@@ -40,6 +40,8 @@ public:
         return adoptRef(*new CustomStateSet(element));
     };
 
+    ~CustomStateSet();
+
     bool addToSetLike(const AtomString& state);
     bool removeFromSetLike(const AtomString& state);
     void clearFromSetLike();

@@ -27,7 +27,6 @@
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "modules/congestion_controller/goog_cc/loss_based_bandwidth_estimation.h"
 #include "modules/congestion_controller/goog_cc/loss_based_bwe_v2.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 
@@ -35,29 +34,9 @@ namespace webrtc {
 
 class RtcEventLog;
 
-class LinkCapacityTracker {
- public:
-  LinkCapacityTracker() = default;
-  ~LinkCapacityTracker() = default;
-  // Call when a new delay-based estimate is available.
-  void UpdateDelayBasedEstimate(Timestamp at_time,
-                                DataRate delay_based_bitrate);
-  void OnStartingRate(DataRate start_rate);
-  void OnRateUpdate(std::optional<DataRate> acknowledged,
-                    DataRate target,
-                    Timestamp at_time);
-  void OnRttBackoff(DataRate backoff_rate, Timestamp at_time);
-  DataRate estimate() const;
-
- private:
-  double capacity_estimate_bps_ = 0;
-  Timestamp last_link_capacity_update_ = Timestamp::MinusInfinity();
-  DataRate last_delay_based_estimate_ = DataRate::PlusInfinity();
-};
-
 class RttBasedBackoff {
  public:
-  explicit RttBasedBackoff(const FieldTrialsView* key_value_config);
+  explicit RttBasedBackoff(const FieldTrialsView& key_value_config);
   ~RttBasedBackoff();
   void UpdatePropagationRtt(Timestamp at_time, TimeDelta propagation_rtt);
   bool IsRttAboveLimit() const;
@@ -95,7 +74,6 @@ class SendSideBandwidthEstimation {
   uint8_t fraction_loss() const { return last_fraction_loss_; }
   TimeDelta round_trip_time() const { return last_round_trip_time_; }
 
-  DataRate GetEstimatedLinkCapacity() const;
   // Call periodically to update estimate.
   void UpdateEstimate(Timestamp at_time);
   void OnSentPacket(const SentPacket& sent_packet);
@@ -128,7 +106,6 @@ class SendSideBandwidthEstimation {
                                 BandwidthUsage delay_detector_state,
                                 std::optional<DataRate> probe_bitrate,
                                 bool in_alr);
-  bool PaceAtLossBasedEstimate() const;
 
  private:
   friend class GoogCcStatePrinter;
@@ -162,15 +139,11 @@ class SendSideBandwidthEstimation {
   // should be cleaned up.
   void ApplyTargetLimits(Timestamp at_time);
 
-  bool LossBasedBandwidthEstimatorV1Enabled() const;
   bool LossBasedBandwidthEstimatorV2Enabled() const;
-
-  bool LossBasedBandwidthEstimatorV1ReadyForUse() const;
   bool LossBasedBandwidthEstimatorV2ReadyForUse() const;
 
   const FieldTrialsView* key_value_config_;
   RttBasedBackoff rtt_backoff_;
-  LinkCapacityTracker link_capacity_;
 
   std::deque<std::pair<Timestamp, DataRate> > min_bitrate_history_;
 
@@ -209,7 +182,6 @@ class SendSideBandwidthEstimation {
   float low_loss_threshold_;
   float high_loss_threshold_;
   DataRate bitrate_threshold_;
-  LossBasedBandwidthEstimation loss_based_bandwidth_estimator_v1_;
   std::unique_ptr<LossBasedBweV2> loss_based_bandwidth_estimator_v2_;
   LossBasedState loss_based_state_;
   FieldTrialFlag disable_receiver_limit_caps_only_;

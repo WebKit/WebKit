@@ -11,17 +11,6 @@ BORINGSSL_bcm_text_start:
 .text
 .loc 1002 2 0
 BORINGSSL_bcm_text_end:
-.type OPENSSL_ia32cap_get, @function
-.globl OPENSSL_ia32cap_get
-.LOPENSSL_ia32cap_get_local_target:
-OPENSSL_ia32cap_get:
-	leaq OPENSSL_ia32cap_P(%rip), %rax
-	ret
-.extern OPENSSL_ia32cap_P
-.type OPENSSL_ia32cap_addr_delta, @object
-.size OPENSSL_ia32cap_addr_delta, 8
-OPENSSL_ia32cap_addr_delta:
-.quad OPENSSL_ia32cap_P-OPENSSL_ia32cap_addr_delta
 .type BORINGSSL_bcm_text_hash, @object
 .size BORINGSSL_bcm_text_hash, 32
 BORINGSSL_bcm_text_hash:

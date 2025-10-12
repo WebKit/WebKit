@@ -29,7 +29,9 @@
 #include "BitmapImage.h"
 #include "ColorBlending.h"
 #include "ColorHash.h"
+#include "ContainerNodeInlines.h"
 #include "Document.h"
+#include "Editing.h"
 #include "Editor.h"
 #include "Element.h"
 #include "ElementAncestorIteratorInlines.h"
@@ -37,6 +39,7 @@
 #include "FrameSnapshotting.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
+#include "GraphicsLayer.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
 #include "LocalFrame.h"
@@ -44,6 +47,7 @@
 #include "NodeTraversal.h"
 #include "Range.h"
 #include "RenderElement.h"
+#include "RenderLayer.h"
 #include "RenderObject.h"
 #include "RenderText.h"
 #include "TextIterator.h"
@@ -102,6 +106,10 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const SimpleRange& range, O
     temporarySelectionOptions.add(TemporarySelectionOption::EnableAppearanceUpdates);
 #endif
     TemporarySelectionChange selectionChange(*document, { rangeToUse }, temporarySelectionOptions);
+
+    // If the selection couldn't be set (usually due to user-select), we can't do a selection-only paint, so changed to painting everything.
+    if (rangeToUse != document->selection().selection().toNormalizedRange())
+        options |= TextIndicatorOption::PaintAllContent;
 
     TextIndicatorData data;
 
@@ -167,7 +175,7 @@ static bool hasNonInlineOrReplacedElements(const SimpleRange& range)
 {
     for (auto& node : intersectingNodes(range)) {
         auto renderer = node.renderer();
-        if (renderer && (!renderer->isInline() || renderer->isReplacedOrAtomicInline()))
+        if (renderer && (!renderer->isInline() || renderer->isBlockLevelReplacedOrAtomicInline()))
             return true;
     }
     return false;
@@ -175,7 +183,7 @@ static bool hasNonInlineOrReplacedElements(const SimpleRange& range)
 
 static SnapshotOptions snapshotOptionsForTextIndicatorOptions(OptionSet<TextIndicatorOption> options)
 {
-    SnapshotOptions snapshotOptions { { SnapshotFlags::PaintWithIntegralScaleFactor }, ImageBufferPixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+    SnapshotOptions snapshotOptions { { SnapshotFlags::PaintWithIntegralScaleFactor }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
 
     if (!options.contains(TextIndicatorOption::PaintAllContent)) {
         if (options.contains(TextIndicatorOption::PaintBackgrounds))
@@ -213,7 +221,7 @@ static bool takeSnapshots(TextIndicatorData& data, LocalFrame& frame, IntRect sn
         return false;
 
     if (data.options.contains(TextIndicatorOption::IncludeSnapshotWithSelectionHighlight)) {
-        SnapshotOptions snapshotOptions { { }, ImageBufferPixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+        SnapshotOptions snapshotOptions { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
         if (data.options.contains(TextIndicatorOption::SnapshotContentAt3xBaseScale))
             snapshotOptions.flags.add(SnapshotFlags::PaintWith3xBaseScale);
 
@@ -223,22 +231,22 @@ static bool takeSnapshots(TextIndicatorData& data, LocalFrame& frame, IntRect sn
     }
 
     if (data.options.contains(TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection)) {
-        SnapshotOptions snapshotOptions { { SnapshotFlags::PaintEverythingExcludingSelection }, ImageBufferPixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+        SnapshotOptions snapshotOptions { { SnapshotFlags::PaintEverythingExcludingSelection }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
         if (data.options.contains(TextIndicatorOption::SnapshotContentAt3xBaseScale))
             snapshotOptions.flags.add(SnapshotFlags::PaintWith3xBaseScale);
 
         float snapshotScaleFactor;
-        auto snapshotRect = frame.protectedView()->visibleContentRect();
-        data.contentImageWithoutSelection = takeSnapshot(frame, snapshotRect, WTFMove(snapshotOptions), snapshotScaleFactor, { });
-        data.contentImageWithoutSelectionRectInRootViewCoordinates = frame.protectedView()->contentsToRootView(snapshotRect);
+        auto visibleContentRect = frame.protectedView()->visibleContentRect();
+        data.contentImageWithoutSelection = takeSnapshot(frame, visibleContentRect, WTFMove(snapshotOptions), snapshotScaleFactor, { });
+        data.contentImageWithoutSelectionRectInRootViewCoordinates = frame.protectedView()->contentsToRootView(visibleContentRect);
     }
     
     return true;
 }
 
-static UncheckedKeyHashSet<Color> estimatedTextColorsForRange(const SimpleRange& range)
+static HashSet<Color> estimatedTextColorsForRange(const SimpleRange& range)
 {
-    UncheckedKeyHashSet<Color> colors;
+    HashSet<Color> colors;
     for (TextIterator iterator(range); !iterator.atEnd(); iterator.advance()) {
         auto node = iterator.node();
         if (!node)
@@ -258,7 +266,7 @@ static FloatRect absoluteBoundingRectForRange(const SimpleRange& range)
     }));
 }
 
-static bool hasAnyIllegibleColors(TextIndicatorData& data, const Color& backgroundColor, UncheckedKeyHashSet<Color>&& textColors)
+static bool hasAnyIllegibleColors(TextIndicatorData& data, const Color& backgroundColor, HashSet<Color>&& textColors)
 {
     if (data.options.contains(TextIndicatorOption::PaintAllContent))
         return false;
@@ -384,6 +392,8 @@ static bool initializeIndicator(TextIndicatorData& data, LocalFrame& frame, cons
         rect.moveBy(-textBoundingRectInRootViewCoordinates.location());
         return rect;
     });
+
+    data.enclosingGraphicsLayerID = computeEnclosingLayer(range).enclosingGraphicsLayerID;
 
     // Store the selection rect in window coordinates, to be used subsequently
     // to determine if the indicator and selection still precisely overlap.

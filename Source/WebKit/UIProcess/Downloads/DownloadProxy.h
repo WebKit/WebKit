@@ -86,7 +86,7 @@ public:
     void processDidClose();
 
     void didReceiveDownloadProxyMessage(IPC::Connection&, IPC::Decoder&);
-    bool didReceiveSyncDownloadProxyMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    void didReceiveSyncDownloadProxyMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
     WebPageProxy* originatingPage() const;
 
@@ -158,7 +158,7 @@ private:
     Vector<URL> m_redirectChain;
     bool m_wasUserInitiated { true };
     bool m_downloadIsCancelled { false };
-    Ref<API::FrameInfo> m_frameInfo;
+    const Ref<API::FrameInfo> m_frameInfo;
     CompletionHandler<void(DownloadProxy*)> m_didStartCallback;
 #if PLATFORM(COCOA)
     RetainPtr<NSProgress> m_progress;

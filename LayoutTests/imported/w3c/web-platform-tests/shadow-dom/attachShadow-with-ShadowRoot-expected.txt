@@ -1,0 +1,4 @@
+
+PASS can use ShadowRoot as options for attachShadow
+PASS can use ShadowRoot in document fragment as options for attachShadow
+

@@ -27,6 +27,7 @@
 
 #if ENABLE(SCREEN_TIME)
 
+#import <ScreenTime/STScreenTimeConfiguration.h>
 #import <ScreenTime/STWebHistory.h>
 #import <ScreenTime/STWebpageController.h>
 #import <wtf/SoftLinking.h>
@@ -34,5 +35,7 @@
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, ScreenTime)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, STWebpageController)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, STWebHistory)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, STScreenTimeConfiguration)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, STScreenTimeConfigurationObserver)
 
 #endif // ENABLE(SCREEN_TIME)

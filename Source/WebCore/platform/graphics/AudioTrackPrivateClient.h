@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "TrackPrivateBaseClient.h"
+#include <WebCore/TrackPrivateBaseClient.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(VIDEO)

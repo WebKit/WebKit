@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include "ServiceWorkerDebuggable.h"
+#include <JavaScriptCore/InspectorFrontendChannel.h>
+#include <WebCore/ServiceWorkerDebuggable.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -33,10 +34,6 @@
 
 // All of these methods should be called on the Main Thread.
 // Used to send messages to the WorkerInspector on the WorkerThread.
-
-namespace Inspector {
-class FrontendChannel;
-}
 
 namespace WebCore {
 

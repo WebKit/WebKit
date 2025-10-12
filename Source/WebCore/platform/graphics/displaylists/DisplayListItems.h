@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,22 +25,22 @@
 
 #pragma once
 
-#include "AlphaPremultiplication.h"
-#include "ControlPart.h"
-#include "DashArray.h"
-#include "DecomposedGlyphs.h"
-#include "DisplayListItem.h"
-#include "Filter.h"
-#include "FloatRoundedRect.h"
-#include "Font.h"
-#include "GlyphBuffer.h"
-#include "Gradient.h"
-#include "GraphicsContext.h"
-#include "Image.h"
-#include "NativeImage.h"
-#include "SharedBuffer.h"
-#include "SystemImage.h"
-#include "TextFlags.h"
+#include <WebCore/AlphaPremultiplication.h>
+#include <WebCore/ControlPart.h>
+#include <WebCore/DashArray.h>
+#include <WebCore/DisplayListItem.h>
+#include <WebCore/Filter.h>
+#include <WebCore/FloatRoundedRect.h>
+#include <WebCore/Font.h>
+#include <WebCore/GlyphBuffer.h>
+#include <WebCore/Gradient.h>
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/Image.h>
+#include <WebCore/NativeImage.h>
+#include <WebCore/SharedBuffer.h>
+#include <WebCore/SystemImage.h>
+#include <WebCore/TextFlags.h>
+#include <wtf/Box.h>
 #include <wtf/TypeCasts.h>
 
 namespace WTF {
@@ -394,14 +394,14 @@ public:
     {
     }
 
-    Ref<ImageBuffer> imageBuffer() const { return m_imageBuffer; }
+    ImageBuffer& imageBuffer() const { return m_imageBuffer; }
     FloatRect destinationRect() const { return m_destinationRect; }
 
     void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    Ref<ImageBuffer> m_imageBuffer;
+    const Ref<ImageBuffer> m_imageBuffer;
     FloatRect m_destinationRect;
 };
 
@@ -478,24 +478,24 @@ public:
     {
     }
 
-    RefPtr<ImageBuffer> sourceImage() const { return m_sourceImage; }
+    ImageBuffer* sourceImage() const { return m_sourceImage.get(); }
     FloatRect sourceImageRect() const { return m_sourceImageRect; }
-    Ref<Filter> filter() const { return m_filter; }
+    Filter& filter() const { return m_filter; }
 
     void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    RefPtr<ImageBuffer> m_sourceImage;
+    const RefPtr<ImageBuffer> m_sourceImage;
     FloatRect m_sourceImageRect;
-    Ref<Filter> m_filter;
+    const Ref<Filter> m_filter;
 };
 
 class DrawGlyphs {
 public:
     static constexpr char name[] = "draw-glyphs";
 
-    DrawGlyphs(Ref<const Font>&& font, Vector<GlyphBufferGlyph>&& glyphs, Vector<GlyphBufferAdvance>&& advances, const FloatPoint& localAnchor,  FontSmoothingMode smoothingMode)
+    DrawGlyphs(Ref<const Font>&& font, Vector<GlyphBufferGlyph>&& glyphs, Vector<GlyphBufferAdvance>&& advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
         : m_font(WTFMove(font))
         , m_glyphs(WTFMove(glyphs))
         , m_advances(WTFMove(advances))
@@ -507,6 +507,7 @@ public:
     Ref<const Font> font() const { return m_font; }
     const Vector<GlyphBufferGlyph>& glyphs() const { return m_glyphs; }
     const Vector<GlyphBufferAdvance>& advances() const { return m_advances; }
+    size_t length() const { return m_glyphs.size(); }
 
     FloatPoint localAnchor() const { return m_localAnchor; }
     FontSmoothingMode fontSmoothingMode() const { return m_fontSmoothingMode; }
@@ -522,26 +523,47 @@ private:
     FontSmoothingMode m_fontSmoothingMode;
 };
 
-class DrawDecomposedGlyphs {
+#if USE(SKIA)
+class DrawTextBlob {
 public:
-    static constexpr char name[] = "draw-decomposed-glyphs";
+    static constexpr char name[] = "draw-text-blob";
 
-    DrawDecomposedGlyphs(Ref<const Font>&& font, Ref<const DecomposedGlyphs>&& decomposedGlyphs)
-        : m_font(WTFMove(font))
-        , m_decomposedGlyphs(WTFMove(decomposedGlyphs))
+    DrawTextBlob(Ref<const Font>&& font, Vector<GlyphBufferGlyph>&& glyphs, Vector<GlyphBufferAdvance>&& advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
+        : m_textBlob(font->buildTextBlob(glyphs, advances, smoothingMode))
+        , m_enableAntialiasing(font->enableAntialiasing(smoothingMode))
+        , m_isVertical(font->platformData().orientation() == FontOrientation::Vertical)
+        , m_localAnchor(localAnchor)
+        , m_fontSmoothingMode(smoothingMode)
     {
     }
 
-    Ref<const Font> font() const { return m_font; }
-    Ref<const DecomposedGlyphs> decomposedGlyphs() const { return m_decomposedGlyphs; }
+    size_t length() const
+    {
+        if (!m_textBlob)
+            return 0;
+
+        size_t glyphsCount = 0;
+        auto iter = SkTextBlob::Iter(*m_textBlob);
+        SkTextBlob::Iter::Run run;
+        while (iter.next(&run))
+            glyphsCount += run.fGlyphCount;
+        return glyphsCount;
+    }
+
+    FloatPoint localAnchor() const { return m_localAnchor; }
+    FontSmoothingMode fontSmoothingMode() const { return m_fontSmoothingMode; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    Ref<const Font> m_font;
-    Ref<const DecomposedGlyphs> m_decomposedGlyphs;
+    sk_sp<SkTextBlob> m_textBlob;
+    bool m_enableAntialiasing { false };
+    bool m_isVertical { false };
+    FloatPoint m_localAnchor;
+    FontSmoothingMode m_fontSmoothingMode;
 };
+#endif // USE(SKIA)
 
 class DrawDisplayList {
 public:
@@ -559,6 +581,21 @@ private:
     Ref<const DisplayList> m_displayList;
 };
 
+class DrawPlaceholder {
+public:
+    static constexpr char name[] = "draw-placeholder";
+
+    DrawPlaceholder(Function<void(GraphicsContext&)>&&);
+    ~DrawPlaceholder();
+
+    void apply(GraphicsContext&) const;
+    void dump(TextStream&, OptionSet<AsTextFlag>) const;
+
+private:
+    using FunctionHolder = Box<Function<void(GraphicsContext&)>>;
+    FunctionHolder m_function;
+};
+
 class DrawImageBuffer {
 public:
     static constexpr char name[] = "draw-image-buffer";
@@ -571,7 +608,7 @@ public:
     {
     }
 
-    Ref<ImageBuffer> imageBuffer() const { return m_imageBuffer; }
+    ImageBuffer& imageBuffer() const { return m_imageBuffer; }
     FloatRect source() const { return m_srcRect; }
     FloatRect destinationRect() const { return m_destinationRect; }
     ImagePaintingOptions options() const { return m_options; }
@@ -580,7 +617,7 @@ public:
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    Ref<ImageBuffer> m_imageBuffer;
+    const Ref<ImageBuffer> m_imageBuffer;
     FloatRect m_destinationRect;
     FloatRect m_srcRect;
     ImagePaintingOptions m_options;
@@ -598,7 +635,7 @@ public:
     {
     }
 
-    Ref<NativeImage> nativeImage() const { return m_image; }
+    NativeImage& nativeImage() const { return m_image; }
     const FloatRect& destinationRect() const { return m_destinationRect; }
     const FloatRect& source() const { return m_srcRect; }
     ImagePaintingOptions options() const { return m_options; }
@@ -607,7 +644,7 @@ public:
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    Ref<NativeImage> m_image;
+    const Ref<NativeImage> m_image;
     FloatRect m_destinationRect;
     FloatRect m_srcRect;
     ImagePaintingOptions m_options;
@@ -623,14 +660,14 @@ public:
     {
     }
 
-    const Ref<SystemImage>& systemImage() const { return m_systemImage; }
+    const SystemImage& systemImage() const { return m_systemImage; }
     const FloatRect& destinationRect() const { return m_destinationRect; }
 
     void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    Ref<SystemImage> m_systemImage;
+    const Ref<SystemImage> m_systemImage;
     FloatRect m_destinationRect;
 };
 
@@ -648,7 +685,7 @@ public:
         , m_options(options)
     {
     }
-    Ref<NativeImage> nativeImage() const { return m_image; }
+    NativeImage& nativeImage() const { return m_image; }
     FloatRect destRect() const { return m_destination; }
     FloatRect tileRect() const { return m_tileRect; }
     const AffineTransform& patternTransform() const { return m_patternTransform; }
@@ -660,7 +697,7 @@ public:
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    Ref<NativeImage> m_image;
+    const Ref<NativeImage> m_image;
     FloatRect m_destination;
     FloatRect m_tileRect;
     AffineTransform m_patternTransform;
@@ -683,7 +720,7 @@ public:
         , m_options(options)
     {
     }
-    Ref<ImageBuffer> imageBuffer() const { return m_imageBuffer; }
+    ImageBuffer& imageBuffer() const { return m_imageBuffer; }
     FloatRect destRect() const { return m_destination; }
     FloatRect tileRect() const { return m_tileRect; }
     const AffineTransform& patternTransform() const { return m_patternTransform; }
@@ -695,7 +732,7 @@ public:
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    Ref<ImageBuffer> m_imageBuffer;
+    const Ref<ImageBuffer> m_imageBuffer;
     FloatRect m_destination;
     FloatRect m_tileRect;
     AffineTransform m_patternTransform;
@@ -993,14 +1030,14 @@ public:
     WEBCORE_EXPORT FillRectWithGradient(FloatRect&&, Ref<Gradient>&&);
 
     const FloatRect& rect() const { return m_rect; }
-    const Ref<Gradient>& gradient() const { return m_gradient; }
+    const Gradient& gradient() const { return m_gradient; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
     FloatRect m_rect;
-    Ref<Gradient> m_gradient;
+    const Ref<Gradient> m_gradient;
 };
 
 class FillRectWithGradientAndSpaceTransform {
@@ -1011,7 +1048,7 @@ public:
     WEBCORE_EXPORT FillRectWithGradientAndSpaceTransform(FloatRect&&, Ref<Gradient>&&, AffineTransform&&, GraphicsContext::RequiresClipToRect);
 
     const FloatRect& rect() const { return m_rect; }
-    const Ref<Gradient>& gradient() const { return m_gradient; }
+    const Gradient& gradient() const { return m_gradient; }
     const AffineTransform& gradientSpaceTransform() const { return m_gradientSpaceTransform; }
     GraphicsContext::RequiresClipToRect requiresClipToRect() const { return m_requiresClipToRect; }
 
@@ -1020,7 +1057,7 @@ public:
 
 private:
     FloatRect m_rect;
-    Ref<Gradient> m_gradient;
+    const Ref<Gradient> m_gradient;
     AffineTransform m_gradientSpaceTransform;
     GraphicsContext::RequiresClipToRect m_requiresClipToRect;
 };
@@ -1227,7 +1264,7 @@ public:
 
     WEBCORE_EXPORT DrawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&);
 
-    Ref<ControlPart> part() const { return m_part; }
+    ControlPart& part() const { return m_part; }
     FloatRoundedRect borderRect() const { return m_borderRect; }
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
     const ControlStyle& style() const { return m_style; }
@@ -1237,7 +1274,7 @@ public:
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    Ref<ControlPart> m_part;
+    const Ref<ControlPart> m_part;
     FloatRoundedRect m_borderRect;
     float m_deviceScaleFactor;
     ControlStyle m_style;
@@ -1285,18 +1322,18 @@ class BeginPage {
 public:
     static constexpr char name[] = "begin-page";
 
-    BeginPage(const IntSize& pageSize)
-        : m_pageSize(pageSize)
+    BeginPage(const FloatRect& pageRect)
+        : m_pageRect(pageRect)
     {
     }
 
-    const IntSize& pageSize() const { return m_pageSize; }
+    const FloatRect& pageRect() const { return m_pageRect; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    IntSize m_pageSize;
+    FloatRect m_pageRect;
 };
 
 class EndPage {

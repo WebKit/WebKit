@@ -32,10 +32,10 @@
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
-#include "LengthFunctions.h"
 #include "Logging.h"
 #include "PlacedFloats.h"
 #include "RenderStyleInlines.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TableFormattingState.h"
 
 namespace WebCore {
@@ -68,15 +68,26 @@ FormattingGeometry::FormattingGeometry(const FormattingContext& formattingContex
 {
 }
 
-std::optional<LayoutUnit> FormattingGeometry::computedHeightValue(const Box& layoutBox, HeightType heightType, std::optional<LayoutUnit> containingBlockHeight) const
+template<FormattingGeometry::HeightType heightType> std::optional<LayoutUnit> FormattingGeometry::computedHeightValue(const Box& layoutBox, std::optional<LayoutUnit> containingBlockHeight) const
 {
-    auto& style = layoutBox.style();
-    auto height = heightType == HeightType::Normal ? style.logicalHeight() : heightType == HeightType::Min ? style.logicalMinHeight() : style.logicalMaxHeight();
-    if (height.isUndefined() || height.isAuto() || height.isMaxContent() || height.isMinContent() || height.isFitContent())
-        return { };
+    auto height = [&] {
+        if constexpr (heightType == HeightType::Normal)
+            return layoutBox.style().logicalHeight();
+        else if constexpr (heightType == HeightType::Min)
+            return layoutBox.style().logicalMinHeight();
+        else if constexpr (heightType == HeightType::Max)
+            return layoutBox.style().logicalMaxHeight();
+    }();
 
-    if (height.isFixed())
-        return LayoutUnit { height.value() };
+    if constexpr (heightType == HeightType::Max) {
+        if (height.isNone() || height.isMaxContent() || height.isMinContent() || height.isFitContent())
+            return { };
+    } else {
+        if (height.isAuto() || height.isMaxContent() || height.isMinContent() || height.isFitContent())
+            return { };
+    }
+    if (auto fixedHeight = height.tryFixed())
+        return LayoutUnit { fixedHeight->resolveZoom(Style::ZoomNeeded { }) };
 
     if (!containingBlockHeight) {
         if (layoutState().inQuirksMode()) {
@@ -84,7 +95,7 @@ std::optional<LayoutUnit> FormattingGeometry::computedHeightValue(const Box& lay
             // Use heightValueOfNearestContainingBlockWithFixedHeight;
             ASSERT_NOT_IMPLEMENTED_YET();
         } else {
-            auto nonAnonymousContainingBlockLogicalHeight = [&]() -> Length {
+            auto nonAnonymousContainingBlockLogicalHeight = [&]() -> Style::PreferredSize {
                 // When the block level box is a direct child of an inline level box (<span><div></div></span>) and we wrap it into a continuation,
                 // the containing block (anonymous wrapper) is not the box we need to check for fixed height.
                 for (auto& containingBlock : containingBlockChain(layoutBox)) {
@@ -93,7 +104,7 @@ std::optional<LayoutUnit> FormattingGeometry::computedHeightValue(const Box& lay
                     return containingBlock.style().logicalHeight();
                 }
                 ASSERT_NOT_REACHED();
-                return { };
+                return CSS::Keyword::Auto { };
             };
             containingBlockHeight = fixedValue(nonAnonymousContainingBlockLogicalHeight());
         }
@@ -102,12 +113,12 @@ std::optional<LayoutUnit> FormattingGeometry::computedHeightValue(const Box& lay
     if (!containingBlockHeight)
         return { };
 
-    return valueForLength(height, *containingBlockHeight);
+    return Style::evaluate<LayoutUnit>(height, *containingBlockHeight, Style::ZoomNeeded { });
 }
 
 std::optional<LayoutUnit> FormattingGeometry::computedHeight(const Box& layoutBox, std::optional<LayoutUnit> containingBlockHeight) const
 {
-    if (auto height = computedHeightValue(layoutBox, HeightType::Normal, containingBlockHeight)) {
+    if (auto height = computedHeightValue<HeightType::Normal>(layoutBox, containingBlockHeight)) {
         if (layoutBox.style().boxSizing() == BoxSizing::ContentBox)
             return height;
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
@@ -116,23 +127,18 @@ std::optional<LayoutUnit> FormattingGeometry::computedHeight(const Box& layoutBo
     return { };
 }
 
-std::optional<LayoutUnit> FormattingGeometry::computedWidthValue(const Box& layoutBox, WidthType widthType, LayoutUnit containingBlockWidth) const
+template<FormattingGeometry::WidthType widthType> std::optional<LayoutUnit> FormattingGeometry::computedWidthValue(const Box& layoutBox, LayoutUnit containingBlockWidth) const
 {
     // Applies to: all elements except non-replaced inlines (out-of-flow check is required for positioned <br> as for some reason we don't blockify them).
     ASSERT(!layoutBox.isInlineBox() || layoutBox.isOutOfFlowPositioned());
 
     auto width = [&] {
-        auto& style = layoutBox.style();
-        switch (widthType) {
-        case WidthType::Normal:
-            return style.logicalWidth();
-        case WidthType::Min:
-            return style.logicalMinWidth();
-        case WidthType::Max:
-            return style.logicalMaxWidth();
-        }
-        ASSERT_NOT_REACHED();
-        return style.logicalWidth();
+        if constexpr (widthType == WidthType::Normal)
+            return layoutBox.style().logicalWidth();
+        else if constexpr (widthType == WidthType::Min)
+            return layoutBox.style().logicalMinWidth();
+        else if constexpr (widthType == WidthType::Max)
+            return layoutBox.style().logicalMaxWidth();
     }();
     if (auto computedValue = this->computedValue(width, containingBlockWidth))
         return computedValue;
@@ -168,10 +174,10 @@ std::optional<LayoutUnit> FormattingGeometry::computedWidthValue(const Box& layo
 
 std::optional<LayoutUnit> FormattingGeometry::computedWidth(const Box& layoutBox, LayoutUnit containingBlockWidth) const
 {
-    if (auto computedWidth = computedWidthValue(layoutBox, WidthType::Normal, containingBlockWidth)) {
+    if (auto computedWidth = computedWidthValue<WidthType::Normal>(layoutBox, containingBlockWidth)) {
         auto& style = layoutBox.style();
         // Non-quantitative values such as auto and min-content are not influenced by the box-sizing property.
-        if (style.boxSizing() == BoxSizing::ContentBox || style.width().isIntrinsicOrAuto())
+        if (style.boxSizing() == BoxSizing::ContentBox || !style.width().isSpecified())
             return computedWidth;
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
         return *computedWidth - boxGeometry.horizontalBorderAndPadding();
@@ -192,43 +198,28 @@ LayoutUnit FormattingGeometry::contentHeightForFormattingContextRoot(const Eleme
     return usedContentHeight;
 }
 
-std::optional<LayoutUnit> FormattingGeometry::computedValue(const Length& geometryProperty, LayoutUnit containingBlockWidth) const
-{
-    //  In general, the computed value resolves the specified value as far as possible without laying out the content.
-    if (geometryProperty.isFixed() || geometryProperty.isPercent() || geometryProperty.isCalculated())
-        return valueForLength(geometryProperty, containingBlockWidth);
-    return { };
-}
-
-std::optional<LayoutUnit> FormattingGeometry::fixedValue(const Length& geometryProperty) const
-{
-    if (!geometryProperty.isFixed())
-        return { };
-    return LayoutUnit { geometryProperty.value() };
-}
-
 // https://www.w3.org/TR/CSS22/visudet.html#min-max-heights
 // Specifies a percentage for determining the used value. The percentage is calculated with respect to the height of the generated box's containing block.
 // If the height of the containing block is not specified explicitly (i.e., it depends on content height), and this element is not absolutely positioned,
 // the percentage value is treated as '0' (for 'min-height') or 'none' (for 'max-height').
 std::optional<LayoutUnit> FormattingGeometry::computedMaxHeight(const Box& layoutBox, std::optional<LayoutUnit> containingBlockHeight) const
 {
-    return computedHeightValue(layoutBox, HeightType::Max, containingBlockHeight);
+    return computedHeightValue<HeightType::Max>(layoutBox, containingBlockHeight);
 }
 
 std::optional<LayoutUnit> FormattingGeometry::computedMinHeight(const Box& layoutBox, std::optional<LayoutUnit> containingBlockHeight) const
 {
-    return computedHeightValue(layoutBox, HeightType::Min, containingBlockHeight);
+    return computedHeightValue<HeightType::Min>(layoutBox, containingBlockHeight);
 }
 
 std::optional<LayoutUnit> FormattingGeometry::computedMinWidth(const Box& layoutBox, LayoutUnit containingBlockWidth) const
 {
-    return computedWidthValue(layoutBox, WidthType::Min, containingBlockWidth);
+    return computedWidthValue<WidthType::Min>(layoutBox, containingBlockWidth);
 }
 
 std::optional<LayoutUnit> FormattingGeometry::computedMaxWidth(const Box& layoutBox, LayoutUnit containingBlockWidth) const
 {
-    return computedWidthValue(layoutBox, WidthType::Max, containingBlockWidth);
+    return computedWidthValue<WidthType::Max>(layoutBox, containingBlockWidth);
 }
 
 LayoutUnit FormattingGeometry::staticVerticalPositionForOutOfFlowPositioned(const Box& layoutBox, const VerticalConstraints& verticalConstraints) const
@@ -1093,8 +1084,14 @@ BoxGeometry::Edges FormattingGeometry::computedBorder(const Box& layoutBox) cons
     auto& style = layoutBox.style();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Border] -> layoutBox: " << &layoutBox);
     return {
-        { LayoutUnit(style.borderLeftWidth()), LayoutUnit(style.borderRightWidth()) },
-        { LayoutUnit(style.borderTopWidth()), LayoutUnit(style.borderBottomWidth()) }
+        {
+            Style::evaluate<LayoutUnit>(style.borderLeftWidth(), Style::ZoomNeeded { }),
+            Style::evaluate<LayoutUnit>(style.borderRightWidth(), Style::ZoomNeeded { })
+        },
+        {
+            Style::evaluate<LayoutUnit>(style.borderTopWidth(), Style::ZoomNeeded { }),
+            Style::evaluate<LayoutUnit>(style.borderBottomWidth(), Style::ZoomNeeded { })
+        },
     };
 }
 
@@ -1106,8 +1103,13 @@ BoxGeometry::Edges FormattingGeometry::computedPadding(const Box& layoutBox, con
     auto& style = layoutBox.style();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Padding] -> layoutBox: " << &layoutBox);
     return {
-        { valueForLength(style.paddingStart(), containingBlockWidth), valueForLength(style.paddingEnd(), containingBlockWidth) },
-        { valueForLength(style.paddingBefore(), containingBlockWidth), valueForLength(style.paddingAfter(), containingBlockWidth) }
+        {
+            Style::evaluate<LayoutUnit>(style.paddingStart(), containingBlockWidth, Style::ZoomNeeded { }),
+            Style::evaluate<LayoutUnit>(style.paddingEnd(), containingBlockWidth, Style::ZoomNeeded { }) },
+        {
+            Style::evaluate<LayoutUnit>(style.paddingBefore(), containingBlockWidth, Style::ZoomNeeded { }),
+            Style::evaluate<LayoutUnit>(style.paddingAfter(), containingBlockWidth, Style::ZoomNeeded { })
+        }
     };
 }
 

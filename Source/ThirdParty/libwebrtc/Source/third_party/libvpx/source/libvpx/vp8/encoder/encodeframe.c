@@ -747,8 +747,10 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 #endif
 
   {
+#if CONFIG_INTERNAL_STATS
     struct vpx_usec_timer emr_timer;
     vpx_usec_timer_start(&emr_timer);
+#endif
 
 #if CONFIG_MULTITHREAD
     if (vpx_atomic_load_acquire(&cpi->b_multi_threaded)) {
@@ -894,8 +896,10 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     }
 #endif
 
+#if CONFIG_INTERNAL_STATS
     vpx_usec_timer_mark(&emr_timer);
     cpi->time_encode_mb_row += vpx_usec_timer_elapsed(&emr_timer);
+#endif
   }
 
   // Work out the segment probabilities if segmentation is enabled

@@ -176,7 +176,7 @@ JSValue JSTestSetLikeWithOverriddenOperations::getConstructor(VM& vm, const JSGl
 
 void JSTestSetLikeWithOverriddenOperations::destroy(JSC::JSCell* cell)
 {
-    JSTestSetLikeWithOverriddenOperations* thisObject = static_cast<JSTestSetLikeWithOverriddenOperations*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestSetLikeWithOverriddenOperations* thisObject = static_cast<JSTestSetLikeWithOverriddenOperations*>(cell);
     thisObject->JSTestSetLikeWithOverriddenOperations::~JSTestSetLikeWithOverriddenOperations();
 }
 
@@ -348,7 +348,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestSetLikeWithOverriddenOperationsPrototypeFunction_
 
 JSC::GCClient::IsoSubspace* JSTestSetLikeWithOverriddenOperations::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestSetLikeWithOverriddenOperations, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestSetLikeWithOverriddenOperations, UseCustomHeapCellType::No>(vm, "JSTestSetLikeWithOverriddenOperations"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestSetLikeWithOverriddenOperations.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestSetLikeWithOverriddenOperations = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestSetLikeWithOverriddenOperations.get(); },
@@ -375,7 +375,7 @@ bool JSTestSetLikeWithOverriddenOperationsOwner::isReachableFromOpaqueRoots(JSC:
 
 void JSTestSetLikeWithOverriddenOperationsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestSetLikeWithOverriddenOperations = static_cast<JSTestSetLikeWithOverriddenOperations*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestSetLikeWithOverriddenOperations = static_cast<JSTestSetLikeWithOverriddenOperations*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestSetLikeWithOverriddenOperations->protectedWrapped().ptr(), jsTestSetLikeWithOverriddenOperations);
 }
@@ -388,7 +388,9 @@ extern "C" { extern void (*const __identifier("??_7TestSetLikeWithOverriddenOper
 #else
 extern "C" { extern void* _ZTVN7WebCore35TestSetLikeWithOverriddenOperationsE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestSetLikeWithOverriddenOperations>, void>> static inline void verifyVTable(TestSetLikeWithOverriddenOperations* ptr) {
+template<std::same_as<TestSetLikeWithOverriddenOperations> T>
+static inline void verifyVTable(TestSetLikeWithOverriddenOperations* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -407,8 +409,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestSetLikeWi
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestSetLikeWithOverriddenOperations>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestSetLikeWithOverriddenOperations>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestSetLikeWithOverriddenOperations>(impl.ptr());
 #endif

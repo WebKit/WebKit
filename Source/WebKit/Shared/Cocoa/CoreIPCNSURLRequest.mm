@@ -192,6 +192,7 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
     SET_NSURLREQUESTDATA_PRIMITIVE(privacyProxyFailClosed, NSNumber, bool);
     SET_NSURLREQUESTDATA_PRIMITIVE(privacyProxyFailClosedForUnreachableNonMainHosts, NSNumber, bool);
     SET_NSURLREQUESTDATA_PRIMITIVE(privacyProxyFailClosedForUnreachableHosts, NSNumber, bool);
+    SET_NSURLREQUESTDATA_PRIMITIVE(privacyProxyStrictFailClosed, NSNumber, bool);
     SET_NSURLREQUESTDATA_PRIMITIVE(requiresDNSSECValidation, NSNumber, bool);
     SET_NSURLREQUESTDATA_PRIMITIVE(allowsPersistentDNS, NSNumber, bool);
     SET_NSURLREQUESTDATA_PRIMITIVE(prohibitPrivacyProxy, NSNumber, bool);
@@ -312,6 +313,7 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
     SET_DICT_FROM_PRIMITIVE(privacyProxyFailClosed, NSInteger, Bool);
     SET_DICT_FROM_PRIMITIVE(privacyProxyFailClosedForUnreachableNonMainHosts, NSInteger, Bool);
     SET_DICT_FROM_PRIMITIVE(privacyProxyFailClosedForUnreachableHosts, NSInteger, Bool);
+    SET_DICT_FROM_PRIMITIVE(privacyProxyStrictFailClosed, NSInteger, Bool);
     SET_DICT_FROM_OPTIONAL_PRIMITIVE(requiresDNSSECValidation, NSInteger, Bool);
     SET_DICT_FROM_PRIMITIVE(allowsPersistentDNS, NSInteger, Bool);
     SET_DICT_FROM_PRIMITIVE(prohibitPrivacyProxy, NSInteger, Bool);

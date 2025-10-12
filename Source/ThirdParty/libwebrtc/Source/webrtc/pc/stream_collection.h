@@ -11,24 +11,27 @@
 #ifndef PC_STREAM_COLLECTION_H_
 #define PC_STREAM_COLLECTION_H_
 
+#include <cstddef>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "api/make_ref_counted.h"
+#include "api/media_stream_interface.h"
 #include "api/peer_connection_interface.h"
+#include "api/scoped_refptr.h"
 
 namespace webrtc {
 
 // Implementation of StreamCollection.
 class StreamCollection : public StreamCollectionInterface {
  public:
-  static rtc::scoped_refptr<StreamCollection> Create() {
-    return rtc::make_ref_counted<StreamCollection>();
+  static scoped_refptr<StreamCollection> Create() {
+    return make_ref_counted<StreamCollection>();
   }
 
-  static rtc::scoped_refptr<StreamCollection> Create(
-      StreamCollection* streams) {
-    return rtc::make_ref_counted<StreamCollection>(streams);
+  static scoped_refptr<StreamCollection> Create(StreamCollection* streams) {
+    return make_ref_counted<StreamCollection>(streams);
   }
 
   virtual size_t count() { return media_streams_.size(); }
@@ -69,7 +72,7 @@ class StreamCollection : public StreamCollectionInterface {
     return NULL;
   }
 
-  void AddStream(rtc::scoped_refptr<MediaStreamInterface> stream) {
+  void AddStream(scoped_refptr<MediaStreamInterface> stream) {
     for (StreamVector::iterator it = media_streams_.begin();
          it != media_streams_.end(); ++it) {
       if ((*it)->id().compare(stream->id()) == 0)
@@ -92,7 +95,7 @@ class StreamCollection : public StreamCollectionInterface {
   StreamCollection() {}
   explicit StreamCollection(StreamCollection* original)
       : media_streams_(original->media_streams_) {}
-  typedef std::vector<rtc::scoped_refptr<MediaStreamInterface> > StreamVector;
+  typedef std::vector<scoped_refptr<MediaStreamInterface> > StreamVector;
   StreamVector media_streams_;
 };
 

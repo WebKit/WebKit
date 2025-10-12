@@ -55,14 +55,23 @@ void PlatformWebViewClientLibWPE::removeFromWindow()
     m_backend->removeActivityState(wpe_view_activity_state_in_window);
 }
 
+WKSize PlatformWebViewClientLibWPE::size()
+{
+    return { 800, 600 };
+}
+
+void PlatformWebViewClientLibWPE::resize(WKSize)
+{
+}
+
 PlatformImage PlatformWebViewClientLibWPE::snapshot()
 {
     {
         class TimeoutTimer {
         public:
             TimeoutTimer()
-                : m_timer(RunLoop::main(), [] {
-                    RunLoop::protectedMain()->stop();
+                : m_timer(RunLoop::mainSingleton(), "PlatformWebViewClientLibWPE::TimeoutTimer"_s, [] {
+                    RunLoop::mainSingleton().stop();
                 })
             {
                 m_timer.startOneShot(1_s / 60);
@@ -71,7 +80,7 @@ PlatformImage PlatformWebViewClientLibWPE::snapshot()
             RunLoop::Timer m_timer;
         } timeoutTimer;
 
-        RunLoop::main().run();
+        RunLoop::mainSingleton().run();
     }
 
     return m_backend->snapshot();

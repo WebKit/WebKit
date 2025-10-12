@@ -1,0 +1,19 @@
+layer at (0,0) size 785x1024
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x1024
+  RenderBlock {HTML} at (0,0) size 785x1024
+    RenderBody {BODY} at (8,16) size 769x1000
+      RenderBlock {P} at (0,0) size 769x18
+        RenderText {#text} at (0,0) size 85x17
+          text run at (0,0) width 85: "Middle frame"
+      RenderBlock (anonymous) at (0,34) size 769x408
+        RenderIFrame {IFRAME} at (0,0) size 504x404 [bgcolor=#FFFFC1] [border: (2px solid #000000)]
+          layer at (0,0) size 485x1024
+            RenderView at (0,0) size 485x400
+          layer at (0,0) size 485x1024
+            RenderBlock {HTML} at (0,0) size 485x1024
+              RenderBody {BODY} at (8,16) size 469x1000
+                RenderBlock {P} at (0,0) size 469x18
+                  RenderText {#text} at (0,0) size 73x17
+                    text run at (0,0) width 73: "Inner frame"
+        RenderText {#text} at (0,0) size 0x0

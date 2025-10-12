@@ -42,6 +42,8 @@ enum class IsNoSniffSet : bool { No, Yes };
 WEBCORE_EXPORT void adjustMIMETypeIfNecessary(CFURLResponseRef, IsMainResourceLoad, IsNoSniffSet);
 
 RetainPtr<CFStringRef> filePathExtension(CFURLResponseRef);
-RetainPtr<CFStringRef> preferredMIMETypeForFileExtensionFromUTType(CFStringRef extension);
+#ifdef __OBJC__
+RetainPtr<NSString> preferredMIMETypeForFileExtensionFromUTType(NSString *extension);
+#endif
 
 }

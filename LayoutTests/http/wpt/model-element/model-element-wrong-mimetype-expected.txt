@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unexpected USDZ MIME type "image/jpeg" in <model> element. Expected "model/vnd.usdz+zip". Some features of <model> may not work properly. The model may fail to render in a future release.
 
 PASS unexpected MIME type should log warning
 

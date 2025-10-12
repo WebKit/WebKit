@@ -37,9 +37,9 @@ namespace WebCore {
 template<typename Visitor>
 void JSAudioWorkletGlobalScope::visitAdditionalChildren(Visitor& visitor)
 {
-    addWebCoreOpaqueRoot(visitor, static_cast<ScriptExecutionContext&>(wrapped()));
-
-    wrapped().visitProcessors(visitor);
+    // This function may get called on the GC thread so we cannot ref the object.
+    SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, static_cast<ScriptExecutionContext&>(wrapped()));
+    SUPPRESS_UNCOUNTED_ARG wrapped().visitProcessors(visitor);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSAudioWorkletGlobalScope);

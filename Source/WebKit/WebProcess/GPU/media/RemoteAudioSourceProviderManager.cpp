@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,7 +71,7 @@ void RemoteAudioSourceProviderManager::setConnection(RefPtr<IPC::Connection>&& c
 void RemoteAudioSourceProviderManager::addProvider(Ref<RemoteAudioSourceProvider>&& provider)
 {
     ASSERT(WTF::isMainRunLoop());
-    setConnection(WebProcess::singleton().ensureGPUProcessConnection().protectedConnection().ptr());
+    setConnection(WebProcess::singleton().ensureGPUProcessConnection().connection());
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, provider = WTFMove(provider)]() mutable {
         auto identifier = provider->identifier();

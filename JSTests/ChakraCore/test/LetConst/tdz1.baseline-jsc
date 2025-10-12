@@ -1,48 +1,48 @@
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'x' before initialization.
 local x
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'x' before initialization.
 local x
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'a' before initialization.
 a is a string
 did not delete a
 did not delete a
-ReferenceError: Cannot access uninitialized variable.
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 't' before initialization.
+ReferenceError: Cannot access 't' before initialization.
 undefined
-ReferenceError: Cannot access uninitialized variable.
-ReferenceError: Cannot access uninitialized variable.
-ReferenceError: Cannot access uninitialized variable.
-ReferenceError: Cannot access uninitialized variable.
-ReferenceError: Cannot access uninitialized variable.
-ReferenceError: Cannot access uninitialized variable.
-ReferenceError: Cannot access uninitialized variable.
-ReferenceError: Cannot access uninitialized variable.
-ReferenceError: Cannot access uninitialized variable.
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'foo' before initialization.
+ReferenceError: Cannot access 'foo' before initialization.
+ReferenceError: Cannot access 'foo' before initialization.
+ReferenceError: Cannot access 'foo' before initialization.
+ReferenceError: Cannot access 'a' before initialization.
+ReferenceError: Cannot access 'a' before initialization.
+ReferenceError: Cannot access 'a' before initialization.
+ReferenceError: Cannot access 'a' before initialization.
+ReferenceError: Cannot access 'a' before initialization.
+ReferenceError: Cannot access 'a' before initialization.
 false
-ReferenceError: Cannot access uninitialized variable.
-false
-string
-false
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'glo_a' before initialization.
 false
 string
-ReferenceError: Cannot access uninitialized variable.
+false
+ReferenceError: Cannot access 'glo_b' before initialization.
+false
+string
+ReferenceError: Cannot access 'x' before initialization.
 function () { write(y = 123); }
 123
 123
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'y' before initialization.
 function () { write(y = 123); }
 123
 123
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'y' before initialization.
 function
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'y' before initialization.
 function
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'y' before initialization.
 function () { write(y); }
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'y' before initialization.
 function () { write(y); }
-ReferenceError: Cannot access uninitialized variable.
-ReferenceError: Cannot access uninitialized variable.
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'y' before initialization.
+ReferenceError: Cannot access 'y' before initialization.
+ReferenceError: Cannot access 'y' before initialization.

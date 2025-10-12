@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-[RValue] struct WebKit::GPUProcessCreationParameters {
+[RValue, DebugDecodingFailure] struct WebKit::GPUProcessCreationParameters {
     WebKit::AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
 
 #if ENABLE(MEDIA_STREAM)
@@ -31,10 +31,6 @@
     WebKit::SandboxExtensionHandle microphoneSandboxExtensionHandle;
     WebKit::SandboxExtensionHandle launchServicesExtensionHandle;
 #endif
-#endif
-
-#if USE(MODERN_AVCONTENTKEYSESSION)
-    bool shouldUseModernAVContentKeySession;
 #endif
 
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
@@ -52,13 +48,19 @@
     String applicationVisibleName;
 
 #if USE(GBM)
-    String renderDeviceFile;
+    WebCore::DRMDevice drmDevice;
 #endif
 
     Vector<String> overrideLanguages;
 #if PLATFORM(COCOA)
     bool enableMetalDebugDeviceForTesting;
     bool enableMetalShaderValidationForTesting;
+#if ENABLE(VP9)
+    std::optional<bool> hasVP9HardwareDecoder;
+#endif
+#if ENABLE(AV1)
+    std::optional<bool> hasAV1HardwareDecoder;
+#endif
 #endif
 };
 

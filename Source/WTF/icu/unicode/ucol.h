@@ -251,42 +251,52 @@ typedef enum {
       */
      UCOL_FRENCH_COLLATION, 
      /** Attribute for handling variable elements.
-      * Acceptable values are UCOL_NON_IGNORABLE (default)
-      * which treats all the codepoints with non-ignorable 
+      * Acceptable values are UCOL_NON_IGNORABLE
+      * which treats all the codepoints with non-ignorable
       * primary weights in the same way,
-      * and UCOL_SHIFTED which causes codepoints with primary 
+      * and UCOL_SHIFTED which causes codepoints with primary
       * weights that are equal or below the variable top value
-      * to be ignored on primary level and moved to the quaternary 
-      * level.
+      * to be ignored on primary level and moved to the quaternary
+      * level. The default setting in a Collator object depends on the
+      * locale data loaded from the resources. For most locales, the
+      * default is UCOL_NON_IGNORABLE, but for others, such as "th",
+      * the default could be UCOL_SHIFTED.
       * @stable ICU 2.0
       */
-     UCOL_ALTERNATE_HANDLING, 
+     UCOL_ALTERNATE_HANDLING,
      /** Controls the ordering of upper and lower case letters.
-      * Acceptable values are UCOL_OFF (default), which orders
+      * Acceptable values are UCOL_OFF, which orders
       * upper and lower case letters in accordance to their tertiary
-      * weights, UCOL_UPPER_FIRST which forces upper case letters to 
-      * sort before lower case letters, and UCOL_LOWER_FIRST which does 
-      * the opposite.
+      * weights, UCOL_UPPER_FIRST which forces upper case letters to
+      * sort before lower case letters, and UCOL_LOWER_FIRST which does
+      * the opposite. The default setting in a Collator object depends on the
+      * locale data loaded from the resources. For most locales, the
+      * default is UCOL_OFF, but for others, such as "da" or "mt",
+      * the default could be UCOL_UPPER.
       * @stable ICU 2.0
       */
-     UCOL_CASE_FIRST, 
+     UCOL_CASE_FIRST,
      /** Controls whether an extra case level (positioned before the third
-      * level) is generated or not. Acceptable values are UCOL_OFF (default), 
+      * level) is generated or not. Acceptable values are UCOL_OFF,
       * when case level is not generated, and UCOL_ON which causes the case
       * level to be generated. Contents of the case level are affected by
-      * the value of UCOL_CASE_FIRST attribute. A simple way to ignore 
+      * the value of UCOL_CASE_FIRST attribute. A simple way to ignore
       * accent differences in a string is to set the strength to UCOL_PRIMARY
-      * and enable case level.
+      * and enable case level. The default setting in a Collator object depends
+      * on the locale data loaded from the resources.
       * @stable ICU 2.0
       */
      UCOL_CASE_LEVEL,
      /** Controls whether the normalization check and necessary normalizations
-      * are performed. When set to UCOL_OFF (default) no normalization check
-      * is performed. The correctness of the result is guaranteed only if the 
+      * are performed. When set to UCOL_OFF no normalization check
+      * is performed. The correctness of the result is guaranteed only if the
       * input data is in so-called FCD form (see users manual for more info).
       * When set to UCOL_ON, an incremental check is performed to see whether
       * the input data is in the FCD form. If the data is not in the FCD form,
-      * incremental NFD normalization is performed.
+      * incremental NFD normalization is performed. The default setting in a
+      * Collator object depends on the locale data loaded from the resources.
+      * For many locales, the default is UCOL_OFF, but for others, such as "hi"
+      * "vi', or "bn", * the default could be UCOL_ON.
       * @stable ICU 2.0
       */
      UCOL_NORMALIZATION_MODE, 
@@ -397,7 +407,7 @@ typedef enum {
  * @param status A pointer to a UErrorCode to receive any errors
  * @return A pointer to a UCollator, or 0 if an error occurred.
  * @see ucol_openRules
- * @see ucol_safeClone
+ * @see ucol_clone
  * @see ucol_close
  * @stable ICU 2.0
  */
@@ -425,7 +435,7 @@ ucol_open(const char *loc, UErrorCode *status);
  * @return A pointer to a UCollator. It is not guaranteed that NULL be returned in case
  *         of error - please use status argument to check for errors.
  * @see ucol_open
- * @see ucol_safeClone
+ * @see ucol_clone
  * @see ucol_close
  * @stable ICU 2.0
  */
@@ -521,7 +531,7 @@ ucol_getContractionsAndExpansions( const UCollator *coll,
  * @param coll The UCollator to close.
  * @see ucol_open
  * @see ucol_openRules
- * @see ucol_safeClone
+ * @see ucol_clone
  * @stable ICU 2.0
  */
 U_CAPI void U_EXPORT2 
@@ -985,7 +995,6 @@ ucol_getShortDefinitionString(const UCollator *coll,
  * 
  *  @deprecated ICU 54
  */
-
 U_DEPRECATED int32_t U_EXPORT2
 ucol_normalizeShortDefinitionString(const char *source,
                                     char *destination,
@@ -1313,6 +1322,20 @@ ucol_restoreVariableTop(UCollator *coll, const uint32_t varTop, UErrorCode *stat
 /**
  * Thread safe cloning operation. The result is a clone of a given collator.
  * @param coll collator to be cloned
+ * @param status to indicate whether the operation went on smoothly or there were errors
+ * @return pointer to the new clone
+ * @see ucol_open
+ * @see ucol_openRules
+ * @see ucol_close
+ * @stable ICU 71
+ */
+U_CAPI UCollator* U_EXPORT2 ucol_clone(const UCollator *coll, UErrorCode *status);
+
+#ifndef U_HIDE_DEPRECATED_API
+
+/**
+ * Thread safe cloning operation. The result is a clone of a given collator.
+ * @param coll collator to be cloned
  * @param stackBuffer <em>Deprecated functionality as of ICU 52, use NULL.</em><br>
  * user allocated space for the new clone. 
  * If NULL new memory will be allocated. 
@@ -1325,21 +1348,20 @@ ucol_restoreVariableTop(UCollator *coll, const uint32_t varTop, UErrorCode *stat
  *  If *pBufferSize is not enough for a stack-based safe clone, 
  *  new memory will be allocated.
  * @param status to indicate whether the operation went on smoothly or there were errors
- *    An informational status value, U_SAFECLONE_ALLOCATED_ERROR, is used if any
- * allocations were necessary.
+ *    An informational status value, U_SAFECLONE_ALLOCATED_ERROR, is used
+ * if pBufferSize != NULL and any allocations were necessary
  * @return pointer to the new clone
  * @see ucol_open
  * @see ucol_openRules
  * @see ucol_close
- * @stable ICU 2.0
+ * @deprecated ICU 71 Use ucol_clone() instead.
  */
-U_CAPI UCollator* U_EXPORT2 
+U_DEPRECATED UCollator* U_EXPORT2
 ucol_safeClone(const UCollator *coll,
                void            *stackBuffer,
                int32_t         *pBufferSize,
                UErrorCode      *status);
 
-#ifndef U_HIDE_DEPRECATED_API
 
 /** default memory size for the new clone.
  * @deprecated ICU 52. Do not rely on ucol_safeClone() cloning into any provided buffer.

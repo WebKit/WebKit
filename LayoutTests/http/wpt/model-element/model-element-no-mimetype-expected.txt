@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unexpected USDZ MIME type "application/octet-stream" in <model> element. Expected "model/vnd.usdz+zip". Some features of <model> may not work properly. The model may fail to render in a future release.
 
 PASS not providing MIME type should log a warning
 

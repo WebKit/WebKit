@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "SWServer.h"
-#include "ServiceWorkerJobData.h"
-#include "Timer.h"
-#include "WorkerFetchResult.h"
+#include <WebCore/SWServer.h>
+#include <WebCore/ServiceWorkerJobData.h>
+#include <WebCore/Timer.h>
+#include <WebCore/WorkerFetchResult.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Deque.h>
 #include <wtf/TZoneMalloc.h>

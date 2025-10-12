@@ -73,12 +73,7 @@ Data mapFile(const String& path)
     if (!size)
         return { };
 
-    return adoptAndMapFile(WTFMove(handle), 0, *size);
-}
-
-Data adoptAndMapFile(FileSystem::FileHandle&& handle, size_t offset, size_t size)
-{
-    if (!size)
+    if (!*size)
         return Data::empty();
 
     auto mappedFile = handle.map(FileSystem::MappedFileMode::Private);

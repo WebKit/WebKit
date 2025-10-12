@@ -66,7 +66,7 @@ private:
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void encodedDataStatusChanged(const WebCore::ImageDecoderIdentifier&, size_t frameCount, const WebCore::IntSize&, bool hasTrack);
+    void encodedDataStatusChanged(const WebCore::ImageDecoderIdentifier&, uint64_t frameCount, const WebCore::IntSize&, bool hasTrack);
 
     HashMap<WebCore::ImageDecoderIdentifier, WeakPtr<RemoteImageDecoderAVF>> m_remoteImageDecoders;
 

@@ -10,22 +10,20 @@
 
 #include "rtc_base/experiments/rate_control_settings.h"
 
-#include "api/video_codecs/video_codec.h"
-#include "test/explicit_key_value_config.h"
+#include "absl/strings/string_view.h"
+#include "api/field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 
 namespace {
 
-using test::ExplicitKeyValueConfig;
 using ::testing::DoubleEq;
 using ::testing::Optional;
 
 RateControlSettings ParseFrom(absl::string_view field_trials) {
-  return RateControlSettings(ExplicitKeyValueConfig(field_trials));
+  return RateControlSettings(FieldTrials(field_trials));
 }
 
 TEST(RateControlSettingsTest, CongestionWindow) {

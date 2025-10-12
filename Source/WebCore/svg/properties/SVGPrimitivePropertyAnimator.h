@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,7 +73,7 @@ public:
     }
 
 protected:
-    Ref<ValuePropertyType> m_property;
+    const Ref<ValuePropertyType> m_property;
 };
 
 #define TZONE_TEMPLATE_PARAMS template<typename PropertyType, typename AnimationFunction>

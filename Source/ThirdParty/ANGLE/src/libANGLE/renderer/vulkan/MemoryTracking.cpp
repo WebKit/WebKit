@@ -7,6 +7,10 @@
 //    Implements the class methods in MemoryTracking.h.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/vulkan/MemoryTracking.h"
 
 #include "common/debug.h"

@@ -35,6 +35,9 @@
 
 namespace WTF {
 
+// We shouldn't use this class in new code and should just use std::unique_ptr. It's the same when T has no destructor and MallocPtr is likely the wrong
+// container if T does.
+// FIXME: Remove this class https://bugs.webkit.org/show_bug.cgi?id=294022
 template<typename T, typename Malloc = FastMalloc> class MallocPtr {
     WTF_MAKE_NONCOPYABLE(MallocPtr);
 public:

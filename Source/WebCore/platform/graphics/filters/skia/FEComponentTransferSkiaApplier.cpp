@@ -46,10 +46,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FEComponentTransferSkiaApplier);
 bool FEComponentTransferSkiaApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
     ASSERT(inputs.size() == 1);
-    Ref input = inputs[0];
+    auto& input = inputs[0].get();
 
     RefPtr resultImage = result.imageBuffer();
-    RefPtr sourceImage = input->imageBuffer();
+    RefPtr sourceImage = input.imageBuffer();
     if (!resultImage || !sourceImage)
         return false;
 
@@ -65,7 +65,7 @@ bool FEComponentTransferSkiaApplier::apply(const Filter&, std::span<const Ref<Fi
     SkPaint paint;
     paint.setColorFilter(SkColorFilters::TableARGB(alphaTable.data(), redTable.data(), greenTable.data(), blueTable.data()));
 
-    auto inputOffsetWithinResult = input->absoluteImageRectRelativeTo(result).location();
+    auto inputOffsetWithinResult = input.absoluteImageRectRelativeTo(result).location();
     resultImage->context().platformContext()->drawImage(nativeImage->platformImage(), inputOffsetWithinResult.x(), inputOffsetWithinResult.y(), { }, &paint);
     return true;
 }

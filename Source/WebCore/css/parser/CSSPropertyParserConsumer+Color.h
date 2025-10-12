@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CSSColorType.h"
+#include <WebCore/CSSColorType.h>
 #include <optional>
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>

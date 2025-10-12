@@ -21,15 +21,13 @@
 
 #pragma once
 
-#include "SVGParsingError.h"
-#include "SVGPropertyTraits.h"
+#include <WebCore/CSSPrimitiveNumeric.h>
+#include <WebCore/SVGParsingError.h>
+#include <WebCore/SVGPropertyTraits.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-class CSSPrimitiveValue;
-class CSSToLengthConversionData;
-class Element;
 class SVGLengthContext;
 template<typename> class ExceptionOr;
 
@@ -71,26 +69,22 @@ public:
 
     static std::optional<SVGLengthValue> construct(SVGLengthMode, StringView);
     static SVGLengthValue construct(SVGLengthMode, StringView, SVGParsingError&, SVGLengthNegativeValuesMode = SVGLengthNegativeValuesMode::Allow);
-    static SVGLengthValue blend(const SVGLengthValue& from, const SVGLengthValue& to, float progress);
 
-    static SVGLengthValue fromCSSPrimitiveValue(const CSSPrimitiveValue&, const CSSToLengthConversionData&, ShouldConvertNumberToPxLength = ShouldConvertNumberToPxLength::No);
-    Ref<CSSPrimitiveValue> toCSSPrimitiveValue(const Element* = nullptr) const;
-
-    SVGLengthType lengthType() const { return m_lengthType; }
+    SVGLengthType lengthType() const;
     SVGLengthMode lengthMode() const { return m_lengthMode; }
 
-    bool isZero() const { return !m_valueInSpecifiedUnits;  }
-    bool isRelative() const { return m_lengthType == SVGLengthType::Percentage || m_lengthType == SVGLengthType::Ems || m_lengthType == SVGLengthType::Exs || m_lengthType == SVGLengthType::Ch; }
+    bool isZero() const;
+    bool isRelative() const;
 
     float value(const SVGLengthContext&) const;
-    float valueAsPercentage() const { return m_lengthType == SVGLengthType::Percentage ? m_valueInSpecifiedUnits / 100 : m_valueInSpecifiedUnits; }
-    float valueInSpecifiedUnits() const { return m_valueInSpecifiedUnits; }
-    
+    float valueAsPercentage() const;
+    float valueInSpecifiedUnits() const;
+
     String valueAsString() const;
     AtomString valueAsAtomString() const;
     ExceptionOr<float> valueForBindings(const SVGLengthContext&) const;
 
-    void setValueInSpecifiedUnits(float value) { m_valueInSpecifiedUnits = value; }
+    void setValueInSpecifiedUnits(float);
     ExceptionOr<void> setValue(const SVGLengthContext&, float);
     ExceptionOr<void> setValue(const SVGLengthContext&, float, SVGLengthType, SVGLengthMode);
 
@@ -102,8 +96,7 @@ public:
     friend bool operator==(SVGLengthValue, SVGLengthValue) = default;
 
 private:
-    float m_valueInSpecifiedUnits { 0 };
-    SVGLengthType m_lengthType { SVGLengthType::Number };
+    Variant<CSS::Number<>, CSS::LengthPercentage<>> m_value;
     SVGLengthMode m_lengthMode { SVGLengthMode::Other };
 };
 

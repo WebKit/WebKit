@@ -15,7 +15,8 @@
 #include <utility>
 #include <vector>
 
-#include "modules/video_coding/include/video_codec_interface.h"
+#include "api/video/encoded_image.h"
+#include "api/video_codecs/video_codec.h"
 #include "modules/video_coding/utility/ivf_file_writer.h"
 
 namespace webrtc {

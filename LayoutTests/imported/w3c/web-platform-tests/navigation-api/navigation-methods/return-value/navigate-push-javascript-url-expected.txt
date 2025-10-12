@@ -1,3 +1,5 @@
 
-PASS navigate() to a javascript: URL
+
+PASS navigate() to "javascript:void 0" with { history: 'push' }
+PASS navigate() to "javascript:'foo'" with { history: 'push' }
 

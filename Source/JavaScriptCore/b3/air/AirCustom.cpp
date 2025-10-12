@@ -221,19 +221,22 @@ MacroAssembler::Jump WasmBoundsCheckCustom::generate(Inst& inst, CCallHelpers& j
     WasmBoundsCheckValue* value = inst.origin->as<WasmBoundsCheckValue>();
     MacroAssembler::Jump outOfBounds = Inst((is32Bit() ? Air::Branch32 : Air::Branch64), value, Arg::relCond(MacroAssembler::AboveOrEqual), inst.args[0], inst.args[1]).generate(jit, context);
 
-    context.latePaths.append(createSharedTask<GenerationContext::LatePathFunction>(
-        [outOfBounds, value] (CCallHelpers& jit, Air::GenerationContext& context) {
-            outOfBounds.link(&jit);
-            switch (value->boundsType()) {
-            case WasmBoundsCheckValue::Type::Pinned:
-                context.code->wasmBoundsCheckGenerator()->run(jit, value, value->bounds().pinnedSize);
-                break;
+    context.latePaths.append(std::tuple {
+        value->origin(),
+        createSharedTask<GenerationContext::LatePathFunction>(
+            [outOfBounds, value] (CCallHelpers& jit, Air::GenerationContext& context) {
+                outOfBounds.link(&jit);
+                switch (value->boundsType()) {
+                case WasmBoundsCheckValue::Type::Pinned:
+                    context.code->wasmBoundsCheckGenerator()->run(jit, value, value->bounds().pinnedSize);
+                    break;
 
-            case WasmBoundsCheckValue::Type::Maximum:
-                context.code->wasmBoundsCheckGenerator()->run(jit, value, InvalidGPRReg);
-                break;
-            }
-        }));
+                case WasmBoundsCheckValue::Type::Maximum:
+                    context.code->wasmBoundsCheckGenerator()->run(jit, value, InvalidGPRReg);
+                    break;
+                }
+            })
+        });
 
     // We said we were not a terminal.
     return MacroAssembler::Jump();

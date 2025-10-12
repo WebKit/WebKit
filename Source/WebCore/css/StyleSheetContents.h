@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "CSSParserContext.h"
+#include <WebCore/CSSParserContext.h>
 #include <optional>
 #include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
@@ -180,7 +180,7 @@ private:
     Vector<Ref<StyleRuleImport>> m_importRules;
     Vector<Ref<StyleRuleNamespace>> m_namespaceRules;
     Vector<Ref<StyleRuleBase>> m_childRules;
-    typedef UncheckedKeyHashMap<AtomString, AtomString> PrefixNamespaceURIMap;
+    typedef HashMap<AtomString, AtomString> PrefixNamespaceURIMap;
     PrefixNamespaceURIMap m_namespaces;
     AtomString m_defaultNamespace;
 

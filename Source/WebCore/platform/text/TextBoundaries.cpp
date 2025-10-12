@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Dominik Röttsches <dominik.roettsches@access-company.com>
  *
  * Redistribution and use in source and binary forms, with or without

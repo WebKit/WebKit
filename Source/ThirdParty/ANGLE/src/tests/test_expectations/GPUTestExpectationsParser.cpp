@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "GPUTestExpectationsParser.h"
 
 #include <stddef.h>
@@ -62,6 +66,7 @@ enum Token
     kConfigVMWare,
     kConfigApple,
     kConfigQualcomm,
+    kConfigARM,
     // build type
     kConfigRelease,
     kConfigDebug,
@@ -188,6 +193,7 @@ constexpr TokenInfo kTokenData[kNumberOfTokens] = {
     {"vmware", GPUTestConfig::kConditionVMWare},
     {"apple", GPUTestConfig::kConditionApple},
     {"qualcomm", GPUTestConfig::kConditionQualcomm},
+    {"arm", GPUTestConfig::kConditionARM},
     {"release", GPUTestConfig::kConditionRelease},
     {"debug", GPUTestConfig::kConditionDebug},
     {"d3d9", GPUTestConfig::kConditionD3D9},
@@ -523,6 +529,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
             case kConfigVMWare:
             case kConfigApple:
             case kConfigQualcomm:
+            case kConfigARM:
             case kConfigRelease:
             case kConfigDebug:
             case kConfigD3D9:

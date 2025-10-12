@@ -10,10 +10,10 @@
 #ifndef TEST_PEER_SCENARIO_SIGNALING_ROUTE_H_
 #define TEST_PEER_SCENARIO_SIGNALING_ROUTE_H_
 
-#include <string>
-#include <utility>
+#include <functional>
 
-#include "test/network/network_emulation_manager.h"
+#include "api/jsep.h"
+#include "api/test/network_emulation/cross_traffic.h"
 #include "test/peer_scenario/peer_scenario_client.h"
 
 namespace webrtc {

@@ -10,10 +10,11 @@
 #include "modules/audio_processing/capture_levels_adjuster/capture_levels_adjuster.h"
 
 #include <algorithm>
+#include <cstddef>
 #include <tuple>
 
+#include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/test/audio_buffer_tools.h"
-#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
 namespace webrtc {

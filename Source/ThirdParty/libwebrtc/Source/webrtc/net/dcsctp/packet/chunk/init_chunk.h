@@ -9,15 +9,16 @@
  */
 #ifndef NET_DCSCTP_PACKET_CHUNK_INIT_CHUNK_H_
 #define NET_DCSCTP_PACKET_CHUNK_INIT_CHUNK_H_
-#include <stddef.h>
-#include <stdint.h>
 
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/chunk/chunk.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
 #include "net/dcsctp/packet/tlv_trait.h"
@@ -51,7 +52,7 @@ class InitChunk : public Chunk, public TLVTrait<InitChunkConfig> {
   InitChunk(InitChunk&& other) = default;
   InitChunk& operator=(InitChunk&& other) = default;
 
-  static std::optional<InitChunk> Parse(rtc::ArrayView<const uint8_t> data);
+  static std::optional<InitChunk> Parse(webrtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

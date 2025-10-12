@@ -407,7 +407,7 @@ TEST(WTF_PackedRefPtr, ReturnValue)
 }
 
 struct ConstRefCounted : RefCounted<ConstRefCounted> {
-    WTF_MAKE_STRUCT_FAST_COMPACT_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_COMPACT_ALLOCATED(ConstRefCounted);
     static Ref<ConstRefCounted> create() { return adoptRef(*new ConstRefCounted); }
 };
 

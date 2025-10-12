@@ -46,6 +46,7 @@ enum class ParamType
     TClientVertexArrayType,
     TClipDepthMode,
     TClipOrigin,
+    TCombinerOp,
     TCommandQueueInfo,
     TCommandQueueProperties,
     TCompositorTiming,
@@ -100,8 +101,8 @@ enum class ParamType
     TGLDEBUGPROC,
     TGLDEBUGPROCKHR,
     TGLGETBLOBPROCANGLE,
-    TGLSETBLOBPROCANGLE,
     TGLMTLRasterizationRateMapANGLE,
+    TGLSETBLOBPROCANGLE,
     TGLbitfield,
     TGLboolean,
     TGLbooleanPointer,
@@ -195,6 +196,7 @@ enum class ParamType
     TShaderProgramIDPointer,
     TShaderType,
     TShadingModel,
+    TShadingRate,
     TSurfaceID,
     TSyncID,
     TTextureEnvParameter,
@@ -272,7 +274,7 @@ enum class ParamType
     TvoidPointerPointer,
 };
 
-constexpr uint32_t kParamTypeCount = 164;
+constexpr uint32_t kParamTypeCount = 237;
 
 union ParamValue
 {
@@ -288,6 +290,7 @@ union ParamValue
     gl::ClientVertexArrayType ClientVertexArrayTypeVal;
     gl::ClipDepthMode ClipDepthModeVal;
     gl::ClipOrigin ClipOriginVal;
+    gl::CombinerOp CombinerOpVal;
     egl::CompositorTiming CompositorTimingVal;
     gl::ContextID ContextIDVal;
     gl::CullFaceMode CullFaceModeVal;
@@ -335,8 +338,8 @@ union ParamValue
     GLDEBUGPROC GLDEBUGPROCVal;
     GLDEBUGPROCKHR GLDEBUGPROCKHRVal;
     GLGETBLOBPROCANGLE GLGETBLOBPROCANGLEVal;
-    GLSETBLOBPROCANGLE GLSETBLOBPROCANGLEVal;
     GLMTLRasterizationRateMapANGLE GLMTLRasterizationRateMapANGLEVal;
+    GLSETBLOBPROCANGLE GLSETBLOBPROCANGLEVal;
     GLbitfield GLbitfieldVal;
     GLboolean GLbooleanVal;
     GLboolean *GLbooleanPointerVal;
@@ -412,6 +415,7 @@ union ParamValue
     gl::ShaderProgramID *ShaderProgramIDPointerVal;
     gl::ShaderType ShaderTypeVal;
     gl::ShadingModel ShadingModelVal;
+    gl::ShadingRate ShadingRateVal;
     egl::SurfaceID SurfaceIDVal;
     gl::SyncID SyncIDVal;
     gl::TextureEnvParameter TextureEnvParameterVal;
@@ -586,6 +590,12 @@ template <>
 inline gl::ClipOrigin GetParamVal<ParamType::TClipOrigin, gl::ClipOrigin>(const ParamValue &value)
 {
     return value.ClipOriginVal;
+}
+
+template <>
+inline gl::CombinerOp GetParamVal<ParamType::TCombinerOp, gl::CombinerOp>(const ParamValue &value)
+{
+    return value.CombinerOpVal;
 }
 
 template <>
@@ -894,18 +904,18 @@ inline GLGETBLOBPROCANGLE GetParamVal<ParamType::TGLGETBLOBPROCANGLE, GLGETBLOBP
 }
 
 template <>
-inline GLSETBLOBPROCANGLE GetParamVal<ParamType::TGLSETBLOBPROCANGLE, GLSETBLOBPROCANGLE>(
-    const ParamValue &value)
-{
-    return value.GLSETBLOBPROCANGLEVal;
-}
-
-template <>
 inline GLMTLRasterizationRateMapANGLE
 GetParamVal<ParamType::TGLMTLRasterizationRateMapANGLE, GLMTLRasterizationRateMapANGLE>(
     const ParamValue &value)
 {
     return value.GLMTLRasterizationRateMapANGLEVal;
+}
+
+template <>
+inline GLSETBLOBPROCANGLE GetParamVal<ParamType::TGLSETBLOBPROCANGLE, GLSETBLOBPROCANGLE>(
+    const ParamValue &value)
+{
+    return value.GLSETBLOBPROCANGLEVal;
 }
 
 template <>
@@ -1397,6 +1407,13 @@ inline gl::ShadingModel GetParamVal<ParamType::TShadingModel, gl::ShadingModel>(
     const ParamValue &value)
 {
     return value.ShadingModelVal;
+}
+
+template <>
+inline gl::ShadingRate GetParamVal<ParamType::TShadingRate, gl::ShadingRate>(
+    const ParamValue &value)
+{
+    return value.ShadingRateVal;
 }
 
 template <>
@@ -2113,6 +2130,8 @@ T AccessParamValue(ParamType paramType, const ParamValue &value)
             return GetParamVal<ParamType::TClipDepthMode, T>(value);
         case ParamType::TClipOrigin:
             return GetParamVal<ParamType::TClipOrigin, T>(value);
+        case ParamType::TCombinerOp:
+            return GetParamVal<ParamType::TCombinerOp, T>(value);
         case ParamType::TCommandQueueInfo:
             return GetParamVal<ParamType::TCommandQueueInfo, T>(value);
         case ParamType::TCommandQueueProperties:
@@ -2221,10 +2240,10 @@ T AccessParamValue(ParamType paramType, const ParamValue &value)
             return GetParamVal<ParamType::TGLDEBUGPROCKHR, T>(value);
         case ParamType::TGLGETBLOBPROCANGLE:
             return GetParamVal<ParamType::TGLGETBLOBPROCANGLE, T>(value);
-        case ParamType::TGLSETBLOBPROCANGLE:
-            return GetParamVal<ParamType::TGLSETBLOBPROCANGLE, T>(value);
         case ParamType::TGLMTLRasterizationRateMapANGLE:
             return GetParamVal<ParamType::TGLMTLRasterizationRateMapANGLE, T>(value);
+        case ParamType::TGLSETBLOBPROCANGLE:
+            return GetParamVal<ParamType::TGLSETBLOBPROCANGLE, T>(value);
         case ParamType::TGLbitfield:
             return GetParamVal<ParamType::TGLbitfield, T>(value);
         case ParamType::TGLboolean:
@@ -2411,6 +2430,8 @@ T AccessParamValue(ParamType paramType, const ParamValue &value)
             return GetParamVal<ParamType::TShaderType, T>(value);
         case ParamType::TShadingModel:
             return GetParamVal<ParamType::TShadingModel, T>(value);
+        case ParamType::TShadingRate:
+            return GetParamVal<ParamType::TShadingRate, T>(value);
         case ParamType::TSurfaceID:
             return GetParamVal<ParamType::TSurfaceID, T>(value);
         case ParamType::TSyncID:
@@ -2630,6 +2651,12 @@ template <>
 inline void SetParamVal<ParamType::TClipOrigin>(gl::ClipOrigin valueIn, ParamValue *valueOut)
 {
     valueOut->ClipOriginVal = valueIn;
+}
+
+template <>
+inline void SetParamVal<ParamType::TCombinerOp>(gl::CombinerOp valueIn, ParamValue *valueOut)
+{
+    valueOut->CombinerOpVal = valueIn;
 }
 
 template <>
@@ -2930,18 +2957,18 @@ inline void SetParamVal<ParamType::TGLGETBLOBPROCANGLE>(GLGETBLOBPROCANGLE value
 }
 
 template <>
-inline void SetParamVal<ParamType::TGLSETBLOBPROCANGLE>(GLSETBLOBPROCANGLE valueIn,
-                                                        ParamValue *valueOut)
-{
-    valueOut->GLSETBLOBPROCANGLEVal = valueIn;
-}
-
-template <>
 inline void SetParamVal<ParamType::TGLMTLRasterizationRateMapANGLE>(
     GLMTLRasterizationRateMapANGLE valueIn,
     ParamValue *valueOut)
 {
     valueOut->GLMTLRasterizationRateMapANGLEVal = valueIn;
+}
+
+template <>
+inline void SetParamVal<ParamType::TGLSETBLOBPROCANGLE>(GLSETBLOBPROCANGLE valueIn,
+                                                        ParamValue *valueOut)
+{
+    valueOut->GLSETBLOBPROCANGLEVal = valueIn;
 }
 
 template <>
@@ -3424,6 +3451,12 @@ template <>
 inline void SetParamVal<ParamType::TShadingModel>(gl::ShadingModel valueIn, ParamValue *valueOut)
 {
     valueOut->ShadingModelVal = valueIn;
+}
+
+template <>
+inline void SetParamVal<ParamType::TShadingRate>(gl::ShadingRate valueIn, ParamValue *valueOut)
+{
+    valueOut->ShadingRateVal = valueIn;
 }
 
 template <>
@@ -4134,6 +4167,9 @@ void InitParamValue(ParamType paramType, T valueIn, ParamValue *valueOut)
         case ParamType::TClipOrigin:
             SetParamVal<ParamType::TClipOrigin>(valueIn, valueOut);
             break;
+        case ParamType::TCombinerOp:
+            SetParamVal<ParamType::TCombinerOp>(valueIn, valueOut);
+            break;
         case ParamType::TCommandQueueInfo:
             SetParamVal<ParamType::TCommandQueueInfo>(valueIn, valueOut);
             break;
@@ -4296,11 +4332,11 @@ void InitParamValue(ParamType paramType, T valueIn, ParamValue *valueOut)
         case ParamType::TGLGETBLOBPROCANGLE:
             SetParamVal<ParamType::TGLGETBLOBPROCANGLE>(valueIn, valueOut);
             break;
-        case ParamType::TGLSETBLOBPROCANGLE:
-            SetParamVal<ParamType::TGLSETBLOBPROCANGLE>(valueIn, valueOut);
-            break;
         case ParamType::TGLMTLRasterizationRateMapANGLE:
             SetParamVal<ParamType::TGLMTLRasterizationRateMapANGLE>(valueIn, valueOut);
+            break;
+        case ParamType::TGLSETBLOBPROCANGLE:
+            SetParamVal<ParamType::TGLSETBLOBPROCANGLE>(valueIn, valueOut);
             break;
         case ParamType::TGLbitfield:
             SetParamVal<ParamType::TGLbitfield>(valueIn, valueOut);
@@ -4580,6 +4616,9 @@ void InitParamValue(ParamType paramType, T valueIn, ParamValue *valueOut)
             break;
         case ParamType::TShadingModel:
             SetParamVal<ParamType::TShadingModel>(valueIn, valueOut);
+            break;
+        case ParamType::TShadingRate:
+            SetParamVal<ParamType::TShadingRate>(valueIn, valueOut);
             break;
         case ParamType::TSurfaceID:
             SetParamVal<ParamType::TSurfaceID>(valueIn, valueOut);

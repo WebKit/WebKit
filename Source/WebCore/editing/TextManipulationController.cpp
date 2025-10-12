@@ -28,11 +28,13 @@
 
 #include "AccessibilityObject.h"
 #include "CharacterData.h"
+#include "ContainerNodeInlines.h"
 #include "EditingInlines.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementRareData.h"
 #include "EventLoop.h"
 #include "EventTargetInlines.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLBRElement.h"
 #include "HTMLElement.h"
 #include "HTMLInputElement.h"
@@ -46,6 +48,7 @@
 #include "NodeTraversal.h"
 #include "PseudoElement.h"
 #include "RenderBox.h"
+#include "RenderStyleInlines.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "Text.h"
@@ -126,7 +129,7 @@ public:
 
 private:
     const Vector<ExclusionRule>& m_rules;
-    UncheckedKeyHashMap<Ref<Element>, ExclusionRule::Type> m_cache;
+    HashMap<Ref<Element>, ExclusionRule::Type> m_cache;
 };
 
 TextManipulationController::TextManipulationController(Document& document)
@@ -147,17 +150,17 @@ void TextManipulationController::startObservingParagraphs(ManipulationItemCallba
     flushPendingItemsForCallback();
 }
 
-static bool isInPrivateUseArea(UChar character)
+static bool isInPrivateUseArea(char16_t character)
 {
     return 0xE000 <= character && character <= 0xF8FF;
 }
 
-static bool isTokenDelimiter(UChar character)
+static bool isTokenDelimiter(char16_t character)
 {
     return isHTMLLineBreak(character) || isInPrivateUseArea(character);
 }
 
-static bool isNotSpace(UChar character)
+static bool isNotSpace(char16_t character)
 {
     if (character == noBreakSpace)
         return false;
@@ -839,7 +842,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         return ManipulationFailure::Type::ContentChanged;
 
     size_t currentTokenIndex = 0;
-    UncheckedKeyHashMap<TextManipulationTokenIdentifier, TokenExchangeData> tokenExchangeMap;
+    HashMap<TextManipulationTokenIdentifier, TokenExchangeData> tokenExchangeMap;
     RefPtr<Node> commonAncestor;
     RefPtr<Node> firstContentNode;
     RefPtr<Node> lastChildOfCommonAncestorInRange;

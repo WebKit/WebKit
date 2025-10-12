@@ -10,6 +10,7 @@
     <script>
     promise_test(async (t) => {
         video.srcObject = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        t.add_cleanup(() => video.srcObject.getTracks().forEach(track => track.stop()));
         await video.play();
 
         if (!window.internals)

@@ -3,7 +3,7 @@
 // (https://github.com/w3c/webref)
 // Source: MediaStream Image Capture (https://w3c.github.io/mediacapture-image/)
 
-[Exposed=Window]
+[Exposed=Window, SecureContext]
 interface ImageCapture {
    constructor(MediaStreamTrack videoTrack);
    Promise<Blob>              takePhoto(optional PhotoSettings photoSettings = {});
@@ -89,7 +89,7 @@ partial dictionary MediaTrackCapabilities {
   MediaSettingsRange   tilt;
   MediaSettingsRange   zoom;
 
-  boolean              torch;
+  sequence<boolean> torch;
 };
 
 partial dictionary MediaTrackConstraintSet {

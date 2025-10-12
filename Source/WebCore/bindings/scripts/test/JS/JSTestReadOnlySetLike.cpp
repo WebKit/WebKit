@@ -166,7 +166,7 @@ JSValue JSTestReadOnlySetLike::getConstructor(VM& vm, const JSGlobalObject* glob
 
 void JSTestReadOnlySetLike::destroy(JSC::JSCell* cell)
 {
-    JSTestReadOnlySetLike* thisObject = static_cast<JSTestReadOnlySetLike*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestReadOnlySetLike* thisObject = static_cast<JSTestReadOnlySetLike*>(cell);
     thisObject->JSTestReadOnlySetLike::~JSTestReadOnlySetLike();
 }
 
@@ -276,7 +276,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunction_forEach, (JSGlob
 
 JSC::GCClient::IsoSubspace* JSTestReadOnlySetLike::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestReadOnlySetLike, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestReadOnlySetLike, UseCustomHeapCellType::No>(vm, "JSTestReadOnlySetLike"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestReadOnlySetLike.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestReadOnlySetLike = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestReadOnlySetLike.get(); },
@@ -303,7 +303,7 @@ bool JSTestReadOnlySetLikeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unk
 
 void JSTestReadOnlySetLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestReadOnlySetLike = static_cast<JSTestReadOnlySetLike*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestReadOnlySetLike = static_cast<JSTestReadOnlySetLike*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestReadOnlySetLike->protectedWrapped().ptr(), jsTestReadOnlySetLike);
 }
@@ -316,7 +316,9 @@ extern "C" { extern void (*const __identifier("??_7TestReadOnlySetLike@WebCore@@
 #else
 extern "C" { extern void* _ZTVN7WebCore19TestReadOnlySetLikeE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestReadOnlySetLike>, void>> static inline void verifyVTable(TestReadOnlySetLike* ptr) {
+template<std::same_as<TestReadOnlySetLike> T>
+static inline void verifyVTable(TestReadOnlySetLike* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -335,8 +337,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestReadOnlyS
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestReadOnlySetLike>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestReadOnlySetLike>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestReadOnlySetLike>(impl.ptr());
 #endif

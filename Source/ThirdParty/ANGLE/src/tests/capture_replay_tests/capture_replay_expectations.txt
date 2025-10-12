@@ -171,6 +171,8 @@
 
 42265218 : EGLMultiContextTest.ReuseUnterminatedDisplay/* = SKIP_FOR_CAPTURE
 
+434453466 : SimpleOperationTest.NullParameterInGetAttachedShaders/* = SKIP_FOR_CAPTURE
+
 # No support yet for Capture/Replay of External Textures using other attribs
 42266040 : ImageTest.MipLevels/* = SKIP_FOR_CAPTURE
 42266040 : ImageTest.Source2DTarget2D_Colorspace/* = SKIP_FOR_CAPTURE
@@ -236,6 +238,8 @@
 
 # error: duplicate case value '1'
 42264614 : EGLSyncTest.GlobalFenceSync/* = COMPILE_FAIL
+433331119 : ValidationStateChangeTest.RebindBufferShouldPickupBufferChange/* = COMPILE_FAIL
+433331119 : ValidationStateChangeTestES31.RebindVertexBufferShouldPickupBufferChange/* = COMPILE_FAIL
 
 # VVL error
 42264614 LINUX : VulkanExternalImageTestES31.UninitializedOnGLImportAndStorageWrite/* = SKIP_FOR_CAPTURE

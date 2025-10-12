@@ -2,12 +2,10 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-generators-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
+features: [host-gc-required]
 ---*/
 var foo;
 
@@ -19,7 +17,7 @@ function* gen() {
 }
 
 var j = 0;
-for (i of gen())
+for (var i of gen())
     assert.sameValue(i, j++);
 
 // now mess up the stack

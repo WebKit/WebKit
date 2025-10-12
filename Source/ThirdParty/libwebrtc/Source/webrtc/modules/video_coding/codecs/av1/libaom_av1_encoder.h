@@ -23,7 +23,7 @@ struct LibaomAv1EncoderSettings {
   // A map of max pixel count --> cpu speed.
   std::map<int, int> max_pixel_count_to_cpu_speed;
 };
-absl::Nonnull<std::unique_ptr<VideoEncoder>> CreateLibaomAv1Encoder(
+absl_nonnull std::unique_ptr<VideoEncoder> CreateLibaomAv1Encoder(
     const Environment& env,
     LibaomAv1EncoderSettings settings = {});
 

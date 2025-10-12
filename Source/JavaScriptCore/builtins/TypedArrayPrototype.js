@@ -26,32 +26,6 @@
 // Note that the intrisic @typedArrayLength checks that the argument passed is a typed array
 // and throws if it is not.
 
-
-// Typed Arrays have their own species constructor function since they need
-// to look up their default constructor, which is expensive. If we used the
-// normal speciesConstructor helper we would need to look up the default
-// constructor every time.
-@linkTimeConstant
-function typedArraySpeciesConstructor(value)
-{
-    "use strict";
-    var constructor = value.constructor;
-    if (constructor === @undefined)
-        return @typedArrayGetOriginalConstructor(value);
-
-    if (!@isObject(constructor))
-        @throwTypeError("|this|.constructor is not an Object or undefined");
-
-    constructor = constructor.@@species;
-    if (@isUndefinedOrNull(constructor))
-        return @typedArrayGetOriginalConstructor(value);
-    // The lack of an @isConstructor(constructor) check here is not observable because
-    // the first thing we will do with the value is attempt to construct the result with it.
-    // If any user of this function does not immediately construct the result they need to
-    // verify that the result is a constructor.
-    return constructor;
-}
-
 function reduce(callback /* [, initialValue] */)
 {
     // 22.2.3.19
@@ -102,64 +76,6 @@ function reduceRight(callback /* [, initialValue] */)
         accumulator = callback.@call(@undefined, accumulator, this[k], k, this);
 
     return accumulator;
-}
-
-function map(callback /*, thisArg */)
-{
-    // 22.2.3.18
-    "use strict";
-
-    var length = @typedArrayLength(this);
-
-    if (!@isCallable(callback))
-        @throwTypeError("TypedArray.prototype.map callback must be a function");
-
-    var thisArg = @argument(1);
-
-    var constructor = @typedArraySpeciesConstructor(this);
-    var result = new constructor(length);
-    if (@typedArrayLength(result) < length)
-        @throwTypeError("TypedArray.prototype.map constructed typed array of insufficient length");
-    if (@typedArrayContentType(this) !== @typedArrayContentType(result))
-        @throwTypeError("TypedArray.prototype.map constructed typed array of different content type from |this|");
-
-    for (var i = 0; i < length; i++) {
-        var mappedValue = callback.@call(thisArg, this[i], i, this);
-        result[i] = mappedValue;
-    }
-    return result;
-}
-
-function filter(callback /*, thisArg */)
-{
-    "use strict";
-
-    var length = @typedArrayLength(this);
-
-    if (!@isCallable(callback))
-        @throwTypeError("TypedArray.prototype.filter callback must be a function");
-
-    var thisArg = @argument(1);
-    var kept = [];
-
-    for (var i = 0; i < length; i++) {
-        var value = this[i];
-        if (callback.@call(thisArg, value, i, this))
-            @arrayPush(kept, value);
-    }
-    var length = kept.length;
-
-    var constructor = @typedArraySpeciesConstructor(this);
-    var result = new constructor(length);
-    if (@typedArrayLength(result) < length)
-        @throwTypeError("TypedArray.prototype.filter constructed typed array of insufficient length");
-    if (@typedArrayContentType(this) !== @typedArrayContentType(result))
-        @throwTypeError("TypedArray.prototype.filter constructed typed array of different content type from |this|");
-
-    for (var i = 0; i < length; i++)
-        result[i] = kept[i];
-
-    return result;
 }
 
 function toLocaleString(/* locale, options */)

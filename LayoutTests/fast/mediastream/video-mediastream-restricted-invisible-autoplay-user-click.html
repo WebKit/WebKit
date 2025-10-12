@@ -26,8 +26,9 @@ async function waitForPause(video)
      return new Promise(resolve => { video.onpause = resolve; });
 }
 
-promise_test(async () => {
+promise_test(async (test) => {
      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+     test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
      localVideo1.srcObject = stream;
      localVideo2.srcObject = stream;
 

@@ -69,7 +69,7 @@ def main():
 
 #pragma once
 
-#include "ThreadGlobalData.h"
+#include <WebCore/ThreadGlobalData.h>
 #include <array>
 #include <functional>
 #include <wtf/HashSet.h>
@@ -132,7 +132,7 @@ private:
 };
 
 struct EventNames {
-    WTF_MAKE_NONCOPYABLE(EventNames); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(EventNames); WTF_DEPRECATED_MAKE_FAST_ALLOCATED(EventNames);
 public:''')
 
         for name in sorted(event_names_input.keys()):
@@ -155,6 +155,17 @@ public:''')
 ''')
         writeln(f'    std::array<const AtomString, {len(event_names_input)}> allEventNames() const;')
         writeln(f'    WTF::HashSet<AtomString> allEventHandlerNames() const;')
+        writeln(f'')
+        writeln(f'    static constexpr std::array timedEvents {{')
+        for name in category_map['EventTimingEligible']:
+            entry = event_names_input[name]
+            conditional = entry.get('conditional', None)
+            writeln(f'#if {conditional}') if conditional else None
+            writeln(f'        EventType::{name},')
+            writeln(f'#endif') if conditional else None
+        writeln(f'    }};')
+        writeln(f'')
+        writeln(f'    const AtomString& eventNameFromEventType(EventType) const;')
         writeln('''
 private:
     EventNames();
@@ -166,7 +177,7 @@ const EventNames& eventNames();
 
 inline const EventNames& eventNames()
 {
-    return threadGlobalData().eventNames();
+    return threadGlobalDataSingleton().eventNames();
 }
 
 inline EventTypeInfo EventNames::typeInfoForEvent(const AtomString& eventType) const
@@ -180,7 +191,7 @@ inline EventTypeInfo EventNames::typeInfoForEvent(const AtomString& eventType) c
         def writeln(text):
             output_file.write(text + '\n')
         writeln('''/*
- * Copyright (C) 2005-2024 Apple Inc.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -261,8 +272,21 @@ EventNames::EventNames()''')
             writeln(f'    set.add("on{name.lower()}"_s);')
             if conditional:
                 writeln(f'#endif')
-        writeln('''    return set;''')
+        writeln('    return set;')
+        writeln('}')
+        writeln('')
+        writeln(f'static constexpr std::array<const AtomString EventNames::*, {len(event_names_input)}> eventStringInEventNames {{')
+        for name in sorted(event_names_input.keys()):
+            entry = event_names_input[name]
+            conditional = entry.get('conditional', None)
+            writeln(f'#if {conditional}') if conditional else None
+            writeln(f'    &EventNames::{name}Event,')
+            writeln(f'#endif') if conditional else None
+        writeln('};')
         writeln('''
+const AtomString& EventNames::eventNameFromEventType(EventType type) const {
+    auto typeAsIndex = static_cast<size_t>(type) - 1;
+    return this->*(eventStringInEventNames[typeAsIndex]);
 }
 
 } // namespace WebCore''')

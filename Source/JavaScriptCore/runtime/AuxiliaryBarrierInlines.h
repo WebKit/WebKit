@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "AuxiliaryBarrier.h"
-#include "Heap.h"
-#include "VM.h"
+#include <JavaScriptCore/AuxiliaryBarrier.h>
+#include <JavaScriptCore/Heap.h>
+#include <JavaScriptCore/VM.h>
 
 namespace JSC {
 

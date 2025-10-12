@@ -59,6 +59,7 @@ set(WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/C/WKHitTestResult.h
     UIProcess/API/C/WKIconDatabase.h
     UIProcess/API/C/WKInspector.h
+    UIProcess/API/C/WKJSHandleRef.h
     UIProcess/API/C/WKLayoutMode.h
     UIProcess/API/C/WKMediaKeySystemPermissionCallback.h
     UIProcess/API/C/WKMessageListener.h
@@ -99,6 +100,7 @@ set(WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/C/WKProtectionSpaceTypes.h
     UIProcess/API/C/WKQueryPermissionResultCallback.h
     UIProcess/API/C/WKResourceCacheManager.h
+    UIProcess/API/C/WKScriptMessageRef.h
     UIProcess/API/C/WKSessionStateRef.h
     UIProcess/API/C/WKSpeechRecognitionPermissionCallback.h
     UIProcess/API/C/WKTestingSupport.h
@@ -115,6 +117,7 @@ set(WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/C/WKWindowFeaturesRef.h
     UIProcess/API/C/WebKit2_C.h
 
+    UIProcess/API/cpp/WKCast.h
     UIProcess/API/cpp/WKRetainPtr.h
 
     WebProcess/InjectedBundle/API/c/WKBundle.h

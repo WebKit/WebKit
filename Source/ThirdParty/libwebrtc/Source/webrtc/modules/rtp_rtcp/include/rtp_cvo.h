@@ -10,6 +10,8 @@
 #ifndef MODULES_RTP_RTCP_INCLUDE_RTP_CVO_H_
 #define MODULES_RTP_RTCP_INCLUDE_RTP_CVO_H_
 
+#include <cstdint>
+
 #include "api/video/video_rotation.h"
 #include "rtc_base/checks.h"
 

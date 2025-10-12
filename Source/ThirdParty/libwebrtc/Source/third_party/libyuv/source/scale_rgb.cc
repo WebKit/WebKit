@@ -10,8 +10,8 @@
 
 #include "libyuv/scale.h" /* For FilterMode */
 
-#include <limits.h>
 #include <assert.h>
+#include <limits.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -41,9 +41,9 @@ int RGBScale(const uint8_t* src_rgb,
              int dst_height,
              enum FilterMode filtering) {
   int r;
-  if (!src_rgb || !dst_rgb ||
-      src_width <= 0 || src_width > INT_MAX / 4 || src_height == 0 ||
-      dst_width <= 0 || dst_width > INT_MAX / 4 || dst_height <= 0) {
+  if (!src_rgb || !dst_rgb || src_width <= 0 || src_width > INT_MAX / 4 ||
+      src_height == 0 || dst_width <= 0 || dst_width > INT_MAX / 4 ||
+      dst_height <= 0) {
     return -1;
   }
   const int abs_src_height = (src_height < 0) ? -src_height : src_height;

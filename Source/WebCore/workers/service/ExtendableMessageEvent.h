@@ -78,6 +78,8 @@ private:
     ExtendableMessageEvent(const AtomString&, const Init&, IsTrusted);
     ExtendableMessageEvent(const AtomString&, const String& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&&, Vector<Ref<MessagePort>>&&);
 
+    bool isExtendableMessageEvent() const final { return true; }
+
     JSValueInWrappedObject m_data;
     String m_origin;
     String m_lastEventId;
@@ -87,3 +89,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ExtendableMessageEvent)
+    static bool isType(const WebCore::ExtendableEvent& event) { return event.isExtendableMessageEvent(); }
+SPECIALIZE_TYPE_TRAITS_END()

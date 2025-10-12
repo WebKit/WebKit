@@ -56,7 +56,7 @@ private:
         if (characterCount > bytesRemaining)
             return false;
 
-        Vector<LChar> characters;
+        Vector<Latin1Character> characters;
         characters.reserveInitialCapacity(static_cast<size_t>(characterCount));
         while (characterCount--) {
             int8_t character = 0;

@@ -27,6 +27,7 @@
 #include "Attribute.h"
 #include "CSSValueKeywords.h"
 #include "CachedImage.h"
+#include "ContainerNodeInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
@@ -63,7 +64,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLObjectElement);
 using namespace HTMLNames;
 
 inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLPlugInImageElement(tagName, document)
+    : HTMLPlugInElement(tagName, document)
     , FormListedElement(form)
 {
     ASSERT(hasTagName(objectTag));
@@ -88,7 +89,7 @@ bool HTMLObjectElement::hasPresentationalHintsForAttribute(const QualifiedName& 
 {
     if (name == borderAttr)
         return true;
-    return HTMLPlugInImageElement::hasPresentationalHintsForAttribute(name);
+    return HTMLPlugInElement::hasPresentationalHintsForAttribute(name);
 }
 
 void HTMLObjectElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
@@ -96,12 +97,12 @@ void HTMLObjectElement::collectPresentationalHintsForAttribute(const QualifiedNa
     if (name == borderAttr)
         applyBorderAttributeToStyle(value, style);
     else
-        HTMLPlugInImageElement::collectPresentationalHintsForAttribute(name, value, style);
+        HTMLPlugInElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 void HTMLObjectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    HTMLPlugInImageElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+    HTMLPlugInElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
     bool invalidateRenderer = false;
     bool needsWidgetUpdate = false;
@@ -183,7 +184,7 @@ bool HTMLObjectElement::hasFallbackContent() const
 }
 
 // FIXME: This should be unified with HTMLEmbedElement::updateWidget and
-// moved down into HTMLPluginImageElement.cpp
+// moved down into HTMLPlugInElement.cpp
 void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
 {
     ASSERT(!renderEmbeddedObject()->isPluginUnavailable());
@@ -238,7 +239,7 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
 
 Node::InsertedIntoAncestorResult HTMLObjectElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLPlugInImageElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    HTMLPlugInElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     FormListedElement::elementInsertedIntoAncestor(*this, insertionType);
     if (!insertionType.connectedToDocument)
         return InsertedIntoAncestorResult::Done;
@@ -252,7 +253,7 @@ void HTMLObjectElement::didFinishInsertingNode()
 
 void HTMLObjectElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    HTMLPlugInImageElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+    HTMLPlugInElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     FormListedElement::elementRemovedFromAncestor(*this, removalType);
 }
 
@@ -264,12 +265,12 @@ void HTMLObjectElement::childrenChanged(const ChildChange& change)
         scheduleUpdateForAfterStyleResolution();
         invalidateStyleForSubtree();
     }
-    HTMLPlugInImageElement::childrenChanged(change);
+    HTMLPlugInElement::childrenChanged(change);
 }
 
 bool HTMLObjectElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attribute.name() == dataAttr || attribute.name() == codebaseAttr || HTMLPlugInImageElement::isURLAttribute(attribute);
+    return attribute.name() == dataAttr || attribute.name() == codebaseAttr || HTMLPlugInElement::isURLAttribute(attribute);
 }
 
 const AtomString& HTMLObjectElement::imageSourceURL() const
@@ -387,7 +388,7 @@ void HTMLObjectElement::updateExposedState()
 
 void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
-    HTMLPlugInImageElement::addSubresourceAttributeURLs(urls);
+    HTMLPlugInElement::addSubresourceAttributeURLs(urls);
 
     addSubresourceURL(urls, document().completeURL(attributeWithoutSynchronization(dataAttr)));
 }
@@ -395,7 +396,7 @@ void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) cons
 void HTMLObjectElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
     FormListedElement::didMoveToNewDocument();
-    HTMLPlugInImageElement::didMoveToNewDocument(oldDocument, newDocument);
+    HTMLPlugInElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
 bool HTMLObjectElement::canContainRangeEndPoint() const

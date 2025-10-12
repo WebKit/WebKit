@@ -28,6 +28,7 @@
 #if LIBPAS_ENABLED
 
 #include "pas_fast_megapage_table.h"
+#include "pas_zero_memory.h"
 
 pas_fast_megapage_table_impl pas_fast_megapage_table_impl_null = {
     .index_begin = 0,

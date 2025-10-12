@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
-#include "MarkStack.h"
-#include "RootMarkReason.h"
-#include "VisitRaceKey.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/MarkStack.h>
+#include <JavaScriptCore/RootMarkReason.h>
+#include <JavaScriptCore/VisitRaceKey.h>
 #include <wtf/ConcurrentPtrHashSet.h>
 #include <wtf/SharedTask.h>
 #include <wtf/TZoneMalloc.h>
@@ -231,7 +231,7 @@ protected:
     CString m_codeName;
 
     MarkingConstraint* m_currentConstraint { nullptr };
-    MarkingConstraintSolver* m_currentSolver { nullptr };
+    SUPPRESS_FORWARD_DECL_MEMBER MarkingConstraintSolver* m_currentSolver { nullptr }; // MarkingConstraintSolver is not refcounted
     ConcurrentPtrHashSet& m_opaqueRoots;
 
     RootMarkReason m_rootMarkReason { RootMarkReason::None };

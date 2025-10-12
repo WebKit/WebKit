@@ -59,9 +59,9 @@ public:
 
     bool isInitialized() const { return !(m_pointer & lazyTag); }
 
-    const T& get(const OwnerType& owner) const
+    T& get(OwnerType& owner) const
     {
-        return const_cast<LazyUniqueRef&>(*this).get(const_cast<OwnerType&>(owner));
+        return const_cast<LazyUniqueRef&>(*this).get(owner);
     }
 
     T& get(OwnerType& owner)
@@ -125,7 +125,7 @@ private:
         return std::bit_cast<T*>(ref.m_pointer);
     }
 
-    uintptr_t m_pointer { 0 };
+    mutable uintptr_t m_pointer { 0 };
 };
 
 } // namespace WTF

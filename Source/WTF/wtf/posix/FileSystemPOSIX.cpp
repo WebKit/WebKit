@@ -172,11 +172,13 @@ std::pair<String, FileHandle> openTemporaryFile(StringView prefix, StringView su
     // This is OK for now since the code using it is built on macOS only.
     ASSERT_UNUSED(suffix, suffix.isEmpty());
 
+    IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
     const char* directory = temporaryFileDirectory();
     CString prefixUTF8 = prefix.utf8();
     size_t length = strlen(directory) + 1 + prefixUTF8.length() + 1 + 6 + 1;
     auto buffer = MallocSpan<char>::malloc(length);
     snprintf(buffer.mutableSpan().data(), length, "%s/%s-XXXXXX", directory, prefixUTF8.data());
+    IGNORE_CLANG_WARNINGS_END
 
     auto handle = FileHandle::adopt(mkostemp(buffer.mutableSpan().data(), O_CLOEXEC));
     if (!handle)

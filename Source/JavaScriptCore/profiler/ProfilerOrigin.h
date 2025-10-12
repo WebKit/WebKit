@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "BytecodeIndex.h"
-#include "CodeBlockHash.h"
-#include "JSCJSValue.h"
+#include <JavaScriptCore/BytecodeIndex.h>
+#include <JavaScriptCore/CodeBlockHash.h>
+#include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC {

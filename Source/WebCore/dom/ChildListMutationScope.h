@@ -31,8 +31,9 @@
 #pragma once
 
 #include "ContainerNode.h"
-#include "DocumentInlines.h"
-#include "MutationObserver.h"
+#include "Document.h"
+#include "MutationObserverOptions.h"
+#include "NodeDocument.h"
 #include <memory>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
@@ -61,9 +62,7 @@ private:
     bool isAddedNodeInOrder(Node&);
     bool isRemovedNodeInOrder(Node&);
 
-    Ref<ContainerNode> protectedTarget() const;
-
-    Ref<ContainerNode> m_target;
+    const Ref<ContainerNode> m_target;
 
     Vector<Ref<Node>> m_removedNodes;
     Vector<Ref<Node>> m_addedNodes;

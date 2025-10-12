@@ -259,9 +259,9 @@ void vp8_setup_key_frame(VP8_COMP *cpi) {
   /* Make sure we initialize separate contexts for altref,gold, and normal.
    * TODO shouldn't need 3 different copies of structure to do this!
    */
-  memcpy(&cpi->lfc_a, &cpi->common.fc, sizeof(cpi->common.fc));
-  memcpy(&cpi->lfc_g, &cpi->common.fc, sizeof(cpi->common.fc));
-  memcpy(&cpi->lfc_n, &cpi->common.fc, sizeof(cpi->common.fc));
+  cpi->lfc_a = cpi->common.fc;
+  cpi->lfc_g = cpi->common.fc;
+  cpi->lfc_n = cpi->common.fc;
 
   cpi->common.filter_level = cpi->common.base_qindex * 3 / 8;
 

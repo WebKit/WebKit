@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Opcode.h"
-#include "ValueProfile.h"
+#include <JavaScriptCore/Opcode.h>
+#include <JavaScriptCore/ValueProfile.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -59,7 +59,7 @@ struct MetadataStatistics {
 
 
 class UnlinkedMetadataTable : public ThreadSafeRefCounted<UnlinkedMetadataTable> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(UnlinkedMetadataTable);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(UnlinkedMetadataTable, UnlinkedMetadataTable);
     friend class LLIntOffsetsExtractor;
     friend class MetadataTable;
     friend class CachedMetadataTable;

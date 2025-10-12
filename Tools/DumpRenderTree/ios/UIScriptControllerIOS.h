@@ -38,7 +38,6 @@ public:
     {
     }
 
-    void doAsyncTask(JSValueRef callback) override;
     void zoomToScale(double scale, JSValueRef callback) override;
     double zoomScale() const override;
     double contentOffsetX() const override;

@@ -4,7 +4,8 @@
         const firstTypeOnly = container == "std::span"
             || container == "Vector"
             || container == "std::array"
-            || container == "HashSet";
+            || container == "HashSet"
+            || container == "Markable";
         const firstTwoTypesOnly = container == "HashMap";
 
         const set = new Set();
@@ -64,7 +65,8 @@
             "KeyValuePair",
             "Markable",
             "RetainPtr",
-            "HashCountedSet"
+            "HashCountedSet",
+            "FixedVector",
         ];
         if (window.testRunner && !testRunner.haveSecureCodingRequest) {
             containerTypes.push("IPC::CoreIPCRetainPtr");
@@ -120,18 +122,13 @@
             "short",
             "float",
             "bool",
-            "NSUInteger",
-            "NSInteger",
-            "size_t",
             "std::nullptr_t",
             "uint32_t",
             "int32_t",
             "uint8_t",
             "UInt32",
-            "long",
             "unsigned",
             "unsigned long long",
-            "unsigned long",
             "unsigned char",
             "unsigned short",
             "void",
@@ -139,12 +136,11 @@
             "uint16_t",
             "int64_t",
             "pid_t",
-            "CGFloat",
             "String",
+            "WTF::String",
             "uint32_t",
             "int16_t",
             "uint64_t",
-            "uintptr_t",
             "int",
             "long long",
             "GCGLint",
@@ -152,7 +148,6 @@
             "OSStatus",
             "GCGLErrorCodeSet",
             "CGBitmapInfo",
-            "uintptr_t",
         ];
         return result.union(new Set(fundamentalTypes));
     }

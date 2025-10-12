@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/WKPreferencesRef.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -294,8 +295,8 @@ TEST(PasteMixedContent, PasteOneOrMoreURLs)
     });
 
     runTest(@"Declare URL UTI and set a URL string.", @"https://www.apple.com/", ^(NSPasteboard *pasteboard) {
-        [pasteboard declareTypes:@[(__bridge NSString *)kUTTypeURL] owner:nil];
-        [pasteboard setString:appleURL.absoluteString forType:(__bridge NSString *)kUTTypeURL];
+        [pasteboard declareTypes:@[UTTypeURL.identifier] owner:nil];
+        [pasteboard setString:appleURL.absoluteString forType:UTTypeURL.identifier];
     });
 }
 
@@ -304,7 +305,7 @@ TEST(PasteMixedContent, PasteOneOrMoreURLs)
 #if PLATFORM(IOS_FAMILY)
 
 class PasteboardAccessChecker {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PasteboardAccessChecker);
     WTF_MAKE_NONCOPYABLE(PasteboardAccessChecker);
 public:
     PasteboardAccessChecker()

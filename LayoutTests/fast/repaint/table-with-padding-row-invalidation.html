@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<style>
+body {
+    margin: 0;
+}
+table {
+    border-collapse: collapse;
+    padding: 4px;
+}
+tr {
+    background: red;
+}
+td {
+    width: 260px;
+    height: 50px;
+    padding: 0;
+}
+</style>
+<script>
+function repaintTest() {
+   const output = document.getElementById("repaintRects");
+
+   if (!window.testRunner) {
+      alert("This test requires testRunner to run!");
+      return;
+   }
+
+   if (!window.internals) {
+      alert("This test requires window.interals to run!");
+      return;
+   }
+
+   window.internals.startTrackingRepaints();
+   window.testRunner.dumpAsText();
+
+   const row = document.querySelector("tr");
+   row.style.background = "green";
+
+   // Force layout for repainting.
+   row.offsetTop;
+
+   const repaintRects = window.internals.repaintRectsAsText();
+   window.internals.stopTrackingRepaints();
+
+   output.textContent = repaintRects;
+}
+
+window.onload = repaintTest;
+</script>
+<body>
+<table>
+    <tr>
+        <td></td>
+    </tr>
+</table>
+<pre id="repaintRects"></pre>
+</body>
+</html>

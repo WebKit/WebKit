@@ -27,6 +27,7 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
+#include "ModelConvertToBackingContext.h"
 #include "WebGPU.h"
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUPtr.h"
@@ -41,6 +42,11 @@ namespace WebCore {
 class GraphicsContext;
 class IntSize;
 class NativeImage;
+namespace DDModel {
+class ConvertToBackingContext;
+class DDMesh;
+struct DDMeshDescriptor;
+}
 }
 
 namespace WebCore::WebGPU {
@@ -79,9 +85,9 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    static Ref<GPUImpl> create(WebGPUPtr<WGPUInstance>&& instance, ConvertToBackingContext& convertToBackingContext)
+    static Ref<GPUImpl> create(WebGPUPtr<WGPUInstance>&& instance, ConvertToBackingContext& convertToBackingContext, DDModel::ConvertToBackingContext& modelConvertToBackingContext)
     {
-        return adoptRef(*new GPUImpl(WTFMove(instance), convertToBackingContext));
+        return adoptRef(*new GPUImpl(WTFMove(instance), convertToBackingContext, modelConvertToBackingContext));
     }
 
     virtual ~GPUImpl();
@@ -91,7 +97,7 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    GPUImpl(WebGPUPtr<WGPUInstance>&&, ConvertToBackingContext&);
+    GPUImpl(WebGPUPtr<WGPUInstance>&&, ConvertToBackingContext&, DDModel::ConvertToBackingContext&);
 
     GPUImpl(const GPUImpl&) = delete;
     GPUImpl(GPUImpl&&) = delete;
@@ -101,6 +107,7 @@ private:
     WGPUInstance backing() const { return m_backing.get(); }
 
     void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) final;
+    RefPtr<DDModel::DDMesh> createModelBacking(unsigned width, unsigned height, CompletionHandler<void(Vector<MachSendRight>&&)>&&) final;
 
     RefPtr<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) final;
 
@@ -134,7 +141,8 @@ private:
     bool isValid(const XRView&) const final;
 
     WebGPUPtr<WGPUInstance> m_backing;
-    Ref<ConvertToBackingContext> m_convertToBackingContext;
+    const Ref<ConvertToBackingContext> m_convertToBackingContext;
+    const Ref<DDModel::ConvertToBackingContext> m_modelConvertToBackingContext;
 };
 
 } // namespace WebCore::WebGPU

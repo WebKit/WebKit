@@ -4,14 +4,13 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-object-shell.js, deepEqual.js]
-flags:
-  - noStrict
+includes: [compareArray.js]
 description: |
   pending
 esid: pending
 ---*/
-assert.deepEqual(Object.getOwnPropertySymbols({}), []);
+
+assert.compareArray(Object.getOwnPropertySymbols({}), []);
 
 // String keys are ignored.
 assert.sameValue(Object.getOwnPropertySymbols({a: 1, b: 2}).length, 0);
@@ -22,8 +21,8 @@ var iterable = {};
 Object.defineProperty(iterable, Symbol.iterator, {
     value: () => [][Symbol.iterator]()
 });
-assert.deepEqual(Object.getOwnPropertySymbols(iterable), [Symbol.iterator]);
-assert.deepEqual(Object.getOwnPropertySymbols(new Proxy(iterable, {})), [Symbol.iterator]);
+assert.compareArray(Object.getOwnPropertySymbols(iterable), [Symbol.iterator]);
+assert.compareArray(Object.getOwnPropertySymbols(new Proxy(iterable, {})), [Symbol.iterator]);
 
 // Test on an object with a thousand own properties.
 var obj = {};
@@ -44,11 +43,10 @@ assert.sameValue(Object.getOwnPropertySymbols(new Proxy(Object.create(obj), {}))
 
 // Primitives are coerced to objects; but there are never any symbol-keyed
 // properties on the resulting wrapper objects.
-assertThrowsInstanceOf(() => Object.getOwnPropertySymbols(), TypeError);
-assertThrowsInstanceOf(() => Object.getOwnPropertySymbols(undefined), TypeError);
-assertThrowsInstanceOf(() => Object.getOwnPropertySymbols(null), TypeError);
+assert.throws(TypeError, () => Object.getOwnPropertySymbols());
+assert.throws(TypeError, () => Object.getOwnPropertySymbols(undefined));
+assert.throws(TypeError, () => Object.getOwnPropertySymbols(null));
 for (var primitive of [true, 1, 3.14, "hello", Symbol()])
     assert.sameValue(Object.getOwnPropertySymbols(primitive).length, 0);
 
 assert.sameValue(Object.getOwnPropertySymbols.length, 1);
-

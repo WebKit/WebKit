@@ -7,7 +7,7 @@ COMPILING THE APPLICATIONS/LIBRARIES:
 
   1. Prerequisites
 
-    * All x86 targets require the Yasm[1] assembler be installed[2].
+    * All x86 targets require the NASM[0] or Yasm[1] assembler be installed[2].
     * All Windows builds require that Cygwin[3] or MSYS2[4] be installed.
     * Building the documentation requires Doxygen[5]. If you do not
       have this package, the install-docs option will be disabled.
@@ -18,11 +18,15 @@ COMPILING THE APPLICATIONS/LIBRARIES:
       source[7]. These requirements are optional if not running the unit
       tests.
 
+    [0]: https://www.nasm.us/
     [1]: http://www.tortall.net/projects/yasm
     [2]: For Visual Studio the base yasm binary (not vsyasm) should be in the
          PATH for Visual Studio. For VS2017 it is sufficient to rename
          yasm-<version>-<arch>.exe to yasm.exe and place it in:
          Program Files (x86)/Microsoft Visual Studio/2017/<level>/Common7/Tools/
+         The MSYS2 version of the yasm binary can also be used and avoids an
+         issue caused by a missing Visual C++ Redistributable install (Visual
+         Studio 2010, MSVCR100.dll).
     [3]: http://www.cygwin.com
     [4]: http://www.msys2.org/
     [5]: http://www.doxygen.org
@@ -65,6 +69,7 @@ COMPILING THE APPLICATIONS/LIBRARIES:
     arm64-darwin21-gcc
     arm64-darwin22-gcc
     arm64-darwin23-gcc
+    arm64-darwin24-gcc
     arm64-linux-gcc
     arm64-win64-gcc
     arm64-win64-vs15
@@ -129,6 +134,7 @@ COMPILING THE APPLICATIONS/LIBRARIES:
     x86_64-darwin21-gcc
     x86_64-darwin22-gcc
     x86_64-darwin23-gcc
+    x86_64-darwin24-gcc
     x86_64-iphonesimulator-gcc
     x86_64-linux-gcc
     x86_64-linux-icc

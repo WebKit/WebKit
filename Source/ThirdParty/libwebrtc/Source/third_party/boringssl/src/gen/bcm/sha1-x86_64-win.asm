@@ -1291,12 +1291,12 @@ $L$prologue_shaext:
 	movdqu	xmm5,XMMWORD[16+rsi]
 	pshufd	xmm1,xmm1,27
 	movdqu	xmm6,XMMWORD[32+rsi]
-DB	102,15,56,0,227
+	pshufb	xmm4,xmm3
 	movdqu	xmm7,XMMWORD[48+rsi]
-DB	102,15,56,0,235
-DB	102,15,56,0,243
+	pshufb	xmm5,xmm3
+	pshufb	xmm6,xmm3
 	movdqa	xmm9,xmm1
-DB	102,15,56,0,251
+	pshufb	xmm7,xmm3
 	jmp	NEAR $L$oop_shaext
 
 ALIGN	16
@@ -1307,133 +1307,133 @@ $L$oop_shaext:
 	cmovne	rsi,r8
 	prefetcht0	[512+rsi]
 	movdqa	xmm8,xmm0
-	DB	15,56,201,229
+	sha1msg1	xmm4,xmm5
 	movdqa	xmm2,xmm0
-	DB	15,58,204,193,0
-	DB	15,56,200,213
+	sha1rnds4	xmm0,xmm1,0
+	sha1nexte	xmm2,xmm5
 	pxor	xmm4,xmm6
-	DB	15,56,201,238
-	DB	15,56,202,231
+	sha1msg1	xmm5,xmm6
+	sha1msg2	xmm4,xmm7
 
 	movdqa	xmm1,xmm0
-	DB	15,58,204,194,0
-	DB	15,56,200,206
+	sha1rnds4	xmm0,xmm2,0
+	sha1nexte	xmm1,xmm6
 	pxor	xmm5,xmm7
-	DB	15,56,202,236
-	DB	15,56,201,247
+	sha1msg2	xmm5,xmm4
+	sha1msg1	xmm6,xmm7
 	movdqa	xmm2,xmm0
-	DB	15,58,204,193,0
-	DB	15,56,200,215
+	sha1rnds4	xmm0,xmm1,0
+	sha1nexte	xmm2,xmm7
 	pxor	xmm6,xmm4
-	DB	15,56,201,252
-	DB	15,56,202,245
+	sha1msg1	xmm7,xmm4
+	sha1msg2	xmm6,xmm5
 
 	movdqa	xmm1,xmm0
-	DB	15,58,204,194,0
-	DB	15,56,200,204
+	sha1rnds4	xmm0,xmm2,0
+	sha1nexte	xmm1,xmm4
 	pxor	xmm7,xmm5
-	DB	15,56,202,254
-	DB	15,56,201,229
+	sha1msg2	xmm7,xmm6
+	sha1msg1	xmm4,xmm5
 	movdqa	xmm2,xmm0
-	DB	15,58,204,193,0
-	DB	15,56,200,213
+	sha1rnds4	xmm0,xmm1,0
+	sha1nexte	xmm2,xmm5
 	pxor	xmm4,xmm6
-	DB	15,56,201,238
-	DB	15,56,202,231
+	sha1msg1	xmm5,xmm6
+	sha1msg2	xmm4,xmm7
 
 	movdqa	xmm1,xmm0
-	DB	15,58,204,194,1
-	DB	15,56,200,206
+	sha1rnds4	xmm0,xmm2,1
+	sha1nexte	xmm1,xmm6
 	pxor	xmm5,xmm7
-	DB	15,56,202,236
-	DB	15,56,201,247
+	sha1msg2	xmm5,xmm4
+	sha1msg1	xmm6,xmm7
 	movdqa	xmm2,xmm0
-	DB	15,58,204,193,1
-	DB	15,56,200,215
+	sha1rnds4	xmm0,xmm1,1
+	sha1nexte	xmm2,xmm7
 	pxor	xmm6,xmm4
-	DB	15,56,201,252
-	DB	15,56,202,245
+	sha1msg1	xmm7,xmm4
+	sha1msg2	xmm6,xmm5
 
 	movdqa	xmm1,xmm0
-	DB	15,58,204,194,1
-	DB	15,56,200,204
+	sha1rnds4	xmm0,xmm2,1
+	sha1nexte	xmm1,xmm4
 	pxor	xmm7,xmm5
-	DB	15,56,202,254
-	DB	15,56,201,229
+	sha1msg2	xmm7,xmm6
+	sha1msg1	xmm4,xmm5
 	movdqa	xmm2,xmm0
-	DB	15,58,204,193,1
-	DB	15,56,200,213
+	sha1rnds4	xmm0,xmm1,1
+	sha1nexte	xmm2,xmm5
 	pxor	xmm4,xmm6
-	DB	15,56,201,238
-	DB	15,56,202,231
+	sha1msg1	xmm5,xmm6
+	sha1msg2	xmm4,xmm7
 
 	movdqa	xmm1,xmm0
-	DB	15,58,204,194,1
-	DB	15,56,200,206
+	sha1rnds4	xmm0,xmm2,1
+	sha1nexte	xmm1,xmm6
 	pxor	xmm5,xmm7
-	DB	15,56,202,236
-	DB	15,56,201,247
+	sha1msg2	xmm5,xmm4
+	sha1msg1	xmm6,xmm7
 	movdqa	xmm2,xmm0
-	DB	15,58,204,193,2
-	DB	15,56,200,215
+	sha1rnds4	xmm0,xmm1,2
+	sha1nexte	xmm2,xmm7
 	pxor	xmm6,xmm4
-	DB	15,56,201,252
-	DB	15,56,202,245
+	sha1msg1	xmm7,xmm4
+	sha1msg2	xmm6,xmm5
 
 	movdqa	xmm1,xmm0
-	DB	15,58,204,194,2
-	DB	15,56,200,204
+	sha1rnds4	xmm0,xmm2,2
+	sha1nexte	xmm1,xmm4
 	pxor	xmm7,xmm5
-	DB	15,56,202,254
-	DB	15,56,201,229
+	sha1msg2	xmm7,xmm6
+	sha1msg1	xmm4,xmm5
 	movdqa	xmm2,xmm0
-	DB	15,58,204,193,2
-	DB	15,56,200,213
+	sha1rnds4	xmm0,xmm1,2
+	sha1nexte	xmm2,xmm5
 	pxor	xmm4,xmm6
-	DB	15,56,201,238
-	DB	15,56,202,231
+	sha1msg1	xmm5,xmm6
+	sha1msg2	xmm4,xmm7
 
 	movdqa	xmm1,xmm0
-	DB	15,58,204,194,2
-	DB	15,56,200,206
+	sha1rnds4	xmm0,xmm2,2
+	sha1nexte	xmm1,xmm6
 	pxor	xmm5,xmm7
-	DB	15,56,202,236
-	DB	15,56,201,247
+	sha1msg2	xmm5,xmm4
+	sha1msg1	xmm6,xmm7
 	movdqa	xmm2,xmm0
-	DB	15,58,204,193,2
-	DB	15,56,200,215
+	sha1rnds4	xmm0,xmm1,2
+	sha1nexte	xmm2,xmm7
 	pxor	xmm6,xmm4
-	DB	15,56,201,252
-	DB	15,56,202,245
+	sha1msg1	xmm7,xmm4
+	sha1msg2	xmm6,xmm5
 
 	movdqa	xmm1,xmm0
-	DB	15,58,204,194,3
-	DB	15,56,200,204
+	sha1rnds4	xmm0,xmm2,3
+	sha1nexte	xmm1,xmm4
 	pxor	xmm7,xmm5
-	DB	15,56,202,254
+	sha1msg2	xmm7,xmm6
 	movdqu	xmm4,XMMWORD[rsi]
 	movdqa	xmm2,xmm0
-	DB	15,58,204,193,3
-	DB	15,56,200,213
+	sha1rnds4	xmm0,xmm1,3
+	sha1nexte	xmm2,xmm5
 	movdqu	xmm5,XMMWORD[16+rsi]
-DB	102,15,56,0,227
+	pshufb	xmm4,xmm3
 
 	movdqa	xmm1,xmm0
-	DB	15,58,204,194,3
-	DB	15,56,200,206
+	sha1rnds4	xmm0,xmm2,3
+	sha1nexte	xmm1,xmm6
 	movdqu	xmm6,XMMWORD[32+rsi]
-DB	102,15,56,0,235
+	pshufb	xmm5,xmm3
 
 	movdqa	xmm2,xmm0
-	DB	15,58,204,193,3
-	DB	15,56,200,215
+	sha1rnds4	xmm0,xmm1,3
+	sha1nexte	xmm2,xmm7
 	movdqu	xmm7,XMMWORD[48+rsi]
-DB	102,15,56,0,243
+	pshufb	xmm6,xmm3
 
 	movdqa	xmm1,xmm0
-	DB	15,58,204,194,3
-	DB	65,15,56,200,201
-DB	102,15,56,0,251
+	sha1rnds4	xmm0,xmm2,3
+	sha1nexte	xmm1,xmm9
+	pshufb	xmm7,xmm3
 
 	paddd	xmm0,xmm8
 	movdqa	xmm9,xmm1
@@ -1515,12 +1515,12 @@ $L$prologue_ssse3:
 	movdqu	xmm1,XMMWORD[16+r9]
 	movdqu	xmm2,XMMWORD[32+r9]
 	movdqu	xmm3,XMMWORD[48+r9]
-DB	102,15,56,0,198
-DB	102,15,56,0,206
-DB	102,15,56,0,214
+	pshufb	xmm0,xmm6
+	pshufb	xmm1,xmm6
+	pshufb	xmm2,xmm6
 	add	r9,64
 	paddd	xmm0,xmm9
-DB	102,15,56,0,222
+	pshufb	xmm3,xmm6
 	paddd	xmm1,xmm9
 	paddd	xmm2,xmm9
 	movdqa	XMMWORD[rsp],xmm0
@@ -2412,12 +2412,12 @@ $L$oop_ssse3:
 	movdqu	xmm1,XMMWORD[16+r9]
 	movdqu	xmm2,XMMWORD[32+r9]
 	movdqu	xmm3,XMMWORD[48+r9]
-DB	102,15,56,0,198
+	pshufb	xmm0,xmm6
 	add	r9,64
 	add	ebx,DWORD[16+rsp]
 	xor	esi,ebp
 	mov	edi,ecx
-DB	102,15,56,0,206
+	pshufb	xmm1,xmm6
 	rol	ecx,5
 	add	ebx,esi
 	xor	edi,ebp
@@ -2453,7 +2453,7 @@ DB	102,15,56,0,206
 	add	ecx,DWORD[32+rsp]
 	xor	esi,eax
 	mov	edi,edx
-DB	102,15,56,0,214
+	pshufb	xmm2,xmm6
 	rol	edx,5
 	add	ecx,esi
 	xor	edi,eax
@@ -2489,7 +2489,7 @@ DB	102,15,56,0,214
 	add	edx,DWORD[48+rsp]
 	xor	esi,ebx
 	mov	edi,ebp
-DB	102,15,56,0,222
+	pshufb	xmm3,xmm6
 	rol	ebp,5
 	add	edx,esi
 	xor	edi,ebx

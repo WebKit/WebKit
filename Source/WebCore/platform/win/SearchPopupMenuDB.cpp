@@ -272,11 +272,11 @@ void SearchPopupMenuDB::checkSQLiteReturnCode(int actual)
     }
 }
 
-int SearchPopupMenuDB::executeSQLStatement(Expected<SQLiteStatement, int>&& statement)
+int SearchPopupMenuDB::executeSQLStatement(std::unique_ptr<SQLiteStatement>&& statement)
 {
     if (!statement) {
-        checkSQLiteReturnCode(statement.error());
-        return statement.error();
+        checkSQLiteReturnCode(m_database.lastError());
+        return m_database.lastError();
     }
 
     int ret = statement->step();
@@ -287,11 +287,9 @@ int SearchPopupMenuDB::executeSQLStatement(Expected<SQLiteStatement, int>&& stat
 
 std::unique_ptr<SQLiteStatement> SearchPopupMenuDB::createPreparedStatement(ASCIILiteral sql)
 {
-    auto statement = m_database.prepareHeapStatement(sql);
+    auto statement = m_database.prepareStatement(sql);
     ASSERT(statement);
-    if (!statement)
-        return nullptr;
-    return statement.value().moveToUniquePtr();
+    return statement;
 }
 
 }

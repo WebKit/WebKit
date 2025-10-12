@@ -11,23 +11,23 @@ PASS Fetch with POST with Float32Array body
 PASS Fetch with POST with Float64Array body
 PASS Fetch with POST with DataView body
 PASS Fetch with POST with Blob body with mime type
-FAIL Fetch with POST with ReadableStream containing String promise_rejects_js: function "function() { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+FAIL Fetch with POST with ReadableStream containing String promise_rejects_js: function "function() { throw e; }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL Fetch with POST with ReadableStream containing null promise_rejects_js: function "function() { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+FAIL Fetch with POST with ReadableStream containing null promise_rejects_js: function "function() { throw e; }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL Fetch with POST with ReadableStream containing number promise_rejects_js: function "function() { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+FAIL Fetch with POST with ReadableStream containing number promise_rejects_js: function "function() { throw e; }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL Fetch with POST with ReadableStream containing ArrayBuffer promise_rejects_js: function "function() { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+FAIL Fetch with POST with ReadableStream containing ArrayBuffer promise_rejects_js: function "function() { throw e; }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL Fetch with POST with ReadableStream containing Blob promise_rejects_js: function "function() { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+FAIL Fetch with POST with ReadableStream containing Blob promise_rejects_js: function "function() { throw e; }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
 FAIL Fetch with POST with text body on 421 response should be retried once on new connection. assert_equals: expected "ok. Request was sent 2 times. 2 connections were created." but got "ok. Request was sent 1 times. 1 connections were created."
-FAIL Streaming upload shouldn't work on Http/1.1. promise_rejects_js: function "function() { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+FAIL Streaming upload shouldn't work on Http/1.1. promise_rejects_js: function "function() { throw e; }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
 

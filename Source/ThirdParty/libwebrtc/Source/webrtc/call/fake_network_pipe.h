@@ -35,7 +35,7 @@ enum class MediaType;
 
 class NetworkPacket {
  public:
-  NetworkPacket(rtc::CopyOnWriteBuffer packet,
+  NetworkPacket(CopyOnWriteBuffer packet,
                 int64_t send_time,
                 int64_t arrival_time,
                 std::optional<PacketOptions> packet_options,
@@ -59,7 +59,7 @@ class NetworkPacket {
 
   const uint8_t* data() const { return packet_.data(); }
   size_t data_length() const { return packet_.size(); }
-  rtc::CopyOnWriteBuffer* raw_packet() { return &packet_; }
+  CopyOnWriteBuffer* raw_packet() { return &packet_; }
   int64_t send_time() const { return send_time_; }
   int64_t arrival_time() const { return arrival_time_; }
   void IncrementArrivalTime(int64_t extra_delay) {
@@ -80,7 +80,7 @@ class NetworkPacket {
   Transport* transport() const { return transport_; }
 
  private:
-  rtc::CopyOnWriteBuffer packet_;
+  CopyOnWriteBuffer packet_;
   // The time the packet was sent out on the network.
   int64_t send_time_;
   // The time the packet should arrive at the receiver.
@@ -133,10 +133,10 @@ class FakeNetworkPipe : public SimulatedPacketReceiverInterface {
   // Methods for use with Transport interface. When/if packets are delivered,
   // they will be passed to the instance specified by the `transport` parameter.
   // Note that that instance must be in the map of active transports.
-  bool SendRtp(rtc::ArrayView<const uint8_t> packet,
+  bool SendRtp(ArrayView<const uint8_t> packet,
                const PacketOptions& options,
                Transport* transport);
-  bool SendRtcp(rtc::ArrayView<const uint8_t> packet, Transport* transport);
+  bool SendRtcp(ArrayView<const uint8_t> packet, Transport* transport);
 
   // Implements the PacketReceiver interface. When/if packets are delivered,
   // they will be passed directly to the receiver instance given in
@@ -146,7 +146,7 @@ class FakeNetworkPipe : public SimulatedPacketReceiverInterface {
       MediaType media_type,
       RtpPacketReceived packet,
       OnUndemuxablePacketHandler undemuxable_packet_handler) override;
-  void DeliverRtcpPacket(rtc::CopyOnWriteBuffer packet) override;
+  void DeliverRtcpPacket(CopyOnWriteBuffer packet) override;
 
   // Processes the network queues and trigger PacketReceiver::IncomingPacket for
   // packets ready to be delivered.
@@ -179,7 +179,7 @@ class FakeNetworkPipe : public SimulatedPacketReceiverInterface {
 
   // Returns true if enqueued, or false if packet was dropped. Use this method
   // when enqueueing packets that should be received by PacketReceiver instance.
-  bool EnqueuePacket(rtc::CopyOnWriteBuffer packet,
+  bool EnqueuePacket(CopyOnWriteBuffer packet,
                      std::optional<PacketOptions> options,
                      bool is_rtcp,
                      MediaType media_type,
@@ -187,7 +187,7 @@ class FakeNetworkPipe : public SimulatedPacketReceiverInterface {
 
   // Returns true if enqueued, or false if packet was dropped. Use this method
   // when enqueueing packets that should be received by Transport instance.
-  bool EnqueuePacket(rtc::CopyOnWriteBuffer packet,
+  bool EnqueuePacket(CopyOnWriteBuffer packet,
                      std::optional<PacketOptions> options,
                      bool is_rtcp,
                      Transport* transport);

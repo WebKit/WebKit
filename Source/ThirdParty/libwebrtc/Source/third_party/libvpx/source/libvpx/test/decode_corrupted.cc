@@ -59,7 +59,7 @@ class DecodeCorruptedFrameTest
     if (pkt->data.frame.flags & VPX_FRAME_IS_KEY) return pkt;
     if (pkt->kind != VPX_CODEC_CX_FRAME_PKT) return pkt;
 
-    memcpy(&modified_pkt_, pkt, sizeof(*pkt));
+    modified_pkt_ = *pkt;
 
     // Halve the size so it's corrupted to decoder.
     modified_pkt_.data.frame.sz = modified_pkt_.data.frame.sz / 2;

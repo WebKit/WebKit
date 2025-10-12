@@ -25,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/outer-svg-intrinsic-size-005-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/outer-svg-intrinsic-size-005.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/svgtransformlist-replaceitem.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/transform-translate-single-parameter.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/view-invalid-viewBox-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/view-invalid-viewBox.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/view-transform-viewBox-expected.html

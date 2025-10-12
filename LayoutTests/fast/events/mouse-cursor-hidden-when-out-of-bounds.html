@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/image-preload-helper.js"></script>
+<style type="text/css">
+body {
+    margin: 0;
+    height: 200vh;
+}
+
+#test-container {
+    display: flex;
+    flex-direction: horizontal;
+}
+
+#test-container > div {
+    writing-mode: vertical-rl;
+}
+
+#test-container.middle {
+    margin-top: 50vh;
+}
+</style>
+</head>
+<body>
+<div id="test-container">
+    <div style='cursor: -webkit-image-set(url(resources/greenbox.png) 1x), pointer'>y=0</div>
+    <div style='cursor: -webkit-image-set(url(resources/greenbox.png) 1x) 12 2, pointer'>y=2</div>
+    <div style='cursor: -webkit-image-set(url(resources/greenbox.png) 1x) 12 24, pointer'>y=24</div>
+    <div style='cursor: -webkit-image-set(url(resources/greenbox200.png) 8x), pointer'>hidpi, y=0</div>
+    <div style='cursor: -webkit-image-set(url(resources/greenbox200.png) 8x) 25 2, pointer'>hidpi, y=2</div>
+    <div style='cursor: -webkit-image-set(url(resources/greenbox200.png) 8x) 25 49, pointer'>hidpi, y=49</div>
+</div>
+<br/>
+<div id="console"></div>
+<script>
+var testContainer = document.getElementById('test-container');
+
+async function checkCursors() {
+    debug('Checking cursors with device pixel ratio of ' + window.devicePixelRatio);  
+    debug('----------------------------------------------');
+	
+    var nodesToTest = document.querySelectorAll('#test-container > div');
+    async function subtest(description) {
+        debug("SUBTEST: " + description);
+        for (var i = 0; i < nodesToTest.length; i++) {
+            var node = nodesToTest[i];
+            await eventSender.asyncMouseMoveTo(node.offsetLeft + 3, node.offsetTop - document.documentElement.scrollTop + 1);
+            var result = window.internals.getCurrentCursorInfo().includes("type=Custom") ? "Used custom cursor." : "Ignored custom cursor.";
+            debug('TEST CASE: ' + node.textContent + ': ' + result);
+        }
+        debug('');
+    }
+
+    await subtest("top of view");
+    testContainer.classList.add("middle");
+    await subtest("middle of view");
+    document.documentElement.scrollTop = testContainer.offsetTop;
+    await subtest("top of view (by scrolling)");
+    document.documentElement.scrollTop = testContainer.offsetTop * 2;
+    await subtest("out of view (by scrolling)");
+    testContainer.classList.remove("middle");
+    document.documentElement.scrollTop = 0;
+}
+
+async function runTests() {
+    if (window.eventSender) {
+        await checkCursors();
+        // Repeat in high-dpi mode
+        testRunner.setBackingScaleFactor(2, async function() {
+            await checkCursors();
+            testContainer.style.display = 'none';
+            finishJSTest();
+    	});	
+    } else {
+        finishJSTest();
+    }
+}
+
+if (!window.eventSender)
+    testFailed('This test must run in the test runner.');
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    window.jsTestIsAsync = true;
+}
+
+// Now wait for each image to load or fail to load before starting tests.
+// Without this we can get null images in the cursors - eg. no known size.
+preloadImagesFromStyle(testContainer, 2, runTests);
+
+</script>
+</body>
+</html>

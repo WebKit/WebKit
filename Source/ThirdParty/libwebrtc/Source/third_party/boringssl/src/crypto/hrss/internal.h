@@ -1,19 +1,19 @@
-/* Copyright (c) 2018, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2018 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-#ifndef OPENSSL_HEADER_HRSS_INTERNAL_H
-#define OPENSSL_HEADER_HRSS_INTERNAL_H
+#ifndef OPENSSL_HEADER_CRYPTO_HRSS_INTERNAL_H
+#define OPENSSL_HEADER_CRYPTO_HRSS_INTERNAL_H
 
 #include <openssl/base.h>
 #include "../internal.h"
@@ -23,10 +23,10 @@ extern "C" {
 #endif
 
 
-#define N 701
+#define HRSS_N 701
 #define BITS_PER_WORD (sizeof(crypto_word_t) * 8)
-#define WORDS_PER_POLY ((N + BITS_PER_WORD - 1) / BITS_PER_WORD)
-#define BITS_IN_LAST_WORD (N % BITS_PER_WORD)
+#define WORDS_PER_POLY ((HRSS_N + BITS_PER_WORD - 1) / BITS_PER_WORD)
+#define BITS_IN_LAST_WORD (HRSS_N % BITS_PER_WORD)
 
 struct poly2 {
   crypto_word_t v[WORDS_PER_POLY];
@@ -54,7 +54,8 @@ OPENSSL_EXPORT void HRSS_poly3_invert(struct poly3 *out,
 // poly_Rq_mul is defined in assembly. Inputs and outputs must be 16-byte-
 // aligned.
 extern void poly_Rq_mul(
-    uint16_t r[N + 3], const uint16_t a[N + 3], const uint16_t b[N + 3],
+    uint16_t r[HRSS_N + 3], const uint16_t a[HRSS_N + 3],
+    const uint16_t b[HRSS_N + 3],
     // The following should be `scratch[POLY_MUL_RQ_SCRATCH_SPACE]` but
     // GCC 11.1 has a bug with unions that breaks that.
     uint8_t scratch[]);
@@ -65,4 +66,4 @@ extern void poly_Rq_mul(
 }  // extern "C"
 #endif
 
-#endif  // !OPENSSL_HEADER_HRSS_INTERNAL_H
+#endif  // !OPENSSL_HEADER_CRYPTO_HRSS_INTERNAL_H

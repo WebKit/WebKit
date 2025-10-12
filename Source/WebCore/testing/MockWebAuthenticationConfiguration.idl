@@ -93,6 +93,8 @@
     Conditional=WEB_AUTHN,
 ] dictionary MockHidConfiguration {
     sequence<DOMString> payloadBase64;
+    sequence<DOMString> expectedCommandsBase64;
+    boolean validateExpectedCommands;
     MockHidStage stage = "info";
     MockHidSubStage subStage = "init";
     MockHidError error = "success";

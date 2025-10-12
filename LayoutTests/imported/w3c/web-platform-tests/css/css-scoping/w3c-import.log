@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/chrome-1492368-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-assigned-node-with-before-after-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-assigned-node-with-before-after.html
@@ -128,18 +129,20 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-descendant-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-dom-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-functional-descendant-invalidation.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-001-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-002-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-002.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-003-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-003.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-internal-001.tentative-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-internal-001.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-internal-002.tentative-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-internal-002.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-internal-003.tentative-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-internal-003.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-002.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-002.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-003.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-003.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-internal-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-internal-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-internal-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-internal-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-internal-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-internal-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-internal-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-has-internal-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-in-host-context-selector.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-in-host-selector.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-is-001-expected.html
@@ -152,6 +155,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-is-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-is-005-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-is-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-is-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-is-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-is-featureless.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-multiple-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-multiple-001.html
@@ -163,8 +168,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-multiple-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-multiple-005-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-multiple-005.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-multiple-006-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-multiple-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-nested-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-nested-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-not-001-expected.html
@@ -271,5 +274,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/svg-id-ref-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/svg-id-ref-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/whitespace-crash-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/whitespace-crash-001.html

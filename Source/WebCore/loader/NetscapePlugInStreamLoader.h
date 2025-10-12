@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "ResourceLoader.h"
+#include <WebCore/ResourceLoader.h>
 #include <wtf/Function.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
@@ -72,7 +72,7 @@ private:
 
     void willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& callback) override;
     void didReceiveResponse(ResourceResponse&&, CompletionHandler<void()>&& policyCompletionHandler) override;
-    void didReceiveData(const SharedBuffer&, long long encodedDataLength, DataPayloadType) override;
+    void didReceiveBuffer(const FragmentedSharedBuffer&, long long encodedDataLength, DataPayloadType) override;
     void didFinishLoading(const NetworkLoadMetrics&) override;
     void didFail(const ResourceError&) override;
 

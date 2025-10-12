@@ -30,24 +30,27 @@
 #if ENABLE(MATHML)
 #include "AccessibilityMathMLElement.h"
 
-#include "AXObjectCache.h"
+#include "AXObjectCacheInlines.h"
+#include "AXUtilities.h"
+#include "AccessibilityObjectInlines.h"
+#include "FrameDestructionObserverInlines.h"
 #include "MathMLNames.h"
 #include "NodeInlines.h"
-#include "RenderStyleInlines.h"
+#include "Settings.h"
 
 namespace WebCore {
 
-AccessibilityMathMLElement::AccessibilityMathMLElement(AXID axID, RenderObject& renderer, bool isAnonymousOperator)
-    : AccessibilityRenderObject(axID, renderer)
+AccessibilityMathMLElement::AccessibilityMathMLElement(AXID axID, RenderObject& renderer, AXObjectCache& cache, bool isAnonymousOperator)
+    : AccessibilityRenderObject(axID, renderer, cache)
     , m_isAnonymousOperator(isAnonymousOperator)
 {
 }
 
 AccessibilityMathMLElement::~AccessibilityMathMLElement() = default;
 
-Ref<AccessibilityMathMLElement> AccessibilityMathMLElement::create(AXID axID, RenderObject& renderer, bool isAnonymousOperator)
+Ref<AccessibilityMathMLElement> AccessibilityMathMLElement::create(AXID axID, RenderObject& renderer, AXObjectCache& cache, bool isAnonymousOperator)
 {
-    return adoptRef(*new AccessibilityMathMLElement(axID, renderer, isAnonymousOperator));
+    return adoptRef(*new AccessibilityMathMLElement(axID, renderer, cache, isAnonymousOperator));
 }
 
 AccessibilityRole AccessibilityMathMLElement::determineAccessibilityRole()
@@ -55,11 +58,10 @@ AccessibilityRole AccessibilityMathMLElement::determineAccessibilityRole()
     if (!m_renderer)
         return AccessibilityRole::Unknown;
 
-    if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Unknown)
+    if (m_ariaRole != AccessibilityRole::Unknown)
         return m_ariaRole;
 
-    Node* node = m_renderer->node();
-    if (WebCore::elementName(node) == ElementName::MathML_math)
+    if (WebCore::elementName(m_renderer->protectedNode().get()) == ElementName::MathML_math)
         return AccessibilityRole::DocumentMath;
 
     // It's not clear which role a platform should choose for a math element.
@@ -69,7 +71,7 @@ AccessibilityRole AccessibilityMathMLElement::determineAccessibilityRole()
 
 void AccessibilityMathMLElement::addChildren()
 {
-    if (!hasElementName(ElementName::MathML_mfenced)) {
+    if ((document() && document()->settings().coreMathMLEnabled()) || !hasElementName(ElementName::MathML_mfenced)) {
         AccessibilityRenderObject::addChildren();
         return;
     }
@@ -80,8 +82,8 @@ void AccessibilityMathMLElement::addChildren()
     // However, this element is very deprecated, and even the most simple usages of it do not render consistently across
     // browsers, so it's already unlikely to be used by web developers, even more so with `display:contents` mixed in.
     m_childrenInitialized = true;
-    for (auto& object : AXChildIterator(*this))
-        addChild(object);
+    for (Ref object : AXChildIterator(*this))
+        addChild(WTFMove(object));
 
     m_subtreeDirty = false;
 
@@ -93,7 +95,7 @@ void AccessibilityMathMLElement::addChildren()
 String AccessibilityMathMLElement::textUnderElement(TextUnderElementMode mode) const
 {
     if (m_isAnonymousOperator && !mode.isHidden()) {
-        UChar operatorChar = downcast<RenderMathMLOperator>(*m_renderer).textContent();
+        char16_t operatorChar = downcast<RenderMathMLOperator>(*m_renderer).textContent();
         return operatorChar ? String(span(operatorChar)) : String();
     }
 
@@ -254,7 +256,7 @@ bool AccessibilityMathMLElement::isMathMultiscriptObject(AccessibilityMathMultis
     return false;
 }
 
-std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityMathMLElement::mathRadicand() 
+std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityMathMLElement::mathRadicand()
 {
     if (!isMathRoot())
         return std::nullopt;
@@ -406,14 +408,14 @@ void AccessibilityMathMLElement::mathPrescripts(AccessibilityMathMultiscriptPair
 
     bool foundPrescript = false;
     std::pair<AccessibilityObject*, AccessibilityObject*> prescriptPair;
-    for (Node* child = node()->firstChild(); child; child = child->nextSibling()) {
+    for (RefPtr child = node()->firstChild(); child; child = child->nextSibling()) {
         if (foundPrescript) {
-            AccessibilityObject* axChild = axObjectCache()->getOrCreate(*child);
+            RefPtr axChild = axObjectCache()->getOrCreate(*child);
             if (axChild && axChild->isMathElement()) {
                 if (!prescriptPair.first)
-                    prescriptPair.first = axChild;
+                    prescriptPair.first = axChild.get();
                 else {
-                    prescriptPair.second = axChild;
+                    prescriptPair.second = axChild.get();
                     prescripts.append(prescriptPair);
                     prescriptPair.first = nullptr;
                     prescriptPair.second = nullptr;
@@ -437,18 +439,18 @@ void AccessibilityMathMLElement::mathPostscripts(AccessibilityMathMultiscriptPai
     // and continue until a <mprescripts> tag is found
     std::pair<AccessibilityObject*, AccessibilityObject*> postscriptPair;
     bool foundBaseElement = false;
-    for (Node* child = node()->firstChild(); child; child = child->nextSibling()) {
+    for (RefPtr child = node()->firstChild(); child; child = child->nextSibling()) {
         if (WebCore::elementName(*child) == ElementName::MathML_mprescripts)
             break;
 
-        AccessibilityObject* axChild = axObjectCache()->getOrCreate(*child);
+        RefPtr axChild = axObjectCache()->getOrCreate(*child);
         if (axChild && axChild->isMathElement()) {
             if (!foundBaseElement)
                 foundBaseElement = true;
             else if (!postscriptPair.first)
-                postscriptPair.first = axChild;
+                postscriptPair.first = axChild.get();
             else {
-                postscriptPair.second = axChild;
+                postscriptPair.second = axChild.get();
                 postscripts.append(postscriptPair);
                 postscriptPair.first = nullptr;
                 postscriptPair.second = nullptr;

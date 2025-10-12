@@ -14,15 +14,20 @@
 
     async function checkSpeakerSelection()
     {
+        let stream1, stream2;
         // Speakers are currently only exposed after getUserMedia.
         try {
-            await navigator.mediaDevices.getUserMedia({ audio : true });
+            stream1 = await navigator.mediaDevices.getUserMedia({ audio : true });
         } catch (e) {
         }
         try {
-            await navigator.mediaDevices.getUserMedia({ video : true });
+            stream2 = await navigator.mediaDevices.getUserMedia({ video : true });
         } catch (e) {
         }
+        if (stream1)
+            stream1.getTracks().forEach(t => t.stop());
+        if (stream2)
+            stream2.getTracks().forEach(t => t.stop());
         return checkDeviceKind('audiooutput');
     }
 

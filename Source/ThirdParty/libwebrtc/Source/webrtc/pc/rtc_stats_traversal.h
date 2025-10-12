@@ -25,8 +25,8 @@ namespace webrtc {
 // `ids`, returning them as a new stats report.
 // This is meant to be used to implement the stats selection algorithm.
 // https://w3c.github.io/webrtc-pc/#dfn-stats-selection-algorithm
-rtc::scoped_refptr<RTCStatsReport> TakeReferencedStats(
-    rtc::scoped_refptr<RTCStatsReport> report,
+scoped_refptr<RTCStatsReport> TakeReferencedStats(
+    scoped_refptr<RTCStatsReport> report,
     const std::vector<std::string>& ids);
 
 // Gets pointers to the string values of any members in `stats` that are used as

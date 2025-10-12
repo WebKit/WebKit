@@ -1,0 +1,12 @@
+This test ensures the scrollview of an iframe doesn't become the root of the tree after dynamic page changes.
+
+PASS: root.childAtIndex(0).role.toLowerCase().includes('webarea') === true
+PASS: webAreaText.includes('main-page-web-area') === true
+PASS: !webAreaText.includes('iframe-web-area') === true
+PASS: webAreaText.includes('main-page-web-area') === true
+PASS: !webAreaText.includes('iframe-web-area') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

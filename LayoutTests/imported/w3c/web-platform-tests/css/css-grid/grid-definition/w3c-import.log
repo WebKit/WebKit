@@ -38,6 +38,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-fill-rows-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-columns-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-rows-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-with-calc-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-with-calc.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-aspect-ratio-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-aspect-ratio-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-aspect-ratio-002-expected.html

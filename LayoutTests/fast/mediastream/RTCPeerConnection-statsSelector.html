@@ -52,6 +52,7 @@
                 shouldBeGreaterThanOrEqual('timestamp', 'startTime');
                 shouldBe('local.kind', '"video"');
                 finishJSTest();
+                stream.getTracks().forEach(track => track.stop());
             }
 
             var startTime = new Date().getTime();

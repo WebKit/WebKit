@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "ArrayProfile.h"
+#include <JavaScriptCore/ArrayProfile.h>
 #include "BytecodeStructs.h"
-#include "Instruction.h"
+#include <JavaScriptCore/Instruction.h>
 #include "InterpreterInlines.h"
-#include "Opcode.h"
+#include <JavaScriptCore/Opcode.h>
 
 namespace JSC {
 

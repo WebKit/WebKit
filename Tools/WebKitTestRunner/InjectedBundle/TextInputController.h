@@ -45,6 +45,8 @@ public:
     void unmarkText();
     void insertText(JSStringRef text);
 
+    void setPageEditable(bool);
+
 private:
     TextInputController() = default;
 

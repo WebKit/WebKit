@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // ProgramExecutableMtl.cpp: Implementation of ProgramExecutableMtl.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/renderer/metal/ProgramExecutableMtl.h"
 
@@ -352,9 +357,7 @@ angle::Result CreateMslShaderLib(mtl::Context *context,
 
         // Convert to actual binary shader
         angle::ObjCPtr<NSError> err;
-        const bool disableFastMath =
-            context->getDisplay()->getFeatures().intelDisableFastMath.enabled ||
-            translatedMslInfo->hasIsnanOrIsinf;
+        const bool disableFastMath      = translatedMslInfo->hasIsnanOrIsinf;
         const bool usesInvariance       = translatedMslInfo->hasInvariant;
         translatedMslInfo->metalLibrary = libraryCache.getOrCompileShaderLibrary(
             context->getDisplay(), translatedMslInfo->metalShaderSource, substitutionMacros,

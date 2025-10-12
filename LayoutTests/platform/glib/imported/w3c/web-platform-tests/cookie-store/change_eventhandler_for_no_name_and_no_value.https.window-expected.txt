@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: The cookie name and value must not both be empty.
 
 FAIL Verify behavior of no-name and no-value cookies. promise_test: Unhandled rejection with value: object "TypeError: The cookie name and value must not both be empty."
 

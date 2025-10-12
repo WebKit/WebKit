@@ -29,6 +29,7 @@
 #include "GPUObjectDescriptorBase.h"
 #include "GPUTextureAspect.h"
 #include "GPUTextureFormat.h"
+#include "GPUTextureUsage.h"
 #include "GPUTextureViewDimension.h"
 #include "WebGPUTextureViewDescriptor.h"
 #include <optional>
@@ -42,6 +43,7 @@ struct GPUTextureViewDescriptor : public GPUObjectDescriptorBase {
             { label },
             format ? std::optional { WebCore::convertToBacking(*format) } : std::nullopt,
             dimension ? std::optional { WebCore::convertToBacking(*dimension) } : std::nullopt,
+            convertTextureUsageFlagsToBacking(usage),
             WebCore::convertToBacking(aspect),
             baseMipLevel,
             mipLevelCount,
@@ -52,6 +54,7 @@ struct GPUTextureViewDescriptor : public GPUObjectDescriptorBase {
 
     std::optional<GPUTextureFormat> format;
     std::optional<GPUTextureViewDimension> dimension;
+    GPUTextureUsageFlags usage { 0 };
     GPUTextureAspect aspect { GPUTextureAspect::All };
     GPUIntegerCoordinate baseMipLevel { 0 };
     std::optional<GPUIntegerCoordinate> mipLevelCount;

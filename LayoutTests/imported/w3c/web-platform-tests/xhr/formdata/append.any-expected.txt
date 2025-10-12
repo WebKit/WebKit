@@ -5,5 +5,5 @@ PASS testFormDataAppendUndefined1
 PASS testFormDataAppendUndefined2
 PASS testFormDataAppendNull1
 PASS testFormDataAppendNull2
-PASS testFormDataAppendEmptyBlob
+FAIL testFormDataAppendEmptyBlob assert_greater_than_equal: expected a "object" but got a "number"
 

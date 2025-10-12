@@ -172,12 +172,12 @@ public:
 
     void executeKnownEdgeTypes(Node*);
     
-    ALWAYS_INLINE void filterEdgeByUse(Edge& edge)
+    ALWAYS_INLINE FiltrationResult filterEdgeByUse(Edge& edge)
     {
         UseKind useKind = edge.useKind();
         if (useKind == UntypedUse)
-            return;
-        filterByType(edge, typeFilterFor(useKind));
+            return FiltrationOK;
+        return filterByType(edge, typeFilterFor(useKind));
     }
     
     // Abstractly execute the effects of the given node. This changes the abstract
@@ -266,8 +266,8 @@ private:
         abstractValue.fixTypeForRepresentation(m_graph, node);
     }
 
-    ALWAYS_INLINE void filterByType(Edge& edge, SpeculatedType type);
-    
+    ALWAYS_INLINE FiltrationResult filterByType(Edge&, SpeculatedType);
+
     void verifyEdge(Node*, Edge);
     void verifyEdges(Node*);
     void executeDoubleUnaryOpEffects(Node*, const auto& functor);

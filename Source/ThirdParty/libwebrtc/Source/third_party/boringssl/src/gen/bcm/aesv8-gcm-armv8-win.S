@@ -4,7 +4,6 @@
 #include <openssl/asm_base.h>
 
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_AARCH64) && defined(_WIN32)
-#include <openssl/arm_arch.h>
 #if __ARM_MAX_ARCH__ >= 8
 
 .arch	armv8-a+crypto

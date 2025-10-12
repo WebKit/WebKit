@@ -29,8 +29,8 @@
 #ifndef GlyphMetricsMap_h
 #define GlyphMetricsMap_h
 
-#include "Glyph.h"
-#include "Path.h"
+#include <WebCore/Glyph.h>
+#include <WebCore/Path.h>
 #include <array>
 #include <wtf/HashMap.h>
 
@@ -102,7 +102,7 @@ private:
 
     bool m_filledPrimaryPage { false };
     GlyphMetricsPage m_primaryPage; // We optimize for the page that contains glyph indices 0-255.
-    UncheckedKeyHashMap<int, std::unique_ptr<GlyphMetricsPage>> m_pages;
+    HashMap<int, std::unique_ptr<GlyphMetricsPage>> m_pages;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<class T>, GlyphMetricsMap<T>);

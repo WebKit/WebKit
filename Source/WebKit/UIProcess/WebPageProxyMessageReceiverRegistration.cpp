@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPageProxyMessageReceiverRegistration.h"
 
+#include "WebBackForwardListMessages.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessProxy.h"
 
@@ -36,25 +37,29 @@ WebPageProxyMessageReceiverRegistration::~WebPageProxyMessageReceiverRegistratio
     stopReceivingMessages();
 }
 
-void WebPageProxyMessageReceiverRegistration::startReceivingMessages(WebProcessProxy& process, WebCore::PageIdentifier webPageID, IPC::MessageReceiver& messageReceiver)
+void WebPageProxyMessageReceiverRegistration::startReceivingMessages(WebProcessProxy& process, WebCore::PageIdentifier webPageID, IPC::MessageReceiver& webPageProxyReceiver, IPC::MessageReceiver& backForwardListReceiver)
 {
     stopReceivingMessages();
-    process.addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), webPageID, messageReceiver);
+    process.addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), webPageID, webPageProxyReceiver);
+    process.addMessageReceiver(Messages::WebBackForwardList::messageReceiverName(), webPageID, backForwardListReceiver);
     m_data = { { webPageID, process } };
 }
 
 void WebPageProxyMessageReceiverRegistration::stopReceivingMessages()
 {
-    if (auto data = std::exchange(m_data, std::nullopt))
+    if (auto data = std::exchange(m_data, std::nullopt)) {
         data->protectedProcess()->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), data->webPageID);
+        data->protectedProcess()->removeMessageReceiver(Messages::WebBackForwardList::messageReceiverName(), data->webPageID);
+    }
 }
 
-void WebPageProxyMessageReceiverRegistration::transferMessageReceivingFrom(WebPageProxyMessageReceiverRegistration& oldRegistration, IPC::MessageReceiver& newReceiver)
+void WebPageProxyMessageReceiverRegistration::transferMessageReceivingFrom(WebPageProxyMessageReceiverRegistration& oldRegistration, IPC::MessageReceiver& newWebPageProxyReceiver, IPC::MessageReceiver& newBackForwardListReceiver)
 {
     ASSERT(!m_data);
     if (auto data = std::exchange(oldRegistration.m_data, std::nullopt)) {
         data->protectedProcess()->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), data->webPageID);
-        startReceivingMessages(data->process, data->webPageID, newReceiver);
+        data->protectedProcess()->removeMessageReceiver(Messages::WebBackForwardList::messageReceiverName(), data->webPageID);
+        startReceivingMessages(data->process, data->webPageID, newWebPageProxyReceiver, newBackForwardListReceiver);
     } else {
         stopReceivingMessages();
         ASSERT_NOT_REACHED();

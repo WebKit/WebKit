@@ -14,6 +14,7 @@ PASS input.stringAttributeValue('AXInvalid') is 'true'
 Testing #email-input-valid
 PASS input.stringAttributeValue('AXInvalid') is 'false'
 Testing #number-input-invalid
+PASS input.stringAttributeValue('AXInvalid') is 'false'
 PASS input.stringAttributeValue('AXInvalid') is 'true'
 PASS successfullyParsed is true
 

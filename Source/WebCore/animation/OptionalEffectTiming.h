@@ -25,19 +25,19 @@
 
 #pragma once
 
-#include "FillMode.h"
-#include "PlaybackDirection.h"
-#include "WebAnimationTypes.h"
+#include <WebCore/FillMode.h>
+#include <WebCore/PlaybackDirection.h>
+#include <WebCore/WebAnimationTypes.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct OptionalEffectTiming {
     std::optional<Variant<double, String>> duration;
-    std::optional<double> iterations; // This value cannot be a MarkableDouble since we need to check for a NaN value.
-    MarkableDouble delay;
-    MarkableDouble endDelay;
-    MarkableDouble iterationStart;
+    std::optional<double> iterations; // This value cannot be a Markable<double> since we need to check for a NaN value.
+    Markable<double> delay;
+    Markable<double> endDelay;
+    Markable<double> iterationStart;
     String easing;
     OptionalFillMode fill;
     OptionalPlaybackDirection direction;

@@ -35,6 +35,7 @@
 #include "AudioUtilities.h"
 #include "AudioWorklet.h"
 #include "AudioWorkletMessagingProxy.h"
+#include "Exception.h"
 #include "HRTFDatabaseLoader.h"
 #include "OfflineAudioContext.h"
 #include "WorkerRunLoop.h"
@@ -88,11 +89,12 @@ void OfflineAudioDestinationNode::uninitialize()
     if (!isInitialized())
         return;
 
+    if (m_renderThread) {
+        m_renderThread->waitForCompletion();
+        m_renderThread = nullptr;
+    }
+
     if (m_startedRendering) {
-        if (m_renderThread) {
-            m_renderThread->waitForCompletion();
-            m_renderThread = nullptr;
-        }
         if (RefPtr workletProxy = context().audioWorklet().proxy()) {
             BinarySemaphore semaphore;
             workletProxy->postTaskForModeToWorkletGlobalScope([&semaphore](ScriptExecutionContext&) mutable {

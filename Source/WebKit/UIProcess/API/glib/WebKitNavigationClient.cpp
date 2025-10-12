@@ -91,16 +91,6 @@ private:
         webkitWebViewLoadFailed(m_webView, WEBKIT_LOAD_COMMITTED, resourceError.failingURL().string().utf8().data(), error.get());
     }
 
-    void didDisplayInsecureContent(WebPageProxy&, API::Object* /* userData */) override
-    {
-        webkitWebViewInsecureContentDetected(m_webView, WEBKIT_INSECURE_CONTENT_DISPLAYED);
-    }
-
-    void didRunInsecureContent(WebPageProxy&, API::Object* /* userData */) override
-    {
-        webkitWebViewInsecureContentDetected(m_webView, WEBKIT_INSECURE_CONTENT_RUN);
-    }
-
     bool didChangeBackForwardList(WebPageProxy&, WebBackForwardListItem* addedItem, const Vector<Ref<WebBackForwardListItem>>& removedItems) override
     {
         webkitBackForwardListChanged(webkit_web_view_get_back_forward_list(m_webView), addedItem, removedItems);

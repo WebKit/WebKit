@@ -15,14 +15,9 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/basic.html
-/LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/cross-document-away-and-back.html
-/LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/cross-document-location-api.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/exception-order-initial-about-blank-unserializablestate.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/exception-order-not-fully-active-unserializablestate.html
-/LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/history-pushState.html
-/LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/history-replaceState.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/initial-about-blank.html
-/LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/location-reload.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/no-args.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/not-fully-active.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/opaque-origin.html

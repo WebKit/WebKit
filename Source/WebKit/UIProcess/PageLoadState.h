@@ -183,8 +183,6 @@ public:
 
     void didSameDocumentNavigation(const Transaction::Token&, const String& url);
 
-    void didDisplayOrRunInsecureContent(const Transaction::Token&);
-
     void setUnreachableURL(const Transaction::Token&, const String&);
 
     const String& title() const;

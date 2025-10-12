@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src-attr directive of the Content Security Policy.
-PASS

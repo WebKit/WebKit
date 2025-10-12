@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,9 @@
 #include "config.h"
 #include "HTMLDialogElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "CSSSelector.h"
-#include "DocumentInlines.h"
+#include "DocumentPage.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FocusOptions.h"
@@ -76,7 +77,7 @@ ExceptionOr<void> HTMLDialogElement::show()
 
     queueDialogToggleEventTask(ToggleState::Closed, ToggleState::Open);
 
-    setBooleanAttribute(openAttr, true);
+    setAttributeWithoutSynchronization(openAttr, emptyAtom());
 
     Ref document = this->document();
     m_previouslyFocusedElement = document->focusedElement();
@@ -126,10 +127,10 @@ ExceptionOr<void> HTMLDialogElement::showModal()
 
     queueDialogToggleEventTask(ToggleState::Closed, ToggleState::Open);
 
-    // setBooleanAttribute will dispatch a DOMSubtreeModified event.
+    // setAttributeWihoutSynchronization will dispatch a DOMSubtreeModified event.
     // Postpone callback execution that can potentially make the dialog disconnected.
     EventQueueScope scope;
-    setBooleanAttribute(openAttr, true);
+    setAttributeWithoutSynchronization(openAttr, emptyAtom());
 
     setIsModal(true);
 
@@ -166,7 +167,7 @@ void HTMLDialogElement::close(const String& result)
 
     queueDialogToggleEventTask(ToggleState::Open, ToggleState::Closed);
 
-    setBooleanAttribute(openAttr, false);
+    removeAttribute(openAttr);
 
     if (isModal())
         removeFromTopLayer();
@@ -255,7 +256,7 @@ void HTMLDialogElement::runFocusingSteps()
         control = this;
 
     Ref controlDocument = control->document();
-    RefPtr page = controlDocument->protectedPage();
+    RefPtr page = controlDocument->page();
     if (!page)
         return;
 
@@ -299,4 +300,9 @@ void HTMLDialogElement::queueDialogToggleEventTask(ToggleState oldState, ToggleS
     RefPtr { m_toggleEventTask }->queue(oldState, newState);
 }
 
-};
+bool HTMLDialogElement::isOpen() const
+{
+    return hasAttributeWithoutSynchronization(HTMLNames::openAttr);
+}
+
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .sticky-container {
+            border: 1px solid black;
+            height: 400px;
+            width: 80%;
+            margin-top: -10px;
+        }
+
+        .sticky {
+            position: sticky;
+            top: 0px;
+            height: 20px;
+            width: 100%;
+            background-color: green;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        window.addEventListener('load', async () => {
+            await UIHelper.immediateScrollTo(0, 40, true);
+            await UIHelper.ensurePresentationUpdate();
+            var out = document.getElementById('out');
+            out.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, false);
+    </script>
+</head>
+<body>
+
+<div class="sticky-container">
+    <div class="sticky"></div>
+</div>
+<pre id="out"></pre>
+
+</body>
+</html>

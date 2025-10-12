@@ -4,7 +4,8 @@
 createBindGroupLayout validation tests.
 
 TODO: make sure tests are complete.
-`;import { kUnitCaseParamsBuilder } from '../../../common/framework/params_builder.js';
+`;import { AllFeaturesMaxLimitsGPUTest } from '../.././gpu_test.js';
+import { kUnitCaseParamsBuilder } from '../../../common/framework/params_builder.js';
 import { makeTestGroup } from '../../../common/framework/test_group.js';
 import {
   kShaderStages,
@@ -19,10 +20,10 @@ import {
 
   getBindingLimitForBindingType } from
 '../../capability_info.js';
-import { kAllTextureFormats, kTextureFormatInfo } from '../../format_info.js';
-import { MaxLimitsTestMixin } from '../../gpu_test.js';
-
-import { ValidationTest } from './validation_test.js';
+import {
+  isTextureFormatUsableWithStorageAccessMode,
+  kAllTextureFormats } from
+'../../format_info.js';
 
 function clone(descriptor) {
   return JSON.parse(JSON.stringify(descriptor));
@@ -74,7 +75,7 @@ function isValidBGLEntryForStages(device, visibility, entry) {
   true;
 }
 
-export const g = makeTestGroup(MaxLimitsTestMixin(ValidationTest));
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 g.test('duplicate_bindings').
 desc('Test that uniqueness of binding numbers across entries is enforced.').
@@ -505,16 +506,11 @@ u //
 .combine('format', kAllTextureFormats) //
 .combine('access', kStorageTextureAccessValues)
 ).
-beforeAllSubcases((t) => {
-  t.selectDeviceForTextureFormatOrSkipTestCase(t.params.format);
-  t.skipIfTextureFormatNotUsableAsStorageTextureDeprecated(t.params.format);
-}).
 fn((t) => {
   const { format, access } = t.params;
-  const info = kTextureFormatInfo[format];
+  t.skipIfTextureFormatNotSupported(format);
 
-  const success =
-  info.color?.storage && !(access === 'read-write' && !info.color?.readWriteStorage);
+  const success = isTextureFormatUsableWithStorageAccessMode(t.device, format, access);
 
   t.expectValidationError(() => {
     t.device.createBindGroupLayout({

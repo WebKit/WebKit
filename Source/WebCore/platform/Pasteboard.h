@@ -25,14 +25,16 @@
 
 #pragma once
 
-#include "DragImage.h"
-#include "PasteboardContext.h"
-#include "PasteboardCustomData.h"
-#include "PasteboardItemInfo.h"
-#include "SharedBuffer.h"
+#include <WebCore/DragImage.h>
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/PasteboardContext.h>
+#include <WebCore/PasteboardCustomData.h>
+#include <WebCore/PasteboardItemInfo.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -43,10 +45,12 @@ OBJC_CLASS NSString;
 #endif
 
 #if PLATFORM(COCOA)
+#include <WebCore/AttributedString.h>
+#include <WebCore/LegacyWebArchive.h>
 OBJC_CLASS NSArray;
 #endif
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
 #include "SelectionData.h"
 #endif
 
@@ -72,6 +76,8 @@ class FragmentedSharedBuffer;
 
 struct SimpleRange;
 
+static constexpr auto pasteboardExpirationDelay = 8_min;
+
 enum class PlainTextURLReadingPolicy : bool { IgnoreURL, AllowURL };
 enum class WebContentReadingPolicy : bool { AnyType, OnlyRichTextTypes };
 enum ShouldSerializeSelectedTextForDataTransfer { DefaultSelectedTextType, IncludeImageAltTextForDataTransfer };
@@ -83,12 +89,18 @@ struct PasteboardWebContent {
     String contentOrigin;
     bool canSmartCopyOrDelete;
     RefPtr<SharedBuffer> dataInWebArchiveFormat;
+    RefPtr<LegacyWebArchive> webArchive;
     RefPtr<SharedBuffer> dataInRTFDFormat;
     RefPtr<SharedBuffer> dataInRTFFormat;
-    RefPtr<SharedBuffer> dataInAttributedStringFormat;
+    std::optional<WebCore::AttributedString> dataInAttributedStringFormat;
     String dataInHTMLFormat;
     String dataInStringFormat;
     Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>> clientTypesAndData;
+#endif
+#if PLATFORM(IOS_FAMILY)
+    // WebArchive-only parameters.
+    HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>> localFrameArchives;
+    Vector<WebCore::FrameIdentifier> remoteFrameIdentifiers;
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
     String contentOrigin;
@@ -188,16 +200,12 @@ public:
     Pasteboard(std::unique_ptr<PasteboardContext>&&);
     virtual ~Pasteboard();
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
     explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, const String& name);
-    explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, SelectionData&);
 #if ENABLE(DRAG_SUPPORT)
+    explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, SelectionData&);
     explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, SelectionData&&);
 #endif
-#endif
-
-#if PLATFORM(WPE)
-    explicit Pasteboard(std::unique_ptr<PasteboardContext>&&, const String& name);
 #endif
 
 #if PLATFORM(WIN)
@@ -261,8 +269,10 @@ public:
     void writeSelection(const std::optional<SimpleRange>&, bool canSmartCopyOrDelete, LocalFrame&, ShouldSerializeSelectedTextForDataTransfer = DefaultSelectedTextType); // FIXME: Layering violation.
 #endif
 
-#if PLATFORM(GTK)
+#if (PLATFORM(GTK) || PLATFORM(WPE)) && ENABLE(DRAG_SUPPORT)
     const SelectionData& selectionData() const;
+#endif
+#if PLATFORM(GTK)
     static std::unique_ptr<Pasteboard> createForGlobalSelection(std::unique_ptr<PasteboardContext>&&);
 #endif
 
@@ -357,7 +367,7 @@ private:
 
     std::unique_ptr<PasteboardContext> m_context;
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<SelectionData> m_selectionData;
 #endif
 
@@ -385,18 +395,18 @@ private:
 };
 
 #if PLATFORM(IOS_FAMILY)
-extern NSString *WebArchivePboardType;
+WEBCORE_EXPORT extern NSString *WebArchivePboardType;
 extern NSString *UIColorPboardType;
 extern NSString *UIImagePboardType;
 #endif
 
 #if PLATFORM(MAC)
-extern const ASCIILiteral WebArchivePboardType;
+WEBCORE_EXPORT extern const ASCIILiteral WebArchivePboardType;
 extern const ASCIILiteral WebURLNamePboardType;
 extern const ASCIILiteral WebURLsWithTitlesPboardType;
 #endif
 
-#if !PLATFORM(GTK)
+#if !PLATFORM(GTK) && !PLATFORM(WPE)
 
 inline Pasteboard::~Pasteboard()
 {

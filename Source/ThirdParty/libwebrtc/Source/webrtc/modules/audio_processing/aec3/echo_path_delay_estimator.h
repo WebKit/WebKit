@@ -11,11 +11,9 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_ECHO_PATH_DELAY_ESTIMATOR_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_ECHO_PATH_DELAY_ESTIMATOR_H_
 
-#include <stddef.h>
-
+#include <cstddef>
 #include <optional>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/alignment_mixer.h"
 #include "modules/audio_processing/aec3/block.h"
 #include "modules/audio_processing/aec3/clockdrift_detector.h"

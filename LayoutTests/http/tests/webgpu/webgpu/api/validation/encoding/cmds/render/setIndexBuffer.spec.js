@@ -4,12 +4,12 @@
 Validation tests for setIndexBuffer on render pass and render bundle.
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import { GPUConst } from '../../../../../constants.js';
-import { kResourceStates } from '../../../../../gpu_test.js';
-import { AllFeaturesMaxLimitsValidationTest } from '../../../validation_test.js';
+import { kResourceStates, AllFeaturesMaxLimitsGPUTest } from '../../../../../gpu_test.js';
+import * as vtu from '../../../validation_test_utils.js';
 
 import { kRenderEncodeTypeParams, buildBufferOffsetAndSizeOOBTestParams } from './render.js';
 
-export const g = makeTestGroup(AllFeaturesMaxLimitsValidationTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 g.test('index_buffer_state').
 desc(
@@ -20,7 +20,7 @@ Tests index buffer must be valid.
 paramsSubcasesOnly(kRenderEncodeTypeParams.combine('state', kResourceStates)).
 fn((t) => {
   const { encoderType, state } = t.params;
-  const indexBuffer = t.createBufferWithState(state, {
+  const indexBuffer = vtu.createBufferWithState(t, state, {
     size: 16,
     usage: GPUBufferUsage.INDEX
   });

@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "UnlinkedSourceCode.h"
+#include <JavaScriptCore/UnlinkedSourceCode.h>
 
 namespace JSC {
 

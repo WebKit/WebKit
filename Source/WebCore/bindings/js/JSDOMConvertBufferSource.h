@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "BufferSource.h"
-#include "IDLTypes.h"
-#include "JSDOMConvertBase.h"
-#include "JSDOMWrapperCache.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSTypedArrays.h>
+#include <WebCore/BufferSource.h>
+#include <WebCore/IDLTypes.h>
+#include <WebCore/JSDOMConvertBase.h>
+#include <WebCore/JSDOMWrapperCache.h>
 
 namespace WebCore {
 

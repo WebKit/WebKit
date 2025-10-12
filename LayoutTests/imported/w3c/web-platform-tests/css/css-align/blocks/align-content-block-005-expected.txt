@@ -52,15 +52,15 @@ OVERFLOW
 Show Text
 
 
-PASS .test 1
-PASS .test 2
-PASS .test 3
-PASS .test 4
-PASS .test 5
-PASS .test 6
-PASS .test 7
-PASS .test 8
-FAIL .test 9 assert_equals:
+PASS .test 1: start
+PASS .test 2: center
+PASS .test 3: end
+PASS .test 4: baseline
+PASS .test 5: last baseline
+PASS .test 6: flex-start
+PASS .test 7: flex-end
+PASS .test 8: unsafe start
+FAIL .test 9: unsafe center assert_equals:
 <div class="test" style="align-content: unsafe center" title="unsafe center">
     <div class="float" data-offset-y="25">FLT</div>
     <div class="in-flow" data-offset-y="35"></div>
@@ -73,7 +73,7 @@ FAIL .test 9 assert_equals:
     </div>
   </div>
 offsetTop expected 25 but got 15
-FAIL .test 10 assert_equals:
+FAIL .test 10: unsafe end assert_equals:
 <div class="test" style="align-content: unsafe end" title="unsafe end">
     <div class="float" data-offset-y="15">FLT</div>
     <div class="in-flow" data-offset-y="25"></div>
@@ -86,11 +86,11 @@ FAIL .test 10 assert_equals:
     </div>
   </div>
 offsetTop expected 15 but got -5
-PASS .test 11
-PASS .test 12
-PASS .test 13
-PASS .test 14
-PASS .test 15
-PASS .test 16
-PASS .test 17
+PASS .test 11: safe start
+PASS .test 12: safe center
+PASS .test 13: safe end
+PASS .test 14: space-evenly
+PASS .test 15: space-between
+PASS .test 16: space-around
+PASS .test 17: normal
 

@@ -31,8 +31,8 @@
 
 #pragma once
 
-#include "JSDOMWrapper.h"
-#include "ScriptWrappable.h"
+#include <WebCore/JSDOMWrapper.h>
+#include <WebCore/ScriptWrappable.h>
 
 namespace WebCore {
 

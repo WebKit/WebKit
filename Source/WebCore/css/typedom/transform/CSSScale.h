@@ -52,7 +52,7 @@ public:
     void setY(CSSNumberish);
     void setZ(CSSNumberish);
 
-    CSSTransformType getType() const final { return CSSTransformType::Scale; }
+    CSSTransformType transformType() const final { return CSSTransformType::Scale; }
 
     RefPtr<CSSValue> toCSSValue() const final;
 
@@ -67,5 +67,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSScale)
-    static bool isType(const WebCore::CSSTransformComponent& transform) { return transform.getType() == WebCore::CSSTransformType::Scale; }
+    static bool isType(const WebCore::CSSTransformComponent& transform) { return transform.transformType() == WebCore::CSSTransformType::Scale; }
 SPECIALIZE_TYPE_TRAITS_END()

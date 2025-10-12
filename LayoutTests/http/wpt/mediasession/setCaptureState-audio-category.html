@@ -23,6 +23,8 @@ async function waitForInternalAudioCategory(expectedCategory)
 
 promise_test(async (test) => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+
     const track = stream.getTracks()[0];
 
     const recorder = new MediaRecorder(stream);

@@ -5,6 +5,11 @@
 //
 // ComputeShaderTest:
 //   Compute shader specific tests.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include <vector>
 #include "test_utils/ANGLETest.h"
@@ -2288,6 +2293,90 @@ TEST_P(ComputeShaderTest, ExceedCombinedShaderOutputResourcesInCS)
     EXPECT_EQ(0u, computeProgram);
 }
 
+// Tests running a compute shader writing to separate components on SSBO without explicit barrier.
+// Based on dEQP test: KHR-GLES31.core.shader_storage_buffer_object.advanced-switchBuffers-cs
+TEST_P(ComputeShaderTest, WriteToSeparateSSBOComponentsWithoutExplicitBarrier)
+{
+    constexpr char kCS[] = R"(#version 310 es
+precision highp float;
+precision highp int;
+
+layout(local_size_x = 1) in;
+layout(binding = 0, std430) buffer Input {
+    uint cookie[4];
+} g_in;
+
+layout(binding = 1, std430) buffer Output {
+    uvec4 digest;
+};
+
+void main()
+{
+    uint sum = g_in.cookie[0] + g_in.cookie[1] + g_in.cookie[2] + g_in.cookie[3];
+    switch (sum)
+    {
+        case 0x000000FFu:
+            digest.x = 0xFF000000u;
+            break;
+        case 0x0000FF00u:
+            digest.y = 0x00FF0000u;
+            break;
+        case 0x00FF0000u:
+            digest.z = 0x0000FF00u;
+            break;
+        case 0xFF000000u:
+            digest.w = 0x000000FFu;
+            break;
+        default:
+            break;
+   }
+})";
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+    EXPECT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    GLBuffer ssboIn[4];
+    GLBuffer ssboOut;
+
+    const GLubyte data0[] = {0, 0, 0, 0x11, 0, 0, 0, 0x44, 0, 0, 0, 0x88, 0, 0, 0, 0x22};
+    const GLubyte data1[] = {0, 0, 0x44, 0, 0, 0, 0x22, 0, 0, 0, 0x88, 0, 0, 0, 0x11, 0};
+    const GLubyte data2[] = {0, 0x88, 0, 0, 0, 0x11, 0, 0, 0, 0x44, 0, 0, 0, 0x22, 0, 0};
+    const GLubyte data3[] = {0x22, 0, 0, 0, 0x88, 0, 0, 0, 0x11, 0, 0, 0, 0x44, 0, 0, 0};
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboIn[0]);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(data0), data0, GL_STATIC_DRAW);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboIn[1]);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(data1), data1, GL_STATIC_DRAW);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboIn[2]);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(data2), data2, GL_STATIC_DRAW);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboIn[3]);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(data3), data3, GL_STATIC_DRAW);
+
+    const GLubyte dataZero[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, ssboOut);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(dataZero), dataZero, GL_STATIC_DRAW);
+
+    // Since the write is expected to occur on separate components on the output SSBO, no explicit
+    // barrier is used between the dispatch calls.
+    for (uint32_t i = 0; i < 4; ++i)
+    {
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssboIn[i]);
+        glDispatchCompute(1, 1, 1);
+    }
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboOut);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    auto actualOutput = static_cast<GLuint *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(data0), GL_MAP_READ_BIT));
+    EXPECT_NE(actualOutput, nullptr);
+
+    GLuint expectedOutput[4] = {0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF};
+    for (uint32_t i = 0; i < 4; i++)
+    {
+        EXPECT_EQ(actualOutput[i], expectedOutput[i]) << "Failed at index " << i;
+    }
+}
+
 // Test that uniform block with struct member in compute shader is supported.
 TEST_P(ComputeShaderTest, UniformBlockWithStructMember)
 {
@@ -3172,6 +3261,12 @@ void main()
 // 3.10
 TEST_P(ComputeShaderTestES3, NotSupported)
 {
+    // Allow the system EGL to skip the test if the context version is not exactly 3.0, which is
+    // possible when the driver does not support "EGL_ANGLE_create_context_backwards_compatible".
+    ANGLE_SKIP_TEST_IF(isDriverSystemEgl() &&
+                       (getClientMajorVersion() > 3 ||
+                        (getClientMajorVersion() == 3 && getClientMinorVersion() >= 1)));
+
     GLuint computeShaderHandle = glCreateShader(GL_COMPUTE_SHADER);
     EXPECT_EQ(0u, computeShaderHandle);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);

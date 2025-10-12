@@ -17,6 +17,7 @@ set(test_main_SOURCES gtk/main.cpp)
 list(APPEND TestWTF_SOURCES
     ${test_main_SOURCES}
 
+    Tests/WTF/glib/ActivityObserver.cpp
     Tests/WTF/glib/GRefPtr.cpp
     Tests/WTF/glib/GUniquePtr.cpp
     Tests/WTF/glib/GWeakPtr.cpp
@@ -31,6 +32,15 @@ list(APPEND TestWTF_LIBRARIES
     GTK::GTK
 )
 
+# TestJavaScriptCore
+list(APPEND TestJavaScriptCore_SOURCES
+    ${test_main_SOURCES}
+)
+
+list(APPEND TestJavaScriptCore_LIBRARIES
+    GTK::GTK
+)
+
 # TestWebCore
 list(APPEND TestWebCore_SOURCES
     ${test_main_SOURCES}
@@ -38,6 +48,8 @@ list(APPEND TestWebCore_SOURCES
     Tests/WebCore/UserAgentQuirks.cpp
 
     Tests/WebCore/glib/Damage.cpp
+    Tests/WebCore/glib/GraphicsContextGLTextureMapper.cpp
+    Tests/WebCore/glib/RunLoopObserver.cpp
 
     Tests/WebCore/gstreamer/GStreamerTest.cpp
     Tests/WebCore/gstreamer/GstElementHarness.cpp
@@ -45,12 +57,10 @@ list(APPEND TestWebCore_SOURCES
 )
 
 list(APPEND TestWebCore_SYSTEM_INCLUDE_DIRECTORIES
-    ${GLIB_INCLUDE_DIRS}
     ${GSTREAMER_INCLUDE_DIRS}
     ${GSTREAMER_AUDIO_INCLUDE_DIRS}
     ${GSTREAMER_PBUTILS_INCLUDE_DIRS}
     ${GSTREAMER_VIDEO_INCLUDE_DIRS}
-    ${LIBSOUP_INCLUDE_DIRS}
 )
 
 list(APPEND TestWebCore_LIBRARIES

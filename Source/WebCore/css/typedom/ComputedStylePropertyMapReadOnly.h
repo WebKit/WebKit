@@ -25,7 +25,10 @@
 
 #pragma once
 
+#include "Element.h"
 #include "MainThreadStylePropertyMapReadOnly.h"
+#include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class Element;

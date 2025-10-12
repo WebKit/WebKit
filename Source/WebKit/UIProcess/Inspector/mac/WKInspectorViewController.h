@@ -48,6 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (BOOL)viewIsInspectorWebView:(NSView *)view;
 + (NSURL * _Nullable)URLForInspectorResource:(NSString *)resource;
+- (void)didAttachOrDetach;
 
 @end
 
@@ -56,6 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)inspectorViewControllerDidBecomeActive:(WKInspectorViewController *)inspectorViewController;
 - (void)inspectorViewControllerInspectorDidCrash:(WKInspectorViewController *)inspectorViewController;
 - (BOOL)inspectorViewControllerInspectorIsUnderTest:(WKInspectorViewController *)inspectorViewController;
+- (BOOL)inspectorViewControllerInspectorIsHorizontallyAttached:(WKInspectorViewController *)inspectorViewController;
 - (void)inspectorViewController:(WKInspectorViewController *)inspectorViewController willMoveToWindow:(NSWindow *)newWindow;
 - (void)inspectorViewControllerDidMoveToWindow:(WKInspectorViewController *)inspectorViewController;
 - (void)inspectorViewController:(WKInspectorViewController *)inspectorViewController openURLExternally:(NSURL *)url;

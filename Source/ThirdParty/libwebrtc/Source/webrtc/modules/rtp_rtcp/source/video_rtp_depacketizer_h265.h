@@ -21,8 +21,7 @@ class VideoRtpDepacketizerH265 : public VideoRtpDepacketizer {
  public:
   ~VideoRtpDepacketizerH265() override = default;
 
-  std::optional<ParsedRtpPayload> Parse(
-      rtc::CopyOnWriteBuffer rtp_payload) override;
+  std::optional<ParsedRtpPayload> Parse(CopyOnWriteBuffer rtp_payload) override;
 };
 }  // namespace webrtc
 

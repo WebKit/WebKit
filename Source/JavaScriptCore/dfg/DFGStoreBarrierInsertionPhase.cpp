@@ -381,7 +381,8 @@ private:
             case NewAsyncGenerator:
             case NewArray:
             case NewArrayWithSize:
-            case NewArrayWithConstantSize:
+            case NewArrayWithButterfly:
+            case NewButterflyWithSize:
             case NewArrayWithSizeAndStructure:
             case NewArrayBuffer:
             case NewInternalFieldObject:
@@ -394,7 +395,7 @@ private:
             case NewSet:
             case NewSymbol:
             case MaterializeNewObject:
-            case MaterializeNewArrayWithConstantSize:
+            case MaterializeNewArrayWithButterfly:
             case MaterializeCreateActivation:
             case MakeRope:
             case MakeAtomString:

@@ -30,22 +30,22 @@ from .wpewebkit.options import Options as WPEWebKitOptions  # noqa
 from .wpewebkit.service import Service as WPEWebKitService  # noqa
 from .wpewebkit.webdriver import WebDriver as WPEWebKit  # noqa
 
-__version__ = "4.32.0.202504060755"
+__version__ = "4.36.0.202508121825"
 
 # We need an explicit __all__ because the above won't otherwise be exported.
 __all__ = [
+    "ActionChains",
+    "DesiredCapabilities",
+    "Keys",
+    "Proxy",
+    "Remote",
     "Safari",
     "SafariOptions",
     "SafariService",
-    "WebKitGTK",
-    "WebKitGTKOptions",
-    "WebKitGTKService",
     "WPEWebKit",
     "WPEWebKitOptions",
     "WPEWebKitService",
-    "Remote",
-    "DesiredCapabilities",
-    "ActionChains",
-    "Proxy",
-    "Keys",
+    "WebKitGTK",
+    "WebKitGTKOptions",
+    "WebKitGTKService",
 ]

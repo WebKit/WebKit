@@ -30,19 +30,19 @@
 
 #pragma once
 
-#include "ContentSecurityPolicyResponseHeaders.h"
-#include "CrossOriginAccessControl.h"
-#include "CrossOriginEmbedderPolicy.h"
-#include "FetchIdentifier.h"
-#include "FetchOptions.h"
-#include "FetchingWorkerIdentifier.h"
-#include "HTTPHeaderNames.h"
-#include "LoadedFromOpaqueSource.h"
-#include "RequestPriority.h"
-#include "ServiceWorkerIdentifier.h"
-#include "ServiceWorkerTypes.h"
-#include "SharedWorkerIdentifier.h"
-#include "StoredCredentialsPolicy.h"
+#include <WebCore/ContentSecurityPolicyResponseHeaders.h>
+#include <WebCore/CrossOriginAccessControl.h>
+#include <WebCore/CrossOriginEmbedderPolicy.h>
+#include <WebCore/FetchIdentifier.h>
+#include <WebCore/FetchOptions.h>
+#include <WebCore/FetchingWorkerIdentifier.h>
+#include <WebCore/HTTPHeaderNames.h>
+#include <WebCore/LoadedFromOpaqueSource.h>
+#include <WebCore/RequestPriority.h>
+#include <WebCore/ServiceWorkerIdentifier.h>
+#include <WebCore/ServiceWorkerTypes.h>
+#include <WebCore/SharedWorkerIdentifier.h>
+#include <WebCore/StoredCredentialsPolicy.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -95,9 +95,10 @@ static constexpr unsigned bitWidthOfDefersLoadingPolicy = 1;
 
 enum class CachingPolicy : uint8_t {
     AllowCaching,
-    DisallowCaching
+    DisallowCaching,
+    AllowCachingPrefetch
 };
-static constexpr unsigned bitWidthOfCachingPolicy = 1;
+static constexpr unsigned bitWidthOfCachingPolicy = 2;
 
 enum class ClientCredentialPolicy : bool {
     CannotAskClientForCredentials,
@@ -135,12 +136,6 @@ enum class ServiceWorkersMode : uint8_t {
     Only // An error will happen if service worker is not handling the fetch. Used to bypass preflight safely.
 };
 static constexpr unsigned bitWidthOfServiceWorkersMode = 2;
-
-enum class ApplicationCacheMode : uint8_t {
-    Use,
-    Bypass
-};
-static constexpr unsigned bitWidthOfApplicationCacheMode = 1;
 
 enum class ContentEncodingSniffingPolicy : bool {
     Default,
@@ -186,7 +181,6 @@ struct ResourceLoaderOptions : public FetchOptions {
         , initiatorContext(InitiatorContext::Document)
         , initiator(Initiator::EmptyString)
         , serviceWorkersMode(ServiceWorkersMode::All)
-        , applicationCacheMode(ApplicationCacheMode::Use)
         , clientCredentialPolicy(ClientCredentialPolicy::CannotAskClientForCredentials)
         , preflightPolicy(PreflightPolicy::Consider)
         , loadedFromOpaqueSource(LoadedFromOpaqueSource::No)
@@ -211,7 +205,6 @@ struct ResourceLoaderOptions : public FetchOptions {
         , initiatorContext(InitiatorContext::Document)
         , initiator(Initiator::EmptyString)
         , serviceWorkersMode(ServiceWorkersMode::All)
-        , applicationCacheMode(ApplicationCacheMode::Use)
         , clientCredentialPolicy(credentialPolicy)
         , preflightPolicy(PreflightPolicy::Consider)
         , loadedFromOpaqueSource(LoadedFromOpaqueSource::No)
@@ -224,8 +217,8 @@ struct ResourceLoaderOptions : public FetchOptions {
         this->mode = mode;
     }
 
-    Markable<ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationIdentifier::MarkableTraits> serviceWorkerRegistrationIdentifier;
-    Markable<ContentSecurityPolicyResponseHeaders, ContentSecurityPolicyResponseHeaders::MarkableTraits> cspResponseHeaders;
+    Markable<ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
+    Markable<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
     std::optional<CrossOriginEmbedderPolicy> crossOriginEmbedderPolicy;
 
     uint8_t maxRedirectCount { 20 };
@@ -245,7 +238,6 @@ struct ResourceLoaderOptions : public FetchOptions {
     InitiatorContext initiatorContext : bitWidthOfInitiatorContext;
     Initiator initiator : bitWidthOfInitiator;
     ServiceWorkersMode serviceWorkersMode : bitWidthOfServiceWorkersMode;
-    ApplicationCacheMode applicationCacheMode : bitWidthOfApplicationCacheMode;
     ClientCredentialPolicy clientCredentialPolicy : bitWidthOfClientCredentialPolicy;
     PreflightPolicy preflightPolicy : bitWidthOfPreflightPolicy;
     LoadedFromOpaqueSource loadedFromOpaqueSource : bitWidthOfLoadedFromOpaqueSource;

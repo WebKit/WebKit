@@ -28,7 +28,7 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include "PlatformRawAudioData.h"
+#include <WebCore/PlatformRawAudioData.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

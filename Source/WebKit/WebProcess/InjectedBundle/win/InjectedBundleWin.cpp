@@ -33,7 +33,7 @@ namespace WebKit {
 
 bool InjectedBundle::initialize(const WebProcessCreationParameters&, RefPtr<API::Object>&& initializationUserData)
 {
-    HMODULE lib = ::LoadLibrary(m_path.wideCharacters().data());
+    HMODULE lib = ::LoadLibrary(m_path.wideCharacters().span().data());
     if (!lib)
         return false;
 

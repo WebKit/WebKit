@@ -77,13 +77,6 @@ p {
 var output = "This test ensures we compute the right visible character range for writing-mode: vertical-rl text.\n\n";
 
 var axBody;
-async function verifyRange(windowWidth, windowHeight, scrollBy, expectedRangeString) {
-    testRunner.setViewSize(windowWidth, windowHeight);
-    document.body.scrollTop = scrollBy;
-    output += `Testing window width ${windowWidth}px, height ${windowHeight}px, scrollTop ${scrollBy}px\n`;
-    await waitFor(() => axBody.stringDescriptionOfAttributeValue("AXVisibleCharacterRange").includes(expectedRangeString));
-}
-
 if (window.accessibilityController) {
     window.jsTestIsAsync = true;
 
@@ -91,11 +84,17 @@ if (window.accessibilityController) {
         axBody = accessibilityController.accessibleElementById("body");
 
         // These values are chosen because they exercise shrinking line-by-line from the end of the text to find the visible character range.
-        await verifyRange(/* width */ 623, /* height */ 1240, /* scrollTop */ 506, "{0, 240}");
+        // NOTE: There are multiple "accepted" values in this test, e.g. in this testcase {0, 240} or {0, 258}. The main-thread
+        // and off-main-thread implementations for visible-character-range are different. The latter ({0, 258} in this case) is
+        // actually generally more accurate. Visibly, with this geomtry, "Line twelve line twelve" is visible but excluded by
+        // the main-thread implementation.
+        output += await verifyVisibleRange(axBody, { width: 623, height: 1240, scrollTop: 506 }, ["{0, 240}", "{0, 258}"]);
 
         // These values exercise shrinking line-by-line from the start of the text.
-        await verifyRange(/* width */ 305, /* height */ 1477, /* scrollTop */ 632, accessibilityController.platformName === "ios" ? "{0, 124}" : "{0, 106}");
-        await verifyRange(/* width */ 625, /* height */ 48, /* scrollTop */ 29, "{537, 500}");
+        output += await verifyVisibleRange(axBody, { width: 305, height: 1477, scrollTop: 632 }, accessibilityController.platformName === "ios" ? ["{0, 124}"] : ["{0, 106}", "{0, 121}"]);
+        // NOTE: The old implementation's expectation of {537, 500} — there aren't even 537 characters in the whole test corpus,
+        // so for the location (where the range starts) to be 537 is just not right.
+        output += await verifyVisibleRange(axBody, { width: 625, height: 48, scrollTop: 29 }, ["{537, 500}", "{0, 203}"]);
 
         debug(output);
         document.getElementById("content-wrapper").style.display = "none";

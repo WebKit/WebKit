@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "AbstractSlotVisitorInlines.h"
-#include "HeapCellInlines.h"
-#include "MarkedBlock.h"
-#include "PreciseAllocation.h"
-#include "SlotVisitor.h"
+#include <JavaScriptCore/AbstractSlotVisitorInlines.h>
+#include <JavaScriptCore/HeapCellInlines.h>
+#include <JavaScriptCore/MarkedBlock.h>
+#include <JavaScriptCore/PreciseAllocation.h>
+#include <JavaScriptCore/SlotVisitor.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

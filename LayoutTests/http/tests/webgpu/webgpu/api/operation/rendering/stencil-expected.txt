@@ -187,4 +187,7 @@ PASS :stencil_read_write_mask:format="depth32float-stencil8";maskType="read";ste
 PASS :stencil_reference_initialized:format="stencil8"
 PASS :stencil_reference_initialized:format="depth24plus-stencil8"
 PASS :stencil_reference_initialized:format="depth32float-stencil8"
+PASS :stencil_accumulation:format="stencil8"
+PASS :stencil_accumulation:format="depth24plus-stencil8"
+PASS :stencil_accumulation:format="depth32float-stencil8"
 

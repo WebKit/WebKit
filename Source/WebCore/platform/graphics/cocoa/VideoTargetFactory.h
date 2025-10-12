@@ -27,8 +27,8 @@
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 
-#include "VideoReceiverEndpoint.h"
-#include "VideoTarget.h"
+#include <WebCore/VideoReceiverEndpoint.h>
+#include <WebCore/VideoTarget.h>
 
 namespace WebCore {
 

@@ -108,7 +108,7 @@ void EndowmentStateTracker::registerMonitorIfNecessary()
         [config setStateDescriptor:stateDescriptor];
 
         [config setUpdateHandler:[this] (RBSProcessMonitor * _Nonnull monitor, RBSProcessHandle * _Nonnull process, RBSProcessStateUpdate * _Nonnull update) mutable {
-            RunLoop::protectedMain()->dispatch([this, state = stateFromEndowments(update.state.endowmentNamespaces)]() mutable {
+            RunLoop::mainSingleton().dispatch([this, state = stateFromEndowments(update.state.endowmentNamespaces)]() mutable {
                 setState(WTFMove(state));
             });
         }];

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Editing.h"
-#include "PositionInlines.h"
+#include <WebCore/Editing.h>
+#include <WebCore/PositionInlines.h>
 
 namespace WebCore {
 

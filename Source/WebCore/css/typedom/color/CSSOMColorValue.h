@@ -59,3 +59,7 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSOMColorValue)
+static bool isType(const WebCore::CSSStyleValue& styleValue) { return WebCore::isCSSColorValue(styleValue.styleValueType()); }
+SPECIALIZE_TYPE_TRAITS_END()

@@ -290,7 +290,7 @@ static String retrieveSeparator(const CString& locale, const String& numberingSy
         return fallbackTimeSeparator;
 
     int32_t length = 0;
-    const UChar* data = ures_getStringByKey(symbolsBundle.get(), "timeSeparator", &length, &status);
+    const char16_t* data = ures_getStringByKey(symbolsBundle.get(), "timeSeparator", &length, &status);
     if (U_FAILURE(status))
         return fallbackTimeSeparator;
 
@@ -330,7 +330,7 @@ static DurationSignType getDurationSign(ISO8601::Duration duration)
 
 static String int128ToString(Int128 value)
 {
-    Vector<LChar> resultString;
+    Vector<Latin1Character> resultString;
     bool isNegative = value < 0;
     if (isNegative)
         value = -value;
@@ -474,7 +474,7 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                 auto scope = DECLARE_THROW_SCOPE(vm);
 
                 UErrorCode status = U_ZERO_ERROR;
-                Vector<UChar, 32> buffer;
+                Vector<char16_t, 32> buffer;
                 status = callBufferProducingFunction(unumf_resultToString, formattedNumber, buffer);
                 if (U_FAILURE(status)) {
                     throwTypeError(globalObject, scope, "Failed to format a number."_s);
@@ -670,7 +670,7 @@ JSValue IntlDurationFormat::format(JSGlobalObject* globalObject, ISO8601::Durati
 
     ListFormatInput input(WTFMove(stringList));
 
-    Vector<UChar, 32> result;
+    Vector<char16_t, 32> result;
     auto status = callBufferProducingFunction(ulistfmt_format, m_listFormat.get(), input.stringPointers(), input.stringLengths(), input.size(), result);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
@@ -743,7 +743,7 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
         return throwOutOfMemoryError(globalObject, scope);
 
     int32_t formattedStringLength = 0;
-    const UChar* formattedStringPointer = ufmtval_getString(formattedValue, &formattedStringLength, &status);
+    const char16_t* formattedStringPointer = ufmtval_getString(formattedValue, &formattedStringLength, &status);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
     StringView resultStringView(std::span(formattedStringPointer, formattedStringLength));

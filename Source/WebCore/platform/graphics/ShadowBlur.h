@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Sencha, Inc.
  * Copyright (C) 2010 Igalia S.L.
  * All rights reserved.

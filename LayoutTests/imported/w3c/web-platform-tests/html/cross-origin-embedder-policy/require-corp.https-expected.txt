@@ -1,19 +1,3 @@
-CONSOLE MESSAGE: Refused to display 'https://localhost:9443/common/blank.html' in a frame because of Cross-Origin-Embedder-Policy.
-CONSOLE MESSAGE: Refused to display 'https://localhost:9443/common/blank.html' in a frame because of Cross-Origin-Embedder-Policy.
-CONSOLE MESSAGE: Sandbox access violation: Blocked a frame at "null" from accessing a frame at "null".  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
-CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/navigate-require-corp-same-site.sub.html?token=7f740667-fa50-474b-9654-b1e3e95e140a because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/navigate-require-corp-same-site.sub.html?token=d31dd031-d251-4252-acd0-10f2e7e6361e because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/blank.html due to access control checks.
-CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/navigate-require-corp-same-site.sub.html?to=https%3A%2F%2Flocalhost%3A9443%2Fhtml%2Fcross-origin-embedder-policy%2Fresources%2Fnavigate-require-corp.sub.html%3FchannelName%3D7ed05564-3dc1-48aa-bf71-c2ec7cd256c7 because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/navigate-require-corp-same-site.sub.html?to=https%3A%2F%2F127.0.0.1%3A9443%2Fhtml%2Fcross-origin-embedder-policy%2Fresources%2Fnavigate-require-corp.sub.html%3FchannelName%3D37a66f6f-2599-4290-918f-b20b36fbdef5 because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Refused to display 'https://127.0.0.1:9443/common/redirect.py?location=https%3A%2F%2Flocalhost%3A9443%2Fhtml%2Fcross-origin-embedder-policy%2Fresources%2Fnavigate-require-corp.sub.html%3FchannelName%3Ddb48278c-c318-4668-a194-bd41cada851f' in a frame because of Cross-Origin-Embedder-Policy.
-CONSOLE MESSAGE: Redirection was blocked by Cross-Origin-Embedder-Policy
-CONSOLE MESSAGE: Sandbox access violation: Blocked a frame at "https://localhost:9443" from accessing a frame at "null".  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
-CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/blank.html due to access control checks.
-CONSOLE MESSAGE: Refused to display 'https://localhost:9443/common/blank.html' in a frame because of Cross-Origin-Embedder-Policy.
-CONSOLE MESSAGE: Sandbox access violation: Blocked a frame at "https://localhost:9443" from accessing a frame at "https://localhost:9443".  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
 
 Harness Error (TIMEOUT), message = null
 

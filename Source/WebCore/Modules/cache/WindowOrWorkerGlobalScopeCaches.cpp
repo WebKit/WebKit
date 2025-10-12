@@ -28,12 +28,10 @@
 
 #include "CacheStorageProvider.h"
 #include "DOMCacheStorage.h"
-#include "Document.h"
-#include "FrameInlines.h"
+#include "DocumentPage.h"
 #include "LocalDOMWindow.h"
 #include "LocalDOMWindowProperty.h"
 #include "LocalFrameInlines.h"
-#include "Page.h"
 #include "Supplementable.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -51,6 +49,7 @@ public:
 
 private:
     static ASCIILiteral supplementName() { return "DOMWindowCaches"_s; }
+    bool isDOMWindowCaches() const final { return true; }
 
     mutable RefPtr<DOMCacheStorage> m_caches;
 };
@@ -66,6 +65,7 @@ public:
 
 private:
     static ASCIILiteral supplementName() { return "WorkerGlobalScopeCaches"_s; }
+    bool isWorkerGlobalScopeCaches() const final { return true; }
 
     WeakRef<WorkerGlobalScope, WeakPtrImplWithEventTargetData> m_scope;
     mutable RefPtr<DOMCacheStorage> m_caches;
@@ -82,7 +82,7 @@ DOMWindowCaches::DOMWindowCaches(LocalDOMWindow& window)
 
 DOMWindowCaches* DOMWindowCaches::from(LocalDOMWindow& window)
 {
-    auto* supplement = static_cast<DOMWindowCaches*>(Supplement<LocalDOMWindow>::from(&window, supplementName()));
+    auto* supplement = downcast<DOMWindowCaches>(Supplement<LocalDOMWindow>::from(&window, supplementName()));
     if (!supplement) {
         auto newSupplement = makeUnique<DOMWindowCaches>(window);
         supplement = newSupplement.get();
@@ -96,7 +96,7 @@ DOMCacheStorage* DOMWindowCaches::caches() const
     ASSERT(frame());
     ASSERT(frame()->document());
     if (!m_caches && frame()->page())
-        m_caches = DOMCacheStorage::create(*frame()->document(), frame()->page()->cacheStorageProvider().createCacheStorageConnection());
+        m_caches = DOMCacheStorage::create(*frame()->protectedDocument(), frame()->page()->cacheStorageProvider().createCacheStorageConnection());
     return m_caches.get();
 }
 
@@ -111,7 +111,7 @@ WorkerGlobalScopeCaches::WorkerGlobalScopeCaches(WorkerGlobalScope& scope)
 
 WorkerGlobalScopeCaches* WorkerGlobalScopeCaches::from(WorkerGlobalScope& scope)
 {
-    auto* supplement = static_cast<WorkerGlobalScopeCaches*>(Supplement<WorkerGlobalScope>::from(&scope, supplementName()));
+    auto* supplement = downcast<WorkerGlobalScopeCaches>(Supplement<WorkerGlobalScope>::from(&scope, supplementName()));
     if (!supplement) {
         auto newSupplement = makeUnique<WorkerGlobalScopeCaches>(scope);
         supplement = newSupplement.get();
@@ -152,3 +152,11 @@ DOMCacheStorage* WindowOrWorkerGlobalScopeCaches::caches(ScriptExecutionContext&
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::DOMWindowCaches)
+    static bool isType(const WebCore::SupplementBase& supplement) { return supplement.isDOMWindowCaches(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WorkerGlobalScopeCaches)
+    static bool isType(const WebCore::SupplementBase& supplement) { return supplement.isWorkerGlobalScopeCaches(); }
+SPECIALIZE_TYPE_TRAITS_END()

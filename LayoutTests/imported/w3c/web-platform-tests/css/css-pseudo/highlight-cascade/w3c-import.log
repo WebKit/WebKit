@@ -45,6 +45,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-008-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-008.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-011.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-computed-inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-computed-visited.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-computed.html
@@ -89,7 +91,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-006-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-006-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-006.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-pseudos-computed-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-pseudos-computed-search-text.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-pseudos-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-pseudos-inheritance-computed-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-pseudos-visited-computed-001.html

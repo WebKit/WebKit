@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2010 Google, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@ public:
     void executeScriptsWaitingForStylesheetsSoon();
 
     // Returns true if the parser didn't yield or pause or synchronously execute a script,
-    // so calls to PageConsoleClient should be associated with the parser's text position.
+    // so calls to FrameConsoleClient should be associated with the parser's text position.
     virtual bool shouldAssociateConsoleMessagesWithTextPosition() const = 0;
 
     void setWasCreatedByScript(bool wasCreatedByScript) { m_wasCreatedByScript = wasCreatedByScript; }

@@ -41,8 +41,7 @@ JSValue JSKeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlobalObject, Call
 {
     auto lock = JSLockHolder { &lexicalGlobalObject };
 
-    auto* context = jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext();
-    if (!context) [[unlikely]]
+    if (!jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext()) [[unlikely]]
         return jsUndefined();
 
     auto& domGlobalObject = *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject);

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2021 Igalia S.L.
  * Author: Caitlin Potter <caitp@igalia.com>
- * Copyright (C) 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,10 @@
 
 #pragma once
 
-#include "AuxiliaryBarrier.h"
-#include "JSFunction.h"
-#include "JSObject.h"
+#include <JavaScriptCore/AuxiliaryBarrier.h>
+#include <JavaScriptCore/JSFunction.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/JSString.h>
 #include <wtf/TaggedArrayStoragePtr.h>
 
 namespace JSC {
@@ -75,13 +76,14 @@ public:
 
     DECLARE_EXPORT_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
 private:
     JSRemoteFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSObject* targetCallable);
 
     void copyNameAndLength(JSGlobalObject*);
 
     void finishCreation(JSGlobalObject*, VM&);
-    DECLARE_VISIT_CHILDREN;
 
     WriteBarrier<JSObject> m_targetFunction;
     WriteBarrier<JSString> m_nameMayBeNull;

@@ -26,9 +26,10 @@
 #include "config.h"
 #include "PushManager.h"
 
-#include "DocumentInlines.h"
+#include "DocumentSecurityOrigin.h"
 #include "EventLoop.h"
 #include "Exception.h"
+#include "FrameDestructionObserverInlines.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSPushPermissionState.h"
 #include "JSPushSubscription.h"

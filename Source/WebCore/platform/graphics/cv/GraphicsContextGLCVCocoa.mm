@@ -745,7 +745,7 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
     GL_Uniform2f(m_uvTextureSizeUniformLocation, uvPlaneWidth, uvPlaneHeight);
 
     auto range = pixelRangeFromPixelFormat(pixelFormat);
-    auto transferFunction = transferFunctionFromString(dynamic_cf_cast<CFStringRef>(CVBufferGetAttachment(image.get(), kCVImageBufferYCbCrMatrixKey, nil)));
+    auto transferFunction = transferFunctionFromString(RetainPtr { dynamic_cf_cast<CFStringRef>(CVBufferGetAttachment(image.get(), kCVImageBufferYCbCrMatrixKey, nil)) }.get());
     auto colorMatrix = YCbCrToRGBMatrixForRangeAndTransferFunction(range, transferFunction);
     GL_UniformMatrix4fv(m_colorMatrixUniformLocation, 1, GL_FALSE, colorMatrix);
 

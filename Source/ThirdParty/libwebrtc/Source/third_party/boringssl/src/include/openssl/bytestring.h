@@ -1,21 +1,21 @@
-/* Copyright (c) 2014, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2014 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #ifndef OPENSSL_HEADER_BYTESTRING_H
 #define OPENSSL_HEADER_BYTESTRING_H
 
-#include <openssl/base.h>
+#include <openssl/base.h>   // IWYU pragma: export
 
 #include <openssl/span.h>
 #include <time.h>
@@ -45,9 +45,7 @@ struct cbs_st {
   // Allow implicit conversions to and from bssl::Span<const uint8_t>.
   cbs_st(bssl::Span<const uint8_t> span)
       : data(span.data()), len(span.size()) {}
-  operator bssl::Span<const uint8_t>() const {
-    return bssl::MakeConstSpan(data, len);
-  }
+  operator bssl::Span<const uint8_t>() const { return bssl::Span(data, len); }
 
   // Defining any constructors requires we explicitly default the others.
   cbs_st() = default;
@@ -294,10 +292,27 @@ OPENSSL_EXPORT int CBS_get_any_ber_asn1_element(CBS *cbs, CBS *out,
 // in 64 bits.
 OPENSSL_EXPORT int CBS_get_asn1_uint64(CBS *cbs, uint64_t *out);
 
+// CBS_get_asn1_uint64_with_tag gets an ASN.1 INTEGER from |cbs| using
+// |CBS_get_asn1| and sets |*out| to its value. |tag| is used to handle to
+// handle implicitly tagged INTEGER fields. It returns one on success and zero
+// on error, where error includes the integer being negative, or too large to
+// represent in 64 bits.
+OPENSSL_EXPORT int CBS_get_asn1_uint64_with_tag(CBS *cbs, uint64_t *out,
+                                                CBS_ASN1_TAG tag);
+
+
 // CBS_get_asn1_int64 gets an ASN.1 INTEGER from |cbs| using |CBS_get_asn1|
 // and sets |*out| to its value. It returns one on success and zero on error,
 // where error includes the integer being too large to represent in 64 bits.
 OPENSSL_EXPORT int CBS_get_asn1_int64(CBS *cbs, int64_t *out);
+
+// CBS_get_asn1_int64_with_tag gets an ASN.1 INTEGER from |cbs| using
+// |CBS_get_asn1| and sets |*out| to its value. |tag| is used to handle to
+// handle implicitly tagged INTEGER fields. It returns one on success and zero
+// on error, where error includes the integer being too large to represent in 64
+// bits.
+OPENSSL_EXPORT int CBS_get_asn1_int64_with_tag(CBS *cbs, int64_t *out,
+                                               CBS_ASN1_TAG tag);
 
 // CBS_get_asn1_bool gets an ASN.1 BOOLEAN from |cbs| and sets |*out| to zero
 // or one based on its value. It returns one on success or zero on error.
@@ -582,9 +597,19 @@ OPENSSL_EXPORT int CBB_add_u64(CBB *cbb, uint64_t value);
 // It returns one on success and zero otherwise.
 OPENSSL_EXPORT int CBB_add_u64le(CBB *cbb, uint64_t value);
 
+// CBB_discard discards the last |len| bytes written to |cbb|. The process will
+// abort if |cbb| has an unflushed child, or its length is smaller than |len|.
+OPENSSL_EXPORT void CBB_discard(CBB *cbb, size_t len);
+
 // CBB_discard_child discards the current unflushed child of |cbb|. Neither the
 // child's contents nor the length prefix will be included in the output.
 OPENSSL_EXPORT void CBB_discard_child(CBB *cbb);
+
+// CBB_add_asn1_element adds an ASN.1 element with the specified tag and
+// contents. It returns one on success and zero on error. This is a convenience
+// function over |CBB_add_asn1| when the data is already available.
+OPENSSL_EXPORT int CBB_add_asn1_element(CBB *cbb, CBS_ASN1_TAG tag,
+                                        const uint8_t *data, size_t data_len);
 
 // CBB_add_asn1_uint64 writes an ASN.1 INTEGER into |cbb| using |CBB_add_asn1|
 // and writes |value| in its contents. It returns one on success and zero on

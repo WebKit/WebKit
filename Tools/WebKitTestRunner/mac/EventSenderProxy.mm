@@ -44,6 +44,7 @@
 #import <pal/spi/cocoa/IOKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/text/TextStream.h>
 
 @interface NSApplication (Details)
 - (void)_setCurrentEvent:(NSEvent *)event;
@@ -765,6 +766,8 @@ void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventIsContinuous, 1);
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventScrollPhase, phase);
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventMomentumPhase, momentum);
+    // Set a value that won't be interpreted as a falsy timestamp:
+    CGEventSetTimestamp(cgScrollEvent.get(), 1);
 
     NSEvent* event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
 
@@ -819,7 +822,7 @@ static CGMomentumScrollPhase cgMomentumPhaseFromPhase(EventSenderProxy::WheelEve
     return kCGMomentumScrollPhaseNone;
 }
 
-void EventSenderProxy::sendWheelEvent(EventTimestamp timestamp, double windowX, double windowY, double deltaX, double deltaY, WheelEventPhase phase, WheelEventPhase momentumPhase)
+void EventSenderProxy::sendWheelEvent(EventTimestamp timestamp, double windowX, double windowY, double deltaX, double deltaY, WheelEventPhase phase, WheelEventPhase momentumPhase, bool momentumWillBegin)
 {
     constexpr uint32_t wheelCount = 2;
     auto cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent2(nullptr, kCGScrollEventUnitPixel, wheelCount, deltaY, deltaX, 0));
@@ -834,6 +837,9 @@ void EventSenderProxy::sendWheelEvent(EventTimestamp timestamp, double windowX, 
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventIsContinuous, 1);
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventScrollPhase, cgScrollPhaseFromPhase(phase));
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventMomentumPhase, cgMomentumPhaseFromPhase(momentumPhase));
+
+    if (momentumWillBegin)
+        CGEventSetIntegerValueField(cgScrollEvent.get(), kCGEventSourceUserData, 1);
 
     const char* markerMessage = nullptr;
     if (phase == WheelEventPhase::Ended || phase == WheelEventPhase::Cancelled)

@@ -33,6 +33,7 @@
 ] interface WebXRRenderState {
     readonly attribute double depthNear;
     readonly attribute double depthFar;
+    readonly attribute boolean? passthroughFullyObscured;
     readonly attribute double? inlineVerticalFieldOfView;
     readonly attribute WebXRWebGLLayer? baseLayer;
 };

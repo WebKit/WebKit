@@ -27,6 +27,7 @@
 #include "BoundaryPoint.h"
 #include "ContainerNode.h"
 #include "Document.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -117,6 +118,11 @@ TextStream& operator<<(TextStream& stream, const BoundaryPoint& boundaryPoint)
     stream.dumpProperty("node"_s, boundaryPoint.container->debugDescription());
     stream.dumpProperty("offset"_s, boundaryPoint.offset);
     return stream;
+}
+
+String BoundaryPoint::debugDescription() const
+{
+    return makeString('{', container->debugDescription().utf8(), ", offset: "_s, offset, '}');
 }
 
 }

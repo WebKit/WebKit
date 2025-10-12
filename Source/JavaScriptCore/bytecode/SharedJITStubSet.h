@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@ namespace JSC {
 #if ENABLE(JIT)
 
 class SharedJITStubSet {
-    WTF_MAKE_FAST_ALLOCATED(SharedJITStubSet);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SharedJITStubSet);
 public:
     SharedJITStubSet() = default;
 
@@ -114,7 +114,7 @@ public:
         }
 
         StructureStubInfoKey m_stubInfoKey;
-        Ref<AccessCase> m_accessCase;
+        const Ref<AccessCase> m_accessCase;
         unsigned m_hash { 0 };
     };
 

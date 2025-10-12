@@ -65,7 +65,8 @@ public:
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     void removeDestroyedLayerIDs(const Vector<WebCore::PlatformLayerIdentifier>&);
     HashSet<WebCore::PlatformLayerIdentifier> fixedScrollingNodeLayerIDs() const;
-    Vector<WKBaseScrollView*> overlayRegionScrollViewCandidates() const;
+    using OverlayRegionCandidatesMap = HashMap<RetainPtr<WKBaseScrollView>, HashSet<WebCore::PlatformLayerIdentifier>>;
+    OverlayRegionCandidatesMap overlayRegionCandidates() const;
 #endif
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)

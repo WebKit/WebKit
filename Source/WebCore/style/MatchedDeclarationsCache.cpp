@@ -31,9 +31,9 @@
 #include "MatchedDeclarationsCache.h"
 
 #include "CSSFontSelector.h"
-#include "Document.h"
 #include "DocumentInlines.h"
 #include "FontCascade.h"
+#include "NodeDocument.h"
 #include "RenderStyleInlines.h"
 #include "StyleLengthResolution.h"
 #include "StyleResolver.h"
@@ -119,7 +119,7 @@ bool MatchedDeclarationsCache::Entry::isUsableAfterHighPriorityProperties(const 
     return Style::equalForLengthResolution(style, *renderStyle);
 }
 
-unsigned MatchedDeclarationsCache::computeHash(const MatchResult& matchResult, const StyleCustomPropertyData& inheritedCustomProperties)
+unsigned MatchedDeclarationsCache::computeHash(const MatchResult& matchResult, const Style::CustomPropertyData& inheritedCustomProperties)
 {
     if (matchResult.isCompletelyNonCacheable)
         return 0;
@@ -135,7 +135,7 @@ unsigned MatchedDeclarationsCache::computeHash(const MatchResult& matchResult, c
     return WTF::computeHash(matchResult, &inheritedCustomProperties);
 }
 
-std::optional<MatchedDeclarationsCache::Result> MatchedDeclarationsCache::find(unsigned hash, const MatchResult& matchResult, const StyleCustomPropertyData& inheritedCustomProperties, const RenderStyle& parentStyle)
+std::optional<MatchedDeclarationsCache::Result> MatchedDeclarationsCache::find(unsigned hash, const MatchResult& matchResult, const Style::CustomPropertyData& inheritedCustomProperties, const RenderStyle& parentStyle)
 {
     if (!hash)
         return std::nullopt;

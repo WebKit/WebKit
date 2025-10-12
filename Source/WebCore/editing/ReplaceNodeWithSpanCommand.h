@@ -53,13 +53,12 @@ private:
     void doUnapply() override;
 
     RefPtr<HTMLElement> protectedSpanElement() const { return m_spanElement; }
-    Ref<HTMLElement> protectedElementToReplace() const { return m_elementToReplace; }
     
 #ifndef NDEBUG
     void getNodesInCommand(NodeSet&) override;
 #endif
 
-    Ref<HTMLElement> m_elementToReplace;
+    const Ref<HTMLElement> m_elementToReplace;
     RefPtr<HTMLElement> m_spanElement;
 };
 

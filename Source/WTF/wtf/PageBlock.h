@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,16 +71,16 @@ inline bool isPageAligned(size_t size) { return isPageAligned(pageSize(), size);
 
 
 class PageBlock {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PageBlock);
 public:
     PageBlock() = default;
-    PageBlock(void*, size_t, bool hasGuardPages);
+    PageBlock(void*, size_t);
     
     void* base() const { return m_base; }
     void* end() const { return static_cast<uint8_t*>(m_base) + size(); }
     size_t size() const { return m_size; }
 
-    operator bool() const { return !!m_realBase; }
+    operator bool() const { return !!m_base; }
 
     bool contains(void* containedBase, size_t containedSize)
     {
@@ -89,14 +89,12 @@ public:
     }
 
 private:
-    void* m_realBase { nullptr };
     void* m_base { nullptr };
     size_t m_size { 0 };
 };
 
-inline PageBlock::PageBlock(void* base, size_t size, bool hasGuardPages)
-    : m_realBase(base)
-    , m_base(static_cast<char*>(base) + ((base && hasGuardPages) ? pageSize() : 0))
+inline PageBlock::PageBlock(void* base, size_t size)
+    : m_base(base)
     , m_size(size)
 {
 }

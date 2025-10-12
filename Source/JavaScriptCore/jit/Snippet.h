@@ -28,7 +28,7 @@
 
 #if ENABLE(JIT)
 
-#include "CCallHelpers.h"
+#include <JavaScriptCore/CCallHelpers.h>
 
 namespace JSC {
 

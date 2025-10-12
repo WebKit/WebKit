@@ -26,14 +26,15 @@
 #include "config.h"
 #include "FileSystemEntry.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "DOMException.h"
 #include "DOMFileSystem.h"
-#include "Document.h"
-#include "DocumentInlines.h"
+#include "DocumentEventLoop.h"
 #include "ErrorCallback.h"
 #include "FileSystemDirectoryEntry.h"
 #include "FileSystemEntryCallback.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptWrappableInlines.h"
 #include "WindowEventLoop.h"
 #include <wtf/FileSystem.h>
 #include <wtf/TZoneMallocInlines.h>

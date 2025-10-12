@@ -28,11 +28,16 @@
 
 #if ENABLE(EXTENSION_CAPABILITIES)
 
+#import "BrowsingContextGroup.h"
 #import "ExtensionCapability.h"
 #import "ExtensionCapabilityGrant.h"
 #import "ExtensionKitSPI.h"
 #import "GPUProcessProxy.h"
 #import "MediaCapability.h"
+#import "RemotePageProxy.h"
+#import "WebFrameProxy.h"
+#import "WebPageProxy.h"
+#import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import <BrowserEngineKit/BrowserEngineKit.h>
 #import <wtf/CrossThreadCopier.h>
@@ -52,21 +57,31 @@ static WorkQueue& granterQueue()
 }
 
 #if USE(EXTENSIONKIT)
-static PlatformGrant grantCapability(const PlatformCapability& capability, const std::optional<ExtensionProcess>& process)
+static PlatformGrant grantCapability(const PlatformCapability& capability, const ExtensionProcess& process)
 {
-    if (!ExtensionCapability::platformCapabilityIsValid(capability) || !process)
+    if (!ExtensionCapability::platformCapabilityIsValid(capability))
         return { };
 
-    return process->grantCapability(capability);
+    return process.grantCapability(capability);
 }
 #endif
 
-struct PlatformExtensionCapabilityGrants {
-    PlatformGrant gpuProcessGrant;
-    PlatformGrant webProcessGrant;
+struct CapabilityGrantForAuxiliaryProcess {
+    Ref<AuxiliaryProcessProxy> auxiliaryProcess;
+    ExtensionProcess extensionProcess;
+    ExtensionCapabilityGrant grant;
 
-    PlatformExtensionCapabilityGrants isolatedCopy() const & { return { gpuProcessGrant, webProcessGrant }; }
+    CapabilityGrantForAuxiliaryProcess isolatedCopy() &&
+    {
+        return {
+            crossThreadCopy(WTFMove(auxiliaryProcess)),
+            crossThreadCopy(WTFMove(extensionProcess)),
+            crossThreadCopy(WTFMove(grant))
+        };
+    }
 };
+
+using PlatformExtensionCapabilityGrants = Vector<CapabilityGrantForAuxiliaryProcess>;
 
 enum class ExtensionCapabilityGrantError: uint8_t {
     PlatformError,
@@ -74,22 +89,19 @@ enum class ExtensionCapabilityGrantError: uint8_t {
 
 using ExtensionCapabilityGrantsPromise = NativePromise<PlatformExtensionCapabilityGrants, ExtensionCapabilityGrantError>;
 
-static Ref<ExtensionCapabilityGrantsPromise> grantCapabilityInternal(const ExtensionCapability& capability, const GPUProcessProxy* gpuProcess, const WebProcessProxy* webProcess)
+static Ref<ExtensionCapabilityGrantsPromise> grantCapabilityInternal(const ExtensionCapability& capability, const Vector<Ref<AuxiliaryProcessProxy>>& processes)
 {
-    auto gpuExtension = gpuProcess ? gpuProcess->extensionProcess() : std::nullopt;
-    auto webExtension = webProcess ? webProcess->extensionProcess() : std::nullopt;
+    PlatformExtensionCapabilityGrants capabilityGrants = WTF::compactMap(processes, [](auto& process) -> std::optional<CapabilityGrantForAuxiliaryProcess> {
+        if (std::optional extensionProcess = process->extensionProcess())
+            return CapabilityGrantForAuxiliaryProcess { process, *extensionProcess, { } };
+        return std::nullopt;
+    });
 
 #if USE(EXTENSIONKIT)
-    return invokeAsync(granterQueue(), [
-        capability = capability.platformCapability(),
-        gpuExtension = WTFMove(gpuExtension),
-        webExtension = WTFMove(webExtension)
-    ] {
-        PlatformExtensionCapabilityGrants grants {
-            grantCapability(capability, gpuExtension),
-            grantCapability(capability, webExtension)
-        };
-        return ExtensionCapabilityGrantsPromise::createAndResolve(WTFMove(grants));
+    return invokeAsync(granterQueue(), [capability = capability.platformCapability(), capabilityGrants = crossThreadCopy(WTFMove(capabilityGrants))] mutable {
+        for (auto& capabilityGrant : capabilityGrants)
+            capabilityGrant.grant.setPlatformGrant(grantCapability(capability, capabilityGrant.extensionProcess));
+        return ExtensionCapabilityGrantsPromise::createAndResolve(WTFMove(capabilityGrants));
     });
 #else
     UNUSED_PARAM(capability);
@@ -114,14 +126,43 @@ static bool prepareGrant(const String& environmentIdentifier, AuxiliaryProcessPr
     return true;
 }
 
-static bool finalizeGrant(ExtensionCapabilityGranter& granter, const String& environmentIdentifier, AuxiliaryProcessProxy* auxiliaryProcess, ExtensionCapabilityGrant&& grant)
+static Vector<Ref<AuxiliaryProcessProxy>> auxiliaryProcessesForPage(WebPageProxy& page)
 {
-    if (!auxiliaryProcess) {
-        GRANTER_RELEASE_LOG_ERROR(environmentIdentifier, "auxiliaryProcess is null");
-        return false;
+    Vector<Ref<AuxiliaryProcessProxy>> auxiliaryProcesses;
+
+    // FIXME: If we've made it this far we assume at least one process is playing media, but we
+    // don't have the metadata to know that the main frame process is *not* one of those processes.
+    // We should fix that, perhaps by storing mediaState on a per-frame basis.
+    auxiliaryProcesses.append(page.legacyMainFrameProcess());
+
+    page.protectedBrowsingContextGroup()->forEachRemotePage(page, [&](auto& remotePage) {
+        if (WebCore::MediaProducer::needsMediaCapability(remotePage.mediaState()))
+            auxiliaryProcesses.append(remotePage.process());
+    });
+
+    if (RefPtr mainFrame = page.mainFrame()) {
+        if (RefPtr gpuProcess = mainFrame->process().processPool().gpuProcess())
+            auxiliaryProcesses.append(*gpuProcess);
     }
 
-    auto& existingGrants = auxiliaryProcess->extensionCapabilityGrants();
+    return auxiliaryProcesses;
+}
+
+static Vector<Ref<AuxiliaryProcessProxy>> processesNeedingGrant(const String& environmentIdentifier, WebPageProxy& page)
+{
+    Vector<Ref<AuxiliaryProcessProxy>> processesNeedingGrant;
+
+    for (auto& auxiliaryProcess : auxiliaryProcessesForPage(page)) {
+        if (prepareGrant(environmentIdentifier, auxiliaryProcess.get()))
+            processesNeedingGrant.append(WTFMove(auxiliaryProcess));
+    }
+
+    return processesNeedingGrant;
+}
+
+static bool finalizeGrant(const String& environmentIdentifier, AuxiliaryProcessProxy& auxiliaryProcess, ExtensionCapabilityGrant&& grant)
+{
+    auto& existingGrants = auxiliaryProcess.extensionCapabilityGrants();
 
     auto iterator = existingGrants.find(environmentIdentifier);
     if (iterator == existingGrants.end()) {
@@ -134,7 +175,7 @@ static bool finalizeGrant(ExtensionCapabilityGranter& granter, const String& env
         ASSERT(!existingGrant.isValid());
         if (existingGrant.isValid()) {
             GRANTER_RELEASE_LOG_ERROR(environmentIdentifier, "grant not expected to be valid");
-            granter.invalidateGrants(Vector<ExtensionCapabilityGrant>::from(WTFMove(existingGrant)));
+            ExtensionCapabilityGranter::invalidateGrants(Vector<ExtensionCapabilityGrant>::from(WTFMove(existingGrant)));
         }
         existingGrant = WTFMove(grant);
         return true;
@@ -147,17 +188,12 @@ static bool finalizeGrant(ExtensionCapabilityGranter& granter, const String& env
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ExtensionCapabilityGranter);
 
-RefPtr<ExtensionCapabilityGranter> ExtensionCapabilityGranter::create(ExtensionCapabilityGranterClient& client)
+RefPtr<ExtensionCapabilityGranter> ExtensionCapabilityGranter::create()
 {
-    return adoptRef(new ExtensionCapabilityGranter(client));
+    return adoptRef(new ExtensionCapabilityGranter());
 }
 
-ExtensionCapabilityGranter::ExtensionCapabilityGranter(ExtensionCapabilityGranterClient& client)
-    : m_client { client }
-{
-}
-
-void ExtensionCapabilityGranter::grant(const ExtensionCapability& capability)
+void ExtensionCapabilityGranter::grant(const ExtensionCapability& capability, WebPageProxy& page)
 {
     String environmentIdentifier = capability.environmentIdentifier();
     if (environmentIdentifier.isEmpty()) {
@@ -165,79 +201,43 @@ void ExtensionCapabilityGranter::grant(const ExtensionCapability& capability)
         return;
     }
 
-    RefPtr gpuProcess = m_client->gpuProcessForCapabilityGranter(*this);
-    bool needsGPUProcessGrant = gpuProcess && prepareGrant(environmentIdentifier, *gpuProcess);
-
-    RefPtr webProcess = m_client->webProcessForCapabilityGranter(*this, environmentIdentifier);
-    bool needsWebProcessGrant = webProcess && prepareGrant(environmentIdentifier, *webProcess);
-
-    if (!needsGPUProcessGrant && !needsWebProcessGrant)
+    Vector processes = processesNeedingGrant(environmentIdentifier, page);
+    if (processes.isEmpty())
         return;
 
-    grantCapabilityInternal(
-        capability,
-        needsGPUProcessGrant ? gpuProcess.get() : nullptr,
-        needsWebProcessGrant ? webProcess.get() : nullptr
-    )->whenSettled(RunLoop::protectedMain(), [
-        this,
-        weakThis = WeakPtr { *this },
-        environmentIdentifier,
-        needsGPUProcessGrant,
-        needsWebProcessGrant
-    ](auto&& result) {
-        ExtensionCapabilityGrant gpuProcessGrant { environmentIdentifier };
-        ExtensionCapabilityGrant webProcessGrant { environmentIdentifier };
-        if (result) {
-            gpuProcessGrant.setPlatformGrant(WTFMove(result->gpuProcessGrant));
-            webProcessGrant.setPlatformGrant(WTFMove(result->webProcessGrant));
-        }
-        RefPtr protectedThis = weakThis.get();
-        RefPtr client = protectedThis ? m_client.ptr() : nullptr;
-        if (!client) {
-            invalidateGrants(Vector<ExtensionCapabilityGrant>::from(WTFMove(gpuProcessGrant), WTFMove(webProcessGrant)));
+    grantCapabilityInternal(capability, processes)->whenSettled(RunLoop::mainSingleton(), [environmentIdentifier, processes = WTFMove(processes)](auto&& result) {
+        if (!result)
             return;
-        }
 
         Vector<ExtensionCapabilityGrant> grantsToInvalidate;
-        grantsToInvalidate.reserveInitialCapacity(2);
 
-        if (needsGPUProcessGrant) {
-            if (finalizeGrant(*this, environmentIdentifier, m_client->gpuProcessForCapabilityGranter(*this).get(), WTFMove(gpuProcessGrant)))
-                GRANTER_RELEASE_LOG(environmentIdentifier, "granted for GPU process");
+        for (auto& capabilityGrant : *result) {
+            if (finalizeGrant(environmentIdentifier, capabilityGrant.auxiliaryProcess.get(), WTFMove(capabilityGrant.grant)))
+                GRANTER_RELEASE_LOG(environmentIdentifier, "granted for auxiliary process %d", capabilityGrant.auxiliaryProcess->processID());
             else {
-                GRANTER_RELEASE_LOG_ERROR(environmentIdentifier, "failed to grant for GPU process");
-                grantsToInvalidate.append(WTFMove(gpuProcessGrant));
+                GRANTER_RELEASE_LOG_ERROR(environmentIdentifier, "failed to grant for auxiliary process %d", capabilityGrant.auxiliaryProcess->processID());
+                grantsToInvalidate.append(WTFMove(capabilityGrant.grant));
             }
-        } else
-            ASSERT(gpuProcessGrant.isEmpty());
-
-        if (needsWebProcessGrant) {
-            if (finalizeGrant(*this, environmentIdentifier, m_client->webProcessForCapabilityGranter(*this, environmentIdentifier).get(), WTFMove(webProcessGrant)))
-                GRANTER_RELEASE_LOG(environmentIdentifier, "granted for WebContent process");
-            else {
-                GRANTER_RELEASE_LOG_ERROR(environmentIdentifier, "failed to grant for WebContent process");
-                grantsToInvalidate.append(WTFMove(webProcessGrant));
-            }
-        } else
-            ASSERT(webProcessGrant.isEmpty());
+        }
 
         invalidateGrants(WTFMove(grantsToInvalidate));
     });
 }
 
-void ExtensionCapabilityGranter::revoke(const ExtensionCapability& capability)
+void ExtensionCapabilityGranter::revoke(const ExtensionCapability& capability, WebPageProxy& page)
 {
-    Vector<ExtensionCapabilityGrant> grants;
-    grants.reserveInitialCapacity(2);
-
     String environmentIdentifier = capability.environmentIdentifier();
+    Vector<ExtensionCapabilityGrant> grants;
 
-    if (RefPtr client = m_client.ptr()) {
-        if (RefPtr gpuProcess = m_client->gpuProcessForCapabilityGranter(*this))
+    grants.append(page.legacyMainFrameProcess().extensionCapabilityGrants().take(environmentIdentifier));
+
+    page.protectedBrowsingContextGroup()->forEachRemotePage(page, [&](auto& remotePage) {
+        grants.append(remotePage.process().extensionCapabilityGrants().take(environmentIdentifier));
+    });
+
+    if (RefPtr mainFrame = page.mainFrame()) {
+        if (RefPtr gpuProcess = mainFrame->process().processPool().gpuProcess())
             grants.append(gpuProcess->extensionCapabilityGrants().take(environmentIdentifier));
-
-        if (RefPtr webProcess = m_client->webProcessForCapabilityGranter(*this, environmentIdentifier))
-            grants.append(webProcess->extensionCapabilityGrants().take(environmentIdentifier));
     }
 
     invalidateGrants(WTFMove(grants));
@@ -277,7 +277,7 @@ void ExtensionCapabilityGranter::setMediaCapabilityActive(MediaCapability& capab
             return ExtensionCapabilityActivationPromise::createAndResolve();
 #endif
         return ExtensionCapabilityActivationPromise::createAndReject(ExtensionCapabilityGrantError::PlatformError);
-    })->whenSettled(RunLoop::protectedMain(), [weakCapability = WeakPtr { capability }, isActive](auto&& result) {
+    })->whenSettled(RunLoop::mainSingleton(), [weakCapability = WeakPtr { capability }, isActive](auto&& result) {
         auto capability = weakCapability.get();
         if (!capability)
             return;

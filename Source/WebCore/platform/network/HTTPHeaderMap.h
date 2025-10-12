@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "HTTPHeaderNames.h"
+#include <WebCore/HTTPHeaderNames.h>
 #include <utility>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>

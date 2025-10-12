@@ -30,6 +30,7 @@
 #pragma once
 
 #include "CachedHTMLCollection.h"
+#include "Document.h"
 #include "Element.h"
 #include "SpaceSplitString.h"
 

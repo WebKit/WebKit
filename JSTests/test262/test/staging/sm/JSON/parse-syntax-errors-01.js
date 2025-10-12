@@ -2,20 +2,15 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-JSON-shell.js]
-flags:
-  - noStrict
+includes: [sm/non262-JSON-shell.js]
 description: |
   pending
 esid: pending
 ---*/
-testJSON("{}...", true);
-testJSON('{"foo": truBBBB}', true);
-testJSON('{foo: truBBBB}', true);
-testJSON('{"foo": undefined}', true);
-testJSON('{"foo": ]', true);
-testJSON('{"foo', true);
 
-/******************************************************************************/
-
-print("Tests complete");
+testJSONSyntaxError("{}...");
+testJSONSyntaxError('{"foo": truBBBB}');
+testJSONSyntaxError('{foo: truBBBB}');
+testJSONSyntaxError('{"foo": undefined}');
+testJSONSyntaxError('{"foo": ]');
+testJSONSyntaxError('{"foo');

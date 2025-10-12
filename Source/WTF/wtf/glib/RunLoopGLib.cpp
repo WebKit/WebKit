@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc. All rights reserved.
+ * Copyright (C) 2025 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +30,8 @@
 
 #include <glib.h>
 #include <wtf/MainThread.h>
+#include <wtf/SafeStrerror.h>
+#include <wtf/glib/ActivityObserver.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
 namespace WTF {
@@ -49,9 +52,9 @@ GSourceFuncs RunLoop::s_runLoopSourceFunctions = {
         g_source_set_ready_time(source, -1);
         const char* name = g_source_get_name(source);
         auto& runLoopSource = *reinterpret_cast<RunLoopSource*>(source);
-        runLoopSource.runLoop->notify(RunLoop::Event::WillDispatch, name);
+        runLoopSource.runLoop->notifyEvent(RunLoop::Event::WillDispatch, name);
         auto returnValue = callback(userData);
-        runLoopSource.runLoop->notify(RunLoop::Event::DidDispatch, name);
+        runLoopSource.runLoop->notifyEvent(RunLoop::Event::DidDispatch, name);
         return returnValue;
     },
     nullptr, // finalize
@@ -65,10 +68,6 @@ RunLoop::RunLoop()
     if (!m_mainContext)
         m_mainContext = isMainThread() ? g_main_context_default() : adoptGRef(g_main_context_new());
     ASSERT(m_mainContext);
-
-    GRefPtr<GMainLoop> innermostLoop = adoptGRef(g_main_loop_new(m_mainContext.get(), FALSE));
-    ASSERT(innermostLoop);
-    m_mainLoops.append(innermostLoop);
 
     m_source = adoptGRef(g_source_new(&RunLoop::s_runLoopSourceFunctions, sizeof(RunLoopSource)));
     auto& runLoopSource = *reinterpret_cast<RunLoopSource*>(m_source.get());
@@ -86,48 +85,67 @@ RunLoop::RunLoop()
 RunLoop::~RunLoop()
 {
     g_source_destroy(m_source.get());
+    m_shouldStop = true;
+}
 
-    for (int i = m_mainLoops.size() - 1; i >= 0; --i) {
-        if (!g_main_loop_is_running(m_mainLoops[i].get()))
-            continue;
-        g_main_loop_quit(m_mainLoops[i].get());
+void RunLoop::runGLibMainLoopIteration(MayBlock mayBlock)
+{
+    gint maxPriority = 0;
+    g_main_context_prepare(m_mainContext.get(), &maxPriority);
+
+    m_pollFDs.resize(s_pollFDsCapacity);
+
+    gint timeoutInMilliseconds = 0;
+    gint numFDs = 0;
+    while ((numFDs = g_main_context_query(m_mainContext.get(), maxPriority, &timeoutInMilliseconds, m_pollFDs.mutableSpan().data(), m_pollFDs.size())) > static_cast<int>(m_pollFDs.size()))
+        m_pollFDs.grow(numFDs);
+
+    if (mayBlock == MayBlock::No)
+        timeoutInMilliseconds = 0;
+
+    notifyActivity(Activity::BeforeWaiting);
+
+    if (numFDs || timeoutInMilliseconds) {
+        auto* pollFunction = g_main_context_get_poll_func(m_mainContext.get());
+        auto result = (*pollFunction)(m_pollFDs.mutableSpan().data(), numFDs, timeoutInMilliseconds);
+        if (result < 0 && errno != EINTR)
+            LOG_ERROR("RunLoop::runGLibMainLoopIteration() - polling failed, ignoring. Error message: %s", safeStrerror(errno).data());
     }
+    notifyActivity(Activity::AfterWaiting);
+
+    g_main_context_check(m_mainContext.get(), maxPriority, m_pollFDs.mutableSpan().data(), numFDs);
+    g_main_context_dispatch(m_mainContext.get());
+}
+
+void RunLoop::runGLibMainLoop()
+{
+    g_main_context_push_thread_default(m_mainContext.get());
+    notifyActivity(Activity::Entry);
+
+    while (!m_shouldStop)
+        runGLibMainLoopIteration(MayBlock::Yes);
+
+    notifyActivity(Activity::Exit);
+    g_main_context_pop_thread_default(m_mainContext.get());
 }
 
 void RunLoop::run()
 {
     Ref runLoop = RunLoop::currentSingleton();
-    GMainContext* mainContext = runLoop->m_mainContext.get();
 
-    // The innermost main loop should always be there.
-    ASSERT(!runLoop->m_mainLoops.isEmpty());
+    ++runLoop->m_nestedLoopLevel;
+    runLoop->m_shouldStop = false;
 
-    GMainLoop* innermostLoop = runLoop->m_mainLoops[0].get();
-    if (!g_main_loop_is_running(innermostLoop)) {
-        g_main_context_push_thread_default(mainContext);
-        g_main_loop_run(innermostLoop);
-        g_main_context_pop_thread_default(mainContext);
-        return;
-    }
+    runLoop->runGLibMainLoop();
 
-    // Create and run a nested loop if the innermost one was already running.
-    GMainLoop* nestedMainLoop = g_main_loop_new(mainContext, FALSE);
-    runLoop->m_mainLoops.append(adoptGRef(nestedMainLoop));
-
-    g_main_context_push_thread_default(mainContext);
-    g_main_loop_run(nestedMainLoop);
-    g_main_context_pop_thread_default(mainContext);
-
-    runLoop->m_mainLoops.removeLast();
+    --runLoop->m_nestedLoopLevel;
+    if (runLoop->m_nestedLoopLevel > 0)
+        runLoop->m_shouldStop = false;
 }
 
 void RunLoop::stop()
 {
-    // The innermost main loop should always be there.
-    ASSERT(!m_mainLoops.isEmpty());
-    GRefPtr<GMainLoop> lastMainLoop = m_mainLoops.last();
-    if (g_main_loop_is_running(lastMainLoop.get()))
-        g_main_loop_quit(lastMainLoop.get());
+    m_shouldStop = true;
 }
 
 void RunLoop::wakeUp()
@@ -137,35 +155,93 @@ void RunLoop::wakeUp()
 
 RunLoop::CycleResult RunLoop::cycle(RunLoopMode)
 {
-    g_main_context_iteration(NULL, FALSE);
+    Ref runLoop = RunLoop::currentSingleton();
+    runLoop->runGLibMainLoopIteration(MayBlock::No);
     return CycleResult::Continue;
 }
 
-void RunLoop::observe(const RunLoop::Observer& observer)
+void RunLoop::observeEvent(const RunLoop::EventObserver& observer)
 {
-    ASSERT(!m_observers.contains(observer));
-    m_observers.add(observer);
+    Locker locker { m_eventObserversLock };
+    ASSERT(!m_eventObservers.contains(observer));
+    m_eventObservers.add(observer);
 }
 
-void RunLoop::notify(RunLoop::Event event, const char* name)
+void RunLoop::observeActivity(const Ref<ActivityObserver>& observer)
 {
-    if (m_observers.isEmptyIgnoringNullReferences())
+    {
+        Locker locker { m_activityObserversLock };
+        ASSERT(!m_activityObservers.contains(observer));
+        m_activityObservers.append(observer);
+
+        std::ranges::sort(m_activityObservers, [](const auto& a, const auto& b) {
+            return a->order() < b->order();
+        });
+    }
+
+    wakeUp();
+}
+
+void RunLoop::unobserveActivity(const Ref<ActivityObserver>& observer)
+{
+    // Don't assert that m_activityObservers contains the observer -- it might have been
+    // removed during notifyActivity() if it was a non-repeating observer.
+    Locker locker { m_activityObserversLock };
+    m_activityObservers.removeFirst(observer);
+}
+
+void RunLoop::notifyActivity(Activity activity)
+{
+    // Lock the activity observers, collect the ones to be notified.
+    ActivityObservers observersToBeNotified;
+    {
+        Locker locker { m_activityObserversLock };
+        if (m_activityObservers.isEmpty())
+            return;
+
+        for (Ref observer : m_activityObservers) {
+            if (observer->activities().contains(activity))
+                observersToBeNotified.append(observer);
+        }
+    }
+
+    // Notify the activity observers, without holding a lock - as mutations
+    // to the activity observers are allowed.
+    ActivityObservers observersToBeInvalidated;
+    for (Ref observer : observersToBeNotified) {
+        if (observer->notify() == ActivityObserver::ContinueObservation::No)
+            observersToBeInvalidated.append(observer);
+    }
+
+    // Invalidation needs to happen _after_ dispatching all notifications.
+    if (!observersToBeInvalidated.isEmpty()) {
+        Locker locker { m_activityObserversLock };
+        for (Ref observer : observersToBeInvalidated)
+            m_activityObservers.removeFirst(observer);
+    }
+}
+
+void RunLoop::notifyEvent(RunLoop::Event event, const char* name)
+{
+    Locker locker { m_eventObserversLock };
+    if (m_eventObservers.isEmptyIgnoringNullReferences())
         return;
 
-    m_observers.forEach([event, name = String::fromUTF8(name)](auto& observer) {
+    m_eventObservers.forEach([event, name = String::fromUTF8(name)](auto& observer) {
         observer(event, name);
     });
 }
 
-RunLoop::TimerBase::TimerBase(Ref<RunLoop>&& runLoop)
+RunLoop::TimerBase::TimerBase(Ref<RunLoop>&& runLoop, ASCIILiteral description)
     : m_runLoop(WTFMove(runLoop))
+    , m_description(description)
     , m_source(adoptGRef(g_source_new(&RunLoop::s_runLoopSourceFunctions, sizeof(RunLoopSource))))
 {
     auto& runLoopSource = *reinterpret_cast<RunLoopSource*>(m_source.get());
     runLoopSource.runLoop = m_runLoop.ptr();
 
     g_source_set_priority(m_source.get(), RunLoopSourcePriority::RunLoopTimer);
-    g_source_set_name(m_source.get(), "[WebKit] RunLoop::Timer work");
+    g_source_set_name(m_source.get(), m_description);
     g_source_set_callback(m_source.get(), [](gpointer userData) -> gboolean {
         // fired() executes the user's callback. It may destroy timer,
         // so we must check if the source is still active afterwards
@@ -185,11 +261,6 @@ RunLoop::TimerBase::TimerBase(Ref<RunLoop>&& runLoop)
 RunLoop::TimerBase::~TimerBase()
 {
     g_source_destroy(m_source.get());
-}
-
-void RunLoop::TimerBase::setName(ASCIILiteral name)
-{
-    g_source_set_name(m_source.get(), name);
 }
 
 void RunLoop::TimerBase::setPriority(int priority)

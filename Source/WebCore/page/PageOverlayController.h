@@ -25,9 +25,8 @@
 
 #pragma once
 
-#include "GraphicsLayer.h"
-#include "GraphicsLayerClient.h"
-#include "PageOverlay.h"
+#include <WebCore/GraphicsLayerClient.h>
+#include <WebCore/PageOverlay.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -35,6 +34,7 @@
 
 namespace WebCore {
 
+class GraphicsLayer;
 class LocalFrame;
 class Page;
 class PlatformMouseEvent;
@@ -73,7 +73,7 @@ public:
     void didChangeOverlayFrame(PageOverlay&);
     void didChangeOverlayBackgroundColor(PageOverlay&);
 
-    int overlayCount() const { return m_overlayGraphicsLayers.computeSize(); }
+    int overlayCount() const;
 
     bool handleMouseEvent(const PlatformMouseEvent&);
 

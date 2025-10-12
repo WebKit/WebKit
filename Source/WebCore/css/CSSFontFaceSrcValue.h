@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CSSURL.h"
-#include "CSSValue.h"
-#include "CachedResourceHandle.h"
-#include "ResourceLoaderOptions.h"
+#include <WebCore/CSSURL.h>
+#include <WebCore/CSSValue.h>
+#include <WebCore/CachedResourceHandle.h>
+#include <WebCore/ResourceLoaderOptions.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

@@ -29,8 +29,7 @@ PASS :shadow_hides_builtin_barriers:inject="module"
 PASS :shadow_hides_access_mode:inject="none"
 PASS :shadow_hides_access_mode:inject="function"
 FAIL :shadow_hides_access_mode:inject="module" assert_unreached:
-  - VALIDATION FAILED: subcase: builtin="read"
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: builtin="read") VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -46,8 +45,10 @@ FAIL :shadow_hides_access_mode:inject="module" assert_unreached:
 
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/shadow_builtins.spec.js:991:24
-  - VALIDATION FAILED: subcase: builtin="read_write"
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: builtin="read") EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: builtin="read") INFO: subcase ran
+  - (in subcase: builtin="read_write") VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -63,17 +64,9 @@ FAIL :shadow_hides_access_mode:inject="module" assert_unreached:
 
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/shadow_builtins.spec.js:991:24
-  - EXPECTATION FAILED: subcase: builtin="read"
-    Expected validation error
+  - (in subcase: builtin="read_write") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: builtin="read_write"
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: builtin="read"
-    OK
-  - INFO: subcase: builtin="read_write"
-    OK
-  - INFO: subcase: builtin="write"
-    OK
+  - (in subcase: builtin="read_write") INFO: subcase ran
+  - (in subcase: builtin="write") INFO: subcase ran
  Reached unreachable code
 

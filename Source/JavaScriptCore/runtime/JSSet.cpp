@@ -54,25 +54,4 @@ bool JSSet::isAddFastAndNonObservable(Structure* structure)
     return true;
 }
 
-bool JSSet::isIteratorProtocolFastAndNonObservable()
-{
-    JSGlobalObject* globalObject = this->globalObject();
-    if (!globalObject->isSetPrototypeIteratorProtocolFastAndNonObservable())
-        return false;
-
-    VM& vm = globalObject->vm();
-    Structure* structure = this->structure();
-    // This is the fast case. Many sets will be an original set.
-    if (structure == globalObject->setStructure())
-        return true;
-
-    if (getPrototypeDirect() != globalObject->jsSetPrototype())
-        return false;
-
-    if (getDirectOffset(vm, vm.propertyNames->iteratorSymbol) != invalidOffset)
-        return false;
-
-    return true;
-}
-
 }

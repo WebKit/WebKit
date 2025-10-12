@@ -10,18 +10,28 @@
 
 #include "video/adaptation/encode_usage_resource.h"
 
+#include <cstdint>
 #include <limits>
+#include <memory>
+#include <optional>
 #include <utility>
 
+#include "api/adaptation/resource.h"
+#include "api/make_ref_counted.h"
+#include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/video/video_frame.h"
 #include "rtc_base/checks.h"
+#include "video/adaptation/overuse_frame_detector.h"
+#include "video/adaptation/video_stream_encoder_resource.h"
 
 namespace webrtc {
 
 // static
-rtc::scoped_refptr<EncodeUsageResource> EncodeUsageResource::Create(
+scoped_refptr<EncodeUsageResource> EncodeUsageResource::Create(
     std::unique_ptr<OveruseFrameDetector> overuse_detector) {
-  return rtc::make_ref_counted<EncodeUsageResource>(
-      std::move(overuse_detector));
+  return make_ref_counted<EncodeUsageResource>(std::move(overuse_detector));
 }
 
 EncodeUsageResource::EncodeUsageResource(

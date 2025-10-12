@@ -27,11 +27,16 @@
 
 #import "HardwareCapabilities.h"
 #import <Metal/Metal.h>
+#import <bmalloc/CompactAllocationMode.h>
+#import <wtf/Assertions.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
+#import <wtf/HashSet.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/RefPtr.h>
 #import <wtf/TZoneMalloc.h>
+#import <wtf/ThreadSafeWeakPtr.h>
 #import <wtf/WeakPtr.h>
 
 struct WGPUAdapterImpl {

@@ -40,8 +40,9 @@ enum class MemoryAllocationType
     RenderBufferStorageImage                 = 9,
     Buffer                                   = 10,
     BufferExternal                           = 11,
+    ImplicitYuvTargetImage                   = 12,
 
-    InvalidEnum = 12,
+    InvalidEnum = 13,
     EnumCount   = InvalidEnum,
 };
 
@@ -58,6 +59,7 @@ constexpr const char *kMemoryAllocationTypeMessage[] = {
     "RenderBufferStorageImage",
     "Buffer",
     "BufferExternal",
+    "ImplicitYuvTargetImage",
     "Invalid",
 };
 constexpr const uint32_t kMemoryAllocationTypeCount =

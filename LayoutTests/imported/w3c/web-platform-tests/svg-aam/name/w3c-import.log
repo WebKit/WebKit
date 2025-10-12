@@ -15,3 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg-aam/name/comp_host_language_label.html
+/LayoutTests/imported/w3c/web-platform-tests/svg-aam/name/comp_label.html
+/LayoutTests/imported/w3c/web-platform-tests/svg-aam/name/comp_labelledby.html

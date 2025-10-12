@@ -29,6 +29,7 @@
 #include "JSBasics.h"
 #include "JSUIScriptController.h"
 #include "UIScriptContext.h"
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSValueRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 
@@ -72,6 +73,38 @@ TextExtractionOptions* toTextExtractionOptions(JSContextRef context, JSValueRef 
     static TextExtractionOptions options;
     options.clipToBounds = booleanProperty(context, (JSObjectRef)argument, "clipToBounds", false);
     options.includeRects = booleanProperty(context, (JSObjectRef)argument, "includeRects", false);
+    options.mergeParagraphs = booleanProperty(context, (JSObjectRef)argument, "mergeParagraphs", false);
+    options.skipNearlyTransparentContent = booleanProperty(context, (JSObjectRef)argument, "skipNearlyTransparentContent", false);
+    options.canIncludeIdentifiers = booleanProperty(context, (JSObjectRef)argument, "canIncludeIdentifiers", false);
+    return &options;
+}
+
+TextExtractionInteractionOptions* toTextExtractionInteractionOptions(JSContextRef context, JSValueRef argument)
+{
+    if (!JSValueIsObject(context, argument))
+        return nullptr;
+
+    static TextExtractionInteractionOptions options;
+    if (auto nodeIdentifier = property(context, (JSObjectRef)argument, "nodeIdentifier"); isValidValue(context, nodeIdentifier))
+        options.nodeIdentifier = createJSString(context, nodeIdentifier);
+    else
+        options.nodeIdentifier = nullptr;
+
+    if (auto text = property(context, (JSObjectRef)argument, "text"); isValidValue(context, text))
+        options.text = createJSString(context, text);
+    else
+        options.text = nullptr;
+
+    options.replaceAll = booleanProperty(context, (JSObjectRef)argument, "replaceAll");
+
+    if (auto locationObject = objectProperty(context, (JSObjectRef)argument, "location")) {
+        options.location = {
+            numericProperty(context, locationObject, "x"),
+            numericProperty(context, locationObject, "y")
+        };
+    } else
+        options.location = std::nullopt;
+
     return &options;
 }
 

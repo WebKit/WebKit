@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +48,7 @@ struct QNameComponentsTranslator {
 
     static void translate(QualifiedName::QualifiedNameImpl*& location, const QualifiedNameComponents& components, unsigned)
     {
-        location = &QualifiedName::QualifiedNameImpl::create(components.m_prefix, components.m_localName, components.m_namespaceURI).leakRef();
+        location = &QualifiedName::QualifiedNameImpl::create(components.m_prefix.get(), components.m_localName.get(), components.m_namespaceURI.get()).leakRef();
     }
 };
 
@@ -66,8 +66,8 @@ Ref<QualifiedName::QualifiedNameImpl> QualifiedNameCache::getOrCreate(const Qual
     auto& impl = **addResult.iterator;
 
     if (addResult.isNewEntry) {
-        auto nodeNamespace = findNamespace(components.m_namespaceURI);
-        auto nodeName = findNodeName(nodeNamespace, components.m_localName);
+        auto nodeNamespace = findNamespace(components.m_namespaceURI.get());
+        auto nodeName = findNodeName(nodeNamespace, components.m_localName.get());
         updateImplWithNamespaceAndElementName(impl, nodeNamespace, nodeName);
         return adoptRef(impl);
     }

@@ -10,8 +10,11 @@
 
 #include "audio/audio_level.h"
 
+#include <cstdint>
+
 #include "api/audio/audio_frame.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 namespace voe {

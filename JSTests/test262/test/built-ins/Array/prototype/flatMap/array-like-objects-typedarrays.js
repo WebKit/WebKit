@@ -1,7 +1,7 @@
 // Copyright (C) 2018 Leo Balter. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-esid: sec-array.prototype.flatMap
+esid: sec-array.prototype.flatmap
 description: >
   array-like objects can be flattened (typedArrays)
 info: |

@@ -16,7 +16,6 @@
 
 #include "api/test/video/video_frame_writer.h"
 #include "api/video/video_frame.h"
-#include "rtc_base/buffer.h"
 #include "test/testsupport/frame_writer.h"
 
 namespace webrtc {

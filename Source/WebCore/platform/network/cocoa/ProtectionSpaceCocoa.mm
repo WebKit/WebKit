@@ -189,17 +189,22 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return m_nsSpace.get();
 }
 
+RetainPtr<NSURLProtectionSpace> ProtectionSpace::protectedNSSpace() const
+{
+    return nsSpace();
+}
+
 bool ProtectionSpace::platformCompare(const ProtectionSpace& a, const ProtectionSpace& b)
 {
     if (!a.m_nsSpace && !b.m_nsSpace)
         return true;
 
-    return [a.nsSpace() isEqual:b.nsSpace()];
+    return [a.protectedNSSpace() isEqual:b.protectedNSSpace().get()];
 }
 
 bool ProtectionSpace::receivesCredentialSecurely() const
 {
-    return nsSpace().receivesCredentialSecurely;
+    return [protectedNSSpace() receivesCredentialSecurely];
 }
 
 bool ProtectionSpace::encodingRequiresPlatformData(NSURLProtectionSpace *space)
@@ -213,6 +218,11 @@ std::optional<ProtectionSpace::PlatformData> ProtectionSpace::getPlatformDataToS
     if (encodingRequiresPlatformData())
         return PlatformData { nsSpace() };
     return std::nullopt;
+}
+
+bool ProtectionSpace::encodingRequiresPlatformData() const
+{
+    return m_nsSpace && encodingRequiresPlatformData(m_nsSpace.get());
 }
 
 } // namespace WebCore

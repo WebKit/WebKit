@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(MAC)
 
-#include "Scrollbar.h"
+#include <WebCore/Scrollbar.h>
 
 OBJC_CLASS NSScrollerImp;
 
@@ -39,6 +40,7 @@ public:
     ~ScrollbarMac() { }
 
     NSScrollerImp* scrollerImp() const;
+    RetainPtr<NSScrollerImp> protectedScrollerImp() const;
     void createScrollerImp(NSScrollerImp* oldScrollerImp = nullptr);
     bool isMacScrollbar() const override { return true; }
 

@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "absl/flags/flag.h"
+#include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "api/field_trials_view.h"
 #include "api/make_ref_counted.h"
@@ -43,7 +44,6 @@
 #include "call/video_receive_stream.h"
 #include "call/video_send_stream.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/string_encode.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "test/call_test.h"
@@ -61,17 +61,17 @@ ABSL_FLAG(std::string,
 namespace webrtc {
 namespace {
 
-using ::webrtc::test::GetGlobalMetricsLogger;
-using ::webrtc::test::ImprovementDirection;
-using ::webrtc::test::Unit;
+using test::GetGlobalMetricsLogger;
+using test::ImprovementDirection;
+using test::Unit;
 
 constexpr TimeDelta kPollInterval = TimeDelta::Millis(20);
-static const int kExpectedHighVideoBitrateBps = 80000;
-static const int kExpectedHighAudioBitrateBps = 30000;
-static const int kLowBandwidthLimitBps = 20000;
+const int kExpectedHighVideoBitrateBps = 80000;
+const int kExpectedHighAudioBitrateBps = 30000;
+const int kLowBandwidthLimitBps = 20000;
 // Set target detected bitrate to slightly larger than the target bitrate to
 // avoid flakiness.
-static const int kLowBitrateMarginBps = 2000;
+const int kLowBitrateMarginBps = 2000;
 
 std::vector<uint32_t> GenerateSsrcs(size_t num_streams, uint32_t ssrc_offset) {
   std::vector<uint32_t> ssrcs;
@@ -177,7 +177,7 @@ void RampUpTester::ModifyVideoConfigs(
   encoder_config->number_of_streams = num_video_streams_;
   encoder_config->max_bitrate_bps = 2000000;
   encoder_config->video_stream_factory =
-      rtc::make_ref_counted<RampUpTester::VideoStreamFactory>();
+      make_ref_counted<RampUpTester::VideoStreamFactory>();
   if (num_video_streams_ == 1) {
     // For single stream rampup until 1mbps
     expected_bitrate_bps_ = kSingleStreamTargetBps;
@@ -450,7 +450,7 @@ void RampUpDownUpTester::PollStats() {
   int transmit_bitrate_bps = 0;
   bool suspended = false;
   if (num_video_streams_ > 0 && send_stream_) {
-    webrtc::VideoSendStream::Stats stats = send_stream_->GetStats();
+    VideoSendStream::Stats stats = send_stream_->GetStats();
     for (const auto& it : stats.substreams) {
       transmit_bitrate_bps += it.second.total_bitrate_bps;
     }
@@ -473,13 +473,13 @@ void RampUpDownUpTester::ModifyReceiverBitrateConfig(
 std::string RampUpDownUpTester::GetModifierString() const {
   std::string str("_");
   if (num_video_streams_ > 0) {
-    str += rtc::ToString(num_video_streams_);
+    str += absl::StrCat(num_video_streams_);
     str += "stream";
     str += (num_video_streams_ > 1 ? "s" : "");
     str += "_";
   }
   if (num_audio_streams_ > 0) {
-    str += rtc::ToString(num_audio_streams_);
+    str += absl::StrCat(num_audio_streams_);
     str += "stream";
     str += (num_audio_streams_ > 1 ? "s" : "");
     str += "_";
@@ -503,7 +503,7 @@ int RampUpDownUpTester::GetExpectedHighBitrate() const {
 size_t RampUpDownUpTester::GetFecBytes() const {
   size_t flex_fec_bytes = 0;
   if (num_flexfec_streams_ > 0) {
-    webrtc::VideoSendStream::Stats stats = send_stream_->GetStats();
+    VideoSendStream::Stats stats = send_stream_->GetStats();
     for (const auto& kv : stats.substreams)
       flex_fec_bytes += kv.second.rtp_stats.fec.TotalBytes();
   }

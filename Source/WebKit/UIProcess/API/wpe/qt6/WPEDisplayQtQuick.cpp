@@ -33,6 +33,7 @@
 
 #include <QGuiApplication>
 #include <qpa/qplatformnativeinterface.h>
+#include <wpe/GRefPtrWPE.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -47,8 +48,7 @@
  */
 struct _WPEDisplayQtQuickPrivate {
     EGLDisplay eglDisplay;
-    CString drmDevice;
-    CString drmRenderNode;
+    GRefPtr<WPEDRMDevice> drmDevice;
 };
 WEBKIT_DEFINE_FINAL_TYPE(WPEDisplayQtQuick, wpe_display_qtquick, WPE_TYPE_DISPLAY, WPEDisplay)
 
@@ -75,21 +75,24 @@ static gboolean wpeDisplayQtQuickConnect(WPEDisplay* display, GError** error)
         return FALSE;
     }
 
+    CString drmDevice;
     const char* extensions = eglQueryDeviceStringEXT(eglDevice, EGL_EXTENSIONS);
     if (epoxy_extension_in_string(extensions, "EGL_EXT_device_drm"))
-        priv->drmDevice = eglQueryDeviceStringEXT(eglDevice, EGL_DRM_DEVICE_FILE_EXT);
+        drmDevice = eglQueryDeviceStringEXT(eglDevice, EGL_DRM_DEVICE_FILE_EXT);
     else {
         g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to initialize rendering: 'EGL_EXT_device_drm' not available");
         return FALSE;
     }
 
+    CString drmRenderNode;
     if (epoxy_extension_in_string(extensions, "EGL_EXT_device_drm_render_node"))
-        priv->drmRenderNode = eglQueryDeviceStringEXT(eglDevice, EGL_DRM_RENDER_NODE_FILE_EXT);
+        drmRenderNode = eglQueryDeviceStringEXT(eglDevice, EGL_DRM_RENDER_NODE_FILE_EXT);
     else {
         g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to initialize rendering: 'EGL_EXT_device_drm_render_node' not available");
         return FALSE;
     }
 
+    priv->drmDevice = adoptGRef(wpe_drm_device_new(drmDevice.data(), drmRenderNode.data()));
     return TRUE;
 }
 
@@ -109,17 +112,9 @@ static gpointer wpeDisplayQtQuickGetEGLDisplay(WPEDisplay* display, GError**)
     return WPE_DISPLAY_QTQUICK(display)->priv->eglDisplay;
 }
 
-static const char* wpeDisplayQtQuickGetDRMDevice(WPEDisplay* display)
+static WPEDRMDevice* wpeDisplayQtQuickGetDRMDevice(WPEDisplay* display)
 {
-    return WPE_DISPLAY_QTQUICK(display)->priv->drmDevice.data();
-}
-
-static const char* wpeDisplayQtQuickGetDRMRenderNode(WPEDisplay* display)
-{
-    auto* priv = WPE_DISPLAY_QTQUICK(display)->priv;
-    if (!priv->drmRenderNode.isNull())
-        return priv->drmRenderNode.data();
-    return priv->drmDevice.data();
+    return WPE_DISPLAY_QTQUICK(display)->priv->drmDevice.get();
 }
 
 static void wpe_display_qtquick_class_init(WPEDisplayQtQuickClass* displayQtQuickClass)
@@ -129,7 +124,6 @@ static void wpe_display_qtquick_class_init(WPEDisplayQtQuickClass* displayQtQuic
     displayClass->create_view = wpeDisplayQtQuickCreateView;
     displayClass->get_egl_display = wpeDisplayQtQuickGetEGLDisplay;
     displayClass->get_drm_device = wpeDisplayQtQuickGetDRMDevice;
-    displayClass->get_drm_render_node = wpeDisplayQtQuickGetDRMRenderNode;
 }
 
 WPEDisplay* wpe_display_qtquick_new(void)

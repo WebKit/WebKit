@@ -25,7 +25,9 @@ class ContextMtl;
 class VertexArrayMtl : public VertexArrayImpl
 {
   public:
-    VertexArrayMtl(const gl::VertexArrayState &state, ContextMtl *context);
+    VertexArrayMtl(const gl::VertexArrayState &state,
+                   const gl::VertexArrayBuffers &vertexArrayBuffers,
+                   ContextMtl *context);
     ~VertexArrayMtl() override;
 
     void destroy(const gl::Context *context) override;

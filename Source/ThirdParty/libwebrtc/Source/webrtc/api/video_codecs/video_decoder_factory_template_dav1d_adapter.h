@@ -14,6 +14,7 @@
 #include <memory>
 #include <vector>
 
+#include "api/environment/environment.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_decoder.h"
 #include "modules/video_coding/codecs/av1/dav1d_decoder.h"
@@ -25,8 +26,9 @@ struct Dav1dDecoderTemplateAdapter {
   }
 
   static std::unique_ptr<VideoDecoder> CreateDecoder(
+      const Environment& env,
       const SdpVideoFormat& /* format */) {
-    return CreateDav1dDecoder();
+    return CreateDav1dDecoder(env);
   }
 };
 

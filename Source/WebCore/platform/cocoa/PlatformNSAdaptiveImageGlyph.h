@@ -37,7 +37,7 @@
 
 #import <UIKit/NSAdaptiveImageGlyph.h>
 
-#define PlatformNSAdaptiveImageGlyph getNSAdaptiveImageGlyphClass()
+#define PlatformNSAdaptiveImageGlyph getNSAdaptiveImageGlyphClassSingleton()
 
 #endif
 

@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script src="referrer-policy-header-test.js"></script>
+<script>
+description("Tests support for Referrer-Policy HTTP header.");
+jsTestIsAsync = true;
+
+let referrerPolicy = "origin";
+let tests = [
+    [sourceOrigin, crossOrigin],
+    [sourceOrigin, sourceOrigin],
+    [sourceOrigin, downgradedOrigin]
+];
+let results = new Array(tests.length);
+let resultsMultipart = new Array(tests.length);
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.setStatisticsShouldDowngradeReferrer(false, async () => { 
+        await runTests(false /* multipart */);
+        await runTests(true /* multipart */);
+    });
+}
+</script>
+</body>
+</html>

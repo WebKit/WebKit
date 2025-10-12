@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "JSDOMPromiseDeferredForward.h"
-#include "PushPermissionState.h"
-#include "PushSubscription.h"
-#include "PushSubscriptionOptionsInit.h"
+#include <WebCore/JSDOMPromiseDeferredForward.h>
+#include <WebCore/PushPermissionState.h>
+#include <WebCore/PushSubscription.h>
+#include <WebCore/PushSubscriptionOptionsInit.h>
 #include <optional>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>

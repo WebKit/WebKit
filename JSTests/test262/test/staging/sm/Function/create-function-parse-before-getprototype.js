@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -18,9 +15,9 @@ var newTarget = Object.defineProperty(function(){}.bind(), "prototype", {
     }
 });
 
-assertThrowsInstanceOf(() => {
+assert.throws(SyntaxError, () => {
     Reflect.construct(Function, ["@error"], newTarget);
-}, SyntaxError);
+});
 
 assert.sameValue(getProtoCalled, false);
 

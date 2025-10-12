@@ -1,0 +1,5 @@
+
+FAIL Can animate standard property in shadow assert_equals: expected "0px" but got "784px"
+FAIL Can animate typed custom property in shadow assert_equals: expected "40px" but got "0px"
+FAIL Can animate untyped custom property in shadow assert_equals: expected "0px" but got "--from()"
+

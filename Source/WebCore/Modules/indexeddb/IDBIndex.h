@@ -26,8 +26,8 @@
 #pragma once
 
 #include "IDBCursor.h"
-#include "IDBIndexInfo.h"
-#include "IDBRequest.h"
+#include <WebCore/IDBIndexInfo.h>
+#include <WebCore/IDBRequest.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
@@ -52,6 +52,7 @@ public:
     const String& name() const;
     ExceptionOr<void> setName(const String&);
     IDBObjectStore& objectStore();
+    Ref<IDBObjectStore> protectedObjectStore();
     const IDBKeyPath& keyPath() const;
     bool unique() const;
     bool multiEntry() const;
@@ -108,7 +109,7 @@ private:
 
     // IDBIndex objects are always owned by their referencing IDBObjectStore.
     // Indexes will never outlive ObjectStores so its okay to keep a raw C++ reference here.
-    CheckedRef<IDBObjectStore> m_objectStore;
+    const CheckedRef<IDBObjectStore> m_objectStore;
 };
 
 WebCoreOpaqueRoot root(IDBIndex*);

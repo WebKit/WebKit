@@ -74,14 +74,7 @@
                         debug(`  capabilities.${property} = ${value}`);
                 }
                 debug("");
-            }
-
-            function gotStream(stream)
-            {
-                mediaStream = stream;
-                listTrackProperties(mediaStream.getVideoTracks()[0]);
-                listTrackProperties(mediaStream.getAudioTracks()[0]);
-                finishJSTest();
+                track.stop();
             }
 
             async function start()

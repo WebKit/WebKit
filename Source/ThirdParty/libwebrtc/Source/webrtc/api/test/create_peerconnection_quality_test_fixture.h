@@ -27,7 +27,7 @@ namespace webrtc_pc_e2e {
 // During the test Alice will be caller and Bob will answer the call.
 // `test_case_name` is a name of test case, that will be used for all metrics
 // reporting.
-// `time_controller` is used to manage all rtc::Thread's and TaskQueue
+// `time_controller` is used to manage all webrtc::Thread's and TaskQueue
 // instances. Instance of `time_controller` have to outlive created fixture.
 // Returns a non-null PeerConnectionE2EQualityTestFixture instance.
 std::unique_ptr<PeerConnectionE2EQualityTestFixture>

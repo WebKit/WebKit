@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/blank.html due to access control checks.
 
 FAIL setting up promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')"
 PASS making a same-origin request for CORP: same-origin

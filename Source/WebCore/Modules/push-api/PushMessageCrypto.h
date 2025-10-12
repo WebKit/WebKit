@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "PushCrypto.h"
+#include <WebCore/PushCrypto.h>
 #include <span>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>

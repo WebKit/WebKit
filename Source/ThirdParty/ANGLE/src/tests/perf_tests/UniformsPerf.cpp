@@ -7,6 +7,10 @@
 //   Performance test for setting uniform data.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "ANGLEPerfTest.h"
 
 #include <array>
@@ -150,6 +154,7 @@ class UniformsBenchmark : public ANGLERenderTest,
 std::vector<Matrix4> GenMatrixData(size_t count, int parity)
 {
     std::vector<Matrix4> data;
+    data.reserve(count);
 
     // Very simple matrix data allocation scheme.
     for (size_t index = 0; index < count; ++index)

@@ -168,6 +168,7 @@ export class ShaderValidationTest extends AllFeaturesMaxLimitsGPUTest {
 
 
 
+
   {
     const phonies = [];
 
@@ -182,10 +183,13 @@ export class ShaderValidationTest extends AllFeaturesMaxLimitsGPUTest {
     }
 
     const code =
-    args.code +
+    args.code + (
+    args.addWorkgroupSize !== false ?
     `
-@compute @workgroup_size(1)
-fn main() {
+@workgroup_size(1)` :
+    ``) +
+    `
+      @compute fn main() {
   ${phonies.join('\n')}
 }`;
 

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "PlatformMediaError.h"
+#include <WebCore/PlatformMediaError.h>
 #include <wtf/Forward.h>
 #include <wtf/MediaTime.h>
 

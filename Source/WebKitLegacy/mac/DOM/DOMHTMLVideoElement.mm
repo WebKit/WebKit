@@ -46,7 +46,7 @@
 - (unsigned)width
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getUnsignedIntegralAttribute(WebCore::HTMLNames::widthAttr);
+    return IMPL->unsignedIntegralAttribute(WebCore::HTMLNames::widthAttr);
 }
 
 - (void)setWidth:(unsigned)newWidth
@@ -58,7 +58,7 @@
 - (unsigned)height
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getUnsignedIntegralAttribute(WebCore::HTMLNames::heightAttr);
+    return IMPL->unsignedIntegralAttribute(WebCore::HTMLNames::heightAttr);
 }
 
 - (void)setHeight:(unsigned)newHeight

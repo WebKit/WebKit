@@ -4,9 +4,6 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -16,8 +13,8 @@ assert.sameValue(Symbol.keyFor(Symbol.for("")), "");
 assert.sameValue(Symbol.keyFor(Symbol("moon")), undefined);
 assert.sameValue(Symbol.keyFor(Symbol.iterator), undefined);
 
-assertThrowsInstanceOf(() => Symbol.keyFor(), TypeError);
-assertThrowsInstanceOf(() => Symbol.keyFor(Object(Symbol("moon"))), TypeError);
+assert.throws(TypeError, () => Symbol.keyFor());
+assert.throws(TypeError, () => Symbol.keyFor(Object(Symbol("moon"))));
 
 assert.sameValue(Symbol.keyFor.length, 1);
 

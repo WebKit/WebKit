@@ -39,6 +39,22 @@ promise_test(() => {
     window.gc();
     return promise;
 }, "GC should collect a signal after its request");
+
+function createAbortedController(message)
+{
+    const controller = new AbortController();
+    controller.abort(new Error(message));
+    return controller;
+}
+
+test(() => {
+    const errorMessage = "my potato";
+    const controller = createAbortedController(errorMessage);
+
+    window.gc();
+
+    assert_equals(controller.signal.reason.message, errorMessage);
+}, "GC should not collect reason of a controller signal");
         </script>
     </body>
 </html>

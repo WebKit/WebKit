@@ -58,6 +58,7 @@
                 testPassed("getStats rejected on closed state");
                 debug("");
                 testNonPromise()
+                stream.getTracks().forEach(track => track.stop());
             })
             .catch(function (e) {
                 testFailed("Error caught in promise chain: " + e);

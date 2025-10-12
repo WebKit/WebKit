@@ -24,7 +24,6 @@
 #if HAVE_MARKETPLACE_KIT
 
 import Foundation
-import WebKitSwift
 import OSLog
 
 // FIXME: (rdar://150642154) This cannot be used in WebKit.framework due to a dependency cycle.

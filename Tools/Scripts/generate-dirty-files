@@ -30,7 +30,7 @@ import re
 
 from webkitpy.safer_cpp.checkers import Checker
 
-DERIVED_SOURCES_RE = r'.*\/DerivedSources\/.*\/JS.*'
+DERIVED_SOURCES_RE = r'(^|.*\/)DerivedSources\/.*\/JS.*'
 
 
 def parser():
@@ -67,6 +67,8 @@ def parse_results_file(args, file_path):
                     bug_file = line.removeprefix('<!-- BUGFILE ')
                     bug_file = bug_file.removesuffix(' -->\n')
                     bug_file = bug_file.removeprefix(f'{args.build_dir}/')
+                    bug_file = bug_file.removeprefix('WebKitBuild/Release/')
+                    bug_file = bug_file.removeprefix('WebKitBuild/Release-iphonesimulator/')
                 if 'ISSUEHASHCONTENTOFLINEINCONTEXT' in line:
                     issue_hash = line.removeprefix('<!-- ISSUEHASHCONTENTOFLINEINCONTEXT ')
                     issue_hash = issue_hash.removesuffix(' -->\n')

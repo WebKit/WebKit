@@ -82,8 +82,6 @@ static NSString *dataTypesToString(NSSet *dataTypes)
         [array addObject:@"Fetch Cache"];
     if ([dataTypes containsObject:WKWebsiteDataTypeMemoryCache])
         [array addObject:@"Memory Cache"];
-    if ([dataTypes containsObject:WKWebsiteDataTypeOfflineWebApplicationCache])
-        [array addObject:@"Offline Web Application Cache"];
     if ([dataTypes containsObject:WKWebsiteDataTypeCookies])
         [array addObject:@"Cookies"];
     if ([dataTypes containsObject:WKWebsiteDataTypeSessionStorage])

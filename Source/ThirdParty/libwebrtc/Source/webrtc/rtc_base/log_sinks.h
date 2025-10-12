@@ -20,7 +20,7 @@
 #include "rtc_base/file_rotating_stream.h"
 #include "rtc_base/logging.h"
 
-namespace rtc {
+namespace webrtc {
 
 // Log sink that uses a FileRotatingStream to write to disk.
 // Init() must be called before adding this sink.
@@ -75,6 +75,7 @@ class CallSessionFileRotatingLogSink : public FileRotatingLogSink {
       const CallSessionFileRotatingLogSink&) = delete;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_LOG_SINKS_H_

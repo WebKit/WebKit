@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_PACKET_BUFFER_H_
 #define MODULES_AUDIO_CODING_NETEQ_PACKET_BUFFER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <optional>
 
 #include "modules/audio_coding/neteq/decoder_database.h"

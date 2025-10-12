@@ -8,6 +8,10 @@
 // gl::PixelLocalStorage and gl::PixelLocalStoragePlane for
 // ANGLE_shader_pixel_local_storage.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/PixelLocalStorage.h"
 
 #include <numeric>

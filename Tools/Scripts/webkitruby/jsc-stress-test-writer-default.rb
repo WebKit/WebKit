@@ -288,7 +288,9 @@ class Plan < BasePlan
             if $reportExecutionTime
                 outp.puts "START_TIME=$(($(date +%s%N)/1000000))"
             end
-            outp.puts "echo Running #{Shellwords.shellescape(@name)}"
+            verboseSuffix = $verbosity >= 1 ? " with cmd: #{Shellwords.shellescape(@arguments.join(' '))}" : ""
+            outp.puts "echo Running #{Shellwords.shellescape(@name)}#{verboseSuffix}"
+            outp.puts "trap 'echo \"Killing #{@name}\" 1>&2' INT"
             #
             # +--------------------------------------------------------------------+
             # | +-----------------------------------------------+                  |

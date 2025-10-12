@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 #include "WorkerInspectorController.h"
 
 #include "CommandLineAPIHost.h"
-#include "InspectorClient.h"
+#include "InspectorBackendClient.h"
 #include "InspectorController.h"
 #include "InstrumentingAgents.h"
 #include "JSExecState.h"
@@ -69,7 +69,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerInspectorController);
 
 WorkerInspectorController::WorkerInspectorController(WorkerOrWorkletGlobalScope& globalScope)
     : m_instrumentingAgents(InstrumentingAgents::create(*this))
-    , m_injectedScriptManager(makeUnique<WebInjectedScriptManager>(*this, WebInjectedScriptHost::create()))
+    , m_injectedScriptManager(makeUniqueRef<WebInjectedScriptManager>(*this, WebInjectedScriptHost::create()))
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_executionStopwatch(Stopwatch::create())
@@ -114,7 +114,7 @@ void WorkerInspectorController::frontendInitialized()
     }
 
     if (m_isAutomaticInspection && is<ServiceWorkerGlobalScope>(m_globalScope)) {
-        auto serviceWorkerIdentifier = downcast<ServiceWorkerGlobalScope>(m_globalScope.get()).thread().identifier();
+        auto serviceWorkerIdentifier = Ref { downcast<ServiceWorkerGlobalScope>(m_globalScope.get()) }->thread()->identifier();
         SWContextManager::singleton().stopRunningDebuggerTasksOnServiceWorker(serviceWorkerIdentifier);
     }
 #endif
@@ -139,7 +139,7 @@ void WorkerInspectorController::connectFrontend(bool isAutomaticInspection, bool
 
     m_forwardingChannel = makeUnique<WorkerToPageFrontendChannel>(m_globalScope);
     m_frontendRouter->connectFrontend(*m_forwardingChannel.get());
-    m_agents.didCreateFrontendAndBackend(&m_frontendRouter.get(), &m_backendDispatcher.get());
+    m_agents.didCreateFrontendAndBackend();
 
     updateServiceWorkerPageFrontendCount();
 }
@@ -167,10 +167,11 @@ void WorkerInspectorController::disconnectFrontend(Inspector::DisconnectReason r
 
 void WorkerInspectorController::updateServiceWorkerPageFrontendCount()
 {
-    if (!is<ServiceWorkerGlobalScope>(m_globalScope))
+    RefPtr globalScope = dynamicDowncast<ServiceWorkerGlobalScope>(m_globalScope.get());
+    if (!globalScope)
         return;
 
-    auto serviceWorkerPage = downcast<ServiceWorkerGlobalScope>(m_globalScope.get()).serviceWorkerPage();
+    RefPtr serviceWorkerPage = globalScope->serviceWorkerPage();
     if (!serviceWorkerPage)
         return;
 
@@ -178,11 +179,11 @@ void WorkerInspectorController::updateServiceWorkerPageFrontendCount()
 
     // When a service worker is loaded in a Page, we need to report its inspector frontend count
     // up to the page's inspectorController so the client knows about it.
-    auto inspectorClient = serviceWorkerPage->inspectorController().inspectorClient();
-    if (!inspectorClient)
+    auto inspectorBackendClient = serviceWorkerPage->inspectorController().inspectorBackendClient();
+    if (!inspectorBackendClient)
         return;
 
-    inspectorClient->frontendCountChanged(m_frontendRouter->frontendCount());
+    inspectorBackendClient->frontendCountChanged(m_frontendRouter->frontendCount());
 }
 
 void WorkerInspectorController::dispatchMessageFromFrontend(const String& message)
@@ -194,9 +195,9 @@ WorkerAgentContext WorkerInspectorController::workerAgentContext()
 {
     AgentContext baseContext = {
         *this,
-        *m_injectedScriptManager,
+        m_injectedScriptManager,
         m_frontendRouter.get(),
-        m_backendDispatcher.get(),
+        m_backendDispatcher,
     };
 
     WebAgentContext webContext = {
@@ -285,7 +286,7 @@ JSC::Debugger* WorkerInspectorController::debugger()
 
 VM& WorkerInspectorController::vm()
 {
-    return m_globalScope->vm();
+    return Ref { m_globalScope.get() }->vm();
 }
 
 } // namespace WebCore

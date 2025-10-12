@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "CSSFillRule.h"
+#include <WebCore/CSSFillRule.h>
 
 namespace WebCore {
 namespace Style {

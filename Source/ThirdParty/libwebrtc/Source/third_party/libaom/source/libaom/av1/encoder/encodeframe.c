@@ -48,6 +48,7 @@
 #include "av1/encoder/aq_complexity.h"
 #include "av1/encoder/aq_cyclicrefresh.h"
 #include "av1/encoder/aq_variance.h"
+#include "av1/encoder/av1_quantize.h"
 #include "av1/encoder/global_motion_facade.h"
 #include "av1/encoder/encodeframe.h"
 #include "av1/encoder/encodeframe_utils.h"
@@ -180,6 +181,8 @@ void av1_accumulate_rtc_counters(AV1_COMP *cpi, const MACROBLOCK *const x) {
   if (cpi->oxcf.q_cfg.aq_mode == CYCLIC_REFRESH_AQ)
     av1_accumulate_cyclic_refresh_counters(cpi->cyclic_refresh, x);
   cpi->rc.cnt_zeromv += x->cnt_zeromv;
+  cpi->rc.num_col_blscroll_last_tl0 += x->sb_col_scroll;
+  cpi->rc.num_row_blscroll_last_tl0 += x->sb_row_scroll;
 }
 
 unsigned int av1_get_perpixel_variance(const AV1_COMP *cpi,
@@ -223,20 +226,70 @@ void av1_setup_src_planes(MACROBLOCK *x, const YV12_BUFFER_CONFIG *src,
 }
 
 #if !CONFIG_REALTIME_ONLY
-/*!\brief Assigns different quantization parameters to each super
- * block based on its TPL weight.
+/*!\brief Assigns different quantization parameters to each superblock
+ * based on statistics relevant to the selected delta-q mode (variance).
+ * This is the non-rd version.
+ *
+ * \param[in]     cpi         Top level encoder instance structure
+ * \param[in,out] td          Thread data structure
+ * \param[in,out] x           Superblock level data for this block.
+ * \param[in]     tile_info   Tile information / identification
+ * \param[in]     mi_row      Block row (in "MI_SIZE" units) index
+ * \param[in]     mi_col      Block column (in "MI_SIZE" units) index
+ * \param[out]    num_planes  Number of image planes (e.g. Y,U,V)
+ *
+ * \remark No return value but updates superblock and thread data
+ * related to the q / q delta to be used.
+ */
+static inline void setup_delta_q_nonrd(AV1_COMP *const cpi, ThreadData *td,
+                                       MACROBLOCK *const x,
+                                       const TileInfo *const tile_info,
+                                       int mi_row, int mi_col, int num_planes) {
+  AV1_COMMON *const cm = &cpi->common;
+  const DeltaQInfo *const delta_q_info = &cm->delta_q_info;
+  assert(delta_q_info->delta_q_present_flag);
+
+  const BLOCK_SIZE sb_size = cm->seq_params->sb_size;
+  av1_setup_src_planes(x, cpi->source, mi_row, mi_col, num_planes, sb_size);
+
+  const int delta_q_res = delta_q_info->delta_q_res;
+  int current_qindex = cm->quant_params.base_qindex;
+
+  if (cpi->oxcf.q_cfg.deltaq_mode == DELTA_Q_VARIANCE_BOOST) {
+    current_qindex = av1_get_sbq_variance_boost(cpi, x);
+  }
+
+  x->rdmult_cur_qindex = current_qindex;
+  MACROBLOCKD *const xd = &x->e_mbd;
+  current_qindex = av1_adjust_q_from_delta_q_res(
+      delta_q_res, xd->current_base_qindex, current_qindex);
+
+  x->delta_qindex = current_qindex - cm->quant_params.base_qindex;
+  x->rdmult_delta_qindex = x->delta_qindex;
+
+  av1_set_offsets(cpi, tile_info, x, mi_row, mi_col, sb_size);
+  xd->mi[0]->current_qindex = current_qindex;
+  av1_init_plane_quantizers(cpi, x, xd->mi[0]->segment_id, 0);
+
+  // keep track of any non-zero delta-q used
+  td->deltaq_used |= (x->delta_qindex != 0);
+}
+
+/*!\brief Assigns different quantization parameters to each superblock
+ * based on statistics relevant to the selected delta-q mode (TPL weight,
+ * variance, HDR, etc).
  *
  * \ingroup tpl_modelling
  *
  * \param[in]     cpi         Top level encoder instance structure
  * \param[in,out] td          Thread data structure
- * \param[in,out] x           Macro block level data for this block.
- * \param[in]     tile_info   Tile infromation / identification
+ * \param[in,out] x           Superblock level data for this block.
+ * \param[in]     tile_info   Tile information / identification
  * \param[in]     mi_row      Block row (in "MI_SIZE" units) index
  * \param[in]     mi_col      Block column (in "MI_SIZE" units) index
  * \param[out]    num_planes  Number of image planes (e.g. Y,U,V)
  *
- * \remark No return value but updates macroblock and thread data
+ * \remark No return value but updates superblock and thread data
  * related to the q / q delta to be used.
  */
 static inline void setup_delta_q(AV1_COMP *const cpi, ThreadData *td,
@@ -249,7 +302,6 @@ static inline void setup_delta_q(AV1_COMP *const cpi, ThreadData *td,
   assert(delta_q_info->delta_q_present_flag);
 
   const BLOCK_SIZE sb_size = cm->seq_params->sb_size;
-  // Delta-q modulation based on variance
   av1_setup_src_planes(x, cpi->source, mi_row, mi_col, num_planes, sb_size);
 
   const int delta_q_res = delta_q_info->delta_q_res;
@@ -287,6 +339,8 @@ static inline void setup_delta_q(AV1_COMP *const cpi, ThreadData *td,
     current_qindex = av1_get_sbq_user_rating_based(cpi, mi_row, mi_col);
   } else if (cpi->oxcf.q_cfg.enable_hdr_deltaq) {
     current_qindex = av1_get_q_for_hdr(cpi, x, sb_size, mi_row, mi_col);
+  } else if (cpi->oxcf.q_cfg.deltaq_mode == DELTA_Q_VARIANCE_BOOST) {
+    current_qindex = av1_get_sbq_variance_boost(cpi, x);
   }
 
   x->rdmult_cur_qindex = current_qindex;
@@ -525,6 +579,13 @@ static inline void encode_nonrd_sb(AV1_COMP *cpi, ThreadData *td,
   const BLOCK_SIZE sb_size = cm->seq_params->sb_size;
   PC_TREE *const pc_root = td->pc_root;
 
+#if !CONFIG_REALTIME_ONLY
+  if (cm->delta_q_info.delta_q_present_flag) {
+    const int num_planes = av1_num_planes(cm);
+
+    setup_delta_q_nonrd(cpi, td, x, tile_info, mi_row, mi_col, num_planes);
+  }
+#endif
 #if CONFIG_RT_ML_PARTITIONING
   if (sf->part_sf.partition_search_type == ML_BASED_PARTITION) {
     RD_STATS dummy_rdc;
@@ -546,6 +607,11 @@ static inline void encode_nonrd_sb(AV1_COMP *cpi, ThreadData *td,
     if (sf->rt_sf.use_fast_fixed_part &&
         x->content_state_sb.source_sad_nonrd < kLowSad) {
       bsize_select = cm->seq_params->sb_size;
+    }
+    if (cpi->sf.rt_sf.skip_encoding_non_reference_slide_change &&
+        cpi->rc.high_source_sad && cpi->ppi->rtc_ref.non_reference_frame) {
+      bsize_select = cm->seq_params->sb_size;
+      x->force_zeromv_skip_for_sb = 1;
     }
     const BLOCK_SIZE bsize = seg_skip ? sb_size : bsize_select;
     if (x->content_state_sb.source_sad_nonrd > kZeroSad)
@@ -1185,7 +1251,7 @@ static inline void encode_sb_row(AV1_COMP *cpi, ThreadData *td,
     if (update_cdf && (tile_info->mi_row_start != mi_row)) {
       if ((tile_info->mi_col_start == mi_col)) {
         // restore frame context at the 1st column sb
-        memcpy(xd->tile_ctx, x->row_ctx, sizeof(*xd->tile_ctx));
+        *xd->tile_ctx = *x->row_ctx;
       } else {
         // update context
         int wt_left = AVG_CDF_WEIGHT_LEFT;
@@ -1215,6 +1281,8 @@ static inline void encode_sb_row(AV1_COMP *cpi, ThreadData *td,
     x->sb_me_block = 0;
     x->sb_me_partition = 0;
     x->sb_me_mv.as_int = 0;
+    x->sb_col_scroll = 0;
+    x->sb_row_scroll = 0;
     x->sb_force_fixed_part = 1;
     x->color_palette_thresh = 64;
     x->force_color_check_block_level = 0;
@@ -1260,10 +1328,9 @@ static inline void encode_sb_row(AV1_COMP *cpi, ThreadData *td,
     // Update the top-right context in row_mt coding
     if (update_cdf && (tile_info->mi_row_end > (mi_row + mib_size))) {
       if (sb_cols_in_tile == 1)
-        memcpy(x->row_ctx, xd->tile_ctx, sizeof(*xd->tile_ctx));
+        x->row_ctx[0] = *xd->tile_ctx;
       else if (sb_col_in_tile >= 1)
-        memcpy(x->row_ctx + sb_col_in_tile - 1, xd->tile_ctx,
-               sizeof(*xd->tile_ctx));
+        x->row_ctx[sb_col_in_tile - 1] = *xd->tile_ctx;
     }
     enc_row_mt->sync_write_ptr(row_mt_sync, sb_row, sb_col_in_tile,
                                sb_cols_in_tile);
@@ -1744,18 +1811,229 @@ static void populate_thresh_to_force_zeromv_skip(AV1_COMP *cpi) {
   }
 }
 
-static void free_block_hash_buffers(uint32_t *block_hash_values[2][2],
-                                    int8_t *is_block_same[2][3]) {
-  for (int k = 0; k < 2; ++k) {
-    for (int j = 0; j < 2; ++j) {
-      aom_free(block_hash_values[k][j]);
-    }
-
-    for (int j = 0; j < 3; ++j) {
-      aom_free(is_block_same[k][j]);
-    }
+static void free_block_hash_buffers(uint32_t *block_hash_values[2]) {
+  for (int j = 0; j < 2; ++j) {
+    aom_free(block_hash_values[j]);
   }
 }
+
+/*!\brief Determines delta_q_res value for Variance Boost modulation.
+ */
+static int aom_get_variance_boost_delta_q_res(int qindex) {
+  // Signaling delta_q changes across superblocks comes with inherent syntax
+  // element overhead, which adds up to total payload size. This overhead
+  // becomes proportionally bigger the higher the base qindex (i.e. lower
+  // quality, smaller file size), so a balance needs to be struck.
+  // - Smaller delta_q_res: more granular delta_q control, more bits spent
+  // signaling deltas.
+  // - Larger delta_q_res: coarser delta_q control, less bits spent signaling
+  // deltas.
+  //
+  // At the same time, SB qindex fluctuations become larger the higher
+  // the base qindex (between lowest and highest-variance regions):
+  // - For QP 5: up to 8 qindexes
+  // - For QP 60: up to 52 qindexes
+  //
+  // With these factors in mind, it was found that the best strategy that
+  // maximizes quality per bitrate is by having very finely-grained delta_q
+  // values for the lowest picture qindexes (to preserve tiny qindex SB deltas),
+  // and progressively making them coarser as base qindex increases (to reduce
+  // total signaling overhead).
+  int delta_q_res = 1;
+
+  if (qindex >= 160) {
+    delta_q_res = 8;
+  } else if (qindex >= 120) {
+    delta_q_res = 4;
+  } else if (qindex >= 80) {
+    delta_q_res = 2;
+  } else {
+    delta_q_res = 1;
+  }
+
+  return delta_q_res;
+}
+
+#if !CONFIG_REALTIME_ONLY
+static float get_thresh_based_on_q(int qindex, int speed) {
+  const float min_threshold_arr[2] = { 0.06f, 0.09f };
+  const float max_threshold_arr[2] = { 0.10f, 0.13f };
+
+  const float min_thresh = min_threshold_arr[speed >= 3];
+  const float max_thresh = max_threshold_arr[speed >= 3];
+  const float thresh = min_thresh + (max_thresh - min_thresh) *
+                                        ((float)MAXQ - (float)qindex) /
+                                        (float)(MAXQ - MINQ);
+  return thresh;
+}
+
+static int get_mv_err(MV cur_mv, MV ref_mv) {
+  const MV diff = { cur_mv.row - ref_mv.row, cur_mv.col - ref_mv.col };
+  const MV abs_diff = { abs(diff.row), abs(diff.col) };
+  const int mv_err = (abs_diff.row + abs_diff.col);
+  return mv_err;
+}
+
+static void check_mv_err_and_update(MV cur_mv, MV ref_mv, int *best_mv_err) {
+  const int mv_err = get_mv_err(cur_mv, ref_mv);
+  *best_mv_err = AOMMIN(mv_err, *best_mv_err);
+}
+
+static int is_inside_frame_border(int mi_row, int mi_col, int row_offset,
+                                  int col_offset, int num_mi_rows,
+                                  int num_mi_cols) {
+  if (mi_row + row_offset < 0 || mi_row + row_offset >= num_mi_rows ||
+      mi_col + col_offset < 0 || mi_col + col_offset >= num_mi_cols)
+    return 0;
+
+  return 1;
+}
+
+// Compute the minimum MV error between current MV and spatial MV predictors.
+static int get_spatial_mvpred_err(AV1_COMMON *cm, TplParams *const tpl_data,
+                                  int tpl_idx, int mi_row, int mi_col,
+                                  int ref_idx, int_mv cur_mv, int allow_hp,
+                                  int is_integer) {
+  const TplDepFrame *tpl_frame = &tpl_data->tpl_frame[tpl_idx];
+  TplDepStats *tpl_ptr = tpl_frame->tpl_stats_ptr;
+  const uint8_t block_mis_log2 = tpl_data->tpl_stats_block_mis_log2;
+
+  int mv_err = INT32_MAX;
+  const int step = 1 << block_mis_log2;
+  const int mv_pred_pos_in_mis[6][2] = {
+    { -step, 0 },     { 0, -step },     { -step, step },
+    { -step, -step }, { -2 * step, 0 }, { 0, -2 * step },
+  };
+
+  for (int i = 0; i < 6; i++) {
+    int row_offset = mv_pred_pos_in_mis[i][0];
+    int col_offset = mv_pred_pos_in_mis[i][1];
+    if (!is_inside_frame_border(mi_row, mi_col, row_offset, col_offset,
+                                tpl_frame->mi_rows, tpl_frame->mi_cols)) {
+      continue;
+    }
+
+    const TplDepStats *tpl_stats =
+        &tpl_ptr[av1_tpl_ptr_pos(mi_row + row_offset, mi_col + col_offset,
+                                 tpl_frame->stride, block_mis_log2)];
+    int_mv this_refmv = tpl_stats->mv[ref_idx];
+    lower_mv_precision(&this_refmv.as_mv, allow_hp, is_integer);
+    check_mv_err_and_update(cur_mv.as_mv, this_refmv.as_mv, &mv_err);
+  }
+
+  // Check MV error w.r.t. Global MV / Zero MV
+  int_mv gm_mv = { 0 };
+  if (cm->global_motion[ref_idx + LAST_FRAME].wmtype > TRANSLATION) {
+    const BLOCK_SIZE bsize = convert_length_to_bsize(tpl_data->tpl_bsize_1d);
+    gm_mv = gm_get_motion_vector(&cm->global_motion[ref_idx + LAST_FRAME],
+                                 allow_hp, bsize, mi_col, mi_row, is_integer);
+  }
+  check_mv_err_and_update(cur_mv.as_mv, gm_mv.as_mv, &mv_err);
+
+  return mv_err;
+}
+
+// Compute the minimum MV error between current MV and temporal MV predictors.
+static int get_temporal_mvpred_err(AV1_COMMON *cm, int mi_row, int mi_col,
+                                   int num_mi_rows, int num_mi_cols,
+                                   int ref_idx, int_mv cur_mv, int allow_hp,
+                                   int is_integer) {
+  const RefCntBuffer *ref_buf = get_ref_frame_buf(cm, ref_idx + LAST_FRAME);
+  if (ref_buf == NULL) return INT32_MAX;
+  int cur_to_ref_dist =
+      get_relative_dist(&cm->seq_params->order_hint_info,
+                        cm->cur_frame->order_hint, ref_buf->order_hint);
+
+  int mv_err = INT32_MAX;
+  const int mv_pred_pos_in_mis[7][2] = {
+    { 0, 0 }, { 0, 2 }, { 2, 0 }, { 2, 2 }, { 4, -2 }, { 4, 4 }, { 2, 4 },
+  };
+
+  for (int i = 0; i < 7; i++) {
+    int row_offset = mv_pred_pos_in_mis[i][0];
+    int col_offset = mv_pred_pos_in_mis[i][1];
+    if (!is_inside_frame_border(mi_row, mi_col, row_offset, col_offset,
+                                num_mi_rows, num_mi_cols)) {
+      continue;
+    }
+    const TPL_MV_REF *ref_mvs =
+        cm->tpl_mvs +
+        ((mi_row + row_offset) >> 1) * (cm->mi_params.mi_stride >> 1) +
+        ((mi_col + col_offset) >> 1);
+    if (ref_mvs->mfmv0.as_int == INVALID_MV) continue;
+
+    int_mv this_refmv;
+    av1_get_mv_projection(&this_refmv.as_mv, ref_mvs->mfmv0.as_mv,
+                          cur_to_ref_dist, ref_mvs->ref_frame_offset);
+    lower_mv_precision(&this_refmv.as_mv, allow_hp, is_integer);
+    check_mv_err_and_update(cur_mv.as_mv, this_refmv.as_mv, &mv_err);
+  }
+
+  return mv_err;
+}
+
+// Determine whether to disable temporal MV prediction for the current frame
+// based on TPL and motion field data. Temporal MV prediction is disabled if the
+// reduction in MV error by including temporal MVs as MV predictors is small.
+static void check_to_disable_ref_frame_mvs(AV1_COMP *cpi) {
+  AV1_COMMON *cm = &cpi->common;
+  if (!cm->features.allow_ref_frame_mvs || cpi->sf.hl_sf.ref_frame_mvs_lvl != 1)
+    return;
+
+  const int tpl_idx = cpi->gf_frame_index;
+  TplParams *const tpl_data = &cpi->ppi->tpl_data;
+  if (!av1_tpl_stats_ready(tpl_data, tpl_idx)) return;
+
+  const SUBPEL_FORCE_STOP tpl_subpel_precision =
+      cpi->sf.tpl_sf.subpel_force_stop;
+  const int allow_high_precision_mv = tpl_subpel_precision == EIGHTH_PEL &&
+                                      cm->features.allow_high_precision_mv;
+  const int force_integer_mv = tpl_subpel_precision == FULL_PEL ||
+                               cm->features.cur_frame_force_integer_mv;
+
+  const TplDepFrame *tpl_frame = &tpl_data->tpl_frame[tpl_idx];
+  TplDepStats *tpl_ptr = tpl_frame->tpl_stats_ptr;
+  const uint8_t block_mis_log2 = tpl_data->tpl_stats_block_mis_log2;
+  const int step = 1 << block_mis_log2;
+
+  uint64_t accum_spatial_mvpred_err = 0;
+  uint64_t accum_best_err = 0;
+
+  for (int mi_row = 0; mi_row < tpl_frame->mi_rows; mi_row += step) {
+    for (int mi_col = 0; mi_col < tpl_frame->mi_cols; mi_col += step) {
+      TplDepStats *tpl_stats_ptr = &tpl_ptr[av1_tpl_ptr_pos(
+          mi_row, mi_col, tpl_frame->stride, block_mis_log2)];
+      const int cur_best_ref_idx = tpl_stats_ptr->ref_frame_index[0];
+      if (cur_best_ref_idx == NONE_FRAME) continue;
+
+      int_mv cur_mv = tpl_stats_ptr->mv[cur_best_ref_idx];
+      lower_mv_precision(&cur_mv.as_mv, allow_high_precision_mv,
+                         force_integer_mv);
+
+      const int cur_spatial_mvpred_err = get_spatial_mvpred_err(
+          cm, tpl_data, tpl_idx, mi_row, mi_col, cur_best_ref_idx, cur_mv,
+          allow_high_precision_mv, force_integer_mv);
+
+      const int cur_temporal_mvpred_err = get_temporal_mvpred_err(
+          cm, mi_row, mi_col, tpl_frame->mi_rows, tpl_frame->mi_cols,
+          cur_best_ref_idx, cur_mv, allow_high_precision_mv, force_integer_mv);
+
+      const int cur_best_err =
+          AOMMIN(cur_spatial_mvpred_err, cur_temporal_mvpred_err);
+      accum_spatial_mvpred_err += cur_spatial_mvpred_err;
+      accum_best_err += cur_best_err;
+    }
+  }
+
+  const float threshold =
+      get_thresh_based_on_q(cm->quant_params.base_qindex, cpi->oxcf.speed);
+  const float mv_err_reduction =
+      (float)(accum_spatial_mvpred_err - accum_best_err);
+
+  if (mv_err_reduction <= threshold * accum_spatial_mvpred_err)
+    cm->features.allow_ref_frame_mvs = 0;
+}
+#endif  // !CONFIG_REALTIME_ONLY
 
 /*!\brief Encoder setup(only for the current frame), encoding, and recontruction
  * for a single frame
@@ -1827,61 +2105,51 @@ static inline void encode_frame_internal(AV1_COMP *cpi) {
     // add to hash table
     const int pic_width = cpi->source->y_crop_width;
     const int pic_height = cpi->source->y_crop_height;
-    uint32_t *block_hash_values[2][2] = { { NULL } };
-    int8_t *is_block_same[2][3] = { { NULL } };
-    int k, j;
+    uint32_t *block_hash_values[2] = { NULL };  // two buffers used ping-pong
     bool error = false;
 
-    for (k = 0; k < 2 && !error; ++k) {
-      for (j = 0; j < 2; ++j) {
-        block_hash_values[k][j] = (uint32_t *)aom_malloc(
-            sizeof(*block_hash_values[0][0]) * pic_width * pic_height);
-        if (!block_hash_values[k][j]) {
-          error = true;
-          break;
-        }
-      }
-
-      for (j = 0; j < 3 && !error; ++j) {
-        is_block_same[k][j] = (int8_t *)aom_malloc(
-            sizeof(*is_block_same[0][0]) * pic_width * pic_height);
-        if (!is_block_same[k][j]) error = true;
+    for (int j = 0; j < 2; ++j) {
+      block_hash_values[j] = (uint32_t *)aom_malloc(
+          sizeof(*block_hash_values[j]) * pic_width * pic_height);
+      if (!block_hash_values[j]) {
+        error = true;
+        break;
       }
     }
 
     av1_hash_table_init(intrabc_hash_info);
     if (error ||
         !av1_hash_table_create(&intrabc_hash_info->intrabc_hash_table)) {
-      free_block_hash_buffers(block_hash_values, is_block_same);
+      free_block_hash_buffers(block_hash_values);
       aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
                          "Error allocating intrabc_hash_table and buffers");
     }
     hash_table_created = 1;
-    av1_generate_block_2x2_hash_value(intrabc_hash_info, cpi->source,
-                                      block_hash_values[0], is_block_same[0]);
+    av1_generate_block_2x2_hash_value(cpi->source, block_hash_values[0]);
     // Hash data generated for screen contents is used for intraBC ME
     const int min_alloc_size = block_size_wide[mi_params->mi_alloc_bsize];
-    const int max_sb_size =
-        (1 << (cm->seq_params->mib_size_log2 + MI_SIZE_LOG2));
+    int max_sb_size = (1 << (cm->seq_params->mib_size_log2 + MI_SIZE_LOG2));
+
+    if (cpi->sf.mv_sf.hash_max_8x8_intrabc_blocks) {
+      max_sb_size = AOMMIN(8, max_sb_size);
+    }
+
     int src_idx = 0;
     for (int size = 4; size <= max_sb_size; size *= 2, src_idx = !src_idx) {
       const int dst_idx = !src_idx;
-      av1_generate_block_hash_value(
-          intrabc_hash_info, cpi->source, size, block_hash_values[src_idx],
-          block_hash_values[dst_idx], is_block_same[src_idx],
-          is_block_same[dst_idx]);
-      if (size >= min_alloc_size) {
-        if (!av1_add_to_hash_map_by_row_with_precal_data(
-                &intrabc_hash_info->intrabc_hash_table,
-                block_hash_values[dst_idx], is_block_same[dst_idx][2],
-                pic_width, pic_height, size)) {
-          error = true;
-          break;
-        }
+      av1_generate_block_hash_value(intrabc_hash_info, cpi->source, size,
+                                    block_hash_values[src_idx],
+                                    block_hash_values[dst_idx]);
+      if (size >= min_alloc_size &&
+          !av1_add_to_hash_map_by_row_with_precal_data(
+              &intrabc_hash_info->intrabc_hash_table,
+              block_hash_values[dst_idx], pic_width, pic_height, size)) {
+        error = true;
+        break;
       }
     }
 
-    free_block_hash_buffers(block_hash_values, is_block_same);
+    free_block_hash_buffers(block_hash_values);
 
     if (error) {
       aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
@@ -1914,7 +2182,8 @@ static inline void encode_frame_internal(AV1_COMP *cpi) {
   cm->delta_q_info.delta_q_res = 0;
   if (cpi->use_ducky_encode) {
     cm->delta_q_info.delta_q_res = DEFAULT_DELTA_Q_RES_DUCKY_ENCODE;
-  } else if (cpi->oxcf.q_cfg.aq_mode != CYCLIC_REFRESH_AQ) {
+  } else if (cpi->oxcf.q_cfg.aq_mode != CYCLIC_REFRESH_AQ &&
+             !cpi->roi.enabled) {
     if (deltaq_mode == DELTA_Q_OBJECTIVE)
       cm->delta_q_info.delta_q_res = DEFAULT_DELTA_Q_RES_OBJECTIVE;
     else if (deltaq_mode == DELTA_Q_PERCEPTUAL)
@@ -1925,6 +2194,9 @@ static inline void encode_frame_internal(AV1_COMP *cpi) {
       cm->delta_q_info.delta_q_res = DEFAULT_DELTA_Q_RES_PERCEPTUAL;
     else if (deltaq_mode == DELTA_Q_HDR)
       cm->delta_q_info.delta_q_res = DEFAULT_DELTA_Q_RES_PERCEPTUAL;
+    else if (deltaq_mode == DELTA_Q_VARIANCE_BOOST)
+      cm->delta_q_info.delta_q_res =
+          aom_get_variance_boost_delta_q_res(quant_params->base_qindex);
     // Set delta_q_present_flag before it is used for the first time
     cm->delta_q_info.delta_lf_res = DEFAULT_DELTA_LF_RES;
     cm->delta_q_info.delta_q_present_flag = deltaq_mode != NO_DELTA_Q;
@@ -1968,7 +2240,8 @@ static inline void encode_frame_internal(AV1_COMP *cpi) {
   init_encode_frame_mb_context(cpi);
   set_default_interp_skip_flags(cm, &cpi->interp_search_flags);
 
-  if (cm->prev_frame && cm->prev_frame->seg.enabled)
+  if (cm->prev_frame && cm->prev_frame->seg.enabled &&
+      cpi->svc.number_spatial_layers == 1)
     cm->last_frame_seg_map = cm->prev_frame->seg_map;
   else
     cm->last_frame_seg_map = NULL;
@@ -2008,7 +2281,13 @@ static inline void encode_frame_internal(AV1_COMP *cpi) {
   start_timing(cpi, av1_setup_motion_field_time);
 #endif
   av1_calculate_ref_frame_side(cm);
+
+  features->allow_ref_frame_mvs &= !(cpi->sf.hl_sf.ref_frame_mvs_lvl == 2);
   if (features->allow_ref_frame_mvs) av1_setup_motion_field(cm);
+#if !CONFIG_REALTIME_ONLY
+  check_to_disable_ref_frame_mvs(cpi);
+#endif  // !CONFIG_REALTIME_ONLY
+
 #if CONFIG_COLLECT_COMPONENT_TIMING
   end_timing(cpi, av1_setup_motion_field_time);
 #endif

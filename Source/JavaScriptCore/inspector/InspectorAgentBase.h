@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include <JavaScriptCore/InspectorFrontendRouter.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
@@ -36,14 +38,13 @@ class JSGlobalObject;
 namespace Inspector {
 
 class BackendDispatcher;
-class FrontendRouter;
 class InjectedScriptManager;
 class InspectorEnvironment;
 
 struct AgentContext {
     InspectorEnvironment& environment;
     InjectedScriptManager& injectedScriptManager;
-    FrontendRouter& frontendRouter;
+    CheckedRef<FrontendRouter> frontendRouter;
     BackendDispatcher& backendDispatcher;
 };
 
@@ -69,7 +70,7 @@ public:
 
     String domainName() const { return m_name; }
 
-    virtual void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) = 0;
+    virtual void didCreateFrontendAndBackend() = 0;
     virtual void willDestroyFrontendAndBackend(DisconnectReason) = 0;
     virtual void discardValues() { }
     virtual void discardAgent() { }

@@ -76,17 +76,17 @@ NS_SWIFT_UI_ACTOR
 
 - (instancetype)initWithDelegate:(id<WKIntelligenceTextEffectCoordinatorDelegate>)delegate;
 
-- (void)startAnimationForRange:(NSRange)range completion:(void (^)(void))completion;
+- (void)startAnimationForRange:(NSRange)range completion:(NS_SWIFT_UI_ACTOR void (^)(void))completion;
 
-- (void)requestReplacementWithProcessedRange:(NSRange)range finished:(BOOL)finished characterDelta:(NSInteger)characterDelta operation:(void (^)(void (^)(void)))operation completion:(void (^)(void))completion;
+- (void)requestReplacementWithProcessedRange:(NSRange)range finished:(BOOL)finished characterDelta:(NSInteger)characterDelta operation:(NS_SWIFT_UI_ACTOR void (^)(NS_SWIFT_UI_ACTOR void (^)(void)))operation completion:(NS_SWIFT_UI_ACTOR void (^)(void))completion;
 
-- (void)flushReplacementsWithCompletion:(void (^)(void))completion;
+- (void)flushReplacementsWithCompletionHandler:(NS_SWIFT_UI_ACTOR void (^)(void))completionHandler;
 
-- (void)restoreSelectionAcceptedReplacements:(BOOL)acceptedReplacements completion:(void (^)(void))completion;
+- (void)restoreSelectionAcceptedReplacements:(BOOL)acceptedReplacements completionHandler:(NS_SWIFT_UI_ACTOR void (^)(void))completionHandler;
 
-- (void)hideEffectsWithCompletion:(void (^)(void))completion;
+- (void)hideEffectsWithCompletionHandler:(NS_SWIFT_UI_ACTOR void (^)(void))completionHandler;
 
-- (void)showEffectsWithCompletion:(void (^)(void))completion;
+- (void)showEffectsWithCompletionHandler:(NS_SWIFT_UI_ACTOR void (^)(void))completionHandler;
 
 @end
 

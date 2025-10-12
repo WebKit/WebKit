@@ -4,16 +4,27 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
-
 #ifndef skgpu_graphite_DrawWriter_DEFINED
 #define skgpu_graphite_DrawWriter_DEFINED
 
+#include "include/private/base/SkAlign.h"
+#include "include/private/base/SkAssert.h"
+#include "include/private/base/SkContainers.h"
+#include "include/private/base/SkDebug.h"
+#include "include/private/base/SkTFitsIn.h"
+#include "include/private/base/SkTo.h"
 #include "src/base/SkAutoMalloc.h"
+#include "src/base/SkEnumBitMask.h"
 #include "src/gpu/BufferWriter.h"
 #include "src/gpu/graphite/BufferManager.h"
 #include "src/gpu/graphite/DrawTypes.h"
+#include "src/gpu/graphite/ResourceTypes.h"
 
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <optional>
+#include <utility>
 
 namespace skgpu::graphite {
 
@@ -88,7 +99,7 @@ public:
                           size_t staticStride,
                           size_t appendStride,
                           SkEnumBitMask<RenderStateFlags> newRenderState,
-                          std::optional<BarrierType> barrierType) {
+                          BarrierType barrierType) {
         this->flush();
 
         // Once flushed, any pending data must have been drawn.
@@ -103,7 +114,7 @@ public:
         // aligned, regardless of the previous render state.
         fShouldAlign4 = SkToBool(newRenderState & RenderStateFlags::kAppendVertices);
 
-        // Assign the (optional) barrier type. If a valid value, then the DrawWriter will append
+        // Assign the barrier type. If a valid value, then the DrawWriter will append
         // AddBarrier commands of the indicated type prior to appending any draw commands used with
         // this pipeline.
         fBarrierToIssueBeforeDraws = barrierType;
@@ -207,6 +218,10 @@ public:
         this->bindAndFlush(vertices, indices, instances, indexCount, instanceCount);
     }
 
+#if defined(GPU_TEST_UTILS)
+    BindBufferInfo getLastAppendedBuffer() { return fAppend; }
+#endif
+
 private:
     // Both of these pointers must outlive the DrawWriter.
     DrawPassCommands::List* fCommandList;
@@ -256,7 +271,7 @@ private:
     // to let the next reserve() call know that we need a 4 count aligned offset.
     bool fShouldAlign4;
 
-    std::optional<BarrierType> fBarrierToIssueBeforeDraws = std::nullopt;
+    BarrierType fBarrierToIssueBeforeDraws = BarrierType::kNone;
 
     void flushInternal();
 

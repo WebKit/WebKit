@@ -84,6 +84,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/test_class_with_class.vtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/test_italic.vtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/test_italic_with_class.vtt
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/test_lang_object.vtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/test_long.vtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/test_two_voices.vtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/test_underline.vtt

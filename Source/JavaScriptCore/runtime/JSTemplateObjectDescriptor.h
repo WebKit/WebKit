@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
- * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "Structure.h"
-#include "TemplateObjectDescriptor.h"
+#include <JavaScriptCore/Structure.h>
+#include <JavaScriptCore/TemplateObjectDescriptor.h>
 
 namespace JSC {
 
@@ -59,7 +59,7 @@ private:
 
     static void destroy(JSCell*);
 
-    Ref<TemplateObjectDescriptor> m_descriptor;
+    const Ref<TemplateObjectDescriptor> m_descriptor;
     int m_endOffset { 0 };
 };
 

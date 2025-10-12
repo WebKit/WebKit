@@ -1,0 +1,5 @@
+
+
+
+PASS Repeated image produces different timestamps.
+

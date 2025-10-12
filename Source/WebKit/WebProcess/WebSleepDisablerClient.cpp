@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2020 Apple Inc. All rights reserved.
+* Copyright (C) 2020-2025 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -38,13 +38,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSleepDisablerClient);
 
 void WebSleepDisablerClient::didCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, const String& reason, bool display, std::optional<WebCore::PageIdentifier> pageID)
 {
-    if (auto* webPage = pageID ? WebProcess::singleton().webPage(*pageID) : nullptr)
+    if (RefPtr webPage = pageID ? WebProcess::singleton().webPage(*pageID) : nullptr)
         webPage->send(Messages::WebPageProxy::DidCreateSleepDisabler(identifier, reason, display));
 }
 
 void WebSleepDisablerClient::didDestroySleepDisabler(WebCore::SleepDisablerIdentifier identifier, std::optional<WebCore::PageIdentifier> pageID)
 {
-    if (auto* webPage = pageID ? WebProcess::singleton().webPage(*pageID) : nullptr)
+    if (RefPtr webPage = pageID ? WebProcess::singleton().webPage(*pageID) : nullptr)
         webPage->send(Messages::WebPageProxy::DidDestroySleepDisabler(identifier));
 }
 

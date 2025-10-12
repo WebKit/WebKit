@@ -10,6 +10,8 @@
 
 #include "modules/audio_processing/echo_detector/moving_max.h"
 
+#include <cstddef>
+
 #include "rtc_base/checks.h"
 
 namespace webrtc {

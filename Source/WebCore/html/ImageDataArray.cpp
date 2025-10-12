@@ -69,8 +69,8 @@ ImageDataArray::ImageDataArray(Ref<JSC::Float16Array>&& data)
     : ImageDataArray(Ref<JSC::ArrayBufferView>(WTFMove(data)))
 { }
 
-ImageDataArray::ImageDataArray(ImageDataArray&& original, std::optional<ImageDataStorageFormat> overridingStorageFormat)
-    : m_arrayBufferView(WTFMove(original).extractBufferViewWithStorageFormat(overridingStorageFormat))
+ImageDataArray::ImageDataArray(ImageDataArray&& original, std::optional<ImageDataPixelFormat> overridingPixelFormat)
+    : m_arrayBufferView(WTFMove(original).extractBufferViewWithPixelFormat(overridingPixelFormat))
 { }
 
 template <typename TypedArray>
@@ -83,17 +83,17 @@ static void fillTypedArray(TypedArray& typedArray, std::span<const uint8_t> opti
     memcpySpan(bufferViewSpan, optionalBytes);
 }
 
-std::optional<ImageDataArray> ImageDataArray::tryCreate(size_t length, ImageDataStorageFormat storageFormat, std::span<const uint8_t> optionalBytes)
+std::optional<ImageDataArray> ImageDataArray::tryCreate(size_t length, ImageDataPixelFormat pixelFormat, std::span<const uint8_t> optionalBytes)
 {
     std::optional<ImageDataArray> array;
-    switch (storageFormat) {
-    case ImageDataStorageFormat::Uint8:
+    switch (pixelFormat) {
+    case ImageDataPixelFormat::RgbaUnorm8:
         if (RefPtr typedArray = JSC::Uint8ClampedArray::tryCreateUninitialized(length)) {
             fillTypedArray(*typedArray, optionalBytes);
             array.emplace(typedArray.releaseNonNull());
         }
         break;
-    case ImageDataStorageFormat::Float16:
+    case ImageDataPixelFormat::RgbaFloat16:
         if (RefPtr typedArray = JSC::Float16Array::tryCreateUninitialized(length)) {
             fillTypedArray(*typedArray, optionalBytes);
             array.emplace(typedArray.releaseNonNull());
@@ -107,11 +107,11 @@ bool ImageDataArray::isSupported(const JSC::ArrayBufferView& arrayBufferView)
     return isSupported(arrayBufferView.getType());
 }
 
-ImageDataStorageFormat ImageDataArray::storageFormat() const
+ImageDataPixelFormat ImageDataArray::pixelFormat() const
 {
-    auto imageDataStorageFormat = toImageDataStorageFormat(m_arrayBufferView->getType());
-    RELEASE_ASSERT(!!imageDataStorageFormat);
-    return *imageDataStorageFormat;
+    auto imageDataPixelFormat = toImageDataPixelFormat(m_arrayBufferView->getType());
+    RELEASE_ASSERT(!!imageDataPixelFormat);
+    return *imageDataPixelFormat;
 }
 
 template <typename From, typename To>
@@ -187,16 +187,16 @@ Ref<JSON::Value> ImageDataArray::copyToJSONArray() const
     });
 }
 
-Ref<ArrayBufferView> ImageDataArray::extractBufferViewWithStorageFormat(std::optional<ImageDataStorageFormat> overridingStorageFormat) &&
+Ref<ArrayBufferView> ImageDataArray::extractBufferViewWithPixelFormat(std::optional<ImageDataPixelFormat> overridingPixelFormat) &&
 {
-    if (!overridingStorageFormat)
+    if (!overridingPixelFormat)
         return WTFMove(m_arrayBufferView);
 
-    switch (*overridingStorageFormat) {
-    case ImageDataStorageFormat::Uint8: return asUint8ClampedArray();
-    case ImageDataStorageFormat::Float16: return asFloat16Array();
+    switch (*overridingPixelFormat) {
+    case ImageDataPixelFormat::RgbaUnorm8: return asUint8ClampedArray();
+    case ImageDataPixelFormat::RgbaFloat16: return asFloat16Array();
     }
-    RELEASE_ASSERT_NOT_REACHED("Unexpected ImageDataStorageFormat value");
+    RELEASE_ASSERT_NOT_REACHED("Unexpected ImageDataPixelFormat value");
 }
 
 ImageDataArray::operator DataVariant() const

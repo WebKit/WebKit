@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "Document.h"
-#include "SecurityOriginData.h"
-#include "TextBreakingPositionContext.h"
-#include "Timer.h"
+#include <WebCore/Document.h>
+#include <WebCore/SecurityOriginData.h>
+#include <WebCore/TextBreakingPositionContext.h>
+#include <WebCore/Timer.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
@@ -56,7 +56,7 @@ private:
     void evict();
 
 private:
-    using TextBreakingPositionMap = UncheckedKeyHashMap<Key, List>;
+    using TextBreakingPositionMap = HashMap<Key, List>;
     TextBreakingPositionMap m_breakingPositionMap;
     size_t m_cachedContentSize { 0 };
     Timer m_delayedEvictionTimer;

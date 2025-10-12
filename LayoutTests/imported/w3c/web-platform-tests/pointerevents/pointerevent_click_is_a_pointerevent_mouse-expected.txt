@@ -4,6 +4,6 @@ Harness Error (TIMEOUT), message = null
 
 PASS click using mouse is a PointerEvent with correct properties
 PASS click using mouse is a PointerEvent with correct properties when no other PointerEvent listeners are present
+PASS click using mouse is a PointerEvent with correct properties using non-pointing device
 TIMEOUT click using mouse is a PointerEvent with correct properties in a subframe Test timed out
-NOTRUN click using mouse is a PointerEvent with correct properties using non-pointing device
 

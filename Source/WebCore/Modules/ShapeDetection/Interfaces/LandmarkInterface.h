@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FloatPoint.h"
-#include "LandmarkTypeInterface.h"
+#include <WebCore/FloatPoint.h>
+#include <WebCore/LandmarkTypeInterface.h>
 #include <wtf/Vector.h>
 
 namespace WebCore::ShapeDetection {

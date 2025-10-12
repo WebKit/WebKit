@@ -30,6 +30,7 @@
 #include "pas_baseline_allocator.h"
 
 #include "pas_segregated_size_directory.h"
+#include "pas_zero_memory.h"
 
 void pas_baseline_allocator_attach_directory(pas_baseline_allocator* allocator,
                                              pas_segregated_size_directory* directory)

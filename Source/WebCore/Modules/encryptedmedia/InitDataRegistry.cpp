@@ -69,9 +69,9 @@ static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsKeyids(const Shared
     // https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html#format
     if (buffer.size() > std::numeric_limits<unsigned>::max())
         return std::nullopt;
-    String json { buffer.span() };
 
-    auto value = JSON::Value::parseJSON(json);
+    // FIXME: Specification says this should be parsed as UTF-8, not Latin-1.
+    auto value = JSON::Value::parseJSON(byteCast<Latin1Character>(buffer.span()));
     if (!value)
         return std::nullopt;
 
@@ -288,7 +288,7 @@ static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsWebM(const SharedBu
     return keyIDs;
 }
 
-InitDataRegistry& InitDataRegistry::shared()
+InitDataRegistry& InitDataRegistry::singleton()
 {
     static NeverDestroyed<InitDataRegistry> registry;
     return registry.get();

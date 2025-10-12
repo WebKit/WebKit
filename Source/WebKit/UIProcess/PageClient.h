@@ -87,6 +87,7 @@ OBJC_CLASS UIView;
 OBJC_CLASS UIViewController;
 OBJC_CLASS WKBaseScrollView;
 OBJC_CLASS WKBEScrollViewScrollUpdate;
+OBJC_CLASS WKFullScreenWindowController;
 OBJC_CLASS _WKRemoteObjectRegistry;
 
 #if USE(APPKIT)
@@ -118,7 +119,7 @@ class WebMediaSessionManager;
 class SelectionData;
 #endif
 
-struct ElementIdentifierType;
+struct NodeIdentifierType;
 enum class MouseEventPolicy : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
 enum class ScrollbarStyle : uint8_t;
@@ -151,7 +152,7 @@ struct PromisedAttachmentInfo;
 struct TranslationContextMenuInfo;
 #endif
 
-using ElementIdentifier = ObjectIdentifier<ElementIdentifierType>;
+using NodeIdentifier = ObjectIdentifier<NodeIdentifierType>;
 
 #if ENABLE(WRITING_TOOLS)
 namespace WritingTools {
@@ -260,8 +261,12 @@ public:
     // Return whether the view is focused.
     virtual bool isViewFocused() = 0;
 
-    // Return whether the view is visible.
-    virtual bool isViewVisible() = 0;
+    // Return whether the active view is visible.
+    virtual bool isActiveViewVisible() = 0;
+
+    // Return whether the main view is visible.
+    // This is relevant for page client that can have multiple views.
+    virtual bool isMainViewVisible() { return isActiveViewVisible(); }
 
     // Called when the activity state of the page transitions from non-visible to visible.
     virtual void viewIsBecomingVisible() { }
@@ -274,13 +279,13 @@ public:
 #endif
 
     // Return whether the view is visible, or occluded by another window.
-    virtual bool isViewVisibleOrOccluded() { return isViewVisible(); }
+    virtual bool isViewVisibleOrOccluded() { return isActiveViewVisible(); }
 
     // Return whether the view is in a window.
     virtual bool isViewInWindow() = 0;
 
     // Return whether the view is visually idle.
-    virtual bool isVisuallyIdle() { return !isViewVisible(); }
+    virtual bool isVisuallyIdle() { return !isActiveViewVisible(); }
 
     virtual WindowKind windowKind() { return isViewInWindow() ? WindowKind::Normal : WindowKind::Unparented; }
 
@@ -327,6 +332,7 @@ public:
         completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotSupportedError, "Digital credentials are not supported."_s }));
     }
     virtual void dismissDigitalCredentialsPicker(WTF::CompletionHandler<void(bool)>&& completionHandler) { completionHandler(true); }
+    virtual void dismissAnyOpenPicker() { }
 
     virtual void didChangeContentSize(const WebCore::IntSize&) = 0;
 
@@ -342,7 +348,7 @@ public:
 #if PLATFORM(GTK)
     virtual void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<WebCore::ShareableBitmap>&& dragImage, WebCore::IntPoint&& dragImageHotspot) = 0;
 #else
-    virtual void startDrag(const WebCore::DragItem&, WebCore::ShareableBitmap::Handle&&, const std::optional<WebCore::ElementIdentifier>&) { }
+    virtual void startDrag(const WebCore::DragItem&, WebCore::ShareableBitmap::Handle&&, const std::optional<WebCore::NodeIdentifier>&) { }
 #endif
     virtual void didPerformDragOperation(bool) { }
     virtual void didPerformDragControllerAction() { }
@@ -515,6 +521,7 @@ public:
     virtual bool useFormSemanticContext() const = 0;
     
     virtual NSView *viewForPresentingRevealPopover() const = 0;
+    RetainPtr<NSView> protectedViewForPresentingRevealPopover() const;
 
     virtual void showPlatformContextMenu(NSMenu *, WebCore::IntPoint) = 0;
 
@@ -592,6 +599,7 @@ public:
 
     virtual bool isSimulatingCompatibilityPointerTouches() const = 0;
 
+    virtual WebCore::FloatBoxExtent computedObscuredInset() const = 0;
     virtual WebCore::Color contentViewBackgroundColor() = 0;
     virtual WebCore::Color insertionPointColor() = 0;
     virtual bool isScreenBeingCaptured() = 0;
@@ -611,6 +619,7 @@ public:
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)
     virtual WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() = 0;
+    CheckedRef<WebFullScreenManagerProxyClient> checkedFullScreenManagerProxyClient();
     virtual void setFullScreenClientForTesting(std::unique_ptr<WebFullScreenManagerProxyClient>&&) = 0;
 #endif
 
@@ -691,6 +700,7 @@ public:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     virtual WebCore::WebMediaSessionManager& mediaSessionManager() = 0;
+    CheckedRef<WebCore::WebMediaSessionManager> checkedMediaSessionManager();
 #endif
 
     virtual void refView() = 0;
@@ -706,17 +716,19 @@ public:
 
     virtual WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() = 0;
 
+    virtual void didChangeLocalInspectorAttachment() { }
+
 #if USE(QUICK_LOOK)
     virtual void requestPasswordForQuickLookDocument(const String& fileName, WTF::Function<void(const String&)>&&) = 0;
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
     virtual void willReceiveEditDragSnapshot() = 0;
-    virtual void didReceiveEditDragSnapshot(std::optional<WebCore::TextIndicatorData>) = 0;
+    virtual void didReceiveEditDragSnapshot(RefPtr<WebCore::TextIndicator>&&) = 0;
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-    virtual void didReceiveInteractiveModelElement(std::optional<WebCore::ElementIdentifier>) = 0;
+    virtual void didReceiveInteractiveModelElement(std::optional<WebCore::NodeIdentifier>) = 0;
 #endif
 
     virtual void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) = 0;
@@ -822,6 +834,11 @@ public:
     virtual void didChangeScreenTimeWebpageControllerURL() { };
     virtual void setURLIsPictureInPictureForScreenTime(bool) { };
     virtual void setURLIsPlayingVideoForScreenTime(bool) { };
+#endif
+
+#if ENABLE(POINTER_LOCK)
+    virtual void beginPointerLockMouseTracking() { }
+    virtual void endPointerLockMouseTracking() { }
 #endif
 };
 

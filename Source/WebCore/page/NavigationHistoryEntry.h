@@ -65,7 +65,6 @@ public:
     SerializedScriptValue* state() const { return m_state.get(); }
 
     HistoryItem& associatedHistoryItem() const { return m_associatedHistoryItem; }
-    Ref<HistoryItem> protectedAssociatedHistoryItem() const { return m_associatedHistoryItem; }
 
     void dispatchDisposeEvent();
 
@@ -85,6 +84,7 @@ private:
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
+    using ActiveDOMObject::protectedScriptExecutionContext;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
     void eventListenersDidChange() final;
@@ -94,7 +94,7 @@ private:
     const WTF::UUID m_key;
     const WTF::UUID m_id;
     RefPtr<SerializedScriptValue> m_state;
-    Ref<HistoryItem> m_associatedHistoryItem;
+    const Ref<HistoryItem> m_associatedHistoryItem;
     DocumentState m_originalDocumentState;
     bool m_hasDisposeEventListener { false };
     bool m_hasDispatchedDisposeEvent { false };

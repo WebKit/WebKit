@@ -24,16 +24,20 @@
 
 #pragma once
 
-#include "EventModifierInit.h"
-#include "KeypressCommand.h"
-#include "UIEventWithKeyState.h"
+#include <WebCore/EventModifierInit.h>
+#include <WebCore/FocusEventData.h>
+#include <WebCore/KeypressCommand.h>
+#include <WebCore/UIEventWithKeyState.h>
 #include <memory>
+#include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Node;
 class PlatformKeyboardEvent;
+
+struct FocusEventData;
 
 class KeyboardEvent final : public UIEventWithKeyState {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(KeyboardEvent);
@@ -80,6 +84,7 @@ public:
     PlatformKeyboardEvent* underlyingPlatformEvent() { return m_underlyingPlatformEvent.get(); }
 
     WEBCORE_EXPORT int keyCode() const; // key code for keydown and keyup, character for keypress
+    int keyCodeForKeyDown() const; // key code for the keydown that matches the keypress
     WEBCORE_EXPORT int charCode() const; // character code for keypress, 0 for keydown and keyup
 
     bool isKeyboardEvent() const final;
@@ -92,6 +97,8 @@ public:
     const Vector<KeypressCommand>& keypressCommands() const { return m_keypressCommands; }
     Vector<KeypressCommand>& keypressCommands() { return m_keypressCommands; }
 #endif
+
+    FocusEventData focusEventData() const;
 
 private:
     KeyboardEvent();

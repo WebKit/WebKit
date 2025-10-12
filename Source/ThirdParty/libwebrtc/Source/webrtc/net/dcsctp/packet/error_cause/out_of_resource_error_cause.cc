@@ -9,9 +9,9 @@
  */
 #include "net/dcsctp/packet/error_cause/out_of_resource_error_cause.h"
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <optional>
+#include <string>
 #include <vector>
 
 #include "api/array_view.h"
@@ -26,7 +26,7 @@ namespace dcsctp {
 constexpr int OutOfResourceErrorCause::kType;
 
 std::optional<OutOfResourceErrorCause> OutOfResourceErrorCause::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   if (!ParseTLV(data).has_value()) {
     return std::nullopt;
   }

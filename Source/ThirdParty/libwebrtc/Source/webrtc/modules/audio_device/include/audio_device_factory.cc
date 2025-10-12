@@ -24,15 +24,15 @@
 
 namespace webrtc {
 
-rtc::scoped_refptr<AudioDeviceModule> CreateWindowsCoreAudioAudioDeviceModule(
-    TaskQueueFactory* task_queue_factory,
-    bool automatic_restart) {
+webrtc::scoped_refptr<AudioDeviceModule>
+CreateWindowsCoreAudioAudioDeviceModule(TaskQueueFactory* task_queue_factory,
+                                        bool automatic_restart) {
   RTC_DLOG(LS_INFO) << __FUNCTION__;
   return CreateWindowsCoreAudioAudioDeviceModuleForTest(task_queue_factory,
                                                         automatic_restart);
 }
 
-rtc::scoped_refptr<AudioDeviceModuleForTest>
+webrtc::scoped_refptr<AudioDeviceModuleForTest>
 CreateWindowsCoreAudioAudioDeviceModuleForTest(
     TaskQueueFactory* task_queue_factory,
     bool automatic_restart) {

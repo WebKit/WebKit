@@ -27,27 +27,41 @@
 #include "WebTransportReceiveStream.h"
 
 #include "JSDOMPromiseDeferred.h"
+#include "JSWebTransportReceiveStreamStats.h"
+#include "ScriptExecutionContextInlines.h"
+#include "TaskSource.h"
 #include "WebTransportReceiveStreamStats.h"
+#include "WebTransportSession.h"
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
-ExceptionOr<Ref<WebTransportReceiveStream>> WebTransportReceiveStream::create(JSDOMGlobalObject& globalObject, Ref<ReadableStreamSource>&& source)
+ExceptionOr<Ref<WebTransportReceiveStream>> WebTransportReceiveStream::create(WebTransportStreamIdentifier identifier, WebTransportSession& session, JSDOMGlobalObject& globalObject, Ref<ReadableStreamSource>&& source)
 {
     auto result = createInternalReadableStream(globalObject, WTFMove(source));
     if (result.hasException())
         return result.releaseException();
 
-    return adoptRef(*new WebTransportReceiveStream(result.releaseReturnValue()));
+    return adoptRef(*new WebTransportReceiveStream(globalObject.protectedScriptExecutionContext().get(), identifier, session, result.releaseReturnValue()));
 }
 
-WebTransportReceiveStream::WebTransportReceiveStream(Ref<InternalReadableStream>&& stream)
-    : ReadableStream(WTFMove(stream)) { }
+WebTransportReceiveStream::WebTransportReceiveStream(ScriptExecutionContext* context, WebTransportStreamIdentifier identifier, WebTransportSession& session, Ref<InternalReadableStream>&& stream)
+    : ReadableStream(context, WTFMove(stream))
+    , m_identifier(identifier)
+    , m_session(session) { }
 
-void WebTransportReceiveStream::getStats(Ref<DeferredPromise>&& promise)
+WebTransportReceiveStream::~WebTransportReceiveStream() = default;
+
+void WebTransportReceiveStream::getStats(ScriptExecutionContext& context, Ref<DeferredPromise>&& promise)
 {
-    // FIXME: Resolve promise with stats.
-    return promise->reject(ExceptionCode::NotSupportedError);
+    RefPtr session = m_session.get();
+    if (!session)
+        return promise->reject(ExceptionCode::InvalidStateError);
+    context.enqueueTaskWhenSettled(session->getReceiveStreamStats(m_identifier), WebCore::TaskSource::Networking, [promise = WTFMove(promise)] (auto&& stats) mutable {
+        if (!stats)
+            return promise->reject(ExceptionCode::InvalidStateError);
+        promise->resolve<IDLDictionary<WebTransportReceiveStreamStats>>(*stats);
+    });
 }
 
 }

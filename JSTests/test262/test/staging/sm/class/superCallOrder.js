@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -33,5 +30,5 @@ class beforeThrow extends base {
 Object.setPrototypeOf(beforeThrow, Math.sin);
 
 // Won't throw that Math.sin is not a constructor before evaluating the args
-assertThrowsInstanceOf(() => new beforeThrow(), MyError);
+assert.throws(MyError, () => new beforeThrow());
 

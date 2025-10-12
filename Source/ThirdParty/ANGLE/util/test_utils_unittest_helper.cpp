@@ -5,6 +5,10 @@
 
 // system_utils_unittest_helper.cpp: Helper to the SystemUtils.RunApp unittest
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils_unittest_helper.h"
 
 #include "../src/tests/test_utils/runner/TestSuite.h"

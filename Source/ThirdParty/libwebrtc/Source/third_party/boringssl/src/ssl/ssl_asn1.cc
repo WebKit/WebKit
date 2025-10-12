@@ -1,84 +1,17 @@
-/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
- * All rights reserved.
- *
- * This package is an SSL implementation written
- * by Eric Young (eay@cryptsoft.com).
- * The implementation was written so as to conform with Netscapes SSL.
- *
- * This library is free for commercial and non-commercial use as long as
- * the following conditions are aheared to.  The following conditions
- * apply to all code found in this distribution, be it the RC4, RSA,
- * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
- * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- *
- * Copyright remains Eric Young's, and as such any Copyright notices in
- * the code are not to be removed.
- * If this package is used in a product, Eric Young should be given attribution
- * as the author of the parts of the library used.
- * This can be in the form of a textual message at program startup or
- * in documentation (online or textual) provided with the package.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *    "This product includes cryptographic software written by
- *     Eric Young (eay@cryptsoft.com)"
- *    The word 'cryptographic' can be left out if the rouines from the library
- *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from
- *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- *
- * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * The licence and distribution terms for any publically available version or
- * derivative of this code cannot be changed.  i.e. this code cannot simply be
- * copied and put under another distribution licence
- * [including the GNU Public Licence.]
- */
-/* ====================================================================
- * Copyright 2005 Nokia. All rights reserved.
- *
- * The portions of the attached software ("Contribution") is developed by
- * Nokia Corporation and is licensed pursuant to the OpenSSL open source
- * license.
- *
- * The Contribution, originally written by Mika Kousa and Pasi Eronen of
- * Nokia Corporation, consists of the "PSK" (Pre-Shared Key) ciphersuites
- * support (see RFC 4279) to OpenSSL.
- *
- * No patent licenses or other rights except those expressly stated in
- * the OpenSSL open source license shall be deemed granted or received
- * expressly, by implication, estoppel, or otherwise.
- *
- * No assurances are provided by Nokia that the Contribution does not
- * infringe the patent or other intellectual property rights of any third
- * party or that the license provides you with all the necessary rights
- * to make use of the Contribution.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND. IN
- * ADDITION TO THE DISCLAIMERS INCLUDED IN THE LICENSE, NOKIA
- * SPECIFICALLY DISCLAIMS ANY LIABILITY FOR CLAIMS BROUGHT BY YOU OR ANY
- * OTHER ENTITY BASED ON INFRINGEMENT OF INTELLECTUAL PROPERTY RIGHTS OR
- * OTHERWISE. */
+// Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved.
+// Copyright 2005 Nokia. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <openssl/ssl.h>
 
@@ -135,6 +68,7 @@ BSSL_NAMESPACE_BEGIN
 //     peerALPS                [30] OCTET STRING OPTIONAL,
 //     -- Either both or none of localALPS and peerALPS must be present. If both
 //     -- are present, earlyALPN must be present and non-empty.
+//     resumableAcrossNames    [31] BOOLEAN OPTIONAL,
 // }
 //
 // Note: historically this serialization has included other optional
@@ -202,6 +136,9 @@ static const CBS_ASN1_TAG kLocalALPSTag =
     CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 29;
 static const CBS_ASN1_TAG kPeerALPSTag =
     CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 30;
+static const CBS_ASN1_TAG kResumableAcrossNamesTag =
+    CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 31;
+
 
 static int SSL_SESSION_to_bytes_full(const SSL_SESSION *in, CBB *cbb,
                                      int for_ticket) {
@@ -231,9 +168,8 @@ static int SSL_SESSION_to_bytes_full(const SSL_SESSION *in, CBB *cbb,
   // serialized instead.
   if (sk_CRYPTO_BUFFER_num(in->certs.get()) > 0 && !in->peer_sha256_valid) {
     const CRYPTO_BUFFER *buffer = sk_CRYPTO_BUFFER_value(in->certs.get(), 0);
-    if (!CBB_add_asn1(&session, &child, kPeerTag) ||
-        !CBB_add_bytes(&child, CRYPTO_BUFFER_data(buffer),
-                       CRYPTO_BUFFER_len(buffer))) {
+    if (!CBB_add_asn1_element(&session, kPeerTag, CRYPTO_BUFFER_data(buffer),
+                              CRYPTO_BUFFER_len(buffer))) {
       return 0;
     }
   }
@@ -318,16 +254,16 @@ static int SSL_SESSION_to_bytes_full(const SSL_SESSION *in, CBB *cbb,
     }
   }
 
-  if (in->group_id > 0 &&
-      (!CBB_add_asn1(&session, &child, kGroupIDTag) ||
+  if (in->group_id > 0 &&                               //
+      (!CBB_add_asn1(&session, &child, kGroupIDTag) ||  //
        !CBB_add_asn1_uint64(&child, in->group_id))) {
     return 0;
   }
 
   // The certificate chain is only serialized if the leaf's SHA-256 isn't
   // serialized instead.
-  if (in->certs != NULL &&
-      !in->peer_sha256_valid &&
+  if (in->certs != NULL &&       //
+      !in->peer_sha256_valid &&  //
       sk_CRYPTO_BUFFER_num(in->certs.get()) >= 2) {
     if (!CBB_add_asn1(&session, &child, kCertChainTag)) {
       return 0;
@@ -405,6 +341,13 @@ static int SSL_SESSION_to_bytes_full(const SSL_SESSION *in, CBB *cbb,
         !CBB_add_asn1(&session, &child, kPeerALPSTag) ||
         !CBB_add_asn1_octet_string(&child, in->peer_application_settings.data(),
                                    in->peer_application_settings.size())) {
+      return 0;
+    }
+  }
+
+  if (in->is_resumable_across_names) {
+    if (!CBB_add_asn1(&session, &child, kResumableAcrossNamesTag) ||
+        !CBB_add_asn1_bool(&child, true)) {
       return 0;
     }
   }
@@ -525,15 +468,15 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
   CBS session;
   uint64_t version, ssl_version;
   uint16_t unused;
-  if (!CBS_get_asn1(cbs, &session, CBS_ASN1_SEQUENCE) ||
-      !CBS_get_asn1_uint64(&session, &version) ||
-      version != kVersion ||
-      !CBS_get_asn1_uint64(&session, &ssl_version) ||
+  if (!CBS_get_asn1(cbs, &session, CBS_ASN1_SEQUENCE) ||  //
+      !CBS_get_asn1_uint64(&session, &version) ||         //
+      version != kVersion ||                              //
+      !CBS_get_asn1_uint64(&session, &ssl_version) ||     //
       // Require sessions have versions valid in either TLS or DTLS. The session
       // will not be used by the handshake if not applicable, but, for
       // simplicity, never parse a session that does not pass
       // |ssl_protocol_version_from_wire|.
-      ssl_version > UINT16_MAX ||
+      ssl_version > UINT16_MAX ||  //
       !ssl_protocol_version_from_wire(&unused, ssl_version)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
     return nullptr;
@@ -542,8 +485,8 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
 
   CBS cipher;
   uint16_t cipher_value;
-  if (!CBS_get_asn1(&session, &cipher, CBS_ASN1_OCTETSTRING) ||
-      !CBS_get_u16(&cipher, &cipher_value) ||
+  if (!CBS_get_asn1(&session, &cipher, CBS_ASN1_OCTETSTRING) ||  //
+      !CBS_get_u16(&cipher, &cipher_value) ||                    //
       CBS_len(&cipher) != 0) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
     return nullptr;
@@ -669,7 +612,7 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
 
     if (has_peer) {
       UniquePtr<CRYPTO_BUFFER> buffer(CRYPTO_BUFFER_new_from_CBS(&peer, pool));
-      if (!buffer ||
+      if (!buffer ||  //
           !PushToStack(ret->certs.get(), std::move(buffer))) {
         return nullptr;
       }
@@ -695,8 +638,8 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
   int age_add_present;
   if (!CBS_get_optional_asn1_octet_string(&session, &age_add, &age_add_present,
                                           kTicketAgeAddTag) ||
-      (age_add_present &&
-       !CBS_get_u32(&age_add, &ret->ticket_age_add)) ||
+      (age_add_present &&                                //
+       !CBS_get_u32(&age_add, &ret->ticket_age_add)) ||  //
       CBS_len(&age_add) != 0) {
     return nullptr;
   }
@@ -731,18 +674,22 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
   }
 
   CBS settings;
-  int has_local_alps, has_peer_alps;
+  int has_local_alps, has_peer_alps, is_resumable_across_names;
   if (!CBS_get_optional_asn1_octet_string(&session, &settings, &has_local_alps,
                                           kLocalALPSTag) ||
       !ret->local_application_settings.CopyFrom(settings) ||
       !CBS_get_optional_asn1_octet_string(&session, &settings, &has_peer_alps,
                                           kPeerALPSTag) ||
       !ret->peer_application_settings.CopyFrom(settings) ||
+      !CBS_get_optional_asn1_bool(&session, &is_resumable_across_names,
+                                  kResumableAcrossNamesTag,
+                                  /*default_value=*/false) ||
       CBS_len(&session) != 0) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
     return nullptr;
   }
   ret->is_quic = is_quic;
+  ret->is_resumable_across_names = is_resumable_across_names;
 
   // The two ALPS values and ALPN must be consistent.
   if (has_local_alps != has_peer_alps ||

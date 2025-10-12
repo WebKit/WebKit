@@ -1337,7 +1337,6 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardsCo
         m_unmodifiedText = String();
     } else {
         m_keyIdentifier = String();
-        m_windowsVirtualKeyCode = 0;
     }
 }
 

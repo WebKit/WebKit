@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JITCode.h"
-#include "Strong.h"
+#include <JavaScriptCore/JITCode.h>
+#include <JavaScriptCore/Strong.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC {

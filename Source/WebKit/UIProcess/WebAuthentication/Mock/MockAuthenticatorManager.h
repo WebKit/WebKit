@@ -44,9 +44,11 @@ private:
     explicit MockAuthenticatorManager(WebCore::MockWebAuthenticationConfiguration&&);
 
     Ref<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&) const final;
-    void respondReceivedInternal(Respond&&) final;
+    void respondReceivedInternal(Respond&&, bool shouldComplete) final;
     void filterTransports(TransportSet&) const;
     void runPresenterInternal(const TransportSet&) final { }
+
+    void validateHidExpectedCommands();
 
     WebCore::MockWebAuthenticationConfiguration m_testConfiguration;
 };

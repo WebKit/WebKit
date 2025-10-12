@@ -1,63 +1,28 @@
-/* ====================================================================
- * Copyright (c) 1999-2007 The OpenSSL Project.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit. (http://www.OpenSSL.org/)"
- *
- * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission. For written permission, please contact
- *    licensing@OpenSSL.org.
- *
- * 5. Products derived from this software may not be called "OpenSSL"
- *    nor may "OpenSSL" appear in their names without prior written
- *    permission of the OpenSSL Project.
- *
- * 6. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit (http://www.OpenSSL.org/)"
- *
- * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- * ==================================================================== */
+// Copyright 1999-2016 The OpenSSL Project Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-#ifndef OPENSSL_HEADER_DIGEST_MD32_COMMON_H
-#define OPENSSL_HEADER_DIGEST_MD32_COMMON_H
+#ifndef OPENSSL_HEADER_CRYPTO_FIPSMODULE_DIGEST_MD32_COMMON_H
+#define OPENSSL_HEADER_CRYPTO_FIPSMODULE_DIGEST_MD32_COMMON_H
 
 #include <openssl/base.h>
+#include <openssl/span.h>
 
 #include <assert.h>
 
 #include "../../internal.h"
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+BSSL_NAMESPACE_BEGIN
 
 
 // This is a generic 32-bit "collector" for message digest algorithms. It
@@ -82,70 +47,80 @@ extern "C" {
 // |h| is the hash state and is updated by a function of type
 // |crypto_md32_block_func|. |data| is the partial unprocessed block and has
 // |num| bytes. |Nl| and |Nh| maintain the number of bits processed so far.
+//
+// The template parameter is then a traits struct defined as follows:
+//
+//     struct HashTraits {
+//       // HashContext is the hash type defined above.
+//       using HashContext = <NAME>_CTX;
+//
+//       // kBlockSize is the block size of the hash function.
+//       static constexpr size_t kBlockSize = <block size>;
+//
+//       // kLengthIsBigEndian determines whether the final length is encoded in
+//       // big or little endian.
+//       static constexpr bool kLengthIsBigEndian = ...;
+//
+//       // HashBlocks incorporates |num_blocks| blocks of input from |data|
+//       // into |state|. It is assumed the caller has sized |state| and |data|
+//       // for the hash function.
+//       static void HashBlocks(uint32_t *state, const uint8_t *data,
+//                              size_t num_blocks) {
+//         <name>_block_data_order(state, data, num_blocks);
+//       }
+//     };
+//
+// The reason for this formulation is to encourage the compiler to specialize
+// all the code for the block size and block function.
 
-// A crypto_md32_block_func should incorporate |num_blocks| of input from |data|
-// into |state|. It is assumed the caller has sized |state| and |data| for the
-// hash function.
-typedef void (*crypto_md32_block_func)(uint32_t *state, const uint8_t *data,
-                                       size_t num_blocks);
-
-// crypto_md32_update adds |len| bytes from |in| to the digest. |data| must be a
-// buffer of length |block_size| with the first |*num| bytes containing a
-// partial block. This function combines the partial block with |in| and
-// incorporates any complete blocks into the digest state |h|. It then updates
-// |data| and |*num| with the new partial block and updates |*Nh| and |*Nl| with
-// the data consumed.
-static inline void crypto_md32_update(crypto_md32_block_func block_func,
-                                      uint32_t *h, uint8_t *data,
-                                      size_t block_size, unsigned *num,
-                                      uint32_t *Nh, uint32_t *Nl,
-                                      const uint8_t *in, size_t len) {
-  if (len == 0) {
+// crypto_md32_update hashes |in| to |ctx|.
+template <typename Traits>
+inline void crypto_md32_update(typename Traits::HashContext *ctx,
+                               Span<const uint8_t> in) {
+  static_assert(Traits::kBlockSize == sizeof(ctx->data), "block size is wrong");
+  if (in.empty()) {
     return;
   }
 
-  uint32_t l = *Nl + (((uint32_t)len) << 3);
-  if (l < *Nl) {
+  uint32_t l = ctx->Nl + ((static_cast<uint32_t>(in.size())) << 3);
+  if (l < ctx->Nl) {
     // Handle carries.
-    (*Nh)++;
+    ctx->Nh++;
   }
-  *Nh += (uint32_t)(len >> 29);
-  *Nl = l;
+  ctx->Nh += static_cast<uint32_t>(in.size() >> 29);
+  ctx->Nl = l;
 
-  size_t n = *num;
+  size_t n = ctx->num;
   if (n != 0) {
-    if (len >= block_size || len + n >= block_size) {
-      OPENSSL_memcpy(data + n, in, block_size - n);
-      block_func(h, data, 1);
-      n = block_size - n;
-      in += n;
-      len -= n;
-      *num = 0;
+    if (in.size() >= Traits::kBlockSize ||
+        in.size() + n >= Traits::kBlockSize) {
+      OPENSSL_memcpy(ctx->data + n, in.data(), Traits::kBlockSize - n);
+      Traits::HashBlocks(ctx->h, ctx->data, 1);
+      in = in.subspan(Traits::kBlockSize - n);
+      ctx->num = 0;
       // Keep |data| zeroed when unused.
-      OPENSSL_memset(data, 0, block_size);
+      OPENSSL_memset(ctx->data, 0, Traits::kBlockSize);
     } else {
-      OPENSSL_memcpy(data + n, in, len);
-      *num += (unsigned)len;
+      OPENSSL_memcpy(ctx->data + n, in.data(), in.size());
+      ctx->num += static_cast<unsigned>(in.size());
       return;
     }
   }
 
-  n = len / block_size;
+  n = in.size() / Traits::kBlockSize;
   if (n > 0) {
-    block_func(h, in, n);
-    n *= block_size;
-    in += n;
-    len -= n;
+    Traits::HashBlocks(ctx->h, in.data(), n);
+    in = in.subspan(n * Traits::kBlockSize);
   }
 
-  if (len != 0) {
-    *num = (unsigned)len;
-    OPENSSL_memcpy(data, in, len);
+  if (!in.empty()) {
+    ctx->num = static_cast<unsigned>(in.size());
+    OPENSSL_memcpy(ctx->data, in.data(), in.size());
   }
 }
 
 // crypto_md32_final incorporates the partial block and trailing length into the
-// digest state |h|. The trailing length is encoded in little-endian if
+// digest state in |ctx|. The trailing length is encoded in little-endian if
 // |is_big_endian| is zero and big-endian otherwise. |data| must be a buffer of
 // length |block_size| with the first |*num| bytes containing a partial block.
 // |Nh| and |Nl| contain the total number of bits processed. On return, this
@@ -154,42 +129,38 @@ static inline void crypto_md32_update(crypto_md32_block_func block_func,
 //
 // This function does not serialize |h| into a final digest. This is the
 // responsibility of the caller.
-static inline void crypto_md32_final(crypto_md32_block_func block_func,
-                                     uint32_t *h, uint8_t *data,
-                                     size_t block_size, unsigned *num,
-                                     uint32_t Nh, uint32_t Nl,
-                                     int is_big_endian) {
+template <typename Traits>
+inline void crypto_md32_final(typename Traits::HashContext *ctx) {
+  static_assert(Traits::kBlockSize == sizeof(ctx->data), "block size is wrong");
   // |data| always has room for at least one byte. A full block would have
   // been consumed.
-  size_t n = *num;
-  assert(n < block_size);
-  data[n] = 0x80;
+  size_t n = ctx->num;
+  assert(n < Traits::kBlockSize);
+  ctx->data[n] = 0x80;
   n++;
 
   // Fill the block with zeros if there isn't room for a 64-bit length.
-  if (n > block_size - 8) {
-    OPENSSL_memset(data + n, 0, block_size - n);
+  if (n > Traits::kBlockSize - 8) {
+    OPENSSL_memset(ctx->data + n, 0, Traits::kBlockSize - n);
     n = 0;
-    block_func(h, data, 1);
+    Traits::HashBlocks(ctx->h, ctx->data, 1);
   }
-  OPENSSL_memset(data + n, 0, block_size - 8 - n);
+  OPENSSL_memset(ctx->data + n, 0, Traits::kBlockSize - 8 - n);
 
   // Append a 64-bit length to the block and process it.
-  if (is_big_endian) {
-    CRYPTO_store_u32_be(data + block_size - 8, Nh);
-    CRYPTO_store_u32_be(data + block_size - 4, Nl);
+  if constexpr (Traits::kLengthIsBigEndian) {
+    CRYPTO_store_u32_be(ctx->data + Traits::kBlockSize - 8, ctx->Nh);
+    CRYPTO_store_u32_be(ctx->data + Traits::kBlockSize - 4, ctx->Nl);
   } else {
-    CRYPTO_store_u32_le(data + block_size - 8, Nl);
-    CRYPTO_store_u32_le(data + block_size - 4, Nh);
+    CRYPTO_store_u32_le(ctx->data + Traits::kBlockSize - 8, ctx->Nl);
+    CRYPTO_store_u32_le(ctx->data + Traits::kBlockSize - 4, ctx->Nh);
   }
-  block_func(h, data, 1);
-  *num = 0;
-  OPENSSL_memset(data, 0, block_size);
+  Traits::HashBlocks(ctx->h, ctx->data, 1);
+  ctx->num = 0;
+  OPENSSL_memset(ctx->data, 0, Traits::kBlockSize);
 }
 
 
-#if defined(__cplusplus)
-}  // extern C
-#endif
+BSSL_NAMESPACE_END
 
-#endif  // OPENSSL_HEADER_DIGEST_MD32_COMMON_H
+#endif  // OPENSSL_HEADER_CRYPTO_FIPSMODULE_DIGEST_MD32_COMMON_H

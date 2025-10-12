@@ -208,7 +208,9 @@ void WebXROpaqueFramebuffer::endFrame()
         tracePoint(WebXRLayerEndFrameEnd);
     });
 
+    ScopedDisableScissorTest disableScissorTest { m_context };
     ScopedWebGLRestoreFramebuffer restoreFramebuffer { m_context };
+
     switch (m_displayLayout) {
     case PlatformXR::Layout::Shared:
         blitShared(*gl);
@@ -446,7 +448,7 @@ const std::array<WebXRExternalAttachments, 2>* WebXROpaqueFramebuffer::reusableD
 
     auto reusableTextureIndex = textureData.reusableTextureIndex;
     if (reusableTextureIndex >= m_displayAttachmentsSets.size() || !m_displayAttachmentsSets[reusableTextureIndex][0]) {
-        RELEASE_LOG_FAULT(XR, "Unable to find reusable texture at index: %zu", reusableTextureIndex);
+        RELEASE_LOG_FAULT(XR, "Unable to find reusable texture at index: %llu", reusableTextureIndex);
         ASSERT_NOT_REACHED();
         return nullptr;
     }
@@ -454,7 +456,7 @@ const std::array<WebXRExternalAttachments, 2>* WebXROpaqueFramebuffer::reusableD
     return &m_displayAttachmentsSets[reusableTextureIndex];
 }
 
-void WebXROpaqueFramebuffer::bindCompositorTexturesForDisplay(GraphicsContextGL& gl, const PlatformXR::FrameData::LayerData& layerData)
+void WebXROpaqueFramebuffer::bindCompositorTexturesForDisplay(GraphicsContextGL& gl, PlatformXR::FrameData::LayerData& layerData)
 {
     int layerCount = (m_displayLayout == PlatformXR::Layout::Layered) ? 2 : 1;
 

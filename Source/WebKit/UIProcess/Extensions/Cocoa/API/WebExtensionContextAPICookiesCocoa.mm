@@ -39,6 +39,7 @@
 #import "WKWebsiteDataStoreInternal.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionCookieParameters.h"
+#import "WebExtensionPermission.h"
 #import "WebExtensionUtilities.h"
 #import "WebsiteDataStore.h"
 #import <WebCore/Cookie.h>
@@ -70,9 +71,9 @@ static inline URL toURL(const WebCore::Cookie& cookie)
     return URL { makeString(cookie.secure ? "https"_s : "http"_s, "://"_s, domain, cookie.path) };
 }
 
-bool WebExtensionContext::isCookiesMessageAllowed()
+bool WebExtensionContext::isCookiesMessageAllowed(IPC::Decoder& message)
 {
-    return isLoaded() && hasPermission(WKWebExtensionPermissionCookies);
+    return isLoadedAndPrivilegedMessage(message) && hasPermission(WebExtensionPermission::cookies());
 }
 
 void WebExtensionContext::fetchCookies(WebsiteDataStore& dataStore, const URL& url, const WebExtensionCookieFilterParameters& filterParameters, CompletionHandler<void(Expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)

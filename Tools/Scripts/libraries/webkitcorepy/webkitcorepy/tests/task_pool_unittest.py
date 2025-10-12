@@ -25,7 +25,7 @@ import time
 import sys
 import unittest
 
-from webkitcorepy import OutputCapture, TaskPool, log as logger
+from webkitcorepy import OutputCapture, TaskPool, Timeout, log as logger
 
 
 def setup(arg='Setting up'):
@@ -282,3 +282,18 @@ class TaskPoolUnittest(unittest.TestCase):
                     with self.assertRaises(ValueError):
                         pool.do(action, 'a', group='invalid')
                     pool.wait()
+
+        def test_mutually_exclusive_group_hang(self):
+            with OutputCapture(level=logging.INFO) as captured:
+                with TaskPool(workers=2, mutually_exclusive_groups=['group']) as pool:
+                    for character in self.alphabet:
+                        pool.do(
+                            action, character,
+                            include_worker=True,
+                            group='group'
+                        )
+
+                    with Timeout(1):
+                        pool.wait()
+
+            self.assertEqual(len(captured.stdout.getvalue().splitlines()), 26)

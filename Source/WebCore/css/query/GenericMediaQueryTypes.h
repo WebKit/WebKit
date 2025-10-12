@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "CSSToLengthConversionData.h"
-#include "CSSValue.h"
-#include "CSSValueKeywords.h"
+#include <WebCore/CSSToLengthConversionData.h>
+#include <WebCore/CSSValue.h>
+#include <WebCore/CSSValueKeywords.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/OptionSet.h>
 #include <wtf/text/AtomString.h>
@@ -89,7 +89,7 @@ struct FeatureEvaluationContext {
 };
 
 struct FeatureSchema {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(FeatureSchema);
 
     enum class Type : uint8_t { Discrete, Range };
     enum class ValueType : uint8_t { Integer, Number, Length, Ratio, Resolution, Identifier, CustomProperty };

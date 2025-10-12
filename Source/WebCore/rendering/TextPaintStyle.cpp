@@ -32,6 +32,7 @@
 #include "LocalFrame.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "RenderObjectInlines.h"
 #include "RenderStyleInlines.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
@@ -72,15 +73,16 @@ static Color adjustColorForVisibilityOnBackground(const Color& textColor, const 
 
 TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
 {
-    auto& frame = renderer.frame();
+    Ref frame = renderer.frame();
+    RefPtr frameView = frame->view();
     TextPaintStyle paintStyle;
 
-    auto viewportSize = frame.view() ? frame.view()->size() : IntSize();
+    auto viewportSize = frameView ? frameView->size() : IntSize();
     paintStyle.strokeWidth = lineStyle.computedStrokeWidth(viewportSize);
     paintStyle.paintOrder = lineStyle.paintOrder();
     paintStyle.lineJoin = lineStyle.joinStyle();
     paintStyle.lineCap = lineStyle.capStyle();
-    paintStyle.miterLimit = lineStyle.strokeMiterLimit();
+    paintStyle.miterLimit = lineStyle.strokeMiterLimit().value.value;
     
     if (paintInfo.forceTextColor()) {
         paintStyle.fillColor = paintInfo.forcedTextColor();
@@ -90,7 +92,7 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderSty
     }
 
     if (lineStyle.insideDefaultButton()) {
-        Page* page = renderer.frame().page();
+        RefPtr page = renderer.frame().page();
         if (page && page->focusController().isActive()) {
             OptionSet<StyleColorOptions> options;
             if (page->settings().useSystemAppearance())
@@ -100,18 +102,30 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderSty
         }
     }
 
+    if (lineStyle.insideSubmitButton()) {
+        RefPtr page = renderer.frame().page();
+        auto focusControllerActive = true;
+#if PLATFORM(MAC)
+        focusControllerActive = page && page->focusController().isActive();
+#endif
+        if (focusControllerActive) {
+            paintStyle.fillColor = RenderTheme::singleton().submitButtonTextColor(renderer);
+            return paintStyle;
+        }
+    }
+
     paintStyle.fillColor = lineStyle.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor, paintInfo.paintBehavior);
 
     bool forceBackgroundToWhite = false;
-    if (frame.document() && frame.document()->printing()) {
+    if (frame->document() && frame->document()->printing()) {
         if (lineStyle.printColorAdjust() == PrintColorAdjust::Economy)
             forceBackgroundToWhite = true;
 
-        if (frame.settings().shouldPrintBackgrounds())
+        if (frame->settings().shouldPrintBackgrounds())
             forceBackgroundToWhite = false;
 
         if (forceBackgroundToWhite) {
-            if (renderer.style().hasAnyBackgroundClipText())
+            if (renderer.checkedStyle()->backgroundLayers().hasAnyBackgroundClipText())
                 paintStyle.fillColor = Color::black;
         }
     }
@@ -135,7 +149,7 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderSty
     return paintStyle;
 }
 
-TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintStyle, const RenderText& renderer, const RenderStyle& lineStyle, const PaintInfo& paintInfo, std::optional<ShadowData>& selectionShadow)
+TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintStyle, const RenderText& renderer, const RenderStyle& lineStyle, const PaintInfo& paintInfo, Style::TextShadows& selectionShadow)
 {
     TextPaintStyle selectionPaintStyle = textPaintStyle;
 
@@ -148,10 +162,11 @@ TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintSty
     if (emphasisMarkForeground.isValid() && emphasisMarkForeground != selectionPaintStyle.emphasisMarkColor)
         selectionPaintStyle.emphasisMarkColor = emphasisMarkForeground;
 
+    RefPtr view = renderer.frame().view();
     if (auto pseudoStyle = renderer.selectionPseudoStyle()) {
         selectionPaintStyle.hasExplicitlySetFillColor = pseudoStyle->hasExplicitlySetColor();
-        selectionShadow = ShadowData::clone(paintInfo.forceTextColor() ? nullptr : pseudoStyle->textShadow());
-        auto viewportSize = renderer.frame().view() ? renderer.frame().view()->size() : IntSize();
+        selectionShadow = paintInfo.forceTextColor() ? Style::TextShadows { CSS::Keyword::None { } } : pseudoStyle->textShadow();
+        auto viewportSize = view ? view->size() : IntSize();
         float strokeWidth = pseudoStyle->computedStrokeWidth(viewportSize);
         if (strokeWidth != selectionPaintStyle.strokeWidth)
             selectionPaintStyle.strokeWidth = strokeWidth;
@@ -160,12 +175,12 @@ TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintSty
         if (stroke != selectionPaintStyle.strokeColor)
             selectionPaintStyle.strokeColor = stroke;
     } else
-        selectionShadow = ShadowData::clone(paintInfo.forceTextColor() ? nullptr : lineStyle.textShadow());
+        selectionShadow = paintInfo.forceTextColor() ? Style::TextShadows { CSS::Keyword::None { } } : lineStyle.textShadow();
 #else
     UNUSED_PARAM(renderer);
     UNUSED_PARAM(lineStyle);
     UNUSED_PARAM(paintInfo);
-    selectionShadow = ShadowData::clone(paintInfo.forceTextColor() ? nullptr : lineStyle.textShadow());
+    selectionShadow = paintInfo.forceTextColor() ? Style::TextShadows { CSS::Keyword::None { } } : lineStyle.textShadow();
 #endif
     return selectionPaintStyle;
 }

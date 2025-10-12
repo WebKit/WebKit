@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FloatRect.h"
-#include "MotionPath.h"
+#include <WebCore/FloatRect.h>
+#include <WebCore/MotionPath.h>
 
 namespace WebCore {
 

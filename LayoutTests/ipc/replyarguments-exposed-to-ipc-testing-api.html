@@ -1,0 +1,25 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that arguments are not null for AsyncReply messages exposed to the IPCTestingAPI</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ipc.js"></script>
+<body>
+<p>Test pass if assertions don't cause error</p>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.IPC) {
+    assert_not_equals(IPC.messages.IPCTester_AsyncOptionalExceptionDataReply.arguments, null);
+    assert_not_equals(IPC.messages.WebPageTesting_IsLayerTreeFrozenReply.arguments, null);
+    assert_not_equals(IPC.messages.WebPageProxy_DecidePolicyForNavigationActionAsyncReply.arguments, null);
+    assert_not_equals(IPC.messages.RemoteMediaResourceManager_ResponseReceivedReply.arguments, null);
+}
+
+document.write("PASS");
+testRunner.notifyDone();
+</script>
+</body>

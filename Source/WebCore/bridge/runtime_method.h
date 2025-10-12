@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "BridgeJSC.h"
 #include <JavaScriptCore/InternalFunction.h>
 #include <JavaScriptCore/JSGlobalObject.h>
+#include <WebCore/BridgeJSC.h>
 
 namespace JSC {
 

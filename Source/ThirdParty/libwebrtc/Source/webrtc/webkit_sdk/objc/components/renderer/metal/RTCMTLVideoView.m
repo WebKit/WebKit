@@ -240,7 +240,7 @@
 
 - (void)setSize:(CGSize)size {
   __weak RTCMTLVideoView *weakSelf = self;
-  dispatch_async(dispatch_get_main_queue(), ^{
+  dispatch_async(mainDispatchQueueSingleton(), ^{
     RTCMTLVideoView *strongSelf = weakSelf;
 
     strongSelf.videoFrameSize = size;

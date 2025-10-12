@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004 Apple Inc.
+ * Copyright (C) 2004 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,13 +22,13 @@
 
 #pragma once
 
-#include "ImageLoader.h"
+#include <WebCore/ImageLoader.h>
 
 namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HTMLImageLoader);
 class HTMLImageLoader final : public ImageLoader {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(HTMLImageLoader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(HTMLImageLoader, HTMLImageLoader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLImageLoader);
 public:
     explicit HTMLImageLoader(Element&);

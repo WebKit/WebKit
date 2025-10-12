@@ -79,7 +79,7 @@ public:
     HashMap<String, int> columnNamesToIndicies();
 private:
     sqlite3_stmt* m_handle;
-    Ref<WebExtensionSQLiteDatabase> m_db;
+    const Ref<WebExtensionSQLiteDatabase> m_db;
 
     Vector<String> m_columnNames;
     HashMap<String, int> m_columnNamesToIndicies;

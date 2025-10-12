@@ -29,6 +29,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -47,6 +48,16 @@ std::optional<CompositeOperation> toCompositeOperation(const CSSValue& value)
     default:
         return std::nullopt;
     }
+}
+
+TextStream& operator<<(TextStream& ts, CompositeOperation operation)
+{
+    switch (operation) {
+    case CompositeOperation::Add: ts << "add"_s; break;
+    case CompositeOperation::Accumulate: ts << "accumulate"_s; break;
+    case CompositeOperation::Replace: ts << "replace"_s; break;
+    }
+    return ts;
 }
 
 } // namespace WebCore

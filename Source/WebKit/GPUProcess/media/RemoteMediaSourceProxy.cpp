@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,17 +95,9 @@ void RemoteMediaSourceProxy::reOpen()
 Ref<MediaTimePromise> RemoteMediaSourceProxy::waitForTarget(const SeekTarget& target)
 {
     if (RefPtr connection = connectionToWebProcess())
-        return connection->protectedConnection()->sendWithPromisedReply<MediaPromiseConverter>(Messages::MediaSourcePrivateRemoteMessageReceiver::ProxyWaitForTarget(target), m_identifier);
+        return connection->connection().sendWithPromisedReply<MediaPromiseConverter>(Messages::MediaSourcePrivateRemoteMessageReceiver::ProxyWaitForTarget(target), m_identifier);
 
     return MediaTimePromise::createAndReject(PlatformMediaError::IPCError);
-}
-
-Ref<MediaPromise> RemoteMediaSourceProxy::seekToTime(const MediaTime& time)
-{
-    if (RefPtr connection = connectionToWebProcess())
-        return connection->protectedConnection()->sendWithPromisedReply<MediaPromiseConverter>(Messages::MediaSourcePrivateRemoteMessageReceiver::ProxySeekToTime(time), m_identifier);
-
-    return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 }
 
 #if !RELEASE_LOG_DISABLED

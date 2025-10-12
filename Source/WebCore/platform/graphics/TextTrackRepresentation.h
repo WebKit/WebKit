@@ -27,7 +27,7 @@
 
 #if ENABLE(VIDEO)
 
-#include "PlatformLayer.h"
+#include <WebCore/PlatformLayer.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 

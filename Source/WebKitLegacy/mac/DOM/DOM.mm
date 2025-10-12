@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2006 James G. Speth (speth@end.com)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  *
@@ -40,11 +40,12 @@
 #import <WebCore/BoundaryPointInlines.h>
 #import <WebCore/CachedImage.h>
 #import <WebCore/ContainerNodeInlines.h>
-#import <WebCore/DocumentInlines.h>
+#import <WebCore/DocumentView.h>
 #import <WebCore/DragImage.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FontCascade.h>
 #import <WebCore/GeometryUtilities.h>
+#import <WebCore/HTMLDocument.h>
 #import <WebCore/HTMLLinkElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLTableCellElement.h>
@@ -64,6 +65,7 @@
 #import <WebCore/RenderView.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SimpleRange.h>
+#import <WebCore/StylePrimitiveNumericTypes+Evaluation.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/Touch.h>
 #import <WebCore/WebScriptObjectPrivate.h>
@@ -265,8 +267,8 @@ Class kitClass(Node* impl)
 {
     switch (impl->nodeType()) {
         case Node::ELEMENT_NODE:
-            if (is<HTMLElement>(*impl))
-                return elementClass(downcast<HTMLElement>(*impl).tagQName(), [DOMHTMLElement class]);
+            if (RefPtr htmlElement = dynamicDowncast<HTMLElement>(*impl))
+                return elementClass(htmlElement->tagQName(), [DOMHTMLElement class]);
             return [DOMElement class];
         case Node::ATTRIBUTE_NODE:
             return [DOMAttr class];
@@ -279,7 +281,7 @@ Class kitClass(Node* impl)
         case Node::COMMENT_NODE:
             return [DOMComment class];
         case Node::DOCUMENT_NODE:
-            if (static_cast<Document*>(impl)->isHTMLDocument())
+            if (is<HTMLDocument>(impl))
                 return [DOMHTMLDocument class];
             return [DOMDocument class];
         case Node::DOCUMENT_TYPE_NODE:
@@ -446,9 +448,9 @@ id <DOMEventTarget> kit(EventTarget* target)
     auto& style = renderer->style();
     IntRect boundingBox = renderer->absoluteBoundingBoxRect(true /* use transforms*/);
 
-    boundingBox.move(style.borderLeftWidth(), style.borderTopWidth());
-    boundingBox.setWidth(boundingBox.width() - style.borderLeftWidth() - style.borderRightWidth());
-    boundingBox.setHeight(boundingBox.height() - style.borderBottomWidth() - style.borderTopWidth());
+    boundingBox.move(WebCore::Style::evaluate<float>(style.borderLeftWidth(), WebCore::Style::ZoomNeeded { }), WebCore::Style::evaluate<float>(style.borderTopWidth(), WebCore::Style::ZoomNeeded { }));
+    boundingBox.setWidth(boundingBox.width() - WebCore::Style::evaluate<float>(style.borderLeftWidth(), WebCore::Style::ZoomNeeded { }) - WebCore::Style::evaluate<float>(style.borderRightWidth(), WebCore::Style::ZoomNeeded { }));
+    boundingBox.setHeight(boundingBox.height() - WebCore::Style::evaluate<float>(style.borderBottomWidth(), WebCore::Style::ZoomNeeded { }) - WebCore::Style::evaluate<float>(style.borderTopWidth(), WebCore::Style::ZoomNeeded { }));
 
     // FIXME: This function advertises returning a quad, but it actually returns a bounding box (so there is no rotation, for instance).
     return wkQuadFromFloatQuad(FloatQuad(boundingBox));
@@ -467,7 +469,7 @@ id <DOMEventTarget> kit(EventTarget* target)
     Page* page = core(self)->document().page();
     if (!page)
         return nil;
-    return kit(page->focusController().nextFocusableElement(*core(self)));
+    return kit(page->focusController().nextFocusableElement(*core(self)).element.get());
 }
 
 - (DOMNode *)previousFocusNode
@@ -475,7 +477,7 @@ id <DOMEventTarget> kit(EventTarget* target)
     Page* page = core(self)->document().page();
     if (!page)
         return nil;
-    return kit(page->focusController().previousFocusableElement(*core(self)));
+    return kit(page->focusController().previousFocusableElement(*core(self)).element.get());
 }
 
 #endif // PLATFORM(IOS_FAMILY)
@@ -648,7 +650,7 @@ id <DOMEventTarget> kit(EventTarget* target)
     auto* renderer = core(self)->renderer();
     if (!renderer)
         return nil;
-    return renderer->style().fontCascade().primaryFont()->getCTFont();
+    return renderer->style().fontCascade().primaryFont()->ctFont();
 }
 
 #if PLATFORM(MAC)

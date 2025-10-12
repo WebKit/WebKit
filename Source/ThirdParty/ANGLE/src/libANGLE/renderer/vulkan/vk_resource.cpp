@@ -7,6 +7,10 @@
 //    Resource lifetime tracking in the Vulkan back-end.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "libANGLE/renderer/vulkan/vk_resource.h"
 
 #include "libANGLE/renderer/vulkan/ContextVk.h"

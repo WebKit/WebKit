@@ -32,6 +32,7 @@
 #include "av1/av1_iface_common.h"
 #include "av1/common/av1_common_int.h"
 #include "av1/common/enums.h"
+#include "av1/common/quant_common.h"
 #include "av1/common/scale.h"
 #include "av1/encoder/bitstream.h"
 #include "av1/encoder/enc_enums.h"
@@ -48,12 +49,12 @@
 #include "common/args_helper.h"
 
 struct av1_extracfg {
-  unsigned int usage;  // Same as g_usage in aom_codec_enc_cfg_t
   int cpu_used;
   unsigned int enable_auto_alt_ref;
   unsigned int enable_auto_bwd_ref;
   unsigned int noise_sensitivity;
   unsigned int sharpness;
+  unsigned int enable_adaptive_sharpness;
   unsigned int static_thresh;
   unsigned int row_mt;
   unsigned int fp_mt;
@@ -99,7 +100,7 @@ struct av1_extracfg {
   unsigned int enable_chroma_deltaq;
   AQ_MODE aq_mode;
   DELTAQ_MODE deltaq_mode;
-  int deltaq_strength;
+  unsigned int deltaq_strength;
   int deltalf_mode;
   unsigned int frame_periodic_boost;
   aom_tune_content content;
@@ -164,6 +165,7 @@ struct av1_extracfg {
   int enable_dnl_denoising;
 #endif
 
+  unsigned int enable_low_complexity_decode;
   unsigned int chroma_subsampling_x;
   unsigned int chroma_subsampling_y;
   int reduced_tx_type_set;
@@ -212,316 +214,321 @@ struct av1_extracfg {
   int strict_level_conformance;
   int kf_max_pyr_height;
   int sb_qp_sweep;
+  aom_screen_detection_mode screen_detection_mode;
 };
 
-static const struct av1_extracfg default_extra_cfg[] = {
 #if !CONFIG_REALTIME_ONLY
-  {
-      AOM_USAGE_GOOD_QUALITY,  // usage
-      0,                       // cpu_used
-      1,                       // enable_auto_alt_ref
-      0,                       // enable_auto_bwd_ref
-      0,                       // noise_sensitivity
-      0,                       // sharpness
-      0,                       // static_thresh
-      1,                       // row_mt
-      0,                       // fp_mt
-      0,                       // tile_columns
-      0,                       // tile_rows
-      0,                       // auto_tiles
-      1,                       // enable_tpl_model
-      1,                       // enable_keyframe_filtering
-      7,                       // arnr_max_frames
-      5,                       // arnr_strength
-      0,                       // min_gf_interval; 0 -> default decision
-      0,                       // max_gf_interval; 0 -> default decision
-      0,                       // gf_min_pyr_height
-      5,                       // gf_max_pyr_height
-      AOM_TUNE_PSNR,           // tuning
-      "/usr/local/share/model/vmaf_v0.6.1.json",  // VMAF model path
-      ".",                                        // partition info path
-      0,                                          // enable rate guide deltaq
-      "./rate_map.txt",                           // rate distribution input
-      AOM_DIST_METRIC_PSNR,                       // dist_metric
-      10,                                         // cq_level
-      0,                                          // rc_max_intra_bitrate_pct
-      0,                                          // rc_max_inter_bitrate_pct
-      0,                                          // gf_cbr_boost_pct
-      0,                                          // lossless
-      1,                                          // enable_cdef
-      1,                                          // enable_restoration
-      0,                                          // force_video_mode
-      1,                                          // enable_obmc
-      3,                                          // disable_trellis_quant
-      0,                                          // enable_qm
-      DEFAULT_QM_Y,                               // qm_y
-      DEFAULT_QM_U,                               // qm_u
-      DEFAULT_QM_V,                               // qm_v
-      DEFAULT_QM_FIRST,                           // qm_min
-      DEFAULT_QM_LAST,                            // qm_max
-      1,                                          // max number of tile groups
-      0,                                          // mtu_size
-      AOM_TIMING_UNSPECIFIED,       // No picture timing signaling in bitstream
-      0,                            // frame_parallel_decoding_mode
-      1,                            // enable dual filter
-      0,                            // enable delta quant in chroma planes
-      NO_AQ,                        // aq_mode
-      DELTA_Q_OBJECTIVE,            // deltaq_mode
-      100,                          // deltaq_strength
-      0,                            // delta lf mode
-      0,                            // frame_periodic_boost
-      AOM_CONTENT_DEFAULT,          // content
-      AOM_CICP_CP_UNSPECIFIED,      // CICP color primaries
-      AOM_CICP_TC_UNSPECIFIED,      // CICP transfer characteristics
-      AOM_CICP_MC_UNSPECIFIED,      // CICP matrix coefficients
-      AOM_CSP_UNKNOWN,              // chroma sample position
-      0,                            // color range
-      0,                            // render width
-      0,                            // render height
-      AOM_SUPERBLOCK_SIZE_DYNAMIC,  // superblock_size
-      1,                            // this depends on large_scale_tile.
-      0,                            // error_resilient_mode off by default.
-      0,                            // s_frame_mode off by default.
-      0,                            // film_grain_test_vector
-      NULL,                         // film_grain_table_filename
-      0,                            // motion_vector_unit_test
+static const struct av1_extracfg default_extra_cfg = {
+  0,              // cpu_used
+  1,              // enable_auto_alt_ref
+  0,              // enable_auto_bwd_ref
+  0,              // noise_sensitivity
+  0,              // sharpness
+  0,              // enable_adaptive_sharpness
+  0,              // static_thresh
+  1,              // row_mt
+  0,              // fp_mt
+  0,              // tile_columns
+  0,              // tile_rows
+  0,              // auto_tiles
+  1,              // enable_tpl_model
+  1,              // enable_keyframe_filtering
+  7,              // arnr_max_frames
+  5,              // arnr_strength
+  0,              // min_gf_interval; 0 -> default decision
+  0,              // max_gf_interval; 0 -> default decision
+  0,              // gf_min_pyr_height
+  5,              // gf_max_pyr_height
+  AOM_TUNE_PSNR,  // tuning
+  "/usr/local/share/model/vmaf_v0.6.1.json",  // VMAF model path
+  ".",                                        // partition info path
+  0,                                          // enable rate guide deltaq
+  "./rate_map.txt",                           // rate distribution input
+  AOM_DIST_METRIC_PSNR,                       // dist_metric
+  10,                                         // cq_level
+  0,                                          // rc_max_intra_bitrate_pct
+  0,                                          // rc_max_inter_bitrate_pct
+  0,                                          // gf_cbr_boost_pct
+  0,                                          // lossless
+  1,                                          // enable_cdef
+  1,                                          // enable_restoration
+  0,                                          // force_video_mode
+  1,                                          // enable_obmc
+  3,                                          // disable_trellis_quant
+  0,                                          // enable_qm
+  DEFAULT_QM_Y,                               // qm_y
+  DEFAULT_QM_U,                               // qm_u
+  DEFAULT_QM_V,                               // qm_v
+  DEFAULT_QM_FIRST,                           // qm_min
+  DEFAULT_QM_LAST,                            // qm_max
+  1,                                          // max number of tile groups
+  0,                                          // mtu_size
+  AOM_TIMING_UNSPECIFIED,       // No picture timing signaling in bitstream
+  0,                            // frame_parallel_decoding_mode
+  1,                            // enable dual filter
+  0,                            // enable delta quant in chroma planes
+  NO_AQ,                        // aq_mode
+  DELTA_Q_OBJECTIVE,            // deltaq_mode
+  100,                          // deltaq_strength
+  0,                            // delta lf mode
+  0,                            // frame_periodic_boost
+  AOM_CONTENT_DEFAULT,          // content
+  AOM_CICP_CP_UNSPECIFIED,      // CICP color primaries
+  AOM_CICP_TC_UNSPECIFIED,      // CICP transfer characteristics
+  AOM_CICP_MC_UNSPECIFIED,      // CICP matrix coefficients
+  AOM_CSP_UNKNOWN,              // chroma sample position
+  0,                            // color range
+  0,                            // render width
+  0,                            // render height
+  AOM_SUPERBLOCK_SIZE_DYNAMIC,  // superblock_size
+  1,                            // this depends on large_scale_tile.
+  0,                            // error_resilient_mode off by default.
+  0,                            // s_frame_mode off by default.
+  0,                            // film_grain_test_vector
+  NULL,                         // film_grain_table_filename
+  0,                            // motion_vector_unit_test
 #if CONFIG_FPMT_TEST
-      0,  // fpmt_unit_test
+  0,  // fpmt_unit_test
 #endif
-      1,    // CDF update mode
-      1,    // enable rectangular partitions
-      1,    // enable ab shape partitions
-      1,    // enable 1:4 and 4:1 partitions
-      4,    // min_partition_size
-      128,  // max_partition_size
-      1,    // enable intra edge filter
-      1,    // frame order hint
-      1,    // enable 64-pt transform usage
-      1,    // enable flip and identity transform
-      1,    // enable rectangular transform usage
-      1,    // dist-wtd compound
-      7,    // max_reference_frames
-      0,    // enable_reduced_reference_set
-      1,    // enable_ref_frame_mvs sequence level
-      1,    // allow ref_frame_mvs frame level
-      1,    // enable masked compound at sequence level
-      1,    // enable one sided compound at sequence level
-      1,    // enable interintra compound at sequence level
-      1,    // enable smooth interintra mode
-      1,    // enable difference-weighted compound
-      1,    // enable interinter wedge compound
-      1,    // enable interintra wedge compound
-      1,    // enable_global_motion usage
-      1,    // enable_warped_motion at sequence level
-      1,    // allow_warped_motion at frame level
-      1,    // enable filter intra at sequence level
-      1,    // enable smooth intra modes usage for sequence
-      1,    // enable Paeth intra mode usage for sequence
-      1,    // enable CFL uv intra mode usage for sequence
-      1,    // enable directional intra mode usage for sequence
-      1,    // enable D45 to D203 intra mode usage for sequence
-      1,    // superres
-      1,    // enable overlay
-      1,    // enable palette
-      1,    // enable intrabc
-      1,    // enable angle delta
+  1,    // CDF update mode
+  1,    // enable rectangular partitions
+  1,    // enable ab shape partitions
+  1,    // enable 1:4 and 4:1 partitions
+  4,    // min_partition_size
+  128,  // max_partition_size
+  1,    // enable intra edge filter
+  1,    // frame order hint
+  1,    // enable 64-pt transform usage
+  1,    // enable flip and identity transform
+  1,    // enable rectangular transform usage
+  1,    // dist-wtd compound
+  7,    // max_reference_frames
+  0,    // enable_reduced_reference_set
+  1,    // enable_ref_frame_mvs sequence level
+  1,    // allow ref_frame_mvs frame level
+  1,    // enable masked compound at sequence level
+  1,    // enable one sided compound at sequence level
+  1,    // enable interintra compound at sequence level
+  1,    // enable smooth interintra mode
+  1,    // enable difference-weighted compound
+  1,    // enable interinter wedge compound
+  1,    // enable interintra wedge compound
+  1,    // enable_global_motion usage
+  1,    // enable_warped_motion at sequence level
+  1,    // allow_warped_motion at frame level
+  1,    // enable filter intra at sequence level
+  1,    // enable smooth intra modes usage for sequence
+  1,    // enable Paeth intra mode usage for sequence
+  1,    // enable CFL uv intra mode usage for sequence
+  1,    // enable directional intra mode usage for sequence
+  1,    // enable D45 to D203 intra mode usage for sequence
+  1,    // superres
+  1,    // enable overlay
+  1,    // enable palette
+  1,    // enable intrabc
+  1,    // enable angle delta
 #if CONFIG_DENOISE
-      0,   // noise_level
-      32,  // noise_block_size
-      1,   // enable_dnl_denoising
+  0,   // noise_level
+  32,  // noise_block_size
+  1,   // enable_dnl_denoising
 #endif
-      0,  // chroma_subsampling_x
-      0,  // chroma_subsampling_y
-      0,  // reduced_tx_type_set
-      0,  // use_intra_dct_only
-      0,  // use_inter_dct_only
-      0,  // use_intra_default_tx_only
-      1,  // enable_tx_size_search
-      0,  // quant_b_adapt
-      0,  // vbr_corpus_complexity_lap
-      {
-          SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
-          SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
-          SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
-          SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
-          SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
-          SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
-          SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
-          SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
-      },               // target_seq_level_idx
-      0,               // tier_mask
-      0,               // min_cr
-      COST_UPD_SB,     // coeff_cost_upd_freq
-      COST_UPD_SB,     // mode_cost_upd_freq
-      COST_UPD_SB,     // mv_cost_upd_freq
-      COST_UPD_SB,     // dv_cost_upd_freq
-      0,               // ext_tile_debug
-      0,               // sb_multipass_unit_test
-      -1,              // passes
-      -1,              // fwd_kf_dist
-      LOOPFILTER_ALL,  // loopfilter_control
-      0,               // skip_postproc_filtering
-      NULL,            // two_pass_output
-      NULL,            // second_pass_log
-      0,               // auto_intra_tools_off
-      0,               // strict_level_conformance
-      -1,              // kf_max_pyr_height
-      0,               // sb_qp_sweep
-  },
-#endif  // !CONFIG_REALTIME_ONLY
+
+  0,  // enable_low_complexity_decode
+  0,  // chroma_subsampling_x
+  0,  // chroma_subsampling_y
+  0,  // reduced_tx_type_set
+  0,  // use_intra_dct_only
+  0,  // use_inter_dct_only
+  0,  // use_intra_default_tx_only
+  1,  // enable_tx_size_search
+  0,  // quant_b_adapt
+  0,  // vbr_corpus_complexity_lap
   {
-      AOM_USAGE_REALTIME,  // usage
-      10,                  // cpu_used
-      1,                   // enable_auto_alt_ref
-      0,                   // enable_auto_bwd_ref
-      0,                   // noise_sensitivity
-      0,                   // sharpness
-      0,                   // static_thresh
-      1,                   // row_mt
-      0,                   // fp_mt
-      0,                   // tile_columns
-      0,                   // tile_rows
-      0,                   // auto_tiles
-      0,                   // enable_tpl_model
-      0,                   // enable_keyframe_filtering
-      7,                   // arnr_max_frames
-      5,                   // arnr_strength
-      0,                   // min_gf_interval; 0 -> default decision
-      0,                   // max_gf_interval; 0 -> default decision
-      0,                   // gf_min_pyr_height
-      5,                   // gf_max_pyr_height
-      AOM_TUNE_PSNR,       // tuning
-      "/usr/local/share/model/vmaf_v0.6.1.json",  // VMAF model path
-      ".",                                        // partition info path
-      0,                                          // enable rate guide deltaq
-      "./rate_map.txt",                           // rate distribution input
-      AOM_DIST_METRIC_PSNR,                       // dist_metric
-      10,                                         // cq_level
-      300,                                        // rc_max_intra_bitrate_pct
-      0,                                          // rc_max_inter_bitrate_pct
-      0,                                          // gf_cbr_boost_pct
-      0,                                          // lossless
-      1,                                          // enable_cdef
-      0,                                          // enable_restoration
-      0,                                          // force_video_mode
-      0,                                          // enable_obmc
-      3,                                          // disable_trellis_quant
-      0,                                          // enable_qm
-      DEFAULT_QM_Y,                               // qm_y
-      DEFAULT_QM_U,                               // qm_u
-      DEFAULT_QM_V,                               // qm_v
-      DEFAULT_QM_FIRST,                           // qm_min
-      DEFAULT_QM_LAST,                            // qm_max
-      1,                                          // max number of tile groups
-      0,                                          // mtu_size
-      AOM_TIMING_UNSPECIFIED,       // No picture timing signaling in bitstream
-      0,                            // frame_parallel_decoding_mode
-      0,                            // enable dual filter
-      0,                            // enable delta quant in chroma planes
-      CYCLIC_REFRESH_AQ,            // aq_mode
-      NO_DELTA_Q,                   // deltaq_mode
-      100,                          // deltaq_strength
-      0,                            // delta lf mode
-      0,                            // frame_periodic_boost
-      AOM_CONTENT_DEFAULT,          // content
-      AOM_CICP_CP_UNSPECIFIED,      // CICP color primaries
-      AOM_CICP_TC_UNSPECIFIED,      // CICP transfer characteristics
-      AOM_CICP_MC_UNSPECIFIED,      // CICP matrix coefficients
-      AOM_CSP_UNKNOWN,              // chroma sample position
-      0,                            // color range
-      0,                            // render width
-      0,                            // render height
-      AOM_SUPERBLOCK_SIZE_DYNAMIC,  // superblock_size
-      1,                            // this depends on large_scale_tile.
-      0,                            // error_resilient_mode off by default.
-      0,                            // s_frame_mode off by default.
-      0,                            // film_grain_test_vector
-      NULL,                         // film_grain_table_filename
-      0,                            // motion_vector_unit_test
-#if CONFIG_FPMT_TEST
-      0,  // fpmt_unit_test
-#endif
-      1,    // CDF update mode
-      0,    // enable rectangular partitions
-      0,    // enable ab shape partitions
-      0,    // enable 1:4 and 4:1 partitions
-      4,    // min_partition_size
-      128,  // max_partition_size
-      0,    // enable intra edge filter
-      0,    // frame order hint
-      0,    // enable 64-pt transform usage
-      1,    // enable flip and identity transform
-      1,    // enable rectangular transform usage
-      0,    // dist-wtd compound
-      3,    // max_reference_frames
-      0,    // enable_reduced_reference_set
-      0,    // enable_ref_frame_mvs sequence level
-      0,    // allow ref_frame_mvs frame level
-      0,    // enable masked compound at sequence level
-      0,    // enable one sided compound at sequence level
-      0,    // enable interintra compound at sequence level
-      0,    // enable smooth interintra mode
-      0,    // enable difference-weighted compound
-      0,    // enable interinter wedge compound
-      0,    // enable interintra wedge compound
-      0,    // enable_global_motion usage
-      0,    // enable_warped_motion at sequence level
-      0,    // allow_warped_motion at frame level
-      0,    // enable filter intra at sequence level
-      0,    // enable smooth intra modes usage for sequence
-      0,    // enable Paeth intra mode usage for sequence
-      0,    // enable CFL uv intra mode usage for sequence
-      1,    // enable directional intra mode usage for sequence
-      1,    // enable D45 to D203 intra mode usage for sequence
-      0,    // superres
-      0,    // enable overlay
-      1,    // enable palette
-      0,    // enable intrabc
-      0,    // enable angle delta
-#if CONFIG_DENOISE
-      0,   // noise_level
-      32,  // noise_block_size
-      1,   // enable_dnl_denoising
-#endif
-      0,  // chroma_subsampling_x
-      0,  // chroma_subsampling_y
-      0,  // reduced_tx_type_set
-      0,  // use_intra_dct_only
-      0,  // use_inter_dct_only
-      1,  // use_intra_default_tx_only
-      1,  // enable_tx_size_search
-      0,  // quant_b_adapt
-      0,  // vbr_corpus_complexity_lap
-      {
-          SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
-          SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
-          SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
-          SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
-          SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
-          SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
-          SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
-          SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
-      },               // target_seq_level_idx
-      0,               // tier_mask
-      0,               // min_cr
-      COST_UPD_OFF,    // coeff_cost_upd_freq
-      COST_UPD_OFF,    // mode_cost_upd_freq
-      COST_UPD_OFF,    // mv_cost_upd_freq
-      COST_UPD_OFF,    // dv_cost_upd_freq
-      0,               // ext_tile_debug
-      0,               // sb_multipass_unit_test
-      -1,              // passes
-      -1,              // fwd_kf_dist
-      LOOPFILTER_ALL,  // loopfilter_control
-      0,               // skip_postproc_filtering
-      NULL,            // two_pass_output
-      NULL,            // second_pass_log
-      0,               // auto_intra_tools_off
-      0,               // strict_level_conformance
-      -1,              // kf_max_pyr_height
-      0,               // sb_qp_sweep
-  },
+      SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
+      SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
+      SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
+      SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
+      SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
+      SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
+      SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
+  },               // target_seq_level_idx
+  0,               // tier_mask
+  0,               // min_cr
+  COST_UPD_SB,     // coeff_cost_upd_freq
+  COST_UPD_SB,     // mode_cost_upd_freq
+  COST_UPD_SB,     // mv_cost_upd_freq
+  COST_UPD_SB,     // dv_cost_upd_freq
+  0,               // ext_tile_debug
+  0,               // sb_multipass_unit_test
+  -1,              // passes
+  -1,              // fwd_kf_dist
+  LOOPFILTER_ALL,  // loopfilter_control
+  0,               // skip_postproc_filtering
+  NULL,            // two_pass_output
+  NULL,            // second_pass_log
+  0,               // auto_intra_tools_off
+  0,               // strict_level_conformance
+  -1,              // kf_max_pyr_height
+  0,               // sb_qp_sweep
+  AOM_SCREEN_DETECTION_STANDARD,
 };
+#else
+// Some settings are changed for realtime only build.
+static const struct av1_extracfg default_extra_cfg = {
+  10,             // cpu_used
+  1,              // enable_auto_alt_ref
+  0,              // enable_auto_bwd_ref
+  0,              // noise_sensitivity
+  0,              // sharpness
+  0,              // enable_adaptive_sharpness
+  0,              // static_thresh
+  1,              // row_mt
+  0,              // fp_mt
+  0,              // tile_columns
+  0,              // tile_rows
+  0,              // auto_tiles
+  0,              // enable_tpl_model
+  0,              // enable_keyframe_filtering
+  7,              // arnr_max_frames
+  5,              // arnr_strength
+  0,              // min_gf_interval; 0 -> default decision
+  0,              // max_gf_interval; 0 -> default decision
+  0,              // gf_min_pyr_height
+  5,              // gf_max_pyr_height
+  AOM_TUNE_PSNR,  // tuning
+  "/usr/local/share/model/vmaf_v0.6.1.json",  // VMAF model path
+  ".",                                        // partition info path
+  0,                                          // enable rate guide deltaq
+  "./rate_map.txt",                           // rate distribution input
+  AOM_DIST_METRIC_PSNR,                       // dist_metric
+  10,                                         // cq_level
+  300,                                        // rc_max_intra_bitrate_pct
+  0,                                          // rc_max_inter_bitrate_pct
+  0,                                          // gf_cbr_boost_pct
+  0,                                          // lossless
+  1,                                          // enable_cdef
+  0,                                          // enable_restoration
+  0,                                          // force_video_mode
+  0,                                          // enable_obmc
+  3,                                          // disable_trellis_quant
+  0,                                          // enable_qm
+  DEFAULT_QM_Y,                               // qm_y
+  DEFAULT_QM_U,                               // qm_u
+  DEFAULT_QM_V,                               // qm_v
+  DEFAULT_QM_FIRST,                           // qm_min
+  DEFAULT_QM_LAST,                            // qm_max
+  1,                                          // max number of tile groups
+  0,                                          // mtu_size
+  AOM_TIMING_UNSPECIFIED,       // No picture timing signaling in bitstream
+  0,                            // frame_parallel_decoding_mode
+  0,                            // enable dual filter
+  0,                            // enable delta quant in chroma planes
+  CYCLIC_REFRESH_AQ,            // aq_mode
+  NO_DELTA_Q,                   // deltaq_mode
+  100,                          // deltaq_strength
+  0,                            // delta lf mode
+  0,                            // frame_periodic_boost
+  AOM_CONTENT_DEFAULT,          // content
+  AOM_CICP_CP_UNSPECIFIED,      // CICP color primaries
+  AOM_CICP_TC_UNSPECIFIED,      // CICP transfer characteristics
+  AOM_CICP_MC_UNSPECIFIED,      // CICP matrix coefficients
+  AOM_CSP_UNKNOWN,              // chroma sample position
+  0,                            // color range
+  0,                            // render width
+  0,                            // render height
+  AOM_SUPERBLOCK_SIZE_DYNAMIC,  // superblock_size
+  1,                            // this depends on large_scale_tile.
+  0,                            // error_resilient_mode off by default.
+  0,                            // s_frame_mode off by default.
+  0,                            // film_grain_test_vector
+  NULL,                         // film_grain_table_filename
+  0,                            // motion_vector_unit_test
+#if CONFIG_FPMT_TEST
+  0,  // fpmt_unit_test
+#endif
+  1,    // CDF update mode
+  0,    // enable rectangular partitions
+  0,    // enable ab shape partitions
+  0,    // enable 1:4 and 4:1 partitions
+  4,    // min_partition_size
+  128,  // max_partition_size
+  0,    // enable intra edge filter
+  0,    // frame order hint
+  0,    // enable 64-pt transform usage
+  1,    // enable flip and identity transform
+  1,    // enable rectangular transform usage
+  0,    // dist-wtd compound
+  3,    // max_reference_frames
+  0,    // enable_reduced_reference_set
+  0,    // enable_ref_frame_mvs sequence level
+  0,    // allow ref_frame_mvs frame level
+  0,    // enable masked compound at sequence level
+  0,    // enable one sided compound at sequence level
+  0,    // enable interintra compound at sequence level
+  0,    // enable smooth interintra mode
+  0,    // enable difference-weighted compound
+  0,    // enable interinter wedge compound
+  0,    // enable interintra wedge compound
+  0,    // enable_global_motion usage
+  0,    // enable_warped_motion at sequence level
+  0,    // allow_warped_motion at frame level
+  0,    // enable filter intra at sequence level
+  0,    // enable smooth intra modes usage for sequence
+  0,    // enable Paeth intra mode usage for sequence
+  0,    // enable CFL uv intra mode usage for sequence
+  1,    // enable directional intra mode usage for sequence
+  1,    // enable D45 to D203 intra mode usage for sequence
+  0,    // superres
+  0,    // enable overlay
+  1,    // enable palette
+  0,    // enable intrabc
+  0,    // enable angle delta
+#if CONFIG_DENOISE
+  0,   // noise_level
+  32,  // noise_block_size
+  1,   // enable_dnl_denoising
+#endif
+
+  0,  // enable_low_complexity_decode
+  0,  // chroma_subsampling_x
+  0,  // chroma_subsampling_y
+  0,  // reduced_tx_type_set
+  0,  // use_intra_dct_only
+  0,  // use_inter_dct_only
+  1,  // use_intra_default_tx_only
+  1,  // enable_tx_size_search
+  0,  // quant_b_adapt
+  0,  // vbr_corpus_complexity_lap
+  {
+      SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
+      SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
+      SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
+      SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
+      SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
+      SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
+      SEQ_LEVEL_MAX, SEQ_LEVEL_MAX,
+  },               // target_seq_level_idx
+  0,               // tier_mask
+  0,               // min_cr
+  COST_UPD_OFF,    // coeff_cost_upd_freq
+  COST_UPD_OFF,    // mode_cost_upd_freq
+  COST_UPD_OFF,    // mv_cost_upd_freq
+  COST_UPD_OFF,    // dv_cost_upd_freq
+  0,               // ext_tile_debug
+  0,               // sb_multipass_unit_test
+  -1,              // passes
+  -1,              // fwd_kf_dist
+  LOOPFILTER_ALL,  // loopfilter_control
+  0,               // skip_postproc_filtering
+  NULL,            // two_pass_output
+  NULL,            // second_pass_log
+  0,               // auto_intra_tools_off
+  0,               // strict_level_conformance
+  -1,              // kf_max_pyr_height
+  0,               // sb_qp_sweep
+  AOM_SCREEN_DETECTION_STANDARD,
+};
+#endif
 
 struct aom_codec_alg_priv {
   aom_codec_priv_t base;
@@ -675,6 +682,12 @@ static aom_codec_err_t validate_config(aom_codec_alg_priv_t *ctx,
   RANGE_CHECK_BOOL(extra_cfg, lossless);
   RANGE_CHECK_HI(extra_cfg, aq_mode, AQ_MODE_COUNT - 1);
   RANGE_CHECK_HI(extra_cfg, deltaq_mode, DELTA_Q_MODE_COUNT - 1);
+
+  if (cfg->g_usage != ALLINTRA &&
+      extra_cfg->deltaq_mode == DELTA_Q_VARIANCE_BOOST) {
+    ERROR("Variance Boost (deltaq_mode = 6) can only be set in all intra mode");
+  }
+
   RANGE_CHECK_HI(extra_cfg, deltalf_mode, 1);
   RANGE_CHECK_HI(extra_cfg, frame_periodic_boost, 1);
 #if CONFIG_REALTIME_ONLY
@@ -732,7 +745,7 @@ static aom_codec_err_t validate_config(aom_codec_alg_priv_t *ctx,
   RANGE_CHECK_HI(extra_cfg, enable_auto_alt_ref, 1);
   RANGE_CHECK_HI(extra_cfg, enable_auto_bwd_ref, 2);
   RANGE_CHECK(extra_cfg, cpu_used, 0,
-              (cfg->g_usage == AOM_USAGE_REALTIME) ? 11 : 9);
+              (cfg->g_usage == AOM_USAGE_REALTIME) ? 12 : 9);
   RANGE_CHECK_HI(extra_cfg, noise_sensitivity, 6);
   RANGE_CHECK(extra_cfg, superblock_size, AOM_SUPERBLOCK_SIZE_64X64,
               AOM_SUPERBLOCK_SIZE_DYNAMIC);
@@ -755,6 +768,7 @@ static aom_codec_err_t validate_config(aom_codec_alg_priv_t *ctx,
         "coding.");
 
   RANGE_CHECK_HI(extra_cfg, sharpness, 7);
+  RANGE_CHECK_HI(extra_cfg, enable_adaptive_sharpness, 1);
   RANGE_CHECK_HI(extra_cfg, arnr_max_frames, 15);
   RANGE_CHECK_HI(extra_cfg, arnr_strength, 6);
   RANGE_CHECK_HI(extra_cfg, cq_level, 63);
@@ -868,8 +882,19 @@ static aom_codec_err_t validate_config(aom_codec_alg_priv_t *ctx,
 
   RANGE_CHECK(extra_cfg, max_reference_frames, 3, 7);
   RANGE_CHECK(extra_cfg, enable_reduced_reference_set, 0, 1);
+
+  RANGE_CHECK_HI(extra_cfg, enable_low_complexity_decode, 1);
   RANGE_CHECK_HI(extra_cfg, chroma_subsampling_x, 1);
   RANGE_CHECK_HI(extra_cfg, chroma_subsampling_y, 1);
+  // 6.4.2 Color config semantics
+  // If matrix_coefficients is equal to MC_IDENTITY, it is a requirement of
+  // bitstream conformance that subsampling_x is equal to 0 and subsampling_y
+  // is equal to 0.
+  if (extra_cfg->matrix_coefficients == AOM_CICP_MC_IDENTITY &&
+      (extra_cfg->chroma_subsampling_x != 0 ||
+       extra_cfg->chroma_subsampling_y != 0)) {
+    ERROR("Subsampling must be 0 with AOM_CICP_MC_IDENTITY.");
+  }
 
   RANGE_CHECK_HI(extra_cfg, disable_trellis_quant, 3);
   RANGE_CHECK(extra_cfg, coeff_cost_upd_freq, 0, 3);
@@ -889,7 +914,7 @@ static aom_codec_err_t validate_config(aom_codec_alg_priv_t *ctx,
     }
   }
 
-  RANGE_CHECK(extra_cfg, deltaq_strength, 0, 1000);
+  RANGE_CHECK_HI(extra_cfg, deltaq_strength, 1000);
   RANGE_CHECK_HI(extra_cfg, loopfilter_control, 3);
   RANGE_CHECK_BOOL(extra_cfg, skip_postproc_filtering);
   RANGE_CHECK_HI(extra_cfg, enable_cdef, 3);
@@ -905,6 +930,7 @@ static aom_codec_err_t validate_config(aom_codec_alg_priv_t *ctx,
         "gf-min-pyr-height");
   }
 
+  RANGE_CHECK(extra_cfg, screen_detection_mode, 1, 2);
   return AOM_CODEC_OK;
 }
 
@@ -938,6 +964,15 @@ static aom_codec_err_t validate_img(aom_codec_alg_priv_t *ctx,
 
   if (img->d_w != ctx->cfg.g_w || img->d_h != ctx->cfg.g_h)
     ERROR("Image size must match encoder init configuration size");
+
+  // 6.4.2 Color config semantics
+  // If matrix_coefficients is equal to MC_IDENTITY, it is a requirement of
+  // bitstream conformance that subsampling_x is equal to 0 and subsampling_y
+  // is equal to 0.
+  if (ctx->oxcf.color_cfg.matrix_coefficients == AOM_CICP_MC_IDENTITY &&
+      (img->x_chroma_shift != 0 || img->y_chroma_shift != 0)) {
+    ERROR("Subsampling must be 0 with AOM_CICP_MC_IDENTITY.");
+  }
 
 #if CONFIG_TUNE_BUTTERAUGLI
   if (ctx->extra_cfg.tuning == AOM_TUNE_BUTTERAUGLI) {
@@ -1083,7 +1118,6 @@ static void set_encoder_config(AV1EncoderConfig *oxcf,
   AlgoCfg *const algo_cfg = &oxcf->algo_cfg;
   ToolCfg *const tool_cfg = &oxcf->tool_cfg;
 
-  const int is_vbr = cfg->rc_end_usage == AOM_VBR;
   oxcf->profile = cfg->g_profile;
   oxcf->max_threads = (int)cfg->g_threads;
 
@@ -1166,9 +1200,9 @@ static void set_encoder_config(AV1EncoderConfig *oxcf,
   rc_cfg->cq_level = av1_quantizer_to_qindex(extra_cfg->cq_level);
   rc_cfg->under_shoot_pct = cfg->rc_undershoot_pct;
   rc_cfg->over_shoot_pct = cfg->rc_overshoot_pct;
-  rc_cfg->maximum_buffer_size_ms = is_vbr ? 240000 : cfg->rc_buf_sz;
-  rc_cfg->starting_buffer_level_ms = is_vbr ? 60000 : cfg->rc_buf_initial_sz;
-  rc_cfg->optimal_buffer_level_ms = is_vbr ? 60000 : cfg->rc_buf_optimal_sz;
+  rc_cfg->maximum_buffer_size_ms = cfg->rc_buf_sz;
+  rc_cfg->starting_buffer_level_ms = cfg->rc_buf_initial_sz;
+  rc_cfg->optimal_buffer_level_ms = cfg->rc_buf_optimal_sz;
   // Convert target bandwidth from Kbit/s to Bit/s
   rc_cfg->target_bandwidth = 1000 * cfg->rc_target_bitrate;
   rc_cfg->drop_frames_water_mark = cfg->rc_dropframe_thresh;
@@ -1258,6 +1292,7 @@ static void set_encoder_config(AV1EncoderConfig *oxcf,
   algo_cfg->enable_overlay = extra_cfg->enable_overlay;
   algo_cfg->disable_trellis_quant = extra_cfg->disable_trellis_quant;
   algo_cfg->sharpness = extra_cfg->sharpness;
+  algo_cfg->enable_adaptive_sharpness = extra_cfg->enable_adaptive_sharpness;
   algo_cfg->arnr_max_frames = extra_cfg->arnr_max_frames;
   algo_cfg->arnr_strength = extra_cfg->arnr_strength;
   algo_cfg->cdf_update_mode = (uint8_t)extra_cfg->cdf_update_mode;
@@ -1266,6 +1301,7 @@ static void set_encoder_config(AV1EncoderConfig *oxcf,
       resize_cfg->resize_mode ? 0 : extra_cfg->enable_tpl_model;
   algo_cfg->loopfilter_control = extra_cfg->loopfilter_control;
   algo_cfg->skip_postproc_filtering = extra_cfg->skip_postproc_filtering;
+  algo_cfg->screen_detection_mode = extra_cfg->screen_detection_mode;
 
   // Set two-pass stats configuration.
   oxcf->twopass_stats_in = cfg->rc_twopass_stats_in;
@@ -1299,6 +1335,13 @@ static void set_encoder_config(AV1EncoderConfig *oxcf,
   if (oxcf->mode == REALTIME && AOMMIN(cfg->g_w, cfg->g_h) >= 1080 &&
       oxcf->speed < 7)
     oxcf->speed = 7;
+
+  // Now, low complexity decode mode is only supported for good-quality
+  // encoding speed 1 to 3. This can be further modified if needed.
+  oxcf->enable_low_complexity_decode =
+      extra_cfg->enable_low_complexity_decode &&
+      cfg->g_usage == AOM_USAGE_GOOD_QUALITY && oxcf->speed >= 1 &&
+      oxcf->speed <= 3;
 
   // Set Color related configuration.
   color_cfg->color_primaries = extra_cfg->color_primaries;
@@ -1524,7 +1567,7 @@ static void set_encoder_config(AV1EncoderConfig *oxcf,
 
 AV1EncoderConfig av1_get_encoder_config(const aom_codec_enc_cfg_t *cfg) {
   AV1EncoderConfig oxcf;
-  struct av1_extracfg extra_cfg = default_extra_cfg[0];
+  struct av1_extracfg extra_cfg = default_extra_cfg;
   set_encoder_config(&oxcf, cfg, &extra_cfg);
   return oxcf;
 }
@@ -1708,6 +1751,14 @@ static aom_codec_err_t ctrl_set_sharpness(aom_codec_alg_priv_t *ctx,
   return update_extra_cfg(ctx, &extra_cfg);
 }
 
+static aom_codec_err_t ctrl_set_enable_adaptive_sharpness(
+    aom_codec_alg_priv_t *ctx, va_list args) {
+  struct av1_extracfg extra_cfg = ctx->extra_cfg;
+  extra_cfg.enable_adaptive_sharpness =
+      CAST(AV1E_SET_ENABLE_ADAPTIVE_SHARPNESS, args);
+  return update_extra_cfg(ctx, &extra_cfg);
+}
+
 static aom_codec_err_t ctrl_set_static_thresh(aom_codec_alg_priv_t *ctx,
                                               va_list args) {
   struct av1_extracfg extra_cfg = ctx->extra_cfg;
@@ -1789,17 +1840,44 @@ static aom_codec_err_t ctrl_set_arnr_strength(aom_codec_alg_priv_t *ctx,
 
 static aom_codec_err_t handle_tuning(aom_codec_alg_priv_t *ctx,
                                      struct av1_extracfg *extra_cfg) {
-  if (extra_cfg->tuning == AOM_TUNE_SSIMULACRA2) {
+  if (extra_cfg->tuning == AOM_TUNE_IQ ||
+      extra_cfg->tuning == AOM_TUNE_SSIMULACRA2) {
     if (ctx->cfg.g_usage != AOM_USAGE_ALL_INTRA) return AOM_CODEC_INCAPABLE;
     // Enable QMs as they've been found to be beneficial for images, when used
-    // with an alternative QM formula (see aom_get_qmlevel_allintra()).
+    // with alternative QM formulas:
+    // - aom_get_qmlevel_allintra()
+    // - aom_get_qmlevel_luma_ssimulacra2()
+    // - aom_get_qmlevel_444_chroma()
     extra_cfg->enable_qm = 1;
-    // We can turn on loop filter sharpness, as frames do not have to serve as
-    // references to others.
+    extra_cfg->qm_min = QM_FIRST_IQ_SSIMULACRA2;
+    extra_cfg->qm_max = QM_LAST_IQ_SSIMULACRA2;
+    // We can turn on sharpness, as frames do not have to serve as references to
+    // others.
     extra_cfg->sharpness = 7;
-    // CDEF_ALL has been found to blur images at high quality QPs, so let's use
-    // a version that adapts on QP.
+    // Using the QM-PSNR metric was found to be beneficial for images (over the
+    // default PSNR metric), as it correlates better with subjective image
+    // quality consistency and better SSIMULACRA 2 scores.
+    extra_cfg->dist_metric = AOM_DIST_METRIC_QM_PSNR;
+    // CDEF_ALL has been found to blur images at medium and high quality
+    // qindexes, so let's use a version that adapts CDEF strength on frame
+    // qindexes. CDEF_ADAPTIVE strengths look like this for varying qindexes:
+    // - CDEF off:          0 -  32
+    // - Reduced strength: 33 - 220
+    // - Full strength:   221 - 255
     extra_cfg->enable_cdef = CDEF_ADAPTIVE;
+    // Enable chroma deltaq so the encoder can factor in chroma subsampling and
+    // adjust chroma quality when necessary.
+    extra_cfg->enable_chroma_deltaq = 1;
+    // Enable "Variance Boost" deltaq mode, optimized for images.
+    extra_cfg->deltaq_mode = DELTA_Q_VARIANCE_BOOST;
+    // Enable "anti-aliased text and graphics aware" screen detection mode.
+    extra_cfg->screen_detection_mode = AOM_SCREEN_DETECTION_ANTIALIASING_AWARE;
+  }
+  if (extra_cfg->tuning == AOM_TUNE_IQ) {
+    // Enable adaptive sharpness to adjust loop filter levels according to QP.
+    // Takes a small SSIMULACRA2 hit on the lower quality end, so enable it
+    // just for tune IQ.
+    extra_cfg->enable_adaptive_sharpness = 1;
   }
   return AOM_CODEC_OK;
 }
@@ -1953,6 +2031,14 @@ static aom_codec_err_t ctrl_set_timing_info_type(aom_codec_alg_priv_t *ctx,
                                                  va_list args) {
   struct av1_extracfg extra_cfg = ctx->extra_cfg;
   extra_cfg.timing_info_type = CAST(AV1E_SET_TIMING_INFO_TYPE, args);
+  return update_extra_cfg(ctx, &extra_cfg);
+}
+
+static aom_codec_err_t ctrl_set_enable_low_complexity_decode(
+    aom_codec_alg_priv_t *ctx, va_list args) {
+  struct av1_extracfg extra_cfg = ctx->extra_cfg;
+  extra_cfg.enable_low_complexity_decode =
+      CAST(AV1E_SET_ENABLE_LOW_COMPLEXITY_DECODE, args);
   return update_extra_cfg(ctx, &extra_cfg);
 }
 
@@ -2376,7 +2462,7 @@ static aom_codec_err_t ctrl_set_vmaf_model_path(aom_codec_alg_priv_t *ctx,
   struct av1_extracfg extra_cfg = ctx->extra_cfg;
   const char *str = CAST(AV1E_SET_VMAF_MODEL_PATH, args);
   const aom_codec_err_t ret = allocate_and_set_string(
-      str, default_extra_cfg[0].vmaf_model_path, &extra_cfg.vmaf_model_path,
+      str, default_extra_cfg.vmaf_model_path, &extra_cfg.vmaf_model_path,
       ctx->ppi->error.detail);
   if (ret != AOM_CODEC_OK) return ret;
   return update_extra_cfg(ctx, &extra_cfg);
@@ -2387,7 +2473,7 @@ static aom_codec_err_t ctrl_set_partition_info_path(aom_codec_alg_priv_t *ctx,
   struct av1_extracfg extra_cfg = ctx->extra_cfg;
   const char *str = CAST(AV1E_SET_PARTITION_INFO_PATH, args);
   const aom_codec_err_t ret = allocate_and_set_string(
-      str, default_extra_cfg[0].partition_info_path,
+      str, default_extra_cfg.partition_info_path,
       &extra_cfg.partition_info_path, ctx->ppi->error.detail);
   if (ret != AOM_CODEC_OK) return ret;
   return update_extra_cfg(ctx, &extra_cfg);
@@ -2406,7 +2492,7 @@ static aom_codec_err_t ctrl_set_rate_distribution_info(
   struct av1_extracfg extra_cfg = ctx->extra_cfg;
   const char *str = CAST(AV1E_SET_RATE_DISTRIBUTION_INFO, args);
   const aom_codec_err_t ret = allocate_and_set_string(
-      str, default_extra_cfg[0].rate_distribution_info,
+      str, default_extra_cfg.rate_distribution_info,
       &extra_cfg.rate_distribution_info, ctx->ppi->error.detail);
   if (ret != AOM_CODEC_OK) return ret;
   return update_extra_cfg(ctx, &extra_cfg);
@@ -2432,7 +2518,7 @@ static aom_codec_err_t ctrl_set_film_grain_table(aom_codec_alg_priv_t *ctx,
     ERROR("film_grain removed from realtime only build.");
 #endif
     const aom_codec_err_t ret = allocate_and_set_string(
-        str, default_extra_cfg[0].film_grain_table_filename,
+        str, default_extra_cfg.film_grain_table_filename,
         &extra_cfg.film_grain_table_filename, ctx->ppi->error.detail);
     if (ret != AOM_CODEC_OK) return ret;
   }
@@ -2746,6 +2832,16 @@ static aom_codec_err_t ctrl_set_postencode_drop_rtc(aom_codec_alg_priv_t *ctx,
   return AOM_CODEC_OK;
 }
 
+static aom_codec_err_t ctrl_set_screen_content_detection_mode(
+    aom_codec_alg_priv_t *ctx, va_list args) {
+  struct av1_extracfg extra_cfg = ctx->extra_cfg;
+  const aom_screen_detection_mode screen_detection_mode =
+      CAST(AV1E_SET_SCREEN_CONTENT_DETECTION_MODE, args);
+
+  extra_cfg.screen_detection_mode = screen_detection_mode;
+  return update_extra_cfg(ctx, &extra_cfg);
+}
+
 #if !CONFIG_REALTIME_ONLY
 static aom_codec_err_t create_stats_buffer(FIRSTPASS_STATS **frame_stats_buffer,
                                            STATS_BUFFER_CTX *stats_buf_context,
@@ -2861,7 +2957,7 @@ static aom_codec_err_t encoder_init(aom_codec_ctx_t *ctx) {
     priv->cfg = *ctx->config.enc;
     ctx->config.enc = &priv->cfg;
 
-    priv->extra_cfg = default_extra_cfg[0];
+    priv->extra_cfg = default_extra_cfg;
     // Special handling:
     // By default, if omitted: --enable-cdef=1, --qm-min=5, and --qm-max=9
     // Here we set its default values to 0, 4, and 10 respectively when
@@ -2984,18 +3080,18 @@ static void check_and_free_string(const char *default_str, const char **ptr) {
 
 static void destroy_extra_config(struct av1_extracfg *extra_cfg) {
 #if CONFIG_TUNE_VMAF
-  check_and_free_string(default_extra_cfg[0].vmaf_model_path,
+  check_and_free_string(default_extra_cfg.vmaf_model_path,
                         &extra_cfg->vmaf_model_path);
 #endif
-  check_and_free_string(default_extra_cfg[0].two_pass_output,
+  check_and_free_string(default_extra_cfg.two_pass_output,
                         &extra_cfg->two_pass_output);
-  check_and_free_string(default_extra_cfg[0].two_pass_output,
+  check_and_free_string(default_extra_cfg.two_pass_output,
                         &extra_cfg->second_pass_log);
-  check_and_free_string(default_extra_cfg[0].partition_info_path,
+  check_and_free_string(default_extra_cfg.partition_info_path,
                         &extra_cfg->partition_info_path);
-  check_and_free_string(default_extra_cfg[0].rate_distribution_info,
+  check_and_free_string(default_extra_cfg.rate_distribution_info,
                         &extra_cfg->rate_distribution_info);
-  check_and_free_string(default_extra_cfg[0].film_grain_table_filename,
+  check_and_free_string(default_extra_cfg.film_grain_table_filename,
                         &extra_cfg->film_grain_table_filename);
 }
 
@@ -3193,8 +3289,20 @@ static aom_codec_err_t encoder_encode(aom_codec_alg_priv_t *ctx,
   if (res == AOM_CODEC_OK) {
     AV1_COMP *cpi = ppi->cpi;
 
+    // Per-frame PSNR is not supported when g_lag_in_frames is greater than 0.
+    if ((flags & AOM_EFLAG_CALCULATE_PSNR) && ctx->cfg.g_lag_in_frames != 0) {
+      aom_internal_error(
+          &ppi->error, AOM_CODEC_INCAPABLE,
+          "Cannot calculate per-frame PSNR when g_lag_in_frames is nonzero");
+    }
+
     // Set up internal flags
-    if (ctx->base.init_flags & AOM_CODEC_USE_PSNR) ppi->b_calculate_psnr = 1;
+#if CONFIG_INTERNAL_STATS
+    assert(ppi->b_calculate_psnr == 1);
+#else
+    ppi->b_calculate_psnr = (ctx->base.init_flags & AOM_CODEC_USE_PSNR) ||
+                            (flags & AOM_EFLAG_CALCULATE_PSNR);
+#endif  // CONFIG_INTERNAL_STATS
 
     if (img != NULL) {
       if (!ctx->pts_offset_initialized) {
@@ -3491,7 +3599,8 @@ static aom_codec_err_t encoder_encode(aom_codec_alg_priv_t *ctx,
         obu_header_size = av1_write_obu_header(
             &ppi->level_params, &cpi->frame_header_count,
             OBU_TEMPORAL_DELIMITER,
-            ppi->seq_params.has_nonzero_operating_point_idc, 0, ctx->cx_data);
+            ppi->seq_params.has_nonzero_operating_point_idc,
+            /*is_layer_specific_obu=*/false, 0, ctx->cx_data);
         if (obu_header_size != 1) {
           aom_internal_error(&ppi->error, AOM_CODEC_ERROR, NULL);
         }
@@ -3713,10 +3822,14 @@ static aom_codec_err_t ctrl_use_reference(aom_codec_alg_priv_t *ctx,
 
 static aom_codec_err_t ctrl_set_roi_map(aom_codec_alg_priv_t *ctx,
                                         va_list args) {
-  (void)ctx;
-  (void)args;
+  aom_roi_map_t *data = va_arg(args, aom_roi_map_t *);
 
-  // TODO(yaowu): Need to re-implement and test for AV1.
+  if (data) {
+    aom_roi_map_t *roi = data;
+    return av1_set_roi_map(ctx->ppi->cpi, roi->roi_map, roi->rows, roi->cols,
+                           roi->delta_q, roi->delta_lf, roi->skip,
+                           roi->ref_frame);
+  }
   return AOM_CODEC_INVALID_PARAM;
 }
 
@@ -3789,7 +3902,12 @@ static aom_codec_err_t ctrl_set_spatial_layer_id(aom_codec_alg_priv_t *ctx,
 static aom_codec_err_t ctrl_set_number_spatial_layers(aom_codec_alg_priv_t *ctx,
                                                       va_list args) {
   const int number_spatial_layers = va_arg(args, int);
-  if (number_spatial_layers > MAX_NUM_SPATIAL_LAYERS)
+  // Note svc.use_flexible_mode is set by AV1E_SET_SVC_REF_FRAME_CONFIG. When
+  // it is false (the default) the actual limit is 3 for both spatial and
+  // temporal layers. Given the order of these calls are unpredictable the
+  // final check is deferred until encoder_encode() (av1_set_svc_fixed_mode()).
+  if (number_spatial_layers <= 0 ||
+      number_spatial_layers > MAX_NUM_SPATIAL_LAYERS)
     return AOM_CODEC_INVALID_PARAM;
   ctx->ppi->number_spatial_layers = number_spatial_layers;
   // update_encoder_cfg() is somewhat costly and this control may be called
@@ -3818,10 +3936,48 @@ static aom_codec_err_t ctrl_set_svc_params(aom_codec_alg_priv_t *ctx,
   AV1_COMP *const cpi = ppi->cpi;
   aom_svc_params_t *const params = va_arg(args, aom_svc_params_t *);
   int64_t target_bandwidth = 0;
+  // Note svc.use_flexible_mode is set by AV1E_SET_SVC_REF_FRAME_CONFIG. When
+  // it is false (the default) the actual limit is 3 for both spatial and
+  // temporal layers. Given the order of these calls are unpredictable the
+  // final check is deferred until encoder_encode() (av1_set_svc_fixed_mode()).
+  if (params->number_spatial_layers <= 0 ||
+      params->number_spatial_layers > MAX_NUM_SPATIAL_LAYERS ||
+      params->number_temporal_layers <= 0 ||
+      params->number_temporal_layers > MAX_NUM_TEMPORAL_LAYERS) {
+    return AOM_CODEC_INVALID_PARAM;
+  }
   ppi->number_spatial_layers = params->number_spatial_layers;
   ppi->number_temporal_layers = params->number_temporal_layers;
   cpi->svc.number_spatial_layers = params->number_spatial_layers;
   cpi->svc.number_temporal_layers = params->number_temporal_layers;
+  // Sequence parameters (operating_points_cnt_minus_1, operating_point_idc[])
+  // need to be updated if the number of layers have changed.
+  // Force a keyframe here and update the two relevant sequence parameters.
+  if (cpi->svc.prev_number_temporal_layers &&
+      cpi->svc.prev_number_spatial_layers &&
+      (cpi->svc.number_temporal_layers !=
+           cpi->svc.prev_number_temporal_layers ||
+       cpi->svc.number_spatial_layers != cpi->svc.prev_number_spatial_layers)) {
+    SequenceHeader *const seq_params = &ppi->seq_params;
+    seq_params->operating_points_cnt_minus_1 =
+        ppi->number_spatial_layers * ppi->number_temporal_layers - 1;
+    ctx->next_frame_flags |= AOM_EFLAG_FORCE_KF;
+    av1_set_svc_seq_params(ppi);
+    // Check for valid values for the spatial/temporal_layer_id here, since
+    // there has been a dynamic change in the number_spatial/temporal_layers,
+    // and if the ctrl_set_layer_id is not used after this call, the
+    // previous (last_encoded) values of spatial/temporal_layer_id will be used,
+    // which may be invalid.
+    cpi->svc.spatial_layer_id =
+        clamp(cpi->svc.spatial_layer_id, 0, cpi->svc.number_spatial_layers - 1);
+    cpi->svc.temporal_layer_id = clamp(cpi->svc.temporal_layer_id, 0,
+                                       cpi->svc.number_temporal_layers - 1);
+    cpi->common.spatial_layer_id = clamp(cpi->common.spatial_layer_id, 0,
+                                         cpi->svc.number_spatial_layers - 1);
+    cpi->common.temporal_layer_id = clamp(cpi->common.temporal_layer_id, 0,
+                                          cpi->svc.number_temporal_layers - 1);
+  }
+
   if (ppi->number_spatial_layers > 1 || ppi->number_temporal_layers > 1) {
     unsigned int sl, tl;
     ctx->ppi->use_svc = 1;
@@ -3850,7 +4006,7 @@ static aom_codec_err_t ctrl_set_svc_params(aom_codec_alg_priv_t *ctx,
         } else {
           lc->layer_target_bitrate = 1000 * layer_target_bitrate;
         }
-        lc->framerate_factor = params->framerate_factor[tl];
+        lc->framerate_factor = AOMMAX(1, params->framerate_factor[tl]);
         if (tl == ppi->number_temporal_layers - 1)
           target_bandwidth += lc->layer_target_bitrate;
       }
@@ -4064,6 +4220,11 @@ static aom_codec_err_t encoder_set_option(aom_codec_alg_priv_t *ctx,
   } else if (arg_match_helper(&arg, &g_av1_codec_arg_defs.sharpness, argv,
                               err_string)) {
     extra_cfg.sharpness = arg_parse_uint_helper(&arg, err_string);
+  } else if (arg_match_helper(&arg,
+                              &g_av1_codec_arg_defs.enable_adaptive_sharpness,
+                              argv, err_string)) {
+    extra_cfg.enable_adaptive_sharpness =
+        arg_parse_int_helper(&arg, err_string);
   } else if (arg_match_helper(&arg, &g_av1_codec_arg_defs.static_thresh, argv,
                               err_string)) {
     extra_cfg.static_thresh = arg_parse_uint_helper(&arg, err_string);
@@ -4109,15 +4270,14 @@ static aom_codec_err_t encoder_set_option(aom_codec_alg_priv_t *ctx,
 #if CONFIG_TUNE_VMAF
   else if (arg_match_helper(&arg, &g_av1_codec_arg_defs.vmaf_model_path, argv,
                             err_string)) {
-    err = allocate_and_set_string(value, default_extra_cfg[0].vmaf_model_path,
+    err = allocate_and_set_string(value, default_extra_cfg.vmaf_model_path,
                                   &extra_cfg.vmaf_model_path, err_string);
   }
 #endif
   else if (arg_match_helper(&arg, &g_av1_codec_arg_defs.partition_info_path,
                             argv, err_string)) {
-    err =
-        allocate_and_set_string(value, default_extra_cfg[0].partition_info_path,
-                                &extra_cfg.partition_info_path, err_string);
+    err = allocate_and_set_string(value, default_extra_cfg.partition_info_path,
+                                  &extra_cfg.partition_info_path, err_string);
   } else if (arg_match_helper(&arg,
                               &g_av1_codec_arg_defs.enable_rate_guide_deltaq,
                               argv, err_string)) {
@@ -4126,9 +4286,9 @@ static aom_codec_err_t encoder_set_option(aom_codec_alg_priv_t *ctx,
   } else if (arg_match_helper(&arg,
                               &g_av1_codec_arg_defs.rate_distribution_info,
                               argv, err_string)) {
-    err = allocate_and_set_string(
-        value, default_extra_cfg[0].rate_distribution_info,
-        &extra_cfg.rate_distribution_info, err_string);
+    err =
+        allocate_and_set_string(value, default_extra_cfg.rate_distribution_info,
+                                &extra_cfg.rate_distribution_info, err_string);
   } else if (arg_match_helper(&arg, &g_av1_codec_arg_defs.dist_metric, argv,
                               err_string)) {
     extra_cfg.dist_metric = arg_parse_enum_helper(&arg, err_string);
@@ -4246,7 +4406,7 @@ static aom_codec_err_t encoder_set_option(aom_codec_alg_priv_t *ctx,
       extra_cfg.film_grain_table_filename = value;
     } else {
       err = allocate_and_set_string(
-          value, default_extra_cfg[0].film_grain_table_filename,
+          value, default_extra_cfg.film_grain_table_filename,
           &extra_cfg.film_grain_table_filename, err_string);
     }
   } else if (arg_match_helper(&arg, &g_av1_codec_arg_defs.cdf_update_mode, argv,
@@ -4361,6 +4521,11 @@ static aom_codec_err_t encoder_set_option(aom_codec_alg_priv_t *ctx,
   } else if (arg_match_helper(&arg, &g_av1_codec_arg_defs.enable_angle_delta,
                               argv, err_string)) {
     extra_cfg.enable_angle_delta = arg_parse_int_helper(&arg, err_string);
+  } else if (arg_match_helper(
+                 &arg, &g_av1_codec_arg_defs.enable_low_complexity_decode, argv,
+                 err_string)) {
+    extra_cfg.enable_low_complexity_decode =
+        arg_parse_int_helper(&arg, err_string);
   } else if (arg_match_helper(&arg, &g_av1_codec_arg_defs.reduced_tx_type_set,
                               argv, err_string)) {
     extra_cfg.reduced_tx_type_set = arg_parse_int_helper(&arg, err_string);
@@ -4444,11 +4609,11 @@ static aom_codec_err_t encoder_set_option(aom_codec_alg_priv_t *ctx,
     extra_cfg.fwd_kf_dist = arg_parse_int_helper(&arg, err_string);
   } else if (arg_match_helper(&arg, &g_av1_codec_arg_defs.two_pass_output, argv,
                               err_string)) {
-    err = allocate_and_set_string(value, default_extra_cfg[0].two_pass_output,
+    err = allocate_and_set_string(value, default_extra_cfg.two_pass_output,
                                   &extra_cfg.two_pass_output, err_string);
   } else if (arg_match_helper(&arg, &g_av1_codec_arg_defs.second_pass_log, argv,
                               err_string)) {
-    err = allocate_and_set_string(value, default_extra_cfg[0].second_pass_log,
+    err = allocate_and_set_string(value, default_extra_cfg.second_pass_log,
                                   &extra_cfg.second_pass_log, err_string);
   } else if (arg_match_helper(&arg, &g_av1_codec_arg_defs.loopfilter_control,
                               argv, err_string)) {
@@ -4474,6 +4639,9 @@ static aom_codec_err_t encoder_set_option(aom_codec_alg_priv_t *ctx,
                               err_string)) {
     ctx->cfg.tile_height_count = arg_parse_list_helper(
         &arg, ctx->cfg.tile_heights, MAX_TILE_HEIGHTS, err_string);
+  } else if (arg_match_helper(&arg, &g_av1_codec_arg_defs.screen_detection_mode,
+                              argv, err_string)) {
+    extra_cfg.screen_detection_mode = arg_parse_int_helper(&arg, err_string);
   } else {
     match = 0;
     snprintf(err_string, ARG_ERR_MSG_MAX_LEN, "Cannot find aom option %s",
@@ -4692,6 +4860,11 @@ static aom_codec_ctrl_fn_map_t encoder_ctrl_maps[] = {
   { AV1E_SET_POSTENCODE_DROP_RTC, ctrl_set_postencode_drop_rtc },
   { AV1E_SET_MAX_CONSEC_FRAME_DROP_MS_CBR,
     ctrl_set_max_consec_frame_drop_ms_cbr },
+  { AV1E_SET_ENABLE_LOW_COMPLEXITY_DECODE,
+    ctrl_set_enable_low_complexity_decode },
+  { AV1E_SET_SCREEN_CONTENT_DETECTION_MODE,
+    ctrl_set_screen_content_detection_mode },
+  { AV1E_SET_ENABLE_ADAPTIVE_SHARPNESS, ctrl_set_enable_adaptive_sharpness },
 
   // Getters
   { AOME_GET_LAST_QUANTIZER, ctrl_get_quantizer },

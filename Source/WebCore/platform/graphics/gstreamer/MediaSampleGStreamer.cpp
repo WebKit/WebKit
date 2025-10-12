@@ -124,8 +124,7 @@ void MediaSampleGStreamer::offsetTimestampsBy(const MediaTime& timestampOffset)
 
 PlatformSample MediaSampleGStreamer::platformSample() const
 {
-    PlatformSample sample = { PlatformSample::GStreamerSampleType, { .gstSample = m_sample.get() } };
-    return sample;
+    return PlatformSample { m_sample.get() };
 }
 
 Ref<MediaSample> MediaSampleGStreamer::createNonDisplayingCopy() const

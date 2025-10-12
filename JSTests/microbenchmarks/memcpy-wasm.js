@@ -1,4 +1,3 @@
-//@ skip unless $isWasmPlatform
 //@ $skipModes << :lockdown
 //@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 //@ requireOptions("--useExecutableAllocationFuzz=false")

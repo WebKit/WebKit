@@ -26,6 +26,7 @@ from webkitpy.common.config.ports_mock import MockPort
 from webkitpy.common.host_mock import MockHost
 from webkitpy.w3c.wpt_runner import WPTRunner, parse_args
 
+WPT_CHECKOUT_PATH = f"/web-platform-tests"
 
 class WPTRunnerTest(unittest.TestCase):
 
@@ -88,9 +89,8 @@ class WPTRunnerTest(unittest.TestCase):
 
         self.assertTrue(instance.runner.prepare_wpt_checkout())
 
-        expected_wpt_checkout = "/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests"
-        self.assertEqual(instance.runner._options.wpt_checkout, expected_wpt_checkout)
-        self.assertTrue(instance.host.filesystem.isdir(expected_wpt_checkout))
+        self.assertEqual(instance.runner._options.wpt_checkout, WPT_CHECKOUT_PATH)
+        self.assertTrue(instance.host.filesystem.isdir(WPT_CHECKOUT_PATH))
 
     def test_prepare_wpt_checkout_specified_path(self):
         # Tests the prepare_wpt_checkout() method with WPT checkout specified in options.
@@ -108,12 +108,12 @@ class WPTRunnerTest(unittest.TestCase):
         # Goal of this test is for the WPT spawn command to match the desired WPT directory and
         # arguments. No options or arguments are used.
 
-        spawn_wpt_func = WPTRunnerTest.MockSpawnWPT(self,
-            "/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests",
-            ["run", "--webkit-port=MockPort", "--processes=4",
-                "--webdriver-binary=/mock-webdriver/bin/webdriver",
-                "--binary=/mock-webdriver/bin/browser",
-                "--binary-arg=webdriver_arg1", "--binary-arg=webdriver_arg2", "webkit"])
+        spawn_wpt_func = WPTRunnerTest.MockSpawnWPT(self, WPT_CHECKOUT_PATH, [
+            "run", "--webkit-port=MockPort", "--processes=4",
+            "--webdriver-binary=/mock-webdriver/bin/webdriver",
+            "--binary=/mock-webdriver/bin/browser",
+            "--binary-arg=webdriver_arg1", "--binary-arg=webdriver_arg2", "webkit"]
+        )
 
         options, _ = parse_args([])
         instance = WPTRunnerTest.TestInstance(options, spawn_wpt_func)
@@ -163,12 +163,12 @@ class WPTRunnerTest(unittest.TestCase):
 
         specified_args = ["test1.html", "test2.html"]
 
-        spawn_wpt_func = WPTRunnerTest.MockSpawnWPT(self,
-            "/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests",
-            ["run", "--webkit-port=MockPort", "--processes=4",
-                "--webdriver-binary=/mock-webdriver/bin/webdriver",
-                "--binary=/mock-webdriver/bin/browser",
-                "--binary-arg=webdriver_arg1", "--binary-arg=webdriver_arg2", "webkit"] + specified_args)
+        spawn_wpt_func = WPTRunnerTest.MockSpawnWPT(self, WPT_CHECKOUT_PATH, [
+            "run", "--webkit-port=MockPort", "--processes=4",
+            "--webdriver-binary=/mock-webdriver/bin/webdriver",
+            "--binary=/mock-webdriver/bin/browser",
+            "--binary-arg=webdriver_arg1", "--binary-arg=webdriver_arg2", "webkit"] + specified_args
+        )
 
         options, _ = parse_args([])
         instance = WPTRunnerTest.TestInstance(options, spawn_wpt_func)

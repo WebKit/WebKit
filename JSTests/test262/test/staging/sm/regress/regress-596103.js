@@ -4,12 +4,10 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
+features: [host-gc-required]
 ---*/
 for (var u = 0; u < 3; ++u) {
     var y = [];

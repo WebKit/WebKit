@@ -312,7 +312,7 @@ void Region::Shape::appendSpans(const Shape& shape, std::span<const Span> spans)
 
 std::span<const int> Region::Shape::segments(std::span<const Span> span) const
 {
-    ASSERT(span.data() >= m_spans.data());
+    ASSERT(span.data() >= std::to_address(m_spans.begin()));
     ASSERT(span.data() < std::to_address(m_spans.end()));
     ASSERT(std::to_address(span.end()) <= std::to_address(m_spans.end()));
 

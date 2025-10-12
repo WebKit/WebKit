@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InternalObserverMap.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "InternalObserver.h"
 #include "MapperCallback.h"
 #include "Observable.h"
@@ -63,7 +64,7 @@ public:
             }
 
             SubscribeOptions options;
-            options.signal = &subscriber.signal();
+            options.signal = subscriber.signal();
             m_sourceObservable->subscribeInternal(*context, InternalObserverMap::create(*context, subscriber, m_mapper), options);
 
             return { };

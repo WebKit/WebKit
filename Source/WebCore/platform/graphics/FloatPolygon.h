@@ -29,10 +29,10 @@
 
 #pragma once
 
-#include "FloatPoint.h"
-#include "FloatRect.h"
-#include "PODIntervalTree.h"
-#include "WindRule.h"
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/PODIntervalTree.h>
+#include <WebCore/WindRule.h>
 #include <memory>
 #include <wtf/Vector.h>
 

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "NativeImage.h"
-#include "PlatformLayer.h"
+#include <WebCore/NativeImage.h>
+#include <WebCore/PlatformLayer.h>
 #include <wtf/Function.h>
 
 namespace WebCore {

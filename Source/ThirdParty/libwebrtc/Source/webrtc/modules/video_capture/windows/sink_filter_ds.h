@@ -97,8 +97,8 @@ class CaptureInputPin : public IMemInputPin, public IPin {
   // running), otherwise accessed on the capture thread.
   VideoCaptureCapability resulting_capability_;
   DWORD capture_thread_id_ = 0;
-  rtc::scoped_refptr<IMemAllocator> allocator_ RTC_GUARDED_BY(main_checker_);
-  rtc::scoped_refptr<IPin> receive_pin_ RTC_GUARDED_BY(main_checker_);
+  webrtc::scoped_refptr<IMemAllocator> allocator_ RTC_GUARDED_BY(main_checker_);
+  webrtc::scoped_refptr<IPin> receive_pin_ RTC_GUARDED_BY(main_checker_);
   std::atomic_bool flushing_{false};
   std::atomic_bool runtime_error_{false};
   // Holds a referenceless pointer to the owning filter, the name and
@@ -148,7 +148,7 @@ class CaptureSinkFilter : public IBaseFilter {
 
  private:
   SequenceChecker main_checker_;
-  const rtc::scoped_refptr<ComRefCount<CaptureInputPin>> input_pin_;
+  const webrtc::scoped_refptr<ComRefCount<CaptureInputPin>> input_pin_;
   VideoCaptureImpl* const capture_observer_;
   FILTER_INFO info_ RTC_GUARDED_BY(main_checker_) = {};
   // Set/cleared in JoinFilterGraph. The filter must be stopped (no capture)

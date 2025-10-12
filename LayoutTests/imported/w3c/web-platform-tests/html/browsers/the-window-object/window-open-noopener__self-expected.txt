@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: this.checkValues is not a function. (In 'this.checkValues(w2)', 'this.checkValues' is undefined)
 
 Harness Error (TIMEOUT), message = null
 

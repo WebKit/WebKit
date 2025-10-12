@@ -53,11 +53,11 @@ class RTC_EXPORT SharedDesktopFrame final : public DesktopFrame {
   bool IsShared();
 
  private:
-  typedef rtc::FinalRefCountedObject<std::unique_ptr<DesktopFrame>> Core;
+  typedef FinalRefCountedObject<std::unique_ptr<DesktopFrame>> Core;
 
-  SharedDesktopFrame(rtc::scoped_refptr<Core> core);
+  SharedDesktopFrame(scoped_refptr<Core> core);
 
-  const rtc::scoped_refptr<Core> core_;
+  const scoped_refptr<Core> core_;
 };
 
 }  // namespace webrtc

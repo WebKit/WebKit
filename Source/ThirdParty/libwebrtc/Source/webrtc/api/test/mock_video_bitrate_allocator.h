@@ -17,7 +17,7 @@
 
 namespace webrtc {
 
-class MockVideoBitrateAllocator : public webrtc::VideoBitrateAllocator {
+class MockVideoBitrateAllocator : public VideoBitrateAllocator {
   MOCK_METHOD(VideoBitrateAllocation,
               Allocate,
               (VideoBitrateAllocationParameters parameters),

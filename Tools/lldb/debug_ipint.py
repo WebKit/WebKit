@@ -6,6 +6,7 @@
 import lldb
 
 import bisect
+import platform
 import struct
 from pathlib import Path
 
@@ -16,16 +17,18 @@ DIM = '\033[2m'
 RED = '\033[31m'
 CYAN = '\033[36m'
 
-ARCH = 'arm64'
+machine = platform.machine().lower()
 
-if ARCH == 'arm64':
+if machine in ['arm64', 'aarch64']:
     PC_REG = 'x26'
     MC_REG = 'x25'
     PL_REG = 'x6'
-elif ARCH == 'x64':
+elif machine in ['x86_64', 'amd64']:
     PC_REG = 'r13'
     MC_REG = 'r12'
     PL_REG = 'r10'
+else:
+    raise RuntimeError(f"Unsupported architecture: {machine}")
 
 # Instruction opcode symbols from InPlaceInterpreter64.asm, without the "ipint_" prefix.
 # The order should match the address space order.
@@ -71,13 +74,7 @@ IPINT_INSTRUCTIONS = [
     # 0xD0
     'ref_null_t', 'ref_is_null', 'ref_func', 'ref_eq', 'ref_as_non_null', 'br_on_null', 'br_on_non_null',
     # 0xFB
-    # The four instructions starting with 0xFB are in transition. The names appearing below are their current
-    # names in InPlaceInterpreter64.asm.
-    'fb_block', 'fc_block', 'simd', 'atomic',
-    # There was an attempted PR that would change their names: https://bugs.webkit.org/show_bug.cgi?id=292725
-    # The PR has been reverted, but if it's reintroduced after fixes, the names above should be changed
-    # to the commented out names below:
-    # 'gc_prefix', 'conversion_prefix', 'simd_prefix', 'atomic_prefix',
+    'gc_prefix', 'conversion_prefix', 'simd_prefix', 'atomic_prefix',
 
     # extended
     'struct_new', 'struct_new_default', 'struct_get',
@@ -90,7 +87,70 @@ IPINT_INSTRUCTIONS = [
     'i32_trunc_sat_f32_u', 'i32_trunc_sat_f64_s', 'i32_trunc_sat_f64_u', 'i64_trunc_sat_f32_s',
     'i64_trunc_sat_f32_u', 'i64_trunc_sat_f64_s', 'i64_trunc_sat_f64_u', 'memory_init',
     'data_drop', 'memory_copy', 'memory_fill', 'table_init', 'elem_drop', 'table_copy',
-    'table_grow', 'table_size', 'table_fill', 'simd_v128_const', 'simd_i32x4_extract_lane',
+    'table_grow', 'table_size', 'table_fill',
+
+    # extended SIMD instructions (0xFD prefix)
+    'simd_v128_load_mem', 'simd_v128_load_8x8s_mem', 'simd_v128_load_8x8u_mem', 'simd_v128_load_16x4s_mem',
+    'simd_v128_load_16x4u_mem', 'simd_v128_load_32x2s_mem', 'simd_v128_load_32x2u_mem', 'simd_v128_load8_splat_mem',
+    'simd_v128_load16_splat_mem', 'simd_v128_load32_splat_mem', 'simd_v128_load64_splat_mem', 'simd_v128_store_mem',
+    'simd_v128_const', 'simd_i8x16_shuffle', 'simd_i8x16_swizzle', 'simd_i8x16_splat',
+    'simd_i16x8_splat', 'simd_i32x4_splat', 'simd_i64x2_splat', 'simd_f32x4_splat',
+    'simd_f64x2_splat', 'simd_i8x16_extract_lane_s', 'simd_i8x16_extract_lane_u', 'simd_i8x16_replace_lane',
+    'simd_i16x8_extract_lane_s', 'simd_i16x8_extract_lane_u', 'simd_i16x8_replace_lane', 'simd_i32x4_extract_lane',
+    'simd_i32x4_replace_lane', 'simd_i64x2_extract_lane', 'simd_i64x2_replace_lane', 'simd_f32x4_extract_lane',
+    'simd_f32x4_replace_lane', 'simd_f64x2_extract_lane', 'simd_f64x2_replace_lane', 'simd_i8x16_eq',
+    'simd_i8x16_ne', 'simd_i8x16_lt_s', 'simd_i8x16_lt_u', 'simd_i8x16_gt_s',
+    'simd_i8x16_gt_u', 'simd_i8x16_le_s', 'simd_i8x16_le_u', 'simd_i8x16_ge_s',
+    'simd_i8x16_ge_u', 'simd_i16x8_eq', 'simd_i16x8_ne', 'simd_i16x8_lt_s',
+    'simd_i16x8_lt_u', 'simd_i16x8_gt_s', 'simd_i16x8_gt_u', 'simd_i16x8_le_s',
+    'simd_i16x8_le_u', 'simd_i16x8_ge_s', 'simd_i16x8_ge_u', 'simd_i32x4_eq',
+    'simd_i32x4_ne', 'simd_i32x4_lt_s', 'simd_i32x4_lt_u', 'simd_i32x4_gt_s',
+    'simd_i32x4_gt_u', 'simd_i32x4_le_s', 'simd_i32x4_le_u', 'simd_i32x4_ge_s',
+    'simd_i32x4_ge_u', 'simd_f32x4_eq', 'simd_f32x4_ne', 'simd_f32x4_lt',
+    'simd_f32x4_gt', 'simd_f32x4_le', 'simd_f32x4_ge', 'simd_f64x2_eq',
+    'simd_f64x2_ne', 'simd_f64x2_lt', 'simd_f64x2_gt', 'simd_f64x2_le',
+    'simd_f64x2_ge', 'simd_v128_not', 'simd_v128_and', 'simd_v128_andnot',
+    'simd_v128_or', 'simd_v128_xor', 'simd_v128_bitselect', 'simd_v128_any_true',
+    'simd_v128_load8_lane_mem', 'simd_v128_load16_lane_mem', 'simd_v128_load32_lane_mem', 'simd_v128_load64_lane_mem',
+    'simd_v128_store8_lane_mem', 'simd_v128_store16_lane_mem', 'simd_v128_store32_lane_mem', 'simd_v128_store64_lane_mem',
+    'simd_v128_load32_zero_mem', 'simd_v128_load64_zero_mem', 'simd_f32x4_demote_f64x2_zero', 'simd_f64x2_promote_low_f32x4',
+    'simd_i8x16_abs', 'simd_i8x16_neg', 'simd_i8x16_popcnt', 'simd_i8x16_all_true',
+    'simd_i8x16_bitmask', 'simd_i8x16_narrow_i16x8_s', 'simd_i8x16_narrow_i16x8_u', 'simd_f32x4_ceil',
+    'simd_f32x4_floor', 'simd_f32x4_trunc', 'simd_f32x4_nearest', 'simd_i8x16_shl',
+    'simd_i8x16_shr_s', 'simd_i8x16_shr_u', 'simd_i8x16_add', 'simd_i8x16_add_sat_s',
+    'simd_i8x16_add_sat_u', 'simd_i8x16_sub', 'simd_i8x16_sub_sat_s', 'simd_i8x16_sub_sat_u',
+    'simd_f64x2_ceil', 'simd_f64x2_floor', 'simd_i8x16_min_s', 'simd_i8x16_min_u',
+    'simd_i8x16_max_s', 'simd_i8x16_max_u', 'simd_f64x2_trunc', 'simd_i8x16_avgr_u',
+    'simd_i16x8_extadd_pairwise_i8x16_s', 'simd_i16x8_extadd_pairwise_i8x16_u', 'simd_i32x4_extadd_pairwise_i16x8_s', 'simd_i32x4_extadd_pairwise_i16x8_u',
+    'simd_i16x8_abs', 'simd_i16x8_neg', 'simd_i16x8_q15mulr_sat_s', 'simd_i16x8_all_true',
+    'simd_i16x8_bitmask', 'simd_i16x8_narrow_i32x4_s', 'simd_i16x8_narrow_i32x4_u', 'simd_i16x8_extend_low_i8x16_s',
+    'simd_i16x8_extend_high_i8x16_s', 'simd_i16x8_extend_low_i8x16_u', 'simd_i16x8_extend_high_i8x16_u', 'simd_i16x8_shl',
+    'simd_i16x8_shr_s', 'simd_i16x8_shr_u', 'simd_i16x8_add', 'simd_i16x8_add_sat_s',
+    'simd_i16x8_add_sat_u', 'simd_i16x8_sub', 'simd_i16x8_sub_sat_s', 'simd_i16x8_sub_sat_u',
+    'simd_f64x2_nearest', 'simd_i16x8_mul', 'simd_i16x8_min_s', 'simd_i16x8_min_u',
+    'simd_i16x8_max_s', 'simd_i16x8_max_u', 'simd_i16x8_avgr_u', 'simd_i16x8_extmul_low_i8x16_s',
+    'simd_i16x8_extmul_high_i8x16_s', 'simd_i16x8_extmul_low_i8x16_u', 'simd_i16x8_extmul_high_i8x16_u', 'simd_i32x4_abs',
+    'simd_i32x4_neg', 'simd_i32x4_all_true', 'simd_i32x4_bitmask', 'simd_i32x4_extend_low_i16x8_s',
+    'simd_i32x4_extend_high_i16x8_s', 'simd_i32x4_extend_low_i16x8_u', 'simd_i32x4_extend_high_i16x8_u', 'simd_i32x4_shl',
+    'simd_i32x4_shr_s', 'simd_i32x4_shr_u', 'simd_i32x4_add', 'simd_i32x4_sub',
+    'simd_i32x4_mul', 'simd_i32x4_min_s', 'simd_i32x4_min_u', 'simd_i32x4_max_s',
+    'simd_i32x4_max_u', 'simd_i32x4_dot_i16x8_s', 'simd_i32x4_extmul_low_i16x8_s', 'simd_i32x4_extmul_high_i16x8_s',
+    'simd_i32x4_extmul_low_i16x8_u', 'simd_i32x4_extmul_high_i16x8_u', 'simd_i64x2_abs', 'simd_i64x2_neg',
+    'simd_i64x2_all_true', 'simd_i64x2_bitmask', 'simd_i64x2_extend_low_i32x4_s', 'simd_i64x2_extend_high_i32x4_s',
+    'simd_i64x2_extend_low_i32x4_u', 'simd_i64x2_extend_high_i32x4_u', 'simd_i64x2_shl', 'simd_i64x2_shr_s',
+    'simd_i64x2_shr_u', 'simd_i64x2_add', 'simd_i64x2_sub', 'simd_i64x2_mul',
+    'simd_i64x2_eq', 'simd_i64x2_ne', 'simd_i64x2_lt_s', 'simd_i64x2_gt_s',
+    'simd_i64x2_le_s', 'simd_i64x2_ge_s', 'simd_i64x2_extmul_low_i32x4_s', 'simd_i64x2_extmul_high_i32x4_s',
+    'simd_i64x2_extmul_low_i32x4_u', 'simd_i64x2_extmul_high_i32x4_u', 'simd_f32x4_abs', 'simd_f32x4_neg',
+    'simd_f32x4_sqrt', 'simd_f32x4_add', 'simd_f32x4_sub', 'simd_f32x4_mul',
+    'simd_f32x4_div', 'simd_f32x4_min', 'simd_f32x4_max', 'simd_f32x4_pmin',
+    'simd_f32x4_pmax', 'simd_f64x2_abs', 'simd_f64x2_neg', 'simd_f64x2_sqrt',
+    'simd_f64x2_add', 'simd_f64x2_sub', 'simd_f64x2_mul', 'simd_f64x2_div',
+    'simd_f64x2_min', 'simd_f64x2_max', 'simd_f64x2_pmin', 'simd_f64x2_pmax',
+    'simd_i32x4_trunc_sat_f32x4_s', 'simd_i32x4_trunc_sat_f32x4_u', 'simd_f32x4_convert_i32x4_s', 'simd_f32x4_convert_i32x4_u',
+    'simd_i32x4_trunc_sat_f64x2_s_zero', 'simd_i32x4_trunc_sat_f64x2_u_zero', 'simd_f64x2_convert_low_i32x4_s', 'simd_f64x2_convert_low_i32x4_u',
+
+    # extended atomic instructions
     'memory_atomic_notify', 'memory_atomic_wait32', 'memory_atomic_wait64', 'atomic_fence',
     'i32_atomic_load', 'i64_atomic_load', 'i32_atomic_load8_u', 'i32_atomic_load16_u',
     'i64_atomic_load8_u', 'i64_atomic_load16_u', 'i64_atomic_load32_u', 'i32_atomic_store',
@@ -128,7 +188,8 @@ def extract_gprs(top_frame):
     regs = top_frame.GetRegisters()
     gprs = {}
     for reg in regs[0]:
-        gprs[reg.name] = int(reg.value[2:], 16)
+        if reg.value is not None:
+            gprs[reg.name] = int(reg.value[2:], 16)
     return gprs
 
 
@@ -230,7 +291,7 @@ def ipint_state(debugger, command, exe_ctx, output, internal_dict):
                 mc_data = '???'
         print(f'MC = 0x{mc:x} -> {CYAN}{mc_data}{RESET}', file=output)
     else:
-        print('MC = {RED}<none>{RESET} (no metadata generated)', file=output)
+        print(f'MC = {RED}<none>{RESET} (no metadata generated)', file=output)
 
     if instr_index < 0:
         print("Stack unknown: not in IPInt", file=output)
@@ -331,7 +392,7 @@ def ipint_continue_on_all_breakpoints(debugger, command, exec_ctx, output, inter
         brk.SetAutoContinue(True)
 
 
-def set_breakpoints(debugger, command, exe_ctx, output, internal_dict):
+def ipint_set_all_breakpoints(debugger, command, exe_ctx, output, internal_dict):
     if not breakpoints:
         print("Initializing internal breakpoints...", file=output)
         set_breakpoints_internal(debugger, True)
@@ -350,5 +411,5 @@ def __lldb_init_module(debugger, internal_dict):
     debugger.HandleCommand('command script add -f debug_ipint.ipint_disable_all_breakpoints ipint_disable_all_breakpoints')
     debugger.HandleCommand('command script add -f debug_ipint.ipint_reenable_all_breakpoints ipint_reenable_all_breakpoints')
     debugger.HandleCommand('command script add -f debug_ipint.ipint_continue_on_all_breakpoints ipint_autocontinue')
-    debugger.HandleCommand('command script add -f debug_ipint.set_breakpoints set_breakpoints')
+    debugger.HandleCommand('command script add -f debug_ipint.ipint_set_all_breakpoints ipint_set_all_breakpoints')
     print("IPInt debugger ready")

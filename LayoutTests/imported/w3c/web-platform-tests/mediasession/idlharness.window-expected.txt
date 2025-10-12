@@ -4,6 +4,7 @@ PASS idl_test validation
 PASS Partial interface Navigator: original interface defined
 PASS Partial interface Navigator: valid exposure set
 PASS Partial interface Navigator: member names are unique
+PASS Partial interface Navigator[2]: member names are unique
 PASS Partial interface mixin NavigatorID: member names are unique
 PASS Navigator includes NavigatorID: member names are unique
 PASS Navigator includes NavigatorLanguage: member names are unique
@@ -49,12 +50,23 @@ PASS MediaMetadata interface: attribute title
 PASS MediaMetadata interface: attribute artist
 PASS MediaMetadata interface: attribute album
 PASS MediaMetadata interface: attribute artwork
+FAIL MediaMetadata interface: attribute chapterInfo assert_true: The prototype object must have a property "chapterInfo" expected true got false
 PASS MediaMetadata must be primary interface of new MediaMetadata()
 PASS Stringification of new MediaMetadata()
 PASS MediaMetadata interface: new MediaMetadata() must inherit property "title" with the proper type
 PASS MediaMetadata interface: new MediaMetadata() must inherit property "artist" with the proper type
 PASS MediaMetadata interface: new MediaMetadata() must inherit property "album" with the proper type
 PASS MediaMetadata interface: new MediaMetadata() must inherit property "artwork" with the proper type
+FAIL MediaMetadata interface: new MediaMetadata() must inherit property "chapterInfo" with the proper type assert_inherits: property "chapterInfo" not found in prototype chain
+FAIL ChapterInformation interface: existence and properties of interface object assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
+FAIL ChapterInformation interface object length assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
+FAIL ChapterInformation interface object name assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
+FAIL ChapterInformation interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
+FAIL ChapterInformation interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
+FAIL ChapterInformation interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
+FAIL ChapterInformation interface: attribute title assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
+FAIL ChapterInformation interface: attribute startTime assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
+FAIL ChapterInformation interface: attribute artwork assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
 PASS Navigator interface: attribute mediaSession
 PASS Navigator interface: navigator must inherit property "mediaSession" with the proper type
 

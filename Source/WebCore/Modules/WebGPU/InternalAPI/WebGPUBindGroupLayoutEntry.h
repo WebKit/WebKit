@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "WebGPUBufferBindingLayout.h"
-#include "WebGPUExternalTextureBindingLayout.h"
-#include "WebGPUIntegralTypes.h"
-#include "WebGPUSamplerBindingLayout.h"
-#include "WebGPUShaderStage.h"
-#include "WebGPUStorageTextureBindingLayout.h"
-#include "WebGPUTextureBindingLayout.h"
+#include <WebCore/WebGPUBufferBindingLayout.h>
+#include <WebCore/WebGPUExternalTextureBindingLayout.h>
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUSamplerBindingLayout.h>
+#include <WebCore/WebGPUShaderStage.h>
+#include <WebCore/WebGPUStorageTextureBindingLayout.h>
+#include <WebCore/WebGPUTextureBindingLayout.h>
 #include <optional>
 
 namespace WebCore::WebGPU {

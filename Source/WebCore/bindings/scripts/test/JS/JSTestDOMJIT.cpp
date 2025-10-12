@@ -1252,7 +1252,7 @@ JSC_DEFINE_JIT_OPERATION(jsTestDOMJITPrototypeFunction_getElementsByNameWithoutT
 
 JSC::GCClient::IsoSubspace* JSTestDOMJIT::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestDOMJIT, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestDOMJIT, UseCustomHeapCellType::No>(vm, "JSTestDOMJIT"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestDOMJIT.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDOMJIT = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestDOMJIT.get(); },
@@ -1267,6 +1267,49 @@ void JSTestDOMJIT::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     if (RefPtr context = thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
+}
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#if ENABLE(BINDING_INTEGRITY)
+#if PLATFORM(WIN)
+#pragma warning(disable: 4483)
+extern "C" { extern void (*const __identifier("??_7TestDOMJIT@WebCore@@6B@")[])(); }
+#else
+extern "C" { extern void* _ZTVN7WebCore10TestDOMJITE[]; }
+#endif
+template<std::same_as<TestDOMJIT> T>
+static inline void verifyVTable(TestDOMJIT* ptr)
+{
+    if constexpr (std::is_polymorphic_v<T>) {
+        const void* actualVTablePointer = getVTablePointer<T>(ptr);
+#if PLATFORM(WIN)
+        void* expectedVTablePointer = __identifier("??_7TestDOMJIT@WebCore@@6B@");
+#else
+        void* expectedVTablePointer = &_ZTVN7WebCore10TestDOMJITE[2];
+#endif
+
+        // If you hit this assertion you either have a use after free bug, or
+        // TestDOMJIT has subclasses. If TestDOMJIT has subclasses that get passed
+        // to toJS() we currently require TestDOMJIT you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+    }
+}
+#endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestDOMJIT>&& impl)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+#if ENABLE(BINDING_INTEGRITY)
+    verifyVTable<TestDOMJIT>(impl.ptr());
+#endif
+    return createWrapper<TestDOMJIT>(globalObject, WTFMove(impl));
+}
+
+JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestDOMJIT& impl)
+{
+    return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
 

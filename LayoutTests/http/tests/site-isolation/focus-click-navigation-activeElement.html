@@ -1,0 +1,137 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Tests click navigation and Document.activeElement behavior with cross-origin iframes in site isolation mode");
+jsTestIsAsync = true;
+
+let iframe;
+let outerInputBlurred = false;
+let innerInputFocused = false;
+let waitingForInnerFocusVerification = false;
+let innerFocusStateChecked = false;
+
+function checkInitialState() {
+    shouldBe("document.activeElement.tagName", "'BODY'");
+    iframe.contentWindow.postMessage({
+        type: 'checkActiveElement',
+        expected: 'BODY',
+        description: 'Initial state: inner Document.activeElement is BODY'
+    }, 'http://localhost:8000');
+}
+
+function checkInnerInputFocusState() {
+    if (innerFocusStateChecked)
+        return;
+    innerFocusStateChecked = true;
+
+    shouldBe("document.activeElement.tagName", "'IFRAME'");
+    testPassed("When inner input focused: outer Document.activeElement is IFRAME");
+
+    if (outerInputBlurred)
+        testPassed("Outer input blur handler was fired before inner input focus");
+    else
+        testFailed("Outer input blur handler was NOT fired before inner input focus");
+
+    iframe.contentWindow.postMessage({
+        type: 'checkActiveElement',
+        expected: 'INPUT',
+        description: 'When inner input focused: inner Document.activeElement is INPUT'
+    }, 'http://localhost:8000');
+
+    waitingForInnerFocusVerification = false;
+}
+
+function tryCheckInnerFocusState() {
+    if (innerInputFocused && outerInputBlurred && waitingForInnerFocusVerification)
+        checkInnerInputFocusState();
+}
+
+async function handleMessage(event) {
+    if (event.data.type === 'activeElementCheck') {
+        if (event.data.success)
+            testPassed(event.data.message);
+        else
+            testFailed(event.data.message);
+
+        if (event.data.message.includes('Initial state'))
+            await UIHelper.activateElement(document.getElementById('outerInput'));
+        else if (event.data.message.includes('When outer input focused')) {
+            const iframeRect = iframe.getBoundingClientRect();
+            const clickX = iframeRect.left + 100;
+            const clickY = iframeRect.top + 60;
+            await UIHelper.activateAt(clickX, clickY);
+        }
+
+    } else if (event.data.type === 'innerInputFocused') {
+        innerInputFocused = true;
+        waitingForInnerFocusVerification = true;
+        tryCheckInnerFocusState();
+    } else if (event.data.type === 'finalCheck') {
+        if (event.data.success)
+            testPassed(event.data.message);
+        else
+            testFailed(event.data.message);
+
+        finishJSTest();
+    }
+}
+
+function onOuterInputFocus() {
+    shouldBe("document.activeElement.tagName", "'INPUT'");
+    testPassed("When outer input focused: outer Document.activeElement is INPUT");
+
+    iframe.contentWindow.postMessage({
+        type: 'checkActiveElement',
+        expected: 'BODY',
+        description: 'When outer input focused: inner Document.activeElement is BODY'
+    }, 'http://localhost:8000');
+}
+
+function onOuterInputBlur() {
+    outerInputBlurred = true;
+    testPassed("Outer input blur handler fired");
+    tryCheckInnerFocusState();
+}
+</script>
+
+<body>
+<p>This test verifies that Document.activeElement behaves correctly during click navigation between main frame and cross-origin iframe in site isolation mode.</p>
+
+<input type="text" id="outerInput" placeholder="Outer frame input">
+<iframe id="testIframe" src="http://localhost:8000/site-isolation/resources/focus-click-navigation-iframe.html" onload="onIframeLoad()"></iframe>
+
+<script>
+let testStarted = false;
+
+async function onIframeLoad() {
+      if (testStarted)
+        return;
+
+      if (!iframe)
+          await setupTest();
+
+      testStarted = true;
+      checkInitialState();
+}
+
+async function setupTest() {
+    iframe = document.getElementById('testIframe');
+
+    testRunner?.dumpAsText();
+
+    await UIHelper.setHardwareKeyboardAttached(true);
+
+    window.addEventListener('message', handleMessage);
+
+    document.getElementById('outerInput').addEventListener('focus', onOuterInputFocus);
+    document.getElementById('outerInput').addEventListener('blur', onOuterInputBlur);
+}
+
+window.addEventListener('load', async () => {
+    await setupTest();
+});
+</script>
+</body>
+</html>

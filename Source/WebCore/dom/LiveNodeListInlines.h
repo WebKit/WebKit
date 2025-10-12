@@ -25,9 +25,10 @@
 
 #pragma once
 
-#include "CollectionIndexCacheInlines.h"
-#include "LiveNodeList.h"
-#include "TreeScopeInlines.h"
+#include <WebCore/CollectionIndexCacheInlines.h>
+#include <WebCore/LiveNodeList.h>
+#include <WebCore/NodeInlines.h>
+#include <WebCore/TreeScopeInlines.h>
 
 namespace WebCore {
 
@@ -55,10 +56,25 @@ ALWAYS_INLINE bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationTyp
     return false;
 }
 
+inline void LiveNodeList::invalidateCache() const
+{
+    invalidateCacheForDocument(protectedDocument().get());
+}
+
 ALWAYS_INLINE void LiveNodeList::invalidateCacheForAttribute(const QualifiedName& attributeName) const
 {
     if (shouldInvalidateTypeOnAttributeChange(m_invalidationType, attributeName))
         invalidateCache();
+}
+
+inline Document& LiveNodeList::document() const
+{
+    return m_ownerNode->document();
+}
+
+inline Ref<Document> LiveNodeList::protectedDocument() const
+{
+    return document();
 }
 
 inline ContainerNode& LiveNodeList::rootNode() const
@@ -66,6 +82,19 @@ inline ContainerNode& LiveNodeList::rootNode() const
     if (isRootedAtTreeScope() && m_ownerNode->isInTreeScope())
         return m_ownerNode->treeScope().rootNode();
     return m_ownerNode;
+}
+
+template <class NodeListType>
+CachedLiveNodeList<NodeListType>::CachedLiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType invalidationType)
+    : LiveNodeList(ownerNode, invalidationType)
+{
+}
+
+template <class NodeListType>
+CachedLiveNodeList<NodeListType>::~CachedLiveNodeList()
+{
+    if (m_indexCache.hasValidCache())
+        protectedDocument()->unregisterNodeListForInvalidation(*this);
 }
 
 template <class NodeListType>

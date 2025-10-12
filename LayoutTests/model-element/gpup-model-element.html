@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Model Example</title>
+</head>
+<script>
+    function handleEvent() {
+        console.log("MODEL IS LOADED")
+        globalThis.testRunner?.notifyDone();
+    }
+
+    window.onload = function() {
+        globalThis.testRunner?.waitUntilDone();
+        console.log("Page has finished loading!");
+        const model = document.getElementsByName("model")[0];
+        model.addEventListener("load", handleEvent);
+    };
+    
+</script>
+<body>
+    <h1>3D Model Viewer</h1>
+    <!-- BlendyLogo.usd ball_soccerball_realistic.usdz -->
+    <model name="model" src="resources/cube.usdz" width="600" height="400" controls="true" entityTransform="translate3d(0px, 0px, 107px)">
+        <p>Your browser does not support the <model> element.</p>
+    </model>
+</body>
+</html>

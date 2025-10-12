@@ -10,42 +10,48 @@
 
 #include "rtc_base/network/received_packet.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <optional>
 #include <utility>
 
+#include "api/array_view.h"
+#include "api/transport/ecn_marking.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/socket_address.h"
 
-namespace rtc {
+namespace webrtc {
 
-ReceivedPacket::ReceivedPacket(rtc::ArrayView<const uint8_t> payload,
-                               const SocketAddress& source_address,
-                               std::optional<webrtc::Timestamp> arrival_time,
-                               EcnMarking ecn,
-                               DecryptionInfo decryption)
+ReceivedIpPacket::ReceivedIpPacket(ArrayView<const uint8_t> payload,
+                                   const SocketAddress& source_address,
+                                   std::optional<Timestamp> arrival_time,
+                                   EcnMarking ecn,
+                                   DecryptionInfo decryption)
     : payload_(payload),
       arrival_time_(std::move(arrival_time)),
       source_address_(source_address),
       ecn_(ecn),
       decryption_info_(decryption) {}
 
-ReceivedPacket ReceivedPacket::CopyAndSet(
+ReceivedIpPacket ReceivedIpPacket::CopyAndSet(
     DecryptionInfo decryption_info) const {
-  return ReceivedPacket(payload_, source_address_, arrival_time_, ecn_,
-                        decryption_info);
+  return ReceivedIpPacket(payload_, source_address_, arrival_time_, ecn_,
+                          decryption_info);
 }
 
 // static
-ReceivedPacket ReceivedPacket::CreateFromLegacy(
+ReceivedIpPacket ReceivedIpPacket::CreateFromLegacy(
     const uint8_t* data,
     size_t size,
     int64_t packet_time_us,
-    const rtc::SocketAddress& source_address) {
+    const SocketAddress& source_address) {
   RTC_DCHECK(packet_time_us == -1 || packet_time_us >= 0);
-  return ReceivedPacket(rtc::MakeArrayView(data, size), source_address,
-                        (packet_time_us >= 0)
-                            ? std::optional<webrtc::Timestamp>(
-                                  webrtc::Timestamp::Micros(packet_time_us))
-                            : std::nullopt);
+  return ReceivedIpPacket(
+      MakeArrayView(data, size), source_address,
+      (packet_time_us >= 0)
+          ? std::optional<Timestamp>(Timestamp::Micros(packet_time_us))
+          : std::nullopt);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

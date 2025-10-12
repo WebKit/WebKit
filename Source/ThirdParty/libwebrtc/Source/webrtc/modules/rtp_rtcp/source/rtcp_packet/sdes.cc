@@ -10,12 +10,15 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/sdes.h"
 
-#include <string.h>
-
+#include <cstdint>
+#include <cstring>
+#include <string>
 #include <utility>
+#include <vector>
 
 #include "absl/strings/string_view.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"

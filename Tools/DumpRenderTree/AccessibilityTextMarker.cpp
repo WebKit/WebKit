@@ -65,17 +65,17 @@ JSClassRef AccessibilityTextMarker::getJSClass()
     static const JSStaticValue staticValues[] = {
         { 0, 0, 0, 0 }
     };
-    
+
     static const JSStaticFunction staticFunctions[] = {
         { "isEqual", isMarkerEqualCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
-    
+
     static const JSClassDefinition classDefinition = {
         0, kJSClassAttributeNone, "AccessibilityTextMarker", 0, staticValues, staticFunctions,
         0, markerFinalize, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
-    
+
     static JSClassRef accessibilityTextMarkerClass = JSClassCreate(&classDefinition);
     return accessibilityTextMarkerClass;
 }
@@ -93,7 +93,7 @@ static JSValueRef isMarkerRangeEqualCallback(JSContextRef context, JSObjectRef f
 {
     if (argumentCount != 1)
         return JSValueMakeBoolean(context, false);
-    
+
     JSObjectRef otherMarker = JSValueToObject(context, arguments[0], exception);
     return JSValueMakeBoolean(context, toTextMarkerRange(thisObject)->isEqual(toTextMarkerRange(otherMarker)));
 }
@@ -117,17 +117,17 @@ JSClassRef AccessibilityTextMarkerRange::getJSClass()
     static const JSStaticValue staticValues[] = {
         { 0, 0, 0, 0 }
     };
-    
+
     static const JSStaticFunction staticFunctions[] = {
         { "isEqual", isMarkerRangeEqualCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
-    
+
     static const JSClassDefinition classDefinition = {
         0, kJSClassAttributeNone, "AccessibilityTextMarkerRange", 0, staticValues, staticFunctions,
         0, markerRangeFinalize, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
-    
+
     static JSClassRef accessibilityTextMarkerRangeClass = JSClassCreate(&classDefinition);
     return accessibilityTextMarkerRangeClass;
 }

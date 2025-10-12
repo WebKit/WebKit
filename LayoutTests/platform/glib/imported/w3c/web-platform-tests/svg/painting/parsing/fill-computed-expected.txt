@@ -1,8 +1,0 @@
-
-PASS Property fill value 'none'
-PASS Property fill value 'rgb(12, 34, 56)'
-PASS Property fill value 'url("https://example.com/")'
-PASS Property fill value 'url("https://example.com/") none'
-PASS Property fill value 'url("https://example.com/") rgb(12, 34, 56)'
-PASS url values are made absolute
-

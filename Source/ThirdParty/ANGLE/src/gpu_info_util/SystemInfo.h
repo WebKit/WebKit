@@ -127,6 +127,7 @@ constexpr VendorID kVendorID_PoCL        = 0x10006;
 
 // Known device IDs
 constexpr DeviceID kDeviceID_Swiftshader  = 0xC0DE;
+constexpr DeviceID kDeviceID_Lavapipe     = 0x0;
 constexpr DeviceID kDeviceID_Adreno540    = 0x5040001;
 constexpr DeviceID kDeviceID_Adreno750    = 0x43051401;
 constexpr DeviceID kDeviceID_UHD630Mobile = 0x3E9B;
@@ -142,7 +143,6 @@ bool IsNVIDIA(VendorID vendorId);
 bool IsQualcomm(VendorID vendorId);
 bool IsSamsung(VendorID vendorId);
 bool IsGoogle(VendorID vendorId);
-bool IsSwiftshader(VendorID vendorId);
 bool IsVeriSilicon(VendorID vendorId);
 bool IsVMWare(VendorID vendorId);
 bool IsVirtIO(VendorID vendorId);

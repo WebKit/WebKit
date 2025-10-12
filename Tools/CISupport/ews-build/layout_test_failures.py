@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@ class LayoutTestFailures(object):
     @classmethod
     def results_from_string(cls, string):
         if not string:
+            print(f'Error while parsing layout-test json, empty json')
             return None
 
         content_string = cls._strip_json_wrapper(string.strip())
@@ -48,7 +49,8 @@ class LayoutTestFailures(object):
         content_string = ''.join(content_string.splitlines())
         try:
             json_dict = json.loads(content_string)
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as e:
+            print(f'Exception while parsing layout-test json: {e}, json data being parsed: {string}')
             return None
 
         failing_tests = []

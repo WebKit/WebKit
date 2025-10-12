@@ -36,6 +36,7 @@
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/darwin/DispatchExtras.h>
 
 namespace WebCore {
 
@@ -56,7 +57,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     size_t modulusLength = modulus.size();
     publicExponent.resize(16384);
     size_t exponentLength = publicExponent.size();
-    CCCryptorStatus status = CCRSAGetKeyComponents(keyIsPublic ? rsaKey.get() : publicKeyFromPrivateKey.get(), modulus.data(), &modulusLength, publicExponent.data(), &exponentLength, 0, 0, 0, 0);
+    CCCryptorStatus status = CCRSAGetKeyComponents(keyIsPublic ? rsaKey.get() : publicKeyFromPrivateKey.get(), modulus.mutableSpan().data(), &modulusLength, publicExponent.mutableSpan().data(), &exponentLength, 0, 0, 0, 0);
     if (status)
         return status;
 
@@ -78,7 +79,7 @@ static CCCryptorStatus getPrivateKeyComponents(const PlatformRSAKeyContainer& rs
     secondPrimeInfo.primeFactor.resize(16384);
     size_t qLength = secondPrimeInfo.primeFactor.size();
 
-    CCCryptorStatus status = CCRSAGetKeyComponents(rsaKey.get(), unusedModulus.data(), &modulusLength, privateExponent.data(), &exponentLength, firstPrimeInfo.primeFactor.data(), &pLength, secondPrimeInfo.primeFactor.data(), &qLength);
+    CCCryptorStatus status = CCRSAGetKeyComponents(rsaKey.get(), unusedModulus.mutableSpan().data(), &modulusLength, privateExponent.mutableSpan().data(), &exponentLength, firstPrimeInfo.primeFactor.mutableSpan().data(), &pLength, secondPrimeInfo.primeFactor.mutableSpan().data(), &qLength);
     if (status)
         return status;
 
@@ -95,7 +96,7 @@ static CCCryptorStatus getPrivateKeyComponents(const PlatformRSAKeyContainer& rs
     Vector<uint8_t> dp(dpSize);
     Vector<uint8_t> dq(dqSize);
     Vector<uint8_t> qinv(qinvSize);
-    if (auto status = CCRSAGetCRTComponents(rsaKey.get(), dp.data(), dpSize, dq.data(), dqSize, qinv.data(), qinvSize))
+    if (auto status = CCRSAGetCRTComponents(rsaKey.get(), dp.mutableSpan().data(), dpSize, dq.mutableSpan().data(), dqSize, qinv.mutableSpan().data(), qinvSize))
         return status;
 
     firstPrimeInfo.factorCRTExponent = WTFMove(dp);
@@ -143,10 +144,10 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::create(CryptoAlgorithmIdentifier identifier, 
     // Please see https://en.wikipedia.org/wiki/RSA_(cryptosystem) for more details on phi vs lambda.
     CCCryptorStatus status = CCRSACryptorCreateFromData(
         keyData.type() == CryptoKeyRSAComponents::Type::Public ? ccRSAKeyPublic : ccRSAKeyPrivate,
-        keyData.modulus().data(), keyData.modulus().size(),
-        keyData.exponent().data(), keyData.exponent().size(),
-        keyData.firstPrimeInfo().primeFactor.data(), keyData.firstPrimeInfo().primeFactor.size(),
-        keyData.secondPrimeInfo().primeFactor.data(), keyData.secondPrimeInfo().primeFactor.size(),
+        keyData.modulus().span().data(), keyData.modulus().size(),
+        keyData.exponent().span().data(), keyData.exponent().size(),
+        keyData.firstPrimeInfo().primeFactor.span().data(), keyData.firstPrimeInfo().primeFactor.size(),
+        keyData.secondPrimeInfo().primeFactor.span().data(), keyData.secondPrimeInfo().primeFactor.size(),
         &cryptor);
 
     if (status) {
@@ -204,7 +205,7 @@ auto CryptoKeyRSA::algorithm() const -> KeyAlgorithm
         CryptoRsaHashedKeyAlgorithm result;
         result.name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
         result.modulusLength = modulusLength;
-        result.publicExponent = Uint8Array::tryCreate(publicExponent.data(), publicExponent.size());
+        result.publicExponent = Uint8Array::tryCreate(publicExponent.span());
         result.hash.name = CryptoAlgorithmRegistry::singleton().name(m_hash);
         return result;
     }
@@ -212,7 +213,7 @@ auto CryptoKeyRSA::algorithm() const -> KeyAlgorithm
     CryptoRsaKeyAlgorithm result;
     result.name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
     result.modulusLength = modulusLength;
-    result.publicExponent = Uint8Array::tryCreate(publicExponent.data(), publicExponent.size());
+    result.publicExponent = Uint8Array::tryCreate(publicExponent.span());
     return result;
 }
 
@@ -283,7 +284,7 @@ void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgor
     __block auto blockCallback(WTFMove(callback));
     __block auto blockFailureCallback(WTFMove(failureCallback));
     auto contextIdentifier = context->identifier();
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         CCRSACryptorRef ccPublicKey = nullptr;
         CCRSACryptorRef ccPrivateKey = nullptr;
         CCCryptorStatus status = CCRSACryptorGeneratePair(modulusLength, e, &ccPublicKey, &ccPrivateKey);
@@ -339,7 +340,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
     // O(size) = Sequence(1) + Length(3) + Integer(1) + Length(3) + Modulus + Integer(1) + Length(3) + Exponent
     Vector<uint8_t> keyBytes(keySizeInBits() / 4);
     size_t keySize = keyBytes.size();
-    if (CCRSACryptorExport(platformKey(), keyBytes.data(), &keySize))
+    if (CCRSACryptorExport(platformKey(), keyBytes.mutableSpan().data(), &keySize))
         return Exception { ExceptionCode::OperationError };
     keyBytes.shrink(keySize);
 
@@ -399,7 +400,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
     // Length(3) + exponent2 + Integer(1) + Length(3) + coefficient.
     Vector<uint8_t> keyBytes(keySizeInBits());
     size_t keySize = keyBytes.size();
-    if (CCRSACryptorExport(platformKey(), keyBytes.data(), &keySize))
+    if (CCRSACryptorExport(platformKey(), keyBytes.mutableSpan().data(), &keySize))
         return Exception { ExceptionCode::OperationError };
     keyBytes.shrink(keySize);
 

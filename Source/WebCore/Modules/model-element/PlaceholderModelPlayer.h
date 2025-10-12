@@ -39,7 +39,7 @@ private:
     PlaceholderModelPlayer(bool suspended, const ModelPlayerAnimationState&, std::unique_ptr<ModelPlayerTransformState>&&);
 
     // ModelPlayer overrides.
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_PROCESS) || ENABLE(GPUP_MODEL)
     ModelPlayerIdentifier identifier() const final { return m_id; }
 #endif
 
@@ -54,7 +54,7 @@ private:
     std::optional<TransformationMatrix> entityTransform() const final;
     void setEntityTransform(TransformationMatrix) final;
     bool supportsTransform(TransformationMatrix) final;
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_PROCESS) || ENABLE(GPUP_MODEL)
     void setAutoplay(bool) final;
     void setLoop(bool) final;
     void setPlaybackRate(double playbackRate, CompletionHandler<void(double effectivePlaybackRate)>&&) final;
@@ -64,6 +64,8 @@ private:
     Seconds currentTime() const final;
     void setCurrentTime(Seconds, CompletionHandler<void()>&&) final;
     void setHasPortal(bool) final;
+#endif
+#if ENABLE(MODEL_PROCESS)
     void setStageMode(WebCore::StageModeOperation) final;
 #endif
 
@@ -90,11 +92,15 @@ private:
 #if PLATFORM(COCOA)
     Vector<RetainPtr<id>> accessibilityChildren() final;
 #endif
+#if ENABLE(GPUP_MODEL)
+    const MachSendRight* displayBuffer() const override;
+    GraphicsLayerContentsDisplayDelegate* contentsDisplayDelegate() override;
+#endif
 
     std::optional<bool> m_lastPausedStateIfSuspended;
     ModelPlayerAnimationState m_animationState;
     std::unique_ptr<ModelPlayerTransformState> m_transformState;
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_PROCESS) || ENABLE(GPUP_MODEL)
     ModelPlayerIdentifier m_id;
 #endif
 };

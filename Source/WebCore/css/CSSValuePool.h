@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CSSColorValue.h"
-#include "CSSPrimitiveValue.h"
-#include "ColorHash.h"
+#include <WebCore/CSSColorValue.h>
+#include <WebCore/CSSPrimitiveValue.h>
+#include <WebCore/ColorHash.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomStringHash.h>
@@ -48,25 +48,25 @@ public:
 private:
     StaticCSSValuePool();
 
-    LazyNeverDestroyed<CSSPrimitiveValue> m_implicitInitialValue;
+    CSSPrimitiveValue m_implicitInitialValue;
 
-    LazyNeverDestroyed<CSSColorValue> m_transparentColor;
-    LazyNeverDestroyed<CSSColorValue> m_whiteColor;
-    LazyNeverDestroyed<CSSColorValue> m_blackColor;
+    CSSColorValue m_transparentColor;
+    CSSColorValue m_whiteColor;
+    CSSColorValue m_blackColor;
 
     static constexpr int maximumCacheableIntegerValue = 255;
 
-    std::array<LazyNeverDestroyed<CSSPrimitiveValue>, maximumCacheableIntegerValue + 1> m_pixelValues;
-    std::array<LazyNeverDestroyed<CSSPrimitiveValue>, maximumCacheableIntegerValue + 1> m_percentageValues;
-    std::array<LazyNeverDestroyed<CSSPrimitiveValue>, maximumCacheableIntegerValue + 1> m_numberValues;
-    std::array<LazyNeverDestroyed<CSSPrimitiveValue>, numCSSValueKeywords> m_identifierValues;
+    std::array<AlignedStorage<CSSPrimitiveValue>, maximumCacheableIntegerValue + 1> m_pixelValues;
+    std::array<AlignedStorage<CSSPrimitiveValue>, maximumCacheableIntegerValue + 1> m_percentageValues;
+    std::array<AlignedStorage<CSSPrimitiveValue>, maximumCacheableIntegerValue + 1> m_numberValues;
+    std::array<AlignedStorage<CSSPrimitiveValue>, numCSSValueKeywords> m_identifierValues;
 };
 
 WEBCORE_EXPORT extern LazyNeverDestroyed<StaticCSSValuePool> staticCSSValuePool;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValuePool);
 class CSSValuePool {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSValuePool);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSValuePool, CSSValuePool);
     WTF_MAKE_NONCOPYABLE(CSSValuePool);
 public:
     CSSValuePool();
@@ -78,20 +78,20 @@ public:
     Ref<CSSPrimitiveValue> createFontFamilyValue(const AtomString&);
 
 private:
-    UncheckedKeyHashMap<WebCore::Color, Ref<CSSColorValue>> m_colorValueCache;
-    UncheckedKeyHashMap<AtomString, RefPtr<CSSValueList>> m_fontFaceValueCache;
-    UncheckedKeyHashMap<AtomString, Ref<CSSPrimitiveValue>> m_fontFamilyValueCache;
+    HashMap<WebCore::Color, Ref<CSSColorValue>> m_colorValueCache;
+    HashMap<AtomString, RefPtr<CSSValueList>> m_fontFaceValueCache;
+    HashMap<AtomString, Ref<CSSPrimitiveValue>> m_fontFamilyValueCache;
 };
 
 inline CSSPrimitiveValue& CSSPrimitiveValue::implicitInitialValue()
 {
-    return staticCSSValuePool->m_implicitInitialValue.get();
+    return staticCSSValuePool->m_implicitInitialValue;
 }
 
 inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(CSSValueID identifier)
 {
     RELEASE_ASSERT(identifier < numCSSValueKeywords);
-    return staticCSSValuePool->m_identifierValues[identifier].get();
+    return *staticCSSValuePool->m_identifierValues[identifier];
 }
 
 } // namespace WebCore

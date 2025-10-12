@@ -10,24 +10,29 @@
 
 #include "modules/video_capture/linux/video_capture_v4l2.h"
 
-#include <errno.h>
 #include <fcntl.h>
 #include <linux/videodev2.h>
-#include <stdio.h>
-#include <string.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/select.h>
-#include <time.h>
 #include <unistd.h>
 
+#include <cerrno>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
 #include <new>
-#include <string>
 
-#include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
+#include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "media/base/video_common.h"
-#include "modules/video_capture/video_capture.h"
+#include "modules/video_capture/video_capture_defines.h"
+#include "modules/video_capture/video_capture_impl.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/platform_thread.h"
+#include "rtc_base/race_checker.h"
+#include "rtc_base/synchronization/mutex.h"
 
 // These defines are here to support building on kernel 3.16 which some
 // downstream projects, e.g. Firefox, use.
@@ -55,7 +60,7 @@ VideoCaptureModuleV4L2::VideoCaptureModuleV4L2()
       _deviceFd(-1),
       _buffersAllocatedByDevice(-1),
       _captureStarted(false),
-      _pool(NULL) {}
+      _pool(nullptr) {}
 
 int32_t VideoCaptureModuleV4L2::Init(const char* deviceUniqueIdUTF8) {
   RTC_DCHECK_RUN_ON(&api_checker_);
@@ -172,8 +177,7 @@ int32_t VideoCaptureModuleV4L2::StartCapture(
   fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   RTC_LOG(LS_INFO) << "Video Capture enumerats supported image formats:";
   while (ioctl(_deviceFd, VIDIOC_ENUM_FMT, &fmt) == 0) {
-    RTC_LOG(LS_INFO) << "  { pixelformat = "
-                     << cricket::GetFourccName(fmt.pixelformat)
+    RTC_LOG(LS_INFO) << "  { pixelformat = " << GetFourccName(fmt.pixelformat)
                      << ", description = '" << fmt.description << "' }";
     // Match the preferred order.
     for (int i = 0; i < nFormats; i++) {
@@ -188,8 +192,7 @@ int32_t VideoCaptureModuleV4L2::StartCapture(
     RTC_LOG(LS_INFO) << "no supporting video formats found";
     return -1;
   } else {
-    RTC_LOG(LS_INFO) << "We prefer format "
-                     << cricket::GetFourccName(fmts[fmtsIdx]);
+    RTC_LOG(LS_INFO) << "We prefer format " << GetFourccName(fmts[fmtsIdx]);
   }
 
   struct v4l2_format video_fmt;
@@ -294,13 +297,12 @@ int32_t VideoCaptureModuleV4L2::StartCapture(
   // start capture thread;
   if (_captureThread.empty()) {
     quit_ = false;
-    _captureThread = rtc::PlatformThread::SpawnJoinable(
+    _captureThread = PlatformThread::SpawnJoinable(
         [this] {
           while (CaptureProcess()) {
           }
         },
-        "CaptureThread",
-        rtc::ThreadAttributes().SetPriority(rtc::ThreadPriority::kHigh));
+        "CaptureThread", ThreadAttributes().SetPriority(ThreadPriority::kHigh));
   }
   return 0;
 }
@@ -369,7 +371,7 @@ bool VideoCaptureModuleV4L2::AllocateVideoBuffers() {
       return false;
     }
 
-    _pool[i].start = mmap(NULL, buffer.length, PROT_READ | PROT_WRITE,
+    _pool[i].start = mmap(nullptr, buffer.length, PROT_READ | PROT_WRITE,
                           MAP_SHARED, _deviceFd, buffer.m.offset);
 
     if (MAP_FAILED == _pool[i].start) {
@@ -423,7 +425,7 @@ bool VideoCaptureModuleV4L2::CaptureProcess() {
   timeout.tv_usec = 0;
 
   // _deviceFd written only in StartCapture, when this thread isn't running.
-  retVal = select(_deviceFd + 1, &rSet, NULL, NULL, &timeout);
+  retVal = select(_deviceFd + 1, &rSet, nullptr, nullptr, &timeout);
 
   {
     MutexLock lock(&capture_lock_);

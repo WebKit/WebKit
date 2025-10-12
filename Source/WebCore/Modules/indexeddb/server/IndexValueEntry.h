@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "IDBKeyData.h"
+#include <WebCore/IDBKeyData.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

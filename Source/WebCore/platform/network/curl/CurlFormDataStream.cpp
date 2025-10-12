@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  * Copyright (C) 2007 Holger Hans Peter Freyther
@@ -50,7 +50,7 @@ CurlFormDataStream::CurlFormDataStream(const RefPtr<FormData>& formData)
     m_formData = formData->isolatedCopy();
 
     // Resolve the blob elements so the formData can correctly report it's size.
-    m_formData = m_formData->resolveBlobReferences(blobRegistry().blobRegistryImpl());
+    m_formData = m_formData->resolveBlobReferences(blobRegistry()->blobRegistryImpl());
 }
 
 CurlFormDataStream::~CurlFormDataStream()
@@ -160,7 +160,7 @@ std::optional<size_t> CurlFormDataStream::readFromFile(const FormDataElement::En
 std::optional<size_t> CurlFormDataStream::readFromData(const Vector<uint8_t>& data, char* buffer, size_t size)
 {
     size_t elementSize = data.size() - m_dataOffset;
-    const uint8_t* elementBuffer = data.data() + m_dataOffset;
+    const uint8_t* elementBuffer = data.subspan(m_dataOffset).data();
 
     size_t readBytes = elementSize > size ? size : elementSize;
     memcpy(buffer, elementBuffer, readBytes);

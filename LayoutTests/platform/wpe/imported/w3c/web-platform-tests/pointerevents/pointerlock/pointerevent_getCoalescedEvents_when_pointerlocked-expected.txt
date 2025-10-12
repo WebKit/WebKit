@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: div1.requestPointerLock is not a function. (In 'div1.requestPointerLock()', 'div1.requestPointerLock' is undefined)
 PointerMove getCoalescedEvent in locked state test
 
 Follow the test instructions with mouse. If you don't have the device skip it.

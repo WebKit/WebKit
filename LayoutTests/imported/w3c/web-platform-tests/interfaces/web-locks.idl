@@ -1,7 +1,7 @@
 // GENERATED CONTENT - DO NOT EDIT
 // Content was automatically extracted by Reffy into webref
 // (https://github.com/w3c/webref)
-// Source: Web Locks API (https://wicg.github.io/web-locks/)
+// Source: Web Locks API (https://w3c.github.io/web-locks/)
 
 [SecureContext]
 interface mixin NavigatorLocks {
@@ -10,7 +10,7 @@ interface mixin NavigatorLocks {
 Navigator includes NavigatorLocks;
 WorkerNavigator includes NavigatorLocks;
 
-[SecureContext, Exposed=(Window,Worker)]
+[SecureContext, Exposed=(Window,Worker,SharedStorageWorklet)]
 interface LockManager {
   Promise<any> request(DOMString name,
                        LockGrantedCallback callback);
@@ -43,7 +43,7 @@ dictionary LockInfo {
   DOMString clientId;
 };
 
-[SecureContext, Exposed=(Window,Worker)]
+[SecureContext, Exposed=(Window,Worker,SharedStorageWorklet)]
 interface Lock {
   readonly attribute DOMString name;
   readonly attribute LockMode mode;

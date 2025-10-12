@@ -15,7 +15,7 @@
 
 #include <string>
 
-namespace rtc {
+namespace webrtc {
 
 constexpr uint16_t kNetworkCostMax = 999;
 constexpr uint16_t kNetworkCostCellular2G = 980;
@@ -67,6 +67,7 @@ constexpr AdapterType kAllAdapterTypes[] = {
     ADAPTER_TYPE_CELLULAR_5G,
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_NETWORK_CONSTANTS_H_

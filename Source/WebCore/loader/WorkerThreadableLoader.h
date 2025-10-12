@@ -49,7 +49,7 @@ class WorkerOrWorkletGlobalScope;
 class WorkerLoaderProxy;
 
 class WorkerThreadableLoader : public RefCounted<WorkerThreadableLoader>, public ThreadableLoader {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(WorkerThreadableLoader, Loader);
 public:
     static void loadResourceSynchronously(WorkerOrWorkletGlobalScope&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
     static Ref<WorkerThreadableLoader> create(WorkerOrWorkletGlobalScope& WorkerOrWorkletGlobalScope, ThreadableLoaderClient& client, const String& taskMode, ResourceRequest&& request, const ThreadableLoaderOptions& options, const String& referrer)
@@ -92,7 +92,7 @@ private:
     //    thread contain the RefPtr<ThreadableLoaderClientWrapper> object, so the
     //    ThreadableLoaderClientWrapper instance is there until all tasks are executed.
     class MainThreadBridge final : public ThreadableLoaderClient {
-        WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MainThreadBridge, Loader);
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MainThreadBridge);
     public:
         // All executed on the worker context's thread.
@@ -106,7 +106,6 @@ private:
     private:
         // Executed on the worker context's thread.
         void clearClientWrapper();
-        RefPtr<ThreadableLoaderClientWrapper> protectedWorkerClientWrapper() const;
 
         // All executed on the main thread.
         void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
@@ -123,7 +122,7 @@ private:
 
         // ThreadableLoaderClientWrapper is to be used on the worker context thread.
         // The ref counting is done on either thread.
-        RefPtr<ThreadableLoaderClientWrapper> m_workerClientWrapper;
+        const Ref<ThreadableLoaderClientWrapper> m_workerClientWrapper;
 
         // May be used on either thread.
         WorkerLoaderProxy* m_loaderProxy; // FIXME: Use a smart pointer.
@@ -139,7 +138,7 @@ private:
 
     void computeIsDone() final;
 
-    Ref<ThreadableLoaderClientWrapper> m_workerClientWrapper;
+    const Ref<ThreadableLoaderClientWrapper> m_workerClientWrapper;
     MainThreadBridge& m_bridge; // FIXME: Use a smart pointer.
 };
 

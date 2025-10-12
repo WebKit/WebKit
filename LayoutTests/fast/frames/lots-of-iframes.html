@@ -1,20 +1,15 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <title>Lots of iframes</title>
-<script type="text/javascript">
+<script>
   var maxNumberOfFrames = 1000;
 
   if (window.testRunner)
     testRunner.dumpAsText();
 
-  function createIFrames() {
-    var str = "<div id=\"status\"></div>";
-    for (var i = 0; i < maxNumberOfFrames + 1; i++) {
-      str += "<iframe id=\"i" + i + "\" src=\"data:text/html,iframe_" + i + "\"></iframe>";
-    }
-    document.getElementsByTagName("body")[0].innerHTML = str;
-
+function dumpResults()
+{
     var results = "";
 
     var f = document.getElementById("i" + (maxNumberOfFrames - 1));
@@ -28,13 +23,32 @@
     if (g && g.contentWindow) {
       results += "Failed to block creation of frame number " + (maxNumberOfFrames + 1) + ".";
     } else {
-      results += "Successfully blocked creation of frame number " + (maxNumberOfFrames + 1) + ".";
+      results += "Successfully blocked creation of frame number " + (maxNumberOfFrames + 1) + ".<br>";
     }
 
     document.getElementById("status").innerHTML = results;
-  }
+}
+
+function createIFrames()
+{
+    let fragment = document.createDocumentFragment();
+    for (var i = 0; i < maxNumberOfFrames + 1; ++i) {
+        let iframe = document.createElement("iframe");
+        iframe.id = `i${i}`;
+        iframe.style.display = "none"
+        iframe.style.position = "absolute";
+        iframe.style.top = "9999px";
+        iframe.loading = "lazy";
+        iframe.srcdoc = `iframe_${i}`;
+        fragment.appendChild(iframe);
+    }
+    document.body.appendChild(fragment);
+    dumpResults();
+}
+
 </script>
 </head>
 <body onLoad="createIFrames()">
+<div id="status"></div>
 </body>
 </html>

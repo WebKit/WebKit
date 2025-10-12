@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +25,11 @@
 
 #pragma once
 
-#include "Credential.h"
-#include "ProtectionSpaceHash.h"
-#include "SecurityOriginData.h"
+#include <WebCore/Credential.h>
+#include <WebCore/ProtectionSpaceHash.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/HashMap.h>
+#include <wtf/Platform.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>

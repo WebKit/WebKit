@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2010-2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -92,7 +92,7 @@ void ApplyBlockElementCommand::doApply()
 
     formatSelection(startOfSelection, endOfSelection);
 
-    protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets();
 
     ASSERT(startScope == endScope);
     ASSERT(startIndex >= 0);
@@ -121,7 +121,7 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
     if (isAtUnsplittableElement(start) && startOfParagraph(start) == endOfParagraph(endOfSelection)) {
         auto blockquote = createBlockElement();
         insertNodeAt(blockquote.copyRef(), start);
-        auto placeholder = HTMLBRElement::create(protectedDocument());
+        auto placeholder = HTMLBRElement::create(document());
         appendNode(placeholder.copyRef(), WTFMove(blockquote));
         setEndingSelection(VisibleSelection(positionBeforeNode(placeholder.ptr()), Affinity::Downstream, endingSelection().directionality()));
         return;
@@ -195,7 +195,7 @@ const RenderStyle* ApplyBlockElementCommand::renderStyleOfEnclosingTextNode(cons
     if (position.anchorType() != Position::PositionIsOffsetInAnchor || !node || !node->isTextNode())
         return nullptr;
 
-    protectedDocument()->updateStyleIfNeeded();
+    document().updateStyleIfNeeded();
 
     if (CheckedPtr renderText = dynamicDowncast<RenderText>(node->renderer()))
         return &renderText->style();
@@ -324,7 +324,7 @@ VisiblePosition ApplyBlockElementCommand::endOfNextParagraphSplittingTextNodesIf
 
 Ref<HTMLElement> ApplyBlockElementCommand::createBlockElement()
 {
-    auto element = createHTMLElement(protectedDocument(), m_tagName);
+    Ref element = createHTMLElement(document(), m_tagName);
     if (m_inlineStyle.length())
         element->setAttribute(styleAttr, m_inlineStyle);
     return element;

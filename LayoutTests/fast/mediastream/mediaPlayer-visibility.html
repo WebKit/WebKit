@@ -7,22 +7,24 @@
 <script src="../../resources/testharnessreport.js"></script>
 <script>
 
-promise_test(async() => {
+promise_test(async test => {
     if (!window.internals)
        return Promise.reject("Test requires internals API");
 
     const stream = await navigator.mediaDevices.getUserMedia({video : true});
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     video1.srcObject = stream;
     await video1.play();
 
     assert_true(internals.isPlayerVisibleInViewport(video1), "video1");
 }, "Check default media stream player visibility");
 
-promise_test(async() => {
+promise_test(async test => {
    if (!window.internals)
         return Promise.reject("Test requires internals API");
 
     const stream = await navigator.mediaDevices.getUserMedia({video : true});
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     video2.srcObject = stream;
     await video2.play();
 
@@ -37,12 +39,13 @@ promise_test(async() => {
     assert_false(internals.isPlayerVisibleInViewport(video2), "video2 3");
 }, "Check media stream player visibility with CSS");
 
-promise_test(async() => {
+promise_test(async test => {
     if (!window.internals)
         return Promise.reject("Test requires internals API");
 
     const video3 = document.createElement("video");
     const stream = await navigator.mediaDevices.getUserMedia({video : true});
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     video3.srcObject = stream;
     video3.playsInline = true;
     await video3.play();

@@ -68,7 +68,7 @@ private:
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WebXRSpace; }
 
-    Ref<WebXRRigidTransform> m_originOffset;
+    const Ref<WebXRRigidTransform> m_originOffset;
 };
 
 // https://immersive-web.github.io/webxr/#xrsession-viewer-reference-space

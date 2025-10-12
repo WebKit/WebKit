@@ -10,6 +10,10 @@
 
 #include "modules/audio_processing/test/conversational_speech/mock_wavreader.h"
 
+#include <cstddef>
+
+#include "test/gmock.h"
+
 namespace webrtc {
 namespace test {
 namespace conversational_speech {

@@ -33,6 +33,7 @@
 #import <wtf/Vector.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/WTFString.h>
 
 // JavaScriptCore's behavior at the time of writing is that destructors
@@ -106,7 +107,7 @@ TEST(JavaScriptCore, IncrementalSweeperSecondaryThread)
     s_expectedRunLoop = &RunLoop::currentSingleton();
 
     while (!s_done) {
-        dispatch_sync(dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0), ^{
+        dispatch_sync(globalDispatchQueueSingleton(QOS_CLASS_USER_INTERACTIVE, 0), ^{
             triggerGC(context.get());
             cycleRunLoop();
         });

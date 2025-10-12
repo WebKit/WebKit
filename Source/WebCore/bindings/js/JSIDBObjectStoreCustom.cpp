@@ -38,7 +38,7 @@ using namespace JSC;
 template<typename Visitor>
 void JSIDBObjectStore::visitAdditionalChildren(Visitor& visitor)
 {
-    static_cast<IDBObjectStore&>(wrapped()).visitReferencedIndexes(visitor);
+    static_cast<IDBObjectStore&>(wrapped()).visitReferencedIndexesConcurrently(visitor);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSIDBObjectStore);

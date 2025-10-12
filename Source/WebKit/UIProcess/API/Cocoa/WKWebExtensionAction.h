@@ -46,7 +46,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  @abstract A ``WKWebExtensionAction`` object encapsulates the properties for an individual web extension action.
  @discussion Provides access to action properties such as popup, icon, and title, with tab-specific values.
  */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_CLASS_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
 WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.Action)
 @interface WKWebExtensionAction : NSObject
 

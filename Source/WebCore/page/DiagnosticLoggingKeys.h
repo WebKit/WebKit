@@ -33,7 +33,6 @@ enum class HTMLMediaElementSourceType : uint8_t;
 
 class DiagnosticLoggingKeys {
 public:
-    static String applicationCacheKey();
 #if ENABLE(APPLICATION_MANIFEST)
     static String applicationManifestKey();
 #endif

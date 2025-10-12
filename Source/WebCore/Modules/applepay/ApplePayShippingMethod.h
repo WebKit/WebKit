@@ -27,7 +27,7 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePayDateComponentsRange.h"
+#include <WebCore/ApplePayDateComponentsRange.h>
 #include <optional>
 #include <wtf/text/WTFString.h>
 

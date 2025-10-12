@@ -74,7 +74,7 @@
 #endif
 
 #if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(GBM)
-#include "DMABufRendererBufferFormat.h"
+#include "RendererBufferFormat.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -87,6 +87,10 @@
 
 #if HAVE(AUDIT_TOKEN)
 #include "CoreIPCAuditToken.h"
+#endif
+
+#if ENABLE(IMAGE_ANALYSIS)
+#include <WebCore/ImageAnalysisQueue.h>
 #endif
 
 namespace WebCore {
@@ -108,7 +112,9 @@ struct WebPageCreationParameters {
     OptionSet<WebCore::ActivityState> activityState { };
     
     WebPreferencesStore store { };
+#if ENABLE(TILED_CA_DRAWING_AREA)
     DrawingAreaType drawingAreaType { };
+#endif
     DrawingAreaIdentifier drawingAreaIdentifier;
     WebPageProxyIdentifier webPageProxyIdentifier;
     WebPageGroupData pageGroupData;
@@ -176,12 +182,14 @@ struct WebPageCreationParameters {
     bool hasResourceLoadClient { false };
 
     Vector<String> mimeTypesWithCustomContentProviders { };
+    String overrideReferrerForAllRequests;
 
     bool controlledByAutomation { false };
     bool isProcessSwap { false };
 
     bool useDarkAppearance { false };
     bool useElevatedUserInterfaceLevel { false };
+    bool allowPostingLegacySynchronousMessages { false };
 
 #if PLATFORM(MAC)
     std::optional<WebCore::DestinationColorSpace> colorSpace { };
@@ -216,7 +224,7 @@ struct WebPageCreationParameters {
     Vector<SandboxExtension::Handle> gpuIOKitExtensionHandles { };
     Vector<SandboxExtension::Handle> gpuMachExtensionHandles { };
 #endif
-#if PLATFORM(MAC)
+#if ENABLE(TILED_CA_DRAWING_AREA)
     SandboxExtension::Handle renderServerMachExtensionHandle { };
 #endif
 #if HAVE(STATIC_FONT_REGISTRY)
@@ -253,6 +261,8 @@ struct WebPageCreationParameters {
 #endif
 
     bool needsFontAttributes { false };
+
+    bool needsScrollGeometryUpdates { false };
 
     // WebRTC members.
     bool iceCandidateFilteringEnabled { true };
@@ -312,6 +322,10 @@ struct WebPageCreationParameters {
 
     bool hasResizableWindows { false };
 
+#if PLATFORM(MAC)
+    double overflowHeightForTopScrollEdgeEffect { 0 };
+#endif
+
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 
     std::optional<RemotePageParameters> remotePageParameters { };
@@ -320,7 +334,11 @@ struct WebPageCreationParameters {
     String openedMainFrameName;
     std::optional<WebCore::FrameIdentifier> mainFrameOpenerIdentifier { };
     WebCore::SandboxFlags initialSandboxFlags;
+    WebCore::ReferrerPolicy initialReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };
     std::optional<WebCore::WindowFeatures> windowFeatures { };
+    bool statusBarIsVisible;
+    bool menuBarIsVisible;
+    bool toolbarsAreVisible;
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     Vector<WebCore::LinkDecorationFilteringData> linkDecorationFilteringData { };
@@ -333,7 +351,7 @@ struct WebPageCreationParameters {
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
 #if USE(GBM)
-    Vector<DMABufRendererBufferFormat> preferredBufferFormats { };
+    Vector<RendererBufferFormat> preferredBufferFormats { };
 #endif
 #endif
 
@@ -348,11 +366,10 @@ struct WebPageCreationParameters {
 #if PLATFORM(COCOA)
     String presentingApplicationBundleIdentifier;
 #endif
-    bool hasReceivedAXRequestInUIProcess { false };
     bool shouldSendConsoleLogsToUIProcessForTesting { false };
 
-#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
-    bool defaultContentInsetBackgroundFillEnabled { false };
+#if ENABLE(IMAGE_ANALYSIS)
+    std::optional<WebCore::ImageTranslationLanguageIdentifiers> imageTranslationLanguageIdentifiers;
 #endif
 };
 

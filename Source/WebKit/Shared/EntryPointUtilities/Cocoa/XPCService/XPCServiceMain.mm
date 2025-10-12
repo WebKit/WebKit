@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "LaunchLogHook.h"
 #import "Logging.h"
 #import "WKCrashReporter.h"
 #import "WebKitServiceNames.h"
@@ -44,6 +45,7 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/WTFProcess.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/darwin/XPCExtras.h>
 #import <wtf/spi/cocoa/OSLogSPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
@@ -80,17 +82,16 @@ static void initializeCFPrefs()
 #if ENABLE(CFPREFS_DIRECT_MODE)
     // Enable CFPrefs direct mode to avoid unsuccessfully attempting to connect to the daemon and getting blocked by the sandbox.
     _CFPrefsSetDirectModeEnabled(YES);
-#if HAVE(CF_PREFS_SET_READ_ONLY)
     _CFPrefsSetReadOnly(YES);
-#endif
 #endif // ENABLE(CFPREFS_DIRECT_MODE)
 }
 
-static void initializeLogd(bool disableLogging)
+static void initializeLogd(bool disableLogging, xpc_connection_t connection)
 {
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     if (disableLogging) {
         os_trace_set_mode(OS_TRACE_MODE_OFF);
+        LaunchLogHook::singleton().initialize(connection);
         return;
     }
 #else
@@ -144,7 +145,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
 {
     OSObjectPtr<xpc_connection_t> retainedPeerConnection(peer);
 
-    xpc_connection_set_target_queue(peer, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
+    xpc_connection_set_target_queue(peer, globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
     xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
         xpc_type_t type = xpc_get_type(event);
         if (type != XPC_TYPE_DICTIONARY) {
@@ -178,7 +179,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             WTF::initialize();
 
             bool disableLogging = xpc_dictionary_get_bool(event, "disable-logging");
-            initializeLogd(disableLogging);
+            initializeLogd(disableLogging, retainedPeerConnection.get());
 
             if (RetainPtr languages = xpc_dictionary_get_value(event, "OverrideLanguages")) {
                 Vector<String> newLanguages;
@@ -252,7 +253,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             if (fd != -1)
                 dup2(fd, STDERR_FILENO);
 
-            WorkQueue::protectedMain()->dispatchSync([initializerFunctionPtr, event = OSObjectPtr<xpc_object_t>(event), retainedPeerConnection] {
+            WorkQueue::mainSingleton().dispatchSync([initializerFunctionPtr, event = OSObjectPtr<xpc_object_t>(event), retainedPeerConnection] {
                 WTF::initializeMainThread();
 
                 initializeCFPrefs();
@@ -281,10 +282,8 @@ int XPCServiceMain(int, const char**)
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #if ASAN_ENABLED
         // EXC_RESOURCE on ASAN builds freezes the process for several minutes: rdar://65027596
-        if (char *disableFreezingOnExcResource = getenv("DISABLE_FREEZING_ON_EXC_RESOURCE")) {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-            if (!strcasecmp(disableFreezingOnExcResource, "yes") || !strcasecmp(disableFreezingOnExcResource, "true") || !strcasecmp(disableFreezingOnExcResource, "1")) {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        if (auto* disableFreezingOnExcResource = getenv("DISABLE_FREEZING_ON_EXC_RESOURCE")) {
+            if (equalIgnoringASCIICase(disableFreezingOnExcResource, "yes"_s) || equalIgnoringASCIICase(disableFreezingOnExcResource, "true"_s) || equalIgnoringASCIICase(disableFreezingOnExcResource, "1"_s)) {
                 int val = 1;
                 int rc = sysctlbyname("debug.toggle_address_reuse", nullptr, 0, &val, sizeof(val));
                 if (rc < 0)

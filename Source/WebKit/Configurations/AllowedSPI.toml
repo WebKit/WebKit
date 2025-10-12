@@ -1,0 +1,229 @@
+# SPI used by WebKit on iOS.
+# More info: https://github.com/WebKit/WebKit/wiki/Using-SPI-on-Apple-platforms
+
+# We don't expect other browsers to support our app extension model of web
+# extensions and to provide their own native messaging implementation.
+[[not-web-essential]]
+request = "rdar://157790803"
+classes = ["NSExtension"]
+selectors = [
+    { name = "beginExtensionRequestWithInputItems:completion:", class = "NSExtension" },
+    { name = "extensionWithIdentifier:error:", class = "NSExtension" },
+    { name = "setRequestCancellationBlock:", class = "NSExtension" },
+    { name = "setRequestCompletionBlock:", class = "NSExtension" },
+    { name = "setRequestInterruptionBlock:", class = "NSExtension" },
+    { name = "_dynamicAssetNamed:generator:", class = "UIImageAsset" },
+    { name = "_imageWithCGSVGDocument:scale:orientation:", class = "UIImage" },
+    { name = "_rasterizedImage", class = "UIImage" },
+]
+
+# Added in rdar://112101742.
+[[equivalent-api]]
+request = "rdar://157876115"
+symbols = ["kSecAttrAlias"]
+
+[[temporary-usage]]
+request = "rdar://147535351"
+cleanup = "rdar://157889728"
+selectors = [
+    { name = "privateBrowsingSessionId", class = "ASDInstallWebAttributionService" },
+    { name = "removeInstallWebAttributionParamsFromPrivateBrowsingSessionID:completionHandler:", class = "ASDInstallWebAttributionService" },
+    { name = "setPrivateBrowsingSessionId:", class = "ASDInstallWebAttributionParamsConfig" },
+]
+
+# Despite being part of WebKit, webpushd is a system daemon that other browsers
+# interact with. cf. rdar://133559977
+[[not-web-essential]]
+request = "rdar://157879638"
+selectors = [
+    { name = "_registerBSActionHandler:", class = "UIApplication" },
+    { name = "emptySettings", class = "UNMutableNotificationSettings" },
+    { name = "hostProcess", class = "RBSProcessHandle" },
+    { name = "iconForApplicationIdentifier:", class = "UNNotificationIcon" },
+    { name = "initWithInfo:responder:", class = "BSAction" },
+    { name = "notificationWithRequest:date:", class = "UNNotification" },
+    { name = "optionsWithDictionary:", class = "FBSOpenApplicationOptions" },
+    { name = "pageURL", class = "UIWebClip" },
+    { name = "pathForWebClipWithIdentifier:", class = "UIWebClip" },
+    { name = "responderWithHandler:", class = "BSActionResponder" },
+    { name = "responseForError:", class = "BSActionResponse" },
+    { name = "setAuthorizationStatus:", class = "UNNotificationSettings" },
+    { name = "setObject:forSetting:", class = "BSMutableSettings" },
+    { name = "trustedClientBundleIdentifiers", class = "UIWebClip" },
+    { name = "webClipWithIdentifier:", class = "UIWebClip" },
+    { name = "webClips", class = "UIWebClip" },
+]
+symbols = [
+    "FBSOpenApplicationOptionKeyActions",
+    "FBSOpenApplicationOptionKeyActivateSuspended",
+    "SBSCreateOpenApplicationService",
+]
+classes = [
+    "BSAction",
+    "BSActionResponder",
+    "BSActionResponse",
+    "BSMutableSettings",
+    "FBSOpenApplicationOptions",
+    "UISApplicationState",
+    "UIWebClip",
+    "UNMutableNotificationSettings",
+    "UNNotificationIcon",
+]
+
+[[temporary-usage]]
+request = "rdar://157884624"
+cleanup = "rdar://157884972"
+selectors = [
+    { name = "_setServerTrust:", class = "?" },
+]
+symbols = [
+    "nw_parameters_create_webtransport_http",
+    "nw_protocol_copy_webtransport_definition",
+    "nw_webtransport_create_options",
+    "nw_webtransport_metadata_get_is_unidirectional",
+    "nw_webtransport_metadata_set_session_error_code",
+    "nw_webtransport_metadata_set_session_error_message",
+    "nw_webtransport_options_add_connect_request_header",
+    "nw_webtransport_options_set_allow_joining_before_ready",
+    "nw_webtransport_options_set_is_datagram",
+    "nw_webtransport_options_set_is_unidirectional",
+]
+requires = ["HAVE_WEB_TRANSPORT"]
+
+[[temporary-usage]]
+request = "rdar://157886016"
+cleanup = "rdar://157886056"
+selectors = [
+    { name = "set_cookieTransformCallback:", class = "NSURLSessionTask" },
+]
+requires = ["HAVE_ALLOW_ONLY_PARTITIONED_COOKIES"]
+
+[[temporary-usage]]
+request = "rdar://157886016"
+cleanup = "rdar://157886056"
+selectors = [
+    { name = "_cookieTransformCallback", class = "NSURLSessionTask" },
+]
+requires = ["ENABLE_OPT_IN_PARTITIONED_COOKIES", "ASSERT_ENABLED"]
+
+[[temporary-usage]]
+request = "rdar://157886016"
+cleanup = "rdar://157886056"
+selectors = [
+    { name = "_setAllowOnlyPartitionedCookies:", class = "NSMutableURLRequest" },
+    { name = "set_storagePartitionIdentifier:", class = "NSURLSessionTask" },
+]
+requires = ["ENABLE_OPT_IN_PARTITIONED_COOKIES"]
+
+[[temporary-usage]]
+request = "rdar://157886016"
+cleanup = "rdar://157886056"
+selectors = [
+    { name = "_storagePartition", class = "NSHTTPCookie" },
+]
+requires = ["ENABLE_OPT_IN_PARTITIONED_COOKIES"]
+
+[[equivalent-api]]
+request = "rdar://157885997"
+selectors = [
+    { name = "contentSwipeGestureRecognizer", class = "_UINavigationInteractiveTransitionBase" },
+]
+requires = ["HAVE_CONTENT_SWIPE_GESTURE_RECOGNIZER"]
+
+[[not-web-essential]]
+request = "rdar://157886270"
+selectors = [
+    { name = "_webKitPropertyListData", class = "?" },
+    { name = "_initWithWebKitPropertyListData:", class = "?" },
+]
+
+[[not-web-essential]]
+request = "rdar://157886270"
+symbols = [
+    "SecTrustCopyPropertyListRepresentation",
+    "SecTrustCreateFromPropertyListRepresentation",
+]
+requires = ["HAVE_WK_SECURE_CODING_SECTRUST"]
+
+[[temporary-usage]]
+request = "rdar://157887811"
+cleanup = "rdar://157887998"
+selectors = [
+    { name = "_setPrefersSolidColorHardPocket:forEdge:", class = "UIScrollView" },
+]
+requires = ["HAVE_LIQUID_GLASS"]
+
+[[not-web-essential]]
+# This is not really a permanent exception request; it's a bug to change
+# audit-spi to stop tracking WebPrivacy as SPI and instead treat it as a
+# component of the engine.
+request = "rdar://157886589"
+selectors = [
+    {name = "allowedCategories", class = "WPFingerprintingScript"},
+]
+requires = ["ENABLE_SCRIPT_TRACKING_PRIVACY_PROTECTIONS"]
+
+[[temporary-usage]]
+request = "rdar://157888734"
+cleanup = "rdar://157888769"
+selectors = [
+    { name = "_needsNetworkTrackingPrevention", class = "NSURLRequest" },
+    { name = "_setAllowPrivateAccessTokensForThirdParty:", class = "NSURLRequest" },
+    { name = "_setBlockTrackers:", class = "NSURLRequest" },
+    { name = "_setNeedsNetworkTrackingPrevention:", class = "NSURLRequest" },
+    { name = "_setPrivacyProxyFailClosed:", class = "NSURLRequest" },
+    { name = "_setPrivacyProxyFailClosedForUnreachableHosts:", class = "NSURLRequest" },
+    { name = "_setPrivacyProxyFailClosedForUnreachableNonMainHosts:", class = "NSURLRequest" },
+    { name = "_setProhibitPrivacyProxy:", class = "NSURLRequest" },
+    { name = "_setUseEnhancedPrivacyMode:", class = "NSURLRequest" },
+    { name = "_setWebSearchContent:", class = "NSURLRequest" },
+]
+requires = ["HAVE_SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS"]
+
+[[temporary-usage]]
+request = "rdar://157888734"
+cleanup = "rdar://157888769"
+selectors = [
+    { name = "_setPrivacyProxyStrictFailClosed:", class = "NSURLRequest" },
+]
+requires = ["HAVE_STRICT_FAIL_CLOSED"]
+
+[[temporary-usage]]
+request = "rdar://157889218"
+cleanup = "rdar://157889180"
+symbols = [
+    "CASupportsFeature",
+]
+requires = [
+    "HAVE_COREVIDEO_COMPRESSED_PIXEL_FORMAT_TYPES",
+    "HAVE_LOSSLESS_COMPRESSED_IOSURFACE_CG_SUPPORT",
+]
+
+[[temporary-usage]]
+request = "rdar://158633667"
+cleanup = "rdar://158634037"
+symbols = [
+    "CARenderServerSnapshot",
+    "kCASnapshotContextId",
+    "kCASnapshotDestination",
+    "kCASnapshotDisplayName",
+    "kCASnapshotLayerId",
+    "kCASnapshotMode",
+    "kCASnapshotModeLayer",
+    "kCASnapshotOriginX",
+    "kCASnapshotOriginY",
+    "kCASnapshotTimeOffset",
+    "kCASnapshotTransform",
+]
+
+
+[[temporary-usage]]
+request = "rdar://140314886"
+cleanup = "rdar://158878742"
+selectors = [
+    { name = "_horizontalScrollIndicatorColor", class = "UIScrollView" },
+    { name = "_setHorizontalScrollIndicatorColor:", class = "UIScrollView" },
+    { name = "_setVerticalScrollIndicatorColor:", class = "UIScrollView" },
+    { name = "_verticalScrollIndicatorColor", class = "UIScrollView" },
+]
+requires = ["HAVE_UIKIT_SCROLLBAR_COLOR_SPI"]

@@ -14,7 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/base-uri/base-uri-allow-leading-zero-port.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/base-uri/base-uri-allow.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/base-uri/base-uri-deny-url-encoded-host.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/base-uri/base-uri-deny.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/base-uri/base-uri_iframe_sandbox.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/base-uri/report-uri-does-not-respect-base-uri.sub.html

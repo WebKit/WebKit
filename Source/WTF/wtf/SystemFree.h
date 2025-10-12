@@ -31,22 +31,20 @@ namespace WTF {
 
 template<typename T>
 struct SystemFree {
-    static_assert(std::is_trivially_destructible<T>::value);
+    static_assert(std::is_trivially_destructible_v<T> || std::is_void_v<T>);
 
     void operator()(T* pointer) const
     {
-        free(const_cast<typename std::remove_cv<T>::type*>(pointer));
+        free(const_cast<std::remove_cv_t<T>*>(pointer));
     }
 };
 
 template<typename T>
-struct SystemFree<T[]> {
-    static_assert(std::is_trivially_destructible<T>::value);
-
-    void operator()(T* pointer) const
-    {
-        free(const_cast<typename std::remove_cv<T>::type*>(pointer));
-    }
-};
+inline std::unique_ptr<T, WTF::SystemFree<T>> adoptSystem(T* value)
+{
+    return std::unique_ptr<T, WTF::SystemFree<T>>(value);
+}
 
 } // namespace WTF
+
+using WTF::adoptSystem;

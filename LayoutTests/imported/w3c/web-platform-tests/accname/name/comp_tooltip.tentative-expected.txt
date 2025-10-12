@@ -2,5 +2,5 @@ Tests the tentative #comp_tooltip portions of the AccName Name Computation algor
 
 
 
-FAIL img with tooltip label with empty alt assert_equals: <img title="title" data-expectedlabel="" alt="" data-testname="img with tooltip label with empty alt" class="ex" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="> expected "" but got "title"
+PASS img with tooltip label with empty alt
 

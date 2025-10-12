@@ -11,6 +11,7 @@
 #ifndef MODULES_VIDEO_CODING_TIMING_DECODE_TIME_PERCENTILE_FILTER_H_
 #define MODULES_VIDEO_CODING_TIMING_DECODE_TIME_PERCENTILE_FILTER_H_
 
+#include <cstdint>
 #include <queue>
 
 #include "rtc_base/numerics/percentile_filter.h"

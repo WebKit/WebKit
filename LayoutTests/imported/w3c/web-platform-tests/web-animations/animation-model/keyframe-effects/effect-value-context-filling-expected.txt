@@ -3,9 +3,9 @@ PASS Filling effect values reflect changes to font-size on element
 PASS Filling effect values reflect changes to font-size on parent element
 PASS Filling effect values reflect changes to variables on element
 PASS Filling effect values reflect changes to variables on parent element
-PASS Filling effect values reflect changes to the the animation's keyframes
-PASS Filling effect values reflect changes to the the animation's composite mode
-PASS Filling effect values reflect changes to the the animation's iteration composite mode
+PASS Filling effect values reflect changes to the animation's keyframes
+PASS Filling effect values reflect changes to the animation's composite mode
+PASS Filling effect values reflect changes to the animation's iteration composite mode
 PASS Filling effect values reflect changes to the base value when using additive animation
 PASS Filling effect values reflect changes to the base value when using additive animation on a single keyframe
 PASS Filling effect values reflect changes to the base value when using the fill value is an implicit keyframe

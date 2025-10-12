@@ -7,6 +7,10 @@
 //    Implements the class methods for FramebufferNULL.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/null/FramebufferNULL.h"
 
 #include "common/debug.h"

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FontDescription.h"
-#include "SystemFontDatabase.h"
+#include <WebCore/FontDescription.h>
+#include <WebCore/SystemFontDatabase.h>
 #include <pal/spi/cf/CoreTextSPI.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
@@ -117,7 +117,7 @@ private:
     static Vector<RetainPtr<CTFontDescriptorRef>> computeCascadeList(CTFontRef, CFStringRef locale);
     static CascadeListParameters systemFontParameters(const FontDescription&, const AtomString& familyName, SystemFontKind, AllowUserInstalledFonts);
 
-    UncheckedKeyHashMap<CascadeListParameters, Vector<RetainPtr<CTFontDescriptorRef>>, CascadeListParameters::Hash, SimpleClassHashTraits<CascadeListParameters>> m_systemFontCache;
+    HashMap<CascadeListParameters, Vector<RetainPtr<CTFontDescriptorRef>>, CascadeListParameters::Hash, SimpleClassHashTraits<CascadeListParameters>> m_systemFontCache;
 
     MemoryCompactRobinHoodHashMap<String, String> m_serifFamilies;
     MemoryCompactRobinHoodHashMap<String, String> m_sansSeriferifFamilies;

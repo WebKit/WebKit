@@ -35,7 +35,7 @@
 namespace WebKit {
 
 class ResponsivenessTimer : public RefCounted<ResponsivenessTimer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ResponsivenessTimer);
 public:
     class Client : public AbstractRefCountedAndCanMakeWeakPtr<Client> {
     public:

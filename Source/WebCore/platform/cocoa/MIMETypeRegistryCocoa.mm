@@ -27,10 +27,13 @@
 #import "config.h"
 #import "MIMETypeRegistry.h"
 
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <pal/spi/cocoa/CoreServicesSPI.h>
 #import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
+#import <pal/spi/cocoa/UniformTypeIdentifiersSPI.h>
 #import <wtf/RobinHoodHashMap.h>
 #import <wtf/RobinHoodHashSet.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/MakeString.h>
 
@@ -59,19 +62,15 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, MemoryCompactLookupOnlyRo
             }
         };
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        auto allUTIs = adoptCF(_UTCopyDeclaredTypeIdentifiers());
-
-        for (NSString *uti in (__bridge NSArray<NSString *> *)allUTIs.get()) {
-            auto type = adoptCF(UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)uti, kUTTagClassMIMEType));
+        [UTType _enumerateAllDeclaredTypesUsingBlock:^(UTType *utType, BOOL *) {
+            RetainPtr<NSString> type = utType.preferredMIMEType;
             if (!type)
-                continue;
-            auto extensions = adoptCF(UTTypeCopyAllTagsWithClass((__bridge CFStringRef)uti, kUTTagClassFilenameExtension));
-            if (!extensions || !CFArrayGetCount(extensions.get()))
-                continue;
-            addExtensions(type.get(), (__bridge NSArray<NSString *> *)extensions.get());
-        }
-ALLOW_DEPRECATED_DECLARATIONS_END
+                return;
+            RetainPtr extensions = dynamic_objc_cast<NSArray<NSString *>>(utType.tags[UTTagClassFilenameExtension]);
+            if (!extensions || ![extensions count])
+                return;
+            addExtensions(type.get(), extensions.get());
+        }];
 
         return map;
     }();
@@ -80,10 +79,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 // Specify MIME type <-> extension mappings for type identifiers recognized by the system that are missing MIME type values.
-static const UncheckedKeyHashMap<String, String, ASCIICaseInsensitiveHash>& additionalMimeTypesMap()
+static const HashMap<String, String, ASCIICaseInsensitiveHash>& additionalMimeTypesMap()
 {
-    static NeverDestroyed<UncheckedKeyHashMap<String, String, ASCIICaseInsensitiveHash>> mimeTypesMap = [] {
-        UncheckedKeyHashMap<String, String, ASCIICaseInsensitiveHash> map;
+    static NeverDestroyed<HashMap<String, String, ASCIICaseInsensitiveHash>> mimeTypesMap = [] {
+        HashMap<String, String, ASCIICaseInsensitiveHash> map;
         static constexpr TypeExtensionPair additionalTypes[] = {
             // FIXME: Remove this list once rdar://112044000 (Many camera RAW image type identifiers are missing MIME types) is resolved.
             { "image/x-canon-cr2"_s, "cr2"_s },
@@ -112,10 +111,10 @@ static const UncheckedKeyHashMap<String, String, ASCIICaseInsensitiveHash>& addi
     return mimeTypesMap;
 }
 
-static const UncheckedKeyHashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& additionalExtensionsMap()
+static const HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& additionalExtensionsMap()
 {
-    static NeverDestroyed<UncheckedKeyHashMap<String, Vector<String>, ASCIICaseInsensitiveHash>> extensionsMap = [] {
-        UncheckedKeyHashMap<String, Vector<String>, ASCIICaseInsensitiveHash> map;
+    static NeverDestroyed<HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>> extensionsMap = [] {
+        HashMap<String, Vector<String>, ASCIICaseInsensitiveHash> map;
         for (auto& [extension, type] : additionalMimeTypesMap()) {
             map.ensure(type, [] {
                 return Vector<String>();
@@ -181,9 +180,9 @@ String MIMETypeRegistry::preferredExtensionForMIMEType(const String& type)
     if (isUSDMIMEType(type))
         return "usdz"_s;
 
-    NSString *preferredExtension = [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:type.createNSString().get()];
-    if (preferredExtension.length)
-        return preferredExtension;
+    RetainPtr preferredExtension = [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:type.createNSString().get()];
+    if ([preferredExtension length])
+        return preferredExtension.get();
 
     auto mapEntry = additionalExtensionsMap().find(type);
     if (mapEntry != additionalExtensionsMap().end())

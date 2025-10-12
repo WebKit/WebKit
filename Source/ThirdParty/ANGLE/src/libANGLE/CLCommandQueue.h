@@ -241,8 +241,21 @@ class CommandQueue final : public _cl_command_queue, public Object
     angle::Result flush();
     angle::Result finish();
 
+    angle::Result enqueueAcquireExternalMemObjectsKHR(cl_uint numMemObjects,
+                                                      const cl_mem *memObjects,
+                                                      cl_uint numEventsInWaitList,
+                                                      const cl_event *eventWaitList,
+                                                      cl_event *event);
+
+    angle::Result enqueueReleaseExternalMemObjectsKHR(cl_uint numMemObjects,
+                                                      const cl_mem *memObjects,
+                                                      cl_uint numEventsInWaitList,
+                                                      const cl_event *eventWaitList,
+                                                      cl_event *event);
+
   public:
     using PropArray = std::vector<cl_queue_properties>;
+    using Priority  = cl_queue_priority_khr;
 
     static constexpr cl_uint kNoSize = std::numeric_limits<cl_uint>::max();
 
@@ -262,6 +275,8 @@ class CommandQueue final : public _cl_command_queue, public Object
     bool hasSize() const;
     cl_uint getSize() const;
 
+    Priority getPriority() const;
+
     template <typename T = rx::CLCommandQueueImpl>
     T &getImpl() const;
 
@@ -271,6 +286,7 @@ class CommandQueue final : public _cl_command_queue, public Object
     CommandQueue(Context &context,
                  Device &device,
                  PropArray &&propArray,
+                 Priority priority,
                  CommandQueueProperties properties,
                  cl_uint size);
 
@@ -281,6 +297,7 @@ class CommandQueue final : public _cl_command_queue, public Object
     const PropArray mPropArray;
     angle::SynchronizedValue<CommandQueueProperties> mProperties;
     const cl_uint mSize = kNoSize;
+    const Priority mPriority;
     rx::CLCommandQueueImpl::Ptr mImpl;
 
     friend class Object;
@@ -324,6 +341,11 @@ inline bool CommandQueue::hasSize() const
 inline cl_uint CommandQueue::getSize() const
 {
     return mSize;
+}
+
+inline CommandQueue::Priority CommandQueue::getPriority() const
+{
+    return mPriority;
 }
 
 template <typename T>

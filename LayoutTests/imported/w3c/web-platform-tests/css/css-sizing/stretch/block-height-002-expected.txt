@@ -1,0 +1,17 @@
+These tests assert the behavior described at https://github.com/w3c/csswg-drafts/issues/11044#issuecomment-2599101601
+
+text
+some more text
+lorem ipsum
+cats
+dogs
+
+FAIL main > div > div 1 assert_equals:
+<div style="height: stretch; margin: 10px;" data-expected-height="180"></div>
+height expected 180 but got 0
+FAIL main > div > div 2 assert_equals:
+<div style="height: stretch; margin: 10px;" data-expected-height="200"></div>
+height expected 200 but got 0
+PASS main > div > div 3
+PASS main > div > div 4
+

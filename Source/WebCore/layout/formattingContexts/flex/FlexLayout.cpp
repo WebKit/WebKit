@@ -162,7 +162,7 @@ FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheti
             // D. If the used flex basis is content or depends on its available space, the available main size is infinite,
             //    and the flex item's inline axis is parallel to the main axis, lay the item out using the rules for a box in an orthogonal flow.
             //    The flex base size is the item's max-content main size.
-            if (flexBasisContentOrAvailableSpaceDependent && flexItem.isOrhogonal()) {
+            if (flexBasisContentOrAvailableSpaceDependent && flexItem.isOrthogonal()) {
                 // Lay the item out using the rules for a box in an orthogonal flow. The flex base size is the item's max-content main size.
                 ASSERT_NOT_IMPLEMENTED_YET();
                 return { };
@@ -171,7 +171,7 @@ FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheti
             // treating a value of content as max-content. If a cross size is needed to determine the main size (e.g. when the flex item’s main size
             // is in its block axis) and the flex item’s cross size is auto and not definite, in this calculation use fit-content as the flex item’s cross size.
             // The flex base size is the item’s resulting main size.
-            if (flexItem.isOrhogonal() && !flexItem.crossAxis().definiteSize) {
+            if (flexItem.isOrthogonal() && !flexItem.crossAxis().definiteSize) {
                 ASSERT_NOT_IMPLEMENTED_YET();
                 return { };
             }
@@ -420,7 +420,7 @@ FlexLayout::LinesCrossSizeList FlexLayout::crossSizeForFlexLines(const LineRange
         for (size_t flexItemIndex = lineRanges[lineIndex].begin(); flexItemIndex < lineRanges[lineIndex].end(); ++flexItemIndex) {
             // Collect all the flex items whose inline-axis is parallel to the main-axis, whose align-self is baseline, and whose cross-axis margins are both non-auto.
             auto& flexItem = flexItems[flexItemIndex];
-            if (!flexItem.isOrhogonal() && flexItem.style().alignSelf().position() == ItemPosition::Baseline && flexItem.crossAxis().hasNonAutoMargins()) {
+            if (!flexItem.isOrthogonal() && flexItem.style().alignSelf().position() == ItemPosition::Baseline && flexItem.crossAxis().hasNonAutoMargins()) {
                 // Find the largest of the distances between each item's baseline and its hypothetical outer cross-start edge,
                 // and the largest of the distances between each item's baseline and its hypothetical outer cross-end edge, and sum these two values.
                 maximumAscent = std::max(maximumAscent, flexItem.crossAxis().ascent);

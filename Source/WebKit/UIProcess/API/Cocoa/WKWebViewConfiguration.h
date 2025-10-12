@@ -57,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSInteger, WKSelectionGranularity) {
     WKSelectionGranularityDynamic,
     WKSelectionGranularityCharacter,
-} WK_API_AVAILABLE(ios(8.0));
+} WK_API_DEPRECATED("This property is ignored; selection granularity is always `character`.", ios(8.0, 11.0), visionos(1.0, 1.0));
 
 #else
 
@@ -107,7 +107,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  will be created for it from the specified pool, or an existing process in
  that pool will be used.
 */
-@property (nonatomic, strong) WKProcessPool *processPool;
+@property (nonatomic, strong) WKProcessPool *processPool WK_API_DEPRECATED("Creating and using multiple instances of WKProcessPool no longer has any effect.", macos(10.10, 12.0), ios(8.0, 15.0), visionos(1.0, 1.0));
 
 /*! @abstract The preference settings to be used by the web view.
 */
@@ -119,7 +119,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 /*! @abstract The web extension controller to associate with the web view.
 */
-@property (nullable, nonatomic, strong) WKWebExtensionController *webExtensionController WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nullable, nonatomic, strong) WKWebExtensionController *webExtensionController WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 
 /*! @abstract The website data store to be used by the web view.
  */
@@ -143,7 +143,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 /*! @abstract A Boolean value indicating whether the System Screen Time blocking view should be shown.
  @discussion The default value is YES.
  */
-@property (nonatomic) BOOL showsSystemScreenTimeBlockingView WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) BOOL showsSystemScreenTimeBlockingView WK_API_AVAILABLE(macos(26.0), ios(26.0));
 
 /*! @abstract A Boolean value indicating whether HTTP requests to servers known to support HTTPS should be automatically upgraded to HTTPS requests.
  @discussion The default value is YES.
@@ -179,7 +179,7 @@ on the system setting.
  @discussion Possible values are described in WKSelectionGranularity.
  The default value is WKSelectionGranularityDynamic.
  */
-@property (nonatomic) WKSelectionGranularity selectionGranularity;
+@property (nonatomic) WKSelectionGranularity selectionGranularity WK_API_DEPRECATED("This property is ignored; selection granularity is always `character`.", ios(8.0, 11.0), visionos(1.0, 1.0));
 
 /*! @abstract A Boolean value indicating whether HTML5 videos may play
  picture-in-picture.

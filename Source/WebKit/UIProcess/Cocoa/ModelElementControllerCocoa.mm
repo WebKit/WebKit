@@ -41,6 +41,7 @@
 #import <wtf/MachSendRight.h>
 #import <wtf/MainThread.h>
 #import <wtf/MonotonicTime.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 #import "APIUIClient.h"
@@ -110,7 +111,7 @@ void ModelElementController::takeModelElementFullscreen(ModelIdentifier modelIde
             return;
         }
 
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             remoteViewController.modalPresentationStyle = UIModalPresentationOverFullScreen;
             remoteViewController.view.backgroundColor = UIColor.clearColor;
 
@@ -122,7 +123,7 @@ void ModelElementController::takeModelElementFullscreen(ModelIdentifier modelIde
             }];
 
             [preview observeDismissFullscreenWithCompletionHandler:^(CAFenceHandle *dismissFenceHandle, NSDictionary *payload, NSError *dismissError) {
-                dispatch_async(dispatch_get_main_queue(), ^{
+                dispatch_async(mainDispatchQueueSingleton(), ^{
                     if (dismissError || !dismissFenceHandle) {
                         LOG(ModelElement, "Unable to get fence handle when dismissing fullscreen instance: %@", [dismissError localizedDescription]);
                         [dismissFenceHandle invalidate];
@@ -319,7 +320,8 @@ void ModelElementController::modelElementSizeDidChange(const String& uuid, WebCo
                 return;
             }
 
-            auto fenceSendRight = MachSendRight::adopt([strongFenceHandle copyPort]);
+            // FIXME: This is a safer cpp false positive.
+            SUPPRESS_RETAINPTR_CTOR_ADOPT auto fenceSendRight = MachSendRight::adopt([strongFenceHandle copyPort]);
             [strongFenceHandle invalidate];
             handler(WTFMove(fenceSendRight));
         });

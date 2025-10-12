@@ -92,8 +92,8 @@ ExceptionOr<void> DOMURL::setHref(const String& url)
     if (!completeURL.isValid())
         return Exception { ExceptionCode::TypeError };
     m_url = WTFMove(completeURL);
-    if (m_searchParams)
-        m_searchParams->updateFromAssociatedURL();
+    if (RefPtr searchParams = m_searchParams)
+        searchParams->updateFromAssociatedURL();
     return { };
 }
 
@@ -104,11 +104,11 @@ String DOMURL::createObjectURL(ScriptExecutionContext& scriptExecutionContext, B
 
 String DOMURL::createPublicURL(ScriptExecutionContext& scriptExecutionContext, URLRegistrable& registrable)
 {
-    URL publicURL = BlobURL::createPublicURL(scriptExecutionContext.securityOrigin());
+    URL publicURL = BlobURL::createPublicURL(scriptExecutionContext.protectedSecurityOrigin().get());
     if (publicURL.isEmpty())
         return String();
 
-    scriptExecutionContext.publicURLManager().registerURL(publicURL, registrable);
+    scriptExecutionContext.protectedPublicURLManager()->registerURL(publicURL, registrable);
 
     return publicURL.string();
 }
@@ -128,7 +128,7 @@ void DOMURL::revokeObjectURL(ScriptExecutionContext& scriptExecutionContext, con
 
     MemoryCache::removeRequestFromSessionCaches(scriptExecutionContext, request);
 
-    scriptExecutionContext.publicURLManager().revoke(request.url());
+    scriptExecutionContext.protectedPublicURLManager()->revoke(request.url());
 }
 
 } // namespace WebCore

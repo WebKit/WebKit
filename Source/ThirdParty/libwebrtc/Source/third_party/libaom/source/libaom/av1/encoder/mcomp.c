@@ -102,6 +102,24 @@ void av1_make_default_fullpel_ms_params(
   ms_params->mv_limits = x->mv_limits;
   av1_set_mv_search_range(&ms_params->mv_limits, ref_mv);
 
+  if (cpi->oxcf.algo_cfg.sharpness == 3) {
+    int top_margin = x->e_mbd.mi_row * MI_SIZE + 8;
+    int left_margin = x->e_mbd.mi_col * MI_SIZE + 8;
+    int bottom_margin =
+        cpi->common.height - mi_size_high[bsize] * MI_SIZE - top_margin + 16;
+    int right_margin =
+        cpi->common.width - mi_size_wide[bsize] * MI_SIZE - left_margin + 16;
+
+    bottom_margin = AOMMAX(bottom_margin, -top_margin);
+    right_margin = AOMMAX(right_margin, -left_margin);
+
+    FullMvLimits *mv_limits = &ms_params->mv_limits;
+    mv_limits->row_min = AOMMAX(mv_limits->row_min, -top_margin);
+    mv_limits->row_max = AOMMIN(mv_limits->row_max, bottom_margin);
+    mv_limits->col_min = AOMMAX(mv_limits->col_min, -left_margin);
+    mv_limits->col_max = AOMMIN(mv_limits->col_max, right_margin);
+  }
+
   // Mvcost params
   init_mv_cost_params(&ms_params->mv_cost_params, x->mv_costs, ref_mv,
                       x->errorperbit, x->sadperbit);
@@ -176,6 +194,26 @@ void av1_make_default_subpel_ms_params(SUBPEL_MOTION_SEARCH_PARAMS *ms_params,
 
   av1_set_subpel_mv_search_range(&ms_params->mv_limits, &x->mv_limits, ref_mv);
 
+  if (cpi->oxcf.algo_cfg.sharpness == 3) {
+    int top_margin = GET_MV_SUBPEL(x->e_mbd.mi_row * MI_SIZE + 8);
+    int left_margin = GET_MV_SUBPEL(x->e_mbd.mi_col * MI_SIZE + 8);
+    int bottom_margin =
+        GET_MV_SUBPEL(cpi->common.height - mi_size_high[bsize] * MI_SIZE -
+                      x->e_mbd.mi_row * MI_SIZE + 8);
+    int right_margin =
+        GET_MV_SUBPEL(cpi->common.width - mi_size_wide[bsize] * MI_SIZE -
+                      x->e_mbd.mi_col * MI_SIZE + 8);
+
+    bottom_margin = AOMMAX(bottom_margin, -top_margin);
+    right_margin = AOMMAX(right_margin, -left_margin);
+
+    SubpelMvLimits *mv_limits = &ms_params->mv_limits;
+    mv_limits->row_min = AOMMAX(mv_limits->row_min, -top_margin);
+    mv_limits->row_max = AOMMIN(mv_limits->row_max, bottom_margin);
+    mv_limits->col_min = AOMMAX(mv_limits->col_min, -left_margin);
+    mv_limits->col_max = AOMMIN(mv_limits->col_max, right_margin);
+  }
+
   // Mvcost params
   init_mv_cost_params(&ms_params->mv_cost_params, x->mv_costs, ref_mv,
                       x->errorperbit, x->sadperbit);
@@ -213,10 +251,10 @@ void av1_set_mv_search_range(FullMvLimits *mv_limits, const MV *mv) {
 
   // Get intersection of UMV window and valid MV window to reduce # of checks
   // in diamond search.
-  if (mv_limits->col_min < col_min) mv_limits->col_min = col_min;
-  if (mv_limits->col_max > col_max) mv_limits->col_max = col_max;
-  if (mv_limits->row_min < row_min) mv_limits->row_min = row_min;
-  if (mv_limits->row_max > row_max) mv_limits->row_max = row_max;
+  mv_limits->col_min = AOMMAX(mv_limits->col_min, col_min);
+  mv_limits->col_max = AOMMIN(mv_limits->col_max, col_max);
+  mv_limits->row_min = AOMMAX(mv_limits->row_min, row_min);
+  mv_limits->row_max = AOMMIN(mv_limits->row_max, row_max);
 
   mv_limits->col_max = AOMMAX(mv_limits->col_min, mv_limits->col_max);
   mv_limits->row_max = AOMMAX(mv_limits->row_min, mv_limits->row_max);
@@ -744,6 +782,7 @@ static inline int get_mvpred_compound_sad(
     return vfp->msdf(src_buf, src_stride, ref_address, ref_stride, second_pred,
                      mask, mask_stride, invert_mask);
   } else if (second_pred) {
+    assert(vfp->sdaf != NULL);
     return vfp->sdaf(src_buf, src_stride, ref_address, ref_stride, second_pred);
   } else {
     return ms_params->sdf(src_buf, src_stride, ref_address, ref_stride);
@@ -1966,9 +2005,12 @@ int av1_intrabc_hash_search(const AV1_COMP *cpi, const MACROBLOCKD *xd,
   av1_get_block_hash_value(intrabc_hash_info, src, src_stride, block_width,
                            &hash_value1, &hash_value2, is_cur_buf_hbd(xd));
 
-  const int count = av1_hash_table_count(ref_frame_hash, hash_value1);
+  int count = av1_hash_table_count(ref_frame_hash, hash_value1);
   if (count <= 1) {
     return INT_MAX;
+  }
+  if (cpi->sf.mv_sf.prune_intrabc_candidate_block_hash_search) {
+    count = AOMMIN(64, count);
   }
 
   Iterator iterator = av1_hash_get_first_iterator(ref_frame_hash, hash_value1);
@@ -3341,8 +3383,6 @@ int av1_return_max_sub_pixel_mv(MACROBLOCKD *xd, const AV1_COMMON *const cm,
   (void)cm;
   (void)start_mv;
   (void)start_mv_stats;
-  (void)sse1;
-  (void)distortion;
   (void)last_mv_search_list;
 
   const int allow_hp = ms_params->allow_hp;
@@ -3356,6 +3396,8 @@ int av1_return_max_sub_pixel_mv(MACROBLOCKD *xd, const AV1_COMMON *const cm,
   // In the sub-pel motion search, if hp is not used, then the last bit of mv
   // has to be 0.
   lower_mv_precision(bestmv, allow_hp, 0);
+  *distortion = besterr;
+  *sse1 = besterr;
   return besterr;
 }
 
@@ -3370,8 +3412,6 @@ int av1_return_min_sub_pixel_mv(MACROBLOCKD *xd, const AV1_COMMON *const cm,
   (void)cm;
   (void)start_mv;
   (void)start_mv_stats;
-  (void)sse1;
-  (void)distortion;
   (void)last_mv_search_list;
 
   const int allow_hp = ms_params->allow_hp;
@@ -3384,6 +3424,8 @@ int av1_return_min_sub_pixel_mv(MACROBLOCKD *xd, const AV1_COMMON *const cm,
   // In the sub-pel motion search, if hp is not used, then the last bit of mv
   // has to be 0.
   lower_mv_precision(bestmv, allow_hp, 0);
+  *distortion = besterr;
+  *sse1 = besterr;
   return besterr;
 }
 

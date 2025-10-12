@@ -17,9 +17,9 @@
 #include <memory>
 #include <optional>
 #include <string>
-#include <vector>
 
 #include "api/stats/rtc_stats.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -27,7 +27,7 @@ namespace webrtc {
 // https://w3c.github.io/webrtc-stats/#certificatestats-dict*
 class RTC_EXPORT RTCCertificateStats final : public RTCStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCCertificateStats);
   RTCCertificateStats(std::string id, Timestamp timestamp);
   ~RTCCertificateStats() override;
 
@@ -40,7 +40,7 @@ class RTC_EXPORT RTCCertificateStats final : public RTCStats {
 // https://w3c.github.io/webrtc-stats/#codec-dict*
 class RTC_EXPORT RTCCodecStats final : public RTCStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCCodecStats);
   RTCCodecStats(std::string id, Timestamp timestamp);
   ~RTCCodecStats() override;
 
@@ -55,7 +55,7 @@ class RTC_EXPORT RTCCodecStats final : public RTCStats {
 // https://w3c.github.io/webrtc-stats/#dcstats-dict*
 class RTC_EXPORT RTCDataChannelStats final : public RTCStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCDataChannelStats);
   RTCDataChannelStats(std::string id, Timestamp timestamp);
   ~RTCDataChannelStats() override;
 
@@ -72,7 +72,7 @@ class RTC_EXPORT RTCDataChannelStats final : public RTCStats {
 // https://w3c.github.io/webrtc-stats/#candidatepair-dict*
 class RTC_EXPORT RTCIceCandidatePairStats final : public RTCStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCIceCandidatePairStats);
   RTCIceCandidatePairStats(std::string id, Timestamp timestamp);
   ~RTCIceCandidatePairStats() override;
 
@@ -110,7 +110,7 @@ class RTC_EXPORT RTCIceCandidatePairStats final : public RTCStats {
 // https://w3c.github.io/webrtc-stats/#icecandidate-dict*
 class RTC_EXPORT RTCIceCandidateStats : public RTCStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCIceCandidateStats);
   ~RTCIceCandidateStats() override;
 
   std::optional<std::string> transport_id;
@@ -165,7 +165,7 @@ class RTC_EXPORT RTCRemoteIceCandidateStats final
 // https://w3c.github.io/webrtc-stats/#pcstats-dict*
 class RTC_EXPORT RTCPeerConnectionStats final : public RTCStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCPeerConnectionStats);
   RTCPeerConnectionStats(std::string id, Timestamp timestamp);
   ~RTCPeerConnectionStats() override;
 
@@ -176,7 +176,7 @@ class RTC_EXPORT RTCPeerConnectionStats final : public RTCStats {
 // https://w3c.github.io/webrtc-stats/#streamstats-dict*
 class RTC_EXPORT RTCRtpStreamStats : public RTCStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCRtpStreamStats);
   ~RTCRtpStreamStats() override;
 
   std::optional<uint32_t> ssrc;
@@ -191,7 +191,7 @@ class RTC_EXPORT RTCRtpStreamStats : public RTCStats {
 // https://www.w3.org/TR/webrtc-stats/#receivedrtpstats-dict*
 class RTC_EXPORT RTCReceivedRtpStreamStats : public RTCRtpStreamStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCReceivedRtpStreamStats);
   ~RTCReceivedRtpStreamStats() override;
 
   std::optional<double> jitter;
@@ -204,7 +204,7 @@ class RTC_EXPORT RTCReceivedRtpStreamStats : public RTCRtpStreamStats {
 // https://www.w3.org/TR/webrtc-stats/#sentrtpstats-dict*
 class RTC_EXPORT RTCSentRtpStreamStats : public RTCRtpStreamStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCSentRtpStreamStats);
   ~RTCSentRtpStreamStats() override;
 
   std::optional<uint64_t> packets_sent;
@@ -218,7 +218,7 @@ class RTC_EXPORT RTCSentRtpStreamStats : public RTCRtpStreamStats {
 class RTC_EXPORT RTCInboundRtpStreamStats final
     : public RTCReceivedRtpStreamStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCInboundRtpStreamStats);
   RTCInboundRtpStreamStats(std::string id, Timestamp timestamp);
   ~RTCInboundRtpStreamStats() override;
 
@@ -324,7 +324,7 @@ class RTC_EXPORT RTCInboundRtpStreamStats final
 class RTC_EXPORT RTCOutboundRtpStreamStats final
     : public RTCSentRtpStreamStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCOutboundRtpStreamStats);
   RTCOutboundRtpStreamStats(std::string id, Timestamp timestamp);
   ~RTCOutboundRtpStreamStats() override;
 
@@ -332,6 +332,7 @@ class RTC_EXPORT RTCOutboundRtpStreamStats final
   std::optional<std::string> remote_id;
   std::optional<std::string> mid;
   std::optional<std::string> rid;
+  std::optional<uint32_t> encoding_index;
   std::optional<uint64_t> retransmitted_packets_sent;
   std::optional<uint64_t> header_bytes_sent;
   std::optional<uint64_t> retransmitted_bytes_sent;
@@ -374,7 +375,7 @@ class RTC_EXPORT RTCOutboundRtpStreamStats final
 class RTC_EXPORT RTCRemoteInboundRtpStreamStats final
     : public RTCReceivedRtpStreamStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCRemoteInboundRtpStreamStats);
   RTCRemoteInboundRtpStreamStats(std::string id, Timestamp timestamp);
   ~RTCRemoteInboundRtpStreamStats() override;
 
@@ -389,7 +390,7 @@ class RTC_EXPORT RTCRemoteInboundRtpStreamStats final
 class RTC_EXPORT RTCRemoteOutboundRtpStreamStats final
     : public RTCSentRtpStreamStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCRemoteOutboundRtpStreamStats);
   RTCRemoteOutboundRtpStreamStats(std::string id, Timestamp timestamp);
   ~RTCRemoteOutboundRtpStreamStats() override;
 
@@ -404,7 +405,7 @@ class RTC_EXPORT RTCRemoteOutboundRtpStreamStats final
 // https://w3c.github.io/webrtc-stats/#dom-rtcmediasourcestats
 class RTC_EXPORT RTCMediaSourceStats : public RTCStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCMediaSourceStats);
   ~RTCMediaSourceStats() override;
 
   std::optional<std::string> track_identifier;
@@ -417,7 +418,7 @@ class RTC_EXPORT RTCMediaSourceStats : public RTCStats {
 // https://w3c.github.io/webrtc-stats/#dom-rtcaudiosourcestats
 class RTC_EXPORT RTCAudioSourceStats final : public RTCMediaSourceStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCAudioSourceStats);
   RTCAudioSourceStats(std::string id, Timestamp timestamp);
   ~RTCAudioSourceStats() override;
 
@@ -431,7 +432,7 @@ class RTC_EXPORT RTCAudioSourceStats final : public RTCMediaSourceStats {
 // https://w3c.github.io/webrtc-stats/#dom-rtcvideosourcestats
 class RTC_EXPORT RTCVideoSourceStats final : public RTCMediaSourceStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCVideoSourceStats);
   RTCVideoSourceStats(std::string id, Timestamp timestamp);
   ~RTCVideoSourceStats() override;
 
@@ -444,7 +445,7 @@ class RTC_EXPORT RTCVideoSourceStats final : public RTCMediaSourceStats {
 // https://w3c.github.io/webrtc-stats/#transportstats-dict*
 class RTC_EXPORT RTCTransportStats final : public RTCStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCTransportStats);
   RTCTransportStats(std::string id, Timestamp timestamp);
   ~RTCTransportStats() override;
 
@@ -470,7 +471,7 @@ class RTC_EXPORT RTCTransportStats final : public RTCStats {
 // https://w3c.github.io/webrtc-stats/#playoutstats-dict*
 class RTC_EXPORT RTCAudioPlayoutStats final : public RTCStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCAudioPlayoutStats);
   RTCAudioPlayoutStats(const std::string& id, Timestamp timestamp);
   ~RTCAudioPlayoutStats() override;
 

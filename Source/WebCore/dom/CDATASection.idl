@@ -18,7 +18,6 @@
  */
 
 [
-    JSGenerateToJSObject,
     Exposed=Window
 ] interface CDATASection : Text {
 };

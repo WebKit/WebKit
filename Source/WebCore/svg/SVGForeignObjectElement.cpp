@@ -32,6 +32,7 @@
 #include "SVGLengthValue.h"
 #include "SVGNames.h"
 #include "SVGParsingError.h"
+#include "Settings.h"
 #include <wtf/Assertions.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>

@@ -4,56 +4,16 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-extensions-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  DataView tests
+info: bugzilla.mozilla.org/show_bug.cgi?id=575688
 esid: pending
+features: [host-gc-required]
 ---*/
-//------------------------------------------------------------------------------
-var BUGNUMBER = 575688;
-var summary = 'DataView tests';
 
 function test(sharedMem) {
-    function die(message, uplevel) {
-        var e = new Error(message);
-        var frame = e.stack.split("\n")[uplevel];
-        print(message + " at " + frame.split("@")[1]);
-        print("Stack:\n" + e.stack);
-        throw(e);
-    }
-
     function checkThrow(fun, type) {
-        var thrown = false;
-        try {
-            fun();
-        } catch (x) {
-            thrown = x;
-        }
-
-        if (!thrown) {
-            die('no exception thrown, expected ' + type.name, 2);
-        } else if (!(thrown instanceof type)) {
-            die('expected ' + type.name + ', got ' + thrown, 2);
-        }
-    }
-
-    function checkThrowTODO(fun, type) {
-        var thrown = false;
-        try {
-            fun();
-        } catch (x) {
-            thrown = x;
-        }
-
-        if (!thrown) {
-            print('(TODO) no exception thrown, expected ' + type.name);
-        } else if (!(thrown instanceof type)) {
-            print('(TODO) expected ' + type.name + ', got ' + thrown);
-        } else {
-            print('test unexpectedly passed: expected ' + type.name + ' exception');
-        }
+        assert.throws(type, fun);
     }
 
     function bufferize(u8array) {
@@ -71,11 +31,8 @@ function test(sharedMem) {
 	return v.buffer;
     }
 
-    printBugNumber(BUGNUMBER);
-    printStatus(summary);
-
     // testConstructor
-    buffer = bufferize(new Uint8Array([1, 2]));
+    var buffer = bufferize(new Uint8Array([1, 2]));
     checkThrow(() => new DataView(buffer, 0, 3), RangeError);
     checkThrow(() => new DataView(buffer, 1, 2), RangeError);
     checkThrow(() => new DataView(buffer, 2, 1), RangeError);
@@ -91,7 +48,7 @@ function test(sharedMem) {
     var data1_r = data1.slice().reverse();
     var buffer1 = bufferize(new Uint8Array(data1));
     var view1 = new DataView(buffer1, 0, 16);
-    view = view1;
+    var view = view1;
     assert.sameValue(view.getInt8(0), 0);
     assert.sameValue(view.getInt8(8), -128);
     assert.sameValue(view.getInt8(15), -1);
@@ -1567,7 +1524,7 @@ function test(sharedMem) {
     checkThrow(() => DataView.prototype.buffer, TypeError);
 
     // Protos and proxies, oh my!
-    var alien = createNewGlobal();
+    var alien = $262.createRealm().global;
     var alien_data = alien.eval('data = ' + JSON.stringify(data1));
     var alien_buffer = alien.eval(`buffer = new ${sharedMem ? 'Shared' : ''}ArrayBuffer(data.length)`);
     alien.eval('new Uint8Array(buffer).set(data)');
@@ -1599,10 +1556,7 @@ function test(sharedMem) {
     } catch (exc) {
         e = exc;
     }
-    if (!e) {
-        print("==== TODO but PASSED? ====");
-        print("Bug 753996 unexpectedly passed");
-    }
+    assert.notSameValue(e, null);
 
     // proto is proxy for view of buffer: should throw TypeError
     //
@@ -1610,8 +1564,8 @@ function test(sharedMem) {
     // TypeError, and in fact it throws a (thisglobal).TypeError instead of
     // alien.TypeError.
     var av = Object.create(alien_view);
-    checkThrowTODO(() => av.getUint8(4), alien.TypeError);
-    checkThrowTODO(() => av.buffer, alien.TypeError);
+    checkThrow(() => av.getUint8(4), alien.TypeError);
+    checkThrow(() => av.buffer, alien.TypeError);
 
     // view of object whose proto is buffer. This should not work per dherman.
     // Note that DataView throws a TypeError while TypedArrays create a

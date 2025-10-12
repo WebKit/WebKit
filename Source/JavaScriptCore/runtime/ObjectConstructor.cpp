@@ -24,7 +24,7 @@
 #include "BuiltinNames.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
-#include "JSImmutableButterfly.h"
+#include "JSCellButterfly.h"
 #include "ObjectConstructorInlines.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
@@ -452,7 +452,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
             }
 
             Structure* targetStructure = target->structure();
-            JSImmutableButterfly* cachedButterfly = nullptr;
+            JSCellButterfly* cachedButterfly = nullptr;
             if (!globalObject->isHavingABadTime()) [[likely]] {
                 auto* butterfly = targetStructure->cachedPropertyNames(CachedPropertyNamesKind::EnumerableStrings);
                 if (butterfly) {
@@ -466,7 +466,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
                 auto* canSentinel = targetStructure->cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind::EnumerableStrings);
                 if (canSentinel == StructureRareData::cachedPropertyNamesSentinel()) {
                     size_t numProperties = properties.size();
-                    auto* newButterfly = JSImmutableButterfly::create(vm, CopyOnWriteArrayWithContiguous, numProperties);
+                    auto* newButterfly = JSCellButterfly::create(vm, CopyOnWriteArrayWithContiguous, numProperties);
                     for (size_t i = 0; i < numProperties; i++) {
                         const auto& identifier = properties[i];
                         newButterfly->setIndex(vm, i, jsOwnedString(vm, identifier.get()));
@@ -869,6 +869,7 @@ static JSValue defineProperties(JSGlobalObject* globalObject, JSObject* object, 
     if (!hasIndexedProperties(properties->indexingType())) {
         Structure* propertiesStructure = properties->structure();
         if (!properties->hasNonReifiedStaticProperties() && propertiesStructure->canPerformFastPropertyEnumerationCommon()) {
+            bool hasSymbol = false;
             canUseFastPath = true;
             propertiesStructure->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
                 if (entry.attributes() & PropertyAttribute::DontEnum)
@@ -878,11 +879,34 @@ static JSValue defineProperties(JSGlobalObject* globalObject, JSObject* object, 
                 if (propertyName.isPrivateName())
                     return true;
 
+                if (propertyName.isSymbol()) {
+                    hasSymbol = true;
+                    return true;
+                }
+
                 propertyNames.append(entry.key());
                 values.appendWithCrashOnOverflow(properties->getDirect(entry.offset()));
 
                 return true;
             });
+
+            // https://tc39.es/ecma262/#sec-ordinaryownpropertykeys
+            // symbol should come last in the order
+            if (hasSymbol) {
+                propertiesStructure->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
+                    if (entry.attributes() & PropertyAttribute::DontEnum)
+                        return true;
+
+                    PropertyName propertyName(entry.key());
+                    if (propertyName.isPrivateName() || !propertyName.isSymbol())
+                        return true;
+
+                    propertyNames.append(entry.key());
+                    values.appendWithCrashOnOverflow(properties->getDirect(entry.offset()));
+
+                    return true;
+                });
+            }
         }
     }
     if (!canUseFastPath) [[unlikely]]
@@ -1280,7 +1304,7 @@ JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, Propert
             if (structure->canCacheOwnPropertyNames()) {
                 auto* cachedButterfly = structure->cachedPropertyNamesIgnoringSentinel(kind);
                 if (cachedButterfly == StructureRareData::cachedPropertyNamesSentinel()) {
-                    auto* newButterfly = JSImmutableButterfly::tryCreate(vm, CopyOnWriteArrayWithContiguous, numProperties);
+                    auto* newButterfly = JSCellButterfly::tryCreate(vm, CopyOnWriteArrayWithContiguous, numProperties);
                     if (!newButterfly) [[unlikely]] {
                         throwOutOfMemoryError(globalObject, scope);
                         return { };

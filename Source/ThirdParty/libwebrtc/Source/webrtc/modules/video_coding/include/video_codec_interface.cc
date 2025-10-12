@@ -9,6 +9,10 @@
  */
 #include "modules/video_coding/include/video_codec_interface.h"
 
+#include <cstring>
+
+#include "api/video/video_codec_type.h"
+
 namespace webrtc {
 CodecSpecificInfo::CodecSpecificInfo() : codecType(kVideoCodecGeneric) {
   memset(&codecSpecific, 0, sizeof(codecSpecific));

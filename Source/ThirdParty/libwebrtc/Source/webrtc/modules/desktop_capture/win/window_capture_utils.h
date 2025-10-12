@@ -11,7 +11,7 @@
 #ifndef MODULES_DESKTOP_CAPTURE_WIN_WINDOW_CAPTURE_UTILS_H_
 #define MODULES_DESKTOP_CAPTURE_WIN_WINDOW_CAPTURE_UTILS_H_
 
-#include <shlobj.h>
+#include <shlobj_core.h>
 #include <windows.h>
 #include <wrl/client.h>
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,6 +71,7 @@
 #include <WebCore/MessagePort.h>
 #include <WebCore/NavigationScheduler.h>
 #include <WebCore/Page.h>
+#include <WebCore/PermissionController.h>
 #include <WebCore/SharedBuffer.h>
 #include <pal/SessionID.h>
 
@@ -85,15 +86,17 @@ NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier&&
     : m_connection(IPC::Connection::createClientConnection(WTFMove(connectionIdentifier)))
     , m_cookieAcceptPolicy(cookieAcceptPolicy)
 {
-    protectedConnection()->open(*this);
+    m_connection->open(*this);
 
+#if USE(LIBWEBRTC)
     if (WebRTCProvider::webRTCAvailable())
         WebProcess::singleton().protectedLibWebRTCNetwork()->setConnection(m_connection.copyRef());
+#endif
 }
 
 NetworkProcessConnection::~NetworkProcessConnection()
 {
-    protectedConnection()->invalidate();
+    m_connection->invalidate();
 }
 
 bool NetworkProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -191,8 +194,10 @@ bool NetworkProcessConnection::dispatchSyncMessage(IPC::Connection& connection, 
 {
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinator::messageReceiverName()) {
-        if (auto webPage = WebProcess::singleton().webPage(ObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
-            return webPage->paymentCoordinator()->didReceiveSyncMessage(connection, decoder, replyEncoder);
+        if (auto webPage = WebProcess::singleton().webPage(ObjectIdentifier<PageIdentifierType>(decoder.destinationID()))) {
+            webPage->paymentCoordinator()->didReceiveSyncMessage(connection, decoder, replyEncoder);
+            return true;
+        }
         return false;
     }
 #endif
@@ -212,13 +217,13 @@ void NetworkProcessConnection::didClose(IPC::Connection&)
         swConnection->connectionToServerLost();
 }
 
-void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t)
+void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>&)
 {
 }
 
 void NetworkProcessConnection::writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
 {
-    protectedConnection()->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::WriteBlobsToTemporaryFilesForIndexedDB(blobURLs), WTFMove(completionHandler));
+    m_connection->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::WriteBlobsToTemporaryFilesForIndexedDB(blobURLs), WTFMove(completionHandler));
 }
 
 void NetworkProcessConnection::didFinishPingLoad(WebCore::ResourceLoaderIdentifier pingLoadIdentifier, ResourceError&& error, ResourceResponse&& response)
@@ -353,5 +358,10 @@ void NetworkProcessConnection::connectToRTCDataChannelRemoteSource(WebCore::RTCD
     callback(RTCDataChannelRemoteManager::singleton().connectToRemoteSource(localIdentifier, remoteIdentifier));
 }
 #endif
+
+void NetworkProcessConnection::storageAccessPermissionChanged(const WebCore::RegistrableDomain& topFrameDomain, const WebCore::RegistrableDomain& subFrameDomain)
+{
+    WebCore::PermissionController::singleton().storageAccessPermissionChanged(topFrameDomain, subFrameDomain);
+}
 
 } // namespace WebKit

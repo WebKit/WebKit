@@ -34,6 +34,7 @@
 #import "TestWKWebView.h"
 #import <Carbon/Carbon.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 namespace TestWebKitAPI {
     
@@ -57,7 +58,7 @@ static void runTest(NSEventModifierFlags flags, NSEventType mouseDownType, NSEve
     __block bool done = false;
     __block BlockPtr<void(NSMenu *)> completionHandlerCopy;
     [uiDelegate setGetContextMenuFromProposedMenu:^(NSMenu *, _WKContextMenuElementInfo *, id <NSSecureCoding>, void (^completionHandler)(NSMenu *)) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             completionHandlerCopy = completionHandler;
             done = true;
         });

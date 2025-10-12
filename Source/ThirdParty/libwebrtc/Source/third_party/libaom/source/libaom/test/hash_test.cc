@@ -24,7 +24,7 @@
 
 namespace {
 
-typedef uint32_t (*get_crc32c_value_func)(void *calculator, uint8_t *p,
+typedef uint32_t (*get_crc32c_value_func)(void *calculator, const uint8_t *p,
                                           size_t length);
 
 typedef std::tuple<get_crc32c_value_func, int> HashParam;

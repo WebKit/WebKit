@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
- * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google, Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -133,7 +133,7 @@ static inline bool causesFosterParenting(const HTMLStackItem& item)
 static inline void insert(HTMLConstructionSiteTask& task)
 {
     if (auto templateElement = dynamicDowncast<HTMLTemplateElement>(task.parent)) {
-        task.parent = &templateElement->fragmentForInsertion();
+        task.parent = templateElement->fragmentForInsertion();
         task.nextChild = nullptr;
     }
 
@@ -235,9 +235,11 @@ void HTMLConstructionSite::attachLater(Ref<ContainerNode>&& parent, Ref<Node>&& 
     task.child = WTFMove(child);
     task.selfClosing = selfClosing;
 
-    // Add as a sibling of the parent if we have reached the maximum depth allowed.
-    if (m_openElements.stackDepth() > m_maximumDOMTreeDepth && task.parent->parentNode())
+    // Close the last open tag and add as a sibling of the parent if we have reached the maximum depth allowed.
+    if (m_openElements.stackDepth() >= m_maximumDOMTreeDepth && task.parent->parentNode()) {
+        m_openElements.pop();
         task.parent = task.parent->parentNode();
+    }
 
     ASSERT(task.parent);
     m_taskQueue.append(WTFMove(task));
@@ -479,7 +481,7 @@ void HTMLConstructionSite::insertDoctype(AtomHTMLToken&& token)
     String publicId = token.publicIdentifier();
     String systemId = token.systemIdentifier();
 
-    auto document = protectedDocument();
+    Ref document = m_document.get();
     attachLater(protectedAttachmentRoot(), DocumentType::create(document, token.name(), publicId, systemId));
 
     // DOCTYPE nodes are only processed when parsing fragments w/o contextElements, which
@@ -692,7 +694,7 @@ static ALWAYS_INLINE unsigned findBreakIndex(const String& string, unsigned curr
 void HTMLConstructionSite::insertTextNode(const String& characters)
 {
     HTMLConstructionSiteTask task(HTMLConstructionSiteTask::Insert);
-    task.parent = &currentNode();
+    task.parent = currentNode();
 
     if (shouldFosterParent())
         findFosterSite(task);
@@ -744,8 +746,8 @@ void HTMLConstructionSite::insertTextNode(const String& characters)
 void HTMLConstructionSite::reparent(HTMLElementStack::ElementRecord& newParent, HTMLElementStack::ElementRecord& child)
 {
     HTMLConstructionSiteTask task(HTMLConstructionSiteTask::Reparent);
-    task.parent = &newParent.node();
-    task.child = &child.element();
+    task.parent = newParent.node();
+    task.child = child.element();
     m_taskQueue.append(WTFMove(task));
 }
 
@@ -756,16 +758,16 @@ void HTMLConstructionSite::insertAlreadyParsedChild(HTMLStackItem& newParent, HT
         findFosterSite(task);
         ASSERT(task.parent);
     } else
-        task.parent = &newParent.node();
-    task.child = &child.element();
+        task.parent = newParent.node();
+    task.child = child.element();
     m_taskQueue.append(WTFMove(task));
 }
 
 void HTMLConstructionSite::takeAllChildrenAndReparent(HTMLStackItem& newParent, HTMLElementStack::ElementRecord& oldParent)
 {
     HTMLConstructionSiteTask task(HTMLConstructionSiteTask::TakeAllChildrenAndReparent);
-    task.parent = &newParent.node();
-    task.child = &oldParent.node();
+    task.parent = newParent.node();
+    task.child = oldParent.node();
     m_taskQueue.append(WTFMove(task));
 }
 
@@ -827,16 +829,14 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
     Ref ownerDocument = treeScope->documentScope();
     bool insideTemplateElement = m_openElements.containsTemplateElement();
     RefPtr element = HTMLElementFactory::createKnownElement(token.tagName(), ownerDocument, insideTemplateElement ? nullptr : form(), true);
+    RefPtr<CustomElementRegistry> registry = m_openElements.stackDepth() > 1 ? registryForCurrentNode(currentNode(), treeScope) : m_registry;
     if (!element) [[unlikely]] {
-        RefPtr<CustomElementRegistry> registry = m_openElements.stackDepth() > 1 ? registryForCurrentNode(currentNode(), treeScope) : m_registry;
         auto* elementInterface = registry ? registry->findInterface(token.name()) : nullptr;
         if (elementInterface) [[unlikely]] {
             if (!m_isParsingFragment)
                 return { nullptr, elementInterface, WTFMove(registry) };
             ASSERT(qualifiedNameForHTMLTag(token) == elementInterface->name());
             element = elementInterface->createElement(ownerDocument);
-            if (registry->isScoped()) [[unlikely]]
-                CustomElementRegistry::addToScopedCustomElementRegistryMap(*element, *registry);
             element->setIsCustomElementUpgradeCandidate();
             element->enqueueToUpgrade(*elementInterface);
         } else {
@@ -851,6 +851,8 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
             element->setUsesNullCustomElementRegistry();
     }
     ASSERT(element);
+    if (registry && registry->isScoped() && registry != treeScope->customElementRegistry()) [[unlikely]]
+        CustomElementRegistry::addToScopedCustomElementRegistryMap(*element, *registry);
 
     // FIXME: This is a hack to connect images to pictures before the image has
     // been inserted into the document. It can be removed once asynchronous image
@@ -946,23 +948,23 @@ void HTMLConstructionSite::findFosterSite(HTMLConstructionSiteTask& task)
     auto* lastTemplate = m_openElements.topmost(HTML::template_);
     auto* lastTable = m_openElements.topmost(HTML::table);
     if (lastTemplate && (!lastTable || lastTemplate->isAbove(*lastTable))) {
-        task.parent = &lastTemplate->element();
+        task.parent = lastTemplate->element();
         return;
     }
 
     if (!lastTable) {
         // Fragment case
-        task.parent = &m_openElements.rootNode();
+        task.parent = m_openElements.rootNode();
         return;
     }
 
     if (auto* parent = lastTable->element().parentNode()) {
         task.parent = parent;
-        task.nextChild = &lastTable->element();
+        task.nextChild = lastTable->element();
         return;
     }
 
-    task.parent = &lastTable->next()->element();
+    task.parent = lastTable->next()->element();
 }
 
 bool HTMLConstructionSite::shouldFosterParent() const

@@ -42,7 +42,7 @@ String localizedDeviceModel()
 {
     auto& deviceModel = cachedLocalizedDeviceModel();
     if (!deviceModel)
-        deviceModel = String([[PAL::getUIDeviceClass() currentDevice] localizedModel]);
+        deviceModel = String([[PAL::getUIDeviceClassSingleton() currentDevice] localizedModel]);
     return *deviceModel;
 }
 

@@ -11,9 +11,11 @@ import { kAddressModes, kMipmapFilterModes } from '../../../capability_info.js';
 import {
 
   getTextureFormatType,
-  kPossiblyRenderableColorTextureFormats } from
+  isTextureFormatColorRenderable,
+  kPossibleColorRenderableTextureFormats } from
 '../../../format_info.js';
-import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
+import * as ttu from '../../../texture_test_utils.js';
 import { getTextureCopyLayout } from '../../../util/texture/layout.js';
 import { TexelView } from '../../../util/texture/texel_view.js';
 
@@ -31,13 +33,13 @@ const kCheckerTextureData = [
  * One more both may required certain features to be enabled.
  */
 const kPossiblyRenderablePossiblyFilterableColorTextureFormats =
-kPossiblyRenderableColorTextureFormats.filter(
+kPossibleColorRenderableTextureFormats.filter(
   (format) =>
   getTextureFormatType(format) === 'float' ||
   getTextureFormatType(format) === 'unfilterable-float'
 );
 
-class FilterModeTest extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {
+class FilterModeTest extends AllFeaturesMaxLimitsGPUTest {
   runFilterRenderPipeline(
   sampler,
   module,
@@ -46,7 +48,14 @@ class FilterModeTest extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {
   vertexCount,
   instanceCount)
   {
-    const sampleTexture = this.createTextureFromTexelView(
+    let renderTargetFormat = format;
+    if (!isTextureFormatColorRenderable(this.device, format)) {
+      // If the format is not renderable, we use rgba32float as the render target format
+      // to verify the result, which is always renderable.
+      renderTargetFormat = 'rgba32float';
+    }
+    const sampleTexture = ttu.createTextureFromTexelView(
+      this,
       TexelView.fromTexelsAsColors(format, (coord) => {
         const id = coord.x + coord.y * kCheckerTextureSize;
         return kCheckerTextureData[id];
@@ -57,7 +66,7 @@ class FilterModeTest extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {
       }
     );
     const renderTexture = this.createTextureTracked({
-      format,
+      format: renderTargetFormat,
       size: renderSize,
       usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC
     });
@@ -70,7 +79,7 @@ class FilterModeTest extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {
       fragment: {
         module,
         entryPoint: 'fs_main',
-        targets: [{ format }]
+        targets: [{ format: renderTargetFormat }]
       }
     });
     const bindgroup = this.device.createBindGroup({
@@ -96,7 +105,7 @@ class FilterModeTest extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {
     renderPass.draw(vertexCount, instanceCount);
     renderPass.end();
     this.device.queue.submit([commandEncoder.finish()]);
-    return renderTexture;
+    return { texture: renderTexture, format: renderTargetFormat };
   }
 }
 
@@ -547,9 +556,10 @@ fn((t) => {
     vertexCount,
     instanceCount
   );
-  t.expectTexelViewComparisonIsOkInTexture(
-    { texture: render },
-    expectedColors(format, 'nearest', addressModeU, addressModeV),
+  ttu.expectTexelViewComparisonIsOkInTexture(
+    t,
+    { texture: render.texture },
+    expectedColors(render.format, 'nearest', addressModeU, addressModeV),
     kNearestRenderDim
   );
 });
@@ -662,9 +672,10 @@ fn((t) => {
     vertexCount,
     instanceCount
   );
-  t.expectTexelViewComparisonIsOkInTexture(
-    { texture: render },
-    expectedColors(format, 'linear', addressModeU, addressModeV),
+  ttu.expectTexelViewComparisonIsOkInTexture(
+    t,
+    { texture: render.texture },
+    expectedColors(render.format, 'linear', addressModeU, addressModeV),
     kLinearRenderDim
   );
 });
@@ -789,9 +800,10 @@ fn((t) => {
     vertexCount,
     instanceCount
   );
-  t.expectTexelViewComparisonIsOkInTexture(
-    { texture: render },
-    expectedColors(format, 'nearest', addressModeU, addressModeV),
+  ttu.expectTexelViewComparisonIsOkInTexture(
+    t,
+    { texture: render.texture },
+    expectedColors(render.format, 'nearest', addressModeU, addressModeV),
     kNearestRenderDim
   );
 });
@@ -914,9 +926,10 @@ fn((t) => {
     vertexCount,
     instanceCount
   );
-  t.expectTexelViewComparisonIsOkInTexture(
-    { texture: render },
-    expectedColors(format, 'linear', addressModeU, addressModeV),
+  ttu.expectTexelViewComparisonIsOkInTexture(
+    t,
+    { texture: render.texture },
+    expectedColors(render.format, 'linear', addressModeU, addressModeV),
     kLinearRenderDim
   );
 });
@@ -939,6 +952,12 @@ fn((t) => {
   const { format, filterMode } = t.params;
   t.skipIfTextureFormatNotSupported(format);
   t.skipIfTextureFormatNotFilterable(format);
+  let renderTargetFormat = format;
+  if (!isTextureFormatColorRenderable(t.device, format)) {
+    // If the format is not renderable, we use rgba32float as the render target format
+    // to verify the result, which is always renderable.
+    renderTargetFormat = 'rgba32float';
+  }
   // Takes a 8x8/4x4 mipmapped texture and renders it on multiple quads with different UVs such
   // that each instanced quad from left to right emulates moving the quad further and further from
   // the camera. Each quad is then rendered to a single pixel in a 1-dimensional texture. Since
@@ -951,7 +970,8 @@ fn((t) => {
   const sampler = t.device.createSampler({
     mipmapFilter: filterMode
   });
-  const sampleTexture = t.createTextureFromTexelViewsMultipleMipmaps(
+  const sampleTexture = ttu.createTextureFromTexelViewsMultipleMipmaps(
+    t,
     [
     TexelView.fromTexelsAsColors(format, () => {
       return { R: 0.0, G: 0.0, B: 0.0, A: 1.0 };
@@ -966,7 +986,7 @@ fn((t) => {
     }
   );
   const renderTexture = t.createTextureTracked({
-    format,
+    format: renderTargetFormat,
     size: [kRenderSize, 1],
     usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC
   });
@@ -1016,7 +1036,7 @@ fn((t) => {
     fragment: {
       module,
       entryPoint: 'fs_main',
-      targets: [{ format }]
+      targets: [{ format: renderTargetFormat }]
     }
   });
   const bindgroup = t.device.createBindGroup({
@@ -1045,13 +1065,13 @@ fn((t) => {
 
   // Since mipmap filtering varies across different backends, we verify that the result exhibits
   // filtered characteristics without strict value equalities via copies to a buffer.
-  const buffer = t.copyWholeTextureToNewBufferSimple(renderTexture, 0);
+  const buffer = ttu.copyWholeTextureToNewBufferSimple(t, renderTexture, 0);
   t.expectGPUBufferValuesPassCheck(
     buffer,
     (actual) => {
       // Convert the buffer to texel view so we can do comparisons.
-      const layout = getTextureCopyLayout(format, '2d', [kRenderSize, 1, 1]);
-      const view = TexelView.fromTextureDataByReference(format, actual, {
+      const layout = getTextureCopyLayout(renderTargetFormat, '2d', [kRenderSize, 1, 1]);
+      const view = TexelView.fromTextureDataByReference(renderTargetFormat, actual, {
         bytesPerRow: layout.bytesPerRow,
         rowsPerImage: layout.rowsPerImage,
         subrectOrigin: [0, 0, 0],

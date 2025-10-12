@@ -13,7 +13,7 @@
 
 #include <optional>
 
-namespace cricket {
+namespace webrtc {
 
 // Field trials for P2PTransportChannel and friends,
 // put in separate file so that they can be shared e.g
@@ -76,6 +76,7 @@ struct IceFieldTrials {
   bool answer_goog_delta = true;  // answer GOOG DELTA
 };
 
-}  // namespace cricket
+}  //  namespace webrtc
+
 
 #endif  // P2P_BASE_P2P_TRANSPORT_CHANNEL_ICE_FIELD_TRIALS_H_

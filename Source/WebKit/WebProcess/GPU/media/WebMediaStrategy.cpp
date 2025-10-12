@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,16 +40,20 @@
 #include <WebCore/SharedAudioDestination.h>
 
 #if PLATFORM(COCOA)
-#include "RemoteMediaRecorderPrivateWriter.h"
 #include <WebCore/MediaSessionManagerCocoa.h>
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
 #include <WebCore/DeprecatedGlobalSettings.h>
 #endif
+#if ENABLE(VIDEO) && ENABLE(GPU_PROCESS)
+#include "AudioVideoRendererRemote.h"
+#endif
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebMediaStrategy);
 
 WebMediaStrategy::~WebMediaStrategy() = default;
 
@@ -67,6 +71,13 @@ Ref<WebCore::AudioDestination> WebMediaStrategy::createAudioDestination(const We
 }
 #endif
 
+#if ENABLE(VIDEO) && ENABLE(GPU_PROCESS)
+RefPtr<AudioVideoRenderer> WebMediaStrategy::createAudioVideoRenderer(LoggerHelper* loggerHelper, WebCore::HTMLMediaElementIdentifier mediaElementIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) const
+{
+    return AudioVideoRendererRemote::create(loggerHelper, mediaElementIdentifier, playerIdentifier, WebProcess::singleton().ensureProtectedGPUProcessConnection());
+}
+#endif
+
 std::unique_ptr<WebCore::NowPlayingManager> WebMediaStrategy::createNowPlayingManager() const
 {
     ASSERT(isMainRunLoop());
@@ -76,7 +87,7 @@ std::unique_ptr<WebCore::NowPlayingManager> WebMediaStrategy::createNowPlayingMa
             void clearNowPlayingInfoPrivate() final
             {
                 if (RefPtr connection = WebProcess::singleton().existingGPUProcessConnection())
-                    connection->protectedConnection()->send(Messages::GPUConnectionToWebProcess::ClearNowPlayingInfo { }, 0);
+                    connection->connection().send(Messages::GPUConnectionToWebProcess::ClearNowPlayingInfo { }, 0);
             }
 
             void setNowPlayingInfoPrivate(const WebCore::NowPlayingInfo& nowPlayingInfo, bool) final
@@ -119,21 +130,6 @@ void WebMediaStrategy::enableMockMediaSource()
     }
 #endif
     WebCore::MediaStrategy::addMockMediaSourceEngine();
-}
-#endif
-
-#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
-std::unique_ptr<MediaRecorderPrivateWriter> WebMediaStrategy::createMediaRecorderPrivateWriter(const String& type, WebCore::MediaRecorderPrivateWriterListener& listener) const
-{
-    ASSERT(isMainRunLoop());
-#if ENABLE(GPU_PROCESS)
-    if (m_useGPUProcess && (equalLettersIgnoringASCIICase(type, "video/mp4"_s) || equalLettersIgnoringASCIICase(type, "audio/mp4"_s)))
-        return RemoteMediaRecorderPrivateWriter::create(WebProcess::singleton().ensureProtectedGPUProcessConnection(), type, listener);
-#else
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(listener);
-#endif
-    return nullptr;
 }
 #endif
 

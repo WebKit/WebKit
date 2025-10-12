@@ -3,9 +3,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// MapBufferRangeBenchmark::
+// MapBufferRangeBenchmark:
 //   Performance test for ANGLE GLES mapped buffers.
 //
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "ANGLEPerfTest.h"
 

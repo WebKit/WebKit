@@ -59,7 +59,7 @@ PASS Property scale value on pseudo element '::before' 'random(7, 17)'
 PASS Property scale value on pseudo element '::before' 'random(--bar, 8, 18)'
 PASS Property scale value on pseudo element '::before' 'random(element-shared, 9, 19)'
 PASS Property scale value on pseudo element '::before' 'random(element-shared --foo, 10, 20)'
-PASS Property translate value 'random(10%, 100%)'
+FAIL Property translate value 'random(10%, 100%)' assert_greater_than_equal: random(10%, 100%) expected a "string" but got a "number"
 PASS Maximum random: 'random(a, b)'
 PASS Maximum random - shorthand: random(a, b))
 PASS Shared by name within an element: 'random(--identifier, a, b)'

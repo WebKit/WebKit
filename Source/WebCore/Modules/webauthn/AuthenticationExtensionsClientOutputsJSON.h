@@ -26,7 +26,7 @@
 #pragma once
 
 #if ENABLE(WEB_AUTHN)
-#include "CredentialPropertiesOutput.h"
+#include <WebCore/CredentialPropertiesOutput.h>
 
 namespace WebCore {
 

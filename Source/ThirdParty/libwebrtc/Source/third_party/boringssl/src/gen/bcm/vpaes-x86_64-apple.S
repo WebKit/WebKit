@@ -34,9 +34,9 @@ _vpaes_encrypt_core:
 	movdqu	(%r9),%xmm5
 	psrld	$4,%xmm1
 	pand	%xmm9,%xmm0
-.byte	102,15,56,0,208
+	pshufb	%xmm0,%xmm2
 	movdqa	L$k_ipt+16(%rip),%xmm0
-.byte	102,15,56,0,193
+	pshufb	%xmm1,%xmm0
 	pxor	%xmm5,%xmm2
 	addq	$16,%r9
 	pxor	%xmm2,%xmm0
@@ -48,25 +48,25 @@ L$enc_loop:
 
 	movdqa	%xmm13,%xmm4
 	movdqa	%xmm12,%xmm0
-.byte	102,15,56,0,226
-.byte	102,15,56,0,195
+	pshufb	%xmm2,%xmm4
+	pshufb	%xmm3,%xmm0
 	pxor	%xmm5,%xmm4
 	movdqa	%xmm15,%xmm5
 	pxor	%xmm4,%xmm0
 	movdqa	-64(%r11,%r10,1),%xmm1
-.byte	102,15,56,0,234
+	pshufb	%xmm2,%xmm5
 	movdqa	(%r11,%r10,1),%xmm4
 	movdqa	%xmm14,%xmm2
-.byte	102,15,56,0,211
+	pshufb	%xmm3,%xmm2
 	movdqa	%xmm0,%xmm3
 	pxor	%xmm5,%xmm2
-.byte	102,15,56,0,193
+	pshufb	%xmm1,%xmm0
 	addq	$16,%r9
 	pxor	%xmm2,%xmm0
-.byte	102,15,56,0,220
+	pshufb	%xmm4,%xmm3
 	addq	$16,%r11
 	pxor	%xmm0,%xmm3
-.byte	102,15,56,0,193
+	pshufb	%xmm1,%xmm0
 	andq	$0x30,%r11
 	subq	$1,%rax
 	pxor	%xmm3,%xmm0
@@ -78,19 +78,19 @@ L$enc_entry:
 	pandn	%xmm0,%xmm1
 	psrld	$4,%xmm1
 	pand	%xmm9,%xmm0
-.byte	102,15,56,0,232
+	pshufb	%xmm0,%xmm5
 	movdqa	%xmm10,%xmm3
 	pxor	%xmm1,%xmm0
-.byte	102,15,56,0,217
+	pshufb	%xmm1,%xmm3
 	movdqa	%xmm10,%xmm4
 	pxor	%xmm5,%xmm3
-.byte	102,15,56,0,224
+	pshufb	%xmm0,%xmm4
 	movdqa	%xmm10,%xmm2
 	pxor	%xmm5,%xmm4
-.byte	102,15,56,0,211
+	pshufb	%xmm3,%xmm2
 	movdqa	%xmm10,%xmm3
 	pxor	%xmm0,%xmm2
-.byte	102,15,56,0,220
+	pshufb	%xmm4,%xmm3
 	movdqu	(%r9),%xmm5
 	pxor	%xmm1,%xmm3
 	jnz	L$enc_loop
@@ -98,12 +98,12 @@ L$enc_entry:
 
 	movdqa	-96(%r10),%xmm4
 	movdqa	-80(%r10),%xmm0
-.byte	102,15,56,0,226
+	pshufb	%xmm2,%xmm4
 	pxor	%xmm5,%xmm4
-.byte	102,15,56,0,195
+	pshufb	%xmm3,%xmm0
 	movdqa	64(%r11,%r10,1),%xmm1
 	pxor	%xmm4,%xmm0
-.byte	102,15,56,0,193
+	pshufb	%xmm1,%xmm0
 	ret
 
 
@@ -156,12 +156,12 @@ _vpaes_encrypt_core_2x:
 	psrld	$4,%xmm7
 	pand	%xmm9,%xmm0
 	pand	%xmm9,%xmm6
-.byte	102,15,56,0,208
-.byte	102,68,15,56,0,198
+	pshufb	%xmm0,%xmm2
+	pshufb	%xmm6,%xmm8
 	movdqa	L$k_ipt+16(%rip),%xmm0
 	movdqa	%xmm0,%xmm6
-.byte	102,15,56,0,193
-.byte	102,15,56,0,247
+	pshufb	%xmm1,%xmm0
+	pshufb	%xmm7,%xmm6
 	pxor	%xmm5,%xmm2
 	pxor	%xmm5,%xmm8
 	addq	$16,%r9
@@ -177,10 +177,10 @@ L$enc2x_loop:
 	movdqa	L$k_sb1+16(%rip),%xmm0
 	movdqa	%xmm4,%xmm12
 	movdqa	%xmm0,%xmm6
-.byte	102,15,56,0,226
-.byte	102,69,15,56,0,224
-.byte	102,15,56,0,195
-.byte	102,65,15,56,0,243
+	pshufb	%xmm2,%xmm4
+	pshufb	%xmm8,%xmm12
+	pshufb	%xmm3,%xmm0
+	pshufb	%xmm11,%xmm6
 	pxor	%xmm5,%xmm4
 	pxor	%xmm5,%xmm12
 	movdqa	L$k_sb2(%rip),%xmm5
@@ -189,30 +189,30 @@ L$enc2x_loop:
 	pxor	%xmm12,%xmm6
 	movdqa	-64(%r11,%r10,1),%xmm1
 
-.byte	102,15,56,0,234
-.byte	102,69,15,56,0,232
+	pshufb	%xmm2,%xmm5
+	pshufb	%xmm8,%xmm13
 	movdqa	(%r11,%r10,1),%xmm4
 
 	movdqa	L$k_sb2+16(%rip),%xmm2
 	movdqa	%xmm2,%xmm8
-.byte	102,15,56,0,211
-.byte	102,69,15,56,0,195
+	pshufb	%xmm3,%xmm2
+	pshufb	%xmm11,%xmm8
 	movdqa	%xmm0,%xmm3
 	movdqa	%xmm6,%xmm11
 	pxor	%xmm5,%xmm2
 	pxor	%xmm13,%xmm8
-.byte	102,15,56,0,193
-.byte	102,15,56,0,241
+	pshufb	%xmm1,%xmm0
+	pshufb	%xmm1,%xmm6
 	addq	$16,%r9
 	pxor	%xmm2,%xmm0
 	pxor	%xmm8,%xmm6
-.byte	102,15,56,0,220
-.byte	102,68,15,56,0,220
+	pshufb	%xmm4,%xmm3
+	pshufb	%xmm4,%xmm11
 	addq	$16,%r11
 	pxor	%xmm0,%xmm3
 	pxor	%xmm6,%xmm11
-.byte	102,15,56,0,193
-.byte	102,15,56,0,241
+	pshufb	%xmm1,%xmm0
+	pshufb	%xmm1,%xmm6
 	andq	$0x30,%r11
 	subq	$1,%rax
 	pxor	%xmm3,%xmm0
@@ -230,32 +230,32 @@ L$enc2x_entry:
 	psrld	$4,%xmm7
 	pand	%xmm9,%xmm0
 	pand	%xmm9,%xmm6
-.byte	102,15,56,0,232
-.byte	102,68,15,56,0,238
+	pshufb	%xmm0,%xmm5
+	pshufb	%xmm6,%xmm13
 	movdqa	%xmm10,%xmm3
 	movdqa	%xmm10,%xmm11
 	pxor	%xmm1,%xmm0
 	pxor	%xmm7,%xmm6
-.byte	102,15,56,0,217
-.byte	102,68,15,56,0,223
+	pshufb	%xmm1,%xmm3
+	pshufb	%xmm7,%xmm11
 	movdqa	%xmm10,%xmm4
 	movdqa	%xmm10,%xmm12
 	pxor	%xmm5,%xmm3
 	pxor	%xmm13,%xmm11
-.byte	102,15,56,0,224
-.byte	102,68,15,56,0,230
+	pshufb	%xmm0,%xmm4
+	pshufb	%xmm6,%xmm12
 	movdqa	%xmm10,%xmm2
 	movdqa	%xmm10,%xmm8
 	pxor	%xmm5,%xmm4
 	pxor	%xmm13,%xmm12
-.byte	102,15,56,0,211
-.byte	102,69,15,56,0,195
+	pshufb	%xmm3,%xmm2
+	pshufb	%xmm11,%xmm8
 	movdqa	%xmm10,%xmm3
 	movdqa	%xmm10,%xmm11
 	pxor	%xmm0,%xmm2
 	pxor	%xmm6,%xmm8
-.byte	102,15,56,0,220
-.byte	102,69,15,56,0,220
+	pshufb	%xmm4,%xmm3
+	pshufb	%xmm12,%xmm11
 	movdqu	(%r9),%xmm5
 
 	pxor	%xmm1,%xmm3
@@ -267,18 +267,18 @@ L$enc2x_entry:
 	movdqa	-80(%r10),%xmm0
 	movdqa	%xmm4,%xmm12
 	movdqa	%xmm0,%xmm6
-.byte	102,15,56,0,226
-.byte	102,69,15,56,0,224
+	pshufb	%xmm2,%xmm4
+	pshufb	%xmm8,%xmm12
 	pxor	%xmm5,%xmm4
 	pxor	%xmm5,%xmm12
-.byte	102,15,56,0,195
-.byte	102,65,15,56,0,243
+	pshufb	%xmm3,%xmm0
+	pshufb	%xmm11,%xmm6
 	movdqa	64(%r11,%r10,1),%xmm1
 
 	pxor	%xmm4,%xmm0
 	pxor	%xmm12,%xmm6
-.byte	102,15,56,0,193
-.byte	102,15,56,0,241
+	pshufb	%xmm1,%xmm0
+	pshufb	%xmm1,%xmm6
 	ret
 
 
@@ -302,11 +302,11 @@ _vpaes_decrypt_core:
 	movdqu	(%r9),%xmm5
 	shlq	$4,%r11
 	pand	%xmm9,%xmm0
-.byte	102,15,56,0,208
+	pshufb	%xmm0,%xmm2
 	movdqa	L$k_dipt+16(%rip),%xmm0
 	xorq	$0x30,%r11
 	leaq	L$k_dsbd(%rip),%r10
-.byte	102,15,56,0,193
+	pshufb	%xmm1,%xmm0
 	andq	$0x30,%r11
 	pxor	%xmm5,%xmm2
 	movdqa	L$k_mc_forward+48(%rip),%xmm5
@@ -322,35 +322,35 @@ L$dec_loop:
 
 	movdqa	-32(%r10),%xmm4
 	movdqa	-16(%r10),%xmm1
-.byte	102,15,56,0,226
-.byte	102,15,56,0,203
+	pshufb	%xmm2,%xmm4
+	pshufb	%xmm3,%xmm1
 	pxor	%xmm4,%xmm0
 	movdqa	0(%r10),%xmm4
 	pxor	%xmm1,%xmm0
 	movdqa	16(%r10),%xmm1
 
-.byte	102,15,56,0,226
-.byte	102,15,56,0,197
-.byte	102,15,56,0,203
+	pshufb	%xmm2,%xmm4
+	pshufb	%xmm5,%xmm0
+	pshufb	%xmm3,%xmm1
 	pxor	%xmm4,%xmm0
 	movdqa	32(%r10),%xmm4
 	pxor	%xmm1,%xmm0
 	movdqa	48(%r10),%xmm1
 
-.byte	102,15,56,0,226
-.byte	102,15,56,0,197
-.byte	102,15,56,0,203
+	pshufb	%xmm2,%xmm4
+	pshufb	%xmm5,%xmm0
+	pshufb	%xmm3,%xmm1
 	pxor	%xmm4,%xmm0
 	movdqa	64(%r10),%xmm4
 	pxor	%xmm1,%xmm0
 	movdqa	80(%r10),%xmm1
 
-.byte	102,15,56,0,226
-.byte	102,15,56,0,197
-.byte	102,15,56,0,203
+	pshufb	%xmm2,%xmm4
+	pshufb	%xmm5,%xmm0
+	pshufb	%xmm3,%xmm1
 	pxor	%xmm4,%xmm0
 	addq	$16,%r9
-.byte	102,15,58,15,237,12
+	palignr	$12,%xmm5,%xmm5
 	pxor	%xmm1,%xmm0
 	subq	$1,%rax
 
@@ -361,32 +361,32 @@ L$dec_entry:
 	movdqa	%xmm11,%xmm2
 	psrld	$4,%xmm1
 	pand	%xmm9,%xmm0
-.byte	102,15,56,0,208
+	pshufb	%xmm0,%xmm2
 	movdqa	%xmm10,%xmm3
 	pxor	%xmm1,%xmm0
-.byte	102,15,56,0,217
+	pshufb	%xmm1,%xmm3
 	movdqa	%xmm10,%xmm4
 	pxor	%xmm2,%xmm3
-.byte	102,15,56,0,224
+	pshufb	%xmm0,%xmm4
 	pxor	%xmm2,%xmm4
 	movdqa	%xmm10,%xmm2
-.byte	102,15,56,0,211
+	pshufb	%xmm3,%xmm2
 	movdqa	%xmm10,%xmm3
 	pxor	%xmm0,%xmm2
-.byte	102,15,56,0,220
+	pshufb	%xmm4,%xmm3
 	movdqu	(%r9),%xmm0
 	pxor	%xmm1,%xmm3
 	jnz	L$dec_loop
 
 
 	movdqa	96(%r10),%xmm4
-.byte	102,15,56,0,226
+	pshufb	%xmm2,%xmm4
 	pxor	%xmm0,%xmm4
 	movdqa	112(%r10),%xmm0
 	movdqa	-352(%r11),%xmm2
-.byte	102,15,56,0,195
+	pshufb	%xmm3,%xmm0
 	pxor	%xmm4,%xmm0
-.byte	102,15,56,0,194
+	pshufb	%xmm2,%xmm0
 	ret
 
 
@@ -426,7 +426,7 @@ _vpaes_schedule_core:
 L$schedule_am_decrypting:
 
 	movdqa	(%r8,%r10,1),%xmm1
-.byte	102,15,56,0,217
+	pshufb	%xmm1,%xmm3
 	movdqu	%xmm3,(%rdx)
 	xorq	$0x30,%r8
 
@@ -480,7 +480,7 @@ L$schedule_192:
 
 L$oop_schedule_192:
 	call	_vpaes_schedule_round
-.byte	102,15,58,15,198,8
+	palignr	$8,%xmm6,%xmm0
 	call	_vpaes_schedule_mangle
 	call	_vpaes_schedule_192_smear
 	call	_vpaes_schedule_mangle
@@ -546,7 +546,7 @@ L$schedule_mangle_last:
 
 
 	movdqa	(%r8,%r10,1),%xmm1
-.byte	102,15,56,0,193
+	pshufb	%xmm1,%xmm0
 	leaq	L$k_opt(%rip),%r11
 	addq	$32,%rdx
 
@@ -622,13 +622,13 @@ _vpaes_schedule_round:
 
 
 	pxor	%xmm1,%xmm1
-.byte	102,65,15,58,15,200,15
-.byte	102,69,15,58,15,192,15
+	palignr	$15,%xmm8,%xmm1
+	palignr	$15,%xmm8,%xmm8
 	pxor	%xmm1,%xmm7
 
 
 	pshufd	$0xFF,%xmm0,%xmm0
-.byte	102,15,58,15,192,1
+	palignr	$1,%xmm0,%xmm0
 
 
 
@@ -649,24 +649,24 @@ _vpaes_schedule_low_round:
 	psrld	$4,%xmm1
 	pand	%xmm9,%xmm0
 	movdqa	%xmm11,%xmm2
-.byte	102,15,56,0,208
+	pshufb	%xmm0,%xmm2
 	pxor	%xmm1,%xmm0
 	movdqa	%xmm10,%xmm3
-.byte	102,15,56,0,217
+	pshufb	%xmm1,%xmm3
 	pxor	%xmm2,%xmm3
 	movdqa	%xmm10,%xmm4
-.byte	102,15,56,0,224
+	pshufb	%xmm0,%xmm4
 	pxor	%xmm2,%xmm4
 	movdqa	%xmm10,%xmm2
-.byte	102,15,56,0,211
+	pshufb	%xmm3,%xmm2
 	pxor	%xmm0,%xmm2
 	movdqa	%xmm10,%xmm3
-.byte	102,15,56,0,220
+	pshufb	%xmm4,%xmm3
 	pxor	%xmm1,%xmm3
 	movdqa	%xmm13,%xmm4
-.byte	102,15,56,0,226
+	pshufb	%xmm2,%xmm4
 	movdqa	%xmm12,%xmm0
-.byte	102,15,56,0,195
+	pshufb	%xmm3,%xmm0
 	pxor	%xmm4,%xmm0
 
 
@@ -694,9 +694,9 @@ _vpaes_schedule_transform:
 	psrld	$4,%xmm1
 	pand	%xmm9,%xmm0
 	movdqa	(%r11),%xmm2
-.byte	102,15,56,0,208
+	pshufb	%xmm0,%xmm2
 	movdqa	16(%r11),%xmm0
-.byte	102,15,56,0,193
+	pshufb	%xmm1,%xmm0
 	pxor	%xmm2,%xmm0
 	ret
 
@@ -737,11 +737,11 @@ _vpaes_schedule_mangle:
 
 	addq	$16,%rdx
 	pxor	L$k_s63(%rip),%xmm4
-.byte	102,15,56,0,229
+	pshufb	%xmm5,%xmm4
 	movdqa	%xmm4,%xmm3
-.byte	102,15,56,0,229
+	pshufb	%xmm5,%xmm4
 	pxor	%xmm4,%xmm3
-.byte	102,15,56,0,229
+	pshufb	%xmm5,%xmm4
 	pxor	%xmm4,%xmm3
 
 	jmp	L$schedule_mangle_both
@@ -755,40 +755,40 @@ L$schedule_mangle_dec:
 	pand	%xmm9,%xmm4
 
 	movdqa	0(%r11),%xmm2
-.byte	102,15,56,0,212
+	pshufb	%xmm4,%xmm2
 	movdqa	16(%r11),%xmm3
-.byte	102,15,56,0,217
+	pshufb	%xmm1,%xmm3
 	pxor	%xmm2,%xmm3
-.byte	102,15,56,0,221
+	pshufb	%xmm5,%xmm3
 
 	movdqa	32(%r11),%xmm2
-.byte	102,15,56,0,212
+	pshufb	%xmm4,%xmm2
 	pxor	%xmm3,%xmm2
 	movdqa	48(%r11),%xmm3
-.byte	102,15,56,0,217
+	pshufb	%xmm1,%xmm3
 	pxor	%xmm2,%xmm3
-.byte	102,15,56,0,221
+	pshufb	%xmm5,%xmm3
 
 	movdqa	64(%r11),%xmm2
-.byte	102,15,56,0,212
+	pshufb	%xmm4,%xmm2
 	pxor	%xmm3,%xmm2
 	movdqa	80(%r11),%xmm3
-.byte	102,15,56,0,217
+	pshufb	%xmm1,%xmm3
 	pxor	%xmm2,%xmm3
-.byte	102,15,56,0,221
+	pshufb	%xmm5,%xmm3
 
 	movdqa	96(%r11),%xmm2
-.byte	102,15,56,0,212
+	pshufb	%xmm4,%xmm2
 	pxor	%xmm3,%xmm2
 	movdqa	112(%r11),%xmm3
-.byte	102,15,56,0,217
+	pshufb	%xmm1,%xmm3
 	pxor	%xmm2,%xmm3
 
 	addq	$-16,%rdx
 
 L$schedule_mangle_both:
 	movdqa	(%r8,%r10,1),%xmm1
-.byte	102,15,56,0,217
+	pshufb	%xmm1,%xmm3
 	addq	$-16,%r8
 	andq	$0x30,%r8
 	movdqu	%xmm3,(%rdx)
@@ -969,8 +969,8 @@ L$ctr32_loop:
 	movdqa	L$rev_ctr(%rip),%xmm1
 	movdqa	%xmm14,%xmm0
 	movdqa	%xmm15,%xmm6
-.byte	102,15,56,0,193
-.byte	102,15,56,0,241
+	pshufb	%xmm1,%xmm0
+	pshufb	%xmm1,%xmm6
 	call	_vpaes_encrypt_core_2x
 	movdqu	(%rdi),%xmm1
 	movdqu	16(%rdi),%xmm2

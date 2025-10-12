@@ -27,8 +27,8 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePayPaymentTiming.h"
-#include "ApplePayRecurringPaymentDateUnit.h"
+#include <WebCore/ApplePayPaymentTiming.h>
+#include <WebCore/ApplePayRecurringPaymentDateUnit.h>
 #include <optional>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>

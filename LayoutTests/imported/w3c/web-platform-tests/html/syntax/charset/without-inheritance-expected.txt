@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Invalid character '\u2a2f'
 layer at (0,0) size 785x1754
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x1754

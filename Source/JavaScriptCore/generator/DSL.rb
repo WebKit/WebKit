@@ -192,8 +192,6 @@ module DSL
         write_bytecode_dumper(bytecode_list, options[:bytecode_dumper_filename])
         write_bytecodes_init(options[:init_asm_filename], bytecode_list)
         write_indices(bytecode_list, options[:bytecode_indices_filename])
-        write_llint_generator(options[:wasm_llint_generator_filename], bytecode_list, @wasm_json)
-        write_wasm_init(options[:wasm_init_filename], bytecode_list, @wasm_json)
     end
 
     def self.write_bytecodes(bytecode_list, bytecodes_filename)
@@ -217,7 +215,6 @@ module DSL
 #include "BytecodeDumper.h"
 #include "Fits.h"
 #include "GetByIdMetadata.h"
-#include "GetByValHistory.h"
 #include "Instruction.h"
 #include "IterationModeMetadata.h"
 #include "JSPropertyNameEnumerator.h"
@@ -235,18 +232,10 @@ class BasicBlockLocation;
 
 void dumpBytecode(BytecodeDumperBase<JSInstructionStream>* dumper, JSInstructionStream::Offset, const JSInstruction*);
 
-#if ENABLE(WEBASSEMBLY)
-void dumpWasm(BytecodeDumperBase<WasmInstructionStream>* dumper, WasmInstructionStream::Offset, const WasmInstruction*);
-#endif // ENABLE(WEBASSEMBLY)
-
 EOF
 
             template.body = <<-EOF
 #{opcodes_filter { |s| s.config[:emit_in_structs_file] && !s.is_wasm? }.map(&:struct).join("\n")}
-
-#if ENABLE(WEBASSEMBLY)
-#{opcodes_filter { |s| s.config[:emit_in_structs_file] && s.is_wasm? }.map(&:struct).join("\n")}
-#endif // ENABLE(WEBASSEMBLY)
 
 EOF
             template.suffix = <<-EOF
@@ -264,6 +253,7 @@ EOF
 #include "config.h"
 #include "BytecodeDumper.h"
 
+#include "ButterflyInlines.h"
 #include "BytecodeStructs.h"
 
 namespace JSC {
@@ -271,10 +261,6 @@ EOF
 
             template.body = <<-EOF
 #{Opcode.dump_bytecode(:Bytecode, :JSOpcodeTraits, opcodes_filter { |s| s.config[:emit_in_structs_file] && !s.is_wasm? })}
-
-#if ENABLE(WEBASSEMBLY)
-#{Opcode.dump_bytecode(:Wasm, :WasmOpcodeTraits, opcodes_filter { |s| s.is_wasm? })}
-#endif // ENABLE(WEBASSEMBLY)
 EOF
             template.suffix = "} // namespace JSC"
         end
@@ -290,16 +276,6 @@ EOF
 
     def self.write_bytecodes_init(bytecodes_init_filename, *dependencies)
         write_init_asm(opcodes_for(:emit_in_asm_file), bytecodes_init_filename, *dependencies)
-    end
-
-    def self.write_wasm_init(wasm_init_filename, *dependencies)
-        write_init_asm(@wasm_section.opcodes, wasm_init_filename, *dependencies)
-    end
-
-    def self.write_llint_generator(generator_filename, *dependencies)
-        GeneratedFile::create(generator_filename, *dependencies) do |template|
-            template.body = Wasm::generate_llint_generator(@wasm_section)
-        end
     end
 
     def self.write_indices(bytecode_list, indices_filename)

@@ -3,10 +3,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// CHROMIUMFramebufferMixedSamplesTest
+// FramebufferMixedSamplesTest:
 //   Test CHROMIUM subset of NV_framebuffer_mixed_samples.
 //   This extension allows rendering to a framebuffer that has different
 //   sample counts for different render buffers (stencil, depth, color)
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "test_utils/ANGLETest.h"
 

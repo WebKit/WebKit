@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "MarkedBlock.h"
-#include "TinyBloomFilter.h"
+#include <JavaScriptCore/MarkedBlock.h>
+#include <JavaScriptCore/TinyBloomFilter.h>
 #include <wtf/HashSet.h>
 
 namespace JSC {

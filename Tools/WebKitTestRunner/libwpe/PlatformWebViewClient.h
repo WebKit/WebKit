@@ -31,7 +31,7 @@
 namespace WTR {
 
 class PlatformWebViewClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PlatformWebViewClient);
 public:
     virtual ~PlatformWebViewClient()
     {
@@ -40,6 +40,8 @@ public:
 
     virtual void addToWindow() = 0;
     virtual void removeFromWindow() = 0;
+    virtual WKSize size() = 0;
+    virtual void resize(WKSize) = 0;
     virtual void focus() { }
 
     virtual PlatformImage snapshot() = 0;

@@ -1,16 +1,16 @@
-/* Copyright (c) 2015, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2015 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <openssl/ssl.h>
 
@@ -24,12 +24,6 @@
 #include "../crypto/internal.h"
 #include "internal.h"
 
-
-#if defined(BORINGSSL_UNSAFE_FUZZER_MODE)
-#define FUZZER_MODE true
-#else
-#define FUZZER_MODE false
-#endif
 
 BSSL_NAMESPACE_BEGIN
 
@@ -109,8 +103,8 @@ UniquePtr<SSLAEADContext> SSLAEADContext::Create(
     OPENSSL_memcpy(merged_key + mac_key.size(), enc_key.data(), enc_key.size());
     OPENSSL_memcpy(merged_key + mac_key.size() + enc_key.size(),
                    fixed_iv.data(), fixed_iv.size());
-    enc_key = MakeConstSpan(merged_key,
-                            enc_key.size() + mac_key.size() + fixed_iv.size());
+    enc_key =
+        Span(merged_key, enc_key.size() + mac_key.size() + fixed_iv.size());
 
     // The |EVP_AEAD|'s per-encryption nonce, if any, is actually the CBC IV. It
     // must be generated randomly and prepended to the record.
@@ -134,7 +128,7 @@ UniquePtr<SSLAEADContext> SSLAEADContext::CreatePlaceholderForQUIC(
 }
 
 size_t SSLAEADContext::ExplicitNonceLen() const {
-  if (!FUZZER_MODE && variable_nonce_included_in_record_) {
+  if (!CRYPTO_fuzzer_mode_enabled() && variable_nonce_included_in_record_) {
     return variable_nonce_len_;
   }
   return 0;
@@ -142,7 +136,7 @@ size_t SSLAEADContext::ExplicitNonceLen() const {
 
 bool SSLAEADContext::SuffixLen(size_t *out_suffix_len, const size_t in_len,
                                const size_t extra_in_len) const {
-  if (is_null_cipher() || FUZZER_MODE) {
+  if (is_null_cipher() || CRYPTO_fuzzer_mode_enabled()) {
     *out_suffix_len = extra_in_len;
     return true;
   }
@@ -168,7 +162,7 @@ bool SSLAEADContext::CiphertextLen(size_t *out_len, const size_t in_len,
 
 size_t SSLAEADContext::MaxOverhead() const {
   return ExplicitNonceLen() +
-         (is_null_cipher() || FUZZER_MODE
+         (is_null_cipher() || CRYPTO_fuzzer_mode_enabled()
               ? 0
               : EVP_AEAD_max_overhead(EVP_AEAD_CTX_aead(ctx_.get())));
 }
@@ -179,7 +173,7 @@ size_t SSLAEADContext::MaxSealInputLen(size_t max_out) const {
     return 0;
   }
   max_out -= explicit_nonce_len;
-  if (is_null_cipher() || FUZZER_MODE) {
+  if (is_null_cipher() || CRYPTO_fuzzer_mode_enabled()) {
     return max_out;
   }
   // TODO(crbug.com/42290602): This should be part of |EVP_AEAD_CTX|.
@@ -226,13 +220,13 @@ Span<const uint8_t> SSLAEADContext::GetAdditionalData(
     storage[len++] = static_cast<uint8_t>((plaintext_len >> 8));
     storage[len++] = static_cast<uint8_t>(plaintext_len);
   }
-  return MakeConstSpan(storage, len);
+  return Span(storage, len);
 }
 
 bool SSLAEADContext::Open(Span<uint8_t> *out, uint8_t type,
                           uint16_t record_version, uint64_t seqnum,
                           Span<const uint8_t> header, Span<uint8_t> in) {
-  if (is_null_cipher() || FUZZER_MODE) {
+  if (is_null_cipher() || CRYPTO_fuzzer_mode_enabled()) {
     // Handle the initial NULL cipher.
     *out = in;
     return true;
@@ -321,7 +315,7 @@ bool SSLAEADContext::SealScatter(uint8_t *out_prefix, uint8_t *out,
     return false;
   }
 
-  if (is_null_cipher() || FUZZER_MODE) {
+  if (is_null_cipher() || CRYPTO_fuzzer_mode_enabled()) {
     // Handle the initial NULL cipher.
     OPENSSL_memmove(out, in, in_len);
     OPENSSL_memmove(out_suffix, extra_in, extra_in_len);

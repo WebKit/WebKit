@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "ScrollLogicalPosition.h"
-#include "ScrollOptions.h"
+#include <WebCore/ScrollLogicalPosition.h>
+#include <WebCore/ScrollOptions.h>
 
 namespace WebCore {
 

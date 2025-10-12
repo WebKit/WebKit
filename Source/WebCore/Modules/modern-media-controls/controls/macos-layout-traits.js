@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@ class MacOSLayoutTraits extends LayoutTraits
 {
     mediaControlsClass()
     {
-        if (this.isFullscreen)
+        if (this._mode === LayoutTraits.Mode.Fullscreen)
             return MacOSFullscreenMediaControls;
         return MacOSInlineMediaControls;
     }
@@ -89,8 +89,10 @@ class MacOSLayoutTraits extends LayoutTraits
 
     toString()
     {
-        const mode = this.isFullscreen ? "Fullscreen" : "Inline";
-        return `[MacOSLayoutTraits ${mode}]`;
+        if (this._mode === LayoutTraits.Mode.Fullscreen)
+            return `[MacOSLayoutTraits Fullscreen]`;
+        return `[MacOSLayoutTraits Inline]`;
+        
     }
 }
 

@@ -9,23 +9,31 @@
  */
 #include "test/pc/e2e/analyzer/video/analyzing_video_sink.h"
 
+#include <cstddef>
+#include <cstdlib>
+#include <map>
 #include <memory>
 #include <optional>
 #include <set>
+#include <string>
 #include <utility>
 
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
+#include "api/scoped_refptr.h"
 #include "api/test/metrics/metric.h"
 #include "api/test/metrics/metrics_logger.h"
 #include "api/test/pclf/media_configuration.h"
 #include "api/test/video/video_frame_writer.h"
+#include "api/test/video_quality_analyzer_interface.h"
 #include "api/units/timestamp.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "system_wrappers/include/clock.h"
+#include "test/pc/e2e/analyzer/video/analyzing_video_sinks_helper.h"
 #include "test/pc/e2e/analyzer/video/simulcast_dummy_buffer_helper.h"
 #include "test/pc/e2e/analyzer/video/video_dumping.h"
 #include "test/pc/e2e/metric_metadata_keys.h"
@@ -60,13 +68,14 @@ void AnalyzingVideoSink::UpdateSubscription(
     for (auto it = stream_sinks_.cbegin(); it != stream_sinks_.cend();) {
       std::optional<VideoResolution> new_requested_resolution =
           subscription_.GetResolutionForPeer(it->second.sender_peer_name);
-      if (!new_requested_resolution.has_value() ||
-          (*new_requested_resolution != it->second.resolution)) {
+      if (new_requested_resolution != it->second.resolution) {
         RTC_LOG(LS_INFO) << peer_name_ << ": Subscribed resolution for stream "
                          << it->first << " from " << it->second.sender_peer_name
                          << " was updated from "
                          << it->second.resolution.ToString() << " to "
-                         << new_requested_resolution->ToString()
+                         << (new_requested_resolution.has_value()
+                                 ? new_requested_resolution->ToString()
+                                 : "none")
                          << ". Repopulating all video sinks and recreating "
                          << "requested video writers";
         writers_to_close.insert(it->second.video_frame_writer);
@@ -111,20 +120,17 @@ void AnalyzingVideoSink::OnFrame(const VideoFrame& frame) {
   }
 }
 
-void AnalyzingVideoSink::LogMetrics(webrtc::test::MetricsLogger& metrics_logger,
+void AnalyzingVideoSink::LogMetrics(test::MetricsLogger& metrics_logger,
                                     absl::string_view test_case_name) const {
   if (report_infra_stats_) {
     MutexLock lock(&mutex_);
-    const std::string test_case(test_case_name);
-    // TODO(bugs.webrtc.org/14757): Remove kExperimentalTestNameMetadataKey.
     std::map<std::string, std::string> metadata = {
-        {MetricMetadataKey::kPeerMetadataKey, peer_name_},
-        {MetricMetadataKey::kExperimentalTestNameMetadataKey, test_case}};
+        {MetricMetadataKey::kPeerMetadataKey, peer_name_}};
     metrics_logger.LogMetric(
-        "analyzing_sink_processing_time_ms", test_case + "/" + peer_name_,
+        "analyzing_sink_processing_time_ms", test_case_name,
         stats_.analyzing_sink_processing_time_ms, test::Unit::kMilliseconds,
         test::ImprovementDirection::kSmallerIsBetter, metadata);
-    metrics_logger.LogMetric("scaling_tims_ms", test_case + "/" + peer_name_,
+    metrics_logger.LogMetric("scaling_tims_ms", test_case_name,
                              stats_.scaling_tims_ms, test::Unit::kMilliseconds,
                              test::ImprovementDirection::kSmallerIsBetter,
                              metadata);
@@ -140,8 +146,10 @@ VideoFrame AnalyzingVideoSink::ScaleVideoFrame(
     const VideoFrame& frame,
     const VideoResolution& required_resolution) {
   Timestamp processing_started = clock_->CurrentTime();
-  if (required_resolution.width() == static_cast<size_t>(frame.width()) &&
-      required_resolution.height() == static_cast<size_t>(frame.height())) {
+  if ((required_resolution.width() == static_cast<size_t>(frame.width()) &&
+       required_resolution.height() == static_cast<size_t>(frame.height())) ||
+      !required_resolution.IsRegular() ||
+      (required_resolution.width() == 0 || required_resolution.height() == 0)) {
     if (report_infra_stats_) {
       stats_.scaling_tims_ms.AddSample(
           (clock_->CurrentTime() - processing_started).ms<double>());
@@ -162,7 +170,7 @@ VideoFrame AnalyzingVideoSink::ScaleVideoFrame(
       << required_resolution.ToString()
       << "; actual resolution=" << frame.width() << "x" << frame.height();
 
-  rtc::scoped_refptr<I420Buffer> scaled_buffer(I420Buffer::Create(
+  scoped_refptr<I420Buffer> scaled_buffer(I420Buffer::Create(
       required_resolution.width(), required_resolution.height()));
   scaled_buffer->ScaleFrom(*frame.video_frame_buffer()->ToI420());
 

@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,36) size 784x21
         RenderText {#text} at (0,0) size 42x19
           text run at (0,0) width 42: "Crash "
-        RenderButton {BUTTON} at (41,1) size 98x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+        RenderButton {BUTTON} at (41,1) size 98x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
           RenderBlock (anonymous) at (12,3) size 74x14
             RenderText {#text} at (0,0) size 74x14
               text run at (0,0) width 74: "TR.cells = null"

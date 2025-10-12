@@ -30,6 +30,8 @@
 namespace WebKit {
 
 class BlobRegistryProxy final : public WebCore::BlobRegistry {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BlobRegistryProxy);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(BlobRegistryProxy);
 public:
     void registerInternalFileBlobURL(const URL&, Ref<WebCore::BlobDataFileReference>&&, const String& path, const String& contentType) final;
     void registerInternalBlobURL(const URL&, Vector<WebCore::BlobPart>&&, const String& contentType) final;

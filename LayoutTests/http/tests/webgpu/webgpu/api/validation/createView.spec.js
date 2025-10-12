@@ -1,6 +1,7 @@
 /**
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
-**/export const description = `createView validation tests.`;import { kUnitCaseParamsBuilder } from '../../../common/framework/params_builder.js';
+**/export const description = `createView validation tests.`;import { AllFeaturesMaxLimitsGPUTest, kResourceStates } from '../.././gpu_test.js';
+import { kUnitCaseParamsBuilder } from '../../../common/framework/params_builder.js';
 import { makeTestGroup } from '../../../common/framework/test_group.js';
 import { unreachable } from '../../../common/util/util.js';
 import {
@@ -20,7 +21,6 @@ import {
   getBlockInfoForTextureFormat,
   isTextureFormatPossiblyUsableAsRenderAttachment } from
 '../../format_info.js';
-import { kResourceStates } from '../../gpu_test.js';
 import {
   getTextureDimensionFromView,
   reifyTextureViewDescriptor,
@@ -28,9 +28,9 @@ import {
 '../../util/texture/base.js';
 import { reifyExtent3D } from '../../util/unions.js';
 
-import { AllFeaturesMaxLimitsValidationTest } from './validation_test.js';
+import * as vtu from './validation_test_utils.js';
 
-export const g = makeTestGroup(AllFeaturesMaxLimitsValidationTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 const kLevels = 6;
 
@@ -216,7 +216,7 @@ fn((t) => {
     arrayLayerCount
   } = t.params;
 
-  t.skipIfTextureViewDimensionNotSupportedDeprecated(viewDimension);
+  t.skipIfTextureViewDimensionNotSupported(viewDimension);
 
   const kWidth = 1 << kLevels - 1; // 32
   const textureDescriptor = {
@@ -331,7 +331,7 @@ desc(`createView should fail if the texture is invalid (but succeed if it is des
 paramsSubcasesOnly((u) => u.combine('state', kResourceStates)).
 fn((t) => {
   const { state } = t.params;
-  const texture = t.createTextureWithState(state);
+  const texture = vtu.createTextureWithState(t, state);
 
   t.expectValidationError(() => {
     texture.createView();

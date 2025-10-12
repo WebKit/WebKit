@@ -31,16 +31,15 @@ class AudioState : public RefCountInterface {
 
     // The audio mixer connected to active receive streams. One per
     // AudioState.
-    rtc::scoped_refptr<AudioMixer> audio_mixer;
+    scoped_refptr<AudioMixer> audio_mixer;
 
     // The audio processing module.
-    rtc::scoped_refptr<webrtc::AudioProcessing> audio_processing;
+    scoped_refptr<webrtc::AudioProcessing> audio_processing;
 
     // TODO(solenberg): Temporary: audio device module.
-    rtc::scoped_refptr<webrtc::AudioDeviceModule> audio_device_module;
+    scoped_refptr<webrtc::AudioDeviceModule> audio_device_module;
 
-    rtc::scoped_refptr<AsyncAudioProcessing::Factory>
-        async_audio_processing_factory;
+    scoped_refptr<AsyncAudioProcessing::Factory> async_audio_processing_factory;
   };
 
   virtual AudioProcessing* audio_processing() = 0;
@@ -59,8 +58,7 @@ class AudioState : public RefCountInterface {
 
   virtual void SetStereoChannelSwapping(bool enable) = 0;
 
-  static rtc::scoped_refptr<AudioState> Create(
-      const AudioState::Config& config);
+  static scoped_refptr<AudioState> Create(const AudioState::Config& config);
 
   ~AudioState() override {}
 };

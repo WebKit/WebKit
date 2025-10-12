@@ -1,5 +1,6 @@
-PASS Loaded iframe
+PASS Loaded iframes
 PASS color.top is "rgb(255, 100, 0)"
+PASS color.bottom is "rgb(0, 100, 250)"
 PASS successfullyParsed is true
 
 TEST COMPLETE

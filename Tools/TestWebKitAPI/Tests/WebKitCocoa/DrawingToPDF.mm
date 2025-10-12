@@ -25,18 +25,16 @@
 
 #import "config.h"
 
-#if USE(PDFKIT_FOR_TESTING)
+#if HAVE(PDFKIT)
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestCocoaImageAndCocoaColor.h"
 #import "TestPDFDocument.h"
 #import "TestWKWebView.h"
-#import <WebCore/Color.h>
 #import <WebKit/WKPDFConfiguration.h>
 #import <WebKit/WKPreferencesPrivate.h>
-#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFeature.h>
-#import <wtf/text/TextStream.h>
 
 namespace TestWebKitAPI {
 
@@ -44,21 +42,21 @@ TEST(DrawingToPDF, GradientIntoPDF)
 {
     static bool didTakeSnapshot;
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
     [webView synchronouslyLoadHTMLString:@"<style>body { margin: 0 } div { width: 100px; height: 100px; border: 2px solid black; background: linear-gradient(blue, blue 90%, green); print-color-adjust: exact; }</style> <div></div>"];
 
-    auto configuration = adoptNS([[WKPDFConfiguration alloc] init]);
+    RetainPtr configuration = adoptNS([[WKPDFConfiguration alloc] init]);
     [configuration setRect:NSMakeRect(0, 0, 100, 100)];
 
     [webView createPDFWithConfiguration:configuration.get() completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
         EXPECT_NULL(error);
-        auto document = TestPDFDocument::createFromData(pdfSnapshotData);
-        EXPECT_EQ(document->pageCount(), 1u);
-        auto page = document->page(0);
-        EXPECT_NE(page, nullptr);
+        RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:pdfSnapshotData]);
+        EXPECT_EQ([document pageCount], 1);
+        RetainPtr page = [document pageAtIndex:0];
+        EXPECT_NE(page.get(), nil);
 
-        EXPECT_TRUE(page->colorAtPoint(50, 50) == WebCore::Color::blue);
+        EXPECT_TRUE(Util::compareColors([page colorAtPoint:CGPointMake(50, 50)], [CocoaColor blueColor]));
 
         didTakeSnapshot = true;
     }];
@@ -70,26 +68,26 @@ TEST(DrawingToPDF, BackgroundClipText)
 {
     static bool didTakeSnapshot;
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
     [webView synchronouslyLoadHTMLString:@"<style>@font-face { font-family: Ahem; src: url(Ahem.ttf); }"
         "body { margin: 0 }"
         "div { font-family: Ahem; font-size: 20px; padding: 10px; color: transparent; background: blue; background-clip: text; print-color-adjust: exact; }</style>"
         "<div>A</div>"];
 
-    auto configuration = adoptNS([[WKPDFConfiguration alloc] init]);
+    RetainPtr configuration = adoptNS([[WKPDFConfiguration alloc] init]);
     [configuration setRect:NSMakeRect(0, 0, 40, 40)];
 
     [webView createPDFWithConfiguration:configuration.get() completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
         EXPECT_NULL(error);
-        auto document = TestPDFDocument::createFromData(pdfSnapshotData);
-        EXPECT_EQ(document->pageCount(), 1u);
-        auto page = document->page(0);
-        EXPECT_NE(page, nullptr);
+        RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:pdfSnapshotData]);
+        EXPECT_EQ([document pageCount], 1);
+        RetainPtr page = [document pageAtIndex:0];
+        EXPECT_NE(page.get(), nil);
 
-        EXPECT_TRUE(page->colorAtPoint(2, 2) == WebCore::Color::white);
+        EXPECT_TRUE(Util::compareColors([page colorAtPoint:CGPointMake(2, 2)], [CocoaColor whiteColor]));
         // We can't test for blue because the colors are affected by colorspace conversions.
-        EXPECT_TRUE(page->colorAtPoint(25, 25) != WebCore::Color::white);
+        EXPECT_TRUE(!Util::compareColors([page colorAtPoint:CGPointMake(25, 25)], [CocoaColor whiteColor]));
 
         didTakeSnapshot = true;
     }];
@@ -112,26 +110,26 @@ TEST(DrawingToPDF, SiteIsolationFormControl)
 {
     static bool didTakeSnapshot;
 
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     enableSiteIsolation(configuration.get());
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width'><body bgcolor=#00ff00><input type='checkbox'><label> Checkbox</label></body>"];
 
     [webView createPDFWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
         EXPECT_NULL(error);
-        auto document = TestPDFDocument::createFromData(pdfSnapshotData);
-        EXPECT_EQ(document->pageCount(), 1u);
-        auto page = document->page(0);
-        EXPECT_NE(page, nullptr);
-        EXPECT_TRUE(CGRectEqualToRect(page->bounds(), CGRectMake(0, 0, 800, 600)));
+        RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:pdfSnapshotData]);
+        EXPECT_EQ([document pageCount], 1);
+        RetainPtr page = [document pageAtIndex:0];
+        EXPECT_NE(page.get(), nil);
+        EXPECT_TRUE(CGRectEqualToRect([page bounds], CGRectMake(0, 0, 800, 600)));
 
-        EXPECT_EQ(page->characterCount(), 8u);
-        EXPECT_EQ(page->text()[0], 'C');
-        EXPECT_EQ(page->text()[7], 'x');
+        EXPECT_EQ([page characterCount], 8);
+        EXPECT_EQ([[page text] characterAtIndex:0], 'C');
+        EXPECT_EQ([[page text] characterAtIndex:7], 'x');
 
         // The entire page should be green. Pick a point in the middle to check.
-        EXPECT_TRUE(page->colorAtPoint(400, 300) == WebCore::Color::green);
+        EXPECT_TRUE(Util::compareColors([page colorAtPoint:CGPointMake(400, 300)], [CocoaColor greenColor]));
 
         didTakeSnapshot = true;
     }];
@@ -141,4 +139,4 @@ TEST(DrawingToPDF, SiteIsolationFormControl)
 
 } // namespace TestWebKitAPI
 
-#endif // USE(PDFKIT_FOR_TESTING)
+#endif // HAVE(PDFKIT)

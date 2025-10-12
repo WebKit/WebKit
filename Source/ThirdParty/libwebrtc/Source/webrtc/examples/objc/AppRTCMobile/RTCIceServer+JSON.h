@@ -13,6 +13,7 @@
 @interface RTC_OBJC_TYPE (RTCIceServer)
 (JSON)
 
-    + (RTC_OBJC_TYPE(RTCIceServer) *)serverFromJSONDictionary : (NSDictionary *)dictionary;
+    + (RTC_OBJC_TYPE(RTCIceServer) *)serverFromJSONDictionary
+    : (NSDictionary *)dictionary;
 
 @end

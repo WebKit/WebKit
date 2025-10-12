@@ -25,16 +25,16 @@
 
 #pragma once
 
-#include "BaselineJITRegisters.h"
-#include "CallFrame.h"
-#include "CallFrameShuffleData.h"
-#include "CallLinkInfoBase.h"
-#include "CallMode.h"
-#include "CodeLocation.h"
-#include "CodeOrigin.h"
-#include "CodeSpecializationKind.h"
-#include "PolymorphicCallStubRoutine.h"
-#include "WriteBarrier.h"
+#include <JavaScriptCore/BaselineJITRegisters.h>
+#include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/CallFrameShuffleData.h>
+#include <JavaScriptCore/CallLinkInfoBase.h>
+#include <JavaScriptCore/CallMode.h>
+#include <JavaScriptCore/CodeLocation.h>
+#include <JavaScriptCore/CodeOrigin.h>
+#include <JavaScriptCore/CodeSpecializationKind.h>
+#include <JavaScriptCore/PolymorphicCallStubRoutine.h>
+#include <JavaScriptCore/WriteBarrier.h>
 #include <wtf/ScopedLambda.h>
 #include <wtf/SentinelLinkedList.h>
 

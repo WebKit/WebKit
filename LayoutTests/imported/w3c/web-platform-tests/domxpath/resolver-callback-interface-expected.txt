@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: [object Object]
-CONSOLE MESSAGE: [object Object]
-CONSOLE MESSAGE: TypeError: 'lookupNamespaceURI' property of callback interface should be callable
-CONSOLE MESSAGE: TypeError: 'lookupNamespaceURI' property of callback interface should be callable
 
 PASS callable resolver
 PASS callable resolver: result is not cached

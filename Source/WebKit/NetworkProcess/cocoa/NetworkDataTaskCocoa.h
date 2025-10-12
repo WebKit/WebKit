@@ -84,6 +84,8 @@ public:
     std::optional<WebCore::PageIdentifier> pageID() const final { return m_pageID; }
     std::optional<WebPageProxyIdentifier> webPageProxyID() const final { return m_webPageProxyID; }
 
+    bool isInitiatedByDedicatedWorker() const final { return m_isInitiatedByDedicatedWorker; }
+
     String description() const override;
 
     void setH2PingCallback(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&) override;

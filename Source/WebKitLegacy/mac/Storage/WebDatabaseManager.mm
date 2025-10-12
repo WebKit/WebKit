@@ -36,6 +36,7 @@
 #import <WebCore/DatabaseTracker.h>
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "WebDatabaseManagerInternal.h"
@@ -208,7 +209,7 @@ static bool isFileHidden(NSString *file)
 {
     DatabaseTracker::emptyDatabaseFilesRemovalTaskWillBeScheduled();
     
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+    dispatch_async(globalDispatchQueueSingleton(0, 0), ^{
         [WebDatabaseManager removeEmptyDatabaseFiles];
         DatabaseTracker::emptyDatabaseFilesRemovalTaskDidFinish();
     });

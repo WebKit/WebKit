@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT ordering when intercept() handler has sync and async blocks Test timed out
+PASS ordering when intercept() handler has sync and async blocks
 

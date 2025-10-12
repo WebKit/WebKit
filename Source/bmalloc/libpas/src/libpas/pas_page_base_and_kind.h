@@ -27,6 +27,7 @@
 #define PAS_PAGE_BASE_AND_KIND_H
 
 #include "pas_page_base.h"
+#include "pas_zero_memory.h"
 
 PAS_BEGIN_EXTERN_C;
 

@@ -103,7 +103,7 @@ struct ListState {
     FTPTime     nowFTPTime;
     char        listStyle;         /* LISTing style */
     bool        parsedOne;         /* returned anything yet? */
-    std::array<LChar, 84> carryBuffer;   /* for VMS multiline */
+    std::array<Latin1Character, 84> carryBuffer;   /* for VMS multiline */
     int         carryBufferLength; /* length of name in carry_buf */
     int64_t     numLines;          /* number of lines seen */
 };
@@ -137,14 +137,14 @@ struct ListResult
     bool valid;
     FTPEntryType type;        
     
-    std::span<LChar> filename;
-    std::span<LChar> linkname;
+    std::span<Latin1Character> filename;
+    std::span<Latin1Character> linkname;
     
     String fileSize;      
     FTPTime modifiedTime; 
     bool caseSensitive; // file system is definitely case insensitive
 };
 
-FTPEntryType parseOneFTPLine(std::span<LChar> inputLine, ListState&, ListResult&);
+FTPEntryType parseOneFTPLine(std::span<Latin1Character> inputLine, ListState&, ListResult&);
                  
 } // namespace WebCore

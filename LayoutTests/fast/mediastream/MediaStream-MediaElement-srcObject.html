@@ -25,6 +25,7 @@
                 shouldNotThrow("streamObj = audio.srcObject;");
                 shouldBe('streamObj', 'null');
                 finishJSTest();
+                stream.getTracks().forEach(track => track.stop());
             }
 
             function gotStream(s)

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'pointertype_log.innerHTML = pointertypes.length ?
     pointertypes.join(",") : "(none)"')
 Deleting touch-action elem after pointerdown has no effect
 

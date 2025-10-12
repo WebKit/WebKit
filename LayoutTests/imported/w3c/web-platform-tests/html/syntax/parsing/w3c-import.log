@@ -103,6 +103,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/math-parse01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/math-parse03.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/meta-inhead-insertion-mode.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/misnested-form-in-template.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/named-character-references-data.js
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/named-character-references.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/no-doctype-name.html

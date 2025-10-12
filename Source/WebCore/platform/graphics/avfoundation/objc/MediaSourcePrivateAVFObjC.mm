@@ -78,6 +78,8 @@ MediaSourcePrivateAVFObjC::~MediaSourcePrivateAVFObjC()
 void MediaSourcePrivateAVFObjC::setPlayer(MediaPlayerPrivateInterface* player)
 {
     m_player = downcast<MediaPlayerPrivateMediaSourceAVFObjC>(player);
+    for (RefPtr sourceBuffer : m_sourceBuffers)
+        downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->setAudioVideoRenderer(m_player->audioVideoRenderer());
 }
 
 MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const ContentType& contentType, const MediaSourceConfiguration& configuration, RefPtr<SourceBufferPrivate>& outPrivate)
@@ -97,7 +99,7 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
     parser->setLogger(m_logger, m_logIdentifier);
 #endif
 
-    auto newSourceBuffer = SourceBufferPrivateAVFObjC::create(*this, parser.releaseNonNull());
+    auto newSourceBuffer = SourceBufferPrivateAVFObjC::create(*this, parser.releaseNonNull(), platformPlayer()->audioVideoRenderer());
 #if ENABLE(ENCRYPTED_MEDIA)
     newSourceBuffer->setCDMInstance(m_cdmInstance.get());
 #endif
@@ -180,12 +182,6 @@ bool MediaSourcePrivateAVFObjC::hasSelectedVideo() const
     });
 }
 
-void MediaSourcePrivateAVFObjC::willSeek()
-{
-    for (auto* sourceBuffer : m_activeSourceBuffers)
-        downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->willSeek();
-}
-
 FloatSize MediaSourcePrivateAVFObjC::naturalSize() const
 {
     FloatSize result;
@@ -205,49 +201,11 @@ void MediaSourcePrivateAVFObjC::hasSelectedVideoChanged(SourceBufferPrivateAVFOb
         setSourceBufferWithSelectedVideo(&sourceBuffer);
 }
 
-void MediaSourcePrivateAVFObjC::setVideoRenderer(VideoMediaSampleRenderer* renderer)
-{
-    if (m_sourceBufferWithSelectedVideo)
-        m_sourceBufferWithSelectedVideo->setVideoRenderer(renderer);
-}
-
-void MediaSourcePrivateAVFObjC::stageVideoRenderer(VideoMediaSampleRenderer* renderer)
-{
-    if (m_sourceBufferWithSelectedVideo)
-        m_sourceBufferWithSelectedVideo->stageVideoRenderer(renderer);
-}
-
-void MediaSourcePrivateAVFObjC::videoRendererWillReconfigure(VideoMediaSampleRenderer& renderer)
-{
-    if (m_sourceBufferWithSelectedVideo)
-        m_sourceBufferWithSelectedVideo->videoRendererWillReconfigure(renderer);
-}
-
-void MediaSourcePrivateAVFObjC::videoRendererDidReconfigure(VideoMediaSampleRenderer& renderer)
-{
-    if (m_sourceBufferWithSelectedVideo)
-        m_sourceBufferWithSelectedVideo->videoRendererDidReconfigure(renderer);
-}
-
-void MediaSourcePrivateAVFObjC::flushActiveSourceBuffersIfNeeded()
+void MediaSourcePrivateAVFObjC::flushAndReenqueueActiveVideoSourceBuffers()
 {
     for (auto* sourceBuffer : m_activeSourceBuffers)
-        downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->flushIfNeeded();
+        downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->flushAndReenqueueVideo();
 }
-
-#if PLATFORM(IOS_FAMILY)
-void MediaSourcePrivateAVFObjC::applicationWillResignActive()
-{
-    for (auto* sourceBuffer : m_activeSourceBuffers)
-        downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->applicationWillResignActive();
-}
-
-void MediaSourcePrivateAVFObjC::applicationDidBecomeActive()
-{
-    for (auto* sourceBuffer : m_activeSourceBuffers)
-        downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->applicationDidBecomeActive();
-}
-#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
 void MediaSourcePrivateAVFObjC::cdmInstanceAttached(CDMInstance& instance)
@@ -256,7 +214,7 @@ void MediaSourcePrivateAVFObjC::cdmInstanceAttached(CDMInstance& instance)
         return;
 
     ASSERT(!m_cdmInstance);
-    m_cdmInstance = &instance;
+    m_cdmInstance = instance;
     for (auto& sourceBuffer : m_sourceBuffers)
         sourceBuffer->setCDMInstance(&instance);
 }
@@ -294,12 +252,12 @@ void MediaSourcePrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectio
 void MediaSourcePrivateAVFObjC::setSourceBufferWithSelectedVideo(SourceBufferPrivateAVFObjC* sourceBuffer)
 {
     if (m_sourceBufferWithSelectedVideo)
-        m_sourceBufferWithSelectedVideo->setVideoRenderer(nullptr);
+        m_sourceBufferWithSelectedVideo->setVideoRenderer(false);
 
     m_sourceBufferWithSelectedVideo = sourceBuffer;
 
     if (auto player = platformPlayer(); m_sourceBufferWithSelectedVideo && player)
-        m_sourceBufferWithSelectedVideo->setVideoRenderer(player->layerOrVideoRenderer().get());
+        m_sourceBufferWithSelectedVideo->setVideoRenderer(true);
 }
 
 #if !RELEASE_LOG_DISABLED

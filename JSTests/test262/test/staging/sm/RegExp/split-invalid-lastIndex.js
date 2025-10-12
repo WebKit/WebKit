@@ -2,17 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-RegExp-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  RegExp.prototype[@@split] should handle if lastIndex is out of bound.
+info: bugzilla.mozilla.org/show_bug.cgi?id=1263851
 esid: pending
 ---*/
-var BUGNUMBER = 1263851;
-var summary = "RegExp.prototype[@@split] should handle if lastIndex is out of bound.";
-
-print(BUGNUMBER + ": " + summary);
 
 var myRegExp = {
     get constructor() {
@@ -37,4 +31,3 @@ var result = RegExp.prototype[Symbol.split].call(myRegExp, "abcde");;
 assert.sameValue(result.length, 2);
 assert.sameValue(result[0], "");
 assert.sameValue(result[1], "");
-

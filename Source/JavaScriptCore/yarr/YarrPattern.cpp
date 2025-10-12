@@ -286,7 +286,7 @@ public:
                 // Nothing to do - no canonical equivalents.
                 break;
             case CanonicalizeSet: {
-                UChar ch;
+                char16_t ch;
                 for (auto* set = canonicalCharacterSetInfo(info->value, m_canonicalMode); (ch = *set); ++set)
                     addSorted(ch);
                 break;
@@ -1561,14 +1561,6 @@ public:
                 m_alternative->m_terms.append(PatternTerm::ForwardReference(m_flags));
                 return;
             }
-
-            if (parenthesisMatchDirection() == Backward
-                && term.type == PatternTerm::Type::ParentheticalAssertion
-                && term.matchDirection() == Backward
-                && subpatternId >= term.parentheses.subpatternId) {
-                m_alternative->m_terms.append(PatternTerm::ForwardReference(m_flags));
-                return;
-            }
         }
 
         m_alternative->m_terms.append(PatternTerm(subpatternId, m_flags));
@@ -1594,14 +1586,6 @@ public:
                 ASSERT((term.type == PatternTerm::Type::ParenthesesSubpattern) || (term.type == PatternTerm::Type::ParentheticalAssertion));
 
                 if ((term.type == PatternTerm::Type::ParenthesesSubpattern) && term.capture() && (subpatternId == term.parentheses.subpatternId)) {
-                    m_alternative->m_terms.append(PatternTerm::ForwardReference(m_flags));
-                    return;
-                }
-
-                if (parenthesisMatchDirection() == Backward
-                    && term.type == PatternTerm::Type::ParentheticalAssertion
-                    && term.matchDirection() == Backward
-                    && subpatternId >= term.parentheses.subpatternId) {
                     m_alternative->m_terms.append(PatternTerm::ForwardReference(m_flags));
                     return;
                 }
@@ -1705,12 +1689,14 @@ public:
         ASSERT(m_alternative->m_terms.size());
 
         if (!max) {
-            // If we're removing a ForwardReference, we need to remove the corresponding references in
-            // m_forwardReferencesInLookbehind, or else we have a bad pointer.
-            // We know that the ForwardReference is the atom we just pushed, so it has to be at the end
-            // of m_forwardReferencesInLookbehind.
-            if (parenthesisMatchDirection() == Backward && m_alternative->m_terms.last().type == PatternTerm::Type::ForwardReference)
-                m_forwardReferencesInLookbehind.removeLast();
+            // In a case of backwards parentheses matching, we may have a forward reference that has
+            // been quantified with {0}, meaning that we can elide it. We should check if we added an
+            // UnresolvedForwardReference object for this term, and if so, pop it.
+            if (parenthesisMatchDirection() == Backward && m_forwardReferencesInLookbehind.size()) {
+                UnresolvedForwardReference& mostRecentForwardReference = m_forwardReferencesInLookbehind.last();
+                if (mostRecentForwardReference.term() == &m_alternative->lastTerm())
+                    m_forwardReferencesInLookbehind.removeLast();
+            }
             m_alternative->removeLastTerm();
             return;
         }
@@ -2229,7 +2215,7 @@ public:
                     return false;
                 if (term.m_matchDirection != MatchDirection::Forward)
                     return false;
-                builder.append(static_cast<UChar>(term.patternCharacter));
+                builder.append(static_cast<char16_t>(term.patternCharacter));
             }
             String atom = builder.toString();
             if (atom.length() > 0) {
@@ -2609,7 +2595,7 @@ void indentForNestingLevel(PrintStream& out, unsigned nestingDepth)
         out.print("  ");
 }
 
-void dumpUChar32(PrintStream& out, char32_t c)
+void dumpChar32(PrintStream& out, char32_t c)
 {
     if (c >= ' ' && c <= 0xff)
         out.printf("'%c'", static_cast<char>(c));
@@ -2675,7 +2661,7 @@ void dumpCharacterClass(PrintStream& out, YarrPattern* pattern, CharacterClass* 
             for (size_t i = 0; i < matchesSize; ++i) {
                 if (i)
                     out.print(",");
-                dumpUChar32(out, matches[i]);
+                dumpChar32(out, matches[i]);
             }
             out.print(")");
         }
@@ -2694,9 +2680,9 @@ void dumpCharacterClass(PrintStream& out, YarrPattern* pattern, CharacterClass* 
                     out.print(",");
                 CharacterRange range = ranges[i];
                 out.print("(");
-                dumpUChar32(out, range.begin);
+                dumpChar32(out, range.begin);
                 out.print("..");
-                dumpUChar32(out, range.end);
+                dumpChar32(out, range.end);
                 out.print(")");
             }
             out.print(")");
@@ -2786,11 +2772,11 @@ void PatternTerm::dump(PrintStream& out, YarrPattern* thisPattern, unsigned nest
         out.printf("character ");
         out.printf("inputPosition %u ", inputPosition);
         if (thisPattern->ignoreCase() && isASCIIAlpha(patternCharacter)) {
-            dumpUChar32(out, toASCIIUpper(patternCharacter));
+            dumpChar32(out, toASCIIUpper(patternCharacter));
             out.print("/");
-            dumpUChar32(out, toASCIILower(patternCharacter));
+            dumpChar32(out, toASCIILower(patternCharacter));
         } else
-            dumpUChar32(out, patternCharacter);
+            dumpChar32(out, patternCharacter);
         dumpQuantifier(out);
         if (quantityType != QuantifierType::FixedCount)
             out.print(",frame location ", frameLocation);

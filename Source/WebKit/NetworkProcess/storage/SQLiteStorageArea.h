@@ -79,6 +79,7 @@ private:
     };
     ASCIILiteral statementString(StatementType) const;
     WebCore::SQLiteStatementAutoResetScope cachedStatement(StatementType);
+    CheckedPtr<WebCore::SQLiteDatabase> checkedDatabase() const;
     Expected<String, StorageError> getItem(const String& key);
     Expected<String, StorageError> getItemFromDatabase(const String& key);
     enum class IsDatabaseDeleted : bool { No, Yes };

@@ -27,9 +27,9 @@
 
 #if ENABLE(NOTIFICATIONS)
 
-#include "ActiveDOMCallback.h"
-#include "CallbackResult.h"
-#include "Notification.h"
+#include <WebCore/ActiveDOMCallback.h>
+#include <WebCore/CallbackResult.h>
+#include <WebCore/Notification.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 

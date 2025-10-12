@@ -28,15 +28,15 @@
 #include "CalculationCategory.h"
 #include "Chrome.h"
 #include "ComputedStyleDependencies.h"
-#include "Document.h"
-#include "DocumentInlines.h"
 #include "DocumentLoader.h"
+#include "DocumentPage.h"
+#include "DocumentQuirks.h"
+#include "DocumentView.h"
+#include "FrameDestructionObserverInlines.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "MediaQueryEvaluator.h"
-#include "Page.h"
-#include "Quirks.h"
-#include "RenderElementInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
 #include "ScreenProperties.h"
@@ -46,9 +46,6 @@
 #include <wtf/Function.h>
 
 namespace WebCore::MQ {
-
-MediaProgressProviding::~MediaProgressProviding() = default;
-
 namespace Features {
 
 struct BooleanSchema : public FeatureSchema {
@@ -71,7 +68,7 @@ private:
     ValueFunction valueFunction;
 };
 
-struct IntegerSchema : public FeatureSchema, public MediaProgressProviding {
+struct IntegerSchema : public FeatureSchema {
     using ValueFunction = Function<int(const FeatureEvaluationContext&)>;
 
     IntegerSchema(const AtomString& name, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
@@ -87,34 +84,11 @@ struct IntegerSchema : public FeatureSchema, public MediaProgressProviding {
         return evaluateIntegerFeature(feature, valueFunction(context), context.conversionData);
     }
 
-    // MediaProgressProviding conformance
-
-    AtomString name() const override
-    {
-        return static_cast<const FeatureSchema*>(this)->name;
-    }
-
-    Calculation::Category category() const override
-    {
-        return Calculation::Category::Integer;
-    }
-
-    void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const override
-    {
-        if (this->dependencies.contains(MediaQueryDynamicDependency::Viewport))
-            dependencies.viewportDimensions = true;
-    }
-
-    double valueInCanonicalUnits(const FeatureEvaluationContext& context) const override
-    {
-        return valueFunction(context);
-    }
-
 private:
     ValueFunction valueFunction;
 };
 
-struct NumberSchema : public FeatureSchema, public MediaProgressProviding {
+struct NumberSchema : public FeatureSchema {
     using ValueFunction = Function<double(const FeatureEvaluationContext&)>;
 
     NumberSchema(const AtomString& name, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
@@ -130,34 +104,11 @@ struct NumberSchema : public FeatureSchema, public MediaProgressProviding {
         return evaluateNumberFeature(feature, valueFunction(context), context.conversionData);
     }
 
-    // MediaProgressProviding conformance
-
-    AtomString name() const override
-    {
-        return static_cast<const FeatureSchema*>(this)->name;
-    }
-
-    Calculation::Category category() const override
-    {
-        return Calculation::Category::Number;
-    }
-
-    void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const override
-    {
-        if (this->dependencies.contains(MediaQueryDynamicDependency::Viewport))
-            dependencies.viewportDimensions = true;
-    }
-
-    double valueInCanonicalUnits(const FeatureEvaluationContext& context) const override
-    {
-        return valueFunction(context);
-    }
-
 private:
     ValueFunction valueFunction;
 };
 
-struct LengthSchema : public FeatureSchema, public MediaProgressProviding {
+struct LengthSchema : public FeatureSchema {
     using ValueFunction = Function<LayoutUnit(const FeatureEvaluationContext&)>;
 
     LengthSchema(const AtomString& name, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
@@ -171,29 +122,6 @@ struct LengthSchema : public FeatureSchema, public MediaProgressProviding {
     EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
     {
         return evaluateLengthFeature(feature, valueFunction(context), context.conversionData);
-    }
-
-    // MediaProgressProviding conformance
-
-    AtomString name() const override
-    {
-        return static_cast<const FeatureSchema*>(this)->name;
-    }
-
-    Calculation::Category category() const override
-    {
-        return Calculation::Category::Length;
-    }
-
-    void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const override
-    {
-        if (this->dependencies.contains(MediaQueryDynamicDependency::Viewport))
-            dependencies.viewportDimensions = true;
-    }
-
-    double valueInCanonicalUnits(const FeatureEvaluationContext& context) const override
-    {
-        return valueFunction(context);
     }
 
 private:
@@ -220,7 +148,7 @@ private:
     ValueFunction valueFunction;
 };
 
-struct ResolutionSchema : public FeatureSchema, public MediaProgressProviding {
+struct ResolutionSchema : public FeatureSchema {
     using ValueFunction = Function<float(const FeatureEvaluationContext&)>;
 
     ResolutionSchema(const AtomString& name, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
@@ -234,29 +162,6 @@ struct ResolutionSchema : public FeatureSchema, public MediaProgressProviding {
     EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
     {
         return evaluateResolutionFeature(feature, valueFunction(context), context.conversionData);
-    }
-
-    // MediaProgressProviding conformance
-
-    AtomString name() const override
-    {
-        return static_cast<const FeatureSchema*>(this)->name;
-    }
-
-    Calculation::Category category() const override
-    {
-        return Calculation::Category::Resolution;
-    }
-
-    void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const override
-    {
-        if (this->dependencies.contains(MediaQueryDynamicDependency::Viewport))
-            dependencies.viewportDimensions = true;
-    }
-
-    double valueInCanonicalUnits(const FeatureEvaluationContext& context) const override
-    {
-        return valueFunction(context);
     }
 
 private:
@@ -1138,21 +1043,6 @@ Vector<const FeatureSchema*> allSchemas()
 #if ENABLE(DARK_MODE_CSS)
         &prefersColorScheme(),
 #endif
-    };
-}
-
-Vector<const MediaProgressProviding*> allMediaProgressProvidingSchemas()
-{
-    return {
-        &colorFeatureSchema(),
-        &colorIndexFeatureSchema(),
-        &deviceHeightFeatureSchema(),
-        &devicePixelRatioFeatureSchema(),
-        &deviceWidthFeatureSchema(),
-        &heightFeatureSchema(),
-        &monochromeFeatureSchema(),
-        &resolutionFeatureSchema(),
-        &widthFeatureSchema(),
     };
 }
 

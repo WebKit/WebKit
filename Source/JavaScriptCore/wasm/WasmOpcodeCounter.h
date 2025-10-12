@@ -33,7 +33,7 @@ namespace JSC {
 namespace Wasm {
 
 class WasmOpcodeCounter {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WasmOpcodeCounter);
     using NumberOfRegisteredOpcodes = size_t;
     using CounterSize = size_t;
 

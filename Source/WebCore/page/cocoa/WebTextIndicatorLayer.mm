@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,7 +103,7 @@ static bool indicatorWantsFadeIn(const WebCore::TextIndicator& indicator)
 
     RefPtr<WebCore::NativeImage> contentsImage;
     WebCore::FloatSize contentsImageLogicalSize { 1, 1 };
-    if (auto* contentImage = _textIndicator->contentImage()) {
+    if (RefPtr contentImage = _textIndicator->contentImage()) {
         contentsImageLogicalSize = contentImage->size();
         contentsImageLogicalSize.scale(1 / _textIndicator->contentImageScaleFactor());
         if (indicatorWantsContentCrossfade(*_textIndicator) && _textIndicator->contentImageWithHighlight())

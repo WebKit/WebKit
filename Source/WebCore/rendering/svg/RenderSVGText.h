@@ -23,7 +23,6 @@
 #pragma once
 
 #include "AffineTransform.h"
-#include "RenderObjectInlines.h"
 #include "RenderSVGBlock.h"
 #include "SVGBoundingBoxComputation.h"
 #include "SVGTextChunk.h"
@@ -92,15 +91,9 @@ private:
     bool hitTestInlineChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const final;
-    VisiblePosition positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
+    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
-    bool requiresLayer() const override
-    {
-        if (document().settings().layerBasedSVGEngineEnabled())
-            return true;
-        return false;
-    }
-
+    bool requiresLayer() const override;
     void layout() override;
 
     void computePerCharacterLayoutInformation();

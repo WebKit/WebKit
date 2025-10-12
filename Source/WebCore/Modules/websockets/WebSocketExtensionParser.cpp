@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc.  All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -54,7 +54,7 @@ static bool isSeparator(char character)
     return WTF::contains(separatorCharacters, character);
 }
 
-static bool isSpaceOrTab(LChar character)
+static bool isSpaceOrTab(Latin1Character character)
 {
     return character == ' ' || character == '\t';
 }

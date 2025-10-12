@@ -47,7 +47,8 @@ public:
     void setSinkAudioCallback(SinkAudioDataCallback&&);
 
 private:
-    std::pair<unsigned long, SinkAudioDataCallback> m_sinkAudioDataCallback;
+    void handleSample(GRefPtr<GstSample>&&);
+    std::pair<GStreamerCapturer::SinkSignalsHolder, SinkAudioDataCallback> m_sinkAudioDataCallback;
 };
 
 } // namespace WebCore

@@ -10,6 +10,10 @@
 #ifndef TEST_VIDEO_CODEC_SETTINGS_H_
 #define TEST_VIDEO_CODEC_SETTINGS_H_
 
+#include <cstdint>
+
+#include "api/video/video_codec_type.h"
+#include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
 
 namespace webrtc {

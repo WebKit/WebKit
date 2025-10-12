@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "YarrFlags.h"
+#include <JavaScriptCore/YarrFlags.h>
 #include <wtf/OptionSet.h>
 #include <wtf/PackedRefPtr.h>
 #include <wtf/text/StringHash.h>

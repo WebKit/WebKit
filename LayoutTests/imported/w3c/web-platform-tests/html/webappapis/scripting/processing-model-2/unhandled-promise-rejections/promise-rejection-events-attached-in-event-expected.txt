@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: e
 
 PASS Attaching a handler in unhandledrejection should not trigger rejectionhandled.
 

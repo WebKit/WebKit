@@ -50,7 +50,7 @@ public:
     void clear();
 
     struct Entry {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Entry);
         Entry(WebCore::ResourceResponse&&, PrivateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&&);
         Entry(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
 

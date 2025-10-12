@@ -237,9 +237,10 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
     m_initialMagnification = page->pageScaleFactor();
     m_initialMagnificationOrigin = { };
 
+    Ref drawingArea = *page->drawingArea();
     auto pageScaleFactor = page->pageScaleFactor();
-    page->drawingArea()->adjustTransientZoom(pageScaleFactor, scaledMagnificationOrigin(FloatPoint(), pageScaleFactor), m_magnificationOrigin);
-    page->drawingArea()->commitTransientZoom(targetMagnification, targetOrigin);
+    drawingArea->adjustTransientZoom(pageScaleFactor, scaledMagnificationOrigin(FloatPoint(), pageScaleFactor), m_magnificationOrigin);
+    drawingArea->commitTransientZoom(targetMagnification, targetOrigin);
 
     m_lastSmartMagnificationUnscaledTargetRect = unscaledTargetRect;
     m_lastSmartMagnificationOrigin = gestureLocationInViewCoordinates;
@@ -384,12 +385,12 @@ void ViewGestureController::applyDebuggingPropertiesToSwipeViews()
 {
     RetainPtr filter = [CAFilter filterWithType:kCAFilterColorInvert];
     [m_swipeLayer setFilters:@[ filter.get() ]];
-    [m_swipeLayer setBackgroundColor:[NSColor blueColor].CGColor];
-    [m_swipeLayer setBorderColor:[NSColor yellowColor].CGColor];
+    [m_swipeLayer setBackgroundColor:RetainPtr { [NSColor blueColor].CGColor }.get()];
+    [m_swipeLayer setBorderColor:RetainPtr { [NSColor yellowColor].CGColor }.get()];
     [m_swipeLayer setBorderWidth:4];
 
-    [m_swipeSnapshotLayer setBackgroundColor:[NSColor greenColor].CGColor];
-    [m_swipeSnapshotLayer setBorderColor:[NSColor redColor].CGColor];
+    [m_swipeSnapshotLayer setBackgroundColor:RetainPtr { [NSColor greenColor].CGColor }.get()];
+    [m_swipeSnapshotLayer setBorderColor:RetainPtr { [NSColor redColor].CGColor }.get()];
     [m_swipeSnapshotLayer setBorderWidth:2];
 }
 
@@ -436,10 +437,10 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     RetainPtr snapshotLayerParent = determineSnapshotLayerParent();
     bool geometryIsFlippedToRoot = layerGeometryFlippedToRoot(snapshotLayerParent.get());
 
-    RetainPtr<CGColorRef> backgroundColor = CGColorGetConstantColor(kCGColorWhite);
-    if (RefPtr<ViewSnapshot> snapshot = targetItem->snapshot()) {
+    RetainPtr backgroundColor = CGColorGetConstantColor(kCGColorWhite);
+    if (RefPtr snapshot = targetItem->snapshot()) {
         if (shouldUseSnapshotForSize(*snapshot, swipeArea.size(), obscuredContentInsets))
-            [m_swipeSnapshotLayer setContents:snapshot->asLayerContents()];
+            [m_swipeSnapshotLayer setContents:snapshot->asProtectedLayerContents().get()];
 
         Color coreColor = snapshot->backgroundColor();
         if (coreColor.isValid())
@@ -458,7 +459,12 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     [m_swipeSnapshotLayer setContentsGravity:kCAGravityTopLeft];
     [m_swipeSnapshotLayer setContentsScale:deviceScaleFactor];
     [m_swipeSnapshotLayer setAnchorPoint:CGPointZero];
-    [m_swipeSnapshotLayer setFrame:CGRectMake(0, 0, swipeArea.width() - obscuredContentInsets.left(), swipeArea.height() - obscuredContentInsets.top())];
+    [m_swipeSnapshotLayer setFrame:CGRectMake(
+        obscuredContentInsets.left(),
+        obscuredContentInsets.bottom(),
+        swipeArea.width() - obscuredContentInsets.right() - obscuredContentInsets.left(),
+        swipeArea.height() - obscuredContentInsets.top() - obscuredContentInsets.bottom()
+    )];
     [m_swipeSnapshotLayer setName:@"Gesture Swipe Snapshot Layer"];
     [m_swipeSnapshotLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
 
@@ -482,7 +488,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
         FloatRect dimmingRect(FloatPoint(), page->viewSize());
         m_swipeDimmingLayer = adoptNS([[CALayer alloc] init]);
         [m_swipeDimmingLayer setName:@"Gesture Swipe Dimming Layer"];
-        [m_swipeDimmingLayer setBackgroundColor:[NSColor blackColor].CGColor];
+        [m_swipeDimmingLayer setBackgroundColor:RetainPtr { [NSColor blackColor].CGColor }.get()];
         [m_swipeDimmingLayer setOpacity:swipeOverlayDimmingOpacity];
         [m_swipeDimmingLayer setAnchorPoint:CGPointZero];
         [m_swipeDimmingLayer setFrame:dimmingRect];
@@ -657,16 +663,33 @@ void ViewGestureController::reset()
     resetState();
 }
 
-bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirection)
+bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirection direction)
 {
-    notImplemented();
-    return false;
+    RefPtr item = itemForSwipeDirection(direction);
+    if (!item)
+        return false;
+
+    beginSwipeGesture(item.get(), direction);
+    return true;
 }
 
-bool ViewGestureController::completeSimulatedSwipeInDirectionForTesting(SwipeDirection)
+bool ViewGestureController::completeSimulatedSwipeInDirectionForTesting(SwipeDirection direction)
 {
-    notImplemented();
-    return false;
+    RefPtr item = itemForSwipeDirection(direction);
+    if (!item)
+        return false;
+
+    willEndSwipeGesture(*item, false);
+    endSwipeGesture(item.get(), false);
+    return true;
+}
+
+WebBackForwardList* ViewGestureController::backForwardListForNavigation() const
+{
+    if (RefPtr page = m_webPageProxy.get())
+        return &page->backForwardList();
+
+    return nullptr;
 }
 
 } // namespace WebKit

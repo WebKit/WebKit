@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,8 +56,8 @@ private:
     void alignInlineLevelBoxes(LineBox&, InlineLayoutUnit lineBoxLogicalHeight) const;
     InlineLayoutUnit adjustForAnnotationIfNeeded(LineBox&, InlineLayoutUnit lineBoxHeight) const;
     std::optional<InlineLevelBox::AscentAndDescent> layoutBoundsForInlineBoxSubtree(const LineBox::InlineLevelBoxList& nonRootInlineLevelBoxes, size_t inlineBoxIndex) const;
-    enum class IsInlineLeveBoxAlignment : bool { No, Yes };
-    InlineLayoutUnit logicalTopOffsetFromParentBaseline(const InlineLevelBox&, const InlineLevelBox& parentInlineBox, IsInlineLeveBoxAlignment = IsInlineLeveBoxAlignment::No) const;
+    enum class IsInlineLevelBoxAlignment : bool { No, Yes };
+    InlineLayoutUnit logicalTopOffsetFromParentBaseline(const InlineLevelBox&, const InlineLevelBox& parentInlineBox, IsInlineLevelBoxAlignment = IsInlineLevelBoxAlignment::No) const;
 
     const InlineFormattingUtils& formattingUtils() const { return formattingContext().formattingUtils(); }
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }

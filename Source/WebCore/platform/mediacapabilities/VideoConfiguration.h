@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "ColorGamut.h"
-#include "HdrMetadataType.h"
-#include "TransferFunction.h"
+#include <WebCore/ColorGamut.h>
+#include <WebCore/HdrMetadataType.h>
+#include <WebCore/TransferFunction.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

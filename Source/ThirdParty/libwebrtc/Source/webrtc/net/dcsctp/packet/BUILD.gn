@@ -39,6 +39,7 @@ rtc_library("tlv_trait") {
 rtc_source_set("data") {
   deps = [
     "../../../rtc_base:checks",
+    "../../../rtc_base:strong_alias",
     "../common:internal_types",
     "../public:types",
   ]
@@ -159,8 +160,11 @@ rtc_library("chunk") {
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
     "../../../rtc_base:stringutils",
+    "../../../rtc_base:strong_alias",
+    "../common:internal_types",
     "../common:math",
     "../packet:bounded_io",
+    "../public:types",
     "//third_party/abseil-cpp/absl/algorithm:container",
     "//third_party/abseil-cpp/absl/strings:string_view",
   ]
@@ -211,6 +215,7 @@ rtc_library("chunk_validators") {
     ":chunk",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
+    "//third_party/abseil-cpp/absl/algorithm:container",
   ]
   sources = [
     "chunk_validators.cc",
@@ -247,6 +252,7 @@ if (rtc_include_tests) {
       ":chunk",
       ":chunk_validators",
       ":crc32c",
+      ":data",
       ":error_cause",
       ":parameter",
       ":sctp_packet",

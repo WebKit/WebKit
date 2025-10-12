@@ -1,4 +1,4 @@
-; Copyright (C) 2010-2024 Apple Inc. All rights reserved.
+; Copyright (C) 2010-2025 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -212,7 +212,7 @@
                     iokit-external-method
                     iokit-external-trap)
                 (allow iokit-external-method
-                    (iokit-method-number 1 2 114 115 120 132 133 144))))
+                    (iokit-method-number 1 2 3 4 5 6 114 115 120 132 133 144))))
         ;; else
         (allow IOKIT_OPEN_USER_CLIENT
             (iokit-user-client-class "AppleIntelMEUserClient")))
@@ -768,7 +768,13 @@
             (GPU_PROCESS_IOKIT_DEFAULT_FILTER_OPERATION (with telemetry)
                 iokit-async-external-method
                 iokit-external-method
-                iokit-external-trap)))
+                iokit-external-trap)
+            ;; Intel
+            (when (equal? (param "CPU") "x86_64")
+                (allow iokit-external-method
+                    (iokit-method-number 3 4 5)))
+            (allow iokit-external-method
+                (iokit-method-number 0 1))))
     ;; else
     (allow IOKIT_OPEN_USER_CLIENT
         (iokit-user-client-class "AppleUpstreamUserClient")))
@@ -1042,11 +1048,11 @@
     (global-name "com.apple.coremedia.endpointremotecontrolsession.xpc")
     (global-name "com.apple.coremedia.routediscoverer.xpc")
     (global-name "com.apple.coremedia.samplebufferconsumer.xpc")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000
+#if PLATFORM(MAC)
     (global-name "com.apple.coremedia.shaphelper.xpc")
 #endif
     (global-name "com.apple.coremedia.volumecontroller.xpc")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000
+#if PLATFORM(MAC)
     (global-name "com.apple.timesync.expositor")
     (global-name "com.apple.timesync.manager")
     (global-name "com.apple.timesync.ptp.manager")
@@ -1110,6 +1116,7 @@
             (subpath "/private/tmp/AudioCapture")
             (subpath "/tmp/AudioCapture"))
         (allow file-read* (subpath "/usr/local/lib"))
+        (allow file-map-executable (literal "/usr/local/lib/libAudioDiagnostics.dylib"))
         (allow file-read-data (subpath "/AppleInternal/Library/Audio"))))
 
 (deny mach-lookup (with no-report)
@@ -1287,6 +1294,7 @@
         task_get_special_port_from_user
         task_info_from_user
         task_policy_set
+        task_restartable_ranges_register
         task_restartable_ranges_synchronize
         task_set_special_port
         thread_get_state_to_user

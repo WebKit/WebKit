@@ -23,9 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://wicg.github.io/cookie-store/#dictdef-cookielistitem
-
-typedef double DOMHighResTimeStamp;
+// https://cookiestore.spec.whatwg.org/#dictdef-cookielistitem
 
 [
     JSGenerateToJSObject,
@@ -33,9 +31,4 @@ typedef double DOMHighResTimeStamp;
 ] dictionary CookieListItem {
     USVString name;
     USVString value;
-    [EnabledBySetting=CookieStoreAPIExtendedAttributesEnabled] USVString? domain;
-    [EnabledBySetting=CookieStoreAPIExtendedAttributesEnabled] USVString path;
-    [EnabledBySetting=CookieStoreAPIExtendedAttributesEnabled] DOMHighResTimeStamp? expires;
-    [EnabledBySetting=CookieStoreAPIExtendedAttributesEnabled] boolean secure = false;
-    [EnabledBySetting=CookieStoreAPIExtendedAttributesEnabled] CookieSameSite sameSite = "strict";
 };

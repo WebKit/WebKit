@@ -11,12 +11,20 @@ enum XRLayerLayout {
   "stereo-top-bottom"
 };
 
+enum XRLayerQuality {
+  "default",
+  "text-optimized",
+  "graphics-optimized"
+};
+
 [Exposed=Window] interface XRCompositionLayer : XRLayer {
   readonly attribute XRLayerLayout layout;
 
   attribute boolean blendTextureSourceAlpha;
-  attribute boolean? chromaticAberrationCorrection;
+  attribute boolean forceMonoPresentation;
+  attribute float opacity;
   readonly attribute unsigned long mipLevels;
+  attribute XRLayerQuality quality;
 
   readonly attribute boolean needsRedraw;
 
@@ -30,6 +38,7 @@ enum XRLayerLayout {
 
   readonly attribute boolean ignoreDepthValues;
   attribute float? fixedFoveation;
+  attribute XRRigidTransform? deltaPose;
 };
 
 [Exposed=Window] interface XRQuadLayer : XRCompositionLayer {
@@ -83,9 +92,15 @@ enum XRLayerLayout {
 [Exposed=Window] interface XRWebGLSubImage : XRSubImage {
   [SameObject] readonly attribute WebGLTexture colorTexture;
   [SameObject] readonly attribute WebGLTexture? depthStencilTexture;
+  [SameObject] readonly attribute WebGLTexture? motionVectorTexture;
+
   readonly attribute unsigned long? imageIndex;
-  readonly attribute unsigned long textureWidth;
-  readonly attribute unsigned long textureHeight;
+  readonly attribute unsigned long colorTextureWidth;
+  readonly attribute unsigned long colorTextureHeight;
+  readonly attribute unsigned long? depthStencilTextureWidth;
+  readonly attribute unsigned long? depthStencilTextureHeight;
+  readonly attribute unsigned long? motionVectorTextureWidth;
+  readonly attribute unsigned long? motionVectorTextureHeight;
 };
 
 enum XRTextureType {
@@ -98,6 +113,7 @@ dictionary XRProjectionLayerInit {
   GLenum colorFormat = 0x1908; // RGBA
   GLenum depthFormat = 0x1902; // DEPTH_COMPONENT
   double scaleFactor = 1.0;
+  boolean clearOnAccess = true;
 };
 
 dictionary XRLayerInit {
@@ -109,6 +125,7 @@ dictionary XRLayerInit {
   required unsigned long viewPixelHeight;
   XRLayerLayout layout = "mono";
   boolean isStatic = false;
+  boolean clearOnAccess = true;
 };
 
 dictionary XRQuadLayerInit : XRLayerInit {
@@ -143,6 +160,7 @@ dictionary XRCubeLayerInit : XRLayerInit {
   constructor(XRSession session, XRWebGLRenderingContext context);
 
   readonly attribute double nativeProjectionScaleFactor;
+  readonly attribute boolean usesDepthValues;
 
   XRProjectionLayer createProjectionLayer(optional XRProjectionLayerInit init = {});
   XRQuadLayer createQuadLayer(optional XRQuadLayerInit init = {});
@@ -152,6 +170,8 @@ dictionary XRCubeLayerInit : XRLayerInit {
 
   XRWebGLSubImage getSubImage(XRCompositionLayer layer, XRFrame frame, optional XREye eye = "none");
   XRWebGLSubImage getViewSubImage(XRProjectionLayer layer, XRView view);
+
+  undefined foveateBoundTexture(GLenum target, float fixed_foveation);
 };
 
 dictionary XRMediaLayerInit {

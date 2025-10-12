@@ -2,29 +2,18 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  async/await containing escapes
+info: bugzilla.mozilla.org/show_bug.cgi?id=1315815
 esid: pending
 ---*/
-var BUGNUMBER = 1315815;
-var summary = "async/await containing escapes";
 
-print(BUGNUMBER + ": " + summary);
-
-// Using "eval" as the argument name is fugly, but it means evals below are
-// *direct* evals, and so their effects in the unescaped case won't extend
-// past each separate |test| call (as would happen if we used a different name
-// that made each eval into an indirect eval, affecting code in the global
-// scope).
-function test(code, eval)
+function test(code)
 {
   var unescaped = code.replace("###", "async");
-  var escaped = code.replace("###", "\\u0061");
+  var escaped = code.replace("###", "\\u0061sync");
 
-  assertThrowsInstanceOf(() => eval(escaped), SyntaxError);
+  assert.throws(SyntaxError, () => eval(escaped));
   eval(unescaped);
 }
 
@@ -39,13 +28,8 @@ test("var x = ### (y) => {}", eval);
 test("({ ### x() {} })", eval);
 test("var x = ### function f() {}", eval);
 
-if (typeof parseModule === "function")
-  test("export default ### function f() {}", parseModule);
-
-assertThrowsInstanceOf(() => eval("async await => 1;"),
-                       SyntaxError);
-assertThrowsInstanceOf(() => eval("async aw\\u0061it => 1;"),
-                       SyntaxError);
+assert.throws(SyntaxError, () => eval("async await => 1;"));
+assert.throws(SyntaxError, () => eval("async aw\\u0061it => 1;"));
 
 var async = 0;
 assert.sameValue(\u0061sync, 0);
@@ -60,4 +44,3 @@ assert.sameValue(z, 42);
 
 var w = async(obj)=>{};
 assert.sameValue(typeof w, "function");
-

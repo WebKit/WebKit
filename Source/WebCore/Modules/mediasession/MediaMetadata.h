@@ -27,10 +27,10 @@
 
 #if ENABLE(MEDIA_SESSION)
 
-#include "CachedImageClient.h"
-#include "CachedResourceHandle.h"
 #include "MediaMetadataInit.h"
-#include "MediaSession.h"
+#include <WebCore/CachedImageClient.h>
+#include <WebCore/CachedResourceHandle.h>
+#include <WebCore/MediaSession.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>

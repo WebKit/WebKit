@@ -31,7 +31,7 @@
 #import <objc/runtime.h>
 #import <wtf/cf/CFURLExtras.h>
 
-static inline Class wkNSURLClass()
+static inline Class wkNSURLClassSingleton()
 {
     static dispatch_once_t once;
     static Class wkNSURLClass;
@@ -47,7 +47,7 @@ WKURLRef WKURLCreateWithCFURL(CFURLRef cfURL)
         return nullptr;
 
     // Since WKNSURL is an internal class with no subclasses, we can do a simple equality check.
-    if (object_getClass((__bridge NSURL *)cfURL) == wkNSURLClass())
+    if (object_getClass((__bridge NSURL *)cfURL) == wkNSURLClassSingleton())
         return WebKit::toAPI(RefPtr { downcast<API::URL>(&[(WKNSURL *)(__bridge NSURL *)CFRetain(cfURL) _apiObject]) }.get());
 
     // FIXME: Why is it OK to ignore the base URL in the CFURL here?

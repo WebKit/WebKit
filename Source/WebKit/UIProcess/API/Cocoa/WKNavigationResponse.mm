@@ -39,7 +39,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKNavigationResponse.class, self))
         return;
 
-    _navigationResponse->~NavigationResponse();
+    RefPtr { _navigationResponse.get() }->~NavigationResponse();
 
     [super dealloc];
 }
@@ -83,7 +83,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (WKFrameInfo *)_navigationInitiatingFrame
 {
-    return wrapper(_navigationResponse->navigationInitiatingFrame());
+    return wrapper(RefPtr { _navigationResponse.get() }->navigationInitiatingFrame());
 }
 
 - (WKNavigation *)_navigation

@@ -193,9 +193,6 @@ const Type* concretize(const Type* type, TypeStore& types)
         [&](const Pointer&) -> const Type* {
             return type;
         },
-        [&](const Bottom&) -> const Type* {
-            return type;
-        },
         [&](const Atomic&) -> const Type* {
             return type;
         },

@@ -11,24 +11,16 @@
 #define NET_DCSCTP_TX_STREAM_SCHEDULER_H_
 
 #include <algorithm>
-#include <cstdint>
-#include <deque>
-#include <map>
+#include <cstddef>
 #include <memory>
 #include <optional>
-#include <queue>
 #include <set>
-#include <string>
-#include <utility>
 
-#include "absl/algorithm/container.h"
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
+#include "api/units/timestamp.h"
 #include "net/dcsctp/packet/chunk/idata_chunk.h"
 #include "net/dcsctp/packet/sctp_packet.h"
-#include "net/dcsctp/public/dcsctp_message.h"
-#include "net/dcsctp/public/dcsctp_socket.h"
 #include "net/dcsctp/public/types.h"
 #include "net/dcsctp/tx/send_queue.h"
 #include "rtc_base/containers/flat_set.h"

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Options.h"
-#include "VM.h"
+#include <JavaScriptCore/Options.h>
+#include <JavaScriptCore/VM.h>
 
 namespace JSC {
 namespace Wasm {

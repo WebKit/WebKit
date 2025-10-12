@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSFunction.h"
+#include <JavaScriptCore/JSFunction.h>
 
 namespace JSC {
 
@@ -52,6 +52,8 @@ public:
 
     DECLARE_EXPORT_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
     JS_EXPORT_PRIVATE static JSNativeStdFunction* create(VM&, JSGlobalObject*, unsigned length, const String& name, NativeStdFunction&&, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
@@ -61,7 +63,6 @@ public:
 private:
     JSNativeStdFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, NativeStdFunction&&);
     void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name);
-    DECLARE_VISIT_CHILDREN;
 
     NativeStdFunction m_function;
 };

@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "WebGPUObjectDescriptorBase.h"
-#include "WebGPUQuerySet.h"
-#include "WebGPURenderPassColorAttachment.h"
-#include "WebGPURenderPassDepthStencilAttachment.h"
-#include "WebGPURenderPassTimestampWrites.h"
+#include <WebCore/WebGPUObjectDescriptorBase.h>
+#include <WebCore/WebGPUQuerySet.h>
+#include <WebCore/WebGPURenderPassColorAttachment.h>
+#include <WebCore/WebGPURenderPassDepthStencilAttachment.h>
+#include <WebCore/WebGPURenderPassTimestampWrites.h>
 #include <optional>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>

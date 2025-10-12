@@ -44,10 +44,17 @@
  */
 
 #include <cmath>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
 #include <memory>
+#include <string>
 
+#include "api/array_view.h"
+#include "modules/include/module_fec_types.h"
 #include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
 #include "modules/rtp_rtcp/test/testFec/average_residual_loss_xor_codes.h"
+#include "rtc_base/checks.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
@@ -693,7 +700,7 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
                                      int num_media_packets,
                                      int num_fec_packets,
                                      int mask_bytes_fec_packet,
-                                     CodeType code_type) {
+                                     CodeType /* code_type */) {
     for (int i = 0; i < num_fec_packets; i++) {
       for (int j = 0; j < num_media_packets; j++) {
         const uint8_t byte_mask =
@@ -723,7 +730,7 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
       for (int num_fec_packets = 1; num_fec_packets <= num_media_packets;
            num_fec_packets++) {
         memset(packet_mask.get(), 0, num_media_packets * mask_bytes_fec_packet);
-        rtc::ArrayView<const uint8_t> mask =
+        ArrayView<const uint8_t> mask =
             mask_table.LookUp(num_media_packets, num_fec_packets);
         memcpy(packet_mask.get(), &mask[0], mask.size());
         // Convert to bit mask.

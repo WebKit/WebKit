@@ -71,7 +71,7 @@ public:
 
     // EventTarget interface
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::SourceBufferList; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final;
 
 private:
     explicit SourceBufferList(ScriptExecutionContext*);

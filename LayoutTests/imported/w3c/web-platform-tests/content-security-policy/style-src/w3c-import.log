@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/import-style-allowed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/import-style-blocked.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/injected-inline-style-allowed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/injected-inline-style-blocked.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/inline-style-allowed-while-cloning-objects.sub.html
@@ -31,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-hash-default-src-allowed.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-imported-style-allowed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-imported-style-blocked.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-injected-inline-style-allowed-with-content-hash.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-injected-inline-style-allowed.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-injected-inline-style-blocked.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-injected-stylesheet-allowed.sub.html
@@ -42,6 +45,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-inline-style-nonce-allowed.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-inline-style-nonce-blocked-error-event.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-inline-style-nonce-blocked.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-inline-style-with-csstext.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-multiple-policies-multiple-hashing-algorithms.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-multiple-policies-multiple-hashing-algorithms.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-none-blocked.html

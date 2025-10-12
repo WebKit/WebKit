@@ -14,6 +14,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <optional>
+
 #include "absl/strings/string_view.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -105,6 +107,9 @@ inline constexpr size_t kScalabilityModeCount =
 
 RTC_EXPORT
 absl::string_view ScalabilityModeToString(ScalabilityMode scalability_mode);
+RTC_EXPORT
+absl::string_view ScalabilityModeToString(
+    std::optional<ScalabilityMode> scalability_mode);
 
 }  // namespace webrtc
 

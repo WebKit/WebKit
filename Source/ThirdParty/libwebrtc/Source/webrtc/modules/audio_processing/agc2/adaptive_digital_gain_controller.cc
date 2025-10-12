@@ -12,6 +12,8 @@
 
 #include <algorithm>
 
+#include "api/audio/audio_processing.h"
+#include "api/audio/audio_view.h"
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_processing/agc2/agc2_common.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
@@ -96,8 +98,8 @@ float ComputeGainChangeThisFrameDb(float target_gain_db,
   if (!gain_increase_allowed) {
     target_gain_difference_db = std::min(target_gain_difference_db, 0.0f);
   }
-  return rtc::SafeClamp(target_gain_difference_db, -max_gain_decrease_db,
-                        max_gain_increase_db);
+  return SafeClamp(target_gain_difference_db, -max_gain_decrease_db,
+                   max_gain_increase_db);
 }
 
 }  // namespace

@@ -11,6 +11,7 @@
 var context = new AudioContext();
 promise_test(async (t) => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+    t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     const audioTrack = stream.getAudioTracks()[0];
 
     assert_true(await doHumAnalysis(stream, true), "Heard hum from track");

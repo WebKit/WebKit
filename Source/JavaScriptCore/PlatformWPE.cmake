@@ -1,21 +1,8 @@
 include(GLib.cmake)
 include(inspector/remote/GLib.cmake)
 
-list(APPEND JavaScriptCore_LIBRARIES
-    ${GLIB_LIBRARIES}
-    ${GLIB_GMODULE_LIBRARIES}
-)
-
-list(APPEND JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
-    ${GLIB_INCLUDE_DIRS}
-)
-
 list(APPEND JavaScriptCore_PRIVATE_DEFINITIONS
     PKGLIBDIR="${CMAKE_INSTALL_FULL_LIBDIR}/wpe-webkit-${WPE_API_VERSION}"
-)
-
-list(APPEND JavaScriptCore_PRIVATE_DEFINITIONS
-    PKGDATADIR="${CMAKE_INSTALL_FULL_DATADIR}/wpe-webkit-${WPE_API_VERSION}"
 )
 
 install(FILES ${JavaScriptCore_INSTALLED_HEADERS}

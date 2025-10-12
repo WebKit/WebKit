@@ -11,7 +11,8 @@ import {
   isDepthTextureFormat,
   isStencilTextureFormat } from
 '../../../format_info.js';
-import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
+import * as ttu from '../../../texture_test_utils.js';
 import { TexelView } from '../../../util/texture/texel_view.js';var
 
 QuadAngle = /*#__PURE__*/function (QuadAngle) {QuadAngle[QuadAngle["Flat"] = 0] = "Flat";QuadAngle[QuadAngle["TiltedX"] = 1] = "TiltedX";return QuadAngle;}(QuadAngle || {});
@@ -30,7 +31,7 @@ QuadAngle = /*#__PURE__*/function (QuadAngle) {QuadAngle[QuadAngle["Flat"] = 0] 
 // depthBias = 0.25 / (2 ** (-2 - 23)) = 8388608.
 const kPointTwoFiveBiasForPointTwoFiveZOnFloat = 8388608;
 
-class DepthBiasTest extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {
+class DepthBiasTest extends AllFeaturesMaxLimitsGPUTest {
   runDepthBiasTestInternal(
   depthFormat,
   {
@@ -172,7 +173,12 @@ class DepthBiasTest extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {
 
     const expColor = { Depth: _expectedDepth };
     const expTexelView = TexelView.fromTexelsAsColors(depthFormat, (_coords) => expColor);
-    this.expectTexelViewComparisonIsOkInTexture({ texture: depthTexture }, expTexelView, [1, 1]);
+    ttu.expectTexelViewComparisonIsOkInTexture(
+      this,
+      { texture: depthTexture },
+      expTexelView,
+      [1, 1]
+    );
   }
 
   runDepthBiasTestFor24BitFormat(
@@ -207,7 +213,12 @@ class DepthBiasTest extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {
       A: _expectedColor[3]
     };
     const expTexelView = TexelView.fromTexelsAsColors(renderTargetFormat, (_coords) => expColor);
-    this.expectTexelViewComparisonIsOkInTexture({ texture: renderTarget }, expTexelView, [1, 1]);
+    ttu.expectTexelViewComparisonIsOkInTexture(
+      this,
+      { texture: renderTarget },
+      expTexelView,
+      [1, 1]
+    );
   }
 
   createRenderPipelineForTest(

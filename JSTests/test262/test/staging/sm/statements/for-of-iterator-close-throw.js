@@ -2,9 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
+includes: [sm/assertThrowsValue.js]
 description: |
   pending
 esid: pending
@@ -16,12 +14,17 @@ function test() {
     var finallyEntered = 0;
     var finallyEnteredExpected = 0;
     var iterable = {};
-    iterable[Symbol.iterator] = makeIterator({
-        ret: function() {
-            returnCalled++;
-            throw 42;
-        }
-    });
+    iterable[Symbol.iterator] = function() {
+        return {
+            next() {
+                return { done: false };
+            },
+            return() {
+                returnCalled++;
+                throw 42;
+            }
+        };
+    };
 
     // inner try cannot catch IteratorClose throwing
     assertThrowsValue(function() {

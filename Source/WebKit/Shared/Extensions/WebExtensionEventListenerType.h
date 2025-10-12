@@ -40,6 +40,9 @@ enum class WebExtensionEventListenerType : uint8_t {
     CommandsOnChanged,
     CommandsOnCommand,
     CookiesOnChanged,
+#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
+    DeclarativeNetRequestOnRuleMatchedDebug,
+#endif
     DevToolsElementsPanelOnSelectionChanged,
     DevToolsExtensionPanelOnHidden,
     DevToolsExtensionPanelOnSearch,
@@ -76,6 +79,8 @@ enum class WebExtensionEventListenerType : uint8_t {
     TabsOnReplaced,
     TabsOnUpdated,
     TestOnMessage,
+    TestOnTestStarted,
+    TestOnTestFinished,
     WebNavigationOnBeforeNavigate,
     WebNavigationOnCommitted,
     WebNavigationOnCompleted,
@@ -110,6 +115,10 @@ inline String toAPIString(WebExtensionEventListenerType eventType)
         return "onCommand"_s;
     case WebExtensionEventListenerType::CookiesOnChanged:
         return "onChanged"_s;
+#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
+    case WebExtensionEventListenerType::DeclarativeNetRequestOnRuleMatchedDebug:
+        return "onRuleMatchedDebug"_s;
+#endif
     case WebExtensionEventListenerType::DevToolsElementsPanelOnSelectionChanged:
         return "onSelectionChanged"_s;
     case WebExtensionEventListenerType::DevToolsExtensionPanelOnHidden:
@@ -182,6 +191,10 @@ inline String toAPIString(WebExtensionEventListenerType eventType)
         return "onUpdated"_s;
     case WebExtensionEventListenerType::TestOnMessage:
         return "onMessage"_s;
+    case WebExtensionEventListenerType::TestOnTestStarted:
+        return "onTestStarted"_s;
+    case WebExtensionEventListenerType::TestOnTestFinished:
+        return "onTestFinished"_s;
     case WebExtensionEventListenerType::WebNavigationOnBeforeNavigate:
         return "onBeforeNavigate"_s;
     case WebExtensionEventListenerType::WebNavigationOnCommitted:

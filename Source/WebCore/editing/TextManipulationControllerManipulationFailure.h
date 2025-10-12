@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FrameIdentifier.h"
-#include "TextManipulationItem.h"
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/TextManipulationItem.h>
 
 namespace WebCore {
 

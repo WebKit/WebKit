@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "WebGPUDepthStencilState.h"
-#include "WebGPUFragmentState.h"
-#include "WebGPUMultisampleState.h"
-#include "WebGPUPipelineDescriptorBase.h"
-#include "WebGPUPrimitiveState.h"
-#include "WebGPUVertexState.h"
+#include <WebCore/WebGPUDepthStencilState.h>
+#include <WebCore/WebGPUFragmentState.h>
+#include <WebCore/WebGPUMultisampleState.h>
+#include <WebCore/WebGPUPipelineDescriptorBase.h>
+#include <WebCore/WebGPUPrimitiveState.h>
+#include <WebCore/WebGPUVertexState.h>
 #include <optional>
 
 namespace WebCore::WebGPU {

@@ -5223,10 +5223,12 @@ CallCapture CaptureGetTranslatedShaderSourceANGLE(const State &glState,
 
 CallCapture CaptureBindMetalRasterizationRateMapANGLE(const State &glState,
                                                       bool isCallValid,
+                                                      GLuint framebuffer,
                                                       GLMTLRasterizationRateMapANGLE map)
 {
     ParamBuffer paramBuffer;
 
+    paramBuffer.addValueParam("framebuffer", ParamType::TGLuint, framebuffer);
     paramBuffer.addValueParam("map", ParamType::TGLMTLRasterizationRateMapANGLE, map);
 
     return CallCapture(angle::EntryPoint::GLBindMetalRasterizationRateMapANGLE,
@@ -6750,6 +6752,99 @@ CallCapture CaptureBufferStorageExternalEXT(const State &glState,
     return CallCapture(angle::EntryPoint::GLBufferStorageExternalEXT, std::move(paramBuffer));
 }
 
+CallCapture CaptureFramebufferShadingRateEXT(const State &glState,
+                                             bool isCallValid,
+                                             GLenum target,
+                                             GLenum attachment,
+                                             GLuint texture,
+                                             GLint baseLayer,
+                                             GLsizei numLayers,
+                                             GLsizei texelWidth,
+                                             GLsizei texelHeight)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addEnumParam("target", GLESEnum::FramebufferTarget, ParamType::TGLenum, target);
+    paramBuffer.addEnumParam("attachment", GLESEnum::FramebufferAttachment, ParamType::TGLenum,
+                             attachment);
+    paramBuffer.addValueParam("texture", ParamType::TGLuint, texture);
+    paramBuffer.addValueParam("baseLayer", ParamType::TGLint, baseLayer);
+    paramBuffer.addValueParam("numLayers", ParamType::TGLsizei, numLayers);
+    paramBuffer.addValueParam("texelWidth", ParamType::TGLsizei, texelWidth);
+    paramBuffer.addValueParam("texelHeight", ParamType::TGLsizei, texelHeight);
+
+    return CallCapture(angle::EntryPoint::GLFramebufferShadingRateEXT, std::move(paramBuffer));
+}
+
+CallCapture CaptureGetFragmentShadingRatesEXT(const State &glState,
+                                              bool isCallValid,
+                                              GLsizei samples,
+                                              GLsizei maxCount,
+                                              GLsizei *count,
+                                              GLenum *shadingRates)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("samples", ParamType::TGLsizei, samples);
+    paramBuffer.addValueParam("maxCount", ParamType::TGLsizei, maxCount);
+
+    if (isCallValid)
+    {
+        ParamCapture countParam("count", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, count, &countParam.value);
+        CaptureGetFragmentShadingRatesEXT_count(glState, isCallValid, samples, maxCount, count,
+                                                shadingRates, &countParam);
+        paramBuffer.addParam(std::move(countParam));
+    }
+    else
+    {
+        ParamCapture countParam("count", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, static_cast<GLsizei *>(nullptr),
+                       &countParam.value);
+        paramBuffer.addParam(std::move(countParam));
+    }
+
+    if (isCallValid)
+    {
+        ParamCapture shadingRatesParam("shadingRates", ParamType::TGLenumPointer);
+        InitParamValue(ParamType::TGLenumPointer, shadingRates, &shadingRatesParam.value);
+        CaptureGetFragmentShadingRatesEXT_shadingRates(glState, isCallValid, samples, maxCount,
+                                                       count, shadingRates, &shadingRatesParam);
+        paramBuffer.addParam(std::move(shadingRatesParam));
+    }
+    else
+    {
+        ParamCapture shadingRatesParam("shadingRates", ParamType::TGLenumPointer);
+        InitParamValue(ParamType::TGLenumPointer, static_cast<GLenum *>(nullptr),
+                       &shadingRatesParam.value);
+        paramBuffer.addParam(std::move(shadingRatesParam));
+    }
+
+    return CallCapture(angle::EntryPoint::GLGetFragmentShadingRatesEXT, std::move(paramBuffer));
+}
+
+CallCapture CaptureShadingRateEXT(const State &glState, bool isCallValid, ShadingRate ratePacked)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("ratePacked", ParamType::TShadingRate, ratePacked);
+
+    return CallCapture(angle::EntryPoint::GLShadingRateEXT, std::move(paramBuffer));
+}
+
+CallCapture CaptureShadingRateCombinerOpsEXT(const State &glState,
+                                             bool isCallValid,
+                                             CombinerOp combinerOp0Packed,
+                                             CombinerOp combinerOp1Packed)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("combinerOp0Packed", ParamType::TCombinerOp, combinerOp0Packed);
+    paramBuffer.addValueParam("combinerOp1Packed", ParamType::TCombinerOp, combinerOp1Packed);
+
+    return CallCapture(angle::EntryPoint::GLShadingRateCombinerOpsEXT, std::move(paramBuffer));
+}
+
 CallCapture CaptureFramebufferTextureEXT(const State &glState,
                                          bool isCallValid,
                                          GLenum target,
@@ -7838,7 +7933,7 @@ CallCapture CaptureCreateShaderProgramvEXT(const State &glState,
                                            bool isCallValid,
                                            ShaderType typePacked,
                                            GLsizei count,
-                                           const GLchar **strings,
+                                           const GLchar *const *strings,
                                            GLuint returnValue)
 {
     ParamBuffer paramBuffer;
@@ -7857,8 +7952,8 @@ CallCapture CaptureCreateShaderProgramvEXT(const State &glState,
     else
     {
         ParamCapture stringsParam("strings", ParamType::TGLcharConstPointerPointer);
-        InitParamValue(ParamType::TGLcharConstPointerPointer, static_cast<const GLchar **>(nullptr),
-                       &stringsParam.value);
+        InitParamValue(ParamType::TGLcharConstPointerPointer,
+                       static_cast<const GLchar *const *>(nullptr), &stringsParam.value);
         paramBuffer.addParam(std::move(stringsParam));
     }
 
@@ -12359,11 +12454,11 @@ CallCapture CaptureFramebufferFoveationParametersQCOM(const State &glState,
                        std::move(paramBuffer));
 }
 
-CallCapture CaptureShadingRateQCOM(const State &glState, bool isCallValid, GLenum rate)
+CallCapture CaptureShadingRateQCOM(const State &glState, bool isCallValid, ShadingRate ratePacked)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("rate", GLESEnum::ShadingRateQCOM, ParamType::TGLenum, rate);
+    paramBuffer.addValueParam("ratePacked", ParamType::TShadingRate, ratePacked);
 
     return CallCapture(angle::EntryPoint::GLShadingRateQCOM, std::move(paramBuffer));
 }

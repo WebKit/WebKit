@@ -47,7 +47,7 @@ const ClassInfo NumberConstructor::s_info = { "Function"_s, &Base::s_info, &numb
 @begin numberConstructorTable
   isFinite       numberConstructorFuncIsFinite       DontEnum|Function 1 NumberIsFiniteIntrinsic
   isNaN          numberConstructorFuncIsNaN          DontEnum|Function 1 NumberIsNaNIntrinsic
-  isSafeInteger  numberConstructorFuncIsSafeInteger  DontEnum|Function 1
+  isSafeInteger  numberConstructorFuncIsSafeInteger  DontEnum|Function 1 NumberIsSafeIntegerIntrinsic
 @end
 */
 

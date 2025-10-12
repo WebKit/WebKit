@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "ActiveDOMObject.h"
+#include <WebCore/ActiveDOMObject.h>
 #include "IDBCursorDirection.h"
-#include "IDBIndexIdentifier.h"
-#include "IDBKeyPath.h"
-#include "IDBObjectStoreInfo.h"
+#include <WebCore/IDBIndexIdentifier.h>
+#include <WebCore/IDBKeyPath.h>
+#include <WebCore/IDBObjectStoreInfo.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Lock.h>
 #include <wtf/TZoneMalloc.h>
@@ -75,6 +75,7 @@ public:
     const std::optional<IDBKeyPath>& keyPath() const;
     Ref<DOMStringList> indexNames() const;
     IDBTransaction& transaction();
+    Ref<IDBTransaction> protectedTransaction();
     bool autoIncrement() const;
 
     struct IndexParameters {
@@ -118,7 +119,7 @@ public:
     void ref() const final;
     void deref() const final;
 
-    template<typename Visitor> void visitReferencedIndexes(Visitor&) const;
+    template<typename Visitor> void visitReferencedIndexesConcurrently(Visitor&) const;
     void renameReferencedIndex(IDBIndex&, const String& newName);
 
 private:

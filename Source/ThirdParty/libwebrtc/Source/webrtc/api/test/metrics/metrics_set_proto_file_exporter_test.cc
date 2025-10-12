@@ -19,7 +19,6 @@
 #include "api/test/metrics/metric.h"
 #include "api/test/metrics/proto/metric.pb.h"
 #include "api/units/timestamp.h"
-#include "rtc_base/protobuf_utils.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
@@ -31,7 +30,7 @@ namespace {
 using ::testing::Eq;
 using ::testing::Test;
 
-namespace proto = ::webrtc::test_metrics;
+namespace proto = test_metrics;
 
 std::string ReadFileAsString(const std::string& filename) {
   std::ifstream infile(filename, std::ios_base::binary);
@@ -66,13 +65,11 @@ class MetricsSetProtoFileExporterTest : public Test {
   ~MetricsSetProtoFileExporterTest() override = default;
 
   void SetUp() override {
-    temp_filename_ = webrtc::test::TempFilename(
-        webrtc::test::OutputPath(), "metrics_set_proto_file_exporter_test");
+    temp_filename_ = test::TempFilename(test::OutputPath(),
+                                        "metrics_set_proto_file_exporter_test");
   }
 
-  void TearDown() override {
-    ASSERT_TRUE(webrtc::test::RemoveFile(temp_filename_));
-  }
+  void TearDown() override { ASSERT_TRUE(test::RemoveFile(temp_filename_)); }
 
   std::string temp_filename_;
 };
@@ -103,7 +100,7 @@ TEST_F(MetricsSetProtoFileExporterTest, MetricsAreExportedCorrectly) {
           .mean = 30.0, .stddev = 10.0, .min = 20.0, .max = 40.0}};
 
   ASSERT_TRUE(exporter.Export(std::vector<Metric>{metric1, metric2}));
-  webrtc::test_metrics::MetricsSet actual_metrics_set;
+  test_metrics::MetricsSet actual_metrics_set;
   actual_metrics_set.ParseFromString(ReadFileAsString(temp_filename_));
   EXPECT_THAT(actual_metrics_set.metrics().size(), Eq(2));
 
@@ -152,7 +149,7 @@ TEST_F(MetricsSetProtoFileExporterTest, NoMetricsSetMetadata) {
   MetricsSetProtoFileExporter::Options options(temp_filename_);
   MetricsSetProtoFileExporter exporter(options);
   ASSERT_TRUE(exporter.Export(std::vector<Metric>{}));
-  webrtc::test_metrics::MetricsSet actual_metrics_set;
+  test_metrics::MetricsSet actual_metrics_set;
   actual_metrics_set.ParseFromString(ReadFileAsString(temp_filename_));
   EXPECT_EQ(actual_metrics_set.metadata_size(), 0);
 }
@@ -162,7 +159,7 @@ TEST_F(MetricsSetProtoFileExporterTest, MetricsSetMetadata) {
       temp_filename_, {{"a_metadata_key", "a_metadata_value"}});
   MetricsSetProtoFileExporter exporter(options);
   ASSERT_TRUE(exporter.Export(std::vector<Metric>{}));
-  webrtc::test_metrics::MetricsSet actual_metrics_set;
+  test_metrics::MetricsSet actual_metrics_set;
   actual_metrics_set.ParseFromString(ReadFileAsString(temp_filename_));
   EXPECT_EQ(actual_metrics_set.metadata_size(), 1);
   EXPECT_EQ(actual_metrics_set.metadata().at("a_metadata_key"),

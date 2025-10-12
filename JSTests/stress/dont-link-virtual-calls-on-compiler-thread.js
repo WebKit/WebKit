@@ -1,4 +1,4 @@
-//@ skip if $cloop or not (["arm64", "x86_64", "arm"].include? $architecture)
+//@ skip if $cloop or not (["arm64", "x86_64"].include? $architecture)
 
 let s = `
 for (let i = 0; i < testLoopCount; i++) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,7 +55,7 @@ Ref<RemoteLegacyCDMFactory> RemoteLegacyCDM::protectedFactory() const
 
 bool RemoteLegacyCDM::supportsMIMEType(const String& mimeType) const
 {
-    auto sendResult = protectedFactory()->gpuProcessConnection().protectedConnection()->sendSync(Messages::RemoteLegacyCDMProxy::SupportsMIMEType(mimeType), m_identifier);
+    auto sendResult = protectedFactory()->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMProxy::SupportsMIMEType(mimeType), m_identifier);
     auto [supported] = sendResult.takeReplyOr(false);
     return supported;
 }
@@ -68,7 +68,7 @@ RefPtr<WebCore::LegacyCDMSession> RemoteLegacyCDM::createSession(WebCore::Legacy
 #endif
 
     Ref factory = m_factory.get();
-    auto sendResult = factory->gpuProcessConnection().protectedConnection()->sendSync(Messages::RemoteLegacyCDMProxy::CreateSession(logIdentifier), m_identifier);
+    auto sendResult = factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMProxy::CreateSession(logIdentifier), m_identifier);
     auto [identifier] = sendResult.takeReplyOr(std::nullopt);
     if (!identifier)
         return nullptr;
@@ -77,7 +77,7 @@ RefPtr<WebCore::LegacyCDMSession> RemoteLegacyCDM::createSession(WebCore::Legacy
 
 void RemoteLegacyCDM::setPlayerId(std::optional<MediaPlayerIdentifier> identifier)
 {
-    protectedFactory()->gpuProcessConnection().protectedConnection()->send(Messages::RemoteLegacyCDMProxy::SetPlayerId(identifier), m_identifier);
+    protectedFactory()->gpuProcessConnection().connection().send(Messages::RemoteLegacyCDMProxy::SetPlayerId(identifier), m_identifier);
 }
 
 void RemoteLegacyCDM::ref() const

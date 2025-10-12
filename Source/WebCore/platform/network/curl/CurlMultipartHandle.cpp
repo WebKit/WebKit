@@ -35,7 +35,6 @@
 #include "HTTPParsers.h"
 #include "ParsedContentType.h"
 #include "SharedBuffer.h"
-#include <wtf/StringExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -132,7 +131,7 @@ bool CurlMultipartHandle::processContent()
         }
 
         if (m_state == State::InBody && result.dataEnd)
-            m_client->didReceiveDataFromMultipart({ m_buffer.data(), result.dataEnd });
+            m_client->didReceiveDataFromMultipart(m_buffer.span().first(result.dataEnd));
 
         if (result.processed)
             m_buffer.removeAt(0, result.processed);
@@ -205,7 +204,7 @@ CurlMultipartHandle::FindBoundaryResult CurlMultipartHandle::findBoundary()
     FindBoundaryResult result;
 
     auto contentLength = m_buffer.size();
-    const auto contentStartPtr = m_buffer.data();
+    const auto contentStartPtr = m_buffer.span().data();
     const auto contentEndPtr = contentStartPtr + contentLength;
 
     auto boundaryLength = m_boundary.length();
@@ -275,7 +274,7 @@ CurlMultipartHandle::ParseHeadersResult CurlMultipartHandle::parseHeadersIfPossi
     static const auto maxHeaderSize = 300 * 1024;
 
     auto contentLength = m_buffer.size();
-    const auto contentStartPtr = m_buffer.data();
+    const auto contentStartPtr = m_buffer.span().data();
 
     // Check if we have the header closing strings.
     const uint8_t* end = nullptr;

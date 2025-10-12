@@ -82,7 +82,7 @@ public:
         listener->ignore();
 
         // Try to load the request in the inspected page.
-        if (RefPtr page = m_proxy.protectedInspectedPage()) {
+        if (RefPtr page = m_proxy.inspectedPage()) {
             auto request = navigationAction->request();
             page->loadRequest(WTFMove(request));
         }

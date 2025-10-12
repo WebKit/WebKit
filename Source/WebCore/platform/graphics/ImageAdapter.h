@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 OBJC_CLASS NSImage;
 #endif
 
+#include <wtf/Platform.h>
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 OBJC_CLASS NSAdaptiveImageGlyph;
 #endif
@@ -51,6 +52,7 @@ typedef SIZE* LPSIZE;
 typedef struct HBITMAP__ *HBITMAP;
 #endif
 
+#include <WebCore/NativeImage.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -65,7 +67,6 @@ namespace WebCore {
 
 class Image;
 class IntSize;
-class NativeImage;
 
 class ImageAdapter {
     WTF_MAKE_TZONE_ALLOCATED(ImageAdapter);

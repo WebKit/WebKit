@@ -9,11 +9,13 @@
  */
 #include "test/pc/e2e/analyzer/video/simulcast_dummy_buffer_helper.h"
 
+#include <cstdint>
+#include <cstring>
+
+#include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
-#include "api/video/video_frame_buffer.h"
 #include "rtc_base/random.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -25,7 +27,7 @@ uint8_t RandByte(Random& random) {
 }
 
 VideoFrame CreateRandom2x2VideoFrame(uint16_t id, Random& random) {
-  rtc::scoped_refptr<I420Buffer> buffer = I420Buffer::Create(2, 2);
+  scoped_refptr<I420Buffer> buffer = I420Buffer::Create(2, 2);
 
   uint8_t data[6] = {RandByte(random), RandByte(random), RandByte(random),
                      RandByte(random), RandByte(random), RandByte(random)};

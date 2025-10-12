@@ -60,7 +60,7 @@ ScrollAnimatorIOS::~ScrollAnimatorIOS()
 bool ScrollAnimatorIOS::handleTouchEvent(const PlatformTouchEvent& touchEvent)
 {
     if (touchEvent.type() == PlatformEvent::Type::TouchStart && touchEvent.touchCount() == 1) {
-        m_firstTouchPoint = touchEvent.touchLocationInRootViewAtIndex(0);
+        m_firstTouchPoint = IntPoint(touchEvent.touchLocationInRootViewAtIndex(0));
         m_lastTouchPoint = m_firstTouchPoint;
         m_inTouchSequence = true;
         m_committedToScrollAxis = false;
@@ -91,7 +91,7 @@ bool ScrollAnimatorIOS::handleTouchEvent(const PlatformTouchEvent& touchEvent)
         return false;
     }
     
-    IntPoint currentPoint = touchEvent.touchLocationInRootViewAtIndex(0);
+    IntPoint currentPoint = IntPoint(touchEvent.touchLocationInRootViewAtIndex(0));
 
     IntSize touchDelta = m_lastTouchPoint - currentPoint;
     m_lastTouchPoint = currentPoint;
@@ -100,7 +100,7 @@ bool ScrollAnimatorIOS::handleTouchEvent(const PlatformTouchEvent& touchEvent)
         determineScrollableAreaForTouchSequence(touchDelta);
 
     if (!m_committedToScrollAxis) {
-        auto scrollSize = m_scrollableArea.maximumScrollPosition() - m_scrollableArea.minimumScrollPosition();
+        auto scrollSize = m_scrollableArea->maximumScrollPosition() - m_scrollableArea->minimumScrollPosition();
         bool horizontallyScrollable = scrollSize.width();
         bool verticallyScrollable = scrollSize.height();
 
@@ -170,7 +170,7 @@ void ScrollAnimatorIOS::determineScrollableAreaForTouchSequence(const IntSize& s
     auto horizontalEdge = ScrollableArea::targetSideForScrollDelta(scrollDelta, ScrollEventAxis::Horizontal);
     auto verticalEdge = ScrollableArea::targetSideForScrollDelta(scrollDelta, ScrollEventAxis::Vertical);
 
-    auto* scrollableArea = &m_scrollableArea;
+    CheckedPtr scrollableArea = m_scrollableArea.ptr();
     while (true) {
         if (verticalEdge && !scrollableArea->isPinnedOnSide(*verticalEdge))
             break;
@@ -178,15 +178,15 @@ void ScrollAnimatorIOS::determineScrollableAreaForTouchSequence(const IntSize& s
         if (horizontalEdge && !scrollableArea->isPinnedOnSide(*horizontalEdge))
             break;
 
-        auto* enclosingArea = scrollableArea->enclosingScrollableArea();
+        CheckedPtr enclosingArea = scrollableArea->enclosingScrollableArea();
         if (!enclosingArea)
             break;
 
-        scrollableArea = enclosingArea;
+        scrollableArea = WTFMove(enclosingArea);
     }
 
     ASSERT(scrollableArea);
-    m_scrollableAreaForTouchSequence = scrollableArea;
+    m_scrollableAreaForTouchSequence = scrollableArea.get();
 }
 #endif
 

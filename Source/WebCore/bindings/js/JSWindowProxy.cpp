@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,9 +30,10 @@
 #include "JSWindowProxy.h"
 
 #include "CommonVM.h"
+#include "Document.h"
 #include "Frame.h"
 #include "FrameLoaderTypes.h"
-#include "GCController.h"
+#include "GarbageCollectionController.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowProperties.h"
 #include "JSEventTarget.h"
@@ -83,16 +84,11 @@ void JSWindowProxy::destroy(JSCell* cell)
     static_cast<JSWindowProxy*>(cell)->JSWindowProxy::~JSWindowProxy();
 }
 
-DOMWrapperWorld& JSWindowProxy::world()
-{
-    return m_world;
-}
-
 void JSWindowProxy::setWindow(VM& vm, JSDOMGlobalObject& window)
 {
     ASSERT(window.classInfo() == JSDOMWindow::info());
     setTarget(vm, &window);
-    GCController::singleton().garbageCollectSoon();
+    GarbageCollectionController::singleton().garbageCollectSoon();
 }
 
 void JSWindowProxy::setWindow(DOMWindow& domWindow)
@@ -188,11 +184,6 @@ WindowProxy* JSWindowProxy::toWrapped(VM&, JSValue value)
 JSC::GCClient::IsoSubspace* JSWindowProxy::subspaceForImpl(JSC::VM& vm)
 {
     return &downcast<JSVMClientData>(vm.clientData)->windowProxySpace();
-}
-
-Ref<DOMWrapperWorld> JSWindowProxy::protectedWorld()
-{
-    return m_world;
 }
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)

@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include "DOMWrapperWorld.h"
-#include "JSDOMWrapper.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/SlotVisitor.h>
 #include <JavaScriptCore/WeakInlines.h>
+#include <WebCore/DOMWrapperWorld.h>
+#include <WebCore/JSDOMWrapper.h>
 
 namespace WebCore {
 

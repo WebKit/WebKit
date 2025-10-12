@@ -12,8 +12,8 @@
 
 #include <algorithm>
 
+#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 #include "rtc_base/checks.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 namespace audio_network_adaptor {

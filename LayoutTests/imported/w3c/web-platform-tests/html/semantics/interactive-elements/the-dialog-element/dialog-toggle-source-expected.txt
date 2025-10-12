@@ -1,0 +1,9 @@
+show modal light dismiss dialog  close  request close
+
+FAIL ToggleEvent.source on <dialog> elements: dialog.showModal(). assert_equals: Opening beforetoggle.source. expected (object) null but got (undefined) undefined
+FAIL ToggleEvent.source on <dialog> elements: command button. assert_true: An opening beforetoggle event should have been fired. expected true got false
+FAIL ToggleEvent.source on <dialog> elements: open with showModal, close with button. assert_true: An opening beforetoggle event should have been fired. expected true got false
+FAIL ToggleEvent.soruce on <dialog> elements: open with button, close with dialog.close(). assert_true: An opening beforetoggle event should have been fired. expected true got false
+FAIL ToggleEvent.source on <dialog> elements: open with showModal, close with request-close button. assert_true: An opening beforetoggle event should have been fired. expected true got false
+FAIL ToggleEvent.source on <dialog> elements: open with button, close with light dismiss. promise_test: Unhandled rejection with value: object "Error: element click intercepted error"
+

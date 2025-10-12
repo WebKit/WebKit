@@ -117,7 +117,7 @@ function test6() {
     class F extends jsNull() { constructor() { return 25; } }
     class G extends jsNull() { constructor() { super(); } }
     assertThrow(() => Reflect.construct(E, [], D), `ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object.`);
-    assertThrow(() => Reflect.construct(F, [], D), 'TypeError: Cannot return a non-object type in the constructor of a derived class.');
+    assertThrow(() => Reflect.construct(F, [], D), 'TypeError: Cannot return a non-object type in the constructor of a derived class F.');
 
     let threw = false;
     try {

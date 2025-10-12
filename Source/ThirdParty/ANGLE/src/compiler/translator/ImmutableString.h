@@ -10,6 +10,10 @@
 #ifndef COMPILER_TRANSLATOR_IMMUTABLESTRING_H_
 #define COMPILER_TRANSLATOR_IMMUTABLESTRING_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <string>
 
 #include "common/string_utils.h"

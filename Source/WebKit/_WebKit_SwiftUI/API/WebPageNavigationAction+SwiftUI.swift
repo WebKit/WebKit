@@ -21,14 +21,18 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+#if ENABLE_SWIFTUI
+
 import Foundation
 public import SwiftUI
 @_spi(CrossImportOverlay) import WebKit
 
 extension WebPage.NavigationAction {
     /// The modifier keys that were pressed at the time of the navigation request.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public var modifierFlags: EventModifiers { EventModifiers(wrapped.modifierFlags) }
 }
+
+#endif

@@ -17,6 +17,7 @@ namespace sh
 {
 
 class ImmutableString;
+class TField;
 class TSymbol;
 class TType;
 
@@ -24,7 +25,8 @@ class TType;
 #ifdef WK_WORKAROUND_RDAR_145268301_ASAN_STACK_USE_AFTER_SCOPE
 __attribute__((no_sanitize_address))
 #endif
-inline float fractionalPart(float f)
+inline float
+fractionalPart(float f)
 {
     float intPart = 0.0f;
     return modff(f, &intPart);
@@ -77,6 +79,7 @@ class TInfoSinkBase
 
     TInfoSinkBase &operator<<(const TType &type);
     TInfoSinkBase &operator<<(const TSymbol &symbol);
+    TInfoSinkBase &operator<<(const TField &symbol);
 
     // Make sure floats are written with correct precision.
     TInfoSinkBase &operator<<(float f)

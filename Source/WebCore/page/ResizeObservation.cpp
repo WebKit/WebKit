@@ -31,7 +31,7 @@
 #include "Logging.h"
 #include "NodeInlines.h"
 #include "RenderBoxInlines.h"
-#include "RenderElementInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "SVGElement.h"
 #include <wtf/TZoneMallocInlines.h>
 

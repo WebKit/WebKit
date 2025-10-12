@@ -125,6 +125,22 @@ public:
 
     GRefPtr<GDBusProxy> extensionProxy();
 
+    class NetworkPolicyGuard {
+    public:
+        NetworkPolicyGuard(WebViewTest*, WebKitTLSErrorsPolicy);
+        ~NetworkPolicyGuard();
+
+        void setErrorPolicy(WebKitTLSErrorsPolicy);
+
+    private:
+        WebKitTLSErrorsPolicy m_originalPolicy;
+#if ENABLE(2022_GLIB_API)
+        WebViewTest* m_test;
+#else
+        WebKitWebsiteDataManager* m_manager;
+#endif
+    };
+
     GRefPtr<WebKitUserContentManager> m_userContentManager;
     GRefPtr<WebKitWebView> m_webView;
     GMainLoop* m_mainLoop;

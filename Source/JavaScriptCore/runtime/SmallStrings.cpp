@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,7 +49,7 @@ void SmallStrings::initializeCommonStrings(VM& vm)
 
     for (unsigned i = 0; i < singleCharacterStringCount; ++i) {
         ASSERT(!m_singleCharacterStrings[i]);
-        std::array<const LChar, 1> string = { static_cast<LChar>(i) };
+        std::array<const Latin1Character, 1> string = { static_cast<Latin1Character>(i) };
         m_singleCharacterStrings[i] = JSString::createHasOtherOwner(vm, AtomStringImpl::add(string).releaseNonNull());
         ASSERT(m_needsToBeVisited);
     }
@@ -118,7 +118,7 @@ Ref<AtomStringImpl> SmallStrings::singleCharacterStringRep(unsigned char charact
 {
     if (m_isInitialized) [[likely]]
         return *static_cast<AtomStringImpl*>(const_cast<StringImpl*>(m_singleCharacterStrings[character]->tryGetValueImpl()));
-    std::array<const LChar, 1> string = { static_cast<LChar>(character) };
+    std::array<const Latin1Character, 1> string = { static_cast<Latin1Character>(character) };
     return AtomStringImpl::add(string).releaseNonNull();
 }
 

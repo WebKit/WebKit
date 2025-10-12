@@ -91,6 +91,7 @@ void AutomationSessionClient::requestNewPageWithOptions(WebKit::WebAutomationSes
                 WebCore::LockBackForwardList::No, /* lockBackForwardList */
                 { }, /* clientRedirectSourceForHistory */
                 { }, /* effectiveSandboxFlags */
+                WebCore::ReferrerPolicy::EmptyString, /* effectiveReferrerPolicy */
                 std::nullopt, /* ownerPermissionsPolicy */
                 std::nullopt, /* privateClickMeasurement */
                 { }, /* advancedPrivacyProtections */
@@ -100,7 +101,8 @@ void AutomationSessionClient::requestNewPageWithOptions(WebKit::WebAutomationSes
                 legacyEmptyFrameInfo(WebCore::ResourceRequest()), /* frameInfo */
                 std::nullopt, /* navigationID */
                 { }, /* originalRequest */
-                { } /* request */
+                { }, /* request */
+                { } /* invalidURLString */
             };
 
             auto userInitiatedActivity = API::UserInitiatedAction::create();
@@ -146,7 +148,7 @@ void AutomationSessionClient::didDisconnectFromRemote(WebKit::WebAutomationSessi
 {
     session.setClient(nullptr);
 
-    RunLoop::protectedMain()->dispatch([&session] {
+    RunLoop::mainSingleton().dispatch([&session] {
         auto processPool = session.protectedProcessPool();
         if (processPool) {
             processPool->setAutomationSession(nullptr);

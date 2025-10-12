@@ -74,21 +74,21 @@ LegacyDownloadClient::LegacyDownloadClient(id <_WKDownloadDelegate> delegate)
 void LegacyDownloadClient::legacyDidStart(DownloadProxy& downloadProxy)
 {
     if (m_delegateMethods.downloadDidStart)
-        [m_delegate _downloadDidStart:[_WKDownload downloadWithDownload:wrapper(downloadProxy)]];
+        [m_delegate.get() _downloadDidStart:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()]];
 }
 
 void LegacyDownloadClient::didReceiveResponse(DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response)
 {
     if (m_delegateMethods.downloadDidReceiveResponse)
-        [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didReceiveResponse:response.nsURLResponse()];
+        [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] didReceiveResponse:RetainPtr { response.nsURLResponse() }.get()];
 }
 
 void LegacyDownloadClient::didReceiveData(DownloadProxy& downloadProxy, uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite)
 {
     if (m_delegateMethods.downloadDidWriteDataTotalBytesWrittenTotalBytesExpectedToWrite)
-        [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didWriteData:bytesWritten totalBytesWritten:totalBytesWritten totalBytesExpectedToWrite:totalBytesExpectedToWrite];
+        [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] didWriteData:bytesWritten totalBytesWritten:totalBytesWritten totalBytesExpectedToWrite:totalBytesExpectedToWrite];
     else if (m_delegateMethods.downloadDidReceiveData)
-        [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didReceiveData:bytesWritten];
+        [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] didReceiveData:bytesWritten];
 }
 
 void LegacyDownloadClient::didReceiveAuthenticationChallenge(DownloadProxy& downloadProxy, AuthenticationChallengeProxy& authenticationChallenge)
@@ -99,7 +99,7 @@ void LegacyDownloadClient::didReceiveAuthenticationChallenge(DownloadProxy& down
         return;
     }
 
-    [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didReceiveAuthenticationChallenge:wrapper(authenticationChallenge) completionHandler:makeBlockPtr([authenticationChallenge = Ref { authenticationChallenge }, checker = CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(_download:didReceiveAuthenticationChallenge:completionHandler:))] (NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) {
+    [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] didReceiveAuthenticationChallenge:RetainPtr { wrapper(authenticationChallenge) }.get() completionHandler:makeBlockPtr([authenticationChallenge = Ref { authenticationChallenge }, checker = CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(_download:didReceiveAuthenticationChallenge:completionHandler:))] (NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
@@ -128,13 +128,13 @@ void LegacyDownloadClient::didReceiveAuthenticationChallenge(DownloadProxy& down
 void LegacyDownloadClient::didCreateDestination(DownloadProxy& downloadProxy, const String& destination)
 {
     if (m_delegateMethods.downloadDidCreateDestination)
-        [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didCreateDestination:destination.createNSString().get()];
+        [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] didCreateDestination:destination.createNSString().get()];
 }
 
 void LegacyDownloadClient::processDidCrash(DownloadProxy& downloadProxy)
 {
     if (m_delegateMethods.downloadProcessDidCrash)
-        [m_delegate _downloadProcessDidCrash:[_WKDownload downloadWithDownload:wrapper(downloadProxy)]];
+        [m_delegate.get() _downloadProcessDidCrash:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()]];
 }
 
 void LegacyDownloadClient::decideDestinationWithSuggestedFilename(DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response, const String& filename, CompletionHandler<void(AllowOverwrite, String)>&& completionHandler)
@@ -147,11 +147,11 @@ void LegacyDownloadClient::decideDestinationWithSuggestedFilename(DownloadProxy&
     if (m_delegateMethods.downloadDecideDestinationWithSuggestedFilenameAllowOverwrite) {
         BOOL allowOverwrite = NO;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        RetainPtr destination = [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] decideDestinationWithSuggestedFilename:filename.createNSString().get() allowOverwrite:&allowOverwrite];
+        RetainPtr destination = [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] decideDestinationWithSuggestedFilename:filename.createNSString().get() allowOverwrite:&allowOverwrite];
 ALLOW_DEPRECATED_DECLARATIONS_END
         completionHandler(allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, destination.get());
     } else {
-        [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] decideDestinationWithSuggestedFilename:filename.createNSString().get() completionHandler:makeBlockPtr([checker = CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(_download:decideDestinationWithSuggestedFilename:completionHandler:)), completionHandler = WTFMove(completionHandler)] (BOOL allowOverwrite, NSString *destination) mutable {
+        [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] decideDestinationWithSuggestedFilename:filename.createNSString().get() completionHandler:makeBlockPtr([checker = CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(_download:decideDestinationWithSuggestedFilename:completionHandler:)), completionHandler = WTFMove(completionHandler)] (BOOL allowOverwrite, NSString *destination) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -163,25 +163,25 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 void LegacyDownloadClient::didFinish(DownloadProxy& downloadProxy)
 {
     if (m_delegateMethods.downloadDidFinish)
-        [m_delegate _downloadDidFinish:[_WKDownload downloadWithDownload:wrapper(downloadProxy)]];
+        [m_delegate.get() _downloadDidFinish:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()]];
 }
 
 void LegacyDownloadClient::didFail(DownloadProxy& downloadProxy, const WebCore::ResourceError& error, API::Data*)
 {
     if (m_delegateMethods.downloadDidFail)
-        [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didFailWithError:error.nsError()];
+        [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] didFailWithError:RetainPtr { error.nsError() }.get()];
 }
 
 void LegacyDownloadClient::legacyDidCancel(DownloadProxy& downloadProxy)
 {
     if (m_delegateMethods.downloadDidCancel)
-        [m_delegate _downloadDidCancel:[_WKDownload downloadWithDownload:wrapper(downloadProxy)]];
+        [m_delegate.get() _downloadDidCancel:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()]];
 }
 
 void LegacyDownloadClient::willSendRequest(DownloadProxy& downloadProxy, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
     if (m_delegateMethods.downloadDidReceiveServerRedirectToURL)
-        [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didReceiveServerRedirectToURL:request.url().createNSURL().get()];
+        [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] didReceiveServerRedirectToURL:request.url().createNSURL().get()];
 
     completionHandler(WTFMove(request));
 }

@@ -1677,48 +1677,6 @@ void vp9_free_tpl_buffer(VP9_COMP *cpi) {
   free_tpl_frame_stats_list(&cpi->tpl_gop_stats);
 }
 
-#if CONFIG_RATE_CTRL
-static void accumulate_frame_tpl_stats(VP9_COMP *cpi) {
-  VP9_COMMON *const cm = &cpi->common;
-  const GF_GROUP *gf_group = &cpi->twopass.gf_group;
-  int show_frame_count = 0;
-  int frame_idx;
-  // Accumulate tpl stats for each frame in the current group of picture.
-  for (frame_idx = 1; frame_idx < gf_group->gf_group_size; ++frame_idx) {
-    TplDepFrame *tpl_frame = &cpi->tpl_stats[frame_idx];
-    TplDepStats *tpl_stats = tpl_frame->tpl_stats_ptr;
-    const int tpl_stride = tpl_frame->stride;
-    int64_t intra_cost_base = 0;
-    int64_t inter_cost_base = 0;
-    int64_t mc_dep_cost_base = 0;
-    int64_t mc_ref_cost_base = 0;
-    int64_t mc_flow_base = 0;
-    int row, col;
-
-    if (!tpl_frame->is_valid) continue;
-
-    for (row = 0; row < cm->mi_rows && tpl_frame->is_valid; ++row) {
-      for (col = 0; col < cm->mi_cols; ++col) {
-        TplDepStats *this_stats = &tpl_stats[row * tpl_stride + col];
-        intra_cost_base += this_stats->intra_cost;
-        inter_cost_base += this_stats->inter_cost;
-        mc_dep_cost_base += this_stats->mc_dep_cost;
-        mc_ref_cost_base += this_stats->mc_ref_cost;
-        mc_flow_base += this_stats->mc_flow;
-      }
-    }
-
-    cpi->tpl_stats_info[show_frame_count].intra_cost = intra_cost_base;
-    cpi->tpl_stats_info[show_frame_count].inter_cost = inter_cost_base;
-    cpi->tpl_stats_info[show_frame_count].mc_dep_cost = mc_dep_cost_base;
-    cpi->tpl_stats_info[show_frame_count].mc_ref_cost = mc_ref_cost_base;
-    cpi->tpl_stats_info[show_frame_count].mc_flow = mc_flow_base;
-
-    ++show_frame_count;
-  }
-}
-#endif  // CONFIG_RATE_CTRL
-
 void vp9_estimate_tpl_qp_gop(VP9_COMP *cpi) {
   VP9_COMMON *cm = &cpi->common;
   int gop_length = cpi->twopass.gf_group.gf_group_size;
@@ -1830,10 +1788,4 @@ void vp9_setup_tpl_stats(VP9_COMP *cpi) {
   dump_tpl_stats(cpi, tpl_group_frames, gf_group, gf_picture, cpi->tpl_bsize);
 #endif  // DUMP_TPL_STATS
 #endif  // CONFIG_NON_GREEDY_MV
-
-#if CONFIG_RATE_CTRL
-  if (cpi->oxcf.use_simple_encode_api) {
-    accumulate_frame_tpl_stats(cpi);
-  }
-#endif  // CONFIG_RATE_CTRL
 }

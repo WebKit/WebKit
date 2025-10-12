@@ -31,7 +31,6 @@
 #include "CachedFontLoadRequest.h"
 #include "CachedSVGFont.h"
 #include "Document.h"
-#include "DocumentInlines.h"
 #include "Font.h"
 #include "FontCache.h"
 #include "FontCascadeDescription.h"
@@ -155,7 +154,7 @@ void CSSFontFaceSource::load(Document* document)
 
     if (m_fontRequest) {
         ASSERT(m_fontSelector);
-        if (auto* context = m_fontSelector->scriptExecutionContext())
+        if (RefPtr context = m_fontSelector->scriptExecutionContext())
             context->beginLoadingFontSoon(*m_fontRequest);
     } else {
         bool success = false;
@@ -187,7 +186,7 @@ void CSSFontFaceSource::load(Document* document)
             fontDescription.setShouldAllowUserInstalledFonts(protectedCSSFontFace()->allowUserInstalledFonts());
             success = FontCache::forCurrentThread()->fontForFamily(fontDescription, m_fontFaceName, { }, FontLookupOptions::ExactFamilyNameMatch);
             if (document && document->settings().webAPIStatisticsEnabled())
-                ResourceLoadObserver::shared().logFontLoad(*document, m_fontFaceName.string(), success);
+                ResourceLoadObserver::singleton().logFontLoad(*document, m_fontFaceName.string(), success);
         }
         setStatus(success ? Status::Success : Status::Failure);
     }

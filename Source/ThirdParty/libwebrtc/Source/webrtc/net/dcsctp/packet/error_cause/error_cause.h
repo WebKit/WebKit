@@ -10,22 +10,10 @@
 #ifndef NET_DCSCTP_PACKET_ERROR_CAUSE_ERROR_CAUSE_H_
 #define NET_DCSCTP_PACKET_ERROR_CAUSE_ERROR_CAUSE_H_
 
-#include <stddef.h>
 
-#include <cstdint>
-#include <iosfwd>
-#include <memory>
-#include <optional>
 #include <string>
-#include <type_traits>
-#include <utility>
-#include <vector>
 
-#include "absl/algorithm/container.h"
-#include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
-#include "net/dcsctp/packet/tlv_trait.h"
 
 namespace dcsctp {
 

@@ -25,14 +25,15 @@
 
 #pragma once
 
-#include "DragActions.h"
-#include "DragImage.h"
-#include "FloatPoint.h"
-#include "IntPoint.h"
-#include "IntRect.h"
-#include "PasteboardWriterData.h"
-#include "PlatformLayerIdentifier.h"
-#include "PromisedAttachmentInfo.h"
+#include <WebCore/DragActions.h>
+#include <WebCore/DragImage.h>
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/IntPoint.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/PasteboardWriterData.h>
+#include <WebCore/PlatformLayerIdentifier.h>
+#include <WebCore/PromisedAttachmentInfo.h>
 
 namespace WebCore {
 
@@ -43,11 +44,13 @@ struct DragItem final {
     FloatPoint imageAnchorPoint;
 
     std::optional<DragSourceAction> sourceAction;
+    std::optional<FrameIdentifier> rootFrameID;
     IntPoint eventPositionInContentCoordinates;
     IntPoint dragLocationInContentCoordinates;
     IntPoint dragLocationInWindowCoordinates;
     String title;
     URL url;
+    // FIXME: rdar://160803165 dragPreviewFrameInRootViewCoordinates is calculated using convertToRootView, which is incorrect with Site Isolation.
     IntRect dragPreviewFrameInRootViewCoordinates;
     bool containsSelection { false };
 

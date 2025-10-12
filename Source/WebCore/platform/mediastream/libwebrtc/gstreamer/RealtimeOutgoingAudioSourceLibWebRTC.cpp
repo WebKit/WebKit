@@ -112,12 +112,12 @@ void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
         auto inBuffer = adoptGRef(gst_adapter_take_buffer(m_adapter.get(), inBufferSize));
         m_audioBuffer.grow(outBufferSize);
         if (isSilenced())
-            webkitGstAudioFormatFillSilence(m_outputStreamDescription.finfo, m_audioBuffer.data(), outBufferSize);
+            webkitGstAudioFormatFillSilence(m_outputStreamDescription.finfo, m_audioBuffer.mutableSpan().data(), outBufferSize);
         else {
             GstMappedBuffer inMap(inBuffer.get(), GST_MAP_READ);
 
             gpointer in[1] = { inMap.data() };
-            gpointer out[1] = { m_audioBuffer.data() };
+            gpointer out[1] = { m_audioBuffer.mutableSpan().data() };
             if (!gst_audio_converter_samples(m_sampleConverter.get(), static_cast<GstAudioConverterFlags>(0), in, inChunkSampleCount, out, outChunkSampleCount)) {
                 GST_ERROR("Could not convert samples.");
 
@@ -125,7 +125,7 @@ void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
             }
         }
 
-        sendAudioFrames(m_audioBuffer.data(), LibWebRTCAudioFormat::sampleSize, GST_AUDIO_INFO_RATE(&m_outputStreamDescription),
+        sendAudioFrames(m_audioBuffer.span(), LibWebRTCAudioFormat::sampleSize, GST_AUDIO_INFO_RATE(&m_outputStreamDescription),
             GST_AUDIO_INFO_CHANNELS(&m_outputStreamDescription), outChunkSampleCount);
     }
 }

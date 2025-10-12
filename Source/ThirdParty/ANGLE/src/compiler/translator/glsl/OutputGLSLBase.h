@@ -108,6 +108,7 @@ class TOutputGLSLBase : public TIntermTraverser
 
     // name hashing.
     ShHashFunction64 mHashFunction;
+    char mUserVariablePrefix;
     NameMap &mNameMap;
 
     sh::GLenum mShaderType;

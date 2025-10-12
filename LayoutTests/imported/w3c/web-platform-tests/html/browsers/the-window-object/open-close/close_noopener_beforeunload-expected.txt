@@ -1,0 +1,4 @@
+
+PASS closing noopener window with 2 entries
+PASS closing noopener window with 1 entry
+

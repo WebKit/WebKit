@@ -65,7 +65,7 @@ entity_count = len(entries)
 output_file = open(output_path, "w")
 
 output_file.write("""/*
- * Copyright (C) 2010-2014 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2010-2014 Google, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,11 +95,12 @@ output_file.write("""/*
 #include "config.h"
 #include "HTMLEntityTable.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#include <array>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 
-static constexpr char staticEntityStringStorage[] = """)
+static constexpr auto staticEntityStringStorage = """)
 
 assert len(entries) > 0, "Code assumes a non-empty entity array."
 def check_ascii(entity_string):
@@ -144,7 +145,7 @@ for entry in entries:
     assert len(entry) == 2, "We will use slot [2] in the list for the offset."
     entry.append(this_offset)
 
-output_file.write(";\n")
+output_file.write("_s;\n")
 
 index = {}
 for offset, entry in enumerate(entries):
@@ -153,7 +154,7 @@ for offset, entry in enumerate(entries):
         index[starting_letter] = offset
 
 output_file.write("""
-static constexpr HTMLEntityTableEntry staticEntityTable[%s] = {\n""" % entity_count)
+static constexpr std::array<HTMLEntityTableEntry, %s> staticEntityTable {\n""" % entity_count)
 
 for entry in entries:
     values = entry[VALUE].split(' ')
@@ -169,60 +170,48 @@ for entry in entries:
     assert second_character < (1 << 16)
     assert entry[OFFSET] < (1 << 14)
     assert name_length < (1 << 5)
-    output_file.write('    { %s, %s, %s, %s, %s }, // &%s\n' % (
+    output_file.write('    HTMLEntityTableEntry { %s, %s, %s, %s, %s }, // &%s\n' % (
         first_character, second_character, entry[OFFSET], name_length, name_includes_trailing_semicolon, entry[ENTITY]))
 
 output_file.write("""};
 
 """)
 
-output_file.write("static constexpr uint16_t uppercaseOffset[] = {\n")
+output_file.write("static constexpr auto uppercaseOffset = std::to_array<uint16_t>({\n")
 for letter in string.ascii_uppercase:
     output_file.write("%d,\n" % index[letter])
 output_file.write("%d\n" % index['a'])
-output_file.write("""};
+output_file.write("""});
 
-static constexpr uint16_t lowercaseOffset[] = {\n""")
+static constexpr auto lowercaseOffset = std::to_array<uint16_t>({\n""")
 for letter in string.ascii_lowercase:
     output_file.write("%d,\n" % index[letter])
 output_file.write("%d\n" % entity_count)
-output_file.write("""};
+output_file.write("""});
 
-const char* HTMLEntityTableEntry::nameCharacters() const
+std::span<const char> HTMLEntityTableEntry::nameCharacters() const
 {
-    return staticEntityStringStorage + nameCharactersOffset;
+    return staticEntityStringStorage.span().subspan(nameCharactersOffset);
 }
 
-const HTMLEntityTableEntry* HTMLEntityTable::firstEntryStartingWith(UChar c)
+std::span<const HTMLEntityTableEntry> HTMLEntityTable::entriesStartingWith(char16_t c)
 {
-    if (c >= 'A' && c <= 'Z')
-        return &staticEntityTable[uppercaseOffset[c - 'A']];
-    if (c >= 'a' && c <= 'z')
-        return &staticEntityTable[lowercaseOffset[c - 'a']];
-    return nullptr;
+    if (c >= 'A' && c <= 'Z') {
+        auto* start = &staticEntityTable[uppercaseOffset[c - 'A']];
+        return unsafeMakeSpan(start, &staticEntityTable[uppercaseOffset[c - 'A' + 1] - 1] - start + 1);
+    }
+    if (c >= 'a' && c <= 'z') {
+        auto* start = &staticEntityTable[lowercaseOffset[c - 'a']];
+        return unsafeMakeSpan(start, &staticEntityTable[lowercaseOffset[c - 'a' + 1] - 1] - start + 1);
+    }
+    return { };
 }
 
-const HTMLEntityTableEntry* HTMLEntityTable::lastEntryStartingWith(UChar c)
+std::span<const HTMLEntityTableEntry> HTMLEntityTable::entries()
 {
-    if (c >= 'A' && c <= 'Z')
-        return &staticEntityTable[uppercaseOffset[c - 'A' + 1]] - 1;
-    if (c >= 'a' && c <= 'z')
-        return &staticEntityTable[lowercaseOffset[c - 'a' + 1]] - 1;
-    return nullptr;
-}
-
-const HTMLEntityTableEntry* HTMLEntityTable::firstEntry()
-{
-    return &staticEntityTable[0];
-}
-
-const HTMLEntityTableEntry* HTMLEntityTable::lastEntry()
-{
-    return &staticEntityTable[%s - 1];
+    return staticEntityTable;
 }
 
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-
-""" % entity_count)
+""")

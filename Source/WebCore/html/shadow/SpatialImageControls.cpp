@@ -27,18 +27,23 @@
 #include "SpatialImageControls.h"
 
 #include "ContainerNodeInlines.h"
+#include "DocumentEventLoop.h"
+#include "DocumentPage.h"
 #include "ElementInlines.h"
 #include "ElementRareData.h"
 #include "Event.h"
 #include "EventLoop.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLButtonElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "HTMLSpanElement.h"
 #include "HTMLStyleElement.h"
+#include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "RenderImage.h"
+#include "Settings.h"
 #include "ShadowRoot.h"
 #include "TreeScopeInlines.h"
 #include "UserAgentStyleSheets.h"
@@ -99,7 +104,11 @@ bool shouldHaveSpatialControls(HTMLImageElement& element)
     if (!image)
         return false;
 
-    return hasSpatialcontrolsAttribute && image->isSpatial();
+    return hasSpatialcontrolsAttribute && (image->isSpatial()
+#if ENABLE(PANORAMA_IMAGE_CONTROLS)
+        || image->isMaybePanoramic()
+#endif
+    );
 }
 
 void ensureSpatialControls(HTMLImageElement& imageElement)
@@ -111,11 +120,32 @@ void ensureSpatialControls(HTMLImageElement& imageElement)
         RefPtr element = weakElement.get();
         if (!element)
             return;
-        Ref shadowRoot = element->ensureUserAgentShadowRoot();
-        Ref document = element->document();
 
         if (hasSpatialImageControls(*element))
             return;
+
+#if ENABLE(PANORAMA_IMAGE_CONTROLS)
+        // Determine if this is a spatial or panoramic image
+        auto* cachedImage = element->cachedImage();
+        if (!cachedImage)
+            return;
+
+        auto* image = cachedImage->image();
+        if (!image)
+            return;
+
+        bool isSpatialImage = image->isSpatial();
+        bool isPanoramicImage = image->isMaybePanoramic();
+
+        if (!isSpatialImage && !isPanoramicImage)
+            return;
+#endif // ENABLE(PANORAMA_IMAGE_CONTROLS)
+
+        RefPtr page = element->document().page();
+        bool isRTL = page && page->userInterfaceLayoutDirection() == UserInterfaceLayoutDirection::RTL;
+
+        Ref shadowRoot = element->ensureUserAgentShadowRoot();
+        Ref document = element->document();
 
         double paddingValue = 20;
         unsigned imageHeight = element->height();
@@ -127,11 +157,13 @@ void ensureSpatialControls(HTMLImageElement& imageElement)
         Ref controlLayer = HTMLDivElement::create(document.get());
         controlLayer->setIdAttribute(spatialImageControlsElementIdentifier());
         controlLayer->setAttributeWithoutSynchronization(HTMLNames::contenteditableAttr, falseAtom());
+        controlLayer->setAttributeWithoutSynchronization(HTMLNames::dirAttr, isRTL ? "rtl"_s : "ltr"_s);
         controlLayer->setInlineStyleProperty(CSSPropertyDisplay, "flex"_s);
         controlLayer->setInlineStyleProperty(CSSPropertyFlexDirection, "column"_s);
         controlLayer->setInlineStyleProperty(CSSPropertyJustifyContent, "space-between"_s);
         controlLayer->setInlineStyleProperty(CSSPropertyPosition, "relative"_s);
         controlLayer->setInlineStyleProperty(CSSPropertyBoxSizing, "border-box"_s);
+        controlLayer->setInlineStyleProperty(CSSPropertyBorderRadius, "inherit"_s);
         controlLayer->setInlineStyleProperty(CSSPropertyPadding, paddingValue, CSSUnitType::CSS_PX);
         shadowRoot->appendChild(controlLayer);
 
@@ -162,11 +194,19 @@ void ensureSpatialControls(HTMLImageElement& imageElement)
 
         Ref bottomLabelText = HTMLDivElement::create(document.get());
         bottomLabelText->setIdAttribute("label"_s);
-        bottomLabelText->setTextContent("SPATIAL"_s);
+#if ENABLE(PANORAMA_IMAGE_CONTROLS)
+        bottomLabelText->setTextContent(isSpatialImage ? imageControlsLabelSpatial() : imageControlsLabelPanorama());
+#else
+        bottomLabelText->setTextContent(imageControlsLabelSpatial());
+#endif
         controlLayer->appendChild(bottomLabelText);
 
         Ref glyphSpan = HTMLSpanElement::create(document.get());
+#if ENABLE(PANORAMA_IMAGE_CONTROLS)
+        glyphSpan->setIdAttribute(isSpatialImage ? "spatial-glyph"_s : "pano-glyph"_s);
+#else
         glyphSpan->setIdAttribute("spatial-glyph"_s);
+#endif
         bottomLabelText->insertBefore(glyphSpan, bottomLabelText->protectedFirstChild());
 
         if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(element->renderer()))

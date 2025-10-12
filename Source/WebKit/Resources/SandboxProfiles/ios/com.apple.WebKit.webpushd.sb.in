@@ -46,7 +46,8 @@
 (allow file-read* file-map-executable
     (subpath "/usr/lib")
     (subpath "/System/Library/Frameworks")
-    (subpath "/System/Library/PrivateFrameworks"))
+    (subpath "/System/Library/PrivateFrameworks")
+    (subpath "/System/Library/SubFrameworks"))
 
 (with-filter (system-attribute apple-internal)
     (allow mach-lookup

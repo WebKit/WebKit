@@ -28,12 +28,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-WK_CLASS_AVAILABLE(visionos(WK_XROS_TBA))
+WK_CLASS_AVAILABLE(visionos(26.0))
 @interface _WKSpatialBackdropSource : NSObject
 
-@property (nonatomic, readonly) NSURL *sourceURL WK_API_AVAILABLE(visionos(WK_XROS_TBA));
-@property (nonatomic, readonly) NSURL *modelURL WK_API_AVAILABLE(visionos(WK_XROS_TBA));
-@property (nonatomic, readonly, nullable) NSURL *environmentMapURL WK_API_AVAILABLE(visionos(WK_XROS_TBA));
+@property (nonatomic, readonly) NSURL *sourceURL WK_API_AVAILABLE(visionos(26.0));
+@property (nonatomic, readonly) NSURL *modelURL WK_API_AVAILABLE(visionos(26.0));
+@property (nonatomic, readonly, nullable) NSURL *environmentMapURL WK_API_AVAILABLE(visionos(26.0));
 
 @end
 

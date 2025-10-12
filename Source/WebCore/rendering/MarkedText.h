@@ -27,6 +27,7 @@
 
 #include <wtf/CheckedPtr.h>
 #include <wtf/Hasher.h>
+#include <wtf/Platform.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,7 +40,7 @@ struct TextBoxSelectableRange;
 enum class DocumentMarkerType : uint32_t;
 
 struct MarkedText : public CanMakeCheckedPtr<MarkedText, WTF::DefaultedOperatorEqual::Yes> {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(MarkedText);
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(MarkedText);
 
     // Sorted by paint order

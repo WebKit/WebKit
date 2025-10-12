@@ -15,7 +15,6 @@
 #include <memory>
 #include <optional>
 #include <queue>
-#include <set>
 #include <type_traits>
 #include <utility>
 
@@ -23,11 +22,10 @@
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/ref_count.h"
-#include "rtc_base/ref_counted_object.h"
 #include "rtc_base/system/no_unique_address.h"
+#include "rtc_base/thread_annotations.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace rtc_operations_chain_internal {
 
@@ -188,7 +186,7 @@ class OperationsChain final : public RefCountedNonVirtual<OperationsChain> {
   std::function<void()> CreateOperationsChainCallback();
   void OnOperationComplete();
 
-  RTC_NO_UNIQUE_ADDRESS webrtc::SequenceChecker sequence_checker_;
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker sequence_checker_;
   // FIFO-list of operations that are chained. An operation that is executing
   // remains on this list until it has completed by invoking the callback passed
   // to it.
@@ -198,6 +196,7 @@ class OperationsChain final : public RefCountedNonVirtual<OperationsChain> {
       RTC_GUARDED_BY(sequence_checker_);
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_OPERATIONS_CHAIN_H_

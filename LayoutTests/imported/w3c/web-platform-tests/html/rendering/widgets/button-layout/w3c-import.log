@@ -33,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/inline-level-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/inline-level-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/inline-level.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-fragmentation-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-clip-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-clip-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-clip.html
@@ -45,4 +46,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/scrollable-button-centering-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/scrollable-button-centering-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/scrollable-button-centering.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/scrollbars-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/scrollbars.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/shrink-wrap.html

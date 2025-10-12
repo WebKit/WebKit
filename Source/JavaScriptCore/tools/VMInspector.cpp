@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include "MarkedSpaceInlines.h"
 #include "StackVisitor.h"
 #include "VMEntryRecord.h"
+#include "VMManager.h"
 #include <mutex>
 #include <wtf/Expected.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -42,35 +43,6 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
-
-WTF_MAKE_TZONE_ALLOCATED_IMPL(VMInspector);
-
-VM* VMInspector::m_recentVM { nullptr };
-
-VMInspector& VMInspector::singleton()
-{
-    static VMInspector* manager;
-    static std::once_flag once;
-    std::call_once(once, [] {
-        manager = new VMInspector();
-    });
-    return *manager;
-}
-
-void VMInspector::add(VM* vm)
-{
-    Locker locker { m_lock };
-    m_recentVM = vm;
-    m_vmList.append(vm);
-}
-
-void VMInspector::remove(VM* vm)
-{
-    Locker locker { m_lock };
-    if (m_recentVM == vm)
-        m_recentVM = nullptr;
-    m_vmList.remove(vm);
-}
 
 #if ENABLE(JIT)
 static bool ensureIsSafeToLock(Lock& lock) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
@@ -85,61 +57,14 @@ static bool ensureIsSafeToLock(Lock& lock) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 }
 #endif // ENABLE(JIT)
 
-bool VMInspector::isValidVMSlow(VM* vm)
-{
-    bool found = false;
-    forEachVM([&] (VM& nextVM) {
-        if (vm == &nextVM) {
-            m_recentVM = vm;
-            found = true;
-            return IterationStatus::Done;
-        }
-        return IterationStatus::Continue;
-    });
-    return found;
-}
-
-void VMInspector::dumpVMs()
-{
-    unsigned i = 0;
-    WTFLogAlways("Registered VMs:");
-    forEachVM([&] (VM& nextVM) {
-        WTFLogAlways("  [%u] VM %p", i++, &nextVM);
-        return IterationStatus::Continue;
-    });
-}
-
-void VMInspector::forEachVM(Function<IterationStatus(VM&)>&& func)
-{
-    VMInspector& inspector = singleton();
-    Locker lock { inspector.getLock() };
-    inspector.iterate(func);
-}
-
 // Returns null if the callFrame doesn't actually correspond to any active VM.
 VM* VMInspector::vmForCallFrame(CallFrame* callFrame)
 {
-    VMInspector& inspector = singleton();
-    Locker lock { inspector.getLock() };
-
-    auto isOnVMStack = [] (VM& vm, CallFrame* callFrame) -> bool {
+    return VMManager::findMatchingVM([&] (VM& vm) -> bool {
         void* stackBottom = vm.stackPointerAtVMEntry(); // high memory
         void* stackTop = vm.stackLimit(); // low memory
         return stackBottom > callFrame && callFrame > stackTop;
-    };
-
-    if (m_recentVM && isOnVMStack(*m_recentVM, callFrame))
-        return m_recentVM;
-
-    VM* ownerVM = nullptr;
-    inspector.iterate([&] (VM& vm) {
-        if (isOnVMStack(vm, callFrame)) {
-            ownerVM = &vm;
-            return IterationStatus::Done;
-        }
-        return IterationStatus::Continue;
     });
-    return ownerVM;
 }
 
 WTF_IGNORES_THREAD_SAFETY_ANALYSIS auto VMInspector::isValidExecutableMemory(void* machinePC) -> Expected<bool, Error>
@@ -168,7 +93,7 @@ auto VMInspector::codeBlockForMachinePC(void* machinePC) -> Expected<CodeBlock*,
 #if ENABLE(JIT)
     CodeBlock* codeBlock = nullptr;
     bool hasTimeout = false;
-    iterate([&] (VM& vm) WTF_IGNORES_THREAD_SAFETY_ANALYSIS {
+    VMManager::forEachVM([&] (VM& vm) WTF_IGNORES_THREAD_SAFETY_ANALYSIS {
         if (!vm.isInService())
             return IterationStatus::Continue;
 
@@ -195,7 +120,7 @@ auto VMInspector::codeBlockForMachinePC(void* machinePC) -> Expected<CodeBlock*,
 
         Locker locker { AdoptLock, codeBlockSetLock };
         vm.heap.forEachCodeBlockIgnoringJITPlans(locker, [&] (CodeBlock* cb) {
-            JITCode* jitCode = cb->jitCode().get();
+            RefPtr jitCode = cb->jitCode();
             if (!jitCode) {
                 // If the codeBlock is a replacement codeBlock which is in the process of being
                 // compiled, its jitCode will be null, and we can disregard it as a match for

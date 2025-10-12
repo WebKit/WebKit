@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #import "PageClient.h"
 #import "WebPageProxy.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/SharedBuffer.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -48,11 +49,9 @@ static WTF::String mimeTypeInferredFromFileExtension(const API::Attachment& atta
     return { };
 }
 
-static BOOL isDeclaredOrDynamicTypeIdentifier(NSString *type)
+static BOOL isDeclaredOrDynamicTypeIdentifier(UTType *type)
 {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return UTTypeIsDeclared((__bridge CFStringRef)type) || UTTypeIsDynamic((__bridge CFStringRef)type);
-ALLOW_DEPRECATED_DECLARATIONS_END
+    return type.declared || type.dynamic;
 }
 
 void Attachment::setFileWrapper(NSFileWrapper *fileWrapper)
@@ -74,12 +73,13 @@ WTF::String Attachment::mimeType() const
     RetainPtr contentType = m_contentType.isEmpty() ? mimeTypeInferredFromFileExtension(*this).createNSString() : m_contentType.createNSString();
     if (!contentType.get().length)
         return nullString();
-    if (!isDeclaredOrDynamicTypeIdentifier(contentType.get()))
-        return contentType.get();
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return adoptCF(UTTypeCopyPreferredTagWithClass(bridge_cast(contentType.get()), kUTTagClassMIMEType)).get();
-ALLOW_DEPRECATED_DECLARATIONS_END
+    if (RetainPtr utType = [UTType typeWithIdentifier:contentType.get()]) {
+        if (isDeclaredOrDynamicTypeIdentifier(utType.get()))
+            return [utType preferredMIMEType];
+    }
+
+    return contentType.get();
 }
 
 WTF::String Attachment::utiType() const
@@ -87,12 +87,14 @@ WTF::String Attachment::utiType() const
     RetainPtr contentType = m_contentType.isEmpty() ? mimeTypeInferredFromFileExtension(*this).createNSString() : m_contentType.createNSString();
     if (!contentType.get().length)
         return nullString();
-    if (isDeclaredOrDynamicTypeIdentifier(contentType.get()))
-        return contentType.get();
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, bridge_cast(contentType.get()), nullptr)).get();
-ALLOW_DEPRECATED_DECLARATIONS_END
+    if (RetainPtr utType = [UTType typeWithIdentifier:contentType.get()]) {
+        if (isDeclaredOrDynamicTypeIdentifier(utType.get()))
+            return contentType.get();
+    }
+
+    RetainPtr preferredType = [UTType typeWithMIMEType:contentType.get()];
+    return [preferredType identifier];
 }
 
 WTF::String Attachment::fileName() const
@@ -109,16 +111,14 @@ void Attachment::setFileWrapperAndUpdateContentType(NSFileWrapper *fileWrapper, 
 {
     RetainPtr updatedContentType = contentType;
     if (!updatedContentType.get().length) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (fileWrapper.directory)
-            updatedContentType = bridge_cast(kUTTypeDirectory);
+            updatedContentType = UTTypeDirectory.identifier;
         else if (fileWrapper.regularFile) {
             if (RetainPtr<NSString> pathExtension = (fileWrapper.filename.length ? fileWrapper.filename : fileWrapper.preferredFilename).pathExtension)
                 updatedContentType = WebCore::MIMETypeRegistry::mimeTypeForExtension(WTF::String(pathExtension.get())).createNSString();
             if (!updatedContentType.get().length)
-                updatedContentType = bridge_cast(kUTTypeData);
+                updatedContentType = UTTypeData.identifier;
         }
-ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     setContentType(updatedContentType.get());
@@ -161,7 +161,7 @@ RefPtr<WebCore::FragmentedSharedBuffer> Attachment::associatedElementData() cons
     return WebCore::SharedBuffer::create(data);
 }
 
-NSData *Attachment::associatedElementNSData() const
+RetainPtr<NSData> Attachment::associatedElementNSData() const
 {
     Locker locker { m_fileWrapperLock };
 
@@ -209,7 +209,8 @@ void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&
     if (!serializedData)
         return;
 
-    RetainPtr fileWrapper = [NSKeyedUnarchiver unarchivedObjectOfClasses:pageClient->serializableFileWrapperClasses() fromData:serializedData.get() error:nullptr];
+    RetainPtr classes = pageClient->serializableFileWrapperClasses();
+    RetainPtr fileWrapper = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes.get() fromData:serializedData.get() error:nullptr];
     if (![fileWrapper isKindOfClass:NSFileWrapper.class])
         return;
 

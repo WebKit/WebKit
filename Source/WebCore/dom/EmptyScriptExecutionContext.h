@@ -33,11 +33,12 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include <JavaScriptCore/JSGlobalObject.h>
-#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class EmptyScriptExecutionContext final : public RefCounted<EmptyScriptExecutionContext>, public ScriptExecutionContext {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(EmptyScriptExecutionContext);
 public:
     static Ref<EmptyScriptExecutionContext> create(JSC::VM& vm)
     {
@@ -54,7 +55,7 @@ public:
     EventLoopTaskGroup& eventLoop() final
     {
         ASSERT_NOT_REACHED();
-        return *m_eventLoopTaskGroup;
+        return m_eventLoopTaskGroup;
     }
     const URL& url() const final { return m_url; }
     const URL& cookieURL() const final { return url(); }
@@ -96,7 +97,7 @@ private:
         , m_vm(vm)
         , m_origin(SecurityOrigin::createOpaque())
         , m_eventLoop(EmptyEventLoop::create(vm))
-        , m_eventLoopTaskGroup(makeUnique<EventLoopTaskGroup>(m_eventLoop))
+        , m_eventLoopTaskGroup(makeUniqueRef<EventLoopTaskGroup>(m_eventLoop))
     {
         relaxAdoptionRequirement();
         m_eventLoop->addAssociatedContext(*this);
@@ -132,11 +133,11 @@ private:
         MicrotaskQueue m_queue;
     };
 
-    Ref<JSC::VM> m_vm;
-    Ref<SecurityOrigin> m_origin;
+    const Ref<JSC::VM> m_vm;
+    const Ref<SecurityOrigin> m_origin;
     URL m_url;
-    Ref<EmptyEventLoop> m_eventLoop;
-    std::unique_ptr<EventLoopTaskGroup> m_eventLoopTaskGroup;
+    const Ref<EmptyEventLoop> m_eventLoop;
+    const UniqueRef<EventLoopTaskGroup> m_eventLoopTaskGroup;
     SettingsValues m_settingsValues;
 };
 

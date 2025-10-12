@@ -26,10 +26,10 @@
 #ifndef LayerPool_h
 #define LayerPool_h
 
-#include "IntSize.h"
-#include "IntSizeHash.h"
-#include "PlatformCALayer.h"
-#include "Timer.h"
+#include <WebCore/IntSize.h>
+#include <WebCore/IntSizeHash.h>
+#include <WebCore/PlatformCALayer.h>
+#include <WebCore/Timer.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
@@ -47,7 +47,7 @@ public:
     WEBCORE_EXPORT LayerPool();
     WEBCORE_EXPORT ~LayerPool();
 
-    static UncheckedKeyHashSet<CheckedPtr<LayerPool>>& allLayerPools();
+    static HashSet<CheckedPtr<LayerPool>>& allLayerPools();
     
     void addLayer(const RefPtr<PlatformCALayer>&);
     RefPtr<PlatformCALayer> takeLayerWithSize(const IntSize&);
@@ -71,7 +71,7 @@ private:
 
     static unsigned backingStoreBytesForSize(const IntSize&);
 
-    UncheckedKeyHashMap<IntSize, LayerList> m_reuseLists;
+    HashMap<IntSize, LayerList> m_reuseLists;
     // Ordered by recent use. The last size is the most recently used.
     Vector<IntSize> m_sizesInPruneOrder;
     unsigned m_totalBytes { 0 };

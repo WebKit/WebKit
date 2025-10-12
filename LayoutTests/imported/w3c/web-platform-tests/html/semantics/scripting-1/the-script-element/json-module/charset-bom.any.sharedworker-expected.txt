@@ -1,5 +1,5 @@
 
 PASS UTF-8 BOM should be stripped when decoding JSON module script
-FAIL UTF-16BE BOM should result in parse error in JSON module script assert_unreached: Should have rejected: Expected parse error from UTF-16BE BOM Reached unreachable code
-FAIL UTF-16LE BOM should result in parse error in JSON module script assert_unreached: Should have rejected: Expected parse error from UTF-16LE BOM Reached unreachable code
+PASS UTF-16BE BOM should result in parse error in JSON module script
+PASS UTF-16LE BOM should result in parse error in JSON module script
 

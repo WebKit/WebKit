@@ -19,7 +19,7 @@ namespace webrtc {
 
 std::string ToString(DataRate value) {
   char buf[64];
-  rtc::SimpleStringBuilder sb(buf);
+  SimpleStringBuilder sb(buf);
   if (value.IsPlusInfinity()) {
     sb << "+inf bps";
   } else if (value.IsMinusInfinity()) {

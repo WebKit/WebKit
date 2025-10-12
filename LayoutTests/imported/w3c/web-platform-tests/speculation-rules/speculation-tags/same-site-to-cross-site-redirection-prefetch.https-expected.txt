@@ -1,0 +1,3 @@
+
+FAIL same-site to cross-site redirection prefetch should not have Sec-Speculation-Tags be sent assert_equals: expected "__no_tags__" but got "\"tag1\""
+

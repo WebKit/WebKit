@@ -78,7 +78,6 @@ public:
     bool hasOpenSessions() const;
     CDMInstance& cdmInstance() { return m_instance; }
     const CDMInstance& cdmInstance() const { return m_instance; }
-    Ref<CDMInstance> protectedCDMInstance() const;
 
 #if !RELEASE_LOG_DISABLED
     uint64_t nextChildIdentifier() const;
@@ -100,14 +99,14 @@ protected:
     bool m_useDistinctiveIdentifier;
     bool m_persistentStateAllowed;
     Vector<MediaKeySessionType> m_supportedSessionTypes;
-    Ref<CDM> m_implementation;
-    Ref<CDMInstance> m_instance;
+    const Ref<CDM> m_implementation;
+    const Ref<CDMInstance> m_instance;
 
     Vector<Ref<MediaKeySession>> m_sessions;
     WeakHashSet<CDMClient> m_cdmClients;
 
 #if !RELEASE_LOG_DISABLED
-    Ref<Logger> m_logger;
+    const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
     mutable uint64_t m_childIdentifierSeed { 0 };
 #endif

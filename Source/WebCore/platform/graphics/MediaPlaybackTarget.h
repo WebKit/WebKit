@@ -27,13 +27,13 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#include "MediaPlaybackTargetContext.h"
+#include <WebCore/MediaPlaybackTargetContext.h>
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
-class MediaPlaybackTarget : public RefCounted<MediaPlaybackTarget> {
+class MediaPlaybackTarget : public ThreadSafeRefCounted<MediaPlaybackTarget> {
 public:
     virtual ~MediaPlaybackTarget() = default;
 

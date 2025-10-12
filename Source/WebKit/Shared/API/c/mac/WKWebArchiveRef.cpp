@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,7 +55,7 @@ WKWebArchiveRef WKWebArchiveCreateWithData(WKDataRef dataRef)
 
 WKWebArchiveRef WKWebArchiveCreateFromRange(WKBundleRangeHandleRef rangeHandleRef)
 {
-    auto webArchive = API::WebArchive::create(makeSimpleRange(WebKit::toProtectedImpl(rangeHandleRef)->protectedCoreRange()));
+    Ref webArchive = API::WebArchive::create(makeSimpleRange(WebKit::toProtectedImpl(rangeHandleRef)->coreRange()));
     return WebKit::toAPILeakingRef(WTFMove(webArchive));
 }
 

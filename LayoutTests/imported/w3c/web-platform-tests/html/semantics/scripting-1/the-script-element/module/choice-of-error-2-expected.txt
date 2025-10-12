@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Importing binding name 'default' cannot be resolved by star export entries.
-CONSOLE MESSAGE: SyntaxError: Importing binding name 'default' cannot be resolved by star export entries.
 
 FAIL Instantiation errors in different files should be reported depending on different roots assert_not_equals: two different instantiation errors should be reported got disallowed value object "SyntaxError: Importing binding name 'default' cannot be resolved by star export entries."
 

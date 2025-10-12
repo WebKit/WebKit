@@ -1,3 +1,4 @@
+//@ skip if $buildType == "debug"
 (function() {
     var result = 0;
     var n = 1000000;

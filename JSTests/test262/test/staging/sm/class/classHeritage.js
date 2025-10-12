@@ -2,20 +2,17 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
 ---*/
 // It's an error to have a non-constructor as your heritage
-assertThrowsInstanceOf(() => eval(`class a extends Math.sin {
+assert.throws(TypeError, () => eval(`class a extends Math.sin {
                                         constructor() { }
-                                    }`), TypeError);
-assertThrowsInstanceOf(() => eval(`(class a extends Math.sin {
+                                    }`));
+assert.throws(TypeError, () => eval(`(class a extends Math.sin {
                                         constructor() { }
-                                    })`), TypeError);
+                                    })`));
 
 // Unless it's null, in which case it works like a normal class, except that
 // the prototype object does not inherit from Object.prototype.
@@ -86,8 +83,8 @@ function nopeExpr() {
         constructor() { }
      });
 }
-assertThrowsInstanceOf(nope, TypeError);
-assertThrowsInstanceOf(nopeExpr, TypeError);
+assert.throws(TypeError, nope);
+assert.throws(TypeError, nopeExpr);
 
 // The .prototype of the extension must be an object, or null.
 nope.prototype = "not really, no";
@@ -101,6 +98,6 @@ function stillNoExpr() {
         constructor() { }
      });
 }
-assertThrowsInstanceOf(stillNo, TypeError);
-assertThrowsInstanceOf(stillNoExpr, TypeError);
+assert.throws(TypeError, stillNo);
+assert.throws(TypeError, stillNoExpr);
 

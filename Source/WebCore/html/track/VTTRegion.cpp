@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2013 Google Inc.  All rights reserved.
- * Copyright (C) 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -35,6 +35,7 @@
 #if ENABLE(VIDEO)
 
 #include "ContainerNodeInlines.h"
+#include "ContextDestructionObserverInlines.h"
 #include "DOMRect.h"
 #include "DOMTokenList.h"
 #include "ElementChildIteratorInlines.h"
@@ -146,8 +147,8 @@ void VTTRegion::setRegionSettings(const String& inputString)
 
     while (!input.isAtEnd()) {
         // Step 1 - Split input on spaces.
-        input.skipWhile<isASCIIWhitespace<UChar>>();
-        VTTScanner::Run valueRun = input.collectUntil<isASCIIWhitespace<UChar>>();
+        input.skipWhile<isASCIIWhitespace<char16_t>>();
+        VTTScanner::Run valueRun = input.collectUntil<isASCIIWhitespace<char16_t>>();
         auto settingValue = input.extractString(valueRun);
         VTTScanner setting(settingValue);
 
@@ -188,7 +189,7 @@ static inline bool parsedEntireRun(const VTTScanner& input, const VTTScanner::Ru
 
 void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
 {
-    VTTScanner::Run valueRun = input.collectUntil<isASCIIWhitespace<UChar>>();
+    VTTScanner::Run valueRun = input.collectUntil<isASCIIWhitespace<char16_t>>();
 
     switch (setting) {
     case Id: {

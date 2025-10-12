@@ -28,7 +28,10 @@
 
 int main(int argc, char * argv[])
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];
+#pragma clang diagnostic pop
 
     @autoreleasepool {
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "FloatRoundedRect.h"
 
+#include "Path.h"
 #include <algorithm>
 #include <numbers>
 #include <wtf/TZoneMallocInlines.h>
@@ -41,7 +42,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FloatRoundedRect);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FloatRoundedRect::Radii);
 
-FloatRoundedRect::FloatRoundedRect(const RoundedRect& rect)
+FloatRoundedRect::FloatRoundedRect(const LayoutRoundedRect& rect)
     : m_rect(rect.rect())
     , m_radii(rect.radii())
 {
@@ -226,6 +227,13 @@ bool FloatRoundedRect::intersectionIsRectangular(const FloatRect& rect) const
     return !(rect.intersects(topLeftCorner()) || rect.intersects(topRightCorner()) || rect.intersects(bottomLeftCorner()) || rect.intersects(bottomRightCorner()));
 }
 
+Path FloatRoundedRect::path() const
+{
+    Path path;
+    path.addRoundedRect(*this);
+    return path;
+}
+
 Region approximateAsRegion(const FloatRoundedRect& roundedRect, unsigned stepLength)
 {
     Region region;
@@ -258,7 +266,7 @@ Region approximateAsRegion(const FloatRoundedRect& roundedRect, unsigned stepLen
         constexpr auto maximumCount = 20u;
         count = std::min(maximumCount, count);
 
-        for (auto i = 0u; i < count; ++i) {
+        for (decltype(count) i = 0; i < count; ++i) {
             auto angle = fromAngle + (i + 1) * (toAngle - fromAngle) / (count + 1);
             auto ellipsisPoint = LayoutPoint { axes.width() * cos(angle), axes.height() * sin(angle) };
             auto cornerRect = makeIntRect(corner, ellipsisCenter + ellipsisPoint);

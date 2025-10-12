@@ -47,7 +47,7 @@ static BOOL isManagedSessionMethodOverride(id self, SEL selector)
 
 TEST(WebKit, WebFilterFeatureHasFrontboardServiceAccess)
 {
-    Method isManagedSessionMethod = class_getClassMethod(getWebFilterEvaluatorClass(), @selector(isManagedSession));
+    Method isManagedSessionMethod = class_getClassMethod(getWebFilterEvaluatorClassSingleton(), @selector(isManagedSession));
     ASSERT(isManagedSessionMethod);
     isManagedSessionMethodOriginal = method_setImplementation(isManagedSessionMethod, (IMP)isManagedSessionMethodOverride);
     ASSERT(isManagedSessionMethodOriginal);

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,11 +55,6 @@ RTCDataChannelEvent::RTCDataChannelEvent(const AtomString& type, Init&& initiali
     : Event(EventInterfaceType::RTCDataChannelEvent, type, initializer, isTrusted)
     , m_channel(initializer.channel.releaseNonNull())
 {
-}
-
-RTCDataChannel& RTCDataChannelEvent::channel()
-{
-    return m_channel.get();
 }
 
 } // namespace WebCore

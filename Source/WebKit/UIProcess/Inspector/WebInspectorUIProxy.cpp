@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
+ * Portions Copyright (c) 2011 Motorola Mobility, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,10 @@
 #include "APIUIClient.h"
 #include "InspectorBrowserAgent.h"
 #include "MessageSenderInlines.h"
+#include "PageClient.h"
 #include "WebAutomationSession.h"
 #include "WebFrameProxy.h"
+#include "WebInspectorBackendProxyMessages.h"
 #include "WebInspectorInterruptDispatcherMessages.h"
 #include "WebInspectorMessages.h"
 #include "WebInspectorUIExtensionControllerProxy.h"
@@ -71,14 +73,15 @@ const unsigned WebInspectorUIProxy::initialWindowWidth = 1000;
 const unsigned WebInspectorUIProxy::initialWindowHeight = 650;
 
 WebInspectorUIProxy::WebInspectorUIProxy(WebPageProxy& inspectedPage)
-    : m_inspectedPage(inspectedPage)
+    : m_backend(adoptRef(new WebInspectorBackendProxy(*this)))
+    , m_inspectedPage(inspectedPage)
     , m_inspectorClient(makeUnique<API::InspectorClient>())
     , m_inspectedPageIdentifier(inspectedPage.identifier())
 #if PLATFORM(MAC)
-    , m_closeFrontendAfterInactivityTimer(RunLoop::main(), this, &WebInspectorUIProxy::closeFrontendAfterInactivityTimerFired)
+    , m_closeFrontendAfterInactivityTimer(RunLoop::mainSingleton(), "WebInspectorUIProxy::CloseFrontendAfterInactivityTimer"_s, this, &WebInspectorUIProxy::closeFrontendAfterInactivityTimerFired)
 #endif
 {
-    protectedInspectedPage()->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess(), *this);
+    protectedInspectedPage()->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebInspectorBackendProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess(), *m_backend);
 }
 
 WebInspectorUIProxy::~WebInspectorUIProxy()
@@ -103,7 +106,7 @@ unsigned WebInspectorUIProxy::inspectionLevel() const
 WebPreferences& WebInspectorUIProxy::inspectorPagePreferences() const
 {
     ASSERT(m_inspectorPage);
-    return protectedInspectorPage()->protectedPageGroup()->preferences();
+    return protectedInspectorPage()->pageGroup().preferences();
 }
 
 Ref<WebPreferences> WebInspectorUIProxy::protectedInspectorPagePreferences() const
@@ -237,7 +240,7 @@ void WebInspectorUIProxy::resetState()
 void WebInspectorUIProxy::reset()
 {
     if (RefPtr inspectedPage = m_inspectedPage.get()) {
-        inspectedPage->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), inspectedPage->webPageIDInMainFrameProcess());
+        inspectedPage->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::WebInspectorBackendProxy::messageReceiverName(), inspectedPage->webPageIDInMainFrameProcess());
         m_inspectedPage = nullptr;
     }
 }
@@ -246,10 +249,10 @@ void WebInspectorUIProxy::updateForNewPageProcess(WebPageProxy& inspectedPage)
 {
     ASSERT(!m_inspectedPage);
 
-    m_inspectedPage = &inspectedPage;
+    m_inspectedPage = inspectedPage;
     m_inspectedPageIdentifier = inspectedPage.identifier();
 
-    protectedInspectedPage()->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess(), *this);
+    protectedInspectedPage()->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebInspectorBackendProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess(), *m_backend);
 
     if (RefPtr inspectorPage = m_inspectorPage.get())
         inspectorPage->protectedLegacyMainFrameProcess()->send(Messages::WebInspectorUI::UpdateConnection(), m_inspectorPage->webPageIDInMainFrameProcess());
@@ -344,6 +347,8 @@ void WebInspectorUIProxy::attach(AttachmentSide side)
     }
 
     platformAttach();
+
+    dispatchDidChangeLocalInspectorAttachment();
 }
 
 void WebInspectorUIProxy::detach()
@@ -360,6 +365,8 @@ void WebInspectorUIProxy::detach()
     protectedInspectorPage()->protectedLegacyMainFrameProcess()->send(Messages::WebInspectorUI::Detached(), m_inspectorPage->webPageIDInMainFrameProcess());
 
     platformDetach();
+
+    dispatchDidChangeLocalInspectorAttachment();
 }
 
 void WebInspectorUIProxy::setAttachedWindowHeight(unsigned height)
@@ -525,6 +532,8 @@ void WebInspectorUIProxy::openLocalInspectorFrontend()
             inspectorPageProcess->send(Messages::WebInspectorUI::Detached(), inspectorPage->webPageIDInMainFrameProcess());
 
         inspectorPageProcess->send(Messages::WebInspectorUI::SetDockingUnavailable(!m_canAttach), inspectorPage->webPageIDInMainFrameProcess());
+
+        dispatchDidChangeLocalInspectorAttachment();
     }
 
     // Notify clients when a local inspector attaches so that it may install delegates prior to the _WKInspector loading its frontend.
@@ -565,6 +574,8 @@ void WebInspectorUIProxy::open()
     }
 
     platformBringToFront();
+
+    dispatchDidChangeLocalInspectorAttachment();
 }
 
 void WebInspectorUIProxy::didClose()
@@ -627,6 +638,8 @@ void WebInspectorUIProxy::closeFrontendPageAndWindow()
     m_canAttach = false;
 
     platformCloseFrontendPageAndWindow();
+
+    dispatchDidChangeLocalInspectorAttachment();
 }
 
 void WebInspectorUIProxy::sendMessageToBackend(const String& message)
@@ -735,6 +748,15 @@ void WebInspectorUIProxy::setInspectorPageDeveloperExtrasEnabled(bool enabled)
     inspectorPage->protectedPreferences()->setDeveloperExtrasEnabled(enabled);
 }
 
+void WebInspectorUIProxy::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
+{
+    RefPtr inspectorPage = m_inspectorPage.get();
+    if (!inspectorPage)
+        return;
+
+    inspectorPage->setPageAndTextZoomFactors(pageZoomFactor, textZoomFactor);
+}
+
 void WebInspectorUIProxy::elementSelectionChanged(bool active)
 {
     m_elementSelectionActive = active;
@@ -757,27 +779,27 @@ void WebInspectorUIProxy::timelineRecordingChanged(bool active)
     m_isProfilingPage = active;
 }
 
-void WebInspectorUIProxy::setDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
+void WebInspectorUIProxy::setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
     switch (developerPreference) {
-    case InspectorClient::DeveloperPreference::PrivateClickMeasurementDebugModeEnabled:
+    case InspectorBackendClient::DeveloperPreference::PrivateClickMeasurementDebugModeEnabled:
         if (RefPtr inspectedPage = m_inspectedPage.get())
             inspectedPage->protectedWebsiteDataStore()->setPrivateClickMeasurementDebugMode(overrideValue && overrideValue.value());
         return;
 
-    case InspectorClient::DeveloperPreference::ITPDebugModeEnabled:
+    case InspectorBackendClient::DeveloperPreference::ITPDebugModeEnabled:
         if (RefPtr inspectedPage = m_inspectedPage.get())
             inspectedPage->protectedWebsiteDataStore()->setResourceLoadStatisticsDebugMode(overrideValue && overrideValue.value());
         return;
 
-    case InspectorClient::DeveloperPreference::MockCaptureDevicesEnabled:
+    case InspectorBackendClient::DeveloperPreference::MockCaptureDevicesEnabled:
 #if ENABLE(MEDIA_STREAM)
         if (RefPtr inspectedPage = m_inspectedPage.get())
             inspectedPage->setMockCaptureDevicesEnabledOverride(overrideValue);
 #endif // ENABLE(MEDIA_STREAM)
         return;
 
-    case InspectorClient::DeveloperPreference::NeedsSiteSpecificQuirks:
+    case InspectorBackendClient::DeveloperPreference::NeedsSiteSpecificQuirks:
         if (RefPtr inspectedPage = m_inspectedPage.get())
             inspectedPage->protectedPreferences()->setNeedsSiteSpecificQuirksInspectorOverride(overrideValue);
         return;
@@ -863,6 +885,19 @@ RefPtr<WebInspectorUIExtensionControllerProxy> WebInspectorUIProxy::protectedExt
     return extensionController();
 }
 #endif
+
+void WebInspectorUIProxy::dispatchDidChangeLocalInspectorAttachment()
+{
+    RefPtr inspectedPage = m_inspectedPage.get();
+    if (!inspectedPage)
+        return;
+
+    RefPtr pageClient = inspectedPage->pageClient();
+    if (!pageClient)
+        return;
+
+    pageClient->didChangeLocalInspectorAttachment();
+}
 
 // Unsupported configurations can use the stubs provided here.
 

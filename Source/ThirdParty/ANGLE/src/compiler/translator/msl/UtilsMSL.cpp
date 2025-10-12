@@ -293,13 +293,4 @@ const char *getBuiltInMetalTypeNameString(const TType *t)
     ASSERT(t->getBasicType() != EbtInterfaceBlock);
     return getBasicMetalString(t);
 }
-
-ImmutableString GetMetalTypeName(const TType &type, ShHashFunction64 hashFunction, NameMap *nameMap)
-{
-    if (type.getBasicType() == EbtStruct)
-        return HashName(type.getStruct(), hashFunction, nameMap);
-    else
-        return ImmutableString(getBuiltInMetalTypeNameString(&type));
-}
-
 }  // namespace sh

@@ -5,13 +5,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS ready() became true
 
-TracksButton was dropped at 488.
-PiPButton was dropped at 488.
-SkipForwardButton was dropped at 453.
-SkipBackButton was dropped at 424.
-MuteButton was dropped at 395.
-AirplayButton was dropped at 357.
-FullscreenButton was dropped at 325.
+TracksButton was dropped at 498.
+PiPButton was dropped at 498.
+SkipForwardButton was dropped at 463.
+SkipBackButton was dropped at 434.
+MuteButton was dropped at 405.
+AirplayButton was dropped at 367.
+FullscreenButton was dropped at 335.
 
 PASS successfullyParsed is true
 

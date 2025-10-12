@@ -34,17 +34,20 @@
 
 namespace WebKit {
 
-FrameProcess::FrameProcess(WebProcessProxy& process, BrowsingContextGroup& group, const WebCore::Site& site, const WebPreferences& preferences, InjectBrowsingContextIntoProcess injectBrowsingContextIntoProcess)
+FrameProcess::FrameProcess(WebProcessProxy& process, BrowsingContextGroup& group, const std::optional<WebCore::Site>& site, const WebCore::Site& mainFrameSite,
+    const WebPreferences& preferences, InjectBrowsingContextIntoProcess injectBrowsingContextIntoProcess)
     : m_process(process)
     , m_browsingContextGroup(group)
     , m_site(site)
+    , m_mainFrameSite(mainFrameSite)
 {
     if (preferences.siteIsolationEnabled()) {
         if (injectBrowsingContextIntoProcess == InjectBrowsingContextIntoProcess::Yes)
             group.addFrameProcess(*this);
-        process.didStartUsingProcessForSiteIsolation(site);
+        process.didStartUsingProcessForSiteIsolation(site, mainFrameSite);
     } else
         m_browsingContextGroup = nullptr;
+    ASSERT(isSharedProcess() == process.isSharedProcess());
 }
 
 FrameProcess::~FrameProcess()

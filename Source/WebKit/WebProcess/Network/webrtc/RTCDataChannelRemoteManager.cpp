@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,8 @@
 #include <WebCore/RTCDataChannel.h>
 #include <WebCore/RTCError.h>
 #include <WebCore/ScriptExecutionContext.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/Ref.h>
 
 namespace WebKit {
 
@@ -51,7 +53,7 @@ RTCDataChannelRemoteManager& RTCDataChannelRemoteManager::singleton()
 
 RTCDataChannelRemoteManager::RTCDataChannelRemoteManager()
     : m_queue(WorkQueue::create("RTCDataChannelRemoteManager"_s))
-    , m_connection(&WebProcess::singleton().ensureNetworkProcessConnection().connection())
+    , m_connection(WebProcess::singleton().ensureNetworkProcessConnection().connection())
 {
 }
 
@@ -122,7 +124,7 @@ void RTCDataChannelRemoteManager::sendData(WebCore::RTCDataChannelIdentifier sou
         if (isRaw)
             source->sendRawData(data);
         else
-            source->sendStringData(CString(data));
+            source->sendStringData(CString(byteCast<Latin1Character>(data)));
     }
 }
 
@@ -163,7 +165,7 @@ void RTCDataChannelRemoteManager::detectError(WebCore::RTCDataChannelIdentifier 
     });
 }
 
-void RTCDataChannelRemoteManager::bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier handlerIdentifier, size_t amount)
+void RTCDataChannelRemoteManager::bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier handlerIdentifier, uint64_t amount)
 {
     postTaskToHandler(handlerIdentifier, [amount](auto& handler) {
         handler.bufferedAmountIsDecreasing(amount);
@@ -239,7 +241,7 @@ void RTCDataChannelRemoteManager::RemoteSourceConnection::didDetectError(WebCore
     m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::DetectError { identifier, type, message }, 0);
 }
 
-void RTCDataChannelRemoteManager::RemoteSourceConnection::bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier identifier, size_t amount)
+void RTCDataChannelRemoteManager::RemoteSourceConnection::bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier identifier, uint64_t amount)
 {
     m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::BufferedAmountIsDecreasing { identifier, amount }, 0);
 }

@@ -31,7 +31,7 @@
 namespace WTF {
 
 class Win32Handle {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Win32Handle);
 public:
     WTF_EXPORT_PRIVATE static Win32Handle adopt(HANDLE);
 

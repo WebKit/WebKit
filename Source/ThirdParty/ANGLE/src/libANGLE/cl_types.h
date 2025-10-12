@@ -4,9 +4,14 @@
 // found in the LICENSE file.
 //
 // cl_types.h: Defines common types for the OpenCL support in ANGLE.
+//
 
 #ifndef LIBANGLE_CLTYPES_H_
 #define LIBANGLE_CLTYPES_H_
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #if defined(ANGLE_ENABLE_CL)
 #    include "libANGLE/CLBitField.h"
@@ -115,8 +120,12 @@ struct BufferRect
                (mSlicePitch * (mOrigin.z + slice));                              // slice offset
     }
 
-    size_t getRowPitch() { return mRowPitch; }
-    size_t getSlicePitch() { return mSlicePitch; }
+    size_t getRowPitch() const { return mRowPitch; }
+    size_t getSlicePitch() const { return mSlicePitch; }
+    // Given the offset, row pitch, slice pitch, this returns the size of the buffer in which this
+    // rect sits.
+    size_t getRectSize() const { return getRowOffset(mSize.depth, mSize.height); }
+    const Extents &getExtents() const { return mSize; }
     Offset mOrigin;
     Extents mSize;
     size_t mRowPitch;
@@ -313,6 +322,13 @@ struct NDRange
     GlobalWorkSize globalWorkSize;
     WorkgroupSize localWorkSize;
     bool nullLocalWorkSize{false};
+};
+
+// Memory property element from cl_khr_external_memory
+struct NameValueProperty
+{
+    intptr_t name;
+    intptr_t value;
 };
 
 }  // namespace cl

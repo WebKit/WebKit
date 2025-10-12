@@ -93,7 +93,7 @@ void PageRuleCollector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isF
 
 static bool checkPageSelectorComponents(const CSSSelector* selector, bool isLeftPage, bool isFirstPage, const String& pageName)
 {
-    for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
+    for (const CSSSelector* component = selector; component; component = component->precedingInComplexSelector()) {
         if (component->match() == CSSSelector::Match::Tag) {
             const AtomString& localName = component->tagQName().localName();
             if (localName != starAtom() && localName != pageName)

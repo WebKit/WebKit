@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,7 +99,6 @@ public:
 
     NavigationPreloadManager& navigationPreload();
     ServiceWorkerContainer& container() { return m_container.get(); }
-    Ref<ServiceWorkerContainer> protectedContainer() const;
 
 #if ENABLE(NOTIFICATION_EVENT)
     struct GetNotificationOptions {
@@ -120,6 +119,7 @@ private:
 
     enum EventTargetInterfaceType eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
+    using ActiveDOMObject::protectedScriptExecutionContext;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
@@ -128,7 +128,7 @@ private:
     bool virtualHasPendingActivity() const final;
 
     ServiceWorkerRegistrationData m_registrationData;
-    Ref<ServiceWorkerContainer> m_container;
+    const Ref<ServiceWorkerContainer> m_container;
 
     RefPtr<ServiceWorker> m_installingWorker;
     RefPtr<ServiceWorker> m_waitingWorker;

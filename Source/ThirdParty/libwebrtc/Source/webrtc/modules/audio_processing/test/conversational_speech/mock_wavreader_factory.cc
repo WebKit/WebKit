@@ -10,8 +10,14 @@
 
 #include "modules/audio_processing/test/conversational_speech/mock_wavreader_factory.h"
 
+#include <cstddef>
+#include <map>
+#include <memory>
+#include <string>
+
 #include "absl/strings/string_view.h"
 #include "modules/audio_processing/test/conversational_speech/mock_wavreader.h"
+#include "modules/audio_processing/test/conversational_speech/wavreader_interface.h"
 #include "rtc_base/logging.h"
 #include "test/gmock.h"
 

@@ -27,13 +27,14 @@
 #include "AccessibilitySpinButton.h"
 
 #include "AXObjectCache.h"
+#include "AccessibilityObjectInlines.h"
 #include "ContainerNodeInlines.h"
 #include "RenderElement.h"
 
 namespace WebCore {
 
 AccessibilitySpinButton::AccessibilitySpinButton(AXID axID, AXObjectCache& cache)
-    : AccessibilityMockObject(axID)
+    : AccessibilityMockObject(axID, cache)
     , m_spinButtonElement(nullptr)
     , m_incrementor(downcast<AccessibilitySpinButtonPart>(*cache.create(AccessibilityRole::SpinButtonPart)))
     , m_decrementor(downcast<AccessibilitySpinButtonPart>(*cache.create(AccessibilityRole::SpinButtonPart)))
@@ -58,25 +59,25 @@ Ref<AccessibilitySpinButton> AccessibilitySpinButton::create(AXID axID, AXObject
 
 
 AccessibilitySpinButton::~AccessibilitySpinButton() = default;
-    
+
 AccessibilitySpinButtonPart* AccessibilitySpinButton::incrementButton()
 {
     ASSERT(m_childrenInitialized);
     RELEASE_ASSERT(m_children.size() == 2);
     return &downcast<AccessibilitySpinButtonPart>(m_children[0].get());
 }
-   
+
 AccessibilitySpinButtonPart* AccessibilitySpinButton::decrementButton()
 {
     ASSERT(m_childrenInitialized);
     RELEASE_ASSERT(m_children.size() == 2);
     return &downcast<AccessibilitySpinButtonPart>(m_children[1].get());
 }
-    
+
 LayoutRect AccessibilitySpinButton::elementRect() const
 {
     ASSERT(m_spinButtonElement);
-    
+
     CheckedPtr renderer = m_spinButtonElement ? m_spinButtonElement->renderer() : nullptr;
     if (!renderer)
         return { };
@@ -94,7 +95,7 @@ void AccessibilitySpinButton::addChildren()
     ASSERT(!m_subtreeDirty);
     ASSERT(!m_childrenDirty);
 }
-    
+
 void AccessibilitySpinButton::step(int amount)
 {
     ASSERT(m_spinButtonElement);

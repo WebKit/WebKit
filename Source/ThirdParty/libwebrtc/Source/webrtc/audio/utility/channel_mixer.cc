@@ -10,13 +10,14 @@
 
 #include "audio/utility/channel_mixer.h"
 
-#if defined(WEBRTC_WEBKIT_BUILD)
+#include <cstddef>
+#include <cstdint>
 #include <cstring>
-#endif
 
+#include "api/audio/audio_frame.h"
+#include "api/audio/channel_layout.h"
 #include "audio/utility/channel_mixing_matrix.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
@@ -94,7 +95,7 @@ void ChannelMixer::Transform(AudioFrame* frame) {
       }
       const size_t index = output_channels_ * i + output_ch;
       RTC_CHECK_LE(index, audio_vector_size_);
-      out_audio[index] = rtc::saturated_cast<int16_t>(acc_value);
+      out_audio[index] = saturated_cast<int16_t>(acc_value);
     }
   }
 

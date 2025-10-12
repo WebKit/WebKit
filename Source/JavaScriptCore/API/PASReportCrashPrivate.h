@@ -34,7 +34,6 @@
 extern "C" {
 #endif
 
-JS_EXPORT kern_return_t PASPGMEnabledOnProcess(void);
 JS_EXPORT kern_return_t PASReportCrashExtractResults(vm_address_t fault_address, mach_vm_address_t pas_dead_root, unsigned version, task_t task, pas_report_crash_pgm_report *report, crash_reporter_memory_reader_t crm_reader);
 
 #ifdef __cplusplus

@@ -135,7 +135,7 @@ void StyleCrossfadeImage::load(CachedResourceLoader& loader, const ResourceLoade
     m_inputImagesAreReady = true;
 }
 
-RefPtr<Image> StyleCrossfadeImage::image(const RenderElement* renderer, const FloatSize& size, bool isForFirstLine) const
+RefPtr<Image> StyleCrossfadeImage::image(const RenderElement* renderer, const FloatSize& size, const GraphicsContext& destinationContext, bool isForFirstLine) const
 {
     if (!renderer)
         return &Image::nullImage();
@@ -146,8 +146,8 @@ RefPtr<Image> StyleCrossfadeImage::image(const RenderElement* renderer, const Fl
     if (!m_from || !m_to)
         return &Image::nullImage();
 
-    auto fromImage = m_from->image(renderer, size, isForFirstLine);
-    auto toImage = m_to->image(renderer, size, isForFirstLine);
+    auto fromImage = m_from->image(renderer, size, destinationContext, isForFirstLine);
+    auto toImage = m_to->image(renderer, size, destinationContext, isForFirstLine);
 
     if (!fromImage || !toImage)
         return &Image::nullImage();

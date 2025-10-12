@@ -42,7 +42,7 @@ std::vector<Turn> LoadTiming(absl::string_view timing_filepath);
 
 // Writes a list of turns into a file.
 void SaveTiming(absl::string_view timing_filepath,
-                rtc::ArrayView<const Turn> timing);
+                ArrayView<const Turn> timing);
 
 }  // namespace conversational_speech
 }  // namespace test

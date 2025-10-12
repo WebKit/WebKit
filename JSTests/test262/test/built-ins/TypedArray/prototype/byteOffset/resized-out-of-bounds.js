@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-get-%typedarray%.prototype.byteOffset
+esid: sec-get-%typedarray%.prototype.byteoffset
 description: >
   TypedArray.p.byteOffset behaves as expected when the underlying resizable
   buffer is resized such that the TypedArray becomes out of bounds.

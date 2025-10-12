@@ -1,7 +1,7 @@
 /*
  * This file is part of the XSL implementation.
  *
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple, Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple, Inc. All rights reserved.
  * Copyright (C) 2005, 2006 Alexey Proskuryakov <ap@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -32,7 +32,10 @@
 #include "DocumentFragment.h"
 #include "FrameLoader.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
+#include "NodeDocument.h"
+#include "NodeInlines.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
 #include "Text.h"
@@ -82,17 +85,16 @@ Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString
     // Before parsing, we need to save & detach the old document and get the new document
     // in place. We have to do this only if we're rendering the result document.
     if (frame) {
-        if (auto* view = frame->view())
+        if (RefPtr view = frame->view())
             view->clear();
 
-        if (Document* oldDocument = frame->document()) {
-            result->setTransformSourceDocument(oldDocument);
+        if (RefPtr oldDocument = frame->document()) {
+            result->setTransformSourceDocument(oldDocument.get());
             result->takeDOMWindowFrom(*oldDocument);
             result->setSecurityOriginPolicy(oldDocument->securityOriginPolicy());
             result->setCookieURL(oldDocument->cookieURL());
             result->setFirstPartyForCookies(oldDocument->firstPartyForCookies());
             result->setSiteForCookies(oldDocument->siteForCookies());
-            result->setStrictMixedContentMode(oldDocument->isStrictMixedContentMode());
             CheckedRef resultCSP = *result->contentSecurityPolicy();
             CheckedRef oldDocumentCSP = *oldDocument->contentSecurityPolicy();
             resultCSP->copyStateFrom(oldDocumentCSP.ptr());

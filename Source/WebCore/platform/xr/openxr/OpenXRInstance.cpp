@@ -32,7 +32,7 @@ using namespace WebCore;
 namespace PlatformXR {
 
 struct Instance::Impl {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Instance);
 
     Impl();
     ~Impl();

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "MarkedBlock.h"
+#include <JavaScriptCore/MarkedBlock.h>
 #include <wtf/ForbidHeapAllocation.h>
 
 namespace JSC {

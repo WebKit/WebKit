@@ -42,7 +42,7 @@ enum class Replacement : bool { None, ReplaceInvalidSequences };
 template<Replacement = Replacement::None, typename CharacterType> static char32_t next(std::span<const CharacterType>, size_t& offset);
 template<Replacement = Replacement::None, typename CharacterType> static bool append(std::span<CharacterType>, size_t& offset, char32_t character);
 
-template<> char32_t next<Replacement::None, LChar>(std::span<const LChar> characters, size_t& offset)
+template<> char32_t next<Replacement::None, Latin1Character>(std::span<const Latin1Character> characters, size_t& offset)
 {
     return characters[offset++];
 }
@@ -136,7 +136,7 @@ ConversionResult<char16_t> convert(std::span<const char8_t> source, std::span<ch
     return convertInternal(source, buffer);
 }
 
-ConversionResult<char8_t> convert(std::span<const LChar> source, std::span<char8_t> buffer)
+ConversionResult<char8_t> convert(std::span<const Latin1Character> source, std::span<char8_t> buffer)
 {
     return convertInternal(source, buffer);
 }
@@ -199,12 +199,12 @@ template<typename CharacterTypeA, typename CharacterTypeB> bool equalInternal(st
     return offsetA == a.size() && offsetB == b.size();
 }
 
-bool equal(std::span<const UChar> a, std::span<const char8_t> b)
+bool equal(std::span<const char16_t> a, std::span<const char8_t> b)
 {
     return equalInternal(a, b);
 }
 
-bool equal(std::span<const LChar> a, std::span<const char8_t> b)
+bool equal(std::span<const Latin1Character> a, std::span<const char8_t> b)
 {
     return equalInternal(a, b);
 }

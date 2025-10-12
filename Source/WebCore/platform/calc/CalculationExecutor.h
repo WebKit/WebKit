@@ -485,7 +485,7 @@ template<> struct OperatorExecutor<Progress> {
     double operator()(double progress, double from, double to)
     {
         // (progress value - start value) / (end value - start value)
-        return (progress - from) / (to - from);
+        return executeOperation<Clamp>(0.0, (progress - from) / (to - from), 1.0);
     }
 };
 

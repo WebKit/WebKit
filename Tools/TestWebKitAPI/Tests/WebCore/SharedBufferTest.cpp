@@ -39,7 +39,7 @@ void FragmentedSharedBufferTest::SetUp()
     // create temp file
     auto result = FileSystem::openTemporaryFile("tempTestFile"_s);
     m_tempFilePath = result.first;
-    result.second.write(testData().span8());
+    result.second.write(byteCast<uint8_t>(testData().span()));
     result.second = { };
 
     m_tempEmptyFilePath = FileSystem::createTemporaryFile("tempEmptyTestFile"_s);

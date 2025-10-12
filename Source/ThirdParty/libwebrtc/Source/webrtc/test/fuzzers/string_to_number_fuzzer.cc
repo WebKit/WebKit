@@ -19,17 +19,17 @@ namespace webrtc {
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
   std::string number_to_parse(reinterpret_cast<const char*>(data), size);
-  rtc::StringToNumber<int8_t>(number_to_parse);
-  rtc::StringToNumber<int16_t>(number_to_parse);
-  rtc::StringToNumber<int32_t>(number_to_parse);
-  rtc::StringToNumber<int64_t>(number_to_parse);
-  rtc::StringToNumber<uint8_t>(number_to_parse);
-  rtc::StringToNumber<uint16_t>(number_to_parse);
-  rtc::StringToNumber<uint32_t>(number_to_parse);
-  rtc::StringToNumber<uint64_t>(number_to_parse);
-  rtc::StringToNumber<float>(number_to_parse);
-  rtc::StringToNumber<double>(number_to_parse);
-  rtc::StringToNumber<long double>(number_to_parse);
+  webrtc::StringToNumber<int8_t>(number_to_parse);
+  webrtc::StringToNumber<int16_t>(number_to_parse);
+  webrtc::StringToNumber<int32_t>(number_to_parse);
+  webrtc::StringToNumber<int64_t>(number_to_parse);
+  webrtc::StringToNumber<uint8_t>(number_to_parse);
+  webrtc::StringToNumber<uint16_t>(number_to_parse);
+  webrtc::StringToNumber<uint32_t>(number_to_parse);
+  webrtc::StringToNumber<uint64_t>(number_to_parse);
+  webrtc::StringToNumber<float>(number_to_parse);
+  webrtc::StringToNumber<double>(number_to_parse);
+  webrtc::StringToNumber<long double>(number_to_parse);
 }
 
 }  // namespace webrtc

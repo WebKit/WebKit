@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,9 +28,8 @@
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
-#import "AddEventListenerOptions.h"
+#import "AddEventListenerOptionsInlines.h"
 #import "DocumentFullscreen.h"
-#import "DocumentInlines.h"
 #import "Event.h"
 #import "EventListener.h"
 #import "EventNames.h"
@@ -40,7 +39,7 @@
 #import "LocalDOMWindow.h"
 #import "Logging.h"
 #import "MediaControlsHost.h"
-#import "NodeInlines.h"
+#import "NodeDocument.h"
 #import "Page.h"
 #import "PlaybackSessionModelMediaElement.h"
 #import "TextTrackList.h"
@@ -197,13 +196,13 @@ void VideoPresentationModelVideoElement::documentFullscreenChanged()
         auto* fullscreen = videoElement->document().fullscreenIfExists();
         if (!fullscreen)
             return false;
-        RefPtr fullscreenElement = fullscreen->protectedFullscreenElement();
+        RefPtr fullscreenElement = fullscreen->fullscreenElement();
         if (!fullscreenElement)
             return false;
-        ContainerNode* ancestor = videoElement->parentNode();
+        RefPtr ancestor = videoElement->parentNode();
         while (ancestor && ancestor != fullscreenElement)
             ancestor = ancestor->parentNode();
-        return !!ancestor;
+        return !!ancestor.get();
     }();
 
     if (std::exchange(m_isChildOfElementFullscreen, isChildOfElementFullscreen) == isChildOfElementFullscreen)
@@ -295,7 +294,7 @@ void VideoPresentationModelVideoElement::requestFullscreenMode(HTMLMediaElementE
 
     if (finishedWithMedia && mode == MediaPlayer::VideoFullscreenModeNone) {
         if (videoElement->document().isMediaDocument()) {
-            if (auto* window = videoElement->document().domWindow())
+            if (RefPtr window = videoElement->document().window())
                 window->history().back();
         }
     }
@@ -310,7 +309,7 @@ void VideoPresentationModelVideoElement::setVideoLayerFrame(FloatRect rect)
         videoElement->setVideoFullscreenFrame(rect);
 }
 
-void VideoPresentationModelVideoElement::setVideoSizeFenced(const FloatSize& size, WTF::MachSendRight&& fence)
+void VideoPresentationModelVideoElement::setVideoSizeFenced(const FloatSize& size, WTF::MachSendRightAnnotated&& fence)
 {
     RefPtr videoElement = m_videoElement;
     if (!videoElement)
@@ -364,8 +363,7 @@ void VideoPresentationModelVideoElement::fullscreenModeChanged(HTMLMediaElementE
 
 void VideoPresentationModelVideoElement::requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&& completionHandler)
 {
-    auto& session = AudioSession::sharedSession();
-    completionHandler(session.routeSharingPolicy(), session.routingContextUID());
+    completionHandler(AudioSession::singleton().routeSharingPolicy(), AudioSession::singleton().routingContextUID());
 }
 
 void VideoPresentationModelVideoElement::addClient(VideoPresentationModelClient& client)
@@ -474,6 +472,12 @@ void VideoPresentationModelVideoElement::audioSessionCategoryChanged(AudioSessio
 {
     for (auto& client : copyToVector(m_clients))
         client->audioSessionCategoryChanged(category, mode, policy);
+}
+
+void VideoPresentationModelVideoElement::routingContextUIDChanged(const String& routingContextUID)
+{
+    for (auto& client : copyToVector(m_clients))
+        client->routingContextUIDChanged(routingContextUID);
 }
 
 #if !RELEASE_LOG_DISABLED

@@ -59,19 +59,19 @@ SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerManag
 
 void SampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, bool shouldMaintainAspectRatio, CompletionHandler<void(bool)>&& callback)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { identifier(), hideRootLayer, size, shouldMaintainAspectRatio, canShowWhileLocked() }, [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto contextId) mutable {
+    m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { identifier(), hideRootLayer, size, shouldMaintainAspectRatio, canShowWhileLocked() }, [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto context) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return callback(false);
-        protectedThis->m_hostingContextID = contextId;
-        callback(!!contextId);
+        protectedThis->m_hostingContext = context;
+        callback(!!context.contextID);
     });
 }
 
 #if !RELEASE_LOG_DISABLED
-void SampleBufferDisplayLayer::setLogIdentifier(String&& logIdentifier)
+void SampleBufferDisplayLayer::setLogIdentifier(uint64_t logIdentifier)
 {
-    ASSERT(m_hostingContextID);
+    ASSERT(m_hostingContext->contextID);
     m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetLogIdentifier { logIdentifier }, identifier());
 }
 #endif
@@ -93,7 +93,7 @@ void SampleBufferDisplayLayer::updateDisplayMode(bool hideDisplayLayer, bool hid
     m_connection->send(Messages::RemoteSampleBufferDisplayLayer::UpdateDisplayMode { hideDisplayLayer, hideRootLayer }, identifier());
 }
 
-void SampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, std::optional<WTF::MachSendRight>&& fence)
+void SampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, std::optional<WTF::MachSendRightAnnotated>&& fence)
 {
     m_connection->send(Messages::GPUConnectionToWebProcess::UpdateSampleBufferDisplayLayerBoundsAndPosition { identifier(), bounds, WTFMove(fence) }, identifier());
 }
@@ -150,8 +150,8 @@ void SampleBufferDisplayLayer::clearVideoFrames()
 
 PlatformLayer* SampleBufferDisplayLayer::rootLayer()
 {
-    if (!m_videoLayer && m_hostingContextID)
-        m_videoLayer = LayerHostingContext::createPlatformLayerForHostingContext(*m_hostingContextID);
+    if (!m_videoLayer && m_hostingContext)
+        m_videoLayer = LayerHostingContext::createPlatformLayerForHostingContext(m_hostingContext->contextID);
     return m_videoLayer.get();
 }
 

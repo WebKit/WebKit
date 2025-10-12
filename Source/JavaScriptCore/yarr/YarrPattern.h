@@ -26,9 +26,9 @@
 
 #pragma once
 
-#include "YarrErrorCode.h"
-#include "YarrFlags.h"
-#include "YarrUnicodeProperties.h"
+#include <JavaScriptCore/YarrErrorCode.h>
+#include <JavaScriptCore/YarrFlags.h>
+#include <JavaScriptCore/YarrUnicodeProperties.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
@@ -773,7 +773,7 @@ private:
 };
 
     void indentForNestingLevel(PrintStream&, unsigned);
-    void dumpUChar32(PrintStream&, char32_t);
+    void dumpChar32(PrintStream&, char32_t);
     void dumpCharacterClass(PrintStream&, YarrPattern*, CharacterClass*);
 
     struct BackTrackInfoPatternCharacter {

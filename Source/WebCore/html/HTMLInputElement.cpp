@@ -41,7 +41,8 @@
 #include "ContainerNodeInlines.h"
 #include "DateComponents.h"
 #include "DateTimeChooser.h"
-#include "DocumentInlines.h"
+#include "DocumentSecurityOrigin.h"
+#include "DocumentView.h"
 #include "Editor.h"
 #include "ElementInlines.h"
 #include "EventLoop.h"
@@ -131,7 +132,7 @@ Ref<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLInputElement(tagName, document, form, createdByParser ? CreationType::ByParser : CreationType::Normal));
 }
 
-Ref<Element> HTMLInputElement::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry*)
+Ref<Element> HTMLInputElement::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry*) const
 {
     return adoptRef(*new HTMLInputElement(tagQName(), document, nullptr, CreationType::ByCloning));
 }
@@ -422,9 +423,9 @@ int HTMLInputElement::defaultTabIndex() const
     return 0;
 }
 
-bool HTMLInputElement::isKeyboardFocusable(KeyboardEvent* event) const
+bool HTMLInputElement::isKeyboardFocusable(const FocusEventData& focusEventData) const
 {
-    return m_inputType->isKeyboardFocusable(event);
+    return m_inputType->isKeyboardFocusable(focusEventData);
 }
 
 bool HTMLInputElement::isMouseFocusable() const
@@ -442,9 +443,9 @@ bool HTMLInputElement::isTextFormControlFocusable() const
     return HTMLTextFormControlElement::isFocusable();
 }
 
-bool HTMLInputElement::isTextFormControlKeyboardFocusable(KeyboardEvent* event) const
+bool HTMLInputElement::isTextFormControlKeyboardFocusable(const FocusEventData& focusEventData) const
 {
-    return HTMLTextFormControlElement::isKeyboardFocusable(event);
+    return HTMLTextFormControlElement::isKeyboardFocusable(focusEventData);
 }
 
 bool HTMLInputElement::isTextFormControlMouseFocusable() const
@@ -503,11 +504,6 @@ void HTMLInputElement::handleBlurEvent()
     m_inputType->handleBlurEvent();
 
     invalidateStyleOnFocusChangeIfNeeded();
-}
-
-void HTMLInputElement::setType(const AtomString& type)
-{
-    setAttributeWithoutSynchronization(typeAttr, type);
 }
 
 void HTMLInputElement::resignStrongPasswordAppearance()
@@ -864,7 +860,7 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
         unsigned oldSize = m_size;
         m_size = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(newValue, defaultSize);
         if (m_size != oldSize && renderer())
-            renderer()->setNeedsLayoutAndPrefWidthsRecalc();
+            renderer()->setNeedsLayoutAndPreferredWidthsUpdate();
         break;
     }
     case AttributeNames::resultsAttr:
@@ -957,7 +953,7 @@ RenderPtr<RenderElement> HTMLInputElement::createElementRenderer(RenderStyle&& s
     return m_inputType->createInputRenderer(WTFMove(style));
 }
 
-bool HTMLInputElement::isReplaced(const RenderStyle&) const
+bool HTMLInputElement::isReplaced(const RenderStyle*) const
 {
     return m_inputType && m_inputType->isImageButton();
 }
@@ -1133,9 +1129,9 @@ bool HTMLInputElement::sizeShouldIncludeDecoration(int& preferredSize) const
     return m_inputType->sizeShouldIncludeDecoration(defaultSize, preferredSize);
 }
 
-float HTMLInputElement::decorationWidth() const
+float HTMLInputElement::decorationWidth(float inputWidth) const
 {
-    return m_inputType->decorationWidth();
+    return m_inputType->decorationWidth(inputWidth);
 }
 
 void HTMLInputElement::copyNonAttributePropertiesFromElement(const Element& source)
@@ -1159,7 +1155,7 @@ void HTMLInputElement::copyNonAttributePropertiesFromElement(const Element& sour
 
 ValueOrReference<String> HTMLInputElement::value() const
 {
-    if (protectedDocument()->requiresScriptExecutionTelemetry(ScriptTelemetryCategory::FormControls))
+    if (protectedDocument()->requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::FormControls))
         return m_inputType->defaultValue();
     if (auto* fileInput = dynamicDowncast<FileInputType>(*m_inputType))
         return fileInput->firstElementPathForInputValue();
@@ -1456,17 +1452,7 @@ ExceptionOr<void> HTMLInputElement::showPicker()
     return { };
 }
 
-const AtomString& HTMLInputElement::defaultValue() const
-{
-    return attributeWithoutSynchronization(valueAttr);
-}
-
-void HTMLInputElement::setDefaultValue(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(valueAttr, value);
-}
-
-static inline bool isRFC2616TokenCharacter(UChar ch)
+static inline bool isRFC2616TokenCharacter(char16_t ch)
 {
     return isASCII(ch) && ch > ' ' && ch != '"' && ch != '(' && ch != ')' && ch != ',' && ch != '/' && (ch < ':' || ch > '@') && (ch < '[' || ch > ']') && ch != '{' && ch != '}' && ch != 0x7f;
 }
@@ -1497,7 +1483,7 @@ static Vector<String> parseAcceptAttribute(StringView acceptString, bool (*predi
         return types;
 
     for (auto splitType : acceptString.split(',')) {
-        auto trimmedType = splitType.trim(isASCIIWhitespace<UChar>);
+        auto trimmedType = splitType.trim(isASCIIWhitespace<char16_t>);
         if (trimmedType.isEmpty())
             continue;
         if (!predicate(trimmedType))
@@ -1516,11 +1502,6 @@ Vector<String> HTMLInputElement::acceptMIMETypes() const
 Vector<String> HTMLInputElement::acceptFileExtensions() const
 {
     return parseAcceptAttribute(attributeWithoutSynchronization(acceptAttr), isValidFileExtension);
-}
-
-String HTMLInputElement::alt() const
-{
-    return attributeWithoutSynchronization(altAttr);
 }
 
 unsigned HTMLInputElement::effectiveMaxLength() const
@@ -1542,17 +1523,12 @@ ExceptionOr<void> HTMLInputElement::setSize(unsigned size)
     return { };
 }
 
-URL HTMLInputElement::src() const
-{
-    return document().completeURL(attributeWithoutSynchronization(srcAttr));
-}
-
 void HTMLInputElement::logUserInteraction()
 {
     if (!document().frame() || !document().frame()->localMainFrame())
         return;
     if (RefPtr mainFrameDocument = document().frame()->localMainFrame()->document())
-        ResourceLoadObserver::shared().logUserInteractionWithReducedTimeResolution(*mainFrameDocument);
+        ResourceLoadObserver::singleton().logUserInteractionWithReducedTimeResolution(*mainFrameDocument);
 }
 
 void HTMLInputElement::setAutofilled(bool autoFilled)
@@ -1740,7 +1716,7 @@ bool HTMLInputElement::needsSuspensionCallback()
     // the page is restored. Non-empty textual default values indicate that the field
     // is not really sensitive -- there's no default value for an account number --
     // and we would see unexpected results if we reset to something other than blank.
-    bool isSensitive = m_autocomplete == Off && !(m_inputType->isTextType() && !defaultValue().isEmpty());
+    bool isSensitive = m_autocomplete == Off && !(m_inputType->isTextType() && !attributeWithoutSynchronization(valueAttr).isEmpty());
 
     return isSensitive;
 }
@@ -1881,7 +1857,7 @@ void HTMLInputElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLTextFormControlElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, src());
+    addSubresourceURL(urls, getURLAttribute(srcAttr));
 }
 
 bool HTMLInputElement::computeWillValidate() const
@@ -2220,7 +2196,7 @@ RefPtr<HTMLInputElement> HTMLInputElement::checkedRadioButtonForGroup() const
     RefPtr<HTMLInputElement> checkedRadio;
     RadioInputType::forEachButtonInDetachedGroup(rootNode(), name, [&](auto& input) {
         if (input.checked()) {
-            checkedRadio = &input;
+            checkedRadio = input;
             return false;
         }
         return true;
@@ -2259,16 +2235,6 @@ unsigned HTMLInputElement::height() const
 unsigned HTMLInputElement::width() const
 {
     return m_inputType->width();
-}
-
-void HTMLInputElement::setHeight(unsigned height)
-{
-    setUnsignedIntegralAttribute(heightAttr, height);
-}
-
-void HTMLInputElement::setWidth(unsigned width)
-{
-    setUnsignedIntegralAttribute(widthAttr, width);
 }
 
 ListAttributeTargetObserver::ListAttributeTargetObserver(const AtomString& id, HTMLInputElement& element)
@@ -2402,12 +2368,12 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
 
     if (hasAutofillStrongPasswordButton() && isMutable()) {
         textBlockStyle.setDisplay(DisplayType::InlineBlock);
-        textBlockStyle.setLogicalMaxWidth(Length { 100, LengthType::Percent });
+        textBlockStyle.setLogicalMaxWidth(100_css_percentage);
         textBlockStyle.setColor(Color::black.colorWithAlphaByte(153));
         textBlockStyle.setTextOverflow(TextOverflow::Clip);
-        textBlockStyle.setMaskImage(autoFillStrongPasswordMaskImage());
+        textBlockStyle.setMaskLayers(Style::MaskLayer { autoFillStrongPasswordMaskImage() });
         // A stacking context is needed for the mask.
-        if (textBlockStyle.hasAutoUsedZIndex())
+        if (textBlockStyle.usedZIndex().isAuto())
             textBlockStyle.setUsedZIndex(0);
     }
 
@@ -2441,7 +2407,7 @@ String HTMLInputElement::placeholder() const
     if (!containsHTMLLineBreak(attributeValue)) [[likely]]
         return attributeValue;
 
-    return attributeValue.removeCharacters([](UChar character) {
+    return attributeValue.removeCharacters([](char16_t character) {
         return isHTMLLineBreak(character);
     });
 }

@@ -6,6 +6,10 @@
 // BlobCacheTest:
 //   Unit tests for the GL_ANGLE_blob_cache extension.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 // Must be included first to prevent errors with "None".
 #include "test_utils/ANGLETest.h"
 

@@ -72,7 +72,7 @@ CoordinatedPlatformLayerBufferNativeImage::CoordinatedPlatformLayerBufferNativeI
 
     auto* grContext = display.skiaGrContext();
     RELEASE_ASSERT(grContext);
-    grContext->flushAndSubmit(GLFence::isSupported() ? GrSyncCpu::kNo : GrSyncCpu::kYes);
+    grContext->flushAndSubmit(GLFence::isSupported(display.glDisplay()) ? GrSyncCpu::kNo : GrSyncCpu::kYes);
 
     unsigned textureID = 0;
     GrBackendTexture backendTexture;
@@ -84,7 +84,7 @@ CoordinatedPlatformLayerBufferNativeImage::CoordinatedPlatformLayerBufferNativeI
     if (!textureID)
         return;
 
-    m_buffer = CoordinatedPlatformLayerBufferRGB::create(textureID, m_image->size(), m_flags, GLFence::create());
+    m_buffer = CoordinatedPlatformLayerBufferRGB::create(textureID, m_image->size(), m_flags, GLFence::create(display.glDisplay()));
 #endif
 }
 

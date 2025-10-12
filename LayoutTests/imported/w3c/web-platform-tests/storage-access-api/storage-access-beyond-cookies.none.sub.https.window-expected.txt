@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unsupported permission name "storage-access".
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unsupported permission name "storage-access".
 
 Harness Error (TIMEOUT), message = null
 

@@ -111,7 +111,7 @@ static const int tx_size_wide_log2_eob[TX_SIZES_ALL] = {
   2, 3, 4, 5, 5, 2, 3, 3, 4, 4, 5, 5, 5, 2, 4, 3, 5, 4, 5,
 };
 
-static int eob_fill[32] = {
+static const int eob_fill[32] = {
   0,  7,  7,  7,  7,  7,  7,  7,  15, 15, 15, 15, 15, 15, 15, 15,
   31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31,
 };

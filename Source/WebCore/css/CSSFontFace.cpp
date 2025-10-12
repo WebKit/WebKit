@@ -36,13 +36,14 @@
 #include "CSSValue.h"
 #include "CSSValueList.h"
 #include "CachedFont.h"
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
-#include "DocumentInlines.h"
 #include "Font.h"
 #include "FontCache.h"
 #include "FontDescription.h"
 #include "FontFace.h"
 #include "FontPaletteValues.h"
+#include "SVGFontFaceElement.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "StyleProperties.h"
@@ -81,7 +82,7 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Sc
 
 Ref<CSSFontFace> CSSFontFace::create(CSSFontSelector& fontSelector, StyleRuleFontFace* cssConnection, FontFace* wrapper, bool isLocalFallback)
 {
-    auto* context = fontSelector.scriptExecutionContext();
+    RefPtr context = fontSelector.scriptExecutionContext();
     const auto* settings = context ? &context->settingsValues() : nullptr;
     auto result = adoptRef(*new CSSFontFace(settings, cssConnection, wrapper, isLocalFallback));
     result->addClient(fontSelector);
@@ -300,7 +301,8 @@ void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
     if (auto* list = dynamicDowncast<CSSValueList>(featureSettings)) {
         for (auto& rangeValue : *list) {
             auto& feature = downcast<CSSFontFeatureValue>(rangeValue);
-            settings.insert({ feature.tag(), feature.value().resolveAsIntegerDeprecated() });
+            if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(feature.value()))
+                settings.insert({ feature.tag(), primitiveValue->resolveAsIntegerDeprecated() });
         }
     }
 

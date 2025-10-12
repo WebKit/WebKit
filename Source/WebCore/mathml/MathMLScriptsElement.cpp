@@ -30,6 +30,7 @@
 #if ENABLE(MATHML)
 
 #include "RenderMathMLScripts.h"
+#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -69,11 +70,13 @@ Ref<MathMLScriptsElement> MathMLScriptsElement::create(const QualifiedName& tagN
 
 const MathMLElement::Length& MathMLScriptsElement::subscriptShift()
 {
+    ASSERT(!document().settings().coreMathMLEnabled());
     return cachedMathMLLength(subscriptshiftAttr, m_subscriptShift);
 }
 
 const MathMLElement::Length& MathMLScriptsElement::superscriptShift()
 {
+    ASSERT(!document().settings().coreMathMLEnabled());
     return cachedMathMLLength(superscriptshiftAttr, m_superscriptShift);
 }
 

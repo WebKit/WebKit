@@ -10,12 +10,25 @@
 
 #include "modules/audio_device/linux/audio_device_pulse_linux.h"
 
-#include <string.h>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 
+#include "api/audio/audio_device.h"
+#include "api/audio/audio_device_defines.h"
+#include "api/units/time_delta.h"
+#include "modules/audio_device/audio_device_buffer.h"
+#include "modules/audio_device/audio_device_generic.h"
 #include "modules/audio_device/linux/latebindingsymboltable_linux.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/platform_thread.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
+
+#if defined(WEBRTC_USE_X11)
+#include <X11/Xlib.h>
+#endif
 
 WebRTCPulseSymbolTable* GetPulseSymbolTable() {
   static WebRTCPulseSymbolTable* pulse_symbol_table =
@@ -33,7 +46,7 @@ WebRTCPulseSymbolTable* GetPulseSymbolTable() {
 namespace webrtc {
 
 AudioDeviceLinuxPulse::AudioDeviceLinuxPulse()
-    : _ptrAudioBuffer(NULL),
+    : _ptrAudioBuffer(nullptr),
       _inputDeviceIndex(0),
       _outputDeviceIndex(0),
       _inputDeviceIsSpecified(false),
@@ -55,28 +68,28 @@ AudioDeviceLinuxPulse::AudioDeviceLinuxPulse()
       _deviceIndex(-1),
       _numPlayDevices(0),
       _numRecDevices(0),
-      _playDeviceName(NULL),
-      _recDeviceName(NULL),
-      _playDisplayDeviceName(NULL),
-      _recDisplayDeviceName(NULL),
-      _playBuffer(NULL),
+      _playDeviceName(nullptr),
+      _recDeviceName(nullptr),
+      _playDisplayDeviceName(nullptr),
+      _recDisplayDeviceName(nullptr),
+      _playBuffer(nullptr),
       _playbackBufferSize(0),
       _playbackBufferUnused(0),
       _tempBufferSpace(0),
-      _recBuffer(NULL),
+      _recBuffer(nullptr),
       _recordBufferSize(0),
       _recordBufferUsed(0),
-      _tempSampleData(NULL),
+      _tempSampleData(nullptr),
       _tempSampleDataSize(0),
       _configuredLatencyPlay(0),
       _configuredLatencyRec(0),
       _paDeviceIndex(-1),
       _paStateChanged(false),
-      _paMainloop(NULL),
-      _paMainloopApi(NULL),
-      _paContext(NULL),
-      _recStream(NULL),
-      _playStream(NULL),
+      _paMainloop(nullptr),
+      _paMainloopApi(nullptr),
+      _paContext(nullptr),
+      _recStream(nullptr),
+      _playStream(nullptr),
       _recStreamFlags(0),
       _playStreamFlags(0) {
   RTC_DLOG(LS_INFO) << __FUNCTION__ << " created";
@@ -94,19 +107,19 @@ AudioDeviceLinuxPulse::~AudioDeviceLinuxPulse() {
 
   if (_recBuffer) {
     delete[] _recBuffer;
-    _recBuffer = NULL;
+    _recBuffer = nullptr;
   }
   if (_playBuffer) {
     delete[] _playBuffer;
-    _playBuffer = NULL;
+    _playBuffer = nullptr;
   }
   if (_playDeviceName) {
     delete[] _playDeviceName;
-    _playDeviceName = NULL;
+    _playDeviceName = nullptr;
   }
   if (_recDeviceName) {
     delete[] _recDeviceName;
-    _recDeviceName = NULL;
+    _recDeviceName = nullptr;
   }
 }
 
@@ -151,7 +164,7 @@ AudioDeviceGeneric::InitStatus AudioDeviceLinuxPulse::Init() {
 
 #if defined(WEBRTC_USE_X11)
   // Get X display handle for typing detection
-  _XDisplay = XOpenDisplay(NULL);
+  _XDisplay = XOpenDisplay(nullptr);
   if (!_XDisplay) {
     RTC_LOG(LS_WARNING)
         << "failed to open X display, typing detection will not work";
@@ -160,8 +173,8 @@ AudioDeviceGeneric::InitStatus AudioDeviceLinuxPulse::Init() {
 
   // RECORDING
   const auto attributes =
-      rtc::ThreadAttributes().SetPriority(rtc::ThreadPriority::kRealtime);
-  _ptrThreadRec = rtc::PlatformThread::SpawnJoinable(
+      ThreadAttributes().SetPriority(ThreadPriority::kRealtime);
+  _ptrThreadRec = PlatformThread::SpawnJoinable(
       [this] {
         while (RecThreadProcess()) {
         }
@@ -169,7 +182,7 @@ AudioDeviceGeneric::InitStatus AudioDeviceLinuxPulse::Init() {
       "webrtc_audio_module_rec_thread", attributes);
 
   // PLAYOUT
-  _ptrThreadPlay = rtc::PlatformThread::SpawnJoinable(
+  _ptrThreadPlay = PlatformThread::SpawnJoinable(
       [this] {
         while (PlayThreadProcess()) {
         }
@@ -208,7 +221,7 @@ int32_t AudioDeviceLinuxPulse::Terminate() {
 #if defined(WEBRTC_USE_X11)
   if (_XDisplay) {
     XCloseDisplay(_XDisplay);
-    _XDisplay = NULL;
+    _XDisplay = nullptr;
   }
 #endif
 
@@ -238,7 +251,7 @@ int32_t AudioDeviceLinuxPulse::InitSpeaker() {
   // check if default device
   if (_outputDeviceIndex == 0) {
     uint16_t deviceIndex = 0;
-    GetDefaultDeviceInfo(false, NULL, deviceIndex);
+    GetDefaultDeviceInfo(false, nullptr, deviceIndex);
     _paDeviceIndex = deviceIndex;
   } else {
     // get the PA device index from
@@ -275,7 +288,7 @@ int32_t AudioDeviceLinuxPulse::InitMicrophone() {
   // Check if default device
   if (_inputDeviceIndex == 0) {
     uint16_t deviceIndex = 0;
-    GetDefaultDeviceInfo(true, NULL, deviceIndex);
+    GetDefaultDeviceInfo(true, nullptr, deviceIndex);
     _paDeviceIndex = deviceIndex;
   } else {
     // Get the PA device index from
@@ -642,7 +655,7 @@ int32_t AudioDeviceLinuxPulse::MinMicrophoneVolume(uint32_t& minVolume) const {
 int16_t AudioDeviceLinuxPulse::PlayoutDevices() {
   PaLock();
 
-  pa_operation* paOperation = NULL;
+  pa_operation* paOperation = nullptr;
   _numPlayDevices = 1;  // init to 1 to account for "default"
 
   // get the whole list of devices and update _numPlayDevices
@@ -691,13 +704,13 @@ int32_t AudioDeviceLinuxPulse::PlayoutDeviceName(
   RTC_DCHECK(thread_checker_.IsCurrent());
   const uint16_t nDevices = PlayoutDevices();
 
-  if ((index > (nDevices - 1)) || (name == NULL)) {
+  if ((index > (nDevices - 1)) || (name == nullptr)) {
     return -1;
   }
 
   memset(name, 0, kAdmMaxDeviceNameSize);
 
-  if (guid != NULL) {
+  if (guid != nullptr) {
     memset(guid, 0, kAdmMaxGuidSize);
   }
 
@@ -716,7 +729,7 @@ int32_t AudioDeviceLinuxPulse::PlayoutDeviceName(
   PlayoutDevices();
 
   // clear device name and index
-  _playDisplayDeviceName = NULL;
+  _playDisplayDeviceName = nullptr;
   _deviceIndex = -1;
 
   return 0;
@@ -729,13 +742,13 @@ int32_t AudioDeviceLinuxPulse::RecordingDeviceName(
   RTC_DCHECK(thread_checker_.IsCurrent());
   const uint16_t nDevices(RecordingDevices());
 
-  if ((index > (nDevices - 1)) || (name == NULL)) {
+  if ((index > (nDevices - 1)) || (name == nullptr)) {
     return -1;
   }
 
   memset(name, 0, kAdmMaxDeviceNameSize);
 
-  if (guid != NULL) {
+  if (guid != nullptr) {
     memset(guid, 0, kAdmMaxGuidSize);
   }
 
@@ -754,7 +767,7 @@ int32_t AudioDeviceLinuxPulse::RecordingDeviceName(
   RecordingDevices();
 
   // Clear device name and index
-  _recDisplayDeviceName = NULL;
+  _recDisplayDeviceName = nullptr;
   _deviceIndex = -1;
 
   return 0;
@@ -763,7 +776,7 @@ int32_t AudioDeviceLinuxPulse::RecordingDeviceName(
 int16_t AudioDeviceLinuxPulse::RecordingDevices() {
   PaLock();
 
-  pa_operation* paOperation = NULL;
+  pa_operation* paOperation = nullptr;
   _numRecDevices = 1;  // Init to 1 to account for "default"
 
   // Get the whole list of devices and update _numRecDevices
@@ -869,7 +882,7 @@ int32_t AudioDeviceLinuxPulse::InitPlayout() {
   {
     MutexLock lock(&mutex_);
     _playStream =
-        LATE(pa_stream_new)(_paContext, "playStream", &playSampleSpec, NULL);
+        LATE(pa_stream_new)(_paContext, "playStream", &playSampleSpec, nullptr);
   }
 
   if (!_playStream) {
@@ -976,7 +989,7 @@ int32_t AudioDeviceLinuxPulse::InitRecording() {
 
   // Create a new rec stream
   _recStream =
-      LATE(pa_stream_new)(_paContext, "recStream", &recSampleSpec, NULL);
+      LATE(pa_stream_new)(_paContext, "recStream", &recSampleSpec, nullptr);
   if (!_recStream) {
     RTC_LOG(LS_ERROR) << "failed to create rec stream, err="
                       << LATE(pa_context_errno)(_paContext);
@@ -1091,7 +1104,7 @@ int32_t AudioDeviceLinuxPulse::StopRecording() {
     return 0;
   }
 
-  if (_recStream == NULL) {
+  if (_recStream == nullptr) {
     return -1;
   }
 
@@ -1104,10 +1117,10 @@ int32_t AudioDeviceLinuxPulse::StopRecording() {
   PaLock();
 
   DisableReadCallback();
-  LATE(pa_stream_set_overflow_callback)(_recStream, NULL, NULL);
+  LATE(pa_stream_set_overflow_callback)(_recStream, nullptr, nullptr);
 
   // Unset this here so that we don't get a TERMINATED callback
-  LATE(pa_stream_set_state_callback)(_recStream, NULL, NULL);
+  LATE(pa_stream_set_state_callback)(_recStream, nullptr, nullptr);
 
   if (LATE(pa_stream_get_state)(_recStream) != PA_STREAM_UNCONNECTED) {
     // Disconnect the stream
@@ -1122,7 +1135,7 @@ int32_t AudioDeviceLinuxPulse::StopRecording() {
   }
 
   LATE(pa_stream_unref)(_recStream);
-  _recStream = NULL;
+  _recStream = nullptr;
 
   PaUnLock();
 
@@ -1131,7 +1144,7 @@ int32_t AudioDeviceLinuxPulse::StopRecording() {
 
   if (_recBuffer) {
     delete[] _recBuffer;
-    _recBuffer = NULL;
+    _recBuffer = nullptr;
   }
 
   return 0;
@@ -1206,7 +1219,7 @@ int32_t AudioDeviceLinuxPulse::StopPlayout() {
     return 0;
   }
 
-  if (_playStream == NULL) {
+  if (_playStream == nullptr) {
     return -1;
   }
 
@@ -1220,10 +1233,10 @@ int32_t AudioDeviceLinuxPulse::StopPlayout() {
   PaLock();
 
   DisableWriteCallback();
-  LATE(pa_stream_set_underflow_callback)(_playStream, NULL, NULL);
+  LATE(pa_stream_set_underflow_callback)(_playStream, nullptr, nullptr);
 
   // Unset this here so that we don't get a TERMINATED callback
-  LATE(pa_stream_set_state_callback)(_playStream, NULL, NULL);
+  LATE(pa_stream_set_state_callback)(_playStream, nullptr, nullptr);
 
   if (LATE(pa_stream_get_state)(_playStream) != PA_STREAM_UNCONNECTED) {
     // Disconnect the stream
@@ -1238,7 +1251,7 @@ int32_t AudioDeviceLinuxPulse::StopPlayout() {
   }
 
   LATE(pa_stream_unref)(_playStream);
-  _playStream = NULL;
+  _playStream = nullptr;
 
   PaUnLock();
 
@@ -1247,7 +1260,7 @@ int32_t AudioDeviceLinuxPulse::StopPlayout() {
 
   if (_playBuffer) {
     delete[] _playBuffer;
-    _playBuffer = NULL;
+    _playBuffer = nullptr;
   }
 
   return 0;
@@ -1437,7 +1450,7 @@ void AudioDeviceLinuxPulse::PaStreamStateCallbackHandler(pa_stream* p) {
 int32_t AudioDeviceLinuxPulse::CheckPulseAudioVersion() {
   PaLock();
 
-  pa_operation* paOperation = NULL;
+  pa_operation* paOperation = nullptr;
 
   // get the server info and update deviceName
   paOperation =
@@ -1455,7 +1468,7 @@ int32_t AudioDeviceLinuxPulse::CheckPulseAudioVersion() {
 int32_t AudioDeviceLinuxPulse::InitSamplingFrequency() {
   PaLock();
 
-  pa_operation* paOperation = NULL;
+  pa_operation* paOperation = nullptr;
 
   // Get the server info and update sample_rate_hz_
   paOperation =
@@ -1474,7 +1487,7 @@ int32_t AudioDeviceLinuxPulse::GetDefaultDeviceInfo(bool recDevice,
   char tmpName[kAdmMaxDeviceNameSize] = {0};
   // subtract length of "default: "
   uint16_t nameLen = kAdmMaxDeviceNameSize - 9;
-  char* pName = NULL;
+  char* pName = nullptr;
 
   if (name) {
     // Add "default: "
@@ -1498,7 +1511,7 @@ int32_t AudioDeviceLinuxPulse::GetDefaultDeviceInfo(bool recDevice,
 
   PaLock();
 
-  pa_operation* paOperation = NULL;
+  pa_operation* paOperation = nullptr;
 
   // Get the server info and update deviceName
   paOperation =
@@ -1528,8 +1541,8 @@ int32_t AudioDeviceLinuxPulse::GetDefaultDeviceInfo(bool recDevice,
   }
 
   // Clear members
-  _playDisplayDeviceName = NULL;
-  _recDisplayDeviceName = NULL;
+  _playDisplayDeviceName = nullptr;
+  _recDisplayDeviceName = nullptr;
   _paDeviceIndex = -1;
   _deviceIndex = -1;
   _numPlayDevices = 0;
@@ -1598,8 +1611,8 @@ int32_t AudioDeviceLinuxPulse::InitPulseAudio() {
 
   // Connect the context to a server (default)
   _paStateChanged = false;
-  retVal =
-      LATE(pa_context_connect)(_paContext, NULL, PA_CONTEXT_NOAUTOSPAWN, NULL);
+  retVal = LATE(pa_context_connect)(_paContext, nullptr, PA_CONTEXT_NOAUTOSPAWN,
+                                    nullptr);
 
   if (retVal != PA_OK) {
     RTC_LOG(LS_ERROR) << "failed to connect context, error=" << retVal;
@@ -1671,7 +1684,7 @@ int32_t AudioDeviceLinuxPulse::TerminatePulseAudio() {
   }
 
   PaUnLock();
-  _paContext = NULL;
+  _paContext = nullptr;
 
   // Stop the threaded main loop
   if (_paMainloop) {
@@ -1683,7 +1696,7 @@ int32_t AudioDeviceLinuxPulse::TerminatePulseAudio() {
     LATE(pa_threaded_mainloop_free)(_paMainloop);
   }
 
-  _paMainloop = NULL;
+  _paMainloop = nullptr;
 
   RTC_LOG(LS_VERBOSE) << "PulseAudio terminated";
 
@@ -1733,7 +1746,7 @@ void AudioDeviceLinuxPulse::EnableWriteCallback() {
 }
 
 void AudioDeviceLinuxPulse::DisableWriteCallback() {
-  LATE(pa_stream_set_write_callback)(_playStream, NULL, NULL);
+  LATE(pa_stream_set_write_callback)(_playStream, nullptr, nullptr);
 }
 
 void AudioDeviceLinuxPulse::PaStreamWriteCallback(pa_stream* /*unused*/,
@@ -1789,7 +1802,7 @@ void AudioDeviceLinuxPulse::PaStreamUnderflowCallbackHandler() {
   _playBufferAttr.prebuf = _playBufferAttr.tlength - _playBufferAttr.minreq;
 
   pa_operation* op = LATE(pa_stream_set_buffer_attr)(
-      _playStream, &_playBufferAttr, NULL, NULL);
+      _playStream, &_playBufferAttr, nullptr, nullptr);
   if (!op) {
     RTC_LOG(LS_ERROR) << "pa_stream_set_buffer_attr()";
     return;
@@ -1807,7 +1820,7 @@ void AudioDeviceLinuxPulse::EnableReadCallback() {
 }
 
 void AudioDeviceLinuxPulse::DisableReadCallback() {
-  LATE(pa_stream_set_read_callback)(_recStream, NULL, NULL);
+  LATE(pa_stream_set_read_callback)(_recStream, nullptr, nullptr);
 }
 
 void AudioDeviceLinuxPulse::PaStreamReadCallback(pa_stream* /*unused1*/,
@@ -1991,7 +2004,7 @@ bool AudioDeviceLinuxPulse::PlayThreadProcess() {
     RTC_LOG(LS_VERBOSE) << "_startPlay true, performing initial actions";
 
     _startPlay = false;
-    _playDeviceName = NULL;
+    _playDeviceName = nullptr;
 
     // Set if not default device
     if (_outputDeviceIndex > 0) {
@@ -2021,7 +2034,7 @@ bool AudioDeviceLinuxPulse::PlayThreadProcess() {
     PaLock();
 
     // NULL gives PA the choice of startup volume.
-    pa_cvolume* ptr_cvolume = NULL;
+    pa_cvolume* ptr_cvolume = nullptr;
     if (update_speaker_volume_at_startup_) {
       pa_cvolume cVolumes;
       ptr_cvolume = &cVolumes;
@@ -2033,9 +2046,10 @@ bool AudioDeviceLinuxPulse::PlayThreadProcess() {
     }
 
     // Connect the stream to a sink
-    if (LATE(pa_stream_connect_playback)(
-            _playStream, _playDeviceName, &_playBufferAttr,
-            (pa_stream_flags_t)_playStreamFlags, ptr_cvolume, NULL) != PA_OK) {
+    if (LATE(pa_stream_connect_playback)(_playStream, _playDeviceName,
+                                         &_playBufferAttr,
+                                         (pa_stream_flags_t)_playStreamFlags,
+                                         ptr_cvolume, nullptr) != PA_OK) {
       RTC_LOG(LS_ERROR) << "failed to connect play stream, err="
                         << LATE(pa_context_errno)(_paContext);
     }
@@ -2057,7 +2071,7 @@ bool AudioDeviceLinuxPulse::PlayThreadProcess() {
     // Clear device name
     if (_playDeviceName) {
       delete[] _playDeviceName;
-      _playDeviceName = NULL;
+      _playDeviceName = nullptr;
     }
 
     _playing = true;
@@ -2081,7 +2095,7 @@ bool AudioDeviceLinuxPulse::PlayThreadProcess() {
       PaLock();
       if (LATE(pa_stream_write)(
               _playStream, (void*)&_playBuffer[_playbackBufferUnused], write,
-              NULL, (int64_t)0, PA_SEEK_RELATIVE) != PA_OK) {
+              nullptr, (int64_t)0, PA_SEEK_RELATIVE) != PA_OK) {
         _writeErrors++;
         if (_writeErrors > 10) {
           RTC_LOG(LS_ERROR) << "Playout error: _writeErrors=" << _writeErrors
@@ -2125,7 +2139,8 @@ bool AudioDeviceLinuxPulse::PlayThreadProcess() {
       RTC_LOG(LS_VERBOSE) << "will write";
       PaLock();
       if (LATE(pa_stream_write)(_playStream, (void*)&_playBuffer[0], write,
-                                NULL, (int64_t)0, PA_SEEK_RELATIVE) != PA_OK) {
+                                nullptr, (int64_t)0,
+                                PA_SEEK_RELATIVE) != PA_OK) {
         _writeErrors++;
         if (_writeErrors > 10) {
           RTC_LOG(LS_ERROR) << "Playout error: _writeErrors=" << _writeErrors
@@ -2160,7 +2175,7 @@ bool AudioDeviceLinuxPulse::RecThreadProcess() {
   if (_startRec) {
     RTC_LOG(LS_VERBOSE) << "_startRec true, performing initial actions";
 
-    _recDeviceName = NULL;
+    _recDeviceName = nullptr;
 
     // Set if not default device
     if (_inputDeviceIndex > 0) {
@@ -2199,7 +2214,7 @@ bool AudioDeviceLinuxPulse::RecThreadProcess() {
     // Clear device name
     if (_recDeviceName) {
       delete[] _recDeviceName;
-      _recDeviceName = NULL;
+      _recDeviceName = nullptr;
     }
 
     _startRec = false;
@@ -2215,7 +2230,7 @@ bool AudioDeviceLinuxPulse::RecThreadProcess() {
       return true;
     }
 
-    _tempSampleData = NULL;
+    _tempSampleData = nullptr;
     _tempSampleDataSize = 0;
 
     PaLock();

@@ -9,8 +9,14 @@
  */
 #include "modules/desktop_capture/linux/wayland/screen_capture_portal_interface.h"
 
+#include <gio/gio.h>
+#include <glib.h>
+
+#include <cstdint>
 #include <string>
 
+#include "modules/portal/portal_request_response.h"
+#include "modules/portal/scoped_glib.h"
 #include "modules/portal/xdg_desktop_portal_utils.h"
 #include "rtc_base/logging.h"
 

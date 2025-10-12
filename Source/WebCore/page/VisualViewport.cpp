@@ -29,15 +29,14 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ContextDestructionObserver.h"
-#include "Document.h"
+#include "DocumentPage.h"
+#include "DocumentView.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "EventTargetInterfaces.h"
-#include "FrameInlines.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
-#include "Page.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -65,7 +64,7 @@ bool VisualViewport::addEventListener(const AtomString& eventType, Ref<EventList
     if (!EventTarget::addEventListener(eventType, WTFMove(listener), options))
         return false;
 
-    if (auto* frame = this->frame())
+    if (RefPtr frame = this->frame())
         frame->document()->addListenerTypeIfNeeded(eventType);
     return true;
 }
@@ -133,7 +132,7 @@ double VisualViewport::height() const
 double VisualViewport::scale() const
 {
     // Subframes always have scale 1 since they aren't scaled relative to their parent frame.
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     if (!frame || !frame->isMainFrame())
         return 1;
 
@@ -153,7 +152,7 @@ void VisualViewport::update()
 
     RefPtr frame = this->frame();
     if (frame) {
-        if (auto* view = frame->view()) {
+        if (RefPtr view = frame->view()) {
             auto visualViewportRect = view->visualViewportRect();
             auto layoutViewportRect = view->layoutViewportRect();
             auto pageZoomFactor = frame->pageZoomFactor();

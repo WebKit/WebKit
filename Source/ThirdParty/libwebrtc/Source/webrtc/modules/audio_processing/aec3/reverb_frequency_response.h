@@ -35,9 +35,7 @@ class ReverbFrequencyResponse {
               bool stationary_block);
 
   // Returns the estimated frequency response for the reverb.
-  rtc::ArrayView<const float> FrequencyResponse() const {
-    return tail_response_;
-  }
+  ArrayView<const float> FrequencyResponse() const { return tail_response_; }
 
  private:
   void Update(const std::vector<std::array<float, kFftLengthBy2Plus1>>&

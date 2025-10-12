@@ -34,8 +34,11 @@ WebKitNavigationType toWebKitNavigationType(WebCore::NavigationType);
 unsigned toWebKitMouseButton(WebKit::WebMouseEventButton);
 unsigned toWebKitError(unsigned webCoreError);
 #if ENABLE(WK_WEB_EXTENSIONS)
+#if ENABLE(2022_GLIB_API)
+unsigned toWebKitWebExtensionError(unsigned apiError);
+#endif // ENABLE(2022_GLIB_API)
 unsigned toWebKitWebExtensionMatchPatternError(unsigned apiError);
-#endif
+#endif // ENABLE(WK_WEB_EXTENSIONS)
 unsigned toWebCoreError(unsigned webKitError);
 
 enum SnapshotRegion {

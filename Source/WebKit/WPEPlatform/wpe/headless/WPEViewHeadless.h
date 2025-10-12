@@ -39,8 +39,6 @@ G_BEGIN_DECLS
 #define WPE_TYPE_VIEW_HEADLESS (wpe_view_headless_get_type())
 WPE_API G_DECLARE_FINAL_TYPE (WPEViewHeadless, wpe_view_headless, WPE, VIEW_HEADLESS, WPEView)
 
-WPE_API WPEView *wpe_view_headless_new (WPEDisplayHeadless *display);
-
 G_END_DECLS
 
 #endif /* WPEViewHeadless_h */

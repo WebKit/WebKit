@@ -27,12 +27,12 @@
 
 #if ENABLE(JIT)
 
-#include "AssemblyHelpers.h"
-#include "DisallowMacroScratchRegisterUsage.h"
-#include "FPRInfo.h"
-#include "GPRInfo.h"
-#include "OperationResult.h"
-#include "StackAlignment.h"
+#include <JavaScriptCore/AssemblyHelpers.h>
+#include <JavaScriptCore/DisallowMacroScratchRegisterUsage.h>
+#include <JavaScriptCore/FPRInfo.h>
+#include <JavaScriptCore/GPRInfo.h>
+#include <JavaScriptCore/OperationResult.h>
+#include <JavaScriptCore/StackAlignment.h>
 #include <wtf/FunctionTraits.h>
 #include <wtf/ScopedLambda.h>
 #include <wtf/TZoneMalloc.h>
@@ -624,7 +624,7 @@ private:
         // arguments should be passed through FPRRegs. This is asserted in the invocation of the lastly-called
         // setupArgumentsImpl(ArgCollection<>) overload, by matching the number of handled GPR and FPR arguments
         // with the corresponding count of properly-typed arguments for this operation.
-        if (!std::is_same_v<ArgumentType, double>) {
+        if constexpr (!std::is_same_v<ArgumentType, double>) {
             // RV64 calling convention requires all 32-bit values to be sign-extended into the whole register.
             // JSC JIT is tailored for other ISAs that pass these values in 32-bit-wide registers, which RISC-V
             // doesn't support, so any 32-bit value passed in argument registers has to be manually sign-extended.
@@ -768,9 +768,10 @@ public:
     static constexpr GPRReg operationExceptionRegister()
     {
         static_assert(assertNotOperationSignature<T>);
-        if (std::is_floating_point_v<typename T::ResultType> || std::is_same_v<typename T::ResultType, void>)
+        if constexpr (std::is_floating_point_v<typename T::ResultType> || std::is_same_v<typename T::ResultType, void>)
             return GPRInfo::returnValueGPR;
-        return GPRInfo::returnValueGPR2;
+        else
+            return GPRInfo::returnValueGPR2;
     }
 #else
     template<typename T>
@@ -778,9 +779,10 @@ public:
     static constexpr GPRReg operationExceptionRegister()
     {
         static_assert(assertNotOperationSignature<T>);
-        if (std::is_same_v<T, ExceptionOperationResult<void>>)
+        if constexpr (std::is_same_v<T, ExceptionOperationResult<void>>)
             return GPRInfo::returnValueGPR;
-        return GPRInfo::returnValueGPR2;
+        else
+            return GPRInfo::returnValueGPR2;
     }
 #endif
 
@@ -897,8 +899,8 @@ public:
     }
 
     // This function is used to store the wasm callee in case this function hasn't tiered up yet.
-    // The LLInt/IPInt is going to expect this so that the common entrypoint can read bytecode/metadata.
-    void storeWasmCalleeCallee(RegisterID value, int offset = 0)
+    // The IPInt is going to expect this so that the common entrypoint can read bytecode/metadata.
+    void storeWasmCalleeToCalleeCallFrame(RegisterID value, int offset = 0)
     {
         JIT_COMMENT(*this, "< Store Callee's wasm callee");
         auto addr = CCallHelpers::addressOfCalleeCalleeFromCallerPerspective(offset);
@@ -912,30 +914,27 @@ public:
 #endif
     }
 
-    void storeWasmCalleeCallee(const CalleeBits* boxedWasmCalleeLoadLocation)
+    void storeWasmCalleeToCalleeCallFrame(CalleeBits boxedCallee)
     {
-        ASSERT(boxedWasmCalleeLoadLocation);
-        JIT_COMMENT(*this, "> ", RawPointer(boxedWasmCalleeLoadLocation->asNativeCallee()));
-        move(TrustedImmPtr(boxedWasmCalleeLoadLocation->rawPtr()), scratchRegister());
-        storeWasmCalleeCallee(scratchRegister());
+        JIT_COMMENT(*this, "> ", RawPointer(boxedCallee.asNativeCallee()));
+        storeWasmCalleeToCalleeCallFrame(TrustedImmPtr(boxedCallee.rawPtr()));
     }
 
-    DataLabelPtr storeWasmCalleeCalleePatchable(int offset = 0)
+    void storeWasmCalleeToCalleeCallFrame(TrustedImmPtr imm, int offset = 0)
     {
-        JIT_COMMENT(*this, "Store Callee's wasm callee (patchable)");
-        auto patch = moveWithPatch(TrustedImmPtr(nullptr), scratchRegister());
+        JIT_COMMENT(*this, "Store Callee's wasm callee");
         auto addr = CCallHelpers::addressOfCalleeCalleeFromCallerPerspective(offset);
 #if USE(JSVALUE64)
-        storePtr(scratchRegister(), addr);
+        store64(imm, addr);
 #elif USE(JSVALUE32_64)
+        move(imm, scratchRegister());
         store32(scratchRegister(), addr.withOffset(PayloadOffset));
         store32(TrustedImm32(JSValue::NativeCalleeTag), addr.withOffset(TagOffset));
 #else
 #error "Unsupported configuration"
 #endif
-        return patch;
     }
-    
+
     // These operations clobber all volatile registers. They assume that there is room on the top of
     // stack to marshall call arguments.
     void logShadowChickenProloguePacket(GPRReg shadowPacket, GPRReg scratch1, GPRReg scope);

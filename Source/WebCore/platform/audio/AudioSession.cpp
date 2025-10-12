@@ -100,7 +100,7 @@ Ref<AudioSession> AudioSession::create()
 AudioSession::AudioSession() = default;
 AudioSession::~AudioSession() = default;
 
-AudioSession& AudioSession::sharedSession()
+AudioSession& AudioSession::singleton()
 {
     if (!s_mediaPlaybackEnabled)
         return dummyAudioSession();
@@ -141,11 +141,10 @@ bool AudioSession::tryToSetActive(bool active)
     m_active = active;
     if (m_isInterrupted && m_active) {
         callOnMainThread([hasActiveChanged] {
-            Ref session = sharedSession();
-            if (session->m_isInterrupted && session->m_active)
-                session->endInterruption(MayResume::Yes);
+            if (singleton().m_isInterrupted && singleton().m_active)
+                singleton().endInterruption(MayResume::Yes);
             if (hasActiveChanged)
-                session->activeStateChanged();
+                singleton().activeStateChanged();
         });
     } else if (hasActiveChanged)
         activeStateChanged();
@@ -153,14 +152,20 @@ bool AudioSession::tryToSetActive(bool active)
     return true;
 }
 
+static WeakHashSet<AudioSessionInterruptionObserver>& audioSessionInterruptionObserversSingleton()
+{
+    static NeverDestroyed<WeakHashSet<AudioSessionInterruptionObserver>> audioSessionInterruptionObservers;
+    return audioSessionInterruptionObservers.get();
+}
+
 void AudioSession::addInterruptionObserver(AudioSessionInterruptionObserver& observer)
 {
-    m_interruptionObservers.add(observer);
+    audioSessionInterruptionObserversSingleton().add(observer);
 }
 
 void AudioSession::removeInterruptionObserver(AudioSessionInterruptionObserver& observer)
 {
-    m_interruptionObservers.remove(observer);
+    audioSessionInterruptionObserversSingleton().remove(observer);
 }
 
 void AudioSession::beginInterruption()
@@ -171,7 +176,7 @@ void AudioSession::beginInterruption()
         return;
     }
     m_isInterrupted = true;
-    for (auto& observer : m_interruptionObservers)
+    for (auto& observer : audioSessionInterruptionObserversSingleton())
         observer.beginAudioSessionInterruption();
 }
 
@@ -184,13 +189,13 @@ void AudioSession::endInterruption(MayResume mayResume)
     }
     m_isInterrupted = false;
 
-    for (auto& observer : m_interruptionObservers)
+    for (auto& observer : audioSessionInterruptionObserversSingleton())
         observer.endAudioSessionInterruption(mayResume);
 }
 
 void AudioSession::activeStateChanged()
 {
-    for (auto& observer : m_interruptionObservers)
+    for (auto& observer : audioSessionInterruptionObserversSingleton())
         observer.audioSessionActiveStateChanged();
 }
 

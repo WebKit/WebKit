@@ -25,21 +25,24 @@
 
 #pragma once
 
-#include "Element.h"
-#include "NodeInlines.h"
-#include "PseudoElement.h"
-#include "PseudoElementIdentifier.h"
-#include "RenderStyleConstants.h"
-#include "WebAnimationTypes.h"
+#include <WebCore/Element.h>
+#include <WebCore/PseudoElement.h>
+#include <WebCore/PseudoElementIdentifier.h>
+#include <WebCore/RenderStyleConstants.h>
+#include <WebCore/WebAnimationTypes.h>
 
 namespace WebCore {
 
+class Element;
 class KeyframeEffectStack;
 class RenderElement;
 class RenderStyle;
 class WebAnimation;
 
 namespace Style {
+template<typename> struct CoordinatedValueList;
+struct Animation;
+using Animations = CoordinatedValueList<Animation>;
 enum class IsInDisplayNoneTree : bool;
 }
 
@@ -53,13 +56,7 @@ struct Styleable {
     {
     }
 
-    static const Styleable fromElement(Element& element)
-    {
-        if (auto* pseudoElement = dynamicDowncast<PseudoElement>(element))
-            return Styleable(*pseudoElement->hostElement(), Style::PseudoElementIdentifier { element.pseudoId() });
-        ASSERT(element.pseudoId() == PseudoId::None);
-        return Styleable(element, std::nullopt);
-    }
+    inline static const Styleable fromElement(Element&);
 
     static const std::optional<const Styleable> fromRenderer(const RenderElement&);
 
@@ -69,6 +66,7 @@ struct Styleable {
     }
 
     RenderElement* renderer() const;
+    Ref<Element> protectedElement() const { return element; }
 
     std::unique_ptr<RenderStyle> computeAnimatedStyle() const;
 
@@ -101,7 +99,7 @@ struct Styleable {
         return element.hasKeyframeEffects(pseudoElementIdentifier);
     }
 
-    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, UncheckedKeyHashSet<AnimatableCSSProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext&) const;
+    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, HashSet<AnimatableCSSProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext&) const;
 
     const AnimationCollection* animations() const
     {
@@ -175,7 +173,7 @@ struct Styleable {
 
     void queryContainerDidChange() const;
 
-    bool animationListContainsNewlyValidAnimation(const AnimationList&) const;
+    bool animationListContainsNewlyValidAnimation(const Style::Animations&) const;
 
     void elementWasRemoved() const;
 

@@ -56,8 +56,9 @@ Ref<WebIDBConnectionToServer> WebIDBConnectionToServer::create(PAL::SessionID se
 }
 
 WebIDBConnectionToServer::WebIDBConnectionToServer(PAL::SessionID sessionID)
-    : m_connectionToServer(IDBClient::IDBConnectionToServer::create(*this, sessionID))
 {
+    relaxAdoptionRequirement();
+    lazyInitialize(m_connectionToServer, IDBClient::IDBConnectionToServer::create(*this, sessionID));
 }
 
 WebIDBConnectionToServer::~WebIDBConnectionToServer() = default;
@@ -74,7 +75,7 @@ IPC::Connection* WebIDBConnectionToServer::messageSenderConnection() const
 
 IDBClient::IDBConnectionToServer& WebIDBConnectionToServer::coreConnectionToServer()
 {
-    return m_connectionToServer;
+    return *m_connectionToServer;
 }
 
 void WebIDBConnectionToServer::deleteDatabase(const IDBOpenRequestData& requestData)

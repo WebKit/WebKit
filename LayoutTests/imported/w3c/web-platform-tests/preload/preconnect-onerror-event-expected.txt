@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Unexpected token ')'
 
 Harness Error (FAIL), message = SyntaxError: Unexpected token ')'
 

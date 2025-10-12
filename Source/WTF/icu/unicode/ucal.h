@@ -442,6 +442,33 @@ enum UCalendarDateFields {
    */
   UCAL_IS_LEAP_MONTH,
 
+#ifndef U_HIDE_DRAFT_API
+  /**
+   * Field number indicating the month. This is a calendar-specific value.
+   * Differ from UCAL_MONTH, this value is continuous and unique within a
+   * year and range from 0 to 11 or 0 to 12 depending on how many months in a
+   * year, the calendar system has leap month or not, and in leap year or not.
+   * It is the ordinal position of that month in the corresponding year of
+   * the calendar. For Chinese, Dangi, and Hebrew calendar, the range is
+   * 0 to 11 in non-leap years and 0 to 12 in leap years. For Coptic and Ethiopian
+   * calendar, the range is always 0 to 12. For other calendars supported by
+   * ICU now, the range is 0 to 11. When the number of months in a year of the
+   * identified calendar is variable, a different UCAL_ORDINAL_MONTH value can
+   * be used for dates that are part of the same named month in different years.
+   * For example, in the Hebrew calendar, "1 Nisan 5781" is associated with
+   * UCAL_ORDINAL_MONTH value 6 while "1 Nisan 5782" is associated with
+   * UCAL_ORDINAL_MONTH value 7 because 5782 is a leap year and Nisan follows
+   * the insertion of Adar I. In Chinese calendar, "Year 4664 Month 6 Day 2"
+   * is associated with UCAL_ORDINAL_MONTH value 5 while "Year 4665 Month 6 Day 2"
+   * is associated with UCAL_ORDINAL_MONTH value 6 because 4665 is a leap year
+   * and there is an extra "Leap Month 5" which associated with UCAL_ORDINAL_MONTH
+   * value 5 before "Month 6" of year 4664.
+   *
+   * @draft ICU 73
+   */
+  UCAL_ORDINAL_MONTH,
+#endif // U_HIDE_DRAFT_API
+
     /* Do not conditionalize the following with #ifndef U_HIDE_DEPRECATED_API,
      * it is needed for layout of Calendar, DateFormat, and other objects */
 #ifndef U_FORCE_HIDE_DEPRECATED_API
@@ -449,7 +476,13 @@ enum UCalendarDateFields {
      * One more than the highest normal UCalendarDateFields value.
      * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
      */
-    UCAL_FIELD_COUNT,
+#ifdef U_HIDE_DRAFT_API
+    // Must include all fields that will be in structs
+    UCAL_FIELD_COUNT = UCAL_IS_LEAP_MONTH + 2,
+#else  // U_HIDE_DRAFT_API (for UCAL_ORDINAL_MONTH)
+    UCAL_FIELD_COUNT = UCAL_ORDINAL_MONTH + 1,
+#endif  // U_HIDE_DRAFT_API (for UCAL_ORDINAL_MONTH)
+
 #endif  // U_FORCE_HIDE_DEPRECATED_API
 
  /**
@@ -1360,6 +1393,38 @@ ucal_getTZDataVersion(UErrorCode* status);
 U_CAPI int32_t U_EXPORT2
 ucal_getCanonicalTimeZoneID(const UChar* id, int32_t len,
                             UChar* result, int32_t resultCapacity, UBool *isSystemID, UErrorCode* status);
+
+#ifndef U_HIDE_DRAFT_API
+/**
+ * Returns the preferred time zone ID in the IANA time zone database for the given time zone ID.
+ * There are two types of preferred IDs. The first type is the one defined in zone.tab file,
+ * such as "America/Los_Angeles". The second types is the one defined for zones not associated
+ * with a specific region, but not defined with "Link" syntax such as "Etc/GMT+10".
+ *
+ * <p>Note: For most of valid time zone IDs, this method returns an ID same as ucal_getCanonicalTimeZoneID().
+ * ucal_getCanonicalTimeZoneID() is based on canonical time zone IDs defined in Unicode CLDR.
+ * These canonical time zone IDs in CLDR were based on very old version of the time zone database.
+ * In the IANA time zone database, some IDs were updated since then. This API returns a newer
+ * time zone ID. For example, CLDR defines "Asia/Calcutta" as the canonical time zone ID. This
+ * method returns "Asia/Kolkata" instead.
+ * <p> "Etc/Unknown" is a special time zone ID defined by CLDR. There are no corresponding zones
+ * in the IANA time zone database. Therefore, this API returns U_ILLEGAL_ARGUMENT_ERROR when the
+ * input ID is "Etc/Unknown".
+ *
+ * @param id        The input time zone ID.
+ * @param len       The length of the input time zone ID.
+ * @param result    The buffer receives the preferred time zone ID in the IANA time zone database.
+ * @param resultCapacity  The capacity of the result buffer.
+ * @param status    Receives the status.  When the given time zone ID is not a known system time zone
+ *                  ID, U_ILLEGAL_ARGUMENT_ERROR is set.
+ * @return          The result string length, not including the terminating null.
+ * @draft ICU 74
+ */
+U_CAPI int32_t U_EXPORT2
+ucal_getIanaTimeZoneID(const UChar* id, int32_t len,
+                        UChar* result, int32_t resultCapacity, UErrorCode* status);
+#endif // U_HIDE_DRAFT_API
+
 /**
  * Get the resource keyword value string designating the calendar type for the UCalendar.
  * @param cal The UCalendar to query.
@@ -1617,25 +1682,23 @@ U_CAPI int32_t U_EXPORT2
 ucal_getTimeZoneIDForWindowsID(const UChar* winid, int32_t len, const char* region,
                                 UChar* id, int32_t idCapacity, UErrorCode* status);
 
-#ifndef U_FORCE_HIDE_DRAFT_API
 /**
  * Options used by ucal_getTimeZoneOffsetFromLocal and BasicTimeZone::getOffsetFromLocal()
  * to specify how to interpret an input time when it does not exist, or when it is ambiguous,
  * around a time zone transition.
- * @draft ICU 69
+ * @stable ICU 69
  */
 enum UTimeZoneLocalOption {
-#ifndef U_HIDE_DRAFT_API
     /**
      * An input time is always interpreted as local time before
      * a time zone transition.
-     * @draft ICU 69
+     * @stable ICU 69
      */
     UCAL_TZ_LOCAL_FORMER = 0x04,
     /**
      * An input time is always interpreted as local time after
      * a time zone transition.
-     * @draft ICU 69
+     * @stable ICU 69
      */
     UCAL_TZ_LOCAL_LATTER = 0x0C,
     /**
@@ -1644,7 +1707,7 @@ enum UTimeZoneLocalOption {
      * sides of a time zone transition are standard time,
      * or daylight saving time, the local time before the
      * transition is used.
-     * @draft ICU 69
+     * @stable ICU 69
      */
     UCAL_TZ_LOCAL_STANDARD_FORMER = UCAL_TZ_LOCAL_FORMER | 0x01,
     /**
@@ -1653,7 +1716,7 @@ enum UTimeZoneLocalOption {
      * sides of a time zone transition are standard time,
      * or daylight saving time, the local time after the
      * transition is used.
-     * @draft ICU 69
+     * @stable ICU 69
      */
     UCAL_TZ_LOCAL_STANDARD_LATTER = UCAL_TZ_LOCAL_LATTER | 0x01,
     /**
@@ -1662,7 +1725,7 @@ enum UTimeZoneLocalOption {
      * sides of a time zone transition are standard time,
      * or daylight saving time, the local time before the
      * transition is used.
-     * @draft ICU 69
+     * @stable ICU 69
      */
     UCAL_TZ_LOCAL_DAYLIGHT_FORMER = UCAL_TZ_LOCAL_FORMER | 0x03,
     /**
@@ -1671,19 +1734,11 @@ enum UTimeZoneLocalOption {
      * sides of a time zone transition are standard time,
      * or daylight saving time, the local time after the
      * transition is used.
-     * @draft ICU 69
+     * @stable ICU 69
      */
     UCAL_TZ_LOCAL_DAYLIGHT_LATTER = UCAL_TZ_LOCAL_LATTER | 0x03,
-#else /* U_HIDE_DRAFT_API */
-    /**
-     * Dummy value to prevent empty enum if U_HIDE_DRAFT_API.
-     * This will go away when draft conditionals are removed.
-     * @internal
-     */
-    UCAL_TZ_LOCAL_NONE = 0,
-#endif /* U_HIDE_DRAFT_API */
 };
-typedef enum UTimeZoneLocalOption UTimeZoneLocalOption; /**< @draft ICU 69 */
+typedef enum UTimeZoneLocalOption UTimeZoneLocalOption; /**< @stable ICU 69 */
 
 /**
 * Returns the time zone raw and GMT offset for the given moment
@@ -1710,7 +1765,7 @@ typedef enum UTimeZoneLocalOption UTimeZoneLocalOption; /**< @draft ICU 69 */
 * typically one hour.
 * If the status is set to one of the error code, the value set is unspecified.
 * @param status A pointer to a UErrorCode to receive any errors.
-* @draft ICU 69
+* @stable ICU 69
 */
 U_CAPI void U_EXPORT2
 ucal_getTimeZoneOffsetFromLocal(
@@ -1718,7 +1773,6 @@ ucal_getTimeZoneOffsetFromLocal(
     UTimeZoneLocalOption nonExistingTimeOpt,
     UTimeZoneLocalOption duplicatedTimeOpt,
     int32_t* rawOffset, int32_t* dstOffset, UErrorCode* status);
-#endif /* U_FORCE_HIDE_DRAFT_API */
 
 #endif /* #if !UCONFIG_NO_FORMATTING */
 

@@ -77,6 +77,8 @@ class CppFrontendDispatcherImplementationGenerator(CppGenerator):
     def _generate_dispatcher_implementations_for_domain(self, domain):
         implementations = []
         events = self.events_for_domain(domain)
+        implementations.append('%sFrontendDispatcher::%sFrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }' % (domain.domain_name, domain.domain_name))
+        implementations.append('%sFrontendDispatcher::~%sFrontendDispatcher() = default;' % (domain.domain_name, domain.domain_name))
         for event in events:
             implementations.append(self._generate_dispatcher_implementation_for_event(event, domain))
 
@@ -144,6 +146,6 @@ class CppFrontendDispatcherImplementationGenerator(CppGenerator):
             lines.append('    protocol_jsonMessage->setObject("params"_s, WTFMove(protocol_paramsObject));')
 
         lines.append('')
-        lines.append('    m_frontendRouter.sendEvent(protocol_jsonMessage->toJSONString());')
+        lines.append('    m_frontendRouter->sendEvent(protocol_jsonMessage->toJSONString());')
         lines.append('}')
         return self.wrap_with_guard_for_condition(event.condition, "\n".join(lines))

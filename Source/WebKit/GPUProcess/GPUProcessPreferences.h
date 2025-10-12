@@ -36,10 +36,6 @@ class WebPreferences;
 struct GPUProcessPreferences {
     void copyEnabledWebPreferences(const WebPreferences&);
 
-#if USE(MODERN_AVCONTENTKEYSESSION)
-    std::optional<bool> shouldUseModernAVContentKeySession;
-#endif
-
 #if ENABLE(VP9)
     std::optional<bool> vp9DecoderEnabled;
     bool swVPDecodersAlwaysEnabled { false };

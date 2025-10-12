@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,8 +85,8 @@ Ref<FrameState> toFrameState(const HistoryItem& historyItem)
     frameState->shouldRestoreScrollPosition = historyItem.shouldRestoreScrollPosition();
     frameState->pageScaleFactor = historyItem.pageScaleFactor();
 
-    if (FormData* formData = const_cast<HistoryItem&>(historyItem).formData()) {
-        HTTPBody httpBody = toHTTPBody(*formData);
+    if (RefPtr formData = const_cast<HistoryItem&>(historyItem).formData()) {
+        HTTPBody httpBody = toHTTPBody(formData.releaseNonNull());
         httpBody.contentType = historyItem.formContentType();
 
         frameState->httpBody = WTFMove(httpBody);

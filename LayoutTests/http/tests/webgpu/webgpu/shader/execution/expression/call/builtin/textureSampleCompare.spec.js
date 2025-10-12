@@ -8,6 +8,7 @@ Samples a depth texture and compares the sampled depth values against a referenc
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import { kCompareFunctions } from '../../../../../capability_info.js';
 import { isDepthTextureFormat, kDepthStencilFormats } from '../../../../../format_info.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../../../gpu_test.js';
 
 import {
   checkCallResults,
@@ -20,14 +21,13 @@ import {
   kSamplePointMethods,
   kShortAddressModes,
   kShortAddressModeToAddressMode,
-  makeRandomDepthComparisonTexelGenerator,
+  makeRandomDepthComparisonTexelGenerator } from
 
 
 
-  WGSLTextureSampleTest } from
 './texture_utils.js';
 
-export const g = makeTestGroup(WGSLTextureSampleTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 g.test('2d_coords').
 specURL('https://www.w3.org/TR/WGSL/#texturesamplecompare').

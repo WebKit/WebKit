@@ -11,20 +11,22 @@
 #ifndef MODULES_VIDEO_CAPTURE_LINUX_PIPEWIRE_SESSION_H_
 #define MODULES_VIDEO_CAPTURE_LINUX_PIPEWIRE_SESSION_H_
 
-#include <pipewire/core.h>
 #include <pipewire/pipewire.h>
 
+#include <cstdint>
 #include <deque>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "api/ref_counted_base.h"
-#include "api/scoped_refptr.h"
 #include "modules/portal/pipewire_utils.h"
+#include "modules/portal/portal_request_response.h"
 #include "modules/video_capture/linux/camera_portal.h"
-#include "modules/video_capture/video_capture.h"
+#include "modules/video_capture/video_capture_defines.h"
 #include "modules/video_capture/video_capture_options.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 namespace videocapturemodule {
@@ -90,7 +92,7 @@ class CameraPortalNotifier : public CameraPortal::PortalNotifier {
   PipeWireSession* session_;
 };
 
-class PipeWireSession : public rtc::RefCountedNonVirtual<PipeWireSession> {
+class PipeWireSession : public webrtc::RefCountedNonVirtual<PipeWireSession> {
  public:
   PipeWireSession();
   ~PipeWireSession();

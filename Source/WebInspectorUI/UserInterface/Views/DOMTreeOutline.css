@@ -99,6 +99,7 @@ body:is(.window-inactive, .window-docked-inactive) .content-view.dom-tree.deemph
     opacity: 0.7;
 }
 
+/* These styles will get overridden by an ancestor matching `.tree-outline.object ol`. Both rules have the same specificity, but that one is defined later. This happens when WI.DOMTreeOutline is nested in WI.ObjectTreeView. */
 .tree-outline.dom ol {
     list-style-type: none;
     margin: 0;

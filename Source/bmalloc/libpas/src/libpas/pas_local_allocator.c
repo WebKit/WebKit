@@ -36,6 +36,7 @@
 #include "pas_segregated_size_directory.h"
 #include "pas_segregated_view.h"
 #include "pas_utility_heap.h"
+#include "pas_zero_memory.h"
 
 #if PAS_LOCAL_ALLOCATOR_MEASURE_REFILL_EFFICIENCY
 double pas_local_allocator_refill_efficiency_sum = 0.;

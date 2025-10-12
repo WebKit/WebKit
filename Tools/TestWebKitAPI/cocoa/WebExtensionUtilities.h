@@ -63,6 +63,8 @@
 
 - (void)sendTestMessage:(NSString *)message;
 - (void)sendTestMessage:(NSString *)message withArgument:(id)argument;
+- (void)sendTestStartedWithArgument:(id)argument;
+- (void)sendTestFinishedWithArgument:(id)argument;
 
 - (void)loadAndRun;
 
@@ -111,7 +113,7 @@
 - (instancetype)initWithExtensionController:(WKWebExtensionController *)extensionController usesPrivateBrowsing:(BOOL)usesPrivateBrowsing NS_DESIGNATED_INITIALIZER;
 
 @property (nonatomic, copy) NSArray<TestWebExtensionTab *> *tabs;
-@property (nonatomic, strong) TestWebExtensionTab * activeTab;
+@property (nonatomic, strong) TestWebExtensionTab *activeTab;
 
 - (TestWebExtensionTab *)openNewTab;
 - (TestWebExtensionTab *)openNewTabAtIndex:(NSUInteger)index;

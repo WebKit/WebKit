@@ -31,12 +31,46 @@
 #import "UIKitSPI.h"
 #import "WebIOSEventFactory.h"
 #import <pal/spi/ios/GraphicsServicesSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/Compiler.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+
+#if ENABLE(POINTER_LOCK)
+
+#import "WKMouseDeviceObserver.h"
+#import <GameController/GameController.h>
+#import <WebCore/GameControllerSoftLink.h>
+
+struct PointerLockState {
+    bool isActive { false };
+    bool isObservingNotifications { false };
+    RetainPtr<GCMouse> currentMouse;
+    GCMouseMoved originalMouseMovedHandler { nil };
+    std::optional<CGPoint> lockedCursorPosition;
+
+    void reset()
+    {
+        isActive = false;
+        isObservingNotifications = false;
+        currentMouse = nil;
+        originalMouseMovedHandler = nil;
+        lockedCursorPosition = std::nullopt;
+    }
+};
+
+#endif
 
 @interface WKMouseInteraction () <UIGestureRecognizerDelegate>
 - (void)_updateMouseTouches:(NSSet<UITouch *> *)touches;
+
+#if ENABLE(POINTER_LOCK)
+- (void)_startObservingMouseNotifications;
+- (void)_stopObservingMouseNotifications;
+- (void)_mouseDidStopBeingCurrent:(NSNotification *)notification;
+- (void)_setupMouseMovedHandlerForMouse:(GCMouse *)mouse;
+#endif
 @end
 
 @interface WKMouseTouchGestureRecognizer : UIGestureRecognizer
@@ -105,6 +139,10 @@
     BOOL _enabled;
     BOOL _touching;
     BOOL _cancelledOrExited;
+
+#if ENABLE(POINTER_LOCK)
+    PointerLockState _pointerLockState;
+#endif
 }
 
 - (instancetype)initWithDelegate:(id<WKMouseInteractionDelegate>)delegate
@@ -141,6 +179,10 @@
     _pressedButtonMask = { };
     _currentHoverTouch = { };
     _currentMouseTouch = { };
+
+#if ENABLE(POINTER_LOCK)
+    _pointerLockState.reset();
+#endif
 }
 
 - (BOOL)hasGesture:(UIGestureRecognizer *)gesture
@@ -236,8 +278,12 @@ inline static String pointerType(UITouchType type)
     }();
 
     auto currentTouch = self.mouseTouch;
-    WebCore::IntPoint point { [self locationInView:self.view] };
-    auto delta = point - WebCore::IntPoint { [currentTouch previousLocationInView:self.view] };
+    auto point = [&] -> WebCore::DoublePoint {
+        if (_pointerLockState.isActive)
+            return _pointerLockState.lockedCursorPosition.value_or(CGPointZero);
+        return [self locationInView:self.view];
+    }();
+    auto delta = point - WebCore::DoublePoint { [currentTouch previousLocationInView:self.view] };
     // UITouch's timestamp uses mach_absolute_time as its timebase, same as MonotonicTime.
     return WebKit::NativeWebMouseEvent {
         *type,
@@ -250,7 +296,7 @@ inline static String pointerType(UITouchType type)
         0,
         static_cast<int>(currentTouch.tapCount),
         modifiers,
-        MonotonicTime::fromRawSeconds(currentTouch.timestamp).approximateWallTime(),
+        MonotonicTime::fromRawSeconds(currentTouch.timestamp),
         0,
         cancelled ? WebKit::GestureWasCancelled::Yes : WebKit::GestureWasCancelled::No,
         pointerType(currentTouch.type)
@@ -384,6 +430,122 @@ inline static String pointerType(UITouchType type)
     auto touch = self.mouseTouch;
     return touch && !_cancelledOrExited ? [touch locationInView:view] : CGPointMake(-1, -1);
 }
+
+- (void)dealloc
+{
+#if ENABLE(POINTER_LOCK)
+    [self _stopObservingMouseNotifications];
+    [self endPointerLockMouseTracking];
+#endif
+    [super dealloc];
+}
+
+#pragma mark - GameController Pointer Lock Integration
+
+#if ENABLE(POINTER_LOCK)
+
+- (void)beginPointerLockMouseTracking
+{
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+    if (![[WKMouseDeviceObserver sharedInstance] hasMouseDevice])
+        return;
+#endif
+
+    _pointerLockState.currentMouse = dynamic_objc_cast<GCMouse>([WebCore::getGCMouseClassSingleton() current]);
+    if (!_pointerLockState.currentMouse)
+        return;
+
+    _pointerLockState.lockedCursorPosition = [self locationInView:self.view];
+    [self _startObservingMouseNotifications];
+    [self _setupMouseMovedHandlerForMouse:_pointerLockState.currentMouse.get()];
+    [_mouseHoverGestureRecognizer setEnabled:NO];
+    _pointerLockState.isActive = true;
+
+    RELEASE_LOG_DEBUG(PointerLock, "Pointer lock mouse tracking enabled with GCMouse: %" PRIVATE_LOG_STRING, [_pointerLockState.currentMouse productCategory].UTF8String);
+}
+
+- (void)endPointerLockMouseTracking
+{
+    if (!_pointerLockState.isActive)
+        return;
+
+    [self _stopObservingMouseNotifications];
+
+    [[_pointerLockState.currentMouse mouseInput] setMouseMovedHandler:_pointerLockState.originalMouseMovedHandler];
+    _pointerLockState.originalMouseMovedHandler = nil;
+    _pointerLockState.currentMouse = nil;
+
+    [_mouseHoverGestureRecognizer setEnabled:YES];
+    _pointerLockState.isActive = false;
+    _pointerLockState.lockedCursorPosition = std::nullopt;
+
+    LOG(PointerLock, "Pointer lock mouse tracking disabled");
+}
+
+- (void)handleGameControllerMouseMove:(float)deltaX deltaY:(float)deltaY
+{
+    if (!_pointerLockState.isActive)
+        return;
+
+    WebCore::DoublePoint lockedPoint { _pointerLockState.lockedCursorPosition.value_or(CGPointZero) };
+    WebKit::NativeWebMouseEvent mouseEvent {
+        WebKit::WebEventType::MouseMove,
+        WebKit::WebMouseEventButton::None,
+        0,
+        lockedPoint,
+        lockedPoint,
+        static_cast<float>(deltaX),
+        static_cast<float>(-deltaY), // GCMouseInput y-axis aligns with macOS conventions, so we flip.
+        0,
+        0,
+        WebKit::WebIOSEventFactory::webEventModifiersForUIKeyModifierFlags(0),
+        MonotonicTime::now(),
+        0,
+        WebKit::GestureWasCancelled::No,
+        WebCore::mousePointerEventType()
+    };
+
+    [_delegate mouseInteraction:self changedWithEvent:mouseEvent];
+}
+
+- (void)_startObservingMouseNotifications
+{
+    if (_pointerLockState.isObservingNotifications)
+        return;
+    // Only observe when current mouse stops being current - we'll exit pointer lock
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_mouseDidStopBeingCurrent:) name:WebCore::get_GameController_GCMouseDidStopBeingCurrentNotificationSingleton() object:nil];
+    _pointerLockState.isObservingNotifications = true;
+}
+
+- (void)_stopObservingMouseNotifications
+{
+    if (!_pointerLockState.isObservingNotifications)
+        return;
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:WebCore::get_GameController_GCMouseDidStopBeingCurrentNotificationSingleton() object:nil];
+    _pointerLockState.isObservingNotifications = false;
+}
+
+- (void)_mouseDidStopBeingCurrent:(NSNotification *)notification
+{
+    if (!_pointerLockState.isActive)
+        return;
+    LOG(PointerLock, "Handling mouse disconnection during pointer lock");
+    [_delegate mouseInteractionDidLoseMouseDeviceDuringPointerLock:self];
+    [self endPointerLockMouseTracking];
+}
+
+- (void)_setupMouseMovedHandlerForMouse:(GCMouse *)mouse
+{
+    if (!mouse)
+        return;
+    _pointerLockState.originalMouseMovedHandler = [[mouse mouseInput] mouseMovedHandler];
+    [[mouse mouseInput] setMouseMovedHandler:makeBlockPtr([weakSelf = WeakObjCPtr<WKMouseInteraction> { self }](GCMouseInput *mouseInput, float deltaX, float deltaY) {
+        if (RetainPtr strongSelf = weakSelf.get())
+            [strongSelf handleGameControllerMouseMove:deltaX deltaY:deltaY];
+    }).get()];
+}
+
+#endif
 
 @end
 

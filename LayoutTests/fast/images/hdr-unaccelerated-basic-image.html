@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AcceleratedDrawingEnabled=false ] -->
+<html>
+<meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-77267">
+<style>
+    .image-box {
+        width: 200px;
+        height: 200px;
+        will-change: transform;
+    }
+</style>
+<body>
+    <div style="position: fixed; top: 10px; left: 10px;">
+        <img class="image-box">
+    </div>
+    <div style="position: fixed; top: 10px; left: 220px;">
+        <div class="image-box"></div>
+    </div>
+    <script>
+        if (window.internals && window.testRunner) {
+            internals.clearMemoryCache();
+            internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+            testRunner.waitUntilDone();
+        }
+
+        var image = new Image;
+        image.onload = (() => {
+            if (window.internals)
+                internals.setHasHDRContentForTesting(image);
+
+            var divElement = document.querySelector("div.image-box");
+            divElement.style.backgroundImage = 'url(' + image.src + ')';
+
+            var imgElement = document.querySelector("img.image-box");
+            imgElement.src = image.src;
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+        image.src = "resources/gainmap-red-green-1920x1920.jpg";
+    </script>
+</body>
+</html>

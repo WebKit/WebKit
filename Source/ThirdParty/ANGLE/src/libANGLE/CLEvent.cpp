@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // CLEvent.cpp: Implements the cl::Event class.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/CLEvent.h"
 

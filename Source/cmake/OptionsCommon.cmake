@@ -20,7 +20,7 @@ if (WTF_CPU_ARM)
     int main() {}
     ")
 
-    if (COMPILER_IS_CLANG AND NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin"))
+    if (COMPILER_IS_GCC_OR_CLANG AND NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin"))
         set(CLANG_EXTRA_ARM_ARGS " -mthumb")
     endif ()
 
@@ -34,10 +34,23 @@ if (WTF_CPU_ARM)
     endif ()
 endif ()
 
+# NB: We can't use CMAKE_HOST_SYSTEM_PROCESSOR as its value is on armv8l is
+# "aarch64". Also, `uname` is not available on Windows, but Windows doesn't
+# currently use this variable.
+execute_process(COMMAND uname -m OUTPUT_VARIABLE WTF_HOST_SYSTEM_MACHINE OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+if ("${WTF_HOST_SYSTEM_MACHINE}" MATCHES "^armv[78]")
+    set(BUILDING_ON_32_BITS TRUE)
+else ()
+    set(BUILDING_ON_32_BITS FALSE)
+endif ()
+
+set(LLD_UNUSABLE_BECAUSE_OF_ADDRESS_SPACE_EXHAUSTION ${BUILDING_ON_32_BITS})
+
 # Use ld.lld when building with LTO, or for debug builds, if available.
 # FIXME: With CMake 3.22+ full conditional syntax can be used in
 #        cmake_dependent_option()
-if (LTO_MODE OR DEVELOPER_MODE)
+if (LTO_MODE OR DEVELOPER_MODE AND (NOT LLD_UNUSABLE_BECAUSE_OF_ADDRESS_SPACE_EXHAUSTION))
     set(TRY_USE_LD_LLD ON)
 endif ()
 CMAKE_DEPENDENT_OPTION(USE_LD_LLD "Use LLD linker" ON

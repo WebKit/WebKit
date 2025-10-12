@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,9 +30,10 @@
 
 #pragma once
 
-#include "ThreadableWebSocketChannel.h"
-#include "WebSocketChannelClient.h"
-#include "WorkerGlobalScope.h"
+#include <WebCore/ThreadableWebSocketChannel.h>
+#include <WebCore/WebSocketChannelClient.h>
+#include <WebCore/WorkerGlobalScope.h>
+#include <WebCore/WorkerLoaderProxy.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -42,8 +43,6 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 class ThreadableWebSocketChannelClientWrapper;
-class WorkerGlobalScope;
-class WorkerLoaderProxy;
 class WorkerRunLoop;
 
 class WorkerThreadableWebSocketChannel final : public RefCounted<WorkerThreadableWebSocketChannel>, public ThreadableWebSocketChannel {
@@ -147,12 +146,12 @@ private:
         // Executed on the worker context's thread.
         void clearClientWrapper();
 
-        Ref<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
+        const Ref<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
         RefPtr<WorkerGlobalScope> m_workerGlobalScope;
         WorkerLoaderProxy& m_loaderProxy;
         String m_taskMode;
         ThreadSafeWeakPtr<Peer> m_peer;
-        Ref<SocketProvider> m_socketProvider;
+        const Ref<SocketProvider> m_socketProvider;
     };
 
     WEBCORE_EXPORT WorkerThreadableWebSocketChannel(WorkerGlobalScope&, WebSocketChannelClient&, const String& taskMode, SocketProvider&);
@@ -167,10 +166,10 @@ private:
     ResourceRequest clientHandshakeRequest(const CookieGetter&) const final { return m_handshakeRequest; }
     const ResourceResponse& serverHandshakeResponse() const final { return m_handshakeResponse; }
 
-    Ref<WorkerGlobalScope> m_workerGlobalScope;
-    Ref<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
+    const Ref<WorkerGlobalScope> m_workerGlobalScope;
+    const Ref<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
     RefPtr<Bridge> m_bridge;
-    Ref<SocketProvider> m_socketProvider;
+    const Ref<SocketProvider> m_socketProvider;
     ResourceRequest m_handshakeRequest;
     ResourceResponse m_handshakeResponse;
     WebSocketChannelIdentifier m_progressIdentifier;

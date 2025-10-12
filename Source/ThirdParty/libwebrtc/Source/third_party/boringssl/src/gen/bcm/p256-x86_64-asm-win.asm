@@ -486,21 +486,21 @@ $L$oop_ord_sqr:
 	mov	rbp,rax
 	mul	r8
 	mov	r9,rax
-DB	102,72,15,110,205
+	movq	xmm1,rbp
 	mov	rax,r14
 	mov	r10,rdx
 
 	mul	r8
 	add	r10,rax
 	mov	rax,r15
-DB	102,73,15,110,214
+	movq	xmm2,r14
 	adc	rdx,0
 	mov	r11,rdx
 
 	mul	r8
 	add	r11,rax
 	mov	rax,r15
-DB	102,73,15,110,223
+	movq	xmm3,r15
 	adc	rdx,0
 	mov	r12,rdx
 
@@ -539,20 +539,20 @@ DB	102,73,15,110,223
 
 	mul	rax
 	mov	r8,rax
-DB	102,72,15,126,200
+	movq	rax,xmm1
 	mov	rbp,rdx
 
 	mul	rax
 	add	r9,rbp
 	adc	r10,rax
-DB	102,72,15,126,208
+	movq	rax,xmm2
 	adc	rdx,0
 	mov	rbp,rdx
 
 	mul	rax
 	add	r11,rbp
 	adc	r12,rax
-DB	102,72,15,126,216
+	movq	rax,xmm3
 	adc	rdx,0
 	mov	rbp,rdx
 
@@ -1033,11 +1033,11 @@ $L$oop_ord_sqrx:
 	mulx	r10,r9,r14
 	mulx	r11,rcx,r15
 	mov	rax,rdx
-DB	102,73,15,110,206
+	movq	xmm1,r14
 	mulx	r12,rbp,r8
 	mov	rdx,r14
 	add	r10,rcx
-DB	102,73,15,110,215
+	movq	xmm2,r15
 	adc	r11,rbp
 	adc	r12,0
 	xor	r13,r13
@@ -1054,7 +1054,7 @@ DB	102,73,15,110,215
 
 	mulx	r14,rcx,r8
 	mov	rdx,rax
-DB	102,73,15,110,216
+	movq	xmm3,r8
 	xor	r15,r15
 	adcx	r9,r9
 	adox	r13,rcx
@@ -1063,18 +1063,18 @@ DB	102,73,15,110,216
 
 
 	mulx	rbp,r8,rdx
-DB	102,72,15,126,202
+	movq	rdx,xmm1
 	adcx	r11,r11
 	adox	r9,rbp
 	adcx	r12,r12
 	mulx	rax,rcx,rdx
-DB	102,72,15,126,210
+	movq	rdx,xmm2
 	adcx	r13,r13
 	adox	r10,rcx
 	adcx	r14,r14
 	mulx	rbp,rcx,rdx
 	DB	0x67
-DB	102,72,15,126,218
+	movq	rdx,xmm3
 	adox	r11,rax
 	adcx	r15,r15
 	adox	r12,rcx
@@ -2659,9 +2659,9 @@ $L$point_double_shortcutq:
 	movdqa	XMMWORD[(96+16)+rsp],xmm1
 	lea	r10,[32+rdi]
 	lea	r11,[64+rdi]
-DB	102,72,15,110,199
-DB	102,73,15,110,202
-DB	102,73,15,110,211
+	movq	xmm0,rdi
+	movq	xmm1,r10
+	movq	xmm2,r11
 
 	lea	rdi,[rsp]
 	call	__ecp_nistz256_mul_by_2q
@@ -2689,7 +2689,7 @@ DB	102,73,15,110,211
 	mov	r12,QWORD[((64+24))+rbx]
 	lea	rsi,[((64-0))+rbx]
 	lea	rbx,[32+rbx]
-DB	102,72,15,126,215
+	movq	rdi,xmm2
 	call	__ecp_nistz256_mul_montq
 	call	__ecp_nistz256_mul_by_2q
 
@@ -2714,7 +2714,7 @@ DB	102,72,15,126,215
 	lea	rsi,[((0+0))+rsp]
 	mov	r15,QWORD[((16+0))+rsp]
 	mov	r8,QWORD[((24+0))+rsp]
-DB	102,72,15,126,207
+	movq	rdi,xmm1
 	call	__ecp_nistz256_sqr_montq
 	xor	r9,r9
 	mov	rax,r12
@@ -2789,7 +2789,7 @@ DB	102,72,15,126,207
 	lea	rsi,[((0+32))+rsp]
 	mov	r15,QWORD[((16+32))+rsp]
 	mov	r8,QWORD[((24+32))+rsp]
-DB	102,72,15,126,199
+	movq	rdi,xmm0
 	call	__ecp_nistz256_sqr_montq
 
 	lea	rbx,[128+rsp]
@@ -2822,8 +2822,8 @@ DB	102,72,15,126,199
 	lea	rdi,[rsp]
 	call	__ecp_nistz256_mul_montq
 
-DB	102,72,15,126,203
-DB	102,72,15,126,207
+	movq	rbx,xmm1
+	movq	rdi,xmm1
 	call	__ecp_nistz256_sub_fromq
 
 	lea	rsi,[((160+56))+rsp]
@@ -2915,7 +2915,7 @@ $L$point_addq_body:
 	por	xmm5,xmm4
 	pxor	xmm4,xmm4
 	por	xmm1,xmm0
-DB	102,72,15,110,199
+	movq	xmm0,rdi
 
 	lea	rsi,[((64-0))+rsi]
 	mov	QWORD[((544+0))+rsp],rax
@@ -2938,7 +2938,7 @@ DB	102,72,15,110,199
 	mov	r14,QWORD[((64+8))+rbx]
 	mov	r15,QWORD[((64+16))+rbx]
 	mov	r8,QWORD[((64+24))+rbx]
-DB	102,72,15,110,203
+	movq	xmm1,rbx
 
 	lea	rsi,[((64-0))+rbx]
 	lea	rdi,[32+rsp]
@@ -2993,7 +2993,7 @@ DB	102,72,15,110,203
 	or	r12,r8
 	or	r12,r9
 	por	xmm2,xmm5
-DB	102,73,15,110,220
+	movq	xmm3,r12
 
 	mov	rax,QWORD[384+rsp]
 	lea	rbx,[384+rsp]
@@ -3023,8 +3023,8 @@ DB	102,73,15,110,220
 	or	r12,r8
 	or	r12,r9
 
-DB	102,73,15,126,208
-DB	102,73,15,126,217
+	movq	r8,xmm2
+	movq	r9,xmm3
 	or	r12,r8
 	DB	0x3e
 	jnz	NEAR $L$add_proceedq
@@ -3039,7 +3039,7 @@ DB	102,73,15,126,217
 
 
 
-DB	102,72,15,126,199
+	movq	rdi,xmm0
 	pxor	xmm0,xmm0
 	movdqu	XMMWORD[rdi],xmm0
 	movdqu	XMMWORD[16+rdi],xmm0
@@ -3051,8 +3051,8 @@ DB	102,72,15,126,199
 
 ALIGN	32
 $L$add_doubleq:
-DB	102,72,15,126,206
-DB	102,72,15,126,199
+	movq	rsi,xmm1
+	movq	rdi,xmm0
 	add	rsp,416
 
 	jmp	NEAR $L$point_double_shortcutq
@@ -3188,7 +3188,7 @@ $L$add_proceedq:
 	lea	rdi,[320+rsp]
 	call	__ecp_nistz256_sub_fromq
 
-DB	102,72,15,126,199
+	movq	rdi,xmm0
 
 	movdqa	xmm0,xmm5
 	movdqa	xmm1,xmm5
@@ -3345,7 +3345,7 @@ $L$add_affineq_body:
 	pshufd	xmm4,xmm5,0x1e
 	movdqa	XMMWORD[(416+16)+rsp],xmm1
 	por	xmm1,xmm0
-DB	102,72,15,110,199
+	movq	xmm0,rdi
 	movdqa	XMMWORD[448+rsp],xmm2
 	movdqa	XMMWORD[(448+16)+rsp],xmm3
 	por	xmm3,xmm2
@@ -3523,7 +3523,7 @@ DB	102,72,15,110,199
 	lea	rdi,[256+rsp]
 	call	__ecp_nistz256_sub_fromq
 
-DB	102,72,15,126,199
+	movq	rdi,xmm0
 
 	movdqa	xmm0,xmm5
 	movdqa	xmm1,xmm5
@@ -3798,9 +3798,9 @@ $L$point_double_shortcutx:
 	movdqa	XMMWORD[(96+16)+rsp],xmm1
 	lea	r10,[32+rdi]
 	lea	r11,[64+rdi]
-DB	102,72,15,110,199
-DB	102,73,15,110,202
-DB	102,73,15,110,211
+	movq	xmm0,rdi
+	movq	xmm1,r10
+	movq	xmm2,r11
 
 	lea	rdi,[rsp]
 	call	__ecp_nistz256_mul_by_2x
@@ -3828,7 +3828,7 @@ DB	102,73,15,110,211
 	mov	r12,QWORD[((64+24))+rbx]
 	lea	rsi,[((64-128))+rbx]
 	lea	rbx,[32+rbx]
-DB	102,72,15,126,215
+	movq	rdi,xmm2
 	call	__ecp_nistz256_mul_montx
 	call	__ecp_nistz256_mul_by_2x
 
@@ -3853,7 +3853,7 @@ DB	102,72,15,126,215
 	lea	rsi,[((-128+0))+rsp]
 	mov	r15,QWORD[((16+0))+rsp]
 	mov	r8,QWORD[((24+0))+rsp]
-DB	102,72,15,126,207
+	movq	rdi,xmm1
 	call	__ecp_nistz256_sqr_montx
 	xor	r9,r9
 	mov	rax,r12
@@ -3928,7 +3928,7 @@ DB	102,72,15,126,207
 	lea	rsi,[((-128+32))+rsp]
 	mov	r15,QWORD[((16+32))+rsp]
 	mov	r8,QWORD[((24+32))+rsp]
-DB	102,72,15,126,199
+	movq	rdi,xmm0
 	call	__ecp_nistz256_sqr_montx
 
 	lea	rbx,[128+rsp]
@@ -3961,8 +3961,8 @@ DB	102,72,15,126,199
 	lea	rdi,[rsp]
 	call	__ecp_nistz256_mul_montx
 
-DB	102,72,15,126,203
-DB	102,72,15,126,207
+	movq	rbx,xmm1
+	movq	rdi,xmm1
 	call	__ecp_nistz256_sub_fromx
 
 	lea	rsi,[((160+56))+rsp]
@@ -4054,7 +4054,7 @@ $L$point_addx_body:
 	por	xmm5,xmm4
 	pxor	xmm4,xmm4
 	por	xmm1,xmm0
-DB	102,72,15,110,199
+	movq	xmm0,rdi
 
 	lea	rsi,[((64-128))+rsi]
 	mov	QWORD[((544+0))+rsp],rdx
@@ -4077,7 +4077,7 @@ DB	102,72,15,110,199
 	mov	r14,QWORD[((64+8))+rbx]
 	mov	r15,QWORD[((64+16))+rbx]
 	mov	r8,QWORD[((64+24))+rbx]
-DB	102,72,15,110,203
+	movq	xmm1,rbx
 
 	lea	rsi,[((64-128))+rbx]
 	lea	rdi,[32+rsp]
@@ -4132,7 +4132,7 @@ DB	102,72,15,110,203
 	or	r12,r8
 	or	r12,r9
 	por	xmm2,xmm5
-DB	102,73,15,110,220
+	movq	xmm3,r12
 
 	mov	rdx,QWORD[384+rsp]
 	lea	rbx,[384+rsp]
@@ -4162,8 +4162,8 @@ DB	102,73,15,110,220
 	or	r12,r8
 	or	r12,r9
 
-DB	102,73,15,126,208
-DB	102,73,15,126,217
+	movq	r8,xmm2
+	movq	r9,xmm3
 	or	r12,r8
 	DB	0x3e
 	jnz	NEAR $L$add_proceedx
@@ -4178,7 +4178,7 @@ DB	102,73,15,126,217
 
 
 
-DB	102,72,15,126,199
+	movq	rdi,xmm0
 	pxor	xmm0,xmm0
 	movdqu	XMMWORD[rdi],xmm0
 	movdqu	XMMWORD[16+rdi],xmm0
@@ -4190,8 +4190,8 @@ DB	102,72,15,126,199
 
 ALIGN	32
 $L$add_doublex:
-DB	102,72,15,126,206
-DB	102,72,15,126,199
+	movq	rsi,xmm1
+	movq	rdi,xmm0
 	add	rsp,416
 
 	jmp	NEAR $L$point_double_shortcutx
@@ -4327,7 +4327,7 @@ $L$add_proceedx:
 	lea	rdi,[320+rsp]
 	call	__ecp_nistz256_sub_fromx
 
-DB	102,72,15,126,199
+	movq	rdi,xmm0
 
 	movdqa	xmm0,xmm5
 	movdqa	xmm1,xmm5
@@ -4484,7 +4484,7 @@ $L$add_affinex_body:
 	pshufd	xmm4,xmm5,0x1e
 	movdqa	XMMWORD[(416+16)+rsp],xmm1
 	por	xmm1,xmm0
-DB	102,72,15,110,199
+	movq	xmm0,rdi
 	movdqa	XMMWORD[448+rsp],xmm2
 	movdqa	XMMWORD[(448+16)+rsp],xmm3
 	por	xmm3,xmm2
@@ -4662,7 +4662,7 @@ DB	102,72,15,110,199
 	lea	rdi,[256+rsp]
 	call	__ecp_nistz256_sub_fromx
 
-DB	102,72,15,126,199
+	movq	rdi,xmm0
 
 	movdqa	xmm0,xmm5
 	movdqa	xmm1,xmm5

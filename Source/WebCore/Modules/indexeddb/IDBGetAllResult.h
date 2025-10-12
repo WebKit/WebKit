@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "IDBKeyData.h"
-#include "IDBKeyPath.h"
-#include "IDBValue.h"
-#include "IndexedDB.h"
+#include <WebCore/IDBKeyData.h>
+#include <WebCore/IDBKeyPath.h>
+#include <WebCore/IDBValue.h>
+#include <WebCore/IndexedDB.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/TZoneMalloc.h>
 

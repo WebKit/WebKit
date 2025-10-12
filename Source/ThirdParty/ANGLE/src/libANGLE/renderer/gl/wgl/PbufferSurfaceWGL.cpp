@@ -192,14 +192,9 @@ egl::Error PbufferSurfaceWGL::releaseTexImage(const gl::Context *context, EGLint
 
 void PbufferSurfaceWGL::setSwapInterval(const egl::Display *display, EGLint interval) {}
 
-EGLint PbufferSurfaceWGL::getWidth() const
+gl::Extents PbufferSurfaceWGL::getSize() const
 {
-    return mWidth;
-}
-
-EGLint PbufferSurfaceWGL::getHeight() const
-{
-    return mHeight;
+    return gl::Extents(mWidth, mHeight, 1);
 }
 
 EGLint PbufferSurfaceWGL::isPostSubBufferSupported() const

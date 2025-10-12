@@ -1,114 +1,63 @@
 /*---
-defines: [testJSON]
-allow_unused: True
+defines: [testJSON, testJSONSyntaxError]
 ---*/
-function testJSON(str, expectSyntaxError)
-{
+
+function testJSON(str) {
   // Leading and trailing whitespace never affect parsing, so test the string
   // multiple times with and without whitespace around it as it's easy and can
   // potentially detect bugs.
 
   // Try the provided string
-  try
-  {
+  try {
     JSON.parse(str);
-    reportCompare(false, expectSyntaxError,
-                  "string <" + str + "> " +
-                  "should" + (expectSyntaxError ? "n't" : "") + " " +
-                  "have parsed as JSON");
-  }
-  catch (e)
-  {
-    if (!(e instanceof SyntaxError))
-    {
-      reportCompare(true, false,
-                    "parsing string <" + str + "> threw a non-SyntaxError " +
-                    "exception: " + e);
-    }
-    else
-    {
-      reportCompare(true, expectSyntaxError,
-                    "string <" + str + "> " +
-                    "should" + (expectSyntaxError ? "n't" : "") + " " +
-                    "have parsed as JSON, exception: " + e);
-    }
+  } catch (e) {
+    throw new Test262Error("string <" + str + "> should have parsed as JSON");
   }
 
   // Now try the provided string with trailing whitespace
-  try
-  {
+  try {
     JSON.parse(str + " ");
-    reportCompare(false, expectSyntaxError,
-                  "string <" + str + " > " +
-                  "should" + (expectSyntaxError ? "n't" : "") + " " +
-                  "have parsed as JSON");
-  }
-  catch (e)
-  {
-    if (!(e instanceof SyntaxError))
-    {
-      reportCompare(true, false,
-                    "parsing string <" + str + " > threw a non-SyntaxError " +
-                    "exception: " + e);
-    }
-    else
-    {
-      reportCompare(true, expectSyntaxError,
-                    "string <" + str + " > " +
-                    "should" + (expectSyntaxError ? "n't" : "") + " " +
-                    "have parsed as JSON, exception: " + e);
-    }
+  } catch (e) {
+    throw new Test262Error("string <" + str + " > should have parsed as JSON");
   }
 
   // Now try the provided string with leading whitespace
-  try
-  {
+  try {
     JSON.parse(" " + str);
-    reportCompare(false, expectSyntaxError,
-                  "string < " + str + "> " +
-                  "should" + (expectSyntaxError ? "n't" : "") + " " +
-                  "have parsed as JSON");
-  }
-  catch (e)
-  {
-    if (!(e instanceof SyntaxError))
-    {
-      reportCompare(true, false,
-                    "parsing string < " + str + "> threw a non-SyntaxError " +
-                    "exception: " + e);
-    }
-    else
-    {
-      reportCompare(true, expectSyntaxError,
-                    "string < " + str + "> " +
-                    "should" + (expectSyntaxError ? "n't" : "") + " " +
-                    "have parsed as JSON, exception: " + e);
-    }
+  } catch (e) {
+    throw new Test262Error("string < " + str + "> should have parsed as JSON");
   }
 
   // Now try the provided string with whitespace surrounding it
-  try
-  {
+  try {
     JSON.parse(" " + str + " ");
-    reportCompare(false, expectSyntaxError,
-                  "string < " + str + " > " +
-                  "should" + (expectSyntaxError ? "n't" : "") + " " +
-                  "have parsed as JSON");
+  } catch (e) {
+    throw new Test262Error("string < " + str + " > should have parsed as JSON");
   }
-  catch (e)
-  {
-    if (!(e instanceof SyntaxError))
-    {
-      reportCompare(true, false,
-                    "parsing string < " + str + " > threw a non-SyntaxError " +
-                    "exception: " + e);
-    }
-    else
-    {
-      reportCompare(true, expectSyntaxError,
-                    "string < " + str + " > " +
-                    "should" + (expectSyntaxError ? "n't" : "") + " " +
-                    "have parsed as JSON, exception: " + e);
-    }
-  }
+}
+
+function testJSONSyntaxError(str) {
+  // Leading and trailing whitespace never affect parsing, so test the string
+  // multiple times with and without whitespace around it as it's easy and can
+  // potentially detect bugs.
+
+  // Try the provided string
+  assert.throws(SyntaxError, function() {
+    JSON.parse(str);
+  }, "string <" + str + "> shouldn't have parsed as JSON");
+
+  // Now try the provided string with trailing whitespace
+  assert.throws(SyntaxError, function() {
+    JSON.parse(str + " ");
+  }, "string <" + str + " > shouldn't have parsed as JSON");
+
+  // Now try the provided string with leading whitespace
+  assert.throws(SyntaxError, function() {
+    JSON.parse(" " + str);
+  }, "string < " + str + "> shouldn't have parsed as JSON");
+
+  // Now try the provided string with whitespace surrounding it
+  assert.throws(SyntaxError, function() {
+    JSON.parse(" " + str + " ");
+  }, "string < " + str + " > shouldn't have parsed as JSON");
 }

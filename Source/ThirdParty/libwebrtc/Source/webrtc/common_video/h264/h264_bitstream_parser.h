@@ -15,6 +15,7 @@
 
 #include <optional>
 
+#include "api/array_view.h"
 #include "api/video_codecs/bitstream_parser.h"
 #include "common_video/h264/pps_parser.h"
 #include "common_video/h264/sps_parser.h"
@@ -32,7 +33,7 @@ class H264BitstreamParser : public BitstreamParser {
   H264BitstreamParser();
   ~H264BitstreamParser() override;
 
-  void ParseBitstream(rtc::ArrayView<const uint8_t> bitstream) override;
+  void ParseBitstream(ArrayView<const uint8_t> bitstream) override;
   std::optional<int> GetLastSliceQp() const override;
 
  protected:
@@ -41,8 +42,8 @@ class H264BitstreamParser : public BitstreamParser {
     kInvalidStream,
     kUnsupportedStream,
   };
-  void ParseSlice(rtc::ArrayView<const uint8_t> slice);
-  Result ParseNonParameterSetNalu(rtc::ArrayView<const uint8_t> source,
+  void ParseSlice(ArrayView<const uint8_t> slice);
+  Result ParseNonParameterSetNalu(ArrayView<const uint8_t> source,
                                   uint8_t nalu_type);
 
   // SPS/PPS state, updated when parsing new SPS/PPS, used to parse slices.

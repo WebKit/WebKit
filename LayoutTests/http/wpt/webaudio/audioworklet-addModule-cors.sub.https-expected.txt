@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin. Status code: 200
 
 PASS same origin works
 PASS cross origin fails without CORS headers

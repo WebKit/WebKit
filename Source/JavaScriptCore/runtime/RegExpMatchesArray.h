@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public

@@ -1,4 +1,4 @@
 
-FAIL Direct slotted child queries flat tree assert_equals: expected "15px" but got "100px"
-FAIL Nondirect slotted child queries flat tree ancestors assert_equals: expected "1.5px" but got "10px"
+PASS Direct slotted child queries flat tree
+PASS Nondirect slotted child queries flat tree ancestors
 

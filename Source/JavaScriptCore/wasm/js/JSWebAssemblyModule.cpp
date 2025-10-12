@@ -32,6 +32,7 @@
 #include "JSWebAssemblyCompileError.h"
 #include "JSWebAssemblyLinkError.h"
 #include "WasmBinding.h"
+#include "WasmDebugServer.h"
 #include "WasmFormat.h"
 #include "WasmModule.h"
 #include "WasmModuleInformation.h"

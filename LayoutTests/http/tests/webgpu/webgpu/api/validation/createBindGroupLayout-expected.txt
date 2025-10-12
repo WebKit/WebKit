@@ -1,17 +1,628 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x182
-  RenderBlock {HTML} at (0,0) size 800x182
-    RenderBody {BODY} at (8,21) size 784x145
-      RenderBlock {H1} at (0,0) size 784x37
-        RenderText {#text} at (0,0) size 206x37
-          text run at (0,0) width 206: "Error response"
-      RenderBlock {P} at (0,58) size 784x19
-        RenderText {#text} at (0,0) size 101x18
-          text run at (0,0) width 101: "Error code: 404"
-      RenderBlock {P} at (0,92) size 784x19
-        RenderText {#text} at (0,0) size 160x18
-          text run at (0,0) width 160: "Message: File not found."
-      RenderBlock {P} at (0,126) size 784x19
-        RenderText {#text} at (0,0) size 556x18
-          text run at (0,0) width 556: "Error code explanation: HTTPStatus.NOT_FOUND - Nothing matches the given URI."
+
+PASS :duplicate_bindings:
+PASS :maximum_binding_limit:
+PASS :visibility:visibility=0
+FAIL :visibility:visibility=1 assert_unreached:
+  - (in subcase: entry={"buffer":{"type":"uniform"}}) INFO: subcase ran
+  - (in subcase: entry={"buffer":{"type":"storage"}}) INFO: subcase ran
+  - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
+  - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"comparison"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"filtering"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"non-filtering"}}) INFO: subcase ran
+  - (in subcase: entry={"texture":{"multisampled":false,"sampleType":"unfilterable-float"}}) INFO: subcase ran
+  - (in subcase: entry={"texture":{"multisampled":true,"sampleType":"unfilterable-float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"write-only","format":"r32float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
+  - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"read-write","format":"r32float"}}) INFO: subcase ran
+ Reached unreachable code
+FAIL :visibility:visibility=2 assert_unreached:
+  - (in subcase: entry={"buffer":{"type":"uniform"}}) INFO: subcase ran
+  - (in subcase: entry={"buffer":{"type":"storage"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
+  - (in subcase: entry={"buffer":{"type":"storage"}}) INFO: subcase ran
+  - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
+  - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"comparison"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"filtering"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"non-filtering"}}) INFO: subcase ran
+  - (in subcase: entry={"texture":{"multisampled":false,"sampleType":"unfilterable-float"}}) INFO: subcase ran
+  - (in subcase: entry={"texture":{"multisampled":true,"sampleType":"unfilterable-float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"write-only","format":"r32float"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: entry={"storageTexture":{"access":"write-only","format":"r32float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"read-write","format":"r32float"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: entry={"storageTexture":{"access":"read-write","format":"r32float"}}) INFO: subcase ran
+ Reached unreachable code
+FAIL :visibility:visibility=3 assert_unreached:
+  - (in subcase: entry={"buffer":{"type":"uniform"}}) INFO: subcase ran
+  - (in subcase: entry={"buffer":{"type":"storage"}}) INFO: subcase ran
+  - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
+  - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"comparison"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"filtering"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"non-filtering"}}) INFO: subcase ran
+  - (in subcase: entry={"texture":{"multisampled":false,"sampleType":"unfilterable-float"}}) INFO: subcase ran
+  - (in subcase: entry={"texture":{"multisampled":true,"sampleType":"unfilterable-float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"write-only","format":"r32float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
+  - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"read-write","format":"r32float"}}) INFO: subcase ran
+ Reached unreachable code
+PASS :visibility:visibility=4
+FAIL :visibility:visibility=5 assert_unreached:
+  - (in subcase: entry={"buffer":{"type":"uniform"}}) INFO: subcase ran
+  - (in subcase: entry={"buffer":{"type":"storage"}}) INFO: subcase ran
+  - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
+  - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"comparison"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"filtering"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"non-filtering"}}) INFO: subcase ran
+  - (in subcase: entry={"texture":{"multisampled":false,"sampleType":"unfilterable-float"}}) INFO: subcase ran
+  - (in subcase: entry={"texture":{"multisampled":true,"sampleType":"unfilterable-float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"write-only","format":"r32float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
+  - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"read-write","format":"r32float"}}) INFO: subcase ran
+ Reached unreachable code
+FAIL :visibility:visibility=6 assert_unreached:
+  - (in subcase: entry={"buffer":{"type":"uniform"}}) INFO: subcase ran
+  - (in subcase: entry={"buffer":{"type":"storage"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
+  - (in subcase: entry={"buffer":{"type":"storage"}}) INFO: subcase ran
+  - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
+  - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"comparison"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"filtering"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"non-filtering"}}) INFO: subcase ran
+  - (in subcase: entry={"texture":{"multisampled":false,"sampleType":"unfilterable-float"}}) INFO: subcase ran
+  - (in subcase: entry={"texture":{"multisampled":true,"sampleType":"unfilterable-float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"write-only","format":"r32float"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: entry={"storageTexture":{"access":"write-only","format":"r32float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"read-write","format":"r32float"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: entry={"storageTexture":{"access":"read-write","format":"r32float"}}) INFO: subcase ran
+ Reached unreachable code
+FAIL :visibility:visibility=7 assert_unreached:
+  - (in subcase: entry={"buffer":{"type":"uniform"}}) INFO: subcase ran
+  - (in subcase: entry={"buffer":{"type":"storage"}}) INFO: subcase ran
+  - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
+  - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"comparison"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"filtering"}}) INFO: subcase ran
+  - (in subcase: entry={"sampler":{"type":"non-filtering"}}) INFO: subcase ran
+  - (in subcase: entry={"texture":{"multisampled":false,"sampleType":"unfilterable-float"}}) INFO: subcase ran
+  - (in subcase: entry={"texture":{"multisampled":true,"sampleType":"unfilterable-float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"write-only","format":"r32float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
+  - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) INFO: subcase ran
+  - (in subcase: entry={"storageTexture":{"access":"read-write","format":"r32float"}}) INFO: subcase ran
+ Reached unreachable code
+PASS :visibility,VERTEX_shader_stage_buffer_type:shaderStage=0
+FAIL :visibility,VERTEX_shader_stage_buffer_type:shaderStage=1 assert_unreached:
+  - (in subcase: type="uniform") INFO: subcase ran
+  - (in subcase: type="storage") INFO: subcase ran
+  - (in subcase: type="read-only-storage") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:190:26
+  - (in subcase: type="read-only-storage") INFO: subcase ran
+ Reached unreachable code
+FAIL :visibility,VERTEX_shader_stage_buffer_type:shaderStage=2 assert_unreached:
+  - (in subcase: type="uniform") INFO: subcase ran
+  - (in subcase: type="storage") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:190:26
+  - (in subcase: type="storage") INFO: subcase ran
+  - (in subcase: type="read-only-storage") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:190:26
+  - (in subcase: type="read-only-storage") INFO: subcase ran
+ Reached unreachable code
+FAIL :visibility,VERTEX_shader_stage_buffer_type:shaderStage=3 assert_unreached:
+  - (in subcase: type="uniform") INFO: subcase ran
+  - (in subcase: type="storage") INFO: subcase ran
+  - (in subcase: type="read-only-storage") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:190:26
+  - (in subcase: type="read-only-storage") INFO: subcase ran
+ Reached unreachable code
+PASS :visibility,VERTEX_shader_stage_buffer_type:shaderStage=4
+FAIL :visibility,VERTEX_shader_stage_buffer_type:shaderStage=5 assert_unreached:
+  - (in subcase: type="uniform") INFO: subcase ran
+  - (in subcase: type="storage") INFO: subcase ran
+  - (in subcase: type="read-only-storage") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:190:26
+  - (in subcase: type="read-only-storage") INFO: subcase ran
+ Reached unreachable code
+FAIL :visibility,VERTEX_shader_stage_buffer_type:shaderStage=6 assert_unreached:
+  - (in subcase: type="uniform") INFO: subcase ran
+  - (in subcase: type="storage") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:190:26
+  - (in subcase: type="storage") INFO: subcase ran
+  - (in subcase: type="read-only-storage") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:190:26
+  - (in subcase: type="read-only-storage") INFO: subcase ran
+ Reached unreachable code
+FAIL :visibility,VERTEX_shader_stage_buffer_type:shaderStage=7 assert_unreached:
+  - (in subcase: type="uniform") INFO: subcase ran
+  - (in subcase: type="storage") INFO: subcase ran
+  - (in subcase: type="read-only-storage") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:190:26
+  - (in subcase: type="read-only-storage") INFO: subcase ran
+ Reached unreachable code
+PASS :visibility,VERTEX_shader_stage_storage_texture_access:shaderStage=0
+FAIL :visibility,VERTEX_shader_stage_storage_texture_access:shaderStage=1 assert_unreached:
+  - (in subcase: access="_undef_") INFO: subcase ran
+  - (in subcase: access="read-only") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:226:26
+  - (in subcase: access="read-only") INFO: subcase ran
+  - (in subcase: access="read-write") INFO: subcase ran
+  - (in subcase: access="write-only") INFO: subcase ran
+ Reached unreachable code
+FAIL :visibility,VERTEX_shader_stage_storage_texture_access:shaderStage=2 assert_unreached:
+  - (in subcase: access="_undef_") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:226:26
+  - (in subcase: access="_undef_") INFO: subcase ran
+  - (in subcase: access="read-only") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:226:26
+  - (in subcase: access="read-only") INFO: subcase ran
+  - (in subcase: access="read-write") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: access="read-write") INFO: subcase ran
+  - (in subcase: access="write-only") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: access="write-only") INFO: subcase ran
+ Reached unreachable code
+FAIL :visibility,VERTEX_shader_stage_storage_texture_access:shaderStage=3 assert_unreached:
+  - (in subcase: access="_undef_") INFO: subcase ran
+  - (in subcase: access="read-only") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:226:26
+  - (in subcase: access="read-only") INFO: subcase ran
+  - (in subcase: access="read-write") INFO: subcase ran
+  - (in subcase: access="write-only") INFO: subcase ran
+ Reached unreachable code
+PASS :visibility,VERTEX_shader_stage_storage_texture_access:shaderStage=4
+FAIL :visibility,VERTEX_shader_stage_storage_texture_access:shaderStage=5 assert_unreached:
+  - (in subcase: access="_undef_") INFO: subcase ran
+  - (in subcase: access="read-only") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:226:26
+  - (in subcase: access="read-only") INFO: subcase ran
+  - (in subcase: access="read-write") INFO: subcase ran
+  - (in subcase: access="write-only") INFO: subcase ran
+ Reached unreachable code
+FAIL :visibility,VERTEX_shader_stage_storage_texture_access:shaderStage=6 assert_unreached:
+  - (in subcase: access="_undef_") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:226:26
+  - (in subcase: access="_undef_") INFO: subcase ran
+  - (in subcase: access="read-only") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:226:26
+  - (in subcase: access="read-only") INFO: subcase ran
+  - (in subcase: access="read-write") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: access="read-write") INFO: subcase ran
+  - (in subcase: access="write-only") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: access="write-only") INFO: subcase ran
+ Reached unreachable code
+FAIL :visibility,VERTEX_shader_stage_storage_texture_access:shaderStage=7 assert_unreached:
+  - (in subcase: access="_undef_") INFO: subcase ran
+  - (in subcase: access="read-only") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:226:26
+  - (in subcase: access="read-only") INFO: subcase ran
+  - (in subcase: access="read-write") INFO: subcase ran
+  - (in subcase: access="write-only") INFO: subcase ran
+ Reached unreachable code
+PASS :multisampled_validation:viewDimension="_undef_"
+PASS :multisampled_validation:viewDimension="1d"
+PASS :multisampled_validation:viewDimension="2d"
+PASS :multisampled_validation:viewDimension="2d-array"
+PASS :multisampled_validation:viewDimension="cube"
+PASS :multisampled_validation:viewDimension="cube-array"
+PASS :multisampled_validation:viewDimension="3d"
+PASS :max_dynamic_buffers:type="uniform"
+PASS :max_dynamic_buffers:type="storage"
+PASS :max_dynamic_buffers:type="read-only-storage"
+PASS :max_resources_per_stage,in_bind_group_layout:maxedEntry={"buffer":{"type":"uniform"}}
+PASS :max_resources_per_stage,in_bind_group_layout:maxedEntry={"buffer":{"type":"storage"}}
+PASS :max_resources_per_stage,in_bind_group_layout:maxedEntry={"buffer":{"type":"read-only-storage"}}
+PASS :max_resources_per_stage,in_bind_group_layout:maxedEntry={"sampler":{"type":"comparison"}}
+PASS :max_resources_per_stage,in_bind_group_layout:maxedEntry={"sampler":{"type":"filtering"}}
+PASS :max_resources_per_stage,in_bind_group_layout:maxedEntry={"sampler":{"type":"non-filtering"}}
+PASS :max_resources_per_stage,in_bind_group_layout:maxedEntry={"texture":{"multisampled":false,"sampleType":"unfilterable-float"}}
+PASS :max_resources_per_stage,in_bind_group_layout:maxedEntry={"texture":{"multisampled":true,"sampleType":"unfilterable-float"}}
+PASS :max_resources_per_stage,in_bind_group_layout:maxedEntry={"storageTexture":{"access":"write-only","format":"r32float"}}
+PASS :max_resources_per_stage,in_bind_group_layout:maxedEntry={"storageTexture":{"access":"read-only","format":"r32float"}}
+PASS :max_resources_per_stage,in_bind_group_layout:maxedEntry={"storageTexture":{"access":"read-write","format":"r32float"}}
+PASS :max_resources_per_stage,in_pipeline_layout:maxedEntry={"buffer":{"type":"uniform"}}
+PASS :max_resources_per_stage,in_pipeline_layout:maxedEntry={"buffer":{"type":"storage"}}
+PASS :max_resources_per_stage,in_pipeline_layout:maxedEntry={"buffer":{"type":"read-only-storage"}}
+PASS :max_resources_per_stage,in_pipeline_layout:maxedEntry={"sampler":{"type":"comparison"}}
+PASS :max_resources_per_stage,in_pipeline_layout:maxedEntry={"sampler":{"type":"filtering"}}
+PASS :max_resources_per_stage,in_pipeline_layout:maxedEntry={"sampler":{"type":"non-filtering"}}
+PASS :max_resources_per_stage,in_pipeline_layout:maxedEntry={"texture":{"multisampled":false,"sampleType":"unfilterable-float"}}
+PASS :max_resources_per_stage,in_pipeline_layout:maxedEntry={"texture":{"multisampled":true,"sampleType":"unfilterable-float"}}
+PASS :max_resources_per_stage,in_pipeline_layout:maxedEntry={"storageTexture":{"access":"write-only","format":"r32float"}}
+PASS :max_resources_per_stage,in_pipeline_layout:maxedEntry={"storageTexture":{"access":"read-only","format":"r32float"}}
+PASS :max_resources_per_stage,in_pipeline_layout:maxedEntry={"storageTexture":{"access":"read-write","format":"r32float"}}
+PASS :storage_texture,layout_dimension:viewDimension="_undef_"
+PASS :storage_texture,layout_dimension:viewDimension="1d"
+PASS :storage_texture,layout_dimension:viewDimension="2d"
+PASS :storage_texture,layout_dimension:viewDimension="2d-array"
+PASS :storage_texture,layout_dimension:viewDimension="cube"
+PASS :storage_texture,layout_dimension:viewDimension="cube-array"
+PASS :storage_texture,layout_dimension:viewDimension="3d"
+PASS :storage_texture,formats:format="r8unorm";access="read-only"
+PASS :storage_texture,formats:format="r8unorm";access="read-write"
+PASS :storage_texture,formats:format="r8unorm";access="write-only"
+PASS :storage_texture,formats:format="r8snorm";access="read-only"
+PASS :storage_texture,formats:format="r8snorm";access="read-write"
+PASS :storage_texture,formats:format="r8snorm";access="write-only"
+PASS :storage_texture,formats:format="r8uint";access="read-only"
+PASS :storage_texture,formats:format="r8uint";access="read-write"
+PASS :storage_texture,formats:format="r8uint";access="write-only"
+PASS :storage_texture,formats:format="r8sint";access="read-only"
+PASS :storage_texture,formats:format="r8sint";access="read-write"
+PASS :storage_texture,formats:format="r8sint";access="write-only"
+PASS :storage_texture,formats:format="rg8unorm";access="read-only"
+PASS :storage_texture,formats:format="rg8unorm";access="read-write"
+PASS :storage_texture,formats:format="rg8unorm";access="write-only"
+PASS :storage_texture,formats:format="rg8snorm";access="read-only"
+PASS :storage_texture,formats:format="rg8snorm";access="read-write"
+PASS :storage_texture,formats:format="rg8snorm";access="write-only"
+PASS :storage_texture,formats:format="rg8uint";access="read-only"
+PASS :storage_texture,formats:format="rg8uint";access="read-write"
+PASS :storage_texture,formats:format="rg8uint";access="write-only"
+PASS :storage_texture,formats:format="rg8sint";access="read-only"
+PASS :storage_texture,formats:format="rg8sint";access="read-write"
+PASS :storage_texture,formats:format="rg8sint";access="write-only"
+PASS :storage_texture,formats:format="rgba8unorm";access="read-only"
+PASS :storage_texture,formats:format="rgba8unorm";access="read-write"
+PASS :storage_texture,formats:format="rgba8unorm";access="write-only"
+PASS :storage_texture,formats:format="rgba8unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="rgba8unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="rgba8unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="rgba8snorm";access="read-only"
+PASS :storage_texture,formats:format="rgba8snorm";access="read-write"
+PASS :storage_texture,formats:format="rgba8snorm";access="write-only"
+PASS :storage_texture,formats:format="rgba8uint";access="read-only"
+PASS :storage_texture,formats:format="rgba8uint";access="read-write"
+PASS :storage_texture,formats:format="rgba8uint";access="write-only"
+PASS :storage_texture,formats:format="rgba8sint";access="read-only"
+PASS :storage_texture,formats:format="rgba8sint";access="read-write"
+PASS :storage_texture,formats:format="rgba8sint";access="write-only"
+PASS :storage_texture,formats:format="bgra8unorm";access="read-only"
+PASS :storage_texture,formats:format="bgra8unorm";access="read-write"
+PASS :storage_texture,formats:format="bgra8unorm";access="write-only"
+PASS :storage_texture,formats:format="bgra8unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="bgra8unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="bgra8unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="r16unorm";access="read-only"
+PASS :storage_texture,formats:format="r16unorm";access="read-write"
+PASS :storage_texture,formats:format="r16unorm";access="write-only"
+PASS :storage_texture,formats:format="r16snorm";access="read-only"
+PASS :storage_texture,formats:format="r16snorm";access="read-write"
+PASS :storage_texture,formats:format="r16snorm";access="write-only"
+PASS :storage_texture,formats:format="r16uint";access="read-only"
+PASS :storage_texture,formats:format="r16uint";access="read-write"
+PASS :storage_texture,formats:format="r16uint";access="write-only"
+PASS :storage_texture,formats:format="r16sint";access="read-only"
+PASS :storage_texture,formats:format="r16sint";access="read-write"
+PASS :storage_texture,formats:format="r16sint";access="write-only"
+PASS :storage_texture,formats:format="r16float";access="read-only"
+PASS :storage_texture,formats:format="r16float";access="read-write"
+PASS :storage_texture,formats:format="r16float";access="write-only"
+PASS :storage_texture,formats:format="rg16unorm";access="read-only"
+PASS :storage_texture,formats:format="rg16unorm";access="read-write"
+PASS :storage_texture,formats:format="rg16unorm";access="write-only"
+PASS :storage_texture,formats:format="rg16snorm";access="read-only"
+PASS :storage_texture,formats:format="rg16snorm";access="read-write"
+PASS :storage_texture,formats:format="rg16snorm";access="write-only"
+PASS :storage_texture,formats:format="rg16uint";access="read-only"
+PASS :storage_texture,formats:format="rg16uint";access="read-write"
+PASS :storage_texture,formats:format="rg16uint";access="write-only"
+PASS :storage_texture,formats:format="rg16sint";access="read-only"
+PASS :storage_texture,formats:format="rg16sint";access="read-write"
+PASS :storage_texture,formats:format="rg16sint";access="write-only"
+PASS :storage_texture,formats:format="rg16float";access="read-only"
+PASS :storage_texture,formats:format="rg16float";access="read-write"
+PASS :storage_texture,formats:format="rg16float";access="write-only"
+PASS :storage_texture,formats:format="rgba16unorm";access="read-only"
+PASS :storage_texture,formats:format="rgba16unorm";access="read-write"
+PASS :storage_texture,formats:format="rgba16unorm";access="write-only"
+PASS :storage_texture,formats:format="rgba16snorm";access="read-only"
+PASS :storage_texture,formats:format="rgba16snorm";access="read-write"
+PASS :storage_texture,formats:format="rgba16snorm";access="write-only"
+PASS :storage_texture,formats:format="rgba16uint";access="read-only"
+PASS :storage_texture,formats:format="rgba16uint";access="read-write"
+PASS :storage_texture,formats:format="rgba16uint";access="write-only"
+PASS :storage_texture,formats:format="rgba16sint";access="read-only"
+PASS :storage_texture,formats:format="rgba16sint";access="read-write"
+PASS :storage_texture,formats:format="rgba16sint";access="write-only"
+PASS :storage_texture,formats:format="rgba16float";access="read-only"
+PASS :storage_texture,formats:format="rgba16float";access="read-write"
+PASS :storage_texture,formats:format="rgba16float";access="write-only"
+PASS :storage_texture,formats:format="r32uint";access="read-only"
+PASS :storage_texture,formats:format="r32uint";access="read-write"
+PASS :storage_texture,formats:format="r32uint";access="write-only"
+PASS :storage_texture,formats:format="r32sint";access="read-only"
+PASS :storage_texture,formats:format="r32sint";access="read-write"
+PASS :storage_texture,formats:format="r32sint";access="write-only"
+PASS :storage_texture,formats:format="r32float";access="read-only"
+PASS :storage_texture,formats:format="r32float";access="read-write"
+PASS :storage_texture,formats:format="r32float";access="write-only"
+PASS :storage_texture,formats:format="rg32uint";access="read-only"
+PASS :storage_texture,formats:format="rg32uint";access="read-write"
+PASS :storage_texture,formats:format="rg32uint";access="write-only"
+PASS :storage_texture,formats:format="rg32sint";access="read-only"
+PASS :storage_texture,formats:format="rg32sint";access="read-write"
+PASS :storage_texture,formats:format="rg32sint";access="write-only"
+PASS :storage_texture,formats:format="rg32float";access="read-only"
+PASS :storage_texture,formats:format="rg32float";access="read-write"
+PASS :storage_texture,formats:format="rg32float";access="write-only"
+PASS :storage_texture,formats:format="rgba32uint";access="read-only"
+PASS :storage_texture,formats:format="rgba32uint";access="read-write"
+PASS :storage_texture,formats:format="rgba32uint";access="write-only"
+PASS :storage_texture,formats:format="rgba32sint";access="read-only"
+PASS :storage_texture,formats:format="rgba32sint";access="read-write"
+PASS :storage_texture,formats:format="rgba32sint";access="write-only"
+PASS :storage_texture,formats:format="rgba32float";access="read-only"
+PASS :storage_texture,formats:format="rgba32float";access="read-write"
+PASS :storage_texture,formats:format="rgba32float";access="write-only"
+PASS :storage_texture,formats:format="rgb10a2uint";access="read-only"
+PASS :storage_texture,formats:format="rgb10a2uint";access="read-write"
+PASS :storage_texture,formats:format="rgb10a2uint";access="write-only"
+PASS :storage_texture,formats:format="rgb10a2unorm";access="read-only"
+PASS :storage_texture,formats:format="rgb10a2unorm";access="read-write"
+PASS :storage_texture,formats:format="rgb10a2unorm";access="write-only"
+PASS :storage_texture,formats:format="rg11b10ufloat";access="read-only"
+PASS :storage_texture,formats:format="rg11b10ufloat";access="read-write"
+PASS :storage_texture,formats:format="rg11b10ufloat";access="write-only"
+PASS :storage_texture,formats:format="rgb9e5ufloat";access="read-only"
+PASS :storage_texture,formats:format="rgb9e5ufloat";access="read-write"
+PASS :storage_texture,formats:format="rgb9e5ufloat";access="write-only"
+PASS :storage_texture,formats:format="stencil8";access="read-only"
+PASS :storage_texture,formats:format="stencil8";access="read-write"
+PASS :storage_texture,formats:format="stencil8";access="write-only"
+PASS :storage_texture,formats:format="depth16unorm";access="read-only"
+PASS :storage_texture,formats:format="depth16unorm";access="read-write"
+PASS :storage_texture,formats:format="depth16unorm";access="write-only"
+PASS :storage_texture,formats:format="depth32float";access="read-only"
+PASS :storage_texture,formats:format="depth32float";access="read-write"
+PASS :storage_texture,formats:format="depth32float";access="write-only"
+PASS :storage_texture,formats:format="depth24plus";access="read-only"
+PASS :storage_texture,formats:format="depth24plus";access="read-write"
+PASS :storage_texture,formats:format="depth24plus";access="write-only"
+PASS :storage_texture,formats:format="depth24plus-stencil8";access="read-only"
+PASS :storage_texture,formats:format="depth24plus-stencil8";access="read-write"
+PASS :storage_texture,formats:format="depth24plus-stencil8";access="write-only"
+PASS :storage_texture,formats:format="depth32float-stencil8";access="read-only"
+PASS :storage_texture,formats:format="depth32float-stencil8";access="read-write"
+PASS :storage_texture,formats:format="depth32float-stencil8";access="write-only"
+PASS :storage_texture,formats:format="bc1-rgba-unorm";access="read-only"
+PASS :storage_texture,formats:format="bc1-rgba-unorm";access="read-write"
+PASS :storage_texture,formats:format="bc1-rgba-unorm";access="write-only"
+PASS :storage_texture,formats:format="bc1-rgba-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="bc1-rgba-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="bc1-rgba-unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="bc2-rgba-unorm";access="read-only"
+PASS :storage_texture,formats:format="bc2-rgba-unorm";access="read-write"
+PASS :storage_texture,formats:format="bc2-rgba-unorm";access="write-only"
+PASS :storage_texture,formats:format="bc2-rgba-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="bc2-rgba-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="bc2-rgba-unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="bc3-rgba-unorm";access="read-only"
+PASS :storage_texture,formats:format="bc3-rgba-unorm";access="read-write"
+PASS :storage_texture,formats:format="bc3-rgba-unorm";access="write-only"
+PASS :storage_texture,formats:format="bc3-rgba-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="bc3-rgba-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="bc3-rgba-unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="bc4-r-unorm";access="read-only"
+PASS :storage_texture,formats:format="bc4-r-unorm";access="read-write"
+PASS :storage_texture,formats:format="bc4-r-unorm";access="write-only"
+PASS :storage_texture,formats:format="bc4-r-snorm";access="read-only"
+PASS :storage_texture,formats:format="bc4-r-snorm";access="read-write"
+PASS :storage_texture,formats:format="bc4-r-snorm";access="write-only"
+PASS :storage_texture,formats:format="bc5-rg-unorm";access="read-only"
+PASS :storage_texture,formats:format="bc5-rg-unorm";access="read-write"
+PASS :storage_texture,formats:format="bc5-rg-unorm";access="write-only"
+PASS :storage_texture,formats:format="bc5-rg-snorm";access="read-only"
+PASS :storage_texture,formats:format="bc5-rg-snorm";access="read-write"
+PASS :storage_texture,formats:format="bc5-rg-snorm";access="write-only"
+PASS :storage_texture,formats:format="bc6h-rgb-ufloat";access="read-only"
+PASS :storage_texture,formats:format="bc6h-rgb-ufloat";access="read-write"
+PASS :storage_texture,formats:format="bc6h-rgb-ufloat";access="write-only"
+PASS :storage_texture,formats:format="bc6h-rgb-float";access="read-only"
+PASS :storage_texture,formats:format="bc6h-rgb-float";access="read-write"
+PASS :storage_texture,formats:format="bc6h-rgb-float";access="write-only"
+PASS :storage_texture,formats:format="bc7-rgba-unorm";access="read-only"
+PASS :storage_texture,formats:format="bc7-rgba-unorm";access="read-write"
+PASS :storage_texture,formats:format="bc7-rgba-unorm";access="write-only"
+PASS :storage_texture,formats:format="bc7-rgba-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="bc7-rgba-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="bc7-rgba-unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="etc2-rgb8unorm";access="read-only"
+PASS :storage_texture,formats:format="etc2-rgb8unorm";access="read-write"
+PASS :storage_texture,formats:format="etc2-rgb8unorm";access="write-only"
+PASS :storage_texture,formats:format="etc2-rgb8unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="etc2-rgb8unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="etc2-rgb8unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="etc2-rgb8a1unorm";access="read-only"
+PASS :storage_texture,formats:format="etc2-rgb8a1unorm";access="read-write"
+PASS :storage_texture,formats:format="etc2-rgb8a1unorm";access="write-only"
+PASS :storage_texture,formats:format="etc2-rgb8a1unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="etc2-rgb8a1unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="etc2-rgb8a1unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="etc2-rgba8unorm";access="read-only"
+PASS :storage_texture,formats:format="etc2-rgba8unorm";access="read-write"
+PASS :storage_texture,formats:format="etc2-rgba8unorm";access="write-only"
+PASS :storage_texture,formats:format="etc2-rgba8unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="etc2-rgba8unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="etc2-rgba8unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="eac-r11unorm";access="read-only"
+PASS :storage_texture,formats:format="eac-r11unorm";access="read-write"
+PASS :storage_texture,formats:format="eac-r11unorm";access="write-only"
+PASS :storage_texture,formats:format="eac-r11snorm";access="read-only"
+PASS :storage_texture,formats:format="eac-r11snorm";access="read-write"
+PASS :storage_texture,formats:format="eac-r11snorm";access="write-only"
+PASS :storage_texture,formats:format="eac-rg11unorm";access="read-only"
+PASS :storage_texture,formats:format="eac-rg11unorm";access="read-write"
+PASS :storage_texture,formats:format="eac-rg11unorm";access="write-only"
+PASS :storage_texture,formats:format="eac-rg11snorm";access="read-only"
+PASS :storage_texture,formats:format="eac-rg11snorm";access="read-write"
+PASS :storage_texture,formats:format="eac-rg11snorm";access="write-only"
+PASS :storage_texture,formats:format="astc-4x4-unorm";access="read-only"
+PASS :storage_texture,formats:format="astc-4x4-unorm";access="read-write"
+PASS :storage_texture,formats:format="astc-4x4-unorm";access="write-only"
+PASS :storage_texture,formats:format="astc-4x4-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="astc-4x4-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="astc-4x4-unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="astc-5x4-unorm";access="read-only"
+PASS :storage_texture,formats:format="astc-5x4-unorm";access="read-write"
+PASS :storage_texture,formats:format="astc-5x4-unorm";access="write-only"
+PASS :storage_texture,formats:format="astc-5x4-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="astc-5x4-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="astc-5x4-unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="astc-5x5-unorm";access="read-only"
+PASS :storage_texture,formats:format="astc-5x5-unorm";access="read-write"
+PASS :storage_texture,formats:format="astc-5x5-unorm";access="write-only"
+PASS :storage_texture,formats:format="astc-5x5-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="astc-5x5-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="astc-5x5-unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="astc-6x5-unorm";access="read-only"
+PASS :storage_texture,formats:format="astc-6x5-unorm";access="read-write"
+PASS :storage_texture,formats:format="astc-6x5-unorm";access="write-only"
+PASS :storage_texture,formats:format="astc-6x5-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="astc-6x5-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="astc-6x5-unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="astc-6x6-unorm";access="read-only"
+PASS :storage_texture,formats:format="astc-6x6-unorm";access="read-write"
+PASS :storage_texture,formats:format="astc-6x6-unorm";access="write-only"
+PASS :storage_texture,formats:format="astc-6x6-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="astc-6x6-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="astc-6x6-unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="astc-8x5-unorm";access="read-only"
+PASS :storage_texture,formats:format="astc-8x5-unorm";access="read-write"
+PASS :storage_texture,formats:format="astc-8x5-unorm";access="write-only"
+PASS :storage_texture,formats:format="astc-8x5-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="astc-8x5-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="astc-8x5-unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="astc-8x6-unorm";access="read-only"
+PASS :storage_texture,formats:format="astc-8x6-unorm";access="read-write"
+PASS :storage_texture,formats:format="astc-8x6-unorm";access="write-only"
+PASS :storage_texture,formats:format="astc-8x6-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="astc-8x6-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="astc-8x6-unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="astc-8x8-unorm";access="read-only"
+PASS :storage_texture,formats:format="astc-8x8-unorm";access="read-write"
+PASS :storage_texture,formats:format="astc-8x8-unorm";access="write-only"
+PASS :storage_texture,formats:format="astc-8x8-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="astc-8x8-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="astc-8x8-unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="astc-10x5-unorm";access="read-only"
+PASS :storage_texture,formats:format="astc-10x5-unorm";access="read-write"
+PASS :storage_texture,formats:format="astc-10x5-unorm";access="write-only"
+PASS :storage_texture,formats:format="astc-10x5-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="astc-10x5-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="astc-10x5-unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="astc-10x6-unorm";access="read-only"
+PASS :storage_texture,formats:format="astc-10x6-unorm";access="read-write"
+PASS :storage_texture,formats:format="astc-10x6-unorm";access="write-only"
+PASS :storage_texture,formats:format="astc-10x6-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="astc-10x6-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="astc-10x6-unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="astc-10x8-unorm";access="read-only"
+PASS :storage_texture,formats:format="astc-10x8-unorm";access="read-write"
+PASS :storage_texture,formats:format="astc-10x8-unorm";access="write-only"
+PASS :storage_texture,formats:format="astc-10x8-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="astc-10x8-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="astc-10x8-unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="astc-10x10-unorm";access="read-only"
+PASS :storage_texture,formats:format="astc-10x10-unorm";access="read-write"
+PASS :storage_texture,formats:format="astc-10x10-unorm";access="write-only"
+PASS :storage_texture,formats:format="astc-10x10-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="astc-10x10-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="astc-10x10-unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="astc-12x10-unorm";access="read-only"
+PASS :storage_texture,formats:format="astc-12x10-unorm";access="read-write"
+PASS :storage_texture,formats:format="astc-12x10-unorm";access="write-only"
+PASS :storage_texture,formats:format="astc-12x10-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="astc-12x10-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="astc-12x10-unorm-srgb";access="write-only"
+PASS :storage_texture,formats:format="astc-12x12-unorm";access="read-only"
+PASS :storage_texture,formats:format="astc-12x12-unorm";access="read-write"
+PASS :storage_texture,formats:format="astc-12x12-unorm";access="write-only"
+PASS :storage_texture,formats:format="astc-12x12-unorm-srgb";access="read-only"
+PASS :storage_texture,formats:format="astc-12x12-unorm-srgb";access="read-write"
+PASS :storage_texture,formats:format="astc-12x12-unorm-srgb";access="write-only"
+

@@ -6,6 +6,10 @@
 
 // queryconversions.cpp: Implementation of state query cast conversions
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/queryconversions.h"
 
 #include <vector>

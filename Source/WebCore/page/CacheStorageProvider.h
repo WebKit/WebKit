@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CacheStorageConnection.h"
+#include <WebCore/CacheStorageConnection.h>
 #include <wtf/NativePromise.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 

@@ -67,6 +67,7 @@
                 shouldBe("pc.getSenders().length", "2");
 
                 finishJSTest();
+                stream.getTracks().forEach(track => track.stop());
             })
             .catch(function (error) {
                 testFailed("Error in promise chain: " + error);

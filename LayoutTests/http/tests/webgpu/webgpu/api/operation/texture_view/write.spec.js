@@ -22,11 +22,12 @@ import {
   kRegularTextureFormats } from
 
 '../../../format_info.js';
-import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
+import * as ttu from '../../../texture_test_utils.js';
 import { kFullscreenQuadVertexShaderCode } from '../../../util/shader.js';
 import { TexelView } from '../../../util/texture/texel_view.js';
 
-export const g = makeTestGroup(TextureTestMixin(AllFeaturesMaxLimitsGPUTest));
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 const kTextureViewWriteMethods = [
 'storage-write-fragment',
@@ -53,16 +54,16 @@ const kColorsFloat = [
 { R: 0.4, G: 0.3, B: 0.6, A: 0.8 }];
 
 
-function FloatToIntColor(c) {
+function floatToIntColor(c) {
   return Math.floor(c * 100);
 }
 
 const kColorsInt = kColorsFloat.map((c) => {
   return {
-    R: FloatToIntColor(c.R),
-    G: FloatToIntColor(c.G),
-    B: FloatToIntColor(c.B),
-    A: FloatToIntColor(c.A)
+    R: floatToIntColor(c.R),
+    G: floatToIntColor(c.G),
+    B: floatToIntColor(c.B),
+    A: floatToIntColor(c.A)
   };
 });
 
@@ -345,7 +346,7 @@ fn((t) => {
   switch (method) {
     case 'storage-write-compute':
     case 'storage-write-fragment':
-      t.skipIfTextureFormatNotUsableAsStorageTexture(format);
+      t.skipIfTextureFormatNotUsableWithStorageAccessMode('write-only', format);
       break;
     case 'render-pass-store':
       t.skipIfTextureFormatNotUsableAsRenderAttachment(format);
@@ -388,7 +389,7 @@ fn((t) => {
   );
 
   // [1] Use copySinglePixelTextureToBufferUsingComputePass to check multisampled texture.
-  t.expectTexelViewComparisonIsOkInTexture({ texture }, expectedTexelView, [
+  ttu.expectTexelViewComparisonIsOkInTexture(t, { texture }, expectedTexelView, [
   kTextureSize,
   kTextureSize]
   );

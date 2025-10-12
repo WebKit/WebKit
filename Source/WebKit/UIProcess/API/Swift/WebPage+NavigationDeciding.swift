@@ -33,7 +33,7 @@ extension WebPage {
     /// A `NavigationAction` value is intended to be used to make policy decisions about whether to
     /// allow navigation within a web page via a `NavigationDeciding`.
     @MainActor
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct NavigationAction {
@@ -64,6 +64,11 @@ extension WebPage {
         public var buttonNumber: Int { wrapped.buttonNumber }
         #endif
 
+        /// Whether or not the navigation is a redirect from a content rule list.
+        public var isContentRuleListRedirect: Bool { wrapped.isContentRuleListRedirect }
+
+        // SPI for the cross-import overlay.
+        // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
         @_spi(CrossImportOverlay)
         public var wrapped: WKNavigationAction
     }
@@ -73,7 +78,7 @@ extension WebPage {
     /// A `NavigationResponse` value is intended to be used to make policy decisions about whether to
     /// allow navigation within a web page via a `NavigationDeciding`.
     @MainActor
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct NavigationResponse {
@@ -81,6 +86,8 @@ extension WebPage {
             self.wrapped = wrapped
         }
 
+        // FIXME: This needs to be made API.
+        // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
         @_spi(Private)
         public var isForMainFrame: Bool { wrapped.isForMainFrame }
 
@@ -100,7 +107,7 @@ extension WebPage {
     /// Allows providing custom behavior to handle navigation changes and to coordinate these changes for the web page's main page.
     ///
     /// For example, you might use these methods to restrict navigation from specific links within your content.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public protocol NavigationDeciding {
@@ -138,7 +145,7 @@ extension WebPage {
 
 // MARK: Default implementation
 
-@available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @available(watchOS, unavailable)
 @available(tvOS, unavailable)
 extension WebPage.NavigationDeciding {

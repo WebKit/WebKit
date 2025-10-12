@@ -11,9 +11,10 @@
 #include "common_audio/fir_filter_avx2.h"
 
 #include <immintrin.h>
-#include <stdint.h>
-#include <string.h>
 #include <xmmintrin.h>
+
+#include <cstdint>
+#include <cstring>
 
 #include "rtc_base/checks.h"
 #include "rtc_base/memory/aligned_malloc.h"

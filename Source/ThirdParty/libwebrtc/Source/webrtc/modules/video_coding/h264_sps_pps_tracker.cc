@@ -10,14 +10,18 @@
 
 #include "modules/video_coding/h264_sps_pps_tracker.h"
 
-#include <memory>
-#include <string>
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 #include <utility>
+#include <vector>
 
-#include "absl/types/variant.h"
+#include "api/array_view.h"
+#include "api/video/video_codec_type.h"
 #include "common_video/h264/h264_common.h"
 #include "common_video/h264/pps_parser.h"
 #include "common_video/h264/sps_parser.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
 #include "rtc_base/byte_buffer.h"
 #include "rtc_base/checks.h"
@@ -31,14 +35,14 @@ const uint8_t start_code_h264[] = {0, 0, 0, 1};
 }  // namespace
 
 H264SpsPpsTracker::FixedBitstream H264SpsPpsTracker::CopyAndFixBitstream(
-    rtc::ArrayView<const uint8_t> bitstream,
+    ArrayView<const uint8_t> bitstream,
     RTPVideoHeader* video_header) {
   RTC_DCHECK(video_header);
   RTC_DCHECK(video_header->codec == kVideoCodecH264);
   RTC_DCHECK_GT(bitstream.size(), 0);
 
   auto& h264_header =
-      absl::get<RTPVideoHeaderH264>(video_header->video_type_header);
+      std::get<RTPVideoHeaderH264>(video_header->video_type_header);
 
   bool append_sps_pps = false;
   auto sps = sps_data_.end();
@@ -111,7 +115,7 @@ H264SpsPpsTracker::FixedBitstream H264SpsPpsTracker::CopyAndFixBitstream(
   }
 
   if (h264_header.packetization_type == kH264StapA) {
-    rtc::ByteBufferReader nalu(bitstream.subview(1));
+    ByteBufferReader nalu(bitstream.subview(1));
     while (nalu.Length() > 0) {
       required_size += sizeof(start_code_h264);
 
@@ -155,7 +159,7 @@ H264SpsPpsTracker::FixedBitstream H264SpsPpsTracker::CopyAndFixBitstream(
 
   // Copy the rest of the bitstream and insert start codes.
   if (h264_header.packetization_type == kH264StapA) {
-    rtc::ByteBufferReader nalu(bitstream.subview(1));
+    ByteBufferReader nalu(bitstream.subview(1));
     while (nalu.Length() > 0) {
       fixed.bitstream.AppendData(start_code_h264);
 
@@ -202,9 +206,9 @@ void H264SpsPpsTracker::InsertSpsPpsNalus(const std::vector<uint8_t>& sps,
     return;
   }
   std::optional<SpsParser::SpsState> parsed_sps = SpsParser::ParseSps(
-      rtc::ArrayView<const uint8_t>(sps).subview(kNaluHeaderOffset));
+      ArrayView<const uint8_t>(sps).subview(kNaluHeaderOffset));
   std::optional<PpsParser::PpsState> parsed_pps = PpsParser::ParsePps(
-      rtc::ArrayView<const uint8_t>(pps).subview(kNaluHeaderOffset));
+      ArrayView<const uint8_t>(pps).subview(kNaluHeaderOffset));
 
   if (!parsed_sps) {
     RTC_LOG(LS_WARNING) << "Failed to parse SPS.";

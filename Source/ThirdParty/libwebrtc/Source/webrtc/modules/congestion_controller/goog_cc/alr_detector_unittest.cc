@@ -10,33 +10,33 @@
 
 #include "modules/congestion_controller/goog_cc/alr_detector.h"
 
-#include <cstdint>
 #include <optional>
 
-#include "api/transport/field_trial_based_config.h"
+#include "absl/base/nullability.h"
+#include "api/environment/environment_factory.h"
+#include "api/field_trials.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/alr_experiment.h"
-#include "test/field_trial.h"
+#include "system_wrappers/include/clock.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
-
-namespace {
-
-constexpr int kEstimatedBitrateBps = 300000;
-
-}  // namespace
 
 namespace webrtc {
 namespace {
+
+constexpr DataRate kEstimatedBitrate = DataRate::BitsPerSec(300'000);
+
 class SimulateOutgoingTrafficIn {
  public:
-  explicit SimulateOutgoingTrafficIn(AlrDetector* alr_detector,
-                                     int64_t* timestamp_ms)
-      : alr_detector_(alr_detector), timestamp_ms_(timestamp_ms) {
-    RTC_CHECK(alr_detector_);
-  }
+  explicit SimulateOutgoingTrafficIn(AlrDetector* absl_nonnull alr_detector,
+                                     SimulatedClock* absl_nonnull clock)
+      : alr_detector_(*alr_detector), clock_(*clock) {}
 
-  SimulateOutgoingTrafficIn& ForTimeMs(int time_ms) {
-    interval_ms_ = time_ms;
+  SimulateOutgoingTrafficIn& ForTime(TimeDelta time) {
+    interval_ = time;
     ProduceTraffic();
     return *this;
   }
@@ -49,97 +49,92 @@ class SimulateOutgoingTrafficIn {
 
  private:
   void ProduceTraffic() {
-    if (!interval_ms_ || !usage_percentage_)
+    if (!interval_ || !usage_percentage_)
       return;
-    const int kTimeStepMs = 10;
-    for (int t = 0; t < *interval_ms_; t += kTimeStepMs) {
-      *timestamp_ms_ += kTimeStepMs;
-      alr_detector_->OnBytesSent(kEstimatedBitrateBps * *usage_percentage_ *
-                                     kTimeStepMs / (8 * 100 * 1000),
-                                 *timestamp_ms_);
+    const TimeDelta kTimeStep = TimeDelta::Millis(10);
+    for (TimeDelta t = TimeDelta::Zero(); t < *interval_; t += kTimeStep) {
+      clock_.AdvanceTime(kTimeStep);
+      alr_detector_.OnBytesSent(
+          kEstimatedBitrate * *usage_percentage_ * kTimeStep / 100,
+          clock_.CurrentTime());
     }
-    int remainder_ms = *interval_ms_ % kTimeStepMs;
-    if (remainder_ms > 0) {
-      *timestamp_ms_ += kTimeStepMs;
-      alr_detector_->OnBytesSent(kEstimatedBitrateBps * *usage_percentage_ *
-                                     remainder_ms / (8 * 100 * 1000),
-                                 *timestamp_ms_);
-    }
+    // As of now all tests use interval that is a multiple of 10ms.
+    RTC_DCHECK_EQ(interval_->ms() % kTimeStep.ms(), 0);
   }
-  AlrDetector* const alr_detector_;
-  int64_t* timestamp_ms_;
-  std::optional<int> interval_ms_;
+  AlrDetector& alr_detector_;
+  SimulatedClock& clock_;
+  std::optional<TimeDelta> interval_;
   std::optional<int> usage_percentage_;
 };
 }  // namespace
 
 TEST(AlrDetectorTest, AlrDetection) {
-  FieldTrialBasedConfig field_trials;
-  int64_t timestamp_ms = 1000;
-  AlrDetector alr_detector(&field_trials);
-  alr_detector.SetEstimatedBitrate(kEstimatedBitrateBps);
+  SimulatedClock clock(Timestamp::Seconds(1));
+  AlrDetector alr_detector(
+      CreateEnvironment(CreateTestFieldTrialsPtr(), &clock));
+  alr_detector.SetEstimatedBitrate(kEstimatedBitrate);
 
   // Start in non-ALR state.
   EXPECT_FALSE(alr_detector.GetApplicationLimitedRegionStartTime());
 
   // Stay in non-ALR state when usage is close to 100%.
-  SimulateOutgoingTrafficIn(&alr_detector, &timestamp_ms)
-      .ForTimeMs(1000)
+  SimulateOutgoingTrafficIn(&alr_detector, &clock)
+      .ForTime(TimeDelta::Seconds(1))
       .AtPercentOfEstimatedBitrate(90);
   EXPECT_FALSE(alr_detector.GetApplicationLimitedRegionStartTime());
 
   // Verify that we ALR starts when bitrate drops below 20%.
-  SimulateOutgoingTrafficIn(&alr_detector, &timestamp_ms)
-      .ForTimeMs(1500)
+  SimulateOutgoingTrafficIn(&alr_detector, &clock)
+      .ForTime(TimeDelta::Millis(1'500))
       .AtPercentOfEstimatedBitrate(20);
   EXPECT_TRUE(alr_detector.GetApplicationLimitedRegionStartTime());
 
   // Verify that ALR ends when usage is above 65%.
-  SimulateOutgoingTrafficIn(&alr_detector, &timestamp_ms)
-      .ForTimeMs(4000)
+  SimulateOutgoingTrafficIn(&alr_detector, &clock)
+      .ForTime(TimeDelta::Seconds(4))
       .AtPercentOfEstimatedBitrate(100);
   EXPECT_FALSE(alr_detector.GetApplicationLimitedRegionStartTime());
 }
 
 TEST(AlrDetectorTest, ShortSpike) {
-  FieldTrialBasedConfig field_trials;
-  int64_t timestamp_ms = 1000;
-  AlrDetector alr_detector(&field_trials);
-  alr_detector.SetEstimatedBitrate(kEstimatedBitrateBps);
+  SimulatedClock clock(Timestamp::Seconds(1));
+  AlrDetector alr_detector(
+      CreateEnvironment(CreateTestFieldTrialsPtr(), &clock));
+  alr_detector.SetEstimatedBitrate(kEstimatedBitrate);
   // Start in non-ALR state.
   EXPECT_FALSE(alr_detector.GetApplicationLimitedRegionStartTime());
 
   // Verify that we ALR starts when bitrate drops below 20%.
-  SimulateOutgoingTrafficIn(&alr_detector, &timestamp_ms)
-      .ForTimeMs(1000)
+  SimulateOutgoingTrafficIn(&alr_detector, &clock)
+      .ForTime(TimeDelta::Seconds(1))
       .AtPercentOfEstimatedBitrate(20);
   EXPECT_TRUE(alr_detector.GetApplicationLimitedRegionStartTime());
 
   // Verify that we stay in ALR region even after a short bitrate spike.
-  SimulateOutgoingTrafficIn(&alr_detector, &timestamp_ms)
-      .ForTimeMs(100)
+  SimulateOutgoingTrafficIn(&alr_detector, &clock)
+      .ForTime(TimeDelta::Millis(100))
       .AtPercentOfEstimatedBitrate(150);
   EXPECT_TRUE(alr_detector.GetApplicationLimitedRegionStartTime());
 
   // ALR ends when usage is above 65%.
-  SimulateOutgoingTrafficIn(&alr_detector, &timestamp_ms)
-      .ForTimeMs(3000)
+  SimulateOutgoingTrafficIn(&alr_detector, &clock)
+      .ForTime(TimeDelta::Seconds(3))
       .AtPercentOfEstimatedBitrate(100);
   EXPECT_FALSE(alr_detector.GetApplicationLimitedRegionStartTime());
 }
 
 TEST(AlrDetectorTest, BandwidthEstimateChanges) {
-  FieldTrialBasedConfig field_trials;
-  int64_t timestamp_ms = 1000;
-  AlrDetector alr_detector(&field_trials);
-  alr_detector.SetEstimatedBitrate(kEstimatedBitrateBps);
+  SimulatedClock clock(Timestamp::Seconds(1));
+  AlrDetector alr_detector(
+      CreateEnvironment(CreateTestFieldTrialsPtr(), &clock));
+  alr_detector.SetEstimatedBitrate(kEstimatedBitrate);
 
   // Start in non-ALR state.
   EXPECT_FALSE(alr_detector.GetApplicationLimitedRegionStartTime());
 
   // ALR starts when bitrate drops below 20%.
-  SimulateOutgoingTrafficIn(&alr_detector, &timestamp_ms)
-      .ForTimeMs(1000)
+  SimulateOutgoingTrafficIn(&alr_detector, &clock)
+      .ForTime(TimeDelta::Seconds(1))
       .AtPercentOfEstimatedBitrate(20);
   EXPECT_TRUE(alr_detector.GetApplicationLimitedRegionStartTime());
 
@@ -147,29 +142,29 @@ TEST(AlrDetectorTest, BandwidthEstimateChanges) {
   // it shortly afterwards as the sender continues sending the same amount of
   // traffic. This is necessary to ensure that ProbeController can still react
   // to the BWE drop by initiating a new probe.
-  alr_detector.SetEstimatedBitrate(kEstimatedBitrateBps / 5);
+  alr_detector.SetEstimatedBitrate(kEstimatedBitrate / 5);
   EXPECT_TRUE(alr_detector.GetApplicationLimitedRegionStartTime());
-  SimulateOutgoingTrafficIn(&alr_detector, &timestamp_ms)
-      .ForTimeMs(1000)
+  SimulateOutgoingTrafficIn(&alr_detector, &clock)
+      .ForTime(TimeDelta::Seconds(1))
       .AtPercentOfEstimatedBitrate(50);
   EXPECT_FALSE(alr_detector.GetApplicationLimitedRegionStartTime());
 }
 
 TEST(AlrDetectorTest, ParseControlFieldTrial) {
-  webrtc::test::ScopedFieldTrials scoped_field_trial(
-      "WebRTC-ProbingScreenshareBwe/Control/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-ProbingScreenshareBwe/Control/");
   std::optional<AlrExperimentSettings> parsed_params =
       AlrExperimentSettings::CreateFromFieldTrial(
-          FieldTrialBasedConfig(), "WebRTC-ProbingScreenshareBwe");
+          field_trials, "WebRTC-ProbingScreenshareBwe");
   EXPECT_FALSE(static_cast<bool>(parsed_params));
 }
 
 TEST(AlrDetectorTest, ParseActiveFieldTrial) {
-  webrtc::test::ScopedFieldTrials scoped_field_trial(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-ProbingScreenshareBwe/1.1,2875,85,20,-20,1/");
   std::optional<AlrExperimentSettings> parsed_params =
       AlrExperimentSettings::CreateFromFieldTrial(
-          FieldTrialBasedConfig(), "WebRTC-ProbingScreenshareBwe");
+          field_trials, "WebRTC-ProbingScreenshareBwe");
   ASSERT_TRUE(static_cast<bool>(parsed_params));
   EXPECT_EQ(1.1f, parsed_params->pacing_factor);
   EXPECT_EQ(2875, parsed_params->max_paced_queue_time);
@@ -180,28 +175,27 @@ TEST(AlrDetectorTest, ParseActiveFieldTrial) {
 }
 
 TEST(AlrDetectorTest, ParseAlrSpecificFieldTrial) {
-  webrtc::test::ScopedFieldTrials scoped_field_trial(
-      "WebRTC-AlrDetectorParameters/"
-      "bw_usage:90%,start:0%,stop:-10%/");
-  FieldTrialBasedConfig field_trials;
-  AlrDetector alr_detector(&field_trials);
-  int64_t timestamp_ms = 1000;
-  alr_detector.SetEstimatedBitrate(kEstimatedBitrateBps);
+  SimulatedClock clock(Timestamp::Seconds(1));
+  AlrDetector alr_detector(CreateEnvironment(
+      CreateTestFieldTrialsPtr(
+          "WebRTC-AlrDetectorParameters/bw_usage:90%,start:0%,stop:-10%/"),
+      &clock));
+  alr_detector.SetEstimatedBitrate(kEstimatedBitrate);
 
   // Start in non-ALR state.
   EXPECT_FALSE(alr_detector.GetApplicationLimitedRegionStartTime());
 
   // ALR does not start at 100% utilization.
-  SimulateOutgoingTrafficIn(&alr_detector, &timestamp_ms)
-      .ForTimeMs(1000)
+  SimulateOutgoingTrafficIn(&alr_detector, &clock)
+      .ForTime(TimeDelta::Seconds(1))
       .AtPercentOfEstimatedBitrate(100);
   EXPECT_FALSE(alr_detector.GetApplicationLimitedRegionStartTime());
 
   // ALR does start at 85% utilization.
   // Overused 10% above so it should take about 2s to reach a budget level of
   // 0%.
-  SimulateOutgoingTrafficIn(&alr_detector, &timestamp_ms)
-      .ForTimeMs(2100)
+  SimulateOutgoingTrafficIn(&alr_detector, &clock)
+      .ForTime(TimeDelta::Millis(2'100))
       .AtPercentOfEstimatedBitrate(85);
   EXPECT_TRUE(alr_detector.GetApplicationLimitedRegionStartTime());
 }

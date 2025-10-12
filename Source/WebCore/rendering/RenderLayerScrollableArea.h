@@ -44,8 +44,9 @@
 
 #pragma once
 
-#include "RenderLayer.h"
-#include "ScrollableArea.h"
+#include <WebCore/RenderLayer.h>
+#include <WebCore/ScrollableArea.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -120,8 +121,9 @@ public:
 
     Color scrollbarThumbColorStyle() const final;
     Color scrollbarTrackColorStyle() const final;
-    ScrollbarGutter scrollbarGutterStyle() const final;
+    Style::ScrollbarGutter scrollbarGutterStyle() const final;
     ScrollbarWidth scrollbarWidthStyle() const final;
+    std::optional<ScrollbarColor> scrollbarColorStyle() const final;
 
     bool requiresScrollPositionReconciliation() const { return m_requiresScrollPositionReconciliation; }
     void setRequiresScrollPositionReconciliation(bool requiresReconciliation = true) { m_requiresScrollPositionReconciliation = requiresReconciliation; }
@@ -267,14 +269,16 @@ public:
     void invalidateScrollAnchoringElement() final;
     ScrollAnchoringController* scrollAnchoringController() { return m_scrollAnchoringController.get(); }
 
+    void updateAnchorPositionedAfterScroll() final;
+
     void createScrollbarsController() final;
 
     std::optional<FrameIdentifier> rootFrameID() const final;
 
     void scrollbarWidthChanged(ScrollbarWidth) override;
 
-#if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
-    bool vectorBasedControlsEnabled() const override;
+#if ENABLE(FORM_CONTROL_REFRESH)
+    bool formControlRefreshEnabled() const override;
 #endif
 
 private:
@@ -303,6 +307,7 @@ private:
     void registerScrollableAreaForAnimatedScroll();
 
     float deviceScaleFactor() const final;
+    void scrollDidEnd() final;
 
 private:
     bool m_scrollDimensionsDirty { true };

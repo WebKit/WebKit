@@ -133,11 +133,11 @@ public:
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << m_event;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_event;
     }
 
 private:
-    const WebKit::WebTouchEvent& m_event;
+    SUPPRESS_FORWARD_DECL_MEMBER const WebKit::WebTouchEvent& m_event;
 };
 #endif
 
@@ -160,11 +160,11 @@ public:
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << m_event;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_event;
     }
 
 private:
-    const WebKit::WebTouchEvent& m_event;
+    SUPPRESS_FORWARD_DECL_MEMBER const WebKit::WebTouchEvent& m_event;
 };
 #endif
 
@@ -266,11 +266,11 @@ public:
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << m_store;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_store;
     }
 
 private:
-    const WebKit::WebPreferencesStore& m_store;
+    SUPPRESS_FORWARD_DECL_MEMBER const WebKit::WebPreferencesStore& m_store;
 };
 
 class SendDoubleAndFloat {
@@ -320,13 +320,13 @@ public:
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << m_ints;
-        encoder << m_intVectors;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_ints;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_intVectors;
     }
 
 private:
-    const Vector<uint64_t>& m_ints;
-    const Vector<Vector<uint64_t>>& m_intVectors;
+    SUPPRESS_FORWARD_DECL_MEMBER const Vector<uint64_t>& m_ints;
+    SUPPRESS_FORWARD_DECL_MEMBER const Vector<Vector<uint64_t>>& m_intVectors;
 };
 
 class CreatePlugin {
@@ -354,12 +354,12 @@ public:
     void encode(Encoder& encoder)
     {
         encoder << m_pluginInstanceID;
-        encoder << m_parameters;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_parameters;
     }
 
 private:
     uint64_t m_pluginInstanceID;
-    const WebKit::Plugin::Parameters& m_parameters;
+    SUPPRESS_FORWARD_DECL_MEMBER const WebKit::Plugin::Parameters& m_parameters;
 };
 
 class RunJavaScriptAlert {
@@ -527,11 +527,11 @@ public:
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << m_a;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_a;
     }
 
 private:
-    const HashMap<String, std::pair<String, uint64_t>>& m_a;
+    SUPPRESS_FORWARD_DECL_MEMBER const HashMap<String, std::pair<String, uint64_t>>& m_a;
 };
 
 class SetVideoLayerID {
@@ -580,12 +580,12 @@ public:
     void encode(Encoder& encoder)
     {
         encoder << WTFMove(m_connectionIdentifier);
-        encoder << m_flags;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_flags;
     }
 
 private:
     MachSendRight&& m_connectionIdentifier;
-    const OptionSet<WebKit::SelectionFlags>& m_flags;
+    SUPPRESS_FORWARD_DECL_MEMBER const OptionSet<WebKit::SelectionFlags>& m_flags;
 };
 #endif
 
@@ -640,11 +640,11 @@ public:
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << m_dummy;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_dummy;
     }
 
 private:
-    const IPC::DummyType& m_dummy;
+    SUPPRESS_FORWARD_DECL_MEMBER const IPC::DummyType& m_dummy;
 };
 #endif
 
@@ -667,11 +667,110 @@ public:
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << m_dummy;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_dummy;
     }
 
 private:
-    const IPC::DummyType& m_dummy;
+    SUPPRESS_FORWARD_DECL_MEMBER const IPC::DummyType& m_dummy;
+};
+#endif
+
+class CreatePluginReply {
+public:
+    using Arguments = std::tuple<bool>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_CreatePluginReply; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    explicit CreatePluginReply(bool result)
+        : m_result(result)
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        encoder << m_result;
+    }
+
+private:
+    bool m_result;
+};
+
+class RunJavaScriptAlertReply {
+public:
+    using Arguments = std::tuple<>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_RunJavaScriptAlertReply; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    RunJavaScriptAlertReply()
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+    }
+
+private:
+};
+
+class GetPluginsReply {
+public:
+    using Arguments = std::tuple<Vector<WebCore::PluginInfo>>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_GetPluginsReply; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    explicit GetPluginsReply(const Vector<WebCore::PluginInfo>& plugins)
+        : m_plugins(plugins)
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_plugins;
+    }
+
+private:
+    SUPPRESS_FORWARD_DECL_MEMBER const Vector<WebCore::PluginInfo>& m_plugins;
+};
+
+#if PLATFORM(MAC)
+class InterpretKeyEventReply {
+public:
+    using Arguments = std::tuple<Vector<WebCore::KeypressCommand>>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_InterpretKeyEventReply; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    explicit InterpretKeyEventReply(const Vector<WebCore::KeypressCommand>& commandName)
+        : m_commandName(commandName)
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_commandName;
+    }
+
+private:
+    SUPPRESS_FORWARD_DECL_MEMBER const Vector<WebCore::KeypressCommand>& m_commandName;
 };
 #endif
 

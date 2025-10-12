@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,9 +62,9 @@ protected:
         return true;
     }
 
-    Ref<ListType> m_from;
-    Ref<ListType> m_to;
-    Ref<ListType> m_toAtEndOfDuration;
+    const Ref<ListType> m_from;
+    const Ref<ListType> m_to;
+    const Ref<ListType> m_toAtEndOfDuration;
 };
 
 }

@@ -95,8 +95,9 @@ private:
     };
 
     static AST::Identifier argumentBufferParameterName(unsigned group);
-    static AST::Identifier argumentBufferStructName(unsigned group);
     static AST::Identifier dynamicOffsetVariableName();
+
+    AST::Identifier argumentBufferStructName(unsigned group);
 
     void def(const AST::Identifier&, AST::Variable*);
 
@@ -162,8 +163,8 @@ private:
     Reflection::EntryPointInformation* m_entryPointInformation { nullptr };
     HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_generateLayoutGroupMapping;
     PipelineLayout* m_generatedLayout { nullptr };
-    unsigned m_constantId { 0 };
     unsigned m_currentStatementIndex { 0 };
+    unsigned m_entryPointID { 0 };
     Vector<Insertion> m_pendingInsertions;
     HashMap<const Types::Struct*, const Type*> m_packedStructTypes;
     ShaderStage m_stage { ShaderStage::Vertex };
@@ -187,6 +188,7 @@ std::optional<Error> RewriteGlobalVariables::run()
         return error;
     for (auto& entryPoint : m_shaderModule.callGraph().entrypoints()) {
         auto maybeError = visitEntryPoint(entryPoint);
+        ++m_entryPointID;
         if (maybeError.has_value())
             return maybeError;
     }
@@ -460,7 +462,7 @@ Packing RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& e
             SourceSpan::empty(),
             AST::Identifier::make(operation)
         );
-        callee.m_inferredType = m_shaderModule.types().bottomType();
+        callee.m_inferredType = m_shaderModule.types().u32Type();
         auto& argument = m_shaderModule.astBuilder().construct<std::remove_cvref_t<decltype(expression)>>(expression);
         auto& call = m_shaderModule.astBuilder().construct<AST::CallExpression>(
             SourceSpan::empty(),
@@ -1019,6 +1021,18 @@ std::optional<Error> RewriteGlobalVariables::visitEntryPoint(const CallGraph::En
     }
     case ShaderStage::Vertex:
         m_entryPointInformation->typedEntryPoint = Reflection::Vertex { false };
+        if (entryPoint.function.returnTypeInvariant())
+            m_entryPointInformation->usesInvariant = true;
+        else if (auto* returnType = entryPoint.function.maybeReturnType()) {
+            if (auto* structType = std::get_if<Types::Struct>(returnType->inferredType())) {
+                for (const auto& member : structType->structure.members()) {
+                    if (member.invariant()) {
+                        m_entryPointInformation->usesInvariant = true;
+                        break;
+                    }
+                }
+            }
+        }
         break;
     case ShaderStage::Fragment:
         m_entryPointInformation->typedEntryPoint = Reflection::Fragment { };
@@ -1284,8 +1298,6 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
         RELEASE_ASSERT_NOT_REACHED();
     }, [&](const TypeConstructor&) -> BindGroupLayoutEntry::BindingMember {
         RELEASE_ASSERT_NOT_REACHED();
-    }, [&](const Bottom&) -> BindGroupLayoutEntry::BindingMember {
-        RELEASE_ASSERT_NOT_REACHED();
     });
 }
 
@@ -1487,9 +1499,6 @@ static BindingType bindingTypeForType(const Type* type)
             return BindingType::Buffer;
         },
         [&](const Types::TypeConstructor&) -> BindingType {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Types::Bottom&) -> BindingType {
             RELEASE_ASSERT_NOT_REACHED();
         });
 }
@@ -2371,7 +2380,7 @@ void RewriteGlobalVariables::initializeVariables(AST::Function& function, const 
 void RewriteGlobalVariables::insertWorkgroupBarrier(AST::Function& function, size_t offset)
 {
     auto& callee = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("workgroupBarrier"_s));
-    callee.m_inferredType = m_shaderModule.types().bottomType();
+    callee.m_inferredType = m_shaderModule.types().voidType();
 
     auto& call = m_shaderModule.astBuilder().construct<AST::CallExpression>(
         SourceSpan::empty(),
@@ -2580,14 +2589,14 @@ void RewriteGlobalVariables::storeInitialValue(AST::Expression& target, AST::Sta
 
     if (type && std::holds_alternative<Types::Atomic>(*type)) {
         auto& callee = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("atomicStore"_s));
-        callee.m_inferredType = m_shaderModule.types().bottomType();
+        callee.m_inferredType = m_shaderModule.types().voidType();
 
         auto& pointer = m_shaderModule.astBuilder().construct<AST::UnaryExpression>(
             SourceSpan::empty(),
             target,
             AST::UnaryOperation::AddressOf
         );
-        pointer.m_inferredType = m_shaderModule.types().bottomType();
+        pointer.m_inferredType = m_shaderModule.types().voidType();
 
         auto& value = m_shaderModule.astBuilder().construct<AST::AbstractIntegerLiteral>(SourceSpan::empty(), 0);
         value.m_inferredType = m_shaderModule.types().abstractIntType();
@@ -2654,7 +2663,7 @@ AST::Identifier RewriteGlobalVariables::argumentBufferParameterName(unsigned gro
 
 AST::Identifier RewriteGlobalVariables::argumentBufferStructName(unsigned group)
 {
-    return AST::Identifier::make(makeString("__ArgumentBufferT_"_s, group));
+    return AST::Identifier::make(makeString("__ArgumentBufferT_"_s, m_entryPointID, "_"_s, group));
 }
 
 AST::Identifier RewriteGlobalVariables::dynamicOffsetVariableName()

@@ -165,6 +165,20 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static async scrollDown()
+    {
+        const midX = innerWidth / 2;
+        const midY = innerHeight / 2;
+        if (!this.isIOSFamily())
+            return await this.mouseWheelScrollAt(midX, midY, 0, -1, 0, -100);
+
+        await this.sendEventStream(new this.EventStreamBuilder()
+            .begin(midX, midY + 180)
+            .move(midX, midY - 180, 0.3)
+            .end()
+            .takeResult());
+    }
+
     static async animationFrame()
     {
         return new Promise(requestAnimationFrame);
@@ -793,7 +807,7 @@ window.UIHelper = class UIHelper {
     {
         do {
             await this.ensureStablePresentationUpdate();
-        } while (await this.isZoomingOrScrolling());
+        } while (this.isIOSFamily() && await this.isZoomingOrScrolling());
     }
 
     static deactivateFormControl(element)
@@ -1522,7 +1536,11 @@ window.UIHelper = class UIHelper {
         if (!this.isWebKit2())
             return Promise.resolve();
 
-        return new Promise(resolve => testRunner.runUIScript(`uiController.removeViewFromWindow()`, resolve));
+        const scriptToRun = `(function() {
+            uiController.removeViewFromWindow();
+            uiController.uiScriptComplete();
+        })()`;
+        return new Promise(resolve => testRunner.runUIScript(scriptToRun, resolve));
     }
 
     static addViewToWindow()
@@ -1530,7 +1548,11 @@ window.UIHelper = class UIHelper {
         if (!this.isWebKit2())
             return Promise.resolve();
 
-        return new Promise(resolve => testRunner.runUIScript(`uiController.addViewToWindow()`, resolve));
+        const scriptToRun = `(function() {
+            uiController.addViewToWindow();
+            uiController.uiScriptComplete();
+        })()`;
+        return new Promise(resolve => testRunner.runUIScript(scriptToRun, resolve));
     }
 
     static minimumZoomScale()
@@ -1608,6 +1630,14 @@ window.UIHelper = class UIHelper {
 
         const escapedIdentifier = identifier.replace(/`/g, "\\`");
         return new Promise(resolve => testRunner.runUIScript(`uiController.setKeyboardInputModeIdentifier(\`${escapedIdentifier}\`)`, resolve));
+    }
+
+    static setFocusStartsInputSessionPolicy(policy)
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve();
+
+        return new Promise(resolve => testRunner.runUIScript(`uiController.setFocusStartsInputSessionPolicy("${policy}")`, resolve));
     }
 
     static contentOffset()
@@ -2045,6 +2075,10 @@ window.UIHelper = class UIHelper {
 
     static setWindowIsKey(isKey)
     {
+        if (!this.isWebKit2()) {
+            testRunner.setWindowIsKey(isKey);
+            return Promise.resolve();
+        }
         const script = `uiController.windowIsKey = ${isKey}`;
         return new Promise(resolve => testRunner.runUIScript(script, resolve));
     }
@@ -2416,6 +2450,52 @@ window.UIHelper = class UIHelper {
                 await UIHelper.ensurePresentationUpdate();
             }, eventTarget || document.activeElement, waitForEvent);
         }
+    }
+
+    static async requestDebugText(options = { })
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve("");
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.requestDebugText(result => uiController.uiScriptComplete(result));
+            })()`, debugText => {
+                if (options.normalize) {
+                    debugText = debugText
+                        .replace(/uid=\d+/g, "uid=…")
+                        .replace(/\[\d+,\d+;\d+x\d+\]/g, "[…]")
+                        .replace(/\t/g, "    ");
+                }
+                resolve(debugText);
+            });
+        });
+    }
+
+    static nodeIdentifierFromDebugText(text, searchTerm)
+    {
+        for (let line of text.split("\n")) {
+            if (!line.includes(searchTerm))
+                continue;
+
+            const match = line.match(/uid=(\d+)/);
+            if (match)
+                return match[1];
+        }
+        return null;
+    }
+
+    static async performTextExtractionInteraction(action, options)
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve(false);
+
+        return new Promise(resolve => {
+            const scriptToRun = `uiController.performTextExtractionInteraction("${action}", ${JSON.stringify(options)}, result => {
+                uiController.uiScriptComplete(result)
+            })`;
+            testRunner.runUIScript(scriptToRun, resolve);
+        });
     }
 }
 

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DataListSuggestionInformation.h"
+#include <WebCore/DataListSuggestionInformation.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>

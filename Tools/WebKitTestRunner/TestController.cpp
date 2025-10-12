@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TestController.h"
 
+#include "DataFunctions.h"
 #include "DictionaryFunctions.h"
 #include "EventSenderProxy.h"
 #include "Options.h"
@@ -38,15 +39,19 @@
 #include <WebKit/WKArray.h>
 #include <WebKit/WKAuthenticationChallenge.h>
 #include <WebKit/WKAuthenticationDecisionListener.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKCast.h>
 #include <WebKit/WKContextConfigurationRef.h>
 #include <WebKit/WKContextPrivate.h>
 #include <WebKit/WKCredential.h>
 #include <WebKit/WKDownloadClient.h>
 #include <WebKit/WKDownloadRef.h>
+#include <WebKit/WKEvent.h>
 #include <WebKit/WKFrameHandleRef.h>
 #include <WebKit/WKFrameInfoRef.h>
 #include <WebKit/WKHTTPCookieStoreRef.h>
 #include <WebKit/WKIconDatabase.h>
+#include <WebKit/WKJSHandleRef.h>
 #include <WebKit/WKMediaKeySystemPermissionCallback.h>
 #include <WebKit/WKMessageListener.h>
 #include <WebKit/WKMockMediaDevice.h>
@@ -57,6 +62,7 @@
 #include <WebKit/WKNotificationPermissionRequest.h>
 #include <WebKit/WKNumber.h>
 #include <WebKit/WKOpenPanelResultListener.h>
+#include <WebKit/WKPageConfigurationRef.h>
 #include <WebKit/WKPageInjectedBundleClient.h>
 #include <WebKit/WKPagePrivate.h>
 #include <WebKit/WKPluginInformation.h>
@@ -64,6 +70,7 @@
 #include <WebKit/WKProtectionSpace.h>
 #include <WebKit/WKQueryPermissionResultCallback.h>
 #include <WebKit/WKRetainPtr.h>
+#include <WebKit/WKScriptMessageRef.h>
 #include <WebKit/WKSecurityOriginRef.h>
 #include <WebKit/WKSpeechRecognitionPermissionCallback.h>
 #include <WebKit/WKTextChecker.h>
@@ -71,6 +78,8 @@
 #include <WebKit/WKUserContentControllerRef.h>
 #include <WebKit/WKUserContentExtensionStoreRef.h>
 #include <WebKit/WKUserMediaPermissionCheck.h>
+#include <WebKit/WKUserScriptInjectionTime.h>
+#include <WebKit/WKUserScriptRef.h>
 #include <WebKit/WKWebsiteDataStoreConfigurationRef.h>
 #include <WebKit/WKWebsiteDataStoreRef.h>
 #include <WebKit/WKWebsitePolicies.h>
@@ -81,9 +90,11 @@
 #include <stdlib.h>
 #include <string>
 #include <wtf/AutodrainedPool.h>
+#include <wtf/Compiler.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/FileSystem.h>
+#include <wtf/Logging.h>
 #include <wtf/MainThread.h>
 #include <wtf/MallocSpan.h>
 #include <wtf/ProcessPrivilege.h>
@@ -97,6 +108,8 @@
 #include <wtf/WTFProcess.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/TextStream.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(COCOA)
@@ -111,6 +124,7 @@
 #if PLATFORM(WIN)
 #include <direct.h>
 #include <shlwapi.h>
+#include <wininet.h>
 #define getcwd _getcwd
 #define PATH_MAX _MAX_PATH
 #else
@@ -336,9 +350,9 @@ static void runJavaScriptConfirm(WKPageRef page, WKStringRef message, WKFrameRef
     TestController::singleton().handleJavaScriptConfirm(message, listener);
 }
 
-static void requestPointerLock(WKPageRef page, const void*)
+static void requestPointerLock(WKPageRef page, WKCompletionListenerRef listener, const void*)
 {
-    WKPageDidAllowPointerLock(page);
+    WKCompletionListenerComplete(listener, nullptr);
 }
 
 static void printFrame(WKPageRef page, WKFrameRef frame, const void*)
@@ -502,6 +516,50 @@ static void addMessageToConsole(WKPageRef, WKStringRef message, const void*)
         invocation->outputText(messageString);
 }
 
+void TestController::tooltipDidChange(WKPageRef, WKStringRef tooltip, const void*)
+{
+    TestController::singleton().tooltipDidChange(tooltip);
+}
+
+void TestController::tooltipDidChange(WKStringRef tooltip)
+{
+    m_tooltipCallbacks.notifyListeners(tooltip);
+}
+
+void TestController::Callbacks::append(WKJSHandleRef handle)
+{
+    if (!handle)
+        return;
+    m_callbacks.append(handle);
+}
+
+void TestController::Callbacks::notifyListeners(WKStringRef parameter)
+{
+    if (TestController::singleton().m_state != RunningTest)
+        return;
+
+    for (auto& callback : m_callbacks) {
+        WKRetainPtr arguments = adoptWK(WKMutableDictionaryCreate());
+        setValue(arguments, "callback", callback);
+        setValue(arguments, "parameter", parameter);
+        WKRetainPtr frame = adoptWK(WKJSHandleCopyFrameInfo(callback.get()));
+        WKPageCallAsyncJavaScriptWithoutUserGesture(WKFrameInfoGetPage(frame.get()), toWK("return callback(parameter)").get(), arguments.get(), frame.get(), nullptr, nullptr);
+    }
+}
+
+void TestController::Callbacks::notifyListeners()
+{
+    if (TestController::singleton().m_state != RunningTest)
+        return;
+
+    for (auto& callback : m_callbacks) {
+        WKRetainPtr arguments = adoptWK(WKMutableDictionaryCreate());
+        setValue(arguments, "callback", callback);
+        WKRetainPtr frame = adoptWK(WKJSHandleCopyFrameInfo(callback.get()));
+        WKPageCallAsyncJavaScriptWithoutUserGesture(WKFrameInfoGetPage(frame.get()), toWK("return callback()").get(), arguments.get(), frame.get(), nullptr, nullptr);
+    }
+}
+
 void TestController::closeOtherPage(WKPageRef page, PlatformWebView* view)
 {
     WKPageClose(page);
@@ -540,12 +598,12 @@ void TestController::willEnterFullScreen(WKPageRef page, WKCompletionListenerRef
     if (m_dumpFullScreenCallbacks)
         protectedCurrentInvocation()->outputText("supportsFullScreen() == true\nenterFullScreenForElement()\n"_s);
     if (!m_scrollDuringEnterFullscreen)
-        return WKCompletionListenerComplete(listener);
+        return WKCompletionListenerComplete(listener, nullptr);
 
     // The amount we scroll isn't important, but it should be nonzero to verify it is gone after restoring scroll position.
     WKPageEvaluateJavaScriptInMainFrame(page, toWK("scrollBy(5,7)").get(), (void*)WKRetain(listener), [] (WKTypeRef, WKErrorRef, void* context) {
         auto listener = (WKCompletionListenerRef)context;
-        WKCompletionListenerComplete(listener);
+        WKCompletionListenerComplete(listener, nullptr);
         WKRelease(listener);
     });
 }
@@ -567,6 +625,20 @@ void TestController::beganEnterFullScreen(WKPageRef page, WKRect initialFrame, W
             finalFrame.size.width,
             ", "_s,
             finalFrame.size.height,
+            "}\n"_s
+        ));
+    }
+
+    if (m_dumpFullScreenOrigin) {
+        protectedCurrentInvocation()->outputText(makeString(
+            "beganEnterFullScreen() - initialRect.origin: {"_s,
+            (initialFrame.origin.x - finalFrame.origin.x),
+            ", "_s,
+            (initialFrame.origin.y - finalFrame.origin.y),
+            "}, finalRect.origin: {"_s,
+            (finalFrame.origin.x - initialFrame.origin.x),
+            ", "_s,
+            (finalFrame.origin.y - initialFrame.origin.y),
             "}\n"_s
         ));
     }
@@ -604,8 +676,22 @@ void TestController::beganExitFullScreen(WKPageRef, WKRect initialFrame, WKRect 
         ));
     }
 
+    if (m_dumpFullScreenOrigin) {
+        protectedCurrentInvocation()->outputText(makeString(
+        "beganExitFullScreen() - initialRect.origin: {"_s,
+        (initialFrame.origin.x - finalFrame.origin.x),
+        ", "_s,
+        (initialFrame.origin.y - finalFrame.origin.y),
+        "}, finalRect.origin: {"_s,
+        (finalFrame.origin.x - initialFrame.origin.x),
+        ", "_s,
+        (finalFrame.origin.y - initialFrame.origin.y),
+        "}\n"_s
+        ));
+    }
+
     m_finishExitFullscreenHandler = [listener = WKRetainPtr { listener }] {
-        WKCompletionListenerComplete(listener.get());
+        WKCompletionListenerComplete(listener.get(), nullptr);
     };
     if (!m_waitBeforeFinishingFullscreenExit)
         finishFullscreenExit();
@@ -616,9 +702,9 @@ void TestController::finishFullscreenExit()
     m_finishExitFullscreenHandler();
 }
 
-void TestController::requestExitFullscreenFromUIProcess(WKPageRef page)
+void TestController::requestExitFullscreenFromUIProcess()
 {
-    WKPageRequestExitFullScreen(page);
+    WKPageRequestExitFullScreen(mainWebView()->page());
 }
 
 PlatformWebView* TestController::createOtherPlatformWebView(PlatformWebView* parentView, WKPageConfigurationRef configuration, WKNavigationActionRef, WKWindowFeaturesRef)
@@ -718,7 +804,8 @@ PlatformWebView* TestController::createOtherPlatformWebView(PlatformWebView* par
         nullptr, // queryPermission
         nullptr, // lockScreenOrientationCallback,
         nullptr, // unlockScreenOrientationCallback,
-        addMessageToConsole
+        addMessageToConsole,
+        tooltipDidChange
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient.base);
 
@@ -768,7 +855,6 @@ PlatformWebView* TestController::createOtherPlatformWebView(PlatformWebView* par
         didReceivePageMessageFromInjectedBundle,
         nullptr,
         didReceiveSynchronousPageMessageFromInjectedBundleWithListener,
-        didReceiveAsyncPageMessageFromInjectedBundleWithListener
     };
     WKPageSetPageInjectedBundleClient(newPage, &injectedBundleClient.base);
 
@@ -882,7 +968,6 @@ void TestController::configureWebsiteDataStoreTemporaryDirectories(WKWebsiteData
         String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
         auto randomNumber = cryptographicallyRandomNumber<uint32_t>();
 
-        WKWebsiteDataStoreConfigurationSetApplicationCacheDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "ApplicationCache"_s, pathSeparator, randomNumber)).get());
         WKWebsiteDataStoreConfigurationSetNetworkCacheDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Cache"_s, pathSeparator, randomNumber)).get());
         WKWebsiteDataStoreConfigurationSetCacheStorageDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "CacheStorage"_s, pathSeparator, randomNumber)).get());
         WKWebsiteDataStoreConfigurationSetIndexedDBDatabaseDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Databases"_s, pathSeparator, "IndexedDB"_s, pathSeparator, randomNumber)).get());
@@ -923,7 +1008,10 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
 {
     if (!m_context || !m_mainWebView || !m_mainWebView->viewSupportsOptions(options)) {
         auto contextConfiguration = generateContextConfiguration(options);
-        m_context = platformAdjustContext(adoptWK(WKContextCreateWithConfiguration(contextConfiguration.get())).get(), contextConfiguration.get());
+        if (options.siteIsolationEnabled() && options.runInCrossOriginFrame())
+            WKContextConfigurationSetPrewarmsProcessesAutomatically(contextConfiguration.get(), false);
+        m_preferences = adoptWK(WKPreferencesCreate());
+        m_context = adoptWK(WKContextCreateWithConfiguration(contextConfiguration.get()));
 
         auto localhostAliases = adoptWK(WKMutableArrayCreate());
         for (const auto& alias : m_localhostAliases)
@@ -990,6 +1078,9 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
 
     if (m_forceComplexText)
         WKContextSetAlwaysUsesComplexTextCodePath(m_context.get(), true);
+
+    if (options.usesBackForwardCache())
+        WKPreferencesSetBoolValueForKeyForTesting(m_preferences.get(), true, toWK("UsesBackForwardCache").get());
 
     auto pageConfiguration = adoptWK(WKPageConfigurationCreate());
     WKPageConfigurationSetContext(pageConfiguration.get(), m_context.get());
@@ -1198,7 +1289,8 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         nullptr, // lockScreenOrientation
         nullptr, // unlockScreenOrientation
 #endif
-        addMessageToConsole
+        addMessageToConsole,
+        tooltipDidChange
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 
@@ -1249,7 +1341,6 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         didReceivePageMessageFromInjectedBundle,
         nullptr,
         didReceiveSynchronousPageMessageFromInjectedBundleWithListener,
-        didReceiveAsyncPageMessageFromInjectedBundleWithListener
     };
     WKPageSetPageInjectedBundleClient(m_mainWebView->page(), &injectedBundleClient.base);
 
@@ -1311,6 +1402,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
             WKPreferencesSetExperimentalFeatureForKey(preferences, false, toWK("SiteIsolationEnabled").get());
             WKPreferencesSetExperimentalFeatureForKey(preferences, false, toWK("VerifyWindowOpenUserGestureFromUIProcess").get());
             WKPreferencesSetExperimentalFeatureForKey(preferences, true, toWK("WebGPUEnabled").get());
+            WKPreferencesSetExperimentalFeatureForKey(preferences, true, toWK("ModelElementEnabled").get());
             WKPreferencesSetExperimentalFeatureForKey(preferences, false, toWK("HTTPSByDefaultEnabled").get());
             WKPreferencesSetExperimentalFeatureForKey(preferences, false, toWK("WebRTCL4SEnabled").get()); // FIXME: Remove this once L4S SDP negotation is supported.
         }
@@ -1388,6 +1480,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     WKPageSetMediaCaptureReportingDelayForTesting(m_mainWebView->page(), 0);
 
     WKWebsiteDataStoreResetResourceMonitorThrottler(websiteDataStore(), nullptr, nullptr);
+
+    WKURLRequestSetDefaultTimeoutInterval((60_s).value());
 
     // FIXME: This function should also ensure that there is only one page open.
 
@@ -1519,7 +1613,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKPageResetStateBetweenTests(m_mainWebView->page());
 
-    WKPageClearBackForwardListForTesting(TestController::singleton().mainWebView()->page(), nullptr, [](void*) { });
+    WKPageClearBackForwardListForTesting(m_mainWebView->page(), nullptr, [](void*) { });
+    WKPageClearBackForwardCache(m_mainWebView->page());
 
     if (resetStage == ResetStage::AfterTest) {
         updateLiveDocumentsAfterTest();
@@ -1535,10 +1630,18 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     m_shouldDownloadContentDispositionAttachments = true;
     m_dumpPolicyDelegateCallbacks = false;
     m_dumpFullScreenCallbacks = false;
+    m_dumpFullScreenOrigin = false;
     m_waitBeforeFinishingFullscreenExit = false;
     m_scrollDuringEnterFullscreen = false;
     if (m_finishExitFullscreenHandler)
         m_finishExitFullscreenHandler();
+
+    m_tooltipCallbacks.clear();
+    m_beginSwipeCallbacks.clear();
+    m_willEndSwipeCallbacks.clear();
+    m_didEndSwipeCallbacks.clear();
+    m_didRemoveSwipeSnapshotCallbacks.clear();
+    m_uiScriptCallbacks.clear();
 
     return m_doneResetting;
 }
@@ -1550,7 +1653,7 @@ void TestController::updateLiveDocumentsAfterTest()
 
     AsyncTask([]() {
         // After each test, we update the list of live documents so that we can detect when an abandoned document first showed up.
-        WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), toWK("GetLiveDocuments").get(), nullptr);
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), toWK("GetLiveDocuments").get(), nullptr);
     }, 5_s).run();
 }
 
@@ -1782,6 +1885,936 @@ void TestController::configureViewForTest(const TestInvocation& test)
     updateWindowScaleForTest(mainWebView(), test);
     configureContentExtensionForTest(test);
     platformConfigureViewForTest(test);
+    installUserScript(test);
+}
+
+static WKFindOptions findOptionsFromArray(WKArrayRef array)
+{
+    auto length = WKArrayGetSize(array);
+    WKFindOptions options { };
+    for (unsigned i = 0; i < length; ++i) {
+        WKStringRef optionName = dynamic_wk_cast<WKStringRef>(WKArrayGetItemAtIndex(array, i));
+        if (WKStringIsEqualToUTF8CString(optionName, "CaseInsensitive"))
+            options |= kWKFindOptionsCaseInsensitive;
+        else if (WKStringIsEqualToUTF8CString(optionName, "AtWordStarts"))
+            options |= kWKFindOptionsAtWordStarts;
+        else if (WKStringIsEqualToUTF8CString(optionName, "TreatMedialCapitalAsWordStart"))
+            options |= kWKFindOptionsTreatMedialCapitalAsWordStart;
+        else if (WKStringIsEqualToUTF8CString(optionName, "Backwards"))
+            options |= kWKFindOptionsBackwards;
+        else if (WKStringIsEqualToUTF8CString(optionName, "WrapAround"))
+            options |= kWKFindOptionsWrapAround;
+        // FIXME: No kWKFindOptionsStartInSelection.
+    }
+    return options;
+}
+
+static void adoptAndCallCompletionHandler(void* context)
+{
+    auto completionHandler = WTF::adopt(static_cast<CompletionHandler<void(WKTypeRef)>::Impl*>(context));
+    completionHandler(nullptr);
+}
+
+struct UIScriptInvocationData {
+    UIScriptInvocationData(unsigned callbackID, WebKit::WKRetainPtr<WKStringRef>&& scriptString, WeakPtr<TestInvocation>&& testInvocation)
+        : callbackID(callbackID)
+        , scriptString(WTFMove(scriptString))
+        , testInvocation(WTFMove(testInvocation)) { }
+
+    unsigned callbackID;
+    WebKit::WKRetainPtr<WKStringRef> scriptString;
+    WeakPtr<TestInvocation> testInvocation;
+
+    static unsigned nextCallbackID;
+};
+
+unsigned UIScriptInvocationData::nextCallbackID { 1 };
+
+static void runUISideScriptImmediately(void* context)
+{
+    UIScriptInvocationData* data = static_cast<UIScriptInvocationData*>(context);
+    if (TestInvocation* invocation = data->testInvocation.get()) {
+        RELEASE_ASSERT(TestController::singleton().isCurrentInvocation(invocation));
+        invocation->runUISideScript(data->scriptString.get(), data->callbackID);
+    }
+    delete data;
+};
+
+void TestController::uiScriptDidComplete(const String& result, unsigned scriptCallbackID)
+{
+    m_uiScriptCallbacks.get(scriptCallbackID).notifyListeners(toWK(result).get());
+}
+
+constexpr auto eventSenderJS = R"eventSenderJS(
+if (window.eventSender) {
+    let post = window.webkit.messageHandlers.webkitTestRunner.postMessage.bind(window.webkit.messageHandlers.webkitTestRunner);
+
+    eventSender.asyncMouseDown = async (button, modifierArray, pointerType, callback) => { // NOLINT
+        await post(['AsyncMouseDown', button, modifierArray, pointerType]);
+        callback?.();
+    };
+    eventSender.asyncMouseUp = async (button, modifierArray, pointerType, callback) => { // NOLINT
+        await post(['AsyncMouseUp', button, modifierArray, pointerType]);
+        callback?.();
+    };
+    eventSender.asyncMouseMoveTo = async (x, y, pointerType, callback) => { // NOLINT
+        await post(['AsyncMouseMoveTo', x, y, pointerType]);
+        callback?.();
+    };
+}
+)eventSenderJS";
+
+constexpr auto testRunnerJS = R"testRunnerJS(
+if (window.testRunner) {
+    let post = window.webkit.messageHandlers.webkitTestRunner.postMessage.bind(window.webkit.messageHandlers.webkitTestRunner);
+    let createHandle = (object) => object ? window.webkit.createJSHandle(object) : undefined;
+
+    testRunner.installTooltipDidChangeCallback = callback => post(['InstallTooltipCallback', createHandle(callback)]);
+    testRunner.installDidBeginSwipeCallback = callback => post(['InstallBeginSwipeCallback', createHandle(callback)]);
+    testRunner.installWillEndSwipeCallback = callback => post(['InstallWillEndSwipeCallback', createHandle(callback)]);
+    testRunner.installDidEndSwipeCallback = callback => post(['InstallDidEndSwipeCallback', createHandle(callback)]);
+    testRunner.installDidRemoveSwipeSnapshotCallback = callback => post(['InstallDidRemoveSwipeSnapshotCallback', createHandle(callback)]);
+    testRunner.findString = (target, options) => post(['FindString', target, options]);
+    testRunner.runUIScript = (script, callback) => post(['RunUIScript', script, createHandle(callback)]);
+    testRunner.runUIScriptImmediately = (script, callback) => post(['RunUIScriptImmediately', script, createHandle(callback)]);
+    testRunner.getApplicationManifestThen = async (callback) => { await post(['GetApplicationManifest']); callback() }; // NOLINT
+    testRunner.scrollDuringEnterFullscreen = () => post(['ScrollDuringEnterFullscreen']);
+    testRunner.waitBeforeFinishingFullscreenExit = () => post(['WaitBeforeFinishingFullscreenExit']);
+    testRunner.finishFullscreenExit = () => post(['FinishFullscreenExit']);
+    testRunner.requestExitFullscreenFromUIProcess = () => post(['RequestExitFullscreenFromUIProcess']);
+    testRunner.keyExistsInKeychain = (attrLabel, applicationLabelBase64) => post(['KeyExistsInKeychain', attrLabel, applicationLabelBase64]);
+    testRunner.indicateFindMatch = index => post(['IndicateFindMatch', index]);
+    testRunner.setShouldLogDownloadCallbacks = value => post(['SetShouldLogDownloadCallbacks', value]);
+    testRunner.setShouldLogDownloadSize = value => post(['SetShouldLogDownloadSize', value]);
+    testRunner.setShouldLogDownloadExpectedSize = value => post(['SetShouldLogDownloadExpectedSize', value]);
+    testRunner.setShouldDownloadContentDispositionAttachments = value => post(['SetShouldDownloadContentDispositionAttachments', value]);
+    testRunner.setShouldDecideNavigationPolicyAfterDelay = value => post(['SetShouldDecideNavigationPolicyAfterDelay', value]);
+    testRunner.setShouldDecideResponsePolicyAfterDelay = value => post(['SetShouldDecideResponsePolicyAfterDelay', value]);
+    testRunner.setNavigationGesturesEnabled = value => post(['SetNavigationGesturesEnabled', value]);
+    testRunner.setIgnoresViewportScaleLimits = value => post(['SetIgnoresViewportScaleLimits', value]);
+    testRunner.setUseDarkAppearanceForTesting = value => post(['SetUseDarkAppearanceForTesting', value]);
+    testRunner.setShouldDownloadUndisplayableMIMETypes = value => post(['SetShouldDownloadUndisplayableMIMETypes', value]);
+    testRunner.setShouldAllowDeviceOrientationAndMotionAccess = value => post(['SetShouldAllowDeviceOrientationAndMotionAccess', value]);
+    testRunner.setRejectsProtectionSpaceAndContinueForAuthenticationChallenges = value => post(['SetRejectsProtectionSpaceAndContinueForAuthenticationChallenges', value]);
+    testRunner.setHandlesAuthenticationChallenges = value => post(['SetHandlesAuthenticationChallenges', value]);
+    testRunner.setShouldLogCanAuthenticateAgainstProtectionSpace = value => post(['SetShouldLogCanAuthenticateAgainstProtectionSpace', value]);
+    testRunner.setBlockAllPlugins = value => post(['SetBlockAllPlugins', value]);
+    testRunner.stopLoading = () => post(['StopLoading']);
+    testRunner.dumpFullScreenCallbacks = () => post(['DumpFullScreenCallbacks']);
+    testRunner.dumpFullScreenOrigin = () => post(['DumpFullScreenOrigin']);
+    testRunner.displayAndTrackRepaints = () => post(['DisplayAndTrackRepaints']);
+    testRunner.clearBackForwardList = () => post(['ClearBackForwardList']);
+    testRunner.addChromeInputField = async (callback) => { await post(['AddChromeInputField']); callback?.(); }; // NOLINT
+    testRunner.removeChromeInputField = async (callback) => { await post(['RemoveChromeInputField']); callback?.(); }; // NOLINT
+    testRunner.setTextInChromeInputField = async (text, callback) => { await post(['SetTextInChromeInputField', text]); callback?.(); }; // NOLINT
+    testRunner.selectChromeInputField = async (callback) => { await post(['SelectChromeInputField']); callback?.(); }; // NOLINT
+    testRunner.getSelectedTextInChromeInputField = async (callback) => { const result = await post(['GetSelectedTextInChromeInputField']); callback?.(result); }; // NOLINT
+    testRunner.focusWebView = async (callback) => { await post(['FocusWebView']); callback?.(); }; // NOLINT
+    testRunner.setBackingScaleFactor = async (value, callback) => { await post(['SetBackingScaleFactor', value]); callback?.(); }; // NOLINT
+    testRunner.removeAllCookies = async (callback) => { await post(['RemoveAllCookies']); callback?.(); }; // NOLINT
+    testRunner.setStatisticsDebugMode = async (value, callback) => { // NOLINT
+        await post(['SetStatisticsDebugMode', value]);
+        callback?.();
+    };
+    testRunner.setStatisticsPrevalentResourceForDebugMode = async (hostName, callback) => { // NOLINT
+        await post(['SetStatisticsPrevalentResourceForDebugMode', hostName]);
+        callback?.();
+    };
+    testRunner.setStatisticsLastSeen = (hostName, seconds) => post(['SetStatisticsLastSeen', { HostName: hostName, Value: seconds }]);
+    testRunner.setStatisticsMergeStatistic = async (hostName, topFrameDomain1, topFrameDomain2, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, callback) => { // NOLINT
+        await post(['SetStatisticsMergeStatistic', {
+            HostName: hostName,
+            TopFrameDomain1: topFrameDomain1,
+            TopFrameDomain2: topFrameDomain2,
+            LastSeen: lastSeen,
+            HadUserInteraction: hadUserInteraction,
+            MostRecentUserInteraction: mostRecentUserInteraction,
+            IsGrandfathered: isGrandfathered,
+            IsPrevalent: isPrevalent,
+            IsVeryPrevalent: isVeryPrevalent,
+            DataRecordsRemoved: dataRecordsRemoved
+        }]);
+        callback?.();
+    };
+    testRunner.setStatisticsExpiredStatistic = async (hostName, numberOfOperatingDaysPassed, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent, callback) => { // NOLINT
+        await post(['SetStatisticsExpiredStatistic', {
+            HostName: hostName,
+            NumberOfOperatingDaysPassed: numberOfOperatingDaysPassed,
+            HadUserInteraction: hadUserInteraction,
+            IsScheduledForAllButCookieDataRemoval: isScheduledForAllButCookieDataRemoval,
+            IsPrevalent: isPrevalent
+        }]);
+        callback?.();
+    };
+    testRunner.setStatisticsPrevalentResource = async (hostName, value, callback) => { // NOLINT
+        await post(['SetStatisticsPrevalentResource', {
+            HostName: hostName,
+            Value: value
+        }]);
+        callback?.();
+    };
+    testRunner.setStatisticsVeryPrevalentResource = async (hostName, value, callback) => { // NOLINT
+        await post(['SetStatisticsVeryPrevalentResource', {
+            HostName: hostName,
+            Value: value
+        }]);
+        callback?.();
+    };
+    testRunner.setStatisticsHasHadUserInteraction = async (hostName, value, callback) => { // NOLINT
+        await post(['SetStatisticsHasHadUserInteraction', {
+            HostName: hostName,
+            Value: value
+        }]);
+        callback?.();
+    };
+    testRunner.statisticsProcessStatisticsAndDataRecords = async () => { // NOLINT
+        await post(['StatisticsProcessStatisticsAndDataRecords']);
+    };
+    testRunner.statisticsUpdateCookieBlocking = async (callback) => { // NOLINT
+        await post(['StatisticsUpdateCookieBlocking']);
+        callback?.();
+    };
+    testRunner.statisticsClearInMemoryAndPersistentStoreModifiedSinceHours = async (hours, callback) => { // NOLINT
+        await post(['StatisticsClearInMemoryAndPersistentStore', hours]);
+        callback?.();
+    };
+    testRunner.statisticsClearInMemoryAndPersistentStore = async (callback) => { // NOLINT
+        await post(['StatisticsClearInMemoryAndPersistentStore']);
+        callback?.();
+    };
+    testRunner.statisticsClearThroughWebsiteDataRemoval = async (callback) => { // NOLINT
+        await post(['StatisticsClearThroughWebsiteDataRemoval']);
+        callback?.();
+    };
+    testRunner.statisticsDeleteCookiesForHost = async (hostName, includeHttpOnlyCookies, callback) => { // NOLINT
+        await post(['StatisticsDeleteCookiesForHost', { HostName: hostName, IncludeHttpOnlyCookies: includeHttpOnlyCookies }]);
+        callback?.();
+    };
+    testRunner.setStatisticsShouldDowngradeReferrer = async (value, callback) => { // NOLINT
+        await post(['SetStatisticsShouldDowngradeReferrer', value]);
+        callback?.();
+    };
+    testRunner.setStatisticsShouldBlockThirdPartyCookies = async (value, callback, onlyOnSitesWithoutUserInteraction, onlyUnpartitionedCookies) => { // NOLINT
+        let message = 'SetStatisticsShouldBlockThirdPartyCookies';
+        if (onlyOnSitesWithoutUserInteraction || onlyUnpartitionedCookies)
+            message = 'SetStatisticsShouldBlockThirdPartyCookiesOnSitesWithoutUserInteraction';
+        else if (onlyUnpartitionedCookies)
+            message = 'SetStatisticsShouldBlockThirdPartyCookiesExceptPartitioned';
+        await post([message, value]);
+        callback?.();
+    };
+    testRunner.setStatisticsFirstPartyWebsiteDataRemovalMode = async (value, callback) => { // NOLINT
+        await post(['SetStatisticsFirstPartyWebsiteDataRemovalMode', value]);
+        callback?.();
+    };
+    testRunner.statisticsSetToSameSiteStrictCookies = async (hostName, callback) => { // NOLINT
+        await post(['StatisticsSetToSameSiteStrictCookies', hostName]);
+        callback?.();
+    };
+    testRunner.statisticsSetFirstPartyHostCNAMEDomain = async (firstPartURL, cnameURLString, callback) => { // NOLINT
+        await post(['StatisticsSetFirstPartyHostCNAMEDomain', { FirstPartyURL: firstPartURL, CNAME: cnameURLString }]);
+        callback?.();
+    };
+    testRunner.statisticsSetThirdPartyCNAMEDomain = async (cnameURLString, callback) => { // NOLINT
+        await post(['StatisticsSetThirdPartyCNAMEDomain', cnameURLString]);
+        callback?.();
+    };
+    testRunner.statisticsResetToConsistentState = async (callback) => { // NOLINT
+        await post(['StatisticsResetToConsistentState']);
+        callback?.();
+    };
+    testRunner.getAllStorageAccessEntries = async (callback) => { // NOLINT
+        const entries = await post(['GetAllStorageAccessEntries']);
+        callback?.(entries);
+    };
+    testRunner.setStorageAccessPermission = async (granted, subFrameURL, callback) => { // NOLINT
+        await post(['SetStorageAccessPermission', { Value: granted, SubFrameURL: subFrameURL }]);
+        callback?.();
+    };
+    testRunner.setStorageAccess = async (blocked, callback) => { // NOLINT
+        await post(['SetStorageAccess', blocked]);
+        callback?.();
+    };
+    testRunner.loadedSubresourceDomains = async (callback) => { // NOLINT
+        const arrays = await post(['LoadedSubresourceDomains']);
+        callback?.(arrays);
+    };
+    testRunner.removeAllSessionCredentials = async (callback) => { // NOLINT
+        await post(['RemoveAllSessionCredentials']);
+        callback?.();
+    };
+    testRunner.takeViewPortSnapshot = async (callback) => { // NOLINT
+        const snapshot = await post(['TakeViewPortSnapshot']);
+        callback?.(snapshot);
+    };
+    testRunner.flushConsoleLogs = () => post(['FlushConsoleLogs']);
+    testRunner.updatePresentation = () => post(['UpdatePresentation']);
+    testRunner.setPageScaleFactor = (scaleFactor, x, y) => post(['SetPageScaleFactor', { scaleFactor: scaleFactor, x: x, y: y }]);
+    testRunner.getAndClearReportedWindowProxyAccessDomains = async (callback) => { // NOLINT
+        const domains = await post(['GetAndClearReportedWindowProxyAccessDomains']);
+        callback?.(domains);
+    };
+    testRunner.setObscuredContentInsets = (top, right, bottom, left) => post(['SetObscuredContentInsets', [top, right, bottom, left]]);
+    testRunner.setResourceMonitorList = (rulesText) => post(['SetResourceMonitorList', rulesText]);
+    testRunner.findStringMatchesInPage = (target, options) => post(['FindStringMatches', { String: target, FindOptions: options }]);
+    testRunner.setAuthenticationUsername = username => post(['SetAuthenticationUsername', username]);
+    testRunner.setAuthenticationPassword = password => post(['SetAuthenticationPassword', password]);
+    testRunner.setPluginSupportedMode = mode => post(['SetPluginSupportedMode', mode]);
+    testRunner.setAllowedMenuActions = actions => post(['SetAllowedMenuActions', actions]);
+    testRunner.setOpenPanelFiles = files => post(['SetOpenPanelFileURLs', files]);
+    testRunner.setOpenPanelFilesMediaIcon = iconBytes => post(['SetOpenPanelFileURLsMediaIcon', iconBytes]);
+    testRunner.setAppBoundDomains = async (domains, callback) => { // NOLINT
+        await post(['SetAppBoundDomains', domains]);
+        callback?.();
+    }
+    testRunner.setManagedDomains = async (domains, callback) => { // NOLINT
+        await post(['SetManagedDomains', domains]);
+        callback?.();
+    }
+}
+)testRunnerJS";
+
+static WKRetainPtr<WKArrayRef> WKURLArrayFromWKStringArray(const WKTypeRef array)
+{
+    const auto stringArray = arrayValue(array);
+    auto urlArray = adoptWK(WKMutableArrayCreate());
+    const auto length = WKArrayGetSize(stringArray);
+    for (size_t i = 0; i < length; i++) {
+        const auto str = WKArrayGetItemAtIndex(stringArray, i);
+        const auto cstr = toWTFString(stringValue(str)).utf8().data();
+        WKArrayAppendItem(urlArray.get(), adoptWK(WKURLCreateWithUTF8CString(cstr)).get());
+    }
+
+    return urlArray;
+}
+
+static WKEventModifiers parseModifier(WKStringRef modifier)
+{
+    if (WKStringIsEqualToUTF8CString(modifier, "ctrlKey"))
+        return kWKEventModifiersControlKey;
+    if (WKStringIsEqualToUTF8CString(modifier, "shiftKey") || WKStringIsEqualToUTF8CString(modifier, "rangeSelectionKey"))
+        return kWKEventModifiersShiftKey;
+    if (WKStringIsEqualToUTF8CString(modifier, "altKey"))
+        return kWKEventModifiersAltKey;
+    if (WKStringIsEqualToUTF8CString(modifier, "metaKey"))
+        return kWKEventModifiersMetaKey;
+    if (WKStringIsEqualToUTF8CString(modifier, "capsLockKey"))
+        return kWKEventModifiersCapsLockKey;
+    if (WKStringIsEqualToUTF8CString(modifier, "addSelectionKey")) {
+#if OS(MACOS)
+        return kWKEventModifiersMetaKey;
+#else
+        return kWKEventModifiersControlKey;
+#endif
+    }
+    return 0;
+}
+
+static WKEventModifiers parseModifierArray(WKArrayRef array)
+{
+    if (!array)
+        return 0;
+
+    if (const auto str = dynamic_wk_cast<WKStringRef>(array))
+        return parseModifier(str);
+
+    WKEventModifiers modifiers = 0;
+    const auto length = WKArrayGetSize(array);
+    for (size_t i = 0; i < length; i++) {
+        const auto modifierStr = WKArrayGetItemAtIndex(array, i);
+        modifiers |= parseModifier(stringValue(modifierStr));
+    }
+
+    return modifiers;
+}
+
+void TestController::didReceiveScriptMessage(WKScriptMessageRef message, WKCompletionListenerRef listener, const void *)
+{
+    TestController::singleton().didReceiveScriptMessage(message, [listener = WKRetainPtr { listener }] (WKTypeRef result) {
+        WKCompletionListenerComplete(listener.get(), result);
+    });
+}
+
+static WKRetainPtr<WKURLRef> makeOpenPanelURL(WKURLRef baseURL, const char* filePath)
+{
+#if OS(WINDOWS)
+    if (!PathIsRelativeA(filePath)) {
+        char fileURI[INTERNET_MAX_PATH_LENGTH];
+        DWORD fileURILength = INTERNET_MAX_PATH_LENGTH;
+        UrlCreateFromPathA(filePath, fileURI, &fileURILength, 0);
+        return adoptWK(WKURLCreateWithUTF8CString(fileURI));
+    }
+#else
+    WKRetainPtr<WKURLRef> fileURL;
+    if (filePath[0] == '/') {
+        fileURL = adoptWK(WKURLCreateWithUTF8CString("file://"));
+        baseURL = fileURL.get();
+    }
+#endif
+    return adoptWK(WKURLCreateWithBaseURL(baseURL, filePath));
+}
+
+void TestController::didReceiveScriptMessage(WKScriptMessageRef message, CompletionHandler<void(WKTypeRef)>&& completionHandler)
+{
+    if (m_state != RunningTest)
+        return completionHandler(nullptr);
+
+    WKTypeRef messageBody = WKScriptMessageGetBody(message);
+    WKArrayRef array = dynamic_wk_cast<WKArrayRef>(messageBody);
+    WKStringRef command = (WKStringRef)WKArrayGetItemAtIndex(array, 0);
+    WKTypeRef argument = WKArrayGetSize(array) > 1 ? WKArrayGetItemAtIndex(array, 1) : nullptr;
+    WKTypeRef argument2 = WKArrayGetSize(array) > 2 ? WKArrayGetItemAtIndex(array, 2) : nullptr;
+    WKTypeRef argument3 = WKArrayGetSize(array) > 3 ? WKArrayGetItemAtIndex(array, 3) : nullptr;
+
+    if (WKStringIsEqualToUTF8CString(command, "FindString")) {
+        WKStringRef target = dynamic_wk_cast<WKStringRef>(argument);
+        WKArrayRef optionsArray = dynamic_wk_cast<WKArrayRef>(WKArrayGetItemAtIndex(array, 2));
+        WKFindOptions options = findOptionsFromArray(optionsArray);
+        return WKPageFindStringForTesting(mainWebView()->page(), completionHandler.leak(), target, options, 0, [] (bool found, void* context) {
+            auto completionHandler = WTF::adopt(static_cast<CompletionHandler<void(WKTypeRef)>::Impl*>(context));
+            completionHandler(adoptWK(WKBooleanCreate(found)).get());
+        });
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "RemoveAllCookies"))
+        return removeAllCookies(WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "AddChromeInputField")) {
+        mainWebView()->addChromeInputField();
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "RemoveChromeInputField")) {
+        mainWebView()->removeChromeInputField();
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetTextInChromeInputField")) {
+        mainWebView()->setTextInChromeInputField(toWTFString(stringValue(argument)));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SelectChromeInputField")) {
+        mainWebView()->selectChromeInputField();
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "GetSelectedTextInChromeInputField")) {
+        auto selectedText = mainWebView()->getSelectedTextInChromeInputField();
+        return completionHandler(toWK(selectedText).get());
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "FocusWebView")) {
+        mainWebView()->makeWebViewFirstResponder();
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetBackingScaleFactor")) {
+        WKPageSetCustomBackingScaleFactorWithCallback(TestController::singleton().mainWebView()->page(), doubleValue(argument), completionHandler.leak(), adoptAndCallCompletionHandler);
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "ClearBackForwardList"))
+        return WKPageClearBackForwardListForTesting(TestController::singleton().mainWebView()->page(), completionHandler.leak(), adoptAndCallCompletionHandler);
+
+    if (WKStringIsEqualToUTF8CString(command, "DisplayAndTrackRepaints"))
+        return WKPageDisplayAndTrackRepaintsForTesting(TestController::singleton().mainWebView()->page(), completionHandler.leak(), adoptAndCallCompletionHandler);
+
+    if (WKStringIsEqualToUTF8CString(command, "SetResourceMonitorList"))
+        return setResourceMonitorList(stringValue(argument), WTFMove(completionHandler));
+
+
+    if (WKStringIsEqualToUTF8CString(command, "SetPageScaleFactor")) {
+        auto argumentDictionary = dictionaryValue(argument);
+        auto scaleFactor = doubleValue(argumentDictionary, "scaleFactor");
+        auto x = doubleValue(argumentDictionary, "x");
+        auto y = doubleValue(argumentDictionary, "y");
+        return setPageScaleFactor(static_cast<float>(scaleFactor), static_cast<int>(x), static_cast<int>(y), WTFMove(completionHandler));
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetObscuredContentInsets")) {
+        auto insetValues = arrayValue(argument);
+        auto top = static_cast<float>(doubleValue(WKArrayGetItemAtIndex(insetValues, 0)));
+        auto right = static_cast<float>(doubleValue(WKArrayGetItemAtIndex(insetValues, 1)));
+        auto bottom = static_cast<float>(doubleValue(WKArrayGetItemAtIndex(insetValues, 2)));
+        auto left = static_cast<float>(doubleValue(WKArrayGetItemAtIndex(insetValues, 3)));
+        return WKPageSetObscuredContentInsetsForTesting(TestController::singleton().mainWebView()->page(), top, right, bottom, left, completionHandler.leak(), adoptAndCallCompletionHandler);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "UpdatePresentation"))
+        return updatePresentation(WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "FlushConsoleLogs"))
+        return completionHandler(nullptr);
+
+    if (WKStringIsEqualToUTF8CString(command, "GetAndClearReportedWindowProxyAccessDomains"))
+        return completionHandler(getAndClearReportedWindowProxyAccessDomains().get());
+
+    if (WKStringIsEqualToUTF8CString(command, "TakeViewPortSnapshot"))
+        return completionHandler(takeViewPortSnapshot().get());
+
+    if (WKStringIsEqualToUTF8CString(command, "SetStatisticsShouldBlockThirdPartyCookies"))
+        return setStatisticsShouldBlockThirdPartyCookies(booleanValue(argument), ThirdPartyCookieBlockingPolicy::All, WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "SetStatisticsShouldDowngradeReferrer"))
+        return setStatisticsShouldDowngradeReferrer(booleanValue(argument), WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "SetStatisticsFirstPartyWebsiteDataRemovalMode"))
+        return setStatisticsFirstPartyWebsiteDataRemovalMode(booleanValue(argument), WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "StatisticsSetToSameSiteStrictCookies"))
+        return setStatisticsToSameSiteStrictCookies(stringValue(argument), WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "StatisticsSetFirstPartyHostCNAMEDomain")) {
+        auto argumentDictionary = dictionaryValue(argument);
+        auto firstPartyURLString = stringValue(argumentDictionary, "FirstPartyURL");
+        auto cnameURLString = stringValue(argumentDictionary, "CNAME");
+        setStatisticsFirstPartyHostCNAMEDomain(firstPartyURLString, cnameURLString, WTFMove(completionHandler));
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "StatisticsSetThirdPartyCNAMEDomain"))
+        return setStatisticsThirdPartyCNAMEDomain(stringValue(argument), WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "LoadedSubresourceDomains"))
+        return loadedSubresourceDomains(WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "RemoveAllSessionCredentials"))
+        return TestController::singleton().removeAllSessionCredentials(WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "SetStorageAccessPermission")) {
+        auto argumentDictionary = dictionaryValue(argument);
+        auto value = booleanValue(argumentDictionary, "Value");
+        auto subFrameURL = stringValue(argumentDictionary, "SubFrameURL");
+        auto page = mainWebView()->page();
+        auto mainFrameURL = adoptWK(WKURLCopyString(WKPageCopyActiveURL(page)));
+        return WKWebsiteDataStoreSetStorageAccessPermissionForTesting(websiteDataStore(), page, value, mainFrameURL.get(), subFrameURL, completionHandler.leak(), adoptAndCallCompletionHandler);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetStorageAccess"))
+        return WKWebsiteDataStoreSetStorageAccessForTesting(websiteDataStore(), booleanValue(argument), completionHandler.leak(), adoptAndCallCompletionHandler);
+
+
+
+    if (WKStringIsEqualToUTF8CString(command, "GetAllStorageAccessEntries"))
+        return getAllStorageAccessEntries(WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "StatisticsResetToConsistentState")) {
+        protectedCurrentInvocation()->dumpResourceLoadStatisticsIfNecessary();
+        statisticsResetToConsistentState();
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "StatisticsDeleteCookiesForHost")) {
+        auto argumentDictionary = dictionaryValue(argument);
+        auto hostName = stringValue(argumentDictionary, "HostName");
+        auto includeHttpOnlyCookies = booleanValue(argumentDictionary, "IncludeHttpOnlyCookies");
+        return TestController::singleton().statisticsDeleteCookiesForHost(hostName, includeHttpOnlyCookies, WTFMove(completionHandler));
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "StatisticsClearInMemoryAndPersistentStore"))
+        return statisticsClearInMemoryAndPersistentStore(WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "StatisticsClearThroughWebsiteDataRemoval"))
+        return statisticsClearThroughWebsiteDataRemoval(WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "StatisticsClearInMemoryAndPersistentStoreModifiedSinceHours"))
+        return statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(uint64Value(argument), WTFMove(completionHandler));
+
+
+    if (WKStringIsEqualToUTF8CString(command, "StatisticsUpdateCookieBlocking"))
+        return statisticsUpdateCookieBlocking(WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "StatisticsProcessStatisticsAndDataRecords"))
+        return TestController::singleton().statisticsProcessStatisticsAndDataRecords(WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "SetStatisticsHasHadUserInteraction")) {
+        auto argumentDictionary = dictionaryValue(argument);
+        auto hostName = stringValue(argumentDictionary, "HostName");
+        auto value = booleanValue(argumentDictionary, "Value");
+        setStatisticsHasHadUserInteraction(hostName, value, WTFMove(completionHandler));
+        return;
+    }
+
+
+    if (WKStringIsEqualToUTF8CString(command, "SetStatisticsPrevalentResourceForDebugMode")) {
+        WKStringRef hostName = stringValue(argument);
+        setStatisticsPrevalentResourceForDebugMode(hostName, WTFMove(completionHandler));
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetStatisticsLastSeen")) {
+        auto argumentDictionary = dictionaryValue(argument);
+        auto hostName = stringValue(argumentDictionary, "HostName");
+        auto value = doubleValue(argumentDictionary, "Value");
+        setStatisticsLastSeen(hostName, value, WTFMove(completionHandler));
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetStatisticsMergeStatistic")) {
+        auto argumentDictionary = dictionaryValue(argument);
+        auto hostName = stringValue(argumentDictionary, "HostName");
+        auto topFrameDomain1 = stringValue(argumentDictionary, "TopFrameDomain1");
+        auto topFrameDomain2 = stringValue(argumentDictionary, "TopFrameDomain2");
+        auto lastSeen = doubleValue(argumentDictionary, "LastSeen");
+        auto hadUserInteraction = booleanValue(argumentDictionary, "HadUserInteraction");
+        auto mostRecentUserInteraction = doubleValue(argumentDictionary, "MostRecentUserInteraction");
+        auto isGrandfathered = booleanValue(argumentDictionary, "IsGrandfathered");
+        auto isPrevalent = booleanValue(argumentDictionary, "IsPrevalent");
+        auto isVeryPrevalent = booleanValue(argumentDictionary, "IsVeryPrevalent");
+        auto dataRecordsRemoved = uint64Value(argumentDictionary, "DataRecordsRemoved");
+        setStatisticsMergeStatistic(hostName, topFrameDomain1, topFrameDomain2, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, WTFMove(completionHandler));
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetStatisticsExpiredStatistic")) {
+        auto argumentDictionary = dictionaryValue(argument);
+        auto hostName = stringValue(argumentDictionary, "HostName");
+        auto numberOfOperatingDaysPassed = static_cast<uint64_t>(doubleValue(argumentDictionary, "NumberOfOperatingDaysPassed"));
+        auto hadUserInteraction = booleanValue(argumentDictionary, "HadUserInteraction");
+        auto isScheduledForAllButCookieDataRemoval = booleanValue(argumentDictionary, "IsScheduledForAllButCookieDataRemoval");
+        auto isPrevalent = booleanValue(argumentDictionary, "IsPrevalent");
+        setStatisticsExpiredStatistic(hostName, numberOfOperatingDaysPassed, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent, WTFMove(completionHandler));
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetStatisticsPrevalentResource")) {
+        auto argumentDictionary = dictionaryValue(argument);
+        auto hostName = stringValue(argumentDictionary, "HostName");
+        auto value = booleanValue(argumentDictionary, "Value");
+        setStatisticsPrevalentResource(hostName, value, WTFMove(completionHandler));
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetStatisticsVeryPrevalentResource")) {
+        auto argumentDictionary = dictionaryValue(argument);
+        auto hostName = stringValue(argumentDictionary, "HostName");
+        auto value = booleanValue(argumentDictionary, "Value");
+        setStatisticsVeryPrevalentResource(hostName, value, WTFMove(completionHandler));
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetStatisticsDebugMode"))
+        return setStatisticsDebugMode(booleanValue(argument), WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "InstallTooltipCallback")) {
+        m_tooltipCallbacks.append(dynamic_wk_cast<WKJSHandleRef>(argument));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "InstallBeginSwipeCallback")) {
+        m_beginSwipeCallbacks.append(dynamic_wk_cast<WKJSHandleRef>(argument));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "InstallWillEndSwipeCallback")) {
+        m_willEndSwipeCallbacks.append(dynamic_wk_cast<WKJSHandleRef>(argument));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "InstallDidEndSwipeCallback")) {
+        m_didEndSwipeCallbacks.append(dynamic_wk_cast<WKJSHandleRef>(argument));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "InstallDidRemoveSwipeSnapshotCallback")) {
+        m_didRemoveSwipeSnapshotCallbacks.append(dynamic_wk_cast<WKJSHandleRef>(argument));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "RunUIScript")) {
+        unsigned callbackID = UIScriptInvocationData::nextCallbackID++;
+        auto invocationData = new UIScriptInvocationData(callbackID, dynamic_wk_cast<WKStringRef>(argument), m_currentInvocation);
+        m_uiScriptCallbacks.add(callbackID, Callbacks { }).iterator->value.append(dynamic_wk_cast<WKJSHandleRef>(argument2));
+        WKPageCallAfterNextPresentationUpdate(mainWebView()->page(), invocationData, [] (WKErrorRef, void* context) {
+            runUISideScriptImmediately(context);
+        });
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "RunUIScriptImmediately")) {
+        unsigned callbackID = UIScriptInvocationData::nextCallbackID++;
+        auto invocationData = new UIScriptInvocationData(callbackID, dynamic_wk_cast<WKStringRef>(argument), m_currentInvocation);
+        m_uiScriptCallbacks.add(callbackID, Callbacks { }).iterator->value.append(dynamic_wk_cast<WKJSHandleRef>(argument2));
+        runUISideScriptImmediately(invocationData);
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "GetApplicationManifest"))
+        return WKPageGetApplicationManifest(mainWebView()->page(), completionHandler.leak(), adoptAndCallCompletionHandler);
+
+    if (WKStringIsEqualToUTF8CString(command, "IndicateFindMatch")) {
+        auto index = static_cast<uint32_t>(WKDoubleGetValue(static_cast<WKDoubleRef>(argument)));
+        WKPageIndicateFindMatch(mainWebView()->page(), index);
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "WaitBeforeFinishingFullscreenExit")) {
+        waitBeforeFinishingFullscreenExit();
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "ScrollDuringEnterFullscreen")) {
+        scrollDuringEnterFullscreen();
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "FinishFullscreenExit")) {
+        finishFullscreenExit();
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "RequestExitFullscreenFromUIProcess")) {
+        requestExitFullscreenFromUIProcess();
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "DumpFullScreenCallbacks")) {
+        dumpFullScreenCallbacks();
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "DumpFullScreenOrigin")) {
+        dumpFullScreenOrigin();
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "StopLoading")) {
+        WKPageStopLoading(mainWebView()->page());
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "KeyExistsInKeychain"))
+        return completionHandler(adoptWK(WKBooleanCreate(keyExistsInKeychain(toWTFString(argument), toWTFString(argument2)))).get());
+
+    if (WKStringIsEqualToUTF8CString(command, "SetShouldLogDownloadCallbacks")) {
+        m_shouldLogDownloadCallbacks = WKBooleanGetValue(dynamic_wk_cast<WKBooleanRef>(argument));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetShouldLogDownloadSize")) {
+        setShouldLogDownloadSize(WKBooleanGetValue(dynamic_wk_cast<WKBooleanRef>(argument)));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetShouldLogDownloadExpectedSize")) {
+        setShouldLogDownloadExpectedSize(WKBooleanGetValue(dynamic_wk_cast<WKBooleanRef>(argument)));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetShouldDownloadContentDispositionAttachments")) {
+        setShouldDownloadContentDispositionAttachments(WKBooleanGetValue(dynamic_wk_cast<WKBooleanRef>(argument)));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetShouldDecideNavigationPolicyAfterDelay")) {
+        setShouldDecideNavigationPolicyAfterDelay(WKBooleanGetValue(dynamic_wk_cast<WKBooleanRef>(argument)));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetShouldDecideResponsePolicyAfterDelay")) {
+        setShouldDecideResponsePolicyAfterDelay(WKBooleanGetValue(dynamic_wk_cast<WKBooleanRef>(argument)));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetNavigationGesturesEnabled")) {
+        setNavigationGesturesEnabled(WKBooleanGetValue(dynamic_wk_cast<WKBooleanRef>(argument)));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetIgnoresViewportScaleLimits")) {
+        setIgnoresViewportScaleLimits(WKBooleanGetValue(dynamic_wk_cast<WKBooleanRef>(argument)));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetUseDarkAppearanceForTesting")) {
+        setUseDarkAppearanceForTesting(WKBooleanGetValue(dynamic_wk_cast<WKBooleanRef>(argument)));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetShouldDownloadUndisplayableMIMETypes")) {
+        setShouldDownloadUndisplayableMIMETypes(WKBooleanGetValue(dynamic_wk_cast<WKBooleanRef>(argument)));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetShouldAllowDeviceOrientationAndMotionAccess")) {
+        setShouldAllowDeviceOrientationAndMotionAccess(WKBooleanGetValue(dynamic_wk_cast<WKBooleanRef>(argument)));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetRejectsProtectionSpaceAndContinueForAuthenticationChallenges")) {
+        setRejectsProtectionSpaceAndContinueForAuthenticationChallenges(WKBooleanGetValue(dynamic_wk_cast<WKBooleanRef>(argument)));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetHandlesAuthenticationChallenges")) {
+        setHandlesAuthenticationChallenges(WKBooleanGetValue(dynamic_wk_cast<WKBooleanRef>(argument)));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetShouldLogCanAuthenticateAgainstProtectionSpace")) {
+        m_shouldLogCanAuthenticateAgainstProtectionSpace = WKBooleanGetValue(dynamic_wk_cast<WKBooleanRef>(argument));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetBlockAllPlugins")) {
+        setBlockAllPlugins(WKBooleanGetValue(dynamic_wk_cast<WKBooleanRef>(argument)));
+        return completionHandler(nullptr);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetStatisticsShouldBlockThirdPartyCookiesOnSitesWithoutUserInteraction"))
+        return setStatisticsShouldBlockThirdPartyCookies(booleanValue(argument), ThirdPartyCookieBlockingPolicy::AllOnlyOnSitesWithoutUserInteraction, WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "SetStatisticsShouldBlockThirdPartyCookiesExceptPartitioned"))
+        return setStatisticsShouldBlockThirdPartyCookies(booleanValue(argument), ThirdPartyCookieBlockingPolicy::AllExceptPartitioned, WTFMove(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "FindStringMatches")) {
+        auto argumentDictionary = dictionaryValue(argument);
+        auto string = stringValue(argumentDictionary, "String");
+        auto findOptions = findOptionsFromArray(arrayValue(argumentDictionary, "FindOptions"));
+        WKPageFindStringMatches(TestController::singleton().mainWebView()->page(), string, findOptions, 0);
+        completionHandler(nullptr);
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetManagedDomains")) {
+        const auto urlArray = WKURLArrayFromWKStringArray(argument);
+        return setManagedDomains(urlArray.get(), WTFMove(completionHandler));
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetAppBoundDomains")) {
+        const auto urlArray = WKURLArrayFromWKStringArray(argument);
+        return setAppBoundDomains(urlArray.get(), WTFMove(completionHandler));
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetAuthenticationUsername")) {
+        WKStringRef username = stringValue(argument);
+        TestController::singleton().setAuthenticationUsername(toWTFString(username));
+        completionHandler(nullptr);
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetAuthenticationPassword")) {
+        WKStringRef password = stringValue(argument);
+        TestController::singleton().setAuthenticationPassword(toWTFString(password));
+        completionHandler(nullptr);
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetPluginSupportedMode")) {
+        WKStringRef mode = stringValue(argument);
+        TestController::singleton().setPluginSupportedMode(toWTFString(mode));
+        completionHandler(nullptr);
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetAllowedMenuActions")) {
+        auto argumentArray = dynamic_wk_cast<WKArrayRef>(argument);
+        auto size = WKArrayGetSize(argumentArray);
+        Vector<String> actions;
+        actions.reserveInitialCapacity(size);
+        for (size_t index = 0; index < size; ++index)
+            actions.append(toWTFString(stringValue(WKArrayGetItemAtIndex(argumentArray, index))));
+        TestController::singleton().setAllowedMenuActions(actions);
+        completionHandler(nullptr);
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetOpenPanelFileURLs")) {
+        const auto files = arrayValue(argument);
+        auto fileURLs = adoptWK(WKMutableArrayCreate());
+
+        const auto length = WKArrayGetSize(files);
+        for (size_t i = 0; i < length; i++) {
+            const auto file = WKArrayGetItemAtIndex(files, i);
+            const auto fileStr = toWTFString(dynamic_wk_cast<WKStringRef>(file)).utf8().data();
+            auto fileURL = makeOpenPanelURL(currentTestURL(), fileStr);
+            WKArrayAppendItem(fileURLs.get(), fileURL.get());
+        }
+
+        TestController::singleton().setOpenPanelFileURLs(fileURLs.get());
+        completionHandler(nullptr);
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetOpenPanelFileURLsMediaIcon")) {
+#if PLATFORM(IOS_FAMILY)
+        const auto dictionary = dynamic_wk_cast<WKDictionaryRef>(argument);
+        const auto keys = WKDictionaryCopyKeys(dictionary);
+        const auto length = WKArrayGetSize(keys);
+        Vector<unsigned char> bytes;
+        for (size_t i = 0; i < length; i++) {
+            const auto key = WKArrayGetItemAtIndex(keys, i);
+            const auto keyStr = toWTFString(stringValue(key)).utf8().data();
+            const auto intValue = doubleValue(dictionary, keyStr);
+            bytes.append(static_cast<unsigned char>(intValue));
+        }
+        WKDataRef data = WKDataCreate(bytes.begin(), bytes.size());
+        TestController::singleton().setOpenPanelFileURLsMediaIcon(data);
+#endif
+        completionHandler(nullptr);
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "AsyncMouseMoveTo")) {
+        const auto x = doubleValue(argument);
+        const auto y = doubleValue(argument2);
+        const auto pointerType = stringValue(argument3);
+
+        auto array = adoptWK(WKMutableArrayCreate());
+        WKArrayAppendItem(array.get(), argument);
+        WKArrayAppendItem(array.get(), argument2);
+        WKPagePostMessageToInjectedBundle(mainWebView()->page(), toWK("SetMousePosition").get(), array.get());
+
+        m_eventSenderProxy->mouseMoveTo(x, y, pointerType);
+        m_eventSenderProxy->waitForPendingMouseEvents();
+        completionHandler(nullptr);
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "AsyncMouseDown")) {
+        const auto button = static_cast<uint64_t>(doubleValue(argument));
+        const auto array = arrayValue(argument2);
+        const auto pointerType = stringValue(argument3);
+
+        m_eventSenderProxy->mouseDown(button, parseModifierArray(array), pointerType);
+        m_eventSenderProxy->waitForPendingMouseEvents();
+        completionHandler(nullptr);
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "AsyncMouseUp")) {
+        const auto button = static_cast<uint64_t>(doubleValue(argument));
+        const auto array = arrayValue(argument2);
+        const auto pointerType = stringValue(argument3);
+
+        m_eventSenderProxy->mouseUp(button, parseModifierArray(array), pointerType);
+        m_eventSenderProxy->waitForPendingMouseEvents();
+        completionHandler(nullptr);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+void TestController::installUserScript(const TestInvocation& test)
+{
+    WKRetainPtr configuration = adoptWK(WKPageCopyPageConfiguration(mainWebView()->page()));
+    WKRetainPtr controller = WKPageConfigurationGetUserContentController(configuration.get());
+    WKUserContentControllerRemoveAllUserScripts(controller.get());
+    WKUserContentControllerRemoveAllUserMessageHandlers(controller.get());
+
+    if (!test.options().shouldInjectTestRunner())
+        return;
+
+    constexpr bool forMainFrameOnly { false };
+    WKRetainPtr uiSenderScript = adoptWK(WKUserScriptCreateWithSource(toWK(eventSenderJS).get(), kWKInjectAtDocumentStart, forMainFrameOnly));
+    WKRetainPtr script = adoptWK(WKUserScriptCreateWithSource(toWK(testRunnerJS).get(), kWKInjectAtDocumentStart, forMainFrameOnly));
+
+    WKUserContentControllerAddUserScript(controller.get(), uiSenderScript.get());
+    WKUserContentControllerAddUserScript(controller.get(), script.get());
+
+    WKUserContentControllerAddScriptMessageHandler(controller.get(), toWK("webkitTestRunner").get(), didReceiveScriptMessage, nullptr);
 }
 
 #if ENABLE(CONTENT_EXTENSIONS) && !PLATFORM(COCOA)
@@ -1897,7 +2930,7 @@ bool TestController::runTest(const char* inputLine)
     auto command = parseInputLine(std::string(inputLine));
 
     m_state = RunningTest;
-    
+
     TestOptions options = testOptionsForTest(command);
 
     m_mainResourceURL = adoptWK(createTestURL(command.pathOrURL));
@@ -2031,11 +3064,6 @@ void TestController::didReceiveSynchronousPageMessageFromInjectedBundleWithListe
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody, listener);
 }
 
-void TestController::didReceiveAsyncPageMessageFromInjectedBundleWithListener(WKPageRef, WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef listener, const void* clientInfo)
-{
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveAsyncMessageFromInjectedBundle(messageName, messageBody, listener);
-}
-
 void TestController::networkProcessDidCrashWithDetails(WKContextRef context, WKProcessID processID, WKProcessTerminationReason reason, const void *clientInfo)
 {
     static_cast<TestController*>(const_cast<void*>(clientInfo))->networkProcessDidCrash(processID, reason);
@@ -2095,17 +3123,23 @@ void TestController::didReceiveLiveDocumentsList(WKArrayRef liveDocumentList)
 void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
 {
     if (WKStringIsEqualToUTF8CString(messageName, "LiveDocuments")) {
-        ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
-        didReceiveLiveDocumentsList(static_cast<WKArrayRef>(messageBody));
+        didReceiveLiveDocumentsList(dynamic_wk_cast<WKArrayRef>(messageBody));
         AsyncTask::currentTask()->taskComplete();
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "EventSender")) {
-        if (m_state != RunningTest)
+        if (m_state != RunningTest || !m_currentInvocation)
             return;
 
         auto dictionary = dictionaryValue(messageBody);
+        uint64_t testIdentifier = uint64Value(dictionary, "TestIdentifier");
+
+        // This EventSender message was meant for another test, discard it
+        // to prevent potential flakiness.
+        if (testIdentifier != m_currentInvocation->identifier())
+            return;
+
         auto subMessageName = stringValue(dictionary, "SubMessage");
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseDown")) {
@@ -2167,271 +3201,6 @@ RefPtr<TestInvocation> TestController::protectedCurrentInvocation()
     return m_currentInvocation;
 }
 
-static void adoptAndCallCompletionHandler(void* context)
-{
-    auto completionHandler = WTF::adopt(static_cast<CompletionHandler<void(WKTypeRef)>::Impl*>(context));
-    completionHandler(nullptr);
-}
-
-void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef listener)
-{
-    CompletionHandler<void(WKTypeRef)> completionHandler = [listener = retainWK(listener)] (WKTypeRef reply) {
-        WKMessageListenerSendReply(listener.get(), reply);
-    };
-
-    if (WKStringIsEqualToUTF8CString(messageName, "EventSender")) {
-        auto dictionary = dictionaryValue(messageBody);
-        auto subMessageName = stringValue(dictionary, "SubMessage");
-
-        if (WKStringIsEqualToUTF8CString(subMessageName, "MouseDown"))
-            m_eventSenderProxy->mouseDown(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"), stringValue(dictionary, "PointerType"));
-        else if (WKStringIsEqualToUTF8CString(subMessageName, "MouseUp"))
-            m_eventSenderProxy->mouseUp(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"), stringValue(dictionary, "PointerType"));
-        else if (WKStringIsEqualToUTF8CString(subMessageName, "MouseMoveTo"))
-            m_eventSenderProxy->mouseMoveTo(doubleValue(dictionary, "X"), doubleValue(dictionary, "Y"), stringValue(dictionary, "PointerType"));
-        else {
-            ASSERT_NOT_REACHED();
-            return completionHandler(nullptr);
-        }
-
-        m_eventSenderProxy->waitForPendingMouseEvents();
-        return completionHandler(nullptr);
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "FlushConsoleLogs"))
-        return completionHandler(nullptr);
-
-    if (WKStringIsEqualToUTF8CString(messageName, "UpdatePresentation"))
-        return updatePresentation(WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetPageScaleFactor")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto scaleFactor = doubleValue(messageBodyDictionary, "scaleFactor");
-        auto x = doubleValue(messageBodyDictionary, "x");
-        auto y = doubleValue(messageBodyDictionary, "y");
-        return setPageScaleFactor(static_cast<float>(scaleFactor), static_cast<int>(x), static_cast<int>(y), WTFMove(completionHandler));
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "GetAllStorageAccessEntries"))
-        return getAllStorageAccessEntries(WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "GetAndClearReportedWindowProxyAccessDomains"))
-        return completionHandler(getAndClearReportedWindowProxyAccessDomains().get());
-
-    if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllCookies"))
-        return removeAllCookies(WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "TakeViewPortSnapshot"))
-        return completionHandler(takeViewPortSnapshot().get());
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsDebugMode"))
-        return setStatisticsDebugMode(booleanValue(messageBody), WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsShouldBlockThirdPartyCookiesOnSitesWithoutUserInteraction"))
-        return setStatisticsShouldBlockThirdPartyCookies(booleanValue(messageBody), ThirdPartyCookieBlockingPolicy::AllOnlyOnSitesWithoutUserInteraction, WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsShouldBlockThirdPartyCookiesExceptPartitioned"))
-        return setStatisticsShouldBlockThirdPartyCookies(booleanValue(messageBody), ThirdPartyCookieBlockingPolicy::AllExceptPartitioned, WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsShouldBlockThirdPartyCookies"))
-        return setStatisticsShouldBlockThirdPartyCookies(booleanValue(messageBody), ThirdPartyCookieBlockingPolicy::All, WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsPrevalentResourceForDebugMode")) {
-        WKStringRef hostName = stringValue(messageBody);
-        setStatisticsPrevalentResourceForDebugMode(hostName, WTFMove(completionHandler));
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsLastSeen")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto hostName = stringValue(messageBodyDictionary, "HostName");
-        auto value = doubleValue(messageBodyDictionary, "Value");
-        setStatisticsLastSeen(hostName, value, WTFMove(completionHandler));
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsMergeStatistic")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto hostName = stringValue(messageBodyDictionary, "HostName");
-        auto topFrameDomain1 = stringValue(messageBodyDictionary, "TopFrameDomain1");
-        auto topFrameDomain2 = stringValue(messageBodyDictionary, "TopFrameDomain2");
-        auto lastSeen = doubleValue(messageBodyDictionary, "LastSeen");
-        auto hadUserInteraction = booleanValue(messageBodyDictionary, "HadUserInteraction");
-        auto mostRecentUserInteraction = doubleValue(messageBodyDictionary, "MostRecentUserInteraction");
-        auto isGrandfathered = booleanValue(messageBodyDictionary, "IsGrandfathered");
-        auto isPrevalent = booleanValue(messageBodyDictionary, "IsPrevalent");
-        auto isVeryPrevalent = booleanValue(messageBodyDictionary, "IsVeryPrevalent");
-        auto dataRecordsRemoved = uint64Value(messageBodyDictionary, "DataRecordsRemoved");
-        setStatisticsMergeStatistic(hostName, topFrameDomain1, topFrameDomain2, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, WTFMove(completionHandler));
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsExpiredStatistic")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto hostName = stringValue(messageBodyDictionary, "HostName");
-        auto numberOfOperatingDaysPassed = uint64Value(messageBodyDictionary, "NumberOfOperatingDaysPassed");
-        auto hadUserInteraction = booleanValue(messageBodyDictionary, "HadUserInteraction");
-        auto isScheduledForAllButCookieDataRemoval = booleanValue(messageBodyDictionary, "IsScheduledForAllButCookieDataRemoval");
-        auto isPrevalent = booleanValue(messageBodyDictionary, "IsPrevalent");
-        setStatisticsExpiredStatistic(hostName, numberOfOperatingDaysPassed, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent, WTFMove(completionHandler));
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsPrevalentResource")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto hostName = stringValue(messageBodyDictionary, "HostName");
-        auto value = booleanValue(messageBodyDictionary, "Value");
-        setStatisticsPrevalentResource(hostName, value, WTFMove(completionHandler));
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsVeryPrevalentResource")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto hostName = stringValue(messageBodyDictionary, "HostName");
-        auto value = booleanValue(messageBodyDictionary, "Value");
-        setStatisticsVeryPrevalentResource(hostName, value, WTFMove(completionHandler));
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsClearInMemoryAndPersistentStore"))
-        return statisticsClearInMemoryAndPersistentStore(WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsClearThroughWebsiteDataRemoval"))
-        return statisticsClearThroughWebsiteDataRemoval(WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsClearInMemoryAndPersistentStoreModifiedSinceHours"))
-        return statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(uint64Value(messageBody), WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsShouldDowngradeReferrer"))
-        return setStatisticsShouldDowngradeReferrer(booleanValue(messageBody), WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsFirstPartyWebsiteDataRemovalMode"))
-        return setStatisticsFirstPartyWebsiteDataRemovalMode(booleanValue(messageBody), WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetToSameSiteStrictCookies"))
-        return setStatisticsToSameSiteStrictCookies(stringValue(messageBody), WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetFirstPartyHostCNAMEDomain")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto firstPartyURLString = stringValue(messageBodyDictionary, "FirstPartyURL");
-        auto cnameURLString = stringValue(messageBodyDictionary, "CNAME");
-        setStatisticsFirstPartyHostCNAMEDomain(firstPartyURLString, cnameURLString, WTFMove(completionHandler));
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetThirdPartyCNAMEDomain"))
-        return setStatisticsThirdPartyCNAMEDomain(stringValue(messageBody), WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsHasHadUserInteraction")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto hostName = stringValue(messageBodyDictionary, "HostName");
-        auto value = booleanValue(messageBodyDictionary, "Value");
-        setStatisticsHasHadUserInteraction(hostName, value, WTFMove(completionHandler));
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsUpdateCookieBlocking"))
-        return statisticsUpdateCookieBlocking(WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsResetToConsistentState")) {
-        protectedCurrentInvocation()->dumpResourceLoadStatisticsIfNecessary();
-        statisticsResetToConsistentState();
-        return completionHandler(nullptr);
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsDeleteCookiesForHost")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto hostName = stringValue(messageBodyDictionary, "HostName");
-        auto includeHttpOnlyCookies = booleanValue(messageBodyDictionary, "IncludeHttpOnlyCookies");
-        return TestController::singleton().statisticsDeleteCookiesForHost(hostName, includeHttpOnlyCookies, WTFMove(completionHandler));
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsProcessStatisticsAndDataRecords"))
-        return TestController::singleton().statisticsProcessStatisticsAndDataRecords(WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "AddChromeInputField")) {
-        mainWebView()->addChromeInputField();
-        return completionHandler(nullptr);
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetTextInChromeInputField")) {
-        mainWebView()->setTextInChromeInputField(toWTFString(stringValue(messageBody)));
-        return completionHandler(nullptr);
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SelectChromeInputField")) {
-        mainWebView()->selectChromeInputField();
-        return completionHandler(nullptr);
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "GetSelectedTextInChromeInputField")) {
-        auto selectedText = mainWebView()->getSelectedTextInChromeInputField();
-        return completionHandler(toWK(selectedText).get());
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "FocusWebView")) {
-        mainWebView()->makeWebViewFirstResponder();
-        return completionHandler(nullptr);
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "LoadedSubresourceDomains"))
-        return loadedSubresourceDomains(WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "GetApplicationManifest")) {
-        WKPageGetApplicationManifest(mainWebView()->page(), completionHandler.leak(), adoptAndCallCompletionHandler);
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "RemoveChromeInputField")) {
-        mainWebView()->removeChromeInputField();
-        return completionHandler(nullptr);
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetManagedDomains"))
-        return setManagedDomains(arrayValue(messageBody), WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetAppBoundDomains"))
-        return setAppBoundDomains(arrayValue(messageBody), WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetBackingScaleFactor")) {
-        WKPageSetCustomBackingScaleFactorWithCallback(TestController::singleton().mainWebView()->page(), doubleValue(messageBody), completionHandler.leak(), adoptAndCallCompletionHandler);
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllSessionCredentials"))
-        return TestController::singleton().removeAllSessionCredentials(WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetObscuredContentInsets")) {
-        auto insetValues = arrayValue(messageBody);
-        auto top = static_cast<float>(doubleValue(WKArrayGetItemAtIndex(insetValues, 0)));
-        auto right = static_cast<float>(doubleValue(WKArrayGetItemAtIndex(insetValues, 1)));
-        auto bottom = static_cast<float>(doubleValue(WKArrayGetItemAtIndex(insetValues, 2)));
-        auto left = static_cast<float>(doubleValue(WKArrayGetItemAtIndex(insetValues, 3)));
-        return WKPageSetObscuredContentInsetsForTesting(TestController::singleton().mainWebView()->page(), top, right, bottom, left, completionHandler.leak(), adoptAndCallCompletionHandler);
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "ClearBackForwardList"))
-        return WKPageClearBackForwardListForTesting(TestController::singleton().mainWebView()->page(), completionHandler.leak(), adoptAndCallCompletionHandler);
-
-    if (WKStringIsEqualToUTF8CString(messageName, "DisplayAndTrackRepaints"))
-        return WKPageDisplayAndTrackRepaintsForTesting(TestController::singleton().mainWebView()->page(), completionHandler.leak(), adoptAndCallCompletionHandler);
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetResourceMonitorList"))
-        return setResourceMonitorList(stringValue(messageBody), WTFMove(completionHandler));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "FindString")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto string = stringValue(messageBodyDictionary, "String");
-        auto findOptions = static_cast<WKFindOptions>(uint64Value(messageBodyDictionary, "FindOptions"));
-        return WKPageFindStringForTesting(TestController::singleton().mainWebView()->page(), completionHandler.leak(), string, findOptions, 0, [](bool found, void* context) {
-            auto completionHandler = WTF::adopt(static_cast<CompletionHandler<void(WKTypeRef)>::Impl*>(context));
-            completionHandler(WKBooleanCreate(found));
-        });
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
 void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef listener)
 {
     auto completionHandler = [listener = retainWK(listener)] (WKTypeRef reply) {
@@ -2439,10 +3208,17 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
     };
 
     if (WKStringIsEqualToUTF8CString(messageName, "EventSender")) {
-        if (m_state != RunningTest)
+        if (m_state != RunningTest || !m_currentInvocation)
             return completionHandler(nullptr);
 
         auto dictionary = dictionaryValue(messageBody);
+        uint64_t testIdentifier = uint64Value(dictionary, "TestIdentifier");
+
+        // This EventSender message was meant for another test, discard it
+        // to prevent potential flakiness.
+        if (testIdentifier != m_currentInvocation->identifier())
+            return completionHandler(nullptr);
+
         auto subMessageName = stringValue(dictionary, "SubMessage");
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "KeyDown")) {
@@ -3091,22 +3867,22 @@ void TestController::webProcessDidTerminate(WKProcessTerminationReason reason)
 
 void TestController::didBeginNavigationGesture(WKPageRef)
 {
-    protectedCurrentInvocation()->didBeginSwipe();
+    m_beginSwipeCallbacks.notifyListeners();
 }
 
 void TestController::willEndNavigationGesture(WKPageRef, WKBackForwardListItemRef)
 {
-    protectedCurrentInvocation()->willEndSwipe();
+    m_willEndSwipeCallbacks.notifyListeners();
 }
 
 void TestController::didEndNavigationGesture(WKPageRef, WKBackForwardListItemRef)
 {
-    protectedCurrentInvocation()->didEndSwipe();
+    m_didEndSwipeCallbacks.notifyListeners();
 }
 
 void TestController::didRemoveNavigationGestureSnapshot(WKPageRef)
 {
-    protectedCurrentInvocation()->didRemoveSwipeSnapshot();
+    m_didRemoveSwipeSnapshotCallbacks.notifyListeners();
 }
 
 void TestController::simulateWebNotificationClick(WKDataRef notificationID)
@@ -3408,7 +4184,14 @@ void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigatio
     WKRetainPtr<WKFramePolicyListenerRef> retainedListener { listener };
     WKRetainPtr<WKNavigationActionRef> retainedNavigationAction { navigationAction };
     const bool shouldIgnore { m_policyDelegateEnabled && !m_policyDelegatePermissive };
-    auto decisionFunction = [shouldIgnore, retainedListener, retainedNavigationAction, shouldSwapToEphemeralSessionOnNextNavigation = m_shouldSwapToEphemeralSessionOnNextNavigation, shouldSwapToDefaultSessionOnNextNavigation = m_shouldSwapToDefaultSessionOnNextNavigation]() {
+    auto decisionFunction = [
+        shouldIgnore,
+        retainedListener,
+        retainedNavigationAction,
+        shouldSwapToEphemeralSessionOnNextNavigation = m_shouldSwapToEphemeralSessionOnNextNavigation,
+        shouldSwapToDefaultSessionOnNextNavigation = m_shouldSwapToDefaultSessionOnNextNavigation,
+        page = WKRetainPtr { page }
+    ] {
         if (shouldIgnore)
             WKFramePolicyListenerIgnore(retainedListener.get());
         else if (WKNavigationActionShouldPerformDownload(retainedNavigationAction.get()))
@@ -3416,14 +4199,18 @@ void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigatio
         else {
             if (shouldSwapToEphemeralSessionOnNextNavigation || shouldSwapToDefaultSessionOnNextNavigation) {
                 ASSERT(shouldSwapToEphemeralSessionOnNextNavigation != shouldSwapToDefaultSessionOnNextNavigation);
-                auto policies = adoptWK(WKWebsitePoliciesCreate());
+                WKRetainPtr policies = adoptWK(WKWebsitePoliciesCreate());
+                WKWebsitePoliciesSetAllowsJSHandleCreationInPageWorld(policies.get(), true);
                 WKRetainPtr<WKWebsiteDataStoreRef> newSession = TestController::defaultWebsiteDataStore();
                 if (shouldSwapToEphemeralSessionOnNextNavigation)
                     newSession = adoptWK(WKWebsiteDataStoreCreateNonPersistentDataStore());
                 WKWebsitePoliciesSetDataStore(policies.get(), newSession.get());
                 WKFramePolicyListenerUseWithPolicies(retainedListener.get(), policies.get());
-            } else
-                WKFramePolicyListenerUse(retainedListener.get());
+            } else {
+                WKRetainPtr policies = WKPageConfigurationGetDefaultWebsitePolicies(adoptWK(WKPageCopyPageConfiguration(page.get())).get());
+                WKWebsitePoliciesSetAllowsJSHandleCreationInPageWorld(policies.get(), true);
+                WKFramePolicyListenerUseWithPolicies(retainedListener.get(), policies.get());
+            }
         }
     };
     m_shouldSwapToEphemeralSessionOnNextNavigation = false;
@@ -3454,7 +4241,7 @@ void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigatio
     }
 
     if (m_shouldDecideNavigationPolicyAfterDelay)
-        RunLoop::protectedMain()->dispatch(WTFMove(decisionFunction));
+        RunLoop::mainSingleton().dispatch(WTFMove(decisionFunction));
     else
         decisionFunction();
 }
@@ -3497,7 +4284,7 @@ void TestController::decidePolicyForNavigationResponse(WKNavigationResponseRef n
     }
 
     if (m_shouldDecideResponsePolicyAfterDelay)
-        RunLoop::protectedMain()->dispatch(WTFMove(decisionFunction));
+        RunLoop::mainSingleton().dispatch(WTFMove(decisionFunction));
     else
         decisionFunction();
 }
@@ -3598,7 +4385,7 @@ void TestController::setUseDarkAppearanceForTesting(bool useDarkAppearance)
 
 void TestController::terminateGPUProcess()
 {
-    WKContextTerminateGPUProcess(platformContext());
+    WKContextTerminateGPUProcess(context());
 }
 
 void TestController::terminateNetworkProcess()
@@ -3608,7 +4395,7 @@ void TestController::terminateNetworkProcess()
 
 void TestController::terminateServiceWorkers()
 {
-    WKContextTerminateServiceWorkers(platformContext());
+    WKContextTerminateServiceWorkers(context());
 }
 
 #if !PLATFORM(COCOA)
@@ -3632,12 +4419,6 @@ void TestController::platformCreateWebView(WKPageConfigurationRef configuration,
 UniqueRef<PlatformWebView> TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef configuration, const TestOptions& options)
 {
     return makeUniqueRef<PlatformWebView>(configuration, options);
-}
-
-WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef)
-{
-    m_preferences = adoptWK(WKPreferencesCreate());
-    return context;
 }
 
 unsigned TestController::imageCountInGeneralPasteboard() const
@@ -4304,27 +5085,27 @@ void TestController::removeAllCookies(CompletionHandler<void(WKTypeRef)>&& compl
 void TestController::addMockMediaDevice(WKStringRef persistentID, WKStringRef label, WKStringRef type, WKDictionaryRef properties)
 {
     bool isDefault = false;
-    WKAddMockMediaDevice(platformContext(), persistentID, label, type, properties, isDefault);
+    WKAddMockMediaDevice(context(), persistentID, label, type, properties, isDefault);
 }
 
 void TestController::clearMockMediaDevices()
 {
-    WKClearMockMediaDevices(platformContext());
+    WKClearMockMediaDevices(context());
 }
 
 void TestController::removeMockMediaDevice(WKStringRef persistentID)
 {
-    WKRemoveMockMediaDevice(platformContext(), persistentID);
+    WKRemoveMockMediaDevice(context(), persistentID);
 }
 
 void TestController::setMockMediaDeviceIsEphemeral(WKStringRef persistentID, bool isEphemeral)
 {
-    WKSetMockMediaDeviceIsEphemeral(platformContext(), persistentID, isEphemeral);
+    WKSetMockMediaDeviceIsEphemeral(context(), persistentID, isEphemeral);
 }
 
 void TestController::resetMockMediaDevices()
 {
-    WKResetMockMediaDevices(platformContext());
+    WKResetMockMediaDevices(context());
 }
 
 void TestController::setMockCameraOrientation(uint64_t rotation, WKStringRef persistentId)
@@ -4620,5 +5401,11 @@ void TestController::setResourceMonitorList(WKStringRef rulesText, CompletionHan
 {
     WKContextSetResourceMonitorURLsForTesting(m_context.get(), rulesText, completionHandler.leak(), adoptAndCallCompletionHandler);
 }
+
+#if !PLATFORM(IOS_FAMILY)
+void TestController::setHasMouseDeviceForTesting(bool)
+{
+}
+#endif
 
 } // namespace WTR

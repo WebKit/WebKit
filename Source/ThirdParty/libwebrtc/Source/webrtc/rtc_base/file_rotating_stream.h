@@ -13,14 +13,13 @@
 
 #include <stddef.h>
 
-#include <memory>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
 #include "rtc_base/system/file_wrapper.h"
 
-namespace rtc {
+namespace webrtc {
 
 // FileRotatingStream writes to a file in the directory specified in the
 // constructor. It rotates the files once the current file is full. The
@@ -91,7 +90,7 @@ class FileRotatingStream {
   const std::string file_prefix_;
 
   // File we're currently writing to.
-  webrtc::FileWrapper file_;
+  FileWrapper file_;
   // Convenience storage for file names so we don't generate them over and over.
   std::vector<std::string> file_names_;
   size_t max_file_size_;
@@ -168,6 +167,7 @@ class CallSessionFileRotatingStreamReader : public FileRotatingStreamReader {
   CallSessionFileRotatingStreamReader(absl::string_view dir_path);
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_FILE_ROTATING_STREAM_H_

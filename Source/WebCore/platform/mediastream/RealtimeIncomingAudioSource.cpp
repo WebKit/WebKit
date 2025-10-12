@@ -35,15 +35,15 @@
 
 #include "LibWebRTCAudioFormat.h"
 #include "LibWebRTCAudioModule.h"
+#include "LibWebRTCRefWrappers.h"
 #include "Logging.h"
 
 namespace WebCore {
 
-RealtimeIncomingAudioSource::RealtimeIncomingAudioSource(rtc::scoped_refptr<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
+RealtimeIncomingAudioSource::RealtimeIncomingAudioSource(Ref<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
     : RealtimeMediaSource(CaptureDevice { WTFMove(audioTrackId), CaptureDevice::DeviceType::Microphone, "remote audio"_s })
     , m_audioTrack(WTFMove(audioTrack))
 {
-    ASSERT(m_audioTrack);
     m_audioTrack->RegisterObserver(this);
 }
 

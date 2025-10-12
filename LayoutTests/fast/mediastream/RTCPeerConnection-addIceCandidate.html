@@ -101,6 +101,7 @@
             })
             .then(function () {
                 testPassed("End of test promise chain");
+                stream.getTracks().forEach(track => track.stop());
                 finishJSTest();
             })
             .catch(function (error) {

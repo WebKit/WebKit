@@ -106,7 +106,7 @@ void DecoderTest::RunLoop(CompressedVideoSource *video) {
 }
 
 void DecoderTest::set_cfg(const aom_codec_dec_cfg_t &dec_cfg) {
-  memcpy(&cfg_, &dec_cfg, sizeof(cfg_));
+  cfg_ = dec_cfg;
 }
 
 void DecoderTest::set_flags(const aom_codec_flags_t flags) { flags_ = flags; }

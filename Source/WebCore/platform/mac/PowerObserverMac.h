@@ -28,6 +28,7 @@
 
 #import <IOKit/IOMessage.h>
 #import <IOKit/pwr_mgt/IOPMLib.h>
+#import <wtf/CheckedRef.h>
 #import <wtf/Function.h>
 #import <wtf/Noncopyable.h>
 #import <wtf/OSObjectPtr.h>
@@ -35,20 +36,11 @@
 #import <wtf/WeakPtr.h>
 
 namespace WebCore {
-class PowerObserver;
-}
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PowerObserver> : std::true_type { };
-}
-
-namespace WebCore {
-
-class PowerObserver : public CanMakeWeakPtr<PowerObserver, WeakPtrFactoryInitialization::Eager> {
+class PowerObserver : public CanMakeWeakPtr<PowerObserver, WeakPtrFactoryInitialization::Eager>, public CanMakeCheckedPtr<PowerObserver> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(PowerObserver, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(PowerObserver);
-
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PowerObserver);
 public:
     WEBCORE_EXPORT PowerObserver(Function<void()>&& powerOnHander);
     WEBCORE_EXPORT ~PowerObserver();

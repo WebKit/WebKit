@@ -33,11 +33,11 @@ static NSInteger kARDTURNClientErrorBadResponse = -1;
 
 - (void)requestServersWithCompletionHandler:
     (void (^)(NSArray *turnServers, NSError *error))completionHandler {
-
   NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_url];
   [NSURLConnection
        sendAsyncRequest:request
-      completionHandler:^(NSURLResponse *response __unused, NSData *data, NSError *error) {
+      completionHandler:^(
+          NSURLResponse *response __unused, NSData *data, NSError *error) {
         if (error) {
           completionHandler(nil, error);
           return;
@@ -54,30 +54,36 @@ static NSInteger kARDTURNClientErrorBadResponse = -1;
 - (void)makeTurnServerRequestToURL:(NSURL *)url
              WithCompletionHandler:(void (^)(NSArray *turnServers,
                                              NSError *error))completionHandler {
-  NSMutableURLRequest *iceServerRequest = [NSMutableURLRequest requestWithURL:url];
+  NSMutableURLRequest *iceServerRequest =
+      [NSMutableURLRequest requestWithURL:url];
   iceServerRequest.HTTPMethod = @"POST";
-  [iceServerRequest addValue:kTURNRefererURLString forHTTPHeaderField:@"referer"];
+  [iceServerRequest addValue:kTURNRefererURLString
+          forHTTPHeaderField:@"referer"];
   [NSURLConnection
        sendAsyncRequest:iceServerRequest
-      completionHandler:^(NSURLResponse *response __unused, NSData *data, NSError *error) {
+      completionHandler:^(
+          NSURLResponse *response __unused, NSData *data, NSError *error) {
         if (error) {
           completionHandler(nil, error);
           return;
         }
-        NSDictionary *turnResponseDict = [NSDictionary dictionaryWithJSONData:data];
+        NSDictionary *turnResponseDict =
+            [NSDictionary dictionaryWithJSONData:data];
         NSMutableArray *turnServers = [NSMutableArray array];
         [turnResponseDict[@"iceServers"]
-            enumerateObjectsUsingBlock:^(
-                NSDictionary *obj, NSUInteger idx __unused, BOOL *stop __unused) {
-              [turnServers addObject:[RTC_OBJC_TYPE(RTCIceServer) serverFromJSONDictionary:obj]];
+            enumerateObjectsUsingBlock:^(NSDictionary *obj,
+                                         NSUInteger idx __unused,
+                                         BOOL *stop __unused) {
+              [turnServers addObject:[RTC_OBJC_TYPE(RTCIceServer)
+                                         serverFromJSONDictionary:obj]];
             }];
         if (!turnServers) {
-          NSError *responseError =
-              [[NSError alloc] initWithDomain:kARDTURNClientErrorDomain
-                                         code:kARDTURNClientErrorBadResponse
-                                     userInfo:@{
-                                       NSLocalizedDescriptionKey : @"Bad TURN response.",
-                                     }];
+          NSError *responseError = [[NSError alloc]
+              initWithDomain:kARDTURNClientErrorDomain
+                        code:kARDTURNClientErrorBadResponse
+                    userInfo:@{
+                      NSLocalizedDescriptionKey : @"Bad TURN response.",
+                    }];
           completionHandler(nil, responseError);
           return;
         }

@@ -52,9 +52,9 @@ Some simple environment variables control frame capture:
      * Results in filenames like this:
        ```
        foo.angledata.gz
-       foo_context1_001.cpp
-       foo_context1_002.cpp
-       foo_context1_003.cpp
+       foo_context1_0001.cpp
+       foo_context1_0002.cpp
+       foo_context1_0003.cpp
        foo_context1.cpp
        foo_context1.h
        foo.json
@@ -63,6 +63,10 @@ Some simple environment variables control frame capture:
        ```
  * `ANGLE_CAPTURE_SERIALIZE_STATE`:
    * Set to `1` to enable GL state serialization. Default is `0`.
+ * `ANGLE_CAPTURE_MAX_RESIDENT_BINARY_SIZE=<n>`:
+   * Maximum binary data storage space in bytes. Must be a power of 2. Default is 2GB with a useful range of 512MB-4GB.
+ * `ANGLE_CAPTURE_BLOCK_SIZE=<n>`:
+   * Block size for binary data, in bytes. Must be a power of 2. Default is 256MB, with a useful range of 32-512MB
 
 A good way to test out the capture is to use environment variables in conjunction with the sample
 template. For example:
@@ -102,9 +106,9 @@ Place all the trace output files into it.  For example, if the label was `deskto
 ```
 src/tests/restricted_traces$ ls -1 desktop_test/
 desktop_test.angledata.gz
-desktop_test_context1_001.cpp
-desktop_test_context1_002.cpp
-desktop_test_context1_003.cpp
+desktop_test_context1_0001.cpp
+desktop_test_context1_0002.cpp
+desktop_test_context1_0003.cpp
 desktop_test_context1.cpp
 desktop_test_context1.h
 desktop_test.json

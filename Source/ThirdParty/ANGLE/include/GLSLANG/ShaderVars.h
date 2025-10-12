@@ -245,6 +245,8 @@ struct ShaderVariable
     // needs to know about, i.e. active variables, excluding non-zero array elements etc.
     uint32_t id;
 
+    bool isFloat16;
+
   protected:
     bool isSameVariableAtLinkTime(const ShaderVariable &other,
                                   bool matchPrecision,

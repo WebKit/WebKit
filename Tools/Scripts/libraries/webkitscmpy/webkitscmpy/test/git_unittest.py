@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import copy
 import os
 import shutil
 import time
@@ -37,6 +38,34 @@ class TestGit(testing.PathTestCase):
     def setUp(self):
         super(TestGit, self).setUp()
         os.mkdir(os.path.join(self.path, '.git'))
+
+    def _prepare_fetch_head_commit(self, mock_git):
+        default_branch = mock_git.default_branch
+        main_history = [copy.deepcopy(commit) for commit in mock_git.commits[default_branch]]
+        fetched_commit = copy.deepcopy(main_history[-1])
+        truncated_history = main_history[:-1]
+
+        mock_git.commits[default_branch] = [copy.deepcopy(commit) for commit in truncated_history]
+        mock_git.head = mock_git.commits[default_branch][-1]
+        mock_git.remotes[f'origin/{default_branch}'] = [copy.deepcopy(commit) for commit in truncated_history]
+
+        fetch_history = [copy.deepcopy(commit) for commit in truncated_history]
+        for commit in fetch_history:
+            commit.branch = 'fetch_head'
+        fetched_commit.branch = 'fetch_head'
+        fetch_history.append(fetched_commit)
+        mock_git.commits['fetch_head'] = fetch_history
+
+        fetched_hash = fetched_commit.hash
+        for branch in list(mock_git.commits.keys()):
+            if branch in (default_branch, 'fetch_head'):
+                continue
+            mock_git.commits[branch] = [commit for commit in mock_git.commits[branch] if commit.hash != fetched_hash]
+
+        for remote_branch in list(mock_git.remotes.keys()):
+            mock_git.remotes[remote_branch] = [commit for commit in mock_git.remotes[remote_branch] if commit.hash != fetched_hash]
+
+        return fetched_commit
 
     def test_detection(self):
         with OutputCapture(), mocks.local.Git(self.path), mocks.local.Svn():
@@ -633,6 +662,56 @@ CommitDate: {time_c}
             self.assertEqual(repo.is_suitable_branch_for_pull_request('safari-610-branch', source_remote=source_remote), False)
             self.assertEqual(repo.is_suitable_branch_for_pull_request('branch-a', source_remote=source_remote), False)
             self.assertEqual(repo.is_suitable_branch_for_pull_request(None, source_remote=source_remote), False)
+
+    def test_fetch_head_updates_default_remote_fetch_origin(self):
+        with mocks.local.Git(self.path) as mock_git, OutputCapture():
+            fetched_commit = self._prepare_fetch_head_commit(mock_git)
+            repo = local.Git(self.path)
+            default_branch = repo.default_branch
+            remote_ref = f'origin/{default_branch}'
+            fetch_path = os.path.join(repo.common_directory, 'FETCH_HEAD')
+
+            with open(fetch_path, 'w') as fetch_head:
+                fetch_head.write(f"{fetched_commit.hash}\tbranch '{default_branch}' of {repo.url()}\n")
+
+            self.assertNotIn(default_branch, repo.branches_for(fetched_commit.hash))
+            self.assertNotEqual(mock_git.remotes[remote_ref][-1].hash, fetched_commit.hash)
+            self.assertTrue(repo._is_on_default_branch(fetched_commit.hash))
+            self.assertEqual(mock_git.remotes[remote_ref][-1].hash, fetched_commit.hash)
+
+    def test_fetch_head_updates_default_remote_fetch_from_url(self):
+        with mocks.local.Git(self.path) as mock_git, OutputCapture():
+            fetched_commit = self._prepare_fetch_head_commit(mock_git)
+            repo = local.Git(self.path)
+            default_branch = repo.default_branch
+            remote_ref = f'origin/{default_branch}'
+            fetch_path = os.path.join(repo.common_directory, 'FETCH_HEAD')
+
+            with open(fetch_path, 'w') as fetch_head:
+                fetch_head.write(f"{fetched_commit.hash}\t\t{repo.url()}\n")
+
+            self.assertNotIn(default_branch, repo.branches_for(fetched_commit.hash))
+            self.assertNotEqual(mock_git.remotes[remote_ref][-1].hash, fetched_commit.hash)
+            self.assertTrue(repo._is_on_default_branch(fetched_commit.hash))
+            self.assertEqual(mock_git.remotes[remote_ref][-1].hash, fetched_commit.hash)
+
+    def test_fetch_head_from_other_remote_ignored(self):
+        with mocks.local.Git(self.path) as mock_git, OutputCapture():
+            fetched_commit = self._prepare_fetch_head_commit(mock_git)
+            repo = local.Git(self.path)
+            default_branch = repo.default_branch
+            remote_ref = f'origin/{default_branch}'
+            fetch_path = os.path.join(repo.common_directory, 'FETCH_HEAD')
+
+            with open(fetch_path, 'w') as fetch_head:
+                fetch_head.write(f"{fetched_commit.hash}\tbranch '{default_branch}' of https://example.invalid/WebKit.git\n")
+                fetch_head.write(f"{fetched_commit.hash}\tnot-for-merge\tbranch '{default_branch}' of {repo.url()}\n")
+                fetch_head.write(f"{fetched_commit.hash}\tbranch 'randombranch' of {repo.url()}\n")
+
+            self.assertNotIn(default_branch, repo.branches_for(fetched_commit.hash))
+            self.assertNotEqual(mock_git.remotes[remote_ref][-1].hash, fetched_commit.hash)
+            self.assertFalse(repo._is_on_default_branch(fetched_commit.hash))
+            self.assertNotEqual(mock_git.remotes[remote_ref][-1].hash, fetched_commit.hash)
 
 
 class TestMockGit(testing.PathTestCase):

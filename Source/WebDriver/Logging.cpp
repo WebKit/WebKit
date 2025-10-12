@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Igalia S.L.  All rights reserved.
+ * Copyright (C) 2024 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,7 @@ namespace WebDriver {
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
-#define DEFINE_WEBDRIVER_LOG_CHANNEL(name) DEFINE_LOG_CHANNEL(name, LOG_CHANNEL_WEBKIT_SUBSYSTEM)
-WEBDRIVER_LOG_CHANNELS(DEFINE_WEBDRIVER_LOG_CHANNEL)
+WEBDRIVER_LOG_CHANNELS(DEFINE_LOG_CHANNEL)
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 

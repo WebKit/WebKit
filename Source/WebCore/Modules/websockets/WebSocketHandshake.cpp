@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
@@ -50,7 +50,6 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/SHA1.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/StringExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/Base64.h>
@@ -88,9 +87,10 @@ static String hostName(const URL& url, bool secure)
 static constexpr size_t maxInputSampleSize = 128;
 static String trimInputSample(std::span<const uint8_t> input)
 {
+    // FIXME: Unclear why this is Latin-1 and not UTF-8.
     if (input.size() <= maxInputSampleSize)
-        return input;
-    return makeString(input.first(maxInputSampleSize), horizontalEllipsis);
+        return byteCast<Latin1Character>(input);
+    return makeString(byteCast<Latin1Character>(input.first(maxInputSampleSize)), horizontalEllipsis);
 }
 
 static String generateSecWebSocketKey()
@@ -413,24 +413,24 @@ int WebSocketHandshake::readStatusLine(std::span<const uint8_t> header, int& sta
         return lineLength;
     }
 
-    StringView httpStatusLine(header.first(*firstSpaceIndex));
+    StringView httpStatusLine(byteCast<Latin1Character>(header.first(*firstSpaceIndex)));
     if (!headerHasValidHTTPVersion(httpStatusLine)) {
         m_failureReason = makeString("Invalid HTTP version string: "_s, httpStatusLine);
         return lineLength;
     }
 
-    StringView statusCodeString(header.subspan(*firstSpaceIndex + 1, *secondSpaceIndex - *firstSpaceIndex - 1));
-    if (statusCodeString.length() != 3) // Status code must consist of three digits.
+    auto statusCodeString = byteCast<Latin1Character>(header.subspan(*firstSpaceIndex + 1, *secondSpaceIndex - *firstSpaceIndex - 1));
+    if (statusCodeString.size() != 3) // Status code must consist of three digits.
         return lineLength;
-    for (int i = 0; i < 3; ++i) {
-        if (!isASCIIDigit(statusCodeString[i])) {
+    for (auto digit : statusCodeString) {
+        if (!isASCIIDigit(digit)) {
             m_failureReason = makeString("Invalid status code: "_s, statusCodeString);
             return lineLength;
         }
     }
 
     statusCode = parseInteger<int>(statusCodeString).value();
-    statusText = String(header.subspan(*secondSpaceIndex + 1, index - *secondSpaceIndex - 3)); // Exclude "\r\n".
+    statusText = String(byteCast<Latin1Character>(header.subspan(*secondSpaceIndex + 1, index - *secondSpaceIndex - 3))); // Exclude "\r\n".
     return lineLength;
 }
 

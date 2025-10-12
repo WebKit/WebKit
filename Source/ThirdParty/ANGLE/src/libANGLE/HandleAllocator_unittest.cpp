@@ -6,6 +6,10 @@
 // Unit tests for HandleAllocator.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <unordered_set>
 
 #include "gmock/gmock.h"

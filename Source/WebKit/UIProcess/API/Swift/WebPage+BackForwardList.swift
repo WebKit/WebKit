@@ -26,12 +26,76 @@
 import Foundation
 
 extension WebPage {
-    /// An observable representation of a webpage's navigations.
+    /// An observable representation of a webpage's previously loaded resources.
     ///
     /// This type can be used to facilitate navigating to prior or subsequent loaded resources
     /// and for observing when new entries get added or removed.
+    ///
+    /// In this example, the back-forward list is used to create a SwiftUI View to facilitate navigating to
+    /// previous or next items:
+    ///
+    /// ```swift
+    /// private struct BackForwardMenuView: View {
+    ///     struct LabelConfiguration {
+    ///         let text: String
+    ///         let systemImage: String
+    ///     }
+    ///
+    ///     let list: [WebPage.BackForwardList.Item]
+    ///     let label: LabelConfiguration
+    ///     let navigateToItem: (WebPage.BackForwardList.Item) -> Void
+    ///
+    ///     var body: some View {
+    ///         Menu {
+    ///             ForEach(list) { item in
+    ///                 Button(item.title ?? item.url.absoluteString) {
+    ///                     navigateToItem(item)
+    ///                 }
+    ///             }
+    ///         } label: {
+    ///             Label(label.text, systemImage: label.systemImage)
+    ///                 .labelStyle(.iconOnly)
+    ///         } primaryAction: {
+    ///             navigateToItem(list.first!)
+    ///         }
+    ///         .disabled(list.isEmpty)
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// The view can then be used for both the back and forward list using a specific ``WebPage``:
+    ///
+    /// ```swift
+    /// struct ContentView: some View {
+    ///     @State private var page = WebPage()
+    ///
+    ///     var body: some View {
+    ///         WebView(page)
+    ///             .toolbar {
+    ///                 ToolbarItemGroup {
+    ///                     ToolbarBackForwardMenuView(
+    ///                         list: page.backForwardList.backList.reversed(),
+    ///                         label: .init(text: "Backward", systemImage: "chevron.backward")
+    ///                     ) {
+    ///                         viewModel.page.load($0)
+    ///                     }
+    ///
+    ///                     ToolbarBackForwardMenuView(
+    ///                         list: page.backForwardList.forwardList,
+    ///                         label: .init(text: "Forward", systemImage: "chevron.forward")
+    ///                     ) {
+    ///                         viewModel.page.load($0)
+    ///                     }
+    ///                 }
+    ///             }
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// Because ``WebPage/backForwardList`` is an observable property, the states of these buttons
+    /// are automatically updated.
     @MainActor
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct BackForwardList: Equatable, Sendable {
@@ -39,6 +103,7 @@ extension WebPage {
         ///
         /// Two items with equal titles, urls, and initial urls may not necessarily be equal to one another.
         public struct Item: Equatable, Identifiable, Sendable {
+            /// An opaque type representing the identifier for an item.
             public struct ID: Hashable, Sendable {
                 private let value = UUID()
             }
@@ -58,13 +123,13 @@ extension WebPage {
             /// The title of the page this item represents.
             ///
             /// If the resource this item represents does not have a title specified, this value will be `nil`.
-            public let title: String?
+            public let title: Swift.String?
 
             /// The url of the page this item represents, after having resolved all redirects.
-            public let url: URL
+            public let url: Foundation.URL
 
-            /// The source URL that originally asked to load the resource
-            public let initialURL: URL
+            /// The source URL that originally asked to load the resource.
+            public let initialURL: Foundation.URL
 
             @MainActor
             let wrapped: WKBackForwardListItem
@@ -76,7 +141,7 @@ extension WebPage {
 
         /// The array of items that precede the current item.
         ///
-        /// The items are in the order in which the web view originally visited them.
+        /// The items are in the order in which the page originally visited them.
         public var backList: [Item] {
             wrapped?.backList.map(Item.init(_:)) ?? []
         }
@@ -90,7 +155,7 @@ extension WebPage {
 
         /// The array of items that follow the current item.
         ///
-        /// The items are in the order in which the web view originally visited them.
+        /// The items are in the order in which they were originally visited.
         public var forwardList: [Item] {
             wrapped?.forwardList.map(Item.init(_:)) ?? []
         }

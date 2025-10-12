@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "JSCJSValueInlines.h"
-#include "Strong.h"
-#include "StrongInlines.h"
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/Strong.h>
+#include <JavaScriptCore/StrongInlines.h>
 #include <wtf/HashMap.h>
 
 namespace Inspector {

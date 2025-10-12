@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 54x19
+          text run at (0,0) width 54: "Test for "
+        RenderInline {I} at (53,0) size 659x19
+          RenderInline {A} at (53,0) size 305x19 [color=#0000EE]
+            RenderText {#text} at (53,0) size 305x19
+              text run at (53,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=12345"
+          RenderText {#text} at (357,0) size 355x19
+            text run at (357,0) width 5: " "
+            text run at (361,0) width 351: "REGRESSION: Disabled pop-up text is not grayed out"
+        RenderText {#text} at (711,0) size 5x19
+          text run at (711,0) width 5: "."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderMenuList {SELECT} at (0,0) size 151x20 [color=#3C3C434C] [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (6,3) size 139x14
+            RenderText at (0,0) size 127x14
+              text run at (0,0) width 127: "This text should be gray"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,72) size 784x20
+        RenderMenuList {SELECT} at (0,0) size 156x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (6,3) size 144x14
+            RenderText at (0,0) size 132x14
+              text run at (0,0) width 132: "This text should be black"
+        RenderText {#text} at (0,0) size 0x0

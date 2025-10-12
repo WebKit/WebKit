@@ -48,8 +48,10 @@ void TestWithEnabledByAndConjunction::didReceiveMessage(IPC::Connection& connect
         return;
     }
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithEnabledByAndConjunction::AlwaysEnabled::name())
-        return IPC::handleMessage<Messages::TestWithEnabledByAndConjunction::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledByAndConjunction::alwaysEnabled);
+    if (decoder.messageName() == Messages::TestWithEnabledByAndConjunction::AlwaysEnabled::name()) {
+        IPC::handleMessage<Messages::TestWithEnabledByAndConjunction::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledByAndConjunction::alwaysEnabled);
+        return;
+    }
     UNUSED_PARAM(connection);
     RELEASE_LOG_ERROR(IPC, "Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
     decoder.markInvalid();

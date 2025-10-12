@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/axisheight5000-verticalarrow14000.woff
+/LayoutTests/imported/w3c/web-platform-tests/fonts/math/css-units.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/fraction-axisheight7000-rulethickness1000.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/fraction-denominatordisplaystylegapmin5000-rulethickness1000.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/fraction-denominatordisplaystyleshiftdown6000-axisheight1000-rulethickness1000.woff
@@ -25,7 +26,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/fraction-numeratorgapmin9000-rulethickness1000.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/fraction-numeratorshiftup11000-axisheight1000-rulethickness1000.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/fraction-rulethickness10000.woff
+/LayoutTests/imported/w3c/web-platform-tests/fonts/math/largeop-displayoperatorminheight1250.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/largeop-displayoperatorminheight2000-2AFF-italiccorrection3000.woff
+/LayoutTests/imported/w3c/web-platform-tests/fonts/math/largeop-displayoperatorminheight3000-2AFF-axisheight1000.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/largeop-displayoperatorminheight5000.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/largeop-displayoperatorminheight7000-2AFF-italiccorrection5000.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/limits-lowerlimitbaselinedropmin3000.woff
@@ -58,6 +61,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/radical-kernafterdegreeminus5000-rulethickness1000.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/radical-kernbeforedegree4000-rulethickness1000.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/radical-negativekernbeforedegree1000-rulethickness1000.woff
+/LayoutTests/imported/w3c/web-platform-tests/fonts/math/radical-rtlm.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/radical-rulethickness8000.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/radical-verticalgap6000-rulethickness1000.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/scriptpercentscaledown0-scriptscriptpercentscaledown40.woff
@@ -84,6 +88,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/stretchstack-gapbelowmin11000.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/stretchstack-topshiftup5000.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/stretchy-centered-on-baseline.woff
+/LayoutTests/imported/w3c/web-platform-tests/fonts/math/stretchy-text-direction-asymetrical.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/stretchy.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/underover-accentbaseheight4000-overbarextraascender3000.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/math/underover-accentbaseheight4000-overbarverticalgap11000.woff

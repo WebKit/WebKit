@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CollectionScope.h"
+#include <JavaScriptCore/CollectionScope.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SharedTask.h>

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,7 +33,7 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleBackgroundData);
 
 StyleBackgroundData::StyleBackgroundData()
-    : background(FillLayer::create(FillLayerType::Background))
+    : background(RenderStyle::initialBackgroundLayers())
     , color(RenderStyle::initialBackgroundColor())
 {
 }
@@ -52,7 +53,9 @@ Ref<StyleBackgroundData> StyleBackgroundData::copy() const
 
 bool StyleBackgroundData::operator==(const StyleBackgroundData& other) const
 {
-    return background == other.background && color == other.color && outline == other.outline;
+    return background == other.background
+        && color == other.color
+        && outline == other.outline;
 }
 
 bool StyleBackgroundData::isEquivalentForPainting(const StyleBackgroundData& other, bool currentColorDiffers) const
@@ -81,7 +84,7 @@ bool StyleBackgroundData::containsCurrentColor() const
 
 void StyleBackgroundData::dump(TextStream& ts, DumpStyleValues behavior) const
 {
-    if (behavior == DumpStyleValues::All || *background != FillLayer::create(FillLayerType::Background).get())
+    if (behavior == DumpStyleValues::All || background != RenderStyle::initialBackgroundLayers())
         ts.dumpProperty("background-image"_s, background);
     if (behavior == DumpStyleValues::All || color != RenderStyle::initialBackgroundColor())
         ts.dumpProperty("background-color"_s, color);

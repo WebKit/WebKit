@@ -49,15 +49,15 @@ static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, co
     auto decorationStyle = pseudoElementStyle->textDecorationStyle();
     auto decorations = pseudoElementStyle->textDecorationLineInEffect();
 
-    if (decorations.contains(TextDecorationLine::Underline)) {
+    if (decorations.hasUnderline()) {
         style.textDecorationStyles.underline.color = color;
         style.textDecorationStyles.underline.decorationStyle = decorationStyle;
     }
-    if (decorations.contains(TextDecorationLine::Overline)) {
+    if (decorations.hasOverline()) {
         style.textDecorationStyles.overline.color = color;
         style.textDecorationStyles.overline.decorationStyle = decorationStyle;
     }
-    if (decorations.contains(TextDecorationLine::LineThrough)) {
+    if (decorations.hasLineThrough()) {
         style.textDecorationStyles.linethrough.color = color;
         style.textDecorationStyles.linethrough.decorationStyle = decorationStyle;
     }
@@ -145,7 +145,7 @@ StyledMarkedText::Style StyledMarkedText::computeStyleForUnmarkedMarkedText(cons
     StyledMarkedText::Style style;
     style.textDecorationStyles = TextDecorationPainter::stylesForRenderer(renderer, lineStyle.textDecorationLineInEffect(), isFirstLine, paintInfo.paintBehavior);
     style.textStyles = computeTextPaintStyle(renderer, lineStyle, paintInfo);
-    style.textShadow = ShadowData::clone(paintInfo.forceTextColor() ? nullptr : lineStyle.textShadow());
+    style.textShadow = paintInfo.forceTextColor() ? WebCore::Style::TextShadows { CSS::Keyword::None { } } : lineStyle.textShadow();
     return style;
 }
 
@@ -153,20 +153,20 @@ static TextDecorationPainter::Styles computeStylesForTextDecorations(const TextD
 {
     auto textDecorations = TextDecorationPainter::textDecorationsInEffectForStyle(currentTextDecorationStyles);
 
-    if (textDecorations.isEmpty())
+    if (textDecorations.isNone())
         return previousTextDecorationStyles;
 
     auto textDecorationStyles = previousTextDecorationStyles;
 
-    if (textDecorations.contains(TextDecorationLine::Underline)) {
+    if (textDecorations.hasUnderline()) {
         textDecorationStyles.underline.color = currentTextDecorationStyles.underline.color;
         textDecorationStyles.underline.decorationStyle = currentTextDecorationStyles.underline.decorationStyle;
     }
-    if (textDecorations.contains(TextDecorationLine::Overline)) {
+    if (textDecorations.hasOverline()) {
         textDecorationStyles.overline.color = currentTextDecorationStyles.overline.color;
         textDecorationStyles.overline.decorationStyle = currentTextDecorationStyles.overline.decorationStyle;
     }
-    if (textDecorations.contains(TextDecorationLine::LineThrough)) {
+    if (textDecorations.hasLineThrough()) {
         textDecorationStyles.linethrough.color = currentTextDecorationStyles.linethrough.color;
         textDecorationStyles.linethrough.decorationStyle = currentTextDecorationStyles.linethrough.decorationStyle;
     }
@@ -218,7 +218,7 @@ static void orderHighlights(const ListHashSet<AtomString>& markedTextsNames, Vec
     if (markedTexts.isEmpty())
         return;
 
-    UncheckedKeyHashMap<AtomString, int> markedTextsNamesPriority;
+    HashMap<AtomString, int> markedTextsNamesPriority;
     int index = 0;
     for (auto& highlightName : markedTextsNames) {
         markedTextsNamesPriority.add(highlightName, index);

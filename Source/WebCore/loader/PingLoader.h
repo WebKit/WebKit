@@ -32,8 +32,8 @@
 
 #pragma once
 
-#include "ReferrerPolicy.h"
-#include "SecurityOriginData.h"
+#include <WebCore/ReferrerPolicy.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 

@@ -27,6 +27,7 @@
 
 #include "ContainerNode.h"
 #include "NodeTraversal.h"
+#include "ScriptWrappableInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

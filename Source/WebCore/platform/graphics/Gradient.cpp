@@ -35,24 +35,24 @@
 
 namespace WebCore {
 
-Ref<Gradient> Gradient::create(Data&& data, ColorInterpolationMethod colorInterpolationMethod, GradientSpreadMethod spreadMethod, GradientColorStops&& stops, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+Ref<Gradient> Gradient::create(Data&& data, ColorInterpolationMethod colorInterpolationMethod, GradientSpreadMethod spreadMethod, GradientColorStops&& stops, bool isTransient)
 {
-    return adoptRef(*new Gradient(WTFMove(data), colorInterpolationMethod, spreadMethod, WTFMove(stops), renderingResourceIdentifier));
+    return adoptRef(*new Gradient(WTFMove(data), colorInterpolationMethod, spreadMethod, WTFMove(stops), isTransient));
 }
 
-Gradient::Gradient(Data&& data, ColorInterpolationMethod colorInterpolationMethod, GradientSpreadMethod spreadMethod, GradientColorStops&& stops, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
-    : RenderingResource(renderingResourceIdentifier)
-    , m_data { WTFMove(data) }
+Gradient::Gradient(Data&& data, ColorInterpolationMethod colorInterpolationMethod, GradientSpreadMethod spreadMethod, GradientColorStops&& stops, bool isTransient)
+    : m_data { WTFMove(data) }
     , m_colorInterpolationMethod { colorInterpolationMethod }
     , m_spreadMethod { spreadMethod }
     , m_stops { WTFMove(stops) }
+    , m_isTransient { isTransient }
 {
 }
 
 Gradient::~Gradient()
 {
-    for (auto& observer : m_observers)
-        observer.willDestroyGradient(renderingResourceIdentifier());
+    for (CheckedRef observer : m_observers)
+        observer->willDestroyGradient(*this);
 }
 
 void Gradient::adjustParametersForTiledDrawing(FloatSize& size, FloatRect& srcRect, const FloatSize& spacing)

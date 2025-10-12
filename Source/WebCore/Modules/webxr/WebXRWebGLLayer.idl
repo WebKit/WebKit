@@ -32,7 +32,6 @@ typedef (WebGLRenderingContext or WebGL2RenderingContext) WebXRWebGLRenderingCon
     EnabledBySetting=WebXREnabled,
     SecureContext,
     Exposed=Window,
-    JSGenerateToJSObject,
     JSGenerateToNativeObject,
     InterfaceName=XRWebGLLayer
 ] interface WebXRWebGLLayer : WebXRLayer {

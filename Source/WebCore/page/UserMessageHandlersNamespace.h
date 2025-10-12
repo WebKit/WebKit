@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,9 @@
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
-#include "FrameDestructionObserver.h"
-#include "UserContentProvider.h"
-#include "UserMessageHandler.h"
+#include <WebCore/FrameDestructionObserver.h>
+#include <WebCore/UserContentProvider.h>
+#include <WebCore/UserMessageHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -61,8 +61,11 @@ private:
     // UserContentProviderInvalidationClient
     void didInvalidate(UserContentProvider&) override;
 
-    Ref<UserContentProvider> m_userContentProvider;
-    UncheckedKeyHashMap<std::pair<AtomString, RefPtr<DOMWrapperWorld>>, RefPtr<UserMessageHandler>> m_messageHandlers;
+    const Ref<UserContentProvider> m_userContentProvider;
+
+    // FIXME: This could be a Ref<const DOMWrapperWorld> but PairHashTraits doesn't have hasIsEmptyValueFunction,
+    // so HashTraitsEmptyValueChecker calls operator== with a null Ref which asserts.
+    HashMap<std::pair<AtomString, RefPtr<const DOMWrapperWorld>>, Ref<UserMessageHandler>> m_messageHandlers;
 };
 
 } // namespace WebCore

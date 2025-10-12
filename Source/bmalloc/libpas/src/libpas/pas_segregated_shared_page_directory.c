@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "pas_config.h"
@@ -35,7 +35,6 @@
 #include "pas_page_malloc.h"
 #include "pas_random.h"
 #include "pas_segregated_directory_inlines.h"
-#include "pas_segregated_page_inlines.h"
 #include "pas_segregated_page_config.h"
 #include "pas_segregated_partial_view.h"
 #include "pas_segregated_shared_handle.h"
@@ -45,11 +44,11 @@
 #include "pas_stream.h"
 
 /* Probability of an eligible page that can't satisfy an allocation being made ineligible.
-   
+
    When we fail to allocate in a page, we get a random number in [0, UINT_MAX]. If that number
    is less equal this, the page is made ineligible. So, it's not possible to have a zero
    probability (which is fine since that would be absurd).
-   
+
    It's probably best to have this be a smallish fraction like 1/8, which is represented as
    0x1fffffff. */
 unsigned pas_segregated_shared_page_directory_probability_of_ineligibility = 0x1fffffff;
@@ -75,7 +74,7 @@ find_first_eligible_consider_view(
     pas_segregated_directory_iterate_config* config)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
-    
+
     find_first_eligible_data* data;
     pas_segregated_shared_view* view;
 
@@ -116,7 +115,7 @@ pas_segregated_shared_view* pas_segregated_shared_page_directory_find_first_elig
     pas_lock_hold_mode heap_lock_hold_mode)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
-    
+
     pas_segregated_directory* directory;
     const pas_segregated_page_config* page_config_ptr;
     pas_segregated_page_config page_config;
@@ -138,7 +137,7 @@ pas_segregated_shared_view* pas_segregated_shared_page_directory_find_first_elig
     for (;;) {
         size_t new_size;
         pas_segregated_shared_view* view;
-        
+
         config.directory = directory;
         config.should_consider_view_parallel = find_first_eligible_should_consider_view_parallel;
         config.consider_view = find_first_eligible_consider_view;
@@ -155,18 +154,18 @@ pas_segregated_shared_view* pas_segregated_shared_page_directory_find_first_elig
             PAS_ASSERT(data.view);
             return data.view;
         }
-        
+
         pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
-        
+
         new_size = pas_segregated_directory_size(directory);
         PAS_ASSERT(new_size >= config.index);
         if (new_size > config.index) {
             pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
             continue;
         }
-        
+
         PAS_ASSERT(new_size == config.index);
-        
+
         view = pas_segregated_shared_view_create(config.index);
         PAS_ASSERT(view);
 
@@ -174,14 +173,14 @@ pas_segregated_shared_view* pas_segregated_shared_page_directory_find_first_elig
            initialization of the shared page directory. Make sure we advertise ourselves. */
         if (!pas_segregated_directory_size(directory))
             pas_all_shared_page_directories_add(shared_page_directory);
-        
+
         pas_segregated_directory_append(
             directory, config.index, pas_segregated_shared_view_as_view_non_null(view));
 
         pas_segregated_directory_view_did_become_eligible_at_index(directory, config.index);
-        
+
         pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
-        
+
         return view;
     }
 }
@@ -219,7 +218,7 @@ take_last_empty_consider_view(
     pas_segregated_directory_iterate_config* config)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
-    
+
     /* We put our take_last_empty logic in consider_view because should_consider_view_parallel
        cannot really tell if a page can be taken. */
 
@@ -259,7 +258,7 @@ take_last_empty_consider_view(
 
     if (verbose)
         pas_log("Considering shared page directory %p index %zu.\n", directory, shared_view_index);
-    
+
     did_take_empty_bit =
         PAS_SEGREGATED_DIRECTORY_BIT_REFERENCE_SET(directory, bit_reference, empty, false);
     if (!did_take_empty_bit) {
@@ -270,34 +269,34 @@ take_last_empty_consider_view(
 
     shared_view = pas_segregated_view_get_shared(
         pas_segregated_directory_get(directory, shared_view_index));
-    
+
     if (verbose)
         pas_log("Considering shared %p.\n", shared_view);
-    
+
     /* If our heap is the utility heap, then we'd kinda like to use the heap lock to protect
        everything. That's easy because we can always grab that. Otherwise, we need the commit
        lock, which we can only contend for if we aren't holding either the heap lock or any
        other locks. The deferred decommit log knows how to do that for us.
-       
+
        It's sort of fortuitous that:
-       
+
        - Except for the utility heap, we never run allocation or deallocation code with the
          heap lock held. Hence, segregated heap guts for non-utility heaps can try to acquire
          the commit lock in most of their paths. And on this path, even though we may have lock
          inversion from acquiring the commit lock, we have a path to dealing with that because
          the deferred decommit log has the right magic (including optional hooks into the
          physical memory transaction).
-       
+
        - The utility heap is only used with the heap lock held. Hence, the utility heap can
          use the implicitly-held heap lock to protect most of their state. The utility heap
          basically avoids holding any other locks, ever.
-       
+
        Because of this nice arrangement, we have non-utility heaps use the commit_lock to
        protect the process of adding partial views to shared views. This nicely guarantees that
        if someone tried to add a partial view to this shared view right now, they'd succeed
        either before we grabbed the lock (thus causing us to move onto another page) or they'd
        succeed after we released it (thus causing them to recommit the page). */
-    
+
     if (pas_segregated_page_config_is_utility(page_config)) {
         pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
         inner_heap_lock_hold_mode = pas_lock_is_held;
@@ -307,12 +306,12 @@ take_last_empty_consider_view(
                 decommit_log, &shared_view->commit_lock, heap_lock_hold_mode)) {
             if (verbose)
                 pas_log("Couldn't take locks.\n");
-            
+
             /* NOTE: It's possible for the empty bit to have been set because we haven't taken
                eligibility. So, someone else could have taken eligibility and then given it back
                and set the empty bit again. No biggie. */
             pas_segregated_directory_view_did_become_empty_at_index(directory, shared_view_index);
-            
+
             data->result = pas_page_sharing_pool_take_locks_unavailable;
             return true;
         }
@@ -324,7 +323,7 @@ take_last_empty_consider_view(
        and make the page empty again. */
 
     switch_to_ownership(shared_view, &held_lock, page_config);
-    
+
     /* It's possible to now find the shared view decommitted. No big deal. */
     if (!shared_view->is_owned) {
         if (verbose)
@@ -342,19 +341,19 @@ take_last_empty_consider_view(
 
         goto unlock_this_view_and_return_result;
     }
-    
+
     shared_handle_or_page_boundary = shared_view->shared_handle_or_page_boundary;
     shared_handle = pas_unwrap_shared_handle(shared_handle_or_page_boundary, page_config);
 
     /* We can take this shared page if either:
-       
+
        - There are no partial views. That's actually totally possible since after decommit the
          shared view thinks that it has no partial views.
 
             -or-
-       
+
        - All of the partial views are eligible and we took their eligibility.
-    
+
        Note that we need to hold the ownership lock to touch noted_in_scan. */
 
     for (partial_index = pas_segregated_shared_handle_num_views(page_config); partial_index--;) {
@@ -370,7 +369,7 @@ take_last_empty_consider_view(
         size_directory_of_partial =
             pas_compact_segregated_size_directory_ptr_load(&partial_view->directory);
         directory_of_partial = &size_directory_of_partial->base;
-        
+
         if (!PAS_SEGREGATED_DIRECTORY_SET_BIT(
                 directory_of_partial, partial_view->index, eligible, false)) {
             if (verbose)
@@ -401,7 +400,7 @@ take_last_empty_consider_view(
 
     if (verbose)
         pas_log("Took shared %p because it was empty.\n", shared_view);
-    
+
     PAS_ASSERT(!PAS_SEGREGATED_DIRECTORY_BIT_REFERENCE_GET(directory, bit_reference, empty));
     PAS_ASSERT(shared_view->is_owned);
     is_in_use_for_allocation_count = shared_view->is_in_use_for_allocation_count;
@@ -434,7 +433,7 @@ take_last_empty_consider_view(
         decommit_log->total += page_config.base.page_size;
         goto return_taken_partial_views_after_decommit;
     }
-    
+
     if (page->emptiness.num_non_empty_words) {
         size_t num_committed_granules;
 
@@ -445,7 +444,7 @@ take_last_empty_consider_view(
         decommit_result = pas_segregated_page_take_empty_granules(
             page, decommit_log, &held_lock, pas_range_is_locked, heap_lock_hold_mode);
         PAS_ASSERT(decommit_result); /* We already held the lock so it has to succeed. */
-        
+
         num_committed_granules = pas_segregated_page_get_num_committed_granules(page);
         PAS_ASSERT(num_committed_granules);
 
@@ -456,7 +455,7 @@ take_last_empty_consider_view(
         /* NOTE: It might be more efficient if we didn't make the partial views ineligible during
            this time, but instead just checked that they still were eligible, since partial views
            can't go from eligible to allocating without grabbing the commit lock in between.
-           
+
            But this code path is really tuned to be best for small pages and full decommit, which
            is OK. Also, it's not clear that optimizing CASes is meaningful when we're doing
            decommits. */
@@ -516,7 +515,7 @@ return_taken_partial_views_after_decommit:
     result = true;
     data->result = pas_page_sharing_pool_take_success;
     goto unlock_this_view_and_return_result;
-    
+
 return_taken_partial_views_unlock_this_view_and_return_result:
     switch_to_ownership(shared_view, &held_lock, page_config);
     for (partial_index = pas_segregated_shared_handle_num_views(page_config); partial_index--;) {
@@ -529,7 +528,7 @@ return_taken_partial_views_unlock_this_view_and_return_result:
             shared_handle->partial_views + partial_index);
         if (!partial_view || !partial_view->noted_in_scan)
             continue;
-        
+
         size_directory_of_partial =
             pas_compact_segregated_size_directory_ptr_load(&partial_view->directory);
         directory_of_partial = &size_directory_of_partial->base;
@@ -543,10 +542,10 @@ return_taken_partial_views_unlock_this_view_and_return_result:
                     "shared %p.\n",
                     partial_view, shared_view);
         }
-        
+
         partial_view->noted_in_scan = false;
     }
-    
+
 unlock_this_view_and_return_result:
     pas_lock_switch(&held_lock, NULL);
     if (pas_segregated_page_config_is_utility(page_config))
@@ -584,20 +583,20 @@ pas_segregated_shared_page_directory_take_last_empty(
     config.should_consider_view_parallel = take_last_empty_should_consider_view_parallel;
     config.consider_view = take_last_empty_consider_view;
     config.arg = &data;
-    
+
     /* Why take last?
-       
+
        The idea here is that this is roughly last-fit. The downside is that if we have a
        size directory that has its first uses late in the program's execution, it will become
        the last-fit solution.
-       
+
        Size directories have the same pathology, but on a smaller scale.
-       
+
        As a mitigation, the shared page directory has its epoch bumped anytime any partial
        view that uses its pages gets allocated out of. So, the shared page directory as a whole
        is likely to be a low priority target for the scavenger. */
     did_find_something = pas_segregated_directory_iterate_backward_to_take_last_empty(&config);
-    
+
     if (!did_find_something)
         return pas_page_sharing_pool_take_none_available;
 

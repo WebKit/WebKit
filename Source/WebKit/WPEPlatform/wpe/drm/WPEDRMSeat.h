@@ -25,9 +25,11 @@
 
 #pragma once
 
+#include "WPEDisplay.h"
 #include "WPEKeymap.h"
 #include "WPEView.h"
 #include <libinput.h>
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
@@ -49,12 +51,18 @@ public:
     explicit Seat(struct libinput*);
     ~Seat();
 
+    WPEAvailableInputDevices availableInputDevices() const;
+    void setAvailableInputDevicesChangedCallback(Function<void(WPEAvailableInputDevices)>&& callback) { m_capabilitiesChangedCallback = WTFMove(callback); }
+
     void setView(WPEView* view);
 
 private:
     WPEModifiers modifiers() const;
     void processEvents();
     void processEvent(struct libinput_event*);
+    void updateCapabilities();
+    enum class DeviceEventType : bool { Added, Removed };
+    void handleDeviceEvent(struct libinput_device*, DeviceEventType);
     void handlePointerMotionEvent(struct libinput_event_pointer*);
     void handlePointerButtonEvent(struct libinput_event_pointer*);
     void handlePointerScrollWheelEvent(struct libinput_event_pointer*);
@@ -70,6 +78,7 @@ private:
     GRefPtr<GSource> m_inputSource;
     GRefPtr<WPEKeymap> m_keymap;
     GWeakPtr<WPEView> m_view;
+    Function<void(WPEAvailableInputDevices)> m_capabilitiesChangedCallback;
 
     struct {
         WPEInputSource source { WPE_INPUT_SOURCE_MOUSE };
@@ -77,12 +86,14 @@ private:
         double y { 0 };
         uint32_t modifiers { 0 };
         uint32_t time { 0 };
+        unsigned deviceCount { 0 };
     } m_pointer;
 
     struct {
         WPEInputSource source { WPE_INPUT_SOURCE_KEYBOARD };
         uint32_t modifiers { 0 };
         uint32_t time { 0 };
+        unsigned deviceCount { 0 };
 
         struct {
 	    uint32_t key { 0 };
@@ -94,6 +105,7 @@ private:
     struct {
         WPEInputSource source { WPE_INPUT_SOURCE_TOUCHSCREEN };
         uint32_t time { 0 };
+        unsigned deviceCount { 0 };
         HashMap<int32_t, std::pair<double, double>, IntHash<int32_t>, WTF::SignedWithZeroKeyHashTraits<int32_t>> points;
     } m_touch;
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,10 +52,8 @@ static size_t commitSize()
 
 static Lock stackStatisticsMutex;
 
-CLoopStack::CLoopStack(VM& vm)
-    : m_vm(vm)
-    , m_topCallFrame(vm.topCallFrame)
-    , m_softReservedZoneSizeInRegisters(0)
+CLoopStack::CLoopStack()
+    : m_softReservedZoneSizeInRegisters(0)
 {
     size_t capacity = Options::maxPerThreadStackUsage();
     capacity = WTF::roundUpToMultipleOf(pageSize(), capacity);
@@ -70,7 +68,7 @@ CLoopStack::CLoopStack(VM& vm)
     m_lastStackPointer = bottomOfStack;
     m_currentStackPointer = bottomOfStack;
 
-    m_topCallFrame = 0;
+    vm().topCallFrame = 0;
 }
 
 CLoopStack::~CLoopStack()
@@ -156,7 +154,7 @@ void CLoopStack::setSoftReservedZoneSize(size_t reservedZoneSize)
 bool CLoopStack::isSafeToRecurse() const
 {
     void* reservationLimit = reinterpret_cast<int8_t*>(reservationTop() + m_softReservedZoneSizeInRegisters);
-    return !m_topCallFrame || (m_topCallFrame->topOfFrame() > reservationLimit);
+    return !vm().topCallFrame || (vm().topCallFrame->topOfFrame() > reservationLimit);
 }
 
 size_t CLoopStack::committedByteCount()

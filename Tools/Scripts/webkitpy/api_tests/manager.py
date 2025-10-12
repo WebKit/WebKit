@@ -22,6 +22,7 @@
 
 import json
 import logging
+import os
 import re
 import time
 
@@ -149,11 +150,6 @@ class Manager(object):
             if need_newline:
                 self._stream.writeln('')
 
-    def _initialize_devices(self):
-        if 'simulator' in self._port.port_name:
-            SimulatedDeviceManager.initialize_devices(DeviceRequest(self._port.supported_device_types()[0], allow_incomplete_match=True), self.host, simulator_ui=False)
-        elif 'device' in self._port.port_name:
-            raise RuntimeError('Running api tests on {} is not supported'.format(self._port.port_name))
 
     def _binaries_for_arguments(self, args):
         if self._port.get_option('api_binary'):
@@ -171,6 +167,37 @@ class Manager(object):
                 return self._port.path_to_api_test_binaries().keys()
         return binaries or self._port.path_to_api_test_binaries().keys()
 
+    def _update_worker_count(self):
+        child_processes_option_value = int(self._options.child_processes or 0)
+        specified_child_processes = (
+            child_processes_option_value
+            or self._port.default_child_processes()
+        )
+        self._options.child_processes = specified_child_processes
+
+    def _set_up_run(self, device_type=None):
+        self._stream.write_update("Starting helper ...")
+        if not self._port.start_helper():
+            return False
+
+        self._update_worker_count()
+        self._port.reset_preferences()
+
+        # Set up devices for the test run
+        if 'simulator' in self._port.port_name:
+            if device_type is None:
+                device_type = self._port.supported_device_types()[0]
+            self._port.setup_test_run(device_type=device_type)
+        elif 'device' in self._port.port_name:
+            raise RuntimeError('Running api tests on {} is not supported'.format(self._port.port_name))
+
+        return True
+
+    def _clean_up_run(self):
+        """Clean up the test run."""
+        self._port.stop_helper()
+        self._port.clean_up_test_run()
+
     def run(self, args, json_output=None):
         if json_output:
             json_output = self.host.filesystem.abspath(json_output)
@@ -184,7 +211,10 @@ class Manager(object):
             _log.error('Build check failed')
             return Manager.FAILED_BUILD_CHECK
 
-        self._initialize_devices()
+        if not self._set_up_run():
+            return Manager.FAILED_BUILD_CHECK
+
+        configuration_for_upload = self._port.configuration_for_upload(self._port.target_host(0))
 
         self._stream.write_update('Collecting tests ...')
         try:
@@ -206,21 +236,27 @@ class Manager(object):
         if self._options.repeat_each != 1:
             _log.debug('Repeating each test {} times'.format(self._options.iterations))
 
+        runner = None
         try:
             _log.info('Running tests')
             runner = Runner(self._port, self._stream)
             for i in range(self._options.iterations):
                 _log.debug('\nIteration {}'.format(i + 1))
-                runner.run(test_names, int(self._options.child_processes) if self._options.child_processes else self._port.default_child_processes())
+                runner.run(test_names, int(self._options.child_processes) if self._options.child_processes else None)
         except KeyboardInterrupt:
             # If we receive a KeyboardInterrupt, print results.
             self._stream.writeln('')
+        finally:
+            self._clean_up_run()
 
         end_time = time.time()
 
+        if not runner:
+            return Manager.FAILED_TESTS
+
         successful = runner.result_map_by_status(runner.STATUS_PASSED)
         disabled = len(runner.result_map_by_status(runner.STATUS_DISABLED))
-        _log.info('Ran {} tests of {} with {} successful'.format(len(runner.results) - disabled, len(test_names), len(successful)))
+        _log.info('Ran {} tests of {} with {} successful'.format(len(runner.results) - disabled, len(set(test_names)), len(successful)))
 
         result_dictionary = {
             'Skipped': [],
@@ -231,7 +267,7 @@ class Manager(object):
 
         self._stream.writeln('-' * 30)
         result = Manager.SUCCESS
-        if len(successful) * self._options.repeat_each + disabled == len(test_names):
+        if len(successful) + disabled == len(set(test_names)):
             self._stream.writeln('All tests successfully passed!')
             if json_output:
                 self.host.filesystem.write_text_file(json_output, json.dumps(result_dictionary, indent=4))
@@ -282,7 +318,7 @@ class Manager(object):
             }
             upload = Upload(
                 suite=self._options.suite or 'api-tests',
-                configuration=self._port.configuration_for_upload(self._port.target_host(0)),
+                configuration=configuration_for_upload,
                 details=Upload.create_details(options=self._options),
                 commits=self._port.commits_for_upload(),
                 run_stats=Upload.create_run_stats(

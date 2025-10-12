@@ -60,7 +60,7 @@ static void appendImplicitSelectorPseudoClassScopeIfNeeded(MutableCSSSelector& s
         scopeSelector->setMatch(CSSSelector::Match::PseudoClass);
         scopeSelector->setPseudoClass(CSSSelector::PseudoClass::Scope);
         scopeSelector->setImplicit();
-        selector.appendTagHistoryAsRelative(WTFMove(scopeSelector));
+        selector.prependInComplexSelectorAsRelative(WTFMove(scopeSelector));
     }
 }
 
@@ -71,7 +71,7 @@ static void appendImplicitSelectorNestingParentIfNeeded(MutableCSSSelector& sele
         nestingParentSelector->setMatch(CSSSelector::Match::NestingParent);
         // https://drafts.csswg.org/css-nesting/#nesting
         // Spec: nested rules with relative selectors include the specificity of their implied nesting selector.
-        selector.appendTagHistoryAsRelative(WTFMove(nestingParentSelector));
+        selector.prependInComplexSelectorAsRelative(WTFMove(nestingParentSelector));
     }
 }
 
@@ -386,7 +386,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumeComplexSelector(CS
 
     OptionSet<CompoundSelectorFlag> previousCompoundFlags;
 
-    for (auto* simple = selector.get(); simple && !previousCompoundFlags; simple = simple->tagHistory())
+    for (auto* simple = selector.get(); simple && !previousCompoundFlags; simple = simple->precedingInComplexSelector())
         previousCompoundFlags = extractCompoundFlags(*simple, m_context.mode);
 
     while (true) {
@@ -401,13 +401,13 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumeComplexSelector(CS
             return nullptr;
         auto* end = nextSelector.get();
         auto compoundFlags = extractCompoundFlags(*end, m_context.mode);
-        while (end->tagHistory()) {
-            end = end->tagHistory();
+        while (end->precedingInComplexSelector()) {
+            end = end->precedingInComplexSelector();
             compoundFlags.add(extractCompoundFlags(*end, m_context.mode));
         }
         end->setRelation(combinator);
         previousCompoundFlags = compoundFlags;
-        end->setTagHistory(WTFMove(selector));
+        end->setPrecedingInComplexSelector(WTFMove(selector));
 
         selector = WTFMove(nextSelector);
     }
@@ -427,14 +427,14 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumeRelativeScopeSelec
         return nullptr;
 
     auto* end = selector.get();
-    while (end->tagHistory())
-        end = end->tagHistory();
+    while (end->precedingInComplexSelector())
+        end = end->precedingInComplexSelector();
 
     auto scopeSelector = makeUnique<MutableCSSSelector>();
     scopeSelector->setMatch(CSSSelector::Match::HasScope);
 
     end->setRelation(scopeCombinator);
-    end->setTagHistory(WTFMove(scopeSelector));
+    end->setPrecedingInComplexSelector(WTFMove(scopeSelector));
 
     return selector;
 }
@@ -547,20 +547,24 @@ static bool isTreeAbidingPseudoElement(CSSSelector::PseudoElement pseudoElement)
     }
 }
 
-static bool isSimpleSelectorValidAfterPseudoElement(const MutableCSSSelector& simpleSelector, CSSSelector::PseudoElement compoundPseudoElement)
+static bool isSimpleSelectorValidAfterPseudoElement(const MutableCSSSelector& simpleSelector, const MutableCSSSelector& compoundPseudoElement)
 {
-    if (compoundPseudoElement == CSSSelector::PseudoElement::Part) {
+    if (compoundPseudoElement.pseudoElement() == CSSSelector::PseudoElement::UserAgentPart && compoundPseudoElement.value() == UserAgentParts::detailsContent()) {
+        if (simpleSelector.match() == CSSSelector::Match::PseudoElement)
+            return true;
+    }
+    if (compoundPseudoElement.pseudoElement() == CSSSelector::PseudoElement::Part) {
         if (simpleSelector.match() == CSSSelector::Match::PseudoElement && simpleSelector.pseudoElement() != CSSSelector::PseudoElement::Part)
             return true;
     }
-    if (compoundPseudoElement == CSSSelector::PseudoElement::Slotted) {
+    if (compoundPseudoElement.pseudoElement() == CSSSelector::PseudoElement::Slotted) {
         if (simpleSelector.match() == CSSSelector::Match::PseudoElement && isTreeAbidingPseudoElement(simpleSelector.pseudoElement()))
             return true;
     }
     if (simpleSelector.match() != CSSSelector::Match::PseudoClass)
         return false;
 
-    return isPseudoClassValidAfterPseudoElement(simpleSelector.pseudoClass(), compoundPseudoElement);
+    return isPseudoClassValidAfterPseudoElement(simpleSelector.pseudoClass(), compoundPseudoElement.pseudoElement());
 }
 
 static bool atEndIgnoringWhitespace(CSSParserTokenRange range)
@@ -583,21 +587,21 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumeCompoundSelector(C
         if (!compoundSelector)
             return nullptr;
         if (compoundSelector->match() == CSSSelector::Match::PseudoElement)
-            m_precedingPseudoElement = compoundSelector->pseudoElement();
+            m_precedingPseudoElement = compoundSelector.get();
     }
 
     while (auto simpleSelector = consumeSimpleSelector(range)) {
         if (simpleSelector->match() == CSSSelector::Match::PseudoElement)
-            m_precedingPseudoElement = simpleSelector->pseudoElement();
+            m_precedingPseudoElement = simpleSelector.get();
 
         if (compoundSelector)
-            compoundSelector->appendTagHistory(CSSSelector::Relation::Subselector, WTFMove(simpleSelector));
+            compoundSelector->prependInComplexSelector(CSSSelector::Relation::Subselector, WTFMove(simpleSelector));
         else
             compoundSelector = WTFMove(simpleSelector);
     }
 
     if (!m_disallowPseudoElements)
-        m_precedingPseudoElement = { };
+        m_precedingPseudoElement = nullptr;
 
     // While inside a nested selector like :is(), the default namespace shall be ignored when [1]:
     // * The compound selector represents the subject [2], and
@@ -1043,7 +1047,7 @@ CSSSelector::Relation CSSSelectorParser::consumeCombinator(CSSParserTokenRange& 
     if (range.peek().type() != DelimiterToken)
         return fallbackResult;
 
-    UChar delimiter = range.peek().delimiter();
+    char16_t delimiter = range.peek().delimiter();
 
     if (delimiter == '+' || delimiter == '~' || delimiter == '>') {
         range.consumeIncludingWhitespace();
@@ -1243,16 +1247,16 @@ void CSSSelectorParser::prependTypeSelectorIfNeeded(const AtomString& namespaceP
     if (isHostPseudo && elementName.isNull() && namespacePrefix.isNull())
         return;
     if (tag != anyQName() || isHostPseudo || isShadowDOM)
-        compoundSelector.prependTagSelector(tag, determinedPrefix == nullAtom() && determinedElementName == starAtom() && !isHostPseudo);
+        compoundSelector.appendTagInComplexSelector(tag, determinedPrefix == nullAtom() && determinedElementName == starAtom() && !isHostPseudo);
 }
 
 std::unique_ptr<MutableCSSSelector> CSSSelectorParser::splitCompoundAtImplicitShadowCrossingCombinator(std::unique_ptr<MutableCSSSelector> compoundSelector, const CSSSelectorParserContext& context)
 {
-    // The tagHistory is a linked list that stores combinator separated compound selectors
+    // Complex selectors are represented as a linked list that stores combinator separated compound selectors
     // from right-to-left. Yet, within a single compound selector, stores the simple selectors
     // from left-to-right.
     //
-    // ".a.b > div#id" is stored in a tagHistory as [div, #id, .a, .b], each element in the
+    // ".a.b > div#id" is stored in a complex selector as [div, #id, .a, .b], each element in the
     // list stored with an associated relation (combinator or Subselector).
     //
     // ::cue, ::shadow, and custom pseudo elements have an implicit ShadowPseudo combinator
@@ -1262,26 +1266,26 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::splitCompoundAtImplicitSh
     // Example: input#x::-webkit-inner-spin-button -> [ ::-webkit-inner-spin-button, input, #x ]
     //
     auto* splitAfter = compoundSelector.get();
-    while (splitAfter->tagHistory() && !splitAfter->tagHistory()->needsImplicitShadowCombinatorForMatching())
-        splitAfter = splitAfter->tagHistory();
+    while (splitAfter->precedingInComplexSelector() && !splitAfter->precedingInComplexSelector()->needsImplicitShadowCombinatorForMatching())
+        splitAfter = splitAfter->precedingInComplexSelector();
 
-    if (!splitAfter || !splitAfter->tagHistory())
+    if (!splitAfter || !splitAfter->precedingInComplexSelector())
         return compoundSelector;
 
     // ::part() combines with other pseudo elements.
-    bool isPart = splitAfter->tagHistory()->match() == CSSSelector::Match::PseudoElement && splitAfter->tagHistory()->pseudoElement() == CSSSelector::PseudoElement::Part;
+    bool isPart = splitAfter->precedingInComplexSelector()->match() == CSSSelector::Match::PseudoElement && splitAfter->precedingInComplexSelector()->pseudoElement() == CSSSelector::PseudoElement::Part;
 
     // ::slotted() combines with other pseudo elements.
-    bool isSlotted = splitAfter->tagHistory()->match() == CSSSelector::Match::PseudoElement && splitAfter->tagHistory()->pseudoElement() == CSSSelector::PseudoElement::Slotted;
+    bool isSlotted = splitAfter->precedingInComplexSelector()->match() == CSSSelector::Match::PseudoElement && splitAfter->precedingInComplexSelector()->pseudoElement() == CSSSelector::PseudoElement::Slotted;
 
     std::unique_ptr<MutableCSSSelector> secondCompound;
     if (isUASheetBehavior(context.mode) || isPart) {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=161747
         // We have to recur, since we have rules in media controls like video::a::b. This should not be allowed, and
         // we should remove this recursion once those rules are gone.
-        secondCompound = splitCompoundAtImplicitShadowCrossingCombinator(splitAfter->releaseTagHistory(), context);
+        secondCompound = splitCompoundAtImplicitShadowCrossingCombinator(splitAfter->releaseFromComplexSelector(), context);
     } else
-        secondCompound = splitAfter->releaseTagHistory();
+        secondCompound = splitAfter->releaseFromComplexSelector();
 
     auto relation = [&] {
         if (isSlotted)
@@ -1290,39 +1294,117 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::splitCompoundAtImplicitSh
             return CSSSelector::Relation::ShadowPartDescendant;
         return CSSSelector::Relation::ShadowDescendant;
     }();
-    secondCompound->appendTagHistory(relation, WTFMove(compoundSelector));
+    secondCompound->prependInComplexSelector(relation, WTFMove(compoundSelector));
     return secondCompound;
 }
 
 bool CSSSelectorParser::containsUnknownWebKitPseudoElements(const CSSSelector& complexSelector)
 {
-    for (auto current = &complexSelector; current; current = current->tagHistory()) {
+    for (auto current = &complexSelector; current; current = current->precedingInComplexSelector()) {
         if (current->match() == CSSSelector::Match::PseudoElement && current->pseudoElement() == CSSSelector::PseudoElement::WebKitUnknown)
             return true;
     }
     return false;
 }
 
-CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& nestedSelectorList, const CSSSelectorList* parentResolvedSelectorList)
+CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& nestedSelectorList, const CSSSelectorList* parentResolvedSelectorList, bool parentRuleIsScope)
 {
     MutableCSSSelectorList result;
-    CSSSelectorList copiedSelectorList { nestedSelectorList };
-    auto selector = copiedSelectorList.first();
-    while (selector) {
-        if (parentResolvedSelectorList) {
-            // FIXME: We should build a new MutableCSSSelector from this selector and resolve it
-            const_cast<CSSSelector*>(selector)->resolveNestingParentSelectors(*parentResolvedSelectorList);
-        } else {
-            // It's top-level, the nesting parent selector should be replaced by :scope
-            const_cast<CSSSelector*>(selector)->replaceNestingParentByPseudoClassScope();
+
+    auto canInline = [](const CSSSelector& nestingSelector, const CSSSelectorList& list) {
+        auto hasTagInCompound = [](const CSSSelector& simpleSelector) {
+            // A compound is organized so that any tag selector is always last.
+            return simpleSelector.lastInCompound()->match() == CSSSelector::Match::Tag;
+        };
+
+        if (list.listSize() != 1) {
+            // .foo, .bar { & .baz {...} } -> :is(.foo, .bar) .baz {...}
+            return false;
         }
-        auto mutableSelector = makeUnique<MutableCSSSelector>(*selector);
-        result.append(WTFMove(mutableSelector));
-        selector = copiedSelectorList.next(selector);
+        if (complexSelectorCanMatchPseudoElement(*list.first())) {
+            // .foo::before { & {...} } -> :is(.foo::before) {...} (which matches nothing)
+            return false;
+        }
+        if (hasTagInCompound(*list.first()) && hasTagInCompound(nestingSelector)) {
+            // foo { bar& {...} } -> bar:is(foo) {...}
+            return false;
+        }
+        if (!nestingSelector.precedingInComplexSelector()) {
+            // .foo .bar { & .baz {...} } -> .foo .bar .baz {...}
+            return true;
+        }
+        bool hasSingleCompound = !list.first()->firstInCompound()->precedingInComplexSelector();
+        if (hasSingleCompound) {
+            // .foo.bar { .baz & {...} } -> .baz .foo.bar {...}
+            return true;
+        }
+        // .foo .bar { .baz & {...} } -> .baz :is(.foo .bar) {...}
+        return false;
+    };
+
+    auto resolveNestingSelector = [&](const CSSSelector& nestingSelector) {
+        ASSERT(nestingSelector.match() == CSSSelector::Match::NestingParent);
+
+        if (parentResolvedSelectorList && !parentRuleIsScope) {
+            if (canInline(nestingSelector, *parentResolvedSelectorList)) {
+                // :is() not needed.
+                return makeUnique<MutableCSSSelector>(*parentResolvedSelectorList->first());
+            }
+            // General case where we wrap with :is().
+            auto isSelector = makeUnique<MutableCSSSelector>();
+            isSelector->setMatch(CSSSelector::Match::PseudoClass);
+            isSelector->setPseudoClass(CSSSelector::PseudoClass::Is);
+            isSelector->setSelectorList(makeUnique<CSSSelectorList>(*parentResolvedSelectorList));
+            return isSelector;
+        }
+
+        // Top-level nesting parent selector acts like :scope with zero specificity thanks to :where
+        // https://github.com/w3c/csswg-drafts/issues/10196#issuecomment-2161119978
+        // Replace by :where(:scope)
+        auto scopeSelector = makeUnique<MutableCSSSelector>();
+        scopeSelector->setMatch(CSSSelector::Match::PseudoClass);
+        scopeSelector->setPseudoClass(CSSSelector::PseudoClass::Scope);
+        auto scopeSelectorList = MutableCSSSelectorList::from(WTFMove(scopeSelector));
+
+        auto whereSelector = makeUnique<MutableCSSSelector>();
+        whereSelector->setMatch(CSSSelector::Match::PseudoClass);
+        whereSelector->setPseudoClass(CSSSelector::PseudoClass::Where);
+        whereSelector->setSelectorList(makeUnique<CSSSelectorList>(WTFMove(scopeSelectorList)));
+        return whereSelector;
+    };
+
+    auto resolveSimpleSelector = [&](const CSSSelector& simpleSelector) {
+        if (simpleSelector.match() == CSSSelector::Match::NestingParent)
+            return resolveNestingSelector(simpleSelector);
+
+        auto resolvedSelector = makeUnique<MutableCSSSelector>(simpleSelector, MutableCSSSelector::SimpleSelector);
+
+        if (auto* subselectorList = simpleSelector.selectorList(); subselectorList && subselectorList->hasExplicitNestingParent()) {
+            // Resolve nested selector lists like :has(&).
+            auto resolvedSubselectorList = resolveNestingParent(*subselectorList, parentResolvedSelectorList, parentRuleIsScope);
+            resolvedSelector->setSelectorList(makeUnique<CSSSelectorList>(WTFMove(resolvedSubselectorList)));
+        }
+        return resolvedSelector;
+    };
+
+    for (auto& complexSelector : nestedSelectorList) {
+        MutableCSSSelector* leftmost = nullptr;
+        for (const auto* simpleSelector = &complexSelector; simpleSelector; simpleSelector = simpleSelector->precedingInComplexSelector()) {
+            auto resolvedSimpleSelector = resolveSimpleSelector(*simpleSelector);
+
+            if (!leftmost) {
+                result.append(WTFMove(resolvedSimpleSelector));
+                leftmost = result.last().get();
+            } else
+                leftmost->setPrecedingInComplexSelector(WTFMove(resolvedSimpleSelector));
+
+            // A nesting selector may resolve to multiple selectors. Find the leftmost one to continue.
+            leftmost = leftmost->leftmostSimpleSelector();
+            leftmost->setRelation(simpleSelector->relation());
+        }
     }
 
-    auto final = CSSSelectorList { WTFMove(result) };
-    return final;
+    return CSSSelectorList { WTFMove(result) };
 }
 
 static std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifierFor(CSSSelectorPseudoElement type)

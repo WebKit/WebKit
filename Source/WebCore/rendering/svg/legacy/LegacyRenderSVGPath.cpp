@@ -33,7 +33,6 @@
 #include "RenderStyleInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGPathElement.h"
-#include "SVGRenderStyle.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGSubpathData.h"
@@ -86,13 +85,19 @@ FloatRect LegacyRenderSVGPath::adjustStrokeBoundingBoxForMarkersAndZeroLengthLin
 {
     float strokeWidth = this->strokeWidth();
 
-    if (!m_markerPositions.isEmpty())
-        strokeBoundingBox.unite(markerRect(repaintRectCalculation, strokeWidth));
+    if (!m_markerPositions.isEmpty()) {
+        auto markerRect = this->markerRect(repaintRectCalculation, strokeWidth);
+        if (!markerRect.isNaN())
+            strokeBoundingBox.unite(markerRect);
+    }
 
-    if (style().svgStyle().hasStroke()) {
+    if (style().hasStroke()) {
         // FIXME: zero-length subpaths do not respect vector-effect = non-scaling-stroke.
-        for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i)
-            strokeBoundingBox.unite(zeroLengthSubpathRect(m_zeroLengthLinecapLocations[i], strokeWidth));
+        for (auto& zeroLengthLinecapLocation : m_zeroLengthLinecapLocations) {
+            auto subpathRect = zeroLengthSubpathRect(zeroLengthLinecapLocation, strokeWidth);
+            if (!subpathRect.isNaN())
+                strokeBoundingBox.unite(subpathRect);
+        }
     }
 
     return strokeBoundingBox;
@@ -110,7 +115,7 @@ static void useStrokeStyleToFill(GraphicsContext& context)
 
 void LegacyRenderSVGPath::strokeShape(GraphicsContext& context) const
 {
-    if (!style().hasVisibleStroke())
+    if (!style().hasStroke() || !style().strokeWidth().isPossiblyPositive())
         return;
 
     // This happens only if the layout was never been called for this element.
@@ -127,7 +132,7 @@ bool LegacyRenderSVGPath::shapeDependentStrokeContains(const FloatPoint& point, 
         return true;
 
     for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i) {
-        ASSERT(style().svgStyle().hasStroke());
+        ASSERT(style().hasStroke());
         float strokeWidth = this->strokeWidth();
         if (style().capStyle() == LineCap::Square) {
             if (zeroLengthSubpathRect(m_zeroLengthLinecapLocations[i], strokeWidth).contains(point))
@@ -146,7 +151,7 @@ bool LegacyRenderSVGPath::shouldStrokeZeroLengthSubpath() const
 {
     // Spec(11.4): Any zero length subpath shall not be stroked if the "stroke-linecap" property has a value of butt
     // but shall be stroked if the "stroke-linecap" property has a value of round or square
-    return style().svgStyle().hasStroke() && style().capStyle() != LineCap::Butt;
+    return style().hasStroke() && style().capStyle() != LineCap::Butt;
 }
 
 Path* LegacyRenderSVGPath::zeroLengthLinecapPath(const FloatPoint& linecapPosition) const
@@ -217,7 +222,7 @@ static inline LegacyRenderSVGResourceMarker* markerForType(SVGMarkerType type, L
 
 bool LegacyRenderSVGPath::shouldGenerateMarkerPositions() const
 {
-    if (!style().svgStyle().hasMarkers())
+    if (!style().hasMarkers())
         return false;
 
     if (!graphicsElement().supportsMarkers())

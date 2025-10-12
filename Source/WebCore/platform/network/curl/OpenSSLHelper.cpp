@@ -108,7 +108,7 @@ public:
     }
 
     BIO(const Vector<uint8_t>& data)
-        : m_bio { ::BIO_new_mem_buf(data.data(), data.size()) }
+        : m_bio { ::BIO_new_mem_buf(data.span().data(), data.size()) }
     {
     }
 
@@ -135,7 +135,7 @@ public:
         if (length < 0)
             return String();
 
-        return String({ data, static_cast<size_t>(length) });
+        return String({ byteCast<Latin1Character>(data), static_cast<size_t>(length) });
     }
 
     std::unique_ptr<X509, deleter<X509>> readX509()
@@ -191,7 +191,7 @@ static String toString(const ASN1_STRING* name)
     if (length <= 0)
         return String();
 
-    String result({ data, static_cast<size_t>(length) });
+    String result({ byteCast<Latin1Character>(data), static_cast<size_t>(length) });
     OPENSSL_free(data);
     return result;
 }

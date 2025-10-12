@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "GraphicsClient.h"
+#include <WebCore/GraphicsClient.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>

@@ -41,13 +41,13 @@ namespace WebKit::ShapeDetection {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteTextDetectorProxy);
 
-Ref<RemoteTextDetectorProxy> RemoteTextDetectorProxy::create(Ref<IPC::StreamClientConnection>&& streamClientConnection, RenderingBackendIdentifier renderingBackendIdentifier, ShapeDetectionIdentifier identifier)
+Ref<RemoteTextDetectorProxy> RemoteTextDetectorProxy::create(Ref<IPC::StreamClientConnection>&& streamClientConnection, RemoteRenderingBackendIdentifier renderingBackendIdentifier, ShapeDetectionIdentifier identifier)
 {
     streamClientConnection->send(Messages::RemoteRenderingBackend::CreateRemoteTextDetector(identifier), renderingBackendIdentifier);
     return adoptRef(*new RemoteTextDetectorProxy(WTFMove(streamClientConnection), renderingBackendIdentifier, identifier));
 }
 
-RemoteTextDetectorProxy::RemoteTextDetectorProxy(Ref<IPC::StreamClientConnection>&& streamClientConnection, RenderingBackendIdentifier renderingBackendIdentifier, ShapeDetectionIdentifier identifier)
+RemoteTextDetectorProxy::RemoteTextDetectorProxy(Ref<IPC::StreamClientConnection>&& streamClientConnection, RemoteRenderingBackendIdentifier renderingBackendIdentifier, ShapeDetectionIdentifier identifier)
     : m_backing(identifier)
     , m_streamClientConnection(WTFMove(streamClientConnection))
     , m_renderingBackendIdentifier(renderingBackendIdentifier)

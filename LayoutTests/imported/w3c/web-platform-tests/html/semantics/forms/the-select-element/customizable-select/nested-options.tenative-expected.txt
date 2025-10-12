@@ -1,0 +1,6 @@
+
+
+PASS The HTML parser should disallow nested options in select datalist.
+FAIL Nested <options> not should be listed in <select> IDLs. assert_equals: select.options.length expected 1 but got 0
+PASS Showing the popup with nested <option>s should not crash.
+

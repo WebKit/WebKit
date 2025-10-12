@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "FontRanges.h"
+#include <WebCore/FontRanges.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
@@ -43,7 +43,7 @@ class FontSelectorClient;
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FontAccessor);
 
 class FontAccessor : public RefCounted<FontAccessor> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FontAccessor);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FontAccessor, FontAccessor);
 public:
     virtual ~FontAccessor() = default;
 

@@ -40,7 +40,7 @@
 #include <WebCore/WebGPUTextureViewDescriptor.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_streamConnection)
 
 namespace WebKit {
 
@@ -58,14 +58,6 @@ RemoteTexture::RemoteTexture(GPUConnectionToWebProcess& gpuConnectionToWebProces
 }
 
 RemoteTexture::~RemoteTexture() = default;
-
-RefPtr<IPC::Connection> RemoteTexture::connection() const
-{
-    RefPtr connection = m_gpuConnectionToWebProcess.get();
-    if (!connection)
-        return nullptr;
-    return &connection->connection();
-}
 
 void RemoteTexture::stopListeningForIPC()
 {

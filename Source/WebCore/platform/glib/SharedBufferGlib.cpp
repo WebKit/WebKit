@@ -26,16 +26,17 @@
 
 namespace WebCore {
 
-FragmentedSharedBuffer::FragmentedSharedBuffer(GBytes* bytes)
+SharedBuffer::SharedBuffer(GBytes* bytes)
+    : FragmentedSharedBuffer(DataSegment::create(GRefPtr<GBytes>(bytes)))
 {
     ASSERT(bytes);
-    m_size = g_bytes_get_size(bytes);
-    m_segments.append({ 0, DataSegment::create(GRefPtr<GBytes>(bytes)) });
 }
 
-Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::create(GBytes* bytes)
+Ref<SharedBuffer> SharedBuffer::create(GBytes* bytes)
 {
-    return adoptRef(*new FragmentedSharedBuffer(bytes));
+    if (!bytes)
+        return SharedBuffer::create();
+    return adoptRef(*new SharedBuffer(bytes));
 }
 
 GRefPtr<GBytes> SharedBuffer::createGBytes() const

@@ -50,11 +50,23 @@ void boxPtrLoggerDeleter(BoxPtrLogger* logger)
     delete logger;
 }
 
+class BoxPtrClassTest {
+public:
+    void method() { ++value; }
+    int value { 1 };
+};
+
+void boxPtrClassTestDeleter(BoxPtrClassTest* theObject)
+{
+    delete theObject;
+}
+
 };
 
 namespace WTF {
 
 WTF_DEFINE_BOXPTR_DELETER(TestWebKitAPI::BoxPtrLogger, TestWebKitAPI::boxPtrLoggerDeleter);
+WTF_DEFINE_BOXPTR_DELETER(TestWebKitAPI::BoxPtrClassTest, TestWebKitAPI::boxPtrClassTestDeleter);
 
 }
 
@@ -121,6 +133,14 @@ TEST(WTF_BoxPtr, Basic)
         EXPECT_EQ(false, static_cast<bool>(ptr));
     }
     EXPECT_STREQ("create(a) delete(a) ", takeLogStr().c_str());
+}
+
+TEST(WTF_BoxPtr, NoCrash)
+{
+    BoxPtr<BoxPtrClassTest> ptr;
+    EXPECT_EQ(false, static_cast<bool>(ptr));
+    EXPECT_EQ(false, ptr.isValid());
+    EXPECT_EQ(nullptr, ptr.get());
 }
 
 TEST(WTF_BoxPtr, Assignment)

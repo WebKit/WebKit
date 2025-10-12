@@ -265,9 +265,8 @@ float toRelatedAcuteAngle(float angle)
     angle = toPositiveAngle(angle);
     if (angle < 90)
         return angle;
-    if (angle > 90 || angle < 180)
-        return std::abs(180 - angle);
-    return std::abs(360 - angle);
+    // FIXME: webkit.org/b/298890 toRelatedAcuteAngle in GeometryUtilities.cpp doesn't handle an angle greater than 270 degrees
+    return std::abs(180 - angle);
 }
 
 RectEdges<double> distanceOfPointToSidesOfRect(const FloatRect& box, const FloatPoint& position)
@@ -375,7 +374,7 @@ float angleOfPointToSideOfIntersection(const FloatRect& boundingRect, const std:
 {
     auto angle = ray.second;
     auto side = intersectionSide(boundingRect, ray);
-    angle = toRelatedAcuteAngle(toPositiveAngle(angle));
+    angle = toRelatedAcuteAngle(angle);
     return side == BoxSide::Top || side == BoxSide::Bottom ? angle : 90 - angle;
 }
 

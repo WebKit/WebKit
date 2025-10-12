@@ -28,6 +28,7 @@
 
 #import "APIConversions.h"
 #import "Adapter.h"
+#import "DDMesh.h"
 #import "HardwareCapabilities.h"
 #import "PresentationContext.h"
 #import <cstring>
@@ -37,22 +38,29 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(WEBGPU_SWIFT)
+#import "WebGPUSwiftInternal.h"
+#endif
+
 namespace WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Instance);
 
+static NSArray<id<MTLDevice>>* getDevices()
+{
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    NSArray<id<MTLDevice>> *devices = MTLCopyAllDevices();
+#else
+    NSMutableArray<id<MTLDevice>> *devices = [NSMutableArray array];
+    if (id<MTLDevice> device = MTLCreateSystemDefaultDevice())
+        [devices addObject:device];
+#endif
+    return devices;
+}
+
 Ref<Instance> Instance::create(const WGPUInstanceDescriptor& descriptor)
 {
-    if (!descriptor.nextInChain)
-        return Instance::createInvalid();
-
-    if (descriptor.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_InstanceCocoaDescriptor))
-        return Instance::createInvalid();
-
-    const WGPUInstanceCocoaDescriptor& cocoaDescriptor = reinterpret_cast<const WGPUInstanceCocoaDescriptor&>(*descriptor.nextInChain);
-
-    if (cocoaDescriptor.chain.next)
-        return Instance::createInvalid();
+    const WGPUInstanceCocoaDescriptor& cocoaDescriptor = descriptor.cocoaDescriptor;
 
     return adoptRef(*new Instance(cocoaDescriptor.scheduleWorkBlock, reinterpret_cast<const WTF::MachSendRight*>(cocoaDescriptor.webProcessResourceOwner)));
 }
@@ -146,22 +154,11 @@ static NSArray<id<MTLDevice>> *sortedDevices(NSArray<id<MTLDevice>> *devices, WG
 
 void Instance::requestAdapter(const WGPURequestAdapterOptions& options, CompletionHandler<void(WGPURequestAdapterStatus, Ref<Adapter>&&, String&&)>&& callback)
 {
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    NSArray<id<MTLDevice>> *devices = MTLCopyAllDevices();
-#else
-    NSMutableArray<id<MTLDevice>> *devices = [NSMutableArray array];
-    if (id<MTLDevice> device = MTLCreateSystemDefaultDevice())
-        [devices addObject:device];
-#endif
+    auto devices = getDevices();
 
     // FIXME: Deal with options.compatibleSurface.
 
     auto sortedDevices = WebGPU::sortedDevices(devices, options.powerPreference);
-
-    if (options.nextInChain) {
-        callback(WGPURequestAdapterStatus_Error, Adapter::createInvalid(*this), "Unknown descriptor type"_s);
-        return;
-    }
 
     if (options.forceFallbackAdapter) {
         callback(WGPURequestAdapterStatus_Unavailable, Adapter::createInvalid(*this), "No adapters present"_s);
@@ -215,6 +212,11 @@ void Instance::retainDevice(Device& device, id<MTLCommandBuffer> commandBuffer)
     retainedDeviceInstances.removeIf([&] (auto& pair) {
         return !pair.value.size();
     });
+}
+
+id<MTLDevice> Instance::device() const
+{
+    return getDevices().firstObject;
 }
 
 } // namespace WebGPU
@@ -404,4 +406,9 @@ WGPUBool wgpuXRProjectionLayerIsValid(WGPUXRProjectionLayer layer)
 WGPUBool wgpuXRViewIsValid(WGPUXRView view)
 {
     return WebGPU::protectedFromAPI(view)->isValid();
+}
+
+WGPUDDMesh wgpuDDMeshCreate(WGPUInstance instance, const WGPUDDCreateMeshDescriptor* descriptor)
+{
+    return WebGPU::releaseToAPI(WebGPU::protectedFromAPI(instance)->createModelBacking(*descriptor));
 }

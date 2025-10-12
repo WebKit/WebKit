@@ -28,6 +28,14 @@ webkit_platform_headers: "CoreIPCNumber.h"
      WebKit::CoreIPCNumber::NumberHolder get()
 }
 
-using WebKit::CoreIPCNumber::NumberHolder = Variant<char, unsigned char, short, unsigned short, int, unsigned, long, unsigned long, long long, unsigned long long, float, double>
+[WebKitPlatform, Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::CoreIPCNumber::Long {
+    int64_t value;
+};
+
+[WebKitPlatform, Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::CoreIPCNumber::UnsignedLong {
+    uint64_t value;
+};
+
+using WebKit::CoreIPCNumber::NumberHolder = Variant<char, unsigned char, short, unsigned short, int, unsigned, WebKit::CoreIPCNumber::Long, WebKit::CoreIPCNumber::UnsignedLong, long long, unsigned long long, float, double>
 
 #endif // USE(CF)

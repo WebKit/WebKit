@@ -1,0 +1,6 @@
+
+PASS Hit test coplanar elements, hittesting box1)
+PASS Hit test coplanar elements, hittesting box2)
+PASS Hit test coplanar elements, hittesting box3)
+PASS Hit test coplanar elements, hittesting box4)
+

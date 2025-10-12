@@ -691,7 +691,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         for (let i = 0; i < tokens.length; i++) {
             let token = tokens[i];
-            if (token.type && token.type.includes("atom") && gradientRegex.test(token.value)) {
+            if (token.type && /\bvariable\b/.test(token.type) && /\bcallee\b/.test(token.type) && gradientRegex.test(token.value)) {
                 gradientStartIndex = i;
                 openParenthesis = 0;
             } else if (token.value === "(" && !isNaN(gradientStartIndex))
@@ -739,18 +739,20 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         for (let i = 0; i < tokens.length; i++) {
             let token = tokens[i];
-            if (token.type && token.type.includes("hex-color")) {
+            if (token.type && /\bhex-color\b/.test(token.type)) {
                 // Hex
                 pushPossibleColorToken(token.value, token);
             } else if (isNaN(colorFunctionStartIndex)
                 && WI.Color.FunctionNames.has(token.value)
                 && tokens[i + 1]?.value === "("
-                && (token.type?.includes("atom") || token.type?.includes("keyword"))) {
+                && token.type
+                && ((/\bvariable\b/.test(token.type) && /\bcallee\b/.test(token.type)) || /\bkeyword\b/.test(token.type))) {
                 // Color Function start
                 colorFunctionStartIndex = i;
             } else if (isNaN(colorFunctionStartIndex)
                 && tokens[i + 1]?.value !== "("
-                && (token.type?.includes("atom") || token.type?.includes("keyword"))) {
+                && token.type
+                && (/\batom\b/.test(token.type) || /\bkeyword\b/.test(token.type))) {
                 // Color keyword
                 pushPossibleColorToken(token.value, token);
             } else if (!isNaN(colorFunctionStartIndex)) {
@@ -817,7 +819,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 }
             }
 
-            if (token.value === tokenType && token.type?.includes("atom")) {
+            if (token.value === tokenType && token.type && /\bvariable\b/.test(token.type) && /\bcallee\b/.test(token.type)) {
                 startIndex = i;
                 openParenthesis = 0;
                 continue;
@@ -955,7 +957,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         for (let i = 0; i < tokens.length; i++) {
             let token = tokens[i];
-            if (token.value === "var" && token.type && token.type.includes("atom")) {
+            if (token.value === "var" && token.type && /\bvariable\b/.test(token.type) && /\bcallee\b/.test(token.type)) {
                 if (isNaN(startIndex)) {
                     startIndex = i;
                     openParenthesis = 0;

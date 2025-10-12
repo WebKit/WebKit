@@ -21,8 +21,10 @@
 #include "GLFence.h"
 
 #include "GLContext.h"
+#include "GLDisplay.h"
 #include "GLFenceEGL.h"
 #include "GLFenceGL.h"
+#include "PlatformDisplay.h"
 #include <wtf/TZoneMallocInlines.h>
 
 #if USE(LIBEPOXY)
@@ -35,78 +37,77 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GLFence);
 
-const GLFence::Capabilities& GLFence::capabilities()
+static inline bool eglVersionSupportsFences(const GLDisplay& display)
 {
-    static Capabilities capabilities;
-#if HAVE(GL_FENCE)
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        auto& display = PlatformDisplay::sharedDisplay();
-        const auto& extensions = display.eglExtensions();
-        if (display.eglCheckVersion(1, 5)) {
-            capabilities.eglSupported = true;
-            capabilities.eglServerWaitSupported = true;
-        } else {
-            capabilities.eglSupported = extensions.KHR_fence_sync;
-            capabilities.eglServerWaitSupported = extensions.KHR_wait_sync;
-        }
-#if OS(UNIX)
-        capabilities.eglExportableSupported = extensions.ANDROID_native_fence_sync;
-#endif
-        capabilities.glSupported = GLContext::versionFromString(reinterpret_cast<const char*>(glGetString(GL_VERSION))) >= 300;
-    });
-#endif
-    return capabilities;
+    return display.checkVersion(1, 5);
 }
 
-bool GLFence::isSupported()
+static inline bool eglExtensionsSupportFences(const GLDisplay& display)
 {
-    const auto& fenceCapabilities = capabilities();
-    return fenceCapabilities.eglSupported || fenceCapabilities.glSupported;
+    return display.extensions().KHR_fence_sync;
 }
 
-std::unique_ptr<GLFence> GLFence::create()
+static inline bool glContextSupportsFences(GLContextWrapper* context)
+{
+    return context->glVersion() >= 300;
+}
+
+bool GLFence::isSupported(const GLDisplay& display)
+{
+    auto* context = GLContextWrapper::currentContext();
+    if (!context)
+        return false;
+
+    if (eglVersionSupportsFences(display) || eglExtensionsSupportFences(display))
+        return true;
+
+    return glContextSupportsFences(context);
+}
+
+std::unique_ptr<GLFence> GLFence::create(const GLDisplay& display)
 {
 #if HAVE(GL_FENCE)
-    if (!GLContextWrapper::currentContext())
+    auto* context = GLContextWrapper::currentContext();
+    if (!context)
         return nullptr;
 
-    const auto& fenceCapabilities = capabilities();
-    if (fenceCapabilities.eglSupported && fenceCapabilities.eglServerWaitSupported)
-        return GLFenceEGL::create();
+    if (eglVersionSupportsFences(display))
+        return GLFenceEGL::create(display);
 
-    if (fenceCapabilities.glSupported)
+    // Prefer EGL if server wait is supported,
+    if (eglExtensionsSupportFences(display) && display.extensions().KHR_wait_sync)
+        return GLFenceEGL::create(display);
+
+    if (glContextSupportsFences(context))
         return GLFenceGL::create();
 
-    if (fenceCapabilities.eglSupported)
-        return GLFenceEGL::create();
+    if (eglExtensionsSupportFences(display))
+        return GLFenceEGL::create(display);
 #endif
     return nullptr;
 }
 
 #if OS(UNIX)
-std::unique_ptr<GLFence> GLFence::createExportable()
+std::unique_ptr<GLFence> GLFence::createExportable(const GLDisplay& display)
 {
 #if HAVE(GL_FENCE)
     if (!GLContextWrapper::currentContext())
         return nullptr;
 
-    const auto& fenceCapabilities = capabilities();
-    if (fenceCapabilities.eglSupported && fenceCapabilities.eglExportableSupported)
-        return GLFenceEGL::createExportable();
+    if (display.extensions().ANDROID_native_fence_sync)
+        return GLFenceEGL::createExportable(display);
 #endif
     return nullptr;
 }
 
-std::unique_ptr<GLFence> GLFence::importFD(UnixFileDescriptor&& fd)
+std::unique_ptr<GLFence> GLFence::importFD(const GLDisplay& display, UnixFileDescriptor&& fd)
 {
 #if HAVE(GL_FENCE)
     if (!GLContextWrapper::currentContext())
         return nullptr;
 
-    const auto& fenceCapabilities = capabilities();
-    if (fenceCapabilities.eglSupported && fenceCapabilities.eglExportableSupported)
-        return GLFenceEGL::importFD(WTFMove(fd));
+    if (display.extensions().ANDROID_native_fence_sync)
+        return GLFenceEGL::importFD(display, WTFMove(fd));
 #else
     UNUSED_PARAM(fd);
 #endif

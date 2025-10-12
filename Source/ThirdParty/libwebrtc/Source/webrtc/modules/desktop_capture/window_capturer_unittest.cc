@@ -16,7 +16,6 @@
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/desktop_geometry.h"
-#include "rtc_base/checks.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -87,7 +86,7 @@ TEST_F(WindowCapturerTest, MAYBE_Capture) {
     }
 
     // If we failed to capture a window make sure it no longer exists.
-    if (!frame_.get()) {
+    if (!frame_) {
       DesktopCapturer::SourceList new_list;
       EXPECT_TRUE(capturer_->GetSourceList(&new_list));
       for (auto new_list_it = new_list.begin(); new_list_it != new_list.end();

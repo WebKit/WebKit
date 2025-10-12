@@ -47,8 +47,8 @@ public:
     float totalAnchorShift() const;
     AffineTransform transformationForTextBox(InlineIterator::SVGTextBoxIterator) const;
 
-    void buildTextChunks(const Vector<InlineIterator::SVGTextBoxIterator>& lineLayoutBoxes, const UncheckedKeyHashSet<InlineIterator::SVGTextBox::Key>& chunkStarts, SVGTextFragmentMap&);
-    void layoutTextChunks(const Vector<InlineIterator::SVGTextBoxIterator>& lineLayoutBoxes, const UncheckedKeyHashSet<InlineIterator::SVGTextBox::Key>& chunkStarts, SVGTextFragmentMap&);
+    void buildTextChunks(const Vector<InlineIterator::SVGTextBoxIterator>& lineLayoutBoxes, const HashSet<InlineIterator::SVGTextBox::Key>& chunkStarts, SVGTextFragmentMap&);
+    void layoutTextChunks(const Vector<InlineIterator::SVGTextBoxIterator>& lineLayoutBoxes, const HashSet<InlineIterator::SVGTextBox::Key>& chunkStarts, SVGTextFragmentMap&);
 
 private:
     Vector<SVGTextChunk> m_textChunks;

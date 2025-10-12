@@ -94,7 +94,7 @@ enum class TapHandlingResult : uint8_t;
 - (void)_didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:(const WTF::String&)suggestedFilename data:(NSData *)data;
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-- (void)_updateOverlayRegionsForCustomContentView;
+- (void)_updateOverlayRegions;
 #endif
 
 - (void)_willInvokeUIScrollViewDelegateCallback;
@@ -194,11 +194,9 @@ enum class TapHandlingResult : uint8_t;
 
 - (UIColor *)_insertionPointColor;
 
-- (BOOL)_tryToHandleKeyEventInCustomContentView:(UIPressesEvent *)event;
-
 @property (nonatomic, readonly) WKPasswordView *_passwordView;
 @property (nonatomic, readonly) WKWebViewContentProviderRegistry *_contentProviderRegistry;
-@property (nonatomic, readonly) WKSelectionGranularity _selectionGranularity;
+@property (nonatomic, readonly) WKSelectionGranularity _selectionGranularity WK_API_DEPRECATED("This property is ignored; selection granularity is always `character`.", ios(8.0, 11.0), visionos(1.0, 1.0));
 
 @property (nonatomic, readonly) BOOL _shouldAvoidSecurityHeuristicScoreUpdates;
 
@@ -209,6 +207,8 @@ enum class TapHandlingResult : uint8_t;
 @property (nonatomic, readonly) UIEdgeInsets _computedUnobscuredSafeAreaInset;
 @property (nonatomic, readonly, getter=_isRetainingActiveFocusedState) BOOL _retainingActiveFocusedState;
 @property (nonatomic, readonly) WebCore::IntDegrees _deviceOrientationIgnoringOverrides;
+
+- (void)_setObscuredInsetsInternal:(UIEdgeInsets)obscuredInsets;
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
 @property (nonatomic, readonly) BOOL _isWindowResizingEnabled;
@@ -224,8 +224,7 @@ enum class TapHandlingResult : uint8_t;
 - (void)_resetUnobscuredSafeAreaInsets;
 - (void)_resetObscuredInsets;
 
-- (void)_overrideZoomScaleParametersWithMinimumZoomScale:(CGFloat)minimumZoomScale maximumZoomScale:(CGFloat)maximumZoomScale allowUserScaling:(BOOL)allowUserScaling;
-- (void)_clearOverrideZoomScaleParameters;
+@property (nonatomic, setter=_setForcesInitialScaleFactor:) BOOL _forcesInitialScaleFactor;
 
 - (void)_setPointerTouchCompatibilitySimulatorEnabled:(BOOL)enabled;
 
@@ -235,12 +234,15 @@ enum class TapHandlingResult : uint8_t;
 
 #if ENABLE(MODEL_PROCESS)
 - (void)_willInvalidateDraggedModelWithContainerView:(UIView *)containerView;
-- (void)_setWebViewTransform3DForModel:(CGFloat)newScale;
 #endif
 
 - (BOOL)_isInStableState:(UIScrollView *)scrollView;
 
 - (UIEdgeInsets)currentlyVisibleContentInsetsWithScale:(CGFloat)scaleFactor obscuredInsets:(UIEdgeInsets)obscuredInsets;
+
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+@property (nonatomic, readonly) BOOL _shouldHideTopScrollPocket;
+#endif
 
 @end
 

@@ -11,14 +11,14 @@
 #ifndef TEST_FUZZERS_AUDIO_PROCESSING_FUZZER_HELPER_H_
 #define TEST_FUZZERS_AUDIO_PROCESSING_FUZZER_HELPER_H_
 
-#include <memory>
 
 #include "api/audio/audio_processing.h"
+#include "api/scoped_refptr.h"
 #include "test/fuzzers/fuzz_data_helper.h"
 namespace webrtc {
 
 void FuzzAudioProcessing(test::FuzzDataHelper* fuzz_data,
-                         rtc::scoped_refptr<AudioProcessing> apm);
+                         scoped_refptr<AudioProcessing> apm);
 
 }  // namespace webrtc
 

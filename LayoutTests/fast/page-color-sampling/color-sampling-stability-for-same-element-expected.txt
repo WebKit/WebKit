@@ -1,0 +1,11 @@
+PASS colorsAfterScrollingDown.left is null
+PASS colorsAfterScrollingDown.right is null
+PASS colorsAfterScrollingDown.bottom is null
+PASS colorsAfterScrollingUp.left is null
+PASS colorsAfterScrollingUp.right is null
+PASS colorsAfterScrollingUp.bottom is null
+PASS colorsAfterScrollingDown.top is colorsAfterScrollingUp.top
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,16 +29,19 @@
 #include "BackForwardController.h"
 #include "CSSRuleList.h"
 #include "CSSStyleProperties.h"
-#include "Document.h"
+#include "DocumentSecurityOrigin.h"
+#include "DocumentView.h"
+#include "ExceptionOr.h"
 #include "Frame.h"
+#include "FrameConsoleClient.h"
 #include "FrameLoader.h"
 #include "HTTPParsers.h"
 #include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "Location.h"
 #include "MediaQueryList.h"
 #include "NodeList.h"
 #include "Page.h"
-#include "PageConsoleClient.h"
 #include "PlatformStrategies.h"
 #include "RemoteDOMWindow.h"
 #include "ResourceLoadObserver.h"
@@ -46,7 +49,11 @@
 #include "SecurityOrigin.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WebKitPoint.h"
+#include "WindowProxy.h"
+#include "dom/SandboxFlags.h"
+#include "page/RemoteFrame.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -65,7 +72,7 @@ ExceptionOr<RefPtr<SecurityOrigin>> DOMWindow::createTargetOriginForPostMessage(
 {
     RefPtr<SecurityOrigin> targetSecurityOrigin;
     if (targetOrigin == "/"_s)
-        targetSecurityOrigin = &sourceDocument.securityOrigin();
+        targetSecurityOrigin = sourceDocument.securityOrigin();
     else if (targetOrigin != "*"_s) {
         targetSecurityOrigin = SecurityOrigin::createFromString(targetOrigin);
         // It doesn't make sense target a postMessage at an opaque origin
@@ -119,22 +126,22 @@ void DOMWindow::close()
     }
 
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
-    if (localFrame && !localFrame->protectedLoader()->shouldClose())
+    if (localFrame && !localFrame->loader().shouldClose())
         return;
 
-    ResourceLoadObserver::shared().updateCentralStatisticsStore([] { });
+    ResourceLoadObserver::singleton().updateCentralStatisticsStore([] { });
 
     page->setIsClosing();
     closePage();
 }
 
-PageConsoleClient* DOMWindow::console() const
+FrameConsoleClient* DOMWindow::console() const
 {
-    auto* frame = this->frame();
-    return frame && frame->page() ? &frame->page()->console() : nullptr;
+    RefPtr frame = dynamicDowncast<LocalFrame>(this->frame());
+    return frame ? &frame->console() : nullptr;
 }
 
-CheckedPtr<PageConsoleClient> DOMWindow::checkedConsole() const
+CheckedPtr<FrameConsoleClient> DOMWindow::checkedConsole() const
 {
     return console();
 }
@@ -238,6 +245,11 @@ Document* DOMWindow::documentIfLocal()
     if (!localThis)
         return nullptr;
     return localThis->document();
+}
+
+RefPtr<Document> DOMWindow::protectedDocumentIfLocal()
+{
+    return documentIfLocal();
 }
 
 ExceptionOr<Document*> DOMWindow::document() const
@@ -917,5 +929,127 @@ ExceptionOr<PushManager&> DOMWindow::pushManager()
     return localThis->pushManager();
 }
 #endif
+
+bool DOMWindow::isCurrentlyDisplayedInFrame() const
+{
+    RefPtr frame = this->frame();
+    return frame && frame->window() == this;
+}
+
+void DOMWindow::printErrorMessage(const String& message) const
+{
+    if (message.isEmpty())
+        return;
+
+    if (CheckedPtr frameConsole = console())
+        frameConsole->addMessage(MessageSource::JS, MessageLevel::Error, message);
+}
+
+String DOMWindow::crossDomainAccessErrorMessage(const LocalDOMWindow& activeWindow, IncludeTargetOrigin includeTargetOrigin)
+{
+    const URL& activeWindowURL = activeWindow.document()->url();
+    if (activeWindowURL.isNull())
+        return String();
+
+    RefPtr remoteFrame = (m_type == DOMWindowType::Remote) ? dynamicDowncast<RemoteDOMWindow>(*this)->frame() : nullptr;
+    RefPtr localDocument = documentIfLocal();
+    // We can't figure anything out if we are operating on a RemoteDOMWindow and don't have a remote frame
+    if (!localDocument && !remoteFrame)
+        return String();
+    Ref activeOrigin = activeWindow.protectedDocument()->securityOrigin();
+    const Ref targetOrigin = localDocument ? localDocument->securityOrigin() : remoteFrame->frameDocumentSecurityOriginOrOpaque();
+    ASSERT(!activeOrigin->isSameOriginDomain(targetOrigin));
+
+    // FIXME: This message, and other console messages, have extra newlines. Should remove them.
+    String message;
+    if (includeTargetOrigin == IncludeTargetOrigin::Yes)
+        message = makeString("Blocked a frame with origin \""_s, activeOrigin->toString(), "\" from accessing a frame with origin \""_s, targetOrigin->toString(), "\". "_s);
+    else
+        message = makeString("Blocked a frame with origin \""_s, activeOrigin->toString(), "\" from accessing a cross-origin frame. "_s);
+
+    // Sandbox errors: Use the origin of the frames' location, rather than their actual origin (since we know that at least one will be "null").
+    URL activeURL = activeWindow.document()->url();
+    RefPtr<const SecurityOrigin> remoteFrameSecurityOrigin = (m_type == DOMWindowType::Remote) ? remoteFrame->frameDocumentSecurityOriginOrOpaque() : RefPtr<const SecurityOrigin>();
+    URL targetURL = localDocument ? localDocument->url() : remoteFrameSecurityOrigin->toURL();
+    bool localSandboxed = (localDocument && localDocument->isSandboxed(SandboxFlag::Origin));
+
+    if (localSandboxed || activeWindow.document()->isSandboxed(SandboxFlag::Origin)) {
+        if (includeTargetOrigin == IncludeTargetOrigin::Yes)
+            message = makeString("Blocked a frame at \""_s, SecurityOrigin::create(activeURL).get().toString(), "\" from accessing a frame at \""_s, SecurityOrigin::create(targetURL).get().toString(), "\". "_s);
+        else
+            message = makeString("Blocked a frame at \""_s, SecurityOrigin::create(activeURL).get().toString(), "\" from accessing a cross-origin frame. "_s);
+
+        if (localSandboxed && activeWindow.document()->isSandboxed(SandboxFlag::Origin))
+            return makeString("Sandbox access violation: "_s, message, " Both frames are sandboxed and lack the \"allow-same-origin\" flag."_s);
+        if (localSandboxed)
+            return makeString("Sandbox access violation: "_s, message, " The frame being accessed is sandboxed and lacks the \"allow-same-origin\" flag."_s);
+        return makeString("Sandbox access violation: "_s, message, " The frame requesting access is sandboxed and lacks the \"allow-same-origin\" flag."_s);
+    }
+
+    if (includeTargetOrigin == IncludeTargetOrigin::Yes) {
+        // Protocol errors: Use the URL's protocol rather than the origin's protocol so that we get a useful message for non-heirarchal URLs like 'data:'.
+        if (targetOrigin->protocol() != activeOrigin->protocol())
+            return makeString(message, " The frame requesting access has a protocol of \""_s, activeURL.protocol(), "\", the frame being accessed has a protocol of \""_s, targetURL.protocol(), "\". Protocols must match.\n"_s);
+
+        // 'document.domain' errors.
+        if (targetOrigin->domainWasSetInDOM() && activeOrigin->domainWasSetInDOM())
+            return makeString(message, "The frame requesting access set \"document.domain\" to \""_s, activeOrigin->domain(), "\", the frame being accessed set it to \""_s, targetOrigin->domain(), "\". Both must set \"document.domain\" to the same value to allow access."_s);
+        if (activeOrigin->domainWasSetInDOM())
+            return makeString(message, "The frame requesting access set \"document.domain\" to \""_s, activeOrigin->domain(), "\", but the frame being accessed did not. Both must set \"document.domain\" to the same value to allow access."_s);
+        if (targetOrigin->domainWasSetInDOM())
+            return makeString(message, "The frame being accessed set \"document.domain\" to \""_s, targetOrigin->domain(), "\", but the frame requesting access did not. Both must set \"document.domain\" to the same value to allow access."_s);
+    }
+
+    // Default.
+    return makeString(message, "Protocols, domains, and ports must match."_s);
+}
+
+bool DOMWindow::isInsecureScriptAccess(const LocalDOMWindow& activeWindow, const String& urlString)
+{
+    if (!WTF::protocolIsJavaScript(urlString))
+        return false;
+
+    // If this LocalDOMWindow isn't currently active in the Frame, then there's no
+    // way we should allow the access.
+    // FIXME: Remove this check if we're able to disconnect LocalDOMWindow from
+    // Frame on navigation: https://bugs.webkit.org/show_bug.cgi?id=62054
+    if (isCurrentlyDisplayedInFrame()) {
+        // FIXME: Is there some way to eliminate the need for a separate "activeWindow == this" check?
+        if (&activeWindow == this)
+            return false;
+
+        // FIXME: The name canAccess seems to be a roundabout way to ask "can execute script".
+        // Can we name the SecurityOrigin function better to make this more clear?
+
+        // This check only makes sense with LocalDOMWindows as RemoteDOMWindows necessarily have different origins
+        RefPtr localDocument = documentIfLocal();
+        if (localDocument && activeWindow.protectedDocument()->protectedSecurityOrigin()->isSameOriginDomain(localDocument->protectedSecurityOrigin()))
+            return false;
+    }
+
+    activeWindow.printErrorMessage(crossDomainAccessErrorMessage(activeWindow, IncludeTargetOrigin::Yes));
+    return true;
+}
+
+bool DOMWindow::passesSetLocationSecurityChecks(const LocalDOMWindow& activeWindow, const URL& completedURL, CanNavigateState& navigationState)
+{
+    ASSERT(navigationState != CanNavigateState::Unchecked);
+    if (!isCurrentlyDisplayedInFrame())
+        return false;
+
+    RefPtr activeDocument = activeWindow.document();
+    if (!activeDocument)
+        return false;
+
+    RefPtr frame = this->frame();
+    if (navigationState != CanNavigateState::Able) [[unlikely]]
+        navigationState = activeDocument->canNavigate(frame.get(), completedURL);
+    if (navigationState == CanNavigateState::Unable)
+        return false;
+
+    if (isInsecureScriptAccess(activeWindow, completedURL.string()))
+        return false;
+    return true;
+}
 
 } // namespace WebCore

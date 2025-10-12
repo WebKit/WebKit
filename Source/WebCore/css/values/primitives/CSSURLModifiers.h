@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "CSSValueTypes.h"
-#include "LoadedFromOpaqueSource.h"
+#include <WebCore/CSSValueTypes.h>
+#include <WebCore/LoadedFromOpaqueSource.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -34,22 +34,22 @@ struct ResourceLoaderOptions;
 
 namespace CSS {
 
-// <crossorigin-modifier> = crossorigin( anonymous | use-credentials )
-// https://drafts.csswg.org/css-values-5/#typedef-request-url-modifier-crossorigin-modifier
-using URLCrossoriginParameters = Variant<
+// <cross-origin-modifier> = cross-origin( anonymous | use-credentials )
+// https://drafts.csswg.org/css-values-5/#typedef-request-url-modifier-cross-origin-modifier
+using URLCrossOriginParameters = Variant<
     Keyword::Anonymous,
     Keyword::UseCredentials
 >;
-using URLCrossoriginFunction = FunctionNotation<CSSValueCrossorigin, URLCrossoriginParameters>;
+using URLCrossOriginFunction = FunctionNotation<CSSValueCrossOrigin, URLCrossOriginParameters>;
 
 // <integrity-modifier> = integrity( <string> )
 // https://drafts.csswg.org/css-values-5/#typedef-request-url-modifier-integrity-modifier
 using URLIntegrityParameters = String;
 using URLIntegrityFunction = FunctionNotation<CSSValueIntegrity, URLIntegrityParameters>;
 
-// <referrerpolicy-modifier> = referrerpolicy( no-referrer | no-referrer-when-downgrade | same-origin | origin | strict-origin | origin-when-cross-origin | strict-origin-when-cross-origin | unsafe-url )
-// https://drafts.csswg.org/css-values-5/#typedef-request-url-modifier-referrerpolicy-modifier
-using URLReferrerpolicyParameters = Variant<
+// <referrer-policy-modifier> = referrer-policy( no-referrer | no-referrer-when-downgrade | same-origin | origin | strict-origin | origin-when-cross-origin | strict-origin-when-cross-origin | unsafe-url )
+// https://drafts.csswg.org/css-values-5/#typedef-request-url-modifier-referrer-policy-modifier
+using URLReferrerPolicyParameters = Variant<
     Keyword::NoReferrer,
     Keyword::NoReferrerWhenDowngrade,
     Keyword::SameOrigin,
@@ -59,14 +59,14 @@ using URLReferrerpolicyParameters = Variant<
     Keyword::StrictOriginWhenCrossOrigin,
     Keyword::UnsafeUrl
 >;
-using URLReferrerpolicyFunction = FunctionNotation<CSSValueReferrerpolicy, URLReferrerpolicyParameters>;
+using URLReferrerPolicyFunction = FunctionNotation<CSSValueReferrerPolicy, URLReferrerPolicyParameters>;
 
 // https://drafts.csswg.org/css-values-5/#typedef-request-url-modifier
-// <request-url-modifier> = <crossorigin-modifier> | <integrity-modifier> | <referrerpolicy-modifier>
+// <request-url-modifier> = <cross-origin-modifier> | <integrity-modifier> | <referrer-policy-modifier>
 struct URLModifiers {
-    std::optional<URLCrossoriginFunction> crossorigin { };
+    std::optional<URLCrossOriginFunction> crossOrigin { };
     std::optional<URLIntegrityFunction> integrity { };
-    std::optional<URLReferrerpolicyFunction> referrerpolicy { };
+    std::optional<URLReferrerPolicyFunction> referrerPolicy { };
 
     // This is not a parsed value, but is implicit from context the modifiers were parsed with.
     LoadedFromOpaqueSource loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
@@ -77,11 +77,11 @@ struct URLModifiers {
 template<size_t I> const auto& get(const URLModifiers& value)
 {
     if constexpr (I == 0)
-        return value.crossorigin;
+        return value.crossOrigin;
     else if constexpr (I == 1)
         return value.integrity;
     else if constexpr (I == 2)
-        return value.referrerpolicy;
+        return value.referrerPolicy;
 }
 
 // Applies `URLModifiers` to `ResourceLoaderOptions`.

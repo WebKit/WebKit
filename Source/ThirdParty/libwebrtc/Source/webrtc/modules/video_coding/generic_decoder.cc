@@ -10,25 +10,37 @@
 
 #include "modules/video_coding/generic_decoder.h"
 
-#include <stddef.h>
-
 #include <algorithm>
-#include <cmath>
+#include <cstddef>
+#include <cstdint>
 #include <iterator>
 #include <optional>
+#include <tuple>
 #include <utility>
+#include <variant>
 
 #include "absl/algorithm/container.h"
-#include "absl/types/variant.h"
+#include "api/field_trials_view.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "api/video/color_space.h"
+#include "api/video/encoded_frame.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_content_type.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_type.h"
 #include "api/video/video_timing.h"
 #include "api/video_codecs/video_decoder.h"
 #include "common_video/frame_instrumentation_data.h"
 #include "common_video/include/corruption_score_calculator.h"
 #include "modules/include/module_common_types_public.h"
+#include "modules/video_coding/encoded_frame.h"
+#include "modules/video_coding/include/video_coding_defines.h"
 #include "modules/video_coding/include/video_error_codes.h"
+#include "modules/video_coding/timing/timing.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/string_encode.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/trace_event.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/metrics.h"
@@ -39,12 +51,12 @@ namespace {
 
 constexpr size_t kDecoderFrameMemoryLength = 10;
 
-}
+}  // namespace
 
 VCMDecodedFrameCallback::VCMDecodedFrameCallback(
     VCMTiming* timing,
     Clock* clock,
-    const FieldTrialsView& field_trials,
+    const FieldTrialsView& /* field_trials */,
     CorruptionScoreCalculator* corruption_score_calculator)
     : _clock(clock),
       _timing(timing),
@@ -134,20 +146,10 @@ void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
     return;
   }
 
-  std::optional<double> corruption_score;
-  if (corruption_score_calculator_ &&
-      frame_info->frame_instrumentation_data.has_value()) {
-    if (const FrameInstrumentationData* data =
-            absl::get_if<FrameInstrumentationData>(
-                &*frame_info->frame_instrumentation_data)) {
-      corruption_score = corruption_score_calculator_->CalculateCorruptionScore(
-          decodedImage, *data);
-    }
-  }
-
   decodedImage.set_ntp_time_ms(frame_info->ntp_time_ms);
   decodedImage.set_packet_infos(frame_info->packet_infos);
   decodedImage.set_rotation(frame_info->rotation);
+  decodedImage.set_color_space(frame_info->color_space);
   VideoFrame::RenderParameters render_parameters = _timing->RenderParameters();
   if (render_parameters.max_composition_delay_in_frames) {
     // Subtract frames that are in flight.
@@ -241,8 +243,17 @@ void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
                                      .qp = qp,
                                      .decode_time = decode_time,
                                      .content_type = frame_info->content_type,
-                                     .frame_type = frame_info->frame_type,
-                                     .corruption_score = corruption_score});
+                                     .frame_type = frame_info->frame_type});
+
+  if (corruption_score_calculator_ &&
+      frame_info->frame_instrumentation_data.has_value()) {
+    if (const FrameInstrumentationData* data =
+            std::get_if<FrameInstrumentationData>(
+                &*frame_info->frame_instrumentation_data)) {
+      corruption_score_calculator_->CalculateCorruptionScore(
+          decodedImage, *data, frame_info->content_type);
+    }
+  }
 }
 
 void VCMDecodedFrameCallback::OnDecoderInfoChanged(
@@ -280,7 +291,7 @@ void VCMDecodedFrameCallback::ClearTimestampMap() {
 }
 
 VCMGenericDecoder::VCMGenericDecoder(VideoDecoder* decoder)
-    : _callback(NULL),
+    : _callback(nullptr),
       decoder_(decoder),
       _last_keyframe_content_type(VideoContentType::UNSPECIFIED) {
   RTC_DCHECK(decoder_);
@@ -317,7 +328,7 @@ int32_t VCMGenericDecoder::Decode(
     Timestamp now,
     int64_t render_time_ms,
     const std::optional<
-        absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>&
+        std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>&
         frame_instrumentation_data) {
   TRACE_EVENT("webrtc", "VCMGenericDecoder::Decode",
               perfetto::Flow::ProcessScoped(frame.RtpTimestamp()));
@@ -333,6 +344,9 @@ int32_t VCMGenericDecoder::Decode(
   frame_info.ntp_time_ms = frame.ntp_time_ms_;
   frame_info.packet_infos = frame.PacketInfos();
   frame_info.frame_instrumentation_data = frame_instrumentation_data;
+  const webrtc::ColorSpace* color_space = frame.ColorSpace();
+  if (color_space)
+    frame_info.color_space = *color_space;
 
   // Set correctly only for key frames. Thus, use latest key frame
   // content type. If the corresponding key frame was lost, decode will fail

@@ -20,4 +20,5 @@ layer at (0,0) size 800x600
           text run at (743,36) width 25: "So, "
           text run at (0,54) width 371: "this test drags a bit of text over the list marker and drops it. "
           text run at (371,54) width 386: "It should be pasted into the list item, which is contenteditable."
-caret: position 0 of child 0 {#text} of child 0 {LI} of child 1 {UL} of body
+selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 0 {LI} of child 1 {UL} of body
+selection end:   position 5 of child 0 {#text} of child 1 {SPAN} of child 0 {LI} of child 1 {UL} of body

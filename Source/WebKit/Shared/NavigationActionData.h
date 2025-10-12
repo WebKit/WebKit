@@ -36,6 +36,7 @@
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/OwnerPermissionsPolicyData.h>
 #include <WebCore/PrivateClickMeasurement.h>
+#include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SandboxFlags.h>
@@ -45,7 +46,7 @@
 namespace WebKit {
 
 struct NavigationActionData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(NavigationActionData);
 
     WebCore::NavigationType navigationType { WebCore::NavigationType::Other };
     OptionSet<WebEventModifier> modifiers;
@@ -65,7 +66,7 @@ struct NavigationActionData {
     bool hasOpener { false };
     bool isPerformingHTTPFallback { false };
     bool isInitialFrameSrcLoad { false };
-    bool isContentExtensionRedirect { false };
+    bool isContentRuleListRedirect { false };
     String openedMainFrameName;
     WebCore::SecurityOriginData requesterOrigin;
     WebCore::SecurityOriginData requesterTopOrigin;
@@ -75,6 +76,7 @@ struct NavigationActionData {
     WebCore::LockBackForwardList lockBackForwardList { WebCore::LockBackForwardList::No };
     WTF::String clientRedirectSourceForHistory;
     WebCore::SandboxFlags effectiveSandboxFlags;
+    WebCore::ReferrerPolicy effectiveReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };
     std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy;
     std::optional<WebCore::PrivateClickMeasurement> privateClickMeasurement;
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
@@ -88,6 +90,7 @@ struct NavigationActionData {
     std::optional<WebCore::NavigationIdentifier> navigationID;
     WebCore::ResourceRequest originalRequest;
     WebCore::ResourceRequest request;
+    String invalidURLString;
 };
 
 }

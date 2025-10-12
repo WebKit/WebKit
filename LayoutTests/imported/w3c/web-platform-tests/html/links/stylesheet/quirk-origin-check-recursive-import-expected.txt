@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Did not parse stylesheet at 'data:/,@import%20url('x/');' because non CSS MIME types are not allowed for cross-origin stylesheets.
 
 PASS Origin check for stylesheet with non-CSS MIME type quirk: recursive @import
 

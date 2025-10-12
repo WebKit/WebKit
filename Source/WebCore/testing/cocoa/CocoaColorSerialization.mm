@@ -29,11 +29,22 @@
 #import <WebCore/ColorSerialization.h>
 #import <wtf/text/WTFString.h>
 
+#if PLATFORM(MAC)
+#import <AppKit/AppKit.h>
+#else
+#import <UIKit/UIKit.h>
+#endif
+
 namespace WebCoreTestSupport {
 
 String serializationForCSS(WebCore::CocoaColor *color)
 {
-    return WebCore::serializationForCSS(WebCore::colorFromCocoaColor(color));
+    return WebCore::serializationForCSS([color = RetainPtr { color }] -> WebCore::Color {
+        RetainPtr cgColor = [color CGColor];
+        if (auto colorComponents = WebCore::roundAndClampToSRGBALossy(cgColor.get()))
+            return { WTFMove(*colorComponents) };
+        return WebCore::colorFromCocoaColor(color.get());
+    }());
 }
 
 } // namespace WebCoreTestSupport

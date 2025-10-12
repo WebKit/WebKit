@@ -27,7 +27,6 @@
 #include "KeyedDecoderGeneric.h"
 
 #include "KeyedEncoderGeneric.h"
-#include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
@@ -40,14 +39,14 @@ typedef KeyedDecoderGeneric::Dictionary KeyedDecoderGenericDictionary;
 class KeyedDecoderGeneric::Dictionary {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(KeyedDecoderGenericDictionary);
 public:
-    using Node = std::variant<Vector<uint8_t>, bool, uint32_t, uint64_t, int32_t, int64_t, float, double, String, std::unique_ptr<Dictionary>, std::unique_ptr<Array>>;
+    using Node = Variant<Vector<uint8_t>, bool, uint32_t, uint64_t, int32_t, int64_t, float, double, String, std::unique_ptr<Dictionary>, std::unique_ptr<Array>>;
 
     template <typename T>
     void add(const String& key, T&& value) { m_map.add(key, makeUniqueWithoutFastMallocCheck<Node>(std::forward<T>(value))); }
     Node* get(const String& key) { return m_map.get(key); }
 
 private:
-    UncheckedKeyHashMap<String, std::unique_ptr<Node>> m_map;
+    HashMap<String, std::unique_ptr<Node>> m_map;
 };
 
 static std::optional<String> readString(WTF::Persistence::Decoder& decoder)
@@ -62,7 +61,7 @@ static std::optional<String> readString(WTF::Persistence::Decoder& decoder)
     if (!decoder.bufferIsLargeEnoughToContain<uint8_t>(*size))
         return std::nullopt;
     Vector<uint8_t> buffer(size.value());
-    if (!decoder.decodeFixedLengthData({ buffer.data(), size.value() }))
+    if (!decoder.decodeFixedLengthData(buffer.mutableSpan()))
         return std::nullopt;
     auto result = String::fromUTF8(buffer.span());
     if (result.isNull())
@@ -121,7 +120,7 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(std::span<const uint8_t> data)
             if (!ok)
                 break;
             Vector<uint8_t> buffer(*size);
-            ok = decoder.decodeFixedLengthData({ buffer.data(), *size });
+            ok = decoder.decodeFixedLengthData(buffer.mutableSpan());
             if (!ok)
                 break;
             m_dictionaryStack.last()->add(*key, WTFMove(buffer));

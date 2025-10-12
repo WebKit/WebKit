@@ -27,6 +27,8 @@ promise_test((test) => {
 
 promise_test((test) => {
     return navigator.mediaDevices.getUserMedia({audio: true, video: true}).then((stream) => {
+        test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+
         findMediaElement();
         video.src = findMediaFile("video", "content/test");
         return video.play().then(() => assert_unreached(), (e) => { assert_equals(e.name, 'NotAllowedError')});
@@ -35,6 +37,8 @@ promise_test((test) => {
 
 promise_test((test) => {
     return navigator.mediaDevices.getUserMedia({audio: true, video: true}).then((stream) => {
+        test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+
         video.srcObject = stream;
         return waitFor(10);
     }).then(() => {
@@ -44,6 +48,8 @@ promise_test((test) => {
 
 promise_test((test) => {
     return navigator.mediaDevices.getUserMedia({audio: true, video: true}).then((stream) => {
+        test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+
         return new Promise((resolve, reject) => {
             createConnections((firstConnection) => {
                 firstConnection.addTrack(stream.getVideoTracks()[0], stream);

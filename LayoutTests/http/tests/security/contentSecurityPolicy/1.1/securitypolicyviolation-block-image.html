@@ -10,7 +10,7 @@
         var expectations = {
             'documentURI': document.location.toString(),
             'referrer': document.referrer,
-            'blockedURI': 'http://127.0.0.1:8000/security/resources/abe.png',
+            'blockedURI': document.location.protocol === 'http:' ? 'http://127.0.0.1:8000/security/resources/abe.png' : 'https://127.0.0.1:8443/security/resources/abe.png',
             'violatedDirective': 'img-src',
             'effectiveDirective': 'img-src',
             'originalPolicy': 'img-src \'none\'',

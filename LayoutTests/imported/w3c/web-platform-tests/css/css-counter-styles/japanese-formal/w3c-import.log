@@ -15,6 +15,9 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/counter-japanese-formal-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/counter-japanese-formal-extended-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/counter-japanese-formal-extended-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/counter-japanese-formal-extended.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/counter-japanese-formal-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/counter-japanese-formal.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-047-expected.html

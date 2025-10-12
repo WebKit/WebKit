@@ -73,7 +73,13 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         if (!data.url)
             return null;
 
-        if (!data.isRegex) {
+        if (data.isRegex) {
+            try {
+                new RegExp(data.url);
+            } catch {
+                return null;
+            }
+        } else {
             const schemes = ["http:", "https:", "file:"];
             if (!schemes.some((scheme) => data.url.toLowerCase().startsWith(scheme)))
                 return null;

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: target.attributeStyleMap.set is not a function. (In 'target.attributeStyleMap.set('width', width)', 'target.attributeStyleMap.set' is undefined)
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x160

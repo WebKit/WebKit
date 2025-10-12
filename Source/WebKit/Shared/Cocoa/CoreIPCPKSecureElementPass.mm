@@ -42,7 +42,7 @@ RetainPtr<id> CoreIPCPKSecureElementPass::toID() const
 {
     RetainPtr data = toNSDataNoCopy(m_data.span(), FreeWhenDone::No);
     RELEASE_ASSERT(isInWebProcess());
-    return [NSKeyedUnarchiver unarchivedObjectOfClass:PAL::getPKSecureElementPassClass() fromData:data.get() error:nil];
+    return [NSKeyedUnarchiver unarchivedObjectOfClass:PAL::getPKSecureElementPassClassSingleton() fromData:data.get() error:nil];
 }
 
 } // namespace WebKit

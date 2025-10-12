@@ -1,4 +1,4 @@
-//@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1")
+//@ requireOptions("--useBBQJIT=1")
 //@ skip if ($architecture != "arm64" && $architecture != "x86_64")
 //@ skip if $memoryLimited
 // Copyright 2016 the V8 project authors. All rights reserved.

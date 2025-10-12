@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,10 +45,10 @@ String logLevelString()
 
     Vector<char> buffer(length);
 
-    if (!GetEnvironmentVariableA(loggingEnvironmentVariable, buffer.data(), length))
+    if (!GetEnvironmentVariableA(loggingEnvironmentVariable, buffer.mutableSpan().data(), length))
         return emptyString();
 
-    return String::fromLatin1(buffer.data());
+    return String::fromLatin1(buffer.span().data());
 #else
     return String();
 #endif

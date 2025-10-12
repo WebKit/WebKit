@@ -21,7 +21,7 @@ let wat = `
 async function test() {
     const instance = await instantiate(wat, {});
     const { table, read, write_null, write_inc, call, inc } = instance.exports
-    assert.throws(() => {call(5)}, WebAssembly.RuntimeError, "call_indirect to a null table entry (evaluating 'call(5)')");
+    assert.throws(() => {call(5)}, WebAssembly.RuntimeError, "call_indirect to a signature that does not match (evaluating 'call(5)')");
 }
 
 await assert.asyncTest(test())

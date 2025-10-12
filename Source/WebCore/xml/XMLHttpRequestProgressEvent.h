@@ -46,6 +46,10 @@ private:
         : ProgressEvent(EventInterfaceType::XMLHttpRequestProgressEvent, type, lengthComputable, loaded, total)
     {
     }
+
+    bool isXMLHttpRequestProgressEvent() const final { return true; }
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENT(XMLHttpRequestProgressEvent)

@@ -69,7 +69,7 @@ OptionSet<Change> determineChanges(const RenderStyle& s1, const RenderStyle& s2)
         // https://bugs.webkit.org/show_bug.cgi?id=55069
         if (s1.hasTextCombine() != s2.hasTextCombine())
             return true;
-        if (!s1.contentDataEquivalent(s2))
+        if (s1.content() != s2.content())
             return true;
         return false;
     };

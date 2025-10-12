@@ -4,25 +4,12 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Don't mishandle deletion of a property from the internal iterator created for a for-in loop, when a gc occurs just after it
+info: bugzilla.mozilla.org/show_bug.cgi?id=1462939
 esid: pending
+features: [host-gc-required]
 ---*/
-//-----------------------------------------------------------------------------
-var gTestfile = "for-in-with-gc-and-unvisited-deletion.js";
-var BUGNUMBER = 1462939;
-var summary =
-  "Don't mishandle deletion of a property from the internal iterator " +
-  "created for a for-in loop, when a gc occurs just after it";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 function testOneDeletion()
 {
@@ -77,7 +64,3 @@ function testThreeDeletions()
   }
 }
 testThreeDeletions();
-
-/******************************************************************************/
-
-print("Tests complete");

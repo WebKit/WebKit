@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 // utilities.cpp: Conversion functions and other utility routines.
 
 // Older clang versions have a false positive on this warning here.
@@ -1279,6 +1283,7 @@ bool IsExternalImageTarget(EGLenum target)
     {
         case EGL_NATIVE_BUFFER_ANDROID:
         case EGL_D3D11_TEXTURE_ANGLE:
+        case EGL_WEBGPU_TEXTURE_ANGLE:
         case EGL_LINUX_DMA_BUF_EXT:
         case EGL_METAL_TEXTURE_ANGLE:
         case EGL_VULKAN_IMAGE_ANGLE:
@@ -1453,7 +1458,7 @@ bool IsQueryEntryPoint(EntryPoint entryPoint)
 }
 }  // namespace angle
 
-void writeFile(const char *path, const void *content, size_t size)
+void writeFile(const char *path, std::string_view content)
 {
 #if !defined(ANGLE_ENABLE_WINDOWS_UWP)
     FILE *file = fopen(path, "w");
@@ -1463,7 +1468,7 @@ void writeFile(const char *path, const void *content, size_t size)
         return;
     }
 
-    fwrite(content, sizeof(char), size, file);
+    fwrite(content.data(), sizeof(char), content.size(), file);
     fclose(file);
 #else
     UNREACHABLE();

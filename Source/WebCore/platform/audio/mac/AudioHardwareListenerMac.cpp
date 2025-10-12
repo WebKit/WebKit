@@ -30,6 +30,7 @@
 
 #include <algorithm>
 #include <wtf/StdLibExtras.h>
+#include <wtf/darwin/DispatchExtras.h>
 
 enum {
     kAudioHardwarePropertyProcessIsRunning = 'prun'
@@ -128,14 +129,14 @@ AudioHardwareListenerMac::AudioHardwareListenerMac(Client& client)
             weakThis->propertyChanged(unsafeMakeSpan(properties, count));
     });
 
-    AudioObjectAddPropertyListenerBlock(kAudioObjectSystemObject, &processIsRunningPropertyDescriptor(), dispatch_get_main_queue(), m_block);
-    AudioObjectAddPropertyListenerBlock(kAudioObjectSystemObject, &outputDevicePropertyDescriptor(), dispatch_get_main_queue(), m_block);
+    AudioObjectAddPropertyListenerBlock(kAudioObjectSystemObject, &processIsRunningPropertyDescriptor(), mainDispatchQueueSingleton(), m_block);
+    AudioObjectAddPropertyListenerBlock(kAudioObjectSystemObject, &outputDevicePropertyDescriptor(), mainDispatchQueueSingleton(), m_block);
 }
 
 AudioHardwareListenerMac::~AudioHardwareListenerMac()
 {
-    AudioObjectRemovePropertyListenerBlock(kAudioObjectSystemObject, &processIsRunningPropertyDescriptor(), dispatch_get_main_queue(), m_block);
-    AudioObjectRemovePropertyListenerBlock(kAudioObjectSystemObject, &outputDevicePropertyDescriptor(), dispatch_get_main_queue(), m_block);
+    AudioObjectRemovePropertyListenerBlock(kAudioObjectSystemObject, &processIsRunningPropertyDescriptor(), mainDispatchQueueSingleton(), m_block);
+    AudioObjectRemovePropertyListenerBlock(kAudioObjectSystemObject, &outputDevicePropertyDescriptor(), mainDispatchQueueSingleton(), m_block);
     Block_release(m_block);
 }
 

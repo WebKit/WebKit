@@ -14,4 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/resources/AhemCrossmarkSupport.otf
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/resources/variabletest_matching.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/resources/w3c-import.log

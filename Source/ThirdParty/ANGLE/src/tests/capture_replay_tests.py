@@ -290,7 +290,7 @@ def CaptureProducedRequiredFiles(all_trace_files, test_name):
     context_id = 0
     for f in test_files:
         # TODO: Consolidate. http://anglebug.com/42266223
-        if "_001.cpp" in f or "_001.c" in f:
+        if "_0001.cpp" in f or "_0001.c" in f:
             frame_files_count += 1
         elif f.endswith(".json"):
             source_json_count += 1

@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "JSLexicalEnvironment.h"
+#include <JavaScriptCore/JSLexicalEnvironment.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -51,6 +51,8 @@ public:
     }
 
     DECLARE_INFO;
+
+    DECLARE_VISIT_CHILDREN;
 
     inline static Structure* createStructure(VM&, JSGlobalObject*);
 
@@ -87,8 +89,6 @@ private:
     {
         return *std::bit_cast<WriteBarrierBase<AbstractModuleRecord>*>(std::bit_cast<char*>(this) + offsetOfModuleRecord(symbolTable()));
     }
-
-    DECLARE_VISIT_CHILDREN;
 };
 
 inline JSModuleEnvironment::JSModuleEnvironment(VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue, AbstractModuleRecord* moduleRecord)

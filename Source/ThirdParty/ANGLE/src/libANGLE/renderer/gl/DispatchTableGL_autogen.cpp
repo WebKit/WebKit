@@ -2243,6 +2243,20 @@ void DispatchTableGL::initProcsGLES(const gl::Version &version,
         ASSIGN("glReadnPixelsKHR", readnPixels);
     }
 
+    if (extensions.count("GL_MESA_sampler_objects") != 0)
+    {
+        ASSIGN("glBindSampler", bindSampler);
+        ASSIGN("glDeleteSamplers", deleteSamplers);
+        ASSIGN("glGenSamplers", genSamplers);
+        ASSIGN("glGetSamplerParameterfv", getSamplerParameterfv);
+        ASSIGN("glGetSamplerParameteriv", getSamplerParameteriv);
+        ASSIGN("glIsSampler", isSampler);
+        ASSIGN("glSamplerParameterf", samplerParameterf);
+        ASSIGN("glSamplerParameterfv", samplerParameterfv);
+        ASSIGN("glSamplerParameteri", samplerParameteri);
+        ASSIGN("glSamplerParameteriv", samplerParameteriv);
+    }
+
     if (extensions.count("GL_NV_framebuffer_blit") != 0)
     {
         ASSIGN("glBlitFramebufferNV", blitFramebufferNV);
@@ -2256,6 +2270,11 @@ void DispatchTableGL::initProcsGLES(const gl::Version &version,
     if (extensions.count("GL_OES_EGL_image") != 0)
     {
         ASSIGN("glEGLImageTargetRenderbufferStorageOES", eGLImageTargetRenderbufferStorageOES);
+        ASSIGN("glEGLImageTargetTexture2DOES", eGLImageTargetTexture2DOES);
+    }
+
+    if (extensions.count("GL_OES_EGL_image_external") != 0)
+    {
         ASSIGN("glEGLImageTargetTexture2DOES", eGLImageTargetTexture2DOES);
     }
 
@@ -2901,6 +2920,7 @@ void DispatchTableGL::initProcsSharedExtensions(const std::set<std::string> &ext
     if (extensions.count("GL_OVR_multiview") != 0)
     {
         ASSIGN("glFramebufferTextureMultiviewOVR", framebufferTextureMultiviewOVR);
+        ASSIGN("glNamedFramebufferTextureMultiviewOVR", namedFramebufferTextureMultiviewOVR);
     }
 }
 
@@ -5118,6 +5138,20 @@ void DispatchTableGL::initProcsGLESNULL(const gl::Version &version,
         readnPixels            = &glReadnPixelsNULL;
     }
 
+    if (extensions.count("GL_MESA_sampler_objects") != 0)
+    {
+        bindSampler           = &glBindSamplerNULL;
+        deleteSamplers        = &glDeleteSamplersNULL;
+        genSamplers           = &glGenSamplersNULL;
+        getSamplerParameterfv = &glGetSamplerParameterfvNULL;
+        getSamplerParameteriv = &glGetSamplerParameterivNULL;
+        isSampler             = &glIsSamplerNULL;
+        samplerParameterf     = &glSamplerParameterfNULL;
+        samplerParameterfv    = &glSamplerParameterfvNULL;
+        samplerParameteri     = &glSamplerParameteriNULL;
+        samplerParameteriv    = &glSamplerParameterivNULL;
+    }
+
     if (extensions.count("GL_NV_framebuffer_blit") != 0)
     {
         blitFramebufferNV = &glBlitFramebufferNVNULL;
@@ -5132,6 +5166,11 @@ void DispatchTableGL::initProcsGLESNULL(const gl::Version &version,
     {
         eGLImageTargetRenderbufferStorageOES = &glEGLImageTargetRenderbufferStorageOESNULL;
         eGLImageTargetTexture2DOES           = &glEGLImageTargetTexture2DOESNULL;
+    }
+
+    if (extensions.count("GL_OES_EGL_image_external") != 0)
+    {
+        eGLImageTargetTexture2DOES = &glEGLImageTargetTexture2DOESNULL;
     }
 
     if (extensions.count("GL_OES_copy_image") != 0)
@@ -5776,6 +5815,7 @@ void DispatchTableGL::initProcsSharedExtensionsNULL(const std::set<std::string> 
     if (extensions.count("GL_OVR_multiview") != 0)
     {
         framebufferTextureMultiviewOVR = &glFramebufferTextureMultiviewOVRNULL;
+        namedFramebufferTextureMultiviewOVR = &glNamedFramebufferTextureMultiviewOVRNULL;
     }
 }
 #endif  // defined(ANGLE_ENABLE_OPENGL_NULL)

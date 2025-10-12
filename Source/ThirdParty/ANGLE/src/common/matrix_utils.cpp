@@ -6,6 +6,10 @@
 
 // matrix_utils.cpp: Contains implementations for Mat4 methods.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "common/matrix_utils.h"
 
 namespace angle

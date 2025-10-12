@@ -704,9 +704,9 @@ static int enc_row_mt_worker_hook(void *arg1, void *unused) {
     if (this_tile->allow_update_cdf) {
       td->mb.row_ctx = this_tile->row_ctx;
       if (current_mi_row == tile_info->mi_row_start)
-        memcpy(td->mb.e_mbd.tile_ctx, &this_tile->tctx, sizeof(FRAME_CONTEXT));
+        *td->mb.e_mbd.tile_ctx = this_tile->tctx;
     } else {
-      memcpy(td->mb.e_mbd.tile_ctx, &this_tile->tctx, sizeof(FRAME_CONTEXT));
+      *td->mb.e_mbd.tile_ctx = this_tile->tctx;
     }
 
     av1_init_above_context(&cm->above_contexts, av1_num_planes(cm), tile_row,
@@ -996,12 +996,12 @@ void av1_init_tile_thread_data(AV1_PRIMARY *ppi, int is_first_pass) {
                              "Failed to allocate SMS tree");
         }
 
-        for (int x = 0; x < 2; x++)
-          for (int y = 0; y < 2; y++)
-            AOM_CHECK_MEM_ERROR(
-                &ppi->error, td->hash_value_buffer[x][y],
-                (uint32_t *)aom_malloc(AOM_BUFFER_SIZE_FOR_BLOCK_HASH *
-                                       sizeof(*td->hash_value_buffer[0][0])));
+        for (int x = 0; x < 2; x++) {
+          AOM_CHECK_MEM_ERROR(
+              &ppi->error, td->hash_value_buffer[x],
+              (uint32_t *)aom_malloc(AOM_BUFFER_SIZE_FOR_BLOCK_HASH *
+                                     sizeof(*td->hash_value_buffer[x])));
+        }
 
         // Allocate frame counters in thread data.
         AOM_CHECK_MEM_ERROR(&ppi->error, td->counts,
@@ -1241,7 +1241,7 @@ int av1_compute_num_fp_contexts(AV1_PRIMARY *ppi, AV1EncoderConfig *oxcf) {
     if (num_fp_contexts < MAX_PARALLEL_FRAMES) num_fp_contexts = 1;
   }
 
-  num_fp_contexts = AOMMAX(1, AOMMIN(num_fp_contexts, MAX_PARALLEL_FRAMES));
+  num_fp_contexts = clamp(num_fp_contexts, 1, MAX_PARALLEL_FRAMES);
   // Limit recalculated num_fp_contexts to ppi->num_fp_contexts.
   num_fp_contexts = (ppi->num_fp_contexts == 1)
                         ? num_fp_contexts
@@ -1589,14 +1589,8 @@ static inline void prepare_enc_workers(AV1_COMP *cpi, AVxWorkerHook hook,
       thread_data->td->mb.obmc_buffer = thread_data->td->obmc_buffer;
 
       for (int x = 0; x < 2; x++) {
-        for (int y = 0; y < 2; y++) {
-          memcpy(thread_data->td->hash_value_buffer[x][y],
-                 cpi->td.mb.intrabc_hash_info.hash_value_buffer[x][y],
-                 AOM_BUFFER_SIZE_FOR_BLOCK_HASH *
-                     sizeof(*thread_data->td->hash_value_buffer[0][0]));
-          thread_data->td->mb.intrabc_hash_info.hash_value_buffer[x][y] =
-              thread_data->td->hash_value_buffer[x][y];
-        }
+        thread_data->td->mb.intrabc_hash_info.hash_value_buffer[x] =
+            thread_data->td->hash_value_buffer[x];
       }
       // Keep these conditional expressions in sync with the corresponding ones
       // in accumulate_counters_enc_workers().
@@ -1605,8 +1599,7 @@ static inline void prepare_enc_workers(AV1_COMP *cpi, AVxWorkerHook hook,
             cm, thread_data->td->mv_costs_alloc,
             (MvCosts *)aom_malloc(sizeof(*thread_data->td->mv_costs_alloc)));
         thread_data->td->mb.mv_costs = thread_data->td->mv_costs_alloc;
-        memcpy(thread_data->td->mb.mv_costs, cpi->td.mb.mv_costs,
-               sizeof(MvCosts));
+        *thread_data->td->mb.mv_costs = *cpi->td.mb.mv_costs;
       }
       if (cpi->sf.intra_sf.dv_cost_upd_level != INTERNAL_COST_UPD_OFF) {
         // Reset dv_costs to NULL for worker threads when dv cost update is
@@ -1618,8 +1611,7 @@ static inline void prepare_enc_workers(AV1_COMP *cpi, AVxWorkerHook hook,
                           (IntraBCMVCosts *)aom_malloc(
                               sizeof(*thread_data->td->dv_costs_alloc)));
           thread_data->td->mb.dv_costs = thread_data->td->dv_costs_alloc;
-          memcpy(thread_data->td->mb.dv_costs, cpi->td.mb.dv_costs,
-                 sizeof(IntraBCMVCosts));
+          *thread_data->td->mb.dv_costs = *cpi->td.mb.dv_costs;
         }
       }
     }
@@ -1631,7 +1623,7 @@ static inline void prepare_enc_workers(AV1_COMP *cpi, AVxWorkerHook hook,
     thread_data->td->mb.palette_pixels = 0;
 
     if (thread_data->td->counts != &cpi->counts) {
-      memcpy(thread_data->td->counts, &cpi->counts, sizeof(cpi->counts));
+      *thread_data->td->counts = cpi->counts;
     }
 
     if (i > 0) {

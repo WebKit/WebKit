@@ -1,16 +1,18 @@
 Platform/cf/ModuleCF.cpp
 
-Platform/cocoa/CocoaImage.mm
-Platform/cocoa/ImageAnalysisUtilities.mm
-Platform/cocoa/LayerHostingContext.mm
-Platform/cocoa/NetworkIssueReporter.mm
-Platform/cocoa/WKCrashReporter.mm
-Platform/cocoa/XPCUtilities.mm
+Platform/cocoa/CocoaHelpers.mm
+Platform/cocoa/CocoaImage.mm @nonARC
+Platform/cocoa/ImageAnalysisUtilities.mm @nonARC
+Platform/cocoa/LayerHostingContext.mm @nonARC
+Platform/cocoa/LayerHostingContextManager.mm @nonARC
+Platform/cocoa/NetworkIssueReporter.mm @nonARC
+Platform/cocoa/WKCrashReporter.mm @nonARC
+Platform/cocoa/XPCUtilities.mm @nonARC
 
-Platform/foundation/LoggingFoundation.mm
+Platform/foundation/LoggingFoundation.mm @nonARC
 
-Platform/IPC/cocoa/ConnectionCocoa.mm
-Platform/IPC/cocoa/DaemonConnectionCocoa.mm
+Platform/IPC/cocoa/ConnectionCocoa.mm @nonARC
+Platform/IPC/cocoa/DaemonConnectionCocoa.mm @nonARC
 Platform/IPC/cocoa/MachMessage.cpp
 
 Platform/IPC/darwin/IPCEventDarwin.cpp

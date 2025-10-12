@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,11 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "RTCDataChannelHandler.h"
-#include "RTCDataChannelHandlerClient.h"
-#include "RTCDataChannelIdentifier.h"
-#include "RTCDataChannelRemoteSourceConnection.h"
-#include "RTCError.h"
+#include <WebCore/RTCDataChannelHandler.h>
+#include <WebCore/RTCDataChannelHandlerClient.h>
+#include <WebCore/RTCDataChannelIdentifier.h>
+#include <WebCore/RTCDataChannelRemoteSourceConnection.h>
+#include <WebCore/RTCError.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
@@ -57,8 +57,8 @@ private:
     size_t bufferedAmount() const final { return 0; }
 
     RTCDataChannelIdentifier m_identifier;
-    UniqueRef<RTCDataChannelHandler> m_handler;
-    Ref<RTCDataChannelRemoteSourceConnection> m_connection;
+    const UniqueRef<RTCDataChannelHandler> m_handler;
+    const Ref<RTCDataChannelRemoteSourceConnection> m_connection;
 };
 
 } // namespace WebCore

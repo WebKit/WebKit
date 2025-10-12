@@ -28,12 +28,12 @@
 
 #pragma once
 
-#include "AsyncNodeDeletionQueue.h"
-#include "ContainerNode.h"
-#include "Element.h"
-#include "HTMLElement.h"
-#include "HTMLNames.h"
-#include "NodeName.h"
+#include <WebCore/AsyncNodeDeletionQueue.h>
+#include <WebCore/ContainerNode.h>
+#include <WebCore/Element.h>
+#include <WebCore/HTMLElement.h>
+#include <WebCore/HTMLNames.h>
+#include <WebCore/NodeName.h>
 
 namespace WebCore {
 

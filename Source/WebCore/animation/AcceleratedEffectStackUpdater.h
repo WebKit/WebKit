@@ -27,8 +27,8 @@
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 
-#include "AcceleratedEffect.h"
-#include "AnimationMalloc.h"
+#include <WebCore/AcceleratedEffect.h>
+#include <WebCore/AnimationMalloc.h>
 #include <wtf/HashSet.h>
 #include <wtf/Seconds.h>
 
@@ -39,7 +39,7 @@ class Element;
 struct Styleable;
 
 class AcceleratedEffectStackUpdater {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AcceleratedEffectStackUpdater, Animation);
 public:
     AcceleratedEffectStackUpdater(Document&);
 

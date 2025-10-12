@@ -4,22 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  null as a trap value on a handler should operate on the target
+info: bugzilla.mozilla.org/show_bug.cgi?id=1257102
 esid: pending
 ---*/
-var gTestfile = 'trap-null.js';
-var BUGNUMBER = 1257102;
-var summary = "null as a trap value on a handler should operate on the target";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 // This might seem like overkill, but this proxying trick caught typos of
 // several trap names before this test landed.  \o/  /o\
@@ -102,7 +91,3 @@ var res = Reflect.construct(proxy, [" - "]);
 assert.sameValue(typeof res, "object");
 assert.sameValue(res instanceof String, true);
 assert.sameValue(res.valueOf(), "@@@ - constructing");
-
-/******************************************************************************/
-
-print("Tests complete");

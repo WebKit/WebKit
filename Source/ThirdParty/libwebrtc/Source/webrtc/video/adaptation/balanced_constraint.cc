@@ -10,10 +10,17 @@
 
 #include "video/adaptation/balanced_constraint.h"
 
-#include <string>
+#include <cstdint>
+#include <optional>
 #include <utility>
 
+#include "api/field_trials_view.h"
+#include "api/rtp_parameters.h"
 #include "api/sequence_checker.h"
+#include "call/adaptation/degradation_preference_provider.h"
+#include "call/adaptation/video_source_restrictions.h"
+#include "call/adaptation/video_stream_input_state.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

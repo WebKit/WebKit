@@ -38,11 +38,6 @@ namespace WebKit {
 
 void GPUProcessPreferences::copyEnabledWebPreferences(const WebPreferences& webPreferences)
 {
-#if USE(MODERN_AVCONTENTKEYSESSION)
-    if (webPreferences.shouldUseModernAVContentKeySession())
-        shouldUseModernAVContentKeySession = true;
-#endif
-        
 #if ENABLE(VP9)
     if (webPreferences.vp9DecoderEnabled())
         vp9DecoderEnabled = true;

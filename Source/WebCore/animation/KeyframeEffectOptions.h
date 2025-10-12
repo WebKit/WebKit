@@ -26,9 +26,9 @@
 
 #pragma once
 
-#include "CompositeOperation.h"
-#include "EffectTiming.h"
-#include "IterationCompositeOperation.h"
+#include <WebCore/CompositeOperation.h>
+#include <WebCore/EffectTiming.h>
+#include <WebCore/IterationCompositeOperation.h>
 
 namespace WebCore {
 

@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "AbstractSlotVisitor.h"
-#include "Heap.h"
-#include "WeakInlines.h"
-#include "WriteBarrier.h"
+#include <JavaScriptCore/AbstractSlotVisitor.h>
+#include <JavaScriptCore/Heap.h>
+#include <JavaScriptCore/WeakInlines.h>
+#include <JavaScriptCore/WriteBarrier.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

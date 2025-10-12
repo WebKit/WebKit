@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #include "config.h"
 #include "FixedContainerEdges.h"
 
@@ -41,6 +39,20 @@ bool FixedContainerEdges::hasFixedEdge(BoxSide side) const
     }, [&](const Color&) {
         return true;
     }), colors.at(side));
+}
+
+BoxSideSet FixedContainerEdges::fixedEdges() const
+{
+    BoxSideSet edges;
+    if (hasFixedEdge(BoxSide::Top))
+        edges.add(BoxSideFlag::Top);
+    if (hasFixedEdge(BoxSide::Left))
+        edges.add(BoxSideFlag::Left);
+    if (hasFixedEdge(BoxSide::Bottom))
+        edges.add(BoxSideFlag::Bottom);
+    if (hasFixedEdge(BoxSide::Right))
+        edges.add(BoxSideFlag::Right);
+    return edges;
 }
 
 Color FixedContainerEdges::predominantColor(BoxSide side) const

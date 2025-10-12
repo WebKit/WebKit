@@ -48,6 +48,14 @@ public:
         Locker locker { *m_thread.m_worklist.m_lock };
         m_thread.m_plan = nullptr;
         m_thread.m_worklist.m_ongoingCompilationsPerTier[static_cast<unsigned>(m_tier)]--;
+
+        ASSERT(m_thread.m_planLoad);
+        ASSERT(m_thread.m_worklist.m_totalLoad >= m_thread.m_planLoad);
+        m_thread.m_worklist.m_totalLoad -= m_thread.m_planLoad;
+        m_thread.m_planLoad = 0;
+
+        ASSERT(!m_thread.m_worklist.m_totalLoad ==
+            (!m_thread.m_worklist.queueLength(locker) && !m_thread.m_worklist.totalOngoingCompilations(locker)));
     }
 
 private:
@@ -94,6 +102,9 @@ auto JITWorklistThread::poll(const AbstractLocker& locker) -> PollResult
         }
 
         RELEASE_ASSERT(m_plan->stage() == JITPlanStage::Preparing);
+        // Dequeuing this plan doesn't change the total load yet, but it will once the compilation finishes.
+        // If the plan is canceled during compilation, the codeBlock may no longer be alive, so remember the plan's load now.
+        m_planLoad = m_worklist.planLoad(*m_plan);
         m_worklist.m_ongoingCompilationsPerTier[i]++;
         return PollResult::Work;
     }

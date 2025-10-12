@@ -107,8 +107,9 @@ Ref<DOMException> DOMException::create(const Exception& exception)
     return adoptRef(*new DOMException(description.legacyCode, description.name, exception.message().isEmpty() ? description.message : exception.message()));
 }
 
-DOMException::DOMException(LegacyCode legacyCode, const String& name, const String& message)
-    : m_legacyCode(legacyCode)
+DOMException::DOMException(LegacyCode legacyCode, const String& name, const String& message, Type type)
+    : m_type(type)
+    , m_legacyCode(legacyCode)
     , m_name(name)
     , m_message(message)
 {

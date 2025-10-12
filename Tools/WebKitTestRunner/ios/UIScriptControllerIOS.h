@@ -145,6 +145,7 @@ private:
     void activateDataListSuggestion(unsigned, JSValueRef) override;
     void setSelectedColorForColorPicker(double, double, double) override;
     void setKeyboardInputModeIdentifier(JSStringRef) override;
+    void setFocusStartsInputSessionPolicy(JSStringRef) override;
     void toggleCapsLock(JSValueRef) override;
     unsigned keyboardWillHideCount() const override;
     bool keyboardIsAutomaticallyShifted() const override;
@@ -179,7 +180,6 @@ private:
 
     void beginInteractiveObscuredInsetsChange() final;
     void endInteractiveObscuredInsetsChange() final;
-    void setObscuredInsets(double top, double right, double bottom, double left) final;
 
     bool suppressSoftwareKeyboard() const final;
     void setSuppressSoftwareKeyboard(bool) final;

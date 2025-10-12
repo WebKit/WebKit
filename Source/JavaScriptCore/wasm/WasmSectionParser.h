@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2018 Yusuke Suzuki <yusukesuzuki@slowstart.org>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -91,7 +91,7 @@ private:
     PartialResult WARN_UNUSED_RETURN checkSubtypeValidity(const TypeDefinition&);
 
     size_t m_offsetInSource;
-    Ref<ModuleInformation> m_info;
+    const Ref<ModuleInformation> m_info;
 };
 
 } } // namespace JSC::Wasm

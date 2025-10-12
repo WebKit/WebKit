@@ -39,6 +39,11 @@ const invalidLanguageOptions = [
   "notalanguage",
   "undefined",
 
+  // "root" is treated as a special `unicode_language_subtag`, but is not
+  // actually one and is not valid in a Unicode BCP 47 locale identifier.
+  // https://unicode.org/reports/tr35/#unicode_bcp47_locale_id
+  "root",
+
   // Value contains more than just the 'language' production.
   "fr-Latn",
   "fr-FR",

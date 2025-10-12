@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: Argument 1 ('space') to XRFrame.getPose must be an instance of WebXRSpace
 
 Harness Error (FAIL), message = TypeError: Argument 1 ('space') to XRFrame.getPose must be an instance of WebXRSpace
 

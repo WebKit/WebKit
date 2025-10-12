@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-title-element/title-multiple-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-title-element/title.text-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-title-element/title.text-02.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-title-element/title.text-03.html

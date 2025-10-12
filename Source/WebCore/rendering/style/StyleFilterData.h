@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +26,7 @@
 
 #pragma once
 
-#include "FilterOperations.h"
+#include <WebCore/StyleFilter.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -46,7 +47,7 @@ public:
     void dumpDifferences(TextStream&, const StyleFilterData&) const;
 #endif
 
-    FilterOperations operations;
+    Style::Filter filter;
 
 private:
     StyleFilterData();

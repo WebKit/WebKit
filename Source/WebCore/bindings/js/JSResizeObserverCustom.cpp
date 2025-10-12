@@ -29,6 +29,7 @@
 
 #include "Element.h"
 #include "JSNodeCustom.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
@@ -39,6 +40,18 @@ void JSResizeObserver::visitAdditionalChildren(Visitor& visitor)
     ResizeObserverCallback* callback = wrapped().callbackConcurrently();
     if (callback)
         callback->visitJSFunction(visitor);
+
+    Locker locker { wrapped().observationTargetsLock() };
+
+    for (const auto& weakTarget : wrapped().activeObservationTargets()) {
+        SUPPRESS_UNCHECKED_LOCAL if (auto* element = weakTarget.get())
+            addWebCoreOpaqueRoot(visitor, element);
+    }
+
+    for (const auto& weakTarget : wrapped().targetsWaitingForFirstObservation()) {
+        SUPPRESS_UNCHECKED_LOCAL if (auto* element = weakTarget.get())
+            addWebCoreOpaqueRoot(visitor, element);
+    }
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSResizeObserver);

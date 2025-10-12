@@ -18,13 +18,13 @@ const result = Temporal.PlainMonthDay.from({
 TemporalHelpers.assertPlainMonthDay(result, "M01", 1,
   "era and eraYear are ignored for calendar not using eras (iso8601)");
 
-const resultHebrew = Temporal.PlainMonthDay.from({
+const resultChinese = Temporal.PlainMonthDay.from({
   era: "foobar",
   eraYear: 1,
   monthCode: "M01",
   day: 1,
-  calendar: "hebrew",
+  calendar: "chinese",
 });
-TemporalHelpers.assertPlainMonthDay(resultHebrew, "M01", 1,
-  "era and eraYear are ignored for calendar not using eras (Hebrew)");
-assert.sameValue(resultHebrew.calendarId, "hebrew");
+TemporalHelpers.assertPlainMonthDay(resultChinese, "M01", 1,
+  "era and eraYear are ignored for calendar not using eras (Chinese)");
+assert.sameValue(resultChinese.calendarId, "chinese");

@@ -14,5 +14,11 @@ accessibility/text-marker/text-marker-debug-description.html [ Skip ]
 # rdar://146986685 (REGRESSION(Sequoia 15.4): fast/canvas/webgl/gl-teximage.html is a constant text failure)
 fast/canvas/webgl/gl-teximage.html [ Pass ]
 
-#rdar://145604998 (REGRESSION(iOS 18.4, macOS Sequoia 15.4 ): fast/text/international/hindi-spacing.html is a constant text failure)
-fast/text/international/hindi-spacing.html [ Pass ]
+# Tests which pass only with form control refresh disabled (support added in Tahoe)
+fast/forms/datalist/input-appearance-range-with-datalist-rtl.html [ Pass ]
+
+imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-import-data.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-import-data.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-import-data.https.html [ Skip ]
+
+webkit.org/b/288847 imported/w3c/web-platform-tests/cookiestore/cookieStore_event_delete.https.window.html [ Pass Failure ]

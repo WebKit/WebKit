@@ -1,16 +1,16 @@
-/* Copyright (c) 2020, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2020 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <openssl/hpke.h>
 
@@ -27,7 +27,7 @@
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/rand.h>
-#include <openssl/sha.h>
+#include <openssl/sha2.h>
 #include <openssl/span.h>
 
 #include "../test/file_test.h"
@@ -40,6 +40,7 @@ namespace {
 const decltype(&EVP_hpke_x25519_hkdf_sha256) kAllKEMs[] = {
     &EVP_hpke_p256_hkdf_sha256,
     &EVP_hpke_x25519_hkdf_sha256,
+    &EVP_hpke_xwing
 };
 
 const decltype(&EVP_hpke_aes_128_gcm) kAllAEADs[] = {
@@ -73,7 +74,8 @@ class HPKETestVector {
     uint8_t enc[EVP_HPKE_MAX_ENC_LENGTH];
     size_t enc_len = 0;
 
-    // X25519 uses the secret key directly. P-256 uses the IKM to derive a key.
+    // X25519 and X-Wing use the secret key directly. P-256 uses the IKM to
+    // derive a key.
     bssl::Span<const uint8_t> secret_input = secret_key_e_;
     if (kem_id_ == EVP_HPKE_DHKEM_P256_HKDF_SHA256) {
       secret_input = ikm_e_;
@@ -442,6 +444,8 @@ TEST(HPKETest, RoundTrip) {
             }
 
             // Test the auth mode.
+            // We skip X-Wing here since it does not support auth mode.
+            if (EVP_HPKE_KEM_id(kem()) != EVP_HPKE_XWING)
             {
               ScopedEVP_HPKE_CTX sender_ctx;
               uint8_t enc[EVP_HPKE_MAX_PUBLIC_KEY_LENGTH];

@@ -11,29 +11,32 @@
 #ifndef RTC_BASE_TASK_QUEUE_FOR_TEST_H_
 #define RTC_BASE_TASK_QUEUE_FOR_TEST_H_
 
+#include <memory>
 #include <utility>
 
 #include "absl/cleanup/cleanup.h"
+#include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
 #include "api/function_view.h"
+#include "api/location.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/task_queue/task_queue_factory.h"
+#include "api/units/time_delta.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
 
 namespace webrtc {
 
-inline void SendTask(TaskQueueBase* task_queue,
-                     rtc::FunctionView<void()> task) {
+inline void SendTask(TaskQueueBase* task_queue, FunctionView<void()> task) {
   if (task_queue->IsCurrent()) {
     task();
     return;
   }
 
-  rtc::Event event;
+  Event event;
   absl::Cleanup cleanup = [&event] { event.Set(); };
   task_queue->PostTask([task, cleanup = std::move(cleanup)] { task(); });
-  RTC_CHECK(event.Wait(/*give_up_after=*/rtc::Event::kForever,
+  RTC_CHECK(event.Wait(/*give_up_after=*/Event::kForever,
                        /*warn_after=*/TimeDelta::Seconds(10)));
 }
 
@@ -53,29 +56,25 @@ class TaskQueueForTest {
   // Returns non-owning pointer to the task queue implementation.
   TaskQueueBase* Get() { return impl_.get(); }
 
-  void PostTask(
-      absl::AnyInvocable<void() &&> task,
-      const webrtc::Location& location = webrtc::Location::Current()) {
+  void PostTask(absl::AnyInvocable<void() &&> task,
+                const Location& location = Location::Current()) {
     impl_->PostTask(std::move(task), location);
   }
-  void PostDelayedTask(
-      absl::AnyInvocable<void() &&> task,
-      webrtc::TimeDelta delay,
-      const webrtc::Location& location = webrtc::Location::Current()) {
+  void PostDelayedTask(absl::AnyInvocable<void() &&> task,
+                       TimeDelta delay,
+                       const Location& location = Location::Current()) {
     impl_->PostDelayedTask(std::move(task), delay, location);
   }
   void PostDelayedHighPrecisionTask(
       absl::AnyInvocable<void() &&> task,
-      webrtc::TimeDelta delay,
-      const webrtc::Location& location = webrtc::Location::Current()) {
+      TimeDelta delay,
+      const Location& location = Location::Current()) {
     impl_->PostDelayedHighPrecisionTask(std::move(task), delay, location);
   }
 
   // A convenience, test-only method that blocks the current thread while
   // a task executes on the task queue.
-  void SendTask(rtc::FunctionView<void()> task) {
-    ::webrtc::SendTask(Get(), task);
-  }
+  void SendTask(FunctionView<void()> task) { ::webrtc::SendTask(Get(), task); }
 
   // Wait for the completion of all tasks posted prior to the
   // WaitForPreviouslyPostedTasks() call.

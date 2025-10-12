@@ -12,9 +12,12 @@
 
 #include <atomic>
 #include <memory>
+#include <utility>
 
 #include "api/task_queue/task_queue_base.h"
+#include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/event.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/task_utils/repeating_task.h"
@@ -134,7 +137,7 @@ TEST(SimulatedTimeControllerTest, ThreadYeildsOnSynchronousCall) {
   // called.
   main_thread->PostTask([&] { task_has_run = true; });
   SendTask(t2.get(), [] {
-    rtc::Event yield_event;
+    Event yield_event;
     // Wait() triggers YieldExecution() which will runs message processing on
     // all threads that are not in the yielded set.
 

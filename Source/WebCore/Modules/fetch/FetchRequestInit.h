@@ -25,12 +25,13 @@
 
 #pragma once
 
-#include "AbortSignal.h"
 #include "FetchBody.h"
-#include "FetchHeaders.h"
-#include "FetchOptions.h"
-#include "RequestPriority.h"
 #include <JavaScriptCore/JSCJSValue.h>
+#include <WebCore/AbortSignal.h>
+#include <WebCore/FetchHeaders.h>
+#include <WebCore/FetchOptions.h>
+#include <WebCore/IPAddressSpace.h>
+#include <WebCore/RequestPriority.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -50,8 +51,8 @@ struct FetchRequestInit {
     JSC::JSValue signal;
     std::optional<RequestPriority> priority;
     JSC::JSValue window;
-
-    bool hasMembers() const { return !method.isEmpty() || headers || body || !referrer.isEmpty() || referrerPolicy || mode || credentials || cache || redirect || !integrity.isEmpty() || keepalive || !window.isUndefined() || !signal.isUndefined(); }
+    IPAddressSpace targetAddressSpace { IPAddressSpace::Public };
+    bool hasMembers() const { return !method.isEmpty() || headers || body || !referrer.isEmpty() || referrerPolicy || mode || credentials || cache || redirect || !integrity.isEmpty() || keepalive || !window.isUndefined() || !signal.isUndefined() || targetAddressSpace != IPAddressSpace::Public; }
 };
 
 }

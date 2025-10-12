@@ -104,18 +104,16 @@ typedef NSString * AVVideoRange NS_TYPED_ENUM;
 @end
 #endif
 
-#if HAVE(AVPLAYER_SUPPRESSES_AUDIO_RENDERING)
 @interface AVPlayer (AVPlayerSuppressesAudioRendering)
 @property (nonatomic, getter=_suppressesAudioRendering, setter=_setSuppressesAudioRendering:) BOOL suppressesAudioRendering;
 @end
-#endif
 
 @interface AVPlayerItemVideoOutput (AVPlayerItemVideoOutputEarliestTime)
 @property (nonatomic, readonly) CMTime earliestAvailablePixelBufferItemTime;
 - (void)requestNotificationOfMediaDataChangeAsSoonAsPossible;
 @end
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) || PLATFORM(IOS_FAMILY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -144,8 +142,6 @@ typedef NS_OPTIONS(NSUInteger, AVOutputDeviceFeatures) {
 @property (nonatomic, readonly) NSString *name;
 @property (nonatomic, readonly) NSString *deviceName;
 @property (nonatomic, readonly) AVOutputDeviceFeatures deviceFeatures;
-@property (nonatomic, readonly) BOOL supportsHeadTrackedSpatialAudio;
-- (BOOL)allowsHeadTrackedSpatialAudio;
 @end
 
 #if !PLATFORM(IOS_FAMILY)
@@ -166,7 +162,7 @@ typedef NS_ENUM(NSInteger, AVPlayerExternalPlaybackType) {
 
 NS_ASSUME_NONNULL_END
 
-#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) || PLATFORM(IOS_FAMILY)
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #import <AVFoundation/AVAssetCache.h>
 NS_ASSUME_NONNULL_BEGIN
@@ -272,14 +268,6 @@ typedef NS_ENUM(NSInteger, AVExternalContentProtectionStatus) {
 @end
 #endif // HAVE(AVCONTENTKEYREQUEST_PENDING_PROTECTION_STATUS)
 
-#if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE)
-NS_ASSUME_NONNULL_BEGIN
-@interface AVContentKeyRequest (AVContentKeyRequest_WebKitCompatibilityMode)
-+ (instancetype)contentKeySessionWithLegacyWebKitCompatibilityModeAndKeySystem:(AVContentKeySystem)keySystem storageDirectoryAtURL:(NSURL *)storageURL;
-@end
-NS_ASSUME_NONNULL_END
-#endif
-
 #endif // HAVE(AVCONTENTKEYSESSION)
 
 #endif // USE(APPLE_INTERNAL_SDK)
@@ -337,7 +325,6 @@ NS_ASSUME_NONNULL_END
 NS_ASSUME_NONNULL_BEGIN
 @interface AVSampleBufferDisplayLayer (VideoPerformanceMetrics)
 - (AVVideoPerformanceMetrics *)videoPerformanceMetrics;
-- (void)prerollDecodeWithCompletionHandler:(void (^)(BOOL success))block;
 @end
 NS_ASSUME_NONNULL_END
 #else
@@ -357,7 +344,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)requestMediaDataWhenReadyOnQueue:(dispatch_queue_t)queue usingBlock:(void (^)(void))block;
 - (void)stopRequestingMediaData;
 - (AVVideoPerformanceMetrics *)videoPerformanceMetrics;
-- (void)prerollDecodeWithCompletionHandler:(void (^)(BOOL success))block;
 @end
 NS_ASSUME_NONNULL_END
 #endif // __has_include(<AVFoundation/AVSampleBufferDisplayLayer.h>)
@@ -404,7 +390,6 @@ NS_ASSUME_NONNULL_END
 NS_ASSUME_NONNULL_BEGIN
 @interface AVSampleBufferVideoRenderer (SPI)
 - (AVVideoPerformanceMetrics *)videoPerformanceMetrics;
-- (void)prerollDecodeWithCompletionHandler:(void (^)(BOOL success))block;
 @property (nonatomic) BOOL preventsDisplaySleepDuringVideoPlayback;
 @property (nonatomic) BOOL preventsAutomaticBackgroundingDuringVideoPlayback;
 @end
@@ -486,8 +471,7 @@ NS_ASSUME_NONNULL_END
 @end
 #endif
 
-// FIXME: Move into !USE(APPLE_INTERNAL_SDK) section once rdar://111695863 has been in the build a while
-#if HAVE(AVURLASSET_ISPLAYABLEEXTENDEDMIMETYPEWITHOPTIONS)
+#if !USE(APPLE_INTERNAL_SDK)
 NS_ASSUME_NONNULL_BEGIN
 @interface AVURLAsset (IsPlayableExtendedMIMETypeWithOptions)
 + (BOOL)isPlayableExtendedMIMEType:(NSString *)extendedMIMEType options:(nullable NSDictionary<NSString *, id> *)options;

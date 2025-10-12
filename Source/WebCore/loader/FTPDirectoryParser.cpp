@@ -50,12 +50,12 @@ static inline FTPEntryType ParsingFailed(ListState& state)
     return FTPMiscEntry; /* its part of a comment or error message */
 }
 
-static bool isSpaceOrTab(LChar c)
+static bool isSpaceOrTab(Latin1Character c)
 {
     return c == ' ' || c == '\t';
 }
 
-FTPEntryType parseOneFTPLine(std::span<LChar> line, ListState& state, ListResult& result)
+FTPEntryType parseOneFTPLine(std::span<Latin1Character> line, ListState& state, ListResult& result)
 {
     result.clear();
 
@@ -84,7 +84,7 @@ FTPEntryType parseOneFTPLine(std::span<LChar> line, ListState& state, ListResult
 
     if (linelen > 0) {
         static constexpr auto monthNames = "JanFebMarAprMayJunJulAugSepOctNovDec"_span;
-        std::array<std::span<LChar>, 16> tokens; /* 16 is more than enough */
+        std::array<std::span<Latin1Character>, 16> tokens; /* 16 is more than enough */
         std::array<unsigned, tokens.size()> toklen;
         unsigned lineLenSansWsp; // line length sans whitespace
         unsigned numtoks = 0;
@@ -145,10 +145,7 @@ FTPEntryType parseOneFTPLine(std::span<LChar> line, ListState& state, ListResult
                             while (pos < linelen && isASCIIDigit(line[pos]))
                                 pos++;
                             if (pos < linelen && line[pos] == ',') {
-                                unsigned long long seconds = 0;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-                                sscanf(byteCast<char>(p.subspan(1)).data(), "%llu", &seconds);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+                                uint64_t seconds = parseIntegerAllowingTrailingJunk<uint64_t>(StringView { p.subspan(1) }).value_or(0);
                                 time_t t = static_cast<time_t>(seconds);
 
                                 // FIXME: This code has the year 2038 bug
@@ -425,9 +422,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                              * So its rounded up to the next block, so what, its better
                              * than not showing the size at all.
                              */
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-                            uint64_t size = strtoull(byteCast<char>(tokens[1]).data(), 0, 10) * 512;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+                            uint64_t size = parseIntegerAllowingTrailingJunk<uint64_t>(StringView { tokens[1] }).value_or(0) * 512;
                             result.fileSize = String::number(size);
                         }
 
@@ -835,7 +830,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                         }
                     }
                 } else if ((toklen[0] == 10 || toklen[0] == 11)
-                    && WTF::contains("-bcdlpsw?DFam"_span, tokens[0][0])) {
+                    && WTF::contains(byteCast<Latin1Character>("-bcdlpsw?DFam"_span), tokens[0][0])) {
                     p = tokens[0].subspan(1);
                     if ((p[0] == 'r' || p[0] == '-') && (p[1] == 'w' || p[1] == '-') && (p[3] == 'r' || p[3] == '-') && (p[4] == 'w' || p[4] == '-') && (p[6] == 'r' || p[6] == '-') && (p[7] == 'w' || p[7] == '-')) {
                     /* 'x'/p[9] can be S|s|x|-|T|t or implementation specific */

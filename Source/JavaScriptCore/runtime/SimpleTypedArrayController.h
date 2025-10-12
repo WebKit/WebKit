@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "Handle.h"
-#include "TypedArrayController.h"
-#include "WeakHandleOwner.h"
+#include <JavaScriptCore/Handle.h>
+#include <JavaScriptCore/TypedArrayController.h>
+#include <JavaScriptCore/WeakHandleOwner.h>
 
 namespace JSC {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2010 Google, Inc. All rights reserved.
  * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,8 +41,11 @@
 #include "JSCustomElementInterface.h"
 #include "LinkLoader.h"
 #include "LocalFrame.h"
+#include "Microtasks.h"
 #include "NavigationScheduler.h"
+#include "NodeDocument.h"
 #include "ScriptElement.h"
+#include "TaskSource.h"
 #include "ThrowOnDynamicMarkupInsertionCountIncrementer.h"
 
 #include <wtf/SystemTracing.h>
@@ -63,7 +66,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument& document, OptionSet<ParserC
     , m_options(document)
     , m_tokenizer(m_options)
     , m_scriptRunner(makeUnique<HTMLScriptRunner>(document, static_cast<HTMLScriptRunnerHost&>(*this)))
-    , m_treeBuilder(makeUnique<HTMLTreeBuilder>(*this, document, parserContentPolicy(), m_options))
+    , m_treeBuilder(makeUniqueRef<HTMLTreeBuilder>(*this, document, parserContentPolicy(), m_options))
     , m_parserScheduler(HTMLParserScheduler::create(*this))
     , m_preloader(makeUnique<HTMLResourcePreloader>(document))
     , m_shouldEmitTracePoints(isMainDocumentLoadingFromHTTP(document))
@@ -79,7 +82,7 @@ inline HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Elemen
     : ScriptableDocumentParser(fragment.document(), rawPolicy)
     , m_options(fragment.document())
     , m_tokenizer(m_options)
-    , m_treeBuilder(makeUnique<HTMLTreeBuilder>(*this, fragment, contextElement, parserContentPolicy(), m_options, registry))
+    , m_treeBuilder(makeUniqueRef<HTMLTreeBuilder>(*this, fragment, contextElement, parserContentPolicy(), m_options, registry))
     , m_shouldEmitTracePoints(false) // Avoid emitting trace points when parsing fragments like outerHTML.
 {
     // https://html.spec.whatwg.org/multipage/syntax.html#parsing-html-fragments
@@ -592,6 +595,17 @@ void HTMLDocumentParser::notifyFinished(PendingScript& pendingScript)
     ASSERT(m_scriptRunner);
     ASSERT(!isExecutingScript());
     if (isStopping()) {
+        // If we're currently in a microtask checkpoint, schedule end() as a regular task.
+        // This ensures it runs after ALL microtasks (including any created during execution) complete.
+        RefPtr document = this->document();
+        if (document->eventLoop().microtaskQueue().isPerformingCheckpoint()) {
+            document->eventLoop().queueTask(TaskSource::InternalAsyncTask, [protectedThis = Ref { *this }] {
+                if (protectedThis->isStopped())
+                    return;
+                protectedThis->attemptToRunDeferredScriptsAndEnd();
+            });
+            return;
+        }
         attemptToRunDeferredScriptsAndEnd();
         return;
     }

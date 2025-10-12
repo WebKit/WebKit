@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "MediaPlayerEnums.h"
+#include <WebCore/MediaPlayerEnums.h>
 
 OBJC_CLASS CASpatialAudioExperience;
 

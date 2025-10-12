@@ -62,8 +62,6 @@ typedef NS_ENUM(NSInteger, PredicateType) {
     PredicateTypePorts,
 };
 
-static NSString * const urlKey = @"url";
-
 static NSString * const hostContainsKey = @"hostContains";
 static NSString * const hostEqualsKey = @"hostEquals";
 static NSString * const hostPrefixKey = @"hostPrefix";
@@ -290,11 +288,11 @@ static NSString * const portsKey = @"ports";
 - (instancetype)initWithDictionary:(NSDictionary<NSString *, id> *)dictionary outErrorMessage:(NSString **)outErrorMessage
 {
     static NSArray<NSString *> *requiredKeys = @[
-        urlKey,
+        @"url",
     ];
 
     static NSDictionary<NSString *, id> *types = @{
-        urlKey: @[ [NSDictionary class] ],
+        @"url": @[ [NSDictionary class] ],
     };
 
     if (!validateDictionary(dictionary, @"filters", requiredKeys, types, outErrorMessage))
@@ -325,8 +323,8 @@ static NSString * const portsKey = @"ports";
 
     NSMutableArray<NSArray<_WKWebExtensionWebNavigationURLPredicate *> *> *predicateGroups = [[NSMutableArray alloc] init];
 
-    for (NSDictionary<NSString *, id> *urlDictionary in dictionary[urlKey]) {
-        if (!validateDictionary(urlDictionary, urlKey, nil, urlTypes, outErrorMessage))
+    for (NSDictionary<NSString *, id> *urlDictionary in dictionary[@"url"]) {
+        if (!validateDictionary(urlDictionary, @"url", nil, urlTypes, outErrorMessage))
             return nil;
 
         NSMutableArray<_WKWebExtensionWebNavigationURLPredicate *> *predicates = [[NSMutableArray alloc] init];
@@ -383,7 +381,7 @@ static NSString * const portsKey = @"ports";
 
 @implementation _WKWebExtensionWebNavigationURLFilter
 
-- (nullable instancetype)initWithDictionary:(NSDictionary<NSString *, id> *)dictionary outErrorMessage:(NSString **)outErrorMessage
+- (instancetype)initWithDictionary:(NSDictionary<NSString *, id> *)dictionary outErrorMessage:(NSString **)outErrorMessage
 {
     return nil;
 }

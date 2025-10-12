@@ -10,9 +10,11 @@
 
 #include "modules/audio_coding/codecs/pcm16b/pcm16b_common.h"
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <initializer_list>
+#include <vector>
+
+#include "api/audio_codecs/audio_format.h"
 
 namespace webrtc {
 

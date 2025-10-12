@@ -1,0 +1,3 @@
+
+FAIL PerformanceNavigationTiming data should show noticeable TTFB if the response is slow assert_in_array: https://web-platform.test:9443/speculation-rules/prefetch/resources/executor.sub.html?uuid=65f13b47-1d3f-4f15-bce6-178ff3b52539&page=2 should have been prefetched. value undefined not in array ["prefetch", "prefetch;anonymous-client-ip"]
+

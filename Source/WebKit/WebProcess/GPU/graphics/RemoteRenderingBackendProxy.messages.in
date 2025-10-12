@@ -29,7 +29,7 @@
 messages -> RemoteRenderingBackendProxy WantsDispatchMessage {
     DidFinalizeRenderingUpdate(WebKit::RenderingUpdateID didRenderingUpdateID)
     DidInitialize(IPC::Semaphore wakeUpSemaphore, IPC::Semaphore clientWaitSemaphore) CanDispatchOutOfOrder
-    DidMarkLayersAsVolatile(WebKit::MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<std::pair<WebKit::RemoteImageBufferSetIdentifier, OptionSet<WebKit::BufferInSetType>>> markedBufferSets, bool didMarkAllLayersAsVolatile)
+    DidMarkLayersAsVolatile(WebKit::MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<std::pair<WebKit::ImageBufferSetIdentifier, OptionSet<WebKit::BufferInSetType>>> markedBufferSets, bool didMarkAllLayersAsVolatile)
 }
 
 #endif // ENABLE(GPU_PROCESS)

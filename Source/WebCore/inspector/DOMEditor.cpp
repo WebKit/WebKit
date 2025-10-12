@@ -36,7 +36,8 @@
 #include "Document.h"
 #include "Element.h"
 #include "InspectorHistory.h"
-#include "Node.h"
+#include "NodeDocument.h"
+#include "NodeInlines.h"
 #include "Text.h"
 #include "markup.h"
 #include <wtf/RefPtr.h>
@@ -73,8 +74,8 @@ public:
     }
 
 private:
-    Ref<ContainerNode> m_parentNode;
-    Ref<Node> m_node;
+    const Ref<ContainerNode> m_parentNode;
+    const Ref<Node> m_node;
     RefPtr<Node> m_anchorNode;
 };
 
@@ -120,9 +121,9 @@ private:
         return m_parentNode->insertBefore(m_node, m_anchorNode.copyRef());
     }
 
-    Ref<ContainerNode> m_parentNode;
-    Ref<Node> m_node;
-    RefPtr<Node> m_anchorNode;
+    const Ref<ContainerNode> m_parentNode;
+    const Ref<Node> m_node;
+    const RefPtr<Node> m_anchorNode;
     std::unique_ptr<RemoveChildAction> m_removeChildAction;
 };
 
@@ -154,7 +155,7 @@ private:
         return { };
     }
 
-    Ref<Element> m_element;
+    const Ref<Element> m_element;
     AtomString m_name;
     AtomString m_value;
 };
@@ -191,7 +192,7 @@ private:
         return m_element->setAttribute(m_name, m_value);
     }
 
-    Ref<Element> m_element;
+    const Ref<Element> m_element;
     AtomString m_name;
     AtomString m_value;
     AtomString m_oldValue;
@@ -233,8 +234,8 @@ private:
         return m_history.redo();
     }
 
-    Ref<Node> m_node;
-    RefPtr<Node> m_nextSibling;
+    const Ref<Node> m_node;
+    const RefPtr<Node> m_nextSibling;
     String m_html;
     String m_oldHTML;
     RefPtr<Node> m_newNode { nullptr };
@@ -275,7 +276,7 @@ private:
         return { };
     }
 
-    Ref<Element> m_element;
+    const Ref<Element> m_element;
     NodeVector m_addedNodes;
     String m_position;
     String m_html;
@@ -310,7 +311,7 @@ private:
         return { };
     }
 
-    Ref<Text> m_textNode;
+    const Ref<Text> m_textNode;
     String m_text;
     String m_oldText;
 };
@@ -342,9 +343,9 @@ private:
         return m_parentNode->replaceChild(m_newNode, m_oldNode);
     }
 
-    Ref<ContainerNode> m_parentNode;
-    Ref<Node> m_newNode;
-    Ref<Node> m_oldNode;
+    const Ref<ContainerNode> m_parentNode;
+    const Ref<Node> m_newNode;
+    const Ref<Node> m_oldNode;
 };
 
 class DOMEditor::SetNodeValueAction final : public InspectorHistory::Action {
@@ -376,7 +377,7 @@ private:
         return { };
     }
 
-    Ref<Node> m_node;
+    const Ref<Node> m_node;
     String m_value;
     String m_oldValue;
 };

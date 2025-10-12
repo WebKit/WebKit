@@ -2,7 +2,5 @@
 FAIL APIs without [AllowResizable] throw when passed resizable ArrayBuffers assert_throws_js: function "() => {
     new Response(new Uint8Array(rab));
   }" did not throw
-FAIL APIs with [AllowShared] but without [AllowResizable] throw when passed growable SharedArrayBuffers assert_throws_js: function "() => {
-    enc.encodeInto("foobar", new Uint8Array(gsab));
-  }" did not throw
+PASS APIs with [AllowShared] but without [AllowResizable] throw when passed growable SharedArrayBuffers
 

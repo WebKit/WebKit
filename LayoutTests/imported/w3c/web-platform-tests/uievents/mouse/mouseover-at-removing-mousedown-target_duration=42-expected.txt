@@ -1,32 +1,32 @@
 
-FAIL mouseover should be fired before mouseup if mousedown target is removed (0) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (0) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (1) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (1) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (2) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (2) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (3) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (3) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (4) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (4) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (5) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (5) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (6) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (6) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (7) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (7) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (8) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (8) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (9) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (9) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (10) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (10) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (11) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (11) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (12) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (12) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (13) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (13) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (14) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (14) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (15) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (15) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (16) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (16) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (17) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (17) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (18) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (18) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (19) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (19) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (20) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (20) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (21) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (21) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (22) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (22) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (23) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (23) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (24) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (24) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (25) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (25) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (26) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (26) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (27) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (27) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (28) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (28) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
-FAIL mouseover should be fired before mouseup if mousedown target is removed (29) assert_equals: mouseover should be fired before mouseup if mousedown target is removed (29) expected "mousedown@div#child,mouseover@div#parent,mouseup@div#parent" but got "mousedown@div#child,mouseup@div#parent"
+PASS mouseover should be fired before mouseup if mousedown target is removed (0)
+PASS mouseover should be fired before mouseup if mousedown target is removed (1)
+PASS mouseover should be fired before mouseup if mousedown target is removed (2)
+PASS mouseover should be fired before mouseup if mousedown target is removed (3)
+PASS mouseover should be fired before mouseup if mousedown target is removed (4)
+PASS mouseover should be fired before mouseup if mousedown target is removed (5)
+PASS mouseover should be fired before mouseup if mousedown target is removed (6)
+PASS mouseover should be fired before mouseup if mousedown target is removed (7)
+PASS mouseover should be fired before mouseup if mousedown target is removed (8)
+PASS mouseover should be fired before mouseup if mousedown target is removed (9)
+PASS mouseover should be fired before mouseup if mousedown target is removed (10)
+PASS mouseover should be fired before mouseup if mousedown target is removed (11)
+PASS mouseover should be fired before mouseup if mousedown target is removed (12)
+PASS mouseover should be fired before mouseup if mousedown target is removed (13)
+PASS mouseover should be fired before mouseup if mousedown target is removed (14)
+PASS mouseover should be fired before mouseup if mousedown target is removed (15)
+PASS mouseover should be fired before mouseup if mousedown target is removed (16)
+PASS mouseover should be fired before mouseup if mousedown target is removed (17)
+PASS mouseover should be fired before mouseup if mousedown target is removed (18)
+PASS mouseover should be fired before mouseup if mousedown target is removed (19)
+PASS mouseover should be fired before mouseup if mousedown target is removed (20)
+PASS mouseover should be fired before mouseup if mousedown target is removed (21)
+PASS mouseover should be fired before mouseup if mousedown target is removed (22)
+PASS mouseover should be fired before mouseup if mousedown target is removed (23)
+PASS mouseover should be fired before mouseup if mousedown target is removed (24)
+PASS mouseover should be fired before mouseup if mousedown target is removed (25)
+PASS mouseover should be fired before mouseup if mousedown target is removed (26)
+PASS mouseover should be fired before mouseup if mousedown target is removed (27)
+PASS mouseover should be fired before mouseup if mousedown target is removed (28)
+PASS mouseover should be fired before mouseup if mousedown target is removed (29)
 

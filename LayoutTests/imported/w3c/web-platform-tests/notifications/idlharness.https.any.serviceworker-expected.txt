@@ -23,6 +23,7 @@ PASS Notification interface: attribute title
 PASS Notification interface: attribute dir
 PASS Notification interface: attribute lang
 PASS Notification interface: attribute body
+PASS Notification interface: attribute navigate
 PASS Notification interface: attribute tag
 FAIL Notification interface: attribute image assert_true: The prototype object must have a property "image" expected true got false
 PASS Notification interface: attribute icon

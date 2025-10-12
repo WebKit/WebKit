@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 
 #include "HTMLMediaElement.h"
+#include "JSValueInWrappedObject.h"
 #include "MediaSession.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -49,17 +50,20 @@ class TextTrackRepresentation;
 class VoidCallback;
 
 class MediaControlsHost final
-    : public RefCounted<MediaControlsHost>
+    : public CanMakeWeakPtr<MediaControlsHost>
 #if ENABLE(MEDIA_SESSION)
     , private MediaSessionObserver
 #endif
-    , public CanMakeWeakPtr<MediaControlsHost> {
-    WTF_MAKE_FAST_ALLOCATED(MediaControlsHost);
+    {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MediaControlsHost);
 public:
     USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<MediaControlsHost>);
 
-    static Ref<MediaControlsHost> create(HTMLMediaElement&);
+    explicit MediaControlsHost(HTMLMediaElement&);
     ~MediaControlsHost();
+
+    void ref() const;
+    void deref() const;
 
     static const AtomString& automaticKeyword();
     static const AtomString& forcedOnlyKeyword();
@@ -111,9 +115,8 @@ public:
 
     static String generateUUID();
 
-    Vector<String> shadowRootStyleSheets() const;
+    Vector<String, 2> shadowRootStyleSheets() const;
     static String base64StringForIconNameAndType(const String& iconName, const String& iconType);
-    static String formattedStringForDuration(double);
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
     bool showMediaControlsContextMenu(HTMLElement&, String&& optionsJSONString, Ref<VoidCallback>&&);
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
@@ -127,13 +130,12 @@ public:
     void ensureMediaSessionObserver();
 #endif
 
-private:
-    explicit MediaControlsHost(HTMLMediaElement&);
+    const JSValueInWrappedObject& controllerWrapper() const { return m_controllerWrapper; }
+    JSValueInWrappedObject& controllerWrapper() { return m_controllerWrapper; }
 
+private:
     void savePreviouslySelectedTextTrackIfNecessary();
     void restorePreviouslySelectedTextTrackIfNecessary();
-
-    RefPtr<HTMLMediaElement> protectedElement() const { return m_mediaElement.ptr(); }
 
 #if ENABLE(MEDIA_SESSION)
     RefPtr<MediaSession> mediaSession() const;
@@ -149,6 +151,8 @@ private:
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
     RefPtr<VoidCallback> m_showMediaControlsContextMenuCallback;
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
+    JSValueInWrappedObject m_controllerWrapper;
 };
 
 } // namespace WebCore

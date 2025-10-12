@@ -37,7 +37,14 @@ template<auto R, typename V, CSS::PrimitiveKeyword... Ks> struct ToCSS<Primitive
     {
         return WTF::switchOn(value,
             [&](const typename LengthPercentage<R, V>::Dimension& length) -> Result {
-                return CSS::LengthPercentageRaw<R, V> { length.unit, adjustForZoom(length.value, style) };
+                if constexpr (R.zoomOptions == CSS::RangeZoomOptions::Default) {
+                    return CSS::LengthPercentageRaw<R, V> { length.unit, adjustForZoom(length.unresolvedValue(), style) };
+                } else if constexpr (R.zoomOptions == CSS::RangeZoomOptions::Unzoomed) {
+                    if (shouldUseEvaluationTimeZoom(style))
+                        return CSS::LengthPercentageRaw<R, V> { length.unit, length.unresolvedValue() };
+
+                    return CSS::LengthPercentageRaw<R, V> { length.unit, adjustForZoom(length.unresolvedValue(), style) };
+                }
             },
             [&](const typename LengthPercentage<R, V>::Percentage& percentage) -> Result {
                 return CSS::LengthPercentageRaw<R, V> { percentage.unit, percentage.value };

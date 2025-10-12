@@ -25,7 +25,7 @@ most recent stable version of each tool.
     by CMake, it may be configured explicitly by setting
     `CMAKE_ASM_NASM_COMPILER`.
 
-  * Compilers for C11 and C++14, or later, are required. On Windows, MSVC from
+  * Compilers for C11 and C++17, or later, are required. On Windows, MSVC from
     Visual Studio 2022 or later with Windows 10 SDK 2104 or later are
     supported, but using the latest versions is recommended. Recent versions of
     GCC (6.1+) and Clang should work on non-Windows platforms, and maybe on
@@ -218,4 +218,4 @@ reported to work, as has MSYS Perl.
 to `PATH`, which can confuse some build tools when identifying the compiler
 (removing `C:\Strawberry\c\bin` from `PATH` should resolve any problems).
 
-See (gen/README.md)[./gen/README.md] for more details.
+See [gen/README.md](./gen/README.md) for more details.

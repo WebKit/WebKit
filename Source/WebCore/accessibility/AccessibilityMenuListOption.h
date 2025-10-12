@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,11 +34,11 @@ class HTMLOptionElement;
 
 class AccessibilityMenuListOption final : public AccessibilityNodeObject {
 public:
-    static Ref<AccessibilityMenuListOption> create(AXID, HTMLOptionElement&);
+    static Ref<AccessibilityMenuListOption> create(AXID, HTMLOptionElement&, AXObjectCache&);
     void setParent(AccessibilityObject* parent) { m_parent = parent; }
 
 private:
-    explicit AccessibilityMenuListOption(AXID, HTMLOptionElement&);
+    explicit AccessibilityMenuListOption(AXID, HTMLOptionElement&, AXObjectCache&);
 
     bool isMenuListOption() const final { return true; }
 

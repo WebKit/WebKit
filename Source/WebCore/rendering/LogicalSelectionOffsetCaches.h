@@ -20,10 +20,9 @@
 
 #pragma once
 
-#include "RenderBlock.h"
-#include "RenderElementInlines.h"
-
 namespace WebCore {
+
+class RenderBlock;
 
 class LogicalSelectionOffsetCaches {
 public:
@@ -35,37 +34,9 @@ public:
             , m_cachedLogicalRightSelectionOffset(false)
         { }
 
-        void setBlock(RenderBlock* block, const LogicalSelectionOffsetCaches* cache, bool parentCacheHasFloatsOrFragmentedFlows = false)
-        {
-            m_block = block;
-            bool blockHasFloatsOrFragmentedFlows = m_block ? (m_block->containsFloats() || m_block->enclosingFragmentedFlow()) : false;
-            m_hasFloatsOrFragmentedFlows = parentCacheHasFloatsOrFragmentedFlows || m_hasFloatsOrFragmentedFlows || blockHasFloatsOrFragmentedFlows;
-            m_cache = cache;
-            m_cachedLogicalLeftSelectionOffset = false;
-            m_cachedLogicalRightSelectionOffset = false;
-        }
-
-        LayoutUnit logicalLeftSelectionOffset(RenderBlock& rootBlock, LayoutUnit position) const
-        {
-            ASSERT(m_cache);
-            if (m_hasFloatsOrFragmentedFlows || !m_cachedLogicalLeftSelectionOffset) {
-                m_cachedLogicalLeftSelectionOffset = true;
-                m_logicalLeftSelectionOffset = m_block ? m_block->logicalLeftSelectionOffset(rootBlock, position, *m_cache) : 0_lu;
-            } else
-                ASSERT(m_logicalLeftSelectionOffset == (m_block ? m_block->logicalLeftSelectionOffset(rootBlock, position, *m_cache) : 0_lu));
-            return m_logicalLeftSelectionOffset;
-        }
-
-        LayoutUnit logicalRightSelectionOffset(RenderBlock& rootBlock, LayoutUnit position) const
-        {
-            ASSERT(m_cache);
-            if (m_hasFloatsOrFragmentedFlows || !m_cachedLogicalRightSelectionOffset) {
-                m_cachedLogicalRightSelectionOffset = true;
-                m_logicalRightSelectionOffset = m_block ? m_block->logicalRightSelectionOffset(rootBlock, position, *m_cache) : 0_lu;
-            } else
-                ASSERT(m_logicalRightSelectionOffset == (m_block ? m_block->logicalRightSelectionOffset(rootBlock, position, *m_cache) : 0_lu));
-            return m_logicalRightSelectionOffset;
-        }
+        inline void setBlock(RenderBlock*, const LogicalSelectionOffsetCaches*, bool parentCacheHasFloatsOrFragmentedFlows = false);
+        inline LayoutUnit logicalLeftSelectionOffset(RenderBlock&, LayoutUnit) const;
+        inline LayoutUnit logicalRightSelectionOffset(RenderBlock&, LayoutUnit) const;
 
         RenderBlock* block() const { return m_block; }
         const LogicalSelectionOffsetCaches* cache() const { return m_cache; }
@@ -79,49 +50,12 @@ public:
         mutable bool m_cachedLogicalRightSelectionOffset : 1;
         mutable LayoutUnit m_logicalLeftSelectionOffset;
         mutable LayoutUnit m_logicalRightSelectionOffset;
-        
     };
 
-    explicit LogicalSelectionOffsetCaches(RenderBlock& rootBlock)
-    {
-#if ENABLE(TEXT_SELECTION)
-        // FIXME: We should either move this assertion to the caller (if applicable) or structure the code
-        // such that we can remove this assertion.
-        ASSERT(rootBlock.isSelectionRoot());
-#endif
-        // LogicalSelectionOffsetCaches should not be used on an orphaned tree.
-        m_containingBlockForFixedPosition.setBlock(RenderObject::containingBlockForPositionType(PositionType::Fixed, rootBlock), nullptr);
-        m_containingBlockForAbsolutePosition.setBlock(RenderObject::containingBlockForPositionType(PositionType::Absolute, rootBlock), nullptr);
-        m_containingBlockForInflowPosition.setBlock(RenderObject::containingBlockForPositionType(PositionType::Static, rootBlock), nullptr);
-    }
+    inline explicit LogicalSelectionOffsetCaches(RenderBlock&);
+    inline LogicalSelectionOffsetCaches(RenderBlock&, const LogicalSelectionOffsetCaches&);
 
-    LogicalSelectionOffsetCaches(RenderBlock& block, const LogicalSelectionOffsetCaches& cache)
-        : m_containingBlockForFixedPosition(cache.m_containingBlockForFixedPosition)
-        , m_containingBlockForAbsolutePosition(cache.m_containingBlockForAbsolutePosition)
-    {
-        if (block.canContainFixedPositionObjects())
-            m_containingBlockForFixedPosition.setBlock(&block, &cache, cache.m_containingBlockForFixedPosition.hasFloatsOrFragmentedFlows());
-
-        if (block.canContainAbsolutelyPositionedObjects() && !block.isRenderInline() && !block.isAnonymousBlock())
-            m_containingBlockForAbsolutePosition.setBlock(&block, &cache, cache.m_containingBlockForAbsolutePosition.hasFloatsOrFragmentedFlows());
-
-        m_containingBlockForInflowPosition.setBlock(&block, &cache, cache.m_containingBlockForInflowPosition.hasFloatsOrFragmentedFlows());
-    }
-
-    const ContainingBlockInfo& containingBlockInfo(RenderBlock& block) const
-    {
-        auto position = block.style().position();
-        if (position == PositionType::Fixed) {
-            ASSERT(block.containingBlock() == m_containingBlockForFixedPosition.block());
-            return m_containingBlockForFixedPosition;
-        }
-        if (position == PositionType::Absolute) {
-            ASSERT(block.containingBlock() == m_containingBlockForAbsolutePosition.block());
-            return m_containingBlockForAbsolutePosition;
-        }
-        ASSERT(block.containingBlock() == m_containingBlockForInflowPosition.block());
-        return m_containingBlockForInflowPosition;
-    }
+    inline const ContainingBlockInfo& containingBlockInfo(RenderBlock&) const;
 
 private:
     ContainingBlockInfo m_containingBlockForFixedPosition;

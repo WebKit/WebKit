@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "ExecutableBase.h"
-#include "FunctionExecutable.h"
-#include "JSCast.h"
-#include "JSFunction.h"
-#include "NativeExecutable.h"
+#include <JavaScriptCore/ExecutableBase.h>
+#include <JavaScriptCore/FunctionExecutable.h>
+#include <JavaScriptCore/JSCast.h>
+#include <JavaScriptCore/JSFunction.h>
+#include <JavaScriptCore/NativeExecutable.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC {

@@ -512,7 +512,7 @@ void webkit_dom_html_image_element_set_height(WebKitDOMHTMLImageElement* self, g
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self));
     WebCore::HTMLImageElement* item = WebKit::core(self);
-    item->setHeight(value);
+    item->setUnsignedIntegralAttribute(WebCore::HTMLNames::heightAttr, value);
 }
 
 glong webkit_dom_html_image_element_get_hspace(WebKitDOMHTMLImageElement* self)
@@ -520,7 +520,7 @@ glong webkit_dom_html_image_element_get_hspace(WebKitDOMHTMLImageElement* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self), 0);
     WebCore::HTMLImageElement* item = WebKit::core(self);
-    glong result = item->getIntegralAttribute(WebCore::HTMLNames::hspaceAttr);
+    glong result = item->integralAttribute(WebCore::HTMLNames::hspaceAttr);
     return result;
 }
 
@@ -608,7 +608,7 @@ glong webkit_dom_html_image_element_get_vspace(WebKitDOMHTMLImageElement* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self), 0);
     WebCore::HTMLImageElement* item = WebKit::core(self);
-    glong result = item->getIntegralAttribute(WebCore::HTMLNames::vspaceAttr);
+    glong result = item->integralAttribute(WebCore::HTMLNames::vspaceAttr);
     return result;
 }
 
@@ -634,7 +634,7 @@ void webkit_dom_html_image_element_set_width(WebKitDOMHTMLImageElement* self, gl
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self));
     WebCore::HTMLImageElement* item = WebKit::core(self);
-    item->setWidth(value);
+    item->setIntegralAttribute(WebCore::HTMLNames::widthAttr, value);
 }
 
 gboolean webkit_dom_html_image_element_get_complete(WebKitDOMHTMLImageElement* self)

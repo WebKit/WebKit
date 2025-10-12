@@ -31,6 +31,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/proxy-getOwnPropertyDescriptor.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/self-et-al.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-aliases.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-indexed-access-vs-named-access.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-indexed-properties-delete-no-cache.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-indexed-properties-strict.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-indexed-properties.html

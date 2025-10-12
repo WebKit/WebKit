@@ -22,7 +22,8 @@ static NSString const *kRTCICECandidatesTypeKey = @"candidates";
 @implementation RTC_OBJC_TYPE (RTCIceCandidate)
 (JSON)
 
-    + (RTC_OBJC_TYPE(RTCIceCandidate) *)candidateFromJSONDictionary : (NSDictionary *)dictionary {
+    + (RTC_OBJC_TYPE(RTCIceCandidate) *)candidateFromJSONDictionary
+    : (NSDictionary *)dictionary {
   NSString *mid = dictionary[kRTCICECandidateMidKey];
   NSString *sdp = dictionary[kRTCICECandidateSdpKey];
   NSNumber *num = dictionary[kRTCICECandidateMLineIndexKey];
@@ -32,7 +33,8 @@ static NSString const *kRTCICECandidatesTypeKey = @"candidates";
                                                       sdpMid:mid];
 }
 
-+ (NSData *)JSONDataForIceCandidates:(NSArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *)candidates
++ (NSData *)JSONDataForIceCandidates:
+                (NSArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *)candidates
                             withType:(NSString *)typeValue {
   NSMutableArray *jsonCandidates =
       [NSMutableArray arrayWithCapacity:candidates.count];
@@ -62,8 +64,8 @@ static NSString const *kRTCICECandidatesTypeKey = @"candidates";
   NSMutableArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *candidates =
       [NSMutableArray arrayWithCapacity:jsonCandidates.count];
   for (NSDictionary *jsonCandidate in jsonCandidates) {
-    RTC_OBJC_TYPE(RTCIceCandidate) *candidate =
-        [RTC_OBJC_TYPE(RTCIceCandidate) candidateFromJSONDictionary:jsonCandidate];
+    RTC_OBJC_TYPE(RTCIceCandidate) *candidate = [RTC_OBJC_TYPE(RTCIceCandidate)
+        candidateFromJSONDictionary:jsonCandidate];
     [candidates addObject:candidate];
   }
   return candidates;
@@ -88,7 +90,7 @@ static NSString const *kRTCICECandidatesTypeKey = @"candidates";
   return data;
 }
 
-- (NSDictionary *)JSONDictionary{
+- (NSDictionary *)JSONDictionary {
   NSDictionary *json = @{
     kRTCICECandidateMLineIndexKey : @(self.sdpMLineIndex),
     kRTCICECandidateMidKey : self.sdpMid,

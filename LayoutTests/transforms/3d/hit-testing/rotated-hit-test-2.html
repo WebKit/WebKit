@@ -9,7 +9,7 @@
       height: 200px;
       margin: 50px;
       border: 1px solid black;
-      -webkit-perspective: 500px;
+      perspective: 500px;
     }
 
     .box {
@@ -21,8 +21,8 @@
     }
 
     #target {
-      -webkit-transform-origin: 10% 50%;
-      -webkit-transform: rotateY(45deg);
+      transform-origin: 10% 50%;
+      transform: rotateY(45deg);
     }
 
     .box:hover {
@@ -32,7 +32,7 @@
   <script src="resources/hit-test-utils.js"></script>
   <script>
       var hitTestData = [
-        { 'point': [56, 100], 'target' : 'container' },
+        { 'point': [55, 100], 'target' : 'container' },
         { 'point': [57, 100], 'target' : 'target' },
         { 'point': [100, 100], 'target' : 'target' },
         { 'point': [195, 100], 'target' : 'target' },

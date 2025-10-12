@@ -1818,7 +1818,7 @@ $L$prologue_shaext:
 	pshufd	xmm1,xmm1,0xb1
 	pshufd	xmm2,xmm2,0x1b
 	movdqa	xmm8,xmm7
-DB	102,15,58,15,202,8
+	palignr	xmm1,xmm2,8
 	punpcklqdq	xmm2,xmm0
 	jmp	NEAR $L$oop_shaext
 
@@ -1827,176 +1827,176 @@ $L$oop_shaext:
 	movdqu	xmm3,XMMWORD[rsi]
 	movdqu	xmm4,XMMWORD[16+rsi]
 	movdqu	xmm5,XMMWORD[32+rsi]
-DB	102,15,56,0,223
+	pshufb	xmm3,xmm7
 	movdqu	xmm6,XMMWORD[48+rsi]
 
 	movdqa	xmm0,XMMWORD[((0-128))+rcx]
 	paddd	xmm0,xmm3
-DB	102,15,56,0,231
+	pshufb	xmm4,xmm7
 	movdqa	xmm10,xmm2
-	DB	15,56,203,209
+	sha256rnds2	xmm2,xmm1
 	pshufd	xmm0,xmm0,0x0e
 	nop
 	movdqa	xmm9,xmm1
-	DB	15,56,203,202
+	sha256rnds2	xmm1,xmm2
 
 	movdqa	xmm0,XMMWORD[((32-128))+rcx]
 	paddd	xmm0,xmm4
-DB	102,15,56,0,239
-	DB	15,56,203,209
+	pshufb	xmm5,xmm7
+	sha256rnds2	xmm2,xmm1
 	pshufd	xmm0,xmm0,0x0e
 	lea	rsi,[64+rsi]
-	DB	15,56,204,220
-	DB	15,56,203,202
+	sha256msg1	xmm3,xmm4
+	sha256rnds2	xmm1,xmm2
 
 	movdqa	xmm0,XMMWORD[((64-128))+rcx]
 	paddd	xmm0,xmm5
-DB	102,15,56,0,247
-	DB	15,56,203,209
+	pshufb	xmm6,xmm7
+	sha256rnds2	xmm2,xmm1
 	pshufd	xmm0,xmm0,0x0e
 	movdqa	xmm7,xmm6
-DB	102,15,58,15,253,4
+	palignr	xmm7,xmm5,4
 	nop
 	paddd	xmm3,xmm7
-	DB	15,56,204,229
-	DB	15,56,203,202
+	sha256msg1	xmm4,xmm5
+	sha256rnds2	xmm1,xmm2
 
 	movdqa	xmm0,XMMWORD[((96-128))+rcx]
 	paddd	xmm0,xmm6
-	DB	15,56,205,222
-	DB	15,56,203,209
+	sha256msg2	xmm3,xmm6
+	sha256rnds2	xmm2,xmm1
 	pshufd	xmm0,xmm0,0x0e
 	movdqa	xmm7,xmm3
-DB	102,15,58,15,254,4
+	palignr	xmm7,xmm6,4
 	nop
 	paddd	xmm4,xmm7
-	DB	15,56,204,238
-	DB	15,56,203,202
+	sha256msg1	xmm5,xmm6
+	sha256rnds2	xmm1,xmm2
 	movdqa	xmm0,XMMWORD[((128-128))+rcx]
 	paddd	xmm0,xmm3
-	DB	15,56,205,227
-	DB	15,56,203,209
+	sha256msg2	xmm4,xmm3
+	sha256rnds2	xmm2,xmm1
 	pshufd	xmm0,xmm0,0x0e
 	movdqa	xmm7,xmm4
-DB	102,15,58,15,251,4
+	palignr	xmm7,xmm3,4
 	nop
 	paddd	xmm5,xmm7
-	DB	15,56,204,243
-	DB	15,56,203,202
+	sha256msg1	xmm6,xmm3
+	sha256rnds2	xmm1,xmm2
 	movdqa	xmm0,XMMWORD[((160-128))+rcx]
 	paddd	xmm0,xmm4
-	DB	15,56,205,236
-	DB	15,56,203,209
+	sha256msg2	xmm5,xmm4
+	sha256rnds2	xmm2,xmm1
 	pshufd	xmm0,xmm0,0x0e
 	movdqa	xmm7,xmm5
-DB	102,15,58,15,252,4
+	palignr	xmm7,xmm4,4
 	nop
 	paddd	xmm6,xmm7
-	DB	15,56,204,220
-	DB	15,56,203,202
+	sha256msg1	xmm3,xmm4
+	sha256rnds2	xmm1,xmm2
 	movdqa	xmm0,XMMWORD[((192-128))+rcx]
 	paddd	xmm0,xmm5
-	DB	15,56,205,245
-	DB	15,56,203,209
+	sha256msg2	xmm6,xmm5
+	sha256rnds2	xmm2,xmm1
 	pshufd	xmm0,xmm0,0x0e
 	movdqa	xmm7,xmm6
-DB	102,15,58,15,253,4
+	palignr	xmm7,xmm5,4
 	nop
 	paddd	xmm3,xmm7
-	DB	15,56,204,229
-	DB	15,56,203,202
+	sha256msg1	xmm4,xmm5
+	sha256rnds2	xmm1,xmm2
 	movdqa	xmm0,XMMWORD[((224-128))+rcx]
 	paddd	xmm0,xmm6
-	DB	15,56,205,222
-	DB	15,56,203,209
+	sha256msg2	xmm3,xmm6
+	sha256rnds2	xmm2,xmm1
 	pshufd	xmm0,xmm0,0x0e
 	movdqa	xmm7,xmm3
-DB	102,15,58,15,254,4
+	palignr	xmm7,xmm6,4
 	nop
 	paddd	xmm4,xmm7
-	DB	15,56,204,238
-	DB	15,56,203,202
+	sha256msg1	xmm5,xmm6
+	sha256rnds2	xmm1,xmm2
 	movdqa	xmm0,XMMWORD[((256-128))+rcx]
 	paddd	xmm0,xmm3
-	DB	15,56,205,227
-	DB	15,56,203,209
+	sha256msg2	xmm4,xmm3
+	sha256rnds2	xmm2,xmm1
 	pshufd	xmm0,xmm0,0x0e
 	movdqa	xmm7,xmm4
-DB	102,15,58,15,251,4
+	palignr	xmm7,xmm3,4
 	nop
 	paddd	xmm5,xmm7
-	DB	15,56,204,243
-	DB	15,56,203,202
+	sha256msg1	xmm6,xmm3
+	sha256rnds2	xmm1,xmm2
 	movdqa	xmm0,XMMWORD[((288-128))+rcx]
 	paddd	xmm0,xmm4
-	DB	15,56,205,236
-	DB	15,56,203,209
+	sha256msg2	xmm5,xmm4
+	sha256rnds2	xmm2,xmm1
 	pshufd	xmm0,xmm0,0x0e
 	movdqa	xmm7,xmm5
-DB	102,15,58,15,252,4
+	palignr	xmm7,xmm4,4
 	nop
 	paddd	xmm6,xmm7
-	DB	15,56,204,220
-	DB	15,56,203,202
+	sha256msg1	xmm3,xmm4
+	sha256rnds2	xmm1,xmm2
 	movdqa	xmm0,XMMWORD[((320-128))+rcx]
 	paddd	xmm0,xmm5
-	DB	15,56,205,245
-	DB	15,56,203,209
+	sha256msg2	xmm6,xmm5
+	sha256rnds2	xmm2,xmm1
 	pshufd	xmm0,xmm0,0x0e
 	movdqa	xmm7,xmm6
-DB	102,15,58,15,253,4
+	palignr	xmm7,xmm5,4
 	nop
 	paddd	xmm3,xmm7
-	DB	15,56,204,229
-	DB	15,56,203,202
+	sha256msg1	xmm4,xmm5
+	sha256rnds2	xmm1,xmm2
 	movdqa	xmm0,XMMWORD[((352-128))+rcx]
 	paddd	xmm0,xmm6
-	DB	15,56,205,222
-	DB	15,56,203,209
+	sha256msg2	xmm3,xmm6
+	sha256rnds2	xmm2,xmm1
 	pshufd	xmm0,xmm0,0x0e
 	movdqa	xmm7,xmm3
-DB	102,15,58,15,254,4
+	palignr	xmm7,xmm6,4
 	nop
 	paddd	xmm4,xmm7
-	DB	15,56,204,238
-	DB	15,56,203,202
+	sha256msg1	xmm5,xmm6
+	sha256rnds2	xmm1,xmm2
 	movdqa	xmm0,XMMWORD[((384-128))+rcx]
 	paddd	xmm0,xmm3
-	DB	15,56,205,227
-	DB	15,56,203,209
+	sha256msg2	xmm4,xmm3
+	sha256rnds2	xmm2,xmm1
 	pshufd	xmm0,xmm0,0x0e
 	movdqa	xmm7,xmm4
-DB	102,15,58,15,251,4
+	palignr	xmm7,xmm3,4
 	nop
 	paddd	xmm5,xmm7
-	DB	15,56,204,243
-	DB	15,56,203,202
+	sha256msg1	xmm6,xmm3
+	sha256rnds2	xmm1,xmm2
 	movdqa	xmm0,XMMWORD[((416-128))+rcx]
 	paddd	xmm0,xmm4
-	DB	15,56,205,236
-	DB	15,56,203,209
+	sha256msg2	xmm5,xmm4
+	sha256rnds2	xmm2,xmm1
 	pshufd	xmm0,xmm0,0x0e
 	movdqa	xmm7,xmm5
-DB	102,15,58,15,252,4
-	DB	15,56,203,202
+	palignr	xmm7,xmm4,4
+	sha256rnds2	xmm1,xmm2
 	paddd	xmm6,xmm7
 
 	movdqa	xmm0,XMMWORD[((448-128))+rcx]
 	paddd	xmm0,xmm5
-	DB	15,56,203,209
+	sha256rnds2	xmm2,xmm1
 	pshufd	xmm0,xmm0,0x0e
-	DB	15,56,205,245
+	sha256msg2	xmm6,xmm5
 	movdqa	xmm7,xmm8
-	DB	15,56,203,202
+	sha256rnds2	xmm1,xmm2
 
 	movdqa	xmm0,XMMWORD[((480-128))+rcx]
 	paddd	xmm0,xmm6
 	nop
-	DB	15,56,203,209
+	sha256rnds2	xmm2,xmm1
 	pshufd	xmm0,xmm0,0x0e
 	dec	rdx
 	nop
-	DB	15,56,203,202
+	sha256rnds2	xmm1,xmm2
 
 	paddd	xmm2,xmm10
 	paddd	xmm1,xmm9
@@ -2006,7 +2006,7 @@ DB	102,15,58,15,252,4
 	pshufd	xmm7,xmm1,0x1b
 	pshufd	xmm1,xmm1,0xb1
 	punpckhqdq	xmm1,xmm2
-DB	102,15,58,15,215,8
+	palignr	xmm2,xmm7,8
 
 	movdqu	XMMWORD[rdi],xmm1
 	movdqu	XMMWORD[16+rdi],xmm2
@@ -2083,16 +2083,16 @@ $L$loop_ssse3:
 	movdqu	xmm0,XMMWORD[rsi]
 	movdqu	xmm1,XMMWORD[16+rsi]
 	movdqu	xmm2,XMMWORD[32+rsi]
-DB	102,15,56,0,199
+	pshufb	xmm0,xmm7
 	movdqu	xmm3,XMMWORD[48+rsi]
 	lea	rbp,[K256]
-DB	102,15,56,0,207
+	pshufb	xmm1,xmm7
 	movdqa	xmm4,XMMWORD[rbp]
 	movdqa	xmm5,XMMWORD[32+rbp]
-DB	102,15,56,0,215
+	pshufb	xmm2,xmm7
 	paddd	xmm4,xmm0
 	movdqa	xmm6,XMMWORD[64+rbp]
-DB	102,15,56,0,223
+	pshufb	xmm3,xmm7
 	movdqa	xmm7,XMMWORD[96+rbp]
 	paddd	xmm5,xmm1
 	paddd	xmm6,xmm2
@@ -2120,10 +2120,10 @@ $L$ssse3_00_47:
 	xor	r12d,r10d
 	ror	r13d,5
 	xor	r14d,eax
-DB	102,15,58,15,224,4
+	palignr	xmm4,xmm0,4
 	and	r12d,r8d
 	xor	r13d,r8d
-DB	102,15,58,15,250,4
+	palignr	xmm7,xmm2,4
 	add	r11d,DWORD[rsp]
 	mov	r15d,eax
 	xor	r12d,r10d
@@ -2264,10 +2264,10 @@ DB	102,15,58,15,250,4
 	xor	r12d,ecx
 	ror	r13d,5
 	xor	r14d,r8d
-DB	102,15,58,15,225,4
+	palignr	xmm4,xmm1,4
 	and	r12d,eax
 	xor	r13d,eax
-DB	102,15,58,15,251,4
+	palignr	xmm7,xmm3,4
 	add	edx,DWORD[16+rsp]
 	mov	r15d,r8d
 	xor	r12d,ecx
@@ -2408,10 +2408,10 @@ DB	102,15,58,15,251,4
 	xor	r12d,r10d
 	ror	r13d,5
 	xor	r14d,eax
-DB	102,15,58,15,226,4
+	palignr	xmm4,xmm2,4
 	and	r12d,r8d
 	xor	r13d,r8d
-DB	102,15,58,15,248,4
+	palignr	xmm7,xmm0,4
 	add	r11d,DWORD[32+rsp]
 	mov	r15d,eax
 	xor	r12d,r10d
@@ -2552,10 +2552,10 @@ DB	102,15,58,15,248,4
 	xor	r12d,ecx
 	ror	r13d,5
 	xor	r14d,r8d
-DB	102,15,58,15,227,4
+	palignr	xmm4,xmm3,4
 	and	r12d,eax
 	xor	r13d,eax
-DB	102,15,58,15,249,4
+	palignr	xmm7,xmm1,4
 	add	edx,DWORD[48+rsp]
 	mov	r15d,r8d
 	xor	r12d,ecx

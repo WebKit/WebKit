@@ -122,7 +122,6 @@ set(wgslc_HEADERS
     AST/ASTAttribute.h
     AST/ASTBinaryExpression.h
     AST/ASTBindingAttribute.h
-    AST/ASTBitcastExpression.h
     AST/ASTBoolLiteral.h
     AST/ASTBreakStatement.h
     AST/ASTBuilder.h
@@ -174,7 +173,6 @@ set(wgslc_HEADERS
     AST/ASTSizeAttribute.h
     AST/ASTStageAttribute.h
     AST/ASTStatement.h
-    AST/ASTStaticAssertStatement.h
     AST/ASTStringDumper.h
     AST/ASTStructure.h
     AST/ASTStructureMember.h

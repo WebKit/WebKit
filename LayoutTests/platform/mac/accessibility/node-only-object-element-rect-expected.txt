@@ -1,0 +1,12 @@
+This test ensures we calculate the frame correctly for objects that don't have a renderer (like display: contents elements).
+
+#toolbar: {width: 784, height: 18}
+#group: {width: 36, height: 18}
+#button: {width: 784, height: 10}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo
+Foo
+Foo

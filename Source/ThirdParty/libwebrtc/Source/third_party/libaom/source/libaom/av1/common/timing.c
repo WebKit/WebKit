@@ -22,7 +22,7 @@
 
 /* Max Bitrates for levels of Main Tier in kbps. Bitrate in main_kbps [31] */
 /* is a dummy value. The decoder model is not applicable for level 31. */
-static int32_t main_kbps[1 << LEVEL_BITS] = {
+static const int32_t main_kbps[1 << LEVEL_BITS] = {
   1500,           3000,           UNDEFINED_RATE, UNDEFINED_RATE,
   6000,           10000,          UNDEFINED_RATE, UNDEFINED_RATE,
   12000,          20000,          UNDEFINED_RATE, UNDEFINED_RATE,
@@ -35,7 +35,7 @@ static int32_t main_kbps[1 << LEVEL_BITS] = {
 
 /* Max Bitrates for levels of High Tier in kbps. Bitrate in high_kbps [31] */
 /* is a dummy value. The decoder model is not applicable for level 31. */
-static int32_t high_kbps[1 << LEVEL_BITS] = {
+static const int32_t high_kbps[1 << LEVEL_BITS] = {
   INVALID_RATE,   INVALID_RATE,   INVALID_RATE,   INVALID_RATE,
   INVALID_RATE,   INVALID_RATE,   INVALID_RATE,   INVALID_RATE,
   30000,          50000,          UNDEFINED_RATE, UNDEFINED_RATE,
@@ -47,9 +47,8 @@ static int32_t high_kbps[1 << LEVEL_BITS] = {
 };
 
 /* BitrateProfileFactor */
-static int bitrate_profile_factor[1 << PROFILE_BITS] = {
-  1, 2, 3, 0, 0, 0, 0, 0
-};
+static const int bitrate_profile_factor[1 << PROFILE_BITS] = { 1, 2, 3, 0,
+                                                               0, 0, 0, 0 };
 
 int64_t av1_max_level_bitrate(BITSTREAM_PROFILE seq_profile, int seq_level_idx,
                               int seq_tier) {

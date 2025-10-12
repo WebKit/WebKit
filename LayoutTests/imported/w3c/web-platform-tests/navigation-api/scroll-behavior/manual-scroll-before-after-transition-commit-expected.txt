@@ -1,3 +1,0 @@
-
-FAIL scroll: scroll() before commit() assert_equals: expected 0 but got 431
-

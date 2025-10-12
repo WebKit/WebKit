@@ -27,16 +27,16 @@
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
-#include "ActiveDOMObject.h"
-#include "AffineTransform.h"
-#include "CanvasBase.h"
-#include "ContextDestructionObserver.h"
-#include "EventTarget.h"
-#include "EventTargetInterfaces.h"
-#include "IDLTypes.h"
-#include "ImageBuffer.h"
-#include "IntSize.h"
-#include "ScriptWrappable.h"
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/AffineTransform.h>
+#include <WebCore/CanvasBase.h>
+#include <WebCore/ContextDestructionObserver.h>
+#include <WebCore/EventTarget.h>
+#include <WebCore/EventTargetInterfaces.h>
+#include <WebCore/IDLTypes.h>
+#include <WebCore/ImageBuffer.h>
+#include <WebCore/IntSize.h>
+#include <WebCore/ScriptWrappable.h>
 #include <wtf/FixedVector.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -46,7 +46,7 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(WEBGL)
-#include "WebGLContextAttributes.h"
+#include <WebCore/WebGLContextAttributes.h>
 #endif
 
 namespace WebCore {
@@ -157,8 +157,8 @@ private:
 
     bool isOffscreenCanvas() const final { return true; }
 
-    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
-    ScriptExecutionContext* canvasBaseScriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* canvasBaseScriptExecutionContext() const final;
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::OffscreenCanvas; }
     void refEventTarget() final { RefCounted::ref(); }

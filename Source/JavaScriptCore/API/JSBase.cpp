@@ -206,7 +206,7 @@ JSObjectRef JSGetMemoryUsageStatistics(JSContextRef ctx)
 
     auto typeCounts = vm.heap.objectTypeCounts();
     JSObject* objectTypeCounts = constructEmptyObject(globalObject);
-    for (auto& it : *typeCounts)
+    for (auto& it : typeCounts)
         objectTypeCounts->putDirect(vm, Identifier::fromString(vm, it.key), jsNumber(it.value));
 
     JSObject* object = constructEmptyObject(globalObject);

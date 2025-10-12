@@ -28,6 +28,7 @@
 #include "FloatSize.h"
 #include "ScrollTypes.h"
 #include "Timer.h"
+#include <wtf/CanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -42,11 +43,12 @@ namespace WebCore {
 
 class Element;
 class LocalFrame;
+class Page;
 class PlatformWheelEvent;
 class ScrollableArea;
 class WeakPtrImplWithEventTargetData;
 
-class ScrollLatchingController {
+class ScrollLatchingController : public CanMakeWeakPtr<ScrollLatchingController> {
     WTF_MAKE_TZONE_ALLOCATED(ScrollLatchingController);
 public:
     explicit ScrollLatchingController(Page&);

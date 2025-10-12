@@ -25,13 +25,14 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(VIDEO)
 
-#include "MediaPlayer.h"
-#include "MediaProducer.h"
-#include "MediaUsageInfo.h"
-#include "PlatformMediaSession.h"
-#include "Timer.h"
+#include <WebCore/MediaPlayer.h>
+#include <WebCore/MediaProducer.h>
+#include <WebCore/MediaUsageInfo.h>
+#include <WebCore/PlatformMediaSession.h>
+#include <WebCore/Timer.h>
 #include <memory>
 #include <wtf/Markable.h>
 #include <wtf/TZoneMalloc.h>

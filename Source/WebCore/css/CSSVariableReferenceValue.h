@@ -29,11 +29,11 @@
 
 #pragma once
 
-#include "CSSParserTokenRange.h"
-#include "CSSPropertyNames.h"
-#include "CSSValue.h"
-#include "CSSValueKeywords.h"
-#include "CSSVariableData.h"
+#include <WebCore/CSSParserTokenRange.h>
+#include <WebCore/CSSPropertyNames.h>
+#include <WebCore/CSSValue.h>
+#include <WebCore/CSSValueKeywords.h>
+#include <WebCore/CSSVariableData.h>
 #include <wtf/PointerComparison.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,7 +43,7 @@ class CSSParserToken;
 struct CSSParserContext;
 
 namespace Style {
-class BuilderState;
+class Builder;
 }
 
 enum CSSPropertyID : uint16_t;
@@ -56,10 +56,10 @@ public:
     bool equals(const CSSVariableReferenceValue&) const;
     String customCSSText(const CSS::SerializationContext&) const;
 
-    RefPtr<CSSVariableData> resolveVariableReferences(Style::BuilderState&) const;
+    RefPtr<CSSVariableData> resolveVariableReferences(Style::Builder&) const;
     const CSSParserContext& context() const;
 
-    RefPtr<CSSValue> resolveSingleValue(Style::BuilderState&, CSSPropertyID) const;
+    RefPtr<CSSValue> resolveSingleValue(Style::Builder&, CSSPropertyID) const;
 
     // The maximum number of tokens that may be produced by a var() reference or var() fallback value.
     // https://drafts.csswg.org/css-variables/#long-variables
@@ -67,20 +67,20 @@ public:
     
     const CSSVariableData& data() const { return m_data.get(); }
 
-    template<typename CacheFunction> bool resolveAndCacheValue(Style::BuilderState&, NOESCAPE const CacheFunction&) const;
+    template<typename CacheFunction> bool resolveAndCacheValue(Style::Builder&, NOESCAPE const CacheFunction&) const;
 
 private:
     explicit CSSVariableReferenceValue(Ref<CSSVariableData>&&);
 
-    std::optional<Vector<CSSParserToken>> resolveTokenRange(CSSParserTokenRange, Style::BuilderState&) const;
-    bool resolveVariableReference(CSSParserTokenRange, CSSValueID, Vector<CSSParserToken>&, Style::BuilderState&) const;
+    std::optional<Vector<CSSParserToken>> resolveTokenRange(CSSParserTokenRange, Style::Builder&) const;
+    bool resolveVariableReference(CSSParserTokenRange, CSSValueID, Vector<CSSParserToken>&, Style::Builder&) const;
     enum class FallbackResult : uint8_t { None, Valid, Invalid };
-    std::pair<FallbackResult, Vector<CSSParserToken>> resolveVariableFallback(const AtomString& variableName, CSSParserTokenRange, CSSValueID functionId, Style::BuilderState&) const;
+    std::pair<FallbackResult, Vector<CSSParserToken>> resolveVariableFallback(const AtomString& variableName, CSSParserTokenRange, CSSValueID functionId, Style::Builder&) const;
 
     void cacheSimpleReference();
-    RefPtr<CSSVariableData> tryResolveSimpleReference(Style::BuilderState&) const;
+    RefPtr<CSSVariableData> tryResolveSimpleReference(Style::Builder&) const;
 
-    Ref<CSSVariableData> m_data;
+    const Ref<CSSVariableData> m_data;
     mutable String m_stringValue;
 
     // For quicky resolving simple var(--foo) values.
@@ -98,17 +98,17 @@ private:
 };
 
 template<typename CacheFunction>
-bool CSSVariableReferenceValue::resolveAndCacheValue(Style::BuilderState& builderState, NOESCAPE const CacheFunction& cacheFunction) const
+bool CSSVariableReferenceValue::resolveAndCacheValue(Style::Builder& builder, NOESCAPE const CacheFunction& cacheFunction) const
 
 {
-    if (auto data = tryResolveSimpleReference(builderState)) {
+    if (auto data = tryResolveSimpleReference(builder)) {
         if (!arePointingToEqualData(m_cacheDependencyData, data))
             cacheFunction(data);
         m_cacheDependencyData = WTFMove(data);
         return true;
     }
 
-    auto resolvedTokens = resolveTokenRange(m_data->tokenRange(), builderState);
+    auto resolvedTokens = resolveTokenRange(m_data->tokenRange(), builder);
     if (!resolvedTokens)
         return false;
 

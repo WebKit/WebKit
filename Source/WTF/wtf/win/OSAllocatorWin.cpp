@@ -45,19 +45,19 @@ static inline DWORD protection(bool writable, bool executable)
         (writable ? PAGE_READWRITE : PAGE_READONLY);
 }
 
-void* OSAllocator::tryReserveUncommitted(size_t bytes, Usage, bool writable, bool executable, bool, bool)
+void* OSAllocator::tryReserveUncommitted(size_t bytes, Usage, void* address, bool writable, bool executable, bool, unsigned)
 {
-    return VirtualAlloc(nullptr, bytes, MEM_RESERVE, protection(writable, executable));
+    return VirtualAlloc(address, bytes, MEM_RESERVE, protection(writable, executable));
 }
 
-void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, void* address, bool writable, bool executable, bool jitCageEnabled, unsigned numGuardPagesToAddOnEachEnd)
 {
-    void* result = tryReserveUncommitted(bytes, usage, writable, executable, jitCageEnabled, includesGuardPages);
+    void* result = tryReserveUncommitted(bytes, usage, address, writable, executable, jitCageEnabled, numGuardPagesToAddOnEachEnd);
     RELEASE_ASSERT(result);
     return result;
 }
 
-void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, Usage, bool writable, bool executable, bool, bool)
+void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, Usage usage, void* address, bool writable, bool executable, bool, unsigned)
 {
     ASSERT(hasOneBitSet(alignment) && alignment >= pageSize());
 
@@ -67,24 +67,24 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, 
         addressReqs.Alignment = alignment;
         param.Type = MemExtendedParameterAddressRequirements;
         param.Pointer = &addressReqs;
-        void* result = VirtualAlloc2Ptr()(nullptr, nullptr, bytes, MEM_RESERVE, protection(writable, executable), &param, 1);
+        void* result = VirtualAlloc2Ptr()(nullptr, address, bytes, MEM_RESERVE, protection(writable, executable), &param, 1);
         return result;
     }
 
-    void* result = tryReserveUncommitted(bytes + alignment);
+    void* result = tryReserveUncommitted(bytes + alignment, usage, address);
     // There's no way to release the reserved memory on Windows, from what I can tell as the whole segment has to be released at once.
     char* aligned = reinterpret_cast<char*>(roundUpToMultipleOf(alignment, reinterpret_cast<uintptr_t>(result)));
     return aligned;
 }
 
-void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage, bool writable, bool executable, bool, bool)
+void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage, void* address, bool writable, bool executable, bool, unsigned)
 {
-    return VirtualAlloc(nullptr, bytes, MEM_RESERVE | MEM_COMMIT, protection(writable, executable));
+    return VirtualAlloc(address, bytes, MEM_RESERVE | MEM_COMMIT, protection(writable, executable));
 }
 
-void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, void* address, bool writable, bool executable, bool jitCageEnabled, unsigned numGuardPagesToAddOnEachEnd)
 {
-    void* result = tryReserveAndCommit(bytes, usage, writable, executable, jitCageEnabled, includesGuardPages);
+    void* result = tryReserveAndCommit(bytes, usage, address, writable, executable, jitCageEnabled, numGuardPagesToAddOnEachEnd);
     RELEASE_ASSERT(result);
     return result;
 }
@@ -117,7 +117,7 @@ void OSAllocator::decommit(void* address, size_t bytes)
     VirtualUnlock(address, bytes);
 }
 
-void OSAllocator::releaseDecommitted(void* address, size_t bytes)
+void OSAllocator::releaseDecommitted(void* address, size_t bytes, unsigned)
 {
     // See comment in OSAllocator::decommit(). Similarly, when bytes is 0, we
     // don't want to release anything. So, don't call VirtualFree() below.

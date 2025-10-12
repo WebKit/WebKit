@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // CLMemory.cpp: Implements the cl::Memory class.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/CLMemory.h"
 

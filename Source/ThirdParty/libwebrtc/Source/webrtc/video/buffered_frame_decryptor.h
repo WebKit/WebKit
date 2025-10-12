@@ -11,12 +11,13 @@
 #ifndef VIDEO_BUFFERED_FRAME_DECRYPTOR_H_
 #define VIDEO_BUFFERED_FRAME_DECRYPTOR_H_
 
+#include <cstddef>
 #include <deque>
 #include <memory>
 
-#include "api/crypto/crypto_options.h"
 #include "api/crypto/frame_decryptor_interface.h"
 #include "api/field_trials_view.h"
+#include "api/scoped_refptr.h"
 #include "modules/rtp_rtcp/source/frame_object.h"
 
 namespace webrtc {
@@ -70,7 +71,7 @@ class BufferedFrameDecryptor final {
   // decryptor. This allows the decryptor to be switched out without resetting
   // the video stream.
   void SetFrameDecryptor(
-      rtc::scoped_refptr<FrameDecryptorInterface> frame_decryptor);
+      scoped_refptr<FrameDecryptorInterface> frame_decryptor);
 
   // Determines whether the frame should be stashed, dropped or handed off to
   // the OnDecryptedFrameCallback.
@@ -94,7 +95,7 @@ class BufferedFrameDecryptor final {
   bool first_frame_decrypted_ = false;
   FrameDecryptorInterface::Status last_status_ =
       FrameDecryptorInterface::Status::kUnknown;
-  rtc::scoped_refptr<FrameDecryptorInterface> frame_decryptor_;
+  scoped_refptr<FrameDecryptorInterface> frame_decryptor_;
   OnDecryptedFrameCallback* const decrypted_frame_callback_;
   OnDecryptionStatusChangeCallback* const decryption_status_change_callback_;
   std::deque<std::unique_ptr<RtpFrameObject>> stashed_frames_;

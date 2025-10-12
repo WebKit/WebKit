@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include "FetchHeadersGuard.h"
-#include "HTTPHeaderMap.h"
+#include <WebCore/FetchHeadersGuard.h>
+#include <WebCore/HTTPHeaderMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Vector.h>
 
@@ -68,7 +68,7 @@ public:
         std::optional<KeyValuePair<String, String>> next();
 
     private:
-        Ref<FetchHeaders> m_headers;
+        const Ref<FetchHeaders> m_headers;
         size_t m_currentIndex { 0 };
         size_t m_setCookieIndex { 0 };
         Vector<String> m_keys;

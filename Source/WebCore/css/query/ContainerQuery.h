@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "GenericMediaQueryTypes.h"
+#include <WebCore/GenericMediaQueryTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/text/AtomString.h>

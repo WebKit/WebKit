@@ -11,7 +11,7 @@ PASS testCreateMarkup('<s>hello</s>') is '<s>hello</s>'
 PASS testCreateMarkup('<strike>hello</strike>') is '<strike>hello</strike>'
 PASS testCreateMarkup('<em><s><u>hello</u></s></em>') is '<em><s><u>hello</u></s></em>'
 PASS testCreateMarkup('<u><s><em><u>hello</u></em></s></u>') is '<u><s><em><u>hello</u></em></s></u>'
-PASS testCreateMarkup('<i><span style="text-decoration: underline overline line-through;">world</span></i>') is '<i><span style="text-decoration: underline overline line-through;">world</span></i>'
+PASS testCreateMarkup('<i><span style="text-decoration-line: underline overline line-through;">world</span></i>') is '<i><span style="text-decoration-line: underline overline line-through;">world</span></i>'
 PASS testCreateMarkup('<em><u style="font-weight: bold;">hello</u></em>') is '<em><u style="font-weight: bold;">hello</u></em>'
 PASS testCreateMarkup('hello <u>world</u> webkit') is 'hello <u>world</u> webkit'
 PASS successfullyParsed is true

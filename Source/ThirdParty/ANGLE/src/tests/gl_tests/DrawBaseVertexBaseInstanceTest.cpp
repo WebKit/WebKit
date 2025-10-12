@@ -95,7 +95,7 @@ struct PrintToStringParamName
 // are checked by using them to select the color of the draw.
 class DrawBaseVertexBaseInstanceTest
     : public ANGLETestBase,
-      public ::testing::TestWithParam<DrawBaseVertexBaseInstanceTestParams>
+      public ::testing::WithParamInterface<DrawBaseVertexBaseInstanceTestParams>
 {
   protected:
     DrawBaseVertexBaseInstanceTest() : ANGLETestBase(std::get<0>(GetParam()))
@@ -490,7 +490,7 @@ using DrawBaseInstanceTestParams = std::
 // gl_VertexID, gl_InstanceID, gl_BaseVertex, and gl_BaseInstance
 // are checked by using them to select the color of the draw.
 class DrawBaseInstanceTest : public ANGLETestBase,
-                             public ::testing::TestWithParam<DrawBaseInstanceTestParams>
+                             public ::testing::WithParamInterface<DrawBaseInstanceTestParams>
 {
   protected:
     DrawBaseInstanceTest() : ANGLETestBase(std::get<0>(GetParam()))
@@ -926,6 +926,38 @@ TEST_P(DrawBaseVertexBaseInstanceTest, DrawArraysInstancedBaseInstance)
     doDrawArraysBaseInstanceReset();
     EXPECT_GL_NO_ERROR();
     checkDrawResult(false, true);
+}
+
+// Tests basic drawcount validation
+TEST_P(DrawBaseVertexBaseInstanceTest, MultiDrawValidation)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_base_vertex_base_instance"));
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_multi_draw"));
+
+    const GLint first           = 0;
+    const GLsizei count         = 0;
+    const GLsizei instanceCount = 0;
+    const GLint baseVertex      = 0;
+    const GLuint baseInstance   = 0;
+    const GLvoid *const indices[1]{nullptr};
+
+    glMultiDrawArraysInstancedBaseInstanceANGLE(GL_TRIANGLES, &first, &count, &instanceCount,
+                                                &baseInstance, -1);
+    EXPECT_GL_ERROR(GL_INVALID_VALUE);
+
+    glMultiDrawArraysInstancedBaseInstanceANGLE(GL_TRIANGLES, &first, &count, &instanceCount,
+                                                &baseInstance, 0);
+    EXPECT_GL_NO_ERROR();
+
+    glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GL_TRIANGLES, &count, GL_UNSIGNED_SHORT,
+                                                            indices, &instanceCount, &baseVertex,
+                                                            &baseInstance, -1);
+    EXPECT_GL_ERROR(GL_INVALID_VALUE);
+
+    glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GL_TRIANGLES, &count, GL_UNSIGNED_SHORT,
+                                                            indices, &instanceCount, &baseVertex,
+                                                            &baseInstance, 0);
+    EXPECT_GL_NO_ERROR();
 }
 
 // Tests basic functionality of glMultiDrawArraysInstancedBaseInstance

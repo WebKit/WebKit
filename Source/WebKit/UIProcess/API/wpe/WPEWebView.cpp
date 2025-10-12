@@ -119,6 +119,11 @@ void View::selectionDidChange()
     }
 }
 
+void View::themeColorDidChange()
+{
+    m_client->themeColorDidChange();
+}
+
 void View::setSize(const WebCore::IntSize& size)
 {
     m_size = size;

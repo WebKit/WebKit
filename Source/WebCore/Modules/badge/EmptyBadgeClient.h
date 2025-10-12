@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "BadgeClient.h"
+#include <WebCore/BadgeClient.h>
 
 namespace WebCore {
 

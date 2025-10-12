@@ -1,0 +1,44 @@
+<html>
+<head>
+</head>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
+
+async function runWorkerFuzz(){
+    const blob=new Blob([`
+        onmessage=function(e){
+            try {
+                let t=e.data;
+                for (let i = 0; i < 70; i++)
+                    t = btoa(t);
+            } catch (e) {
+                postMessage(e);
+                return;
+            }
+            postMessage("didn't throw");
+        };
+    `], { type: 'application/javascript' });
+    const url = URL.createObjectURL(blob);
+    const worker = new Worker(url);
+    let done;
+    let promise = new Promise((resolve) => {
+        done = resolve;
+    });
+
+    worker.onmessage = done;
+    worker.postMessage("A");
+
+    globalThis.message = await promise;
+    shouldBeType("message.data", "RangeError");
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+}
+addEventListener('load', runWorkerFuzz);
+</script>
+
+</body>
+</html>
+

@@ -58,6 +58,7 @@
 #include "RenderTreeUpdaterViewTransition.h"
 #include "RenderView.h"
 #include "SVGElement.h"
+#include "StylableInlines.h"
 #include "StyleResolver.h"
 #include "StyleTreeResolver.h"
 #include "TextManipulationController.h"
@@ -85,8 +86,8 @@ RenderTreeUpdater::Parent::Parent(Element& element, const Style::ElementUpdate* 
 
 RenderTreeUpdater::RenderTreeUpdater(Document& document, Style::PostResolutionCallbackDisabler&)
     : m_document(document)
-    , m_generatedContent(makeUnique<GeneratedContent>(*this))
-    , m_viewTransition(makeUnique<ViewTransition>(*this))
+    , m_generatedContent(makeUniqueRef<GeneratedContent>(*this))
+    , m_viewTransition(makeUniqueRef<ViewTransition>(*this))
     , m_builder(renderView())
 {
 }
@@ -390,8 +391,7 @@ static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newS
         return false;
 
     for (auto& [key, value] : pseudoStyleCache->styles) {
-        Style::PseudoElementIdentifier pseudoElementIdentifier { value->pseudoElementType(), value->pseudoElementNameArgument() };
-        auto newPseudoStyle = renderer->getUncachedPseudoStyle(pseudoElementIdentifier, newStyle, newStyle);
+        auto newPseudoStyle = renderer->getUncachedPseudoStyle(*value->pseudoElementIdentifier(), newStyle, newStyle);
         if (!newPseudoStyle)
             return true;
         if (*newPseudoStyle != *value) {
@@ -470,9 +470,9 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         element.clearDisplayContentsOrNoneStyle();
 
     if (!hasDisplayContentsOrNone) {
-        if (!elementUpdateStyle.containIntrinsicLogicalWidthHasAuto())
+        if (!elementUpdateStyle.containIntrinsicLogicalWidth().hasAuto())
             element.clearLastRememberedLogicalWidth();
-        if (!elementUpdateStyle.containIntrinsicLogicalHeightHasAuto())
+        if (!elementUpdateStyle.containIntrinsicLogicalHeight().hasAuto())
             element.clearLastRememberedLogicalHeight();
     }
 
@@ -789,7 +789,7 @@ static std::optional<DidRepaintAndMarkContainingBlock> repaintAndMarkContainingB
         auto shouldRepaint = [&] {
             if (!renderElement->everHadLayout())
                 return false;
-            if (!renderElement->style().opacity())
+            if (renderElement->style().opacity().isTransparent())
                 return false;
             if (renderElement->isOutOfFlowPositioned())
                 return destroyRootRenderer != renderElement->containingBlock() || !destroyRootRenderer->hasNonVisibleOverflow();
@@ -818,7 +818,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
         teardownStack.append(&element);
     };
 
-    auto pop = [&] (unsigned depth) {
+    auto pop = [&] (unsigned depth, NeedsRepaintAndLayout needsRepaintAndLayout) {
         while (teardownStack.size() > depth) {
             auto& element = *teardownStack.takeLast();
             auto styleable = Styleable::fromElement(element);
@@ -863,6 +863,13 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
             }
 
             if (auto* renderer = element.renderer()) {
+                if (needsRepaintAndLayout == NeedsRepaintAndLayout::Yes) {
+                    renderer->repaint();
+                    if (auto* parent = renderer->parent()) {
+                        parent->setChildNeedsLayout();
+                        parent->setNeedsPreferredWidthsUpdate();
+                    }
+                }
                 if (auto backdropRenderer = renderer->backdropRenderer())
                     builder.destroyAndCleanUpAnonymousWrappers(*backdropRenderer, { });
                 builder.destroyAndCleanUpAnonymousWrappers(*renderer, root.renderer());
@@ -880,7 +887,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
     auto didRepaintRoot = repaintAndMarkContainingBlockDirtyBeforeTearDown(root, descendants);
     auto needsDescendantRepaintAndLayout = !didRepaintRoot || *didRepaintRoot == DidRepaintAndMarkContainingBlock::Yes ? NeedsRepaintAndLayout::No : NeedsRepaintAndLayout::Yes;
     for (auto it = descendants.begin(), end = descendants.end(); it != end; ++it) {
-        pop(it.depth());
+        pop(it.depth(), needsDescendantRepaintAndLayout);
 
         if (auto* text = dynamicDowncast<Text>(*it)) {
             tearDownTextRenderer(*text, &root, builder, needsDescendantRepaintAndLayout);
@@ -890,7 +897,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
         push(downcast<Element>(*it));
     }
 
-    pop(0);
+    pop(0, needsDescendantRepaintAndLayout);
 
     tearDownLeftoverPaginationRenderersIfNeeded(root, builder);
 }

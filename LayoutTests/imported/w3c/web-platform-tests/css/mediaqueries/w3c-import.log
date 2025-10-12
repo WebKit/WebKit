@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/aspect-ratio-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/aspect-ratio-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/aspect-ratio-002-expected.xht
@@ -36,6 +37,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-006-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/display-mode.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/display-mode.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/dynamic-range.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/forced-colors.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/inverted-colors.html
@@ -66,6 +69,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-008.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-resolution-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-resolution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-sign-function-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-sign-function-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-sign-function-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-sign-function-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-sign-function-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-sign-function-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-sign-function-004-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-sign-function-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-sign-function-005-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-sign-function-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-sign-function-006-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-sign-function-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-case-insensitive-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-case-insensitive-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-deprecated-001-expected.xht
@@ -107,6 +122,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/negation-002-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/negation-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/overflow-media-features.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme-svg-as-image-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme-svg-as-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme-svg-as-image.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme-svg-image-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme-svg-image-normal-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme-svg-image-normal-ref.html

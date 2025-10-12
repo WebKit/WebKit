@@ -357,16 +357,40 @@ foreach(diag_group, diag_groups) {
       "-clang-component=${diag_group}",
     ]
     td_file = "//$clspv_llvm_dir/clang/include/clang/Basic/Diagnostic.td"
-    output_name = "$clspv_llvm_dir/clang/Basic/Diagnostic${diag_group}Kinds.inc"
+    output_path = "$clspv_llvm_dir/clang/include/clang/Basic"
+  }
+
+  clang_tablegen("Diagnostic${diag_group}Enums") {
+    args = [
+      "-gen-clang-diags-enums",
+      "-clang-component=${diag_group}",
+    ]
+    td_file = "//$clspv_llvm_dir/clang/include/clang/Basic/Diagnostic.td"
+    output_path = "$clspv_llvm_dir/clang/include/clang/Basic"
+  }
+
+  clang_tablegen("Diagnostic${diag_group}CompatIDs") {
+    args = [
+      "-gen-clang-diags-compat-ids",
+      "-clang-component=${diag_group}",
+    ]
+    td_file = "//$clspv_llvm_dir/clang/include/clang/Basic/Diagnostic.td"
+    output_path = "$clspv_llvm_dir/clang/include/clang/Basic"
   }
 }
 group("diags_tablegen") {
-  # DiagnosticGroups and DiagnosticIndexName are intentionally not part of this
-  # group.  Much of clang depends on the DiagKinds.inc files transitively,
-  # but almost nothing needs DiagnosticGroups.inc or DiagnosticIndexName.inc.
+  # DiagnosticGroups, DiagnosticIndexName, DiagnosticAllCompatIDs are
+  # intentionally not part of this group.  Much of clang depends on the
+  # DiagKinds.inc files transitively, but almost nothing needs
+  # DiagnosticGroups.inc, DiagnosticIndexName.inc, or
+  # DiagnosticAllCompatIDs.inc.
   public_deps = []
   foreach(diag_group, diag_groups) {
-    public_deps += [ ":Diagnostic${diag_group}Kinds" ]
+    public_deps += [
+      ":Diagnostic${diag_group}CompatIDs",
+      ":Diagnostic${diag_group}Enums",
+      ":Diagnostic${diag_group}Kinds",
+    ]
   }
 }
 
@@ -378,6 +402,12 @@ clang_tablegen("DiagnosticGroups") {
 
 clang_tablegen("DiagnosticIndexName") {
   args = [ "-gen-clang-diags-index-name" ]
+  td_file = "//$clspv_llvm_dir/clang/include/clang/Basic/Diagnostic.td"
+  output_path = "$clspv_llvm_dir/clang/include/clang/Basic"
+}
+
+clang_tablegen("DiagnosticAllCompatIDs") {
+  args = [ "-gen-clang-diags-compat-ids" ]
   td_file = "//$clspv_llvm_dir/clang/include/clang/Basic/Diagnostic.td"
   output_path = "$clspv_llvm_dir/clang/include/clang/Basic"
 }
@@ -417,6 +447,30 @@ clang_tablegen("Builtins") {
 clang_tablegen("BuiltinsBPF") {
   args = [ "-gen-clang-builtins" ]
   td_file = "//$clspv_llvm_dir/clang/include/clang/Basic/BuiltinsBPF.td"
+  output_path = "$clspv_llvm_dir/clang/include/clang/Basic"
+}
+
+clang_tablegen("BuiltinsNVPTX") {
+  args = [ "-gen-clang-builtins" ]
+  td_file = "//$clspv_llvm_dir/clang/include/clang/Basic/BuiltinsNVPTX.td"
+  output_path = "$clspv_llvm_dir/clang/include/clang/Basic"
+}
+
+clang_tablegen("BuiltinsSPIRV") {
+  args = [ "-gen-clang-builtins" ]
+  td_file = "//$clspv_llvm_dir/clang/include/clang/Basic/BuiltinsSPIRV.td"
+  output_path = "$clspv_llvm_dir/clang/include/clang/Basic"
+}
+
+clang_tablegen("BuiltinsX86_64") {
+  args = [ "-gen-clang-builtins" ]
+  td_file = "//$clspv_llvm_dir/clang/include/clang/Basic/BuiltinsX86_64.td"
+  output_path = "$clspv_llvm_dir/clang/include/clang/Basic"
+}
+
+clang_tablegen("BuiltinsHexagon") {
+  args = [ "-gen-clang-builtins" ]
+  td_file = "//$clspv_llvm_dir/clang/include/clang/Basic/BuiltinsHexagon.td"
   output_path = "$clspv_llvm_dir/clang/include/clang/Basic"
 }
 
@@ -615,7 +669,7 @@ clang_tablegen("AttrTemplateInstantiate") {
 clang_tablegen("AttrParsedAttrList") {
   args = [ "-gen-clang-attr-parsed-attr-list" ]
   td_file = "//$clspv_llvm_dir/clang/include/clang/Basic/Attr.td"
-  output_path = "$clspv_llvm_dir/clang/include/clang/Sema"
+  output_path = "$clspv_llvm_dir/clang/include/clang/Basic"
 }
 
 clang_tablegen("AttrParsedAttrKinds") {
@@ -676,4 +730,15 @@ clang_tablegen("Checkers") {
   args = [ "-gen-clang-sa-checkers" ]
   td_file = "//$clspv_llvm_dir/clang/include/clang/StaticAnalyzer/Checkers/Checkers.td"
   output_path = "$clspv_llvm_dir/clang/include/clang/StaticAnalyzer/Checkers"
+}
+
+clang_tablegen("BuiltinTemplates") {
+  args = [ "-gen-clang-builtin-templates" ]
+  td_file = "//$clspv_llvm_dir/clang/include/clang/Basic/BuiltinTemplates.td"
+  output_path = "$clspv_llvm_dir/clang/include/clang/Basic"
+}
+clang_tablegen("CXX11AttributeInfo") {
+  args = [ "-gen-cxx11-attribute-info" ]
+  td_file = "//$clspv_llvm_dir/clang/include/clang/Basic/Attr.td"
+  output_path = "$clspv_llvm_dir/clang/include/clang/Basic"
 }

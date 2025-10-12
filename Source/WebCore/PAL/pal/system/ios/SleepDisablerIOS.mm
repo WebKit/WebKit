@@ -37,7 +37,7 @@ namespace PAL {
 
 class ScreenSleepDisabler {
 public:
-    static ScreenSleepDisabler& shared()
+    static ScreenSleepDisabler& singleton()
     {
         static MainThreadNeverDestroyed<ScreenSleepDisabler> screenSleepDisabler;
         return screenSleepDisabler;
@@ -70,7 +70,7 @@ private:
         ensureOnMainRunLoop([this, shouldKeepScreenAwake] {
             if (m_screenWakeLockHandler && m_screenWakeLockHandler(shouldKeepScreenAwake))
                 return;
-            [[PAL::getUIApplicationClass() sharedApplication] _setIdleTimerDisabled:shouldKeepScreenAwake forReason:@"WebKit SleepDisabler"];
+            [[PAL::getUIApplicationClassSingleton() sharedApplication] _setIdleTimerDisabled:shouldKeepScreenAwake forReason:@"WebKit SleepDisabler"];
         });
     }
     ScreenSleepDisablerCounter m_screenSleepDisablerCount;
@@ -79,12 +79,12 @@ private:
 
 void SleepDisablerCocoa::takeScreenSleepDisablingAssertion(const String&)
 {
-    m_screenSleepDisablerToken = ScreenSleepDisabler::shared().takeAssertion();
+    m_screenSleepDisablerToken = ScreenSleepDisabler::singleton().takeAssertion();
 }
 
 void SleepDisablerCocoa::setScreenWakeLockHandler(Function<bool(bool shouldKeepScreenAwake)>&& screenWakeLockHandler)
 {
-    ScreenSleepDisabler::shared().setScreenWakeLockHandler(WTFMove(screenWakeLockHandler));
+    ScreenSleepDisabler::singleton().setScreenWakeLockHandler(WTFMove(screenWakeLockHandler));
 }
 
 } // namespace PAL

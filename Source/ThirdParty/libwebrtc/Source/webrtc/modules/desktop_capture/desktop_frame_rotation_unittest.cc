@@ -10,9 +10,10 @@
 
 #include "modules/desktop_capture/desktop_frame_rotation.h"
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/desktop_region.h"
 #include "modules/desktop_capture/test_utils.h"
 #include "test/gtest.h"

@@ -26,9 +26,9 @@
 #pragma once
 
 #include "InlineFormattingContext.h"
-#include "InlineLayoutState.h"
+#include <WebCore/InlineLayoutState.h>
 #include "InlineLineBuilder.h"
-#include "TextUtil.h"
+#include <WebCore/TextUtil.h>
 
 namespace WebCore {
 namespace Layout {
@@ -58,12 +58,12 @@ private:
     void adjustOutsideListMarkersPosition(LineBox&);
     void expandAboveRootInlineBox(LineBox&, InlineLayoutUnit) const;
 
-    bool isFirstLine() const { return lineLayoutResult().isFirstLast.isFirstFormattedLine != LineLayoutResult::IsFirstLast::FirstFormattedLine::No; }
+    bool isFirstFormattedLine() const { return lineLayoutResult().isFirstLast.isFirstFormattedLine == IsFirstFormattedLine::Yes; }
     bool isLastLine() const { return lineLayoutResult().isFirstLast.isLastLineWithInlineContent; }
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const LineLayoutResult& lineLayoutResult() const { return m_lineLayoutResult; }
     const ElementBox& rootBox() const { return formattingContext().root(); }
-    const RenderStyle& rootStyle() const { return isFirstLine() ? rootBox().firstLineStyle() : rootBox().style(); }
+    const RenderStyle& rootStyle() const { return isFirstFormattedLine() ? rootBox().firstLineStyle() : rootBox().style(); }
 
     const InlineLayoutState& layoutState() const { return formattingContext().layoutState(); }
     const BlockLayoutState& blockLayoutState() const { return layoutState().parentBlockLayoutState(); }
@@ -73,7 +73,7 @@ private:
     LineLayoutResult& m_lineLayoutResult;
     bool m_fallbackFontRequiresIdeographicBaseline { false };
     bool m_lineHasNonLineSpanningRubyContent { false };
-    UncheckedKeyHashMap<const InlineLevelBox*, TextUtil::FallbackFontList> m_fallbackFontsForInlineBoxes;
+    HashMap<const InlineLevelBox*, TextUtil::FallbackFontList> m_fallbackFontsForInlineBoxes;
     Vector<size_t> m_outsideListMarkers;
 };
 

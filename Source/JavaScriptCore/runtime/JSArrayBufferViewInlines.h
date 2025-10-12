@@ -29,10 +29,10 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-#include "ArrayBufferView.h"
-#include "JSArrayBufferView.h"
-#include "JSDataView.h"
-#include "TypedArrayType.h"
+#include <JavaScriptCore/ArrayBufferView.h>
+#include <JavaScriptCore/JSArrayBufferView.h>
+#include <JavaScriptCore/JSDataView.h>
+#include <JavaScriptCore/TypedArrayType.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 

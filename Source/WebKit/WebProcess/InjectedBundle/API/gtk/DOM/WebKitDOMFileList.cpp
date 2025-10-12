@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitDOMFileList.h"
 
+#include <WebCore/AddEventListenerOptionsInlines.h>
 #include <WebCore/CSSImportRule.h>
 #include "DOMObjectCache.h"
 #include <WebCore/Document.h>

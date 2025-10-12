@@ -92,7 +92,7 @@ void CtapNfcDriver::transact(Vector<uint8_t>&& data, ResponseCallback&& callback
 // Return the response async to match the HID behaviour, such that nfc could fit into the current infra.
 void CtapNfcDriver::respondAsync(ResponseCallback&& callback, Vector<uint8_t>&& response) const
 {
-    RunLoop::protectedMain()->dispatch([callback = WTFMove(callback), response = WTFMove(response)] () mutable {
+    RunLoop::mainSingleton().dispatch([callback = WTFMove(callback), response = WTFMove(response)] () mutable {
         callback(WTFMove(response));
     });
 }

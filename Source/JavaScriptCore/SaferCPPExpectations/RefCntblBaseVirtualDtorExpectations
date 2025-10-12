@@ -5,8 +5,6 @@ bytecode/ProxyableAccessCase.h
 domjit/DOMJITCallDOMGetterSnippet.h
 jit/GCAwareJITStubRoutine.h
 jit/PolymorphicCallStubRoutine.h
-runtime/DataView.h
-runtime/GenericTypedArrayView.h
 runtime/InferredValue.h
 wasm/WasmCallee.h
 wasm/WasmTable.h

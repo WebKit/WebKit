@@ -322,6 +322,11 @@ var assert = function assert() {
             }
             var validationErrorMessage = exception instanceof Error ? exception.message : undefined;
 
+            const jscReferenceErrorMessageRegexp = /Cannot access '\w+' before initialization\./
+            if (expectedException instanceof ReferenceError && jscReferenceErrorMessageRegexp.test(validationErrorMessage)) {
+                return;
+            }
+
             // Remap Chakra exception expectations to JSC exception expectations.
             var jscReplacements = [
                 {
@@ -429,13 +434,14 @@ var assert = function assert() {
                     replStr: "Proxy 'setPrototypeOf' returned false indicating it could not set the prototype value. The operation was expected to succeed"
                 }
             ];
+
             for (let idx = 0; idx < jscReplacements.length; idx++) {
                 if (jscReplacements[idx].regexp.test(expectedErrorMessage)) {
                     expectedErrorMessage = expectedErrorMessage.replace(jscReplacements[idx].regexp, jscReplacements[idx].replStr);
                     break;
                 }
             }
-            
+
             if (validationPart !== expectedException || (expectedErrorMessage && validationErrorMessage !== expectedErrorMessage)) {
                 var expectedString = expectedException !== undefined ?
                   expectedException.toString().replace(/\n/g, "").replace(/.*function (.*)\(.*/g, "$1") :

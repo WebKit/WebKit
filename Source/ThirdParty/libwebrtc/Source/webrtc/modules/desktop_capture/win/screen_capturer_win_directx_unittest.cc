@@ -10,6 +10,7 @@
 
 #include "modules/desktop_capture/win/screen_capturer_win_directx.h"
 
+#include <cstddef>
 #include <string>
 #include <vector>
 

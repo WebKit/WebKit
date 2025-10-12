@@ -1,0 +1,10 @@
+This test ensures we compute the correct title accessibility text for area-element links.
+
+PASS: accessibilityController.accessibleElementById('link1').title === 'AXTitle: Link1'
+PASS: accessibilityController.accessibleElementById('link3').title === 'AXTitle: Link3'
+PASS: accessibilityController.accessibleElementById('link1').title === 'AXTitle: New title'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

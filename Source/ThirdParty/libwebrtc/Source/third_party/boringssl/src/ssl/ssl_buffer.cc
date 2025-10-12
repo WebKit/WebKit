@@ -1,16 +1,16 @@
-/* Copyright (c) 2015, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2015 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <openssl/ssl.h>
 
@@ -37,11 +37,10 @@ static_assert((SSL3_ALIGN_PAYLOAD & (SSL3_ALIGN_PAYLOAD - 1)) == 0,
               "SSL3_ALIGN_PAYLOAD must be a power of 2");
 
 void SSLBuffer::Clear() {
-  if (buf_allocated_) {
+  if (buf_ != inline_buf_) {
     free(buf_);  // Allocated with malloc().
   }
   buf_ = nullptr;
-  buf_allocated_ = false;
   offset_ = 0;
   size_ = 0;
   cap_ = 0;
@@ -58,13 +57,11 @@ bool SSLBuffer::EnsureCap(size_t header_len, size_t new_cap) {
   }
 
   uint8_t *new_buf;
-  bool new_buf_allocated;
   size_t new_offset;
   if (new_cap <= sizeof(inline_buf_)) {
     // This function is called twice per TLS record, first for the five-byte
     // header. To avoid allocating twice, use an inline buffer for short inputs.
     new_buf = inline_buf_;
-    new_buf_allocated = false;
     new_offset = 0;
   } else {
     // Add up to |SSL3_ALIGN_PAYLOAD| - 1 bytes of slack for alignment.
@@ -77,7 +74,6 @@ bool SSLBuffer::EnsureCap(size_t header_len, size_t new_cap) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
       return false;
     }
-    new_buf_allocated = true;
 
     // Offset the buffer such that the record body is aligned.
     new_offset =
@@ -88,12 +84,11 @@ bool SSLBuffer::EnsureCap(size_t header_len, size_t new_cap) {
   // may alias.
   OPENSSL_memmove(new_buf + new_offset, buf_ + offset_, size_);
 
-  if (buf_allocated_) {
+  if (buf_ != inline_buf_) {
     free(buf_);  // Allocated with malloc().
   }
 
   buf_ = new_buf;
-  buf_allocated_ = new_buf_allocated;
   offset_ = new_offset;
   cap_ = new_cap;
   return true;

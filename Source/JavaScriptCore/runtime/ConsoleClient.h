@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ConsoleTypes.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 

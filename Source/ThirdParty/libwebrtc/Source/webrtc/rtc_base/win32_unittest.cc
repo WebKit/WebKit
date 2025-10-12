@@ -13,13 +13,15 @@
 #include <string>
 
 #include "rtc_base/gunit.h"
+#include "rtc_base/ip_address.h"
 #include "rtc_base/net_helpers.h"
+#include "test/gtest.h"
 
 #if !defined(WEBRTC_WIN)
 #error Only for Windows
 #endif
 
-namespace rtc {
+namespace webrtc {
 
 class Win32Test : public ::testing::Test {
  public:
@@ -86,4 +88,4 @@ TEST_F(Win32Test, InvalidIPv6AddressParsing) {
   EXPECT_FALSE(IPFromString("1:2:3:4:5:6:7", &ipv6));
 }
 
-}  // namespace rtc
+}  // namespace webrtc

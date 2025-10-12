@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,14 +25,14 @@
 
 #pragma once
 
-#include "IDBConnectionProxy.h"
-#include "IDBConnectionToServerDelegate.h"
-#include "IDBDatabaseConnectionIdentifier.h"
-#include "IDBIndexIdentifier.h"
-#include "IDBKeyPath.h"
-#include "IDBObjectStoreIdentifier.h"
-#include "IDBResourceIdentifier.h"
-#include "IndexKey.h"
+#include <WebCore/IDBConnectionProxy.h>
+#include <WebCore/IDBConnectionToServerDelegate.h>
+#include <WebCore/IDBDatabaseConnectionIdentifier.h>
+#include <WebCore/IDBIndexIdentifier.h>
+#include <WebCore/IDBKeyPath.h>
+#include <WebCore/IDBObjectStoreIdentifier.h>
+#include <WebCore/IDBResourceIdentifier.h>
+#include <WebCore/IndexKey.h>
 #include <pal/SessionID.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Function.h>
@@ -68,7 +68,7 @@ public:
 
     WEBCORE_EXPORT IDBConnectionIdentifier identifier() const;
 
-    IDBConnectionProxy& proxy();
+    IDBConnectionProxy& proxy() { return m_proxy; }
 
     void deleteDatabase(const IDBOpenRequestData&);
     WEBCORE_EXPORT void didDeleteDatabase(const IDBResultData&);
@@ -159,10 +159,12 @@ private:
     typedef void (IDBConnectionToServer::*ResultFunction)(const IDBResultData&);
     void callResultFunctionWithErrorLater(ResultFunction, const IDBResourceIdentifier& requestIdentifier);
 
-    WeakPtr<IDBConnectionToServerDelegate> m_delegate;
+    Ref<IDBConnectionToServerDelegate> protectedDelegate() const { return m_delegate.get(); }
+
+    WeakRef<IDBConnectionToServerDelegate> m_delegate;
     bool m_serverConnectionIsValid { true };
 
-    UniqueRef<IDBConnectionProxy> m_proxy;
+    const UniqueRef<IDBConnectionProxy> m_proxy;
 };
 
 } // namespace IDBClient

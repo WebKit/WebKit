@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: 'text/plain' is not a valid JavaScript MIME type.
 
 
 PASS Speculative parsing, page load: script-src-module

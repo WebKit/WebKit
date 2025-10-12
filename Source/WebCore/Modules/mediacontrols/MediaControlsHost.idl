@@ -41,6 +41,7 @@ enum DeviceType {
 
 [
     Conditional=VIDEO,
+    JSCustomMarkFunction,
     LegacyNoInterfaceObject,
 ] interface MediaControlsHost {
     readonly attribute DOMString layoutTraitsClassName;
@@ -82,8 +83,9 @@ enum DeviceType {
 
     readonly attribute sequence<DOMString> shadowRootStyleSheets;
     DOMString base64StringForIconNameAndType(DOMString iconName, DOMString iconType);
-    DOMString formattedStringForDuration(unrestricted double durationInSeconds);
     [Conditional=MEDIA_CONTROLS_CONTEXT_MENUS, EnabledBySetting=MediaControlsContextMenusEnabled] boolean showMediaControlsContextMenu(HTMLElement target, JSON options, VoidCallback callback);
 
     [Conditional=MEDIA_SESSION] undefined ensureMediaSessionObserver();
+
+    [Custom] attribute any controller;
 };

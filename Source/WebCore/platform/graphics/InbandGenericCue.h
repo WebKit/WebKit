@@ -27,8 +27,8 @@
 
 #if ENABLE(VIDEO)
 
-#include "Color.h"
-#include "InbandGenericCueIdentifier.h"
+#include <WebCore/Color.h>
+#include <WebCore/InbandGenericCueIdentifier.h>
 #include <wtf/MediaTime.h>
 
 namespace WebCore {

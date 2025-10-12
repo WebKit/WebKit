@@ -28,7 +28,7 @@
 #include "Image.h"
 #include "IntRect.h"
 #include "LegacyRenderSVGResourceMaskerInlines.h"
-#include "SVGRenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "SVGRenderingContext.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -79,7 +79,7 @@ auto LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const
         auto maskColorSpace = DestinationColorSpace::SRGB();
         auto drawColorSpace = DestinationColorSpace::SRGB();
 
-        if (style().svgStyle().colorInterpolation() == ColorInterpolation::LinearRGB) {
+        if (style().colorInterpolation() == ColorInterpolation::LinearRGB) {
 #if USE(CG) || USE(SKIA)
             maskColorSpace = DestinationColorSpace::LinearSRGB();
 #endif
@@ -103,21 +103,22 @@ auto LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const
 
 bool LegacyRenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, const DestinationColorSpace& colorSpace, RenderObject* object)
 {
-    auto& maskImageContext = maskerData->maskImage->context();
+    RefPtr maskImage = maskerData->maskImage;
+    auto& maskImageContext = maskImage->context();
     auto objectBoundingBox = object->objectBoundingBox();
 
     if (!drawContentIntoContext(maskImageContext, objectBoundingBox))
         return false;
 
 #if !USE(CG) && !USE(SKIA)
-    maskerData->maskImage->transformToColorSpace(colorSpace);
+    maskImage->transformToColorSpace(colorSpace);
 #else
     UNUSED_PARAM(colorSpace);
 #endif
 
     // Create the luminance mask.
-    if (style().svgStyle().maskType() == MaskType::Luminance)
-        maskerData->maskImage->convertToLuminanceMask();
+    if (style().maskType() == MaskType::Luminance)
+        maskImage->convertToLuminanceMask();
 
     return true;
 }
@@ -127,21 +128,22 @@ bool LegacyRenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& cont
     // Eventually adjust the mask image context according to the target objectBoundingBox.
     AffineTransform maskContentTransformation;
 
-    if (maskElement().maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+    Ref maskElement = this->maskElement();
+    if (maskElement->maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         maskContentTransformation.translate(objectBoundingBox.location());
         maskContentTransformation.scale(objectBoundingBox.size());
         context.concatCTM(maskContentTransformation);
     }
 
     // Draw the content into the ImageBuffer.
-    for (auto& child : childrenOfType<SVGElement>(protectedMaskElement())) {
-        auto renderer = child.renderer();
+    for (Ref child : childrenOfType<SVGElement>(maskElement)) {
+        CheckedPtr renderer = child->renderer();
         if (!renderer)
             continue;
         if (renderer->needsLayout())
             return false;
-        const RenderStyle& style = renderer->style();
-        if (style.display() == DisplayType::None || style.usedVisibility() != Visibility::Visible)
+        const CheckedRef style = renderer->style();
+        if (style->display() == DisplayType::None || style->usedVisibility() != Visibility::Visible)
             continue;
         SVGRenderingContext::renderSubtreeToContext(context, *renderer, maskContentTransformation);
     }
@@ -167,12 +169,12 @@ bool LegacyRenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& cont
 
 void LegacyRenderSVGResourceMasker::calculateMaskContentRepaintRect(RepaintRectCalculation repaintRectCalculation)
 {
-    for (Node* childNode = maskElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
+    for (RefPtr childNode = maskElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
         CheckedPtr renderer = dynamicDowncast<RenderElement>(childNode->renderer());
         if (!renderer || !childNode->isSVGElement())
             continue;
-        const RenderStyle& style = renderer->style();
-        if (style.display() == DisplayType::None || style.usedVisibility() != Visibility::Visible)
+        const CheckedRef style = renderer->style();
+        if (style->display() == DisplayType::None || style->usedVisibility() != Visibility::Visible)
              continue;
         m_maskContentBoundaries[repaintRectCalculation].unite(renderer->localToParentTransform().mapRect(renderer->repaintRectInLocalCoordinates(repaintRectCalculation)));
     }

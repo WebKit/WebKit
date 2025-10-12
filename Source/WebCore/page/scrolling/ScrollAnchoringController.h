@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "Document.h"
-#include "Element.h"
-#include "FloatPoint.h"
-#include "ScrollTypes.h"
+#include <WebCore/Document.h>
+#include <WebCore/Element.h>
+#include <WebCore/FloatPoint.h>
+#include <WebCore/ScrollTypes.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 

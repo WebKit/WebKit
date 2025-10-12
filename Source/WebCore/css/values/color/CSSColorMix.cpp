@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +28,6 @@
 #include "CSSColorMix.h"
 
 #include "CSSColorMixResolver.h"
-#include "CSSColorMixSerialization.h"
 #include "CSSPlatformColorResolutionState.h"
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
@@ -37,6 +37,8 @@
 
 namespace WebCore {
 namespace CSS {
+
+using namespace CSS::Literals;
 
 WebCore::Color createColor(const ColorMix& unresolved, PlatformColorResolutionState& state)
 {
@@ -90,9 +92,79 @@ bool containsColorSchemeDependentColor(const ColorMix& unresolved)
         || containsColorSchemeDependentColor(unresolved.mixComponents2.color);
 }
 
+namespace ColorMixSerializationDetails {
+
+static bool sumTo100Percent(const ColorMix::Component::Percentage& a, const ColorMix::Component::Percentage& b)
+{
+    return a.isRaw() && b.isRaw() && a.raw()->value + b.raw()->value == 100.0;
+}
+
+static std::optional<PercentageRaw<>> subtractFrom100Percent(const ColorMix::Component::Percentage& percentage)
+{
+    return percentage.isRaw() ? std::make_optional(PercentageRaw<> { 100.0 - percentage.raw()->value }) : std::nullopt;
+}
+
+static void serializationForColorMixPercentage1(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMix& value)
+{
+    if (value.mixComponents1.percentage && value.mixComponents2.percentage) {
+        if (*value.mixComponents1.percentage == 50_css_percentage && *value.mixComponents2.percentage == 50_css_percentage)
+            return;
+        builder.append(' ');
+        serializationForCSS(builder, context, *value.mixComponents1.percentage);
+    } else if (value.mixComponents1.percentage) {
+        if (*value.mixComponents1.percentage == 50_css_percentage)
+            return;
+        builder.append(' ');
+        serializationForCSS(builder, context, *value.mixComponents1.percentage);
+    } else if (value.mixComponents2.percentage) {
+        if (*value.mixComponents2.percentage == 50_css_percentage)
+            return;
+
+        auto subtractedPercent = subtractFrom100Percent(*value.mixComponents2.percentage);
+        if (!subtractedPercent)
+            return;
+
+        builder.append(' ');
+        serializationForCSS(builder, context, *subtractedPercent);
+    }
+}
+
+static void serializationForColorMixPercentage2(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMix& value)
+{
+    if (value.mixComponents1.percentage && value.mixComponents2.percentage) {
+        if (sumTo100Percent(*value.mixComponents1.percentage, *value.mixComponents2.percentage))
+            return;
+
+        builder.append(' ');
+        serializationForCSS(builder, context, *value.mixComponents2.percentage);
+    } else if (value.mixComponents2.percentage) {
+        if (*value.mixComponents2.percentage == 50_css_percentage)
+            return;
+        if (!value.mixComponents2.percentage->isCalc())
+            return;
+
+        builder.append(' ');
+        serializationForCSS(builder, context, *value.mixComponents2.percentage);
+    }
+}
+
+} // namespace ColorMixSerializationDetails
+
 void Serialize<ColorMix>::operator()(StringBuilder& builder, const SerializationContext& context, const ColorMix& value)
 {
-    serializationForCSSColorMix(builder, context, value);
+
+    builder.append("color-mix("_s);
+    if (value.colorInterpolationMethod != CSS::defaultInterpolationMethodForColorMix) {
+        builder.append("in "_s);
+        WebCore::serializationForCSS(builder, value.colorInterpolationMethod);
+        builder.append(", "_s);
+    }
+    serializationForCSS(builder, context, value.mixComponents1.color);
+    ColorMixSerializationDetails::serializationForColorMixPercentage1(builder, context, value);
+    builder.append(", "_s);
+    serializationForCSS(builder, context, value.mixComponents2.color);
+    ColorMixSerializationDetails::serializationForColorMixPercentage2(builder, context, value);
+    builder.append(')');
 }
 
 void ComputedStyleDependenciesCollector<ColorMix>::operator()(ComputedStyleDependencies& dependencies, const ColorMix& value)

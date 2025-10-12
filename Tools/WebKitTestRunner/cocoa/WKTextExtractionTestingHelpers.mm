@@ -26,63 +26,13 @@
 #import "config.h"
 #import "WKTextExtractionTestingHelpers.h"
 
+#import "_WKTextExtractionInternal.h"
 #import <objc/runtime.h>
 #import <wtf/Scope.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/TextStream.h>
 #import <wtf/text/WTFString.h>
 #import <wtf/text/cf/StringConcatenateCF.h>
-
-// FIXME: Remove these forward declarations once text extraction support is fully migrated to WebKit from WebKitSwift.
-
-typedef NS_ENUM(NSInteger, WKTextExtractionContainer) {
-    WKTextExtractionContainerRoot,
-    WKTextExtractionContainerViewportConstrained,
-    WKTextExtractionContainerList,
-    WKTextExtractionContainerListItem,
-    WKTextExtractionContainerBlockQuote,
-    WKTextExtractionContainerArticle,
-    WKTextExtractionContainerSection,
-    WKTextExtractionContainerNav,
-    WKTextExtractionContainerButton
-};
-
-@interface WKTextExtractionItem : NSObject
-@property (nonatomic, readonly) NSArray<WKTextExtractionItem *> *children;
-@property (nonatomic, readonly) CGRect rectInWebView;
-@end
-
-@interface WKTextExtractionContainerItem : WKTextExtractionItem
-@property (nonatomic, readonly) WKTextExtractionContainer container;
-@end
-
-@interface WKTextExtractionLink : NSObject
-@property (nonatomic, readonly) NSURL *url;
-@property (nonatomic, readonly) NSRange range;
-@end
-
-@interface WKTextExtractionEditable : NSObject
-@property (nonatomic, readonly) NSString *label;
-@property (nonatomic, readonly) NSString *placeholder;
-@property (nonatomic, readonly, getter=isSecure) BOOL secure;
-@property (nonatomic, readonly, getter=isFocused) BOOL focused;
-@end
-
-@interface WKTextExtractionTextItem : WKTextExtractionItem
-@property (nonatomic, readonly) NSString *content;
-@property (nonatomic, readonly) NSRange selectedRange;
-@property (nonatomic, readonly) NSArray<WKTextExtractionLink *> *links;
-@property (nonatomic, readonly) WKTextExtractionEditable *editable;
-@end
-
-@interface WKTextExtractionScrollableItem : WKTextExtractionItem
-@property (nonatomic, readonly) CGSize contentSize;
-@end
-
-@interface WKTextExtractionImageItem : WKTextExtractionItem
-@property (nonatomic, readonly) NSString *name;
-@property (nonatomic, readonly) NSString *altText;
-@end
 
 namespace WTR {
 
@@ -110,6 +60,10 @@ ASCIILiteral description(WKTextExtractionContainer container)
         return "NAV"_s;
     case WKTextExtractionContainerButton:
         return "BUTTON"_s;
+    case WKTextExtractionContainerCanvas:
+        return "CANVAS"_s;
+    case WKTextExtractionContainerGeneric:
+        return "GENERIC"_s;
     }
 }
 

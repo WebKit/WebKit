@@ -28,6 +28,9 @@
 
 #include "SessionState.h"
 #include "WebBackForwardListItem.h"
+#include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -171,5 +174,34 @@ bool WebBackForwardListFrameItem::sharesAncestor(WebBackForwardListFrameItem& fr
     }
     return false;
 }
+
+#if !LOG_DISABLED
+String WebBackForwardListFrameItem::loggingString()
+{
+    return loggingStringAtIndent(1);
+}
+
+String WebBackForwardListFrameItem::loggingStringAtIndent(size_t indent)
+{
+    StringBuilder indentBuilder;
+    for (size_t j = 0; j < indent; ++j)
+        indentBuilder.append("   "_s);
+    String indentString = indentBuilder.toString();
+
+    StringBuilder builder;
+    {
+        uint64_t calculatedFrameID = frameID() ? frameID()->toRawValue() : 0;
+        builder.append(makeString(url(), " ("_s, String::number(calculatedFrameID), ")"_s));
+        if (!m_frameState->target.isEmpty())
+            builder.append(makeString(" in "_s, m_frameState->target));
+        builder.append('\n');
+    }
+
+    for (size_t i = 0; i < m_children.size(); ++i)
+        builder.append(makeString(indentString, String::number(i), " - "_s, m_children[i]->loggingStringAtIndent(indent + 1)));
+
+    return builder.toString();
+}
+#endif // !LOG_DISABLED
 
 } // namespace WebKit

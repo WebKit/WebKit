@@ -37,7 +37,7 @@ public:
 
     virtual ~PlatformDisplayDefault();
 private:
-    explicit PlatformDisplayDefault(std::unique_ptr<GLDisplay>&&);
+    explicit PlatformDisplayDefault(Ref<GLDisplay>&&);
 
     Type type() const override { return PlatformDisplay::Type::Default; }
 };

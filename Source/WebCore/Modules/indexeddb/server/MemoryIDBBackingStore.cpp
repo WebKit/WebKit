@@ -272,7 +272,7 @@ IDBError MemoryIDBBackingStore::renameIndex(const IDBResourceIdentifier& transac
     if (!objectStore)
         return IDBError { ExceptionCode::ConstraintError };
 
-    auto* index = objectStore->indexForIdentifier(indexIdentifier);
+    RefPtr index = objectStore->indexForIdentifier(indexIdentifier);
     ASSERT(index);
     if (!index)
         return IDBError { ExceptionCode::ConstraintError };
@@ -393,7 +393,7 @@ IDBError MemoryIDBBackingStore::getAllRecords(const IDBResourceIdentifier& trans
         return IDBError { ExceptionCode::UnknownError, "No backing store object store found"_s };
 
     if (getAllRecordsData.indexIdentifier) {
-        auto* index = objectStore->indexForIdentifier(*getAllRecordsData.indexIdentifier);
+        RefPtr index = objectStore->indexForIdentifier(*getAllRecordsData.indexIdentifier);
         if (!index)
             return IDBError { ExceptionCode::UnknownError, "No backing store index found"_s };
 
@@ -523,7 +523,7 @@ IDBError MemoryIDBBackingStore::openCursor(const IDBResourceIdentifier& transact
             return IDBError { ExceptionCode::UnknownError, "No backing store object store found"_s };
 
         auto identifier = std::get<IDBIndexIdentifier>(info.sourceIdentifier());
-        auto* index = objectStore->indexForIdentifier(identifier);
+        RefPtr index = objectStore->indexForIdentifier(identifier);
         if (!index)
             return IDBError { ExceptionCode::UnknownError, "No backing store index found"_s };
 

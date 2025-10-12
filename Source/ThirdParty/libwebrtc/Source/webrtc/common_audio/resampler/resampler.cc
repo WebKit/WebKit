@@ -14,9 +14,9 @@
 
 #include "common_audio/resampler/include/resampler.h"
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
 
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "rtc_base/logging.h"

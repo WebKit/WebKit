@@ -1,0 +1,4 @@
+
+
+FAIL precommitHandler for an uncancelable traverse navigation assert_throws_dom: function "() => e.intercept({ precommitHandler: async () => {} })" did not throw
+

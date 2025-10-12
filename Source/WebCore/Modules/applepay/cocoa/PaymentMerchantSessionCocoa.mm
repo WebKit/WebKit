@@ -28,6 +28,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#import <JavaScriptCore/JSGlobalObject.h>
 #import <JavaScriptCore/JSONObject.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
@@ -42,13 +43,13 @@ std::optional<PaymentMerchantSession> PaymentMerchantSession::fromJS(JSC::JSGlob
     if (!jsonString)
         return std::nullopt;
 
-    auto dictionary = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[jsonString.createNSString().get() dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil]);
+    RetainPtr dictionary = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[jsonString.createNSString().get() dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil]);
     if (!dictionary || ![dictionary isKindOfClass:[NSDictionary class]])
         return std::nullopt;
 
-    auto pkPaymentMerchantSession = adoptNS([PAL::allocPKPaymentMerchantSessionInstance() initWithDictionary:dictionary]);
+    RetainPtr pkPaymentMerchantSession = adoptNS([PAL::allocPKPaymentMerchantSessionInstance() initWithDictionary:dictionary.get()]);
 
-    return PaymentMerchantSession(pkPaymentMerchantSession.get());
+    return PaymentMerchantSession(WTFMove(pkPaymentMerchantSession));
 }
 
 }

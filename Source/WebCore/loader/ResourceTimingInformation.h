@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CachedResourceHandle.h"
+#include <WebCore/CachedResourceHandle.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/text/WTFString.h>
 

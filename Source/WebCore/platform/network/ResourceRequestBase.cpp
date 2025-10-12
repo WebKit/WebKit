@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2025 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2009, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,7 @@
 
 #include "HTTPHeaderNames.h"
 #include "HTTPStatusCodes.h"
+#include "IPAddressSpace.h"
 #include "Logging.h"
 #include "PublicSuffixStore.h"
 #include "RegistrableDomain.h"
@@ -285,6 +286,11 @@ void ResourceRequestBase::setTimeoutInterval(double timeoutInterval)
     m_requestData.m_timeoutInterval = timeoutInterval;
     
     m_platformRequestUpdated = false;
+}
+
+void ResourceRequestBase::resetTimeoutInterval()
+{
+    setTimeoutInterval(s_defaultTimeoutInterval);
 }
 
 const URL& ResourceRequestBase::firstPartyForCookies() const

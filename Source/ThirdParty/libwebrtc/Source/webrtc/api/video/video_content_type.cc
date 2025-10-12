@@ -18,9 +18,8 @@ namespace webrtc {
 namespace videocontenttypehelpers {
 
 namespace {
-static constexpr uint8_t kScreenshareBitsSize = 1;
-static constexpr uint8_t kScreenshareBitsMask =
-    (1u << kScreenshareBitsSize) - 1;
+constexpr uint8_t kScreenshareBitsSize = 1;
+constexpr uint8_t kScreenshareBitsMask = (1u << kScreenshareBitsSize) - 1;
 }  // namespace
 
 bool IsScreenshare(const VideoContentType& content_type) {

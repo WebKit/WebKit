@@ -283,6 +283,12 @@ inline bool IsQualcomm()
     return angle::IsQualcomm(GetActiveGPUVendorID());
 }
 
+// Check whether the active GPU is ARM.
+inline bool IsARM()
+{
+    return angle::IsARM(GetActiveGPUVendorID());
+}
+
 // Check whether this is a debug build.
 inline bool IsDebug()
 {
@@ -519,6 +525,7 @@ GPUTestConfig::GPUTestConfig(bool isSwiftShader)
     mConditions[kConditionVMWare]      = !isSwiftShader && IsVMWare();
     mConditions[kConditionApple]       = !isSwiftShader && IsAppleGPU();
     mConditions[kConditionQualcomm]    = !isSwiftShader && IsQualcomm();
+    mConditions[kConditionARM]         = !isSwiftShader && IsARM();
     mConditions[kConditionSwiftShader] = isSwiftShader;
 
     mConditions[kConditionRelease] = IsRelease();

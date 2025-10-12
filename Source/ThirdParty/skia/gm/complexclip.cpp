@@ -303,7 +303,7 @@ DEF_SIMPLE_GM(clip_shader_nested, canvas, 256, 256) {
     canvas->translate(0.f, 2.f * h);
 
     // A small blue rect, with clip shader and path clipping
-    SkPath starPath;
+    SkPathBuilder starPath;
     starPath.moveTo(0.0f, -33.3333f);
     starPath.lineTo(9.62f, -16.6667f);
     starPath.lineTo(28.867f, -16.6667f);
@@ -321,7 +321,7 @@ DEF_SIMPLE_GM(clip_shader_nested, canvas, 256, 256) {
     canvas->save();
     canvas->clipShader(s);
     canvas->translate(w/2, h/2);
-    canvas->clipPath(starPath);
+    canvas->clipPath(starPath.detach());
     p.setColor(SK_ColorBLUE);
     canvas->translate(-w/2, -h/2);
     canvas->drawRect(SkRect::MakeWH(w, h), p);
@@ -408,14 +408,13 @@ DEF_SIMPLE_GM(clip_shader_persp, canvas, 1370, 1030) {
     // Scale factor always applied to the image shader so that it tiles
     SkMatrix scale = SkMatrix::Scale(1.f / 4.f, 1.f / 4.f);
     // The perspective matrix applied wherever needed
-    SkPoint src[4];
-    SkRect::Make(img->dimensions()).toQuad(src);
+    const std::array<SkPoint, 4> src = SkRect::Make(img->dimensions()).toQuad();
     SkPoint dst[4] = {{0, 80.f},
                       {img->width() + 28.f, -100.f},
                       {img->width() - 28.f, img->height() + 100.f},
                       {0.f, img->height() - 80.f}};
     SkMatrix persp;
-    SkAssertResult(persp.setPolyToPoly(src, dst, 4));
+    SkAssertResult(persp.setPolyToPoly(src, dst));
 
     SkMatrix perspScale = SkMatrix::Concat(persp, scale);
 
@@ -486,8 +485,8 @@ DEF_SIMPLE_GM(clip_shader_difference, canvas, 512, 512) {
     canvas->clear(SK_ColorGRAY);
 
     SkRect rect = SkRect::MakeWH(256, 256);
-    SkMatrix local = SkMatrix::RectToRect(SkRect::MakeWH(image->width(), image->height()),
-                                          SkRect::MakeWH(64, 64));
+    SkMatrix local = SkMatrix::RectToRectOrIdentity(SkRect::MakeWH(image->width(), image->height()),
+                                                    SkRect::MakeWH(64, 64));
     auto shader = image->makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat,
                                     SkSamplingOptions(), &local);
 
@@ -517,7 +516,7 @@ DEF_SIMPLE_GM(clip_shader_difference, canvas, 512, 512) {
         canvas->translate(0, 256);
         canvas->clipShader(shader, SkClipOp::kDifference);
 
-        SkPath path;
+        SkPathBuilder path;
         path.moveTo(0.f, 128.f);
         path.lineTo(128.f, 256.f);
         path.lineTo(256.f, 128.f);
@@ -528,7 +527,7 @@ DEF_SIMPLE_GM(clip_shader_difference, canvas, 512, 512) {
         path.lineTo(128.f - d, 128.f + d);
         path.lineTo(128.f + d, 128.f + d);
         path.lineTo(128.f + d, 128.f - d);
-        canvas->drawPath(path, paint);
+        canvas->drawPath(path.detach(), paint);
         canvas->restore();
     }
     // BR: Text

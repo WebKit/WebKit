@@ -28,8 +28,8 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "ImageBuffer.h"
-#include "LengthFunctions.h"
 #include "NativeImage.h"
+#include "PlatformDisplay.h"
 #include "TextureMapper.h"
 #include "TextureMapperFlags.h"
 #include "TextureMapperShaderProgram.h"
@@ -114,11 +114,10 @@ BitmapTexture::BitmapTexture(const IntSize& size, OptionSet<Flags> flags)
 void BitmapTexture::createTexture()
 {
     ASSERT(!m_id);
-    auto filter = m_flags.contains(Flags::UseNearestTextureFilter) ? GL_NEAREST : GL_LINEAR;
     glGenTextures(1, &m_id);
     glBindTexture(GL_TEXTURE_2D, m_id);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
@@ -260,7 +259,8 @@ void BitmapTexture::updateContents(const void* srcData, const IntRect& targetRec
             return;
         }
 
-        LOG_ERROR("BitmapTexture::updateContents(), failed to obtain MemoryMappedGPUBuffer write scope, fallback to OpenGL.");
+        WTFLogAlways("ERROR: Update Bitmap Texture Contents failed to obtain MemoryMappedGPUBuffer write scope. Aborting fallback to OpenGL..."); // NOLINT
+        CRASH();
     }
 #endif
 
@@ -280,7 +280,7 @@ void BitmapTexture::updateContents(const void* srcData, const IntRect& targetRec
     if (requireSubImageBuffer) {
         WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
         temporaryData.resize(targetRect.width() * targetRect.height() * bytesPerPixel);
-        auto dst = temporaryData.data();
+        auto dst = temporaryData.mutableSpan().data();
         data = dst;
         auto bits = static_cast<const uint8_t*>(srcData);
         auto src = bits + sourceOffset.y() * bytesPerLine + sourceOffset.x() * bytesPerPixel;
@@ -341,7 +341,7 @@ void BitmapTexture::updateContents(GraphicsLayer* sourceLayer, const IntRect& ta
 {
     // Making an unconditionally unaccelerated buffer here is OK because this code
     // isn't used by any platforms that respect the accelerated bit.
-    auto imageBuffer = ImageBuffer::create(targetRect.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(targetRect.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer)
         return;
 

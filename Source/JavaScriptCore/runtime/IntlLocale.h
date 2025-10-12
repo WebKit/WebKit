@@ -52,6 +52,8 @@ public:
 
     DECLARE_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
     void initializeLocale(JSGlobalObject*, const String& tag, JSValue optionsValue);
     void initializeLocale(JSGlobalObject*, JSValue tagValue, JSValue optionsValue);
     const String& maximal();
@@ -61,6 +63,7 @@ public:
     const String& language();
     const String& script();
     const String& region();
+    const String& variants();
 
     const String& calendar();
     const String& caseFirst();
@@ -81,7 +84,6 @@ public:
 private:
     IntlLocale(VM&, Structure*);
     DECLARE_DEFAULT_FINISH_CREATION;
-    DECLARE_VISIT_CHILDREN;
 
     String keywordValue(ASCIILiteral, bool isBoolean = false) const;
 
@@ -94,6 +96,7 @@ private:
     String m_language;
     String m_script;
     String m_region;
+    String m_variants;
     std::optional<String> m_calendar;
     std::optional<String> m_caseFirst;
     std::optional<String> m_collation;

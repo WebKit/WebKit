@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2004-2025 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,13 @@
 
 #pragma once
 
-#include "DecodingOptions.h"
-#include "DestinationColorSpace.h"
-#include "FloatRect.h"
-#include "ImageAdapter.h"
-#include "ImageOrientation.h"
-#include "ImagePaintingOptions.h"
-#include "ImageTypes.h"
+#include <WebCore/DecodingOptions.h>
+#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/ImageAdapter.h>
+#include <WebCore/ImageOrientation.h>
+#include <WebCore/ImagePaintingOptions.h>
+#include <WebCore/ImageTypes.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -50,7 +50,6 @@ class GraphicsContext;
 class NativeImage;
 class ShareableBitmap;
 class Timer;
-struct Length;
 
 enum class CompositeOperator : uint8_t;
 
@@ -85,6 +84,7 @@ public:
     virtual unsigned frameCount() const { return 1; }
 
     virtual bool currentFrameKnownToBeOpaque() const = 0;
+    virtual bool currentFrameIsComplete() const = 0;
     virtual bool isAnimated() const { return false; }
 
     // Derived classes should override this if their rendering could leak
@@ -99,7 +99,7 @@ public:
     virtual bool usesContainerSize() const { return false; }
     virtual bool hasRelativeWidth() const { return false; }
     virtual bool hasRelativeHeight() const { return false; }
-    virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
+    virtual void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio);
 
     virtual FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const = 0;
     virtual FloatSize sourceSize(ImageOrientation = ImageOrientation::Orientation::FromImage) const;
@@ -168,6 +168,10 @@ public:
 
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
     virtual bool isSpatial() const { return false; }
+#endif
+
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    virtual bool isMaybePanoramic() const { return false; }
 #endif
 
     virtual void dump(WTF::TextStream&) const;

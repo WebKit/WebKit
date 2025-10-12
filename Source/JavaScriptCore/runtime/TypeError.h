@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CallFrame.h"
-#include "Error.h"
+#include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/Error.h>
 
 namespace JSC {
 

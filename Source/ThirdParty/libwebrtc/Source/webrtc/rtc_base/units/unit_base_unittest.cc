@@ -10,6 +10,11 @@
 
 #include "rtc_base/units/unit_base.h"
 
+#include <cmath>
+#include <cstdint>
+#include <limits>
+
+#include "rtc_base/checks.h"
 #include "test/gtest.h"
 
 namespace webrtc {

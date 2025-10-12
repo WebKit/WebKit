@@ -10,12 +10,10 @@
 
 #include "rtc_base/deprecated/recursive_critical_section.h"
 
-#include <time.h>
-
 #include "rtc_base/checks.h"
 #include "rtc_base/platform_thread_types.h"
-#include "rtc_base/synchronization/yield.h"
 #include "rtc_base/system/unused.h"
+#include "rtc_base/thread_annotations.h"
 
 #if RTC_DCHECK_IS_ON
 #define RTC_CS_DEBUG_CODE(x) x
@@ -23,7 +21,7 @@
 #define RTC_CS_DEBUG_CODE(x)
 #endif  // !RTC_DCHECK_IS_ON
 
-namespace rtc {
+namespace webrtc {
 
 RecursiveCriticalSection::RecursiveCriticalSection() {
 #if defined(WEBRTC_WIN)
@@ -215,4 +213,4 @@ CritScope::~CritScope() {
   cs_->Leave();
 }
 
-}  // namespace rtc
+}  // namespace webrtc

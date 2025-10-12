@@ -17,7 +17,6 @@
 #include <memory>
 #include <set>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
@@ -52,7 +51,7 @@ class MultiEndCall {
   };
 
   MultiEndCall(
-      rtc::ArrayView<const Turn> timing,
+      ArrayView<const Turn> timing,
       absl::string_view audiotracks_path,
       std::unique_ptr<WavReaderAbstractFactory> wavreader_abstract_factory);
   ~MultiEndCall();
@@ -85,7 +84,7 @@ class MultiEndCall {
   // only up to 2 speakers. Rejects unordered turns and self cross-talk.
   bool CheckTiming();
 
-  rtc::ArrayView<const Turn> timing_;
+  ArrayView<const Turn> timing_;
   std::string audiotracks_path_;
   std::unique_ptr<WavReaderAbstractFactory> wavreader_abstract_factory_;
   std::set<std::string> speaker_names_;

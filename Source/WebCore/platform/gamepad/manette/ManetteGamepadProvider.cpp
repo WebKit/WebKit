@@ -37,7 +37,6 @@
 
 namespace WebCore {
 
-static const Seconds connectionDelayInterval { 500_ms };
 static const Seconds inputNotificationDelay { 50_ms };
 
 ManetteGamepadProvider& ManetteGamepadProvider::singleton()
@@ -58,7 +57,7 @@ static void onDeviceDisconnected(ManetteMonitor*, ManetteDevice* device, Manette
 
 ManetteGamepadProvider::ManetteGamepadProvider()
     : m_monitor(adoptGRef(manette_monitor_new()))
-    , m_inputNotificationTimer(RunLoop::currentSingleton(), this, &ManetteGamepadProvider::inputNotificationTimerFired)
+    , m_inputNotificationTimer(RunLoop::currentSingleton(), "ManetteGamepadProvider::InputNotificationTimer"_s, this, &ManetteGamepadProvider::inputNotificationTimerFired)
 {
     g_signal_connect(m_monitor.get(), "device-connected", G_CALLBACK(onDeviceConnected), this);
     g_signal_connect(m_monitor.get(), "device-disconnected", G_CALLBACK(onDeviceDisconnected), this);

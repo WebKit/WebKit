@@ -38,12 +38,14 @@
 #import <WebKit/WKURLSchemeHandler.h>
 #import <WebKit/WKUserContentController.h>
 #import <WebKit/WKWebView.h>
+#import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKContentRuleListAction.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/WTFString.h>
 
 static bool receivedNotification;
@@ -214,7 +216,7 @@ TEST(ContentRuleList, DisplayNoneInSrcDocIFrame)
     __block bool isDone = false;
 
     // Make sure the frame loads before checking the computed style.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.05 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.05 * NSEC_PER_SEC), mainDispatchQueueSingleton(), ^{
         NSString *getHeaderDisplay = @"window.getComputedStyle(document.getElementById('subframe').contentDocument.querySelector('h1')).getPropertyValue('display')";
         EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:getHeaderDisplay], "none");
 
@@ -254,6 +256,32 @@ TEST(ContentRuleList, DisplayNoneInAboutBlankIFrame)
     }];
 
     TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(ContentRuleList, DisplayNoneAfterIgnoreFollowingRules)
+{
+    NSString *html = @"<h1 id='A'></h1><h1 id='B'></h1>";
+
+    NSString *headerADisplay = @"window.getComputedStyle(document.querySelector('h1[id*=\"A\"]')).getPropertyValue('display')";
+    NSString *headerBDisplay = @"window.getComputedStyle(document.querySelector('h1[id*=\"B\"]')).getPropertyValue('display')";
+
+    auto list = makeContentRuleList(@"["
+        "{ \"action\": { \"type\" : \"css-display-none\", \"selector\": \"h1[id*='A']\" }, \"trigger\": { \"url-filter\": \".*\" }},"
+        "{ \"action\": { \"type\" : \"ignore-following-rules\" }, \"trigger\": { \"url-filter\": \"webkit.org\" }},"
+        "{ \"action\": { \"type\" : \"css-display-none\", \"selector\": \"h1[id*='B']\" }, \"trigger\": { \"url-filter\": \".*\" }}"
+    "]");
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:list.get()];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView synchronouslyLoadHTMLString:html];
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:headerADisplay], "none");
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:headerBDisplay], "none");
+
+    [webView synchronouslyLoadHTMLString:html baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:headerADisplay], "none");
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:headerBDisplay], "block");
 }
 
 TEST(ContentRuleList, PerformedActionForURL)
@@ -599,4 +627,32 @@ TEST(WebKit, RedirectToPlaintextHTTPSUpgrade)
     webView.get().navigationDelegate = delegate.get();
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://download/originalRequest"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
+}
+
+TEST(ContentRuleList, RedirectBeforeBlock)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/to-be-blocked"_s, { "This content isn't going to load."_s } },
+        { "/redirected"_s, { "<script>alert('Redirected!')</script>"_s } }
+    });
+
+    NSString *rules = [NSString stringWithFormat:@"[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"url\":\"%@\"}},\"trigger\":{\"url-filter\":\".*\"}},{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\"}}]", server.request("/redirected"_s).URL.absoluteString];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addContentRuleList:makeContentRuleList(rules).get()];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences._activeContentRuleListActionPatterns = @{
+            @"testidentifier": [NSSet setWithObject:@"*://*/*"]
+        };
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+    [delegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = delegate.get();
+
+    [webView loadRequest:server.request("/to-be-blocked"_s)];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "Redirected!");
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #import "ExtensionCapability.h"
 #import "ExtensionKitSPI.h"
 #import <BrowserEngineKit/BrowserEngineKit.h>
+#import <wtf/CrossThreadCopier.h>
 
 #if __has_include(<WebKitAdditions/BEKAdditions.h>)
 #import <WebKitAdditions/BEKAdditions.h>
@@ -53,12 +54,10 @@ ExtensionProcess::ExtensionProcess(BERenderingProcess *process)
 {
 }
 
-#if USE(LEGACY_EXTENSIONKIT_SPI)
-ExtensionProcess::ExtensionProcess(_SEExtensionProcess *process)
-    : m_process(process)
+ExtensionProcess::ExtensionProcess(ExtensionProcessVariant&& process)
+    : m_process(WTFMove(process))
 {
 }
-#endif
 
 void ExtensionProcess::invalidate() const
 {
@@ -81,19 +80,6 @@ PlatformGrant ExtensionProcess::grantCapability(const PlatformCapability& capabi
 {
     NSError *error = nil;
     PlatformGrant grant;
-#if USE(LEGACY_EXTENSIONKIT_SPI)
-    WTF::switchOn(m_process, [&] (auto& process) {
-        WTF::switchOn(capability, [&] (const RetainPtr<BEProcessCapability>& capability) {
-            grant = [process grantCapability:capability.get() error:&error];
-        }, [] (const RetainPtr<_SECapability>&) {
-        });
-    }, [&] (const RetainPtr<_SEExtensionProcess>& process) {
-        WTF::switchOn(capability, [] (const RetainPtr<BEProcessCapability>&) {
-        }, [&] (const RetainPtr<_SECapability>& capability) {
-            grant = [process grantCapability:capability.get() error:&error];
-        });
-    });
-#else
     WTF::switchOn(m_process, [&] (auto& process) {
 #if __has_include(<WebKitAdditions/BEKAdditions.h>)
         GRANT_ADDITIONS
@@ -101,7 +87,6 @@ PlatformGrant ExtensionProcess::grantCapability(const PlatformCapability& capabi
         grant = [process grantCapability:capability.get() error:&error];
 #endif
     });
-#endif
     return grant;
 }
 
@@ -115,6 +100,11 @@ RetainPtr<UIInteraction> ExtensionProcess::createVisibilityPropagationInteractio
     }, [] (auto& process) {
     });
     return interaction;
+}
+
+ExtensionProcess ExtensionProcess::isolatedCopy() &&
+{
+    return ExtensionProcess { crossThreadCopy(WTFMove(m_process)) };
 }
 
 } // namespace WebKit

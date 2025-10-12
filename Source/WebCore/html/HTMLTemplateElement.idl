@@ -34,10 +34,10 @@
     Exposed=Window
 ] interface HTMLTemplateElement : HTMLElement {
     readonly attribute DocumentFragment content;
-    [CEReactions=NotNeeded] attribute [AtomString] DOMString shadowRootMode;
-    [CEReactions=NotNeeded, Reflect=shadowrootdelegatesfocus] attribute boolean shadowRootDelegatesFocus;
-    [CEReactions=NotNeeded, Reflect=shadowrootclonable] attribute boolean shadowRootClonable;
-    [CEReactions=NotNeeded, Reflect=shadowrootserializable] attribute boolean shadowRootSerializable;
-    [EnabledBySetting=ScopedCustomElementRegistryEnabled, CEReactions=NotNeeded, Reflect=shadowrootcustomelementregistry] attribute DOMString shadowRootCustomElementRegistry;
-    [EnabledBySetting=ShadowRootReferenceTargetEnabled, CEReactions=NotNeeded, Reflect=shadowrootreferencetarget] attribute DOMString shadowRootReferenceTarget;
+    [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString shadowRootMode;
+    [CEReactions=NotNeeded, Reflect] attribute boolean shadowRootDelegatesFocus;
+    [CEReactions=NotNeeded, Reflect] attribute boolean shadowRootClonable;
+    [CEReactions=NotNeeded, Reflect] attribute boolean shadowRootSerializable;
+    [EnabledBySetting=ScopedCustomElementRegistryEnabled, CEReactions=NotNeeded, Reflect] attribute DOMString shadowRootCustomElementRegistry;
+    [EnabledBySetting=ShadowRootReferenceTargetEnabled, CEReactions=NotNeeded, Reflect] attribute DOMString shadowRootReferenceTarget;
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,35 @@
 #include "config.h"
 #include "StyleBorderRadius.h"
 
+#include "CSSPrimitiveNumericUnits.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSValuePair.h"
+#include "StyleBuilderChecking.h"
+#include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
 namespace Style {
 
+using namespace CSS::Literals;
+
+// MARK: - Conversion
+
 auto ToCSS<BorderRadius>::operator()(const BorderRadius& value, const RenderStyle& style) -> CSS::BorderRadius
 {
     return {
         .horizontal {
-            toCSS(value.topLeft.width(), style),
-            toCSS(value.topRight.width(), style),
-            toCSS(value.bottomRight.width(), style),
-            toCSS(value.bottomLeft.width(), style),
+            toCSS(value.topLeft().width(), style),
+            toCSS(value.topRight().width(), style),
+            toCSS(value.bottomRight().width(), style),
+            toCSS(value.bottomLeft().width(), style),
         },
         .vertical {
-            toCSS(value.topLeft.height(), style),
-            toCSS(value.topRight.height(), style),
-            toCSS(value.bottomRight.height(), style),
-            toCSS(value.bottomLeft.height(), style),
+            toCSS(value.topLeft().height(), style),
+            toCSS(value.topRight().height(), style),
+            toCSS(value.bottomRight().height(), style),
+            toCSS(value.bottomLeft().height(), style),
         },
     };
 }
@@ -52,20 +61,47 @@ auto ToCSS<BorderRadius>::operator()(const BorderRadius& value, const RenderStyl
 auto ToStyle<CSS::BorderRadius>::operator()(const CSS::BorderRadius& value, const BuilderState& state) -> BorderRadius
 {
     return {
-        .topLeft { toStyle(value.topLeft(), state) },
-        .topRight { toStyle(value.topRight(), state) },
-        .bottomRight { toStyle(value.bottomRight(), state) },
-        .bottomLeft { toStyle(value.bottomLeft(), state) },
+        toStyle(value.topLeft(), state),
+        toStyle(value.topRight(), state),
+        toStyle(value.bottomLeft(), state),
+        toStyle(value.bottomRight(), state),
     };
 }
 
-auto Evaluation<BorderRadius>::operator()(const BorderRadius& value, FloatSize referenceBox) -> FloatRoundedRect::Radii
+auto CSSValueConversion<BorderRadiusValue>::operator()(BuilderState& state, const CSSValue& value) -> BorderRadiusValue
+{
+    if (!value.isPair())
+        return { 0_css_px, 0_css_px };
+
+    auto pair = requiredPairDowncast<CSSPrimitiveValue>(state, value);
+    if (!pair)
+        return { 0_css_px, 0_css_px };
+
+    return {
+        toStyleFromCSSValue<LengthPercentage<CSS::Nonnegative>>(state, pair->first),
+        toStyleFromCSSValue<LengthPercentage<CSS::Nonnegative>>(state, pair->second)
+    };
+}
+
+// MARK: - Evaluation
+
+auto Evaluation<BorderRadius, FloatRoundedRect::Radii>::operator()(const BorderRadius& value, FloatSize referenceSize, ZoomNeeded token) -> FloatRoundedRect::Radii
 {
     return {
-        evaluate(value.topLeft, referenceBox),
-        evaluate(value.topRight, referenceBox),
-        evaluate(value.bottomLeft, referenceBox),
-        evaluate(value.bottomRight, referenceBox)
+        evaluate<FloatSize>(value.topLeft(), referenceSize, token),
+        evaluate<FloatSize>(value.topRight(), referenceSize, token),
+        evaluate<FloatSize>(value.bottomLeft(), referenceSize, token),
+        evaluate<FloatSize>(value.bottomRight(), referenceSize, token),
+    };
+}
+
+auto Evaluation<BorderRadius, LayoutRoundedRect::Radii>::operator()(const BorderRadius& value, LayoutSize referenceSize, ZoomNeeded token) -> LayoutRoundedRect::Radii
+{
+    return {
+        evaluate<LayoutSize>(value.topLeft(), referenceSize, token),
+        evaluate<LayoutSize>(value.topRight(), referenceSize, token),
+        evaluate<LayoutSize>(value.bottomLeft(), referenceSize, token),
+        evaluate<LayoutSize>(value.bottomRight(), referenceSize, token),
     };
 }
 

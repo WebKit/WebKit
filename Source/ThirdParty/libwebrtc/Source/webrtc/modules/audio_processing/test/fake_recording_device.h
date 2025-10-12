@@ -11,13 +11,11 @@
 #ifndef MODULES_AUDIO_PROCESSING_TEST_FAKE_RECORDING_DEVICE_H_
 #define MODULES_AUDIO_PROCESSING_TEST_FAKE_RECORDING_DEVICE_H_
 
-#include <algorithm>
+#include <cstdint>
 #include <memory>
-#include <vector>
 
 #include "api/array_view.h"
 #include "common_audio/channel_buffer.h"
-#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {
@@ -55,7 +53,7 @@ class FakeRecordingDevice final {
   // If `real_device_level` is a valid level, the unmodified mic signal is
   // virtually restored. To skip the latter step set `real_device_level` to
   // an empty value.
-  void SimulateAnalogGain(rtc::ArrayView<int16_t> buffer);
+  void SimulateAnalogGain(ArrayView<int16_t> buffer);
 
   // Simulates the analog gain.
   // If `real_device_level` is a valid level, the unmodified mic signal is

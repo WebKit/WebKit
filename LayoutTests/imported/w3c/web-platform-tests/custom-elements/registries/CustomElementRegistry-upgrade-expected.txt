@@ -2,5 +2,5 @@
 PASS upgrade is a function on both global and scoped CustomElementRegistry
 PASS upgrade is a no-op when called on a shadow root with no association
 PASS upgrade should upgrade a candidate element when called on a shadow root with an association
-PASS upgrade should not upgrade a candidate element not associated with the registry
+PASS upgrade should not upgrade a candidate element not associated with a registry
 

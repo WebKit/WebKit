@@ -2,20 +2,25 @@ WebCoreSupport/SocketStreamHandleImplCFNet.cpp
 mac/DefaultDelegates/WebDefaultEditingDelegate.m
 mac/DefaultDelegates/WebDefaultPolicyDelegate.mm
 mac/History/WebHistory.mm
-mac/History/WebHistoryItem.mm
 mac/Misc/WebKitErrors.m
-mac/Misc/WebNSImageExtras.m
+[ Mac ] mac/Misc/WebNSImageExtras.m
 mac/Misc/WebNSObjectExtras.mm
-mac/Misc/WebNSPasteboardExtras.mm
-mac/Panels/WebAuthenticationPanel.m
-mac/Panels/WebPanelAuthenticationHandler.m
+[ Mac ] mac/Misc/WebNSPasteboardExtras.mm
+[ Mac ] mac/Panels/WebAuthenticationPanel.m
+[ Mac ] mac/Panels/WebPanelAuthenticationHandler.m
 mac/Plugins/WebPluginController.mm
 mac/Storage/WebDatabaseManager.mm
 mac/Storage/WebStorageManager.mm
 mac/WebView/WebDeviceOrientationProviderMock.mm
 mac/WebView/WebFormDelegate.m
-mac/WebView/WebHTMLView.mm
-mac/WebView/WebPDFView.mm
+[ Mac ] mac/WebView/WebHTMLView.mm
+[ Mac ] mac/WebView/WebPDFView.mm
 mac/WebView/WebScriptWorld.mm
-mac/WebView/WebVideoFullscreenController.mm
+[ Mac ] mac/WebView/WebVideoFullscreenController.mm
 mac/WebView/WebView.mm
+[ iOS ] ios/DefaultDelegates/WebDefaultFormDelegate.m
+[ iOS ] ios/DefaultDelegates/WebDefaultFrameLoadDelegate.m
+[ iOS ] ios/DefaultDelegates/WebDefaultResourceLoadDelegate.m
+[ iOS ] ios/DefaultDelegates/WebDefaultUIKitDelegate.m
+[ iOS ] ios/WebView/WebPDFViewIOS.mm
+[ iOS ] ios/WebView/WebPDFViewPlaceholder.mm

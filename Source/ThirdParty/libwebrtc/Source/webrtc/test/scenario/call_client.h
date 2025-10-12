@@ -10,6 +10,8 @@
 #ifndef TEST_SCENARIO_CALL_CLIENT_H_
 #define TEST_SCENARIO_CALL_CLIENT_H_
 
+#include <cstdint>
+#include <functional>
 #include <map>
 #include <memory>
 #include <string>
@@ -18,17 +20,26 @@
 
 #include "api/array_view.h"
 #include "api/audio/audio_device.h"
+#include "api/audio/audio_processing.h"
 #include "api/environment/environment.h"
-#include "api/rtc_event_log/rtc_event_log.h"
+#include "api/media_types.h"
+#include "api/rtc_event_log_output.h"
 #include "api/rtp_parameters.h"
+#include "api/scoped_refptr.h"
+#include "api/test/network_emulation/network_emulation_interfaces.h"
 #include "api/test/time_controller.h"
+#include "api/transport/bitrate_settings.h"
+#include "api/transport/network_control.h"
+#include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "call/audio_state.h"
 #include "call/call.h"
 #include "modules/congestion_controller/goog_cc/test/goog_cc_printer.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "test/logging/log_writer.h"
-#include "test/network/network_emulation.h"
 #include "test/scenario/column_printer.h"
 #include "test/scenario/network_node.h"
 #include "test/scenario/scenario_config.h"
@@ -96,9 +107,9 @@ class LoggingNetworkControllerFactory
 };
 
 struct CallClientFakeAudio {
-  rtc::scoped_refptr<AudioProcessing> apm;
-  rtc::scoped_refptr<AudioDeviceModule> fake_audio_device;
-  rtc::scoped_refptr<AudioState> audio_state;
+  scoped_refptr<AudioProcessing> apm;
+  scoped_refptr<AudioDeviceModule> fake_audio_device;
+  scoped_refptr<AudioState> audio_state;
 };
 // CallClient represents a participant in a call scenario. It is created by the
 // Scenario class and is used as sender and receiver when setting up a media
@@ -120,15 +131,12 @@ class CallClient : public EmulatedNetworkReceiverInterface {
     return DataRate::BitsPerSec(GetStats().send_bandwidth_bps);
   }
   DataRate target_rate() const;
-  DataRate stable_target_rate() const;
   DataRate padding_rate() const;
   void UpdateBitrateConstraints(const BitrateConstraints& constraints);
   void SetRemoteBitrate(DataRate bitrate);
 
-  void SetAudioReceiveRtpHeaderExtensions(
-      rtc::ArrayView<RtpExtension> extensions);
-  void SetVideoReceiveRtpHeaderExtensions(
-      rtc::ArrayView<RtpExtension> extensions);
+  void SetAudioReceiveRtpHeaderExtensions(ArrayView<RtpExtension> extensions);
+  void SetVideoReceiveRtpHeaderExtensions(ArrayView<RtpExtension> extensions);
 
   // Sets the network adapter id used next time the network route changes.
   void UpdateNetworkAdapterId(int adapter_id);

@@ -22,17 +22,35 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import SwiftUI
+@_spi(Testing) import WebKit
+import _WebKit_SwiftUI
 
 struct BrowserView: View {
-    @Binding var url: URL?
+    @Binding
+    var url: URL?
+
+    let smartListsEnabled: Bool
 
     let initialRequest: URLRequest
 
-    @State private var viewModel = BrowserViewModel()
+    @State
+    private var viewModel = BrowserViewModel()
 
     var body: some View {
         ContentView(url: $url, initialRequest: initialRequest)
             .environment(viewModel)
+            .onChange(of: smartListsEnabled, initial: true) {
+                #if os(macOS)
+                viewModel.page.smartListsEnabled = smartListsEnabled
+                #endif
+            }
+            .task {
+                // Safety: this is actually safe; false positive is rdar://154775389
+                for await unsafe _ in NotificationCenter.default.messages(of: UserDefaults.self, for: .didChange) {
+                    viewModel.updateWebPreferences()
+                }
+            }
+            .onAppear(perform: viewModel.updateWebPreferences)
     }
 }
 
@@ -46,6 +64,6 @@ struct BrowserView: View {
         return URLRequest(url: url)
     }()
 
-    BrowserView(url: $url, initialRequest: request)
+    BrowserView(url: $url, smartListsEnabled: true, initialRequest: request)
         .environment(viewModel)
 }

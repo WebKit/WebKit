@@ -1,4 +1,4 @@
-//@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1")
+//@ requireOptions("--useBBQJIT=1")
 //@ skip
 // Failure:
 // Exception: CompileError: WebAssembly.Module doesn't parse at byte 30: resizable limits flag should be 0x00, 0x01, or 0x03 but 0x05 (evaluating 'new WebAssembly.Module(this.toBuffer(debug))')

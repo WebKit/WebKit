@@ -1,0 +1,5 @@
+
+
+FAIL <select>: Typeahead should focus options without checking them. assert_equals: appearance: base-select must be supported to run this test. expected "base-select" but got "auto"
+FAIL <select multiple>: Typeahead should focus options without checking them. assert_equals: appearance: base-select must be supported to run this test. expected "base-select" but got "auto"
+

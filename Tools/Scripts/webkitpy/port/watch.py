@@ -36,7 +36,6 @@ _log = logging.getLogger(__name__)
 class WatchPort(DevicePort):
     port_name = 'watchos'
 
-    CURRENT_VERSION = Version(5)
     DEVICE_TYPE = DeviceType(software_variant='watchOS')
 
     def __init__(self, *args, **kwargs):

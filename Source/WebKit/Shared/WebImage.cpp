@@ -39,24 +39,31 @@ Ref<WebImage> WebImage::createEmpty()
     return adoptRef(*new WebImage(nullptr));
 }
 
-Ref<WebImage> WebImage::create(const IntSize& size, ImageOptions options, const DestinationColorSpace& colorSpace, ChromeClient* client)
+Ref<WebImage> WebImage::create(const FloatSize& size, ImageOptions options, const DestinationColorSpace& colorSpace, ChromeClient* client)
 {
+    auto pixelFormat = PixelFormat::BGRA8;
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (options.contains(ImageOption::AllowHDR) && colorSpace.usesExtendedRange())
+        pixelFormat = PixelFormat::RGBA16F;
+#endif
+
     if (client) {
         auto purpose = options.contains(ImageOption::Shareable) ? RenderingPurpose::ShareableSnapshot : RenderingPurpose::Snapshot;
         purpose = options.contains(ImageOption::Local) ? RenderingPurpose::ShareableLocalSnapshot : purpose;
-        
-        if (auto buffer = client->createImageBuffer(size, RenderingMode::Unaccelerated, purpose, 1, colorSpace, ImageBufferPixelFormat::BGRA8))
+        auto accelerated = options.contains(ImageOption::Accelerated) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+
+        if (auto buffer = client->createImageBuffer(size, accelerated, purpose, 1, colorSpace, { pixelFormat }))
             return WebImage::create(buffer.releaseNonNull());
     }
 
     if (options.contains(ImageOption::Shareable)) {
-        auto buffer = ImageBuffer::create<ImageBufferShareableBitmapBackend>(size, 1, colorSpace, ImageBufferPixelFormat::BGRA8, RenderingPurpose::ShareableSnapshot, { });
+        auto buffer = ImageBuffer::create<ImageBufferShareableBitmapBackend>(size, 1, colorSpace, { pixelFormat }, RenderingPurpose::ShareableSnapshot, { });
         if (!buffer)
             return createEmpty();
         return WebImage::create(buffer.releaseNonNull());
     }
 
-    auto buffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Snapshot, 1, colorSpace, ImageBufferPixelFormat::BGRA8);
+    auto buffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Snapshot, 1, colorSpace, pixelFormat);
     if (!buffer)
         return createEmpty();
     return WebImage::create(buffer.releaseNonNull());
@@ -155,6 +162,15 @@ RefPtr<cairo_surface_t> WebImage::createCairoSurface()
 
 std::optional<ShareableBitmap::Handle> WebImage::createHandle(SharedMemory::Protection protection) const
 {
+    auto backendHandle = createImageBufferBackendHandle(protection);
+    if (!backendHandle || !std::holds_alternative<ShareableBitmap::Handle>(*backendHandle))
+        return { };
+
+    return std::get<ShareableBitmap::Handle>(WTFMove(*backendHandle));
+}
+
+std::optional<ImageBufferBackendHandle> WebImage::createImageBufferBackendHandle(SharedMemory::Protection protection) const
+{
     RefPtr buffer = m_buffer;
     if (!buffer)
         return { };
@@ -164,11 +180,7 @@ std::optional<ShareableBitmap::Handle> WebImage::createHandle(SharedMemory::Prot
     if (!sharing)
         return { };
 
-    auto backendHandle = sharing->createBackendHandle(protection);
-    if (!backendHandle)
-        return { };
-
-    return std::get<ShareableBitmap::Handle>(WTFMove(*backendHandle));
+    return sharing->createBackendHandle(protection);
 }
 
 } // namespace WebKit

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ContentsFormat.h"
-#include "PlatformCALayer.h"
+#include <WebCore/ContentsFormat.h>
+#include <WebCore/PlatformCALayer.h>
 
 OBJC_CLASS NSObject;
 

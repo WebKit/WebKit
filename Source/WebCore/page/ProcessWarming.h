@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "PrewarmInformation.h"
+#include <WebCore/PrewarmInformation.h>
 
 namespace WebCore {
 

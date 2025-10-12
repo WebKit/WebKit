@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
 </head>
 <body>
 
@@ -26,21 +27,17 @@
 </details>
 <p>See an <a href="http://foo.com/pt.html" id="details2">Application of the Pythagorean Theorem</a>.</p>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-    description("This verifies the exposure of aria-details.");
+    var output = "This verifies the exposure of aria-details.\n\n";
 
     if (window.accessibilityController) {
         image1 = accessibilityController.accessibleElementById("image1");
         details = image1.detailsElements();
-        shouldBe("details.length", "5");
-        shouldBe("details[0].description", "'AXLabel: Details example'");
-        shouldBe("details[2].description", "'AXLabel: The following drawing illustrates an application of the Pythagorean Theorem when used to construct a skateboard ramp.'");
-        shouldBe("details[4].description", "'AXLabel: Application of the Pythagorean Theorem'");
+        output += expect("details.length", "2");
+        output += expect("details[0].childAtIndex(0).childAtIndex(0).description", "'AXLabel: Details example'");
+        output += expect("details[1].description", "'AXLabel: Application of the Pythagorean Theorem'");
+        debug(output);
     }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

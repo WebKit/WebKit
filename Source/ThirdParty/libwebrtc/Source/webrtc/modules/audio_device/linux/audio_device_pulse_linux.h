@@ -11,7 +11,10 @@
 #ifndef AUDIO_DEVICE_AUDIO_DEVICE_PULSE_LINUX_H_
 #define AUDIO_DEVICE_AUDIO_DEVICE_PULSE_LINUX_H_
 
-#include <memory>
+#include <pulse/pulseaudio.h>
+
+#include <cstddef>
+#include <cstdint>
 
 #include "api/audio/audio_device.h"
 #include "api/audio/audio_device_defines.h"
@@ -28,10 +31,6 @@
 #if defined(WEBRTC_USE_X11)
 #include <X11/Xlib.h>
 #endif
-
-#include <pulse/pulseaudio.h>
-#include <stddef.h>
-#include <stdint.h>
 
 // We define this flag if it's missing from our headers, because we want to be
 // able to compile against old headers but still use PA_STREAM_ADJUST_LATENCY
@@ -263,13 +262,13 @@ class AudioDeviceLinuxPulse : public AudioDeviceGeneric {
   AudioDeviceBuffer* _ptrAudioBuffer;
 
   mutable Mutex mutex_;
-  rtc::Event _timeEventRec;
-  rtc::Event _timeEventPlay;
-  rtc::Event _recStartEvent;
-  rtc::Event _playStartEvent;
+  Event _timeEventRec;
+  Event _timeEventPlay;
+  Event _recStartEvent;
+  Event _playStartEvent;
 
-  rtc::PlatformThread _ptrThreadPlay;
-  rtc::PlatformThread _ptrThreadRec;
+  PlatformThread _ptrThreadPlay;
+  PlatformThread _ptrThreadRec;
 
   AudioMixerManagerLinuxPulse _mixerManager;
 

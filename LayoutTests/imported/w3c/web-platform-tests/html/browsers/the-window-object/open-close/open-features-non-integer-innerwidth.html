@@ -44,7 +44,7 @@ function runWindowTests (baselineDimensions) {
         e.source.close();
         assert_equals(data.width, baselineDimensions.width, `"${feature} begins with an invalid character and should be ignored"`);
       }));
-      var win = window.open(prefixedMessage.url(windowURL), '', featureString);
+      var win = window.open(prefixedMessage.url(windowURL) + '&expected_innerWidth=' + baselineDimensions.width, '', featureString);
     }, `features "${feature}" should NOT set "width=404"`);
   });
 

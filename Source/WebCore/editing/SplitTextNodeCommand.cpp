@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,8 @@
 
 #include "CompositeEditCommand.h"
 #include "Document.h"
-#include "DocumentInlines.h"
 #include "DocumentMarkerController.h"
+#include "NodeDocument.h"
 #include "Text.h"
 #include <wtf/Assertions.h>
 
@@ -55,7 +55,7 @@ void SplitTextNodeCommand::doApply()
     if (!parent || !parent->hasEditableStyle())
         return;
 
-    auto result = protectedText2()->substringData(0, m_offset);
+    auto result = m_text2->substringData(0, m_offset);
     if (result.hasException())
         return;
     auto prefixText = result.releaseReturnValue();
@@ -65,7 +65,7 @@ void SplitTextNodeCommand::doApply()
     m_text1 = Text::create(document(), WTFMove(prefixText));
     ASSERT(m_text1);
     if (CheckedPtr markers = document().markersIfExists())
-        markers->copyMarkers(protectedText2(), { 0, m_offset }, *protectedText1());
+        markers->copyMarkers(m_text2, { 0, m_offset }, *protectedText1());
 
     insertText1AndTrimText2();
 }
@@ -113,7 +113,7 @@ void SplitTextNodeCommand::insertText1AndTrimText2()
 void SplitTextNodeCommand::getNodesInCommand(NodeSet& nodes)
 {
     addNodeAndDescendants(protectedText1().get(), nodes);
-    addNodeAndDescendants(protectedText2().ptr(), nodes);
+    addNodeAndDescendants(m_text2.ptr(), nodes);
 }
 
 #endif

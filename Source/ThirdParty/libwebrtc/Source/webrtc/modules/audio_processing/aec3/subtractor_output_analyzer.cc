@@ -11,8 +11,12 @@
 #include "modules/audio_processing/aec3/subtractor_output_analyzer.h"
 
 #include <algorithm>
+#include <cstddef>
 
+#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/subtractor_output.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -20,7 +24,7 @@ SubtractorOutputAnalyzer::SubtractorOutputAnalyzer(size_t num_capture_channels)
     : filters_converged_(num_capture_channels, false) {}
 
 void SubtractorOutputAnalyzer::Update(
-    rtc::ArrayView<const SubtractorOutput> subtractor_output,
+    ArrayView<const SubtractorOutput> subtractor_output,
     bool* any_filter_converged,
     bool* any_coarse_filter_converged,
     bool* all_filters_diverged) {

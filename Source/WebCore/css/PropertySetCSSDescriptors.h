@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "CSSProperty.h"
-#include "CSSPropertyNames.h"
-#include "CSSStyleDeclaration.h"
+#include <WebCore/CSSProperty.h>
+#include <WebCore/CSSPropertyNames.h>
+#include <WebCore/CSSStyleDeclaration.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -84,7 +84,7 @@ protected:
     Ref<MutableStyleProperties> protectedPropertySet() const;
 
     WeakPtr<CSSRule> m_parentRule;
-    UncheckedKeyHashMap<CSSValue*, WeakPtr<DeprecatedCSSOMValue>> m_cssomValueWrappers;
+    HashMap<CSSValue*, WeakPtr<DeprecatedCSSOMValue>> m_cssomValueWrappers;
 
     // FIXME: Replaced this with a more descriptor specific property map that doesn't have all the complexity of the Style one.
     Ref<MutableStyleProperties> m_propertySet;

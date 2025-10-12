@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "DefinePropertyAttributes.h"
-#include "JSCJSValue.h"
-#include "PropertySlot.h"
+#include <JavaScriptCore/DefinePropertyAttributes.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/PropertySlot.h>
 
 namespace JSC {
 

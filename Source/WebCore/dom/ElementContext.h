@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "ElementIdentifier.h"
-#include "FloatRect.h"
-#include "PageIdentifier.h"
-#include "ProcessQualified.h"
-#include "ScriptExecutionContextIdentifier.h"
+#include <WebCore/FloatRect.h>
+#include <WebCore/NodeIdentifier.h>
+#include <WebCore/PageIdentifier.h>
+#include <WebCore/ProcessQualified.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
@@ -39,13 +39,13 @@ struct ElementContext {
 
     Markable<PageIdentifier> webPageIdentifier;
     Markable<ScriptExecutionContextIdentifier> documentIdentifier;
-    Markable<ElementIdentifier> elementIdentifier;
+    Markable<NodeIdentifier> nodeIdentifier;
 
     ~ElementContext() = default;
 
     bool isSameElement(const ElementContext& other) const
     {
-        return webPageIdentifier == other.webPageIdentifier && documentIdentifier == other.documentIdentifier && elementIdentifier == other.elementIdentifier;
+        return webPageIdentifier == other.webPageIdentifier && documentIdentifier == other.documentIdentifier && nodeIdentifier == other.nodeIdentifier;
     }
 };
 

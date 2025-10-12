@@ -10,12 +10,10 @@
 
 #include "api/audio_codecs/g722/audio_encoder_g722.h"
 
-#include <stddef.h>
-
+#include <cstddef>
 #include <map>
 #include <memory>
 #include <optional>
-#include <utility>
 #include <vector>
 
 #include "absl/strings/match.h"
@@ -40,13 +38,13 @@ std::optional<AudioEncoderG722Config> AudioEncoderG722::SdpToConfig(
   }
 
   AudioEncoderG722Config config;
-  config.num_channels = rtc::checked_cast<int>(format.num_channels);
+  config.num_channels = checked_cast<int>(format.num_channels);
   auto ptime_iter = format.parameters.find("ptime");
   if (ptime_iter != format.parameters.end()) {
-    auto ptime = rtc::StringToNumber<int>(ptime_iter->second);
+    auto ptime = StringToNumber<int>(ptime_iter->second);
     if (ptime && *ptime > 0) {
       const int whole_packets = *ptime / 10;
-      config.frame_size_ms = rtc::SafeClamp<int>(whole_packets * 10, 10, 60);
+      config.frame_size_ms = SafeClamp<int>(whole_packets * 10, 10, 60);
     }
   }
   if (!config.IsOk()) {
@@ -66,7 +64,7 @@ void AudioEncoderG722::AppendSupportedEncoders(
 AudioCodecInfo AudioEncoderG722::QueryAudioEncoder(
     const AudioEncoderG722Config& config) {
   RTC_DCHECK(config.IsOk());
-  return {16000, rtc::dchecked_cast<size_t>(config.num_channels),
+  return {16000, dchecked_cast<size_t>(config.num_channels),
           64000 * config.num_channels};
 }
 

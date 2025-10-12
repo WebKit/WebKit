@@ -20,3 +20,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/dispatcher/executor-service-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/common/dispatcher/executor-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/common/dispatcher/executor.html
+/LayoutTests/imported/w3c/web-platform-tests/common/dispatcher/remote-executor-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/common/dispatcher/remote-executor.html

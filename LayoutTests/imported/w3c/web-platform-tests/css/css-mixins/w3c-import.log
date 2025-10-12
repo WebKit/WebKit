@@ -1,0 +1,57 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/at-function-cssom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/at-function-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/basic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/contents-rule.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/cross-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/cssom.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/cycle.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/dashed-function-cycles.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/dashed-function-eval.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/dashed-function-named-arg.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/dashed-function-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/dashed-function-standard-property.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/declarations.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/function-attr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/function-conditionals.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/function-container-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/function-container-self.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/function-container-style.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/function-in-media.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/function-invalidation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/function-layer.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/function-media-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/function-shadow-animations.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/function-shadow-cache.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/function-shadow-container.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/function-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/import-with-media-queries.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/import.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/imported-sheet-with-mixin.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/imported-sheet-with-red-mixin.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/invalid-at-top-level.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/invalidation.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/local-attr-substitution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/local-if-substitution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/local-var-substitution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/media-queries.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins-including-mixins.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/parameter-types.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/shadow-dom.html

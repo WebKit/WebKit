@@ -25,10 +25,11 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(MEDIA_STREAM)
 
-#include "ImageBuffer.h"
-#include "RealtimeMediaSource.h"
+#include <WebCore/ImageBuffer.h>
+#include <WebCore/RealtimeMediaSource.h>
 #include <ranges>
 #include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>

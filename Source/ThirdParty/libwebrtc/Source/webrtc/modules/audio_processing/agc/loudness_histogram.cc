@@ -10,9 +10,9 @@
 
 #include "modules/audio_processing/agc/loudness_histogram.h"
 
-#include <string.h>
-
 #include <cmath>
+#include <cstdint>
+#include <cstring>
 
 #include "rtc_base/checks.h"
 
@@ -174,7 +174,7 @@ LoudnessHistogram* LoudnessHistogram::Create() {
 
 LoudnessHistogram* LoudnessHistogram::Create(int window_size) {
   if (window_size < 0)
-    return NULL;
+    return nullptr;
   return new LoudnessHistogram(window_size);
 }
 

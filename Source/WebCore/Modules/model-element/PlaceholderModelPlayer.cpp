@@ -43,7 +43,7 @@ Ref<PlaceholderModelPlayer> PlaceholderModelPlayer::create(bool suspended, const
 PlaceholderModelPlayer::PlaceholderModelPlayer(bool suspended, const ModelPlayerAnimationState& animationState, std::unique_ptr<ModelPlayerTransformState>&& transformState)
     : m_animationState(animationState)
     , m_transformState(WTFMove(transformState))
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_PROCESS) || ENABLE(GPUP_MODEL)
     , m_id(ModelPlayerIdentifier::generate())
 #endif
 {
@@ -118,7 +118,7 @@ bool PlaceholderModelPlayer::supportsTransform(WebCore::TransformationMatrix tra
     return m_transformState->isEntityTransformSupported(transform);
 }
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_PROCESS) || ENABLE(GPUP_MODEL)
 void PlaceholderModelPlayer::setAutoplay(bool autoplay)
 {
     m_animationState.setAutoplay(autoplay);
@@ -176,13 +176,19 @@ void PlaceholderModelPlayer::setCurrentTime(Seconds currentTime, CompletionHandl
 
 void PlaceholderModelPlayer::setHasPortal(bool hasPortal)
 {
+#if ENABLE(MODEL_PROCESS)
     m_transformState->setHasPortal(hasPortal);
+#else
+    UNUSED_PARAM(hasPortal);
+#endif
 }
 
+#if ENABLE(MODEL_PROCESS)
 void PlaceholderModelPlayer::setStageMode(WebCore::StageModeOperation stageModeOperation)
 {
     m_transformState->setStageMode(stageModeOperation);
 }
+#endif
 #endif
 
 // Empty implementation
@@ -268,6 +274,18 @@ void PlaceholderModelPlayer::setIsMuted(bool, CompletionHandler<void(bool succes
 Vector<RetainPtr<id>> PlaceholderModelPlayer::accessibilityChildren()
 {
     return { };
+}
+#endif
+
+#if ENABLE(GPUP_MODEL)
+const MachSendRight* PlaceholderModelPlayer::displayBuffer() const
+{
+    return nullptr;
+}
+
+GraphicsLayerContentsDisplayDelegate* PlaceholderModelPlayer::contentsDisplayDelegate()
+{
+    return nullptr;
 }
 #endif
 

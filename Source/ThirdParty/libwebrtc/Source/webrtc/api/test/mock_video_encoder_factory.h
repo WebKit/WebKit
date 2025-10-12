@@ -22,7 +22,7 @@
 
 namespace webrtc {
 
-class MockVideoEncoderFactory : public webrtc::VideoEncoderFactory {
+class MockVideoEncoderFactory : public VideoEncoderFactory {
  public:
   ~MockVideoEncoderFactory() override { Die(); }
 

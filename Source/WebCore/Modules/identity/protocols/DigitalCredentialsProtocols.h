@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "IdentityCredentialProtocol.h"
-#include "MobileDocumentRequest.h"
-#include "OpenID4VPRequest.h"
-#include "ValidatedMobileDocumentRequest.h"
+#include <WebCore/IdentityCredentialProtocol.h>
+#include <WebCore/MobileDocumentRequest.h>
+#include <WebCore/OpenID4VPRequest.h>
+#include <WebCore/ValidatedMobileDocumentRequest.h>
 
 namespace WebCore {
 

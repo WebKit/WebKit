@@ -27,7 +27,7 @@
 
 #if ENABLE(VIDEO)
 
-#include "PlatformVideoMatrixCoefficients.h"
+#include <WebCore/PlatformVideoMatrixCoefficients.h>
 
 namespace WebCore {
 

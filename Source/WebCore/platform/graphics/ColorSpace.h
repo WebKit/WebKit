@@ -25,8 +25,10 @@
 
 #pragma once
 
-#include "ColorTypes.h"
+#include <WebCore/ColorTypes.h>
+#include <WebCore/PlatformExportMacros.h>
 #include <functional>
+#include <wtf/Assertions.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -37,6 +39,7 @@ enum class ColorSpace : uint8_t {
     DisplayP3,
     ExtendedA98RGB,
     ExtendedDisplayP3,
+    ExtendedLinearDisplayP3,
     ExtendedLinearSRGB,
     ExtendedProPhotoRGB,
     ExtendedRec2020,
@@ -45,6 +48,7 @@ enum class ColorSpace : uint8_t {
     HWB,
     LCH,
     Lab,
+    LinearDisplayP3,
     LinearSRGB,
     OKLCH,
     OKLab,
@@ -63,6 +67,7 @@ template<typename T> struct ColorSpaceMapping<A98RGB<T>> { static constexpr auto
 template<typename T> struct ColorSpaceMapping<DisplayP3<T>> { static constexpr auto colorSpace { ColorSpace::DisplayP3 }; };
 template<typename T> struct ColorSpaceMapping<ExtendedA98RGB<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedA98RGB }; };
 template<typename T> struct ColorSpaceMapping<ExtendedDisplayP3<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedDisplayP3 }; };
+template<typename T> struct ColorSpaceMapping<ExtendedLinearDisplayP3<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedLinearDisplayP3 }; };
 template<typename T> struct ColorSpaceMapping<ExtendedLinearSRGBA<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedLinearSRGB }; };
 template<typename T> struct ColorSpaceMapping<ExtendedProPhotoRGB<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedProPhotoRGB }; };
 template<typename T> struct ColorSpaceMapping<ExtendedRec2020<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedRec2020 }; };
@@ -71,6 +76,7 @@ template<typename T> struct ColorSpaceMapping<HSLA<T>> { static constexpr auto c
 template<typename T> struct ColorSpaceMapping<HWBA<T>> { static constexpr auto colorSpace { ColorSpace::HWB }; };
 template<typename T> struct ColorSpaceMapping<LCHA<T>> { static constexpr auto colorSpace { ColorSpace::LCH }; };
 template<typename T> struct ColorSpaceMapping<Lab<T>> { static constexpr auto colorSpace { ColorSpace::Lab }; };
+template<typename T> struct ColorSpaceMapping<LinearDisplayP3<T>> { static constexpr auto colorSpace { ColorSpace::LinearDisplayP3 }; };
 template<typename T> struct ColorSpaceMapping<LinearSRGBA<T>> { static constexpr auto colorSpace { ColorSpace::LinearSRGB }; };
 template<typename T> struct ColorSpaceMapping<OKLab<T>> { static constexpr auto colorSpace { ColorSpace::OKLab }; };
 template<typename T> struct ColorSpaceMapping<OKLCHA<T>> { static constexpr auto colorSpace { ColorSpace::OKLCH }; };
@@ -93,6 +99,8 @@ template<typename T, typename Functor> constexpr decltype(auto) callWithColorTyp
         return functor.template operator()<ExtendedA98RGB<T>>();
     case ColorSpace::ExtendedDisplayP3:
         return functor.template operator()<ExtendedDisplayP3<T>>();
+    case ColorSpace::ExtendedLinearDisplayP3:
+        return functor.template operator()<ExtendedLinearDisplayP3<T>>();
     case ColorSpace::ExtendedLinearSRGB:
         return functor.template operator()<ExtendedLinearSRGBA<T>>();
     case ColorSpace::ExtendedProPhotoRGB:
@@ -109,6 +117,8 @@ template<typename T, typename Functor> constexpr decltype(auto) callWithColorTyp
         return functor.template operator()<LCHA<T>>();
     case ColorSpace::Lab:
         return functor.template operator()<Lab<T>>();
+    case ColorSpace::LinearDisplayP3:
+        return functor.template operator()<LinearDisplayP3<T>>();
     case ColorSpace::LinearSRGB:
         return functor.template operator()<LinearSRGBA<T>>();
     case ColorSpace::OKLCH:

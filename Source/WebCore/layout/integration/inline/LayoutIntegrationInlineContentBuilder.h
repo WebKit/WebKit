@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "InlineDisplayContent.h"
 #include "InlineFormattingContext.h"
+#include <WebCore/InlineDisplayContent.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

@@ -91,7 +91,7 @@ private:
     const Ref<WTF::WorkQueue> m_queue;
 
     struct Mixer {
-        UncheckedKeyHashSet<Ref<AudioSampleDataSource>> sources;
+        HashSet<Ref<AudioSampleDataSource>> sources;
         RefPtr<AudioSampleDataSource> registeredMixedSource;
         String deviceID;
     };

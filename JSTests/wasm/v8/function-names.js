@@ -1,4 +1,4 @@
-//@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1")
+//@ requireOptions("--useBBQJIT=1")
 //@ skip
 // Failure:
 // Exception: Failure (should start with 'at exec_unreachable (': '<?>.wasm-function[1]@[wasm code]'): expected <true> found <false>

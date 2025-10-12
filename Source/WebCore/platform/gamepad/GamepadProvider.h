@@ -27,7 +27,7 @@
 
 #if ENABLE(GAMEPAD)
 
-#include "GamepadHapticEffectType.h"
+#include <WebCore/GamepadHapticEffectType.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakHashSet.h>

@@ -23,8 +23,8 @@
 
 #pragma once
 
-#include "FormAssociatedElement.h"
-#include "Node.h"
+#include <WebCore/FormAssociatedElement.h>
+#include <WebCore/Node.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>

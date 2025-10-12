@@ -4,18 +4,15 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-String-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
 ---*/
-assert.sameValue(raisesException(TypeError)('String.prototype.toString.call(42)'), true);
-assert.sameValue(raisesException(TypeError)('String.prototype.toString.call(true)'), true);
-assert.sameValue(raisesException(TypeError)('String.prototype.toString.call({})'), true);
-assert.sameValue(raisesException(TypeError)('String.prototype.toString.call(null)'), true);
-assert.sameValue(raisesException(TypeError)('String.prototype.toString.call([])'), true);
-assert.sameValue(raisesException(TypeError)('String.prototype.toString.call(undefined)'), true);
-assert.sameValue(completesNormally('String.prototype.toString.call("")'), true);
 
+assert.throws(TypeError, function() { String.prototype.toString.call(42); });
+assert.throws(TypeError, function() { String.prototype.toString.call(true); });
+assert.throws(TypeError, function() { String.prototype.toString.call({}); });
+assert.throws(TypeError, function() { String.prototype.toString.call(null); });
+assert.throws(TypeError, function() { String.prototype.toString.call([]); });
+assert.throws(TypeError, function() { String.prototype.toString.call(undefined); });
+assert.sameValue(String.prototype.toString.call(""), "");

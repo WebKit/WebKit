@@ -172,7 +172,7 @@ JSValue JSTestSetLike::getConstructor(VM& vm, const JSGlobalObject* globalObject
 
 void JSTestSetLike::destroy(JSC::JSCell* cell)
 {
-    JSTestSetLike* thisObject = static_cast<JSTestSetLike*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestSetLike* thisObject = static_cast<JSTestSetLike*>(cell);
     thisObject->JSTestSetLike::~JSTestSetLike();
 }
 
@@ -336,7 +336,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestSetLikePrototypeFunction_delete, (JSGlobalObject*
 
 JSC::GCClient::IsoSubspace* JSTestSetLike::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestSetLike, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestSetLike, UseCustomHeapCellType::No>(vm, "JSTestSetLike"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestSetLike.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestSetLike = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestSetLike.get(); },
@@ -363,7 +363,7 @@ bool JSTestSetLikeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> ha
 
 void JSTestSetLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestSetLike = static_cast<JSTestSetLike*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestSetLike = static_cast<JSTestSetLike*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestSetLike->protectedWrapped().ptr(), jsTestSetLike);
 }
@@ -376,7 +376,9 @@ extern "C" { extern void (*const __identifier("??_7TestSetLike@WebCore@@6B@")[])
 #else
 extern "C" { extern void* _ZTVN7WebCore11TestSetLikeE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestSetLike>, void>> static inline void verifyVTable(TestSetLike* ptr) {
+template<std::same_as<TestSetLike> T>
+static inline void verifyVTable(TestSetLike* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -395,8 +397,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestSetLike>,
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestSetLike>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestSetLike>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestSetLike>(impl.ptr());
 #endif

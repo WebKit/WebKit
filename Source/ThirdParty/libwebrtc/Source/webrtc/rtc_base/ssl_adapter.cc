@@ -17,7 +17,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-namespace rtc {
+namespace webrtc {
 
 std::unique_ptr<SSLAdapterFactory> SSLAdapterFactory::Create() {
   return std::make_unique<OpenSSLAdapterFactory>();
@@ -39,4 +39,4 @@ bool CleanupSSL() {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-}  // namespace rtc
+}  // namespace webrtc

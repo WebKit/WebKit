@@ -1,0 +1,47 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=1600">
+    <style>
+        body { margin: 0; }
+        input, label { zoom: 2; }
+        #circle-checkbox { clip-path: circle(50% at 50% 50%); }
+        
+        #non-uniform-border-radii-checkbox {
+            appearance: none;
+            border-radius: 2px 7px 13px 18px;
+            width: 20px;
+            height: 20px;
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+<div id="test">
+    <section>
+       <input id="circle-checkbox" name="circle-checkbox" type="checkbox">
+       <label for="circle-checkbox">Label</label>
+       <br>
+       <input id="non-uniform-border-radii-checkbox" name="non-uniform-border-radii-checkbox" type="checkbox">
+       <label for="non-uniform-border-radii-checkbox">Label</label>
+    </section>
+</div>
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (!window.internals)
+       return;
+
+   results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+   document.getElementById('test').remove();
+};
+</script>
+</body>
+</html>

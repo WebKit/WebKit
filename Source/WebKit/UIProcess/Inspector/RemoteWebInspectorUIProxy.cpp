@@ -78,7 +78,7 @@ void RemoteWebInspectorUIProxy::invalidate()
 void RemoteWebInspectorUIProxy::setDiagnosticLoggingAvailable(bool available)
 {
 #if ENABLE(INSPECTOR_TELEMETRY)
-    if (RefPtr page = protectedInspectorPage())
+    if (RefPtr page = m_inspectorPage.get())
         page->protectedLegacyMainFrameProcess()->send(Messages::RemoteWebInspectorUI::SetDiagnosticLoggingAvailable(available), page->webPageIDInMainFrameProcess());
 #else
     UNUSED_PARAM(available);
@@ -92,7 +92,7 @@ void RemoteWebInspectorUIProxy::initialize(Ref<API::DebuggableInfo>&& debuggable
 
     createFrontendPageAndWindow();
 
-    auto inspectorPage = protectedInspectorPage();
+    RefPtr inspectorPage = m_inspectorPage.get();
     inspectorPage->protectedLegacyMainFrameProcess()->send(Messages::RemoteWebInspectorUI::Initialize(m_debuggableInfo->debuggableInfoData(), backendCommandsURL), m_inspectorPage->webPageIDInMainFrameProcess());
     inspectorPage->loadRequest(URL { WebInspectorUIProxy::inspectorPageURL() });
 }
@@ -115,19 +115,19 @@ void RemoteWebInspectorUIProxy::show()
 
 void RemoteWebInspectorUIProxy::showConsole()
 {
-    if (RefPtr page = protectedInspectorPage())
+    if (RefPtr page = m_inspectorPage.get())
         page->protectedLegacyMainFrameProcess()->send(Messages::RemoteWebInspectorUI::ShowConsole { }, page->webPageIDInMainFrameProcess());
 }
 
 void RemoteWebInspectorUIProxy::showResources()
 {
-    if (RefPtr page = protectedInspectorPage())
+    if (RefPtr page = m_inspectorPage.get())
         page->protectedLegacyMainFrameProcess()->send(Messages::RemoteWebInspectorUI::ShowResources { }, page->webPageIDInMainFrameProcess());
 }
 
 void RemoteWebInspectorUIProxy::sendMessageToFrontend(const String& message)
 {
-    if (RefPtr page = protectedInspectorPage())
+    if (RefPtr page = m_inspectorPage.get())
         page->protectedLegacyMainFrameProcess()->send(Messages::RemoteWebInspectorUI::SendMessageToFrontend(message), page->webPageIDInMainFrameProcess());
 }
 
@@ -220,6 +220,15 @@ void RemoteWebInspectorUIProxy::setInspectorPageDeveloperExtrasEnabled(bool enab
     inspectorPage->protectedPreferences()->setDeveloperExtrasEnabled(enabled);
 }
 
+void RemoteWebInspectorUIProxy::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
+{
+    RefPtr inspectorPage = m_inspectorPage.get();
+    if (!inspectorPage)
+        return;
+
+    inspectorPage->setPageAndTextZoomFactors(pageZoomFactor, textZoomFactor);
+}
+
 void RemoteWebInspectorUIProxy::sendMessageToBackend(const String& message)
 {
     if (CheckedPtr client = m_client.get())
@@ -245,7 +254,7 @@ void RemoteWebInspectorUIProxy::createFrontendPageAndWindow()
 
 void RemoteWebInspectorUIProxy::closeFrontendPageAndWindow()
 {
-    RefPtr inspectorPage = protectedInspectorPage();
+    RefPtr inspectorPage = m_inspectorPage.get();
     if (!inspectorPage)
         return;
 

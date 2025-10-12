@@ -27,10 +27,16 @@
 #include "WKUserContentControllerRef.h"
 
 #include "APIArray.h"
+#include "APICompletionListener.h"
 #include "APIContentRuleList.h"
+#include "APIFrameInfo.h"
+#include "APIScriptMessage.h"
 #include "APIUserScript.h"
 #include "InjectUserScriptImmediately.h"
+#include "JavaScriptEvaluationResult.h"
 #include "WKAPICast.h"
+#include "WebPageProxy.h"
+#include "WebScriptMessageHandler.h"
 #include "WebUserContentControllerProxy.h"
 
 using namespace WebKit;
@@ -47,29 +53,68 @@ WKUserContentControllerRef WKUserContentControllerCreate()
 
 WKArrayRef WKUserContentControllerCopyUserScripts(WKUserContentControllerRef userContentControllerRef)
 {
-    return toAPILeakingRef(toImpl(userContentControllerRef)->userScripts().copy());
+    return toAPILeakingRef(toProtectedImpl(userContentControllerRef)->userScripts().copy());
 }
 
 void WKUserContentControllerAddUserScript(WKUserContentControllerRef userContentControllerRef, WKUserScriptRef userScriptRef)
 {
-    toImpl(userContentControllerRef)->addUserScript(*toImpl(userScriptRef), InjectUserScriptImmediately::No);
+    toProtectedImpl(userContentControllerRef)->addUserScript(*toProtectedImpl(userScriptRef), InjectUserScriptImmediately::No);
 }
 
 void WKUserContentControllerRemoveAllUserScripts(WKUserContentControllerRef userContentControllerRef)
 {
-    toImpl(userContentControllerRef)->removeAllUserScripts();
+    toProtectedImpl(userContentControllerRef)->removeAllUserScripts();
 }
 
 void WKUserContentControllerAddUserContentFilter(WKUserContentControllerRef userContentControllerRef, WKUserContentFilterRef userContentFilterRef)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    toImpl(userContentControllerRef)->addContentRuleList(*toImpl(userContentFilterRef));
+    toProtectedImpl(userContentControllerRef)->addContentRuleList(*toProtectedImpl(userContentFilterRef));
 #endif
 }
 
 void WKUserContentControllerRemoveAllUserContentFilters(WKUserContentControllerRef userContentControllerRef)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    toImpl(userContentControllerRef)->removeAllContentRuleLists();
+    toProtectedImpl(userContentControllerRef)->removeAllContentRuleLists();
 #endif
+}
+
+class WebScriptMessageClient : public WebScriptMessageHandler::Client {
+    WTF_MAKE_TZONE_ALLOCATED(WebScriptMessageClient);
+public:
+    WebScriptMessageClient(const String& name, WKScriptMessageHandlerCallback callback, const void* context)
+        : m_name(name)
+        , m_callback(callback)
+        , m_context(context) { }
+private:
+    void didPostMessage(WebPageProxy& page, FrameInfoData&& frameInfo, API::ContentWorld&, JavaScriptEvaluationResult&& result, CompletionHandler<void(Expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler) override
+    {
+        Ref message = API::ScriptMessage::create(result.toAPI(), page, API::FrameInfo::create(WTFMove(frameInfo)), m_name, API::ContentWorld::pageContentWorldSingleton());
+        Ref listener = API::CompletionListener::create([completionHandler = WTFMove(completionHandler)] (WKTypeRef reply) mutable {
+            if (auto result = JavaScriptEvaluationResult::extract(toProtectedImpl(reply).get()))
+                return completionHandler(WTFMove(*result));
+            completionHandler(makeUnexpected(String()));
+        });
+        m_callback(toAPI(message.ptr()), toAPI(listener.ptr()), m_context);
+    }
+
+    String m_name;
+    WKScriptMessageHandlerCallback m_callback;
+    const void* m_context;
+};
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebScriptMessageClient);
+
+void WKUserContentControllerAddScriptMessageHandler(WKUserContentControllerRef userContentController, WKStringRef wkName, WKScriptMessageHandlerCallback callback, const void* context)
+{
+    String name = toWTFString(wkName);
+
+    auto handler = WebKit::WebScriptMessageHandler::create(makeUnique<WebScriptMessageClient>(name, callback, context), name, API::ContentWorld::pageContentWorldSingleton());
+    toProtectedImpl(userContentController)->addUserScriptMessageHandler(handler);
+}
+
+void WKUserContentControllerRemoveAllUserMessageHandlers(WKUserContentControllerRef userContentController)
+{
+    toProtectedImpl(userContentController)->removeAllUserMessageHandlers();
 }

@@ -49,7 +49,7 @@
 #endif
 
     CGFloat components[4] = { 0.8, 0.8, 0.8, 0.8 };
-    [super setBackgroundColor:adoptCF(CGColorCreate(WebCore::sRGBColorSpaceRef(), components)).get()];
+    [super setBackgroundColor:adoptCF(CGColorCreate(WebCore::sRGBColorSpaceSingleton(), components)).get()];
 
     return self;
 }
@@ -75,7 +75,7 @@
 #endif
 
     CGFloat components[4] = { 0.2, 0.2, 0.2, 0.8 };
-    [super setBackgroundColor:adoptCF(CGColorCreate(WebCore::sRGBColorSpaceRef(), components)).get()];
+    [super setBackgroundColor:adoptCF(CGColorCreate(WebCore::sRGBColorSpaceSingleton(), components)).get()];
 
     return self;
 }

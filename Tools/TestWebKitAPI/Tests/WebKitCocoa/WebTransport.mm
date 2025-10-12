@@ -35,9 +35,19 @@
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import "WebTransportServer.h"
+#import <CommonCrypto/CommonDigest.h>
+#import <Security/SecCertificateRequest.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKInternalDebugFeature.h>
+#import <wtf/SoftLinking.h>
+#import <wtf/spi/cocoa/SecuritySPI.h>
+#import <wtf/text/MakeString.h>
+#import <wtf/text/StringBuilder.h>
+
+// FIXME: Replace this soft linking with a HAVE macro once rdar://158191390 is available on all tested OS builds.
+SOFT_LINK_FRAMEWORK(Network)
+SOFT_LINK_MAY_FAIL(Network, nw_webtransport_options_set_allow_joining_before_ready, void, (nw_protocol_options_t options, bool allow), (options, allow))
 
 namespace TestWebKitAPI {
 
@@ -61,16 +71,14 @@ static void validateChallenge(NSURLAuthenticationChallenge *challenge, uint16_t 
     verifyCertificateAndPublicKey(challenge.protectionSpace.serverTrust);
 }
 
-// FIXME: Re-enable these tests once rdar://148050136 is fixed.
-#if PLATFORM(MAC)
 TEST(WebTransport, ClientBidirectional)
-#else
-TEST(WebTransport, DISABLED_ClientBidirectional)
-#endif
 {
     WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
         auto connection = co_await group.receiveIncomingConnection();
         auto request = co_await connection.awaitableReceiveBytes();
+        request.append('d');
+        request.append('e');
+        request.append('f');
         co_await connection.awaitableSend(WTFMove(request));
     });
 
@@ -93,29 +101,43 @@ TEST(WebTransport, DISABLED_ClientBidirectional)
         "    let t = new WebTransport('https://127.0.0.1:%d/');"
         "    await t.ready;"
         "    let s = await t.createBidirectionalStream();"
+        "    let initialReadStats = await s.readable.getStats();"
+        "    let initialWriteStats = await s.writable.getStats();"
         "    let w = s.writable.getWriter();"
         "    await w.write(new TextEncoder().encode('abc'));"
-        "    await w.close();"
+        "    let finalWriteStats = await s.writable.getStats();"
         "    let r = s.readable.getReader();"
         "    const { value, done } = await r.read();"
+        "    let finalReadStats = await s.readable.getStats();"
+        "    await w.close();"
         "    await r.cancel();"
         "    t.close();"
-        "    alert('successfully read ' + new TextDecoder().decode(value));"
+        "    let writableThrew = false;"
+        "    let readableThrew = false;"
+        "    try { await s.writable.getStats() } catch (e) { writableThrew = true }"
+        "    try { await s.readable.getStats() } catch (e) { readableThrew = true }"
+        "    alert('successfully read ' + new TextDecoder().decode(value)"
+        "        + ', stats before: ' + initialReadStats.bytesReceived + ' ' + initialWriteStats.bytesSent"
+        "        + ', stats after: ' + finalReadStats.bytesReceived + ' ' + finalWriteStats.bytesSent"
+        "        + ', writable threw after closing: ' + writableThrew"
+        "        + ', readable threw after closing: ' + readableThrew"
+        "    );"
         "  } catch (e) { alert('caught ' + e); }"
         "}; test();"
         "</script>",
         port];
     [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully read abc");
+    const char* expected =
+        "successfully read abcdef"
+        ", stats before: 0 0"
+        ", stats after: 6 3"
+        ", writable threw after closing: true"
+        ", readable threw after closing: true";
+    EXPECT_WK_STREQ([webView _test_waitForAlert], expected);
     EXPECT_TRUE(challenged);
 }
 
-// FIXME: Re-enable these tests once rdar://148050136 is fixed.
-#if PLATFORM(MAC)
 TEST(WebTransport, Datagram)
-#else
-TEST(WebTransport, DISABLED_Datagram)
-#endif
 {
     WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
         auto datagramConnection = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Datagram);
@@ -165,12 +187,7 @@ TEST(WebTransport, DISABLED_Datagram)
     EXPECT_TRUE(challenged);
 }
 
-// FIXME: Re-enable these tests once rdar://148050136 is fixed.
-#if PLATFORM(MAC)
 TEST(WebTransport, Unidirectional)
-#else
-TEST(WebTransport, DISABLED_Unidirectional)
-#endif
 {
     WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
         auto connection = co_await group.receiveIncomingConnection();
@@ -217,8 +234,7 @@ TEST(WebTransport, DISABLED_Unidirectional)
     EXPECT_TRUE(challenged);
 }
 
-// FIXME: Fix and enable this test.
-TEST(WebTransport, DISABLED_ServerBidirectional)
+TEST(WebTransport, ServerBidirectional)
 {
     WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
         auto connection = co_await group.receiveIncomingConnection();
@@ -267,12 +283,7 @@ TEST(WebTransport, DISABLED_ServerBidirectional)
     EXPECT_TRUE(challenged);
 }
 
-// FIXME: Re-enable these tests once rdar://148050136 is fixed.
-#if PLATFORM(MAC)
 TEST(WebTransport, NetworkProcessCrash)
-#else
-TEST(WebTransport, DISABLED_NetworkProcessCrash)
-#endif
 {
     WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
         auto datagramConnection = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Datagram);
@@ -444,12 +455,54 @@ TEST(WebTransport, DISABLED_NetworkProcessCrash)
     EXPECT_EQ(obj, nil);
 }
 
-// FIXME: Re-enable these tests once rdar://148050136 is fixed.
-#if PLATFORM(MAC)
 TEST(WebTransport, Worker)
-#else
-TEST(WebTransport, DISABLED_Worker)
-#endif
+{
+    WebTransportServer transportServer([](ConnectionGroup group) -> ConnectionTask {
+        auto connection = co_await group.receiveIncomingConnection();
+        auto request = co_await connection.awaitableReceiveBytes();
+        auto serverBidirectionalStream = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Bidirectional);
+        co_await serverBidirectionalStream.awaitableSend(WTFMove(request));
+    });
+
+    auto mainHTML = "<script>"
+    "const worker = new Worker('worker.js');"
+    "worker.onmessage = (event) => {"
+    "  alert('message from worker: ' + event.data);"
+    "};"
+    "</script>"_s;
+
+    NSString *workerJS = [NSString stringWithFormat:@""
+        "async function test() {"
+        "  try {"
+        "    let t = new WebTransport('https://127.0.0.1:%d/');"
+        "    %s"
+        "    let c = await t.createBidirectionalStream();"
+        "    let w = c.writable.getWriter();"
+        "    await w.write(new TextEncoder().encode('abc'));"
+        "    let sr = t.incomingBidirectionalStreams.getReader();"
+        "    let {value: s, d} = await sr.read();"
+        "    let r = s.readable.getReader();"
+        "    const { value, done } = await r.read();"
+        "    self.postMessage('successfully read ' + new TextDecoder().decode(value));"
+        "  } catch (e) { self.postMessage('caught ' + e); }"
+        "}; test();", transportServer.port(), canLoadnw_webtransport_options_set_allow_joining_before_ready() ? "" : "await t.ready;"];
+
+    HTTPServer loadingServer({
+        { "/"_s, { mainHTML } },
+        { "/worker.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, workerJS } }
+    });
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    enableWebTransport(configuration.get());
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:loadingServer.request()];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "message from worker: successfully read abc");
+}
+
+TEST(WebTransport, WorkerAfterNetworkProcessCrash)
 {
     WebTransportServer transportServer([](ConnectionGroup group) -> ConnectionTask {
         auto connection = co_await group.receiveIncomingConnection();
@@ -479,7 +532,8 @@ TEST(WebTransport, DISABLED_Worker)
         "    const { value, done } = await r.read();"
         "    self.postMessage('successfully read ' + new TextDecoder().decode(value));"
         "  } catch (e) { self.postMessage('caught ' + e); }"
-        "}; test();", transportServer.port()];
+        "};"
+        "addEventListener('message', test);", transportServer.port()];
 
     HTTPServer loadingServer({
         { "/"_s, { mainHTML } },
@@ -493,7 +547,220 @@ TEST(WebTransport, DISABLED_Worker)
     [delegate allowAnyTLSCertificate];
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:loadingServer.request()];
+    [delegate waitForDidFinishNavigation];
+    kill([configuration.get().websiteDataStore _networkProcessIdentifier], SIGKILL);
+    [webView evaluateJavaScript:@"worker.postMessage('start')" completionHandler:nil];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "message from worker: successfully read abc");
+}
+
+TEST(WebTransport, CreateStreamsBeforeReady)
+{
+    if (!canLoadnw_webtransport_options_set_allow_joining_before_ready())
+        return;
+
+    WebTransportServer datagramServer([](ConnectionGroup group) -> ConnectionTask {
+        auto datagramConnection = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Datagram);
+        auto request = co_await datagramConnection.awaitableReceiveBytes();
+        co_await datagramConnection.awaitableSend(WTFMove(request));
+    });
+
+    WebTransportServer streamServer([](ConnectionGroup group) -> ConnectionTask {
+        auto connection = co_await group.receiveIncomingConnection();
+        auto request = co_await connection.awaitableReceiveBytes();
+        co_await connection.awaitableSend(WTFMove(request));
+    });
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    enableWebTransport(configuration.get());
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSString *datagramHTML = [NSString stringWithFormat:@"<script>"
+    "async function test() {"
+    "  try {"
+    "    const w = new WebTransport('https://127.0.0.1:%d/');"
+    "    const writer = w.datagrams.writable.getWriter();"
+    "    const reader = w.datagrams.readable.getReader();"
+    "    await writer.write(new TextEncoder().encode('abc'));"
+    "    const { value, done } = await reader.read();"
+    "    alert('successfully read ' + new TextDecoder().decode(value));"
+    "  } catch (e) { alert('caught ' + e); }"
+    "}; test()"
+    "</script>", datagramServer.port()];
+    [webView loadHTMLString:datagramHTML baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully read abc");
+
+    NSString *streamHTML = [NSString stringWithFormat:@"<script>"
+    "async function test() {"
+    "  try {"
+    "    const w = new WebTransport('https://127.0.0.1:%d/');"
+    "    let c = await w.createBidirectionalStream();"
+    "    let writer = c.writable.getWriter();"
+    "    await writer.write(new TextEncoder().encode('abc'));"
+    "    let reader = await c.readable.getReader();"
+    "    const { value, done } = await reader.read();"
+    "    alert('successfully read ' + new TextDecoder().decode(value));"
+    "  } catch (e) { alert('caught ' + e); }"
+    "}; test()"
+    "</script>", streamServer.port()];
+    [webView loadHTMLString:streamHTML baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully read abc");
+}
+
+// FIXME: Re-enable this test on iOS when rdar://161858543 is resolved.
+#if PLATFORM(MAC)
+TEST(WebTransport, CSP)
+#else
+TEST(WebTransport, DISABLED_CSP)
+#endif
+{
+    WebTransportServer server([](ConnectionGroup group) -> ConnectionTask {
+        co_return;
+    });
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    enableWebTransport(configuration.get());
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:delegate.get()];
+
+    auto runTest = [&] (const char* allowedDestination) {
+        NSString *html = [NSString stringWithFormat:@"<script>"
+            "function setCSP(destination) {"
+            "  let meta = document.createElement('meta');"
+            "  meta.httpEquiv = 'Content-Security-Policy';"
+            "  meta.content = 'connect-src ' + destination;"
+            "  document.head.appendChild(meta);"
+            "};"
+            "async function test() {"
+            "  try {"
+            "    setCSP('%s');"
+            "    const w = new WebTransport('https://localhost:%d/');"
+            "    await w.ready;"
+            "    alert('ready');"
+            "  } catch (e) { alert('caught ' + e.name + ' ' + e.source + ' ' + e.streamErrorCode + ' ' + (e instanceof WebTransportError)); }"
+            "}; test()"
+            "</script>", allowedDestination, server.port()];
+        [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+        return [webView _test_waitForAlert];
+    };
+    EXPECT_WK_STREQ(runTest("none"), "caught WebTransportError session null true");
+    EXPECT_WK_STREQ(runTest([NSString stringWithFormat:@"https://localhost:%d", server.port()].UTF8String), "ready");
+}
+
+TEST(WebTransport, ServerCertificateHashes)
+{
+    auto runTest = [] (uint64_t certLifetime, bool matchHash = true) {
+        NSDictionary* options = @{
+            (id)kSecAttrKeyType: (id)kSecAttrKeyTypeECSECPrimeRandom,
+            (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
+            (id)kSecAttrKeySizeInBits: @256,
+        };
+        CFErrorRef error = nullptr;
+        RetainPtr privateKey = adoptCF(SecKeyCreateRandomKey((__bridge CFDictionaryRef)options, &error));
+        EXPECT_NULL(error);
+
+        NSArray *subject = @[];
+        NSDictionary *parameters = @{
+            (__bridge NSString*)kSecCertificateLifetime: @(certLifetime)
+        };
+        RetainPtr certificate = adoptCF(SecGenerateSelfSignedCertificate((__bridge CFArrayRef)subject, (__bridge CFDictionaryRef)parameters, nullptr, privateKey.get()));
+        RetainPtr identity = adoptCF(SecIdentityCreate(kCFAllocatorDefault, certificate.get(), privateKey.get()));
+        RetainPtr certificateDER = adoptNS((__bridge NSData *)SecCertificateCopyData(certificate.get()));
+
+        WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
+            auto connection = co_await group.receiveIncomingConnection();
+            auto request = co_await connection.awaitableReceiveBytes();
+            auto serverBidirectionalStream = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Bidirectional);
+            co_await serverBidirectionalStream.awaitableSend(WTFMove(request));
+        }, adoptNS(sec_identity_create(identity.get())).get());
+
+        std::array<uint8_t, CC_SHA256_DIGEST_LENGTH> sha2 { };
+        if (matchHash)
+            CC_SHA256([certificateDER bytes], [certificateDER length], sha2.data());
+
+        StringBuilder certificateBytes;
+        for (NSUInteger i = 0; i < CC_SHA256_DIGEST_LENGTH; i++) {
+            if (i)
+                certificateBytes.append(", "_s);
+            certificateBytes.append(makeString((unsigned)sha2[i]));
+        }
+
+        NSString *html = [NSString stringWithFormat:@""
+            "<script>async function test() {"
+            "  try {"
+            "    const hashValue = new Uint8Array([%s]);"
+            "    let t = new WebTransport('https://127.0.0.1:%d/',{serverCertificateHashes: [{algorithm: 'sha-256',value: hashValue}]});"
+            "    try { await t.ready } catch (e) { alert('did not become ready') };"
+            "    let c = await t.createBidirectionalStream();"
+            "    let w = c.writable.getWriter();"
+            "    await w.write(new TextEncoder().encode('abc'));"
+            "    let sr = t.incomingBidirectionalStreams.getReader();"
+            "    let {value: s, d} = await sr.read();"
+            "    let r = s.readable.getReader();"
+            "    const { value, done } = await r.read();"
+            "    alert('successfully read ' + new TextDecoder().decode(value));"
+            "  } catch (e) { alert('caught ' + e); }"
+            "}; test();"
+            "</script>", certificateBytes.toString().utf8().data(), echoServer.port()];
+
+        auto configuration = adoptNS([WKWebViewConfiguration new]);
+        enableWebTransport(configuration.get());
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+        auto delegate = adoptNS([TestNavigationDelegate new]);
+        [webView setNavigationDelegate:delegate.get()];
+
+        __block bool challenged { false };
+        delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+            challenged = true;
+            completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+        };
+
+        [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+        NSString *result = [webView _test_waitForAlert];
+        EXPECT_FALSE(challenged);
+        return result;
+    };
+
+    constexpr uint64_t oneWeekValidity = 7 * 24 * 60 * 60;
+    EXPECT_WK_STREQ(runTest(oneWeekValidity), "successfully read abc");
+    // FIXME: Add negative tests once rdar://161855525 is fixed.
+}
+
+TEST(WebTransport, ServerConnectionTermination)
+{
+    WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
+        auto connection = co_await group.receiveIncomingConnection();
+        auto request = co_await connection.awaitableReceiveBytes();
+        EXPECT_EQ(request.size(), 3u);
+        group.cancel();
+    });
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    enableWebTransport(configuration.get());
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSString *html = [NSString stringWithFormat:@""
+        "<script>async function test() {"
+        "  try {"
+        "    let t = new WebTransport('https://127.0.0.1:%d/');"
+        "    await t.ready;"
+        "    let c = await t.createUnidirectionalStream();"
+        "    let w = c.getWriter();"
+        "    await w.write(new TextEncoder().encode('abc'));"
+        "    await t.closed;"
+        "    alert('closed should have thrown');"
+        "  } catch (e) { alert('caught ' + e); }"
+        "}; test();"
+        "</script>", echoServer.port()];
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "caught AbortError: The operation was aborted.");
 }
 
 } // namespace TestWebKitAPI

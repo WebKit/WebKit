@@ -17,7 +17,7 @@
 
 #include "absl/strings/string_view.h"
 
-namespace rtc {
+namespace webrtc {
 
 // Definitions for the digest algorithms.
 extern const char DIGEST_MD5[];
@@ -128,6 +128,7 @@ bool ComputeHmac(absl::string_view alg,
                  absl::string_view input,
                  std::string* output);
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_MESSAGE_DIGEST_H_

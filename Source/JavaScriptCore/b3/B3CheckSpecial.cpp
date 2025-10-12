@@ -181,7 +181,8 @@ CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
     for (unsigned i = 0; i < m_numCheckArgs; ++i)
         args.append(inst.args[1 + i]);
 
-    context.latePaths.append(
+    context.latePaths.append(std::tuple {
+        inst.origin->origin(),
         createSharedTask<GenerationContext::LatePathFunction>(
             [=, this] (auto& jit, GenerationContext& context) {
                 fail.link(&jit);
@@ -279,7 +280,8 @@ CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
                     break;
                 }
                 value->m_generator->run(jit, StackmapGenerationParams(value, reps, context));
-            }));
+            })
+        });
     return CCallHelpers::Jump(); // As far as Air thinks, we are not a terminal.
 }
 

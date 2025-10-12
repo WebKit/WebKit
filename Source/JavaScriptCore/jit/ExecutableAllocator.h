@@ -25,14 +25,14 @@
 
 #pragma once
 
+#include <JavaScriptCore/AssemblerCommon.h>
+#include <JavaScriptCore/ExecutableMemoryHandle.h>
+#include <JavaScriptCore/FastJITPermissions.h>
+#include <JavaScriptCore/JITCompilationEffort.h>
+#include <JavaScriptCore/JSCConfig.h>
+#include <JavaScriptCore/JSCPtrTag.h>
+#include <JavaScriptCore/Options.h>
 #include <bit>
-#include "AssemblerCommon.h"
-#include "ExecutableMemoryHandle.h"
-#include "FastJITPermissions.h"
-#include "JITCompilationEffort.h"
-#include "JSCConfig.h"
-#include "JSCPtrTag.h"
-#include "Options.h"
 #include <limits>
 #include <wtf/Assertions.h>
 #include <wtf/ForbidHeapAllocation.h>
@@ -210,7 +210,54 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n)
+#if ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
+ALWAYS_INLINE void jitMemcpyCheckForZeros(void *dst, const void *src, size_t n)
+{
+    if (Options::zeroExecutableMemoryOnFree()) [[unlikely]]
+        return;
+    // On x86-64, the maximum immediate size is 8B, no opcodes/prefixes have 0x00
+    // On other architectures this could be smaller
+    constexpr size_t maxZeroByteRunLength = 16;
+    // This algorithm works because the number of 0-bytes which can fit into
+    // one qword (8) is smaller than the limit on which we assert.
+    constexpr size_t stride = sizeof(uint64_t);
+    static_assert(stride <= maxZeroByteRunLength);
+
+    const char* dstBuff = reinterpret_cast<const char*>(dst);
+    size_t runLength = 0;
+    size_t i = 0;
+    if (n > stride) {
+        for (; (reinterpret_cast<uintptr_t>(dstBuff) + i) % stride; i++) {
+            if (!(dstBuff[i]))
+                runLength++;
+            else
+                runLength = 0;
+        }
+        for (; i + stride <= n; i += stride) {
+            uint64_t chunk = *reinterpret_cast<const uint64_t*>(dstBuff + i);
+            if (!chunk) {
+                runLength += sizeof(chunk);
+                RELEASE_ASSERT_ZERO_CHECK(runLength, dst, src, n, i + stride);
+            } else {
+                runLength += (std::countr_zero(chunk) / 8);
+                RELEASE_ASSERT_ZERO_CHECK(runLength, dst, src, n, i + (std::countr_zero(chunk) / 8));
+                runLength = std::countl_zero(chunk) / 8;
+            }
+        }
+        for (; i < n; i++) {
+            if (!(dstBuff[i])) {
+                runLength++;
+                RELEASE_ASSERT_ZERO_CHECK(runLength, dst, src, n, i + 1);
+            }
+        }
+    }
+}
+#else
+ALWAYS_INLINE void jitMemcpyCheckForZeros(void *, const void *, size_t) { }
+
+#endif
+
+ALWAYS_INLINE void jitMemcpyChecks(void *dst, const void *src, size_t n)
 {
 #if CPU(ARM64)
     static constexpr size_t instructionSize = sizeof(unsigned);
@@ -221,67 +268,32 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
         RELEASE_ASSERT(!Gigacage::contains(src));
         RELEASE_ASSERT(static_cast<uint8_t*>(dst) + n <= endOfFixedExecutableMemoryPool());
 
-#if ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
-        auto checkForZeroes = [dst, src, n] () {
-            if (Options::zeroExecutableMemoryOnFree()) [[unlikely]]
-                return;
-            // On x86-64, the maximum immediate size is 8B, no opcodes/prefixes have 0x00
-            // On other architectures this could be smaller
-            constexpr size_t maxZeroByteRunLength = 16;
-            // This algorithm works because the number of 0-bytes which can fit into
-            // one qword (8) is smaller than the limit on which we assert.
-            constexpr size_t stride = sizeof(uint64_t);
-            static_assert(stride <= maxZeroByteRunLength);
-
-            const char* dstBuff = reinterpret_cast<const char*>(dst);
-            size_t runLength = 0;
-            size_t i = 0;
-            if (n > stride) {
-                for (; (reinterpret_cast<uintptr_t>(dstBuff) + i) % stride; i++) {
-                    if (!(dstBuff[i]))
-                        runLength++;
-                    else
-                        runLength = 0;
-                }
-                for (; i + stride <= n; i += stride) {
-                    uint64_t chunk = *reinterpret_cast<const uint64_t*>(dstBuff + i);
-                    if (!chunk) {
-                        runLength += sizeof(chunk);
-                        RELEASE_ASSERT_ZERO_CHECK(runLength, dst, src, n, i + stride);
-                    } else {
-                        runLength += (std::countr_zero(chunk) / 8);
-                        RELEASE_ASSERT_ZERO_CHECK(runLength, dst, src, n, i + (std::countr_zero(chunk) / 8));
-                        runLength = std::countl_zero(chunk) / 8;
-                    }
-                }
-                for (; i < n; i++) {
-                    if (!(dstBuff[i])) {
-                        runLength++;
-                        RELEASE_ASSERT_ZERO_CHECK(runLength, dst, src, n, i + 1);
-                    }
-                }
-            }
-        };
-#endif
-
         if (Options::dumpJITMemoryPath()) [[unlikely]]
             dumpJITMemory(dst, src, n);
+    }
+}
 
+template<RepatchingInfo repatch>
+ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n)
+{
+    static_assert(!(*repatch).contains(RepatchingFlag::Memcpy));
+    static_assert(!(*repatch).contains(RepatchingFlag::Flush));
+    jitMemcpyChecks(dst, src, n);
+    if (isJITPC(dst)) {
 #if ENABLE(MPROTECT_RX_TO_RWX)
         auto ret = performJITMemcpyWithMProtect(dst, src, n);
-#if ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
-        checkForZeroes();
-#endif
+        jitMemcpyCheckForZeros(dst, src, n);
         return ret;
 #endif
 
         if (g_jscConfig.useFastJITPermissions) {
             threadSelfRestrict<MemoryRestriction::kRwxToRw>();
-            memcpyAtomicIfPossible(dst, src, n);
+            if constexpr ((*repatch).contains(RepatchingFlag::Atomic))
+                memcpyAtomic(dst, src, n);
+            else
+                memcpyAtomicIfPossible(dst, src, n);
             threadSelfRestrict<MemoryRestriction::kRwxToRx>();
-#if ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
-            checkForZeroes();
-#endif
+            jitMemcpyCheckForZeros(dst, src, n);
             return dst;
         }
 
@@ -292,18 +304,13 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
             off_t offset = (off_t)((uintptr_t)dst - startOfFixedExecutableMemoryPool<uintptr_t>());
             retagCodePtr<JITThunkPtrTag, CFunctionPtrTag>(g_jscConfig.jitWriteSeparateHeaps)(offset, src, n);
             RELEASE_ASSERT(!Gigacage::contains(src));
-#if ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
-            checkForZeroes();
-#endif
+            jitMemcpyCheckForZeros(dst, src, n);
             return dst;
         }
 #endif
-
-        auto ret = memcpyAtomicIfPossible(dst, src, n);
-#if ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
-        checkForZeroes();
-#endif
-        return ret;
+        memcpyAtomicIfPossible(dst, src, n);
+        jitMemcpyCheckForZeros(dst, src, n);
+        return dst;
     }
 
     return memcpyAtomicIfPossible(dst, src, n);
@@ -314,7 +321,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 class ExecutableAllocator : private ExecutableAllocatorBase {
     // This does not need to be TZONE_ALLOCATED because it is only used as a singleton, and
     // is only allocated once long before any script is executed.
-    WTF_MAKE_FAST_ALLOCATED(ExecutableAllocator);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ExecutableAllocator);
 public:
     using Base = ExecutableAllocatorBase;
 
@@ -365,7 +372,7 @@ private:
 class ExecutableAllocator : public ExecutableAllocatorBase {
     // This does not need to be TZONE_ALLOCATED because it is only used as a singleton, and
     // is only allocated once long before any script is executed.
-    WTF_MAKE_FAST_ALLOCATED(ExecutableAllocator);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ExecutableAllocator);
 public:
     static ExecutableAllocator& singleton();
     static void initialize();
@@ -376,7 +383,7 @@ private:
     ~ExecutableAllocator() = default;
 };
 
-static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
+inline void* performJITMemcpy(void *dst, const void *src, size_t n)
 {
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return memcpy(dst, src, n);

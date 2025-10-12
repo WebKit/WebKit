@@ -4,9 +4,6 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -15,11 +12,11 @@ esid: pending
 
 for (var T of [Uint8Array, Uint8ClampedArray, Int16Array, Float32Array]) {
     // Typed array constructors convert symbols using ToNumber(), which throws.
-    assertThrowsInstanceOf(() => new T([Symbol("a")]), TypeError);
+    assert.throws(TypeError, () => new T([Symbol("a")]));
 
     // Assignment does the same.
     var arr = new T([1]);
-    assertThrowsInstanceOf(() => { arr[0] = Symbol.iterator; }, TypeError);
+    assert.throws(TypeError, () => { arr[0] = Symbol.iterator; });
     assert.sameValue(arr[0], 1);
 }
 

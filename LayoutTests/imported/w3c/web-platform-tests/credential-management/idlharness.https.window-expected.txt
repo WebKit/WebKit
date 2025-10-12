@@ -11,11 +11,12 @@ PASS Partial dictionary CredentialRequestOptions[2]: original dictionary defined
 PASS Partial dictionary CredentialRequestOptions[2]: member names are unique
 PASS Partial dictionary CredentialCreationOptions[2]: original dictionary defined
 PASS Partial dictionary CredentialCreationOptions[2]: member names are unique
+PASS Partial interface Navigator[2]: member names are unique
+PASS Partial interface Element: member names are unique
 PASS Partial interface mixin NavigatorID: member names are unique
 PASS PasswordCredential includes CredentialUserData: member names are unique
 PASS FederatedCredential includes CredentialUserData: member names are unique
 PASS HTMLElement includes GlobalEventHandlers: member names are unique
-PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
 PASS HTMLElement includes ElementContentEditable: member names are unique
 PASS HTMLElement includes HTMLOrSVGElement: member names are unique
 PASS Navigator includes NavigatorID: member names are unique
@@ -37,6 +38,8 @@ PASS Credential interface: existence and properties of interface prototype objec
 PASS Credential interface: existence and properties of interface prototype object's @@unscopables property
 PASS Credential interface: attribute id
 PASS Credential interface: attribute type
+PASS Credential interface: operation isConditionalMediationAvailable()
+FAIL Credential interface: operation willRequestConditionalCreation() assert_own_property: interface object missing static operation expected property "willRequestConditionalCreation" missing
 PASS CredentialsContainer interface: existence and properties of interface object
 PASS CredentialsContainer interface object length
 PASS CredentialsContainer interface object name
@@ -72,6 +75,8 @@ FAIL PasswordCredential interface: passwordCredential must inherit property "nam
 FAIL PasswordCredential interface: passwordCredential must inherit property "iconURL" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: passwordCredential"
 FAIL Credential interface: passwordCredential must inherit property "id" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: passwordCredential"
 FAIL Credential interface: passwordCredential must inherit property "type" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: passwordCredential"
+FAIL Credential interface: passwordCredential must inherit property "isConditionalMediationAvailable()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: passwordCredential"
+FAIL Credential interface: passwordCredential must inherit property "willRequestConditionalCreation()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: passwordCredential"
 FAIL FederatedCredential interface: existence and properties of interface object assert_own_property: self does not have own property "FederatedCredential" expected property "FederatedCredential" missing
 FAIL FederatedCredential interface object length assert_own_property: self does not have own property "FederatedCredential" expected property "FederatedCredential" missing
 FAIL FederatedCredential interface object name assert_own_property: self does not have own property "FederatedCredential" expected property "FederatedCredential" missing
@@ -90,5 +95,7 @@ FAIL FederatedCredential interface: federatedCredential must inherit property "n
 FAIL FederatedCredential interface: federatedCredential must inherit property "iconURL" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: federatedCredential"
 FAIL Credential interface: federatedCredential must inherit property "id" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: federatedCredential"
 FAIL Credential interface: federatedCredential must inherit property "type" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: federatedCredential"
+FAIL Credential interface: federatedCredential must inherit property "isConditionalMediationAvailable()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: federatedCredential"
+FAIL Credential interface: federatedCredential must inherit property "willRequestConditionalCreation()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: federatedCredential"
 PASS Navigator interface: attribute credentials
 

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Unexpected token '%'
 
 PASS module graph with a syntax error should not evaulate but should not crash UA.
 

@@ -10,8 +10,16 @@
 #include "modules/audio_processing/aec3/matched_filter_lag_aggregator.h"
 
 #include <algorithm>
+#include <cstddef>
 #include <iterator>
+#include <memory>
+#include <optional>
 
+#include "api/array_view.h"
+#include "api/audio/echo_canceller3_config.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/delay_estimate.h"
+#include "modules/audio_processing/aec3/matched_filter.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_minmax.h"
@@ -73,7 +81,7 @@ std::optional<DelayEstimate> MatchedFilterLagAggregator::Aggregate(
   if (lag_estimate) {
     highest_peak_aggregator_.Aggregate(
         std::max(0, static_cast<int>(lag_estimate->lag) - headroom_));
-    rtc::ArrayView<const int> histogram = highest_peak_aggregator_.histogram();
+    ArrayView<const int> histogram = highest_peak_aggregator_.histogram();
     int candidate = highest_peak_aggregator_.candidate();
     significant_candidate_found_ = significant_candidate_found_ ||
                                    histogram[candidate] > thresholds_.converged;
@@ -142,7 +150,7 @@ void MatchedFilterLagAggregator::PreEchoLagAggregator::Aggregate(
   RTC_DCHECK(pre_echo_block_size >= 0 &&
              pre_echo_block_size < static_cast<int>(histogram_.size()));
   pre_echo_block_size =
-      rtc::SafeClamp(pre_echo_block_size, 0, histogram_.size() - 1);
+      SafeClamp(pre_echo_block_size, 0, histogram_.size() - 1);
   // Remove the oldest point from the `histogram_`, it ignores the initial
   // points where no updates have been done to the `histogram_data_` array.
   if (histogram_data_[histogram_data_index_] !=

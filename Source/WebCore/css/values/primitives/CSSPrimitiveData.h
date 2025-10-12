@@ -24,10 +24,10 @@
 
 #pragma once
 
-#include "CSSPrimitiveKeywordList.h"
-#include "CSSPrimitiveNumericConcepts.h"
-#include "CSSPrimitiveNumericRaw.h"
-#include "CSSUnevaluatedCalc.h"
+#include <WebCore/CSSPrimitiveKeywordList.h>
+#include <WebCore/CSSPrimitiveNumericConcepts.h>
+#include <WebCore/CSSPrimitiveNumericRaw.h>
+#include <WebCore/CSSUnevaluatedCalc.h>
 #include <limits>
 #include <type_traits>
 #include <wtf/EnumTraits.h>

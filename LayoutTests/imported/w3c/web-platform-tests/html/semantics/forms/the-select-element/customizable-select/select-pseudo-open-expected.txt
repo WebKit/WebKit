@@ -1,0 +1,5 @@
+
+
+FAIL select should support :open pseudo selector. assert_true: This test requires appearance:base-select in order to run. expected true got false
+FAIL select :open and :not(:open) should invalidate correctly. assert_true: This test requires appearance:base-select in order to run. expected true got false
+

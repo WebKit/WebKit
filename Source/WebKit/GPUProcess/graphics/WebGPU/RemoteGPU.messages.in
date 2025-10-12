@@ -34,6 +34,9 @@ messages -> RemoteGPU Stream {
     void CreateCompositorIntegration(WebKit::WebGPUIdentifier identifier)
 
     void IsValid(WebKit::WebGPUIdentifier identifier) -> (bool isValid, bool exists) Synchronous
+#if ENABLE(GPUP_MODEL)
+    void CreateModelBacking(unsigned width, unsigned height, WebKit::DDModelIdentifier identifier) -> (Vector<MachSendRight> renderBuffers) Synchronous NotStreamEncodableReply
+#endif
 }
 
 #endif

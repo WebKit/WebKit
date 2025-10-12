@@ -26,7 +26,7 @@
 #ifndef PlatformCAAnimationCocoa_h
 #define PlatformCAAnimationCocoa_h
 
-#include "PlatformCAAnimation.h"
+#include <WebCore/PlatformCAAnimation.h>
 
 #include <wtf/RetainPtr.h>
 

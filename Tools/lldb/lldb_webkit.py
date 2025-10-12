@@ -29,6 +29,7 @@
 
 """
 
+import ctypes
 import re
 import string
 import struct
@@ -75,6 +76,97 @@ def addSummaryAndSyntheticFormattersForRawBitmaskType(debugger, type_name, enume
     debugger.HandleCommand('type synthetic add %s --python-class lldb_webkit.%s' % (type_name, synthetic_provider_class_name))
 
 
+class WebCoreStyleLengthProviderBase:
+    KEYWORDS = []
+
+    def __init__(self, valobj, dict):
+        self.valobj = valobj
+
+    def has_quirk(self):
+        length_wrapper_data = self.valobj.GetChildMemberWithName("m_value")
+        has_quirk = length_wrapper_data.GetChildMemberWithName("m_hasQuirk").GetValueAsUnsigned()
+        return bool(has_quirk)
+
+    def has_keywords(self):
+        return len(self.KEYWORDS) > 0
+
+    def fixed_type_value(self):
+        return len(self.KEYWORDS)
+
+    def percentage_type_value(self):
+        return self.fixed_type_value() + 1
+
+    def calculated_type_value(self):
+        return self.fixed_type_value() + 2
+
+    def get_type_value(self):
+        length_wrapper_data = self.valobj.GetChildMemberWithName("m_value")
+        opaque_type = length_wrapper_data.GetChildMemberWithName("m_opaqueType")
+        return opaque_type.GetValueAsUnsigned()
+
+    def is_keyword(self):
+        type_value = self.get_type_value()
+        return type_value < len(self.KEYWORDS)
+
+    def keyword_string(self):
+        type_value = self.get_type_value()
+        if type_value < len(self.KEYWORDS):
+            return self.KEYWORDS[type_value]
+        return "Unknown Keyword"
+
+    def is_fixed(self):
+        return self.get_type_value() == self.fixed_type_value()
+
+    def is_percentage(self):
+        return self.get_type_value() == self.percentage_type_value()
+
+    def is_calculated(self):
+        return self.get_type_value() == self.calculated_type_value()
+
+    def get_numeric_value(self):
+        if self.is_keyword() or self.is_calculated():
+            return None
+
+        length_wrapper_data = self.valobj.GetChildMemberWithName("m_value")
+        float_value = length_wrapper_data.GetChildMemberWithName("m_floatValue")
+
+        return float_value.GetValue()
+
+    def get_summary(self):
+        if self.is_keyword():
+            return "%s" % self.keyword_string()
+
+        if self.is_fixed():
+            return "%spx" % self.get_numeric_value()
+
+        if self.is_percentage():
+            return "%s%%" % self.get_numeric_value()
+
+        if self.is_calculated():
+            return "calc"
+
+        return None
+
+
+def addSummaryProviderForWebCoreStyleLength(debugger, type_name, keywords):
+    class WebCoreStyleLengthProviderDerived(WebCoreStyleLengthProviderBase):
+        KEYWORDS = keywords
+
+    def webcore_style_length_provider(valobj, dict):
+        provider = WebCoreStyleLengthProviderDerived(valobj, dict)
+
+        if summary := provider.get_summary():
+            quirky = '(quirky)' if provider.has_quirk() else ""
+            return "{ %s%s }" % (summary, quirky)
+        return "Unknown Value"
+
+    # e.g. WebCore::Style::PreferredSize -> WebCoreStylePreferredSize.
+    python_type_name = type_name.replace("::", "")
+    summary_provider_function_name = python_type_name + "_SummaryProvider"
+    globals()[summary_provider_function_name] = webcore_style_length_provider
+
+    debugger.HandleCommand('type summary add -F lldb_webkit.%s %s' % (summary_provider_function_name, type_name))
+
 def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('command script add -f lldb_webkit.btjs btjs')
     debugger.HandleCommand('command script add -f lldb_webkit.llintLocate llintLocate')
@@ -89,6 +181,10 @@ def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFMediaTime_SummaryProvider WTF::MediaTime')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFOptionSet_SummaryProvider -x "^WTF::OptionSet<.+>$"')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFCompactPointerTuple_SummaryProvider -x "^WTF::CompactPointerTuple<.+,.+>$"')
+
+    debugger.HandleCommand('type summary add --expand -F lldb_webkit.SummarizeEncodedJSValue JSC::EncodedJSValue')
+    debugger.HandleCommand('type summary add --expand -F lldb_webkit.SummarizeJSString JSC::JSString')
+    debugger.HandleCommand('type summary add --expand -F lldb_webkit.SummarizeJSValue JSC::JSValue')
 
     debugger.HandleCommand('type summary add -F lldb_webkit.WTFURL_SummaryProvider WTF::URL')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreColor_SummaryProvider WebCore::Color')
@@ -107,6 +203,41 @@ def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFloatRect_SummaryProvider WebCore::FloatRect')
 
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreLength_SummaryProvider WebCore::Length')
+
+    preferred_size_keywords = [
+        "Auto",
+        "MinContent",
+        "MaxContent",
+        "FitContent",
+        "WebKitFillAvailable",
+        "Intrinsic",
+        "MinIntrinsic"
+    ]
+    addSummaryProviderForWebCoreStyleLength(debugger, "WebCore::Style::PreferredSize", preferred_size_keywords)
+
+    minimum_size_keywords = [
+        "Auto",
+        "MinContent",
+        "MaxContent",
+        "FitContent",
+        "WebKitFillAvailable",
+        "Intrinsic",
+        "MinIntrinsic"
+    ]
+    addSummaryProviderForWebCoreStyleLength(debugger, "WebCore::Style::MinimumSize", minimum_size_keywords)
+
+    maximum_size_keywords = [
+        "None",
+        "MinContent",
+        "MaxContent",
+        "FitContent",
+        "WebKitFillAvailable",
+        "Intrinsic",
+        "MinIntrinsic"
+    ]
+    addSummaryProviderForWebCoreStyleLength(debugger, "WebCore::Style::MaximumSize", maximum_size_keywords)
+
+    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreStyleSelfAlignmentData_SummaryProvider WebCore::StyleSelfAlignmentData')
 
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreSecurityOrigin_SummaryProvider WebCore::SecurityOrigin')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFrame_SummaryProvider WebCore::Frame')
@@ -297,6 +428,11 @@ def WebCoreLength_SummaryProvider(valobj, dict):
 def WebCoreSecurityOrigin_SummaryProvider(valobj, dict):
     provider = WebCoreSecurityOriginProvider(valobj, dict)
     return '{ %s, domain = %s, hasUniversalAccess = %d }' % (provider.to_string(), provider.domain(), provider.has_universal_access())
+
+
+def WebCoreStyleSelfAlignmentData_SummaryProvider(valobj, dict):
+    provider = WebCoreStyleSelfAlignmentDataProvider(valobj, dict)
+    return "{ %s, %s, %s }" % (provider.get_item_position(), provider.get_item_position_type(), provider.get_overflow_alignment())
 
 
 def WebCoreFrame_SummaryProvider(valobj, dict):
@@ -593,6 +729,7 @@ class WebCoreColorProvider:
             'DisplayP3',
             'ExtendedA98RGB',
             'ExtendedDisplayP3',
+            'ExtendedLinearDisplayP3',
             'ExtendedLinearSRGB',
             'ExtendedProPhotoRGB',
             'ExtendedRec2020',
@@ -601,6 +738,7 @@ class WebCoreColorProvider:
             'HWB',
             'LCH',
             'Lab',
+            'LinearDisplayP3',
             'LinearSRGB',
             'OKLCH',
             'OKLab',
@@ -858,6 +996,24 @@ class WebCoreLengthProvider:
 
         return self.valobj.GetChildMemberWithName('m_intValue').GetValueAsSigned()
 
+
+class WebCoreStyleSelfAlignmentDataProvider:
+    "Print a WebCore::StyleSelfAlignmentData"
+
+    def __init__(self, valobj, dict):
+        self.valobj = valobj
+
+    def get_item_position(self):
+        item_position = self.valobj.GetChildMemberWithName("m_position").GetValueAsUnsigned()
+        return self.valobj.CreateValueFromExpression("itemPosition", f"(WebCore::ItemPosition){item_position}")
+
+    def get_item_position_type(self):
+        item_position_type = self.valobj.GetChildMemberWithName("m_positionType").GetValueAsUnsigned()
+        return self.valobj.CreateValueFromExpression("positionType", f"(WebCore::ItemPositionType){item_position_type}")
+
+    def get_overflow_alignment(self):
+        overflow_alignment = self.valobj.GetChildMemberWithName("m_overflow").GetValueAsUnsigned()
+        return self.valobj.CreateValueFromExpression("overflow", f"(WebCore::OverflowAlignment){overflow_alignment}")
 
 
 class WTFURLProvider:
@@ -1301,3 +1457,200 @@ class WTFMediaTimeProvider:
 
     def hasDoubleValue(self):
         return self.valobj.GetChildMemberWithName('m_timeFlags').GetValueAsSigned(0) & (1 << 5)
+
+
+def SummarizeJSValue(valobj, dict):
+    mirror = JSValueMirror(valobj)
+    return mirror.summary()
+
+
+def SummarizeEncodedJSValue(valobj, dict):
+    mirror = JSValueMirror(valobj, valobj.GetValueAsUnsigned(0))
+    return mirror.summary()
+
+
+def SummarizeJSString(valobj, dict):
+    mirror = JSStringMirror(valobj)
+    return mirror.summary()
+
+
+class JSValueMirror:
+    """Reflects on a JSValue or EncodedJSValue."""
+
+    OTHER_TAG     = 0b0010
+    BOOL_TAG      = 0b0100
+    UNDEFINED_TAG = 0b1000
+
+    NATIVE_CALLEE_TAG   = OTHER_TAG | 1
+    NATIVE_CALLEE_MASK  = 0b0111
+
+    TOP_15_BITS_MASK        = 0xFFFE << 48
+    TOP_15_BITS_POINTER_TAG = 0
+    TOP_15_BITS_INTEGER_TAG     = 0xFFFE << 48
+
+    NUMBER_TAG = 0xFFFE000000000000
+    MISC_TAG = OTHER_TAG | BOOL_TAG | UNDEFINED_TAG
+
+    NOT_CELL_MASK = NUMBER_TAG | OTHER_TAG
+
+    VALUE_NULL      = OTHER_TAG
+    VALUE_UNDEFINED = OTHER_TAG | UNDEFINED_TAG
+    VALUE_TRUE      = OTHER_TAG | BOOL_TAG | 1
+    VALUE_FALSE     = OTHER_TAG | BOOL_TAG | 0
+
+    VALUE_EMPTY     = 0
+    VALUE_DELETED   = 4
+
+    def __init__(self, valobj, bits=None):
+        assert valobj.GetTypeName() == "JSC::JSValue" or valobj.GetTypeName() == "JSC::EncodedJSValue"
+        self.valobj = valobj
+        self.bits = bits if bits is not None else valobj.GetChildMemberWithName("u").GetChildMemberWithName("asInt64").GetValueAsUnsigned(0)
+
+    def isNull(self):
+        return self.bits == self.VALUE_NULL
+
+    def isUndefined(self):
+        return self.bits == self.VALUE_UNDEFINED
+
+    def isEmpty(self):
+        return self.bits == self.VALUE_EMPTY
+
+    def isBool(self):
+        return self.bits & ~1 == self.VALUE_FALSE
+
+    def isTrue(self):
+        return self.bits == self.VALUE_TRUE
+
+    def isFalse(self):
+        return self.bits == self.VALUE_TRUE
+
+    def isInt32(self):
+        return self.bits & self.NUMBER_TAG == self.NUMBER_TAG
+
+    def isNumber(self):
+        return self.bits & self.NUMBER_TAG != 0
+
+    def isDouble(self):
+        return self.isNumber() and not self.isInt32()
+
+    def isCell(self):
+        return self.bits & self.NOT_CELL_MASK == 0
+
+    def toInt32(self):
+        assert self.isInt32()
+        masked = self.bits & 0xFFFFFFFF
+        if masked > 0x80000000:
+            return masked - 0x100000000  # => -1
+        else:
+            return masked
+
+    def toDouble(self):
+        assert self.isDouble()
+        corrected = self.bits - (1 << 49)
+        return struct.unpack('<d', corrected.to_bytes(8, 'little'))[0]
+
+    def summary(self):
+        if self.isCell():
+            cell = castSBValueToPointerType("JSC::JSCell", self.valobj)
+            mirror = JSCellMirror(cell, self.bits)
+            return mirror.summary()
+        if self.isNull():
+            return "{JS null}"
+        if self.isUndefined():
+            return "{JS undefined}"
+        if self.isTrue():
+            return "{JS true}"
+        if self.isFalse():
+            return "{JS false}"
+        if self.isEmpty():
+            return "{JS empty}"
+        if self.isInt32():
+            return f"{{JS int32={self.toInt32()}}}"
+        if self.isDouble():
+            return f"{{JS double={self.toDouble()}}}"
+        return "{JSC ?}"
+
+
+class JSCellMirror:
+    def __init__(self, valobj, bits):
+        assert valobj.GetTypeName() == "JSC::JSCell *"
+        self.valobj = valobj
+        self.bits = bits
+        self.type = valobj.GetChildMemberWithName("m_type").GetValueAsUnsigned(0)
+        typeEnum = valobj.GetTarget().FindFirstType("JSC::JSType")
+        self.enumMembers = typeEnum.GetEnumMembers()
+
+    def enumMemberValue(self, enumMemberName):
+        return self.enumMembers[enumMemberName].unsigned
+
+    def enumMemberName(self, enumMemberValue):
+        # try bisecting first, but it that fails give it another try linearly just to be sure
+        index = bisect_right(self.enumMembers, enumMemberValue, key=lambda mem: mem.unsigned)
+        guess = self.enumMembers[index - 1]
+        if guess.unsigned == enumMemberValue:
+            return guess.name
+        for member in self.enumMembers:
+            if member.unsigned == enumMemberValue:
+                return member.name
+        return "?"
+
+    def isString(self):
+        return self.type == self.enumMemberValue("StringType")
+
+    def isObject(self):
+        return self.type >= self.enumMemberValue("ObjectType")
+
+    def isCustomGetterSetter(self):
+        return self.type == self.enumMemberValue("CustomGetterSetterType")
+
+    def summary(self):
+        if self.isString():
+            string = castSBValueToPointerType("JSC::JSString", self.valobj)
+            mirror = JSStringMirror(string)
+            return mirror.summary(verbose=False)
+        if self.isObject():
+            return "{JS object %s}" % (self.enumMemberName(self.type))
+        return "{{JS cell %s}}}" % (self.enumMemberName(self.type))
+
+
+class JSStringMirror:
+    def __init__(self, valobj):
+        assert valobj.GetTypeName() == "JSC::JSString *"
+        self.fiber = valobj.GetChildMemberWithName("m_fiber")
+
+    def isRopeString(self):
+        return self.fiber.GetValueAsUnsigned(0) & 1 != 0
+
+    def summary(self, verbose=True):
+        provider = WTFStringImplProvider(self.fiber, {})
+        if not provider.is_initialized():
+            raise RuntimeError("null fiber pointer in JSString mirror")
+        contents = self.maybeTrim(provider.to_string())
+        if verbose:
+            bitCount = 8 if provider.is_8bit() else 16
+            if self.isRopeString():
+                return '{JS ropeString bits=%d fiber1 length=%d %s ...}' % (bitCount, provider.get_length(), contents)
+            else:
+                return '{JS string bits=%d length=%d %s}' % (bitCount, provider.get_length(), contents)
+        else:
+            if self.isRopeString():
+                return '{JS ropeString fiber1=%s}' % (contents)
+            else:
+                return '{JS string %s}' % (contents)
+
+    def maybeTrim(self, string):
+        escaped = repr(string)
+        if len(escaped) > 90:
+            return f'{escaped[:80]} [... trimmed]'
+        else:
+            return escaped
+
+
+def castSBValueToPointerType(typeName, value):
+    ptrType = value.GetTarget().FindFirstType(typeName).GetPointerType()
+    return value.Cast(ptrType)
+
+
+def hexPointerString(bits):
+    """Convert bits, which is an unsigned integer, to a string that would be produced by %p in C."""
+    return f"{bits:#0{2 + ctypes.sizeof(ctypes.c_void_p) * 2}x}"

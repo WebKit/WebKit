@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,10 +43,13 @@
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
-#include "DocumentInlines.h"
+#include "DocumentQuirks.h"
+#include "DocumentView.h"
 #include "Element.h"
+#include "EventTargetInlines.h"
 #include "FontCascade.h"
 #include "GeometryUtilities.h"
+#include "GraphicsLayerAnimation.h"
 #include "InspectorInstrumentation.h"
 #include "JSCompositeOperation.h"
 #include "JSCompositeOperationOrAuto.h"
@@ -61,7 +64,6 @@
 #include "RenderBoxModelObject.h"
 #include "RenderElement.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyleInlines.h"
 #include "Settings.h"
 #include "StyleAdjuster.h"
 #include "StyleEasingFunction.h"
@@ -72,6 +74,7 @@
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "StyleSingleAnimationRange.h"
 #include "StyledElement.h"
 #include "TimelineRangeOffset.h"
 #include "TimingFunction.h"
@@ -107,9 +110,9 @@ static inline void invalidateElement(const std::optional<const Styleable>& style
     if (!styleable)
         return;
 
-    auto& element = styleable->element;
-    if (!element.document().inStyleRecalc())
-        element.invalidateStyleForAnimation();
+    Ref element = styleable->element;
+    if (!element->document().inStyleRecalc())
+        element->invalidateStyleForAnimation();
 }
 
 String KeyframeEffect::CSSPropertyIDToIDLAttributeName(CSSPropertyID property)
@@ -160,53 +163,12 @@ static inline CSSPropertyID IDLAttributeNameToAnimationPropertyName(const AtomSt
     return cssPropertyId;
 }
 
-static SingleTimelineRange::Name rangeStringToSingleTimelineRangeName(const String& rangeString)
-{
-    if (rangeString == "cover"_s)
-        return SingleTimelineRange::Name::Cover;
-    if (rangeString == "contain"_s)
-        return SingleTimelineRange::Name::Contain;
-    if (rangeString == "entry"_s)
-        return SingleTimelineRange::Name::Entry;
-    if (rangeString == "exit"_s)
-        return SingleTimelineRange::Name::Exit;
-    if (rangeString == "entry-crossing"_s)
-        return SingleTimelineRange::Name::EntryCrossing;
-    if (rangeString == "exit-crossing"_s)
-        return SingleTimelineRange::Name::ExitCrossing;
-    return SingleTimelineRange::Name::Normal;
-}
-
 static bool isTimelineRangeOffsetValid(const TimelineRangeOffset& timelineRangeOffset)
 {
-    if (rangeStringToSingleTimelineRangeName(timelineRangeOffset.rangeName) == SingleTimelineRange::Name::Normal)
+    if (Style::convertRangeStringToSingleTimelineRangeName(timelineRangeOffset.rangeName) == Style::SingleAnimationRangeName::Normal)
         return false;
     RefPtr offsetUnitValue = dynamicDowncast<CSSUnitValue>(timelineRangeOffset.offset);
     return offsetUnitValue && offsetUnitValue->unitEnum() == CSSUnitType::CSS_PERCENTAGE;
-}
-
-static String rangeStringFromSingleTimelineRangeName(SingleTimelineRange::Name rangeName)
-{
-    switch (rangeName) {
-    case SingleTimelineRange::Name::Normal:
-        return "normal"_s;
-    case SingleTimelineRange::Name::Omitted:
-        return "omitted"_s;
-    case SingleTimelineRange::Name::Cover:
-        return "cover"_s;
-    case SingleTimelineRange::Name::Contain:
-        return "contain"_s;
-    case SingleTimelineRange::Name::Entry:
-        return "entry"_s;
-    case SingleTimelineRange::Name::Exit:
-        return "exit"_s;
-    case SingleTimelineRange::Name::EntryCrossing:
-        return "entry-crossing"_s;
-    case SingleTimelineRange::Name::ExitCrossing:
-        return "exit-crossing"_s;
-    }
-    ASSERT_NOT_REACHED();
-    return "normal"_s;
 }
 
 static std::optional<Variant<double, TimelineRangeOffset>> doubleOrTimelineRangeOffsetFromString(const String& offsetString, const Document& document)
@@ -222,11 +184,11 @@ static std::optional<Variant<double, TimelineRangeOffset>> doubleOrTimelineRange
         return { };
 
     auto [rangeCSSValueID, value] = offsets[0];
-    auto rangeName = SingleTimelineRange::timelineName(rangeCSSValueID);
-    if (rangeName == SingleTimelineRange::Name::Normal)
+    auto rangeName = Style::convertCSSValueIDToSingleAnimationRangeName(rangeCSSValueID);
+    if (rangeName == Style::SingleAnimationRangeName::Normal)
         return value;
 
-    return { TimelineRangeOffset { rangeStringFromSingleTimelineRangeName(rangeName), CSSNumericFactory::percent(value * 100) } };
+    return { TimelineRangeOffset { Style::convertSingleAnimationRangeNameToRangeString(rangeName), CSSNumericFactory::percent(value * 100) } };
 }
 
 static std::optional<KeyframeEffect::KeyframeOffset> validateKeyframeOffset(const KeyframeEffect::KeyframeOffset& offset, const Document& document)
@@ -253,9 +215,9 @@ static std::optional<KeyframeEffect::KeyframeOffset> validateKeyframeOffset(cons
     return nullptr;
 };
 
-static double computedOffset(SingleTimelineRange::Name rangeName, double offset, const ViewTimeline* viewTimeline, WebAnimation* animation)
+static double computedOffset(Style::SingleAnimationRangeName rangeName, double offset, const ViewTimeline* viewTimeline, WebAnimation* animation)
 {
-    if ((rangeName == SingleTimelineRange::Name::Normal || rangeName == SingleTimelineRange::Name::Omitted))
+    if ((rangeName == Style::SingleAnimationRangeName::Normal || rangeName == Style::SingleAnimationRangeName::Omitted))
         return offset;
 
     if (!viewTimeline)
@@ -295,7 +257,7 @@ static inline void computeMissingKeyframeOffsets(Vector<KeyframeEffect::ParsedKe
     for (auto& keyframe : keyframes) {
         auto& offset = keyframe.offset;
         if (auto* timelineRangeOffset = std::get_if<TimelineRangeOffset>(&offset)) {
-            auto rangeName = rangeStringToSingleTimelineRangeName(timelineRangeOffset->rangeName);
+            auto rangeName = Style::convertRangeStringToSingleTimelineRangeName(timelineRangeOffset->rangeName);
             RefPtr offsetUnitValue = dynamicDowncast<CSSUnitValue>(timelineRangeOffset->offset);
             ASSERT(offsetUnitValue && offsetUnitValue->unitEnum() == CSSUnitType::CSS_PERCENTAGE);
             keyframe.computedOffset = computedOffset(rangeName, offsetUnitValue->value() / 100, viewTimeline, animation);
@@ -896,7 +858,7 @@ void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
 
 static TimelineRangeOffset timelineRangeOffsetFromSpecifiedOffset(const BlendingKeyframe::Offset& specifiedOffset)
 {
-    auto name = rangeStringFromSingleTimelineRangeName(specifiedOffset.name);
+    auto name = Style::convertSingleAnimationRangeNameToRangeString(specifiedOffset.name);
     return TimelineRangeOffset { name, CSSNumericFactory::percent(specifiedOffset.value * 100) };
 }
 
@@ -904,7 +866,7 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
 {
     // https://drafts.csswg.org/web-animations-1/#dom-keyframeeffectreadonly-getkeyframes
 
-    if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation()))
+    if (RefPtr styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation()))
         styleOriginatedAnimation->flushPendingStyleChanges();
 
     updateComputedKeyframeOffsetsIfNeeded();
@@ -927,11 +889,11 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
         return computedKeyframes;
     }
 
-    auto* target = m_target.get();
+    RefPtr target = m_target;
     auto* lastStyleChangeEventStyle = targetStyleable()->lastStyleChangeEventStyle();
     auto& elementStyle = lastStyleChangeEventStyle ? *lastStyleChangeEventStyle : currentStyle();
 
-    Style::Extractor computedStyleExtractor { target, false, m_pseudoElementIdentifier };
+    Style::Extractor computedStyleExtractor { target.get(), false, m_pseudoElementIdentifier };
 
     BlendingKeyframes computedBlendingKeyframes(m_blendingKeyframes.identifier());
     computedBlendingKeyframes.copyKeyframes(m_blendingKeyframes);
@@ -940,19 +902,19 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
         computedBlendingKeyframes.fillImplicitKeyframes(*this, elementStyle);
 
     auto keyframeRules = [&]() -> const Vector<Ref<StyleRuleKeyframe>> {
-        auto* cssAnimation = dynamicDowncast<CSSAnimation>(animation());
+        RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation());
         if (!cssAnimation)
             return { };
 
         if (!m_target || !m_target->isConnected())
             return { };
 
-        auto& backingAnimation = cssAnimation->backingAnimation();
-        auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.name().scopeOrdinal);
+        auto& backingStyleAnimation = cssAnimation->backingStyleAnimation();
+        auto* styleScope = Style::Scope::forOrdinal(*m_target, backingStyleAnimation.name().tryKeyframesName()->scopeOrdinal);
         if (!styleScope)
             return { };
 
-        return styleScope->resolver().keyframeRulesForName(computedBlendingKeyframes.keyframesName(), backingAnimation.timingFunction());
+        return styleScope->resolver().keyframeRulesForName(computedBlendingKeyframes.keyframesName(), backingStyleAnimation.timingFunction().value.ptr());
     }();
 
     auto matchingStyleRuleKeyframe = [&](const BlendingKeyframe& keyframe) -> StyleRuleKeyframe* {
@@ -960,12 +922,12 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
         if (!cssAnimation)
             return nullptr;
 
-        auto& backingAnimation = cssAnimation->backingAnimation();
-        auto defaultCompositeOperation = backingAnimation.compositeOperation();
-        auto* defaultTimingFunction = backingAnimation.timingFunction();
+        auto& backingStyleAnimation = cssAnimation->backingStyleAnimation();
+        auto defaultCompositeOperation = backingStyleAnimation.compositeOperation();
+        RefPtr defaultTimingFunction = backingStyleAnimation.timingFunction().value.ptr();
 
         auto compositeOperation = keyframe.compositeOperation().value_or(defaultCompositeOperation);
-        auto* timingFunction = keyframe.timingFunction();
+        RefPtr<TimingFunction> timingFunction = keyframe.timingFunction();
         if (!timingFunction)
             timingFunction = defaultTimingFunction;
 
@@ -988,7 +950,7 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
         };
 
         auto& specifiedOffset = keyframe.specifiedOffset();
-        StyleRuleKeyframe::Key key { SingleTimelineRange::valueID(specifiedOffset.name), specifiedOffset.value };
+        StyleRuleKeyframe::Key key { Style::convertSingleAnimationRangeNameToCSSValueID(specifiedOffset.name), specifiedOffset.value };
 
         for (auto& keyframeRule : keyframeRules) {
             if (compositeOperationForStyleRuleKeyframe(keyframeRule) != compositeOperation)
@@ -1005,11 +967,11 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
 
     auto styleProperties = MutableStyleProperties::create();
     if (m_animationType == WebAnimationType::CSSAnimation && m_target->isConnected()) {
-        auto matchingRules = m_target->styleResolver().pseudoStyleRulesForElement(target, m_pseudoElementIdentifier, Style::Resolver::AllCSSRules);
+        auto matchingRules = m_target->styleResolver().pseudoStyleRulesForElement(target.get(), m_pseudoElementIdentifier, Style::Resolver::AllCSSRules);
         for (auto& matchedRule : matchingRules)
             styleProperties->mergeAndOverrideOnConflict(matchedRule->properties());
-        if (auto* target = dynamicDowncast<StyledElement>(m_target.get()); target && !m_pseudoElementIdentifier) {
-            if (auto* inlineProperties = target->inlineStyle())
+        if (RefPtr target = dynamicDowncast<StyledElement>(*m_target); target && !m_pseudoElementIdentifier) {
+            if (RefPtr inlineProperties = target->inlineStyle())
                 styleProperties->mergeAndOverrideOnConflict(*inlineProperties);
         }
     }
@@ -1019,7 +981,7 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
 
     for (auto& keyframe : computedBlendingKeyframes) {
         auto& style = *keyframe.style();
-        auto* keyframeRule = matchingStyleRuleKeyframe(keyframe);
+        RefPtr keyframeRule = matchingStyleRuleKeyframe(keyframe);
 
         ComputedKeyframe computedKeyframe;
         computedKeyframe.offset = [&] -> KeyframeOffset {
@@ -1068,8 +1030,8 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
                 }
             }
             if (styleString.isEmpty()) {
-                if (auto* cssValue = style.customPropertyValue(customProperty))
-                    styleString = cssValue->cssText(CSS::defaultSerializationContext());
+                if (RefPtr cssValue = style.customPropertyValue(customProperty))
+                    styleString = cssValue->propertyValueSerialization(CSS::defaultSerializationContext(), style);
             }
             computedKeyframe.customStyleStrings.set(customProperty, styleString);
         };
@@ -1106,7 +1068,7 @@ ExceptionOr<void> KeyframeEffect::setBindingsKeyframes(JSGlobalObject& lexicalGl
 {
     auto retVal = setKeyframes(lexicalGlobalObject, document, WTFMove(keyframesInput));
     if (!retVal.hasException()) {
-        if (auto* cssAnimation = dynamicDowncast<CSSAnimation>(animation()))
+        if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation()))
             cssAnimation->effectKeyframesWereSetUsingBindings();
     }
     return retVal;
@@ -1231,7 +1193,7 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobal
 static BlendingKeyframe::Offset specifiedOffsetForParsedKeyframe(const KeyframeEffect::ParsedKeyframe& keyframe)
 {
     if (auto* timelineRangeOffset = std::get_if<TimelineRangeOffset>(&keyframe.offset)) {
-        auto rangeName = rangeStringToSingleTimelineRangeName(timelineRangeOffset->rangeName);
+        auto rangeName = Style::convertRangeStringToSingleTimelineRangeName(timelineRangeOffset->rangeName);
         RefPtr offsetUnitValue = dynamicDowncast<CSSUnitValue>(timelineRangeOffset->offset);
         ASSERT(offsetUnitValue && offsetUnitValue->unitEnum() == CSSUnitType::CSS_PERCENTAGE);
         return { rangeName, offsetUnitValue->value() / 100 };
@@ -1249,7 +1211,7 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
         return;
 
     BlendingKeyframes blendingKeyframes(m_blendingKeyframes.identifier());
-    auto& styleResolver = m_target->styleResolver();
+    Ref styleResolver = m_target->styleResolver();
 
     for (auto& keyframe : m_parsedKeyframes) {
         BlendingKeyframe blendingKeyframe(specifiedOffsetForParsedKeyframe(keyframe), nullptr);
@@ -1270,7 +1232,7 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
         }
 
         auto keyframeRule = StyleRuleKeyframe::create(keyframe.style->immutableCopyIfNeeded());
-        blendingKeyframe.setStyle(styleResolver.styleForKeyframe(*m_target, elementStyle, resolutionContext, keyframeRule.get(), blendingKeyframe));
+        blendingKeyframe.setStyle(styleResolver->styleForKeyframe(*m_target, elementStyle, resolutionContext, keyframeRule.get(), blendingKeyframe));
         blendingKeyframes.insert(WTFMove(blendingKeyframe));
         blendingKeyframes.updatePropertiesMetadata(keyframeRule->properties());
     }
@@ -1278,7 +1240,7 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
     setBlendingKeyframes(WTFMove(blendingKeyframes));
 }
 
-const UncheckedKeyHashSet<AnimatableCSSProperty>& KeyframeEffect::animatedProperties()
+const HashSet<AnimatableCSSProperty>& KeyframeEffect::animatedProperties()
 {
     if (!m_blendingKeyframes.isEmpty())
         return m_blendingKeyframes.properties();
@@ -1331,7 +1293,7 @@ bool KeyframeEffect::forceLayoutIfNeeded()
         return false;
 
     ASSERT(document());
-    auto* frameView = document()->view();
+    RefPtr frameView = document()->view();
     if (!frameView)
         return false;
 
@@ -1394,7 +1356,7 @@ void KeyframeEffect::checkForMatchingTransformFunctionLists()
         return;
     }
 
-    TransformOperationsSharedPrimitivesPrefix prefix;
+    TransformOperationsSharedPrimitivesPrefix<Style::TransformFunctionType> prefix;
     for (const auto& keyframe : m_blendingKeyframes)
         prefix.update(keyframe.style()->transform());
 
@@ -1437,12 +1399,17 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
 {
     ASSERT(document());
 
-    auto& backingAnimation = downcast<CSSAnimation>(*animation()).backingAnimation();
+    auto& backingStyleAnimation = downcast<CSSAnimation>(*animation()).backingStyleAnimation();
 
-    BlendingKeyframes blendingKeyframes(AtomString { backingAnimation.name().name });
+    // NOTE: A CSSAnimation is always constructed with a backing Style::Animation that has a valid, non-none, name.
+    auto backingStyleAnimationName = backingStyleAnimation.name().tryKeyframesName();
+
+    BlendingKeyframes blendingKeyframes(AtomString { backingStyleAnimationName->name });
     if (m_target) {
-        if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.name().scopeOrdinal))
-            styleScope->resolver().keyframeStylesForAnimation(*m_target, unanimatedStyle, resolutionContext, blendingKeyframes, backingAnimation.timingFunction());
+        Style::Scope::resolveTreeScopedReference(*m_target, *backingStyleAnimationName, [&](const Style::Scope& scope, const AtomString&) {
+            ASSERT(scope.resolverIfExists());
+            return scope.resolverIfExists()->keyframeStylesForAnimation(*m_target, unanimatedStyle, resolutionContext, blendingKeyframes, backingStyleAnimation.timingFunction().value.ptr());
+        });
 
         // Ensure resource loads for all the frames.
         for (auto& keyframe : blendingKeyframes) {
@@ -1587,7 +1554,7 @@ void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
     auto& previousTargetStyleable = targetStyleable();
     RefPtr<Element> protector;
     if (previousTargetStyleable)
-        protector = &previousTargetStyleable->element;
+        protector = previousTargetStyleable->element;
     m_target = WTFMove(newTarget);
     didChangeTargetStyleable(previousTargetStyleable);
 }
@@ -1624,7 +1591,7 @@ void KeyframeEffect::didChangeTargetStyleable(const std::optional<const Styleabl
 {
     auto newTargetStyleable = targetStyleable();
 
-    if (auto* effectAnimation = animation())
+    if (RefPtr effectAnimation = animation())
         effectAnimation->effectTargetDidChange(previousTargetStyleable, newTargetStyleable);
 
     clearBlendingKeyframes();
@@ -1648,7 +1615,7 @@ void KeyframeEffect::didChangeTargetStyleable(const std::optional<const Styleabl
         newTargetStyleable->ensureKeyframeEffectStack().addEffect(*this);
 }
 
-OptionSet<AnimationImpact> KeyframeEffect::apply(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext)
+OptionSet<AnimationImpact> KeyframeEffect::apply(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, EndpointInclusiveActiveInterval endpointInclusiveActiveInterval)
 {
     OptionSet<AnimationImpact> impact;
     if (!m_target)
@@ -1656,7 +1623,7 @@ OptionSet<AnimationImpact> KeyframeEffect::apply(RenderStyle& targetStyle, const
 
     updateBlendingKeyframes(targetStyle, resolutionContext);
 
-    auto computedTiming = getComputedTiming();
+    auto computedTiming = getComputedTiming(UseCachedCurrentTime::Yes, endpointInclusiveActiveInterval);
 
     if (m_phaseAtLastApplication != computedTiming.phase) {
         m_phaseAtLastApplication = computedTiming.phase;
@@ -1680,7 +1647,7 @@ bool KeyframeEffect::isRunningAccelerated() const
     if (threadedAnimationResolutionEnabled()) {
         if (!m_inTargetEffectStack || !canBeAccelerated())
             return false;
-        auto* animation = this->animation();
+        RefPtr animation = this->animation();
         ASSERT(animation);
         return !animation->isSuspended() && animation->playState() == WebAnimation::PlayState::Running;
     }
@@ -1711,7 +1678,7 @@ bool KeyframeEffect::isRunningAcceleratedAnimationForProperty(CSSPropertyID prop
     return Style::Interpolation::isAccelerated(property, document()->settings()) && m_blendingKeyframes.properties().contains(property);
 }
 
-static bool propertiesContainTransformRelatedProperty(const UncheckedKeyHashSet<AnimatableCSSProperty>& properties)
+static bool propertiesContainTransformRelatedProperty(const HashSet<AnimatableCSSProperty>& properties)
 {
     return properties.contains(CSSPropertyTranslate)
         || properties.contains(CSSPropertyScale)
@@ -1735,7 +1702,7 @@ void KeyframeEffect::computeAcceleratedPropertiesState()
     bool hasSomeAcceleratedProperties = false;
     bool hasSomeUnacceleratedProperties = false;
 
-    if (auto* document = this->document()) {
+    if (RefPtr document = this->document()) {
         auto& settings = document->settings();
         for (auto property : m_blendingKeyframes.properties()) {
             // If any animated property can be accelerated, then the animation should run accelerated.
@@ -1770,17 +1737,17 @@ void KeyframeEffect::computeSomeKeyframesUseStepsOrLinearTimingFunctionWithPoint
     // If we're dealing with a CSS Animation and it specifies a default steps() or linear() timing function,
     // we need to check that any of the specified keyframes either does not have an explicit timing
     // function or specifies an explicit steps() or linear() timing function.
-    if (auto* cssAnimation = dynamicDowncast<CSSAnimation>(animation())) {
-        auto* defaultTimingFunction = cssAnimation->backingAnimation().timingFunction();
+    if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation())) {
+        RefPtr defaultTimingFunction = cssAnimation->backingStyleAnimation().timingFunction().value.ptr();
         auto defaultTimingFunctionIsSteps = is<StepsTimingFunction>(defaultTimingFunction);
-        auto defaultTimingFunctionIsLinearWithPoints = isLinearTimingFunctionWithPoints(defaultTimingFunction);
+        auto defaultTimingFunctionIsLinearWithPoints = isLinearTimingFunctionWithPoints(defaultTimingFunction.get());
         if (defaultTimingFunctionIsSteps || defaultTimingFunctionIsLinearWithPoints) {
             for (auto& keyframe : m_blendingKeyframes) {
-                auto* timingFunction = keyframe.timingFunction();
+                RefPtr timingFunction = keyframe.timingFunction();
                 if (defaultTimingFunctionIsSteps && !m_someKeyframesUseStepsTimingFunction)
                     m_someKeyframesUseStepsTimingFunction = !timingFunction || is<StepsTimingFunction>(timingFunction);
                 else if (defaultTimingFunctionIsLinearWithPoints && !m_someKeyframesUseLinearTimingFunctionWithPoints)
-                    m_someKeyframesUseLinearTimingFunctionWithPoints = !timingFunction || isLinearTimingFunctionWithPoints(timingFunction);
+                    m_someKeyframesUseLinearTimingFunctionWithPoints = !timingFunction || isLinearTimingFunctionWithPoints(timingFunction.get());
                 if (defaultTimingFunctionIsSteps == m_someKeyframesUseStepsTimingFunction && defaultTimingFunctionIsLinearWithPoints == m_someKeyframesUseLinearTimingFunctionWithPoints)
                     break;
             }
@@ -1791,10 +1758,10 @@ void KeyframeEffect::computeSomeKeyframesUseStepsOrLinearTimingFunctionWithPoint
     // For any other type of animation, we just need to check whether any of the keyframes specify
     // an explicit steps() or linear() timing function.
     for (auto& keyframe : m_blendingKeyframes) {
-        auto* timingFunction = keyframe.timingFunction();
+        RefPtr timingFunction = keyframe.timingFunction();
         if (!m_someKeyframesUseStepsTimingFunction && is<StepsTimingFunction>(timingFunction))
             m_someKeyframesUseStepsTimingFunction = true;
-        if (!m_someKeyframesUseLinearTimingFunctionWithPoints && isLinearTimingFunctionWithPoints(timingFunction))
+        if (!m_someKeyframesUseLinearTimingFunctionWithPoints && isLinearTimingFunctionWithPoints(timingFunction.get()))
             m_someKeyframesUseLinearTimingFunctionWithPoints = true;
         if (m_someKeyframesUseStepsTimingFunction && m_someKeyframesUseLinearTimingFunctionWithPoints)
             return;
@@ -1823,7 +1790,12 @@ void KeyframeEffect::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyl
     if (!renderer() || !animation())
         return;
 
-    auto computedTiming = getComputedTiming();
+    // In case we are running accelerated, we want to use a live, non-cached current time so that any geometry
+    // computation that may rely on this computed style has the most current information. Indeed, when using
+    // accelerated effects, we may not update animations in WebCore and thus will fail to have a meaningful
+    // cached current time.
+    auto useCachedCurrentTime = isRunningAccelerated() ? UseCachedCurrentTime::No : UseCachedCurrentTime::Yes;
+    auto computedTiming = getComputedTiming(useCachedCurrentTime);
     LOG_WITH_STREAM(Animations, stream << "KeyframeEffect " << this << " getAnimatedStyle - progress " << computedTiming.progress);
     if (!computedTiming.progress)
         return;
@@ -1934,7 +1906,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, cons
 
 const TimingFunction* KeyframeEffect::timingFunctionForBlendingKeyframe(const BlendingKeyframe& keyframe) const
 {
-    if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation())) {
+    if (RefPtr styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation())) {
         // If we're dealing with a CSS Animation, the timing function is specified either on the keyframe itself.
         if (is<CSSAnimation>(styleOriginatedAnimation)) {
             if (auto* timingFunction = keyframe.timingFunction())
@@ -1942,7 +1914,7 @@ const TimingFunction* KeyframeEffect::timingFunctionForBlendingKeyframe(const Bl
         }
 
         // Failing that, or for a CSS Transition, the timing function is inherited from the backing Animation object.
-        return styleOriginatedAnimation->backingAnimation().timingFunction();
+        return styleOriginatedAnimation->backingAnimationTimingFunction();
     }
 
     return keyframe.timingFunction();
@@ -1984,6 +1956,11 @@ bool KeyframeEffect::canBeAccelerated() const
     if (m_blendingKeyframes.hasDiscreteTransformInterval())
         return false;
 
+    if (RefPtr document = this->document()) {
+        if (document->quirks().shouldPreventKeyframeEffectAcceleration(*this))
+            return false;
+    }
+
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     if (threadedAnimationResolutionEnabled())
         return true;
@@ -2015,7 +1992,7 @@ bool KeyframeEffect::preventsAcceleration() const
     // to an element, either through the underlying style, or through a keyframe.
     if (auto target = targetStyleable()) {
         if (auto* lastStyleChangeEventStyle = target->lastStyleChangeEventStyle()) {
-            if (lastStyleChangeEventStyle->offsetPath())
+            if (lastStyleChangeEventStyle->hasOffsetPath())
                 return true;
         }
     }
@@ -2105,8 +2082,8 @@ void KeyframeEffect::animationDidTick()
     invalidate();
     updateAcceleratedActions();
 
-    if (auto* viewTimeline = activeViewTimeline())
-        computeMissingKeyframeOffsets(m_parsedKeyframes, viewTimeline, animation());
+    if (RefPtr viewTimeline = activeViewTimeline())
+        computeMissingKeyframeOffsets(m_parsedKeyframes, viewTimeline.get(), animation());
 }
 
 void KeyframeEffect::animationDidChangeTimingProperties()
@@ -2415,13 +2392,13 @@ void KeyframeEffect::applyPendingAcceleratedActions()
     }
 }
 
-Ref<const Animation> KeyframeEffect::backingAnimationForCompositedRenderer()
+Ref<const GraphicsLayerAnimation> KeyframeEffect::backingAnimationForCompositedRenderer()
 {
-    auto effectAnimation = animation();
+    Ref effectAnimation = *animation();
 
     // FIXME: The iterationStart and endDelay AnimationEffectTiming properties do not have
-    // corresponding Animation properties.
-    auto animation = Animation::create();
+    // corresponding GraphicsLayerAnimation properties.
+    auto animation = GraphicsLayerAnimation::create();
     animation->setDuration(iterationDuration().time()->seconds());
     animation->setDelay(delay().time()->seconds());
     animation->setIterationCount(iterations());
@@ -2432,39 +2409,39 @@ Ref<const Animation> KeyframeEffect::backingAnimationForCompositedRenderer()
     switch (fill()) {
     case FillMode::None:
     case FillMode::Auto:
-        animation->setFillMode(AnimationFillMode::None);
+        animation->setFillMode(GraphicsLayerAnimation::FillMode::None);
         break;
     case FillMode::Backwards:
-        animation->setFillMode(AnimationFillMode::Backwards);
+        animation->setFillMode(GraphicsLayerAnimation::FillMode::Backwards);
         break;
     case FillMode::Forwards:
-        animation->setFillMode(AnimationFillMode::Forwards);
+        animation->setFillMode(GraphicsLayerAnimation::FillMode::Forwards);
         break;
     case FillMode::Both:
-        animation->setFillMode(AnimationFillMode::Both);
+        animation->setFillMode(GraphicsLayerAnimation::FillMode::Both);
         break;
     }
 
     switch (direction()) {
     case PlaybackDirection::Normal:
-        animation->setDirection(Animation::Direction::Normal);
+        animation->setDirection(GraphicsLayerAnimation::Direction::Normal);
         break;
     case PlaybackDirection::Alternate:
-        animation->setDirection(Animation::Direction::Alternate);
+        animation->setDirection(GraphicsLayerAnimation::Direction::Alternate);
         break;
     case PlaybackDirection::Reverse:
-        animation->setDirection(Animation::Direction::Reverse);
+        animation->setDirection(GraphicsLayerAnimation::Direction::Reverse);
         break;
     case PlaybackDirection::AlternateReverse:
-        animation->setDirection(Animation::Direction::AlternateReverse);
+        animation->setDirection(GraphicsLayerAnimation::Direction::AlternateReverse);
         break;
     }
 
     // In the case of CSS Animations, we must set the default timing function for keyframes to match
     // the current value set for animation-timing-function on the target element which affects only
     // keyframes and not the animation-wide timing.
-    if (auto* cssAnimation = dynamicDowncast<CSSAnimation>(effectAnimation))
-        animation->setDefaultTimingFunctionForKeyframes(cssAnimation->backingAnimation().timingFunction());
+    if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(effectAnimation))
+        animation->setDefaultTimingFunctionForKeyframes(cssAnimation->backingStyleAnimation().timingFunction().value.ptr());
 
     return animation;
 }
@@ -2556,7 +2533,7 @@ bool KeyframeEffect::computeTransformedExtentViaTransformList(const FloatRect& r
     FloatRect floatBounds = bounds;
     FloatPoint transformOrigin;
 
-    bool applyTransformOrigin = style.transform().hasTransformOfType<TransformOperation::Type::Rotate>() || style.transform().affectedByTransformOrigin();
+    bool applyTransformOrigin = style.transform().hasTransformOfType<Style::TransformFunctionType::Rotate>() || style.transform().affectedByTransformOrigin();
     if (applyTransformOrigin) {
         transformOrigin = style.computeTransformOrigin(rendererBox).xy();
         // Ignore transformOriginZ because we'll bail if we encounter any 3D transforms.
@@ -2564,7 +2541,7 @@ bool KeyframeEffect::computeTransformedExtentViaTransformList(const FloatRect& r
     }
 
     for (const auto& operation : style.transform()) {
-        if (operation->type() == TransformOperation::Type::Rotate) {
+        if (operation->type() == Style::TransformFunctionType::Rotate) {
             // For now, just treat this as a full rotation. This could take angle into account to reduce inflation.
             floatBounds = boundsOfRotatingRect(floatBounds);
         } else {
@@ -2573,7 +2550,7 @@ bool KeyframeEffect::computeTransformedExtentViaTransformList(const FloatRect& r
             if (!transform.isAffine())
                 return false;
 
-            if (operation->type() == TransformOperation::Type::Matrix || operation->type() == TransformOperation::Type::Matrix3D) {
+            if (operation->type() == Style::TransformFunctionType::Matrix || operation->type() == Style::TransformFunctionType::Matrix3D) {
                 TransformationMatrix::Decomposed2Type toDecomp;
                 // Any rotation prevents us from using a simple start/end rect union.
                 if (!transform.decompose2(toDecomp) || toDecomp.angle)
@@ -2647,8 +2624,8 @@ std::optional<double> KeyframeEffect::progressUntilNextStep(double iterationProg
         // This will be a linear timing function unless we're dealing with a CSS Animation which might have
         // the default timing function for its keyframes defined on its backing Animation object.
         if (!i) {
-            if (auto* cssAnimation = dynamicDowncast<CSSAnimation>(animation()))
-                return progressUntilNextStepInInterval(0, intervalEndProgress, cssAnimation->backingAnimation().timingFunction());
+            if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation()))
+                return progressUntilNextStepInInterval(0, intervalEndProgress, cssAnimation->backingStyleAnimation().timingFunction().value.ptr());
             return std::nullopt;
         }
 
@@ -2659,8 +2636,8 @@ std::optional<double> KeyframeEffect::progressUntilNextStep(double iterationProg
     // This will be a linear timing function unless we're dealing with a CSS Animation which might have
     // the default timing function for its keyframes defined on its backing Animation object.
     auto& lastExplicitKeyframe = m_blendingKeyframes[m_blendingKeyframes.size() - 1];
-    if (auto* cssAnimation = dynamicDowncast<CSSAnimation>(animation()))
-        return progressUntilNextStepInInterval(lastExplicitKeyframe.offset(), 1, cssAnimation->backingAnimation().timingFunction());
+    if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation()))
+        return progressUntilNextStepInInterval(lastExplicitKeyframe.offset(), 1, cssAnimation->backingStyleAnimation().timingFunction().value.ptr());
 
     // In any other case, we are not dealing with an interval with a steps() timing function.
     return std::nullopt;
@@ -2733,7 +2710,7 @@ void KeyframeEffect::setComposite(CompositeOperation compositeOperation)
 
 CompositeOperation KeyframeEffect::bindingsComposite() const
 {
-    if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation()))
+    if (RefPtr styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation()))
         styleOriginatedAnimation->flushPendingStyleChanges();
     return composite();
 }
@@ -2741,7 +2718,7 @@ CompositeOperation KeyframeEffect::bindingsComposite() const
 void KeyframeEffect::setBindingsComposite(CompositeOperation compositeOperation)
 {
     setComposite(compositeOperation);
-    if (auto* cssAnimation = dynamicDowncast<CSSAnimation>(animation()))
+    if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation()))
         cssAnimation->effectCompositeOperationWasSetUsingBindings();
 }
 
@@ -2790,9 +2767,9 @@ void KeyframeEffect::computeHasImplicitKeyframeForAcceleratedProperty()
             // We keep three property lists, one which contains all properties seen across keyframes
             // which will be filtered eventually to only contain implicit properties, one containing
             // properties seen on the 0% keyframe and one containing properties seen on the 100% keyframe.
-            UncheckedKeyHashSet<CSSPropertyID> implicitProperties;
-            UncheckedKeyHashSet<CSSPropertyID> explicitZeroProperties;
-            UncheckedKeyHashSet<CSSPropertyID> explicitOneProperties;
+            HashSet<CSSPropertyID> implicitProperties;
+            HashSet<CSSPropertyID> explicitZeroProperties;
+            HashSet<CSSPropertyID> explicitOneProperties;
             auto styleProperties = keyframe.style;
             for (auto propertyReference : styleProperties.get()) {
                 auto computedOffset = keyframe.computedOffset;
@@ -3085,7 +3062,7 @@ void KeyframeEffect::lastStyleChangeEventStyleDidChange(const RenderStyle* previ
 #endif
 
     auto hasMotionPath = [](const RenderStyle* style) {
-        return style && style->offsetPath();
+        return style && style->hasOffsetPath();
     };
 
     if (hasMotionPath(previousStyle) != hasMotionPath(currentStyle))
@@ -3148,7 +3125,7 @@ void KeyframeEffect::updateAssociatedThreadedEffectStack(const std::optional<con
     if (auto currentTarget = targetStyleable())
         acceleratedEffectStackUpdater.updateEffectStackForTarget(*currentTarget);
 
-    if (auto* animation = this->animation())
+    if (RefPtr animation = this->animation())
         animation->acceleratedStateDidChange();
 }
 #endif
@@ -3186,12 +3163,12 @@ const ViewTimeline* KeyframeEffect::activeViewTimeline()
 
     RefPtr viewTimeline = dynamicDowncast<ViewTimeline>(animation->timeline());
     if (viewTimeline && viewTimeline->currentTime())
-        return viewTimeline.get();
+        return viewTimeline.unsafeGet();
 
     return nullptr;
 }
 
-void KeyframeEffect::animationProgressBasedTimelineSourceDidChangeMetrics(const TimelineRange& animationAttachmentRange)
+void KeyframeEffect::animationProgressBasedTimelineSourceDidChangeMetrics(const Style::SingleAnimationRange& animationAttachmentRange)
 {
     AnimationEffect::animationProgressBasedTimelineSourceDidChangeMetrics(animationAttachmentRange);
     m_needsComputedKeyframeOffsetsUpdate = true;

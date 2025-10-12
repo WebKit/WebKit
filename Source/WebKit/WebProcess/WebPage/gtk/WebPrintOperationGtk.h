@@ -76,7 +76,7 @@ private:
 #endif
 
     struct PrintPagesData {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(PrintPagesData);
         explicit PrintPagesData(WebPrintOperationGtk*);
 
         size_t collatedCopiesLeft() const { return collatedCopies > 1 ? collatedCopies - collated - 1 : 0; }

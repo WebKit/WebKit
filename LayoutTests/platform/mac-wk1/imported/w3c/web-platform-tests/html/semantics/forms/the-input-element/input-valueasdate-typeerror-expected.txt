@@ -1,0 +1,18 @@
+input_valueAsDate_TypeError
+
+
+Harness Error (FAIL), message = 1 duplicate test name: "valueAsDate setter with non-Date object (input type text)"
+
+FAIL valueAsDate setter with non-Date object (input type text) assert_throws_js: function "() => input.valueAsDate = {}" threw object "InvalidStateError: The object is in an invalid state." ("InvalidStateError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL valueAsDate setter with non-Date object (input type text) assert_throws_js: function "() => input.valueAsDate = {}" threw object "InvalidStateError: The object is in an invalid state." ("InvalidStateError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL valueAsDate setter with non-Date object (input type text) assert_throws_js: function "() => input.valueAsDate = {}" threw object "InvalidStateError: The object is in an invalid state." ("InvalidStateError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL valueAsDate setter with non-Date object (input type text) assert_throws_js: function "() => input.valueAsDate = {}" threw object "InvalidStateError: The object is in an invalid state." ("InvalidStateError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+

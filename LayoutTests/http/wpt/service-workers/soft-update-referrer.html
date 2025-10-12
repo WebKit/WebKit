@@ -1,0 +1,56 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+</head>
+<body>
+<script>
+function with_iframe(url) {
+    return new Promise(function(resolve) {
+        var frame = document.createElement('iframe');
+        frame.className = 'test-iframe';
+        frame.src = url;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+const scriptURL = "resources/soft-update-service-worker.py?token=" + self.token();
+
+promise_test(async (test) => {
+    let registration = await navigator.serviceWorker.getRegistration("resources/");
+    if (registration)
+        await registration.unregister();
+    registration = await navigator.serviceWorker.register(scriptURL, { scope : "resources/" });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    await new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+promise_test(async (test) => {
+    let iframe = await with_iframe("resources/empty.html");
+    iframe.remove();
+
+    let counter = 0;
+    const expectedResult = window.location.origin + "/";
+    do {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        const response = await fetch(scriptURL + "&get_referrer");
+        const text = await response.text();
+        if (text.length)
+            result = text;
+    } while (result != expectedResult && ++counter < 100);
+
+    assert_equals(result, expectedResult);
+}, "Load iframe to do soft update");
+</script>
+</body>
+</html>

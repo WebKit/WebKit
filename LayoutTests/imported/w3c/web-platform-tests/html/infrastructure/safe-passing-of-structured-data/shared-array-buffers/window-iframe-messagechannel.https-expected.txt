@@ -1,9 +1,7 @@
-CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/iframe-messagechannel-site-failure.html because it violates the resource's Cross-Origin-Resource-Policy response header.
-
-Harness Error (TIMEOUT), message = null
+ALERT: [object SharedArrayBuffer]
 
 PASS postMessaging to a same-origin iframe via MessageChannel allows them to see each others' modifications
-TIMEOUT postMessaging to a same-site iframe via MessageChannel should fail Test timed out
-NOTRUN postMessaging to a cross-site iframe via MessageChannel should fail
-NOTRUN postMessaging with a MessageChannel that's been cross-site should succeed
+FAIL postMessaging to a same-site iframe via MessageChannel should fail assert_equals: expected "messageerror event received" but got "message event received"
+FAIL postMessaging to a cross-site iframe via MessageChannel should fail assert_equals: expected "messageerror event received" but got "message event received"
+PASS postMessaging with a MessageChannel that's been cross-site should succeed
 

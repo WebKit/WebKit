@@ -26,6 +26,14 @@
 #include <QQmlContext>
 #include <QUrl>
 
+class UrlHelper : public QObject {
+    Q_OBJECT
+public:
+    Q_INVOKABLE QUrl parseUserUrl(const QString &input) {
+        return QUrl::fromUserInput(input);
+    }
+};
+
 int main(int argc, char* argv[])
 {
 #if defined(WEBKIT_INJECTED_BUNDLE_PATH)
@@ -45,12 +53,16 @@ int main(int argc, char* argv[])
     parser.addPositionalArgument("initialUrl", "The URL to open.");
     QStringList arguments = app.arguments();
     parser.process(arguments);
-    const QString initialUrl = parser.positionalArguments().isEmpty() ?
+    const QString userInput = parser.positionalArguments().isEmpty() ?
         QStringLiteral("https://wpewebkit.org") : parser.positionalArguments().first();
 
     QQmlApplicationEngine engine;
     QQmlContext* context = engine.rootContext();
-    context->setContextProperty(QStringLiteral("initialUrl"), QUrl(initialUrl));
+    QUrl initialUrl = QUrl::fromUserInput(userInput);
+    context->setContextProperty(QStringLiteral("initialUrl"), initialUrl);
+
+    UrlHelper urlHelper;
+    context->setContextProperty(QStringLiteral("urlHelper"), &urlHelper);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())
@@ -58,3 +70,5 @@ int main(int argc, char* argv[])
 
     return app.exec();
 }
+
+#include "main.moc"

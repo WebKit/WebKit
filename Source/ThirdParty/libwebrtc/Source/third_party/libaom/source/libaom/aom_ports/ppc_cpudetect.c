@@ -12,14 +12,15 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdint.h>
-#include <asm/cputable.h>
-#include <linux/auxvec.h>
 
 #include "config/aom_config.h"
 
 #include "aom_ports/ppc.h"
 
 #if CONFIG_RUNTIME_CPU_DETECT
+#include <asm/cputable.h>
+#include <linux/auxvec.h>
+
 static int cpu_env_flags(int *flags) {
   char *env;
   env = getenv("AOM_SIMD_CAPS");

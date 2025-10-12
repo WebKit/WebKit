@@ -1,46 +1,7 @@
 
-PASS # AUDIT TASK RUNNER STARTED.
-PASS Executing "setup"
-PASS Executing "without-audio-node-options"
-PASS Executing "audio-node-options"
-PASS Executing "channel-count"
-PASS Executing "channel-count-mode"
-PASS Executing "channel-interpretation"
-PASS Audit report
-PASS > [setup]
-PASS < [setup] All assertions passed. (total 0 assertions)
-PASS > [without-audio-node-options]
-PASS   Creating AudioWOrkletNode without options did not throw an exception.
-PASS   testNode is instance of AudioWorkletNode is equal to true.
-PASS   testNode.numberOfInputs (default) is equal to 1.
-PASS   testNode.numberOfOutputs (default) is equal to 1.
-PASS   testNode.channelCount (default) is equal to 2.
-PASS   testNode.channelCountMode (default) is equal to max.
-PASS   testNode.channelInterpretation (default) is equal to speakers.
-PASS < [without-audio-node-options] All assertions passed. (total 7 assertions)
-PASS > [audio-node-options]
-PASS   Creating AudioWOrkletNode with options: {"numberOfInputs":7,"numberOfOutputs":18,"channelCount":4,"channelCountMode":"clamped-max","channelInterpretation":"discrete"} did not throw an exception.
-PASS   testNode.numberOfInputs is equal to 7.
-PASS   testNode.numberOfOutputs is equal to 18.
-PASS   testNode.channelCount is equal to 4.
-PASS   testNode.channelCountMode is equal to clamped-max.
-PASS   testNode.channelInterpretation is equal to discrete.
-PASS < [audio-node-options] All assertions passed. (total 6 assertions)
-PASS > [channel-count]
-PASS   testNode.channelCount is equal to 17.
-PASS   Creating AudioWorkletNode with channelCount 0 threw NotSupportedError: "Channel count cannot be 0".
-PASS   Creating AudioWorkletNode with channelCount 33 threw NotSupportedError: "Channel count exceeds maximum limit".
-PASS < [channel-count] All assertions passed. (total 3 assertions)
-PASS > [channel-count-mode]
-PASS   testNode.channelCountMode (set via options.max) is equal to max.
-PASS   testNode.channelCountMode (set via options.clamped-max) is equal to clamped-max.
-PASS   testNode.channelCountMode (set via options.explicit) is equal to explicit.
-PASS   Creating AudioWorkletNode with channelCountMode "foobar" threw TypeError: "Type error".
-PASS < [channel-count-mode] All assertions passed. (total 4 assertions)
-PASS > [channel-interpretation]
-PASS   testNode.channelInterpretation (set via options.speakers) is equal to speakers.
-PASS   testNode.channelInterpretation (set via options.discrete) is equal to discrete.
-PASS   Creating AudioWorkletNode with channelInterpretation "foobar" threw TypeError: "Type error".
-PASS < [channel-interpretation] All assertions passed. (total 3 assertions)
-PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully.
+PASS Construct AudioWorkletNode without options and check default values
+PASS Construct AudioWorkletNode with explicit AudioNodeOptions
+PASS Validate channelCount boundaries for AudioWorkletNode
+PASS Validate allowed and disallowed channelCountMode options
+PASS Validate allowed and disallowed channelInterpretation values
 

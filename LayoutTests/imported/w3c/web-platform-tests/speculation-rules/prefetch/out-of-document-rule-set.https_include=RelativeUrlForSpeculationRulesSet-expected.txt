@@ -1,0 +1,3 @@
+
+PASS It should fetch a speculation rules set using its relative URL.
+

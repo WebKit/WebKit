@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ElementIteratorInlines.h"
-#include "TypedElementDescendantIterator.h"
+#include <WebCore/ElementIteratorInlines.h>
+#include <WebCore/TypedElementDescendantIterator.h>
 
 namespace WebCore {
 

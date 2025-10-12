@@ -32,6 +32,7 @@
 #include "CryptoAlgorithmRsaPssParams.h"
 #include "CryptoDigestAlgorithm.h"
 #include "CryptoKeyRSA.h"
+#include "ExceptionOr.h"
 
 namespace WebCore {
 
@@ -53,7 +54,7 @@ static ExceptionOr<Vector<uint8_t>> signRSA_PSS(CryptoAlgorithmIdentifier hash, 
     Vector<uint8_t> signature(keyLength / 8); // Per https://tools.ietf.org/html/rfc3447#section-8.1.1
     size_t signatureSize = signature.size();
 
-    CCCryptorStatus status = CCRSACryptorSign(key, ccRSAPSSPadding, digestData.data(), digestData.size(), digestAlgorithm, saltLength, signature.data(), &signatureSize);
+    CCCryptorStatus status = CCRSACryptorSign(key, ccRSAPSSPadding, digestData.span().data(), digestData.size(), digestAlgorithm, saltLength, signature.mutableSpan().data(), &signatureSize);
     if (status)
         return Exception { ExceptionCode::OperationError };
 
@@ -75,7 +76,7 @@ static ExceptionOr<bool> verifyRSA_PSS(CryptoAlgorithmIdentifier hash, const Pla
     digest->addBytes(data.span());
     auto digestData = digest->computeHash();
 
-    auto status = CCRSACryptorVerify(key, ccRSAPSSPadding, digestData.data(), digestData.size(), digestAlgorithm, saltLength, signature.data(), signature.size());
+    auto status = CCRSACryptorVerify(key, ccRSAPSSPadding, digestData.span().data(), digestData.size(), digestAlgorithm, saltLength, signature.span().data(), signature.size());
     if (!status)
         return true;
     return false;

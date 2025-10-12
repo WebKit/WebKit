@@ -1120,7 +1120,7 @@ static inline void var_filter_block2d_bil_16x(const uint8_t *src_ptr,
       const uint8_t *ref_ptr, int ref_stride, uint32_t *sse) {                 \
     uint8_t temp2[16 * (H)];                                                   \
     var_filter_block2d_bil_16x(src_ptr, src_stride, x_offset, y_offset, temp2, \
-                               ((H)-2) / 2);                                   \
+                               ((H) - 2) / 2);                                 \
                                                                                \
     return vpx_variance16x##H##_mmi(temp2, 16, ref_ptr, ref_stride, sse);      \
   }
@@ -1219,7 +1219,7 @@ static inline void var_filter_block2d_bil_8x(const uint8_t *src_ptr,
       const uint8_t *ref_ptr, int ref_stride, uint32_t *sse) {                \
     uint8_t temp2[8 * (H)];                                                   \
     var_filter_block2d_bil_8x(src_ptr, src_stride, x_offset, y_offset, temp2, \
-                              ((H)-2) / 2);                                   \
+                              ((H) - 2) / 2);                                 \
                                                                               \
     return vpx_variance8x##H##_mmi(temp2, 8, ref_ptr, ref_stride, sse);       \
   }
@@ -1315,7 +1315,7 @@ static inline void var_filter_block2d_bil_4x(const uint8_t *src_ptr,
       const uint8_t *ref_ptr, int ref_stride, uint32_t *sse) {                \
     uint8_t temp2[4 * (H)];                                                   \
     var_filter_block2d_bil_4x(src_ptr, src_stride, x_offset, y_offset, temp2, \
-                              ((H)-2) / 2);                                   \
+                              ((H) - 2) / 2);                                 \
                                                                               \
     return vpx_variance4x##H##_mmi(temp2, 4, ref_ptr, ref_stride, sse);       \
   }

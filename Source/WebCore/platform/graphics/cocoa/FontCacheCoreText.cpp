@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #include "FontInterrogation.h"
 #include "FontMetricsNormalization.h"
 #include "FontPaletteValues.h"
+#include "Logging.h"
 #include "StyleFontSizeFunctions.h"
 #include "SystemFontDatabaseCoreText.h"
 #include "UnrealizedCoreTextFont.h"
@@ -48,6 +49,8 @@
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/URLHash.h>
+#include <wtf/cf/NotificationCenterCF.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
@@ -175,19 +178,19 @@ static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCe
 
 void FontCache::platformInit()
 {
-    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, &fontCacheRegisteredFontsChangedNotificationCallback, kCTFontManagerRegisteredFontsChangedNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenterSingleton(), this, &fontCacheRegisteredFontsChangedNotificationCallback, kCTFontManagerRegisteredFontsChangedNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
 
 #if PLATFORM(IOS_FAMILY)
-    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, &fontCacheRegisteredFontsChangedNotificationCallback, getUIContentSizeCategoryDidChangeNotificationName(), nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenterSingleton(), this, &fontCacheRegisteredFontsChangedNotificationCallback, getUIContentSizeCategoryDidChangeNotificationName(), nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
 #endif
 
-    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, &fontCacheRegisteredFontsChangedNotificationCallback, kAXSEnhanceTextLegibilityChangedNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenterSingleton(), this, &fontCacheRegisteredFontsChangedNotificationCallback, kAXSEnhanceTextLegibilityChangedNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
 
 #if PLATFORM(MAC)
-    CFNotificationCenterRef center = CFNotificationCenterGetLocalCenter();
+    CFNotificationCenterRef center = CFNotificationCenterGetLocalCenterSingleton();
     const CFStringRef notificationName = kCFLocaleCurrentLocaleDidChangeNotification;
 #else
-    CFNotificationCenterRef center = CFNotificationCenterGetDarwinNotifyCenter();
+    CFNotificationCenterRef center = CFNotificationCenterGetDarwinNotifyCenterSingleton();
     const CFStringRef notificationName = CFSTR("com.apple.language.changed");
 #endif
     CFNotificationCenterAddObserver(center, this, &fontCacheRegisteredFontsChangedNotificationCallback, notificationName, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
@@ -229,7 +232,7 @@ bool FontCache::isSystemFontForbiddenForEditing(const String& fontFamily)
 static CTFontSymbolicTraits computeTraits(const FontDescription& fontDescription)
 {
     CTFontSymbolicTraits traits = 0;
-    if (fontDescription.italic())
+    if (fontDescription.fontStyleSlope())
         traits |= kCTFontTraitItalic;
     if (isFontWeightBold(fontDescription.weight()))
         traits |= kCTFontTraitBold;
@@ -254,7 +257,7 @@ SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& f
 
     CTFontSymbolicTraits desiredTraits = computeTraits(fontDescription);
     CTFontSymbolicTraits actualTraits = 0;
-    if (isFontWeightBold(fontDescription.weight()) || isItalic(fontDescription.italic())) {
+    if (isFontWeightBold(fontDescription.weight()) || isItalic(fontDescription.fontStyleSlope())) {
         if (shouldComputePhysicalTraits == ShouldComputePhysicalTraits::Yes)
             actualTraits = CTFontGetPhysicalSymbolicTraits(font);
         else
@@ -290,7 +293,7 @@ public:
     static Lock lock;
 
 private:
-    UncheckedKeyHashSet<String, ASCIICaseInsensitiveHash> m_families;
+    HashSet<String, ASCIICaseInsensitiveHash> m_families;
 };
 
 Lock FontCacheAllowlist::lock;
@@ -556,14 +559,12 @@ static std::optional<SpecialCaseFontLookupResult> fontDescriptorWithFamilySpecia
     // FIXME: See comment in FontCascadeDescription::effectiveFamilyAt() in FontDescriptionCocoa.cpp
     std::optional<SystemFontKind> systemDesign;
 
-#if HAVE(DESIGN_SYSTEM_UI_FONTS)
     if (equalLettersIgnoringASCIICase(family, "ui-serif"_s))
         systemDesign = SystemFontKind::UISerif;
     else if (equalLettersIgnoringASCIICase(family, "ui-monospace"_s))
         systemDesign = SystemFontKind::UIMonospace;
     else if (equalLettersIgnoringASCIICase(family, "ui-rounded"_s))
         systemDesign = SystemFontKind::UIRounded;
-#endif
 
     if (equalLettersIgnoringASCIICase(family, "-webkit-system-font"_s) || equalLettersIgnoringASCIICase(family, "-apple-system"_s) || equalLettersIgnoringASCIICase(family, "-apple-system-font"_s) || equalLettersIgnoringASCIICase(family, "system-ui"_s) || equalLettersIgnoringASCIICase(family, "ui-sans-serif"_s)) {
         ASSERT(!systemDesign);
@@ -666,8 +667,41 @@ static void autoActivateFont(const String& name, CGFloat size)
 }
 #endif
 
+static void registerFontIfNeeded(const String& family) WTF_REQUIRES_LOCK(userInstalledFontMapLock())
+{
+    if (auto fontURL = userInstalledFontMap().getOptional(family)) {
+        RELEASE_LOG_FORWARDABLE(Fonts, FONTCACHECORETEXT_REGISTER_FONT, family.utf8(), fontURL->string().utf8());
+        RetainPtr cfURL = fontURL->createCFURL();
+
+        CFErrorRef error = nullptr;
+        if (!CTFontManagerRegisterFontsForURL(cfURL.get(), kCTFontManagerScopeProcess, &error)) {
+            RetainPtr descriptionCF = adoptCF(CFErrorCopyDescription(error));
+            String error(descriptionCF.get());
+            RELEASE_LOG_FORWARDABLE(Fonts, FONTCACHECORETEXT_REGISTER_ERROR, family.utf8(), error.utf8());
+        }
+
+        userInstalledFontMap().removeIf([&](auto& keyAndValue) {
+            return keyAndValue.value == fontURL;
+        });
+    }
+}
+
 std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
 {
+    {
+        Locker locker(userInstalledFontMapLock());
+        if (!userInstalledFontMap().isEmpty()) {
+            auto fontFamily = family.string().convertToASCIILowercase();
+            registerFontIfNeeded(fontFamily);
+            auto fontNames = userInstalledFontFamilyMap().find(fontFamily);
+            if (fontNames != userInstalledFontFamilyMap().end()) {
+                for (auto& fontName : fontNames->value)
+                    registerFontIfNeeded(fontName);
+                userInstalledFontFamilyMap().remove(fontNames);
+            }
+        }
+    }
+
     auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     auto& fontDatabase = database(fontDescription.shouldAllowUserInstalledFonts());
     auto font = fontWithFamily(fontDatabase, family, fontDescription, fontCreationContext, size, options);
@@ -714,7 +748,7 @@ void FontCache::platformPurgeInactiveFontData()
 }
 
 #if PLATFORM(IOS_FAMILY)
-static inline bool isArabicCharacter(UChar character)
+static inline bool isArabicCharacter(char16_t character)
 {
     return character >= 0x0600 && character <= 0x06FF;
 }
@@ -746,7 +780,7 @@ static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValu
     // (used to?) perform poorly. In order to speed up the browser, we block those fonts, and use other faster fonts instead.
     // However, this performance analysis was done, like, 10 years ago, and the probability that these fonts are still too slow
     // seems quite low. We should re-analyze performance to see if we can delete this code.
-    UChar firstCharacter = characterCluster[0];
+    char16_t firstCharacter = characterCluster[0];
     if (isArabicCharacter(firstCharacter)) {
         auto familyName = adoptCF(static_cast<CFStringRef>(CTFontCopyAttribute(result.get(), kCTFontFamilyNameAttribute)));
         if (fontFamilyShouldNotBeUsedForArabic(familyName.get())) {
@@ -796,11 +830,11 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
 
 ASCIILiteral FontCache::platformAlternateFamilyName(const String& familyName)
 {
-    static const UChar heitiString[] = { 0x9ed1, 0x4f53 };
-    static const UChar songtiString[] = { 0x5b8b, 0x4f53 };
-    static const UChar weiruanXinXiMingTi[] = { 0x5fae, 0x8edf, 0x65b0, 0x7d30, 0x660e, 0x9ad4 };
-    static const UChar weiruanYaHeiString[] = { 0x5fae, 0x8f6f, 0x96c5, 0x9ed1 };
-    static const UChar weiruanZhengHeitiString[] = { 0x5fae, 0x8edf, 0x6b63, 0x9ed1, 0x9ad4 };
+    static const char16_t heitiString[] = { 0x9ed1, 0x4f53 };
+    static const char16_t songtiString[] = { 0x5b8b, 0x4f53 };
+    static const char16_t weiruanXinXiMingTi[] = { 0x5fae, 0x8edf, 0x65b0, 0x7d30, 0x660e, 0x9ad4 };
+    static const char16_t weiruanYaHeiString[] = { 0x5fae, 0x8f6f, 0x96c5, 0x9ed1 };
+    static const char16_t weiruanZhengHeitiString[] = { 0x5fae, 0x8edf, 0x6b63, 0x9ed1, 0x9ad4 };
 
     static constexpr ASCIILiteral songtiSC = "Songti SC"_s;
     static constexpr ASCIILiteral songtiTC = "Songti TC"_s;
@@ -988,6 +1022,24 @@ void FontCache::platformReleaseNoncriticalMemory()
     m_systemFontDatabaseCoreText.clear();
     m_fontFamilySpecificationCoreTextCache.clear();
 #endif
+}
+
+HashMap<String, URL>& userInstalledFontMap()
+{
+    static NeverDestroyed<HashMap<String, URL>> fontMap;
+    return fontMap.get();
+}
+
+HashMap<String, Vector<String>>& userInstalledFontFamilyMap()
+{
+    static NeverDestroyed<HashMap<String, Vector<String>>> fontFamilyMap;
+    return fontFamilyMap.get();
+}
+
+Lock& userInstalledFontMapLock()
+{
+    static Lock lock;
+    return lock;
 }
 
 }

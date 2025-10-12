@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources
 Test Description: Tests that the mouse events with some keys pressed.
 Press Alt, Control, Meta, Shift keys and move the mouse
 

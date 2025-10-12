@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "FontSelectionAlgorithm.h"
-#include "TextFlags.h"
 #include <CoreText/CoreText.h>
+#include <WebCore/FontSelectionAlgorithm.h>
+#include <WebCore/TextFlags.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RobinHoodHashMap.h>
@@ -51,7 +51,7 @@ public:
     };
 
     struct InstalledFontFamily {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(InstalledFontFamily);
 
         InstalledFontFamily() = default;
 

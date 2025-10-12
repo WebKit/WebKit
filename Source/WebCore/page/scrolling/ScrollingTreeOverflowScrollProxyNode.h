@@ -27,8 +27,8 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "ScrollingPlatformLayer.h"
-#include "ScrollingTreeNode.h"
+#include <WebCore/ScrollingPlatformLayer.h>
+#include <WebCore/ScrollingTreeNode.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

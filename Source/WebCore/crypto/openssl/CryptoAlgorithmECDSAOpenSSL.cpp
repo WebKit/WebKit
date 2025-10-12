@@ -51,7 +51,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgo
 
     // We use ECDSA_do_sign rather than EVP API because the latter handles ECDSA signature in DER format
     // while this function is supposed to return simply concatinated "r" and "s".
-    auto sig = ECDSASigPtr(ECDSA_do_sign(digest->data(), digest->size(), ecKey));
+    auto sig = ECDSASigPtr(ECDSA_do_sign(digest->span().data(), digest->size(), ecKey));
     if (!sig)
         return Exception { ExceptionCode::OperationError };
 
@@ -75,8 +75,8 @@ ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcds
         return false;
     
     auto sig = ECDSASigPtr(ECDSA_SIG_new());
-    auto r = BN_bin2bn(signature.data(), keySizeInBytes, nullptr);
-    auto s = BN_bin2bn(signature.data() + keySizeInBytes, keySizeInBytes, nullptr);
+    auto r = BN_bin2bn(signature.span().data(), keySizeInBytes, nullptr);
+    auto s = BN_bin2bn(signature.subspan(keySizeInBytes).data(), keySizeInBytes, nullptr);
 
     if (!ECDSA_SIG_set0(sig.get(), r, s))
         return Exception { ExceptionCode::OperationError };
@@ -93,7 +93,7 @@ ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcds
     if (!ecKey)
         return Exception { ExceptionCode::OperationError };
 
-    int ret = ECDSA_do_verify(digest->data(), digest->size(), sig.get(), ecKey);
+    int ret = ECDSA_do_verify(digest->span().data(), digest->size(), sig.get(), ecKey);
     return ret == 1;
 }
 

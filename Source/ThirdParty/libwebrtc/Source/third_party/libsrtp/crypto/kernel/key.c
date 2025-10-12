@@ -77,14 +77,6 @@ srtp_err_status_t srtp_key_limit_clone(srtp_key_limit_t original,
     return srtp_err_status_ok;
 }
 
-srtp_err_status_t srtp_key_limit_check(const srtp_key_limit_t key)
-{
-    if (key->state == srtp_key_state_expired) {
-        return srtp_err_status_key_expired;
-    }
-    return srtp_err_status_ok;
-}
-
 srtp_key_event_t srtp_key_limit_update(srtp_key_limit_t key)
 {
 #ifdef NO_64BIT_MATH

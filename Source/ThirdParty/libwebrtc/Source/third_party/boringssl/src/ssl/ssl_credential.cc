@@ -1,16 +1,16 @@
-/* Copyright (c) 2024, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2024 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <openssl/ssl.h>
 
@@ -18,8 +18,9 @@
 
 #include <openssl/span.h>
 
-#include "internal.h"
 #include "../crypto/internal.h"
+#include "../crypto/spake2plus/internal.h"
+#include "internal.h"
 
 
 BSSL_NAMESPACE_BEGIN
@@ -27,15 +28,15 @@ BSSL_NAMESPACE_BEGIN
 // new_leafless_chain returns a fresh stack of buffers set to {nullptr}.
 static UniquePtr<STACK_OF(CRYPTO_BUFFER)> new_leafless_chain(void) {
   UniquePtr<STACK_OF(CRYPTO_BUFFER)> chain(sk_CRYPTO_BUFFER_new_null());
-  if (!chain ||
-      !sk_CRYPTO_BUFFER_push(chain.get(), nullptr)) {
+  if (!chain || !sk_CRYPTO_BUFFER_push(chain.get(), nullptr)) {
     return nullptr;
   }
 
   return chain;
 }
 
-bool ssl_get_credential_list(SSL_HANDSHAKE *hs, Array<SSL_CREDENTIAL *> *out) {
+bool ssl_get_full_credential_list(SSL_HANDSHAKE *hs,
+                                  Array<SSL_CREDENTIAL *> *out) {
   CERT *cert = hs->config->cert.get();
   // Finish filling in the legacy credential if needed.
   if (!cert->x509_method->ssl_auto_chain_if_needed(hs)) {
@@ -63,27 +64,41 @@ bool ssl_get_credential_list(SSL_HANDSHAKE *hs, Array<SSL_CREDENTIAL *> *out) {
 
 bool ssl_credential_matches_requested_issuers(SSL_HANDSHAKE *hs,
                                               const SSL_CREDENTIAL *cred) {
-  if (cred->must_match_issuer) {
-    // If we have names sent by the CA extension, and this
-    // credential matches it, it is good.
-    if (hs->ca_names != nullptr) {
-      for (const CRYPTO_BUFFER *ca_name : hs->ca_names.get()) {
-        if (cred->ChainContainsIssuer(MakeConstSpan(
-                CRYPTO_BUFFER_data(ca_name), CRYPTO_BUFFER_len(ca_name)))) {
-          return true;
-        }
-      }
-    }
-    // TODO(bbe): Other forms of issuer matching go here.
-
-    // If this cred must match a requested issuer and we
-    // get here, we should not use it.
-    return false;
+  if (!cred->must_match_issuer) {
+    // This credential does not need to match a requested issuer, so
+    // it is good to use without a match.
+    return true;
   }
 
-  // This cred does not need to match a requested issuer, so
-  // it is good to use without a match.
-  return true;
+  // If we have names sent by the CA extension, and this
+  // credential matches it, it is good.
+  if (hs->ca_names != nullptr) {
+    for (const CRYPTO_BUFFER *ca_name : hs->ca_names.get()) {
+      if (cred->ChainContainsIssuer(
+              Span(CRYPTO_BUFFER_data(ca_name), CRYPTO_BUFFER_len(ca_name)))) {
+        return true;
+      }
+    }
+  }
+  // If the credential has a trust anchor ID and it matches one sent by the
+  // peer, it is good.
+  if (!cred->trust_anchor_id.empty() && hs->peer_requested_trust_anchors) {
+    CBS cbs = CBS(*hs->peer_requested_trust_anchors), candidate;
+    while (CBS_len(&cbs) > 0) {
+      if (!CBS_get_u8_length_prefixed(&cbs, &candidate) ||
+          CBS_len(&candidate) == 0) {
+        OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+        return false;
+      }
+      if (candidate == Span(cred->trust_anchor_id)) {
+        hs->matched_peer_trust_anchor = true;
+        return true;
+      }
+    }
+  }
+
+  OPENSSL_PUT_ERROR(SSL, SSL_R_NO_MATCHING_ISSUER);
+  return false;
 }
 
 BSSL_NAMESPACE_END
@@ -98,7 +113,7 @@ ssl_credential_st::ssl_credential_st(SSLCredentialType type_arg)
 }
 
 ssl_credential_st::~ssl_credential_st() {
-  CRYPTO_free_ex_data(&g_ex_data_class, this, &ex_data);
+  CRYPTO_free_ex_data(&g_ex_data_class, &ex_data);
 }
 
 static CRYPTO_BUFFER *buffer_up_ref(const CRYPTO_BUFFER *buffer) {
@@ -143,15 +158,27 @@ void ssl_credential_st::ClearCertAndKey() {
 }
 
 bool ssl_credential_st::UsesX509() const {
-  // Currently, all credential types use X.509. However, we may add other
-  // certificate types in the future. Add the checks in the setters now, so we
-  // don't forget.
-  return true;
+  switch (type) {
+    case SSLCredentialType::kX509:
+    case SSLCredentialType::kDelegated:
+      return true;
+    case SSLCredentialType::kSPAKE2PlusV1Client:
+    case SSLCredentialType::kSPAKE2PlusV1Server:
+      return false;
+  }
+  abort();
 }
 
 bool ssl_credential_st::UsesPrivateKey() const {
-  // Currently, all credential types use private keys. However, we may add PSK
-  return true;
+  switch (type) {
+    case SSLCredentialType::kX509:
+    case SSLCredentialType::kDelegated:
+      return true;
+    case SSLCredentialType::kSPAKE2PlusV1Client:
+    case SSLCredentialType::kSPAKE2PlusV1Server:
+      return false;
+  }
+  abort();
 }
 
 bool ssl_credential_st::IsComplete() const {
@@ -240,12 +267,12 @@ void ssl_credential_st::ClearIntermediateCerts() {
 
 bool ssl_credential_st::ChainContainsIssuer(
     bssl::Span<const uint8_t> dn) const {
-    if (UsesX509()) {
-    // TODO(bbe) This is used for matching a chain by CA name for the CA extension.
-    // If we require a chain to be present, we could remove any remaining parts
-    // of the chain after the found issuer, on the assumption that the peer
-    // sending the CA extension has the issuer in their trust store and does not
-    // need us to waste bytes on the wire.
+  if (UsesX509()) {
+    // TODO(bbe) This is used for matching a chain by CA name for the CA
+    // extension. If we require a chain to be present, we could remove any
+    // remaining parts of the chain after the found issuer, on the assumption
+    // that the peer sending the CA extension has the issuer in their trust
+    // store and does not need us to waste bytes on the wire.
     CBS dn_cbs;
     CBS_init(&dn_cbs, dn.data(), dn.size());
     for (size_t i = 0; i < sk_CRYPTO_BUFFER_num(chain.get()); i++) {
@@ -258,6 +285,30 @@ bool ssl_credential_st::ChainContainsIssuer(
     }
   }
   return false;
+}
+
+bool ssl_credential_st::HasPAKEAttempts() const {
+  return pake_limit.load() != 0;
+}
+
+bool ssl_credential_st::ClaimPAKEAttempt() const {
+  uint32_t current = pake_limit.load(std::memory_order_relaxed);
+  for (;;) {
+    if (current == 0) {
+      return false;
+    }
+    if (pake_limit.compare_exchange_weak(current, current - 1)) {
+      break;
+    }
+  }
+
+  return true;
+}
+
+void ssl_credential_st::RestorePAKEAttempt() const {
+  // This should not overflow because it will only be paired with
+  // ClaimPAKEAttempt.
+  pake_limit.fetch_add(1);
 }
 
 bool ssl_credential_st::AppendIntermediateCert(UniquePtr<CRYPTO_BUFFER> cert) {
@@ -344,8 +395,8 @@ int SSL_CREDENTIAL_set1_cert_chain(SSL_CREDENTIAL *cred,
   return 1;
 }
 
-int SSL_CREDENTIAL_set1_delegated_credential(
-    SSL_CREDENTIAL *cred, CRYPTO_BUFFER *dc) {
+int SSL_CREDENTIAL_set1_delegated_credential(SSL_CREDENTIAL *cred,
+                                             CRYPTO_BUFFER *dc) {
   if (cred->type != SSLCredentialType::kDelegated) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
     return 0;
@@ -377,13 +428,12 @@ int SSL_CREDENTIAL_set1_delegated_credential(
     return 0;
   }
 
-  UniquePtr<EVP_PKEY> pubkey(EVP_parse_public_key(&spki));
-  if (pubkey == nullptr || CBS_len(&spki) != 0) {
-    OPENSSL_PUT_ERROR(SSL, SSL_R_DECODE_ERROR);
+  UniquePtr<EVP_PKEY> pubkey = ssl_parse_peer_subject_public_key_info(spki);
+  if (pubkey == nullptr) {
     return 0;
   }
 
-  if (!cred->sigalgs.CopyFrom(MakeConstSpan(&dc_cert_verify_algorithm, 1))) {
+  if (!cred->sigalgs.CopyFrom(Span(&dc_cert_verify_algorithm, 1))) {
     return 0;
   }
 
@@ -425,6 +475,97 @@ int SSL_CREDENTIAL_set1_signed_cert_timestamp_list(SSL_CREDENTIAL *cred,
 
   cred->signed_cert_timestamp_list = UpRef(sct_list);
   return 1;
+}
+
+int SSL_spake2plusv1_register(uint8_t out_w0[32], uint8_t out_w1[32],
+                              uint8_t out_registration_record[65],
+                              const uint8_t *password, size_t password_len,
+                              const uint8_t *client_identity,
+                              size_t client_identity_len,
+                              const uint8_t *server_identity,
+                              size_t server_identity_len) {
+  return spake2plus::Register(
+      Span(out_w0, 32), Span(out_w1, 32), Span(out_registration_record, 65),
+      Span(password, password_len), Span(client_identity, client_identity_len),
+      Span(server_identity, server_identity_len));
+}
+
+static UniquePtr<SSL_CREDENTIAL> ssl_credential_new_spake2plusv1(
+    SSLCredentialType type, Span<const uint8_t> context,
+    Span<const uint8_t> client_identity, Span<const uint8_t> server_identity,
+    uint32_t limit) {
+  assert(type == SSLCredentialType::kSPAKE2PlusV1Client ||
+         type == SSLCredentialType::kSPAKE2PlusV1Server);
+  auto cred = MakeUnique<SSL_CREDENTIAL>(type);
+  if (cred == nullptr) {
+    return nullptr;
+  }
+
+  if (!cred->pake_context.CopyFrom(context) ||
+      !cred->client_identity.CopyFrom(client_identity) ||
+      !cred->server_identity.CopyFrom(server_identity)) {
+    return nullptr;
+  }
+
+  cred->pake_limit.store(limit);
+  return cred;
+}
+
+SSL_CREDENTIAL *SSL_CREDENTIAL_new_spake2plusv1_client(
+    const uint8_t *context, size_t context_len, const uint8_t *client_identity,
+    size_t client_identity_len, const uint8_t *server_identity,
+    size_t server_identity_len, uint32_t error_limit, const uint8_t *w0,
+    size_t w0_len, const uint8_t *w1, size_t w1_len) {
+  if (w0_len != spake2plus::kVerifierSize ||
+      w1_len != spake2plus::kVerifierSize ||
+      (context == nullptr && context_len != 0)) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SPAKE2PLUSV1_VALUE);
+    return nullptr;
+  }
+
+  UniquePtr<SSL_CREDENTIAL> cred = ssl_credential_new_spake2plusv1(
+      SSLCredentialType::kSPAKE2PlusV1Client, Span(context, context_len),
+      Span(client_identity, client_identity_len),
+      Span(server_identity, server_identity_len), error_limit);
+  if (!cred) {
+    return nullptr;
+  }
+
+  if (!cred->password_verifier_w0.CopyFrom(Span(w0, w0_len)) ||
+      !cred->password_verifier_w1.CopyFrom(Span(w1, w1_len))) {
+    return nullptr;
+  }
+
+  return cred.release();
+}
+
+SSL_CREDENTIAL *SSL_CREDENTIAL_new_spake2plusv1_server(
+    const uint8_t *context, size_t context_len, const uint8_t *client_identity,
+    size_t client_identity_len, const uint8_t *server_identity,
+    size_t server_identity_len, uint32_t rate_limit, const uint8_t *w0,
+    size_t w0_len, const uint8_t *registration_record,
+    size_t registration_record_len) {
+  if (w0_len != spake2plus::kVerifierSize ||
+      registration_record_len != spake2plus::kRegistrationRecordSize ||
+      (context == nullptr && context_len != 0)) {
+    return nullptr;
+  }
+
+  UniquePtr<SSL_CREDENTIAL> cred = ssl_credential_new_spake2plusv1(
+      SSLCredentialType::kSPAKE2PlusV1Server, Span(context, context_len),
+      Span(client_identity, client_identity_len),
+      Span(server_identity, server_identity_len), rate_limit);
+  if (!cred) {
+    return nullptr;
+  }
+
+  if (!cred->password_verifier_w0.CopyFrom(Span(w0, w0_len)) ||
+      !cred->registration_record.CopyFrom(
+          Span(registration_record, registration_record_len))) {
+    return nullptr;
+  }
+
+  return cred.release();
 }
 
 int SSL_CTX_add1_credential(SSL_CTX *ctx, SSL_CREDENTIAL *cred) {
@@ -469,14 +610,75 @@ void *SSL_CREDENTIAL_get_ex_data(const SSL_CREDENTIAL *cred, int idx) {
   return CRYPTO_get_ex_data(&cred->ex_data, idx);
 }
 
-void SSL_CREDENTIAL_set_must_match_issuer(SSL_CREDENTIAL *cred) {
-  cred->must_match_issuer = true;
+void SSL_CREDENTIAL_set_must_match_issuer(SSL_CREDENTIAL *cred, int match) {
+  cred->must_match_issuer = !!match;
 }
 
-void SSL_CREDENTIAL_clear_must_match_issuer(SSL_CREDENTIAL *cred) {
-  cred->must_match_issuer = false;
+int SSL_CREDENTIAL_set1_trust_anchor_id(SSL_CREDENTIAL *cred, const uint8_t *id,
+                                        size_t id_len) {
+  // For now, this is only valid for X.509.
+  if (!cred->UsesX509()) {
+    OPENSSL_PUT_ERROR(SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
+    return 0;
+  }
+
+  if (!cred->trust_anchor_id.CopyFrom(Span(id, id_len))) {
+    OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+    return 0;
+  }
+
+  return 1;
 }
 
-int SSL_CREDENTIAL_must_match_issuer(const SSL_CREDENTIAL *cred) {
-  return cred->must_match_issuer ? 1 : 0;
+int SSL_CREDENTIAL_set1_certificate_properties(
+    SSL_CREDENTIAL *cred, CRYPTO_BUFFER *cert_property_list) {
+  std::optional<CBS> trust_anchor;
+  CBS cbs, cpl;
+  CRYPTO_BUFFER_init_CBS(cert_property_list, &cbs);
+
+  if (!CBS_get_u16_length_prefixed(&cbs, &cpl)) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_CERTIFICATE_PROPERTY_LIST);
+    return 0;
+  }
+  while (CBS_len(&cpl) != 0) {
+    uint16_t cp_type;
+    CBS cp_data;
+    if (!CBS_get_u16(&cpl, &cp_type) ||
+        !CBS_get_u16_length_prefixed(&cpl, &cp_data)) {
+      OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_CERTIFICATE_PROPERTY_LIST);
+      return 0;
+    }
+    switch (cp_type) {
+      case 0:  // trust anchor identifier.
+        if (trust_anchor.has_value()) {
+          OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_CERTIFICATE_PROPERTY_LIST);
+          return 0;
+        }
+        trust_anchor = cp_data;
+        break;
+      default:
+        break;
+    }
+  }
+  if (CBS_len(&cbs) != 0) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_CERTIFICATE_PROPERTY_LIST);
+    return 0;
+  }
+  // Certificate property list has parsed correctly.
+
+  // We do not currently retain |cert_property_list|, but if we define another
+  // property with larger fields (e.g. stapled SCTs), it may make sense for
+  // those fields to retain |cert_property_list| and alias into it.
+  if (trust_anchor.has_value()) {
+    if (!CBS_len(&trust_anchor.value())) {
+      OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_TRUST_ANCHOR_LIST);
+      return 0;
+    }
+    if (!SSL_CREDENTIAL_set1_trust_anchor_id(cred,
+                                             CBS_data(&trust_anchor.value()),
+                                             CBS_len(&trust_anchor.value()))) {
+      return 0;
+    }
+  }
+  return 1;
 }

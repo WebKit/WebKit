@@ -39,8 +39,8 @@ class IntlCache {
 public:
     IntlCache() = default;
 
-    Vector<UChar, 32> getBestDateTimePattern(const CString& locale, std::span<const UChar> skeleton, UErrorCode&);
-    Vector<UChar, 32> getFieldDisplayName(const CString& locale, UDateTimePatternField, UDateTimePGDisplayWidth, UErrorCode&);
+    Vector<char16_t, 32> getBestDateTimePattern(const CString& locale, std::span<const char16_t> skeleton, UErrorCode&);
+    Vector<char16_t, 32> getFieldDisplayName(const CString& locale, UDateTimePatternField, UDateTimePGDisplayWidth, UErrorCode&);
 
 private:
     UDateTimePatternGenerator* getSharedPatternGenerator(const CString& locale, UErrorCode& status)

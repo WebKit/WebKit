@@ -27,7 +27,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "CompiledContentExtension.h"
+#include <WebCore/CompiledContentExtension.h>
 #include <system_error>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>

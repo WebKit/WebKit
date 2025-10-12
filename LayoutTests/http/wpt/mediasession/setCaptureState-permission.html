@@ -5,6 +5,8 @@
 <script>
 promise_test(async (test) => {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+
     const track = stream.getTracks()[0];
 
     testRunner.setCaptureState(false, true, true);
@@ -28,6 +30,8 @@ promise_test(async (test) => {
 
 promise_test(async (test) => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+
     const track = stream.getTracks()[0];
 
     testRunner.setCaptureState(true, false, true);

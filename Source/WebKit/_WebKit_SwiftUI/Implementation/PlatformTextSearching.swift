@@ -21,6 +21,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+#if ENABLE_SWIFTUI
+
 import Foundation
 
 @MainActor
@@ -72,5 +74,7 @@ struct UIFindInteractionAdapter: PlatformFindInteraction {
         wrapped.dismissFindNavigator()
     }
 }
+
+#endif
 
 #endif

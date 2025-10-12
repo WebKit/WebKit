@@ -144,8 +144,10 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_QuerySurface(Thread *thread,
 {
     switch (attribute)
     {
-        // EGL_BUFFER_AGE_EXT uses current Context and therefore requires the lock.
+        // EGL_BUFFER_AGE_EXT and EGL_SURFACE_COMPRESSION_EXT uses current Context
+        // and therefore requires the lock.
         case EGL_BUFFER_AGE_EXT:
+        case EGL_SURFACE_COMPRESSION_EXT:
             return TryLockCurrentContext(thread);
         // Other attributes are not using Context, therefore lock is not required.
         default:
@@ -675,7 +677,17 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_QuerySurface64KHR(Thread *thr
                                                                      egl::Display *dpyPacked,
                                                                      EGLint attribute)
 {
-    return {};
+    switch (attribute)
+    {
+        // EGL_BUFFER_AGE_EXT and EGL_SURFACE_COMPRESSION_EXT uses current Context
+        // and therefore requires the lock.
+        case EGL_BUFFER_AGE_EXT:
+        case EGL_SURFACE_COMPRESSION_EXT:
+            return TryLockCurrentContext(thread);
+        // Other attributes are not using Context, therefore lock is not required.
+        default:
+            return {};
+    }
 }
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_UnlockSurfaceKHR(Thread *thread,

@@ -94,8 +94,6 @@ private:
     Ref<IPC::StreamServerConnection> protectedStreamConnection();
     Ref<RemoteGPU> protectedGPU() const;
 
-    RefPtr<IPC::Connection> connection() const;
-
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
     void destruct();
     void getColorTexture(WebGPUIdentifier);

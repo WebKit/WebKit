@@ -13,6 +13,8 @@
 #include <string>
 #include <vector>
 
+#include "common/frame_capture_binary_data.h"
+
 namespace angle
 {
 
@@ -44,6 +46,11 @@ struct TraceInfo
     int configDepthBits;
     int configStencilBits;
     bool isBinaryDataCompressed;
+    uint32_t binaryVersion;
+    uint32_t binaryBlockCount;
+    uint64_t binaryBlockSize;
+    uint64_t binaryResidentSize;
+    uint64_t binaryIndexOffset;
     bool areClientArraysEnabled;
     bool isBindGeneratesResourcesEnabled;
     bool isWebGLCompatibilityEnabled;
@@ -76,7 +83,7 @@ struct TraceFunctions
 struct TraceCallbacks
 {
     virtual uint8_t *LoadBinaryData(const char *fileName) = 0;
-
+    virtual FrameCaptureBinaryData *ConfigureBinaryDataLoader(const char *fileName) = 0;
     virtual ~TraceCallbacks() {}
 };
 

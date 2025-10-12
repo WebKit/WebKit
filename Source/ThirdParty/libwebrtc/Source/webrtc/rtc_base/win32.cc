@@ -14,13 +14,13 @@
 #include <ws2tcpip.h>
 
 #include <algorithm>
+#include <iterator>
 
-#include "rtc_base/arraysize.h"
 #include "rtc_base/byte_order.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/string_utils.h"
 
-namespace rtc {
+namespace webrtc {
 
 // Helper function declarations for inet_ntop/inet_pton.
 static const char* inet_ntop_v4(const void* src, char* dst, socklen_t size);
@@ -88,7 +88,7 @@ const char* inet_ntop_v6(const void* src, char* dst, socklen_t size) {
   int current = 1;
   int max = 0;
   int maxpos = -1;
-  int run_array_size = arraysize(runpos);
+  int run_array_size = std::ssize(runpos);
   // Run over the address marking runs of 0s.
   for (int i = 0; i < run_array_size; ++i) {
     if (as_shorts[i] == 0) {
@@ -310,4 +310,4 @@ int inet_pton_v6(const char* src, void* dst) {
   return 1;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

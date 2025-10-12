@@ -2,20 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-expressions-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Array destructuring with accessing uninitialized lexical binding.
+info: bugzilla.mozilla.org/show_bug.cgi?id=1184922
 esid: pending
 ---*/
-var BUGNUMBER = 1184922;
-var summary = "Array destructuring with accessing uninitialized lexical binding.";
 
-print(BUGNUMBER + ": " + summary);
-
-assertThrowsInstanceOf(() => { let y = [y] = []; },
-                       ReferenceError);
-assertThrowsInstanceOf(() => { let y = [y] = [,]; },
-                       ReferenceError);
-
+assert.throws(ReferenceError, () => { let y = [y] = []; });
+assert.throws(ReferenceError, () => { let y = [y] = [,]; });

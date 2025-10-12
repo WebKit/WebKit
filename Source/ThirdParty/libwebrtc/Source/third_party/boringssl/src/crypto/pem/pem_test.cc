@@ -1,16 +1,16 @@
-/* Copyright (c) 2018, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2018 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <openssl/pem.h>
 
@@ -25,6 +25,8 @@
 
 #include "../test/test_util.h"
 
+
+namespace {
 
 // Test that implausible ciphers, notably an IV-less RC4, aren't allowed in PEM.
 // This is a regression test for https://github.com/openssl/openssl/issues/6347,
@@ -53,7 +55,7 @@ static std::vector<uint8_t> DecodePEMBytes(const char *pem) {
   char *name, *header;
   uint8_t *data;
   long len;
-  if (bio == nullptr ||
+  if (bio == nullptr ||  //
       !PEM_read_bio(bio.get(), &name, &header, &data, &len)) {
     return {};
   }
@@ -313,3 +315,126 @@ Rvvdqakendy6WgHn1peoChj5w8SjHlbifINI2xYaHPUdfvGULUvPciLB
     }
   }
 }
+
+TEST(PEMTest, BadHeaders) {
+  const struct {
+    const char *pem;
+    int err_lib, err_reason;
+  } kTests[] = {
+      // Proc-Type must be the first header.
+      {
+          R"(
+-----BEGIN EC PRIVATE KEY-----
+DEK-Info: AES-128-CBC,B3B2988AECAE6EAB0D043105994C1123
+Proc-Type: 4,ENCRYPTED
+
+RK7DUIGDHWTFh2rpTX+dR88hUyC1PyDlIULiNCkuWFwHrJbc1gM6hMVOKmU196XC
+iITrIKmilFm9CPD6Tpfk/NhI/QPxyJlk1geIkxpvUZ2FCeMuYI1To14oYOUKv14q
+wr6JtaX2G+pOmwcSPymZC4u2TncAP7KHgS8UGcMw8CE=
+-----END EC PRIVATE KEY-----
+)",
+          ERR_LIB_PEM, PEM_R_NOT_PROC_TYPE},
+      // Unsupported Proc-Type version.
+      {
+          R"(
+-----BEGIN EC PRIVATE KEY-----
+Proc-Type: 5,ENCRYPTED
+DEK-Info: AES-128-CBC,B3B2988AECAE6EAB0D043105994C1123
+
+RK7DUIGDHWTFh2rpTX+dR88hUyC1PyDlIULiNCkuWFwHrJbc1gM6hMVOKmU196XC
+iITrIKmilFm9CPD6Tpfk/NhI/QPxyJlk1geIkxpvUZ2FCeMuYI1To14oYOUKv14q
+wr6JtaX2G+pOmwcSPymZC4u2TncAP7KHgS8UGcMw8CE=
+-----END EC PRIVATE KEY-----
+)",
+          ERR_LIB_PEM, PEM_R_UNSUPPORTED_PROC_TYPE_VERSION},
+      // Unsupported Proc-Type version.
+      {
+          R"(
+-----BEGIN EC PRIVATE KEY-----
+Proc-Type: 42,ENCRYPTED
+DEK-Info: AES-128-CBC,B3B2988AECAE6EAB0D043105994C1123
+
+RK7DUIGDHWTFh2rpTX+dR88hUyC1PyDlIULiNCkuWFwHrJbc1gM6hMVOKmU196XC
+iITrIKmilFm9CPD6Tpfk/NhI/QPxyJlk1geIkxpvUZ2FCeMuYI1To14oYOUKv14q
+wr6JtaX2G+pOmwcSPymZC4u2TncAP7KHgS8UGcMw8CE=
+-----END EC PRIVATE KEY-----
+)",
+          ERR_LIB_PEM, PEM_R_UNSUPPORTED_PROC_TYPE_VERSION},
+      // Unsupported Proc-Type.
+      {
+          R"(
+-----BEGIN EC PRIVATE KEY-----
+Proc-Type: 4,MIC-ONLY
+DEK-Info: AES-128-CBC,B3B2988AECAE6EAB0D043105994C1123
+
+RK7DUIGDHWTFh2rpTX+dR88hUyC1PyDlIULiNCkuWFwHrJbc1gM6hMVOKmU196XC
+iITrIKmilFm9CPD6Tpfk/NhI/QPxyJlk1geIkxpvUZ2FCeMuYI1To14oYOUKv14q
+wr6JtaX2G+pOmwcSPymZC4u2TncAP7KHgS8UGcMw8CE=
+-----END EC PRIVATE KEY-----
+)",
+          ERR_LIB_PEM, PEM_R_NOT_ENCRYPTED},
+      // Missing DEK-Info.
+      {
+          R"(
+-----BEGIN EC PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+
+RK7DUIGDHWTFh2rpTX+dR88hUyC1PyDlIULiNCkuWFwHrJbc1gM6hMVOKmU196XC
+iITrIKmilFm9CPD6Tpfk/NhI/QPxyJlk1geIkxpvUZ2FCeMuYI1To14oYOUKv14q
+wr6JtaX2G+pOmwcSPymZC4u2TncAP7KHgS8UGcMw8CE=
+-----END EC PRIVATE KEY-----
+)",
+          ERR_LIB_PEM, PEM_R_NOT_DEK_INFO},
+      // Unsupported cipher.
+      {
+          R"(
+-----BEGIN EC PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: AES-127-CBC,B3B2988AECAE6EAB0D043105994C1123
+
+RK7DUIGDHWTFh2rpTX+dR88hUyC1PyDlIULiNCkuWFwHrJbc1gM6hMVOKmU196XC
+iITrIKmilFm9CPD6Tpfk/NhI/QPxyJlk1geIkxpvUZ2FCeMuYI1To14oYOUKv14q
+wr6JtaX2G+pOmwcSPymZC4u2TncAP7KHgS8UGcMw8CE=
+-----END EC PRIVATE KEY-----
+)",
+          ERR_LIB_PEM, PEM_R_UNSUPPORTED_ENCRYPTION},
+      // IV is not hex.
+      {
+          R"(
+-----BEGIN EC PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: AES-128-CBC,B3B2988AECAE6EAB0D043105994C112Z
+
+RK7DUIGDHWTFh2rpTX+dR88hUyC1PyDlIULiNCkuWFwHrJbc1gM6hMVOKmU196XC
+iITrIKmilFm9CPD6Tpfk/NhI/QPxyJlk1geIkxpvUZ2FCeMuYI1To14oYOUKv14q
+wr6JtaX2G+pOmwcSPymZC4u2TncAP7KHgS8UGcMw8CE=
+-----END EC PRIVATE KEY-----
+)",
+          ERR_LIB_PEM, PEM_R_BAD_IV_CHARS},
+      // Truncated IV.
+      {
+          R"(
+-----BEGIN EC PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: AES-128-CBC,B3B2988AECAE6EAB0D043105994C112
+
+RK7DUIGDHWTFh2rpTX+dR88hUyC1PyDlIULiNCkuWFwHrJbc1gM6hMVOKmU196XC
+iITrIKmilFm9CPD6Tpfk/NhI/QPxyJlk1geIkxpvUZ2FCeMuYI1To14oYOUKv14q
+wr6JtaX2G+pOmwcSPymZC4u2TncAP7KHgS8UGcMw8CE=
+-----END EC PRIVATE KEY-----
+)",
+          ERR_LIB_PEM, PEM_R_BAD_IV_CHARS},
+  };
+  for (const auto &t : kTests) {
+    SCOPED_TRACE(t.pem);
+    bssl::UniquePtr<BIO> bio(BIO_new_mem_buf(t.pem, -1));
+    ASSERT_TRUE(bio);
+    bssl::UniquePtr<EVP_PKEY> pkey(PEM_read_bio_PrivateKey(
+        bio.get(), nullptr, nullptr, const_cast<char *>("password")));
+    EXPECT_FALSE(pkey);
+    EXPECT_TRUE(ErrorEquals(ERR_get_error(), t.err_lib, t.err_reason));
+    ERR_clear_error();
+  }
+}
+
+}  // namespace

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -94,12 +94,12 @@ Value LocationPath::evaluate() const
     // the spec and treat / as the root node of the detached tree.
     // This is for compatibility with Firefox, and also seems like a more
     // logical treatment of where you would expect the "root" to be.
-    Node* context = evaluationContext.node.get();
+    RefPtr context = evaluationContext.node.get();
     if (m_isAbsolute && !context->isDocumentNode())
         context = &context->rootNode();
 
     NodeSet nodes;
-    nodes.append(context);
+    nodes.append(WTFMove(context));
     evaluate(nodes);
     
     evaluationContext = backupContext;

@@ -1,0 +1,16 @@
+<style>
+.sibling {
+  float: left;
+  margin-top: 1px;
+}
+</style>
+<div id=container>
+  <div class=sibling>PASS</div>
+  <div>if this is all selected.</div>
+</div>
+<script>
+let range = new Range();
+range.setStart(container.firstChild, 0);
+range.setEnd(container.lastChild, 0);
+window.getSelection().addRange(range);
+</script>

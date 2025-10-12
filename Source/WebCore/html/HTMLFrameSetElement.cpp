@@ -4,6 +4,7 @@
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,6 +25,7 @@
 #include "config.h"
 #include "HTMLFrameSetElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "CSSPropertyNames.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
@@ -35,7 +37,6 @@
 #include "HTMLFrameElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "Length.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
 #include "MouseEvent.h"
@@ -53,8 +54,6 @@ using namespace HTMLNames;
 
 HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document, TypeFlag::HasCustomStyleResolveCallbacks)
-    , m_totalRows(1)
-    , m_totalCols(1)
     , m_border(6)
     , m_borderSet(false)
     , m_borderColorSet(false)
@@ -97,8 +96,8 @@ void HTMLFrameSetElement::attributeChanged(const QualifiedName& name, const Atom
         // FIXME: What is the right thing to do when removing this attribute?
         // Why not treat it the same way we treat setting it to the empty string?
         if (!newValue.isNull()) {
-            m_rowLengths = newLengthArray(newValue.string(), m_totalRows);
-            // FIXME: Would be nice to optimize the case where m_rowLengths did not change.
+            m_rowDimensions = parseHTMLDimensionsList(newValue);
+            // FIXME: Would be nice to optimize the case where m_rowDimensions did not change.
             invalidateStyleForSubtree();
         }
         break;
@@ -106,8 +105,8 @@ void HTMLFrameSetElement::attributeChanged(const QualifiedName& name, const Atom
         // FIXME: What is the right thing to do when removing this attribute?
         // Why not treat it the same way we treat setting it to the empty string?
         if (!newValue.isNull()) {
-            m_colLengths = newLengthArray(newValue.string(), m_totalCols);
-            // FIXME: Would be nice to optimize the case where m_colLengths did not change.
+            m_colDimensions = parseHTMLDimensionsList(newValue);
+            // FIXME: Would be nice to optimize the case where m_colDimensions did not change.
             invalidateStyleForSubtree();
         }
         break;

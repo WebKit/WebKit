@@ -42,6 +42,7 @@ g.test('uninitialized_texture_is_zero').
 params(kTestParams).
 fn((t) => {
   t.skipIfTextureFormatNotSupportedForTest(t.params);
+  t.skipIfTextureFormatAndDimensionNotCompatible(t.params.format, t.params.dimension);
 
   const usage = getRequiredTextureUsage(
     t.params.format,

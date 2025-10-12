@@ -14,10 +14,10 @@
 #include <optional>
 #include <vector>
 
+#include "api/transport/ecn_marking.h"
 #include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/congestion_control_feedback.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
-#include "rtc_base/network/ecn_marking.h"
 #include "rtc_base/numerics/sequence_number_unwrapper.h"
 namespace webrtc {
 
@@ -44,7 +44,7 @@ class CongestionControlFeedbackTracker {
     uint32_t ssrc;
     int64_t unwrapped_sequence_number = 0;
     Timestamp arrival_time;
-    rtc::EcnMarking ecn = rtc::EcnMarking::kNotEct;
+    EcnMarking ecn = EcnMarking::kNotEct;
   };
 
   std::optional<int64_t> last_sequence_number_in_feedback_;

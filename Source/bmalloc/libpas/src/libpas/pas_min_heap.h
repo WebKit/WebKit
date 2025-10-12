@@ -28,6 +28,7 @@
 
 #include "pas_allocation_config.h"
 #include "pas_utils.h"
+#include "pas_zero_memory.h"
 #include <stdio.h>
 
 PAS_BEGIN_EXTERN_C;

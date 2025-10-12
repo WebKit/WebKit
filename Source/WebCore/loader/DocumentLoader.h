@@ -29,44 +29,45 @@
 
 #pragma once
 
-#include "AdvancedPrivacyProtections.h"
-#include "AutoplayPolicy.h"
-#include "CachedRawResourceClient.h"
-#include "CachedResourceHandle.h"
-#include "ContentFilterClient.h"
-#include "ContentSecurityPolicyClient.h"
-#include "CrossOriginOpenerPolicy.h"
-#include "DeviceOrientationOrMotionPermissionState.h"
-#include "DocumentLoadTiming.h"
-#include "DocumentWriter.h"
-#include "ElementTargetingTypes.h"
-#include "FrameDestructionObserver.h"
-#include "FrameLoaderTypes.h"
-#include "HTTPSByDefaultMode.h"
-#include "LinkIcon.h"
-#include "NavigationAction.h"
-#include "NavigationIdentifier.h"
-#include "ResourceError.h"
-#include "ResourceLoaderIdentifier.h"
-#include "ResourceLoaderOptions.h"
-#include "ResourceRequest.h"
-#include "ResourceResponse.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include "SecurityPolicyViolationEvent.h"
-#include "ServiceWorkerRegistrationData.h"
-#include "StringWithDirection.h"
-#include "StyleSheetContents.h"
-#include "SubstituteData.h"
-#include "Timer.h"
+#include <WebCore/AdvancedPrivacyProtections.h>
+#include <WebCore/AutoplayPolicy.h>
+#include <WebCore/CachedRawResourceClient.h>
+#include <WebCore/CachedResourceHandle.h>
+#include <WebCore/ContentFilterClient.h>
+#include <WebCore/ContentSecurityPolicyClient.h>
+#include <WebCore/CrossOriginOpenerPolicy.h>
+#include <WebCore/DeviceOrientationOrMotionPermissionState.h>
+#include <WebCore/DocumentLoadTiming.h>
+#include <WebCore/DocumentWriter.h>
+#include <WebCore/ElementTargetingTypes.h>
+#include <WebCore/FrameDestructionObserver.h>
+#include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/HTTPSByDefaultMode.h>
+#include <WebCore/LinkIcon.h>
+#include <WebCore/NavigationAction.h>
+#include <WebCore/NavigationIdentifier.h>
+#include <WebCore/ResourceError.h>
+#include <WebCore/ResourceLoaderIdentifier.h>
+#include <WebCore/ResourceLoaderOptions.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/SecurityPolicyViolationEvent.h>
+#include <WebCore/ServiceWorkerRegistrationData.h>
+#include <WebCore/StringWithDirection.h>
+#include <WebCore/StyleSheetContents.h>
+#include <WebCore/SubstituteData.h>
+#include <WebCore/Timer.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
+#include <wtf/Platform.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(APPLICATION_MANIFEST)
-#include "ApplicationManifest.h"
+#include <WebCore/ApplicationManifest.h>
 #endif
 
 #if PLATFORM(COCOA)
@@ -84,7 +85,6 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::DataLoadToke
 
 namespace WebCore {
 
-class ApplicationCacheHost;
 class ApplicationManifestLoader;
 class Archive;
 class ArchiveResource;
@@ -106,7 +106,10 @@ class SWClientConnection;
 class SharedBuffer;
 class SubresourceLoader;
 class SubstituteResource;
+class UserContentProvider;
 class UserContentURLPattern;
+
+struct IntegrityPolicy;
 
 enum class ClearSiteDataValue : uint8_t;
 enum class LoadWillContinueInAnotherProcess : bool;
@@ -195,7 +198,7 @@ class DocumentLoader
     , public ContentFilterClient
 #endif
     , public CachedRawResourceClient {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DocumentLoader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DocumentLoader, DocumentLoader);
     friend class ContentFilter;
 public:
 #if ENABLE(CONTENT_FILTERING)
@@ -261,8 +264,8 @@ public:
     // FIXME: This method seems to violate the encapsulation of this class.
     void setResponse(ResourceResponse&& response) { m_response = WTFMove(response); }
 
-    bool isContentExtensionRedirect() const { return m_isContentExtensionRedirect; }
-    void setIsContentExtensionRedirect(bool isContentExtensionRedirect) { m_isContentExtensionRedirect = isContentExtensionRedirect; }
+    bool isContentRuleListRedirect() const { return m_isContentRuleListRedirect; }
+    void setIsContentRuleListRedirect(bool isContentRuleListRedirect) { m_isContentRuleListRedirect = isContentRuleListRedirect; }
 
     bool isClientRedirect() const { return m_isClientRedirect; }
     void setIsClientRedirect(bool isClientRedirect) { m_isClientRedirect = isClientRedirect; }
@@ -315,6 +318,8 @@ public:
 
     const NavigationAction& triggeringAction() const { return m_triggeringAction; }
     void setTriggeringAction(NavigationAction&&);
+    void setTriggeringNavigationAPIType(NavigationNavigationType type) { m_triggeringAction.setNavigationAPIType(type); };
+
     void setOverrideEncoding(const String& encoding) { m_overrideEncoding = encoding; }
     void setLastCheckedRequest(ResourceRequest&& request) { m_lastCheckedRequest = WTFMove(request); }
     const ResourceRequest& lastCheckedRequest()  { return m_lastCheckedRequest; }
@@ -345,7 +350,7 @@ public:
 
     void startLoadingMainResource();
     WEBCORE_EXPORT void cancelMainResourceLoad(const ResourceError&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
-    void willContinueMainResourceLoadAfterRedirect(const ResourceRequest&);
+    WEBCORE_EXPORT void willContinueMainResourceLoadAfterRedirect(const ResourceRequest&);
 
     bool isLoadingMainResource() const { return m_loadingMainResource; }
     bool isLoadingMultipartContent() const { return m_isLoadingMultipartContent; }
@@ -377,6 +382,9 @@ public:
 
     void setAllowPrivacyProxy(bool allow) { m_allowPrivacyProxy = allow; }
     bool allowPrivacyProxy() const { return m_allowPrivacyProxy; }
+
+    void setAllowsJSHandleCreationInPageWorld(bool allow) { m_allowsJSHandleCreationInPageWorld = allow; }
+    bool allowsJSHandleCreationInPageWorld() const { return m_allowsJSHandleCreationInPageWorld; }
 
     void setCustomUserAgentAsSiteSpecificQuirks(String&& customUserAgent) { m_customUserAgentAsSiteSpecificQuirks = WTFMove(customUserAgent); }
     const String& customUserAgentAsSiteSpecificQuirks() const { return m_customUserAgentAsSiteSpecificQuirks; }
@@ -421,6 +429,16 @@ public:
     InlineMediaPlaybackPolicy inlineMediaPlaybackPolicy() const { return m_inlineMediaPlaybackPolicy; }
     void setInlineMediaPlaybackPolicy(InlineMediaPlaybackPolicy policy) { m_inlineMediaPlaybackPolicy = policy; }
 
+    struct WebpagePreferences {
+        WEBCORE_EXPORT WebpagePreferences();
+        WEBCORE_EXPORT ~WebpagePreferences();
+        WebpagePreferences& operator=(WebpagePreferences&&);
+
+        RefPtr<UserContentProvider> userContentProvider;
+    };
+    const WebpagePreferences& preferences() const { return m_preferences; }
+    WEBCORE_EXPORT void setPreferences(WebpagePreferences&&);
+
     void addSubresourceLoader(SubresourceLoader&);
     void removeSubresourceLoader(LoadCompletionType, SubresourceLoader&);
     void addPlugInStreamLoader(ResourceLoader&);
@@ -441,9 +459,6 @@ public:
 
     // The WebKit layer calls this function when it's ready for the data to actually be added to the document.
     WEBCORE_EXPORT void commitData(const SharedBuffer&);
-
-    ApplicationCacheHost& applicationCacheHost() const;
-    ApplicationCacheHost* applicationCacheHostUnlessBeingDestroyed() const;
 
     void checkLoadComplete();
 
@@ -470,7 +485,7 @@ public:
     void setSubstituteDataFromContentFilter(SubstituteData&& substituteDataFromContentFilter) { m_substituteDataFromContentFilter = WTFMove(substituteDataFromContentFilter); }
     ContentFilter* contentFilter() const { return m_contentFilter.get(); }
 
-    WEBCORE_EXPORT ResourceError handleContentFilterDidBlock(ContentFilterUnblockHandler, String&& unblockRequestDeniedScript);
+    WEBCORE_EXPORT ResourceError handleContentFilterDidBlock(ContentFilterUnblockHandler&&, String&& unblockRequestDeniedScript);
 #endif
 
     void startIconLoading();
@@ -513,6 +528,9 @@ public:
     ContentSecurityPolicy* contentSecurityPolicy() const { return m_contentSecurityPolicy.get(); }
     const std::optional<CrossOriginOpenerPolicy>& crossOriginOpenerPolicy() const { return m_responseCOOP; }
     OptionSet<ClearSiteDataValue> responseClearSiteDataValues() const { return m_responseClearSiteDataValues; }
+
+    std::unique_ptr<IntegrityPolicy> integrityPolicy();
+    std::unique_ptr<IntegrityPolicy> integrityPolicyReportOnly();
 
     bool isContinuingLoadAfterProvisionalLoadStarted() const { return m_isContinuingLoadAfterProvisionalLoadStarted; }
     void setIsContinuingLoadAfterProvisionalLoadStarted(bool isContinuingLoadAfterProvisionalLoadStarted) { m_isContinuingLoadAfterProvisionalLoadStarted = isContinuingLoadAfterProvisionalLoadStarted; }
@@ -564,7 +582,7 @@ private:
     void commitLoad(const SharedBuffer&);
     void clearMainResourceLoader();
 
-    void setupForReplace();
+    void setupForMultipartReplace();
     void maybeFinishLoadingMultipartContent();
     
     bool maybeCreateArchive();
@@ -588,7 +606,7 @@ private:
 #if ENABLE(CONTENT_FILTERING)
     // ContentFilterClient
     WEBCORE_EXPORT void dataReceivedThroughContentFilter(const SharedBuffer&) final;
-    WEBCORE_EXPORT ResourceError contentFilterDidBlock(ContentFilterUnblockHandler, String&& unblockRequestDeniedScript) final;
+    WEBCORE_EXPORT ResourceError contentFilterDidBlock(ContentFilterUnblockHandler&&, String&& unblockRequestDeniedScript) final;
     WEBCORE_EXPORT void cancelMainResourceLoadForContentFilter(const ResourceError&) final;
     WEBCORE_EXPORT void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, SubstituteData&&) final;
 #if HAVE(WEBCONTENTRESTRICTIONS)
@@ -611,9 +629,7 @@ private:
     bool isMultipartReplacingLoad() const;
     bool isPostOrRedirectAfterPost(const ResourceRequest&, const ResourceResponse&);
 
-    bool tryLoadingRequestFromApplicationCache();
     bool tryLoadingSubstituteData();
-    bool tryLoadingRedirectRequestFromApplicationCache(const ResourceRequest&);
     void continueAfterContentPolicy(PolicyAction);
 
     void stopLoadingForPolicyChange(LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
@@ -724,8 +740,9 @@ private:
 
     Vector<CustomHeaderFields> m_customHeaderFields;
 
-    std::unique_ptr<ApplicationCacheHost> m_applicationCacheHost;
     std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
+    std::unique_ptr<IntegrityPolicy> m_integrityPolicy;
+    std::unique_ptr<IntegrityPolicy> m_integrityPolicyReportOnly;
 
 #if ENABLE(CONTENT_FILTERING)
     std::unique_ptr<ContentFilter> m_contentFilter;
@@ -774,6 +791,7 @@ private:
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     PushAndNotificationsEnabledPolicy m_pushAndNotificationsEnabledPolicy { PushAndNotificationsEnabledPolicy::UseGlobalPolicy };
     InlineMediaPlaybackPolicy m_inlineMediaPlaybackPolicy { InlineMediaPlaybackPolicy::Default };
+    WebpagePreferences m_preferences;
 
     Function<void(Document*)> m_whenDocumentIsCreatedCallback;
 
@@ -783,6 +801,7 @@ private:
     bool m_loadStartedDuringSwipeAnimation { false };
     bool m_lastNavigationWasAppInitiated { true };
     bool m_allowPrivacyProxy { true };
+    bool m_allowsJSHandleCreationInPageWorld : 1 { false };
 
     bool m_deferMainResourceDataLoad { true };
 
@@ -790,7 +809,7 @@ private:
     bool m_committed { false };
     bool m_isStopping { false };
     bool m_gotFirstByte { false };
-    bool m_isContentExtensionRedirect { false };
+    bool m_isContentRuleListRedirect { false };
     bool m_isClientRedirect { false };
     bool m_isLoadingMultipartContent { false };
     bool m_isContinuingLoadAfterProvisionalLoadStarted { false };
@@ -883,19 +902,6 @@ inline const String& DocumentLoader::currentContentType() const
 inline const URL& DocumentLoader::unreachableURL() const
 {
     return m_substituteData.failingURL();
-}
-
-inline ApplicationCacheHost& DocumentLoader::applicationCacheHost() const
-{
-    // For a short time while the document loader is being destroyed, m_applicationCacheHost is null.
-    // It's not acceptable to call this function during that time.
-    ASSERT(m_applicationCacheHost);
-    return *m_applicationCacheHost;
-}
-
-inline ApplicationCacheHost* DocumentLoader::applicationCacheHostUnlessBeingDestroyed() const
-{
-    return m_applicationCacheHost.get();
 }
 
 inline void DocumentLoader::didTellClientAboutLoad(const String& url)

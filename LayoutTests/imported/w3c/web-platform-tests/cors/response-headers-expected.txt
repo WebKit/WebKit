@@ -11,6 +11,8 @@ PASS getResponseHeader: Content-Language: readable by default
 PASS getResponseHeader: Expires: readable by default
 PASS getResponseHeader: Last-Modified: readable by default
 PASS getResponseHeader: Pragma: readable by default
+PASS getResponseHeader: Content-Length: readable by default
+PASS getResponseHeader: Content-Type: readable by default
 PASS getResponseHeader: Server: unreadable by default
 PASS getResponseHeader: X-Powered-By: unreadable by default
 PASS getResponseHeader: Combined testing of cors response headers

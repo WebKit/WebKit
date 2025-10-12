@@ -92,7 +92,7 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
     JSC::Weak<JSC::JSGlobalObject> weak(globalObject, &owner, (__bridge void*)self);
     m_globalObject.swap(weak);
 
-    m_lock = &vm.apiLock();
+    m_lock = vm.apiLock();
 
     NSPointerFunctionsOptions weakIDOptions = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
     NSPointerFunctionsOptions integerOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsIntegerPersonality;

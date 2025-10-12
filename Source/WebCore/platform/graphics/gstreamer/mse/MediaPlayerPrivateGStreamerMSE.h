@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Collabora Ltd. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2009, 2010, 2016 Igalia S.L
@@ -96,6 +96,11 @@ public:
 #ifndef GST_DISABLE_GST_DEBUG
     void setShouldDisableSleep(bool) final;
 #endif
+
+    // On MSE, the player holds its own set of tracks, independent from the ones SourceBuffer
+    // reported to HTMLMediaElement. We need to synchronize the enabled status of the player
+    // mirror when the element one changed. Fortunately, both share the same trackId.
+    void mirrorEnabledVideoTrackIfNeeded(const VideoTrackPrivateGStreamer& originalVideoTrackPrivate) final;
 
 private:
     explicit MediaPlayerPrivateGStreamerMSE(MediaPlayer*);

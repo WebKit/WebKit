@@ -31,13 +31,13 @@
 
 #pragma once
 
-#include "ArgList.h"
-#include "Exception.h"
-#include "JSCJSValue.h"
-#include "JSCJSValueInlines.h"
-#include "JSObject.h"
-#include "Strong.h"
-#include "StrongInlines.h"
+#include <JavaScriptCore/ArgList.h>
+#include <JavaScriptCore/Exception.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/Strong.h>
+#include <JavaScriptCore/StrongInlines.h>
 #include <wtf/Expected.h>
 #include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>

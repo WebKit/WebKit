@@ -27,6 +27,6 @@
 
 namespace WebCore {
 
-enum ImageSmoothingQuality { Low, Medium, High };
+enum class ImageSmoothingQuality : uint8_t { Low, Medium, High };
 
 }

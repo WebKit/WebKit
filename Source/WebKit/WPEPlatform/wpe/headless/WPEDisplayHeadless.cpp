@@ -27,6 +27,7 @@
 #include "WPEDisplayHeadless.h"
 
 #include "WPEBufferDMABufFormats.h"
+#include "WPEDRMDevicePrivate.h"
 #include "WPEExtensions.h"
 #include "WPEToplevelHeadless.h"
 #include "WPEViewHeadless.h"
@@ -54,13 +55,10 @@
  *
  */
 struct _WPEDisplayHeadlessPrivate {
+    std::optional<GRefPtr<WPEDRMDevice>> drmDevice;
 #if USE(GBM)
     UnixFileDescriptor gbmDeviceFD;
     struct gbm_device* gbmDevice;
-#endif
-#if USE(LIBDRM)
-    std::optional<CString> drmDevice;
-    std::optional<CString> drmRenderNode;
 #endif
 };
 WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE(WPEDisplayHeadless, wpe_display_headless, WPE_TYPE_DISPLAY, WPEDisplay,
@@ -69,8 +67,9 @@ WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE(WPEDisplayHeadless, wpe_display_headless, WPE
 
 static void wpeDisplayHeadlessDispose(GObject* object)
 {
-#if USE(GBM)
     auto* priv = WPE_DISPLAY_HEADLESS(object)->priv;
+
+#if USE(GBM)
     g_clear_pointer(&priv->gbmDevice, gbm_device_destroy);
     priv->gbmDeviceFD = { };
 #endif
@@ -85,7 +84,7 @@ static gboolean wpeDisplayHeadlessConnect(WPEDisplay*, GError**)
 
 static WPEView* wpeDisplayHeadlessCreateView(WPEDisplay* display)
 {
-    auto* view = wpe_view_headless_new(WPE_DISPLAY_HEADLESS(display));
+    auto* view = WPE_VIEW(g_object_new(WPE_TYPE_VIEW_HEADLESS, "display", display, nullptr));
     if (wpe_settings_get_boolean(wpe_display_get_settings(display), WPE_SETTING_CREATE_VIEWS_WITH_A_TOPLEVEL, nullptr)) {
         GRefPtr<WPEToplevel> toplevel = adoptGRef(wpe_toplevel_headless_new(WPE_DISPLAY_HEADLESS(display)));
         wpe_view_set_toplevel(view, toplevel.get());
@@ -96,11 +95,15 @@ static WPEView* wpeDisplayHeadlessCreateView(WPEDisplay* display)
 static gpointer wpeDisplayHeadlessGetEGLDisplay(WPEDisplay* display, GError** error)
 {
 #if USE(GBM)
-    if (const char* filename = wpe_display_get_drm_render_node(display)) {
+    if (auto* drmDevice = wpe_display_get_drm_device(display)) {
         if (!epoxy_has_egl_extension(nullptr, "EGL_KHR_platform_gbm")) {
             g_set_error_literal(error, WPE_EGL_ERROR, WPE_EGL_ERROR_NOT_AVAILABLE, "Can't get EGL display: GBM platform not supported");
             return nullptr;
         }
+
+        const char* filename = wpe_drm_device_get_render_node(drmDevice);
+        if (!filename)
+            filename = wpe_drm_device_get_primary_node(drmDevice);
 
         auto fd = UnixFileDescriptor { open(filename, O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
         if (!fd) {
@@ -149,51 +152,14 @@ static gpointer wpeDisplayHeadlessGetEGLDisplay(WPEDisplay* display, GError** er
     return nullptr;
 }
 
-#if USE(LIBDRM)
-static void wpeDisplayHeadlessInitializeDRMDevices(WPEDisplayHeadless* display)
-{
-    auto* priv = display->priv;
-    priv->drmDevice = CString();
-    priv->drmRenderNode = CString();
-
-    drmDevicePtr devices[64];
-    memset(devices, 0, sizeof(devices));
-
-    int numDevices = drmGetDevices2(0, devices, std::size(devices));
-    if (numDevices <= 0)
-        return;
-
-    for (int i = 0; i < numDevices && priv->drmDevice->isNull(); ++i) {
-        drmDevice* device = devices[i];
-        if (!(device->available_nodes & (1 << DRM_NODE_PRIMARY | 1 << DRM_NODE_RENDER)))
-            continue;
-
-        if (device->available_nodes & (1 << DRM_NODE_RENDER))
-            priv->drmRenderNode = CString(device->nodes[DRM_NODE_RENDER]);
-        if (device->available_nodes & (1 << DRM_NODE_PRIMARY))
-            priv->drmDevice = CString(device->nodes[DRM_NODE_PRIMARY]);
-    }
-    drmFreeDevices(devices, numDevices);
-}
-
-static const char* wpeDisplayHeadlessGetDRMDevice(WPEDisplay* display)
+static WPEDRMDevice* wpeDisplayHeadlessGetDRMDevice(WPEDisplay* display)
 {
     auto* displayHeadless = WPE_DISPLAY_HEADLESS(display);
     auto* priv = displayHeadless->priv;
     if (!priv->drmDevice.has_value())
-        wpeDisplayHeadlessInitializeDRMDevices(displayHeadless);
-    return priv->drmDevice->data();
+        priv->drmDevice = wpeDRMDeviceCreateForDevice(nullptr);
+    return priv->drmDevice->get();
 }
-
-static const char* wpeDisplayHeadlessGetDRMRenderNode(WPEDisplay* display)
-{
-    auto* displayHeadless = WPE_DISPLAY_HEADLESS(display);
-    auto* priv = displayHeadless->priv;
-    if (!priv->drmRenderNode.has_value())
-        wpeDisplayHeadlessInitializeDRMDevices(displayHeadless);
-    return !priv->drmRenderNode->isNull() ? priv->drmRenderNode->data() : priv->drmDevice->data();
-}
-#endif
 
 static void wpe_display_headless_class_init(WPEDisplayHeadlessClass* displayHeadlessClass)
 {
@@ -204,10 +170,7 @@ static void wpe_display_headless_class_init(WPEDisplayHeadlessClass* displayHead
     displayClass->connect = wpeDisplayHeadlessConnect;
     displayClass->create_view = wpeDisplayHeadlessCreateView;
     displayClass->get_egl_display = wpeDisplayHeadlessGetEGLDisplay;
-#if USE(LIBDRM)
     displayClass->get_drm_device = wpeDisplayHeadlessGetDRMDevice;
-    displayClass->get_drm_render_node = wpeDisplayHeadlessGetDRMRenderNode;
-#endif
 }
 
 /**
@@ -234,38 +197,16 @@ WPEDisplay* wpe_display_headless_new(void)
 WPEDisplay* wpe_display_headless_new_for_device(const char* name, GError** error)
 {
 #if USE(LIBDRM)
-    auto* display = WPE_DISPLAY_HEADLESS(wpe_display_headless_new());
-    auto* priv = display->priv;
-    drmDevicePtr devices[64];
-    memset(devices, 0, sizeof(devices));
-
-    int numDevices = drmGetDevices2(0, devices, std::size(devices));
-    if (numDevices <= 0) {
-        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_NOT_SUPPORTED, "No DRM device found");
+    auto drmDevice = wpeDRMDeviceCreateForDevice(name);
+    if (!drmDevice) {
+        g_set_error(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_NOT_SUPPORTED, "DRM device \"%s\" not found", name);
         return nullptr;
     }
 
-    for (int i = 0; i < numDevices; ++i) {
-        drmDevice* device = devices[i];
-        for (int j = 0; j < DRM_NODE_MAX; ++j) {
-            if (device->available_nodes & (1 << j) && !strcmp(device->nodes[j], name)) {
-                if (device->available_nodes & (1 << DRM_NODE_RENDER))
-                    priv->drmRenderNode = CString(device->nodes[DRM_NODE_RENDER]);
-                else
-                    priv->drmRenderNode = CString();
-                if (device->available_nodes & (1 << DRM_NODE_PRIMARY))
-                    priv->drmDevice = CString(device->nodes[DRM_NODE_PRIMARY]);
-                else
-                    priv->drmDevice = CString();
-                drmFreeDevices(devices, numDevices);
-                return WPE_DISPLAY(display);
-            }
-        }
-    }
-
-    drmFreeDevices(devices, numDevices);
-    g_set_error(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_NOT_SUPPORTED, "DRM device \"%s\" not found", name);
-    return nullptr;
+    auto* display = WPE_DISPLAY_HEADLESS(wpe_display_headless_new());
+    auto* priv = display->priv;
+    priv->drmDevice = WTFMove(drmDevice);
+    return WPE_DISPLAY(display);
 #else
     g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_NOT_SUPPORTED, "DRM device not supported");
     return nullptr;

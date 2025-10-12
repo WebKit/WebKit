@@ -43,10 +43,10 @@ RefPtr<VideoFrameCV> VideoFrame::asVideoFrameCV()
     if (auto* videoFrameCV = dynamicDowncast<VideoFrameCV>(*this))
         return videoFrameCV;
 
-    auto buffer = pixelBuffer();
+    RetainPtr buffer = pixelBuffer();
     if (!buffer)
         return nullptr;
-    return VideoFrameCV::create(presentationTime(), isMirrored(), rotation(), buffer);
+    return VideoFrameCV::create(presentationTime(), isMirrored(), rotation(), buffer.get());
 }
 #endif // USE(AVFOUNDATION)
 

@@ -1,22 +1,41 @@
-/* Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-#ifndef OPENSSL_HEADER_SERVICE_INDICATOR_INTERNAL_H
-#define OPENSSL_HEADER_SERVICE_INDICATOR_INTERNAL_H
+#ifndef OPENSSL_HEADER_CRYPTO_FIPSMODULE_SERVICE_INDICATOR_INTERNAL_H
+#define OPENSSL_HEADER_CRYPTO_FIPSMODULE_SERVICE_INDICATOR_INTERNAL_H
 
 #include <openssl/base.h>
-#include <openssl/service_indicator.h>
+
+
+// FIPS_service_indicator_before_call and |FIPS_service_indicator_after_call|
+// both currently return the same local thread counter which is slowly
+// incremented whenever approved services are called. The
+// |CALL_SERVICE_AND_CHECK_APPROVED| macro is strongly recommended over calling
+// these functions directly.
+//
+// |FIPS_service_indicator_before_call| is intended to be called immediately
+// before an approved service, while |FIPS_service_indicator_after_call| should
+// be called immediately after. If the values returned from these two functions
+// are not equal, this means that the service called inbetween is deemed to be
+// approved. If the values are still the same, this means the counter has not
+// been incremented, and the service called is not approved for FIPS.
+//
+// In non-FIPS builds, |FIPS_service_indicator_before_call| always returns zero
+// and |FIPS_service_indicator_after_call| always returns one. Thus calls always
+// appear to be approved. This is intended to simplify testing.
+OPENSSL_EXPORT uint64_t FIPS_service_indicator_before_call(void);
+OPENSSL_EXPORT uint64_t FIPS_service_indicator_after_call(void);
 
 #if defined(BORINGSSL_FIPS)
 
@@ -53,37 +72,37 @@ void TLSKDF_verify_service_indicator(const EVP_MD *dgst);
 
 // Service indicator functions are no-ops in non-FIPS builds.
 
-OPENSSL_INLINE void FIPS_service_indicator_update_state(void) {}
-OPENSSL_INLINE void FIPS_service_indicator_lock_state(void) {}
-OPENSSL_INLINE void FIPS_service_indicator_unlock_state(void) {}
+inline void FIPS_service_indicator_update_state(void) {}
+inline void FIPS_service_indicator_lock_state(void) {}
+inline void FIPS_service_indicator_unlock_state(void) {}
 
-OPENSSL_INLINE void AEAD_GCM_verify_service_indicator(
-    OPENSSL_UNUSED const EVP_AEAD_CTX *ctx) {}
+inline void AEAD_GCM_verify_service_indicator(
+    [[maybe_unused]] const EVP_AEAD_CTX *ctx) {}
 
-OPENSSL_INLINE void AEAD_CCM_verify_service_indicator(
-    OPENSSL_UNUSED const EVP_AEAD_CTX *ctx) {}
+inline void AEAD_CCM_verify_service_indicator(
+    [[maybe_unused]] const EVP_AEAD_CTX *ctx) {}
 
-OPENSSL_INLINE void EC_KEY_keygen_verify_service_indicator(
-    OPENSSL_UNUSED const EC_KEY *eckey) {}
+inline void EC_KEY_keygen_verify_service_indicator(
+    [[maybe_unused]] const EC_KEY *eckey) {}
 
-OPENSSL_INLINE void ECDH_verify_service_indicator(
-    OPENSSL_UNUSED const EC_KEY *ec_key) {}
+inline void ECDH_verify_service_indicator(
+    [[maybe_unused]] const EC_KEY *ec_key) {}
 
-OPENSSL_INLINE void EVP_Cipher_verify_service_indicator(
-    OPENSSL_UNUSED const EVP_CIPHER_CTX *ctx) {}
+inline void EVP_Cipher_verify_service_indicator(
+    [[maybe_unused]] const EVP_CIPHER_CTX *ctx) {}
 
-OPENSSL_INLINE void EVP_DigestSign_verify_service_indicator(
-    OPENSSL_UNUSED const EVP_MD_CTX *ctx) {}
+inline void EVP_DigestSign_verify_service_indicator(
+    [[maybe_unused]] const EVP_MD_CTX *ctx) {}
 
-OPENSSL_INLINE void EVP_DigestVerify_verify_service_indicator(
-    OPENSSL_UNUSED const EVP_MD_CTX *ctx) {}
+inline void EVP_DigestVerify_verify_service_indicator(
+    [[maybe_unused]] const EVP_MD_CTX *ctx) {}
 
-OPENSSL_INLINE void HMAC_verify_service_indicator(
-    OPENSSL_UNUSED const EVP_MD *evp_md) {}
+inline void HMAC_verify_service_indicator(
+    [[maybe_unused]] const EVP_MD *evp_md) {}
 
-OPENSSL_INLINE void TLSKDF_verify_service_indicator(
-    OPENSSL_UNUSED const EVP_MD *dgst) {}
+inline void TLSKDF_verify_service_indicator(
+    [[maybe_unused]] const EVP_MD *dgst) {}
 
 #endif  // BORINGSSL_FIPS
 
-#endif  // OPENSSL_HEADER_SERVICE_INDICATOR_INTERNAL_H
+#endif  // OPENSSL_HEADER_CRYPTO_FIPSMODULE_SERVICE_INDICATOR_INTERNAL_H

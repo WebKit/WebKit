@@ -40,41 +40,40 @@ static const int kChunksPerSecond = 1000 / AudioProcessing::kChunkSizeMs;
 
 struct Int16Frame {
   void SetFormat(int sample_rate_hz, int num_channels) {
-    this->sample_rate_hz = sample_rate_hz;
-    samples_per_channel =
-        rtc::CheckedDivExact(sample_rate_hz, kChunksPerSecond);
-    this->num_channels = num_channels;
+    sample_rate_hz_ = sample_rate_hz;
+    samples_per_channel_ = CheckedDivExact(sample_rate_hz, kChunksPerSecond);
+    num_channels_ = num_channels;
     config = StreamConfig(sample_rate_hz, num_channels);
-    data.resize(num_channels * samples_per_channel);
+    data.resize(num_channels * samples_per_channel_);
   }
 
   void CopyTo(ChannelBuffer<float>* dest) {
     RTC_DCHECK(dest);
-    RTC_CHECK_EQ(num_channels, dest->num_channels());
-    RTC_CHECK_EQ(samples_per_channel, dest->num_frames());
+    RTC_CHECK_EQ(num_channels_, dest->num_channels());
+    RTC_CHECK_EQ(samples_per_channel_, dest->num_frames());
     // Copy the data from the input buffer.
-    std::vector<float> tmp(samples_per_channel * num_channels);
+    std::vector<float> tmp(samples_per_channel_ * num_channels_);
     S16ToFloat(data.data(), tmp.size(), tmp.data());
-    Deinterleave(tmp.data(), samples_per_channel, num_channels,
+    Deinterleave(tmp.data(), samples_per_channel_, num_channels_,
                  dest->channels());
   }
 
   void CopyFrom(const ChannelBuffer<float>& src) {
-    RTC_CHECK_EQ(src.num_channels(), num_channels);
-    RTC_CHECK_EQ(src.num_frames(), samples_per_channel);
-    data.resize(num_channels * samples_per_channel);
+    RTC_CHECK_EQ(src.num_channels(), num_channels_);
+    RTC_CHECK_EQ(src.num_frames(), samples_per_channel_);
+    data.resize(num_channels_ * samples_per_channel_);
     int16_t* dest_data = data.data();
-    for (int ch = 0; ch < num_channels; ++ch) {
-      for (int sample = 0; sample < samples_per_channel; ++sample) {
-        dest_data[sample * num_channels + ch] =
+    for (int ch = 0; ch < num_channels_; ++ch) {
+      for (int sample = 0; sample < samples_per_channel_; ++sample) {
+        dest_data[sample * num_channels_ + ch] =
             src.channels()[ch][sample] * 32767;
       }
     }
   }
 
-  int sample_rate_hz;
-  int samples_per_channel;
-  int num_channels;
+  int sample_rate_hz_;
+  int samples_per_channel_;
+  int num_channels_;
 
   StreamConfig config;
 
@@ -166,7 +165,7 @@ class AudioProcessingSimulator {
  public:
   AudioProcessingSimulator(
       const SimulationSettings& settings,
-      absl::Nonnull<scoped_refptr<AudioProcessing>> audio_processing);
+      absl_nonnull scoped_refptr<AudioProcessing> audio_processing);
 
   AudioProcessingSimulator() = delete;
   AudioProcessingSimulator(const AudioProcessingSimulator&) = delete;
@@ -210,7 +209,7 @@ class AudioProcessingSimulator {
                                     int capture_frames_since_init) const;
 
   const SimulationSettings settings_;
-  rtc::scoped_refptr<AudioProcessing> ap_;
+  scoped_refptr<AudioProcessing> ap_;
 
   std::unique_ptr<ChannelBuffer<float>> in_buf_;
   std::unique_ptr<ChannelBuffer<float>> out_buf_;

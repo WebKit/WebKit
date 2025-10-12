@@ -36,13 +36,13 @@ public:
         return subspaceForImpl(vm);
     }
 
+    DECLARE_VISIT_CHILDREN;
+
 protected:
     JSDOMBuiltinConstructorBase(JSC::VM& vm, JSC::Structure* structure, JSC::NativeFunction functionForConstruct)
         : Base(vm, structure, functionForConstruct)
     {
     }
-
-    DECLARE_VISIT_CHILDREN;
 
     JSC::JSFunction* initializeFunction();
     void setInitializeFunction(JSC::VM&, JSC::JSFunction&);

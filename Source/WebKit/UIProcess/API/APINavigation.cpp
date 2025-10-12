@@ -27,6 +27,7 @@
 #include "APINavigation.h"
 
 #include "BrowsingWarning.h"
+#include "FrameProcess.h"
 #include "WebBackForwardListFrameItem.h"
 #include "WebBackForwardListItem.h"
 #include <WebCore/RegistrableDomain.h>
@@ -110,7 +111,7 @@ void Navigation::resetRequestStart()
     m_requestStart = MonotonicTime::now();
 }
 
-void Navigation::setCurrentRequest(ResourceRequest&& request, ProcessIdentifier processIdentifier)
+void Navigation::setCurrentRequest(ResourceRequest&& request, std::optional<ProcessIdentifier> processIdentifier)
 {
     m_currentRequest = WTFMove(request);
     m_currentRequestProcessIdentifier = processIdentifier;
@@ -182,6 +183,12 @@ size_t Navigation::redirectChainIndex(const WTF::URL& url)
     if (index == WTF::notFound)
         index = m_redirectChain.size();
     return index;
+}
+
+void Navigation::setPendingSharedProcess(FrameProcess& sharedProcess)
+{
+    // Extend the life of a shared process until the end of the current navigation.
+    m_pendingSharedProcess = sharedProcess;
 }
 
 #if !LOG_DISABLED

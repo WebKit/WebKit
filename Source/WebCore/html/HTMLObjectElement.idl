@@ -29,9 +29,9 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
     [CEReactions=NotNeeded, Reflect] attribute DOMString archive;
     [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString border;
-    [CEReactions=NotNeeded, Reflect, URL] attribute USVString codeBase;
+    [CEReactions=NotNeeded, ReflectURL] attribute USVString codeBase;
     [CEReactions=NotNeeded, Reflect] attribute DOMString codeType;
-    [CEReactions=NotNeeded, Reflect, URL] attribute USVString data;
+    [CEReactions=NotNeeded, ReflectURL] attribute USVString data;
     [CEReactions=NotNeeded, Reflect] attribute boolean declare;
     [CEReactions=NotNeeded, Reflect] attribute DOMString height;
     [CEReactions=NotNeeded, Reflect] attribute unsigned long hspace;

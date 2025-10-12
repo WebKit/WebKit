@@ -28,13 +28,13 @@
 
 #include "pas_allocation_mode.h"
 #include "pas_allocation_result.h"
-#include "pas_debug_heap.h"
 #include "pas_heap_inlines.h"
 #include "pas_local_allocator_inlines.h"
 #include "pas_malloc_stack_logging.h"
 #include "pas_primitive_heap_ref.h"
 #include "pas_probabilistic_guard_malloc_allocator.h"
 #include "pas_segregated_heap_inlines.h"
+#include "pas_system_heap.h"
 #include "pas_utils.h"
 
 PAS_BEGIN_EXTERN_C;
@@ -166,17 +166,17 @@ pas_try_allocate_common_impl_slow(
     type = heap_ref->type;
     alignment = PAS_MAX(alignment, config.get_type_alignment(type));
     
-    if (PAS_UNLIKELY(pas_debug_heap_is_enabled(config.kind))) {
+    if (PAS_UNLIKELY(pas_system_heap_is_enabled(config.kind))) {
         if (verbose)
-            pas_log("Debug heap enabled, asking debug heap.\n");
-        result = pas_debug_heap_allocate(size, alignment, allocation_mode);
+            pas_log("System heap enabled, asking system heap.\n");
+        result = pas_system_heap_allocate(size, alignment, allocation_mode);
         if (verbose)
             pas_log("Got result.ptr = %p, did_succeed = %d\n", (void*)result.begin, result.did_succeed);
         return result;
     }
 
     if (verbose)
-        pas_log("Not using debug heap.\n");
+        pas_log("Not using system heap.\n");
 
     heap = pas_ensure_heap(heap_ref, heap_ref_kind, config.config_ptr, runtime_config);
     

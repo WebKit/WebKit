@@ -1,0 +1,3 @@
+
+PASS Coalesced list in pointerdown/move/up events
+

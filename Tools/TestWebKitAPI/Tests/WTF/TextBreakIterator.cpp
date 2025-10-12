@@ -33,9 +33,9 @@
 
 namespace TestWebKitAPI {
 
-static String makeUTF16(std::vector<UChar> input)
+static String makeUTF16(std::vector<char16_t> input)
 {
-    return std::span<const UChar> { input };
+    return std::span<const char16_t> { input };
 }
 
 TEST(WTF_TextBreakIterator, NumGraphemeClusters)

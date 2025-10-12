@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "IDLTypes.h"
-#include "JSDOMConvertBase.h"
-#include "JSDOMExceptionHandling.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/PureNaN.h>
+#include <WebCore/IDLTypes.h>
+#include <WebCore/JSDOMConvertBase.h>
+#include <WebCore/JSDOMExceptionHandling.h>
 
 namespace WebCore {
 

@@ -25,9 +25,10 @@
 
 #pragma once
 
-#include "Image.h"
-#include "IntPoint.h"
+#include <WebCore/Image.h>
+#include <WebCore/IntPoint.h>
 #include <wtf/Assertions.h>
+#include <wtf/Platform.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -269,7 +270,7 @@ inline auto Cursor::ipcData() const -> IPCData
     auto type = this->type();
     if (type != Type::Custom)
         return type;
-    if (m_image->isNull())
+    if (Ref { *m_image }->isNull())
         return std::nullopt;
     return CustomCursorIPCData {
         *m_image

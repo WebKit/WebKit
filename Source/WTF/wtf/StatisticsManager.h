@@ -44,7 +44,7 @@ private:
     ~StatisticsManager() = default;
 
     mutable Lock m_lock;
-    UncheckedKeyHashMap<ASCIILiteral, Vector<double>> m_data WTF_GUARDED_BY_LOCK(m_lock);
+    HashMap<ASCIILiteral, Vector<double>> m_data WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } // namespace WTF

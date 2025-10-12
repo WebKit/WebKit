@@ -1067,6 +1067,58 @@ TEST_P(DatarateTestVP9RealTimeDenoiser, DenoiserOffOn) {
 }
 #endif  // CONFIG_VP9_TEMPORAL_DENOISING
 
+class DatarateTestVP9Psnr : public DatarateTestVP9,
+                            public ::libvpx_test::CodecTestWithParam<int> {
+ protected:
+  DatarateTestVP9Psnr() : DatarateTestVP9(GET_PARAM(0)) {}
+  ~DatarateTestVP9Psnr() override = default;
+
+  void SetUp() override {
+    InitializeConfig();
+    cfg_.g_lag_in_frames = 0;
+    SetMode(libvpx_test::kRealTime);
+    set_cpu_used_ = 10;
+    ResetModel();
+    frame_flags_ = VPX_EFLAG_CALCULATE_PSNR;
+    expect_psnr_ = true;
+  }
+  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                          ::libvpx_test::Encoder *encoder) override {
+    DatarateTestVP9::PreEncodeFrameHook(video, encoder);
+    frame_flags_ ^= VPX_EFLAG_CALCULATE_PSNR;
+#if CONFIG_INTERNAL_STATS
+    // CONFIG_INTERNAL_STATS unconditionally generates PSNR.
+    expect_psnr_ = true;
+#else
+    expect_psnr_ = (frame_flags_ & VPX_EFLAG_CALCULATE_PSNR) != 0;
+#endif  // CONFIG_INTERNAL_STATS
+    if (video->img() == nullptr) {
+      expect_psnr_ = false;
+    }
+  }
+  void PostEncodeFrameHook(::libvpx_test::Encoder *encoder) override {
+    libvpx_test::CxDataIterator iter = encoder->GetCxData();
+
+    bool had_psnr = false;
+    while (const vpx_codec_cx_pkt_t *pkt = iter.Next()) {
+      if (pkt->kind == VPX_CODEC_PSNR_PKT) had_psnr = true;
+    }
+
+    EXPECT_EQ(had_psnr, expect_psnr_);
+  }
+
+ private:
+  bool expect_psnr_;
+};
+
+TEST_P(DatarateTestVP9Psnr, PerFramePsnr) {
+  ::libvpx_test::I420VideoSource video("hantro_collage_w352h288.yuv", 352, 288,
+                                       30, 1, 0, 100);
+
+  ResetModel();
+  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+}
+
 VP9_INSTANTIATE_TEST_SUITE(DatarateTestVP9RealTimeMultiBR,
                            ::testing::Range(5, 10), ::testing::Range(0, 4));
 
@@ -1093,4 +1145,7 @@ VP9_INSTANTIATE_TEST_SUITE(DatarateTestVP9PostEncodeDrop,
 VP9_INSTANTIATE_TEST_SUITE(DatarateTestVP9RealTimeDenoiser,
                            ::testing::Range(5, 10));
 #endif
+
+VP9_INSTANTIATE_TEST_SUITE(DatarateTestVP9Psnr,
+                           ::testing::Values(::libvpx_test::kRealTime));
 }  // namespace

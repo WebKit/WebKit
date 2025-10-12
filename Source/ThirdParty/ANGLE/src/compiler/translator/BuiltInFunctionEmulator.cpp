@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "compiler/translator/BuiltInFunctionEmulator.h"
 #include "angle_gl.h"
 #include "compiler/translator/Symbol.h"

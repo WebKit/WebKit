@@ -1868,8 +1868,8 @@ static int64_t full_pixel_exhaustive_new(const VP9_COMP *cpi, MACROBLOCK *x,
 
   // Check size of proposed first range against magnitude of the centre
   // value used as a starting point.
-  range = VPXMAX(range, (5 * VPXMAX(abs(temp_mv.row), abs(temp_mv.col))) / 4);
-  range = VPXMIN(range, MAX_RANGE);
+  range = clamp(range, (5 * VPXMAX(abs(temp_mv.row), abs(temp_mv.col))) / 4,
+                MAX_RANGE);
   interval = VPXMAX(interval, range / baseline_interval_divisor);
 
   // initial search
@@ -2629,8 +2629,8 @@ static int full_pixel_exhaustive(const VP9_COMP *const cpi,
 
   // Check size of proposed first range against magnitude of the centre
   // value used as a starting point.
-  range = VPXMAX(range, (5 * VPXMAX(abs(temp_mv.row), abs(temp_mv.col))) / 4);
-  range = VPXMIN(range, MAX_RANGE);
+  range = clamp(range, (5 * VPXMAX(abs(temp_mv.row), abs(temp_mv.col))) / 4,
+                MAX_RANGE);
   interval = VPXMAX(interval, range / baseline_interval_divisor);
 
   // initial search

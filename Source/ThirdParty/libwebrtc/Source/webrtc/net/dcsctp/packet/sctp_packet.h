@@ -10,11 +10,9 @@
 #ifndef NET_DCSCTP_PACKET_SCTP_PACKET_H_
 #define NET_DCSCTP_PACKET_SCTP_PACKET_H_
 
-#include <stddef.h>
-
+#include <cstddef>
 #include <cstdint>
-#include <functional>
-#include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -42,11 +40,11 @@ class SctpPacket {
   struct ChunkDescriptor {
     ChunkDescriptor(uint8_t type,
                     uint8_t flags,
-                    rtc::ArrayView<const uint8_t> data)
+                    webrtc::ArrayView<const uint8_t> data)
         : type(type), flags(flags), data(data) {}
     uint8_t type;
     uint8_t flags;
-    rtc::ArrayView<const uint8_t> data;
+    webrtc::ArrayView<const uint8_t> data;
   };
 
   SctpPacket(SctpPacket&& other) = default;
@@ -89,14 +87,14 @@ class SctpPacket {
   };
 
   // Parses `data` as an SCTP packet and returns it if it validates.
-  static std::optional<SctpPacket> Parse(rtc::ArrayView<const uint8_t> data,
+  static std::optional<SctpPacket> Parse(webrtc::ArrayView<const uint8_t> data,
                                          const DcSctpOptions& options);
 
   // Returns the SCTP common header.
   const CommonHeader& common_header() const { return common_header_; }
 
   // Returns the chunks (types and offsets) within the packet.
-  rtc::ArrayView<const ChunkDescriptor> descriptors() const {
+  webrtc::ArrayView<const ChunkDescriptor> descriptors() const {
     return descriptors_;
   }
 

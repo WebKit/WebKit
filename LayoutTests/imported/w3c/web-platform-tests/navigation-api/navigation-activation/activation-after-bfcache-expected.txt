@@ -1,3 +1,3 @@
 
-NOTRUN navigation.activation must be updated when restored from bfcache Could have been BFCached but actually wasn't
+PASS navigation.activation must be updated when restored from bfcache
 

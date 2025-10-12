@@ -1,13 +1,3 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:49001/echo-query?%C3%A5' failed: WebSocket is closed before the connection is established.
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=75059958-2d99-40ad-83d9-fea11dd5fa14' because non CSS MIME types are not allowed in strict mode.
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=311ddf07-b409-4fce-8f81-26e50d36be9e' because non CSS MIME types are not allowed in strict mode.
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=fcad33d9-dc93-403a-b031-9a5a259ede2c' because non CSS MIME types are not allowed in strict mode.
-CONSOLE MESSAGE: SyntaxError: Invalid character '\u2079'
-CONSOLE MESSAGE: SyntaxError: Invalid character '\u2079'
-CONSOLE MESSAGE: SyntaxError: Invalid character '\u2079'
-CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
-CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
-CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 
 Harness Error (FAIL), message = SyntaxError: Invalid character '\u2079'
 

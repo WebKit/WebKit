@@ -29,7 +29,6 @@
 
 #include "PDFDocumentLayout.h"
 #include <WebCore/DataDetectorHighlight.h>
-#include <WebCore/GraphicsLayer.h>
 #include <WebCore/PageOverlay.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -85,7 +84,7 @@ private:
     float deviceScaleFactor() const final;
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient&) final;
 
-    WebCore::PageOverlay& installOverlayIfNeeded();
+    Ref<WebCore::PageOverlay> installProtectedOverlayIfNeeded();
     void uninstallOverlay();
 
     RetainPtr<DDHighlightRef> createPlatformDataDetectorHighlight(PDFDataDetectorItem&) const;

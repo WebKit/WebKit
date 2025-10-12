@@ -389,8 +389,13 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
                 let logEditor = consoleSettingsView.addGroupWithCustomSetting(label, WI.SettingEditor.Type.Select, {values: logLevels});
                 logEditor.value = channel.level;
                 logEditor.addEventListener(WI.SettingEditor.Event.ValueDidChange, function(event) {
-                    for (let target of WI.targets)
+                    for (let target of WI.targets) {
+                        // FIXME: <https://webkit.org/b/298911> Add Console support for FrameTarget.
+                        if (target instanceof WI.FrameTarget)
+                            continue;
+
                         target.ConsoleAgent.setLoggingChannelLevel(channel.source, this.value);
+                    }
                 }, logEditor);
             }
         }
@@ -434,7 +439,11 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         let sourcesGroup = experimentalSettingsView.addGroup(WI.UIString("Sources:"));
         sourcesGroup.addSetting(WI.settings.experimentalLimitSourceCodeHighlighting, WI.UIString("Limit syntax highlighting on long lines of code"));
         sourcesGroup.addSetting(WI.settings.experimentalUseFuzzyMatchingForCSSCodeCompletion, WI.UIString("Use fuzzy matching for CSS code completion"));
-        sourcesGroup.addSetting(WI.settings.experimentalVirtualizeSourcesNavigationSidebarTreeOutline, WI.UIString("Limit number of resources in navigation sidebar"));
+
+        experimentalSettingsView.addSeparator();
+
+        let searchGroup = experimentalSettingsView.addGroup(WI.UIString("Search:"));
+        searchGroup.addSetting(WI.settings.experimentalUseStrictCheckForGlobMatching, WI.UIString("Use strict word boundary checks for glob pattern matching"));
 
         experimentalSettingsView.addSeparator();
 
@@ -472,7 +481,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         listenForChange(WI.settings.experimentalLimitSourceCodeHighlighting);
         listenForChange(WI.settings.experimentalUseFuzzyMatchingForCSSCodeCompletion);
-        listenForChange(WI.settings.experimentalVirtualizeSourcesNavigationSidebarTreeOutline);
 
         this._createReferenceLink(experimentalSettingsView);
 

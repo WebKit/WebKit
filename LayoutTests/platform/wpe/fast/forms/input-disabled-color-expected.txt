@@ -1,0 +1,190 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 509x17
+        text run at (0,0) width 509: "This tests that the text color changes appropriately when the text field is disabled."
+      RenderBR {BR} at (509,0) size 0x17
+      RenderTextControl {INPUT} at (0,18) size 172x24 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+      RenderText {#text} at (172,21) size 4x17
+        text run at (172,21) width 4: " "
+      RenderTextControl {INPUT} at (176,18) size 173x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+      RenderBR {BR} at (349,21) size 0x17
+      RenderTextControl {INPUT} at (0,42) size 172x24 [color=#FF0000] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+      RenderText {#text} at (172,45) size 4x17
+        text run at (172,45) width 4: " "
+      RenderTextControl {INPUT} at (176,42) size 173x24 [color=#FF0000] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+      RenderBR {BR} at (349,45) size 0x17
+      RenderTextControl {INPUT} at (0,66) size 172x24 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#0000FF] [border: (2px inset #808080)]
+      RenderText {#text} at (172,69) size 4x17
+        text run at (172,69) width 4: " "
+      RenderTextControl {INPUT} at (176,66) size 173x24 [bgcolor=#0000FF] [border: (2px inset #808080)]
+      RenderBR {BR} at (349,69) size 0x17
+      RenderTextControl {INPUT} at (0,90) size 172x24 [color=#FF0000] [bgcolor=#0000FF] [border: (2px inset #808080)]
+      RenderText {#text} at (172,93) size 4x17
+        text run at (172,93) width 4: " "
+      RenderTextControl {INPUT} at (176,90) size 173x24 [color=#FF0000] [bgcolor=#0000FF] [border: (2px inset #808080)]
+      RenderBR {BR} at (349,93) size 0x17
+      RenderTextControl {INPUT} at (0,114) size 172x24 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#000000] [border: (2px inset #808080)]
+      RenderText {#text} at (172,117) size 4x17
+        text run at (172,117) width 4: " "
+      RenderTextControl {INPUT} at (176,114) size 173x24 [bgcolor=#000000] [border: (2px inset #808080)]
+      RenderBR {BR} at (349,117) size 0x17
+      RenderTextControl {INPUT} at (0,138) size 172x24 [color=#FFFFFF] [bgcolor=#000000] [border: (2px inset #808080)]
+      RenderText {#text} at (172,141) size 4x17
+        text run at (172,141) width 4: " "
+      RenderTextControl {INPUT} at (176,138) size 173x24 [color=#FFFFFF] [bgcolor=#000000] [border: (2px inset #808080)]
+      RenderBR {BR} at (349,141) size 0x17
+      RenderTextControl {INPUT} at (0,162) size 172x24 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#808080] [border: (2px inset #808080)]
+      RenderText {#text} at (172,165) size 4x17
+        text run at (172,165) width 4: " "
+      RenderTextControl {INPUT} at (176,162) size 173x24 [bgcolor=#808080] [border: (2px inset #808080)]
+      RenderBR {BR} at (349,165) size 0x17
+      RenderTextControl {INPUT} at (0,186) size 172x24 [color=#FFFFFF] [bgcolor=#A9A9A9] [border: (2px inset #808080)]
+      RenderText {#text} at (172,189) size 4x17
+        text run at (172,189) width 4: " "
+      RenderTextControl {INPUT} at (176,186) size 173x24 [color=#FFFFFF] [bgcolor=#A9A9A9] [border: (2px inset #808080)]
+      RenderBR {BR} at (349,189) size 0x17
+      RenderTextControl {INPUT} at (0,210) size 172x24 [color=#808080] [bgcolor=#000000] [border: (2px inset #808080)]
+      RenderText {#text} at (172,213) size 4x17
+        text run at (172,213) width 4: " "
+      RenderTextControl {INPUT} at (176,210) size 173x24 [color=#808080] [bgcolor=#000000] [border: (2px inset #808080)]
+      RenderBR {BR} at (349,213) size 0x17
+      RenderTextControl {INPUT} at (0,234) size 172x24 [color=#FF0000] [bgcolor=#808080] [border: (2px inset #808080)]
+      RenderText {#text} at (172,237) size 4x17
+        text run at (172,237) width 4: " "
+      RenderTextControl {INPUT} at (176,234) size 173x24 [color=#FF0000] [bgcolor=#808080] [border: (2px inset #808080)]
+      RenderBR {BR} at (349,237) size 0x17
+      RenderTextControl {INPUT} at (0,258) size 172x24 [color=#808080] [bgcolor=#FF0000] [border: (2px inset #808080)]
+      RenderText {#text} at (172,261) size 4x17
+        text run at (172,261) width 4: " "
+      RenderTextControl {INPUT} at (176,258) size 173x24 [color=#808080] [bgcolor=#FF0000] [border: (2px inset #808080)]
+      RenderBR {BR} at (349,261) size 0x17
+      RenderTextControl {INPUT} at (0,282) size 172x24 [color=#FF0000] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+      RenderText {#text} at (172,285) size 4x17
+        text run at (172,285) width 4: " "
+      RenderTextControl {INPUT} at (176,282) size 173x24 [color=#FF0000] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+      RenderBR {BR} at (349,285) size 0x17
+      RenderTextControl {INPUT} at (0,306) size 172x24 [color=#FF0000] [border: (2px inset #808080)]
+      RenderText {#text} at (172,309) size 4x17
+        text run at (172,309) width 4: " "
+      RenderTextControl {INPUT} at (176,306) size 173x24 [color=#FF0000] [border: (2px inset #808080)]
+      RenderBR {BR} at (349,309) size 0x17
+      RenderTextControl {INPUT} at (0,330) size 172x24 [color=#ACACAC] [bgcolor=#F2F2F2] [border: (2px inset #808080)]
+      RenderText {#text} at (172,333) size 4x17
+        text run at (172,333) width 4: " "
+      RenderTextControl {INPUT} at (176,330) size 173x24 [color=#ACACAC] [bgcolor=#F2F2F2] [border: (2px inset #808080)]
+      RenderBR {BR} at (349,333) size 0x17
+layer at (11,29) size 166x18 scrollWidth 413
+  RenderBlock {DIV} at (3,3) size 166x18
+    RenderText {#text} at (0,0) size 413x17
+      text run at (0,0) width 413: "The text in this disabled field should displayed as dimmed or grey"
+layer at (187,29) size 167x18 scrollWidth 182
+  RenderBlock {DIV} at (3,3) size 167x18
+    RenderText {#text} at (0,0) size 181x17
+      text run at (0,0) width 181: "This text field is not disabled"
+layer at (11,53) size 166x18 scrollWidth 413
+  RenderBlock {DIV} at (3,3) size 166x18
+    RenderText {#text} at (0,0) size 413x17
+      text run at (0,0) width 413: "The text in this disabled field should displayed as dimmed or grey"
+layer at (187,53) size 167x18 scrollWidth 182
+  RenderBlock {DIV} at (3,3) size 167x18
+    RenderText {#text} at (0,0) size 181x17
+      text run at (0,0) width 181: "This text field is not disabled"
+layer at (11,77) size 166x18 scrollWidth 413
+  RenderBlock {DIV} at (3,3) size 166x18
+    RenderText {#text} at (0,0) size 413x17
+      text run at (0,0) width 413: "The text in this disabled field should displayed as dimmed or grey"
+layer at (187,77) size 167x18 scrollWidth 182
+  RenderBlock {DIV} at (3,3) size 167x18
+    RenderText {#text} at (0,0) size 181x17
+      text run at (0,0) width 181: "This text field is not disabled"
+layer at (11,101) size 166x18 scrollWidth 413
+  RenderBlock {DIV} at (3,3) size 166x18
+    RenderText {#text} at (0,0) size 413x17
+      text run at (0,0) width 413: "The text in this disabled field should displayed as dimmed or grey"
+layer at (187,101) size 167x18 scrollWidth 182
+  RenderBlock {DIV} at (3,3) size 167x18
+    RenderText {#text} at (0,0) size 181x17
+      text run at (0,0) width 181: "This text field is not disabled"
+layer at (11,125) size 166x18 scrollWidth 413
+  RenderBlock {DIV} at (3,3) size 166x18
+    RenderText {#text} at (0,0) size 413x17
+      text run at (0,0) width 413: "The text in this disabled field should displayed as dimmed or grey"
+layer at (187,125) size 167x18 scrollWidth 182
+  RenderBlock {DIV} at (3,3) size 167x18
+    RenderText {#text} at (0,0) size 181x17
+      text run at (0,0) width 181: "This text field is not disabled"
+layer at (11,149) size 166x18 scrollWidth 413
+  RenderBlock {DIV} at (3,3) size 166x18
+    RenderText {#text} at (0,0) size 413x17
+      text run at (0,0) width 413: "The text in this disabled field should displayed as dimmed or grey"
+layer at (187,149) size 167x18 scrollWidth 182
+  RenderBlock {DIV} at (3,3) size 167x18
+    RenderText {#text} at (0,0) size 181x17
+      text run at (0,0) width 181: "This text field is not disabled"
+layer at (11,173) size 166x18 scrollWidth 413
+  RenderBlock {DIV} at (3,3) size 166x18
+    RenderText {#text} at (0,0) size 413x17
+      text run at (0,0) width 413: "The text in this disabled field should displayed as dimmed or grey"
+layer at (187,173) size 167x18 scrollWidth 182
+  RenderBlock {DIV} at (3,3) size 167x18
+    RenderText {#text} at (0,0) size 181x17
+      text run at (0,0) width 181: "This text field is not disabled"
+layer at (11,197) size 166x18 scrollWidth 413
+  RenderBlock {DIV} at (3,3) size 166x18
+    RenderText {#text} at (0,0) size 413x17
+      text run at (0,0) width 413: "The text in this disabled field should displayed as dimmed or grey"
+layer at (187,197) size 167x18 scrollWidth 182
+  RenderBlock {DIV} at (3,3) size 167x18
+    RenderText {#text} at (0,0) size 181x17
+      text run at (0,0) width 181: "This text field is not disabled"
+layer at (11,221) size 166x18 scrollWidth 413
+  RenderBlock {DIV} at (3,3) size 166x18
+    RenderText {#text} at (0,0) size 413x17
+      text run at (0,0) width 413: "The text in this disabled field should displayed as dimmed or grey"
+layer at (187,221) size 167x18 scrollWidth 182
+  RenderBlock {DIV} at (3,3) size 167x18
+    RenderText {#text} at (0,0) size 181x17
+      text run at (0,0) width 181: "This text field is not disabled"
+layer at (11,245) size 166x18 scrollWidth 413
+  RenderBlock {DIV} at (3,3) size 166x18
+    RenderText {#text} at (0,0) size 413x17
+      text run at (0,0) width 413: "The text in this disabled field should displayed as dimmed or grey"
+layer at (187,245) size 167x18 scrollWidth 182
+  RenderBlock {DIV} at (3,3) size 167x18
+    RenderText {#text} at (0,0) size 181x17
+      text run at (0,0) width 181: "This text field is not disabled"
+layer at (11,269) size 166x18 scrollWidth 413
+  RenderBlock {DIV} at (3,3) size 166x18
+    RenderText {#text} at (0,0) size 413x17
+      text run at (0,0) width 413: "The text in this disabled field should displayed as dimmed or grey"
+layer at (187,269) size 167x18 scrollWidth 182
+  RenderBlock {DIV} at (3,3) size 167x18
+    RenderText {#text} at (0,0) size 181x17
+      text run at (0,0) width 181: "This text field is not disabled"
+layer at (11,293) size 166x18 scrollWidth 413
+  RenderBlock {DIV} at (3,3) size 166x18
+    RenderText {#text} at (0,0) size 413x17
+      text run at (0,0) width 413: "The text in this disabled field should displayed as dimmed or grey"
+layer at (187,293) size 167x18 scrollWidth 182
+  RenderBlock {DIV} at (3,3) size 167x18
+    RenderText {#text} at (0,0) size 181x17
+      text run at (0,0) width 181: "This text field is not disabled"
+layer at (11,317) size 166x18 scrollWidth 413
+  RenderBlock {DIV} at (3,3) size 166x18
+    RenderText {#text} at (0,0) size 413x17
+      text run at (0,0) width 413: "The text in this disabled field should displayed as dimmed or grey"
+layer at (187,317) size 167x18 scrollWidth 182
+  RenderBlock {DIV} at (3,3) size 167x18
+    RenderText {#text} at (0,0) size 181x17
+      text run at (0,0) width 181: "This text field is not disabled"
+layer at (11,341) size 166x18 scrollWidth 413
+  RenderBlock {DIV} at (3,3) size 166x18
+    RenderText {#text} at (0,0) size 413x17
+      text run at (0,0) width 413: "The text in this disabled field should displayed as dimmed or grey"
+layer at (187,341) size 167x18 scrollWidth 182
+  RenderBlock {DIV} at (3,3) size 167x18
+    RenderText {#text} at (0,0) size 181x17
+      text run at (0,0) width 181: "This text field is not disabled"

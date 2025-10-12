@@ -41,10 +41,6 @@ enum {
     kWKImmediateActionTelLink
 };
 
-#ifndef _WKImmediateActionType 
-#define _WKImmediateActionType uint32_t
-#endif
-
 #ifdef __cplusplus
 }
 #endif

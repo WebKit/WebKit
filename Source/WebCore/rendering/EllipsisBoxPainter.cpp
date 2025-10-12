@@ -25,10 +25,14 @@
 #include "config.h"
 #include "EllipsisBoxPainter.h"
 
+#include "CSSPropertyNames.h"
 #include "InlineIteratorTextBox.h"
 #include "LineSelection.h"
 #include "PaintInfo.h"
+#include "RenderObjectDocument.h"
+#include "RenderStyleInlines.h"
 #include "RenderView.h"
+#include "StyleTextShadow.h"
 
 namespace WebCore {
 
@@ -63,13 +67,16 @@ void EllipsisBoxPainter::paint()
     if (textColor != context.fillColor())
         context.setFillColor(textColor);
 
-    auto setShadow = false;
-    if (style.textShadow()) {
-        auto shadowColor = style.colorWithColorFilter(style.textShadow()->color());
-        context.setDropShadow({ LayoutSize(style.textShadow()->x().value, style.textShadow()->y().value), style.textShadow()->radius().value, shadowColor, ShadowRadiusMode::Default });
-        setShadow = true;
-    }
-    
+    bool setShadow = WTF::switchOn(style.textShadow(),
+        [&](const CSS::Keyword::None&) {
+            return false;
+        },
+        [&](const auto& shadows) {
+            context.setDropShadow({ LayoutSize(shadows[0].location.x().resolveZoom(Style::ZoomNeeded { }), shadows[0].location.y().resolveZoom(Style::ZoomNeeded { })), shadows[0].blur.resolveZoom(Style::ZoomNeeded { }), style.colorWithColorFilter(shadows[0].color), ShadowRadiusMode::Default });
+            return true;
+        }
+    );
+
     auto visualRect = m_lineBox.ellipsisVisualRect();
     auto textOrigin = visualRect.location();
     textOrigin.move(m_paintOffset.x(), m_paintOffset.y() + style.metricsOfPrimaryFont().intAscent());

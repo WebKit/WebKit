@@ -27,10 +27,10 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#include "CocoaView.h"
-#include "MediaPlaybackTarget.h"
-#include "MediaProducer.h"
-#include "PlaybackTargetClientContextIdentifier.h"
+#include <WebCore/CocoaView.h>
+#include <WebCore/MediaPlaybackTarget.h>
+#include <WebCore/MediaProducer.h>
+#include <WebCore/PlaybackTargetClientContextIdentifier.h>
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 

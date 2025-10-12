@@ -10,7 +10,9 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 
-#include <limits>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 
 #include "rtc_base/random.h"
 #include "test/gtest.h"
@@ -20,15 +22,15 @@ using webrtc::rtcp::ReportBlock;
 namespace webrtc {
 namespace {
 
-const uint32_t kRemoteSsrc = 0x23456789;
-const uint8_t kFractionLost = 55;
+constexpr uint32_t kRemoteSsrc = 0x23456789;
+constexpr uint8_t kFractionLost = 55;
 // Use values that are streamed differently LE and BE.
-const int32_t kCumulativeLost = 0x111213;
-const uint32_t kExtHighestSeqNum = 0x22232425;
-const uint32_t kJitter = 0x33343536;
-const uint32_t kLastSr = 0x44454647;
-const uint32_t kDelayLastSr = 0x55565758;
-const size_t kBufferLength = ReportBlock::kLength;
+constexpr int32_t kCumulativeLost = 0x111213;
+constexpr uint32_t kExtHighestSeqNum = 0x22232425;
+constexpr uint32_t kJitter = 0x33343536;
+constexpr uint32_t kLastSr = 0x44454647;
+constexpr uint32_t kDelayLastSr = 0x55565758;
+constexpr size_t kBufferLength = ReportBlock::kLength;
 
 TEST(RtcpPacketReportBlockTest, ParseChecksLength) {
   uint8_t buffer[kBufferLength];

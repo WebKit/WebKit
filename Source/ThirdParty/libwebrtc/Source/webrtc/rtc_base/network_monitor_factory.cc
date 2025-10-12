@@ -10,9 +10,9 @@
 
 #include "rtc_base/network_monitor_factory.h"
 
-namespace rtc {
+namespace webrtc {
 
 NetworkMonitorFactory::NetworkMonitorFactory() {}
 NetworkMonitorFactory::~NetworkMonitorFactory() {}
 
-}  // namespace rtc
+}  // namespace webrtc

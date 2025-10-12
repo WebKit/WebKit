@@ -2,24 +2,18 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-String-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  String.raw
+info: bugzilla.mozilla.org/show_bug.cgi?id=1039774
 esid: pending
 ---*/
-var BUGNUMBER = 1039774;
-var summary = 'String.raw';
 
-print(BUGNUMBER + ": " + summary);
-
-assertThrowsInstanceOf(function() { String.raw(); }, TypeError);
+assert.throws(TypeError, function() { String.raw(); });
 
 assert.sameValue(String.raw.length, 1);
 
 var cooked = [];
-assertThrowsInstanceOf(function() { String.raw(cooked); }, TypeError);
+assert.throws(TypeError, function() { String.raw(cooked); });
 
 cooked.raw = {};
 assert.sameValue(String.raw(cooked), "");
@@ -62,4 +56,3 @@ assert.sameValue(String.raw(cooked, "x", "y"), "axb");
 
 cooked.raw = {length: 4, '0':"a", '1':"b", '2':"c"};
 assert.sameValue(String.raw(cooked, "x", "y"), "axbycundefined");
-

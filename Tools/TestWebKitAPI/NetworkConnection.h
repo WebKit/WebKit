@@ -76,6 +76,7 @@ public:
     enum class ConnectionType : uint8_t { Datagram, Bidirectional, Unidirectional };
     Connection createWebTransportConnection(ConnectionType) const;
     ReceiveIncomingConnectionOperation receiveIncomingConnection() const;
+    void cancel();
 
 private:
     friend class WebTransportServer;

@@ -83,8 +83,8 @@ WARN_UNUSED_RETURN std::optional<String> ArgumentCoder<String>::decode(Decoder& 
         return std::nullopt;
     
     if (*is8Bit)
-        return decodeStringText<LChar>(decoder, *length);
-    return decodeStringText<UChar>(decoder, *length);
+        return decodeStringText<Latin1Character>(decoder, *length);
+    return decodeStringText<char16_t>(decoder, *length);
 }
 template
 std::optional<String> ArgumentCoder<String>::decode<Decoder>(Decoder&);

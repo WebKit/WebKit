@@ -9,8 +9,7 @@
  */
 #include "net/dcsctp/public/types.h"
 
-#include "rtc_base/gunit.h"
-#include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace {

@@ -16,20 +16,15 @@
 
 #include "absl/base/nullability.h"
 #include "api/environment/environment.h"
+#include "api/field_trials_view.h"
 #include "api/ref_counted_base.h"
+#include "api/rtc_event_log/rtc_event_log.h"
 #include "api/scoped_refptr.h"
+#include "api/task_queue/task_queue_factory.h"
 #include "rtc_base/system/rtc_export.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
-
-// These classes are forward declared to reduce amount of headers exposed
-// through api header.
-// IWYU pragma: begin_keep
-class Clock;
-class TaskQueueFactory;
-class FieldTrialsView;
-class RtcEventLog;
-// IWYU pragma: end_keep
 // Constructs `Environment`.
 // Individual utilities are provided using one of the `Set` functions.
 // `Set` functions do nothing when nullptr value is passed.
@@ -55,27 +50,27 @@ class RTC_EXPORT EnvironmentFactory final {
 
   ~EnvironmentFactory() = default;
 
-  void Set(absl::Nullable<std::unique_ptr<const FieldTrialsView>> utility);
-  void Set(absl::Nullable<std::unique_ptr<Clock>> utility);
-  void Set(absl::Nullable<std::unique_ptr<TaskQueueFactory>> utility);
-  void Set(absl::Nullable<std::unique_ptr<RtcEventLog>> utility);
+  void Set(absl_nullable std::unique_ptr<const FieldTrialsView> utility);
+  void Set(absl_nullable std::unique_ptr<Clock> utility);
+  void Set(absl_nullable std::unique_ptr<TaskQueueFactory> utility);
+  void Set(absl_nullable std::unique_ptr<RtcEventLog> utility);
 
-  void Set(absl::Nullable<const FieldTrialsView*> utility);
-  void Set(absl::Nullable<Clock*> utility);
-  void Set(absl::Nullable<TaskQueueFactory*> utility);
-  void Set(absl::Nullable<RtcEventLog*> utility);
+  void Set(const FieldTrialsView* absl_nullable utility);
+  void Set(Clock* absl_nullable utility);
+  void Set(TaskQueueFactory* absl_nullable utility);
+  void Set(RtcEventLog* absl_nullable utility);
 
   Environment Create() const;
 
  private:
   Environment CreateWithDefaults() &&;
 
-  scoped_refptr<const rtc::RefCountedBase> leaf_;
+  scoped_refptr<const RefCountedBase> leaf_;
 
-  absl::Nullable<const FieldTrialsView*> field_trials_ = nullptr;
-  absl::Nullable<Clock*> clock_ = nullptr;
-  absl::Nullable<TaskQueueFactory*> task_queue_factory_ = nullptr;
-  absl::Nullable<RtcEventLog*> event_log_ = nullptr;
+  const FieldTrialsView* absl_nullable field_trials_ = nullptr;
+  Clock* absl_nullable clock_ = nullptr;
+  TaskQueueFactory* absl_nullable task_queue_factory_ = nullptr;
+  RtcEventLog* absl_nullable event_log_ = nullptr;
 };
 
 // Helper for concise way to create an environment.
@@ -98,25 +93,25 @@ Environment CreateEnvironment(Utilities&&... utilities);
 //------------------------------------------------------------------------------
 
 inline void EnvironmentFactory::Set(
-    absl::Nullable<const FieldTrialsView*> utility) {
+    const FieldTrialsView* absl_nullable utility) {
   if (utility != nullptr) {
     field_trials_ = utility;
   }
 }
 
-inline void EnvironmentFactory::Set(absl::Nullable<Clock*> utility) {
+inline void EnvironmentFactory::Set(Clock* absl_nullable utility) {
   if (utility != nullptr) {
     clock_ = utility;
   }
 }
 
-inline void EnvironmentFactory::Set(absl::Nullable<TaskQueueFactory*> utility) {
+inline void EnvironmentFactory::Set(TaskQueueFactory* absl_nullable utility) {
   if (utility != nullptr) {
     task_queue_factory_ = utility;
   }
 }
 
-inline void EnvironmentFactory::Set(absl::Nullable<RtcEventLog*> utility) {
+inline void EnvironmentFactory::Set(RtcEventLog* absl_nullable utility) {
   if (utility != nullptr) {
     event_log_ = utility;
   }

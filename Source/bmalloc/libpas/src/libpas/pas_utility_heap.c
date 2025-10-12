@@ -30,8 +30,6 @@
 #include "pas_utility_heap.h"
 
 #include "pas_allocation_callbacks.h"
-#include "pas_deallocate.h"
-#include "pas_get_allocation_size.h"
 #include "pas_local_allocator_inlines.h"
 #include "pas_utility_heap_config.h"
 
@@ -52,6 +50,7 @@ pas_heap_runtime_config pas_utility_heap_runtime_config = {
 
 pas_segregated_heap pas_utility_segregated_heap = {
     .runtime_config = &pas_utility_heap_runtime_config,
+    .parent_heap = NULL,
     .basic_size_directory_and_head = PAS_COMPACT_ATOMIC_PTR_INITIALIZER,
     .index_to_small_size_directory = pas_utility_heap_support_instance.index_to_size_directory,
     .rare_data = PAS_COMPACT_ATOMIC_PTR_INITIALIZER,

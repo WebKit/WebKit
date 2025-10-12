@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "BytecodeConventions.h"
-#include "CallFrame.h"
+#include <JavaScriptCore/BytecodeConventions.h>
+#include <JavaScriptCore/CallFrame.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC {

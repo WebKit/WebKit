@@ -46,7 +46,7 @@ editing/glib/WebContentReaderGLib.cpp
 
 loader/soup/ResourceLoaderSoup.cpp
 
-page/gtk/DragControllerGtk.cpp
+page/glib/DragControllerGLib.cpp
 
 page/linux/ResourceUsageOverlayLinux.cpp
 page/linux/ResourceUsageThreadLinux.cpp
@@ -55,6 +55,10 @@ platform/gamepad/manette/ManetteGamepad.cpp
 platform/gamepad/manette/ManetteGamepadProvider.cpp
 
 platform/generic/ScrollbarsControllerGeneric.cpp
+
+platform/glib/DragDataGLib.cpp
+platform/glib/PasteboardGLib.cpp
+platform/glib/RunLoopObserverGLib.cpp
 
 platform/graphics/PlatformDisplay.cpp @no-unify
 
@@ -71,10 +75,12 @@ platform/graphics/egl/PlatformDisplaySurfaceless.cpp @no-unify
 
 platform/graphics/gbm/DMABufBuffer.cpp
 platform/graphics/gbm/DRMDeviceManager.cpp
-platform/graphics/gbm/DRMDeviceNode.cpp
+platform/graphics/gbm/GBMDevice.cpp
 platform/graphics/gbm/GraphicsContextGLTextureMapperGBM.cpp @no-unify
 platform/graphics/gbm/MemoryMappedGPUBuffer.cpp
 platform/graphics/gbm/PlatformDisplayGBM.cpp @no-unify
+
+platform/graphics/glib/ImageAdapterGLib.cpp
 
 platform/graphics/gtk/ColorGtk.cpp
 platform/graphics/gtk/GdkCairoUtilities.cpp
@@ -88,8 +94,6 @@ platform/graphics/opentype/OpenTypeVerticalData.cpp
 platform/graphics/x11/XErrorTrapper.cpp @no-unify
 
 platform/gtk/CursorGtk.cpp
-platform/gtk/DragDataGtk.cpp
-platform/gtk/DragImageGtk.cpp
 platform/gtk/GRefPtrGtk.cpp
 platform/gtk/GtkUtilities.cpp @no-unify
 platform/gtk/LocalizedStringsGtk.cpp
@@ -112,3 +116,5 @@ platform/unix/LoggingUnix.cpp
 platform/unix/SharedMemoryUnix.cpp
 
 platform/xdg/MIMETypeRegistryXdg.cpp
+
+platform/xr/openxr/PlatformXROpenXR.cpp

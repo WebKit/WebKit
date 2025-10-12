@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
- *  Copyright (C) 2008, 2015 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,9 +21,10 @@
 #include "DOMPluginArray.h"
 
 #include "DOMPlugin.h"
-#include "FrameInlines.h"
+#include "DocumentPage.h"
 #include "LocalFrameInlines.h"
 #include "Page.h"
+#include "ScriptWrappableInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 
@@ -90,7 +91,7 @@ void DOMPluginArray::refresh(bool reloadPages)
     if (!m_navigator)
         return;
 
-    auto* frame = m_navigator->frame();
+    RefPtr frame = m_navigator->frame();
     if (!frame)
         return;
 

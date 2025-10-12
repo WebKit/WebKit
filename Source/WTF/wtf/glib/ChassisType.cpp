@@ -68,7 +68,9 @@ static std::optional<ChassisType> readDMIChassisType()
     GUniqueOutPtr<char> buffer;
     GUniqueOutPtr<GError> error;
     if (g_file_get_contents("/sys/class/dmi/id/chassis_type", &buffer.outPtr(), nullptr, &error.outPtr())) {
+        IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
         int type = strtol(buffer.get(), nullptr, 10);
+        IGNORE_CLANG_WARNINGS_END
 
         // See the SMBIOS Specification 3.0 section 7.4.1 for details about the values listed here:
         // https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.0.0.pdf
@@ -103,7 +105,9 @@ static std::optional<ChassisType> readACPIChassisType()
     GUniqueOutPtr<char> buffer;
     GUniqueOutPtr<GError> error;
     if (g_file_get_contents("/sys/firmware/acpi/pm_profile", &buffer.outPtr(), nullptr, &error.outPtr())) {
+        IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
         int type = strtol(buffer.get(), nullptr, 10);
+        IGNORE_CLANG_WARNINGS_END
 
         // See the ACPI 5.0 Spec Section 5.2.9.1 for details:
         // http://www.acpi.info/DOWNLOADS/ACPIspec50.pdf

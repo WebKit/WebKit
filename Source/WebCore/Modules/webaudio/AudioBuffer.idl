@@ -31,7 +31,6 @@
     EnabledBySetting=WebAudioEnabled,
     GenerateIsReachable=Impl,
     JSCustomMarkFunction,
-    JSGenerateToJSObject,
     ReportExtraMemoryCost,
     Exposed=Window
 ] interface AudioBuffer {

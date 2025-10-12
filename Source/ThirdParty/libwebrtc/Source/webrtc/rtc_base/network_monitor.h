@@ -15,11 +15,10 @@
 #include <utility>
 
 #include "absl/strings/string_view.h"
+#include "rtc_base/ip_address.h"
 #include "rtc_base/network_constants.h"
 
-namespace rtc {
-
-class IPAddress;
+namespace webrtc {
 
 enum class NetworkBindingResult {
   SUCCESS = 0,   // No error
@@ -134,6 +133,7 @@ class NetworkMonitorInterface {
   std::function<void()> networks_changed_callback_;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_NETWORK_MONITOR_H_

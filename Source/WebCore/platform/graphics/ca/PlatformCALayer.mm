@@ -33,6 +33,7 @@
 #include "LayerPool.h"
 #include "PlatformCALayerClient.h"
 #include "PlatformCALayerDelegatedContents.h"
+#include "PlatformScreen.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreText/CoreText.h>
 #include <QuartzCore/CABase.h>
@@ -178,9 +179,14 @@ Ref<PlatformCALayer> PlatformCALayer::createCompatibleLayerOrTakeFromPool(Platfo
     return layer;
 }
 
-ContentsFormat PlatformCALayer::contentsFormatForLayer(Widget* widget, PlatformCALayerClient* client)
+ContentsFormat PlatformCALayer::contentsFormatForLayer(PlatformCALayerClient* client)
 {
-    auto contentsFormats = screenContentsFormats(widget);
+    OptionSet<ContentsFormat> contentsFormats;
+    if (client)
+        contentsFormats = client->screenContentsFormats();
+    if (contentsFormats.isEmpty())
+        contentsFormats = screenContentsFormats(nullptr);
+
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     if (client && client->drawsHDRContent() && contentsFormats.contains(ContentsFormat::RGBA16F))
         return ContentsFormat::RGBA16F;
@@ -250,6 +256,22 @@ void PlatformCALayer::clearAcceleratedEffectsAndBaseValues()
 
 void PlatformCALayer::setAcceleratedEffectsAndBaseValues(const AcceleratedEffects&, const AcceleratedEffectValues&)
 {
+}
+#endif
+
+#if HAVE(SUPPORT_HDR_DISPLAY)
+bool PlatformCALayer::setNeedsDisplayIfEDRHeadroomExceeds(float)
+{
+    return false;
+}
+
+void PlatformCALayer::setTonemappingEnabled(bool)
+{
+}
+
+bool PlatformCALayer::tonemappingEnabled() const
+{
+    return false;
 }
 #endif
 

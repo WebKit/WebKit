@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "WebGPUCommandBuffer.h"
-#include "WebGPUExtent3D.h"
-#include "WebGPUImageCopyExternalImage.h"
-#include "WebGPUImageCopyTexture.h"
-#include "WebGPUImageCopyTextureTagged.h"
-#include "WebGPUImageDataLayout.h"
-#include "WebGPUIntegralTypes.h"
+#include <WebCore/WebGPUCommandBuffer.h>
+#include <WebCore/WebGPUExtent3D.h>
+#include <WebCore/WebGPUImageCopyExternalImage.h>
+#include <WebCore/WebGPUImageCopyTexture.h>
+#include <WebCore/WebGPUImageCopyTextureTagged.h>
+#include <WebCore/WebGPUImageDataLayout.h>
+#include <WebCore/WebGPUIntegralTypes.h>
 #include <cstdint>
 #include <functional>
 #include <optional>

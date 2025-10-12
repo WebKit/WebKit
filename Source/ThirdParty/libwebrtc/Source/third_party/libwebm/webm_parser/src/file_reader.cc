@@ -16,6 +16,19 @@
 
 #include "webm/status.h"
 
+#ifdef _MSC_VER
+#define FSEEK_(stream, offset, whence) _fseeki64(stream, offset, whence)
+#elif defined(_WIN32)
+#define FSEEK_(stream, offset, whence) \
+  fseeko64(stream, static_cast<off_t>(offset), whence)
+#elif _POSIX_C_SOURCE >= 200112L
+#define FSEEK_(stream, offset, whence) \
+  fseeko(stream, static_cast<off_t>(offset), whence)
+#else
+#define FSEEK_(stream, offset, whence) \
+  std::fseek(stream, static_cast<long>(offset), whence)
+#endif
+
 namespace webm {
 
 FileReader::FileReader(FILE* file) : file_(file) { assert(file); }
@@ -77,8 +90,7 @@ Status FileReader::Skip(std::uint64_t num_to_skip,
   if (num_to_skip < static_cast<unsigned long>(seek_offset)) {  // NOLINT
     seek_offset = static_cast<long>(num_to_skip);  // NOLINT
   }
-  // TODO(mjbshaw): Use fseeko64/_fseeki64 if available.
-  if (!std::fseek(file_.get(), seek_offset, SEEK_CUR)) {
+  if (!FSEEK_(file_.get(), seek_offset, SEEK_CUR)) {
     *num_actually_skipped = static_cast<std::uint64_t>(seek_offset);
     position_ += static_cast<std::uint64_t>(seek_offset);
     if (static_cast<unsigned long>(seek_offset) == num_to_skip) {  // NOLINT
@@ -115,6 +127,14 @@ Status FileReader::Skip(std::uint64_t num_to_skip,
   } else {
     return Status(Status::kOkPartial);
   }
+}
+
+Status FileReader::Seek(std::uint64_t seek_position) {
+  if (FSEEK_(file_.get(), seek_position, SEEK_SET)) {
+    return Status(Status::kSeekFailed);
+  }
+  position_ = seek_position;
+  return Status(Status::kOkCompleted);
 }
 
 std::uint64_t FileReader::Position() const { return position_; }

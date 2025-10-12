@@ -172,6 +172,8 @@ promise_test(async (test) => {
             break;
     }
     assert_less_than(testCounter, 10);
+
+    frame1.contentWindow.stopCapture();
 }, "voiceActivity detection tests");
 </script>
 </body>

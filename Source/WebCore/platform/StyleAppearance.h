@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,6 +79,8 @@ enum class StyleAppearance : uint8_t {
     SwitchThumb,
     SwitchTrack
 };
+
+constexpr int appearanceBitWidth = 7;
 
 WTF::TextStream& operator<<(WTF::TextStream&, StyleAppearance);
 

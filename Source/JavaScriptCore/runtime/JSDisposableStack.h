@@ -38,6 +38,8 @@ public:
 
     DECLARE_EXPORT_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
     enum class State : int32_t {
         Pending = 0,
         Disposed
@@ -80,7 +82,6 @@ private:
     }
 
     void finishCreation(VM&);
-    DECLARE_VISIT_CHILDREN;
 };
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSDisposableStack);

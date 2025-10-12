@@ -10,10 +10,14 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <utility>
+#include <vector>
 
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 

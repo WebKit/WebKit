@@ -28,5 +28,6 @@ interface TextInputController {
     boolean hasMarkedText();
     undefined unmarkText();
     undefined insertText(DOMString string);
+    undefined setPageEditable(boolean isEditable);
 };
 

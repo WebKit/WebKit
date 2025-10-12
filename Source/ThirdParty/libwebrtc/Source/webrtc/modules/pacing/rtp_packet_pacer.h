@@ -11,7 +11,6 @@
 #ifndef MODULES_PACING_RTP_PACKET_PACER_H_
 #define MODULES_PACING_RTP_PACKET_PACER_H_
 
-
 #include <optional>
 #include <vector>
 

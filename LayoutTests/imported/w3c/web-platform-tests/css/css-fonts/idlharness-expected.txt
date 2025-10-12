@@ -3,13 +3,60 @@ PASS idl_test setup
 PASS idl_test validation
 PASS Partial interface CSSRule: original interface defined
 PASS Partial interface CSSRule: member names are unique
+PASS CSSFontFaceDescriptors interface: existence and properties of interface object
+PASS CSSFontFaceDescriptors interface object length
+PASS CSSFontFaceDescriptors interface object name
+PASS CSSFontFaceDescriptors interface: existence and properties of interface prototype object
+PASS CSSFontFaceDescriptors interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSFontFaceDescriptors interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSFontFaceDescriptors interface: attribute src
+PASS CSSFontFaceDescriptors interface: attribute fontFamily
+PASS CSSFontFaceDescriptors interface: attribute font-family
+PASS CSSFontFaceDescriptors interface: attribute fontStyle
+PASS CSSFontFaceDescriptors interface: attribute font-style
+PASS CSSFontFaceDescriptors interface: attribute fontWeight
+PASS CSSFontFaceDescriptors interface: attribute font-weight
+PASS CSSFontFaceDescriptors interface: attribute fontStretch
+PASS CSSFontFaceDescriptors interface: attribute font-stretch
+PASS CSSFontFaceDescriptors interface: attribute fontWidth
+PASS CSSFontFaceDescriptors interface: attribute font-width
+FAIL CSSFontFaceDescriptors interface: attribute fontSize assert_true: The prototype object must have a property "fontSize" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute font-size assert_true: The prototype object must have a property "font-size" expected true got false
+PASS CSSFontFaceDescriptors interface: attribute sizeAdjust
+PASS CSSFontFaceDescriptors interface: attribute size-adjust
+PASS CSSFontFaceDescriptors interface: attribute unicodeRange
+PASS CSSFontFaceDescriptors interface: attribute unicode-range
+PASS CSSFontFaceDescriptors interface: attribute fontFeatureSettings
+PASS CSSFontFaceDescriptors interface: attribute font-feature-settings
+FAIL CSSFontFaceDescriptors interface: attribute fontVariationSettings assert_true: The prototype object must have a property "fontVariationSettings" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute font-variation-settings assert_true: The prototype object must have a property "font-variation-settings" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute fontNamedInstance assert_true: The prototype object must have a property "fontNamedInstance" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute font-named-instance assert_true: The prototype object must have a property "font-named-instance" expected true got false
+PASS CSSFontFaceDescriptors interface: attribute fontDisplay
+PASS CSSFontFaceDescriptors interface: attribute font-display
+FAIL CSSFontFaceDescriptors interface: attribute fontLanguageOverride assert_true: The prototype object must have a property "fontLanguageOverride" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute font-language-override assert_true: The prototype object must have a property "font-language-override" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute ascentOverride assert_true: The prototype object must have a property "ascentOverride" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute ascent-override assert_true: The prototype object must have a property "ascent-override" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute descentOverride assert_true: The prototype object must have a property "descentOverride" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute descent-override assert_true: The prototype object must have a property "descent-override" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute lineGapOverride assert_true: The prototype object must have a property "lineGapOverride" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute line-gap-override assert_true: The prototype object must have a property "line-gap-override" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute superscriptPositionOverride assert_true: The prototype object must have a property "superscriptPositionOverride" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute superscript-position-override assert_true: The prototype object must have a property "superscript-position-override" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute subscriptPositionOverride assert_true: The prototype object must have a property "subscriptPositionOverride" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute subscript-position-override assert_true: The prototype object must have a property "subscript-position-override" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute superscriptSizeOverride assert_true: The prototype object must have a property "superscriptSizeOverride" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute superscript-size-override assert_true: The prototype object must have a property "superscript-size-override" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute subscriptSizeOverride assert_true: The prototype object must have a property "subscriptSizeOverride" expected true got false
+FAIL CSSFontFaceDescriptors interface: attribute subscript-size-override assert_true: The prototype object must have a property "subscript-size-override" expected true got false
 PASS CSSFontFaceRule interface: existence and properties of interface object
 PASS CSSFontFaceRule interface object length
 PASS CSSFontFaceRule interface object name
 PASS CSSFontFaceRule interface: existence and properties of interface prototype object
 PASS CSSFontFaceRule interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSFontFaceRule interface: existence and properties of interface prototype object's @@unscopables property
-PASS CSSFontFaceRule interface: attribute style
+FAIL CSSFontFaceRule interface: attribute style assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
 PASS CSSFontFaceRule must be primary interface of cssFontFaceRule
 PASS Stringification of cssFontFaceRule
 PASS CSSFontFaceRule interface: cssFontFaceRule must inherit property "style" with the proper type
@@ -27,6 +74,7 @@ FAIL CSSFontFeatureValuesRule interface: attribute stylistic assert_true: The pr
 FAIL CSSFontFeatureValuesRule interface: attribute swash assert_true: The prototype object must have a property "swash" expected true got false
 FAIL CSSFontFeatureValuesRule interface: attribute characterVariant assert_true: The prototype object must have a property "characterVariant" expected true got false
 FAIL CSSFontFeatureValuesRule interface: attribute styleset assert_true: The prototype object must have a property "styleset" expected true got false
+FAIL CSSFontFeatureValuesRule interface: attribute historicalForms assert_true: The prototype object must have a property "historicalForms" expected true got false
 FAIL CSSFontFeatureValuesMap interface: existence and properties of interface object assert_own_property: self does not have own property "CSSFontFeatureValuesMap" expected property "CSSFontFeatureValuesMap" missing
 FAIL CSSFontFeatureValuesMap interface object length assert_own_property: self does not have own property "CSSFontFeatureValuesMap" expected property "CSSFontFeatureValuesMap" missing
 FAIL CSSFontFeatureValuesMap interface object name assert_own_property: self does not have own property "CSSFontFeatureValuesMap" expected property "CSSFontFeatureValuesMap" missing

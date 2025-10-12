@@ -170,6 +170,7 @@ public:
     operator Register*() { return std::bit_cast<Register*>(m_value); }
     operator VM*() { return std::bit_cast<VM*>(m_value); }
     operator CallLinkInfo*() { return std::bit_cast<CallLinkInfo*>(m_value); }
+    operator void*() { return reinterpret_cast<void*>(m_value); }
 
     template<typename T, typename = std::enable_if_t<sizeof(T) == sizeof(uintptr_t)>>
     ALWAYS_INLINE void operator=(T value) { m_value = std::bit_cast<uintptr_t>(value); }
@@ -247,7 +248,11 @@ static void decodeResult(UGPRPair result, CLoopRegister& t0, CLoopRegister& t1)
 
 JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, ProtoCallFrame* protoCallFrame, bool isInitializationPass)
 {
-#define CAST std::bit_cast
+    // WARNING: it is critical to avoid 'std::bit_cast' in the CAST macro that follows and in
+    // the OPCODE_ENTRY() and LLINT_OPCODE_ENTRY() macros below. Using it dramatically increases the
+    // frame size of this function in debug builds, potentially causing stack overflows in tests.
+    // See https://bugs.webkit.org/show_bug.cgi?id=295796 for details.
+#define CAST reinterpret_cast
 
     // One-time initialization of our address tables. We have to put this code
     // here because our labels are only in scope inside this function. The
@@ -261,12 +266,12 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 
 #if ENABLE(COMPUTED_GOTO_OPCODES)
         #define OPCODE_ENTRY(__opcode, length) \
-            opcodeMap[__opcode] = std::bit_cast<void*>(&&__opcode); \
-            opcodeMapWide16[__opcode] = std::bit_cast<void*>(&&__opcode##_wide16); \
-            opcodeMapWide32[__opcode] = std::bit_cast<void*>(&&__opcode##_wide32);
+            opcodeMap[__opcode] = static_cast<void*>(&&__opcode); \
+            opcodeMapWide16[__opcode] = static_cast<void*>(&&__opcode##_wide16); \
+            opcodeMapWide32[__opcode] = static_cast<void*>(&&__opcode##_wide32);
 
         #define LLINT_OPCODE_ENTRY(__opcode, length) \
-            opcodeMap[__opcode] = std::bit_cast<void*>(&&__opcode);
+            opcodeMap[__opcode] = static_cast<void*>(&&__opcode);
 #else
         // FIXME: this mapping is unnecessarily expensive in the absence of COMPUTED_GOTO
         //   narrow opcodes don't need any mapping and wide opcodes just need to add numOpcodeIDs
@@ -355,7 +360,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
         void* m_originalStackPointer;
     };
 
-    CLoopStack& cloopStack = vm->interpreter.cloopStack();
+    CLoopStack& cloopStack = vm->cloopStack();
     StackPointerScope stackPointerScope(cloopStack);
 
     lr = getOpcode(llint_return_to_host);

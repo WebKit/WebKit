@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        iframe {
+            width: 500px;
+            height: 400px;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <iframe></iframe>
+    <pre id="layers">Layer tree goes here in DRT</pre>
+    <script>
+        if (window.internals && window.testRunner) {
+            internals.clearMemoryCache();
+            internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        const imageLoadPromise = new Promise((resolve) => {
+            window.imageLoadResolve = resolve;
+        });
+        
+        const iframe = document.getElementsByTagName('iframe')[0];
+        iframe.srcdoc = `
+            <style>
+            img {
+                width: 200px;
+                height: 200px;
+            }
+            </style>
+            <script src="../../resources/ui-helper.js"></` + `script>
+            <script>
+                window.addEventListener('load', async () => {
+                    await UIHelper.renderingUpdate();
+
+                    const image = document.getElementsByTagName('img')[0];
+                    image.onload = (() => {
+                        if (window.internals)
+                            internals.setHasHDRContentForTesting(image);
+            
+                        parent.imageLoadResolve();
+                    });
+
+                    image.src = "../../fast/images/resources/green-400x400.png";
+                }, false);
+            </` + `script>
+            <body>
+            <img>
+            </body>
+            `;
+
+        (async () => {
+            await imageLoadPromise;
+            await UIHelper.renderingUpdate();
+            await UIHelper.renderingUpdate();
+            await UIHelper.renderingUpdate();
+
+            if (window.testRunner) {
+                document.getElementById("layers").textContent = internals.layerTreeAsText(document);
+                testRunner.notifyDone();
+            }
+        })();
+    </script>
+</body>
+</html>

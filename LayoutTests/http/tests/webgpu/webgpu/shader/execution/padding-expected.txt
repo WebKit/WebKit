@@ -8,183 +8,159 @@ PASS :array_of_vec3h,elementwise:
 PASS :array_of_struct:
 PASS :vec3:
 FAIL :matCx3:columns=2;use_struct=true assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Array had unexpected contents at indices 3 through 7.
+  - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 3 through 7.
      Starting at index 2:
        actual == 0x: 40400000 00000000 40800000 40a00000 40c00000 00000000
        failed ->                    xx                                  xx
      expected ==     40400000 deadbeef 40800000 40a00000 40c00000 deadbeef
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     runShaderTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:47:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:438:16
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :matCx3:columns=2;use_struct=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Array had unexpected contents at indices 3 through 7.
+  - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 3 through 7.
      Starting at index 2:
        actual == 0x: 40400000 00000000 40800000 40a00000 40c00000 00000000
        failed ->                    xx                                  xx
      expected ==     40400000 deadbeef 40800000 40a00000 40c00000 deadbeef
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     runShaderTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:47:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:438:16
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :matCx3:columns=3;use_struct=true assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Array had unexpected contents at indices 3 through 11.
+  - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 3 through 11.
      Starting at index 2:
        actual == 0x: 40400000 00000000 40800000 40a00000 40c00000 00000000 40e00000 41000000 41100000 00000000
        failed ->                    xx                                  xx                                  xx
      expected ==     40400000 deadbeef 40800000 40a00000 40c00000 deadbeef 40e00000 41000000 41100000 deadbeef
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     runShaderTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:47:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:438:16
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :matCx3:columns=3;use_struct=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Array had unexpected contents at indices 3 through 11.
+  - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 3 through 11.
      Starting at index 2:
        actual == 0x: 40400000 00000000 40800000 40a00000 40c00000 00000000 40e00000 41000000 41100000 00000000
        failed ->                    xx                                  xx                                  xx
      expected ==     40400000 deadbeef 40800000 40a00000 40c00000 deadbeef 40e00000 41000000 41100000 deadbeef
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     runShaderTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:47:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:438:16
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :matCx3:columns=4;use_struct=true assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Array had unexpected contents at indices 3 through 15.
+  - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 3 through 15.
      Starting at index 2:
        actual == 0x: 40400000 00000000 40800000 40a00000 40c00000 00000000 40e00000 41000000 41100000 00000000 41200000 41300000 ...
        failed ->                    xx                                  xx                                  xx                   ...
      expected ==     40400000 deadbeef 40800000 40a00000 40c00000 deadbeef 40e00000 41000000 41100000 deadbeef 41200000 41300000 ...
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     runShaderTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:47:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:438:16
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :matCx3:columns=4;use_struct=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Array had unexpected contents at indices 3 through 15.
+  - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 3 through 15.
      Starting at index 2:
        actual == 0x: 40400000 00000000 40800000 40a00000 40c00000 00000000 40e00000 41000000 41100000 00000000 41200000 41300000 ...
        failed ->                    xx                                  xx                                  xx                   ...
      expected ==     40400000 deadbeef 40800000 40a00000 40c00000 deadbeef 40e00000 41000000 41100000 deadbeef 41200000 41300000 ...
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     runShaderTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:47:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:438:16
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :array_of_matCx3:columns=2;use_struct=true assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Array had unexpected contents at indices 3 through 7.
+  - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 3 through 7.
      Starting at index 2:
        actual == 0x: 40400000 00000000 40800000 40a00000 40c00000 00000000 40000000
        failed ->                    xx                                  xx
      expected ==     40400000 deadbeef 40800000 40a00000 40c00000 deadbeef 40000000
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     runShaderTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:47:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:482:16
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :array_of_matCx3:columns=2;use_struct=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Array had unexpected contents at indices 3 through 7.
+  - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 3 through 7.
      Starting at index 2:
        actual == 0x: 40400000 00000000 40800000 40a00000 40c00000 00000000 40000000
        failed ->                    xx                                  xx
      expected ==     40400000 deadbeef 40800000 40a00000 40c00000 deadbeef 40000000
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     runShaderTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:47:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:482:16
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :array_of_matCx3:columns=3;use_struct=true assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Array had unexpected contents at indices 3 through 11.
+  - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 3 through 11.
      Starting at index 2:
        actual == 0x: 40400000 00000000 40800000 40a00000 40c00000 00000000 40e00000 41000000 41100000 00000000 40000000
        failed ->                    xx                                  xx                                  xx
      expected ==     40400000 deadbeef 40800000 40a00000 40c00000 deadbeef 40e00000 41000000 41100000 deadbeef 40000000
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     runShaderTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:47:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:482:16
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :array_of_matCx3:columns=3;use_struct=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Array had unexpected contents at indices 3 through 11.
+  - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 3 through 11.
      Starting at index 2:
        actual == 0x: 40400000 00000000 40800000 40a00000 40c00000 00000000 40e00000 41000000 41100000 00000000 40000000
        failed ->                    xx                                  xx                                  xx
      expected ==     40400000 deadbeef 40800000 40a00000 40c00000 deadbeef 40e00000 41000000 41100000 deadbeef 40000000
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     runShaderTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:47:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:482:16
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :array_of_matCx3:columns=4;use_struct=true assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Array had unexpected contents at indices 3 through 15.
+  - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 3 through 15.
      Starting at index 2:
        actual == 0x: 40400000 00000000 40800000 40a00000 40c00000 00000000 40e00000 41000000 41100000 00000000 41200000 41300000 ...
        failed ->                    xx                                  xx                                  xx                   ...
      expected ==     40400000 deadbeef 40800000 40a00000 40c00000 deadbeef 40e00000 41000000 41100000 deadbeef 41200000 41300000 ...
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     runShaderTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:47:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:482:16
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :array_of_matCx3:columns=4;use_struct=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Array had unexpected contents at indices 3 through 15.
+  - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 3 through 15.
      Starting at index 2:
        actual == 0x: 40400000 00000000 40800000 40a00000 40c00000 00000000 40e00000 41000000 41100000 00000000 41200000 41300000 ...
        failed ->                    xx                                  xx                                  xx                   ...
      expected ==     40400000 deadbeef 40800000 40a00000 40c00000 deadbeef 40e00000 41000000 41100000 deadbeef 41200000 41300000 ...
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     runShaderTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:47:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/padding.spec.js:482:16
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 

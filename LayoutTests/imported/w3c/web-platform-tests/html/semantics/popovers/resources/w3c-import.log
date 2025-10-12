@@ -18,3 +18,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/resources/popover-styles.css
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/resources/popover-top-layer-nesting.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/resources/popover-utils.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/resources/toggle-event-source-test.js

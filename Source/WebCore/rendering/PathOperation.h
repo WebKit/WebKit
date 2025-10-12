@@ -29,13 +29,13 @@
 
 #pragma once
 
-#include "MotionPath.h"
-#include "Path.h"
-#include "RenderStyleConstants.h"
-#include "StyleBasicShape.h"
-#include "StyleRayFunction.h"
-#include "StyleURL.h"
-#include "TransformOperationData.h"
+#include <WebCore/MotionPath.h>
+#include <WebCore/Path.h>
+#include <WebCore/RenderStyleConstants.h>
+#include <WebCore/StyleBasicShape.h>
+#include <WebCore/StyleRayFunction.h>
+#include <WebCore/StyleURL.h>
+#include <WebCore/TransformOperationData.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
@@ -99,13 +99,17 @@ public:
     std::optional<Path> getPath(const TransformOperationData&) const final { return m_path; }
     std::optional<Path> path() const { return m_path; }
 
+    bool operator==(const ReferencePathOperation& other) const
+    {
+        return m_url == other.m_url;
+    }
+
 private:
     bool operator==(const PathOperation& other) const override
     {
         if (!isSameType(other))
             return false;
-        auto& referenceClip = uncheckedDowncast<ReferencePathOperation>(other);
-        return m_url == referenceClip.m_url;
+        return *this == uncheckedDowncast<ReferencePathOperation>(other);
     }
 
     ReferencePathOperation(const Style::URL&, const AtomString& fragment, const RefPtr<SVGElement>);
@@ -131,15 +135,18 @@ public:
 
     std::optional<Path> getPath(const TransformOperationData&) const final;
 
+    bool operator==(const ShapePathOperation& other) const
+    {
+        return m_shape == other.m_shape
+            && m_referenceBox == other.m_referenceBox;
+    }
+
 private:
     bool operator==(const PathOperation& other) const override
     {
         if (!isSameType(other))
             return false;
-
-        auto& otherOperation = uncheckedDowncast<ShapePathOperation>(other);
-        return m_shape == otherOperation.m_shape
-            && m_referenceBox == otherOperation.m_referenceBox;
+        return *this == uncheckedDowncast<ShapePathOperation>(other);
     }
 
     ShapePathOperation(Style::BasicShape shape, CSSBoxType referenceBox)
@@ -157,22 +164,19 @@ public:
 
     Ref<PathOperation> clone() const final;
 
-    Path pathForReferenceRect(const FloatRoundedRect& boundingRect) const
-    {
-        Path path;
-        path.addRoundedRect(boundingRect);
-        return path;
-    }
-    
     std::optional<Path> getPath(const TransformOperationData&) const final;
+
+    bool operator==(const BoxPathOperation& other) const
+    {
+        return referenceBox() == other.referenceBox();
+    }
 
 private:
     bool operator==(const PathOperation& other) const override
     {
         if (!isSameType(other))
             return false;
-        auto& boxClip = uncheckedDowncast<BoxPathOperation>(other);
-        return referenceBox() == boxClip.referenceBox();
+        return *this == uncheckedDowncast<BoxPathOperation>(other);
     }
 
     explicit BoxPathOperation(CSSBoxType referenceBox)
@@ -183,7 +187,8 @@ private:
 
 class RayPathOperation final : public PathOperation {
 public:
-    WEBCORE_EXPORT static Ref<RayPathOperation> create(Style::RayFunction, CSSBoxType = CSSBoxType::BoxMissing);
+    WEBCORE_EXPORT static Ref<RayPathOperation> create(Style::RayFunction&&, CSSBoxType = CSSBoxType::BoxMissing);
+    WEBCORE_EXPORT static Ref<RayPathOperation> create(const Style::RayFunction&, CSSBoxType = CSSBoxType::BoxMissing);
 
     Ref<PathOperation> clone() const final;
 
@@ -196,14 +201,17 @@ public:
     double lengthForContainPath(const FloatRect& elementRect, double computedPathLength) const;
     std::optional<Path> getPath(const TransformOperationData&) const final;
 
+    bool operator==(const RayPathOperation& other) const
+    {
+        return m_ray == other.m_ray;
+    }
+
 private:
     bool operator==(const PathOperation& other) const override
     {
         if (!isSameType(other))
             return false;
-
-        auto& otherCasted = uncheckedDowncast<RayPathOperation>(other);
-        return m_ray == otherCasted.m_ray;
+        return *this == uncheckedDowncast<RayPathOperation>(other);
     }
 
     RayPathOperation(Style::RayFunction ray, CSSBoxType referenceBox)

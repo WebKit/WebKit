@@ -74,13 +74,18 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
-#include "DRMDevice.h"
+#if USE(GBM)
+#include "DRMMainDevice.h"
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
 #include "ExtensionCapabilityGrant.h"
+#include "ExtensionCapabilityGranter.h"
 #include "MediaCapability.h"
+#endif
+
+#if HAVE(POWERLOG_TASK_MODE_QUERY)
+#include <wtf/darwin/DispatchExtras.h>
 #endif
 
 namespace WebKit {
@@ -122,7 +127,7 @@ void GPUProcessProxy::keepProcessAliveTemporarily()
         return;
 
     keptAliveGPUProcessProxy() = singleton().get();
-    static NeverDestroyed<RunLoop::Timer> releaseGPUProcessTimer(RunLoop::main(), [] {
+    static NeverDestroyed<RunLoop::Timer> releaseGPUProcessTimer(RunLoop::mainSingleton(), "GPUProcessProxy::KeepProcessAliveTemporarily::ReleaseGPUProcessTimer"_s, [] {
         keptAliveGPUProcessProxy() = nullptr;
     });
     releaseGPUProcessTimer.get().startOneShot(durationToKeepGPUProcessAliveAfterDestruction);
@@ -199,12 +204,20 @@ GPUProcessProxy::GPUProcessProxy()
 #endif
 
 #if USE(GBM)
-    parameters.renderDeviceFile = drmRenderNodeDevice();
+    parameters.drmDevice = drmMainDevice();
 #endif
 
 #if PLATFORM(COCOA)
     m_isMetalDebugDeviceEnabledForTesting = s_enableMetalDebugDeviceInNewGPUProcessesForTesting;
     m_isMetalShaderValidationEnabledForTesting = s_enableMetalShaderValidationInNewGPUProcessesForTesting;
+    if (s_gpuProcessMediaCodecCapabilities) {
+#if ENABLE(VP9)
+        parameters.hasVP9HardwareDecoder = s_gpuProcessMediaCodecCapabilities->hasVP9HardwareDecoder;
+#endif
+#if ENABLE(AV1)
+        parameters.hasAV1HardwareDecoder = s_gpuProcessMediaCodecCapabilities->hasAV1HardwareDecoder;
+#endif
+    }
 #endif
 
     platformInitializeGPUProcessParameters(parameters);
@@ -492,14 +505,6 @@ void GPUProcessProxy::cancelGetDisplayMediaPrompt()
 }
 #endif
 
-#if PLATFORM(COCOA)
-void GPUProcessProxy::didDrawRemoteToPDF(PageIdentifier pageID, RefPtr<SharedBuffer>&& data, SnapshotIdentifier snapshotIdentifier)
-{
-    if (auto page = WebProcessProxy::webPage(pageID))
-        page->didDrawRemoteToPDF(WTFMove(data), snapshotIdentifier);
-}
-#endif
-
 void GPUProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     launchOptions.processType = ProcessLauncher::ProcessType::GPU;
@@ -519,21 +524,11 @@ void GPUProcessProxy::processWillShutDown(IPC::Connection& connection)
         singleton() = nullptr;
 }
 
-#if ENABLE(VP9)
-std::optional<bool> GPUProcessProxy::s_hasVP9HardwareDecoder;
-#endif
-#if ENABLE(AV1)
-std::optional<bool> GPUProcessProxy::s_hasAV1HardwareDecoder;
-#endif
+std::optional<GPUProcessMediaCodecCapabilities> GPUProcessProxy::s_gpuProcessMediaCodecCapabilities;
 
 void GPUProcessProxy::createGPUProcessConnection(WebProcessProxy& webProcessProxy, IPC::Connection::Handle&& connectionIdentifier, GPUProcessConnectionParameters&& parameters)
 {
-#if ENABLE(VP9)
-    parameters.hasVP9HardwareDecoder = s_hasVP9HardwareDecoder;
-#endif
-#if ENABLE(AV1)
-    parameters.hasAV1HardwareDecoder = s_hasAV1HardwareDecoder;
-#endif
+    parameters.mediaCodecCapabilities = s_gpuProcessMediaCodecCapabilities;
 
     if (RefPtr store = webProcessProxy.websiteDataStore())
         addSession(*store);
@@ -577,12 +572,7 @@ void GPUProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
     }
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    // FIXME: Any ExtensionCapabilityGranter can invalidate the GPUProcessProxy grants, so we pick the first one. In the future ExtensionCapabilityGranter should be made a singleton.
-    for (auto& processPool : WebProcessPool::allProcessPools()) {
-        processPool->extensionCapabilityGranter().invalidateGrants(moveToVector(std::exchange(extensionCapabilityGrants(), { }).values()));
-        break;
-    }
-
+    ExtensionCapabilityGranter::invalidateGrants(moveToVector(std::exchange(extensionCapabilityGrants(), { }).values()));
 #endif
 
     if (keptAliveGPUProcessProxy() == this)
@@ -623,7 +613,7 @@ void GPUProcessProxy::didClose(IPC::Connection&)
     gpuProcessExited(ProcessTerminationReason::Crash); // May cause |this| to get deleted.
 }
 
-void GPUProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName, int32_t)
+void GPUProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName, const Vector<uint32_t>&)
 {
     logInvalidMessage(connection, messageName);
 
@@ -649,7 +639,7 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
         gpuProcessExited(ProcessTerminationReason::Crash);
         return;
     }
-    
+
 #if PLATFORM(COCOA)
     if (auto networkProcess = NetworkProcessProxy::defaultNetworkProcess())
         networkProcess->sendXPCEndpointToProcess(*this);
@@ -661,10 +651,10 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
         processPool->gpuProcessDidFinishLaunching(processID());
 
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([weakThis = WeakPtr { *this }] () mutable {
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([weakThis = WeakPtr { *this }] () mutable {
         if (!isPowerLoggingInTaskMode())
             return;
-        RunLoop::protectedMain()->dispatch([weakThis = WTFMove(weakThis)] () {
+        RunLoop::mainSingleton().dispatch([weakThis = WTFMove(weakThis)] () {
             if (!weakThis)
                 return;
             weakThis->enablePowerLogging();
@@ -930,6 +920,16 @@ void GPUProcessProxy::unregisterMemoryAttributionID(const String& attributionID,
 }
 #endif
 #endif
+
+void GPUProcessProxy::sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier identifier, const WebCore::FloatSize& size, WebCore::FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::GPUProcess::SinkCompletedSnapshotToBitmap(identifier, size, rootFrameIdentifier), WTFMove(completionHandler));
+}
+
+void GPUProcessProxy::releaseSnapshot(RemoteSnapshotIdentifier identifier)
+{
+    send(Messages::GPUProcess::ReleaseSnapshot(identifier), 0);
+}
 
 } // namespace WebKit
 

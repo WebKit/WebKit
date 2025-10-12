@@ -6,6 +6,8 @@ PASS Should not load image with 'none' CSP - meta tag
 PASS Should not load image with 'none' CSP - HTTP header
 PASS Non-ASCII character in directive value should drop the whole directive. - meta tag
 PASS Non-ASCII character in directive value should drop the whole directive. - HTTP header
+PASS Non-ASCII quote character in directive value should drop the whole directive. - meta tag
+PASS Non-ASCII quote character in directive value should drop the whole directive. - HTTP header
 PASS Non-ASCII character in directive value should not affect other directives. - meta tag
 PASS Non-ASCII character in directive value should not affect other directives. - HTTP header
 PASS Non-ASCII character in directive name should not affect other directives. - meta tag

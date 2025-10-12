@@ -33,7 +33,7 @@
 + (BOOL)_web_canPerformAuthorizationWithURL:(NSURL *)url
 {
 #if HAVE(APP_SSO)
-    return [PAL::getSOAuthorizationClass() canPerformAuthorizationWithURL:url responseCode:0];
+    return [PAL::getSOAuthorizationClassSingleton() canPerformAuthorizationWithURL:url responseCode:0];
 #else
     return false;
 #endif
@@ -42,7 +42,7 @@
 + (BOOL)_web_willPerformSOKerberosAuthorizationWithURL:(NSURL *)url
 {
 #if HAVE(APP_SSO)
-    return [PAL::getSOAuthorizationClass() canPerformAuthorizationWithURL:url responseCode:401];
+    return [PAL::getSOAuthorizationClassSingleton() canPerformAuthorizationWithURL:url responseCode:401];
 #else
     return false;
 #endif

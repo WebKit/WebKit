@@ -31,17 +31,13 @@
 #import "CocoaImage.h"
 #import "Logging.h"
 #import "TransactionID.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/TextRecognitionResult.h>
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
+#import <pal/cocoa/VisionSoftLink.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <wtf/RobinHoodHashSet.h>
 #import <wtf/WorkQueue.h>
-
-#if HAVE(UNIFORM_TYPE_IDENTIFIERS_FRAMEWORK)
-#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
-#endif
-
-#import <pal/cocoa/VisionKitCoreSoftLink.h>
-#import <pal/cocoa/VisionSoftLink.h>
 
 #define CRLayoutDirectionTopToBottom 3
 
@@ -138,7 +134,7 @@ TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
 #endif // ENABLE(DATA_DETECTION)
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    if ([analysis isKindOfClass:PAL::getVKCImageAnalysisClass()])
+    if ([analysis isKindOfClass:PAL::getVKCImageAnalysisClassSingleton()])
         result.imageAnalysisData = TextRecognitionResult::encodeVKCImageAnalysis(analysis);
 #endif
 
@@ -163,7 +159,7 @@ bool languageIdentifierSupportsLiveText(NSString *languageIdentifier)
 
     static NeverDestroyed<MemoryCompactRobinHoodHashSet<String>> supportedLanguages = [] {
         MemoryCompactRobinHoodHashSet<String> set;
-        for (NSString *identifier in [PAL::getVKCImageAnalyzerClass() supportedRecognitionLanguages]) {
+        for (NSString *identifier in [PAL::getVKCImageAnalyzerClassSingleton() supportedRecognitionLanguages]) {
             if (auto code = languageCodeForLocale(identifier); !code.isEmpty())
                 set.add(WTFMove(code));
         }
@@ -420,7 +416,7 @@ void requestPayloadForQRCode(CGImageRef image, CompletionHandler<void(NSString *
             }
 
             for (VNBarcodeObservation *result in request.results) {
-                if (![result.symbology isEqualToString:PAL::get_Vision_VNBarcodeSymbologyQR()])
+                if (![result.symbology isEqualToString:PAL::get_Vision_VNBarcodeSymbologyQRSingleton()])
                     continue;
 
                 callCompletionOnMainRunLoopWithResult(result.payloadStringValue);
@@ -431,7 +427,7 @@ void requestPayloadForQRCode(CGImageRef image, CompletionHandler<void(NSString *
         });
 
         auto request = adoptNS([PAL::allocVNDetectBarcodesRequestInstance() initWithCompletionHandler:completionHandler.get()]);
-        [request setSymbologies:@[ PAL::get_Vision_VNBarcodeSymbologyQR() ]];
+        [request setSymbologies:@[ PAL::get_Vision_VNBarcodeSymbologyQRSingleton() ]];
 
         NSError *error = nil;
         auto handler = adoptNS([PAL::allocVNImageRequestHandlerInstance() initWithCGImage:adjustedImage.get() options:@{ }]);
@@ -439,6 +435,69 @@ void requestPayloadForQRCode(CGImageRef image, CompletionHandler<void(NSString *
 
         if (error)
             completionHandler(nil, error);
+    });
+}
+
+static WorkQueue& textRecognitionQueueSingleton()
+{
+    static NeverDestroyed queue {
+        WorkQueue::create("com.apple.WebKit.ImageAnalysisUtilities.TextRecognition"_s)
+    };
+    return queue.get();
+}
+
+void recognizeText(CGImageRef image, CompletionHandler<void(NSString *, NSError *)>&& completion)
+{
+    textRecognitionQueueSingleton().dispatch([image = retainPtr(image), completion = WTFMove(completion)] mutable {
+        __block RetainPtr<NSString> resultText;
+        __block RetainPtr<NSError> error;
+        RetainPtr request = adoptNS([PAL::allocVNRecognizeTextRequestInstance() initWithCompletionHandler:^(VNRequest *request, NSError *requestError) {
+            if (requestError) {
+                error = requestError;
+                return;
+            }
+
+            RetainPtr observations = dynamic_objc_cast<NSArray>(request.results);
+            if (![observations count]) {
+                resultText = @"";
+                return;
+            }
+
+            RetainPtr resultBuffer = adoptNS([NSMutableString new]);
+            for (VNRecognizedTextObservation *observation in observations.get()) {
+                RetainPtr best = [[observation topCandidates:1] firstObject];
+                if (!best)
+                    continue;
+
+                if ([resultBuffer length])
+                    [resultBuffer appendString:@" "];
+
+                [resultBuffer appendString:[best string]];
+            }
+
+            resultText = resultBuffer;
+        }]);
+
+        [request setAutomaticallyDetectsLanguage:YES];
+
+        @try {
+            RetainPtr handler = adoptNS([PAL::allocVNImageRequestHandlerInstance() initWithCGImage:image.get() options:@{ }]);
+            NSError *performError = nil;
+            [handler performRequests:@[ request.get() ] error:&performError];
+            if (performError)
+                error = performError;
+        } @catch (NSException *exception) {
+            error = [NSError errorWithDomain:@"com.apple.WebKit.ImageAnalysis" code:1 userInfo:@{
+                NSLocalizedDescriptionKey: exception.reason ?: @""
+            }];
+        }
+
+        RunLoop::mainSingleton().dispatch([resultText = WTFMove(resultText), error = WTFMove(error), completion = WTFMove(completion)] mutable {
+            if (error)
+                completion(nil, error.get());
+            else
+                completion(resultText.get(), nil);
+        });
     });
 }
 

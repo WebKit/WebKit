@@ -1,16 +1,18 @@
-/* Copyright (c) 2014, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2014 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include <openssl/evp.h>
 
 #include <stdint.h>
 #include <stdio.h>
@@ -582,186 +584,16 @@ TEST(EVPExtraTest, Print) {
       20:1b:e5:df
 )");
 
+  // We don't support printing DSA keys.
   bssl::UniquePtr<EVP_PKEY> dsa = ParsePrivateKey(
       EVP_PKEY_DSA, kExampleDSAKeyDER, sizeof(kExampleDSAKeyDER));
   ASSERT_TRUE(dsa);
   EXPECT_EQ(PrintToString(dsa.get(), /*indent=*/2, &EVP_PKEY_print_params),
-            R"(  DSA-Parameters: (2048 bit)
-  P:
-      00:9e:12:fa:b3:de:12:21:35:01:dd:82:aa:10:ca:
-      2d:10:1d:2d:4e:bf:ef:4d:2a:3f:8d:aa:0f:e0:ce:
-      da:d8:d6:af:85:61:6a:a2:f3:25:2c:0a:2b:5a:6d:
-      b0:9e:6f:14:90:0e:0d:db:83:11:87:6d:d8:f9:66:
-      95:25:f9:9e:d6:59:49:e1:84:d5:06:47:93:27:11:
-      69:a2:28:68:0b:95:ec:12:f5:9a:8e:20:b2:1f:2b:
-      58:eb:2a:20:12:d3:5b:de:2e:e3:51:82:2f:e8:f3:
-      2d:0a:33:05:65:dc:ce:5c:67:2b:72:59:c1:4b:24:
-      33:d0:b5:b2:ca:2b:2d:b0:ab:62:6e:8f:13:f4:7f:
-      e0:34:5d:90:4e:72:94:bb:03:8e:9c:e2:1a:9e:58:
-      0b:83:35:62:78:70:6c:fe:76:84:36:c6:9d:e1:49:
-      cc:ff:98:b4:aa:b8:cb:4f:63:85:c9:f1:02:ce:59:
-      34:6e:ae:ef:27:e0:ad:22:2d:53:d6:e8:9c:c8:cd:
-      e5:77:6d:d0:00:57:b0:3f:2d:88:ab:3c:ed:ba:fd:
-      7b:58:5f:0b:7f:78:35:e1:7a:37:28:bb:f2:5e:a6:
-      25:72:f2:45:dc:11:1f:3c:e3:9c:b6:ff:ac:c3:1b:
-      0a:27:90:e7:bd:e9:02:24:ea:9b:09:31:53:62:af:
-      3d:2b
-  Q:
-      00:f3:81:dc:f5:3e:bf:72:4f:8b:2e:5c:a8:2c:01:
-      0f:b4:b5:ed:a9:35:8d:0f:d8:8e:d2:78:58:94:88:
-      b5:4f:c3
-  G:
-      0c:40:2a:72:5d:cc:3a:62:e0:2b:f4:cf:43:cd:17:
-      f4:a4:93:59:12:20:22:36:69:cf:41:93:ed:ab:42:
-      3a:d0:8d:fb:55:2e:30:8a:6a:57:a5:ff:bc:7c:d0:
-      fb:20:87:f8:1f:8d:f0:cb:08:ab:21:33:28:7d:2b:
-      69:68:71:4a:94:f6:33:c9:40:84:5a:48:a3:e1:67:
-      08:dd:e7:61:cc:6a:8e:ab:2d:84:db:21:b6:ea:5b:
-      07:68:14:93:cc:9c:31:fb:c3:68:b2:43:f6:dd:f8:
-      c9:32:a8:b4:03:8f:44:e7:b1:5c:a8:76:34:4a:14:
-      78:59:f2:b4:3b:39:45:86:68:ad:5e:0a:1a:9a:66:
-      95:46:dd:28:12:e3:b3:61:7a:0a:ef:99:d5:8e:3b:
-      b4:cc:87:fd:94:22:5e:01:d2:dc:c4:69:a7:72:68:
-      14:6c:51:91:8f:18:e8:b4:d7:0a:a1:f0:c7:62:3b:
-      cc:52:cf:37:31:d3:86:41:b2:d2:83:0b:7e:ec:b2:
-      f0:95:52:ff:13:7d:04:6e:49:4e:7f:33:c3:59:00:
-      02:b1:6d:1b:97:d9:36:fd:a2:8f:90:c3:ed:3c:a3:
-      53:38:16:8a:c1:6f:77:c3:c5:7a:dc:2e:8f:7c:6c:
-      22:56:e4:1a:5f:65:45:05:90:db:b5:bc:f0:6d:66:
-      61
-)");
+            "  Parameters algorithm unsupported\n");
   EXPECT_EQ(PrintToString(dsa.get(), /*indent=*/2, &EVP_PKEY_print_public),
-            R"(  Public-Key: (2048 bit)
-  pub:
-      31:97:31:a1:4e:38:56:88:db:94:1d:bf:65:5c:da:
-      4b:c2:10:de:74:20:03:ce:13:60:f2:25:1d:55:7c:
-      5d:94:82:54:08:53:db:85:95:bf:dd:5e:50:d5:96:
-      e0:79:51:1b:bf:4d:4e:b9:3a:c5:ee:c4:5e:98:75:
-      7b:be:ff:30:e6:d0:7b:a6:f1:bc:29:ea:df:ec:f3:
-      8b:fa:83:11:9f:3f:f0:5d:06:51:32:aa:21:fc:26:
-      17:e7:50:c2:16:ba:fa:54:b7:7e:1d:2c:a6:a3:41:
-      66:33:94:83:b9:bf:a0:4f:bd:a6:fd:2c:81:58:35:
-      33:39:c0:6d:33:40:56:64:12:5a:cd:35:53:21:78:
-      8f:27:24:37:66:8a:df:5e:5f:63:fc:8b:2d:ef:57:
-      db:40:25:d5:17:53:0b:e4:a5:ae:54:bf:46:4f:a6:
-      79:c3:74:fa:1f:85:34:64:6d:c5:03:eb:72:98:80:
-      7b:c0:8f:35:11:a7:09:eb:51:e0:b0:ac:92:14:f2:
-      ad:37:95:5a:ba:8c:c4:db:ed:c4:4e:8b:8f:84:33:
-      64:f8:57:12:d7:08:7e:90:66:df:91:50:23:f2:73:
-      c0:6b:b1:15:dd:64:d7:c9:75:17:73:72:da:33:c4:
-      6f:a5:47:a1:cc:d1:c6:62:e5:ca:ab:5f:2a:8f:6b:
-      cc
-  P:
-      00:9e:12:fa:b3:de:12:21:35:01:dd:82:aa:10:ca:
-      2d:10:1d:2d:4e:bf:ef:4d:2a:3f:8d:aa:0f:e0:ce:
-      da:d8:d6:af:85:61:6a:a2:f3:25:2c:0a:2b:5a:6d:
-      b0:9e:6f:14:90:0e:0d:db:83:11:87:6d:d8:f9:66:
-      95:25:f9:9e:d6:59:49:e1:84:d5:06:47:93:27:11:
-      69:a2:28:68:0b:95:ec:12:f5:9a:8e:20:b2:1f:2b:
-      58:eb:2a:20:12:d3:5b:de:2e:e3:51:82:2f:e8:f3:
-      2d:0a:33:05:65:dc:ce:5c:67:2b:72:59:c1:4b:24:
-      33:d0:b5:b2:ca:2b:2d:b0:ab:62:6e:8f:13:f4:7f:
-      e0:34:5d:90:4e:72:94:bb:03:8e:9c:e2:1a:9e:58:
-      0b:83:35:62:78:70:6c:fe:76:84:36:c6:9d:e1:49:
-      cc:ff:98:b4:aa:b8:cb:4f:63:85:c9:f1:02:ce:59:
-      34:6e:ae:ef:27:e0:ad:22:2d:53:d6:e8:9c:c8:cd:
-      e5:77:6d:d0:00:57:b0:3f:2d:88:ab:3c:ed:ba:fd:
-      7b:58:5f:0b:7f:78:35:e1:7a:37:28:bb:f2:5e:a6:
-      25:72:f2:45:dc:11:1f:3c:e3:9c:b6:ff:ac:c3:1b:
-      0a:27:90:e7:bd:e9:02:24:ea:9b:09:31:53:62:af:
-      3d:2b
-  Q:
-      00:f3:81:dc:f5:3e:bf:72:4f:8b:2e:5c:a8:2c:01:
-      0f:b4:b5:ed:a9:35:8d:0f:d8:8e:d2:78:58:94:88:
-      b5:4f:c3
-  G:
-      0c:40:2a:72:5d:cc:3a:62:e0:2b:f4:cf:43:cd:17:
-      f4:a4:93:59:12:20:22:36:69:cf:41:93:ed:ab:42:
-      3a:d0:8d:fb:55:2e:30:8a:6a:57:a5:ff:bc:7c:d0:
-      fb:20:87:f8:1f:8d:f0:cb:08:ab:21:33:28:7d:2b:
-      69:68:71:4a:94:f6:33:c9:40:84:5a:48:a3:e1:67:
-      08:dd:e7:61:cc:6a:8e:ab:2d:84:db:21:b6:ea:5b:
-      07:68:14:93:cc:9c:31:fb:c3:68:b2:43:f6:dd:f8:
-      c9:32:a8:b4:03:8f:44:e7:b1:5c:a8:76:34:4a:14:
-      78:59:f2:b4:3b:39:45:86:68:ad:5e:0a:1a:9a:66:
-      95:46:dd:28:12:e3:b3:61:7a:0a:ef:99:d5:8e:3b:
-      b4:cc:87:fd:94:22:5e:01:d2:dc:c4:69:a7:72:68:
-      14:6c:51:91:8f:18:e8:b4:d7:0a:a1:f0:c7:62:3b:
-      cc:52:cf:37:31:d3:86:41:b2:d2:83:0b:7e:ec:b2:
-      f0:95:52:ff:13:7d:04:6e:49:4e:7f:33:c3:59:00:
-      02:b1:6d:1b:97:d9:36:fd:a2:8f:90:c3:ed:3c:a3:
-      53:38:16:8a:c1:6f:77:c3:c5:7a:dc:2e:8f:7c:6c:
-      22:56:e4:1a:5f:65:45:05:90:db:b5:bc:f0:6d:66:
-      61
-)");
+            "  Public Key algorithm unsupported\n");
   EXPECT_EQ(PrintToString(dsa.get(), /*indent=*/2, &EVP_PKEY_print_private),
-            R"(  Private-Key: (2048 bit)
-  priv:
-      00:b0:c7:68:70:27:43:bc:51:24:29:93:a9:71:a5:
-      28:89:79:54:44:f7:c6:45:22:03:d0:ce:84:fe:61:
-      17:d4:6e
-  pub:
-      31:97:31:a1:4e:38:56:88:db:94:1d:bf:65:5c:da:
-      4b:c2:10:de:74:20:03:ce:13:60:f2:25:1d:55:7c:
-      5d:94:82:54:08:53:db:85:95:bf:dd:5e:50:d5:96:
-      e0:79:51:1b:bf:4d:4e:b9:3a:c5:ee:c4:5e:98:75:
-      7b:be:ff:30:e6:d0:7b:a6:f1:bc:29:ea:df:ec:f3:
-      8b:fa:83:11:9f:3f:f0:5d:06:51:32:aa:21:fc:26:
-      17:e7:50:c2:16:ba:fa:54:b7:7e:1d:2c:a6:a3:41:
-      66:33:94:83:b9:bf:a0:4f:bd:a6:fd:2c:81:58:35:
-      33:39:c0:6d:33:40:56:64:12:5a:cd:35:53:21:78:
-      8f:27:24:37:66:8a:df:5e:5f:63:fc:8b:2d:ef:57:
-      db:40:25:d5:17:53:0b:e4:a5:ae:54:bf:46:4f:a6:
-      79:c3:74:fa:1f:85:34:64:6d:c5:03:eb:72:98:80:
-      7b:c0:8f:35:11:a7:09:eb:51:e0:b0:ac:92:14:f2:
-      ad:37:95:5a:ba:8c:c4:db:ed:c4:4e:8b:8f:84:33:
-      64:f8:57:12:d7:08:7e:90:66:df:91:50:23:f2:73:
-      c0:6b:b1:15:dd:64:d7:c9:75:17:73:72:da:33:c4:
-      6f:a5:47:a1:cc:d1:c6:62:e5:ca:ab:5f:2a:8f:6b:
-      cc
-  P:
-      00:9e:12:fa:b3:de:12:21:35:01:dd:82:aa:10:ca:
-      2d:10:1d:2d:4e:bf:ef:4d:2a:3f:8d:aa:0f:e0:ce:
-      da:d8:d6:af:85:61:6a:a2:f3:25:2c:0a:2b:5a:6d:
-      b0:9e:6f:14:90:0e:0d:db:83:11:87:6d:d8:f9:66:
-      95:25:f9:9e:d6:59:49:e1:84:d5:06:47:93:27:11:
-      69:a2:28:68:0b:95:ec:12:f5:9a:8e:20:b2:1f:2b:
-      58:eb:2a:20:12:d3:5b:de:2e:e3:51:82:2f:e8:f3:
-      2d:0a:33:05:65:dc:ce:5c:67:2b:72:59:c1:4b:24:
-      33:d0:b5:b2:ca:2b:2d:b0:ab:62:6e:8f:13:f4:7f:
-      e0:34:5d:90:4e:72:94:bb:03:8e:9c:e2:1a:9e:58:
-      0b:83:35:62:78:70:6c:fe:76:84:36:c6:9d:e1:49:
-      cc:ff:98:b4:aa:b8:cb:4f:63:85:c9:f1:02:ce:59:
-      34:6e:ae:ef:27:e0:ad:22:2d:53:d6:e8:9c:c8:cd:
-      e5:77:6d:d0:00:57:b0:3f:2d:88:ab:3c:ed:ba:fd:
-      7b:58:5f:0b:7f:78:35:e1:7a:37:28:bb:f2:5e:a6:
-      25:72:f2:45:dc:11:1f:3c:e3:9c:b6:ff:ac:c3:1b:
-      0a:27:90:e7:bd:e9:02:24:ea:9b:09:31:53:62:af:
-      3d:2b
-  Q:
-      00:f3:81:dc:f5:3e:bf:72:4f:8b:2e:5c:a8:2c:01:
-      0f:b4:b5:ed:a9:35:8d:0f:d8:8e:d2:78:58:94:88:
-      b5:4f:c3
-  G:
-      0c:40:2a:72:5d:cc:3a:62:e0:2b:f4:cf:43:cd:17:
-      f4:a4:93:59:12:20:22:36:69:cf:41:93:ed:ab:42:
-      3a:d0:8d:fb:55:2e:30:8a:6a:57:a5:ff:bc:7c:d0:
-      fb:20:87:f8:1f:8d:f0:cb:08:ab:21:33:28:7d:2b:
-      69:68:71:4a:94:f6:33:c9:40:84:5a:48:a3:e1:67:
-      08:dd:e7:61:cc:6a:8e:ab:2d:84:db:21:b6:ea:5b:
-      07:68:14:93:cc:9c:31:fb:c3:68:b2:43:f6:dd:f8:
-      c9:32:a8:b4:03:8f:44:e7:b1:5c:a8:76:34:4a:14:
-      78:59:f2:b4:3b:39:45:86:68:ad:5e:0a:1a:9a:66:
-      95:46:dd:28:12:e3:b3:61:7a:0a:ef:99:d5:8e:3b:
-      b4:cc:87:fd:94:22:5e:01:d2:dc:c4:69:a7:72:68:
-      14:6c:51:91:8f:18:e8:b4:d7:0a:a1:f0:c7:62:3b:
-      cc:52:cf:37:31:d3:86:41:b2:d2:83:0b:7e:ec:b2:
-      f0:95:52:ff:13:7d:04:6e:49:4e:7f:33:c3:59:00:
-      02:b1:6d:1b:97:d9:36:fd:a2:8f:90:c3:ed:3c:a3:
-      53:38:16:8a:c1:6f:77:c3:c5:7a:dc:2e:8f:7c:6c:
-      22:56:e4:1a:5f:65:45:05:90:db:b5:bc:f0:6d:66:
-      61
-)");
+            "  Private Key algorithm unsupported\n");
 
   bssl::UniquePtr<EVP_PKEY> ec =
       ParsePrivateKey(EVP_PKEY_EC, kExampleECKeyDER, sizeof(kExampleECKeyDER));
@@ -872,8 +704,8 @@ TEST(EVPExtraTest, Ed25519) {
   };
 
   // Create a public key.
-  bssl::UniquePtr<EVP_PKEY> pubkey(EVP_PKEY_new_raw_public_key(
-      EVP_PKEY_ED25519, nullptr, kPublicKey, sizeof(kPublicKey)));
+  bssl::UniquePtr<EVP_PKEY> pubkey(EVP_PKEY_from_raw_public_key(
+      EVP_pkey_ed25519(), kPublicKey, sizeof(kPublicKey)));
   ASSERT_TRUE(pubkey);
   EXPECT_EQ(EVP_PKEY_ED25519, EVP_PKEY_id(pubkey.get()));
 
@@ -921,8 +753,8 @@ TEST(EVPExtraTest, Ed25519) {
   cbb.Reset();
 
   // Create a private key.
-  bssl::UniquePtr<EVP_PKEY> privkey(EVP_PKEY_new_raw_private_key(
-      EVP_PKEY_ED25519, NULL, kPrivateKeySeed, sizeof(kPrivateKeySeed)));
+  bssl::UniquePtr<EVP_PKEY> privkey(EVP_PKEY_from_raw_private_key(
+      EVP_pkey_ed25519(), kPrivateKeySeed, sizeof(kPrivateKeySeed)));
   ASSERT_TRUE(privkey);
   EXPECT_EQ(EVP_PKEY_ED25519, EVP_PKEY_id(privkey.get()));
 
@@ -965,8 +797,8 @@ TEST(EVPExtraTest, Ed25519) {
   EXPECT_EQ(1, EVP_PKEY_cmp(pubkey.get(), privkey.get()));
 
   static const uint8_t kZeros[32] = {0};
-  bssl::UniquePtr<EVP_PKEY> pubkey2(EVP_PKEY_new_raw_public_key(
-      EVP_PKEY_ED25519, nullptr, kZeros, sizeof(kZeros)));
+  bssl::UniquePtr<EVP_PKEY> pubkey2(
+      EVP_PKEY_from_raw_public_key(EVP_pkey_ed25519(), kZeros, sizeof(kZeros)));
   ASSERT_TRUE(pubkey2);
   EXPECT_EQ(0, EVP_PKEY_cmp(pubkey.get(), pubkey2.get()));
   EXPECT_EQ(0, EVP_PKEY_cmp(privkey.get(), pubkey2.get()));
@@ -1004,6 +836,7 @@ static void ExpectECGroupOnly(const EVP_PKEY *pkey, int nid) {
   const EC_GROUP *group = EC_KEY_get0_group(ec);
   ASSERT_TRUE(group);
   EXPECT_EQ(nid, EC_GROUP_get_curve_name(group));
+  EXPECT_EQ(nid, EVP_PKEY_get_ec_curve_nid(pkey));
   EXPECT_FALSE(EC_KEY_get0_public_key(ec));
   EXPECT_FALSE(EC_KEY_get0_private_key(ec));
 }
@@ -1014,6 +847,7 @@ static void ExpectECGroupAndKey(const EVP_PKEY *pkey, int nid) {
   const EC_GROUP *group = EC_KEY_get0_group(ec);
   ASSERT_TRUE(group);
   EXPECT_EQ(nid, EC_GROUP_get_curve_name(group));
+  EXPECT_EQ(nid, EVP_PKEY_get_ec_curve_nid(pkey));
   EXPECT_TRUE(EC_KEY_get0_public_key(ec));
   EXPECT_TRUE(EC_KEY_get0_private_key(ec));
 }
@@ -1231,15 +1065,6 @@ TEST(EVPExtraTest, TLSEncodedPoint) {
 }
 
 TEST(EVPExtraTest, Parameters) {
-  auto new_pkey_with_type = [](int type) -> bssl::UniquePtr<EVP_PKEY> {
-    bssl::UniquePtr<EVP_PKEY> pkey(EVP_PKEY_new());
-    if (!pkey ||  //
-        !EVP_PKEY_set_type(pkey.get(), type)) {
-      return nullptr;
-    }
-    return pkey;
-  };
-
   auto new_pkey_with_curve = [](int curve_nid) -> bssl::UniquePtr<EVP_PKEY> {
     bssl::UniquePtr<EVP_PKEY_CTX> ctx(
         EVP_PKEY_CTX_new_id(EVP_PKEY_EC, nullptr));
@@ -1254,13 +1079,15 @@ TEST(EVPExtraTest, Parameters) {
   };
 
   // RSA keys have no parameters.
-  bssl::UniquePtr<EVP_PKEY> rsa = new_pkey_with_type(EVP_PKEY_RSA);
+  bssl::UniquePtr<EVP_PKEY> rsa = LoadExampleRSAKey();
   ASSERT_TRUE(rsa);
   EXPECT_FALSE(EVP_PKEY_missing_parameters(rsa.get()));
 
-  // EC keys have parameters.
-  bssl::UniquePtr<EVP_PKEY> ec_no_params = new_pkey_with_type(EVP_PKEY_EC);
+  // EC keys have parameters, but it is possible to initialize an |EVP_PKEY|
+  // with a completely empty |EC_KEY|.
+  bssl::UniquePtr<EVP_PKEY> ec_no_params(EVP_PKEY_new());
   ASSERT_TRUE(ec_no_params);
+  ASSERT_TRUE(EVP_PKEY_assign_EC_KEY(ec_no_params.get(), EC_KEY_new()));
   EXPECT_TRUE(EVP_PKEY_missing_parameters(ec_no_params.get()));
 
   bssl::UniquePtr<EVP_PKEY> p256 = new_pkey_with_curve(NID_X9_62_prime256v1);
@@ -1306,4 +1133,173 @@ TEST(EVPExtraTest, RawKeyUnsupported) {
       EVP_PKEY_new_raw_public_key(EVP_PKEY_RSA, nullptr, kKey, sizeof(kKey)));
   EXPECT_FALSE(
       EVP_PKEY_new_raw_private_key(EVP_PKEY_RSA, nullptr, kKey, sizeof(kKey)));
+  EXPECT_FALSE(
+      EVP_PKEY_from_raw_public_key(EVP_pkey_rsa(), kKey, sizeof(kKey)));
+  EXPECT_FALSE(
+      EVP_PKEY_from_raw_private_key(EVP_pkey_rsa(), kKey, sizeof(kKey)));
+}
+
+// The default salt length for PSS should be |RSA_PSS_SALTLEN_DIGEST|.
+TEST(EVPExtraTest, PSSDefaultSaltLen) {
+  bssl::UniquePtr<EVP_PKEY> key = LoadExampleRSAKey();
+  ASSERT_TRUE(key);
+  bssl::ScopedEVP_MD_CTX ctx;
+  EVP_PKEY_CTX *pctx;
+  ASSERT_TRUE(
+      EVP_DigestSignInit(ctx.get(), &pctx, EVP_sha256(), nullptr, key.get()));
+  ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_padding(pctx, RSA_PKCS1_PSS_PADDING));
+  int salt_len;
+  ASSERT_TRUE(EVP_PKEY_CTX_get_rsa_pss_saltlen(pctx, &salt_len));
+  EXPECT_EQ(salt_len, RSA_PSS_SALTLEN_DIGEST);
+}
+
+// Test that setting a key to type none will clear it. Some calling code has
+// unit tests that rely on this, usually as part of a roundabout way to get a
+// key of the "wrong" type to test with. (In reality, |EVP_PKEY_new| will
+// produce the same object.)
+TEST(EVPExtraTest, SetNoneClearsKey) {
+  bssl::UniquePtr<EVP_PKEY> pkey = LoadExampleRSAKey();
+  ASSERT_TRUE(pkey);
+  // EVP_PKEY_NONE is not a known type, so this should fail.
+  EXPECT_FALSE(EVP_PKEY_set_type(pkey.get(), EVP_PKEY_NONE));
+  // However, it still resets the key to the initial state.
+  EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
+  // Calling operations on the |EVP_PKEY| should cleanly fail.
+  EXPECT_EQ(EVP_PKEY_bits(pkey.get()), 0);
+}
+
+// Test that |EC_KEY|s using custom curves can be wrapped in |EVP_PKEY|. Callers
+// should not follow this code. This is maintained and tested only for
+// compatibility with one legacy application, and supported in only a limited
+// form. (E.g. such keys cannot be serialized.)
+TEST(EVPExtraTest, CustomCurve) {
+  // Coefficients for brainpoolp256r1, not supported by BoringSSL.
+  static const char kP[] =
+      "a9fb57dba1eea9bc3e660a909d838d726e3bf623d52620282013481d1f6e5377";
+  static const char kA[] =
+      "7d5a0975fc2c3057eef67530417affe7fb8055c126dc5c6ce94a4b44f330b5d9";
+  static const char kB[] =
+      "26dc5c6ce94a4b44f330b5d9bbd77cbf958416295cf7e1ce6bccdc18ff8c07b6";
+  static const char kX[] =
+      "8bd2aeb9cb7e57cb2c4b482ffc81b7afb9de27e1e3bd23c23a4453bd9ace3262";
+  static const char kY[] =
+      "547ef835c3dac4fd97f8461a14611dc9c27745132ded8e545c1d54c72f046997";
+  static const char kN[] =
+      "a9fb57dba1eea9bc3e660a909d838d718c397aa3b561a6f7901e0e82974856a7";
+  static const char kD[] =
+      "0da21d76fed40dd82ac3314cce91abb585b5c4246e902b238a839609ea1e7ce1";
+  static const char kQX[] =
+      "3a55e0341cab50452fe27b8a87e4775dec7a9daca94b0d84ad1e9f85b53ea513";
+  static const char kQY[] =
+      "40088146b33bbbe81b092b41146774b35dd478cf056437cfb35ef0df2d269339";
+
+  // Construct a custom group.
+  bssl::UniquePtr<BIGNUM> p = HexToBIGNUM(kP), a = HexToBIGNUM(kA),
+                          b = HexToBIGNUM(kB), x = HexToBIGNUM(kX),
+                          y = HexToBIGNUM(kY), n = HexToBIGNUM(kN),
+                          d = HexToBIGNUM(kD), qx = HexToBIGNUM(kQX),
+                          qy = HexToBIGNUM(kQY);
+  ASSERT_TRUE(p && a && b && x && y && n && d && qx && qy);
+  bssl::UniquePtr<EC_GROUP> group(
+      EC_GROUP_new_curve_GFp(p.get(), a.get(), b.get(), nullptr));
+  ASSERT_TRUE(group);
+  bssl::UniquePtr<EC_POINT> g(EC_POINT_new(group.get()));
+  ASSERT_TRUE(g);
+  ASSERT_TRUE(EC_POINT_set_affine_coordinates_GFp(group.get(), g.get(), x.get(),
+                                                  y.get(), nullptr));
+  ASSERT_TRUE(
+      EC_GROUP_set_generator(group.get(), g.get(), n.get(), BN_value_one()));
+
+  // Generate a key with it.
+  bssl::UniquePtr<EC_KEY> ec_key(EC_KEY_new());
+  ASSERT_TRUE(ec_key);
+  ASSERT_TRUE(EC_KEY_set_group(ec_key.get(), group.get()));
+  ASSERT_TRUE(EC_KEY_generate_key(ec_key.get()));
+
+  // Wrap it in an |EVP_PKEY|.
+  bssl::UniquePtr<EVP_PKEY> pkey(EVP_PKEY_new());
+  ASSERT_TRUE(pkey);
+  ASSERT_TRUE(EVP_PKEY_set1_EC_KEY(pkey.get(), ec_key.get()));
+
+  // Signing should work.
+  bssl::Span<const uint8_t> msg = bssl::StringAsBytes("hello");
+  bssl::ScopedEVP_MD_CTX ctx;
+  ASSERT_TRUE(EVP_DigestSignInit(ctx.get(), nullptr, EVP_sha256(), nullptr,
+                                 pkey.get()));
+  std::vector<uint8_t> sig(EVP_PKEY_size(pkey.get()));
+  size_t len = sig.size();
+  ASSERT_TRUE(
+      EVP_DigestSign(ctx.get(), sig.data(), &len, msg.data(), msg.size()));
+  sig.resize(len);
+
+  // Verifying should work.
+  ctx.Reset();
+  ASSERT_TRUE(EVP_DigestVerifyInit(ctx.get(), nullptr, EVP_sha256(), nullptr,
+                                   pkey.get()));
+  ASSERT_TRUE(EVP_DigestVerify(ctx.get(), sig.data(), sig.size(), msg.data(),
+                               msg.size()));
+
+  // We will not serialize arbitrary groups, so serialization should fail.
+  bssl::ScopedCBB cbb;
+  ASSERT_TRUE(CBB_init(cbb.get(), 0));
+  EXPECT_FALSE(EVP_marshal_public_key(cbb.get(), pkey.get()));
+  cbb.Reset();
+  ASSERT_TRUE(CBB_init(cbb.get(), 0));
+  EXPECT_FALSE(EVP_marshal_private_key(cbb.get(), pkey.get()));
+}
+
+// APIs should avoid creating an |EVP_PKEY| that is missing its underlying data.
+// In some cases, we are stuck with this due to OpenSSL compatibility, but it is
+// preferable to reduce the number of kinds of half-empty states.
+TEST(EVPExtraTest, NoHalfEmptyKeys) {
+  bssl::UniquePtr<EVP_PKEY> pkey(EVP_PKEY_new());
+  ASSERT_TRUE(pkey);
+
+  EXPECT_FALSE(EVP_PKEY_set_type(pkey.get(), EVP_PKEY_RSA));
+  EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
+  EXPECT_FALSE(EVP_PKEY_set1_RSA(pkey.get(), nullptr));
+  EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
+
+  EXPECT_FALSE(EVP_PKEY_set_type(pkey.get(), EVP_PKEY_EC));
+  EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
+  EXPECT_FALSE(EVP_PKEY_set1_EC_KEY(pkey.get(), nullptr));
+  EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
+
+  EXPECT_FALSE(EVP_PKEY_set_type(pkey.get(), EVP_PKEY_DH));
+  EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
+  EXPECT_FALSE(EVP_PKEY_set1_DH(pkey.get(), nullptr));
+  EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
+
+  EXPECT_FALSE(EVP_PKEY_set_type(pkey.get(), EVP_PKEY_DSA));
+  EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
+  EXPECT_FALSE(EVP_PKEY_set1_DSA(pkey.get(), nullptr));
+  EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
+}
+
+// Test that parsers correctly handle trailing data.
+TEST(EVPExtraTest, TrailingData) {
+  bssl::UniquePtr<EVP_PKEY> pkey = LoadExampleRSAKey();
+  ASSERT_TRUE(pkey);
+  bssl::ScopedCBB cbb;
+  ASSERT_TRUE(CBB_init(cbb.get(), 64));
+  ASSERT_TRUE(EVP_marshal_public_key(cbb.get(), pkey.get()));
+
+  std::vector<uint8_t> spki(CBB_data(cbb.get()),
+                            CBB_data(cbb.get()) + CBB_len(cbb.get()));
+  spki.push_back('a');
+
+  // |EVP_parse_public_key| should accept trailing data and return the
+  // remainder.
+  CBS cbs(spki);
+  pkey.reset(EVP_parse_public_key(&cbs));
+  EXPECT_TRUE(pkey);
+  EXPECT_EQ(Bytes(cbs), Bytes("a"));
+
+  // |EVP_PKEY_from_subject_public_key_info| should not.
+  const EVP_PKEY_ALG *alg = EVP_pkey_rsa();
+  pkey.reset(EVP_PKEY_from_subject_public_key_info(spki.data(), spki.size(),
+                                                   &alg, 1u));
+  EXPECT_FALSE(pkey);
+  EXPECT_TRUE(
+      ErrorEquals(ERR_peek_last_error(), ERR_LIB_EVP, EVP_R_DECODE_ERROR));
 }

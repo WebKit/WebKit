@@ -80,7 +80,8 @@ int MediaSelectionOptionAVFObjC::index() const
     if (!m_group)
         return 0;
 
-    return [[m_group->avMediaSelectionGroup() options] indexOfObject:m_mediaSelectionOption.get()];
+    RetainPtr avMediaSelectionGroup = m_group->avMediaSelectionGroup();
+    return [[avMediaSelectionGroup options] indexOfObject:m_mediaSelectionOption.get()];
 }
 
 AVAssetTrack* MediaSelectionOptionAVFObjC::assetTrack() const
@@ -88,7 +89,8 @@ AVAssetTrack* MediaSelectionOptionAVFObjC::assetTrack() const
     if ([m_mediaSelectionOption respondsToSelector:@selector(track)] && [m_mediaSelectionOption track])
         return [m_mediaSelectionOption track];
     if (selected()) {
-        for (AVPlayerItemTrack* track in [playerItem() tracks]) {
+        RetainPtr item = playerItem();
+        for (AVPlayerItemTrack* track in [item tracks]) {
             if (!track.enabled)
                 continue;
             if (!track.assetTrack)
@@ -129,7 +131,7 @@ MediaSelectionGroupAVFObjC::~MediaSelectionGroupAVFObjC()
 
 void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteristics)
 {
-    RetainPtr<NSSet> newAVOptions = adoptNS([[NSSet alloc] initWithArray:[PAL::getAVMediaSelectionGroupClass() playableMediaSelectionOptionsFromArray:[m_mediaSelectionGroup options]]]);
+    RetainPtr<NSSet> newAVOptions = adoptNS([[NSSet alloc] initWithArray:[PAL::getAVMediaSelectionGroupClassSingleton() playableMediaSelectionOptionsFromArray:[m_mediaSelectionGroup options]]]);
     RetainPtr<NSMutableSet> oldAVOptions = adoptNS([[NSMutableSet alloc] initWithCapacity:m_options.size()]);
     for (auto& avOption : m_options.keys())
         [oldAVOptions addObject:(__bridge AVMediaSelectionOption *)avOption];
@@ -159,7 +161,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!m_shouldSelectOptionAutomatically)
         return;
 
-    NSArray* filteredOptions = [PAL::getAVMediaSelectionGroupClass() mediaSelectionOptionsFromArray:[m_mediaSelectionGroup options]
+    RetainPtr filteredOptions = [PAL::getAVMediaSelectionGroupClassSingleton() mediaSelectionOptionsFromArray:[m_mediaSelectionGroup options]
         filteredAndSortedAccordingToPreferredLanguages:createNSArray(userPreferredLanguages(ShouldMinimizeLanguages::No)).get()];
 
     if (![filteredOptions count] && characteristics.isEmpty())
@@ -169,7 +171,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (![filteredOptions count])
         filteredOptions = [m_mediaSelectionGroup options];
 
-    NSArray* optionsWithCharacteristics = [PAL::getAVMediaSelectionGroupClass() mediaSelectionOptionsFromArray:filteredOptions withMediaCharacteristics:createNSArray(characteristics).get()];
+    RetainPtr optionsWithCharacteristics = [PAL::getAVMediaSelectionGroupClassSingleton() mediaSelectionOptionsFromArray:filteredOptions.get() withMediaCharacteristics:createNSArray(characteristics).get()];
     if (optionsWithCharacteristics && [optionsWithCharacteristics count])
         filteredOptions = optionsWithCharacteristics;
 
@@ -200,7 +202,8 @@ void MediaSelectionGroupAVFObjC::setSelectedOption(MediaSelectionOptionAVFObjC* 
 void MediaSelectionGroupAVFObjC::selectionTimerFired()
 {
     @try {
-        [m_playerItem selectMediaOption:(m_selectedOption ? m_selectedOption->avMediaSelectionOption() : nil) inMediaSelectionGroup:m_mediaSelectionGroup.get()];
+        RetainPtr mediaSelectionOption = m_selectedOption ? m_selectedOption->avMediaSelectionOption() : nil;
+        [m_playerItem selectMediaOption:mediaSelectionOption.get() inMediaSelectionGroup:m_mediaSelectionGroup.get()];
     } @catch(NSException *exception) {
         WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, "exception thrown from -selectMediaOption:inMediaSelectionGroup: %s", exception.name.UTF8String);
     }

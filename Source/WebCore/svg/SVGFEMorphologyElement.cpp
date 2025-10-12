@@ -24,7 +24,7 @@
 
 #include "FEMorphology.h"
 #include "NodeName.h"
-#include "SVGFilter.h"
+#include "SVGFilterRenderer.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPropertyOwnerRegistry.h"
@@ -120,7 +120,7 @@ bool SVGFEMorphologyElement::isIdentity() const
 
 IntOutsets SVGFEMorphologyElement::outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const
 {
-    auto radius = SVGFilter::calculateResolvedSize({ radiusX(), radiusY() }, targetBoundingBox, primitiveUnits);
+    auto radius = SVGFilterRenderer::calculateResolvedSize({ radiusX(), radiusY() }, targetBoundingBox, primitiveUnits);
     return { static_cast<int>(radius.height()), static_cast<int>(radius.width()), static_cast<int>(radius.height()), static_cast<int>(radius.width()) };
 }
 

@@ -1,0 +1,4 @@
+
+FAIL @container anchored() without applied fallback assert_equals: expected "no" but got ""
+FAIL @container anchored() with fallback applied assert_equals: expected "yes" but got ""
+

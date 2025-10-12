@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "RenderWidget.h"
+#include <WebCore/RenderWidget.h>
 
 namespace WebCore {
 

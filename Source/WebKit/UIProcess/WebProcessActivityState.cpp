@@ -29,6 +29,7 @@
 #include "APIPageConfiguration.h"
 #include "RemotePageProxy.h"
 #include "WebPageProxy.h"
+#include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 
 namespace WebKit {

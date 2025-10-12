@@ -7,13 +7,17 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
+#include <cstddef>
+#include <cstdint>
+
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer_h264.h"
+#include "rtc_base/copy_on_write_buffer.h"
 
 namespace webrtc {
 void FuzzOneInput(const uint8_t* data, size_t size) {
   if (size > 200000)
     return;
   VideoRtpDepacketizerH264 depacketizer;
-  depacketizer.Parse(rtc::CopyOnWriteBuffer(data, size));
+  depacketizer.Parse(webrtc::CopyOnWriteBuffer(data, size));
 }
 }  // namespace webrtc

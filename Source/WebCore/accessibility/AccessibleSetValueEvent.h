@@ -48,5 +48,4 @@ private:
     const AtomString m_value;
 };
 
-}
-
+} // namespace WebCore

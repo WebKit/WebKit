@@ -1,0 +1,50 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/anonymous-client.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/clear-prefetch-cache-after-clear-site-data-cache.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/cookie-indices.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/cross-origin-cookies-anonymous-client-ip-duplicate.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/cross-origin-cookies.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/different-initiators-2.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/different-initiators.sub.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/document-rules.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/duplicate-urls.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/fragment.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/implicit-source.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/initiators-a-element.sub.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/initiators-iframe-location-href.sub.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/initiators-window-open.sub.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/multiple-url.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/navigation-timing-delivery-type.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/navigation-timing-requestStart-responseStart.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/navigation-timing-sizes.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/no-http-cache-interference.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/no-prefetch-for-post.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/out-of-document-rule-set.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/prefetch-single.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/prefetch-status.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/prefetch-traverse-reload.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/prefetch-uses-cache.sub.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/redirect-middle-of-prefetch.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/redirect-to-prefetch-url.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/redirect-url.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/referrer-policy-from-rules.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/referrer-policy-not-accepted.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/referrer-policy.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/same-origin-cookies.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/sec-fetch-headers.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/user-pass.https.html

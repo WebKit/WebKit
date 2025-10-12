@@ -48,7 +48,7 @@ class MetricsSetProtoFileExporter : public MetricsExporter {
   MetricsSetProtoFileExporter& operator=(const MetricsSetProtoFileExporter&) =
       delete;
 
-  bool Export(rtc::ArrayView<const Metric> metrics) override;
+  bool Export(ArrayView<const Metric> metrics) override;
 
  private:
   const Options options_;

@@ -84,7 +84,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
 
     def _generate_secondary_header_includes(self):
         header_includes = [
-            (["JavaScriptCore", "WebKit", "WebDriverBidi"], ("JavaScriptCore", "inspector/InspectorProtocolTypes.h")),
+            (["JavaScriptCore", "WebKit", "WebDriverBidi"], ("JavaScriptCore", "inspector/InspectorProtocolTypes.h", True)),
             (["JavaScriptCore", "WebKit", "WebDriverBidi"], ("WTF", "wtf/JSONValues.h")),
             (["JavaScriptCore", "WebKit", "WebDriverBidi"], ("WTF", "wtf/text/WTFString.h")),
         ]
@@ -266,6 +266,8 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         for type_member in required_members:
             lines.append(self._generate_builder_setter_for_member(type_member, domain))
         lines.append(Template(CppTemplates.ProtocolObjectBuilderDeclarationPostlude).substitute(None, **builder_args))
+        for member in [member for member in required_members if member.is_nullable]:
+            lines.append(self._generate_unchecked_setter_for_member(member, domain))
         for member in optional_members:
             lines.append(self._generate_unchecked_setter_for_member(member, domain))
 
@@ -340,9 +342,17 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         lines.append('        Builder<STATE | %(camelName)sSet>& set%(camelName)s(%(memberType)s %(memberName)s)' % setter_args)
         lines.append('        {')
         lines.append('            static_assert(!(STATE & %(camelName)sSet), "property %(memberKey)s already set");' % setter_args)
-        lines.append('            m_result->%(setter)s("%(memberKey)s"_s, %(memberValue)s);' % setter_args)
+        lines.append('            Ref { *m_result }->%(setter)s("%(memberKey)s"_s, %(memberValue)s);' % setter_args)
         lines.append('            return castState<%(camelName)sSet>();' % setter_args)
         lines.append('        }')
+        if type_member.is_nullable:
+            lines.append('')
+            lines.append('        Builder<STATE | %(camelName)sSet>& set%(camelName)sIsNull()' % setter_args)
+            lines.append('        {')
+            lines.append('            static_assert(!(STATE & %(camelName)sSet), "property %(memberKey)s already set");' % setter_args)
+            lines.append('            Ref { *m_result }->setValue("%(memberKey)s"_s, JSON::Value::null());' % setter_args)
+            lines.append('            return castState<%(camelName)sSet>();' % setter_args)
+            lines.append('        }')
         return '\n'.join(lines)
 
     def _generate_unchecked_setter_for_member(self, type_member, domain):
@@ -369,6 +379,12 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         lines.append('    {')
         lines.append('        JSON::ObjectBase::%(setter)s("%(memberKey)s"_s, %(memberValue)s);' % setter_args)
         lines.append('    }')
+        if type_member.is_nullable:
+            lines.append('')
+            lines.append('    void set%(camelName)sIsNull()' % setter_args)
+            lines.append('    {')
+            lines.append('        JSON::ObjectBase::setValue("%(memberKey)s"_s, JSON::Value::null());' % setter_args)
+            lines.append('    }')
         return '\n'.join(lines)
 
     def _generate_forward_declarations_for_binding_traits(self, domains):

@@ -6,8 +6,13 @@
 
 // Context_gles_1_0.cpp: Implements the GLES1-specific parts of Context.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/Context.h"
 #include "libANGLE/Context.inl.h"
+#include "libANGLE/context_private_call.inl.h"
 
 #include "common/mathutil.h"
 #include "common/utilities.h"
@@ -36,14 +41,16 @@ void Context::colorPointer(GLint size, VertexAttribType type, GLsizei stride, co
 void Context::disableClientState(ClientVertexArrayType clientState)
 {
     getMutableGLES1State()->setClientStateEnabled(clientState, false);
-    disableVertexAttribArray(vertexArrayIndex(clientState));
+    ContextPrivateDisableVertexAttribArray(getMutablePrivateState(), getMutablePrivateStateCache(),
+                                           vertexArrayIndex(clientState));
     mStateCache.onGLES1ClientStateChange(this);
 }
 
 void Context::enableClientState(ClientVertexArrayType clientState)
 {
     getMutableGLES1State()->setClientStateEnabled(clientState, true);
-    enableVertexAttribArray(vertexArrayIndex(clientState));
+    ContextPrivateEnableVertexAttribArray(getMutablePrivateState(), getMutablePrivateStateCache(),
+                                          vertexArrayIndex(clientState));
     mStateCache.onGLES1ClientStateChange(this);
 }
 

@@ -37,6 +37,7 @@ HardwareAccelerationManager& HardwareAccelerationManager::singleton()
     return manager;
 }
 
+IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 HardwareAccelerationManager::HardwareAccelerationManager()
     : m_canUseHardwareAcceleration(true)
     , m_forceHardwareAcceleration(true)
@@ -53,5 +54,6 @@ HardwareAccelerationManager::HardwareAccelerationManager()
     if (forceCompositing && !strcmp(forceCompositing, "0"))
         m_forceHardwareAcceleration = false;
 }
+IGNORE_CLANG_WARNINGS_END
 
 } // namespace WebKit

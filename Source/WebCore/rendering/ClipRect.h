@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "LayoutRect.h"
+#include <WebCore/LayoutRect.h>
 
 namespace WTF {
 class TextStream;

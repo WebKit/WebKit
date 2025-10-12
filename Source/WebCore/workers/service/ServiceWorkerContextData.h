@@ -25,17 +25,17 @@
 
 #pragma once
 
-#include "CertificateInfo.h"
-#include "ContentSecurityPolicyResponseHeaders.h"
-#include "CrossOriginEmbedderPolicy.h"
-#include "NavigationPreloadState.h"
-#include "ScriptBuffer.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include "ServiceWorkerIdentifier.h"
-#include "ServiceWorkerImportedScript.h"
-#include "ServiceWorkerJobDataIdentifier.h"
-#include "ServiceWorkerRegistrationData.h"
-#include "WorkerType.h"
+#include <WebCore/CertificateInfo.h>
+#include <WebCore/ContentSecurityPolicyResponseHeaders.h>
+#include <WebCore/CrossOriginEmbedderPolicy.h>
+#include <WebCore/NavigationPreloadState.h>
+#include <WebCore/ScriptBuffer.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/ServiceWorkerIdentifier.h>
+#include <WebCore/ServiceWorkerImportedScript.h>
+#include <WebCore/ServiceWorkerJobDataIdentifier.h>
+#include <WebCore/ServiceWorkerRegistrationData.h>
+#include <WebCore/WorkerType.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/URLHash.h>
 

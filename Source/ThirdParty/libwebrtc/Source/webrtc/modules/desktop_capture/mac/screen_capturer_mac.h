@@ -36,9 +36,10 @@ class DisplayStreamManager;
 // A class to perform video frame capturing for mac.
 class ScreenCapturerMac final : public DesktopCapturer {
  public:
-  ScreenCapturerMac(rtc::scoped_refptr<DesktopConfigurationMonitor> desktop_config_monitor,
-                    bool detect_updated_region,
-                    bool allow_iosurface);
+  ScreenCapturerMac(
+      scoped_refptr<DesktopConfigurationMonitor> desktop_config_monitor,
+      bool detect_updated_region,
+      bool allow_iosurface);
   ~ScreenCapturerMac() override;
 
   ScreenCapturerMac(const ScreenCapturerMac&) = delete;
@@ -101,7 +102,7 @@ class ScreenCapturerMac final : public DesktopCapturer {
   DesktopRegion last_invalid_region_;
 
   // Monitoring display reconfiguration.
-  rtc::scoped_refptr<DesktopConfigurationMonitor> desktop_config_monitor_;
+  scoped_refptr<DesktopConfigurationMonitor> desktop_config_monitor_;
 
   CGWindowID excluded_window_ = 0;
 

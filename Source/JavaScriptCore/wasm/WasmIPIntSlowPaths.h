@@ -38,7 +38,17 @@ namespace JSC {
 
 class JSWebAssemblyInstance;
 
+namespace Wasm {
+class IPIntCallee;
+}
+
 namespace IPInt {
+
+extern "C" [[noreturn]] void SYSV_ABI wasm_log_crash(CallFrame*, JSWebAssemblyInstance* instance) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair SYSV_ABI slow_path_wasm_throw_exception(CallFrame*, JSWebAssemblyInstance* instance, Wasm::ExceptionType) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UCPURegister SYSV_ABI slow_path_wasm_unwind_exception(CallFrame* callFrame, JSWebAssemblyInstance* instance);
+extern "C" UGPRPair SYSV_ABI slow_path_wasm_popcount(const void* pc, uint32_t) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair SYSV_ABI slow_path_wasm_popcountll(const void* pc, uint64_t) REFERENCED_FROM_ASM WTF_INTERNAL;
 
 #if USE(JSVALUE64)
 static constexpr uintptr_t SlowPathExceptionTag = 1;
@@ -78,7 +88,6 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_set, unsigned tableIndex, unsigned index
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_init, IPIntStackEntry* sp, TableInitMetadata* metadata);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_fill, IPIntStackEntry* sp, TableFillMetadata* metadata);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_grow, IPIntStackEntry* sp, TableGrowMetadata* metadata);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL_1P(current_memory);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_grow, int32_t);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_init, int32_t, IPIntStackEntry*);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(data_drop, int32_t);
@@ -89,20 +98,20 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_copy, IPIntStackEntry* sp, TableCopyMeta
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_size, int32_t);
 
 // Wasm-GC
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(struct_new, Wasm::TypeIndex, IPIntStackEntry* sp);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(struct_new_default, Wasm::TypeIndex);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(struct_get, EncodedJSValue, uint32_t);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(struct_get_s, EncodedJSValue, uint32_t);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(struct_new, uint32_t, IPIntStackEntry* sp);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(struct_new_default, uint32_t);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(struct_get, EncodedJSValue, uint32_t, IPIntStackEntry*);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(struct_get_s, EncodedJSValue, uint32_t, IPIntStackEntry*);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(struct_set, EncodedJSValue, uint32_t, IPIntStackEntry*);
 
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(array_new, Wasm::TypeIndex, EncodedJSValue, uint32_t);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(array_new_default, Wasm::TypeIndex, uint32_t);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(array_new_fixed, Wasm::TypeIndex, uint32_t, IPIntStackEntry*);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(array_new, uint32_t, uint32_t, IPIntStackEntry*);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(array_new_default, uint32_t, uint32_t);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(array_new_fixed, uint32_t, uint32_t, IPIntStackEntry*);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(array_new_data, IPInt::ArrayNewDataMetadata*, uint32_t, uint32_t);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(array_new_elem, IPInt::ArrayNewElemMetadata*, uint32_t, uint32_t);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(array_get, Wasm::TypeIndex, EncodedJSValue, uint32_t);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(array_get_s, Wasm::TypeIndex, EncodedJSValue, uint32_t);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(array_set, Wasm::TypeIndex, IPIntStackEntry*);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(array_get, uint32_t, IPIntStackEntry*);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(array_get_s, uint32_t, IPIntStackEntry*);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(array_set, uint32_t, IPIntStackEntry*);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(array_fill, IPIntStackEntry* sp);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(array_copy, IPIntStackEntry* sp);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(array_init_data, uint32_t, IPIntStackEntry* sp);
@@ -116,9 +125,9 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(ref_cast, int32_t, bool, EncodedJSValue);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(call_indirect, CallFrame* callFrame, Wasm::FunctionSpaceIndex* functionIndex, CallIndirectMetadata* call);
 
 // We can't use FunctionSpaceIndex here since ARMv7 ABI always passes structs on th stack...
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(prepare_call, unsigned functionSpaceIndex, Register* callee);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(prepare_call, CallFrame*, CallMetadata*, Register* callee);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(prepare_call_indirect, CallFrame* callFrame, Wasm::FunctionSpaceIndex* functionIndex, CallIndirectMetadata* call);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(prepare_call_ref, CallFrame*, Wasm::TypeIndex, IPIntStackEntry*);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(prepare_call_ref, CallFrame*, CallRefMetadata*, IPIntStackEntry*);
 
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(set_global_ref, uint32_t globalIndex, JSValue value);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(get_global_64, unsigned);
@@ -128,6 +137,8 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_wait32, uint64_t, uint32_t, uint
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_wait64, uint64_t, uint64_t, uint64_t);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_notify, unsigned, unsigned, int32_t);
 
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(check_stack_and_vm_traps, void* candidateNewStackPointer, Wasm::IPIntCallee*);
+WASM_IPINT_EXTERN_CPP_DECL(unreachable_breakpoint_handler, CallFrame*, Register*);
 
 } } // namespace JSC::IPInt
 

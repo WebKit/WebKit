@@ -11,9 +11,21 @@
 #include "modules/audio_processing/test/conversational_speech/multiend_call.h"
 
 #include <algorithm>
+#include <cstddef>
 #include <iterator>
+#include <map>
+#include <memory>
+#include <string>
+#include <tuple>
+#include <utility>
+#include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
+#include "modules/audio_processing/test/conversational_speech/timing.h"
+#include "modules/audio_processing/test/conversational_speech/wavreader_abstract_factory.h"
+#include "modules/audio_processing/test/conversational_speech/wavreader_interface.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "test/testsupport/file_utils.h"
 
@@ -22,7 +34,7 @@ namespace test {
 namespace conversational_speech {
 
 MultiEndCall::MultiEndCall(
-    rtc::ArrayView<const Turn> timing,
+    ArrayView<const Turn> timing,
     absl::string_view audiotracks_path,
     std::unique_ptr<WavReaderAbstractFactory> wavreader_abstract_factory)
     : timing_(timing),

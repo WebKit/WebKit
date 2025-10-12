@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'exportedNamesSource'. Expected 'from' before imported module name.
 
 Harness Error (FAIL), message = SyntaxError: Unexpected identifier 'exportedNamesSource'. Expected 'from' before imported module name.
 

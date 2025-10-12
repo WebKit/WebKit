@@ -10,6 +10,7 @@
 #ifndef RTC_TOOLS_DATA_CHANNEL_BENCHMARK_SIGNALING_INTERFACE_H_
 #define RTC_TOOLS_DATA_CHANNEL_BENCHMARK_SIGNALING_INTERFACE_H_
 
+#include <functional>
 #include <memory>
 
 #include "api/jsep.h"
@@ -20,22 +21,20 @@ class SignalingInterface {
   virtual ~SignalingInterface() = default;
 
   // Send an ICE candidate over the transport.
-  virtual void SendIceCandidate(
-      const webrtc::IceCandidateInterface* candidate) = 0;
+  virtual void SendIceCandidate(const IceCandidate* candidate) = 0;
 
   // Send a local description over the transport.
-  virtual void SendDescription(
-      const webrtc::SessionDescriptionInterface* sdp) = 0;
+  virtual void SendDescription(const SessionDescriptionInterface* sdp) = 0;
 
   // Set a callback when receiving a description from the transport.
   virtual void OnRemoteDescription(
-      std::function<void(std::unique_ptr<webrtc::SessionDescriptionInterface>
-                             sdp)> callback) = 0;
+      std::function<void(std::unique_ptr<SessionDescriptionInterface> sdp)>
+          callback) = 0;
 
   // Set a callback when receiving an ICE candidate from the transport.
   virtual void OnIceCandidate(
-      std::function<void(std::unique_ptr<webrtc::IceCandidateInterface>
-                             candidate)> callback) = 0;
+      std::function<void(std::unique_ptr<IceCandidate> candidate)>
+          callback) = 0;
 };
 }  // namespace webrtc
 

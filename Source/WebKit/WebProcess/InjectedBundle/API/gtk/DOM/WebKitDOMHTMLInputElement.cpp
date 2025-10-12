@@ -692,7 +692,7 @@ void webkit_dom_html_input_element_set_height(WebKitDOMHTMLInputElement* self, g
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
     WebCore::HTMLInputElement* item = WebKit::core(self);
-    item->setHeight(value);
+    item->setUnsignedIntegralAttribute(WebCore::HTMLNames::heightAttr, value);
 }
 
 gboolean webkit_dom_html_input_element_get_indeterminate(WebKitDOMHTMLInputElement* self)
@@ -841,7 +841,7 @@ void webkit_dom_html_input_element_set_input_type(WebKitDOMHTMLInputElement* sel
     g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLInputElement* item = WebKit::core(self);
-    item->setType(WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_input_element_get_default_value(WebKitDOMHTMLInputElement* self)
@@ -849,7 +849,7 @@ gchar* webkit_dom_html_input_element_get_default_value(WebKitDOMHTMLInputElement
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
     WebCore::HTMLInputElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->defaultValue());
+    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::valueAttr));
     return result;
 }
 
@@ -859,7 +859,7 @@ void webkit_dom_html_input_element_set_default_value(WebKitDOMHTMLInputElement* 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLInputElement* item = WebKit::core(self);
-    item->setDefaultValue(WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::valueAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_input_element_get_value(WebKitDOMHTMLInputElement* self)
@@ -895,7 +895,7 @@ void webkit_dom_html_input_element_set_width(WebKitDOMHTMLInputElement* self, gu
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
     WebCore::HTMLInputElement* item = WebKit::core(self);
-    item->setWidth(value);
+    item->setIntegralAttribute(WebCore::HTMLNames::widthAttr, value);
 }
 
 gboolean webkit_dom_html_input_element_get_will_validate(WebKitDOMHTMLInputElement* self)

@@ -1,16 +1,16 @@
-/* Copyright (c) 2014, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2014 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include "async_bio.h"
 
@@ -25,30 +25,33 @@
 
 namespace {
 
-extern const BIO_METHOD g_async_bio_method;
-
 struct AsyncBio {
-  bool datagram;
-  bool enforce_write_quota;
-  size_t read_quota;
-  size_t write_quota;
+  bool datagram = false;
+  size_t read_quota = 0;
+  size_t write_quota = 0;
 };
 
+static int AsyncBioMethodType() {
+  static int type = [] {
+    int idx = BIO_get_new_index();
+    BSSL_CHECK(idx > 0);
+    return idx | BIO_TYPE_FILTER;
+  }();
+  return type;
+}
+
 AsyncBio *GetData(BIO *bio) {
-  if (bio->method != &g_async_bio_method) {
-    return NULL;
+  if (BIO_method_type(bio) != AsyncBioMethodType()) {
+    return nullptr;
   }
-  return (AsyncBio *)bio->ptr;
+  return static_cast<AsyncBio *>(BIO_get_data(bio));
 }
 
 static int AsyncWrite(BIO *bio, const char *in, int inl) {
   AsyncBio *a = GetData(bio);
-  if (a == NULL || bio->next_bio == NULL) {
+  BIO *next = BIO_next(bio);
+  if (a == nullptr || next == nullptr) {
     return 0;
-  }
-
-  if (!a->enforce_write_quota) {
-    return BIO_write(bio->next_bio, in, inl);
   }
 
   BIO_clear_retry_flags(bio);
@@ -62,7 +65,7 @@ static int AsyncWrite(BIO *bio, const char *in, int inl) {
   if (!a->datagram && static_cast<size_t>(inl) > a->write_quota) {
     inl = static_cast<int>(a->write_quota);
   }
-  int ret = BIO_write(bio->next_bio, in, inl);
+  int ret = BIO_write(next, in, inl);
   if (ret <= 0) {
     BIO_copy_next_retry(bio);
   } else {
@@ -73,7 +76,8 @@ static int AsyncWrite(BIO *bio, const char *in, int inl) {
 
 static int AsyncRead(BIO *bio, char *out, int outl) {
   AsyncBio *a = GetData(bio);
-  if (a == NULL || bio->next_bio == NULL) {
+  BIO *next = BIO_next(bio);
+  if (a == nullptr || next == nullptr) {
     return 0;
   }
 
@@ -88,7 +92,7 @@ static int AsyncRead(BIO *bio, char *out, int outl) {
   if (!a->datagram && static_cast<size_t>(outl) > a->read_quota) {
     outl = static_cast<int>(a->read_quota);
   }
-  int ret = BIO_read(bio->next_bio, out, outl);
+  int ret = BIO_read(next, out, outl);
   if (ret <= 0) {
     BIO_copy_next_retry(bio);
   } else {
@@ -98,66 +102,74 @@ static int AsyncRead(BIO *bio, char *out, int outl) {
 }
 
 static long AsyncCtrl(BIO *bio, int cmd, long num, void *ptr) {
-  if (bio->next_bio == NULL) {
+  AsyncBio *a = GetData(bio);
+  BIO *next = BIO_next(bio);
+  if (next == nullptr) {
     return 0;
   }
   BIO_clear_retry_flags(bio);
-  long ret = BIO_ctrl(bio->next_bio, cmd, num, ptr);
+  // Model an async flush as consuming one byte of write quota.
+  if (cmd == BIO_CTRL_FLUSH && a->write_quota == 0) {
+    BIO_set_retry_write(bio);
+    errno = EAGAIN;
+    return -1;
+  }
+  long ret = BIO_ctrl(next, cmd, num, ptr);
+  if (cmd == BIO_CTRL_FLUSH && ret > 0) {
+    a->write_quota--;
+  }
   BIO_copy_next_retry(bio);
   return ret;
 }
 
 static int AsyncNew(BIO *bio) {
-  AsyncBio *a = (AsyncBio *)OPENSSL_zalloc(sizeof(*a));
-  if (a == NULL) {
-    return 0;
-  }
-  a->enforce_write_quota = true;
-  bio->init = 1;
-  bio->ptr = (char *)a;
+  BIO_set_data(bio, new AsyncBio);
+  BIO_set_init(bio, 1);
   return 1;
 }
 
 static int AsyncFree(BIO *bio) {
-  if (bio == NULL) {
+  if (bio == nullptr) {
     return 0;
   }
 
-  OPENSSL_free(bio->ptr);
-  bio->ptr = NULL;
-  bio->init = 0;
-  bio->flags = 0;
+  delete GetData(bio);
+  BIO_set_data(bio, nullptr);
+  BIO_set_init(bio, 0);
   return 1;
 }
 
-static long AsyncCallbackCtrl(BIO *bio, int cmd, bio_info_cb fp) {
-  if (bio->next_bio == NULL) {
+static long AsyncCallbackCtrl(BIO *bio, int cmd, BIO_info_cb *fp) {
+  BIO *next = BIO_next(bio);
+  if (next == nullptr) {
     return 0;
   }
-  return BIO_callback_ctrl(bio->next_bio, cmd, fp);
+  return BIO_callback_ctrl(next, cmd, fp);
 }
 
-const BIO_METHOD g_async_bio_method = {
-  BIO_TYPE_FILTER,
-  "async bio",
-  AsyncWrite,
-  AsyncRead,
-  NULL /* puts */,
-  NULL /* gets */,
-  AsyncCtrl,
-  AsyncNew,
-  AsyncFree,
-  AsyncCallbackCtrl,
-};
+static const BIO_METHOD *AsyncBioMethod() {
+  static const BIO_METHOD *method = [] {
+    BIO_METHOD *ret = BIO_meth_new(AsyncBioMethodType(), "async bio");
+    BSSL_CHECK(ret);
+    BSSL_CHECK(BIO_meth_set_write(ret, AsyncWrite));
+    BSSL_CHECK(BIO_meth_set_read(ret, AsyncRead));
+    BSSL_CHECK(BIO_meth_set_ctrl(ret, AsyncCtrl));
+    BSSL_CHECK(BIO_meth_set_create(ret, AsyncNew));
+    BSSL_CHECK(BIO_meth_set_destroy(ret, AsyncFree));
+    BSSL_CHECK(BIO_meth_set_callback_ctrl(ret, AsyncCallbackCtrl));
+    return ret;
+  }();
+  return method;
+}
 
 }  // namespace
 
 bssl::UniquePtr<BIO> AsyncBioCreate() {
-  return bssl::UniquePtr<BIO>(BIO_new(&g_async_bio_method));
+  return bssl::UniquePtr<BIO>(BIO_new(AsyncBioMethod()));
 }
 
 bssl::UniquePtr<BIO> AsyncBioCreateDatagram() {
-  bssl::UniquePtr<BIO> ret(BIO_new(&g_async_bio_method));
+  bssl::UniquePtr<BIO> ret(BIO_new(AsyncBioMethod()));
   if (!ret) {
     return nullptr;
   }
@@ -167,7 +179,7 @@ bssl::UniquePtr<BIO> AsyncBioCreateDatagram() {
 
 void AsyncBioAllowRead(BIO *bio, size_t count) {
   AsyncBio *a = GetData(bio);
-  if (a == NULL) {
+  if (a == nullptr) {
     return;
   }
   a->read_quota += count;
@@ -175,16 +187,8 @@ void AsyncBioAllowRead(BIO *bio, size_t count) {
 
 void AsyncBioAllowWrite(BIO *bio, size_t count) {
   AsyncBio *a = GetData(bio);
-  if (a == NULL) {
+  if (a == nullptr) {
     return;
   }
   a->write_quota += count;
-}
-
-void AsyncBioEnforceWriteQuota(BIO *bio, bool enforce) {
-  AsyncBio *a = GetData(bio);
-  if (a == NULL) {
-    return;
-  }
-  a->enforce_write_quota = enforce;
 }

@@ -32,9 +32,13 @@
 
 namespace WebKit {
 
+class MockHidConnection;
+
 class MockHidService final : public HidService {
 public:
     static Ref<MockHidService> create(AuthenticatorTransportServiceObserver&, const WebCore::MockWebAuthenticationConfiguration&);
+
+    void validateExpectedCommandsCompleted() final;
 
 private:
     MockHidService(AuthenticatorTransportServiceObserver&, const WebCore::MockWebAuthenticationConfiguration&);
@@ -43,6 +47,7 @@ private:
     Ref<HidConnection> createHidConnection(IOHIDDeviceRef) const final;
 
     WebCore::MockWebAuthenticationConfiguration m_configuration;
+    mutable WeakPtr<MockHidConnection> m_activeConnection;
 };
 
 } // namespace WebKit

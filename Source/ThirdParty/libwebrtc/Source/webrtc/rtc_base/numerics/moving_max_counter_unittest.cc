@@ -13,7 +13,7 @@
 #include "test/gtest.h"
 
 TEST(MovingMaxCounter, ReportsMaximumInTheWindow) {
-  rtc::MovingMaxCounter<int> counter(100);
+  webrtc::MovingMaxCounter<int> counter(100);
   counter.Add(1, 1);
   EXPECT_EQ(counter.Max(1), 1);
   counter.Add(2, 30);
@@ -27,7 +27,7 @@ TEST(MovingMaxCounter, ReportsMaximumInTheWindow) {
 }
 
 TEST(MovingMaxCounter, IgnoresOldElements) {
-  rtc::MovingMaxCounter<int> counter(100);
+  webrtc::MovingMaxCounter<int> counter(100);
   counter.Add(1, 1);
   counter.Add(2, 30);
   counter.Add(100, 60);
@@ -39,14 +39,14 @@ TEST(MovingMaxCounter, IgnoresOldElements) {
 }
 
 TEST(MovingMaxCounter, HandlesEmptyWindow) {
-  rtc::MovingMaxCounter<int> counter(100);
+  webrtc::MovingMaxCounter<int> counter(100);
   counter.Add(123, 1);
   EXPECT_TRUE(counter.Max(101).has_value());
   EXPECT_FALSE(counter.Max(102).has_value());
 }
 
 TEST(MovingMaxCounter, HandlesSamplesWithEqualTimestamps) {
-  rtc::MovingMaxCounter<int> counter(100);
+  webrtc::MovingMaxCounter<int> counter(100);
   counter.Add(2, 30);
   EXPECT_EQ(counter.Max(30), 2);
   counter.Add(5, 30);

@@ -1,0 +1,29 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/streams/transferable/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/streams/transferable/deserialize-error.window.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/transferable/gc-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/transferable/readable-stream.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/transferable/reason.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/transferable/service-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/transferable/shared-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/transferable/transfer-with-messageport.window.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/transferable/transform-stream-members.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/transferable/transform-stream.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/transferable/window.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/transferable/worker.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/transferable/writable-stream.html

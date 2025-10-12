@@ -34,6 +34,8 @@ dictionary MediaRecorderOptions {
   unsigned long videoBitsPerSecond;
   unsigned long bitsPerSecond;
   BitrateMode audioBitrateMode = "variable";
+  DOMHighResTimeStamp videoKeyFrameIntervalDuration;
+  unsigned long videoKeyFrameIntervalCount;
 };
 
 enum BitrateMode {
@@ -54,17 +56,7 @@ interface BlobEvent : Event {
   readonly attribute DOMHighResTimeStamp timecode;
 };
 
-dictionary BlobEventInit {
+dictionary BlobEventInit : EventInit {
   required Blob data;
   DOMHighResTimeStamp timecode;
-};
-
-dictionary MediaRecorderErrorEventInit : EventInit {
-  required DOMException error;
-};
-
-[Exposed=Window]
-interface MediaRecorderErrorEvent : Event {
-  constructor(DOMString type, MediaRecorderErrorEventInit eventInitDict);
-  [SameObject] readonly attribute DOMException error;
 };

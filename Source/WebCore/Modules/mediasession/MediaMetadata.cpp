@@ -30,9 +30,8 @@
 
 #include "BitmapImage.h"
 #include "CachedImage.h"
-#include "CachedResourceLoader.h"
-#include "Document.h"
-#include "DocumentInlines.h"
+#include "DocumentResourceLoader.h"
+#include "ExceptionOr.h"
 #include "GraphicsContext.h"
 #include "Image.h"
 #include "ImageBuffer.h"

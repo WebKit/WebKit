@@ -25,14 +25,20 @@
 
 #import "config.h"
 
+#import "CGImagePixelReader.h"
 #import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import <WebCore/Color.h>
+#import <WebKit/WKContentWorldPrivate.h>
 #import <WebKit/WKSnapshotConfigurationPrivate.h>
+#import <WebKit/_WKContentWorldConfiguration.h>
+#import <WebKit/_WKJSHandle.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 static NSInteger getPixelIndex(NSInteger x, NSInteger y, NSInteger width)
 {
@@ -54,6 +60,35 @@ static NSInteger getPixelIndex(NSInteger x, NSInteger y, NSInteger width)
         _error = error;
         completionBlock();
     }];
+}
+
+@end
+
+namespace TestWebKitAPI {
+
+struct SnapshotResult {
+    RetainPtr<TestWebKitAPI::Util::PlatformImage> image;
+    RetainPtr<NSError> error;
+};
+
+}
+
+@interface WKWebView (SnapshotTests)
+- (TestWebKitAPI::SnapshotResult)takeSnapshotOfNode:(_WKJSHandle *)nodeHandle;
+@end
+
+@implementation WKWebView (SnapshotTests)
+
+- (TestWebKitAPI::SnapshotResult)takeSnapshotOfNode:(_WKJSHandle *)nodeHandle
+{
+    __block bool done = false;
+    __block TestWebKitAPI::SnapshotResult result;
+    [self _takeSnapshotOfNode:nodeHandle completionHandler:^(TestWebKitAPI::Util::PlatformImage *snapshotImage, NSError *error) {
+        result = { { snapshotImage }, { error } };
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result;
 }
 
 @end
@@ -716,5 +751,61 @@ TEST(WKWebView, SnapshotWithContentsRect)
     TestWebKitAPI::Util::run(&isDone);
 }
 #endif
+
+TEST(WKWebView, SnapshotNodeByJSHandle)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    [webView synchronouslyLoadTestPageNamed:@"node-snapshotting"];
+
+    RetainPtr worldConfiguration = adoptNS([_WKContentWorldConfiguration new]);
+    [worldConfiguration setAllowJSHandleCreation:YES];
+
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:worldConfiguration.get()];
+    auto querySelector = [&](ASCIILiteral selector) -> RetainPtr<_WKJSHandle> {
+        RetainPtr script = [NSString stringWithFormat:@"webkit.createJSHandle(document.querySelector('%s'))", selector.characters()];
+        return dynamic_objc_cast<_WKJSHandle>([webView objectByEvaluatingJavaScript:script.get() inFrame:nil inContentWorld:world.get()]);
+    };
+
+    {
+        auto [image, error] = [webView takeSnapshotOfNode:querySelector(".red-box"_s).get()];
+        EXPECT_NULL(error);
+
+        CGImagePixelReader reader { Util::convertToCGImage(image.get()).get() };
+        EXPECT_WK_STREQ("rgb(255, 0, 0)", reader.cssColorAt(2, 2));
+        EXPECT_WK_STREQ("rgb(255, 0, 0)", reader.cssColorAt(reader.width() / 2, reader.height() / 2));
+    }
+
+    {
+        auto [image, error] = [webView takeSnapshotOfNode:querySelector("img"_s).get()];
+        EXPECT_NULL(error);
+
+        CGImagePixelReader reader { Util::convertToCGImage(image.get()).get() };
+        EXPECT_TRUE(reader.isTransparentBlack(2, 2));
+        EXPECT_FALSE(reader.isTransparentBlack(reader.width() / 2, reader.height() / 2));
+    }
+
+    {
+        auto [image, error] = [webView takeSnapshotOfNode:querySelector("h2"_s).get()];
+        EXPECT_NULL(error);
+
+        CGImagePixelReader reader { Util::convertToCGImage(image.get()).get() };
+        EXPECT_WK_STREQ("rgb(0, 0, 0)", reader.cssColorAt(2, 2));
+        EXPECT_FALSE(reader.isTransparentBlack(reader.width() / 2, reader.height() / 2));
+    }
+
+    {
+        auto [image, error] = [webView takeSnapshotOfNode:nil];
+        EXPECT_NOT_NULL(error);
+        EXPECT_NULL(image);
+    }
+
+    {
+        NSString *scriptToRun = @"window.randomObject = {'foo': 1}; webkit.createJSHandle(randomObject)";
+        RetainPtr handle = dynamic_objc_cast<_WKJSHandle>([webView objectByEvaluatingJavaScript:scriptToRun inFrame:nil inContentWorld:world.get()]);
+        auto [image, error] = [webView takeSnapshotOfNode:handle.get()];
+        EXPECT_NOT_NULL(error);
+        EXPECT_NULL(image);
+    }
+}
 
 } // namespace TestWebKitAPI

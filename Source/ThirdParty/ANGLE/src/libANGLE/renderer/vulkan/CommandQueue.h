@@ -591,8 +591,8 @@ class [[nodiscard]] ScopedPrimaryCommandBuffer final
 
     DeviceScoped<PrimaryCommandBuffer> unlockAndRelease()
     {
-        ASSERT(mCommandBuffer.get().valid() && mPoolLock.owns_lock() ||
-               !mCommandBuffer.get().valid() && mPoolLock.mutex() == nullptr);
+        ASSERT((mCommandBuffer.get().valid() && mPoolLock.owns_lock()) ||
+               (!mCommandBuffer.get().valid() && mPoolLock.mutex() == nullptr));
         mPoolLock = {};
         return std::move(mCommandBuffer);
     }

@@ -39,6 +39,8 @@ class WebPlatformStrategies :
     , public WebCore::PushStrategy
 #endif
 {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebPlatformStrategies);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebPlatformStrategies);
     friend NeverDestroyed<WebPlatformStrategies>;
 public:
     static void initialize();
@@ -80,6 +82,7 @@ private:
     int64_t setURL(const WebCore::PasteboardURL&, const String& pasteboardName, const WebCore::PasteboardContext*) override;
     int64_t setColor(const WebCore::Color&, const String& pasteboardName, const WebCore::PasteboardContext*) override;
     int64_t setStringForType(const String&, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
+    int64_t writeWebArchive(WebCore::LegacyWebArchive&, const String& pasteboardName) override;
 
     bool containsURLStringSuitableForLoading(const String& pasteboardName, const WebCore::PasteboardContext*) override;
     String urlStringSuitableForLoading(const String& pasteboardName, String& title, const WebCore::PasteboardContext*) override;
@@ -114,6 +117,11 @@ private:
     void windowUnsubscribeFromPushService(const URL& scope, std::optional<WebCore::PushSubscriptionIdentifier>, UnsubscribeFromPushServiceCallback&&) override;
     void windowGetPushSubscription(const URL& scope, GetPushSubscriptionCallback&&) override;
     void windowGetPushPermissionState(const URL& scope, GetPushPermissionStateCallback&&) override;
+
+    uint32_t checkedPtrCount() const final { return WebCore::PasteboardStrategy::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return WebCore::PasteboardStrategy::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { WebCore::PasteboardStrategy::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { WebCore::PasteboardStrategy::decrementCheckedPtrCount(); }
 #endif
 };
 

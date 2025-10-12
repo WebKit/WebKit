@@ -1,0 +1,5 @@
+
+PASS Untrusted HTMLScriptElement with classic type uses the source text returned by the default policy.
+PASS Untrusted HTMLScriptElement of importmap type uses the source text returned by the default policy.
+PASS Untrusted HTMLScriptElement of module type uses the source text returned by the default policy.
+

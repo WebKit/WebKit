@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FocusDirection.h"
-#include "SelectionRestorationMode.h"
+#include <WebCore/FocusDirection.h>
+#include <WebCore/SelectionRestorationMode.h>
 #include <optional>
 
 namespace WebCore {

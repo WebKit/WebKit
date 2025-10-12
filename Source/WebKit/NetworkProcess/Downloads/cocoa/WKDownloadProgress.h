@@ -28,10 +28,6 @@
 #import <Foundation/NSProgress.h>
 #import <wtf/RefPtr.h>
 
-#if HAVE(MODERN_DOWNLOADPROGRESS)
-#import <WebKitAdditions/DownloadProgressAdditions.h>
-#endif
-
 namespace WebKit {
 
 class Download;
@@ -42,8 +38,19 @@ class SandboxExtension;
 NS_ASSUME_NONNULL_BEGIN
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-WKDOWNLOADPROGRESS_ADDITIONS
-#endif
+@class UTType;
+
+bool enableModernDownloadProgress();
+Vector<uint8_t> activityAccessToken();
+
+#if defined(__OBJC__)
+@interface WKModernDownloadProgress : NSProgress
+- (instancetype)initWithDownloadTask:(NSURLSessionDownloadTask *)task download:(WebKit::Download&)download URL:(NSURL *)fileURL useDownloadPlaceholder:(BOOL)useDownloadPlaceholder resumePlaceholderURL:(nullable NSURL *)resumePlaceholderURL liveActivityAccessToken:(NSData *)liveActivityAccessToken;
+- (void)startUpdatingDownloadProgress;
+- (void)didFinish:(void (^)())completionHandler;
+@end
+#endif // defined(__OBJC__)
+#endif // HAVE(MODERN_DOWNLOADPROGRESS)
 
 @interface WKDownloadProgress : NSProgress
 

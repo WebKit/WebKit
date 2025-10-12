@@ -12,20 +12,24 @@
 
 #include <algorithm>
 #include <cstdint>
-#include <limits>
 #include <memory>
 #include <optional>
 #include <utility>
+#include <vector>
 
+#include "api/rtp_headers.h"
+#include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
-#include "modules/rtp_rtcp/source/rtcp_packet/remote_estimate.h"
+#include "api/units/timestamp.h"
+#include "modules/remote_bitrate_estimator/packet_arrival_map.h"
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/numerics/safe_minmax.h"
-#include "system_wrappers/include/clock.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 namespace {
@@ -35,37 +39,16 @@ constexpr TimeDelta kMinInterval = TimeDelta::Millis(50);
 constexpr TimeDelta kMaxInterval = TimeDelta::Millis(250);
 constexpr TimeDelta kDefaultInterval = TimeDelta::Millis(100);
 
-TimeDelta GetAbsoluteSendTimeDelta(uint32_t new_sendtime,
-                                   uint32_t previous_sendtime) {
-  static constexpr uint32_t kWrapAroundPeriod = 0x0100'0000;
-  RTC_DCHECK_LT(new_sendtime, kWrapAroundPeriod);
-  RTC_DCHECK_LT(previous_sendtime, kWrapAroundPeriod);
-  uint32_t delta = (new_sendtime - previous_sendtime) % kWrapAroundPeriod;
-  if (delta >= kWrapAroundPeriod / 2) {
-    // absolute send time wraps around, thus treat deltas larger than half of
-    // the wrap around period as negative.
-    delta = (previous_sendtime - new_sendtime) % kWrapAroundPeriod;
-    return TimeDelta::Micros(int64_t{delta} * -1'000'000 / (1 << 18));
-  }
-  return TimeDelta::Micros(int64_t{delta} * 1'000'000 / (1 << 18));
-}
 }  // namespace
 
 TransportSequenceNumberFeedbackGenenerator::
-    TransportSequenceNumberFeedbackGenenerator(
-        RtcpSender feedback_sender,
-        NetworkStateEstimator* network_state_estimator)
+    TransportSequenceNumberFeedbackGenenerator(RtcpSender feedback_sender)
     : feedback_sender_(std::move(feedback_sender)),
       last_process_time_(Timestamp::MinusInfinity()),
-      network_state_estimator_(network_state_estimator),
       media_ssrc_(0),
       feedback_packet_count_(0),
-      packet_overhead_(DataSize::Zero()),
       send_interval_(kDefaultInterval),
-      send_periodic_feedback_(true),
-      previous_abs_send_time_(0),
-      abs_send_timestamp_(Timestamp::Zero()),
-      last_arrival_time_with_abs_send_time_(Timestamp::MinusInfinity()) {
+      send_periodic_feedback_(true) {
   RTC_LOG(LS_INFO)
       << "Maximum interval between transport feedback RTCP messages: "
       << kMaxInterval;
@@ -138,27 +121,6 @@ void TransportSequenceNumberFeedbackGenenerator::OnReceivedPacket(
     // Send feedback packet immediately.
     SendFeedbackOnRequest(seq, *feedback_request);
   }
-
-  std::optional<uint32_t> absolute_send_time_24bits =
-      packet.GetExtension<AbsoluteSendTime>();
-  if (network_state_estimator_ && absolute_send_time_24bits.has_value()) {
-    PacketResult packet_result;
-    packet_result.receive_time = packet.arrival_time();
-    if (packet.arrival_time() - last_arrival_time_with_abs_send_time_ <
-        TimeDelta::Seconds(10)) {
-      abs_send_timestamp_ += GetAbsoluteSendTimeDelta(
-          *absolute_send_time_24bits, previous_abs_send_time_);
-    } else {
-      abs_send_timestamp_ = packet.arrival_time();
-    }
-    last_arrival_time_with_abs_send_time_ = packet.arrival_time();
-    previous_abs_send_time_ = *absolute_send_time_24bits;
-    packet_result.sent_packet.send_time = abs_send_timestamp_;
-    packet_result.sent_packet.size =
-        DataSize::Bytes(packet.size()) + packet_overhead_;
-    packet_result.sent_packet.sequence_number = seq;
-    network_state_estimator_->OnReceivedPacket(packet_result);
-  }
 }
 
 TimeDelta TransportSequenceNumberFeedbackGenenerator::Process(Timestamp now) {
@@ -202,28 +164,12 @@ void TransportSequenceNumberFeedbackGenenerator::OnSendBandwidthEstimateChanged(
   send_interval_ = send_interval;
 }
 
-void TransportSequenceNumberFeedbackGenenerator::SetTransportOverhead(
-    DataSize overhead_per_packet) {
-  MutexLock lock(&lock_);
-  packet_overhead_ = overhead_per_packet;
-}
-
 void TransportSequenceNumberFeedbackGenenerator::SendPeriodicFeedbacks() {
   // `periodic_window_start_seq_` is the first sequence number to include in
   // the current feedback packet. Some older may still be in the map, in case
   // a reordering happens and we need to retransmit them.
   if (!periodic_window_start_seq_)
     return;
-
-  std::unique_ptr<rtcp::RemoteEstimate> remote_estimate;
-  if (network_state_estimator_) {
-    std::optional<NetworkStateEstimate> state_estimate =
-        network_state_estimator_->GetCurrentEstimate();
-    if (state_estimate) {
-      remote_estimate = std::make_unique<rtcp::RemoteEstimate>();
-      remote_estimate->SetEstimate(state_estimate.value());
-    }
-  }
 
   int64_t packet_arrival_times_end_seq =
       packet_arrival_times_.end_sequence_number();
@@ -238,13 +184,8 @@ void TransportSequenceNumberFeedbackGenenerator::SendPeriodicFeedbacks() {
     }
 
     RTC_DCHECK(feedback_sender_ != nullptr);
-
     std::vector<std::unique_ptr<rtcp::RtcpPacket>> packets;
-    if (remote_estimate) {
-      packets.push_back(std::move(remote_estimate));
-    }
     packets.push_back(std::move(feedback_packet));
-
     feedback_sender_(std::move(packets));
     // Note: Don't erase items from packet_arrival_times_ after sending, in
     // case they need to be re-sent after a reordering. Removal will be

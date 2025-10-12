@@ -8,7 +8,7 @@ PASS Allow origin: http://web-platform.test:8800
 PASS Allow origin: _http://web-platform.test:8800
 PASS Allow origin: _http://web-platform.test:8800___[tab]_
 PASS Allow origin: [tab]http://web-platform.test:8800
-PASS Disallow origin: http://not-web-platform.test.web-platform.test:8800
+PASS Disallow origin: http://www1.web-platform.test:8800
 PASS Disallow origin: //web-platform.test:8800
 PASS Disallow origin: ://web-platform.test:8800
 PASS Disallow origin: ftp://web-platform.test:8800
@@ -52,7 +52,7 @@ PASS Disallow origin: null *
 PASS Disallow origin:
 PASS Disallow origin: http://web-platform.test:8800/cors/origin.htm
 PASS Disallow origin: http://web-platform.test:8800/cors/
-PASS Disallow origin: http://not-web-platform.test:8800/cors/
+PASS Disallow origin: http://www1.web-platform.test:8800/cors/
 PASS Disallow origin: test:8800
 PASS Disallow origin: .test:8800
 PASS Disallow origin: *.test:8800

@@ -93,6 +93,11 @@
     return self.protectedInspectorProxy->isUnderTest();
 }
 
+- (BOOL)inspectorViewControllerInspectorIsHorizontallyAttached:(WKInspectorViewController *)inspectorViewController
+{
+    return NO;
+}
+
 @end
 
 namespace WebKit {
@@ -112,8 +117,8 @@ WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
 {
     m_objCAdapter = adoptNS([[WKRemoteWebInspectorUIProxyObjCAdapter alloc] initWithRemoteWebInspectorUIProxy:this]);
 
-    Ref<API::InspectorConfiguration> configuration = m_client->configurationForRemoteInspector(*this);
-    m_inspectorView = adoptNS([[WKInspectorViewController alloc] initWithConfiguration: WebKit::wrapper(configuration) inspectedPage:nullptr]);
+    Ref<API::InspectorConfiguration> configuration = checkedClient()->configurationForRemoteInspector(*this);
+    m_inspectorView = adoptNS([[WKInspectorViewController alloc] initWithConfiguration: WebKit::protectedWrapper(configuration.get()).get() inspectedPage:nullptr]);
     [m_inspectorView.get() setDelegate:m_objCAdapter.get()];
 
     m_window = WebInspectorUIProxy::createFrontendWindow(NSZeroRect, WebInspectorUIProxy::InspectionTargetType::Remote);
@@ -121,10 +126,11 @@ WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
     [m_window setFrameAutosaveName:@"WKRemoteWebInspectorWindowFrame"];
 
     NSView *contentView = m_window.get().contentView;
-    [webView() setFrame:contentView.bounds];
-    [contentView addSubview:webView()];
+    RetainPtr webView = this->webView();
+    [webView setFrame:contentView.bounds];
+    [contentView addSubview:webView.get()];
 
-    return webView()->_page.get();
+    return webView->_page.get();
 }
 
 void RemoteWebInspectorUIProxy::platformCloseFrontendPageAndWindow()
@@ -152,7 +158,7 @@ void RemoteWebInspectorUIProxy::platformResetState()
 void RemoteWebInspectorUIProxy::platformBringToFront()
 {
     [m_window makeKeyAndOrderFront:nil];
-    [m_window makeFirstResponder:webView()];
+    [m_window makeFirstResponder:protectedWebView().get()];
 }
 
 void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
@@ -182,7 +188,7 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::Sav
 void RemoteWebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
 {
     if (auto contents = FileSystem::readEntireFile(path))
-        completionHandler(String::adopt(WTFMove(*contents)));
+        completionHandler(String { byteCast<Latin1Character>(contents->span()) });
     else
         completionHandler(nullString());
 }
@@ -196,7 +202,7 @@ void RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<vo
             return;
         }
 
-        completionHandler(Color::createAndPreserveColorSpace(selectedColor.CGColor));
+        completionHandler(Color::createAndPreserveColorSpace(RetainPtr { selectedColor.CGColor }.get()));
     }).get()];
 }
 
@@ -222,7 +228,7 @@ void RemoteWebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendCli
         break;
     }
 
-    webView().appearance = platformAppearance;
+    protectedWebView().get().appearance = platformAppearance;
 
     RetainPtr window = m_window.get();
     ASSERT(window);
@@ -231,7 +237,7 @@ void RemoteWebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendCli
 
 void RemoteWebInspectorUIProxy::platformStartWindowDrag()
 {
-    webView()._protectedPage->startWindowDrag();
+    protectedWebView().get()._protectedPage->startWindowDrag();
 }
 
 void RemoteWebInspectorUIProxy::platformOpenURLExternally(const String& url)
@@ -259,6 +265,11 @@ void RemoteWebInspectorUIProxy::platformShowCertificate(const CertificateInfo& c
     [certificateView setEditableTrust:NO];
     [certificateView setDisplayDetails:YES];
     [certificateView setDetailsDisclosed:YES];
+}
+
+RetainPtr<WKWebView> RemoteWebInspectorUIProxy::protectedWebView() const
+{
+    return webView();
 }
 
 } // namespace WebKit

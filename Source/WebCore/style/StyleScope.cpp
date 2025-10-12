@@ -32,8 +32,8 @@
 #include "CSSFontSelector.h"
 #include "CSSStyleSheet.h"
 #include "ContainerNodeInlines.h"
-#include "CustomPropertyRegistry.h"
 #include "DocumentInlines.h"
+#include "DocumentView.h"
 #include "Element.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
@@ -49,6 +49,7 @@
 #include "MatchResultCache.h"
 #include "ProcessingInstruction.h"
 #include "RenderBoxInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
@@ -58,6 +59,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleBuilder.h"
+#include "StyleCustomPropertyRegistry.h"
 #include "StyleInvalidator.h"
 #include "StyleResolver.h"
 #include "StyleSheetContents.h"
@@ -238,6 +240,9 @@ const Scope& Scope::forNode(const Node& node)
 
 Scope* Scope::forOrdinal(Element& element, ScopeOrdinal ordinal)
 {
+    if (CheckedPtr pseudoElement = dynamicDowncast<PseudoElement>(element))
+        return forOrdinal(*pseudoElement->hostElement(), ordinal);
+
     if (ordinal == ScopeOrdinal::Element)
         return &forNode(element);
     if (ordinal == ScopeOrdinal::Shadow) {
@@ -791,19 +796,16 @@ auto Scope::collectResolverScopes() -> ResolverScopes
 {
     ASSERT(!m_shadowRoot);
 
-    if (!resolverIfExists())
-        return { };
-
     ResolverScopes resolverScopes;
 
-    resolverScopes.add(*resolverIfExists(), Vector<WeakPtr<Scope>> { this });
+    if (auto* resolver = resolverIfExists())
+        resolverScopes.add(*resolver, Vector<WeakPtr<Scope>> { this });
 
     for (auto& shadowRoot : m_document->inDocumentShadowRoots()) {
         auto& scope = const_cast<ShadowRoot&>(shadowRoot).styleScope();
-        auto* resolver = scope.resolverIfExists();
-        if (!resolver)
-            continue;
-        resolverScopes.add(*resolver, Vector<WeakPtr<Scope>> { }).iterator->value.append(&scope);
+
+        if (auto* resolver = scope.resolverIfExists())
+            resolverScopes.add(*resolver, Vector<WeakPtr<Scope>> { }).iterator->value.append(&scope);
     }
     return resolverScopes;
 }
@@ -853,13 +855,12 @@ void Scope::didChangeStyleSheetEnvironment()
     if (!m_shadowRoot) {
         m_sharedShadowTreeResolvers.clear();
 
-        for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots()) {
-            // Stylesheets is author shadow roots are potentially affected.
-            if (descendantShadowRoot.mode() != ShadowRootMode::UserAgent)
-                const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().scheduleUpdate(UpdateType::ContentsOrInterpretation);
-        }
+        for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots())
+            const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().scheduleUpdate(UpdateType::ContentsOrInterpretation);
+
         m_document->invalidateCachedCSSParserContext();
     }
+
     scheduleUpdate(UpdateType::ContentsOrInterpretation);
 }
 
@@ -937,9 +938,11 @@ bool Scope::isForUserAgentShadowTree() const
 
 bool Scope::invalidateForLayoutDependencies(LayoutDependencyUpdateContext& context)
 {
-    return invalidateForContainerDependencies(context)
-        || invalidateForAnchorDependencies(context)
-        || invalidateForPositionTryFallbacks(context);
+    auto didInvalidate = false;
+    didInvalidate |= invalidateForContainerDependencies(context);
+    didInvalidate |= invalidateForAnchorDependencies(context);
+    didInvalidate |= invalidateForPositionTryFallbacks(context);
+    return didInvalidate;
 }
 
 bool Scope::invalidateForContainerDependencies(LayoutDependencyUpdateContext& context)
@@ -999,8 +1002,8 @@ bool Scope::invalidateForAnchorDependencies(LayoutDependencyUpdateContext& conte
     if (!m_document->renderView())
         return false;
 
-    auto previousAnchorRects = WTFMove(m_anchorRectsOnLastUpdate);
-    m_anchorRectsOnLastUpdate.clear();
+    auto previousAnchorPositions = WTFMove(m_anchorPositionsOnLastUpdate);
+    m_anchorPositionsOnLastUpdate.clear();
 
     Vector<CheckedRef<Element>> anchoredElementsToInvalidate;
 
@@ -1009,13 +1012,24 @@ bool Scope::invalidateForAnchorDependencies(LayoutDependencyUpdateContext& conte
 
     auto anchorMap = AnchorPositionEvaluator::makeAnchorPositionedForAnchorMap(m_anchorPositionedToAnchorMap);
 
+    auto makeAnchorPosition = [&](const RenderBoxModelObject& anchorRenderer) {
+        AnchorPosition result;
+        result.absoluteRect = anchorRenderer.absoluteBoundingBoxRectIgnoringTransforms();
+        // Include containing block sizes as anchor function insets may be computed against any side and if they change
+        // we need to invalidate.
+        for (auto* containingBlock = anchorRenderer.containingBlock(); containingBlock; containingBlock = containingBlock->containingBlock()) {
+            if (containingBlock->canContainAbsolutelyPositionedObjects())
+                result.containingBlockSizes.append(containingBlock->contentBoxSize());
+        }
+        return result;
+    };
+
     for (auto& anchorRenderer : m_document->renderView()->anchors()) {
-        auto rect = anchorRenderer.absoluteBoundingBoxRect();
+        auto anchorPosition = makeAnchorPosition(anchorRenderer);
+        m_anchorPositionsOnLastUpdate.add(anchorRenderer, anchorPosition);
 
-        m_anchorRectsOnLastUpdate.add(anchorRenderer, rect);
-
-        auto it = previousAnchorRects.find(anchorRenderer);
-        bool changed = it == previousAnchorRects.end() || it->value != rect;
+        auto it = previousAnchorPositions.find(anchorRenderer);
+        bool changed = it == previousAnchorPositions.end() || it->value != anchorPosition;
         if (!changed)
             continue;
 
@@ -1095,13 +1109,38 @@ Element* hostForScopeOrdinal(const Element& element, ScopeOrdinal scopeOrdinal)
     return host;
 }
 
+CheckedPtr<const Scope> Scope::hostScope() const
+{
+    if (!m_shadowRoot || !m_shadowRoot->host())
+        return nullptr;
+    return &forNode(*m_shadowRoot->host());
+}
+
 void Scope::updateAnchorPositioningStateAfterStyleResolution()
 {
-    AnchorPositionEvaluator::updateSnapshottedScrollOffsets(m_document);
+    if (CheckedPtr renderView = m_document->renderView())
+        AnchorPositionEvaluator::updateScrollAdjustments(*renderView); // Is this necessary? Or will the combination of layout and scroll invalidation handle it sufficiently?
 
     m_anchorPositionedToAnchorMap.removeIf([](auto& elementAndState) {
-        return elementAndState.value.isEmpty();
+        return elementAndState.value.anchors.isEmpty();
     });
+}
+
+std::optional<size_t> Scope::lastSuccessfulPositionOptionIndexFor(const Styleable& styleable)
+{
+    AnchorPositionedKey key { styleable.element, styleable.pseudoElementIdentifier };
+    return m_lastSuccessfulPositionOptionIndexes.getOptional(key);
+}
+
+void Scope::setLastSuccessfulPositionOptionIndexMap(HashMap<AnchorPositionedKey, size_t>&& map)
+{
+    m_lastSuccessfulPositionOptionIndexes = WTFMove(map);
+}
+
+void Scope::forgetLastSuccessfulPositionOptionIndex(const Styleable& styleable)
+{
+    AnchorPositionedKey key { styleable.element, styleable.pseudoElementIdentifier };
+    m_lastSuccessfulPositionOptionIndexes.remove(key);
 }
 
 }

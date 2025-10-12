@@ -37,6 +37,9 @@
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#define DOWNLOAD_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "[downloadID=%" PRIu64 "] Download::" fmt, m_downloadID.toUInt64(), ##__VA_ARGS__)
+#define DOWNLOAD_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(Network, "[downloadID=%" PRIu64 "] Download::" fmt, m_downloadID.toUInt64(), ##__VA_ARGS__)
+
 namespace WebKit {
 
 void Download::resume(std::span<const uint8_t> resumeData, const String& path, SandboxExtension::Handle&& sandboxExtensionHandle, std::span<const uint8_t> activityAccessToken)
@@ -45,12 +48,12 @@ void Download::resume(std::span<const uint8_t> resumeData, const String& path, S
     if (RefPtr extension = m_sandboxExtension)
         extension->consume();
 
-    auto* networkSession = m_downloadManager->protectedClient()->networkSession(m_sessionID);
+    CheckedPtr networkSession = m_downloadManager->protectedClient()->networkSession(m_sessionID);
     if (!networkSession) {
-        WTFLogAlways("Could not find network session with given session ID");
+        DOWNLOAD_RELEASE_LOG("resume: Could not find network session with given session ID");
         return;
     }
-    auto& cocoaSession = downcast<NetworkSessionCocoa>(*networkSession);
+    CheckedRef cocoaSession = downcast<NetworkSessionCocoa>(*networkSession);
     RetainPtr nsData = toNSData(resumeData);
 
     RetainPtr dictionary = [NSPropertyListSerialization propertyListWithData:nsData.get() options:NSPropertyListMutableContainersAndLeaves format:0 error:nullptr];
@@ -59,18 +62,18 @@ void Download::resume(std::span<const uint8_t> resumeData, const String& path, S
 
     // FIXME: Use nsData instead of updatedData once we've migrated from _WKDownload to WKDownload
     // because there's no reason to set the local path we got from the data back into the data.
-    m_downloadTask = [cocoaSession.sessionWrapperForDownloadResume().session downloadTaskWithResumeData:updatedData.get()];
+    m_downloadTask = [cocoaSession->sessionWrapperForDownloadResume().session downloadTaskWithResumeData:updatedData.get()];
     if (!m_downloadTask) {
-        RELEASE_LOG_ERROR(Network, "Could not create download task from resume data");
+        DOWNLOAD_RELEASE_LOG_ERROR("resume: Could not create download task from resume data");
         return;
     }
     auto taskIdentifier = [m_downloadTask taskIdentifier];
     if (!taskIdentifier) {
-        RELEASE_LOG_ERROR(Network, "Could not resume download, since task identifier is 0");
+        DOWNLOAD_RELEASE_LOG_ERROR("resume: Could not resume download, since task identifier is 0");
         return;
     }
-    ASSERT(!cocoaSession.sessionWrapperForDownloadResume().downloadMap.contains(taskIdentifier));
-    cocoaSession.sessionWrapperForDownloadResume().downloadMap.add(taskIdentifier, m_downloadID);
+    ASSERT(!cocoaSession->sessionWrapperForDownloadResume().downloadMap.contains(taskIdentifier));
+    cocoaSession->sessionWrapperForDownloadResume().downloadMap.add(taskIdentifier, m_downloadID);
     m_downloadTask.get()._pathToDownloadTaskFile = path.createNSString().get();
 
     [m_downloadTask resume];
@@ -90,7 +93,7 @@ void Download::resume(std::span<const uint8_t> resumeData, const String& path, S
             m_progress = adoptNS([[WKModernDownloadProgress alloc] initWithDownloadTask:m_downloadTask.get() download:*this URL:destinationURL.get() useDownloadPlaceholder:YES resumePlaceholderURL:placeholderURL.get() liveActivityAccessToken:nsActivityAccessToken.get()]);
             startUpdatingProgress();
         } else
-            RELEASE_LOG_ERROR(Network, "Download::resume: unable to create resume placeholder URL, error = %@", bookmarkResolvingError);
+            DOWNLOAD_RELEASE_LOG_ERROR("resume: unable to create resume placeholder URL, error = %@", bookmarkResolvingError);
 
         if (usingSecurityScopedURL)
             [placeholderURL stopAccessingSecurityScopedResource];
@@ -138,8 +141,10 @@ void Download::platformDestroyDownload()
 #if HAVE(MODERN_DOWNLOADPROGRESS)
 void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmarkData, UseDownloadPlaceholder useDownloadPlaceholder, std::span<const uint8_t> activityAccessToken)
 {
+    DOWNLOAD_RELEASE_LOG("publishProgress: isUsingPlaceholder=%d", useDownloadPlaceholder == WebKit::UseDownloadPlaceholder::Yes);
+
     if (m_progress) {
-        RELEASE_LOG(Network, "Progress is already being published for download.");
+        DOWNLOAD_RELEASE_LOG("publishProgress: Progress is already being published for download.");
         return;
     }
 
@@ -153,16 +158,16 @@ void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmark
     m_bookmarkURL = [NSURL URLByResolvingBookmarkData:m_bookmarkData.get() options:NSURLBookmarkResolutionWithoutUI relativeToURL:nil bookmarkDataIsStale:&bookmarkIsStale error:&error];
     ASSERT(m_bookmarkURL);
     if (!m_bookmarkURL)
-        RELEASE_LOG(Network, "Unable to create bookmark URL, error = %@", error);
+        DOWNLOAD_RELEASE_LOG("publishProgress: Unable to create bookmark URL, error = %@", error);
 
     if (enableModernDownloadProgress()) {
         RetainPtr publishURL = url.createNSURL();
         if (!publishURL) {
-            RELEASE_LOG_ERROR(Network, "Download::publishProgress: Invalid publish URL");
+            DOWNLOAD_RELEASE_LOG("publishProgress: Invalid publish URL");
             return;
         }
 
-        bool isUsingPlaceholder = useDownloadPlaceholder == WebKit::UseDownloadPlaceholder::Yes && m_downloadTask;
+        bool isUsingPlaceholder = useDownloadPlaceholder == WebKit::UseDownloadPlaceholder::Yes;
 
         m_progress = adoptNS([[WKModernDownloadProgress alloc] initWithDownloadTask:m_downloadTask.get() download:*this URL:publishURL.get() useDownloadPlaceholder:isUsingPlaceholder resumePlaceholderURL:nil liveActivityAccessToken:accessToken.get()]);
 
@@ -182,6 +187,8 @@ void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmark
 
 void Download::setPlaceholderURL(NSURL *placeholderURL, NSData *bookmarkData)
 {
+    DOWNLOAD_RELEASE_LOG("setPlaceholderURL");
+
     if (!placeholderURL)
         return;
 
@@ -209,6 +216,8 @@ void Download::setPlaceholderURL(NSURL *placeholderURL, NSData *bookmarkData)
 
 void Download::setFinalURL(NSURL *finalURL, NSData *bookmarkData)
 {
+    DOWNLOAD_RELEASE_LOG("setFinalURL");
+
     if (!finalURL)
         return;
 
@@ -226,6 +235,8 @@ void Download::setFinalURL(NSURL *finalURL, NSData *bookmarkData)
 
 void Download::startUpdatingProgress()
 {
+    DOWNLOAD_RELEASE_LOG("startUpdatingProgress");
+
     m_canUpdateProgress = true;
 
     if (![m_progress isKindOfClass:WKModernDownloadProgress.class])
@@ -243,8 +254,11 @@ void Download::startUpdatingProgress()
     if (!m_totalBytesWritten || !m_totalBytesExpectedToWrite)
         return;
 
-    progress.completedUnitCount = *m_totalBytesWritten;
+    DOWNLOAD_RELEASE_LOG("startUpdatingProgress: m_totalBytesWritten=%llu, m_totalBytesExpectedToWrite=%llu", *m_totalBytesWritten, *m_totalBytesExpectedToWrite);
+
+    // It's important to update totalUnitCount first, otherwise NSProgress may consider the download finished.
     progress.totalUnitCount = *m_totalBytesExpectedToWrite;
+    progress.completedUnitCount = *m_totalBytesWritten;
 }
 
 void Download::updateProgress(uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite)

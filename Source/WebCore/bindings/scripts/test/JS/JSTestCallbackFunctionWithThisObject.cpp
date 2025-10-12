@@ -130,4 +130,8 @@ JSC::JSValue toJS(TestCallbackFunctionWithThisObject& impl)
     return static_cast<JSTestCallbackFunctionWithThisObject&>(impl).callbackData()->callback();
 }
 
+ScriptExecutionContext* JSTestCallbackFunctionWithThisObject::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
+}
 } // namespace WebCore

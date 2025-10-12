@@ -93,6 +93,11 @@ public:
         return m_type == DeviceType::Microphone || m_type == DeviceType::Camera;
     }
 
+    bool isSpeakerDevice() const
+    {
+        return m_type == DeviceType::Speaker;
+    }
+
     explicit operator bool() const { return m_type != DeviceType::Unknown; }
 
     CaptureDevice isolatedCopy() &&;

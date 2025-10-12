@@ -27,6 +27,7 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
@@ -68,6 +69,8 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
+
     friend class WebSocketTask;
 
 private:
@@ -90,7 +93,7 @@ private:
 
     NetworkSession* session() const;
 
-    CheckedPtr<WebSocketTask> checkedSocket();
+    RefPtr<WebSocketTask> protectedSocket();
 
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final { return m_identifier.toUInt64(); }
@@ -100,7 +103,7 @@ private:
     WeakRef<NetworkConnectionToWebProcess> m_connectionToWebProcess;
     WebCore::WebSocketIdentifier m_identifier;
     WeakPtr<NetworkSession> m_session;
-    std::unique_ptr<WebSocketTask> m_socket;
+    RefPtr<WebSocketTask> m_socket;
 
     enum class State { Open, Closing, Closed };
     State m_state { State::Open };

@@ -11,6 +11,7 @@
 #ifndef MODULES_AUDIO_PROCESSING_NS_NS_FFT_H_
 #define MODULES_AUDIO_PROCESSING_NS_NS_FFT_H_
 
+#include <cstddef>
 #include <vector>
 
 #include "api/array_view.h"
@@ -26,14 +27,14 @@ class NrFft {
   NrFft& operator=(const NrFft&) = delete;
 
   // Transforms the signal from time to frequency domain.
-  void Fft(rtc::ArrayView<float, kFftSize> time_data,
-           rtc::ArrayView<float, kFftSize> real,
-           rtc::ArrayView<float, kFftSize> imag);
+  void Fft(ArrayView<float, kFftSize> time_data,
+           ArrayView<float, kFftSize> real,
+           ArrayView<float, kFftSize> imag);
 
   // Transforms the signal from frequency to time domain.
-  void Ifft(rtc::ArrayView<const float> real,
-            rtc::ArrayView<const float> imag,
-            rtc::ArrayView<float> time_data);
+  void Ifft(ArrayView<const float> real,
+            ArrayView<const float> imag,
+            ArrayView<float> time_data);
 
  private:
   std::vector<size_t> bit_reversal_state_;

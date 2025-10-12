@@ -254,6 +254,7 @@ int main(int argc, char *argv[])
                           break;
                       case 'y': resources.EXT_YUV_target = 1; break;
                       case 's': resources.OES_sample_variables = 1; break;
+                      case 't': resources.EXT_fragment_shading_rate = 1; break;
                       default: failCode = EFailUsage;
                     }
                         // clang-format on
@@ -467,7 +468,8 @@ void usage()
         "       -x=a     : enable ARM_shader_framebuffer_fetch\n"
         "       -x=m     : enable OVR_multiview\n"
         "       -x=y     : enable YUV_target\n"
-        "       -x=s     : enable OES_sample_variables\n");
+        "       -x=s     : enable OES_sample_variables\n"
+        "       -x=t     : enable EXT_fragment_shading_rate\n");
     // clang-format on
 }
 

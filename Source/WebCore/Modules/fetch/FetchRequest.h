@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Canon Inc.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -76,7 +77,7 @@ public:
 
     const String& integrity() const { return m_options.integrity; }
 
-    ExceptionOr<Ref<FetchRequest>> clone();
+    ExceptionOr<Ref<FetchRequest>> clone(JSDOMGlobalObject&);
 
     const FetchOptions& fetchOptions() const { return m_options; }
     const ResourceRequest& internalRequest() const { return m_request; }
@@ -88,6 +89,8 @@ public:
     void setNavigationPreloadIdentifier(std::optional<FetchIdentifier> identifier) { m_navigationPreloadIdentifier = identifier; }
 
     RequestPriority priority() const { return m_priority; }
+
+    IPAddressSpace targetAddressSpace() const { return m_targetAddressSpace; }
 
     bool shouldEnableContentExtensionsCheck() const { return m_enableContentExtensionsCheck; }
     void disableContentExtensionsCheck() { m_enableContentExtensionsCheck = false; }
@@ -103,16 +106,15 @@ private:
 
     void stop() final;
 
-    Ref<AbortSignal> protectedSignal() const { return m_signal; }
-
     ResourceRequest m_request;
     URLKeepingBlobAlive m_requestURL;
     FetchOptions m_options;
     RequestPriority m_priority { RequestPriority::Auto };
     String m_referrer;
-    Ref<AbortSignal> m_signal;
+    const Ref<AbortSignal> m_signal;
     Markable<FetchIdentifier> m_navigationPreloadIdentifier;
     bool m_enableContentExtensionsCheck { true };
+    IPAddressSpace m_targetAddressSpace;
 };
 
 WebCoreOpaqueRoot root(FetchRequest*);

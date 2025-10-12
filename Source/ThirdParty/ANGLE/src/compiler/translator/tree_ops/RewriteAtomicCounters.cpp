@@ -47,9 +47,11 @@ const TVariable *DeclareAtomicCountersBuffers(TIntermBlock *root, TSymbolTable *
     TLayoutQualifier layoutQualifier = TLayoutQualifier::Create();
     layoutQualifier.blockStorage     = EbsStd430;
 
-    return DeclareInterfaceBlock(root, symbolTable, fieldList, EvqBuffer, layoutQualifier,
-                                 coherentMemory, kMaxAtomicCounterBuffers, kAtomicCountersBlockName,
-                                 kAtomicCountersVarName);
+    const TInterfaceBlock *interfaceBlock =
+        DeclareInterfaceBlock(symbolTable, fieldList, layoutQualifier, kAtomicCountersBlockName);
+    return DeclareInterfaceBlockVariable(root, symbolTable, EvqBuffer, interfaceBlock,
+                                         layoutQualifier, coherentMemory, kMaxAtomicCounterBuffers,
+                                         kAtomicCountersVarName);
 }
 
 TIntermTyped *CreateUniformBufferOffset(const TIntermTyped *uniformBufferOffsets, int binding)

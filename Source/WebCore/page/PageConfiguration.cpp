@@ -27,7 +27,6 @@
 #include "PageConfiguration.h"
 
 #include "AlternativeTextClient.h"
-#include "ApplicationCacheStorage.h"
 #include "AttachmentElementClient.h"
 #include "BackForwardClient.h"
 #include "BadgeClient.h"
@@ -39,16 +38,16 @@
 #include "CryptoClient.h"
 #include "DatabaseProvider.h"
 #include "DiagnosticLoggingClient.h"
+#include "DocumentSyncClient.h"
 #include "DragClient.h"
 #include "EditorClient.h"
 #include "Frame.h"
 #include "HistoryItem.h"
-#include "InspectorClient.h"
+#include "InspectorBackendClient.h"
 #include "LocalFrameLoaderClient.h"
 #include "ModelPlayerProvider.h"
 #include "PerformanceLoggingClient.h"
 #include "PluginInfoProvider.h"
-#include "ProcessSyncClient.h"
 #include "ProgressTrackerClient.h"
 #include "RemoteFrameClient.h"
 #include "ScreenOrientationManager.h"
@@ -105,7 +104,7 @@ PageConfiguration::PageConfiguration(
 #endif
     UniqueRef<ChromeClient>&& chromeClient,
     UniqueRef<CryptoClient>&& cryptoClient,
-    UniqueRef<ProcessSyncClient>&& processSyncClient
+    UniqueRef<DocumentSyncClient>&& documentSyncClient
 #if HAVE(DIGITAL_CREDENTIALS_UI)
     , Ref<CredentialRequestCoordinatorClient>&& credentialRequestCoordinatorClient
 #endif
@@ -137,7 +136,7 @@ PageConfiguration::PageConfiguration(
     , badgeClient(WTFMove(badgeClient))
     , historyItemClient(WTFMove(historyItemClient))
     , cryptoClient(WTFMove(cryptoClient))
-    , processSyncClient(WTFMove(processSyncClient))
+    , documentSyncClient(WTFMove(documentSyncClient))
 #if HAVE(DIGITAL_CREDENTIALS_UI)
     , credentialRequestCoordinatorClient(WTFMove(credentialRequestCoordinatorClient))
 #endif

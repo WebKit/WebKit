@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,32 +21,32 @@
 
 #pragma once
 
-#include "ArrayBuffer.h"
-#include "CellState.h"
-#include "CollectionScope.h"
-#include "CollectorPhase.h"
-#include "CompleteSubspace.h"
-#include "DeleteAllCodeEffort.h"
-#include "GCConductor.h"
-#include "GCIncomingRefCountedSet.h"
-#include "GCMemoryOperations.h"
-#include "GCRequest.h"
-#include "HandleSet.h"
-#include "HeapFinalizerCallback.h"
-#include "HeapObserver.h"
-#include "IsoCellSet.h"
-#include "IsoHeapCellType.h"
-#include "IsoInlinedHeapCellType.h"
-#include "IsoSubspace.h"
-#include "JSDestructibleObjectHeapCellType.h"
-#include "MarkedBlock.h"
-#include "MarkedSpace.h"
-#include "MutatorState.h"
-#include "Options.h"
-#include "PreciseSubspace.h"
-#include "StructureID.h"
-#include "Synchronousness.h"
-#include "WeakHandleOwner.h"
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/CellState.h>
+#include <JavaScriptCore/CollectionScope.h>
+#include <JavaScriptCore/CollectorPhase.h>
+#include <JavaScriptCore/CompleteSubspace.h>
+#include <JavaScriptCore/DeleteAllCodeEffort.h>
+#include <JavaScriptCore/GCConductor.h>
+#include <JavaScriptCore/GCIncomingRefCountedSet.h>
+#include <JavaScriptCore/GCMemoryOperations.h>
+#include <JavaScriptCore/GCRequest.h>
+#include <JavaScriptCore/HandleSet.h>
+#include <JavaScriptCore/HeapFinalizerCallback.h>
+#include <JavaScriptCore/HeapObserver.h>
+#include <JavaScriptCore/IsoCellSet.h>
+#include <JavaScriptCore/IsoHeapCellType.h>
+#include <JavaScriptCore/IsoInlinedHeapCellType.h>
+#include <JavaScriptCore/IsoSubspace.h>
+#include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
+#include <JavaScriptCore/MarkedBlock.h>
+#include <JavaScriptCore/MarkedSpace.h>
+#include <JavaScriptCore/MutatorState.h>
+#include <JavaScriptCore/Options.h>
+#include <JavaScriptCore/PreciseSubspace.h>
+#include <JavaScriptCore/StructureID.h>
+#include <JavaScriptCore/Synchronousness.h>
+#include <JavaScriptCore/WeakHandleOwner.h>
 #include <wtf/AutomaticThread.h>
 #include <wtf/Box.h>
 #include <wtf/ConcurrentPtrHashSet.h>
@@ -81,7 +81,7 @@ class IncrementalSweeper;
 class JITStubRoutine;
 class JITStubRoutineSet;
 class JSCell;
-class JSImmutableButterfly;
+class JSCellButterfly;
 class JSRopeString;
 class JSString;
 class JSValue;
@@ -235,6 +235,7 @@ class Heap;
     v(float32ArraySpace, cellHeapCellType, JSFloat32Array) \
     v(float64ArraySpace, cellHeapCellType, JSFloat64Array) \
     v(functionRareDataSpace, destructibleCellHeapCellType, FunctionRareData) \
+    v(functionWithFieldsSpace, cellHeapCellType, JSFunctionWithFields) \
     v(generatorSpace, cellHeapCellType, JSGenerator) \
     v(globalObjectSpace, globalObjectHeapCellType, JSGlobalObject) \
     v(injectedScriptHostSpace, injectedScriptHostSpaceHeapCellType, Inspector::JSInjectedScriptHost) \
@@ -297,6 +298,9 @@ class Heap;
     v(weakSetSpace, weakSetHeapCellType, JSWeakSet) \
     v(withScopeSpace, cellHeapCellType, JSWithScope) \
     v(wrapForValidIteratorSpace, cellHeapCellType, JSWrapForValidIterator) \
+    v(promiseAllContextSpace, cellHeapCellType, JSPromiseAllContext) \
+    v(promiseAllGlobalContextSpace, cellHeapCellType, JSPromiseAllGlobalContext) \
+    v(promiseReactionSpace, cellHeapCellType, JSPromiseReaction) \
     v(asyncFromSyncIteratorSpace, cellHeapCellType, JSAsyncFromSyncIterator) \
     v(regExpStringIteratorSpace, cellHeapCellType, JSRegExpStringIterator) \
     v(disposableStackSpace, cellHeapCellType, JSDisposableStack) \
@@ -308,6 +312,7 @@ typedef HashCountedSet<JSCell*> ProtectCountSet;
 typedef HashCountedSet<ASCIILiteral> TypeCountSet;
 
 enum class HeapType : uint8_t { Small, Medium, Large };
+enum class GrowthMode : uint8_t { Default, Aggressive };
 
 class HeapUtil;
 
@@ -450,8 +455,8 @@ public:
     JS_EXPORT_PRIVATE size_t globalObjectCount();
     JS_EXPORT_PRIVATE size_t protectedObjectCount();
     JS_EXPORT_PRIVATE size_t protectedGlobalObjectCount();
-    JS_EXPORT_PRIVATE std::unique_ptr<TypeCountSet> protectedObjectTypeCounts();
-    JS_EXPORT_PRIVATE std::unique_ptr<TypeCountSet> objectTypeCounts();
+    JS_EXPORT_PRIVATE TypeCountSet protectedObjectTypeCounts();
+    JS_EXPORT_PRIVATE TypeCountSet objectTypeCounts();
 
     UncheckedKeyHashSet<MarkedVectorBase*>& markListSet();
     void addMarkedJSValueRefArray(MarkedJSValueRefArray*);
@@ -477,7 +482,7 @@ public:
     void deleteAllCodeBlocks(DeleteAllCodeEffort);
     void deleteAllUnlinkedCodeBlocks(DeleteAllCodeEffort);
 
-    void didAllocate(size_t);
+    JS_EXPORT_PRIVATE void didAllocate(size_t);
     bool isPagedOut();
     
     const JITStubRoutineSet& jitStubRoutines() { return *m_jitStubRoutines; }
@@ -596,7 +601,7 @@ public:
     
     Seconds totalGCTime() const { return m_totalGCTime; }
 
-    UncheckedKeyHashMap<JSImmutableButterfly*, JSString*> immutableButterflyToStringCache;
+    UncheckedKeyHashMap<JSCellButterfly*, JSString*> immutableButterflyToStringCache;
 
     bool isMarkingForGCVerifier() const { return m_isMarkingForGCVerifier; }
 
@@ -733,7 +738,6 @@ private:
     void prepareForMarking();
     
     void gatherStackRoots(ConservativeRoots&);
-    void gatherJSStackRoots(ConservativeRoots&);
     void gatherScratchBufferRoots(ConservativeRoots&);
     void beginMarking();
     void visitCompilerWorklistWeakReferences();
@@ -757,6 +761,7 @@ private:
 
     void deleteUnmarkedCompiledCode();
     JS_EXPORT_PRIVATE void addToRememberedSet(const JSCell*);
+    double projectedGCRateLimitingValue(MonotonicTime);
     void updateAllocationLimits();
     void didFinishCollection();
     void resumeCompilerThreads();
@@ -814,7 +819,10 @@ private:
     const HeapType m_heapType;
     MutatorState m_mutatorState { MutatorState::Running };
     const size_t m_ramSize;
+    const GrowthMode m_growthMode;
     const size_t m_minBytesPerCycle;
+    const size_t m_maxEdenSizeForRateLimiting;
+    double m_gcRateLimitingValue { 0.0 };
     size_t m_bytesAllocatedBeforeLastEdenCollect { 0 };
     size_t m_sizeAfterLastCollect { 0 };
     size_t m_sizeAfterLastFullCollect { 0 };
@@ -838,8 +846,8 @@ private:
     bool m_shouldDoOpportunisticFullCollection { false };
     bool m_isInOpportunisticTask { false };
     bool m_shouldDoFullCollection { false };
-    Markable<CollectionScope, EnumMarkableTraits<CollectionScope>> m_collectionScope;
-    Markable<CollectionScope, EnumMarkableTraits<CollectionScope>> m_lastCollectionScope;
+    Markable<CollectionScope> m_collectionScope;
+    Markable<CollectionScope> m_lastCollectionScope;
     Lock m_raceMarkStackLock;
 
     MarkedSpace m_objectSpace;
@@ -883,8 +891,13 @@ private:
 
     unsigned m_barrierThreshold { Options::forceFencedBarrier() ? tautologicalThreshold : blackThreshold };
 
+#if PLATFORM(MAC)
+    Seconds m_lastFullGCLength { 2_ms };
+    Seconds m_lastEdenGCLength { 2_ms };
+#else
     Seconds m_lastFullGCLength { 10_ms };
     Seconds m_lastEdenGCLength { 10_ms };
+#endif
 
     Vector<WeakBlock*> m_logicallyEmptyWeakBlocks;
     size_t m_indexOfNextLogicallyEmptyWeakBlockToSweep { WTF::notFound };
@@ -894,7 +907,7 @@ private:
     RefPtr<GCActivityCallback> m_fullActivityCallback;
     RefPtr<GCActivityCallback> m_edenActivityCallback;
     const Ref<IncrementalSweeper> m_sweeper;
-    Ref<StopIfNecessaryTimer> m_stopIfNecessaryTimer;
+    const Ref<StopIfNecessaryTimer> m_stopIfNecessaryTimer;
 
     Vector<HeapObserver*> m_observers;
     
@@ -969,7 +982,7 @@ private:
     uint64_t m_phaseVersion { 0 };
     uint64_t m_gcVersion { 0 };
     Box<Lock> m_threadLock;
-    Ref<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
+    const Ref<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
     RefPtr<AutomaticThread> m_thread;
 
     RefPtr<Thread> m_collectContinuouslyThread { nullptr };
@@ -1065,7 +1078,7 @@ public:
     // Subspaces
     CompleteSubspace primitiveGigacageAuxiliarySpace; // Typed arrays, strings, bitvectors, etc go here.
     CompleteSubspace auxiliarySpace; // Butterflies, arrays of JSValues, etc go here.
-    CompleteSubspace immutableButterflyAuxiliarySpace; // JSImmutableButterfly goes here.
+    CompleteSubspace immutableButterflyAuxiliarySpace; // JSCellButterfly goes here.
 
     // We make cross-cutting assumptions about typed arrays being in the primitive Gigacage and butterflies
     // being in the JSValue gigacage. For some types, it's super obvious where they should go, and so we
@@ -1087,7 +1100,6 @@ public:
     
     // Whenever possible, use subspaceFor<CellType>(vm) to get one of these subspaces.
     CompleteSubspace cellSpace;
-    CompleteSubspace variableSizedCellSpace;
     CompleteSubspace destructibleObjectSpace;
 
 #define DECLARE_ISO_SUBSPACE(name, heapCellType, type) \
@@ -1124,7 +1136,7 @@ public:
     std::unique_ptr<type> m_##name;
     
     struct SpaceAndSet {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SpaceAndSet);
 
         IsoSubspace space;
         IsoCellSet set;
@@ -1155,7 +1167,7 @@ public:
     }
 
     struct ScriptExecutableSpaceAndSets {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ScriptExecutableSpaceAndSets);
 
         IsoSubspace space;
         IsoCellSet clearableCodeSet;

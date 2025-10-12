@@ -30,8 +30,12 @@
 
 #include "modules/audio_coding/neteq/dtmf_tone_generator.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <iterator>
+
+#include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "modules/audio_coding/neteq/audio_vector.h"
-#include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -133,26 +137,26 @@ int DtmfToneGenerator::Init(int fs, int event, int attenuation) {
 
   // Look up oscillator coefficient for low and high frequencies.
   RTC_DCHECK_LE(0, fs_index);
-  RTC_DCHECK_GT(arraysize(kCoeff1), fs_index);
-  RTC_DCHECK_GT(arraysize(kCoeff2), fs_index);
+  RTC_DCHECK_GT(std::size(kCoeff1), fs_index);
+  RTC_DCHECK_GT(std::size(kCoeff2), fs_index);
   RTC_DCHECK_LE(0, event);
-  RTC_DCHECK_GT(arraysize(kCoeff1[fs_index]), event);
-  RTC_DCHECK_GT(arraysize(kCoeff2[fs_index]), event);
+  RTC_DCHECK_GT(std::ssize(kCoeff1[fs_index]), event);
+  RTC_DCHECK_GT(std::ssize(kCoeff2[fs_index]), event);
   coeff1_ = kCoeff1[fs_index][event];
   coeff2_ = kCoeff2[fs_index][event];
 
   // Look up amplitude multiplier.
   RTC_DCHECK_LE(0, attenuation);
-  RTC_DCHECK_GT(arraysize(kAmplitude), attenuation);
+  RTC_DCHECK_GT(std::ssize(kAmplitude), attenuation);
   amplitude_ = kAmplitude[attenuation];
 
   // Initialize sample history.
   RTC_DCHECK_LE(0, fs_index);
-  RTC_DCHECK_GT(arraysize(kInitValue1), fs_index);
-  RTC_DCHECK_GT(arraysize(kInitValue2), fs_index);
+  RTC_DCHECK_GT(std::size(kInitValue1), fs_index);
+  RTC_DCHECK_GT(std::size(kInitValue2), fs_index);
   RTC_DCHECK_LE(0, event);
-  RTC_DCHECK_GT(arraysize(kInitValue1[fs_index]), event);
-  RTC_DCHECK_GT(arraysize(kInitValue2[fs_index]), event);
+  RTC_DCHECK_GT(std::ssize(kInitValue1[fs_index]), event);
+  RTC_DCHECK_GT(std::ssize(kInitValue2[fs_index]), event);
   sample_history1_[0] = kInitValue1[fs_index][event];
   sample_history1_[1] = 0;
   sample_history2_[0] = kInitValue2[fs_index][event];

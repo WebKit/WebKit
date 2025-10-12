@@ -27,8 +27,8 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include "VideoFrame.h"
-#include "VideoPixelFormat.h"
+#include <WebCore/VideoFrame.h>
+#include <WebCore/VideoPixelFormat.h>
 
 namespace WebCore {
 

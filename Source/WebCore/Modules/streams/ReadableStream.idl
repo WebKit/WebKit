@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2025 Apple Inc.
  * Copyright (C) 2015 Canon Inc.
  * Copyright (C) 2015 Igalia S.L.
  *
@@ -27,19 +28,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum ReadableStreamReaderMode { "byob" };
+
+dictionary ReadableStreamGetReaderOptions {
+    ReadableStreamReaderMode mode;
+};
+
+dictionary ReadableWritablePair {
+    required ReadableStream readable;
+    required WritableStream writable;
+};
+
+typedef (ReadableStreamDefaultReader or ReadableStreamBYOBReader) ReadableStreamReader;
+
 [
     ExportMacro=WEBCORE_EXPORT,
     Exposed=*,
+    JSCustomMarkFunction,
     PrivateIdentifier,
     PublicIdentifier
 ] interface ReadableStream {
     [CallWith=CurrentGlobalObject] constructor(optional object underlyingSource, optional object options);
 
-    [Custom, ReturnsOwnPromise] Promise<any> cancel(optional any reason);
-    [Custom] Object getReader(optional any options);
-    [Custom, ReturnsOwnPromise] Promise<any> pipeTo(any streams, optional any options);
-    [Custom] Object pipeThrough(any dest, optional any options);
-    sequence<ReadableStream> tee();
+    [CallWith=CurrentGlobalObject, ReturnsOwnPromise, ImplementedAs=cancelForBindings] Promise<undefined> cancel(optional any reason);
+    [CallWith=CurrentGlobalObject] ReadableStreamReader getReader(optional ReadableStreamGetReaderOptions options = { });
+    [CallWith=CurrentGlobalObject] Promise<undefined> pipeTo(WritableStream destination, optional StreamPipeOptions options = {});
+    [CallWith=CurrentGlobalObject] ReadableStream pipeThrough(ReadableWritablePair transform, optional StreamPipeOptions options = {});
+    [CallWith=CurrentGlobalObject] sequence<ReadableStream> tee();
 
     [ImplementedAs=isLocked] readonly attribute boolean locked;
 };

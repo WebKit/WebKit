@@ -17,7 +17,7 @@
 
 #include "api/array_view.h"
 
-namespace rtc {
+namespace webrtc {
 
 // Fill memory with zeros in a way that the compiler doesn't optimize it away
 // even if the pointer is not used afterwards.
@@ -26,10 +26,11 @@ void ExplicitZeroMemory(void* ptr, size_t len);
 template <typename T,
           typename std::enable_if<!std::is_const<T>::value &&
                                   std::is_trivial<T>::value>::type* = nullptr>
-void ExplicitZeroMemory(rtc::ArrayView<T> a) {
+void ExplicitZeroMemory(ArrayView<T> a) {
   ExplicitZeroMemory(a.data(), a.size());
 }
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_ZERO_MEMORY_H_

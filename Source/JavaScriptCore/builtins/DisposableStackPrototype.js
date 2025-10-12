@@ -23,25 +23,61 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://tc39.es/proposal-explicit-resource-management/#sec-getdisposemethod
+@linkTimeConstant
+function getAsyncDisposableMethod(value)
+{
+    'use strict';
+
+    var method = value.@@asyncDispose;
+
+    if (!@isCallable(method))
+        @throwTypeError("@@asyncDispose must be callable");
+
+    if (@isUndefinedOrNull(method))
+        return @undefined;
+
+    return () => {
+        var promise = @newPromise();
+        var result;
+        try {
+            result = method.@call(value);
+        } catch (e) {
+            @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
+            return promise;
+        }
+        @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, @undefined);
+        return promise;
+    };
+}
+
 // https://tc39.es/proposal-explicit-resource-management/#sec-createdisposableresource
 @linkTimeConstant
-function createSyncDisposableResource(value /* , method */)
+function createDisposableResource(value, isAsync /* , method */)
 {
     'use strict';
 
     var method;
-    if (@argumentCount() < 2) {
+    if (@argumentCount() < 3) {
         if (@isUndefinedOrNull(value))
             value = @undefined;
         else {
             if (!@isObject(value))
                 @throwTypeError("Disposable value must be an object");
-            method = value.@@dispose;
-            if (method === @undefined)
-                @throwTypeError("@@dispose must not be an undefined");
+            if (isAsync) {
+                method = @getAsyncDisposableMethod(value);
+                if (method === @undefined)
+                    @throwTypeError("@@asyncDispose must not be an undefined");
+            } else {
+                method = value.@@dispose;
+                if (!@isCallable(method))
+                    @throwTypeError("@@dispose must be callable");
+                if (@isUndefinedOrNull(method))
+                    @throwTypeError("@@dispose must not be an undefined");
+            }
         }
     } else {
-        method = @argument(1);
+        method = @argument(2);
         if (!@isCallable(method))
             @throwTypeError("Callback that is called on dispose must be callable");
     }
@@ -51,20 +87,20 @@ function createSyncDisposableResource(value /* , method */)
 
 // https://tc39.es/proposal-explicit-resource-management/#sec-adddisposableresource
 @linkTimeConstant
-function addSyncDisposableResource(disposeCapability, value /* , method */)
+function addDisposableResource(disposeCapability, value, isAsync /* , method */)
 {
     'use strict';
 
     @assert(@isArray(disposeCapability));
 
     var resource;
-    if (@argumentCount() < 3) {
+    if (@argumentCount() < 4) {
         if (@isUndefinedOrNull(value))
             return;
-        resource = @createSyncDisposableResource(value);
+        resource = @createDisposableResource(value, isAsync);
     } else {
         @assert(value === @undefined);
-        resource = @createSyncDisposableResource(@undefined, @argument(2));
+        resource = @createDisposableResource(@undefined, isAsync, @argument(3));
     }
 
     @arrayPush(disposeCapability, resource);
@@ -85,7 +121,7 @@ function adopt(value, onDispose)
         @throwTypeError("DisposableStack.prototype.adopt requires that onDispose argument be a callable");
 
     var closure = () => { onDispose.@call(@undefined, value); }
-    @addSyncDisposableResource(@getDisposableStackInternalField(this, @disposableStackFieldCapability), @undefined, closure);
+    @addDisposableResource(@getDisposableStackInternalField(this, @disposableStackFieldCapability), @undefined, /* isAsync */ false, closure);
 
     return value;
 }
@@ -105,7 +141,7 @@ function deferMethod(onDispose)
     if (!@isCallable(onDispose))
         @throwTypeError("DisposableStack.prototype.defer requires that onDispose argument be a callable");
 
-    @addSyncDisposableResource(@getDisposableStackInternalField(this, @disposableStackFieldCapability), @undefined, onDispose);
+    @addDisposableResource(@getDisposableStackInternalField(this, @disposableStackFieldCapability), @undefined, /* isAsync */ false, onDispose);
 
     return @undefined;
 }
@@ -180,7 +216,7 @@ function use(value)
     if (@getDisposableStackInternalField(this, @disposableStackFieldState) === @DisposableStackStateDisposed)
         throw new @ReferenceError("DisposableStack.prototype.use requires that |this| be a pending DisposableStack object");
 
-    @addSyncDisposableResource(@getDisposableStackInternalField(this, @disposableStackFieldCapability), value);
+    @addDisposableResource(@getDisposableStackInternalField(this, @disposableStackFieldCapability), value, /* isAsync */ false);
 
     return value;
 }

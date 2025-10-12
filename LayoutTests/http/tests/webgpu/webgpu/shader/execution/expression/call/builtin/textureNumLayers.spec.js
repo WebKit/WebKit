@@ -7,11 +7,18 @@ Returns the number of layers (elements) of an array texture.
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import {
   isTextureFormatPossiblyStorageReadWritable,
-  kPossibleStorageTextureFormats } from
+  kPossibleStorageTextureFormats,
+  kTextureFormatTier1ThrowsWhenNotEnabled,
+  kTextureFormatsTier1EnablesStorageReadOnlyWriteOnly } from
 '../../../../../format_info.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../../../gpu_test.js';
 import { kShaderStages } from '../../../../validation/decl/util.js';
 
-import { kSampleTypeInfo, WGSLTextureQueryTest } from './texture_utils.js';
+import {
+  executeTextureQueryAndExpectResult,
+  kSampleTypeInfo,
+  skipIfNoStorageTexturesInStage } from
+'./texture_utils.js';
 
 const kNumLayers = 36;
 
@@ -36,7 +43,7 @@ function getLayerSettingsAndExpected({
   };
 }
 
-export const g = makeTestGroup(WGSLTextureQueryTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 g.test('sampled').
 specURL('https://www.w3.org/TR/WGSL/#texturenumlayers').
@@ -96,7 +103,7 @@ fn getValue() -> u32 {
     arrayLayerCount
   };
 
-  t.executeAndExpectResult(stage, code, texture, viewDescription, expected);
+  executeTextureQueryAndExpectResult(t, stage, code, texture, viewDescription, expected);
 });
 
 g.test('arrayed').
@@ -154,7 +161,7 @@ fn getValue() -> u32 {
     arrayLayerCount
   };
 
-  t.executeAndExpectResult(stage, code, texture, viewDescription, expected);
+  executeTextureQueryAndExpectResult(t, stage, code, texture, viewDescription, expected);
 });
 
 g.test('storage').
@@ -206,11 +213,10 @@ beforeAllSubcases((t) => {
 }).
 fn((t) => {
   const { stage, format, access_mode, view_type } = t.params;
-  t.skipIfNoStorageTexturesInStage(stage);
-  t.skipIfTextureFormatNotUsableAsStorageTexture(format);
-  if (access_mode === 'read_write') {
-    t.skipIfTextureFormatNotUsableAsReadWriteStorageTexture(format);
-  }
+  skipIfNoStorageTexturesInStage(t, stage);
+  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotUsableWithStorageAccessMode(access_mode, format);
+  t.skipIf(kTextureFormatTier1ThrowsWhenNotEnabled.includes(format) || kTextureFormatsTier1EnablesStorageReadOnlyWriteOnly.includes(format), "16-bit s/unorm formats not correctly implemented");
 
   const texture = t.createTextureTracked({
     format,
@@ -235,5 +241,5 @@ fn getValue() -> u32 {
     arrayLayerCount
   };
 
-  t.executeAndExpectResult(stage, code, texture, viewDescription, expected);
+  executeTextureQueryAndExpectResult(t, stage, code, texture, viewDescription, expected);
 });

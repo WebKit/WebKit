@@ -29,6 +29,7 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSSerializationContext.h"
 #include "Document.h"
+#include "NodeInlines.h"
 #include "StyleAttributeMutationScope.h"
 #include "StylePropertiesInlines.h"
 #include "StyledElement.h"

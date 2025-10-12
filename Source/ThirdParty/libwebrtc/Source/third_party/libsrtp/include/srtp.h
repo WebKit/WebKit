@@ -94,6 +94,23 @@ extern "C" {
 #define SRTP_MAX_TRAILER_LEN (SRTP_MAX_TAG_LEN + SRTP_MAX_MKI_LEN)
 
 /**
+ * SRTP_SRCTP_INDEX_LEN is the size the SRTCP index which is
+ * 4 bytes
+ */
+#define SRTP_SRCTP_INDEX_LEN 4
+
+/**
+ * SRTP_MAX_SRTCP_TRAILER_LEN is the maximum length of the SRTCP trailer
+ * (index, authentication tag and MKI) supported by libSRTP.  This value is
+ * the maximum number of octets that will be added to an RTCP packet by
+ * srtp_protect_rtcp().
+ *
+ * @brief the maximum number of octets added by srtp_protect().
+ */
+#define SRTP_MAX_SRTCP_TRAILER_LEN                                             \
+    (SRTP_SRCTP_INDEX_LEN + SRTP_MAX_TAG_LEN + SRTP_MAX_MKI_LEN)
+
+/**
  * SRTP_MAX_NUM_MASTER_KEYS is the maximum number of Master keys for
  * MKI supported by libSRTP.
  *
@@ -271,16 +288,6 @@ typedef struct {
 } srtp_ssrc_t;
 
 /**
- * @brief points to an EKT policy
- */
-typedef struct srtp_ekt_policy_ctx_t *srtp_ekt_policy_t;
-
-/**
- * @brief points to EKT stream data
- */
-typedef struct srtp_ekt_stream_ctx_t *srtp_ekt_stream_t;
-
-/**
  * @brief srtp_master_key_t represents a master key.  There will
  * be a Master Key Index and the Master Key associated with the
  * Master Key Index.  Need to also keep track of the Master Key
@@ -329,8 +336,8 @@ typedef struct srtp_policy_t {
                                    /**< this stream.                        */
     srtp_master_key_t **keys;      /** Array of Master Key structures       */
     unsigned long num_master_keys; /** Number of master keys                */
-    srtp_ekt_policy_t ekt;         /**< Pointer to the EKT policy structure */
-                                   /**< for this stream (if any)            */
+    void *deprecated_ekt;          /**< DEPRECATED: pointer to the EKT      */
+                                   /**< policy structure for this stream    */
     unsigned long window_size;     /**< The window size to use for replay   */
                                    /**< protection.                         */
     int allow_repeat_tx;           /**< Whether retransmissions of          */
@@ -1168,9 +1175,7 @@ srtp_err_status_t srtp_dealloc(srtp_t s);
  * @brief identifies a particular SRTP profile
  *
  * An srtp_profile_t enumeration is used to identify a particular SRTP
- * profile (that is, a set of algorithms and parameters). These profiles
- * are defined for DTLS-SRTP:
- * https://www.iana.org/assignments/srtp-protection/srtp-protection.xhtml
+ * profile (that is, a set of algorithms and parameters).
  */
 typedef enum {
     srtp_profile_reserved = 0,
@@ -1179,7 +1184,7 @@ typedef enum {
     srtp_profile_null_sha1_80 = 5,
     srtp_profile_null_sha1_32 = 6,
     srtp_profile_aead_aes_128_gcm = 7,
-    srtp_profile_aead_aes_256_gcm = 8,
+    srtp_profile_aead_aes_256_gcm = 8
 } srtp_profile_t;
 
 /**
@@ -1301,7 +1306,7 @@ void srtp_append_salt_to_key(unsigned char *key,
  * packet, and assumes that the RTCP packet is aligned on a 32-bit
  * boundary.
  *
- * @warning This function assumes that it can write SRTP_MAX_TRAILER_LEN+4
+ * @warning This function assumes that it can write SRTP_MAX_SRTCP_TRAILER_LEN
  * into the location in memory immediately following the RTCP packet.
  * Callers MUST ensure that this much writable memory is available in
  * the buffer that holds the RTCP packet.
@@ -1342,7 +1347,7 @@ srtp_err_status_t srtp_protect_rtcp(srtp_t ctx,
  * packet, and assumes that the RTCP packet is aligned on a 32-bit
  * boundary.
  *
- * @warning This function assumes that it can write SRTP_MAX_TRAILER_LEN+4
+ * @warning This function assumes that it can write SRTP_MAX_SRTCP_TRAILER_LEN
  * into the location in memory immediately following the RTCP packet.
  * Callers MUST ensure that this much writable memory is available in
  * the buffer that holds the RTCP packet.

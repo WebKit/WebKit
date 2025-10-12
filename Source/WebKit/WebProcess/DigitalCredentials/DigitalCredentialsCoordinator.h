@@ -70,7 +70,6 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    RefPtr<WebPage> protectedPage() const;
     WeakPtr<WebPage> m_page;
     const WebCore::PageIdentifier m_pageIdentifier;
     Vector<WebCore::UnvalidatedDigitalCredentialRequest> m_rawRequests;

@@ -4,44 +4,19 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
 flags:
   - noStrict
 description: |
-  pending
+  arguments.caller and arguments.callee are poison pills in ES5, later changed in ES2017 to only poison pill arguments.callee.
+info: bugzilla.mozilla.org/show_bug.cgi?id=514563
 esid: pending
 ---*/
-var gTestfile = 'arguments-caller-callee.js';
-var BUGNUMBER = 514563;
-var summary = "arguments.caller and arguments.callee are poison pills in ES5, " +
-              "later changed in ES2017 to only poison pill arguments.callee.";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 // behavior
 
-function expectTypeError(fun)
-{
-  try
-  {
-    fun();
-    throw new Error("didn't throw");
-  }
-  catch (e)
-  {
-    assert.sameValue(e instanceof TypeError, true,
-             "expected TypeError calling function" +
-             ("name" in fun ? " " + fun.name : "") + ", instead got: " + e);
-  }
-}
-
 function bar() { "use strict"; return arguments; }
 assert.sameValue(bar().caller, undefined); // No error when accessing arguments.caller in ES2017+
-expectTypeError(function barCallee() { bar().callee; });
+assert.throws(TypeError, function barCallee() { bar().callee; });
 
 function baz() { return arguments; }
 assert.sameValue(baz().callee, baz);
@@ -62,8 +37,3 @@ assert.sameValue("get" in argsCallee, true);
 assert.sameValue("set" in argsCallee, true);
 assert.sameValue(argsCallee.get, canonicalTTE);
 assert.sameValue(argsCallee.set, canonicalTTE);
-
-
-/******************************************************************************/
-
-print("All tests passed!");

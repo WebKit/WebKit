@@ -1,7 +1,7 @@
 // GENERATED CONTENT - DO NOT EDIT
 // Content was automatically extracted by Reffy into webref
 // (https://github.com/w3c/webref)
-// Source: User Timing Level 3 (https://w3c.github.io/user-timing/)
+// Source: User Timing (https://w3c.github.io/user-timing/)
 
 dictionary PerformanceMarkOptions {
     any detail;
@@ -22,13 +22,13 @@ partial interface Performance {
     undefined clearMeasures(optional DOMString measureName);
 };
 
-[Exposed=*]
+[Exposed=(Window,Worker)]
 interface PerformanceMark : PerformanceEntry {
   constructor(DOMString markName, optional PerformanceMarkOptions markOptions = {});
   readonly attribute any detail;
 };
 
-[Exposed=*]
+[Exposed=(Window,Worker)]
 interface PerformanceMeasure : PerformanceEntry {
   readonly attribute any detail;
 };

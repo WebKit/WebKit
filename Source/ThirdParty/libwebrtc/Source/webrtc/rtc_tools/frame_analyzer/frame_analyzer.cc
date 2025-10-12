@@ -8,21 +8,25 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-
+#include <cmath>
 #include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
 #include "absl/strings/match.h"
+#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/test/metrics/chrome_perf_dashboard_metrics_exporter.h"
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
+#include "api/test/metrics/metric.h"
 #include "api/test/metrics/metrics_exporter.h"
-#include "api/test/metrics/stdout_metrics_exporter.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_tools/frame_analyzer/video_color_aligner.h"
 #include "rtc_tools/frame_analyzer/video_geometry_aligner.h"
@@ -73,6 +77,98 @@ std::string JoinFilename(std::string directory, std::string filename) {
   return directory + kPathDelimiter + filename;
 }
 
+// FrameAnalyzerMetricsExporter is a fork of
+// webrtc::test::StdoutMetricsExporter. The fork was required because:
+// 1. frame_analyzer must be compiled with build_with_chromium=true
+// 2. The api/metrics:stdout_metrics_exporter depends on absl/flags which cannot
+//    be build when build_with_chromium=true unless the target is an
+//    rtc_executable (which is not the case for
+//    api/metrics:stdout_metrics_exporter). So this fork allows to cut the
+//    dependency.
+
+// Returns positive integral part of the number.
+int64_t IntegralPart(double value) {
+  return std::lround(std::floor(std::abs(value)));
+}
+
+void AppendWithPrecision(double value,
+                         int digits_after_comma,
+                         webrtc::StringBuilder& out) {
+  int64_t multiplier = std::lround(std::pow(10, digits_after_comma));
+  int64_t integral_part = IntegralPart(value);
+  double decimal_part = std::abs(value) - integral_part;
+
+  // If decimal part has leading zeros then when it will be multiplied on
+  // `multiplier`, leading zeros will be lost. To preserve them we add "1"
+  // so then leading digit will be greater than 0 and won't be removed.
+  //
+  // During conversion to the string leading digit has to be stripped.
+  //
+  // Also due to rounding it may happen that leading digit may be incremented,
+  // like with `digits_after_comma` 3 number 1.9995 will be rounded to 2. In
+  // such case this increment has to be propagated to the `integral_part`.
+  int64_t decimal_holder = std::lround((1 + decimal_part) * multiplier);
+  if (decimal_holder >= 2 * multiplier) {
+    // Rounding incremented added leading digit, so we need to transfer 1 to
+    // integral part.
+    integral_part++;
+    decimal_holder -= multiplier;
+  }
+  // Remove trailing zeros.
+  while (decimal_holder % 10 == 0) {
+    decimal_holder /= 10;
+  }
+
+  // Print serialized number to output.
+  if (value < 0) {
+    out << "-";
+  }
+  out << integral_part;
+  if (decimal_holder != 1) {
+    out << "." << std::to_string(decimal_holder).substr(1, digits_after_comma);
+  }
+}
+
+class FrameAnalyzerMetricsExporter : public webrtc::test::MetricsExporter {
+ public:
+  FrameAnalyzerMetricsExporter() : output_(stdout) {}
+  ~FrameAnalyzerMetricsExporter() override = default;
+
+  FrameAnalyzerMetricsExporter(const FrameAnalyzerMetricsExporter&) = delete;
+  FrameAnalyzerMetricsExporter& operator=(const FrameAnalyzerMetricsExporter&) =
+      delete;
+
+  bool Export(webrtc::ArrayView<const webrtc::test::Metric> metrics) override {
+    for (const webrtc::test::Metric& metric : metrics) {
+      PrintMetric(metric);
+    }
+    return true;
+  }
+
+ private:
+  void PrintMetric(const webrtc::test::Metric& metric) {
+    webrtc::StringBuilder value_stream;
+    value_stream << metric.test_case << " / " << metric.name << "= {mean=";
+    if (metric.stats.mean.has_value()) {
+      AppendWithPrecision(*metric.stats.mean, 8, value_stream);
+    } else {
+      value_stream << "-";
+    }
+    value_stream << ", stddev=";
+    if (metric.stats.stddev.has_value()) {
+      AppendWithPrecision(*metric.stats.stddev, 8, value_stream);
+    } else {
+      value_stream << "-";
+    }
+    value_stream << "} " << ToString(metric.unit) << " ("
+                 << ToString(metric.improvement_direction) << ")";
+
+    fprintf(output_, "RESULT: %s\n", value_stream.str().c_str());
+  }
+
+  FILE* const output_;
+};
+
 }  // namespace
 
 /*
@@ -110,9 +206,9 @@ int main(int argc, char* argv[]) {
 
   webrtc::test::ResultsContainer results;
 
-  rtc::scoped_refptr<webrtc::test::Video> reference_video =
+  webrtc::scoped_refptr<webrtc::test::Video> reference_video =
       webrtc::test::OpenYuvOrY4mFile(reference_file_name, width, height);
-  rtc::scoped_refptr<webrtc::test::Video> test_video =
+  webrtc::scoped_refptr<webrtc::test::Video> test_video =
       webrtc::test::OpenYuvOrY4mFile(test_file_name, width, height);
 
   if (!reference_video || !test_video) {
@@ -126,7 +222,7 @@ int main(int argc, char* argv[]) {
   // Align the reference video both temporally and geometrically. I.e. align the
   // frames to match up in order to the test video, and align a crop region of
   // the reference video to match up to the test video.
-  const rtc::scoped_refptr<webrtc::test::Video> aligned_reference_video =
+  const webrtc::scoped_refptr<webrtc::test::Video> aligned_reference_video =
       AdjustCropping(ReorderVideo(reference_video, matching_indices),
                      test_video);
 
@@ -136,7 +232,7 @@ int main(int argc, char* argv[]) {
       CalculateColorTransformationMatrix(aligned_reference_video, test_video);
 
   char buf[256];
-  rtc::SimpleStringBuilder string_builder(buf);
+  webrtc::SimpleStringBuilder string_builder(buf);
   for (int i = 0; i < 3; ++i) {
     string_builder << "\n";
     for (int j = 0; j < 4; ++j)
@@ -147,7 +243,7 @@ int main(int argc, char* argv[]) {
 
   // Adjust all frames in the test video with the calculated color
   // transformation.
-  const rtc::scoped_refptr<webrtc::test::Video> color_adjusted_test_video =
+  const webrtc::scoped_refptr<webrtc::test::Video> color_adjusted_test_video =
       AdjustColors(color_transformation, test_video);
 
   results.frames = webrtc::test::RunAnalysis(
@@ -166,7 +262,7 @@ int main(int argc, char* argv[]) {
                                      *webrtc::test::GetGlobalMetricsLogger());
 
   std::vector<std::unique_ptr<webrtc::test::MetricsExporter>> exporters;
-  exporters.push_back(std::make_unique<webrtc::test::StdoutMetricsExporter>());
+  exporters.push_back(std::make_unique<FrameAnalyzerMetricsExporter>());
   std::string chartjson_result_file =
       absl::GetFlag(FLAGS_chartjson_result_file);
   if (!chartjson_result_file.empty()) {

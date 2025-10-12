@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CookieJar.h"
-#include "FrameIdentifier.h"
-#include "PageIdentifier.h"
-#include "SameSiteInfo.h"
+#include <WebCore/CookieJar.h>
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/PageIdentifier.h>
+#include <WebCore/SameSiteInfo.h>
 #include <wtf/URL.h>
 
 namespace WebCore {

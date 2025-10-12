@@ -78,6 +78,7 @@ per-file third_party/perfetto=*
 per-file third_party/protobuf=*
 per-file third_party/Python-Markdown=*
 per-file third_party/rapidjson/src=*
+per-file third_party/re2/src=*
 per-file third_party/requests/src=*
 per-file third_party/rust=*
 per-file third_party/six=*

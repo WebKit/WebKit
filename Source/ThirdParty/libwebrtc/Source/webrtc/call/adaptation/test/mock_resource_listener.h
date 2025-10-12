@@ -12,6 +12,7 @@
 #define CALL_ADAPTATION_TEST_MOCK_RESOURCE_LISTENER_H_
 
 #include "api/adaptation/resource.h"
+#include "api/scoped_refptr.h"
 #include "test/gmock.h"
 
 namespace webrtc {
@@ -20,7 +21,7 @@ class MockResourceListener : public ResourceListener {
  public:
   MOCK_METHOD(void,
               OnResourceUsageStateMeasured,
-              (rtc::scoped_refptr<Resource> resource,
+              (scoped_refptr<Resource> resource,
                ResourceUsageState usage_state),
               (override));
 };

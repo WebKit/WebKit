@@ -25,16 +25,19 @@
 
 import Foundation
 import WebKit
-import WebKitSwift
 @_spi(Private) import WebKit
 
 @MainActor
-protocol IntelligenceTextEffectViewManagerDelegate  {
+protocol IntelligenceTextEffectViewManagerDelegate {
     func updateTextChunkVisibility(_ chunk: IntelligenceTextEffectChunk, visible: Bool, force: Bool) async
 }
 
 @MainActor
-class IntelligenceTextEffectViewManager<Source> where Source: IntelligenceTextEffectViewManagerDelegate, Source: PlatformIntelligenceTextEffectViewSource, Source.Chunk == IntelligenceTextEffectChunk {
+class IntelligenceTextEffectViewManager<Source>
+where
+    Source: IntelligenceTextEffectViewManagerDelegate, Source: PlatformIntelligenceTextEffectViewSource,
+    Source.Chunk == IntelligenceTextEffectChunk
+{
     init(source: Source? = nil, contentView: CocoaView) {
         self.source = source
         self.contentView = contentView
@@ -50,7 +53,7 @@ class IntelligenceTextEffectViewManager<Source> where Source: IntelligenceTextEf
 
     var suppressEffectView = false
 
-    public var hasActiveEffects: Bool {
+    var hasActiveEffects: Bool {
         self.activePonderingEffect != nil || self.activeReplacementEffect != nil
     }
 
@@ -61,14 +64,14 @@ class IntelligenceTextEffectViewManager<Source> where Source: IntelligenceTextEf
 
         let effectView = PlatformIntelligenceTextEffectView(source: source)
 
-#if os(iOS)
+        #if os(iOS)
         effectView.isUserInteractionEnabled = false
         effectView.frame = contentView.frame
-        contentView.superview!.addSubview(effectView)
-#else
+        contentView.superview?.addSubview(effectView)
+        #else
         effectView.frame = contentView.bounds
         contentView.addSubview(effectView)
-#endif
+        #endif
 
         if self.suppressEffectView {
             effectView.isHidden = true
@@ -95,7 +98,9 @@ class IntelligenceTextEffectViewManager<Source> where Source: IntelligenceTextEf
         }
 
         if self.activePonderingEffect != nil && effect != nil {
-            assertionFailure("Intelligence text effect coordinator: trying to either set a new pondering effect when there is an ongoing one.")
+            assertionFailure(
+                "Intelligence text effect coordinator: trying to either set a new pondering effect when there is an ongoing one."
+            )
             return
         }
 
@@ -113,8 +118,13 @@ class IntelligenceTextEffectViewManager<Source> where Source: IntelligenceTextEf
             //
             // Therefore, the delegate method itself must avoid any work so that it can be synchronous, which is what the platform
             // interfaces expect.
+            //
+            // Safe force-unwrap due to the above logic; effect being nil implies activePonderingEffect was originally non-nil.
+            // swift-format-ignore: NeverForceUnwrap
             await self.source?.updateTextChunkVisibility(oldEffect!.chunk, visible: true, force: true)
 
+            // Safe force-unwrap due to the above logic; effect being nil implies activePonderingEffect was originally non-nil.
+            // swift-format-ignore: NeverForceUnwrap
             await self.effectView?.removeEffect(oldEffect!.id)
 
             self.destroyViewIfNeeded()
@@ -127,7 +137,9 @@ class IntelligenceTextEffectViewManager<Source> where Source: IntelligenceTextEf
         }
 
         if self.activeReplacementEffect != nil && effect != nil {
-            assertionFailure("Intelligence text effect coordinator: trying to either set a new replacement effect when there is an ongoing one.")
+            assertionFailure(
+                "Intelligence text effect coordinator: trying to either set a new replacement effect when there is an ongoing one."
+            )
             return
         }
 
@@ -138,6 +150,8 @@ class IntelligenceTextEffectViewManager<Source> where Source: IntelligenceTextEf
             self.setupViewIfNeeded()
             await self.effectView?.addEffect(effect)
         } else {
+            // Safe force-unwrap due to the above logic; effect being nil implies activePonderingEffect was originally non-nil.
+            // swift-format-ignore: NeverForceUnwrap
             await self.effectView?.removeEffect(oldEffect!.id)
             self.destroyViewIfNeeded()
         }
@@ -198,11 +212,21 @@ class IntelligenceTextEffectViewManager<Source> where Source: IntelligenceTextEf
     }
 
     func assertPonderingEffectIsInactive(file: StaticString = #file, line: UInt = #line) {
-        assert(self.activePonderingEffect == nil, "Intelligence text effect coordinator: expected pondering effect to be inactive", file: file, line: line)
+        assert(
+            self.activePonderingEffect == nil,
+            "Intelligence text effect coordinator: expected pondering effect to be inactive",
+            file: file,
+            line: line
+        )
     }
 
     func assertReplacementEffectIsInactive(file: StaticString = #file, line: UInt = #line) {
-        assert(self.activeReplacementEffect == nil, "Intelligence text effect coordinator: expected replacement effect to be inactive", file: file, line: line)
+        assert(
+            self.activeReplacementEffect == nil,
+            "Intelligence text effect coordinator: expected replacement effect to be inactive",
+            file: file,
+            line: line
+        )
     }
 }
 

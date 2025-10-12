@@ -1,9 +1,3 @@
-CONSOLE MESSAGE: Refused to load 'https://web-platform.test:9443/html/cross-origin-embedder-policy/resources/universal-worker.js?pipe=' worker because of Cross-Origin-Embedder-Policy.
-CONSOLE MESSAGE: Worker load was blocked by Cross-Origin-Embedder-Policy
-CONSOLE MESSAGE: Cannot load https://web-platform.test:9443/html/cross-origin-embedder-policy/resources/universal-worker.js?pipe= due to access control checks.
-CONSOLE MESSAGE: Refused to load 'https://web-platform.test:9443/html/cross-origin-embedder-policy/resources/universal-worker.js?pipe=' worker because of Cross-Origin-Embedder-Policy.
-CONSOLE MESSAGE: Worker load was blocked by Cross-Origin-Embedder-Policy
-CONSOLE MESSAGE: Cannot load https://web-platform.test:9443/html/cross-origin-embedder-policy/resources/universal-worker.js?pipe= due to access control checks.
 
 PASS coep-none coep-none corp-cross-origin
 PASS coep-none coep-none corp-undefined

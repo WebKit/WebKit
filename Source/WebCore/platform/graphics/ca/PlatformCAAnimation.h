@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "Color.h"
-#include "FilterOperation.h"
-#include "FloatPoint3D.h"
-#include "GraphicsLayerClient.h"
-#include "PlatformCAFilters.h"
-#include "TransformationMatrix.h"
+#include <WebCore/Color.h>
+#include <WebCore/FilterOperation.h>
+#include <WebCore/FloatPoint3D.h>
+#include <WebCore/GraphicsLayerClient.h>
+#include <WebCore/PlatformCAFilters.h>
+#include <WebCore/TransformationMatrix.h>
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>

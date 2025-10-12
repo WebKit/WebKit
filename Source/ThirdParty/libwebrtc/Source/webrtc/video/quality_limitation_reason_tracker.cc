@@ -10,9 +10,13 @@
 
 #include "video/quality_limitation_reason_tracker.h"
 
+#include <cstdint>
+#include <map>
 #include <utility>
 
+#include "common_video/include/quality_limitation_reason.h"
 #include "rtc_base/checks.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 

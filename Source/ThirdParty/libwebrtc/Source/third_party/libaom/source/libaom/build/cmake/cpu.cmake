@@ -12,7 +12,6 @@
 if("${AOM_TARGET_CPU}" STREQUAL "arm64")
   set(AOM_ARCH_ARM 1)
   set(AOM_ARCH_AARCH64 1)
-  set(RTCD_ARCH_ARM "yes")
 
   set(ARM64_FLAVORS "NEON;ARM_CRC32;NEON_DOTPROD;NEON_I8MM;SVE;SVE2")
   set(AOM_ARM_CRC32_DEFAULT_FLAG "-march=armv8-a+crc")
@@ -34,12 +33,12 @@ if("${AOM_TARGET_CPU}" STREQUAL "arm64")
       # against stderr does not recognise the "invalid feature modifier" error
       # produced by certain versions of GCC, leading to the feature being
       # incorrectly marked as available.
-      set(OLD_CMAKE_REQURED_FLAGS ${CMAKE_REQUIRED_FLAGS})
+      set(OLD_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
       set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${AOM_${flavor}_FLAG}")
       unset(FLAG_SUPPORTED)
       aom_check_source_compiles("arm_feature_flag_${flavor_lower}_available"
                                 "static void function(void) {}" FLAG_SUPPORTED)
-      set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQURED_FLAGS})
+      set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQUIRED_FLAGS})
 
       if(NOT ${FLAG_SUPPORTED})
         set(ENABLE_${flavor} 0)
@@ -49,7 +48,7 @@ if("${AOM_TARGET_CPU}" STREQUAL "arm64")
 
   # SVE and SVE2 require that the Neon-SVE bridge header is also available.
   if(ENABLE_SVE OR ENABLE_SVE2)
-    set(OLD_CMAKE_REQURED_FLAGS ${CMAKE_REQUIRED_FLAGS})
+    set(OLD_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
     set(OLD_CMAKE_TRY_COMPILE_TARGET_TYPE ${CMAKE_TRY_COMPILE_TARGET_TYPE})
     set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${AOM_SVE_FLAG}")
     set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
@@ -69,7 +68,7 @@ svfloat32_t func(svfloat32_t a) {
   other()\;
   return a\;
 }" CAN_COMPILE_SVE)
-    set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQURED_FLAGS})
+    set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQUIRED_FLAGS})
     set(CMAKE_TRY_COMPILE_TARGET_TYPE ${OLD_CMAKE_TRY_COMPILE_TARGET_TYPE})
     if(HAVE_SVE_HEADERS EQUAL 0 OR CAN_COMPILE_SVE EQUAL 0)
       set(ENABLE_SVE 0)
@@ -80,7 +79,6 @@ svfloat32_t func(svfloat32_t a) {
   foreach(flavor ${ARM64_FLAVORS})
     if(ENABLE_${flavor})
       set(HAVE_${flavor} 1)
-      set(RTCD_HAVE_${flavor} "yes")
     else()
       set(HAVE_${flavor} 0)
       string(TOLOWER ${flavor} flavor)
@@ -90,11 +88,9 @@ svfloat32_t func(svfloat32_t a) {
 
 elseif("${AOM_TARGET_CPU}" MATCHES "^arm")
   set(AOM_ARCH_ARM 1)
-  set(RTCD_ARCH_ARM "yes")
 
   if(ENABLE_NEON)
     set(HAVE_NEON 1)
-    set(RTCD_HAVE_NEON "yes")
   else()
     set(HAVE_NEON 0)
     set(AOM_RTCD_FLAGS ${AOM_RTCD_FLAGS} --disable-neon)
@@ -102,11 +98,9 @@ elseif("${AOM_TARGET_CPU}" MATCHES "^arm")
 
 elseif("${AOM_TARGET_CPU}" MATCHES "ppc")
   set(AOM_ARCH_PPC 1)
-  set(RTCD_ARCH_PPC "yes")
 
   if(ENABLE_VSX)
     set(HAVE_VSX 1)
-    set(RTCD_HAVE_VSX "yes")
   else()
     set(HAVE_VSX 0)
     set(AOM_RTCD_FLAGS ${AOM_RTCD_FLAGS} --disable-vsx)
@@ -114,17 +108,21 @@ elseif("${AOM_TARGET_CPU}" MATCHES "ppc")
 elseif("${AOM_TARGET_CPU}" MATCHES "^x86")
   if("${AOM_TARGET_CPU}" STREQUAL "x86")
     set(AOM_ARCH_X86 1)
-    set(RTCD_ARCH_X86 "yes")
+    # Disable avx512
+    set(HAVE_AVX512 0)
+    set(AOM_RTCD_FLAGS ${AOM_RTCD_FLAGS} --disable-avx512)
   elseif("${AOM_TARGET_CPU}" STREQUAL "x86_64")
     set(AOM_ARCH_X86_64 1)
-    set(RTCD_ARCH_X86_64 "yes")
   endif()
 
-  set(X86_FLAVORS "MMX;SSE;SSE2;SSE3;SSSE3;SSE4_1;SSE4_2;AVX;AVX2")
+  set(X86_FLAVORS "MMX;SSE;SSE2;SSE3;SSSE3;SSE4_1;SSE4_2;AVX;AVX2;AVX512")
   foreach(flavor ${X86_FLAVORS})
+    # Special handling of AVX512 on x86-32 above.
+    if("${flavor}" STREQUAL "AVX512" AND "${AOM_TARGET_CPU}" STREQUAL "x86")
+      continue()
+    endif()
     if(ENABLE_${flavor} AND NOT disable_remaining_flavors)
       set(HAVE_${flavor} 1)
-      set(RTCD_HAVE_${flavor} "yes")
     else()
       set(disable_remaining_flavors 1)
       set(HAVE_${flavor} 0)
@@ -132,4 +130,13 @@ elseif("${AOM_TARGET_CPU}" MATCHES "^x86")
       set(AOM_RTCD_FLAGS ${AOM_RTCD_FLAGS} --disable-${flavor})
     endif()
   endforeach()
+elseif("${AOM_TARGET_CPU}" MATCHES "riscv")
+  set(AOM_ARCH_RISCV64 1)
+
+  if(ENABLE_RVV)
+    set(HAVE_RVV 1)
+  else()
+    set(HAVE_RVV 0)
+    set(AOM_RTCD_FLAGS ${AOM_RTCD_FLAGS} --disable-rvv)
+  endif()
 endif()

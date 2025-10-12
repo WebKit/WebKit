@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -178,7 +178,7 @@ void EOTHeader::appendBigEndianString(const BigEndianUShort* string, unsigned sh
 {
     size_t oldSize = m_buffer.size();
     m_buffer.grow(oldSize + length + 2 * sizeof(unsigned short));
-    UChar* dst = reinterpret_cast<UChar*>(m_buffer.data() + oldSize);
+    char16_t* dst = reinterpret_cast<char16_t*>(m_buffer.mutableSpan().subspan(oldSize).data());
     unsigned i = 0;
     dst[i++] = length;
     unsigned numCharacters = length / 2;
@@ -219,7 +219,7 @@ bool renameFont(const SharedBuffer& fontData, const String& fontName, Vector<uin
     const int nameRecordCount = 5;
 
     // Rounded up to a multiple of 4 to simplify the checksum calculation.
-    size_t nameTableSize = ((offsetof(nameTable, nameRecords) + nameRecordCount * sizeof(nameRecord) + fontName.length() * sizeof(UChar)) & ~3) + 4;
+    size_t nameTableSize = ((offsetof(nameTable, nameRecords) + nameRecordCount * sizeof(nameRecord) + fontName.length() * sizeof(char16_t)) & ~3) + 4;
 
     rewrittenFontData.resize(fontData.size() + nameTableSize);
     auto dataSpan = rewrittenFontData.mutableSpan();
@@ -240,7 +240,7 @@ bool renameFont(const SharedBuffer& fontData, const String& fontName, Vector<uin
         name->nameRecords[i].encodingID = 1;
         name->nameRecords[i].languageID = 0x0409;
         name->nameRecords[i].offset = 0;
-        name->nameRecords[i].length = fontName.length() * sizeof(UChar);
+        name->nameRecords[i].length = fontName.length() * sizeof(char16_t);
     }
 
     // The required 'name' record types: Family, Style, Unique, Full and PostScript.
@@ -270,7 +270,7 @@ RefPtr<FontMemoryResource> renameAndActivateFont(const SharedBuffer& fontData, c
         return { };
 
     DWORD numFonts = 0;
-    HANDLE fontHandle = AddFontMemResourceEx(rewrittenFontData.data(), rewrittenFontData.size(), 0, &numFonts);
+    HANDLE fontHandle = AddFontMemResourceEx(rewrittenFontData.mutableSpan().data(), rewrittenFontData.size(), 0, &numFonts);
     if (!fontHandle)
         return { };
     if (numFonts < 1) {

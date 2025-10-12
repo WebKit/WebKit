@@ -27,9 +27,9 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include "MediaPlayerEnums.h"
-#include "SourceBufferPrivateClient.h"
 #include <JavaScriptCore/Forward.h>
+#include <WebCore/MediaPlayerEnums.h>
+#include <WebCore/SourceBufferPrivateClient.h>
 #include <pal/spi/cocoa/MediaToolboxSPI.h>
 #include <wtf/Expected.h>
 #include <wtf/RefCounted.h>
@@ -64,30 +64,12 @@ public:
         Discontinuity,
     };
 
-    class Segment {
-    public:
-        Segment(Ref<SharedBuffer>&&);
-        Segment(Segment&&) = default;
-        Ref<SharedBuffer> takeSharedBuffer();
-        Ref<SharedBuffer> getData(size_t offset, size_t length) const;
-
-        size_t size() const;
-
-        enum class ReadError { EndOfFile, FatalError };
-        using ReadResult = Expected<size_t, ReadError>;
-
-        ReadResult read(std::span<uint8_t> destination, size_t position = 0) const;
-
-    private:
-        Ref<SharedBuffer> m_segment;
-    };
-
     using CallOnClientThreadCallback = Function<void(Function<void()>&&)>;
     void setCallOnClientThreadCallback(CallOnClientThreadCallback&&);
 
     // appendData will be called on the SourceBufferPrivateAVFObjC data parser queue.
     // Other methods will be called on the main thread, but only once appendData has returned.
-    virtual Expected<void, PlatformMediaError> appendData(Segment&&, AppendFlags = AppendFlags::None) = 0;
+    virtual Expected<void, PlatformMediaError> appendData(Ref<const SharedBuffer>&&, AppendFlags = AppendFlags::None) = 0;
     virtual void flushPendingMediaData() = 0;
     virtual void resetParserState() = 0;
     virtual void invalidate() = 0;

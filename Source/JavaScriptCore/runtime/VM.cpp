@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,12 +70,13 @@
 #include "JSAPIValueWrapper.h"
 #include "JSBigInt.h"
 #include "JSGlobalObject.h"
-#include "JSImmutableButterflyInlines.h"
+#include "JSCellButterflyInlines.h"
 #include "JSIterator.h"
 #include "JSLock.h"
 #include "JSMap.h"
 #include "JSMicrotask.h"
 #include "JSPromise.h"
+#include "JSPromiseReaction.h"
 #include "JSPropertyNameEnumeratorInlines.h"
 #include "JSScriptFetchParametersInlines.h"
 #include "JSScriptFetcherInlines.h"
@@ -128,7 +129,7 @@
 #include "UnlinkedProgramCodeBlockInlines.h"
 #include "VMEntryScopeInlines.h"
 #include "VMInlines.h"
-#include "VMInspector.h"
+#include "VMManager.h"
 #include "VariableEnvironment.h"
 #include "WaiterListManager.h"
 #include "WasmWorklist.h"
@@ -145,10 +146,6 @@
 #include <wtf/Threading.h>
 #include <wtf/text/AtomStringTable.h>
 #include <wtf/text/StringToIntegerConversion.h>
-
-#if ENABLE(C_LOOP)
-#include "CLoopStackInlines.h"
-#endif
 
 #if ENABLE(DFG_JIT)
 #include "ConservativeRoots.h"
@@ -216,6 +213,25 @@ void VM::computeCanUseJIT()
 #endif
 }
 
+// This function is not meant to be called by anyone. It just provides a convenient scope
+// that can is permitted to access private members of VM in order to do some needed
+// static_asserts.
+inline void VM::checkStaticAsserts()
+{
+    // VM registration is done in the instantiation of its VMThreadContext.
+    //
+    // VM registration with the VMManager can only be done after m_apiLock is initialized
+    // because VMManager may trigger traps to stop the VM, and VMTraps the which uses
+    // m_apiLock for the VMTraps::SignalSender uses m_apiLock.
+    //
+    // VM registration needs to be done before the heap is initialized because we may Global GC
+    // may want to block the VM from doing any heap activity. In a Global GC world, we would be
+    // binding this VM to the global heap instead of instantiating the heap field. We want to
+    // be able to block before that point.
+    static_assert(OBJECT_OFFSETOF(VM, m_apiLock) < OBJECT_OFFSETOF(VM, m_threadContext));
+    static_assert(OBJECT_OFFSETOF(VM, m_threadContext) < OBJECT_OFFSETOF(VM, heap));
+}
+
 static bool vmCreationShouldCrash = false;
 
 VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
@@ -245,8 +261,6 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
 {
     if (vmCreationShouldCrash || g_jscConfig.vmCreationDisallowed) [[unlikely]]
         CRASH_WITH_EXTRA_SECURITY_IMPLICATION_AND_INFO(VMCreationDisallowed, "VM creation disallowed"_s, 0x4242424220202020, 0xbadbeef0badbeef, 0x1234123412341234, 0x1337133713371337);
-
-    VMInspector::singleton().add(this);
 
     // Set up lazy initializers.
     {
@@ -305,19 +319,20 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     programExecutableStructure.setWithoutWriteBarrier(ProgramExecutable::createStructure(*this, nullptr, jsNull()));
     functionExecutableStructure.setWithoutWriteBarrier(FunctionExecutable::createStructure(*this, nullptr, jsNull()));
     moduleProgramExecutableStructure.setWithoutWriteBarrier(ModuleProgramExecutable::createStructure(*this, nullptr, jsNull()));
+    promiseReactionStructure.setWithoutWriteBarrier(JSPromiseReaction::createStructure(*this, nullptr, jsNull()));
     regExpStructure.setWithoutWriteBarrier(RegExp::createStructure(*this, nullptr, jsNull()));
     symbolStructure.setWithoutWriteBarrier(Symbol::createStructure(*this, nullptr, jsNull()));
     symbolTableStructure.setWithoutWriteBarrier(SymbolTable::createStructure(*this, nullptr, jsNull()));
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    rawImmutableButterflyStructure(CopyOnWriteArrayWithInt32).setWithoutWriteBarrier(JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithInt32));
-    Structure* copyOnWriteArrayWithContiguousStructure = JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithContiguous);
-    rawImmutableButterflyStructure(CopyOnWriteArrayWithDouble).setWithoutWriteBarrier(Options::allowDoubleShape() ? JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithDouble) : copyOnWriteArrayWithContiguousStructure);
+    rawImmutableButterflyStructure(CopyOnWriteArrayWithInt32).setWithoutWriteBarrier(JSCellButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithInt32));
+    Structure* copyOnWriteArrayWithContiguousStructure = JSCellButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithContiguous);
+    rawImmutableButterflyStructure(CopyOnWriteArrayWithDouble).setWithoutWriteBarrier(Options::allowDoubleShape() ? JSCellButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithDouble) : copyOnWriteArrayWithContiguousStructure);
     rawImmutableButterflyStructure(CopyOnWriteArrayWithContiguous).setWithoutWriteBarrier(copyOnWriteArrayWithContiguousStructure);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-    // This is only for JSImmutableButterfly filled with atom strings.
-    immutableButterflyOnlyAtomStringsStructure.setWithoutWriteBarrier(JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithContiguous));
+    // This is only for JSCellButterfly filled with atom strings.
+    cellButterflyOnlyAtomStringsStructure.setWithoutWriteBarrier(JSCellButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithContiguous));
 
     sourceCodeStructure.setWithoutWriteBarrier(JSSourceCode::createStructure(*this, nullptr, jsNull()));
     scriptFetcherStructure.setWithoutWriteBarrier(JSScriptFetcher::createStructure(*this, nullptr, jsNull()));
@@ -432,7 +447,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         ftlThunks = makeUnique<FTL::Thunks>();
 #endif // ENABLE(FTL_JIT)
         m_sharedJITStubs = makeUnique<SharedJITStubSet>();
-        getBoundFunction(/* isJSFunction */ true);
+        getBoundFunction(/* isJSFunction */ true, SourceTaintedOrigin::Untainted);
     }
 #endif // ENABLE(JIT)
 
@@ -473,7 +488,7 @@ VM::~VM()
 #endif
     if (RefPtr watchdog = this->watchdog(); watchdog) [[unlikely]]
         watchdog->willDestroyVM(this);
-    m_traps.willDestroyVM();
+    traps().willDestroyVM();
     m_isInService = false;
     WTF::storeStoreFence();
 
@@ -495,8 +510,6 @@ VM::~VM()
         worklist->cancelAllPlansForVM(*this);
 #endif // ENABLE(JIT)
     
-    waitForAsynchronousDisassembly();
-    
     // Clear this first to ensure that nobody tries to remove themselves from it.
     m_perBytecodeProfiler = nullptr;
 
@@ -509,8 +522,6 @@ VM::~VM()
         m_microtaskQueues.begin()->remove();
 
     JSRunLoopTimer::Manager::singleton().unregisterVM(*this);
-
-    VMInspector::singleton().remove(this);
 
     delete emptyList;
 
@@ -658,6 +669,8 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
         return globalIsFiniteThunkGenerator;
     case NumberIsFiniteIntrinsic:
         return numberIsFiniteThunkGenerator;
+    case NumberIsSafeIntegerIntrinsic:
+        return numberIsSafeIntegerThunkGenerator;
     case SqrtIntrinsic:
         return sqrtThunkGenerator;
     case AbsIntrinsic:
@@ -771,13 +784,15 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, ImplementationVis
     return NativeExecutable::create(*this, jitCodeForCallTrampoline(intrinsic), toTagged(function), jitCodeForConstructTrampoline(), toTagged(constructor), implementationVisibility, name);
 }
 
-NativeExecutable* VM::getBoundFunction(bool isJSFunction)
+NativeExecutable* VM::getBoundFunction(bool isJSFunction, SourceTaintedOrigin taintedness)
 {
     bool slowCase = !isJSFunction;
 
     auto getOrCreate = [&](WriteBarrier<NativeExecutable>& slot) -> NativeExecutable* {
-        if (auto* cached = slot.get())
-            return cached;
+        if (taintedness < SourceTaintedOrigin::IndirectlyTainted) {
+            if (auto* cached = slot.get())
+                return cached;
+        }
         NativeExecutable* result = getHostFunction(
             slowCase ? boundFunctionCall : boundThisNoArgsFunctionCall,
             ImplementationVisibility::Private, // Bound function's visibility is private on the stack.
@@ -820,12 +835,12 @@ CodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(CodeSpecializatio
 {
 #if ENABLE(JIT)
     if (Options::useJIT()) {
-        if (kind == CodeForCall)
+        if (kind == CodeSpecializationKind::CodeForCall)
             return jitStubs->ctiInternalFunctionCall(*this).retagged<JSEntryPtrTag>();
         return jitStubs->ctiInternalFunctionConstruct(*this).retagged<JSEntryPtrTag>();
     }
 #endif
-    if (kind == CodeForCall)
+    if (kind == CodeSpecializationKind::CodeForCall)
         return LLInt::getCodePtr<JSEntryPtrTag>(llint_internal_function_call_trampoline);
     return LLInt::getCodePtr<JSEntryPtrTag>(llint_internal_function_construct_trampoline);
 }
@@ -922,7 +937,7 @@ void VM::clearSourceProviderCaches()
 bool VM::hasExceptionsAfterHandlingTraps()
 {
     if (traps().needHandling(VMTraps::NonDebuggerAsyncEvents)) [[unlikely]]
-        m_traps.handleTraps(VMTraps::NonDebuggerAsyncEvents);
+        traps().handleTraps(VMTraps::NonDebuggerAsyncEvents);
     return exception();
 }
 
@@ -932,13 +947,13 @@ void VM::setException(Exception* exception)
     m_exception = exception;
     m_lastException = exception;
     if (exception)
-        traps().setTrapBit(VMTraps::NeedExceptionHandling);
+        traps().fireTrap(VMTraps::NeedExceptionHandling);
 }
 
 void VM::throwTerminationException()
 {
     ASSERT(hasTerminationRequest());
-    ASSERT(!m_traps.isDeferringTermination());
+    ASSERT(!traps().isDeferringTermination());
     setException(terminationException());
     if (m_executionForbiddenOnTermination)
         setExecutionForbidden();
@@ -1005,7 +1020,7 @@ size_t VM::updateSoftReservedZoneSize(size_t softReservedZoneSize)
     size_t oldSoftReservedZoneSize = m_currentSoftReservedZoneSize;
     m_currentSoftReservedZoneSize = softReservedZoneSize;
 #if ENABLE(C_LOOP)
-    interpreter.cloopStack().setSoftReservedZoneSize(softReservedZoneSize);
+    cloopStack().setSoftReservedZoneSize(softReservedZoneSize);
 #endif
 
     updateStackLimits();
@@ -1040,7 +1055,7 @@ static void preCommitStackMemory(void* stackLimit)
 
 void VM::updateStackLimits()
 {
-    void* lastSoftStackLimit = m_softStackLimit;
+    void* lastSoftStackLimit = traps().softStackLimit();
 
     const StackBounds& stack = Thread::currentSingleton().stack();
     size_t reservedZoneSize = Options::reservedZoneSize();
@@ -1050,35 +1065,28 @@ void VM::updateStackLimits()
     // that the value is sane.
     RELEASE_ASSERT(reservedZoneSize >= minimumReservedZoneSize);
 
+    void* newSoftStackLimit = 0;
     if (m_stackPointerAtVMEntry) {
         char* startOfStack = reinterpret_cast<char*>(m_stackPointerAtVMEntry);
-        m_softStackLimit = stack.recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_currentSoftReservedZoneSize);
+        newSoftStackLimit = stack.recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_currentSoftReservedZoneSize);
         m_stackLimit = stack.recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), reservedZoneSize);
     } else {
-        m_softStackLimit = stack.recursionLimit(m_currentSoftReservedZoneSize);
+        newSoftStackLimit = stack.recursionLimit(m_currentSoftReservedZoneSize);
         m_stackLimit = stack.recursionLimit(reservedZoneSize);
     }
 
-    if (lastSoftStackLimit != m_softStackLimit) {
+    if (lastSoftStackLimit != newSoftStackLimit) {
+        traps().setStackSoftLimit(newSoftStackLimit);
 #if OS(WINDOWS)
-        // We only need to precommit stack memory dictated by the VM::m_softStackLimit limit.
-        // This is because VM::m_softStackLimit applies to stack usage by LLINT asm or JIT
+        // We only need to precommit stack memory dictated by the VM::softStackLimit() limit.
+        // This is because VM::softStackLimit() applies to stack usage by LLINT asm or JIT
         // generated code which can allocate stack space that the C++ compiler does not know
         // about. As such, we have to precommit that stack memory manually.
         //
         // In contrast, we do not need to worry about VM::m_stackLimit because that limit is
         // used exclusively by C++ code, and the C++ compiler will automatically commit the
         // needed stack pages.
-        preCommitStackMemory(m_softStackLimit);
-#endif
-#if ENABLE(WEBASSEMBLY)
-        // PreciseAllocations are always eagerly swept so we don't have to worry about handling instances pending destruction thus need a HeapIterationScope
-        if (heap.m_webAssemblyInstanceSpace) {
-            heap.m_webAssemblyInstanceSpace->forEachLiveCell([&] (HeapCell* cell, HeapCell::Kind kind) {
-                ASSERT_UNUSED(kind, kind == HeapCell::JSCell);
-                SUPPRESS_MEMORY_UNSAFE_CAST static_cast<JSWebAssemblyInstance*>(cell)->updateSoftStackLimit(m_softStackLimit);
-            });
-        }
+        preCommitStackMemory(newSoftStackLimit);
 #endif
     }
 }
@@ -1320,7 +1328,7 @@ void VM::callPromiseRejectionCallback(Strong<JSPromise>& promise)
 
     MarkedArgumentBuffer args;
     args.append(promise.get());
-    args.append(promise->result(*this));
+    args.append(promise->result());
     ASSERT(!args.hasOverflowed());
     call(promise->globalObject(), callback, callData, jsNull(), args);
     scope.clearException();
@@ -1331,7 +1339,7 @@ void VM::didExhaustMicrotaskQueue()
     do {
         auto unhandledRejections = WTFMove(m_aboutToBeNotifiedRejectedPromises);
         for (auto& promise : unhandledRejections) {
-            if (promise->isHandled(*this))
+            if (promise->isHandled())
                 continue;
 
             callPromiseRejectionCallback(promise);
@@ -1354,13 +1362,38 @@ void VM::drainMicrotasks()
     if (executionForbidden()) [[unlikely]]
         m_defaultMicrotaskQueue.clear();
     else {
-        do {
+        std::optional<VMEntryScope> entryScope;
+        if (!m_defaultMicrotaskQueue.isEmpty())
+            entryScope.emplace(*this, nullptr);
+        while (true) {
             m_defaultMicrotaskQueue.performMicrotaskCheckpoint(*this,
                 [&](QueuedTask& task) ALWAYS_INLINE_LAMBDA {
+                    auto* globalObject = task.globalObject();
+                    entryScope->setGlobalObject(globalObject);
                     if (RefPtr dispatcher = task.dispatcher())
                         return dispatcher->run(task);
 
-                    runJSMicrotask(task.globalObject(), task.identifier(), task.job(), task.arguments());
+                    auto identifier = task.identifier();
+                    {
+                        auto catchScope = DECLARE_CATCH_SCOPE(*this);
+                        if (auto* debugger = globalObject->debugger()) [[unlikely]] {
+                            DeferTerminationForAWhile deferTerminationForAWhile(*this);
+                            debugger->willRunMicrotask(globalObject, identifier);
+                            if (!catchScope.clearExceptionExceptTermination()) [[unlikely]]
+                                return QueuedTask::Result::Executed;
+                        }
+
+                        runInternalMicrotask(globalObject, task.job(), task.arguments());
+                        if (!catchScope.clearExceptionExceptTermination()) [[unlikely]]
+                            return QueuedTask::Result::Executed;
+
+                        if (auto* debugger = globalObject->debugger()) [[unlikely]] {
+                            DeferTerminationForAWhile deferTerminationForAWhile(*this);
+                            debugger->didRunMicrotask(globalObject, identifier);
+                            if (!catchScope.clearExceptionExceptTermination()) [[unlikely]]
+                                return QueuedTask::Result::Executed;
+                        }
+                    }
                     return QueuedTask::Result::Executed;
                 });
             if (hasPendingTerminationException()) [[unlikely]]
@@ -1368,7 +1401,11 @@ void VM::drainMicrotasks()
             didExhaustMicrotaskQueue();
             if (hasPendingTerminationException()) [[unlikely]]
                 return;
-        } while (!m_defaultMicrotaskQueue.isEmpty());
+            if (m_defaultMicrotaskQueue.isEmpty())
+                break;
+            if (!entryScope)
+                entryScope.emplace(*this, nullptr);
+        }
     }
     finalizeSynchronousJSExecution();
 }
@@ -1384,7 +1421,7 @@ void sanitizeStackForVM(VM& vm)
 
     RELEASE_ASSERT(stack.contains(vm.lastStackTop()), 0xaa10, vm.lastStackTop(), stack.origin(), stack.end());
 #if ENABLE(C_LOOP)
-    vm.interpreter.cloopStack().sanitizeStack();
+    vm.cloopStack().sanitizeStack();
 #else
     sanitizeStackForVMImpl(&vm);
 #endif
@@ -1403,23 +1440,6 @@ size_t VM::committedStackByteCount()
     return CLoopStack::committedByteCount();
 #endif
 }
-
-#if ENABLE(C_LOOP)
-bool VM::ensureStackCapacityForCLoop(Register* newTopOfStack)
-{
-    return interpreter.cloopStack().ensureCapacityFor(newTopOfStack);
-}
-
-bool VM::isSafeToRecurseSoftCLoop() const
-{
-    return interpreter.cloopStack().isSafeToRecurse();
-}
-
-void* VM::currentCLoopStackPointer() const
-{
-    return interpreter.cloopStack().currentStackPointer();
-}
-#endif // ENABLE(C_LOOP)
 
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
 void VM::verifyExceptionCheckNeedIsSatisfied(unsigned recursionDepth, ExceptionEventLocation& location)
@@ -1450,7 +1470,7 @@ void VM::verifyExceptionCheckNeedIsSatisfied(unsigned recursionDepth, ExceptionE
         out.println(StackTracePrinter { *currentTrace, "    " });
 
         dataLog(out.toCString());
-        RELEASE_ASSERT(!m_needExceptionCheck);
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("exception check validation failed");
     }
 }
 #endif
@@ -1526,6 +1546,62 @@ JSPropertyNameEnumerator* VM::emptyPropertyNameEnumeratorSlow()
     return enumerator;
 }
 
+NativeExecutable* VM::promiseResolvingFunctionResolveExecutableSlow()
+{
+    ASSERT(!m_promiseResolvingFunctionResolveExecutable);
+    auto* executable = getHostFunction(promiseResolvingFunctionResolve, ImplementationVisibility::Public, callHostFunctionAsConstructor, emptyString());
+    m_promiseResolvingFunctionResolveExecutable.setWithoutWriteBarrier(executable);
+    return executable;
+}
+
+NativeExecutable* VM::promiseResolvingFunctionRejectExecutableSlow()
+{
+    ASSERT(!m_promiseResolvingFunctionRejectExecutable);
+    auto* executable = getHostFunction(promiseResolvingFunctionReject, ImplementationVisibility::Public, callHostFunctionAsConstructor, emptyString());
+    m_promiseResolvingFunctionRejectExecutable.setWithoutWriteBarrier(executable);
+    return executable;
+}
+
+NativeExecutable* VM::promiseFirstResolvingFunctionResolveExecutableSlow()
+{
+    ASSERT(!m_promiseFirstResolvingFunctionResolveExecutable);
+    auto* executable = getHostFunction(promiseFirstResolvingFunctionResolve, ImplementationVisibility::Public, callHostFunctionAsConstructor, emptyString());
+    m_promiseFirstResolvingFunctionResolveExecutable.setWithoutWriteBarrier(executable);
+    return executable;
+}
+
+NativeExecutable* VM::promiseFirstResolvingFunctionRejectExecutableSlow()
+{
+    ASSERT(!m_promiseFirstResolvingFunctionRejectExecutable);
+    auto* executable = getHostFunction(promiseFirstResolvingFunctionReject, ImplementationVisibility::Public, callHostFunctionAsConstructor, emptyString());
+    m_promiseFirstResolvingFunctionRejectExecutable.setWithoutWriteBarrier(executable);
+    return executable;
+}
+
+NativeExecutable* VM::promiseResolvingFunctionResolveWithoutPromiseExecutableSlow()
+{
+    ASSERT(!m_promiseResolvingFunctionResolveWithoutPromiseExecutable);
+    auto* executable = getHostFunction(promiseResolvingFunctionResolveWithoutPromise, ImplementationVisibility::Public, callHostFunctionAsConstructor, emptyString());
+    m_promiseResolvingFunctionResolveWithoutPromiseExecutable.setWithoutWriteBarrier(executable);
+    return executable;
+}
+
+NativeExecutable* VM::promiseResolvingFunctionRejectWithoutPromiseExecutableSlow()
+{
+    ASSERT(!m_promiseResolvingFunctionRejectWithoutPromiseExecutable);
+    auto* executable = getHostFunction(promiseResolvingFunctionRejectWithoutPromise, ImplementationVisibility::Public, callHostFunctionAsConstructor, emptyString());
+    m_promiseResolvingFunctionRejectWithoutPromiseExecutable.setWithoutWriteBarrier(executable);
+    return executable;
+}
+
+NativeExecutable* VM::promiseCapabilityExecutorExecutableSlow()
+{
+    ASSERT(!m_promiseCapabilityExecutorExecutable);
+    auto* executable = getHostFunction(promiseCapabilityExecutor, ImplementationVisibility::Public, callHostFunctionAsConstructor, emptyString());
+    m_promiseCapabilityExecutorExecutable.setWithoutWriteBarrier(executable);
+    return executable;
+}
+
 void VM::executeEntryScopeServicesOnEntry()
 {
     if (hasEntryScopeServiceRequest(EntryScopeService::FirePrimitiveGigacageEnabled)) [[unlikely]] {
@@ -1549,10 +1625,16 @@ void VM::executeEntryScopeServicesOnEntry()
 
     if (Options::useTracePoints()) [[unlikely]]
         tracePoint(VMEntryScopeStart);
+
+    if (hasEntryScopeServiceRequest(ConcurrentEntryScopeService::NeedStopTheWorld)) [[unlikely]]
+        VMManager::singleton().notifyVMActivation(*this);
 }
 
 void VM::executeEntryScopeServicesOnExit()
 {
+    if (hasEntryScopeServiceRequest(ConcurrentEntryScopeService::NeedStopTheWorld)) [[unlikely]]
+        VMManager::singleton().notifyVMDeactivation(*this);
+
     if (Options::useTracePoints()) [[unlikely]]
         tracePoint(VMEntryScopeEnd);
 
@@ -1663,12 +1745,13 @@ void VM::visitAggregateImpl(Visitor& visitor)
     visitor.append(webAssemblyCalleeGroupStructure);
 #endif
     visitor.append(moduleProgramExecutableStructure);
+    visitor.append(promiseReactionStructure);
     visitor.append(regExpStructure);
     visitor.append(symbolStructure);
     visitor.append(symbolTableStructure);
-    for (auto& structure : immutableButterflyStructures)
+    for (auto& structure : cellButterflyStructures)
         visitor.append(structure);
-    visitor.append(immutableButterflyOnlyAtomStringsStructure);
+    visitor.append(cellButterflyOnlyAtomStringsStructure);
     visitor.append(sourceCodeStructure);
     visitor.append(scriptFetcherStructure);
     visitor.append(scriptFetchParametersStructure);
@@ -1698,6 +1781,14 @@ void VM::visitAggregateImpl(Visitor& visitor)
     visitor.append(m_slowCanConstructBoundExecutable);
     visitor.append(lastCachedString);
     visitor.append(heapBigIntConstantOne);
+
+    visitor.append(m_promiseResolvingFunctionResolveExecutable);
+    visitor.append(m_promiseResolvingFunctionRejectExecutable);
+    visitor.append(m_promiseFirstResolvingFunctionResolveExecutable);
+    visitor.append(m_promiseFirstResolvingFunctionRejectExecutable);
+    visitor.append(m_promiseResolvingFunctionResolveWithoutPromiseExecutable);
+    visitor.append(m_promiseResolvingFunctionRejectWithoutPromiseExecutable);
+    visitor.append(m_promiseCapabilityExecutorExecutable);
 }
 DEFINE_VISIT_AGGREGATE(VM);
 
@@ -1743,7 +1834,6 @@ void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSe
             if (estimatedGCDuration + extraDurationToAvoidExceedingDeadlineDuringFullGC < remainingTime) {
                 dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] FULL", " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
                 heap.collectSync(CollectionScope::Full);
-                heap.m_shouldDoOpportunisticFullCollection = false;
                 return;
             }
         }
@@ -1754,8 +1844,12 @@ void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSe
             if (estimatedGCDuration + extraDurationToAvoidExceedingDeadlineDuringEdenGC < remainingTime) {
                 dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] EDEN: ", timeSinceFinishingLastFullGC, " ", timeSinceLastGC, " ", heap.m_shouldDoOpportunisticFullCollection, " ", heap.m_totalBytesVisitedAfterLastFullCollect, " ", heap.totalBytesAllocatedThisCycle(), " ", heap.m_bytesAllocatedBeforeLastEdenCollect, " ", heap.m_lastGCEndTime, " ", heap.m_currentGCStartTime, " ", (heap.lastFullGCLength() * heap.m_totalBytesVisited) / heap.m_totalBytesVisitedAfterLastFullCollect, " ", remainingTime, " ", (heap.lastEdenGCLength() * heap.totalBytesAllocatedThisCycle()) / heap.m_bytesAllocatedBeforeLastEdenCollect, " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
                 heap.collectSync(CollectionScope::Eden);
-                heap.m_shouldDoOpportunisticFullCollection = false;
                 return;
+            } else if (estimatedGCDuration < 2 * remainingTime) {
+                if (heap.totalBytesAllocatedThisCycle() * 2 > heap.m_minBytesPerCycle) {
+                    heap.collectAsync(CollectionScope::Eden);
+                    return;
+                }
             }
         }
 

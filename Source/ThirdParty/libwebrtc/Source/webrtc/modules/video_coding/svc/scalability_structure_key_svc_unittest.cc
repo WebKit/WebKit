@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "api/array_view.h"
-#include "api/transport/rtp/dependency_descriptor.h"
 #include "common_video/generic_frame_descriptor/generic_frame_info.h"
 #include "modules/video_coding/svc/scalability_structure_test_helpers.h"
 #include "test/gmock.h"
@@ -235,7 +234,7 @@ TEST(ScalabilityStructureL3T3KeyTest, ReenablingSpatialLayerTriggersKeyFrame) {
   EXPECT_EQ(frames[13].temporal_id, 0);
   EXPECT_EQ(frames[14].temporal_id, 0);
   EXPECT_EQ(frames[15].temporal_id, 0);
-  auto all_frames = rtc::MakeArrayView(frames.data(), frames.size());
+  auto all_frames = MakeArrayView(frames.data(), frames.size());
   EXPECT_TRUE(wrapper.FrameReferencesAreValid(all_frames.subview(0, 13)));
   // Frames starting from the frame#13 should not reference any earlier frames.
   EXPECT_TRUE(wrapper.FrameReferencesAreValid(all_frames.subview(13)));

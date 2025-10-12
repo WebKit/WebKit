@@ -37,7 +37,9 @@
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
 
-struct WGPUTextureImpl {
+// FIXME(rdar://155970441): this annotation should be in WebGPU.h, move it once we support
+// annotating incomplete types
+struct SWIFT_SHARED_REFERENCE(wgpuTextureReference, wgpuTextureRelease) WGPUTextureImpl {
 };
 
 namespace WebGPU {
@@ -87,6 +89,7 @@ public:
     static NSString* errorValidatingLinearTextureData(const WGPUTextureDataLayout&, uint64_t, WGPUTextureFormat, WGPUExtent3D);
     static MTLTextureUsage usage(WGPUTextureUsageFlags, WGPUTextureFormat);
     static MTLPixelFormat pixelFormat(WGPUTextureFormat);
+    static WGPUTextureFormat textureFormat(MTLPixelFormat);
     static std::optional<MTLPixelFormat> depthOnlyAspectMetalFormat(WGPUTextureFormat);
     static std::optional<MTLPixelFormat> stencilOnlyAspectMetalFormat(WGPUTextureFormat);
     static WGPUTextureFormat removeSRGBSuffix(WGPUTextureFormat);
@@ -120,11 +123,13 @@ public:
 
     Device& device() const { return m_device; }
 
+    bool previouslyCleared() const;
+    void setPreviouslyCleared();
     bool previouslyCleared(uint32_t mipLevel, uint32_t slice) const;
     void setPreviouslyCleared(uint32_t mipLevel, uint32_t slice, bool = true);
     bool isDestroyed() const { return m_destroyed; }
 
-    static bool hasStorageBindingCapability(WGPUTextureFormat, const Device&, WGPUStorageTextureAccess = WGPUStorageTextureAccess_Undefined);
+    static bool hasStorageBindingCapability(WGPUTextureFormat, const Device&, std::optional<WGPUStorageTextureAccess> = std::nullopt);
     static bool supportsMultisampling(WGPUTextureFormat, const Device&);
     static bool supportsResolve(WGPUTextureFormat, const Device&);
     static bool supportsBlending(WGPUTextureFormat, const Device&);
@@ -138,13 +143,24 @@ public:
     void updateCompletionEvent(const std::pair<id<MTLSharedEvent>, uint64_t>&);
     id<MTLSharedEvent> sharedEvent() const;
     uint64_t sharedEventSignalValue() const;
+    void setRasterizationRateMaps(std::pair<id<MTLRasterizationRateMap>, id<MTLRasterizationRateMap>>&& rateMaps) { m_leftRightRasterizationMaps = WTFMove(rateMaps); }
+    id<MTLRasterizationRateMap> rasterizationMapForSlice(uint32_t slice) const { return slice ? m_leftRightRasterizationMaps.second : m_leftRightRasterizationMaps.first; }
+    uint32_t arrayLayerCount() const;
+    WGPUTextureAspect aspect() const { return WGPUTextureAspect_All; }
+    uint32_t baseArrayLayer() const { return 0; }
+    uint32_t baseMipLevel() const { return 0; }
+    uint32_t parentRelativeSlice() const { return 0; }
+    bool is2DTexture() const { return dimension() == WGPUTextureDimension_2D; }
+    bool is2DArrayTexture() const { return is2DTexture() && arrayLayerCount() > 1; }
+    bool is3DTexture() const { return dimension() == WGPUTextureDimension_3D; }
+    id<MTLTexture> parentTexture() const { return texture(); }
+    const Texture& apiParentTexture() const { return *this; }
 
 private:
     Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Vector<WGPUTextureFormat>&& viewFormats, Device&);
     Texture(Device&);
 
     std::optional<WGPUTextureViewDescriptor> resolveTextureViewDescriptorDefaults(const WGPUTextureViewDescriptor&) const;
-    uint32_t arrayLayerCount() const;
     NSString* errorValidatingTextureViewCreation(const WGPUTextureViewDescriptor&) const;
 
     id<MTLTexture> m_texture { nil };
@@ -169,6 +185,8 @@ private:
     bool m_canvasBacking { false };
     mutable Vector<uint64_t> m_commandEncoders;
     id<MTLSharedEvent> m_sharedEvent { nil };
+    std::pair<id<MTLRasterizationRateMap>, id<MTLRasterizationRateMap>> m_leftRightRasterizationMaps;
+
     uint64_t m_sharedEventSignalValue { 0 };
 } SWIFT_SHARED_REFERENCE(refTexture, derefTexture);
 

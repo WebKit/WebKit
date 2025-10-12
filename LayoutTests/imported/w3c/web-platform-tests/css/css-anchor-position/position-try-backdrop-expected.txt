@@ -1,5 +1,5 @@
 Anchor
 Dialog
 
-FAIL ::backdrop can use position-try-fallbacks assert_equals: expected "300px" but got "9999px"
+PASS ::backdrop can use position-try-fallbacks
 

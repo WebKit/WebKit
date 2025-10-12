@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "LazyOperandValueProfile.h"
+#include <JavaScriptCore/LazyOperandValueProfile.h>
 
 namespace JSC {
 

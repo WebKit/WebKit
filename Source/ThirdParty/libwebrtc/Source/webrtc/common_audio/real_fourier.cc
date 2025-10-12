@@ -10,9 +10,16 @@
 
 #include "common_audio/real_fourier.h"
 
+#include <complex>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+
 #include "common_audio/real_fourier_ooura.h"
-#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"  // IWYU pragma: keep
+#include "common_audio/signal_processing/include/spl_inl.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/memory/aligned_malloc.h"
 
 namespace webrtc {
 

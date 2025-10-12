@@ -23,22 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #import <XCTest/XCTest.h>
-#import <string>
-#import <fstream>
 #import <filesystem>
+#import <fstream>
+#import <string>
 #import <vector>
 
 extern "C" int LLVMFuzzerTestOneInput(const unsigned char *data, size_t size);
 
-// In order to link with the fuzzer that uses LLVMFuzzerMutate, provide a dummy symbol for the function.
-extern "C" size_t LLVMFuzzerMutate(uint8_t*, size_t, size_t)
+// In order to link with the fuzzer that uses LLVMFuzzerMutate, provide a dummy symbol for the
+// function.
+extern "C" size_t LLVMFuzzerMutate(uint8_t *, size_t, size_t)
 {
     exit(1);
     return 0;
 }
-
 
 @interface TranslatorFuzzerCoverage : XCTestCase
 
@@ -46,26 +45,25 @@ extern "C" size_t LLVMFuzzerMutate(uint8_t*, size_t, size_t)
 
 @implementation TranslatorFuzzerCoverage
 
-- (void)setUp {
+- (void)setUp
+{}
 
-}
+- (void)tearDown
+{}
 
-- (void)tearDown {
-
-}
-
-- (void)testFuzzerCorpusCoverage {
-    const char* corpusPathEnv = getenv("ANGLE_TRANSLATOR_FUZZER_CORPUS_PATH");
-    std::string corpusPath = corpusPathEnv ? corpusPathEnv : "corpus";
-    for (auto& fileEntry : std::filesystem::directory_iterator { corpusPath })
+- (void)testFuzzerCorpusCoverage
+{
+    const char *corpusPathEnv = getenv("ANGLE_TRANSLATOR_FUZZER_CORPUS_PATH");
+    std::string corpusPath    = corpusPathEnv ? corpusPathEnv : "corpus";
+    for (auto &fileEntry : std::filesystem::directory_iterator{corpusPath})
     {
-        std::ifstream file { fileEntry.path(), std::ios::binary };
+        std::ifstream file{fileEntry.path(), std::ios::binary};
         file.seekg(0, std::ios::end);
         std::streampos fileSize = file.tellg();
         file.seekg(0, std::ios::beg);
 
         std::vector<uint8_t> fileData(fileSize);
-        file.read(reinterpret_cast<char*>(&fileData[0]), fileSize);
+        file.read(reinterpret_cast<char *>(&fileData[0]), fileSize);
         LLVMFuzzerTestOneInput(&fileData[0], fileData.size());
         XCTAssertTrue(true, @"Case done: %s", fileEntry.path().c_str());
     }

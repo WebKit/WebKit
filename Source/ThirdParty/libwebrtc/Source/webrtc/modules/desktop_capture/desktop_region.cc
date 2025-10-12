@@ -11,8 +11,10 @@
 #include "modules/desktop_capture/desktop_region.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <utility>
 
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

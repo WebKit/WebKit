@@ -4,22 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-object-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Object.getOwnPropertyNames: function objects
+info: bugzilla.mozilla.org/show_bug.cgi?id=518663
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 518663;
-var summary = 'Object.getOwnPropertyNames: function objects';
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 function two(a, b) { }
 
@@ -52,8 +41,3 @@ var bound3 = Function.prototype.bind
 
 assert.sameValue(Object.getOwnPropertyNames(bound3).indexOf("length") >= 0, true);
 assert.sameValue(bound3.length, 0);
-
-
-/******************************************************************************/
-
-print("All tests passed!");

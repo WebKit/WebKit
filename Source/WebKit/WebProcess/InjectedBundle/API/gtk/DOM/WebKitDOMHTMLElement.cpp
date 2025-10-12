@@ -447,7 +447,7 @@ void webkit_dom_html_element_set_dir(WebKitDOMHTMLElement* self, const gchar* va
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLElement* item = WebKit::core(self);
-    item->setDir(WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::dirAttr, WTF::AtomString::fromUTF8(value));
 }
 
 glong webkit_dom_html_element_get_tab_index(WebKitDOMHTMLElement* self)

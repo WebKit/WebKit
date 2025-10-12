@@ -29,6 +29,7 @@
 #import "WebProcessPool.h"
 #import <pal/spi/cocoa/NSUserDefaultsSPI.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 @interface WKUserDefaults : NSUserDefaults {
 @private
@@ -49,7 +50,8 @@
 
 - (void)findPreferenceChangesAndNotifyForKeys:(NSDictionary<NSString *, id> *)oldValues toValuesForKeys:(NSDictionary<NSString *, id> *)newValues
 {
-    if (!m_observer)
+    RetainPtr strongObserver = m_observer.get();
+    if (!strongObserver)
         return;
 
     for (NSString *key in oldValues) {
@@ -80,10 +82,10 @@
         };
 
         if (preferenceValuesAreEqual((__bridge id)systemValue.get(), newValue.get()) || preferenceValuesAreEqual((__bridge id)globalValue.get(), newValue.get()))
-            [m_observer preferenceDidChange:nil key:key encodedValue:encodedString.get()];
+            [strongObserver.get() preferenceDidChange:nil key:key encodedValue:encodedString.get()];
 
         if (preferenceValuesAreEqual((__bridge id)domainValue.get(), newValue.get()))
-            [m_observer preferenceDidChange:m_suiteName.get() key:key encodedValue:encodedString.get()];
+            [strongObserver.get() preferenceDidChange:m_suiteName.get() key:key encodedValue:encodedString.get()];
     }
 }
 
@@ -96,7 +98,7 @@
         return;
     }
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [self, protectedSelf = retainPtr(self), oldValues = retainPtr(oldValues), newValues = retainPtr(newValues)] {
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [self, protectedSelf = retainPtr(self), oldValues = retainPtr(oldValues), newValues = retainPtr(newValues)] {
         [self findPreferenceChangesAndNotifyForKeys:oldValues.get() toValuesForKeys:newValues.get()];
     });
 }
@@ -177,7 +179,7 @@
 - (void)preferenceDidChange:(NSString *)domain key:(NSString *)key encodedValue:(NSString *)encodedValue
 {
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    RunLoop::protectedMain()->dispatch([domain = retainPtr(domain), key = retainPtr(key), encodedValue = retainPtr(encodedValue)] {
+    RunLoop::mainSingleton().dispatch([domain = retainPtr(domain), key = retainPtr(key), encodedValue = retainPtr(encodedValue)] {
         std::optional<String> encodedValueString;
         if (encodedValue)
             encodedValueString = String(encodedValue.get());

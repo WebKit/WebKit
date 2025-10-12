@@ -28,6 +28,7 @@
 #import "XPCUtilities.h"
 
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/ASCIILiteral.h>
 
 #if PLATFORM(MAC)
@@ -43,7 +44,7 @@ XPCEndpoint::XPCEndpoint()
     m_connection = adoptOSObject(xpc_connection_create(nullptr, nullptr));
     m_endpoint = adoptOSObject(xpc_endpoint_create(m_connection.get()));
 
-    xpc_connection_set_target_queue(m_connection.get(), dispatch_get_main_queue());
+    xpc_connection_set_target_queue(m_connection.get(), mainDispatchQueueSingleton());
     xpc_connection_set_event_handler(m_connection.get(), ^(xpc_object_t message) {
         xpc_type_t type = xpc_get_type(message);
 #if USE(EXIT_XPC_MESSAGE_WORKAROUND)
@@ -68,7 +69,7 @@ XPCEndpoint::XPCEndpoint()
 #endif
             }
 #endif // USE(APPLE_INTERNAL_SDK)
-            xpc_connection_set_target_queue(connection.get(), dispatch_get_main_queue());
+            xpc_connection_set_target_queue(connection.get(), mainDispatchQueueSingleton());
             xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t event) {
                 handleEvent(connection.get(), event);
             });

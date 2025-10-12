@@ -34,10 +34,10 @@ namespace Layout {
 class InlineContentBreaker;
 
 class RangeBasedLineBuilder final : public AbstractLineBuilder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RangeBasedLineBuilder);
 public:
     RangeBasedLineBuilder(InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineContentCache::InlineItems&);
-    LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
+    LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&, bool isFirstFormattedLineCandidate) final;
 
     static bool isEligibleForRangeInlineLayout(const InlineFormattingContext&, const InlineContentCache::InlineItems&, const PlacedFloats&);
 

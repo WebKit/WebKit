@@ -118,7 +118,7 @@ private:
 
     float m_scale;
 
-    typedef UncheckedKeyHashMap<TileIndex, RefPtr<LegacyTileGridTile>> TileMap;
+    using TileMap = HashMap<TileIndex, RefPtr<LegacyTileGridTile>>;
     TileMap m_tiles;
 
     IntRect m_validBounds;

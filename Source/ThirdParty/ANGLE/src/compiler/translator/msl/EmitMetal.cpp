@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <cctype>
 #include <map>
 
@@ -191,7 +195,7 @@ class GenMetalTraverser : public TIntermTraverser
     const PipelineStructs &mPipelineStructs;
     SymbolEnv &mSymbolEnv;
     IdGen &mIdGen;
-    int mForwardProgressStoreNestingCount  = -1; // Negative means forward progress is not ensured.
+    int mForwardProgressStoreNestingCount = -1;  // Negative means forward progress is not ensured.
     int mIndentLevel                  = -1;
     int mLastIndentationPos           = -1;
     int mOpenPointerParenCount        = 0;
@@ -211,14 +215,15 @@ class GenMetalTraverser : public TIntermTraverser
 
 class ScopedForwardProgressStore
 {
-public:
-    ScopedForwardProgressStore(GenMetalTraverser& traverser);
+  public:
+    ScopedForwardProgressStore(GenMetalTraverser &traverser);
     ~ScopedForwardProgressStore();
-private:
-    GenMetalTraverser& mTraverser;
+
+  private:
+    GenMetalTraverser &mTraverser;
 };
 
-ScopedForwardProgressStore::ScopedForwardProgressStore(GenMetalTraverser& traverser)
+ScopedForwardProgressStore::ScopedForwardProgressStore(GenMetalTraverser &traverser)
     : mTraverser(traverser)
 {
     if (mTraverser.shouldEnsureForwardProgress())
@@ -272,7 +277,9 @@ GenMetalTraverser::GenMetalTraverser(const TCompiler &compiler,
                                   ShFragmentSynchronizationType::RasterOrderGroups_Metal)
 {
     if (compileOptions.metal.injectAsmStatementIntoLoopBodies)
+    {
         mForwardProgressStoreNestingCount = 0;
+    }
 }
 
 void GenMetalTraverser::emitIndentation()
@@ -321,12 +328,20 @@ static const char *GetOperatorString(TOperator op,
             return "=";
         case TOperator::EOpInitialize:
             return "=";
+        case TOperator::EOpAddAssign:
+            return resultType.isSignedInt() ? "ANGLE_addAssignInt" : "+=";
+        case TOperator::EOpSubAssign:
+            return resultType.isSignedInt() ? "ANGLE_subAssignInt" : "-=";
         case TOperator::EOpBitwiseAndAssign:
             return "&=";
         case TOperator::EOpBitwiseXorAssign:
             return "^=";
         case TOperator::EOpBitwiseOrAssign:
             return "|=";
+        case TOperator::EOpAdd:
+            return resultType.isSignedInt() ? "ANGLE_addInt" : "+";
+        case TOperator::EOpSub:
+            return resultType.isSignedInt() ? "ANGLE_subInt" : "-";
         case TOperator::EOpBitwiseAnd:
             return "&";
         case TOperator::EOpBitwiseXor:
@@ -371,13 +386,13 @@ static const char *GetOperatorString(TOperator op,
         case TOperator::EOpBitwiseNot:
             return "~";
         case TOperator::EOpPostIncrement:
-            return "++";
+            return resultType.isSignedInt() ? "ANGLE_postIncrementInt" : "++";
         case TOperator::EOpPostDecrement:
-            return "--";
+            return resultType.isSignedInt() ? "ANGLE_postDecrementInt" : "--";
         case TOperator::EOpPreIncrement:
-            return "++";
+            return resultType.isSignedInt() ? "ANGLE_preIncrementInt" : "++";
         case TOperator::EOpPreDecrement:
-            return "--";
+            return resultType.isSignedInt() ? "ANGLE_preDecrementInt" : "--";
         case TOperator::EOpVectorTimesMatrixAssign:
             return "*=";
         case TOperator::EOpMatrixTimesScalarAssign:
@@ -406,14 +421,6 @@ static const char *GetOperatorString(TOperator op,
         case TOperator::EOpBitShiftLeftAssign:
             // TODO: Check logical vs arithmetic shifting.
             return resultType.isSignedInt() ? "ANGLE_ilshift" : "ANGLE_ulshift";
-
-        case TOperator::EOpAddAssign:
-        case TOperator::EOpAdd:
-            return resultType.isSignedInt() ? "ANGLE_iadd" : "+";
-
-        case TOperator::EOpSubAssign:
-        case TOperator::EOpSub:
-            return resultType.isSignedInt() ? "ANGLE_isub" : "-";
 
         case TOperator::EOpMulAssign:
         case TOperator::EOpMul:
@@ -566,6 +573,8 @@ static const char *GetOperatorString(TOperator op,
             return "metal::rint";
         case TOperator::EOpClamp:
             return "metal::clamp";  // TODO fast vs precise namespace
+        case TOperator::EOpLoopForwardProgress:
+            return "ANGLE_loopForwardProgress";
         case TOperator::EOpSaturate:
             return "metal::saturate";  // TODO fast vs precise namespace
         case TOperator::EOpMix:
@@ -2304,9 +2313,13 @@ bool GenMetalTraverser::visitAggregate(Visit, TIntermAggregate *aggregateNode)
             bool isFtoi = [&]() {
                 if ((!retType.isScalar() && !retType.isVector()) ||
                     !IsInteger(retType.getBasicType()))
+                {
                     return false;
+                }
                 if (aggregateNode->getChildCount() != 1)
+                {
                     return false;
+                }
                 auto &argType = aggregateNode->getChildNode(0)->getAsTyped()->getType();
                 return (argType.isScalar() || argType.isVector()) &&
                        argType.getBasicType() == EbtFloat;

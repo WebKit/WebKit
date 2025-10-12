@@ -101,6 +101,10 @@ public:
 private:
     SVGFEConvolveMatrixElement(const QualifiedName&, Document&);
 
+    static constexpr int initialOrderValue = 3;
+    static constexpr float initialDivisorValue = 1;
+    static constexpr float initialKernelUnitLengthValue = 0;
+
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
@@ -111,10 +115,10 @@ private:
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
-    Ref<SVGAnimatedInteger> m_orderX { SVGAnimatedInteger::create(this) };
-    Ref<SVGAnimatedInteger> m_orderY { SVGAnimatedInteger::create(this) };
+    Ref<SVGAnimatedInteger> m_orderX { SVGAnimatedInteger::create(this, initialOrderValue) };
+    Ref<SVGAnimatedInteger> m_orderY { SVGAnimatedInteger::create(this, initialOrderValue) };
     Ref<SVGAnimatedNumberList> m_kernelMatrix { SVGAnimatedNumberList::create(this) };
-    Ref<SVGAnimatedNumber> m_divisor { SVGAnimatedNumber::create(this) };
+    Ref<SVGAnimatedNumber> m_divisor { SVGAnimatedNumber::create(this, initialDivisorValue) };
     Ref<SVGAnimatedNumber> m_bias { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedInteger> m_targetX { SVGAnimatedInteger::create(this) };
     Ref<SVGAnimatedInteger> m_targetY { SVGAnimatedInteger::create(this) };

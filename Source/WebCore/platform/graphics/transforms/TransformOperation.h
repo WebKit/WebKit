@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "CompositeOperation.h"
-#include "FloatSize.h"
-#include "TransformationMatrix.h"
+#include <WebCore/CompositeOperation.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/TransformationMatrix.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
@@ -72,20 +72,16 @@ public:
     virtual ~TransformOperation() = default;
 
     virtual Ref<TransformOperation> clone() const = 0;
-    virtual Ref<TransformOperation> selfOrCopyWithResolvedCalculatedValues(const FloatSize&) { return *this; }
 
     virtual bool operator==(const TransformOperation&) const = 0;
 
-    virtual bool isIdentity() const = 0;
-
-    // Return true if the borderBoxSize was used in the computation, false otherwise.
-    virtual bool apply(TransformationMatrix&, const FloatSize& borderBoxSize) const = 0;
-    virtual bool applyUnrounded(TransformationMatrix& transform, const FloatSize& borderBoxSize) const
+    virtual void apply(TransformationMatrix&) const = 0;
+    virtual void applyUnrounded(TransformationMatrix& transform) const
     {
-        return apply(transform, borderBoxSize);
+        apply(transform);
     }
 
-    virtual Ref<TransformOperation> blend(const TransformOperation* from, const BlendingContext&, bool blendToIdentity = false) = 0;
+    virtual Ref<TransformOperation> blend(const TransformOperation* from, const BlendingContext&, bool blendToIdentity = false) const = 0;
 
     Type type() const { return m_type; }
     bool isSameType(const TransformOperation& other) const { return type() == other.type(); }
@@ -93,24 +89,6 @@ public:
     virtual Type primitiveType() const { return m_type; }
     std::optional<Type> sharedPrimitiveType(Type other) const;
     std::optional<Type> sharedPrimitiveType(const TransformOperation* other) const;
-
-    virtual bool isAffectedByTransformOrigin() const { return false; }
-    
-    bool is3DOperation() const
-    {
-        Type opType = type();
-        return opType == Type::ScaleZ
-            || opType == Type::Scale3D
-            || opType == Type::TranslateZ
-            || opType == Type::Translate3D
-            || opType == Type::RotateX
-            || opType == Type::RotateY
-            || opType == Type::Rotate3D
-            || opType == Type::Matrix3D
-            || opType == Type::Perspective;
-    }
-    
-    virtual bool isRepresentableIn2D() const { return true; }
 
     static bool isRotateTransformOperationType(Type type)
     {
@@ -145,7 +123,7 @@ public:
             || type == Type::Translate
             || type == Type::Translate3D;
     }
-    
+
     virtual void dump(WTF::TextStream&) const = 0;
 
 private:

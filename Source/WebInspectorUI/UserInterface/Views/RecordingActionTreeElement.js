@@ -293,7 +293,6 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         case "createImageData":
         case "drawFocusIfNeeded":
         case "drawImage":
-        case "drawImageFromRect":
         case "filter":
         case "getImageData":
         case "imageSmoothingEnabled":

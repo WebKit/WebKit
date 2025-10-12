@@ -3,7 +3,7 @@
  * Copyright (C) 1999 Antti Koivisto <koivisto@kde.org>
  * Copyright (C) 2006 Allan Sandfeld Jensen <kde@carewolf.com>
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
- * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "RenderImageResource.h"
-#include "StyleImage.h"
+#include <WebCore/RenderImageResource.h>
+#include <WebCore/StyleImage.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -54,7 +54,7 @@ private:
     WrappedImagePtr imagePtr() const final { return m_styleImage->data(); }
     LayoutSize imageSize(float multiplier, CachedImage::SizeType) const final { return LayoutSize(m_styleImage->imageSize(renderer(), multiplier)); }
 
-    Ref<StyleImage> m_styleImage;
+    const Ref<StyleImage> m_styleImage;
 };
 
 } // namespace WebCore

@@ -14,6 +14,7 @@
 
 #include "gtest/gtest.h"
 
+#include "config/aom_config.h"
 #include "config/av1_rtcd.h"
 
 #include "test/acm_random.h"
@@ -422,6 +423,15 @@ INSTANTIATE_TEST_SUITE_P(
     AVX2, AV1HighbdSelfguidedFilterTest,
     ::testing::Combine(::testing::Values(av1_apply_selfguided_restoration_avx2),
                        ::testing::ValuesIn(highbd_params_avx2)));
+#endif
+
+#if HAVE_AVX512 && CONFIG_HIGHWAY
+const int highbd_params_avx512[] = { 8, 10, 12 };
+INSTANTIATE_TEST_SUITE_P(
+    AVX512, AV1HighbdSelfguidedFilterTest,
+    ::testing::Combine(
+        ::testing::Values(av1_apply_selfguided_restoration_avx512),
+        ::testing::ValuesIn(highbd_params_avx512)));
 #endif
 
 #if HAVE_NEON

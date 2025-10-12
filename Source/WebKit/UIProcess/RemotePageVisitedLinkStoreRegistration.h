@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,19 +39,17 @@ public:
         : m_page(page)
         , m_process(process)
     {
-        protectedProcess()->addVisitedLinkStoreUser(page.visitedLinkStore(), page.identifier());
+        m_process->addVisitedLinkStoreUser(page.visitedLinkStore(), page.identifier());
     }
     ~RemotePageVisitedLinkStoreRegistration()
     {
         if (RefPtr page = m_page.get())
-            protectedProcess()->removeVisitedLinkStoreUser(page->visitedLinkStore(), page->identifier());
+            m_process->removeVisitedLinkStoreUser(page->visitedLinkStore(), page->identifier());
     }
 
 private:
-    Ref<WebProcessProxy> protectedProcess() const { return m_process; }
-
     WeakPtr<WebPageProxy> m_page;
-    Ref<WebProcessProxy> m_process;
+    const Ref<WebProcessProxy> m_process;
 };
 
 }

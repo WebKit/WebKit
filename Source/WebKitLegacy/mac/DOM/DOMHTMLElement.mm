@@ -90,7 +90,7 @@
 - (void)setDir:(NSString *)newDir
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setDir(newDir);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::dirAttr, newDir);
 }
 
 - (int)tabIndex
@@ -259,12 +259,14 @@
 
 #if ENABLE(AUTOCORRECT)
 
+// FIXME: This method isn't in a header. Is it used? Can we remove it?
 - (BOOL)autocorrect
 {
     WebCore::JSMainThreadNullState state;
     return IMPL->shouldAutocorrect();
 }
 
+// FIXME: This method isn't in a header. Is it used? Can we remove it?
 - (void)setAutocorrect:(BOOL)newAutocorrect
 {
     WebCore::JSMainThreadNullState state;
@@ -275,16 +277,18 @@
 
 #if ENABLE(AUTOCAPITALIZE)
 
+// FIXME: This method isn't in a header. Is it used? Can we remove it?
 - (NSString *)autocapitalize
 {
     WebCore::JSMainThreadNullState state;
     return IMPL->autocapitalize().createNSString().autorelease();
 }
 
+// FIXME: This method isn't in a header. Is it used? Can we remove it?
 - (void)setAutocapitalize:(NSString *)newAutocapitalize
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAutocapitalize(newAutocapitalize);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::autocapitalizeAttr, newAutocapitalize);
 }
 
 #endif

@@ -102,8 +102,9 @@ void BackgroundFetchEngine::startBackgroundFetch(SWServerRegistration& registrat
 // https://wicg.github.io/background-fetch/#update-background-fetch-instance-algorithm
 void BackgroundFetchEngine::notifyBackgroundFetchUpdate(BackgroundFetch& fetch)
 {
+    RefPtr server = m_server.get();
     auto information = fetch.information();
-    auto* registration = m_server->getRegistration(information.registrationIdentifier);
+    RefPtr registration = server->getRegistration(information.registrationIdentifier);
     if (!registration)
         return;
 
@@ -116,7 +117,7 @@ void BackgroundFetchEngine::notifyBackgroundFetchUpdate(BackgroundFetch& fetch)
         return;
 
     // FIXME: We should delay events if the service worker (or related page) is not running.
-    m_server->fireBackgroundFetchEvent(*registration, WTFMove(information), [weakFetch = WeakPtr { fetch }]() {
+    server->fireBackgroundFetchEvent(*registration, WTFMove(information), [weakFetch = WeakPtr { fetch }]() {
         if (weakFetch)
             weakFetch->unsetRecordsAvailableFlag();
     });
@@ -198,7 +199,7 @@ void BackgroundFetchEngine::abortBackgroundFetch(SWServerRegistration& registrat
         callback(false);
         return;
     }
-    callback(fetchIterator->value->abort());
+    callback(Ref { fetchIterator->value }->abort());
 }
 
 // https://wicg.github.io/background-fetch/#dom-backgroundfetchregistration-matchall starting from step 3
@@ -225,7 +226,7 @@ void BackgroundFetchEngine::matchBackgroundFetch(SWServerRegistration& registrat
         callback({ });
         return;
     }
-    fetchIterator->value->match(options, [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto&& records) mutable {
+    Ref { fetchIterator->value }->match(options, [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto&& records) mutable {
         if (!weakThis) {
             callback({ });
             return;
@@ -251,7 +252,7 @@ void BackgroundFetchEngine::remove(SWServerRegistration& registration)
 
 void BackgroundFetchEngine::retrieveRecordResponse(BackgroundFetchRecordIdentifier recordIdentifier, RetrieveRecordResponseCallback&& callback)
 {
-    auto record = m_records.get(recordIdentifier);
+    RefPtr record = m_records.get(recordIdentifier);
     if (!record) {
         callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Record not found"_s }));
         return;
@@ -261,7 +262,7 @@ void BackgroundFetchEngine::retrieveRecordResponse(BackgroundFetchRecordIdentifi
 
 void BackgroundFetchEngine::retrieveRecordResponseBody(BackgroundFetchRecordIdentifier recordIdentifier, RetrieveRecordResponseBodyCallback&& callback)
 {
-    auto record = m_records.get(recordIdentifier);
+    RefPtr record = m_records.get(recordIdentifier);
     if (!record) {
         callback(makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, { }, "Record not found"_s }));
         return;
@@ -271,7 +272,7 @@ void BackgroundFetchEngine::retrieveRecordResponseBody(BackgroundFetchRecordIden
 
 void BackgroundFetchEngine::addFetchFromStore(std::span<const uint8_t> data, CompletionHandler<void(const ServiceWorkerRegistrationKey&, const String&)>&& callback)
 {
-    auto fetch = BackgroundFetch::createFromStore(data, *m_server, m_store.get(), [weakThis = WeakPtr { *this }](auto& fetch) {
+    auto fetch = BackgroundFetch::createFromStore(data, Ref { *m_server }, m_store.get(), [weakThis = WeakPtr { *this }](auto& fetch) {
         if (weakThis)
             weakThis->notifyBackgroundFetchUpdate(fetch);
     });
@@ -294,13 +295,13 @@ void BackgroundFetchEngine::addFetchFromStore(std::span<const uint8_t> data, Com
 
 void BackgroundFetchEngine::abortBackgroundFetch(const ServiceWorkerRegistrationKey& key, const String& identifier)
 {
-    if (auto *registration = m_server ? m_server->getRegistration(key) : nullptr)
+    if (RefPtr registration = m_server ? Ref { *m_server }->getRegistration(key) : nullptr)
         abortBackgroundFetch(*registration, identifier, [](auto) { });
 }
 
 void BackgroundFetchEngine::pauseBackgroundFetch(const ServiceWorkerRegistrationKey& key, const String& identifier)
 {
-    auto* registration = m_server ? m_server->getRegistration(key) : nullptr;
+    RefPtr registration = m_server ? Ref { *m_server }->getRegistration(key) : nullptr;
     if (!registration)
         return;
 
@@ -313,12 +314,12 @@ void BackgroundFetchEngine::pauseBackgroundFetch(const ServiceWorkerRegistration
     if (fetchIterator == map.end())
         return;
 
-    fetchIterator->value->pause();
+    Ref { fetchIterator->value }->pause();
 }
 
 void BackgroundFetchEngine::resumeBackgroundFetch(const ServiceWorkerRegistrationKey& key, const String& identifier)
 {
-    auto* registration = m_server ? m_server->getRegistration(key) : nullptr;
+    RefPtr registration = m_server ? Ref { *m_server }->getRegistration(key) : nullptr;
     if (!registration)
         return;
 
@@ -331,14 +332,15 @@ void BackgroundFetchEngine::resumeBackgroundFetch(const ServiceWorkerRegistratio
     if (fetchIterator == map.end())
         return;
 
-    fetchIterator->value->resume([server = m_server](auto& client, auto& request, auto responseDataSize, auto& origin) mutable {
+    Ref { fetchIterator->value }->resume([server = m_server](auto& client, auto& request, auto responseDataSize, auto& origin) mutable {
         return server ? RefPtr { server->createBackgroundFetchRecordLoader(client, request, responseDataSize, origin) } : nullptr;
     });
 }
 
 void BackgroundFetchEngine::clickBackgroundFetch(const ServiceWorkerRegistrationKey& key, const String& backgroundFetchIdentifier)
 {
-    auto* registration = m_server ? m_server->getRegistration(key) : nullptr;
+    RefPtr server = m_server.get();
+    RefPtr registration = m_server ? server->getRegistration(key) : nullptr;
     if (!registration)
         return;
 
@@ -351,7 +353,7 @@ void BackgroundFetchEngine::clickBackgroundFetch(const ServiceWorkerRegistration
     if (fetchIterator == map.end())
         return;
 
-    m_server->fireBackgroundFetchClickEvent(*registration, fetchIterator->value->information());
+    server->fireBackgroundFetchClickEvent(*registration, fetchIterator->value->information());
 }
 
 WeakPtr<BackgroundFetch> BackgroundFetchEngine::backgroundFetch(const ServiceWorkerRegistrationKey& key, const String& identifier) const

@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "BooleanObject.h"
+#include <JavaScriptCore/BooleanObject.h>
 
 namespace JSC {
 

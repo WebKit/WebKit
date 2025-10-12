@@ -30,14 +30,21 @@
 #if ENABLE(WEBDRIVER_BIDI)
 
 #include "AutomationProtocolObjects.h"
+#include "FrameTreeNodeData.h"
 #include "Logging.h"
 #include "PageLoadState.h"
 #include "WebAutomationSession.h"
 #include "WebAutomationSessionMacros.h"
-#include "WebDriverBidiFrontendDispatchers.h"
 #include "WebDriverBidiProtocolObjects.h"
+#include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
+#include <JavaScriptCore/MathCommon.h>
+#include <wtf/Ref.h>
+#include <wtf/URL.h>
+#include <wtf/Unexpected.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
@@ -85,9 +92,10 @@ void BidiBrowsingContextAgent::close(const BrowsingContext& browsingContext, std
     // FIXME: implement `promptUnload` option.
     // FIXME: raise `invalid argument` if `browsingContext` is not a top-level traversable.
 
-    session->closeBrowsingContext(browsingContext);
+    RefPtr webPageProxy = session->webPageProxyForHandle(browsingContext);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!webPageProxy, FrameNotFound);
 
-    callback({ });
+    session->closeBrowsingContext(browsingContext, WTFMove(callback));
 }
 
 static constexpr Inspector::Protocol::Automation::BrowsingContextPresentation defaultBrowsingContextPresentation = Inspector::Protocol::Automation::BrowsingContextPresentation::Tab;
@@ -125,35 +133,122 @@ void BidiBrowsingContextAgent::create(Inspector::Protocol::BidiBrowsingContext::
     });
 }
 
-void BidiBrowsingContextAgent::getTree(const BrowsingContext& optionalRoot, std::optional<double>&& optionalMaxDepth, CommandCallback<Ref<JSON::ArrayOf<Protocol::BidiBrowsingContext::Info>>>&& callback)
+Inspector::Protocol::BidiBrowsingContext::BrowsingContext BidiBrowsingContextAgent::getBrowsingContextID(const WebCore::FrameIdentifier& frameID) const
 {
+    RefPtr session = m_session.get();
+    if (!session)
+        return { };
+
+    if (RefPtr frame = WebFrameProxy::webFrame(frameID); frame && frame->isMainFrame()) {
+        if (RefPtr page = frame->page())
+            return session->handleForWebPageProxy(*page);
+        return WTF::emptyString();
+    }
+    return session->handleForWebFrameID(frameID);
+}
+
+Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::getNavigableInfo(const WebKit::FrameTreeNodeData& tree, std::optional<uint64_t> maxDepth, IncludeParentID includeParentID)
+{
+    // https://w3c.github.io/webdriver-bidi/#get-the-navigable-info
+
+    // FIXME: Properly support different user contexts, which will likely map to different WebAutomationSessions.
+    // https://bugs.webkit.org/show_bug.cgi?id=288104
+    auto info = Inspector::Protocol::BidiBrowsingContext::Info::create()
+        .setContext(getBrowsingContextID(tree.info.frameID))
+        .setUrl(tree.info.request.url().string())
+        .setClientWindow("placeholder_window"_s)
+        .setUserContext("default"_s)
+        .setChildrenIsNull()
+        .setOriginalOpenerIsNull()
+        .release();
+
+    // FIXME: Support originalOpener attribute.
+    // https://w3c.github.io/webdriver-bidi/#original-opener
+
+    if (includeParentID == IncludeParentID::Yes) {
+        if (tree.info.parentFrameID)
+            info->setParent(getBrowsingContextID(tree.info.parentFrameID.value()));
+        else
+            info->setParentIsNull();
+    }
+
+    if (maxDepth && !*maxDepth) {
+        info->setChildrenIsNull();
+        return info;
+    }
+
+    auto childrenInfo = JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create();
+    auto newDepth = maxDepth ? std::optional<uint64_t>(*maxDepth - 1) : std::nullopt;
+    for (auto& child : tree.children)
+        childrenInfo->addItem(getNavigableInfo(child, newDepth, IncludeParentID::No));
+
+    info->setChildren(WTFMove(childrenInfo));
+    return info;
+}
+
+// Recursively traverses the frame tree of the given pages, one page at a time.
+// We need such recursion because we need to wait for the frame tree of the current page to be fully processed before moving on to the next page.
+void BidiBrowsingContextAgent::getNextTree(Vector<Ref<WebPageProxy>>&& pagesToProcess, Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>> resultsObject, std::optional<uint64_t> maxDepth, CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>>&& callback)
+{
+    if (pagesToProcess.isEmpty()) {
+        callback(WTFMove(resultsObject));
+        return;
+    }
+
+    Ref webPageProxy = pagesToProcess.takeLast();
+    webPageProxy->getAllFrameTrees([this, pagesToProcess = WTFMove(pagesToProcess), resultsObject = WTFMove(resultsObject), callback = WTFMove(callback), maxDepth, protectedPage = Ref { webPageProxy }](Vector<WebKit::FrameTreeNodeData>&& trees) mutable {
+        for (auto& tree : trees) {
+            auto infoTree = getNavigableInfo(tree, maxDepth, IncludeParentID::Yes);
+            resultsObject->addItem(WTFMove(infoTree));
+        }
+        getNextTree(WTFMove(pagesToProcess), WTFMove(resultsObject), maxDepth, WTFMove(callback));
+    });
+}
+
+void BidiBrowsingContextAgent::getTree(const BrowsingContext& optionalRoot, std::optional<double>&& optionalMaxDepth, CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>>&& callback)
+{
+    // https://w3c.github.io/webdriver-bidi/#command-browsingContext-getTree
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-    // FIXME: implement `root` option.
-    // FIXME: implement `maxDepth` option.
+    std::optional<uint64_t> maxDepth = std::nullopt;
+    if (optionalMaxDepth) {
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(*optionalMaxDepth < 0, InvalidParameter);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(std::floor(*optionalMaxDepth) != *optionalMaxDepth, InvalidParameter);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(*optionalMaxDepth > JSC::maxSafeInteger(), InvalidParameter);
+        maxDepth = std::optional<uint64_t>(static_cast<uint64_t>(*optionalMaxDepth));
+    }
 
-    auto infos = JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create();
+    Vector<Ref<WebPageProxy>> pagesToProcess;
+
     for (Ref process : session->protectedProcessPool()->processes()) {
         for (Ref page : process->pages()) {
             if (!page->isControlledByAutomation())
                 continue;
 
-            // FIXME: implement `parent` field.
-            // FIXME: implement `children` field.
-            // FIXME: implement `originalOpener` field.
-            // FIXME: implement `clientWindow` field.
-            // FIXME: implement `userContext` field.
-            infos->addItem(Inspector::Protocol::BidiBrowsingContext::Info::create()
-                .setContext(session->handleForWebPageProxy(page))
-                .setUrl(page->currentURL())
-                .setClientWindow("placeholder_window"_s)
-                .setUserContext("placeholder_context"_s)
-                .release());
+            if (!optionalRoot.isEmpty()) {
+                if (session->handleForWebPageProxy(page) == optionalRoot) {
+                    pagesToProcess.append(page);
+                    break;
+                }
+            } else
+                pagesToProcess.append(page);
         }
     }
 
-    callback({ { WTFMove(infos) } });
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!optionalRoot.isEmpty() && pagesToProcess.isEmpty(), FrameNotFound);
+
+    if (pagesToProcess.isEmpty()) {
+        callback({ { JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create() } });
+        return;
+    }
+
+    pagesToProcess.reverse();
+
+    auto resultsObject = JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create();
+    getNextTree(WTFMove(pagesToProcess), WTFMove(resultsObject), WTFMove(maxDepth), [callback = WTFMove(callback)](auto&& result) {
+        callback({ { result.value() } });
+    });
 }
 
 void BidiBrowsingContextAgent::handleUserPrompt(const BrowsingContext& browsingContext, std::optional<bool>&& optionalShouldAccept, const String&, CommandCallback<void>&& callback)
@@ -175,7 +270,7 @@ void BidiBrowsingContextAgent::handleUserPrompt(const BrowsingContext& browsingC
 
 // https://www.w3.org/TR/webdriver/#dfn-session-page-load-timeout
 static constexpr Seconds defaultPageLoadTimeout = 300_s;
-static constexpr ReadinessState defaultReadinessState = ReadinessState::None;
+static constexpr ReadinessState defaultReadinessState = ReadinessState::Interactive;
 
 static PageLoadStrategy pageLoadStrategyFromReadinessState(ReadinessState state)
 {
@@ -192,24 +287,32 @@ static PageLoadStrategy pageLoadStrategyFromReadinessState(ReadinessState state)
     return PageLoadStrategy::Normal;
 }
 
-void BidiBrowsingContextAgent::navigate(const BrowsingContext& browsingContext, const String& url, std::optional<ReadinessState>&& optionalReadinessState, CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::Navigation>&& callback)
+void BidiBrowsingContextAgent::navigate(const BrowsingContext& browsingContext, const String& url, std::optional<ReadinessState>&& optionalReadinessState, CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::NavigationID>&& callback)
 {
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-    auto pageLoadStrategy = pageLoadStrategyFromReadinessState(optionalReadinessState.value_or(defaultReadinessState));
-    session->navigateBrowsingContext(browsingContext, url, pageLoadStrategy, defaultPageLoadTimeout.milliseconds(), [url, callback = WTFMove(callback)](CommandResult<void>&& result) {
+    RefPtr webPageProxy = session->webPageProxyForHandle(browsingContext);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!webPageProxy, WindowNotFound);
+
+    URL baseURL { webPageProxy->currentURL() };
+    URL urlRecord { baseURL, url };
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!urlRecord.isValid(), InvalidParameter);
+
+    auto waitCondition = optionalReadinessState.value_or(defaultReadinessState);
+    auto pageLoadStrategy = pageLoadStrategyFromReadinessState(waitCondition);
+    session->navigateBrowsingContext(browsingContext, urlRecord.string(), pageLoadStrategy, defaultPageLoadTimeout.milliseconds(), [urlRecord, callback = WTFMove(callback)](CommandResult<void>&& result) {
         if (!result) {
             callback(makeUnexpected(result.error()));
             return;
         }
 
         // FIXME: keep track of navigation IDs that we hand out.
-        callback({ { url, "placeholder_navigation"_s } });
+        callback({ { urlRecord.string(), "placeholder_navigation"_s } });
     });
 }
 
-void BidiBrowsingContextAgent::reload(const BrowsingContext& browsingContext, std::optional<bool>&& optionalIgnoreCache, std::optional<ReadinessState>&& optionalReadinessState, CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::Navigation>&& callback)
+void BidiBrowsingContextAgent::reload(const BrowsingContext& browsingContext, std::optional<bool>&& optionalIgnoreCache, std::optional<ReadinessState>&& optionalReadinessState, CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::NavigationID>&& callback)
 {
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);

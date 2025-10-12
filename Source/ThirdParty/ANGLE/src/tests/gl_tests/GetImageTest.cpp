@@ -7,6 +7,10 @@
 //   Tests for the ANGLE_get_image extension.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "image_util/storeimage.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"

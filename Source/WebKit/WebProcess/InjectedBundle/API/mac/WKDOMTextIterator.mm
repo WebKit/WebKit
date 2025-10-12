@@ -85,7 +85,7 @@
         _upconvertedText.appendRange(characters.begin(), characters.end());
     }
     ASSERT(_upconvertedText.size() == text.length());
-    return _upconvertedText.data();
+    return _upconvertedText.span().data();
 }
 
 - (NSUInteger)currentTextLength

@@ -10,6 +10,8 @@
 
 #include "modules/remote_bitrate_estimator/inter_arrival.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 
 #include "test/gtest.h"
@@ -27,12 +29,13 @@ enum {
   kInterArrivalShift = kAbsSendTimeFraction + kAbsSendTimeInterArrivalUpshift,
 };
 
-const double kRtpTimestampToMs = 1.0 / 90.0;
-const double kAstToMs = 1000.0 / static_cast<double>(1 << kInterArrivalShift);
+constexpr double kRtpTimestampToMs = 1.0 / 90.0;
+constexpr double kAstToMs =
+    1000.0 / static_cast<double>(1 << kInterArrivalShift);
 
 class InterArrivalTest : public ::testing::Test {
  protected:
-  virtual void SetUp() {
+  void SetUp() override {
     inter_arrival_.reset(new InterArrival(kTimestampGroupLengthUs / 1000, 1.0));
     inter_arrival_rtp_.reset(new InterArrival(
         MakeRtpTimestamp(kTimestampGroupLengthUs), kRtpTimestampToMs));

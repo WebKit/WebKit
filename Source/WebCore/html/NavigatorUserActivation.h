@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,14 +40,14 @@ public:
     explicit NavigatorUserActivation(Navigator&);
     ~NavigatorUserActivation();
 
-    static Ref<UserActivation> userActivation(Navigator&);
-    Ref<UserActivation> userActivation();
+    static UserActivation& userActivation(Navigator&);
+    UserActivation& userActivation() const { return m_userActivation; }
 
 private:
     static NavigatorUserActivation* from(Navigator&);
     static ASCIILiteral supplementName();
 
-    Ref<UserActivation> m_userActivation;
+    const Ref<UserActivation> m_userActivation;
 };
 
 }

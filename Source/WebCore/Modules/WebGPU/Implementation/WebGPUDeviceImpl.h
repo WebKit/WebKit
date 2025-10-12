@@ -104,8 +104,8 @@ private:
     [[noreturn]] Ref<BindGroupLayout> emptyBindGroupLayout() const final;
 
     WebGPUPtr<WGPUDevice> m_backing;
-    Ref<ConvertToBackingContext> m_convertToBackingContext;
-    Ref<QueueImpl> m_queue;
+    const Ref<ConvertToBackingContext> m_convertToBackingContext;
+    const Ref<QueueImpl> m_queue;
 };
 
 } // namespace WebCore::WebGPU

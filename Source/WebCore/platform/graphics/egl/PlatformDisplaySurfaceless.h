@@ -35,7 +35,7 @@ public:
 
     virtual ~PlatformDisplaySurfaceless();
 private:
-    explicit PlatformDisplaySurfaceless(std::unique_ptr<GLDisplay>&&);
+    explicit PlatformDisplaySurfaceless(Ref<GLDisplay>&&);
 
     Type type() const override { return PlatformDisplay::Type::Surfaceless; }
 };

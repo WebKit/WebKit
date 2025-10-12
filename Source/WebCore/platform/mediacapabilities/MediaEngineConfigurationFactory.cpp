@@ -33,6 +33,7 @@
 #include "MediaDecodingConfiguration.h"
 #include "MediaEncodingConfiguration.h"
 #include "MediaEngineConfigurationFactoryMock.h"
+#include "MediaSessionManagerInterface.h"
 #include <algorithm>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
@@ -167,6 +168,25 @@ void MediaEngineConfigurationFactory::enableMock()
 void MediaEngineConfigurationFactory::disableMock()
 {
     mockEnabled() = false;
+}
+
+static MediaEngineConfigurationFactory::MediaSessionManagerProvider& mediaSessionManagerProvider()
+{
+    static NeverDestroyed<MediaEngineConfigurationFactory::MediaSessionManagerProvider> provider;
+    return provider.get();
+}
+
+void MediaEngineConfigurationFactory::setMediaSessionManagerProvider(MediaSessionManagerProvider&& provider)
+{
+    mediaSessionManagerProvider() = WTFMove(provider);
+}
+
+RefPtr<MediaSessionManagerInterface> MediaEngineConfigurationFactory::mediaSessionManagerForPageIdentifier(PageIdentifier pageIdentifier)
+{
+    if (mediaSessionManagerProvider())
+        return mediaSessionManagerProvider()(pageIdentifier);
+
+    return nullptr;
 }
 
 }

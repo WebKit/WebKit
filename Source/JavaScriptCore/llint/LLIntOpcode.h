@@ -75,4 +75,5 @@
     macro(op_enumerator_get_by_val) \
     macro(op_enumerator_put_by_val) \
     macro(op_enumerator_in_by_val) \
+    macro(op_instanceof) \
 

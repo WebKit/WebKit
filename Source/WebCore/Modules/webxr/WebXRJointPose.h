@@ -47,9 +47,15 @@ public:
 private:
     WebXRJointPose(Ref<WebXRRigidTransform>&&, bool emulatedPosition, float radius);
 
+    bool isWebXRJointPose() const final { return true; }
+
     float m_radius { 0 };
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebXRJointPose)
+    static bool isType(const WebCore::WebXRPose& pose) { return pose.isWebXRJointPose(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

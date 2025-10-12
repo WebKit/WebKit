@@ -4,7 +4,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2,1 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,6 +21,7 @@
 #include "CryptoAlgorithmEd25519.h"
 
 #include "CryptoKeyOKP.h"
+#include "ExceptionOr.h"
 #include "GCryptUtilities.h"
 
 namespace WebCore {
@@ -58,7 +59,7 @@ static ExceptionOr<Vector<uint8_t>> signEd25519(const Vector<uint8_t>& sk, size_
     PAL::GCrypt::Handle<gcry_sexp_t> dataSexp;
     {
         gcry_error_t error = gcry_sexp_build(&dataSexp, nullptr, "(data(flags eddsa)(hash-algo sha512) (value %b))",
-            data.size(), data.data());
+            data.size(), data.span().data());
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
             return Exception { ExceptionCode::OperationError };
@@ -68,7 +69,7 @@ static ExceptionOr<Vector<uint8_t>> signEd25519(const Vector<uint8_t>& sk, size_
     // Construct the `private-key` expression that will also be used for the EC context.
     PAL::GCrypt::Handle<gcry_sexp_t> keySexp;
     gcry_error_t error = gcry_sexp_build(&keySexp, nullptr, "(private-key(ecc(curve Ed25519)(flags eddsa)(d %b)))",
-        sk.size(), sk.data());
+        sk.size(), sk.span().data());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return Exception { ExceptionCode::OperationError };
@@ -106,7 +107,7 @@ static ExceptionOr<bool> verifyEd25519(const Vector<uint8_t>& key, size_t keyLen
     // Construct the sig-val s-expression, extracting the r and s components from the signature vector.
     PAL::GCrypt::Handle<gcry_sexp_t> signatureSexp;
     gcry_error_t error = gcry_sexp_build(&signatureSexp, nullptr, "(sig-val(eddsa(r %b)(s %b)))",
-        keyLengthInBytes, signature.data(), keyLengthInBytes, signature.subspan(keyLengthInBytes).data());
+        keyLengthInBytes, signature.span().data(), keyLengthInBytes, signature.subspan(keyLengthInBytes).data());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return false;
@@ -116,7 +117,7 @@ static ExceptionOr<bool> verifyEd25519(const Vector<uint8_t>& key, size_t keyLen
     PAL::GCrypt::Handle<gcry_sexp_t> dataSexp;
     {
         gcry_error_t error = gcry_sexp_build(&dataSexp, nullptr, "(data(flags eddsa)(hash-algo sha512) (value %b))",
-            data.size(), data.data());
+            data.size(), data.span().data());
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
             return false;
@@ -126,7 +127,7 @@ static ExceptionOr<bool> verifyEd25519(const Vector<uint8_t>& key, size_t keyLen
     // Construct the `public-key` expression to be used for generating the MPI structure.
     PAL::GCrypt::Handle<gcry_sexp_t> keySexp;
     error = gcry_sexp_build(&keySexp, nullptr, "(public-key(ecc(curve Ed25519)(q %b)))",
-        key.size(), key.data());
+        key.size(), key.span().data());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return false;

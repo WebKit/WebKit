@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "CSSStyleSheet.h"
-#include "Element.h"
-#include "FloatSize.h"
-#include "HTMLInterchange.h"
-#include "MarkupExclusionRule.h"
-#include "ParserContentPolicy.h"
-#include "ShadowRoot.h"
+#include <WebCore/CSSStyleSheet.h>
+#include <WebCore/Element.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/HTMLInterchange.h>
+#include <WebCore/MarkupExclusionRule.h>
+#include <WebCore/ParserContentPolicy.h>
+#include <WebCore/ShadowRoot.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
@@ -56,7 +56,7 @@ struct SimpleRange;
 
 template<typename> class ExceptionOr;
 
-void replaceSubresourceURLs(Ref<DocumentFragment>&&, UncheckedKeyHashMap<AtomString, AtomString>&&);
+void replaceSubresourceURLs(Ref<DocumentFragment>&&, HashMap<AtomString, AtomString>&&);
 void removeSubresourceURLAttributes(Ref<DocumentFragment>&&, Function<bool(const URL&)> shouldRemoveURL);
 
 Ref<Page> createPageForSanitizingWebContent();
@@ -78,7 +78,7 @@ private:
     enum class State : uint8_t { NotUserSelectNone, Mixed, OnlyUserSelectNone };
     State computeState(Node&);
 
-    UncheckedKeyHashMap<Ref<Node>, State> m_cache;
+    HashMap<Ref<Node>, State> m_cache;
     bool m_useComposedTree;
 };
 

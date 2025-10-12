@@ -14,6 +14,9 @@
 #define RTC_BASE_CONTAINERS_FLAT_TREE_H_
 
 #include <algorithm>
+#include <array>
+#include <cstddef>
+#include <initializer_list>
 #include <iterator>
 #include <type_traits>
 #include <utility>

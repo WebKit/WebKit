@@ -56,20 +56,13 @@
 #ifndef PC_PROXY_H_
 #define PC_PROXY_H_
 
-#include <stddef.h>
-
-#include <memory>
-#include <string>
+#include <cstddef>
+#include <string>  // IWYU pragma: keep
 #include <tuple>
-#include <type_traits>
 #include <utility>
 
-#include "api/make_ref_counted.h"
-#include "api/scoped_refptr.h"
-#include "api/task_queue/task_queue_base.h"
 #include "rtc_base/event.h"
-#include "rtc_base/string_utils.h"
-#include "rtc_base/system/rtc_export.h"
+#include "rtc_base/string_utils.h"  // IWYU pragma: keep
 #include "rtc_base/thread.h"
 #include "rtc_base/trace_event.h"
 
@@ -113,7 +106,7 @@ class MethodCall {
         m_(m),
         args_(std::forward_as_tuple(std::forward<Args>(args)...)) {}
 
-  R Marshal(rtc::Thread* t) {
+  R Marshal(Thread* t) {
     if (t->IsCurrent()) {
       Invoke(std::index_sequence_for<Args...>());
     } else {
@@ -121,7 +114,7 @@ class MethodCall {
         Invoke(std::index_sequence_for<Args...>());
         event_.Set();
       });
-      event_.Wait(rtc::Event::kForever);
+      event_.Wait(Event::kForever);
     }
     return r_.moved_result();
   }
@@ -136,7 +129,7 @@ class MethodCall {
   Method m_;
   ReturnType<R> r_;
   std::tuple<Args&&...> args_;
-  rtc::Event event_;
+  Event event_;
 };
 
 template <typename C, typename R, typename... Args>
@@ -148,7 +141,7 @@ class ConstMethodCall {
         m_(m),
         args_(std::forward_as_tuple(std::forward<Args>(args)...)) {}
 
-  R Marshal(rtc::Thread* t) {
+  R Marshal(Thread* t) {
     if (t->IsCurrent()) {
       Invoke(std::index_sequence_for<Args...>());
     } else {
@@ -156,7 +149,7 @@ class ConstMethodCall {
         Invoke(std::index_sequence_for<Args...>());
         event_.Set();
       });
-      event_.Wait(rtc::Event::kForever);
+      event_.Wait(Event::kForever);
     }
     return r_.moved_result();
   }
@@ -171,7 +164,7 @@ class ConstMethodCall {
   Method m_;
   ReturnType<R> r_;
   std::tuple<Args&&...> args_;
-  rtc::Event event_;
+  Event event_;
 };
 
 #define PROXY_STRINGIZE_IMPL(x) #x
@@ -206,27 +199,27 @@ class ConstMethodCall {
   constexpr char class_name##ProxyWithInternal<INTERNAL_CLASS>::proxy_name_[];
 // clang-format on
 
-#define PRIMARY_PROXY_MAP_BOILERPLATE(class_name)                     \
- protected:                                                           \
-  class_name##ProxyWithInternal(rtc::Thread* primary_thread,          \
-                                rtc::scoped_refptr<INTERNAL_CLASS> c) \
-      : primary_thread_(primary_thread), c_(std::move(c)) {}          \
-                                                                      \
- private:                                                             \
-  mutable rtc::Thread* primary_thread_;
+#define PRIMARY_PROXY_MAP_BOILERPLATE(class_name)                \
+ protected:                                                      \
+  class_name##ProxyWithInternal(Thread* primary_thread,          \
+                                scoped_refptr<INTERNAL_CLASS> c) \
+      : primary_thread_(primary_thread), c_(std::move(c)) {}     \
+                                                                 \
+ private:                                                        \
+  mutable Thread* primary_thread_;
 
-#define SECONDARY_PROXY_MAP_BOILERPLATE(class_name)                   \
- protected:                                                           \
-  class_name##ProxyWithInternal(rtc::Thread* primary_thread,          \
-                                rtc::Thread* secondary_thread,        \
-                                rtc::scoped_refptr<INTERNAL_CLASS> c) \
-      : primary_thread_(primary_thread),                              \
-        secondary_thread_(secondary_thread),                          \
-        c_(std::move(c)) {}                                           \
-                                                                      \
- private:                                                             \
-  mutable rtc::Thread* primary_thread_;                               \
-  mutable rtc::Thread* secondary_thread_;
+#define SECONDARY_PROXY_MAP_BOILERPLATE(class_name)              \
+ protected:                                                      \
+  class_name##ProxyWithInternal(Thread* primary_thread,          \
+                                Thread* secondary_thread,        \
+                                scoped_refptr<INTERNAL_CLASS> c) \
+      : primary_thread_(primary_thread),                         \
+        secondary_thread_(secondary_thread),                     \
+        c_(std::move(c)) {}                                      \
+                                                                 \
+ private:                                                        \
+  mutable Thread* primary_thread_;                               \
+  mutable Thread* secondary_thread_;
 
 // Note that the destructor is protected so that the proxy can only be
 // destroyed via RefCountInterface.
@@ -248,7 +241,7 @@ class ConstMethodCall {
   void DestroyInternal() {                                      \
     c_ = nullptr;                                               \
   }                                                             \
-  rtc::scoped_refptr<INTERNAL_CLASS> c_;
+  scoped_refptr<INTERNAL_CLASS> c_;
 
 // Note: This doesn't use a unique_ptr, because it intends to handle a corner
 // case where an object's deletion triggers a callback that calls back into
@@ -280,35 +273,35 @@ class ConstMethodCall {
   PRIMARY_PROXY_MAP_BOILERPLATE(class_name)                                \
   REFCOUNTED_PROXY_MAP_BOILERPLATE(class_name)                             \
  public:                                                                   \
-  static rtc::scoped_refptr<class_name##ProxyWithInternal> Create(         \
-      rtc::Thread* primary_thread, rtc::scoped_refptr<INTERNAL_CLASS> c) { \
-    return rtc::make_ref_counted<class_name##ProxyWithInternal>(           \
-        primary_thread, std::move(c));                                     \
+  static scoped_refptr<class_name##ProxyWithInternal> Create(              \
+      Thread* primary_thread, scoped_refptr<INTERNAL_CLASS> c) {           \
+    return make_ref_counted<class_name##ProxyWithInternal>(primary_thread, \
+                                                           std::move(c));  \
   }
 
-#define BEGIN_PROXY_MAP(class_name)                                \
-  PROXY_MAP_BOILERPLATE(class_name)                                \
-  SECONDARY_PROXY_MAP_BOILERPLATE(class_name)                      \
-  REFCOUNTED_PROXY_MAP_BOILERPLATE(class_name)                     \
- public:                                                           \
-  static rtc::scoped_refptr<class_name##ProxyWithInternal> Create( \
-      rtc::Thread* primary_thread, rtc::Thread* secondary_thread,  \
-      rtc::scoped_refptr<INTERNAL_CLASS> c) {                      \
-    return rtc::make_ref_counted<class_name##ProxyWithInternal>(   \
-        primary_thread, secondary_thread, std::move(c));           \
+#define BEGIN_PROXY_MAP(class_name)                           \
+  PROXY_MAP_BOILERPLATE(class_name)                           \
+  SECONDARY_PROXY_MAP_BOILERPLATE(class_name)                 \
+  REFCOUNTED_PROXY_MAP_BOILERPLATE(class_name)                \
+ public:                                                      \
+  static scoped_refptr<class_name##ProxyWithInternal> Create( \
+      Thread* primary_thread, Thread* secondary_thread,       \
+      scoped_refptr<INTERNAL_CLASS> c) {                      \
+    return make_ref_counted<class_name##ProxyWithInternal>(   \
+        primary_thread, secondary_thread, std::move(c));      \
   }
 
-#define PROXY_PRIMARY_THREAD_DESTRUCTOR()  \
- private:                                  \
-  rtc::Thread* destructor_thread() const { \
-    return primary_thread_;                \
-  }                                        \
-                                           \
+#define PROXY_PRIMARY_THREAD_DESTRUCTOR() \
+ private:                                 \
+  Thread* destructor_thread() const {     \
+    return primary_thread_;               \
+  }                                       \
+                                          \
  public:  // NOLINTNEXTLINE
 
 #define PROXY_SECONDARY_THREAD_DESTRUCTOR() \
  private:                                   \
-  rtc::Thread* destructor_thread() const {  \
+  Thread* destructor_thread() const {       \
     return secondary_thread_;               \
   }                                         \
                                             \
@@ -319,11 +312,11 @@ class ConstMethodCall {
   do {                            \
   } while (0)
 #else  // if defined(RTC_DISABLE_PROXY_TRACE_EVENTS)
-#define TRACE_BOILERPLATE(method)                       \
-  static constexpr auto class_and_method_name =         \
-      rtc::MakeCompileTimeString(proxy_name_)           \
-          .Concat(rtc::MakeCompileTimeString("::"))     \
-          .Concat(rtc::MakeCompileTimeString(#method)); \
+#define TRACE_BOILERPLATE(method)                          \
+  static constexpr auto class_and_method_name =            \
+      webrtc::MakeCompileTimeString(proxy_name_)           \
+          .Concat(webrtc::MakeCompileTimeString("::"))     \
+          .Concat(webrtc::MakeCompileTimeString(#method)); \
   TRACE_EVENT0("webrtc", class_and_method_name.string)
 
 #endif  // if defined(RTC_DISABLE_PROXY_TRACE_EVENTS)

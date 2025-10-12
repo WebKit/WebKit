@@ -9,6 +9,10 @@
         "description": "Changes the appearance of buttons and other controls to resemble native controls.",
         "syntax": "none | button | checkbox | listbox | menulist | menulist-button | meter | progress-bar | push-button | radio | searchfield | slider-horizontal | slider-vertical | square-button | textarea | textfield | -apple-pay-button"
     },
+    "dynamic-range-limit": {
+        "description": "Controls the maximum brightness of high dynamic range (HDR) content.",
+        "syntax": "standard | no-limit"
+    },
     "overlay": {
         "description": "The overlay CSS property specifies whether an element appearing in the top layer (for example, a shown popover or modal <dialog> element) is actually rendered in the top layer. This property is only relevant within a list of transition-property values, and only if allow-discrete is set as the transition-behavior."
     },

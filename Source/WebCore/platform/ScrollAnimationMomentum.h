@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "ScrollAnimation.h"
+#include <WebCore/ScrollAnimation.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

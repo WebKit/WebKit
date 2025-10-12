@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CSSNumericValue.h"
-#include "CommonAtomStrings.h"
-#include "FillMode.h"
-#include "PlaybackDirection.h"
+#include <WebCore/CSSNumericValue.h>
+#include <WebCore/CommonAtomStrings.h>
+#include <WebCore/FillMode.h>
+#include <WebCore/PlaybackDirection.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

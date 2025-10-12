@@ -616,6 +616,7 @@ static void setup_block_rdmult(const AV1_COMP *const cpi, MACROBLOCK *const x,
 #endif  // !CONFIG_REALTIME_ONLY
 
   if (cpi->oxcf.tune_cfg.tuning == AOM_TUNE_SSIM ||
+      cpi->oxcf.tune_cfg.tuning == AOM_TUNE_IQ ||
       cpi->oxcf.tune_cfg.tuning == AOM_TUNE_SSIMULACRA2) {
     av1_set_ssim_rdmult(cpi, &x->errorperbit, bsize, mi_row, mi_col,
                         &x->rdmult);
@@ -2152,7 +2153,7 @@ static void encode_b_nonrd(const AV1_COMP *const cpi, TileDataEnc *tile_data,
     if (tile_data->allow_update_cdf) update_stats(&cpi->common, td);
   }
   if ((cpi->oxcf.q_cfg.aq_mode == CYCLIC_REFRESH_AQ ||
-       cpi->active_map.enabled) &&
+       cpi->active_map.enabled || cpi->roi.enabled) &&
       mbmi->skip_txfm && !cpi->rc.rtc_external_ratectrl && cm->seg.enabled)
     av1_cyclic_reset_segment_skip(cpi, x, mi_row, mi_col, bsize, dry_run);
   // TODO(Ravi/Remya): Move this copy function to a better logical place
@@ -2301,6 +2302,8 @@ static void pick_sb_modes_nonrd(AV1_COMP *const cpi, TileDataEnc *tile_data,
   // Save rdmult before it might be changed, so it can be restored later.
   const int orig_rdmult = x->rdmult;
   setup_block_rdmult(cpi, x, mi_row, mi_col, bsize, aq_mode, mbmi);
+  if (cpi->roi.enabled && cpi->roi.delta_qp_enabled && mbmi->segment_id)
+    x->rdmult = cpi->roi.rdmult_delta_qp;
   // Set error per bit for current rdmult
   av1_set_error_per_bit(&x->errorperbit, x->rdmult);
   // Find best coding mode & reconstruct the MB so it is available
@@ -4044,8 +4047,12 @@ static void prune_4_way_partition_search(
   const PartitionBlkParams blk_params = part_search_state->part_blk_params;
   const BLOCK_SIZE bsize = blk_params.bsize;
 
+  const PartitionCfg *const part_cfg = &cpi->oxcf.part_cfg;
+
   // Do not prune if there is no valid partition
-  if (best_rdc->rdcost == INT64_MAX) return;
+  if (best_rdc->rdcost == INT64_MAX && part_cfg->enable_1to4_partitions &&
+      bsize != BLOCK_128X128)
+    return;
 
   // Determine bsize threshold to evaluate 4-way partitions
   BLOCK_SIZE part4_bsize_thresh = cpi->sf.part_sf.ext_partition_eval_thresh;
@@ -4073,7 +4080,6 @@ static void prune_4_way_partition_search(
 
   PARTITION_TYPE cur_part[NUM_PART4_TYPES] = { PARTITION_HORZ_4,
                                                PARTITION_VERT_4 };
-  const PartitionCfg *const part_cfg = &cpi->oxcf.part_cfg;
   // partition4_allowed is 1 if we can use a PARTITION_HORZ_4 or
   // PARTITION_VERT_4 for this block. This is almost the same as
   // partition4_allowed, except that we don't allow 128x32 or 32x128
@@ -4399,6 +4405,22 @@ static void none_partition_search(
   av1_restore_context(x, x_ctx, mi_row, mi_col, bsize, av1_num_planes(cm));
 }
 
+static inline double get_split_partition_penalty(
+    BLOCK_SIZE bsize, int split_partition_penalty_level) {
+  if (!split_partition_penalty_level) return 1.00;
+
+  // Higher penalty for smaller block sizes.
+  static const double penalty_factors[2][SQR_BLOCK_SIZES - 1] = {
+    { 1.080, 1.040, 1.020, 1.010, 1.000 },
+    { 1.100, 1.075, 1.050, 1.025, 1.000 },
+  };
+  const int sqr_bsize_idx = get_sqr_bsize_idx(bsize);
+  assert(sqr_bsize_idx > 0 && sqr_bsize_idx < SQR_BLOCK_SIZES);
+  const double this_penalty_factor =
+      penalty_factors[split_partition_penalty_level - 1][sqr_bsize_idx - 1];
+  return this_penalty_factor;
+}
+
 // PARTITION_SPLIT search.
 static void split_partition_search(
     AV1_COMP *const cpi, ThreadData *td, TileDataEnc *tile_data,
@@ -4510,7 +4532,10 @@ static void split_partition_search(
   *part_split_rd = sum_rdc.rdcost;
   if (reached_last_index && sum_rdc.rdcost < best_rdc->rdcost) {
     sum_rdc.rdcost = RDCOST(x->rdmult, sum_rdc.rate, sum_rdc.dist);
-    if (sum_rdc.rdcost < best_rdc->rdcost) {
+    const double penalty_factor = get_split_partition_penalty(
+        bsize, cpi->sf.part_sf.split_partition_penalty_level);
+    const int64_t this_rdcost = (int64_t)(sum_rdc.rdcost * penalty_factor);
+    if (this_rdcost < best_rdc->rdcost) {
       *best_rdc = sum_rdc;
       part_search_state->found_best_partition = true;
       pc_tree->partitioning = PARTITION_SPLIT;

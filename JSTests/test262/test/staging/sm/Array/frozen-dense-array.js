@@ -2,11 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
 flags:
   - noStrict
 description: |
-  pending
+  Dense array properties shouldn't be modified when they're frozen
+info: bugzilla.mozilla.org/show_bug.cgi?id=1310744
 esid: pending
 ---*/
 /*
@@ -14,10 +14,6 @@ esid: pending
  * http://creativecommons.org/licenses/publicdomain/
  * Author: Emilio Cobos Álvarez <ecoal95@gmail.com>
  */
-var BUGNUMBER = 1310744;
-var summary = "Dense array properties shouldn't be modified when they're frozen";
-
-print(BUGNUMBER + ": " + summary);
 
 var a = Object.freeze([4, 5, 1]);
 
@@ -28,18 +24,18 @@ function assertArrayIsExpected() {
   assert.sameValue(a[2], 1);
 }
 
-assertThrowsInstanceOf(() => a.reverse(), TypeError);
-assertThrowsInstanceOf(() => a.shift(), TypeError);
-assertThrowsInstanceOf(() => a.unshift(0), TypeError);
-assertThrowsInstanceOf(() => a.sort(function() {}), TypeError);
-assertThrowsInstanceOf(() => a.pop(), TypeError);
-assertThrowsInstanceOf(() => a.fill(0), TypeError);
-assertThrowsInstanceOf(() => a.splice(0, 1, 1), TypeError);
-assertThrowsInstanceOf(() => a.push("foo"), TypeError);
-assertThrowsInstanceOf(() => { "use strict"; a.length = 5; }, TypeError);
-assertThrowsInstanceOf(() => { "use strict"; a[2] = "foo"; }, TypeError);
-assertThrowsInstanceOf(() => { "use strict"; delete a[0]; }, TypeError);
-assertThrowsInstanceOf(() => a.splice(Math.a), TypeError);
+assert.throws(TypeError, () => a.reverse());
+assert.throws(TypeError, () => a.shift());
+assert.throws(TypeError, () => a.unshift(0));
+assert.throws(TypeError, () => a.sort(function() {}));
+assert.throws(TypeError, () => a.pop());
+assert.throws(TypeError, () => a.fill(0));
+assert.throws(TypeError, () => a.splice(0, 1, 1));
+assert.throws(TypeError, () => a.push("foo"));
+assert.throws(TypeError, () => { "use strict"; a.length = 5; });
+assert.throws(TypeError, () => { "use strict"; a[2] = "foo"; });
+assert.throws(TypeError, () => { "use strict"; delete a[0]; });
+assert.throws(TypeError, () => a.splice(Math.a));
 
 // Shouldn't throw, since this is not strict mode, but shouldn't change the
 // value of the property.
@@ -48,4 +44,3 @@ a[2] = "foo";
 assert.sameValue(delete a[0], false);
 
 assertArrayIsExpected();
-

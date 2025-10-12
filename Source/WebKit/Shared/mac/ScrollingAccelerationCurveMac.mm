@@ -33,6 +33,7 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/IOKitSPI.h>
 #import <wtf/cf/TypeCastsCF.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 namespace WebKit {
 
@@ -95,7 +96,7 @@ static ScrollingAccelerationCurve fromIOHIDCurveArrayWithAcceleration(NSArray<NS
 static RetainPtr<IOHIDEventSystemClientRef> createHIDClient()
 {
     auto client = adoptCF(IOHIDEventSystemClientCreateWithType(nil, kIOHIDEventSystemClientTypePassive, nil));
-    IOHIDEventSystemClientSetDispatchQueue(client.get(), dispatch_get_main_queue());
+    IOHIDEventSystemClientSetDispatchQueue(client.get(), mainDispatchQueueSingleton());
     IOHIDEventSystemClientActivate(client.get());
     return client;
 }

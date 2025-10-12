@@ -23,10 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "APIScriptMessage.h"
+#import "WKObject.h"
 #import "WKScriptMessage.h"
+#import <wtf/AlignedStorage.h>
 
-@interface WKScriptMessage ()
+namespace WebKit {
 
-- (instancetype)_initWithBody:(id)body webView:(WKWebView *)webView frameInfo:(WKFrameInfo *)frameInfo name:(NSString *)name world:(WKContentWorld *)world;
+template<> struct WrapperTraits<API::ScriptMessage> {
+    using WrapperClass = WKScriptMessage;
+};
 
+}
+
+@interface WKScriptMessage () <WKObject> {
+@package
+    AlignedStorage<API::ScriptMessage> _scriptMessage;
+}
 @end

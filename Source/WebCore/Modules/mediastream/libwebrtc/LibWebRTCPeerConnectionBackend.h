@@ -34,13 +34,13 @@ namespace WebCore {
 class LibWebRTCPeerConnectionBackend;
 }
 
+namespace webrtc {
+class IceCandidate;
+}
+
 namespace WTF {
 template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
 template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::LibWebRTCPeerConnectionBackend> : std::true_type { };
-}
-
-namespace webrtc {
-class IceCandidateInterface;
 }
 
 namespace WebCore {
@@ -63,10 +63,8 @@ class RealtimeOutgoingVideoSource;
 class LibWebRTCPeerConnectionBackend final : public PeerConnectionBackend {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCPeerConnectionBackend);
 public:
-    LibWebRTCPeerConnectionBackend(RTCPeerConnection&, LibWebRTCProvider&);
+    LibWebRTCPeerConnectionBackend(RTCPeerConnection&, Ref<LibWebRTCMediaEndpoint>&&);
     ~LibWebRTCPeerConnectionBackend();
-
-    bool shouldEnableWebRTCL4S() const;
 
 private:
     void close() final;
@@ -126,11 +124,11 @@ private:
     void disableICECandidateFiltering() final;
     bool isNegotiationNeeded(uint32_t) const final;
 
-    Ref<LibWebRTCMediaEndpoint> m_endpoint;
+    const Ref<LibWebRTCMediaEndpoint> m_endpoint;
     bool m_isLocalDescriptionSet { false };
     bool m_isRemoteDescriptionSet { false };
 
-    Vector<std::unique_ptr<webrtc::IceCandidateInterface>> m_pendingCandidates;
+    Vector<std::unique_ptr<webrtc::IceCandidate>> m_pendingCandidates;
     Vector<Ref<RTCRtpReceiver>> m_pendingReceivers;
 
     Function<void(String&&)> m_rtcStatsLogCallback;

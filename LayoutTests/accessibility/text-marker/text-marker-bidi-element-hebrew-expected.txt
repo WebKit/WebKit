@@ -1,0 +1,36 @@
+This test verifies that a combination of Hebrew and English is read correctly by Accessibility, when using CSS unicode-bidi property.
+
+PASS: rangeLength === 28
+PASS: ltrCount === 22
+PASS: rtlCount === 7
+PASS: staticText.stringForTextMarkerRange(staticTextTextMarkerRange).trim() === 'Anyone can try שפת תכנות C++'
+PASS: rangeLength === 28
+PASS: ltrCount === 22
+PASS: rtlCount === 7
+PASS: staticText.stringForTextMarkerRange(staticTextTextMarkerRange).trim() === 'Anyone can try שפת תכנות C++'
+PASS: rangeLength === 28
+PASS: ltrCount === 22
+PASS: rtlCount === 7
+PASS: staticText.stringForTextMarkerRange(staticTextTextMarkerRange).trim() === 'Anyone can try שפת תכנות C++'
+PASS: rangeLength === 28
+PASS: ltrCount === 22
+PASS: rtlCount === 7
+PASS: staticText.stringForTextMarkerRange(staticTextTextMarkerRange).trim() === 'Anyone can try שפת תכנות C++'
+PASS: rangeLength === 28
+PASS: ltrCount === 28
+PASS: rtlCount === 0
+PASS: staticText.stringForTextMarkerRange(staticTextTextMarkerRange).trim() === 'Anyone can try שפת תכנות C++'
+PASS: rangeLength === 28
+PASS: ltrCount === 28
+PASS: rtlCount === 0
+PASS: staticText.stringForTextMarkerRange(staticTextTextMarkerRange).trim() === 'Anyone can try שפת תכנות C++'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Anyone can try שפת תכנות C++
+Anyone can try שפת תכנות C++
+Anyone can try שפת תכנות C++
+Anyone can try שפת תכנות C++
+Anyone can try שפת תכנות C++
+Anyone can try שפת תכנות C++

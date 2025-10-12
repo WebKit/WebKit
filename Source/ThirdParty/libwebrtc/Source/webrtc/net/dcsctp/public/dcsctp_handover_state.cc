@@ -9,6 +9,7 @@
  */
 #include "net/dcsctp/public/dcsctp_handover_state.h"
 
+#include <cstdint>
 #include <string>
 
 #include "absl/strings/string_view.h"

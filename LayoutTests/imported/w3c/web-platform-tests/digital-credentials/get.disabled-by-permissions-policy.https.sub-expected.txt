@@ -1,6 +1,8 @@
 
 
-FAIL Permissions-Policy header digital-credentials-get=() disallows the top-level document. promise_rejects_dom: function "function() { throw e }" threw object "TypeError: At least one request must present." that is not a DOMException NotAllowedError: property "code" is equal to undefined, expected 0
+Harness Error (TIMEOUT), message = null
+
+FAIL Permissions-Policy header digital-credentials-get=() disallows the top-level document. promise_rejects_dom: function "function() { throw e; }" threw object "TypeError: At least one request must present." that is not a DOMException NotAllowedError: property "code" is equal to undefined, expected 0
 FAIL Permissions-Policy header digital-credentials-get=() disallows same-origin iframes. assert_false: Digital Credential API expected false got true
-FAIL Permissions-Policy header digital-credentials-get=() cannot be overridden using the allow attribute. assert_false: Digital Credential API expected false got true
+TIMEOUT Permissions-Policy header digital-credentials-get=() cannot be overridden using the allow attribute. Test timed out
 

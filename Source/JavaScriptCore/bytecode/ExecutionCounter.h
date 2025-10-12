@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Options.h"
+#include <JavaScriptCore/Options.h>
 #include <wtf/Nonmovable.h>
 #include <wtf/PrintStream.h>
 #include <wtf/TZoneMalloc.h>
@@ -99,6 +99,9 @@ public:
     // the memory usage heuristics.
     int32_t m_activeThreshold;
 };
+
+extern template class ExecutionCounter<CountingForBaseline>;
+extern template class ExecutionCounter<CountingForUpperTiers>;
 
 WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<CountingVariant countingVariant>, ExecutionCounter<countingVariant>);
 

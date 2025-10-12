@@ -17,7 +17,9 @@
  */
 
 #include "config.h"
+
 #include "GStreamerWebRTCCommon.h"
+#include "GStreamerCommon.h"
 
 GST_DEBUG_CATEGORY(webkit_webrtc_common_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_common_debug

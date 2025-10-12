@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2016 Apple Inc. All rights reserved.
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,20 +26,20 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
+#include "CSSValue.h"
 #include "FontTaggedSettings.h"
 
 namespace WebCore {
 
 class CSSFontVariationValue final : public CSSValue {
 public:
-    static Ref<CSSFontVariationValue> create(FontTag tag, Ref<CSSPrimitiveValue>&& value)
+    static Ref<CSSFontVariationValue> create(FontTag tag, Ref<CSSValue>&& value)
     {
         return adoptRef(*new CSSFontVariationValue(tag, WTFMove(value)));
     }
 
     const FontTag& tag() const { return m_tag; }
-    const CSSPrimitiveValue& value() const { return m_value; }
+    const CSSValue& value() const { return m_value; }
     String customCSSText(const CSS::SerializationContext&) const;
 
     bool equals(const CSSFontVariationValue&) const;
@@ -52,10 +52,10 @@ public:
     }
 
 private:
-    CSSFontVariationValue(FontTag, Ref<CSSPrimitiveValue>&&);
+    CSSFontVariationValue(FontTag, Ref<CSSValue>&&);
 
     FontTag m_tag;
-    const Ref<CSSPrimitiveValue> m_value;
+    const Ref<CSSValue> m_value;
 };
 
 } // namespace WebCore

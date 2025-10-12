@@ -11,30 +11,26 @@
 #ifndef TEST_PC_E2E_ANALYZER_VIDEO_VIDEO_QUALITY_ANALYZER_INJECTION_HELPER_H_
 #define TEST_PC_E2E_ANALYZER_VIDEO_VIDEO_QUALITY_ANALYZER_INJECTION_HELPER_H_
 
-#include <stdio.h>
-
-#include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "api/scoped_refptr.h"
+#include "api/stats/rtc_stats_report.h"
 #include "api/test/pclf/media_configuration.h"
 #include "api/test/stats_observer_interface.h"
+#include "api/test/video/video_frame_writer.h"
 #include "api/test/video_quality_analyzer_interface.h"
-#include "api/video/video_frame.h"
-#include "api/video/video_sink_interface.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_factory.h"
-#include "rtc_base/synchronization/mutex.h"
 #include "system_wrappers/include/clock.h"
 #include "test/pc/e2e/analyzer/video/analyzing_video_sink.h"
 #include "test/pc/e2e/analyzer/video/analyzing_video_sinks_helper.h"
 #include "test/pc/e2e/analyzer/video/encoded_image_data_injector.h"
 #include "test/pc/e2e/analyzer/video/quality_analyzing_video_encoder.h"
 #include "test/test_video_capturer.h"
-#include "test/testsupport/video_frame_writer.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
@@ -81,7 +77,7 @@ class VideoQualityAnalyzerInjectionHelper : public StatsObserverInterface {
       bool report_infra_metrics);
 
   void Start(std::string test_case_name,
-             rtc::ArrayView<const std::string> peer_names,
+             ArrayView<const std::string> peer_names,
              int max_threads_count = 1);
 
   // Registers new call participant to the underlying video quality analyzer.
@@ -96,7 +92,7 @@ class VideoQualityAnalyzerInjectionHelper : public StatsObserverInterface {
   // `analyzer_`.
   void OnStatsReports(
       absl::string_view pc_label,
-      const rtc::scoped_refptr<const RTCStatsReport>& report) override;
+      const scoped_refptr<const RTCStatsReport>& report) override;
 
   // Stops VideoQualityAnalyzerInterface to populate final data and metrics.
   // Should be invoked after analyzed video tracks are disposed.

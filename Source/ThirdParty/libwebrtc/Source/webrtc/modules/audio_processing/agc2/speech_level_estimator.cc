@@ -10,17 +10,17 @@
 
 #include "modules/audio_processing/agc2/speech_level_estimator.h"
 
+#include "api/audio/audio_processing.h"
 #include "modules/audio_processing/agc2/agc2_common.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
 namespace {
 
 float ClampLevelEstimateDbfs(float level_estimate_dbfs) {
-  return rtc::SafeClamp<float>(level_estimate_dbfs, -90.0f, 30.0f);
+  return SafeClamp<float>(level_estimate_dbfs, -90.0f, 30.0f);
 }
 
 // Returns the initial speech level estimate needed to apply the initial gain.

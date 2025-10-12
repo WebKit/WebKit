@@ -45,17 +45,17 @@ namespace WebCore {
 
 static inline bool isClassic()
 {
-    return [[PAL::getUIApplicationClass() sharedApplication] _isClassic];
+    return [[PAL::getUIApplicationClassSingleton() sharedApplication] _isClassic];
 }
 
 static inline bool isClassicPad()
 {
-    return [PAL::getUIApplicationClass() _classicMode] == UIApplicationSceneClassicModeOriginalPad;
+    return [PAL::getUIApplicationClassSingleton() _classicMode] == UIApplicationSceneClassicModeOriginalPad;
 }
 
 static inline bool isClassicPhone()
 {
-    return isClassic() && [PAL::getUIApplicationClass() _classicMode] != UIApplicationSceneClassicModeOriginalPad;
+    return isClassic() && [PAL::getUIApplicationClassSingleton() _classicMode] != UIApplicationSceneClassicModeOriginalPad;
 }
 
 ASCIILiteral osNameForUserAgent()
@@ -65,7 +65,6 @@ ASCIILiteral osNameForUserAgent()
     return "iPhone OS"_s;
 }
 
-#if !ENABLE(STATIC_IPAD_USER_AGENT_VALUE)
 static StringView deviceNameForUserAgent()
 {
     if (isClassic()) {
@@ -85,7 +84,6 @@ static StringView deviceNameForUserAgent()
     }();
     return name.get();
 }
-#endif
 
 String standardUserAgentWithApplicationName(const String& applicationName, const String& userAgentOSVersion, UserAgentType type)
 {
@@ -98,10 +96,6 @@ String standardUserAgentWithApplicationName(const String& applicationName, const
     if (type == UserAgentType::Desktop)
         return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)"_s, separator, applicationName);
 
-#if ENABLE(STATIC_IPAD_USER_AGENT_VALUE)
-    UNUSED_PARAM(userAgentOSVersion);
-    return makeString("Mozilla/5.0 (iPad; CPU OS 16_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko)"_s, separator, applicationName);
-#else
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DoesNotOverrideUAFromNSUserDefault)) {
         if (auto override = dynamic_cf_cast<CFStringRef>(adoptCF(CFPreferencesCopyAppValue(CFSTR("UserAgent"), CFSTR("com.apple.WebFoundation"))))) {
             static BOOL hasLoggedDeprecationWarning = NO;
@@ -115,7 +109,6 @@ String standardUserAgentWithApplicationName(const String& applicationName, const
 
     auto osVersion = userAgentOSVersion.isEmpty() ? systemMarketingVersionForUserAgentString() : userAgentOSVersion;
     return makeString("Mozilla/5.0 ("_s, deviceNameForUserAgent(), "; CPU "_s, osNameForUserAgent(), ' ', osVersion, " like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko)"_s, separator, applicationName);
-#endif
 }
 
 } // namespace WebCore.

@@ -48,7 +48,7 @@ void WebSocketChannelManager::didReceiveMessage(IPC::Connection& connection, IPC
 {
     auto iterator = m_channels.find(AtomicObjectIdentifier<WebCore::WebSocketIdentifierType>(decoder.destinationID()));
     if (iterator != m_channels.end())
-        iterator->value->didReceiveMessage(connection, decoder);
+        Ref { *iterator->value }->didReceiveMessage(connection, decoder);
 }
 
 } // namespace WebKit

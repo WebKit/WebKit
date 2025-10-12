@@ -91,7 +91,7 @@
 - (unsigned)hspace
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getUnsignedIntegralAttribute(WebCore::HTMLNames::hspaceAttr);
+    return IMPL->unsignedIntegralAttribute(WebCore::HTMLNames::hspaceAttr);
 }
 
 - (void)setHspace:(unsigned)newHspace
@@ -151,7 +151,7 @@
 - (unsigned)vspace
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getUnsignedIntegralAttribute(WebCore::HTMLNames::vspaceAttr);
+    return IMPL->unsignedIntegralAttribute(WebCore::HTMLNames::vspaceAttr);
 }
 
 - (void)setVspace:(unsigned)newVspace

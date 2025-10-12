@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "Instruction.h"
-#include "Opcode.h"
-#include "UnlinkedMetadataTable.h"
-#include "ValueProfile.h"
+#include <JavaScriptCore/Instruction.h>
+#include <JavaScriptCore/Opcode.h>
+#include <JavaScriptCore/UnlinkedMetadataTable.h>
+#include <JavaScriptCore/ValueProfile.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 

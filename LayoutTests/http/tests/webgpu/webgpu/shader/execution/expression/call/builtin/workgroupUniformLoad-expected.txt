@@ -27,4 +27,136 @@ PASS :types:type="ComplexStruct";wgsize=[1,1]
 PASS :types:type="ComplexStruct";wgsize=[3,7]
 PASS :types:type="ComplexStruct";wgsize=[1,128]
 PASS :types:type="ComplexStruct";wgsize=[16,16]
+FAIL :types:type="atomic%3Cu32%3E";wgsize=[1,1] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: deadbeef
+       failed ->           xx
+     expected ==     0000002a
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'atomic<u32>' to 'u32'
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
+FAIL :types:type="atomic%3Cu32%3E";wgsize=[3,7] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 20.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'atomic<u32>' to 'u32'
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
+FAIL :types:type="atomic%3Cu32%3E";wgsize=[1,128] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 127.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'atomic<u32>' to 'u32'
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
+FAIL :types:type="atomic%3Cu32%3E";wgsize=[16,16] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 255.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'atomic<u32>' to 'u32'
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
+FAIL :types:type="atomic%3Ci32%3E";wgsize=[1,1] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: -21524111
+       failed ->            xx
+     expected ==     -0000002a
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'atomic<i32>' to 'i32'
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
+FAIL :types:type="atomic%3Ci32%3E";wgsize=[3,7] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 20.
+     Starting at index 0:
+       actual == 0x: -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 ...
+       failed ->            xx        xx        xx        xx        xx        xx        xx        xx        xx        xx        xx ...
+     expected ==     -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'atomic<i32>' to 'i32'
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
+FAIL :types:type="atomic%3Ci32%3E";wgsize=[1,128] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 127.
+     Starting at index 0:
+       actual == 0x: -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 ...
+       failed ->            xx        xx        xx        xx        xx        xx        xx        xx        xx        xx        xx ...
+     expected ==     -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'atomic<i32>' to 'i32'
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
+FAIL :types:type="atomic%3Ci32%3E";wgsize=[16,16] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 255.
+     Starting at index 0:
+       actual == 0x: -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 -21524111 ...
+       failed ->            xx        xx        xx        xx        xx        xx        xx        xx        xx        xx        xx ...
+     expected ==     -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a -0000002a ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'atomic<i32>' to 'i32'
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
+FAIL :types:type="AtomicInStruct";wgsize=[1,1] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: deadbeef
+       failed ->           xx
+     expected ==     0000002a
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    17:18: cannot assign value of type 'atomic<u32>' to 'u32'
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
+FAIL :types:type="AtomicInStruct";wgsize=[3,7] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 20.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    17:18: cannot assign value of type 'atomic<u32>' to 'u32'
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
+FAIL :types:type="AtomicInStruct";wgsize=[1,128] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 127.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    17:18: cannot assign value of type 'atomic<u32>' to 'u32'
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
+FAIL :types:type="AtomicInStruct";wgsize=[16,16] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 255.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    17:18: cannot assign value of type 'atomic<u32>' to 'u32'
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 

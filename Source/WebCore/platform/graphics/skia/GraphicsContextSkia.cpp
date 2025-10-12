@@ -28,7 +28,6 @@
 
 #if USE(SKIA)
 #include "AffineTransform.h"
-#include "DecomposedGlyphs.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
 #include "FontRenderOptions.h"
@@ -252,7 +251,7 @@ static SkSamplingOptions toSkSamplingOptions(InterpolationQuality quality)
     return SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNearest);
 }
 
-void GraphicsContextSkia::drawNativeImageInternal(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void GraphicsContextSkia::drawNativeImage(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     auto image = nativeImage.platformImage();
     if (!image)
@@ -355,9 +354,9 @@ void GraphicsContextSkia::drawLine(const FloatPoint& point1, const FloatPoint& p
         if (strokeWidth <= patternWidth + 1)
             return;
 
-        const SkScalar dashIntervals[] = { SkFloatToScalar(patternWidth), SkFloatToScalar(patternWidth) };
+        const Vector<SkScalar, 2> dashIntervals = { SkFloatToScalar(patternWidth), SkFloatToScalar(patternWidth) };
         const float patternOffset = dashedLinePatternOffsetForPatternAndStrokeWidth(patternWidth, strokeWidth);
-        paint.setPathEffect(SkDashPathEffect::Make(dashIntervals, 2, patternOffset));
+        paint.setPathEffect(SkDashPathEffect::Make(dashIntervals.span(), patternOffset));
     }
 
     const auto centeredPoints = centerLineAndCutOffCorners(isVertical, cornerWidth, point1, point2);
@@ -474,8 +473,7 @@ sk_sp<SkImageFilter> GraphicsContextSkia::createDropShadowFilterIfNeeded(ShadowS
     // Ignoring the CTM is practically equal as applying the inverse of
     // the CTM when post-processing the drop shadow.
     if (const std::optional<SkMatrix>& inverse = ctm.inverse()) {
-        SkPoint3 p = SkPoint3::Make(offset.width(), offset.height(), 0);
-        inverse->mapHomogeneousPoints(&p, &p, 1);
+        SkPoint3 p = inverse->mapHomogeneousPoint(SkPoint3::Make(offset.width(), offset.height(), 0));
         sigma = inverse->mapRadius(sigma);
         return SkImageFilters::DropShadowOnly(p.x(), p.y(), sigma, sigma, shadowColor, nullptr);
     }
@@ -737,10 +735,12 @@ void GraphicsContextSkia::translate(float x, float y)
     m_canvas.translate(SkFloatToScalar(x), SkFloatToScalar(y));
 }
 
-void GraphicsContextSkia::didUpdateState(GraphicsContextState& state)
+void GraphicsContextSkia::didUpdateState(GraphicsContextState&)
 {
-    // FIXME: Handle stroke changes.
-    state.didApplyChanges();
+}
+
+void GraphicsContextSkia::didUpdateSingleState(GraphicsContextState&, GraphicsContextState::ChangeIndex)
+{
 }
 
 void GraphicsContextSkia::concatCTM(const AffineTransform& ctm)
@@ -857,11 +857,12 @@ void GraphicsContextSkia::setLineDash(const DashArray& dashArray, float dashOffs
 
     if (dashArray.size() % 2 == 1) {
         // Repeat the array to ensure even number of dash array elements, see e.g. 'stroke-dasharray' spec.
-        DashArray repeatedDashArray(dashArray);
-        repeatedDashArray.appendVector(dashArray);
-        m_skiaState.m_stroke.dash = SkDashPathEffect::Make(repeatedDashArray.data(), repeatedDashArray.size(), dashOffset);
+        auto repeatedDashArray = DashArray::createWithSizeFromGenerator(dashArray.size() * 2, [&](auto i) {
+            return dashArray[i % dashArray.size()];
+        });
+        m_skiaState.m_stroke.dash = SkDashPathEffect::Make(repeatedDashArray.span(), dashOffset);
     } else
-        m_skiaState.m_stroke.dash = SkDashPathEffect::Make(dashArray.data(), dashArray.size(), dashOffset);
+        m_skiaState.m_stroke.dash = SkDashPathEffect::Make(dashArray.span(), dashOffset);
 }
 
 void GraphicsContextSkia::setLineJoin(LineJoin lineJoin)
@@ -1054,10 +1055,11 @@ inline std::unique_ptr<GLFence> createAcceleratedRenderingFence(T object)
 
     grContext->flush(object);
 
-    if (GLFence::isSupported()) {
+    auto& glDisplay = PlatformDisplay::sharedDisplay().glDisplay();
+    if (GLFence::isSupported(glDisplay)) {
         grContext->submit(GrSyncCpu::kNo);
 
-        if (auto fence = GLFence::create())
+        if (auto fence = GLFence::create(glDisplay))
             return fence;
     }
 

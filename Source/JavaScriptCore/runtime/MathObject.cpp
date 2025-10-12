@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007-2019 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -201,6 +201,8 @@ JSC_DEFINE_HOST_FUNCTION(mathProtoFuncHypot, (JSGlobalObject* globalObject, Call
 
     unsigned argsCount = callFrame->argumentCount();
 
+    if (!argsCount) [[unlikely]]
+        return JSValue::encode(jsDoubleNumber(0));
     if (argsCount == 1) {
         double arg0 = callFrame->uncheckedArgument(0).toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
@@ -450,20 +452,37 @@ JSC_DEFINE_HOST_FUNCTION(mathProtoFuncSumPrecise, (JSGlobalObject* globalObject,
     if (iterable.isUndefinedOrNull())
         return throwVMTypeError(globalObject, scope, "Math.sumPrecise requires first argument not be null or undefined"_s);
 
-    PreciseSum sum;
-
     scope.release();
-    forEachInIterable(globalObject, iterable, [&sum](VM& vm, JSGlobalObject* globalObject, JSValue value) {
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        if (!value.isNumber()) {
-            throwTypeError(globalObject, scope, "Math.sumPrecise was passed a non-number"_s);
-            return;
-        }
 
-        sum.add(value.asNumber());
-    });
+    const std::optional<uint64_t> length = isJSArray(iterable) ?
+        std::make_optional(static_cast<uint64_t>(jsCast<JSArray*>(iterable)->length()))
+        : std::nullopt;
 
-    return JSValue::encode(jsNumber(sum.compute()));
+    auto calculatePreciseSum = [&](auto& sum) {
+        uint64_t count = 0;
+        forEachInIterable(globalObject, iterable, [&sum, &count](VM& vm, JSGlobalObject* globalObject, JSValue value) {
+            auto scope = DECLARE_THROW_SCOPE(vm);
+            if (count >= maxSafeIntegerAsUInt64()) [[unlikely]] {
+                throwRangeError(globalObject, scope, "Math.sumPrecise exceeded maximum iterations"_s);
+                return;
+            }
+            if (!value.isNumber()) [[unlikely]] {
+                throwTypeError(globalObject, scope, "Math.sumPrecise was passed a non-number"_s);
+                return;
+            }
+            sum.add(value.asNumber());
+            ++count;
+        });
+        return JSValue::encode(jsNumber(sum.compute()));
+    };
+
+    if (length && length.value() > WTF::PRECISE_SUM_THRESHOLD) {
+        PreciseSum<WTF::Xsum::XsumLarge> sum;
+        return calculatePreciseSum(sum);
+    }
+
+    PreciseSum sum;
+    return calculatePreciseSum(sum);
 }
 
 } // namespace JSC

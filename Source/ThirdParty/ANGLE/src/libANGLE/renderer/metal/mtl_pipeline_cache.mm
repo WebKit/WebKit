@@ -7,6 +7,10 @@
 //    Defines classes for caching of mtl pipelines
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/metal/mtl_pipeline_cache.h"
 
 #include "libANGLE/ErrorStrings.h"

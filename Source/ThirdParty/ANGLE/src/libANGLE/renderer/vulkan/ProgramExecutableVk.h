@@ -219,23 +219,6 @@ class ProgramExecutableVk : public ProgramExecutableImpl
                                               PipelineType pipelineType,
                                               UpdateDescriptorSetsBuilder *updateBuilder);
 
-    angle::Result updateShaderResourcesDescriptorSet(
-        vk::Context *context,
-        uint32_t currentFrame,
-        UpdateDescriptorSetsBuilder *updateBuilder,
-        const vk::WriteDescriptorDescs &writeDescriptorDescs,
-        const vk::DescriptorSetDescBuilder &shaderResourcesDesc,
-        vk::SharedDescriptorSetCacheKey *newSharedCacheKeyOut);
-
-    angle::Result updateUniformsAndXfbDescriptorSet(
-        vk::Context *context,
-        uint32_t currentFrame,
-        UpdateDescriptorSetsBuilder *updateBuilder,
-        const vk::WriteDescriptorDescs &writeDescriptorDescs,
-        vk::BufferHelper *defaultUniformBuffer,
-        vk::DescriptorSetDescBuilder *uniformsAndXfbDesc,
-        vk::SharedDescriptorSetCacheKey *sharedCacheKeyOut);
-
     template <typename CommandBufferT>
     angle::Result bindDescriptorSets(vk::ErrorContext *context,
                                      uint32_t currentFrame,
@@ -340,21 +323,43 @@ class ProgramExecutableVk : public ProgramExecutableImpl
 
     angle::Result mergePipelineCacheToRenderer(vk::ErrorContext *context) const;
 
-    const vk::WriteDescriptorDescs &getShaderResourceWriteDescriptorDescs() const
+    angle::Result updateUniformsAndXfbDescInfo(vk::Context *context,
+                                               const vk::BufferHelper *currentUniformBuffer,
+                                               const vk::BufferHelper &emptyBuffer,
+                                               uint32_t currentFrameCount,
+                                               UpdateDescriptorSetsBuilder *updateBuilder,
+                                               bool activeUnpaused,
+                                               TransformFeedbackVk *transformFeedbackVk);
+
+    angle::Result updateUniformBuffersDescInfo(vk::Context *context,
+                                               vk::CommandBufferHelperCommon *commandBufferHelper,
+                                               const gl::BufferVector &bufferBindings,
+                                               VkDeviceSize maxBoundBufferRange,
+                                               const vk::BufferHelper &emptyBuffer,
+                                               uint32_t currentFrameCount,
+                                               UpdateDescriptorSetsBuilder *updateBuilder);
+
+    void updateOneUniformBufferOffset(const size_t blockIndex,
+                                      const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding)
     {
-        return mShaderResourceWriteDescriptorDescs;
-    }
-    const vk::WriteDescriptorDescs &getDefaultUniformWriteDescriptorDescs(
-        TransformFeedbackVk *transformFeedbackVk) const
-    {
-        return transformFeedbackVk == nullptr ? mDefaultUniformWriteDescriptorDescs
-                                              : mDefaultUniformAndXfbWriteDescriptorDescs;
+        mUniformBuffersDescriptorDescBuilder.updateOneUniformBufferOffset(
+            blockIndex, bufferBinding, mUniformBuffersWriteDescriptorDescs);
     }
 
-    const vk::WriteDescriptorDescs &getTextureWriteDescriptorDescs() const
-    {
-        return mTextureWriteDescriptorDescs;
-    }
+    angle::Result updateShaderResourcesDescInfo(
+        ContextVk *contextVk,
+        vk::CommandBufferHelperCommon *commandBufferHelper,
+        const FramebufferVk *framebufferVk,
+        const gl::BufferVector &shaderStorageBufferBindings,
+        const gl::BufferVector &atomicCounterBufferBindings,
+        const VkPhysicalDeviceLimits &limits,
+        const vk::BufferHelper &emptyBuffer,
+        const GLbitfield memoryBarrierBits,
+        const gl::ActiveTextureArray<TextureVk *> &activeImages,
+        const std::vector<gl::ImageUnit> &imageUnits,
+        uint32_t currentFrameCount,
+        UpdateDescriptorSetsBuilder *updateBuilder);
+
     // The following functions are for internal use of programs, including from a threaded link job:
     angle::Result resizeUniformBlockMemory(vk::ErrorContext *context,
                                            const gl::ShaderMap<size_t> &requiredBufferSize);
@@ -512,7 +517,29 @@ class ProgramExecutableVk : public ProgramExecutableImpl
 
     void initializeWriteDescriptorDesc(vk::ErrorContext *context);
 
+    void updateShaderResourcesWithSharedCacheKey(
+        const gl::BufferVector &shaderStorageBufferBindings,
+        const gl::BufferVector &atomicCounterBufferBindings,
+        const gl::ActiveTextureArray<TextureVk *> &activeImages,
+        const vk::SharedDescriptorSetCacheKey &newSharedCacheKey);
+
+    angle::Result updateUniformsAndXfbDescriptorSet(
+        vk::Context *context,
+        uint32_t currentFrame,
+        UpdateDescriptorSetsBuilder *updateBuilder,
+        const vk::BufferHelper *defaultUniformBuffer,
+        vk::SharedDescriptorSetCacheKey *sharedCacheKeyOut);
+
+    angle::Result updateBuffersDescriptorSet(vk::Context *context,
+                                             const uint32_t currentFrame,
+                                             const vk::DescriptorSetDescBuilder &descriptorSetDesc,
+                                             const vk::WriteDescriptorDescs &writeDescriptorDescs,
+                                             const DescriptorSetIndex setIndex,
+                                             UpdateDescriptorSetsBuilder *updateBuilder,
+                                             vk::SharedDescriptorSetCacheKey *newSharedCacheKeyOut);
+
     // Descriptor sets and pools for shader resources for this program.
+    angle::PackedEnumBitSet<DescriptorSetIndex, uint8_t> mValidDescriptorSetIndices;
     vk::DescriptorSetArray<vk::DescriptorSetPointer> mDescriptorSets;
     vk::DescriptorSetArray<vk::DynamicDescriptorPoolPointer> mDynamicDescriptorPools;
     vk::BufferSerial mCurrentDefaultUniformBufferSerial;
@@ -526,8 +553,7 @@ class ProgramExecutableVk : public ProgramExecutableImpl
 
     // A set of dynamic offsets used with vkCmdBindDescriptorSets for the default uniform buffers.
     VkDescriptorType mUniformBufferDescriptorType;
-    gl::ShaderVector<uint32_t> mDynamicUniformDescriptorOffsets;
-    std::vector<uint32_t> mDynamicShaderResourceDescriptorOffsets;
+    gl::ShaderVector<uint32_t> mDefaultUniformDynamicDescriptorOffsets;
 
     ShaderInterfaceVariableInfoMap mVariableInfoMap;
 
@@ -578,11 +604,18 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     vk::GraphicsPipelineDesc mWarmUpGraphicsPipelineDesc;
 
     // The "layout" information for descriptorSets
+    vk::WriteDescriptorDescs mUniformBuffersWriteDescriptorDescs;
     vk::WriteDescriptorDescs mShaderResourceWriteDescriptorDescs;
     vk::WriteDescriptorDescs mTextureWriteDescriptorDescs;
-    vk::WriteDescriptorDescs mDefaultUniformWriteDescriptorDescs;
     vk::WriteDescriptorDescs mDefaultUniformAndXfbWriteDescriptorDescs;
 
+    // The DescriptorSetDescBuilder for descriptorSets
+    vk::DescriptorSetDescBuilder mUniformBuffersDescriptorDescBuilder;
+    vk::DescriptorSetDescBuilder mShaderResourceDescriptorDescBuilder;
+    vk::DescriptorSetDescBuilder mTextureDescriptorDescBuilder;
+    vk::DescriptorSetDescBuilder mDefaultUniformAndXfbDescriptorDescBuilder;
+
+    vk::DescriptorSetLayoutDesc mUniformBuffersSetDesc;
     vk::DescriptorSetLayoutDesc mShaderResourceSetDesc;
     vk::DescriptorSetLayoutDesc mTextureSetDesc;
     vk::DescriptorSetLayoutDesc mDefaultUniformAndXfbSetDesc;

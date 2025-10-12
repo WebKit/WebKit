@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2010 Google, Inc. All rights reserved.
  * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
 #pragma once
 
 #include "PendingScriptClient.h"
-#include "Timer.h"
+#include <WebCore/Timer.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
@@ -80,7 +80,7 @@ private:
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     Vector<Ref<PendingScript>> m_scriptsToExecuteInOrder;
     Vector<RefPtr<PendingScript>> m_scriptsToExecuteSoon; // http://www.whatwg.org/specs/web-apps/current-work/#set-of-scripts-that-will-execute-as-soon-as-possible
-    UncheckedKeyHashSet<Ref<PendingScript>> m_pendingAsyncScripts;
+    HashSet<Ref<PendingScript>> m_pendingAsyncScripts;
     Timer m_timer;
 };
 

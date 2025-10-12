@@ -1,3 +1,0 @@
-
-FAIL Verify DataTransfer constructor assert_equals: expected "none" but got "uninitialized"
-

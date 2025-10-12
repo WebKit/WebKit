@@ -27,7 +27,6 @@
 
 #include "ActiveDOMCallback.h"
 #include "CallbackResult.h"
-#include "ContextDestructionObserverInlines.h"
 #include "RTCPeerConnection.h"
 
 namespace WebCore {

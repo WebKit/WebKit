@@ -36,12 +36,15 @@
 #include "RenderChildIterator.h"
 #include "RenderCombineText.h"
 #include "RenderCounter.h"
+#include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
+#include "RenderGrid.h"
 #include "RenderImage.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderMenuList.h"
+#include "RenderObjectInlines.h"
 #include "RenderSVGInline.h"
 #include "RenderSlider.h"
 #include "RenderStyleInlines.h"
@@ -118,12 +121,23 @@ CheckedRef<Layout::ElementBox> BoxTreeUpdater::build()
 
     if (is<RenderBlockFlow>(m_rootRenderer))
         rootBox->setIsInlineIntegrationRoot();
-    rootBox->setIsFirstChildForIntegration(!m_rootRenderer.parent() || m_rootRenderer.parent()->firstChild() == &m_rootRenderer);
+
+    auto isAnonymousTextIndentCandidateForIntegration = [&] {
+        if (!m_rootRenderer.isAnonymousBlock())
+            return false;
+        if (m_rootRenderer.isBlockBox())
+            return !m_rootRenderer.parent() || m_rootRenderer.parent()->firstChild() == &m_rootRenderer;
+        // E.g. flex and grid items are not block boxes (they are block containers though).
+        return m_rootRenderer.isBlockContainer();
+    };
+    rootBox->setIsAnonymousTextIndentCandidateForIntegration(isAnonymousTextIndentCandidateForIntegration());
 
     if (is<RenderBlockFlow>(m_rootRenderer))
         buildTreeForInlineContent();
     else if (is<RenderFlexibleBox>(m_rootRenderer))
         buildTreeForFlexContent();
+    else if (is<RenderGrid>(m_rootRenderer))
+        buildTreeForGridContent();
     else
         ASSERT_NOT_IMPLEMENTED_YET();
 
@@ -309,6 +323,19 @@ void BoxTreeUpdater::buildTreeForFlexContent()
         auto style = RenderStyle::clone(flexItemRenderer.style());
         auto flexItemBox = makeUniqueRef<Layout::ElementBox>(elementAttributes(flexItemRenderer), WTFMove(style));
         insertChild(WTFMove(flexItemBox), flexItemRenderer, flexItemRenderer.previousSibling());
+    }
+}
+
+void BoxTreeUpdater::buildTreeForGridContent()
+{
+    for (auto& gridItemRenderer : childrenOfType<RenderElement>(m_rootRenderer)) {
+        if (auto existingChildBox = gridItemRenderer.layoutBox()) {
+            insertChild(existingChildBox->removeFromParent(), gridItemRenderer, gridItemRenderer.previousSibling());
+            continue;
+        }
+        auto style = RenderStyle::clone(gridItemRenderer.style());
+        auto gridItemBox = makeUniqueRef<Layout::ElementBox>(elementAttributes(gridItemRenderer), WTFMove(style));
+        insertChild(WTFMove(gridItemBox), gridItemRenderer, gridItemRenderer.previousSibling());
     }
 }
 
@@ -539,5 +566,3 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
 
 }
 }
-
-

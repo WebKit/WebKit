@@ -10,18 +10,20 @@
 
 #include "modules/desktop_capture/linux/x11/x_error_trap.h"
 
-#include <stddef.h>
+#include <X11/Xlib.h>
 
 #include <atomic>
+#include <cstddef>
 
 #include "rtc_base/checks.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 
 namespace {
 
-static int g_last_xserver_error_code = 0;
-static std::atomic<Display*> g_display_for_error_handler = nullptr;
+int g_last_xserver_error_code = 0;
+std::atomic<Display*> g_display_for_error_handler = nullptr;
 
 Mutex* AcquireMutex() {
   static Mutex* mutex = new Mutex();

@@ -320,6 +320,13 @@ void RemoteInspector::requestAutomationSession(const char* sessionID, const Clie
     updateClientCapabilities();
 }
 
+void RemoteInspector::automationConnectionDidClose()
+{
+    if (!m_client)
+        return;
+    m_client->closeAutomationSession();
+}
+
 void RemoteInspector::setInspectorServerAddress(CString&& address)
 {
     s_inspectorServerAddress = WTFMove(address);

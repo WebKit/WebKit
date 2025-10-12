@@ -3,9 +3,9 @@ PASS colorsBeforeShowingPopup.left is null
 PASS colorsBeforeShowingPopup.right is null
 PASS colorsBeforeShowingPopup.bottom is "rgb(0, 122, 255)"
 PASS colorsAfterShowingPopup.top is "rgb(255, 59, 48)"
-PASS colorsAfterShowingPopup.left is "rgb(255, 59, 48)"
-PASS colorsAfterShowingPopup.right is "rgb(255, 59, 48)"
-PASS colorsAfterShowingPopup.bottom is "rgb(255, 59, 48)"
+PASS colorsAfterShowingPopup.left is null
+PASS colorsAfterShowingPopup.right is null
+PASS colorsAfterShowingPopup.bottom is "rgb(0, 122, 255)"
 PASS successfullyParsed is true
 
 TEST COMPLETE

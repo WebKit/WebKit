@@ -1,0 +1,103 @@
+
+
+
+
+
+
+
+
+PASS [data-expected-width] 1
+FAIL [data-expected-width] 2 assert_equals:
+<canvas class="test" data-expected-width="45"></canvas>
+width expected 45 but got 50
+FAIL [data-expected-width] 3 assert_equals:
+<input class="test" data-expected-width="45">
+width expected 45 but got 177
+FAIL [data-expected-width] 4 assert_equals:
+<textarea class="test" data-expected-width="45"></textarea>
+width expected 45 but got 185
+FAIL [data-expected-width] 5 assert_equals:
+<button class="test" data-expected-width="45"></button>
+width expected 45 but got 10
+FAIL [data-expected-width] 6 assert_equals:
+<div class="test" style="float: left" data-expected-width="45"></div>
+width expected 45 but got 10
+PASS [data-expected-width] 7
+FAIL [data-expected-width] 8 assert_equals:
+<div class="test" style="position: absolute" data-expected-width="50"></div>
+width expected 50 but got 10
+FAIL [data-expected-width] 9 assert_equals:
+<div class="test" style="position: absolute; inset-inline-start: 10px" data-expected-width="45"></div>
+width expected 45 but got 10
+FAIL [data-expected-width] 10 assert_equals:
+<div class="test" style="position: absolute; inset-inline-end: 10px" data-expected-width="45"></div>
+width expected 45 but got 10
+PASS [data-expected-width] 11
+PASS [data-expected-width] 12
+PASS [data-expected-width] 13
+FAIL [data-expected-width] 14 assert_equals:
+<div class="test" style="position: absolute" data-expected-width="55"></div>
+width expected 55 but got 10
+FAIL [data-expected-width] 15 assert_equals:
+<div class="test" style="position: absolute; inset-inline-start: 10px" data-expected-width="45"></div>
+width expected 45 but got 10
+FAIL [data-expected-width] 16 assert_equals:
+<div class="test" style="position: absolute; inset-inline-end: 10px" data-expected-width="45"></div>
+width expected 45 but got 10
+PASS [data-expected-width] 17
+PASS [data-expected-width] 18
+FAIL [data-expected-width] 19 assert_equals:
+<div class="test" data-expected-width="45"></div>
+width expected 45 but got 10
+PASS [data-expected-width] 20
+PASS [data-expected-width] 21
+PASS [data-expected-width] 22
+PASS [data-expected-width] 23
+PASS [data-expected-width] 24
+FAIL [data-expected-width] 25 assert_equals:
+<canvas class="test" data-expected-width="45" style="box-sizing: border-box;"></canvas>
+width expected 45 but got 30
+FAIL [data-expected-width] 26 assert_equals:
+<input class="test" data-expected-width="45" style="box-sizing: border-box;">
+width expected 45 but got 177
+FAIL [data-expected-width] 27 assert_equals:
+<textarea class="test" data-expected-width="45" style="box-sizing: border-box;"></textarea>
+width expected 45 but got 185
+FAIL [data-expected-width] 28 assert_equals:
+<button class="test" data-expected-width="45" style="box-sizing: border-box;"></button>
+width expected 45 but got 10
+FAIL [data-expected-width] 29 assert_equals:
+<div class="test" style="float: left; box-sizing: border-box;" data-expected-width="45"></div>
+width expected 45 but got 10
+PASS [data-expected-width] 30
+FAIL [data-expected-width] 31 assert_equals:
+<div class="test" style="position: absolute; box-sizing: border-box;" data-expected-width="50"></div>
+width expected 50 but got 10
+FAIL [data-expected-width] 32 assert_equals:
+<div class="test" style="position: absolute; inset-inline-start: 10px; box-sizing: border-box;" data-expected-width="45"></div>
+width expected 45 but got 10
+FAIL [data-expected-width] 33 assert_equals:
+<div class="test" style="position: absolute; inset-inline-end: 10px; box-sizing: border-box;" data-expected-width="45"></div>
+width expected 45 but got 10
+PASS [data-expected-width] 34
+PASS [data-expected-width] 35
+PASS [data-expected-width] 36
+FAIL [data-expected-width] 37 assert_equals:
+<div class="test" style="position: absolute; box-sizing: border-box;" data-expected-width="55"></div>
+width expected 55 but got 10
+FAIL [data-expected-width] 38 assert_equals:
+<div class="test" style="position: absolute; inset-inline-start: 10px; box-sizing: border-box;" data-expected-width="45"></div>
+width expected 45 but got 10
+FAIL [data-expected-width] 39 assert_equals:
+<div class="test" style="position: absolute; inset-inline-end: 10px; box-sizing: border-box;" data-expected-width="45"></div>
+width expected 45 but got 10
+PASS [data-expected-width] 40
+PASS [data-expected-width] 41
+FAIL [data-expected-width] 42 assert_equals:
+<div class="test" data-expected-width="45" style="box-sizing: border-box;"></div>
+width expected 45 but got 10
+PASS [data-expected-width] 43
+PASS [data-expected-width] 44
+PASS [data-expected-width] 45
+PASS [data-expected-width] 46
+

@@ -21,15 +21,15 @@
 
 #pragma once
 
-#include "ContainerNode.h"
-#include "ContentSecurityPolicy.h"
-#include "LoadableScript.h"
-#include "ReferrerPolicy.h"
-#include "RequestPriority.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include "ScriptType.h"
-#include "UserGestureIndicator.h"
 #include <JavaScriptCore/Forward.h>
+#include <WebCore/ContainerNode.h>
+#include <WebCore/ContentSecurityPolicy.h>
+#include <WebCore/LoadableScript.h>
+#include <WebCore/ReferrerPolicy.h>
+#include <WebCore/RequestPriority.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/ScriptType.h>
+#include <WebCore/UserGestureIndicator.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/text/TextPosition.h>
 
@@ -58,6 +58,7 @@ public:
     void executeClassicScript(const ScriptSourceCode&);
     void executeModuleScript(LoadableModuleScript&);
     void registerImportMap(const ScriptSourceCode&);
+    void registerSpeculationRules(const ScriptSourceCode&);
 
     void executePendingScript(PendingScript&);
 
@@ -86,7 +87,7 @@ public:
     void ref() const;
     void deref() const;
 
-    static std::optional<ScriptType> determineScriptType(const String& typeAttribute, const String& languageAttribute, bool isHTMLDocument = true);
+    static std::optional<ScriptType> determineScriptType(const String& typeAttribute, const String& languageAttribute, bool isHTMLDocument = true, bool speculationRulesPrefetchEnabled = false);
 
 protected:
     ScriptElement(Element&, bool createdByParser, bool isEvaluated);

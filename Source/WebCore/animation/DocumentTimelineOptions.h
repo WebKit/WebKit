@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DOMHighResTimeStamp.h"
+#include <WebCore/DOMHighResTimeStamp.h>
 
 namespace WebCore {
 

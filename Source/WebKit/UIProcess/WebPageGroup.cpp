@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,16 +89,6 @@ WebPageGroup::WebPageGroup(const String& identifier)
 WebPageGroup::~WebPageGroup()
 {
     webPageGroupMap().remove(pageGroupID());
-}
-
-WebPreferences& WebPageGroup::preferences() const
-{
-    return m_preferences;
-}
-
-Ref<WebPreferences> WebPageGroup::protectedPreferences() const
-{
-    return m_preferences;
 }
 
 } // namespace WebKit

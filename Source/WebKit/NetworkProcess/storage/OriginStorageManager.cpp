@@ -283,7 +283,7 @@ bool OriginStorageManager::StorageBucket::isActive() const
     return (fileSystemStorageManager && fileSystemStorageManager->isActive())
         || (m_localStorageManager && m_localStorageManager->isActive())
         || (m_sessionStorageManager && m_sessionStorageManager->isActive())
-        || (m_idbStorageManager && m_idbStorageManager->isActive())
+        || (m_idbStorageManager && CheckedRef { *m_idbStorageManager }->isActive())
         || (m_cacheStorageManager && RefPtr { m_cacheStorageManager }->isActive());
 }
 
@@ -291,7 +291,7 @@ bool OriginStorageManager::StorageBucket::hasDataInMemory() const
 {
     return (m_localStorageManager && m_localStorageManager->hasDataInMemory())
         || (m_sessionStorageManager && m_sessionStorageManager->hasDataInMemory())
-        || (m_idbStorageManager && m_idbStorageManager->hasDataInMemory())
+        || (m_idbStorageManager && CheckedRef { *m_idbStorageManager }->hasDataInMemory())
         || (m_cacheStorageManager && RefPtr { m_cacheStorageManager }->hasDataInMemory());
 }
 
@@ -338,7 +338,7 @@ OptionSet<WebsiteDataType> OriginStorageManager::StorageBucket::fetchDataTypesIn
     }
 
     if (types.contains(WebsiteDataType::IndexedDBDatabases)) {
-        if (m_idbStorageManager && m_idbStorageManager->hasDataInMemory())
+        if (m_idbStorageManager && CheckedRef { *m_idbStorageManager }->hasDataInMemory())
             result.add(WebsiteDataType::IndexedDBDatabases);
     }
 
@@ -450,8 +450,8 @@ void OriginStorageManager::StorageBucket::deleteSessionStorageData()
 
 void OriginStorageManager::StorageBucket::deleteIDBStorageData(WallTime time)
 {
-    if (m_idbStorageManager)
-        m_idbStorageManager->closeDatabasesForDeletion();
+    if (CheckedPtr manager = m_idbStorageManager.get())
+        manager->closeDatabasesForDeletion();
 
     FileSystem::deleteAllFilesModifiedSince(resolvedIDBStoragePath(), time);
 }
@@ -479,8 +479,8 @@ void OriginStorageManager::StorageBucket::moveData(OptionSet<WebsiteDataType> ty
     }
 
     if (types.contains(WebsiteDataType::IndexedDBDatabases) && !idbStoragePath.isEmpty()) {
-        if (m_idbStorageManager)
-            m_idbStorageManager->closeDatabasesForDeletion();
+        if (CheckedPtr manager = m_idbStorageManager.get())
+            manager->closeDatabasesForDeletion();
 
         auto currentIDBStoragePath = resolvedIDBStoragePath();
         if (!currentIDBStoragePath.isEmpty()) {
@@ -735,6 +735,11 @@ IDBStorageManager& OriginStorageManager::idbStorageManager(IDBStorageRegistry& r
             completionHandler(decision == OriginQuotaManager::Decision::Grant);
         });
     });
+}
+
+CheckedRef<IDBStorageManager> OriginStorageManager::checkedIDBStorageManager(IDBStorageRegistry& registry)
+{
+    return idbStorageManager(registry);
 }
 
 IDBStorageManager* OriginStorageManager::existingIDBStorageManager()

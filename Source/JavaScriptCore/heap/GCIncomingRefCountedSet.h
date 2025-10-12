@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "GCIncomingRefCounted.h"
+#include <JavaScriptCore/GCIncomingRefCounted.h>
 
 namespace JSC {
 

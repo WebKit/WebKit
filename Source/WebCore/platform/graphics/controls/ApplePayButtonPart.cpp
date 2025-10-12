@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,7 @@ ApplePayButtonPart::ApplePayButtonPart(ApplePayButtonType buttonType, ApplePayBu
 
 std::unique_ptr<PlatformControl> ApplePayButtonPart::createPlatformControl()
 {
-    return controlFactory().createPlatformApplePayButton(*this);
+    return protectedControlFactory()->createPlatformApplePayButton(*this);
 }
 
 } // namespace WebCore

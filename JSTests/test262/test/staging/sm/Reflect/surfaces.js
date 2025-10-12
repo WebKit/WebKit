@@ -4,9 +4,6 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-Reflect-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -15,7 +12,7 @@ esid: pending
 assert.sameValue(typeof Reflect, 'object');
 assert.sameValue(Object.getPrototypeOf(Reflect), Object.prototype);
 assert.sameValue(Reflect.toString(), '[object Reflect]');
-assertThrowsInstanceOf(() => new Reflect, TypeError);
+assert.throws(TypeError, () => new Reflect);
 
 var desc = Object.getOwnPropertyDescriptor(this, "Reflect");
 assert.sameValue(desc.enumerable, false);

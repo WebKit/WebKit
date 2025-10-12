@@ -34,8 +34,8 @@
     attribute EventHandler onfullscreenerror;
 
     // Non-standard: WebKit prefixed variants.
-    [ImplementedAs=webkitRequestFullscreen] undefined webkitRequestFullScreen(); // Prefixed Mozilla version.
-    undefined webkitRequestFullscreen(); // Prefixed W3C version.
+    [ImplementedAs=webkitRequestFullscreen, CustomEnabledBy=shouldEnableWebkitRequestFullScreen] undefined webkitRequestFullScreen(); // Prefixed Mozilla version.
+    [CustomEnabledBy=shouldEnableWebkitRequestFullScreen] undefined webkitRequestFullscreen(); // Prefixed W3C version.
     [NotEnumerable] attribute EventHandler onwebkitfullscreenchange;
     [NotEnumerable] attribute EventHandler onwebkitfullscreenerror;
 };

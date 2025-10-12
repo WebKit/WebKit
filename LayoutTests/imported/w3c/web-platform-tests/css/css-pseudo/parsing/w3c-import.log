@@ -14,8 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/parsing/highlight-pseudos-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/parsing/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/parsing/highlight-pseudos-search-text.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/parsing/highlight-pseudos.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/parsing/marker-supported-properties.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/parsing/the-checkmark-pseudo-element.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/parsing/the-picker-icon-pseudo-element.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/parsing/tree-abiding-pseudo-elements.html

@@ -9,37 +9,37 @@ label element
 This is clickable summary text
 
 PASS Clicking on non-interactive child of a <summary> opens its <details>
-PASS Clicking an <a> link doesn’t open <details>
-PASS Clicking an SVG <a> link doesn’t open <details>
-PASS Clicking an HTML <a> link in an SVG <foreignObject> doesn’t open <details>
-PASS Clicking an <audio> element doesn’t open <details>
-PASS Clicking a <button> doesn’t open <details>
-PASS Clicking the content of an <embed> doesn’t open <details>
-PASS Clicking in an <iframe> doesn’t open <details>
-PASS Clicking an <img> with a “usemap” attribute doesn’t open <details>
-PASS Clicking an <img> without a “usemap” attribute opens <details>
-PASS Clicking an <input type=button> doesn’t open <details>
-PASS Clicking an <input type=reset> doesn’t open <details>
-PASS Clicking an <input type=submit> doesn’t open <details>
-PASS Clicking an <input type=text> doesn’t open <details>
-PASS Clicking an <input type=search> doesn’t open <details>
-PASS Clicking an <input type=tel> doesn’t open <details>
-PASS Clicking an <input type=url> doesn’t open <details>
-PASS Clicking an <input type=email> doesn’t open <details>
-PASS Clicking an <input type=password> doesn’t open <details>
-PASS Clicking an <input type=date> doesn’t open <details>
-PASS Clicking an <input type=month> doesn’t open <details>
-PASS Clicking an <input type=week> doesn’t open <details>
-PASS Clicking an <input type=time> doesn’t open <details>
-PASS Clicking an <input type=datetime-local> doesn’t open <details>
-PASS Clicking an <input type=number> doesn’t open <details>
-PASS Clicking an <input type=range> doesn’t open <details>
-PASS Clicking an <input type=color> doesn’t open <details>
-PASS Clicking an <input type=checkbox> doesn’t open <details>
-PASS Clicking an <input type=radio> doesn’t open <details>
-PASS Clicking an <input type=file> doesn’t open <details>
-PASS Clicking an <input type=image> doesn’t open <details>
-PASS Clicking a <label> doesn’t open <details>
-PASS Clicking in a <textarea> doesn’t open <details>
-PASS Clicking a <video> doesn’t open <details>
+PASS Clicking an <a> link doesn't open <details>
+PASS Clicking an SVG <a> link doesn't open <details>
+PASS Clicking an HTML <a> link in an SVG <foreignObject> doesn't open <details>
+PASS Clicking an <audio> element doesn't open <details>
+PASS Clicking a <button> doesn't open <details>
+PASS Clicking the content of an <embed> doesn't open <details>
+PASS Clicking in an <iframe> doesn't open <details>
+PASS Clicking an <img> with a 'usemap' attribute doesn't open <details>
+PASS Clicking an <img> without a 'usemap' attribute opens <details>
+PASS Clicking an <input type=button> doesn't open <details>
+PASS Clicking an <input type=reset> doesn't open <details>
+PASS Clicking an <input type=submit> doesn't open <details>
+PASS Clicking an <input type=text> doesn't open <details>
+PASS Clicking an <input type=search> doesn't open <details>
+PASS Clicking an <input type=tel> doesn't open <details>
+PASS Clicking an <input type=url> doesn't open <details>
+PASS Clicking an <input type=email> doesn't open <details>
+PASS Clicking an <input type=password> doesn't open <details>
+PASS Clicking an <input type=date> doesn't open <details>
+PASS Clicking an <input type=month> doesn't open <details>
+PASS Clicking an <input type=week> doesn't open <details>
+PASS Clicking an <input type=time> doesn't open <details>
+PASS Clicking an <input type=datetime-local> doesn't open <details>
+PASS Clicking an <input type=number> doesn't open <details>
+PASS Clicking an <input type=range> doesn't open <details>
+PASS Clicking an <input type=color> doesn't open <details>
+PASS Clicking an <input type=checkbox> doesn't open <details>
+PASS Clicking an <input type=radio> doesn't open <details>
+PASS Clicking an <input type=file> doesn't open <details>
+PASS Clicking an <input type=image> doesn't open <details>
+PASS Clicking a <label> doesn't open <details>
+PASS Clicking in a <textarea> doesn't open <details>
+PASS Clicking a <video> doesn't open <details>
 

@@ -42,6 +42,6 @@ PASS BackgroundFetchRecord interface: existence and properties of interface prot
 PASS BackgroundFetchRecord interface: attribute request
 PASS BackgroundFetchRecord interface: attribute responseReady
 PASS BackgroundFetchEvent interface: existence and properties of interface object
-FAIL BackgroundFetchUpdateUIEvent interface: existence and properties of interface object assert_false: expected false got true
+FAIL BackgroundFetchUpdateUIEvent interface: existence and properties of interface object assert_false: BackgroundFetchUpdateUIEvent interface should not exist expected false got true
 PASS ServiceWorkerRegistration interface: attribute backgroundFetch
 

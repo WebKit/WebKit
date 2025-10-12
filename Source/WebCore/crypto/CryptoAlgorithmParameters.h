@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CryptoAlgorithmIdentifier.h"
+#include <WebCore/CryptoAlgorithmIdentifier.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 

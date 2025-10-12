@@ -224,6 +224,7 @@ angle_source_set("angle_trace_fixture") {
   ]
   public_deps = [
     ":angle_trace_loader",
+    "$angle_root:angle_capture_common",
     "$angle_root:includes",
   ]
   if (is_ios) {
@@ -244,6 +245,7 @@ if (angle_enable_cl) {
     ]
     public_deps = [
       ":angle_trace_loader",
+      "$angle_root:angle_capture_common",
       "$angle_root:includes",
     ]
     if (is_ios) {

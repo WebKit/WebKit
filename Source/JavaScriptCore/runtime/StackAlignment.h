@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CallFrame.h"
-#include "JSCJSValue.h"
+#include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/MathExtras.h>
 
 namespace JSC {

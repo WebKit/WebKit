@@ -152,9 +152,10 @@ struct ConversionResultStorage<T&> {
 
 } // namespace Detail
 
-template<typename IDL>
+template<typename T>
 class ConversionResult {
 public:
+    using IDL = T;
     using ReturnType = typename Converter<IDL>::ReturnType;
 
     static ConversionResult exception() { return ConversionResult(ConversionResultException()); }

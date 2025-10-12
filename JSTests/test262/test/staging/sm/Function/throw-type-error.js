@@ -2,9 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, deepEqual.js]
-flags:
-  - noStrict
+includes: [propertyHelper.js]
 description: |
   pending
 esid: pending
@@ -17,9 +15,8 @@ const ThrowTypeError = function(){
     return Object.getOwnPropertyDescriptor(arguments, "callee").get;
 }();
 
-assert.deepEqual(Object.getOwnPropertyDescriptor(ThrowTypeError, "length"), {
+verifyProperty(ThrowTypeError, "length", {
     value: 0, writable: false, enumerable: false, configurable: false
 });
 
 assert.sameValue(Object.isFrozen(ThrowTypeError), true);
-

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DOMJITHeapRange.h"
+#include <JavaScriptCore/DOMJITHeapRange.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

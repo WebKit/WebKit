@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleCSSStyleDeclarationHandle_h
-#define InjectedBundleCSSStyleDeclarationHandle_h
+#pragma once
 
 #include "APIObject.h"
 #include <JavaScriptCore/JSBase.h>
@@ -44,14 +43,12 @@ public:
     static RefPtr<InjectedBundleCSSStyleDeclarationHandle> getOrCreate(WebCore::CSSStyleDeclaration*);
     virtual ~InjectedBundleCSSStyleDeclarationHandle();
 
-    WebCore::CSSStyleDeclaration* coreCSSStyleDeclaration();
+    WebCore::CSSStyleDeclaration& coreCSSStyleDeclaration() { return m_styleDeclaration; }
 
 private:
     InjectedBundleCSSStyleDeclarationHandle(WebCore::CSSStyleDeclaration&);
 
-    Ref<WebCore::CSSStyleDeclaration> m_styleDeclaration;
+    const Ref<WebCore::CSSStyleDeclaration> m_styleDeclaration;
 };
 
 } // namespace WebKit
-
-#endif // InjectedBundleCSSStyleDeclarationHandle_h

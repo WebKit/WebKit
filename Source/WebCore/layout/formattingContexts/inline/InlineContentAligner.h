@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "InlineDisplayContent.h"
-#include "InlineDisplayLine.h"
-#include "LayoutUnits.h"
+#include <WebCore/InlineDisplayContent.h>
+#include <WebCore/InlineDisplayLine.h>
+#include <WebCore/LayoutUnits.h>
 
 namespace WebCore {
 namespace Layout {
@@ -39,7 +39,7 @@ public:
     static InlineLayoutUnit applyRubyAlign(RubyAlign, Line::RunList&, WTF::Range<size_t>, InlineLayoutUnit spaceToDistribute);
 
     enum class AdjustContentOnlyInsideRubyBase : bool { No, Yes };
-    static void applyRubyBaseAlignmentOffset(InlineDisplay::Boxes&, const UncheckedKeyHashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, AdjustContentOnlyInsideRubyBase, InlineFormattingContext&);
+    static void applyRubyBaseAlignmentOffset(InlineDisplay::Boxes&, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, AdjustContentOnlyInsideRubyBase, InlineFormattingContext&);
     static void applyRubyAnnotationAlignmentOffset(InlineDisplay::Boxes&, InlineLayoutUnit alignmentOffset, InlineFormattingContext&);
 
 private:

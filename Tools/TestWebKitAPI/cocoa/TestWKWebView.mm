@@ -26,6 +26,8 @@
 #import "config.h"
 #import "TestWKWebView.h"
 
+#ifdef __cplusplus
+
 #import "CGImagePixelReader.h"
 #import "ClassMethodSwizzler.h"
 #import "HostWindowManager.h"
@@ -55,10 +57,14 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
+#endif
+
 #if PLATFORM(MAC)
 #import <AppKit/AppKit.h>
 #import <Carbon/Carbon.h>
 #endif
+
+#ifdef __cplusplus
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPIForTesting.h"
@@ -81,6 +87,13 @@ static NSString *overrideBundleIdentifier(id, SEL)
 @interface WKWebView (TextServices)
 - (void)_lookup:(id)sender;
 @end
+
+#if PLATFORM(IOS_FAMILY)
+@interface WKWebView (UIScrollViewDelegate)
+- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView;
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view;
+@end
+#endif
 
 @implementation WKWebView (TestWebKitAPI)
 
@@ -173,11 +186,6 @@ static NSString *overrideBundleIdentifier(id, SEL)
 }
 
 #if PLATFORM(IOS_FAMILY)
-
-- (UIView <UITextInputPrivate, UITextInputMultiDocument> *)textInputContentView
-{
-    return (UIView <UITextInputPrivate, UITextInputMultiDocument> *)[self valueForKey:@"_currentContentView"];
-}
 
 - (NSArray<_WKTextInputContext *> *)synchronouslyRequestTextInputContextsInRect:(CGRect)rect
 {
@@ -523,6 +531,18 @@ static WebEvent *unwrap(BEKeyEntry *event)
     return count;
 }
 
+- (NSUInteger)modelProcessModelPlayerCount
+{
+    __block bool done = false;
+    __block NSUInteger count = 0;
+    [self _modelProcessModelPlayerCountForTesting:^(NSUInteger result) {
+        done = true;
+        count = result;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return count;
+}
+
 - (NSString *)contentsAsString
 {
     __block bool done = false;
@@ -618,6 +638,21 @@ static WebEvent *unwrap(BEKeyEntry *event)
     return evalResult.autorelease();
 }
 
+- (id)objectByEvaluatingJavaScript:(NSString *)script inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)world
+{
+    __block RetainPtr<id> evalResult;
+    __block bool done { false };
+    [self evaluateJavaScript:script inFrame:frame inContentWorld:world completionHandler:^(id result, NSError *error) {
+        evalResult = result;
+        done = true;
+        EXPECT_FALSE(error);
+        if (error)
+            NSLog(@"Encountered error: %@ while evaluating script: %@", error, script);
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return evalResult.autorelease();
+}
+
 - (id)objectByEvaluatingJavaScriptWithUserGesture:(NSString *)script
 {
     bool callbackComplete = false;
@@ -631,6 +666,14 @@ static WebEvent *unwrap(BEKeyEntry *event)
     }];
     TestWebKitAPI::Util::run(&callbackComplete);
     return evalResult.autorelease();
+}
+
+- (id)objectByCallingAsyncFunction:(NSString *)script withArguments:(NSDictionary *)arguments
+{
+    NSError *error = nil;
+    id result = [self objectByCallingAsyncFunction:script withArguments:arguments error:&error];
+    EXPECT_NULL(error);
+    return result;
 }
 
 - (id)objectByCallingAsyncFunction:(NSString *)script withArguments:(NSDictionary *)arguments error:(NSError **)errorOut
@@ -651,6 +694,21 @@ static WebEvent *unwrap(BEKeyEntry *event)
     if (errorOut)
         *errorOut = strongError.autorelease();
 
+    return evalResult.autorelease();
+}
+
+- (id)objectByCallingAsyncFunction:(NSString *)script withArguments:(NSDictionary *)arguments inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)world
+{
+    __block RetainPtr<id> evalResult;
+    __block bool done { false };
+    [self callAsyncJavaScript:script arguments:arguments inFrame:frame inContentWorld:world completionHandler:^(id result, NSError *error) {
+        evalResult = result;
+        done = true;
+        EXPECT_FALSE(error);
+        if (error)
+            NSLog(@"Encountered error: %@ while evaluating script: %@", error, script);
+    }];
+    TestWebKitAPI::Util::run(&done);
     return evalResult.autorelease();
 }
 
@@ -703,6 +761,37 @@ static WebEvent *unwrap(BEKeyEntry *event)
     return CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
 }
 
+static IterationStatus forEachCALayer(CALayer *layer, IterationStatus(^visitor)(CALayer *))
+{
+    if (visitor(layer) == IterationStatus::Done)
+        return IterationStatus::Done;
+
+    for (CALayer *sublayer in layer.sublayers) {
+        if (forEachCALayer(sublayer, visitor) == IterationStatus::Done)
+            return IterationStatus::Done;
+    }
+
+    return IterationStatus::Continue;
+}
+
+- (void)forEachCALayer:(IterationStatus(^)(CALayer *))visitor
+{
+    forEachCALayer(self.layer, visitor);
+}
+
+- (CALayer *)firstLayerWithName:(NSString *)layerName
+{
+    __block RetainPtr<CALayer> result;
+    [self forEachCALayer:^(CALayer *layer) {
+        if (![layer.name isEqualToString:@"Gesture Swipe Snapshot Layer"])
+            return IterationStatus::Continue;
+
+        result = layer;
+        return IterationStatus::Done;
+    }];
+    return result.autorelease();
+}
+
 - (CGImageRef)snapshotAfterScreenUpdates
 {
     __block RetainPtr<CGImage> result;
@@ -718,6 +807,21 @@ static WebEvent *unwrap(BEKeyEntry *event)
 }
 
 @end
+
+#endif // __cplusplus
+
+@implementation WKWebView (TestWebKitAPI_NonCpp)
+
+#if PLATFORM(IOS_FAMILY)
+- (UIView <UITextInputPrivate, UITextInputMultiDocument> *)textInputContentView
+{
+    return (UIView <UITextInputPrivate, UITextInputMultiDocument> *)[self valueForKey:@"_currentContentView"];
+}
+#endif // PLATFORM(IOS_FAMILY)
+
+@end
+
+#ifdef __cplusplus
 
 @implementation TestMessageHandler {
     NSMutableDictionary<NSString *, dispatch_block_t> *_messageHandlers;
@@ -1091,6 +1195,15 @@ static UIWindowScene *windowScene()
     TestWebKitAPI::Util::run(&done);
 }
 
+- (void)forceLightMode
+{
+#if USE(APPKIT)
+    [self setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameAqua]];
+#else
+    [self setOverrideUserInterfaceStyle:UIUserInterfaceStyleLight];
+#endif
+}
+
 - (void)forceDarkMode
 {
 #if USE(APPKIT)
@@ -1210,6 +1323,20 @@ static UIWindowScene *windowScene()
             samples.append(reader.at(x, y));
     }
     return samples;
+}
+
+- (RetainPtr<_WKFrameTreeNode>)frameTree
+{
+    __block RetainPtr<_WKFrameTreeNode> result;
+    __block bool isDone = false;
+
+    [self _frames:^(_WKFrameTreeNode *tree) {
+        result = tree;
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+
+    return result;
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -1350,6 +1477,21 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
 - (WKContentView *)wkContentView
 {
     return recursiveFindWKContentView(self);
+}
+
+- (void)setZoomScaleSimulatingUserTriggeredZoom:(CGFloat)zoomScale
+{
+    InstanceMethodSwizzler gestureSwizzler {
+        [UIPinchGestureRecognizer class],
+        @selector(state),
+        imp_implementationWithBlock(^UIGestureRecognizerState {
+            return UIGestureRecognizerStateBegan;
+        })
+    };
+
+    RetainPtr scrollView = [self scrollView];
+    [self scrollViewWillBeginZooming:scrollView.get() withView:[self viewForZoomingInScrollView:scrollView.get()]];
+    [scrollView setZoomScale:zoomScale];
 }
 
 @end
@@ -1608,3 +1750,5 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
 }
 
 @end
+
+#endif // __cplusplus

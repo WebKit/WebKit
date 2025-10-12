@@ -74,6 +74,15 @@
             "id": "DummyObject",
             "description": "An open object that doesn't have any predefined fields.",
             "type": "object"
+        },
+        {
+            "id": "ObjectWithNullableProperties",
+            "description": "An object with properties that can be null.",
+            "type": "object",
+            "properties": [
+                { "name": "nullableObject", "$ref": "DummyObject", "nullable": true },
+                { "name": "nullableOptionalObject", "$ref": "DummyObject", "nullable": true, "optional": true }
+            ]
         }
     ]
 },

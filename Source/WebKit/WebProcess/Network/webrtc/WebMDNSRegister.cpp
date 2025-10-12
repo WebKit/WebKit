@@ -28,28 +28,28 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "LibWebRTCNetwork.h"
 #include "NetworkMDNSRegisterMessages.h"
 #include "NetworkProcessConnection.h"
 #include "WebProcess.h"
+#include "WebRTCNetworkBase.h"
 #include <WebCore/Document.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-WebMDNSRegister::WebMDNSRegister(LibWebRTCNetwork& libWebRTCNetwork)
-    : m_libWebRTCNetwork(libWebRTCNetwork)
+WebMDNSRegister::WebMDNSRegister(WebRTCNetworkBase& webRTCNetwork)
+    : m_webRTCNetwork(webRTCNetwork)
 {
 }
 
 void WebMDNSRegister::ref() const
 {
-    m_libWebRTCNetwork->ref();
+    m_webRTCNetwork->ref();
 }
 
 void WebMDNSRegister::deref() const
 {
-    m_libWebRTCNetwork->deref();
+    m_webRTCNetwork->deref();
 }
 
 void WebMDNSRegister::finishedRegisteringMDNSName(WebCore::ScriptExecutionContextIdentifier documentIdentifier, const String& ipAddress, String&& name, std::optional<MDNSRegisterError> error, CompletionHandler<void(const String&, std::optional<MDNSRegisterError>)>&& completionHandler)

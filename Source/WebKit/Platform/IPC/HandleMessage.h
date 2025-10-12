@@ -352,14 +352,14 @@ void handleMessageWithoutUsingIPCConnection(Decoder& decoder, T* object, MF U::*
 }
 
 template<typename MessageType, typename T, typename U, typename MF>
-bool handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder, T* object, MF U::* function)
+void handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder, T* object, MF U::* function)
 {
     using ValidationType = MethodSignatureValidation<MF>;
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
 
     auto arguments = decoder.decode<typename MessageType::Arguments>();
     if (!arguments) [[unlikely]]
-        return true; // Message handler found, but decode failed.
+        return;
 
     static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
@@ -376,7 +376,6 @@ bool handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRe
         callMemberFunction(object, function, connection, WTFMove(*arguments), WTFMove(completionHandler));
     else
         callMemberFunction(object, function, WTFMove(*arguments), WTFMove(completionHandler));
-    return true;
 }
 
 template<typename MessageType, typename T, typename U, typename MF>

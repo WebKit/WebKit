@@ -28,12 +28,12 @@
 
 #if ENABLE(VIDEO)
 
-#include "CachedRawResourceClient.h"
-#include "CachedResourceHandle.h"
-#include "ContextDestructionObserver.h"
-#include "FetchOptions.h"
-#include "PlatformMediaResourceLoader.h"
-#include "ResourceResponse.h"
+#include <WebCore/CachedRawResourceClient.h>
+#include <WebCore/CachedResourceHandle.h>
+#include <WebCore/ContextDestructionObserver.h>
+#include <WebCore/FetchOptions.h>
+#include <WebCore/PlatformMediaResourceLoader.h>
+#include <WebCore/ResourceResponse.h>
 #include <wtf/Atomics.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
@@ -108,7 +108,6 @@ public:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
 
 private:
-    Ref<MediaResourceLoader> protectedLoader() const;
     CachedResourceHandle<CachedRawResource> protectedResource() const;
 
     MediaResource(MediaResourceLoader&, CachedResourceHandle<CachedRawResource>&&);

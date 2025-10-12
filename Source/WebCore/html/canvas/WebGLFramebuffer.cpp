@@ -61,11 +61,11 @@ static void entryDetachAndClear(WebGLFramebuffer::AttachmentEntry& entry, const 
             renderbuffer = nullptr;
         },
         [&](WebGLFramebuffer::TextureAttachment& textureAttachment) {
-            textureAttachment.texture->onDetached(locker, gl);
+            RefPtr { textureAttachment.texture }->onDetached(locker, gl);
             textureAttachment.texture = nullptr;
         },
         [&](WebGLFramebuffer::TextureLayerAttachment& layerAttachment) {
-            layerAttachment.texture->onDetached(locker, gl);
+            RefPtr { layerAttachment.texture }->onDetached(locker, gl);
             layerAttachment.texture = nullptr;
         });
 }
@@ -219,7 +219,7 @@ void WebGLFramebuffer::deleteObjectImpl(const AbstractLocker& locker, GraphicsCo
 
 bool WebGLFramebuffer::isBound(GCGLenum target) const
 {
-    return (context()->getFramebufferBinding(target) == this);
+    return protectedContext()->getFramebufferBinding(target) == this;
 }
 
 void WebGLFramebuffer::drawBuffers(const Vector<GCGLenum>& bufs)

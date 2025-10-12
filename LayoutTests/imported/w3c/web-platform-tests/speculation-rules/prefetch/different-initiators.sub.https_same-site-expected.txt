@@ -1,0 +1,3 @@
+
+FAIL Cross-initiator prefetches using ServiceWorker tricks assert_equals: Prefetch should not work due to ServiceWorker. expected (undefined) undefined but got (string) "prefetch"
+

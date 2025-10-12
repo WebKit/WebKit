@@ -10,22 +10,23 @@
 
 #include "rtc_base/rtc_certificate.h"
 
-#include <time.h>
-
+#include <cstdint>
+#include <ctime>
 #include <memory>
 #include <utility>
 
+#include "api/scoped_refptr.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/time_utils.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 
-static const char* kTestCertCommonName = "RTCCertificateTest's certificate";
+constexpr char kTestCertCommonName[] = "RTCCertificateTest's certificate";
 
 }  // namespace
 
@@ -137,4 +138,4 @@ TEST_F(RTCCertificateTest, FromPEMWithInvalidPEM) {
   EXPECT_FALSE(certificate);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

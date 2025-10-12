@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CSSParserContext.h"
+#include <WebCore/CSSParserContext.h>
 
 namespace WebCore {
     

@@ -25,11 +25,12 @@
 
 #pragma once
 
-#include "CSSNumericValue.h"
-#include "CSSPrimitiveValue.h"
-#include "ScrollTimeline.h"
-#include "Styleable.h"
-#include "ViewTimelineOptions.h"
+#include <WebCore/CSSNumericValue.h>
+#include <WebCore/CSSPrimitiveValue.h>
+#include <WebCore/ScrollTimeline.h>
+#include <WebCore/StyleViewTimelineInsets.h>
+#include <WebCore/Styleable.h>
+#include <WebCore/ViewTimelineOptions.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
 
@@ -37,12 +38,11 @@ namespace WebCore {
 
 namespace Style {
 class BuilderState;
+enum class SingleAnimationRangeName : uint8_t;
 }
 
 class Element;
 class StickyPositionViewportConstraints;
-
-struct TimelineRange;
 
 struct StickinessAdjustmentData {
     bool operator==(const StickinessAdjustmentData& other) const = default;
@@ -71,15 +71,15 @@ struct StickinessAdjustmentData {
 class ViewTimeline final : public ScrollTimeline {
 public:
     static ExceptionOr<Ref<ViewTimeline>> create(Document&, ViewTimelineOptions&& = { });
-    static Ref<ViewTimeline> create(const AtomString&, ScrollAxis, ViewTimelineInsets&&);
+    static Ref<ViewTimeline> create(const AtomString&, ScrollAxis, const Style::ViewTimelineInsetItem&);
 
     const Element* subject() const;
     const WeakStyleable subjectStyleable() const { return m_subject; }
     void setSubject(Element*);
     void setSubject(const Styleable&);
 
-    const ViewTimelineInsets& insets() const { return m_insets; }
-    void setInsets(ViewTimelineInsets&& insets) { m_insets = WTFMove(insets); }
+    const Style::ViewTimelineInsetItem& insets() const { return m_insets; }
+    void setInsets(const Style::ViewTimelineInsetItem& insets) { m_insets = insets; }
 
     Ref<CSSNumericValue> startOffset() const;
     Ref<CSSNumericValue> endOffset() const;
@@ -91,19 +91,19 @@ public:
     const RenderElement* stickyContainer() const;
     Element* bindingsSource() const override;
     Element* source() const override;
-    TimelineRange defaultRange() const final;
+    Style::SingleAnimationRange defaultRange() const final;
 
-    std::pair<WebAnimationTime, WebAnimationTime> intervalForAttachmentRange(const TimelineRange&) const final;
-    std::pair<double, double> offsetIntervalForAttachmentRange(const TimelineRange&) const;
-    std::pair<double, double> offsetIntervalForTimelineRangeName(const SingleTimelineRange::Name) const;
+    std::pair<WebAnimationTime, WebAnimationTime> intervalForAttachmentRange(const Style::SingleAnimationRange&) const final;
+    std::pair<double, double> offsetIntervalForAttachmentRange(const Style::SingleAnimationRange&) const;
+    std::pair<double, double> offsetIntervalForTimelineRangeName(Style::SingleAnimationRangeName) const;
 
 private:
     ScrollTimeline::Data computeTimelineData() const final;
-    std::pair<double, double> intervalForTimelineRangeName(const ScrollTimeline::Data&, const SingleTimelineRange::Name) const;
-    template<typename F> double mapOffsetToTimelineRange(const ScrollTimeline::Data&, const SingleTimelineRange::Name, F&&) const;
+    std::pair<double, double> intervalForTimelineRangeName(const ScrollTimeline::Data&, Style::SingleAnimationRangeName) const;
+    template<typename F> double mapOffsetToTimelineRange(const ScrollTimeline::Data&, Style::SingleAnimationRangeName, F&&) const;
 
     explicit ViewTimeline(ScrollAxis);
-    explicit ViewTimeline(const AtomString&, ScrollAxis, ViewTimelineInsets&&);
+    explicit ViewTimeline(const AtomString&, ScrollAxis, const Style::ViewTimelineInsetItem&);
 
     bool isViewTimeline() const final { return true; }
 
@@ -128,12 +128,13 @@ private:
 
     WeakStyleable m_subject;
     std::optional<SpecifiedViewTimelineInsets> m_specifiedInsets;
-    ViewTimelineInsets m_insets;
+    Style::ViewTimelineInsetItem m_insets;
     CurrentTimeData m_cachedCurrentTimeData { };
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const StickinessAdjustmentData&);
 WTF::TextStream& operator<<(WTF::TextStream&, const StickinessAdjustmentData::StickinessLocation&);
+WTF::TextStream& operator<<(WTF::TextStream&, const ViewTimeline&);
 
 } // namespace WebCore
 

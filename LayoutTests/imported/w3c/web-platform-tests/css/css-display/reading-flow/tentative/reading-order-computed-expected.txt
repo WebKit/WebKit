@@ -1,0 +1,6 @@
+
+FAIL Property reading-order value '-1' assert_true: reading-order doesn't seem to be supported in the computed style expected true got false
+FAIL Property reading-order value '0' assert_true: reading-order doesn't seem to be supported in the computed style expected true got false
+FAIL Property reading-order value '34' assert_true: reading-order doesn't seem to be supported in the computed style expected true got false
+FAIL Property reading-order value 'calc(34.1)' assert_true: reading-order doesn't seem to be supported in the computed style expected true got false
+

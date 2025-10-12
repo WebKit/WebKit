@@ -43,12 +43,12 @@ messages -> WebProcessProxy WantsDispatchMessage {
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-    CreateModelProcessConnection(IPC::ConnectionHandle connectionIdentifier, struct WebKit::ModelProcessConnectionParameters parameters) AllowedWhenWaitingForSyncReply
+    [EnabledBy=ModelElementEnabled && ModelProcessEnabled] CreateModelProcessConnection(IPC::ConnectionHandle connectionIdentifier) AllowedWhenWaitingForSyncReply
 #endif
 
     DidExceedActiveMemoryLimit()
     DidExceedInactiveMemoryLimit()
-    DidExceedMemoryFootprintThreshold(size_t footprint)
+    DidExceedMemoryFootprintThreshold(uint64_t footprint)
     DidExceedCPULimit()
 
     StopResponsivenessTimer()
@@ -97,16 +97,19 @@ messages -> WebProcessProxy WantsDispatchMessage {
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-    SetupLogStream(uint32_t pid, IPC::StreamServerConnectionHandle serverConnection, WebKit::LogStreamIdentifier identifier) -> (IPC::Semaphore streamWakeUpSemaphore, IPC::Semaphore streamClientWaitSemaphore)
+    CreateLogStream(IPC::StreamServerConnectionHandle connectionHandle, WebKit::LogStreamIdentifier identifier) -> (IPC::Semaphore streamWakeUpSemaphore, IPC::Semaphore streamClientWaitSemaphore)
 #endif
 #if !ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-    SetupLogStream(uint32_t pid, WebKit::LogStreamIdentifier identifier) -> ()
+    CreateLogStream(WebKit::LogStreamIdentifier identifier) -> ()
 #endif
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
-    CreateServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier identifier, URL url, enum:bool WebCore::ServiceWorkerIsInspectable isInspectable) -> (bool shouldWaitForAutoInspection) Async
-    DeleteServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier identifier)
-    SendMessageToInspector(WebCore::ServiceWorkerIdentifier identifier, String message)
+    [EnabledBy=ServiceWorkersEnabled] CreateServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier identifier, URL url, enum:bool WebCore::ServiceWorkerIsInspectable isInspectable) -> (bool shouldWaitForAutoInspection) Async
+    [EnabledBy=ServiceWorkersEnabled] DeleteServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier identifier)
+    [EnabledBy=ServiceWorkersEnabled] SendMessageToInspector(WebCore::ServiceWorkerIdentifier identifier, String message)
 #endif
+
+    DidPostMessage(WebKit::WebPageProxyIdentifier pageID, WebKit::UserContentControllerIdentifier identifier, struct WebKit::FrameInfoData frameInfoData, WebKit::ScriptMessageHandlerIdentifier messageHandlerID, WebKit::JavaScriptEvaluationResult message) -> (Expected<WebKit::JavaScriptEvaluationResult, String> reply)
+    DidPostLegacySynchronousMessage(WebKit::WebPageProxyIdentifier pageID, WebKit::UserContentControllerIdentifier identifier, struct WebKit::FrameInfoData frameInfoData, WebKit::ScriptMessageHandlerIdentifier messageHandlerID, WebKit::JavaScriptEvaluationResult message) -> (Expected<WebKit::JavaScriptEvaluationResult, String> reply) Synchronous
 }

@@ -57,7 +57,7 @@ public:
 private:
     CSSUnitValue(double, CSSUnitType);
 
-    CSSStyleValueType getType() const final { return CSSStyleValueType::CSSUnitValue; }
+    CSSStyleValueType styleValueType() const final { return CSSStyleValueType::CSSUnitValue; }
     std::optional<SumValue> toSumValue() const final;
     bool equals(const CSSNumericValue&) const final;
 
@@ -68,5 +68,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSUnitValue)
-static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSUnitValue; }
+static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.styleValueType() == WebCore::CSSStyleValueType::CSSUnitValue; }
 SPECIALIZE_TYPE_TRAITS_END()

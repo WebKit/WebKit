@@ -34,7 +34,6 @@
 #include "GraphicsContext.h"
 #include "GraphicsTypesGL.h"
 #include "Image.h"
-#include "LengthFunctions.h"
 #include "TextureMapperFlags.h"
 #include "TextureMapperShaderProgram.h"
 #include <wtf/HashMap.h>
@@ -109,7 +108,7 @@ private:
     private:
         friend class TextureMapperGLData;
 
-        using GLContextDataMap = UncheckedKeyHashMap<void*, SharedGLData*>;
+        using GLContextDataMap = HashMap<void*, SharedGLData*>;
         static GLContextDataMap& contextDataMap()
         {
             static NeverDestroyed<GLContextDataMap> map;
@@ -121,13 +120,13 @@ private:
             glGetIntegerv(GL_MAX_TEXTURE_SIZE, &m_maxTextureSize);
         }
 
-        UncheckedKeyHashMap<unsigned, RefPtr<TextureMapperShaderProgram>> m_programs;
+        HashMap<unsigned, RefPtr<TextureMapperShaderProgram>> m_programs;
         int32_t m_maxTextureSize;
     };
 
-    Ref<SharedGLData> m_sharedGLData;
-    UncheckedKeyHashMap<const void*, GLuint> m_vbos;
-    UncheckedKeyHashMap<uint64_t, Vector<Ref<TextureMapperGPUBuffer>>> m_buffers;
+    const Ref<SharedGLData> m_sharedGLData;
+    HashMap<const void*, GLuint> m_vbos;
+    HashMap<uint64_t, Vector<Ref<TextureMapperGPUBuffer>>> m_buffers;
 };
 
 TextureMapperGLData::TextureMapperGLData(void* platformContext)
@@ -982,8 +981,8 @@ void TextureMapper::drawBlurred(const BitmapTexture& sourceTexture, const FloatR
 RefPtr<BitmapTexture> TextureMapper::applyBlurFilter(RefPtr<BitmapTexture>& sourceTexture, const BlurFilterOperation& blurFilter)
 {
     const auto& textureSize = sourceTexture->size();
-    float radiusX = floatValueForLength(blurFilter.stdDeviation(), textureSize.width());
-    float radiusY = floatValueForLength(blurFilter.stdDeviation(), textureSize.height());
+    float radiusX = blurFilter.stdDeviation();
+    float radiusY = blurFilter.stdDeviation();
 
     if (radiusX < MinBlurRadius && radiusY < MinBlurRadius)
         return sourceTexture;

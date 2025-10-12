@@ -68,8 +68,7 @@ static std::pair<GstAudioFormat, GstAudioLayout> convertAudioSampleFormatToGStre
 
 Ref<PlatformRawAudioData> PlatformRawAudioData::create(Ref<MediaSample>&& sample)
 {
-    ASSERT(sample->platformSample().type == PlatformSample::GStreamerSampleType);
-    return PlatformRawAudioDataGStreamer::create(GRefPtr { sample->platformSample().sample.gstSample });
+    return PlatformRawAudioDataGStreamer::create(GRefPtr { sample->platformSample().gstSample() });
 }
 
 RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(std::span<const uint8_t> sourceData, AudioSampleFormat format, float sampleRate, int64_t timestamp, size_t numberOfFrames, size_t numberOfChannels)
@@ -190,7 +189,7 @@ size_t PlatformRawAudioDataGStreamer::memoryCost() const
     return gst_buffer_get_size(gst_sample_get_buffer(m_sample.get()));
 }
 
-std::optional<std::variant<Vector<std::span<uint8_t>>, Vector<std::span<int16_t>>, Vector<std::span<int32_t>>, Vector<std::span<float>>>> PlatformRawAudioDataGStreamer::planesOfSamples(size_t samplesOffset)
+std::optional<Variant<Vector<std::span<uint8_t>>, Vector<std::span<int16_t>>, Vector<std::span<int32_t>>, Vector<std::span<float>>>> PlatformRawAudioDataGStreamer::planesOfSamples(size_t samplesOffset)
 {
     GstMappedAudioBuffer mappedBuffer(m_sample, GST_MAP_READ);
     if (!mappedBuffer)
@@ -244,14 +243,21 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
     GST_TRACE("Copying %s %s data at planeIndex %zu, destination format is %s %s, source offset: %zu", layoutToString(sourceLayout), gst_audio_format_to_string(gstSourceFormat), planeIndex, layoutToString(destinationLayout), destinationFormatDescription, sourceOffset);
 #endif
 
-    if (audioSampleElementFormat(sourceFormat) == audioSampleElementFormat(format) && (numberOfChannels() == 1 || (audioData.isInterleaved() && isDestinationInterleaved))) {
-        ASSERT(!planeIndex);
+    // Copy memory when:
+    // - formats fully match
+    // - sample format matches and source is mono (planar and interleaved have the same layout)
+    if (sourceFormat == format || (audioSampleElementFormat(sourceFormat) == audioSampleElementFormat(format) && numberOfChannels() == 1)) {
+        ASSERT(!isDestinationInterleaved || !planeIndex);
         GstMappedBuffer mappedBuffer(gst_sample_get_buffer(sourceSample.get()), GST_MAP_READ);
         auto source = mappedBuffer.span<uint8_t>();
         GUniquePtr<GstAudioInfo> sourceInfo(gst_audio_info_copy(audioData.info()));
-        size_t frameOffsetInBytes = frameOffset.value_or(0) * GST_AUDIO_INFO_BPF(sourceInfo.get());
-        RELEASE_ASSERT(frameOffsetInBytes <= source.size());
-        auto subSource = source.subspan(frameOffsetInBytes, source.size() - frameOffsetInBytes);
+        size_t sampleSize = GST_AUDIO_INFO_BPS(sourceInfo.get());
+        size_t frameSize = audioData.isInterleaved() ? GST_AUDIO_INFO_BPF(sourceInfo.get()) : sampleSize;
+        size_t planeOffset = planeIndex * numberOfFrames();
+        size_t frameOffsetInBytes = (planeOffset + frameOffset.value_or(0)) * frameSize;
+        size_t copyLengthInBytes = copyElementCount * sampleSize;
+        RELEASE_ASSERT(frameOffsetInBytes + copyLengthInBytes <= source.size());
+        auto subSource = source.subspan(frameOffsetInBytes, copyLengthInBytes);
         memcpySpan(destination, subSource);
         return;
     }

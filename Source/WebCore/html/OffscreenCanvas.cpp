@@ -31,6 +31,7 @@
 #include "BitmapImage.h"
 #include "CSSValuePool.h"
 #include "CanvasRenderingContext.h"
+#include "ContextDestructionObserverInlines.h"
 #include "Chrome.h"
 #include "Document.h"
 #include "EventDispatcher.h"
@@ -46,7 +47,7 @@
 #include "OffscreenCanvasRenderingContext2D.h"
 #include "Page.h"
 #include "PlaceholderRenderingContext.h"
-#include "ScriptTelemetryCategory.h"
+#include "ScriptTrackingPrivacyCategory.h"
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerNavigator.h"
@@ -113,7 +114,7 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecu
 
 Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, PlaceholderRenderingContext& placeholder)
 {
-    auto offscreen = adoptRef(*new OffscreenCanvas(scriptExecutionContext, placeholder.size(), placeholder.source().ptr()));
+    auto offscreen = adoptRef(*new OffscreenCanvas(scriptExecutionContext, placeholder.size(), &placeholder.source()));
     offscreen->suspendIfNeeded();
     return offscreen;
 }
@@ -232,11 +233,11 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
             Ref scriptExecutionContext = *this->scriptExecutionContext();
             if (RefPtr globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext)) {
                 if (auto* gpu = globalScope->protectedNavigator()->gpu())
-                    m_context = GPUCanvasContext::create(*this, *gpu);
+                    m_context = GPUCanvasContext::create(*this, *gpu, nullptr);
             } else if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext)) {
-                if (RefPtr domWindow = document->domWindow()) {
-                    if (auto* gpu = domWindow->protectedNavigator()->gpu())
-                        m_context = GPUCanvasContext::create(*this, *gpu);
+                if (RefPtr window = document->window()) {
+                    if (auto* gpu = window->protectedNavigator()->gpu())
+                        m_context = GPUCanvasContext::create(*this, *gpu, document.get());
                 }
             }
         }
@@ -255,7 +256,7 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
             if (attributes.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
 
-            auto* scriptExecutionContext = this->scriptExecutionContext();
+            RefPtr scriptExecutionContext = this->scriptExecutionContext();
             if (shouldEnableWebGL(scriptExecutionContext->settingsValues(), is<WorkerGlobalScope>(scriptExecutionContext)))
                 m_context = WebGLRenderingContextBase::create(*this, attributes.releaseReturnValue(), webGLVersion);
         }
@@ -320,7 +321,7 @@ void OffscreenCanvas::convertToBlob(ImageEncodeOptions&& options, Ref<DeferredPr
     auto quality = qualityFromDouble(options.quality);
 
     RefPtr context = canvasBaseScriptExecutionContext();
-    if (context && context->requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Canvas)) {
+    if (context && context->requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::Canvas)) {
         RefPtr buffer = createImageForNoiseInjection();
         auto blobData = buffer->toData(encodingMIMEType, quality);
         if (blobData.isEmpty())
@@ -373,11 +374,11 @@ void OffscreenCanvas::clearCopiedImage() const
 
 SecurityOrigin* OffscreenCanvas::securityOrigin() const
 {
-    auto& scriptExecutionContext = *canvasBaseScriptExecutionContext();
-    if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext))
+    Ref scriptExecutionContext = *canvasBaseScriptExecutionContext();
+    if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext.get()))
         return &globalScope->topOrigin();
 
-    return &downcast<Document>(scriptExecutionContext).securityOrigin();
+    return &downcast<Document>(scriptExecutionContext)->securityOrigin();
 }
 
 bool OffscreenCanvas::canDetach() const
@@ -410,15 +411,15 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
     RefPtr imageBuffer = m_context->surfaceBufferToImageBuffer(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
     if (!imageBuffer)
         return;
-    m_placeholderSource->setPlaceholderBuffer(WTFMove(imageBuffer));
+    m_placeholderSource->setPlaceholderBuffer(*imageBuffer, m_context->isOpaque());
     }
 
 void OffscreenCanvas::scheduleCommitToPlaceholderCanvas()
 {
-    if (!m_hasScheduledCommit && m_placeholderSource) {
-        auto& scriptContext = *scriptExecutionContext();
+    RefPtr scriptContext = scriptExecutionContext();
+    if (scriptContext && !m_hasScheduledCommit && m_placeholderSource) {
         m_hasScheduledCommit = true;
-        scriptContext.postTask([protectedThis = Ref { *this }, this] (ScriptExecutionContext&) {
+        scriptContext->postTask([protectedThis = Ref { *this }, this] (ScriptExecutionContext&) {
             m_hasScheduledCommit = false;
             commitToPlaceholderCanvas();
         });
@@ -469,6 +470,16 @@ std::unique_ptr<CSSParserContext> OffscreenCanvas::createCSSParserContext() cons
 {
     // FIXME: Rather than using a default CSSParserContext, there should be one exposed via ScriptExecutionContext.
     return makeUnique<CSSParserContext>(HTMLStandardMode);
+}
+
+ScriptExecutionContext* OffscreenCanvas::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
+}
+
+ScriptExecutionContext* OffscreenCanvas::canvasBaseScriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
 }
 
 }

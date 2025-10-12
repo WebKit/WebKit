@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 namespace WebCore {
 
 struct WEBCORE_EXPORT QuirksData {
@@ -32,31 +33,37 @@ struct WEBCORE_EXPORT QuirksData {
     bool isBankOfAmerica : 1 { false };
     bool isBing : 1 { false };
     bool isCBSSports : 1 { false };
+    bool isEA : 1 { false };
     bool isESPN : 1 { false };
     bool isFacebook : 1 { false };
     bool isGoogleDocs : 1 { false };
     bool isGoogleProperty : 1 { false };
     bool isGoogleMaps : 1 { false };
     bool isNetflix : 1 { false };
+    bool isOutlook : 1 { false };
     bool isSoundCloud : 1 { false };
     bool isThesaurus : 1 { false };
     bool isVimeo : 1 { false };
+    bool isWalmart : 1 { false };
     bool isWebEx : 1 { false };
     bool isYouTube : 1 { false };
     bool isZoom : 1 { false };
 
     bool hasBrokenEncryptedMediaAPISupportQuirk : 1 { false };
     bool implicitMuteWhenVolumeSetToZero : 1 { false };
+    bool inputMethodUsesCorrectKeyEventOrder : 1 { false };
     bool maybeBypassBackForwardCache : 1 { false };
     bool needsBingGestureEventQuirk : 1 { false };
     bool needsBodyScrollbarWidthNoneDisabledQuirk : 1 { false };
     bool needsCanPlayAfterSeekedQuirk : 1 { false };
     bool needsChromeMediaControlsPseudoElementQuirk : 1 { false };
+    bool needsFacebookRemoveNotSupportedQuirk : 1 { false };
     bool needsHotelsAnimationQuirk : 1 { false };
     bool needsMozillaFileTypeForDataTransferQuirk : 1 { false };
     bool needsResettingTransitionCancelsRunningTransitionQuirk : 1 { false };
     bool needsScrollbarWidthThinDisabledQuirk : 1 { false };
     bool needsSeekingSupportDisabledQuirk : 1 { false };
+    bool needsTikTokOverflowingContentQuirk : 1 { false };
     bool needsVP9FullRangeFlagQuirk : 1 { false };
     bool needsVideoShouldMaintainAspectRatioQuirk : 1 { false };
     bool returnNullPictureInPictureElementDuringFullscreenChangeQuirk : 1 { false };
@@ -96,12 +103,10 @@ struct WEBCORE_EXPORT QuirksData {
     bool needsGMailOverflowScrollQuirk : 1 { false };
     bool needsGoogleMapsScrollingQuirk : 1 { false };
     bool needsGoogleTranslateScrollingQuirk : 1 { false };
-    bool needsIPadSkypeOverflowScrollQuirk : 1 { false };
     bool needsPreloadAutoQuirk : 1 { false };
     bool needsScriptToEvaluateBeforeRunningScriptFromURLQuirk : 1 { false };
     bool needsYouTubeMouseOutQuirk : 1 { false };
     bool needsYouTubeOverflowScrollQuirk : 1 { false };
-    bool shouldAvoidPastingImagesAsWebContent : 1 { false };
     bool shouldDisablePointerEventsQuirk : 1 { false };
     bool shouldIgnoreAriaForFastPathContentObservationCheckQuirk : 1 { false };
     bool shouldNavigatorPluginsBeEmpty : 1 { false };
@@ -109,6 +114,7 @@ struct WEBCORE_EXPORT QuirksData {
     bool shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk : 1 { false };
     bool shouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk : 1 { false };
     bool shouldTreatAddingMouseOutEventListenerAsContentChange : 1 { false };
+    bool requirePageVisibilityToPlayAudioQuirk : 1 { false };
 #endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
@@ -136,6 +142,7 @@ struct WEBCORE_EXPORT QuirksData {
 
 #if PLATFORM(IOS_FAMILY)
     bool shouldHideCoarsePointerCharacteristicsQuirk : 1 { false };
+    bool shouldHideSoftTopScrollEdgeEffectDuringFocusQuirk : 1 { false };
 #endif
 
 #if ENABLE(FLIP_SCREEN_DIMENSIONS_QUIRKS)
@@ -143,10 +150,15 @@ struct WEBCORE_EXPORT QuirksData {
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+    bool shouldEnableFacebookFlagQuirk : 1 { false };
     bool shouldDisableImageCaptureQuirk : 1 { false };
     bool shouldEnableLegacyGetUserMediaQuirk : 1 { false };
     bool shouldEnableSpeakerSelectionPermissionsPolicyQuirk : 1 { false };
     bool shouldEnableEnumerateDeviceQuirk : 1 { false };
+    bool shouldEnableCameraAndMicrophonePermissionStateQuirk : 1 { false };
+#endif
+#if ENABLE(WEB_RTC)
+    bool shouldEnableRTCEncodedStreamsQuirk : 1 { false };
 #endif
 
 #if ENABLE(META_VIEWPORT)
@@ -181,9 +193,18 @@ struct WEBCORE_EXPORT QuirksData {
     bool shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk : 1 { false };
 #endif
 
+    bool needsNavigatorUserAgentDataQuirk : 1 { false };
+    bool needsCustomUserAgentData : 1 { false };
     bool needsNowPlayingFullscreenSwapQuirk : 1 { false };
     bool needsWebKitMediaTextTrackDisplayQuirk : 1 { false };
     bool needsMediaRewriteRangeRequestQuirk : 1 { false };
+    bool shouldEnterNativeFullscreenWhenCallingElementRequestFullscreen : 1 { false };
+    bool shouldDelayReloadWhenRegisteringServiceWorker : 1 { false };
+    bool shouldDisableDOMAudioSession : 1 { false };
+
+#if HAVE(PIP_SKIP_PREROLL)
+    bool shouldDisableAdSkippingInPip : 1 { false };
+#endif
 };
 
 } // namespace WebCore

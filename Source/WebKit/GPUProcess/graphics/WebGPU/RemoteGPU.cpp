@@ -28,16 +28,21 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "DDMeshDescriptor.h"
 #include "GPUConnectionToWebProcess.h"
 #include "Logging.h"
+#include "ModelObjectHeap.h"
 #include "RemoteAdapter.h"
 #include "RemoteCompositorIntegration.h"
+#include "RemoteDDMesh.h"
 #include "RemoteGPUMessages.h"
 #include "RemoteGPUProxyMessages.h"
 #include "RemotePresentationContext.h"
 #include "RemoteRenderingBackend.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
+#include <WebCore/DDMesh.h>
+#include <WebCore/DDMeshDescriptor.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/RenderingResourceIdentifier.h>
@@ -52,7 +57,7 @@
 #include <WebCore/WebGPUCreateImpl.h>
 #endif
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_streamConnection)
 
 namespace WebKit {
 
@@ -64,6 +69,7 @@ RemoteGPU::RemoteGPU(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpu
     , m_workQueue(IPC::StreamConnectionWorkQueue::create("WebGPU work queue"_s))
     , m_streamConnection(WTFMove(streamConnection))
     , m_objectHeap(WebGPU::ObjectHeap::create())
+    , m_modelObjectHeap(DDModel::ObjectHeap::create())
     , m_identifier(identifier)
     , m_renderingBackend(renderingBackend)
 {
@@ -71,14 +77,6 @@ RemoteGPU::RemoteGPU(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpu
 }
 
 RemoteGPU::~RemoteGPU() = default;
-
-RefPtr<IPC::Connection> RemoteGPU::connection() const
-{
-    RefPtr connection = m_gpuConnectionToWebProcess.get();
-    if (!connection)
-        return nullptr;
-    return &connection->connection();
-}
 
 void RemoteGPU::initialize()
 {
@@ -103,7 +101,7 @@ void RemoteGPU::workQueueInitialize()
     assertIsCurrent(workQueue());
     Ref workQueue = m_workQueue;
     RefPtr streamConnection = m_streamConnection;
-    streamConnection->open(workQueue);
+    streamConnection->open(*this, workQueue);
     streamConnection->startReceivingMessages(*this, Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
@@ -134,8 +132,19 @@ void RemoteGPU::workQueueUninitialize()
     streamConnection->invalidate();
     m_streamConnection = nullptr;
     Ref { m_objectHeap }->clear();
+    Ref { m_modelObjectHeap }->clear();
     m_backing = nullptr;
 }
+
+void RemoteGPU::didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName messageName, const Vector<uint32_t>&)
+{
+    RELEASE_LOG_FAULT(IPC, "Received an invalid message '%" PUBLIC_LOG_STRING "' from WebContent process, requesting for it to be terminated.", description(messageName).characters());
+    callOnMainRunLoop([weakGPUConnectionToWebProcess = m_gpuConnectionToWebProcess] {
+        if (RefPtr gpuConnectionToWebProcess = weakGPUConnectionToWebProcess.get())
+            gpuConnectionToWebProcess->terminateWebProcess();
+    });
+}
+
 
 void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, WebGPUIdentifier identifier, CompletionHandler<void(std::optional<RemoteGPURequestAdapterResponse>&&)>&& callback)
 {
@@ -255,6 +264,22 @@ void RemoteGPU::paintNativeImageToImageBuffer(WebCore::NativeImage& nativeImage,
         semaphore.signal();
     });
     semaphore.wait();
+}
+
+void RemoteGPU::createModelBacking(unsigned width, unsigned height, DDModelIdentifier identifier, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
+{
+    assertIsCurrent(workQueue());
+
+    Ref objectHeap = m_modelObjectHeap.get();
+
+    RefPtr gpu = m_backing.get();
+    auto mesh = gpu->createModelBacking(width, height, WTFMove(callback));
+#if ENABLE(GPUP_MODEL)
+    auto remoteMesh = RemoteDDMesh::create(*m_gpuConnectionToWebProcess.get(), *this, *mesh, objectHeap, Ref { *m_streamConnection }, identifier);
+    objectHeap->addObject(identifier, remoteMesh);
+#else
+    UNUSED_PARAM(mesh);
+#endif
 }
 
 void RemoteGPU::isValid(WebGPUIdentifier identifier, CompletionHandler<void(bool, bool)>&& completionHandler)

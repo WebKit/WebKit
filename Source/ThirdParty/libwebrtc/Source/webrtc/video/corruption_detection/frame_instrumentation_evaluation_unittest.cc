@@ -11,17 +11,28 @@
 #include "video/corruption_detection/frame_instrumentation_evaluation.h"
 
 #include <cstdint>
-#include <optional>
 #include <vector>
 
 #include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/video_content_type.h"
 #include "api/video/video_frame.h"
 #include "common_video/frame_instrumentation_data.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
+
+using ::testing::_;
+using ::testing::AllOf;
+using ::testing::Ge;
+using ::testing::Le;
+
+class MockCorruptionScoreObserver : public CorruptionScoreObserver {
+ public:
+  MOCK_METHOD(void, OnCorruptionScore, (double, VideoContentType), (override));
+};
 
 scoped_refptr<I420Buffer> MakeI420FrameBufferWithDifferentPixelValues() {
   // Create an I420 frame of size 4x4.
@@ -43,7 +54,7 @@ TEST(FrameInstrumentationEvaluationTest,
      HaveNoCorruptionScoreWhenNoSampleValuesAreProvided) {
   FrameInstrumentationData data = {.sequence_index = 0,
                                    .communicate_upper_bits = false,
-                                   .std_dev = 0.0,
+                                   .std_dev = 1.0,
                                    .luma_error_threshold = 0,
                                    .chroma_error_threshold = 0,
                                    .sample_values = {}};
@@ -52,9 +63,10 @@ TEST(FrameInstrumentationEvaluationTest,
           .set_video_frame_buffer(MakeI420FrameBufferWithDifferentPixelValues())
           .build();
 
-  std::optional<double> corruption_score = GetCorruptionScore(data, frame);
-
-  EXPECT_FALSE(corruption_score.has_value());
+  MockCorruptionScoreObserver observer;
+  FrameInstrumentationEvaluation evaluator(&observer);
+  EXPECT_CALL(observer, OnCorruptionScore).Times(0);
+  evaluator.OnInstrumentedFrame(data, frame, VideoContentType::UNSPECIFIED);
 }
 
 TEST(FrameInstrumentationEvaluationTest,
@@ -62,7 +74,7 @@ TEST(FrameInstrumentationEvaluationTest,
   FrameInstrumentationData data = {
       .sequence_index = 0,
       .communicate_upper_bits = false,
-      .std_dev = 0.0,
+      .std_dev = 1.0,
       .luma_error_threshold = 0,
       .chroma_error_threshold = 0,
       .sample_values = {12, 12, 12, 12, 12, 12, 12, 12}};
@@ -71,10 +83,10 @@ TEST(FrameInstrumentationEvaluationTest,
           .set_video_frame_buffer(MakeI420FrameBufferWithDifferentPixelValues())
           .build();
 
-  std::optional<double> corruption_score = GetCorruptionScore(data, frame);
-
-  ASSERT_TRUE(corruption_score.has_value());
-  EXPECT_DOUBLE_EQ(*corruption_score, 1.0);
+  MockCorruptionScoreObserver observer;
+  FrameInstrumentationEvaluation evaluator(&observer);
+  EXPECT_CALL(observer, OnCorruptionScore(1.0, VideoContentType::SCREENSHARE));
+  evaluator.OnInstrumentedFrame(data, frame, VideoContentType::SCREENSHARE);
 }
 
 TEST(FrameInstrumentationEvaluationTest,
@@ -82,7 +94,7 @@ TEST(FrameInstrumentationEvaluationTest,
   FrameInstrumentationData data = {
       .sequence_index = 0,
       .communicate_upper_bits = false,
-      .std_dev = 0.0,
+      .std_dev = 1.0,
       .luma_error_threshold = 8,
       .chroma_error_threshold = 8,
       .sample_values = {12, 12, 12, 12, 12, 12, 12, 12}};
@@ -91,11 +103,10 @@ TEST(FrameInstrumentationEvaluationTest,
           .set_video_frame_buffer(MakeI420FrameBufferWithDifferentPixelValues())
           .build();
 
-  std::optional<double> corruption_score = GetCorruptionScore(data, frame);
-
-  ASSERT_TRUE(corruption_score.has_value());
-  EXPECT_LE(*corruption_score, 1);
-  EXPECT_GE(*corruption_score, 0);
+  MockCorruptionScoreObserver observer;
+  FrameInstrumentationEvaluation evaluator(&observer);
+  EXPECT_CALL(observer, OnCorruptionScore(AllOf(Ge(0.0), Le(1.0)), _));
+  evaluator.OnInstrumentedFrame(data, frame, VideoContentType::UNSPECIFIED);
 }
 
 TEST(FrameInstrumentationEvaluationTest,
@@ -114,11 +125,10 @@ TEST(FrameInstrumentationEvaluationTest,
           .set_video_frame_buffer(MakeI420FrameBufferWithDifferentPixelValues())
           .build();
 
-  std::optional<double> corruption_score = GetCorruptionScore(data, frame);
-
-  ASSERT_TRUE(corruption_score.has_value());
-  EXPECT_LE(*corruption_score, 1);
-  EXPECT_GE(*corruption_score, 0);
+  MockCorruptionScoreObserver observer;
+  FrameInstrumentationEvaluation evaluator(&observer);
+  EXPECT_CALL(observer, OnCorruptionScore(AllOf(Ge(0.0), Le(1.0)), _));
+  evaluator.OnInstrumentedFrame(data, frame, VideoContentType::UNSPECIFIED);
 }
 
 TEST(FrameInstrumentationEvaluationTest, ApplySequenceIndexWhenProvided) {
@@ -136,11 +146,10 @@ TEST(FrameInstrumentationEvaluationTest, ApplySequenceIndexWhenProvided) {
           .set_video_frame_buffer(MakeI420FrameBufferWithDifferentPixelValues())
           .build();
 
-  std::optional<double> corruption_score = GetCorruptionScore(data, frame);
-
-  ASSERT_TRUE(corruption_score.has_value());
-  EXPECT_LE(*corruption_score, 1);
-  EXPECT_GE(*corruption_score, 0);
+  MockCorruptionScoreObserver observer;
+  FrameInstrumentationEvaluation evaluator(&observer);
+  EXPECT_CALL(observer, OnCorruptionScore(AllOf(Ge(0.0), Le(1.0)), _));
+  evaluator.OnInstrumentedFrame(data, frame, VideoContentType::UNSPECIFIED);
 }
 
 }  // namespace

@@ -85,27 +85,31 @@ void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIde
 
 void WebInspectorUI::updateConnection()
 {
-    if (m_backendConnection) {
-        m_backendConnection->invalidate();
+    RefPtr backendConnection = m_backendConnection;
+    if (backendConnection) {
+        backendConnection->invalidate();
         m_backendConnection = nullptr;
     }
     auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
     if (!connectionIdentifiers)
         return;
 
-    m_backendConnection = IPC::Connection::createServerConnection(WTFMove(connectionIdentifiers->server));
-    m_backendConnection->open(*this);
+    backendConnection = IPC::Connection::createServerConnection(WTFMove(connectionIdentifiers->server));
+    m_backendConnection = backendConnection.copyRef();
+    backendConnection->open(*this);
 
     sendToParentProcess(Messages::WebInspectorUIProxy::SetFrontendConnection(WTFMove(connectionIdentifiers->client)));
 }
 
 void WebInspectorUI::windowObjectCleared()
 {
-    if (m_frontendHost)
-        m_frontendHost->disconnectClient();
+    RefPtr frontendHost = m_frontendHost;
+    if (frontendHost)
+        frontendHost->disconnectClient();
 
-    m_frontendHost = InspectorFrontendHost::create(this, m_page->corePage());
-    m_frontendHost->addSelfToGlobalObjectInWorld(mainThreadNormalWorldSingleton());
+    frontendHost = InspectorFrontendHost::create(this, m_page->protectedCorePage().get());
+    m_frontendHost = frontendHost.copyRef();
+    frontendHost->addSelfToGlobalObjectInWorld(mainThreadNormalWorldSingleton());
 }
 
 void WebInspectorUI::frontendLoaded()
@@ -144,16 +148,14 @@ void WebInspectorUI::closeWindow()
 {
     sendToParentProcess(Messages::WebInspectorUIProxy::DidClose());
 
-    if (m_backendConnection) {
-        m_backendConnection->invalidate();
-        m_backendConnection = nullptr;
-    }
+    if (RefPtr backendConnection = std::exchange(m_backendConnection, nullptr))
+        backendConnection->invalidate();
 
     if (RefPtr frontendController = std::exchange(m_frontendController, nullptr).get())
         frontendController->setInspectorFrontendClient(nullptr);
 
-    if (m_frontendHost)
-        m_frontendHost->disconnectClient();
+    if (RefPtr frontendHost = m_frontendHost)
+        frontendHost->disconnectClient();
 
     m_inspectedPageIdentifier = std::nullopt;
     m_underTest = false;
@@ -321,6 +323,17 @@ void WebInspectorUI::setInspectorPageDeveloperExtrasEnabled(bool enabled)
     sendToParentProcess(Messages::WebInspectorUIProxy::SetInspectorPageDeveloperExtrasEnabled(enabled));
 }
 
+void WebInspectorUI::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
+{
+    m_pageZoomFactor = pageZoomFactor;
+    sendToParentProcess(Messages::WebInspectorUIProxy::SetPageAndTextZoomFactors(pageZoomFactor, textZoomFactor));
+}
+
+double WebInspectorUI::pageZoomFactor() const
+{
+    return m_pageZoomFactor;
+}
+
 #if ENABLE(INSPECTOR_TELEMETRY)
 bool WebInspectorUI::supportsDiagnosticLogging()
 {
@@ -329,7 +342,7 @@ bool WebInspectorUI::supportsDiagnosticLogging()
 
 void WebInspectorUI::logDiagnosticEvent(const String& eventName, const DiagnosticLoggingClient::ValueDictionary& dictionary)
 {
-    m_page->corePage()->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(eventName, "Web Inspector Frontend Diagnostics"_s, dictionary, ShouldSample::No);
+    m_page->protectedCorePage()->checkedDiagnosticLoggingClient()->logDiagnosticMessageWithValueDictionary(eventName, "Web Inspector Frontend Diagnostics"_s, dictionary, ShouldSample::No);
 }
 
 void WebInspectorUI::setDiagnosticLoggingAvailable(bool available)

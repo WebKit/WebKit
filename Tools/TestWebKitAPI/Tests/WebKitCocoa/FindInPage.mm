@@ -26,11 +26,11 @@
 #import "config.h"
 
 #import "InstanceMethodSwizzler.h"
+#import "PDFTestHelpers.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
-#import "UnifiedPDFTestHelpers.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFindDelegate.h>
@@ -999,93 +999,9 @@ TEST(WebKit, FindOverlaySPI)
 
 static bool hasPerformedTextSearchWithQueryString = false;
 
-static void swizzledPerformTextSearchWithQueryString(id, SEL, NSString *, UITextSearchOptions *, id<UITextSearchAggregator> aggregator)
-{
-    [aggregator finishedSearching];
-    hasPerformedTextSearchWithQueryString = true;
-}
-
-TEST(WebKit, FindInPDF)
-{
-    // Swizzle out the method that performs searching, since PDFHostViewController (a remote view
-    // (controller) cannot be created in TestWebKitAPI, and we cannot actually search the PDF.
-    std::unique_ptr<InstanceMethodSwizzler> performTextSearchInPDFWithQueryStringSwizzler = makeUnique<InstanceMethodSwizzler>(NSClassFromString(@"WKPDFView"), @selector(performTextSearchWithQueryString:usingOptions:resultAggregator:), reinterpret_cast<IMP>(swizzledPerformTextSearchWithQueryString));
-
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
-    [webView loadRequest:request];
-    [webView _test_waitForDidFinishNavigation];
-
-    auto searchOptions = adoptNS([[UITextSearchOptions alloc] init]);
-    testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birthday", searchOptions.get(), 0UL);
-
-    hasPerformedTextSearchWithQueryString = false;
-}
-
-TEST(WebKit, FindInPDFAfterReload)
-{
-    // Swizzle out the method that performs searching, since PDFHostViewController (a remote view
-    // (controller) cannot be created in TestWebKitAPI, and we cannot actually search the PDF.
-    std::unique_ptr<InstanceMethodSwizzler> performTextSearchInPDFWithQueryStringSwizzler = makeUnique<InstanceMethodSwizzler>(NSClassFromString(@"WKPDFView"), @selector(performTextSearchWithQueryString:usingOptions:resultAggregator:), reinterpret_cast<IMP>(swizzledPerformTextSearchWithQueryString));
-
-    auto webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-
-    auto searchForText = [&] {
-        NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
-        [webView loadRequest:request];
-        [webView _test_waitForDidFinishNavigation];
-
-        auto *findInteraction = [webView findInteraction];
-        [findInteraction presentFindNavigatorShowingReplace:NO];
-        [webView waitForNextPresentationUpdate];
-
-        auto *findSession = [findInteraction activeFindSession];
-        [findSession performSearchWithQuery:@"Birthday" options:0];
-
-        TestWebKitAPI::Util::run(&hasPerformedTextSearchWithQueryString);
-
-        [findInteraction dismissFindNavigator];
-        [webView waitForNextPresentationUpdate];
-
-        hasPerformedTextSearchWithQueryString = false;
-    };
-
-    searchForText();
-    searchForText();
-}
-
-TEST(WebKit, FindInPDFAfterFindInPage)
-{
-    auto webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
-    [webView synchronouslyLoadTestPageNamed:@"lots-of-text"];
-
-    auto *findInteraction = [webView findInteraction];
-    [findInteraction presentFindNavigatorShowingReplace:NO];
-    [webView waitForNextPresentationUpdate];
-
-    [findInteraction dismissFindNavigator];
-    [webView waitForNextPresentationUpdate];
-
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
-    [webView loadRequest:request];
-    [webView _test_waitForDidFinishNavigation];
-
-    [findInteraction presentFindNavigatorShowingReplace:NO];
-    [webView waitForNextPresentationUpdate];
-
-    [findInteraction dismissFindNavigator];
-    [webView waitForNextPresentationUpdate];
-}
-
 #if ENABLE(UNIFIED_PDF)
 
-// rdar://144724909 (REGRESSION(290220@main): [ iOS ] 12x TestWebKitAPI.UnifiedPDF* (api-tests) are constant failures (287579))
-#if !defined(NDEBUG)
-TEST(WebKit, DISABLED_FindInUnifiedPDF)
-#else
 TEST(WebKit, FindInUnifiedPDF)
-#endif
 {
     RetainPtr webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:TestWebKitAPI::configurationForWebViewTestingUnifiedPDF().get()]);
 
@@ -1099,12 +1015,7 @@ TEST(WebKit, FindInUnifiedPDF)
     hasPerformedTextSearchWithQueryString = false;
 }
 
-// rdar://144724909 (REGRESSION(290220@main): [ iOS ] 12x TestWebKitAPI.UnifiedPDF* (api-tests) are constant failures (287579))
-#if !defined(NDEBUG)
-TEST(WebKit, DISABLED_FindInUnifiedPDFAfterReload)
-#else
 TEST(WebKit, FindInUnifiedPDFAfterReload)
-#endif
 {
     RetainPtr webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:TestWebKitAPI::configurationForWebViewTestingUnifiedPDF().get()]);
 
@@ -1130,12 +1041,7 @@ TEST(WebKit, FindInUnifiedPDFAfterReload)
     searchForText();
 }
 
-// rdar://144724909 (REGRESSION(290220@main): [ iOS ] 12x TestWebKitAPI.UnifiedPDF* (api-tests) are constant failures (287579))
-#if !defined(NDEBUG)
-TEST(WebKit, DISABLED_FindInUnifiedPDFAfterFindInPage)
-#else
 TEST(WebKit, FindInUnifiedPDFAfterFindInPage)
-#endif
 {
     RetainPtr webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200) configuration:TestWebKitAPI::configurationForWebViewTestingUnifiedPDF().get()]);
     [webView synchronouslyLoadTestPageNamed:@"lots-of-text"];

@@ -1678,7 +1678,7 @@ public:
 
     static void replaceWithNops(void* from, size_t memoryToFillWithNopsInBytes)
     {
-        fillNops<MachineCodeCopyMode::Memcpy>(from, memoryToFillWithNopsInBytes);
+        fillNops(from, memoryToFillWithNopsInBytes);
         cacheFlush(from, memoryToFillWithNopsInBytes);
     }
 
@@ -1703,7 +1703,6 @@ public:
         __builtin___clear_cache(static_cast<char*>(code), reinterpret_cast<char*>(end));
     }
 
-    template<MachineCodeCopyMode copy>
     static void fillNops(void* base, size_t size)
     {
         uint32_t* ptr = static_cast<uint32_t*>(base);
@@ -1712,7 +1711,7 @@ public:
 
         uint32_t nop = RISCV64Instructions::ADDI::construct(RISCV64Registers::zero, RISCV64Registers::zero, IImmediate::v<IImmediate, 0>());
         for (size_t i = 0, n = size / sizeof(uint32_t); i < n; ++i)
-            machineCodeCopy<copy>(&ptr[i], &nop, sizeof(uint32_t));
+            machineCodeCopy<memcpyRepatch>(&ptr[i], &nop, sizeof(uint32_t));
     }
 
     typedef enum {

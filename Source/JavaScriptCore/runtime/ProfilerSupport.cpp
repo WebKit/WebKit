@@ -168,4 +168,23 @@ void ProfilerSupport::mark(const void* identifier, Category, CString&& message)
     });
 }
 
+
+void ProfilerSupport::markInterval(const void* identifier, Category, MonotonicTime startTime, MonotonicTime endTime, CString&& message)
+{
+    if (!Options::useTextMarkers())
+        return;
+    if (!identifier)
+        return;
+
+    uint64_t start = startTime.secondsSinceEpoch().nanosecondsAs<uint64_t>();
+    uint64_t end = endTime.secondsSinceEpoch().nanosecondsAs<uint64_t>();
+
+    auto& profiler = singleton();
+    profiler.queue().dispatch([message = WTFMove(message), start, end] {
+        auto& profiler = singleton();
+        Locker locker { profiler.m_lock };
+        profiler.write(locker, start, end, message);
+    });
+}
+
 } // namespace JSC

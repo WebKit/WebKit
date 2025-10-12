@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "AnimationFrameRate.h"
+#include <WebCore/AnimationFrameRate.h>
 #include "AnimationFrameRatePreset.h"
-#include "AnimationTimeline.h"
-#include "CSSKeywordValue.h"
-#include "KeyframeEffectOptions.h"
-#include "TimelineRangeOffset.h"
+#include <WebCore/AnimationTimeline.h>
+#include <WebCore/CSSKeywordValue.h>
+#include <WebCore/KeyframeEffectOptions.h>
+#include <WebCore/TimelineRangeValue.h>
 
 namespace WebCore {
 

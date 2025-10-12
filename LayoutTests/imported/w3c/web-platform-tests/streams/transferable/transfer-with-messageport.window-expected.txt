@@ -1,0 +1,12 @@
+
+FAIL Transferring a MessagePort with a ReadableStream should set `.ports` promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL Transferring a MessagePort with a WritableStream should set `.ports` promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL Transferring a MessagePort with a TransformStream should set `.ports` promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL Transferring a MessagePort with a ReadableStream should set `.ports`, advanced promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL Transferring a MessagePort with a WritableStream should set `.ports`, advanced promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL Transferring a MessagePort with a TransformStream should set `.ports`, advanced promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL Transferring a MessagePort with multiple streams should set `.ports` promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+PASS ReadableStream must not be serializable
+PASS WritableStream must not be serializable
+PASS TransformStream must not be serializable
+

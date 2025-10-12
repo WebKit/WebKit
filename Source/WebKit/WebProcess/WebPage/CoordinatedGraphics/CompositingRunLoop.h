@@ -82,7 +82,7 @@ private:
     void scheduleUpdate(Locker<Lock>&);
     void updateTimerFired();
 
-    Ref<RunLoop> m_runLoop;
+    const Ref<RunLoop> m_runLoop;
     RunLoop::Timer m_updateTimer;
     Function<void ()> m_updateFunction;
     Lock m_dispatchSyncConditionLock;

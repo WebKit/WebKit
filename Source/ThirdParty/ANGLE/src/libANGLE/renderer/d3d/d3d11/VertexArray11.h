@@ -21,7 +21,8 @@ class Renderer11;
 class VertexArray11 : public VertexArrayImpl
 {
   public:
-    VertexArray11(const gl::VertexArrayState &data);
+    VertexArray11(const gl::VertexArrayState &data,
+                  const gl::VertexArrayBuffers &vertexArrayBuffers);
     ~VertexArray11() override;
     void destroy(const gl::Context *context) override;
 

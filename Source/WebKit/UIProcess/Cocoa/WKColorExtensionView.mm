@@ -26,14 +26,16 @@
 #import "config.h"
 #import "WKColorExtensionView.h"
 
+#import <QuartzCore/CoreAnimation.h>
 #import <wtf/RetainPtr.h>
+
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
 
 @interface WKColorExtensionView () <CAAnimationDelegate>
 @end
 
 @implementation WKColorExtensionView {
     BOOL _isVisible;
-    BOOL _isDoneFadingIn;
     __weak id<WKColorExtensionViewDelegate> _delegate;
     RetainPtr<WebCore::CocoaColor> _targetColor;
 }
@@ -44,29 +46,32 @@
         return nil;
 
     _delegate = delegate;
+    self.hidden = YES;
     return self;
 }
 
-- (void)fadeToColor:(WebCore::CocoaColor *)color
+- (void)updateColor:(WebCore::CocoaColor *)color
 {
-    [self _fadeToColor:color visible:YES];
+    [self _updateColor:color visible:YES];
 }
 
 - (void)fadeOut
 {
-    [self _fadeToColor:[WebCore::CocoaColor clearColor] visible:NO];
+    [self _updateColor:[WebCore::CocoaColor clearColor] visible:NO];
 }
 
-- (void)_fadeToColor:(WebCore::CocoaColor *)color visible:(BOOL)visible
+- (void)_updateColor:(WebCore::CocoaColor *)color visible:(BOOL)visible
 {
     if (!visible && !_isVisible)
         return;
 
+    BOOL isBeingRevealed = self.hidden && visible;
+    if (isBeingRevealed)
+        [self cancelFadeAnimation];
+
     BOOL wasVisible = std::exchange(_isVisible, visible);
-    if (wasVisible && !visible) {
-        [retainPtr(_delegate) colorExtensionViewWillFadeOut:self];
-        _isDoneFadingIn = NO;
-    }
+    if (wasVisible && !visible)
+        [retainPtr(_delegate) colorExtensionViewWillDisappear:self];
 
     if (visible)
         self.hidden = NO;
@@ -77,6 +82,11 @@
     RetainPtr toColor = [color CGColor];
     _targetColor = color;
     self.layer.backgroundColor = toColor.get();
+
+    if (isBeingRevealed) {
+        [retainPtr(_delegate) colorExtensionViewDidAppear:self];
+        return;
+    }
 
     RetainPtr animation = [CABasicAnimation animationWithKeyPath:@"backgroundColor"];
     [animation setFromValue:(__bridge id)fromColor.get()];
@@ -94,13 +104,8 @@
     if (!finished)
         return;
 
-    if (!_isVisible) {
+    if (!_isVisible)
         self.hidden = YES;
-        return;
-    }
-
-    if (!std::exchange(_isDoneFadingIn, YES))
-        [retainPtr(_delegate) colorExtensionViewDidFadeIn:self];
 }
 
 - (BOOL)isHiddenOrFadingOut
@@ -120,3 +125,5 @@
 }
 
 @end
+
+#endif // ENABLE(CONTENT_INSET_BACKGROUND_FILL)

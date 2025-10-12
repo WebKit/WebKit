@@ -28,7 +28,7 @@
 #include "CanvasBase.h"
 #include "CanvasObserver.h"
 #include "InspectorCanvas.h"
-#include "InspectorCanvasCallTracer.h"
+#include "InspectorCanvasProcessedArguments.h"
 #include "InspectorWebAgentBase.h"
 #include "Timer.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
@@ -65,7 +65,7 @@ public:
     ~InspectorCanvasAgent();
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void didCreateFrontendAndBackend();
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
     void discardAgent();
     virtual bool enabled() const;
@@ -105,13 +105,10 @@ public:
     bool isWebGLProgramHighlighted(WebGLProgram&);
 #endif // ENABLE(WEBGL)
 
-    // InspectorCanvasCallTracer
-#define PROCESS_ARGUMENT_DECLARATION(ArgumentType) \
-    std::optional<InspectorCanvasCallTracer::ProcessedArgument> processArgument(CanvasRenderingContext&, ArgumentType); \
-// end of PROCESS_ARGUMENT_DECLARATION
-    FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_ARGUMENT(PROCESS_ARGUMENT_DECLARATION)
-#undef PROCESS_ARGUMENT_DECLARATION
-    void recordAction(CanvasRenderingContext&, String&&, InspectorCanvasCallTracer::ProcessedArguments&& = { });
+    void recordAction(CanvasRenderingContext&, String&&, InspectorCanvasProcessedArguments&& = { });
+
+    RefPtr<InspectorCanvas> assertInspectorCanvas(Inspector::Protocol::ErrorString&, const String& canvasId);
+    RefPtr<InspectorCanvas> findInspectorCanvas(CanvasRenderingContext&);
 
 protected:
     InspectorCanvasAgent(WebAgentContext&);
@@ -122,12 +119,9 @@ protected:
     void reset();
     void unbindCanvas(InspectorCanvas&);
 
-    RefPtr<InspectorCanvas> assertInspectorCanvas(Inspector::Protocol::ErrorString&, const String& canvasId);
-    RefPtr<InspectorCanvas> findInspectorCanvas(CanvasRenderingContext&);
-
     virtual bool matchesCurrentContext(ScriptExecutionContext*) const = 0;
 
-    std::unique_ptr<Inspector::CanvasFrontendDispatcher> m_frontendDispatcher;
+    const UniqueRef<Inspector::CanvasFrontendDispatcher> m_frontendDispatcher;
 
     MemoryCompactRobinHoodHashMap<String, RefPtr<InspectorCanvas>> m_identifierToInspectorCanvas;
 
@@ -152,7 +146,7 @@ private:
     RefPtr<InspectorShaderProgram> findInspectorProgram(WebGLProgram&);
 #endif // ENABLE(WEBGL)
 
-    RefPtr<Inspector::CanvasBackendDispatcher> m_backendDispatcher;
+    const Ref<Inspector::CanvasBackendDispatcher> m_backendDispatcher;
 
     Inspector::InjectedScriptManager& m_injectedScriptManager;
 

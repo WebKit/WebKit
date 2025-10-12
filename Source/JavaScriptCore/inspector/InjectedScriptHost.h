@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSCJSValueInlines.h"
-#include "PerGlobalObjectWrapperWorld.h"
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/PerGlobalObjectWrapperWorld.h>
 #include <wtf/RefCounted.h>
 
 namespace Inspector {

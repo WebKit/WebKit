@@ -22,13 +22,14 @@
 
 #pragma once
 
-#include "PaintPhase.h"
-#include "RenderElement.h"
+#include <WebCore/PaintPhase.h>
+#include <WebCore/RenderElement.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
 
 class BlendingKeyframes;
+class GraphicsLayerAnimation;
 class LegacyRenderSVGResourceClipper;
 class RenderLayer;
 class RenderSVGResourceClipper;
@@ -39,7 +40,7 @@ class RenderSVGResourcePaintServer;
 class SVGGraphicsElement;
 
 namespace Style {
-struct URL;
+struct SVGMarkerResource;
 }
 
 class RenderLayerModelObject : public RenderElement {
@@ -65,7 +66,7 @@ public:
 
     // Returns false if the rect has no intersection with the applied clip rect. When the context specifies edge-inclusive
     // intersection, this return value allows distinguishing between no intersection and zero-area intersection.
-    virtual bool applyCachedClipAndScrollPosition(RepaintRects&, const RenderLayerModelObject*, VisibleRectContext) const { return false; }
+    virtual bool applyCachedClipAndScrollPosition(RepaintRects&, const RenderLayerModelObject*, VisibleRectContext) const;
 
     virtual bool isScrollableOrRubberbandableBox() const { return false; }
 
@@ -73,7 +74,7 @@ public:
 
     std::optional<LayoutRect> cachedLayerClippedOverflowRect() const;
 
-    bool startAnimation(double timeOffset, const Animation&, const BlendingKeyframes&) override;
+    bool startAnimation(double timeOffset, const GraphicsLayerAnimation&, const BlendingKeyframes&) override;
     void animationPaused(double timeOffset, const BlendingKeyframes&) override;
     void animationFinished(const BlendingKeyframes&) override;
     void transformRelatedPropertyDidChange() override;
@@ -137,7 +138,7 @@ protected:
     virtual void updateFromStyle() { }
 
 private:
-    RenderSVGResourceMarker* svgMarkerResourceFromStyle(const Style::URL& markerResource) const;
+    RenderSVGResourceMarker* svgMarkerResourceFromStyle(const Style::SVGMarkerResource&) const;
 
     std::unique_ptr<RenderLayer> m_layer;
 

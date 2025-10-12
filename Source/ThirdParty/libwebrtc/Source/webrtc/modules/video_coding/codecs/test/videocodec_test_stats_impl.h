@@ -15,10 +15,11 @@
 
 #include <map>
 #include <optional>
-#include <string>
 #include <vector>
 
 #include "api/test/videocodec_test_stats.h"  // NOLINT(build/include)
+#include "api/units/data_rate.h"
+#include "api/units/frequency.h"
 
 namespace webrtc {
 namespace test {

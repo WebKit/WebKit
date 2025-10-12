@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "JSObject.h"
-#include "PropertySlot.h"
-#include "Structure.h"
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/PropertySlot.h>
+#include <JavaScriptCore/Structure.h>
 #include <wtf/UniqueRef.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

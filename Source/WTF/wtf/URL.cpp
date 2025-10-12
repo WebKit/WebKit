@@ -74,7 +74,7 @@ URL::URL(String&& absoluteURL, const URLTextEncoding* encoding)
     *this = URLParser(WTFMove(absoluteURL), URL(), encoding).result();
 }
 
-static bool shouldTrimFromURL(UChar character)
+static bool shouldTrimFromURL(char16_t character)
 {
     // Ignore leading/trailing whitespace and control characters.
     return character <= ' ';
@@ -140,6 +140,13 @@ bool URL::hasFetchScheme() const
         || protocolIsFile();
 }
 
+bool URL::protocolIsSecure() const
+{
+    // Note: FTPS is not considered secure for WebKit purposes.
+    return protocolIs("https"_s)
+        || protocolIs("wss"_s);
+}
+
 unsigned URL::pathStart() const
 {
     unsigned start = m_hostEnd + m_portLength;
@@ -190,7 +197,7 @@ String URL::protocolHostAndPort() const
     );
 }
 
-static std::optional<LChar> decodeEscapeSequence(StringView input, unsigned index, unsigned length)
+static std::optional<Latin1Character> decodeEscapeSequence(StringView input, unsigned index, unsigned length)
 {
     if (index + 3 > length || input[index] != '%')
         return std::nullopt;
@@ -210,7 +217,7 @@ static String decodeEscapeSequencesFromParsedURL(StringView input)
         return input.toString();
 
     // FIXME: This 100 is arbitrary. Should make a histogram of how this function is actually used to choose a better value.
-    Vector<LChar, 100> percentDecoded;
+    Vector<Latin1Character, 100> percentDecoded;
     percentDecoded.reserveInitialCapacity(length);
     for (unsigned i = 0; i < length; ) {
         if (auto decodedCharacter = decodeEscapeSequence(input, i, length)) {
@@ -440,7 +447,7 @@ bool URL::setProtocol(StringView newProtocol)
 // Appends the punycoded hostname identified by the given string and length to
 // the output buffer. The result will not be null terminated.
 // Return value of false means error in encoding.
-static bool appendEncodedHostname(Vector<UChar, 512>& buffer, StringView string)
+static bool appendEncodedHostname(Vector<char16_t, 512>& buffer, StringView string)
 {
     // hostnameBuffer needs to be big enough to hold an IDN-encoded name.
     // For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
@@ -449,10 +456,11 @@ static bool appendEncodedHostname(Vector<UChar, 512>& buffer, StringView string)
         return true;
     }
 
-    std::array<UChar, URLParser::hostnameBufferLength> hostnameBuffer;
+    std::array<char16_t, URLParser::hostnameBufferLength> hostnameBuffer;
     UErrorCode error = U_ZERO_ERROR;
     UIDNAInfo processingDetails = UIDNA_INFO_INITIALIZER;
-    int32_t numCharactersConverted = uidna_nameToASCII(&URLParser::internationalDomainNameTranscoder(),
+    // struct UIDNA is forward declared in WTF/icu/unicode/uidna.h.
+    SUPPRESS_FORWARD_DECL_ARG int32_t numCharactersConverted = uidna_nameToASCII(&URLParser::internationalDomainNameTranscoder(),
         string.upconvertedCharacters(), string.length(), hostnameBuffer.data(), hostnameBuffer.size(), &processingDetails, &error);
 
     if (U_SUCCESS(error) && !(processingDetails.errors & ~URLParser::allowedNameToASCIIErrors) && numCharactersConverted) {
@@ -476,14 +484,14 @@ unsigned URL::credentialsEnd() const
     return end;
 }
 
-static bool forwardSlashHashOrQuestionMark(UChar c)
+static bool forwardSlashHashOrQuestionMark(char16_t c)
 {
     return c == '/'
         || c == '#'
         || c == '?';
 }
 
-static bool slashHashOrQuestionMark(UChar c)
+static bool slashHashOrQuestionMark(char16_t c)
 {
     return forwardSlashHashOrQuestionMark(c) || c == '\\';
 }
@@ -502,7 +510,7 @@ bool URL::setHost(StringView newHost)
     if (newHost.contains(':') && !newHost.startsWith('['))
         return false;
 
-    Vector<UChar, 512> encodedHostName;
+    Vector<char16_t, 512> encodedHostName;
     if (hasSpecialScheme() && !appendEncodedHostname(encodedHostName, newHost))
         return false;
 
@@ -580,7 +588,7 @@ void URL::setHostAndPort(StringView hostAndPort)
     if (!parseInteger<uint16_t>(portString))
         portString = { };
 
-    Vector<UChar, 512> encodedHostName;
+    Vector<char16_t, 512> encodedHostName;
     if (hasSpecialScheme() && !appendEncodedHostname(encodedHostName, hostName))
         return;
 
@@ -602,16 +610,18 @@ void URL::removeHostAndPort()
 }
 
 template<typename StringType>
-static String percentEncodeCharacters(const StringType& input, bool(*shouldEncode)(UChar))
+static String percentEncodeCharacters(const StringType& input, bool(*shouldEncode)(char16_t))
 {
     auto encode = [shouldEncode] (const StringType& input) {
         auto result = input.tryGetUTF8([&](std::span<const char8_t> span) -> String {
-            StringBuilder builder;
+            StringBuilder builder(OverflowPolicy::RecordOverflow);
             for (char c : span) {
                 if (shouldEncode(c))
                     builder.append('%', upperNibbleToASCIIHexDigit(c), lowerNibbleToASCIIHexDigit(c));
                 else
                     builder.append(c);
+                if (builder.hasOverflowed())
+                    return { };
             }
             return builder.toString();
         });
@@ -745,7 +755,7 @@ void URL::setQuery(StringView newQuery)
 
 static String escapePathWithoutCopying(StringView path)
 {
-    auto questionMarkOrNumberSignOrNonASCII = [] (UChar character) {
+    auto questionMarkOrNumberSignOrNonASCII = [] (char16_t character) {
         return character == '?' || character == '#' || !isASCII(character);
     };
     return percentEncodeCharacters(path, questionMarkOrNumberSignOrNonASCII);
@@ -996,72 +1006,73 @@ bool portAllowed(const URL& url)
     if (!port)
         return true;
 
-    // This blocked port list matches the port blocking that Mozilla implements.
-    // See http://www.mozilla.org/projects/netlib/PortBanning.html for more information.
+    // This blocked port list is defined by the Fetch spec, with the addition of port 0.
+    // See https://fetch.spec.whatwg.org/#port-blocking for more information.
     static const uint16_t blockedPortList[] = {
-        1,    // tcpmux
-        7,    // echo
-        9,    // discard
-        11,   // systat
-        13,   // daytime
-        15,   // netstat
-        17,   // qotd
-        19,   // chargen
-        20,   // FTP-data
-        21,   // FTP-control
-        22,   // SSH
-        23,   // telnet
-        25,   // SMTP
-        37,   // time
-        42,   // name
-        43,   // nicname
-        53,   // domain
-        69,   // TFTP
-        77,   // priv-rjs
-        79,   // finger
-        87,   // ttylink
-        95,   // supdup
-        101,  // hostriame
-        102,  // iso-tsap
-        103,  // gppitnp
-        104,  // acr-nema
-        109,  // POP2
-        110,  // POP3
-        111,  // sunrpc
-        113,  // auth
-        115,  // SFTP
-        117,  // uucp-path
-        119,  // nntp
-        123,  // NTP
-        135,  // loc-srv / epmap
-        137,  // NetBIOS
-        139,  // netbios
-        143,  // IMAP2
-        161,  // SNMP
-        179,  // BGP
-        389,  // LDAP
-        427,  // SLP (Also used by Apple Filing Protocol)
-        465,  // SMTP+SSL
-        512,  // print / exec
-        513,  // login
-        514,  // shell
-        515,  // printer
-        526,  // tempo
-        530,  // courier
-        531,  // Chat
-        532,  // netnews
-        540,  // UUCP
-        548,  // afpovertcp [Apple addition]
-        554,  // rtsp
-        556,  // remotefs
-        563,  // NNTP+SSL
-        587,  // ESMTP
-        601,  // syslog-conn
-        636,  // LDAP+SSL
-        989,  // ftps-data
-        990,  // ftps
-        993,  // IMAP+SSL
-        995,  // POP3+SSL
+        0, // reserved
+        1, // tcpmux
+        7, // echo
+        9, // discard
+        11, // systat
+        13, // daytime
+        15, // netstat
+        17, // qotd
+        19, // chargen
+        20, // FTP-data
+        21, // FTP-control
+        22, // SSH
+        23, // telnet
+        25, // SMTP
+        37, // time
+        42, // name
+        43, // nicname
+        53, // domain
+        69, // TFTP
+        77, // priv-rjs
+        79, // finger
+        87, // ttylink
+        95, // supdup
+        101, // hostriame
+        102, // iso-tsap
+        103, // gppitnp
+        104, // acr-nema
+        109, // POP2
+        110, // POP3
+        111, // sunrpc
+        113, // auth
+        115, // SFTP
+        117, // uucp-path
+        119, // nntp
+        123, // NTP
+        135, // loc-srv / epmap
+        137, // NetBIOS
+        139, // netbios
+        143, // IMAP2
+        161, // SNMP
+        179, // BGP
+        389, // LDAP
+        427, // SLP (Also used by Apple Filing Protocol)
+        465, // SMTP+SSL
+        512, // print / exec
+        513, // login
+        514, // shell
+        515, // printer
+        526, // tempo
+        530, // courier
+        531, // Chat
+        532, // netnews
+        540, // UUCP
+        548, // afpovertcp [Apple addition]
+        554, // rtsp
+        556, // remotefs
+        563, // NNTP+SSL
+        587, // ESMTP
+        601, // syslog-conn
+        636, // LDAP+SSL
+        989, // ftps-data
+        990, // ftps
+        993, // IMAP+SSL
+        995, // POP3+SSL
         1719, // H323 (RAS)
         1720, // H323 (Q931)
         1723, // H323 (H245)
@@ -1339,7 +1350,7 @@ bool isEqualIgnoringQueryAndFragments(const URL& a, const URL& b)
     return substringIgnoringQueryAndFragments(a) == substringIgnoringQueryAndFragments(b);
 }
 
-Vector<String> removeQueryParameters(URL& url, const UncheckedKeyHashSet<String>& keysToRemove)
+Vector<String> removeQueryParameters(URL& url, const HashSet<String>& keysToRemove)
 {
     if (keysToRemove.isEmpty())
         return { };

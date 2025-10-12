@@ -1,7 +1,7 @@
 PASS edgeColorsBeforeUnparenting.top is "rgb(100, 100, 100)"
-PASS edgeColorsBeforeUnparenting.left is "rgb(100, 100, 100)"
-PASS edgeColorsBeforeUnparenting.right is "rgb(100, 100, 100)"
-PASS edgeColorsBeforeUnparenting.bottom is "rgb(100, 100, 100)"
+PASS edgeColorsBeforeUnparenting.left is null
+PASS edgeColorsBeforeUnparenting.right is null
+PASS edgeColorsBeforeUnparenting.bottom is null
 PASS edgeColorsAfterUnparenting.top is null
 PASS edgeColorsAfterUnparenting.left is null
 PASS edgeColorsAfterUnparenting.right is null

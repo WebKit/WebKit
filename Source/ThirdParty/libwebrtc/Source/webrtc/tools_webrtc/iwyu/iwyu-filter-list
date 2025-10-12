@@ -7,3 +7,5 @@
 #include <__memory/unique_ptr.h>
 #include <__tree>
 #include <iosfwd>
+#include <bits/time.h>
+#include <bits/pthreadtypes.h>

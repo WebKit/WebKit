@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,7 +84,7 @@ Ref<Element> WebVTTElement::create(WebVTTNodeType nodeType, AtomString language,
     return adoptRef(*new WebVTTElement(nodeType, language, document));
 }
 
-Ref<Element> WebVTTElement::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry*)
+Ref<Element> WebVTTElement::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry*) const
 {
     return create(m_webVTTNodeType, m_language, document);
 }

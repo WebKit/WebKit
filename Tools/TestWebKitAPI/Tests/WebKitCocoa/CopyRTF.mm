@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <wtf/RetainPtr.h>
@@ -53,7 +54,7 @@ static NSData *readRTFDataFromPasteboard()
 #else
 static NSData *readRTFDataFromPasteboard()
 {
-    id value = [[UIPasteboard generalPasteboard] valueForPasteboardType:(__bridge NSString *)kUTTypeRTF];
+    id value = [[UIPasteboard generalPasteboard] valueForPasteboardType:UTTypeRTF.identifier];
     ASSERT([value isKindOfClass:[NSData class]]);
     return value;
 }

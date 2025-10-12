@@ -10,6 +10,7 @@
  */
 
 #include <assert.h>
+#include <stdint.h>
 
 #include "config/aom_config.h"
 
@@ -64,7 +65,7 @@ uint32_t aom_rb_read_uvlc(struct aom_read_bit_buffer *rb) {
   int leading_zeros = 0;
   while (leading_zeros < 32 && !aom_rb_read_bit(rb)) ++leading_zeros;
   // Maximum 32 bits.
-  if (leading_zeros == 32) return UINT32_MAX;
+  if (leading_zeros == 32) return UINT32_MAX;  // Error.
   const uint32_t base = (1u << leading_zeros) - 1;
   const uint32_t value = aom_rb_read_literal(rb, leading_zeros);
   return base + value;

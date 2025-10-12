@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-get-regexp.prototype.unicodeSets
+esid: sec-get-regexp.prototype.unicodesets
 description: >
     `unicodeSets` accessor function invoked on a RegExp instance
 info: |

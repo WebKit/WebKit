@@ -10,9 +10,12 @@
 
 #include "video/encoder_rtcp_feedback.h"
 
-#include <memory>
+#include <cstdint>
+#include <vector>
 
 #include "api/environment/environment_factory.h"
+#include "api/video/video_frame_type.h"
+#include "system_wrappers/include/clock.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "video/test/mock_video_stream_encoder.h"

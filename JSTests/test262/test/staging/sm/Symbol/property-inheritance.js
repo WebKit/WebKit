@@ -4,9 +4,6 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -48,7 +45,7 @@ assert.sameValue(value, "gravity");
 Object.defineProperty(F.prototype, sym, {
     set: undefined
 });
-assertThrowsInstanceOf(function () { "use strict"; f[sym] = 0; }, TypeError);
+assert.throws(TypeError, function () { "use strict"; f[sym] = 0; });
 
 // deeply inherited accessor property
 var g = Object.create(f);

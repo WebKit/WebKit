@@ -84,11 +84,6 @@ void Symbol::destroy(JSCell* cell)
     static_cast<Symbol*>(cell)->Symbol::~Symbol();
 }
 
-String Symbol::descriptiveString() const
-{
-    return makeString("Symbol("_s, StringView(m_privateName.uid()), ')');
-}
-
 Expected<String, ErrorTypeWithExtension> Symbol::tryGetDescriptiveString() const
 {
     String description = tryMakeString("Symbol("_s, StringView(m_privateName.uid()), ')');

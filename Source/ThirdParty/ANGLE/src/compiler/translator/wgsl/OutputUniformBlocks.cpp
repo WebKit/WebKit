@@ -20,6 +20,7 @@
 #include "compiler/translator/InfoSink.h"
 #include "compiler/translator/IntermNode.h"
 #include "compiler/translator/SymbolUniqueId.h"
+#include "compiler/translator/tree_ops/GatherDefaultUniforms.h"
 #include "compiler/translator/tree_util/DriverUniform.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
 #include "compiler/translator/util.h"
@@ -49,10 +50,19 @@ class FindUniformAddressSpaceStructs : public TIntermTraverser
         TIntermTyped *variable = sequence.front()->getAsTyped();
         const TType &type      = variable->getType();
 
-        // TODO(anglebug.com/376553328): should eventually ASSERT that there are no default uniforms
-        // here.
-        if (type.getQualifier() == EvqUniform)
+        // Note: EvqBuffer is the qualifier given to structs created by ReduceInterfaceBlocks.
+        if (type.getQualifier() == EvqUniform || type.getQualifier() == EvqBuffer)
         {
+#if defined(ANGLE_ENABLE_ASSERTS)
+            if (IsDefaultUniform(type))
+            {
+                FATAL()
+                    << "Found default uniform still in AST, by now all default uniforms should be "
+                       "moved into an interface block or deleted if inactive. Uniform name = "
+                    << variable->getAsSymbolNode()->getName();
+            }
+#endif
+
             recordTypesUsedInUniformAddressSpace(&type);
         }
 
@@ -94,6 +104,24 @@ bool RecordUniformBlockMetadata(TIntermBlock *root, UniformBlockMetadata &outMet
     return true;
 }
 
+bool OutputUniformBoolOrBvecConversion(TInfoSinkBase &output, const TType &type)
+{
+    ASSERT(type.getBasicType() == EbtBool);
+    // Bools are represented by u32s in the uniform address space, and so the u32s need to
+    // be casted.
+    if (type.isVector())
+    {
+        // Compare != to a vector of 0s, in WGSL this is componentwise and returns a bvec.
+        output << "(vec" << static_cast<unsigned int>(type.getNominalSize()) << "<u32>(0u) != ";
+    }
+    else
+    {
+        output << "bool(";
+    }
+
+    return true;
+}
+
 bool OutputUniformWrapperStructsAndConversions(
     TInfoSinkBase &output,
     const WGSLGenerationMetadataForUniforms &wgslGenerationMetadataForUniforms)
@@ -102,7 +130,7 @@ bool OutputUniformWrapperStructsAndConversions(
     auto generate16AlignedWrapperStruct = [&output](const TType &type) {
         output << "struct " << MakeUniformWrapperStructName(&type) << "\n{\n";
         output << "  @align(16) " << kWrappedStructFieldName << " : ";
-        WriteWgslType(output, type, {});
+        WriteWgslType(output, type, {WgslAddressSpace::Uniform});
         output << "\n};\n";
     };
 
@@ -150,7 +178,17 @@ bool OutputUniformWrapperStructsAndConversions(
         WriteWgslType(output, type, {WgslAddressSpace::NonUniform});
         output << ";\n";
         output << "  for (var i : u32 = 0; i < " << type.getOutermostArraySize() << "; i++) {;\n";
-        output << "    retVal[i] = wrappedArr[i]." << kWrappedStructFieldName << ";\n";
+        output << "    retVal[i] = ";
+        if (type.getBasicType() == EbtBool)
+        {
+            OutputUniformBoolOrBvecConversion(output, type);
+        }
+        output << "wrappedArr[i]." << kWrappedStructFieldName;
+        if (type.getBasicType() == EbtBool)
+        {
+            output << ")";
+        }
+        output << ";\n";
         output << "  }\n";
         output << "  return retVal;\n";
         output << "}\n";
@@ -234,71 +272,59 @@ ImmutableString MakeMatCx2ConversionFunctionName(const TType *type)
     return BuildConcatenatedImmutableString("ANGLE_Convert_", arrStr, "Mat", type->getCols(), "x2");
 }
 
-bool OutputUniformBlocksAndSamplers(TCompiler *compiler, TIntermBlock *root)
+bool OutputUniformBlocksAndSamplers(TCompiler *compiler,
+                                    TIntermBlock *root,
+                                    const TVariable *defaultUniformBlock)
 {
-    // TODO(anglebug.com/42267100): This should eventually just be handled the same way as a regular
-    // UBO, like in Vulkan which create a block out of the default uniforms with a traverser:
-    // https://source.chromium.org/chromium/chromium/src/+/main:third_party/angle/src/compiler/translator/spirv/TranslatorSPIRV.cpp;l=70;drc=451093bbaf7fe812bf67d27d760f3bb64c92830b
-    const std::vector<ShaderVariable> &basicUniforms = compiler->getUniforms();
     TInfoSinkBase &output                            = compiler->getInfoSink().obj;
     GlobalVars globalVars                            = FindGlobalVars(root);
 
+#if defined(ANGLE_ENABLE_ASSERTS)
     // Only output a struct at all if there are going to be members.
-    bool outputStructHeader = false;
-    for (const ShaderVariable &shaderVar : basicUniforms)
+    bool outputDefaultUniformBlockVar = false;
+    if (defaultUniformBlock)
     {
-        if (gl::IsOpaqueType(shaderVar.type) || !shaderVar.active)
+        const std::vector<ShaderVariable> &basicUniforms = compiler->getUniforms();
+        for (const ShaderVariable &shaderVar : basicUniforms)
         {
-            continue;
-        }
-        if (shaderVar.isBuiltIn())
-        {
-            // gl_DepthRange and also the GLSL 4.2 gl_NumSamples are uniforms.
-            // TODO(anglebug.com/42267100): put gl_DepthRange into default uniform block.
-            continue;
-        }
+            if (gl::IsOpaqueType(shaderVar.type) || !shaderVar.active)
+            {
+                continue;
+            }
+            if (shaderVar.isBuiltIn())
+            {
+                // gl_DepthRange and also the GLSL 4.2 gl_NumSamples are uniforms.
+                // TODO(anglebug.com/42267100): put gl_DepthRange into default uniform block.
+                continue;
+            }
 
-        // TODO(anglebug.com/42267100): some types will NOT match std140 layout here, namely matCx2,
-        // bool, and arrays with stride less than 16.
-        // (this check does not cover the unsupported case where there is an array of structs of
-        // size < 16).
-        if (shaderVar.type == GL_BOOL)
-        {
-            return false;
+            // Some uniform variables might have been deleted, for example if they were structs that
+            // only contained samplers (which are pulled into separate default uniforms).
+            ASSERT(defaultUniformBlock->getType().getInterfaceBlock());
+            for (const TField *field : defaultUniformBlock->getType().getInterfaceBlock()->fields())
+            {
+                if (field->name() == shaderVar.name)
+                {
+                    outputDefaultUniformBlockVar = true;
+                    break;
+                }
+            }
         }
-
-        // Some uniform variables might have been deleted, for example if they were structs that
-        // only contained samplers (which are pulled into separate default uniforms).
-        auto globalVarIter = globalVars.find(shaderVar.name);
-        if (globalVarIter == globalVars.end())
-        {
-            continue;
-        }
-
-        if (!outputStructHeader)
-        {
-            output << "struct ANGLE_DefaultUniformBlock {\n";
-            outputStructHeader = true;
-        }
-        output << "  ";
-        output << shaderVar.name << " : ";
-
-        TIntermDeclaration *declNode = globalVarIter->second;
-        const TVariable *astVar      = &ViewDeclaration(*declNode).symbol.variable();
-        WriteWgslType(output, astVar->getType(), {WgslAddressSpace::Uniform});
-
-        output << ",\n";
     }
 
-    if (outputStructHeader)
+    ASSERT(outputDefaultUniformBlockVar == (defaultUniformBlock != nullptr));
+#else   // defined(ANGLE_ENABLE_ASSERTS)
+    bool outputDefaultUniformBlockVar = (defaultUniformBlock != nullptr);
+#endif  // defined(ANGLE_ENABLE_ASSERTS)
+
+    if (outputDefaultUniformBlockVar)
     {
         ASSERT(compiler->getShaderType() == GL_VERTEX_SHADER ||
                compiler->getShaderType() == GL_FRAGMENT_SHADER);
         const uint32_t bindingIndex = compiler->getShaderType() == GL_VERTEX_SHADER
                                           ? kDefaultVertexUniformBlockBinding
                                           : kDefaultFragmentUniformBlockBinding;
-        output << "};\n\n"
-               << "@group(" << kDefaultUniformBlockBindGroup << ") @binding(" << bindingIndex
+        output << "@group(" << kDefaultUniformBlockBindGroup << ") @binding(" << bindingIndex
                << ") var<uniform> " << kDefaultUniformBlockVarName << " : "
                << kDefaultUniformBlockVarType << ";\n";
     }

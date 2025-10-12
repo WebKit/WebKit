@@ -17,6 +17,8 @@
     promise_test(async (t) => {
         let constraints = { video: { width: 160 } };
         const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 160 } });
+        t.add_cleanup(() => stream.getVideoTracks()[0].stop());
+
         assert_equals(stream.getVideoTracks()[0].getConstraints().width, 160);
 
         const streamClone = stream.clone();
@@ -26,6 +28,8 @@
 
         const videoTrack = stream.getVideoTracks()[0];
         const videoTrackClone = streamClone.getVideoTracks()[0];
+        t.add_cleanup(() => videoTrack.stop());
+        t.add_cleanup(() => videoTrackClone.stop());
 
         assert_equals(videoTrack.enabled, videoTrackClone.enabled);
         videoTrack.enabled = false;
@@ -39,6 +43,8 @@
         }, "Check cloned track settings after applying width constraints");
 
         const videoTrackClone2 = videoTrackClone.clone();
+        t.add_cleanup(() => videoTrackClone2.stop());
+
         await videoTrackClone.applyConstraints({width: 1280});
         video3.srcObject = new MediaStream([videoTrackClone2]);
         test(() => {
@@ -57,6 +63,9 @@
         const videoTrack = stream.getVideoTracks()[0];
         const videoTrackClone = streamClone.getVideoTracks()[0];
 
+        t.add_cleanup(() => videoTrack.stop());
+        t.add_cleanup(() => videoTrackClone.stop());
+
         assert_equals(videoTrack.enabled, videoTrackClone.enabled);
         videoTrack.enabled = false;
         assert_true(videoTrackClone.enabled);
@@ -69,6 +78,8 @@
         }, "Check cloned track settings after applying height constraints");
 
         const videoTrackClone2 = videoTrackClone.clone();
+        t.add_cleanup(() => videoTrackClone2.stop());
+
         await videoTrackClone.applyConstraints({height: 400});
         video3.srcObject = new MediaStream([videoTrackClone2]);
         test(() => {
@@ -87,6 +98,9 @@
         const videoTrack = stream.getVideoTracks()[0];
         const videoTrackClone = streamClone.getVideoTracks()[0];
 
+        t.add_cleanup(() => videoTrack.stop());
+        t.add_cleanup(() => videoTrackClone.stop());
+
         assert_equals(videoTrack.enabled, videoTrackClone.enabled);
         videoTrack.enabled = false;
         assert_true(videoTrackClone.enabled);
@@ -101,6 +115,8 @@
         }, "Check cloned track settings after applying width+height constraints");
 
         const videoTrackClone2 = videoTrackClone.clone();
+        t.add_cleanup(() => videoTrackClone2.stop());
+
         await videoTrackClone.applyConstraints({width: 400, height: 200});
         video3.srcObject = new MediaStream([videoTrackClone2]);
         test(() => {
@@ -115,6 +131,9 @@
         const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 100, height: 100 } });
         const streamClone = stream.clone();
 
+        t.add_cleanup(() => stream.getVideoTracks()[0].stop());
+        t.add_cleanup(() => streamClone.getVideoTracks()[0].stop());
+
         video1.srcObject = streamClone;
         stream.getVideoTracks()[0].stop();
 
@@ -125,6 +144,9 @@
     promise_test(async (t) => {
         const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 100, height: 100 } });
         const streamClone = stream.clone();
+
+        t.add_cleanup(() => stream.getVideoTracks()[0].stop());
+        t.add_cleanup(() => streamClone.getVideoTracks()[0].stop());
 
         video1.srcObject = stream;
         streamClone.getVideoTracks()[0].stop();
@@ -138,6 +160,8 @@
         stream.clone().getVideoTracks()[0].stop();
         gc();
 
+        t.add_cleanup(() => stream.getVideoTracks()[0].stop());
+
         video1.srcObject = stream;
 
         await video1.play();
@@ -146,7 +170,10 @@
 
     promise_test(async (t) => {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-        stream.getTracks().forEach(t => t.enabled = false);
+        stream.getTracks().forEach(track => {
+            track.enabled = false;
+            t.add_cleanup(() => track.stop());
+        });
 
         const channel = new MessageChannel();
         const transferringTracks = { audio:stream.getAudioTracks()[0].clone() , video:stream.getVideoTracks()[0].clone() };
@@ -167,7 +194,7 @@
         assert_equals(transferredTracks.video.readyState, "ended", "transferredTracks.video.enabled");
     }, "Transferring a track should preserve enabled and readyState");
 
-    promise_test(async (t) => {
+    promise_test(async (test) => {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
         stream.getTracks().forEach(t => t.enabled = false);
         const clone1 = stream.clone();
@@ -176,6 +203,13 @@
 
         stream.getTracks().forEach(t => t.stop());
         const clone2 = stream.clone();
+
+        clone1.getTracks().forEach(track => {
+            test.add_cleanup(() => track.stop());
+        });
+        clone2.getTracks().forEach(track => {
+            test.add_cleanup(() => track.stop());
+        });
 
         clone1.getTracks().forEach(t => assert_equals(t.readyState, "live"));
         clone2.getTracks().forEach(t => assert_equals(t.readyState, "ended"));

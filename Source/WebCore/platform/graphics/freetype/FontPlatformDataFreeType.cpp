@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007, 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) 2007 Holger Hans Peter Freyther
@@ -299,7 +299,7 @@ RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 
     Vector<uint8_t> data(tableSize);
     FT_ULong expectedTableSize = tableSize;
-    FT_Error error = FT_Load_Sfnt_Table(freeTypeFace, tag, 0, reinterpret_cast<FT_Byte*>(data.data()), &tableSize);
+    FT_Error error = FT_Load_Sfnt_Table(freeTypeFace, tag, 0, reinterpret_cast<FT_Byte*>(data.mutableSpan().data()), &tableSize);
     if (error || tableSize != expectedTableSize)
         return nullptr;
 

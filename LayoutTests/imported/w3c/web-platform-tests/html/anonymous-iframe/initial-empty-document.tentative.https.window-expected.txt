@@ -1,4 +1,4 @@
 
 FAIL Initial empty document inherits from parent's document. assert_false: expected false got undefined
-FAIL Initial empty document inherits from its's iframe's anonymous attribute. assert_false: expected false got undefined
+FAIL Initial empty document inherits from its's iframe's credentialless attribute. assert_false: expected false got undefined
 

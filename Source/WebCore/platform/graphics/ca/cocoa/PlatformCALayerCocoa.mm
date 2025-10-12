@@ -31,7 +31,6 @@
 #import "GraphicsContext.h"
 #import "GraphicsLayerCA.h"
 #import "IOSurface.h"
-#import "LengthFunctions.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "MediaPlayerEnumsCocoa.h"
 #import "Model.h"
@@ -74,7 +73,7 @@
 
 namespace WebCore {
 
-using LayerToPlatformCALayerMap = UncheckedKeyHashMap<void*, PlatformCALayer*>;
+using LayerToPlatformCALayerMap = HashMap<void*, PlatformCALayer*>;
 
 static Lock layerToPlatformLayerMapLock;
 static LayerToPlatformCALayerMap& layerToPlatformLayerMap() WTF_REQUIRES_LOCK(layerToPlatformLayerMapLock)
@@ -209,7 +208,7 @@ static NSString *toCAFilterType(PlatformCALayer::FilterType type)
 
 PlatformCALayer::LayerType PlatformCALayerCocoa::layerTypeForPlatformLayer(PlatformLayer* layer)
 {
-    if (PAL::isAVFoundationFrameworkAvailable() && [layer isKindOfClass:PAL::getAVPlayerLayerClass()])
+    if (PAL::isAVFoundationFrameworkAvailable() && [layer isKindOfClass:PAL::getAVPlayerLayerClassSingleton()])
         return LayerType::LayerTypeAVPlayerLayer;
 
     if ([layer isKindOfClass:WebVideoContainerLayer.class]
@@ -247,7 +246,7 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
         break;
 #if HAVE(CORE_MATERIAL)
     case LayerType::LayerTypeMaterialLayer:
-        layerClass = PAL::getMTMaterialLayerClass();
+        layerClass = PAL::getMTMaterialLayerClassSingleton();
         break;
 #endif
 #if HAVE(MATERIAL_HOSTING)
@@ -261,7 +260,7 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
         break;
     case LayerType::LayerTypeAVPlayerLayer:
         if (PAL::isAVFoundationFrameworkAvailable())
-            layerClass = PAL::getAVPlayerLayerClass();
+            layerClass = PAL::getAVPlayerLayerClassSingleton();
         break;
 #if ENABLE(MODEL_ELEMENT)
     case LayerType::LayerTypeModelLayer:
@@ -388,13 +387,13 @@ Ref<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* owner) c
     newLayer->updateCustomAppearance(customAppearance());
 
     if (type == PlatformCALayer::LayerType::LayerTypeAVPlayerLayer) {
-        ASSERT(PAL::isAVFoundationFrameworkAvailable() && [newLayer->platformLayer() isKindOfClass:PAL::getAVPlayerLayerClass()]);
+        ASSERT(PAL::isAVFoundationFrameworkAvailable() && [newLayer->platformLayer() isKindOfClass:PAL::getAVPlayerLayerClassSingleton()]);
 
         AVPlayerLayer *destinationPlayerLayer = newLayer->avPlayerLayer();
         AVPlayerLayer *sourcePlayerLayer = avPlayerLayer();
         ASSERT(sourcePlayerLayer);
 
-        RunLoop::protectedMain()->dispatch([destinationPlayerLayer = retainPtr(destinationPlayerLayer), sourcePlayerLayer = retainPtr(sourcePlayerLayer)] {
+        RunLoop::mainSingleton().dispatch([destinationPlayerLayer = retainPtr(destinationPlayerLayer), sourcePlayerLayer = retainPtr(sourcePlayerLayer)] {
             [destinationPlayerLayer setPlayer:[sourcePlayerLayer player]];
         });
     }
@@ -472,7 +471,7 @@ void PlatformCALayerCocoa::copyContentsFromLayer(PlatformCALayer* layer)
 
 PlatformCALayer* PlatformCALayerCocoa::superlayer() const
 {
-    return platformCALayerForLayer((__bridge void*)[m_layer superlayer]).get();
+    return platformCALayerForLayer((__bridge void*)[m_layer superlayer]).unsafeGet();
 }
 
 void PlatformCALayerCocoa::removeFromSuperlayer()
@@ -1217,7 +1216,7 @@ bool PlatformCALayer::isWebLayer()
 
 void PlatformCALayer::setBoundsOnMainThread(CGRect bounds)
 {
-    RunLoop::protectedMain()->dispatch([layer = m_layer, bounds] {
+    RunLoop::mainSingleton().dispatch([layer = m_layer, bounds] {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         [layer setBounds:bounds];
         END_BLOCK_OBJC_EXCEPTIONS
@@ -1226,7 +1225,7 @@ void PlatformCALayer::setBoundsOnMainThread(CGRect bounds)
 
 void PlatformCALayer::setPositionOnMainThread(CGPoint position)
 {
-    RunLoop::protectedMain()->dispatch([layer = m_layer, position] {
+    RunLoop::mainSingleton().dispatch([layer = m_layer, position] {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         [layer setPosition:position];
         END_BLOCK_OBJC_EXCEPTIONS
@@ -1235,7 +1234,7 @@ void PlatformCALayer::setPositionOnMainThread(CGPoint position)
 
 void PlatformCALayer::setAnchorPointOnMainThread(FloatPoint3D value)
 {
-    RunLoop::protectedMain()->dispatch([layer = m_layer, value] {
+    RunLoop::mainSingleton().dispatch([layer = m_layer, value] {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         [layer setAnchorPoint:CGPointMake(value.x(), value.y())];
         [layer setAnchorPointZ:value.z()];
@@ -1287,7 +1286,7 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
         std::optional<FontAntialiasingStateSaver> fontAntialiasingState;
 #endif
         // We never use CompositingCoordinatesOrientation::BottomUp on Mac.
-        ASSERT(layerContents->platformCALayerContentsOrientation() == GraphicsLayer::CompositingCoordinatesOrientation::TopDown);
+        ASSERT(layerContents->platformCALayerContentsOrientation() == GraphicsLayerCompositingCoordinatesOrientation::TopDown);
 
         if (graphicsContext.hasPlatformContext()) {
             platformContextSaver.emplace(graphicsContext);
@@ -1369,7 +1368,7 @@ AVPlayerLayer *PlatformCALayerCocoa::avPlayerLayer() const
     if (layerType() != PlatformCALayer::LayerType::LayerTypeAVPlayerLayer)
         return nil;
 
-    if ([platformLayer() isKindOfClass:PAL::getAVPlayerLayerClass()])
+    if ([platformLayer() isKindOfClass:PAL::getAVPlayerLayerClassSingleton()])
         return static_cast<AVPlayerLayer *>(platformLayer());
 
     if (auto *layer = dynamic_objc_cast<WebVideoContainerLayer>(platformLayer()))

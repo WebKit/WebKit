@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebKit/WKCast.h>
 #include <WebKit/WKData.h>
 #include <WebKit/WKRetainPtr.h>
 #include <wtf/UUID.h>
@@ -37,7 +38,7 @@ WKRetainPtr<WKDataRef> uuidToData(const WTF::UUID&);
 
 inline WKDataRef dataValue(WKTypeRef value)
 {
-    return value && WKGetTypeID(value) == WKDataGetTypeID() ? static_cast<WKDataRef>(value) : nullptr;
+    return dynamic_wk_cast<WKDataRef>(value);
 }
 
 inline WTF::UUID dataToUUID(WKDataRef data)

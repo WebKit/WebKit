@@ -22,26 +22,48 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import SwiftUI
-import WebKit
+@_spi(Testing) import WebKit
 
 @main
 struct SwiftBrowserApp: App {
-    @FocusedValue(BrowserViewModel.self) var focusedBrowserViewModel
+    @FocusedValue(BrowserViewModel.self)
+    var focusedBrowserViewModel
 
-    @AppStorage(AppStorageKeys.homepage) private var homepage = "https://www.webkit.org"
+    @AppStorage(AppStorageKeys.homepage)
+    private var homepage = "https://www.webkit.org"
 
-    @State private var mostRecentURL: URL? = nil
+    @State
+    private var smartListsEnabled = true
+
+    @State
+    private var mostRecentURL: URL? = nil
+
+    private static func addProtocolIfNecessary(to address: String) -> String {
+        if address.contains("://") || address.hasPrefix("data:") || address.hasPrefix("about:") {
+            return address
+        }
+        return "http://\(address)"
+    }
 
     var body: some Scene {
         WindowGroup(for: CodableURLRequest.self) { $request in
-            BrowserView(url: $mostRecentURL, initialRequest: request.value)
+            BrowserView(
+                url: $mostRecentURL,
+                smartListsEnabled: smartListsEnabled,
+                initialRequest: request.value
+            )
         } defaultValue: {
-            let url = URL(string: homepage)!
+            // FIXME: <https://webkit.org/b/293859> BrowserView does not reflect URL argument passed to SwiftBrowser.app.
+            let parsedURL = CommandLine.value(for: "--url").flatMap {
+                let withProtocol = Self.addProtocolIfNecessary(to: $0)
+                return URL(string: withProtocol)
+            }
+            let url = parsedURL ?? URL(string: homepage)!
             return CodableURLRequest(.init(url: url))
         }
         .commands {
             CommandGroup(after: .sidebar) {
-                Button("Reload Page") {
+                Button("Reload Page", systemImage: "arrow.clockwise") {
                     focusedBrowserViewModel!.page.reload()
                 }
                 .keyboardShortcut("r")
@@ -49,13 +71,20 @@ struct SwiftBrowserApp: App {
             }
 
             CommandGroup(replacing: .importExport) {
-                Button("Export as PDF…") {
+                Button("Export as PDF…", systemImage: "arrow.up.document") {
                     focusedBrowserViewModel!.exportAsPDF()
                 }
                 .disabled(focusedBrowserViewModel == nil)
             }
 
             TextEditingCommands()
+
+            CommandGroup(after: .textEditing) {
+                Toggle(isOn: $smartListsEnabled) {
+                    Label("Smart Lists", systemImage: "sparkle.text.clipboard")
+                }
+                .disabled(focusedBrowserViewModel == nil)
+            }
         }
 
         #if os(macOS)

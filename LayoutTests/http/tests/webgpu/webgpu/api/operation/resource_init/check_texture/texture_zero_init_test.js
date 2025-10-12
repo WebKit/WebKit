@@ -8,7 +8,7 @@ import { kTextureAspects, kTextureDimensions } from '../../../../capability_info
 import { GPUConst } from '../../../../constants.js';
 import {
   kUncompressedTextureFormats,
-  textureDimensionAndFormatCompatible,
+  textureFormatAndDimensionPossiblyCompatible,
 
 
   isColorTextureFormat,
@@ -480,7 +480,7 @@ ReadMethod.StencilTest]
 )
 // [3] compressed formats
 .combine('format', kUncompressedTextureFormats).
-filter(({ dimension, format }) => textureDimensionAndFormatCompatible(dimension, format)).
+filter(({ dimension, format }) => textureFormatAndDimensionPossiblyCompatible(dimension, format)).
 beginSubcases().
 combine('aspect', kTextureAspects).
 unless(({ readMethod, format, aspect }) => {

@@ -152,7 +152,7 @@ interface AccessibilityUIElement {
     undefined press();
     undefined syncPress();
     undefined showMenu();
-    undefined dismiss();
+    boolean dismiss();
 
     // Attribute info.
     DOMString allAttributes();
@@ -274,6 +274,7 @@ interface AccessibilityUIElement {
     DOMString stringForTextMarkerRange(AccessibilityTextMarkerRange range);
     DOMString rectsForTextMarkerRange(AccessibilityTextMarkerRange range, DOMString searchText);
     DOMString attributedStringForTextMarkerRange(AccessibilityTextMarkerRange range);
+    DOMString attributedStringForTextMarkerRangeWithDidSpellCheck(AccessibilityTextMarkerRange range);
     DOMString attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange range, boolean includeSpellCheck);
     long textMarkerRangeLength(AccessibilityTextMarkerRange range);
     boolean attributedStringForTextMarkerRangeContainsAttribute(DOMString attr, AccessibilityTextMarkerRange range);

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "MessagePortIdentifier.h"
+#include <WebCore/MessagePortIdentifier.h>
 
 namespace WebCore {
 

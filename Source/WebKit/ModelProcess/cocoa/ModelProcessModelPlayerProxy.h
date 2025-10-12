@@ -50,7 +50,7 @@
 
 OBJC_CLASS WKModelProcessModelLayer;
 OBJC_CLASS WKModelProcessModelPlayerProxyObjCAdapter;
-OBJC_CLASS WKSRKEntity;
+OBJC_CLASS WKRKEntity;
 OBJC_CLASS WKStageModeInteractionDriver;
 
 namespace WebCore {
@@ -69,7 +69,7 @@ class ModelProcessModelPlayerProxy final
     , private IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(ModelProcessModelPlayerProxy);
 public:
-    static Ref<ModelProcessModelPlayerProxy> create(ModelProcessModelPlayerManagerProxy&, WebCore::ModelPlayerIdentifier, Ref<IPC::Connection>&&, const std::optional<String>&);
+    static Ref<ModelProcessModelPlayerProxy> create(ModelProcessModelPlayerManagerProxy&, WebCore::ModelPlayerIdentifier, Ref<IPC::Connection>&&, const std::optional<String>&, std::optional<int> debugEntityMemoryLimit);
     ~ModelProcessModelPlayerProxy();
 
     void ref() const final { WebCore::ModelPlayer::ref(); }
@@ -82,7 +82,7 @@ public:
     template<typename T> void send(T&& message);
 
     void unloadModelTimerFired();
-    void updateTransform();
+    void updateTransformAfterLayout();
     void updateOpacity();
     void startAnimating();
     void animationPlaybackStateDidUpdate();
@@ -145,17 +145,20 @@ public:
     USING_CAN_MAKE_WEAKPTR(WebCore::REModelLoaderClient);
 
     void disableUnloadDelayForTesting() { m_unloadDelayDisabledForTesting = true; }
+    static uint64_t objectCountForTesting() { return gObjectCountForTesting; }
 
 private:
-    ModelProcessModelPlayerProxy(ModelProcessModelPlayerManagerProxy&, WebCore::ModelPlayerIdentifier, Ref<IPC::Connection>&&, const std::optional<String>&);
+    ModelProcessModelPlayerProxy(ModelProcessModelPlayerManagerProxy&, WebCore::ModelPlayerIdentifier, Ref<IPC::Connection>&&, const std::optional<String>&, std::optional<int> debugEntityMemoryLimit);
 
     void computeTransform(bool);
+    void updateTransform();
     void applyEnvironmentMapDataAndRelease();
     void applyStageModeOperationToDriver();
     bool stageModeInteractionInProgress() const;
     void updateTransformSRT();
     void notifyModelPlayerOfEntityTransformChange();
     void applyDefaultIBL();
+    void updateForCurrentStageMode();
 
     WebCore::ModelPlayerIdentifier m_id;
     bool m_isVisible { true };
@@ -165,7 +168,7 @@ private:
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     RetainPtr<WKModelProcessModelLayer> m_layer;
     RefPtr<WebCore::REModelLoader> m_loader;
-    RetainPtr<WKSRKEntity> m_modelRKEntity;
+    RetainPtr<WKRKEntity> m_modelRKEntity;
     REPtr<RESceneRef> m_scene;
     REPtr<REEntityRef> m_hostingEntity;
     REPtr<REEntityRef> m_containerEntity;
@@ -177,6 +180,7 @@ private:
     float m_yaw { 0 };
 
     RESRT m_transformSRT; // SRT=Scaling/Rotation/Translation. This is stricter than a WebCore::TransformationMatrix.
+    bool m_transformNeedsUpdateAfterNextLayout { false };
 
     bool m_autoplay { false };
     bool m_loop { false };
@@ -190,12 +194,14 @@ private:
     WebCore::StageModeOperation m_stageModeOperation { WebCore::StageModeOperation::None };
 
     std::optional<String> m_attributionTaskID;
+    std::optional<int> m_debugEntityMemoryLimit;
     std::optional<WebCore::TransformationMatrix> m_entityTransformToRestore;
     std::optional<WebCore::ModelPlayerAnimationState> m_animationStateToRestore;
     RunLoop::Timer m_unloadModelTimer;
 
     // For testing
     bool m_unloadDelayDisabledForTesting { false };
+    static uint64_t gObjectCountForTesting;
 };
 
 } // namespace WebKit

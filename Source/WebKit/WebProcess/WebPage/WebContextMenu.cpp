@@ -34,9 +34,12 @@
 #include "WebProcess.h"
 #include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuController.h>
+#include <WebCore/DocumentView.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/Page.h>
+#include <WebCore/PointerCaptureController.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -50,18 +53,19 @@ WebContextMenu::~WebContextMenu()
 {
 }
 
-void WebContextMenu::show()
+bool WebContextMenu::show()
 {
-    ContextMenuController& controller = m_page->corePage()->contextMenuController();
+    Ref page = *m_page;
+    auto& controller = page->corePage()->contextMenuController();
     RefPtr frame = controller.hitTestResult().innerNodeFrame();
     if (!frame)
-        return;
+        return false;
     RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
     if (!webFrame)
-        return;
+        return false;
     RefPtr view = frame->view();
     if (!view)
-        return;
+        return false;
 
     Vector<WebContextMenuItemData> menuItems;
     RefPtr<API::Object> userData;
@@ -71,7 +75,8 @@ void WebContextMenu::show()
 
     ContextMenuContextData contextMenuContextData(menuLocation, menuItems, controller.context());
 
-    m_page->showContextMenuFromFrame(webFrame->info(), contextMenuContextData, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()));
+    page->showContextMenuFromFrame(webFrame->info(), contextMenuContextData, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()));
+    return true;
 }
 
 void WebContextMenu::itemSelected(const WebContextMenuItemData& item)

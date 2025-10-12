@@ -31,10 +31,13 @@
 #import "Test.h"
 #import "TestAwakener.h"
 #import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <wtf/BlockPtr.h>
@@ -253,6 +256,47 @@ TEST(RemoteObjectRegistry, CallReplyBlockAfterOriginatingWebViewDeallocates)
     localObject->completionHandlerFromWebProcess();
 }
 
+@interface StringReplyObject : NSObject<StringReplyObjectProtocol> {
+@public
+    bool calledCompletionHandler;
+}
+@end
+
+@implementation StringReplyObject
+
+- (void) methodWithInteger:(uint64_t)integer
+{
+}
+
+- (void) methodWithCompletionHandler:(void (^)(id, NSString *))completionHandler
+{
+    completionHandler(@"a", @"b");
+    calledCompletionHandler = true;
+}
+
+@end
+
+TEST(RemoteObjectRegistry, CallReplyBlockWithInvalidTypeSignature)
+{
+    auto completedReplyObject = adoptNS([[LocalObject alloc] init]);
+    auto stringReplyObject = adoptNS([[StringReplyObject alloc] init]);
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:[WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"RemoteObjectRegistryPlugIn"]]);
+
+    [[webView _remoteObjectRegistry] registerExportedObject:completedReplyObject.get() interface:localObjectInterface()];
+    [[webView _remoteObjectRegistry] registerExportedObject:stringReplyObject.get() interface:stringReplyObjectInterface()];
+
+    _WKRemoteObjectInterface *interface = remoteObjectInterface();
+    id<RemoteObjectProtocol> object = [[webView _remoteObjectRegistry] remoteObjectProxyWithInterface:interface];
+
+    [object callUIProcessMethodWithInvalidTypeSignature];
+    [object callUIProcessMethodWithReplyBlock];
+
+    TestWebKitAPI::Util::run(&completedReplyObject->hasCompletionHandler);
+
+    EXPECT_FALSE(stringReplyObject->calledCompletionHandler);
+}
+
 TEST(RemoteObjectRegistry, SerializeErrorWithCertificates)
 {
     TestWebKitAPI::HTTPServer server({ }, TestWebKitAPI::HTTPServer::Protocol::Https);
@@ -277,3 +321,46 @@ TEST(RemoteObjectRegistry, SerializeErrorWithCertificates)
     }];
     TestWebKitAPI::Util::run(&roundTripComplete);
 }
+
+#if ENABLE(IPC_TESTING_API)
+
+TEST(RemoteObjectRegistry, CallReplyBlockWithBadInvocation)
+{
+    NSString * const testPlugInClassName = @"RemoteObjectRegistryPlugIn";
+    auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:testPlugInClassName]);
+
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration: configuration.get()]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"RemoteObjectRegistry-BadReplyBlock" withExtension:@"html"]]];
+
+    [webView waitForMessage:@"Expecting InvokeMethod..."];
+
+    __block bool invalidCallReceived = false;
+
+    id stringReplyObjectProxy = [[webView _remoteObjectRegistry] remoteObjectProxyWithInterface:stringReplyObjectInterface()];
+    [stringReplyObjectProxy methodWithCompletionHandler:^(id, NSString * reply) {
+        NSLog(@"Failed, should not have received: %@", reply);
+        invalidCallReceived = true;
+    }];
+
+    __block bool validCallReceived = false;
+
+    [stringReplyObjectProxy methodWithCompletionHandler:^(id, NSString * reply) {
+        NSLog(@"Success, received: %@", reply);
+        validCallReceived = true;
+    }];
+
+    TestWebKitAPI::Util::run(&validCallReceived);
+
+    TestWebKitAPI::Util::runFor(0.5_s);
+    EXPECT_FALSE(invalidCallReceived);
+}
+
+#endif // ENABLE(IPC_TESTING_API)

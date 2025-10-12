@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // CLSampler.cpp: Implements the cl::Sampler class.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/CLSampler.h"
 

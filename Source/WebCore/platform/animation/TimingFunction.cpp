@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,7 +102,7 @@ double TimingFunction::transformProgress(double progress, double duration, Befor
     switch (type()) {
     case Type::CubicBezierFunction: {
         auto& function = uncheckedDowncast<CubicBezierTimingFunction>(*this);
-        if (function.isLinear())
+        if (function.isLinear() || duration >= std::numeric_limits<double>::max())
             return progress;
         // The epsilon value we pass to UnitBezier::solve given that the animation is going to run over |dur| seconds. The longer the
         // animation, the more precision we need in the timing function result to avoid ugly discontinuities.

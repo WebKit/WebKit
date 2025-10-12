@@ -58,6 +58,9 @@ public:
     const String& code() const { return m_code; }
     const String& keyIdentifier() const { return m_keyIdentifier; }
     int32_t windowsVirtualKeyCode() const { return m_windowsVirtualKeyCode; }
+#if PLATFORM(WIN)
+    void setWindowsVirtualKeyCode(int32_t keyCode) { m_windowsVirtualKeyCode = keyCode; }
+#endif
     int32_t nativeVirtualKeyCode() const { return m_nativeVirtualKeyCode; }
     int32_t macCharCode() const { return m_macCharCode; }
 #if USE(APPKIT) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || USE(LIBWPE)

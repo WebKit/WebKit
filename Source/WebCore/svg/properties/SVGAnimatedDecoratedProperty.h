@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -149,7 +149,7 @@ public:
     }
 
 protected:
-    Ref<SVGDecoratedProperty<DecorationType>> m_baseVal;
+    const Ref<SVGDecoratedProperty<DecorationType>> m_baseVal;
     RefPtr<SVGDecoratedProperty<DecorationType>> m_animVal;
     SVGPropertyState m_state { SVGPropertyState::Clean };
 };

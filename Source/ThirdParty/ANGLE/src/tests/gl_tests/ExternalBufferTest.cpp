@@ -7,6 +7,10 @@
 //   Tests the correctness of external buffer ext extension.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
@@ -379,6 +383,56 @@ TEST_P(ExternalBufferTestES31, BufferDoesNotLeakAHB)
         // Delete the source AHB
         destroyAndroidHardwareBuffer(aHardwareBuffer);
     }
+}
+
+// Test that checks buffer object state after calling glBufferStorageExternalEXT
+TEST_P(ExternalBufferTestES31, getBufferParameter)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_external_buffer") ||
+                       !IsGLExtensionEnabled("GL_EXT_buffer_storage"));
+
+    GLint64 value = -1;
+
+    constexpr uint8_t kBufferSize = 3;
+    std::vector<GLubyte> initData(kBufferSize, 0xA);
+
+    // Create the Image
+    AHardwareBuffer *aHardwareBuffer;
+    constexpr GLbitfield kFlags = GL_MAP_WRITE_BIT;
+    aHardwareBuffer             = createAndroidHardwareBuffer(kBufferSize, initData.data());
+
+    GLBuffer buffer;
+    glBindBuffer(GL_COPY_READ_BUFFER, buffer);
+    glBufferStorageExternalEXT(GL_COPY_READ_BUFFER, 0, kBufferSize,
+                               eglGetNativeClientBufferANDROID(aHardwareBuffer), kFlags);
+    ASSERT_GL_NO_ERROR();
+
+    /* Check the value of GL_BUFFER_SIZE. */
+    glGetBufferParameteri64v(GL_COPY_READ_BUFFER, GL_BUFFER_SIZE, &value);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_EQ(kBufferSize, static_cast<GLint>(value));
+
+    /* Check the value of GL_BUFFER_USAGE. */
+    value = -1;
+    glGetBufferParameteri64v(GL_COPY_READ_BUFFER, GL_BUFFER_USAGE, &value);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_EQ(GL_DYNAMIC_DRAW, value);
+
+    /* Check the value of GL_BUFFER_IMMUTABLE_STORAGE_EXT. */
+    value = -1;
+    glGetBufferParameteri64v(GL_COPY_READ_BUFFER, GL_BUFFER_IMMUTABLE_STORAGE_EXT, &value);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_EQ(GL_TRUE, value);
+
+    /* Check the value of GL_BUFFER_STORAGE_FLAGS_EXT. */
+    value = -1;
+    glGetBufferParameteri64v(GL_COPY_READ_BUFFER, GL_BUFFER_STORAGE_FLAGS_EXT, &value);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_EQ(kFlags, value);
+
+    /* Clean up. */
+    glUnmapBuffer(GL_COPY_READ_BUFFER);
+    glBindBuffer(GL_COPY_READ_BUFFER, 0);
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ExternalBufferTestES31);

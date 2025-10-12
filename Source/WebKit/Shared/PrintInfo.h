@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/LengthBox.h>
+#include <WebCore/BoxExtents.h>
 
 #if USE(APPKIT)
 OBJC_CLASS NSPrintInfo;

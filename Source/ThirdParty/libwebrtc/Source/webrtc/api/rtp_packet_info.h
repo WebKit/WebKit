@@ -87,7 +87,7 @@ class RTC_EXPORT RtpPacketInfo {
   std::vector<uint32_t> csrcs_;
   uint32_t rtp_timestamp_;
 
-  // Local `webrtc::Clock`-based timestamp of when the packet was received.
+  // Local `Clock`-based timestamp of when the packet was received.
   Timestamp receive_time_;
 
   // Fields from the Audio Level header extension:

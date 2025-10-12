@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,11 +66,6 @@ WebSharedWorkerServerConnection::~WebSharedWorkerServerConnection()
     CONNECTION_RELEASE_LOG("~WebSharedWorkerServerConnection:");
 }
 
-Ref<NetworkProcess> WebSharedWorkerServerConnection::protectedNetworkProcess()
-{
-    return m_networkProcess;
-}
-
 WebSharedWorkerServer* WebSharedWorkerServerConnection::server()
 {
     return m_server.get();
@@ -91,16 +86,16 @@ NetworkSession* WebSharedWorkerServerConnection::session()
     CheckedPtr server = m_server.get();
     if (!server)
         return nullptr;
-    return protectedNetworkProcess()->networkSession(server->sessionID());
+    return m_networkProcess->networkSession(server->sessionID());
 }
 
 void WebSharedWorkerServerConnection::requestSharedWorker(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&& port, WebCore::WorkerOptions&& workerOptions)
 {
-    MESSAGE_CHECK(protectedNetworkProcess()->allowsFirstPartyForCookies(m_webProcessIdentifier, WebCore::RegistrableDomain::uncheckedCreateFromHost(sharedWorkerKey.origin.topOrigin.host())) != NetworkProcess::AllowCookieAccess::Terminate);
+    MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, WebCore::RegistrableDomain::uncheckedCreateFromHost(sharedWorkerKey.origin.topOrigin.host())) != NetworkProcess::AllowCookieAccess::Terminate);
     MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
     MESSAGE_CHECK(sharedWorkerKey.name == workerOptions.name);
     CONNECTION_RELEASE_LOG("requestSharedWorker: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
-    if (auto* session = this->session())
+    if (CheckedPtr session = this->session())
         session->ensureSharedWorkerServer().requestSharedWorker(WTFMove(sharedWorkerKey), sharedWorkerObjectIdentifier, WTFMove(port), WTFMove(workerOptions));
 }
 
@@ -108,7 +103,7 @@ void WebSharedWorkerServerConnection::sharedWorkerObjectIsGoingAway(WebCore::Sha
 {
     MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
     CONNECTION_RELEASE_LOG("sharedWorkerObjectIsGoingAway: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
-    if (auto* session = this->session())
+    if (CheckedPtr session = this->session())
         session->ensureSharedWorkerServer().sharedWorkerObjectIsGoingAway(sharedWorkerKey, sharedWorkerObjectIdentifier);
 }
 
@@ -116,7 +111,7 @@ void WebSharedWorkerServerConnection::suspendForBackForwardCache(WebCore::Shared
 {
     MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
     CONNECTION_RELEASE_LOG("suspendForBackForwardCache: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
-    if (auto* session = this->session())
+    if (CheckedPtr session = this->session())
         session->ensureSharedWorkerServer().suspendForBackForwardCache(sharedWorkerKey, sharedWorkerObjectIdentifier);
 }
 
@@ -124,7 +119,7 @@ void WebSharedWorkerServerConnection::resumeForBackForwardCache(WebCore::SharedW
 {
     MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
     CONNECTION_RELEASE_LOG("resumeForBackForwardCache: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
-    if (auto* session = this->session())
+    if (CheckedPtr session = this->session())
         session->ensureSharedWorkerServer().resumeForBackForwardCache(sharedWorkerKey, sharedWorkerObjectIdentifier);
 }
 
@@ -148,8 +143,7 @@ void WebSharedWorkerServerConnection::postErrorToWorkerObject(WebCore::SharedWor
 
 std::optional<SharedPreferencesForWebProcess> WebSharedWorkerServerConnection::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
 {
-    Ref networkProcess = m_networkProcess;
-    return networkProcess->webProcessConnection(connection)->sharedPreferencesForWebProcess();
+    return m_networkProcess->webProcessConnection(connection)->sharedPreferencesForWebProcess();
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)

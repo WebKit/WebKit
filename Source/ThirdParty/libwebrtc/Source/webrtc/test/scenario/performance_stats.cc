@@ -11,6 +11,10 @@
 
 #include <algorithm>
 
+#include "api/units/timestamp.h"
+#include "api/video/video_frame_buffer.h"
+#include "rtc_base/checks.h"
+
 namespace webrtc {
 namespace test {
 void VideoFramesStats::AddFrameInfo(const VideoFrameBuffer& frame,

@@ -44,7 +44,7 @@ class XRProjectionLayer;
 class XRSubImage;
 
 class XRBinding : public RefCountedAndCanMakeWeakPtr<XRBinding>, public WGPUXRBindingImpl {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(XRBinding);
 public:
     static Ref<XRBinding> create(Device& device)
     {
@@ -63,14 +63,12 @@ public:
     Ref<XRProjectionLayer> createXRProjectionLayer(WGPUTextureFormat, WGPUTextureFormat*, WGPUTextureUsageFlags, double);
     RefPtr<XRSubImage> getViewSubImage(XRProjectionLayer&);
     Device& device() { return m_device; }
-    Ref<Device> protectedDevice() { return m_device; }
-
 
 private:
     XRBinding(bool, Device&);
     XRBinding(Device&);
 
-    Ref<Device> m_device;
+    const Ref<Device> m_device;
 };
 
 } // namespace WebGPU

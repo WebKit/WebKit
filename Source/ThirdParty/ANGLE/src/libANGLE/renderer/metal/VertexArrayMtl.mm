@@ -7,6 +7,10 @@
 //    Implements the class methods for VertexArrayMtl.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/metal/VertexArrayMtl.h"
 
 #include <TargetConditionals.h>
@@ -205,8 +209,10 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
 }  // namespace
 
 // VertexArrayMtl implementation
-VertexArrayMtl::VertexArrayMtl(const gl::VertexArrayState &state, ContextMtl *context)
-    : VertexArrayImpl(state),
+VertexArrayMtl::VertexArrayMtl(const gl::VertexArrayState &state,
+                               const gl::VertexArrayBuffers &vertexArrayBuffers,
+                               ContextMtl *context)
+    : VertexArrayImpl(state, vertexArrayBuffers),
       mDefaultFloatVertexFormat(
           context->getVertexFormat(angle::FormatID::R32G32B32A32_FLOAT, false))
 {
@@ -289,18 +295,6 @@ angle::Result VertexArrayMtl::syncState(const gl::Context *context,
         size_t dirtyBit = *iter;
         switch (dirtyBit)
         {
-            case gl::VertexArray::DIRTY_BIT_LOST_OBSERVATION:
-            {
-                // If vertex array was not observing while unbound, we need to check buffer's
-                // internal storage and take action if buffer has changed while not observing.
-                // For now we just simply assume buffer storage has changed and always dirty all
-                // binding points.
-                iter.setLaterBits(
-                    gl::VertexArray::DirtyBits(mState.getBufferBindingMask().to_ulong()
-                                               << gl::VertexArray::DIRTY_BIT_BINDING_0));
-                break;
-            }
-
             case gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER:
             case gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER_DATA:
             {
@@ -519,7 +513,7 @@ angle::Result VertexArrayMtl::updateClientAttribs(const gl::Context *context,
                                                   const void *indices)
 {
     ContextMtl *contextMtl                  = mtl::GetImpl(context);
-    const gl::AttributesMask &clientAttribs = context->getStateCache().getActiveClientAttribsMask();
+    const gl::AttributesMask &clientAttribs = context->getActiveClientAttribsMask();
 
     ASSERT(clientAttribs.any());
 
@@ -537,7 +531,7 @@ angle::Result VertexArrayMtl::updateClientAttribs(const gl::Context *context,
     {
         const gl::VertexAttribute &attrib = attribs[attribIndex];
         const gl::VertexBinding &binding  = bindings[attrib.bindingIndex];
-        ASSERT(attrib.enabled && binding.getBuffer().get() == nullptr);
+        ASSERT(attrib.enabled && getVertexArrayBuffer(attrib.bindingIndex) == nullptr);
 
         // Source client memory pointer
         const uint8_t *src = static_cast<const uint8_t *>(attrib.pointer);
@@ -647,10 +641,11 @@ angle::Result VertexArrayMtl::syncDirtyAttrib(const gl::Context *glContext,
 {
     ContextMtl *contextMtl = mtl::GetImpl(glContext);
     ASSERT(mtl::kMaxVertexAttribs > attribIndex);
+    mContentsObserverBindingsMask.reset(attrib.bindingIndex);
 
     if (attrib.enabled)
     {
-        gl::Buffer *bufferGL            = binding.getBuffer().get();
+        gl::Buffer *bufferGL            = getVertexArrayBuffer(attrib.bindingIndex);
         const mtl::VertexFormat &format = contextMtl->getVertexFormat(attrib.format->id, false);
 
         if (bufferGL)
@@ -659,7 +654,7 @@ angle::Result VertexArrayMtl::syncDirtyAttrib(const gl::Context *glContext,
             // https://bugs.webkit.org/show_bug.cgi?id=236733
             // even non-converted buffers need to be observed for potential
             // data rebinds.
-            mContentsObservers->enableForBuffer(bufferGL, static_cast<uint32_t>(attribIndex));
+            mContentsObserverBindingsMask.set(attrib.bindingIndex);
             bool needConversion =
                 format.actualFormatId != format.intendedFormatId ||
                 (binding.getOffset() % mtl::kVertexAttribBufferStrideAlignment) != 0 ||
@@ -705,7 +700,7 @@ angle::Result VertexArrayMtl::getIndexBuffer(const gl::Context *context,
                                              size_t *idxBufferOffsetOut,
                                              gl::DrawElementsType *indexTypeOut)
 {
-    const gl::Buffer *glElementArrayBuffer = getState().getElementArrayBuffer();
+    const gl::Buffer *glElementArrayBuffer = getElementArrayBuffer();
 
     size_t convertedOffset = reinterpret_cast<size_t>(indices);
     if (!glElementArrayBuffer)
@@ -763,7 +758,7 @@ std::vector<DrawCommandRange> VertexArrayMtl::getDrawIndices(const gl::Context *
     }
     const std::vector<IndexRange> *restartIndices;
     std::vector<IndexRange> clientIndexRange;
-    const gl::Buffer *glElementArrayBuffer = getState().getElementArrayBuffer();
+    const gl::Buffer *glElementArrayBuffer = getElementArrayBuffer();
     if (glElementArrayBuffer)
     {
         BufferMtl *idxBuffer = mtl::GetImpl(glElementArrayBuffer);
@@ -862,7 +857,7 @@ angle::Result VertexArrayMtl::convertIndexBuffer(const gl::Context *glContext,
 
     ContextMtl *contextMtl   = mtl::GetImpl(glContext);
     const gl::State &glState = glContext->getState();
-    BufferMtl *idxBuffer     = mtl::GetImpl(getState().getElementArrayBuffer());
+    BufferMtl *idxBuffer     = mtl::GetImpl(getElementArrayBuffer());
 
     IndexConversionBufferMtl *conversion = idxBuffer->getIndexConversionBuffer(
         contextMtl, indexType, glState.isPrimitiveRestartEnabled(), offsetModulo);
@@ -938,7 +933,7 @@ angle::Result VertexArrayMtl::streamIndexBufferFromClient(const gl::Context *con
                                                           mtl::BufferRef *idxBufferOut,
                                                           size_t *idxBufferOffsetOut)
 {
-    ASSERT(getState().getElementArrayBuffer() == nullptr);
+    ASSERT(getElementArrayBuffer() == nullptr);
     ContextMtl *contextMtl = mtl::GetImpl(context);
 
     auto srcData = static_cast<const uint8_t *>(sourcePointer);
@@ -1088,8 +1083,10 @@ angle::Result VertexArrayMtl::convertVertexBufferGPU(const gl::Context *glContex
     GLintptr bindingOffset = binding.getOffset();
 
     if constexpr (sizeof(bindingOffset) > sizeof(uint32_t))
+    {
         ANGLE_CHECK_GL_MATH(contextMtl, static_cast<std::make_unsigned_t<decltype(bindingOffset)>>(
                                             bindingOffset) <= std::numeric_limits<uint32_t>::max());
+    }
     ANGLE_CHECK_GL_MATH(contextMtl, newBufferOffset <= std::numeric_limits<uint32_t>::max());
     ANGLE_CHECK_GL_MATH(contextMtl, numVertices <= std::numeric_limits<uint32_t>::max());
 
@@ -1097,8 +1094,10 @@ angle::Result VertexArrayMtl::convertVertexBufferGPU(const gl::Context *glContex
     VertexConversionBufferMtl *vertexConversion =
         static_cast<VertexConversionBufferMtl *>(conversion);
     if constexpr (sizeof(vertexConversion->offset) > sizeof(uint32_t))
+    {
         ANGLE_CHECK_GL_MATH(contextMtl,
                             vertexConversion->offset <= std::numeric_limits<uint32_t>::max());
+    }
     params.srcBuffer            = srcBuffer->getCurrentBuffer();
     params.srcBufferStartOffset = std::min(static_cast<uint32_t>(vertexConversion->offset),
                                            static_cast<uint32_t>(bindingOffset));

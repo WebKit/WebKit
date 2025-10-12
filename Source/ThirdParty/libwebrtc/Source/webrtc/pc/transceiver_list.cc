@@ -10,8 +10,16 @@
 
 #include "pc/transceiver_list.h"
 
+#include <cstddef>
+#include <optional>
 #include <string>
+#include <vector>
 
+#include "api/rtp_parameters.h"
+#include "api/rtp_sender_interface.h"
+#include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
+#include "pc/rtp_transceiver.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -53,7 +61,7 @@ std::vector<RtpTransceiver*> TransceiverList::ListInternal() const {
 }
 
 RtpTransceiverProxyRefPtr TransceiverList::FindBySender(
-    rtc::scoped_refptr<RtpSenderInterface> sender) const {
+    scoped_refptr<RtpSenderInterface> sender) const {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   for (auto transceiver : transceivers_) {
     if (transceiver->sender() == sender) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,6 +57,13 @@ MallocSpan<Ivar, SystemMalloc> class_copyIvarListSpan(Class cls)
     unsigned ivarCount = 0;
     auto* ivars = class_copyIvarList(cls, &ivarCount);
     return adoptMallocSpan<Ivar, SystemMalloc>(unsafeMakeSpan(ivars, ivarCount));
+}
+
+MallocSpan<objc_property_attribute_t, SystemMalloc> property_copyAttributeListSpan(objc_property_t property)
+{
+    unsigned attributeCount = 0;
+    auto* attributes = property_copyAttributeList(property, &attributeCount);
+    return adoptMallocSpan<objc_property_attribute_t, SystemMalloc>(unsafeMakeSpan(attributes, attributeCount));
 }
 
 MallocSpan<objc_method_description, SystemMalloc> protocol_copyMethodDescriptionListSpan(Protocol *protocol, BOOL isRequiredMethod, BOOL isInstanceMethod)

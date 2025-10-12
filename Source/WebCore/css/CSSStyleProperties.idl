@@ -23,7 +23,6 @@
 typedef USVString CSSOMString;
 
 [
-    JSGenerateToJSObject,
     JSGenerateToNativeObject,
     SkipVTableValidation,
     Exposed=Window,

@@ -36,14 +36,14 @@ shouldThrow(() => {
 
 shouldThrow(() => {
     const { data } = data;
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'data' before initialization.`);
 
 shouldThrow(() => {
     const { [throwing()]: data } = { data: 50 };
     function throwing() {
         data;
     }
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'data' before initialization.`);
 
 (function () {
     let data = 42;
@@ -58,18 +58,18 @@ shouldThrow(() => {
 
 shouldThrow(() => {
     let { data } = data;
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'data' before initialization.`);
 
 shouldThrow(() => {
     let { [throwing()]: data } = { data: 50 };
     function throwing() {
         data;
     }
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'data' before initialization.`);
 
 shouldThrow(() => {
     let { [data = 'data']: data } = { data: 50 };
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'data' before initialization.`);
 
 (function () {
     let { [43]: data } = { 43: 50 };

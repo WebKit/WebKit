@@ -1,13 +1,11 @@
 /*---
 defines: [typedArrayConstructors, sharedTypedArrayConstructors, anyTypedArrayConstructors, isSharedConstructor, isFloatConstructor, isUnsignedConstructor]
-allow_unused: True
 ---*/
 (function(global) {
     "use strict";
 
     const {
         Float16Array, Float32Array, Float64Array, Object, Reflect, SharedArrayBuffer, WeakMap,
-        assertEq
     } = global;
     const {
         apply: Reflect_apply,
@@ -37,7 +35,7 @@ allow_unused: True
                                                     new.target);
                 for (var i = 0; i < length; i++)
                     sharedArray[i] = array[i];
-                assertEq(sharedArray.buffer, sharedBuffer);
+                assert.sameValue(sharedArray.buffer, sharedBuffer);
                 return sharedArray;
             }
         }

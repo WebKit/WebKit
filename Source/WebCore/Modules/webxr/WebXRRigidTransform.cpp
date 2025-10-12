@@ -30,6 +30,7 @@
 
 #include "DOMPointReadOnly.h"
 #include "ExceptionOr.h"
+#include "ScriptWrappableInlines.h"
 #include "TransformationMatrix.h"
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -149,7 +150,7 @@ const WebXRRigidTransform& WebXRRigidTransform::inverse()
     // Inverse should always return the same object.
     if (m_inverse)
         return *m_inverse;
-    
+
     auto inverseTransform = m_rawTransform.inverse();
     ASSERT(!!inverseTransform);
 

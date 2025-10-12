@@ -109,6 +109,7 @@ if (rtc_include_tests && !build_with_chromium) {
       ":pcc_controller",
       ":rtt_tracker",
       ":utility_function",
+      "../../../api/environment",
       "../../../api/environment:environment_factory",
       "../../../api/transport:network_control",
       "../../../api/units:data_rate",

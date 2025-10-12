@@ -164,6 +164,9 @@ static int TestCpuEnv(int cpu_info) {
   if (TestEnv("LIBYUV_DISABLE_AVX10")) {
     cpu_info &= ~libyuv::kCpuHasAVX10;
   }
+  if (TestEnv("LIBYUV_DISABLE_AVX10_2")) {
+    cpu_info &= ~libyuv::kCpuHasAVX10_2;
+  }
   if (TestEnv("LIBYUV_DISABLE_AVXVNNI")) {
     cpu_info &= ~libyuv::kCpuHasAVXVNNI;
   }

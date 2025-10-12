@@ -30,6 +30,11 @@
 namespace WebCore {
 namespace Style {
 
+UnevaluatedCalculationBase::UnevaluatedCalculationBase(CalculationValue& value)
+    : calc { value }
+{
+}
+
 UnevaluatedCalculationBase::UnevaluatedCalculationBase(Ref<CalculationValue>&& value)
     : calc { WTFMove(value) }
 {
@@ -60,7 +65,7 @@ Ref<CalculationValue> UnevaluatedCalculationBase::protectedCalculation() const
 
 bool UnevaluatedCalculationBase::equal(const UnevaluatedCalculationBase& other) const
 {
-    return calc == other.calc;
+    return arePointingToEqualData(calc, other.calc);
 }
 
 } // namespace Style

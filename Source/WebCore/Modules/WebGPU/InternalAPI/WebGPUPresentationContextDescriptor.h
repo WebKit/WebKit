@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUCompositorIntegration.h"
+#include <WebCore/WebGPUCompositorIntegration.h>
 
 namespace WebCore::WebGPU {
 

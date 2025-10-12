@@ -31,6 +31,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
 #include <wtf/ThreadSafetyAnalysis.h>
+#include <wtf/ThreadSanitizerSupport.h>
 
 #if ENABLE(UNFAIR_LOCK)
 #include <os/lock.h>
@@ -60,7 +61,7 @@ typedef LockAlgorithm<uint8_t, 1, 2> DefaultLockAlgorithm;
 // use lock capability annotations defined in ThreadSafetyAnalysis.h.
 class WTF_CAPABILITY_LOCK Lock {
     WTF_MAKE_NONCOPYABLE(Lock);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Lock);
 public:
     constexpr Lock() = default;
 
@@ -68,11 +69,15 @@ public:
     {
         if (!DefaultLockAlgorithm::lockFastAssumingZero(m_byte)) [[unlikely]]
             lockSlow();
+        TSAN_ANNOTATE_HAPPENS_AFTER(this);
     }
 
     bool tryLock() WTF_ACQUIRES_LOCK_IF(true) // NOLINT: Intentional deviation to support std::scoped_lock.
     {
-        return DefaultLockAlgorithm::tryLock(m_byte);
+        bool success = DefaultLockAlgorithm::tryLock(m_byte);
+        if (success)
+            TSAN_ANNOTATE_HAPPENS_AFTER(this);
+        return success;
     }
 
     // Need this version for std::unique_lock.
@@ -93,6 +98,7 @@ public:
     // guarantees that long critical sections always get a fair lock.
     void unlock() WTF_RELEASES_LOCK()
     {
+        TSAN_ANNOTATE_HAPPENS_BEFORE(this);
         if (!DefaultLockAlgorithm::unlockFastAssumingZero(m_byte)) [[unlikely]]
             unlockSlow();
     }
@@ -104,6 +110,7 @@ public:
     // want.
     void unlockFairly() WTF_RELEASES_LOCK()
     {
+        TSAN_ANNOTATE_HAPPENS_BEFORE(this);
         if (!DefaultLockAlgorithm::unlockFastAssumingZero(m_byte)) [[unlikely]]
             unlockFairlySlow();
     }
@@ -161,9 +168,11 @@ public:
     void lock() WTF_ACQUIRES_LOCK()
     {
         os_unfair_lock_lock(&m_lock);
+        TSAN_ANNOTATE_HAPPENS_AFTER(this);
     }
     void unlock() WTF_RELEASES_LOCK()
     {
+        TSAN_ANNOTATE_HAPPENS_BEFORE(this);
         os_unfair_lock_unlock(&m_lock);
     }
     void assertIsOwner() const
@@ -195,6 +204,7 @@ public:
         , m_isLocked(true)
     {
         m_lock.lock();
+        TSAN_ANNOTATE_HAPPENS_AFTER(&m_lock);
     }
     Locker(AdoptLockTag, T& lock) WTF_REQUIRES_LOCK(lock)
         : m_lock(lock)
@@ -203,13 +213,16 @@ public:
     }
     ~Locker() WTF_RELEASES_LOCK()
     {
-        if (m_isLocked)
+        if (m_isLocked) {
+            TSAN_ANNOTATE_HAPPENS_BEFORE(&m_lock);
             m_lock.unlock();
+        }
     }
     void unlockEarly() WTF_RELEASES_LOCK()
     {
         ASSERT(m_isLocked);
         m_isLocked = false;
+        TSAN_ANNOTATE_HAPPENS_BEFORE(&m_lock);
         m_lock.unlock();
     }
     Locker(const Locker<T>&) = delete;
@@ -227,15 +240,20 @@ private:
     template<typename>
     friend class DropLockForScope;
 
+    // Support Condition class to access private lock/unlock methods
+    friend class Condition;
+
     void lock() WTF_ACQUIRES_LOCK(m_lock)
     {
         m_lock.lock();
+        TSAN_ANNOTATE_HAPPENS_AFTER(&m_lock);
         compilerFence();
     }
 
     void unlock() WTF_RELEASES_LOCK(m_lock)
     {
         compilerFence();
+        TSAN_ANNOTATE_HAPPENS_BEFORE(&m_lock);
         m_lock.unlock();
     }
 

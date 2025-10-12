@@ -12,7 +12,6 @@
 #define MODULES_AUDIO_PROCESSING_SPLITTING_FILTER_H_
 
 #include <cstring>
-#include <memory>
 #include <vector>
 
 #include "common_audio/channel_buffer.h"

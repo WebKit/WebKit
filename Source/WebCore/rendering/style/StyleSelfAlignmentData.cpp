@@ -47,6 +47,7 @@ LayoutUnit StyleSelfAlignmentData::adjustmentFromStartEdge(LayoutUnit extraSpace
 
     case ItemPosition::Center:
     case ItemPosition::AnchorCenter:
+    case ItemPosition::Dialog:
         return extraSpace / 2;
 
     case ItemPosition::End:

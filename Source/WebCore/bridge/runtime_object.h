@@ -26,8 +26,8 @@
 #ifndef KJS_RUNTIME_OBJECT_H
 #define KJS_RUNTIME_OBJECT_H
 
-#include "BridgeJSC.h"
 #include <JavaScriptCore/JSGlobalObject.h>
+#include <WebCore/BridgeJSC.h>
 
 namespace JSC {
 namespace Bindings {

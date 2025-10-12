@@ -42,7 +42,8 @@ enum class PermissionName : uint8_t {
     Notifications,
     Push,
     ScreenWakeLock,
-    SpeakerSelection
+    SpeakerSelection,
+    StorageAccess
 };
 
 } // namespace WebCore

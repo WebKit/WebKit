@@ -52,3 +52,10 @@ audit-spi = "webkitapipy.program:main"
 Homepage = "https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitapipy"
 Issues = "https://bugs.webkit.org"
 Repository = "https://github.com/WebKit/WebKit"
+
+[mypy]
+strict = true
+disallow_any_generics = false
+disallow_untyped_calls = false
+disallow_untyped_defs = false
+disallow_incomplete_defs = false

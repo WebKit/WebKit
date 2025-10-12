@@ -1728,4 +1728,22 @@ TEST(DocumentEditingContext, ContextWithWritingSuggestions)
     EXPECT_EQ(selectedRangeInMarkedText.length, 0U);
 }
 
+TEST(DocumentEditingContext, RequestAttributedTextWithCustomFont)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(threeSentencesExample)];
+    [webView objectByEvaluatingJavaScript:@"getSelection().setPosition(document.getElementById('text').childNodes[0], 3)"]; // After the first word, "The".
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestAttributed, UITextGranularityWord, 2)];
+    RetainPtr contextBefore = [dynamic_objc_cast<NSAttributedString>([context contextBefore]) string] ?: @"";
+    RetainPtr selectedText = [dynamic_objc_cast<NSAttributedString>([context selectedText]) string] ?: @"";
+    RetainPtr contextAfter = [dynamic_objc_cast<NSAttributedString>([context contextAfter]) string] ?: @"";
+
+    EXPECT_WK_STREQ(contextBefore.get(), "The");
+    EXPECT_WK_STREQ(selectedText.get(), "");
+    EXPECT_WK_STREQ(contextAfter.get(), " first sentence");
+}
+
 #endif // HAVE(UI_WK_DOCUMENT_CONTEXT)

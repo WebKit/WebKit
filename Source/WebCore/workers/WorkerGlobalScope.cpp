@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2008-2025 Apple Inc. All Rights Reserved.
- * Copyright (C) 2009, 2011 Google Inc. All Rights Reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,21 +37,22 @@
 #include "CrossOriginMode.h"
 #include "Crypto.h"
 #include "CryptoKeyData.h"
-#include "DocumentInlines.h"
+#include "DOMTimer.h"
 #include "FontCustomPlatformData.h"
 #include "FontFaceSet.h"
-#include "GCController.h"
+#include "FrameConsoleClient.h"
+#include "GarbageCollectionController.h"
 #include "IDBConnectionProxy.h"
 #include "ImageBitmapOptions.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMExceptionHandling.h"
 #include "Logging.h"
 #include "NotImplemented.h"
-#include "PageConsoleClient.h"
 #include "Performance.h"
 #include "RTCDataChannelRemoteHandlerConnection.h"
 #include "ReportingScope.h"
 #include "ScheduledAction.h"
+#include "ScriptExecutionContextInlines.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
@@ -143,7 +144,7 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
 
 WorkerGlobalScope::~WorkerGlobalScope()
 {
-    ASSERT(thread().thread() == &Thread::currentSingleton());
+    ASSERT(thread()->thread() == &Thread::currentSingleton());
 
     {
         Locker locker { allWorkerGlobalScopeIdentifiersLock };
@@ -154,13 +155,13 @@ WorkerGlobalScope::~WorkerGlobalScope()
     m_crypto = nullptr;
 
     // Notify proxy that we are going away. This can free the WorkerThread object, so do not access it after this.
-    if (auto* workerReportingProxy = thread().workerReportingProxy())
+    if (auto* workerReportingProxy = thread()->workerReportingProxy())
         workerReportingProxy->workerGlobalScopeDestroyed();
 }
 
 String WorkerGlobalScope::origin() const
 {
-    auto* securityOrigin = this->securityOrigin();
+    RefPtr securityOrigin = this->securityOrigin();
     return securityOrigin ? securityOrigin->toString() : emptyString();
 }
 
@@ -225,6 +226,11 @@ SocketProvider* WorkerGlobalScope::socketProvider()
     return m_socketProvider.get();
 }
 
+RefPtr<SocketProvider> WorkerGlobalScope::protectedSocketProvider()
+{
+    return socketProvider();
+}
+
 RefPtr<RTCDataChannelRemoteHandlerConnection> WorkerGlobalScope::createRTCDataChannelRemoteHandlerConnection()
 {
     RefPtr<RTCDataChannelRemoteHandlerConnection> connection;
@@ -268,7 +274,7 @@ void WorkerGlobalScope::resume()
 WorkerStorageConnection& WorkerGlobalScope::storageConnection()
 {
     if (!m_storageConnection)
-        m_storageConnection = WorkerStorageConnection::create(*this);
+        lazyInitialize(m_storageConnection, WorkerStorageConnection::create(*this));
 
     return *m_storageConnection;
 }
@@ -298,7 +304,7 @@ WorkerFileSystemStorageConnection* WorkerGlobalScope::fileSystemStorageConnectio
 WorkerLocation& WorkerGlobalScope::location() const
 {
     if (!m_location)
-        m_location = WorkerLocation::create(URL { m_url }, origin());
+        lazyInitialize(m_location, WorkerLocation::create(URL { m_url }, origin()));
     return *m_location;
 }
 
@@ -315,7 +321,7 @@ void WorkerGlobalScope::close()
         ASSERT_WITH_SECURITY_IMPLICATION(is<WorkerGlobalScope>(context));
         WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
         // Notify parent that this context is closed. Parent is responsible for calling WorkerThread::stop().
-        if (auto* workerReportingProxy = workerGlobalScope.thread().workerReportingProxy())
+        if (auto* workerReportingProxy = workerGlobalScope.thread()->workerReportingProxy())
             workerReportingProxy->workerGlobalScopeClosed();
     } });
 }
@@ -323,7 +329,7 @@ void WorkerGlobalScope::close()
 WorkerNavigator& WorkerGlobalScope::navigator()
 {
     if (!m_navigator)
-        m_navigator = WorkerNavigator::create(*this, m_userAgent, m_isOnline);
+        lazyInitialize(m_navigator, WorkerNavigator::create(*this, m_userAgent, m_isOnline));
     return *m_navigator;
 }
 
@@ -462,7 +468,7 @@ EventTarget* WorkerGlobalScope::errorEventTarget()
 
 void WorkerGlobalScope::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<ScriptCallStack>&&)
 {
-    if (auto* workerReportingProxy = thread().workerReportingProxy())
+    if (auto* workerReportingProxy = thread()->workerReportingProxy())
         workerReportingProxy->postExceptionToWorkerObject(errorMessage, lineNumber, columnNumber, sourceURL);
 }
 
@@ -475,7 +481,7 @@ void WorkerGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMess
 
     auto sessionID = this->sessionID();
     if (settingsValues().logsPageMessagesToSystemConsoleEnabled && sessionID && !sessionID->isEphemeral()) [[unlikely]]
-        PageConsoleClient::logMessageToSystemConsole(*message);
+        FrameConsoleClient::logMessageToSystemConsole(*message);
 
 #if ENABLE(WEBDRIVER_BIDI)
     AutomationInstrumentation::addMessageToConsole(message);
@@ -510,7 +516,7 @@ void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, con
 std::optional<Vector<uint8_t>> WorkerGlobalScope::serializeAndWrapCryptoKey(CryptoKeyData&& keyData)
 {
     Ref protectedThis { *this };
-    auto* workerLoaderProxy = thread().workerLoaderProxy();
+    auto* workerLoaderProxy = thread()->workerLoaderProxy();
     if (!workerLoaderProxy)
         return std::nullopt;
 
@@ -527,7 +533,7 @@ std::optional<Vector<uint8_t>> WorkerGlobalScope::serializeAndWrapCryptoKey(Cryp
 std::optional<Vector<uint8_t>> WorkerGlobalScope::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey)
 {
     Ref protectedThis { *this };
-    auto* workerLoaderProxy = thread().workerLoaderProxy();
+    auto* workerLoaderProxy = thread()->workerLoaderProxy();
     if (!workerLoaderProxy)
         return std::nullopt;
 
@@ -572,7 +578,7 @@ CacheStorageConnection& WorkerGlobalScope::cacheStorageConnection()
             RELEASE_LOG_INFO(ServiceWorker, "Creating worker dummy CacheStorageConnection");
             mainThreadConnection = CacheStorageProvider::DummyCacheStorageConnection::create();
         }
-        m_cacheStorageConnection = mainThreadConnection.releaseNonNull();
+        lazyInitialize(m_cacheStorageConnection, mainThreadConnection.releaseNonNull());
     }
     return *m_cacheStorageConnection;
 }
@@ -580,14 +586,14 @@ CacheStorageConnection& WorkerGlobalScope::cacheStorageConnection()
 MessagePortChannelProvider& WorkerGlobalScope::messagePortChannelProvider()
 {
     if (!m_messagePortChannelProvider)
-        m_messagePortChannelProvider = makeUnique<WorkerMessagePortChannelProvider>(*this);
+        lazyInitialize(m_messagePortChannelProvider, makeUnique<WorkerMessagePortChannelProvider>(*this));
     return *m_messagePortChannelProvider;
 }
 
 WorkerSWClientConnection& WorkerGlobalScope::swClientConnection()
 {
     if (!m_swClientConnection)
-        m_swClientConnection = WorkerSWClientConnection::create(*this);
+        lazyInitialize(m_swClientConnection, WorkerSWClientConnection::create(*this));
     return *m_swClientConnection;
 }
 
@@ -611,7 +617,7 @@ CSSValuePool& WorkerGlobalScope::cssValuePool()
 CSSFontSelector* WorkerGlobalScope::cssFontSelector()
 {
     if (!m_cssFontSelector)
-        m_cssFontSelector = CSSFontSelector::create(*this);
+        lazyInitialize(m_cssFontSelector, CSSFontSelector::create(*this));
     return m_cssFontSelector.get();
 }
 
@@ -631,14 +637,9 @@ void WorkerGlobalScope::beginLoadingFontSoon(FontLoadRequest& request)
     downcast<WorkerFontLoadRequest>(request).load(*this);
 }
 
-WorkerThread& WorkerGlobalScope::thread() const
+Ref<WorkerThread> WorkerGlobalScope::thread() const
 {
-    return *static_cast<WorkerThread*>(workerOrWorkletThread());
-}
-
-Ref<WorkerThread> WorkerGlobalScope::protectedThread() const
-{
-    return thread();
+    return downcast<WorkerThread>(workerOrWorkletThread()).releaseNonNull();
 }
 
 void WorkerGlobalScope::releaseMemory(Synchronous synchronous)
@@ -686,7 +687,7 @@ void WorkerGlobalScope::dumpGCHeapForWorkers()
     Locker locker { allWorkerGlobalScopeIdentifiersLock };
     for (auto& globalScopeIdentifier : allWorkerGlobalScopeIdentifiers()) {
         postTaskTo(globalScopeIdentifier, [](auto& context) {
-            GCController::dumpHeapForVM(downcast<WorkerGlobalScope>(context).vm());
+            GarbageCollectionController::dumpHeapForVM(downcast<WorkerGlobalScope>(context).vm());
         });
     }
 }
@@ -706,7 +707,7 @@ void WorkerGlobalScope::addImportedScriptSourceProvider(const URL& url, ScriptBu
 
 void WorkerGlobalScope::reportErrorToWorkerObject(const String& errorMessage)
 {
-    if (auto* workerReportingProxy = thread().workerReportingProxy())
+    if (auto* workerReportingProxy = thread()->workerReportingProxy())
         workerReportingProxy->reportErrorToWorkerObject(errorMessage);
 }
 
@@ -718,8 +719,8 @@ void WorkerGlobalScope::clearDecodedScriptData()
         m_mainScriptSourceProvider->clearDecodedData();
 
     for (auto& sourceProviders : m_importedScriptsSourceProviders.values()) {
-        for (auto& sourceProvider : sourceProviders)
-            sourceProvider.clearDecodedData();
+        for (Ref sourceProvider : sourceProviders)
+            sourceProvider->clearDecodedData();
     }
 }
 
@@ -739,8 +740,8 @@ void WorkerGlobalScope::updateSourceProviderBuffers(const ScriptBuffer& mainScri
         auto it = m_importedScriptsSourceProviders.find(pair.key);
         if (it == m_importedScriptsSourceProviders.end())
             continue;
-        for (auto& sourceProvider : it->value)
-            sourceProvider.tryReplaceScriptBuffer(pair.value);
+        for (Ref sourceProvider : it->value)
+            sourceProvider->tryReplaceScriptBuffer(pair.value);
     }
 }
 

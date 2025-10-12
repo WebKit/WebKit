@@ -6,11 +6,12 @@ PASS Partial interface Navigator: valid exposure set
 PASS Partial interface Navigator: member names are unique
 PASS Partial interface mixin WindowEventHandlers: original interface mixin defined
 PASS Partial interface mixin WindowEventHandlers: member names are unique
+PASS Partial interface Navigator[2]: member names are unique
+PASS Partial interface Element: member names are unique
 PASS Partial interface mixin NavigatorID: member names are unique
 PASS Partial interface HTMLBodyElement: member names are unique
 PASS Partial interface Window: member names are unique
 PASS HTMLElement includes GlobalEventHandlers: member names are unique
-PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
 PASS HTMLElement includes ElementContentEditable: member names are unique
 PASS HTMLElement includes HTMLOrSVGElement: member names are unique
 PASS HTMLBodyElement includes WindowEventHandlers: member names are unique
@@ -45,6 +46,8 @@ PASS Gamepad interface: attribute timestamp
 PASS Gamepad interface: attribute mapping
 PASS Gamepad interface: attribute axes
 PASS Gamepad interface: attribute buttons
+FAIL Gamepad interface: attribute touches assert_true: The prototype object must have a property "touches" expected true got false
+PASS Gamepad interface: attribute vibrationActuator
 PASS GamepadButton interface: existence and properties of interface object
 PASS GamepadButton interface object length
 PASS GamepadButton interface object name
@@ -54,6 +57,15 @@ PASS GamepadButton interface: existence and properties of interface prototype ob
 PASS GamepadButton interface: attribute pressed
 FAIL GamepadButton interface: attribute touched assert_true: The prototype object must have a property "touched" expected true got false
 PASS GamepadButton interface: attribute value
+PASS GamepadHapticActuator interface: existence and properties of interface object
+PASS GamepadHapticActuator interface object length
+PASS GamepadHapticActuator interface object name
+PASS GamepadHapticActuator interface: existence and properties of interface prototype object
+PASS GamepadHapticActuator interface: existence and properties of interface prototype object's "constructor" property
+PASS GamepadHapticActuator interface: existence and properties of interface prototype object's @@unscopables property
+FAIL GamepadHapticActuator interface: attribute effects assert_true: The prototype object must have a property "effects" expected true got false
+PASS GamepadHapticActuator interface: operation playEffect(GamepadHapticEffectType, optional GamepadEffectParameters)
+PASS GamepadHapticActuator interface: operation reset()
 PASS GamepadEvent interface: existence and properties of interface object
 FAIL GamepadEvent interface object length assert_equals: wrong value for GamepadEvent.length expected 2 but got 1
 PASS GamepadEvent interface object name

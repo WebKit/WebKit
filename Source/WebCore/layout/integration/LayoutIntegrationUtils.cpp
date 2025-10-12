@@ -39,27 +39,27 @@ IntegrationUtils::IntegrationUtils(const LayoutState& globalLayoutState)
 {
 }
 
-void IntegrationUtils::layoutWithFormattingContextForBox(const ElementBox& box, std::optional<LayoutUnit> widthConstraint) const
+void IntegrationUtils::layoutWithFormattingContextForBox(const ElementBox& box, std::optional<LayoutUnit> widthConstraint, std::optional<LayoutUnit> heightConstraint) const
 {
-    m_globalLayoutState.layoutWithFormattingContextForBox(box, widthConstraint);
+    m_globalLayoutState->layoutWithFormattingContextForBox(box, widthConstraint, heightConstraint);
 }
 
 LayoutUnit IntegrationUtils::maxContentWidth(const ElementBox& box) const
 {
     ASSERT(box.isFlexItem());
-    return m_globalLayoutState.logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MaxContent);
+    return m_globalLayoutState->logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MaxContent);
 }
 
 LayoutUnit IntegrationUtils::minContentWidth(const ElementBox& box) const
 {
     ASSERT(box.isFlexItem());
-    return m_globalLayoutState.logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MinContent);
+    return m_globalLayoutState->logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MinContent);
 }
 
 LayoutUnit IntegrationUtils::minContentHeight(const ElementBox& box) const
 {
     ASSERT(box.isFlexItem());
-    return m_globalLayoutState.logicalHeightWithFormattingContextForBox(box, LayoutIntegration::LogicalHeightType::MinContent);
+    return m_globalLayoutState->logicalHeightWithFormattingContextForBox(box, LayoutIntegration::LogicalHeightType::MinContent);
 }
 
 }

@@ -72,7 +72,7 @@ IDBKey::IDBKey(IndexedDB::KeyType type, double number)
 IDBKey::IDBKey(const String& value)
     : m_type(IndexedDB::KeyType::String)
     , m_value(value)
-    , m_sizeEstimate(OverheadSize + value.length() * sizeof(UChar))
+    , m_sizeEstimate(OverheadSize + value.length() * sizeof(char16_t))
 {
 }
 
@@ -117,7 +117,7 @@ std::weak_ordering IDBKey::compare(const IDBKey& other) const
         auto& array = std::get<IDBKeyVector>(m_value);
         auto& otherArray = std::get<IDBKeyVector>(other.m_value);
         for (size_t i = 0; i < array.size() && i < otherArray.size(); ++i) {
-            if (auto result = array[i]->compare(*otherArray[i]); is_neq(result))
+            if (auto result = Ref { *array[i] }->compare(Ref { *otherArray[i] }); is_neq(result))
                 return result;
         }
         return array.size() <=> otherArray.size();

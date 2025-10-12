@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #include "config.h"
 #include "BackForwardCache.h"
 
-#include "ApplicationCacheHost.h"
 #include "BackForwardController.h"
 #include "CachedPage.h"
 #include "DeviceMotionController.h"
@@ -35,8 +34,10 @@
 #include "DiagnosticLoggingKeys.h"
 #include "DiagnosticLoggingResultType.h"
 #include "Document.h"
-#include "DocumentInlines.h"
 #include "DocumentLoader.h"
+#include "DocumentQuirks.h"
+#include "DocumentSecurityOrigin.h"
+#include "DocumentView.h"
 #include "FocusController.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
@@ -48,7 +49,6 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "Page.h"
-#include "Quirks.h"
 #include "ScriptDisallowedScope.h"
 #include "SecurityOriginHash.h"
 #include "Settings.h"
@@ -175,13 +175,6 @@ static bool canCacheFrame(LocalFrame& frame, DiagnosticLoggingClient& diagnostic
         isCacheable = false;
     }
 
-    // FIXME: We should investigating caching frames that have an associated
-    // application cache. <rdar://problem/5917899> tracks that work.
-    if (!documentLoader->applicationCacheHost().canCacheInBackForwardCache()) {
-        PCLOG("   -The DocumentLoader uses an application cache"_s);
-        logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::applicationCacheKey());
-        isCacheable = false;
-    }
     if (!frameLoader->client().canCachePage()) {
         PCLOG("   -The client says this frame cannot be cached"_s);
         logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::deniedByClientKey());
@@ -253,9 +246,15 @@ static bool canCachePage(Page& page)
         logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::redirectKey());
         isCacheable = false;
         break;
-    case FrameLoadType::Replace:
+    case FrameLoadType::MultipartReplace:
         // No point writing to the cache on a replace, since we will just write over it again when we leave that page.
-        PCLOG("   -Load type is: Replace"_s);
+        PCLOG("   -Load type is: MultipartReplace"_s);
+        logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::replaceKey());
+        isCacheable = false;
+        break;
+    case FrameLoadType::NavigationAPIReplace:
+        // No point writing to the cache on a replace, since we will just write over it again when we leave that page.
+        PCLOG("   -Load type is: NavigationAPIReplace"_s);
         logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::replaceKey());
         isCacheable = false;
         break;
@@ -403,7 +402,7 @@ void BackForwardCache::markPagesForCaptionPreferencesChanged()
             ASSERT(!m_items.contains(item.key));
             continue;
         }
-        CheckedRef { **cachedPage }->markForCaptionPreferencesChanged();
+        CheckedRef { (*cachedPage).get() }->markForCaptionPreferencesChanged();
     }
 }
 #endif
@@ -445,7 +444,7 @@ static void firePageHideEventRecursively(Frame& frame)
         // https://html.spec.whatwg.org/multipage/browsers.html#unload-a-document
         unloadCountIncrementer.emplace(document.get());
 
-        localFrame->protectedLoader()->stopLoading(UnloadEventPolicy::UnloadAndPageHide);
+        localFrame->loader().stopLoading(UnloadEventPolicy::UnloadAndPageHide);
     }
     for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
         firePageHideEventRecursively(*child);
@@ -616,6 +615,9 @@ void BackForwardCache::prune(PruningReason pruningReason)
 {
     while (pageCount() > maxSize()) {
         auto oldestItem = m_items.takeFirst();
+
+        // Take the CachedPage before calling set() so ~CachedPage doesn’t find itself in m_cachedPageMap.
+        auto cachedPage = m_cachedPageMap.take(oldestItem);
         m_cachedPageMap.set(oldestItem, pruningReason);
         RELEASE_LOG(BackForwardCache, "BackForwardCache::prune removing item: %s, size: %u / %u", oldestItem.toString().utf8().data(), pageCount(), maxSize());
     }

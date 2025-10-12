@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "SerializedScriptValue.h"
-#include "TransferredMessagePort.h"
+#include <WebCore/SerializedScriptValue.h>
+#include <WebCore/TransferredMessagePort.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

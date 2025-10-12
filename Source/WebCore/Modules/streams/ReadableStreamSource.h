@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include "JSDOMPromiseDeferredForward.h"
 #include "ReadableStreamDefaultController.h"
+#include <WebCore/JSDOMPromiseDeferredForward.h>
 #include <wtf/AbstractRefCounted.h>
 #include <wtf/WeakPtr.h>
 

@@ -21,9 +21,9 @@
 
 #pragma once
 
-#include "CSSSelectorEnums.h"
-#include "QualifiedName.h"
-#include "RenderStyleConstants.h"
+#include <WebCore/CSSSelectorEnums.h>
+#include <WebCore/QualifiedName.h>
+#include <WebCore/RenderStyleConstants.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/FixedVector.h>
 #include <wtf/TZoneMalloc.h>
@@ -55,6 +55,8 @@ class CSSSelector {
 public:
     CSSSelector() = default;
     CSSSelector(const CSSSelector&);
+    enum MutableSelectorCopyTag { MutableSelectorCopy };
+    CSSSelector(const CSSSelector&, MutableSelectorCopyTag);
     explicit CSSSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
 
     ~CSSSelector();
@@ -66,12 +68,14 @@ public:
     std::array<uint8_t, 3> computeSpecificityTuple() const;
     unsigned specificityForPage() const;
 
-    bool visitAllSimpleSelectors(auto& apply) const;
+    enum class VisitFunctionalPseudoClasses { No, Yes };
+    enum class VisitOnlySubject { No, Yes };
+    using VisitFunctor = WTF::Function<bool(const CSSSelector&)>;
+    bool visitSimpleSelectors(VisitFunctor&&, VisitFunctionalPseudoClasses = VisitFunctionalPseudoClasses::No, VisitOnlySubject = VisitOnlySubject::No) const;
 
     bool hasExplicitNestingParent() const;
     bool hasExplicitPseudoClassScope() const;
-    void resolveNestingParentSelectors(const CSSSelectorList& parent);
-    void replaceNestingParentByPseudoClassScope();
+    bool hasScope() const;
 
     using PseudoClass = CSSSelectorPseudoClass;
     using PseudoElement = CSSSelectorPseudoElement;
@@ -130,12 +134,14 @@ public:
     static const ASCIILiteral nameForUserAgentPartLegacyAlias(StringView);
 
     // Selectors are kept in an array by CSSSelectorList.
-    // The next component of the selector is the next item in the array.
+    // The left component of the selector is the next item in the array.
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    const CSSSelector* tagHistory() const { return m_isLastInTagHistory ? nullptr : this + 1; }
+    const CSSSelector* precedingInComplexSelector() const { return m_isFirstInComplexSelector ? nullptr : this + 1; }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     const CSSSelector* firstInCompound() const;
+    const CSSSelector* lastInCompound() const;
+    const CSSSelector* precedingInCompound() const;
 
     const QualifiedName& tagQName() const;
     const AtomString& tagLowercaseLocalName() const;
@@ -165,13 +171,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     bool isSiblingSelector() const;
     bool isAttributeSelector() const;
     bool isHostPseudoClass() const;
+    bool isScopePseudoClass() const;
 
     Relation relation() const { return static_cast<Relation>(m_relation); }
     Match match() const { return static_cast<Match>(m_match); }
 
     bool isLastInSelectorList() const { return m_isLastInSelectorList; }
-    bool isFirstInTagHistory() const { return m_isFirstInTagHistory; }
-    bool isLastInTagHistory() const { return m_isLastInTagHistory; }
+    bool isFirstInComplexSelector() const { return m_isFirstInComplexSelector; }
+    bool isLastInComplexSelector() const { return m_isLastInComplexSelector; }
 
     // FIXME: This should ideally be private, but StyleRule uses it.
     void setLastInSelectorList() { m_isLastInSelectorList = true; }
@@ -213,8 +220,11 @@ private:
     mutable unsigned m_pseudoType : 8 { 0 }; // PseudoType.
     // 17 bits
     unsigned m_isLastInSelectorList : 1 { false };
-    unsigned m_isFirstInTagHistory : 1 { true };
-    unsigned m_isLastInTagHistory : 1 { true };
+
+    // These are in logical order, which is reversed from the memory order.
+    unsigned m_isFirstInComplexSelector : 1 { true };
+    unsigned m_isLastInComplexSelector : 1 { true };
+
     unsigned m_hasRareData : 1 { false };
     unsigned m_isForPage : 1 { false };
     unsigned m_tagIsForNamespaceRule : 1 { false };
@@ -229,7 +239,7 @@ private:
     CSSSelector(CSSSelector&&) = delete;
 
     struct RareData : public RefCounted<RareData> {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSSelectorRareData);
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSSelectorRareData, CSSSelectorRareData);
         static Ref<RareData> create(AtomString);
         WEBCORE_EXPORT ~RareData();
 
@@ -263,6 +273,9 @@ private:
         RareData* rareData;
     } m_data;
 };
+
+bool complexSelectorCanMatchPseudoElement(const CSSSelector&);
+bool complexSelectorMatchesElementBackedPseudoElement(const CSSSelector&);
 
 inline bool operator==(const PossiblyQuotedIdentifier& a, const AtomString& b) { return a.identifier == b; }
 

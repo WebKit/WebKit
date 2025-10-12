@@ -16,7 +16,7 @@
 
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 namespace {
 
 struct FunctionsCalled {
@@ -109,4 +109,4 @@ TEST(ScopedRefptrTest, MovableDuringVectorReallocation) {
 }
 
 }  // namespace
-}  // namespace rtc
+}  // namespace webrtc

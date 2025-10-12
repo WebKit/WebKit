@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 

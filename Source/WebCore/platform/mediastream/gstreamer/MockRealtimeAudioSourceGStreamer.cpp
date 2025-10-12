@@ -30,6 +30,7 @@
 #include <gst/app/gstappsrc.h>
 #include <numbers>
 #include <wtf/IndexedRange.h>
+#include <wtf/MediaTime.h>
 
 namespace WebCore {
 
@@ -43,13 +44,13 @@ static constexpr double s_HumVolume = 0.1;
 static constexpr double s_NoiseFrequency = 3000;
 static constexpr double s_NoiseVolume = 0.05;
 
-static UncheckedKeyHashSet<MockRealtimeAudioSource*>& allMockRealtimeAudioSourcesStorage()
+static HashSet<MockRealtimeAudioSource*>& allMockRealtimeAudioSourcesStorage()
 {
-    static MainThreadNeverDestroyed<UncheckedKeyHashSet<MockRealtimeAudioSource*>> audioSources;
+    static MainThreadNeverDestroyed<HashSet<MockRealtimeAudioSource*>> audioSources;
     return audioSources;
 }
 
-const UncheckedKeyHashSet<MockRealtimeAudioSource*>& MockRealtimeAudioSourceGStreamer::allMockRealtimeAudioSources()
+const HashSet<MockRealtimeAudioSource*>& MockRealtimeAudioSourceGStreamer::allMockRealtimeAudioSources()
 {
     return allMockRealtimeAudioSourcesStorage();
 }

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css" />
+    <script src="resources/webgl_test_files/js/js-test-pre.js"></script>
+    <script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body onload="test()">
+    <div id="description"></div>
+    <div id="console"></div>
+    <img id="img" src="data:image/gif;base64,R0lGODlhIAAgAPIBAGbMzP///wAAADOZZpn"></img>
+    <script>
+        "use strict";
+        description("Test that calls to texSubImage2D with bad arguments don't crash.");
+        var wtu = WebGLTestUtils;
+        var gl;
+        function runTest() {
+            const canvas = document.createElement("canvas");
+            const gl = canvas.getContext("webgl2");
+            const level = 0;
+            const xoffset = 0;
+            const yoffset = 0;
+            const badValue = 0;
+            gl.texSubImage2D(gl.TEXTURE_2D, level, xoffset, yoffset, badValue, gl.UNSIGNED_BYTE, img);
+            gl.texSubImage2D(gl.TEXTURE_2D, level, xoffset, yoffset, gl.RGBA, badValue, img);
+
+            const height = 800;
+            const width = 600;
+            gl.texSubImage2D(gl.TEXTURE_2D, level, xoffset, yoffset, height, width, badValue, gl.UNSIGNED_BYTE, img);
+            gl.texSubImage2D(gl.TEXTURE_2D, level, xoffset, yoffset, height, width, gl.RGBA, badValue, img);
+            testPassed(`Did not crash.`);
+        }
+
+        function test() {
+            runTest();
+            finishTest();
+        }
+    </script>
+</body>
+</html>

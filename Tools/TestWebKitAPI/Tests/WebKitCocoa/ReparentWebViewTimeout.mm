@@ -31,6 +31,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 TEST(WebKit, ReparentWebViewTimeout)
 {
@@ -47,11 +48,11 @@ TEST(WebKit, ReparentWebViewTimeout)
     void (^runTest)(void) = ^{
         __block bool done = false;
 
-        dispatch_async(dispatch_get_main_queue(), ^{
-            dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
+            dispatch_async(mainDispatchQueueSingleton(), ^{
                 [webView removeFromSuperview];
 
-                dispatch_async(dispatch_get_main_queue(), ^{
+                dispatch_async(mainDispatchQueueSingleton(), ^{
                     [webView addToTestWindow];
                     [webView waitForNextPresentationUpdate];
                     done = true;

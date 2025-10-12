@@ -485,14 +485,9 @@ void D3DTextureSurfaceWGL::setSwapInterval(const egl::Display *display, EGLint i
     UNIMPLEMENTED();
 }
 
-EGLint D3DTextureSurfaceWGL::getWidth() const
+gl::Extents D3DTextureSurfaceWGL::getSize() const
 {
-    return static_cast<EGLint>(mWidth);
-}
-
-EGLint D3DTextureSurfaceWGL::getHeight() const
-{
-    return static_cast<EGLint>(mHeight);
+    return gl::Extents(static_cast<EGLint>(mWidth), static_cast<EGLint>(mHeight), 1);
 }
 
 EGLint D3DTextureSurfaceWGL::isPostSubBufferSupported() const
@@ -510,7 +505,7 @@ HDC D3DTextureSurfaceWGL::getDC() const
     return mDeviceContext;
 }
 
-const angle::Format *D3DTextureSurfaceWGL::getD3DTextureColorFormat() const
+const angle::Format *D3DTextureSurfaceWGL::getClientBufferTextureColorFormat() const
 {
     return mColorFormat;
 }

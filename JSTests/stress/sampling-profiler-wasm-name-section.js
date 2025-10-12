@@ -75,5 +75,5 @@ if (platformSupportsSamplingProfiler() && $vm.isWasmSupported()) {
     var wasmEntry = function() {
         return instance.exports._parrot(1);
     };
-    runTest(wasmEntry, ["_silly", "wasm-stub", "<?>.wasm-function[_eggs]", "<?>.wasm-function[_bacon]", "<?>.wasm-function[_spam]", "<?>.wasm-function[_parrot]", "wasm-stub", "wasmEntry"]);
+    runTest(wasmEntry, ["_silly", "wasm-stub", ".wasm-function[_eggs]", ".wasm-function[_bacon]", ".wasm-function[_spam]", ".wasm-function[_parrot]", "wasm-stub", "wasmEntry"]);
 }

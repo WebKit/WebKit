@@ -13,7 +13,6 @@
 
 #include <cstdint>
 #include <map>
-#include <memory>
 #include <optional>
 #include <ostream>
 #include <set>
@@ -21,6 +20,7 @@
 #include <utility>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/numerics/samples_stats_counter.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -88,8 +88,7 @@ struct StreamCodecInfo {
 };
 
 std::ostream& operator<<(std::ostream& os, const StreamCodecInfo& state);
-rtc::StringBuilder& operator<<(rtc::StringBuilder& sb,
-                               const StreamCodecInfo& state);
+StringBuilder& operator<<(StringBuilder& sb, const StreamCodecInfo& state);
 bool operator==(const StreamCodecInfo& a, const StreamCodecInfo& b);
 
 // Represents phases where video frame can be dropped and such drop will be
@@ -106,7 +105,7 @@ enum class FrameDropPhase : int {
 
 std::string ToString(FrameDropPhase phase);
 std::ostream& operator<<(std::ostream& os, FrameDropPhase phase);
-rtc::StringBuilder& operator<<(rtc::StringBuilder& sb, FrameDropPhase phase);
+StringBuilder& operator<<(StringBuilder& sb, FrameDropPhase phase);
 
 struct StreamStats {
   explicit StreamStats(Timestamp stream_started_time);

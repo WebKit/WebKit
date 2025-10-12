@@ -31,11 +31,11 @@
 #include "CSSPropertyParser.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSTokenizer.h"
-#include "CustomPropertyRegistry.h"
 #include "DOMCSSNamespace.h"
 #include "Document.h"
+#include "ExceptionOr.h"
 #include "StyleBuilder.h"
-#include "StyleBuilderConverter.h"
+#include "StyleCustomPropertyRegistry.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include <wtf/text/WTFString.h>
@@ -57,7 +57,7 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
     if (!syntax->isUniversal() && descriptor.initialValue.isNull())
         return Exception { ExceptionCode::SyntaxError, "An initial value is mandatory except for the '*' syntax."_s };
 
-    RefPtr<CSSCustomPropertyValue> initialValue;
+    RefPtr<const Style::CustomProperty> initialValue;
     RefPtr<CSSVariableData> initialValueTokensForViewportUnits;
 
     if (!descriptor.initialValue.isNull()) {

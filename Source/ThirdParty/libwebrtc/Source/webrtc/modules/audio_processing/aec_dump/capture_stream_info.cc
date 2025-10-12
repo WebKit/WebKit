@@ -10,26 +10,35 @@
 
 #include "modules/audio_processing/aec_dump/capture_stream_info.h"
 
+#include <cstddef>
+#include <cstdint>
+
+#include "api/audio/audio_view.h"
+#include "modules/audio_processing/include/aec_dump.h"
+#include "modules/audio_processing/include/audio_frame_view.h"
+
 namespace webrtc {
 
 void CaptureStreamInfo::AddInput(const AudioFrameView<const float>& src) {
-  auto* stream = event_->mutable_stream();
-
   for (int i = 0; i < src.num_channels(); ++i) {
-    const auto& channel_view = src.channel(i);
-    stream->add_input_channel(channel_view.begin(),
-                              sizeof(float) * channel_view.size());
+    AddInputChannel(src.channel(i));
   }
 }
 
-void CaptureStreamInfo::AddOutput(const AudioFrameView<const float>& src) {
+void CaptureStreamInfo::AddInputChannel(MonoView<const float> channel) {
   auto* stream = event_->mutable_stream();
+  stream->add_input_channel(channel.begin(), sizeof(float) * channel.size());
+}
 
+void CaptureStreamInfo::AddOutput(const AudioFrameView<const float>& src) {
   for (int i = 0; i < src.num_channels(); ++i) {
-    const auto& channel_view = src.channel(i);
-    stream->add_output_channel(channel_view.begin(),
-                               sizeof(float) * channel_view.size());
+    AddOutputChannel(src.channel(i));
   }
+}
+
+void CaptureStreamInfo::AddOutputChannel(MonoView<const float> channel) {
+  auto* stream = event_->mutable_stream();
+  stream->add_output_channel(channel.begin(), sizeof(float) * channel.size());
 }
 
 void CaptureStreamInfo::AddInput(const int16_t* const data,

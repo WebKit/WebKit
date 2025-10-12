@@ -50,23 +50,9 @@ extern "C" WK_EXPORT void GPU_SERVICE_INITIALIZER(xpc_connection_t connection, x
 
 void GPU_SERVICE_INITIALIZER(xpc_connection_t connection, xpc_object_t initializerMessage)
 {
-    g_jscConfig.vmCreationDisallowed = true;
-    g_jscConfig.vmEntryDisallowed = true;
-    g_wtfConfig.useSpecialAbortForExtraSecurityImplications = true;
-
-    WTF::initializeMainThread();
-    {
-        JSC::Options::initialize();
-        JSC::Options::AllowUnfinalizedAccessScope scope;
-        JSC::ExecutableAllocator::disableJIT();
-        JSC::Options::useWasm() = false;
-        JSC::Options::notifyOptionsChanged();
-    }
-    WTF::compilerFence();
-
+    WebKit::disableJSC([&] {
 #if ENABLE(GPU_PROCESS)
-    WebKit::XPCServiceInitializer<WebKit::GPUProcess, WebKit::GPUServiceInitializerDelegate>(connection, initializerMessage);
+        WebKit::XPCServiceInitializer<WebKit::GPUProcess, WebKit::GPUServiceInitializerDelegate>(connection, initializerMessage);
 #endif // ENABLE(GPU_PROCESS)
-
-    JSC::Config::finalize();
+    });
 }

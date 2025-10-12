@@ -33,6 +33,7 @@
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
+#import <WebKit/WKErrorPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKScriptMessageHandler.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -48,8 +49,10 @@
 #import <wtf/MonotonicTime.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Scope.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/UUID.h>
 #import <wtf/Vector.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
 
 TEST(NetworkProcess, Entitlements)
@@ -75,9 +78,9 @@ TEST(WebKit, HTTPReferer)
             connection.receiveHTTPRequest([connection, expectedReferer, &done] (Vector<char>&& request) {
                 if (expectedReferer) {
                     auto expectedHeaderField = makeString("Referer: "_s, unsafeSpan(expectedReferer), "\r\n"_s);
-                    EXPECT_TRUE(strnstr(request.data(), expectedHeaderField.utf8().data(), request.size()));
+                    EXPECT_TRUE(contains(request.span(), expectedHeaderField.utf8().span()));
                 } else
-                    EXPECT_FALSE(strnstr(request.data(), "Referer:"_s, request.size()));
+                    EXPECT_FALSE(contains(request.span(), "Referer:"_span));
                 done = true;
             });
         });
@@ -90,10 +93,10 @@ TEST(WebKit, HTTPReferer)
     a5k.append(0);
     Vector<char> a3k(3000, 'a');
     a3k.append(0);
-    NSString *longPath = [NSString stringWithFormat:@"http://webkit.org/%s?asdf", a5k.data()];
-    NSString *shorterPath = [NSString stringWithFormat:@"http://webkit.org/%s?asdf", a3k.data()];
-    NSString *longHost = [NSString stringWithFormat:@"http://webkit.org%s/path", a5k.data()];
-    NSString *shorterHost = [NSString stringWithFormat:@"http://webkit.org%s/path", a3k.data()];
+    NSString *longPath = [NSString stringWithFormat:@"http://webkit.org/%s?asdf", a5k.span().data()];
+    NSString *shorterPath = [NSString stringWithFormat:@"http://webkit.org/%s?asdf", a3k.span().data()];
+    NSString *longHost = [NSString stringWithFormat:@"http://webkit.org%s/path", a5k.span().data()];
+    NSString *shorterHost = [NSString stringWithFormat:@"http://webkit.org%s/path", a3k.span().data()];
     checkReferer([NSURL URLWithString:longPath], "http://webkit.org/");
     checkReferer([NSURL URLWithString:shorterPath], shorterPath.UTF8String);
     checkReferer([NSURL URLWithString:longHost], nullptr);
@@ -258,10 +261,9 @@ TEST(NetworkProcess, CORSPreflightCachePartitioned)
     size_t preflightRequestsReceived { 0 };
     HTTPServer server([&] (Connection connection) {
         connection.receiveHTTPRequest([&, connection] (Vector<char>&& request) {
-            const char* expectedRequestBegin = "OPTIONS / HTTP/1.1\r\n";
-            EXPECT_TRUE(!memcmp(request.data(), expectedRequestBegin, strlen(expectedRequestBegin)));
-            EXPECT_TRUE(strnstr(request.data(), "Origin: http://example.com\r\n", request.size()));
-            EXPECT_TRUE(strnstr(request.data(), "Access-Control-Request-Method: DELETE\r\n", request.size()));
+            EXPECT_TRUE(spanHasPrefix(request.span(), "OPTIONS / HTTP/1.1\r\n"_span));
+            EXPECT_TRUE(contains(request.span(), "Origin: http://example.com\r\n"_span));
+            EXPECT_TRUE(contains(request.span(), "Access-Control-Request-Method: DELETE\r\n"_span));
             
             constexpr auto response =
             "HTTP/1.1 204 No Content\r\n"
@@ -270,9 +272,8 @@ TEST(NetworkProcess, CORSPreflightCachePartitioned)
             "Cache-Control: max-age=604800\r\n\r\n"_s;
             connection.send(response, [&, connection] {
                 connection.receiveHTTPRequest([&, connection] (Vector<char>&& request) {
-                    const char* expectedRequestBegin = "DELETE / HTTP/1.1\r\n";
-                    EXPECT_TRUE(!memcmp(request.data(), expectedRequestBegin, strlen(expectedRequestBegin)));
-                    EXPECT_TRUE(strnstr(request.data(), "Origin: http://example.com\r\n", request.size()));
+                    EXPECT_TRUE(spanHasPrefix(request.span(), "DELETE / HTTP/1.1\r\n"_span));
+                    EXPECT_TRUE(contains(request.span(), "Origin: http://example.com\r\n"_span));
                     constexpr auto response =
                     "HTTP/1.1 200 OK\r\n"
                     "Content-Length: 2\r\n\r\n"
@@ -564,7 +565,7 @@ TEST(_WKDataTask, Basic)
         };
     }];
     Util::run(&done);
-    EXPECT_TRUE(strnstr(secondRequest.data(), "Cookie: testkey=value\r\n", secondRequest.size()));
+    EXPECT_TRUE(contains(secondRequest.span(), "Cookie: testkey=value\r\n"_span));
     EXPECT_WK_STREQ(HTTPServer::parseBody(secondRequest), requestBody);
 
     done = false;
@@ -682,7 +683,7 @@ TEST(_WKDataTask, Cancel)
         task.delegate = delegate.get();
         delegate.get().didReceiveResponse = ^(_WKDataTask *task, NSURLResponse *response, void (^decisionHandler)(_WKDataTaskResponsePolicy)) {
             decisionHandler(_WKDataTaskResponsePolicyAllow);
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(mainDispatchQueueSingleton(), ^{
                 EXPECT_NOT_NULL(task.delegate);
                 [task cancel];
                 EXPECT_NULL(task.delegate);
@@ -841,8 +842,7 @@ TEST(WKWebView, CrossOriginDoubleRedirectAuthentication)
     bool done { false };
 
     auto hasAuthorizationHeaderField = [] (const Vector<char>& request) {
-        const char* field = "Authorization: TestValue\r\n";
-        return memmem(request.data(), request.size(), field, strlen(field));
+        return contains(request.span(), "Authorization: TestValue\r\n"_span);
     };
 
     HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {

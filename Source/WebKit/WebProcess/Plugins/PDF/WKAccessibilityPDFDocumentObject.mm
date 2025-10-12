@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -162,8 +162,8 @@
 {
     if (RefPtr plugin = _pdfPlugin.get()) {
         if (RefPtr activeAnnotation = plugin->activeAnnotation()) {
-            if (WebCore::AXObjectCache* existingCache = plugin->axObjectCache()) {
-                if (RefPtr object = existingCache->getOrCreate(activeAnnotation->element())) {
+            if (CheckedPtr existingCache = plugin->axObjectCache()) {
+                if (RefPtr object = existingCache->exportedGetOrCreate(activeAnnotation->protectedElement().get())) {
                 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                     return [object->wrapper() accessibilityAttributeValue:@"_AXAssociatedPluginParent"];
                 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -225,7 +225,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!protectedSelf->_parent) {
         callOnMainRunLoopAndWait([protectedSelf] {
             if (CheckedPtr axObjectCache = protectedSelf->_pdfPlugin.get()->axObjectCache()) {
-                if (RefPtr pluginAxObject = axObjectCache->getOrCreate(protectedSelf->_pluginElement.get()))
+                if (RefPtr pluginAxObject = axObjectCache->exportedGetOrCreate(RefPtr { protectedSelf->_pluginElement.get() }.get()))
                     protectedSelf->_parent = pluginAxObject->wrapper();
             }
         });
@@ -325,8 +325,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if (!activeAnnotation)
             return;
 
-        if (auto* axObjectCache = protectedSelf->_pdfPlugin.get()->axObjectCache()) {
-            if (RefPtr annotationElementAxObject = axObjectCache->getOrCreate(activeAnnotation->element()))
+        if (CheckedPtr axObjectCache = protectedSelf->_pdfPlugin.get()->axObjectCache()) {
+            if (RefPtr annotationElementAxObject = axObjectCache->exportedGetOrCreate(activeAnnotation->protectedElement().get()))
                 wrapper = annotationElementAxObject->wrapper();
         }
     });

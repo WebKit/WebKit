@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,12 +56,12 @@ RemoteCDMInstanceProxy::RemoteCDMInstanceProxy(RemoteCDMProxy& cdm, Ref<CDMInsta
     , m_logIdentifier(cdm.logIdentifier())
 #endif
 {
-    protectedInstance()->setClient(*this);
+    m_instance->setClient(*this);
 }
 
 RemoteCDMInstanceProxy::~RemoteCDMInstanceProxy()
 {
-    protectedInstance()->clearClient();
+    m_instance->clearClient();
 }
 
 void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String& type, Ref<SharedBuffer>&& initData)
@@ -77,17 +77,17 @@ void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String&
     if (!gpuConnectionToWebProcess)
         return;
 
-    gpuConnectionToWebProcess->protectedConnection()->send(Messages::RemoteCDMInstance::UnrequestedInitializationDataReceived(type, WTFMove(initData)), m_identifier);
+    gpuConnectionToWebProcess->connection().send(Messages::RemoteCDMInstance::UnrequestedInitializationDataReceived(type, WTFMove(initData)), m_identifier);
 }
 
 void RemoteCDMInstanceProxy::initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration& configuration, AllowDistinctiveIdentifiers allowDistinctiveIdentifiers, AllowPersistentState allowPersistentState, CompletionHandler<void(SuccessValue)>&& completion)
 {
-    protectedInstance()->initializeWithConfiguration(configuration, allowDistinctiveIdentifiers, allowPersistentState, WTFMove(completion));
+    m_instance->initializeWithConfiguration(configuration, allowDistinctiveIdentifiers, allowPersistentState, WTFMove(completion));
 }
 
 void RemoteCDMInstanceProxy::setServerCertificate(Ref<SharedBuffer>&& certificate, CompletionHandler<void(SuccessValue)>&& completion)
 {
-    protectedInstance()->setServerCertificate(WTFMove(certificate), WTFMove(completion));
+    m_instance->setServerCertificate(WTFMove(certificate), WTFMove(completion));
 }
 
 void RemoteCDMInstanceProxy::setStorageDirectory(const String& directory)
@@ -104,12 +104,12 @@ void RemoteCDMInstanceProxy::setStorageDirectory(const String& directory)
         return;
 
     if (directory.startsWith(mediaKeysStorageDirectory))
-        protectedInstance()->setStorageDirectory(directory);
+        m_instance->setStorageDirectory(directory);
 }
 
 void RemoteCDMInstanceProxy::createSession(uint64_t logIdentifier, CompletionHandler<void(std::optional<RemoteCDMInstanceSessionIdentifier>)>&& completion)
 {
-    auto privSession = protectedInstance()->createSession();
+    auto privSession = m_instance->createSession();
     if (!privSession || !m_cdm || !m_cdm->factory()) {
         completion(std::nullopt);
         return;
@@ -123,11 +123,6 @@ void RemoteCDMInstanceProxy::createSession(uint64_t logIdentifier, CompletionHan
     auto session = RemoteCDMInstanceSessionProxy::create(m_cdm.get(), privSession.releaseNonNull(), logIdentifier, identifier);
     protectedCdm()->protectedFactory()->addSession(identifier, WTFMove(session));
     completion(identifier);
-}
-
-Ref<WebCore::CDMInstance> RemoteCDMInstanceProxy::protectedInstance() const
-{
-    return m_instance;
 }
 
 std::optional<SharedPreferencesForWebProcess> RemoteCDMInstanceProxy::sharedPreferencesForWebProcess() const

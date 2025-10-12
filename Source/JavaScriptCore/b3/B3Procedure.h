@@ -299,7 +299,7 @@ public:
         if (Options::forceAllFunctionsToUseSIMD())
             return true;
         // The LLInt discovers this value.
-        ASSERT(Options::useWasmLLInt() || Options::useWasmIPInt());
+        ASSERT(Options::useWasmIPInt());
         return m_usesSIMD;
     }
 

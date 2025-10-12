@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,7 @@ private:
     CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);
     CanvasGradient(const FloatPoint& centerPoint, float angleInRadians);
 
-    Ref<Gradient> m_gradient;
+    const Ref<Gradient> m_gradient;
 };
 
 } // namespace WebCore

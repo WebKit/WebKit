@@ -62,7 +62,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
     configuration.shouldBePrivate = creationParameters.privateBrowsing.value_or(false);
 
     if (creationParameters.frame) {
-        CGRect desiredFrame = creationParameters.frame.value();
+        CGRect desiredFrame = creationParameters.frame.value().toCG();
 
 #if PLATFORM(MAC)
         // Window coordinates on macOS have the origin in the bottom-left corner.
@@ -242,7 +242,7 @@ void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdent
             return;
         }
 
-        CGRect desiredFrame = updateParameters.frame.value();
+        CGRect desiredFrame = updateParameters.frame.value().toCG();
 
         if (std::isnan(desiredFrame.size.width))
             desiredFrame.size.width = currentFrame.size.width;

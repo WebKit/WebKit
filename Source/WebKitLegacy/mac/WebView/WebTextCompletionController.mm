@@ -83,10 +83,9 @@ using namespace WebCore;
 - (void)_buildUI
 {
     NSRect scrollFrame = NSMakeRect(0, 0, 100, 100);
-    NSRect tableFrame = NSZeroRect;    
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    tableFrame.size = [NSScrollView contentSizeForFrameSize:scrollFrame.size hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSNoBorder];
-ALLOW_DEPRECATED_DECLARATIONS_END
+    NSRect tableFrame = NSZeroRect;
+    tableFrame.size = [NSScrollView contentSizeForFrameSize:scrollFrame.size horizontalScrollerClass:nil verticalScrollerClass:[NSScroller class] borderType:NSNoBorder
+        controlSize:NSControlSizeRegular scrollerStyle:[NSScroller preferredScrollerStyle]];
     auto column = adoptNS([[NSTableColumn alloc] init]);
     [column setWidth:tableFrame.size.width];
     [column setEditable:NO];
@@ -127,9 +126,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     NSRect windowFrame;
     NSPoint wordStart = topLeft;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    windowFrame.origin = [[_view window] convertBaseToScreen:[_htmlView convertPoint:wordStart toView:nil]];
-ALLOW_DEPRECATED_DECLARATIONS_END
+    windowFrame.origin = [[_view window] convertPointToScreen:[_htmlView convertPoint:wordStart toView:nil]];
     windowFrame.size.height = numberToShow * [_tableView rowHeight] + (numberToShow + 1) * [_tableView intercellSpacing].height;
     windowFrame.origin.y -= windowFrame.size.height;
     NSDictionary *attributes = @{ NSFontAttributeName: [NSFont systemFontOfSize:12.0f] };

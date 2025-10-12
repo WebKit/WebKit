@@ -1,0 +1,4 @@
+
+PASS Test unclosed token
+PASS Test constructor with undefined
+

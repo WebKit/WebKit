@@ -117,15 +117,13 @@ class VideoQualityTestFixtureInterface {
   // Contains objects, that will be injected on different layers of test
   // framework to override the behavior of system parts.
   struct InjectionComponents {
-    InjectionComponents();
-    ~InjectionComponents();
-
     // Simulations of sender and receiver networks. They must either both be
     // null (in which case `config` from Params is used), or both be non-null
     // (in which case `config` from Params must be nullopt).
     std::unique_ptr<NetworkBehaviorInterface> sender_network;
     std::unique_ptr<NetworkBehaviorInterface> receiver_network;
 
+    std::string field_trials;
     std::unique_ptr<FecControllerFactoryInterface> fec_controller_factory;
     std::unique_ptr<VideoEncoderFactory> video_encoder_factory;
     std::unique_ptr<VideoDecoderFactory> video_decoder_factory;
@@ -140,7 +138,7 @@ class VideoQualityTestFixtureInterface {
   virtual void RunWithAnalyzer(const Params& params) = 0;
   virtual void RunWithRenderers(const Params& params) = 0;
 
-  virtual const std::map<uint8_t, webrtc::MediaType>& payload_type_map() = 0;
+  virtual const std::map<uint8_t, MediaType>& payload_type_map() = 0;
 };
 
 }  // namespace webrtc

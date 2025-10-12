@@ -11,11 +11,15 @@
 #include "test/jitter/logging_delay_variation_calculator.h"
 
 #include <algorithm>
+#include <iterator>
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
+#include "api/test/metrics/metric.h"
 #include "api/test/metrics/metrics_logger.h"
+#include "api/units/data_size.h"
 #include "api/units/timestamp.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gtest.h"

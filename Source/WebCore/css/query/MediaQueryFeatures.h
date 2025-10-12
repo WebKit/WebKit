@@ -35,18 +35,6 @@ enum class Category : uint8_t;
 struct ComputedStyleDependencies;
 
 namespace MQ {
-
-// Interface exposed by schemas that can provide a value for the media-progress() function.
-struct MediaProgressProviding {
-    virtual ~MediaProgressProviding();
-
-    virtual AtomString name() const = 0;
-    virtual Calculation::Category category() const = 0;
-    virtual void collectComputedStyleDependencies(ComputedStyleDependencies&) const = 0;
-
-    virtual double valueInCanonicalUnits(const FeatureEvaluationContext&) const = 0;
-};
-
 namespace Features {
 
 const FeatureSchema& animation();
@@ -91,7 +79,6 @@ const FeatureSchema& prefersColorScheme();
 #endif
 
 Vector<const FeatureSchema*> allSchemas();
-Vector<const MediaProgressProviding*> allMediaProgressProvidingSchemas();
 
 } // namespace Features
 } // namespace MQ

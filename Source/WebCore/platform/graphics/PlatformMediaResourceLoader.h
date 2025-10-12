@@ -27,8 +27,8 @@
 
 #if ENABLE(VIDEO)
 
-#include "PolicyChecker.h"
-#include "SharedBuffer.h"
+#include <WebCore/PolicyChecker.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 #include <wtf/Lock.h>

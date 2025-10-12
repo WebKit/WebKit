@@ -428,7 +428,7 @@ public:
 #endif
     }
 
-    void didAssociateFormControls(WebPage*, const Vector<RefPtr<Element>>& elements, WebFrame* frame) override
+    void didAssociateFormControls(WebPage*, const Vector<Ref<Element>>& elements, WebFrame* frame) override
     {
         auto* wkFrame = webkitFrameGetOrCreate(frame);
         if (!m_webPage->priv->formManagerMap.isEmpty()) {
@@ -440,7 +440,7 @@ public:
 #if !ENABLE(2022_GLIB_API)
         GRefPtr<GPtrArray> formElements = adoptGRef(g_ptr_array_sized_new(elements.size()));
         for (size_t i = 0; i < elements.size(); ++i)
-            g_ptr_array_add(formElements.get(), WebKit::kit(elements[i].get()));
+            g_ptr_array_add(formElements.get(), WebKit::kit(elements[i].ptr()));
 
         g_signal_emit(m_webPage, signals[FORM_CONTROLS_ASSOCIATED], 0, formElements.get());
         g_signal_emit(m_webPage, signals[FORM_CONTROLS_ASSOCIATED_FOR_FRAME], 0, formElements.get(), wkFrame);

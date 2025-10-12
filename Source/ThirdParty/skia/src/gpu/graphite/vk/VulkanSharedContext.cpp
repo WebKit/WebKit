@@ -99,6 +99,7 @@ sk_sp<SharedContext> VulkanSharedContext::Make(const VulkanBackendContext& conte
                                                         std::move(interface),
                                                         std::move(memoryAllocator),
                                                         std::move(caps),
+                                                        options.fExecutor,
                                                         options.fUserDefinedKnownRuntimeEffects));
 }
 
@@ -107,19 +108,62 @@ VulkanSharedContext::VulkanSharedContext(
                 sk_sp<const skgpu::VulkanInterface> interface,
                 sk_sp<skgpu::VulkanMemoryAllocator> memoryAllocator,
                 std::unique_ptr<const VulkanCaps> caps,
+                SkExecutor* executor,
                 SkSpan<sk_sp<SkRuntimeEffect>> userDefinedKnownRuntimeEffects)
-        : SharedContext(std::move(caps), BackendApi::kVulkan, userDefinedKnownRuntimeEffects)
+        : SharedContext(std::move(caps),
+                        BackendApi::kVulkan,
+                        executor,
+                        userDefinedKnownRuntimeEffects)
         , fInterface(std::move(interface))
         , fMemoryAllocator(std::move(memoryAllocator))
         , fPhysDevice(backendContext.fPhysicalDevice)
         , fDevice(backendContext.fDevice)
         , fQueueIndex(backendContext.fGraphicsQueueIndex)
         , fDeviceLostContext(backendContext.fDeviceLostContext)
-        , fDeviceLostProc(backendContext.fDeviceLostProc) {}
+        , fDeviceLostProc(backendContext.fDeviceLostProc) {
+    fPipelineCache = this->createPipelineCache();
+    fThreadSafeResourceProvider = std::make_unique<VulkanThreadSafeResourceProvider>(
+        this->makeResourceProvider(&fSingleOwner,
+                                   SK_InvalidGenID,
+                                   kThreadedSafeResourceBudget));
+}
 
 VulkanSharedContext::~VulkanSharedContext() {
+    if (fPipelineCache != VK_NULL_HANDLE) {
+        VULKAN_CALL(this->interface(),
+                    DestroyPipelineCache(this->device(),
+                                         fPipelineCache,
+                                         nullptr));
+        fPipelineCache = VK_NULL_HANDLE;
+    }
+    fThreadSafeResourceProvider.reset();
+
     // need to clear out resources before the allocator is removed
     this->globalCache()->deleteResources();
+}
+
+VkPipelineCache VulkanSharedContext::createPipelineCache() {
+    VkPipelineCacheCreateInfo createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+    createInfo.initialDataSize = 0;
+    createInfo.pInitialData = nullptr;
+    VkResult result;
+    VkPipelineCache pipelineCache = VK_NULL_HANDLE;
+    VULKAN_CALL_RESULT(this,
+                       result,
+                       CreatePipelineCache(this->device(),
+                                           &createInfo,
+                                           nullptr,
+                                           &pipelineCache));
+    if (VK_SUCCESS != result) {
+        return VK_NULL_HANDLE;
+    }
+
+    return pipelineCache;
+}
+
+VulkanThreadSafeResourceProvider* VulkanSharedContext::threadSafeResourceProvider() const {
+    return static_cast<VulkanThreadSafeResourceProvider*>(fThreadSafeResourceProvider.get());
 }
 
 std::unique_ptr<ResourceProvider> VulkanSharedContext::makeResourceProvider(
@@ -131,6 +175,22 @@ std::unique_ptr<ResourceProvider> VulkanSharedContext::makeResourceProvider(
                                        singleOwner,
                                        recorderID,
                                        resourceBudget));
+}
+
+sk_sp<GraphicsPipeline> VulkanSharedContext::createGraphicsPipeline(
+        const RuntimeEffectDictionary* runtimeDict,
+        const UniqueKey& pipelineKey,
+        const GraphicsPipelineDesc& pipelineDesc,
+        const RenderPassDesc& renderPassDesc,
+        SkEnumBitMask<PipelineCreationFlags> pipelineCreationFlags,
+        uint32_t compilationID) {
+    return VulkanGraphicsPipeline::Make(this,
+                                        runtimeDict,
+                                        pipelineKey,
+                                        pipelineDesc,
+                                        renderPassDesc,
+                                        pipelineCreationFlags,
+                                        compilationID);
 }
 
 bool VulkanSharedContext::checkVkResult(VkResult result) const {

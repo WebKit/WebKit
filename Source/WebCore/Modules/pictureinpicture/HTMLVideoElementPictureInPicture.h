@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2019 Carlos Eduardo Ramalho <cadubentzen@gmail.com>.
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,8 @@
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
 
-#include "PictureInPictureObserver.h"
-#include "Supplementable.h"
+#include <WebCore/PictureInPictureObserver.h>
+#include <WebCore/Supplementable.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
@@ -85,7 +85,7 @@ private:
     RefPtr<DeferredPromise> m_exitPictureInPicturePromise;
 
 #if !RELEASE_LOG_DISABLED
-    Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
 #endif
 };

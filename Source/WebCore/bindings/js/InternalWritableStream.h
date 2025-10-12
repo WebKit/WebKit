@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class Exception;
 template<typename> class ExceptionOr;
 
 class InternalWritableStream final : public DOMGuarded<JSC::JSObject> {
@@ -48,6 +49,12 @@ public:
 
     void closeIfPossible();
     void errorIfPossible(Exception&&);
+
+    JSC::JSValue abort(JSC::JSGlobalObject&, JSC::JSValue);
+    String state(JSC::JSGlobalObject& globalObject) const;
+    bool closeQueuedOrInFlight();
+
+    ExceptionOr<JSC::JSValue> storedError() const;
 
 private:
     InternalWritableStream(JSDOMGlobalObject& globalObject, JSC::JSObject& jsObject)

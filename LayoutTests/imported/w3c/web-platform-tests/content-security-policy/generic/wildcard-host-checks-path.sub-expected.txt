@@ -1,4 +1,0 @@
-
-
-PASS Test that using a wildcard in the host component will still check for a match in the path component
-

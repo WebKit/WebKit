@@ -115,6 +115,8 @@ private:
     void animationAttributeChanged() override;
     void setAttributeType(const AtomString&);
 
+    bool isSVGAnimationElement() const final { return true; }
+
     virtual bool setFromAndToValues(const String& fromString, const String& toString) = 0;
     virtual bool setFromAndByValues(const String& fromString, const String& byString) = 0;
     virtual bool setToAtEndOfDurationValue(const String& toAtEndOfDurationString) = 0;
@@ -147,3 +149,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimationElement)
+    static bool isType(const WebCore::SVGElement& element) { return element.isSVGAnimationElement(); }
+SPECIALIZE_TYPE_TRAITS_END()

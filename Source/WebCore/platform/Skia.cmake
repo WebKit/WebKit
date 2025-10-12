@@ -20,6 +20,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/skia/SkiaRecordingResult.h
     platform/graphics/skia/SkiaReplayCanvas.h
     platform/graphics/skia/SkiaSpanExtras.h
+    platform/graphics/skia/SkiaSystemFallbackFontCache.h
 )
 
 list(APPEND WebCore_LIBRARIES

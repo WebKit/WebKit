@@ -34,11 +34,11 @@
 
 namespace PAL {
 
-const std::array<std::pair<uint16_t, UChar>, 7724>& jis0208();
-const std::array<std::pair<uint16_t, UChar>, 6067>& jis0212();
+const std::array<std::pair<uint16_t, char16_t>, 7724>& jis0208();
+const std::array<std::pair<uint16_t, char16_t>, 6067>& jis0212();
 const std::array<std::pair<uint16_t, char32_t>, 18590>& big5();
-const std::array<std::pair<uint16_t, UChar>, 17048>& eucKR();
-const std::array<UChar, 23940>& gb18030();
+const std::array<std::pair<uint16_t, char16_t>, 17048>& eucKR();
+const std::array<char16_t, 23940>& gb18030();
 
 void checkEncodingTableInvariants();
 

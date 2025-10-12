@@ -3,12 +3,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// MultiviewPerfTest:
+// MultiviewPerf.cpp:
 //   Performance tests for multiview rendering.
 //   - MultiviewCPUBoundBenchmark issues many draw calls and state changes to stress the CPU.
 //   - MultiviewGPUBoundBenchmark draws half a million quads with multiple attributes per vertex in
 //   order to stress the GPU's memory system.
 //
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
 
 #include "ANGLEPerfTest.h"
 #include "common/vector_utils.h"

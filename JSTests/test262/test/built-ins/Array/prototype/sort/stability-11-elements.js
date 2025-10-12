@@ -11,6 +11,7 @@ info: |
   The array length of 11 was chosen because V8 used an unstable
   QuickSort for arrays with more than 10 elements until v7.0 (September
   2018). https://v8.dev/blog/array-sort
+features: [stable-array-sort]
 ---*/
 
 const array = [

@@ -51,4 +51,21 @@ UserScript::UserScript(String&& source, URL&& url, Vector<String>&& allowlist, V
 {
 }
 
+String UserScript::debugDescription() const
+{
+    String urlString = m_url.string();
+    if (!urlString.isEmpty() && !urlString.startsWith("user-script:"_s))
+        return urlString;
+
+    StringView view { m_source };
+    auto truncated = view.left(64);
+    if (size_t pos = truncated.find('\n'); pos != notFound) {
+        if (truncated.startsWith("//# sourceURL="_s))
+            truncated = truncated.substring(14, pos);
+        else
+            truncated = truncated.substring(0, pos);
+    }
+    return truncated.toString();
+}
+
 } // namespace WebCore

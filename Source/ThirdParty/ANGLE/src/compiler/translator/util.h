@@ -56,7 +56,10 @@ InterpolationType GetFieldInterpolationType(TQualifier qualifier);
 // 3.10 section 4.1.9.
 ImmutableString ArrayString(const TType &type);
 
-ImmutableString GetTypeName(const TType &type, ShHashFunction64 hashFunction, NameMap *nameMap);
+ImmutableString GetTypeName(const TType &type,
+                            char prefix,
+                            ShHashFunction64 hashFunction,
+                            NameMap *nameMap);
 
 TType GetShaderVariableBasicType(const sh::ShaderVariable &var);
 

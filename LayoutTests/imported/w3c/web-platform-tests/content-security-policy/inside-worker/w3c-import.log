@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-report-only.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-script-src.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-script-src.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-worker-src.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/serviceworker-connect-src.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/serviceworker-report-only.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/serviceworker-script-src.https.sub.html

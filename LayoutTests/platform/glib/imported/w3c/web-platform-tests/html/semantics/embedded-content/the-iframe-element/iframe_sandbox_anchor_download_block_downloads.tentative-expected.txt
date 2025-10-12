@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: Not allowed to download due to sandboxing
-CONSOLE MESSAGE: Not allowed to download due to sandboxing
-CONSOLE MESSAGE: Not allowed to download due to sandboxing
 
 
 PASS <a download> triggered download in sandbox is blocked.

@@ -42,7 +42,7 @@ class CCallHelpers;
 namespace Wasm {
 
 struct CallInformation;
-class JSEntrypointCallee;
+class JSToWasmCallee;
 class Module;
 
 MacroAssemblerCodeRef<JITThunkPtrTag> createJSToWasmJITShared();

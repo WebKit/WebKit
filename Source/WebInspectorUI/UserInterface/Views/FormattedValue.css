@@ -43,7 +43,7 @@
 }
 
 .formatted-string, .formatted-regexp {
-    white-space: pre;
+    white-space: pre-wrap;
     unicode-bidi: isolate;
 }
 
@@ -67,6 +67,10 @@
     color: hsl(0, 0%, 50%);
 }
 
+.formatted-node, .formatted-node-preview {
+    white-space: wrap;
+}
+
 .formatted-node > .tree-outline.dom {
     display: block !important;
     padding: 0;
@@ -76,6 +80,7 @@
 
 .formatted-node > .tree-outline.dom li {
     -webkit-user-select: none !important;
+    white-space: wrap;
 }
 
 .formatted-node > .tree-outline.dom li.selected .selection-area {

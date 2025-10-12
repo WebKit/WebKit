@@ -29,4 +29,5 @@ enum AppStorageKeys {
     static let mediaCaptureAuthorization = "mediaCaptureAuthorization2"
     static let scrollBounceBehaviorBasedOnSize = "scrollBounceBehaviorBasedOnSize"
     static let backgroundHidden = "backgroundHidden"
+    static let showColorInTabBar = "showColorInTabBar"
 }

@@ -32,6 +32,7 @@
 
     [URL, ConvertNullStringTo=Null, RaisesException] DOMString getURL(DOMString resourcePath);
     [NSDictionary] any getManifest();
+    DOMString getVersion();
     double getFrameId(any target);
 
     [MainWorldOnly] void getPlatformInfo([Optional, CallbackHandler] function callback);

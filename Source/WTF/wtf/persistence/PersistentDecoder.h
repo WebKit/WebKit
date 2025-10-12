@@ -35,7 +35,7 @@ namespace WTF::Persistence {
 template<typename> struct Coder;
 
 class Decoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Decoder);
 public:
     WTF_EXPORT_PRIVATE Decoder(std::span<const uint8_t>);
     WTF_EXPORT_PRIVATE ~Decoder();

@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "CSSRule.h"
+#include <WebCore/CSSRule.h>
 
 namespace WebCore {
 
@@ -52,3 +52,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSPageRule)
+    static bool isType(const WebCore::CSSRule& rule) { return rule.styleRuleType() == WebCore::StyleRuleType::Page; }
+SPECIALIZE_TYPE_TRAITS_END()

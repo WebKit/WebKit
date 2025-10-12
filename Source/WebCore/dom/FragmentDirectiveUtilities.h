@@ -28,6 +28,10 @@
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class ContainerNode;
@@ -39,6 +43,8 @@ struct ParsedTextDirective {
     String endText;
     String suffix;
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, const ParsedTextDirective&);
 
 namespace FragmentDirectiveUtilities {
 

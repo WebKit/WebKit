@@ -37,7 +37,8 @@ using namespace WebKit;
 - (NSObject *)_web_createTarget
 {
     String string = RefPtr { downcast<API::String>(&self._apiObject) }->string();
-    return bridge_cast(string.createCFString().leakRef());
+    // FIXME(rdar://162218496): SaferCPP should notice that our API is NS_RETURNS_RETAINED.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return bridge_cast(string.createCFString().leakRef());
 }
 
 - (Class)superclass

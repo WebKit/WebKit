@@ -10,6 +10,7 @@
 
 #include <jni.h>
 
+#include "rtc_base/checks.h"
 #include "rtc_base/ssl_adapter.h"
 #include "sdk/android/native_api/base/init.h"
 
@@ -17,12 +18,12 @@ namespace webrtc_examples {
 
 extern "C" jint JNIEXPORT JNICALL JNI_OnLoad(JavaVM* jvm, void* reserved) {
   webrtc::InitAndroid(jvm);
-  RTC_CHECK(rtc::InitializeSSL()) << "Failed to InitializeSSL()";
+  RTC_CHECK(webrtc::InitializeSSL()) << "Failed to InitializeSSL()";
   return JNI_VERSION_1_6;
 }
 
 extern "C" void JNIEXPORT JNICALL JNI_OnUnLoad(JavaVM* jvm, void* reserved) {
-  RTC_CHECK(rtc::CleanupSSL()) << "Failed to CleanupSSL()";
+  RTC_CHECK(webrtc::CleanupSSL()) << "Failed to CleanupSSL()";
 }
 
 }  // namespace webrtc_examples

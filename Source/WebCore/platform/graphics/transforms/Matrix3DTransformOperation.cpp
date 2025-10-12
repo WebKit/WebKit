@@ -54,28 +54,22 @@ static Ref<TransformOperation> createOperation(TransformationMatrix& to, Transfo
     return Matrix3DTransformOperation::create(to);
 }
 
-Ref<TransformOperation> Matrix3DTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
+Ref<TransformOperation> Matrix3DTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity) const
 {
     if (!sharedPrimitiveType(from))
-        return *this;
+        return const_cast<Matrix3DTransformOperation&>(*this);
 
     // Convert the TransformOperations into matrices
-    FloatSize size;
     TransformationMatrix fromT;
     TransformationMatrix toT;
     if (from)
-        from->apply(fromT, size);
+        from->apply(fromT);
 
-    apply(toT, size);
+    apply(toT);
 
     if (blendToIdentity)
         return createOperation(fromT, toT, context);
     return createOperation(toT, fromT, context);
-}
-
-bool Matrix3DTransformOperation::isRepresentableIn2D() const
-{
-    return m_matrix.isAffine();
 }
 
 void Matrix3DTransformOperation::dump(TextStream& ts) const

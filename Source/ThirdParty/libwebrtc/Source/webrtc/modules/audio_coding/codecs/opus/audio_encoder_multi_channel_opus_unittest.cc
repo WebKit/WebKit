@@ -10,7 +10,14 @@
 
 #include "api/audio_codecs/opus/audio_encoder_multi_channel_opus.h"
 
+#include <memory>
+#include <optional>
+#include <vector>
+
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/audio_format.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 using ::testing::NiceMock;

@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "Node.h"
-#include "QualifiedName.h"
+#include <WebCore/Node.h>
+#include <WebCore/QualifiedName.h>
 
 namespace WebCore {
 
@@ -70,7 +70,8 @@ private:
 
     ExceptionOr<void> setPrefix(const AtomString&) final;
 
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) final;
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const final;
+    SerializedNode serializeNode(CloningOperation) const final;
 
     bool isAttributeNode() const final { return true; }
 

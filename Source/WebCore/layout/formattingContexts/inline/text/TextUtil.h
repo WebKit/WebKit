@@ -25,10 +25,11 @@
 
 #pragma once
 
-#include "Font.h"
-#include "InlineItem.h"
-#include "InlineLine.h"
-#include "LayoutUnits.h"
+#include <WebCore/Font.h>
+#include <WebCore/InlineItem.h>
+#include <WebCore/InlineLine.h>
+#include <WebCore/LayoutUnits.h>
+#include <WebCore/TextSpacing.h>
 #include <wtf/Range.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/TextBreakIterator.h>

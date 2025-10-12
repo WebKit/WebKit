@@ -11,10 +11,7 @@
 #ifndef MODULES_DESKTOP_CAPTURE_WIN_WGC_DESKTOP_FRAME_H_
 #define MODULES_DESKTOP_CAPTURE_WIN_WGC_DESKTOP_FRAME_H_
 
-#include <d3d11.h>
-#include <wrl/client.h>
-
-#include <memory>
+#include <cstdint>
 #include <vector>
 
 #include "modules/desktop_capture/desktop_frame.h"

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2020 Igalia S.L.
  * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,9 +37,9 @@ class RenderThemeAdwaita : public RenderTheme {
 public:
     virtual ~RenderThemeAdwaita();
 
-    bool canCreateControlPartForRenderer(const RenderObject&) const final;
-    bool canCreateControlPartForBorderOnly(const RenderObject&) const final;
-    bool canCreateControlPartForDecorations(const RenderObject&) const final;
+    bool canCreateControlPartForRenderer(const RenderElement&) const final;
+    bool canCreateControlPartForBorderOnly(const RenderElement&) const final;
+    bool canCreateControlPartForDecorations(const RenderElement&) const final;
 
     bool isControlStyled(const RenderStyle&) const final;
 
@@ -48,10 +49,11 @@ private:
     String extraDefaultStyleSheet() final;
 #if ENABLE(VIDEO)
     Vector<String, 2> mediaControlsScripts() final;
-    Vector<String> mediaControlsStyleSheets(const HTMLMediaElement&) final;
+    Vector<String, 2> mediaControlsStyleSheets(const HTMLMediaElement&) final;
 #endif
 
 #if ENABLE(VIDEO)
+    RefPtr<FragmentedSharedBuffer> mediaControlsImageDataForIconNameAndType(const String&, const String&) override;
     String mediaControlsBase64StringForIconNameAndType(const String&, const String&) final;
     String mediaControlsFormattedStringForDuration(double) final;
 
@@ -59,7 +61,7 @@ private:
 #endif // ENABLE(VIDEO)
 
     bool supportsHover() const final { return true; }
-    bool supportsFocusRing(const RenderObject&, const RenderStyle&) const final;
+    bool supportsFocusRing(const RenderElement&, const RenderStyle&) const final;
     bool supportsSelectionForegroundColors(OptionSet<StyleColorOptions>) const final { return false; }
     bool supportsListBoxSelectionForegroundColors(OptionSet<StyleColorOptions>) const final { return true; }
     bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
@@ -82,7 +84,7 @@ private:
     bool popsMenuBySpaceOrReturn() const final { return true; }
     void adjustMenuListStyle(RenderStyle&, const Element*) const override;
     void adjustMenuListButtonStyle(RenderStyle&, const Element*) const override;
-    LengthBox popupInternalPaddingBox(const RenderStyle&) const final;
+    Style::PaddingBox popupInternalPaddingBox(const RenderStyle&) const final;
 
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
     IntRect progressBarRectForBounds(const RenderProgress&, const IntRect&) const final;
@@ -94,6 +96,10 @@ private:
     IntSize sliderTickSize() const final;
     int sliderTickOffsetFromTrackCenter() const final;
     void adjustListButtonStyle(RenderStyle&, const Element*) const final;
+
+    Style::PreferredSizePair controlSize(StyleAppearance, const FontCascade&, const Style::PreferredSizePair&, float) const final;
+    Style::MinimumSizePair minimumControlSize(StyleAppearance, const FontCascade&, const Style::MinimumSizePair&, float zoomFactor) const final;
+    Style::LineWidthBox controlBorder(StyleAppearance, const FontCascade&, const Style::LineWidthBox&, float, const Element*) const final;
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<Seconds> caretBlinkInterval() const override;

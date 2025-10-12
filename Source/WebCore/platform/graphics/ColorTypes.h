@@ -25,11 +25,12 @@
 
 #pragma once
 
-#include "ColorComponents.h"
-#include "ColorMatrix.h"
-#include "ColorModels.h"
-#include "ColorTransferFunctions.h"
+#include <WebCore/ColorComponents.h>
+#include <WebCore/ColorMatrix.h>
+#include <WebCore/ColorModels.h>
+#include <WebCore/ColorTransferFunctions.h>
 #include <optional>
+#include <type_traits>
 
 namespace WebCore {
 
@@ -136,15 +137,16 @@ template<typename ColorType, typename T, typename Alpha> constexpr auto makeFrom
 
 #if ASSERT_ENABLED
 
-template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename ColorType::ComponentType, float>>* = nullptr>
+template<typename ColorType>
 constexpr void assertInRange(ColorType color)
+    requires std::same_as<typename ColorType::ComponentType, float>
 {
     auto components = asColorComponents(color.unresolved());
     for (unsigned i = 0; i < 3; ++i) {
         if (isNaNConstExpr(components[i]))
             continue;
-        ASSERT_WITH_MESSAGE(components[i] >= ColorType::Model::componentInfo[i].min, "Component at index %d is %f and is less than the allowed minimum %f", i,  components[i], ColorType::Model::componentInfo[i].min);
-        ASSERT_WITH_MESSAGE(components[i] <= ColorType::Model::componentInfo[i].max, "Component at index %d is %f and is greater than the allowed maximum %f", i,  components[i], ColorType::Model::componentInfo[i].max);
+        ASSERT_WITH_MESSAGE(components[i] >= ColorType::Model::componentInfo[i].min, "Component at index %d is %f and is less than the allowed minimum %f", i, components[i], ColorType::Model::componentInfo[i].min);
+        ASSERT_WITH_MESSAGE(components[i] <= ColorType::Model::componentInfo[i].max, "Component at index %d is %f and is greater than the allowed maximum %f", i, components[i], ColorType::Model::componentInfo[i].max);
     }
     if (!isNaNConstExpr(components[3])) {
         ASSERT_WITH_MESSAGE(components[3] >= AlphaTraits<typename ColorType::ComponentType>::transparent, "Alpha is %f and is less than the allowed minimum (transparent) %f", components[3], AlphaTraits<typename ColorType::ComponentType>::transparent);
@@ -152,8 +154,9 @@ constexpr void assertInRange(ColorType color)
     }
 }
 
-template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename ColorType::ComponentType, uint8_t>>* = nullptr>
+template<typename ColorType>
 constexpr void assertInRange(ColorType)
+    requires std::same_as<typename ColorType::ComponentType, uint8_t>
 {
 }
 
@@ -165,8 +168,11 @@ template<typename T> constexpr void assertInRange(T)
 
 #endif
 
-template<typename, typename = void> inline constexpr bool IsConvertibleToColorComponents = false;
-template<typename T> inline constexpr bool IsConvertibleToColorComponents<T, std::void_t<decltype(asColorComponents(std::declval<T>().unresolved()))>> = true;
+template<typename T>
+concept IsConvertibleToColorComponents = requires(T t)
+{
+    asColorComponents(t.unresolved());
+};
 
 template<typename, typename = void> inline constexpr bool HasComponentTypeMember = false;
 template<typename T> inline constexpr bool HasComponentTypeMember<T, std::void_t<typename T::ComponentType>> = true;
@@ -176,7 +182,7 @@ template<typename T, typename U> inline constexpr bool HasComponentTypeValue<T, 
 template<typename T, typename U> inline constexpr bool HasComponentType = HasComponentTypeValue<T, U, HasComponentTypeMember<T>>;
 
 template<typename T> inline constexpr bool IsColorType = IsConvertibleToColorComponents<T> && HasComponentTypeMember<T>;
-template<typename T, typename U> inline constexpr bool IsColorTypeWithComponentType = IsConvertibleToColorComponents<T> && HasComponentType<T, U>;
+template<typename T, typename U> concept IsColorTypeWithComponentType = IsConvertibleToColorComponents<T> && HasComponentType<T, U>;
 
 template<template<typename> class ColorType, typename Replacement> struct ColorTypeReplacingComponentTypeHelper { using type = ColorType<Replacement>; };
 template<template<typename> class ColorType, typename Replacement> using ColorTypeReplacingComponentType = typename ColorTypeReplacingComponentTypeHelper<ColorType, Replacement>::type;
@@ -194,13 +200,11 @@ template<typename Parent> struct ColorWithAlphaHelper {
     }
 };
 
-
-template<typename ColorType, typename std::enable_if_t<IsConvertibleToColorComponents<ColorType>>* = nullptr>
+template<IsConvertibleToColorComponents ColorType>
 constexpr bool operator==(const ColorType& a, const ColorType& b)
 {
     return asColorComponents(a.unresolved()) == asColorComponents(b.unresolved());
 }
-
 
 // MARK: - RGB Color Types.
 

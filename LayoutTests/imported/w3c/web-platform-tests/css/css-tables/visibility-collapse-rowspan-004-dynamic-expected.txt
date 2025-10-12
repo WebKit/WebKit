@@ -25,9 +25,9 @@ dddd
 PASS spanning row visibility:collapse doesn't change table width
 PASS when third row is collapsed, first row stays the same height
 PASS when third row is collapsed, second row stays the same height
-FAIL third row visibility:collapse makes row height 0 assert_equals: third row visibility:collapse makes row height 0 expected 0 but got 29
+PASS third row visibility:collapse makes row height 0
 PASS when third row is collapsed, fourth row stays the same height
-FAIL spanning cell shrinks to sum of remaining three rows' height assert_equals: spanning cell shrinks to sum of remaining three rows' height expected 116 but got 145
+PASS spanning cell shrinks to sum of remaining three rows' height
 PASS when third row is visible, first row stays the same height
 PASS when third row is visible, second row stays the same height
 PASS when third row is visible, third row stays the same height
@@ -37,7 +37,7 @@ PASS when third row is visible, spanning cell stays the same height
 PASS (2nd collapse) spanning row visibility:collapse doesn't change table width
 PASS when third row is collapsed again, first row stays the same height
 PASS when third row is collapsed again, second row stays the same height
-FAIL (2nd collapse) third row visibility:collapse makes row height 0 assert_equals: (2nd collapse) third row visibility:collapse makes row height 0 expected 0 but got 29
+PASS (2nd collapse) third row visibility:collapse makes row height 0
 PASS when third row is collapsed again, fourth row stays the same height
-FAIL (2nd collapse) spanning cell shrinks to sum of remaining three rows' height assert_equals: (2nd collapse) spanning cell shrinks to sum of remaining three rows' height expected 116 but got 145
+PASS (2nd collapse) spanning cell shrinks to sum of remaining three rows' height
 

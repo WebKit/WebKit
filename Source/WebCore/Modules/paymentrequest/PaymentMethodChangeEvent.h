@@ -62,11 +62,15 @@ private:
     PaymentMethodChangeEvent(const AtomString& type, Init&&);
     PaymentMethodChangeEvent(const AtomString& type, const String& methodName, MethodDetailsFunction&&);
 
+    bool isPaymentMethodChangeEvent() const final { return true; }
+
     String m_methodName;
     MethodDetailsType m_methodDetails;
     JSValueInWrappedObject m_cachedMethodDetails;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENT(PaymentMethodChangeEvent)
 
 #endif // ENABLE(PAYMENT_REQUEST)

@@ -10,9 +10,9 @@
 #ifndef MODULES_VIDEO_CODING_CODECS_AV1_AV1_SVC_CONFIG_H_
 #define MODULES_VIDEO_CODING_CODECS_AV1_AV1_SVC_CONFIG_H_
 
-#include <vector>
 
 #include "absl/container/inlined_vector.h"
+#include "api/video_codecs/scalability_mode.h"
 #include "api/video_codecs/video_codec.h"
 
 namespace webrtc {

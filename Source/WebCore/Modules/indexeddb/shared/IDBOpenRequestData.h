@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "IDBDatabaseIdentifier.h"
-#include "IDBResourceIdentifier.h"
-#include "IndexedDB.h"
+#include <WebCore/IDBDatabaseIdentifier.h>
+#include <WebCore/IDBResourceIdentifier.h>
+#include <WebCore/IndexedDB.h>
 #include <wtf/ArgumentCoder.h>
 
 namespace WebCore {

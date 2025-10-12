@@ -27,8 +27,8 @@
 
 #if ENABLE(WRITING_TOOLS)
 
-#include "AttributedString.h"
-#include "CharacterRange.h"
+#include <WebCore/AttributedString.h>
+#include <WebCore/CharacterRange.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

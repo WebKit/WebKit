@@ -83,7 +83,7 @@ namespace OptionsHelper {
 struct Metadata {
     // This struct does not need to be TZONE_ALLOCATED because it is only used for transient memory
     // during Options initialization, and will not be re-allocated thereafter. See comment above.
-    WTF_MAKE_FAST_ALLOCATED(Metadata);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Metadata);
 public:
     OptionsStorage defaults;
 };
@@ -384,9 +384,6 @@ bool Options::isAvailable(Options::ID id, Options::Availability availability)
         return !!LLINT_TRACING;
     if (id == traceLLIntSlowPathID)
         return !!LLINT_TRACING;
-    if (id == traceWasmLLIntExecutionID)
-        return !!LLINT_TRACING;
-
     if (id == validateVMEntryCalleeSavesID)
         return !!ASSERT_ENABLED;
     return false;
@@ -661,7 +658,6 @@ void Options::setAllJITCodeValidations(bool value)
 static inline void disableAllWasmJITOptions()
 {
     Options::useLLInt() = true;
-    Options::useWasmJIT() = false;
     Options::useBBQJIT() = false;
     Options::useOMGJIT() = false;
 
@@ -678,7 +674,6 @@ static inline void disableAllWasmOptions()
 
     Options::useWasm() = false;
     Options::useWasmIPInt() = false;
-    Options::useWasmLLInt() = false;
     Options::failToCompileWasmCode() = true;
 
     Options::useWasmFastMemory() = false;
@@ -694,7 +689,6 @@ static inline void disableAllJITOptions()
 {
     Options::useLLInt() = true;
     Options::useJIT() = false;
-    Options::useWasmJIT() = false;
     disableAllWasmJITOptions();
 
     Options::useBaselineJIT() = false;
@@ -708,7 +702,6 @@ static inline void disableAllJITOptions()
     Options::usePollingTraps() = true;
 
     Options::dumpDisassembly() = false;
-    Options::asyncDisassembly() = false;
     Options::dumpBaselineDisassembly() = false;
     Options::dumpDFGDisassembly() = false;
     Options::dumpFTLDisassembly() = false;
@@ -773,7 +766,6 @@ void Options::notifyOptionsChanged()
 
 #if !ENABLE(JIT)
     Options::useJIT() = false;
-    Options::useWasmJIT() = false;
 #endif
 #if !ENABLE(CONCURRENT_JS)
     Options::useConcurrentJIT() = false;
@@ -821,12 +813,16 @@ void Options::notifyOptionsChanged()
         disableAllWasmOptions();
 
     if (!Options::useJIT())
-        Options::useWasmJIT() = false;
-    if (!Options::useWasmJIT())
         disableAllWasmJITOptions();
 
-    if (!Options::useWasmLLInt() && !Options::useWasmIPInt())
+    if (!Options::useWasmIPInt())
         Options::thresholdForBBQOptimizeAfterWarmUp() = 0; // Trigger immediate BBQ tier up.
+
+#if CPU(ARM_THUMB2)
+    // WasmIPInt is not supported on ARM32, so disable wasm if BBQJIT is disabled.
+    if (Options::useWasm() && !Options::useBBQJIT())
+        Options::useWasm() = false;
+#endif
 
     // At initialization time, we may decide that useJIT should be false for any
     // number of reasons (including failing to allocate JIT memory), and therefore,
@@ -848,7 +844,6 @@ void Options::notifyOptionsChanged()
         }
 
         if (Options::dumpDisassembly()
-            || Options::asyncDisassembly()
             || Options::dumpBaselineDisassembly()
             || Options::dumpDFGDisassembly()
             || Options::dumpFTLDisassembly()
@@ -891,7 +886,7 @@ void Options::notifyOptionsChanged()
         if (Options::forceAllFunctionsToUseSIMD() && !Options::useWasmSIMD())
             Options::forceAllFunctionsToUseSIMD() = false;
 
-        if (Options::useWasmSIMD() && !(Options::useWasmLLInt() || Options::useWasmIPInt())) {
+        if (Options::useWasmSIMD() && !Options::useWasmIPInt()) {
             // The LLInt is responsible for discovering if functions use SIMD.
             // If we can't run using it, then we should be conservative.
             Options::forceAllFunctionsToUseSIMD() = true;
@@ -981,7 +976,7 @@ void Options::notifyOptionsChanged()
         // FIXME: Should support for OSR exit as well.
     }
 
-#if CPU(ADDRESS32) || PLATFORM(PLAYSTATION)
+#if CPU(ADDRESS32) || PLATFORM(PLAYSTATION) || OS(WINDOWS)
     Options::useWasmFastMemory() = false;
 #endif
 
@@ -1003,13 +998,13 @@ inline bool strncasecmp(const char* str1, const char* str2, size_t n)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-void Options::initialize()
+void Options::initializeWithOptionsCustomization(const ScopedLambda<void()>& optionsCustomizationCallback)
 {
     static std::once_flag initializeOptionsOnceFlag;
     
     std::call_once(
         initializeOptionsOnceFlag,
-        [] {
+        [&] {
             AllowUnfinalizedAccessScope scope;
 
             // Sanity check that options address computation is working.
@@ -1077,6 +1072,9 @@ void Options::initialize()
                 (hwPhysicalCPUMax() >= 4) && (hwL3CacheSize() >= static_cast<int64_t>(6 * MB));
 #endif
 
+            // Client gets the last word on what options they want to override.
+            optionsCustomizationCallback();
+
             // No more options changes after this point. notifyOptionsChanged() will
             // do sanity checks and fix up options as needed.
             notifyOptionsChanged();
@@ -1087,7 +1085,6 @@ void Options::initialize()
             if (Options::useMachForExceptions())
                 handleSignalsWithMach();
 #endif
-
     });
 }
 
@@ -1364,9 +1361,13 @@ void Options::assertOptionsAreCoherent()
         coherent = false;
         dataLog("INCOHERENT OPTIONS: at least one of useLLInt or useJIT must be true\n");
     }
-    if (useWasm() && !(useWasmIPInt() || useWasmLLInt() || useBBQJIT())) {
+    if (useWasm() && !(useWasmIPInt() || useBBQJIT())) {
         coherent = false;
-        dataLog("INCOHERENT OPTIONS: at least one of useWasmIPInt, useWasmLLInt, or useBBQJIT must be true\n");
+        dataLog("INCOHERENT OPTIONS: at least one of useWasmIPInt, or useBBQJIT must be true\n");
+    }
+    if (useWasmIPIntSIMD() && useWasmRelaxedSIMD()) {
+        coherent = false;
+        dataLog("INCOHERENT OPTIONS: useWasmIPIntSIMD and useWasmRelaxedSIMD cannot both be enabled (relaxed SIMD opcodes 0x100-0x10c are not yet supported in IPInt)\n");
     }
     if (useProfiler() && useConcurrentJIT()) {
         coherent = false;

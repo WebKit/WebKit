@@ -41,7 +41,7 @@
 
 namespace WebKit {
 
-bool WebExtensionContext::isStorageMessageAllowed()
+bool WebExtensionContext::isStorageMessageAllowed(IPC::Decoder& message)
 {
     return isLoaded() && (hasPermission(WebExtensionPermission::storage()) || hasPermission(WebExtensionPermission::unlimitedStorage()));
 }
@@ -77,7 +77,7 @@ void WebExtensionContext::storageGetKeys(WebPageProxyIdentifier webPageProxyIden
     });
 }
 
-void WebExtensionContext::storageGetBytesInUse(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const Vector<String>& keys, CompletionHandler<void(Expected<size_t, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::storageGetBytesInUse(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const Vector<String>& keys, CompletionHandler<void(Expected<uint64_t, WebExtensionError>&&)>&& completionHandler)
 {
     auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".getBytesInUse()"_s);
 

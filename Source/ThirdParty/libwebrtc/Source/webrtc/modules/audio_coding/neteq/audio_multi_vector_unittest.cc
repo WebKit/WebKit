@@ -10,11 +10,14 @@
 
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 
-#include <stdlib.h>
-
-#include <string>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
+#include <memory>
 #include <vector>
 
+#include "api/audio/audio_view.h"
+#include "modules/audio_coding/neteq/audio_vector.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/gtest.h"
 
@@ -34,9 +37,9 @@ class AudioMultiVectorTest : public ::testing::TestWithParam<size_t> {
       : num_channels_(GetParam()),  // Get the test parameter.
         array_interleaved_(num_channels_ * array_length()) {}
 
-  ~AudioMultiVectorTest() = default;
+  ~AudioMultiVectorTest() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     // Populate test arrays.
     for (size_t i = 0; i < array_length(); ++i) {
       array_[i] = static_cast<int16_t>(i);
@@ -47,7 +50,7 @@ class AudioMultiVectorTest : public ::testing::TestWithParam<size_t> {
     // And so on.
     for (size_t i = 0; i < array_length(); ++i) {
       for (size_t j = 1; j <= num_channels_; ++j) {
-        *ptr = rtc::checked_cast<int16_t>(j * 100 + i);
+        *ptr = checked_cast<int16_t>(j * 100 + i);
         ++ptr;
       }
     }
@@ -118,7 +121,7 @@ TEST_P(AudioMultiVectorTest, PushBackInterleavedAndCopy) {
 // Try to copy to a NULL pointer. Nothing should happen.
 TEST_P(AudioMultiVectorTest, CopyToNull) {
   AudioMultiVector vec(num_channels_);
-  AudioMultiVector* vec_copy = NULL;
+  AudioMultiVector* vec_copy = nullptr;
   vec.PushBackInterleaved(array_interleaved_);
   vec.CopyTo(vec_copy);
 }
@@ -185,21 +188,37 @@ TEST_P(AudioMultiVectorTest, Zeros) {
 TEST_P(AudioMultiVectorTest, ReadInterleaved) {
   AudioMultiVector vec(num_channels_);
   vec.PushBackInterleaved(array_interleaved_);
-  int16_t* output = new int16_t[array_interleaved_.size()];
+  std::unique_ptr<int16_t[]> output(new int16_t[array_interleaved_.size()]);
   // Read 5 samples.
   size_t read_samples = 5;
   EXPECT_EQ(num_channels_ * read_samples,
-            vec.ReadInterleaved(read_samples, output));
-  EXPECT_EQ(0, memcmp(array_interleaved_.data(), output,
+            vec.ReadInterleaved(read_samples, output.get()));
+  EXPECT_EQ(0, memcmp(array_interleaved_.data(), output.get(),
                       read_samples * sizeof(int16_t)));
 
   // Read too many samples. Expect to get all samples from the vector.
   EXPECT_EQ(array_interleaved_.size(),
-            vec.ReadInterleaved(array_length() + 1, output));
-  EXPECT_EQ(0, memcmp(array_interleaved_.data(), output,
+            vec.ReadInterleaved(array_length() + 1, output.get()));
+  EXPECT_EQ(0, memcmp(array_interleaved_.data(), output.get(),
                       read_samples * sizeof(int16_t)));
+}
 
-  delete[] output;
+TEST_P(AudioMultiVectorTest, ReadInterleavedView) {
+  AudioMultiVector vec(num_channels_);
+  vec.PushBackInterleaved(array_interleaved_);
+
+  // Read 5 samples.
+  size_t samples_per_channel = 5;
+  ASSERT_GT(array_length(), samples_per_channel);
+  std::unique_ptr<int16_t[]> buffer(new int16_t[array_interleaved_.size()]);
+  InterleavedView<int16_t> view(buffer.get(), samples_per_channel,
+                                num_channels_);
+  EXPECT_TRUE(vec.ReadInterleavedFromIndex(0u, view));
+  EXPECT_EQ(0, memcmp(array_interleaved_.data(), &view[0],
+                      view.size() * sizeof(int16_t)));
+  // Trying to read too much should result in failure.
+  // Attempt to read 5 samples when only 4 can be read.
+  EXPECT_FALSE(vec.ReadInterleavedFromIndex(vec.Size() - 4u, view));
 }
 
 // Test the PopFront method.

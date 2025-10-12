@@ -3,11 +3,11 @@ PASS Computed * is reified as CSSUnparsedValue
 PASS Computed <angle> is reified as CSSUnitValue
 PASS Computed <color> is reified as CSSStyleValue
 PASS Computed <custom-ident> is reified as CSSKeywordValue
-FAIL Computed <image> [url] is reified as CSSImageValue assert_false: expected false got true
+PASS Computed <image> [url] is reified as CSSImageValue
 PASS Computed <integer> is reified as CSSUnitValue
 PASS Computed <length-percentage> [%] is reified as CSSUnitValue
 PASS Computed <length-percentage> [px] is reified as CSSUnitValue
-FAIL Computed <length-percentage> [px + %] is reified as CSSMathSum assert_false: expected false got true
+PASS Computed <length-percentage> [px + %] is reified as CSSMathSum
 PASS Computed <length> is reified as CSSUnitValue
 PASS Computed <number> is reified as CSSUnitValue
 PASS Computed <percentage> is reified as CSSUnitValue
@@ -315,7 +315,7 @@ PASS Registered property with initial value show up on iteration of computedStyl
 PASS Computed * is reified as CSSUnparsedValue by iterator
 PASS Computed <angle> is reified as CSSUnitValue by iterator
 PASS Computed <custom-ident> is reified as CSSKeywordValue by iterator
-FAIL Computed <image> is reified as CSSImageValue by iterator assert_true: expected true got false
+PASS Computed <image> is reified as CSSImageValue by iterator
 PASS Computed <integer> is reified as CSSUnitValue by iterator
 PASS Computed <length> is reified as CSSUnitValue by iterator
 PASS Computed <number> is reified as CSSUnitValue by iterator

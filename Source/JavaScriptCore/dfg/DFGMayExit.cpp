@@ -71,8 +71,9 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case BottomValue:
     case PutHint:
     case PhantomNewObject:
-    case PhantomNewArrayWithConstantSize:
+    case PhantomNewArrayWithButterfly:
     case PhantomNewInternalFieldObject:
+    case PhantomNewButterflyWithSize:
     case PutStack:
     case KillStack:
     case GetStack:
@@ -125,6 +126,20 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case CompareEqPtr:
         break;
 
+    case Switch: {
+        auto* data = node->switchData();
+        switch (data->kind) {
+        case SwitchImm:
+        case SwitchCell:
+            break;
+        case SwitchChar:
+        case SwitchString:
+            result = ExitsForExceptions;
+            break;
+        }
+        break;
+    }
+
     case Int52Rep:
         switch (node->child1().useKind()) {
         case AnyIntUse:
@@ -158,7 +173,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case CreateActivation:
     case MaterializeCreateActivation:
     case MaterializeNewObject:
-    case MaterializeNewArrayWithConstantSize:
+    case MaterializeNewArrayWithButterfly:
     case MaterializeNewInternalFieldObject:
     case NewFunction:
     case NewGeneratorFunction:
@@ -170,13 +185,15 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case NewRegExp:
     case NewMap:
     case NewSet:
-    case NewArrayWithConstantSize:
+    case NewArrayWithButterfly:
+    case NewButterflyWithSize:
     case ToNumber:
     case ToNumeric:
     case ToObject:
     case RegExpExecNonGlobalOrSticky:
     case RegExpMatchFastGlobal:
     case CallWasm:
+    case TailCallInlinedCallerWasm:
     case CallCustomAccessorGetter:
     case CallCustomAccessorSetter:
     case AllocatePropertyStorage:

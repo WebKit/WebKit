@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<script>
+const map = new Map([['Window', [new WeakRef(globalThis)]]]);
+function storeObject(key, o) {
+  let weak = new WeakRef(o);
+  let entriesForKey = map.get(key) ?? [];
+  entriesForKey.push(weak);
+  map.set(key, entriesForKey);
+}
+function getObject(key) {
+  let entriesForKey = map.get(key);
+  let nextEntry = entriesForKey.shift();
+  let theObject = nextEntry.deref();
+  entriesForKey.push(nextEntry);
+  return theObject;
+}
+
+(async () => {
+  testRunner?.dumpAsText();
+  testRunner?.waitUntilDone();
+  storeObject('Document', Document.parseHTMLUnsafe( trustedTypes.emptyHTML));
+  storeObject('HTMLCanvasElement', getObject('Document').createElementNS('http://www.w3.org/1999/xhtml', 'canvas'));
+  let offscreen = getObject('HTMLCanvasElement').transferControlToOffscreen();
+  await (()=>{ return frames.cookieStore.delete("bar") })();
+  offscreen.getContext('bitmaprenderer');
+  testRunner?.notifyDone();
+})();
+</script>
+PASS if no crash.

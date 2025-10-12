@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TrustedScriptURL.h"
 
+#include "ScriptWrappableInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -41,5 +42,7 @@ TrustedScriptURL::TrustedScriptURL(const String& data)
     : m_data(data)
 {
 }
+
+TrustedScriptURL::~TrustedScriptURL() = default;
 
 } // namespace WebCore

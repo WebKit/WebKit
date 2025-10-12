@@ -39,7 +39,7 @@ void GraphicsLayerContentsDisplayDelegate::prepareToDelegateDisplay(PlatformCALa
 {
 }
 
-GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayerContentsDisplayDelegate::orientation() const
+GraphicsLayerCompositingCoordinatesOrientation GraphicsLayerContentsDisplayDelegate::orientation() const
 {
     return GraphicsLayerCA::defaultContentsOrientation;
 }

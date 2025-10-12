@@ -26,8 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "AXTextMarker.h"
-#import "WebAccessibilityObjectWrapperBase.h"
+#import <WebCore/AXTextMarker.h>
+#import <WebCore/WebAccessibilityObjectWrapperBase.h>
+#import <wtf/Platform.h>
 
 #if PLATFORM(MAC)
 

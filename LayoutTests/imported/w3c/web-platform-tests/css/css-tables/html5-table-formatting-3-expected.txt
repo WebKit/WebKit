@@ -32,4 +32,11 @@ Three 25px border-spacing causes the addition of 75px (tracks are 12.5x12.5)
 
 
 PASS Control test for table-cell padding and border-spacing, etc (width)
+PASS Control test for table-cell padding and border-spacing (height)
+PASS Anonymous consecutive columns spanned by the same set of cells are merged
+PASS Anonymous consecutive rows spanned by the same set of cells are merged
+FAIL Explicitely-defined consecutive columns spanned by the same set of cells are not merged assert_equals: expected 75 but got 50
+PASS Explicitely-defined consecutive rows spanned by the same set of cells are not merged
+FAIL Explicitely-defined consecutive columns spanned by the same set of cells are not merged, and cells span across border-spacing assert_equals: expected 12.5 but got 0
+FAIL Explicitely-defined consecutive rows spanned by the same set of cells are not merged, and cells span across border-spacing assert_equals: expected 12.5 but got 50
 

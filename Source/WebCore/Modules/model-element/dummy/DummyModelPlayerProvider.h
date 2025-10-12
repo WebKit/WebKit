@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ModelPlayerProvider.h"
+#include <WebCore/ModelPlayerProvider.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

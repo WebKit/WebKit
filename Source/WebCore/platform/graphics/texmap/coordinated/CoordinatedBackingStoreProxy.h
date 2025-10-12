@@ -149,7 +149,7 @@ private:
     IntRect m_visibleRect;
     IntRect m_coverRect;
     IntRect m_keepRect;
-    UncheckedKeyHashMap<IntPoint, Tile> m_tiles;
+    HashMap<IntPoint, Tile> m_tiles;
     struct {
         Lock lock;
         Update pending WTF_GUARDED_BY_LOCK(lock);

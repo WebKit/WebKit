@@ -15,9 +15,10 @@
 #include <optional>
 
 #include "api/test/video/video_frame_writer.h"
-#include "api/video/video_sink_interface.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "api/video/video_frame.h"
 #include "system_wrappers/include/clock.h"
-#include "test/testsupport/video_frame_writer.h"
 
 namespace webrtc {
 namespace test {

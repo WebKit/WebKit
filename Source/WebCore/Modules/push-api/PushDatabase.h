@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "EpochTimeStamp.h"
-#include "PushSubscriptionIdentifier.h"
-#include "SQLiteDatabase.h"
-#include "SQLiteStatement.h"
-#include "SQLiteStatementAutoResetScope.h"
+#include <WebCore/EpochTimeStamp.h>
+#include <WebCore/PushSubscriptionIdentifier.h>
+#include <WebCore/SQLiteDatabase.h>
+#include <WebCore/SQLiteStatement.h>
+#include <WebCore/SQLiteStatementAutoResetScope.h>
 #include <span>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
@@ -123,7 +123,7 @@ private:
 
     void dispatchOnWorkQueue(Function<void()>&&);
 
-    Ref<WorkQueue> m_queue;
+    const Ref<WorkQueue> m_queue;
     UniqueRef<WebCore::SQLiteDatabase> m_db;
     HashMap<ASCIILiteral, UniqueRef<WebCore::SQLiteStatement>> m_statements;
 };

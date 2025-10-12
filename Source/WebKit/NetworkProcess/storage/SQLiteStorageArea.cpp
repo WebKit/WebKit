@@ -33,8 +33,10 @@
 #include <WebCore/SQLiteStatementAutoResetScope.h>
 #include <WebCore/SQLiteTransaction.h>
 #include <WebCore/StorageMap.h>
+#include <wtf/Assertions.h>
 #include <wtf/FileSystem.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
@@ -117,7 +119,7 @@ bool SQLiteStorageArea::isEmpty()
     if (!m_database)
         return true;
 
-    auto statement = cachedStatement(StatementType::CountItems);
+    CheckedPtr statement = cachedStatement(StatementType::CountItems).get();
     if (!statement || statement->step() != SQLITE_ROW) {
         RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::isEmpty failed on executing statement (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
         return true;
@@ -140,25 +142,39 @@ bool SQLiteStorageArea::createTableIfNecessary()
     if (!m_database)
         return false;
 
-    String statement = m_database->tableSQL("ItemTable"_s);
+    CheckedRef database = *m_database;
+    String statement = database->tableSQL("ItemTable"_s);
     if (statement == createItemTableStatement || statement == createItemTableStatementAlternative)
         return true;
 
     // Table exists but statement is wrong; drop it.
     if (!statement.isEmpty()) {
-        if (!m_database->executeCommand("DROP TABLE ItemTable"_s)) {
+        if (!database->executeCommand("DROP TABLE ItemTable"_s)) {
             RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::createTableIfNecessary failed to drop existing item table (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
             return false;
         }
     }
 
     // Table does not exist.
-    if (!m_database->executeCommand(createItemTableStatement)) {
+    if (!database->executeCommand(createItemTableStatement)) {
         RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::createTableIfNecessary failed to create item table (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
         return false;
     }
 
     return true;
+}
+
+enum class ShouldCreateParentDirectory : bool { No, Yes };
+static Expected<UniqueRef<WebCore::SQLiteDatabase>, int> createAndOpenDatabase(const String& path, ShouldCreateParentDirectory shouldCreateParentDirectory = ShouldCreateParentDirectory::No)
+{
+    auto database = makeUniqueRef<WebCore::SQLiteDatabase>();
+    if (shouldCreateParentDirectory == ShouldCreateParentDirectory::Yes)
+        FileSystem::makeAllDirectories(FileSystem::parentPath(path));
+    bool opened = database->open(path, WebCore::SQLiteDatabase::OpenMode::ReadWriteCreate, WebCore::SQLiteDatabase::OpenOptions::CanSuspendWhileLocked);
+    if (!opened)
+        return makeUnexpected(database->lastError());
+
+    return database;
 }
 
 bool SQLiteStorageArea::prepareDatabase(ShouldCreateIfNotExists shouldCreateIfNotExists)
@@ -171,27 +187,26 @@ bool SQLiteStorageArea::prepareDatabase(ShouldCreateIfNotExists shouldCreateIfNo
     if (shouldCreateIfNotExists == ShouldCreateIfNotExists::No && !databaseExists)
         return true;
 
-    m_database = makeUnique<WebCore::SQLiteDatabase>();
-    FileSystem::makeAllDirectories(FileSystem::parentPath(m_path));
-    auto openResult  = m_database->open(m_path, WebCore::SQLiteDatabase::OpenMode::ReadWriteCreate, WebCore::SQLiteDatabase::OpenOptions::CanSuspendWhileLocked);
-    if (!openResult && handleDatabaseErrorIfNeeded(m_database->lastError()) == IsDatabaseDeleted::Yes) {
+    auto openResult = createAndOpenDatabase(m_path, ShouldCreateParentDirectory::Yes);
+    if (!openResult && handleDatabaseErrorIfNeeded(openResult.error()) == IsDatabaseDeleted::Yes) {
         databaseExists = false;
         if (shouldCreateIfNotExists == ShouldCreateIfNotExists::No)
             return true;
 
-        m_database = makeUnique<WebCore::SQLiteDatabase>();
-        openResult = m_database->open(m_path);
+        // Try again after deleting corrupted database file.
+        openResult = createAndOpenDatabase(m_path);
     }
 
     if (!openResult) {
         RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::prepareDatabase failed to open database at '%s'", m_path.utf8().data());
-        m_database = nullptr;
         return false;
     }
 
+    m_database = openResult.value().moveToUniquePtr();
+
     // Since a WorkQueue isn't bound to a specific thread, we need to disable threading check.
     // We will never access the database from different threads simultaneously.
-    m_database->disableThreadingChecks();
+    checkedDatabase()->disableThreadingChecks();
 
     if (!createTableIfNecessary()) {
         m_database = nullptr;
@@ -211,7 +226,7 @@ void SQLiteStorageArea::startTransactionIfNecessary()
     ASSERT(m_database);
 
     if (!m_transaction || m_transaction->wasRolledBackBySqlite())
-        m_transaction = makeUnique<WebCore::SQLiteTransaction>(*m_database);
+        m_transaction = makeUnique<WebCore::SQLiteTransaction>(*checkedDatabase());
 
     if (m_transaction->inProgress())
         return;
@@ -230,11 +245,16 @@ WebCore::SQLiteStatementAutoResetScope SQLiteStorageArea::cachedStatement(Statem
 
     auto index = static_cast<uint8_t>(type);
     if (!m_cachedStatements[index]) {
-        if (auto result = m_database->prepareHeapStatement(statementString(type)))
-            m_cachedStatements[index] = result.value().moveToUniquePtr();
+        if (auto result = checkedDatabase()->prepareStatement(statementString(type)))
+            m_cachedStatements[index] = WTFMove(result);
     }
 
     return WebCore::SQLiteStatementAutoResetScope { m_cachedStatements[index].get() };
+}
+
+CheckedPtr<WebCore::SQLiteDatabase> SQLiteStorageArea::checkedDatabase() const
+{
+    return m_database.get();
 }
 
 Expected<String, StorageError> SQLiteStorageArea::getItem(const String& key)
@@ -264,7 +284,7 @@ Expected<String, StorageError> SQLiteStorageArea::getItemFromDatabase(const Stri
     int result = SQLITE_OK;
     // Ensure that statement goes out of scope before handleDatabaseErrorIfNeeded(). Otherwise, we may get a CheckedPtr verification failure.
     {
-        auto statement = cachedStatement(StatementType::GetItem);
+        CheckedPtr statement = cachedStatement(StatementType::GetItem).get();
         if (!statement || statement->bindText(1, key)) {
             RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::getItemFromDatabase failed on creating statement (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
             return makeUnexpected(StorageError::Database);
@@ -295,15 +315,28 @@ HashMap<String, String> SQLiteStorageArea::allItems()
     HashMap<String, String> items;
     if (m_cache) {
         items.reserveInitialCapacity(m_cache->size());
-        for (auto& [key, value] : *m_cache) {
-            if (auto* valueString = std::get_if<String>(&value)) {
+        for (auto& key : copyToVector(m_cache->keys())) {
+            if (!m_cache) {
+                RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::allItems cache deleted during read from cache");
+                return { };
+            }
+
+            auto iterator = m_cache->find(key);
+            RELEASE_ASSERT(iterator != m_cache->end());
+
+            if (auto* valueString = std::get_if<String>(&iterator->value)) {
                 ASSERT(!valueString->isNull());
                 items.add(key, *valueString);
                 continue;
             }
 
-            if (auto result = getItemFromDatabase(key))
+            auto result = getItemFromDatabase(key);
+            if (result.has_value())
                 items.add(key, result.value());
+            else {
+                RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::allItems failed during read from cache (%hhu)" PUBLIC_LOG_STRING, result.error());
+                return { };
+            }
         }
         return items;
     }
@@ -312,7 +345,7 @@ HashMap<String, String> SQLiteStorageArea::allItems()
     int result = SQLITE_OK;
     // Ensure that statement goes out of scope before handleDatabaseErrorIfNeeded(). Otherwise, we may get a CheckedPtr verification failure.
     {
-        auto statement = cachedStatement(StatementType::GetAllItems);
+        CheckedPtr statement = cachedStatement(StatementType::GetAllItems).get();
         if (!statement) {
             RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::allItems failed on creating statement (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
             return { };
@@ -364,7 +397,7 @@ Expected<void, StorageError> SQLiteStorageArea::setItem(std::optional<IPC::Conne
     int result = SQLITE_OK;
     // Ensure that statement goes out of scope before handleDatabaseErrorIfNeeded(). Otherwise, we may get a CheckedPtr verification failure.
     {
-        auto statement = cachedStatement(StatementType::SetItem);
+        CheckedPtr statement = cachedStatement(StatementType::SetItem).get();
         if (!statement || statement->bindText(1, key) || statement->bindBlob(2, value)) {
             RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::setItem failed on creating statement (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
             return makeUnexpected(StorageError::Database);
@@ -406,7 +439,7 @@ Expected<void, StorageError> SQLiteStorageArea::removeItem(IPC::Connection::Uniq
     int result = SQLITE_OK;
     // Ensure that statement goes out of scope before handleDatabaseErrorIfNeeded(). Otherwise, we may get a CheckedPtr verification failure.
     {
-        auto statement = cachedStatement(StatementType::DeleteItem);
+        CheckedPtr statement = cachedStatement(StatementType::DeleteItem).get();
         if (!statement || statement->bindText(1, key)) {
             RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::removeItem failed on creating statement (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
             return makeUnexpected(StorageError::Database);
@@ -451,7 +484,7 @@ Expected<void, StorageError> SQLiteStorageArea::clear(IPC::Connection::UniqueID 
     int result = SQLITE_OK;
     // Ensure that statement goes out of scope before handleDatabaseErrorIfNeeded(). Otherwise, we may get a CheckedPtr verification failure.
     {
-        auto statement = cachedStatement(StatementType::DeleteAllItems);
+        CheckedPtr statement = cachedStatement(StatementType::DeleteAllItems).get();
         if (!statement) {
             RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::clear failed on creating statement (%d) - %" PUBLIC_LOG_STRING, m_database->lastError(), m_database->lastErrorMsg());
             return makeUnexpected(StorageError::Database);
@@ -467,7 +500,7 @@ Expected<void, StorageError> SQLiteStorageArea::clear(IPC::Connection::UniqueID 
         return makeUnexpected(StorageError::Database);
     }
 
-    if (m_database->lastChanges() <= 0)
+    if (checkedDatabase()->lastChanges() <= 0)
         return makeUnexpected(StorageError::ItemNotFound);
 
     dispatchEvents(connection, storageAreaImplID, String(), String(), String(), urlString);
@@ -485,8 +518,12 @@ void SQLiteStorageArea::handleLowMemoryWarning()
 {
     ASSERT(!isMainRunLoop());
 
-    if (m_database && m_database->isOpen())
-        m_database->releaseMemory();
+    if (!m_database)
+        return;
+
+    CheckedRef database = *m_database;
+    if (database->isOpen())
+        database->releaseMemory();
 }
 
 SQLiteStorageArea::IsDatabaseDeleted SQLiteStorageArea::handleDatabaseErrorIfNeeded(int databaseError)

@@ -27,6 +27,7 @@
 #include "bmalloc_heap.h"
 #include "bmalloc_heap_config.h"
 
+#include <array>
 #include <cstdlib>
 
 using namespace std;
@@ -38,6 +39,68 @@ void testBmallocAllocate()
     void* mem = bmalloc_try_allocate(100, pas_non_compact_allocation_mode);
     CHECK(mem);
 }
+
+void testBmallocAllocationZeroing()
+{
+    auto checkBufferIsZeroed = [](void* buff, size_t size) -> void {
+        for (size_t i = 0; i < size; i++) {
+            auto* ptr { reinterpret_cast<uint8_t*>(buff) + i };
+            uint8_t byte { };
+            std::memcpy(&byte, ptr, sizeof(byte));
+            CHECK(!byte);
+        }
+    };
+
+    auto sizes = std::array<size_t, 6> {
+        7, 100, 128, 2003, 4096, 1024 * 32
+    };
+    auto allocationModes = std::array<pas_allocation_mode, 3> {
+        pas_non_compact_allocation_mode,
+        pas_maybe_compact_allocation_mode,
+        pas_always_compact_allocation_mode,
+    };
+    for (auto size : sizes) {
+        for (auto mode : allocationModes) {
+            void* memA = bmalloc_try_allocate_zeroed(size, mode);
+            checkBufferIsZeroed(memA, size);
+            void* memB = bmalloc_try_allocate_zeroed_with_alignment(size, 1, mode);
+            checkBufferIsZeroed(memB, size);
+            void* memC = bmalloc_try_allocate_zeroed_with_alignment(size, 64, mode);
+            checkBufferIsZeroed(memC, size);
+        }
+    }
+}
+
+void testBmallocAllocationAlignment()
+{
+    auto checkBufferIsAligned = [](void* buff, size_t alignment)  {
+        auto buffAddr { reinterpret_cast<uintptr_t>(buff) };
+        CHECK(!(buffAddr % alignment));
+    };
+
+    auto sizes = std::array<size_t, 6> {
+        7, 100, 128, 2003, 4096, 1024 * 32
+    };
+    auto alignments = std::array<size_t, 5> {
+        1, 8, 128, 1024, 4096
+    };
+    auto allocationModes = std::array<pas_allocation_mode, 3> {
+        pas_non_compact_allocation_mode,
+        pas_maybe_compact_allocation_mode,
+        pas_always_compact_allocation_mode,
+    };
+    for (auto size : sizes) {
+        for (auto align : alignments) {
+            for (auto mode : allocationModes) {
+                void* memA = bmalloc_try_allocate_with_alignment(size, align, mode);
+                checkBufferIsAligned(memA, align);
+                void* memB = bmalloc_try_allocate_zeroed_with_alignment(size, align, mode);
+                checkBufferIsAligned(memB, align);
+            }
+        }
+    }
+}
+
 
 void testBmallocDeallocate()
 {
@@ -86,6 +149,8 @@ void addBmallocTests()
 {
     ADD_TEST(testBmallocAllocate());
     ADD_TEST(testBmallocDeallocate());
+    ADD_TEST(testBmallocAllocationZeroing());
+    ADD_TEST(testBmallocAllocationAlignment());
     ADD_TEST(testBmallocForceBitfitAfterAlloc());
     ADD_TEST(testBmallocSmallIndexOverlap());
 }

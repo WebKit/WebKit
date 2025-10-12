@@ -34,18 +34,11 @@
 namespace WebCore {
 
 class CSSFontStyleWithAngleValue;
-class CSSToLengthConversionData;
 class CSSValue;
 class FontCascade;
 class FontCascadeDescription;
 class FontSelectionValue;
 class ScriptExecutionContext;
-
-struct FontSizeAdjust;
-
-template<typename> class FontTaggedSettings;
-using FontFeatureSettings = FontTaggedSettings<int>;
-using FontVariationSettings = FontTaggedSettings<float>;
 
 namespace CSSPropertyParserHelpers {
 struct UnresolvedFont;
@@ -53,26 +46,13 @@ struct UnresolvedFont;
 
 namespace Style {
 
-class BuilderState;
-
 FontSelectionValue fontWeightFromCSSValueDeprecated(const CSSValue&);
-FontSelectionValue fontWeightFromCSSValue(BuilderState&, const CSSValue&);
 
 FontSelectionValue fontStretchFromCSSValueDeprecated(const CSSValue&);
-FontSelectionValue fontStretchFromCSSValue(BuilderState&, const CSSValue&);
 
 FontSelectionValue fontStyleAngleFromCSSValueDeprecated(const CSSValue&);
-FontSelectionValue fontStyleAngleFromCSSValue(BuilderState&, const CSSValue&);
-
 std::optional<FontSelectionValue> fontStyleAngleFromCSSFontStyleWithAngleValueDeprecated(const CSSFontStyleWithAngleValue&);
-std::optional<FontSelectionValue> fontStyleAngleFromCSSFontStyleWithAngleValue(BuilderState&, const CSSFontStyleWithAngleValue&);
-
 std::optional<FontSelectionValue> fontStyleFromCSSValueDeprecated(const CSSValue&);
-std::optional<FontSelectionValue> fontStyleFromCSSValue(BuilderState&, const CSSValue&);
-
-FontFeatureSettings fontFeatureSettingsFromCSSValue(BuilderState&, const CSSValue&);
-FontVariationSettings fontVariationSettingsFromCSSValue(BuilderState&, const CSSValue&);
-FontSizeAdjust fontSizeAdjustFromCSSValue(BuilderState&, const CSSValue&);
 
 std::optional<FontCascade> resolveForUnresolvedFont(const CSSPropertyParserHelpers::UnresolvedFont&, FontCascadeDescription&&, ScriptExecutionContext&);
 

@@ -45,7 +45,7 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 class CallbackArgument {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CallbackArgument);
 public:
     virtual ~CallbackArgument();
     virtual void set(NSInvocation *, NSInteger, JSContext *, JSValueRef, JSValueRef*) = 0;
@@ -131,7 +131,7 @@ private:
         *exception = toRef(JSC::createTypeError(toJS(contextRef), "Argument does not match Objective-C Class"_s));
     }
 
-    RetainPtr<Class> m_class;
+    const RetainPtr<Class> m_class;
 };
 
 class CallbackArgumentNSNumber final : public CallbackArgument {
@@ -206,7 +206,7 @@ private:
         [invocation setArgument:m_buffer atIndex:argumentNumber];
     }
 
-    RetainPtr<NSInvocation> m_conversionInvocation;
+    const RetainPtr<NSInvocation> m_conversionInvocation;
     StructBuffer m_buffer;
 };
 
@@ -280,7 +280,7 @@ public:
 };
 
 class CallbackResult {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CallbackResult);
 public:
     virtual ~CallbackResult()
     {
@@ -346,7 +346,7 @@ private:
         return valueInternalValue(value);
     }
 
-    RetainPtr<NSInvocation> m_conversionInvocation;
+    const RetainPtr<NSInvocation> m_conversionInvocation;
     StructBuffer m_buffer;
 };
 
@@ -410,7 +410,7 @@ enum CallbackType {
 namespace JSC {
 
 class ObjCCallbackFunctionImpl final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ObjCCallbackFunctionImpl);
 public:
     ObjCCallbackFunctionImpl(NSInvocation *invocation, CallbackType type, Class instanceClass, std::unique_ptr<CallbackArgument> arguments, std::unique_ptr<CallbackResult> result)
         : m_type(type)
@@ -462,7 +462,7 @@ public:
 private:
     CallbackType m_type;
     RetainPtr<Class> m_instanceClass;
-    RetainPtr<NSInvocation> m_invocation;
+    const RetainPtr<NSInvocation> m_invocation;
     std::unique_ptr<CallbackArgument> m_arguments;
     std::unique_ptr<CallbackResult> m_result;
 };

@@ -59,7 +59,7 @@ class App : public RtcpPacket {
 
   uint8_t sub_type_;
   uint32_t name_;
-  rtc::Buffer data_;
+  Buffer data_;
 };
 
 }  // namespace rtcp

@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "JSCast.h"
-#include "JSTypeInfo.h"
-#include "PropertyDescriptor.h"
-#include "PutDirectIndexMode.h"
-#include "VM.h"
-#include "WriteBarrier.h"
+#include <JavaScriptCore/JSCast.h>
+#include <JavaScriptCore/JSTypeInfo.h>
+#include <JavaScriptCore/PropertyDescriptor.h>
+#include <JavaScriptCore/PutDirectIndexMode.h>
+#include <JavaScriptCore/VM.h>
+#include <JavaScriptCore/WriteBarrier.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 

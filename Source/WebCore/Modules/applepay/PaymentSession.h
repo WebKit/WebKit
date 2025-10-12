@@ -27,7 +27,7 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "PaymentSessionBase.h"
+#include <WebCore/PaymentSessionBase.h>
 
 namespace WebCore {
 

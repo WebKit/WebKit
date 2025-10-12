@@ -10,6 +10,8 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmb_item.h"
 
+#include <cstdint>
+
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"

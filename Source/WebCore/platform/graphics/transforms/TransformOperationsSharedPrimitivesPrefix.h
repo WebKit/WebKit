@@ -34,21 +34,47 @@ namespace WebCore {
 class TransformOperations;
 
 // This class is used to find a shared prefix of transform function primitives (as
-// defined by CSS Transforms Level 1 & 2). Given a series of `TransformOperations` in
-// the keyframes of an animation. After `update()` is called with the `TransformOperations`
+// defined by CSS Transforms Level 1 & 2). Given a series of transform function ranges in
+// the keyframes of an animation. After `update()` is called with the transform function range
 // of every keyframe, `primitives()` will return the prefix of primitives that are shared
 // by all keyframes passed to `update()`.
-class TransformOperationsSharedPrimitivesPrefix final {
+template<typename PrimitiveType> class TransformOperationsSharedPrimitivesPrefix final {
 public:
-    void update(const TransformOperations&);
+    void update(const auto&);
 
     bool hadIncompatibleTransformFunctions() { return m_indexOfFirstMismatch.has_value(); }
-    const Vector<TransformOperation::Type>& primitives() const { return m_primitives; }
+    const Vector<PrimitiveType>& primitives() const { return m_primitives; }
 
 private:
     std::optional<size_t> m_indexOfFirstMismatch;
-    Vector<TransformOperation::Type> m_primitives;
+    Vector<PrimitiveType> m_primitives;
 };
 
-} // namespace WebCore
+template<typename PrimitiveType>
+void TransformOperationsSharedPrimitivesPrefix<PrimitiveType>::update(const auto& operations)
+{
+    size_t maxIteration = operations.size();
+    if (m_indexOfFirstMismatch.has_value())
+        maxIteration = std::min(*m_indexOfFirstMismatch, maxIteration);
 
+    for (size_t i = 0; i < maxIteration; ++i) {
+        auto operation = operations[i];
+
+        // If we haven't seen an operation at this index before, we can simply use our primitive type.
+        if (i >= m_primitives.size()) {
+            ASSERT(i == m_primitives.size());
+            m_primitives.append(operation->primitiveType());
+            continue;
+        }
+
+        if (auto sharedPrimitive = operation->sharedPrimitiveType(m_primitives[i]))
+            m_primitives[i] = *sharedPrimitive;
+        else {
+            m_indexOfFirstMismatch = i;
+            m_primitives.shrink(i);
+            return;
+        }
+    }
+}
+
+} // namespace WebCore

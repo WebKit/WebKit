@@ -169,8 +169,7 @@ void ModelConnectionToWebProcess::didUnloadModelPlayer(WebCore::ModelPlayerIdent
 
 bool ModelConnectionToWebProcess::allowsExitUnderMemoryPressure() const
 {
-    // FIXME: Should allow exit if we have no models.
-    return false;
+    return !m_modelProcessModelPlayerManagerProxy->hasModelPlayers();
 }
 
 Logger& ModelConnectionToWebProcess::logger()
@@ -183,12 +182,8 @@ Logger& ModelConnectionToWebProcess::logger()
     return *m_logger;
 }
 
-void ModelConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName, int32_t)
+void ModelConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName, const Vector<uint32_t>&)
 {
-#if ENABLE(IPC_TESTING_API)
-    if (connection.ignoreInvalidMessageForTesting())
-        return;
-#endif
     RELEASE_LOG_FAULT(IPC, "Received an invalid message '%" PUBLIC_LOG_STRING "' from WebContent process %" PRIu64 ".", description(messageName).characters(), m_webProcessIdentifier.toUInt64());
     m_modelProcess->parentProcessConnection()->send(Messages::ModelProcessProxy::TerminateWebProcess(m_webProcessIdentifier), 0);
 }
@@ -232,6 +227,11 @@ bool ModelConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connectio
 bool ModelConnectionToWebProcess::isAlwaysOnLoggingAllowed() const
 {
     return m_sessionID.isAlwaysOnLoggingAllowed() || m_sharedPreferencesForWebProcess.allowPrivacySensitiveOperationsInNonPersistentDataStores;
+}
+
+std::optional<int> ModelConnectionToWebProcess::debugEntityMemoryLimit() const
+{
+    return m_modelProcess->debugEntityMemoryLimit();
 }
 
 } // namespace WebKit

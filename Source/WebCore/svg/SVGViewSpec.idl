@@ -28,7 +28,6 @@
 // It would require that any of those classes would be RefCounted, and we want to avoid that.
 [
     JSCustomMarkFunction,
-    JSGenerateToJSObject,
     Exposed=Window
 ] interface SVGViewSpec {
     readonly attribute SVGTransformList transform;

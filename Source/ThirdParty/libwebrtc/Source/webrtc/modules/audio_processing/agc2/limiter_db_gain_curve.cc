@@ -10,6 +10,7 @@
 
 #include "modules/audio_processing/agc2/limiter_db_gain_curve.h"
 
+#include <array>
 #include <cmath>
 
 #include "common_audio/include/audio_util.h"

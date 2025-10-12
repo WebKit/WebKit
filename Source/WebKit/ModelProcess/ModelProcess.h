@@ -80,8 +80,10 @@ public:
 #if PLATFORM(VISION) && ENABLE(GPU_PROCESS)
     void requestSharedSimulationConnection(WebCore::ProcessIdentifier, CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&&);
 #endif
+    std::optional<int> debugEntityMemoryLimit() const { return m_debugEntityMemoryLimit; }
 
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
+    void modelPlayerCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
 private:
     void lowMemoryHandler(Critical, Synchronous);
@@ -117,6 +119,7 @@ private:
 
     WebCore::Timer m_idleExitTimer;
     String m_applicationVisibleName;
+    std::optional<int> m_debugEntityMemoryLimit;
 };
 
 } // namespace WebKit

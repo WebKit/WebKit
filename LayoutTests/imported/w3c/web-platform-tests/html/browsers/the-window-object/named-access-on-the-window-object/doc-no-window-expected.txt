@@ -1,0 +1,3 @@
+
+PASS A document without a Window must not cause errors
+

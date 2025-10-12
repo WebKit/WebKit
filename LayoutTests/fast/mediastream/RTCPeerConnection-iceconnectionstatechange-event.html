@@ -42,9 +42,11 @@
                     finishJSTest();
             };
 
+            let stream1, stream2, stream3;
             navigator.mediaDevices.getUserMedia({ "video": true }).then(function (stream) {
-                const stream2 = stream.clone();
-                const stream3 = stream.clone();
+                stream1 = stream;
+                stream2 = stream.clone();
+                stream3 = stream.clone();
 
                 pc.addTrack(stream.getTracks()[0], stream);
                 pc.addTrack(stream2.getTracks()[0], stream2);
@@ -63,6 +65,9 @@
                 window.internals.emulateRTCPeerConnectionPlatformEvent(pc, "step-ice-transport-states");
                 testPassed("End of test promise chain");
                 debug("");
+                stream1.getTracks().forEach(track => track.stop());
+                stream2.getTracks().forEach(track => track.stop());
+                stream3.getTracks().forEach(track => track.stop());
             })
             .catch(function (error) {
                 testFailed("Error in promise chain: " + error);

@@ -10,5 +10,5 @@ Test passes if pointer events has fractional coordinates.
 
 
 PASS mouse pointerevent events in capturing
-FAIL mouse assert_true: pointerdown should have fractional coordinates expected true got false
+PASS mouse
 

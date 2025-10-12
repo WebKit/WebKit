@@ -1,6 +1,0 @@
-Blocked access to external URL http://www.localhost/content-security-policy/generic/positiveTest.js
-test implicit port number matching (requires port 80)
-
-
-PASS Test that script does not fire violation event
-

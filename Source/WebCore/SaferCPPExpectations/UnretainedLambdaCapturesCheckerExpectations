@@ -1,6 +1,4 @@
-accessibility/mac/WebAccessibilityObjectWrapperMac.mm
-platform/cocoa/SharedVideoFrameInfo.mm
 platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm
-platform/graphics/cv/VideoFrameCV.mm
-platform/mac/WebCoreObjCExtras.mm
 platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm
+[ iOS ] platform/ios/PlatformPasteboardIOS.mm
+[ iOS ] platform/ios/WebItemProviderPasteboard.mm

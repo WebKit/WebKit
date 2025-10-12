@@ -9,13 +9,12 @@
  */
 #include "net/dcsctp/packet/parameter/add_incoming_streams_request_parameter.h"
 
-#include <stdint.h>
-
-#include <type_traits>
+#include <cstdint>
 #include <vector>
 
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/testing/testing_macros.h"
-#include "rtc_base/gunit.h"
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace {

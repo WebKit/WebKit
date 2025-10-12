@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/semantics/document-metadata/the-style-element/support/css-red.txt' because non CSS MIME types are not allowed in strict mode.
 
 PASS Should get an error event for a text/plain response.
 

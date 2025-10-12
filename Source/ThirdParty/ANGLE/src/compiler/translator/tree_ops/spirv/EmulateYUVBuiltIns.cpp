@@ -6,6 +6,10 @@
 // EmulateYUVBuiltIns: Adds functions that emulate yuv_2_rgb and rgb_2_yuv built-ins.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "compiler/translator/tree_ops/spirv/EmulateYUVBuiltIns.h"
 
 #include "compiler/translator/StaticType.h"

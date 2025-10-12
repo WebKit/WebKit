@@ -10,9 +10,11 @@
 
 #include "modules/audio_processing/vad/standalone_vad.h"
 
-#include <string.h>
+#include <cstdint>
+#include <cstring>
 
 #include "common_audio/vad/include/webrtc_vad.h"
+#include "modules/audio_processing/vad/common.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

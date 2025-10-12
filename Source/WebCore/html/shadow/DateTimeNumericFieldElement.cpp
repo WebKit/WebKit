@@ -65,7 +65,7 @@ DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document& document, Dat
 
 void DateTimeNumericFieldElement::adjustMinInlineSize(RenderStyle& style) const
 {
-    auto& font = style.fontCascade();
+    CheckedRef font = style.fontCascade();
 
     unsigned length = 2;
     if (m_range.maximum > 999)
@@ -78,13 +78,10 @@ void DateTimeNumericFieldElement::adjustMinInlineSize(RenderStyle& style) const
     float inlineSize = 0;
     for (char c = '0'; c <= '9'; ++c) {
         auto numberString = locale.convertToLocalizedNumber(makeString(pad(c, length, makeString(c))));
-        inlineSize = std::max(inlineSize, font.width(RenderBlock::constructTextRun(numberString, style)));
+        inlineSize = std::max(inlineSize, font->width(RenderBlock::constructTextRun(numberString, style)));
     }
 
-    if (style.writingMode().isHorizontal())
-        style.setMinWidth({ inlineSize, LengthType::Fixed });
-    else
-        style.setMinHeight({ inlineSize, LengthType::Fixed });
+    style.setLogicalMinWidth(Style::MinimumSize::Fixed { inlineSize });
 }
 
 int DateTimeNumericFieldElement::maximum() const
@@ -133,8 +130,9 @@ void DateTimeNumericFieldElement::setValueAsIntegerByStepping(int value)
 
 void DateTimeNumericFieldElement::setARIAValueAttributesWithInteger(int value)
 {
-    setAttributeWithoutSynchronization(HTMLNames::aria_valuenowAttr, AtomString::number(value));
-    setAttributeWithoutSynchronization(HTMLNames::aria_valuetextAttr, AtomString::number(value));
+    auto string = AtomString::number(value);
+    setAttributeWithoutSynchronization(HTMLNames::aria_valuenowAttr, string);
+    setAttributeWithoutSynchronization(HTMLNames::aria_valuetextAttr, string);
 }
 
 void DateTimeNumericFieldElement::stepDown()
@@ -170,7 +168,7 @@ void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent& keyboardEve
     if (keyboardEvent.type() != eventNames().keypressEvent)
         return;
 
-    auto charCode = static_cast<UChar>(keyboardEvent.charCode());
+    auto charCode = static_cast<char16_t>(keyboardEvent.charCode());
     String number = localeForOwner().convertFromLocalizedNumber(span(charCode));
     int digit = number[0] - '0';
     if (digit < 0 || digit > 9)

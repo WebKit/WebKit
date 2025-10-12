@@ -36,9 +36,6 @@ GLuint64 MergeQueryResults(gl::QueryType type, GLuint64 currentResult, GLuint64 
         case gl::QueryType::Timestamp:
             return newResult;
 
-        case gl::QueryType::CommandsCompleted:
-            return newResult;
-
         default:
             UNREACHABLE();
             return 0;
@@ -400,23 +397,6 @@ angle::Result Query11::testQuery(Context11 *context11, QueryState *queryState)
                             }
                         }
                     }
-                }
-            }
-            break;
-
-            case gl::QueryType::CommandsCompleted:
-            {
-                ASSERT(queryState->query.valid());
-                BOOL completed = 0;
-                HRESULT result =
-                    context->GetData(queryState->query.get(), &completed, sizeof(completed), 0);
-                ANGLE_TRY_HR(context11, result, "Failed to get the data of an internal query");
-
-                if (result == S_OK)
-                {
-                    queryState->finished = true;
-                    ASSERT(completed == TRUE);
-                    mResult = (completed == TRUE) ? GL_TRUE : GL_FALSE;
                 }
             }
             break;

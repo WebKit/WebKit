@@ -14,10 +14,14 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/bad-buffers-and-views.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/construct-byob-request.any.js
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/enqueue-with-detached-buffer.window.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/enqueue-with-detached-buffer.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/general.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/non-transferable-buffers.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/patched-global.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/read-min.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/respond-after-enqueue.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/tee.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/templated.any.js

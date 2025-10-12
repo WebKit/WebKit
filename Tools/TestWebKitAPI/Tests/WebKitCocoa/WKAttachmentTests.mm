@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -554,7 +554,7 @@ static void simulateFolderDragWithURL(DragAndDropSimulator *simulator, NSURL *fo
     auto folderProvider = adoptNS([[NSItemProvider alloc] init]);
     [folderProvider setSuggestedName:folderURL.lastPathComponent];
     [folderProvider setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
-    [folderProvider registerFileRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeFolder fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[protectedFolderURL = retainPtr(folderURL)] (void(^completion)(NSURL *, BOOL, NSError *)) -> NSProgress * {
+    [folderProvider registerFileRepresentationForTypeIdentifier:UTTypeFolder.identifier fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[protectedFolderURL = retainPtr(folderURL)] (void(^completion)(NSURL *, BOOL, NSError *)) -> NSProgress * {
         completion(protectedFolderURL.get(), NO, nil);
         return nil;
     }];
@@ -628,9 +628,9 @@ typedef void(^ItemProviderDataLoadHandler)(NSData *, NSError *);
 
 void platformCopyRichTextWithMultipleAttachments()
 {
-    auto image = adoptNS([[NSTextAttachment alloc] initWithData:testImageData() ofType:(__bridge NSString *)kUTTypePNG]);
-    auto pdf = adoptNS([[NSTextAttachment alloc] initWithData:testPDFData() ofType:(__bridge NSString *)kUTTypePDF]);
-    auto zip = adoptNS([[NSTextAttachment alloc] initWithData:testZIPData() ofType:(__bridge NSString *)kUTTypeZipArchive]);
+    auto image = adoptNS([[NSTextAttachment alloc] initWithData:testImageData() ofType:UTTypePNG.identifier]);
+    auto pdf = adoptNS([[NSTextAttachment alloc] initWithData:testPDFData() ofType:UTTypePDF.identifier]);
+    auto zip = adoptNS([[NSTextAttachment alloc] initWithData:testZIPData() ofType:UTTypeZIP.identifier]);
 
     auto richText = adoptNS([[NSMutableAttributedString alloc] init]);
     [richText appendAttributedString:[NSAttributedString attributedStringWithAttachment:image.get()]];
@@ -651,7 +651,7 @@ void platformCopyRichTextWithMultipleAttachments()
 void platformCopyRichTextWithImage()
 {
     auto richText = adoptNS([[NSMutableAttributedString alloc] init]);
-    auto image = adoptNS([[NSTextAttachment alloc] initWithData:testImageData() ofType:(__bridge NSString *)kUTTypePNG]);
+    auto image = adoptNS([[NSTextAttachment alloc] initWithData:testImageData() ofType:UTTypePNG.identifier]);
 
     [richText appendAttributedString:adoptNS([[NSAttributedString alloc] initWithString:@"Lorem ipsum "]).get()];
     [richText appendAttributedString:[NSAttributedString attributedStringWithAttachment:image.get()]];
@@ -678,7 +678,7 @@ void platformCopyPNG()
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
     auto item = adoptNS([[NSItemProvider alloc] init]);
     [item setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
-    [item registerData:testImageData() type:(__bridge NSString *)kUTTypePNG];
+    [item registerData:testImageData() type:UTTypePNG.identifier];
     pasteboard.itemProviders = @[ item.get() ];
 #endif
 }
@@ -687,13 +687,13 @@ void platformCopyPDF()
 {
 #if PLATFORM(MAC)
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
-    [pasteboard declareTypes:@[(__bridge NSString *)kUTTypePDF] owner:nil];
-    [pasteboard setData:testPDFData() forType:(__bridge NSString *)kUTTypePDF];
+    [pasteboard declareTypes:@[UTTypePDF.identifier] owner:nil];
+    [pasteboard setData:testPDFData() forType:UTTypePDF.identifier];
 #elif PLATFORM(IOS_FAMILY)
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
     auto item = adoptNS([[NSItemProvider alloc] init]);
     [item setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
-    [item registerData:testPDFData() type:(__bridge NSString *)kUTTypePDF];
+    [item registerData:testPDFData() type:UTTypePDF.identifier];
     pasteboard.itemProviders = @[ item.get() ];
 #endif
 }
@@ -702,13 +702,13 @@ void platformCopyJPEG()
 {
 #if PLATFORM(MAC)
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
-    [pasteboard declareTypes:@[(__bridge NSString *)kUTTypeJPEG] owner:nil];
-    [pasteboard setData:testJPEGData() forType:(__bridge NSString *)kUTTypeJPEG];
+    [pasteboard declareTypes:@[UTTypeJPEG.identifier] owner:nil];
+    [pasteboard setData:testJPEGData() forType:UTTypeJPEG.identifier];
 #elif PLATFORM(IOS_FAMILY)
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
     auto item = adoptNS([[NSItemProvider alloc] init]);
     [item setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
-    [item registerData:testJPEGData() type:(__bridge NSString *)kUTTypeJPEG];
+    [item registerData:testJPEGData() type:UTTypeJPEG.identifier];
     pasteboard.itemProviders = @[ item.get() ];
 #endif
 }
@@ -961,9 +961,9 @@ TEST(WKAttachmentTests, DropFolderAsAttachmentAndMoveByDragging)
         TestWKWebView *webView = [simulator webView];
         auto attachment = retainPtr([simulator insertedAttachments].firstObject);
 #if PLATFORM(IOS_FAMILY)
-        NSString *expectedType = (__bridge NSString *)kUTTypeFolder;
+        NSString *expectedType = UTTypeFolder.identifier;
 #else
-        NSString *expectedType = (__bridge NSString *)kUTTypeDirectory;
+        NSString *expectedType = UTTypeDirectory.identifier;
 #endif
         EXPECT_WK_STREQ([attachment uniqueIdentifier], [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').uniqueIdentifier"]);
         EXPECT_WK_STREQ(expectedType, [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
@@ -1011,8 +1011,11 @@ TEST(WKAttachmentTests, InsertFolderAndFileWithUnknownExtension)
 
     auto checkAttachmentConsistency = [webView, file, folder] (_WKAttachment *expectedFileAttachment, _WKAttachment *expectedFolderAttachment) {
         [webView expectElementCount:2 querySelector:@"ATTACHMENT"];
-        EXPECT_TRUE(UTTypeConformsTo((__bridge CFStringRef)[webView valueOfAttribute:@"type" forQuerySelector:@"attachment[title=folder]"], kUTTypeDirectory));
-        EXPECT_TRUE(UTTypeConformsTo((__bridge CFStringRef)[webView valueOfAttribute:@"type" forQuerySelector:@"attachment[title^=test]"], kUTTypeData));
+
+        UTType *directoryType = [UTType typeWithIdentifier:[webView valueOfAttribute:@"type" forQuerySelector:@"attachment[title=folder]"]];
+        EXPECT_TRUE([directoryType conformsToType:UTTypeDirectory]);
+        UTType *dataType = [UTType typeWithIdentifier:[webView valueOfAttribute:@"type" forQuerySelector:@"attachment[title^=test]"]];
+        EXPECT_TRUE([dataType conformsToType:UTTypeData]);
         EXPECT_WK_STREQ(expectedFileAttachment.uniqueIdentifier, [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment[title^=test]').uniqueIdentifier"]);
         EXPECT_WK_STREQ(expectedFolderAttachment.uniqueIdentifier, [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment[title=folder]').uniqueIdentifier"]);
         EXPECT_TRUE([expectedFileAttachment.info.fileWrapper isEqual:file.get()]);
@@ -1557,7 +1560,7 @@ TEST(WKAttachmentTests, AddAttachmentToConnectedImageElement)
     EXPECT_EQ(NO, errorOccurred);
     [webView waitForImageElementSizeToBecome:CGSizeMake(215, 174)];
 
-    errorOccurred = [attachment synchronouslySetFileWrapper:secondImage.get() newContentType:(__bridge NSString *)kUTTypeGIF error:nil];
+    errorOccurred = [attachment synchronouslySetFileWrapper:secondImage.get() newContentType:UTTypeGIF.identifier error:nil];
     EXPECT_EQ(NO, errorOccurred);
     [webView waitForImageElementSizeToBecome:CGSizeMake(52, 64)];
 
@@ -1630,7 +1633,7 @@ TEST(WKAttachmentTests, CopyAndPasteBetweenWebViews)
     @autoreleasepool {
         auto firstWebView = webViewForTestingAttachments();
         [firstWebView synchronouslyInsertAttachmentWithFileWrapper:file.get() contentType:@"application/octet-stream"];
-        [firstWebView synchronouslyInsertAttachmentWithFileWrapper:folder.get() contentType:(__bridge NSString *)kUTTypeFolder];
+        [firstWebView synchronouslyInsertAttachmentWithFileWrapper:folder.get() contentType:UTTypeFolder.identifier];
         [firstWebView synchronouslyInsertAttachmentWithFileWrapper:archive.get() contentType:@"application/zip"];
         [firstWebView selectAll:nil];
         [firstWebView _executeEditCommand:@"Copy" argument:nil completion:nil];
@@ -1779,13 +1782,13 @@ TEST(WKAttachmentTests, SetFileWrapperForPDFImageAttachment)
     auto attachment = retainPtr([webView _attachmentForIdentifier:identifier]);
 
     auto pdfFile = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:testPDFData()]);
-    [attachment setFileWrapper:pdfFile.get() contentType:(__bridge NSString *)kUTTypePDF completion:nil];
+    [attachment setFileWrapper:pdfFile.get() contentType:UTTypePDF.identifier completion:nil];
     [webView waitForImageElementSizeToBecome:CGSizeMake(130, 29)];
 
     [webView synchronouslyLoadTestPageNamed:@"simple"];
 
     auto zipFile = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:testZIPData()]);
-    [attachment setFileWrapper:zipFile.get() contentType:(__bridge NSString *)kUTTypeZipArchive completion:nil];
+    [attachment setFileWrapper:zipFile.get() contentType:UTTypeZIP.identifier completion:nil];
     EXPECT_FALSE([attachment isConnected]);
 }
 
@@ -1922,8 +1925,8 @@ TEST(WKAttachmentTests, PasteRawUnnamedPDFData)
 {
     RetainPtr pdfData = testPDFData();
 #if PLATFORM(MAC)
-    [NSPasteboard.generalPasteboard declareTypes:@[(__bridge NSString *)kUTTypePDF] owner:nil];
-    [NSPasteboard.generalPasteboard setData:pdfData.get() forType:(__bridge NSString *)kUTTypePDF];
+    [NSPasteboard.generalPasteboard declareTypes:@[UTTypePDF.identifier] owner:nil];
+    [NSPasteboard.generalPasteboard setData:pdfData.get() forType:UTTypePDF.identifier];
 #else
     [UIPasteboard.generalPasteboard setData:pdfData.get() forPasteboardType:UTTypePDF.identifier];
 #endif
@@ -2202,14 +2205,14 @@ TEST(WKAttachmentTestsIOS, TargetedPreviewsWhenDroppingImages)
     // The first item preview should be scaled down by a factor of 2.
     auto firstPreview = targetedImageDragPreview(webView.get(), testImageData(), CGSizeMake(430, 348));
     auto firstItem = adoptNS([[NSItemProvider alloc] init]);
-    [firstItem registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG withData:testImageData() loadingDelay:0.5];
+    [firstItem registerDataRepresentationForTypeIdentifier:UTTypePNG.identifier withData:testImageData() loadingDelay:0.5];
     [firstItem setPreferredPresentationSize:CGSizeMake(215, 174)];
     [firstItem setSuggestedName:@"icon"];
 
     // The second item preview should be scaled up by a factor of 2.
     auto secondPreview = targetedImageDragPreview(webView.get(), testGIFData(), CGSizeMake(26, 32));
     auto secondItem = adoptNS([[NSItemProvider alloc] init]);
-    [secondItem registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeGIF withData:testGIFData() loadingDelay:0.5];
+    [secondItem registerDataRepresentationForTypeIdentifier:UTTypeGIF.identifier withData:testGIFData() loadingDelay:0.5];
     [secondItem setPreferredPresentationSize:CGSizeMake(52, 64)];
     [secondItem setSuggestedName:@"apple"];
 
@@ -2248,7 +2251,7 @@ TEST(WKAttachmentTestsIOS, TargetedPreviewIsClippedWhenDroppingTallImage)
 
     auto preview = targetedImageDragPreview(webView.get(), imageData.get(), CGSizeMake(100, 100));
     auto item = adoptNS([[NSItemProvider alloc] init]);
-    [item registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG withData:imageData.get() loadingDelay:0.5];
+    [item registerDataRepresentationForTypeIdentifier:UTTypePNG.identifier withData:imageData.get() loadingDelay:0.5];
     [item setPreferredPresentationSize:CGSizeMake(400, 400)];
     [item setSuggestedName:@"green"];
 
@@ -2272,7 +2275,7 @@ TEST(WKAttachmentTestsIOS, InsertDroppedImageAsAttachment)
     auto webView = webViewForTestingAttachments();
     auto dragAndDropSimulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     auto item = adoptNS([[NSItemProvider alloc] init]);
-    [item registerData:testImageData() type:(__bridge NSString *)kUTTypePNG];
+    [item registerData:testImageData() type:UTTypePNG.identifier];
     [dragAndDropSimulator setExternalItemProviders:@[ item.get() ]];
     [dragAndDropSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
 
@@ -2295,7 +2298,7 @@ TEST(WKAttachmentTestsIOS, InsertDroppedImageWithPreferredPresentationSize)
     auto webView = webViewForTestingAttachments();
     auto dragAndDropSimulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     auto item = adoptNS([[NSItemProvider alloc] init]);
-    [item registerData:testImageData() type:(__bridge NSString *)kUTTypePNG];
+    [item registerData:testImageData() type:UTTypePNG.identifier];
     [item setPreferredPresentationSize:CGSizeMake(200, 100)];
     [dragAndDropSimulator setExternalItemProviders:@[ item.get() ]];
     [dragAndDropSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
@@ -2309,7 +2312,7 @@ TEST(WKAttachmentTestsIOS, InsertDroppedAttributedStringContainingAttachment)
 {
     auto webView = webViewForTestingAttachments();
     auto dragAndDropSimulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
-    auto image = adoptNS([[NSTextAttachment alloc] initWithData:testImageData() ofType:(__bridge NSString *)kUTTypePNG]);
+    auto image = adoptNS([[NSTextAttachment alloc] initWithData:testImageData() ofType:UTTypePNG.identifier]);
     auto item = adoptNS([[NSItemProvider alloc] init]);
     [item registerObject:[NSAttributedString attributedStringWithAttachment:image.get()] visibility:NSItemProviderRepresentationVisibilityAll];
 
@@ -2363,10 +2366,10 @@ TEST(WKAttachmentTestsIOS, InsertDroppedRichAndPlainTextFilesAsAttachments)
 
     [webView expectElementCount:2 querySelector:@"ATTACHMENT"];
     EXPECT_WK_STREQ("hello.rtf", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('title')"]);
-    EXPECT_WK_STREQ((__bridge NSString *)kUTTypeFlatRTFD, [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('type')"]);
+    EXPECT_WK_STREQ(UTTypeFlatRTFD.identifier, [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('type')"]);
     EXPECT_WK_STREQ("world.txt", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('title')"]);
     auto contentType = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('type')"];
-    EXPECT_TRUE([contentType isEqualToString:(__bridge NSString *)kUTTypeUTF8PlainText] || [contentType containsString:@"text/plain"]);
+    EXPECT_TRUE([contentType isEqualToString:UTTypeUTF8PlainText.identifier] || [contentType containsString:@"text/plain"]);
 }
 
 TEST(WKAttachmentTestsIOS, InsertDroppedZipArchiveAsAttachment)
@@ -2376,7 +2379,7 @@ TEST(WKAttachmentTestsIOS, InsertDroppedZipArchiveAsAttachment)
     // presentation style (e.g. Notes) into Mail.
     auto item = adoptNS([[NSItemProvider alloc] init]);
     NSData *data = testZIPData();
-    [item registerData:data type:(__bridge NSString *)kUTTypeZipArchive];
+    [item registerData:data type:UTTypeZIP.identifier];
     [item setSuggestedName:@"archive.zip"];
 
     auto webView = webViewForTestingAttachments();
@@ -2406,7 +2409,7 @@ TEST(WKAttachmentTestsIOS, InsertDroppedItemProvidersInOrder)
     [inlineTextItem registerObject:appleURL.get() visibility:NSItemProviderRepresentationVisibilityAll];
 
     auto secondAttachmentItem = adoptNS([[NSItemProvider alloc] init]);
-    [secondAttachmentItem registerData:testPDFData() type:(__bridge NSString *)kUTTypePDF];
+    [secondAttachmentItem registerData:testPDFData() type:UTTypePDF.identifier];
     [secondAttachmentItem setSuggestedName:@"second.pdf"];
 
     auto webView = webViewForTestingAttachments();
@@ -2424,7 +2427,7 @@ TEST(WKAttachmentTestsIOS, InsertDroppedItemProvidersInOrder)
 
     EXPECT_WK_STREQ("first.txt", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('title')"]);
     auto contentType = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('type')"];
-    EXPECT_TRUE([contentType isEqualToString:(__bridge NSString *)kUTTypeUTF8PlainText] || [contentType containsString:@"text/plain"]);
+    EXPECT_TRUE([contentType isEqualToString:UTTypeUTF8PlainText.identifier] || [contentType containsString:@"text/plain"]);
     EXPECT_WK_STREQ([appleURL absoluteString], [webView valueOfAttribute:@"href" forQuerySelector:@"a"]);
     EXPECT_WK_STREQ("second.pdf", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('title')"]);
     EXPECT_WK_STREQ("application/pdf", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('type')"]);
@@ -2434,7 +2437,7 @@ TEST(WKAttachmentTestsIOS, DragAttachmentInsertedAsFile)
 {
     auto item = adoptNS([[NSItemProvider alloc] init]);
     auto data = retainPtr(testPDFData());
-    [item registerData:data.get() type:(__bridge NSString *)kUTTypePDF];
+    [item registerData:data.get() type:UTTypePDF.identifier];
     [item setSuggestedName:@"document.pdf"];
 
     auto webView = webViewForTestingAttachments();
@@ -2457,7 +2460,7 @@ TEST(WKAttachmentTestsIOS, DragAttachmentInsertedAsFile)
     EXPECT_EQ(1U, [dragAndDropSimulator sourceItemProviders].count);
     NSItemProvider *itemProvider = [dragAndDropSimulator sourceItemProviders].firstObject;
     EXPECT_EQ(UIPreferredPresentationStyleAttachment, itemProvider.preferredPresentationStyle);
-    [itemProvider expectType:(__bridge NSString *)kUTTypePDF withData:data.get()];
+    [itemProvider expectType:UTTypePDF.identifier withData:data.get()];
     EXPECT_WK_STREQ("document.pdf", [itemProvider suggestedName]);
     [dragAndDropSimulator endDataTransfer];
 }
@@ -2486,7 +2489,7 @@ TEST(WKAttachmentTestsIOS, DragAttachmentInsertedAsData)
     EXPECT_EQ(1U, [dragAndDropSimulator sourceItemProviders].count);
     NSItemProvider *itemProvider = [dragAndDropSimulator sourceItemProviders].firstObject;
     EXPECT_EQ(UIPreferredPresentationStyleAttachment, itemProvider.preferredPresentationStyle);
-    [itemProvider expectType:(__bridge NSString *)kUTTypePDF withData:data.get()];
+    [itemProvider expectType:UTTypePDF.identifier withData:data.get()];
     EXPECT_WK_STREQ("document.pdf", [itemProvider suggestedName]);
     [dragAndDropSimulator endDataTransfer];
 }
@@ -2618,11 +2621,11 @@ TEST(WKAttachmentTestsIOS, InsertPastedFilesAsAttachments)
 {
     auto pdfItem = adoptNS([[NSItemProvider alloc] init]);
     [pdfItem setSuggestedName:@"doc"];
-    [pdfItem registerData:testPDFData() type:(__bridge NSString *)kUTTypePDF];
+    [pdfItem registerData:testPDFData() type:UTTypePDF.identifier];
 
     auto textItem = adoptNS([[NSItemProvider alloc] init]);
     [textItem setSuggestedName:@"hello"];
-    [textItem registerData:[@"helloworld" dataUsingEncoding:NSUTF8StringEncoding] type:(__bridge NSString *)kUTTypePlainText];
+    [textItem registerData:[@"helloworld" dataUsingEncoding:NSUTF8StringEncoding] type:UTTypePlainText.identifier];
 
     UIPasteboard.generalPasteboard.itemProviders = @[ pdfItem.get(), textItem.get() ];
 
@@ -2660,7 +2663,7 @@ TEST(WKAttachmentTestsIOS, InsertDroppedImageWithNonImageFileExtension)
     runTestWithTemporaryImageFile(@"image.hello", ^(NSURL *fileURL) {
         auto item = adoptNS([[NSItemProvider alloc] init]);
         [item setSuggestedName:@"image.hello"];
-        [item registerFileRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG fileOptions:NSItemProviderFileOptionOpenInPlace visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(void (^callback)(NSURL *, BOOL, NSError *))
+        [item registerFileRepresentationForTypeIdentifier:UTTypePNG.identifier fileOptions:NSItemProviderFileOptionOpenInPlace visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(void (^callback)(NSURL *, BOOL, NSError *))
         {
             callback(fileURL, YES, nil);
             return nil;
@@ -2692,7 +2695,7 @@ TEST(WKAttachmentTestsIOS, CopyAttachmentUsingElementAction)
     auto document = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:testPDFData()]);
     [document setPreferredFilename:@"hello.pdf"];
 
-    auto attachment = retainPtr([webView synchronouslyInsertAttachmentWithFileWrapper:document.get() contentType:(__bridge NSString *)kUTTypePDF]);
+    auto attachment = retainPtr([webView synchronouslyInsertAttachmentWithFileWrapper:document.get() contentType:UTTypePDF.identifier]);
     NSString *identifier = [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').uniqueIdentifier"];
     EXPECT_WK_STREQ(identifier, [attachment uniqueIdentifier]);
 
@@ -2716,7 +2719,7 @@ TEST(WKAttachmentTestsIOS, CopyAttachmentUsingElementAction)
     EXPECT_WK_STREQ("hello.pdf", itemProvider.suggestedName);
 
     __block bool done = false;
-    [itemProvider loadDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePDF completionHandler:^(NSData *data, NSError *) {
+    [itemProvider loadDataRepresentationForTypeIdentifier:UTTypePDF.identifier completionHandler:^(NSData *data, NSError *) {
         EXPECT_TRUE([[document regularFileContents] isEqualToData:data]);
         done = true;
     }];

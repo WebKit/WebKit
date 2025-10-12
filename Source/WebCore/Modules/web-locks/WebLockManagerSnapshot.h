@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "WebLockMode.h"
+#include <WebCore/WebLockMode.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

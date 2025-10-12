@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,13 +31,16 @@
 #include <atomic>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-class DNSResolveQueue {
-    friend NeverDestroyed<DNSResolveQueue>;
+class DNSResolveQueue : public CanMakeCheckedPtr<DNSResolveQueue> {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DNSResolveQueue);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DNSResolveQueue);
 
+    friend NeverDestroyed<DNSResolveQueue>;
 public:
     virtual ~DNSResolveQueue() = default;
 
@@ -68,7 +71,7 @@ private:
 
     Timer m_timer;
 
-    UncheckedKeyHashSet<String> m_names;
+    HashSet<String> m_names;
     std::atomic<int> m_requestsInFlight;
     MonotonicTime m_lastProxyEnabledStatusCheckTime;
 };

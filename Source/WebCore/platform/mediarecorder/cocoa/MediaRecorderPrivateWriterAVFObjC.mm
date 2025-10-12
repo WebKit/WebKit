@@ -31,14 +31,17 @@
 #import "AudioStreamDescription.h"
 #import "CMUtilities.h"
 #import "Logging.h"
-#import "MediaSampleAVFObjC.h"
+#import "MediaSamplesBlock.h"
 #import <AVFoundation/AVAssetWriter.h>
 #import <AVFoundation/AVAssetWriterInput.h>
+#import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVAssetWriterSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Deque.h>
 #import <wtf/NativePromise.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/WorkQueue.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -96,6 +99,7 @@ std::unique_ptr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriterAVFObjC::c
 MediaRecorderPrivateWriterAVFObjC::MediaRecorderPrivateWriterAVFObjC(RetainPtr<AVAssetWriter>&& writer, MediaRecorderPrivateWriterListener& listener)
     : m_delegate(adoptNS([[WebAVAssetWriterDelegate alloc] initWithWriter:listener]))
     , m_writer(WTFMove(writer))
+    , m_waitingQueue(WorkQueue::create("MediaRecorderPrivateWriterAVFObjC"_s))
 {
     [m_writer setPreferredOutputSegmentInterval:PAL::kCMTimeIndefinite];
     [m_writer setDelegate:m_delegate.get()];
@@ -158,8 +162,10 @@ bool MediaRecorderPrivateWriterAVFObjC::allTracksAdded()
 MediaRecorderPrivateWriterAVFObjC::Result MediaRecorderPrivateWriterAVFObjC::writeFrame(const MediaSamplesBlock& frame)
 {
     if (frame.trackID() == m_audioTrackIndex) {
-        if (![m_audioAssetWriterInput isReadyForMoreMediaData])
+        if (![m_audioAssetWriterInput isReadyForMoreMediaData]) {
+            RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPMediaRecorderPrivateWriterAVFObjC::writeFrame isReadyForMoreMediaData:NO");
             return Result::NotReady;
+        }
 
         auto sample = toCMSampleBuffer(frame, m_audioDescription.get());
         if (sample) {
@@ -214,15 +220,74 @@ void MediaRecorderPrivateWriterAVFObjC::forceNewSegment(const MediaTime& endTime
     [m_writer flushSegment];
 }
 
-Ref<GenericPromise> MediaRecorderPrivateWriterAVFObjC::close(const MediaTime& endTime)
+Ref<GenericPromise> MediaRecorderPrivateWriterAVFObjC::close(Deque<UniqueRef<MediaSamplesBlock>>&& samples, const MediaTime& endTime)
 {
-    if (m_hasAddedVideoFrame)
-        appendEndsPreviousSampleDurationMarker(m_videoAssetWriterInput.get(), PAL::toCMTime(endTime));
+    Deque<RetainPtr<CMSampleBufferRef>> audioSamples;
+    Deque<RetainPtr<CMSampleBufferRef>> videoSamples;
+
+    while (!samples.isEmpty()) {
+        auto sample = samples.takeFirst();
+        if (sample->trackID() == m_audioTrackIndex) {
+            if (auto cmSample = toCMSampleBuffer(sample, m_audioDescription.get()))
+                audioSamples.append(WTFMove(*cmSample));
+            else {
+                ASSERT_NOT_REACHED();
+                break;
+            }
+            continue;
+        }
+        if (auto cmSample = toCMSampleBuffer(sample, m_videoDescription.get())) {
+            videoSamples.append(WTFMove(*cmSample));
+            m_hasAddedVideoFrame = true;
+        } else {
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
+    RetainPtr queue = m_waitingQueue->dispatchQueue();
+    Vector<Ref<GenericPromise>> promises;
+    if (audioSamples.size()) {
+        GenericPromise::Producer producer;
+        promises.append(producer.promise());
+        [m_audioAssetWriterInput requestMediaDataWhenReadyOnQueue:queue.get() usingBlock:makeBlockPtr([producer = WTFMove(producer), samples = WTFMove(audioSamples), writerInput = m_audioAssetWriterInput]() mutable {
+            while ([writerInput isReadyForMoreMediaData]) {
+                if (samples.size()) {
+                    [writerInput appendSampleBuffer:samples.takeFirst().get()];
+                    continue;
+                }
+                [writerInput markAsFinished];
+                producer.resolve();
+                break;
+            }
+        }).get()];
+    }
+    if (videoSamples.size()) {
+        GenericPromise::Producer producer;
+        promises.append(producer.promise());
+        [m_videoAssetWriterInput requestMediaDataWhenReadyOnQueue:queue.get() usingBlock:makeBlockPtr([producer = WTFMove(producer), samples = WTFMove(audioSamples), writerInput = m_videoAssetWriterInput, hasAddedVideoFrame = m_hasAddedVideoFrame, endTime]() mutable {
+            while ([writerInput isReadyForMoreMediaData]) {
+                if (samples.size()) {
+                    [writerInput appendSampleBuffer:samples.takeFirst().get()];
+                    continue;
+                }
+                if (hasAddedVideoFrame)
+                    appendEndsPreviousSampleDurationMarker(writerInput.get(), PAL::toCMTime(endTime));
+                [writerInput markAsFinished];
+                producer.resolve();
+                break;
+            }
+        }).get()];
+    }
+
     GenericPromise::Producer producer;
     Ref promise = producer.promise();
-    [m_writer finishWritingWithCompletionHandler:makeBlockPtr([producer = WTFMove(producer)]() mutable {
-        producer.resolve();
-    }).get()];
+    GenericPromise::all(promises)->whenSettled(m_waitingQueue, [producer = WTFMove(producer), writer = m_writer]() mutable {
+        [writer finishWritingWithCompletionHandler:makeBlockPtr([producer = WTFMove(producer)]() mutable {
+            producer.resolve();
+        }).get()];
+    });
+
     return promise;
 }
 

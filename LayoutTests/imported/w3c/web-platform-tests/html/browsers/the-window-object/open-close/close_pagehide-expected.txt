@@ -1,0 +1,3 @@
+
+PASS Running pagehide handler in window.close()
+

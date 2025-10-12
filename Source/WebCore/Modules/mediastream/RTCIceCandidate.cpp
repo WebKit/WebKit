@@ -37,6 +37,7 @@
 
 #include "ExceptionOr.h"
 #include "RTCIceCandidateInit.h"
+#include "ScriptWrappableInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

@@ -1,0 +1,33 @@
+<html><!-- webkit-test-runner [ UseSystemAppearance=true ] -->
+<head>
+    <script src="../../../resources/accessibility-helper.js"></script>
+    <style>
+        div {
+            background-color: -apple-system-tertiary-label;
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            if (testRunner.dontForceRepaint)
+                testRunner.dontForceRepaint();
+        }
+
+        function test() {
+            if (!window.testRunner)
+                return;
+
+            accessibilityController.injectAccessibilityPreference("com.apple.universalaccess", "increaseContrast", "1");
+
+            setTimeout(function () {
+                testRunner.notifyDone();
+            }, 50);
+        }
+    </script>
+</head>
+<body onload="test()">
+    <div id="div"></div>
+</body>
+</html>

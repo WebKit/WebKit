@@ -26,6 +26,6 @@
 
 /*returns an addr aligned to the byte boundary specified by align*/
 #define align_addr(addr, align) \
-  (void *)(((size_t)(addr) + ((align)-1)) & ~(size_t)((align)-1))
+  (void *)(((size_t)(addr) + ((align) - 1)) & ~(size_t)((align) - 1))
 
 #endif  // VPX_VPX_MEM_INCLUDE_VPX_MEM_INTRNL_H_

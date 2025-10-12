@@ -6,6 +6,10 @@
 
 // TextureD3D.cpp: Implementations of the Texture interfaces shared betweeen the D3D backends.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/TextureD3D.h"
 
 #include "common/mathutil.h"
@@ -1396,8 +1400,7 @@ angle::Result TextureD3D_2D::bindTexImage(const gl::Context *context, egl::Surfa
 {
     GLenum internalformat = surface->getConfig()->renderTargetFormat;
 
-    gl::Extents size(surface->getWidth(), surface->getHeight(), 1);
-    ANGLE_TRY(redefineImage(context, 0, internalformat, size, true));
+    ANGLE_TRY(redefineImage(context, 0, internalformat, surface->getSize(), true));
 
     ANGLE_TRY(releaseTexStorage(context, gl::TexLevelMask()));
 

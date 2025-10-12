@@ -25,6 +25,7 @@
 #include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -43,7 +44,7 @@ FrameTree::FrameTree(Frame& thisFrame, Frame* parentFrame)
 
 FrameTree::~FrameTree()
 {
-    for (auto* child = firstChild(); child; child = child->tree().nextSibling())
+    for (RefPtr child = firstChild(); child; child = child->tree().nextSibling())
         child->disconnectView();
 }
 
@@ -71,9 +72,9 @@ void FrameTree::appendChild(Frame& child)
 
     if (oldLast) {
         child.tree().m_previousSibling = oldLast;
-        oldLast->tree().m_nextSibling = &child;
+        oldLast->tree().m_nextSibling = child;
     } else
-        m_firstChild = &child;
+        m_firstChild = child;
 
     m_scopedChildCount = invalidCount;
 
@@ -122,9 +123,9 @@ void FrameTree::replaceChild(Frame& oldChild, Frame& newChild)
     newTree.m_previousSibling = oldPreviousSibling.get();
 
     if (oldChildWasFirst)
-        m_firstChild = &newChild;
+        m_firstChild = newChild;
     if (oldChildWasLast)
-        m_lastChild = &newChild;
+        m_lastChild = newChild;
     if (oldNextSibling)
         oldNextSibling->tree().m_previousSibling = &newChild;
     if (oldPreviousSibling)
@@ -154,10 +155,10 @@ Frame* FrameTree::scopedChild(unsigned index, TreeScope* scope) const
         return nullptr;
 
     unsigned scopedIndex = 0;
-    for (auto* result = firstChild(); result; result = result->tree().nextSibling()) {
+    for (RefPtr result = firstChild(); result; result = result->tree().nextSibling()) {
         if (inScope(*result, *scope)) {
             if (scopedIndex == index)
-                return result;
+                return result.unsafeGet();
             scopedIndex++;
         }
     }
@@ -170,9 +171,9 @@ inline Frame* FrameTree::scopedChild(NOESCAPE const Function<bool(const FrameTre
     if (!scope)
         return nullptr;
 
-    for (auto* child = firstChild(); child; child = child->tree().nextSibling()) {
+    for (RefPtr child = firstChild(); child; child = child->tree().nextSibling()) {
         if (isMatch(child->tree()) && inScope(*child, *scope))
-            return child;
+            return child.unsafeGet();
     }
     return nullptr;
 }
@@ -183,7 +184,7 @@ inline unsigned FrameTree::scopedChildCount(TreeScope* scope) const
         return 0;
 
     unsigned scopedCount = 0;
-    for (auto* result = firstChild(); result; result = result->tree().nextSibling()) {
+    for (RefPtr result = firstChild(); result; result = result->tree().nextSibling()) {
         if (inScope(*result, *scope))
             scopedCount++;
     }
@@ -193,7 +194,7 @@ inline unsigned FrameTree::scopedChildCount(TreeScope* scope) const
 
 Frame* FrameTree::scopedChild(unsigned index) const
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(m_thisFrame.get());
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_thisFrame.get());
     if (!localFrame)
         return nullptr;
     return scopedChild(index, localFrame->protectedDocument().get());
@@ -201,7 +202,7 @@ Frame* FrameTree::scopedChild(unsigned index) const
 
 Frame* FrameTree::scopedChildByUniqueName(const AtomString& uniqueName) const
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(m_thisFrame.get());
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_thisFrame.get());
     if (!localFrame)
         return nullptr;
     return scopedChild([&](auto& frameTree) {
@@ -222,8 +223,8 @@ Frame* FrameTree::scopedChildBySpecifiedName(const AtomString& specifiedName) co
 unsigned FrameTree::scopedChildCount() const
 {
     if (m_scopedChildCount == invalidCount) {
-        if (auto* localFrame = dynamicDowncast<LocalFrame>(m_thisFrame.get()))
-            m_scopedChildCount = scopedChildCount(localFrame->document());
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_thisFrame.get()))
+            m_scopedChildCount = scopedChildCount(localFrame->protectedDocument().get());
     }
     return m_scopedChildCount;
 }
@@ -302,15 +303,15 @@ inline Frame* FrameTree::find(const AtomString& name, F&& nameGetter, Frame& act
 
     // Search subtree starting with this frame first.
     Ref thisFrame = m_thisFrame.get();
-    for (auto* frame = thisFrame.ptr(); frame; frame = frame->tree().traverseNext(thisFrame.ptr())) {
+    for (RefPtr frame = thisFrame.ptr(); frame; frame = frame->tree().traverseNext(thisFrame.ptr())) {
         if (nameGetter(frame->tree()) == name)
-            return frame;
+            return frame.unsafeGet();
     }
 
     // Then the rest of the tree.
-    for (Frame* frame = &thisFrame->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (RefPtr frame = &thisFrame->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (nameGetter(frame->tree()) == name)
-            return frame;
+            return frame.unsafeGet();
     }
 
     // Search the entire tree of each of the other pages in this namespace.
@@ -319,12 +320,12 @@ inline Frame* FrameTree::find(const AtomString& name, F&& nameGetter, Frame& act
         return nullptr;
 
     // FIXME: These pages are searched in random order; that doesn't seem good. Maybe use order of creation?
-    for (auto& otherPage : page->group().pages()) {
-        if (&otherPage == page || otherPage.isClosing())
+    for (RefPtr otherPage : page->group().pages()) {
+        if (otherPage == page || otherPage->isClosing())
             continue;
-        for (Frame* frame = &otherPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (RefPtr frame = &otherPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             if (nameGetter(frame->tree()) == name && isFrameFamiliarWith(activeFrame, *frame))
-                return frame;
+                return frame.unsafeGet();
         }
     }
 

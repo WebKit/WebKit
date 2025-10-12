@@ -30,6 +30,7 @@
 
 #include "MathMLElement.h"
 #include "MathMLNames.h"
+#include "RenderElementInlines.h"
 #include "RenderMathMLBlock.h"
 #include "RenderMathMLFraction.h"
 #include "RenderMathMLMath.h"

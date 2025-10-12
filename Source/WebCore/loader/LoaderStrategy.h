@@ -25,13 +25,14 @@
 
 #pragma once
 
-#include "FetchOptions.h"
-#include "LoadSchedulingMode.h"
-#include "PageIdentifier.h"
-#include "ResourceLoadPriority.h"
-#include "ResourceLoaderIdentifier.h"
-#include "ResourceLoaderOptions.h"
-#include "StoredCredentialsPolicy.h"
+#include <WebCore/FetchOptions.h>
+#include <WebCore/LoadSchedulingMode.h>
+#include <WebCore/PageIdentifier.h>
+#include <WebCore/ResourceLoadPriority.h>
+#include <WebCore/ResourceLoaderIdentifier.h>
+#include <WebCore/ResourceLoaderOptions.h>
+#include <WebCore/StoredCredentialsPolicy.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -56,7 +57,9 @@ class SubresourceLoader;
 
 struct FetchOptions;
 
-class WEBCORE_EXPORT LoaderStrategy {
+class WEBCORE_EXPORT LoaderStrategy : public CanMakeCheckedPtr<LoaderStrategy> {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LoaderStrategy);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LoaderStrategy);
 public:
     virtual void loadResource(LocalFrame&, CachedResource&, ResourceRequest&&, const ResourceLoaderOptions&, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&&) = 0;
     virtual void loadResourceSynchronously(FrameLoader&, ResourceLoaderIdentifier, const ResourceRequest&, ClientCredentialPolicy, const FetchOptions&, const HTTPHeaderMap&, ResourceError&, ResourceResponse&, Vector<uint8_t>& data) = 0;
@@ -80,7 +83,7 @@ public:
 
     using PreconnectCompletionHandler = Function<void(const ResourceError&)>;
     enum class ShouldPreconnectAsFirstParty : bool { No, Yes };
-    virtual void preconnectTo(FrameLoader&, const URL&, StoredCredentialsPolicy, ShouldPreconnectAsFirstParty, PreconnectCompletionHandler&&) = 0;
+    virtual void preconnectTo(FrameLoader&, ResourceRequest&&, StoredCredentialsPolicy, ShouldPreconnectAsFirstParty, PreconnectCompletionHandler&&) = 0;
 
     virtual void setCaptureExtraNetworkLoadMetricsEnabled(bool) = 0;
 

@@ -17,8 +17,7 @@ namespace vk
 
 void DedicatedCommandBlockAllocator::resetAllocator()
 {
-    mAllocator.pop();
-    mAllocator.push();
+    mAllocator.reset();
 }
 
 void DedicatedCommandBlockPool::reset(CommandBufferCommandTracker *commandBufferTracker)
@@ -50,7 +49,7 @@ bool DedicatedCommandBlockPool::empty() const
 void DedicatedCommandBlockPool::allocateNewBlock(size_t blockSize)
 {
     ASSERT(mAllocator);
-    mCurrentWritePointer   = mAllocator->fastAllocate(blockSize);
+    mCurrentWritePointer   = reinterpret_cast<uint8_t *>(mAllocator->allocate(blockSize));
     mCurrentBytesRemaining = blockSize;
     mCommandBuffer->pushToCommands(mCurrentWritePointer);
 }

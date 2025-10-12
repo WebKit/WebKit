@@ -25,7 +25,8 @@ NS_CLASS_AVAILABLE_IOS(10)
  *
  * @param capturer The capturer to be controlled.
  */
-- (instancetype)initWithCapturer:(RTC_OBJC_TYPE(RTCFileVideoCapturer) *)capturer;
+- (instancetype)initWithCapturer:
+    (RTC_OBJC_TYPE(RTCFileVideoCapturer) *)capturer;
 
 /**
  * Starts the file capturer.

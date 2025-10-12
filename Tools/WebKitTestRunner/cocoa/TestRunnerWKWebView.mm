@@ -37,6 +37,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPIForTesting.h"
@@ -304,7 +305,7 @@ IGNORE_WARNINGS_END
     ASSERT(!self.zoomToScaleCompletionHandler);
 
     if (self.scrollView.zoomScale == scale) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             completionHandler();
         });
         return;
@@ -658,7 +659,7 @@ static bool isQuickboardViewController(UIViewController *viewController)
 
     [UIView performWithoutAnimation:^{
         for (id<UIInteraction> interaction in self.contentView.interactions) {
-            if ([interaction isKindOfClass:getUIEditMenuInteractionClass()])
+            if ([interaction isKindOfClass:getUIEditMenuInteractionClassSingleton()])
                 [(UIEditMenuInteraction *)interaction dismissMenu];
         }
     }];

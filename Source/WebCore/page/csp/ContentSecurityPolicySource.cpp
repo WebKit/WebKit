@@ -62,8 +62,8 @@ bool ContentSecurityPolicySource::matches(const URL& url, bool didReceiveRedirec
 bool ContentSecurityPolicySource::schemeMatches(const URL& url) const
 {
     // https://www.w3.org/TR/CSP3/#match-schemes.
-    const auto& scheme = m_scheme.isEmpty() ? m_policy.selfProtocol() : m_scheme;
-    auto urlScheme = url.protocol().convertToASCIILowercase();
+    auto& scheme = m_scheme.isEmpty() ? m_policy->selfProtocol() : m_scheme;
+    auto urlScheme = url.protocol();
 
     if (scheme == urlScheme)
         return true;

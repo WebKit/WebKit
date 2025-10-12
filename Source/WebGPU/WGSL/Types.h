@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ASTForward.h"
+#include "CompilationMessage.h"
 #include "WGSLEnums.h"
 #include <array>
 #include <functional>
@@ -241,10 +242,7 @@ struct Atomic {
 
 struct TypeConstructor {
     ASCIILiteral name;
-    std::function<const Type*(AST::ElaboratedTypeExpression&)> construct;
-};
-
-struct Bottom {
+    std::function<Result<const Type*>(AST::ElaboratedTypeExpression&)> construct;
 };
 
 } // namespace Types
@@ -263,8 +261,7 @@ struct Type : public Variant<
     Types::Reference,
     Types::Pointer,
     Types::Atomic,
-    Types::TypeConstructor,
-    Types::Bottom
+    Types::TypeConstructor
 > {
     using Variant<
         Types::Primitive,
@@ -280,8 +277,7 @@ struct Type : public Variant<
         Types::Reference,
         Types::Pointer,
         Types::Atomic,
-        Types::TypeConstructor,
-        Types::Bottom
+        Types::TypeConstructor
         >::variant;
     void dump(PrintStream&) const;
     String toString() const;
@@ -300,7 +296,7 @@ struct Type : public Variant<
     bool isTexture() const;
 };
 
-using ConversionRank = Markable<unsigned, IntegralMarkableTraits<unsigned, std::numeric_limits<unsigned>::max()>>;
+using ConversionRank = Markable<unsigned>;
 ConversionRank conversionRank(const Type* from, const Type* to);
 
 bool isPrimitive(const Type*, Types::Primitive::Kind);

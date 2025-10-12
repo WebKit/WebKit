@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "DOMFormData.h"
-#include "File.h"
+#include <WebCore/DOMFormData.h>
+#include <WebCore/File.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

@@ -135,7 +135,7 @@ private:
     FloatPoint3D position() const WTF_REQUIRES_LOCK(m_processLock);
     FloatPoint3D orientation() const WTF_REQUIRES_LOCK(m_processLock);
 
-    Ref<HRTFDatabaseLoader> m_hrtfDatabaseLoader;
+    const Ref<HRTFDatabaseLoader> m_hrtfDatabaseLoader;
     PanningModelType m_panningModel WTF_GUARDED_BY_LOCK(m_processLock);
     std::unique_ptr<Panner> m_panner WTF_GUARDED_BY_LOCK(m_processLock);
 
@@ -143,13 +143,13 @@ private:
     DistanceEffect m_distanceEffect WTF_GUARDED_BY_LOCK(m_processLock);
     ConeEffect m_coneEffect WTF_GUARDED_BY_LOCK(m_processLock);
     
-    Ref<AudioParam> m_positionX WTF_GUARDED_BY_LOCK(m_processLock);
-    Ref<AudioParam> m_positionY WTF_GUARDED_BY_LOCK(m_processLock);
-    Ref<AudioParam> m_positionZ WTF_GUARDED_BY_LOCK(m_processLock);
+    const Ref<AudioParam> m_positionX WTF_GUARDED_BY_LOCK(m_processLock);
+    const Ref<AudioParam> m_positionY WTF_GUARDED_BY_LOCK(m_processLock);
+    const Ref<AudioParam> m_positionZ WTF_GUARDED_BY_LOCK(m_processLock);
     
-    Ref<AudioParam> m_orientationX WTF_GUARDED_BY_LOCK(m_processLock);
-    Ref<AudioParam> m_orientationY WTF_GUARDED_BY_LOCK(m_processLock);
-    Ref<AudioParam> m_orientationZ WTF_GUARDED_BY_LOCK(m_processLock);
+    const Ref<AudioParam> m_orientationX WTF_GUARDED_BY_LOCK(m_processLock);
+    const Ref<AudioParam> m_orientationY WTF_GUARDED_BY_LOCK(m_processLock);
+    const Ref<AudioParam> m_orientationZ WTF_GUARDED_BY_LOCK(m_processLock);
 
     mutable std::optional<AzimuthElevation> m_cachedAzimuthElevation WTF_GUARDED_BY_LOCK(m_processLock);
     mutable std::optional<float> m_cachedConeGain WTF_GUARDED_BY_LOCK(m_processLock);
@@ -162,5 +162,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_AUDIONODE(PannerNode, NodeTypePanner);
 
 #endif

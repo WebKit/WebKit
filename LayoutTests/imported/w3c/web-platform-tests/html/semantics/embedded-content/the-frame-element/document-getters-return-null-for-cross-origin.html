@@ -5,6 +5,7 @@
 <script src="/resources/testharnessreport.js"></script>
 <script>
 var t = async_test('HTMLFrameElement.contentDocument for cross-origin document');
+t.add_cleanup(function() { document.body.remove(); });
 window.addEventListener(
     'load', t.step_func_done(() => { assert_equals(document.querySelector('frame').contentDocument, null); }));
 </script>

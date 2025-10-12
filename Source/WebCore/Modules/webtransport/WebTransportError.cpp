@@ -34,7 +34,7 @@ Ref<WebTransportError> WebTransportError::create(String&& message, WebTransportE
 }
 
 WebTransportError::WebTransportError(String&& message, WebTransportErrorOptions&& options)
-    : DOMException(0, "WebTransportError"_s, WTFMove(message))
+    : DOMException(0, "WebTransportError"_s, WTFMove(message), DOMException::Type::WebTransportError)
     , m_options(WTFMove(options))
 {
 }

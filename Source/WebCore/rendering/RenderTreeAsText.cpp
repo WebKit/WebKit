@@ -28,9 +28,11 @@
 
 #include "ClipRect.h"
 #include "ColorSerialization.h"
+#include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "ElementInlines.h"
 #include "FrameSelection.h"
+#include "GraphicsLayer.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLSpanElement.h"
@@ -44,6 +46,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
+#include "NodeInlines.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
 #include "RemoteFrame.h"
@@ -77,6 +80,8 @@
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "StylePropertiesInlines.h"
+#include "StylePrimitiveKeyword+Logging.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/HexNumber.h>
 #include <wtf/Vector.h>
 #include <wtf/text/TextStream.h>
@@ -160,7 +165,7 @@ String quoteAndEscapeNonPrintables(StringView s)
     StringBuilder result;
     result.append('"');
     for (unsigned i = 0; i != s.length(); ++i) {
-        UChar c = s[i];
+        char16_t c = s[i];
         if (c == '\\') {
             result.append("\\\\"_s);
         } else if (c == '"') {
@@ -193,8 +198,8 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     if (behavior.contains(RenderAsTextFlag::ShowAddresses))
         ts << ' ' << &o;
 
-    if (o.style().usedZIndex()) // FIXME: This should use !hasAutoUsedZIndex().
-        ts << " zI: "_s << o.style().usedZIndex();
+    if (auto value = o.style().usedZIndex().tryValue(); value && value->value) // FIXME: This should log even when value->value is zero.
+        ts << " zI: "_s << value->value;
 
     if (o.node()) {
         String tagName = getTagName(o.node());
@@ -271,8 +276,8 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                 && textStrokeColor != color && textStrokeColor != Color::transparentBlack)
                 ts << " [textStrokeColor="_s << serializationForRenderTreeAsText(textStrokeColor) << ']';
 
-            if (renderElement->parent()->style().textStrokeWidth() != renderElement->style().textStrokeWidth() && renderElement->style().textStrokeWidth() > 0)
-                ts << " [textStrokeWidth="_s << renderElement->style().textStrokeWidth() << ']';
+            if (renderElement->parent()->style().textStrokeWidth() != renderElement->style().textStrokeWidth() && renderElement->style().textStrokeWidth().isPositive())
+                ts << " [textStrokeWidth="_s << Style::evaluate<float>(renderElement->style().textStrokeWidth(), renderElement->style().usedZoomForLength()) << ']';
         }
 
         auto* box = dynamicDowncast<RenderBoxModelObject>(o);
@@ -403,7 +408,7 @@ void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<Render
     }
 
     if (behavior.contains(RenderAsTextFlag::ShowLayoutState)) {
-        bool needsLayout = object.selfNeedsLayout() || object.needsPositionedMovementLayout() || object.posChildNeedsLayout() || object.normalChildNeedsLayout();
+        bool needsLayout = object.selfNeedsLayout() || object.needsOutOfFlowMovementLayout() || object.outOfFlowChildNeedsLayout() || object.normalChildNeedsLayout();
         if (needsLayout)
             ts << " (needs layout:"_s;
         
@@ -413,7 +418,7 @@ void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<Render
             havePrevious = true;
         }
 
-        if (object.needsPositionedMovementLayout()) {
+        if (object.needsOutOfFlowMovementLayout()) {
             if (havePrevious)
                 ts << ',';
             havePrevious = true;
@@ -427,7 +432,7 @@ void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<Render
             ts << " child"_s;
         }
 
-        if (object.posChildNeedsLayout()) {
+        if (object.outOfFlowChildNeedsLayout()) {
             if (havePrevious)
                 ts << ',';
             ts << " positioned child"_s;
@@ -654,21 +659,19 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
     }
     
     // Calculate the clip rects we should use.
-    LayoutRect layerBounds;
-    ClipRect damageRect;
-    ClipRect clipRectToApply;
     LayoutSize offsetFromRoot = layer.offsetFromAncestor(&rootLayer);
-    layer.calculateRects(RenderLayer::ClipRectsContext(&rootLayer, TemporaryClipRects), paintDirtyRect, layerBounds, damageRect, clipRectToApply, offsetFromRoot);
+    RenderLayer::ClipRectsContext clipRectsContext(&rootLayer, PaintingClipRects, RenderLayer::clipRectTemporaryOptions);
+    auto rects = layer.calculateRects(clipRectsContext, offsetFromRoot, paintDirtyRect);
 
     // Ensure our lists are up-to-date.
     layer.updateLayerListsIfNeeded();
     layer.updateDescendantDependentFlags();
 
-    bool shouldPaint = (behavior.contains(RenderAsTextFlag::ShowAllLayers)) ? true : layer.intersectsDamageRect(layerBounds, damageRect.rect(), &rootLayer, layer.offsetFromAncestor(&rootLayer));
+    bool shouldPaint = (behavior.contains(RenderAsTextFlag::ShowAllLayers)) ? true : layer.intersectsDamageRect(rects.layerBounds(), rects.dirtyBackgroundRect().rect(), &rootLayer, layer.offsetFromAncestor(&rootLayer));
     auto negativeZOrderLayers = layer.negativeZOrderLayers();
     bool paintsBackgroundSeparately = negativeZOrderLayers.size() > 0;
     if (shouldPaint && paintsBackgroundSeparately) {
-        writeLayer(ts, layer, layerBounds, damageRect.rect(), clipRectToApply.rect(), LayerPaintPhaseBackground, behavior);
+        writeLayer(ts, layer, rects.layerBounds(), rects.dirtyBackgroundRect().rect(), rects.dirtyForegroundRect().rect(), LayerPaintPhaseBackground, behavior);
         writeLayerRenderers(ts, layer, LayerPaintPhaseBackground, behavior);
     }
         
@@ -686,17 +689,17 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
     }
 
     if (shouldPaint) {
-        writeLayer(ts, layer, layerBounds, damageRect.rect(), clipRectToApply.rect(), paintsBackgroundSeparately ? LayerPaintPhaseForeground : LayerPaintPhaseAll, behavior);
+        writeLayer(ts, layer, rects.layerBounds(), rects.dirtyBackgroundRect().rect(), rects.dirtyForegroundRect().rect(), paintsBackgroundSeparately ? LayerPaintPhaseForeground : LayerPaintPhaseAll, behavior);
         
         if (behavior.contains(RenderAsTextFlag::ShowLayerFragments)) {
             LayerFragments layerFragments;
-            layer.collectFragments(layerFragments, &rootLayer, paintDirtyRect, RenderLayer::PaginationInclusionMode::ExcludeCompositedPaginatedLayers, TemporaryClipRects, { RenderLayer::ClipRectsOption::RespectOverflowClip }, offsetFromRoot);
-            
+            layer.collectFragments(layerFragments, &rootLayer, paintDirtyRect, RenderLayer::PaginationInclusionMode::ExcludeCompositedPaginatedLayers, PaintingClipRects, RenderLayer::clipRectTemporaryOptions, offsetFromRoot);
+
             if (layerFragments.size() > 1) {
                 TextStream::IndentScope indentScope(ts, 2);
                 for (unsigned i = 0; i < layerFragments.size(); ++i) {
                     const auto& fragment = layerFragments[i];
-                    ts << indent << " fragment "_s << i << ": bounds in layer "_s << fragment.layerBounds << " fragment bounds "_s << fragment.boundingBox << '\n';
+                    ts << indent << " fragment "_s << i << ": bounds in layer "_s << fragment.layerBounds() << " fragment bounds "_s << fragment.boundingBox() << '\n';
                 }
             }
         }

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <bit>
+#include <limits>
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 

@@ -53,7 +53,7 @@ extension ContiguousBytes {
             let result = VectorUInt8(buf.count)
             buf.copyBytes(
                 to: UnsafeMutableRawBufferPointer(
-                    start: UnsafeMutableRawPointer(mutating: result.__dataUnsafe()),
+                    start: UnsafeMutableRawPointer(mutating: result.span().__dataUnsafe()),
                     count: result.size()), count: result.size())
             return result
         }

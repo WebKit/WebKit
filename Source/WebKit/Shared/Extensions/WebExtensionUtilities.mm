@@ -38,8 +38,8 @@
 #import "WebExtensionAPITabs.h"
 #import "WebExtensionMessageSenderParameters.h"
 #import "WebFrame.h"
-#import <WebCore/DocumentInlines.h>
-#import <WebCore/LocalFrame.h>
+#import <WebCore/Document.h>
+#import <WebCore/LocalFrameInlines.h>
 #import <objc/runtime.h>
 
 #if PLATFORM(IOS_FAMILY)

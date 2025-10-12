@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
- * Copyright (C) 2011 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,12 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ContextDestructionObserverInlines.h"
 #include "Database.h"
 #include "DatabaseManager.h"
 #include "DatabaseTask.h"
 #include "DatabaseThread.h"
-#include "DocumentInlines.h"
+#include "DocumentPage.h"
 #include "FrameDestructionObserverInlines.h"
 #include "LegacySchemeRegistry.h"
 #include "Page.h"
@@ -166,10 +167,10 @@ bool DatabaseContext::stopDatabases(DatabaseTaskSynchronizer* synchronizer)
         m_hasRequestedTermination = true;
     }
 
-    auto& context = *scriptExecutionContext();
-    if (context.databaseContext()) {
-        ASSERT(context.databaseContext() == this);
-        context.setDatabaseContext(nullptr);
+    Ref context = *scriptExecutionContext();
+    if (context->databaseContext()) {
+        ASSERT(context->databaseContext() == this);
+        context->setDatabaseContext(nullptr);
     }
 
     return result;
@@ -197,6 +198,11 @@ void DatabaseContext::databaseExceededQuota(const String& name, DatabaseDetails 
         return;
     }
     ASSERT(context->isWorkerGlobalScope());
+}
+
+Document* DatabaseContext::document() const
+{
+    return downcast<Document>(ActiveDOMObject::scriptExecutionContext());
 }
 
 const SecurityOriginData& DatabaseContext::securityOrigin() const

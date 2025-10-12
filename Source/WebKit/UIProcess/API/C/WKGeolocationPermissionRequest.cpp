@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,10 +38,10 @@ WKTypeID WKGeolocationPermissionRequestGetTypeID()
 
 void WKGeolocationPermissionRequestAllow(WKGeolocationPermissionRequestRef geolocationPermissionRequestRef)
 {
-    return toImpl(geolocationPermissionRequestRef)->allow();
+    return toProtectedImpl(geolocationPermissionRequestRef)->allow();
 }
 
 void WKGeolocationPermissionRequestDeny(WKGeolocationPermissionRequestRef geolocationPermissionRequestRef)
 {
-    return toImpl(geolocationPermissionRequestRef)->deny();
+    return toProtectedImpl(geolocationPermissionRequestRef)->deny();
 }

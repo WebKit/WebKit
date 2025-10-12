@@ -33,7 +33,6 @@
 #include "ImageAnalysisUtilities.h"
 #include "PDFPluginIdentifier.h"
 #include "WKLayoutMode.h"
-#include "WKTextAnimationType.h"
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/KeypressCommand.h>
@@ -62,6 +61,7 @@ OBJC_CLASS NSAccessibilityRemoteUIElement;
 OBJC_CLASS NSImmediateActionGestureRecognizer;
 OBJC_CLASS NSMenu;
 OBJC_CLASS NSPopover;
+OBJC_CLASS NSScrollPocket;
 OBJC_CLASS NSTextInputContext;
 OBJC_CLASS NSTextPlaceholder;
 OBJC_CLASS NSView;
@@ -134,11 +134,10 @@ namespace WritingTools {
 enum class ReplacementBehavior : uint8_t;
 }
 
-} // namespace WebCore
+struct FrameIdentifierType;
+using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebViewImplAdditionsBefore.h>)
-#import <WebKitAdditions/WebViewImplAdditionsBefore.h>
-#endif
+} // namespace WebCore
 
 @protocol WebViewImplDelegate
 
@@ -191,6 +190,8 @@ struct DragItem;
 struct DigitalCredentialsRequestData;
 #endif
 
+struct FrameIdentifierType;
+using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
 }
 
 namespace WebKit {
@@ -228,10 +229,12 @@ public:
     ~WebViewImpl();
 
     NSWindow *window();
+    RetainPtr<NSWindow> protectedWindow();
 
     WebPageProxy& page() { return m_page.get(); }
 
     WKWebView *view() const { return m_view.getAutoreleased(); }
+    RetainPtr<WKWebView> protectedView() const { return m_view.get(); };
 
     void processWillSwap();
     void processDidExit();
@@ -326,6 +329,8 @@ public:
     void windowDidChangeScreen();
     void windowDidChangeOcclusionState();
     void windowWillClose();
+    void windowWillEnterOrExitFullScreen();
+    void windowDidEnterOrExitFullScreen();
     void screenDidChangeColorSpace();
     bool shouldDelayWindowOrderingForEvent(NSEvent *);
     bool windowResizeMouseLocationIsInVisibleScrollerThumb(CGPoint);
@@ -398,6 +403,7 @@ public:
 #if ENABLE(FULLSCREEN_API)
     bool hasFullScreenWindowController() const;
     WKFullScreenWindowController *fullScreenWindowController();
+    RetainPtr<WKFullScreenWindowController> protectedFullScreenWindowController();
     void closeFullScreenWindowController();
 #endif
     NSView *fullScreenPlaceholderView();
@@ -457,6 +463,9 @@ public:
     bool isAutomaticTextReplacementEnabled();
     void setAutomaticTextReplacementEnabled(bool);
     void toggleAutomaticTextReplacement();
+    bool isSmartListsEnabled();
+    void setSmartListsEnabled(bool);
+    void toggleSmartLists();
     void uppercaseWord();
     void lowercaseWord();
     void capitalizeWord();
@@ -503,6 +512,12 @@ public:
     void enableAccessibilityIfNecessary(NSString *attribute = nil);
     id accessibilityAttributeValue(NSString *, id parameter = nil);
     RetainPtr<NSAccessibilityRemoteUIElement> remoteAccessibilityChildIfNotSuspended();
+
+    // Accessibility info for debugging
+    NSUInteger accessibilityRemoteChildTokenHash();
+    NSUInteger accessibilityUIProcessLocalTokenHash();
+    NSArray<NSNumber *> *registeredRemoteAccessibilityPids();
+    bool hasRemoteAccessibilityChild();
 
     void updatePrimaryTrackingAreaOptions(NSTrackingAreaOptions);
 
@@ -615,7 +630,7 @@ public:
     CGFloat totalHeightOfBanners() const { return m_totalHeightOfBanners; }
 
     void doneWithKeyEvent(NSEvent *, bool eventWasHandled);
-    NSArray *validAttributesForMarkedText();
+    NSArray *validAttributesForMarkedTextSingleton();
     void doCommandBySelector(SEL);
     void insertText(id string);
     void insertText(id string, NSRange replacementRange);
@@ -702,7 +717,7 @@ public:
     NSTouchBar *currentTouchBar() const { return m_currentTouchBar.get(); }
     NSCandidateListTouchBarItem *candidateListTouchBarItem() const;
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    RefPtr<WebCore::PlatformPlaybackSessionInterface> protectedPlaybackSessionInterface() const;
+    WebCore::PlatformPlaybackSessionInterface* playbackSessionInterface() const;
     bool isPictureInPictureActive();
     void togglePictureInPicture();
     bool isInWindowFullscreenActive() const;
@@ -788,11 +803,15 @@ public:
 #endif
 
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
-    void updateContentInsetFillViews();
-    WKNSContentInsetFillView *topContentInsetFillView() const { return m_topContentInsetFillView.get(); }
-    void registerViewAboveTopContentInsetArea(NSView *);
-    void unregisterViewAboveTopContentInsetArea(NSView *);
-    void updateTopContentInsetFillDueToScrolling();
+    void updateScrollPocket();
+    NSScrollPocket *topScrollPocket() const { return m_topScrollPocket.get(); }
+    void registerViewAboveScrollPocket(NSView *);
+    void unregisterViewAboveScrollPocket(NSView *);
+    void updateScrollPocketVisibilityWhenScrolledToTop();
+    void updateTopScrollPocketCaptureColor();
+    void updateTopScrollPocketStyle();
+    void updatePrefersSolidColorHardPocket();
+    void setCanInstallScrollPocket();
 #endif
 
 private:
@@ -846,7 +865,8 @@ private:
     void sendToolTipMouseEntered();
 
     void reparentLayerTreeInThumbnailView();
-    void updateThumbnailViewLayer();
+    // Returns true if the thumbnail view consumed the layer.
+    bool updateThumbnailViewLayer();
 
     void setUserInterfaceItemState(NSString *commandName, bool enabled, int state);
 
@@ -890,7 +910,7 @@ private:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    CocoaImageAnalyzer *ensureImageAnalyzer();
+    CocoaImageAnalyzer* ensureImageAnalyzer();
     int32_t processImageAnalyzerRequest(CocoaImageAnalyzerRequest *, CompletionHandler<void(RetainPtr<CocoaImageAnalysis>&&, NSError *)>&&);
 #endif
 
@@ -900,7 +920,9 @@ private:
     const UniqueRef<PageClient> m_pageClient;
     const Ref<WebPageProxy> m_page;
 
+#if ENABLE(TILED_CA_DRAWING_AREA)
     DrawingAreaType m_drawingAreaType { DrawingAreaType::TiledCoreAnimation };
+#endif
 
     bool m_willBecomeFirstResponderAgain { false };
     bool m_inBecomeFirstResponder { false };
@@ -912,6 +934,7 @@ private:
     bool m_needsViewFrameInWindowCoordinates;
     bool m_didScheduleWindowAndViewFrameUpdate { false };
     bool m_windowOcclusionDetectionEnabled { true };
+    bool m_windowIsEnteringOrExitingFullScreen { false };
 
     CGSize m_scrollOffsetAdjustment { 0, 0 };
 
@@ -949,7 +972,7 @@ private:
 
     id m_flagsChangedEventMonitor { nullptr };
 
-    std::unique_ptr<PAL::HysteresisActivity> m_contentRelativeViewsHysteresis;
+    const UniqueRef<PAL::HysteresisActivity> m_contentRelativeViewsHysteresis;
 
     RetainPtr<NSColorSpace> m_colorSpace;
 
@@ -995,7 +1018,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     bool m_allowsMagnification { false };
 
     RetainPtr<NSAccessibilityRemoteUIElement> m_remoteAccessibilityChild;
+    RetainPtr<NSData> m_remoteAccessibilityChildToken;
+    RetainPtr<NSData> m_remoteAccessibilityTokenGeneratedByUIProcess;
     RetainPtr<NSMutableDictionary> m_remoteAccessibilityFrameCache;
+    HashSet<pid_t> m_registeredRemoteAccessibilityPids;
 
     RefPtr<WebCore::Image> m_promisedImage;
     String m_promisedFilename;
@@ -1010,13 +1036,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // that has been already sent to WebCore.
     RetainPtr<NSEvent> m_keyDownEventBeingResent;
 
-    struct CheckedCommands : public CanMakeCheckedPtr<CheckedCommands> {
-        WTF_MAKE_FAST_ALLOCATED;
-        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CheckedCommands);
-    public:
-        Vector<WebCore::KeypressCommand> commands;
-    };
-    CheckedPtr<CheckedCommands> m_collectedKeypressCommands;
+    std::optional<Vector<WebCore::KeypressCommand>> m_collectedKeypressCommands;
+    std::optional<NSRange> m_stagedMarkedRange;
+    Vector<CompletionHandler<void()>> m_interpretKeyEventHoldingTank;
 
     String m_lastStringForCandidateRequest;
     NSInteger m_lastCandidateRequestSequenceNumber;
@@ -1051,8 +1073,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    RefPtr<WorkQueue> m_imageAnalyzerQueue;
-    RetainPtr<CocoaImageAnalyzer> m_imageAnalyzer;
+    const RefPtr<WorkQueue> m_imageAnalyzerQueue;
+    const RetainPtr<CocoaImageAnalyzer> m_imageAnalyzer;
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
@@ -1072,8 +1094,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
-    RetainPtr<WKNSContentInsetFillView> m_topContentInsetFillView;
-    RetainPtr<NSHashTable<NSView *>> m_viewsAboveTopContentInsetArea;
+    RetainPtr<NSScrollPocket> m_topScrollPocket;
+    RetainPtr<NSHashTable<NSView *>> m_viewsAboveScrollPocket;
+    bool m_canInstallScrollPocket { false };
 #endif
 
 #if HAVE(INLINE_PREDICTIONS)

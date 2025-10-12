@@ -120,6 +120,7 @@ public:
 
 #if ENABLE(DAMAGE_TRACKING)
     void setDamagePropagationEnabled(bool enabled) { m_damagePropagationEnabled = enabled; }
+    void setDamageInGlobalCoordinateSpace(std::shared_ptr<Damage> damage) { m_damageInGlobalCoordinateSpace = WTFMove(damage); }
     void setDamage(Damage&&);
     void collectDamage(TextureMapper&, Damage&);
 #endif
@@ -194,7 +195,6 @@ private:
     void collectDamageSelfChildrenFilterAndMask(TextureMapperPaintOptions&, Damage&);
     void collectDamageFromLayerAboutToBeRemoved(TextureMapperLayer&);
     ALWAYS_INLINE Damage& ensureDamageInLayerCoordinateSpace();
-    ALWAYS_INLINE Damage& ensureDamageInGlobalCoordinateSpace();
     inline void damageWholeLayer();
     void damageWholeLayerIncludingItsRectFromPreviousFrame();
 #endif
@@ -291,7 +291,7 @@ private:
     bool m_damagePropagationEnabled { false };
     bool m_collectDamageDespiteBeingInvisible { false };
     std::optional<Damage> m_damageInLayerCoordinateSpace;
-    std::optional<Damage> m_damageInGlobalCoordinateSpace;
+    std::shared_ptr<Damage> m_damageInGlobalCoordinateSpace;
     FloatRect m_accumulatedOverlapRegionDamage;
     std::optional<FloatRect> m_previousLayerRectInGlobalCoordinateSpace;
 #endif

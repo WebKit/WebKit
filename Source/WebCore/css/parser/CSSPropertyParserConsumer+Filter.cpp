@@ -26,11 +26,9 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+Filter.h"
 
-#include "CSSAppleColorFilterProperty.h"
-#include "CSSAppleColorFilterPropertyValue.h"
+#include "CSSAppleColorFilterValue.h"
 #include "CSSFilterFunctionDescriptor.h"
-#include "CSSFilterProperty.h"
-#include "CSSFilterPropertyValue.h"
+#include "CSSFilterValue.h"
 #include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
@@ -49,7 +47,8 @@
 #include "CSSTokenizer.h"
 #include "CSSValueKeywords.h"
 #include "FilterOperations.h"
-#include "StyleFilterProperty.h"
+#include "StyleBuilderState.h"
+#include "StyleFilter.h"
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -280,7 +279,7 @@ static std::optional<CSS::SepiaFunction> consumeFilterSepia(CSSParserTokenRange&
     return CSS::SepiaFunction { .parameters = { CSS::Sepia::Parameter { WTFMove(*parsedValue) } } };
 }
 
-static std::optional<CSS::FilterProperty::List> consumeUnresolvedFilterValueList(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+static std::optional<CSS::FilterValueList> consumeUnresolvedFilterValueList(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // <filter-value-list> = [ <filter-function> | <url> ]+
     // <filter-function> = <blur()> | <brightness()> | <contrast()> | <drop-shadow()> | <grayscale()> | <hue-rotate()> | <invert()> | <opacity()> | <sepia()> | <saturate()>
@@ -288,7 +287,7 @@ static std::optional<CSS::FilterProperty::List> consumeUnresolvedFilterValueList
 
     auto rangeCopy = range;
 
-    CSS::FilterProperty::List list;
+    CSS::FilterValueList list;
 
     auto appendOnSuccess = [&](auto&& value) -> bool {
         if (!value)
@@ -354,34 +353,34 @@ static std::optional<CSS::FilterProperty::List> consumeUnresolvedFilterValueList
     return { WTFMove(list) };
 }
 
-std::optional<CSS::FilterProperty> consumeUnresolvedFilter(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+std::optional<CSS::Filter> consumeUnresolvedFilter(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     if (range.peek().id() == CSSValueNone) {
         range.consumeIncludingWhitespace();
-        return CSS::FilterProperty { CSS::Keyword::None { } };
+        return CSS::Filter { CSS::Keyword::None { } };
     }
     if (auto filterValueList = consumeUnresolvedFilterValueList(range, state))
-        return CSS::FilterProperty { WTFMove(*filterValueList) };
+        return CSS::Filter { WTFMove(*filterValueList) };
     return { };
 }
 
 RefPtr<CSSValue> consumeFilter(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     if (auto property = consumeUnresolvedFilter(range, state))
-        return CSSFilterPropertyValue::create({ WTFMove(*property) });
+        return CSSFilterValue::create({ WTFMove(*property) });
     return nullptr;
 }
 
 // MARK: - <-apple-color-filter>
 
-static std::optional<CSS::AppleColorFilterProperty::List> consumeUnresolvedAppleColorFilterValueList(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+static std::optional<CSS::AppleColorFilter::List> consumeUnresolvedAppleColorFilterValueList(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // <-apple-color-filter-value-list = <-apple-color-filter-function>+
     // <-apple-color-filter-function> = <-apple-invert-lightness() | <brightness()> | <contrast()> | <grayscale()> | <hue-rotate()> | <invert()> | <opacity()> | <sepia()> | <saturate()>
 
     auto rangeCopy = range;
 
-    CSS::AppleColorFilterProperty::List list;
+    CSS::AppleColorFilter::List list;
 
     auto appendOnSuccess = [&](auto&& value) -> bool {
         if (!value)
@@ -438,25 +437,25 @@ static std::optional<CSS::AppleColorFilterProperty::List> consumeUnresolvedApple
     return { WTFMove(list) };
 }
 
-std::optional<CSS::AppleColorFilterProperty> consumeUnresolvedAppleColorFilter(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+std::optional<CSS::AppleColorFilter> consumeUnresolvedAppleColorFilter(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     if (range.peek().id() == CSSValueNone) {
         range.consumeIncludingWhitespace();
-        return CSS::AppleColorFilterProperty { CSS::Keyword::None { } };
+        return CSS::AppleColorFilter { CSS::Keyword::None { } };
     }
     if (auto filterValueList = consumeUnresolvedAppleColorFilterValueList(range, state))
-        return CSS::AppleColorFilterProperty { WTFMove(*filterValueList) };
+        return CSS::AppleColorFilter { WTFMove(*filterValueList) };
     return { };
 }
 
 RefPtr<CSSValue> consumeAppleColorFilter(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     if (auto property = consumeUnresolvedAppleColorFilter(range, state))
-        return CSSAppleColorFilterPropertyValue::create({ WTFMove(*property) });
+        return CSSAppleColorFilterValue::create({ WTFMove(*property) });
     return nullptr;
 }
 
-std::optional<FilterOperations> parseFilterValueListOrNoneRaw(const String& string, const CSSParserContext& context, const Document& document, RenderStyle& style)
+std::optional<Style::Filter> parseFilterValueListOrNoneRaw(const String& string, const CSSParserContext& context, const Document& document, RenderStyle& style)
 {
     auto tokenizer = CSSTokenizer(string);
     auto range = tokenizer.tokenRange();
@@ -475,8 +474,8 @@ std::optional<FilterOperations> parseFilterValueListOrNoneRaw(const String& stri
     if (!range.atEnd())
         return { };
 
-    CSSToLengthConversionData conversionData { style, nullptr, nullptr, nullptr };
-    return Style::createFilterOperations(*filter, document, style, conversionData);
+    auto builderState = Style::BuilderState::create(style, Style::BuilderContext { document });
+    return Style::toStyle(*filter, *CheckedPtr { builderState.ptr() });
 }
 
 } // namespace CSSPropertyParserHelpers

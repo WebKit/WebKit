@@ -18,7 +18,6 @@
 #include "api/array_view.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
-#include "net/dcsctp/packet/tlv_trait.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace dcsctp {
@@ -34,7 +33,7 @@ namespace dcsctp {
 constexpr int UnrecognizedChunkTypeCause::kType;
 
 std::optional<UnrecognizedChunkTypeCause> UnrecognizedChunkTypeCause::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -51,7 +50,7 @@ void UnrecognizedChunkTypeCause::SerializeTo(std::vector<uint8_t>& out) const {
 }
 
 std::string UnrecognizedChunkTypeCause::ToString() const {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
   sb << "Unrecognized Chunk Type, chunk_type=";
   if (!unrecognized_chunk_.empty()) {
     sb << static_cast<int>(unrecognized_chunk_[0]);

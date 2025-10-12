@@ -1,8 +1,0 @@
-This test makes sure that AccessibilityNodeObjects are properly detached when the node they point to is deleted.
-
-PASS: axButton.role === detachedRole
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

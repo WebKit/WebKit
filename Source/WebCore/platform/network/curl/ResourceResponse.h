@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2025 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "ResourceResponseBase.h"
+#include <WebCore/ResourceResponseBase.h>
 
 namespace WebCore {
 

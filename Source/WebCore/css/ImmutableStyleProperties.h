@@ -24,13 +24,13 @@
 
 #pragma once
 
-#include "StyleProperties.h"
+#include <WebCore/StyleProperties.h>
 
 namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ImmutableStyleProperties);
 class ImmutableStyleProperties final : public StyleProperties {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ImmutableStyleProperties);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ImmutableStyleProperties, ImmutableStyleProperties);
 public:
     inline void deref() const;
 
@@ -56,8 +56,8 @@ public:
     void* m_storage;
 
 private:
-    PackedPtr<const CSSValue>* valueArray() const;
-    const StylePropertyMetadata* metadataArray() const;
+    std::span<PackedPtr<const CSSValue>> valueSpan() const;
+    std::span<const StylePropertyMetadata> metadataSpan() const;
     ImmutableStyleProperties(std::span<const CSSProperty>, CSSParserMode);
 };
 
@@ -68,30 +68,28 @@ inline void ImmutableStyleProperties::deref() const
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-inline PackedPtr<const CSSValue>* ImmutableStyleProperties::valueArray() const
+inline std::span<PackedPtr<const CSSValue>> ImmutableStyleProperties::valueSpan() const
 {
-    return std::bit_cast<PackedPtr<const CSSValue>*>(std::bit_cast<const uint8_t*>(metadataArray()) + (m_arraySize * sizeof(StylePropertyMetadata)));
+    return unsafeMakeSpan(std::bit_cast<PackedPtr<const CSSValue>*>(std::bit_cast<const uint8_t*>(metadataSpan().data()) + (m_arraySize * sizeof(StylePropertyMetadata))), propertyCount());
 }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-inline const StylePropertyMetadata* ImmutableStyleProperties::metadataArray() const
+inline std::span<const StylePropertyMetadata> ImmutableStyleProperties::metadataSpan() const
 {
-    return reinterpret_cast<const StylePropertyMetadata*>(const_cast<const void**>((&(this->m_storage))));
+    return unsafeMakeSpan(reinterpret_cast<const StylePropertyMetadata*>(const_cast<const void**>((&(this->m_storage)))), propertyCount());
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 inline ImmutableStyleProperties::PropertyReference ImmutableStyleProperties::propertyAt(unsigned index) const
 {
-    return PropertyReference(metadataArray()[index], valueArray()[index].get());
+    return PropertyReference(metadataSpan()[index], valueSpan()[index].get());
 }
 
 constexpr size_t ImmutableStyleProperties::objectSize(unsigned count)
 {
     return sizeof(ImmutableStyleProperties) - sizeof(void*) + sizeof(StylePropertyMetadata) * count + sizeof(PackedPtr<const CSSValue>) * count;
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-}
+} // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ImmutableStyleProperties)
     static bool isType(const WebCore::StyleProperties& properties) { return !properties.isMutable(); }

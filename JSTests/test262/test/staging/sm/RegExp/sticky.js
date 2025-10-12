@@ -2,17 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-RegExp-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  sticky flag should not break assertion behavior.
+info: bugzilla.mozilla.org/show_bug.cgi?id=773687
 esid: pending
 ---*/
-var BUGNUMBER = 773687;
-var summary = 'sticky flag should not break assertion behavior.';
-
-print(BUGNUMBER + ": " + summary);
 
 function test(re, text, expectations) {
   // Sanity check for test data itself.
@@ -132,4 +126,3 @@ test(/\B/y, "abc bc", [
   { lastIndex: 5, matches: [""], index: 5 },
   null,
 ]);
-

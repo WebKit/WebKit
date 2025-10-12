@@ -10,7 +10,9 @@
 
 #include "modules/audio_processing/agc2/agc2_testing_common.h"
 
-#include <math.h>
+#include <cmath>
+#include <numbers>
+#include <vector>
 
 #include "rtc_base/checks.h"
 
@@ -56,7 +58,7 @@ SineGenerator::SineGenerator(float amplitude,
 }
 
 float SineGenerator::operator()() {
-  constexpr float kPi = 3.1415926536f;
+  constexpr float kPi = std::numbers::pi_v<float>;
   x_radians_ += frequency_hz_ / sample_rate_hz_ * 2 * kPi;
   if (x_radians_ >= 2 * kPi) {
     x_radians_ -= 2 * kPi;

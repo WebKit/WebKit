@@ -19,7 +19,7 @@ namespace webrtc {
 // Creates a new factory that can create only Opus audio decoders. Works like
 // CreateAudioDecoderFactory<AudioDecoderOpus>(), but is easier to use and is
 // not inline because it isn't a template.
-rtc::scoped_refptr<AudioDecoderFactory> CreateOpusAudioDecoderFactory();
+scoped_refptr<AudioDecoderFactory> CreateOpusAudioDecoderFactory();
 
 }  // namespace webrtc
 

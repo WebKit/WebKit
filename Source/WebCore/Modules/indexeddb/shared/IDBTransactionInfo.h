@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "IDBDatabaseInfo.h"
-#include "IDBResourceIdentifier.h"
-#include "IDBTransactionDurability.h"
-#include "IDBTransactionMode.h"
-#include "IndexedDB.h"
+#include <WebCore/IDBDatabaseInfo.h>
+#include <WebCore/IDBResourceIdentifier.h>
+#include <WebCore/IDBTransactionDurability.h>
+#include <WebCore/IDBTransactionMode.h>
+#include <WebCore/IndexedDB.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 

@@ -32,14 +32,14 @@ DECLARE_SYSTEM_HEADER
 
 #if ENABLE(WRITING_TOOLS)
 
-#if USE(APPLE_INTERNAL_SDK)
-
-#import <WritingTools/WTSession_Private.h>
-#import <WritingTools/WritingTools.h>
-
-#else
+// FIXME: (rdar://149216417) Import WritingTools when using the internal SDK instead of using forward declarations.
 
 #import <Foundation/Foundation.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+@protocol BSXPCCoding;
+@protocol BSXPCSecureCoding;
 
 extern NSAttributedStringKey const WTWritingToolsPreservedAttributeName;
 
@@ -67,9 +67,10 @@ typedef NS_ENUM(NSInteger, WTRequestedTool) {
 
 // MARK: WTContext
 
+@protocol WTTextViewDelegate_Proposed_v1;
 @protocol WTTextViewDelegate;
 
-@interface WTContext : NSObject
+@interface WTContext : NSObject<NSSecureCoding, NSCopying>
 
 @property (nonatomic, readonly) NSUUID *uuid;
 
@@ -104,17 +105,21 @@ typedef NS_ENUM(NSInteger, WTSessionType) {
     WTSessionTypeComposition,
 };
 
-@interface WTSession : NSObject
+@interface WTSession : NSObject<BSXPCSecureCoding, NSSecureCoding>
 
 @property (nonatomic, readonly) NSUUID *uuid;
 @property (nonatomic, readonly) WTSessionType type;
 
-@property (nonatomic, weak) id<WTTextViewDelegate> textViewDelegate;
+@property (nonatomic, weak) id<WTTextViewDelegate_Proposed_v1> textViewDelegate;
+
+- (instancetype)initWithType:(WTSessionType)type textViewDelegate:(id<WTTextViewDelegate> _Nullable)textViewDelegate;
+
+@end
+
+@interface WTSession (Private)
 
 @property (nonatomic) WTCompositionSessionType compositionSessionType;
 @property (nonatomic, readonly) WTRequestedTool requestedTool;
-
-- (instancetype)initWithType:(WTSessionType)type textViewDelegate:(id<WTTextViewDelegate>)textViewDelegate;
 
 @end
 
@@ -125,9 +130,11 @@ typedef NS_ENUM(NSInteger, WTTextSuggestionState) {
     WTTextSuggestionStateReviewing = 1,
     WTTextSuggestionStateRejected = 3,
     WTTextSuggestionStateInvalid = 4,
+
+    WTTextSuggestionStateAccepted = 2,
 };
 
-@interface WTTextSuggestion : NSObject
+@interface WTTextSuggestion : NSObject<BSXPCCoding, NSSecureCoding>
 
 @property (nonatomic, readonly) NSUUID *uuid;
 
@@ -135,9 +142,21 @@ typedef NS_ENUM(NSInteger, WTTextSuggestionState) {
 
 @property (nonatomic, readonly) NSString *replacement;
 
+@property (nonatomic, nullable, readonly) NSString *suggestionCategory;
+@property (nonatomic, nullable, readonly) NSString *suggestionShortDescription;
+@property (nonatomic, nullable, readonly) NSString *suggestionDescription;
+
 @property (nonatomic) WTTextSuggestionState state;
 
+- (instancetype)init NS_UNAVAILABLE;
+
+- (instancetype)initWithOriginalRange:(NSRange)originalRange replacement:(NSString *)replacement suggestionCategory:(NSString * _Nullable)suggestionCategory suggestionDescription:(NSString * _Nullable)suggestionDescription NS_DESIGNATED_INITIALIZER;
+
+- (instancetype)initWithOriginalRange:(NSRange)originalRange replacement:(NSString *)replacement suggestionCategory:(NSString * _Nullable)suggestionCategory suggestionShortDescription:(NSString * _Nullable)suggestionShortDescription suggestionDescription:(NSString * _Nullable)suggestionDescription;
+
 - (instancetype)initWithOriginalRange:(NSRange)originalRange replacement:(NSString *)replacement;
+
+- (instancetype)initWithOriginalRange:(NSRange)originalRange replacement:(NSString *)replacement suggestionDescription:(NSString *)suggestionDescription;
 
 @end
 
@@ -149,7 +168,7 @@ typedef NS_ENUM(NSInteger, WTTextSuggestionState) {
 @class NSView;
 #endif
 
-@protocol WTTextViewDelegate
+@protocol WTTextViewDelegate_Proposed_v1
 
 - (void)proofreadingSessionWithUUID:(NSUUID *)sessionUUID updateState:(WTTextSuggestionState)state forSuggestionWithUUID:(NSUUID *)suggestionUUID;
 
@@ -159,13 +178,19 @@ typedef NS_ENUM(NSInteger, WTTextSuggestionState) {
 - (void)proofreadingSessionWithUUID:(NSUUID *)sessionUUID showDetailsForSuggestionWithUUID:(NSUUID *)suggestionUUID relativeToRect:(NSRect)rect inView:(NSView *)sourceView;
 #endif
 
+- (void)textSystemWillBeginEditingDuringSessionWithUUID:(NSUUID *)sessionUUID;
+
+@end
+
+@protocol WTTextViewDelegate <WTTextViewDelegate_Proposed_v1>
+
 @end
 
 // MARK: WTWritingToolsDelegate
 
-@protocol WTWritingToolsDelegate
+@protocol WTWritingToolsDelegate_Proposed_v3
 
-- (void)willBeginWritingToolsSession:(WTSession *)session requestContexts:(void (^)(NSArray<WTContext *> *contexts))completion;
+- (void)willBeginWritingToolsSession:(nullable WTSession *)session requestContexts:(void (^)(NSArray<WTContext *> *contexts))completion;
 
 - (void)didBeginWritingToolsSession:(WTSession *)session contexts:(NSArray<WTContext *> *)contexts;
 
@@ -174,6 +199,12 @@ typedef NS_ENUM(NSInteger, WTAction) {
     WTActionShowRewritten,
     WTActionCompositionRestart,
     WTActionCompositionRefine,
+};
+
+typedef NS_ENUM(NSInteger, WTFormSheetUIType) {
+    WTFormSheetUITypeUnspecified,
+    WTFormSheetUITypeEnrollment,
+    WTFormSheetUITypeShareSheet,
 };
 
 - (void)writingToolsSession:(WTSession *)session didReceiveAction:(WTAction)action;
@@ -186,8 +217,18 @@ typedef NS_ENUM(NSInteger, WTAction) {
 
 - (void)compositionSession:(WTSession *)session didReceiveText:(NSAttributedString *)attributedText replacementRange:(NSRange)range inContext:(WTContext *)context finished:(BOOL)finished;
 
+@optional
+
+- (BOOL)supportsWritingToolsAction:(WTAction)action;
+
+@property (readonly, nonatomic) BOOL includesTextListMarkers;
+
 @end
 
-#endif // USE(APPLE_INTERNAL_SDK)
+@protocol WTWritingToolsDelegate <WTWritingToolsDelegate_Proposed_v3>
+
+@end
+
+NS_ASSUME_NONNULL_END
 
 #endif // ENABLE(WRITING_TOOLS)

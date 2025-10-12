@@ -20,8 +20,9 @@
   NSParameterAssert(jsonString.length > 0);
   NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
   NSError *error = nil;
-  NSDictionary *dict =
-      [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+  NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data
+                                                       options:0
+                                                         error:&error];
   if (error) {
     RTCLogError(@"Error parsing JSON: %@", error.localizedDescription);
   }
@@ -30,8 +31,9 @@
 
 + (NSDictionary *)dictionaryWithJSONData:(NSData *)jsonData {
   NSError *error = nil;
-  NSDictionary *dict =
-      [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
+  NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:jsonData
+                                                       options:0
+                                                         error:&error];
   if (error) {
     RTCLogError(@"Error parsing JSON: %@", error.localizedDescription);
   }
@@ -49,7 +51,8 @@
   // Kick off an async request which will call back on main thread.
   NSURLSession *session = [NSURLSession sharedSession];
   [[session dataTaskWithRequest:request
-              completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+              completionHandler:^(
+                  NSData *data, NSURLResponse *response, NSError *error) {
                 if (completionHandler) {
                   completionHandler(response, data, error);
                 }
@@ -59,37 +62,38 @@
 // Posts data to the specified URL.
 + (void)sendAsyncPostToURL:(NSURL *)url
                   withData:(NSData *)data
-         completionHandler:(void (^)(BOOL succeeded,
-                                     NSData *data))completionHandler {
+         completionHandler:
+             (void (^)(BOOL succeeded, NSData *data))completionHandler {
   NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
   request.HTTPMethod = @"POST";
   request.HTTPBody = data;
-  [[self class] sendAsyncRequest:request
-                completionHandler:^(NSURLResponse *response,
-                                    NSData *data,
-                                    NSError *error) {
-    if (error) {
-      RTCLogError(@"Error posting data: %@", error.localizedDescription);
-      if (completionHandler) {
-        completionHandler(NO, data);
-      }
-      return;
-    }
-    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-    if (httpResponse.statusCode != 200) {
-      NSString *serverResponse = data.length > 0 ?
-          [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] :
-          nil;
-      RTCLogError(@"Received bad response: %@", serverResponse);
-      if (completionHandler) {
-        completionHandler(NO, data);
-      }
-      return;
-    }
-    if (completionHandler) {
-      completionHandler(YES, data);
-    }
-  }];
+  [[self class]
+       sendAsyncRequest:request
+      completionHandler:^(
+          NSURLResponse *response, NSData *responseData, NSError *error) {
+        if (error) {
+          RTCLogError(@"Error posting data: %@", error.localizedDescription);
+          if (completionHandler) {
+            completionHandler(NO, responseData);
+          }
+          return;
+        }
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+        if (httpResponse.statusCode != 200) {
+          NSString *serverResponse = responseData.length > 0 ?
+              [[NSString alloc] initWithData:responseData
+                                    encoding:NSUTF8StringEncoding] :
+              nil;
+          RTCLogError(@"Received bad response: %@", serverResponse);
+          if (completionHandler) {
+            completionHandler(NO, responseData);
+          }
+          return;
+        }
+        if (completionHandler) {
+          completionHandler(YES, responseData);
+        }
+      }];
 }
 
 @end
@@ -120,7 +124,7 @@ NSInteger ARDGetCpuUsagePercentage(void) {
   }
 
   // Dealloc the created array.
-  vm_deallocate(task, (vm_address_t)thread_array,
-                sizeof(thread_act_t) * thread_count);
+  vm_deallocate(
+      task, (vm_address_t)thread_array, sizeof(thread_act_t) * thread_count);
   return lroundf(cpu_usage_percentage);
 }

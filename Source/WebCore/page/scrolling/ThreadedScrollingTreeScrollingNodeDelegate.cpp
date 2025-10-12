@@ -178,6 +178,7 @@ void ThreadedScrollingTreeScrollingNodeDelegate::willStartScrollSnapAnimation()
 void ThreadedScrollingTreeScrollingNodeDelegate::didStopScrollSnapAnimation()
 {
     protectedScrollingNode()->setScrollSnapInProgress(false);
+    didStopAnimatedScroll();
 }
 
 ScrollExtents ThreadedScrollingTreeScrollingNodeDelegate::scrollExtents() const

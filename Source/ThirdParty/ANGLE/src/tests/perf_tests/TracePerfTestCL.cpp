@@ -7,6 +7,10 @@
 //   Performance test for ANGLE CL replaying traces.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "tests/perf_tests/ANGLEComputeTestCL.h"
 #include "tests/perf_tests/TracePerfTest.h"
 

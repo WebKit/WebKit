@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -127,7 +127,7 @@ HTMLCollection::HTMLCollection(ContainerNode& ownerNode, CollectionType type)
 HTMLCollection::~HTMLCollection()
 {
     if (hasNamedElementCache())
-        document().collectionWillClearIdNameMap(*this);
+        protectedDocument()->collectionWillClearIdNameMap(*this);
 
     // HTMLNameCollection & ClassCollection remove cache by themselves.
     // FIXME: We need a cleaner way to handle this.
@@ -210,16 +210,16 @@ void HTMLCollection::updateNamedElementCache() const
 
     unsigned size = length();
     for (unsigned i = 0; i < size; ++i) {
-        Element& element = *item(i);
-        const AtomString& id = element.getIdAttribute();
+        Ref element = *item(i);
+        auto& id = element->getIdAttribute();
         if (!id.isEmpty())
-            cache->appendToIdCache(id, element);
-        auto* htmlElement = dynamicDowncast<HTMLElement>(element);
+            cache->appendToIdCache(id, element.get());
+        RefPtr htmlElement = dynamicDowncast<HTMLElement>(element);
         if (!htmlElement)
             continue;
-        const AtomString& name = element.getNameAttribute();
+        auto& name = htmlElement->getNameAttribute();
         if (!name.isEmpty() && id != name && (type() != CollectionType::DocAll || nameShouldBeVisibleInDocumentAll(*htmlElement)))
-            cache->appendToNameCache(name, element);
+            cache->appendToNameCache(name, *htmlElement);
     }
 
     setNamedItemCache(WTFMove(cache));

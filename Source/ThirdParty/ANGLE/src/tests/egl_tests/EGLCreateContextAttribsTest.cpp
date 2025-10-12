@@ -23,7 +23,7 @@ class EGLCreateContextAttribsTest : public ANGLETest<>
     void testSetUp() override
     {
         EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
-        mDisplay              = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+        mDisplay              = eglGetPlatformDisplay(GetEglPlatform(),
                                                       reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
         EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
         EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr) != EGL_FALSE);
@@ -206,6 +206,52 @@ TEST_P(EGLCreateContextAttribsTest, IMGContextPriorityExtension)
         EGLint value = 0;
         EXPECT_EGL_FALSE(
             eglQueryContext(mDisplay, context, EGL_CONTEXT_PRIORITY_LEVEL_IMG, &value));
+        ASSERT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
+    }
+
+    // Cleanup contexts
+    ASSERT_EGL_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    eglDestroyContext(mDisplay, context);
+    eglTerminate(mDisplay);
+}
+
+// Test that creating and querying context with realtime priority works
+TEST_P(EGLCreateContextAttribsTest, RealtimePriority)
+{
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(mDisplay, "EGL_IMG_context_priority"));
+
+    const EGLint configAttributes[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT, EGL_SURFACE_TYPE,
+                                       EGL_WINDOW_BIT, EGL_NONE};
+
+    // Get all the configs
+    EGLint count = 0;
+    EGLConfig config;
+    EXPECT_EGL_TRUE(eglChooseConfig(mDisplay, configAttributes, &config, 1, &count));
+    EXPECT_TRUE(count == 1);
+
+    EGLContext context      = EGL_NO_CONTEXT;
+    EGLint contextAttribs[] = {EGL_CONTEXT_MAJOR_VERSION,
+                               2,
+                               EGL_CONTEXT_MINOR_VERSION,
+                               0,
+                               EGL_CONTEXT_PRIORITY_LEVEL_IMG,
+                               EGL_CONTEXT_PRIORITY_REALTIME_NV,
+                               EGL_NONE};
+
+    if (IsEGLDisplayExtensionEnabled(mDisplay, "EGL_NV_context_priority_realtime"))
+    {
+        context = eglCreateContext(mDisplay, config, nullptr, contextAttribs);
+        EXPECT_NE(context, EGL_NO_CONTEXT);
+        ASSERT_EGL_ERROR(EGL_SUCCESS);
+
+        EGLint value = 0;
+        EXPECT_EGL_TRUE(eglQueryContext(mDisplay, context, EGL_CONTEXT_PRIORITY_LEVEL_IMG, &value));
+        ASSERT_EGL_ERROR(EGL_SUCCESS);
+    }
+    else  // Not supported so should get EGL_BAD_ATTRIBUTE
+    {
+        context = eglCreateContext(mDisplay, config, nullptr, contextAttribs);
+        EXPECT_EQ(context, EGL_NO_CONTEXT);
         ASSERT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
     }
 

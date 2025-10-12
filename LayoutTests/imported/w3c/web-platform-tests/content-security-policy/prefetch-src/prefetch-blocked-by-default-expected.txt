@@ -1,5 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT `default-src`-blocked prefetch generates report. Test timed out
-

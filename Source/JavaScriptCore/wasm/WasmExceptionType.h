@@ -40,7 +40,7 @@ namespace Wasm {
     macro(OutOfBoundsCallIndirect, "Out of bounds call_indirect"_s) \
     macro(NullTableEntry,  "call_indirect to a null table entry"_s) \
     macro(NullReference,  "call_ref to a null reference"_s) \
-    macro(NullExnReference,  "throw_ref on a null reference"_s) \
+    macro(NullExnrefReference,  "throw_ref on a null reference"_s) \
     macro(NullI31Get, "i31.get_<sx> to a null reference"_s) \
     macro(BadSignature, "call_indirect to a signature that does not match"_s) \
     macro(OutOfBoundsTrunc, "Out of bounds Trunc operation"_s) \
@@ -59,22 +59,20 @@ namespace Wasm {
     macro(BadArrayNew, "Failed to allocate new array"_s) \
     macro(BadArrayNewInitElem, "Out of bounds or failed to allocate in array.new_elem"_s) \
     macro(BadArrayNewInitData, "Out of bounds or failed to allocate in array.new_data"_s) \
-    macro(NullArrayGet, "array.get to a null reference"_s) \
-    macro(NullArraySet, "array.set to a null reference"_s) \
-    macro(NullArrayLen, "array.len to a null reference"_s) \
+    macro(NullAccess, "access to a null reference"_s) \
     macro(NullArrayFill, "array.fill to a null reference"_s) \
     macro(NullArrayCopy, "array.copy to a null reference"_s) \
     macro(NullArrayInitElem, "array.init_elem to a null reference"_s) \
     macro(NullArrayInitData, "array.init_data to a null reference"_s) \
-    macro(NullStructGet, "struct.get to a null reference"_s) \
-    macro(NullStructSet, "struct.set to a null reference"_s) \
     macro(TypeErrorInvalidValueUse, "an exported wasm function cannot contain an invalid parameter or return value"_s) \
     macro(TypeErrorV128TagAccessInJS, "a v128 parameter of a tag may not be accessed from JS"_s) \
     macro(NullRefAsNonNull, "ref.as_non_null to a null reference"_s) \
     macro(CastFailure, "ref.cast failed to cast reference to target heap type"_s) \
     macro(OutOfBoundsDataSegmentAccess, "Offset + array length would exceed the size of a data segment"_s) \
     macro(OutOfBoundsElementSegmentAccess, "Offset + array length would exceed the length of an element segment"_s) \
-    macro(OutOfMemory,  "Out of memory"_s)
+    macro(OutOfMemory, "Out of memory"_s) \
+    macro(IllegalArgument, "Illegal argument"_s) \
+    macro(Termination, "Termination"_s)
 
 enum class ExceptionType : uint32_t {
 #define MAKE_ENUM(enumName, error) enumName,
@@ -110,7 +108,7 @@ ALWAYS_INLINE bool isTypeErrorExceptionType(ExceptionType type)
     case ExceptionType::OutOfBoundsCallIndirect:
     case ExceptionType::NullTableEntry:
     case ExceptionType::NullReference:
-    case ExceptionType::NullExnReference:
+    case ExceptionType::NullExnrefReference:
     case ExceptionType::NullI31Get:
     case ExceptionType::BadSignature:
     case ExceptionType::OutOfBoundsTrunc:
@@ -128,18 +126,16 @@ ALWAYS_INLINE bool isTypeErrorExceptionType(ExceptionType type)
     case ExceptionType::BadArrayNew:
     case ExceptionType::BadArrayNewInitElem:
     case ExceptionType::BadArrayNewInitData:
-    case ExceptionType::NullArrayGet:
-    case ExceptionType::NullArraySet:
-    case ExceptionType::NullArrayLen:
+    case ExceptionType::NullAccess:
     case ExceptionType::NullArrayFill:
     case ExceptionType::NullArrayCopy:
     case ExceptionType::NullArrayInitElem:
     case ExceptionType::NullArrayInitData:
-    case ExceptionType::NullStructGet:
-    case ExceptionType::NullStructSet:
     case ExceptionType::NullRefAsNonNull:
     case ExceptionType::CastFailure:
     case ExceptionType::OutOfMemory:
+    case ExceptionType::IllegalArgument:
+    case ExceptionType::Termination:
         return false;
     case ExceptionType::InvalidGCTypeUse:
     case ExceptionType::TypeErrorInvalidValueUse:

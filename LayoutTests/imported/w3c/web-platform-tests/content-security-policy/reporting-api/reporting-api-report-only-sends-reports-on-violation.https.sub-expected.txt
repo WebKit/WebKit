@@ -1,6 +1,6 @@
 
 
-PASS Test that image does not load
+PASS Test that image does load
 PASS Event is fired
 PASS Violation report status OK.
 

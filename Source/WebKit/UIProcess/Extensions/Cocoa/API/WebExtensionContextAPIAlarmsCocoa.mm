@@ -34,12 +34,13 @@
 
 #import "WebExtensionAlarm.h"
 #import "WebExtensionContextProxyMessages.h"
+#import "WebExtensionPermission.h"
 
 namespace WebKit {
 
-bool WebExtensionContext::isAlarmsMessageAllowed()
+bool WebExtensionContext::isAlarmsMessageAllowed(IPC::Decoder& message)
 {
-    return isLoaded() && hasPermission(WKWebExtensionPermissionAlarms);
+    return isLoadedAndPrivilegedMessage(message) && hasPermission(WebExtensionPermission::alarms());
 }
 
 void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterval, Seconds repeatInterval)

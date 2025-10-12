@@ -74,7 +74,7 @@ void setDecoderFrameSize(LocalDecoder, uint16_t width, uint16_t height);
 
 class WebKitEncodedImageBufferWrapper : public EncodedImageBufferInterface {
 public:
-    static rtc::scoped_refptr<WebKitEncodedImageBufferWrapper> create(uint8_t* data, size_t size) { return rtc::make_ref_counted<WebKitEncodedImageBufferWrapper>(data, size); }
+    static webrtc::scoped_refptr<WebKitEncodedImageBufferWrapper> create(uint8_t* data, size_t size) { return webrtc::make_ref_counted<WebKitEncodedImageBufferWrapper>(data, size); }
 
     WebKitEncodedImageBufferWrapper(uint8_t* data, size_t size)
         : m_data(data)

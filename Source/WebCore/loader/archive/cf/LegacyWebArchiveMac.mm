@@ -57,13 +57,13 @@ ResourceResponse LegacyWebArchive::createResourceResponseFromMacArchivedData(CFD
 
 RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const ResourceResponse& response)
 {    
-    NSURLResponse *nsResponse = response.nsURLResponse();
+    RetainPtr nsResponse = response.nsURLResponse();
     ASSERT(nsResponse);
     if (!nsResponse)
         return nullptr;
 
     auto archiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
-    [archiver encodeObject:nsResponse forKey:LegacyWebArchiveResourceResponseKey];
+    [archiver encodeObject:nsResponse.get() forKey:LegacyWebArchiveResourceResponseKey];
     return (__bridge CFDataRef)archiver.get().encodedData;
 }
 

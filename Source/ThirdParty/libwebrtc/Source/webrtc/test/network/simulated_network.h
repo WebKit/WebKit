@@ -14,16 +14,20 @@
 
 #include <cstdint>
 #include <deque>
+#include <functional>
+#include <memory>
 #include <optional>
-#include <queue>
 #include <vector>
 
+#include "absl/functional/any_invocable.h"
 #include "api/sequence_checker.h"
+#include "api/test/network_emulation/network_queue.h"
 #include "api/test/simulated_network.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/race_checker.h"
 #include "rtc_base/random.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
@@ -36,11 +40,15 @@ namespace webrtc {
 //                   packet through at the time with a limited capacity.
 // - Extra delay with or without packets reorder
 // - Packet overhead
-// - Queue max capacity
+// Per default a simple leaky bucket queue is used that allows setting a max
+// capacity. But more advanced AQM can be used.
 class RTC_EXPORT SimulatedNetwork : public SimulatedNetworkInterface {
  public:
   using Config = BuiltInNetworkBehaviorConfig;
   explicit SimulatedNetwork(Config config, uint64_t random_seed = 1);
+  SimulatedNetwork(Config config,
+                   uint64_t random_seed,
+                   std::unique_ptr<NetworkQueue> queue);
   ~SimulatedNetwork() override;
 
   // Sets a new configuration. This will affect packets that will be sent with
@@ -104,27 +112,27 @@ class RTC_EXPORT SimulatedNetwork : public SimulatedNetworkInterface {
   // Moves packets from capacity- to delay link.
   // If `previouse_config` is set, it is the config that was used until
   // `time_now_us`
-  void UpdateCapacityQueue(ConfigState state, Timestamp time_now)
-      RTC_RUN_ON(&process_checker_);
-  ConfigState GetConfigState() const;
+  void UpdateCapacityLink(ConfigState state, Timestamp time_now)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(&lock_);
+  void SetConfigLocked(const Config& config)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(&lock_);
 
-  mutable Mutex config_lock_;
+  // A note about threads:
+  // Some tests run the SimulatedNetwork on multiple threads. FakeNetworkPipe
+  // may call several methods on separate threads. Other tests call SetConfig
+  // on a thread other than the the other methods.
+  mutable Mutex lock_;
 
   // Guards the data structures involved in delay and loss processing, such as
   // the packet queues.
-  rtc::RaceChecker process_checker_;
-  // Models the capacity of the network by rejecting packets if the queue is
-  // full and keeping them in the queue until they are ready to exit (according
-  // to the link capacity, which cannot be violated, e.g. a 1 kbps link will
-  // only be able to deliver 1000 bits per second).
-  //
-  // Invariant:
-  // The head of the `capacity_link_` has arrival_time correctly set to the
-  // time when the packet is supposed to be delivered (without accounting
-  // potential packet loss or potential extra delay and without accounting for a
-  // new configuration of the network, which requires a re-computation of the
-  // arrival_time).
-  std::queue<PacketInfo> capacity_link_ RTC_GUARDED_BY(process_checker_);
+  RaceChecker process_checker_;
+
+  // Queue of packets that have not yet entered the capacity link.
+  std::unique_ptr<webrtc::NetworkQueue> queue_ RTC_GUARDED_BY(lock_);
+  // Models the capacity of the network. There can only be one packet at the
+  // time in the capacity link. The time spend in the capacity link depends on
+  // the link capacity.
+  std::optional<PacketInfo> capacity_link_ RTC_GUARDED_BY(process_checker_);
   // Models the extra delay of the network (see `queue_delay_ms`
   // and `delay_standard_deviation_ms` in BuiltInNetworkBehaviorConfig), packets
   // in the `delay_link_` have technically already left the network and don't
@@ -138,11 +146,11 @@ class RTC_EXPORT SimulatedNetwork : public SimulatedNetworkInterface {
   absl::AnyInvocable<void()> next_process_time_changed_callback_
       RTC_GUARDED_BY(process_checker_) = nullptr;
 
-  ConfigState config_state_ RTC_GUARDED_BY(config_lock_);
+  ConfigState config_state_ RTC_GUARDED_BY(lock_);
 
   Random random_ RTC_GUARDED_BY(process_checker_);
   // Are we currently dropping a burst of packets?
-  bool bursting_;
+  bool bursting_ = false;
 
   // The send time of the last enqueued packet, this is only used to check that
   // the send time of enqueued packets is monotonically increasing.

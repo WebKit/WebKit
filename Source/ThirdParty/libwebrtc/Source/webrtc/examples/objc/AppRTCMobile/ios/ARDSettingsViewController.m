@@ -69,10 +69,10 @@ typedef NS_ENUM(int, ARDAudioSettingsOptions) {
 #pragma mark -
 
 - (void)addDoneBarButton {
-  UIBarButtonItem *barItem =
-      [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                    target:self
-                                                    action:@selector(dismissModally:)];
+  UIBarButtonItem *barItem = [[UIBarButtonItem alloc]
+      initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                           target:self
+                           action:@selector(dismissModally:)];
   self.navigationItem.leftBarButtonItem = barItem;
 }
 
@@ -88,7 +88,8 @@ typedef NS_ENUM(int, ARDAudioSettingsOptions) {
   return 4;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(UITableView *)tableView
+    numberOfRowsInSection:(NSInteger)section {
   switch (section) {
     case ARDSettingsSectionAudioSettings:
       return 3;
@@ -103,9 +104,7 @@ typedef NS_ENUM(int, ARDAudioSettingsOptions) {
 
 #pragma mark - Table view delegate helpers
 
-- (void)removeAllAccessories:(UITableView *)tableView
-                   inSection:(int)section
-{
+- (void)removeAllAccessories:(UITableView *)tableView inSection:(int)section {
   for (int i = 0; i < [tableView numberOfRowsInSection:section]; i++) {
     NSIndexPath *rowPath = [NSIndexPath indexPathForRow:i inSection:section];
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:rowPath];
@@ -114,8 +113,8 @@ typedef NS_ENUM(int, ARDAudioSettingsOptions) {
 }
 
 - (void)tableView:(UITableView *)tableView
-updateListSelectionAtIndexPath:(NSIndexPath *)indexPath
-        inSection:(int)section {
+    updateListSelectionAtIndexPath:(NSIndexPath *)indexPath
+                         inSection:(int)section {
   [self removeAllAccessories:tableView inSection:section];
   UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
   cell.accessoryType = UITableViewCellAccessoryCheckmark;
@@ -144,16 +143,20 @@ updateListSelectionAtIndexPath:(NSIndexPath *)indexPath
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   switch (indexPath.section) {
     case ARDSettingsSectionAudioSettings:
-      return [self audioSettingsTableViewCellForTableView:tableView atIndexPath:indexPath];
+      return [self audioSettingsTableViewCellForTableView:tableView
+                                              atIndexPath:indexPath];
 
     case ARDSettingsSectionVideoResolution:
-      return [self videoResolutionTableViewCellForTableView:tableView atIndexPath:indexPath];
+      return [self videoResolutionTableViewCellForTableView:tableView
+                                                atIndexPath:indexPath];
 
     case ARDSettingsSectionVideoCodec:
-      return [self videoCodecTableViewCellForTableView:tableView atIndexPath:indexPath];
+      return [self videoCodecTableViewCellForTableView:tableView
+                                           atIndexPath:indexPath];
 
     case ARDSettingsSectionBitRate:
-      return [self bitrateTableViewCellForTableView:tableView atIndexPath:indexPath];
+      return [self bitrateTableViewCellForTableView:tableView
+                                        atIndexPath:indexPath];
 
     default:
       return [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
@@ -161,7 +164,8 @@ updateListSelectionAtIndexPath:(NSIndexPath *)indexPath
   }
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView
+    didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   switch (indexPath.section) {
     case ARDSettingsSectionVideoResolution:
       [self tableView:tableView disSelectVideoResolutionAtIndex:indexPath];
@@ -175,17 +179,21 @@ updateListSelectionAtIndexPath:(NSIndexPath *)indexPath
 
 #pragma mark - Table view delegate(Video Resolution)
 
-- (UITableViewCell *)videoResolutionTableViewCellForTableView:(UITableView *)tableView
-                                                  atIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)
+    videoResolutionTableViewCellForTableView:(UITableView *)tableView
+                                 atIndexPath:(NSIndexPath *)indexPath {
   NSString *dequeueIdentifier = @"ARDSettingsVideoResolutionViewCellIdentifier";
-  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:dequeueIdentifier];
+  UITableViewCell *cell =
+      [tableView dequeueReusableCellWithIdentifier:dequeueIdentifier];
   if (!cell) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
                                   reuseIdentifier:dequeueIdentifier];
   }
   NSString *resolution = self.videoResolutionArray[indexPath.row];
   cell.textLabel.text = resolution;
-  if ([resolution isEqualToString:[_settingsModel currentVideoResolutionSettingFromStore]]) {
+  if ([resolution
+          isEqualToString:[_settingsModel
+                              currentVideoResolutionSettingFromStore]]) {
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
   } else {
     cell.accessoryType = UITableViewCellAccessoryNone;
@@ -206,17 +214,20 @@ updateListSelectionAtIndexPath:(NSIndexPath *)indexPath
 
 #pragma mark - Table view delegate(Video Codec)
 
-- (UITableViewCell *)videoCodecTableViewCellForTableView:(UITableView *)tableView
-                                             atIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)
+    videoCodecTableViewCellForTableView:(UITableView *)tableView
+                            atIndexPath:(NSIndexPath *)indexPath {
   NSString *dequeueIdentifier = @"ARDSettingsVideoCodecCellIdentifier";
-  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:dequeueIdentifier];
+  UITableViewCell *cell =
+      [tableView dequeueReusableCellWithIdentifier:dequeueIdentifier];
   if (!cell) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
                                   reuseIdentifier:dequeueIdentifier];
   }
   RTC_OBJC_TYPE(RTCVideoCodecInfo) *codec = self.videoCodecArray[indexPath.row];
   cell.textLabel.text = [codec humanReadableDescription];
-  if ([codec isEqualToCodecInfo:[_settingsModel currentVideoCodecSettingFromStore]]) {
+  if ([codec isEqualToCodecInfo:[_settingsModel
+                                    currentVideoCodecSettingFromStore]]) {
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
   } else {
     cell.accessoryType = UITableViewCellAccessoryNone;
@@ -228,10 +239,11 @@ updateListSelectionAtIndexPath:(NSIndexPath *)indexPath
 - (void)tableView:(UITableView *)tableView
     didSelectVideoCodecCellAtIndexPath:(NSIndexPath *)indexPath {
   [self tableView:tableView
-    updateListSelectionAtIndexPath:indexPath
-        inSection:ARDSettingsSectionVideoCodec];
+      updateListSelectionAtIndexPath:indexPath
+                           inSection:ARDSettingsSectionVideoCodec];
 
-  RTC_OBJC_TYPE(RTCVideoCodecInfo) *videoCodec = self.videoCodecArray[indexPath.row];
+  RTC_OBJC_TYPE(RTCVideoCodecInfo) *videoCodec =
+      self.videoCodecArray[indexPath.row];
   [_settingsModel storeVideoCodecSetting:videoCodec];
 }
 
@@ -240,30 +252,37 @@ updateListSelectionAtIndexPath:(NSIndexPath *)indexPath
 - (UITableViewCell *)bitrateTableViewCellForTableView:(UITableView *)tableView
                                           atIndexPath:(NSIndexPath *)indexPath {
   NSString *dequeueIdentifier = @"ARDSettingsBitrateCellIdentifier";
-  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:dequeueIdentifier];
+  UITableViewCell *cell =
+      [tableView dequeueReusableCellWithIdentifier:dequeueIdentifier];
   if (!cell) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
                                   reuseIdentifier:dequeueIdentifier];
 
     UITextField *textField = [[UITextField alloc]
-        initWithFrame:CGRectMake(10, 0, cell.bounds.size.width - 20, cell.bounds.size.height)];
-    NSString *currentMaxBitrate = [_settingsModel currentMaxBitrateSettingFromStore].stringValue;
+        initWithFrame:CGRectMake(10,
+                                 0,
+                                 cell.bounds.size.width - 20,
+                                 cell.bounds.size.height)];
+    NSString *currentMaxBitrate =
+        [_settingsModel currentMaxBitrateSettingFromStore].stringValue;
     textField.text = currentMaxBitrate;
     textField.placeholder = @"Enter max bit rate (kbps)";
     textField.keyboardType = UIKeyboardTypeNumberPad;
     textField.delegate = self;
 
     // Numerical keyboards have no return button, we need to add one manually.
-    UIToolbar *numberToolbar =
-        [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 50)];
+    UIToolbar *numberToolbar = [[UIToolbar alloc]
+        initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 50)];
     numberToolbar.items = @[
-      [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                                                    target:nil
-                                                    action:nil],
-      [[UIBarButtonItem alloc] initWithTitle:@"Apply"
-                                       style:UIBarButtonItemStyleDone
-                                      target:self
-                                      action:@selector(numberTextFieldDidEndEditing:)]
+      [[UIBarButtonItem alloc]
+          initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                               target:nil
+                               action:nil],
+      [[UIBarButtonItem alloc]
+          initWithTitle:@"Apply"
+                  style:UIBarButtonItemStyleDone
+                 target:self
+                 action:@selector(numberTextFieldDidEndEditing:)]
     ];
     [numberToolbar sizeToFit];
 
@@ -289,10 +308,12 @@ updateListSelectionAtIndexPath:(NSIndexPath *)indexPath
 
 #pragma mark - Table view delegate(Audio settings)
 
-- (UITableViewCell *)audioSettingsTableViewCellForTableView:(UITableView *)tableView
-                                                atIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)
+    audioSettingsTableViewCellForTableView:(UITableView *)tableView
+                               atIndexPath:(NSIndexPath *)indexPath {
   NSString *dequeueIdentifier = @"ARDSettingsAudioSettingsCellIdentifier";
-  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:dequeueIdentifier];
+  UITableViewCell *cell =
+      [tableView dequeueReusableCellWithIdentifier:dequeueIdentifier];
   if (!cell) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
                                   reuseIdentifier:dequeueIdentifier];

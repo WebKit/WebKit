@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CSSStyleValue.h"
+#include <WebCore/CSSStyleValue.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,7 +43,7 @@ public:
     const String& value() const { return m_value; }
     ExceptionOr<void> setValue(const String&);
     
-    CSSStyleValueType getType() const final { return CSSStyleValueType::CSSKeywordValue; }
+    CSSStyleValueType styleValueType() const final { return CSSStyleValueType::CSSKeywordValue; }
     
     static Ref<CSSKeywordValue> rectifyKeywordish(CSSKeywordish&&);
 
@@ -60,5 +60,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSKeywordValue)
-    static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSKeywordValue; }
+    static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.styleValueType() == WebCore::CSSStyleValueType::CSSKeywordValue; }
 SPECIALIZE_TYPE_TRAITS_END()

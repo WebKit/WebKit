@@ -1,0 +1,10 @@
+
+PASS e.style['font-width'] = "auto" should not set the property value
+PASS e.style['font-width'] = "normal, ultra-condensed" should not set the property value
+PASS e.style['font-width'] = "condensed expanded" should not set the property value
+PASS e.style['font-width'] = "-50%" should not set the property value
+PASS e.style['font-stretch'] = "auto" should not set the property value
+PASS e.style['font-stretch'] = "normal, ultra-condensed" should not set the property value
+PASS e.style['font-stretch'] = "condensed expanded" should not set the property value
+PASS e.style['font-stretch'] = "-50%" should not set the property value
+

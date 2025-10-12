@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "IDBIndexIdentifier.h"
-#include "IDBKeyRangeData.h"
-#include "IDBObjectStoreIdentifier.h"
-#include "IDBResourceIdentifier.h"
+#include <WebCore/IDBIndexIdentifier.h>
+#include <WebCore/IDBKeyRangeData.h>
+#include <WebCore/IDBObjectStoreIdentifier.h>
+#include <WebCore/IDBResourceIdentifier.h>
 #include <wtf/ArgumentCoder.h>
 
 namespace WebCore {

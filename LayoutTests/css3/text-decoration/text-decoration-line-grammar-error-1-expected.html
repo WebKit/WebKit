@@ -1,0 +1,42 @@
+<!DOCTYPE html><!-- webkit-test-runner [ spellCheckingDots=true ] -->
+<html lang="en">
+<meta charset="UTF-8">
+<style>
+div {
+  font-size: 300%;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner)
+  testRunner.waitUntilDone();
+
+if (window.internals)
+  internals.setContinuousSpellCheckingEnabled(true);
+
+function runTest()
+{
+  const target = document.getElementById("target");
+  const misspelledText = "the the sample";
+  target.focus();
+  document.execCommand("insertText", false, misspelledText);
+  target.blur();
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+</script>
+<body>
+<div contenteditable="true" id="target"></div>
+<script>
+UIHelper.setSpellCheckerResults({
+  "the the sample" : [
+    {
+      type: "grammar",
+      from: 4,
+      to : 7,
+      details : [{ from : 0, to : 3 }]
+    }
+  ]
+}).then(runTest);
+</script>
+</body>

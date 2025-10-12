@@ -583,6 +583,16 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
     };
 
     Disassembler* disassembler = m_code.disassembler();
+    PCToOriginMap& pcToOriginMap = m_code.proc().pcToOriginMap();
+    auto addItem = [&](Inst& inst) {
+        if (!m_code.shouldPreserveB3Origins())
+            return;
+        if (inst.origin)
+            pcToOriginMap.appendItem(m_jit->labelIgnoringWatchpoints(), inst.origin->origin());
+        else
+            pcToOriginMap.appendItem(m_jit->labelIgnoringWatchpoints(), Origin());
+    };
+
 
     m_globalInstIndex = 1;
 
@@ -911,8 +921,11 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
             if (!inst.isTerminal()) {
                 CCallHelpers::Jump jump;
-                if (needsToGenerate)
+                if (needsToGenerate) {
+                    // Register allocation is done, emit PC label to origin map before emitting bytes.
+                    addItem(inst);
                     jump = inst.generate(*m_jit, context);
+                }
                 ASSERT_UNUSED(jump, !jump.isSet());
 
                 handleClobber();
@@ -955,10 +968,12 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
                     // We currently don't represent the full epilogue in Air, so we need to
                     // have this override.
+                    addItem(inst);
                     m_code.emitEpilogue(*m_jit);
                 }
                 
                 if (needsToGenerate) {
+                    addItem(inst);
                     CCallHelpers::Jump jump = inst.generate(*m_jit, context);
 
                     // The jump won't be set for patchpoints. It won't be set for Oops because then it won't have
@@ -1024,15 +1039,19 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
         entrypointLabels[i] = *context.blockLabels[m_code.entrypoint(i).block()];
     m_code.setEntrypointLabels(WTFMove(entrypointLabels));
 
+    pcToOriginMap.appendItem(m_jit->labelIgnoringWatchpoints(), Origin());
     if (disassembler)
         disassembler->startLatePath(*m_jit);
 
-    // FIXME: Make late paths have Origins: https://bugs.webkit.org/show_bug.cgi?id=153689
-    for (auto& latePath : context.latePaths)
+    for (auto& [origin, latePath] : context.latePaths) {
+        if (m_code.shouldPreserveB3Origins())
+            pcToOriginMap.appendItem(m_jit->labelIgnoringWatchpoints(), origin);
         latePath->run(*m_jit, context);
+    }
 
     if (disassembler)
         disassembler->endLatePath(*m_jit);
+    pcToOriginMap.appendItem(m_jit->labelIgnoringWatchpoints(), Origin());
 }
 
 } } } // namespace JSC::B3::Air

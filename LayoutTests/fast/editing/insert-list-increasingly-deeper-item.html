@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<style>
+  marquee, ul, li, a { float: left; }
+</style>
+<body><span id="span"></span>AAAAAAAAAA<marquee>AAAAAAAAAA</marquee></body>
+<script>
+  window.testRunner?.dumpAsText();
+  window.document.designMode = "on";
+  span.textContent = "";
+  window.find("A", true);
+  document.execCommand("createLink", false, "x");
+  document.execCommand("selectAll", false, null);
+  document.execCommand("insertUnorderedList", false, null);
+  document.execCommand("insertUnorderedList", false, null);
+  document.body.innerHTML = "PASS if no crash.";
+</script>

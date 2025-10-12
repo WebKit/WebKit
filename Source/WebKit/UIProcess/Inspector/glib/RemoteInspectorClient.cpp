@@ -214,7 +214,7 @@ void RemoteInspectorClient::setBackendCommands(const char* backendCommands)
         return;
     }
 
-    m_backendCommandsURL = makeString("data:text/javascript;base64,"_s, base64Encoded(unsafeSpan8(backendCommands)));
+    m_backendCommandsURL = makeString("data:text/javascript;base64,"_s, base64Encoded(byteCast<std::byte>(unsafeSpan(backendCommands))));
 }
 
 void RemoteInspectorClient::connectionDidClose()

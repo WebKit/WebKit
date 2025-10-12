@@ -10,6 +10,9 @@
 
 #include "modules/desktop_capture/linux/x11/x_atom_cache.h"
 
+#include <X11/X.h>
+#include <X11/Xlib.h>
+
 #include "rtc_base/checks.h"
 
 namespace webrtc {

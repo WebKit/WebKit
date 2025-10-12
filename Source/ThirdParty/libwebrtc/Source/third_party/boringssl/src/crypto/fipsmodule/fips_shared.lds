@@ -4,6 +4,10 @@ SECTIONS
     BORINGSSL_bcm_text_start = .;
     *(.text)
     *(.text.unlikely.*)
+    /* These sections shouldn't exist. But C++ `inline` symbols seem to be
+     * placed in function sections on Android even with
+     * -fno-function-sections. */
+    *(text.*)
     BORINGSSL_bcm_text_end = .;
   }
   .rodata : {
@@ -19,7 +23,6 @@ SECTIONS
     *(.rela.dyn)
     *(.data)
     *(.rel.ro)
-    *(*.text.*)
     *(*.data.*)
   }
 }

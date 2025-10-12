@@ -29,9 +29,9 @@
 
 #pragma once
 
-#include "FloatPoint.h"
-#include "FloatSize.h"
-#include "Glyph.h"
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/Glyph.h>
 #include <wtf/Vector.h>
 
 #if USE(CG)

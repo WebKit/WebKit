@@ -67,7 +67,9 @@ public:
             return 2;
         if (byteSize() <= 4)
             return 4;
-        return 8;
+        if (byteSize() <= 8)
+            return 8;
+        return 16;
     }
 
     // Zero means that it's not yet assigned.

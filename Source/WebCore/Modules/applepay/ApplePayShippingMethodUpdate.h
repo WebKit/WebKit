@@ -27,8 +27,8 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePayDetailsUpdateBase.h"
-#include "ApplePayShippingMethod.h"
+#include <WebCore/ApplePayDetailsUpdateBase.h>
+#include <WebCore/ApplePayShippingMethod.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

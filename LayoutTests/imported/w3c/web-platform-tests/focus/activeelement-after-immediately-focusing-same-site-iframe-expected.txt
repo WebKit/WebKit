@@ -1,0 +1,3 @@
+
+FAIL Check result assert_equals: Check log expected "outerparse,activeElement:BODY,willfocusiframe,didfocusiframe,activeElement:IFRAME,willbluriframe,didbluriframe,activeElement:BODY,willspineventloop," but got "outerparse,activeElement:BODY,willfocusiframe,didfocusiframe,activeElement:IFRAME,willbluriframe,didbluriframe,activeElement:IFRAME,willspineventloop,"
+

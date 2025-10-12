@@ -216,7 +216,6 @@ angle::Result ProvokingVertexHelper::preconditionIndexBuffer(ContextMtl *context
     mtl::BufferRef newBuffer;
     ANGLE_TRY(mIndexBuffers.allocate(context, newIndexCount * indexSize + indexOffset, nullptr,
                                      &newBuffer, &newOffset));
-    uint indexCountEncoded     = (uint)indexCount;
     auto threadsPerThreadgroup = MTLSizeMake(MIN(primCount, 64u), 1, 1);
 
     mtl::ComputeCommandEncoder *encoder =
@@ -225,7 +224,7 @@ angle::Result ProvokingVertexHelper::preconditionIndexBuffer(ContextMtl *context
     encoder->setBuffer(indexBuffer, static_cast<uint32_t>(indexOffset), 0);
     encoder->setBufferForWrite(
         newBuffer, static_cast<uint32_t>(indexOffset) + static_cast<uint32_t>(newOffset), 1);
-    encoder->setData(indexCountEncoded, 2);
+    encoder->setData(static_cast<uint>(indexCount), 2);
     encoder->setData(primCount, 3);
     encoder->dispatch(
         MTLSizeMake((primCount + threadsPerThreadgroup.width - 1) / threadsPerThreadgroup.width, 1,
@@ -264,18 +263,15 @@ angle::Result ProvokingVertexHelper::generateIndexBuffer(ContextMtl *context,
     mtl::BufferRef newBuffer;
     ANGLE_TRY(mIndexBuffers.allocate(context, newIndexCount * indexSize, nullptr, &newBuffer,
                                      &newIndexOffset));
-    uint indexCountEncoded     = static_cast<uint>(indexCount);
-    uint firstVertexEncoded    = static_cast<uint>(first);
-    uint indexOffsetEncoded    = static_cast<uint>(newIndexOffset);
     auto threadsPerThreadgroup = MTLSizeMake(MIN(primCount, 64u), 1, 1);
 
     mtl::ComputeCommandEncoder *encoder =
         context->getComputeCommandEncoderWithoutEndingRenderEncoder();
     ANGLE_TRY(prepareCommandEncoderForDescriptor(context, encoder, pipelineDesc));
-    encoder->setBufferForWrite(newBuffer, indexOffsetEncoded, 1);
-    encoder->setData(indexCountEncoded, 2);
+    encoder->setBufferForWrite(newBuffer, static_cast<uint>(newIndexOffset), 1);
+    encoder->setData(static_cast<uint>(indexCount), 2);
     encoder->setData(primCount, 3);
-    encoder->setData(firstVertexEncoded, 4);
+    encoder->setData(static_cast<uint>(first), 4);
     encoder->dispatch(
         MTLSizeMake((primCount + threadsPerThreadgroup.width - 1) / threadsPerThreadgroup.width, 1,
                     1),

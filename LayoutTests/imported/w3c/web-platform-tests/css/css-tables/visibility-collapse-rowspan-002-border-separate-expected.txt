@@ -26,7 +26,7 @@ This text should not intersect with the table.
 PASS spanning row visibility:collapse doesn't change table width
 PASS fourth row stays the same height
 PASS third row stays the same height
-FAIL spanning row visibility:collapse makes row height 0 assert_equals: spanning row visibility:collapse makes row height 0 expected 0 but got 30
+PASS spanning row visibility:collapse makes row height 0
 PASS first row stays the same height
-FAIL spanning cell shrinks to sum of remaining three rows' height assert_equals: spanning cell shrinks to sum of remaining three rows' height expected 90 but got 120
+PASS spanning cell shrinks to sum of remaining three rows' height
 

@@ -150,8 +150,9 @@ void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinishInternal(Ref<Fo
             return;
         }
 
-        m_blobLoader = makeUnique<BlobLoader>(*this);
-        auto loader = serviceWorkerThreadProxy->createBlobLoader(*m_blobLoader, blobURL);
+        Ref blobLoader = BlobLoader::create(*this);
+        m_blobLoader = blobLoader.copyRef();
+        auto loader = serviceWorkerThreadProxy->createBlobLoader(blobLoader, blobURL);
         if (!loader) {
             m_blobLoader = nullptr;
             didFail(internalError(blobURL));
@@ -348,6 +349,31 @@ void WebServiceWorkerFetchTaskClient::contextIsStopping()
 
     connection->send(Messages::ServiceWorkerFetchTask::WorkerClosed { }, m_fetchIdentifier);
     cleanup();
+}
+
+Ref<WebServiceWorkerFetchTaskClient::BlobLoader> WebServiceWorkerFetchTaskClient::BlobLoader::create(WebServiceWorkerFetchTaskClient& client)
+{
+    return adoptRef(*new BlobLoader(client));
+}
+
+WebServiceWorkerFetchTaskClient::BlobLoader::~BlobLoader() = default;
+
+void WebServiceWorkerFetchTaskClient::BlobLoader::didReceiveData(const WebCore::SharedBuffer& data)
+{
+    if (RefPtr client = m_client.get())
+        client->didReceiveBlobChunk(data);
+}
+
+void WebServiceWorkerFetchTaskClient::BlobLoader::didFail(const WebCore::ResourceError& error)
+{
+    if (RefPtr client = m_client.get())
+        client->didFail(error);
+}
+
+void WebServiceWorkerFetchTaskClient::BlobLoader::didSucceed(const WebCore::NetworkLoadMetrics&)
+{
+    if (RefPtr client = m_client.get())
+        client->didFinishBlobLoading();
 }
 
 } // namespace WebKit

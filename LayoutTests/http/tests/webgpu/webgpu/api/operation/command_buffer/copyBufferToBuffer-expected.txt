@@ -1,5 +1,6 @@
 
-PASS :single:
+PASS :single:newSig=false
+PASS :single:newSig=true
 PASS :state_transitions:
 PASS :copy_order:
 

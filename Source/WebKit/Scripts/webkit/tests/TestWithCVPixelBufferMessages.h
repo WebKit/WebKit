@@ -63,11 +63,11 @@ public:
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << m_s0;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_s0;
     }
 
 private:
-    const RetainPtr<CVPixelBufferRef>& m_s0;
+    SUPPRESS_FORWARD_DECL_MEMBER const RetainPtr<CVPixelBufferRef>& m_s0;
 };
 #endif
 
@@ -97,6 +97,33 @@ public:
     }
 
 private:
+};
+#endif
+
+#if USE(AVFOUNDATION)
+class ReceiveCVPixelBufferReply {
+public:
+    using Arguments = std::tuple<RetainPtr<CVPixelBufferRef>>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBufferReply; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    explicit ReceiveCVPixelBufferReply(const RetainPtr<CVPixelBufferRef>& r0)
+        : m_r0(r0)
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_r0;
+    }
+
+private:
+    SUPPRESS_FORWARD_DECL_MEMBER const RetainPtr<CVPixelBufferRef>& m_r0;
 };
 #endif
 

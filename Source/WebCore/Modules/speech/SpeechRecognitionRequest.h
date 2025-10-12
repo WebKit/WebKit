@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "SpeechRecognitionConnectionClientIdentifier.h"
-#include "SpeechRecognitionRequestInfo.h"
+#include <WebCore/SpeechRecognitionConnectionClientIdentifier.h>
+#include <WebCore/SpeechRecognitionRequestInfo.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

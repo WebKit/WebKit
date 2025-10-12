@@ -4,9 +4,7 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-Reflect-shell.js]
-flags:
-  - noStrict
+includes: [sm/assertThrowsValue.js]
 description: |
   pending
 esid: pending
@@ -28,9 +26,9 @@ for (var obj of someObjects) {
 }
 
 // Error cases.
-assertThrowsInstanceOf(() => Reflect.isExtensible(), TypeError);
+assert.throws(TypeError, () => Reflect.isExtensible());
 for (var value of [undefined, null, true, 1, NaN, "Phaedo", Symbol("good")]) {
-    assertThrowsInstanceOf(() => Reflect.isExtensible(value), TypeError);
+    assert.throws(TypeError, () => Reflect.isExtensible(value));
 }
 
 // A proxy's preventExtensions handler can return false without doing anything.
@@ -57,7 +55,7 @@ obj = {};
 proxy = new Proxy(obj, {
     preventExtensions() { return true; }
 });
-assertThrowsInstanceOf(() => Reflect.preventExtensions(proxy), TypeError);
+assert.throws(TypeError, () => Reflect.preventExtensions(proxy));
 assert.sameValue(Reflect.isExtensible(obj), true);
 assert.sameValue(Reflect.isExtensible(proxy), true);
 

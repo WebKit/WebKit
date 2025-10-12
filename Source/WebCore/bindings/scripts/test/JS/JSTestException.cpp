@@ -148,7 +148,7 @@ JSValue JSTestException::getConstructor(VM& vm, const JSGlobalObject* globalObje
 
 void JSTestException::destroy(JSC::JSCell* cell)
 {
-    JSTestException* thisObject = static_cast<JSTestException*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestException* thisObject = static_cast<JSTestException*>(cell);
     thisObject->JSTestException::~JSTestException();
 }
 
@@ -177,7 +177,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestException_name, (JSGlobalObject* lexicalGlobalObj
 
 JSC::GCClient::IsoSubspace* JSTestException::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestException, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestException, UseCustomHeapCellType::No>(vm, "JSTestException"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestException.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestException = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestException.get(); },
@@ -204,7 +204,7 @@ bool JSTestExceptionOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> 
 
 void JSTestExceptionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestException = static_cast<JSTestException*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestException = static_cast<JSTestException*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestException->protectedWrapped().ptr(), jsTestException);
 }
@@ -217,7 +217,9 @@ extern "C" { extern void (*const __identifier("??_7TestException@WebCore@@6B@")[
 #else
 extern "C" { extern void* _ZTVN7WebCore13TestExceptionE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestException>, void>> static inline void verifyVTable(TestException* ptr) {
+template<std::same_as<TestException> T>
+static inline void verifyVTable(TestException* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -236,8 +238,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestException
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestException>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestException>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestException>(impl.ptr());
 #endif

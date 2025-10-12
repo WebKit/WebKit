@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2013-2024 Apple Inc. All rights reserved.
+# Copyright (C) 2013-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -165,7 +165,7 @@ $model = nil
 $runJITlessWasm = true
 $filter = nil
 $envVars = []
-$mode = "full"
+$mode = :full
 $buildType = "release"
 $forceCollectContinuously = false
 $reportExecutionTime = false
@@ -271,6 +271,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--release', GetoptLong::NO_ARGUMENT],
                ['--quick', '-q', GetoptLong::NO_ARGUMENT],
                ['--basic', GetoptLong::NO_ARGUMENT],
+               ['--no-slow', GetoptLong::NO_ARGUMENT],
                ['--jitless-wasm', GetoptLong::NO_ARGUMENT],
                ['--no-retry', GetoptLong::NO_ARGUMENT]).each {
     | opt, arg |
@@ -285,7 +286,6 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $outputDir = Pathname.new(arg)
     when '--cloop'
         $cloop = true
-        $jitTests = false
     when '--platform'
         $platform = arg
     when '--memory-limited'
@@ -382,9 +382,11 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     when '--env-vars'
         $envVars = arg.gsub(/\s+/, ' ').split(' ')
     when '--quick'
-        $mode = "quick"
+        $mode = :quick
     when '--basic'
-        $mode = "basic"
+        $mode = :basic
+    when '--no-slow'
+        $mode = :noSlow
     when '--jitless-wasm'
         $runJITlessWasm = true
     when '--debug'
@@ -468,7 +470,7 @@ else
     $jscPath = Pathname.new(jscArg).realpath
 end
 
-$progressMeter = ($verbosity == 0 and $stdout.tty? and $remoteHosts.length <= 1)
+$progressMeter = ($verbosity == 0 and $stdout.tty? and $remoteHosts.length <= 1 and !ENV["JSCTEST_noProgressMeter"])
 
 if $bundle
     $jscPath = $bundle + ".vm" + "JavaScriptCore.framework" + "Helpers" + "jsc"
@@ -615,6 +617,12 @@ def determineOS
     end
 end
 
+if $cloop
+    $jitTests = false
+    $runJITlessWasm = false
+    # $isWasmPlatform will already be disabled below because it is dependend on "not $cloop".
+end
+
 $hostOS = determineOS unless $hostOS
 $architecture = determineArchitecture unless $architecture
 $isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $architecture == "mips" || $architecture == "riscv64" || $hostOS == "playstation")
@@ -637,6 +645,7 @@ end
 
 if $architecture == "arm"
     $runJITlessWasm = false # TODO: re-enable this when these tests pass <rdar://146100752>.
+    $skipLockdown = true
 end
 
 # This is meant for skipping execution of tests than require a lot of address
@@ -947,7 +956,7 @@ end
 
 def slow!
     $runCommandOptions[:isSlow] = true
-    skip() if ($mode == "quick")
+    skip() if ($mode == :quick or $mode == :basic or $mode == :noSlow)
 end
 
 def mustCrash!
@@ -1333,7 +1342,7 @@ BASE_MODES = [
         "FTLNoCJITSmallPool",
         "ftl-no-cjit-small-pool",
         [
-            "--jitMemoryReservationSize=1048576",
+            $buildType == "debug" ? "--jitMemoryReservationSize=4194304" : "--jitMemoryReservationSize=1048576",
         ] +
         FTL_OPTIONS +
         NO_CJIT_OPTIONS
@@ -1579,7 +1588,7 @@ BASE_MODES.each { |mode|
 # Default set of tests to run; propagates the cfg to every callee.
 def defaultRunCfg(cfg, subsetOptions, *optionalTestSpecificOptions)
     cfg.freeze
-    if not subsetOptions.has_key?(:ignoreQuickMode) and $mode == "quick"
+    if not subsetOptions.has_key?(:ignoreQuickMode) and $mode == :quick
         defaultQuickRunCfg(cfg, *optionalTestSpecificOptions)
     else
         runDefaultCfg(cfg, *optionalTestSpecificOptions)
@@ -1594,7 +1603,7 @@ def defaultRunCfg(cfg, subsetOptions, *optionalTestSpecificOptions)
             runNoCJITCollectContinuouslyCfg(cfg, *optionalTestSpecificOptions) if shouldCollectContinuously?
             if not subsetOptions.has_key?(:skipEager)
                 runDFGEagerCfg(cfg)
-                if $mode != "basic"
+                if $mode != :basic
                     runDFGEagerNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
                     runEagerJettisonNoCJITCfg(cfg, *optionalTestSpecificOptions)
                 end
@@ -1609,7 +1618,7 @@ def defaultRunCfg(cfg, subsetOptions, *optionalTestSpecificOptions)
             end
             runFTLNoCJITSmallPoolCfg(cfg, *optionalTestSpecificOptions)
 
-            return if $mode == "basic"
+            return if $mode == :basic
 
             runFTLNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
             runFTLNoCJITB3O0Cfg(cfg, *optionalTestSpecificOptions)
@@ -1832,15 +1841,15 @@ end
 def runWebAssembly
     return unless $isWasmPlatform
     run("default-wasm", "-m", *FTL_OPTIONS)
-    if $mode != "quick"
+    if $mode != :quick
         run("wasm-no-cjit", "-m", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
         run("wasm-eager", "-m", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + EAGER_OPTIONS))
         run("wasm-eager-jettison", "-m", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *FTL_OPTIONS)
         run("wasm-slow-memory", "-m", "--useWasmFastMemory=false", *FTL_OPTIONS)
         run("wasm-collect-continuously", "-m", "--collectContinuously=true", "--zeroExecutableMemoryOnFree=true", "--verifyGC=true", *FTL_OPTIONS) if shouldCollectContinuously?
-        run("wasm-bbq", "-m", "--useWasmLLInt=false", "--useWasmIPInt=false", *FTL_OPTIONS)
+        run("wasm-bbq", "-m", "--useWasmIPInt=false", *FTL_OPTIONS)
         if $isOMGPlatform
-            run("wasm-omg", "-m", "--useWasmLLInt=true", "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *FTL_OPTIONS)
+            run("wasm-omg", "-m", "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *FTL_OPTIONS)
         end
         if $isFTLPlatform
             run("wasm-simd", "-m", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
@@ -1865,15 +1874,15 @@ def runWebAssemblyJetStream2
 
     run("default-wasm", *FTL_OPTIONS)
 
-    if $mode != "quick"
+    if $mode != :quick
         run("wasm-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
         run("wasm-eager", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + EAGER_OPTIONS))
         run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", "--verifyGC=true", *FTL_OPTIONS)
         run("wasm-slow-memory", "--useWasmFastMemory=false", *FTL_OPTIONS)
         run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *FTL_OPTIONS) if shouldCollectContinuously?
-        run("wasm-bbq", "--useWasmLLInt=false", "--useWasmIPInt=false", *FTL_OPTIONS)
+        run("wasm-bbq", "--useWasmIPInt=false", *FTL_OPTIONS)
         if $isOMGPlatform
-            run("wasm-omg", "--useWasmLLInt=true", "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *FTL_OPTIONS)
+            run("wasm-omg", "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *FTL_OPTIONS)
         end
         if $isFTLPlatform
             run("wasm-simd", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
@@ -1900,20 +1909,21 @@ def runWebAssemblySuite(*optionalTestSpecificOptions)
       optionalTestSpecificOptions.unshift "-m"
     end
     runDefaultWasm(*optionalTestSpecificOptions)
-    if $mode != "quick"
+    if $mode != :quick
         run("wasm-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
         run("wasm-eager", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
         run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
         run("wasm-slow-memory", "--useWasmFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
-        run("wasm-bbq", "--useWasmLLInt=false", "--useWasmIPInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
-        run("wasm-bbq-no-consts", "--useWasmLLInt=false", "--useWasmIPInt=false", "--disableBBQConsts=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-bbq", "--useWasmIPInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-bbq-no-consts", "--useWasmIPInt=false", "--disableBBQConsts=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
         # FIXME: this is a hacky way to check if we use SIMD rdar://138436830
         if $runJITlessWasm and not $testSpecificRequiredOptions.include? "--useWasmSIMD=1"
-          run("wasm-no-wasm-jit", "--useWasmJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless $skipModes.include?("wasm-no-wasm-jit".to_sym)
+          run("wasm-no-jit", "--useJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless $skipModes.include?("wasm-no-jit".to_sym)
+          run("wasm-no-wasm-jit", "--useBBQJIT=false", "--useOMGJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless $skipModes.include?("wasm-no-wasm-jit".to_sym)
         end
         if $isOMGPlatform
-            run("wasm-omg", "--useWasmLLInt=true", "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
+            run("wasm-omg", "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
         end
         if $isFTLPlatform
             run("wasm-simd", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless !$isSIMDPlatform
@@ -1933,20 +1943,21 @@ def runV8WebAssemblySuite(*optionalTestSpecificOptions)
       optionalTestSpecificOptions.unshift "-m"
     end
     runDefaultWasm(*optionalTestSpecificOptions)
-    if $mode != "quick"
+    if $mode != :quick
         run("wasm-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
         run("wasm-eager", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
         run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
         run("wasm-slow-memory", "--useWasmFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
-        run("wasm-bbq", "--useWasmLLInt=false", "--useWasmIPInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
-        run("wasm-bbq-no-consts", "--useWasmLLInt=false", "--useWasmIPInt=false", "--disableBBQConsts=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-bbq", "--useWasmIPInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-bbq-no-consts", "--useWasmIPInt=false", "--disableBBQConsts=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
         # FIXME: this is a hacky way to check if we use SIMD rdar://138436830
         if $runJITlessWasm and not $testSpecificRequiredOptions.include? "--useWasmSIMD=1"
-          run("wasm-no-wasm-jit", "--useWasmJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless $skipModes.include?("wasm-no-wasm-jit".to_sym)
+          run("wasm-no-jit", "--useJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless $skipModes.include?("wasm-no-jit".to_sym)
+          run("wasm-no-wasm-jit", "--useBBQJIT=false", "--useOMGJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless $skipModes.include?("wasm-no-wasm-jit".to_sym)
         end
         if $isOMGPlatform
-            run("wasm-omg", "--useWasmLLInt=true", "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
+            run("wasm-omg", "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
         end        
         if $isFTLPlatform
             run("wasm-simd", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless !$isSIMDPlatform
@@ -1987,15 +1998,15 @@ def runWebAssemblyWithHarness(*optionalTestSpecificOptions)
     prepareExtraRelativeFiles(wasmFiles.map { |f| f.basename }, $collection)
 
     runWasmHarnessTest("default-wasm", *(FTL_OPTIONS + optionalTestSpecificOptions))
-    if $mode != "quick"
+    if $mode != :quick
         runWasmHarnessTest("wasm-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
         runWasmHarnessTest("wasm-eager", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
         runWasmHarnessTest("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
         runWasmHarnessTest("wasm-slow-memory", "--useWasmFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         runWasmHarnessTest("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
-        runWasmHarnessTest("wasm-bbq", "--useWasmLLInt=false", "--useWasmIPInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
+        runWasmHarnessTest("wasm-bbq", "--useWasmIPInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
         if $isOMGPlatform
-            runWasmHarnessTest("wasm-omg", "--useWasmLLInt=true", "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
+            runWasmHarnessTest("wasm-omg", "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
         end
         if $isFTLPlatform
             runWasmHarnessTest("wasm-simd", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
@@ -2015,17 +2026,18 @@ def runWebAssemblyEmscripten(mode)
     wasm = $benchmark.to_s.sub! '.js', '.wasm'
     prepareExtraRelativeFiles([Pathname('..') + wasm], $collection)
     run("default-wasm", *FTL_OPTIONS)
-    if $mode != "quick"
+    if $mode != :quick
         run("wasm-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
         run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *FTL_OPTIONS)
         run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *FTL_OPTIONS) if shouldCollectContinuously?
-        run("wasm-bbq", "--useWasmLLInt=false", "--useWasmIPInt=false", *FTL_OPTIONS) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
+        run("wasm-bbq", "--useWasmIPInt=false", *FTL_OPTIONS) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
         # FIXME: this is a hacky way to check if we use SIMD rdar://138436830
         if $runJITlessWasm and not $testSpecificRequiredOptions.include? "--useWasmSIMD=1"
-          run("wasm-no-wasm-jit", "--useWasmJIT=false", *FTL_OPTIONS) unless $skipModes.include?("wasm-no-wasm-jit".to_sym)
+          run("wasm-no-jit", "--useJIT=false" *FTL_OPTIONS) unless $skipModes.include?("wasm-no-jit".to_sym)
+          run("wasm-no-wasm-jit", "--useBBQJIT=false", "--useOMGJIT=false" *FTL_OPTIONS) unless $skipModes.include?("wasm-no-wasm-jit".to_sym)
         end
         if $isOMGPlatform
-            run("wasm-omg", "--useWasmLLInt=true", "--useWasmIPInt=true", "--useBBQJIT=false", *FTL_OPTIONS)
+            run("wasm-omg", "--useWasmIPInt=true", "--useBBQJIT=false", *FTL_OPTIONS)
         end
         if $isFTLPlatform
             run("wasm-simd", "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
@@ -2052,15 +2064,15 @@ def runWebAssemblySpecTestBase(mode, specHarnessPath, postfix, *optionalTestSpec
 
     specHarnessJsPath = "../" + specHarnessPath + ".js"
     runWithOutputHandler("default-wasm" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, *(FTL_OPTIONS + optionalTestSpecificOptions))
-    if $mode != "quick"
+    if $mode != :quick
         runWithOutputHandler("wasm-no-cjit" + (postfix || ''), noisyOutputHandler, specHarnessJsPath,  *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
         # FIXME: We should probably only run these two for GC spec tests.
         runWithOutputHandler("wasm-eager-jettison" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
         runWithOutputHandler("wasm-collect-continuously" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
-        runWithOutputHandler("wasm-bbq" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", "--useWasmIPInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
-        runWithOutputHandler("wasm-bbq-no-consts" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", "--useWasmIPInt=false", "--disableBBQConsts=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        runWithOutputHandler("wasm-bbq" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmIPInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        runWithOutputHandler("wasm-bbq-no-consts" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmIPInt=false", "--disableBBQConsts=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
         if $isOMGPlatform
-            runWithOutputHandler("wasm-omg" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=true", "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
+            runWithOutputHandler("wasm-omg" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmIPInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
         end
         if $isFTLPlatform
             runWithOutputHandler("wasm-simd" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmSIMD=1", "--forceAllFunctionsToUseSIMD=1", *(FTL_OPTIONS + optionalTestSpecificOptions))
@@ -2087,7 +2099,7 @@ end
 def runWebAssemblySIMDSpecTest(mode)
     return if !$isSIMDPlatform
     runWebAssemblySpecTestBase(mode, "spec-harness", nil, "--useWasmSIMD=true")
-    runWebAssemblySpecTestBase(mode, "spec-harness", "-eager", "--useWasmSIMD=true", "--useBBQJIT=1", "--useWasmLLInt=1", "--useWasmIPInt=1", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0")
+    runWebAssemblySpecTestBase(mode, "spec-harness", "-eager", "--useWasmSIMD=true", "--useBBQJIT=1", "--useWasmIPInt=1", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0")
 end
 
 def runWebAssemblyTailCallSpecTest(mode)
@@ -2219,7 +2231,7 @@ def defaultQuickRunLayoutTest
 end
 
 def defaultRunLayoutTest
-    if $mode == "quick"
+    if $mode == :quick
         defaultQuickRunLayoutTest
     else
         runLayoutTestDefault
@@ -2362,7 +2374,7 @@ def defaultQuickRunMozillaTest(mode, *extraFiles)
 end
 
 def defaultRunMozillaTest(mode, *extraFiles)
-    if $mode == "quick"
+    if $mode == :quick
         defaultQuickRunMozillaTest(mode, *extraFiles)
     else
         runMozillaTestNoFTL(mode, *extraFiles)
@@ -2476,6 +2488,15 @@ end
 
 $collectionNames = {}
 
+def isWasmTest(path)
+    pathStr = path.to_s;
+    wasmIndex = pathStr.index("wasm");
+    if not wasmIndex
+        return false
+    end
+    pathStr[wasmIndex-1,1] == "\-" or pathStr[wasmIndex+4,1] == "\-"
+end
+
 def handleCollectionFile(collection)
     collectionName = simplifyCollectionName(collection)
    
@@ -2531,7 +2552,8 @@ def handleCollectionFile(collection)
                 | pathToSearch |
                 allJSFiles(pathToSearch).each {
                     | path |
-                    
+
+                    next if not $isWasmPlatform and isWasmTest(path)
                     $benchmark = path.basename
                     $benchmarkDirectory = path.dirname
                     $skipModes = Set.new
@@ -2560,7 +2582,8 @@ def handleCollectionDirectory(collection)
         $benchmarkDirectory = $collection
         allJSFiles($collection).each {
             | path |
-            
+
+            next if not $isWasmPlatform and isWasmTest(path)
             $benchmark = path.basename
             $skipModes = Set.new
             $runCommandOptions = {}
@@ -2644,24 +2667,33 @@ def prepareBundle
                 end
             end
 
-            if $remote and $hostOS == "linux"
-                bundle_binary = (Pathname.new(THIS_SCRIPT_PATH).dirname + 'bundle-binary').realpath
-                Dir.mktmpdir {
-                    | tmpdir |
-                    # Generate bundle in a temporary directory so that
-                    # we can safely pick it up regardless of its name
-                    # (it's the only zip file there).
-                    cmdline = [
-                        bundle_binary.to_s,
-                        "--dest-dir=#{$jscPath.dirname}",
-                        "--log-level=debug",
-                        $jscPath.to_s
-                    ]
-                    if not $ldd.nil?
-                        cmdline << "--ldd=#{$ldd}"
+            if $hostOS == "linux"
+                if $remote
+                    bundle_binary = (Pathname.new(THIS_SCRIPT_PATH).dirname + 'bundle-binary').realpath
+                    Dir.mktmpdir {
+                        | tmpdir |
+                        # Generate bundle in a temporary directory so that
+                        # we can safely pick it up regardless of its name
+                        # (it's the only zip file there).
+                        cmdline = [
+                            bundle_binary.to_s,
+                            "--dest-dir=#{$jscPath.dirname}",
+                            "--log-level=debug",
+                            $jscPath.to_s
+                        ]
+                        if not $ldd.nil?
+                            cmdline << "--ldd=#{$ldd}"
+                        end
+                        mysys(cmdline)
+                    }
+                else
+                    if originalJSCPath.dirname.basename.to_s == "bin" && originalJSCPath.basename.to_s == "jsc"
+                        libPath = originalJSCPath.dirname.dirname + "lib"
+                        if libPath.directory?
+                            ENV["LD_LIBRARY_PATH"] ||= "#{libPath}"
+                        end
                     end
-                    mysys(cmdline)
-                }
+                end
             end
         }
     end
@@ -3148,7 +3180,7 @@ end
 # We do not adjust hardTimeout. If we are not producing any results during 1200 seconds, buildbot terminates the tests. So we should terminate hung tests.
 
 if !ENV["JSCTEST_memoryLimit"] && $memoryLimited
-    ENV["JSCTEST_memoryLimit"] = (600 * 1024 * 1024).to_s
+    ENV["JSCTEST_memoryLimit"] = (1 * 1024 * 1024 * 1024).to_s
 end
 
 # Some tests fail if the time zone is not set to US/Pacific

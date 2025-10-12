@@ -1,4 +1,4 @@
-//@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1")
+//@ requireOptions("--useBBQJIT=1")
 //@ skip
 // Failure:
 // Exception: TypeError: undefined is not a constructor (evaluating 'new WebAssembly.Function({parameters:p, results:r}, testFun)')

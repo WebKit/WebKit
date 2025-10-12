@@ -73,7 +73,9 @@ GMallocSpan<char, Malloc> adoptGMallocString(char* str, size_t length)
 template<typename Malloc = GMalloc>
 GMallocSpan<char, Malloc> adoptGMallocString(char* str)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return adoptGMallocSpan<char, Malloc>(unsafeMakeSpan(str, str ? strlen(str) : 0));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 WTF_EXPORT_PRIVATE GMallocSpan<char> gFileGetContents(const char* path, GUniqueOutPtr<GError>&);

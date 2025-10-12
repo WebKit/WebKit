@@ -10,16 +10,20 @@
 
 #include "modules/desktop_capture/win/screen_capturer_win_magnifier.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <optional>
+#include <string>
 #include <utility>
 
 #include "modules/desktop_capture/desktop_capture_metrics_helper.h"
-#include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_frame.h"
-#include "modules/desktop_capture/desktop_frame_win.h"
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/desktop_region.h"
-#include "modules/desktop_capture/mouse_cursor.h"
-#include "modules/desktop_capture/win/cursor.h"
+#include "modules/desktop_capture/shared_desktop_frame.h"
+#include "modules/desktop_capture/shared_memory.h"
 #include "modules/desktop_capture/win/desktop.h"
 #include "modules/desktop_capture/win/screen_capture_utils.h"
 #include "rtc_base/checks.h"
@@ -87,7 +91,7 @@ void ScreenCapturerWinMagnifier::CaptureFrame() {
     return;
   }
 
-  int64_t capture_start_time_nanos = rtc::TimeNanos();
+  int64_t capture_start_time_nanos = TimeNanos();
 
   // Switch to the desktop receiving user input if different from the current
   // one.
@@ -121,8 +125,8 @@ void ScreenCapturerWinMagnifier::CaptureFrame() {
   frame->mutable_updated_region()->SetRect(
       DesktopRect::MakeSize(frame->size()));
 
-  int capture_time_ms = (rtc::TimeNanos() - capture_start_time_nanos) /
-                        rtc::kNumNanosecsPerMillisec;
+  int capture_time_ms =
+      (TimeNanos() - capture_start_time_nanos) / kNumNanosecsPerMillisec;
   RTC_HISTOGRAM_COUNTS_1000(
       "WebRTC.DesktopCapture.Win.MagnifierCapturerFrameTime", capture_time_ms);
   frame->set_capture_time_ms(capture_time_ms);
@@ -131,16 +135,20 @@ void ScreenCapturerWinMagnifier::CaptureFrame() {
 }
 
 bool ScreenCapturerWinMagnifier::GetSourceList(SourceList* sources) {
-  return webrtc::GetScreenList(sources);
+  return GetScreenList(sources);
 }
 
 bool ScreenCapturerWinMagnifier::SelectSource(SourceId id) {
-  if (IsScreenValid(id, &current_device_key_)) {
+  std::wstring device_key;
+  bool valid = IsScreenValid(id, &device_key);
+  if (valid) {
     current_screen_id_ = id;
-    return true;
+    current_device_key_ = device_key;
+  } else {
+    current_screen_id_ = kFullDesktopScreenId;
+    current_device_key_ = std::nullopt;
   }
-
-  return false;
+  return valid;
 }
 
 void ScreenCapturerWinMagnifier::SetExcludedWindow(WindowId excluded_window) {

@@ -40,8 +40,10 @@ namespace WebKit {
 void TestWithDispatchedFromAndTo::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithDispatchedFromAndTo::AlwaysEnabled::name())
-        return IPC::handleMessage<Messages::TestWithDispatchedFromAndTo::AlwaysEnabled>(connection, decoder, this, &TestWithDispatchedFromAndTo::alwaysEnabled);
+    if (decoder.messageName() == Messages::TestWithDispatchedFromAndTo::AlwaysEnabled::name()) {
+        IPC::handleMessage<Messages::TestWithDispatchedFromAndTo::AlwaysEnabled>(connection, decoder, this, &TestWithDispatchedFromAndTo::alwaysEnabled);
+        return;
+    }
     UNUSED_PARAM(connection);
     RELEASE_LOG_ERROR(IPC, "Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
     decoder.markInvalid();

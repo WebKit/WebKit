@@ -70,6 +70,12 @@ static inline int get_msb(unsigned int n) {
 }
 #endif
 
+// Returns (int)ceil(log2(n)).
+static inline int aom_ceil_log2(int n) {
+  if (n < 2) return 0;
+  return get_msb(n - 1) + 1;
+}
+
 #if defined(__GNUC__) && \
     ((__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || __GNUC__ >= 4)
 static inline int aom_clzll(uint64_t n) { return __builtin_clzll(n); }

@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "pas_config.h"
@@ -32,7 +32,6 @@
 #include "pas_bitfit_heap.h"
 #include "pas_deferred_decommit_log.h"
 #include "pas_exclusive_view_template_memo_table.h"
-#include "pas_monotonic_time.h"
 #include "pas_page_malloc.h"
 #include "pas_page_sharing_pool.h"
 #include "pas_segregated_directory_inlines.h"
@@ -55,7 +54,7 @@ pas_segregated_size_directory* pas_segregated_size_directory_create(
     pas_segregated_size_directory_creation_mode creation_mode)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
-    
+
     pas_segregated_size_directory* result;
     pas_segregated_page_config_kind page_config_kind;
 
@@ -117,10 +116,10 @@ pas_segregated_size_directory* pas_segregated_size_directory_create(
 
     result->encoded_stuff =
         pas_segregated_size_directory_encode_stuff(2 * PAS_NUM_BASELINE_ALLOCATORS, UINT_MAX);
-    
+
     result->view_cache_index = (pas_allocator_index)UINT_MAX;
     result->allocator_index = 0;
-    
+
     pas_segregated_size_directory_data_ptr_store(&result->data, NULL);
 
     if (!page_config) {
@@ -129,13 +128,13 @@ pas_segregated_size_directory* pas_segregated_size_directory_create(
 
         bitfit_heap = pas_segregated_heap_get_bitfit(heap, heap_config, pas_lock_is_held);
         PAS_ASSERT(bitfit_heap);
-        
+
         bitfit_size_class = pas_segregated_size_directory_get_bitfit_size_class(result);
-        
+
         pas_bitfit_heap_construct_and_insert_size_class(
             bitfit_heap, bitfit_size_class, object_size, heap_config, heap->runtime_config);
     }
-    
+
     pas_compact_atomic_segregated_size_directory_ptr_store(&result->next_for_heap, NULL);
 
     pas_segregated_size_directory_set_did_try_to_create_view_cache(result, false);
@@ -157,7 +156,7 @@ void pas_segregated_size_directory_finish_creation(pas_segregated_size_directory
     pas_segregated_heap* heap;
 
     heap = directory->heap;
-    
+
     if (!heap->runtime_config->directory_size_bound_for_baseline_allocators)
         pas_segregated_size_directory_create_tlc_allocator(directory);
     if (!heap->runtime_config->directory_size_bound_for_partial_views)
@@ -245,7 +244,7 @@ void pas_segregated_size_directory_create_tlc_allocator(
         PAS_ASSERT(directory->allocator_index != (pas_allocator_index)UINT_MAX);
         return;
     }
-    
+
     pas_thread_local_cache_layout_add(directory);
 
     PAS_ASSERT(directory->allocator_index);
@@ -256,7 +255,7 @@ void pas_segregated_size_directory_create_tlc_view_cache(
     pas_segregated_size_directory* directory)
 {
     size_t index;
-    
+
     pas_heap_lock_assert_held();
 
     if (pas_segregated_page_config_kind_is_utility(directory->base.page_config_kind))
@@ -269,7 +268,7 @@ void pas_segregated_size_directory_create_tlc_view_cache(
         return;
 
     PAS_ASSERT(directory->view_cache_index == (pas_allocator_index)UINT_MAX);
-    
+
     pas_thread_local_cache_layout_add_view_cache(directory);
 
     PAS_ASSERT(directory->view_cache_index);
@@ -287,7 +286,7 @@ void pas_segregated_size_directory_create_tlc_view_cache(
             continue;
 
         pas_segregated_view_get_page(view)->view_cache_index = directory->view_cache_index;
-        
+
         pas_segregated_view_unlock_ownership_lock(view);
     }
 }
@@ -319,10 +318,10 @@ void pas_segregated_size_directory_enable_exclusive_views(
     page_config_kind = directory->base.page_config_kind;
     if (page_config_kind == pas_segregated_page_config_kind_null)
         return;
-    
+
     page_config_ptr = pas_segregated_page_config_kind_get_config(page_config_kind);
     object_size = directory->object_size;
-    
+
     template_directory = pas_exclusive_view_template_memo_table_get(
         &pas_exclusive_view_template_memo_table_instance,
         pas_exclusive_view_template_memo_key_create(object_size, page_config_kind));
@@ -330,7 +329,7 @@ void pas_segregated_size_directory_enable_exclusive_views(
         pas_segregated_size_directory_data* template_data;
 
         template_data = pas_segregated_size_directory_data_ptr_load(&template_directory->data);
-        
+
         data->full_alloc_bits = template_data->full_alloc_bits;
         data->offset_from_page_boundary_to_first_object =
             template_data->offset_from_page_boundary_to_first_object;
@@ -350,7 +349,7 @@ void pas_segregated_size_directory_enable_exclusive_views(
     }
 
     page_config = *page_config_ptr;
-    
+
     alloc_bits_bytes = pas_segregated_page_config_num_alloc_bytes(page_config);
     full_alloc_bits = pas_immortal_heap_allocate_with_manual_alignment(
         alloc_bits_bytes, PAS_MAX(PAS_INTERNAL_MIN_ALIGN, sizeof(unsigned)),
@@ -374,7 +373,7 @@ void pas_segregated_size_directory_enable_exclusive_views(
                 offset, page_config.base),
             true);
     }
-    
+
     full_num_non_empty_words = 0;
     for (index = pas_segregated_page_config_num_alloc_words(page_config); index--;) {
         if (full_alloc_bits[index])
@@ -414,7 +413,7 @@ void pas_segregated_size_directory_enable_exclusive_views(
     PAS_ASSERT(data->full_num_non_empty_words == full_num_non_empty_words);
 
     pas_bootstrap_free_heap_allocation_config_construct(&bootstrap_allocation_config, pas_lock_is_held);
-    
+
     pas_exclusive_view_template_memo_table_add_new(
         &pas_exclusive_view_template_memo_table_instance,
         directory,
@@ -427,7 +426,7 @@ pas_segregated_size_directory_select_allocator_slow(
     pas_segregated_size_directory* directory)
 {
     pas_baseline_allocator_table_initialize_if_necessary();
-    
+
     for (;;) {
         unsigned a_index;
         unsigned b_index;
@@ -455,10 +454,10 @@ pas_segregated_size_directory_select_allocator_slow(
             selected_index -= PAS_NUM_BASELINE_ALLOCATORS;
         else {
             PAS_ASSERT(selected_index == 2 * PAS_NUM_BASELINE_ALLOCATORS);
-            
+
             a_index = pas_baseline_allocator_table_get_random_index();
             b_index = pas_baseline_allocator_table_get_random_index();
-    
+
             a_allocator = pas_baseline_allocator_table + a_index;
             b_allocator = pas_baseline_allocator_table + b_index;
 
@@ -488,9 +487,9 @@ pas_segregated_size_directory_select_allocator_slow(
                     PAS_NUM_BASELINE_ALLOCATORS + selected_index))
                 continue;
         }
-    
+
         selected_allocator = pas_baseline_allocator_table + selected_index;
-    
+
         pas_lock_lock(&selected_allocator->lock);
 
         if (pas_segregated_size_directory_baseline_allocator_index(directory) == selected_index)
@@ -523,13 +522,13 @@ static pas_segregated_view take_first_eligible_direct_create_new_view_callback(
     pas_segregated_directory_iterate_config* config)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
-    
+
     pas_segregated_size_directory* size_directory;
     pas_segregated_view view;
     pas_heap_runtime_config* runtime_config;
 
     PAS_TESTING_ASSERT(config->directory->directory_kind == pas_segregated_size_directory_kind);
-    
+
     size_directory = (pas_segregated_size_directory*)config->directory;
 
     runtime_config = size_directory->heap->runtime_config;
@@ -542,7 +541,7 @@ static pas_segregated_view take_first_eligible_direct_create_new_view_callback(
 
     if (config->index >= runtime_config->directory_size_bound_for_no_view_cache)
         pas_segregated_size_directory_create_tlc_view_cache(size_directory);
-    
+
     if (pas_segregated_size_directory_are_exclusive_views_enabled(size_directory)) {
         view = pas_segregated_exclusive_view_as_view_non_null(
             pas_segregated_exclusive_view_create(size_directory, config->index));
@@ -574,7 +573,7 @@ pas_segregated_view pas_segregated_size_directory_take_first_eligible(
     pas_segregated_size_directory* size_directory)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
-    
+
     pas_segregated_directory* directory;
     pas_segregated_directory_iterate_config config;
     pas_segregated_view view;
@@ -596,7 +595,7 @@ pas_segregated_view pas_segregated_size_directory_take_first_eligible(
 
     PAS_TESTING_ASSERT(!PAS_SEGREGATED_DIRECTORY_GET_BIT(
                            directory, pas_segregated_view_get_index(view), eligible));
-    
+
     return view;
 }
 
@@ -647,7 +646,7 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
     index = config->index;
 
     did_take_bit = PAS_SEGREGATED_DIRECTORY_SET_BIT(directory, index, empty, false);
-    
+
     if (!did_take_bit)
         return false;
 
@@ -661,7 +660,7 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
     heap_lock_hold_mode = data->heap_lock_hold_mode;
     decommit_log = data->decommit_log;
     my_page_config = *my_page_config_ptr;
-    
+
     if (verbose)
         pas_log("%p: considering empty index %zu, view = %p.\n", directory, index, view);
 
@@ -671,32 +670,32 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
         ownership_lock = &view->ownership_lock;
 
     pas_lock_switch(&held_lock, ownership_lock);
-    
+
     if (pas_segregated_page_config_is_utility(my_page_config))
         pas_heap_lock_assert_held();
-    
+
     if (!view->is_owned) {
         if (verbose)
             pas_log("not owned.\n");
-        
+
         goto release_held_lock_and_return_false;
     }
-    
+
     page = pas_segregated_page_for_boundary(view->page_boundary, my_page_config);
-    
+
     if (verbose)
         pas_log("exclusive mode.\n");
-    
+
     if (!PAS_SEGREGATED_DIRECTORY_SET_BIT(directory, index, eligible, false))
         goto release_held_lock_and_return_false;
-        
+
     if (!view->is_owned) {
         bool result;
         result = pas_segregated_directory_view_did_become_eligible_at_index(directory, index);
         PAS_ASSERT(result);
         goto release_held_lock_and_return_false;
     }
-    
+
     /* The empty bit just means that the page *could* be empty. It's possible to come here and find
        a non-empty page. In that case we make the page eligible again but leave the empty bit clear. */
     if (!pas_segregated_page_qualifies_for_decommit(page, my_page_config)) {
@@ -705,11 +704,11 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
         pas_segregated_directory_view_did_become_eligible_at_index(directory, index);
         goto release_held_lock_and_return_false;
     }
-    
+
     /* This has a very short race that causes the directory to possibly waste memory: if
        during this brief window we have someone trying to find an eligible page, they may
        end up allocating a new one.
-       
+
        But we deliberately keep the duration of this race window short. We make the page
        ineligible only during the time it takes us to figure out how to decommit it and to
        acquire the commit lock. The commit lock should be trivially available here, so
@@ -734,10 +733,10 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
     PAS_UNUSED_PARAM(result);
 
     PAS_TESTING_ASSERT(pas_segregated_page_qualifies_for_decommit(page, my_page_config));
-    
+
     if (pas_segregated_page_config_is_utility(my_page_config)) {
         PAS_ASSERT(my_page_config.base.page_size == my_page_config.base.granule_size);
-        
+
         pas_heap_lock_assert_held();
 
         view->is_owned = false;
@@ -756,31 +755,31 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
         data->result = pas_page_sharing_pool_take_success;
         return true;
     }
-    
+
     if (page->emptiness.num_non_empty_words) {
         bool decommit_result;
         size_t num_committed_granules;
-        
+
         /* No partial decommit in the utility heap! */
         PAS_ASSERT(!pas_segregated_page_config_is_utility(my_page_config));
-        
+
         /* We know that there must be empty granules in this page, since either the empty
            or the partly_empty bit was set. Those bits wouldn't get set unless we noticed
            an empty granule. If we did try to allocate from those granules, we would first
            have to take away its eligibility and then clear its empty bits. But we know that
            this could not have happened since *we* took away its eligibility. */
-        
+
         decommit_result = pas_segregated_page_take_empty_granules(
             page, decommit_log, &held_lock, pas_range_is_not_locked, heap_lock_hold_mode);
-        
+
         pas_lock_switch(&held_lock, NULL);
-        
+
         num_committed_granules = pas_segregated_page_get_num_committed_granules(page);
         PAS_ASSERT(num_committed_granules);
-        
+
         /* The page can become eligible again now that we've marked things for decommit. */
         pas_segregated_directory_view_did_become_eligible_at_index(directory, index);
-        
+
         if (decommit_result) {
             if (verbose)
                 pas_log("%p: did partly take index %zu\n", directory, index);
@@ -797,11 +796,11 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
                     view);
         }
         pas_lock_switch(&held_lock, NULL);
-        
+
         if (!pas_segregated_page_take_physically(
                 page, decommit_log, pas_range_is_not_locked, heap_lock_hold_mode)) {
             PAS_ASSERT(!pas_segregated_page_config_kind_is_utility(directory->page_config_kind));
-            
+
             pas_lock_switch(&held_lock, &view->ownership_lock);
             view->is_owned = true;
             if (verbose) {
@@ -809,14 +808,14 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
                         view);
             }
             pas_lock_switch(&held_lock, NULL);
-            
+
             pas_segregated_directory_view_did_become_eligible_at_index(directory, index);
             pas_segregated_directory_view_did_become_empty_at_index(directory, index);
-            
+
             data->result = pas_page_sharing_pool_take_locks_unavailable;
             return true;
         }
-        
+
         if (verbose) {
             pas_log("%p: did fully take index %zu\n", directory, index);
             pas_log("Destroying page header for view = %p, page = %p, boundary = %p (%p) "
@@ -828,7 +827,7 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
 
         pas_segregated_directory_view_did_become_eligible_at_index(directory, index);
     }
-    
+
     data->result = pas_page_sharing_pool_take_success;
     return true;
 
@@ -883,7 +882,7 @@ pas_segregated_size_directory_take_last_empty(
             directory,
             pas_page_sharing_participant_kind_select_for_segregated_directory(
                 directory->directory_kind)));
-    
+
     return data.result;
 }
 
@@ -911,7 +910,7 @@ pas_segregated_size_directory_get_allocator_from_tlc(
 
     PAS_ASSERT(pas_segregated_size_directory_has_tlc_allocator(directory));
     PAS_ASSERT(!pas_heap_config_is_utility(config));
-    
+
     pas_heap_lock_lock();
     pas_segregated_heap_ensure_allocator_index(
         directory->heap,
@@ -927,9 +926,9 @@ pas_segregated_size_directory_get_allocator_from_tlc(
     baseline_allocator_index = pas_segregated_size_directory_baseline_allocator_index(directory);
     if (baseline_allocator_index < PAS_NUM_BASELINE_ALLOCATORS) {
         pas_baseline_allocator* baseline_allocator;
-        
+
         baseline_allocator = pas_baseline_allocator_table + baseline_allocator_index;
-        
+
         pas_lock_lock(&baseline_allocator->lock);
 
         /* It's possible that due to a race, the directory's index has been reassigned to something
@@ -942,15 +941,15 @@ pas_segregated_size_directory_get_allocator_from_tlc(
             pas_segregated_size_directory_set_baseline_allocator_index(
                 directory, 2 * PAS_NUM_BASELINE_ALLOCATORS);
         }
-        
+
         pas_lock_unlock(&baseline_allocator->lock);
     }
-    
+
     tlc_result = pas_thread_local_cache_get_local_allocator_for_initialized_index(
         pas_thread_local_cache_get(config),
         directory->allocator_index,
         pas_lock_is_not_held);
-    
+
     PAS_ASSERT(tlc_result.did_succeed);
 
     return pas_baseline_allocator_result_create_success(tlc_result.allocator, NULL);
@@ -968,16 +967,16 @@ pas_heap_summary pas_segregated_size_directory_compute_summary_for_unowned_exclu
 
     data = pas_segregated_size_directory_data_ptr_load(&directory->data);
     page_config = *pas_segregated_page_config_kind_get_config(directory->base.page_config_kind);
-    
+
     result = pas_heap_summary_create_empty();
-    
+
     payload_size = (data->offset_from_page_boundary_to_end_of_last_object -
                     data->offset_from_page_boundary_to_first_object);
-    
+
     result.decommitted += page_config.base.page_size;
     result.free += payload_size;
     result.free_decommitted += payload_size;
-    
+
     return result;
 }
 
@@ -1040,7 +1039,7 @@ uint8_t pas_segregated_size_directory_view_cache_capacity(pas_segregated_size_di
     config = pas_segregated_page_config_kind_get_config(kind);
     if (!config->enable_view_cache)
         return 0;
-    
+
     return pas_heap_runtime_config_view_cache_capacity_for_object_size(
         directory->heap->runtime_config, directory->object_size, config);
 }
@@ -1054,7 +1053,7 @@ size_t pas_segregated_size_directory_local_allocator_size(
 
     if (kind == pas_segregated_page_config_kind_null)
         return pas_segregated_size_directory_local_allocator_size_for_null_config();
-    
+
     return pas_segregated_size_directory_local_allocator_size_for_config(
         *pas_segregated_page_config_kind_get_config(kind));
 }
@@ -1073,7 +1072,7 @@ void pas_segregated_size_directory_dump_reference(
         pas_stream_printf(stream, "null");
         return;
     }
-    
+
     pas_stream_printf(
         stream,
         "%p(segregated_size_directory, %u, %p, %s)",

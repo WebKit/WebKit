@@ -7,6 +7,10 @@
 //   Runs the glmark2 benchmark.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include <gtest/gtest.h>
 
 #include <stdio.h>

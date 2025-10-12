@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "AuxiliaryBarrier.h"
-#include "JSObject.h"
+#include <JavaScriptCore/AuxiliaryBarrier.h>
+#include <JavaScriptCore/JSObject.h>
 #include <wtf/TaggedArrayStoragePtr.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -254,8 +254,6 @@ protected:
     
     JS_EXPORT_PRIVATE JSArrayBufferView(VM&, ConstructionContext&);
     JS_EXPORT_PRIVATE void finishCreation(VM&);
-
-    DECLARE_VISIT_CHILDREN;
     
 public:
     TypedArrayMode mode() const { return m_mode; }
@@ -344,6 +342,8 @@ public:
     }
 
     DECLARE_EXPORT_INFO;
+
+    DECLARE_VISIT_CHILDREN;
     
     static constexpr ptrdiff_t offsetOfVector() { return OBJECT_OFFSETOF(JSArrayBufferView, m_vector); }
     static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSArrayBufferView, m_length); }

@@ -4,8 +4,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS Storage access was granted. document.cookie == firstPartyCookie=value, cookies seen server-side == {"firstPartyCookie":"value"}
-Did navigate iframe same-site and will now check that it still has storage access.
-PASS document.cookie == firstPartyCookie=value, cookies seen server-side == {"firstPartyCookie":"value"}
+Did navigate iframe from a cross-site parent and will now check that it does not have storage access.
+PASS document.cookie == , cookies seen server-side == "No cookies"
+PASS Storage access was granted. document.cookie == firstPartyCookie=value, cookies seen server-side == {"firstPartyCookie":"value"}
 PASS successfullyParsed is true
 
 TEST COMPLETE

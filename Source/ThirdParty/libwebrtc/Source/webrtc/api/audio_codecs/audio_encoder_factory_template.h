@@ -14,6 +14,7 @@
 #include <memory>
 #include <optional>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 #include "absl/base/nullability.h"
@@ -41,7 +42,7 @@ struct Helper<> {
       const SdpAudioFormat& /* format */) {
     return std::nullopt;
   }
-  static absl::Nullable<std::unique_ptr<AudioEncoder>> CreateAudioEncoder(
+  static absl_nullable std::unique_ptr<AudioEncoder> CreateAudioEncoder(
       const Environment& /* env */,
       const SdpAudioFormat& /* format */,
       const AudioEncoderFactory::Options& /* options */) {
@@ -60,7 +61,7 @@ template <typename Trait,
                   std::declval<typename Trait::Config>(),
                   std::declval<AudioEncoderFactory::Options>())),
               std::unique_ptr<AudioEncoder>>>>
-absl::Nullable<std::unique_ptr<AudioEncoder>> CreateEncoder(
+absl_nullable std::unique_ptr<AudioEncoder> CreateEncoder(
     Rank1,
     const Environment& env,
     const typename Trait::Config& config,
@@ -75,7 +76,7 @@ template <typename Trait,
                   int{},
                   std::declval<std::optional<AudioCodecPairId>>())),
               std::unique_ptr<AudioEncoder>>>>
-absl::Nullable<std::unique_ptr<AudioEncoder>> CreateEncoder(
+absl_nullable std::unique_ptr<AudioEncoder> CreateEncoder(
     Rank0,
     const Environment& /* env */,
     const typename Trait::Config& config,
@@ -104,7 +105,7 @@ struct Helper<T, Ts...> {
                       : Helper<Ts...>::QueryAudioEncoder(format);
   }
 
-  static absl::Nullable<std::unique_ptr<AudioEncoder>> CreateAudioEncoder(
+  static absl_nullable std::unique_ptr<AudioEncoder> CreateAudioEncoder(
       const Environment& env,
       const SdpAudioFormat& format,
       const AudioEncoderFactory::Options& options) {
@@ -129,7 +130,7 @@ class AudioEncoderFactoryT : public AudioEncoderFactory {
     return Helper<Ts...>::QueryAudioEncoder(format);
   }
 
-  absl::Nullable<std::unique_ptr<AudioEncoder>> Create(
+  absl_nullable std::unique_ptr<AudioEncoder> Create(
       const Environment& env,
       const SdpAudioFormat& format,
       Options options) override {
@@ -181,7 +182,7 @@ class AudioEncoderFactoryT : public AudioEncoderFactory {
 // TODO(kwiberg): Point at CreateBuiltinAudioEncoderFactory() for an example of
 // how it is used.
 template <typename... Ts>
-rtc::scoped_refptr<AudioEncoderFactory> CreateAudioEncoderFactory() {
+scoped_refptr<AudioEncoderFactory> CreateAudioEncoderFactory() {
   // There's no technical reason we couldn't allow zero template parameters,
   // but such a factory couldn't create any encoders, and callers can do this
   // by mistake by simply forgetting the <> altogether. So we forbid it in
@@ -189,7 +190,7 @@ rtc::scoped_refptr<AudioEncoderFactory> CreateAudioEncoderFactory() {
   static_assert(sizeof...(Ts) >= 1,
                 "Caller must give at least one template parameter");
 
-  return rtc::make_ref_counted<
+  return make_ref_counted<
       audio_encoder_factory_template_impl::AudioEncoderFactoryT<Ts...>>();
 }
 

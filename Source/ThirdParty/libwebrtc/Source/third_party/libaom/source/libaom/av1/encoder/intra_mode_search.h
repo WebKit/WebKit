@@ -15,6 +15,8 @@
 #ifndef AOM_AV1_ENCODER_INTRA_MODE_SEARCH_H_
 #define AOM_AV1_ENCODER_INTRA_MODE_SEARCH_H_
 
+#include <stdbool.h>
+
 #include "av1/encoder/encoder.h"
 
 #ifdef __cplusplus
@@ -284,6 +286,20 @@ void av1_count_colors_highbd(const uint8_t *src8, int stride, int rows,
                              int *val_count_8bit, int *num_color_bins,
                              int *num_colors);
 
+/*! \brief Set \a *num_colors to the number of colors in src.
+
+   Exits early if the number of colors exceeds a specified threshold.
+   Used by screen content detection mode 2.
+   \return Returns true if the number of colors does not exceed the threshold.
+   \note If the function returns true, \a *num_colors is accurate (and is <=
+   \a num_colors_threshold). If the function returns false, the function exited
+   early, and \a *num_colors may be smaller than the actual number of colors
+   (and is > \a num_colors_threshold).
+ */
+bool av1_count_colors_with_threshold(const uint8_t *src, int stride, int rows,
+                                     int cols, int num_colors_threshold,
+                                     int *num_colors);
+
 /*! \brief Initializes the \ref IntraModeSearchState struct.
  */
 static inline void init_intra_mode_search_state(
@@ -293,6 +309,7 @@ static inline void init_intra_mode_search_state(
 }
 
 /*! \brief set the luma intra mode and delta angles for a given mode index.
+ *
  * The total number of luma intra mode is LUMA_MODE_COUNT = 61.
  * The first 13 modes are from DC_PRED to PAETH_PRED, followed by directional
  * modes. Each of the main 8 directional modes have 6 = MAX_ANGLE_DELTA * 2

@@ -142,14 +142,14 @@ class DefaultStyleErrorHandlerTest(LoggingTestCase):
         # First call: usual reporting.
         self._call_error_handler(error_handler, confidence)
         self.assertEqual(1, self._error_count)
-        self.assertLog(["ERROR: foo.h(100):  message  [whitespace/tab] [5]\n"])
+        self.assertLog(["foo.h(100): error: [whitespace/tab]  message\n"])
 
         # Second call: suppression message reported.
         self._call_error_handler(error_handler, confidence)
         # The "Suppressing further..." message counts as an additional
         # message (but not as an addition to the error count).
         self.assertEqual(2, self._error_count)
-        expected_message = ["ERROR: foo.h(100):  message  [whitespace/tab] [5]\n",
+        expected_message = ["foo.h(100): error: [whitespace/tab]  message\n",
                             "ERROR: Suppressing further [whitespace/tab] reports for this file.\n"]
         self.assertLog(expected_message)
 
@@ -174,11 +174,11 @@ class DefaultStyleErrorHandlerTest(LoggingTestCase):
         # Error on modified line: error.
         self._call_error_handler(error_handler, confidence, line_number=50)
         self.assertEqual(1, self._error_count)
-        self.assertLog(["ERROR: foo.h(50):  message  [whitespace/tab] [5]\n"])
+        self.assertLog(["foo.h(50): error: [whitespace/tab]  message\n"])
 
         # Error on non-modified line after turning off line filtering: error.
         error_handler.turn_off_line_filtering()
         self._call_error_handler(error_handler, confidence, line_number=60)
         self.assertEqual(2, self._error_count)
-        self.assertLog(['ERROR: foo.h(60):  message  [whitespace/tab] [5]\n',
+        self.assertLog(['foo.h(60): error: [whitespace/tab]  message\n',
                         'ERROR: Suppressing further [whitespace/tab] reports for this file.\n'])

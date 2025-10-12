@@ -182,7 +182,7 @@ void TextureMapperLayer3DRenderingContext::paint(TextureMapper& textureMapper, c
 
     unsigned clipBufferSize = clipVertices.size() * sizeof(float);
     auto clipBuffer = textureMapper.acquireBufferFromPool(clipBufferSize, TextureMapperGPUBuffer::Type::Vertex);
-    clipBuffer->updateData(clipVertices.data(), 0, clipBufferSize);
+    clipBuffer->updateData(clipVertices.span().data(), 0, clipBufferSize);
 
     // Paint
     traverseTree(*root, [&clipVertices, &clipBuffer, &paintLayerFunction](LayerNode& node) {

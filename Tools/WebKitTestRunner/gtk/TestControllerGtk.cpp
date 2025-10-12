@@ -41,18 +41,17 @@
 #include <wtf/text/WTFString.h>
 
 #if USE(SKIA)
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkData.h>
-
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/encode/SkPngEncoder.h>
-IGNORE_CLANG_WARNINGS_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
 namespace WTR {
 
 void TestController::notifyDone()
 {
-    RunLoop::protectedMain()->stop();
+    RunLoop::mainSingleton().stop();
 }
 
 void TestController::platformInitialize(const Options&)
@@ -69,9 +68,9 @@ void TestController::platformRunUntil(bool& done, WTF::Seconds timeout)
     class TimeoutTimer {
     public:
         TimeoutTimer(WTF::Seconds timeout, bool& timedOut)
-            : m_timer(RunLoop::main(), [&timedOut] {
+            : m_timer(RunLoop::mainSingleton(), "TestController::TimeoutTimer"_s, [&timedOut] {
                 timedOut = true;
-                RunLoop::protectedMain()->stop();
+                RunLoop::mainSingleton().stop();
             })
         {
             m_timer.setPriority(G_PRIORITY_DEFAULT_IDLE);
@@ -83,7 +82,7 @@ void TestController::platformRunUntil(bool& done, WTF::Seconds timeout)
     } timeoutTimer(timeout, timedOut);
 
     while (!done && !timedOut)
-        RunLoop::main().run();
+        RunLoop::mainSingleton().run();
 }
 
 static char* getEnvironmentVariableAsUTF8String(const char* variableName)
@@ -129,11 +128,6 @@ void TestController::runModal(PlatformWebView*)
 
 void TestController::abortModal()
 {
-}
-
-WKContextRef TestController::platformContext()
-{
-    return m_context.get();
 }
 
 const char* TestController::platformLibraryPathForTesting()

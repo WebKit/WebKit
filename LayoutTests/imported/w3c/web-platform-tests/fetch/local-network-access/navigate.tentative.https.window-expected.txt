@@ -1,0 +1,15 @@
+
+FAIL loopback to loopback: no permission required. Can't find variable: navigateTest
+FAIL loopback to local: no permission required. Can't find variable: navigateTest
+FAIL loopback to public: no preflight required. Can't find variable: navigateTest
+FAIL local to loopback: no permission required. Can't find variable: navigateTest
+FAIL local to local: no permission required. Can't find variable: navigateTest
+FAIL local to public: no permission required. Can't find variable: navigateTest
+FAIL public to loopback: no permission required. Can't find variable: navigateTest
+FAIL public to local: no permission required. Can't find variable: navigateTest
+FAIL public to public: no permission required. Can't find variable: navigateTest
+FAIL treat-as-public-address to loopback: no permission required. Can't find variable: navigateTest
+FAIL treat-as-public-address to loopback (same-origin): no permission required. Can't find variable: navigateTest
+FAIL treat-as-public-address to local: no permission required. Can't find variable: navigateTest
+FAIL treat-as-public-address to public: no permission required. Can't find variable: navigateTest
+

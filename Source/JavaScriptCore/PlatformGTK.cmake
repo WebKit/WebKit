@@ -28,13 +28,6 @@ install(FILES ${JavaScriptCore_INSTALLED_HEADERS}
         DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/jsc"
 )
 
-list(APPEND JavaScriptCore_LIBRARIES
-    ${GLIB_LIBRARIES}
-)
-list(APPEND JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
-    ${GLIB_INCLUDE_DIRS}
-)
-
 GI_INTROSPECT(JavaScriptCore ${WEBKITGTK_API_VERSION} jsc/jsc.h
     PACKAGE javascriptcoregtk
     SYMBOL_PREFIX jsc

@@ -1,0 +1,4 @@
+
+
+FAIL @starting-style should work on ::picker(select) just like a popover. assert_equals: color should transition based on @starting-style. expected "rgb(128, 128, 128)" but got "rgba(0, 0, 0, 0.847)"
+

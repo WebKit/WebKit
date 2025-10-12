@@ -72,7 +72,7 @@ struct RTCPacketOptions {
         int64_t srtpPacketIndex;
     };
 
-    explicit RTCPacketOptions(const rtc::PacketOptions& options)
+    explicit RTCPacketOptions(const webrtc::AsyncSocketPacketOptions& options)
         : options(options)
     { }
 
@@ -80,7 +80,7 @@ struct RTCPacketOptions {
 
     SerializableData serializableData() const;
 
-    rtc::PacketOptions options;
+    webrtc::AsyncSocketPacketOptions options;
 };
 
 }

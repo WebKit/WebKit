@@ -9,8 +9,7 @@
  */
 #include "net/dcsctp/packet/parameter/outgoing_ssn_reset_request_parameter.h"
 
-#include <stddef.h>
-
+#include <cstddef>
 #include <cstdint>
 #include <optional>
 #include <string>
@@ -21,7 +20,6 @@
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
-#include "net/dcsctp/packet/tlv_trait.h"
 #include "net/dcsctp/public/types.h"
 #include "rtc_base/strings/string_builder.h"
 
@@ -49,7 +47,7 @@ namespace dcsctp {
 constexpr int OutgoingSSNResetRequestParameter::kType;
 
 std::optional<OutgoingSSNResetRequestParameter>
-OutgoingSSNResetRequestParameter::Parse(rtc::ArrayView<const uint8_t> data) {
+OutgoingSSNResetRequestParameter::Parse(webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -91,7 +89,7 @@ void OutgoingSSNResetRequestParameter::SerializeTo(
 }
 
 std::string OutgoingSSNResetRequestParameter::ToString() const {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
   sb << "Outgoing SSN Reset Request, req_seq_nbr=" << *request_sequence_number()
      << ", resp_seq_nbr=" << *response_sequence_number()
      << ", sender_last_asg_tsn=" << *sender_last_assigned_tsn();

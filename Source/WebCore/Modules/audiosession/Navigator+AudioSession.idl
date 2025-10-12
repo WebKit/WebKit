@@ -27,6 +27,6 @@
     Conditional=DOM_AUDIO_SESSION,
     ImplementedBy=NavigatorAudioSession
 ] partial interface Navigator {
-    [EnabledBySetting=DOMAudioSessionEnabled] readonly attribute DOMAudioSession audioSession;
+    [EnabledBySetting=DOMAudioSessionEnabled, DisabledByQuirk=shouldDisableDOMAudioSession] readonly attribute DOMAudioSession audioSession;
 };
 

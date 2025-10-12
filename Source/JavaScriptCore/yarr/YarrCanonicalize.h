@@ -55,7 +55,7 @@ struct CanonicalizationRange {
 extern const size_t ucs2CanonicalizationRanges;
 extern const char32_t* const ucs2CharacterSetInfo[];
 extern const CanonicalizationRange ucs2RangeInfo[];
-extern const uint16_t canonicalTableLChar[256];
+extern const uint16_t latin1CanonicalizationTable[256];
 
 extern const size_t UNICODE_CANONICALIZATION_RANGES;
 extern const char32_t* const unicodeCharacterSetInfo[];

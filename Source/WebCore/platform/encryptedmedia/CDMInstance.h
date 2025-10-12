@@ -27,9 +27,9 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "CDMKeyStatus.h"
-#include "CDMMessageType.h"
-#include "CDMSessionType.h"
+#include <WebCore/CDMKeyStatus.h>
+#include <WebCore/CDMMessageType.h>
+#include <WebCore/CDMSessionType.h>
 #include <utility>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>

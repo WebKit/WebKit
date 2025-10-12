@@ -422,6 +422,10 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
     _takeHeapSnapshotClicked()
     {
         for (let target of WI.targets) {
+            // FIXME: <https://webkit.org/b/298984> Add Heap support for FrameTarget.
+            if (target instanceof WI.FrameTarget)
+                continue;
+
             WI.heapManager.snapshot(target, (error, timestamp, snapshotStringData) => {
                 let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
                 workerProxy.createSnapshot(target.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {

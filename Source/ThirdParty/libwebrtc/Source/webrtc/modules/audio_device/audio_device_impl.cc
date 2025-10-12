@@ -10,20 +10,24 @@
 
 #include "modules/audio_device/audio_device_impl.h"
 
-#include <stddef.h>
+#include <cstdint>
+#include <memory>
+#include <utility>
 
+#include "absl/base/nullability.h"
+#include "api/audio/audio_device.h"
+#include "api/audio/audio_device_defines.h"
+#include "api/environment/environment.h"
 #include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
-#include "modules/audio_device/audio_device_config.h"  // IWYU pragma: keep
+#include "api/task_queue/task_queue_factory.h"
 #include "modules/audio_device/audio_device_generic.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/metrics.h"
 
-#if defined(_WIN32)
-#if defined(WEBRTC_WINDOWS_CORE_AUDIO_BUILD)
+#if defined(WEBRTC_WIN)
 #include "modules/audio_device/win/audio_device_core_win.h"
-#endif
 #elif defined(WEBRTC_ANDROID)
 #include <stdlib.h>
 #include "webkit_sdk/android/native_api/audio_device_module/audio_device_android.h"
@@ -61,17 +65,8 @@
 
 namespace webrtc {
 
-rtc::scoped_refptr<AudioDeviceModule> AudioDeviceModule::Create(
-    AudioLayer audio_layer,
-    TaskQueueFactory* task_queue_factory) {
-  RTC_DLOG(LS_INFO) << __FUNCTION__;
-  return AudioDeviceModule::CreateForTest(audio_layer, task_queue_factory);
-}
-
-// static
-rtc::scoped_refptr<AudioDeviceModuleForTest> AudioDeviceModule::CreateForTest(
-    AudioLayer audio_layer,
-    TaskQueueFactory* task_queue_factory) {
+absl_nullable scoped_refptr<AudioDeviceModuleImpl>
+AudioDeviceModuleImpl::Create(const Environment& env, AudioLayer audio_layer) {
   RTC_DLOG(LS_INFO) << __FUNCTION__;
 
   // The "AudioDeviceModule::kWindowsCoreAudio2" audio layer has its own
@@ -82,7 +77,8 @@ rtc::scoped_refptr<AudioDeviceModuleForTest> AudioDeviceModule::CreateForTest(
     return nullptr;
   } else if (audio_layer == AudioDeviceModule::kAndroidJavaAudio ||
              audio_layer == AudioDeviceModule::kAndroidOpenSLESAudio ||
-             audio_layer == AudioDeviceModule::kAndroidJavaInputAndOpenSLESOutputAudio ||
+             audio_layer ==
+                 AudioDeviceModule::kAndroidJavaInputAndOpenSLESOutputAudio ||
              audio_layer == kAndroidAAudioAudio ||
              audio_layer == kAndroidJavaInputAndAAudioOutputAudio) {
     RTC_LOG(LS_ERROR) << "Use the CreateAndroidAudioDeviceModule() "
@@ -91,8 +87,8 @@ rtc::scoped_refptr<AudioDeviceModuleForTest> AudioDeviceModule::CreateForTest(
   }
 
   // Create the generic reference counted (platform independent) implementation.
-  auto audio_device = rtc::make_ref_counted<AudioDeviceModuleImpl>(
-      audio_layer, task_queue_factory);
+  auto audio_device = make_ref_counted<AudioDeviceModuleImpl>(
+      audio_layer, &env.task_queue_factory());
 
   // Ensure that the current platform is supported.
   if (audio_device->CheckPlatform() == -1) {
@@ -100,7 +96,7 @@ rtc::scoped_refptr<AudioDeviceModuleForTest> AudioDeviceModule::CreateForTest(
   }
 
   // Create the platform-dependent implementation.
-  if (audio_device->CreatePlatformSpecificObjects() == -1) {
+  if (audio_device->CreatePlatformSpecificObjects(env) == -1) {
     return nullptr;
   }
 
@@ -164,7 +160,8 @@ int32_t AudioDeviceModuleImpl::CheckPlatform() {
   return 0;
 }
 
-int32_t AudioDeviceModuleImpl::CreatePlatformSpecificObjects() {
+int32_t AudioDeviceModuleImpl::CreatePlatformSpecificObjects(
+    [[maybe_unused]] const Environment& env) {
   RTC_LOG(LS_INFO) << __FUNCTION__;
   if (audio_device_ != nullptr) {
     RTC_LOG(LS_INFO) << "Reusing provided audio device";
@@ -187,8 +184,8 @@ int32_t AudioDeviceModuleImpl::CreatePlatformSpecificObjects() {
 // Real (non-dummy) ADM implementations.
 #else
   AudioLayer audio_layer(PlatformAudioLayer());
-// Windows ADM implementation.
-#if defined(WEBRTC_WINDOWS_CORE_AUDIO_BUILD)
+#if defined(WEBRTC_WIN)
+  // Windows ADM implementation.
   if ((audio_layer == kWindowsCoreAudio) ||
       (audio_layer == kPlatformDefaultAudio)) {
     RTC_LOG(LS_INFO) << "Attempting to use the Windows Core Audio APIs...";
@@ -197,7 +194,7 @@ int32_t AudioDeviceModuleImpl::CreatePlatformSpecificObjects() {
       RTC_LOG(LS_INFO) << "Windows Core Audio APIs will be utilized";
     }
   }
-#endif  // defined(WEBRTC_WINDOWS_CORE_AUDIO_BUILD)
+#endif
 
 // Linux ADM implementation.
 // Note that, WEBRTC_ENABLE_LINUX_ALSA is always defined by default when
@@ -239,9 +236,11 @@ int32_t AudioDeviceModuleImpl::CreatePlatformSpecificObjects() {
 // iOS ADM implementation.
 #if defined(WEBRTC_IOS)
   if (audio_layer == kPlatformDefaultAudio) {
-    audio_device_.reset(new ios_adm::AudioDeviceIOS(
+    audio_device_ = std::make_unique<ios_adm::AudioDeviceIOS>(
+        env,
         /*bypass_voice_processing=*/false,
-        /*muted_speech_event_handler=*/nullptr));
+        /*muted_speech_event_handler=*/nullptr,
+        /*render_error_handler=*/nullptr);
     RTC_LOG(LS_INFO) << "iPhone Audio APIs will be utilized.";
   }
 // END #if defined(WEBRTC_IOS)
@@ -651,16 +650,16 @@ int32_t AudioDeviceModuleImpl::PlayoutDeviceName(
     char guid[kAdmMaxGuidSize]) {
   RTC_LOG(LS_INFO) << __FUNCTION__ << "(" << index << ", ...)";
   CHECKinitialized_();
-  if (name == NULL) {
+  if (name == nullptr) {
     return -1;
   }
   if (audio_device_->PlayoutDeviceName(index, name, guid) == -1) {
     return -1;
   }
-  if (name != NULL) {
+  if (name != nullptr) {
     RTC_LOG(LS_INFO) << "output: name = " << name;
   }
-  if (guid != NULL) {
+  if (guid != nullptr) {
     RTC_LOG(LS_INFO) << "output: guid = " << guid;
   }
   return 0;
@@ -672,16 +671,16 @@ int32_t AudioDeviceModuleImpl::RecordingDeviceName(
     char guid[kAdmMaxGuidSize]) {
   RTC_LOG(LS_INFO) << __FUNCTION__ << "(" << index << ", ...)";
   CHECKinitialized_();
-  if (name == NULL) {
+  if (name == nullptr) {
     return -1;
   }
   if (audio_device_->RecordingDeviceName(index, name, guid) == -1) {
     return -1;
   }
-  if (name != NULL) {
+  if (name != nullptr) {
     RTC_LOG(LS_INFO) << "output: name = " << name;
   }
-  if (guid != NULL) {
+  if (guid != nullptr) {
     RTC_LOG(LS_INFO) << "output: guid = " << guid;
   }
   return 0;

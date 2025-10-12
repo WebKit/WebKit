@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "InlineDisplayContent.h"
-#include "InlineLineTypes.h"
+#include <WebCore/InlineDisplayContent.h>
+#include <WebCore/InlineLineTypes.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {

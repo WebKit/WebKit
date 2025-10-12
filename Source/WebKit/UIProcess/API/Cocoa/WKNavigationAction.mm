@@ -120,7 +120,9 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEventSyntheti
 
 - (NSURLRequest *)request
 {
-    return _navigationAction->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
+    if (RetainPtr request = _navigationAction->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody))
+        return request.autorelease();
+    return [NSURLRequest requestWithURL:bridge_cast(URL::createCFURL(_navigationAction->data().invalidURLString).get())];
 }
 
 - (BOOL)shouldPerformDownload
@@ -217,9 +219,14 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEventSyntheti
     return wrapper(_navigationAction->protectedUserInitiatedAction().get());
 }
 
+- (BOOL)isContentRuleListRedirect
+{
+    return _navigationAction->isContentRuleListRedirect();
+}
+
 - (BOOL)_isContentExtensionRedirect
 {
-    return _navigationAction->isContentExtensionRedirect();
+    return _navigationAction->isContentRuleListRedirect();
 }
 
 - (BOOL)_isRedirect

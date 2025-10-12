@@ -53,8 +53,6 @@
 # BaseGenerator in the outer script that caused it to be created, since the
 # inner one is the one with all the xcfilelist information.
 
-from __future__ import print_function
-
 import itertools
 import os
 import pickle

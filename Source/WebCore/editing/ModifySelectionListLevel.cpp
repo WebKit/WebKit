@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "Editing.h"
 #include "ElementInlines.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameSelection.h"
 #include "HTMLOListElement.h"
 #include "HTMLUListElement.h"

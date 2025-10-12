@@ -52,6 +52,7 @@
 #ifndef PAS_PROBABILISTIC_GUARD_MALLOC_ALLOCATOR
 #define PAS_PROBABILISTIC_GUARD_MALLOC_ALLOCATOR
 
+#include "pas_backtrace_metadata.h"
 #include "pas_utils.h"
 #include "pas_large_heap.h"
 #include "pas_large_map_entry.h"
@@ -60,15 +61,6 @@
 #include <stdint.h>
 
 PAS_BEGIN_EXTERN_C;
-
-#define PGM_BACKTRACE_MAX_FRAMES 31
-
-/* structure for holding the allocation and deallocation backtraces */
-typedef struct pas_backtrace_metadata pas_backtrace_metadata;
-struct pas_backtrace_metadata {
-    int frame_size;
-    void* backtrace_buffer[PGM_BACKTRACE_MAX_FRAMES];
-};
 
 /* structure for holding pgm metadata allocations */
 typedef struct pas_pgm_storage pas_pgm_storage;
@@ -101,6 +93,12 @@ struct pas_pgm_storage {
 
     pas_large_heap* large_heap;
 };
+
+/* 
+ * Flag to indicate if PGM was ever enabled for this process,
+ * even if it been subsequently disabled, or no guarded allocations have been made.
+*/
+extern bool pas_probabilistic_guard_malloc_has_been_used;
 
 /* max amount of free memory that can be wasted (1MB) */
 #define PAS_PGM_MAX_WASTED_MEMORY (1024 * 1024)

@@ -7,7 +7,7 @@ PASS setParameters() with codec.sdpFmtpLine modified should reject with InvalidM
 PASS setParameters() with new codecs inserted should reject with InvalidModificationError (audio)
 PASS setParameters() with codecs removed should reject with InvalidModificationError (audio)
 PASS setParameters() with codecs reordered should reject with InvalidModificationError (audio)
-FAIL setParameters() with codecs undefined should reject with InvalidModificationError (audio) promise_rejects_dom: function "function() { throw e }" threw object "TypeError: Member RTCRtpSendParameters.codecs is required and must be an instance of sequence" that is not a DOMException InvalidModificationError: property "code" is equal to undefined, expected 13
+FAIL setParameters() with codecs undefined should reject with InvalidModificationError (audio) promise_rejects_dom: function "function() { throw e; }" threw object "TypeError: Member RTCRtpSendParameters.codecs is required and must be an instance of sequence" that is not a DOMException InvalidModificationError: property "code" is equal to undefined, expected 13
 PASS RTCRtpSender.getParameters() should not have codecs before SDP negotiation completes (audio)
 PASS RTCRtpReceiver.getParameters() should not have codecs before SDP negotiation completes (audio)
 FAIL RTCRtpSender.getParameters() should have codecs after negotiation (audio) assert_not_equals: got disallowed value 0
@@ -22,7 +22,7 @@ PASS setParameters() with codec.sdpFmtpLine modified should reject with InvalidM
 PASS setParameters() with new codecs inserted should reject with InvalidModificationError (video)
 PASS setParameters() with codecs removed should reject with InvalidModificationError (video)
 PASS setParameters() with codecs reordered should reject with InvalidModificationError (video)
-FAIL setParameters() with codecs undefined should reject with InvalidModificationError (video) promise_rejects_dom: function "function() { throw e }" threw object "TypeError: Member RTCRtpSendParameters.codecs is required and must be an instance of sequence" that is not a DOMException InvalidModificationError: property "code" is equal to undefined, expected 13
+FAIL setParameters() with codecs undefined should reject with InvalidModificationError (video) promise_rejects_dom: function "function() { throw e; }" threw object "TypeError: Member RTCRtpSendParameters.codecs is required and must be an instance of sequence" that is not a DOMException InvalidModificationError: property "code" is equal to undefined, expected 13
 PASS RTCRtpSender.getParameters() should not have codecs before SDP negotiation completes (video)
 PASS RTCRtpReceiver.getParameters() should not have codecs before SDP negotiation completes (video)
 FAIL RTCRtpSender.getParameters() should have codecs after negotiation (video) assert_not_equals: got disallowed value 0

@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "WritingMode.h"
+#include <WebCore/WritingMode.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

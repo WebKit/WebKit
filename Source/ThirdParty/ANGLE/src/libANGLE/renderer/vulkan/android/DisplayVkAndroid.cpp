@@ -7,6 +7,10 @@
 //    Implements the class methods for DisplayVkAndroid.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/vulkan/android/DisplayVkAndroid.h"
 
 #include <android/log.h>

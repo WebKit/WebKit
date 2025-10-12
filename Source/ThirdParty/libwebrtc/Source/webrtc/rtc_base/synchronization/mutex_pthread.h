@@ -14,13 +14,15 @@
 #if defined(WEBRTC_POSIX)
 
 #include <pthread.h>
+
+#include "absl/base/attributes.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/system/no_unique_address.h"
+#include "rtc_base/thread_annotations.h"
+
 #if defined(WEBRTC_MAC)
 #include <pthread_spis.h>
 #endif
-
-#include "absl/base/attributes.h"
-#include "rtc_base/system/no_unique_address.h"
-#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(MAC)
+#if ENABLE(TILED_CA_DRAWING_AREA)
 
 #include "CallbackID.h"
 #include "DrawingArea.h"
@@ -62,6 +62,10 @@ public:
 
 private:
     TiledCoreAnimationDrawingArea(WebPage&, const WebPageCreationParameters&);
+
+#if ENABLE(TILED_CA_DRAWING_AREA)
+    DrawingAreaType type() const final { return DrawingAreaType::TiledCoreAnimation; }
+#endif
 
     // DrawingArea
     void setNeedsDisplay() override;
@@ -193,4 +197,4 @@ inline bool TiledCoreAnimationDrawingArea::addMilestonesToDispatch(OptionSet<Web
 
 SPECIALIZE_TYPE_TRAITS_DRAWING_AREA(TiledCoreAnimationDrawingArea, DrawingAreaType::TiledCoreAnimation)
 
-#endif // PLATFORM(MAC)
+#endif // ENABLE(TILED_CA_DRAWING_AREA)

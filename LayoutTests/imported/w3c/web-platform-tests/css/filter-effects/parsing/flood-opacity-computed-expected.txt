@@ -5,4 +5,6 @@ PASS Property flood-opacity value '3'
 PASS Property flood-opacity value '-100%'
 PASS Property flood-opacity value '50%'
 PASS Property flood-opacity value '300%'
+PASS Property flood-opacity value 'calc(0.5 * sign(10em - 1px))'
+PASS Property flood-opacity value 'calc(50% * sign(10em - 1px))'
 

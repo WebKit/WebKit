@@ -12,6 +12,7 @@ info: |
   4. IfAbruptRejectPromise(return, promiseCapability).
   ...
 
+flags: [async]
 features: [explicit-resource-management]
 includes: [asyncHelpers.js]
 ---*/

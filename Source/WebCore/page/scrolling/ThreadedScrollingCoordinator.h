@@ -27,7 +27,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
 
-#include "AsyncScrollingCoordinator.h"
+#include <WebCore/AsyncScrollingCoordinator.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

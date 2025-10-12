@@ -12,20 +12,23 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
+#include <cstdio>
 #include <cstring>
 #include <memory>
+#include <tuple>
 
 #include "common_audio/include/audio_util.h"
+#include "common_audio/resampler/sinc_resampler.h"
 #include "common_audio/resampler/sinusoidal_linear_chirp_source.h"
 #include "rtc_base/time_utils.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
 
 // Almost all conversions have an RMS error of around -14 dbFS.
-const double kResamplingRMSError = -14.42;
+constexpr double kResamplingRMSError = -14.42;
 
 // Used to convert errors to dbFS.
 template <typename T>
@@ -86,17 +89,16 @@ void PushSincResamplerTest::ResampleBenchmarkTest(bool int_format) {
   const double io_ratio = input_rate_ / static_cast<double>(output_rate_);
   SincResampler sinc_resampler(io_ratio, SincResampler::kDefaultRequestSize,
                                &resampler_source);
-  int64_t start = rtc::TimeNanos();
+  int64_t start = TimeNanos();
   for (int i = 0; i < kResampleIterations; ++i) {
     sinc_resampler.Resample(output_samples, resampled_destination.get());
   }
-  double total_time_sinc_us =
-      (rtc::TimeNanos() - start) / rtc::kNumNanosecsPerMicrosec;
+  double total_time_sinc_us = (TimeNanos() - start) / kNumNanosecsPerMicrosec;
   printf("SincResampler took %.2f us per frame.\n",
          total_time_sinc_us / kResampleIterations);
 
   PushSincResampler resampler(input_samples, output_samples);
-  start = rtc::TimeNanos();
+  start = TimeNanos();
   if (int_format) {
     for (int i = 0; i < kResampleIterations; ++i) {
       EXPECT_EQ(output_samples,
@@ -110,8 +112,7 @@ void PushSincResamplerTest::ResampleBenchmarkTest(bool int_format) {
                                                    output_samples));
     }
   }
-  double total_time_us =
-      (rtc::TimeNanos() - start) / rtc::kNumNanosecsPerMicrosec;
+  double total_time_us = (TimeNanos() - start) / kNumNanosecsPerMicrosec;
   printf(
       "PushSincResampler took %.2f us per frame; which is a %.1f%% overhead "
       "on SincResampler.\n\n",

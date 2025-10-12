@@ -21,13 +21,13 @@
 
 #pragma once
 
-#include "CSSAttrValue.h"
-#include "CSSCalcValue.h"
-#include "CSSPrimitiveNumericUnits.h"
-#include "CSSPropertyNames.h"
-#include "CSSValue.h"
-#include "CSSValueKeywords.h"
-#include "LayoutUnit.h"
+#include <WebCore/CSSAttrValue.h>
+#include <WebCore/CSSCalcValue.h>
+#include <WebCore/CSSPrimitiveNumericUnits.h>
+#include <WebCore/CSSPropertyNames.h>
+#include <WebCore/CSSValue.h>
+#include <WebCore/CSSValueKeywords.h>
+#include <WebCore/LayoutUnit.h>
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/MathExtras.h>
@@ -38,8 +38,6 @@ class CSSToLengthConversionData;
 class FontCascade;
 class RenderStyle;
 class RenderView;
-
-struct Length;
 
 template<typename> class ExceptionOr;
 
@@ -108,8 +106,6 @@ public:
     static Ref<CSSPrimitiveValue> create(double);
     static Ref<CSSPrimitiveValue> create(double, CSSUnitType);
     static Ref<CSSPrimitiveValue> createInteger(double);
-    static Ref<CSSPrimitiveValue> create(const Length&);
-    static Ref<CSSPrimitiveValue> create(const Length&, const RenderStyle&);
     static Ref<CSSPrimitiveValue> create(Ref<CSSCalcValue>);
     static Ref<CSSPrimitiveValue> create(Ref<CSSAttrValue>);
 
@@ -126,6 +122,7 @@ public:
 
     static Ref<CSSPrimitiveValue> createCustomIdent(String);
     bool isCustomIdent() const { return primitiveUnitType() == CSSUnitType::CustomIdent; }
+    String customIdent() const { ASSERT(isCustomIdent()); return stringValue(); }
 
     static Ref<CSSPrimitiveValue> createFontFamily(String);
     bool isFontFamily() const { return primitiveUnitType() == CSSUnitType::CSS_FONT_FAMILY; }
@@ -179,8 +176,6 @@ public:
     template<typename T = double> T resolveAsLength(const CSSToLengthConversionData&) const;
     template<typename T = double> T resolveAsLengthNoConversionDataRequired() const;
     template<typename T = double> T resolveAsLengthDeprecated() const;
-    bool convertingToLengthHasRequiredConversionData(int lengthConversion, const CSSToLengthConversionData&) const;
-    template<int> Length convertToLength(const CSSToLengthConversionData&) const;
 
     // MARK: Non-converting
     template<typename T = double> T value(const CSSToLengthConversionData& conversionData) const { return clampTo<T>(doubleValue(conversionData)); }
@@ -222,8 +217,6 @@ private:
     friend bool CSSValue::addHash(Hasher&) const;
 
     explicit CSSPrimitiveValue(CSSPropertyID);
-    explicit CSSPrimitiveValue(const Length&);
-    CSSPrimitiveValue(const Length&, const RenderStyle&);
     CSSPrimitiveValue(const String&, CSSUnitType);
     CSSPrimitiveValue(double, CSSUnitType);
     explicit CSSPrimitiveValue(Ref<CSSCalcValue>);
@@ -781,6 +774,18 @@ inline bool CSSValue::isCustomIdent() const
 inline String CSSValue::customIdent() const
 {
     ASSERT(isCustomIdent());
+    return downcast<CSSPrimitiveValue>(*this).stringValue();
+}
+
+inline bool CSSValue::isString() const
+{
+    auto* value = dynamicDowncast<CSSPrimitiveValue>(*this);
+    return value && value->isString();
+}
+
+inline String CSSValue::string() const
+{
+    ASSERT(isString());
     return downcast<CSSPrimitiveValue>(*this).stringValue();
 }
 

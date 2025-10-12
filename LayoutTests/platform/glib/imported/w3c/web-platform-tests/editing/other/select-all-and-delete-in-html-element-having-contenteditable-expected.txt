@@ -1,15 +1,15 @@
-abc
 
-FAIL Select All, then, Backspace promise_test: Unhandled rejection with value: "Neither Control-A nor Meta-A does select all contents"
-FAIL Select All, then, Delete promise_test: Unhandled rejection with value: "Neither Control-A nor Meta-A does select all contents"
-FAIL execCommand("selectall"), then, Backspace assert_in_array: value "abc" not in array ["", "<br>"]
-FAIL execCommand("selectall"), then, Delete assert_in_array: value "abc" not in array ["", "<br>"]
-FAIL Select All, then, execCommand("forwarddelete") promise_test: Unhandled rejection with value: "Neither Control-A nor Meta-A does select all contents"
-FAIL Select All, then, execCommand("delete") promise_test: Unhandled rejection with value: "Neither Control-A nor Meta-A does select all contents"
+
+PASS Select All, then, Backspace
+PASS Select All, then, Delete
+PASS execCommand("selectall"), then, Backspace
+PASS execCommand("selectall"), then, Delete
+PASS Select All, then, execCommand("forwarddelete")
+PASS Select All, then, execCommand("delete")
 PASS execCommand("selectall"), then, execCommand("forwarddelete")
 PASS execCommand("selectall"), then, execCommand("delete")
-FAIL getSelection().selectAllChildren(document.documentElement), then, Backspace assert_in_array: value "abc" not in array ["", "<br>"]
-FAIL getSelection().selectAllChildren(document.documentElement), then, Delete assert_in_array: value "abc" not in array ["", "<br>"]
+PASS getSelection().selectAllChildren(document.documentElement), then, Backspace
+PASS getSelection().selectAllChildren(document.documentElement), then, Delete
 PASS getSelection().selectAllChildren(document.documentElement), then, execCommand("forwarddelete")
 PASS getSelection().selectAllChildren(document.documentElement), then, execCommand("delete")
 

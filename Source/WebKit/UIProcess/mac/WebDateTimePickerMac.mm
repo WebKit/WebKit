@@ -191,7 +191,9 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
 
     _presentingView = view;
 
-    NSRect windowRect = [[_presentingView window] convertRectToScreen:[_presentingView convertRect:params.anchorRectInRootView toView:nil]];
+    RetainPtr presentingView = _presentingView.get();
+
+    NSRect windowRect = [[presentingView window] convertRectToScreen:[presentingView convertRect:params.anchorRectInRootView toView:nil]];
     windowRect.origin.y = NSMinY(windowRect) - kCalendarHeight;
     windowRect.size.width = kCalendarWidth;
     windowRect.size.height = kCalendarHeight;
@@ -229,7 +231,7 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
     _picker = picker;
 
     [[_enclosingWindow contentView] addSubview:_datePicker.get()];
-    [[_presentingView window] addChildWindow:_enclosingWindow.get() ordered:NSWindowAbove];
+    [[_presentingView.get() window] addChildWindow:_enclosingWindow.get() ordered:NSWindowAbove];
 }
 
 - (void)updatePicker:(WebCore::DateTimeChooserParameters&&)params
@@ -269,7 +271,7 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
 
     _dateFormatter = nil;
 
-    [[_presentingView window] removeChildWindow:_enclosingWindow.get()];
+    [[_presentingView.get() window] removeChildWindow:_enclosingWindow.get()];
     [_enclosingWindow close];
     _enclosingWindow = nil;
 }

@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "HeapInlines.h"
-#include "WeakGCSet.h"
-#include "WeakInlines.h"
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/WeakGCSet.h>
+#include <JavaScriptCore/WeakInlines.h>
 
 namespace JSC {
 

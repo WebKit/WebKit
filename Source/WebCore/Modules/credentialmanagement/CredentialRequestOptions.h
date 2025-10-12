@@ -28,9 +28,9 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "DigitalCredentialRequestOptions.h"
-#include "MediationRequirement.h"
-#include "PublicKeyCredentialRequestOptions.h"
+#include <WebCore/DigitalCredentialRequestOptions.h>
+#include <WebCore/MediationRequirement.h>
+#include <WebCore/PublicKeyCredentialRequestOptions.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

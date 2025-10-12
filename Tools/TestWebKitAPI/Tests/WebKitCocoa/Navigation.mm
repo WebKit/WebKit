@@ -28,6 +28,7 @@
 #import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
+#import "SiteIsolationUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestProtocol.h"
@@ -42,6 +43,7 @@
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKURLRequest.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
@@ -721,6 +723,10 @@ static bool navigationComplete;
 TEST(WKNavigation, WillGoToBackForwardListItem)
 {
     auto webView = adoptNS([[WKWebView alloc] init]);
+    // FIXME: Page cache is currently disabled under site isolation; see rdar://161762363.
+    if (isSiteIsolationEnabled(webView.get()))
+        return;
+
     auto delegate = adoptNS([[BackForwardDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
@@ -2272,8 +2278,8 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
 
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_NOT_NULL(error);
-        EXPECT_NOT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
-        EXPECT_WK_STREQ(@"https://site.example/secure", ((NSURL *)error.userInfo[@"NSErrorFailingURLKey"]).absoluteString);
+        EXPECT_NOT_NULL(error.userInfo[NSURLErrorFailingURLErrorKey]);
+        EXPECT_WK_STREQ(@"https://site.example/secure", ((NSURL *)error.userInfo[NSURLErrorFailingURLErrorKey]).absoluteString);
         errorCode = error.code;
         didFailNavigation = true;
     };
@@ -2361,8 +2367,8 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
     // Step 4: Attempt cross-site http load with HTTPS-bypass enabled
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_NOT_NULL(error);
-        EXPECT_NOT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
-        EXPECT_WK_STREQ(@"https://site2.example/secure", ((NSURL *)error.userInfo[@"NSErrorFailingURLKey"]).absoluteString);
+        EXPECT_NOT_NULL(error.userInfo[NSURLErrorFailingURLErrorKey]);
+        EXPECT_WK_STREQ(@"https://site2.example/secure", ((NSURL *)error.userInfo[NSURLErrorFailingURLErrorKey]).absoluteString);
         errorCode = error.code;
         didFailNavigation = true;
     };
@@ -2448,8 +2454,8 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
 
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_NOT_NULL(error);
-        EXPECT_NOT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
-        EXPECT_WK_STREQ(@"https://site.example/secure", ((NSURL *)error.userInfo[@"NSErrorFailingURLKey"]).absoluteString);
+        EXPECT_NOT_NULL(error.userInfo[NSURLErrorFailingURLErrorKey]);
+        EXPECT_WK_STREQ(@"https://site.example/secure", ((NSURL *)error.userInfo[NSURLErrorFailingURLErrorKey]).absoluteString);
         errorCode = error.code;
         didFailNavigation = true;
     };
@@ -2474,8 +2480,8 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
 
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_NOT_NULL(error);
-        EXPECT_NOT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
-        EXPECT_WK_STREQ(@"https://site2.example/secure2", ((NSURL *)error.userInfo[@"NSErrorFailingURLKey"]).absoluteString);
+        EXPECT_NOT_NULL(error.userInfo[NSURLErrorFailingURLErrorKey]);
+        EXPECT_WK_STREQ(@"https://site2.example/secure2", ((NSURL *)error.userInfo[NSURLErrorFailingURLErrorKey]).absoluteString);
         errorCode = error.code;
         didFailNavigation = true;
     };
@@ -2631,6 +2637,79 @@ TEST(WKNavigation, HTTPSFirstWithHTTPRedirect)
     EXPECT_FALSE(didFailNavigation);
     EXPECT_EQ(loadCount, 23);
     EXPECT_WK_STREQ(@"http://site2.example/secure3", [webView URL].absoluteString);
+}
+
+TEST(WKNavigation, DISABLED_PreferredHTTPSPolicyAutomaticHTTPFallbackRedirectNo3SecondTimeout)
+{
+    using namespace TestWebKitAPI;
+
+    WKURLRequestSetDefaultTimeoutInterval((60_s).value());
+
+    auto httpsServer = HTTPServer(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+
+            if (path == "/redirect"_s) {
+                co_await connection.awaitableSend(HTTPResponse(302, { { "Content-Type"_s, "text/html"_s }, { "Location"_s, "https://bar.com/finalTarget"_s } }, "redirecting..."_s).serialize());
+
+                continue;
+            }
+
+            if (path == "/finalTarget"_s) {
+                TestWebKitAPI::Util::runFor(4_s);
+
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, "hello"_s).serialize());
+
+                continue;
+            }
+
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(httpsServer.port())
+    }];
+
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    configuration.get().defaultWebpagePreferences.preferredHTTPSNavigationPolicy = WKWebpagePreferencesUpgradeToHTTPSPolicyAutomaticFallbackToHTTP;
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
+    __block int loadCount = 0;
+    __block int errorCode = 0;
+    __block bool finished = false;
+
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        loadCount++;
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+
+    delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
+        errorCode = error.code;
+        finished = true;
+    };
+
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finished = true;
+    };
+
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://foo.com/redirect"]]];
+
+    Util::run(&finished);
+
+    EXPECT_EQ(errorCode, 0);
+    EXPECT_EQ(loadCount, 2);
 }
 
 TEST(WKNavigation, PreferredHTTPSPolicyAutomaticHTTPFallbackHTTPDowngrade)
@@ -3467,8 +3546,8 @@ TEST(WKNavigation, PreferredHTTPSPolicyUserMediatedHTTPFallbackWithHTTPRedirect)
 
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_NOT_NULL(error);
-        EXPECT_NOT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
-        EXPECT_WK_STREQ(@"https://site.example/secure", ((NSURL *)error.userInfo[@"NSErrorFailingURLKey"]).absoluteString);
+        EXPECT_NOT_NULL(error.userInfo[NSURLErrorFailingURLErrorKey]);
+        EXPECT_WK_STREQ(@"https://site.example/secure", ((NSURL *)error.userInfo[NSURLErrorFailingURLErrorKey]).absoluteString);
         errorCode = error.code;
         didFailNavigation = true;
     };
@@ -3493,8 +3572,8 @@ TEST(WKNavigation, PreferredHTTPSPolicyUserMediatedHTTPFallbackWithHTTPRedirect)
 
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_NOT_NULL(error);
-        EXPECT_NOT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
-        EXPECT_WK_STREQ(@"https://site2.example/secure2", ((NSURL *)error.userInfo[@"NSErrorFailingURLKey"]).absoluteString);
+        EXPECT_NOT_NULL(error.userInfo[NSURLErrorFailingURLErrorKey]);
+        EXPECT_WK_STREQ(@"https://site2.example/secure2", ((NSURL *)error.userInfo[NSURLErrorFailingURLErrorKey]).absoluteString);
         errorCode = error.code;
         didFailNavigation = true;
     };
@@ -4418,3 +4497,121 @@ TEST(WKNavigation, FrameNavigationWithPrivateTokenPermissionAndAllowOriginsAndWi
     didReceiveAllowPrivateToken = false;
 }
 #endif
+
+@interface NSURLSessionTask ()
+@property (nonatomic, copy) NSArray<NSHTTPCookie*>* (^_cookieTransformCallback)(NSArray<NSHTTPCookie*>* cookies);
+@end
+
+
+@interface NSURLSessionConfiguration ()
+@property BOOL _usesNWLoader;
+@end
+
+@interface SessionDelegate : NSObject <NSURLSessionDelegate>
+@end
+
+@implementation SessionDelegate
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
+{
+    completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+}
+@end
+
+TEST(Navigation, CookieTransformOnRedirect)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer httpsServer({
+        { "/page1"_s, { 302, {{ "Location"_s, "https://site.example/page2"_s }, { "Set-Cookie"_s, "Test_Redirect=1;"_s }}, "redirecting..."_s } },
+        { "/page2"_s, { 200, {{ "Set-Cookie"_s, "Test=1;"_s }}, "body"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    HTTPServer httpServer({
+        { "http://site.example/page1"_s, { 302, {{ "Location"_s, "http://site.example/page2"_s }, { "Set-Cookie"_s, "Test_Redirect=1;"_s }}, "redirecting..."_s } },
+        { "http://site.example/page2"_s, { 200, {{ "Set-Cookie"_s, "Test=1;"_s }}, "body"_s } },
+        { "http://site.example/page3"_s, { 302, {{ "Location"_s, "https://site.example/page2"_s }, { "Set-Cookie"_s, "Test_Redirect=1;"_s }}, "redirecting..."_s } }
+    }, HTTPServer::Protocol::Http);
+
+    // Partially copied from SessionSet::initializeEphemeralStatelessSessionIfNeeded.
+    RetainPtr configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
+    configuration.get().HTTPCookieAcceptPolicy = NSHTTPCookieAcceptPolicyAlways;
+    configuration.get().URLCredentialStorage = nil;
+    configuration.get().URLCache = nil;
+    configuration.get().connectionProxyDictionary = @{
+        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPProxyPort: @(httpServer.port()),
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(httpsServer.port())
+    };
+    configuration.get()._usesNWLoader = YES;
+
+    RetainPtr delegate = adoptNS([SessionDelegate new]);
+    RetainPtr session = [NSURLSession sessionWithConfiguration:configuration.get() delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
+
+    __block unsigned transformCallbackCount = 0;
+    __block bool done = false;
+    RetainPtr task = [session dataTaskWithURL:[NSURL URLWithString:@"https://site.example/page1"] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(data);
+        EXPECT_NOT_NULL(response);
+        done = true;
+    }];
+    task.get()._cookieTransformCallback = ^(NSArray<NSHTTPCookie*> *cookiesSetInResponse) {
+        EXPECT_EQ(cookiesSetInResponse.count, 1u);
+        if (!transformCallbackCount)
+            EXPECT_WK_STREQ(cookiesSetInResponse[0].name, @"Test_Redirect");
+        else
+            EXPECT_WK_STREQ(cookiesSetInResponse[0].name, @"Test");
+        transformCallbackCount++;
+        return cookiesSetInResponse;
+    };
+    [task resume];
+
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_EQ(transformCallbackCount, 2u);
+
+    done = false;
+    transformCallbackCount = 0;
+
+    task = [session dataTaskWithURL:[NSURL URLWithString:@"http://site.example/page1"] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(data);
+        EXPECT_NOT_NULL(response);
+        done = true;
+    }];
+    task.get()._cookieTransformCallback = ^(NSArray<NSHTTPCookie*> *cookiesSetInResponse) {
+        EXPECT_EQ(cookiesSetInResponse.count, 1u);
+        if (!transformCallbackCount)
+            EXPECT_WK_STREQ(cookiesSetInResponse[0].name, @"Test_Redirect");
+        else
+            EXPECT_WK_STREQ(cookiesSetInResponse[0].name, @"Test");
+        transformCallbackCount++;
+        return cookiesSetInResponse;
+    };
+    [task resume];
+
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_EQ(transformCallbackCount, 2u);
+
+    done = false;
+    transformCallbackCount = 0;
+
+    task = [session dataTaskWithURL:[NSURL URLWithString:@"http://site.example/page3"] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(data);
+        EXPECT_NOT_NULL(response);
+        done = true;
+    }];
+    task.get()._cookieTransformCallback = ^(NSArray<NSHTTPCookie*> *cookiesSetInResponse) {
+        EXPECT_EQ(cookiesSetInResponse.count, 1u);
+        if (!transformCallbackCount)
+            EXPECT_WK_STREQ(cookiesSetInResponse[0].name, @"Test_Redirect");
+        else
+            EXPECT_WK_STREQ(cookiesSetInResponse[0].name, @"Test");
+        transformCallbackCount++;
+        return cookiesSetInResponse;
+    };
+    [task resume];
+
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_EQ(transformCallbackCount, 2u);
+}

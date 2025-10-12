@@ -2,9 +2,14 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="svg-image-with-css-cross-domain.css"/>
+    <style>
+        section {
+            position: absolute;
+            top: 80px;
+        }
+        </style>
   </head>
    <body>
-    <h1>WebKit bug</h1>
     <h3>SVG circle with different-origin CSS. Ensure reuse caching over different origins work</h3>
     <p>Expected: 2 orange circles.</p>
     <script>
@@ -22,10 +27,12 @@ function onSecondFrameLoaded()
 if (window.testRunner)
     testRunner.waitUntilDone();
     </script>
+    <section>
     <p id="frame1">
       <iframe src="resources/image-with-css-cross-domain.svg" width="68" height="68" onload="onFirstFrameLoaded()"></iframe>
     </p>
     <p id="frame2">
     </p>
+    </section>
   </body>
 </html>

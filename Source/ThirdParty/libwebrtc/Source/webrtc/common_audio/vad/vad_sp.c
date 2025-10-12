@@ -10,15 +10,15 @@
 
 #include "common_audio/vad/vad_sp.h"
 
-#include "rtc_base/checks.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "common_audio/vad/vad_core.h"
+#include "rtc_base/checks.h"
 
 // Allpass filter coefficients, upper and lower, in Q13.
 // Upper: 0.64, Lower: 0.17.
-static const int16_t kAllPassCoefsQ13[2] = { 5243, 1392 };  // Q13.
-static const int16_t kSmoothingDown = 6553;  // 0.2 in Q15.
-static const int16_t kSmoothingUp = 32439;  // 0.99 in Q15.
+static const int16_t kAllPassCoefsQ13[2] = {5243, 1392};  // Q13.
+static const int16_t kSmoothingDown = 6553;               // 0.2 in Q15.
+static const int16_t kSmoothingUp = 32439;                // 0.99 in Q15.
 
 // TODO(bjornv): Move this function to vad_filterbank.c.
 // Downsampling filter based on splitting filter and allpass functions.
@@ -36,14 +36,14 @@ void WebRtcVad_Downsampling(const int16_t* signal_in,
   // Filter coefficients in Q13, filter state in Q0.
   for (n = 0; n < half_length; n++) {
     // All-pass filtering upper branch.
-    tmp16_1 = (int16_t) ((tmp32_1 >> 1) +
-        ((kAllPassCoefsQ13[0] * *signal_in) >> 14));
+    tmp16_1 =
+        (int16_t)((tmp32_1 >> 1) + ((kAllPassCoefsQ13[0] * *signal_in) >> 14));
     *signal_out = tmp16_1;
     tmp32_1 = (int32_t)(*signal_in++) - ((kAllPassCoefsQ13[0] * tmp16_1) >> 12);
 
     // All-pass filtering lower branch.
-    tmp16_2 = (int16_t) ((tmp32_2 >> 1) +
-        ((kAllPassCoefsQ13[1] * *signal_in) >> 14));
+    tmp16_2 =
+        (int16_t)((tmp32_2 >> 1) + ((kAllPassCoefsQ13[1] * *signal_in) >> 14));
     *signal_out++ += tmp16_2;
     tmp32_2 = (int32_t)(*signal_in++) - ((kAllPassCoefsQ13[1] * tmp16_2) >> 12);
   }
@@ -170,7 +170,7 @@ int16_t WebRtcVad_FindMinimum(VadInstT* self,
   tmp32 = (alpha + 1) * self->mean_value[channel];
   tmp32 += (WEBRTC_SPL_WORD16_MAX - alpha) * current_median;
   tmp32 += 16384;
-  self->mean_value[channel] = (int16_t) (tmp32 >> 15);
+  self->mean_value[channel] = (int16_t)(tmp32 >> 15);
 
   return self->mean_value[channel];
 }

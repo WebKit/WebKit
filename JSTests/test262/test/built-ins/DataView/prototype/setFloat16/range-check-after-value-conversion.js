@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-dataview.prototype.setFloat16
+esid: sec-dataview.prototype.setfloat16
 description: >
   Index bounds checks are performed after value conversion.
 features: [Float16Array]

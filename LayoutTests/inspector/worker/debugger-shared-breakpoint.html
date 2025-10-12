@@ -46,6 +46,10 @@ function test()
 
     function areAllTargetsPaused() {
         for (let target of WI.targets) {
+            // FIXME: <https://webkit.org/b/298909> Add Debugger support for FrameTarget.
+            if (target instanceof WI.FrameTarget)
+                continue;
+
             let targetData = WI.debuggerManager.dataForTarget(target);
             if (!targetData.paused)
                 return false;

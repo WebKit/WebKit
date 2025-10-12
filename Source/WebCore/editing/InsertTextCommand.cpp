@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,22 +26,29 @@
 #include "config.h"
 #include "InsertTextCommand.h"
 
+#include "CSSSerializationContext.h"
+#include "CSSValuePool.h"
 #include "Document.h"
 #include "Editing.h"
 #include "Editor.h"
+#include "FontAttributes.h"
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInterchange.h"
 #include "LocalFrame.h"
+#include "MutableStyleProperties.h"
 #include "PositionInlines.h"
 #include "Text.h"
+#include "TextListParser.h"
 #include "VisibleUnits.h"
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
-InsertTextCommand::InsertTextCommand(Ref<Document>&& document, const String& text, bool selectInsertedText, RebalanceType rebalanceType, EditAction editingAction)
+InsertTextCommand::InsertTextCommand(Ref<Document>&& document, const String& text, AllowPasswordEcho allowPasswordEcho, bool selectInsertedText, RebalanceType rebalanceType, EditAction editingAction)
     : CompositeEditCommand(WTFMove(document), editingAction)
     , m_text(text)
+    , m_allowPasswordEcho(allowPasswordEcho)
     , m_selectInsertedText(selectInsertedText)
     , m_rebalanceType(rebalanceType)
 {
@@ -94,7 +101,7 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
     if (!endingSelection().isRange())
         return false;
 
-    if (text.contains([](UChar c) { return c == '\t' || c == ' ' || c == '\n'; }))
+    if (text.contains([](char16_t c) { return c == '\t' || c == ' ' || c == '\n'; }))
         return false;
 
     Position start = endingSelection().start();
@@ -129,6 +136,57 @@ bool InsertTextCommand::performOverwrite(const String& text, bool selectInserted
 
     return true;
 }
+
+#if PLATFORM(COCOA)
+bool InsertTextCommand::applySmartListsIfNeeded()
+{
+    if (!selectionAllowsSmartLists(m_text, endingSelection()))
+        return false;
+
+    auto lineStart = startOfLine(endingSelection().visibleBase());
+    if (lineStart.isNull() || lineStart.isOrphan()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    // Get the range from the beginning of the line up until the current caret position,
+    // before `m_text` has been applied.
+    VisibleSelection line { lineStart, endingSelection().visibleExtent() };
+    auto range = line.firstRange();
+    if (!range) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    // First, convert the SimpleRange to a String, and then convert the String to a Style::ListStyleType
+    // (which itself is later converted to a CSSValue).
+
+    auto lineText = plainText(*range);
+    auto smartList = parseTextList(lineText);
+    if (!smartList) {
+        // The line content does not match the Smart List marker criteria.
+        return false;
+    }
+
+    Ref document = this->document();
+    auto listType = smartList->ordered ? InsertListCommand::Type::OrderedList : InsertListCommand::Type::UnorderedList;
+    applyCommandToComposite(InsertListCommand::create(document.copyRef(), listType), *range);
+
+    // This list is the one that was just created or modified.
+    RefPtr listElement = enclosingList(endingSelection().base().anchorNode());
+    if (!listElement) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    auto attributes = nodeAttributesForSmartList(*listElement, *smartList);
+    for (const auto& [attribute, value] : attributes)
+        setNodeAttribute(*listElement, attribute, value);
+
+    deleteSelection();
+    return true;
+}
+#endif // PLATFORM(COCOA)
 
 void InsertTextCommand::doApply()
 {
@@ -191,7 +249,23 @@ void InsertTextCommand::doApply()
         return;
 
     Position endPosition;
-    
+
+#if PLATFORM(COCOA)
+    if (applySmartListsIfNeeded()) {
+        // This branch is evaluated if Smart Lists are available, enabled, and contextually applicable.
+        //
+        // A Smart List is generated if the current input is the space character preceded by an eligible
+        // marker such as "2.", "-", "*", etc, at the beginning of a line.
+        //
+        // The start of the line, up to and including the space, is deleted from the DOM, and the corresponding
+        // list type (<ul> or <ol>) is inserted in it place, with a list element <li> contained within for the subsequent text.
+        //
+        // Since the space character acts as a "trigger" for Smart Lists, it should not actually be inserted.
+
+        return;
+    }
+#endif // PLATFORM(COCOA)
+
     if (m_text == "\t"_s) {
         endPosition = insertTab(startPosition);
         startPosition = endPosition.previous();
@@ -208,7 +282,7 @@ void InsertTextCommand::doApply()
         RefPtr<Text> textNode = startPosition.containerText();
         const unsigned offset = startPosition.offsetInContainerNode();
 
-        insertTextIntoNode(*textNode, offset, m_text);
+        insertTextIntoNode(*textNode, offset, m_text, m_allowPasswordEcho);
         endPosition = Position(textNode.get(), offset + m_text.length());
         if (m_markerSupplier)
             m_markerSupplier->addMarkersToTextNode(*textNode, offset, m_text);
@@ -242,7 +316,7 @@ void InsertTextCommand::doApply()
 #endif
 
     if (typingStyle) {
-        typingStyle->prepareToApplyAt(endPosition, EditingStyle::PreserveWritingDirection);
+        typingStyle->prepareToApplyAt(endPosition, EditingStyle::ShouldPreserveWritingDirection::Yes);
         if (!typingStyle->isEmpty())
             applyStyle(typingStyle.get());
     }

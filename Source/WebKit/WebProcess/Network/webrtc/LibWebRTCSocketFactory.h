@@ -47,9 +47,10 @@ namespace WebKit {
 
 class LibWebRTCNetwork;
 class LibWebRTCSocket;
+struct RTCSocketCreationFlags;
 
 class LibWebRTCSocketFactory : public CanMakeThreadSafeCheckedPtr<LibWebRTCSocketFactory> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LibWebRTCSocketFactory);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LibWebRTCSocketFactory);
 public:
     LibWebRTCSocketFactory() = default;
@@ -59,8 +60,8 @@ public:
     LibWebRTCSocket* socket(WebCore::LibWebRTCSocketIdentifier identifier) { return m_sockets.get(identifier); }
 
     void forSocketInGroup(WebCore::ScriptExecutionContextIdentifier, NOESCAPE const Function<void(LibWebRTCSocket&)>&);
-    rtc::AsyncPacketSocket* createUdpSocket(WebCore::ScriptExecutionContextIdentifier, const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, WebPageProxyIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
-    rtc::AsyncPacketSocket* createClientTcpSocket(WebCore::ScriptExecutionContextIdentifier, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, String&& userAgent, const rtc::PacketSocketTcpOptions&, WebPageProxyIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
+    webrtc::AsyncPacketSocket* createUdpSocket(WebCore::ScriptExecutionContextIdentifier, const webrtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, WebPageProxyIdentifier, RTCSocketCreationFlags, const WebCore::RegistrableDomain&);
+    webrtc::AsyncPacketSocket* createClientTcpSocket(WebCore::ScriptExecutionContextIdentifier, const webrtc::SocketAddress& localAddress, const webrtc::SocketAddress& remoteAddress, String&& userAgent, const webrtc::PacketSocketTcpOptions&, WebPageProxyIdentifier, RTCSocketCreationFlags, const WebCore::RegistrableDomain&);
 
     CheckedPtr<LibWebRTCResolver> resolver(LibWebRTCResolverIdentifier identifier) { return m_resolvers.get(identifier); }
     void removeResolver(LibWebRTCResolverIdentifier identifier) { m_resolvers.remove(identifier); }

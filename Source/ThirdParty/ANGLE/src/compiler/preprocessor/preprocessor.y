@@ -208,8 +208,7 @@ expression
                 stream << $1 << " >> " << $3;
                 std::string text = stream.str();
                 context->diagnostics->report(angle::pp::Diagnostics::PP_UNDEFINED_SHIFT,
-                                             context->token->location,
-                                             text.c_str());
+                                             context->token->location, text);
                 *(context->valid) = false;
             }
             $$ = static_cast<YYSTYPE>(0);
@@ -233,8 +232,7 @@ expression
                 stream << $1 << " << " << $3;
                 std::string text = stream.str();
                 context->diagnostics->report(angle::pp::Diagnostics::PP_UNDEFINED_SHIFT,
-                                             context->token->location,
-                                             text.c_str());
+                                             context->token->location, text);
                 *(context->valid) = false;
             }
             $$ = static_cast<YYSTYPE>(0);
@@ -261,8 +259,7 @@ expression
                 stream << $1 << " % " << $3;
                 std::string text = stream.str();
                 context->diagnostics->report(angle::pp::Diagnostics::PP_DIVISION_BY_ZERO,
-                                             context->token->location,
-                                             text.c_str());
+                                             context->token->location, text);
                 *(context->valid) = false;
             }
             $$ = static_cast<YYSTYPE>(0);
@@ -287,8 +284,7 @@ expression
                 stream << $1 << " / " << $3;
                 std::string text = stream.str();
                 context->diagnostics->report(angle::pp::Diagnostics::PP_DIVISION_BY_ZERO,
-                                            context->token->location,
-                                            text.c_str());
+                                            context->token->location, text);
                 *(context->valid) = false;
             }
             $$ = static_cast<YYSTYPE>(0);

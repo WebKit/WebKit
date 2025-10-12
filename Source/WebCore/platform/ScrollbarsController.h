@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "FloatPoint.h"
-#include "FloatSize.h"
-#include "UserInterfaceLayoutDirection.h"
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/UserInterfaceLayoutDirection.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
@@ -39,6 +39,8 @@ class ScrollableArea;
 enum class ScrollbarOrientation : uint8_t;
 enum class ScrollbarWidth : uint8_t;
 
+struct ScrollbarColor;
+
 class ScrollbarsController {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollbarsController, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(ScrollbarsController);
@@ -46,9 +48,10 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<ScrollbarsController> create(ScrollableArea&);
 
     WEBCORE_EXPORT explicit ScrollbarsController(ScrollableArea&);
-    virtual ~ScrollbarsController() = default;
+    WEBCORE_EXPORT virtual ~ScrollbarsController();
     
-    ScrollableArea& scrollableArea() const { return m_scrollableArea; }
+    inline ScrollableArea& scrollableArea() const; // Defined in ScrollbarsControllerInlines.h
+    inline CheckedRef<ScrollableArea> checkedScrollableArea() const; // Defined in ScrollbarsControllerInlines.h
 
     bool scrollbarAnimationsUnsuspendedByUserInteraction() const { return m_scrollbarAnimationsUnsuspendedByUserInteraction; }
     void setScrollbarAnimationsUnsuspendedByUserInteraction(bool unsuspended) { m_scrollbarAnimationsUnsuspendedByUserInteraction = unsuspended; }
@@ -107,6 +110,7 @@ public:
     WEBCORE_EXPORT virtual void setScrollbarMinimumThumbLength(WebCore::ScrollbarOrientation, int) { }
     WEBCORE_EXPORT virtual int minimumThumbLength(WebCore::ScrollbarOrientation) { return 0; }
     WEBCORE_EXPORT virtual void scrollbarLayoutDirectionChanged(UserInterfaceLayoutDirection) { }
+    WEBCORE_EXPORT virtual void scrollbarColorChanged(std::optional<ScrollbarColor>);
 
     WEBCORE_EXPORT virtual void updateScrollerStyle() { }
 
@@ -117,7 +121,7 @@ public:
     WEBCORE_EXPORT virtual void scrollbarWidthChanged(WebCore::ScrollbarWidth) { }
 
 private:
-    ScrollableArea& m_scrollableArea;
+    WeakRef<ScrollableArea> m_scrollableArea;
     bool m_scrollbarAnimationsUnsuspendedByUserInteraction { true };
 };
 

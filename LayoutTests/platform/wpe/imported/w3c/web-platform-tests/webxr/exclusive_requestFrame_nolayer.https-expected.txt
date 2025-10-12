@@ -1,4 +1,0 @@
-
-FAIL XRSession requestAnimationFrame must fail if the session has no baseLayer for immersive assert_equals: expected object "[object XRWebGLLayer]" but got object "[object XRWebGLLayer]"
-FAIL XRSession requestAnimationFrame must fail if the session has no baseLayer for non immersive assert_equals: expected object "[object XRWebGLLayer]" but got object "[object XRWebGLLayer]"
-

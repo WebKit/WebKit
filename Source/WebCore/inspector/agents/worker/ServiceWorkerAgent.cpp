@@ -47,7 +47,7 @@ ServiceWorkerAgent::ServiceWorkerAgent(WorkerAgentContext& context)
 
 ServiceWorkerAgent::~ServiceWorkerAgent() = default;
 
-void ServiceWorkerAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
+void ServiceWorkerAgent::didCreateFrontendAndBackend()
 {
 }
 

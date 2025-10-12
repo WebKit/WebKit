@@ -113,22 +113,28 @@ void AsyncStackTrace::didCancelAsyncCall()
     m_state = State::Canceled;
 }
 
-Ref<Protocol::Console::StackTrace> AsyncStackTrace::buildInspectorObject() const
+RefPtr<Protocol::Console::StackTrace> AsyncStackTrace::buildInspectorObject() const
 {
     RefPtr<Protocol::Console::StackTrace> topStackTrace;
     RefPtr<Protocol::Console::StackTrace> previousStackTrace;
 
-    auto* stackTrace = this;
-    while (stackTrace) {
+    for (auto* stackTrace = this; stackTrace; stackTrace = stackTrace->m_parent.get()) {
         auto& callStack = stackTrace->m_callStack;
+        bool truncated = stackTrace->m_truncated;
+        bool topCallFrameIsBoundary = stackTrace->topCallFrameIsBoundary();
+
+        // Skip async stack traces that only contain the boundary frame.
+        // If none contain more than the boundary frame then pretend there are no async stack traces.
+        if (topCallFrameIsBoundary && !truncated && stackTrace->size() == 1)
+            continue;
 
         auto protocolObject = Protocol::Console::StackTrace::create()
             .setCallFrames(callStack->buildInspectorArray())
             .release();
 
-        if (stackTrace->m_truncated)
+        if (truncated)
             protocolObject->setTruncated(true);
-        if (stackTrace->topCallFrameIsBoundary())
+        if (topCallFrameIsBoundary)
             protocolObject->setTopCallFrameIsBoundary(true);
 
         if (!topStackTrace)
@@ -138,10 +144,9 @@ Ref<Protocol::Console::StackTrace> AsyncStackTrace::buildInspectorObject() const
             previousStackTrace->setParentStackTrace(protocolObject.copyRef());
 
         previousStackTrace = WTFMove(protocolObject);
-        stackTrace = stackTrace->m_parent.get();
     }
 
-    return topStackTrace.releaseNonNull();
+    return topStackTrace;
 }
 
 void AsyncStackTrace::truncate(size_t maxDepth)

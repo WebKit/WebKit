@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2008-2024 Apple Inc. All Rights Reserved.
- * Copyright (C) 2012 Google Inc. All Rights Reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,10 @@
 
 #pragma once
 
-#include "ScriptExecutionContextIdentifier.h"
-#include "SecurityContext.h"
-#include "ServiceWorkerIdentifier.h"
-#include "Timer.h"
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/SecurityContext.h>
+#include <WebCore/ServiceWorkerIdentifier.h>
+#include <WebCore/Timer.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -105,7 +105,7 @@ enum class CrossOriginMode : bool;
 enum class LoadedFromOpaqueSource : bool;
 enum class NoiseInjectionPolicy : uint8_t;
 enum class ReasonForSuspension : uint8_t;
-enum class ScriptTelemetryCategory : uint8_t;
+enum class ScriptTrackingPrivacyCategory : uint8_t;
 enum class StorageBlockingPolicy : uint8_t;
 enum class TaskSource : uint8_t;
 struct CryptoKeyData;
@@ -125,7 +125,9 @@ enum class ScriptExecutionContextType : uint8_t {
     EmptyScriptExecutionContext
 };
 
-class ScriptExecutionContext : public SecurityContext, public TimerAlignment {
+class ScriptExecutionContext : public SecurityContext, public TimerAlignment, public CanMakeThreadSafeCheckedPtr<ScriptExecutionContext> {
+    WTF_MAKE_TZONE_ALLOCATED(ScriptExecutionContext);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScriptExecutionContext);
 public:
     using Type = ScriptExecutionContextType;
 
@@ -165,6 +167,7 @@ public:
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
 
     virtual SocketProvider* socketProvider() = 0;
+    RefPtr<SocketProvider> protectedSocketProvider();
 
     virtual GraphicsClient* graphicsClient() { return nullptr; }
 
@@ -188,10 +191,12 @@ public:
     virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) = 0;
 
     virtual SecurityOrigin& topOrigin() const = 0;
+    Ref<SecurityOrigin> protectedTopOrigin() const;
 
     virtual bool shouldBypassMainWorldContentSecurityPolicy() const { return false; }
 
     PublicURLManager& publicURLManager();
+    Ref<PublicURLManager> protectedPublicURLManager();
 
     virtual void suspendActiveDOMObjects(ReasonForSuspension);
     virtual void resumeActiveDOMObjects(ReasonForSuspension);
@@ -233,14 +238,15 @@ public:
     WEBCORE_EXPORT void ref();
     WEBCORE_EXPORT void deref();
 
-    WEBCORE_EXPORT bool requiresScriptExecutionTelemetry(ScriptTelemetryCategory);
+    WEBCORE_EXPORT bool requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory);
 
     class Task {
         WTF_MAKE_TZONE_ALLOCATED(Task);
     public:
         enum CleanupTaskTag { CleanupTask };
 
-        template<typename T, typename = typename std::enable_if<!std::is_base_of<Task, T>::value && std::is_convertible<T, Function<void(ScriptExecutionContext&)>>::value>::type>
+        template<typename T>
+            requires (!std::derived_from<T, Task> && std::convertible_to<T, Function<void(ScriptExecutionContext&)>>)
         Task(T task)
             : m_task(WTFMove(task))
             , m_isCleanupTask(false)
@@ -253,7 +259,8 @@ public:
         {
         }
 
-        template<typename T, typename = typename std::enable_if<std::is_convertible<T, Function<void(ScriptExecutionContext&)>>::value>::type>
+        template<typename T>
+            requires std::convertible_to<T, Function<void(ScriptExecutionContext&)>>
         Task(CleanupTaskTag, T task)
             : m_task(WTFMove(task))
             , m_isCleanupTask(true)
@@ -332,7 +339,7 @@ public:
 
     void registerServiceWorker(ServiceWorker&);
     void unregisterServiceWorker(ServiceWorker&);
-    inline ServiceWorker* serviceWorker(ServiceWorkerIdentifier);
+    inline ServiceWorker* serviceWorker(ServiceWorkerIdentifier); // Defined in ScriptExecutionContextInlines.h.
 
     ServiceWorkerContainer* serviceWorkerContainer();
     ServiceWorkerContainer* ensureServiceWorkerContainer();
@@ -350,7 +357,6 @@ public:
 
     void setStorageBlockingPolicy(StorageBlockingPolicy policy) { m_storageBlockingPolicy = policy; }
     enum class ResourceType : uint8_t {
-        ApplicationCache,
         Cookies,
         Geolocation,
         IndexedDB,
@@ -413,11 +419,11 @@ private:
     void checkConsistency() const;
     WEBCORE_EXPORT GuaranteedSerialFunctionDispatcher& nativePromiseDispatcher();
 
-    UncheckedKeyHashSet<MessagePort*> m_messagePorts;
-    UncheckedKeyHashSet<ContextDestructionObserver*> m_destructionObservers;
-    UncheckedKeyHashSet<ActiveDOMObject*> m_activeDOMObjects;
+    HashSet<MessagePort*> m_messagePorts;
+    HashSet<ContextDestructionObserver*> m_destructionObservers;
+    HashSet<ActiveDOMObject*> m_activeDOMObjects;
 
-    UncheckedKeyHashMap<int, RefPtr<DOMTimer>> m_timeouts;
+    HashMap<int, RefPtr<DOMTimer>> m_timeouts;
 
     struct PendingException;
     std::unique_ptr<Vector<std::unique_ptr<PendingException>>> m_pendingExceptions;
@@ -437,12 +443,12 @@ private:
 #endif
 
     RefPtr<ServiceWorker> m_activeServiceWorker;
-    UncheckedKeyHashMap<ServiceWorkerIdentifier, ServiceWorker*> m_serviceWorkers;
+    HashMap<ServiceWorkerIdentifier, ServiceWorker*> m_serviceWorkers;
 
     String m_domainForCachePartition;
     mutable ScriptExecutionContextIdentifier m_identifier;
 
-    UncheckedKeyHashMap<NotificationCallbackIdentifier, CompletionHandler<void()>> m_notificationCallbacks;
+    HashMap<NotificationCallbackIdentifier, CompletionHandler<void()>> m_notificationCallbacks;
 
     StorageBlockingPolicy m_storageBlockingPolicy;
     ReasonForSuspension m_reasonForSuspendingActiveDOMObjects { static_cast<ReasonForSuspension>(-1) };

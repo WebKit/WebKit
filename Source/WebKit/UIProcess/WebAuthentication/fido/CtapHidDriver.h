@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,10 +67,8 @@ private:
     void returnMessage();
     void reset();
 
-    Ref<HidConnection> protectedConnection() { return m_connection; }
-
     WeakRef<CtapHidDriver> m_driver;
-    Ref<HidConnection> m_connection;
+    const Ref<HidConnection> m_connection;
     State m_state { State::Idle };
     std::optional<fido::FidoHidMessage> m_requestMessage;
     std::optional<fido::FidoHidMessage> m_responseMessage;
@@ -102,8 +100,6 @@ private:
     void continueAfterResponseReceived(std::optional<fido::FidoHidMessage>&&);
     void returnResponse(Vector<uint8_t>&&);
     void reset();
-
-    Ref<CtapHidDriverWorker> protectedWorker() const { return m_worker.get(); }
 
     const UniqueRef<CtapHidDriverWorker> m_worker;
     State m_state { State::Idle };

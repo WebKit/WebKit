@@ -20,18 +20,19 @@
 #include "config.h"
 #include "WebEditorClient.h"
 
-#include <WebCore/Document.h>
+#include <WebCore/DocumentPage.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EventNames.h>
+#include <WebCore/FrameDestructionObserverInlines.h>
+#include <WebCore/FrameInlines.h>
 #include <WebCore/KeyboardEvent.h>
-#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameInlines.h>
 #include <WebCore/PagePasteboardContext.h>
 #include <WebCore/Pasteboard.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/markup.h>
 #include <WebPage.h>
-#include <variant>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebKit {
@@ -42,7 +43,8 @@ bool WebEditorClient::handleGtkEditorCommand(LocalFrame& frame, const String& co
     if (command == "GtkInsertEmoji"_s) {
         if (!allowTextInsertion)
             return false;
-        m_page->showEmojiPicker(frame);
+        if (RefPtr page = m_page.get())
+            page->showEmojiPicker(frame);
         return true;
     }
 
@@ -51,7 +53,7 @@ bool WebEditorClient::handleGtkEditorCommand(LocalFrame& frame, const String& co
 
 bool WebEditorClient::executePendingEditorCommands(LocalFrame& frame, const Vector<WTF::String>& pendingEditorCommands, bool allowTextInsertion)
 {
-    Vector<std::variant<Editor::Command, String>> commands;
+    Vector<Variant<Editor::Command, String>> commands;
     for (auto& commandString : pendingEditorCommands) {
         if (commandString.startsWith("Gtk"_s))
             commands.append(commandString);

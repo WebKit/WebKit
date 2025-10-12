@@ -41,16 +41,17 @@ namespace WebCore {
 class IntRect;
 }
 
-@class WKView;
+@class WKWebView;
+@class WKFullScreenPlaceholderView;
 @class WebCoreFullScreenPlaceholderView;
 
 typedef enum FullScreenState : NSInteger FullScreenState;
 
 @interface WKFullScreenWindowController : NSWindowController<NSWindowDelegate> {
 @private
-    WeakObjCPtr<NSView> _webView; // Cannot be retained, see <rdar://problem/14884666>.
+    WeakObjCPtr<WKWebView> _webView; // Cannot be retained, see <rdar://problem/14884666>.
     WeakPtr<WebKit::WebPageProxy> _page;
-    RetainPtr<WebCoreFullScreenPlaceholderView> _webViewPlaceholder;
+    RetainPtr<WKFullScreenPlaceholderView> _webViewPlaceholder;
     RetainPtr<NSView> _exitPlaceholder;
     RetainPtr<NSView> _clipView;
     RetainPtr<NSView> _backgroundView;
@@ -72,9 +73,9 @@ typedef enum FullScreenState : NSInteger FullScreenState;
 @property (readonly) NSRect finalFrame;
 @property (assign) NSArray *savedConstraints;
 
-- (id)initWithWindow:(NSWindow *)window webView:(NSView *)webView page:(std::reference_wrapper<WebKit::WebPageProxy>)page;
+- (instancetype)initWithWindow:(NSWindow *)window webView:(WKWebView *)webView page:(std::reference_wrapper<WebKit::WebPageProxy>)page;
 
-- (WebCoreFullScreenPlaceholderView*)webViewPlaceholder;
+@property (nonatomic, readonly) WebCoreFullScreenPlaceholderView *webViewPlaceholder;
 
 - (BOOL)isFullScreen;
 

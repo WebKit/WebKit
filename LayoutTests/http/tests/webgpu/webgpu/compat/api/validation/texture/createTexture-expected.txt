@@ -1,4 +1,0 @@
-
-PASS :unsupportedTextureFormats:
-PASS :unsupportedTextureViewFormats:
-

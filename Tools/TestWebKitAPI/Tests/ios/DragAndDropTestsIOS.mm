@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #import "ClassMethodSwizzler.h"
 #import "DragAndDropSimulator.h"
+#import "ModelLoadingMessageHandler.h"
 #import "NSItemProviderAdditions.h"
 #import "PlatformUtilities.h"
 #import "TestURLSchemeHandler.h"
@@ -99,28 +100,6 @@ static NSData *testZIPArchive()
 
 @end
 
-@interface ModelLoadingMessageHandler : NSObject <WKScriptMessageHandler>
-
-@property (nonatomic) BOOL didLoadModel;
-@property (nonatomic) BOOL modelIsReady;
-
-@end
-
-@implementation ModelLoadingMessageHandler
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
-{
-    if ([[message body] isEqualToString:@"LOADED"])
-        _didLoadModel = YES;
-    else if ([[message body] isEqualToString:@"READY"])
-        _modelIsReady = YES;
-    else {
-        EXPECT_TRUE(false);
-        NSLog(@"Unexpected message received: %@", [message body]);
-    }
-}
-@end
-
-
 static void loadTestPageAndEnsureInputSession(DragAndDropSimulator *simulator, NSString *testPageName)
 {
     TestWKWebView *webView = [simulator webView];
@@ -152,11 +131,11 @@ static void checkRichTextTypePrecedesPlainTextType(DragAndDropSimulator *simulat
     EXPECT_TRUE(hasHighFidelityHTML || hasHighFidelityFlatRTFD || hasHighFidelityRTF);
 }
 
-static void checkFirstTypeIsPresentAndSecondTypeIsMissing(DragAndDropSimulator *simulator, CFStringRef firstType, CFStringRef secondType)
+static void checkFirstTypeIsPresentAndSecondTypeIsMissing(DragAndDropSimulator *simulator, NSString *firstType, NSString *secondType)
 {
     NSArray *registeredTypes = [simulator.sourceItemProviders.firstObject registeredTypeIdentifiers];
-    EXPECT_TRUE([registeredTypes containsObject:(NSString *)firstType]);
-    EXPECT_FALSE([registeredTypes containsObject:(NSString *)secondType]);
+    EXPECT_TRUE([registeredTypes containsObject:firstType]);
+    EXPECT_FALSE([registeredTypes containsObject:secondType]);
 }
 
 static void checkTypeIdentifierIsRegisteredAtIndex(DragAndDropSimulator *simulator, NSString *type, NSUInteger index)
@@ -280,7 +259,7 @@ TEST(DragAndDropTests, ImageToContentEditable)
     EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
     EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
     checkCGRectIsEqualToCGRectWithLogging(CGRectMake(214, 201, 2, 174), [simulator finalSelectionStartRect]);
-    checkFirstTypeIsPresentAndSecondTypeIsMissing(simulator.get(), kUTTypePNG, kUTTypeFileURL);
+    checkFirstTypeIsPresentAndSecondTypeIsMissing(simulator.get(), UTTypePNG.identifier, UTTypeFileURL.identifier);
     checkEstimatedSize(simulator.get(), { 215, 174 });
     EXPECT_TRUE([simulator lastKnownDropProposal].precise);
 }
@@ -294,7 +273,7 @@ TEST(DragAndDropTests, CanStartDragOnEnormousImage)
     [simulator runFrom:CGPointMake(100, 100) to:CGPointMake(100, 100)];
 
     NSArray *registeredTypes = [[simulator sourceItemProviders].firstObject registeredTypeIdentifiers];
-    EXPECT_WK_STREQ((__bridge NSString *)kUTTypeScalableVectorGraphics, [registeredTypes firstObject]);
+    EXPECT_WK_STREQ(UTTypeSVG.identifier, [registeredTypes firstObject]);
 }
 
 TEST(DragAndDropTests, ImageToTextarea)
@@ -311,7 +290,7 @@ TEST(DragAndDropTests, ImageToTextarea)
     EXPECT_TRUE([observedEventNames containsObject:@"dragenter"]);
     EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
     EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
-    checkFirstTypeIsPresentAndSecondTypeIsMissing(simulator.get(), kUTTypePNG, kUTTypeFileURL);
+    checkFirstTypeIsPresentAndSecondTypeIsMissing(simulator.get(), UTTypePNG.identifier, UTTypeFileURL.identifier);
     checkEstimatedSize(simulator.get(), { 215, 174 });
 }
 
@@ -326,7 +305,7 @@ TEST(DragAndDropTests, ImageInLinkToInput)
     EXPECT_WK_STREQ("https://www.apple.com/", [webView editorValue].UTF8String);
     checkCGRectIsEqualToCGRectWithLogging(CGRectMake(2069, 170, 2, 240), [simulator finalSelectionStartRect]);
     checkSuggestedNameAndEstimatedSize(simulator.get(), @"icon.png", { 215, 174 });
-    checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), (__bridge NSString *)kUTTypePNG, 0);
+    checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), UTTypePNG.identifier, 0);
     EXPECT_TRUE([simulator lastKnownDropProposal].precise);
 }
 
@@ -362,7 +341,7 @@ TEST(DragAndDropTests, ImageInLinkWithoutHREFToInput)
 
     EXPECT_WK_STREQ("", [webView editorValue]);
     checkEstimatedSize(simulator.get(), { 215, 174 });
-    checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), (__bridge NSString *)kUTTypePNG, 0);
+    checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), UTTypePNG.identifier, 0);
 }
 
 TEST(DragAndDropTests, ImageDoesNotUseElementSizeAsEstimatedSize)
@@ -373,7 +352,7 @@ TEST(DragAndDropTests, ImageDoesNotUseElementSizeAsEstimatedSize)
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator runFrom: { 100, 100 } to: { 100, 300 }];
 
-    checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), (__bridge NSString *)kUTTypeGIF, 0);
+    checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), UTTypeGIF.identifier, 0);
     checkSuggestedNameAndEstimatedSize(simulator.get(), @"apple.gif", { 52, 64 });
     EXPECT_WK_STREQ("apple.gif (image/gif)", [webView stringByEvaluatingJavaScript:@"output.textContent"]);
 }
@@ -512,7 +491,7 @@ TEST(DragAndDropTests, SinglePlainTextWordTypeIdentifiers)
     NSItemProvider *itemProvider = [simulator sourceItemProviders].firstObject;
     NSArray *registeredTypes = [itemProvider registeredTypeIdentifiers];
     EXPECT_EQ(1UL, registeredTypes.count);
-    EXPECT_WK_STREQ([(__bridge NSString *)kUTTypeUTF8PlainText UTF8String], [registeredTypes.firstObject UTF8String]);
+    EXPECT_WK_STREQ([UTTypeUTF8PlainText.identifier UTF8String], [registeredTypes.firstObject UTF8String]);
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"source.value"].length, 0UL);
     EXPECT_EQ(UIPreferredPresentationStyleInline, itemProvider.preferredPresentationStyle);
     EXPECT_WK_STREQ("pneumonoultramicroscopicsilicovolcanoconiosis", [webView editorValue].UTF8String);
@@ -532,8 +511,8 @@ TEST(DragAndDropTests, SinglePlainTextURLTypeIdentifiers)
     NSItemProvider *itemProvider = [simulator sourceItemProviders].firstObject;
     NSArray *registeredTypes = [itemProvider registeredTypeIdentifiers];
     EXPECT_EQ(2UL, registeredTypes.count);
-    EXPECT_WK_STREQ([(__bridge NSString *)kUTTypeURL UTF8String], [registeredTypes.firstObject UTF8String]);
-    EXPECT_WK_STREQ([(__bridge NSString *)kUTTypeUTF8PlainText UTF8String], [registeredTypes.lastObject UTF8String]);
+    EXPECT_WK_STREQ([UTTypeURL.identifier UTF8String], [registeredTypes.firstObject UTF8String]);
+    EXPECT_WK_STREQ([UTTypeUTF8PlainText.identifier UTF8String], [registeredTypes.lastObject UTF8String]);
     EXPECT_EQ(0UL, [webView stringByEvaluatingJavaScript:@"source.value"].length);
     EXPECT_EQ(UIPreferredPresentationStyleInline, itemProvider.preferredPresentationStyle);
     EXPECT_WK_STREQ("https://webkit.org/", [webView editorValue].UTF8String);
@@ -565,7 +544,7 @@ TEST(DragAndDropTests, LinkToInput)
     auto selectionRectWithRoundedWidth = [simulator finalSelectionStartRect];
     selectionRectWithRoundedWidth.size.width = std::round(selectionRectWithRoundedWidth.size.width);
     checkCGRectIsEqualToCGRectWithLogging(CGRectMake(2069, 202, 2, 240), selectionRectWithRoundedWidth);
-    checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), (__bridge NSString *)kUTTypeURL, 0);
+    checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), UTTypeURL.identifier, 0);
 }
 
 TEST(DragAndDropTests, BackgroundImageLinkToInput)
@@ -583,7 +562,7 @@ TEST(DragAndDropTests, BackgroundImageLinkToInput)
     EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
     EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
     checkCGRectIsEqualToCGRectWithLogging(CGRectMake(2069, 170, 2, 240), [simulator finalSelectionStartRect]);
-    checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), (__bridge NSString *)kUTTypeURL, 0);
+    checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), UTTypeURL.identifier, 0);
 }
 
 TEST(DragAndDropTests, CanPreventStart)
@@ -695,7 +674,7 @@ TEST(DragAndDropTests, ExternalSourceJSONToFileInput)
 
     auto simulatedJSONItemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSData *jsonData = [@"{ \"foo\": \"bar\",  \"bar\": \"baz\" }" dataUsingEncoding:NSUTF8StringEncoding];
-    [simulatedJSONItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeJSON withData:jsonData];
+    [simulatedJSONItemProvider registerDataRepresentationForTypeIdentifier:UTTypeJSON.identifier withData:jsonData];
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator setExternalItemProviders:@[ simulatedJSONItemProvider.get() ]];
@@ -712,7 +691,7 @@ TEST(DragAndDropTests, ExternalSourceImageToFileInput)
 
     auto simulatedImageItemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSData *imageData = UIImageJPEGRepresentation(testIconImage(), 0.5);
-    [simulatedImageItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeJPEG withData:imageData];
+    [simulatedImageItemProvider registerDataRepresentationForTypeIdentifier:UTTypeJPEG.identifier withData:imageData];
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator setExternalItemProviders:@[ simulatedImageItemProvider.get() ]];
@@ -730,7 +709,7 @@ TEST(DragAndDropTests, ExternalSourceHTMLToUploadArea)
 
     auto simulatedHTMLItemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSData *htmlData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
-    [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML withData:htmlData];
+    [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:UTTypeHTML.identifier withData:htmlData];
     [simulatedHTMLItemProvider setSuggestedName:@"index.html"];
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
@@ -751,7 +730,7 @@ TEST(DragAndDropTests, ExternalSourceMoveOperationNotAllowed)
 
     auto simulatedHTMLItemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSData *htmlData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
-    [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML withData:htmlData];
+    [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:UTTypeHTML.identifier withData:htmlData];
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator setShouldAllowMoveOperation:NO];
@@ -767,7 +746,7 @@ TEST(DragAndDropTests, ExternalSourcePKCS12ToSingleFileInput)
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
 
     auto item = adoptNS([[NSItemProvider alloc] init]);
-    [item registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePKCS12 withData:[@"Not a real p12 file." dataUsingEncoding:NSUTF8StringEncoding]];
+    [item registerDataRepresentationForTypeIdentifier:UTTypePKCS12.identifier withData:[@"Not a real p12 file." dataUsingEncoding:NSUTF8StringEncoding]];
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator setExternalItemProviders:@[ item.get() ]];
@@ -782,7 +761,7 @@ TEST(DragAndDropTests, ExternalSourceZIPArchiveAndURLToSingleFileInput)
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
 
     auto archiveProvider = adoptNS([[NSItemProvider alloc] init]);
-    [archiveProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeZipArchive withData:testZIPArchive()];
+    [archiveProvider registerDataRepresentationForTypeIdentifier:UTTypeZIP.identifier withData:testZIPArchive()];
 
     auto urlProvider = adoptNS([[NSItemProvider alloc] init]);
     [urlProvider registerObject:[NSURL URLWithString:@"https://webkit.org"] visibility:NSItemProviderRepresentationVisibilityAll];
@@ -802,7 +781,7 @@ TEST(DragAndDropTests, ExternalSourceZIPArchiveToUploadArea)
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
 
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
-    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeZipArchive withData:testZIPArchive()];
+    [itemProvider registerDataRepresentationForTypeIdentifier:UTTypeZIP.identifier withData:testZIPArchive()];
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator setExternalItemProviders:@[ itemProvider.get() ]];
@@ -820,11 +799,11 @@ TEST(DragAndDropTests, ExternalSourceImageAndHTMLToSingleFileInput)
 
     auto simulatedImageItemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSData *imageData = UIImageJPEGRepresentation(testIconImage(), 0.5);
-    [simulatedImageItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeJPEG withData:imageData];
+    [simulatedImageItemProvider registerDataRepresentationForTypeIdentifier:UTTypeJPEG.identifier withData:imageData];
 
     auto simulatedHTMLItemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSData *htmlData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
-    [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML withData:htmlData];
+    [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:UTTypeHTML.identifier withData:htmlData];
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator setExternalItemProviders:@[ simulatedHTMLItemProvider.get(), simulatedImageItemProvider.get() ]];
@@ -843,11 +822,11 @@ TEST(DragAndDropTests, ExternalSourceImageAndHTMLToMultipleFileInput)
 
     auto simulatedImageItemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSData *imageData = UIImageJPEGRepresentation(testIconImage(), 0.5);
-    [simulatedImageItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeJPEG withData:imageData];
+    [simulatedImageItemProvider registerDataRepresentationForTypeIdentifier:UTTypeJPEG.identifier withData:imageData];
 
     auto simulatedHTMLItemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSData *htmlData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
-    [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML withData:htmlData];
+    [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:UTTypeHTML.identifier withData:htmlData];
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator setExternalItemProviders:@[ simulatedHTMLItemProvider.get(), simulatedImageItemProvider.get() ]];
@@ -865,15 +844,15 @@ TEST(DragAndDropTests, ExternalSourceImageAndHTMLToUploadArea)
 
     auto simulatedImageItemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSData *imageData = UIImageJPEGRepresentation(testIconImage(), 0.5);
-    [simulatedImageItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeJPEG withData:imageData];
+    [simulatedImageItemProvider registerDataRepresentationForTypeIdentifier:UTTypeJPEG.identifier withData:imageData];
 
     auto firstSimulatedHTMLItemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSData *firstHTMLData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
-    [firstSimulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML withData:firstHTMLData];
+    [firstSimulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:UTTypeHTML.identifier withData:firstHTMLData];
 
     auto secondSimulatedHTMLItemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSData *secondHTMLData = [@"<html><body>hello world</body></html>" dataUsingEncoding:NSUTF8StringEncoding];
-    [secondSimulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML withData:secondHTMLData];
+    [secondSimulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:UTTypeHTML.identifier withData:secondHTMLData];
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator setShouldAllowMoveOperation:NO];
@@ -894,7 +873,7 @@ TEST(DragAndDropTests, ExternalSourceHTMLToContentEditable)
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSData *htmlData = [@"<h1>This is a test</h1>" dataUsingEncoding:NSUTF8StringEncoding];
-    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML withData:htmlData];
+    [itemProvider registerDataRepresentationForTypeIdentifier:UTTypeHTML.identifier withData:htmlData];
     [simulator setExternalItemProviders:@[ itemProvider.get() ]];
     [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
 
@@ -1013,7 +992,7 @@ TEST(DragAndDropTests, ExternalSourceUTF8PlainTextOnly)
     NSString *textPayload = @"Ceci n'est pas une string";
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     auto simulatedItemProvider = adoptNS([[NSItemProvider alloc] init]);
-    [simulatedItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeUTF8PlainText visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionBlock)
+    [simulatedItemProvider registerDataRepresentationForTypeIdentifier:UTTypeUTF8PlainText.identifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionBlock)
     {
         completionBlock([textPayload dataUsingEncoding:NSUTF8StringEncoding], nil);
         return [NSProgress discreteProgressWithTotalUnitCount:100];
@@ -1033,7 +1012,7 @@ TEST(DragAndDropTests, ExternalSourceJPEGOnly)
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     auto simulatedItemProvider = adoptNS([[NSItemProvider alloc] init]);
-    [simulatedItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeJPEG visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionBlock)
+    [simulatedItemProvider registerDataRepresentationForTypeIdentifier:UTTypeJPEG.identifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionBlock)
     {
         completionBlock(UIImageJPEGRepresentation(testIconImage(), 0.5), nil);
         return [NSProgress discreteProgressWithTotalUnitCount:100];
@@ -1087,11 +1066,11 @@ TEST(DragAndDropTests, ExternalSourceOverrideDropFileUpload)
 
     auto simulatedImageItemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSData *imageData = UIImageJPEGRepresentation(testIconImage(), 0.5);
-    [simulatedImageItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeJPEG withData:imageData];
+    [simulatedImageItemProvider registerDataRepresentationForTypeIdentifier:UTTypeJPEG.identifier withData:imageData];
 
     auto simulatedHTMLItemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSData *firstHTMLData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
-    [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML withData:firstHTMLData];
+    [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:UTTypeHTML.identifier withData:firstHTMLData];
     [simulatedHTMLItemProvider setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
@@ -1100,8 +1079,8 @@ TEST(DragAndDropTests, ExternalSourceOverrideDropFileUpload)
         EXPECT_EQ(2UL, session.items.count);
         UIDragItem *firstItem = session.items[0];
         UIDragItem *secondItem = session.items[1];
-        EXPECT_TRUE([firstItem.itemProvider.registeredTypeIdentifiers isEqual:@[ (__bridge NSString *)kUTTypeJPEG ]]);
-        EXPECT_TRUE([secondItem.itemProvider.registeredTypeIdentifiers isEqual:@[ (__bridge NSString *)kUTTypeHTML ]]);
+        EXPECT_TRUE([firstItem.itemProvider.registeredTypeIdentifiers isEqual:@[ UTTypeJPEG.identifier ]]);
+        EXPECT_TRUE([secondItem.itemProvider.registeredTypeIdentifiers isEqual:@[ UTTypeHTML.identifier ]]);
         return @[ secondItem ];
     }];
     [simulator setExternalItemProviders:@[ simulatedImageItemProvider.get(), simulatedHTMLItemProvider.get() ]];
@@ -1220,7 +1199,7 @@ TEST(DragAndDropTests, ExternalSourceDataTransferItemGetFolderAsEntry)
     runTestWithTemporaryFolder(^(NSURL *folderURL) {
         auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
         [itemProvider setSuggestedName:@"somedirectory"];
-        [itemProvider registerFileRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeFolder fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[capturedFolderURL = retainPtr(folderURL)] (FileLoadCompletionBlock completionHandler) -> NSProgress * {
+        [itemProvider registerFileRepresentationForTypeIdentifier:UTTypeFolder.identifier fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[capturedFolderURL = retainPtr(folderURL)] (FileLoadCompletionBlock completionHandler) -> NSProgress * {
             completionHandler(capturedFolderURL.get(), NO, nil);
             return nil;
         }];
@@ -1250,7 +1229,7 @@ TEST(DragAndDropTests, ExternalSourceDataTransferItemGetPlainTextFileAsEntry)
     runTestWithTemporaryTextFile(^(NSURL *fileURL) {
         auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
         [itemProvider setSuggestedName:@"foo"];
-        [itemProvider registerFileRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeUTF8PlainText fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[capturedFileURL = retainPtr(fileURL)](FileLoadCompletionBlock completionHandler) -> NSProgress * {
+        [itemProvider registerFileRepresentationForTypeIdentifier:UTTypeUTF8PlainText.identifier fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[capturedFileURL = retainPtr(fileURL)](FileLoadCompletionBlock completionHandler) -> NSProgress * {
             completionHandler(capturedFileURL.get(), NO, nil);
             return nil;
         }];
@@ -1275,7 +1254,7 @@ TEST(DragAndDropTests, ExternalSourceOverrideDropInsertURL)
     {
         NSMutableArray<UIDragItem *> *allowedItems = [NSMutableArray array];
         for (UIDragItem *item in session.items) {
-            if ([item.itemProvider.registeredTypeIdentifiers containsObject:(__bridge NSString *)kUTTypeURL])
+            if ([item.itemProvider.registeredTypeIdentifiers containsObject:UTTypeURL.identifier])
                 [allowedItems addObject:item];
         }
         EXPECT_EQ(1UL, allowedItems.count);
@@ -1299,7 +1278,7 @@ TEST(DragAndDropTests, OverrideDrop)
     [webView synchronouslyLoadTestPageNamed:@"simple"];
 
     auto simulatedItemProvider = adoptNS([[NSItemProvider alloc] init]);
-    [simulatedItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML withData:[@"<body></body>" dataUsingEncoding:NSUTF8StringEncoding]];
+    [simulatedItemProvider registerDataRepresentationForTypeIdentifier:UTTypeHTML.identifier withData:[@"<body></body>" dataUsingEncoding:NSUTF8StringEncoding]];
 
     __block bool finishedLoadingData = false;
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
@@ -1310,7 +1289,7 @@ TEST(DragAndDropTests, OverrideDrop)
     }];
     [simulator setDropCompletionBlock:^(BOOL handled, NSArray *itemProviders) {
         EXPECT_FALSE(handled);
-        [itemProviders.firstObject loadDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML completionHandler:^(NSData *data, NSError *error) {
+        [itemProviders.firstObject loadDataRepresentationForTypeIdentifier:UTTypeHTML.identifier completionHandler:^(NSData *data, NSError *error) {
             auto text = adoptNS([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
             EXPECT_WK_STREQ("<body></body>", [text UTF8String]);
             EXPECT_FALSE(!!error);
@@ -1331,7 +1310,7 @@ TEST(DragAndDropTests, InjectedBundleOverridePerformTwoStepDrop)
     [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
 
     auto simulatedItemProvider = adoptNS([[NSItemProvider alloc] init]);
-    [simulatedItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeUTF8PlainText visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionBlock)
+    [simulatedItemProvider registerDataRepresentationForTypeIdentifier:UTTypeUTF8PlainText.identifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionBlock)
     {
         completionBlock([@"Hello world" dataUsingEncoding:NSUTF8StringEncoding], nil);
         return [NSProgress discreteProgressWithTotalUnitCount:100];
@@ -1354,7 +1333,7 @@ TEST(DragAndDropTests, InjectedBundleAllowPerformTwoStepDrop)
     [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
 
     auto simulatedItemProvider = adoptNS([[NSItemProvider alloc] init]);
-    [simulatedItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeUTF8PlainText visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionBlock)
+    [simulatedItemProvider registerDataRepresentationForTypeIdentifier:UTTypeUTF8PlainText.identifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionBlock)
     {
         completionBlock([@"Hello world" dataUsingEncoding:NSUTF8StringEncoding], nil);
         return [NSProgress discreteProgressWithTotalUnitCount:100];
@@ -1419,7 +1398,7 @@ TEST(DragAndDropTests, LargeImageToTargetDiv)
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator runFrom:CGPointMake(200, 400) to:CGPointMake(200, 150)];
     EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target.textContent"].UTF8String);
-    checkFirstTypeIsPresentAndSecondTypeIsMissing(simulator.get(), kUTTypePNG, kUTTypeFileURL);
+    checkFirstTypeIsPresentAndSecondTypeIsMissing(simulator.get(), UTTypePNG.identifier, UTTypeFileURL.identifier);
     checkEstimatedSize(simulator.get(), { 2000, 2000 });
 }
 
@@ -1605,14 +1584,14 @@ TEST(DragAndDropTests, WebItemProviderPasteboardLoading)
 
     WebItemProviderPasteboard *pasteboard = [WebItemProviderPasteboard sharedInstance];
     auto fastItem = adoptNS([[NSItemProvider alloc] init]);
-    [fastItem registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeUTF8PlainText visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionBlock)
+    [fastItem registerDataRepresentationForTypeIdentifier:UTTypeUTF8PlainText.identifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionBlock)
     {
         completionBlock([fastString dataUsingEncoding:NSUTF8StringEncoding], nil);
         return nil;
     }];
 
     auto slowItem = adoptNS([[NSItemProvider alloc] init]);
-    [slowItem registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeUTF8PlainText visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionBlock)
+    [slowItem registerDataRepresentationForTypeIdentifier:UTTypeUTF8PlainText.identifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionBlock)
     {
         sleep(2_s);
         completionBlock([slowString dataUsingEncoding:NSUTF8StringEncoding], nil);
@@ -1725,9 +1704,9 @@ TEST(DragAndDropTests, DataTransferGetDataWhenDroppingImageAndMarkup)
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
-    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG withData:testIconImageData()];
+    [itemProvider registerDataRepresentationForTypeIdentifier:UTTypePNG.identifier withData:testIconImageData()];
     NSString *markupString = @"<script>bar()</script><strong onmousedown=javascript:void(0)>HELLO WORLD</strong>";
-    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML withData:[markupString dataUsingEncoding:NSUTF8StringEncoding]];
+    [itemProvider registerDataRepresentationForTypeIdentifier:UTTypeHTML.identifier withData:[markupString dataUsingEncoding:NSUTF8StringEncoding]];
     [itemProvider setSuggestedName:@"icon"];
     [simulator setExternalItemProviders:@[ itemProvider.get() ]];
     [simulator runFrom:CGPointZero to:CGPointMake(50, 100)];
@@ -1812,7 +1791,7 @@ TEST(DragAndDropTests, DataTransferGetDataWhenDroppingImageWithFileURL)
 
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSURL *iconURL = [NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"];
-    [itemProvider registerFileRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[protectedIconURL = retainPtr(iconURL)] (FileLoadCompletionBlock completionHandler) -> NSProgress * {
+    [itemProvider registerFileRepresentationForTypeIdentifier:UTTypePNG.identifier fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[protectedIconURL = retainPtr(iconURL)] (FileLoadCompletionBlock completionHandler) -> NSProgress * {
         completionHandler(protectedIconURL.get(), NO, nil);
         return nil;
     }];
@@ -1835,7 +1814,7 @@ TEST(DragAndDropTests, DataTransferGetDataWhenDroppingImageWithHTTPURL)
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
-    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeJPEG visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
+    [itemProvider registerDataRepresentationForTypeIdentifier:UTTypeJPEG.identifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
     {
         completionHandler(UIImageJPEGRepresentation(testIconImage(), 0.5), nil);
         return nil;
@@ -1858,7 +1837,7 @@ TEST(DragAndDropTests, DataTransferGetDataWhenDroppingRespectsPresentationStyle)
 
     runTestWithTemporaryTextFile(^(NSURL *fileURL) {
         auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
-        [itemProvider registerFileRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeUTF8PlainText fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[protectedFileURL = retainPtr(fileURL)] (FileLoadCompletionBlock completionHandler) -> NSProgress * {
+        [itemProvider registerFileRepresentationForTypeIdentifier:UTTypeUTF8PlainText.identifier fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[protectedFileURL = retainPtr(fileURL)] (FileLoadCompletionBlock completionHandler) -> NSProgress * {
             completionHandler(protectedFileURL.get(), NO, nil);
             return nil;
         }];
@@ -1891,7 +1870,7 @@ TEST(DragAndDropTests, DataTransferSetDataCannotWritePlatformTypes)
     [webView stringByEvaluatingJavaScript:@"writeCustomData = true"];
 
     [simulator runFrom:CGPointMake(50, 225) to:CGPointMake(50, 375)];
-    checkFirstTypeIsPresentAndSecondTypeIsMissing(simulator.get(), kUTTypeUTF8PlainText, kUTTypePDF);
+    checkFirstTypeIsPresentAndSecondTypeIsMissing(simulator.get(), UTTypeUTF8PlainText.identifier, UTTypePDF.identifier);
     checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
         @"dragover": @{
             @"text/plain": @"",
@@ -1957,8 +1936,8 @@ TEST(DragAndDropTests, DataTransferExposePlainTextWithFileURLAsFile)
 
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSData *urlAsData = [@"file:///some/file/path.txt" dataUsingEncoding:NSUTF8StringEncoding];
-    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeFileURL withData:urlAsData];
-    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeURL withData:urlAsData];
+    [itemProvider registerDataRepresentationForTypeIdentifier:UTTypeFileURL.identifier withData:urlAsData];
+    [itemProvider registerDataRepresentationForTypeIdentifier:UTTypeURL.identifier withData:urlAsData];
     [itemProvider registerObject:@"Hello world" visibility:NSItemProviderRepresentationVisibilityAll];
 
     [simulator setExternalItemProviders:@[ itemProvider.get() ]];
@@ -1982,7 +1961,7 @@ TEST(DragAndDropTests, DataTransferGetDataCannotReadPrivateArbitraryTypes)
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
-    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeMP3 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
+    [itemProvider registerDataRepresentationForTypeIdentifier:UTTypeMP3.identifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
     {
         completionHandler([@"this is a test" dataUsingEncoding:NSUTF8StringEncoding], nil);
         return nil;
@@ -2016,7 +1995,7 @@ TEST(DragAndDropTests, DataTransferSetDataValidURL)
     {
         EXPECT_EQ(1UL, session.items.count);
         auto *item = session.items[0].itemProvider;
-        EXPECT_TRUE([item.registeredTypeIdentifiers containsObject:(__bridge NSString *)kUTTypeURL]);
+        EXPECT_TRUE([item.registeredTypeIdentifiers containsObject:UTTypeURL.identifier]);
         EXPECT_TRUE([item canLoadObjectOfClass: [NSURL class]]);
         [item loadObjectOfClass:[NSURL class] completionHandler:^(id<NSItemProviderReading> url, NSError *error) {
             EXPECT_TRUE([url isKindOfClass: [NSURL class]]);
@@ -2053,7 +2032,7 @@ TEST(DragAndDropTests, DataTransferSetDataUnescapedURL)
     {
         EXPECT_EQ(1UL, session.items.count);
         auto *item = session.items[0].itemProvider;
-        EXPECT_TRUE([item.registeredTypeIdentifiers containsObject:(__bridge NSString *)kUTTypeURL]);
+        EXPECT_TRUE([item.registeredTypeIdentifiers containsObject:UTTypeURL.identifier]);
         EXPECT_TRUE([item canLoadObjectOfClass: [NSURL class]]);
         [item loadObjectOfClass:[NSURL class] completionHandler:^(id<NSItemProviderReading> url, NSError *error) {
             EXPECT_TRUE([url isKindOfClass: [NSURL class]]);
@@ -2087,7 +2066,7 @@ TEST(DragAndDropTests, DataTransferSetDataInvalidURL)
 
     [simulator runFrom:CGPointMake(50, 225) to:CGPointMake(50, 375)];
     NSArray *registeredTypes = [simulator.get().sourceItemProviders.firstObject registeredTypeIdentifiers];
-    EXPECT_FALSE([registeredTypes containsObject:(__bridge NSString *)kUTTypeURL]);
+    EXPECT_FALSE([registeredTypes containsObject:UTTypeURL.identifier]);
     checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
         @"dragover": @{
             @"text/uri-list": @"",
@@ -2114,8 +2093,8 @@ TEST(DragAndDropTests, DataTransferSanitizeHTML)
     {
         EXPECT_EQ(1UL, session.items.count);
         auto *item = session.items[0].itemProvider;
-        EXPECT_TRUE([item.registeredTypeIdentifiers containsObject:(__bridge NSString *)kUTTypeHTML]);
-        [item loadDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML completionHandler:^(NSData *data, NSError *error) {
+        EXPECT_TRUE([item.registeredTypeIdentifiers containsObject:UTTypeHTML.identifier]);
+        [item loadDataRepresentationForTypeIdentifier:UTTypeHTML.identifier completionHandler:^(NSData *data, NSError *error) {
             auto markup = adoptNS([[NSString alloc] initWithData:(NSData *)data encoding:NSUTF8StringEncoding]);
             EXPECT_TRUE([markup containsString:@"hello"]);
             EXPECT_TRUE([markup containsString:@", world"]);
@@ -2199,11 +2178,11 @@ TEST(DragAndDropTests, SuggestedNameContainsDot)
     [webView synchronouslyLoadTestPageNamed:@"gif-and-file-input"];
 
     auto firstItem = adoptNS([[NSItemProvider alloc] init]);
-    [firstItem registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG withData:testIconImageData()];
+    [firstItem registerDataRepresentationForTypeIdentifier:UTTypePNG.identifier withData:testIconImageData()];
     [firstItem setSuggestedName:@"one.foo"];
 
     auto secondItem = adoptNS([[NSItemProvider alloc] init]);
-    [secondItem registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG withData:testIconImageData()];
+    [secondItem registerDataRepresentationForTypeIdentifier:UTTypePNG.identifier withData:testIconImageData()];
     [secondItem setSuggestedName:@"two.foo.PNG"];
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);

@@ -4295,6 +4295,13 @@ private:
             return;
         }
 
+        case MemoryCopy:
+        case MemoryFill: {
+            // They should be lowered already.
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+
         case B3::VectorExtractLane: {
             SIMDValue* value = m_value->as<SIMDValue>();
             auto lane = value->simdLane();

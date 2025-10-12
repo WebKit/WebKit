@@ -51,7 +51,7 @@ MemoryIndexCursor::MemoryIndexCursor(MemoryIndex& index, const IDBCursorInfo& cu
 {
     LOG(IndexedDB, "MemoryIndexCursor::MemoryIndexCursor %s", cursorInfo.range().loggingString().utf8().data());
 
-    auto* valueStore = index.valueStore();
+    CheckedPtr valueStore = index.valueStore();
     if (!valueStore)
         return;
 
@@ -99,7 +99,7 @@ void MemoryIndexCursor::iterate(const IDBKeyData& key, const IDBKeyData& primary
         // Cannot iterate by both a count and to a key
         ASSERT(!count);
 
-        auto* valueStore = index->valueStore();
+        CheckedPtr valueStore = index->valueStore();
         if (!valueStore) {
             m_currentKey = { };
             m_currentPrimaryKey = { };
@@ -144,7 +144,7 @@ void MemoryIndexCursor::iterate(const IDBKeyData& key, const IDBKeyData& primary
         count = 1;
 
     if (!m_currentIterator.isValid()) {
-        auto* valueStore = index->valueStore();
+        CheckedPtr valueStore = index->valueStore();
         if (!valueStore) {
             m_currentKey = { };
             m_currentPrimaryKey = { };
@@ -212,15 +212,10 @@ void MemoryIndexCursor::iterate(const IDBKeyData& key, const IDBKeyData& primary
     currentData(getResult);
 }
 
-Ref<MemoryIndex> MemoryIndexCursor::protectedIndex() const
-{
-    return m_index.get();
-}
-
 void MemoryIndexCursor::indexRecordsAllChanged()
 {
     m_currentIterator.invalidate();
-    protectedIndex()->cursorDidBecomeDirty(*this);
+    m_index->cursorDidBecomeDirty(*this);
 }
 
 void MemoryIndexCursor::indexValueChanged(const IDBKeyData& key, const IDBKeyData& primaryKey)
@@ -229,7 +224,7 @@ void MemoryIndexCursor::indexValueChanged(const IDBKeyData& key, const IDBKeyDat
         return;
 
     m_currentIterator.invalidate();
-    protectedIndex()->cursorDidBecomeDirty(*this);
+    m_index->cursorDidBecomeDirty(*this);
 }
 
 } // namespace IDBServer

@@ -1,0 +1,5 @@
+
+
+FAIL Attempting to focus the previous option while focused on the first option should not crash. assert_equals: appearance:base-select must be supported in order to run this test. expected "base-select" but got "auto"
+FAIL Keyboard navigating backwards over an <hr> and <optgroup> should not crash. assert_equals: appearance:base-select must be supported in order to run this test. expected "base-select" but got "auto"
+

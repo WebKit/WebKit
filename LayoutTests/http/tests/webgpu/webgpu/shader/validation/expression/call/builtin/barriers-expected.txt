@@ -27,22 +27,7 @@ PASS :no_return_value:assign=false;rhs="bar"
 PASS :no_return_value:assign=false;rhs="storageBarrier"
 PASS :no_return_value:assign=false;rhs="textureBarrier"
 PASS :no_return_value:assign=false;rhs="workgroupBarrier"
-FAIL :no_return_value:assign=true;rhs="bar" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    fn bar() {}
-
-    fn foo() {
-      _ =  bar();
-    }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.spec.js:108:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
+PASS :no_return_value:assign=true;rhs="bar"
 FAIL :no_return_value:assign=true;rhs="storageBarrier" assert_unreached:
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 

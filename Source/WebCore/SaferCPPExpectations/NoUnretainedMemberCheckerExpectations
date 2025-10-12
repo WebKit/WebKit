@@ -1,20 +1,17 @@
-PAL/pal/graphics/cocoa/WebAVContentKeyGrouping.h
-accessibility/cocoa/AXCoreObjectCocoa.mm
-accessibility/mac/WebAccessibilityObjectWrapperBase.mm
+[ Mac ] accessibility/cocoa/AXCoreObjectCocoa.mm
 bridge/objc/WebScriptObject.h
 page/EventHandler.h
-platform/MediaSample.h
-platform/cocoa/WebAVPlayerLayer.h
-platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm
-platform/graphics/ca/cocoa/WebVideoContainerLayer.h
 platform/graphics/cg/CGSubimageCacheWithTimer.cpp
-platform/graphics/cocoa/WebSampleBufferVideoRendering.h
-platform/graphics/mac/LegacyDisplayRefreshMonitorMac.h
 platform/ios/WebAVPlayerController.h
 platform/ios/WebAVPlayerController.mm
-platform/mac/WebCoreFullScreenPlaceholderView.h
-platform/mac/WebPlaybackControlsManager.h
-platform/network/cf/FormDataStreamCFNet.cpp
-platform/network/cocoa/CookieStorageObserver.mm
-platform/network/cocoa/WebCoreNSURLSession.h
-platform/network/cocoa/WebCoreNSURLSession.mm
+[ iOS ] platform/cocoa/WebAVPlayerLayer.h
+[ iOS ] platform/graphics/ios/DisplayRefreshMonitorIOS.mm
+[ iOS ] platform/ios/DeviceMotionClientIOS.h
+[ iOS ] platform/ios/LegacyTileCache.h
+[ iOS ] platform/ios/WebEvent.h
+[ iOS ] platform/ios/WebItemProviderPasteboard.h
+[ iOS ] platform/ios/wak/WAKClipView.h
+[ iOS ] platform/ios/wak/WAKScrollView.h
+[ iOS ] platform/ios/wak/WAKWindow.h
+[ iOS ] platform/ios/wak/WKView.h
+[ iOS ] platform/ios/wak/WebCoreThread.h

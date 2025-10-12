@@ -44,12 +44,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CompositingRunLoop);
 
 CompositingRunLoop::CompositingRunLoop(Function<void ()>&& updateFunction)
     : m_runLoop(RunLoop::create("org.webkit.ThreadedCompositor"_s, ThreadType::Graphics))
-    , m_updateTimer(m_runLoop.get(), this, &CompositingRunLoop::updateTimerFired)
+    , m_updateTimer(m_runLoop.get(), "CompositingRunLoop::UpdateTimer"_s, this, &CompositingRunLoop::updateTimerFired)
     , m_updateFunction(WTFMove(updateFunction))
 {
 #if USE(GLIB_EVENT_LOOP)
     m_updateTimer.setPriority(RunLoopSourcePriority::CompositingThreadUpdateTimer);
-    m_updateTimer.setName("[WebKit] CompositingRunLoop"_s);
 #endif
 }
 
@@ -57,7 +56,7 @@ CompositingRunLoop::~CompositingRunLoop()
 {
     ASSERT(RunLoop::isMain());
     // Make sure the RunLoop is stopped after the CompositingRunLoop, because m_updateTimer has a reference.
-    RunLoop::protectedMain()->dispatch([runLoop = m_runLoop] {
+    RunLoop::mainSingleton().dispatch([runLoop = m_runLoop] {
         runLoop->stop();
         runLoop->dispatch([] {
             RunLoop::currentSingleton().stop();

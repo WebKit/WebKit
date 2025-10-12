@@ -1,0 +1,8 @@
+service-worker-download-worker.js has MIME type application/x-javascript
+resources has MIME type text/html
+download-octet-stream.py has MIME type application/octet-stream
+Download started.
+Downloading URL with suggested filename ""
+Download size: 16.
+Download completed.
+

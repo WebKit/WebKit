@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // CLCommandQueueCL.cpp: Implements the class methods for CLCommandQueueCL.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/renderer/cl/CLCommandQueueCL.h"
 
@@ -701,6 +706,72 @@ angle::Result CLCommandQueueCL::flush()
 angle::Result CLCommandQueueCL::finish()
 {
     ANGLE_CL_TRY(mNative->getDispatch().clFinish(mNative));
+    return angle::Result::Continue;
+}
+
+angle::Result CLCommandQueueCL::enqueueAcquireExternalMemObjectsKHR(
+    const cl::MemoryPtrs &memObjects,
+    const cl::EventPtrs &waitEvents,
+    CLEventImpl::CreateFunc *eventCreateFunc)
+{
+    std::vector<cl_mem> nativeMemories;
+    nativeMemories.reserve(memObjects.size());
+    for (const cl::MemoryPtr &memory : memObjects)
+    {
+        nativeMemories.emplace_back(memory->getImpl<CLMemoryCL>().getNative());
+    }
+    const cl_uint numMemories                = static_cast<cl_uint>(nativeMemories.size());
+    const std::vector<cl_event> nativeEvents = CLEventCL::Cast(waitEvents);
+    const cl_uint numEvents                  = static_cast<cl_uint>(nativeEvents.size());
+    const cl_event *const nativeEventsPtr    = nativeEvents.empty() ? nullptr : nativeEvents.data();
+    cl_event nativeEvent                     = nullptr;
+    cl_event *const nativeEventPtr           = eventCreateFunc != nullptr ? &nativeEvent : nullptr;
+
+    clEnqueueAcquireExternalMemObjectsKHR_fn clEnqueueAcquireExternalMemObjectsKHR =
+        reinterpret_cast<clEnqueueAcquireExternalMemObjectsKHR_fn>(
+            mNative->getDispatch().clGetExtensionFunctionAddress(
+                "clEnqueueAcquireExternalMemObjectsKHR"));
+
+    if (clEnqueueAcquireExternalMemObjectsKHR != nullptr)
+    {
+        ANGLE_CL_TRY(clEnqueueAcquireExternalMemObjectsKHR(mNative, numMemories,
+                                                           nativeMemories.data(), numEvents,
+                                                           nativeEventsPtr, nativeEventPtr));
+        CheckCreateEvent(nativeEvent, eventCreateFunc);
+    }
+    return angle::Result::Continue;
+}
+
+angle::Result CLCommandQueueCL::enqueueReleaseExternalMemObjectsKHR(
+    const cl::MemoryPtrs &memObjects,
+    const cl::EventPtrs &waitEvents,
+    CLEventImpl::CreateFunc *eventCreateFunc)
+{
+    std::vector<cl_mem> nativeMemories;
+    nativeMemories.reserve(memObjects.size());
+    for (const cl::MemoryPtr &memory : memObjects)
+    {
+        nativeMemories.emplace_back(memory->getImpl<CLMemoryCL>().getNative());
+    }
+    const cl_uint numMemories                = static_cast<cl_uint>(nativeMemories.size());
+    const std::vector<cl_event> nativeEvents = CLEventCL::Cast(waitEvents);
+    const cl_uint numEvents                  = static_cast<cl_uint>(nativeEvents.size());
+    const cl_event *const nativeEventsPtr    = nativeEvents.empty() ? nullptr : nativeEvents.data();
+    cl_event nativeEvent                     = nullptr;
+    cl_event *const nativeEventPtr           = eventCreateFunc != nullptr ? &nativeEvent : nullptr;
+
+    clEnqueueReleaseExternalMemObjectsKHR_fn clEnqueueReleaseExternalMemObjectsKHR =
+        reinterpret_cast<clEnqueueReleaseExternalMemObjectsKHR_fn>(
+            mNative->getDispatch().clGetExtensionFunctionAddress(
+                "clEnqueueReleaseExternalMemObjectsKHR"));
+
+    if (clEnqueueReleaseExternalMemObjectsKHR != nullptr)
+    {
+        ANGLE_CL_TRY(clEnqueueReleaseExternalMemObjectsKHR(mNative, numMemories,
+                                                           nativeMemories.data(), numEvents,
+                                                           nativeEventsPtr, nativeEventPtr));
+        CheckCreateEvent(nativeEvent, eventCreateFunc);
+    }
     return angle::Result::Continue;
 }
 

@@ -78,6 +78,7 @@ private:
     void setContentsTilePhase(const FloatSize&) override;
     void setContentsClippingRect(const FloatRoundedRect&) override;
     void setContentsNeedsDisplay() override;
+    void setContentsNeedsDisplayInRect(const FloatRect&) override;
     void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
     void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose) override;
     RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate(GraphicsLayerAsyncContentsDisplayDelegate*) override;
@@ -107,7 +108,7 @@ private:
     bool setBackdropFilters(const FilterOperations&) override;
     void setBackdropFiltersRect(const FloatRoundedRect&) override;
 
-    bool addAnimation(const KeyframeValueList&, const FloatSize&, const Animation*, const String&, double) override;
+    bool addAnimation(const KeyframeValueList&, const GraphicsLayerAnimation*, const String&, double) override;
     void removeAnimation(const String&, std::optional<AnimatedProperty>) override;
     void pauseAnimation(const String& animationName, double timeOffset) override;
     void suspendAnimations(MonotonicTime) override;
@@ -116,7 +117,7 @@ private:
     Vector<std::pair<String, double>> acceleratedAnimationsForTesting(const Settings&) const override;
 
     void setNeedsDisplay() override;
-    void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
+    void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ShouldClipToLayer::Clip) override;
 
     FloatSize pixelAlignmentOffset() const override { return m_pixelAlignmentOffset; }
 
@@ -192,13 +193,14 @@ private:
     bool updateBackingStoresIfNeeded();
     bool updateBackingStoreIfNeeded();
 
-    Ref<CoordinatedPlatformLayer> m_platformLayer;
+    const Ref<CoordinatedPlatformLayer> m_platformLayer;
     OptionSet<Change> m_pendingChanges;
     bool m_hasDescendantsWithPendingChanges { false };
     bool m_hasDescendantsWithPendingTilesCreation { false };
     bool m_hasDescendantsWithRunningTransformAnimations { false };
     FloatSize m_pixelAlignmentOffset;
     std::optional<Damage> m_dirtyRegion;
+    std::optional<Damage> m_contentsDirtyRegion;
     FloatRect m_visibleRect;
     struct {
         GraphicsLayerTransform current;

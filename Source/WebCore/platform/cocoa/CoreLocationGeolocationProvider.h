@@ -61,7 +61,7 @@ public:
     static void requestAuthorization(const RegistrableDomain&, CompletionHandler<void(bool)>&&);
 
 private:
-    RetainPtr<WebCLLocationManager> m_locationManager;
+    const RetainPtr<WebCLLocationManager> m_locationManager;
 };
 
 #endif // HAVE(CORE_LOCATION)

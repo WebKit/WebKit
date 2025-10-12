@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,7 +100,7 @@ ImageBuffer* SourceImage::imageBuffer() const
         auto nativeImage = std::get<Ref<NativeImage>>(m_imageVariant);
 
         auto rect = FloatRect { { }, nativeImage->size() };
-        auto imageBuffer = ImageBuffer::create(nativeImage->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
+        auto imageBuffer = ImageBuffer::create(nativeImage->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
         if (!imageBuffer)
             return nullptr;
 

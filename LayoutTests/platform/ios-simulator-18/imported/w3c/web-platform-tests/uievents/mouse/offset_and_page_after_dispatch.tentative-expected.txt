@@ -1,0 +1,3 @@
+
+FAIL Click on the target without moving the mouse cursor assert_equals: mousedown should've been received expected (string) "mousedown" but got (undefined) undefined
+

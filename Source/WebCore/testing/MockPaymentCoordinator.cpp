@@ -88,14 +88,14 @@ bool MockPaymentCoordinator::canMakePayments()
 
 void MockPaymentCoordinator::canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
 {
-    RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), canMakePaymentsWithActiveCard = m_canMakePaymentsWithActiveCard]() mutable {
+    RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), canMakePaymentsWithActiveCard = m_canMakePaymentsWithActiveCard]() mutable {
         completionHandler(canMakePaymentsWithActiveCard);
     });
 }
 
 void MockPaymentCoordinator::openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
 {
-    RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+    RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler(true);
     });
 }
@@ -110,7 +110,7 @@ void MockPaymentCoordinator::dispatchIfShowing(Function<void()>&& function)
     if (m_showCount <= m_hideCount)
         return;
 
-    RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, currentShowCount = m_showCount, function = WTFMove(function)]() {
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, currentShowCount = m_showCount, function = WTFMove(function)]() {
         if (protectedThis->m_showCount > protectedThis->m_hideCount && protectedThis->m_showCount == currentShowCount)
             function();
     });
@@ -164,7 +164,7 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
     ASSERT(m_showCount == m_hideCount);
     ++m_showCount;
     dispatchIfShowing([page = WTFMove(page)]() {
-        page->paymentCoordinator().validateMerchant(URL { "https://webkit.org/"_str });
+        page->protectedPaymentCoordinator()->validateMerchant(URL { "https://webkit.org/"_str });
     });
     return true;
 }
@@ -176,7 +176,7 @@ void MockPaymentCoordinator::completeMerchantValidation(const PaymentMerchantSes
         return;
 
     dispatchIfShowing([page = WTFMove(page), shippingAddress = m_shippingAddress]() mutable {
-        page->paymentCoordinator().didSelectShippingContact(MockPaymentContact { WTFMove(shippingAddress) });
+        page->protectedPaymentCoordinator()->didSelectShippingContact(MockPaymentContact { WTFMove(shippingAddress) });
     });
 }
 
@@ -305,7 +305,7 @@ void MockPaymentCoordinator::changeShippingOption(String&& shippingOption)
     dispatchIfShowing([page = WTFMove(page), shippingOption = WTFMove(shippingOption)]() mutable {
         ApplePayShippingMethod shippingMethod;
         shippingMethod.identifier = WTFMove(shippingOption);
-        page->paymentCoordinator().didSelectShippingMethod(shippingMethod);
+        page->protectedPaymentCoordinator()->didSelectShippingMethod(shippingMethod);
     });
 }
 
@@ -316,7 +316,7 @@ void MockPaymentCoordinator::changePaymentMethod(ApplePayPaymentMethod&& payment
         return;
 
     dispatchIfShowing([page = WTFMove(page), paymentMethod = WTFMove(paymentMethod)]() mutable {
-        page->paymentCoordinator().didSelectPaymentMethod(MockPaymentMethod { WTFMove(paymentMethod) });
+        page->protectedPaymentCoordinator()->didSelectPaymentMethod(MockPaymentMethod { WTFMove(paymentMethod) });
     });
 }
 
@@ -329,7 +329,7 @@ void MockPaymentCoordinator::changeCouponCode(String&& couponCode)
         return;
 
     dispatchIfShowing([page = WTFMove(page), couponCode = WTFMove(couponCode)]() mutable {
-        page->paymentCoordinator().didChangeCouponCode(WTFMove(couponCode));
+        page->protectedPaymentCoordinator()->didChangeCouponCode(WTFMove(couponCode));
     });
 }
 
@@ -344,7 +344,7 @@ void MockPaymentCoordinator::acceptPayment()
     dispatchIfShowing([page = WTFMove(page), shippingAddress = m_shippingAddress]() mutable {
         ApplePayPayment payment;
         payment.shippingContact = WTFMove(shippingAddress);
-        page->paymentCoordinator().didAuthorizePayment(MockPayment { WTFMove(payment) });
+        page->protectedPaymentCoordinator()->didAuthorizePayment(MockPayment { WTFMove(payment) });
     });
 }
 
@@ -355,7 +355,7 @@ void MockPaymentCoordinator::cancelPayment()
         return;
 
     dispatchIfShowing([protectedThis = Ref { *this }, page = WTFMove(page)] {
-        page->paymentCoordinator().didCancelPaymentSession({ });
+        page->protectedPaymentCoordinator()->didCancelPaymentSession({ });
         ++protectedThis->m_hideCount;
         ASSERT(protectedThis->m_showCount == protectedThis->m_hideCount);
     });

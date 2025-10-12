@@ -26,6 +26,7 @@
 #include "config.h"
 #include "IDBOpenDBRequest.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "DOMException.h"
 #include "EventNames.h"
 #include "IDBConnectionProxy.h"
@@ -71,6 +72,13 @@ IDBOpenDBRequest::~IDBOpenDBRequest()
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 }
 
+EventTargetInterfaceType IDBOpenDBRequest::eventTargetInterface() const
+{
+    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+
+    return EventTargetInterfaceType::IDBOpenDBRequest;
+}
+
 void IDBOpenDBRequest::onError(const IDBResultData& data)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
@@ -94,7 +102,7 @@ void IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()
 
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(hasPendingActivity());
-    m_transaction->addRequest(*this);
+    protectedTransaction()->addRequest(*this);
 
     Ref event = IDBRequestCompletionEvent::create(eventNames().successEvent, Event::CanBubble::No, Event::IsCancelable::No, *this);
     m_openDatabaseSuccessEvent = event.get();
@@ -113,7 +121,7 @@ void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()
     m_domError = DOMException::create(ExceptionCode::AbortError);
     setResultToUndefined();
 
-    m_transaction->addRequest(*this);
+    protectedTransaction()->addRequest(*this);
     enqueueEvent(IDBRequestCompletionEvent::create(eventNames().errorEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, *this));
 }
 
@@ -130,8 +138,8 @@ void IDBOpenDBRequest::dispatchEvent(Event& event)
 
     IDBRequest::dispatchEvent(event);
 
-    if (m_transaction && m_transaction->isVersionChange() && (event.type() == eventNames().errorEvent || event.type() == eventNames().successEvent))
-        m_transaction->database().connectionProxy().didFinishHandlingVersionChangeTransaction(m_transaction->database().databaseConnectionIdentifier(), *m_transaction);
+    if (RefPtr transaction = m_transaction; transaction && transaction->isVersionChange() && (event.type() == eventNames().errorEvent || event.type() == eventNames().successEvent))
+        transaction->database().connectionProxy().didFinishHandlingVersionChangeTransaction(transaction->database().databaseConnectionIdentifier(), *transaction);
 }
 
 void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
@@ -140,7 +148,7 @@ void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
 
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    setResult(IDBDatabase::create(*scriptExecutionContext(), connectionProxy(), resultData));
+    setResult(IDBDatabase::create(*protectedScriptExecutionContext(), connectionProxy(), resultData));
     setReadyState(ReadyState::Done);
 
     enqueueEvent(IDBRequestCompletionEvent::create(eventNames().successEvent, Event::CanBubble::No, Event::IsCancelable::No, *this));
@@ -150,8 +158,8 @@ void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    Ref<IDBDatabase> database = IDBDatabase::create(*scriptExecutionContext(), connectionProxy(), resultData);
-    Ref<IDBTransaction> transaction = database->startVersionChangeTransaction(resultData.transactionInfo(), *this);
+    Ref database = IDBDatabase::create(*protectedScriptExecutionContext(), connectionProxy(), resultData);
+    Ref transaction = database->startVersionChangeTransaction(resultData.transactionInfo(), *this);
 
     ASSERT(transaction->info().mode() == IDBTransactionMode::Versionchange);
     ASSERT(transaction->originalDatabaseInfo());
@@ -163,8 +171,8 @@ void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
 
     setResult(WTFMove(database));
     setReadyState(ReadyState::Done);
-    m_transaction = WTFMove(transaction);
-    m_transaction->addRequest(*this);
+    m_transaction = transaction.copyRef();
+    transaction->addRequest(*this);
 
     enqueueEvent(IDBVersionChangeEvent::create(oldVersion, newVersion, eventNames().upgradeneededEvent));
 }

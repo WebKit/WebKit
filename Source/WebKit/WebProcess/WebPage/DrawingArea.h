@@ -80,11 +80,17 @@ public:
 
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
-    
-    DrawingAreaType type() const { return m_type; }
+
+#if ENABLE(TILED_CA_DRAWING_AREA)
+    virtual DrawingAreaType type() const = 0;
+#endif
     DrawingAreaIdentifier identifier() const { return m_identifier; }
 
+#if ENABLE(TILED_CA_DRAWING_AREA)
     static bool supportsGPUProcessRendering(DrawingAreaType);
+#else
+    static bool supportsGPUProcessRendering();
+#endif
 
     virtual void setNeedsDisplay() = 0;
     virtual void setNeedsDisplayInRect(const WebCore::IntRect&) = 0;
@@ -196,7 +202,7 @@ public:
     static RetainPtr<CABasicAnimation> transientZoomSnapAnimationForKeyPath(ASCIILiteral);
 
 protected:
-    DrawingArea(DrawingAreaType, DrawingAreaIdentifier, WebPage&);
+    DrawingArea(DrawingAreaIdentifier, WebPage&);
 
     template<typename T> bool send(T&& message)
     {
@@ -206,7 +212,6 @@ protected:
 
     Ref<WebPage> protectedWebPage() const { return m_webPage.get(); }
 
-    const DrawingAreaType m_type;
     DrawingAreaIdentifier m_identifier;
     WeakRef<WebPage> m_webPage;
     WebCore::IntSize m_lastViewSizeForScaleToFit;
@@ -251,7 +256,19 @@ private:
 
 } // namespace WebKit
 
+#if ENABLE(TILED_CA_DRAWING_AREA)
+
 #define SPECIALIZE_TYPE_TRAITS_DRAWING_AREA(ToValueTypeName, AreaType) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ToValueTypeName) \
     static bool isType(const WebKit::DrawingArea& area) { return area.type() == WebKit::AreaType; } \
 SPECIALIZE_TYPE_TRAITS_END()
+
+#else
+
+// There is only one type of DrawingArea.
+#define SPECIALIZE_TYPE_TRAITS_DRAWING_AREA(ToValueTypeName, AreaType) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ToValueTypeName) \
+    static bool isType(const WebKit::DrawingArea&) { return true; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+#endif

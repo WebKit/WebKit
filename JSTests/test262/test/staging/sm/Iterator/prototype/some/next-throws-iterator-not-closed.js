@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 features:
   - iterator-helpers
 info: |
@@ -29,6 +26,6 @@ const fn = () => {};
 const iter = new TestIterator();
 
 assert.sameValue(iter.closed, false);
-assertThrowsInstanceOf(() => iter.some(fn), Error);
+assert.throws(Error, () => iter.some(fn));
 assert.sameValue(iter.closed, false);
 

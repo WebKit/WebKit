@@ -117,6 +117,8 @@ PASS A KeyframeEffect can be constructed with a single keyframe sequence with nu
 PASS A KeyframeEffect constructed with a single keyframe sequence with null offset roundtrips
 PASS A KeyframeEffect can be constructed with a single keyframe sequence with string offset
 PASS A KeyframeEffect constructed with a single keyframe sequence with string offset roundtrips
+FAIL A KeyframeEffect can be constructed with a single keyframe sequence with a single calc() offset Type error
+FAIL A KeyframeEffect constructed with a single keyframe sequence with a single calc() offset roundtrips Type error
 PASS A KeyframeEffect can be constructed with a one property keyframe sequence with some omitted offsets
 PASS A KeyframeEffect constructed with a one property keyframe sequence with some omitted offsets roundtrips
 PASS A KeyframeEffect can be constructed with a one property keyframe sequence with some null offsets

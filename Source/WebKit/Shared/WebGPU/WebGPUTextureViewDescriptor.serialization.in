@@ -24,6 +24,7 @@
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::TextureViewDescriptor : WebKit::WebGPU::ObjectDescriptorBase {
     std::optional<WebCore::WebGPU::TextureFormat> format;
     std::optional<WebCore::WebGPU::TextureViewDimension> dimension;
+    WebCore::WebGPU::TextureUsageFlags usage;
     WebCore::WebGPU::TextureAspect aspect;
     WebCore::WebGPU::IntegerCoordinate baseMipLevel;
     std::optional<WebCore::WebGPU::IntegerCoordinate> mipLevelCount;

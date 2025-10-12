@@ -32,16 +32,15 @@
 
 namespace WebCore {
 
-Ref<PerspectiveTransformOperation> PerspectiveTransformOperation::create(const std::optional<Length>& p)
+Ref<PerspectiveTransformOperation> PerspectiveTransformOperation::create(const std::optional<float>& p)
 {
     return adoptRef(*new PerspectiveTransformOperation(p));
 }
 
-PerspectiveTransformOperation::PerspectiveTransformOperation(const std::optional<Length>& p)
+PerspectiveTransformOperation::PerspectiveTransformOperation(const std::optional<float>& p)
     : TransformOperation(TransformOperation::Type::Perspective)
     , m_p(p)
 {
-    ASSERT(!p || (*p).isFixed());
 }
 
 bool PerspectiveTransformOperation::operator==(const TransformOperation& other) const
@@ -51,10 +50,10 @@ bool PerspectiveTransformOperation::operator==(const TransformOperation& other) 
     return m_p == downcast<PerspectiveTransformOperation>(other).m_p;
 }
 
-Ref<TransformOperation> PerspectiveTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
+Ref<TransformOperation> PerspectiveTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity) const
 {
     if (!sharedPrimitiveType(from))
-        return *this;
+        return const_cast<PerspectiveTransformOperation&>(*this);
 
     // https://drafts.csswg.org/css-transforms-2/#interpolation-of-transform-functions
     // says that we should run matrix decomposition and then run the rules for
@@ -75,10 +74,9 @@ Ref<TransformOperation> PerspectiveTransformOperation::blend(const TransformOper
     }
 
     double pInverse = WebCore::blend(fromPInverse, toPInverse, context);
-    std::optional<Length> p;
-    if (pInverse > 0.0 && std::isnormal(pInverse)) {
-        p = Length(1.0 / pInverse, LengthType::Fixed);
-    }
+    std::optional<float> p;
+    if (pInverse > 0.0 && std::isnormal(pInverse))
+        p = 1.0 / pInverse;
     return PerspectiveTransformOperation::create(p);
 }
 

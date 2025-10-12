@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CellContainer.h"
-#include "WeakBlock.h"
+#include <JavaScriptCore/CellContainer.h>
+#include <JavaScriptCore/WeakBlock.h>
 #include <wtf/SentinelLinkedList.h>
 
 namespace JSC {

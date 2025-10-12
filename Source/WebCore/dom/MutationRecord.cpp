@@ -79,7 +79,7 @@ private:
             visitNodeList(visitor, *m_removedNodes);
     }
     
-    Ref<ContainerNode> m_target;
+    const Ref<ContainerNode> m_target;
     RefPtr<NodeList> m_addedNodes;
     RefPtr<NodeList> m_removedNodes;
     RefPtr<Node> m_previousSibling;
@@ -112,7 +112,7 @@ private:
         addWebCoreOpaqueRoot(visitor, m_target.get());
     }
 
-    Ref<Node> m_target;
+    const Ref<Node> m_target;
     String m_oldValue;
     RefPtr<NodeList> m_addedNodes;
     RefPtr<NodeList> m_removedNodes;
@@ -171,7 +171,7 @@ private:
         m_record->visitNodesConcurrently(visitor);
     }
 
-    Ref<MutationRecord> m_record;
+    const Ref<MutationRecord> m_record;
 };
 
 const AtomString& ChildListRecord::type()

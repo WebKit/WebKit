@@ -72,7 +72,7 @@ void WebExtensionControllerProxy::globalObjectIsAvailableForFrame(WebPage& page,
     extension->addFrameWithExtensionContent(frame);
 
     if (!isMainWorld)
-        extension->setContentScriptWorld(&world);
+        extension->setContentScriptWorld(world);
 
     auto contentWorldType = isMainWorld ? WebExtensionContentWorldType::Main : WebExtensionContentWorldType::ContentScript;
 

@@ -11,12 +11,12 @@
 #ifndef VIDEO_ADAPTATION_ENCODE_USAGE_RESOURCE_H_
 #define VIDEO_ADAPTATION_ENCODE_USAGE_RESOURCE_H_
 
+#include <cstdint>
 #include <memory>
 #include <optional>
-#include <string>
 
 #include "api/scoped_refptr.h"
-#include "api/video/video_adaptation_reason.h"
+#include "rtc_base/thread_annotations.h"
 #include "video/adaptation/overuse_frame_detector.h"
 #include "video/adaptation/video_stream_encoder_resource.h"
 
@@ -30,7 +30,7 @@ namespace webrtc {
 class EncodeUsageResource : public VideoStreamEncoderResource,
                             public OveruseFrameDetectorObserverInterface {
  public:
-  static rtc::scoped_refptr<EncodeUsageResource> Create(
+  static scoped_refptr<EncodeUsageResource> Create(
       std::unique_ptr<OveruseFrameDetector> overuse_detector);
 
   explicit EncodeUsageResource(

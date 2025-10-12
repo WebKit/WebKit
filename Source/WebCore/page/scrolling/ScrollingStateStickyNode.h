@@ -27,8 +27,8 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "ScrollingConstraints.h"
-#include "ScrollingStateNode.h"
+#include <WebCore/ScrollingConstraints.h>
+#include <WebCore/ScrollingStateNode.h>
 
 #include <wtf/Forward.h>
 

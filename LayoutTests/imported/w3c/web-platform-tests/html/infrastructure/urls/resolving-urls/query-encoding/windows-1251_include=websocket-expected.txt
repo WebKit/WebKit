@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:49001/echo-query?%C3%A5' failed: WebSocket is closed before the connection is established.
 
 PASS WebSocket constructor
 PASS WebSocket#url

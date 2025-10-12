@@ -44,6 +44,7 @@
 #import <WebCore/Image.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/NodeDocument.h>
 #import <WebCore/PasteboardCustomData.h>
 #import <WebCore/RenderAttachment.h>
 #import <WebCore/RenderImage.h>
@@ -64,10 +65,10 @@ NSString *WebURLNamePboardType = @"public.url-name";
 {
     static NSArray *types = [[NSArray alloc] initWithObjects:
         WebURLsWithTitlesPboardType,
-        legacyURLPasteboardType(),
+        legacyURLPasteboardTypeSingleton(),
         WebURLPboardType,
         WebURLNamePboardType,
-        legacyStringPasteboardType(),
+        legacyStringPasteboardTypeSingleton(),
         nil];
     return types;
 }
@@ -75,7 +76,7 @@ NSString *WebURLNamePboardType = @"public.url-name";
 static NSArray *writableTypesForImageWithoutArchive()
 {
     static NeverDestroyed types = [] {
-        auto types = adoptNS([[NSMutableArray alloc] initWithObjects:legacyTIFFPasteboardType(), nil]);
+        auto types = adoptNS([[NSMutableArray alloc] initWithObjects:legacyTIFFPasteboardTypeSingleton(), nil]);
         [types addObjectsFromArray:[NSPasteboard _web_writableTypesForURL]];
         return types;
     }();
@@ -86,7 +87,7 @@ static NSArray *writableTypesForImageWithArchive()
 {
     static NeverDestroyed types = [] {
         auto types = adoptNS([writableTypesForImageWithoutArchive() mutableCopy]);
-        [types addObject:legacyRTFDPasteboardType()];
+        [types addObject:legacyRTFDPasteboardTypeSingleton()];
         [types addObject:WebArchivePboardType];
         return types;
     }();
@@ -102,12 +103,12 @@ static NSArray *writableTypesForImageWithArchive()
 {
     return @[
         WebURLsWithTitlesPboardType,
-        legacyURLPasteboardType(),
+        legacyURLPasteboardTypeSingleton(),
         WebURLPboardType,
         WebURLNamePboardType,
-        legacyStringPasteboardType(),
-        legacyFilenamesPasteboardType(),
-        legacyFilesPromisePasteboardType(),
+        legacyStringPasteboardTypeSingleton(),
+        legacyFilenamesPasteboardTypeSingleton(),
+        legacyFilesPromisePasteboardTypeSingleton(),
     ];
 }
 
@@ -115,7 +116,7 @@ static NSArray *writableTypesForImageWithArchive()
 {
     NSArray *types = [self types];
 
-    if ([types containsObject:legacyURLPasteboardType()]) {
+    if ([types containsObject:legacyURLPasteboardTypeSingleton()]) {
         NSURL *URLFromPasteboard = [NSURL URLFromPasteboard:self];
         NSString *scheme = [URLFromPasteboard scheme];
         if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
@@ -123,8 +124,8 @@ static NSArray *writableTypesForImageWithArchive()
         }
     }
 
-    if ([types containsObject:legacyStringPasteboardType()]) {
-        NSString *URLString = [self stringForType:legacyStringPasteboardType()];
+    if ([types containsObject:legacyStringPasteboardTypeSingleton()]) {
+        NSString *URLString = [self stringForType:legacyStringPasteboardTypeSingleton()];
         if ([URLString _webkit_looksLikeAbsoluteURL]) {
             NSURL *URL = [[NSURL _webkit_URLWithUserTypedString:URLString] _webkit_canonicalize];
             if (URL) {
@@ -133,8 +134,8 @@ static NSArray *writableTypesForImageWithArchive()
         }
     }
 
-    if ([types containsObject:legacyFilenamesPasteboardType()]) {
-        NSArray *files = [self propertyListForType:legacyFilenamesPasteboardType()];
+    if ([types containsObject:legacyFilenamesPasteboardTypeSingleton()]) {
+        NSArray *files = [self propertyListForType:legacyFilenamesPasteboardTypeSingleton()];
         // FIXME: Maybe it makes more sense to allow multiple files and only use the first one?
         if ([files count] == 1) {
             NSString *file = [files objectAtIndex:0];
@@ -162,14 +163,14 @@ static NSArray *writableTypesForImageWithArchive()
             title = [URL _web_userVisibleString];
     }
     
-    if ([types containsObject:legacyURLPasteboardType()])
+    if ([types containsObject:legacyURLPasteboardTypeSingleton()])
         [URL writeToPasteboard:self];
     if ([types containsObject:WebURLPboardType])
         [self setString:[URL _web_originalDataAsString] forType:WebURLPboardType];
     if ([types containsObject:WebURLNamePboardType])
         [self setString:title forType:WebURLNamePboardType];
-    if ([types containsObject:legacyStringPasteboardType()])
-        [self setString:[URL _web_userVisibleString] forType:legacyStringPasteboardType()];
+    if ([types containsObject:legacyStringPasteboardTypeSingleton()])
+        [self setString:[URL _web_userVisibleString] forType:legacyStringPasteboardTypeSingleton()];
     if ([types containsObject:WebURLsWithTitlesPboardType])
         [WebURLsWithTitles writeURLs:@[URL] andTitles:@[title] toPasteboard:self];
 }
@@ -177,8 +178,8 @@ static NSArray *writableTypesForImageWithArchive()
 + (int)_web_setFindPasteboardString:(NSString *)string withOwner:(id)owner
 {
     NSPasteboard *findPasteboard = [NSPasteboard pasteboardWithName:NSPasteboardNameFind];
-    [findPasteboard declareTypes:@[legacyStringPasteboardType()] owner:owner];
-    [findPasteboard setString:string forType:legacyStringPasteboardType()];
+    [findPasteboard declareTypes:@[legacyStringPasteboardTypeSingleton()] owner:owner];
+    [findPasteboard setString:string forType:legacyStringPasteboardTypeSingleton()];
     return [findPasteboard changeCount];
 }
 
@@ -188,7 +189,7 @@ static NSArray *writableTypesForImageWithArchive()
     NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:attachment.get()];
     
     NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }];
-    [self setData:RTFDData forType:legacyRTFDPasteboardType()];
+    [self setData:RTFDData forType:legacyRTFDPasteboardTypeSingleton()];
 }
 
 
@@ -240,13 +241,13 @@ static CachedImage* imageFromElement(DOMElement *domElement)
 
     [self _web_writeURL:URL andTitle:title types:types];
     
-    if ([types containsObject:legacyTIFFPasteboardType()]) {
+    if ([types containsObject:legacyTIFFPasteboardTypeSingleton()]) {
         if (image)
-            [self setData:[image TIFFRepresentation] forType:legacyTIFFPasteboardType()];
+            [self setData:[image TIFFRepresentation] forType:legacyTIFFPasteboardTypeSingleton()];
         else if (source && element)
             [source setPromisedDragTIFFDataSource:imageFromElement(element)];
         else if (element)
-            [self setData:[element _imageTIFFRepresentation] forType:legacyTIFFPasteboardType()];
+            [self setData:[element _imageTIFFRepresentation] forType:legacyTIFFPasteboardTypeSingleton()];
     }
     
     if (archive) {
@@ -256,7 +257,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
     }
 
     // We should not have declared types that we aren't going to write (4031826).
-    ASSERT(![types containsObject:legacyRTFDPasteboardType()]);
+    ASSERT(![types containsObject:legacyRTFDPasteboardTypeSingleton()]);
     ASSERT(![types containsObject:WebArchivePboardType]);
 }
 
@@ -269,7 +270,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
     ASSERT(self == [NSPasteboard pasteboardWithName:NSPasteboardNameDrag]);
 
     RetainPtr<NSString> extension = @"";
-    RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:legacyFilesPromisePasteboardType(), nil]);
+    RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:legacyFilesPromisePasteboardTypeSingleton(), nil]);
     RetainPtr originIdentifier = core(element)->document().originIdentifierForPasteboard().createNSString();
     RetainPtr<NSData> customDataBuffer;
     if (originIdentifier.get().length) {
@@ -295,7 +296,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
             extension = URL.pathExtension;
             [types addObjectsFromArray:[NSPasteboard _web_dragTypesForURL]];
             [self declareTypes:types.get() owner:source];
-            [self setPropertyList:@[title] forType:legacyFilenamesPasteboardType()];
+            [self setPropertyList:@[title] forType:legacyFilenamesPasteboardTypeSingleton()];
         }
 #endif
     }
@@ -304,7 +305,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
     if (customDataBuffer)
         [self setData:customDataBuffer.get() forType:@(PasteboardCustomData::cocoaType().characters())];
 
-    [self setPropertyList:@[extension.get()] forType:legacyFilesPromisePasteboardType()];
+    [self setPropertyList:@[extension.get()] forType:legacyFilesPromisePasteboardTypeSingleton()];
 
     return source;
 }

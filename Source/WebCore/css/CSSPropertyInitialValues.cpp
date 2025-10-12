@@ -31,6 +31,7 @@
 #include "CSSOffsetRotateValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
+#include "CSSQuadValue.h"
 #include "CSSUnits.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePair.h"
@@ -473,10 +474,10 @@ static bool isNumber(const CSSValue& value, double number, CSSUnitType type)
 
 static bool isNumber(const RectBase& quad, double number, CSSUnitType type)
 {
-    return isNumber(quad.protectedTop(), number, type)
-        && isNumber(quad.protectedRight(), number, type)
-        && isNumber(quad.protectedBottom(), number, type)
-        && isNumber(quad.protectedLeft(), number, type);
+    return isNumber(quad.top(), number, type)
+        && isNumber(quad.right(), number, type)
+        && isNumber(quad.bottom(), number, type)
+        && isNumber(quad.left(), number, type);
 }
 
 static bool isValueID(const RectBase& quad, CSSValueID valueID)

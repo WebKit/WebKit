@@ -19,7 +19,9 @@ extern "C" {
 #endif
 
 // This module is for GCC x86 and x64.
-#if !defined(LIBYUV_DISABLE_X86) && (defined(__x86_64__) || defined(__i386__))
+#if !defined(LIBYUV_DISABLE_X86) &&               \
+    (defined(__x86_64__) || defined(__i386__)) && \
+    !defined(LIBYUV_ENABLE_ROWWIN)
 
 // "memory" clobber prevents the reads from being removed
 
@@ -29,7 +31,7 @@ uint32_t HammingDistance_SSE42(const uint8_t* src_a,
                                int count) {
   uint64_t diff;
 
-      asm volatile (
+  asm volatile(
       "xor         %3,%3                         \n"
       "xor         %%r8,%%r8                     \n"
       "xor         %%r9,%%r9                     \n"
@@ -37,7 +39,7 @@ uint32_t HammingDistance_SSE42(const uint8_t* src_a,
 
       // Process 32 bytes per loop.
       LABELALIGN
-      "1:                                        \n"
+      "1:          \n"
       "mov         (%0),%%rcx                    \n"
       "mov         0x8(%0),%%rdx                 \n"
       "xor         (%1),%%rcx                    \n"
@@ -77,10 +79,10 @@ uint32_t HammingDistance_SSE42(const uint8_t* src_a,
                                int count) {
   uint32_t diff = 0u;
 
-  asm volatile (
+  asm volatile(
       // Process 16 bytes per loop.
       LABELALIGN
-      "1:                                        \n"
+      "1:          \n"
       "mov         (%0),%%ecx                    \n"
       "mov         0x4(%0),%%edx                 \n"
       "xor         (%1),%%ecx                    \n"
@@ -121,7 +123,7 @@ uint32_t HammingDistance_SSSE3(const uint8_t* src_a,
                                int count) {
   uint32_t diff;
 
-  asm volatile (
+  asm volatile(
       "movdqa      %4,%%xmm2                     \n"
       "movdqa      %5,%%xmm3                     \n"
       "pxor        %%xmm0,%%xmm0                 \n"
@@ -129,7 +131,7 @@ uint32_t HammingDistance_SSSE3(const uint8_t* src_a,
       "sub         %0,%1                         \n"
 
       LABELALIGN
-      "1:                                        \n"
+      "1:          \n"
       "movdqa      (%0),%%xmm4                   \n"
       "movdqa      0x10(%0), %%xmm5              \n"
       "pxor        (%0,%1), %%xmm4               \n"
@@ -180,7 +182,7 @@ uint32_t HammingDistance_AVX2(const uint8_t* src_a,
                               int count) {
   uint32_t diff;
 
-      asm volatile (
+  asm volatile(
       "vbroadcastf128 %4,%%ymm2                  \n"
       "vbroadcastf128 %5,%%ymm3                  \n"
       "vpxor       %%ymm0,%%ymm0,%%ymm0          \n"
@@ -188,7 +190,7 @@ uint32_t HammingDistance_AVX2(const uint8_t* src_a,
       "sub         %0,%1                         \n"
 
       LABELALIGN
-      "1:                                        \n"
+      "1:          \n"
       "vmovdqa     (%0),%%ymm4                   \n"
       "vmovdqa     0x20(%0), %%ymm5              \n"
       "vpxor       (%0,%1), %%ymm4, %%ymm4       \n"
@@ -217,7 +219,7 @@ uint32_t HammingDistance_AVX2(const uint8_t* src_a,
       "vpermq      $0xaa,%%ymm0,%%ymm1           \n"
       "vpaddd      %%ymm1,%%ymm0,%%ymm0          \n"
       "vmovd       %%xmm0,%3                     \n"
-      "vzeroupper                                \n"
+      "vzeroupper  \n"
       : "+r"(src_a),       // %0
         "+r"(src_b),       // %1
         "+r"(count),       // %2
@@ -234,12 +236,12 @@ uint32_t SumSquareError_SSE2(const uint8_t* src_a,
                              const uint8_t* src_b,
                              int count) {
   uint32_t sse;
-      asm volatile (
+  asm volatile(
       "pxor        %%xmm0,%%xmm0                 \n"
       "pxor        %%xmm5,%%xmm5                 \n"
 
       LABELALIGN
-      "1:                                        \n"
+      "1:          \n"
       "movdqu      (%0),%%xmm1                   \n"
       "lea         0x10(%0),%0                   \n"
       "movdqu      (%1),%%xmm2                   \n"
@@ -300,13 +302,13 @@ static const uvec32 kHashMul3 = {
 
 uint32_t HashDjb2_SSE41(const uint8_t* src, int count, uint32_t seed) {
   uint32_t hash;
-      asm volatile (
+  asm volatile(
       "movd        %2,%%xmm0                     \n"
       "pxor        %%xmm7,%%xmm7                 \n"
       "movdqa      %4,%%xmm6                     \n"
 
       LABELALIGN
-      "1:                                        \n"
+      "1:          \n"
       "movdqu      (%0),%%xmm1                   \n"
       "lea         0x10(%0),%0                   \n"
       "pmulld      %%xmm6,%%xmm0                 \n"

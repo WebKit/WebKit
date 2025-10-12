@@ -10,10 +10,11 @@
 
 #include "modules/desktop_capture/win/test_support/test_window.h"
 
+#include <cstring>
+
 namespace webrtc {
 namespace {
 
-const WCHAR kWindowClass[] = L"DesktopCaptureTestWindowClass";
 const int kWindowHeight = 200;
 const int kWindowWidth = 300;
 
@@ -42,7 +43,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd,
 WindowInfo CreateTestWindow(const WCHAR* window_title,
                             const int height,
                             const int width,
-                            const LONG extended_styles) {
+                            const LONG extended_styles,
+                            const WCHAR* window_class) {
   WindowInfo info;
   ::GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
                            GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
@@ -55,19 +57,20 @@ WindowInfo CreateTestWindow(const WCHAR* window_title,
   wcex.style = CS_HREDRAW | CS_VREDRAW;
   wcex.hInstance = info.window_instance;
   wcex.lpfnWndProc = &WindowProc;
-  wcex.lpszClassName = kWindowClass;
+  wcex.lpszClassName = window_class;
   info.window_class = ::RegisterClassExW(&wcex);
 
   // Use the default height and width if the caller did not supply the optional
   // height and width parameters, or if they supplied invalid values.
   int window_height = height <= 0 ? kWindowHeight : height;
   int window_width = width <= 0 ? kWindowWidth : width;
-  info.hwnd =
-      ::CreateWindowExW(extended_styles, kWindowClass, window_title,
-                        WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-                        window_width, window_height, /*parent_window=*/nullptr,
-                        /*menu_bar=*/nullptr, info.window_instance,
-                        /*additional_params=*/nullptr);
+  info.hwnd = ::CreateWindowExW(
+      extended_styles, window_class, window_title,
+      (window_class == kWindowClass) ? WS_OVERLAPPEDWINDOW : WS_OVERLAPPED,
+      CW_USEDEFAULT, CW_USEDEFAULT, window_width, window_height,
+      /*parent_window=*/nullptr,
+      /*menu_bar=*/nullptr, info.window_instance,
+      /*additional_params=*/nullptr);
 
   ::ShowWindow(info.hwnd, SW_SHOWNORMAL);
   ::UpdateWindow(info.hwnd);
@@ -78,6 +81,23 @@ void ResizeTestWindow(const HWND hwnd, const int width, const int height) {
   // SWP_NOMOVE results in the x and y params being ignored.
   ::SetWindowPos(hwnd, HWND_TOP, /*x-coord=*/0, /*y-coord=*/0, width, height,
                  SWP_SHOWWINDOW | SWP_NOMOVE);
+  ::UpdateWindow(hwnd);
+}
+
+void ResizeTestWindowToFullScreen(const HWND hwnd) {
+  ::SetWindowLongPtr(hwnd, GWL_STYLE, WS_VISIBLE);
+
+  MONITORINFO monitor_info = {sizeof(monitor_info)};
+  if (!::GetMonitorInfo(::MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST),
+                        &monitor_info)) {
+    return;
+  }
+
+  ::SetWindowPos(
+      hwnd, HWND_TOP, monitor_info.rcMonitor.left, monitor_info.rcMonitor.top,
+      /*width=*/monitor_info.rcMonitor.right - monitor_info.rcMonitor.left,
+      /*height=*/monitor_info.rcMonitor.bottom - monitor_info.rcMonitor.top,
+      SWP_SHOWWINDOW);
   ::UpdateWindow(hwnd);
 }
 

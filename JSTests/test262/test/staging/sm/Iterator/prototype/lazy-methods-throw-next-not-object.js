@@ -9,9 +9,6 @@ info: |
   Iterator Helpers proposal 2.1.5
 features:
   - iterator-helpers
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 ---*/
 
 //
@@ -40,7 +37,7 @@ for (const method of methods) {
   for (const value of [undefined, null, 0, false, '', Symbol('')]) {
     const iterator = new TestIterator();
     assert.sameValue(iterator.closed, false);
-    assertThrowsInstanceOf(() => method(iterator).next(value), TypeError);
+    assert.throws(TypeError, () => method(iterator).next(value));
     assert.sameValue(iterator.closed, false);
   }
 }

@@ -1,0 +1,3 @@
+
+PASS speculation rules based prefetch should use cookies for same origin urls.
+

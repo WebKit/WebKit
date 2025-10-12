@@ -60,17 +60,12 @@ Ref<DigitalCredentialsCoordinator> DigitalCredentialsCoordinator::create(WebPage
     return adoptRef(*new DigitalCredentialsCoordinator(webPage));
 }
 
-RefPtr<WebPage> DigitalCredentialsCoordinator::protectedPage() const
-{
-    return m_page.get();
-}
-
 void DigitalCredentialsCoordinator::showDigitalCredentialsPicker(Vector<UnvalidatedDigitalCredentialRequest>&& rawRequests, const WebCore::DigitalCredentialsRequestData& request, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     ASSERT(m_rawRequests.isEmpty());
     m_rawRequests = WTFMove(rawRequests);
 
-    if (RefPtr page = protectedPage()) {
+    if (RefPtr page = m_page.get()) {
         page->showDigitalCredentialsPicker(request, [this, completionHandler = WTFMove(completionHandler)](Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&& responseOrException) mutable {
             m_rawRequests.clear();
             completionHandler(WTFMove(responseOrException));
@@ -90,7 +85,7 @@ ExceptionOr<Vector<WebCore::ValidatedDigitalCredentialRequest>> DigitalCredentia
 void DigitalCredentialsCoordinator::dismissDigitalCredentialsPicker(CompletionHandler<void(bool)>&& completionHandler)
 {
     m_rawRequests.clear();
-    if (RefPtr page = protectedPage())
+    if (RefPtr page = m_page.get())
         page->dismissDigitalCredentialsPicker(WTFMove(completionHandler));
     else
         completionHandler(false);

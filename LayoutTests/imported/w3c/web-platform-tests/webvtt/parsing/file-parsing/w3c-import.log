@@ -15,5 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/README.md
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/categories.json
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/signature-invalid.html

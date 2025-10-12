@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,7 +35,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FEDropShadowSoftwareApplier);
 
 bool FEDropShadowSoftwareApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
-    Ref input = inputs[0];
+    auto& input = inputs[0].get();
 
     RefPtr resultImage = result.imageBuffer();
     if (!resultImage)
@@ -47,11 +47,11 @@ bool FEDropShadowSoftwareApplier::apply(const Filter& filter, std::span<const Re
     auto offset = filter.resolvedSize({ m_effect->dx(), m_effect->dy() });
     auto absoluteOffset = filter.scaledByFilterScale(offset);
 
-    FloatRect inputImageRect = input->absoluteImageRectRelativeTo(result);
+    FloatRect inputImageRect = input.absoluteImageRectRelativeTo(result);
     FloatRect inputImageRectWithOffset(inputImageRect);
     inputImageRectWithOffset.move(absoluteOffset);
 
-    RefPtr inputImage = input->imageBuffer();
+    RefPtr inputImage = input.imageBuffer();
     if (!inputImage)
         return false;
 

@@ -163,7 +163,7 @@ public:
     ComposedTreeIterator<ContextInlineCapacity> at(const Node& child) { return ComposedTreeIterator(m_parent, const_cast<Node&>(child)); }
 
 private:
-    CheckedRef<ContainerNode> m_parent;
+    const CheckedRef<ContainerNode> m_parent;
 };
 
 template <size_t ContextInlineCapacity = defaultInlineCapacity>
@@ -192,7 +192,7 @@ public:
     Iterator at(const Node& child) { return Iterator(m_parent, const_cast<Node&>(child)); }
 
 private:
-    CheckedRef<ContainerNode> m_parent;
+    const CheckedRef<ContainerNode> m_parent;
 };
 
 // FIXME: We should have const versions too.

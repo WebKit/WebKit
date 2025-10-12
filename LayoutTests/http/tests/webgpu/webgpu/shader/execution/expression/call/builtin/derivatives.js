@@ -187,6 +187,7 @@ fn frag(info : CaseInfo) -> @location(0) vec4u {
           const tx = i % 2;
           const ty = i / 2 | 0;
           const [inputNdx, caseNdx] = dir === 'x' ? [tx, ty] : [ty, tx];
+          const caseNdxAlt = 1 - caseNdx;
           const c = cases[quadNdx * 2 + caseNdx];
 
           // Both invocations involved in the derivative should get the same result.
@@ -201,7 +202,7 @@ fn frag(info : CaseInfo) -> @location(0) vec4u {
             // If this is a coarse derivative, the implementation is also allowed to calculate only
             // one of the two derivatives and return that result to all of the invocations.
             if (!builtin.endsWith('Fine')) {
-              const c0 = cases[inputNdx];
+              const c0 = cases[quadNdx * 2 + caseNdxAlt];
               const cmp0 = toComparator(c0.expected).compare(result);
               if (!cmp0.matched) {
                 return new Error(`

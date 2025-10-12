@@ -75,7 +75,7 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&&
 MockRealtimeAudioSource::MockRealtimeAudioSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
     : RealtimeMediaSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Microphone, WTFMove(name) }, WTFMove(hashSalts), pageIdentifier)
     , m_workQueue(WorkQueue::create("MockRealtimeAudioSource Render Queue"_s))
-    , m_timer(RunLoop::currentSingleton(), this, &MockRealtimeAudioSource::tick)
+    , m_timer(RunLoop::currentSingleton(), "MockRealtimeAudioSource::Timer"_s, this, &MockRealtimeAudioSource::tick)
 {
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(persistentID());
     ASSERT(device);
@@ -147,12 +147,6 @@ void MockRealtimeAudioSource::settingsDidChange(OptionSet<RealtimeMediaSourceSet
 
 void MockRealtimeAudioSource::startProducingData()
 {
-#if PLATFORM(IOS_FAMILY)
-    PlatformMediaSessionManager::singleton().sessionCanProduceAudioChanged();
-    ASSERT(AudioSession::sharedSession().category() == AudioSession::CategoryType::PlayAndRecord);
-    ASSERT(AudioSession::sharedSession().mode() == AudioSession::Mode::VideoChat);
-#endif
-
     if (!sampleRate())
         setSampleRate(std::get<MockMicrophoneProperties>(m_device.properties).defaultSampleRate);
 

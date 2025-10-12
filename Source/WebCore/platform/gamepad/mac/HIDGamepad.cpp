@@ -88,7 +88,7 @@ void HIDGamepad::initialize()
 
 HIDInputType HIDGamepad::valueChanged(IOHIDValueRef value)
 {
-    IOHIDElementCookie cookie = IOHIDElementGetCookie(IOHIDValueGetElement(value));
+    IOHIDElementCookie cookie = IOHIDElementGetCookie(RetainPtr { IOHIDValueGetElement(value) }.get());
     HIDGamepadElement* element = m_elementMap.get(cookie);
 
     // This might be an element we don't currently handle as input so we can skip it.

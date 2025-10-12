@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSDestructibleObject.h"
-#include "StackFrame.h"
+#include <JavaScriptCore/JSDestructibleObject.h>
+#include <JavaScriptCore/StackFrame.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -67,6 +67,7 @@ public:
     void setDidNotifyInspectorOfThrow() { m_didNotifyInspectorOfThrow = true; }
 
 #if ENABLE(WEBASSEMBLY)
+    void tryUnwrapValueForJSTag(VM&);
     void wrapValueForJSTag(JSGlobalObject*);
 #endif
 

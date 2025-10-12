@@ -83,7 +83,7 @@ static Expected<Vector<String>, std::error_code> getDomainList(const JSON::Array
             domain = domain.substring(1);
         }
 
-        std::array<std::pair<UChar, ASCIILiteral>, 9> escapeTable { {
+        std::array<std::pair<char16_t, ASCIILiteral>, 9> escapeTable { {
             { '\\', "\\\\"_s },
             { '{', "\\{"_s },
             { '}', "\\}"_s },
@@ -232,7 +232,7 @@ WebCore::CSSParserContext contentExtensionCSSParserContext()
     return context;
 }
 
-static std::optional<Expected<Action, std::error_code>> loadAction(const JSON::Object& ruleObject, const String& urlFilter)
+static std::optional<Expected<Action, std::error_code>> loadAction(const JSON::Object& ruleObject, const String& urlFilter, CSSSelectorsAllowed selectorsAllowed)
 {
     auto actionObject = ruleObject.getObject("action"_s);
     if (!actionObject)
@@ -244,9 +244,17 @@ static std::optional<Expected<Action, std::error_code>> loadAction(const JSON::O
         return Action { BlockLoadAction() };
     if (actionType == "ignore-previous-rules"_s)
         return Action { IgnorePreviousRulesAction() };
+    if (actionType == "ignore-following-rules"_s)
+        return Action { IgnoreFollowingRulesAction() };
     if (actionType == "block-cookies"_s)
         return Action { BlockCookiesAction() };
     if (actionType == "css-display-none"_s) {
+        ASSERT(selectorsAllowed == CSSSelectorsAllowed::Yes);
+        if (selectorsAllowed == CSSSelectorsAllowed::No) {
+            // Skip css-display-none rules if CSS selectors aren't allowed.
+            return std::nullopt;
+        }
+
         String selectorString = actionObject->getString("selector"_s);
         if (!selectorString)
             return makeUnexpected(ContentExtensionError::JSONInvalidCSSDisplayNoneActionType);
@@ -277,13 +285,13 @@ static std::optional<Expected<Action, std::error_code>> loadAction(const JSON::O
     return makeUnexpected(ContentExtensionError::JSONInvalidActionType);
 }
 
-static std::optional<Expected<ContentExtensionRule, std::error_code>> loadRule(const JSON::Object& ruleObject)
+static std::optional<Expected<ContentExtensionRule, std::error_code>> loadRule(const JSON::Object& ruleObject, CSSSelectorsAllowed selectorsAllowed)
 {
     auto trigger = loadTrigger(ruleObject);
     if (!trigger.has_value())
         return makeUnexpected(trigger.error());
 
-    auto action = loadAction(ruleObject, trigger->urlFilter);
+    auto action = loadAction(ruleObject, trigger->urlFilter, selectorsAllowed);
     if (!action)
         return std::nullopt;
     if (!action->has_value())
@@ -292,7 +300,26 @@ static std::optional<Expected<ContentExtensionRule, std::error_code>> loadRule(c
     return { { { WTFMove(trigger.value()), WTFMove(action->value()) } } };
 }
 
-static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(const String& ruleJSON)
+static std::optional<Expected<ContentExtensionRule, std::error_code>> loadRuleIdentifier(const JSON::Object& ruleObject)
+{
+    auto identifierValue = ruleObject.getValue("_identifier"_s);
+    if (!identifierValue || !identifierValue->asValue())
+        return std::nullopt;
+
+    auto identifier = identifierValue->asValue()->asDouble();
+    if (!identifier.has_value())
+        return makeUnexpected(ContentExtensionError::JSONInvalidRuleIdentifier);
+
+    auto rulesetIdentifier = ruleObject.getString("_rulesetIdentifier"_s);
+
+    auto trigger = loadTrigger(ruleObject);
+    if (!trigger.has_value())
+        return makeUnexpected(trigger.error());
+
+    return { { { WTFMove(trigger.value()), Action { ReportIdentifierAction { rulesetIdentifier, identifier.value() } } } } };
+}
+
+static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(const String& ruleJSON, CSSSelectorsAllowed selectorsAllowed)
 {
     auto decodedRules = JSON::Value::parseJSON(ruleJSON);
 
@@ -304,7 +331,6 @@ static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(
         return makeUnexpected(ContentExtensionError::JSONTopLevelStructureNotAnArray);
 
     Vector<ContentExtensionRule> ruleList;
-
     constexpr size_t maxRuleCount = 150000;
     if (topLevelArray->length() > maxRuleCount)
         return makeUnexpected(ContentExtensionError::JSONTooManyRules);
@@ -314,24 +340,31 @@ static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(
         if (!ruleObject)
             return makeUnexpected(ContentExtensionError::JSONInvalidRule);
 
-        auto rule = loadRule(*ruleObject);
+        auto rule = loadRule(*ruleObject, selectorsAllowed);
         if (!rule)
             continue;
         if (!rule->has_value())
             return makeUnexpected(rule->error());
         ruleList.append(WTFMove(rule->value()));
+
+        auto ruleIdentifier = loadRuleIdentifier(*ruleObject);
+        if (!ruleIdentifier)
+            continue;
+        if (!ruleIdentifier->has_value())
+            return makeUnexpected(ruleIdentifier->error());
+        ruleList.append(WTFMove(ruleIdentifier->value()));
     }
 
     return ruleList;
 }
 
-Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const String& ruleJSON)
+Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const String& ruleJSON, CSSSelectorsAllowed selectorsAllowed)
 {
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime loadExtensionStartTime = MonotonicTime::now();
 #endif
 
-    auto ruleList = loadEncodedRules(ruleJSON);
+    auto ruleList = loadEncodedRules(ruleJSON, selectorsAllowed);
 
     if (!ruleList.has_value())
         return makeUnexpected(ruleList.error());

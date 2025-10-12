@@ -31,7 +31,7 @@
 #include "WebImage.h"
 #include "WebLocalFrameLoaderClient.h"
 #include <WebCore/BitmapImage.h>
-#include <WebCore/Document.h>
+#include <WebCore/DocumentView.h>
 #include <WebCore/Element.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
@@ -39,7 +39,7 @@
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
-#include <WebCore/NodeInlines.h>
+#include <WebCore/NodeDocument.h>
 #include <wtf/URL.h>
 
 namespace WebKit {
@@ -62,11 +62,11 @@ RefPtr<InjectedBundleNodeHandle> InjectedBundleHitTestResult::urlElementHandle()
 
 RefPtr<WebFrame> InjectedBundleHitTestResult::frame() const
 {
-    auto* node = m_hitTestResult.innerNonSharedNode();
+    RefPtr node = m_hitTestResult.innerNonSharedNode();
     if (!node)
         return nullptr;
 
-    auto* frame = node->document().frame();
+    RefPtr frame = node->document().frame();
     if (!frame)
         return nullptr;
 
@@ -75,11 +75,8 @@ RefPtr<WebFrame> InjectedBundleHitTestResult::frame() const
 
 RefPtr<WebFrame> InjectedBundleHitTestResult::targetFrame() const
 {
-    auto* frame = m_hitTestResult.targetFrame();
-    if (!frame)
-        return nullptr;
-
-    return WebFrame::fromCoreFrame(*frame);
+    RefPtr frame = m_hitTestResult.targetFrame();
+    return frame ? WebFrame::fromCoreFrame(*frame) : nullptr;
 }
 
 String InjectedBundleHitTestResult::absoluteImageURL() const
@@ -155,7 +152,7 @@ IntRect InjectedBundleHitTestResult::imageRect() const
     if (!webFrame)
         return imageRect;
     
-    auto* coreFrame = webFrame->coreLocalFrame();
+    RefPtr coreFrame = webFrame->coreLocalFrame();
     if (!coreFrame)
         return imageRect;
     
@@ -169,12 +166,12 @@ IntRect InjectedBundleHitTestResult::imageRect() const
 RefPtr<WebImage> InjectedBundleHitTestResult::image() const
 {
     // For now, we only handle bitmap images.
-    auto* bitmapImage = dynamicDowncast<BitmapImage>(m_hitTestResult.image());
+    RefPtr bitmapImage = dynamicDowncast<BitmapImage>(m_hitTestResult.image());
     if (!bitmapImage)
         return nullptr;
 
     IntSize size(bitmapImage->size());
-    auto webImage = WebImage::create(size, { }, DestinationColorSpace::SRGB());
+    RefPtr webImage = WebImage::create(size, { }, DestinationColorSpace::SRGB());
     if (!webImage->context())
         return nullptr;
 

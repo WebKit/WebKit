@@ -29,10 +29,10 @@
 
 #pragma once
 
-#include "RenderHighlight.h"
-#include "RenderSelectionGeometry.h"
+#include <WebCore/RenderHighlight.h>
+#include <WebCore/RenderSelectionGeometry.h>
 #if ENABLE(SERVICE_CONTROLS)
-#include "SelectionGeometryGatherer.h"
+#include <WebCore/SelectionGeometryGatherer.h>
 #endif
 
 namespace WebCore {

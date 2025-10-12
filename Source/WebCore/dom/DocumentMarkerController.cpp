@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
@@ -30,13 +30,16 @@
 #include "BoundaryPointInlines.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DocumentInlines.h"
+#include "DocumentMarkers.h"
+#include "DocumentView.h"
+#include "FloatQuad.h"
 #include "FontCascade.h"
 #include "LocalFrame.h"
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderBlockFlow.h"
 #include "RenderLayer.h"
+#include "RenderObjectInlines.h"
 #include "RenderReplaced.h"
 #include "RenderText.h"
 #include "RenderedDocumentMarker.h"
@@ -114,8 +117,8 @@ void DocumentMarkerController::addTransparentContentMarker(const SimpleRange& ra
         //
         // Otherwise, this information would be lost if the original range is collapsed, so this prevents that from happening.
 
-        DocumentMarker::TransparentContentData markerData { { range.protectedStartContainer().ptr() }, uuid };
-        Ref node = range.protectedStartContainer();
+        Ref node = range.startContainer();
+        DocumentMarker::TransparentContentData markerData { { node.ptr() }, uuid };
         addMarker(node.get(), { DocumentMarkerType::TransparentContent, { range.startOffset(), range.endOffset() }, WTFMove(markerData) });
 
         return;
@@ -543,7 +546,7 @@ void DocumentMarkerController::applyToCollapsedRangeMarker(const SimpleRange& ra
     if (!range.collapsed())
         return;
 
-    Ref node = range.protectedStartContainer();
+    Ref node = range.startContainer();
     if (auto list = m_markers.get(node.ptr())) {
         auto offsetRange = characterDataOffsetRange(range, node.get());
         for (auto& marker : *list) {

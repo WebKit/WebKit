@@ -31,8 +31,8 @@
 
 #pragma once
 
-#include "AsyncStackTrace.h"
-#include "ScriptCallFrame.h"
+#include <JavaScriptCore/AsyncStackTrace.h>
+#include <JavaScriptCore/ScriptCallFrame.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>

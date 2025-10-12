@@ -43,7 +43,7 @@ class RemoteInspectorClient;
 class RemoteInspectorProxy;
 
 class RemoteInspectorObserver : public CanMakeCheckedPtr<RemoteInspectorObserver> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RemoteInspectorObserver);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteInspectorObserver);
 public:
     virtual ~RemoteInspectorObserver() { }
@@ -93,7 +93,7 @@ private:
     void sendWebInspectorEvent(const String&);
 
     String m_backendCommandsURL;
-    CheckedRef<RemoteInspectorObserver> m_observer;
+    const CheckedRef<RemoteInspectorObserver> m_observer;
     std::optional<ConnectionID> m_connectionID;
     HashMap<ConnectionID, Vector<Target>> m_targets;
     HashMap<std::pair<ConnectionID, TargetID>, std::unique_ptr<RemoteInspectorProxy>> m_inspectorProxyMap;

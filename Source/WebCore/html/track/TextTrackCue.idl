@@ -29,7 +29,6 @@
 [
     Conditional=VIDEO,
     CustomIsReachable,
-    CustomToJSObject,
     JSCustomMarkFunction,
     SkipVTableValidation,
     LegacyFactoryFunctionEnabledBySetting=GenericCueAPIEnabled,

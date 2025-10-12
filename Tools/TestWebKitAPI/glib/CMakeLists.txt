@@ -1,6 +1,7 @@
 set(WebKitGLibAPITests_SOURCES
     ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/LoadTrackingTest.cpp
     ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/TestMain.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/WebExtensionUtilities.cpp
     ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp
     ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp
 )
@@ -31,11 +32,8 @@ if (USE_LIBWEBRTC)
 endif ()
 
 set(WebKitGLibAPITests_SYSTEM_INCLUDE_DIRECTORIES
-    ${GIO_UNIX_INCLUDE_DIRS}
-    ${GLIB_INCLUDE_DIRS}
     ${GSTREAMER_AUDIO_INCLUDE_DIRS}
     ${GSTREAMER_INCLUDE_DIRS}
-    ${LIBSOUP_INCLUDE_DIRS}
 )
 
 set(WebKitAPITest_LIBRARIES
@@ -47,14 +45,12 @@ set(WebKitGLibAPITestsCore_LIBRARIES
 )
 
 set(WebKitGLibAPITest_LIBRARIES
-    ${GLIB_LIBRARIES}
-    ${LIBSOUP_LIBRARIES}
     ${WebKitAPITest_LIBRARIES}
+    Soup3::Soup3
     WebKitGLibAPITestsCore
 )
 
 set(WebKitGLibAPITestExtension_LIBRARIES
-    ${GLIB_LIBRARIES}
     WebKit::WebKit
 )
 
@@ -111,7 +107,7 @@ set(WebKitGLibAPITests_DEFINITIONS
     WEBKIT_INJECTED_BUNDLE_PATH="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
     WEBKIT_INSPECTOR_RESOURCES_PATH="${CMAKE_BINARY_DIR}/share"
     WEBKIT_TEST_RESOURCES_DIR="${TEST_RESOURCES_DIR}"
-    WPE_MOCK_PLATFORM_DIR="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/wpe-mock-platform"
+    WPE_MOCK_PLATFORM_DIR="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WPEPlatformMock"
 )
 
 add_library(WebKitGLibAPITestsCore STATIC ${WebKitGLibAPITests_SOURCES})
@@ -123,45 +119,6 @@ target_link_libraries(WebKitGLibAPITestsCore ${WebKitGLibAPITestsCore_LIBRARIES}
 
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebKitGLibAPITestsCore -Wno-unused-parameter)
-endif ()
-
-if (ENABLE_WPE_PLATFORM)
-    add_executable(TestWPESettings
-        ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/TestMain.cpp
-        ${TOOLS_DIR}/TestWebKitAPI/Tests/WPEPlatform/TestSettings.cpp
-    )
-    target_link_libraries(TestWPESettings
-        ${WebKitGLibAPITest_LIBRARIES}
-        WPEPlatform-${WPE_API_VERSION}
-    )
-    target_include_directories(TestWPESettings PRIVATE
-        ${WebKitGLibAPITests_INCLUDE_DIRECTORIES}
-        ${WPEPlatform_DERIVED_SOURCES_DIR}
-        ${WEBKIT_DIR}/WPEPlatform
-    )
-    target_compile_definitions(TestWPESettings PRIVATE ${WebKitGLibAPITests_DEFINITIONS})
-    set_target_properties(TestWPESettings PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI/WPEPlatform)
-    if (COMPILER_IS_GCC_OR_CLANG)
-        WEBKIT_ADD_TARGET_CXX_FLAGS(TestWPESettings -Wno-unused-parameter)
-    endif ()
-
-    add_executable(TestWPEDisplay
-        ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/TestMain.cpp
-        ${TOOLS_DIR}/TestWebKitAPI/Tests/WPEPlatform/TestDisplay.cpp
-    )
-    target_link_libraries(TestWPEDisplay
-        ${WebKitGLibAPITest_LIBRARIES}
-        WPEPlatform-${WPE_API_VERSION}
-    )
-    target_include_directories(TestWPEDisplay PRIVATE
-        ${WebKitGLibAPITests_INCLUDE_DIRECTORIES}
-        ${WPEPlatform_DERIVED_SOURCES_DIR}
-        ${WEBKIT_DIR}/WPEPlatform
-    )
-    target_compile_definitions(TestWPEDisplay PRIVATE ${WebKitGLibAPITests_DEFINITIONS})
-    set_target_properties(TestWPEDisplay PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI/WPEPlatform)
-
-    WEBKIT_ADD_TARGET_CXX_FLAGS(TestWPEDisplay -Wno-unused-parameter)
 endif ()
 
 GLIB_COMPILE_RESOURCES(
@@ -207,12 +164,20 @@ ADD_WK2_TEST(TestDOMElement ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestDOME
 ADD_WK2_TEST(TestGeolocationManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestGeolocationManager.cpp)
 ADD_WK2_TEST(TestInputMethodContext ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestInputMethodContext.cpp)
 
-if (ENABLE_WK_WEB_EXTENSIONS)
-    ADD_WK2_TEST(TestWebKitWebExtensionMatchPattern ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebExtensionMatchPattern.cpp)
+if (ENABLE_WEBXR AND USE_OPENXR)
+    ADD_WK2_TEST(TestWebKitWebXR ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebXR.cpp)
 endif ()
 
 if (ENABLE_2022_GLIB_API)
     ADD_WK2_TEST(TestWebKitNetworkSession ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitNetworkSession.cpp)
+
+if (ENABLE_WK_WEB_EXTENSIONS)
+if (ENABLE_2022_GLIB_API)
+    ADD_WK2_TEST(TestWebKitWebExtension ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebExtension.cpp)
+endif ()
+    ADD_WK2_TEST(TestWebKitWebExtensionMatchPattern ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebExtensionMatchPattern.cpp)
+endif ()
+
 endif ()
 
 macro(ADD_WPE_QT_TEST test_name)
@@ -238,8 +203,6 @@ if (PORT STREQUAL "WPE" AND ENABLE_WPE_QT_API)
         ${CMAKE_BINARY_DIR}
         ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
         ${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
-        ${GLIB_INCLUDE_DIRS}
-        ${LIBSOUP_INCLUDE_DIRS}
         ${TOOLS_DIR}/TestWebKitAPI
         ${WEBKIT_DIR}/WPEPlatform
         ${WPEPlatform_DERIVED_SOURCES_DIR}

@@ -8,14 +8,22 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stdlib.h>
+#include "api/audio_codecs/audio_decoder.h"
 
 #include <array>
+#include <cstdint>
+#include <cstdlib>
 #include <memory>
-#include <string>
+#include <optional>
+#include <tuple>
+#include <utility>
 #include <vector>
 
+#include "api/array_view.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/g722/audio_encoder_g722_config.h"
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
+#include "api/audio_codecs/opus/audio_encoder_opus_config.h"
 #include "api/environment/environment_factory.h"
 #include "modules/audio_coding/codecs/g711/audio_decoder_pcm.h"
 #include "modules/audio_coding/codecs/g711/audio_encoder_pcm.h"
@@ -24,17 +32,17 @@
 #include "modules/audio_coding/codecs/opus/audio_decoder_opus.h"
 #include "modules/audio_coding/codecs/pcm16b/audio_decoder_pcm16b.h"
 #include "modules/audio_coding/codecs/pcm16b/audio_encoder_pcm16b.h"
+#include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "modules/audio_coding/neteq/tools/resample_input_audio_file.h"
-#include "rtc_base/system/arch.h"
-#include "test/explicit_key_value_config.h"
+#include "rtc_base/buffer.h"
+#include "rtc_base/checks.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 
 namespace {
-
-using test::ExplicitKeyValueConfig;
 
 constexpr int kOverheadBytesPerPacket = 50;
 
@@ -92,15 +100,14 @@ double MseInputOutput(const std::vector<int16_t>& input,
 class AudioDecoderTest : public ::testing::Test {
  protected:
   AudioDecoderTest()
-      : input_audio_(
-            webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm"),
-            32000),
+      : input_audio_(test::ResourcePath("audio_coding/testfile32kHz", "pcm"),
+                     32000),
         codec_input_rate_hz_(32000),  // Legacy default value.
         frame_size_(0),
         data_length_(0),
         channels_(1),
         payload_type_(17),
-        decoder_(NULL) {}
+        decoder_(nullptr) {}
 
   ~AudioDecoderTest() override {}
 
@@ -113,7 +120,7 @@ class AudioDecoderTest : public ::testing::Test {
 
   void TearDown() override {
     delete decoder_;
-    decoder_ = NULL;
+    decoder_ = nullptr;
   }
 
   virtual void InitEncoder() {}
@@ -122,7 +129,7 @@ class AudioDecoderTest : public ::testing::Test {
   // implementations are gone.
   virtual int EncodeFrame(const int16_t* input,
                           size_t input_len_samples,
-                          rtc::Buffer* output) {
+                          Buffer* output) {
     AudioEncoder::EncodedInfo encoded_info;
     const size_t samples_per_10ms = audio_encoder_->SampleRateHz() / 100;
     RTC_CHECK_EQ(samples_per_10ms * audio_encoder_->Num10MsFramesInNextPacket(),
@@ -138,13 +145,12 @@ class AudioDecoderTest : public ::testing::Test {
                                                  samples_per_10ms, channels_,
                                                  interleaved_input.get());
 
-      encoded_info =
-          audio_encoder_->Encode(0,
-                                 rtc::ArrayView<const int16_t>(
-                                     interleaved_input.get(),
-                                     audio_encoder_->NumChannels() *
-                                         audio_encoder_->SampleRateHz() / 100),
-                                 output);
+      encoded_info = audio_encoder_->Encode(
+          0,
+          ArrayView<const int16_t>(interleaved_input.get(),
+                                   audio_encoder_->NumChannels() *
+                                       audio_encoder_->SampleRateHz() / 100),
+          output);
     }
     EXPECT_EQ(payload_type_, encoded_info.payload_type);
     return static_cast<int>(encoded_info.encoded_bytes);
@@ -175,7 +181,7 @@ class AudioDecoderTest : public ::testing::Test {
       ASSERT_GE(input.size() - processed_samples, frame_size_);
       ASSERT_TRUE(input_audio_.Read(frame_size_, codec_input_rate_hz_,
                                     &input[processed_samples]));
-      rtc::Buffer encoded;
+      Buffer encoded;
       size_t enc_len =
           EncodeFrame(&input[processed_samples], frame_size_, &encoded);
       // Make sure that frame_size_ * channels_ samples are allocated and free.
@@ -185,8 +191,8 @@ class AudioDecoderTest : public ::testing::Test {
           decoder_->ParsePayload(std::move(encoded), /*timestamp=*/0);
       RTC_CHECK_EQ(parse_result.size(), size_t{1});
       auto decode_result = parse_result[0].frame->Decode(
-          rtc::ArrayView<int16_t>(&decoded[processed_samples * channels_],
-                                  frame_size_ * channels_ * sizeof(int16_t)));
+          ArrayView<int16_t>(&decoded[processed_samples * channels_],
+                             frame_size_ * channels_ * sizeof(int16_t)));
       RTC_CHECK(decode_result.has_value());
       EXPECT_EQ(frame_size_ * channels_, decode_result->num_decoded_samples);
       encoded_bytes += enc_len;
@@ -215,7 +221,7 @@ class AudioDecoderTest : public ::testing::Test {
     std::unique_ptr<int16_t[]> input(new int16_t[frame_size_]);
     ASSERT_TRUE(
         input_audio_.Read(frame_size_, codec_input_rate_hz_, input.get()));
-    std::array<rtc::Buffer, 2> encoded;
+    std::array<Buffer, 2> encoded;
     EncodeFrame(input.get(), frame_size_, &encoded[0]);
     // Make a copy.
     encoded[1].SetData(encoded[0].data(), encoded[0].size());
@@ -240,7 +246,7 @@ class AudioDecoderTest : public ::testing::Test {
     std::unique_ptr<int16_t[]> input(new int16_t[frame_size_]);
     ASSERT_TRUE(
         input_audio_.Read(frame_size_, codec_input_rate_hz_, input.get()));
-    rtc::Buffer encoded;
+    Buffer encoded;
     EncodeFrame(input.get(), frame_size_, &encoded);
     decoder_->Reset();
     std::vector<int16_t> output(frame_size_ * channels_);
@@ -349,10 +355,10 @@ class AudioDecoderOpusTest
   AudioDecoderOpusTest() : AudioDecoderTest() {
     channels_ = opus_num_channels_;
     codec_input_rate_hz_ = opus_sample_rate_hz_;
-    frame_size_ = rtc::CheckedDivExact(opus_sample_rate_hz_, 100);
+    frame_size_ = CheckedDivExact(opus_sample_rate_hz_, 100);
     data_length_ = 10 * frame_size_;
     decoder_ = new AudioDecoderOpusImpl(
-        ExplicitKeyValueConfig(""), opus_num_channels_, opus_sample_rate_hz_);
+        CreateTestFieldTrials(), opus_num_channels_, opus_sample_rate_hz_);
     AudioEncoderOpusConfig config;
     config.frame_size_ms = 10;
     config.sample_rate_hz = opus_sample_rate_hz_;

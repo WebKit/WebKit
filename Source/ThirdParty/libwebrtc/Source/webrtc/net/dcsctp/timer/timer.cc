@@ -17,7 +17,9 @@
 
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
+#include "api/units/time_delta.h"
 #include "net/dcsctp/public/timeout.h"
+#include "net/dcsctp/public/types.h"
 #include "rtc_base/checks.h"
 
 namespace dcsctp {

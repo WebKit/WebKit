@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ ResourceMonitorChecker& ResourceMonitorChecker::singleton()
 ResourceMonitorChecker::ResourceMonitorChecker()
     : m_workQueue { WorkQueue::create("ResourceMonitorChecker Work Queue"_s) }
 {
-    protectedWorkQueue()->dispatchAfter(ruleListPreparationTimeout, [this] mutable {
+    m_workQueue->dispatchAfter(ruleListPreparationTimeout, [this] mutable {
         if (m_ruleList)
             return;
 
@@ -71,7 +71,7 @@ void ResourceMonitorChecker::checkEligibility(ContentExtensions::ResourceLoadInf
 {
     ASSERT(isMainThread());
 
-    protectedWorkQueue()->dispatch([this, info = crossThreadCopy(WTFMove(info)), completionHandler = WTFMove(completionHandler)] mutable {
+    m_workQueue->dispatch([this, info = crossThreadCopy(WTFMove(info)), completionHandler = WTFMove(completionHandler)] mutable {
         if (!m_ruleList && m_ruleListIsPreparing) {
             m_pendingQueries.append(std::make_pair(WTFMove(info), WTFMove(completionHandler)));
             return;
@@ -99,7 +99,7 @@ void ResourceMonitorChecker::setContentRuleList(ContentExtensions::ContentExtens
 {
     ASSERT(isMainThread());
 
-    protectedWorkQueue()->dispatch([this, backend = crossThreadCopy(WTFMove(backend))] mutable {
+    m_workQueue->dispatch([this, backend = crossThreadCopy(WTFMove(backend))] mutable {
         m_ruleList = makeUnique<ContentExtensions::ContentExtensionsBackend>(WTFMove(backend));
         m_ruleListIsPreparing = false;
 

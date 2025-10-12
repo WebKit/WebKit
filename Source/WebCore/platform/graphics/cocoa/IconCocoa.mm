@@ -57,9 +57,9 @@ RefPtr<Icon> Icon::create(PlatformImagePtr&& platformImage)
         return nullptr;
 
 #if USE(APPKIT)
-    auto image = adoptNS([[NSImage alloc] initWithCGImage:platformImage.get() size:NSZeroSize]);
+    RetainPtr image = adoptNS([[NSImage alloc] initWithCGImage:platformImage.get() size:NSZeroSize]);
 #else
-    auto image = adoptNS([PAL::allocUIImageInstance() initWithCGImage:platformImage.get()]);
+    RetainPtr image = adoptNS([PAL::allocUIImageInstance() initWithCGImage:platformImage.get()]);
 #endif
     return adoptRef(new Icon(image.get()));
 }
@@ -72,11 +72,11 @@ void Icon::paint(GraphicsContext& context, const FloatRect& destRect)
     GraphicsContextStateSaver stateSaver(context);
 
 #if USE(APPKIT)
-    auto cgImage = [m_image CGImageForProposedRect:nil context:nil hints:nil];
+    RetainPtr cgImage = [m_image CGImageForProposedRect:nil context:nil hints:nil];
 #else
-    auto cgImage = [m_image CGImage];
+    RetainPtr cgImage = [m_image CGImage];
 #endif
-    auto image = NativeImage::create(cgImage);
+    RefPtr image = NativeImage::create(cgImage.get());
 
     FloatRect srcRect(FloatPoint::zero(), image->size());
     context.drawNativeImage(*image, destRect, srcRect, { InterpolationQuality::High });

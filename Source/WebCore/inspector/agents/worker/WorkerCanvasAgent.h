@@ -47,7 +47,7 @@ public:
 private:
     bool matchesCurrentContext(ScriptExecutionContext*) const override;
 
-    WorkerOrWorkletGlobalScope& m_globalScope;
+    const CheckedRef<WorkerOrWorkletGlobalScope> m_globalScope;
 };
 
 } // namespace WebCore

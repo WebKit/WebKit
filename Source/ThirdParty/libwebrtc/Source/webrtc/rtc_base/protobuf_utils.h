@@ -8,7 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <string>
 
 #ifndef RTC_BASE_PROTOBUF_UTILS_H_
 #define RTC_BASE_PROTOBUF_UTILS_H_
@@ -16,7 +15,9 @@
 #if WEBRTC_ENABLE_PROTOBUF
 
 #include "third_party/protobuf/src/google/protobuf/message_lite.h"  // nogncheck
+// IWYU pragma: begin_keep
 #include "third_party/protobuf/src/google/protobuf/repeated_field.h"  // nogncheck
+// IWYU pragma: end_keep
 
 namespace webrtc {
 

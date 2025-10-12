@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "SandboxFlags.h"
+#include <WebCore/SandboxFlags.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 

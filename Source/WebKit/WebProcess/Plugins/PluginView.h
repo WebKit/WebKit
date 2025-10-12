@@ -72,6 +72,7 @@ public:
     static RefPtr<PluginView> create(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader);
 
     WebCore::LocalFrame* frame() const;
+    RefPtr<WebCore::LocalFrame> protectedFrame() const;
 
     bool isBeingDestroyed() const;
 
@@ -90,7 +91,6 @@ public:
     void layerHostingStrategyDidChange() final;
 
     WebCore::HTMLPlugInElement& pluginElement() const { return m_pluginElement; }
-    Ref<WebCore::HTMLPlugInElement> protectedPluginElement() const;
     const URL& mainResourceURL() const { return m_mainResourceURL; }
 
     void didBeginMagnificationGesture();
@@ -128,7 +128,7 @@ public:
     RefPtr<WebCore::TextIndicator> textIndicatorForCurrentSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition);
 
     Vector<WebFoundTextRange::PDFData> findTextMatches(const String& target, WebCore::FindOptions);
-    Vector<WebCore::FloatRect> rectsForTextMatch(const WebFoundTextRange::PDFData&);
+    Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const Vector<WebFoundTextRange::PDFData>&, const WebCore::IntRect& clipRect);
     RefPtr<WebCore::TextIndicator> textIndicatorForTextMatch(const WebFoundTextRange::PDFData&, WebCore::TextIndicatorPresentationTransition);
     void scrollToRevealTextMatch(const WebFoundTextRange::PDFData&);
 
@@ -167,6 +167,10 @@ public:
 
     void frameViewLayoutOrVisualViewportChanged(const WebCore::IntRect& unobscuredContentRect);
 
+    bool pluginDelegatesScrollingToMainFrame() const;
+
+    bool isPresentingLockedContent() const;
+
 private:
     PluginView(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader, WebPage&);
     virtual ~PluginView();
@@ -174,8 +178,6 @@ private:
     bool isPluginView() const final { return true; }
 
     void initializePlugin();
-
-    Ref<PDFPluginBase> protectedPlugin() const;
 
     void viewGeometryDidChange();
     void viewVisibilityDidChange();
@@ -191,7 +193,7 @@ private:
 
     void updateDocumentForPluginSizingBehavior();
 
-    CheckedPtr<WebCore::RenderEmbeddedObject> checkedRenderer() const;
+    WebCore::RenderEmbeddedObject* renderer() const;
 
     // WebCore::PluginViewBase
     WebCore::PluginLayerHostingStrategy layerHostingStrategy() const final;
@@ -230,8 +232,8 @@ private:
 
     RefPtr<WebPage> protectedWebPage() const;
 
-    Ref<WebCore::HTMLPlugInElement> m_pluginElement;
-    Ref<PDFPluginBase> m_plugin;
+    const Ref<WebCore::HTMLPlugInElement> m_pluginElement;
+    const Ref<PDFPluginBase> m_plugin;
     WeakPtr<WebPage> m_webPage;
     URL m_mainResourceURL;
     String m_mainResourceContentType;

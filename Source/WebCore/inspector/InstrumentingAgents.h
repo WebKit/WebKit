@@ -44,7 +44,6 @@ class InspectorScriptProfilerAgent;
 namespace WebCore {
 
 class InspectorAnimationAgent;
-class InspectorApplicationCacheAgent;
 class InspectorCPUProfilerAgent;
 class InspectorCSSAgent;
 class InspectorCanvasAgent;
@@ -70,7 +69,6 @@ class WebHeapAgent;
 #define DEFINE_INSPECTOR_AGENT(macro, Class, Name, Getter, Setter) macro(Class, Name, Getter, Setter)
 
 #define DEFINE_INSPECTOR_AGENT_Animation(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorAnimationAgent, AnimationAgent, Getter, Setter)
-#define DEFINE_INSPECTOR_AGENT_ApplicationCache(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorApplicationCacheAgent, ApplicationCacheAgent, Getter, Setter)
 #define DEFINE_INSPECTOR_AGENT_Canvas(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorCanvasAgent, CanvasAgent, Getter, Setter)
 #define DEFINE_INSPECTOR_AGENT_Canvas_Page(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, PageCanvasAgent, PageCanvasAgent, Getter, Setter)
 #define DEFINE_INSPECTOR_AGENT_CSS(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorCSSAgent, CSSAgent, Getter, Setter)
@@ -120,7 +118,6 @@ class WebHeapAgent;
     DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, ScriptProfiler) \
     DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, Worker) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, Animation) \
-    DEFINE_ENABLED_INSPECTOR_AGENT(macro, ApplicationCache) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, Canvas) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, Canvas_Page) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, CSS) \

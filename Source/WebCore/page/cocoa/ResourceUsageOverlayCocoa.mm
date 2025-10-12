@@ -30,6 +30,7 @@
 
 #import "ColorSpaceCG.h"
 #import "CommonVM.h"
+#import "GraphicsLayer.h"
 #import "JSDOMWindow.h"
 #import "PlatformCALayer.h"
 #import "ResourceUsageThread.h"
@@ -125,7 +126,7 @@ private:
 static RetainPtr<CGColorRef> createColor(float r, float g, float b, float a)
 {
     CGFloat components[4] = { r, g, b, a };
-    return adoptCF(CGColorCreate(sRGBColorSpaceRef(), components));
+    return adoptCF(CGColorCreate(sRGBColorSpaceSingleton(), components));
 }
 
 struct HistoricMemoryCategoryInfo {
@@ -149,7 +150,7 @@ struct HistoricMemoryCategoryInfo {
 };
 
 struct HistoricResourceUsageData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(HistoricResourceUsageData);
     HistoricResourceUsageData();
 
     RingBuffer<float> cpu;
@@ -222,9 +223,9 @@ static void appendDataToHistory(const ResourceUsageData& data)
 
 void ResourceUsageOverlay::platformInitialize()
 {
-    m_layer = adoptNS([[WebResourceUsageOverlayLayer alloc] initWithResourceUsageOverlay:this]);
+    lazyInitialize(m_layer, adoptNS([[WebResourceUsageOverlayLayer alloc] initWithResourceUsageOverlay:this]));
 
-    m_containerLayer = adoptNS([[CALayer alloc] init]);
+    lazyInitialize(m_containerLayer, adoptNS([[CALayer alloc] init]));
     [m_containerLayer addSublayer:m_layer.get()];
 
     [m_containerLayer setAnchorPoint:CGPointZero];
@@ -462,7 +463,6 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
     CGContextSetShouldAntialias(context, false);
     CGContextSetShouldSmoothFonts(context, false);
 
-    RefPtr overlay = m_overlay.get();
     CGRect viewBounds = m_overlay->bounds();
     CGContextClearRect(context, viewBounds);
 

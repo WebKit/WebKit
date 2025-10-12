@@ -6,6 +6,10 @@
 
 // MultisampledRenderToTextureTest: Tests of EXT_multisampled_render_to_texture extension
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -2699,6 +2703,101 @@ TEST_P(MultisampledRenderToTextureES3Test, RenderbufferDrawThenBlitDepthStencil)
     EXPECT_PIXEL_COLOR_EQ(kSize - 1, kSize - 1, GLColor::red);
 }
 
+// Makes sure that mixed drawing/reading into/from the same texture using multisampled and single
+// sampled framebuffers produce expected results.
+TEST_P(MultisampledRenderToTextureES3Test, MixedMultisampleSingleSampledDraw)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+
+    constexpr GLsizei kSize = 64;
+
+    // Create render target texture.
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    // Create multisampled framebuffer.
+    GLFramebuffer fboMS;
+    glBindFramebuffer(GL_FRAMEBUFFER, fboMS);
+    glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color,
+                                         0, 4);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Create single sampled framebuffer.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color, 0);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Set up program
+    ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(drawColor);
+    GLint colorUniformLocation =
+        glGetUniformLocation(drawColor, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fboMS);
+
+    // Draw blue multisampled.
+    glUniform4f(colorUniformLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 1.0f);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    // Draw red single sampled.
+    glUniform4f(colorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+
+    // Check that single sampled framebuffer is red.
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kSize - 1, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(0, kSize - 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kSize - 1, kSize - 1, GLColor::red);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fboMS);
+
+    // Check that multisampled framebuffer is also red since it uses same texture.
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kSize - 1, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(0, kSize - 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kSize - 1, kSize - 1, GLColor::red);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    // Check that single sampled framebuffer is still red.
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kSize - 1, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(0, kSize - 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kSize - 1, kSize - 1, GLColor::red);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fboMS);
+
+    // Draw green multisampled with scissor.
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, kSize / 2, kSize / 2);
+    glUniform4f(colorUniformLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 1.0f);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    // Draw yellow single sampled with scissor.
+    glScissor(kSize / 2, kSize / 2, kSize / 2, kSize / 2);
+    glUniform4f(colorUniformLocation, 1.0f, 1.0f, 0.0f, 1.0f);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 1.0f);
+    ASSERT_GL_NO_ERROR();
+
+    // Check that single sampled framebuffer contains expected colors.
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(kSize - 1, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(0, kSize - 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kSize - 1, kSize - 1, GLColor::yellow);
+}
+
 // Draw, then blit depth/stencil with renderbuffers, without a color attachment. Note that this test
 // doesn't apply to depth/stencil textures as they are explicitly autoinvalidated between render
 // passes.
@@ -3686,6 +3785,69 @@ TEST_P(MultisampledRenderToTextureTest, DrawNonMultisampledThenMultisampled)
     EXPECT_PIXEL_COLOR_EQ(3 * kSize / 8, 5 * kSize / 8, GLColor::blue);
     EXPECT_PIXEL_COLOR_EQ(5 * kSize / 8, 5 * kSize / 8, GLColor::blue);
     EXPECT_PIXEL_COLOR_EQ(kSize / 2, kSize / 2, GLColor::blue);
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Draw multisampled triangle with different sample counts on one single FBO. This test makes use of
+// different sample results for different sample location to distinguish whether sample count truly
+// changed or not.
+TEST_P(MultisampledRenderToTextureTest, DrawMultisampledDifferentSamplesOneFBO)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+    constexpr GLsizei kSize = 64;
+
+    GLsizei maxSamples = 0;
+    glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
+    ANGLE_SKIP_TEST_IF(maxSamples <= 4);
+
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer fboMS;
+    glBindFramebuffer(GL_FRAMEBUFFER, fboMS);
+
+    std::array<GLfloat, 16> attribPosData = {1, 1,  0.5, 1, -1, 1,  0.5, 1,
+                                             1, -1, 0.5, 1, -1, -1, 0.5, 1};
+    const uint16_t indices[]              = {0, 1, 2};
+
+    // Refer to Vulkan spec Standard Sample Locations
+    const GLColor kExpected4(128, 0, 0, 255);
+    const GLColor kExpected8(159, 0, 0, 255);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+    ANGLE_GL_PROGRAM(drawColorTriangle, essl1_shaders::vs::Simple(),
+                     essl1_shaders::fs::UniformColor());
+    glUseProgram(drawColorTriangle);
+
+    GLint colorUniformLocation =
+        glGetUniformLocation(drawColorTriangle, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+    glUniform4f(colorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+
+    GLint positionUniformLocation =
+        glGetAttribLocation(drawColorTriangle, angle::essl1_shaders::PositionAttrib());
+    ASSERT_NE(positionUniformLocation, -1);
+    glEnableVertexAttribArray(positionUniformLocation);
+    glVertexAttribPointer(positionUniformLocation, 4, GL_FLOAT, GL_FALSE, 0, attribPosData.data());
+
+    // First set sample count to 4.
+    glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color,
+                                         0, 4);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, indices);
+    EXPECT_PIXEL_COLOR_NEAR(kSize / 2 - 1, kSize / 2, kExpected4, 1);
+
+    // Then set sample count to 8 without changing FBO.
+    glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color,
+                                         0, 8);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, indices);
+    EXPECT_PIXEL_COLOR_NEAR(kSize / 2 - 1, kSize / 2, kExpected8, 1);
 
     ASSERT_GL_NO_ERROR();
 }

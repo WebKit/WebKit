@@ -19,12 +19,12 @@
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/time_utils.h"
 
-namespace rtc {
+namespace webrtc {
 
 // Fake clock for use with unit tests, which does not tick on its own.
 // Starts at time 0.
 //
-// TODO(deadbeef): Unify with webrtc::SimulatedClock.
+// TODO(deadbeef): Unify with SimulatedClock.
 class FakeClock : public ClockInterface {
  public:
   FakeClock() = default;
@@ -38,20 +38,20 @@ class FakeClock : public ClockInterface {
   // Methods that can be used by the test to control the time.
 
   // Should only be used to set a time in the future.
-  void SetTime(webrtc::Timestamp new_time);
+  void SetTime(Timestamp new_time);
 
-  void AdvanceTime(webrtc::TimeDelta delta);
+  void AdvanceTime(TimeDelta delta);
 
  private:
-  mutable webrtc::Mutex lock_;
+  mutable Mutex lock_;
   int64_t time_ns_ RTC_GUARDED_BY(lock_) = 0;
 };
 
 class ThreadProcessingFakeClock : public ClockInterface {
  public:
   int64_t TimeNanos() const override { return clock_.TimeNanos(); }
-  void SetTime(webrtc::Timestamp time);
-  void AdvanceTime(webrtc::TimeDelta delta);
+  void SetTime(Timestamp time);
+  void AdvanceTime(TimeDelta delta);
 
  private:
   FakeClock clock_;
@@ -78,6 +78,7 @@ class ScopedFakeClock : public ThreadProcessingFakeClock {
   ClockInterface* prev_clock_;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_FAKE_CLOCK_H_

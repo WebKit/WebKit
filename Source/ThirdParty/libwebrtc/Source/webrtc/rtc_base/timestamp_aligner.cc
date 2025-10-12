@@ -10,14 +10,14 @@
 
 #include "rtc_base/timestamp_aligner.h"
 
+#include <cstdint>
 #include <cstdlib>
 #include <limits>
 
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/time_utils.h"
 
-namespace rtc {
+namespace webrtc {
 
 TimestampAligner::TimestampAligner()
     : frames_seen_(0),
@@ -140,4 +140,4 @@ int64_t TimestampAligner::ClipTimestamp(int64_t filtered_time_us,
   return time_us;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

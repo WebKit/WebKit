@@ -1,3 +1,6 @@
+//@ $skipModes << "wasm-no-wasm-jit".to_sym
+//@ $skipModes << "wasm-no-jit".to_sym
+// BBQ / OMG is required
 function instantiate(moduleBase64, importObject) {
     let bytes = Uint8Array.fromBase64(moduleBase64);
     return WebAssembly.instantiate(bytes, importObject);

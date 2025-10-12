@@ -25,7 +25,12 @@
 
 #pragma once
 
+#include <WebCore/PlatformExportMacros.h>
+#include <wtf/Platform.h>
+
 #if PLATFORM(MAC)
+
+#import <AppKit/NSSpellChecker.h>
 
 namespace WebCore {
 

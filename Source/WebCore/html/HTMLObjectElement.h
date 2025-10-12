@@ -22,14 +22,14 @@
 
 #pragma once
 
-#include "FormListedElement.h"
-#include "HTMLPlugInImageElement.h"
+#include <WebCore/FormListedElement.h>
+#include <WebCore/HTMLPlugInElement.h>
 
 namespace WebCore {
 
 class HTMLFormElement;
 
-class HTMLObjectElement final : public HTMLPlugInImageElement, public FormListedElement {
+class HTMLObjectElement final : public HTMLPlugInElement, public FormListedElement {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLObjectElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLObjectElement);
 public:
@@ -48,8 +48,8 @@ public:
     static bool checkValidity() { return true; }
     static bool reportValidity() { return true; }
 
-    using HTMLPlugInImageElement::ref;
-    using HTMLPlugInImageElement::deref;
+    using HTMLPlugInElement::ref;
+    using HTMLPlugInElement::deref;
 
 private:
     HTMLObjectElement(const QualifiedName&, Document&, HTMLFormElement*);

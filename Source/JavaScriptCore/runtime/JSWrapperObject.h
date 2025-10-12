@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "JSInternalFieldObjectImpl.h"
+#include <JavaScriptCore/JSInternalFieldObjectImpl.h>
 
 namespace JSC {
 
@@ -61,10 +61,10 @@ public:
 #endif
     }
 
+    DECLARE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE);
+
 protected:
     explicit JSWrapperObject(VM&, Structure*);
-
-    DECLARE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE);
 };
 
 inline JSWrapperObject::JSWrapperObject(VM& vm, Structure* structure)

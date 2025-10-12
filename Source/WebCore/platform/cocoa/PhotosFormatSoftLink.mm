@@ -26,5 +26,7 @@
 #import <ImageIO/CGImageSource.h>
 #import <wtf/SoftLinking.h>
 
+#if ENABLE(QUICKLOOK_FULLSCREEN)
 SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(WebCore, PhotosFormats);
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebCore, PhotosFormats, PFMetadataImageSourceIsSpatialMedia, bool, (CGImageSourceRef source), (source));
+#endif

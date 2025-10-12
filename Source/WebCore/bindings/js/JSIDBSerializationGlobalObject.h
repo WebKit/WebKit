@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +57,7 @@ private:
     JSIDBSerializationGlobalObject(JSC::VM&, JSC::Structure*, Ref<DOMWrapperWorld>&&);
     void finishCreation(JSC::VM&);
 
-    Ref<EmptyScriptExecutionContext> m_scriptExecutionContext;
+    const Ref<EmptyScriptExecutionContext> m_scriptExecutionContext;
 };
 
 } // namespace WebCore

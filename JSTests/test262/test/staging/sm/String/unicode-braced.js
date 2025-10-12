@@ -2,17 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-String-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Add \\u{xxxxxx} string literals
+info: bugzilla.mozilla.org/show_bug.cgi?id=320500
 esid: pending
 ---*/
-var BUGNUMBER = 320500;
-var summary = 'Add \\u{xxxxxx} string literals';
-
-print(BUGNUMBER + ": " + summary);
 
 assert.sameValue("\u{0}", String.fromCodePoint(0x0));
 assert.sameValue("\u{1}", String.fromCodePoint(0x1));
@@ -55,19 +49,18 @@ assert.sameValue(eval(`"\\u{${"0".repeat(Math.pow(2, 24)) + "1234"}}"`), String.
 
 assert.sameValue("\U{0}", "U{0}");
 
-assertThrowsInstanceOf(() => eval(`"\\u{-1}"`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`"\\u{0.0}"`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`"\\u{G}"`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`"\\u{}"`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`"\\u{{"`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`"\\u{"`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`"\\u{110000}"`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`"\\u{00110000}"`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`"\\u{100000000000000000000000000000}"`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`"\\u{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}"`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`"\\u{   FFFF}"`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`"\\u{FFFF   }"`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`"\\u{FF   FF}"`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`"\\u{F F F F}"`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`"\\u{100000001}"`), SyntaxError);
-
+assert.throws(SyntaxError, () => eval(`"\\u{-1}"`));
+assert.throws(SyntaxError, () => eval(`"\\u{0.0}"`));
+assert.throws(SyntaxError, () => eval(`"\\u{G}"`));
+assert.throws(SyntaxError, () => eval(`"\\u{}"`));
+assert.throws(SyntaxError, () => eval(`"\\u{{"`));
+assert.throws(SyntaxError, () => eval(`"\\u{"`));
+assert.throws(SyntaxError, () => eval(`"\\u{110000}"`));
+assert.throws(SyntaxError, () => eval(`"\\u{00110000}"`));
+assert.throws(SyntaxError, () => eval(`"\\u{100000000000000000000000000000}"`));
+assert.throws(SyntaxError, () => eval(`"\\u{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}"`));
+assert.throws(SyntaxError, () => eval(`"\\u{   FFFF}"`));
+assert.throws(SyntaxError, () => eval(`"\\u{FFFF   }"`));
+assert.throws(SyntaxError, () => eval(`"\\u{FF   FF}"`));
+assert.throws(SyntaxError, () => eval(`"\\u{F F F F}"`));
+assert.throws(SyntaxError, () => eval(`"\\u{100000001}"`));

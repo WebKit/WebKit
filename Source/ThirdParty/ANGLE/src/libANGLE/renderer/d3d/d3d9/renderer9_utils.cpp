@@ -365,8 +365,6 @@ D3DQUERYTYPE ConvertQueryType(gl::QueryType type)
         case gl::QueryType::AnySamples:
         case gl::QueryType::AnySamplesConservative:
             return D3DQUERYTYPE_OCCLUSION;
-        case gl::QueryType::CommandsCompleted:
-            return D3DQUERYTYPE_EVENT;
         default:
             UNREACHABLE();
             return static_cast<D3DQUERYTYPE>(0);
@@ -761,7 +759,6 @@ void GenerateCaps(IDirect3D9 *d3d9,
     extensions->EGLImageExternalOES   = true;
     extensions->unpackSubimageEXT     = true;
     extensions->packSubimageNV        = true;
-    extensions->syncQueryCHROMIUM     = extensions->fenceNV;
     extensions->copyTextureCHROMIUM   = true;
     extensions->textureBorderClampEXT = true;
     extensions->textureBorderClampOES = true;

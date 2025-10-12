@@ -30,11 +30,10 @@ class VideoRtpDepacketizerVp8 : public VideoRtpDepacketizer {
 
   // Parses vp8 rtp payload descriptor.
   // Returns zero on error or vp8 payload header offset on success.
-  static int ParseRtpPayload(rtc::ArrayView<const uint8_t> rtp_payload,
+  static int ParseRtpPayload(ArrayView<const uint8_t> rtp_payload,
                              RTPVideoHeader* video_header);
 
-  std::optional<ParsedRtpPayload> Parse(
-      rtc::CopyOnWriteBuffer rtp_payload) override;
+  std::optional<ParsedRtpPayload> Parse(CopyOnWriteBuffer rtp_payload) override;
 };
 
 }  // namespace webrtc

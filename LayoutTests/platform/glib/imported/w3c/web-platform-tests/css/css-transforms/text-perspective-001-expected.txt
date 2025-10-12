@@ -1,12 +1,12 @@
-layer at (0,0) size 4318x633
-  RenderView at (0,0) size 785x585
-layer at (0,0) size 785x585
-  RenderBlock {HTML} at (0,0) size 785x585
-    RenderBody {BODY} at (0,0) size 785x585
-layer at (0,0) size 785x115
-  RenderBlock {DIV} at (0,0) size 785x115
-layer at (0,0) size 785x115
-  RenderBlock {DIV} at (0,0) size 785x115
-    RenderBlock {H1} at (0,0) size 785x115
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 800x600
+layer at (0,0) size 800x115
+  RenderBlock {DIV} at (0,0) size 800x115
+layer at (0,0) size 800x115
+  RenderBlock {DIV} at (0,0) size 800x115
+    RenderBlock {H1} at (0,0) size 800x115
       RenderText {#text} at (0,2) size 72x111
         text run at (0,2) width 72: "X"

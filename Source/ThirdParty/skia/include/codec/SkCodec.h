@@ -18,6 +18,7 @@
 #include "include/core/SkTypes.h"
 #include "include/core/SkYUVAPixmaps.h"
 #include "include/private/SkEncodedInfo.h"
+#include "include/private/SkHdrMetadata.h"
 #include "include/private/base/SkNoncopyable.h"
 #include "modules/skcms/skcms.h"
 
@@ -238,6 +239,12 @@ public:
     const skcms_ICCProfile* getICCProfile() const {
         return this->getEncodedInfo().profile();
     }
+
+    /**
+     * Return the HDR metadata associated with this image. Note that even SDR images can include
+     * HDR metadata (e.g, indicating how to inverse tone map when displayed on an HDR display).
+     */
+    const skhdr::Metadata& getHdrMetadata() const { return fEncodedInfo.getHdrMetadata(); }
 
     /**
      * Whether the encoded input uses 16 or more bits per component.
@@ -904,11 +911,20 @@ protected:
     [[nodiscard]] bool rewindIfNeeded();
 
     /**
+     *  Called by onRewind(), attempts to rewind fStream.
+     */
+    bool rewindStream();
+
+    /**
      *  Called by rewindIfNeeded, if the stream needed to be rewound.
      *
-     *  Subclasses should do any set up needed after a rewind.
+     *  Subclasses should call rewindStream() if they own one, and then
+     *  do any set up needed after.
      */
     virtual bool onRewind() {
+        if (!this->rewindStream()) {
+            return false;
+        }
         return true;
     }
 
@@ -992,7 +1008,12 @@ private:
     };
     XformTime                          fXformTime;
     XformFormat                        fDstXformFormat; // Based on fDstInfo.
-    skcms_ICCProfile                   fDstProfile;
+    skcms_ICCProfile                   fDstProfileStorage;
+    // This tracks either fDstProfileStorage or the ICC profile in fEncodedInfo.
+    // For the latter case it is important to not make a profile copy because skcms_Transform
+    // only performs a shallow pointer comparison to decide whether it can skip the color space
+    // transformation.
+    const skcms_ICCProfile*            fDstProfile = &fDstProfileStorage;
     skcms_AlphaFormat                  fDstXformAlphaFormat;
 
     // Only meaningful during scanline decodes.

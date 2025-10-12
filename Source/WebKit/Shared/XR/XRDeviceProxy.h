@@ -35,6 +35,7 @@
 
 namespace WebCore {
 class SecurityOriginData;
+struct XRCanvasConfiguration;
 }
 
 namespace WebKit {
@@ -56,7 +57,7 @@ private:
 
     WebCore::IntSize recommendedResolution(PlatformXR::SessionMode) final { return m_recommendedResolution; }
     double minimumNearClipPlane() const final { return m_minimumNearClipPlane; }
-    void initializeTrackingAndRendering(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&) final;
+    void initializeTrackingAndRendering(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&, std::optional<WebCore::XRCanvasConfiguration>&&) final;
     void shutDownTrackingAndRendering() final;
     void didCompleteShutdownTriggeredBySystem() final;
     bool supportsSessionShutdownNotification() const final { return true; }

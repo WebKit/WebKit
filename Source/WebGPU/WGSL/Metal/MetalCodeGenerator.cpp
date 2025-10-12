@@ -33,7 +33,9 @@
 
 #if PLATFORM(COCOA)
 #include <notify.h>
+#include <wtf/darwin/DispatchExtras.h>
 #endif
+
 namespace WGSL {
 
 namespace Metal {
@@ -57,7 +59,7 @@ static void dumpMetalCodeIfNeeded(StringBuilder& stringBuilder)
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         int dumpMetalCodeToken;
-        notify_register_dispatch("com.apple.WebKit.WebGPU.TogglePrintMetalCode", &dumpMetalCodeToken, dispatch_get_main_queue(), ^(int) {
+        notify_register_dispatch("com.apple.WebKit.WebGPU.TogglePrintMetalCode", &dumpMetalCodeToken, mainDispatchQueueSingleton(), ^(int) {
             dumpMetalCode = !dumpMetalCode;
         });
     });

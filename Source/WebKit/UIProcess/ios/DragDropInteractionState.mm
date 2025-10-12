@@ -130,7 +130,7 @@ static bool shouldUseVisiblePathToCreatePreviewForDragSource(const DragSourceSta
 
 static bool shouldUseTextIndicatorToCreatePreviewForDragSource(const DragSourceState& source)
 {
-    if (!source.indicatorData)
+    if (!source.textIndicator)
         return false;
 
     if (source.action.containsAny({ DragSourceAction::Link, DragSourceAction::Selection }))
@@ -208,10 +208,10 @@ UITargetedDragPreview *DragDropInteractionState::finalDropPreview(UIDragItem *it
     return m_finalDropPreviews.get(item).get();
 }
 
-void DragDropInteractionState::deliverDelayedDropPreview(UIView *contentView, UIView *previewContainer, const WebCore::TextIndicatorData& indicator)
+void DragDropInteractionState::deliverDelayedDropPreview(UIView *contentView, UIView *previewContainer, RefPtr<WebCore::TextIndicator>&& textIndicator)
 {
-    auto textIndicatorImage = uiImageForImage(indicator.contentImage.get());
-    auto preview = createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, cocoaColor(indicator.estimatedBackgroundColor).get(), nil, AddPreviewViewToContainer::No);
+    auto textIndicatorImage = uiImageForImage(textIndicator->contentImage());
+    auto preview = createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, textIndicator->textBoundingRectInRootViewCoordinates(), textIndicator->textRectsInBoundingRectCoordinates(), cocoaColor(textIndicator->estimatedBackgroundColor()).get(), nil, AddPreviewViewToContainer::No);
     if (!preview)
         return;
 
@@ -268,20 +268,20 @@ void DragDropInteractionState::deliverDelayedDropPreview(UIView *contentView, CG
     }
 }
 
-UITargetedDragPreview *DragDropInteractionState::previewForLifting(UIDragItem *item, UIView *contentView, UIView *previewContainer, const std::optional<WebCore::TextIndicatorData>& indicator) const
+UITargetedDragPreview *DragDropInteractionState::previewForLifting(UIDragItem *item, UIView *contentView, UIView *previewContainer, RefPtr<WebCore::TextIndicator>&& indicator) const
 {
-    return createDragPreviewInternal(item, contentView, previewContainer, AddPreviewViewToContainer::No, indicator).autorelease();
+    return createDragPreviewInternal(item, contentView, previewContainer, AddPreviewViewToContainer::No, WTFMove(indicator)).autorelease();
 }
 
 UITargetedDragPreview *DragDropInteractionState::previewForCancelling(UIDragItem *item, UIView *contentView, UIView *previewContainer)
 {
-    auto preview = createDragPreviewInternal(item, contentView, previewContainer, AddPreviewViewToContainer::Yes, std::nullopt);
+    auto preview = createDragPreviewInternal(item, contentView, previewContainer, AddPreviewViewToContainer::Yes, nullptr);
     if ([preview view].superview == previewContainer)
         m_previewViewsForDragCancel.append([preview view]);
     return preview.autorelease();
 }
 
-RetainPtr<UITargetedDragPreview> DragDropInteractionState::createDragPreviewInternal(UIDragItem *item, UIView *contentView, UIView *previewContainer, AddPreviewViewToContainer addPreviewViewToContainer, const std::optional<WebCore::TextIndicatorData>& indicator) const
+RetainPtr<UITargetedDragPreview> DragDropInteractionState::createDragPreviewInternal(UIDragItem *item, UIView *contentView, UIView *previewContainer, AddPreviewViewToContainer addPreviewViewToContainer, const RefPtr<WebCore::TextIndicator>&& indicator) const
 {
     auto foundSource = activeDragSourceForItem(item);
     if (!foundSource)
@@ -298,8 +298,8 @@ RetainPtr<UITargetedDragPreview> DragDropInteractionState::createDragPreviewInte
         // If the context menu preview was created using the snapshot mechanism,
         // the drag preview should be created likewise, so that the size and position
         // of both previews match.
-        auto textIndicatorImage = uiImageForImage(indicator->contentImage.get());
-        return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator->textBoundingRectInRootViewCoordinates, indicator->textRectsInBoundingRectCoordinates, cocoaColor(indicator->estimatedBackgroundColor).get(), nil, addPreviewViewToContainer).autorelease();
+        auto textIndicatorImage = uiImageForImage(indicator->contentImage());
+        return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator->textBoundingRectInRootViewCoordinates(), indicator->textRectsInBoundingRectCoordinates(), cocoaColor(indicator->estimatedBackgroundColor()).get(), nil, addPreviewViewToContainer).autorelease();
     }
 
     if (shouldUseDragImageToCreatePreviewForDragSource(source)) {
@@ -314,9 +314,9 @@ RetainPtr<UITargetedDragPreview> DragDropInteractionState::createDragPreviewInte
     }
 
     if (shouldUseTextIndicatorToCreatePreviewForDragSource(source)) {
-        auto indicator = source.indicatorData.value();
-        auto textIndicatorImage = uiImageForImage(indicator.contentImage.get());
-        return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, cocoaColor(indicator.estimatedBackgroundColor).get(), nil, addPreviewViewToContainer).autorelease();
+        RefPtr textIndicator = source.textIndicator;
+        RetainPtr textIndicatorImage = uiImageForImage(textIndicator->contentImage());
+        return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, textIndicator->textBoundingRectInRootViewCoordinates(), textIndicator->textRectsInBoundingRectCoordinates(), cocoaColor(textIndicator->estimatedBackgroundColor()).get(), nil, addPreviewViewToContainer).autorelease();
     }
 
     return nil;
@@ -348,7 +348,7 @@ void DragDropInteractionState::stageDragItem(const DragItem& item, DragSourceSta
         item.sourceAction,
         item.dragPreviewFrameInRootViewCoordinates,
         dragPreviewContent,
-        item.image.textIndicator() ? std::optional { item.image.textIndicator()->data() } : std::nullopt,
+        item.image.textIndicator(),
         item.image.visiblePath(),
         item.title.isEmpty() ? nil : item.title.createNSString().get(),
         item.url.isEmpty() ? nil : item.url.createNSURL().get(),
@@ -370,9 +370,9 @@ void DragDropInteractionState::clearStagedDragSource(DidBecomeActive didBecomeAc
     m_stagedDragSource = std::nullopt;
 }
 
-void DragDropInteractionState::setElementIdentifier(const std::optional<ElementIdentifier>& elementID)
+void DragDropInteractionState::setElementIdentifier(const std::optional<NodeIdentifier>& nodeID)
 {
-    m_elementIdentifier = elementID;
+    m_nodeIdentifier = nodeID;
 }
 
 void DragDropInteractionState::dragAndDropSessionsDidBecomeInactive()

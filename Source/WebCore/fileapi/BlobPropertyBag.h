@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "EndingType.h"
+#include <WebCore/EndingType.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

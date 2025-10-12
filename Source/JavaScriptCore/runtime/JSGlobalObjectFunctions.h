@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
+#include <JavaScriptCore/JSCJSValue.h>
 #include <unicode/uchar.h>
 
 namespace JSC {
@@ -54,7 +54,6 @@ JSC_DECLARE_HOST_FUNCTION(globalFuncProtoGetter);
 JSC_DECLARE_HOST_FUNCTION(globalFuncProtoSetter);
 JSC_DECLARE_HOST_FUNCTION(globalFuncSetPrototypeDirect);
 JSC_DECLARE_HOST_FUNCTION(globalFuncSetPrototypeDirectOrThrow);
-JSC_DECLARE_HOST_FUNCTION(globalFuncHostPromiseRejectionTracker);
 JSC_DECLARE_HOST_FUNCTION(globalFuncBuiltinLog);
 JSC_DECLARE_HOST_FUNCTION(globalFuncBuiltinDescribe);
 JSC_DECLARE_HOST_FUNCTION(globalFuncImportModule);

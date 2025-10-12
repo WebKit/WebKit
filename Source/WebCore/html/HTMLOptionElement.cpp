@@ -5,7 +5,7 @@
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2010-2017 Google Inc. All rights reserved.
- * Copyright (C) 2011 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2011 Motorola Mobility, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,8 +28,8 @@
 #include "HTMLOptionElement.h"
 
 #include "AXObjectCache.h"
+#include "ContainerNodeInlines.h"
 #include "Document.h"
-#include "DocumentInlines.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "HTMLDataListElement.h"
 #include "HTMLNames.h"
@@ -40,6 +40,7 @@
 #include "NodeTraversal.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderMenuList.h"
+#include "RenderStyleInlines.h"
 #include "RenderTheme.h"
 #include "ScriptElement.h"
 #include "StyleResolver.h"
@@ -81,7 +82,7 @@ ExceptionOr<Ref<HTMLOptionElement>> HTMLOptionElement::createForLegacyFactoryFun
     }
 
     if (!value.isNull())
-        element->setValue(value);
+        element->setAttributeWithoutSynchronization(valueAttr, value);
     if (defaultSelected)
         element->setAttributeWithoutSynchronization(selectedAttr, emptyAtom());
     element->setSelected(selected);
@@ -148,7 +149,7 @@ HTMLFormElement* HTMLOptionElement::form() const
 HTMLFormElement* HTMLOptionElement::formForBindings() const
 {
     // FIXME: The downcast should be unnecessary, but the WPT was written before https://github.com/WICG/webcomponents/issues/1072 was resolved. Update once the WPT has been updated.
-    return dynamicDowncast<HTMLFormElement>(retargetReferenceTargetForBindings(form())).get();
+    return dynamicDowncast<HTMLFormElement>(retargetReferenceTargetForBindings(form())).unsafeGet();
 }
 
 int HTMLOptionElement::index() const
@@ -216,12 +217,7 @@ String HTMLOptionElement::value() const
     const AtomString& value = attributeWithoutSynchronization(valueAttr);
     if (!value.isNull())
         return value;
-    return collectOptionInnerText().trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
-}
-
-void HTMLOptionElement::setValue(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(valueAttr, value);
+    return collectOptionInnerTextCollapsingWhitespace();
 }
 
 bool HTMLOptionElement::selected(AllowStyleInvalidation allowStyleInvalidation) const
@@ -254,7 +250,7 @@ void HTMLOptionElement::setSelectedState(bool selected, AllowStyleInvalidation a
     m_isSelected = selected;
 
     if (CheckedPtr cache = protectedDocument()->existingAXObjectCache())
-        cache->onSelectedChanged(*this);
+        cache->onSelectedOptionChanged(*this);
 }
 
 void HTMLOptionElement::childrenChanged(const ChildChange& change)
@@ -286,13 +282,16 @@ String HTMLOptionElement::label() const
 {
     String label = attributeWithoutSynchronization(labelAttr);
     if (!label.isNull())
-        return label.trim(isASCIIWhitespace);
-    return collectOptionInnerText().trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
+        return label;
+    return collectOptionInnerTextCollapsingWhitespace();
 }
 
-void HTMLOptionElement::setLabel(const AtomString& label)
+// Same as label() but ignores the label content attribute in quirks mode for compatibility with other browsers.
+String HTMLOptionElement::displayLabel() const
 {
-    setAttributeWithoutSynchronization(labelAttr, label);
+    if (document().inQuirksMode())
+        return collectOptionInnerTextCollapsingWhitespace();
+    return label();
 }
 
 void HTMLOptionElement::willResetComputedStyle()
@@ -331,6 +330,11 @@ String HTMLOptionElement::collectOptionInnerText() const
             text.append(textNode->data());
     }
     return text.toString();
+}
+
+String HTMLOptionElement::collectOptionInnerTextCollapsingWhitespace() const
+{
+    return collectOptionInnerText().trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
 }
 
 } // namespace

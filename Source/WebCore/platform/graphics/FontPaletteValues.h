@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Color.h"
-#include "Gradient.h"
+#include <WebCore/Color.h>
+#include <WebCore/Gradient.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>

@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "ArgumentsMode.h"
-#include "CommonIdentifiers.h"
-#include "JSObject.h"
+#include <JavaScriptCore/ArgumentsMode.h>
+#include <JavaScriptCore/CommonIdentifiers.h>
+#include <JavaScriptCore/JSObject.h>
 
 namespace JSC {
 

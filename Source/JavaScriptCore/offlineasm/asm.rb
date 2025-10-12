@@ -391,7 +391,8 @@ File.open(outputFlnm, "w") {
             end
 
             lowLevelAST = lowLevelAST.demacroify({})
-            lowLevelAST = lowLevelAST.resolve(buildOffsetsMap(lowLevelAST, offsetsList))
+            mapping = buildOffsetsMap(lowLevelAST, offsetsList)
+            lowLevelAST = lowLevelAST.resolve(mapping)
             lowLevelAST.validate
             emitCodeInConfiguration(concreteSettings, lowLevelAST, backend) {
                 $currentSettings = concreteSettings

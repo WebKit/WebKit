@@ -25,7 +25,7 @@ headers: <WebCore/TextIndicator.h>
 #if PLATFORM(MAC)
 header: "WebHitTestResultData.h" <pal/mac/DataDetectorsSoftLink.h>
 [Nested] struct WebKit::WebHitTestResultPlatformData::DetectedDataActionContext {
-    [SecureCodingAllowed=[PAL::getWKDDActionContextClass()]] RetainPtr<WKDDActionContext> context;
+    [SecureCodingAllowed=[PAL::getWKDDActionContextClassSingleton()]] RetainPtr<WKDDActionContext> context;
 };
 [CustomHeader] struct WebKit::WebHitTestResultPlatformData {
     Markable<WebKit::WebHitTestResultPlatformData::DetectedDataActionContext> detectedDataActionContext;

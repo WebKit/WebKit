@@ -26,7 +26,7 @@ headers: "WebsiteDataType.h"
     Cookies,
     DiskCache,
     MemoryCache,
-    OfflineWebApplicationCache,
+    LegacyOfflineWebApplicationCachePlaceholder,
     SessionStorage,
     LocalStorage,
     WebSQLDatabases,

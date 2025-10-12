@@ -50,7 +50,7 @@ void JSMapIterator::finishCreation(JSGlobalObject* globalObject, JSMap* iterated
     setEntry(vm, 0);
     setIteratedObject(vm, iteratedObject);
 
-    JSCell* storage = iteratedObject->storage(globalObject);
+    JSCell* storage = iteratedObject->tryGetStorage(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
     setStorage(vm, storage);
 

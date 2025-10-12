@@ -268,7 +268,7 @@ struct Type {
 
     bool operator==(const Type& other) const
     {
-        return other.kind == kind && other.isNullable() == isNullable() && other.index == index;
+        return other.kind == kind && other.index == index;
     }
 
     bool isNullable() const
@@ -276,10 +276,14 @@ struct Type {
         return kind == TypeKind::RefNull || kind == TypeKind::Externref || kind == TypeKind::Funcref;
     }
 
+    // Saying conservatively.
+    bool definitelyIsCellOrNull() const;
+    bool definitelyIsWasmGCObjectOrNull() const;
+
     void dump(PrintStream& out) const;
     Width width() const;
 
-    // Use Wasm::isFuncref and Wasm::isExternref instead because they check againts all kind of representations of function referenes and external references.
+    // Use Wasm::isFuncref and Wasm::isExternref instead because they check against all kinds of representations of function references and external references.
 
     #define CREATE_PREDICATE(name, ...) bool is ## name() const { return kind == TypeKind::name; }
     FOR_EACH_WASM_TYPE_EXCEPT_FUNCREF_AND_EXTERNREF(CREATE_PREDICATE)
@@ -290,7 +294,7 @@ struct Type {
         switch(kind) {
         case TypeKind::I64:
         case TypeKind::Funcref:
-        case TypeKind::Exn:
+        case TypeKind::Exnref:
         case TypeKind::Externref:
         case TypeKind::RefNull:
         case TypeKind::Ref:
@@ -460,6 +464,42 @@ inline bool isControlOp(OpType op)
     default:
         break;
     }
+    return false;
+}
+
+inline bool isControlFlowInstruction(OpType op)
+{
+    switch (op) {
+#define CREATE_CASE(name, ...) case OpType::name:
+    FOR_EACH_WASM_CONTROL_FLOW_OP(CREATE_CASE)
+        return true;
+#undef CREATE_CASE
+    case OpType::Call:
+    case OpType::CallIndirect:
+    case OpType::CallRef:
+    case OpType::TailCall:
+    case OpType::TailCallIndirect:
+    case OpType::TailCallRef:
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+
+// Enhanced version that includes ExtGC branch operations
+// This function requires access to the current extended opcode for ExtGC operations
+template<typename ExtendedOpcodeProvider>
+inline bool isControlFlowInstructionWithExtGC(OpType op, ExtendedOpcodeProvider&& getExtendedOpcode)
+{
+    if (isControlFlowInstruction(op))
+        return true;
+
+    if (op == OpType::ExtGC) {
+        uint32_t extOp = getExtendedOpcode();
+        return extOp == static_cast<uint32_t>(ExtGCOpType::BrOnCast) || extOp == static_cast<uint32_t>(ExtGCOpType::BrOnCastFail);
+    }
+
     return false;
 }
 

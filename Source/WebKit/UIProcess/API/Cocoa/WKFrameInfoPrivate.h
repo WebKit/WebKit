@@ -27,20 +27,25 @@
 
 @class _WKFrameHandle;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface WKFrameInfo (WKPrivate)
 
-@property (nonatomic, readonly, copy, nonnull) _WKFrameHandle *_handle WK_API_AVAILABLE(macos(10.12), ios(10.0));
+@property (nonatomic, readonly, copy) _WKFrameHandle *_handle WK_API_AVAILABLE(macos(10.12), ios(10.0));
 @property (nonatomic, readonly, copy, nullable) _WKFrameHandle *_parentFrameHandle WK_API_AVAILABLE(macos(11.0), ios(14.0));
-@property (nonatomic, readonly, copy, nullable) NSUUID *_documentIdentifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, readonly, copy, nullable) NSUUID *_documentIdentifier WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 @property (nonatomic, readonly) pid_t _processIdentifier WK_API_AVAILABLE(macos(13.3), ios(16.4));
 @property (nonatomic, readonly) BOOL _isLocalFrame WK_API_AVAILABLE(macos(14.0), ios(17.0));
 @property (nonatomic, readonly) BOOL _isFocused WK_API_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1));
 @property (nonatomic, readonly) BOOL _errorOccurred WK_API_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1));
 @property (nonatomic, readonly, copy, nullable) NSString *_title WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
-@property (nonatomic, readonly) BOOL _isScrollable WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
-@property (nonatomic, readonly) CGSize _contentSize WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
-@property (nonatomic, readonly) CGSize _visibleContentSize WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
-@property (nonatomic, readonly) CGSize _visibleContentSizeExcludingScrollbars WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
-@property (nonatomic, readonly, nullable) SecTrustRef _serverTrust WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, readonly) BOOL _isScrollable WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
+@property (nonatomic, readonly) CGSize _contentSize WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
+@property (nonatomic, readonly) CGSize _visibleContentSize WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
+@property (nonatomic, readonly) CGSize _visibleContentSizeExcludingScrollbars WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
+@property (nonatomic, readonly, nullable) SecTrustRef _serverTrust WK_API_AVAILABLE(macos(26.0), ios(26.0), visionos(26.0));
+
+- (BOOL)_isSameFrame:(WKFrameInfo *)frame WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+NS_ASSUME_NONNULL_END
 
 @end

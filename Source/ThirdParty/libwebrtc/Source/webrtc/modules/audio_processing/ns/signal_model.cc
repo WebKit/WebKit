@@ -10,6 +10,8 @@
 
 #include "modules/audio_processing/ns/signal_model.h"
 
+#include "modules/audio_processing/ns/ns_common.h"
+
 namespace webrtc {
 
 SignalModel::SignalModel() {

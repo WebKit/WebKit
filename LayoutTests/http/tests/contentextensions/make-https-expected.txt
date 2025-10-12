@@ -2,5 +2,5 @@ CONSOLE MESSAGE: Promoted URL from http://127.0.0.1/promote to https
 CONSOLE MESSAGE: Promoted URL from http://127.0.0.1/promote to https
 CONSOLE MESSAGE: Promoted URL from http://127.0.0.1/promote to https
 CONSOLE MESSAGE: Promoted URL from http://promote/ to https
-Blocked access to external URL https://promote/
+CONSOLE MESSAGE: Blocked access to external URL https://promote/
 URLs with http, port 80, and promote in the url should be promoted to https with port 443. Four URLs should be promoted as should be shown by four CONSOLE MESSAGE lines.

@@ -10,10 +10,14 @@
 
 #include <windows.h>
 
+#include <cstddef>
 #include <memory>
 
+#include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/rgba_color.h"
 #include "modules/desktop_capture/screen_drawer.h"
-#include "system_wrappers/include/sleep.h"
+#include "rtc_base/thread.h"
 
 namespace webrtc {
 
@@ -40,7 +44,7 @@ ScreenDrawerLockWin::ScreenDrawerLockWin() {
       if (mutex_) {
         CloseHandle(mutex_);
       }
-      SleepMs(1000);
+      Thread::SleepMs(1000);
     }
   }
 }
@@ -152,7 +156,7 @@ void ScreenDrawerWin::Clear() {
 // paintings.
 void ScreenDrawerWin::WaitForPendingDraws() {
   BringToFront();
-  SleepMs(50);
+  Thread::SleepMs(50);
 }
 
 bool ScreenDrawerWin::MayDrawIncompleteShapes() {

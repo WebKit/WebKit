@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -123,14 +123,14 @@ void WebSharedWorkerServerToContextConnection::launchSharedWorker(WebSharedWorke
     if (!connection)
         return;
 
-    connection->protectedNetworkProcess()->addAllowedFirstPartyForCookies(connection->webProcessIdentifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(sharedWorker.origin().topOrigin.host()), LoadedWebArchive::No, [] { });
+    connection->networkProcess().addAllowedFirstPartyForCookies(connection->webProcessIdentifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(sharedWorker.origin().topOrigin.host()), LoadedWebArchive::No, [] { });
 
     CONTEXT_CONNECTION_RELEASE_LOG("launchSharedWorker: sharedWorkerIdentifier=%" PRIu64, sharedWorker.identifier().toUInt64());
     sharedWorker.markAsRunning();
     auto initializationData = sharedWorker.initializationData();
     if (auto contextIdentifier = initializationData.clientIdentifier) {
         initializationData.clientIdentifier = WebCore::ScriptExecutionContextIdentifier { contextIdentifier->object(), *webProcessIdentifier() };
-        if (RefPtr serviceWorkerOldConnection = connection->protectedNetworkProcess()->webProcessConnection(contextIdentifier->processIdentifier())) {
+        if (RefPtr serviceWorkerOldConnection = connection->networkProcess().webProcessConnection(contextIdentifier->processIdentifier())) {
             if (RefPtr swOldConnection = serviceWorkerOldConnection->swConnection()) {
                 if (auto clientData = swOldConnection->gatherClientData(*contextIdentifier)) {
                     swOldConnection->unregisterServiceWorkerClient(*contextIdentifier);
@@ -181,7 +181,7 @@ void WebSharedWorkerServerToContextConnection::addSharedWorkerObject(WebCore::Sh
         RefPtr connection = m_connection.get();
         auto identifier = webProcessIdentifier();
         if (connection && identifier)
-            connection->protectedNetworkProcess()->send(Messages::NetworkProcessProxy::RegisterRemoteWorkerClientProcess { RemoteWorkerType::SharedWorker, sharedWorkerObjectIdentifier.processIdentifier(), *identifier }, 0);
+            connection->networkProcess().send(Messages::NetworkProcessProxy::RegisterRemoteWorkerClientProcess { RemoteWorkerType::SharedWorker, sharedWorkerObjectIdentifier.processIdentifier(), *identifier }, 0);
     }
 
     m_idleTerminationTimer.stop();
@@ -203,7 +203,7 @@ void WebSharedWorkerServerToContextConnection::removeSharedWorkerObject(WebCore:
         RefPtr connection = m_connection.get();
         auto identifier = webProcessIdentifier();
         if (connection && identifier)
-            connection->protectedNetworkProcess()->send(Messages::NetworkProcessProxy::UnregisterRemoteWorkerClientProcess { RemoteWorkerType::SharedWorker, sharedWorkerObjectIdentifier.processIdentifier(), *identifier }, 0);
+            connection->networkProcess().send(Messages::NetworkProcessProxy::UnregisterRemoteWorkerClientProcess { RemoteWorkerType::SharedWorker, sharedWorkerObjectIdentifier.processIdentifier(), *identifier }, 0);
     }
 
 

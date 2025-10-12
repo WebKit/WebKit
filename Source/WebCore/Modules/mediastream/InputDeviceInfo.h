@@ -45,9 +45,15 @@ public:
 private:
     InputDeviceInfo(CaptureDeviceWithCapabilities&&, String&& saltedDeviceId, String&& saltedGroupId);
 
+    bool isInputDeviceInfo() const final { return true; }
+
     RealtimeMediaSourceCapabilities m_capabilities;
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InputDeviceInfo)
+    static bool isType(const WebCore::MediaDeviceInfo& info) { return info.isInputDeviceInfo(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

@@ -92,7 +92,7 @@ bool PageClientImpl::isViewFocused()
     return m_view.isFocused();
 }
 
-bool PageClientImpl::isViewVisible()
+bool PageClientImpl::isActiveViewVisible()
 {
     return m_view.isVisible();
 }
@@ -247,7 +247,7 @@ bool PageClientImpl::handleRunOpenPanel(const WebPageProxy&, const WebFrameProxy
 
     ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = viewWindow;
-    ofn.lpstrFile = fileBuffer.data();
+    ofn.lpstrFile = fileBuffer.mutableSpan().data();
     ofn.nMaxFile = fileBuffer.size();
     ofn.lpstrTitle = L"Upload";
     ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_EXPLORER;
@@ -256,7 +256,7 @@ bool PageClientImpl::handleRunOpenPanel(const WebPageProxy&, const WebFrameProxy
 
     if (GetOpenFileName(&ofn)) {
         Vector<String> fileList;
-        auto p = fileBuffer.data();
+        auto p = fileBuffer.span().data();
         auto length = wcslen(p);
         auto firstValue = String(p, length);
 

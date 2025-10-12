@@ -10,7 +10,9 @@
 
 #include "rtc_base/memory/always_valid_pointer.h"
 
+#include <memory>
 #include <string>
+#include <utility>
 
 #include "test/gtest.h"
 
@@ -32,7 +34,7 @@ TEST(AlwaysValidPointerTest, DefaultToSubclass) {
   struct B : public A {
     int b = 0;
     explicit B(int val) : b(val) {}
-    virtual ~B() {}
+    ~B() override {}
     int f() override { return b; }
   };
   AlwaysValidPointer<A, B> ptr(nullptr, 3);

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error: Error Message
 
 PASS ErrorEvent on worker doesn't bubble and is cancelable
 

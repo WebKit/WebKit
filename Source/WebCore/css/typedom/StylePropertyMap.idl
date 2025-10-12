@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2018 Apple Inc.  All rights reserved.
+* Copyright (C) 2018 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -26,8 +26,7 @@
 // https://drafts.css-houdini.org/css-typed-om/#cssstylepropertymap
 [
     Exposed=Window,
-    SkipVTableValidation,
-    JSGenerateToJSObject
+    SkipVTableValidation
 ] interface StylePropertyMap : StylePropertyMapReadOnly {
     [CallWith=CurrentDocument] undefined set([AtomString] USVString property, (CSSStyleValue or USVString)... values);
     [CallWith=CurrentDocument] undefined append([AtomString] USVString property, (CSSStyleValue or USVString)... values);

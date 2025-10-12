@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "UIEventInit.h"
+#include <WebCore/UIEventInit.h>
 
 namespace WebCore {
 

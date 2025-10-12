@@ -141,7 +141,7 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
         ProgramExecutable* executable = jsCast<ProgramExecutable*>(this);
         ProgramCodeBlock* codeBlock = static_cast<ProgramCodeBlock*>(genericCodeBlock);
         
-        ASSERT(kind == CodeForCall);
+        ASSERT(kind == CodeSpecializationKind::CodeForCall);
         
         oldCodeBlock = executable->replaceCodeBlockWith(vm, codeBlock);
         break;
@@ -151,7 +151,7 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
         ModuleProgramExecutable* executable = jsCast<ModuleProgramExecutable*>(this);
         ModuleProgramCodeBlock* codeBlock = static_cast<ModuleProgramCodeBlock*>(genericCodeBlock);
 
-        ASSERT(kind == CodeForCall);
+        ASSERT(kind == CodeSpecializationKind::CodeForCall);
 
         oldCodeBlock = executable->replaceCodeBlockWith(vm, codeBlock);
         break;
@@ -161,7 +161,7 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
         EvalExecutable* executable = jsCast<EvalExecutable*>(this);
         EvalCodeBlock* codeBlock = static_cast<EvalCodeBlock*>(genericCodeBlock);
         
-        ASSERT(kind == CodeForCall);
+        ASSERT(kind == CodeSpecializationKind::CodeForCall);
         
         oldCodeBlock = executable->replaceCodeBlockWith(vm, codeBlock);
         break;
@@ -177,11 +177,11 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
     }
 
     switch (kind) {
-    case CodeForCall:
+    case CodeSpecializationKind::CodeForCall:
         m_jitCodeForCall = genericCodeBlock ? genericCodeBlock->jitCode() : nullptr;
         m_jitCodeForCallWithArityCheck = nullptr;
         break;
-    case CodeForConstruct:
+    case CodeSpecializationKind::CodeForConstruct:
         m_jitCodeForConstruct = genericCodeBlock ? genericCodeBlock->jitCode() : nullptr;
         m_jitCodeForConstructWithArityCheck = nullptr;
         break;
@@ -260,7 +260,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
 
     if (classInfo() == EvalExecutable::info()) {
         EvalExecutable* executable = jsCast<EvalExecutable*>(this);
-        RELEASE_ASSERT(kind == CodeForCall);
+        RELEASE_ASSERT(kind == CodeSpecializationKind::CodeForCall);
         RELEASE_ASSERT(!executable->m_codeBlock);
         RELEASE_ASSERT(!function);
 
@@ -273,7 +273,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
 
     if (classInfo() == ProgramExecutable::info()) {
         ProgramExecutable* executable = jsCast<ProgramExecutable*>(this);
-        RELEASE_ASSERT(kind == CodeForCall);
+        RELEASE_ASSERT(kind == CodeSpecializationKind::CodeForCall);
         RELEASE_ASSERT(!executable->m_codeBlock);
         RELEASE_ASSERT(!function);
         RELEASE_AND_RETURN(throwScope, ProgramCodeBlock::create(vm, executable, executable->unlinkedCodeBlock(), scope));
@@ -281,7 +281,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
 
     if (classInfo() == ModuleProgramExecutable::info()) {
         ModuleProgramExecutable* executable = jsCast<ModuleProgramExecutable*>(this);
-        RELEASE_ASSERT(kind == CodeForCall);
+        RELEASE_ASSERT(kind == CodeSpecializationKind::CodeForCall);
         RELEASE_ASSERT(!executable->m_codeBlock);
         RELEASE_ASSERT(!function);
 
@@ -327,7 +327,7 @@ CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(
 {
     VM& vm = this->vm();
     if (classInfo() == EvalExecutable::info()) {
-        RELEASE_ASSERT(kind == CodeForCall);
+        RELEASE_ASSERT(kind == CodeSpecializationKind::CodeForCall);
         EvalExecutable* executable = jsCast<EvalExecutable*>(this);
         EvalCodeBlock* baseline = static_cast<EvalCodeBlock*>(
             executable->codeBlock()->baselineVersion());
@@ -338,7 +338,7 @@ CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(
     }
     
     if (classInfo() == ProgramExecutable::info()) {
-        RELEASE_ASSERT(kind == CodeForCall);
+        RELEASE_ASSERT(kind == CodeSpecializationKind::CodeForCall);
         ProgramExecutable* executable = jsCast<ProgramExecutable*>(this);
         ProgramCodeBlock* baseline = static_cast<ProgramCodeBlock*>(
             executable->codeBlock()->baselineVersion());
@@ -349,7 +349,7 @@ CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(
     }
 
     if (classInfo() == ModuleProgramExecutable::info()) {
-        RELEASE_ASSERT(kind == CodeForCall);
+        RELEASE_ASSERT(kind == CodeSpecializationKind::CodeForCall);
         ModuleProgramExecutable* executable = jsCast<ModuleProgramExecutable*>(this);
         ModuleProgramCodeBlock* baseline = static_cast<ModuleProgramCodeBlock*>(
             executable->codeBlock()->baselineVersion());
@@ -378,7 +378,7 @@ static void setupJIT(VM& vm, CodeBlock* codeBlock)
 {
 #if ENABLE(JIT)
     CompilationResult result = JIT::compileSync(vm, codeBlock, JITCompilationMustSucceed);
-    RELEASE_ASSERT(result == CompilationSuccessful);
+    RELEASE_ASSERT(result == CompilationResult::CompilationSuccessful);
 #else
     UNUSED_PARAM(vm);
     UNUSED_PARAM(codeBlock);

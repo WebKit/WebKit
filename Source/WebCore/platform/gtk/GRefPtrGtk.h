@@ -28,28 +28,17 @@ typedef struct _GskRenderNode GskRenderNode;
 
 namespace WTF {
 
-#if !USE(GTK4)
-template <> GtkTargetList* refGPtr(GtkTargetList* ptr);
-template <> void derefGPtr(GtkTargetList* ptr);
+#if USE(GTK4)
+WTF_DECLARE_GREF_TRAITS(GskRenderNode)
+WTF_DECLARE_GREF_TRAITS(GdkEvent)
+#else
+WTF_DECLARE_GREF_TRAITS(GtkTargetList)
+WTF_DECLARE_GREF_TRAITS(GtkWidgetPath)
 #endif
 
 #if USE(LIBSECRET)
-template <> SecretValue* refGPtr(SecretValue* ptr);
-template <> void derefGPtr(SecretValue* ptr);
+WTF_DECLARE_GREF_TRAITS(SecretValue)
 #endif
 
-#if !USE(GTK4)
-template <> GtkWidgetPath* refGPtr(GtkWidgetPath* ptr);
-template <> void derefGPtr(GtkWidgetPath* ptr);
-#endif
-
-#if USE(GTK4)
-template <> GskRenderNode* refGPtr(GskRenderNode* ptr);
-template <> void derefGPtr(GskRenderNode* ptr);
-
-template <> GdkEvent* refGPtr(GdkEvent* ptr);
-template <> void derefGPtr(GdkEvent* ptr);
-#endif
-
-}
+} // namespace WTF
 

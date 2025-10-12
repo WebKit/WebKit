@@ -36,6 +36,7 @@
 #include <WebCore/NotImplemented.h>
 #include <string.h>
 #include <sys/sysinfo.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/WallTime.h>
 #include <wtf/linux/CurrentProcessMemoryStatus.h>
 #include <wtf/text/WTFString.h>
@@ -77,6 +78,13 @@ static inline void appendKeyValuePair(WebMemoryStatistics& stats, const String& 
     stats.values.append(value);
 }
 
+#define INSTRUMENT_KEY_VALUE_COUNTER(stats, id, key, value) \
+do { \
+    WTFSetCounter(id, value); \
+    appendKeyValuePair(stats, key, value); \
+} while (0);
+
+IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 String WebMemorySampler::processName() const
 {
     char processPath[maxProcessPath];
@@ -92,6 +100,7 @@ String WebMemorySampler::processName() const
 
     return processName;
 }
+IGNORE_CLANG_WARNINGS_END
 
 WebMemoryStatistics WebMemorySampler::sampleWebKit() const
 {
@@ -104,13 +113,13 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     ProcessMemoryStatus processMemoryStatus;
     currentProcessMemoryStatus(processMemoryStatus);
 
-    appendKeyValuePair(webKitMemoryStats, "Total Program Bytes"_s, processMemoryStatus.size);
-    appendKeyValuePair(webKitMemoryStats, "Resident Set Bytes"_s, processMemoryStatus.resident);
-    appendKeyValuePair(webKitMemoryStats, "Resident Shared Bytes"_s, processMemoryStatus.shared);
-    appendKeyValuePair(webKitMemoryStats, "Text Bytes"_s, processMemoryStatus.text);
-    appendKeyValuePair(webKitMemoryStats, "Library Bytes"_s, processMemoryStatus.lib);
-    appendKeyValuePair(webKitMemoryStats, "Data + Stack Bytes"_s, processMemoryStatus.data);
-    appendKeyValuePair(webKitMemoryStats, "Dirty Bytes"_s, processMemoryStatus.dt);
+    INSTRUMENT_KEY_VALUE_COUNTER(webKitMemoryStats, TotalProgramBytes, "Total Program Bytes"_s, processMemoryStatus.size);
+    INSTRUMENT_KEY_VALUE_COUNTER(webKitMemoryStats, ResidentSetBytes, "Resident Set Bytes"_s, processMemoryStatus.resident);
+    INSTRUMENT_KEY_VALUE_COUNTER(webKitMemoryStats, ResidentSharedBytes, "Resident Shared Bytes"_s, processMemoryStatus.shared);
+    INSTRUMENT_KEY_VALUE_COUNTER(webKitMemoryStats, TextBytes, "Text Bytes"_s, processMemoryStatus.text);
+    INSTRUMENT_KEY_VALUE_COUNTER(webKitMemoryStats, LibraryBytes, "Library Bytes"_s, processMemoryStatus.lib);
+    INSTRUMENT_KEY_VALUE_COUNTER(webKitMemoryStats, DataStackBytes, "Data + Stack Bytes"_s, processMemoryStatus.data);
+    INSTRUMENT_KEY_VALUE_COUNTER(webKitMemoryStats, DirtyBytes, "Dirty Bytes"_s, processMemoryStatus.dt);
 
     size_t totalBytesInUse = 0;
     size_t totalBytesCommitted = 0;
@@ -121,8 +130,8 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     totalBytesInUse += fastMallocBytesInUse;
     totalBytesCommitted += fastMallocBytesCommitted;
 
-    appendKeyValuePair(webKitMemoryStats, "Fast Malloc In Use"_s, fastMallocBytesInUse);
-    appendKeyValuePair(webKitMemoryStats, "Fast Malloc Committed Memory"_s, fastMallocBytesCommitted);
+    INSTRUMENT_KEY_VALUE_COUNTER(webKitMemoryStats, FastMallocInUse, "Fast Malloc In Use"_s, fastMallocBytesInUse);
+    INSTRUMENT_KEY_VALUE_COUNTER(webKitMemoryStats, FastMallocCommittedMemory, "Fast Malloc Committed Memory"_s, fastMallocBytesCommitted);
 
     size_t jscHeapBytesInUse = commonVM().heap.size();
     size_t jscHeapBytesCommitted = commonVM().heap.capacity();
@@ -133,14 +142,14 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     totalBytesInUse += globalMemoryStats.stackBytes + globalMemoryStats.JITBytes;
     totalBytesCommitted += globalMemoryStats.stackBytes + globalMemoryStats.JITBytes;
 
-    appendKeyValuePair(webKitMemoryStats, "JavaScript Heap In Use"_s, jscHeapBytesInUse);
-    appendKeyValuePair(webKitMemoryStats, "JavaScript Heap Committed Memory"_s, jscHeapBytesCommitted);
-    
-    appendKeyValuePair(webKitMemoryStats, "JavaScript Stack Bytes"_s, globalMemoryStats.stackBytes);
-    appendKeyValuePair(webKitMemoryStats, "JavaScript JIT Bytes"_s, globalMemoryStats.JITBytes);
+    INSTRUMENT_KEY_VALUE_COUNTER(webKitMemoryStats, JSHeapInUse, "JavaScript Heap In Use"_s, jscHeapBytesInUse);
+    INSTRUMENT_KEY_VALUE_COUNTER(webKitMemoryStats, JSHeapCommittedMemory, "JavaScript Heap Committed Memory"_s, jscHeapBytesCommitted);
 
-    appendKeyValuePair(webKitMemoryStats, "Total Memory In Use"_s, totalBytesInUse);
-    appendKeyValuePair(webKitMemoryStats, "Total Committed Memory"_s, totalBytesCommitted);
+    INSTRUMENT_KEY_VALUE_COUNTER(webKitMemoryStats, JSStackBytes, "JavaScript Stack Bytes"_s, globalMemoryStats.stackBytes);
+    INSTRUMENT_KEY_VALUE_COUNTER(webKitMemoryStats, JSJITBytes, "JavaScript JIT Bytes"_s, globalMemoryStats.JITBytes);
+
+    INSTRUMENT_KEY_VALUE_COUNTER(webKitMemoryStats, TotalMemory, "Total Memory In Use"_s, totalBytesInUse);
+    INSTRUMENT_KEY_VALUE_COUNTER(webKitMemoryStats, TotalCommittedMemory, "Total Committed Memory"_s, totalBytesCommitted);
 
     struct sysinfo systemInfo;
     if (!sysinfo(&systemInfo)) {

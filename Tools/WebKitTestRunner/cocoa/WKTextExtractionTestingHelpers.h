@@ -26,11 +26,13 @@
 #pragma once
 
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKTextExtraction.h>
 
 @class WKTextExtractionItem;
+@class WKTextExtractionResult;
 
 @interface WKWebView (TextExtractionTesting)
-- (void)_requestTextExtraction:(CGRect)bounds completionHandler:(void(^)(WKTextExtractionItem *))completionHandler;
+- (void)_requestTextExtraction:(_WKTextExtractionConfiguration *)configuration completionHandler:(void(^)(WKTextExtractionResult *))completionHandler;
 @end
 
 namespace WTR {

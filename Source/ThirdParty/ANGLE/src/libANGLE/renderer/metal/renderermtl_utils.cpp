@@ -7,6 +7,10 @@
 //   Helper methods pertaining to the Metal back-end.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/metal/renderermtl_utils.h"
 #include "libANGLE/renderer/renderer_utils.h"
 

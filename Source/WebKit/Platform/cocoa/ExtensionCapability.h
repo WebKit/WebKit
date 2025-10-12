@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,17 +31,10 @@
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS BEProcessCapability;
-#if USE(LEGACY_EXTENSIONKIT_SPI)
-OBJC_CLASS _SECapability;
-#endif
 
 namespace WebKit {
 
-#if USE(LEGACY_EXTENSIONKIT_SPI)
-using PlatformCapability = Variant<RetainPtr<BEProcessCapability>, RetainPtr<_SECapability>>;
-#else
 using PlatformCapability = RetainPtr<BEProcessCapability>;
-#endif
 
 class ExtensionCapability {
 public:
@@ -53,13 +46,7 @@ public:
 
     static bool platformCapabilityIsValid(const PlatformCapability& platformCapability)
     {
-#if USE(LEGACY_EXTENSIONKIT_SPI)
-        return WTF::switchOn(platformCapability, [] (auto& capability) {
-            return !!capability;
-        });
-#else
         return !!platformCapability;
-#endif
     }
 
 protected:

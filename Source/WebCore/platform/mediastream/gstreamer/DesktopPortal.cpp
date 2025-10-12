@@ -126,7 +126,7 @@ bool DesktopPortalCamera::isCameraPresent()
     return g_variant_get_boolean(isCameraPresent.get());
 }
 
-bool DesktopPortalCamera::accessCamera()
+void DesktopPortalCamera::accessCamera(Function<void(std::optional<int>)>&& callback)
 {
     auto token = makeString("WebKit"_s, weakRandomNumber<uint32_t>());
     GVariantBuilder options;
@@ -137,26 +137,28 @@ bool DesktopPortalCamera::accessCamera()
     auto connectionString = StringView::fromLatin1(g_dbus_connection_get_unique_name(connection));
     auto sender = makeStringByReplacingAll(connectionString.substring(1), '.', '_');
     auto objectPath = makeString("/org/freedesktop/portal/desktop/request/"_s, sender, '/', token);
-    m_cameraAccessResults.add(objectPath, std::nullopt);
 
-    m_currentResponseCallback = [&](auto* variant) mutable {
+    m_currentResponseCallback = [callback = WTFMove(callback), this](auto* variant) mutable {
         if (!variant) {
-            m_cameraAccessResults.get(objectPath) = false;
+            callback(std::nullopt);
             return;
         }
 
         uint32_t response;
         g_variant_get(variant, "(u@a{sv})", &response, nullptr);
         // 0 response value means the user allowed device access.
-        m_cameraAccessResults.set(objectPath, !response);
+        if (!response) {
+            callback(openCameraPipewireRemote());
+            return;
+        }
+        callback(std::nullopt);
     };
 
     auto signalId = g_dbus_connection_signal_subscribe(connection, "org.freedesktop.portal.Desktop", "org.freedesktop.portal.Request",
         "Response", objectPath.utf8().data(), nullptr, G_DBUS_SIGNAL_FLAGS_NO_MATCH_RULE, reinterpret_cast<GDBusSignalCallback>(+[](GDBusConnection*, const char* /* senderName */, const char* /* objectPath */, const char* /* interfaceName */, const char* /* signalName */, GVariant* parameters, gpointer userData) {
             auto& self = *reinterpret_cast<DesktopPortal*>(userData);
             self.notifyResponse(parameters);
-        }),
-        this, nullptr);
+        }), this, nullptr);
 
     g_dbus_proxy_call(m_proxy.get(), "AccessCamera", g_variant_new("(a{sv})", &options), G_DBUS_CALL_FLAGS_NONE, -1, nullptr, reinterpret_cast<GAsyncReadyCallback>(+[](GDBusProxy* proxy, GAsyncResult* result, gpointer) {
         auto finalResult = adoptGRef(g_dbus_proxy_call_finish(proxy, result, nullptr));
@@ -164,10 +166,7 @@ bool DesktopPortalCamera::accessCamera()
 
     while (m_currentResponseCallback)
         g_main_context_iteration(nullptr, false);
-
     g_dbus_connection_signal_unsubscribe(connection, signalId);
-    auto result = m_cameraAccessResults.take(objectPath);
-    return *result;
 }
 
 std::optional<int> DesktopPortalCamera::openCameraPipewireRemote()

@@ -77,7 +77,7 @@ void av1_convert_model_to_params(const double *params,
                                  WarpedMotionParams *model);
 
 // Criteria for accepting a global motion model
-static const double erroradv_tr = 0.65;
+static const double erroradv_tr[2] = { 0.65, 0.2 };
 static const double erroradv_prod_tr = 20000;
 
 // Early exit threshold for global motion refinement
@@ -91,7 +91,8 @@ static const double erroradv_prod_tr = 20000;
 //    threshold even if the model is initially above the threshold
 static const double erroradv_early_tr = 0.70;
 
-int av1_is_enough_erroradvantage(double best_erroradvantage, int params_cost);
+int av1_is_enough_erroradvantage(double best_erroradvantage, int params_cost,
+                                 double gm_erroradv_tr);
 
 void av1_compute_feature_segmentation_map(uint8_t *segment_map, int width,
                                           int height, int *inliers,
@@ -109,7 +110,8 @@ int64_t av1_refine_integerized_param(
     WarpedMotionParams *wm, TransformationType wmtype, int use_hbd, int bd,
     uint8_t *ref, int r_width, int r_height, int r_stride, uint8_t *dst,
     int d_width, int d_height, int d_stride, int n_refinements,
-    int64_t ref_frame_error, uint8_t *segment_map, int segment_map_stride);
+    int64_t ref_frame_error, uint8_t *segment_map, int segment_map_stride,
+    double gm_erroradv_tr);
 
 #ifdef __cplusplus
 }  // extern "C"

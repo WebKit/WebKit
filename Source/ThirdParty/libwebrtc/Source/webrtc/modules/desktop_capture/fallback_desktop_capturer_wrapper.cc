@@ -10,11 +10,16 @@
 
 #include "modules/desktop_capture/fallback_desktop_capturer_wrapper.h"
 
-#include <stddef.h>
-
+#include <cstddef>
+#include <memory>
 #include <utility>
 
 #include "api/sequence_checker.h"
+#include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/desktop_capture/desktop_capturer.h"
+#include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/shared_memory.h"
 #include "rtc_base/checks.h"
 #include "system_wrappers/include/metrics.h"
 

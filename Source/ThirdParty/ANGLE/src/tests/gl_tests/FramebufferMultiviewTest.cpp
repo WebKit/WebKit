@@ -193,6 +193,8 @@ TEST_P(FramebufferMultiviewTest, DefaultState)
 // the OVR_multiview2 tokens results in an INVALID_ENUM error.
 TEST_P(FramebufferMultiviewTest, NegativeFramebufferStateQueries)
 {
+    ANGLE_SKIP_TEST_IF(IsGLExtensionEnabled("GL_OVR_multiview2"));
+
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
@@ -751,6 +753,11 @@ TEST_P(FramebufferMultiviewTest, NegativeMultisampledFramebufferTest)
     ANGLE_SKIP_TEST_IF(!requestMultiviewExtension());
 
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_OES_texture_storage_multisample_2d_array"));
+    // GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES is valid when GL_ANGLE_multiview_multisample is enabled.
+    // The ANGLE_multiview_multisample extension depends on both OVR_multiview and
+    // OES_texture_storage_multisample_2d_array. Its only function is allowing multisample 2D array
+    // textures to be used with multiview framebuffers.
+    ANGLE_SKIP_TEST_IF(IsGLExtensionEnabled("GL_ANGLE_multiview_multisample"));
 
     // We don't enable OVR_multiview2_multisample
 

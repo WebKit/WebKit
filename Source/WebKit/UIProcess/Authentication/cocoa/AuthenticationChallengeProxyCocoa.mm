@@ -43,16 +43,17 @@ void AuthenticationChallengeProxy::sendClientCertificateCredentialOverXpc(IPC::C
     auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), ClientCertificateAuthentication::XPCMessageNameKey, ClientCertificateAuthentication::XPCMessageNameValue);
     xpc_dictionary_set_uint64(message.get(), ClientCertificateAuthentication::XPCChallengeIDKey, challengeID.toUInt64());
-    xpc_dictionary_set_value(message.get(), ClientCertificateAuthentication::XPCSecKeyProxyEndpointKey, secKeyProxyStore.get().endpoint._endpoint);
+    xpc_dictionary_set_value(message.get(), ClientCertificateAuthentication::XPCSecKeyProxyEndpointKey, RetainPtr { secKeyProxyStore.get() }.get().endpoint._endpoint);
     auto certificateDataArray = adoptOSObject(xpc_array_create(nullptr, 0));
-    for (id certificate in credential.nsCredential().certificates) {
+    RetainPtr nsCredential = credential.nsCredential();
+    for (id certificate in nsCredential.get().certificates) {
         auto data = adoptCF(SecCertificateCopyData((SecCertificateRef)certificate));
         xpc_array_append_value(certificateDataArray.get(), adoptOSObject(xpc_data_create(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()))).get());
     }
     xpc_dictionary_set_value(message.get(), ClientCertificateAuthentication::XPCCertificatesKey, certificateDataArray.get());
-    xpc_dictionary_set_uint64(message.get(), ClientCertificateAuthentication::XPCPersistenceKey, static_cast<uint64_t>(credential.nsCredential().persistence));
+    xpc_dictionary_set_uint64(message.get(), ClientCertificateAuthentication::XPCPersistenceKey, static_cast<uint64_t>(nsCredential.get().persistence));
 
-    xpc_connection_send_message(connection.xpcConnection(), message.get());
+    xpc_connection_send_message(connection.protectedXPCConnection().get(), message.get());
 }
 
 } // namespace WebKit

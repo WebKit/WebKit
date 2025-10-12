@@ -1,3 +1,10 @@
 
-PASS No Opener policy attribute on svg anchor element is applied
+PASS SVG Anchor element with target=_blank with rel=noopener
+PASS SVG Anchor element with target=_blank with rel=opener
+PASS SVG Anchor element with target=_blank with implicit rel=noopener
+PASS SVG Anchor element with target=_blank with rel=opener+noopener
+PASS SVG Anchor element with target=_blank with rel=noopener+opener
+PASS SVG Anchor element with target=_blank with rel=noreferrer
+PASS SVG Anchor element with target=_blank with rel=opener+noreferrer
+PASS SVG Anchor element with target=_blank with rel=noopener+opener+noreferrer
 

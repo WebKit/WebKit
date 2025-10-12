@@ -34,6 +34,7 @@
 #include "Range.h"
 #include "Sizes.h"
 #include <algorithm>
+#include <cstddef>
 
 #if BOS(WINDOWS)
 #include <windows.h>
@@ -43,7 +44,14 @@
 #endif
 
 #if BOS(DARWIN)
+#include <mach/mach.h>
 #include <mach/vm_page_size.h>
+#endif
+
+#if defined(MADV_ZERO) && BOS(DARWIN)
+#define BMALLOC_USE_MADV_ZERO 0
+#else
+#define BMALLOC_USE_MADV_ZERO 0
 #endif
 
 BALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -58,6 +66,10 @@ namespace bmalloc {
 #define BMALLOC_NORESERVE MAP_NORESERVE
 #else
 #define BMALLOC_NORESERVE 0
+#endif
+
+#if BMALLOC_USE_MADV_ZERO
+bool isMadvZeroSupported();
 #endif
 
 // The following require platform-specific implementations
@@ -253,12 +265,27 @@ inline void vmRevokePermissions(void* p, size_t vmSize)
     mprotect(p, vmSize, PROT_NONE);
 }
 
+#if BENABLE(MTE) && BOS(DARWIN)
+bool tryVmZeroAndPurgeMTECase(void* p, size_t vmSize, VMTag usage);
+#endif // BENABLE(MTE) && BOS(DARWIN)
+
 inline void vmZeroAndPurge(void* p, size_t vmSize, VMTag usage)
 {
     vmValidate(p, vmSize);
     int flags = MAP_PRIVATE | MAP_ANON | MAP_FIXED | BMALLOC_NORESERVE;
     int tag = static_cast<int>(usage);
+#if BMALLOC_USE_MADV_ZERO
+    if (isMadvZeroSupported()) {
+        int rc = madvise(p, vmSize, MADV_ZERO);
+        if (rc != -1)
+            return;
+    }
+#endif
     BPROFILE_ZERO_FILL_PAGE(p, vmSize, flags, tag);
+#if BENABLE(MTE) && BOS(DARWIN)
+    if (tryVmZeroAndPurgeMTECase(p, vmSize, usage))
+        return;
+#endif // BENABLE(MTE) && BOS(DARWIN)
     // MAP_ANON guarantees the memory is zeroed. This will also cause
     // page faults on accesses to this range following this call.
     void* result = mmap(p, vmSize, PROT_READ | PROT_WRITE, flags, tag, 0);

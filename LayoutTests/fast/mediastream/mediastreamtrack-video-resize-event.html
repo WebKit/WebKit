@@ -34,6 +34,7 @@ async function validateVideoFrameSize(video, width)
 
 promise_test(async (t) => {
     video.srcObject = await navigator.mediaDevices.getUserMedia({ video: { width: 1280 } });
+    t.add_cleanup(() => video.srcObject.getTracks().forEach(track => track.stop()));
     if (video.requestVideoFrameCallback)
         await new Promise((resolve, reject) => {
             video.requestVideoFrameCallback(resolve);

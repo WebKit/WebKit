@@ -14,6 +14,7 @@
 
 #include "modules/audio_coding/neteq/mock/mock_decoder_database.h"
 #include "modules/audio_coding/neteq/sync_buffer.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {

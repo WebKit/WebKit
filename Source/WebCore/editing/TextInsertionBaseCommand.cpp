@@ -30,7 +30,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "FrameSelection.h"
-#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "Node.h"
 
 namespace WebCore {

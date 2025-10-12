@@ -676,7 +676,7 @@ String Database::getDomainStringFromDomainID(DomainID domainID) const
     }
     
     if (scopedStatement->step() == SQLITE_ROW)
-        result = m_domainStringFromDomainIDStatement->columnText(0);
+        result = scopedStatement->columnText(0);
     
     return result;
 }

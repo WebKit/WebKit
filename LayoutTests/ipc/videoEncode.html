@@ -1,0 +1,37 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.IPC) {
+    import('./coreipc.js').then(({
+        CoreIPC
+    }) => {
+        const id = 393216;
+        const width = 8000;
+        const height = 6000;
+
+        CoreIPC.GPU.LibWebRTCCodecsProxy.CreateEncoder(0, {
+            id, codecType:0, codecString:'avc1.64001f', parameters:[], useLowLatency:true, useAnnexB:false, scalabilityMode:1
+        });
+        CoreIPC.GPU.LibWebRTCCodecsProxy.InitializeEncoder(0, {
+            id, width, height, startBitrate:62, maxBitrate:91, minBitrate:5, maxFramerate:720916
+        });
+        CoreIPC.GPU.LibWebRTCCodecsProxy.EncodeFrame(0, {
+            id, buffer:{ time: { timeValue:43, timeScale:79, timeFlags:145 }, mirrored:false, rotation:0, buffer:{ alias: { variantType:'WebCore::IntSize', variant : { width, height } } } }, timeStamp:61, duration:{}, shouldEncodeAsKeyFrame:true
+        });
+        CoreIPC.GPU.LibWebRTCCodecsProxy.ReleaseEncoder(0, {
+            id
+        });
+    });
+}
+
+setTimeout(() => window.testRunner?.notifyDone(), 500);
+</script>
+This test passes if it does not crash.
+</body>
+</html>

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPUPipelineDescriptorBase.h"
-#include "WebGPUProgrammableStage.h"
+#include <WebCore/WebGPUPipelineDescriptorBase.h>
+#include <WebCore/WebGPUProgrammableStage.h>
 
 namespace WebCore::WebGPU {
 

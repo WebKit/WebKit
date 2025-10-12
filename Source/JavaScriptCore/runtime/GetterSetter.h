@@ -22,13 +22,12 @@
 
 #pragma once
 
-#include "JSCast.h"
-
-#include "CallFrame.h"
-#include "JSGlobalObject.h"
-#include "NullGetterFunction.h"
-#include "NullSetterFunction.h"
-#include "Structure.h"
+#include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/JSCast.h>
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/NullGetterFunction.h>
+#include <JavaScriptCore/NullSetterFunction.h>
+#include <JavaScriptCore/Structure.h>
 
 namespace JSC {
 

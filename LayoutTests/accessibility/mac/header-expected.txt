@@ -1,9 +1,9 @@
 PASS accessibilityController.accessibleElementById("header01").role is "AXRole: AXGroup"
 PASS accessibilityController.accessibleElementById("header01").roleDescription is "AXRoleDescription: banner"
 PASS accessibilityController.accessibleElementById("header02").role is "AXRole: AXGroup"
-PASS accessibilityController.accessibleElementById("header02").roleDescription is "AXRoleDescription: group"
+PASS accessibilityController.accessibleElementById("header02").roleDescription is "AXRoleDescription: section header"
 PASS accessibilityController.accessibleElementById("header03").role is "AXRole: AXGroup"
-PASS accessibilityController.accessibleElementById("header03").roleDescription is "AXRoleDescription: group"
+PASS accessibilityController.accessibleElementById("header03").roleDescription is "AXRoleDescription: section header"
 PASS successfullyParsed is true
 
 TEST COMPLETE

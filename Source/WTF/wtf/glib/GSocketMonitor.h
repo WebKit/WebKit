@@ -41,7 +41,7 @@ public:
     GSocketMonitor() = default;
     WTF_EXPORT_PRIVATE ~GSocketMonitor();
 
-    WTF_EXPORT_PRIVATE void start(GSocket*, GIOCondition, RunLoop&, Function<gboolean(GIOCondition)>&&);
+    WTF_EXPORT_PRIVATE void start(GSocket*, GIOCondition, RunLoop&, GCancellable*, Function<gboolean(GIOCondition)>&&);
     WTF_EXPORT_PRIVATE void stop();
     bool isActive() const { return !!m_source; }
 
@@ -53,6 +53,7 @@ private:
     Function<gboolean(GIOCondition)> m_callback;
     bool m_isExecutingCallback { false };
     bool m_shouldDestroyCallback { false };
+    bool m_shouldCancelOnStop { false };
 };
 
 } // namespace WTF

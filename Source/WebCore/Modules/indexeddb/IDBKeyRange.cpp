@@ -31,6 +31,7 @@
 #include "IDBKey.h"
 #include "IDBKeyData.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptWrappableInlines.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <wtf/TZoneMallocInlines.h>

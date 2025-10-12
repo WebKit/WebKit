@@ -27,10 +27,10 @@
 
 #if ENABLE(DOM_AUDIO_SESSION)
 
-#include "ActiveDOMObject.h"
-#include "AudioSession.h"
-#include "ContextDestructionObserver.h"
-#include "EventTarget.h"
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/AudioSession.h>
+#include <WebCore/ContextDestructionObserver.h>
+#include <WebCore/EventTarget.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
 

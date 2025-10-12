@@ -259,7 +259,10 @@ namespace Inspector {
 #pragma once
 
 #include "TestProtocolObjects.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/JSONValues.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Nonmovable.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -419,35 +422,35 @@ public:
         Builder<STATE | StringSet>& setString(const String& in_string)
         {
             static_assert(!(STATE & StringSet), "property string already set");
-            m_result->setString("string"_s, in_string);
+            Ref { *m_result }->setString("string"_s, in_string);
             return castState<StringSet>();
         }
 
         Builder<STATE | NumberSet>& setNumber(int in_number)
         {
             static_assert(!(STATE & NumberSet), "property number already set");
-            m_result->setInteger("number"_s, in_number);
+            Ref { *m_result }->setInteger("number"_s, in_number);
             return castState<NumberSet>();
         }
 
         Builder<STATE | AnimalsSet>& setAnimals(Protocol::Test::CastedAnimals in_animals)
         {
             static_assert(!(STATE & AnimalsSet), "property animals already set");
-            m_result->setString("animals"_s, Protocol::TestHelpers::getEnumConstantValue(in_animals));
+            Ref { *m_result }->setString("animals"_s, Protocol::TestHelpers::getEnumConstantValue(in_animals));
             return castState<AnimalsSet>();
         }
 
         Builder<STATE | IdSet>& setId(int in_id)
         {
             static_assert(!(STATE & IdSet), "property id already set");
-            m_result->setInteger("id"_s, in_id);
+            Ref { *m_result }->setInteger("id"_s, in_id);
             return castState<IdSet>();
         }
 
         Builder<STATE | TreeSet>& setTree(Ref<Protocol::Test::RecursiveObject1>&& in_tree)
         {
             static_assert(!(STATE & TreeSet), "property tree already set");
-            m_result->setObject("tree"_s, WTFMove(in_tree));
+            Ref { *m_result }->setObject("tree"_s, WTFMove(in_tree));
             return castState<TreeSet>();
         }
 

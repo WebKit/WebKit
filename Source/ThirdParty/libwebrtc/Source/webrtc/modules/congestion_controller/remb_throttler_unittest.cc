@@ -9,10 +9,12 @@
  */
 #include "modules/congestion_controller/remb_throttler.h"
 
+#include <cstdint>
 #include <vector>
 
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gmock.h"
 #include "test/gtest.h"

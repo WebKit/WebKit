@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "SpeechRecognitionProvider.h"
+#include <WebCore/SpeechRecognitionProvider.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

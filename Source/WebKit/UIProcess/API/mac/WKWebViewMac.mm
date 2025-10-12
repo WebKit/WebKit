@@ -30,7 +30,6 @@
 
 #import "AppKitSPI.h"
 #import "WKIntelligenceTextEffectCoordinator.h"
-#import "WKTextAnimationType.h"
 #import "WKTextFinderClient.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WebBackForwardList.h"
@@ -152,14 +151,32 @@ static WebCore::FloatBoxExtent coreBoxExtentsFromEdgeInsets(NSEdgeInsets insets)
 - (BOOL)_holdWindowResizeSnapshotIfNeeded
 {
 #if HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
-    if (self->_windowSnapshotReadinessHandler)
+    if (_windowSnapshotReadinessHandler)
         return NO;
 
-    if (!self.window || ![self.window respondsToSelector:@selector(_holdResizeSnapshotWithReason:)])
+    if (!self.window)
+        return NO;
+
+    RefPtr page = _page;
+    if (!page)
+        return NO;
+
+    if (!page->protectedLegacyMainFrameProcess()->isResponsive())
+        return NO;
+
+    if (page->isSuspended())
+        return NO;
+
+    if (self.hidden)
         return NO;
 
     _windowSnapshotReadinessHandler = makeBlockPtr([self.window _holdResizeSnapshotWithReason:@"full screen"]);
-    return !!_windowSnapshotReadinessHandler;
+    if (!_windowSnapshotReadinessHandler)
+        return NO;
+
+    RELEASE_LOG(ViewState, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", PID=%i] Began holding window resize snapshot for window full screen",
+        self, page->identifier().toUInt64(), page->webPageIDInMainFrameProcess().toUInt64(), page->legacyMainFrameProcessID());
+    return YES;
 #else
     return NO;
 #endif
@@ -168,14 +185,16 @@ static WebCore::FloatBoxExtent coreBoxExtentsFromEdgeInsets(NSEdgeInsets insets)
 - (void)_doWindowSnapshotReadinessUpdate
 {
 #if HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
+    [self performSelector:@selector(_invalidateWindowSnapshotReadinessHandler) withObject:nil afterDelay:1];
     [self _doAfterNextPresentationUpdate:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self)] {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
 
+        [NSObject cancelPreviousPerformRequestsWithTarget:strongSelf.get() selector:@selector(_invalidateWindowSnapshotReadinessHandler) object:nil];
         [strongSelf _invalidateWindowSnapshotReadinessHandler];
     }).get()];
-#endif
+#endif // HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
 }
 
 - (void)setFrameSize:(NSSize)size
@@ -700,7 +719,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 
 - (NSArray *)validAttributesForMarkedText
 {
-    return _impl->validAttributesForMarkedText();
+    return _impl->validAttributesForMarkedTextSingleton();
 }
 
 - (void)insertTextPlaceholderWithSize:(CGSize)size completionHandler:(void (^)(NSTextPlaceholder *))completionHandler
@@ -1122,9 +1141,32 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 #endif
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKWebViewMacAdditions.mm>)
-#import <WebKitAdditions/WKWebViewMacAdditions.mm>
-#endif
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+
+- (BOOL)scrollViewDrawsMagicPocket
+{
+    if (!_page)
+        return NO;
+
+    if (!_page->preferences().contentInsetBackgroundFillEnabled())
+        return NO;
+
+    return _page->obscuredContentInsets().top() > 0 || _page->overflowHeightForTopScrollEdgeEffect() > 0;
+}
+
+- (void)registerPocketContainer:(NSView *)container onEdge:(NSScrollPocketEdge)edge
+{
+    if (edge == NSScrollPocketEdgeTop)
+        _impl->registerViewAboveScrollPocket(container);
+}
+
+- (void)unregisterPocketContainer:(NSView *)container onEdge:(NSScrollPocketEdge)edge
+{
+    if (edge == NSScrollPocketEdgeTop)
+        _impl->unregisterViewAboveScrollPocket(container);
+}
+
+#endif // ENABLE(CONTENT_INSET_BACKGROUND_FILL)
 
 @end
 
@@ -1292,14 +1334,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_web_suppressContentRelativeChildViews
 {
 #if ENABLE(WRITING_TOOLS)
-    [_intelligenceTextEffectCoordinator hideEffectsWithCompletion:^{ }];
+    [_intelligenceTextEffectCoordinator hideEffectsWithCompletionHandler:^{ }];
 #endif
 }
 
 - (void)_web_restoreContentRelativeChildViews
 {
 #if ENABLE(WRITING_TOOLS)
-    [_intelligenceTextEffectCoordinator showEffectsWithCompletion:^{ }];
+    [_intelligenceTextEffectCoordinator showEffectsWithCompletionHandler:^{ }];
 #endif
 }
 
@@ -1362,6 +1404,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _impl->insertText(string, replacementRange);
 }
 
+- (void)_resetSecureInputState
+{
+    if (_impl)
+        _impl->resetSecureInputState();
+}
+
 - (void)_setContentOffsetX:(NSNumber *)x y:(NSNumber *)y animated:(BOOL)animated
 {
     std::optional<int> optionalX = std::nullopt;
@@ -1422,6 +1470,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_setIgnoresNonWheelEvents:(BOOL)ignoresNonWheelEvents
 {
+    RELEASE_LOG(MouseHandling, "[pageProxyID=%lld] [WKWebView _setIgnoresNonWheelEvents:%d]", _page->identifier().toUInt64(), ignoresNonWheelEvents);
     _impl->setIgnoresNonWheelEvents(ignoresNonWheelEvents);
 }
 
@@ -1517,9 +1566,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_setTopContentInset:(CGFloat)inset
 {
-    auto insets = _impl->obscuredContentInsets();
-    insets.setTop(static_cast<float>(inset));
-    _impl->setObscuredContentInsets(insets);
+    [self _setTopContentInset:inset immediate:NO];
 }
 
 - (CGFloat)_topContentInset
@@ -1543,6 +1590,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+    _impl->setCanInstallScrollPocket();
+#endif
+
     _impl->setObscuredContentInsets(coreBoxExtentsFromEdgeInsets(insets));
 
     if (immediate)
@@ -1560,15 +1611,77 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     );
 }
 
+- (CGFloat)_overflowHeightForTopScrollEdgeEffect
+{
+    return _page->overflowHeightForTopScrollEdgeEffect();
+}
+
+- (void)_setOverflowHeightForTopScrollEdgeEffect:(CGFloat)height
+{
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+    _impl->setCanInstallScrollPocket();
+#endif
+
+    if (_page->overflowHeightForTopScrollEdgeEffect() == height)
+        return;
+
+    _page->setOverflowHeightForTopScrollEdgeEffect(height);
+
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+    _impl->updateScrollPocket();
+#endif
+
+    if (RetainPtr attachedInspectorWebView = [self _horizontallyAttachedInspectorWebView])
+        [attachedInspectorWebView _setOverflowHeightForTopScrollEdgeEffect:height];
+}
+
+- (NSColor *)_overrideTopScrollEdgeEffectColor
+{
+    return _overrideTopScrollEdgeEffectColor.get();
+}
+
+- (void)_setOverrideTopScrollEdgeEffectColor:(NSColor *)color
+{
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+    _impl->setCanInstallScrollPocket();
+#endif
+
+    if (_overrideTopScrollEdgeEffectColor == color || [_overrideTopScrollEdgeEffectColor isEqual:color])
+        return;
+
+    _overrideTopScrollEdgeEffectColor = adoptNS(color.copy);
+
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+    [self _doAfterAdjustingColorForTopContentInsetFromUIDelegate:[strongSelf = RetainPtr { self }] {
+        [strongSelf _updateTopScrollPocketCaptureColor];
+    }];
+#endif
+}
+
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+
+- (NSScrollPocket *)_topScrollPocket
+{
+    return _impl->topScrollPocket();
+}
+
+#endif
+
 - (void)_setUsesAutomaticContentInsetBackgroundFill:(BOOL)value
 {
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+    _impl->setCanInstallScrollPocket();
+#endif
+
     if (_usesAutomaticContentInsetBackgroundFill == value)
         return;
 
     _usesAutomaticContentInsetBackgroundFill = value;
 
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
-    _impl->updateTopContentInsetFillDueToScrolling();
+    _impl->updateTopScrollPocketStyle();
+    _impl->updateScrollPocketVisibilityWhenScrolledToTop();
+    _impl->updateTopScrollPocketCaptureColor();
 #endif
 }
 
@@ -1732,6 +1845,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_setIgnoresAllEvents:(BOOL)ignoresAllEvents
 {
+    RELEASE_LOG(MouseHandling, "[pageProxyID=%lld] [WKWebView _setIgnoresAllEvents:%d]", _page->identifier().toUInt64(), ignoresAllEvents);
     _impl->setIgnoresAllEvents(ignoresAllEvents);
 }
 
@@ -1930,6 +2044,21 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
+- (BOOL)_isSmartListsEnabled
+{
+    return _impl->isSmartListsEnabled();
+}
+
+- (void)_setSmartListsEnabled:(BOOL)flag
+{
+    _impl->setSmartListsEnabled(flag);
+}
+
+- (void)_toggleSmartLists:(id)sender
+{
+    _impl->toggleSmartLists();
+}
+
 @end // WKWebView (WKPrivateMac)
 
 @implementation WKWebView (WKWindowSnapshot)
@@ -1939,7 +2068,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!snapshot)
         return nil;
 
-    return [[NSImage alloc] initWithCGImage:snapshot.get() size:NSZeroSize];
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return [[NSImage alloc] initWithCGImage:snapshot.get() size:NSZeroSize];
 }
 @end
 

@@ -37,19 +37,20 @@
 
 namespace WebCore {
 
-static NSBundle *passKitBundle()
+static NSBundle *passKitBundleSingleton()
 {
     static NSBundle *passKitBundle;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        passKitBundle = [NSBundle bundleWithURL:[NSURL fileURLWithPath:[FileSystem::systemDirectoryPath() stringByAppendingPathComponent:@"Library/Frameworks/PassKit.framework"] isDirectory:YES]];
+        RetainPtr systemDirectoryPath = FileSystem::systemDirectoryPath();
+        passKitBundle = [NSBundle bundleWithURL:[NSURL fileURLWithPath:[systemDirectoryPath stringByAppendingPathComponent:@"Library/Frameworks/PassKit.framework"] isDirectory:YES]];
     });
     return passKitBundle;
 }
 
 static RetainPtr<CGPDFPageRef> loadPassKitPDFPage(NSString *imageName)
 {
-    NSURL *url = [passKitBundle() URLForResource:imageName withExtension:@"pdf"];
+    NSURL *url = [passKitBundleSingleton() URLForResource:imageName withExtension:@"pdf"];
     if (!url)
         return nullptr;
     auto document = adoptCF(CGPDFDocumentCreateWithURL((CFURLRef)url));
@@ -101,20 +102,20 @@ void ApplePayLogoSystemImage::draw(GraphicsContext& context, const FloatRect& de
     auto page = applePayLogoForStyle(m_applePayLogoStyle);
     if (!page)
         return;
-    CGContextRef cgContext = context.platformContext();
-    CGContextSaveGState(cgContext);
+    RetainPtr cgContext = context.platformContext();
+    CGContextSaveGState(cgContext.get());
     CGSize pdfSize = CGPDFPageGetBoxRect(page.get(), kCGPDFMediaBox).size;
 
     auto largestRect = largestRectWithAspectRatioInsideRect(pdfSize.width / pdfSize.height, destinationRect);
-    CGContextTranslateCTM(cgContext, largestRect.x(), largestRect.y());
+    CGContextTranslateCTM(cgContext.get(), largestRect.x(), largestRect.y());
     auto scale = largestRect.width() / pdfSize.width;
-    CGContextScaleCTM(cgContext, scale, scale);
+    CGContextScaleCTM(cgContext.get(), scale, scale);
 
-    CGContextTranslateCTM(cgContext, 0, pdfSize.height);
-    CGContextScaleCTM(cgContext, 1, -1);
+    CGContextTranslateCTM(cgContext.get(), 0, pdfSize.height);
+    CGContextScaleCTM(cgContext.get(), 1, -1);
 
-    CGContextDrawPDFPage(cgContext, page.get());
-    CGContextRestoreGState(cgContext);
+    CGContextDrawPDFPage(cgContext.get(), page.get());
+    CGContextRestoreGState(cgContext.get());
 }
 
 } // namespace WebCore

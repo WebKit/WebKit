@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,9 +61,9 @@ Ref<WebPage> GeolocationPermissionRequestManager::protectedPage() const
 
 void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation& geolocation)
 {
-    auto* frame = geolocation.frame();
+    RefPtr frame = geolocation.frame();
 
-    ASSERT_WITH_MESSAGE(frame, "It is not well understood in which cases the Geolocation is alive after its frame goes away. If you hit this assertion, please add a test covering this case.");
+    ASSERT_WITH_MESSAGE(frame.get(), "It is not well understood in which cases the Geolocation is alive after its frame goes away. If you hit this assertion, please add a test covering this case.");
     if (!frame) {
         geolocation.setIsAllowed(false, { });
         return;
@@ -74,7 +74,7 @@ void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation
     m_geolocationToIDMap.set(geolocation, geolocationID);
     m_idToGeolocationMap.set(geolocationID, geolocation);
 
-    auto webFrame = WebFrame::fromCoreFrame(*frame);
+    RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
     protectedPage()->send(Messages::WebPageProxy::RequestGeolocationPermissionForFrame(geolocationID, webFrame->info()));

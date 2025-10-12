@@ -2,17 +2,12 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-expressions-shell.js]
-flags:
-  - noStrict
+includes: [sm/non262-expressions-shell.js]
 description: |
-  pending
+  Array destructuring with various default values in various context - class expression and super/new.target
+info: bugzilla.mozilla.org/show_bug.cgi?id=1184922
 esid: pending
 ---*/
-var BUGNUMBER = 1184922;
-var summary = "Array destructuring with various default values in various context - class expression and super/new.target";
-
-print(BUGNUMBER + ": " + summary);
 
 testDestructuringArrayDefault(`class E {
   constructor() {}
@@ -78,4 +73,3 @@ opt = {
     no_comp: false,
 };
 testDestructuringArrayDefault("new.target", opt);
-

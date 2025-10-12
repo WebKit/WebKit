@@ -70,9 +70,7 @@ void webKitMediaSrcSetPlayer(WebKitMediaSrc*, ThreadSafeWeakPtr<WebCore::MediaPl
 G_END_DECLS
 
 namespace WTF {
-template<> GRefPtr<WebKitMediaSrc> adoptGRef(WebKitMediaSrc* ptr);
-template<> WebKitMediaSrc* refGPtr<WebKitMediaSrc>(WebKitMediaSrc* ptr);
-template<> void derefGPtr<WebKitMediaSrc>(WebKitMediaSrc* ptr);
+WTF_DECLARE_GREF_TRAITS(WebKitMediaSrc);
 } // namespace WTF
 
 #endif // USE(GSTREAMER)

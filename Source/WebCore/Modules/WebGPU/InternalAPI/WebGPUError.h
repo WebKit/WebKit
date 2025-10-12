@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "WebGPUInternalError.h"
-#include "WebGPUOutOfMemoryError.h"
-#include "WebGPUValidationError.h"
+#include <WebCore/WebGPUInternalError.h>
+#include <WebCore/WebGPUOutOfMemoryError.h>
+#include <WebCore/WebGPUValidationError.h>
 #include <wtf/Ref.h>
 
 namespace WebCore::WebGPU {

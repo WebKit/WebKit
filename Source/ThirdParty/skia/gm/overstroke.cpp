@@ -16,7 +16,7 @@
  * The old Nvidia Path Renderer used to yield correct results, so a possible
  * direction of attack is to use the GPU and a completely different algorithm.
  *
- * See crbug.com/589769 skbug.com/5405 skbug.com/5406
+ * See crbug.com/589769 skbug.com/40036571 skbug.com/40036572
  */
 
 #include "gm/gm.h"
@@ -66,13 +66,10 @@ SkPath quad_path() {
 }
 
 SkPath cubic_path() {
-    SkPath path;
-    path.moveTo(0, 0);
-    path.cubicTo(25, 75,
-                 75, -50,
-                 100, 0);
-
-    return path;
+    return SkPathBuilder()
+           .moveTo(0, 0)
+           .cubicTo(25, 75, 75, -50, 100, 0)
+           .detach();
 }
 
 SkPath oval_path() {
@@ -82,7 +79,7 @@ SkPath oval_path() {
 }
 
 SkPath ribs_path(SkPath path, SkScalar radius) {
-    SkPath ribs;
+    SkPathBuilder ribs;
 
     const SkScalar spacing = 5.0f;
     float accum = 0.0f;
@@ -95,14 +92,12 @@ SkPath ribs_path(SkPath path, SkScalar radius) {
         if (meas.getPosTan(accum, &pos, &tan)) {
             tan.scale(radius);
             SkPointPriv::RotateCCW(&tan);
-
-            ribs.moveTo(pos.x() + tan.x(), pos.y() + tan.y());
-            ribs.lineTo(pos.x() - tan.x(), pos.y() - tan.y());
+            ribs.addLine(pos + tan, pos - tan);
         }
         accum += spacing;
     }
 
-    return ribs;
+    return ribs.detach();
 }
 
 void draw_ribs(SkCanvas *canvas, SkPath path) {
@@ -143,10 +138,10 @@ void draw_quad_fillpath(SkCanvas *canvas) {
     SkPaint fillp = make_normal_paint();
     fillp.setColor(SK_ColorMAGENTA);
 
-    SkPath fillpath;
+    SkPathBuilder fillpath;
     skpathutils::FillPathWithPaint(path, p, &fillpath);
 
-    canvas->drawPath(fillpath, fillp);
+    canvas->drawPath(fillpath.detach(), fillp);
 }
 
 void draw_stroked_quad(SkCanvas *canvas) {
@@ -180,10 +175,10 @@ void draw_cubic_fillpath(SkCanvas *canvas) {
     SkPaint fillp = make_normal_paint();
     fillp.setColor(SK_ColorMAGENTA);
 
-    SkPath fillpath;
+    SkPathBuilder fillpath;
     skpathutils::FillPathWithPaint(path, p, &fillpath);
 
-    canvas->drawPath(fillpath, fillp);
+    canvas->drawPath(fillpath.detach(), fillp);
 }
 
 void draw_stroked_cubic(SkCanvas *canvas) {
@@ -218,8 +213,7 @@ void draw_oval_fillpath(SkCanvas *canvas) {
     SkPaint fillp = make_normal_paint();
     fillp.setColor(SK_ColorMAGENTA);
 
-    SkPath fillpath;
-    skpathutils::FillPathWithPaint(path, p, &fillpath);
+    SkPath fillpath = skpathutils::FillPathWithPaint(path, p);
 
     canvas->drawPath(fillpath, fillp);
 }

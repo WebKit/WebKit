@@ -27,7 +27,7 @@
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
-#include "InbandTextTrackPrivateAVF.h"
+#include <WebCore/InbandTextTrackPrivateAVF.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 

@@ -1,10 +1,6 @@
-CONSOLE MESSAGE: Unsafe attempt to load URL http://127.0.0.1:8800/fetch/api/request/resources/cache.py?token=d07fb81d-0a81-4633-899d-19687c0986d4&content=0.09681072238028665&tag=0.5769303022215281&expires=Tue,%2003%20Apr%202018%2007:00:00%20GMT from frame with URL http://localhost:8800/fetch/api/request/request-cache-only-if-cached.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: Unsafe attempt to load URL http://127.0.0.1:8800/fetch/api/request/resources/cache.py?token=5bc9ad98-23f6-443f-8c30-94d2a897cd6e&content=0.9083582816816281&date=Wed,%2012%20Apr%202017%2021:29:43%20GMT&expires=Tue,%2003%20Apr%202018%2007:00:00%20GMT from frame with URL http://localhost:8800/fetch/api/request/request-cache-only-if-cached.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: Unsafe attempt to load URL http://127.0.0.1:8800/fetch/api/request/resources/cache.py?token=7e0a0d45-6c60-4fea-b131-52e12bb96394&content=0.6943228996891518&tag=0.0023629092536666674&expires=Sun,%2003%20Apr%202016%2007:00:00%20GMT from frame with URL http://localhost:8800/fetch/api/request/request-cache-only-if-cached.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: Unsafe attempt to load URL http://127.0.0.1:8800/fetch/api/request/resources/cache.py?token=d1c282ed-3daa-43fe-b484-f21da6444e6d&content=0.5709032658809978&date=Wed,%2012%20Apr%202017%2021:29:43%20GMT&expires=Sun,%2003%20Apr%202016%2007:00:00%20GMT from frame with URL http://localhost:8800/fetch/api/request/request-cache-only-if-cached.html. Domains, protocols and ports must match.
 
 
 PASS RequestCache "only-if-cached" mode checks the cache for previously cached content and avoids revalidation for stale responses with Etag and stale response

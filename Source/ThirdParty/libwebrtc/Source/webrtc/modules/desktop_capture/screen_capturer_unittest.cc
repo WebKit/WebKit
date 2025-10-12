@@ -8,14 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
 #include <memory>
 
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/desktop_region.h"
 #include "modules/desktop_capture/mock_desktop_capturer_callback.h"
-#include "rtc_base/logging.h"
+#include "modules/desktop_capture/shared_memory.h"
+#include "rtc_base/logging.h"  // IWYU pragma: keep
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -25,7 +28,7 @@
 
 using ::testing::_;
 
-const int kTestSharedMemoryId = 123;
+constexpr int kTestSharedMemoryId = 123;
 
 namespace webrtc {
 
@@ -101,7 +104,7 @@ ACTION_P(SaveUniquePtrArg, dest) {
 #define MAYBE_GetScreenListAndSelectScreen GetScreenListAndSelectScreen
 #endif
 TEST_F(ScreenCapturerTest, MAYBE_GetScreenListAndSelectScreen) {
-  webrtc::DesktopCapturer::SourceList screens;
+  DesktopCapturer::SourceList screens;
   EXPECT_TRUE(capturer_->GetSourceList(&screens));
   for (const auto& screen : screens) {
     EXPECT_TRUE(capturer_->SelectSource(screen.id));
@@ -138,7 +141,7 @@ TEST_F(ScreenCapturerTest, MAYBE_Capture) {
   EXPECT_GT(frame->size().height(), 0);
   EXPECT_GE(frame->stride(),
             frame->size().width() * DesktopFrame::kBytesPerPixel);
-  EXPECT_TRUE(frame->shared_memory() == NULL);
+  EXPECT_TRUE(frame->shared_memory() == nullptr);
 
   // Verify that the region contains whole screen.
   EXPECT_FALSE(frame->updated_region().is_empty());

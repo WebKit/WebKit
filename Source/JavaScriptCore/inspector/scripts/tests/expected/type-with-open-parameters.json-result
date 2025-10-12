@@ -247,7 +247,10 @@ namespace Inspector {
 #pragma once
 
 #include "TestProtocolObjects.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/JSONValues.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Nonmovable.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -384,14 +387,14 @@ public:
         Builder<STATE | OneSet>& setOne(double in_one)
         {
             static_assert(!(STATE & OneSet), "property one already set");
-            m_result->setDouble("one"_s, in_one);
+            Ref { *m_result }->setDouble("one"_s, in_one);
             return castState<OneSet>();
         }
 
         Builder<STATE | TwoSet>& setTwo(double in_two)
         {
             static_assert(!(STATE & TwoSet), "property two already set");
-            m_result->setDouble("two"_s, in_two);
+            Ref { *m_result }->setDouble("two"_s, in_two);
             return castState<TwoSet>();
         }
 
@@ -449,14 +452,14 @@ public:
         Builder<STATE | AlphaSet>& setAlpha(double in_alpha)
         {
             static_assert(!(STATE & AlphaSet), "property alpha already set");
-            m_result->setDouble("alpha"_s, in_alpha);
+            Ref { *m_result }->setDouble("alpha"_s, in_alpha);
             return castState<AlphaSet>();
         }
 
         Builder<STATE | BetaSet>& setBeta(double in_beta)
         {
             static_assert(!(STATE & BetaSet), "property beta already set");
-            m_result->setDouble("beta"_s, in_beta);
+            Ref { *m_result }->setDouble("beta"_s, in_beta);
             return castState<BetaSet>();
         }
 

@@ -33,12 +33,15 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestResourceLoadDelegate.h"
+#import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <Foundation/NSURLError.h>
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKResourceLoadDelegate.h>
 #import <WebKit/_WKResourceLoadInfo.h>
 #import <wtf/RetainPtr.h>
@@ -369,8 +372,7 @@ static Vector<URL> urls;
 
 @end
 
-// FIXME: Re-enable this test once webkit.org/b/292932 is resolved.
-TEST(SafeBrowsing, DISABLED_URLObservation)
+TEST(SafeBrowsing, URLObservation)
 {
     ClassMethodSwizzler swizzler(objc_getClass("SSBLookupContext"), @selector(sharedLookupContext), [TestLookupContext methodForSelector:@selector(sharedLookupContext)]);
 
@@ -513,8 +515,12 @@ TEST(SafeBrowsing, WKWebViewGoBackIFrame)
     __block bool navigationFinished = false;
     delegate.get().didFailProvisionalLoadInSubframeWithError = ^(WKWebView *, WKFrameInfo *frame, NSError *error) {
         EXPECT_NOT_NULL(error);
-        auto failingURL = (NSString *)[error.userInfo valueForKey:@"NSErrorFailingURLStringKey"];
-        EXPECT_TRUE([failingURL hasSuffix:@"/simple.html"]);
+        auto failingURL = (NSURL *)[error.userInfo valueForKey:NSURLErrorFailingURLErrorKey];
+        EXPECT_TRUE([failingURL.lastPathComponent isEqualToString:@"simple.html"]);
+#if USE(NSURL_ERROR_FAILING_URL_STRING_KEY)
+        auto failingURLString = (NSString *)[error.userInfo valueForKey:NSURLErrorFailingURLStringErrorKey];
+        EXPECT_TRUE([failingURLString hasSuffix:@"/simple.html"]);
+#endif
         navigationFailed = true;
     };
     delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *navigation) {
@@ -565,7 +571,7 @@ static Seconds delayDuration;
 - (void)lookUpURL:(NSURL *)URL completionHandler:(void (^)(TestLookupResult *, NSError *))completionHandler
 {
     BOOL phishing = ![URL isEqual:resourceURL(@"simple2")] && ![[URL path] isEqual:@"/safe"];
-    RunLoop::protectedMain()->dispatchAfter(delayDuration, [completionHandler = makeBlockPtr(completionHandler), phishing] {
+    RunLoop::mainSingleton().dispatchAfter(delayDuration, [completionHandler = makeBlockPtr(completionHandler), phishing] {
         completionHandler.get()([TestLookupResult resultWithResults:@[[TestServiceLookupResult resultWithProvider:@"SSBProviderApple" phishing:phishing malware:NO unwantedSoftware:NO]]], nil);
     });
 }
@@ -628,8 +634,12 @@ TEST(SafeBrowsing, PostResponseIframe)
     __block bool navigationFinished = false;
     delegate.get().didFailProvisionalLoadInSubframeWithError = ^(WKWebView *, WKFrameInfo *frame, NSError *error) {
         EXPECT_NOT_NULL(error);
-        auto failingURL = (NSString *)[error.userInfo valueForKey:@"NSErrorFailingURLStringKey"];
-        EXPECT_TRUE([failingURL hasSuffix:@"/simple.html"]);
+        auto failingURL = (NSURL *)[error.userInfo valueForKey:NSURLErrorFailingURLErrorKey];
+        EXPECT_TRUE([failingURL.lastPathComponent isEqualToString:@"simple.html"]);
+#if USE(NSURL_ERROR_FAILING_URL_STRING_KEY)
+        auto failingURLString = (NSString *)[error.userInfo valueForKey:NSURLErrorFailingURLStringErrorKey];
+        EXPECT_TRUE([failingURLString hasSuffix:@"/simple.html"]);
+#endif
         navigationFailed = true;
     };
     delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *navigation) {
@@ -657,7 +667,7 @@ TEST(SafeBrowsing, PreresponseSafeBrowsingWarning)
     [webView setNavigationDelegate:delegate.get()];
 
     [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
-        RunLoop::protectedMain()->dispatchAfter(1000_s, [task = retainPtr(task)] {
+        RunLoop::mainSingleton().dispatchAfter(1000_s, [task = retainPtr(task)] {
             auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.get().request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
             [task didReceiveResponse:response.get()];
             [task didReceiveData:[NSData dataWithBytes:mainResource length:strlen(mainResource)]];
@@ -787,5 +797,71 @@ TEST(SafeBrowsing, PostResponseInjectedBundleSkipsDecidePolicyForResponse)
     while (![webView _safeBrowsingWarning])
         TestWebKitAPI::Util::spinRunLoop();
 }
+
+TEST(SafeBrowsing, PostTimeout)
+{
+    delayDuration = 100_ms;
+    TestWebKitAPI::HTTPServer server({
+        { "/test"_s, { "test"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+    auto configuration = server.httpsProxyConfiguration();
+
+    ClassMethodSwizzler swizzler(objc_getClass("SSBLookupContext"), @selector(sharedLookupContext), [DelayedLookupContext methodForSelector:@selector(sharedLookupContext)]);
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    [webView configuration].preferences.fraudulentWebsiteWarningEnabled = YES;
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView evaluateJavaScript:@"window.location = 'https://example2.com/test'" completionHandler:nil];
+
+    EXPECT_WK_STREQ([webView title], "");
+    while (![webView _safeBrowsingWarning])
+        TestWebKitAPI::Util::spinRunLoop();
+}
+
+TEST(SafeBrowsing, PhishingInFrame)
+{
+    phishingResourceName = @"simple";
+    ClassMethodSwizzler swizzler(objc_getClass("SSBLookupContext"), @selector(sharedLookupContext), [SimpleLookupContext methodForSelector:@selector(sharedLookupContext)]);
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    auto webView = adoptNS([WKWebView new]);
+    auto configuration = webView.get().configuration;
+    auto preferences = configuration.preferences;
+    preferences._safeBrowsingEnabled = YES;
+
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"SiteIsolationEnabled"]) {
+            [preferences _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+
+    __block bool navigationFailed = false;
+    __block bool navigationFinished = false;
+    delegate.get().didFailProvisionalLoadInSubframeWithError = ^(WKWebView *, WKFrameInfo *frame, NSError *error) {
+        EXPECT_NOT_NULL(error);
+        auto failingURL = (NSURL *)[error.userInfo valueForKey:NSURLErrorFailingURLErrorKey];
+        EXPECT_TRUE([failingURL.lastPathComponent isEqualToString:@"simple.html"]);
+#if USE(NSURL_ERROR_FAILING_URL_STRING_KEY)
+        auto failingURLString = (NSString *)[error.userInfo valueForKey:NSURLErrorFailingURLStringErrorKey];
+        EXPECT_TRUE([failingURLString hasSuffix:@"/simple.html"]);
+#endif
+        navigationFailed = true;
+    };
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *navigation) {
+        navigationFinished = true;
+    };
+
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple-iframe")]];
+    TestWebKitAPI::Util::run(&navigationFinished);
+    TestWebKitAPI::Util::run(&navigationFailed);
+    EXPECT_TRUE(navigationFailed);
+    EXPECT_TRUE(navigationFinished);
+}
+
 
 #endif // HAVE(SAFE_BROWSING)

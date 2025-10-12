@@ -79,9 +79,8 @@ void genericUnwind(VM& vm, CallFrame* callFrame)
         };
 
         ASSERT_WITH_MESSAGE(!std::holds_alternative<uintptr_t>(catchPCForInterpreter), "IPInt does not support no JIT");
-        catchRoutine = std::holds_alternative<const JSInstruction*>(catchPCForInterpreter)
-            ? getCatchRoutine(std::get<const JSInstruction*>(catchPCForInterpreter))
-            : getCatchRoutine(std::get<const WasmInstruction*>(catchPCForInterpreter));
+        if (std::holds_alternative<const JSInstruction*>(catchPCForInterpreter))
+            catchRoutine = getCatchRoutine(std::get<const JSInstruction*>(catchPCForInterpreter));
 #endif
     } else
         catchRoutine = LLInt::handleUncaughtException(vm).code().taggedPtr();

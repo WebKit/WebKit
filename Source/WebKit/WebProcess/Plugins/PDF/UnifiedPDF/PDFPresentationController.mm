@@ -29,6 +29,7 @@
 #if ENABLE(UNIFIED_PDF)
 
 #include "AsyncPDFRenderer.h"
+#include "Logging.h"
 #include "PDFDiscretePresentationController.h"
 #include "PDFKitSPI.h"
 #include "PDFScrollingPresentationController.h"

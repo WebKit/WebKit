@@ -142,7 +142,7 @@ void ARKitBadgeSystemImage::draw(GraphicsContext& graphicsContext, const FloatRe
 
     // The circle must have an alpha channel value of 1 for the shadow color to appear.
     CGFloat circleColorComponents[4] = { 0, 0, 0, 1 };
-    RetainPtr<CGColorRef> circleColor = adoptCF(CGColorCreate(sRGBColorSpaceRef(), circleColorComponents));
+    RetainPtr<CGColorRef> circleColor = adoptCF(CGColorCreate(sRGBColorSpaceSingleton(), circleColorComponents));
     CGContextSetFillColorWithColor(ctx, circleColor.get());
 
     // Clip out the circle to only show the shadow.
@@ -204,7 +204,7 @@ void ARKitBadgeSystemImage::draw(GraphicsContext& graphicsContext, const FloatRe
         auto surfaceDimension = useSmallBadge ? smallBadgeDimension : largeBadgeDimension;
         std::unique_ptr<IOSurface> badgeSurface = IOSurface::create(&IOSurfacePool::sharedPoolSingleton(), { surfaceDimension, surfaceDimension }, DestinationColorSpace::SRGB());
         IOSurfaceRef surface = badgeSurface->surface();
-        [ciContext render:translatedImage toIOSurface:surface bounds:badgeRect colorSpace:sRGBColorSpaceRef()];
+        [ciContext render:translatedImage toIOSurface:surface bounds:badgeRect colorSpace:sRGBColorSpaceSingleton()];
         auto surfaceContext = badgeSurface->createPlatformContext();
         cgImage = badgeSurface->createImage(surfaceContext.get());
     } else

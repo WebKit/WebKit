@@ -50,7 +50,7 @@ public:
     static URL createPublicURL(SecurityOrigin*);
     static URL createInternalURL();
 
-    static URL getOriginURL(const URL&);
+    WEBCORE_EXPORT static URL getOriginURL(const URL&);
     static bool isSecureBlobURL(const URL&);
 #if ASSERT_ENABLED
     static bool isInternalURL(const URL&);

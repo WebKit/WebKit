@@ -37,8 +37,6 @@ DEF_SIMPLE_GM(getpostextpath, canvas, 480, 780) {
     // explicitly add spaces, to test a prev. bug
     const char* text = "Ham bur ge fons";
     size_t len = strlen(text);
-    SkPath path;
-
     SkFont font = ToolUtils::DefaultPortableFont();
     font.setSize(48);
 
@@ -48,27 +46,26 @@ DEF_SIMPLE_GM(getpostextpath, canvas, 480, 780) {
     canvas->translate(SkIntToScalar(10), SkIntToScalar(64));
 
     canvas->drawSimpleText(text, len, SkTextEncoding::kUTF8, 0, 0, font, paint);
-    ToolUtils::get_text_path(font, text, len, SkTextEncoding::kUTF8, &path, nullptr);
+    SkPath path = ToolUtils::get_text_path(font, text, len, SkTextEncoding::kUTF8, nullptr);
     strokePath(canvas, path);
-    path.reset();
 
     SkAutoToGlyphs atg(font, text, len, SkTextEncoding::kUTF8);
-    const int count = atg.count();
+    const size_t count = atg.count();
     AutoTArray<SkPoint>  pos(count);
     AutoTArray<SkScalar> widths(count);
-    font.getWidths(atg.glyphs(), count, &widths[0]);
+    font.getWidths(atg.glyphs(), widths);
 
     SkRandom rand;
     SkScalar x = SkIntToScalar(20);
     SkScalar y = SkIntToScalar(100);
-    for (int i = 0; i < count; ++i) {
+    for (size_t i = 0; i < count; ++i) {
         pos[i].set(x, y + rand.nextSScalar1() * 24);
         x += widths[i];
     }
 
     canvas->translate(0, SkIntToScalar(64));
 
-    canvas->drawTextBlob(SkTextBlob::MakeFromPosText(text, len, &pos[0], font), 0, 0, paint);
-    ToolUtils::get_text_path(font, text, len, SkTextEncoding::kUTF8, &path, &pos[0]);
+    canvas->drawTextBlob(SkTextBlob::MakeFromPosText(text, len, pos, font), 0, 0, paint);
+    path = ToolUtils::get_text_path(font, text, len, SkTextEncoding::kUTF8, &pos[0]);
     strokePath(canvas, path);
 }

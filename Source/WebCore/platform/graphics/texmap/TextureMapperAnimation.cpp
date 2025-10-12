@@ -29,12 +29,12 @@
 
 namespace WebCore {
 
-static RefPtr<FilterOperation> blendFunc(FilterOperation* fromOp, FilterOperation& toOp, double progress, const FloatSize&, bool blendToPassthrough = false)
+static RefPtr<FilterOperation> blendFunc(FilterOperation* fromOp, FilterOperation& toOp, double progress, bool blendToPassthrough = false)
 {
     return toOp.blend(fromOp, progress, blendToPassthrough);
 }
 
-static FilterOperations applyFilterAnimation(const FilterOperations& from, const FilterOperations& to, double progress, const FloatSize& boxSize)
+static FilterOperations applyFilterAnimation(const FilterOperations& from, const FilterOperations& to, double progress)
 {
     // First frame of an animation.
     if (!progress)
@@ -57,7 +57,7 @@ static FilterOperations applyFilterAnimation(const FilterOperations& from, const
     for (size_t i = 0; i < size; i++) {
         RefPtr<FilterOperation> fromOp = (i < fromSize) ? from[i].ptr() : nullptr;
         RefPtr<FilterOperation> toOp = (i < toSize) ? to[i].ptr() : nullptr;
-        RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(fromOp.get(), *toOp, progress, boxSize) : (fromOp ? blendFunc(nullptr, *fromOp, progress, boxSize, true) : nullptr);
+        RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(fromOp.get(), *toOp, progress) : (fromOp ? blendFunc(nullptr, *fromOp, progress, true) : nullptr);
         if (blendedOp)
             operations.append(blendedOp.releaseNonNull());
         else {
@@ -78,14 +78,14 @@ static FilterOperations applyFilterAnimation(const FilterOperations& from, const
     return FilterOperations { WTFMove(operations) };
 }
 
-static bool shouldReverseAnimationValue(Animation::Direction direction, int loopCount)
+static bool shouldReverseAnimationValue(GraphicsLayerAnimation::Direction direction, int loopCount)
 {
-    return (direction == Animation::Direction::Alternate && loopCount & 1)
-        || (direction == Animation::Direction::AlternateReverse && !(loopCount & 1))
-        || direction == Animation::Direction::Reverse;
+    return (direction == GraphicsLayerAnimation::Direction::Alternate && loopCount & 1)
+        || (direction == GraphicsLayerAnimation::Direction::AlternateReverse && !(loopCount & 1))
+        || direction == GraphicsLayerAnimation::Direction::Reverse;
 }
 
-static double normalizedAnimationValue(double runningTime, double duration, Animation::Direction direction, double iterationCount)
+static double normalizedAnimationValue(double runningTime, double duration, GraphicsLayerAnimation::Direction direction, double iterationCount)
 {
     if (!duration)
         return 0;
@@ -99,11 +99,11 @@ static double normalizedAnimationValue(double runningTime, double duration, Anim
     return shouldReverseAnimationValue(direction, loopCount) ? 1 - normalized : normalized;
 }
 
-static double normalizedAnimationValueForFillsForwards(double iterationCount, Animation::Direction direction)
+static double normalizedAnimationValueForFillsForwards(double iterationCount, GraphicsLayerAnimation::Direction direction)
 {
-    if (direction == Animation::Direction::Normal)
+    if (direction == GraphicsLayerAnimation::Direction::Normal)
         return 1;
-    if (direction == Animation::Direction::Reverse)
+    if (direction == GraphicsLayerAnimation::Direction::Reverse)
         return 0;
     return shouldReverseAnimationValue(direction, iterationCount) ? 1 : 0;
 }
@@ -120,23 +120,23 @@ static float applyOpacityAnimation(float fromOpacity, float toOpacity, double pr
     return fromOpacity + progress * (toOpacity - fromOpacity);
 }
 
-static TransformationMatrix applyTransformAnimation(const TransformOperations& from, const TransformOperations& to, double progress, const FloatSize& boxSize)
+static TransformationMatrix applyTransformAnimation(const TransformOperations& from, const TransformOperations& to, double progress)
 {
     TransformationMatrix matrix;
 
     // First frame of an animation.
     if (!progress) {
-        from.apply(matrix, boxSize);
+        from.apply(matrix);
         return matrix;
     }
 
     // Last frame of an animation.
     if (progress == 1) {
-        to.apply(matrix, boxSize);
+        to.apply(matrix);
         return matrix;
     }
 
-    to.blend(from, progress, LayoutSize { boxSize }).apply(matrix, boxSize);
+    blend(from, to, progress).apply(matrix);
     return matrix;
 }
 
@@ -149,36 +149,10 @@ static const TimingFunction& timingFunctionForAnimationValue(const AnimationValu
     return CubicBezierTimingFunction::defaultTimingFunction();
 }
 
-static KeyframeValueList createThreadsafeKeyFrames(const KeyframeValueList& originalKeyframes, const FloatSize& boxSize)
-{
-    if (originalKeyframes.property() != AnimatedProperty::Transform)
-        return originalKeyframes;
-
-    // Currently translation operations are the only transform operations that store a non-fixed
-    // Length. Some Lengths, in particular those for calc() operations, are not thread-safe or
-    // multiprocess safe, because they maintain indices into a shared UncheckedKeyHashMap of CalculationValues.
-    // This code converts all possible unsafe Length parameters to fixed Lengths, which are safe to
-    // use in other threads and across IPC channels.
-    KeyframeValueList keyframes = originalKeyframes;
-    for (unsigned i = 0; i < keyframes.size(); i++) {
-        const auto& transformValue = static_cast<const TransformAnimationValue&>(keyframes.at(i));
-        for (auto& operation : transformValue.value()) {
-            if (RefPtr translation = dynamicDowncast<TranslateTransformOperation>(operation)) {
-                translation->setX(Length(translation->xAsFloat(boxSize), LengthType::Fixed));
-                translation->setY(Length(translation->yAsFloat(boxSize), LengthType::Fixed));
-                translation->setZ(Length(translation->zAsFloat(), LengthType::Fixed));
-            }
-        }
-    }
-
-    return keyframes;
-}
-
-TextureMapperAnimation::TextureMapperAnimation(const String& name, const KeyframeValueList& keyframes, const FloatSize& boxSize, const Animation& animation, MonotonicTime startTime, Seconds pauseTime, State state)
+TextureMapperAnimation::TextureMapperAnimation(const String& name, const KeyframeValueList& keyframes, const GraphicsLayerAnimation& animation, MonotonicTime startTime, Seconds pauseTime, State state)
     : m_name(name.isSafeToSendToAnotherThread() ? name : name.isolatedCopy())
-    , m_keyframes(createThreadsafeKeyFrames(keyframes, boxSize))
-    , m_boxSize(boxSize)
-    , m_timingFunction(animation.timingFunction()->clone())
+    , m_keyframes(keyframes)
+    , m_timingFunction(animation.defaultTimingFunctionForKeyframes() ? animation.defaultTimingFunctionForKeyframes()->clone() : animation.timingFunction()->clone())
     , m_iterationCount(animation.iterationCount())
     , m_duration(animation.duration().value_or(0))
     , m_direction(animation.direction())
@@ -194,7 +168,6 @@ TextureMapperAnimation::TextureMapperAnimation(const String& name, const Keyfram
 TextureMapperAnimation::TextureMapperAnimation(const TextureMapperAnimation& other)
     : m_name(other.m_name.isSafeToSendToAnotherThread() ? other.m_name : other.m_name.isolatedCopy())
     , m_keyframes(other.m_keyframes)
-    , m_boxSize(other.m_boxSize)
     , m_timingFunction(other.m_timingFunction->clone())
     , m_iterationCount(other.m_iterationCount)
     , m_duration(other.m_duration)
@@ -212,7 +185,6 @@ TextureMapperAnimation& TextureMapperAnimation::operator=(const TextureMapperAni
 {
     m_name = other.m_name.isSafeToSendToAnotherThread() ? other.m_name : other.m_name.isolatedCopy();
     m_keyframes = other.m_keyframes;
-    m_boxSize = other.m_boxSize;
     m_timingFunction = other.m_timingFunction->clone();
     m_iterationCount = other.m_iterationCount;
     m_duration = other.m_duration;
@@ -245,7 +217,7 @@ void TextureMapperAnimation::apply(ApplicationResult& applicationResults, Monoto
     Seconds totalRunningTime = computeTotalRunningTime(time);
     double normalizedValue = normalizedAnimationValue(totalRunningTime.seconds(), m_duration, m_direction, m_iterationCount);
 
-    if (m_iterationCount != Animation::IterationCountInfinite && totalRunningTime.seconds() >= m_duration * m_iterationCount) {
+    if (m_iterationCount != GraphicsLayerAnimation::IterationCountInfinite && totalRunningTime.seconds() >= m_duration * m_iterationCount) {
         m_state = State::Stopped;
         m_pauseTime = 0_s;
         normalizedValue = normalizedAnimationValueForFillsForwards(m_iterationCount, m_direction);
@@ -318,7 +290,7 @@ void TextureMapperAnimation::applyInternal(ApplicationResult& applicationResults
     case AnimatedProperty::Scale:
     case AnimatedProperty::Transform: {
         ASSERT(applicationResults.transform);
-        auto transform = applyTransformAnimation(static_cast<const TransformAnimationValue&>(from).value(), static_cast<const TransformAnimationValue&>(to).value(), progress, m_boxSize);
+        auto transform = applyTransformAnimation(static_cast<const TransformAnimationValue&>(from).value(), static_cast<const TransformAnimationValue&>(to).value(), progress);
         applicationResults.transform->multiply(transform);
         return;
     }
@@ -327,7 +299,7 @@ void TextureMapperAnimation::applyInternal(ApplicationResult& applicationResults
         return;
     case AnimatedProperty::Filter:
     case AnimatedProperty::WebkitBackdropFilter:
-        applicationResults.filters = applyFilterAnimation(static_cast<const FilterAnimationValue&>(from).value(), static_cast<const FilterAnimationValue&>(to).value(), progress, m_boxSize);
+        applicationResults.filters = applyFilterAnimation(static_cast<const FilterAnimationValue&>(from).value(), static_cast<const FilterAnimationValue&>(to).value(), progress);
         return;
     default:
         ASSERT_NOT_REACHED();

@@ -26,8 +26,8 @@
 #include "LineInfo.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
-#include "RenderLayer.h"
 #include "RenderObjectInlines.h"
+#include "RenderLayer.h"
 
 namespace WebCore {
 
@@ -91,8 +91,9 @@ inline bool requiresLineBox(const LegacyInlineIterator& it, const LineInfo& line
     if (!shouldCollapseWhiteSpace(&it.renderer()->style(), lineInfo, whitespacePosition))
         return true;
 
-    UChar current = it.current();
-    bool notJustWhitespace = current != ' ' && current != '\t' && current != softHyphen && (current != '\n' || it.renderer()->preservesNewline()) && !skipNonBreakingSpace(it, lineInfo);
+    char16_t current = it.current();
+    auto preservesNewline = !it.renderer()->isRenderSVGInlineText() && it.renderer()->style().preserveNewline();
+    bool notJustWhitespace = current != ' ' && current != '\t' && current != softHyphen && (current != '\n' || preservesNewline) && !skipNonBreakingSpace(it, lineInfo);
     return notJustWhitespace || rendererIsEmptyInline;
 }
 

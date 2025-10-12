@@ -7,6 +7,10 @@
 //   Performance test for device creation.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "ANGLEPerfTest.h"
 #include "platform/PlatformMethods.h"
 #include "test_utils/angle_test_configs.h"

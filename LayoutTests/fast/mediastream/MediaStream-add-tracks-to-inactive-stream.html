@@ -29,6 +29,7 @@
                 tryAddTrack(stream2, audioTrack);
                 shouldBe('stream2.getAudioTracks().length', '1');
                 finishJSTest();
+                stream1.getTracks().forEach(track => track.stop());
             }
 
             function gotStream1(s)

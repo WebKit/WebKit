@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
  * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,13 +32,13 @@
 
 #pragma once
 
-#include "CSSColor.h"
-#include "CSSColorDescriptors.h"
-#include "CSSColorType.h"
-#include "CSSValueKeywords.h"
-#include "StyleColorOptions.h"
-#include "StyleCurrentColor.h"
-#include "StyleResolvedColor.h"
+#include <WebCore/CSSColor.h>
+#include <WebCore/CSSColorDescriptors.h>
+#include <WebCore/CSSColorType.h>
+#include <WebCore/CSSValueKeywords.h>
+#include <WebCore/StyleColorOptions.h>
+#include <WebCore/StyleCurrentColor.h>
+#include <WebCore/StyleResolvedColor.h>
 #include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
 #include <wtf/UniqueRef.h>
@@ -62,6 +63,7 @@ template<typename Descriptor> struct RelativeColor;
 
 struct Color {
 private:
+    friend struct MarkableTraits<Color>;
     struct EmptyToken { constexpr bool operator==(const EmptyToken&) const = default; };
 
     // FIXME: Replace Variant with a generic CompactPointerVariant type.
@@ -81,6 +83,7 @@ private:
         UniqueRef<RelativeColor<OKLCHFunction>>,
         UniqueRef<RelativeColor<ColorRGBFunction<ExtendedA98RGB<float>>>>,
         UniqueRef<RelativeColor<ColorRGBFunction<ExtendedDisplayP3<float>>>>,
+        UniqueRef<RelativeColor<ColorRGBFunction<ExtendedLinearDisplayP3<float>>>>,
         UniqueRef<RelativeColor<ColorRGBFunction<ExtendedProPhotoRGB<float>>>>,
         UniqueRef<RelativeColor<ColorRGBFunction<ExtendedRec2020<float>>>>,
         UniqueRef<RelativeColor<ColorRGBFunction<ExtendedSRGBA<float>>>>,
@@ -96,6 +99,7 @@ public:
     // The default constructor initializes to Style::CurrentColor to preserve old behavior,
     // we might want to remove it entirely at some point.
     Color();
+    Color(CSS::Keyword::Currentcolor);
 
     // Convenience constructors that create Style::ResolvedColor.
     Color(WebCore::Color);
@@ -115,6 +119,7 @@ public:
     Color(RelativeColor<OKLCHFunction>&&);
     Color(RelativeColor<ColorRGBFunction<ExtendedA98RGB<float>>>&&);
     Color(RelativeColor<ColorRGBFunction<ExtendedDisplayP3<float>>>&&);
+    Color(RelativeColor<ColorRGBFunction<ExtendedLinearDisplayP3<float>>>&&);
     Color(RelativeColor<ColorRGBFunction<ExtendedProPhotoRGB<float>>>&&);
     Color(RelativeColor<ColorRGBFunction<ExtendedRec2020<float>>>&&);
     Color(RelativeColor<ColorRGBFunction<ExtendedSRGBA<float>>>&&);
@@ -132,7 +137,7 @@ public:
 
     bool operator==(const Color&) const;
 
-    static Color currentColor();
+    static const Color& currentColor();
 
     bool containsCurrentColor() const;
     bool isCurrentColor() const;
@@ -149,11 +154,6 @@ public:
     // as const references, pretending the UniqueRefs don't exist.
     template<typename... F> decltype(auto) switchOn(F&&...) const;
 
-    struct MarkableTraits {
-        static bool isEmptyValue(const Color&);
-        static Color emptyValue();
-    };
-
     String debugDescription() const;
 
 private:
@@ -167,8 +167,12 @@ private:
 WebCore::Color resolveColor(const Color&, const WebCore::Color& currentColor);
 bool containsCurrentColor(const Color&);
 
-void serializationForCSS(StringBuilder&, const CSS::SerializationContext&, const Color&);
-WEBCORE_EXPORT String serializationForCSS(const CSS::SerializationContext&, const Color&);
+void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const Color&);
+String serializationForCSSTokenization(const CSS::SerializationContext&, const Color&);
+
+template<> struct Serialize<Color> {
+    void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const Color&);
+};
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
 
@@ -176,6 +180,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
 
 Color toStyleColor(const CSS::Color&, ColorResolutionState&);
 Color toStyleColor(const CSS::Color&, Ref<const Document>, const RenderStyle&, const CSSToLengthConversionData&, ForVisitedLink);
+Color toStyleColor(const CSS::Color&, const BuilderState&, ForVisitedLink);
 
 template<> struct ToCSS<Color> {
     auto operator()(const Color&, const RenderStyle&) -> CSS::Color;
@@ -184,6 +189,25 @@ template<> struct ToStyle<CSS::Color> {
     auto operator()(const CSS::Color&, const BuilderState&, ForVisitedLink) -> Color;
     auto operator()(const CSS::Color&, const BuilderState&) -> Color;
 };
+
+template<> struct CSSValueConversion<Color> {
+    auto operator()(BuilderState&, const CSSValue&, ForVisitedLink) -> Color;
+    auto operator()(BuilderState&, const CSSValue&) -> Color;
+};
+template<> struct CSSValueCreation<Color> {
+    auto operator()(CSSValuePool&, const RenderStyle&, const Color&) -> Ref<CSSValue>;
+};
+
+// MARK: - Blending
+
+template<> struct Blending<Color> {
+    auto equals(const Color&, const Color&, const RenderStyle&, const RenderStyle&) -> bool;
+    auto canBlend(const Color&, const Color&) -> bool;
+    constexpr auto requiresInterpolationForAccumulativeIteration(const Color&, const Color&) -> bool { return true; }
+    auto blend(const Color&, const Color&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> Color;
+};
+
+// MARK: - Color Implementation
 
 template<typename... F> decltype(auto) Color::switchOn(F&&... f) const
 {
@@ -209,4 +233,14 @@ template<typename... F> decltype(auto) Color::switchOn(F&&... f) const
 } // namespace Style
 } // namespace WebCore
 
-template<> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::Style::Color> = true;
+namespace WTF {
+
+template<>
+struct MarkableTraits<WebCore::Style::Color> {
+    static bool isEmptyValue(const WebCore::Style::Color& color) { return std::holds_alternative<WebCore::Style::Color::EmptyToken>(color.value); }
+    static WebCore::Style::Color emptyValue() { return WebCore::Style::Color(WebCore::Style::Color::EmptyToken()); }
+};
+
+}
+
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::Color)

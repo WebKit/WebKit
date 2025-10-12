@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,7 +49,7 @@ public:
 
 private:
     String m_name;
-    Ref<MessagePort> m_port;
+    const Ref<MessagePort> m_port;
 };
 
 } // namespace WebCore

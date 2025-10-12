@@ -326,7 +326,7 @@ static WARN_UNUSED_RETURN bool decodeKey(std::span<const uint8_t>& data, IDBKeyD
         if (data.size() < length * 2)
             return false;
 
-        Vector<UChar> buffer;
+        Vector<char16_t> buffer;
         buffer.reserveInitialCapacity(length);
         for (size_t i = 0; i < length; i++) {
             uint16_t ch;

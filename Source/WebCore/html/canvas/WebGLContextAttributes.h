@@ -29,7 +29,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsContextGLAttributes.h"
+#include <WebCore/GraphicsContextGLAttributes.h>
 
 namespace WebCore {
 

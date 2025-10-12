@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_PROCESSING_TEST_PERFORMANCE_TIMER_H_
 #define MODULES_AUDIO_PROCESSING_TEST_PERFORMANCE_TIMER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <optional>
 #include <vector>
 

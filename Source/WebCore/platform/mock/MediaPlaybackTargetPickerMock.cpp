@@ -77,12 +77,13 @@ void MediaPlaybackTargetPickerMock::showPlaybackTargetPicker(CocoaView*, const F
     LOG(Media, "MediaPlaybackTargetPickerMock::showPlaybackTargetPicker - checkActiveRoute = %i, useDarkAppearance = %i", (int)checkActiveRoute, (int)useDarkAppearance);
 
     m_showingMenu = true;
-    callOnMainThread([this, weakThis = WeakPtr { *this }] {
-        if (!weakThis)
+    callOnMainThread([weakThis = WeakPtr { *this }] {
+        CheckedPtr checkedThis = weakThis.get();
+        if (!checkedThis)
             return;
 
-        m_showingMenu = false;
-        currentDeviceDidChange();
+        checkedThis->m_showingMenu = false;
+        checkedThis->currentDeviceDidChange();
     });
 }
 
@@ -90,15 +91,16 @@ void MediaPlaybackTargetPickerMock::startingMonitoringPlaybackTargets()
 {
     LOG(Media, "MediaPlaybackTargetPickerMock::startingMonitoringPlaybackTargets");
 
-    callOnMainThread([this, weakThis = WeakPtr { *this }] {
-        if (!weakThis)
+    callOnMainThread([weakThis = WeakPtr { *this }] {
+        CheckedPtr checkedThis = weakThis.get();
+        if (!checkedThis)
             return;
 
-        if (m_state == MediaPlaybackTargetContext::MockState::OutputDeviceAvailable)
-            availableDevicesDidChange();
+        if (checkedThis->m_state == MediaPlaybackTargetContext::MockState::OutputDeviceAvailable)
+            checkedThis->availableDevicesDidChange();
 
-        if (!m_deviceName.isEmpty() && m_state != MediaPlaybackTargetContext::MockState::Unknown)
-            currentDeviceDidChange();
+        if (!checkedThis->m_deviceName.isEmpty() && checkedThis->m_state != MediaPlaybackTargetContext::MockState::Unknown)
+            checkedThis->currentDeviceDidChange();
     });
 }
 
@@ -117,18 +119,19 @@ void MediaPlaybackTargetPickerMock::setState(const String& deviceName, MediaPlay
 {
     LOG(Media, "MediaPlaybackTargetPickerMock::setState - name = %s, state = 0x%x", deviceName.utf8().data(), (unsigned)state);
 
-    callOnMainThread([this, weakThis = WeakPtr { *this }, state, deviceName] {
-        if (!weakThis)
+    callOnMainThread([weakThis = WeakPtr { *this }, state, deviceName] {
+        CheckedPtr checkedThis = weakThis.get();
+        if (!checkedThis)
             return;
 
-        if (deviceName != m_deviceName && state != MediaPlaybackTargetContext::MockState::Unknown) {
-            m_deviceName = deviceName;
-            currentDeviceDidChange();
+        if (deviceName != checkedThis->m_deviceName && state != MediaPlaybackTargetContext::MockState::Unknown) {
+            checkedThis->m_deviceName = deviceName;
+            checkedThis->currentDeviceDidChange();
         }
 
-        if (m_state != state) {
-            m_state = state;
-            availableDevicesDidChange();
+        if (checkedThis->m_state != state) {
+            checkedThis->m_state = state;
+            checkedThis->availableDevicesDidChange();
         }
     });
 }

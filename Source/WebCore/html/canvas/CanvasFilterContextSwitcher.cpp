@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CanvasFilterContextSwitcher);
 
 std::unique_ptr<CanvasFilterContextSwitcher> CanvasFilterContextSwitcher::create(CanvasRenderingContext2DBase& context, const FloatRect& bounds)
 {
-    if (context.state().filterOperations.isEmpty())
+    if (context.state().filter.isNone())
         return nullptr;
 
     auto filter = context.createFilter(bounds);

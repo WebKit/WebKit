@@ -66,6 +66,9 @@ const char *FunctionName(FunctionType function)
             return "textureProjGrad";
         case FunctionType::TextureProjGradOffset:
             return "textureProjGradOffset";
+        default:
+            UNREACHABLE();
+            return "";
     }
 }
 

@@ -14,14 +14,15 @@
 #include <optional>
 #include <vector>
 
+#include "api/array_view.h"
 #include "modules/audio_coding/audio_network_adaptor/controller.h"
-#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
+#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 
 namespace webrtc {
 
 class FrameLengthControllerV2 final : public Controller {
  public:
-  FrameLengthControllerV2(rtc::ArrayView<const int> encoder_frame_lengths_ms,
+  FrameLengthControllerV2(ArrayView<const int> encoder_frame_lengths_ms,
                           int min_payload_bitrate_bps,
                           bool use_slow_adaptation);
 

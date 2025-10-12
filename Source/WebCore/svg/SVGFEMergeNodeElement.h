@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "SVGAnimatedString.h"
 #include "SVGElement.h"
 #include <wtf/TZoneMalloc.h>
 

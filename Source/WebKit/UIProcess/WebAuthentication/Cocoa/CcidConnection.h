@@ -57,7 +57,7 @@ private:
 
     void trySelectFidoApplet();
 
-    RetainPtr<TKSmartCard> m_smartCard;
+    const RetainPtr<TKSmartCard> m_smartCard;
     WeakPtr<CcidService> m_service;
     RunLoop::Timer m_retryTimer;
     bool m_contactless { false };

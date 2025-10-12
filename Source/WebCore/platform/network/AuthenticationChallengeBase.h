@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +25,10 @@
 #ifndef AuthenticationChallengeBase_h
 #define AuthenticationChallengeBase_h
 
-#include "Credential.h"
-#include "ProtectionSpace.h"
-#include "ResourceResponse.h"
-#include "ResourceError.h"
+#include <WebCore/Credential.h>
+#include <WebCore/ProtectionSpace.h>
+#include <WebCore/ResourceError.h>
+#include <WebCore/ResourceResponse.h>
 
 namespace WebCore {
 

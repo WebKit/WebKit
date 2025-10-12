@@ -31,6 +31,7 @@
 
 #include "ContextDestructionObserverInlines.h"
 #include "DOMException.h"
+#include "ExceptionOr.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebCodecsAudioDecoderSupport.h"
 #include "ScriptExecutionContextInlines.h"
@@ -85,7 +86,7 @@ static bool isValidDecoderConfig(const WebCodecsAudioDecoderConfig& config)
 {
     // https://w3c.github.io/webcodecs/#valid-audiodecoderconfig
     // 1. If codec is empty after stripping leading and trailing ASCII whitespace, return false.
-    if (StringView(config.codec).trim(isASCIIWhitespace<UChar>).isEmpty())
+    if (StringView(config.codec).trim(isASCIIWhitespace<char16_t>).isEmpty())
         return false;
 
     // 2. If description is [detached], return false.

@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "ScriptCallStack.h"
+#include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/Forward.h>
 
 namespace JSC {

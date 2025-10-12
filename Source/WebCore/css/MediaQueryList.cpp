@@ -20,15 +20,16 @@
 #include "config.h"
 #include "MediaQueryList.h"
 
-#include "AddEventListenerOptions.h"
+#include "AddEventListenerOptionsInlines.h"
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
-#include "DocumentInlines.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
 #include "HTMLFrameOwnerElement.h"
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryListEvent.h"
 #include "MediaQueryParser.h"
+#include "NodeDocument.h"
 #include "Quirks.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
@@ -139,6 +140,11 @@ bool MediaQueryList::matches()
         setMatches(m_matcher->evaluate(m_mediaQueries));
 
     return m_matches;
+}
+
+ScriptExecutionContext* MediaQueryList::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
 }
 
 void MediaQueryList::eventListenersDidChange()

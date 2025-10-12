@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Apple Inc.  All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,13 +37,13 @@ private:
     NativeImageSource(Ref<NativeImage>&&);
 
     IntSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const final { return m_frame.size(); }
-    DestinationColorSpace colorSpace() const final { return m_frame.nativeImage()->colorSpace(); }
-    std::optional<Color> singlePixelSolidColor() const final { return m_frame.nativeImage()->singlePixelSolidColor(); }
-    bool hasHDRContent() const final { return m_frame.nativeImage()->hasHDRContent(); }
+    DestinationColorSpace colorSpace() const final { return m_frame.nativeImage(ShouldDecodeToHDR::No)->colorSpace(); }
+    std::optional<Color> singlePixelSolidColor() const final { return m_frame.nativeImage(ShouldDecodeToHDR::No)->singlePixelSolidColor(); }
+    bool hasHDRContent() const final { return m_frame.nativeImage(ShouldDecodeToHDR::No)->hasHDRContent(); }
 
     const ImageFrame& primaryImageFrame(const std::optional<SubsamplingLevel>& = std::nullopt) final { return m_frame; }
 
-    RefPtr<NativeImage> primaryNativeImage() final { return m_frame.nativeImage(); }
+    RefPtr<NativeImage> primaryNativeImage() final { return m_frame.nativeImage(ShouldDecodeToHDR::No); }
 
     void dump(TextStream&) const final;
 

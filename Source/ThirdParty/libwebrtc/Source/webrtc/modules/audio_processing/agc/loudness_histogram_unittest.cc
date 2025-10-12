@@ -12,10 +12,9 @@
 
 #include "modules/audio_processing/agc/loudness_histogram.h"
 
-#include <stdio.h>
-
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 #include <memory>
 #include <string>
 
@@ -33,7 +32,7 @@ struct InputOutput {
   double loudness;
 };
 
-const double kRelativeErrTol = 1e-10;
+constexpr double kRelativeErrTol = 1e-10;
 
 class LoudnessHistogramTest : public ::testing::Test {
  protected:
@@ -53,7 +52,7 @@ void LoudnessHistogramTest::TestClean() {
 void LoudnessHistogramTest::RunTest(bool enable_circular_buff,
                                     absl::string_view filename) {
   FILE* in_file = fopen(std::string(filename).c_str(), "rb");
-  ASSERT_TRUE(in_file != NULL);
+  ASSERT_TRUE(in_file != nullptr);
   if (enable_circular_buff) {
     int buffer_size;
     EXPECT_EQ(fread(&buffer_size, sizeof(buffer_size), 1, in_file), 1u);

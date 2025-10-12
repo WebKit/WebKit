@@ -139,6 +139,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-basic-006-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-basic-006.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-basic-007-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-basic-007-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-basic-007.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-basic-008-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-basic-008.xht
@@ -162,15 +163,19 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-basic-017.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-basic-018-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-basic-018.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-basic-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-block-between-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-block-between-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-block-between-002-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-block-between-002.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-block-between-003-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-block-between-003.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-block-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-breaking-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-breaking-001-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-breaking-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-breaking-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-breaking-002-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-breaking-002.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-clear-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-clear-001.xht
@@ -269,6 +274,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-float-between-003-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-float-between-003.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-inherit-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-inherit-001-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-inherit-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-inheritance-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-inline-between-001-expected.xht
@@ -297,6 +303,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-listitem-between-002.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-listitem-between-003-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-listitem-between-003.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-pre-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-relpos-between-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-relpos-between-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-relpos-between-002-expected.xht
@@ -304,6 +311,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-relpos-between-003-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-relpos-between-003.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-replaced-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-replaced-001-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-replaced-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-restyle-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-restyle-001.xht
@@ -355,6 +363,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-text-between-004.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-text-between-005-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-text-between-005.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/run-in-text-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/table-anonymous-block-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/table-layout-applies-to-004.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/run-in/text-align-applies-to-004.xht

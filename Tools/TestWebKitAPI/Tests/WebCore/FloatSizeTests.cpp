@@ -333,7 +333,7 @@ TEST(FloatSize, Rounded)
 TEST(FloatSize, Markable)
 {
     WebCore::FloatSize size(1024.3f, 768.6f);
-    Markable<WebCore::FloatSize, WebCore::FloatSize::MarkableTraits> optional;
+    Markable<WebCore::FloatSize> optional;
     EXPECT_FALSE(optional) << "nullopt";
     optional = size;
     EXPECT_EQ((optional.value_or(WebCore::FloatSize { })), size) << "retained";

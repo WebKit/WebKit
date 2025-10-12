@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DownloadID.h"
+#include "NetworkSession.h"
 #include "SandboxExtension.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/Credential.h>
@@ -36,6 +37,7 @@
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <pal/SessionID.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -136,6 +138,8 @@ public:
 
     bool isTopLevelNavigation() const { return m_dataTaskIsForMainFrameNavigation; }
 
+    bool isInitiatedByDedicatedWorker() const { return m_isInitiatedByDedicatedWorker; }
+
     virtual String description() const;
     virtual void setH2PingCallback(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
 
@@ -146,17 +150,22 @@ public:
     virtual void setEmulatedConditions(const std::optional<int64_t>& /* bytesPerSecondLimit */) { }
 #endif
 
-    PAL::SessionID sessionID() const;
+    PAL::SessionID sessionID() const { return m_session->sessionID(); }
+    const NetworkSession* networkSession() const { return m_session.get(); }
+    NetworkSession* networkSession() { return m_session.get(); }
 
-    const NetworkSession* networkSession() const;
-    NetworkSession* networkSession();
+    CheckedPtr<NetworkSession> checkedNetworkSession()
+    {
+        ASSERT(m_session);
+        return m_session.get();
+    }
 
     virtual void setTimingAllowFailedFlag() { }
 
     size_t bytesTransferredOverNetwork() const { return m_bytesTransferredOverNetwork; }
 
 protected:
-    NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation);
+    NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation, bool isInitiatedByDedicatedWorker);
 
     enum class FailureType : uint8_t {
         Blocked,
@@ -169,7 +178,7 @@ protected:
     void restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest&);
     void setBytesTransferredOverNetwork(size_t bytes) { m_bytesTransferredOverNetwork = bytes; }
 
-    WeakPtr<NetworkSession> m_session;
+    const WeakPtr<NetworkSession> m_session;
     WeakPtr<NetworkDataTaskClient> m_client;
     WeakPtr<PendingDownload> m_pendingDownload;
     Markable<DownloadID> m_pendingDownloadID;
@@ -187,6 +196,7 @@ protected:
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect { true };
     bool m_dataTaskIsForMainFrameNavigation { false };
     bool m_failureScheduled { false };
+    bool m_isInitiatedByDedicatedWorker { false };
 };
 
 } // namespace WebKit

@@ -28,7 +28,6 @@
 
 #include "BitmapImage.h"
 #include "Color.h"
-#include "DecomposedGlyphs.h"
 #include "FloatPoint.h"
 #include "Font.h"
 #include "FontCascade.h"
@@ -93,10 +92,9 @@ UniqueRef<GraphicsContext> DrawGlyphsRecorder::createInternalContext()
     return makeUniqueRef<GraphicsContextCG>(context.get());
 }
 
-DrawGlyphsRecorder::DrawGlyphsRecorder(GraphicsContext& owner, float scaleFactor, DeriveFontFromContext deriveFontFromContext, DrawDecomposedGlyphs drawDecomposedGlyphs)
+DrawGlyphsRecorder::DrawGlyphsRecorder(GraphicsContext& owner, float scaleFactor, DeriveFontFromContext deriveFontFromContext)
     : m_owner(owner)
     , m_internalContext(createInternalContext())
-    , m_drawDecomposedGlyphs(drawDecomposedGlyphs)
     , m_deriveFontFromContext(deriveFontFromContext)
 {
     m_internalContext->applyDeviceScaleFactor(scaleFactor);
@@ -135,16 +133,16 @@ void DrawGlyphsRecorder::populateInternalContext(const GraphicsContextState& con
 
 void DrawGlyphsRecorder::recordInitialColors()
 {
-    CGContextRef cgContext = m_internalContext->platformContext();
-    m_initialFillColor = CGContextGetFillColorAsColor(cgContext);
-    m_initialStrokeColor = CGContextGetStrokeColorAsColor(cgContext);
+    RetainPtr cgContext = m_internalContext->platformContext();
+    m_initialFillColor = CGContextGetFillColorAsColor(cgContext.get());
+    m_initialStrokeColor = CGContextGetStrokeColorAsColor(cgContext.get());
 }
 
 void DrawGlyphsRecorder::prepareInternalContext(const Font& font, FontSmoothingMode smoothingMode)
 {
     ASSERT(CGAffineTransformIsIdentity(CTFontGetMatrix(font.platformData().ctFont())));
 
-    m_originalFont = &font;
+    m_originalFont = font;
     m_smoothingMode = smoothingMode;
 
     m_originalTextMatrix = computeOverallTextMatrix(font);
@@ -226,10 +224,10 @@ void DrawGlyphsRecorder::updateShadow(CGStyleRef style)
     auto rad = deg2rad(shadowStyle.azimuth - 180);
     auto shadowOffset = FloatSize(std::cos(rad), std::sin(rad)) * shadowStyle.height;
     auto shadowRadius = static_cast<float>(shadowStyle.radius);
-    auto shadowColor = CGStyleGetColor(style);
+    RetainPtr shadowColor = CGStyleGetColor(style);
     // Note: due to bugs in GraphicsContext interface and GraphicsContextCG, we have to set this first.
     m_owner.setShadowsIgnoreTransforms(true);
-    m_owner.setDropShadow({ shadowOffset, shadowRadius, Color::createAndPreserveColorSpace(shadowColor) });
+    m_owner.setDropShadow({ shadowOffset, shadowRadius, Color::createAndPreserveColorSpace(shadowColor.get()) });
 }
 
 void DrawGlyphsRecorder::recordBeginLayer(CGRenderingStateRef, CGGStateRef gstate, CGRect)
@@ -296,13 +294,13 @@ static AdvancesAndInitialPosition computeVerticalAdvancesFromPositions(std::span
 
 void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstate, const CGAffineTransform*, std::span<const CGGlyph> glyphs, std::span<const CGPoint> positions)
 {
-    ASSERT_IMPLIES(m_deriveFontFromContext == DeriveFontFromContext::No, m_originalFont);
+    ASSERT_IMPLIES(m_deriveFontFromContext == DeriveFontFromContext::No, m_originalFont.get());
 
     if (glyphs.empty())
         return;
 
-    CGFontRef usedFont = CGGStateGetFont(gstate);
-    if (m_deriveFontFromContext == DeriveFontFromContext::No && usedFont != adoptCF(CTFontCopyGraphicsFont(m_originalFont->platformData().ctFont(), nullptr)).get())
+    RetainPtr usedFont = CGGStateGetFont(gstate);
+    if (m_deriveFontFromContext == DeriveFontFromContext::No && usedFont != adoptCF(CTFontCopyGraphicsFont(m_originalFont->platformData().protectedCTFont().get(), nullptr)).get())
         return;
 
     updateCTM(*CGGStateGetCTM(gstate));
@@ -319,7 +317,7 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
     // If you set these two equal to each other, and solve for X, you get
     // CTM * currentTextMatrix = CTM * X * m_originalTextMatrix
     // currentTextMatrix * inverse(m_originalTextMatrix) = X
-    AffineTransform currentTextMatrix = CGContextGetTextMatrix(m_internalContext->platformContext());
+    AffineTransform currentTextMatrix = CGContextGetTextMatrix(m_internalContext->protectedPlatformContext().get());
     AffineTransform ctmFixup;
     if (auto invertedOriginalTextMatrix = m_originalTextMatrix.inverse())
         ctmFixup = currentTextMatrix * invertedOriginalTextMatrix.value();
@@ -330,12 +328,12 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
         ctmFixup = AffineTransform();
     m_owner.concatCTM(ctmFixup);
 
-    updateFillColor(CGGStateGetFillColor(gstate));
-    updateStrokeColor(CGGStateGetStrokeColor(gstate));
+    updateFillColor(RetainPtr { CGGStateGetFillColor(gstate) }.get());
+    updateStrokeColor(RetainPtr { CGGStateGetStrokeColor(gstate) }.get());
     updateShadow(CGGStateGetStyle(gstate));
 
     auto fontSize = CGGStateGetFontSize(gstate);
-    Ref font = m_deriveFontFromContext == DeriveFontFromContext::No ? *m_originalFont : Font::create(FontPlatformData(adoptCF(CTFontCreateWithGraphicsFont(usedFont, fontSize, nullptr, nullptr)), fontSize));
+    Ref font = m_deriveFontFromContext == DeriveFontFromContext::No ? *m_originalFont : Font::create(FontPlatformData(adoptCF(CTFontCreateWithGraphicsFont(usedFont.get(), fontSize, nullptr, nullptr)), fontSize));
 
     // The above does the work of ensuring the right CTM (which is the combination of CG's CTM and
     // CG's text matrix) is set for the replayer, but in order to provide the right values to
@@ -346,17 +344,13 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
     AdvancesAndInitialPosition advances;
     if (font->platformData().orientation() == FontOrientation::Vertical) {
         Vector<CGSize, 256> translations(glyphs.size());
-        CTFontGetVerticalTranslationsForGlyphs(font->platformData().ctFont(), glyphs.data(), translations.data(), glyphs.size());
-        auto ascentDelta = font->fontMetrics().ascent(IdeographicBaseline) - font->fontMetrics().ascent();
+        CTFontGetVerticalTranslationsForGlyphs(font->platformData().protectedCTFont().get(), glyphs.data(), translations.mutableSpan().data(), glyphs.size());
+        auto ascentDelta = font->fontMetrics().ascent(FontBaseline::Ideographic) - font->fontMetrics().ascent();
         advances = computeVerticalAdvancesFromPositions(translations.span(), positions, ascentDelta, textMatrix);
     } else
         advances = computeHorizontalAdvancesFromPositions(positions, textMatrix);
 
-    if (m_drawDecomposedGlyphs == DrawDecomposedGlyphs::Yes) {
-        Ref decomposedGlyphs = DecomposedGlyphs::create(WTFMove(glyphs), WTFMove(advances.advances), advances.initialPosition, m_smoothingMode);
-        m_owner.drawDecomposedGlyphs(font, decomposedGlyphs);
-    } else
-        m_owner.drawGlyphsImmediate(font, glyphs, advances.advances.span(), advances.initialPosition, m_smoothingMode);
+    m_owner.drawGlyphsImmediate(font, glyphs, advances.advances.span(), advances.initialPosition, m_smoothingMode);
 
     m_owner.concatCTM(inverseCTMFixup);
 }
@@ -397,27 +391,27 @@ void DrawGlyphsRecorder::recordDrawPath(CGRenderingStateRef, CGGStateRef gstate,
 
     switch (drawingMode) {
     case CGPathDrawingMode::kCGPathEOFill:
-        updateFillColor(CGGStateGetFillColor(gstate));
+        updateFillColor(RetainPtr { CGGStateGetFillColor(gstate) }.get());
         m_owner.setFillRule(WindRule::EvenOdd);
         m_owner.fillPath(path);
         break;
     case CGPathDrawingMode::kCGPathFill:
-        updateFillColor(CGGStateGetFillColor(gstate));
+        updateFillColor(RetainPtr { CGGStateGetFillColor(gstate) }.get());
         m_owner.setFillRule(WindRule::NonZero);
         m_owner.fillPath(path);
         break;
     case CGPathDrawingMode::kCGPathStroke:
-        updateStrokeColor(CGGStateGetStrokeColor(gstate));
+        updateStrokeColor(RetainPtr { CGGStateGetStrokeColor(gstate) }.get());
         m_owner.strokePath(path);
         break;
     case CGPathDrawingMode::kCGPathFillStroke:
-        updateStrokeColor(CGGStateGetStrokeColor(gstate));
-        updateFillColor(CGGStateGetFillColor(gstate));
+        updateStrokeColor(RetainPtr { CGGStateGetStrokeColor(gstate) }.get());
+        updateFillColor(RetainPtr { CGGStateGetFillColor(gstate) }.get());
         m_owner.setFillRule(WindRule::NonZero);
         m_owner.drawPath(path);
         break;
     case CGPathDrawingMode::kCGPathEOFillStroke:
-        updateStrokeColor(CGGStateGetStrokeColor(gstate));
+        updateStrokeColor(RetainPtr { CGGStateGetStrokeColor(gstate) }.get());
         m_owner.setFillRule(WindRule::EvenOdd);
         m_owner.drawPath(path);
         break;
@@ -512,8 +506,9 @@ void DrawGlyphsRecorder::drawNativeText(CTFontRef font, CGFloat fontSize, CTLine
     m_owner.scale(FloatSize(1, -1));
 
     prepareInternalContext(Font::create(FontPlatformData(font, fontSize)), FontSmoothingMode::SubpixelAntialiased);
-    CGContextSetTextPosition(m_internalContext->platformContext(), 0, 0);
-    CTLineDraw(line, m_internalContext->platformContext());
+    RetainPtr context = m_internalContext->platformContext();
+    CGContextSetTextPosition(context.get(), 0, 0);
+    CTLineDraw(line, context.get());
     concludeInternalContext();
 }
 

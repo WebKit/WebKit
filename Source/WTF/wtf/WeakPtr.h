@@ -26,10 +26,12 @@
 
 #pragma once
 
+#include <type_traits>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/CompactRefPtrTuple.h>
 #include <wtf/GetPtr.h>
 #include <wtf/Packed.h>
+#include <wtf/TypeTraits.h>
 #include <wtf/WeakPtrFactory.h>
 #include <wtf/WeakRef.h>
 
@@ -40,7 +42,7 @@ template<typename, typename = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertio
 template <typename, typename = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes> class WeakListHashSet;
 
 template<typename T, typename WeakPtrImpl, typename PtrTraits> class WeakPtr {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WeakPtr);
 public:
     WeakPtr() { }
     WeakPtr(std::nullptr_t) { }

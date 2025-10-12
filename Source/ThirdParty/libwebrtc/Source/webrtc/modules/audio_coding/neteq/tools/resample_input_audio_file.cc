@@ -10,8 +10,11 @@
 
 #include "modules/audio_coding/neteq/tools/resample_input_audio_file.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 
+#include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

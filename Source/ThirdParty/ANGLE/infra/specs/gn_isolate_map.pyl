@@ -127,6 +127,10 @@
     "label": "//src/tests:angle_deqp_khr_gles32_tests",
     "type": "windowed_test_launcher",
   },
+  "angle_deqp_khr_glesext_tests": {
+    "label": "//src/tests:angle_deqp_khr_glesext_tests",
+    "type": "windowed_test_launcher",
+  },
   "angle_deqp_khr_noctx_gles2_tests": {
     "label": "//src/tests:angle_deqp_khr_noctx_gles2_tests",
     "type": "windowed_test_launcher",

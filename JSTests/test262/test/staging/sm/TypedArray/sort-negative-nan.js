@@ -2,9 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-TypedArray-shell.js]
-flags:
-  - noStrict
+includes: [sm/non262-TypedArray-shell.js]
 description: |
   pending
 esid: pending
@@ -13,8 +11,8 @@ esid: pending
 const floatConstructors = anyTypedArrayConstructors.filter(isFloatConstructor);
 
 // Also test with cross-compartment wrapped typed arrays.
-if (typeof createNewGlobal === "function") {
-    const otherGlobal = createNewGlobal();
+{
+    const otherGlobal = $262.createRealm().global;
     floatConstructors.push(otherGlobal.Float16Array);
     floatConstructors.push(otherGlobal.Float32Array);
     floatConstructors.push(otherGlobal.Float64Array);

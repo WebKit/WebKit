@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(IOS_FAMILY)
 
-#include "SQLiteDatabaseTrackerClient.h"
+#include <WebCore/SQLiteDatabaseTrackerClient.h>
 #include <pal/HysteresisActivity.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>

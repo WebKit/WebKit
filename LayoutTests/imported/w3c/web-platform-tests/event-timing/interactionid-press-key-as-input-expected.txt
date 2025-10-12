@@ -1,4 +1,4 @@
 
 
-FAIL Event Timing: compare event timing interactionId for key press as input. assert_implements: Event Timing is not supported. undefined
+PASS Event Timing: compare event timing interactionId for key press as input.
 

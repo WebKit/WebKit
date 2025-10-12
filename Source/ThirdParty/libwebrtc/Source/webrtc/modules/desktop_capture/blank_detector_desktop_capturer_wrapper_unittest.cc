@@ -19,6 +19,7 @@
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/desktop_region.h"
 #include "modules/desktop_capture/fake_desktop_capturer.h"
+#include "modules/desktop_capture/rgba_color.h"
 #include "test/gtest.h"
 
 namespace webrtc {

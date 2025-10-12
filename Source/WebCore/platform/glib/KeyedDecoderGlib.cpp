@@ -50,9 +50,9 @@ KeyedDecoderGlib::~KeyedDecoderGlib()
     ASSERT(m_arrayIndexStack.isEmpty());
 }
 
-UncheckedKeyHashMap<String, GRefPtr<GVariant>> KeyedDecoderGlib::dictionaryFromGVariant(GVariant* variant)
+HashMap<String, GRefPtr<GVariant>> KeyedDecoderGlib::dictionaryFromGVariant(GVariant* variant)
 {
-    UncheckedKeyHashMap<String, GRefPtr<GVariant>> dictionary;
+    HashMap<String, GRefPtr<GVariant>> dictionary;
     GVariantIter iter;
     g_variant_iter_init(&iter, variant);
     const char* key;

@@ -10,6 +10,12 @@
 
 #include "modules/audio_coding/codecs/tools/audio_codec_speed_test.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+#include <string>
+
 #include "rtc_base/checks.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
@@ -34,7 +40,7 @@ AudioCodecSpeedTest::AudioCodecSpeedTest(int block_duration_ms,
       encoded_bytes_(0),
       encoding_time_ms_(0.0),
       decoding_time_ms_(0.0),
-      out_file_(NULL) {}
+      out_file_(nullptr) {}
 
 void AudioCodecSpeedTest::SetUp() {
   channels_ = get<0>(GetParam());

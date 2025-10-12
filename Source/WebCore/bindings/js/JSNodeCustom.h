@@ -26,10 +26,10 @@
 
 #pragma once
 
-#include "JSDOMBinding.h"
-#include "JSNode.h"
-#include "NodeInlines.h"
-#include "WebCoreOpaqueRoot.h"
+#include <WebCore/JSDOMBinding.h>
+#include <WebCore/JSNode.h>
+#include <WebCore/NodeInlines.h>
+#include <WebCore/WebCoreOpaqueRoot.h>
 
 namespace JSC {
 namespace JSCastingHelpers {

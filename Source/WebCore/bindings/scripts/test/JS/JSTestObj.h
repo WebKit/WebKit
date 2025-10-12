@@ -22,8 +22,8 @@
 
 #include "JSDOMConvertDictionary.h"
 #include "JSDOMConvertEnumeration.h"
-#include "JSDOMWrapper.h"
 #include "TestObj.h"
+#include <WebCore/JSDOMWrapper.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -116,6 +116,7 @@ inline void* wrapperKey(TestObj* wrappableObject)
 JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestObj&);
 inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestObj* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestObj>&&);
+ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestObj& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
 inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestObj>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<TestObj> {
@@ -203,6 +204,48 @@ template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::Confidence);
 template<> std::optional<TestObj::Confidence> parseEnumerationFromString<TestObj::Confidence>(const String&);
 template<> std::optional<TestObj::Confidence> parseEnumeration<TestObj::Confidence>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestObj::Confidence>();
+
+String convertEnumerationToString(TestObj::EnumWithMissingValueDefault);
+template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumWithMissingValueDefault);
+
+template<> std::optional<TestObj::EnumWithMissingValueDefault> parseEnumerationFromString<TestObj::EnumWithMissingValueDefault>(const String&);
+template<> std::optional<TestObj::EnumWithMissingValueDefault> parseEnumeration<TestObj::EnumWithMissingValueDefault>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumWithMissingValueDefault>();
+
+String convertEnumerationToString(TestObj::EnumWithInvalidValueDefault);
+template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumWithInvalidValueDefault);
+
+template<> std::optional<TestObj::EnumWithInvalidValueDefault> parseEnumerationFromString<TestObj::EnumWithInvalidValueDefault>(const String&);
+template<> std::optional<TestObj::EnumWithInvalidValueDefault> parseEnumeration<TestObj::EnumWithInvalidValueDefault>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumWithInvalidValueDefault>();
+
+String convertEnumerationToString(TestObj::EnumWithMissingAndInvalidValueDefault);
+template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumWithMissingAndInvalidValueDefault);
+
+template<> std::optional<TestObj::EnumWithMissingAndInvalidValueDefault> parseEnumerationFromString<TestObj::EnumWithMissingAndInvalidValueDefault>(const String&);
+template<> std::optional<TestObj::EnumWithMissingAndInvalidValueDefault> parseEnumeration<TestObj::EnumWithMissingAndInvalidValueDefault>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumWithMissingAndInvalidValueDefault>();
+
+String convertEnumerationToString(TestObj::EnumWithMissingValueDefaultNoQuotes);
+template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumWithMissingValueDefaultNoQuotes);
+
+template<> std::optional<TestObj::EnumWithMissingValueDefaultNoQuotes> parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultNoQuotes>(const String&);
+template<> std::optional<TestObj::EnumWithMissingValueDefaultNoQuotes> parseEnumeration<TestObj::EnumWithMissingValueDefaultNoQuotes>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumWithMissingValueDefaultNoQuotes>();
+
+String convertEnumerationToString(TestObj::EnumWithMissingValueDefaultAsEmptyValue);
+template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumWithMissingValueDefaultAsEmptyValue);
+
+template<> std::optional<TestObj::EnumWithMissingValueDefaultAsEmptyValue> parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultAsEmptyValue>(const String&);
+template<> std::optional<TestObj::EnumWithMissingValueDefaultAsEmptyValue> parseEnumeration<TestObj::EnumWithMissingValueDefaultAsEmptyValue>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumWithMissingValueDefaultAsEmptyValue>();
+
+String convertEnumerationToString(TestObj::EnumWithMissingValueDefaultNotInEnumValues);
+template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumWithMissingValueDefaultNotInEnumValues);
+
+template<> std::optional<TestObj::EnumWithMissingValueDefaultNotInEnumValues> parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultNotInEnumValues>(const String&);
+template<> std::optional<TestObj::EnumWithMissingValueDefaultNotInEnumValues> parseEnumeration<TestObj::EnumWithMissingValueDefaultNotInEnumValues>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumWithMissingValueDefaultNotInEnumValues>();
 
 template<> ConversionResult<IDLDictionary<TestObj::Dictionary>> convertDictionary<TestObj::Dictionary>(JSC::JSGlobalObject&, JSC::JSValue);
 

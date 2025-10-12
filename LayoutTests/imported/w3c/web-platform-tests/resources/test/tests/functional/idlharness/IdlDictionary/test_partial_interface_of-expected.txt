@@ -1,0 +1,9 @@
+Verify the series of sub-tests that are executed for "partial" dictionary objects.
+
+
+FAIL Partial dictionary A: original dictionary defined assert_true: Original dictionary should be defined expected true got false
+PASS Partial dictionary B[2]: original dictionary defined
+PASS Partial dictionary B[3]: original dictionary defined
+PASS Partial dictionary B[4]: original dictionary defined
+FAIL Partial dictionary C: original dictionary defined assert_true: Original C definition should have type dictionary expected true got false
+

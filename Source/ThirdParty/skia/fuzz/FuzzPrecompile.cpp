@@ -25,6 +25,7 @@
 #include "src/core/SkBlenderBase.h"
 #include "src/gpu/graphite/ContextPriv.h"
 #include "src/gpu/graphite/ContextUtils.h"
+#include "src/gpu/graphite/DrawContext.h"
 #include "src/gpu/graphite/KeyContext.h"
 #include "src/gpu/graphite/PaintParams.h"
 #include "src/gpu/graphite/PaintParamsKey.h"
@@ -35,7 +36,7 @@
 #include "src/gpu/graphite/RuntimeEffectDictionary.h"
 #include "src/gpu/graphite/geom/Geometry.h"
 #include "src/gpu/graphite/precompile/PaintOptionsPriv.h"
-#include "tools/gpu/GrContextFactory.h"
+#include "tools/ganesh/GrContextFactory.h"
 #include "tools/graphite/ContextFactory.h"
 
 using namespace skgpu::graphite;
@@ -300,25 +301,55 @@ void check_draw(Context* context,
     SkASSERT_RELEASE(before == after);
 }
 
+sk_sp<DrawContext> get_precompile_draw_context(
+            const skgpu::graphite::Caps* caps, Context* context) {
+    std::unique_ptr<Recorder> drawRecorder = context->makeRecorder();
+    ResourceProvider* resourceProvider = drawRecorder->priv().resourceProvider();
+    constexpr SkISize drawSize = {128, 128};
+    const SkColorInfo colorInfo = SkColorInfo(kRGBA_8888_SkColorType,
+                                              kPremul_SkAlphaType,
+                                              SkColorSpace::MakeSRGB());
+    TextureInfo texInfo = caps->getDefaultSampledTextureInfo(colorInfo.colorType(),
+                                                             skgpu::Mipmapped::kNo,
+                                                             skgpu::Protected::kNo,
+                                                             skgpu::Renderable::kYes);
+    sk_sp<TextureProxy> target = TextureProxy::Make(caps,
+                                                    resourceProvider,
+                                                    drawSize,
+                                                    texInfo,
+                                                    "PrecompileTarget",
+                                                    skgpu::Budgeted::kYes);
+    sk_sp<DrawContext> precompileDrawContext = DrawContext::Make(caps,
+                                                                 std::move(target),
+                                                                 drawSize,
+                                                                 colorInfo,
+                                                                 {});
+    return precompileDrawContext;
+}
+
 void fuzz_graphite(Fuzz* fuzz, Context* context, int depth = 9) {
+    const skgpu::graphite::Caps* caps = context->priv().caps();
     std::unique_ptr<PrecompileContext> precompileContext = context->makePrecompileContext();
     std::unique_ptr<Recorder> recorder = context->makeRecorder();
     ShaderCodeDictionary* dict = context->priv().shaderCodeDictionary();
 
     SkColorInfo ci = SkColorInfo(kRGBA_8888_SkColorType, kPremul_SkAlphaType,
                                  SkColorSpace::MakeSRGB());
-
-    std::unique_ptr<RuntimeEffectDictionary> rtDict = std::make_unique<RuntimeEffectDictionary>();
-    KeyContext precompileKeyContext(recorder->priv().caps(), dict, rtDict.get(), ci);
-
-    DrawTypeFlags kDrawType = DrawTypeFlags::kSimpleShape;
-    SkPath path = make_path();
-
     Layout layout = context->backend() == skgpu::BackendApi::kMetal ? Layout::kMetal
                                                                     : Layout::kStd140;
 
+    // Currently, we just use this as a valid parameter for keyContext (will hit asserts otherwise)
+    sk_sp<DrawContext> drawContext = get_precompile_draw_context(caps, context);
+
+    FloatStorageManager floatStorageManager;
     PaintParamsKeyBuilder builder(dict);
     PipelineDataGatherer gatherer(layout);
+    sk_sp<RuntimeEffectDictionary> rtDict = sk_make_sp<RuntimeEffectDictionary>();
+    KeyContext precompileKeyContext(caps, &floatStorageManager, &builder, &gatherer, dict, rtDict,
+                                    ci);
+
+    DrawTypeFlags kDrawType = DrawTypeFlags::kSimpleShape;
+    SkPath path = make_path();
 
     auto [paint, paintOptions] = create_random_paint(fuzz, depth);
 
@@ -328,30 +359,31 @@ void fuzz_graphite(Fuzz* fuzz, Context* context, int depth = 9) {
     fuzz->next(&temp);
     Coverage coverage = coverageOptions[temp % 3];
 
-    const SkBlenderBase* blender = as_BB(paint.getBlender());
-    bool dstReadRequired = blender ? !CanUseHardwareBlending(recorder->priv().caps(),
-                                                             blender->asBlendMode(),
-                                                             coverage)
-                                   : false;
-    UniquePaintParamsID paintID = ExtractPaintData(recorder.get(),
-                                                   &gatherer,
-                                                   &builder,
-                                                   layout,
-                                                   {},
-                                                   PaintParams(paint,
-                                                               /* primitiveBlender= */ nullptr,
-                                                               /* nonMSAAClip= */ {},
-                                                               /* clipShader= */ nullptr,
-                                                               dstReadRequired,
-                                                               /* skipColorXform= */ false),
-                                                   {},
-                                                   ci);
+    PaintParams paintParams = PaintParams(recorder->priv().caps(),
+                                          paint,
+                                          /* primitiveBlender= */ nullptr,
+                                          /* nonMSAAClip= */ {},
+                                          /* clipShader= */ nullptr,
+                                          coverage,
+                                          TextureFormat::kRGBA8,
+                                          /* skipColorXform= */ false);
+    SkDEBUGCODE(builder.checkReset());
+    SkDEBUGCODE(gatherer.checkReset());
+    KeyContext keyContext(recorder.get(),
+                          drawContext.get(),
+                          &floatStorageManager,
+                          &builder,
+                          &gatherer,
+                          {},
+                          ci,
+                          KeyGenFlags::kDisableSamplingOptimization,
+                          paintParams.color());
+    paintParams.toKey(keyContext);
+    UniquePaintParamsID paintID = recorder->priv().shaderCodeDictionary()->findOrCreate(&builder);
 
     RenderPassDesc unusedRenderPassDesc;
-
     std::vector<UniquePaintParamsID> precompileIDs;
     paintOptions.priv().buildCombinations(precompileKeyContext,
-                                          &gatherer,
                                           DrawTypeFlags::kNone,
                                           /* withPrimitiveBlender= */ false,
                                           coverage,
@@ -364,7 +396,7 @@ void fuzz_graphite(Fuzz* fuzz, Context* context, int depth = 9) {
                                                   precompileIDs.push_back(id);
                                           });
 
-    // The specific key generated by ExtractPaintData should be one of the
+    // The specific key generated by paintParams.toKey() should be one of the
     // combinations generated by the combination system.
     auto result = std::find(precompileIDs.begin(), precompileIDs.end(), paintID);
 

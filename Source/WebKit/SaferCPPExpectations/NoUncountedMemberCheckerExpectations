@@ -1,22 +1,2 @@
-AutomationFrontendDispatchers.h
-NetworkConnectionToWebProcessMessages.h
-Platform/IPC/StreamClientConnection.h
-Shared/API/Cocoa/_WKRemoteObjectRegistryInternal.h
-Shared/Cocoa/WKObject.h
-UIProcess/API/Cocoa/WKBackForwardListItemInternal.h
-UIProcess/API/Cocoa/WKWebExtensionActionInternal.h
-UIProcess/API/Cocoa/WKWebExtensionCommandInternal.h
-UIProcess/API/Cocoa/WKWebExtensionContextInternal.h
-UIProcess/API/Cocoa/WKWebExtensionControllerConfigurationInternal.h
-UIProcess/API/Cocoa/WKWebExtensionControllerInternal.h
-UIProcess/API/Cocoa/WKWebExtensionDataRecordInternal.h
-UIProcess/API/Cocoa/WKWebExtensionInternal.h
-UIProcess/API/Cocoa/WKWebExtensionMatchPatternInternal.h
-UIProcess/API/Cocoa/WKWebExtensionMessagePortInternal.h
-WebDriverBidiFrontendDispatchers.h
-WebProcess/Extensions/API/Cocoa/WebExtensionAPIRuntimeCocoa.mm
-WebProcess/GPU/media/cocoa/VideoLayerRemoteCocoa.h
-WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h
-WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandleInternal.h
-WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandleInternal.h
-WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorldInternal.h
+[ iOS ] UIProcess/RemoteLayerTree/ios/RemoteLayerTreeDrawingAreaProxyIOS.mm
+[ iOS ] UIProcess/ios/ViewGestureControllerIOS.mm

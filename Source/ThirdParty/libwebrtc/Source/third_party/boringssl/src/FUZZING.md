@@ -48,13 +48,11 @@ In order to minimise all the corpora, build for fuzzing and run `./fuzz/minimise
 
 ## Fuzzer mode
 
-When `-DFUZZ=1` is passed into CMake, BoringSSL builds with `BORINGSSL_UNSAFE_FUZZER_MODE` and `BORINGSSL_UNSAFE_DETERMINISTIC_MODE` defined. This modifies the library to be more friendly to fuzzers. If `BORINGSSL_UNSAFE_DETERMINISTIC_MODE` is set, BoringSSL will:
+When `-DFUZZ=1` is passed into CMake, BoringSSL builds with `FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION` defined. BoringSSL will then:
 
 * Replace `RAND_bytes` with a deterministic PRNG. Call `RAND_reset_for_fuzzing()` at the start of fuzzers which use `RAND_bytes` to reset the PRNG state.
 
-* Use a hard-coded time instead of the actual time.
-
-Additionally, if `BORINGSSL_UNSAFE_FUZZER_MODE` is set, BoringSSL will:
+Additionally, if `CRYPTO_set_fuzzer_mode()` is called to enable fuzzer mode, BoringSSL will:
 
 * Modify the TLS stack to perform all signature checks (CertificateVerify and ServerKeyExchange) and the Finished check, but always act as if the check succeeded.
 
@@ -70,7 +68,7 @@ This is to prevent the fuzzer from getting stuck at a cryptographic invariant in
 
 The `client` and `server` corpora are seeded from the test suite. The test suite has a `-fuzzer` flag which mirrors the fuzzer mode changes above and a `-deterministic` flag which removes all non-determinism on the Go side. Not all tests pass, so `ssl/test/runner/fuzzer_mode.json` contains the necessary suppressions. The `run_tests` target will pass appropriate command-line flags.
 
-There are separate corpora, `client_corpus_no_fuzzer_mode` and `server_corpus_no_fuzzer_mode`. These are transcripts for fuzzers with only `BORINGSSL_UNSAFE_DETERMINISTIC_MODE` defined. To build in this mode, pass `-DNO_FUZZER_MODE=1` into CMake. This configuration is run in the same way but without `-fuzzer` and `-shim-config` flags.
+There are separate fuzzers, `client_no_fuzzer_mode` and `server_no_fuzzer_mode`, with fuzzer mode disabled. This configuration is run in the same way but without `-fuzzer` and `-shim-config` flags.
 
 If both sets of tests pass, refresh the fuzzer corpora with `refresh_ssl_corpora.sh`:
 

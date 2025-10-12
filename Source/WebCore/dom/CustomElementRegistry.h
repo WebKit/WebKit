@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "ContextDestructionObserver.h"
-#include "Element.h"
-#include "EventTarget.h"
-#include "QualifiedName.h"
-#include "TreeScope.h"
+#include <WebCore/ContextDestructionObserver.h>
+#include <WebCore/Element.h>
+#include <WebCore/EventTarget.h>
+#include <WebCore/QualifiedName.h>
+#include <WebCore/TreeScope.h>
 #include <wtf/Lock.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/RobinHoodHashSet.h>
@@ -105,7 +105,7 @@ public:
     JSC::JSValue get(const AtomString&);
     String getName(JSC::JSValue);
     void upgrade(Node& root);
-    void initialize(Node& root);
+    ExceptionOr<void> initialize(Node& root);
 
     MemoryCompactRobinHoodHashMap<AtomString, Ref<DeferredPromise>>& promiseMap() { return m_promiseMap; }
     bool isShadowDisabled(const AtomString& name) const { return m_disabledShadowSet.contains(name); }
@@ -119,8 +119,8 @@ private:
     static WeakHashMap<Element, Ref<CustomElementRegistry>, WeakPtrImplWithEventTargetData>& scopedCustomElementRegistryMap();
 
     WeakPtr<LocalDOMWindow, WeakPtrImplWithEventTargetData> m_window;
-    UncheckedKeyHashMap<AtomString, Ref<JSCustomElementInterface>> m_nameMap;
-    UncheckedKeyHashMap<const JSC::JSObject*, JSCustomElementInterface*> m_constructorMap WTF_GUARDED_BY_LOCK(m_constructorMapLock);
+    HashMap<AtomString, Ref<JSCustomElementInterface>> m_nameMap;
+    HashMap<const JSC::JSObject*, JSCustomElementInterface*> m_constructorMap WTF_GUARDED_BY_LOCK(m_constructorMapLock);
     MemoryCompactRobinHoodHashMap<AtomString, Ref<DeferredPromise>> m_promiseMap;
     MemoryCompactRobinHoodHashSet<AtomString> m_disabledShadowSet;
     WeakListHashSet<Document, WeakPtrImplWithEventTargetData> m_associatedDocuments;

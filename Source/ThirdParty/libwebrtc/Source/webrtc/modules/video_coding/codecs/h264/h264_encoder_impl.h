@@ -17,21 +17,26 @@
 // #ifdef unless needed and tested.
 #ifdef WEBRTC_USE_H264
 
-#if defined(WEBRTC_WIN) && !defined(__clang__)
-#error "See: bugs.webrtc.org/9213#c13."
-#endif
-
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "absl/container/inlined_vector.h"
-#include "api/transport/rtp/dependency_descriptor.h"
+#include "api/environment/environment.h"
+#include "api/scoped_refptr.h"
+#include "api/video/encoded_image.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_codec_constants.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_type.h"
 #include "api/video_codecs/scalability_mode.h"
+#include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
 #include "common_video/h264/h264_bitstream_parser.h"
 #include "modules/video_coding/codecs/h264/include/h264.h"
+#include "modules/video_coding/codecs/h264/include/h264_globals.h"
 #include "modules/video_coding/svc/scalable_video_controller.h"
 #include "modules/video_coding/utility/quality_scaler.h"
 
@@ -41,6 +46,10 @@
 #else
 #include "third_party/openh264/src/codec/api/svc/codec_app_def.h"
 #endif
+#endif
+
+#if defined(WEBRTC_WIN) && !defined(__clang__)
+#error "See: bugs.webrtc.org/9213#c13."
 #endif
 
 class ISVCEncoder;
@@ -99,14 +108,14 @@ class H264EncoderImpl : public VideoEncoder {
  private:
   SEncParamExt CreateEncoderParams(size_t i) const;
 
-  webrtc::H264BitstreamParser h264_bitstream_parser_;
+  H264BitstreamParser h264_bitstream_parser_;
   // Reports statistics with histograms.
   void ReportInit();
   void ReportError();
 
   std::vector<ISVCEncoder*> encoders_;
   std::vector<SSourcePicture> pictures_;
-  std::vector<rtc::scoped_refptr<I420Buffer>> downscaled_buffers_;
+  std::vector<scoped_refptr<I420Buffer>> downscaled_buffers_;
   std::vector<LayerConfig> configurations_;
   std::vector<EncodedImage> encoded_images_;
   std::vector<std::unique_ptr<ScalableVideoController>> svc_controllers_;

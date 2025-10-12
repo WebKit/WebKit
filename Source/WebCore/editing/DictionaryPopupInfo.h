@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "FloatPoint.h"
-#include "TextIndicator.h"
+#include <WebCore/FloatPoint.h>
+#include <WebCore/TextIndicator.h>
 
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
-#include "AttributedString.h"
+#include <WebCore/AttributedString.h>
 #include <wtf/RetainPtr.h>
 OBJC_CLASS NSDictionary;
 #endif

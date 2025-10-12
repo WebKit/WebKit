@@ -27,7 +27,7 @@
 
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
 
-#include "ApplePayInstallmentItemType.h"
+#include <WebCore/ApplePayInstallmentItemType.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

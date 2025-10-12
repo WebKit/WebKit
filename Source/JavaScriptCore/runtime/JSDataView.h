@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "DataView.h"
-#include "JSArrayBufferView.h"
+#include <JavaScriptCore/DataView.h>
+#include <JavaScriptCore/JSArrayBufferView.h>
 
 namespace JSC {
 

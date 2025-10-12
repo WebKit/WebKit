@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -191,7 +191,7 @@ String keyForCharCode(unichar charCode)
     case NSNextFunctionKey:
         return "Unidentified"_s;
     default:
-        return span(*reinterpret_cast<const UChar*>(&charCode));
+        return span(*reinterpret_cast<const char16_t*>(&charCode));
     }
 }
 

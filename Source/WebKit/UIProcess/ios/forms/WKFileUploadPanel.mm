@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,6 +54,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SetForScope.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/StringView.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -923,9 +924,9 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 
     if (auto allowedImagePickerType = _allowedImagePickerTypes.toSingleValue()) {
         if (*allowedImagePickerType == WKFileUploadPanelImagePickerType::Image)
-            [configuration setFilter:[getPHPickerFilterClass() imagesFilter]];
+            [configuration setFilter:[getPHPickerFilterClassSingleton() imagesFilter]];
         else
-            [configuration setFilter:[getPHPickerFilterClass() videosFilter]];
+            [configuration setFilter:[getPHPickerFilterClassSingleton() videosFilter]];
     }
 
     _uploadFileManager = adoptNS([[NSFileManager alloc] init]);
@@ -973,7 +974,7 @@ static RetainPtr<NSString> displayStringForDocumentsAtURLs(NSArray<NSURL *> *url
     ASSERT(urlsFromUIKit.count);
     [self _dismissDisplayAnimated:YES];
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([retainedSelf = retainPtr(self), urlsFromUIKit = retainPtr(urlsFromUIKit)] () mutable {
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([retainedSelf = retainPtr(self), urlsFromUIKit = retainPtr(urlsFromUIKit)] () mutable {
         // When using UIDocumentPickerModeOpen, which is required for selecting directories, urlsFromUIKit consists of urls
         // pointing directly to selected items rather than imported copies of the items.
         bool filesImportedByUIKit = !retainedSelf->_allowDirectories;
@@ -1001,7 +1002,7 @@ static RetainPtr<NSString> displayStringForDocumentsAtURLs(NSArray<NSURL *> *url
         }
 
         [retainedSelf->_view _removeTemporaryDirectoriesWhenDeallocated:std::exchange(retainedSelf->_temporaryUploadedFileURLs, { })];
-        RunLoop::protectedMain()->dispatch([retainedSelf = WTFMove(retainedSelf), maybeMovedURLs = WTFMove(maybeMovedURLs)] {
+        RunLoop::mainSingleton().dispatch([retainedSelf = WTFMove(retainedSelf), maybeMovedURLs = WTFMove(maybeMovedURLs)] {
             [retainedSelf _chooseFiles:maybeMovedURLs.get() displayString:displayStringForDocumentsAtURLs(maybeMovedURLs.get()).get() iconImage:WebKit::iconForFiles({ maybeMovedURLs.get()[0].absoluteString }).get()];
         });
     }).get());
@@ -1245,7 +1246,7 @@ static RetainPtr<NSString> displayStringForDocumentsAtURLs(NSArray<NSURL *> *url
 {
     ASSERT_ARG(image, image);
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         // FIXME: Different compression for different devices?
         // FIXME: Different compression for different UIImage sizes?
         // FIXME: Should EXIF data be maintained?
@@ -1285,7 +1286,7 @@ static RetainPtr<NSString> displayStringForDocumentsAtURLs(NSArray<NSURL *> *url
     }
 
     if (![mediaType conformsToType:UTTypeImage]) {
-        LOG_ERROR("WKFileUploadPanel: Unexpected media type. Expected image or video, got: %@", mediaType);
+        LOG_ERROR("WKFileUploadPanel: Unexpected media type. Expected image or video, got: %@", mediaType.identifier);
         ASSERT_NOT_REACHED();
         failureBlock();
         return;

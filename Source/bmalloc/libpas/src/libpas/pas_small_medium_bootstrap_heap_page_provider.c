@@ -30,6 +30,7 @@
 #include "pas_small_medium_bootstrap_heap_page_provider.h"
 
 #include "pas_bootstrap_free_heap.h"
+#include "pas_mte.h"
 #include "pas_small_medium_bootstrap_free_heap.h"
 
 pas_allocation_result pas_small_medium_bootstrap_heap_page_provider(

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2010 Google, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,39 +25,33 @@
 
 #pragma once
 
+#include "HTMLEntityTable.h"
 #include <unicode/umachine.h>
 
 namespace WebCore {
-
-struct HTMLEntityTableEntry;
 
 class HTMLEntitySearch {
 public:
     HTMLEntitySearch();
 
-    void advance(UChar);
+    void advance(char16_t);
 
-    bool isEntityPrefix() const { return m_first; }
+    bool isEntityPrefix() const { return m_entries.data(); }
     unsigned currentLength() const { return m_currentLength; }
 
     const HTMLEntityTableEntry* match() const { return m_mostRecentMatch; }
 
 private:
     enum CompareResult { Before, Prefix, After };
-    CompareResult compare(const HTMLEntityTableEntry*, UChar) const;
-    const HTMLEntityTableEntry* findFirst(UChar) const;
-    const HTMLEntityTableEntry* findLast(UChar) const;
+    CompareResult compare(const HTMLEntityTableEntry*, char16_t) const;
+    const HTMLEntityTableEntry* findFirst(char16_t) const;
+    const HTMLEntityTableEntry* findLast(char16_t) const;
 
-    void fail()
-    {
-        m_first = nullptr;
-        m_last = nullptr;
-    }
+    void fail() { m_entries = { }; }
 
     unsigned m_currentLength { 0 };
     const HTMLEntityTableEntry* m_mostRecentMatch { nullptr };
-    const HTMLEntityTableEntry* m_first { nullptr };
-    const HTMLEntityTableEntry* m_last { nullptr };
+    std::span<const HTMLEntityTableEntry> m_entries;
 };
 
 } // namespace WebCore

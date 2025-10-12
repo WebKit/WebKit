@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,6 @@
 #include "RemoteAudioSessionProxy.h"
 #include "RemoteTextTrackProxy.h"
 #include "RemoteVideoFrameObjectHeap.h"
-#include "RemoteVideoFrameProxy.h"
 #include "RemoteVideoTrackProxy.h"
 #include "TextTrackPrivateRemoteConfiguration.h"
 #include "TrackPrivateRemoteConfiguration.h"
@@ -57,9 +56,9 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/SecurityOrigin.h>
-#include <wtf/TZoneMallocInlines.h>
 #include <wtf/MemoryFootprint.h>
-
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/UniqueRef.h>
 #if ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMFactoryProxy.h"
 #endif
@@ -69,8 +68,13 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "LayerHostingContextManager.h"
 #include <WebCore/AudioSourceProviderAVFObjC.h>
 #include <WebCore/VideoFrameCV.h>
+#endif
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+#include "VideoReceiverEndpointManager.h"
 #endif
 
 #include <wtf/NativePromise.h>
@@ -92,12 +96,15 @@ RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& ma
     , m_webProcessConnection(WTFMove(connection))
     , m_manager(manager)
     , m_engineIdentifier(engineIdentifier)
-    , m_updateCachedStateMessageTimer(RunLoop::main(), this, &RemoteMediaPlayerProxy::timerFired)
+    , m_updateCachedStateMessageTimer(RunLoop::mainSingleton(), "RemoteMediaPlayerProxy::UpdateCachedStateMessageTimer"_s, this, &RemoteMediaPlayerProxy::timerFired)
     , m_configuration(configuration)
     , m_renderingResourcesRequest(ScopedRenderingResourcesRequest::acquire())
     , m_videoFrameObjectHeap(videoFrameObjectHeap)
 #if !RELEASE_LOG_DISABLED
     , m_logger(manager.logger())
+#endif
+#if PLATFORM(COCOA)
+    , m_layerHostingContextManager(makeUniqueRef<LayerHostingContextManager>())
 #endif
 {
     m_typesRequiringHardwareSupport = m_configuration.mediaContentTypesRequiringHardwareSupport;
@@ -118,9 +125,6 @@ RemoteMediaPlayerProxy::~RemoteMediaPlayerProxy()
     if (m_performTaskAtTimeCompletionHandler)
         m_performTaskAtTimeCompletionHandler(std::nullopt);
     setShouldEnableAudioSourceProvider(false);
-
-    for (auto& request : std::exchange(m_layerHostingContextIDRequests, { }))
-        request({ });
 }
 
 void RemoteMediaPlayerProxy::invalidate()
@@ -644,7 +648,7 @@ void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
     protectedConnection()->send(Messages::MediaPlayerPrivateRemote::RenderingModeChanged(), m_id);
 }
 
-void RemoteMediaPlayerProxy::requestHostingContextID(LayerHostingContextIDCallback&& completionHandler)
+void RemoteMediaPlayerProxy::requestHostingContext(LayerHostingContextCallback&& completionHandler)
 {
     completionHandler({ });
 }
@@ -959,8 +963,10 @@ bool RemoteMediaPlayerProxy::mediaPlayerShouldCheckHardwareSupport() const
 WebCore::PlatformVideoTarget RemoteMediaPlayerProxy::mediaPlayerVideoTarget() const
 {
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    if (m_manager)
-        return m_manager->takeVideoTargetForMediaElementIdentifier(m_clientIdentifier, m_id);
+    if (m_manager) {
+        if (RefPtr gpuConnectionToWebProcess = m_manager->gpuConnectionToWebProcess())
+            return gpuConnectionToWebProcess->videoReceiverEndpointManager().takeVideoTargetForMediaElementIdentifier(m_clientIdentifier, m_id);
+    }
 #endif
     return nullptr;
 }
@@ -1083,7 +1089,7 @@ void RemoteMediaPlayerProxy::cdmInstanceAttached(RemoteCDMInstanceIdentifier&& i
         return;
 
     if (RefPtr instanceProxy = manager->gpuConnectionToWebProcess()->protectedCdmFactoryProxy()->getInstance(instanceId))
-        protectedPlayer()->cdmInstanceAttached(instanceProxy->protectedInstance());
+        protectedPlayer()->cdmInstanceAttached(instanceProxy->instance());
 }
 
 void RemoteMediaPlayerProxy::cdmInstanceDetached(RemoteCDMInstanceIdentifier&& instanceId)
@@ -1094,7 +1100,7 @@ void RemoteMediaPlayerProxy::cdmInstanceDetached(RemoteCDMInstanceIdentifier&& i
         return;
 
     if (RefPtr instanceProxy = manager->gpuConnectionToWebProcess()->protectedCdmFactoryProxy()->getInstance(instanceId))
-        protectedPlayer()->cdmInstanceDetached(instanceProxy->protectedInstance());
+        protectedPlayer()->cdmInstanceDetached(instanceProxy->instance());
 }
 
 void RemoteMediaPlayerProxy::attemptToDecryptWithInstance(RemoteCDMInstanceIdentifier&& instanceId)
@@ -1105,7 +1111,7 @@ void RemoteMediaPlayerProxy::attemptToDecryptWithInstance(RemoteCDMInstanceIdent
         return;
 
     if (RefPtr instanceProxy = manager->gpuConnectionToWebProcess()->protectedCdmFactoryProxy()->getInstance(instanceId))
-        protectedPlayer()->attemptToDecryptWithInstance(instanceProxy->protectedInstance());
+        protectedPlayer()->attemptToDecryptWithInstance(instanceProxy->instance());
 }
 #endif
 
@@ -1170,13 +1176,13 @@ void RemoteMediaPlayerProxy::performTaskAtTime(const MediaTime& taskTime, Perfor
     }
 
     m_performTaskAtTimeCompletionHandler = WTFMove(completionHandler);
-    player->performTaskAtTime([weakThis = WeakPtr { *this }]() mutable {
+    player->performTaskAtTime([weakThis = WeakPtr { *this }](const MediaTime& time) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !protectedThis->m_performTaskAtTimeCompletionHandler)
             return;
 
         auto completionHandler = std::exchange(protectedThis->m_performTaskAtTimeCompletionHandler, nullptr);
-        completionHandler(protectedThis->protectedPlayer()->currentTime());
+        completionHandler(time);
     }, taskTime);
 }
 

@@ -74,14 +74,14 @@ struct DataChannelInit {
 // this structure's `binary` flag tells whether the data should be interpreted
 // as binary or text.
 struct DataBuffer {
-  DataBuffer(const rtc::CopyOnWriteBuffer& data, bool binary)
+  DataBuffer(const CopyOnWriteBuffer& data, bool binary)
       : data(data), binary(binary) {}
   // For convenience for unit tests.
   explicit DataBuffer(const std::string& text)
       : data(text.data(), text.length()), binary(false) {}
   size_t size() const { return data.size(); }
 
-  rtc::CopyOnWriteBuffer data;
+  CopyOnWriteBuffer data;
   // Indicates if the received data contains UTF-8 or binary data.
   // Note that the upper layers are left to verify the UTF-8 encoding.
   // TODO(jiayl): prefer to use an enum instead of a bool.
@@ -160,9 +160,6 @@ class RTC_EXPORT DataChannelInterface : public RefCountInterface {
   // implemented these APIs. They should all just return the values the
   // DataChannel was created with.
   virtual bool ordered() const;
-  // TODO(hta): Deprecate and remove the following two functions.
-  virtual uint16_t maxRetransmitTime() const;
-  virtual uint16_t maxRetransmits() const;
   virtual std::optional<int> maxRetransmitsOpt() const;
   virtual std::optional<int> maxPacketLifeTime() const;
   virtual std::string protocol() const;

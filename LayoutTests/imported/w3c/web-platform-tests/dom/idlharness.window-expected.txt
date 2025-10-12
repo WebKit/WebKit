@@ -10,6 +10,7 @@ PASS Partial interface Document: member names are unique
 PASS Partial interface mixin DocumentOrShadowRoot: original interface mixin defined
 PASS Partial interface mixin DocumentOrShadowRoot: member names are unique
 PASS Partial interface Document[2]: member names are unique
+PASS Partial interface Element[2]: member names are unique
 PASS Partial interface Document[3]: member names are unique
 PASS Partial interface Window[2]: member names are unique
 PASS Document includes NonElementParentNode: member names are unique
@@ -29,9 +30,7 @@ PASS Text includes Slottable: member names are unique
 PASS Document includes XPathEvaluatorBase: member names are unique
 PASS XPathEvaluator includes XPathEvaluatorBase: member names are unique
 PASS Document includes GlobalEventHandlers: member names are unique
-PASS Document includes DocumentAndElementEventHandlers: member names are unique
 PASS HTMLElement includes GlobalEventHandlers: member names are unique
-PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
 PASS HTMLElement includes ElementContentEditable: member names are unique
 PASS HTMLElement includes HTMLOrSVGElement: member names are unique
 PASS Window includes GlobalEventHandlers: member names are unique
@@ -374,7 +373,7 @@ PASS Document interface: operation createTextNode(DOMString)
 PASS Document interface: operation createCDATASection(DOMString)
 PASS Document interface: operation createComment(DOMString)
 PASS Document interface: operation createProcessingInstruction(DOMString, DOMString)
-PASS Document interface: operation importNode(Node, optional boolean)
+PASS Document interface: operation importNode(Node, optional (boolean or ImportNodeOptions))
 PASS Document interface: operation adoptNode(Node)
 PASS Document interface: operation createAttribute(DOMString)
 PASS Document interface: operation createAttributeNS(DOMString?, DOMString)
@@ -388,6 +387,7 @@ PASS Document interface: operation exitFullscreen()
 PASS Document interface: attribute onfullscreenchange
 PASS Document interface: attribute onfullscreenerror
 PASS Document interface: operation getElementById(DOMString)
+PASS Document interface: attribute customElementRegistry
 PASS Document interface: attribute fullscreenElement
 PASS Document interface: attribute children
 PASS Document interface: attribute firstElementChild
@@ -396,6 +396,7 @@ PASS Document interface: attribute childElementCount
 PASS Document interface: operation prepend((Node or DOMString)...)
 PASS Document interface: operation append((Node or DOMString)...)
 PASS Document interface: operation replaceChildren((Node or DOMString)...)
+FAIL Document interface: operation moveBefore(Node, Node?) assert_own_property: interface prototype object missing non-static operation expected property "moveBefore" missing
 PASS Document interface: operation querySelector(DOMString)
 PASS Document interface: operation querySelectorAll(DOMString)
 PASS Document interface: operation createExpression(DOMString, optional XPathNSResolver?)
@@ -432,8 +433,8 @@ PASS Document interface: new Document() must inherit property "createComment(DOM
 PASS Document interface: calling createComment(DOMString) on new Document() with too few arguments must throw TypeError
 PASS Document interface: new Document() must inherit property "createProcessingInstruction(DOMString, DOMString)" with the proper type
 PASS Document interface: calling createProcessingInstruction(DOMString, DOMString) on new Document() with too few arguments must throw TypeError
-PASS Document interface: new Document() must inherit property "importNode(Node, optional boolean)" with the proper type
-PASS Document interface: calling importNode(Node, optional boolean) on new Document() with too few arguments must throw TypeError
+PASS Document interface: new Document() must inherit property "importNode(Node, optional (boolean or ImportNodeOptions))" with the proper type
+PASS Document interface: calling importNode(Node, optional (boolean or ImportNodeOptions)) on new Document() with too few arguments must throw TypeError
 PASS Document interface: new Document() must inherit property "adoptNode(Node)" with the proper type
 PASS Document interface: calling adoptNode(Node) on new Document() with too few arguments must throw TypeError
 PASS Document interface: new Document() must inherit property "createAttribute(DOMString)" with the proper type
@@ -454,6 +455,7 @@ PASS Document interface: new Document() must inherit property "onfullscreenchang
 PASS Document interface: new Document() must inherit property "onfullscreenerror" with the proper type
 PASS Document interface: new Document() must inherit property "getElementById(DOMString)" with the proper type
 PASS Document interface: calling getElementById(DOMString) on new Document() with too few arguments must throw TypeError
+PASS Document interface: new Document() must inherit property "customElementRegistry" with the proper type
 PASS Document interface: new Document() must inherit property "fullscreenElement" with the proper type
 PASS Document interface: new Document() must inherit property "children" with the proper type
 PASS Document interface: new Document() must inherit property "firstElementChild" with the proper type
@@ -465,6 +467,8 @@ PASS Document interface: new Document() must inherit property "append((Node or D
 PASS Document interface: calling append((Node or DOMString)...) on new Document() with too few arguments must throw TypeError
 PASS Document interface: new Document() must inherit property "replaceChildren((Node or DOMString)...)" with the proper type
 PASS Document interface: calling replaceChildren((Node or DOMString)...) on new Document() with too few arguments must throw TypeError
+FAIL Document interface: new Document() must inherit property "moveBefore(Node, Node?)" with the proper type assert_inherits: property "moveBefore" not found in prototype chain
+FAIL Document interface: calling moveBefore(Node, Node?) on new Document() with too few arguments must throw TypeError assert_inherits: property "moveBefore" not found in prototype chain
 PASS Document interface: new Document() must inherit property "querySelector(DOMString)" with the proper type
 PASS Document interface: calling querySelector(DOMString) on new Document() with too few arguments must throw TypeError
 PASS Document interface: new Document() must inherit property "querySelectorAll(DOMString)" with the proper type
@@ -578,8 +582,8 @@ PASS Document interface: xmlDoc must inherit property "createComment(DOMString)"
 PASS Document interface: calling createComment(DOMString) on xmlDoc with too few arguments must throw TypeError
 PASS Document interface: xmlDoc must inherit property "createProcessingInstruction(DOMString, DOMString)" with the proper type
 PASS Document interface: calling createProcessingInstruction(DOMString, DOMString) on xmlDoc with too few arguments must throw TypeError
-PASS Document interface: xmlDoc must inherit property "importNode(Node, optional boolean)" with the proper type
-PASS Document interface: calling importNode(Node, optional boolean) on xmlDoc with too few arguments must throw TypeError
+PASS Document interface: xmlDoc must inherit property "importNode(Node, optional (boolean or ImportNodeOptions))" with the proper type
+PASS Document interface: calling importNode(Node, optional (boolean or ImportNodeOptions)) on xmlDoc with too few arguments must throw TypeError
 PASS Document interface: xmlDoc must inherit property "adoptNode(Node)" with the proper type
 PASS Document interface: calling adoptNode(Node) on xmlDoc with too few arguments must throw TypeError
 PASS Document interface: xmlDoc must inherit property "createAttribute(DOMString)" with the proper type
@@ -600,6 +604,7 @@ PASS Document interface: xmlDoc must inherit property "onfullscreenchange" with 
 PASS Document interface: xmlDoc must inherit property "onfullscreenerror" with the proper type
 PASS Document interface: xmlDoc must inherit property "getElementById(DOMString)" with the proper type
 PASS Document interface: calling getElementById(DOMString) on xmlDoc with too few arguments must throw TypeError
+PASS Document interface: xmlDoc must inherit property "customElementRegistry" with the proper type
 PASS Document interface: xmlDoc must inherit property "fullscreenElement" with the proper type
 PASS Document interface: xmlDoc must inherit property "children" with the proper type
 PASS Document interface: xmlDoc must inherit property "firstElementChild" with the proper type
@@ -611,6 +616,8 @@ PASS Document interface: xmlDoc must inherit property "append((Node or DOMString
 PASS Document interface: calling append((Node or DOMString)...) on xmlDoc with too few arguments must throw TypeError
 PASS Document interface: xmlDoc must inherit property "replaceChildren((Node or DOMString)...)" with the proper type
 PASS Document interface: calling replaceChildren((Node or DOMString)...) on xmlDoc with too few arguments must throw TypeError
+FAIL Document interface: xmlDoc must inherit property "moveBefore(Node, Node?)" with the proper type assert_inherits: property "moveBefore" not found in prototype chain
+FAIL Document interface: calling moveBefore(Node, Node?) on xmlDoc with too few arguments must throw TypeError assert_inherits: property "moveBefore" not found in prototype chain
 PASS Document interface: xmlDoc must inherit property "querySelector(DOMString)" with the proper type
 PASS Document interface: calling querySelector(DOMString) on xmlDoc with too few arguments must throw TypeError
 PASS Document interface: xmlDoc must inherit property "querySelectorAll(DOMString)" with the proper type
@@ -811,6 +818,7 @@ PASS DocumentFragment interface: attribute childElementCount
 PASS DocumentFragment interface: operation prepend((Node or DOMString)...)
 PASS DocumentFragment interface: operation append((Node or DOMString)...)
 PASS DocumentFragment interface: operation replaceChildren((Node or DOMString)...)
+FAIL DocumentFragment interface: operation moveBefore(Node, Node?) assert_own_property: interface prototype object missing non-static operation expected property "moveBefore" missing
 PASS DocumentFragment interface: operation querySelector(DOMString)
 PASS DocumentFragment interface: operation querySelectorAll(DOMString)
 PASS DocumentFragment must be primary interface of document.createDocumentFragment()
@@ -827,6 +835,8 @@ PASS DocumentFragment interface: document.createDocumentFragment() must inherit 
 PASS DocumentFragment interface: calling append((Node or DOMString)...) on document.createDocumentFragment() with too few arguments must throw TypeError
 PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "replaceChildren((Node or DOMString)...)" with the proper type
 PASS DocumentFragment interface: calling replaceChildren((Node or DOMString)...) on document.createDocumentFragment() with too few arguments must throw TypeError
+FAIL DocumentFragment interface: document.createDocumentFragment() must inherit property "moveBefore(Node, Node?)" with the proper type assert_inherits: property "moveBefore" not found in prototype chain
+FAIL DocumentFragment interface: calling moveBefore(Node, Node?) on document.createDocumentFragment() with too few arguments must throw TypeError assert_inherits: property "moveBefore" not found in prototype chain
 PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "querySelector(DOMString)" with the proper type
 PASS DocumentFragment interface: calling querySelector(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError
 PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "querySelectorAll(DOMString)" with the proper type
@@ -907,8 +917,10 @@ PASS ShadowRoot interface: attribute mode
 PASS ShadowRoot interface: attribute delegatesFocus
 PASS ShadowRoot interface: attribute slotAssignment
 PASS ShadowRoot interface: attribute clonable
+PASS ShadowRoot interface: attribute serializable
 PASS ShadowRoot interface: attribute host
 PASS ShadowRoot interface: attribute onslotchange
+PASS ShadowRoot interface: attribute customElementRegistry
 PASS ShadowRoot interface: attribute fullscreenElement
 PASS Element interface: existence and properties of interface object
 PASS Element interface object length
@@ -943,6 +955,7 @@ PASS Element interface: operation setAttributeNodeNS(Attr)
 PASS Element interface: operation removeAttributeNode(Attr)
 PASS Element interface: operation attachShadow(ShadowRootInit)
 PASS Element interface: attribute shadowRoot
+PASS Element interface: attribute customElementRegistry
 PASS Element interface: operation closest(DOMString)
 PASS Element interface: operation matches(DOMString)
 PASS Element interface: operation webkitMatchesSelector(DOMString)
@@ -961,6 +974,7 @@ PASS Element interface: attribute childElementCount
 PASS Element interface: operation prepend((Node or DOMString)...)
 PASS Element interface: operation append((Node or DOMString)...)
 PASS Element interface: operation replaceChildren((Node or DOMString)...)
+FAIL Element interface: operation moveBefore(Node, Node?) assert_own_property: interface prototype object missing non-static operation expected property "moveBefore" missing
 PASS Element interface: operation querySelector(DOMString)
 PASS Element interface: operation querySelectorAll(DOMString)
 PASS Element interface: attribute previousElementSibling
@@ -1014,6 +1028,7 @@ PASS Element interface: calling removeAttributeNode(Attr) on element with too fe
 PASS Element interface: element must inherit property "attachShadow(ShadowRootInit)" with the proper type
 PASS Element interface: calling attachShadow(ShadowRootInit) on element with too few arguments must throw TypeError
 PASS Element interface: element must inherit property "shadowRoot" with the proper type
+PASS Element interface: element must inherit property "customElementRegistry" with the proper type
 PASS Element interface: element must inherit property "closest(DOMString)" with the proper type
 PASS Element interface: calling closest(DOMString) on element with too few arguments must throw TypeError
 PASS Element interface: element must inherit property "matches(DOMString)" with the proper type
@@ -1044,6 +1059,8 @@ PASS Element interface: element must inherit property "append((Node or DOMString
 PASS Element interface: calling append((Node or DOMString)...) on element with too few arguments must throw TypeError
 PASS Element interface: element must inherit property "replaceChildren((Node or DOMString)...)" with the proper type
 PASS Element interface: calling replaceChildren((Node or DOMString)...) on element with too few arguments must throw TypeError
+FAIL Element interface: element must inherit property "moveBefore(Node, Node?)" with the proper type assert_inherits: property "moveBefore" not found in prototype chain
+FAIL Element interface: calling moveBefore(Node, Node?) on element with too few arguments must throw TypeError assert_inherits: property "moveBefore" not found in prototype chain
 PASS Element interface: element must inherit property "querySelector(DOMString)" with the proper type
 PASS Element interface: calling querySelector(DOMString) on element with too few arguments must throw TypeError
 PASS Element interface: element must inherit property "querySelectorAll(DOMString)" with the proper type

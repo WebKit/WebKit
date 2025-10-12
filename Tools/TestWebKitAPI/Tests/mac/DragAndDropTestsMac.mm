@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestDraggingInfo.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/PasteboardCustomData.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -119,7 +120,7 @@ TEST(DragAndDropTests, DragPromisedImageFileIntoFileUpload)
     EXPECT_EQ(1UL, [filePromiseReceivers count]);
     NSFilePromiseReceiver *filePromiseReceiver = filePromiseReceivers.firstObject;
     EXPECT_EQ(1UL, [filePromiseReceiver.fileTypes count]);
-    EXPECT_WK_STREQ((__bridge NSString *)kUTTypeGIF, filePromiseReceiver.fileTypes.firstObject);
+    EXPECT_WK_STREQ(UTTypeGIF.identifier, filePromiseReceiver.fileTypes.firstObject);
 }
 
 TEST(DragAndDropTests, ReadURLWhenDroppingPromisedWebLoc)
@@ -225,18 +226,18 @@ TEST(DragAndDropTests, ProvideImageDataAsTypeIdentifiers)
 
     [webView synchronouslyLoadHTMLString:@"<img src='sunset-in-cupertino-600px.jpg'></img>"];
     [simulator runFrom:NSMakePoint(25, 25) to:NSMakePoint(300, 300)];
-    [webView pasteboard:uniquePasteboard.get() provideDataForType:(__bridge NSString *)kUTTypeJPEG];
-    EXPECT_GT([uniquePasteboard dataForType:(__bridge NSString *)kUTTypeJPEG].length, 0u);
+    [webView pasteboard:uniquePasteboard.get() provideDataForType:UTTypeJPEG.identifier];
+    EXPECT_GT([uniquePasteboard dataForType:UTTypeJPEG.identifier].length, 0u);
 
     [webView synchronouslyLoadHTMLString:@"<img src='icon.png'></img>"];
     [simulator runFrom:NSMakePoint(25, 25) to:NSMakePoint(300, 300)];
-    [webView pasteboard:uniquePasteboard.get() provideDataForType:(__bridge NSString *)kUTTypePNG];
-    EXPECT_GT([uniquePasteboard dataForType:(__bridge NSString *)kUTTypePNG].length, 0u);
+    [webView pasteboard:uniquePasteboard.get() provideDataForType:UTTypePNG.identifier];
+    EXPECT_GT([uniquePasteboard dataForType:UTTypePNG.identifier].length, 0u);
 
     [webView synchronouslyLoadHTMLString:@"<img src='apple.gif'></img>"];
     [simulator runFrom:NSMakePoint(25, 25) to:NSMakePoint(300, 300)];
-    [webView pasteboard:uniquePasteboard.get() provideDataForType:(__bridge NSString *)kUTTypeGIF];
-    EXPECT_GT([uniquePasteboard dataForType:(__bridge NSString *)kUTTypeGIF].length, 0u);
+    [webView pasteboard:uniquePasteboard.get() provideDataForType:UTTypeGIF.identifier];
+    EXPECT_GT([uniquePasteboard dataForType:UTTypeGIF.identifier].length, 0u);
 }
 
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)

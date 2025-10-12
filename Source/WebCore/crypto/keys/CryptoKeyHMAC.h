@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CryptoKey.h"
+#include <WebCore/CryptoKey.h>
 #include <wtf/Function.h>
 #include <wtf/Vector.h>
 

@@ -31,7 +31,6 @@ import os
 import unittest
 
 from webkitcorepy import OutputCapture
-from webkitscmpy.mocks.local import Git as Git_mock
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
@@ -41,6 +40,7 @@ from webkitpy.w3c.test_importer import TestImporter, parse_args
 
 FAKE_SOURCE_DIR = '/tests/csswg'
 FAKE_TEST_PATH = 'css-fake-1'
+FAKE_WPT_DIR = '/wpt'
 
 FAKE_FILES = {
     '/tests/csswg/css-fake-1/empty_dir/README.txt': '',
@@ -54,6 +54,8 @@ FAKE_RESOURCES = {
     "test2": "skip"
 }''',
     '/mock-checkout/LayoutTests/imported/w3c/resources/resource-files.json': '{"directories": [], "files": []}',
+    f'{FAKE_WPT_DIR}/wpt': '',
+    f'{FAKE_WPT_DIR}/resources/testharness.js': '',
 }
 
 FAKE_FILES.update(FAKE_RESOURCES)
@@ -67,6 +69,12 @@ MINIMAL_TESTHARNESS = '''
 
 
 class TestImporterTest(unittest.TestCase):
+    def setUp(self):
+        # This is a horrible hack so we don't actually need to support symlinks in the MockFileSystem.
+        MockFileSystem.symlink = lambda self, src, dst: self.copytree(src, dst)
+        self.addCleanup(lambda: delattr(MockFileSystem, "symlink"))
+        return super().setUp()
+
     def _parse_options(self, args):
         options, args = parse_args(args)
         return options
@@ -81,8 +89,7 @@ class TestImporterTest(unittest.TestCase):
 
         importer = TestImporter(port, [FAKE_TEST_PATH], self._parse_options(['-n', '-d', 'w3c', '-s', FAKE_SOURCE_DIR]))
 
-        with OutputCapture():
-            importer.do_import()
+        importer.do_import()
 
     def test_import_dir_with_no_tests(self):
         host = MockHost()
@@ -93,8 +100,7 @@ class TestImporterTest(unittest.TestCase):
             fs.write_binary_file(path, contents)
 
         importer = TestImporter(port, [FAKE_TEST_PATH], self._parse_options(['-n', '-d', 'w3c', '-s', FAKE_SOURCE_DIR]))
-        with OutputCapture():
-            importer.do_import()
+        importer.do_import()
 
     def test_import_dir_with_empty_init_py(self):
         FAKE_FILES = {
@@ -103,7 +109,7 @@ class TestImporterTest(unittest.TestCase):
         }
         FAKE_FILES.update(FAKE_RESOURCES)
 
-        host = MockHost()
+        host = MockHost(initialize_scm_by_default=False)
         port = host.port_factory.get()
         fs = host.filesystem
         for path, contents in FAKE_FILES.items():
@@ -116,11 +122,24 @@ class TestImporterTest(unittest.TestCase):
         self.assertTrue(host.filesystem.exists("/mock-checkout/LayoutTests/w3c/web-platform-tests/test2/__init__.py"))
         self.assertTrue(host.filesystem.getsize("/mock-checkout/LayoutTests/w3c/web-platform-tests/test1/__init__.py") > 0)
 
+    def test_import_dir_not_web_platform_tests(self):
+        FAKE_FILES = {}
+        FAKE_FILES.update(FAKE_RESOURCES)
+        FAKE_FILES.update({
+            '/t/wpt/test1/test.html': MINIMAL_TESTHARNESS,
+            '/t/wpt/wpt': '',
+            '/t/wpt/resources/testharness.js': '',
+        })
+
+        fs = self.import_downloaded_tests(['--no-fetch', '-s', '/t/wpt', '-d', 'w3c'], FAKE_FILES)
+
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/test1/test.html'))
+
     def import_directory(self, args, files, test_paths):
         return self.import_downloaded_tests(args + test_paths, files)
 
     def import_downloaded_tests(self, args, files, test_port=False):
-        host = MockHost()
+        host = MockHost(initialize_scm_by_default=False)
         if test_port:
             port = TestPort(host)
         else:
@@ -131,15 +150,14 @@ class TestImporterTest(unittest.TestCase):
 
         options, test_paths = parse_args(args)
         importer = TestImporter(port, test_paths, options)
-        with Git_mock(fs.join(importer.tests_download_path, "web-platform-tests")):
-            importer.do_import()
+        importer.do_import()
         return host.filesystem
 
     def test_harnesslinks_conversion(self):
         FAKE_FILES = {
-            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/t/test.html': MINIMAL_TESTHARNESS,
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/t/test.html': MINIMAL_TESTHARNESS,
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test.html': MINIMAL_TESTHARNESS,
+            '/mock-checkout/w3c-tests/csswg-tests/t/test.html': MINIMAL_TESTHARNESS,
+            f'{FAKE_WPT_DIR}/css/t/test.html': MINIMAL_TESTHARNESS,
+            f'{FAKE_WPT_DIR}/t/test.html': MINIMAL_TESTHARNESS,
             '/mock-checkout/Source/WebCore/css/CSSProperties.json': '',
             '/mock-checkout/Source/WebCore/css/CSSValueKeywords.in': '',
         }
@@ -156,17 +174,17 @@ class TestImporterTest(unittest.TestCase):
         FAKE_FILES = {}
         FAKE_FILES.update(FAKE_RESOURCES)
         FAKE_FILES.update({
-            '/mock-checkout/WebKitBuild/w3c-tests/streams-api/reference-implementation/web-platform-tests/test.html': MINIMAL_TESTHARNESS,
+            '/w3c-tests/streams-api/reference-implementation/web-platform-tests/test.html': MINIMAL_TESTHARNESS,
             '/mock-checkout/LayoutTests/imported/w3c/resources/import-expectations.json': '''
 {
 "web-platform-tests/dir-to-skip": "skip",
 "web-platform-tests/dir-to-skip/dir-to-import": "import",
 "web-platform-tests/dir-to-skip/file-to-import.html": "import"
 }''',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/dir-to-skip/test-to-skip.html': 'to be skipped',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/dir-to-skip/dir-to-import/test-to-import.html': 'to be imported',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/dir-to-skip/dir-to-not-import/test-to-not-import.html': 'to be skipped',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/dir-to-skip/file-to-import.html': 'to be imported',
+            f'{FAKE_WPT_DIR}/dir-to-skip/test-to-skip.html': 'to be skipped',
+            f'{FAKE_WPT_DIR}/dir-to-skip/dir-to-import/test-to-import.html': 'to be imported',
+            f'{FAKE_WPT_DIR}/dir-to-skip/dir-to-not-import/test-to-not-import.html': 'to be skipped',
+            f'{FAKE_WPT_DIR}/dir-to-skip/file-to-import.html': 'to be imported',
         })
 
         fs = self.import_downloaded_tests(['--no-fetch', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
@@ -202,9 +220,9 @@ class TestImporterTest(unittest.TestCase):
 
     def test_no_implicit_skip_with_download(self):
         FAKE_FILES = {
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/css-images/tools/test1.html': MINIMAL_TESTHARNESS,
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/css-images/support/test2.html': MINIMAL_TESTHARNESS,
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/css-images/work-in-progress/test3.html': MINIMAL_TESTHARNESS,
+            f'{FAKE_WPT_DIR}/css/css-images/tools/test1.html': MINIMAL_TESTHARNESS,
+            f'{FAKE_WPT_DIR}/css/css-images/support/test2.html': MINIMAL_TESTHARNESS,
+            f'{FAKE_WPT_DIR}/css/css-images/work-in-progress/test3.html': MINIMAL_TESTHARNESS,
         }
         FAKE_FILES.update(FAKE_RESOURCES)
 
@@ -235,8 +253,8 @@ class TestImporterTest(unittest.TestCase):
 {
 "web-platform-tests/css": "skip-new-directories"
 }""",
-                "/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/css-viewport/computedStyle-zoom.html": MINIMAL_TESTHARNESS,
-                "/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/css-viewport/zoom/scroll-top-test-with-zoom.html": MINIMAL_TESTHARNESS,
+                f"{FAKE_WPT_DIR}/css/css-viewport/computedStyle-zoom.html": MINIMAL_TESTHARNESS,
+                f"{FAKE_WPT_DIR}/css/css-viewport/zoom/scroll-top-test-with-zoom.html": MINIMAL_TESTHARNESS,
             }
         )
 
@@ -262,22 +280,6 @@ class TestImporterTest(unittest.TestCase):
             )
         )
 
-    def test_checkout_directory(self):
-        FAKE_FILES = {
-            '/mock-checkout/WebKitBuild2/w3c-tests/web-platform-tests/existing-test.html': '',
-            '/mock-checkout/WebKitBuild2/w3c-tests/csswg-tests/test.html': '1',
-        }
-
-        FAKE_FILES.update(FAKE_RESOURCES)
-
-        os.environ['WEBKIT_OUTPUTDIR'] = '/mock-checkout/WebKitBuild2'
-        try:
-            fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
-        finally:
-            del os.environ['WEBKIT_OUTPUTDIR']
-
-        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/existing-test.html'))
-
     def test_clean_directory_option(self):
         FAKE_FILES = {
             '/mock-checkout/LayoutTests/w3c/web-platform-tests/.gitattributes': '-1',
@@ -287,8 +289,8 @@ class TestImporterTest(unittest.TestCase):
             '/mock-checkout/LayoutTests/w3c/web-platform-tests/old-test-expected.txt': '2',
             '/mock-checkout/LayoutTests/w3c/web-platform-tests/existing-test.html': '3',
             '/mock-checkout/LayoutTests/w3c/web-platform-tests/existing-test-expected.txt': '4',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/existing-test.html': '5',
-            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/test.html': '1',
+            f'{FAKE_WPT_DIR}/existing-test.html': '5',
+            '/mock-checkout/w3c-tests/csswg-tests/test.html': '1',
         }
 
         FAKE_FILES.update(FAKE_RESOURCES)
@@ -318,8 +320,8 @@ class TestImporterTest(unittest.TestCase):
             '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/a/existing-test-expected.txt': '2',
             '/mock-checkout/LayoutTests/imported/w3c/resources/resource-files.json': json.dumps(existing_resource_files),
             '/mock-checkout/LayoutTests/tests-options.json': json.dumps(existing_tests_options),
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/a/existing-test.html': MINIMAL_TESTHARNESS,
-            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/test.html': '-1',
+            f'{FAKE_WPT_DIR}/a/existing-test.html': MINIMAL_TESTHARNESS,
+            '/mock-checkout/w3c-tests/csswg-tests/test.html': '-1',
         }
 
         FAKE_FILES.update(FAKE_RESOURCES)
@@ -358,8 +360,8 @@ class TestImporterTest(unittest.TestCase):
             '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/b/existing-test-expected.txt': '5',
             '/mock-checkout/LayoutTests/imported/w3c/resources/resource-files.json': json.dumps(existing_resource_files),
             '/mock-checkout/LayoutTests/tests-options.json': json.dumps(existing_tests_options),
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/b/existing-test.html': MINIMAL_TESTHARNESS,
-            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/test.html': '-1',
+            f'{FAKE_WPT_DIR}/b/existing-test.html': MINIMAL_TESTHARNESS,
+            '/mock-checkout/w3c-tests/csswg-tests/test.html': '-1',
         })
 
         fs = self.import_downloaded_tests(['--no-fetch', '--import-all', 'web-platform-tests/b'], FAKE_FILES)
@@ -407,8 +409,8 @@ class TestImporterTest(unittest.TestCase):
             '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/cssom/existing-test-expected.txt': '5',
             '/mock-checkout/LayoutTests/imported/w3c/resources/resource-files.json': json.dumps(existing_resource_files),
             '/mock-checkout/LayoutTests/tests-options.json': json.dumps(existing_tests_options),
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/cssom/existing-test.html': MINIMAL_TESTHARNESS,
-            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/test.html': '-1',
+            f'{FAKE_WPT_DIR}/cssom/existing-test.html': MINIMAL_TESTHARNESS,
+            '/mock-checkout/w3c-tests/csswg-tests/test.html': '-1',
         })
 
         fs = self.import_downloaded_tests(['--no-fetch', '--import-all', 'web-platform-tests/cssom'], FAKE_FILES)
@@ -430,8 +432,8 @@ class TestImporterTest(unittest.TestCase):
 
     def test_initpy_generation(self):
         FAKE_FILES = {
-            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
+            '/mock-checkout/w3c-tests/csswg-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
+            f'{FAKE_WPT_DIR}/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
         }
 
         FAKE_FILES.update(FAKE_RESOURCES)
@@ -448,9 +450,9 @@ class TestImporterTest(unittest.TestCase):
 
     def test_remove_obsolete_content(self):
         FAKE_FILES = {
-            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/temp': '',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/new.html': MINIMAL_TESTHARNESS,
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/w3c-import.log': 'List of files:\n/LayoutTests/w3c/web-platform-tests/t/obsolete.html',
+            '/mock-checkout/w3c-tests/csswg-tests/temp': '',
+            f'{FAKE_WPT_DIR}/t/new.html': MINIMAL_TESTHARNESS,
+            f'{FAKE_WPT_DIR}/t/w3c-import.log': 'List of files:\n/LayoutTests/w3c/web-platform-tests/t/obsolete.html',
             '/mock-checkout/LayoutTests/w3c/web-platform-tests/t/obsolete.html': 'obsoleted content',
             '/mock-checkout/LayoutTests/w3c/web-platform-tests/t/obsolete-expected.txt': 'PASS',
         }
@@ -470,8 +472,8 @@ class TestImporterTest(unittest.TestCase):
     def test_manual_slow_test(self):
         tests_options = '{"a": ["slow"]}'
         FAKE_FILES = {
-            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/temp': '',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/new-manual.html': '<!doctype html><meta name="timeout" content="long"><script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
+            '/mock-checkout/w3c-tests/csswg-tests/temp': '',
+            f'{FAKE_WPT_DIR}/t/new-manual.html': '<!doctype html><meta name="timeout" content="long"><script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
             '/mock-checkout/LayoutTests/tests-options.json': tests_options}
         FAKE_FILES.update(FAKE_RESOURCES)
 
@@ -506,12 +508,12 @@ class TestImporterTest(unittest.TestCase):
 
     def test_webkit_test_runner_options(self):
         FAKE_FILES = {
-            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/t/test.html': '<!doctype html><script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/test.html': '<!doctype html>\n<script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
+            '/mock-checkout/w3c-tests/csswg-tests/t/test.html': '<!doctype html><script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
+            f'{FAKE_WPT_DIR}/css/test.html': '<!doctype html>\n<script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
             '/mock-checkout/LayoutTests/w3c/web-platform-tests/css/test.html': '<!-- doctype html --><!-- webkit-test-runner [ dummy ] -->',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test.html': '<!doctype html><script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
+            f'{FAKE_WPT_DIR}/t/test.html': '<!doctype html><script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
             '/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html': '<!-- doctype html --><!-- webkit-test-runner [ dummy ] -->',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test.any.js': 'test(() => {}, "empty")',
+            f'{FAKE_WPT_DIR}/t/test.any.js': 'test(() => {}, "empty")',
             '/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.any.html': '<!-- This file is required for WebKit test infrastructure to run the templated test --><!-- webkit-test-runner [ dummy ] -->',
             '/mock-checkout/Source/WebCore/css/CSSProperties.json': '',
             '/mock-checkout/Source/WebCore/css/CSSValueKeywords.in': '',
@@ -533,12 +535,12 @@ class TestImporterTest(unittest.TestCase):
 
     def test_webkit_test_runner_import_reftests_with_absolute_paths_download(self):
         FAKE_FILES = {
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/css-images/test3.html': '<html><head><link rel=match href=/css/css-images/test3-ref.html></head></html>',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/css-images/test3-ref.html': '<html></html>',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/css-images/test4.html': '<html><head><link rel=match href=/some/directory/in/wpt-root/test4-ref.html></head></html>',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/some/directory/in/wpt-root/test4-ref.html': '<html></html>',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/css-images/test5.html': '<html><head><link rel=match href="     /some/directory/in/wpt-root/test5-ref.html    "></head></html>',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/some/directory/in/wpt-root/test5-ref.html': '<html></html>',
+            f'{FAKE_WPT_DIR}/css/css-images/test3.html': '<html><head><link rel=match href=/css/css-images/test3-ref.html></head></html>',
+            f'{FAKE_WPT_DIR}/css/css-images/test3-ref.html': '<html></html>',
+            f'{FAKE_WPT_DIR}/css/css-images/test4.html': '<html><head><link rel=match href=/some/directory/in/wpt-root/test4-ref.html></head></html>',
+            f'{FAKE_WPT_DIR}/some/directory/in/wpt-root/test4-ref.html': '<html></html>',
+            f'{FAKE_WPT_DIR}/css/css-images/test5.html': '<html><head><link rel=match href="     /some/directory/in/wpt-root/test5-ref.html    "></head></html>',
+            f'{FAKE_WPT_DIR}/some/directory/in/wpt-root/test5-ref.html': '<html></html>',
         }
         FAKE_FILES.update(FAKE_RESOURCES)
 
@@ -604,11 +606,11 @@ class TestImporterTest(unittest.TestCase):
 
     def test_template_test(self):
         FAKE_FILES = {
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test.any.js': '// META: global=window,dedicatedworker,sharedworker,serviceworker\n',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test2.any.js': '\n// META: global=dedicatedworker,serviceworker\n',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test3.any.js': '\n// META: global=worker\n',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test4.any.js': '\n// META: global=dedicatedworker\n',
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test5.any.js': '\n// META: global=window,worker\n',
+            f'{FAKE_WPT_DIR}/t/test.any.js': '// META: global=window,dedicatedworker,sharedworker,serviceworker\n',
+            f'{FAKE_WPT_DIR}/t/test2.any.js': '\n// META: global=dedicatedworker,serviceworker\n',
+            f'{FAKE_WPT_DIR}/t/test3.any.js': '\n// META: global=worker\n',
+            f'{FAKE_WPT_DIR}/t/test4.any.js': '\n// META: global=dedicatedworker\n',
+            f'{FAKE_WPT_DIR}/t/test5.any.js': '\n// META: global=window,worker\n',
         }
         FAKE_FILES.update(FAKE_RESOURCES)
 
@@ -641,7 +643,7 @@ class TestImporterTest(unittest.TestCase):
 
     def test_template_test_variant(self):
         FAKE_FILES = {
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/variant.any.js': '// META: variant=?1-10\n// META: variant=?11-20',
+            f'{FAKE_WPT_DIR}/t/variant.any.js': '// META: variant=?1-10\n// META: variant=?11-20',
         }
         FAKE_FILES.update(FAKE_RESOURCES)
 
@@ -653,7 +655,7 @@ class TestImporterTest(unittest.TestCase):
 
     def test_template_test_variant_dangling(self):
         FAKE_FILES = {
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/variant.any.js': '// META: variant=?1-10\n// META: variant=?11-20',
+            f'{FAKE_WPT_DIR}/t/variant.any.js': '// META: variant=?1-10\n// META: variant=?11-20',
             '/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.any.js': '// META: variant=?1-10\n// META: variant=?11-20',
             '/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.any_1-10-expected.txt': '1',
             '/mock-checkout/LayoutTests/w3c/web-platform-tests/t/variant.any_11-20-expected.txt': '2',
@@ -670,7 +672,7 @@ class TestImporterTest(unittest.TestCase):
 
     def test_non_dangling_platform(self):
         FAKE_FILES = {
-            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test.html': MINIMAL_TESTHARNESS,
+            f'{FAKE_WPT_DIR}/t/test.html': MINIMAL_TESTHARNESS,
             '/test.checkout/LayoutTests/imported/w3c/resources/import-expectations.json': '{}',
             '/test.checkout/LayoutTests/w3c/web-platform-tests/t/test.html': MINIMAL_TESTHARNESS,
             '/test.checkout/LayoutTests/w3c/web-platform-tests/t/test-expected.txt': '1',
@@ -678,6 +680,7 @@ class TestImporterTest(unittest.TestCase):
             '/test.checkout/LayoutTests/platform/test-linux-x86_64/w3c/web-platform-tests/t/test-expected.txt': '3',
             '/test.checkout/LayoutTests/platform/unknown-platform/w3c/web-platform-tests/t/test-expected.txt': '4',
         }
+        FAKE_FILES.update(FAKE_RESOURCES)
 
         fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES, test_port=True)
 

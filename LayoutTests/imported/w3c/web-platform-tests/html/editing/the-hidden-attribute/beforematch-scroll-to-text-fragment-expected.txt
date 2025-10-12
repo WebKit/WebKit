@@ -1,5 +1,5 @@
 
-FAIL Verifies that the beforematch event is fired on the matching element of a ScrollToTextFragment navigation. assert_equals: Scrolling should happen after beforematch is fired. expected (number) 0 but got (undefined) undefined
-FAIL Verifies that beforematch is only fired on elements targeted by a text fragment when there is both a text fragment and an element fragment. assert_true: foo was searched for, so it should get the beforematch event. expected true got false
-FAIL Verifies that the beforematch event bubbles with scroll to text fragment. assert_true: The element containing the searched text should have beforematch fired on it. expected true got false
+PASS Verifies that the beforematch event is fired on the matching element of a ScrollToTextFragment navigation.
+PASS Verifies that beforematch is only fired on elements targeted by a text fragment when there is both a text fragment and an element fragment.
+PASS Verifies that the beforematch event bubbles with scroll to text fragment.
 

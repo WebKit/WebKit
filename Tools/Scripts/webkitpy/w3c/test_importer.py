@@ -71,7 +71,8 @@ import itertools
 import json
 import logging
 import mimetypes
-from pathlib import Path
+from pathlib import PurePath
+from typing import Optional
 
 from webkitscmpy.local.git import Git
 
@@ -115,16 +116,13 @@ def configure_logging():
     return handler
 
 
-# FIXME: We should decide whether we want to make this specific to web-platform-tests or to make it generic to any git repository containing tests.
 def parse_args(args):
     description = """
 To import a web-platform-tests test suite named xyz, use:
     import-w3c-tests --tip-of-tree web-platform-tests/xyz
 
-To import a web-platform-tests suite from a local copy of web platform tests:
-   1. Your local WPT copy must be in a directory called "web-platform-tests".
-   2. If the local copy is at, for example, "~/dev/web-platform-tests/", use:
-      import-w3c-tests web-platform-tests/xyz --src-dir ~/dev/"""
+To import a web-platform-tests suite from a local checkout in ~/dev/wpt:
+      import-w3c-tests web-platform-tests/xyz --src-dir ~/dev/wpt"""
     parser = argparse.ArgumentParser(description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('-n', '--no-overwrite', dest='overwrite', action='store_false', default=True,
@@ -141,7 +139,7 @@ To import a web-platform-tests suite from a local copy of web platform tests:
                         help='Import into a specified directory relative to the LayoutTests root. By default, imports into imported/w3c')
 
     parser.add_argument('-s', '--src-dir', dest='source', default=None,
-                        help='Import from a specific folder which contains web-platform-tests folder. If not provided, the script will clone the necessary repositories.')
+                        help='Import from a specific web-platform-tests directory. If not provided, the script will clone the necessary repository. By default, the repository will be cloned into the parent directory of your WebKit checkout (e.g. ~/WebKit/../wpt).')
 
     parser.add_argument('-v', '--verbose', action='store_true', default=False,
                         help='Print maximal log')
@@ -206,18 +204,20 @@ class TestImporter(object):
         }
 
     def do_import(self):
-        if self.source_directory:
-            source_path = str(Path(self.source_directory) / 'web-platform-tests')
-            try:
-                self.upstream_revision = Git(source_path).find('HEAD').hash
-            except OSError:
-                self.upstream_revision = None
-        else:
-            _log.info('Downloading W3C test repositories')
-            self.filesystem.maybe_make_directory(self.tests_download_path)
-            self.test_downloader().download_tests(self.options.use_tip_of_tree)
-            self.upstream_revision = self.test_downloader().upstream_revision
-            self.source_directory = self.tests_download_path
+        finder = WebKitFinder(self.filesystem)
+        self.source_directory = self.source_directory or WPTPaths.ensure_wpt_repository(finder, self.source_directory)
+
+        directory = self._get_wpt_directory(self.source_directory)
+        _log.debug(f"Using {directory!r} for {self.source_directory!r}")
+        if directory is None:
+            return
+
+        self.source_directory = directory
+        source_path = self.filesystem.join(self.source_directory, 'web-platform-tests')
+        try:
+            self.upstream_revision = Git(source_path).find('HEAD').hash
+        except OSError:
+            self.upstream_revision = None
 
         for test_path in self.test_paths:
             if test_path != "web-platform-tests" and not test_path.startswith(
@@ -261,6 +261,48 @@ class TestImporter(object):
             self.test_paths, self._to_skip_new_directories
         )
 
+    def _get_wpt_directory(self, directory: str) -> Optional[str]:
+        """Finds an appropriate path to WPT
+
+        This checks whether either `directory` or `directory / "web-platform-tests"` is
+        WPT, and returns an appropriate path.
+
+        NB: The path returned may be neither of these, as we may create a symlink to
+        ensure we have a directory called "web-platform-tests".
+        """
+
+        fs = self.filesystem
+        directory_abs = fs.abspath(directory)
+        d = PurePath(directory)
+
+        if not fs.isdir(directory):
+            _log.error(f"{directory_abs} is not a directory")
+            return None
+
+        if fs.isfile(str(d / "resources" / "testharness.js")) and fs.isfile(str(d / "wpt")):
+            # For historic reasons, we require the directory be called
+            # web-platform-tests. (We should ultimately remove this restriction, but
+            # this is future work.)
+
+            # Getting the path and not using this as a context manager means we don't
+            # actually tidy up after ourselves, which isn't ideal, but as a temporary
+            # workaround this will do.
+            temp_parent = str(fs.mkdtemp())
+
+            fs.symlink(str(d), fs.join(temp_parent, "web-platform-tests"))
+            return temp_parent
+
+        if fs.isdir(str(d / "web-platform-tests")):
+            # This is historically what we required, and we should keep supporting this.
+            return directory
+
+        _log.error(
+            f"Neither {directory_abs} nor "
+            f"{fs.join(directory_abs, 'web-platform-tests')} "
+            "appear to be web-platform-tests"
+        )
+        return None
+
     def generate_git_submodules_description_for_all_repositories(self):
         for test_repository in self._test_downloader.test_repositories:
             if 'generate_init_py' in test_repository['import_options']:
@@ -279,7 +321,7 @@ class TestImporter(object):
         return self._test_downloader
 
     def should_skip_path(self, path):
-        rel_path = Path(path).relative_to(self.source_directory)
+        rel_path = PurePath(path).relative_to(self.source_directory)
         if rel_path.suffix == ".pl":
             return True
 
@@ -287,9 +329,9 @@ class TestImporter(object):
             return True
 
         downloader = self.test_downloader()
-        paths_to_skip_new_directories = {Path(p) for p in downloader.paths_to_skip_new_directories}
-        paths_to_skip = {Path(p) for p in downloader.paths_to_skip}
-        paths_to_import = {Path(p) for p in downloader.paths_to_import}
+        paths_to_skip_new_directories = {PurePath(p) for p in downloader.paths_to_skip_new_directories}
+        paths_to_skip = {PurePath(p) for p in downloader.paths_to_skip}
+        paths_to_import = {PurePath(p) for p in downloader.paths_to_import}
 
         for parent in itertools.chain([rel_path], rel_path.parents):
             if parent in paths_to_skip_new_directories:

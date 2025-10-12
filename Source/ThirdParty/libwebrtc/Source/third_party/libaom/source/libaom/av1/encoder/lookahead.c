@@ -43,10 +43,9 @@ void av1_lookahead_destroy(struct lookahead_ctx *ctx) {
 }
 
 struct lookahead_ctx *av1_lookahead_init(
-    unsigned int width, unsigned int height, unsigned int subsampling_x,
-    unsigned int subsampling_y, int use_highbitdepth, unsigned int depth,
-    const int border_in_pixels, int byte_alignment, int num_lap_buffers,
-    bool is_all_intra, bool alloc_pyramid) {
+    int width, int height, int subsampling_x, int subsampling_y,
+    int use_highbitdepth, int depth, int border_in_pixels, int byte_alignment,
+    int num_lap_buffers, bool is_all_intra, bool alloc_pyramid) {
   int lag_in_frames = AOMMAX(1, depth);
 
   // For all-intra frame encoding, previous source frames are not required.
@@ -66,7 +65,6 @@ struct lookahead_ctx *av1_lookahead_init(
   // Allocate the lookahead structures
   struct lookahead_ctx *ctx = calloc(1, sizeof(*ctx));
   if (ctx) {
-    unsigned int i;
     ctx->max_sz = depth;
     ctx->push_frame_count = 0;
     ctx->max_pre_frames = max_pre_frames;
@@ -78,7 +76,7 @@ struct lookahead_ctx *av1_lookahead_init(
     }
     ctx->buf = calloc(depth, sizeof(*ctx->buf));
     if (!ctx->buf) goto fail;
-    for (i = 0; i < depth; i++) {
+    for (int i = 0; i < depth; i++) {
       if (aom_realloc_frame_buffer(
               &ctx->buf[i].img, width, height, subsampling_x, subsampling_y,
               use_highbitdepth, border_in_pixels, byte_alignment, NULL, NULL,
@@ -207,8 +205,7 @@ struct lookahead_entry *av1_lookahead_peek(struct lookahead_ctx *ctx, int index,
   return buf;
 }
 
-unsigned int av1_lookahead_depth(struct lookahead_ctx *ctx,
-                                 COMPRESSOR_STAGE stage) {
+int av1_lookahead_depth(struct lookahead_ctx *ctx, COMPRESSOR_STAGE stage) {
   assert(ctx != NULL);
 
   struct read_ctx *read_ctx = &ctx->read_ctxs[stage];

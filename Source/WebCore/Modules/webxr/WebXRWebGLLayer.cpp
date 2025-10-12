@@ -29,6 +29,7 @@
 
 #if ENABLE(WEBXR)
 
+#include "ContextDestructionObserverInlines.h"
 #include "ExceptionOr.h"
 #include "HTMLCanvasElement.h"
 #include "IntSize.h"
@@ -43,6 +44,7 @@
 #include "WebXRView.h"
 #include "WebXRViewport.h"
 #include "XRWebGLLayerInit.h"
+#include <JavaScriptCore/ConsoleMessage.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -53,6 +55,8 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRWebGLLayer);
 // Arbitrary value for minimum framebuffer scaling.
 // Below this threshold the resulting framebuffer would be too small to see.
 constexpr double MinFramebufferScalingFactor = 0.2;
+
+using namespace JSC;
 
 static ExceptionOr<std::unique_ptr<WebXROpaqueFramebuffer>> createOpaqueFramebuffer(WebXRSession& session, WebGLRenderingContextBase& context, const XRWebGLLayerInit& init)
 {
@@ -91,6 +95,11 @@ static ExceptionOr<std::unique_ptr<WebXROpaqueFramebuffer>> createOpaqueFramebuf
     return framebuffer;
 }
 
+static bool isImmersiveMode(XRSessionMode mode)
+{
+    return mode == XRSessionMode::ImmersiveAr || mode == XRSessionMode::ImmersiveVr;
+}
+
 // https://immersive-web.github.io/webxr/#dom-xrwebgllayer-xrwebgllayer
 ExceptionOr<Ref<WebXRWebGLLayer>> WebXRWebGLLayer::create(Ref<WebXRSession>&& session, WebXRRenderingContext&& context, const XRWebGLLayerInit& init)
 {
@@ -109,7 +118,7 @@ ExceptionOr<Ref<WebXRWebGLLayer>> WebXRWebGLLayer::create(Ref<WebXRSession>&& se
                 return Exception { ExceptionCode::InvalidStateError, "Cannot create an XRWebGLLayer with a lost WebGL context."_s };
 
             auto mode = session->mode();
-            if ((mode == XRSessionMode::ImmersiveAr || mode == XRSessionMode::ImmersiveVr) && !baseContext->isXRCompatible())
+            if (isImmersiveMode(mode) && !baseContext->isXRCompatible())
                 return Exception { ExceptionCode::InvalidStateError, "Cannot create an XRWebGLLayer with WebGL context not marked as XR compatible."_s };
 
 
@@ -190,8 +199,12 @@ const WebGLFramebuffer* WebXRWebGLLayer::framebuffer() const
 
 unsigned WebXRWebGLLayer::framebufferWidth() const
 {
-    if (m_framebuffer)
-        return std::max<unsigned>(1, m_framebuffer->drawFramebufferSize().width());
+    if (m_framebuffer) {
+        auto framebufferSize = m_framebuffer->drawFramebufferSize();
+        if (framebufferSize.isEmpty())
+            addConsoleMessage(MessageLevel::Warning, "accurate framebufferWidth is unavailable until requestAnimationFrame processing; returning 1"_s);
+        return std::max<unsigned>(1, framebufferSize.width());
+    }
 
     return WTF::switchOn(m_context,
         [&](const RefPtr<WebGLRenderingContextBase>& baseContext) {
@@ -201,8 +214,12 @@ unsigned WebXRWebGLLayer::framebufferWidth() const
 
 unsigned WebXRWebGLLayer::framebufferHeight() const
 {
-    if (m_framebuffer)
-        return std::max<unsigned>(1, m_framebuffer->drawFramebufferSize().height());
+    if (m_framebuffer) {
+        auto framebufferSize = m_framebuffer->drawFramebufferSize();
+        if (framebufferSize.isEmpty())
+            addConsoleMessage(MessageLevel::Warning, "accurate framebufferHeight is unavailable until requestAnimationFrame processing; returning 1"_s);
+        return std::max<unsigned>(1, framebufferSize.height());
+    }
 
     return WTF::switchOn(m_context,
         [&](const RefPtr<WebGLRenderingContextBase>& baseContext) {
@@ -305,7 +322,14 @@ PlatformXR::Device::Layer WebXRWebGLLayer::endFrame()
         { PlatformXR::Eye::Right, m_rightViewportData.viewport->rect() }
     };
 
-    return PlatformXR::Device::Layer { .handle = m_framebuffer->handle(), .visible = true, .views = WTFMove(views) };
+    return PlatformXR::Device::Layer {
+        .handle = m_framebuffer->handle(),
+        .visible = true,
+        .views = WTFMove(views),
+#if USE(OPENXR)
+        .fenceFD = m_framebuffer->takeFenceFD()
+#endif
+    };
 }
 
 void WebXRWebGLLayer::canvasResized(CanvasBase&)
@@ -331,7 +355,7 @@ void WebXRWebGLLayer::computeViewports()
     auto width = framebufferWidth();
     auto height = framebufferHeight();
 
-    if (m_session->mode() == XRSessionMode::ImmersiveVr && m_session->views().size() > 1) {
+    if (isImmersiveMode(m_session->mode()) && m_session->views().size() > 1) {
         if (m_framebuffer && m_framebuffer->usesLayeredMode()) {
             auto scale = m_leftViewportData.currentScale;
             auto viewport = m_framebuffer->drawViewport(PlatformXR::Eye::Left);
@@ -353,6 +377,16 @@ void WebXRWebGLLayer::computeViewports()
         auto viewport = m_framebuffer ? m_framebuffer->drawViewport(PlatformXR::Eye::None) : IntRect(0, 0, framebufferWidth(), framebufferHeight());
         m_leftViewportData.viewport->updateViewport(viewport);
     }
+}
+
+void WebXRWebGLLayer::addConsoleMessage(MessageLevel level, String&& message) const
+{
+    auto* scriptExecutionContext = this->scriptExecutionContext();
+    if (!scriptExecutionContext)
+        return;
+
+    auto consoleMessage = makeUnique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, level, WTFMove(message));
+    scriptExecutionContext->addConsoleMessage(WTFMove(consoleMessage));
 }
 
 } // namespace WebCore

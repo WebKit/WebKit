@@ -37,6 +37,7 @@ namespace WebKit::WebGPU {
 
 enum class BindingResourceType : uint8_t {
     Sampler,
+    Texture,
     TextureView,
     BufferBinding,
     ExternalTexture,

@@ -34,7 +34,7 @@
 #import "Element.h"
 #import "FrameDestructionObserverInlines.h"
 #import "ImageAdapter.h"
-#import "NodeInlines.h"
+#import "NodeDocument.h"
 
 namespace WebCore {
 

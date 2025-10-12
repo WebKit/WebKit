@@ -8,6 +8,20 @@
 
 description("This tests the constructor for the WheelEvent DOM class.");
 
+function attributeIsCoordinate(attribute) {
+    switch (attribute) {
+    case "clientX":
+    case "clientY":
+    case "screenX":
+    case "screenY":
+        return true;
+    default:
+        break;
+    }
+
+    return false;
+}
+
 var testObject = {nyannyan: 123};
 var testDiv = document.createElement("div");
 var xhr = new XMLHttpRequest;
@@ -69,15 +83,16 @@ shouldThrow("new WheelEvent('eventType', { get view() { throw 'WheelEvent Error'
 
     // numbers within the long range, but outside the range of LayoutUnit.
     var exponent = attr.startsWith("client") ? 25 : 31;
-    shouldBe("new WheelEvent('eventType', { " + attr + ": 2147483647 })." + attr, String(Math.pow(2, exponent) - 1));
-    shouldBe("new WheelEvent('eventType', { " + attr + ": -2147483648 })." + attr, String(-Math.pow(2, exponent)));
+    shouldBe("new WheelEvent('eventType', { " + attr + ": 2147483647 })." + attr, "2147483647");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": -2147483648 })." + attr, "-2147483648");
 
     // numbers out of the long range.
-    shouldBe("new WheelEvent('eventType', { " + attr + ": 4294967295 })." + attr, "-1");
+    var isCoordinate = attributeIsCoordinate(attr);
+    shouldBe("new WheelEvent('eventType', { " + attr + ": 4294967295 })." + attr, isCoordinate ? "4294967295" : "-1");
     // 2^{53}-1, the largest number that can be exactly represented by double.
-    shouldBe("new WheelEvent('eventType', { " + attr + ": 9007199254740991 })." + attr, "-1");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": 9007199254740991 })." + attr, isCoordinate ? "9007199254740991" : "-1");
     // 2^{64}-1
-    shouldBe("new WheelEvent('eventType', { " + attr + ": 18446744073709551615 })." + attr, "0");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": 18446744073709551615 })." + attr, isCoordinate ? "18446744073709552000" : "0");
     shouldBe("new WheelEvent('eventType', { " + attr + ": 123.45 })." + attr, "123");
     shouldBe("new WheelEvent('eventType', { " + attr + ": NaN })." + attr, "0");
 

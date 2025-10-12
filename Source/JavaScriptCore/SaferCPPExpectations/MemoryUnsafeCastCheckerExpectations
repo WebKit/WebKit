@@ -29,8 +29,8 @@ dfg/DFGByteCodeParser.cpp
 dfg/DFGConstantFoldingPhase.cpp
 dfg/DFGOSRExitCompilerCommon.cpp
 dfg/DFGOperations.cpp
-disassembler/ARM64/A64DOpcode.cpp
-disassembler/ARM64/A64DOpcode.h
+[ Mac ] disassembler/ARM64/A64DOpcode.cpp
+[ Mac ] disassembler/ARM64/A64DOpcode.h
 ftl/FTLState.cpp
 heap/ConservativeRoots.cpp
 heap/Heap.cpp
@@ -49,11 +49,9 @@ interpreter/CallFrame.cpp
 interpreter/CallFrame.h
 interpreter/CallFrameInlines.h
 interpreter/Interpreter.cpp
-interpreter/StackVisitor.cpp
 jit/JITOperations.cpp
 jit/JITThunks.cpp
 jsc.cpp
-llint/LLIntSlowPaths.cpp
 parser/ASTBuilder.h
 parser/NodesAnalyzeModule.cpp
 runtime/ArrayStorage.h
@@ -88,6 +86,7 @@ runtime/IntlSegmenter.h
 runtime/IntlSegments.h
 runtime/JSArrayBufferView.cpp
 runtime/JSCJSValueInlines.h
+[ iOS ] runtime/JSCell.cpp
 runtime/JSCell.h
 runtime/JSCustomGetterFunction.cpp
 runtime/JSCustomSetterFunction.cpp
@@ -109,7 +108,6 @@ runtime/JSString.h
 runtime/JSStringInlines.h
 runtime/JSTemplateObjectDescriptor.cpp
 runtime/ModuleProgramExecutable.cpp
-runtime/NativeCallee.cpp
 runtime/NativeExecutable.cpp
 runtime/ObjectConstructor.cpp
 runtime/ProgramExecutable.cpp
@@ -140,14 +138,9 @@ tools/HeapVerifier.cpp
 tools/JSDollarVM.cpp
 tools/VMInspector.cpp
 wasm/WasmCalleeGroup.cpp
-wasm/WasmFaultSignalHandler.cpp
 wasm/WasmIPIntSlowPaths.cpp
-wasm/WasmLLIntGenerator.cpp
 wasm/WasmModule.cpp
-wasm/WasmOMGIRGenerator.cpp
-wasm/WasmOSREntryPlan.cpp
 wasm/WasmOperations.cpp
-wasm/WasmSlowPaths.cpp
 wasm/WasmStreamingCompiler.cpp
 wasm/js/JSWebAssemblyException.cpp
 wasm/js/JSWebAssemblyGlobal.cpp

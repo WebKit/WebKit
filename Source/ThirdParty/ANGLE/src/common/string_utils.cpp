@@ -7,6 +7,10 @@
 //   String helper functions.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "common/string_utils.h"
 
 #include <stdlib.h>

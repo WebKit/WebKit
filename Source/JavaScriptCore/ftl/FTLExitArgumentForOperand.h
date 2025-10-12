@@ -27,8 +27,8 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "FTLExitArgument.h"
-#include "VirtualRegister.h"
+#include <JavaScriptCore/FTLExitArgument.h>
+#include <JavaScriptCore/VirtualRegister.h>
 
 namespace JSC { namespace FTL {
 

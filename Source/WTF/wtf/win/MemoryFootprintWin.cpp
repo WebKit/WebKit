@@ -31,6 +31,7 @@
 #include <windows.h>
 #include <psapi.h>
 #include <wtf/MallocSpan.h>
+#include <wtf/MathExtras.h>
 #include <wtf/win/Win32Handle.h>
 
 namespace WTF {
@@ -75,7 +76,8 @@ size_t memoryFootprint()
     };
 
     for (size_t numberOfEntries = updateNumberOfEntries(workingSetsOnStack->NumberOfEntries);;) {
-        size_t workingSetSizeInBytes = sizeof(PSAPI_WORKING_SET_INFORMATION) + sizeof(PSAPI_WORKING_SET_BLOCK) * numberOfEntries;
+        size_t workingSetSizeInBytes = roundUpToMultipleOf(sizeof(PSAPI_WORKING_SET_INFORMATION), sizeof(PSAPI_WORKING_SET_INFORMATION) + sizeof(PSAPI_WORKING_SET_BLOCK) * numberOfEntries);
+
         auto workingSets = MallocSpan<PSAPI_WORKING_SET_INFORMATION>::malloc(workingSetSizeInBytes);
         auto workingSetsSpan = workingSets.mutableSpan();
         if (QueryWorkingSet(process.get(), workingSetsSpan.data(), workingSetsSpan.size_bytes()))

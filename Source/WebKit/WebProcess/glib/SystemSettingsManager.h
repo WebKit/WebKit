@@ -58,7 +58,7 @@ private:
 
     void didChange(const WebCore::SystemSettings::State&);
 
-    CheckedRef<WebProcess> m_process;
+    const CheckedRef<WebProcess> m_process;
 };
 
 } // namespace WebKit

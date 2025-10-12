@@ -36,6 +36,9 @@ class WebExtensionPermission {
 public:
     static String activeTab();
     static String alarms();
+#if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
+    static String bookmarks();
+#endif
     static String clipboardWrite();
     static String contextMenus();
     static String cookies();

@@ -4,21 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-Date-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  TimeClip behavior for very large numbers
+info: bugzilla.mozilla.org/show_bug.cgi?id=747197
 esid: pending
 ---*/
-var BUGNUMBER = 747197;
-var summary = "TimeClip behavior for very large numbers";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 function addToLimit(n) { return 8.64e15 + n; }
 
@@ -41,7 +31,3 @@ for (var i = 0, len = times.length; i < len; i++)
   assert.sameValue(d.getTime(), NaN);
   assert.sameValue(d.valueOf(), NaN);
 }
-
-/******************************************************************************/
-
-print("Tests complete");

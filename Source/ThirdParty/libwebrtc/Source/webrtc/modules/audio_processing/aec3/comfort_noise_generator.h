@@ -14,10 +14,13 @@
 #include <stdint.h>
 
 #include <array>
+#include <cstddef>
 #include <memory>
+#include <vector>
 
+#include "api/array_view.h"
+#include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
-#include "modules/audio_processing/aec3/aec_state.h"
 #include "modules/audio_processing/aec3/fft_data.h"
 #include "rtc_base/system/arch.h"
 
@@ -48,15 +51,14 @@ class ComfortNoiseGenerator {
   ComfortNoiseGenerator(const ComfortNoiseGenerator&) = delete;
 
   // Computes the comfort noise.
-  void Compute(bool saturated_capture,
-               rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
-                   capture_spectrum,
-               rtc::ArrayView<FftData> lower_band_noise,
-               rtc::ArrayView<FftData> upper_band_noise);
+  void Compute(
+      bool saturated_capture,
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>> capture_spectrum,
+      ArrayView<FftData> lower_band_noise,
+      ArrayView<FftData> upper_band_noise);
 
   // Returns the estimate of the background noise spectrum.
-  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> NoiseSpectrum()
-      const {
+  ArrayView<const std::array<float, kFftLengthBy2Plus1>> NoiseSpectrum() const {
     return N2_;
   }
 

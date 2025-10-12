@@ -9,6 +9,10 @@
 // behavior.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "compiler/translator/hlsl/TextureFunctionHLSL.h"
 
 #include "compiler/translator/ImmutableStringBuilder.h"

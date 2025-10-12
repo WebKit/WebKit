@@ -13,7 +13,8 @@ rust/target
 
 src/fuzz/
 src/pki/testdata
-src/third_party
+src/third_party/googletest
+src/third_party/wycheproof_testvectors
 
 util/bot/android_ndk
 util/bot/android_sdk/public

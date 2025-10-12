@@ -4,8 +4,6 @@
 #include <openssl/asm_base.h>
 
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_AARCH64) && defined(_WIN32)
-#include <openssl/arm_arch.h>
-
 .text
 
 .globl	gcm_init_neon

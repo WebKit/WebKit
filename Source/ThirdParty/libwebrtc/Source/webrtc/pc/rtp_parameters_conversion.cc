@@ -10,35 +10,30 @@
 
 #include "pc/rtp_parameters_conversion.h"
 
-#include <cstdint>
-#include <set>
+#include <optional>
 #include <string>
-#include <type_traits>
-#include <utility>
+#include <vector>
 
-#include "api/array_view.h"
 #include "api/media_types.h"
-#include "api/rtc_error.h"
+#include "api/rtp_parameters.h"
 #include "media/base/codec.h"
 #include "media/base/media_constants.h"
-#include "media/base/rtp_utils.h"
-#include "rtc_base/checks.h"
+#include "pc/session_description.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
 
 std::optional<RtcpFeedback> ToRtcpFeedback(
-    const cricket::FeedbackParam& cricket_feedback) {
-  if (cricket_feedback.id() == cricket::kRtcpFbParamCcm) {
-    if (cricket_feedback.param() == cricket::kRtcpFbCcmParamFir) {
+    const FeedbackParam& cricket_feedback) {
+  if (cricket_feedback.id() == kRtcpFbParamCcm) {
+    if (cricket_feedback.param() == kRtcpFbCcmParamFir) {
       return RtcpFeedback(RtcpFeedbackType::CCM, RtcpFeedbackMessageType::FIR);
     } else {
       RTC_LOG(LS_WARNING) << "Unsupported parameter for CCM RTCP feedback: "
                           << cricket_feedback.param();
       return std::nullopt;
     }
-  } else if (cricket_feedback.id() == cricket::kRtcpFbParamLntf) {
+  } else if (cricket_feedback.id() == kRtcpFbParamLntf) {
     if (cricket_feedback.param().empty()) {
       return RtcpFeedback(RtcpFeedbackType::LNTF);
     } else {
@@ -46,18 +41,18 @@ std::optional<RtcpFeedback> ToRtcpFeedback(
                           << cricket_feedback.param();
       return std::nullopt;
     }
-  } else if (cricket_feedback.id() == cricket::kRtcpFbParamNack) {
+  } else if (cricket_feedback.id() == kRtcpFbParamNack) {
     if (cricket_feedback.param().empty()) {
       return RtcpFeedback(RtcpFeedbackType::NACK,
                           RtcpFeedbackMessageType::GENERIC_NACK);
-    } else if (cricket_feedback.param() == cricket::kRtcpFbNackParamPli) {
+    } else if (cricket_feedback.param() == kRtcpFbNackParamPli) {
       return RtcpFeedback(RtcpFeedbackType::NACK, RtcpFeedbackMessageType::PLI);
     } else {
       RTC_LOG(LS_WARNING) << "Unsupported parameter for NACK RTCP feedback: "
                           << cricket_feedback.param();
       return std::nullopt;
     }
-  } else if (cricket_feedback.id() == cricket::kRtcpFbParamRemb) {
+  } else if (cricket_feedback.id() == kRtcpFbParamRemb) {
     if (!cricket_feedback.param().empty()) {
       RTC_LOG(LS_WARNING) << "Unsupported parameter for REMB RTCP feedback: "
                           << cricket_feedback.param();
@@ -65,7 +60,7 @@ std::optional<RtcpFeedback> ToRtcpFeedback(
     } else {
       return RtcpFeedback(RtcpFeedbackType::REMB);
     }
-  } else if (cricket_feedback.id() == cricket::kRtcpFbParamTransportCc) {
+  } else if (cricket_feedback.id() == kRtcpFbParamTransportCc) {
     if (!cricket_feedback.param().empty()) {
       RTC_LOG(LS_WARNING)
           << "Unsupported parameter for transport-cc RTCP feedback: "
@@ -80,15 +75,14 @@ std::optional<RtcpFeedback> ToRtcpFeedback(
   return std::nullopt;
 }
 
-RtpCodecCapability ToRtpCodecCapability(const cricket::Codec& cricket_codec) {
+RtpCodecCapability ToRtpCodecCapability(const Codec& cricket_codec) {
   RtpCodecCapability codec;
   codec.name = cricket_codec.name;
-  codec.kind = cricket_codec.type == cricket::Codec::Type::kAudio
-                   ? cricket::MEDIA_TYPE_AUDIO
-                   : cricket::MEDIA_TYPE_VIDEO;
+  codec.kind = cricket_codec.type == Codec::Type::kAudio ? MediaType::AUDIO
+                                                         : MediaType::VIDEO;
   codec.clock_rate.emplace(cricket_codec.clockrate);
   codec.preferred_payload_type.emplace(cricket_codec.id);
-  for (const cricket::FeedbackParam& cricket_feedback :
+  for (const FeedbackParam& cricket_feedback :
        cricket_codec.feedback_params.params()) {
     std::optional<RtcpFeedback> feedback = ToRtcpFeedback(cricket_feedback);
     if (feedback) {
@@ -96,10 +90,10 @@ RtpCodecCapability ToRtpCodecCapability(const cricket::Codec& cricket_codec) {
     }
   }
   switch (cricket_codec.type) {
-    case cricket::Codec::Type::kAudio:
+    case Codec::Type::kAudio:
       codec.num_channels = static_cast<int>(cricket_codec.channels);
       break;
-    case cricket::Codec::Type::kVideo:
+    case Codec::Type::kVideo:
       codec.scalability_modes = cricket_codec.scalability_modes;
       break;
   }
@@ -108,58 +102,38 @@ RtpCodecCapability ToRtpCodecCapability(const cricket::Codec& cricket_codec) {
   return codec;
 }
 
-RtpCodecParameters ToRtpCodecParameters(const cricket::Codec& cricket_codec) {
-  RtpCodecParameters codec_param;
-  codec_param.name = cricket_codec.name;
-  codec_param.kind = cricket_codec.type == cricket::Codec::Type::kAudio
-                         ? cricket::MEDIA_TYPE_AUDIO
-                         : cricket::MEDIA_TYPE_VIDEO;
-  codec_param.clock_rate.emplace(cricket_codec.clockrate);
-  codec_param.payload_type = cricket_codec.id;
-  for (const cricket::FeedbackParam& cricket_feedback :
-       cricket_codec.feedback_params.params()) {
-    std::optional<RtcpFeedback> feedback = ToRtcpFeedback(cricket_feedback);
-    if (feedback) {
-      codec_param.rtcp_feedback.push_back(feedback.value());
-    }
-  }
-  switch (cricket_codec.type) {
-    case cricket::Codec::Type::kAudio:
-      codec_param.num_channels = static_cast<int>(cricket_codec.channels);
-      break;
-    case cricket::Codec::Type::kVideo:
-      // Nothing to do.
-      break;
-  }
-  codec_param.parameters = cricket_codec.params;
-  return codec_param;
-}
-
 RtpCapabilities ToRtpCapabilities(
-    const std::vector<cricket::Codec>& cricket_codecs,
-    const cricket::RtpHeaderExtensions& cricket_extensions) {
+    const std::vector<Codec>& cricket_codecs,
+    const RtpHeaderExtensions& cricket_extensions) {
   RtpCapabilities capabilities;
   bool have_red = false;
   bool have_ulpfec = false;
   bool have_flexfec = false;
   bool have_rtx = false;
-  for (const cricket::Codec& cricket_codec : cricket_codecs) {
-    if (cricket_codec.name == cricket::kRedCodecName) {
+  for (const Codec& cricket_codec : cricket_codecs) {
+    if (cricket_codec.name == kRedCodecName) {
+      if (have_red) {
+        // There should only be one RED codec entry in caps.
+        continue;
+      }
       have_red = true;
-    } else if (cricket_codec.name == cricket::kUlpfecCodecName) {
+    } else if (cricket_codec.name == kUlpfecCodecName) {
       have_ulpfec = true;
-    } else if (cricket_codec.name == cricket::kFlexfecCodecName) {
+    } else if (cricket_codec.name == kFlexfecCodecName) {
       have_flexfec = true;
-    } else if (cricket_codec.name == cricket::kRtxCodecName) {
+    } else if (cricket_codec.name == kRtxCodecName) {
       if (have_rtx) {
-        // There should only be one RTX codec entry
+        // There should only be one RTX codec entry in caps.
         continue;
       }
       have_rtx = true;
     }
     auto codec_capability = ToRtpCodecCapability(cricket_codec);
-    if (cricket_codec.name == cricket::kRtxCodecName) {
-      // RTX codec should not have any parameter
+    if (cricket_codec.name == kRtxCodecName ||
+        cricket_codec.name == kRedCodecName) {
+      // For RTX this removes the APT which points to a payload type.
+      // For RED this removes the redundancy spec which points to a payload
+      // type.
       codec_capability.parameters.clear();
     }
     capabilities.codecs.push_back(codec_capability);

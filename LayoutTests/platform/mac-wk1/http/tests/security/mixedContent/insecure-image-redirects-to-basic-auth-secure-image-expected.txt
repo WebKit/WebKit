@@ -1,3 +1,0 @@
-This test opens a new window to a secure page that loads an insecure image that redirects to a secure image guarded by basic authentication. The secure image should be blocked because it requires credentials and was loaded via an insecure redirect.
-
-PASS did not load image.

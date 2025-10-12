@@ -20,9 +20,9 @@
 
 #pragma once
 
-#include "BidiContext.h"
-#include "LegacyInlineFlowBox.h"
-#include "RenderBox.h"
+#include <WebCore/BidiContext.h>
+#include <WebCore/LegacyInlineFlowBox.h>
+#include <WebCore/RenderBox.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -71,9 +71,6 @@ public:
         m_lineBoxTop = lineBoxTop;
         m_lineBoxBottom = lineBoxBottom;
     }
-
-    LayoutUnit baselinePosition(FontBaseline baselineType) const final;
-    LayoutUnit lineHeight() const final;
 
     RenderObject::HighlightState selectionState() const final;
     const LegacyInlineBox* firstSelectedBox() const;

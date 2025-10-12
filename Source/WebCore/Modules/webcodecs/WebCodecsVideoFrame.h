@@ -27,13 +27,13 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include "ContextDestructionObserver.h"
-#include "DOMRectReadOnly.h"
-#include "JSDOMPromiseDeferredForward.h"
-#include "PlaneLayout.h"
-#include "VideoColorSpaceInit.h"
-#include "WebCodecsAlphaOption.h"
-#include "WebCodecsVideoFrameData.h"
+#include <WebCore/ContextDestructionObserver.h>
+#include <WebCore/DOMRectReadOnly.h>
+#include <WebCore/JSDOMPromiseDeferredForward.h>
+#include <WebCore/PlaneLayout.h>
+#include <WebCore/VideoColorSpaceInit.h>
+#include <WebCore/WebCodecsAlphaOption.h>
+#include <WebCore/WebCodecsVideoFrameData.h>
 
 namespace WebCore {
 

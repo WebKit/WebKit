@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 
 #if USE(LIBWEBRTC)
 
-#include "VideoEncoder.h"
+#include <WebCore/VideoEncoder.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
@@ -60,7 +60,7 @@ private:
     void close() final;
     Ref<GenericPromise> setRates(uint64_t bitRate, double frameRate) final;
 
-    Ref<LibWebRTCVPXInternalVideoEncoder> m_internalEncoder;
+    const Ref<LibWebRTCVPXInternalVideoEncoder> m_internalEncoder;
 };
 
 }

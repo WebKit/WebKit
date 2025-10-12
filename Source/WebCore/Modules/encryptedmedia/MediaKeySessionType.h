@@ -30,7 +30,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "CDMSessionType.h"
+#include <WebCore/CDMSessionType.h>
 
 namespace WebCore {
 

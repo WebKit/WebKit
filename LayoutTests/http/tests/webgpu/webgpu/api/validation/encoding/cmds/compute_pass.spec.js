@@ -8,16 +8,20 @@ Does **not** test usage scopes (resource_usages/) or programmable pass stuff (pr
 import { makeValueTestVariant } from '../../../../../common/util/util.js';
 import { kBufferUsages } from '../../../../capability_info.js';
 import { GPUConst } from '../../../../constants.js';
-import { kResourceStates } from '../../../../gpu_test.js';
-import { AllFeaturesMaxLimitsValidationTest } from '../../validation_test.js';
+import {
+  kResourceStates,
 
-class F extends AllFeaturesMaxLimitsValidationTest {
+  AllFeaturesMaxLimitsGPUTest } from
+'../../../../gpu_test.js';
+import * as vtu from '../../validation_test_utils.js';
+
+class F extends AllFeaturesMaxLimitsGPUTest {
   createComputePipeline(state) {
     if (state === 'valid') {
-      return this.createNoOpComputePipeline();
+      return vtu.createNoOpComputePipeline(this);
     }
 
-    return this.createErrorComputePipeline();
+    return vtu.createErrorComputePipeline(this);
   }
 
   createIndirectBuffer(state, data) {
@@ -119,7 +123,7 @@ fn((t) => {
   const maxDispatch = t.device.limits.maxComputeWorkgroupsPerDimension;
   const largeDimValue = makeValueTestVariant(maxDispatch, largeDimValueVariant);
 
-  const pipeline = t.createNoOpComputePipeline();
+  const pipeline = vtu.createNoOpComputePipeline(t);
 
   const workSizes = [smallDimValue, smallDimValue, smallDimValue];
   workSizes[largeDimIndex] = largeDimValue;
@@ -172,7 +176,7 @@ kBufferData.byteLength - 2 * Uint32Array.BYTES_PER_ELEMENT]
 ).
 fn((t) => {
   const { state, offset } = t.params;
-  const pipeline = t.createNoOpComputePipeline();
+  const pipeline = vtu.createNoOpComputePipeline(t);
   const buffer = t.createIndirectBuffer(state, kBufferData);
 
   const { encoder, validateFinishAndSubmit } = t.createEncoder('compute pass');
@@ -195,7 +199,7 @@ beforeAllSubcases((t) => t.usesMismatchedDevice()).
 fn((t) => {
   const { mismatched } = t.params;
 
-  const pipeline = t.createNoOpComputePipeline();
+  const pipeline = vtu.createNoOpComputePipeline(t);
 
   const sourceDevice = mismatched ? t.mismatchedDevice : t.device;
 
@@ -238,7 +242,7 @@ fn((t) => {
   const bufferUsage = bufferUsage0 | bufferUsage1;
 
   const layout = t.device.createPipelineLayout({ bindGroupLayouts: [] });
-  const pipeline = t.createNoOpComputePipeline(layout);
+  const pipeline = vtu.createNoOpComputePipeline(t, layout);
 
   const buffer = t.createBufferTracked({
     size: 16,

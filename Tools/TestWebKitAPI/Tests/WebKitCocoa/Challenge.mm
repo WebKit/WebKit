@@ -42,6 +42,8 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/Platform.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cf/VectorCF.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
 
@@ -50,12 +52,12 @@ static bool navigationFinished;
 RetainPtr<SecCertificateRef> testCertificate()
 {
     auto certificateBytes = TestWebKitAPI::HTTPServer::testCertificate();
-    return adoptCF(SecCertificateCreateWithData(nullptr, (__bridge CFDataRef)[NSData dataWithBytes:certificateBytes.data() length:certificateBytes.size()]));
+    return adoptCF(SecCertificateCreateWithData(nullptr, toCFData(certificateBytes.span()).get()));
 }
 
 static RetainPtr<SecIdentityRef> createTestIdentity(const Vector<uint8_t>& privateKeyBytes, const Vector<uint8_t>& certificateBytes)
 {
-    NSData *derEncodedPrivateKey = [NSData dataWithBytes:privateKeyBytes.data() length:privateKeyBytes.size()];
+    RetainPtr derEncodedPrivateKey = toNSData(privateKeyBytes.span());
     NSDictionary* options = @{
         (id)kSecAttrKeyType: (id)kSecAttrKeyTypeRSA,
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
@@ -63,11 +65,11 @@ static RetainPtr<SecIdentityRef> createTestIdentity(const Vector<uint8_t>& priva
     };
     const NSUInteger pemEncodedPrivateKeyHeaderLength = 26;
     CFErrorRef error = nullptr;
-    auto privateKey = adoptCF(SecKeyCreateWithData((__bridge CFDataRef)[derEncodedPrivateKey subdataWithRange:NSMakeRange(pemEncodedPrivateKeyHeaderLength, derEncodedPrivateKey.length - pemEncodedPrivateKeyHeaderLength)], (__bridge CFDictionaryRef)options, &error));
+    auto privateKey = adoptCF(SecKeyCreateWithData((__bridge CFDataRef)[derEncodedPrivateKey subdataWithRange:NSMakeRange(pemEncodedPrivateKeyHeaderLength, [derEncodedPrivateKey length] - pemEncodedPrivateKeyHeaderLength)], (__bridge CFDictionaryRef)options, &error));
     EXPECT_NULL(error);
     EXPECT_NOT_NULL(privateKey.get());
 
-    auto testCertificate = adoptCF(SecCertificateCreateWithData(nullptr, (__bridge CFDataRef)[NSData dataWithBytes:certificateBytes.data() length:certificateBytes.size()]));
+    RetainPtr testCertificate = adoptCF(SecCertificateCreateWithData(nullptr, toCFData(certificateBytes.span()).get()));
 
     return adoptCF(SecIdentityCreate(kCFAllocatorDefault, testCertificate.get(), privateKey.get()));
 }

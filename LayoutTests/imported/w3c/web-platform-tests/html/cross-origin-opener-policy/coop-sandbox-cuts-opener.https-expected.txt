@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Navigation was blocked by Cross-Origin-Opener-Policy
-CONSOLE MESSAGE: Navigation was blocked by Cross-Origin-Opener-Policy
 
 FAIL <iframe sandbox="allow-popups allow-scripts allow-same-origin"> Sandboxed Cross-Origin-Opener-Policy popup should cut the opener if necessary assert_equals: expected "true" but got "false"
 FAIL <iframe sandbox="allow-popups allow-scripts"> Sandboxed Cross-Origin-Opener-Policy popup should cut the opener if necessary assert_equals: expected "true" but got "false"

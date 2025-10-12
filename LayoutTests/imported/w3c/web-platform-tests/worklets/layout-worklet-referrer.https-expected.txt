@@ -1,21 +1,3 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(workletType).addModule')
 
 FAIL Importing a same-origin script from a page that has "no-referrer" referrer policy should not send referrer. assert_equals: expected (string) "RESOLVED" but got (object) object "[object Object]"
 FAIL Importing a remote-origin script from a page that has "no-referrer" referrer policy should not send referrer. assert_equals: expected (string) "RESOLVED" but got (object) object "[object Object]"

@@ -1,46 +1,11 @@
-NetworkProcess/Notifications/Cocoa/WebPushDaemonConnectionCocoa.mm
-NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementConnectionCocoa.mm
-NetworkProcess/cache/NetworkCacheDataCocoa.mm
-NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm
-NetworkProcess/cocoa/LaunchServicesDatabaseObserver.mm
-NetworkProcess/cocoa/NetworkProcessCocoa.mm
-NetworkProcess/cocoa/NetworkSessionCocoa.mm
-NetworkProcess/mac/SecItemShim.cpp
-NetworkProcess/webrtc/NetworkRTCMonitor.cpp
-Platform/IPC/cocoa/ConnectionCocoa.mm
-Platform/IPC/cocoa/DaemonConnectionCocoa.mm
-Platform/cf/ModuleCF.cpp
-Shared/API/Cocoa/WKRemoteObjectCoder.mm
-Shared/API/Cocoa/_WKRemoteObjectRegistry.mm
-Shared/API/c/cf/WKErrorCF.cpp
-Shared/API/c/cg/WKImageCG.cpp
-Shared/Cocoa/APIObject.mm
-Shared/Cocoa/WKNSString.mm
-Shared/Cocoa/XPCEndpoint.mm
-Shared/Cocoa/XPCEndpointClient.mm
-Shared/Daemon/DaemonUtilities.mm
-Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonConnectionSet.mm
-Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm
-Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm
-Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm
-Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm
-UIProcess/API/Cocoa/NSAttributedString.mm
-UIProcess/API/Cocoa/WKBackForwardListItem.mm
-UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm
-UIProcess/Authentication/cocoa/AuthenticationChallengeProxyCocoa.mm
-UIProcess/Cocoa/ModelElementControllerCocoa.mm
-UIProcess/Cocoa/PageClientImplCocoa.mm
-UIProcess/Cocoa/WebProcessPoolCocoa.mm
-UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm
-UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm
-UIProcess/WebAuthentication/Cocoa/LocalConnection.mm
-UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm
-UIProcess/WebAuthentication/Mock/MockLocalConnection.mm
-UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorUtils.mm
-UIProcess/mac/ServicesController.mm
-UIProcess/mac/WebViewImpl.mm
-WebProcess/cocoa/LaunchServicesDatabaseManager.mm
-WebProcess/cocoa/WebProcessCocoa.mm
-webpushd/WebPushDaemon.mm
-webpushd/_WKMockUserNotificationCenter.mm
-webpushd/webpushtool/WebPushToolConnection.mm
+[ iOS ] GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm
+[ iOS ] LogMessagesImplementations.h
+[ iOS ] Shared/LogStream.cpp
+[ iOS ] Shared/ios/AuxiliaryProcessIOS.mm
+[ iOS ] UIProcess/API/Cocoa/WKPreviewActionItem.mm
+[ iOS ] UIProcess/API/Cocoa/_WKTouchEventGenerator.mm
+[ iOS ] UIProcess/API/ios/WKWebViewIOS.mm
+[ iOS ] UIProcess/Extensions/Cocoa/WebExtensionCocoa.mm
+[ iOS ] UIProcess/ios/WKContentViewInteraction.mm
+[ iOS ] UIProcess/ios/WKWebGeolocationPolicyDeciderIOS.mm
+[ iOS ] UIProcess/ios/forms/WKFileUploadPanel.mm

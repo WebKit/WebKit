@@ -17,6 +17,12 @@ PASS g.setAttribute(onbeforeinput, "unsafe_handler()") calls default policy
 PASS g.setAttributeNS(onbeforeinput, "unsafe_handler()") calls default policy
 PASS mrow.setAttribute(onbeforeinput, "unsafe_handler()") calls default policy
 PASS mrow.setAttributeNS(onbeforeinput, "unsafe_handler()") calls default policy
+PASS DIV.setAttribute(onbeforematch, "unsafe_handler()") calls default policy
+PASS DIV.setAttributeNS(onbeforematch, "unsafe_handler()") calls default policy
+PASS g.setAttribute(onbeforematch, "unsafe_handler()") calls default policy
+PASS g.setAttributeNS(onbeforematch, "unsafe_handler()") calls default policy
+PASS mrow.setAttribute(onbeforematch, "unsafe_handler()") calls default policy
+PASS mrow.setAttributeNS(onbeforematch, "unsafe_handler()") calls default policy
 PASS DIV.setAttribute(onbeforetoggle, "unsafe_handler()") calls default policy
 PASS DIV.setAttributeNS(onbeforetoggle, "unsafe_handler()") calls default policy
 PASS g.setAttribute(onbeforetoggle, "unsafe_handler()") calls default policy
@@ -77,12 +83,24 @@ PASS g.setAttribute(oncontextmenu, "unsafe_handler()") calls default policy
 PASS g.setAttributeNS(oncontextmenu, "unsafe_handler()") calls default policy
 PASS mrow.setAttribute(oncontextmenu, "unsafe_handler()") calls default policy
 PASS mrow.setAttributeNS(oncontextmenu, "unsafe_handler()") calls default policy
+PASS DIV.setAttribute(oncopy, "unsafe_handler()") calls default policy
+PASS DIV.setAttributeNS(oncopy, "unsafe_handler()") calls default policy
+PASS g.setAttribute(oncopy, "unsafe_handler()") calls default policy
+PASS g.setAttributeNS(oncopy, "unsafe_handler()") calls default policy
+PASS mrow.setAttribute(oncopy, "unsafe_handler()") calls default policy
+PASS mrow.setAttributeNS(oncopy, "unsafe_handler()") calls default policy
 PASS DIV.setAttribute(oncuechange, "unsafe_handler()") calls default policy
 PASS DIV.setAttributeNS(oncuechange, "unsafe_handler()") calls default policy
 PASS g.setAttribute(oncuechange, "unsafe_handler()") calls default policy
 PASS g.setAttributeNS(oncuechange, "unsafe_handler()") calls default policy
 PASS mrow.setAttribute(oncuechange, "unsafe_handler()") calls default policy
 PASS mrow.setAttributeNS(oncuechange, "unsafe_handler()") calls default policy
+PASS DIV.setAttribute(oncut, "unsafe_handler()") calls default policy
+PASS DIV.setAttributeNS(oncut, "unsafe_handler()") calls default policy
+PASS g.setAttribute(oncut, "unsafe_handler()") calls default policy
+PASS g.setAttributeNS(oncut, "unsafe_handler()") calls default policy
+PASS mrow.setAttribute(oncut, "unsafe_handler()") calls default policy
+PASS mrow.setAttributeNS(oncut, "unsafe_handler()") calls default policy
 PASS DIV.setAttribute(ondblclick, "unsafe_handler()") calls default policy
 PASS DIV.setAttributeNS(ondblclick, "unsafe_handler()") calls default policy
 PASS g.setAttribute(ondblclick, "unsafe_handler()") calls default policy
@@ -263,6 +281,12 @@ PASS g.setAttribute(onmouseup, "unsafe_handler()") calls default policy
 PASS g.setAttributeNS(onmouseup, "unsafe_handler()") calls default policy
 PASS mrow.setAttribute(onmouseup, "unsafe_handler()") calls default policy
 PASS mrow.setAttributeNS(onmouseup, "unsafe_handler()") calls default policy
+PASS DIV.setAttribute(onpaste, "unsafe_handler()") calls default policy
+PASS DIV.setAttributeNS(onpaste, "unsafe_handler()") calls default policy
+PASS g.setAttribute(onpaste, "unsafe_handler()") calls default policy
+PASS g.setAttributeNS(onpaste, "unsafe_handler()") calls default policy
+PASS mrow.setAttribute(onpaste, "unsafe_handler()") calls default policy
+PASS mrow.setAttributeNS(onpaste, "unsafe_handler()") calls default policy
 PASS DIV.setAttribute(onpause, "unsafe_handler()") calls default policy
 PASS DIV.setAttributeNS(onpause, "unsafe_handler()") calls default policy
 PASS g.setAttribute(onpause, "unsafe_handler()") calls default policy
@@ -311,6 +335,12 @@ PASS g.setAttribute(onscroll, "unsafe_handler()") calls default policy
 PASS g.setAttributeNS(onscroll, "unsafe_handler()") calls default policy
 PASS mrow.setAttribute(onscroll, "unsafe_handler()") calls default policy
 PASS mrow.setAttributeNS(onscroll, "unsafe_handler()") calls default policy
+PASS DIV.setAttribute(onscrollend, "unsafe_handler()") calls default policy
+PASS DIV.setAttributeNS(onscrollend, "unsafe_handler()") calls default policy
+PASS g.setAttribute(onscrollend, "unsafe_handler()") calls default policy
+PASS g.setAttributeNS(onscrollend, "unsafe_handler()") calls default policy
+PASS mrow.setAttribute(onscrollend, "unsafe_handler()") calls default policy
+PASS mrow.setAttributeNS(onscrollend, "unsafe_handler()") calls default policy
 PASS DIV.setAttribute(onsecuritypolicyviolation, "unsafe_handler()") calls default policy
 PASS DIV.setAttributeNS(onsecuritypolicyviolation, "unsafe_handler()") calls default policy
 PASS g.setAttribute(onsecuritypolicyviolation, "unsafe_handler()") calls default policy
@@ -429,10 +459,18 @@ PASS BODY.setAttribute(onpagehide, "unsafe_handler()") calls default policy
 PASS BODY.setAttributeNS(onpagehide, "unsafe_handler()") calls default policy
 PASS FRAMESET.setAttribute(onpagehide, "unsafe_handler()") calls default policy
 PASS FRAMESET.setAttributeNS(onpagehide, "unsafe_handler()") calls default policy
+PASS BODY.setAttribute(onpagereveal, "unsafe_handler()") calls default policy
+PASS BODY.setAttributeNS(onpagereveal, "unsafe_handler()") calls default policy
+PASS FRAMESET.setAttribute(onpagereveal, "unsafe_handler()") calls default policy
+PASS FRAMESET.setAttributeNS(onpagereveal, "unsafe_handler()") calls default policy
 PASS BODY.setAttribute(onpageshow, "unsafe_handler()") calls default policy
 PASS BODY.setAttributeNS(onpageshow, "unsafe_handler()") calls default policy
 PASS FRAMESET.setAttribute(onpageshow, "unsafe_handler()") calls default policy
 PASS FRAMESET.setAttributeNS(onpageshow, "unsafe_handler()") calls default policy
+PASS BODY.setAttribute(onpageswap, "unsafe_handler()") calls default policy
+PASS BODY.setAttributeNS(onpageswap, "unsafe_handler()") calls default policy
+PASS FRAMESET.setAttribute(onpageswap, "unsafe_handler()") calls default policy
+PASS FRAMESET.setAttributeNS(onpageswap, "unsafe_handler()") calls default policy
 PASS BODY.setAttribute(onpopstate, "unsafe_handler()") calls default policy
 PASS BODY.setAttributeNS(onpopstate, "unsafe_handler()") calls default policy
 PASS FRAMESET.setAttribute(onpopstate, "unsafe_handler()") calls default policy
@@ -461,9 +499,13 @@ PASS AUDIO.setAttribute(onwaitingforkey, "unsafe_handler()") calls default polic
 PASS AUDIO.setAttributeNS(onwaitingforkey, "unsafe_handler()") calls default policy
 PASS VIDEO.setAttribute(onwaitingforkey, "unsafe_handler()") calls default policy
 PASS VIDEO.setAttributeNS(onwaitingforkey, "unsafe_handler()") calls default policy
+PASS animation.setAttribute(onbegin, "unsafe_handler()") calls default policy
+PASS animation.setAttributeNS(onbegin, "unsafe_handler()") calls default policy
+PASS animation.setAttribute(onrepeat, "unsafe_handler()") calls default policy
+PASS animation.setAttributeNS(onrepeat, "unsafe_handler()") calls default policy
 PASS DIV.setAttribute("onafterprint", "unsafe_handler()") calls default policy
 PASS DIV.setAttribute("onwaitingforkey", "unsafe_handler()") calls default policy
-FAIL DIV.setAttribute("onbegin", "unsafe_handler()") calls default policy assert_equals: expected (string) "Element onbegin" but got (undefined) undefined
+PASS DIV.setAttribute("onbegin", "unsafe_handler()") calls default policy
 FAIL DIV.setAttribute("onreadystatechange", "unsafe_handler()") does not call default policy assert_equals: expected (undefined) undefined but got (string) "Element onreadystatechange"
 FAIL DIV.setAttribute("onvisibilitychange", "unsafe_handler()") does not call default policy assert_equals: expected (undefined) undefined but got (string) "Element onvisibilitychange"
 FAIL DIV.setAttribute("ondevicemotion", "unsafe_handler()") does not call default policy assert_equals: expected (undefined) undefined but got (string) "Element ondevicemotion"

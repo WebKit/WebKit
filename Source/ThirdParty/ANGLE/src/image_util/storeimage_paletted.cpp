@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 // storeimage_paletted.cpp: Encodes GL_PALETTE_* textures.
 
 #include <unordered_map>

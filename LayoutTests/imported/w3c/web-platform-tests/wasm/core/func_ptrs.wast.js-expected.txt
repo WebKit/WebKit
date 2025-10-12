@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: 83
 
 PASS #1 Reinitialize the default imports
 PASS #2 Test that WebAssembly compilation fails

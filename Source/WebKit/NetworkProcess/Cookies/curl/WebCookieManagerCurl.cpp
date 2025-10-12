@@ -52,7 +52,7 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(PAL::SessionID sessionI
         break;
     }
 
-    if (auto* storageSession = protectedProcess()->storageSession(sessionID))
+    if (CheckedPtr storageSession = protectedProcess()->storageSession(sessionID))
         storageSession->setCookieAcceptPolicy(curlPolicy);
 
     completionHandler();

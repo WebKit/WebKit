@@ -28,7 +28,6 @@
 
 #include "BackgroundFetchInformation.h"
 #include "BackgroundFetchRegistration.h"
-#include "DocumentInlines.h"
 #include "ExceptionData.h"
 #include "MessageEvent.h"
 #include "ResourceMonitor.h"
@@ -93,7 +92,7 @@ bool SWClientConnection::postTaskForJob(ServiceWorkerJobIdentifier jobIdentifier
     }
     auto isPosted = dispatchToContextThreadIfNecessary(iterator->value, [jobIdentifier, task = WTFMove(task)] (ScriptExecutionContext& context) mutable {
         if (RefPtr container = context.serviceWorkerContainer()) {
-            if (auto* job = container->job(jobIdentifier))
+            if (RefPtr job = container->job(jobIdentifier))
                 task(*job);
         }
     });
@@ -325,7 +324,7 @@ void SWClientConnection::registerServiceWorkerClients()
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void SWClientConnection::reportNetworkUsageToWorkerClient(ScriptExecutionContextIdentifier destinationContextIdentifier, size_t bytesTransferredOverNetworkDelta)
+void SWClientConnection::reportNetworkUsageToWorkerClient(ScriptExecutionContextIdentifier destinationContextIdentifier, uint64_t bytesTransferredOverNetworkDelta)
 {
     ASSERT(isMainThread());
 

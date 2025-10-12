@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "RTCDataChannelIdentifier.h"
-#include "ScriptExecutionContextIdentifier.h"
+#include <WebCore/RTCDataChannelIdentifier.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 

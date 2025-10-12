@@ -33,18 +33,15 @@
 #include "CoreIPCAuditToken.h"
 #endif
 
+#include "GPUProcessMediaCodecCapabilities.h"
+
 namespace WebKit {
 
 struct GPUProcessConnectionInfo {
 #if HAVE(AUDIT_TOKEN)
-    std::optional<CoreIPCAuditToken> auditToken;
+    std::optional<CoreIPCAuditToken> auditToken { };
 #endif
-#if ENABLE(VP9)
-    bool hasVP9HardwareDecoder { false };
-#endif
-#if ENABLE(AV1)
-    bool hasAV1HardwareDecoder { false };
-#endif
+    GPUProcessMediaCodecCapabilities mediaCodecCapabilities;
 };
 
 } // namespace WebKit

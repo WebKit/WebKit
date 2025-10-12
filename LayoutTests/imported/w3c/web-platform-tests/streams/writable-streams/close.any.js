@@ -1,4 +1,4 @@
-// META: global=window,worker,jsshell
+// META: global=window,worker,shadowrealm
 // META: script=../resources/test-utils.js
 // META: script=../resources/recording-streams.js
 'use strict';
@@ -468,3 +468,14 @@ promise_test(t => {
 
   return promise_rejects_js(t, TypeError, ws.close(), 'close should reject');
 }, 'close() on a stream with a pending close should reject');
+
+// See https://github.com/whatwg/streams/issues/1341.
+promise_test(async t => {
+  const ws = new WritableStream();
+  const writer = ws.getWriter();
+
+  await writer.write(1);
+  await writer.close();
+
+  return promise_rejects_js(t, TypeError, writer.write(2), 'write should reject');
+}, 'write() on a closed stream should reject');

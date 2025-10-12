@@ -9,11 +9,23 @@
  */
 #include "net/dcsctp/tx/stream_scheduler.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <functional>
+#include <map>
+#include <memory>
+#include <optional>
 #include <vector>
 
+#include "api/units/timestamp.h"
+#include "net/dcsctp/common/internal_types.h"
+#include "net/dcsctp/packet/chunk/idata_chunk.h"
+#include "net/dcsctp/packet/data.h"
 #include "net/dcsctp/packet/sctp_packet.h"
 #include "net/dcsctp/public/types.h"
+#include "net/dcsctp/tx/send_queue.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace {
@@ -45,7 +57,8 @@ CreateChunk(OutgoingMessageId message_id,
             StreamID sid,
             MID mid,
             size_t payload_size = kPayloadSize) {
-  return [sid, mid, payload_size, message_id](Timestamp now, size_t max_size) {
+  return [sid, mid, payload_size, message_id](Timestamp /* now */,
+                                              size_t /* max_size */) {
     return SendQueue::DataToSend(
         message_id,
         Data(sid, SSN(0), mid, FSN(0), PPID(42),

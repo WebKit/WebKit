@@ -2,17 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-generators-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Returning non-object from @@iterator should throw
+info: bugzilla.mozilla.org/show_bug.cgi?id=1021835
 esid: pending
 ---*/
-var BUGNUMBER = 1021835;
-var summary = "Returning non-object from @@iterator should throw";
-
-print(BUGNUMBER + ": " + summary);
 
 let primitives = [
     1,
@@ -29,12 +23,11 @@ for (let primitive of primitives) {
             return primitive;
         }
     };
-    assertThrowsInstanceOf(() => {
+    assert.throws(TypeError, () => {
         function* g() {
             yield* obj;
         }
         for (let x of g()) {
         }
-    }, TypeError);
+    });
 }
-

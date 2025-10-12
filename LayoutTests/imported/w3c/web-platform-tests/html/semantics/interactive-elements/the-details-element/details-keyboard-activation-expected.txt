@@ -1,0 +1,6 @@
+Activate me with the Space key
+Summary
+
+
+PASS Details activation with space bar
+

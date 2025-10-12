@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-intercept-handler-modifies.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-push.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-reject.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-reload-no-scroll-anchoring.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-reload.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-replace.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-timing.html
@@ -27,9 +28,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-immediate-scroll.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-after-dispatch.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-after-resolve.html
-/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-before-after-transition-commit.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-fragment-does-not-exist.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-in-precommit-handler.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-push.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-reload-no-scroll-anchoring.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-reload.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-repeated.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-replace.html

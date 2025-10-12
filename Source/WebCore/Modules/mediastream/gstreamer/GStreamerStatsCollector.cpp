@@ -23,6 +23,7 @@
 #if ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)
 
 #include "GStreamerCommon.h"
+#include "GStreamerWebRTCUtils.h"
 #include "JSDOMMapLike.h"
 #include "JSRTCStatsReport.h"
 
@@ -187,9 +188,34 @@ RTCStatsReport::TransportStats::TransportStats(const GstStructure* structure)
     : Stats(Type::Transport, structure)
     , selectedCandidatePairId(gstStructureGetString(structure, "selected-candidate-pair-id"_s).toString())
 {
-    // FIXME: This field is required, GstWebRTC doesn't provide it, so hard-code a value here.
-    dtlsState = RTCDtlsTransportState::Connected;
+    // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/9e38ee7526ecbb12320d1aef29a0c74b815eb4ef
+    if (gst_structure_has_field_typed(structure, "dtls-state", GST_TYPE_WEBRTC_DTLS_TRANSPORT_STATE)) {
+        GstWebRTCDTLSTransportState state;
+        gst_structure_get(structure, "dtls-state", GST_TYPE_WEBRTC_DTLS_TRANSPORT_STATE, &state, nullptr);
+        dtlsState = toRTCDtlsTransportState(state);
+    } else {
+        // Our GStreamer version is likely too old, but this field being required, hard-code it to Connected.
+        dtlsState = RTCDtlsTransportState::Connected;
+    }
 
+    // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/9e38ee7526ecbb12320d1aef29a0c74b815eb4ef
+#if GST_CHECK_VERSION(1, 27, 0)
+    if (gst_structure_has_field_typed(structure, "dtls-role", GST_TYPE_WEBRTC_DTLS_ROLE)) {
+        GstWebRTCDTLSRole role;
+        gst_structure_get(structure, "dtls-role", GST_TYPE_WEBRTC_DTLS_ROLE, &role, nullptr);
+        switch (role) {
+        case GST_WEBRTC_DTLS_ROLE_CLIENT:
+            dtlsRole = DtlsRole::Client;
+            break;
+        case GST_WEBRTC_DTLS_ROLE_SERVER:
+            dtlsRole = DtlsRole::Server;
+            break;
+        case GST_WEBRTC_DTLS_ROLE_UNKNOWN:
+            dtlsRole = DtlsRole::Unknown;
+            break;
+        }
+    }
+#endif
     // FIXME
     // stats.bytesSent =
     // stats.bytesReceived =
@@ -201,7 +227,7 @@ RTCStatsReport::TransportStats::TransportStats(const GstStructure* structure)
     // stats.srtpCipher =
 }
 
-static inline RTCIceCandidateType iceCandidateType(StringView type)
+static inline RTCIceCandidateType iceCandidateType(CStringView type)
 {
     if (type == "host"_s)
         return RTCIceCandidateType::Host;

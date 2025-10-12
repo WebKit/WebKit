@@ -70,7 +70,7 @@ void WebGLMultiDraw::multiDrawArraysWEBGL(GCGLenum mode, Int32List&& firstsList,
     if (!context->validateVertexArrayObject("multiDrawArraysWEBGL"_s))
         return;
 
-    if (context->m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context.get(), *context->m_currentProgram))
+    if (RefPtr currentProgram = context->m_currentProgram; currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context.get(), *currentProgram))
         return;
 
     context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
@@ -100,7 +100,7 @@ void WebGLMultiDraw::multiDrawArraysInstancedWEBGL(GCGLenum mode, Int32List&& fi
     if (!context->validateVertexArrayObject("multiDrawArraysInstancedWEBGL"_s))
         return;
 
-    if (context->m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context.get(), *context->m_currentProgram))
+    if (RefPtr currentProgram = context->m_currentProgram; currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context.get(), *currentProgram))
         return;
 
     context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
@@ -129,7 +129,7 @@ void WebGLMultiDraw::multiDrawElementsWEBGL(GCGLenum mode, Int32List&& countsLis
     if (!context->validateVertexArrayObject("multiDrawElementsWEBGL"_s))
         return;
 
-    if (context->m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context.get(), *context->m_currentProgram))
+    if (RefPtr currentProgram = context->m_currentProgram; currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context.get(), *currentProgram))
         return;
 
     context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
@@ -159,7 +159,7 @@ void WebGLMultiDraw::multiDrawElementsInstancedWEBGL(GCGLenum mode, Int32List&& 
     if (!context->validateVertexArrayObject("multiDrawElementsInstancedWEBGL"_s))
         return;
 
-    if (context->m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context.get(), *context->m_currentProgram))
+    if (RefPtr currentProgram = context->m_currentProgram; currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context.get(), *currentProgram))
         return;
 
     context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);

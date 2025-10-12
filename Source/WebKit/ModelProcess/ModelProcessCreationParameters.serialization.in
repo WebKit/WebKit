@@ -29,6 +29,7 @@ headers: "ModelProcessCreationParameters.h" "AuxiliaryProcessCreationParameters.
     ProcessID parentPID;
     String applicationVisibleName;
     bool restrictiveRenderingMode;
+    std::optional<int> debugEntityMemoryLimit;
 };
 
 #endif

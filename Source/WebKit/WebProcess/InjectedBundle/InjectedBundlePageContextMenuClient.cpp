@@ -71,7 +71,7 @@ bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage&
     
     size_t size = array->size();
     for (size_t i = 0; i < size; ++i) {
-        WebContextMenuItem* item = array->at<WebContextMenuItem>(i);
+        RefPtr item = array->at<WebContextMenuItem>(i);
         if (!item) {
             LOG(ContextMenu, "New menu entry at index %i is not a WebContextMenuItem", (int)i);
             continue;

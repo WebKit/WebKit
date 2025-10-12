@@ -22,6 +22,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/color.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/hr.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/setting-overflow-visible.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/size-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/size-with-color-or-noshade-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/size-with-color-or-noshade-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/size-with-color-or-noshade.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/size.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/width-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/width-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/width.html

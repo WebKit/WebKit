@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: Focus order mismatch at step 2/11 expected Element node <button id="within1">button</button> but got Element node <dialog tabindex="0" id="dialog2" open="">
   <button id="...
 before button after 1 button after 2 button after 3 button  after 4
 

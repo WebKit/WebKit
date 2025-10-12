@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CellContainer.h"
-#include "WeakImpl.h"
+#include <JavaScriptCore/CellContainer.h>
+#include <JavaScriptCore/WeakImpl.h>
 #include <wtf/DebugHeap.h>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/StdLibExtras.h>

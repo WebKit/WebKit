@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Operands.h"
+#include <JavaScriptCore/Operands.h>
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {

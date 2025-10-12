@@ -34,8 +34,8 @@ using ::testing::ValuesIn;
 namespace {
 const int kNumIterations = 10000;
 
-typedef uint64_t (*SSI16Func)(const int16_t *src, int stride, int size);
-typedef std::tuple<SSI16Func, SSI16Func> SumSquaresParam;
+using SSI16Func = uint64_t (*)(const int16_t *src, int stride, int size);
+using SumSquaresParam = std::tuple<SSI16Func, SSI16Func>;
 
 class SumSquaresTest : public ::testing::TestWithParam<SumSquaresParam> {
  public:
@@ -140,8 +140,8 @@ INSTANTIATE_TEST_SUITE_P(
                                  &vpx_sum_squares_2d_i16_msa)));
 #endif  // HAVE_MSA
 
-typedef int64_t (*SSEFunc)(const uint8_t *a, int a_stride, const uint8_t *b,
-                           int b_stride, int width, int height);
+using SSEFunc = int64_t (*)(const uint8_t *a, int a_stride, const uint8_t *b,
+                            int b_stride, int width, int height);
 
 struct TestSSEFuncs {
   TestSSEFuncs(SSEFunc ref = nullptr, SSEFunc tst = nullptr, int depth = 0)
@@ -151,7 +151,7 @@ struct TestSSEFuncs {
   int bit_depth;
 };
 
-typedef std::tuple<TestSSEFuncs, int> SSETestParam;
+using SSETestParam = std::tuple<TestSSEFuncs, int>;
 
 class SSETest : public ::testing::TestWithParam<SSETestParam> {
  public:

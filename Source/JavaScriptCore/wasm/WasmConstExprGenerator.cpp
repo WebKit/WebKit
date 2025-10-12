@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2023 Igalia S.L. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,7 +60,7 @@ public:
             Invalid,
             Numeric,
             Vector,
-            Object,
+            Ref,
         };
 
         ConstExprValue(InvalidTag)
@@ -82,9 +83,9 @@ public:
             , m_vector(value)
         { }
 
-        ConstExprValue(Strong<JSObject> object)
-            : m_type(ConstExprValueType::Object)
-            , m_object(object)
+        ConstExprValue(JSValue value)
+            : m_type(ConstExprValueType::Ref)
+            , m_bits(JSValue::encode(value))
         { }
 
         bool isInvalid()
@@ -94,10 +95,8 @@ public:
 
         uint64_t getValue()
         {
-            if (m_type == ConstExprValueType::Numeric)
-                return m_bits;
-            ASSERT(m_type == ConstExprValueType::Object);
-            return JSValue::encode(JSValue(m_object.get()));
+            ASSERT(m_type == ConstExprValueType::Numeric || m_type == ConstExprValueType::Ref);
+            return m_bits;
         }
 
         v128_t getVector()
@@ -135,12 +134,10 @@ public:
             uint64_t m_bits;
             v128_t m_vector;
         };
-        Strong<JSObject> m_object;
     };
 
     using ExpressionType = ConstExprValue;
     using ResultList = Vector<ExpressionType, 8>;
-    using ArgumentList = Vector<ExpressionType, 8>;
 
     // Structured blocks should not appear in the constant expression except
     // for a dummy top-level block from parseBody() that cannot be jumped to.
@@ -172,6 +169,7 @@ public:
     using Stack = FunctionParser<ConstExprGenerator>::Stack;
     using TypedExpression = FunctionParser<ConstExprGenerator>::TypedExpression;
     using CatchHandler = FunctionParser<ConstExprGenerator>::CatchHandler;
+    using ArgumentList = FunctionParser<ConstExprGenerator>::ArgumentList;
 
     enum class Mode : uint8_t {
         Validate,
@@ -179,9 +177,9 @@ public:
     };
 
     static constexpr bool shouldFuseBranchCompare = false;
-    static constexpr bool tierSupportsSIMD = true;
+    static constexpr bool tierSupportsSIMD() { return true; }
     static constexpr bool validateFunctionBodySize = false;
-    static ExpressionType emptyExpression() { return 0; };
+    static ExpressionType emptyExpression() { return { }; };
 
 protected:
     template <typename ...Args>
@@ -231,14 +229,14 @@ public:
         case TypeKind::Structref:
         case TypeKind::Arrayref:
         case TypeKind::Funcref:
-        case TypeKind::Exn:
+        case TypeKind::Exnref:
         case TypeKind::Externref:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
-        case TypeKind::Nullexn:
-        case TypeKind::Nullref:
-        case TypeKind::Nullfuncref:
-        case TypeKind::Nullexternref:
+        case TypeKind::Noexnref:
+        case TypeKind::Noneref:
+        case TypeKind::Nofuncref:
+        case TypeKind::Noexternref:
             return ConstExprValue(JSValue::encode(jsNull()));
         default:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unimplemented constant type.\n");
@@ -267,8 +265,12 @@ public:
         WASM_COMPILE_FAIL_IF(index >= m_info.globals.size(), "get_global's index ", index, " exceeds the number of globals ", m_info.globals.size());
         WASM_COMPILE_FAIL_IF(m_info.globals[index].mutability != Mutability::Immutable, "get_global import kind index ", index, " is mutable ");
 
-        if (m_mode == Mode::Evaluate)
-            result = ConstExprValue(m_instance->loadI64Global(index));
+        if (m_mode == Mode::Evaluate) {
+            if (m_info.globals[index].type.kind == TypeKind::V128)
+                result = ConstExprValue(m_instance->loadV128Global(index));
+            else
+                result = ConstExprValue(m_instance->loadI64Global(index));
+        }
 
         return { };
     }
@@ -297,7 +299,7 @@ public:
         if (m_mode == Mode::Evaluate) {
             JSValue i31 = JSValue((((static_cast<int32_t>(value.getValue()) & 0x7fffffff) << 1) >> 1));
             ASSERT(i31.isInt32());
-            result = ConstExprValue(JSValue::encode(i31));
+            result = ConstExprValue(i31);
         }
         return { };
     }
@@ -305,41 +307,41 @@ public:
     PartialResult WARN_UNUSED_RETURN addI31GetS(ExpressionType, ExpressionType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType, ExpressionType&) CONST_EXPR_STUB
 
-    ExpressionType createNewArray(uint32_t typeIndex, uint32_t size, ExpressionType value)
+    ExpressionType createNewArray(WebAssemblyGCStructure* structure, uint32_t size, ExpressionType value)
     {
-        VM& vm = m_instance->vm();
         JSValue result;
         if (value.type() == ConstExprValue::Vector)
-            result = arrayNew(m_instance, typeIndex, size, value.getVector());
+            result = arrayNew(m_instance, structure, size, value.getVector());
         else
-            result = arrayNew(m_instance, typeIndex, size, value.getValue());
+            result = arrayNew(m_instance, structure, size, value.getValue());
         if (result.isNull()) [[unlikely]]
             return ConstExprValue(InvalidConstExpr);
-        return ConstExprValue(Strong<JSObject>(vm, asObject(result)));
+        m_keepAlive.appendWithCrashOnOverflow(asObject(result));
+        return ConstExprValue(result);
     }
 
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result)
     {
         if (m_mode == Mode::Evaluate) {
-            result = createNewArray(typeIndex, static_cast<uint32_t>(size.getValue()), value);
+            auto* structure = m_instance->gcObjectStructure(typeIndex);
+            result = createNewArray(structure, static_cast<uint32_t>(size.getValue()), value);
             WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array"_s);
         }
-
         return { };
     }
 
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t typeIndex, ExpressionType size, ExpressionType& result)
     {
         if (m_mode == Mode::Evaluate) {
-            Ref<TypeDefinition> typeDef = m_info.typeSignatures[typeIndex];
-            const TypeDefinition& arraySignature = typeDef->expand();
-            auto elementType = arraySignature.as<ArrayType>()->elementType().type.unpacked();
-            ExpressionType initValue = { 0 };
+            auto* structure = m_instance->gcObjectStructure(typeIndex);
+            const Wasm::TypeDefinition& arraySignature = structure->typeDefinition();
+            auto elementType = arraySignature.as<Wasm::ArrayType>()->elementType().type.unpacked();
+            ExpressionType initValue { };
             if (isRefType(elementType))
                 initValue = { static_cast<uint64_t>(JSValue::encode(jsNull())) };
             if (elementType == Wasm::Types::V128)
                 initValue = { vectorAllZeros() };
-            result = createNewArray(typeIndex, static_cast<uint32_t>(size.getValue()), initValue);
+            result = createNewArray(structure, static_cast<uint32_t>(size.getValue()), initValue);
             WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array"_s);
         }
 
@@ -349,19 +351,20 @@ public:
     PartialResult WARN_UNUSED_RETURN addArrayNewFixed(uint32_t typeIndex, ArgumentList& args, ExpressionType& result)
     {
         if (m_mode == Mode::Evaluate) {
-            auto* arrayType = m_info.typeSignatures[typeIndex]->expand().as<ArrayType>();
-            if (arrayType->elementType().type.unpacked().isV128()) {
-                result = createNewArray(typeIndex, args.size(), { vectorAllZeros() });
+            auto* structure = m_instance->gcObjectStructure(typeIndex);
+            const Wasm::TypeDefinition& arraySignature = structure->typeDefinition();
+            if (arraySignature.as<Wasm::ArrayType>()->elementType().type.unpacked().isV128()) {
+                result = createNewArray(structure, args.size(), { vectorAllZeros() });
                 WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array"_s);
                 JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(JSValue::decode(result.getValue()));
                 for (size_t i = 0; i < args.size(); i++)
-                    arrayObject->set(arrayObject->vm(), i, args[i].getVector());
+                    arrayObject->set(arrayObject->vm(), i, args[i].value().getVector());
             } else {
-                result = createNewArray(typeIndex, args.size(), { });
+                result = createNewArray(structure, args.size(), { });
                 WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array"_s);
                 JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(JSValue::decode(result.getValue()));
                 for (size_t i = 0; i < args.size(); i++)
-                    arrayObject->set(arrayObject->vm(), i, args[i].getValue());
+                    arrayObject->set(arrayObject->vm(), i, args[i].value().getValue());
             }
         }
 
@@ -380,13 +383,13 @@ public:
 
     ExpressionType createNewStruct(uint32_t typeIndex)
     {
-        VM& vm = m_instance->vm();
-        EncodedJSValue obj = structNew(m_instance, typeIndex, static_cast<bool>(UseDefaultValue::Yes), nullptr);
-        if (!obj) [[unlikely]]
+        auto* structure = m_instance->gcObjectStructure(typeIndex);
+        JSValue result = structNew(m_instance, structure, static_cast<bool>(UseDefaultValue::Yes), nullptr);
+        if (result.isNull()) [[unlikely]]
             return ConstExprValue(InvalidConstExpr);
-        return ConstExprValue(Strong<JSObject>(vm, JSValue::decode(obj).getObject()));
+        m_keepAlive.appendWithCrashOnOverflow(asObject(result));
+        return ConstExprValue(result);
     }
-
 
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t typeIndex, ExpressionType& result)
     {
@@ -405,10 +408,10 @@ public:
             WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new struct"_s);
             JSWebAssemblyStruct* structObject = jsCast<JSWebAssemblyStruct*>(JSValue::decode(result.getValue()));
             for (size_t i = 0; i < args.size(); i++) {
-                if (args[i].type() == ConstExprValue::Vector)
-                    structObject->set(i, args[i].getVector());
+                if (args[i].value().type() == ConstExprValue::Vector)
+                    structObject->set(i, args[i].value().getVector());
                 else
-                    structObject->set(i, args[i].getValue());
+                    structObject->set(i, args[i].value().getValue());
             }
         }
 
@@ -614,10 +617,11 @@ public:
     PartialResult WARN_UNUSED_RETURN addRefFunc(FunctionSpaceIndex index, ExpressionType& result)
     {
         if (m_mode == Mode::Evaluate) {
-            VM& vm = m_instance->vm();
             JSValue wrapper = m_instance->getFunctionWrapper(index);
             ASSERT(!wrapper.isNull());
-            result = ConstExprValue(Strong<JSObject>(vm, wrapper.getObject()));
+            ASSERT(wrapper.isObject());
+            m_keepAlive.appendWithCrashOnOverflow(asObject(wrapper));
+            result = ConstExprValue(wrapper);
         } else
             m_declaredFunctions.append(index);
 
@@ -674,9 +678,9 @@ public:
         return { };
     }
 
-    PartialResult WARN_UNUSED_RETURN addCall(unsigned, const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call) CONST_EXPR_STUB
-    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned, const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call) CONST_EXPR_STUB
-    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addCall(unsigned, FunctionSpaceIndex, const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned, unsigned, const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addCallRef(unsigned, const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addUnreachable() CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addCrash() CONST_EXPR_STUB
     bool usesSIMD() { return false; }
@@ -729,6 +733,7 @@ private:
     JSWebAssemblyInstance* m_instance { nullptr };
     bool m_shouldError = false;
     Vector<FunctionSpaceIndex> m_declaredFunctions;
+    MarkedArgumentBufferWithSize<16> m_keepAlive;
 };
 
 Expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> source, size_t offsetInSource, size_t& offset, ModuleInformation& info, Type expectedType)

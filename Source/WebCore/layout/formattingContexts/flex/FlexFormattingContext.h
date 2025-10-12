@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "FlexFormattingConstraints.h"
 #include "FlexFormattingUtils.h"
-#include "FlexLayout.h"
-#include "FlexRect.h"
-#include "LayoutIntegrationUtils.h"
+#include <WebCore/FlexFormattingConstraints.h>
+#include <WebCore/FlexLayout.h>
+#include <WebCore/FlexRect.h>
+#include <WebCore/LayoutIntegrationUtils.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -46,6 +46,7 @@ public:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints();
 
     const ElementBox& root() const { return m_flexBox; }
+    CheckedRef<const ElementBox> checkedRoot() const { return m_flexBox; }
     const FlexFormattingUtils& formattingUtils() const { return m_flexFormattingUtils; }
 
     const BoxGeometry& geometryForFlexItem(const Box&) const;
@@ -61,8 +62,8 @@ private:
     std::optional<LayoutUnit> computedAutoMarginValueForFlexItems(const ConstraintsForFlexContent&);
 
 private:
-    const ElementBox& m_flexBox;
-    LayoutState& m_globalLayoutState;
+    const CheckedRef<const ElementBox> m_flexBox;
+    const CheckedRef<LayoutState> m_globalLayoutState;
     const FlexFormattingUtils m_flexFormattingUtils;
     const IntegrationUtils m_integrationUtils;
 };

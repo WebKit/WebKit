@@ -18,11 +18,12 @@
 #include <vector>
 
 #include "api/sequence_checker.h"
+#include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/include/recovered_packet_receiver.h"
-#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/system/no_unique_address.h"
+#include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {

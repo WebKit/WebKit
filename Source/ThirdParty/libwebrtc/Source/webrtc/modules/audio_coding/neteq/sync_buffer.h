@@ -16,14 +16,14 @@
 
 #include <vector>
 
-#include "api/audio/audio_frame.h"
+#include "api/audio/audio_view.h"
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "modules/audio_coding/neteq/audio_vector.h"
 #include "rtc_base/buffer.h"
 
 namespace webrtc {
 
-class SyncBuffer : public AudioMultiVector {
+class SyncBuffer final : public AudioMultiVector {
  public:
   SyncBuffer(size_t channels, size_t length)
       : AudioMultiVector(channels, length),
@@ -33,6 +33,8 @@ class SyncBuffer : public AudioMultiVector {
 
   SyncBuffer(const SyncBuffer&) = delete;
   SyncBuffer& operator=(const SyncBuffer&) = delete;
+
+  ~SyncBuffer() override = default;
 
   // Returns the number of samples yet to play out from the buffer.
   size_t FutureLength() const;
@@ -44,7 +46,7 @@ class SyncBuffer : public AudioMultiVector {
   void PushBack(const AudioMultiVector& append_this) override;
 
   // Like PushBack, but reads the samples channel-interleaved from the input.
-  void PushBackInterleaved(const rtc::BufferT<int16_t>& append_this);
+  void PushBackInterleaved(const BufferT<int16_t>& append_this);
 
   // Adds `length` zeros to the beginning of each channel. Removes
   // the same number of samples from the end of the SyncBuffer, to
@@ -57,7 +59,7 @@ class SyncBuffer : public AudioMultiVector {
   // Inserts `length` zeros into each channel at index `position`. The size of
   // the SyncBuffer is kept constant, which means that the last `length`
   // elements in each channel will be purged.
-  virtual void InsertZerosAtIndex(size_t length, size_t position);
+  void InsertZerosAtIndex(size_t length, size_t position);
 
   // Overwrites each channel in this SyncBuffer with values taken from
   // `insert_this`. The values are taken from the beginning of `insert_this` and
@@ -66,20 +68,25 @@ class SyncBuffer : public AudioMultiVector {
   // and `position` are selected such that the new data would extend beyond the
   // end of the current SyncBuffer, the buffer is not extended.
   // The `next_index_` is not updated.
-  virtual void ReplaceAtIndex(const AudioMultiVector& insert_this,
-                              size_t length,
-                              size_t position);
+  void ReplaceAtIndex(const AudioMultiVector& insert_this,
+                      size_t length,
+                      size_t position);
 
   // Same as the above method, but where all of `insert_this` is written (with
   // the same constraints as above, that the SyncBuffer is not extended).
-  virtual void ReplaceAtIndex(const AudioMultiVector& insert_this,
-                              size_t position);
+  void ReplaceAtIndex(const AudioMultiVector& insert_this, size_t position);
 
-  // Reads `requested_len` samples from each channel and writes them interleaved
-  // into `output`. The `next_index_` is updated to point to the sample to read
-  // next time. The AudioFrame `output` is first reset, and the `data_`,
-  // `num_channels_`, and `samples_per_channel_` fields are updated.
-  void GetNextAudioInterleaved(size_t requested_len, AudioFrame* output);
+  // If enough data is available, reads `audio.samples_per_channel()` samples
+  // from each channel into `audio` and return true.
+  // If not enough data is available, the function returns false and no data
+  // will have been read.
+  //
+  // When successful, the internal `next_index_` position is updated to point
+  // to the samples to read next time around.
+  //
+  // Note: `audio` must be configured to have the same number of channels as
+  // `Channels()` and expected to meet the size limitations of AudioFrame.
+  bool GetNextAudioInterleaved(InterleavedView<int16_t> audio);
 
   // Adds `increment` to `end_timestamp_`.
   void IncreaseEndTimestamp(uint32_t increment);

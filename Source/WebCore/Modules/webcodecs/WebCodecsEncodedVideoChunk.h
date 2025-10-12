@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,8 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include "BufferSource.h"
-#include "WebCodecsEncodedVideoChunkData.h"
+#include <WebCore/BufferSource.h>
+#include <WebCore/WebCodecsEncodedVideoChunkData.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -77,7 +77,7 @@ private:
     explicit WebCodecsEncodedVideoChunk(Init&&);
     explicit WebCodecsEncodedVideoChunk(Ref<WebCodecsEncodedVideoChunkStorage>&&);
 
-    Ref<WebCodecsEncodedVideoChunkStorage> m_storage;
+    const Ref<WebCodecsEncodedVideoChunkStorage> m_storage;
 };
 
 inline WebCodecsEncodedVideoChunkStorage::WebCodecsEncodedVideoChunkStorage(WebCodecsEncodedVideoChunkData&& data)

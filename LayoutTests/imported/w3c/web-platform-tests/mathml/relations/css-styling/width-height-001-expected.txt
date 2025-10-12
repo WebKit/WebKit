@@ -30,7 +30,7 @@ PASS width property on mn (preferred width)
 PASS width and height properties on mo
 PASS inline-size and block-size properties on mo
 PASS width and height properties on mo (content overflowing)
-FAIL width property on mo (preferred width) assert_approx_equals: expected 300 +/- 1 but got 308.875
+PASS width property on mo (preferred width)
 PASS width and height properties on mover
 PASS inline-size and block-size properties on mover
 PASS width and height properties on mover (content overflowing)

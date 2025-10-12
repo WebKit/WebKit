@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+<!DOCTYPE HTML><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
 <html>
 <body>
 <script src="../../resources/gc.js"></script>
@@ -10,11 +10,18 @@ promise_test(async () => {
     if (!window.internals)
         return;
 
+    let promise = new Promise((resolve, reject) => {
+        internals.setConsoleMessageListener(resolve);
+        setTimeout(() => reject("internals.setConsoleMessageListener timed out"), 5000);
+    });
+
     for (let counter = 0; counter < 10; ++counter) {
         await navigator.mediaDevices.getUserMedia({audio:true, video : true});
         gc();
     }
     assert_less_than(internals.audioCaptureSourceCount(), 10); 
+
+    assert_equals(await promise, "A capture MediaStreamTrack was destroyed without having been stopped explicitly");
 }, "Media streams can be gced if they are not expected to fire events - 1");
 
 promise_test(async () => {

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "AudioStreamDescription.h"
 #include <CoreAudio/CoreAudioTypes.h>
+#include <WebCore/AudioStreamDescription.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

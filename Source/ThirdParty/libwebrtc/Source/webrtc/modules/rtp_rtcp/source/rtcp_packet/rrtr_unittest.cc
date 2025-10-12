@@ -10,6 +10,11 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/rrtr.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+
+#include "system_wrappers/include/ntp_time.h"
 #include "test/gtest.h"
 
 using webrtc::rtcp::Rrtr;
@@ -17,11 +22,11 @@ using webrtc::rtcp::Rrtr;
 namespace webrtc {
 namespace {
 
-const uint32_t kNtpSec = 0x12345678;
-const uint32_t kNtpFrac = 0x23456789;
-const uint8_t kBlock[] = {0x04, 0x00, 0x00, 0x02, 0x12, 0x34,
-                          0x56, 0x78, 0x23, 0x45, 0x67, 0x89};
-const size_t kBlockSizeBytes = sizeof(kBlock);
+constexpr uint32_t kNtpSec = 0x12345678;
+constexpr uint32_t kNtpFrac = 0x23456789;
+constexpr uint8_t kBlock[] = {0x04, 0x00, 0x00, 0x02, 0x12, 0x34,
+                              0x56, 0x78, 0x23, 0x45, 0x67, 0x89};
+constexpr size_t kBlockSizeBytes = sizeof(kBlock);
 static_assert(
     kBlockSizeBytes == Rrtr::kLength,
     "Size of manually created Rrtr block should match class constant");

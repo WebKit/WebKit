@@ -1,9 +1,9 @@
 // GENERATED CONTENT - DO NOT EDIT
 // Content was automatically extracted by Reffy into webref
 // (https://github.com/w3c/webref)
-// Source: CSSOM View Module (https://drafts.csswg.org/cssom-view/)
+// Source: CSSOM View Module (https://drafts.csswg.org/cssom-view-1/)
 
-enum ScrollBehavior { "auto", "smooth" };
+enum ScrollBehavior { "auto", "instant", "smooth" };
 
 dictionary ScrollOptions {
     ScrollBehavior behavior = "auto";
@@ -16,6 +16,7 @@ dictionary ScrollToOptions : ScrollOptions {
 partial interface Window {
     [NewObject] MediaQueryList matchMedia(CSSOMString query);
     [SameObject, Replaceable] readonly attribute Screen screen;
+    [SameObject, Replaceable] readonly attribute VisualViewport? visualViewport;
 
     // browsing context
     undefined moveTo(long x, long y);
@@ -83,8 +84,12 @@ interface Screen {
 partial interface Document {
   Element? elementFromPoint(double x, double y);
   sequence<Element> elementsFromPoint(double x, double y);
-  CaretPosition? caretPositionFromPoint(double x, double y);
+  CaretPosition? caretPositionFromPoint(double x, double y, optional CaretPositionFromPointOptions options = {});
   readonly attribute Element? scrollingElement;
+};
+
+dictionary CaretPositionFromPointOptions {
+  sequence<ShadowRoot> shadowRoots = [];
 };
 
 [Exposed=Window]
@@ -98,11 +103,25 @@ enum ScrollLogicalPosition { "start", "center", "end", "nearest" };
 dictionary ScrollIntoViewOptions : ScrollOptions {
   ScrollLogicalPosition block = "start";
   ScrollLogicalPosition inline = "nearest";
+  ScrollIntoViewContainer container = "all";
+};
+
+enum ScrollIntoViewContainer { "all", "nearest" };
+
+dictionary CheckVisibilityOptions {
+    boolean checkOpacity = false;
+    boolean checkVisibilityCSS = false;
+    boolean contentVisibilityAuto = false;
+    boolean opacityProperty = false;
+    boolean visibilityProperty = false;
 };
 
 partial interface Element {
   DOMRectList getClientRects();
   [NewObject] DOMRect getBoundingClientRect();
+
+  boolean checkVisibility(optional CheckVisibilityOptions options = {});
+
   undefined scrollIntoView(optional (boolean or ScrollIntoViewOptions) arg = {});
   undefined scroll(optional ScrollToOptions options = {});
   undefined scroll(unrestricted double x, unrestricted double y);
@@ -118,9 +137,11 @@ partial interface Element {
   readonly attribute long clientLeft;
   readonly attribute long clientWidth;
   readonly attribute long clientHeight;
+  readonly attribute double currentCSSZoom;
 };
 
 partial interface HTMLElement {
+  readonly attribute Element? scrollParent;
   readonly attribute Element? offsetParent;
   readonly attribute long offsetTop;
   readonly attribute long offsetLeft;
@@ -171,3 +192,21 @@ CSSPseudoElement includes GeometryUtils;
 Document includes GeometryUtils;
 
 typedef (Text or Element or CSSPseudoElement or Document) GeometryNode;
+
+[Exposed=Window]
+interface VisualViewport : EventTarget {
+  readonly attribute double offsetLeft;
+  readonly attribute double offsetTop;
+
+  readonly attribute double pageLeft;
+  readonly attribute double pageTop;
+
+  readonly attribute double width;
+  readonly attribute double height;
+
+  readonly attribute double scale;
+
+  attribute EventHandler onresize;
+  attribute EventHandler onscroll;
+  attribute EventHandler onscrollend;
+};

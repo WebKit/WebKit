@@ -52,7 +52,8 @@ int main(int argc, char** argv)
 
         if (*eventFD != -1) {
             uint64_t event = 1;
-            write(*eventFD, &event, sizeof(uint64_t));
+            ssize_t result = write(*eventFD, &event, sizeof(uint64_t));
+            RELEASE_ASSERT(result != -1);
             close(*eventFD);
         }
     }), &eventFD);

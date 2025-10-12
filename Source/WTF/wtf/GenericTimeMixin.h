@@ -31,7 +31,7 @@ namespace WTF {
 
 template<typename DerivedTime>
 class GenericTimeMixin {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(GenericTimeMixin);
 public:
     // Call this if you know for sure that the double represents the time according to the
     // same time source as DerivedTime. It must be in seconds.

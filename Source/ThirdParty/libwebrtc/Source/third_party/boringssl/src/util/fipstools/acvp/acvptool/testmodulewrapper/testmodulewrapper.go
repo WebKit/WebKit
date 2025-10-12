@@ -1,16 +1,16 @@
-// Copyright (c) 2021, Google Inc.
+// Copyright 2021 The BoringSSL Authors
 //
-// Permission to use, copy, modify, and/or distribute this software for any
-// purpose with or without fee is hereby granted, provided that the above
-// copyright notice and this permission notice appear in all copies.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-// WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-// SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-// OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-// CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 // testmodulewrapper is a modulewrapper binary that works with acvptool and
 // implements the primitives that BoringSSL's modulewrapper doesn't, so that
@@ -24,9 +24,12 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/ed25519"
+	"crypto/hkdf"
 	"crypto/hmac"
+	"crypto/pbkdf2"
 	"crypto/rand"
 	"crypto/sha256"
+	"crypto/sha3"
 	"crypto/sha512"
 	"encoding/binary"
 	"errors"
@@ -37,9 +40,6 @@ import (
 
 	"filippo.io/edwards25519"
 
-	"golang.org/x/crypto/hkdf"
-	"golang.org/x/crypto/pbkdf2"
-	"golang.org/x/crypto/sha3"
 	"golang.org/x/crypto/xts"
 )
 
@@ -64,12 +64,16 @@ var handlers = map[string]func([][]byte) error{
 	"EDDSA/keyVer":             eddsaKeyVer,
 	"EDDSA/sigGen":             eddsaSigGen,
 	"EDDSA/sigVer":             eddsaSigVer,
-	"SHAKE-128":                shakeAftVot(sha3.NewShake128),
-	"SHAKE-128/VOT":            shakeAftVot(sha3.NewShake128),
-	"SHAKE-128/MCT":            shakeMct(sha3.NewShake128),
-	"SHAKE-256":                shakeAftVot(sha3.NewShake256),
-	"SHAKE-256/VOT":            shakeAftVot(sha3.NewShake256),
-	"SHAKE-256/MCT":            shakeMct(sha3.NewShake256),
+	"SHAKE-128":                shakeAftVot(sha3.NewSHAKE128),
+	"SHAKE-128/VOT":            shakeAftVot(sha3.NewSHAKE128),
+	"SHAKE-128/MCT":            shakeMct(sha3.NewSHAKE128),
+	"SHAKE-256":                shakeAftVot(sha3.NewSHAKE256),
+	"SHAKE-256/VOT":            shakeAftVot(sha3.NewSHAKE256),
+	"SHAKE-256/MCT":            shakeMct(sha3.NewSHAKE256),
+	"cSHAKE-128":               cShakeAft(sha3.NewCSHAKE128),
+	"cSHAKE-128/MCT":           cShakeMct(sha3.NewCSHAKE128),
+	"cSHAKE-256":               cShakeAft(sha3.NewCSHAKE256),
+	"cSHAKE-256/MCT":           cShakeMct(sha3.NewCSHAKE256),
 }
 
 func flush(args [][]byte) error {
@@ -257,6 +261,34 @@ func getConfig(args [][]byte) error {
 			"increment": 8
 		}],
 		"revision": "1.0"
+	}, {
+		"algorithm": "cSHAKE-128",
+		"hexCustomization": false,
+		"outputLen": [{
+			"min": 16,
+			"max": 65536,
+			"increment": 8
+		}],
+		"msgLen": [{
+			"min": 0,
+			"max": 65536,
+			"increment": 8
+		}],
+		"revision": "1.0"
+	}, {
+		"algorithm": "cSHAKE-256",
+		"hexCustomization": false,
+		"outputLen": [{
+			"min": 16,
+			"max": 65536,
+			"increment": 8
+		}],
+		"msgLen": [{
+			"min": 0,
+			"max": 65536,
+			"increment": 8
+		}],
+		"revision": "1.0"
 	}
 ]`)); err != nil {
 		return err
@@ -396,9 +428,10 @@ func hkdfMAC(args [][]byte) error {
 
 	length := binary.LittleEndian.Uint32(lengthBytes)
 
-	mac := hkdf.New(sha256.New, key, salt, info)
-	ret := make([]byte, length)
-	mac.Read(ret)
+	ret, err := hkdf.Key(sha256.New, key, salt, string(info), int(length))
+	if err != nil {
+		return err
+	}
 
 	return reply(ret)
 }
@@ -583,13 +616,13 @@ func pbkdf(args [][]byte) error {
 	case "SHA2-512/256":
 		h = sha512.New512_256
 	case "SHA3-224":
-		h = sha3.New224
+		h = func() hash.Hash { return sha3.New224() }
 	case "SHA3-256":
-		h = sha3.New256
+		h = func() hash.Hash { return sha3.New256() }
 	case "SHA3-384":
-		h = sha3.New384
+		h = func() hash.Hash { return sha3.New384() }
 	case "SHA3-512":
-		h = sha3.New512
+		h = func() hash.Hash { return sha3.New512() }
 	default:
 		return fmt.Errorf("pbkdf unknown HMAC algorithm: %q", hmacName)
 	}
@@ -597,7 +630,10 @@ func pbkdf(args [][]byte) error {
 	salt, password := args[2], args[3]
 	iterationCount := binary.LittleEndian.Uint32(args[4])
 
-	derivedKey := pbkdf2.Key(password, salt, int(iterationCount), int(keyLen), h)
+	derivedKey, err := pbkdf2.Key(h, string(password), salt, int(iterationCount), int(keyLen))
+	if err != nil {
+		return err
+	}
 
 	return reply(derivedKey)
 }
@@ -699,7 +735,7 @@ func eddsaSigVer(args [][]byte) error {
 	return reply([]byte{1})
 }
 
-func shakeAftVot(digestFn func() sha3.ShakeHash) func([][]byte) error {
+func shakeAftVot(digestFn func() *sha3.SHAKE) func([][]byte) error {
 	return func(args [][]byte) error {
 		if len(args) != 2 {
 			return fmt.Errorf("shakeAftVot received %d args, wanted 2", len(args))
@@ -717,7 +753,7 @@ func shakeAftVot(digestFn func() sha3.ShakeHash) func([][]byte) error {
 	}
 }
 
-func shakeMct(digestFn func() sha3.ShakeHash) func([][]byte) error {
+func shakeMct(digestFn func() *sha3.SHAKE) func([][]byte) error {
 	return func(args [][]byte) error {
 		if len(args) != 4 {
 			return fmt.Errorf("shakeMct received %d args, wanted 4", len(args))
@@ -762,6 +798,91 @@ func shakeMct(digestFn func() sha3.ShakeHash) func([][]byte) error {
 		binary.LittleEndian.PutUint32(encodedOutputLenBytes, outputLenBytes)
 
 		return reply(md, encodedOutputLenBytes)
+	}
+}
+
+func cShakeAft(hFn func(N, S []byte) *sha3.SHAKE) func([][]byte) error {
+	return func(args [][]byte) error {
+		if len(args) != 4 {
+			return fmt.Errorf("cShakeAft received %d args, wanted 4", len(args))
+		}
+
+		msg := args[0]
+		outLenBytes := binary.LittleEndian.Uint32(args[1])
+		functionName := args[2]
+		customization := args[3]
+
+		h := hFn(functionName, customization)
+		h.Write(msg)
+		digest := make([]byte, outLenBytes)
+		h.Read(digest)
+
+		return reply(digest)
+	}
+}
+
+func cShakeMct(hFn func(N, S []byte) *sha3.SHAKE) func([][]byte) error {
+	return func(args [][]byte) error {
+		if len(args) != 6 {
+			return fmt.Errorf("cShakeMct received %d args, wanted 6", len(args))
+		}
+
+		message := args[0]
+		minOutLenBytes := binary.LittleEndian.Uint32(args[1])
+		maxOutLenBytes := binary.LittleEndian.Uint32(args[2])
+		outputLenBytes := binary.LittleEndian.Uint32(args[3])
+		incrementBytes := binary.LittleEndian.Uint32(args[4])
+		customization := args[5]
+
+		if outputLenBytes < 2 {
+			return fmt.Errorf("invalid output length: %d", outputLenBytes)
+		}
+
+		rangeBits := (maxOutLenBytes*8 - minOutLenBytes*8) + 1
+		if rangeBits == 0 {
+			return fmt.Errorf("invalid maxOutLenBytes and minOutLenBytes: %d, %d", maxOutLenBytes, minOutLenBytes)
+		}
+
+		// cSHAKE Monte Carlo test inner loop:
+		//   https://pages.nist.gov/ACVP/draft-celi-acvp-xof.html#section-6.2.1
+		for i := 0; i < 1000; i++ {
+			// InnerMsg = Left(Output[i-1] || ZeroBits(128), 128);
+			boundary := min(len(message), 16)
+			innerMsg := make([]byte, 16)
+			copy(innerMsg, message[:boundary])
+
+			// Output[i] = CSHAKE(InnerMsg, OutputLen, FunctionName, Customization);
+			h := hFn(nil, customization) // Note: function name fixed to "" for MCT.
+			h.Write(innerMsg)
+			digest := make([]byte, outputLenBytes)
+			h.Read(digest)
+			message = digest
+
+			// Rightmost_Output_bits = Right(Output[i], 16);
+			rightmostOutput := digest[outputLenBytes-2:]
+			// IMPORTANT: the specification says:
+			//   NOTE: For the "Rightmost_Output_bits % Range" operation, the Rightmost_Output_bits bit string
+			//   should be interpreted as a little endian-encoded number.
+			// This is **a lie**! It has to be interpreted as a big-endian number.
+			rightmostOutputBE := binary.BigEndian.Uint16(rightmostOutput)
+
+			// OutputLen = MinOutLen + (floor((Rightmost_Output_bits % Range) / OutLenIncrement) * OutLenIncrement);
+			incrementBits := incrementBytes * 8
+			outputLenBits := (minOutLenBytes * 8) + (((uint32)(rightmostOutputBE)%rangeBits)/incrementBits)*incrementBits
+			outputLenBytes = outputLenBits / 8
+
+			// Customization = BitsToString(InnerMsg || Rightmost_Output_bits);
+			msgWithBits := append(innerMsg, rightmostOutput...)
+			customization = make([]byte, len(msgWithBits))
+			for i, b := range msgWithBits {
+				customization[i] = (b % 26) + 65
+			}
+		}
+
+		encodedOutputLenBytes := make([]byte, 4)
+		binary.LittleEndian.PutUint32(encodedOutputLenBytes, outputLenBytes)
+
+		return reply(message, encodedOutputLenBytes, customization)
 	}
 }
 

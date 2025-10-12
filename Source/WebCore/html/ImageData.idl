@@ -35,11 +35,11 @@ typedef (Uint8ClampedArray or Float16Array) ImageDataArray;
 ] interface ImageData {
     constructor(unsigned long sw, unsigned long sh, optional ImageDataSettings settings);
     constructor(Uint8ClampedArray data, unsigned long sw, optional unsigned long sh, optional ImageDataSettings settings);
-    [EnabledBySetting=CanvasPixelFormatEnabled] constructor(Float16Array data, unsigned long sw, optional unsigned long sh, optional ImageDataSettings settings);
+    [EnabledBySetting=CanvasColorTypeEnabled] constructor(Float16Array data, unsigned long sw, optional unsigned long sh, optional ImageDataSettings settings);
 
     readonly attribute unsigned long width;
     readonly attribute unsigned long height;
     readonly attribute ImageDataArray data;
     [EnabledBySetting=CanvasColorSpaceEnabled] readonly attribute PredefinedColorSpace colorSpace;
-    [EnabledBySetting=CanvasPixelFormatEnabled] readonly attribute ImageDataStorageFormat storageFormat;
+    [EnabledBySetting=CanvasColorTypeEnabled] readonly attribute ImageDataPixelFormat pixelFormat;
 };

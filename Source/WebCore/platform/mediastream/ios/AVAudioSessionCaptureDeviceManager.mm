@@ -59,7 +59,7 @@
     if (!self)
         return nil;
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(routeDidChange:) name:PAL::get_AVFoundation_AVAudioSessionRouteChangeNotification() object:session];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(routeDidChange:) name:PAL::get_AVFoundation_AVAudioSessionRouteChangeNotificationSingleton() object:session];
 
     _callback = callback;
 
@@ -104,10 +104,10 @@ AVAudioSessionCaptureDeviceManager::AVAudioSessionCaptureDeviceManager()
 void AVAudioSessionCaptureDeviceManager::createAudioSession()
 {
 #if !PLATFORM(MACCATALYST)
-    m_audioSession = adoptNS([[PAL::getAVAudioSessionClass() alloc] initAuxiliarySession]);
+    m_audioSession = adoptNS([[PAL::getAVAudioSessionClassSingleton() alloc] initAuxiliarySession]);
 #else
     // FIXME: Figure out if this is correct for Catalyst, where auxiliary session isn't available.
-    m_audioSession = [PAL::getAVAudioSessionClass() sharedInstance];
+    m_audioSession = [PAL::getAVAudioSessionClassSingleton() sharedInstance];
 #endif
 
     NSError *error = nil;
@@ -187,7 +187,7 @@ void AVAudioSessionCaptureDeviceManager::setPreferredSpeakerID(const String& spe
     } else
         m_isReceiverPreferredSpeaker = false;
 
-    AudioSession::sharedSession().setCategory(AudioSession::sharedSession().category(), AudioSession::sharedSession().mode(), AudioSession::sharedSession().routeSharingPolicy());
+    AudioSession::singleton().setCategory(AudioSession::singleton().category(), AudioSession::singleton().mode(), AudioSession::singleton().routeSharingPolicy());
 }
 
 bool AVAudioSessionCaptureDeviceManager::setPreferredAudioSessionDeviceIDs()
@@ -206,7 +206,7 @@ bool AVAudioSessionCaptureDeviceManager::setPreferredAudioSessionDeviceIDs()
         RELEASE_LOG_INFO(WebRTC, "AVAudioSessionCaptureDeviceManager setting preferred input to '%{public}s'", m_preferredMicrophoneID.ascii().data());
 
         NSError *error = nil;
-        if (![[PAL::getAVAudioSessionClass() sharedInstance] setPreferredInput:preferredInputPort error:&error]) {
+        if (![[PAL::getAVAudioSessionClassSingleton() sharedInstance] setPreferredInput:preferredInputPort error:&error]) {
             RELEASE_LOG_ERROR(WebRTC, "AVAudioSessionCaptureDeviceManager failed to set preferred input to '%{public}s' with error: %@", m_preferredMicrophoneID.utf8().data(), error.localizedDescription);
             return false;
         }
@@ -276,10 +276,9 @@ void AVAudioSessionCaptureDeviceManager::setAudioCaptureDevices(Vector<AVAudioSe
 {
     bool firstTime = !m_captureDevices;
     bool deviceListChanged = !m_audioSessionCaptureDevices || newAudioDevices.size() != m_audioSessionCaptureDevices->size();
-    bool defaultDeviceChanged = false;
+
     if (!deviceListChanged && !firstTime) {
         for (auto& newState : newAudioDevices) {
-
             std::optional<CaptureDevice> oldState;
             for (const auto& device : m_audioSessionCaptureDevices.value()) {
                 if (device.type() == newState.type() && device.persistentId() == newState.persistentId()) {
@@ -288,14 +287,25 @@ void AVAudioSessionCaptureDeviceManager::setAudioCaptureDevices(Vector<AVAudioSe
                 }
             }
 
-            if (!oldState || newState.isDefault() != oldState->isDefault() || newState.enabled() != oldState->enabled()) {
+            if (!oldState || newState.enabled() != oldState->enabled()) {
+                deviceListChanged = true;
+                break;
+            }
+
+            if (newState.isDefault() == oldState->isDefault())
+                continue;
+
+            bool hasNewDefaultDevice = newState.isDefault() || newAudioDevices.containsIf([type = newState.type()](auto& state) {
+                return state.isDefault() && state.type() == type;
+            });
+            if (hasNewDefaultDevice) {
                 deviceListChanged = true;
                 break;
             }
         }
     }
 
-    if (!deviceListChanged && !firstTime && !defaultDeviceChanged)
+    if (!deviceListChanged && !firstTime)
         return;
 
     m_audioSessionCaptureDevices = WTFMove(newAudioDevices);
@@ -311,14 +321,28 @@ void AVAudioSessionCaptureDeviceManager::setAudioCaptureDevices(Vector<AVAudioSe
         }
     }
 
+    auto isDifferentDeviceList = [](auto& list1, auto& list2) -> bool {
+        if (list1.size() != list2.size())
+            return true;
+        for (size_t cptr = 0; cptr < list1.size(); ++cptr) {
+            if (list1[cptr].persistentId() != list2[cptr].persistentId() || list1[cptr].enabled() != list2[cptr].enabled())
+                return true;
+        }
+        return false;
+    };
+
     std::ranges::sort(newCaptureDevices, [] (auto& first, auto& second) -> bool {
         return first.isDefault() && !second.isDefault();
     });
+    if (m_captureDevices)
+        deviceListChanged = isDifferentDeviceList(newCaptureDevices, *m_captureDevices);
     m_captureDevices = WTFMove(newCaptureDevices);
 
     std::ranges::sort(newSpeakerDevices, [] (auto& first, auto& second) -> bool {
         return first.isDefault() && !second.isDefault();
     });
+    if (!deviceListChanged)
+        deviceListChanged = isDifferentDeviceList(newSpeakerDevices, m_speakerDevices);
     m_speakerDevices = WTFMove(newSpeakerDevices);
 
     if (deviceListChanged && !firstTime)

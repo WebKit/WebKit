@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "AnimationList.h"
-#include "AnimationMalloc.h"
-#include "CSSPropertyNames.h"
-#include "WebAnimationTypes.h"
+#include <WebCore/AnimationMalloc.h>
+#include <WebCore/CSSPropertyNames.h>
+#include <WebCore/StyleAnimations.h>
+#include <WebCore/WebAnimationTypes.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -52,7 +52,7 @@ struct ResolutionContext;
 }
 
 class KeyframeEffectStack {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(KeyframeEffectStack, Animation);
 public:
     explicit KeyframeEffectStack();
     ~KeyframeEffectStack();
@@ -61,12 +61,12 @@ public:
     void removeEffect(KeyframeEffect&);
     bool hasEffects() const { return !m_effects.isEmpty(); }
     Vector<WeakPtr<KeyframeEffect>> sortedEffects();
-    const AnimationList* cssAnimationList() const { return m_cssAnimationList.get(); }
-    void setCSSAnimationList(RefPtr<const AnimationList>&&);
+    const std::optional<Style::Animations>& cssAnimationList() const { return m_cssAnimationList; }
+    void setCSSAnimationList(std::optional<Style::Animations>&&);
     bool containsProperty(CSSPropertyID) const;
     bool isCurrentlyAffectingProperty(CSSPropertyID) const;
     bool requiresPseudoElement() const;
-    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, UncheckedKeyHashSet<AnimatableCSSProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext&);
+    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, HashSet<AnimatableCSSProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext&);
     bool hasEffectWithImplicitKeyframes() const;
 
     void effectAbilityToBeAcceleratedDidChange(const KeyframeEffect&);
@@ -78,9 +78,9 @@ public:
     void addInvalidCSSAnimationName(const String&);
 
     void lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle);
-    void cascadeDidOverrideProperties(const UncheckedKeyHashSet<AnimatableCSSProperty>&, const Document&);
+    void cascadeDidOverrideProperties(const HashSet<AnimatableCSSProperty>&, const Document&);
 
-    const UncheckedKeyHashSet<AnimatableCSSProperty>& acceleratedPropertiesOverriddenByCascade() const { return m_acceleratedPropertiesOverriddenByCascade; }
+    const HashSet<AnimatableCSSProperty>& acceleratedPropertiesOverriddenByCascade() const { return m_acceleratedPropertiesOverriddenByCascade; }
 
     void applyPendingAcceleratedActions() const;
 
@@ -99,9 +99,9 @@ private:
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     WeakListHashSet<AcceleratedEffect> m_acceleratedEffects;
 #endif
-    UncheckedKeyHashSet<String> m_invalidCSSAnimationNames;
-    UncheckedKeyHashSet<AnimatableCSSProperty> m_acceleratedPropertiesOverriddenByCascade;
-    RefPtr<const AnimationList> m_cssAnimationList;
+    HashSet<String> m_invalidCSSAnimationNames;
+    HashSet<AnimatableCSSProperty> m_acceleratedPropertiesOverriddenByCascade;
+    std::optional<Style::Animations> m_cssAnimationList;
     bool m_isSorted { true };
 };
 

@@ -1,0 +1,3 @@
+
+FAIL import should be allowed promise_test: Unhandled rejection with value: "Should not raise securitypolicyviolation."
+

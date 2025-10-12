@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Motorola Mobility Inc.
- * Copyright (C) 2013 Google Inc. All Rights Reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,15 +55,19 @@ void PublicURLManager::registerURL(const URL& url, URLRegistrable& registrable)
     if (m_isStopped || !scriptExecutionContext())
         return;
 
-    registrable.registry().registerURL(*scriptExecutionContext(), url, registrable);
+    registrable.registry().registerURL(*protectedScriptExecutionContext(), url, registrable);
 }
 
 void PublicURLManager::revoke(const URL& url)
 {
-    if (m_isStopped || !scriptExecutionContext())
+    if (m_isStopped)
         return;
 
-    RefPtr contextOrigin = scriptExecutionContext()->securityOrigin();
+    RefPtr context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    RefPtr contextOrigin = context->securityOrigin();
     if (!contextOrigin)
         return;
 
@@ -72,7 +76,7 @@ void PublicURLManager::revoke(const URL& url)
         return;
 
     URLRegistry::forEach([&](auto& registry) {
-        registry.unregisterURL(url, scriptExecutionContext()->topOrigin().data());
+        registry.unregisterURL(url, context->topOrigin().data());
     });
 }
 

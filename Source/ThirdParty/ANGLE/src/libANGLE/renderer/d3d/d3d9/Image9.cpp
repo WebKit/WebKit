@@ -7,6 +7,10 @@
 // Image9.cpp: Implements the rx::Image9 class, which acts as the interface to
 // the actual underlying surfaces of a Texture.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d9/Image9.h"
 
 #include "common/utilities.h"

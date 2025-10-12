@@ -28,7 +28,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include <WebCore/DecomposedGlyphs.h>
 #include <WebCore/Filter.h>
 #include <WebCore/Font.h>
 #include <WebCore/FontCustomPlatformData.h>
@@ -43,10 +42,9 @@ RemoteResourceCache::RemoteResourceCache() = default;
 
 RemoteResourceCache::~RemoteResourceCache() = default;
 
-void RemoteResourceCache::cacheNativeImage(Ref<NativeImage>&& image)
+bool RemoteResourceCache::cacheNativeImage(WebCore::RenderingResourceIdentifier identifier, Ref<NativeImage>&& image)
 {
-    auto identifier = image->renderingResourceIdentifier();
-    m_nativeImages.add(identifier, WTFMove(image));
+    return m_nativeImages.add(identifier, WTFMove(image)).isNewEntry;
 }
 
 bool RemoteResourceCache::releaseNativeImage(RenderingResourceIdentifier identifier)
@@ -59,33 +57,17 @@ RefPtr<NativeImage> RemoteResourceCache::cachedNativeImage(RenderingResourceIden
     return m_nativeImages.get(identifier);
 }
 
-void RemoteResourceCache::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& decomposedGlyphs)
-{
-    auto identifier = decomposedGlyphs->renderingResourceIdentifier();
-    m_decomposedGlyphs.add(identifier, WTFMove(decomposedGlyphs));
-}
-
-bool RemoteResourceCache::releaseDecomposedGlyphs(RenderingResourceIdentifier identifier)
-{
-    return m_decomposedGlyphs.remove(identifier);
-}
-
-RefPtr<DecomposedGlyphs> RemoteResourceCache::cachedDecomposedGlyphs(RenderingResourceIdentifier identifier) const
-{
-    return m_decomposedGlyphs.get(identifier);
-}
-
-bool RemoteResourceCache::cacheGradient(RenderingResourceIdentifier identifier, Ref<Gradient>&& gradient)
+bool RemoteResourceCache::cacheGradient(RemoteGradientIdentifier identifier, Ref<Gradient>&& gradient)
 {
     return m_gradients.add(identifier, WTFMove(gradient)).isNewEntry;
 }
 
-bool RemoteResourceCache::releaseGradient(RenderingResourceIdentifier identifier)
+bool RemoteResourceCache::releaseGradient(RemoteGradientIdentifier identifier)
 {
     return m_gradients.remove(identifier);
 }
 
-RefPtr<Gradient> RemoteResourceCache::cachedGradient(RenderingResourceIdentifier identifier) const
+RefPtr<Gradient> RemoteResourceCache::cachedGradient(RemoteGradientIdentifier identifier) const
 {
     return m_gradients.get(identifier);
 }
@@ -138,6 +120,21 @@ RefPtr<FontCustomPlatformData> RemoteResourceCache::cachedFontCustomPlatformData
     return m_fontCustomPlatformDatas.get(identifier);
 }
 
+bool RemoteResourceCache::cacheDisplayList(RemoteDisplayListIdentifier identifier, Ref<const DisplayList::DisplayList> displayList)
+{
+    return m_displayLists.add(identifier, displayList).isNewEntry;
+}
+
+RefPtr<const DisplayList::DisplayList> RemoteResourceCache::cachedDisplayList(RemoteDisplayListIdentifier identifier) const
+{
+    return m_displayLists.get(identifier);
+}
+
+bool RemoteResourceCache::releaseDisplayList(RemoteDisplayListIdentifier identifier)
+{
+    return m_displayLists.remove(identifier);
+}
+
 void RemoteResourceCache::releaseAllResources()
 {
     m_imageBuffers.clear();
@@ -148,10 +145,10 @@ void RemoteResourceCache::releaseMemory()
 {
     m_nativeImages.clear();
     m_gradients.clear();
-    m_decomposedGlyphs.clear();
     m_filters.clear();
     m_fonts.clear();
     m_fontCustomPlatformDatas.clear();
+    m_displayLists.clear();
 }
 
 void RemoteResourceCache::releaseNativeImages()

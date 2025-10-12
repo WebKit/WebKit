@@ -39,7 +39,7 @@ using namespace WebCore;
 
 RetainPtr<PKAutomaticReloadPaymentRequest> platformAutomaticReloadPaymentRequest(const ApplePayAutomaticReloadPaymentRequest& webAutomaticReloadPaymentRequest)
 {
-    auto pkAutomaticReloadPaymentRequest = adoptNS([PAL::allocPKAutomaticReloadPaymentRequestInstance() initWithPaymentDescription:webAutomaticReloadPaymentRequest.paymentDescription.createNSString().get() automaticReloadBilling:platformAutomaticReloadSummaryItem(webAutomaticReloadPaymentRequest.automaticReloadBilling) managementURL:adoptNS([[NSURL alloc] initWithString:webAutomaticReloadPaymentRequest.managementURL.createNSString().get()]).get()]);
+    auto pkAutomaticReloadPaymentRequest = adoptNS([PAL::allocPKAutomaticReloadPaymentRequestInstance() initWithPaymentDescription:webAutomaticReloadPaymentRequest.paymentDescription.createNSString().get() automaticReloadBilling:platformAutomaticReloadSummaryItem(webAutomaticReloadPaymentRequest.automaticReloadBilling).get() managementURL:adoptNS([[NSURL alloc] initWithString:webAutomaticReloadPaymentRequest.managementURL.createNSString().get()]).get()]);
     if (auto& billingAgreement = webAutomaticReloadPaymentRequest.billingAgreement; !billingAgreement.isNull())
         [pkAutomaticReloadPaymentRequest setBillingAgreement:billingAgreement.createNSString().get()];
     if (auto& tokenNotificationURL = webAutomaticReloadPaymentRequest.tokenNotificationURL; !tokenNotificationURL.isNull())

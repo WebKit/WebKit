@@ -42,7 +42,7 @@ String utf16String(const char16_t (&url)[length])
     StringBuilder builder;
     builder.reserveCapacity(length - 1);
     for (size_t i = 0; i < length - 1; ++i)
-        builder.append(static_cast<UChar>(url[i]));
+        builder.append(static_cast<char16_t>(url[i]));
     return builder.toString();
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -170,7 +170,7 @@ static JSString* jsStringForPaymentRequestState(VM& vm, PaymentRequest::State st
 
 static JSObject* objectForEventTargetListeners(VM& vm, JSGlobalObject* exec, EventTarget* eventTarget)
 {
-    auto* scriptExecutionContext = eventTarget->scriptExecutionContext();
+    RefPtr scriptExecutionContext = eventTarget->scriptExecutionContext();
     if (!scriptExecutionContext)
         return nullptr;
 
@@ -214,7 +214,7 @@ JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, JSGlobalObject* exe
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (auto* worker = JSWorker::toWrapped(vm, value)) {
+    if (RefPtr worker = JSWorker::toWrapped(vm, value)) {
         unsigned index = 0;
         auto* array = constructEmptyArray(exec, nullptr);
 
@@ -224,7 +224,7 @@ JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, JSGlobalObject* exe
 
         array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "terminated"_s, jsBoolean(worker->wasTerminated())));
 
-        if (auto* listeners = objectForEventTargetListeners(vm, exec, worker))
+        if (auto* listeners = objectForEventTargetListeners(vm, exec, worker.get()))
             array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "listeners"_s, listeners));
 
         RETURN_IF_EXCEPTION(scope, { });
@@ -232,7 +232,7 @@ JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, JSGlobalObject* exe
     }
 
 #if ENABLE(PAYMENT_REQUEST)
-    if (PaymentRequest* paymentRequest = JSPaymentRequest::toWrapped(vm, value)) {
+    if (RefPtr paymentRequest = JSPaymentRequest::toWrapped(vm, value)) {
         unsigned index = 0;
         auto* array = constructEmptyArray(exec, nullptr);
 
@@ -240,7 +240,7 @@ JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, JSGlobalObject* exe
         array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "details"_s, objectForPaymentDetails(vm, exec, paymentRequest->paymentDetails())));
         array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "state"_s, jsStringForPaymentRequestState(vm, paymentRequest->state())));
 
-        if (auto* listeners = objectForEventTargetListeners(vm, exec, paymentRequest))
+        if (auto* listeners = objectForEventTargetListeners(vm, exec, paymentRequest.get()))
             array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "listeners"_s, listeners));
 
         RETURN_IF_EXCEPTION(scope, { });
@@ -248,11 +248,11 @@ JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, JSGlobalObject* exe
     }
 #endif
 
-    if (auto* eventTarget = JSEventTarget::toWrapped(vm, value)) {
+    if (RefPtr eventTarget = JSEventTarget::toWrapped(vm, value)) {
         unsigned index = 0;
         auto* array = constructEmptyArray(exec, nullptr);
 
-        if (auto* listeners = objectForEventTargetListeners(vm, exec, eventTarget))
+        if (auto* listeners = objectForEventTargetListeners(vm, exec, eventTarget.get()))
             array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "listeners"_s, listeners));
 
         RETURN_IF_EXCEPTION(scope, { });

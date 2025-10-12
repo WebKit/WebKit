@@ -58,7 +58,9 @@ extension UIKit_SPI.UITextEffectView {
     @_Concurrency.MainActor public init(chunk: UIKit_SPI.UITextEffectTextChunk, view: UIKit_SPI.UITextEffectView, delegate: any UIKit_SPI.UITextEffectView.ReplacementTextEffect.Delegate, fromColor: UIKit.UIColor = UIDirectionalLightEffectView.Configuration.pondering.fillColor)
     public protocol Delegate {
       func performReplacementAndGeneratePreview(for chunk: UIKit_SPI.UITextEffectTextChunk, effect: UIKit_SPI.UITextEffectView.ReplacementTextEffect, animation: UIKit_SPI.UITextEffectView.ReplacementTextEffect.AnimationParameters) async -> UIKit.UITargetedPreview?
+      func performAnimatedReplacement(for chunk: UIKit_SPI.UITextEffectTextChunk, effect: UIKit_SPI.UITextEffectView.ReplacementTextEffect, animation: UIKit_SPI.UITextEffectView.ReplacementTextEffect.AnimationParameters) async
       @_Concurrency.MainActor func replacementEffectDidComplete(_ effect: UIKit_SPI.UITextEffectView.ReplacementTextEffect)
+      func performReplacement(for chunk: UIKit_SPI.UITextEffectTextChunk, effect: UIKit_SPI.UITextEffectView.ReplacementTextEffect, animation: UIKit_SPI.UITextEffectView.ReplacementTextEffect.AnimationParameters) async
     }
     public struct AnimationParameters {
       public let duration: Foundation.TimeInterval
@@ -70,6 +72,7 @@ extension UIKit_SPI.UITextEffectView {
 extension UIKit_SPI.UITextEffectView.ReplacementTextEffect.Delegate {
   public func performReplacementAndGeneratePreview(for chunk: UIKit_SPI.UITextEffectTextChunk, effect: UIKit_SPI.UITextEffectView.ReplacementTextEffect, animation: UIKit_SPI.UITextEffectView.ReplacementTextEffect.AnimationParameters) async -> UIKit.UITargetedPreview?
   public func performReplacement(for chunk: UIKit_SPI.UITextEffectTextChunk, effect: UIKit_SPI.UITextEffectView.ReplacementTextEffect, animation: UIKit_SPI.UITextEffectView.ReplacementTextEffect.AnimationParameters) async
+  public func performAnimatedReplacement(for chunk: UIKit_SPI.UITextEffectTextChunk, effect: UIKit_SPI.UITextEffectView.ReplacementTextEffect, animation: UIKit_SPI.UITextEffectView.ReplacementTextEffect.AnimationParameters) async
 }
 extension UIKit_SPI.UITextEffectView {
   @_Concurrency.MainActor public class PonderingEffect : UIKit_SPI.UITextEffectView.TextEffect {

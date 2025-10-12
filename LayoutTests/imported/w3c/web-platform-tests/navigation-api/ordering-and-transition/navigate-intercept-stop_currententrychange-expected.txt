@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT event and promise ordering for navigation.navigate() intercepted by intercept() but then stopped using window.stop() Test timed out
+PASS event and promise ordering for navigation.navigate() intercepted by intercept() but then stopped using window.stop()
 

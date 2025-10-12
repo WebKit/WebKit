@@ -24,10 +24,10 @@
 
 #pragma once
 
-#include "CSSProperty.h"
-#include "CSSPropertyNames.h"
-#include "CSSValuePool.h"
-#include "StyleRuleType.h"
+#include <WebCore/CSSProperty.h>
+#include <WebCore/CSSPropertyNames.h>
+#include <WebCore/CSSValuePool.h>
+#include <WebCore/StyleRuleType.h>
 
 namespace WebCore {
 

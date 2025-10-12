@@ -41,7 +41,7 @@ static std::optional<Vector<uint8_t>> platformDeriveBitsCC(const CryptoKeyEC& ba
     Vector<uint8_t> derivedKey(baseKey.keySizeInBytes()); // Per https://tools.ietf.org/html/rfc6090#section-4.
     size_t size = derivedKey.size();
 
-    if (!CCECCryptorComputeSharedSecret(baseKey.platformKey().get(), publicKey.platformKey().get(), derivedKey.data(), &size))
+    if (!CCECCryptorComputeSharedSecret(baseKey.platformKey().get(), publicKey.platformKey().get(), derivedKey.mutableSpan().data(), &size))
         result = std::make_optional(WTFMove(derivedKey));
     return result;
 }

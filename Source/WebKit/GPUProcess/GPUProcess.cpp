@@ -40,6 +40,7 @@
 #include "LogInitialization.h"
 #include "Logging.h"
 #include "RemoteMediaPlayerManagerProxy.h"
+#include "RemoteSnapshot.h"
 #include "SandboxExtension.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessPoolMessages.h"
@@ -92,7 +93,7 @@ GPUProcess::GPUProcess()
     : m_idleExitTimer(*this, &GPUProcess::tryExitIfUnused)
 {
     RELEASE_LOG(Process, "%p - GPUProcess::GPUProcess:", this);
-#if ASSERT_ENABLED && PLATFORM(COCOA)
+#if ASSERT_ENABLED && PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     CoreAudioSharedUnit::singleton().allowStarting();
 #endif
 }
@@ -280,11 +281,6 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters,
 
 void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences)
 {
-#if USE(MODERN_AVCONTENTKEYSESSION)
-    if (updatePreference(m_preferences.shouldUseModernAVContentKeySession, preferences.shouldUseModernAVContentKeySession))
-        MediaSessionManagerCocoa::setShouldUseModernAVContentKeySession(*m_preferences.shouldUseModernAVContentKeySession);
-#endif
-
 #if ENABLE(VP9)
     if (updatePreference(m_preferences.vp9DecoderEnabled, preferences.vp9DecoderEnabled)) {
         VP9TestingOverrides::singleton().setShouldEnableVP9Decoder(*m_preferences.vp9DecoderEnabled);
@@ -357,12 +353,70 @@ void GPUProcess::updateSandboxAccess(const Vector<SandboxExtension::Handle>& ext
         SandboxExtension::consumePermanently(extension);
 }
 
-#if PLATFORM(COCOA)
-void GPUProcess::didDrawRemoteToPDF(PageIdentifier pageID, RefPtr<SharedBuffer>&& data, SnapshotIdentifier snapshotIdentifier)
+Ref<RemoteSnapshot> GPUProcess::getOrCreateSnapshot(RemoteSnapshotIdentifier snapshotIdentifier)
 {
-    protectedParentProcessConnection()->send(Messages::GPUProcessProxy::DidDrawRemoteToPDF(pageID, WTFMove(data), snapshotIdentifier), 0);
+    Locker locker(m_globalResourceLocker);
+    auto addResult = m_snapshots.ensure(snapshotIdentifier, [&] {
+        return RemoteSnapshot::create();
+    });
+    return addResult.iterator->value;
 }
+
+#if PLATFORM(COCOA)
+
+void GPUProcess::sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier identifier, FloatSize size, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+{
+    RefPtr<RemoteSnapshot> snapshot;
+    {
+        Locker locker(m_globalResourceLocker);
+        snapshot = m_snapshots.take(identifier);
+    }
+    if (!snapshot) {
+        // Currently it's not possible to know if a snapshot exists, hence no ASSERT.
+        completionHandler({ });
+        return;
+    }
+    if (!snapshot->isComplete()) {
+        // Currently the callbacks ensure the completeness.
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    auto result = snapshot->drawToPDF(size, rootFrameIdentifier);
+    if (!result) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    completionHandler(WTFMove(*result));
+}
+
 #endif
+
+void GPUProcess::sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier identifier, const FloatSize& size, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
+{
+    RefPtr<RemoteSnapshot> snapshot;
+    {
+        Locker locker(m_globalResourceLocker);
+        snapshot = m_snapshots.take(identifier);
+    }
+    if (!snapshot) {
+        // Currently it's not possible to know if a snapshot exists, hence no ASSERT.
+        completionHandler({ });
+        return;
+    }
+    if (!snapshot->isComplete()) {
+        // Currently the callbacks ensure the completeness.
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    completionHandler(snapshot->drawToBitmap(size, rootFrameIdentifier));
+}
+
+void GPUProcess::releaseSnapshot(RemoteSnapshotIdentifier identifier)
+{
+    // Currently it's not possible to know if a snapshot exists, hence no ASSERT.
+    Locker locker(m_globalResourceLocker);
+    m_snapshots.remove(identifier);
+}
 
 #if ENABLE(MEDIA_STREAM)
 void GPUProcess::setMockCaptureDevicesEnabled(bool isEnabled)
@@ -573,6 +627,11 @@ WorkQueue& GPUProcess::libWebRTCCodecsQueue()
 void GPUProcess::webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     completionHandler(GPUConnectionToWebProcess::objectCountForTesting());
+}
+
+void GPUProcess::terminateWebProcess(WebCore::ProcessIdentifier identifier)
+{
+    protectedParentProcessConnection()->send(Messages::GPUProcessProxy::TerminateWebProcess(identifier), 0);
 }
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)

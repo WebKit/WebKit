@@ -123,7 +123,7 @@ private:
 
     void notifyDidReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&&);
 
-    CheckedPtr<NetworkLoadClient> m_client;
+    WeakPtr<NetworkLoadClient> m_client;
     const Ref<NetworkProcess> m_networkProcess;
     const NetworkLoadParameters m_parameters;
     RefPtr<NetworkDataTask> m_task;

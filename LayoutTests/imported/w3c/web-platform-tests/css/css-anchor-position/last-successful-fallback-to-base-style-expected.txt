@@ -1,0 +1,5 @@
+
+PASS Starts rendering with flip-inline fallback
+PASS Base position without fallback now successful
+PASS Both base position and flip-inline works, keep base position since it's the last successful option
+

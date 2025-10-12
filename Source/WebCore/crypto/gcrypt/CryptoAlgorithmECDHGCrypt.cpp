@@ -52,7 +52,7 @@ static std::optional<Vector<uint8_t>> gcryptDerive(gcry_sexp_t baseKeySexp, gcry
         if (!data)
             return std::nullopt;
 
-        gcry_sexp_build(&dataSexp, nullptr, "(data(flags raw)(value %b))", data->size(), data->data());
+        gcry_sexp_build(&dataSexp, nullptr, "(data(flags raw)(value %b))", data->size(), data->span().data());
         if (!dataSexp)
             return std::nullopt;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008, 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2008 Nuanti Ltd.
@@ -307,11 +307,11 @@ static void drawGlyphsToContext(cairo_t* context, cairo_scaled_font_t* scaledFon
         cairo_set_font_options(context, fontOptionsSmoothing.get());
     }
 
-    cairo_show_glyphs(context, glyphs.data(), glyphs.size());
+    cairo_show_glyphs(context, glyphs.span().data(), glyphs.size());
 
     if (syntheticBoldOffset) {
         cairo_translate(context, syntheticBoldOffset, 0);
-        cairo_show_glyphs(context, glyphs.data(), glyphs.size());
+        cairo_show_glyphs(context, glyphs.span().data(), glyphs.size());
 
         cairo_set_matrix(context, &originalTransform);
     }
@@ -337,7 +337,7 @@ static void drawGlyphsShadow(GraphicsContextCairo& platformContext, const Shadow
     }
 
     cairo_text_extents_t extents;
-    cairo_scaled_font_glyph_extents(scaledFont, glyphs.data(), glyphs.size(), &extents);
+    cairo_scaled_font_glyph_extents(scaledFont, glyphs.span().data(), glyphs.size(), &extents);
     FloatRect fontExtentsRect(point.x() + extents.x_bearing, point.y() + extents.y_bearing, extents.width, extents.height);
 
     shadow.drawShadowLayer(State::getCTM(platformContext), State::getClipBounds(platformContext), fontExtentsRect,
@@ -615,8 +615,10 @@ void setLineDash(GraphicsContextCairo& platformContext, const DashArray& dashes,
 {
     if (std::all_of(dashes.begin(), dashes.end(), [](auto& dash) { return !dash; }))
         cairo_set_dash(platformContext.cr(), 0, 0, 0);
-    else
-        cairo_set_dash(platformContext.cr(), dashes.data(), dashes.size(), dashOffset);
+    else {
+        auto dashesSpan = dashes.span();
+        cairo_set_dash(platformContext.cr(), dashesSpan.data(), dashesSpan.size(), dashOffset);
+    }
 }
 
 void setLineJoin(GraphicsContextCairo& platformContext, LineJoin lineJoin)
@@ -827,7 +829,7 @@ void drawGlyphs(GraphicsContextCairo& platformContext, const FillSource& fillSou
 
         // This may disturb the CTM, but we are going to call cairo_restore soon after.
         cairo_set_scaled_font(cr, scaledFont);
-        cairo_glyph_path(cr, glyphs.data(), glyphs.size());
+        cairo_glyph_path(cr, glyphs.span().data(), glyphs.size());
         cairo_stroke(cr);
     }
 

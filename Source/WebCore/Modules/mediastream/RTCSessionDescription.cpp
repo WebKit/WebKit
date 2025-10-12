@@ -36,6 +36,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "RTCSessionDescriptionInit.h"
+#include "ScriptWrappableInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -57,6 +58,8 @@ Ref<RTCSessionDescription> RTCSessionDescription::create(RTCSdpType type, String
 {
     return adoptRef(*new RTCSessionDescription(type, WTFMove(sdp)));
 }
+
+RTCSessionDescription::~RTCSessionDescription() = default;
 
 } // namespace WebCore
 

@@ -10,8 +10,13 @@
 
 #include "modules/audio_processing/aec3/fft_data.h"
 
+#include <array>
+#include <cstddef>
+
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/cpu_info.h"
 #include "rtc_base/system/arch.h"
-#include "system_wrappers/include/cpu_features_wrapper.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -20,7 +25,7 @@ namespace webrtc {
 // Verifies that the optimized methods are bitexact to their reference
 // counterparts.
 TEST(FftData, TestSse2Optimizations) {
-  if (GetCPUInfo(kSSE2) != 0) {
+  if (cpu_info::Supports(cpu_info::ISA::kSSE2)) {
     FftData x;
 
     for (size_t k = 0; k < x.re.size(); ++k) {
@@ -43,7 +48,7 @@ TEST(FftData, TestSse2Optimizations) {
 // Verifies that the optimized methods are bitexact to their reference
 // counterparts.
 TEST(FftData, TestAvx2Optimizations) {
-  if (GetCPUInfo(kAVX2) != 0) {
+  if (cpu_info::Supports(cpu_info::ISA::kAVX2)) {
     FftData x;
 
     for (size_t k = 0; k < x.re.size(); ++k) {

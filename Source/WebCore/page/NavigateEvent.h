@@ -28,6 +28,7 @@
 #include "AbortController.h"
 #include "AbortSignal.h"
 #include "DOMFormData.h"
+#include "Element.h"
 #include "Event.h"
 #include "EventInit.h"
 #include "JSValueInWrappedObject.h"
@@ -65,6 +66,7 @@ public:
         RefPtr<DOMFormData> formData;
         String downloadRequest;
         JSC::JSValue info;
+        RefPtr<Element> sourceElement;
         bool canIntercept { false };
         bool userInitiated { false };
         bool hashChange { false };
@@ -101,6 +103,7 @@ public:
     String downloadRequest() { return m_downloadRequest; }
     JSC::JSValue info() { return m_info.getValue(); }
     JSValueInWrappedObject& infoWrapper() { return m_info; }
+    Element* sourceElement() { return m_sourceElement.get(); }
 
     ExceptionOr<void> intercept(Document&, NavigationInterceptOptions&&);
     ExceptionOr<void> scroll(Document&);
@@ -127,6 +130,7 @@ private:
     String m_downloadRequest;
     Vector<Ref<NavigationInterceptHandler>> m_handlers;
     JSValueInWrappedObject m_info;
+    RefPtr<Element> m_sourceElement;
     bool m_canIntercept { false };
     bool m_userInitiated { false };
     bool m_hashChange { false };

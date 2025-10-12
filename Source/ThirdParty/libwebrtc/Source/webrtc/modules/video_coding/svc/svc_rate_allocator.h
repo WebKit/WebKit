@@ -22,7 +22,6 @@
 #include "api/video/video_bitrate_allocator.h"
 #include "api/video/video_codec_constants.h"
 #include "api/video_codecs/video_codec.h"
-#include "rtc_base/experiments/stable_target_rate_experiment.h"
 
 namespace webrtc {
 
@@ -62,7 +61,6 @@ class SvcRateAllocator : public VideoBitrateAllocator {
 
   const VideoCodec codec_;
   const NumLayers num_layers_;
-  const StableTargetRateExperiment experiment_settings_;
   const absl::InlinedVector<DataRate, kMaxSpatialLayers>
       cumulative_layer_start_bitrates_;
   size_t last_active_layer_count_;

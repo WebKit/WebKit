@@ -29,6 +29,7 @@
 #include <wtf/Compiler.h>
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/ThreadSanitizerSupport.h>
 
 namespace TestWebKitAPI {
 struct LockInspector;
@@ -47,7 +48,7 @@ namespace WTF {
 
 class WordLock final {
     WTF_MAKE_NONCOPYABLE(WordLock);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WordLock);
 public:
     constexpr WordLock() = default;
 
@@ -55,14 +56,17 @@ public:
     {
         if (m_word.compareExchangeWeak(0, isLockedBit, std::memory_order_acquire)) [[likely]] {
             // WordLock acquired!
+            TSAN_ANNOTATE_HAPPENS_AFTER(this);
             return;
         }
 
         lockSlow();
+        TSAN_ANNOTATE_HAPPENS_AFTER(this);
     }
 
     void unlock()
     {
+        TSAN_ANNOTATE_HAPPENS_BEFORE(this);
         if (m_word.compareExchangeWeak(isLockedBit, 0, std::memory_order_release)) [[likely]] {
             // WordLock released, and nobody was waiting!
             return;

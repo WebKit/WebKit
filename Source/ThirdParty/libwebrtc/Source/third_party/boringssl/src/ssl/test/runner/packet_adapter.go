@@ -8,6 +8,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"math"
 	"net"
 	"slices"
 	"time"
@@ -29,6 +30,11 @@ const opcodeTimeoutAck = byte('t')
 
 // opcodeMTU updates the shim's MTU, encoded as a 32-bit number of bytes.
 const opcodeMTU = byte('M')
+
+// opcodeExpectNextTimeout indicates that the shim should report a specified timeout
+// to the calling application. The timeout is encoded as in opcodeTimeout, but
+// MaxUint64 indicates there should be no timeout.
+const opcodeExpectNextTimeout = byte('E')
 
 type packetAdaptor struct {
 	net.Conn
@@ -141,6 +147,24 @@ func (p *packetAdaptor) SetPeerMTU(mtu int) error {
 	payload := make([]byte, 1+4)
 	payload[0] = opcodeMTU
 	binary.BigEndian.PutUint32(payload[1:], uint32(mtu))
+	_, err := p.Conn.Write(payload)
+	return err
+}
+
+// ExpectNextTimeout indicates the peer's next timeout should be d from now.
+func (p *packetAdaptor) ExpectNextTimeout(d time.Duration) error {
+	payload := make([]byte, 1+8)
+	payload[0] = opcodeExpectNextTimeout
+	binary.BigEndian.PutUint64(payload[1:], uint64(d.Nanoseconds()))
+	_, err := p.Conn.Write(payload)
+	return err
+}
+
+// ExpectNoNext indicates the peer should not have a next timeout.
+func (p *packetAdaptor) ExpectNoNextTimeout() error {
+	payload := make([]byte, 1+8)
+	payload[0] = opcodeExpectNextTimeout
+	binary.BigEndian.PutUint64(payload[1:], math.MaxUint64)
 	_, err := p.Conn.Write(payload)
 	return err
 }

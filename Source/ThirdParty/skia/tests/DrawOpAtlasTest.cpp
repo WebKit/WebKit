@@ -39,8 +39,8 @@
 #include "tests/CtsEnforcement.h"
 #include "tests/Test.h"
 #include "tools/fonts/FontToolUtils.h"
-#include "tools/gpu/ganesh/AtlasTextOpTools.h"
-#include "tools/gpu/ganesh/GrAtlasTools.h"
+#include "tools/ganesh/AtlasTextOpTools.h"
+#include "tools/ganesh/GrAtlasTools.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -98,12 +98,12 @@ public:
     const skgpu::TokenTracker* tokenTracker() final { return &fTokenTracker; }
     skgpu::TokenTracker* writeableTokenTracker() { return &fTokenTracker; }
 
-    skgpu::AtlasToken addInlineUpload(GrDeferredTextureUploadFn&&) final {
+    skgpu::Token addInlineUpload(GrDeferredTextureUploadFn&&) final {
         SkASSERT(0); // this test shouldn't invoke this code path
         return fTokenTracker.nextDrawToken();
     }
 
-    skgpu::AtlasToken addASAPUpload(GrDeferredTextureUploadFn&& upload) final {
+    skgpu::Token addASAPUpload(GrDeferredTextureUploadFn&& upload) final {
         return fTokenTracker.nextFlushToken();
     }
 

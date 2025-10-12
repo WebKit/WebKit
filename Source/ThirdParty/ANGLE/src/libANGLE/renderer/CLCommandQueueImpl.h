@@ -206,6 +206,16 @@ class CLCommandQueueImpl : angle::NonCopyable
     virtual angle::Result flush()  = 0;
     virtual angle::Result finish() = 0;
 
+    virtual angle::Result enqueueAcquireExternalMemObjectsKHR(
+        const cl::MemoryPtrs &memObjects,
+        const cl::EventPtrs &waitEvents,
+        CLEventImpl::CreateFunc *eventCreateFunc) = 0;
+
+    virtual angle::Result enqueueReleaseExternalMemObjectsKHR(
+        const cl::MemoryPtrs &memObjects,
+        const cl::EventPtrs &waitEvents,
+        CLEventImpl::CreateFunc *eventCreateFunc) = 0;
+
   protected:
     const cl::CommandQueue &mCommandQueue;
 };

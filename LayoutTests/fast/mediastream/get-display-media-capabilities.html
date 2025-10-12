@@ -21,6 +21,7 @@
                 let width = capabilities.width;
                 assert_equals(width.max, 1920);
                 assert_equals(width.min, 1);
+                stream.getTracks().forEach(track => track.stop());
             }, "check capabilities");
 
         </script>

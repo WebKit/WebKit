@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1205,7 +1205,7 @@ bool ProxyObject::performSetPrototype(JSGlobalObject* globalObject, JSValue prot
     if (targetIsExtensible)
         return true;
 
-    JSValue targetPrototype = target->getPrototype(vm, globalObject);
+    JSValue targetPrototype = target->getPrototype(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
     bool isSame = sameValue(globalObject, prototype, targetPrototype);
     RETURN_IF_EXCEPTION(scope, false);
@@ -1246,7 +1246,7 @@ JSValue ProxyObject::performGetPrototype(JSGlobalObject* globalObject)
 
     JSObject* target = this->target();
     if (getPrototypeOfMethod.isUndefined()) 
-        RELEASE_AND_RETURN(scope, target->getPrototype(vm, globalObject));
+        RELEASE_AND_RETURN(scope, target->getPrototype(globalObject));
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
@@ -1264,7 +1264,7 @@ JSValue ProxyObject::performGetPrototype(JSGlobalObject* globalObject)
     if (targetIsExtensible)
         return trapResult;
 
-    JSValue targetPrototype = target->getPrototype(vm, globalObject);
+    JSValue targetPrototype = target->getPrototype(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     bool isSame = sameValue(globalObject, targetPrototype, trapResult);
     RETURN_IF_EXCEPTION(scope, { });

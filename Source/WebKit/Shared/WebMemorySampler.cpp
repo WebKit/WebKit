@@ -37,6 +37,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebMemorySampler);
+
 static const char separator = '\t';
 
 static void appendSpaces(StringBuilder& string, int count)

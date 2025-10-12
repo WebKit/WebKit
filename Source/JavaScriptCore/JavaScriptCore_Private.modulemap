@@ -1,0 +1,123 @@
+framework module JavaScriptCore_Private [system] {
+    // These ad-hoc explicit modules are the exhaustive set of headers that are both private and compatible
+    // with both C and C++.
+
+    explicit module APIIntegrityPrivate {
+        header "APIIntegrityPrivate.h"
+        export *
+    }
+
+    explicit module JSBasePrivate {
+        header "JSBasePrivate.h"
+        export *
+    }
+
+    explicit module JSContextPrivate {
+        header "JSContextPrivate.h"
+        export *
+    }
+
+    explicit module JSContextRefPrivate {
+        header "JSContextRefPrivate.h"
+        export *
+    }
+
+    explicit module JSHeapFinalizerPrivate {
+        header "JSHeapFinalizerPrivate.h"
+        export *
+    }
+
+    explicit module JSLockRefPrivate {
+        header "JSLockRefPrivate.h"
+        export *
+    }
+
+    explicit module JSMarkingConstraintPrivate {
+        header "JSMarkingConstraintPrivate.h"
+        export *
+    }
+
+    explicit module JSObjectRefPrivate {
+        header "JSObjectRefPrivate.h"
+        export *
+    }
+
+    explicit module JSRemoteInspector {
+        header "JSRemoteInspector.h"
+        export *
+    }
+
+    explicit module JSScript {
+        header "JSScript.h"
+        export *
+    }
+
+    explicit module JSScriptRefPrivate {
+        header "JSScriptRefPrivate.h"
+        export *
+    }
+
+    explicit module JSStringRefPrivate {
+        header "JSStringRefPrivate.h"
+        export *
+    }
+
+    explicit module JSValuePrivate {
+        header "JSValuePrivate.h"
+        export *
+    }
+
+    explicit module JSVirtualMachinePrivate {
+        header "JSVirtualMachinePrivate.h"
+        export *
+    }
+
+    explicit module JSWeakObjectMapRefPrivate {
+        header "JSWeakObjectMapRefPrivate.h"
+        export *
+    }
+
+    explicit module JSWeakPrivate {
+        header "JSWeakPrivate.h"
+        export *
+    }
+
+    explicit module PASReportCrashPrivate {
+        header "PASReportCrashPrivate.h"
+        export *
+    }
+
+    explicit module Cxx {
+        // This Cxx module is essentially "PrivateHeaders" minus any headers that do not actually require C++.
+
+        umbrella "PrivateHeaders"
+
+        // Ideally, no headers in this module should need `requires cplusplus` and instead just have
+        // compile-time guards themselves. However, this is not practical due to the large private interface
+        // surface of JSC that uses C++.
+        requires cplusplus
+
+        // These headers are already included via their dedicated separate modules above.
+        exclude header "APIIntegrityPrivate.h"
+        exclude header "JSBasePrivate.h"
+        exclude header "JSContextPrivate.h"
+        exclude header "JSContextRefPrivate.h"
+        exclude header "JSHeapFinalizerPrivate.h"
+        exclude header "JSLockRefPrivate.h"
+        exclude header "JSMarkingConstraintPrivate.h"
+        exclude header "JSObjectRefPrivate.h"
+        exclude header "JSRemoteInspector.h"
+        exclude header "JSScript.h"
+        exclude header "JSScriptRefPrivate.h"
+        exclude header "JSStringRefPrivate.h"
+        exclude header "JSValuePrivate.h"
+        exclude header "JSVirtualMachinePrivate.h"
+        exclude header "JSWeakPrivate.h"
+        exclude header "JSWeakObjectMapRefPrivate.h"
+        exclude header "PASReportCrashPrivate.h"
+
+        explicit module * {
+            export *
+        }
+    }
+}

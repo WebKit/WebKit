@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,26 +86,6 @@ public:
 private:
     friend struct IPC::ArgumentCoder<CoreIPCNSURLCredential, void>;
     CoreIPCNSURLCredentialData m_data;
-};
-
-#endif
-
-#if !HAVE(WK_SECURE_CODING_NSURLCREDENTIAL) && !HAVE(DICTIONARY_SERIALIZABLE_NSURLCREDENTIAL)
-
-class CoreIPCNSURLCredential {
-public:
-    CoreIPCNSURLCredential(NSURLCredential *);
-    CoreIPCNSURLCredential(const RetainPtr<NSURLCredential>& credential)
-        : CoreIPCNSURLCredential(credential.get()) { }
-    CoreIPCNSURLCredential(RetainPtr<NSData>&& serializedBytes)
-        : m_serializedBytes(WTFMove(serializedBytes)) { }
-
-    RetainPtr<id> toID() const;
-
-private:
-    friend struct IPC::ArgumentCoder<CoreIPCNSURLCredential, void>;
-
-    RetainPtr<NSData> m_serializedBytes;
 };
 
 #endif

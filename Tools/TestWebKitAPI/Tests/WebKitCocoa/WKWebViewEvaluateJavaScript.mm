@@ -32,6 +32,7 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestScriptMessageHandler.h"
+#import "TestUIDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
@@ -95,17 +96,25 @@ TEST(WKWebView, EvaluateJavaScriptErrorCases)
 
     auto handler = adoptNS([TestScriptMessageHandler new]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [[webView configuration].userContentController addScriptMessageHandler:handler.get() name:@"testHandler"];
+    NSString *handlerName = @"testHandler";
+    [[webView configuration].userContentController addScriptMessageHandler:handler.get() name:handlerName];
     NSString *postMessages = @""
         "window.webkit.messageHandlers.testHandler.postMessage(document.body);"
         "window.webkit.messageHandlers.testHandler.postMessage('abc');"
         "window.webkit.messageHandlers.testHandler.postMessage(null);"
-        "window.webkit.messageHandlers.testHandler.postMessage(undefined);";
+        "window.webkit.messageHandlers.testHandler.postMessage(undefined);"
+        "window.webkit.messageHandlers.testHandler.postMessage(new DOMException(null, null));"
+        "window.webkit.messageHandlers.testHandler.postMessage(new DOMMatrix());"
+    "";
     [webView evaluateJavaScript:postMessages completionHandler:nil];
     RetainPtr firstMessage = [handler waitForMessage];
+    EXPECT_EQ(firstMessage.get().name, handlerName);
+    EXPECT_WK_STREQ(firstMessage.get().name, handlerName);
     EXPECT_WK_STREQ(firstMessage.get().body, "abc");
     EXPECT_EQ(firstMessage.get().body, firstMessage.get().body);
     EXPECT_EQ([handler waitForMessage].body, NSNull.null);
+    EXPECT_NULL([handler waitForMessage].body);
+    EXPECT_NULL([handler waitForMessage].body);
     EXPECT_NULL([handler waitForMessage].body);
 
     [webView evaluateJavaScript:@"document.body.insertBefore(document, document)" completionHandler:^(id result, NSError *error) {
@@ -944,6 +953,13 @@ TEST(EvaluateJavaScript, ReturnTypes)
         EXPECT_EQ([dict objectForKey:@"blob"], [NSNull null]);
     }];
 
+    NSString *containersWithNullAndUndefined = @"(function(){return [{'a':null, 'b':undefined}, [null, undefined, 0]]})()";
+    [webView evaluateJavaScript:containersWithNullAndUndefined completionHandler:^(id value, NSError *error) {
+        EXPECT_FALSE(error);
+        NSArray *expected = @[@{ @"a":NSNull.null }, @[NSNull.null, NSNull.null, @0]];
+        EXPECT_TRUE([value isEqual:expected]);
+    }];
+
     NSString *jsWithNestedObjects = @""
     "(function(){"
     "    let aBool = true;\n"
@@ -1095,7 +1111,7 @@ TEST(EvaluateJavaScript, ReturnTypes)
     }];
 
     constexpr NSUInteger depth { 100000 };
-    NSString *deeplyNestedArray = [[@"" stringByPaddingToLength:depth withString: @"[" startingAtIndex:0] stringByAppendingString:[@"" stringByPaddingToLength:depth withString: @"[" startingAtIndex:0]];
+    NSString *deeplyNestedArray = [[@"" stringByPaddingToLength:depth withString: @"{" startingAtIndex:0] stringByAppendingString:[@"" stringByPaddingToLength:depth withString: @"{" startingAtIndex:0]];
     [webView evaluateJavaScript:deeplyNestedArray completionHandler:^(id value, NSError *error) {
         EXPECT_WK_STREQ(error.domain, WKErrorDomain);
         EXPECT_EQ(error.code, WKErrorJavaScriptExceptionOccurred);
@@ -1115,4 +1131,27 @@ TEST(EvaluateJavaScript, ReturnTypes)
     }];
 
     TestWebKitAPI::Util::run(&didEvaluateJavaScript);
+}
+
+@interface TestScriptMessageHandlerWithReply : NSObject <WKScriptMessageHandlerWithReply>
+@end
+
+@implementation TestScriptMessageHandlerWithReply
+
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message replyHandler:(void(^)(id, NSString *))replyHandler
+{
+    replyHandler([NSString stringWithFormat:@"UI process received: %@", message.body], nil);
+}
+
+@end
+
+TEST(WKWebView, LegacySynchronousMessages)
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration _setAllowPostingLegacySynchronousMessages:YES];
+    RetainPtr handler = adoptNS([TestScriptMessageHandlerWithReply new]);
+    [[configuration userContentController] addScriptMessageHandlerWithReply:handler.get() contentWorld:WKContentWorld.pageWorld name:@"testHandler"];
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    [webView loadHTMLString:@"<script>alert(window.webkit.messageHandlers.testHandler.postLegacySynchronousMessage('hello!'))</script>" baseURL:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "UI process received: hello!");
 }

@@ -31,7 +31,7 @@
 #include "WebPageProxyMessages.h"
 #include <WebCore/Element.h>
 #include <WebCore/LocalFrame.h>
-#include <WebCore/NodeInlines.h>
+#include <WebCore/NodeDocument.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -52,16 +52,17 @@ WebValidationMessageClient::~WebValidationMessageClient()
 
 void WebValidationMessageClient::documentDetached(Document& document)
 {
-    if (!m_currentAnchor)
+    RefPtr anchor = m_currentAnchor.get();
+    if (!anchor)
         return;
-    if (&m_currentAnchor->document() == &document)
-        hideValidationMessage(*m_currentAnchor);
+    if (&anchor->document() == &document)
+        hideValidationMessage(*anchor);
 }
 
 void WebValidationMessageClient::showValidationMessage(const Element& anchor, String&& message)
 {
-    if (m_currentAnchor)
-        hideValidationMessage(*m_currentAnchor);
+    if (RefPtr currentAnchor = m_currentAnchor.get())
+        hideValidationMessage(*currentAnchor);
 
     m_currentAnchor = anchor;
     m_currentAnchorRect = anchor.boundingBoxInRootViewCoordinates();
@@ -97,13 +98,14 @@ bool WebValidationMessageClient::isValidationMessageVisible(const Element& ancho
 
 void WebValidationMessageClient::updateValidationBubbleStateIfNeeded()
 {
-    if (!m_currentAnchor)
+    RefPtr anchor = m_currentAnchor.get();
+    if (!anchor)
         return;
 
     // We currently hide the validation bubble if its position is outdated instead of trying
     // to update its position.
-    if (m_currentAnchorRect != m_currentAnchor->boundingBoxInRootViewCoordinates())
-        hideValidationMessage(*m_currentAnchor);
+    if (m_currentAnchorRect != anchor->boundingBoxInRootViewCoordinates())
+        hideValidationMessage(*anchor);
 }
 
 } // namespace WebKit

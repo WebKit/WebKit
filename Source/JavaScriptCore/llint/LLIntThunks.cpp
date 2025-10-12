@@ -205,51 +205,12 @@ MacroAssemblerCodeRef<JSEntryPtrTag> moduleProgramEntryThunk()
 }
 
 #if ENABLE(WEBASSEMBLY)
-MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunk()
-{
-    static LazyNeverDestroyed<MacroAssemblerCodeRef<JITThunkPtrTag>> codeRef;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(wasm_function_prologue, "function for wasm call"));
-    });
-    return codeRef;
-}
-
-MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunkSIMD()
-{
-    static LazyNeverDestroyed<MacroAssemblerCodeRef<JITThunkPtrTag>> codeRef;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(wasm_function_prologue_simd, "function for wasm SIMD call"));
-    });
-    return codeRef;
-}
-
 
 ALWAYS_INLINE void* untaggedPtr(void* ptr)
 {
     return CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr<>();
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> inPlaceInterpreterEntryThunk()
-{
-    static LazyNeverDestroyed<MacroAssemblerCodeRef<JITThunkPtrTag>> codeRef;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(ipint_entry, "function for IPInt entry"));
-    });
-    return codeRef;
-}
-
-MacroAssemblerCodeRef<JITThunkPtrTag> inPlaceInterpreterSIMDEntryThunk()
-{
-    static LazyNeverDestroyed<MacroAssemblerCodeRef<JITThunkPtrTag>> codeRef;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(ipint_function_prologue_simd, "function for IPInt SIMD call"));
-    });
-    return codeRef;
-}
 #endif // ENABLE(WEBASSEMBLY)
 
 MacroAssemblerCodeRef<JSEntryPtrTag> defaultCallThunk()
@@ -374,157 +335,6 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleCatchThunk(OpcodeSize size)
     RELEASE_ASSERT_NOT_REACHED();
     return { };
 }
-
-#if ENABLE(WEBASSEMBLY)
-MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchThunk(OpcodeSize size)
-{
-    WasmOpcodeID opcode = wasm_catch;
-    switch (size) {
-    case OpcodeSize::Narrow: {
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
-        static std::once_flag onceKey;
-        std::call_once(onceKey, [&] {
-            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getCodeFunctionPtr<OperationPtrTag>(opcode), "wasm_catch"));
-        });
-        return codeRef;
-    }
-    case OpcodeSize::Wide16: {
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
-        static std::once_flag onceKey;
-        std::call_once(onceKey, [&] {
-            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide16CodeFunctionPtr<OperationPtrTag>(opcode), "wasm_catch16"));
-        });
-        return codeRef;
-    }
-    case OpcodeSize::Wide32: {
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
-        static std::once_flag onceKey;
-        std::call_once(onceKey, [&] {
-            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide32CodeFunctionPtr<OperationPtrTag>(opcode), "wasm_catch32"));
-        });
-        return codeRef;
-    }
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return { };
-}
-
-MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchAllThunk(OpcodeSize size)
-{
-    WasmOpcodeID opcode = wasm_catch_all;
-    switch (size) {
-    case OpcodeSize::Narrow: {
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
-        static std::once_flag onceKey;
-        std::call_once(onceKey, [&] {
-            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getCodeFunctionPtr<OperationPtrTag>(opcode), "wasm_catch_all"));
-        });
-        return codeRef;
-    }
-    case OpcodeSize::Wide16: {
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
-        static std::once_flag onceKey;
-        std::call_once(onceKey, [&] {
-            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide16CodeFunctionPtr<OperationPtrTag>(opcode), "wasm_catch_all16"));
-        });
-        return codeRef;
-    }
-    case OpcodeSize::Wide32: {
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
-        static std::once_flag onceKey;
-        std::call_once(onceKey, [&] {
-            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide32CodeFunctionPtr<OperationPtrTag>(opcode), "wasm_catch_all32"));
-        });
-        return codeRef;
-    }
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return { };
-}
-
-MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmTryTableThunk(WasmOpcodeID opcode, OpcodeSize size)
-{
-    switch (size) {
-    case OpcodeSize::Narrow: {
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatch;
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchRef;
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchAll;
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchAllRef;
-        static std::once_flag onceKey;
-        std::call_once(onceKey, [&] {
-            codeRefCatch.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getCodeFunctionPtr<OperationPtrTag>(wasm_try_table_catch), "wasm_try_table_catch"));
-            codeRefCatchRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getCodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchref), "wasm_try_table_catchref"));
-            codeRefCatchAll.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getCodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchall), "wasm_try_table_catchall"));
-            codeRefCatchAllRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getCodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchallref), "wasm_try_table_catchallref"));
-        });
-        switch (opcode) {
-        case wasm_try_table_catch:
-            return codeRefCatch;
-        case wasm_try_table_catchref:
-            return codeRefCatchRef;
-        case wasm_try_table_catchall:
-            return codeRefCatchAll;
-        case wasm_try_table_catchallref:
-            return codeRefCatchAllRef;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    }
-    case OpcodeSize::Wide16: {
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatch;
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchRef;
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchAll;
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchAllRef;
-        static std::once_flag onceKey;
-        std::call_once(onceKey, [&] {
-            codeRefCatch.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide16CodeFunctionPtr<OperationPtrTag>(wasm_try_table_catch), "wasm_try_table_catch16"));
-            codeRefCatchRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide16CodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchref), "wasm_try_table_catchref16"));
-            codeRefCatchAll.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide16CodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchall), "wasm_try_table_catchall16"));
-            codeRefCatchAllRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide16CodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchallref), "wasm_try_table_catchallref16"));
-        });
-        switch (opcode) {
-        case wasm_try_table_catch:
-            return codeRefCatch;
-        case wasm_try_table_catchref:
-            return codeRefCatchRef;
-        case wasm_try_table_catchall:
-            return codeRefCatchAll;
-        case wasm_try_table_catchallref:
-            return codeRefCatchAllRef;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    }
-    case OpcodeSize::Wide32: {
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatch;
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchRef;
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchAll;
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchAllRef;
-        static std::once_flag onceKey;
-        std::call_once(onceKey, [&] {
-            codeRefCatch.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide32CodeFunctionPtr<OperationPtrTag>(wasm_try_table_catch), "wasm_try_table_catch32"));
-            codeRefCatchRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide32CodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchref), "wasm_try_table_catchref32"));
-            codeRefCatchAll.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide32CodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchall), "wasm_try_table_catchall32"));
-            codeRefCatchAllRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide32CodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchallref), "wasm_try_table_catchallref32"));
-        });
-        switch (opcode) {
-        case wasm_try_table_catch:
-            return codeRefCatch;
-        case wasm_try_table_catchref:
-            return codeRefCatchRef;
-        case wasm_try_table_catchall:
-            return codeRefCatchAll;
-        case wasm_try_table_catchallref:
-            return codeRefCatchAllRef;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    }
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return { };
-}
-#endif
 
 MacroAssemblerCodeRef<JSEntryPtrTag> genericReturnPointThunk(OpcodeSize size)
 {
@@ -981,23 +791,72 @@ MacroAssemblerCodeRef<JSEntryPtrTag> returnLocationThunk(OpcodeID opcodeID, Opco
 
 #else // ENABLE(JIT)
 
+#endif // ENABLE(JIT)
+
 namespace LLInt {
 
 #if ENABLE(WEBASSEMBLY)
-MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunk()
+#if ENABLE(JIT)
+
+MacroAssemblerCodeRef<JITThunkPtrTag> inPlaceInterpreterEntryThunk()
 {
-    return { };
+    static LazyNeverDestroyed<MacroAssemblerCodeRef<JITThunkPtrTag>> codeRef;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(ipint_entry, "function for IPInt entry"));
+    });
+    return codeRef;
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunkSIMD()
+MacroAssemblerCodeRef<JITThunkPtrTag> inPlaceInterpreterSIMDEntryThunk()
 {
-    return { };
+    static LazyNeverDestroyed<MacroAssemblerCodeRef<JITThunkPtrTag>> codeRef;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(ipint_simd_entry, "function for IPInt SIMD call"));
+    });
+    return codeRef;
 }
-#endif // ENABLE(WEBASSEMBLY)
+
+#define DEFINE_IPINT_THUNK_FOR_CATCH(funcName, target) \
+    MacroAssemblerCodeRef<JITThunkPtrTag> funcName() \
+    { \
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<JITThunkPtrTag>> codeRef; \
+        static std::once_flag onceKey; \
+        std::call_once(onceKey, [&] { \
+            if (Options::useJIT()) \
+                codeRef.construct(generateThunkWithJumpTo<JITThunkPtrTag>(target, #target)); \
+            else \
+                codeRef.construct(getCodeRef<JITThunkPtrTag>(target)); \
+        }); \
+        return codeRef; \
+    }
+
+#else
+
+#define DEFINE_IPINT_THUNK_FOR_CATCH(funcName, target) \
+    MacroAssemblerCodeRef<JITThunkPtrTag> funcName() \
+    { \
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<JITThunkPtrTag>> codeRef; \
+        static std::once_flag onceKey; \
+        std::call_once(onceKey, [&] { \
+            codeRef.construct(getCodeRef<JITThunkPtrTag>(target)); \
+        }); \
+        return codeRef; \
+    }
+
+#endif
+
+DEFINE_IPINT_THUNK_FOR_CATCH(inPlaceInterpreterCatchEntryThunk, ipint_catch_entry)
+DEFINE_IPINT_THUNK_FOR_CATCH(inPlaceInterpreterCatchAllEntryThunk, ipint_catch_all_entry)
+DEFINE_IPINT_THUNK_FOR_CATCH(inPlaceInterpreterTableCatchEntryThunk, ipint_table_catch_entry)
+DEFINE_IPINT_THUNK_FOR_CATCH(inPlaceInterpreterTableCatchRefEntryThunk, ipint_table_catch_ref_entry)
+DEFINE_IPINT_THUNK_FOR_CATCH(inPlaceInterpreterTableCatchAllEntryThunk, ipint_table_catch_all_entry)
+DEFINE_IPINT_THUNK_FOR_CATCH(inPlaceInterpreterTableCatchAllrefEntryThunk, ipint_table_catch_allref_entry)
+
+#endif
 
 } // namespace LLInt
-
-#endif // ENABLE(JIT)
 
 #if ENABLE(C_LOOP)
 // Non-JIT (i.e. C Loop LLINT) case:

@@ -103,7 +103,7 @@ private:
     bool m_isForceRepaintCompletionHandlerDeferred { false };
     WCUpdateInfo m_updateInfo;
     Vector<RootLayerInfo, 1> m_rootLayers;
-    Ref<WorkQueue> m_commitQueue;
+    const Ref<WorkQueue> m_commitQueue;
     int64_t m_backingStoreStateID { 0 };
     WebCore::Region m_dirtyRegion;
     WebCore::IntRect m_scrollRect;

@@ -45,7 +45,7 @@ bool isInspectorProcessPool(WebProcessPool&);
 bool isInspectorPage(WebPageProxy&);
 
 #if PLATFORM(COCOA)
-CFStringRef bundleIdentifierForSandboxBroker();
+CFStringRef bundleIdentifierForSandboxBrokerSingleton();
 #endif
 
 }

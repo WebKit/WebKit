@@ -16,6 +16,7 @@
             stream = await navigator.mediaDevices.getUserMedia({ video: { width : 640 } });
             assert_equals(stream.getVideoTracks()[0].getSettings().whiteBalanceMode, undefined, 'settings-1');
             assert_equals(stream.getVideoTracks()[0].getCapabilities().whiteBalanceMode, undefined, 'capabilities-1');
+            stream.getTracks().forEach(track => track.stop());
 
             stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, whiteBalanceMode : 'single-shot' } });
             assert_equals(stream.getVideoTracks()[0].getSettings().whiteBalanceMode, 'single-shot', 'settings-2');
@@ -23,6 +24,7 @@
             await stream.getVideoTracks()[0].applyConstraints({ whiteBalanceMode : 'manual' });
             assert_equals(stream.getVideoTracks()[0].getSettings().whiteBalanceMode, 'manual', 'settings -3');
 
+            stream.getTracks().forEach(track => track.stop());
         }, 'getUserMedia whiteBalanceMode');
     </script>
 </body>

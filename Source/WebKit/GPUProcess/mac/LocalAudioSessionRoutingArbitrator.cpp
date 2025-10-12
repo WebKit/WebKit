@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,7 +65,7 @@ void LocalAudioSessionRoutingArbitrator::beginRoutingArbitrationWithCategory(Aud
     RefPtr connection = m_connectionToWebProcess.get();
     if (!connection)
         return;
-    connection->protectedConnection()->sendWithAsyncReply(Messages::GPUProcessConnection::BeginRoutingArbitrationWithCategory(category), WTFMove(callback), 0);
+    connection->connection().sendWithAsyncReply(Messages::GPUProcessConnection::BeginRoutingArbitrationWithCategory(category), WTFMove(callback), 0);
 }
 
 void LocalAudioSessionRoutingArbitrator::leaveRoutingAbritration()
@@ -73,7 +73,7 @@ void LocalAudioSessionRoutingArbitrator::leaveRoutingAbritration()
     RefPtr connection = m_connectionToWebProcess.get();
     if (!connection)
         return;
-    connection->protectedConnection()->send(Messages::GPUProcessConnection::EndRoutingArbitration(), 0);
+    connection->connection().send(Messages::GPUProcessConnection::EndRoutingArbitration(), 0);
 }
 
 Logger& LocalAudioSessionRoutingArbitrator::logger()

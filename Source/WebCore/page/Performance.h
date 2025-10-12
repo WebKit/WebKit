@@ -39,8 +39,10 @@
 #include "ReducedResolutionSeconds.h"
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
+#include <memory>
 #include <wtf/ContinuousTime.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/MonotonicTime.h>
 
 namespace JSC {
 class JSGlobalObject;
@@ -52,6 +54,8 @@ class CachedResource;
 class Document;
 class DocumentLoadTiming;
 class DocumentLoader;
+class EventCounts;
+class LargestContentfulPaint;
 class NetworkLoadMetrics;
 class PerformanceUserTiming;
 class PerformanceEntry;
@@ -65,6 +69,8 @@ class PerformanceTiming;
 class ResourceResponse;
 class ResourceTiming;
 class ScriptExecutionContext;
+enum class EventType : uint16_t;
+struct PerformanceEventTimingCandidate;
 struct PerformanceMarkOptions;
 struct PerformanceMeasureOptions;
 template<typename> class ExceptionOr;
@@ -81,11 +87,17 @@ public:
 
     PerformanceNavigation* navigation();
     PerformanceTiming* timing();
+    EventCounts* eventCounts();
+
+    uint64_t interactionCount();
 
     Vector<Ref<PerformanceEntry>> getEntries() const;
     Vector<Ref<PerformanceEntry>> getEntriesByType(const String& entryType) const;
     Vector<Ref<PerformanceEntry>> getEntriesByName(const String& name, const String& entryType) const;
     void appendBufferedEntriesByType(const String& entryType, Vector<Ref<PerformanceEntry>>&, PerformanceObserver&) const;
+
+    void countEvent(EventType);
+    void processEventEntry(const PerformanceEventTimingCandidate&);
 
     void clearResourceTimings();
     void setResourceTimingBufferSize(unsigned);
@@ -98,10 +110,12 @@ public:
     void clearMeasures(const String& measureName);
 
     void addNavigationTiming(DocumentLoader&, Document&, CachedResource&, const DocumentLoadTiming&, const NetworkLoadMetrics&);
-    void navigationFinished(const NetworkLoadMetrics&);
+    void documentLoadFinished(const NetworkLoadMetrics&);
+    void navigationFinished(MonotonicTime loadEventEnd);
     void addResourceTiming(ResourceTiming&&);
 
-    void reportFirstContentfulPaint();
+    void reportFirstContentfulPaint(DOMHighResTimeStamp);
+    void reportLargestContentfulPaint(Ref<LargestContentfulPaint>&&);
 
     void removeAllObservers();
     void registerPerformanceObserver(PerformanceObserver&);
@@ -111,15 +125,16 @@ public:
     static Seconds timeResolution();
     static Seconds reduceTimeResolution(Seconds);
 
+    Seconds relativeTimeFromTimeOriginInReducedResolutionSeconds(MonotonicTime) const;
     DOMHighResTimeStamp relativeTimeFromTimeOriginInReducedResolution(MonotonicTime) const;
     MonotonicTime monotonicTimeFromRelativeTime(DOMHighResTimeStamp) const;
 
-    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final;
 
     using RefCounted::ref;
     using RefCounted::deref;
 
-    void scheduleNavigationObservationTaskIfNeeded();
+    void scheduleTaskIfNeeded();
 
     PerformanceNavigationTiming* navigationTiming() { return m_navigationTiming.get(); }
 
@@ -137,28 +152,35 @@ private:
     void resourceTimingBufferFullTimerFired();
 
     void queueEntry(PerformanceEntry&);
-    void scheduleTaskIfNeeded();
 
+    const std::unique_ptr<EventCounts> m_eventCounts;
     mutable RefPtr<PerformanceNavigation> m_navigation;
     mutable RefPtr<PerformanceTiming> m_timing;
 
     // https://w3c.github.io/resource-timing/#sec-extensions-performance-interface recommends initial buffer size of 250.
     Vector<Ref<PerformanceEntry>> m_resourceTimingBuffer;
-    unsigned m_resourceTimingBufferSize { 250 };
 
     Timer m_resourceTimingBufferFullTimer;
     Vector<Ref<PerformanceEntry>> m_backupResourceTimingBuffer;
 
+    RefPtr<PerformanceEntry> m_firstInput;
+    Vector<Ref<PerformanceEntry>> m_eventTimingBuffer;
+
+    // Sizes recommended by https://w3c.github.io/timing-entrytypes-registry/#registry:
+    unsigned m_eventTimingBufferSize { 150 };
+    unsigned m_resourceTimingBufferSize { 250 };
+
     // https://w3c.github.io/resource-timing/#dfn-resource-timing-buffer-full-flag
     bool m_resourceTimingBufferFullFlag { false };
     bool m_waitingForBackupBufferToBeProcessed { false };
-    bool m_hasScheduledTimingBufferDeliveryTask { false };
+    bool m_hasScheduledDeliveryTask { false };
 
     MonotonicTime m_timeOrigin;
-    UNUSED_MEMBER_VARIABLE ContinuousTime m_continuousTimeOrigin;
+    ContinuousTime m_continuousTimeOrigin;
 
     RefPtr<PerformanceNavigationTiming> m_navigationTiming;
     RefPtr<PerformancePaintTiming> m_firstContentfulPaint;
+    RefPtr<PerformanceEntry> m_largestContentfulPaint;
     std::unique_ptr<PerformanceUserTiming> m_userTiming;
 
     ListHashSet<RefPtr<PerformanceObserver>> m_observers;

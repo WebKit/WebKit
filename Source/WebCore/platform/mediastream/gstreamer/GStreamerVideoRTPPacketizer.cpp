@@ -38,17 +38,19 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_webrtc_video_rtp_packetizer_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_video_rtp_packetizer_debug
 
-RefPtr<GStreamerVideoRTPPacketizer> GStreamerVideoRTPPacketizer::create(RefPtr<UniqueSSRCGenerator> ssrcGenerator, const GstStructure* codecParameters, GUniquePtr<GstStructure>&& encodingParameters)
+RefPtr<GStreamerVideoRTPPacketizer> GStreamerVideoRTPPacketizer::create(RefPtr<UniqueSSRCGenerator> ssrcGenerator, const GstStructure* parameters, GUniquePtr<GstStructure>&& encodingParameters)
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_webrtc_video_rtp_packetizer_debug, "webkitwebrtcrtppacketizervideo", 0, "WebKit WebRTC Video RTP Packetizer");
     });
 
-    GST_DEBUG("Creating packetizer for codec: %" GST_PTR_FORMAT " and encoding parameters %" GST_PTR_FORMAT, codecParameters, encodingParameters.get());
+    GUniquePtr<GstStructure> codecParameters(gst_structure_copy(parameters));
+    GST_DEBUG("Creating packetizer for codec: %" GST_PTR_FORMAT " and encoding parameters %" GST_PTR_FORMAT, codecParameters.get(), encodingParameters.get());
     String encoding;
-    if (auto encodingName = gstStructureGetString(codecParameters, "encoding-name"_s))
-        encoding = encodingName.convertToASCIILowercase();
+    auto encodingName = gstStructureGetString(codecParameters.get(), "encoding-name"_s);
+    if (encodingName)
+        encoding = encodingName.toString().convertToASCIILowercase();
     else {
         GST_ERROR("encoding-name not found");
         return nullptr;
@@ -75,8 +77,8 @@ RefPtr<GStreamerVideoRTPPacketizer> GStreamerVideoRTPPacketizer::create(RefPtr<U
 
         VPCodecConfigurationRecord record;
         record.codecName = "vp09"_s;
-        if (auto vp9Profile = gstStructureGetString(codecParameters, "profile-id"_s)) {
-            if (auto profile = parseInteger<uint8_t>(vp9Profile))
+        if (auto vp9Profile = gstStructureGetString(codecParameters.get(), "profile-id"_s)) {
+            if (auto profile = parseInteger<uint8_t>(vp9Profile.toString()))
                 record.profile = *profile;
         }
         codec = createVPCodecParametersString(record);
@@ -84,25 +86,35 @@ RefPtr<GStreamerVideoRTPPacketizer> GStreamerVideoRTPPacketizer::create(RefPtr<U
         gst_util_set_object_arg(G_OBJECT(payloader.get()), "aggregate-mode", "zero-latency");
         g_object_set(payloader.get(), "config-interval", -1, nullptr);
 
-        auto profileValue = gstStructureGetString(codecParameters, "profile"_s);
-        auto profile = profileValue ? profileValue : "constrained-baseline"_s;
+        auto profileLevelID = gstStructureGetString(codecParameters.get(), "profile-level-id"_s);
+        if (!profileLevelID.isEmpty()) {
+            codec = makeString("avc1."_s, profileLevelID.toString());
+            gst_structure_remove_field(codecParameters.get(), "profile-level-id");
+        } else {
+            auto profileValue = gstStructureGetString(codecParameters.get(), "profile"_s);
+            auto profile = profileValue ? profileValue : "constrained-baseline"_s;
 
-        AVCParameters parameters;
-        if (profile == "baseline"_s)
-            parameters.profileIDC = 66;
-        else if (profile == "constrained-baseline"_s) {
-            parameters.profileIDC = 66;
-            parameters.constraintsFlags |= 1 << 6;
-        } else if (profile == "main"_s)
-            parameters.profileIDC = 77;
-        else if (profile == "constrained-high"_s) {
-            parameters.profileIDC = 100;
-            parameters.constraintsFlags |= 1 << 3;
-            parameters.constraintsFlags |= 1 << 2;
-        } else if (profile == "high"_s)
-            parameters.profileIDC = 100;
+            const guint8 CSF0 = 0x80;
+            const guint8 CSF1 = 0x40;
+            const guint8 CSF4 = 0x08;
+            const guint8 CSF5 = 0x04;
 
-        codec = createAVCCodecParametersString(parameters);
+            AVCParameters parameters;
+            if (profile == "baseline"_s) {
+                parameters.profileIDC = 66;
+                parameters.constraintsFlags = CSF0;
+            } else if (profile == "constrained-baseline"_s) {
+                parameters.profileIDC = 66;
+                parameters.constraintsFlags = CSF0 | CSF1;
+            } else if (profile == "main"_s)
+                parameters.profileIDC = 77;
+            else if (profile == "constrained-high"_s) {
+                parameters.profileIDC = 100;
+                parameters.constraintsFlags = CSF4 | CSF5;
+            } else if (profile == "high"_s)
+                parameters.profileIDC = 100;
+            codec = createAVCCodecParametersString(parameters);
+        }
     } else if (encoding == "h265"_s) {
         gst_util_set_object_arg(G_OBJECT(payloader.get()), "aggregate-mode", "zero-latency");
         g_object_set(payloader.get(), "config-interval", -1, nullptr);
@@ -118,7 +130,7 @@ RefPtr<GStreamerVideoRTPPacketizer> GStreamerVideoRTPPacketizer::create(RefPtr<U
     // Align MTU with libwebrtc implementation, also helping to reduce packet fragmentation.
     g_object_set(payloader.get(), "auto-header-extension", TRUE, "mtu", 1200, nullptr);
 
-    auto payloadType = gstStructureGet<int>(codecParameters, "payload"_s);
+    auto payloadType = gstStructureGet<int>(codecParameters.get(), "payload"_s);
     if (!payloadType)
         payloadType = gstStructureGet<int>(encodingParameters.get(), "payload"_s);
 
@@ -128,14 +140,12 @@ RefPtr<GStreamerVideoRTPPacketizer> GStreamerVideoRTPPacketizer::create(RefPtr<U
         return nullptr;
     }
 
-    GUniquePtr<GstStructure> structure(gst_structure_copy(codecParameters));
-
     auto ssrc = ssrcGenerator->generateSSRC();
     if (ssrc != std::numeric_limits<uint32_t>::max())
-        gst_structure_set(structure.get(), "ssrc", G_TYPE_UINT, ssrc, nullptr);
+        gst_structure_set(codecParameters.get(), "ssrc", G_TYPE_UINT, ssrc, nullptr);
 
     auto rtpCaps = adoptGRef(gst_caps_new_empty());
-    gst_caps_append_structure(rtpCaps.get(), structure.release());
+    gst_caps_append_structure(rtpCaps.get(), codecParameters.release());
     return adoptRef(*new GStreamerVideoRTPPacketizer(WTFMove(encoder), WTFMove(payloader), WTFMove(encodingParameters), WTFMove(rtpCaps), WTFMove(payloadType)));
 }
 

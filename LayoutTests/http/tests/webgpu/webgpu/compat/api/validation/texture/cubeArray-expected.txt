@@ -1,4 +1,0 @@
-
-PASS :cube_array:dimension="cube"
-PASS :cube_array:dimension="cube-array"
-

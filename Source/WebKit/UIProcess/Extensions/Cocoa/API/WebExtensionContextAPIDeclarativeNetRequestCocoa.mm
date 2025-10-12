@@ -33,10 +33,9 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
-#import "WKWebExtensionPermission.h"
 #import "WebExtensionConstants.h"
+#import "WebExtensionPermission.h"
 #import "WebExtensionUtilities.h"
-#import "_WKWebExtensionDeclarativeNetRequestSQLiteStore.h"
 #import "_WKWebExtensionSQLiteStore.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -45,20 +44,6 @@ static NSString * const declarativeNetRequestRulesetStateKey = @"DeclarativeNetR
 static NSString * const displayBlockedResourceCountAsBadgeTextStateKey = @"DisplayBlockedResourceCountAsBadgeText";
 
 namespace WebKit {
-
-bool WebExtensionContext::isDeclarativeNetRequestMessageAllowed()
-{
-    return isLoaded() && (hasPermission(WKWebExtensionPermissionDeclarativeNetRequest) || hasPermission(WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess));
-}
-
-void WebExtensionContext::declarativeNetRequestGetEnabledRulesets(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
-{
-    Vector<String> enabledRulesets;
-    for (auto& identifier : m_enabledStaticRulesetIDs)
-        enabledRulesets.append(identifier);
-
-    completionHandler(WTFMove(enabledRulesets));
-}
 
 void WebExtensionContext::loadDeclarativeNetRequestRulesetStateFromStorage()
 {
@@ -103,22 +88,6 @@ void WebExtensionContext::clearDeclarativeNetRequestRulesetState()
 {
     [m_state removeObjectForKey:declarativeNetRequestRulesetStateKey];
     m_enabledStaticRulesetIDs.clear();
-}
-
-WebExtensionContext::DeclarativeNetRequestValidatedRulesets WebExtensionContext::declarativeNetRequestValidateRulesetIdentifiers(const Vector<String>& rulesetIdentifiers)
-{
-    WebExtension::DeclarativeNetRequestRulesetVector validatedRulesets;
-
-    RefPtr extension = m_extension;
-    for (auto& identifier : rulesetIdentifiers) {
-        auto ruleset = extension->declarativeNetRequestRuleset(identifier);
-        if (!ruleset)
-            return toWebExtensionError(@"declarativeNetRequest.updateEnabledRulesets()", nullString(), @"Failed to apply rules. Invalid ruleset id: %@.", identifier.createNSString().get());
-
-        validatedRulesets.append(ruleset.value());
-    }
-
-    return WTFMove(validatedRulesets);
 }
 
 void WebExtensionContext::declarativeNetRequestToggleRulesets(const Vector<String>& rulesetIdentifiers, bool newValue, NSMutableDictionary *rulesetIdentifiersToEnabledState)
@@ -271,167 +240,6 @@ void WebExtensionContext::declarativeNetRequestGetMatchedRules(std::optional<Web
 
         completionHandler(WTFMove(result));
     });
-}
-
-_WKWebExtensionDeclarativeNetRequestSQLiteStore *WebExtensionContext::declarativeNetRequestDynamicRulesStore()
-{
-    if (!m_declarativeNetRequestDynamicRulesStore)
-        m_declarativeNetRequestDynamicRulesStore = [[_WKWebExtensionDeclarativeNetRequestSQLiteStore alloc] initWithUniqueIdentifier:uniqueIdentifier().createNSString().get() storageType:_WKWebExtensionDeclarativeNetRequestStorageType::Dynamic directory:storageDirectory().createNSString().get() usesInMemoryDatabase:!storageIsPersistent()];
-
-    return m_declarativeNetRequestDynamicRulesStore.get();
-}
-
-_WKWebExtensionDeclarativeNetRequestSQLiteStore *WebExtensionContext::declarativeNetRequestSessionRulesStore()
-{
-    if (!m_declarativeNetRequestSessionRulesStore)
-        m_declarativeNetRequestSessionRulesStore = [[_WKWebExtensionDeclarativeNetRequestSQLiteStore alloc] initWithUniqueIdentifier:uniqueIdentifier().createNSString().get() storageType:_WKWebExtensionDeclarativeNetRequestStorageType::Session directory:storageDirectory().createNSString().get() usesInMemoryDatabase:YES];
-
-    return m_declarativeNetRequestSessionRulesStore.get();
-}
-
-void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(_WKWebExtensionDeclarativeNetRequestSQLiteStore *storage, NSString *storageType, NSString *apiName, NSArray *rulesToAdd, NSArray *ruleIDsToRemove, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
-{
-    [storage createSavepointWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), storage, storageType, apiName, rulesToAdd, ruleIDsToRemove](NSUUID *savepointIdentifier, NSString *errorMessage) mutable {
-        if (errorMessage)
-            RELEASE_LOG_ERROR(Extensions, "Unable to create %{public}@ rules savepoint for extension %{private}@. Error: %{public}@", storageType, uniqueIdentifier().createNSString().get(), errorMessage);
-
-        if (errorMessage.length) {
-            completionHandler(toWebExtensionError(apiName, nullString(), errorMessage));
-            return;
-        }
-
-        [storage updateRulesByRemovingIDs:ruleIDsToRemove addRules:rulesToAdd completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), storage, storageType, apiName, savepointIdentifier](NSString *errorMessage) mutable {
-            if (errorMessage)
-                RELEASE_LOG_ERROR(Extensions, "Unable to update %{public}@ rules for extension %{private}@. Error: %{public}@", storageType, uniqueIdentifier().createNSString().get(), errorMessage);
-
-            if (errorMessage.length) {
-                // Update was unsucessful, rollback the changes to the database.
-                [storage rollbackToSavepoint:savepointIdentifier completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), storageType, apiName, errorMessage](NSString *savepointErrorMessage) mutable {
-                    if (savepointErrorMessage)
-                        RELEASE_LOG_ERROR(Extensions, "Unable to rollback to %{public}@ rules savepoint for extension %{private}@. Error: %{public}@", storageType, uniqueIdentifier().createNSString().get(), savepointErrorMessage);
-
-                    completionHandler(toWebExtensionError(apiName, nullString(), errorMessage));
-                }).get()];
-
-                return;
-            }
-
-            // Update was sucessful, load the new rules.
-            loadDeclarativeNetRequestRules([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), storageType, apiName, storage, savepointIdentifier](bool success) mutable {
-                if (!success) {
-                    // Load was unsucessful, rollback the changes to the database.
-                    [storage rollbackToSavepoint:savepointIdentifier completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), storageType, apiName](NSString *savepointErrorMessage) mutable {
-                        if (savepointErrorMessage)
-                            RELEASE_LOG_ERROR(Extensions, "Unable to rollback to %{public}@ rules savepoint for extension %{private}@. Error: %{public}@", storageType, uniqueIdentifier().createNSString().get(), savepointErrorMessage);
-
-                        // Load the declarativeNetRequest rules again after rolling back the dynamic update.
-                        loadDeclarativeNetRequestRules([completionHandler = WTFMove(completionHandler), apiName](bool success) mutable {
-                            if (!success) {
-                                completionHandler(toWebExtensionError(apiName, nullString(), @"unable to load declarativeNetRequest rules"));
-                                return;
-                            }
-
-                            completionHandler({ });
-                        });
-                    }).get()];
-
-                    return;
-                }
-
-                // Load was successful, commit the changes to the database.
-                [storage commitSavepoint:savepointIdentifier completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), storageType](NSString *savepointErrorMessage) mutable {
-                    if (savepointErrorMessage)
-                        RELEASE_LOG_ERROR(Extensions, "Unable to commit %{public}@ rules savepoint for extension %{private}@. Error: %{public}@", storageType, uniqueIdentifier().createNSString().get(), savepointErrorMessage);
-
-                    completionHandler({ });
-                }).get()];
-            });
-        }).get()];
-    }).get()];
-}
-
-void WebExtensionContext::declarativeNetRequestGetDynamicRules(Vector<double>&& filter, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
-{
-    auto *ruleIDs = createNSArray(filter, [this](auto ruleID) -> NSNumber * {
-        return m_dynamicRulesIDs.contains(ruleID) ? @(ruleID) : nil;
-    }).get();
-
-    [declarativeNetRequestDynamicRulesStore() getRulesWithRuleIDs:ruleIDs completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSArray *rules, NSString *errorMessage) mutable {
-        if (errorMessage) {
-            completionHandler(toWebExtensionError(@"declarativeNetRequest.getDynamicRules()", nullString(), errorMessage));
-            return;
-        }
-
-        completionHandler(String(encodeJSONString(rules, JSONOptions::FragmentsAllowed)));
-    }).get()];
-}
-
-void WebExtensionContext::declarativeNetRequestUpdateDynamicRules(String&& rulesToAddJSON, Vector<double>&& ruleIDsToDeleteVector, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
-{
-    static NSString * const apiName = @"declarativeNetRequest.updateDynamicRules()";
-
-    auto *ruleIDsToDelete = createNSArray(ruleIDsToDeleteVector, [this](double ruleID) -> NSNumber * {
-        if (!m_dynamicRulesIDs.contains(ruleID))
-            return nil;
-        return @(ruleID);
-    }).get();
-
-    auto *rulesToAdd = dynamic_objc_cast<NSArray>(parseJSON(rulesToAddJSON.createNSString().get(), JSONOptions::FragmentsAllowed)) ?: @[ ];
-
-    if (!ruleIDsToDelete.count && !rulesToAdd.count) {
-        completionHandler({ });
-        return;
-    }
-
-    auto updatedDynamicRulesCount = m_dynamicRulesIDs.size() + rulesToAdd.count - ruleIDsToDelete.count;
-    if (updatedDynamicRulesCount + m_sessionRulesIDs.size() > webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"Failed to add dynamic rules. Maximum number of dynamic and session rules exceeded."));
-        return;
-    }
-
-    updateDeclarativeNetRequestRulesInStorage(declarativeNetRequestDynamicRulesStore(), @"dynamic", apiName, rulesToAdd, ruleIDsToDelete, WTFMove(completionHandler));
-}
-
-void WebExtensionContext::declarativeNetRequestGetSessionRules(Vector<double>&& filter, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
-{
-    auto *ruleIDs = createNSArray(filter, [this](auto ruleID) -> NSNumber * {
-        return m_sessionRulesIDs.contains(ruleID) ? @(ruleID) : nil;
-    }).get();
-
-    [declarativeNetRequestSessionRulesStore() getRulesWithRuleIDs:ruleIDs completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSArray *rules, NSString *errorMessage) mutable {
-        if (errorMessage) {
-            completionHandler(toWebExtensionError(@"declarativeNetRequest.getSessionRules()", nullString(), errorMessage));
-            return;
-        }
-
-        completionHandler(String(encodeJSONString(rules, JSONOptions::FragmentsAllowed)));
-    }).get()];
-}
-
-void WebExtensionContext::declarativeNetRequestUpdateSessionRules(String&& rulesToAddJSON, Vector<double>&& ruleIDsToDeleteVector, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
-{
-    static NSString * const apiName = @"declarativeNetRequest.updateSessionRules()";
-
-    auto *ruleIDsToDelete = createNSArray(ruleIDsToDeleteVector, [this](double ruleID) -> NSNumber * {
-        if (!m_sessionRulesIDs.contains(ruleID))
-            return nil;
-        return @(ruleID);
-    }).get();
-
-    auto *rulesToAdd = dynamic_objc_cast<NSArray>(parseJSON(rulesToAddJSON.createNSString().get(), JSONOptions::FragmentsAllowed)) ?: @[ ];
-
-    if (!ruleIDsToDelete.count && !rulesToAdd.count) {
-        completionHandler({ });
-        return;
-    }
-
-    auto updatedSessionRulesCount = m_sessionRulesIDs.size() + rulesToAdd.count - ruleIDsToDelete.count;
-    if (updatedSessionRulesCount + m_dynamicRulesIDs.size() > webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"Failed to add session rules. Maximum number of dynamic and session rules exceeded."));
-        return;
-    }
-
-    updateDeclarativeNetRequestRulesInStorage(declarativeNetRequestSessionRulesStore(), @"session", apiName, rulesToAdd, ruleIDsToDelete, WTFMove(completionHandler));
 }
 
 } // namespace WebKit

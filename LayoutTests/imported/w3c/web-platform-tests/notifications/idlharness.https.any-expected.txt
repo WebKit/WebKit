@@ -23,6 +23,7 @@ PASS Notification interface: attribute title
 PASS Notification interface: attribute dir
 PASS Notification interface: attribute lang
 PASS Notification interface: attribute body
+PASS Notification interface: attribute navigate
 PASS Notification interface: attribute tag
 FAIL Notification interface: attribute image assert_true: The prototype object must have a property "image" expected true got false
 PASS Notification interface: attribute icon
@@ -49,6 +50,7 @@ PASS Notification interface: notification must inherit property "title" with the
 PASS Notification interface: notification must inherit property "dir" with the proper type
 PASS Notification interface: notification must inherit property "lang" with the proper type
 PASS Notification interface: notification must inherit property "body" with the proper type
+PASS Notification interface: notification must inherit property "navigate" with the proper type
 PASS Notification interface: notification must inherit property "tag" with the proper type
 FAIL Notification interface: notification must inherit property "image" with the proper type assert_inherits: property "image" not found in prototype chain
 PASS Notification interface: notification must inherit property "icon" with the proper type

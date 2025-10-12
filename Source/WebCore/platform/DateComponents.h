@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include <limits>
 #include <optional>
 #include <unicode/utypes.h>
 #include <wtf/Forward.h>

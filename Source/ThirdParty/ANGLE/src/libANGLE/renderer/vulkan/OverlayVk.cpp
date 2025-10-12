@@ -7,6 +7,10 @@
 //    Implements the OverlayVk class.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/vulkan/OverlayVk.h"
 
 #include "common/system_utils.h"

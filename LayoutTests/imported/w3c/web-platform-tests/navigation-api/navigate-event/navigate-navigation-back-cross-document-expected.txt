@@ -1,4 +1,4 @@
 
 
-FAIL navigate event for navigation.back() - cross-document assert_true: expected true got false
+PASS navigate event for navigation.back() - cross-document
 

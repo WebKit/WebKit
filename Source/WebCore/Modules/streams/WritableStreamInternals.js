@@ -182,12 +182,16 @@ function setUpWritableStreamDefaultWriter(writer, stream)
 
 function writableStreamAbort(stream, reason)
 {
-    const state = @getByIdDirectPrivate(stream, "state");
+    let state = @getByIdDirectPrivate(stream, "state");
     if (state === "closed" || state === "errored")
         return @Promise.@resolve();
 
     const controller = @getByIdDirectPrivate(stream, "controller");
     @signalAbort(@getByIdDirectPrivate(controller, "signal"), reason);
+
+    state = @getByIdDirectPrivate(stream, "state");
+    if (state === "closed" || state === "errored")
+        return @Promise.@resolve();
 
     const pendingAbortRequest = @getByIdDirectPrivate(stream, "pendingAbortRequest");
     if (pendingAbortRequest !== @undefined)
@@ -802,4 +806,28 @@ function writableStreamDefaultControllerWrite(controller, chunk, chunkSize)
     } catch (e) {
         @writableStreamDefaultControllerErrorIfNeeded(controller, e);
     }
+}
+
+function writableStreamState(stream)
+{
+    @assert(@isWritableStream(stream));
+    return @getByIdDirectPrivate(stream, "state");
+}
+
+function writableStreamStoredError(stream)
+{
+    @assert(@isWritableStream(stream));
+    return @getByIdDirectPrivate(stream, "storedError");
+}
+
+function writableStreamDefaultWriterClosedPromise(writer)
+{
+    @assert(@isWritableStreamDefaultWriter(writer));
+    return @getByIdDirectPrivate(writer, "closedPromise").promise;
+}
+
+function writableStreamDefaultWriterReadyPromise(writer)
+{
+    @assert(@isWritableStreamDefaultWriter(writer));
+    return @getByIdDirectPrivate(writer, "readyPromise").promise;
 }

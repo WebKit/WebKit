@@ -8,31 +8,31 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stddef.h>
-#include <stdlib.h>
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
 
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/signal_processing/include/spl_inl.h"
 #include "modules/audio_processing/aecm/aecm_core.h"
-
-extern "C" {
-#include "common_audio/ring_buffer.h"
-#include "common_audio/signal_processing/include/real_fft.h"
-}
+#include "modules/audio_processing/aecm/aecm_defines.h"
 #include "modules/audio_processing/aecm/echo_control_mobile.h"
 #include "modules/audio_processing/utility/delay_estimator_wrapper.h"
-extern "C" {
-#include "system_wrappers/include/cpu_features_wrapper.h"
-}
-
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/sanitizer.h"
+
+extern "C" {
+#include "common_audio/signal_processing/include/real_fft.h"
+}
 
 namespace webrtc {
 
 namespace {
 
 // Square root of Hanning window in Q14.
-static const ALIGN8_BEG int16_t WebRtcAecm_kSqrtHanning[] ALIGN8_END = {
+const ALIGN8_BEG int16_t WebRtcAecm_kSqrtHanning[] ALIGN8_END = {
     0,     399,   798,   1196,  1594,  1990,  2386,  2780,  3172,  3562,  3951,
     4337,  4720,  5101,  5478,  5853,  6224,  6591,  6954,  7313,  7668,  8019,
     8364,  8705,  9040,  9370,  9695,  10013, 10326, 10633, 10933, 11227, 11514,
@@ -55,13 +55,13 @@ static const uint16_t kAlpha3 = 26951;
 static const uint16_t kBeta3 = 18927;
 #endif
 
-static const int16_t kNoiseEstQDomain = 15;
-static const int16_t kNoiseEstIncCount = 5;
+const int16_t kNoiseEstQDomain = 15;
+const int16_t kNoiseEstIncCount = 5;
 
-static void ComfortNoise(AecmCore* aecm,
-                         const uint16_t* dfa,
-                         ComplexInt16* out,
-                         const int16_t* lambda) {
+void ComfortNoise(AecmCore* aecm,
+                  const uint16_t* dfa,
+                  ComplexInt16* out,
+                  const int16_t* lambda) {
   int16_t i;
   int16_t tmp16;
   int32_t tmp32;
@@ -171,11 +171,11 @@ static void ComfortNoise(AecmCore* aecm,
   }
 }
 
-static void WindowAndFFT(AecmCore* aecm,
-                         int16_t* fft,
-                         const int16_t* time_signal,
-                         ComplexInt16* freq_signal,
-                         int time_signal_scaling) {
+void WindowAndFFT(AecmCore* aecm,
+                  int16_t* fft,
+                  const int16_t* time_signal,
+                  ComplexInt16* freq_signal,
+                  int time_signal_scaling) {
   int i = 0;
 
   // FFT of signal
@@ -198,11 +198,11 @@ static void WindowAndFFT(AecmCore* aecm,
   }
 }
 
-static void InverseFFTAndWindow(AecmCore* aecm,
-                                int16_t* fft,
-                                ComplexInt16* efw,
-                                int16_t* output,
-                                const int16_t* nearendClean) {
+void InverseFFTAndWindow(AecmCore* aecm,
+                         int16_t* fft,
+                         ComplexInt16* efw,
+                         int16_t* output,
+                         const int16_t* nearendClean) {
   int i, j, outCFFT;
   int32_t tmp32no1;
   // Reuse `efw` for the inverse FFT output after transferring
@@ -243,7 +243,7 @@ static void InverseFFTAndWindow(AecmCore* aecm,
   memcpy(aecm->xBuf, aecm->xBuf + PART_LEN, sizeof(int16_t) * PART_LEN);
   memcpy(aecm->dBufNoisy, aecm->dBufNoisy + PART_LEN,
          sizeof(int16_t) * PART_LEN);
-  if (nearendClean != NULL) {
+  if (nearendClean != nullptr) {
     memcpy(aecm->dBufClean, aecm->dBufClean + PART_LEN,
            sizeof(int16_t) * PART_LEN);
   }
@@ -262,11 +262,11 @@ static void InverseFFTAndWindow(AecmCore* aecm,
 //                              the frequency domain array
 // return value                 The Q-domain of current frequency values
 //
-static int TimeToFrequencyDomain(AecmCore* aecm,
-                                 const int16_t* time_signal,
-                                 ComplexInt16* freq_signal,
-                                 uint16_t* freq_signal_abs,
-                                 uint32_t* freq_signal_sum_abs) {
+int TimeToFrequencyDomain(AecmCore* aecm,
+                          const int16_t* time_signal,
+                          ComplexInt16* freq_signal,
+                          uint16_t* freq_signal_abs,
+                          uint32_t* freq_signal_sum_abs) {
   int i = 0;
   int time_signal_scaling = 0;
 
@@ -390,7 +390,7 @@ int RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/8200
   uint16_t dfaNoisy[PART_LEN1];
   uint16_t dfaClean[PART_LEN1];
   uint16_t* ptrDfaClean = dfaClean;
-  const uint16_t* far_spectrum_ptr = NULL;
+  const uint16_t* far_spectrum_ptr = nullptr;
 
   // 32 byte aligned buffers (with +8 or +16).
   // TODO(kma): define fft with ComplexInt16.
@@ -435,7 +435,7 @@ int RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/8200
   // Buffer near and far end signals
   memcpy(aecm->xBuf + PART_LEN, farend, sizeof(int16_t) * PART_LEN);
   memcpy(aecm->dBufNoisy + PART_LEN, nearendNoisy, sizeof(int16_t) * PART_LEN);
-  if (nearendClean != NULL) {
+  if (nearendClean != nullptr) {
     memcpy(aecm->dBufClean + PART_LEN, nearendClean,
            sizeof(int16_t) * PART_LEN);
   }
@@ -449,7 +449,7 @@ int RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/8200
   aecm->dfaNoisyQDomainOld = aecm->dfaNoisyQDomain;
   aecm->dfaNoisyQDomain = (int16_t)zerosDBufNoisy;
 
-  if (nearendClean == NULL) {
+  if (nearendClean == nullptr) {
     ptrDfaClean = dfaNoisy;
     aecm->dfaCleanQDomainOld = aecm->dfaNoisyQDomainOld;
     aecm->dfaCleanQDomain = aecm->dfaNoisyQDomain;
@@ -487,7 +487,7 @@ int RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/8200
   // Get aligned far end spectrum
   far_spectrum_ptr = WebRtcAecm_AlignedFarend(aecm, &far_q, delay);
   zerosXBuf = (int16_t)far_q;
-  if (far_spectrum_ptr == NULL) {
+  if (far_spectrum_ptr == nullptr) {
     return -1;
   }
 
@@ -513,8 +513,7 @@ int RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/8200
     // Far end signal through channel estimate in Q8
     // How much can we shift right to preserve resolution
     tmp32no1 = echoEst32[i] - aecm->echoFilt[i];
-    aecm->echoFilt[i] +=
-        rtc::dchecked_cast<int32_t>((int64_t{tmp32no1} * 50) >> 8);
+    aecm->echoFilt[i] += dchecked_cast<int32_t>((int64_t{tmp32no1} * 50) >> 8);
 
     zeros32 = WebRtcSpl_NormW32(aecm->echoFilt[i]) + 1;
     zeros16 = WebRtcSpl_NormW16(supGain) + 1;

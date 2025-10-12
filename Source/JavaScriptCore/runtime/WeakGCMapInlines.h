@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "HeapInlines.h"
-#include "WeakGCMap.h"
-#include "WeakInlines.h"
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/WeakGCMap.h>
+#include <JavaScriptCore/WeakInlines.h>
 #include <wtf/IterationStatus.h>
 
 namespace JSC {

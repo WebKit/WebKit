@@ -1,6 +1,16 @@
 // Copyright 2016 The Chromium Authors
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include "encode_values.h"
 
@@ -11,15 +21,6 @@
 
 BSSL_NAMESPACE_BEGIN
 namespace der::test {
-
-namespace {
-
-template <size_t N>
-std::string_view ToStringView(const uint8_t (&data)[N]) {
-  return std::string_view(reinterpret_cast<const char *>(data), N);
-}
-
-}  // namespace
 
 TEST(EncodeValuesTest, EncodePosixTimeAsGeneralizedTime) {
   // Fri, 24 Jun 2016 17:04:54 GMT
@@ -76,7 +77,7 @@ TEST(EncodeValuesTest, EncodeGeneralizedTime) {
   // Encode a time where no components have leading zeros.
   uint8_t out[kGeneralizedTimeLength];
   ASSERT_TRUE(EncodeGeneralizedTime(time, out));
-  EXPECT_EQ("20141218161259Z", ToStringView(out));
+  EXPECT_EQ("20141218161259Z", bssl::BytesAsStringView(out));
 
   // Test bounds on all components. Note the encoding function does not validate
   // the input is a valid time, only that it is encodable.
@@ -87,7 +88,7 @@ TEST(EncodeValuesTest, EncodeGeneralizedTime) {
   time.minutes = 0;
   time.seconds = 0;
   ASSERT_TRUE(EncodeGeneralizedTime(time, out));
-  EXPECT_EQ("00000000000000Z", ToStringView(out));
+  EXPECT_EQ("00000000000000Z", bssl::BytesAsStringView(out));
 
   time.year = 9999;
   time.month = 99;
@@ -96,7 +97,7 @@ TEST(EncodeValuesTest, EncodeGeneralizedTime) {
   time.minutes = 99;
   time.seconds = 99;
   ASSERT_TRUE(EncodeGeneralizedTime(time, out));
-  EXPECT_EQ("99999999999999Z", ToStringView(out));
+  EXPECT_EQ("99999999999999Z", bssl::BytesAsStringView(out));
 
   time.year = 10000;
   EXPECT_FALSE(EncodeGeneralizedTime(time, out));
@@ -118,23 +119,23 @@ TEST(EncodeValuesTest, EncodeUTCTime) {
   // Encode a time where no components have leading zeros.
   uint8_t out[kUTCTimeLength];
   ASSERT_TRUE(EncodeUTCTime(time, out));
-  EXPECT_EQ("141218161259Z", ToStringView(out));
+  EXPECT_EQ("141218161259Z", bssl::BytesAsStringView(out));
 
   time.year = 2049;
   ASSERT_TRUE(EncodeUTCTime(time, out));
-  EXPECT_EQ("491218161259Z", ToStringView(out));
+  EXPECT_EQ("491218161259Z", bssl::BytesAsStringView(out));
 
   time.year = 2000;
   ASSERT_TRUE(EncodeUTCTime(time, out));
-  EXPECT_EQ("001218161259Z", ToStringView(out));
+  EXPECT_EQ("001218161259Z", bssl::BytesAsStringView(out));
 
   time.year = 1999;
   ASSERT_TRUE(EncodeUTCTime(time, out));
-  EXPECT_EQ("991218161259Z", ToStringView(out));
+  EXPECT_EQ("991218161259Z", bssl::BytesAsStringView(out));
 
   time.year = 1950;
   ASSERT_TRUE(EncodeUTCTime(time, out));
-  EXPECT_EQ("501218161259Z", ToStringView(out));
+  EXPECT_EQ("501218161259Z", bssl::BytesAsStringView(out));
 
   time.year = 2050;
   EXPECT_FALSE(EncodeUTCTime(time, out));
@@ -151,7 +152,7 @@ TEST(EncodeValuesTest, EncodeUTCTime) {
   time.minutes = 0;
   time.seconds = 0;
   ASSERT_TRUE(EncodeUTCTime(time, out));
-  EXPECT_EQ("000000000000Z", ToStringView(out));
+  EXPECT_EQ("000000000000Z", bssl::BytesAsStringView(out));
 
   time.year = 1999;
   time.month = 99;
@@ -160,7 +161,7 @@ TEST(EncodeValuesTest, EncodeUTCTime) {
   time.minutes = 99;
   time.seconds = 99;
   ASSERT_TRUE(EncodeUTCTime(time, out));
-  EXPECT_EQ("999999999999Z", ToStringView(out));
+  EXPECT_EQ("999999999999Z", bssl::BytesAsStringView(out));
 
   time.year = 2000;
   time.month = 100;

@@ -12,6 +12,7 @@
 #ifndef AOM_AV1_ENCODER_NONRD_OPT_H_
 #define AOM_AV1_ENCODER_NONRD_OPT_H_
 
+#include "av1/encoder/context_tree.h"
 #include "av1/encoder/rdopt_utils.h"
 #include "av1/encoder/rdopt.h"
 
@@ -72,6 +73,7 @@ struct estimate_block_intra_args {
   RD_STATS *rdc;
   unsigned int best_sad;
   bool prune_mode_based_on_sad;
+  bool prune_palette_sad;
 };
 /*!\endcond */
 
@@ -507,6 +509,7 @@ static inline void init_estimate_block_intra_args(
   args->rdc = 0;
   args->best_sad = UINT_MAX;
   args->prune_mode_based_on_sad = false;
+  args->prune_palette_sad = false;
 }
 
 static inline int get_pred_buffer(PRED_BUFFER *p, int len) {
@@ -517,6 +520,18 @@ static inline int get_pred_buffer(PRED_BUFFER *p, int len) {
     }
   }
   return -1;
+}
+
+static inline bool prune_palette_testing_inter(AV1_COMP *cpi,
+                                               unsigned int source_variance) {
+  return (
+      cpi->oxcf.tune_cfg.content == AOM_CONTENT_SCREEN &&
+      cpi->oxcf.speed >= 11 && cpi->rc.high_source_sad &&
+      ((cpi->sf.rt_sf.prune_palette_search_nonrd > 2) ||
+       (cpi->sf.rt_sf.rc_compute_spatial_var_sc &&
+        cpi->rc.frame_spatial_variance < 1200 &&
+        cpi->rc.perc_spatial_flat_blocks < 5 &&
+        cpi->rc.percent_blocks_with_motion > 98 && source_variance < 4000)));
 }
 
 static inline void free_pred_buffer(PRED_BUFFER *p) {
@@ -570,6 +585,7 @@ void av1_estimate_intra_mode(AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bsize,
                              PRED_BUFFER *tmp_buffers,
                              PRED_BUFFER **this_mode_pred, RD_STATS *best_rdc,
                              BEST_PICKMODE *best_pickmode,
-                             PICK_MODE_CONTEXT *ctx);
+                             PICK_MODE_CONTEXT *ctx,
+                             unsigned int *best_sad_norm);
 
 #endif  // AOM_AV1_ENCODER_NONRD_OPT_H_

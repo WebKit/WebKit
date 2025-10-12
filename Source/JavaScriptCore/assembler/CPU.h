@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSExportMacros.h"
+#include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/StdIntExtras.h>
 

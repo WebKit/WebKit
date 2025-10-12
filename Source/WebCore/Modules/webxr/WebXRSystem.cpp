@@ -31,7 +31,9 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DocumentInlines.h"
+#include "ContextDestructionObserverInlines.h"
+#include "DocumentPage.h"
+#include "DocumentSecurityOrigin.h"
 #include "IDLTypes.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebXRSession.h"
@@ -42,6 +44,7 @@
 #include "PermissionsPolicy.h"
 #include "RequestAnimationFrameCallback.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
 #include "UserGestureIndicator.h"
 #include "WebXRSession.h"
 #include "XRReferenceSpaceType.h"
@@ -271,6 +274,8 @@ bool WebXRSystem::isFeaturePermitted(PlatformXR::SessionFeature feature) const
     switch (feature) {
     case PlatformXR::SessionFeature::ReferenceSpaceTypeViewer:
         return true;
+    case PlatformXR::SessionFeature::WebGPU:
+        return true;
     case PlatformXR::SessionFeature::ReferenceSpaceTypeLocal:
     case PlatformXR::SessionFeature::ReferenceSpaceTypeLocalFloor:
     case PlatformXR::SessionFeature::ReferenceSpaceTypeBoundedFloor:
@@ -489,7 +494,7 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
     // 3. Let global object be the relevant Global object for the XRSystem on which this method was invoked.
     bool immersive = isImmersive(mode);
     Ref protectedDocument { document };
-    RefPtr globalObject = protectedDocument->domWindow();
+    RefPtr globalObject = protectedDocument->window();
     if (!globalObject) {
         promise.reject(Exception { ExceptionCode::InvalidAccessError });
         return;
@@ -569,6 +574,11 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
             // 5.4.10 is handled in WebXRSession::sessionDidInitializeInputSources.
         });
     });
+}
+
+ScriptExecutionContext* WebXRSystem::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 void WebXRSystem::stop()

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-array.prototype.copyWithin
+esid: sec-array.prototype.copywithin
 description: Array.prototype.copyWithin applied to boolean primitive
 ---*/
 

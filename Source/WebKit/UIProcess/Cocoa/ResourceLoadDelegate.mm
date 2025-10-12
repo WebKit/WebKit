@@ -88,7 +88,7 @@ void ResourceLoadDelegate::ResourceLoadClient::didSendRequest(WebKit::ResourceLo
     if (!delegate)
         return;
 
-    [delegate webView:m_resourceLoadDelegate->m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didSendRequest:request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody)];
+    [delegate webView:m_resourceLoadDelegate->m_webView.get().get() resourceLoad:protectedWrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo))).get() didSendRequest:request.protectedNSURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody).get()];
 }
 
 void ResourceLoadDelegate::ResourceLoadClient::didPerformHTTPRedirection(WebKit::ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response, WebCore::ResourceRequest&& request) const
@@ -100,7 +100,7 @@ void ResourceLoadDelegate::ResourceLoadClient::didPerformHTTPRedirection(WebKit:
     if (!delegate)
         return;
 
-    [delegate webView:m_resourceLoadDelegate->m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didPerformHTTPRedirection:response.nsURLResponse() newRequest:request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody)];
+    [delegate webView:m_resourceLoadDelegate->m_webView.get().get() resourceLoad:protectedWrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo))).get() didPerformHTTPRedirection:response.protectedNSURLResponse().get() newRequest:request.protectedNSURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody).get()];
 }
 
 void ResourceLoadDelegate::ResourceLoadClient::didReceiveChallenge(WebKit::ResourceLoadInfo&& loadInfo, WebCore::AuthenticationChallenge&& challenge) const
@@ -112,7 +112,7 @@ void ResourceLoadDelegate::ResourceLoadClient::didReceiveChallenge(WebKit::Resou
     if (!delegate)
         return;
 
-    [delegate webView:m_resourceLoadDelegate->m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didReceiveChallenge:mac(challenge)];
+    [delegate webView:m_resourceLoadDelegate->m_webView.get().get() resourceLoad:protectedWrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo))).get() didReceiveChallenge:protectedMac(challenge).get()];
 }
 
 void ResourceLoadDelegate::ResourceLoadClient::didReceiveResponse(WebKit::ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response) const
@@ -124,7 +124,7 @@ void ResourceLoadDelegate::ResourceLoadClient::didReceiveResponse(WebKit::Resour
     if (!delegate)
         return;
 
-    [delegate webView:m_resourceLoadDelegate->m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didReceiveResponse:response.nsURLResponse()];
+    [delegate webView:m_resourceLoadDelegate->m_webView.get().get() resourceLoad:protectedWrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo))).get() didReceiveResponse:response.protectedNSURLResponse().get()];
 }
 
 void ResourceLoadDelegate::ResourceLoadClient::didCompleteWithError(WebKit::ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response, WebCore::ResourceError&& error) const
@@ -136,7 +136,7 @@ void ResourceLoadDelegate::ResourceLoadClient::didCompleteWithError(WebKit::Reso
     if (!delegate)
         return;
 
-    [delegate webView:m_resourceLoadDelegate->m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didCompleteWithError:error.nsError() response:response.nsURLResponse()];
+    [delegate webView:m_resourceLoadDelegate->m_webView.get().get() resourceLoad:protectedWrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo))).get() didCompleteWithError:error.protectedNSError().get() response:response.protectedNSURLResponse().get()];
 }
 
 } // namespace WebKit

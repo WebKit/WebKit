@@ -134,7 +134,7 @@ shouldBe('content(\'<span style="text-decoration: underline;">a<span style="text
     '\'<span style="text-decoration: underline;">a</span><span style="text-decoration: line-through;">b</span>c\'');
 shouldBe('content(\'a<span style="text-decoration: underline;"><span style="text-decoration: line-through;">b</span>c</span>\');\n'
     + 'select(0, 2); toggle("underline")',
-    '\'<span style="text-decoration: underline;">a<span style="text-decoration: line-through underline;">b</span>c</span>\'');
+    '\'<span style="text-decoration: underline;">a<span style="text-decoration: underline line-through;">b</span>c</span>\'');
 shouldBe('content(\'a<span style="text-decoration: line-through;"><span style="text-decoration: underline;">bc</span></span>\');\n'
     + 'select(0, 2); toggle("underline")',
     '\'<span style="text-decoration: underline;">a</span><span style="text-decoration: line-through;"><span style="text-decoration: underline;">bc</span></span>\'');

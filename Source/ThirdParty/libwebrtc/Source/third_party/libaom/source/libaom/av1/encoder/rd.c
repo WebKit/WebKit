@@ -386,7 +386,7 @@ static double def_kf_rd_multiplier(int qindex) {
 
 int av1_compute_rd_mult_based_on_qindex(aom_bit_depth_t bit_depth,
                                         FRAME_UPDATE_TYPE update_type,
-                                        int qindex) {
+                                        int qindex, aom_tune_metric tuning) {
   const int q = av1_dc_quant_QTX(qindex, 0, bit_depth);
   int64_t rdmult = q * q;
   if (update_type == KF_UPDATE) {
@@ -398,6 +398,25 @@ int av1_compute_rd_mult_based_on_qindex(aom_bit_depth_t bit_depth,
   } else {
     double def_rd_q_mult = def_inter_rd_multiplier(q);
     rdmult = (int64_t)((double)rdmult * def_rd_q_mult);
+  }
+
+  if (tuning == AOM_TUNE_IQ || tuning == AOM_TUNE_SSIMULACRA2) {
+    // Further multiply rdmult (by up to 200/128 = 1.5625) to improve image
+    // quality. The most noticeable effect is a mild bias towards choosing
+    // larger transform sizes (e.g. one 16x16 transform instead of 4 8x8
+    // transforms).
+    // For very high qindexes, start progressively reducing the weight towards
+    // unity (128/128), as transforms are large enough and making them even
+    // larger actually harms subjective quality and SSIMULACRA 2 scores.
+    // This weight part of the equation was determined by iteratively increasing
+    // weight on CID22 and Daala's subset1, and observing its effects on visual
+    // quality and SSIMULACRA 2 scores along the usable (0-100) range.
+    // The ramp-down part of the equation was determined by choosing a fixed
+    // initial qindex point [qindex 159 = (255 - 159) * 3 / 4] where SSIMULACRA
+    // 2 scores for encodes with qindexes greater than 159 scored at or above
+    // their equivalents with no rdmult adjustment.
+    const int weight = clamp(((255 - qindex) * 3) / 4, 0, 72) + 128;
+    rdmult = (int64_t)((double)rdmult * weight / 128.0);
   }
 
   switch (bit_depth) {
@@ -416,9 +435,10 @@ int av1_compute_rd_mult(const int qindex, const aom_bit_depth_t bit_depth,
                         const int layer_depth, const int boost_index,
                         const FRAME_TYPE frame_type,
                         const int use_fixed_qp_offsets,
-                        const int is_stat_consumption_stage) {
-  int64_t rdmult =
-      av1_compute_rd_mult_based_on_qindex(bit_depth, update_type, qindex);
+                        const int is_stat_consumption_stage,
+                        const aom_tune_metric tuning) {
+  int64_t rdmult = av1_compute_rd_mult_based_on_qindex(bit_depth, update_type,
+                                                       qindex, tuning);
   if (is_stat_consumption_stage && !use_fixed_qp_offsets &&
       (frame_type != KEY_FRAME)) {
     // Layer depth adjustment
@@ -426,7 +446,7 @@ int av1_compute_rd_mult(const int qindex, const aom_bit_depth_t bit_depth,
     // ARF boost adjustment
     rdmult += ((rdmult * rd_boost_factor[boost_index]) >> 7);
   }
-  return (int)rdmult;
+  return rdmult > 0 ? (int)AOMMIN(rdmult, INT_MAX) : 1;
 }
 
 int av1_get_deltaq_offset(aom_bit_depth_t bit_depth, int qindex, double beta) {
@@ -486,7 +506,7 @@ int av1_get_adaptive_rdmult(const AV1_COMP *cpi, double beta) {
                    cpi->ppi->gf_group.update_type[cpi->gf_frame_index],
                    layer_depth, boost_index, frame_type,
                    cpi->oxcf.q_cfg.use_fixed_qp_offsets,
-                   is_stat_consumption_stage(cpi)) /
+                   is_stat_consumption_stage(cpi), cpi->oxcf.tune_cfg.tuning) /
                beta);
 }
 #endif  // !CONFIG_REALTIME_ONLY
@@ -629,10 +649,6 @@ void av1_fill_coeff_costs(CoeffCosts *coeff_costs, FRAME_CONTEXT *fc,
         av1_cost_tokens_from_cdf(
             br_rate, fc->coeff_br_cdf[AOMMIN(tx_size, TX_32X32)][plane][ctx],
             NULL);
-        // printf("br_rate: ");
-        // for(j = 0; j < BR_CDF_SIZE; j++)
-        //  printf("%4d ", br_rate[j]);
-        // printf("\n");
         for (i = 0; i < COEFF_BASE_RANGE; i += BR_CDF_SIZE - 1) {
           for (j = 0; j < BR_CDF_SIZE - 1; j++) {
             pcost->lps_cost[ctx][i + j] = prev_cost + br_rate[j];
@@ -640,10 +656,6 @@ void av1_fill_coeff_costs(CoeffCosts *coeff_costs, FRAME_CONTEXT *fc,
           prev_cost += br_rate[j];
         }
         pcost->lps_cost[ctx][i] = prev_cost;
-        // printf("lps_cost: %d %d %2d : ", tx_size, plane, ctx);
-        // for (i = 0; i <= COEFF_BASE_RANGE; i++)
-        //  printf("%5d ", pcost->lps_cost[ctx][i]);
-        // printf("\n");
       }
       for (int ctx = 0; ctx < LEVEL_CONTEXTS; ++ctx) {
         pcost->lps_cost[ctx][0 + COEFF_BASE_RANGE + 1] =
@@ -778,7 +790,7 @@ void av1_initialize_rd_consts(AV1_COMP *cpi) {
       qindex_rdmult, cm->seq_params->bit_depth,
       cpi->ppi->gf_group.update_type[cpi->gf_frame_index], layer_depth,
       boost_index, frame_type, cpi->oxcf.q_cfg.use_fixed_qp_offsets,
-      is_stat_consumption_stage(cpi));
+      is_stat_consumption_stage(cpi), cpi->oxcf.tune_cfg.tuning);
 #if CONFIG_RD_COMMAND
   if (cpi->oxcf.pass == 2) {
     const RD_COMMAND *rd_command = &cpi->rd_command;

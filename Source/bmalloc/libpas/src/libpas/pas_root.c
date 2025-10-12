@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #include "pas_config.h"
 
 #if LIBPAS_ENABLED
-
+#include "pas_zero_memory.h"
 #include "pas_root.h"
 
 #include "pas_all_heaps.h"
@@ -39,6 +39,7 @@
 #include "pas_large_sharing_pool.h"
 #include "pas_payload_reservation_page_list.h"
 #include "pas_probabilistic_guard_malloc_allocator.h"
+#include "pas_report_crash_pgm_report.h"
 #include "pas_scavenger.h"
 #include "pas_thread_local_cache_layout.h"
 #include "pas_thread_local_cache_node.h"
@@ -127,6 +128,8 @@ void pas_root_construct(pas_root* root)
     root->tiny_large_map_second_level_hashtable_in_flux_stash_instance =
         &pas_tiny_large_map_second_level_hashtable_in_flux_stash_instance;
 
+    root->probabilistic_guard_malloc_has_been_used = &pas_probabilistic_guard_malloc_has_been_used;
+
     root->pas_pgm_hash_map_instance = &pas_pgm_hash_map;
     root->pas_pgm_hash_map_instance_in_flux_stash = &pas_pgm_hash_map_in_flux_stash;
 
@@ -145,6 +148,9 @@ void pas_root_construct(pas_root* root)
 
     root->baseline_allocator_table = &pas_baseline_allocator_table;
     root->num_baseline_allocators = PAS_NUM_BASELINE_ALLOCATORS;
+#ifdef __APPLE__
+    root->pas_crash_report_version = pas_crash_report_version;
+#endif
 }
 
 pas_root* pas_root_create(void)

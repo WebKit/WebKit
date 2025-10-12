@@ -1,0 +1,5 @@
+Interest Invoker Other button
+
+FAIL hover interest invoking closed popover opens assert_true: expected true got false
+PASS interest invoking closed popover with preventDefault does not open
+

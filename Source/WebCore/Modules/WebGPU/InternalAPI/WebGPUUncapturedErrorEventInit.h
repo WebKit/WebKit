@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUError.h"
+#include <WebCore/WebGPUError.h>
 
 namespace WebCore::WebGPU {
 

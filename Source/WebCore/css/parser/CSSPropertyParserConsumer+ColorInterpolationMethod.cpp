@@ -104,6 +104,8 @@ std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(CSSParse
         return consumeRectangularColorSpace(args, ColorInterpolationMethod::SRGBLinear { });
     case CSSValueDisplayP3:
         return consumeRectangularColorSpace(args, ColorInterpolationMethod::DisplayP3 { });
+    case CSSValueDisplayP3Linear:
+        return consumeRectangularColorSpace(args, ColorInterpolationMethod::DisplayP3Linear { });
     case CSSValueA98Rgb:
         return consumeRectangularColorSpace(args, ColorInterpolationMethod::A98RGB { });
     case CSSValueProphotoRgb:

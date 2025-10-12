@@ -50,18 +50,18 @@ PageBanner::PageBanner(CALayer *layer, int height, std::unique_ptr<Client>&& cli
 
 void PageBanner::addToPage(Type type, WebPage* webPage)
 {
+    ASSERT(type != NotSet);
+    ASSERT(webPage);
+
     m_type = type;
     m_webPage = webPage;
 
-    ASSERT(m_type != NotSet);
-    ASSERT(m_webPage);
-
-    switch (m_type) {
+    switch (type) {
     case Header:
-        m_webPage->corePage()->setHeaderHeight(m_height);
+        webPage->protectedCorePage()->setHeaderHeight(m_height);
         break;
     case Footer:
-        m_webPage->corePage()->setFooterHeight(m_height);
+        webPage->protectedCorePage()->setFooterHeight(m_height);
         break;
     case NotSet:
         ASSERT_NOT_REACHED();
@@ -84,25 +84,25 @@ void PageBanner::detachFromPage()
 
     // m_webPage->corePage() can be null when this is called from WebPage::~WebPage() after
     // the web page has been closed.
-    if (m_webPage->corePage()) {
+    if (RefPtr corePage = m_webPage->corePage()) {
         // We can hide the banner by removing the parent layer that hosts it.
         if (m_type == Header)
-            m_webPage->corePage()->setHeaderHeight(0);
+            corePage->setHeaderHeight(0);
         else if (m_type == Footer)
-            m_webPage->corePage()->setFooterHeight(0);
+            corePage->setFooterHeight(0);
     }
 
     m_type = NotSet;
-    m_webPage = 0;
+    m_webPage = nullptr;
 }
 
 void PageBanner::hide()
 {
     // We can hide the banner by removing the parent layer that hosts it.
     if (m_type == Header)
-        m_webPage->corePage()->setHeaderHeight(0);
+        protectedWebPage()->protectedCorePage()->setHeaderHeight(0);
     else if (m_type == Footer)
-        m_webPage->corePage()->setFooterHeight(0);
+        protectedWebPage()->protectedCorePage()->setFooterHeight(0);
 
     m_isHidden = true;
 }
@@ -129,7 +129,7 @@ bool PageBanner::mouseEvent(const WebMouseEvent& mouseEvent)
     if (m_isHidden)
         return false;
 
-    RefPtr frameView = m_webPage->localMainFrameView();
+    RefPtr frameView = protectedWebPage()->localMainFrameView();
     if (!frameView)
         return false;
 
@@ -137,11 +137,11 @@ bool PageBanner::mouseEvent(const WebMouseEvent& mouseEvent)
 
     switch (m_type) {
     case Header: {
-        positionInBannerSpace = frameView->rootViewToTotalContents(mouseEvent.position());
+        positionInBannerSpace = frameView->rootViewToTotalContents(flooredIntPoint(mouseEvent.position()));
         break;
     }
     case Footer: {
-        positionInBannerSpace = frameView->rootViewToTotalContents(mouseEvent.position()) - IntSize(0, frameView->totalContentsSize().height() - m_height);
+        positionInBannerSpace = frameView->rootViewToTotalContents(flooredIntPoint(mouseEvent.position())) - IntSize(0, frameView->totalContentsSize().height() - m_height);
         break;
     }
     case NotSet:
@@ -162,6 +162,11 @@ bool PageBanner::mouseEvent(const WebMouseEvent& mouseEvent)
 CALayer *PageBanner::layer()
 {
     return m_layer.get();
+}
+
+RefPtr<WebPage> PageBanner::protectedWebPage()
+{
+    return m_webPage.get();
 }
 
 } // namespace WebKit

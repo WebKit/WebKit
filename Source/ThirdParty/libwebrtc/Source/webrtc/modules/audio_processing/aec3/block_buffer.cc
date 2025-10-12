@@ -10,7 +10,9 @@
 
 #include "modules/audio_processing/aec3/block_buffer.h"
 
-#include <algorithm>
+#include <cstddef>
+
+#include "modules/audio_processing/aec3/block.h"
 
 namespace webrtc {
 

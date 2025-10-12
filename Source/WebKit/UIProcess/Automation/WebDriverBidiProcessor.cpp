@@ -33,7 +33,9 @@
 
 #include "BidiBrowserAgent.h"
 #include "BidiBrowsingContextAgent.h"
+#include "BidiPermissionsAgent.h"
 #include "BidiScriptAgent.h"
+#include "BidiStorageAgent.h"
 #include "Logging.h"
 #include "WebAutomationSession.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
@@ -51,28 +53,20 @@ WebDriverBidiProcessor::WebDriverBidiProcessor(WebAutomationSession& session)
     : m_session(session)
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
-    , m_browserAgent(makeUnique<BidiBrowserAgent>(session, m_backendDispatcher))
-    , m_browsingContextAgent(makeUnique<BidiBrowsingContextAgent>(session, m_backendDispatcher))
-    , m_scriptAgent(makeUnique<BidiScriptAgent>(session, m_backendDispatcher))
-    , m_browsingContextDomainNotifier(makeUnique<BidiBrowsingContextFrontendDispatcher>(m_frontendRouter))
-    , m_logDomainNotifier(makeUnique<BidiLogFrontendDispatcher>(m_frontendRouter))
+    , m_browserAgent(makeUniqueRef<BidiBrowserAgent>(session, m_backendDispatcher))
+    , m_browsingContextAgent(makeUniqueRef<BidiBrowsingContextAgent>(session, m_backendDispatcher))
+    , m_permissionsAgent(makeUniqueRef<BidiPermissionsAgent>(session, m_backendDispatcher))
+    , m_scriptAgent(makeUniqueRef<BidiScriptAgent>(session, m_backendDispatcher))
+    , m_storageAgent(makeUniqueRef<BidiStorageAgent>(session, m_backendDispatcher))
+    , m_browsingContextDomainNotifier(makeUniqueRef<BidiBrowsingContextFrontendDispatcher>(m_frontendRouter))
+    , m_logDomainNotifier(makeUniqueRef<BidiLogFrontendDispatcher>(m_frontendRouter))
 {
-    protectedFrontendRouter()->connectFrontend(*this);
+    m_frontendRouter->connectFrontend(*this);
 }
 
 WebDriverBidiProcessor::~WebDriverBidiProcessor()
 {
-    protectedFrontendRouter()->disconnectFrontend(*this);
-}
-
-Ref<Inspector::FrontendRouter> WebDriverBidiProcessor::protectedFrontendRouter() const
-{
-    return m_frontendRouter;
-}
-
-Ref<Inspector::BackendDispatcher> WebDriverBidiProcessor::protectedBackendDispatcher() const
-{
-    return m_backendDispatcher;
+    m_frontendRouter->disconnectFrontend(*this);
 }
 
 void WebDriverBidiProcessor::processBidiMessage(const String& message)
@@ -86,7 +80,7 @@ void WebDriverBidiProcessor::processBidiMessage(const String& message)
     LOG(Automation, "[s:%s] processBidiMessage of length %d", session->sessionIdentifier().utf8().data(), message.length());
     LOG(Automation, "%s", message.utf8().data());
 
-    protectedBackendDispatcher()->dispatch(message);
+    m_backendDispatcher->dispatch(message);
 }
 
 // Translate internal error messages that come from the inspector protocol payload.
@@ -189,8 +183,18 @@ void WebDriverBidiProcessor::sendBidiMessage(const String& message)
             auto bidiErrorObj = JSON::Object::create();
             bidiErrorObj->setString("type"_s, "error"_s);
             auto internalMsg = internalErrorObj->getString("message"_s);
-            bidiErrorObj->setString("message"_s, internalMsg);
-            bidiErrorObj->setString("error"_s, toBidiErrorCode(*codeField, internalMsg));
+            auto divot = internalMsg.find(';');
+            if (divot != notFound) {
+                auto errorName = internalMsg.substring(0, divot);
+                auto errorDetail = internalMsg.substring(divot + 1);
+                if (errorDetail.isEmpty())
+                    errorDetail = "An error occurred."_s;
+                bidiErrorObj->setString("message"_s, errorDetail);
+                bidiErrorObj->setString("error"_s, toBidiErrorCode(*codeField, errorName));
+            } else {
+                bidiErrorObj->setString("message"_s, internalMsg);
+                bidiErrorObj->setString("error"_s, toBidiErrorCode(*codeField, internalMsg));
+            }
             if (auto commandId = msgObj->getInteger("id"_s))
                 bidiErrorObj->setInteger("id"_s, *commandId);
 

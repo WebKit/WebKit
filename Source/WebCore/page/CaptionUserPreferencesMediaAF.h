@@ -25,12 +25,13 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(VIDEO)
 
-#include "CSSPropertyNames.h"
-#include "CaptionPreferencesDelegate.h"
-#include "CaptionUserPreferences.h"
-#include "Color.h"
+#include <WebCore/CSSPropertyNames.h>
+#include <WebCore/CaptionPreferencesDelegate.h>
+#include <WebCore/CaptionUserPreferences.h>
+#include <WebCore/Color.h>
 #include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(COCOA)
@@ -77,6 +78,8 @@ public:
     bool shouldFilterTrackMenu() const { return true; }
     
     WEBCORE_EXPORT static void setCaptionPreferencesDelegate(std::unique_ptr<CaptionPreferencesDelegate>&&);
+
+    bool testingMode() const final;
 #else
     bool shouldFilterTrackMenu() const { return false; }
 #endif
@@ -87,7 +90,7 @@ public:
 
     String captionsStyleSheetOverride() const override;
     Vector<RefPtr<AudioTrack>> sortedTrackListForMenu(AudioTrackList*) override;
-    Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*, UncheckedKeyHashSet<TextTrack::Kind>) override;
+    Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*, HashSet<TextTrack::Kind>) override;
     String displayNameForTrack(AudioTrack*) const override;
     String displayNameForTrack(TextTrack*) const override;
 
@@ -96,6 +99,7 @@ private:
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     void updateTimerFired();
+    bool hasNullCaptionProfile() const;
 
     String captionsWindowCSS() const;
     String captionsBackgroundCSS() const;
@@ -110,7 +114,7 @@ private:
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK) && PLATFORM(COCOA)
     static RetainPtr<WebCaptionUserPreferencesMediaAFWeakObserver> createWeakObserver(CaptionUserPreferencesMediaAF*);
 
-    RetainPtr<WebCaptionUserPreferencesMediaAFWeakObserver> m_observer;
+    const RetainPtr<WebCaptionUserPreferencesMediaAFWeakObserver> m_observer;
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)

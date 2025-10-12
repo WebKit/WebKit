@@ -60,10 +60,10 @@
 }
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-- (void)_download:(WKDownload *)download decidePlaceholderPolicy:(void (^)(_WKPlaceholderPolicy, NSURL *))completionHandler
+- (void)_download:(WKDownload *)download decidePlaceholderPolicy:(void (^)(WKDownloadPlaceholderPolicy, NSURL *))completionHandler
 {
     _callbackRecord.append(DownloadCallback::DecidePlaceholderPolicy);
-    completionHandler(_WKPlaceholderPolicyDisable, nil);
+    completionHandler(WKDownloadPlaceholderPolicyDisable, nil);
 }
 
 - (void)_download:(WKDownload *)download didReceivePlaceholderURL:(NSURL *)url completionHandler:(void (^)(void))completionHandler

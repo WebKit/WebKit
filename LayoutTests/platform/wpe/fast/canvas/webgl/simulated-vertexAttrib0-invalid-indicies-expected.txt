@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: Element value exceeds maximum element index.
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: glDrawElements: Element value exceeds maximum element index.
 PASS: MAX_UINT index was unable to be simulated
 PASS: MAX_UINT index did not crash
 FAIL: Huge index did not fail validation

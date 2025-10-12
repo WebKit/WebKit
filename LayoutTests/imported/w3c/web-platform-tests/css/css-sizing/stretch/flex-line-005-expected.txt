@@ -1,0 +1,8 @@
+
+FAIL .stretch 1 assert_equals:
+<div class="container">
+  <div class="stretch" style="width: 75px; border-color: cyan" data-expected-height="156"></div>
+  <div style="border-color: orange; height: 150px"></div>
+</div>
+height expected 156 but got 578
+

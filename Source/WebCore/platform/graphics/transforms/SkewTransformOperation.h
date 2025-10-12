@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "TransformOperation.h"
+#include <WebCore/TransformOperation.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -44,19 +44,15 @@ public:
     double angleY() const { return m_angleY; }
 
 private:
-    bool isIdentity() const override { return m_angleX == 0 && m_angleY == 0; }
-    bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
-
     bool operator==(const SkewTransformOperation& other) const { return operator==(static_cast<const TransformOperation&>(other)); }
     bool operator==(const TransformOperation&) const override;
 
-    bool apply(TransformationMatrix& transform, const FloatSize&) const override
+    void apply(TransformationMatrix& transform) const override
     {
         transform.skew(m_angleX, m_angleY);
-        return false;
     }
 
-    Ref<TransformOperation> blend(const TransformOperation* from, const BlendingContext&, bool blendToIdentity = false) override;
+    Ref<TransformOperation> blend(const TransformOperation* from, const BlendingContext&, bool blendToIdentity = false) const override;
 
     void dump(WTF::TextStream&) const final;
     

@@ -23,7 +23,8 @@
 #include "CDATASection.h"
 
 #include "Document.h"
-#include "DocumentInlines.h"
+#include "NodeDocument.h"
+#include "SerializedNode.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -45,9 +46,14 @@ String CDATASection::nodeName() const
     return "#cdata-section"_s;
 }
 
-Ref<Node> CDATASection::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*)
+Ref<Node> CDATASection::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*) const
 {
     return create(document, String { data() });
+}
+
+SerializedNode CDATASection::serializeNode(CloningOperation) const
+{
+    return { SerializedNode::CDATASection { data() } };
 }
 
 Ref<Text> CDATASection::virtualCreate(String&& data)

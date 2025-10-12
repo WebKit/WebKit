@@ -29,6 +29,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "ContextDestructionObserverInlines.h"
 #include "EventNames.h"
 #include "ExceptionOr.h"
 #include "HTMLMediaElement.h"
@@ -102,6 +103,11 @@ bool MediaController::everyElement(Function<bool(Ref<HTMLMediaElement>&&)>&& fun
     }
     return isNonEmpty;
 }
+
+ScriptExecutionContext* MediaController::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
+};
 
 void MediaController::addMediaElement(HTMLMediaElement& element)
 {

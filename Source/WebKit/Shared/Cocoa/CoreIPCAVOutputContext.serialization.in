@@ -37,7 +37,7 @@ header: "CoreIPCAVOutputContext.h"
 
 #if USE(AVFOUNDATION) && !HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
 secure_coding_header: <pal/cocoa/AVFoundationSoftLink.h>
-[WebKitSecureCodingClass=PAL::getAVOutputContextClass(), SupportWKKeyedCoder] webkit_secure_coding AVOutputContext {
+[WebKitSecureCodingClass=PAL::getAVOutputContextClassSingleton(), SupportWKKeyedCoder] webkit_secure_coding AVOutputContext {
     AVOutputContextSerializationKeyContextID: String
     AVOutputContextSerializationKeyContextType: String
 }

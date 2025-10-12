@@ -6,6 +6,10 @@
 
 // Platform.cpp: Implementation methods for angle::Platform.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <platform/PlatformMethods.h>
 
 #include <cstring>

@@ -28,12 +28,13 @@
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
+#include "ContextDestructionObserverInlines.h"
+#include "GraphicsLayer.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "HTMLCanvasElement.h"
+#include "NodeInlines.h"
 #include "OffscreenCanvas.h"
-#include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <utility>
 
 namespace WebCore {
 
@@ -49,41 +50,57 @@ PlaceholderRenderingContextSource::PlaceholderRenderingContextSource(Placeholder
 {
 }
 
-void PlaceholderRenderingContextSource::setPlaceholderBuffer(RefPtr<ImageBuffer>&& imageBuffer)
+void PlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& imageBuffer, bool opaque)
 {
-    RefPtr clone = imageBuffer->clone();
-
+    auto bufferVersion = ++m_bufferVersion;
     {
         Locker locker { m_lock };
-        if (m_delegate)
-            m_delegate->tryCopyToLayer(*imageBuffer);
-        else
-            m_imageBufferForDelegate = WTFMove(imageBuffer);
+        if (m_delegate) {
+            m_delegate->tryCopyToLayer(imageBuffer, opaque);
+            m_delegateBufferVersion = bufferVersion;
+        }
     }
 
+    RefPtr clone = imageBuffer.clone();
     if (!clone)
         return;
     std::unique_ptr serializedClone = ImageBuffer::sinkIntoSerializedImageBuffer(WTFMove(clone));
     if (!serializedClone)
         return;
-    callOnMainThread([weakPlaceholder = m_placeholder, buffer = WTFMove(serializedClone)] () mutable {
+    callOnMainThread([weakPlaceholder = m_placeholder, buffer = WTFMove(serializedClone), bufferVersion, opaque] () mutable {
+        assertIsMainThread();
         RefPtr placeholder = weakPlaceholder.get();
         if (!placeholder)
             return;
-        RefPtr imageBuffer = SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(buffer), placeholder->protectedCanvas()->scriptExecutionContext()->graphicsClient());
+        RefPtr imageBuffer = SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(buffer), placeholder->protectedCanvas()->protectedScriptExecutionContext()->graphicsClient());
         if (!imageBuffer)
             return;
-        placeholder->setPlaceholderBuffer(imageBuffer.releaseNonNull());
+        Ref source = placeholder->source();
+        {
+            Locker locker { source->m_lock };
+            if (source->m_delegate && source->m_delegateBufferVersion < bufferVersion) {
+                // Compare the versions, so that possibly already historical buffer in this
+                // main thread task does not override the newest buffer that the worker thread
+                // already set.
+                source->m_delegate->tryCopyToLayer(*imageBuffer, opaque);
+                source->m_delegateBufferVersion = bufferVersion;
+            }
+        }
+
+        placeholder->setPlaceholderBuffer(imageBuffer.releaseNonNull(), opaque);
+        source->m_placeholderBufferVersion = bufferVersion;
     });
 }
 
-void PlaceholderRenderingContextSource::setContentsToLayer(GraphicsLayer& layer)
+void PlaceholderRenderingContextSource::setContentsToLayer(GraphicsLayer& layer, ImageBuffer* buffer, bool opaque)
 {
+    assertIsMainThread();
     Locker locker { m_lock };
-    m_delegate = layer.createAsyncContentsDisplayDelegate(m_delegate.get());
-    if (m_imageBufferForDelegate) {
-        m_delegate->tryCopyToLayer(*std::exchange(m_imageBufferForDelegate, nullptr));
-        m_imageBufferForDelegate = nullptr;
+    if ((m_delegate = layer.createAsyncContentsDisplayDelegate(m_delegate.get()))) {
+        if (buffer) {
+            m_delegate->tryCopyToLayer(*buffer, opaque);
+            m_delegateBufferVersion = m_placeholderBufferVersion;
+        }
     }
 }
 
@@ -102,7 +119,7 @@ PlaceholderRenderingContext::PlaceholderRenderingContext(HTMLCanvasElement& canv
 
 HTMLCanvasElement& PlaceholderRenderingContext::canvas() const
 {
-    return static_cast<HTMLCanvasElement&>(canvasBase());
+    return downcast<HTMLCanvasElement>(canvasBase());
 }
 
 IntSize PlaceholderRenderingContext::size() const
@@ -112,12 +129,24 @@ IntSize PlaceholderRenderingContext::size() const
 
 void PlaceholderRenderingContext::setContentsToLayer(GraphicsLayer& layer)
 {
-    m_source->setContentsToLayer(layer);
+    RefPtr<ImageBuffer> buffer;
+    Ref canvas = this->canvas();
+    if (canvas->hasCreatedImageBuffer())
+        buffer = canvas->buffer();
+    m_source->setContentsToLayer(layer, buffer.get(), m_opaque);
 }
 
-void PlaceholderRenderingContext::setPlaceholderBuffer(Ref<ImageBuffer>&& buffer)
+void PlaceholderRenderingContext::setPlaceholderBuffer(Ref<ImageBuffer>&& buffer, bool opaque)
 {
+    m_opaque = opaque;
     canvasBase().setImageBufferAndMarkDirty(WTFMove(buffer));
+}
+
+PixelFormat PlaceholderRenderingContext::pixelFormat() const
+{
+    if (Ref canvas = this->canvas(); canvas->buffer())
+        return Ref { *canvas->buffer() }->pixelFormat();
+    return CanvasRenderingContext::pixelFormat();
 }
 
 }

@@ -25,16 +25,15 @@
 
 #pragma once
 
-#include "FormattingConstraints.h"
-#include "LayoutElementBox.h"
-#include "LayoutUnit.h"
-#include "LayoutUnits.h"
+#include <WebCore/FormattingConstraints.h>
+#include <WebCore/LayoutElementBox.h>
+#include <WebCore/LayoutUnit.h>
+#include <WebCore/LayoutUnits.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class LayoutSize;
-struct Length;
 
 namespace Layout {
 
@@ -91,8 +90,8 @@ protected:
 #endif
 
 private:
-    CheckedRef<const ElementBox> m_root;
-    LayoutState& m_layoutState;
+    const CheckedRef<const ElementBox> m_root;
+    const CheckedRef<LayoutState> m_layoutState;
 };
 
 }

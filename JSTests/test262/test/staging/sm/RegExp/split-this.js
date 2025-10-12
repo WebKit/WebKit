@@ -2,20 +2,12 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-RegExp-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  RegExp.prototype[@@split] should check this value.
+info: bugzilla.mozilla.org/show_bug.cgi?id=887016
 esid: pending
 ---*/
-var BUGNUMBER = 887016;
-var summary = "RegExp.prototype[@@split] should check this value.";
-
-print(BUGNUMBER + ": " + summary);
 
 for (var v of [null, 1, true, undefined, "", Symbol.iterator]) {
-  assertThrowsInstanceOf(() => RegExp.prototype[Symbol.split].call(v),
-                         TypeError);
+  assert.throws(TypeError, () => RegExp.prototype[Symbol.split].call(v));
 }
-

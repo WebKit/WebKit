@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2025 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "PageIdentifier.h"
-#include "ResourceRequestBase.h"
+#include <WebCore/PageIdentifier.h>
+#include <WebCore/ResourceRequestBase.h>
 #include "URLSoup.h"
 #include <wtf/glib/GRefPtr.h>
 
@@ -40,7 +40,7 @@ struct ResourceRequestPlatformData {
     bool acceptEncoding;
     uint16_t redirectCount;
 };
-using ResourceRequestData = std::variant<ResourceRequestBase::RequestData, ResourceRequestPlatformData>;
+using ResourceRequestData = Variant<ResourceRequestBase::RequestData, ResourceRequestPlatformData>;
 
 class ResourceRequest : public ResourceRequestBase {
 public:
@@ -101,11 +101,7 @@ public:
 private:
     friend class ResourceRequestBase;
 
-#if USE(SOUP2)
-    GUniquePtr<SoupURI> createSoupURI() const;
-#else
     GRefPtr<GUri> createSoupURI() const;
-#endif
 
     void doUpdatePlatformRequest() { }
     void doUpdateResourceRequest() { }

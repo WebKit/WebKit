@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,11 @@
 #include "config.h"
 #include "MessagePort.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
+#include "ExceptionOr.h"
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "MessagePortChannelProvider.h"
@@ -48,15 +50,15 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MessagePort);
 
 static Lock allMessagePortsLock;
-static UncheckedKeyHashMap<MessagePortIdentifier, ThreadSafeWeakPtr<MessagePort>>& allMessagePorts() WTF_REQUIRES_LOCK(allMessagePortsLock)
+static HashMap<MessagePortIdentifier, ThreadSafeWeakPtr<MessagePort>>& allMessagePorts() WTF_REQUIRES_LOCK(allMessagePortsLock)
 {
-    static NeverDestroyed<UncheckedKeyHashMap<MessagePortIdentifier, ThreadSafeWeakPtr<MessagePort>>> map;
+    static NeverDestroyed<HashMap<MessagePortIdentifier, ThreadSafeWeakPtr<MessagePort>>> map;
     return map;
 }
 
-static UncheckedKeyHashMap<MessagePortIdentifier, ScriptExecutionContextIdentifier>& portToContextIdentifier() WTF_REQUIRES_LOCK(allMessagePortsLock)
+static HashMap<MessagePortIdentifier, ScriptExecutionContextIdentifier>& portToContextIdentifier() WTF_REQUIRES_LOCK(allMessagePortsLock)
 {
-    static NeverDestroyed<UncheckedKeyHashMap<MessagePortIdentifier, ScriptExecutionContextIdentifier>> map;
+    static NeverDestroyed<HashMap<MessagePortIdentifier, ScriptExecutionContextIdentifier>> map;
     return map;
 }
 
@@ -130,7 +132,7 @@ MessagePort::~MessagePort()
     if (m_entangled)
         close();
 
-    if (auto* context = scriptExecutionContext())
+    if (RefPtr context = scriptExecutionContext())
         context->destroyedMessagePort(*this);
 }
 
@@ -264,7 +266,7 @@ void MessagePort::dispatchMessages()
         Ref vm = globalObject->vm();
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
-        auto* workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(*context);
+        RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(*context);
         for (auto& message : messages) {
             // close() in Worker onmessage handler should prevent next message from dispatching.
             if (workerGlobalScope && workerGlobalScope->isClosing())
@@ -328,7 +330,7 @@ ExceptionOr<Vector<TransferredMessagePort>> MessagePort::disentanglePorts(Vector
         return Vector<TransferredMessagePort> { };
 
     // Walk the incoming array - if there are any duplicate ports, or null ports or cloned ports, throw an error (per section 8.3.3 of the HTML5 spec).
-    UncheckedKeyHashSet<Ref<MessagePort>> portSet;
+    HashSet<Ref<MessagePort>> portSet;
     for (auto& port : ports) {
         if (!port->m_entangled || !portSet.add(port).isNewEntry)
             return Exception { ExceptionCode::DataCloneError };
@@ -378,6 +380,11 @@ bool MessagePort::removeEventListener(const AtomString& eventType, EventListener
         m_hasMessageEventListener = false;
 
     return result;
+}
+
+ScriptExecutionContext* MessagePort::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 WebCoreOpaqueRoot root(MessagePort* port)

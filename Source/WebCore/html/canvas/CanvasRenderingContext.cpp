@@ -39,6 +39,7 @@
 #include "OriginAccessPatterns.h"
 #include "PixelFormat.h"
 #include "SVGImageElement.h"
+#include "ScriptWrappableInlines.h"
 #include "SecurityOrigin.h"
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -56,9 +57,9 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CanvasRenderingContext);
 
 Lock CanvasRenderingContext::s_instancesLock;
 
-UncheckedKeyHashSet<CanvasRenderingContext*>& CanvasRenderingContext::instances()
+HashSet<CanvasRenderingContext*>& CanvasRenderingContext::instances()
 {
-    static NeverDestroyed<UncheckedKeyHashSet<CanvasRenderingContext*>> instances;
+    static NeverDestroyed<HashSet<CanvasRenderingContext*>> instances;
     return instances;
 }
 
@@ -128,9 +129,14 @@ RefPtr<ImageBuffer> CanvasRenderingContext::transferToImageBuffer()
     return nullptr;
 }
 
-ImageBufferPixelFormat CanvasRenderingContext::pixelFormat() const
+PixelFormat CanvasRenderingContext::pixelFormat() const
 {
-    return ImageBufferPixelFormat::BGRA8;
+    return PixelFormat::BGRA8;
+}
+
+bool CanvasRenderingContext::isOpaque() const
+{
+    return pixelFormatIsOpaque(pixelFormat());
 }
 
 DestinationColorSpace CanvasRenderingContext::colorSpace() const

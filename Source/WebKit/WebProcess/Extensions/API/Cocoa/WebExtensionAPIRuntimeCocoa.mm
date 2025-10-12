@@ -60,6 +60,7 @@ static NSString * const nameKey = @"name";
 static NSString * const reasonKey = @"reason";
 static NSString * const previousVersionKey = @"previousVersion";
 static NSString * const documentIdKey = @"documentId";
+static NSString * const versionKey = @"version";
 
 namespace WebKit {
 
@@ -85,7 +86,7 @@ using ReplyCallbackAggregator = EagerCallbackAggregator<void(id, IsDefaultReply)
     if (!(self = [super init]))
         return nil;
 
-    _aggregator = &aggregator;
+    _aggregator = aggregator;
 
     return self;
 }
@@ -179,6 +180,11 @@ NSDictionary *WebExtensionAPIRuntime::getManifest()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getManifest
 
     return extensionContext().manifest();
+}
+
+NSString *WebExtensionAPIRuntime::getVersion()
+{
+    return objectForKey<NSString>(extensionContext().manifest(), versionKey);
 }
 
 NSString *WebExtensionAPIRuntime::runtimeIdentifier()
@@ -562,7 +568,7 @@ WebExtensionAPIEvent& WebExtensionAPIRuntime::onMessageExternal()
     return *m_onMessageExternal;
 }
 
-NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters& parameters, const URL& baseURL)
+NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters& parameters)
 {
     NSMutableDictionary *result = [NSMutableDictionary dictionary];
 
@@ -577,15 +583,8 @@ NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters& parameters, co
         result[frameIdKey] = @(toWebAPI(parameters.frameIdentifier.value()));
 
     if (parameters.url.isValid()) {
-        auto securityOrigin = WebCore::SecurityOrigin::create(parameters.url)->toString();
-        auto baseURLOrigin = makeString(baseURL.protocol(), "://"_s, baseURL.host());
-
-        if (equalIgnoringASCIICase(securityOrigin, baseURLOrigin))
-            result[originKey] = baseURLOrigin.createNSString().get();
-        else
-            result[originKey] = securityOrigin.createNSString().get();
-
         result[urlKey] = parameters.url.string().createNSString().get();
+        result[originKey] = WebCore::SecurityOrigin::create(parameters.url)->toString().createNSString().get();
     }
 
     if (parameters.documentIdentifier.isValid())
@@ -599,7 +598,11 @@ static bool matches(WebFrame& frame, const std::optional<WebExtensionMessageTarg
     if (!targetParameters)
         return true;
 
-    // Skip all frames / documents that don't match the target parameters.
+    // Skip all pages / frames / documents that don't match the target parameters.
+    auto& pageProxyIdentifier = targetParameters.value().pageProxyIdentifier;
+    if (pageProxyIdentifier && pageProxyIdentifier != frame.protectedPage()->webPageProxyIdentifier())
+        return false;
+
     auto& frameIdentifier = targetParameters.value().frameIdentifier;
     if (frameIdentifier && !matchesFrame(frameIdentifier.value(), frame))
         return false;
@@ -625,7 +628,7 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
     }
 
     id message = parseJSON(messageJSON.createNSString().get(), JSONOptions::FragmentsAllowed);
-    auto *senderInfo = toWebAPI(senderParameters, baseURL());
+    auto *senderInfo = toWebAPI(senderParameters);
     auto sourceContentWorldType = senderParameters.contentWorldType;
 
     auto callbackAggregator = ReplyCallbackAggregator::create([completionHandler = WTFMove(completionHandler)](JSValue *replyMessage, IsDefaultReply defaultReply) mutable {

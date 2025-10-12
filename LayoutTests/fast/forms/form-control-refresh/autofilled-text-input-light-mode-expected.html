@@ -1,0 +1,26 @@
+<html>
+<head>
+    <script>
+        function setBackground() {
+            var textfield = document.getElementById('devolved');
+
+            if (window.internals)
+                window.internals.setAutofilled(textfield, true);
+
+            document.body.style.backgroundColor = window.getComputedStyle(textfield).backgroundColor;
+        }
+    </script>
+    <style>
+        input {
+            margin-top: 40px;
+            display: block;
+            visibility: hidden;
+            border: none;
+        }
+    </style>
+</head>
+<body onload="setBackground()">
+    <p>This tests that background and text colors properly change for autofilled native inputs. It can only be run using WKTR.</p>
+    <input id="devolved" type="text">
+</body>
+</html>

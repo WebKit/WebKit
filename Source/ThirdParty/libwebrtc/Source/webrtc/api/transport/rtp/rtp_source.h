@@ -15,6 +15,7 @@
 
 #include <optional>
 
+#include "absl/strings/str_format.h"
 #include "api/rtp_headers.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -82,6 +83,13 @@ class RtpSource {
 
   std::optional<TimeDelta> local_capture_clock_offset() const {
     return extensions_.local_capture_clock_offset;
+  }
+
+  template <typename Sink>
+  friend void AbslStringify(Sink& sink, const RtpSource& source) {
+    absl::Format(&sink, "{ source_type: %s, source_id: %u }",
+                 source.source_type() == RtpSourceType::CSRC ? "CSRC" : "SSRC",
+                 source.source_id());
   }
 
   bool operator==(const RtpSource& o) const {

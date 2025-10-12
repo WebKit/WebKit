@@ -10,10 +10,10 @@
 
 #include "test/testsupport/perf_test.h"
 
-#include <algorithm>
 #include <limits>
 #include <string>
 
+#include "api/numerics/samples_stats_counter.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/rtc_expect_death.h"

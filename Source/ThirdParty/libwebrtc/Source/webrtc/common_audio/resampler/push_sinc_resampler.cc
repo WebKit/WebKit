@@ -10,9 +10,11 @@
 
 #include "common_audio/resampler/push_sinc_resampler.h"
 
+#include <cstdint>
 #include <cstring>
 
 #include "common_audio/include/audio_util.h"
+#include "common_audio/resampler/sinc_resampler.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -34,7 +36,7 @@ size_t PushSincResampler::Resample(const int16_t* source,
                                    size_t source_length,
                                    int16_t* destination,
                                    size_t /* destination_capacity */) {
-  if (!float_buffer_.get())
+  if (!float_buffer_)
     float_buffer_.reset(new float[destination_frames_]);
 
   source_ptr_int_ = source;

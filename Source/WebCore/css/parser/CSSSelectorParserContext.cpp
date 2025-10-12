@@ -27,8 +27,8 @@
 #include "CSSSelectorParserContext.h"
 
 #include "CSSParserContext.h"
-#include "DocumentInlines.h"
-#include "Quirks.h"
+#include "DocumentQuirks.h"
+#include "Settings.h"
 #include <wtf/Hasher.h>
 
 namespace WebCore {

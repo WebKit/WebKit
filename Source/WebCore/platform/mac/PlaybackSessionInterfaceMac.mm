@@ -72,31 +72,32 @@ PlaybackSessionModel* PlaybackSessionInterfaceMac::playbackSessionModel() const
 
 bool PlaybackSessionInterfaceMac::isInWindowFullscreenActive() const
 {
-    return m_playbackSessionModel && m_playbackSessionModel->isInWindowFullscreenActive();
+    CheckedPtr model = m_playbackSessionModel.get();
+    return model && model->isInWindowFullscreenActive();
 }
 
 void PlaybackSessionInterfaceMac::enterInWindowFullscreen()
 {
-    if (m_playbackSessionModel)
-        m_playbackSessionModel->enterInWindowFullscreen();
+    if (CheckedPtr model = m_playbackSessionModel.get())
+        model->enterInWindowFullscreen();
 }
 
 void PlaybackSessionInterfaceMac::exitInWindowFullscreen()
 {
-    if (m_playbackSessionModel)
-        m_playbackSessionModel->exitInWindowFullscreen();
+    if (CheckedPtr model = m_playbackSessionModel.get())
+        model->exitInWindowFullscreen();
 }
 
 void PlaybackSessionInterfaceMac::durationChanged(double duration)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    WebPlaybackControlsManager* controlsManager = playBackControlsManager();
+    RetainPtr controlsManager = playBackControlsManager();
 
-    controlsManager.contentDuration = duration;
+    controlsManager.get().contentDuration = duration;
 
     // FIXME: We take this as an indication that playback is ready, but that is not necessarily true.
-    controlsManager.hasEnabledAudio = YES;
-    controlsManager.hasEnabledVideo = YES;
+    controlsManager.get().hasEnabledAudio = YES;
+    controlsManager.get().hasEnabledVideo = YES;
 #else
     UNUSED_PARAM(duration);
 #endif
@@ -105,8 +106,8 @@ void PlaybackSessionInterfaceMac::durationChanged(double duration)
 void PlaybackSessionInterfaceMac::currentTimeChanged(double currentTime, double anchorTime)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    WebPlaybackControlsManager* controlsManager = playBackControlsManager();
-    updatePlaybackControlsManagerTiming(currentTime, anchorTime, controlsManager.rate, controlsManager.playing);
+    RetainPtr controlsManager = playBackControlsManager();
+    updatePlaybackControlsManagerTiming(currentTime, anchorTime, controlsManager.get().rate, controlsManager.get().playing);
 #else
     UNUSED_PARAM(currentTime);
     UNUSED_PARAM(anchorTime);
@@ -116,12 +117,15 @@ void PlaybackSessionInterfaceMac::currentTimeChanged(double currentTime, double 
 void PlaybackSessionInterfaceMac::rateChanged(OptionSet<PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double defaultPlaybackRate)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "playbackState: ", playbackState, ", playbackRate: ", playbackRate);
+
     auto isPlaying = playbackState.contains(PlaybackSessionModel::PlaybackState::Playing);
-    WebPlaybackControlsManager* controlsManager = playBackControlsManager();
+    RetainPtr controlsManager = playBackControlsManager();
     [controlsManager setDefaultPlaybackRate:defaultPlaybackRate fromJavaScript:YES];
     [controlsManager setRate:isPlaying ? playbackRate : 0. fromJavaScript:YES];
     [controlsManager setPlaying:isPlaying];
-    updatePlaybackControlsManagerTiming(m_playbackSessionModel ? m_playbackSessionModel->currentTime() : 0, [[NSProcessInfo processInfo] systemUptime], playbackRate, isPlaying);
+    CheckedPtr model = m_playbackSessionModel.get();
+    updatePlaybackControlsManagerTiming(model ? model->currentTime() : 0, [[NSProcessInfo processInfo] systemUptime], playbackRate, isPlaying);
 #else
     UNUSED_PARAM(isPlaying);
     UNUSED_PARAM(playbackRate);
@@ -131,26 +135,27 @@ void PlaybackSessionInterfaceMac::rateChanged(OptionSet<PlaybackSessionModel::Pl
 void PlaybackSessionInterfaceMac::willBeginScrubbing()
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    updatePlaybackControlsManagerTiming(m_playbackSessionModel ? m_playbackSessionModel->currentTime() : 0, [[NSProcessInfo processInfo] systemUptime], 0, false);
+    CheckedPtr model = m_playbackSessionModel.get();
+    updatePlaybackControlsManagerTiming(model ? model->currentTime() : 0, [[NSProcessInfo processInfo] systemUptime], 0, false);
 #endif
 }
 
 void PlaybackSessionInterfaceMac::beginScrubbing()
 {
     willBeginScrubbing();
-    if (auto* model = playbackSessionModel())
+    if (CheckedPtr model = playbackSessionModel())
         model->beginScrubbing();
 }
 
 void PlaybackSessionInterfaceMac::endScrubbing()
 {
-    if (auto* model = playbackSessionModel())
+    if (CheckedPtr model = playbackSessionModel())
         model->endScrubbing();
 }
 #if HAVE(PIP_SKIP_PREROLL)
 void PlaybackSessionInterfaceMac::skipAd()
 {
-    if (auto* model = playbackSessionModel())
+    if (CheckedPtr model = playbackSessionModel())
         model->skipAd();
 }
 #endif
@@ -158,7 +163,7 @@ void PlaybackSessionInterfaceMac::skipAd()
 void PlaybackSessionInterfaceMac::seekableRangesChanged(const PlatformTimeRanges& timeRanges, double, double)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    [playBackControlsManager() setSeekableTimeRanges:makeNSArray(timeRanges).get()];
+    [protectedPlayBackControlsManager() setSeekableTimeRanges:makeNSArray(timeRanges).get()];
 #else
     UNUSED_PARAM(timeRanges);
 #endif
@@ -167,7 +172,7 @@ void PlaybackSessionInterfaceMac::seekableRangesChanged(const PlatformTimeRanges
 void PlaybackSessionInterfaceMac::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    [playBackControlsManager() setAudioMediaSelectionOptions:options withSelectedIndex:static_cast<NSUInteger>(selectedIndex)];
+    [protectedPlayBackControlsManager() setAudioMediaSelectionOptions:options withSelectedIndex:static_cast<NSUInteger>(selectedIndex)];
 #else
     UNUSED_PARAM(options);
     UNUSED_PARAM(selectedIndex);
@@ -177,7 +182,7 @@ void PlaybackSessionInterfaceMac::audioMediaSelectionOptionsChanged(const Vector
 void PlaybackSessionInterfaceMac::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    [playBackControlsManager() setLegibleMediaSelectionOptions:options withSelectedIndex:static_cast<NSUInteger>(selectedIndex)];
+    [protectedPlayBackControlsManager() setLegibleMediaSelectionOptions:options withSelectedIndex:static_cast<NSUInteger>(selectedIndex)];
 #else
     UNUSED_PARAM(options);
     UNUSED_PARAM(selectedIndex);
@@ -187,7 +192,7 @@ void PlaybackSessionInterfaceMac::legibleMediaSelectionOptionsChanged(const Vect
 void PlaybackSessionInterfaceMac::audioMediaSelectionIndexChanged(uint64_t selectedIndex)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    [playBackControlsManager() setAudioMediaSelectionIndex:selectedIndex];
+    [protectedPlayBackControlsManager() setAudioMediaSelectionIndex:selectedIndex];
 #else
     UNUSED_PARAM(selectedIndex);
 #endif
@@ -196,7 +201,7 @@ void PlaybackSessionInterfaceMac::audioMediaSelectionIndexChanged(uint64_t selec
 void PlaybackSessionInterfaceMac::legibleMediaSelectionIndexChanged(uint64_t selectedIndex)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    [playBackControlsManager() setLegibleMediaSelectionIndex:selectedIndex];
+    [protectedPlayBackControlsManager() setLegibleMediaSelectionIndex:selectedIndex];
 #else
     UNUSED_PARAM(selectedIndex);
 #endif
@@ -218,10 +223,8 @@ void PlaybackSessionInterfaceMac::externalPlaybackChanged(bool, PlaybackSessionM
 
 void PlaybackSessionInterfaceMac::invalidate()
 {
-    if (!m_playbackSessionModel)
-        return;
-
-    m_playbackSessionModel->removeClient(*this);
+    if (CheckedPtr model = m_playbackSessionModel.get())
+        model->removeClient(*this);
     m_playbackSessionModel = nullptr;
 }
 
@@ -243,44 +246,45 @@ void PlaybackSessionInterfaceMac::setPlayBackControlsManager(WebPlaybackControls
 {
     m_playbackControlsManager = manager;
 
-    if (!manager || !m_playbackSessionModel)
+    CheckedPtr model = m_playbackSessionModel.get();
+    if (!manager || !model)
         return;
 
     NSTimeInterval anchorTimeStamp = ![manager rate] ? NAN : [[NSProcessInfo processInfo] systemUptime];
-    manager.timing = [getAVValueTimingClass() valueTimingWithAnchorValue:m_playbackSessionModel->currentTime() anchorTimeStamp:anchorTimeStamp rate:0];
-    double duration = m_playbackSessionModel->duration();
+    manager.timing = [getAVValueTimingClassSingleton() valueTimingWithAnchorValue:model->currentTime() anchorTimeStamp:anchorTimeStamp rate:0];
+    double duration = model->duration();
     manager.contentDuration = duration;
     manager.hasEnabledAudio = duration > 0;
     manager.hasEnabledVideo = duration > 0;
-    manager.defaultPlaybackRate = m_playbackSessionModel->defaultPlaybackRate();
-    manager.rate = m_playbackSessionModel->isPlaying() ? m_playbackSessionModel->playbackRate() : 0.;
-    manager.seekableTimeRanges = makeNSArray(m_playbackSessionModel->seekableRanges()).get();
+    manager.defaultPlaybackRate = model->defaultPlaybackRate();
+    manager.rate = model->isPlaying() ? model->playbackRate() : 0.;
+    manager.seekableTimeRanges = makeNSArray(model->seekableRanges()).get();
     manager.canTogglePlayback = YES;
-    manager.playing = m_playbackSessionModel->isPlaying();
-    [manager setAudioMediaSelectionOptions:m_playbackSessionModel->audioMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(m_playbackSessionModel->audioMediaSelectedIndex())];
-    [manager setLegibleMediaSelectionOptions:m_playbackSessionModel->legibleMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(m_playbackSessionModel->legibleMediaSelectedIndex())];
+    manager.playing = model->isPlaying();
+    [manager setAudioMediaSelectionOptions:model->audioMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(model->audioMediaSelectedIndex())];
+    [manager setLegibleMediaSelectionOptions:model->legibleMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(model->legibleMediaSelectedIndex())];
 
     updatePlaybackControlsManagerCanTogglePictureInPicture();
 }
 
 void PlaybackSessionInterfaceMac::updatePlaybackControlsManagerCanTogglePictureInPicture()
 {
-    PlaybackSessionModel* model = playbackSessionModel();
+    CheckedPtr model = playbackSessionModel();
     if (!model) {
-        [playBackControlsManager() setCanTogglePictureInPicture:NO];
+        [protectedPlayBackControlsManager() setCanTogglePictureInPicture:NO];
         return;
     }
 
-    [playBackControlsManager() setCanTogglePictureInPicture:model->isPictureInPictureSupported() && !model->externalPlaybackEnabled()];
+    [protectedPlayBackControlsManager() setCanTogglePictureInPicture:model->isPictureInPictureSupported() && !model->externalPlaybackEnabled()];
 }
 
 void PlaybackSessionInterfaceMac::updatePlaybackControlsManagerTiming(double currentTime, double anchorTime, double playbackRate, bool isPlaying)
 {
-    WebPlaybackControlsManager *manager = playBackControlsManager();
+    RetainPtr manager = playBackControlsManager();
     if (!manager)
         return;
 
-    PlaybackSessionModel *model = playbackSessionModel();
+    CheckedPtr model = playbackSessionModel();
     if (!model)
         return;
 
@@ -288,11 +292,11 @@ void PlaybackSessionInterfaceMac::updatePlaybackControlsManagerTiming(double cur
     double effectivePlaybackRate = playbackRate;
     if (!isPlaying
         || model->isScrubbing()
-        || (manager.rate > 0 && model->playbackStartedTime() >= currentTime)
-        || (manager.rate < 0 && model->playbackStartedTime() <= currentTime))
+        || (manager.get().rate > 0 && model->playbackStartedTime() >= currentTime)
+        || (manager.get().rate < 0 && model->playbackStartedTime() <= currentTime))
         effectivePlaybackRate = 0;
 
-    manager.timing = [getAVValueTimingClass() valueTimingWithAnchorValue:currentTime anchorTimeStamp:effectiveAnchorTime rate:effectivePlaybackRate];
+    manager.get().timing = [getAVValueTimingClassSingleton() valueTimingWithAnchorValue:currentTime anchorTimeStamp:effectiveAnchorTime rate:effectivePlaybackRate];
 }
 
 uint32_t PlaybackSessionInterfaceMac::checkedPtrCount() const
@@ -315,17 +319,24 @@ void PlaybackSessionInterfaceMac::decrementCheckedPtrCount() const
     CanMakeCheckedPtr::decrementCheckedPtrCount();
 }
 
+RetainPtr<WebPlaybackControlsManager> PlaybackSessionInterfaceMac::protectedPlayBackControlsManager()
+{
+    return playBackControlsManager();
+}
+
 #endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
 #if !RELEASE_LOG_DISABLED
 uint64_t PlaybackSessionInterfaceMac::logIdentifier() const
 {
-    return m_playbackSessionModel ? m_playbackSessionModel->logIdentifier() : 0;
+    CheckedPtr model = m_playbackSessionModel.get();
+    return model ? model->logIdentifier() : 0;
 }
 
 const Logger* PlaybackSessionInterfaceMac::loggerPtr() const
 {
-    return m_playbackSessionModel ? m_playbackSessionModel->loggerPtr() : nullptr;
+    CheckedPtr model = m_playbackSessionModel.get();
+    return model ? model->loggerPtr() : nullptr;
 }
 
 WTFLogChannel& PlaybackSessionInterfaceMac::logChannel() const

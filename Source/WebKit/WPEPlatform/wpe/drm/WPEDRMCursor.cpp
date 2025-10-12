@@ -75,7 +75,7 @@ void Cursor::updateBuffer(const uint8_t* pixels, uint32_t width, uint32_t height
     Vector<uint32_t> deviceBuffer(m_deviceWidth * m_deviceHeight);
     for (uint32_t i = 0; i < height; ++i)
         memcpy(&deviceBuffer[i * m_deviceWidth], pixels + i * stride, stride);
-    gbm_bo_write(m_buffer->bufferObject(), deviceBuffer.data(), deviceBuffer.sizeInBytes());
+    gbm_bo_write(m_buffer->bufferObject(), deviceBuffer.span().data(), deviceBuffer.sizeInBytes());
 }
 
 void Cursor::setFromName(const char* name, double scale)
@@ -103,7 +103,7 @@ void Cursor::setFromName(const char* name, double scale)
         return;
 
     m_isHidden = false;
-    updateBuffer(reinterpret_cast<const uint8_t*>(cursor[0].pixels.data()), cursor[0].width, cursor[0].height, cursor[0].width * 4);
+    updateBuffer(reinterpret_cast<const uint8_t*>(cursor[0].pixels.span().data()), cursor[0].width, cursor[0].height, cursor[0].width * 4);
     m_hotspot.x = cursor[0].hotspotX;
     m_hotspot.y = cursor[0].hotspotY;
 }

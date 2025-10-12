@@ -1,0 +1,6 @@
+
+FAIL Default values when no property bag is supplied Can't find variable: AnimationTrigger
+FAIL Default values when an empty property bag is supplied. Can't find variable: AnimationTrigger
+FAIL All values supplied (scroll timeline). Can't find variable: AnimationTrigger
+FAIL All values supplied (view timeline). Can't find variable: AnimationTrigger
+

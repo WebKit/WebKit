@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,6 +60,7 @@ public:
 
     // EventTarget.
     ScriptExecutionContext* scriptExecutionContext() const final;
+    using ActiveDOMObject::protectedScriptExecutionContext;
 
     void reportNetworkUsage(size_t bytesTransferredOverNetworkDelta);
 
@@ -76,7 +77,7 @@ private:
     void resume() final;
 
     SharedWorkerKey m_key;
-    Ref<MessagePort> m_port;
+    const Ref<MessagePort> m_port;
     String m_identifierForInspector;
     URLKeepingBlobAlive m_blobURLExtension;
     size_t m_bytesTransferredOverNetwork { 0 };

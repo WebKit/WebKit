@@ -92,6 +92,7 @@ header: <WebCore/ScrollingStatePositionedNode.h>
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::MouseActivityState] WebCore::MouseLocationState mouseLocationState();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarHoverState] WebCore::ScrollbarHoverState scrollbarHoverState();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarEnabledState] WebCore::ScrollbarEnabledState scrollbarEnabledState();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarColor] std::optional<WebCore::ScrollbarColor> scrollbarColor();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarLayoutDirection] WebCore::UserInterfaceLayoutDirection scrollbarLayoutDirection();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarWidth] WebCore::ScrollbarWidth scrollbarWidth();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::UseDarkAppearanceForScrollbars] bool useDarkAppearanceForScrollbars();
@@ -145,6 +146,7 @@ header: <WebCore/ScrollingStatePositionedNode.h>
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::MouseActivityState] WebCore::MouseLocationState mouseLocationState();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarHoverState] WebCore::ScrollbarHoverState scrollbarHoverState();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarEnabledState] WebCore::ScrollbarEnabledState scrollbarEnabledState();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarColor] std::optional<WebCore::ScrollbarColor> scrollbarColor();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarLayoutDirection] WebCore::UserInterfaceLayoutDirection scrollbarLayoutDirection();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarWidth] WebCore::ScrollbarWidth scrollbarWidth();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::UseDarkAppearanceForScrollbars] bool useDarkAppearanceForScrollbars();
@@ -186,6 +188,7 @@ header: <WebCore/ScrollingStatePositionedNode.h>
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::MouseActivityState] WebCore::MouseLocationState mouseLocationState();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarHoverState] WebCore::ScrollbarHoverState scrollbarHoverState();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarEnabledState] WebCore::ScrollbarEnabledState scrollbarEnabledState();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarColor] std::optional<WebCore::ScrollbarColor> scrollbarColor();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarLayoutDirection] WebCore::UserInterfaceLayoutDirection scrollbarLayoutDirection();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarWidth] WebCore::ScrollbarWidth scrollbarWidth();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::UseDarkAppearanceForScrollbars] bool useDarkAppearanceForScrollbars();

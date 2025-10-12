@@ -21,6 +21,7 @@
 #pragma once
 
 #include <gtk/gtk.h>
+#include <wtf/glib/GRefPtr.h>
 
 #if USE(GTK4)
 
@@ -210,17 +211,16 @@ static inline int
 gtk_native_dialog_run(GtkNativeDialog* dialog)
 {
     struct RunDialogContext {
-        GMainLoop *loop;
+        GRefPtr<GMainLoop> loop;
         int response;
-    } context = { g_main_loop_new(nullptr, FALSE), 0 };
+    } context = { adoptGRef(g_main_loop_new(nullptr, FALSE)), 0 };
 
     gtk_native_dialog_show(dialog);
     g_signal_connect(dialog, "response", G_CALLBACK(+[](GtkNativeDialog*, int response, RunDialogContext* context) {
         context->response = response;
-        g_main_loop_quit(context->loop);
+        g_main_loop_quit(context->loop.get());
     }), &context);
-    g_main_loop_run(context.loop);
-    g_main_loop_unref(context.loop);
+    g_main_loop_run(context.loop.get());
 
     return context.response;
 }
@@ -229,17 +229,16 @@ static inline int
 gtk_dialog_run(GtkDialog* dialog)
 {
     struct RunDialogContext {
-        GMainLoop *loop;
+        GRefPtr<GMainLoop> loop;
         int response;
-    } context = { g_main_loop_new(nullptr, FALSE), 0 };
+    } context = { adoptGRef(g_main_loop_new(nullptr, FALSE)), 0 };
 
     gtk_widget_show(GTK_WIDGET(dialog));
     g_signal_connect(dialog, "response", G_CALLBACK(+[](GtkDialog*, int response, RunDialogContext* context) {
         context->response = response;
-        g_main_loop_quit(context->loop);
+        g_main_loop_quit(context->loop.get());
     }), &context);
-    g_main_loop_run(context.loop);
-    g_main_loop_unref(context.loop);
+    g_main_loop_run(context.loop.get());
 
     return context.response;
 }

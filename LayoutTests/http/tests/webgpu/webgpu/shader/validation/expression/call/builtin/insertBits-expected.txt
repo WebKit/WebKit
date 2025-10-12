@@ -80,44 +80,25 @@ PASS :mismatched:arg0="vec4%3Cu32%3E";arg1="vec2%3Cu32%3E"
 PASS :mismatched:arg0="vec4%3Cu32%3E";arg1="vec3%3Cu32%3E"
 PASS :mismatched:arg0="vec4%3Cu32%3E";arg1="vec4%3Cu32%3E"
 FAIL :count_offset:offsetStage="constant";countStage="constant" assert_unreached:
-  - INFO: subcase: offset=0;count=31;in_shader=false
-    OK
-  - INFO: subcase: offset=0;count=31;in_shader=true
-    OK
-  - INFO: subcase: offset=1;count=30;in_shader=false
-    OK
-  - INFO: subcase: offset=1;count=30;in_shader=true
-    OK
-  - INFO: subcase: offset=31;count=0;in_shader=false
-    OK
-  - INFO: subcase: offset=31;count=0;in_shader=true
-    OK
-  - INFO: subcase: offset=30;count=1;in_shader=false
-    OK
-  - INFO: subcase: offset=30;count=1;in_shader=true
-    OK
-  - INFO: subcase: offset=0;count=32;in_shader=false
-    OK
-  - INFO: subcase: offset=0;count=32;in_shader=true
-    OK
-  - INFO: subcase: offset=1;count=31;in_shader=false
-    OK
-  - INFO: subcase: offset=1;count=31;in_shader=true
-    OK
-  - INFO: subcase: offset=16;count=16;in_shader=false
-    OK
-  - INFO: subcase: offset=16;count=16;in_shader=true
-    OK
-  - INFO: subcase: offset=31;count=1;in_shader=false
-    OK
-  - INFO: subcase: offset=31;count=1;in_shader=true
-    OK
-  - INFO: subcase: offset=32;count=0;in_shader=false
-    OK
-  - INFO: subcase: offset=32;count=0;in_shader=true
-    OK
-  - VALIDATION FAILED: subcase: offset=2;count=31;in_shader=false
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: offset=0;count=31;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=0;count=31;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=1;count=30;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=1;count=30;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=31;count=0;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=31;count=0;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=30;count=1;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=30;count=1;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=0;count=32;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=0;count=32;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=1;count=31;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=1;count=31;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=16;count=16;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=16;count=16;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=31;count=1;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=31;count=1;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=32;count=0;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=32;count=0;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=2;count=31;in_shader=false) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -133,8 +114,10 @@ FAIL :count_offset:offsetStage="constant";countStage="constant" assert_unreached
     }
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/insertBits.spec.js:169:24
-  - VALIDATION FAILED: subcase: offset=2;count=31;in_shader=true
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: offset=2;count=31;in_shader=false) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: offset=2;count=31;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=2;count=31;in_shader=true) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -150,8 +133,10 @@ FAIL :count_offset:offsetStage="constant";countStage="constant" assert_unreached
     }
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/insertBits.spec.js:169:24
-  - VALIDATION FAILED: subcase: offset=31;count=2;in_shader=false
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: offset=2;count=31;in_shader=true) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: offset=2;count=31;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=31;count=2;in_shader=false) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -166,8 +151,10 @@ FAIL :count_offset:offsetStage="constant";countStage="constant" assert_unreached
       let tmp = insertBits(e, newbits, 31u, 2u);
     }
       at (elided: only 2 shown)
-  - VALIDATION FAILED: subcase: offset=31;count=2;in_shader=true
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: offset=31;count=2;in_shader=false) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: offset=31;count=2;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=31;count=2;in_shader=true) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -182,8 +169,10 @@ FAIL :count_offset:offsetStage="constant";countStage="constant" assert_unreached
       let tmp = insertBits(e, newbits, 31u, 2u);
     }
       at (elided: only 2 shown)
-  - VALIDATION FAILED: subcase: offset=33;count=0;in_shader=false
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: offset=31;count=2;in_shader=true) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: offset=31;count=2;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=33;count=0;in_shader=false) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -198,8 +187,10 @@ FAIL :count_offset:offsetStage="constant";countStage="constant" assert_unreached
       let tmp = insertBits(e, newbits, 33u, 0u);
     }
       at (elided: only 2 shown)
-  - VALIDATION FAILED: subcase: offset=33;count=0;in_shader=true
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: offset=33;count=0;in_shader=false) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: offset=33;count=0;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=33;count=0;in_shader=true) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -214,8 +205,10 @@ FAIL :count_offset:offsetStage="constant";countStage="constant" assert_unreached
       let tmp = insertBits(e, newbits, 33u, 0u);
     }
       at (elided: only 2 shown)
-  - VALIDATION FAILED: subcase: offset=33;count=1;in_shader=false
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: offset=33;count=0;in_shader=true) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: offset=33;count=0;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=33;count=1;in_shader=false) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -230,8 +223,10 @@ FAIL :count_offset:offsetStage="constant";countStage="constant" assert_unreached
       let tmp = insertBits(e, newbits, 33u, 1u);
     }
       at (elided: only 2 shown)
-  - VALIDATION FAILED: subcase: offset=33;count=1;in_shader=true
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: offset=33;count=1;in_shader=false) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: offset=33;count=1;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=33;count=1;in_shader=true) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -246,8 +241,10 @@ FAIL :count_offset:offsetStage="constant";countStage="constant" assert_unreached
       let tmp = insertBits(e, newbits, 33u, 1u);
     }
       at (elided: only 2 shown)
-  - VALIDATION FAILED: subcase: offset=0;count=33;in_shader=false
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: offset=33;count=1;in_shader=true) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: offset=33;count=1;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=0;count=33;in_shader=false) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -262,8 +259,10 @@ FAIL :count_offset:offsetStage="constant";countStage="constant" assert_unreached
       let tmp = insertBits(e, newbits, 0u, 33u);
     }
       at (elided: only 2 shown)
-  - VALIDATION FAILED: subcase: offset=0;count=33;in_shader=true
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: offset=0;count=33;in_shader=false) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: offset=0;count=33;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=0;count=33;in_shader=true) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -278,8 +277,10 @@ FAIL :count_offset:offsetStage="constant";countStage="constant" assert_unreached
       let tmp = insertBits(e, newbits, 0u, 33u);
     }
       at (elided: only 2 shown)
-  - VALIDATION FAILED: subcase: offset=1;count=33;in_shader=false
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: offset=0;count=33;in_shader=true) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: offset=0;count=33;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=1;count=33;in_shader=false) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -294,8 +295,10 @@ FAIL :count_offset:offsetStage="constant";countStage="constant" assert_unreached
       let tmp = insertBits(e, newbits, 1u, 33u);
     }
       at (elided: only 2 shown)
-  - VALIDATION FAILED: subcase: offset=1;count=33;in_shader=true
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: offset=1;count=33;in_shader=false) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: offset=1;count=33;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=1;count=33;in_shader=true) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -310,325 +313,160 @@ FAIL :count_offset:offsetStage="constant";countStage="constant" assert_unreached
       let tmp = insertBits(e, newbits, 1u, 33u);
     }
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: offset=2;count=31;in_shader=false
-    Expected validation error
+  - (in subcase: offset=1;count=33;in_shader=true) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: offset=2;count=31;in_shader=true
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: offset=31;count=2;in_shader=false
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: offset=31;count=2;in_shader=true
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: offset=33;count=0;in_shader=false
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: offset=33;count=0;in_shader=true
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: offset=33;count=1;in_shader=false
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: offset=33;count=1;in_shader=true
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: offset=0;count=33;in_shader=false
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: offset=2;count=31;in_shader=false
-    OK
-  - INFO: subcase: offset=2;count=31;in_shader=true
-    OK
-  - INFO: subcase: offset=31;count=2;in_shader=false
-    OK
-  - INFO: subcase: offset=31;count=2;in_shader=true
-    OK
-  - INFO: subcase: offset=33;count=0;in_shader=false
-    OK
-  - INFO: subcase: offset=33;count=0;in_shader=true
-    OK
-  - INFO: subcase: offset=33;count=1;in_shader=false
-    OK
-  - INFO: subcase: offset=33;count=1;in_shader=true
-    OK
-  - INFO: subcase: offset=0;count=33;in_shader=false
-    OK
-  - EXPECTATION FAILED: subcase: offset=0;count=33;in_shader=true
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: offset=1;count=33;in_shader=false
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: offset=1;count=33;in_shader=true
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: offset=0;count=33;in_shader=true
-    OK
-  - INFO: subcase: offset=1;count=33;in_shader=false
-    OK
-  - INFO: subcase: offset=1;count=33;in_shader=true
-    OK
+  - (in subcase: offset=1;count=33;in_shader=true) INFO: subcase ran
  Reached unreachable code
 FAIL :count_offset:offsetStage="constant";countStage="override" assert_unreached:
-  - INFO: subcase: offset=0;count=31;in_shader=false
-    OK
-  - INFO: subcase: offset=0;count=31;in_shader=true
-    OK
-  - INFO: subcase: offset=1;count=30;in_shader=false
-    OK
-  - INFO: subcase: offset=1;count=30;in_shader=true
-    OK
-  - INFO: subcase: offset=31;count=0;in_shader=false
-    OK
-  - INFO: subcase: offset=31;count=0;in_shader=true
-    OK
-  - INFO: subcase: offset=30;count=1;in_shader=false
-    OK
-  - INFO: subcase: offset=30;count=1;in_shader=true
-    OK
-  - INFO: subcase: offset=0;count=32;in_shader=false
-    OK
-  - INFO: subcase: offset=0;count=32;in_shader=true
-    OK
-  - INFO: subcase: offset=1;count=31;in_shader=false
-    OK
-  - INFO: subcase: offset=1;count=31;in_shader=true
-    OK
-  - INFO: subcase: offset=16;count=16;in_shader=false
-    OK
-  - INFO: subcase: offset=16;count=16;in_shader=true
-    OK
-  - INFO: subcase: offset=31;count=1;in_shader=false
-    OK
-  - INFO: subcase: offset=31;count=1;in_shader=true
-    OK
-  - INFO: subcase: offset=32;count=0;in_shader=false
-    OK
-  - INFO: subcase: offset=32;count=0;in_shader=true
-    OK
-  - INFO: subcase: offset=2;count=31;in_shader=false
-    OK
-  - INFO: subcase: offset=31;count=2;in_shader=false
-    OK
-  - INFO: subcase: offset=33;count=0;in_shader=false
-    OK
-  - INFO: subcase: offset=33;count=1;in_shader=false
-    OK
-  - INFO: subcase: offset=0;count=33;in_shader=false
-    OK
-  - INFO: subcase: offset=1;count=33;in_shader=false
-    OK
-  - EXPECTATION FAILED: subcase: offset=2;count=31;in_shader=true
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: offset=0;count=31;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=0;count=31;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=1;count=30;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=1;count=30;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=31;count=0;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=31;count=0;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=30;count=1;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=30;count=1;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=0;count=32;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=0;count=32;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=1;count=31;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=1;count=31;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=16;count=16;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=16;count=16;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=31;count=1;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=31;count=1;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=32;count=0;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=32;count=0;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=2;count=31;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=2;count=31;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/insertBits.spec.js:174:27
-  - EXPECTATION FAILED: subcase: offset=31;count=2;in_shader=true
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: offset=2;count=31;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=31;count=2;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=31;count=2;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/insertBits.spec.js:174:27
-  - EXPECTATION FAILED: subcase: offset=33;count=0;in_shader=true
-    Expected validation error
+  - (in subcase: offset=31;count=2;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=33;count=0;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=33;count=0;in_shader=true) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: offset=33;count=1;in_shader=true
-    Expected validation error
+  - (in subcase: offset=33;count=0;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=33;count=1;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=33;count=1;in_shader=true) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - INFO: subcase: offset=2;count=31;in_shader=true
-    OK
-  - INFO: subcase: offset=31;count=2;in_shader=true
-    OK
-  - INFO: subcase: offset=33;count=0;in_shader=true
-    OK
-  - INFO: subcase: offset=33;count=1;in_shader=true
-    OK
-  - EXPECTATION FAILED: subcase: offset=0;count=33;in_shader=true
-    Expected validation error
+  - (in subcase: offset=33;count=1;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=0;count=33;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=0;count=33;in_shader=true) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: offset=1;count=33;in_shader=true
-    Expected validation error
+  - (in subcase: offset=0;count=33;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=1;count=33;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=1;count=33;in_shader=true) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - INFO: subcase: offset=0;count=33;in_shader=true
-    OK
-  - INFO: subcase: offset=1;count=33;in_shader=true
-    OK
+  - (in subcase: offset=1;count=33;in_shader=true) INFO: subcase ran
  Reached unreachable code
 PASS :count_offset:offsetStage="constant";countStage="runtime"
 FAIL :count_offset:offsetStage="override";countStage="constant" assert_unreached:
-  - INFO: subcase: offset=0;count=31;in_shader=false
-    OK
-  - INFO: subcase: offset=0;count=31;in_shader=true
-    OK
-  - INFO: subcase: offset=1;count=30;in_shader=false
-    OK
-  - INFO: subcase: offset=1;count=30;in_shader=true
-    OK
-  - INFO: subcase: offset=31;count=0;in_shader=false
-    OK
-  - INFO: subcase: offset=31;count=0;in_shader=true
-    OK
-  - INFO: subcase: offset=30;count=1;in_shader=false
-    OK
-  - INFO: subcase: offset=30;count=1;in_shader=true
-    OK
-  - INFO: subcase: offset=0;count=32;in_shader=false
-    OK
-  - INFO: subcase: offset=0;count=32;in_shader=true
-    OK
-  - INFO: subcase: offset=1;count=31;in_shader=false
-    OK
-  - INFO: subcase: offset=1;count=31;in_shader=true
-    OK
-  - INFO: subcase: offset=16;count=16;in_shader=false
-    OK
-  - INFO: subcase: offset=16;count=16;in_shader=true
-    OK
-  - INFO: subcase: offset=31;count=1;in_shader=false
-    OK
-  - INFO: subcase: offset=31;count=1;in_shader=true
-    OK
-  - INFO: subcase: offset=32;count=0;in_shader=false
-    OK
-  - INFO: subcase: offset=32;count=0;in_shader=true
-    OK
-  - INFO: subcase: offset=2;count=31;in_shader=false
-    OK
-  - INFO: subcase: offset=31;count=2;in_shader=false
-    OK
-  - INFO: subcase: offset=33;count=0;in_shader=false
-    OK
-  - INFO: subcase: offset=33;count=1;in_shader=false
-    OK
-  - INFO: subcase: offset=0;count=33;in_shader=false
-    OK
-  - INFO: subcase: offset=1;count=33;in_shader=false
-    OK
-  - EXPECTATION FAILED: subcase: offset=2;count=31;in_shader=true
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: offset=0;count=31;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=0;count=31;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=1;count=30;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=1;count=30;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=31;count=0;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=31;count=0;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=30;count=1;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=30;count=1;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=0;count=32;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=0;count=32;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=1;count=31;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=1;count=31;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=16;count=16;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=16;count=16;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=31;count=1;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=31;count=1;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=32;count=0;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=32;count=0;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=2;count=31;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=2;count=31;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/insertBits.spec.js:174:27
-  - EXPECTATION FAILED: subcase: offset=31;count=2;in_shader=true
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: offset=2;count=31;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=31;count=2;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=31;count=2;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/insertBits.spec.js:174:27
-  - EXPECTATION FAILED: subcase: offset=33;count=0;in_shader=true
-    Expected validation error
+  - (in subcase: offset=31;count=2;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=33;count=0;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=33;count=0;in_shader=true) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: offset=33;count=1;in_shader=true
-    Expected validation error
+  - (in subcase: offset=33;count=0;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=33;count=1;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=33;count=1;in_shader=true) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: offset=0;count=33;in_shader=true
-    Expected validation error
+  - (in subcase: offset=33;count=1;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=0;count=33;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=0;count=33;in_shader=true) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: offset=1;count=33;in_shader=true
-    Expected validation error
+  - (in subcase: offset=0;count=33;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=1;count=33;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=1;count=33;in_shader=true) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - INFO: subcase: offset=2;count=31;in_shader=true
-    OK
-  - INFO: subcase: offset=31;count=2;in_shader=true
-    OK
-  - INFO: subcase: offset=33;count=0;in_shader=true
-    OK
-  - INFO: subcase: offset=33;count=1;in_shader=true
-    OK
-  - INFO: subcase: offset=0;count=33;in_shader=true
-    OK
-  - INFO: subcase: offset=1;count=33;in_shader=true
-    OK
+  - (in subcase: offset=1;count=33;in_shader=true) INFO: subcase ran
  Reached unreachable code
 FAIL :count_offset:offsetStage="override";countStage="override" assert_unreached:
-  - INFO: subcase: offset=0;count=31;in_shader=false
-    OK
-  - INFO: subcase: offset=0;count=31;in_shader=true
-    OK
-  - INFO: subcase: offset=1;count=30;in_shader=false
-    OK
-  - INFO: subcase: offset=1;count=30;in_shader=true
-    OK
-  - INFO: subcase: offset=31;count=0;in_shader=false
-    OK
-  - INFO: subcase: offset=31;count=0;in_shader=true
-    OK
-  - INFO: subcase: offset=30;count=1;in_shader=false
-    OK
-  - INFO: subcase: offset=30;count=1;in_shader=true
-    OK
-  - INFO: subcase: offset=0;count=32;in_shader=false
-    OK
-  - INFO: subcase: offset=0;count=32;in_shader=true
-    OK
-  - INFO: subcase: offset=1;count=31;in_shader=false
-    OK
-  - INFO: subcase: offset=1;count=31;in_shader=true
-    OK
-  - INFO: subcase: offset=16;count=16;in_shader=false
-    OK
-  - INFO: subcase: offset=16;count=16;in_shader=true
-    OK
-  - INFO: subcase: offset=31;count=1;in_shader=false
-    OK
-  - INFO: subcase: offset=31;count=1;in_shader=true
-    OK
-  - INFO: subcase: offset=32;count=0;in_shader=false
-    OK
-  - INFO: subcase: offset=32;count=0;in_shader=true
-    OK
-  - INFO: subcase: offset=2;count=31;in_shader=false
-    OK
-  - INFO: subcase: offset=31;count=2;in_shader=false
-    OK
-  - INFO: subcase: offset=33;count=0;in_shader=false
-    OK
-  - INFO: subcase: offset=33;count=1;in_shader=false
-    OK
-  - INFO: subcase: offset=0;count=33;in_shader=false
-    OK
-  - INFO: subcase: offset=1;count=33;in_shader=false
-    OK
-  - EXPECTATION FAILED: subcase: offset=2;count=31;in_shader=true
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: offset=0;count=31;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=0;count=31;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=1;count=30;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=1;count=30;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=31;count=0;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=31;count=0;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=30;count=1;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=30;count=1;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=0;count=32;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=0;count=32;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=1;count=31;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=1;count=31;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=16;count=16;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=16;count=16;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=31;count=1;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=31;count=1;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=32;count=0;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=32;count=0;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=2;count=31;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=2;count=31;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/insertBits.spec.js:174:27
-  - EXPECTATION FAILED: subcase: offset=31;count=2;in_shader=true
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: offset=2;count=31;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=31;count=2;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=31;count=2;in_shader=true) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/insertBits.spec.js:174:27
-  - EXPECTATION FAILED: subcase: offset=33;count=0;in_shader=true
-    Expected validation error
+  - (in subcase: offset=31;count=2;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=33;count=0;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=33;count=0;in_shader=true) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: offset=33;count=1;in_shader=true
-    Expected validation error
+  - (in subcase: offset=33;count=0;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=33;count=1;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=33;count=1;in_shader=true) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: offset=0;count=33;in_shader=true
-    Expected validation error
+  - (in subcase: offset=33;count=1;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=0;count=33;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=0;count=33;in_shader=true) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: offset=1;count=33;in_shader=true
-    Expected validation error
+  - (in subcase: offset=0;count=33;in_shader=true) INFO: subcase ran
+  - (in subcase: offset=1;count=33;in_shader=false) INFO: subcase ran
+  - (in subcase: offset=1;count=33;in_shader=true) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - INFO: subcase: offset=2;count=31;in_shader=true
-    OK
-  - INFO: subcase: offset=31;count=2;in_shader=true
-    OK
-  - INFO: subcase: offset=33;count=0;in_shader=true
-    OK
-  - INFO: subcase: offset=33;count=1;in_shader=true
-    OK
-  - INFO: subcase: offset=0;count=33;in_shader=true
-    OK
-  - INFO: subcase: offset=1;count=33;in_shader=true
-    OK
+  - (in subcase: offset=1;count=33;in_shader=true) INFO: subcase ran
  Reached unreachable code
 PASS :count_offset:offsetStage="override";countStage="runtime"
 PASS :count_offset:offsetStage="runtime";countStage="constant"

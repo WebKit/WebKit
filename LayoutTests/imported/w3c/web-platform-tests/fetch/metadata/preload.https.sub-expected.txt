@@ -1,15 +1,3 @@
-Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-header.py?file=fetch1d05a9a6-8b8e-48b4-a5fe-fe5a322187c0
-Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/record-header.py?file=fetch30e3e8ca-7b9e-47d8-85b7-3cd39a698393
-Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-header.py?file=font2d925818-bed3-4b58-8c94-8762dca04c22
-Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/record-header.py?file=font37e4a72d-d66f-442f-8ade-9cecf5bc856e
-Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-header.py?file=image67d1bf58-3292-4437-bf52-d5ff55adfb87
-Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/record-header.py?file=imagec30ffece-6260-47f2-89f1-f4e916eb3468
-Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-header.py?file=script0ddc60ff-b6b1-4498-8e44-a15009de95a0
-Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/record-header.py?file=script5a85f4f4-ec0e-476f-be0d-9fab9f34e7b4
-Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-header.py?file=style7eee1049-bd32-4574-80ba-d6dddcb7d10d
-Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/record-header.py?file=stylecf2e207d-ad29-46c0-ae11-c9fe362777ae
-Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-header.py?file=track82e49c2a-fb46-4be6-9a2c-f5c6829deb48
-Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/record-header.py?file=trackcc215f4f-2ffb-49e1-876e-238860a28947
 
 Harness Error (TIMEOUT), message = null
 

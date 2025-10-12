@@ -1,0 +1,247 @@
+
+{
+ "SDKContentRoot": [
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "14", "name": "initWithActivityItemsConfiguration:"}
+     ],
+     "interface": "UIActivityViewController",
+     "name": "UIActivityItemsConfiguration"
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIActivityCategoryAction"},
+      {"access": "public", "name": "UIActivityCategoryShare"}
+     ],
+     "introduced": "7",
+     "name": "UIActivityCategory"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIActivityCollaborationModeSendCopy"},
+      {"access": "public", "name": "UIActivityCollaborationModeCollaborate"}
+     ],
+     "introduced": "18",
+     "name": "UIActivityCollaborationMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIActivitySectionTypesNone"},
+      {"access": "public", "name": "UIActivitySectionTypesPeopleSuggestions"}
+     ],
+     "introduced": "18",
+     "name": "UIActivitySectionTypes"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_UIActivityItemsConfigurationMetadataKeyCollaborationModeRestrictions"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_UIActivityItemsConfigurationMetadataKeyShareRecipients"},
+    {"access": "public", "introduced": "16.4", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypeAddToHomeScreen"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypeAddToReadingList"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypeAirDrop"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypeAssignToContact"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypeCollaborationCopyLink"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypeCollaborationInviteWithLink"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypeCopyToPasteboard"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypeMail"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypeMarkupAsPDF"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypeMessage"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypeOpenInIBooks"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypePostToFacebook"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypePostToFlickr"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypePostToTencentWeibo"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypePostToTwitter"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypePostToVimeo"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypePostToWeibo"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypePrint"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypeSaveToCameraRoll"},
+    {"access": "public", "introduced": "15.4", "kind": "variable", "linkage": "exported", "name": "_UIActivityTypeSharePlay"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "canPerformWithActivityItems:"},
+      {"access": "public", "name": "prepareWithActivityItems:"},
+      {"access": "public", "name": "performActivity"},
+      {"access": "public", "name": "activityDidFinish:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "UIActivity",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "activityCategory", "introduced": "7", "name": "activityCategory"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "activityType", "name": "activityType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "activityTitle", "name": "activityTitle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "activityImage", "name": "activityImage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "activityViewController", "name": "activityViewController"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDisabledMode:"},
+      {"access": "public", "name": "initWithDisabledMode:alertTitle:alertMessage:"},
+      {"access": "public", "name": "initWithDisabledMode:alertTitle:alertMessage:alertDismissButtonTitle:"},
+      {"access": "public", "name": "initWithDisabledMode:alertTitle:alertMessage:alertDismissButtonTitle:alertRecoverySuggestionButtonTitle:alertRecoverySuggestionButtonLaunchURL:"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "description"}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "UIActivityCollaborationModeRestriction",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "disabledMode", "name": "disabledMode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alertTitle", "name": "alertTitle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alertMessage", "name": "alertMessage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alertDismissButtonTitle", "name": "alertDismissButtonTitle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alertRecoverySuggestionButtonTitle", "name": "alertRecoverySuggestionButtonTitle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alertRecoverySuggestionButtonLaunchURL", "name": "alertRecoverySuggestionButtonLaunchURL"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithPlaceholderItem:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "UIActivityItemProvider",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "placeholderItem", "name": "placeholderItem"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "activityType", "name": "activityType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "item", "name": "item"}
+     ],
+     "protocols": [
+      "UIActivityItemSource"
+     ],
+     "super": "NSOperation"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "UIActivityItemsConfiguration"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithNibName:bundle:", "unavailable": true},
+      {"access": "public", "name": "initWithCoder:", "unavailable": true},
+      {"access": "public", "name": "initWithActivityItems:applicationActivities:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "UIActivityViewController",
+     "properties": [
+      {"access": "public", "getter": "completionHandler", "introduced": "6", "name": "completionHandler", "setter": "setCompletionHandler:"},
+      {"access": "public", "getter": "completionWithItemsHandler", "introduced": "8", "name": "completionWithItemsHandler", "setter": "setCompletionWithItemsHandler:"},
+      {"access": "public", "getter": "excludedActivityTypes", "name": "excludedActivityTypes", "setter": "setExcludedActivityTypes:"},
+      {"access": "public", "getter": "excludedActivitySectionTypes", "introduced": "18", "name": "excludedActivitySectionTypes", "setter": "setExcludedActivitySectionTypes:"},
+      {"access": "public", "getter": "allowsProminentActivity", "introduced": "15.4", "name": "allowsProminentActivity", "setter": "setAllowsProminentActivity:"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "interactionControllerWithURL:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "presentOptionsMenuFromRect:inView:animated:"},
+      {"access": "public", "name": "presentOptionsMenuFromBarButtonItem:animated:"},
+      {"access": "public", "name": "presentPreviewAnimated:"},
+      {"access": "public", "name": "presentOpenInMenuFromRect:inView:animated:"},
+      {"access": "public", "name": "presentOpenInMenuFromBarButtonItem:animated:"},
+      {"access": "public", "name": "dismissPreviewAnimated:"},
+      {"access": "public", "name": "dismissMenuAnimated:"}
+     ],
+     "introduced": "3.2",
+     "linkage": "exported",
+     "name": "UIDocumentInteractionController",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "URL", "name": "URL", "setter": "setURL:"},
+      {"access": "public", "getter": "UTI", "name": "UTI", "setter": "setUTI:"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "icons", "name": "icons"},
+      {"access": "public", "getter": "annotation", "name": "annotation", "setter": "setAnnotation:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gestureRecognizers", "name": "gestureRecognizers"}
+     ],
+     "protocols": [
+      "UIActionSheetDelegate"
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "activityViewControllerPlaceholderItem:"},
+      {"access": "public", "name": "activityViewController:itemForActivityType:"},
+      {"access": "public", "introduced": "7", "name": "activityViewController:subjectForActivityType:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "activityViewController:dataTypeIdentifierForActivityType:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "activityViewController:thumbnailImageForActivityType:suggestedSize:", "optional": true},
+      {"access": "public", "introduced": "13", "name": "activityViewControllerLinkMetadata:", "optional": true},
+      {"access": "public", "introduced": "18", "name": "activityViewControllerShareRecipients:", "optional": true}
+     ],
+     "introduced": "6",
+     "name": "UIActivityItemSource",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "documentInteractionControllerViewControllerForPreview:", "optional": true},
+      {"access": "public", "name": "documentInteractionControllerRectForPreview:", "optional": true},
+      {"access": "public", "name": "documentInteractionControllerViewForPreview:", "optional": true},
+      {"access": "public", "name": "documentInteractionControllerWillBeginPreview:", "optional": true},
+      {"access": "public", "name": "documentInteractionControllerDidEndPreview:", "optional": true},
+      {"access": "public", "name": "documentInteractionControllerWillPresentOptionsMenu:", "optional": true},
+      {"access": "public", "name": "documentInteractionControllerDidDismissOptionsMenu:", "optional": true},
+      {"access": "public", "name": "documentInteractionControllerWillPresentOpenInMenu:", "optional": true},
+      {"access": "public", "name": "documentInteractionControllerDidDismissOpenInMenu:", "optional": true},
+      {"access": "public", "name": "documentInteractionController:willBeginSendingToApplication:", "optional": true},
+      {"access": "public", "name": "documentInteractionController:didEndSendingToApplication:", "optional": true},
+      {"access": "public", "introduced": "3.2", "name": "documentInteractionController:canPerformAction:", "optional": true},
+      {"access": "public", "introduced": "3.2", "name": "documentInteractionController:performAction:", "optional": true}
+     ],
+     "introduced": "3.2",
+     "name": "UIDocumentInteractionControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios",
+   "typedefs": [
+    {"access": "public", "name": "UIActivityCategory"},
+    {"access": "public", "name": "UIActivityCollaborationMode"},
+    {"access": "public", "name": "UIActivitySectionTypes"},
+    {"access": "public", "introduced": "6", "name": "UIActivityType"},
+    {"access": "public", "introduced": "6", "name": "UIActivityViewControllerCompletionHandler"},
+    {"access": "public", "introduced": "8", "name": "UIActivityViewControllerCompletionWithItemsHandler"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

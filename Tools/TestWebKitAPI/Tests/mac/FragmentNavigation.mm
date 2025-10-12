@@ -27,6 +27,7 @@
 #import "PlatformUtilities.h"
 
 #import <wtf/RetainPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 static bool testFinished;
 
@@ -62,7 +63,7 @@ static bool testFinished;
 
     [listener ignore];
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         [self _runNextTestWithWebView:webView];
     });
 }

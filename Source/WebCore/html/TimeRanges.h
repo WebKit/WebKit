@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "PlatformTimeRanges.h"
+#include <WebCore/PlatformTimeRanges.h>
 
 namespace WebCore {
 

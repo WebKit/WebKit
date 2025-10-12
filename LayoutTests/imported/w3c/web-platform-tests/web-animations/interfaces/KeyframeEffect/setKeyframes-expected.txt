@@ -56,6 +56,7 @@ PASS Keyframes can be replaced with a two property four keyframe sequence
 PASS Keyframes can be replaced with a single keyframe sequence with omitted offset
 PASS Keyframes can be replaced with a single keyframe sequence with null offset
 PASS Keyframes can be replaced with a single keyframe sequence with string offset
+FAIL Keyframes can be replaced with a single keyframe sequence with a single calc() offset Type error
 PASS Keyframes can be replaced with a one property keyframe sequence with some omitted offsets
 PASS Keyframes can be replaced with a one property keyframe sequence with some null offsets
 PASS Keyframes can be replaced with a two property keyframe sequence with some omitted offsets

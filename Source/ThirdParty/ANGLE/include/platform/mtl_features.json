@@ -158,21 +158,6 @@
             ]
         },
         {
-            "name": "intel_explicit_bool_cast_workaround",
-            "category": "Workarounds",
-            "description": [
-                "Insert explicit casts for float/double/unsigned/signed int on macOS 10.15 with Intel ",
-                "driver"
-            ]
-        },
-        {
-            "name": "intel_disable_fast_math",
-            "category": "Workarounds",
-            "description": [
-                "Disable fast math in atan and invariance cases when running below macOS 12.0"
-            ]
-        },
-        {
             "name": "allow_renderpass_without_attachment",
             "category": "Features",
             "description": [
@@ -423,6 +408,14 @@
             "description": [
                 "Inject asm(\"\") statements into loop bodies to force all loops to be treated as ",
                 "having side effects and not optimized out."
+            ],
+            "issue": "http://crbug.com/1513738"
+        },
+        {
+            "name": "ensure_loop_forward_progress",
+            "category": "Features",
+            "description": [
+                "Inject statements into loop bodies when needed to ensure infinite loops are optimized out."
             ],
             "issue": "http://crbug.com/1513738"
         }

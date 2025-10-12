@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "CSSPrimitiveNumericConcepts.h"
-#include "CSSValueTypes.h"
+#include <WebCore/CSSPrimitiveNumericConcepts.h>
+#include <WebCore/CSSValueTypes.h>
 #include <optional>
 #include <wtf/Forward.h>
 #include <wtf/IterationStatus.h>

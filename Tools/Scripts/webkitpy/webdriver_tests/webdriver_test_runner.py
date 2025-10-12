@@ -73,11 +73,11 @@ class WebDriverTestRunner(object):
         self._port = port
         _log.info('Using port %s' % self._port.name())
         _log.info('Test configuration: %s' % self._port.test_configuration())
-        _log.info('Using display server %s' % (self._port._display_server))
 
         self._display_driver = self._port._driver_class()(self._port, worker_number=0, pixel_tests=False, no_timeout=True)
         if not self._display_driver.check_driver(self._port):
             raise RuntimeError("Failed to check driver %s" % self._display_driver.__class__.__name__)
+        _log.info('Using display server %s' % (self._display_driver.__class__.__name__))
 
         driver = create_driver(self._port)
         _log.info('Using driver at %s' % (driver.binary_path()))

@@ -4,9 +4,7 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-Reflect-shell.js]
-flags:
-  - noStrict
+includes: [sm/non262-Reflect-shell.js]
 description: |
   pending
 esid: pending
@@ -43,11 +41,11 @@ for (const name of Object.keys(methodInfo)) {
     var args = methodInfo[name];
 
     // The target argument is required.
-    assertThrowsInstanceOf(Reflect[name], TypeError);
+    assert.throws(TypeError, Reflect[name]);
 
     // Throw if the target argument is not an object.
     for (var value of SOME_PRIMITIVE_VALUES) {
-        assertThrowsInstanceOf(() => Reflect[name](value, ...args), TypeError);
+        assert.throws(TypeError, () => Reflect[name](value, ...args));
     }
 }
 

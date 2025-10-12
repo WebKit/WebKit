@@ -39,6 +39,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 // Enable this to test all web extension tests with site isolation.
 static constexpr BOOL shouldEnableSiteIsolation = NO;
@@ -244,6 +245,16 @@ static constexpr BOOL shouldEnableSiteIsolation = NO;
     [_context _sendTestMessage:message withArgument:argument];
 }
 
+- (void)sendTestStartedWithArgument:(id)argument
+{
+    [_context _sendTestStartedWithArgument:argument];
+}
+
+- (void)sendTestFinishedWithArgument:(id)argument
+{
+    [_context _sendTestFinishedWithArgument:argument];
+}
+
 - (void)load
 {
     NSError *error;
@@ -269,7 +280,7 @@ static constexpr BOOL shouldEnableSiteIsolation = NO;
 {
     _done = false;
 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), mainDispatchQueueSingleton(), ^{
         self->_done = true;
     });
 
@@ -527,7 +538,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)setReaderModeActive:(BOOL)showing forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         if (self->_setReaderModeShowing)
             self->_setReaderModeShowing(showing);
 
@@ -541,7 +552,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)detectWebpageLocaleForWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSLocale *, NSError *))completionHandler
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         if (self->_webpageLocale)
             completionHandler(self->_webpageLocale(), nil);
         else
@@ -551,7 +562,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)reloadFromOrigin:(BOOL)fromOrigin forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         if (self->_reload)
             self->_reload(fromOrigin);
         else if (fromOrigin)
@@ -565,7 +576,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)goBackForWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         if (self->_goBack)
             self->_goBack();
         else
@@ -577,7 +588,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)goForwardForWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         if (self->_goForward)
             self->_goForward();
         else
@@ -594,7 +605,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)setParentTab:(id<WKWebExtensionTab>)parentTab forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         self->_parentTab = dynamic_objc_cast<TestWebExtensionTab>(parentTab);
 
         completionHandler(nil);
@@ -608,7 +619,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)setPinned:(BOOL)pinned forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         self->_pinned = pinned;
 
         [self->_extensionController didChangeTabProperties:WKWebExtensionTabChangedPropertiesPinned forTab:self];
@@ -624,7 +635,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)setMuted:(BOOL)muted forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         self->_muted = muted;
 
         [self->_extensionController didChangeTabProperties:WKWebExtensionTabChangedPropertiesMuted forTab:self];
@@ -635,7 +646,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)duplicateUsingConfiguration:(WKWebExtensionTabConfiguration *)configuration forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(id<WKWebExtensionTab> duplicatedTab, NSError *error))completionHandler
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         if (self->_duplicate)
             self->_duplicate(configuration, completionHandler);
         else
@@ -645,7 +656,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)activateForWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         auto *previousActiveTab = self->_window.activeTab;
         self->_window.activeTab = self;
 
@@ -664,7 +675,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)setSelected:(BOOL)selected forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         self->_selected = selected;
 
         if (selected)
@@ -678,7 +689,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)closeForWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         [self->_window closeTab:self];
 
         completionHandler(nil);
@@ -786,7 +797,8 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (TestWebExtensionTab *)openNewTabAtIndex:(NSUInteger)index
 {
-    ASSERT(index <= _tabs.count);
+    index = MIN(index, _tabs.count);
+
 
     auto *newTab = [[TestWebExtensionTab alloc] initWithWindow:self extensionController:_extensionController];
 
@@ -808,6 +820,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
     if (!_activeTab)
         _activeTab = newTab;
+
 
     [_tabs insertObject:newTab atIndex:index];
     [_extensionController didOpenTab:newTab];
@@ -905,7 +918,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)setWindowState:(WKWebExtensionWindowState)state forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *error))completionHandler
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         self->_windowState = state;
 
         if (state == WKWebExtensionWindowStateFullscreen) {
@@ -937,7 +950,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)setFrame:(CGRect)frame forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *error))completionHandler
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         self->_frame = frame;
 
         completionHandler(nil);
@@ -954,7 +967,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)closeForWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *error))completionHandler
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         if (self->_didClose)
             self->_didClose();
 

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011-2024 Apple Inc.  All rights reserved.
- * Copyright (C) 2013 Google Inc.  All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without

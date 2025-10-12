@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "OrderedHashTable.h"
+#include <JavaScriptCore/OrderedHashTable.h>
 
 namespace JSC {
 
@@ -59,7 +59,7 @@ public:
     ALWAYS_INLINE void set(JSGlobalObject*, JSValue key, JSValue);
 
     static bool isSetFastAndNonObservable(Structure*);
-    bool isIteratorProtocolFastAndNonObservable();
+    ALWAYS_INLINE bool isIteratorProtocolFastAndNonObservable();
     JSMap* clone(JSGlobalObject*, VM&, Structure*);
 
 private:

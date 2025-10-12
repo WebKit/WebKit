@@ -175,7 +175,7 @@ class CFLTestWithAlignedData : public CFLTest {
 typedef cfl_subtract_average_fn (*sub_avg_fn)(TX_SIZE tx_size);
 typedef std::tuple<TX_SIZE, sub_avg_fn> sub_avg_param;
 class CFLSubAvgTest : public ::testing::TestWithParam<sub_avg_param>,
-                      public CFLTestWithData<int16_t> {
+                      public CFLTestWithData<uint16_t> {
  public:
   void SetUp() override {
     CFLTest::init(std::get<0>(this->GetParam()));
@@ -191,27 +191,31 @@ class CFLSubAvgTest : public ::testing::TestWithParam<sub_avg_param>,
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CFLSubAvgTest);
 
 TEST_P(CFLSubAvgTest, SubAvgTest) {
+  int16_t dst[CFL_BUF_SQUARE];
+  int16_t dst_ref[CFL_BUF_SQUARE];
   for (int it = 0; it < NUM_ITERATIONS; it++) {
     randData(&ACMRandom::Rand15);
-    sub_avg((uint16_t *)data, data);
-    sub_avg_ref((uint16_t *)data_ref, data_ref);
-    assert_eq<int16_t>(data, data_ref, width, height);
+    sub_avg(data, dst);
+    sub_avg_ref(data_ref, dst_ref);
+    assert_eq<int16_t>(dst, dst_ref, width, height);
   }
 }
 
 TEST_P(CFLSubAvgTest, DISABLED_SubAvgSpeedTest) {
+  int16_t dst[CFL_BUF_SQUARE];
+  int16_t dst_ref[CFL_BUF_SQUARE];
   aom_usec_timer ref_timer;
   aom_usec_timer timer;
   randData(&ACMRandom::Rand15);
   aom_usec_timer_start(&ref_timer);
   for (int k = 0; k < NUM_ITERATIONS_SPEED; k++) {
-    sub_avg_ref((uint16_t *)data_ref, data_ref);
+    sub_avg_ref(data_ref, dst_ref);
   }
   aom_usec_timer_mark(&ref_timer);
   int ref_elapsed_time = (int)aom_usec_timer_elapsed(&ref_timer);
   aom_usec_timer_start(&timer);
   for (int k = 0; k < NUM_ITERATIONS_SPEED; k++) {
-    sub_avg((uint16_t *)data, data);
+    sub_avg(data, dst);
   }
   aom_usec_timer_mark(&timer);
   int elapsed_time = (int)aom_usec_timer_elapsed(&timer);
@@ -261,13 +265,13 @@ class CFLSubsampleTest : public ::testing::TestWithParam<S>,
     CFLTestWithData<I>::randData(random);
     aom_usec_timer_start(&ref_timer);
     for (int k = 0; k < NUM_ITERATIONS_SPEED; k++) {
-      fun_ref(this->data_ref, CFL_BUF_LINE, sub_luma_pels);
+      fun_ref(this->data_ref, CFL_BUF_LINE, sub_luma_pels_ref);
     }
     aom_usec_timer_mark(&ref_timer);
     int ref_elapsed_time = (int)aom_usec_timer_elapsed(&ref_timer);
     aom_usec_timer_start(&timer);
     for (int k = 0; k < NUM_ITERATIONS_SPEED; k++) {
-      fun(this->data, CFL_BUF_LINE, sub_luma_pels_ref);
+      fun(this->data, CFL_BUF_LINE, sub_luma_pels);
     }
     aom_usec_timer_mark(&timer);
     int elapsed_time = (int)aom_usec_timer_elapsed(&timer);

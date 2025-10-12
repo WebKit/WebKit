@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #import "Test.h"
 #import "TestWKWebView.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/WKWebViewPrivate.h>
 
 namespace TestWebKitAPI {
@@ -40,8 +41,8 @@ TEST(NSResponderTests, ValidRequestorForSendAndReturnTypes)
     [webView waitForNextPresentationUpdate];
 
     EXPECT_EQ(webView.get(), [webView validRequestorForSendType:NSPasteboardTypeRTF returnType:nil]);
-    EXPECT_EQ(webView.get(), [webView validRequestorForSendType:nil returnType:(__bridge NSString *)kUTTypePNG]);
-    EXPECT_NULL([webView validRequestorForSendType:nil returnType:(__bridge NSString *)kUTTypeAppleScript]);
+    EXPECT_EQ(webView.get(), [webView validRequestorForSendType:nil returnType:UTTypePNG.identifier]);
+    EXPECT_NULL([webView validRequestorForSendType:nil returnType:UTTypeAppleScript.identifier]);
 }
 
 } // namespace TestWebKitAPI

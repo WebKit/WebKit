@@ -30,8 +30,8 @@ class QuantileNoiseEstimator {
   QuantileNoiseEstimator& operator=(const QuantileNoiseEstimator&) = delete;
 
   // Estimate noise.
-  void Estimate(rtc::ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum,
-                rtc::ArrayView<float, kFftSizeBy2Plus1> noise_spectrum);
+  void Estimate(ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum,
+                ArrayView<float, kFftSizeBy2Plus1> noise_spectrum);
 
  private:
   std::array<float, kSimult * kFftSizeBy2Plus1> density_;

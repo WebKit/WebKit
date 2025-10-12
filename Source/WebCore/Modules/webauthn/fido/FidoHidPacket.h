@@ -31,7 +31,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "FidoConstants.h"
+#include <WebCore/FidoConstants.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>

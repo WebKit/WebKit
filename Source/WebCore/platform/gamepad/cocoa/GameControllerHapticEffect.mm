@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,13 +46,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(GameControllerHapticEffect);
 
 static double magnitudeToIntensity(double magnitude)
 {
-    auto intensity = std::clamp<double>(magnitude, 0, 1);
-#if HAVE(GCCONTROLLER_REQUIRING_HAPTICS_SQUARING)
-    // Older versions of GameController didn't use the intensity as-is and required the values to
-    // be squared. Without this, values below 0.1 would end up not triggering any gamepad vibration.
-    intensity = std::sqrt(intensity);
-#endif
-    return intensity;
+    return std::clamp<double>(magnitude, 0, 1);
 }
 
 RefPtr<GameControllerHapticEffect> GameControllerHapticEffect::create(GameControllerHapticEngines& engines, GamepadHapticEffectType type, const GamepadEffectParameters& parameters)

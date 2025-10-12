@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, State state, const WebCore::IntPoint& screenPosition, const WebCore::IntPoint& position)
+WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, State state, const WebCore::DoublePoint& screenPosition, const WebCore::DoublePoint& position)
     : m_id(id)
     , m_state(state)
     , m_screenPosition(screenPosition)
@@ -42,7 +42,7 @@ WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, State state, const Web
 {
 }
 
-WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, State state, const WebCore::IntPoint& screenPosition, const WebCore::IntPoint& position, const WebCore::IntSize& radius, float rotationAngle, float force)
+WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, State state, const WebCore::DoublePoint& screenPosition, const WebCore::DoublePoint& position, const WebCore::DoubleSize& radius, float rotationAngle, float force)
     : m_id(id)
     , m_state(state)
     , m_screenPosition(screenPosition)

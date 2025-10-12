@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if HAVE(SEC_ACCESS_CONTROL)
+#if USE(CF)
 
 webkit_platform_headers: "CoreIPCSecAccessControl.h"
 
@@ -28,4 +28,4 @@ webkit_platform_headers: "CoreIPCSecAccessControl.h"
     std::span<const uint8_t> dataReference();
 }
 
-#endif // HAVE(SEC_ACCESS_CONTROL)
+#endif // USE(CF)

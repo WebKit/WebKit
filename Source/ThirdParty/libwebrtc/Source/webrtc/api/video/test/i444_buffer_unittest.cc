@@ -23,19 +23,19 @@
 namespace webrtc {
 
 namespace {
-int GetY(rtc::scoped_refptr<I444BufferInterface> buf, int col, int row) {
+int GetY(scoped_refptr<I444BufferInterface> buf, int col, int row) {
   return buf->DataY()[row * buf->StrideY() + col];
 }
 
-int GetU(rtc::scoped_refptr<I444BufferInterface> buf, int col, int row) {
+int GetU(scoped_refptr<I444BufferInterface> buf, int col, int row) {
   return buf->DataU()[row * buf->StrideU() + col];
 }
 
-int GetV(rtc::scoped_refptr<I444BufferInterface> buf, int col, int row) {
+int GetV(scoped_refptr<I444BufferInterface> buf, int col, int row) {
   return buf->DataV()[row * buf->StrideV() + col];
 }
 
-void FillI444Buffer(rtc::scoped_refptr<I444Buffer> buf) {
+void FillI444Buffer(scoped_refptr<I444Buffer> buf) {
   const uint8_t Y = 1;
   const uint8_t U = 2;
   const uint8_t V = 3;
@@ -55,7 +55,7 @@ TEST(I444BufferTest, InitialData) {
   constexpr int width = 3;
   constexpr int height = 3;
 
-  rtc::scoped_refptr<I444Buffer> i444_buffer(I444Buffer::Create(width, height));
+  scoped_refptr<I444Buffer> i444_buffer(I444Buffer::Create(width, height));
   EXPECT_EQ(width, i444_buffer->width());
   EXPECT_EQ(height, i444_buffer->height());
   EXPECT_EQ(stride, i444_buffer->StrideY());
@@ -69,7 +69,7 @@ TEST(I444BufferTest, ReadPixels) {
   constexpr int width = 3;
   constexpr int height = 3;
 
-  rtc::scoped_refptr<I444Buffer> i444_buffer(I444Buffer::Create(width, height));
+  scoped_refptr<I444Buffer> i444_buffer(I444Buffer::Create(width, height));
   // Y = 1, U = 2, V = 3.
   FillI444Buffer(i444_buffer);
   for (int row = 0; row < height; row++) {
@@ -87,12 +87,12 @@ TEST(I444BufferTest, ToI420) {
   constexpr int size_y = width * height;
   constexpr int size_u = (width + 1) / 2 * (height + 1) / 2;
   constexpr int size_v = (width + 1) / 2 * (height + 1) / 2;
-  rtc::scoped_refptr<I420Buffer> reference(I420Buffer::Create(width, height));
+  scoped_refptr<I420Buffer> reference(I420Buffer::Create(width, height));
   memset(reference->MutableDataY(), 8, size_y);
   memset(reference->MutableDataU(), 4, size_u);
   memset(reference->MutableDataV(), 2, size_v);
 
-  rtc::scoped_refptr<I444Buffer> i444_buffer(I444Buffer::Create(width, height));
+  scoped_refptr<I444Buffer> i444_buffer(I444Buffer::Create(width, height));
   // Convert the reference buffer to I444.
   memset(i444_buffer->MutableDataY(), 8, size_y);
   memset(i444_buffer->MutableDataU(), 4, size_y);
@@ -107,7 +107,7 @@ TEST(I444BufferTest, ToI420) {
     }
   }
 
-  rtc::scoped_refptr<I420BufferInterface> i420_buffer(i444_buffer->ToI420());
+  scoped_refptr<I420BufferInterface> i420_buffer(i444_buffer->ToI420());
   EXPECT_EQ(height, i420_buffer->height());
   EXPECT_EQ(width, i420_buffer->width());
   EXPECT_TRUE(test::FrameBufsEqual(reference, i420_buffer));

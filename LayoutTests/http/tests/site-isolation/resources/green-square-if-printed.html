@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+  body {
+    background: white;
+  }
+  div {
+    width: 100%;
+    height: 10px;
+    background: red;
+  }
+  @media print {
+    div {
+      height: 100px;
+      background: green;
+    }
+  }
+</style>
+</head>
+<body>
+<div></div>
+<script>
+onload = () => { window.parent.postMessage("onload", "*"); }
+</script>
+</body>
+</html>

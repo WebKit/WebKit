@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Refused to display 'http://127.0.0.1:8800/WebKit/html/browsers/browsing-the-web/navigating-across-documents/resources/only-same-origin-allowed.py' in a frame because it set 'X-Frame-Options' to 'SAMEORIGIN'.
-CONSOLE MESSAGE: Not allowed to redirect to data:text/html,FAIL due to its scheme
 
 PASS Ensure document gets replaced with an error document in case of blocked navigation
 PASS Ensure document gets replaced with an error document in case of blocked redirection

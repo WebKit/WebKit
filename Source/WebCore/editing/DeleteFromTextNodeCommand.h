@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,9 +49,7 @@ private:
     void getNodesInCommand(NodeSet&) override;
 #endif
 
-    Ref<Text> protectedNode() const;
-    
-    Ref<Text> m_node;
+    const Ref<Text> m_node;
     unsigned m_offset;
     unsigned m_count;
     String m_text;

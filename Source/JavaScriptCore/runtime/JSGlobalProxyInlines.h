@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSGlobalProxy.h"
+#include <JavaScriptCore/JSGlobalProxy.h>
 
 namespace JSC {
 

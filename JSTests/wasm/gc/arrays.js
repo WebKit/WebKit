@@ -324,7 +324,7 @@ function testArrayGet() {
     assert.throws(
       () => { m.exports.f(); },
       WebAssembly.RuntimeError,
-      "array.get to a null reference"
+      "access to a null reference"
     );
   }
 
@@ -342,7 +342,7 @@ function testArrayGet() {
     assert.throws(
       () => { m.exports.f(); },
       WebAssembly.RuntimeError,
-      "array.get to a null reference"
+      "access to a null reference"
     );
   }
 
@@ -515,7 +515,7 @@ function testArraySet() {
     assert.throws(
       () => { m.exports.f(); },
       WebAssembly.RuntimeError,
-      "array.set to a null reference"
+      "access to a null reference"
     );
   }
 
@@ -531,7 +531,7 @@ function testArraySet() {
     assert.throws(
       () => { m.exports.f(); },
       WebAssembly.RuntimeError,
-      "array.set to a null reference"
+      "access to a null reference"
     );
   }
 
@@ -593,7 +593,7 @@ function testArrayLen() {
     assert.throws(
       () => { m.exports.f(); },
       WebAssembly.RuntimeError,
-      "array.len to a null reference"
+      "access to a null reference"
     );
   }
 
@@ -610,7 +610,7 @@ function testArrayLen() {
     assert.throws(
       () => { m.exports.f(); },
       WebAssembly.RuntimeError,
-      "array.len to a null reference"
+      "access to a null reference"
     );
   }
 }
@@ -630,7 +630,7 @@ function testArrayTable() {
     `);
     m.exports.set(5);
     assert.eq(m.exports.get(5, 1), 42);
-    assert.throws(() => m.exports.get(2, 2), WebAssembly.RuntimeError, "array.get to a null");
+    assert.throws(() => m.exports.get(2, 2), WebAssembly.RuntimeError, "access to a null");
   }
 
   // Test arrayref table storing arrays of different types.
@@ -650,7 +650,7 @@ function testArrayTable() {
     m.exports.set(5, 6);
     assert.eq(m.exports.len(5), 5);
     assert.eq(m.exports.len(6), 7);
-    assert.throws(() => m.exports.len(9), WebAssembly.RuntimeError, "array.len to a null");
+    assert.throws(() => m.exports.len(9), WebAssembly.RuntimeError, "access to a null");
   }
 
   // Invalid array.get, needs a downcast.

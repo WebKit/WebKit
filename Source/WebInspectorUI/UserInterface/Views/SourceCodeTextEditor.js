@@ -1554,7 +1554,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             // Avoid highlighting the entire program if this is the start of the first statement.
             // Special case the assignment expression inside of a for..of and for..in to highlight a larger range.
             for (let node of nodes) {
-                if (node.startPosition.equals(position) && node.type !== WI.ScriptSyntaxTree.NodeType.Program) {
+                if (node.startPosition?.equals(position) && node.type !== WI.ScriptSyntaxTree.NodeType.Program) {
                     highlightSourceCodeRange(node.startPosition, node.endPosition);
                     return;
                 }
@@ -1564,7 +1564,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
                         return;
                     }
                 }
-                if (node.startPosition.isAfter(position))
+                if (node.startPosition?.isAfter(position))
                     break;
             }
 
@@ -1572,14 +1572,14 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             // We check this after ensuring nothing starts with this offset,
             // as that would be more important.
             for (let node of nodes) {
-                if (node.endPosition.equals(position)) {
+                if (node.endPosition?.equals(position)) {
                     if (node.type === WI.ScriptSyntaxTree.NodeType.BlockStatement) {
                         // Closing brace of a block, only highlight the closing brace character.
                         highlightSourceCodeRange(position.offsetColumn(-1), position);
                         return;
                     }
                 }
-                if (node.startPosition.isAfter(position))
+                if (node.startPosition?.isAfter(position))
                     break;
             }
 

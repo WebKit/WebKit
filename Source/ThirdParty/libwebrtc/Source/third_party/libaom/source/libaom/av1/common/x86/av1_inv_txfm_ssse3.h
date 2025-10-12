@@ -193,7 +193,7 @@ static inline void get_eobx_eoby_scan_default(int *eobx, int *eoby,
   *eoby = eobxy >> 8;
 }
 
-static int eob_fill[32] = {
+static const int eob_fill[32] = {
   0,  7,  7,  7,  7,  7,  7,  7,  15, 15, 15, 15, 15, 15, 15, 15,
   31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31,
 };

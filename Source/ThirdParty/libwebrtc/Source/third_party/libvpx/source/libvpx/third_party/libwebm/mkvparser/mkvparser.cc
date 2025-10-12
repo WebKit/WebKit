@@ -8,7 +8,6 @@
 #include "mkvparser/mkvparser.h"
 
 #if defined(_MSC_VER) && _MSC_VER < 1800
-#include <float.h>  // _isnan() / _finite()
 #define MSC_COMPAT
 #endif
 
@@ -7891,8 +7890,10 @@ long Block::Parse(const Cluster* pCluster) {
     if (frame_size <= 0)
       return E_FILE_FORMAT_INVALID;
 
+#if LLONG_MAX > LONG_MAX
     if (frame_size > LONG_MAX)
       return E_FILE_FORMAT_INVALID;
+#endif
 
     if ((pos + len) > stop)
       return E_FILE_FORMAT_INVALID;
@@ -7958,8 +7959,10 @@ long Block::Parse(const Cluster* pCluster) {
       if (frame_size <= 0)
         return E_FILE_FORMAT_INVALID;
 
+#if LLONG_MAX > LONG_MAX
       if (frame_size > LONG_MAX)
         return E_FILE_FORMAT_INVALID;
+#endif
 
       curr.len = static_cast<long>(frame_size);
       // Check if size + curr.len could overflow.

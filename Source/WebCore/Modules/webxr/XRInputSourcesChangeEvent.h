@@ -55,7 +55,7 @@ public:
 private:
     XRInputSourcesChangeEvent(const AtomString&, const Init&, IsTrusted);
 
-    Ref<WebXRSession> m_session;
+    const Ref<WebXRSession> m_session;
     Vector<Ref<WebXRInputSource>> m_added;
     Vector<Ref<WebXRInputSource>> m_removed;
 };

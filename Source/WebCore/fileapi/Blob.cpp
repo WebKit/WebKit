@@ -36,12 +36,14 @@
 #include "BlobLoader.h"
 #include "BlobPart.h"
 #include "BlobURL.h"
+#include "ContextDestructionObserverInlines.h"
 #include "File.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PolicyContainer.h"
 #include "ReadableStream.h"
 #include "ReadableStreamSource.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptWrappableInlines.h"
 #include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include "ThreadableBlobRegistry.h"
@@ -67,7 +69,7 @@ public:
     static URLRegistry& registry();
 
     Lock m_urlsPerContextLock;
-    HashMap<ScriptExecutionContextIdentifier, UncheckedKeyHashSet<URL>> m_urlsPerContext WTF_GUARDED_BY_LOCK(m_urlsPerContextLock);
+    HashMap<ScriptExecutionContextIdentifier, HashSet<URL>> m_urlsPerContext WTF_GUARDED_BY_LOCK(m_urlsPerContextLock);
 };
 
 void BlobURLRegistry::registerURL(const ScriptExecutionContext& context, const URL& publicURL, URLRegistrable& blob)
@@ -75,7 +77,7 @@ void BlobURLRegistry::registerURL(const ScriptExecutionContext& context, const U
     ASSERT(&blob.registry() == this);
     {
         Locker locker { m_urlsPerContextLock };
-        m_urlsPerContext.add(context.identifier(), UncheckedKeyHashSet<URL>()).iterator->value.add(publicURL.isolatedCopy());
+        m_urlsPerContext.add(context.identifier(), HashSet<URL>()).iterator->value.add(publicURL.isolatedCopy());
     }
     ThreadableBlobRegistry::registerBlobURL(context.protectedSecurityOrigin().get(), context.policyContainer(), publicURL, downcast<Blob>(blob).url(), context.topOrigin().data());
 }
@@ -102,7 +104,7 @@ void BlobURLRegistry::unregisterURL(const URL& url, const SecurityOriginData& to
 
 void BlobURLRegistry::unregisterURLsForContext(const ScriptExecutionContext& context)
 {
-    UncheckedKeyHashSet<URL> urlsForContext;
+    HashSet<URL> urlsForContext;
     {
         Locker locker { m_urlsPerContextLock };
         urlsForContext = m_urlsPerContext.take(context.identifier());
@@ -181,6 +183,18 @@ Blob::Blob(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String
     ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, { BlobPart(WTFMove(data)) }, contentType);
 }
 
+Blob::Blob(ScriptExecutionContext* context, Ref<FragmentedSharedBuffer>&& buffer, const String& contentType)
+    : ActiveDOMObject(context)
+    , m_type(contentType)
+    , m_size(buffer->size())
+    , m_memoryCost(buffer->size())
+    , m_internalURL(BlobURL::createInternalURL())
+{
+    BlobBuilder builder(EndingType::Transparent);
+    builder.append(WTFMove(buffer));
+    ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, builder.finalize(), contentType);
+}
+
 Blob::Blob(ReferencingExistingBlobConstructor, ScriptExecutionContext* context, const Blob& blob)
     : ActiveDOMObject(context)
     , m_type(blob.type())
@@ -218,7 +232,7 @@ Blob::~Blob()
 {
     ThreadableBlobRegistry::unregisterBlobURL(m_internalURL, std::nullopt);
     while (!m_blobLoaders.isEmpty())
-        (*m_blobLoaders.begin())->cancel();
+        RefPtr { (*m_blobLoaders.begin()).get() }->cancel();
 }
 
 Ref<Blob> Blob::slice(long long start, long long end, const String& contentType) const
@@ -268,7 +282,7 @@ String Blob::normalizedContentType(const String& contentType)
 
 void Blob::loadBlob(FileReaderLoader::ReadType readType, Function<void(BlobLoader&)>&& completionHandler)
 {
-    auto blobLoader = makeUnique<BlobLoader>([pendingActivity = makePendingActivity(*this), completionHandler = WTFMove(completionHandler)](BlobLoader& blobLoader) mutable {
+    Ref blobLoader = BlobLoader::create([pendingActivity = makePendingActivity(*this), completionHandler = WTFMove(completionHandler)](BlobLoader& blobLoader) mutable {
         completionHandler(blobLoader);
         pendingActivity->object().m_blobLoaders.take(&blobLoader);
     });
@@ -427,7 +441,7 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream()
             return didSucceed;
         }
 
-        UniqueRef<FileReaderLoader> m_loader;
+        const UniqueRef<FileReaderLoader> m_loader;
         Deque<Ref<FragmentedSharedBuffer>> m_queue;
         std::optional<Exception> m_exception;
         enum class StreamState : uint8_t { NotStarted, Started, Waiting };
@@ -436,7 +450,7 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream()
         LoaderState m_loaderState { LoaderState::Started };
     };
 
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     auto* globalObject = context ? context->globalObject() : nullptr;
     if (!globalObject)
         return Exception { ExceptionCode::InvalidStateError };

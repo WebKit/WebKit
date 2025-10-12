@@ -15,18 +15,6 @@
   <footer id="footer2">footer that is not contentinfo</footer>
 </main>
 
-<blockquote>
-  <footer id="footer3">footer that is not contentinfo</footer>
-</blockquote>
-
-<fieldset>
-  <footer id="footer3">footer that is not contentinfo</footer>
-</fieldset>
-
-<details open>
-  <footer id="footer4">footer that is not contentinfo</footer>
-</details>
-
 </div>
 
 <p id="description"></p>
@@ -38,14 +26,12 @@
 
     if (window.accessibilityController) {
 
-          // Scoped to body, becomes a content info.
+          // Scoped to body, becomes a contentinfo.
           var footer1 = accessibilityController.accessibleElementById("footer1");
           var contentinfo = accessibilityController.accessibleElementById("contentinfo");
 
-          // Scoped to other element types, not a content info.
+          // Scoped to main (sectioning element), becomes sectionfooter.
           var footer2 = accessibilityController.accessibleElementById("footer2");
-          var footer3 = accessibilityController.accessibleElementById("footer3");
-          var footer4 = accessibilityController.accessibleElementById("footer4");
          
           shouldBe("footer1.role", "'AXRole: AXGroup'");
           shouldBe("footer1.subrole", "'AXSubrole: AXLandmarkContentInfo'");
@@ -56,16 +42,8 @@
           shouldBe("contentinfo.roleDescription", "'AXRoleDescription: content information'");
 
           shouldBe("footer2.role", "'AXRole: AXGroup'");
-          shouldBe("footer2.subrole", "'AXSubrole: AXFooter'");
-          shouldBe("footer2.roleDescription", "'AXRoleDescription: footer'");
-
-          shouldBe("footer3.role", "'AXRole: AXGroup'");
-          shouldBe("footer3.subrole", "'AXSubrole: AXFooter'");
-          shouldBe("footer3.roleDescription", "'AXRoleDescription: footer'");
-
-          shouldBe("footer4.role", "'AXRole: AXGroup'");
-          shouldBe("footer4.subrole", "'AXSubrole: AXFooter'");
-          shouldBe("footer4.roleDescription", "'AXRoleDescription: footer'");
+          shouldBe("footer2.subrole", "'AXSubrole: AXSectionFooter'");
+          shouldBe("footer2.roleDescription", "'AXRoleDescription: section footer'");
 
           document.getElementById("content").style.visibility = "hidden";
     }

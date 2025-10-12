@@ -22,3 +22,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+#import "../../TestPDFDocument.h"
+#import "../WebKitCocoa/SmartListsSupport.h"
+#import "TestWKWebView.h"
+#import "UIKitSPIForTesting.h"
+#import <pal/spi/cg/CoreGraphicsSPI.h>

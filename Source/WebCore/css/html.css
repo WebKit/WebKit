@@ -101,9 +101,8 @@ hr {
     border-width: 1px;
 }
 
-/* FIXME: webkit.org/b/230083 - Remove `-webkit-` from below.  */
 abbr[title], acronym[title] {
-    -webkit-text-decoration: dotted underline;
+    text-decoration: dotted underline;
 }
 
 /* ::backdrop */
@@ -158,7 +157,6 @@ video {
     -webkit-tap-highlight-color: transparent;
 #endif
     content: normal !important;
-    dynamic-range-limit: no-limit;
 }
 
 audio {
@@ -178,31 +176,6 @@ h1 {
     margin-block: 0.67__qem 0.67em;
     margin-inline: 0;
     font-weight: bold;
-}
-
-:is(article, aside, nav, section) h1 {
-    font-size: 1.5em;
-    margin-block: 0.83__qem 0.83em;
-}
-
-:is(article, aside, nav, section) :is(article, aside, nav, section) h1 {
-    font-size: 1.17em;
-    margin-block: 1__qem 1em;
-}
-
-:is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) h1 {
-    font-size: 1.00em;
-    margin-block: 1.33__qem 1.33em;
-}
-
-:is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) h1 {
-    font-size: .83em;
-    margin-block: 1.67__qem 1.67em;
-}
-
-:is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) h1 {
-    font-size: .67em;
-    margin-block: 2.33__qem 2.33em;
 }
 
 h2 {
@@ -366,6 +339,7 @@ dt {
     font-variant-numeric: tabular-nums;
     white-space: pre;
     text-transform: none;
+    text-indent: 0px !important;
 }
 
 /* form elements */
@@ -872,7 +846,6 @@ button[type="submit"], button[type="submit"]:active,
 button[type="menu"], button[type="menu"]:active {
     background-color: -apple-system-blue;
     color: white;
-    font-weight: bold;
 }
 
 #endif
@@ -1440,4 +1413,12 @@ ins, del {
 }
 :root:lang(zh), [lang|=zh] {
     text-underline-position: left;
+}
+
+:root::spelling-error {
+    text-decoration-line: spelling-error;
+}
+
+:root::grammar-error {
+    text-decoration-line: grammar-error;
 }

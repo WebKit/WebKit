@@ -51,12 +51,7 @@
 #include "getopt_s.h"
 #include "cipher.h"
 #include "cipher_priv.h"
-#ifdef GCM
-#include "aes_icm_ext.h"
-#include "aes_gcm.h"
-#else
-#include "aes_icm.h"
-#endif
+#include "datatypes.h"
 
 #define PRINT_DEBUG 0
 
@@ -394,7 +389,7 @@ srtp_err_status_t cipher_driver_test_buffering(srtp_cipher_t *c)
 
             /* make sure that len doesn't cause us to overreach the buffer */
             if (current + len > end)
-                len = end - current;
+                len = (unsigned)(end - current);
 
             status = srtp_cipher_encrypt(c, current, &len);
             if (status)
@@ -443,7 +438,7 @@ srtp_err_status_t cipher_array_alloc_init(srtp_cipher_t ***ca,
 {
     int i, j;
     srtp_err_status_t status;
-    uint8_t *key;
+    uint8_t *key = NULL;
     srtp_cipher_t **cipher_array;
     /* pad klen allocation, to handle aes_icm reading 16 bytes for the
        14-byte salt */
@@ -458,11 +453,13 @@ srtp_err_status_t cipher_array_alloc_init(srtp_cipher_t ***ca,
     /* set ca to location of cipher_array */
     *ca = cipher_array;
 
-    /* allocate key */
-    key = srtp_crypto_alloc(klen_pad);
-    if (key == NULL) {
-        srtp_crypto_free(cipher_array);
-        return srtp_err_status_alloc_fail;
+    /* allocate key , allow zero key for example null cipher */
+    if (klen_pad > 0) {
+        key = srtp_crypto_alloc(klen_pad);
+        if (key == NULL) {
+            srtp_crypto_free(cipher_array);
+            return srtp_err_status_alloc_fail;
+        }
     }
 
     /* allocate and initialize an array of ciphers */

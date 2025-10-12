@@ -25,20 +25,8 @@
 
 #pragma once
 
-#include <wtf/Condition.h>
 #include <wtf/Function.h>
-#include <wtf/Lock.h>
-#include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
-
-namespace WebKit {
-class DisplayVBlankMonitor;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebKit::DisplayVBlankMonitor> : std::true_type { };
-}
 
 namespace WebKit {
 
@@ -50,37 +38,29 @@ public:
     static std::unique_ptr<DisplayVBlankMonitor> create(PlatformDisplayID);
     virtual ~DisplayVBlankMonitor();
 
-    enum class Type { Drm, Timer };
+    enum class Type {
+        Drm,
+        Timer,
+#if ENABLE(WPE_PLATFORM)
+        Wpe,
+#endif
+    };
     virtual Type type() const = 0;
 
     unsigned refreshRate() const { return m_refreshRate; }
 
-    void start();
-    void stop();
-    bool isActive();
-    void invalidate();
+    virtual void start() = 0;
+    virtual void stop() = 0;
+    virtual bool isActive() = 0;
+    virtual void invalidate() = 0;
 
-    void setHandler(Function<void()>&&);
+    virtual void setHandler(Function<void()>&&);
 
 protected:
     explicit DisplayVBlankMonitor(unsigned);
 
-    virtual bool waitForVBlank() const = 0;
-
     unsigned m_refreshRate;
-
-private:
-    enum class State { Stop, Active, Failed, Invalid };
-
-    bool startThreadIfNeeded();
-    void destroyThreadTimerFired();
-
-    RefPtr<Thread> m_thread;
-    Lock m_lock;
-    Condition m_condition;
-    State m_state WTF_GUARDED_BY_LOCK(m_lock) { State::Stop };
     Function<void()> m_handler;
-    RunLoop::Timer m_destroyThreadTimer;
 };
 
 } // namespace WebKit

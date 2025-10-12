@@ -51,11 +51,10 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     ASSERT(noOverlap(scratch, GPRInfo::wasmContextInstancePointer));
 
     JIT_COMMENT(jit, "Store Callee's wasm callee for import function ", importIndex);
-    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfBoxedWasmCalleeLoadLocation(importIndex)), scratch);
-    jit.loadPtr(JIT::Address(scratch), scratch);
+    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfBoxedCallee(importIndex)), scratch);
     // We are halfway between being the caller and the callee: we have already made the call, but not yet completed the prologue.
     // On ARM64 this doesn't really matter, but on intel we need to worry about the pushed pc.
-    jit.storeWasmCalleeCallee(scratch, safeCast<int>(sizeof(CallerFrameAndPC)) - safeCast<int>(prologueStackPointerDelta()));
+    jit.storeWasmCalleeToCalleeCallFrame(scratch, safeCast<int>(sizeof(CallerFrameAndPC)) - safeCast<int>(prologueStackPointerDelta()));
 
     // FIXME: This could be a load pair.
     // B3's call codegen ensures that the JSCell is a WebAssemblyFunction.
@@ -79,7 +78,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     jit.loadPtr(JIT::Address(scratch), scratch);
     jit.farJump(scratch, WasmEntryPtrTag);
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk, JITCompilationMustSucceed);
     if (patchBuffer.didFailToAllocate()) [[unlikely]]
         return makeUnexpected(BindingFailure::OutOfMemory);
 

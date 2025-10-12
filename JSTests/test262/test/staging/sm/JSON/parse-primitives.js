@@ -2,13 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-JSON-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
 ---*/
+
 var x;
 
 // check an empty object, just for sanity
@@ -64,7 +62,3 @@ assert.sameValue(x, "\uabcd");
 
 x = JSON.parse('"\\f"');
 assert.sameValue(x, "\f");
-
-/******************************************************************************/
-
-print("Tests complete");

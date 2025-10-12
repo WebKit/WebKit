@@ -28,9 +28,10 @@ enum RenderingMode {
     "Accelerated",
 };
 
+// https://html.spec.whatwg.org/multipage/canvas.html#canvasrenderingcontext2d
+
 [
     CustomIsReachable,
-    JSGenerateToJSObject,
     JSCustomMarkFunction,
     CallTracer=InspectorCanvasCallTracer,
     Exposed=Window
@@ -39,12 +40,6 @@ enum RenderingMode {
     readonly attribute HTMLCanvasElement canvas;
 
     CanvasRenderingContext2DSettings getContextAttributes();
-
-    // Non-standard functionality (CanvasDrawImage).
-    undefined drawImageFromRect(HTMLImageElement image,
-        optional unrestricted float sx = 0, optional unrestricted float sy = 0, optional unrestricted float sw = 0, optional unrestricted float sh = 0,
-        optional unrestricted float dx = 0, optional unrestricted float dy = 0, optional unrestricted float dw = 0, optional unrestricted float dh = 0,
-        optional DOMString compositeOperation = "");
 
     // Non-standard legacy aliases (CanvasFillStrokeStyles).
     undefined setStrokeColor(DOMString color, optional unrestricted float alpha);

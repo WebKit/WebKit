@@ -29,7 +29,10 @@
 #include "AnimationUtilities.h"
 #include "CSSDynamicRangeLimit.h"
 #include "CSSDynamicRangeLimitMix.h"
+#include "CSSDynamicRangeLimitValue.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "PlatformDynamicRangeLimit.h"
+#include "StyleBuilderChecking.h"
 #include "StyleDynamicRangeLimitMix.h"
 
 namespace WebCore {
@@ -75,6 +78,39 @@ auto ToStyle<CSS::DynamicRangeLimit>::operator()(const CSS::DynamicRangeLimit& l
             return resolve(toStyle(mix, state));
         }
     );
+}
+
+Ref<CSSValue> CSSValueCreation<DynamicRangeLimit>::operator()(CSSValuePool&, const RenderStyle& style, const DynamicRangeLimit& value)
+{
+    return CSSDynamicRangeLimitValue::create(toCSS(value, style));
+}
+
+auto CSSValueConversion<DynamicRangeLimit>::operator()(BuilderState& state, const CSSValue& value) -> DynamicRangeLimit
+{
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        switch (primitiveValue->valueID()) {
+        case CSSValueStandard:      return CSS::Keyword::Standard { };
+        case CSSValueConstrained:   return CSS::Keyword::Constrained { };
+        case CSSValueNoLimit:       return CSS::Keyword::NoLimit { };
+        default:
+            break;
+        }
+
+        state.setCurrentPropertyInvalidAtComputedValueTime();
+        return CSS::Keyword::NoLimit { };
+    }
+
+    RefPtr dynamicRangeLimit = requiredDowncast<CSSDynamicRangeLimitValue>(state, value);
+    if (!dynamicRangeLimit)
+        return CSS::Keyword::NoLimit { };
+    return toStyle(dynamicRangeLimit->dynamicRangeLimit(), state);
+}
+
+// MARK: - Serialization
+
+void Serialize<DynamicRangeLimit>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const DynamicRangeLimit& value)
+{
+    CSS::serializationForCSS(builder, context, toCSS(value, style));
 }
 
 // MARK: - Blending

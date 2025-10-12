@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(DATA_DETECTION)
 
 #include <pal/spi/cocoa/DataDetectorsCoreSPI.h>

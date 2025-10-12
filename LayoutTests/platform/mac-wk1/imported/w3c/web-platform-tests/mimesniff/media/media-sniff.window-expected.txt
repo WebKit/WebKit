@@ -17,12 +17,12 @@ PASS flac.flac loads when served with Content-Type application/octet-stream
 PASS flac.flac loads when served with Content-Type text/html
 PASS flac.flac loads when served with Content-Type audio/ogg; codec=vorbis
 PASS flac.flac loads when served with Content-Type application/pdf
-FAIL ogg.ogg loads when served with Content-Type  assert_unreached: No error expected frorm the HTMLMediaElement Reached unreachable code
-FAIL ogg.ogg loads when served with Content-Type bogus/mime assert_unreached: No error expected frorm the HTMLMediaElement Reached unreachable code
-FAIL ogg.ogg loads when served with Content-Type application/octet-stream assert_unreached: No error expected frorm the HTMLMediaElement Reached unreachable code
-FAIL ogg.ogg loads when served with Content-Type text/html assert_unreached: No error expected frorm the HTMLMediaElement Reached unreachable code
-FAIL ogg.ogg loads when served with Content-Type audio/ogg; codec=vorbis assert_unreached: No error expected frorm the HTMLMediaElement Reached unreachable code
-FAIL ogg.ogg loads when served with Content-Type application/pdf assert_unreached: No error expected frorm the HTMLMediaElement Reached unreachable code
+PASS ogg.ogg loads when served with Content-Type
+PASS ogg.ogg loads when served with Content-Type bogus/mime
+PASS ogg.ogg loads when served with Content-Type application/octet-stream
+PASS ogg.ogg loads when served with Content-Type text/html
+PASS ogg.ogg loads when served with Content-Type audio/ogg; codec=vorbis
+PASS ogg.ogg loads when served with Content-Type application/pdf
 PASS mp4.mp4 loads when served with Content-Type
 PASS mp4.mp4 loads when served with Content-Type bogus/mime
 PASS mp4.mp4 loads when served with Content-Type application/octet-stream

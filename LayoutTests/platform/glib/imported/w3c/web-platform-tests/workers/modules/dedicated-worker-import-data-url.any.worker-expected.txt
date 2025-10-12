@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Cross-origin redirection to http://web-platform.test:8800/workers/modules/resources/export-on-load-script.js denied by Cross-Origin Resource Sharing policy: Origin null is not allowed by Access-Control-Allow-Origin. Status code: 302
 
 Harness Error (FAIL), message = Error in remote: Importing a module script failed.
 

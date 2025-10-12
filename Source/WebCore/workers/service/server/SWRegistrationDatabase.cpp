@@ -199,8 +199,8 @@ SQLiteStatementAutoResetScope SWRegistrationDatabase::cachedStatement(StatementT
 
     auto index = enumToUnderlyingType(type);
     if (!m_cachedStatements[index]) {
-        if (auto result = m_database->prepareHeapStatement(statementString(type)))
-            m_cachedStatements[index] = result.value().moveToUniquePtr();
+        if (auto statement = CheckedRef { *m_database }->prepareStatement(statementString(type)))
+            m_cachedStatements[index] = WTFMove(statement);
     }
 
     return SQLiteStatementAutoResetScope { m_cachedStatements[index].get() };
@@ -237,9 +237,14 @@ SWScriptStorage& SWRegistrationDatabase::scriptStorage()
     return *m_scriptStorage;
 }
 
+CheckedPtr<SQLiteDatabase> SWRegistrationDatabase::checkedDatabase() const
+{
+    return m_database.get();
+}
+
 bool SWRegistrationDatabase::prepareDatabase(ShouldCreateIfNotExists shouldCreateIfNotExists)
 {
-    if (m_database && m_database->isOpen())
+    if (CheckedPtr database = m_database.get(); database && database->isOpen())
         return true;
 
     if (m_directory.isEmpty())
@@ -252,13 +257,13 @@ bool SWRegistrationDatabase::prepareDatabase(ShouldCreateIfNotExists shouldCreat
 
     m_database = makeUnique<SQLiteDatabase>();
     FileSystem::makeAllDirectories(m_directory);
-    auto openResult  = m_database->open(databasePath, SQLiteDatabase::OpenMode::ReadWriteCreate, SQLiteDatabase::OpenOptions::CanSuspendWhileLocked);
+    auto openResult  = checkedDatabase()->open(databasePath, SQLiteDatabase::OpenMode::ReadWriteCreate, SQLiteDatabase::OpenOptions::CanSuspendWhileLocked);
     if (!openResult) {
-        auto lastError = m_database->lastError();
+        auto lastError = checkedDatabase()->lastError();
         if (lastError == SQLITE_CORRUPT && lastError == SQLITE_NOTADB) {
             m_database = makeUnique<SQLiteDatabase>();
             SQLiteFileSystem::deleteDatabaseFile(databasePath);
-            openResult  = m_database->open(databasePath);
+            openResult  = checkedDatabase()->open(databasePath);
         }
     }
 
@@ -268,7 +273,7 @@ bool SWRegistrationDatabase::prepareDatabase(ShouldCreateIfNotExists shouldCreat
         return false;
     }
 
-    m_database->disableThreadingChecks();
+    checkedDatabase()->disableThreadingChecks();
 
     if (!ensureValidRecordsTable()) {
         m_database = nullptr;
@@ -280,23 +285,24 @@ bool SWRegistrationDatabase::prepareDatabase(ShouldCreateIfNotExists shouldCreat
 
 bool SWRegistrationDatabase::ensureValidRecordsTable()
 {
-    if (!m_database || !m_database->isOpen())
+    CheckedPtr database = m_database.get();
+    if (!database || !database->isOpen())
         return false;
 
-    String statement = m_database->tableSQL("Records"_s);
+    String statement = database->tableSQL("Records"_s);
     if (statement == currentRecordsTableSchema() || statement == currentRecordsTableSchemaAlternate())
         return true;
 
     // Table exists but statement is wrong; drop it.
     if (!statement.isEmpty()) {
-        if (!m_database->executeCommand("DROP TABLE Records"_s)) {
+        if (!database->executeCommand("DROP TABLE Records"_s)) {
             RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::ensureValidRecordsTable failed to drop existing table (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return false;
         }
     }
 
     // Table does not exist.
-    if (!m_database->executeCommand(currentRecordsTableSchema())) {
+    if (!database->executeCommand(currentRecordsTableSchema())) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::ensureValidRecordsTable failed to create table (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
         return false;
     }
@@ -323,11 +329,12 @@ std::optional<Vector<ServiceWorkerContextData>> SWRegistrationDatabase::importRe
         return Vector<ServiceWorkerContextData> { };
     }
 
-    auto statement = cachedStatement(StatementType::GetAllRecords);
-    if (!statement) {
+    auto sqlStatement = cachedStatement(StatementType::GetAllRecords);
+    if (!sqlStatement) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::importRegistrations failed on creating statement (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
         return std::nullopt;
     }
+    CheckedPtr statement = sqlStatement.get();
 
     Vector<ServiceWorkerContextData> registrations;
     int result = statement->step();
@@ -456,8 +463,13 @@ std::optional<Vector<ServiceWorkerScripts>> SWRegistrationDatabase::updateRegist
     transaction.begin();
 
     for (auto& registration : registrationsToDelete) {
-        auto statement = cachedStatement(StatementType::DeleteRecord);
-        if (!statement || statement->bindText(1, registration.toDatabaseKey()) != SQLITE_OK || statement->step() != SQLITE_DONE) {
+        auto sqlStatement = cachedStatement(StatementType::DeleteRecord);
+        if (!sqlStatement) {
+            RELEASE_LOG_ERROR(Storage, "SWRegistrationDatabase::updateRegistrations failed to delete record (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
+            return std::nullopt;
+        }
+        CheckedPtr statement = sqlStatement.get();
+        if (statement->bindText(1, registration.toDatabaseKey()) != SQLITE_OK || statement->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(Storage, "SWRegistrationDatabase::updateRegistrations failed to delete record (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return std::nullopt;
         }
@@ -465,11 +477,12 @@ std::optional<Vector<ServiceWorkerScripts>> SWRegistrationDatabase::updateRegist
     }
 
     for (auto&& data : registrationsToUpdate) {
-        auto statement = cachedStatement(StatementType::InsertRecord);
-        if (!statement) {
+        auto sqlStatement = cachedStatement(StatementType::InsertRecord);
+        if (!sqlStatement) {
             RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::updateRegistrations failed to prepare statement for inserting record (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return std::nullopt;
         }
+        CheckedPtr statement = sqlStatement.get();
 
         WTF::Persistence::Encoder cspEncoder;
         cspEncoder << data.contentSecurityPolicy;
@@ -533,12 +546,13 @@ std::optional<uint64_t> SWRegistrationDatabase::recordsCount()
     if (!m_database)
         return std::nullopt;
 
-    auto statement = cachedStatement(StatementType::CountAllRecords);
-    if (!statement) {
+    auto sqlStatement = cachedStatement(StatementType::CountAllRecords);
+    if (!sqlStatement) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::recordsCount failed on creating statement (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
         return std::nullopt;
     }
 
+    CheckedPtr statement = sqlStatement.get();
     if (statement->step() != SQLITE_ROW) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::recordsCount failed to count records (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
         return std::nullopt;

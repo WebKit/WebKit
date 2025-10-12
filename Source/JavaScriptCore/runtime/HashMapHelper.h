@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "ExceptionExpectation.h"
-#include "ExceptionHelpers.h"
-#include "JSCJSValueInlines.h"
-#include "JSObject.h"
-#include "VMTrapsInlines.h"
+#include <JavaScriptCore/ExceptionExpectation.h>
+#include <JavaScriptCore/ExceptionHelpers.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/VMTrapsInlines.h>
 
 namespace JSC {
 

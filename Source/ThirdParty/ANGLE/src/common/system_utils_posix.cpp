@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 // system_utils_posix.cpp: Implementation of POSIX OS-specific functions.
 
 #include "common/debug.h"
@@ -259,6 +263,23 @@ bool IsDebuggerAttached()
     // This could have a fuller implementation.
     // See https://cs.chromium.org/chromium/src/base/debug/debugger_posix.cc
     return false;
+}
+
+bool IsSameFileDescriptor(int fd1, int fd2)
+{
+    struct stat stat1, stat2;
+    if (fstat(fd1, &stat1) < 0)
+    {
+        return false;
+    }
+    if (fstat(fd2, &stat2) < 0)
+    {
+        return false;
+    }
+    // Comparing st_ino (the unique identifier within a filesystem) and
+    // st_dev (the identifier of the filesystem) uniquely identifies a
+    // file within a POSIX-conforming system
+    return (stat1.st_dev == stat2.st_dev) && (stat1.st_ino == stat2.st_ino);
 }
 
 void BreakDebugger()

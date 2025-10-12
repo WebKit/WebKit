@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "IDBDatabaseInfo.h"
-#include "IDBKeyData.h"
-#include "IDBTransactionInfo.h"
-#include "IndexValueStore.h"
-#include "ThreadSafeDataBuffer.h"
+#include <WebCore/IDBDatabaseInfo.h>
+#include <WebCore/IDBKeyData.h>
+#include <WebCore/IDBTransactionInfo.h>
+#include <WebCore/IndexValueStore.h>
+#include <WebCore/ThreadSafeDataBuffer.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -62,7 +62,7 @@ public:
     void addExistingObjectStore(MemoryObjectStore&);
 
     void objectStoreDeleted(Ref<MemoryObjectStore>&&);
-    void objectStoreCleared(MemoryObjectStore&, std::unique_ptr<KeyValueMap>&&, std::unique_ptr<IDBKeyDataSet>&&);
+    void objectStoreCleared(MemoryObjectStore&, KeyValueMap&&, std::unique_ptr<IDBKeyDataSet>&&);
     void objectStoreRenamed(MemoryObjectStore&, const String& oldName);
     void indexRenamed(MemoryIndex&, const String& oldName);
 
@@ -83,7 +83,7 @@ private:
     MemoryBackingStoreTransaction(MemoryIDBBackingStore&, const IDBTransactionInfo&);
     void finish();
 
-    CheckedRef<MemoryIDBBackingStore> m_backingStore;
+    const CheckedRef<MemoryIDBBackingStore> m_backingStore;
     IDBTransactionInfo m_info;
 
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;

@@ -283,7 +283,7 @@ void RemoteInspectorSocketEndpoint::recvIfEnabled(ConnectionID id)
     Locker locker { m_connectionsLock };
     if (const auto& connection = m_clients.get(id)) {
         Vector<uint8_t> recvBuffer(Socket::BufferSize);
-        if (auto readSize = Socket::read(connection->socket, recvBuffer.data(), recvBuffer.size())) {
+        if (auto readSize = Socket::read(connection->socket, recvBuffer.mutableSpan().data(), recvBuffer.size())) {
             if (*readSize > 0) {
                 recvBuffer.shrink(*readSize);
                 locker.unlockEarly();
@@ -310,7 +310,7 @@ void RemoteInspectorSocketEndpoint::sendIfEnabled(ConnectionID id)
         if (buffer.isEmpty())
             return;
 
-        if (auto writeSize = Socket::write(connection->socket, buffer.data(), std::min(buffer.size(), Socket::BufferSize))) {
+        if (auto writeSize = Socket::write(connection->socket, buffer.span().data(), std::min(buffer.size(), Socket::BufferSize))) {
             auto size = *writeSize;
             if (size == buffer.size()) {
                 buffer.clear();

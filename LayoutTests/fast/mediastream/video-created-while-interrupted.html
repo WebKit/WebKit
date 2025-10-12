@@ -17,6 +17,7 @@
         document.body.appendChild(video);
 
         const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+        test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
         video.srcObject = stream;
 
         let counter = 0;

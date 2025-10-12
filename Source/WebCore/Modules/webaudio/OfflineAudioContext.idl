@@ -25,7 +25,6 @@
 [
     Conditional=WEB_AUDIO,
     EnabledBySetting=WebAudioEnabled,
-    JSGenerateToJSObject,
     Exposed=Window
 ] interface OfflineAudioContext : BaseAudioContext {
     [CallWith=CurrentScriptExecutionContext] constructor(OfflineAudioContextOptions contextOptions);

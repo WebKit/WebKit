@@ -896,7 +896,7 @@ class BaseIndex < Node
     end
     
     def dump
-        "#{offset.dump}[#{base.dump}, #{index.dump}, #{scale.value}]"
+        "#{offset.dump}[#{base.dump}, #{index.dump}, #{scale.dump}]"
     end
     
     def address?
@@ -1085,7 +1085,7 @@ end
 $labelMapping = {}
 $referencedExternLabels = Array.new
 
-class Label < NoChildren
+class Label < Node
     def initialize(codeOrigin, name, definedInFile = false)
         super(codeOrigin)
         @name = name
@@ -1096,7 +1096,21 @@ class Label < NoChildren
         @alignTo = false
         @export = false
     end
+
+    def children
+        if aligned? and @alignTo
+            [@alignTo]
+        else
+            []
+        end
+    end
     
+    def mapChildren
+        # This is mutable, since labels are unique.
+        @alignTo = yield @alignTo if aligned? and @alignTo
+        self
+    end
+
     def self.forName(codeOrigin, name, definedInFile = false)
         if $labelMapping[name]
             raise "Label name collision: #{name}" unless $labelMapping[name].is_a? Label

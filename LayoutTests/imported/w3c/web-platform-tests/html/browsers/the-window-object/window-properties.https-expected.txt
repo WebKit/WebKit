@@ -116,7 +116,6 @@ PASS Window attribute: onmousemove
 PASS Window attribute: onmouseout
 PASS Window attribute: onmouseover
 PASS Window attribute: onmouseup
-PASS Window attribute: onmousewheel
 PASS Window attribute: onoffline
 PASS Window attribute: ononline
 PASS Window attribute: onpause

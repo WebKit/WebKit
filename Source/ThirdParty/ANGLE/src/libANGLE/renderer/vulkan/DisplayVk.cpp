@@ -559,8 +559,8 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
     // also be exposed.  The Vulkan extensions that support these EGL extensions are not split in
     // the same way; both Vulkan extensions are needed for EGL_EXT_image_dma_buf_import, and with
     // both Vulkan extensions, EGL_EXT_image_dma_buf_import_modifiers is also supportable.
-    outExtensions->imageDmaBufImportEXT =
-        getFeatures().supportsExternalMemoryDmaBufAndModifiers.enabled;
+    outExtensions->imageDmaBufImportEXT = getFeatures().supportsExternalMemoryDmaBuf.enabled &&
+                                          getFeatures().supportsImageDrmFormatModifier.enabled;
     outExtensions->imageDmaBufImportModifiersEXT = outExtensions->imageDmaBufImportEXT;
 
     // Disable context priority when non-zero memory init is enabled. This enforces a queue order.
@@ -573,6 +573,7 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
 
     outExtensions->bufferAgeEXT = true;
 
+    outExtensions->presentationTime    = getFeatures().supportsTimestampSurfaceAttribute.enabled;
     outExtensions->protectedContentEXT = (getFeatures().supportsProtectedMemory.enabled &&
                                           getFeatures().supportsSurfaceProtectedSwapchains.enabled);
 
@@ -618,6 +619,9 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
 
     outExtensions->surfaceCompressionEXT =
         getFeatures().supportsImageCompressionControlSwapchain.enabled;
+
+    outExtensions->contextPriorityRealtimeNV = (getFeatures().supportsGlobalPriority.enabled &&
+                                                getFeatures().supportsGlobalPriorityQuery.enabled);
 }
 
 void DisplayVk::generateCaps(egl::Caps *outCaps) const

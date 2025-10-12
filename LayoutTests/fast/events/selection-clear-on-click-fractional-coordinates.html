@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #testtext {
+            margin: 0px;
+            overflow: hidden;
+            display: block;
+            font-size: 20px;
+            line-height: 30px;
+            width: 400px;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <p id="testtext">This is a test paragraph with some text that we will select and then click on at a point inside the
+        selection with real, non-integer coordinates to verify that the selection is properly cleared. This is a test
+        paragraph with some text that we will select and then click on at a point inside the selection with real,
+        non-integer coordinates to verify that the selection is properly cleared.</p>
+    <div id="console" style="margin-top:100px;"></div>
+    <script>
+        function log(message) {
+            document.getElementById('console').textContent = message;
+        }
+
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function runTest() {
+            if (!window.testRunner || !window.eventSender) {
+                log('This test requires WebKitTestRunner.');
+                return;
+            }
+
+            const testElement = document.getElementById('testtext');
+
+            const startX = testElement.offsetLeft + 1;
+            const startY = testElement.offsetTop + 1;
+            const endX = testElement.offsetLeft + testElement.offsetWidth - 1;
+            const endY = testElement.offsetTop + testElement.offsetHeight - 1;
+
+            eventSender.mouseMoveTo(startX, startY);
+            eventSender.mouseDown();
+            eventSender.mouseMoveTo(endX, endY);
+            eventSender.mouseUp();
+
+            const selection = window.getSelection();
+            if (selection.rangeCount === 0 || selection.isCollapsed) {
+                log('FAIL: Could not create initial selection');
+                return;
+            }
+
+            const clickX = testElement.offsetLeft + testElement.offsetWidth / 2 + 0.7;
+            const clickY = testElement.offsetTop + testElement.offsetHeight / 2 + 0.3;
+
+            document.addEventListener('selectionchange', function (event) {
+                if (event.pageX == Math.floor(event.pageX) && event.pageY == Math.floor(event.pageY))
+                    log('FAIL: Unable to move the mouse to a fractional coordinate.')
+
+                const finalSelection = window.getSelection();
+                if (finalSelection.isCollapsed)
+                    log('PASS: Selection was properly cleared on click with fractional coordinates.');
+                else
+                    log('FAIL: Selection was not cleared on click with fractional coordinates.');
+
+                testElement.remove();
+                testRunner.notifyDone();
+            });
+
+            eventSender.mouseMoveTo(clickX, clickY);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+        }
+
+        window.addEventListener('load', runTest);
+    </script>
+</body>
+</html>

@@ -1,16 +1,16 @@
-// Copyright (c) 2023, Google Inc.
+// Copyright 2023 The BoringSSL Authors
 //
-// Permission to use, copy, modify, and/or distribute this software for any
-// purpose with or without fee is hereby granted, provided that the above
-// copyright notice and this permission notice appear in all copies.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-// WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-// SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-// OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-// CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package runner
 
@@ -26,11 +26,12 @@ import (
 )
 
 type shimDispatcher struct {
-	lock       sync.Mutex
-	nextShimID uint64
-	listener   *net.TCPListener
-	shims      map[uint64]*shimListener
-	err        error
+	lock        sync.Mutex
+	nextShimID  uint64
+	listener    *net.TCPListener
+	shims       map[uint64]*shimListener
+	closedShims map[uint64]struct{}
+	err         error
 }
 
 func newShimDispatcher() (*shimDispatcher, error) {
@@ -42,7 +43,7 @@ func newShimDispatcher() (*shimDispatcher, error) {
 	if err != nil {
 		return nil, err
 	}
-	d := &shimDispatcher{listener: listener, shims: make(map[uint64]*shimListener)}
+	d := &shimDispatcher{listener: listener, shims: make(map[uint64]*shimListener), closedShims: make(map[uint64]struct{})}
 	go d.acceptLoop()
 	return d, nil
 }
@@ -63,6 +64,7 @@ func (d *shimDispatcher) NewShim() (*shimListener, error) {
 func (d *shimDispatcher) unregisterShim(l *shimListener) {
 	d.lock.Lock()
 	delete(d.shims, l.shimID)
+	d.closedShims[l.shimID] = struct{}{}
 	d.lock.Unlock()
 }
 
@@ -97,8 +99,17 @@ func (d *shimDispatcher) dispatch(conn net.Conn) error {
 	shimID := binary.LittleEndian.Uint64(buf[:])
 	d.lock.Lock()
 	shim, ok := d.shims[shimID]
+	_, closed := d.closedShims[shimID]
 	d.lock.Unlock()
 	if !ok {
+		// If the shim is known but already closed, just silently reject the
+		// connection. This may happen if runner fails the test at the shim's
+		// first connection, but the shim tries to make a second connection
+		// before it is killed.
+		if closed {
+			conn.Close()
+			return nil
+		}
 		return fmt.Errorf("shim ID %d not found", shimID)
 	}
 

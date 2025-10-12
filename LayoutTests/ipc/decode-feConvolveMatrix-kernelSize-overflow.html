@@ -1,0 +1,225 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<p>This test passes if WebKit does not crash.</p>
+<script src="../resources/ipc.js"></script>
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+
+setTimeout(async () => {
+    if (!window.IPC)
+        return testRunner?.notifyDone();
+
+    const { CoreIPC } = await import('./coreipc.js');
+    const renderingBackendIdentifier = randomIPCID();
+    o58 = CoreIPC.newStreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(
+        0, { renderingBackendIdentifier : renderingBackendIdentifier, connectionHandle : o58 });
+    o60 = o58.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+
+    const didInitializeReply = o58.connection.waitForMessage(renderingBackendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1)
+    o58.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
+
+    s7 = 'A';
+    s10 = '';
+        o60.CacheFilter({
+            filter : {
+            subclasses : {
+                variantType : 'WebCore::CSSFilterRenderer',
+                variant : {
+                functions : [
+                    {
+                    subclasses : {
+                        variantType : 'WebCore::FEComposite',
+                        variant : {
+                        operation : 5,
+                        k1 : -86242.08364529378,
+                        k2 : -0.0000015329670121806829,
+                        k3 : 8.407790785948902e-44,
+                        k4 : -8.633401098587574e-14,
+                        operatingColorSpace : {
+                            serializableColorSpace : {
+                            alias : {
+                                m_cgColorSpace : {
+                                alias : {
+                                    variantType : 'RetainPtr<CFTypeRef>',
+                                    variant : {
+                                    object : {
+                                        alias : {
+                                        variantType : 'std::nullptr_t',
+                                        variant : null
+                                        }
+                                    }
+                                    }
+                                }
+                                }
+                            }
+                            }
+                        }
+                        }
+                    }
+                    },
+                    {
+                    subclasses : {
+                        variantType : 'WebCore::SourceAlpha',
+                        variant : {
+                        operatingColorSpace : {
+                            serializableColorSpace : {
+                            alias : {
+                                m_cgColorSpace : {
+                                alias : {
+                                    variantType : 'RetainPtr<CFStringRef>',
+                                    variant : s7
+                                }
+                                }
+                            }
+                            }
+                        }
+                        }
+                    }
+                    },
+                    {
+                    subclasses : {
+                        variantType : 'WebCore::FEFlood',
+                        variant : {
+                        floodColor : { data : {} },
+                        floodOpacity : -2.4559581509165345e-24,
+                        operatingColorSpace : {
+                            serializableColorSpace : {
+                            alias : {
+                                m_cgColorSpace : {
+                                alias : {
+                                    variantType : 'WebCore::ColorSpace',
+                                    variant : 0
+                                }
+                                }
+                            }
+                            }
+                        }
+                        }
+                    }
+                    },
+                    {
+                    subclasses : {
+                        variantType : 'WebCore::FEComposite',
+                        variant : {
+                        operation : 5,
+                        k1 : -66822039598.69408,
+                        k2 : -1.175494351e-38,
+                        k3 : 1.0369608636003646e-43,
+                        k4 : 4.344025239406933e-44,
+                        operatingColorSpace : {
+                            serializableColorSpace : {
+                            alias : {
+                                m_cgColorSpace : {
+                                alias : {
+                                    variantType : 'WebCore::ColorSpace',
+                                    variant : 12
+                                }
+                                }
+                            }
+                            }
+                        }
+                        }
+                    }
+                    },
+                    {
+                    subclasses : {
+                        variantType : 'WebCore::FEMerge',
+                        variant : {
+                        numberOfEffectInputs : 93,
+                        operatingColorSpace : {
+                            serializableColorSpace : {
+                            alias : {
+                                m_cgColorSpace : {
+                                alias : {
+                                    variantType : 'RetainPtr<CFStringRef>',
+                                    variant : s10
+                                }
+                                }
+                            }
+                            }
+                        }
+                        }
+                    }
+                    },
+                    {
+                    subclasses : {
+                        variantType : 'WebCore::SourceGraphic',
+                        variant : {
+                        operatingColorSpace : {
+                            serializableColorSpace : {
+                            alias : {
+                                m_cgColorSpace : {
+                                alias : {
+                                    variantType : 'WebCore::ColorSpace',
+                                    variant : 13
+                                }
+                                }
+                            }
+                            }
+                        }
+                        }
+                    }
+                    },
+                    {
+                    subclasses : {
+                        variantType : 'WebCore::FEConvolveMatrix',
+                        variant : {
+                        kernelSize : { width : 363433, height : 296419329 },
+                        divisor : 653.8013334138727,
+                        bias : -1.17549421e-38,
+                        targetOffset : { x : 28, y : 624448 },
+                        edgeMode : 0,
+                        kernelUnitLength : {
+                            x : 1.789584885814042e-10,
+                            y : 1.7656360650492695e-43
+                        },
+                        preserveAlpha : false,
+                        kernel : [],
+                        operatingColorSpace : {
+                            serializableColorSpace : {
+                            alias : {
+                                m_cgColorSpace : {
+                                alias : {
+                                    variantType : 'RetainPtr<CFTypeRef>',
+                                    variant : {
+                                    object : {
+                                        alias : {
+                                        variantType : 'WebKit::CoreIPCData',
+                                        variant : { dataReference : {} }
+                                        }
+                                    }
+                                    }
+                                }
+                                }
+                            }
+                            }
+                        }
+                        }
+                    }
+                    }
+                ],
+                filterRenderingModes : 135,
+                filterScale :
+                    { width : 3.2175183536110756e-38, height : 1.4142135623730951 },
+                filterRegion : {
+                    location :
+                    { x : -509502506841300.9, y : -5.566387275235406e-27 },
+                    size : {
+                    width : 1.961817850054744e-44,
+                    height : 1.723597111119525e-43
+                    }
+                }
+                }
+            }
+            }
+        });
+
+    o58.connection.invalidate();
+}, 20);
+
+setTimeout(() => {
+    testRunner?.notifyDone();
+}, 500);
+</script>
+

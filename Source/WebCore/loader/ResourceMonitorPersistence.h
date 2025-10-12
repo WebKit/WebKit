@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "SQLiteDatabase.h"
+#include <WebCore/SQLiteDatabase.h>
 #include <wtf/ContinuousApproximateTime.h>
 #include <wtf/text/WTFString.h>
 
@@ -34,7 +34,7 @@ namespace WebCore {
 class SQLiteDatabase;
 
 class ResourceMonitorPersistence final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ResourceMonitorPersistence);
 public:
     struct Record {
         String host;

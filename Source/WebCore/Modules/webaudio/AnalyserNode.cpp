@@ -76,28 +76,28 @@ AnalyserNode::~AnalyserNode()
 
 void AnalyserNode::process(size_t framesToProcess)
 {
-    AudioBus& outputBus = output(0)->bus();
+    Ref outputBus = output(0)->bus();
 
     if (!isInitialized()) {
-        outputBus.zero();
+        outputBus->zero();
         return;
     }
 
-    AudioBus& inputBus = input(0)->bus();
+    Ref inputBus = input(0)->bus();
 
     // Give the analyser the audio which is passing through this AudioNode. This must always
     // be done so that the state of the Analyser reflects the current input.
-    m_analyser.writeInput(inputBus, framesToProcess);
+    m_analyser.writeInput(inputBus.get(), framesToProcess);
 
     if (!input(0)->isConnected()) {
-        outputBus.zero();
+        outputBus->zero();
         return;
     }
 
     // For in-place processing, our override of pullInputs() will just pass the audio data through unchanged if the channel count matches from input to output
     // (resulting in inputBus == outputBus). Otherwise, do an up-mix to stereo.
-    if (&inputBus != &outputBus)
-        outputBus.copyFrom(inputBus);
+    if (inputBus.ptr() != outputBus.ptr())
+        outputBus->copyFrom(inputBus.get());
 }
 
 ExceptionOr<void> AnalyserNode::setFftSize(unsigned size)

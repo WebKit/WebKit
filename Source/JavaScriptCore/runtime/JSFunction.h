@@ -23,10 +23,10 @@
 
 #pragma once
 
-#include "FunctionRareData.h"
-#include "InternalFunction.h"
-#include "JSCallee.h"
-#include "JSScope.h"
+#include <JavaScriptCore/FunctionRareData.h>
+#include <JavaScriptCore/InternalFunction.h>
+#include <JavaScriptCore/JSCallee.h>
+#include <JavaScriptCore/JSScope.h>
 
 namespace JSC {
 
@@ -106,14 +106,16 @@ public:
     }
 
     // To call any of these methods include JSFunctionInlines.h
-    bool isHostFunction() const;
-    bool isNonBoundHostFunction() const;
-    FunctionExecutable* jsExecutable() const;
-    Intrinsic intrinsic() const;
+    inline bool isHostFunction() const;
+    inline bool isNonBoundHostFunction() const;
+    inline FunctionExecutable* jsExecutable() const;
+    inline Intrinsic intrinsic() const;
 
     JS_EXPORT_PRIVATE const SourceCode* sourceCode() const;
 
     DECLARE_EXPORT_INFO;
+
+    DECLARE_VISIT_CHILDREN;
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
@@ -202,8 +204,6 @@ protected:
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
 
     static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
-
-    DECLARE_VISIT_CHILDREN;
 
 private:
     static JSFunction* createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)

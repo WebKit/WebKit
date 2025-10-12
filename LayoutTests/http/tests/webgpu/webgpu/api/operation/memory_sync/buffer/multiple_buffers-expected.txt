@@ -156,9 +156,9 @@ FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-p
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -166,9 +166,9 @@ FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-p
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -190,9 +190,9 @@ FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-p
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -200,9 +200,9 @@ FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-p
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -224,9 +224,9 @@ FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-p
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -234,9 +234,9 @@ FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-p
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -258,9 +258,9 @@ FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-b
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -268,9 +268,9 @@ FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-b
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -292,9 +292,9 @@ FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-b
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -302,9 +302,9 @@ FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-b
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -326,9 +326,9 @@ FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-b
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -336,9 +336,9 @@ FAIL :wr:boundary="queue-op";readOp="input-indirect-index";readContext="render-b
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -400,9 +400,9 @@ FAIL :wr:boundary="command-buffer";readOp="input-indirect-index";readContext="re
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -410,9 +410,9 @@ FAIL :wr:boundary="command-buffer";readOp="input-indirect-index";readContext="re
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -434,9 +434,9 @@ FAIL :wr:boundary="command-buffer";readOp="input-indirect-index";readContext="re
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -444,9 +444,9 @@ FAIL :wr:boundary="command-buffer";readOp="input-indirect-index";readContext="re
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -468,9 +468,9 @@ FAIL :wr:boundary="command-buffer";readOp="input-indirect-index";readContext="re
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -478,9 +478,9 @@ FAIL :wr:boundary="command-buffer";readOp="input-indirect-index";readContext="re
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -502,9 +502,9 @@ FAIL :wr:boundary="command-buffer";readOp="input-indirect-index";readContext="re
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
@@ -512,9 +512,9 @@ FAIL :wr:boundary="command-buffer";readOp="input-indirect-index";readContext="re
        actual == 0x: 00000000
        failed ->           xx
      expected ==     00000001
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
     verifyData@http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js:964:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.spec.js:180:17
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.

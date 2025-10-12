@@ -78,7 +78,7 @@ struct Benchmark {
         std::unique_ptr<WithPadding<double>[]> words = makeUniqueWithoutFastMallocCheck<WithPadding<double>[]>(numThreadGroups);
         std::unique_ptr<RefPtr<Thread>[]> threads = makeUniqueWithoutFastMallocCheck<RefPtr<Thread>[]>(numThreadGroups * numThreadsPerGroup);
 
-        volatile bool keepGoing = true;
+        std::atomic<bool> keepGoing = true;
 
         MonotonicTime before = MonotonicTime::now();
     

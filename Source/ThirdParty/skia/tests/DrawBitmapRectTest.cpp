@@ -12,6 +12,7 @@
 #include "include/core/SkMatrix.h"
 #include "include/core/SkPaint.h"
 #include "include/core/SkPath.h"
+#include "include/core/SkPathBuilder.h"
 #include "include/core/SkRect.h"
 #include "include/core/SkSamplingOptions.h"
 #include "include/core/SkScalar.h"
@@ -186,7 +187,7 @@ static void test_giantrepeat_crbug118018(skiatest::Reporter* reporter) {
         int fWidth;
         int fHeight;
     } gTests[] = {
-        { 0x1b294, 0x7f},   // crbug 118018 (width exceeds 64K)... should draw safely now.
+        { 0x1b294, 0x7f},   // crbug.com/40054915 (width exceeds 64K)... should draw safely now.
         { 0xFFFF, 0x7f },   // should draw, test max width
         { 0x7f, 0xFFFF },   // should draw, test max height
     };
@@ -205,9 +206,9 @@ static void test_nan_antihair() {
 
     SkCanvas canvas(bm);
 
-    SkPath path;
-    path.moveTo(0, 0);
-    path.lineTo(10, SK_ScalarNaN);
+    SkPathBuilder builder;
+    builder.moveTo(0, 0);
+    builder.lineTo(10, SK_ScalarNaN);
 
     SkPaint paint;
     paint.setAntiAlias(true);
@@ -217,7 +218,7 @@ static void test_nan_antihair() {
     // this would trigger an assert/crash.
     //
     // see rev. 3558
-    canvas.drawPath(path, paint);
+    canvas.drawPath(builder.detach(), paint);
 }
 
 static bool check_for_all_zeros(const SkBitmap& bm) {

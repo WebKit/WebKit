@@ -28,11 +28,11 @@ struct ifaddrs {
   // We don't need them (yet?).
 };
 
-namespace rtc {
+namespace webrtc {
 
 int getifaddrs(struct ifaddrs** result);
 void freeifaddrs(struct ifaddrs* addrs);
 
-}  // namespace rtc
+}  // namespace webrtc
 
 #endif  // RTC_BASE_IFADDRS_ANDROID_H_

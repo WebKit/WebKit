@@ -11,8 +11,14 @@
 #include "modules/audio_processing/aec3/erl_estimator.h"
 
 #include <algorithm>
+#include <array>
+#include <cstddef>
+#include <iterator>
 #include <numeric>
+#include <vector>
 
+#include "api/array_view.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -40,9 +46,8 @@ void ErlEstimator::Reset() {
 
 void ErlEstimator::Update(
     const std::vector<bool>& converged_filters,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> render_spectra,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
-        capture_spectra) {
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> render_spectra,
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> capture_spectra) {
   const size_t num_capture_channels = converged_filters.size();
   RTC_DCHECK_EQ(capture_spectra.size(), num_capture_channels);
 
@@ -85,7 +90,7 @@ void ErlEstimator::Update(
 
   const size_t num_render_channels = render_spectra.size();
   std::array<float, kFftLengthBy2Plus1> max_render_spectrum_data;
-  rtc::ArrayView<const float, kFftLengthBy2Plus1> max_render_spectrum =
+  ArrayView<const float, kFftLengthBy2Plus1> max_render_spectrum =
       render_spectra[/*channel=*/0];
   if (num_render_channels > 1) {
     std::copy(render_spectra[0].begin(), render_spectra[0].end(),

@@ -30,6 +30,8 @@
 #error "Only <wpe/wpe-platform.h> can be included directly."
 #endif
 
+#cmakedefine WPE_PLATFORM_BUFFER_ANDROID
+
 #cmakedefine WPE_PLATFORM_DRM
 #cmakedefine WPE_PLATFORM_HEADLESS
 #cmakedefine WPE_PLATFORM_WAYLAND

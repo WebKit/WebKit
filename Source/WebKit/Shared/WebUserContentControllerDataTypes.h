@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ContentWorldData.h"
 #include "ContentWorldShared.h"
 #include "ScriptMessageHandlerIdentifier.h"
 #include "UserScriptIdentifier.h"
@@ -32,28 +33,23 @@
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebKit {
 
 struct WebUserScriptData {
     UserScriptIdentifier identifier;
-    ContentWorldIdentifier worldIdentifier;
+    ContentWorldData worldData;
     WebCore::UserScript userScript;
 };
 
 struct WebUserStyleSheetData {
     UserStyleSheetIdentifier identifier;
-    ContentWorldIdentifier worldIdentifier;
+    ContentWorldData worldData;
     WebCore::UserStyleSheet userStyleSheet;
 };
 
 struct WebScriptMessageHandlerData {
     ScriptMessageHandlerIdentifier identifier;
-    ContentWorldIdentifier worldIdentifier;
+    ContentWorldData worldData;
     String name;
 };
 

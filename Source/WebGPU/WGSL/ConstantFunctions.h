@@ -150,9 +150,6 @@ static ConstantValue zeroValue(const Type* type)
         },
         [&](const Types::TypeConstructor&) -> ConstantValue {
             RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Types::Bottom&) -> ConstantValue {
-            RELEASE_ASSERT_NOT_REACHED();
         });
 }
 

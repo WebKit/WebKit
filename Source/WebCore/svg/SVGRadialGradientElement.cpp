@@ -37,6 +37,7 @@
 #include "SVGParsingError.h"
 #include "SVGStopElement.h"
 #include "SVGUnitTypes.h"
+#include "Settings.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -157,7 +158,7 @@ bool SVGRadialGradientElement::collectGradientAttributes(RadialGradientAttribute
     if (!renderer())
         return false;
 
-    UncheckedKeyHashSet<RefPtr<SVGGradientElement>> processedGradients;
+    HashSet<RefPtr<SVGGradientElement>> processedGradients;
     RefPtr<SVGGradientElement> current = this;
 
     setGradientAttributes(*current, attributes);

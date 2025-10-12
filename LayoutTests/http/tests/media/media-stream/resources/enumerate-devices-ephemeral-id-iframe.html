@@ -7,7 +7,7 @@
             testRunner.addMockCameraDevice(event.data.cameraId, event.data.cameraName);
         }
 
-        await navigator.mediaDevices.getUserMedia({ video: true });
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
 
         testRunner.setMockMediaDeviceIsEphemeral(event.data.cameraId, event.data.isEphemeral);
 
@@ -19,6 +19,7 @@
         });
 
         parent.postMessage(JSON.stringify(result), '*');
+        stream.getTracks().forEach(track => track.stop());
     }
 
     window.addEventListener('message', enumerate);

@@ -26,10 +26,10 @@
 
 #pragma once
 
-#include "CSSColor.h"
-#include "CSSPosition.h"
-#include "CSSValueTypes.h"
-#include "ColorInterpolationMethod.h"
+#include <WebCore/CSSColor.h>
+#include <WebCore/CSSPosition.h>
+#include <WebCore/CSSValueTypes.h>
+#include <WebCore/ColorInterpolationMethod.h>
 
 namespace WebCore {
 namespace CSS {

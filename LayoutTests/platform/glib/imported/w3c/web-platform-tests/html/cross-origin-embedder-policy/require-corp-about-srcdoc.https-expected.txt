@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Refused to display 'https://web-platform.test:9443/common/blank.html' in a frame because of Cross-Origin-Embedder-Policy.
-CONSOLE MESSAGE: Sandbox access violation: Blocked a frame at "https://web-platform.test:9443" from accessing a frame at "https://web-platform.test:9443".  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
 
 
 PASS Wait for the DOM to be built.

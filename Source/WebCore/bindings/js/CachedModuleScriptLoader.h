@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CachedResourceClient.h"
-#include "CachedResourceHandle.h"
-#include "CachedScriptFetcher.h"
-#include "ModuleScriptLoader.h"
+#include <WebCore/CachedResourceClient.h>
+#include <WebCore/CachedResourceHandle.h>
+#include <WebCore/CachedScriptFetcher.h>
+#include <WebCore/ModuleScriptLoader.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

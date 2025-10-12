@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ServiceWorkerIdentifier.h"
+#include <WebCore/ServiceWorkerIdentifier.h>
 
 namespace WebCore {
 

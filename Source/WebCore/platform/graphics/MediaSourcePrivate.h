@@ -32,8 +32,8 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include "MediaPlayer.h"
-#include "PlatformTimeRanges.h"
+#include <WebCore/MediaPlayer.h>
+#include <WebCore/PlatformTimeRanges.h>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Vector.h>
@@ -101,7 +101,7 @@ public:
     MediaTime currentTime() const;
 
     Ref<MediaTimePromise> waitForTarget(const SeekTarget&);
-    Ref<MediaPromise> seekToTime(const MediaTime&);
+    void seekToTime(const MediaTime&);
 
     virtual void setTimeFudgeFactor(const MediaTime& fudgeFactor) { m_timeFudgeFactor = fudgeFactor; }
     MediaTime timeFudgeFactor() const { return m_timeFudgeFactor; }

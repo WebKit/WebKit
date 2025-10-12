@@ -9,11 +9,14 @@
  */
 #include "rtc_base/experiments/field_trial_parser.h"
 
-#include <inttypes.h>
-
-#include <algorithm>
+#include <cinttypes>
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <initializer_list>
 #include <map>
-#include <type_traits>
+#include <optional>
+#include <string>
 #include <utility>
 
 #include "absl/strings/string_view.h"
@@ -138,7 +141,7 @@ template <>
 std::optional<int> ParseTypedParameter<int>(absl::string_view str) {
   int64_t value;
   if (sscanf(std::string(str).c_str(), "%" SCNd64, &value) == 1) {
-    if (rtc::IsValueInRangeForNumericType<int, int64_t>(value)) {
+    if (IsValueInRangeForNumericType<int, int64_t>(value)) {
       return static_cast<int>(value);
     }
   }
@@ -149,7 +152,7 @@ template <>
 std::optional<unsigned> ParseTypedParameter<unsigned>(absl::string_view str) {
   int64_t value;
   if (sscanf(std::string(str).c_str(), "%" SCNd64, &value) == 1) {
-    if (rtc::IsValueInRangeForNumericType<unsigned, int64_t>(value)) {
+    if (IsValueInRangeForNumericType<unsigned, int64_t>(value)) {
       return static_cast<unsigned>(value);
     }
   }
@@ -193,7 +196,7 @@ bool FieldTrialFlag::Get() const {
   return value_;
 }
 
-webrtc::FieldTrialFlag::operator bool() const {
+FieldTrialFlag::operator bool() const {
   return value_;
 }
 

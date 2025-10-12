@@ -228,7 +228,7 @@
 // These methods may be called on non-main thread.
 - (void)setSize:(CGSize)size {
   __weak RTCEAGLVideoView *weakSelf = self;
-  dispatch_async(dispatch_get_main_queue(), ^{
+  dispatch_async(mainDispatchQueueSingleton(), ^{
     RTCEAGLVideoView *strongSelf = weakSelf;
     [strongSelf.delegate videoView:strongSelf didChangeVideoSize:size];
   });

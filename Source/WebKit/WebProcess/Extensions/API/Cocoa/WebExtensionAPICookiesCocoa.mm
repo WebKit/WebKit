@@ -51,7 +51,6 @@ static NSString * const hostOnlyKey = @"hostOnly";
 static NSString * const httpOnlyKey = @"httpOnly";
 static NSString * const idKey = @"id";
 static NSString * const incognitoKey = @"incognito";
-static NSString * const nameKey = @"name";
 static NSString * const pathKey = @"path";
 static NSString * const sameSiteKey = @"sameSite";
 static NSString * const secureKey = @"secure";
@@ -122,7 +121,7 @@ static inline NSDictionary *toWebAPI(const WebExtensionCookieParameters& cookieP
         domainKey: cookie.domain.createNSString().get(),
         hostOnlyKey: @(!cookie.domain.startsWith('.')),
         httpOnlyKey: @(cookie.httpOnly),
-        nameKey: cookie.name.createNSString().get(),
+        @"name": cookie.name.createNSString().get(),
         pathKey: cookie.path.createNSString().get(),
         sameSiteKey: toWebAPI(cookie.sameSite),
         secureKey: @(cookie.secure),
@@ -155,7 +154,7 @@ static inline NSArray *toWebAPI(const HashMap<PAL::SessionID, Vector<WebExtensio
 std::optional<WebExtensionAPICookies::ParsedDetails> WebExtensionAPICookies::parseCookieDetails(NSDictionary *details, NSArray *requiredKeys, NSString **outExceptionString)
 {
     static NSDictionary<NSString *, id> *types = @{
-        nameKey: NSString.class,
+        @"name": NSString.class,
         storeIdKey: NSString.class,
         urlKey: NSString.class,
     };
@@ -163,9 +162,9 @@ std::optional<WebExtensionAPICookies::ParsedDetails> WebExtensionAPICookies::par
     if (!validateDictionary(details, @"details", requiredKeys, types, outExceptionString))
         return std::nullopt;
 
-    String name = details[nameKey];
+    String name = details[@"name"];
     if (!name.isNull() && name.isEmpty()) {
-        *outExceptionString = toErrorString(nullString(), nameKey, @"it must not be empty").createNSString().autorelease();
+        *outExceptionString = toErrorString(nullString(), @"name", @"it must not be empty").createNSString().autorelease();
         return std::nullopt;
     }
 
@@ -204,7 +203,7 @@ void WebExtensionAPICookies::get(NSDictionary *details, Ref<WebExtensionCallback
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/cookies/get
 
-    auto parsedDetails = parseCookieDetails(details, @[ nameKey, urlKey ], outExceptionString);
+    auto parsedDetails = parseCookieDetails(details, @[ @"name", urlKey ], outExceptionString);
     if (!parsedDetails)
         return;
 
@@ -308,7 +307,7 @@ void WebExtensionAPICookies::set(NSDictionary *details, Ref<WebExtensionCallback
     auto cookieParameters = WebExtensionCookieParameters { sessionID, { } };
     auto& cookie = cookieParameters.cookie;
 
-    cookie.name = details[nameKey] ?: @"";
+    cookie.name = details[@"name"] ?: @"";
     cookie.value = details[valueKey] ?: @"";
     cookie.secure = details[secureKey] ? objectForKey<NSNumber>(details, secureKey).boolValue : false;
     auto *domain = dynamic_objc_cast<NSString>(details[domainKey]);
@@ -350,7 +349,7 @@ void WebExtensionAPICookies::remove(NSDictionary *details, Ref<WebExtensionCallb
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/cookies/remove
 
-    auto parsedDetails = parseCookieDetails(details, @[ nameKey, urlKey ], outExceptionString);
+    auto parsedDetails = parseCookieDetails(details, @[ @"name", urlKey ], outExceptionString);
     if (!parsedDetails)
         return;
 

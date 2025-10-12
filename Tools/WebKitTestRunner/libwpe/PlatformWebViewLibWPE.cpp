@@ -51,6 +51,7 @@ PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const Tes
     m_window = new PlatformWebViewClientLibWPE(configuration);
 #endif
 
+    m_window->resize({ options.viewWidth(), options.viewHeight() });
     m_view = m_window->view();
 }
 
@@ -59,8 +60,12 @@ PlatformWebView::~PlatformWebView()
     delete m_window;
 }
 
-void PlatformWebView::resizeTo(unsigned, unsigned, WebViewSizingMode)
+void PlatformWebView::resizeTo(unsigned width, unsigned height, WebViewSizingMode sizingMode)
 {
+    WKRect frame = windowFrame();
+    frame.size.width = width;
+    frame.size.height = height;
+    setWindowFrame(frame, sizingMode);
 }
 
 WKPageRef PlatformWebView::page()
@@ -75,11 +80,12 @@ void PlatformWebView::focus()
 
 WKRect PlatformWebView::windowFrame()
 {
-    return { { 0, 0 }, { 1, 1 } };
+    return { { 0, 0 }, m_window->size() };
 }
 
-void PlatformWebView::setWindowFrame(WKRect, WebViewSizingMode)
+void PlatformWebView::setWindowFrame(WKRect frame, WebViewSizingMode)
 {
+    m_window->resize(frame.size);
 }
 
 void PlatformWebView::didInitializeClients()

@@ -1,0 +1,5 @@
+
+FAIL Property container-type value 'scroll-state' assert_true: 'scroll-state' is a supported value for container-type. expected true got false
+FAIL Property container-type value 'scroll-state size' assert_true: 'scroll-state size' is a supported value for container-type. expected true got false
+FAIL Property container-type value 'inline-size scroll-state' assert_true: 'inline-size scroll-state' is a supported value for container-type. expected true got false
+

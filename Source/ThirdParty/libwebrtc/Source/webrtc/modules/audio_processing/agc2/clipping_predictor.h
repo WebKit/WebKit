@@ -13,7 +13,6 @@
 
 #include <memory>
 #include <optional>
-#include <vector>
 
 #include "api/audio/audio_processing.h"
 #include "modules/audio_processing/include/audio_frame_view.h"

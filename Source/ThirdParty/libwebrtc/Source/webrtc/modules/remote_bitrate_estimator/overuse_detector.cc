@@ -10,13 +10,11 @@
 
 #include "modules/remote_bitrate_estimator/overuse_detector.h"
 
-#include <math.h>
-#include <stdio.h>
-
 #include <algorithm>
-#include <string>
+#include <cmath>
+#include <cstdint>
 
-#include "rtc_base/checks.h"
+#include "api/transport/bandwidth_usage.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
@@ -93,7 +91,7 @@ void OveruseDetector::UpdateThreshold(double modified_offset, int64_t now_ms) {
   const int64_t kMaxTimeDeltaMs = 100;
   int64_t time_delta_ms = std::min(now_ms - last_update_ms_, kMaxTimeDeltaMs);
   threshold_ += k * (fabs(modified_offset) - threshold_) * time_delta_ms;
-  threshold_ = rtc::SafeClamp(threshold_, 6.f, 600.f);
+  threshold_ = SafeClamp(threshold_, 6.f, 600.f);
   last_update_ms_ = now_ms;
 }
 

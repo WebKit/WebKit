@@ -1,0 +1,4 @@
+
+
+PASS Cross-origin elements with valid TAO have correct renderTime, with invalid TAO have renderTime set to 0.
+

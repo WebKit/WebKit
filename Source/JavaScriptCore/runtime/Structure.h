@@ -25,23 +25,23 @@
 
 #pragma once
 
-#include "ClassInfo.h"
-#include "Concurrency.h"
-#include "ConcurrentJSLock.h"
-#include "DeletePropertySlot.h"
-#include "IndexingType.h"
-#include "JSCJSValue.h"
-#include "JSCast.h"
-#include "JSType.h"
-#include "JSTypeInfo.h"
-#include "PropertyName.h"
-#include "PropertyNameArray.h"
-#include "PropertyOffset.h"
-#include "PutPropertySlot.h"
-#include "StructureRareData.h"
-#include "StructureTransitionTable.h"
-#include "TypeInfoBlob.h"
-#include "Watchpoint.h"
+#include <JavaScriptCore/ClassInfo.h>
+#include <JavaScriptCore/Concurrency.h>
+#include <JavaScriptCore/ConcurrentJSLock.h>
+#include <JavaScriptCore/DeletePropertySlot.h>
+#include <JavaScriptCore/IndexingType.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSCast.h>
+#include <JavaScriptCore/JSType.h>
+#include <JavaScriptCore/JSTypeInfo.h>
+#include <JavaScriptCore/PropertyName.h>
+#include <JavaScriptCore/PropertyNameArray.h>
+#include <JavaScriptCore/PropertyOffset.h>
+#include <JavaScriptCore/PutPropertySlot.h>
+#include <JavaScriptCore/StructureRareData.h>
+#include <JavaScriptCore/StructureTransitionTable.h>
+#include <JavaScriptCore/TypeInfoBlob.h>
+#include <JavaScriptCore/Watchpoint.h>
 #include <wtf/Atomics.h>
 #include <wtf/CompactPointerTuple.h>
 #include <wtf/CompactPtr.h>
@@ -217,7 +217,7 @@ public:
     using SeenProperties = TinyBloomFilter<CompactPtr<UniquedStringImpl>::StorageType>;
 
     enum PolyProtoTag { PolyProto };
-    inline static Structure* create(VM&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0);
+    inline static Structure* create(VM&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0); // Defined in StructureInlines.h
     static Structure* create(PolyProtoTag, VM&, JSGlobalObject*, JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0);
 
     ~Structure();
@@ -255,7 +255,7 @@ private:
 public:
     StructureID id() const { return StructureID::encode(this); }
 
-    int32_t typeInfoBlob() const { return m_blob.blob(); }
+    uint32_t typeInfoBlob() const { return m_blob.blob(); }
 
     bool isProxy() const
     {
@@ -697,9 +697,9 @@ public:
     bool canCachePropertyNameEnumerator(VM&) const;
     bool canAccessPropertiesQuicklyForEnumeration() const;
 
-    JSImmutableButterfly* cachedPropertyNames(CachedPropertyNamesKind) const;
-    JSImmutableButterfly* cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind) const;
-    void setCachedPropertyNames(VM&, CachedPropertyNamesKind, JSImmutableButterfly*);
+    JSCellButterfly* cachedPropertyNames(CachedPropertyNamesKind) const;
+    JSCellButterfly* cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind) const;
+    void setCachedPropertyNames(VM&, CachedPropertyNamesKind, JSCellButterfly*);
     bool canCacheOwnPropertyNames() const;
 
     void getPropertyNamesFromStructure(VM&, PropertyNameArray&, DontEnumPropertiesMode);

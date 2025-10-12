@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CSSKeywordValue.h"
-#include "CSSNumericValue.h"
-#include "Element.h"
-#include "ScrollAxis.h"
+#include <WebCore/CSSKeywordValue.h>
+#include <WebCore/CSSNumericValue.h>
+#include <WebCore/Element.h>
+#include <WebCore/ScrollAxis.h>
 
 namespace WebCore {
 

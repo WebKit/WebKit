@@ -1,6 +1,10 @@
 include(CheckCXXSymbolExists)
 
 if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
+    list(APPEND WebCore_LIBRARIES
+        GLib::GioUnix
+    )
+
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/Modules/mediastream/gstreamer"
         "${WEBCORE_DIR}/platform/graphics/gstreamer"
@@ -73,17 +77,6 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         # Specify video decoding limits for platform/graphics/gstreamer/GStreamerRegistryScanner.cpp
         list(APPEND WebCore_PRIVATE_DEFINITIONS VIDEO_DECODING_LIMIT="${VIDEO_DECODING_LIMIT}")
     endif ()
-endif ()
-
-if (USE_GSTREAMER_TRANSCODER)
-    if (NOT USE_GSTREAMER_FULL)
-        list(APPEND WebCore_LIBRARIES
-            ${GSTREAMER_TRANSCODER_LIBRARIES}
-        )
-    endif ()
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${GSTREAMER_TRANSCODER_INCLUDE_DIRS}
-    )
 endif ()
 
 if (ENABLE_VIDEO)

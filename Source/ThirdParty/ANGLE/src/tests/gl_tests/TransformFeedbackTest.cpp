@@ -4,10 +4,13 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
-#include "util/gles_loader_autogen.h"
 #include "util/random_utils.h"
 #include "util/test_utils.h"
 
@@ -1651,6 +1654,65 @@ TEST_P(TransformFeedbackTest, CaptureAndCopy)
     glCopyBufferSubData(GL_TRANSFORM_FEEDBACK_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, 1);
 
     EXPECT_GL_NO_ERROR();
+}
+
+// Test that the captured xfb buffer can be used as uniform buffer.
+TEST_P(TransformFeedbackTest, CaptureThenUseAsUBO)
+{
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Set the program's transform feedback varyings (just gl_Position)
+    std::vector<std::string> tfVaryings;
+    tfVaryings.push_back("gl_Position");
+    compileDefaultProgram(tfVaryings, GL_INTERLEAVED_ATTRIBS);
+    glUseProgram(mProgram);
+    GLint positionLocation = glGetAttribLocation(mProgram, essl1_shaders::PositionAttrib());
+
+    // First pass: draw 3 points to the XFB buffer
+    glEnable(GL_RASTERIZER_DISCARD);
+    const GLfloat vertices[] = {-0.5f, 0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f};
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+    glEnableVertexAttribArray(positionLocation);
+
+    // Bind the buffer for transform feedback output and start transform feedback
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTransformFeedbackBuffer);
+    glBeginTransformFeedback(GL_POINTS);
+
+    glDrawArrays(GL_POINTS, 0, 3);
+    // End the transform feedback
+    glEndTransformFeedback();
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 0);
+    glDisable(GL_RASTERIZER_DISCARD);
+
+    // Second pass: draw from the feedback buffer
+    {
+        glBindBuffer(GL_UNIFORM_BUFFER, mTransformFeedbackBuffer);
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, mTransformFeedbackBuffer);
+        EXPECT_GL_NO_ERROR();
+
+        constexpr char kVerifyUBO[] = R"(#version 300 es
+        precision mediump float;
+        uniform block {
+            vec3 data[3];
+        } ubo;
+        out vec4 colorOut;
+        void main()
+        {
+            bool data0Ok = all(equal(ubo.data[0], vec3(-0.5f, 0.5f, 0.5f)));
+            bool data1Ok = all(equal(ubo.data[1], vec3(-0.5f, -0.5f, 0.5f)));
+            bool data2Ok = all(equal(ubo.data[2], vec3(0.5f, -0.5f, 0.5f)));
+            if (data0Ok && data1Ok && data2Ok)
+                colorOut = vec4(0, 1.0, 0, 1.0);
+            else
+                colorOut = vec4(0, 0, 1.0, 1.0);
+        })";
+
+        ANGLE_GL_PROGRAM(verifyUbo, essl3_shaders::vs::Simple(), kVerifyUBO);
+        drawQuad(verifyUbo, essl3_shaders::PositionAttrib(), 0.5);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::green);
+    }
 }
 
 class TransformFeedbackLifetimeTest : public TransformFeedbackTest
@@ -4431,6 +4493,175 @@ color = var;
     glDrawArrays(GL_POINTS, 0, 1);
     glEndTransformFeedback();
     glFlush();
+}
+
+// Test that geometry or tessellation shader support allows transform feedback primitive to be
+// different from the draw call.
+TEST_P(TransformFeedbackTestES31, ModeMismatchButSameClass)
+{
+    // Geometry and tessellation shaders allow the transform feedback mode to match the draw call's
+    // primitive mode class but not necessarily identically.
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader") &&
+                       !IsGLExtensionEnabled("GL_OES_geometry_shader") &&
+                       !IsGLExtensionEnabled("GL_EXT_tessellation_shader") &&
+                       !IsGLExtensionEnabled("GL_OES_tessellation_shader"));
+
+    std::vector<std::string> tfVaryings;
+    tfVaryings.push_back("gl_Position");
+    mProgram = CompileProgramWithTransformFeedback(
+        essl3_shaders::vs::Simple(), essl3_shaders::fs::Red(), tfVaryings, GL_INTERLEAVED_ATTRIBS);
+
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, mTransformFeedback);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTransformFeedbackBuffer);
+    glUseProgram(mProgram);
+    glBeginTransformFeedback(GL_TRIANGLES);
+
+    const GLint posLoc            = glGetAttribLocation(mProgram, essl3_shaders::PositionAttrib());
+    constexpr GLfloat kVertices[] = {-1, -1, 1, -1, -1, 1, 1, 1};
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 8, kVertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(posLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(posLoc);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glEndTransformFeedback();
+
+    const GLfloat *mapped = (const GLfloat *)glMapBufferRange(
+        GL_TRANSFORM_FEEDBACK_BUFFER, 0, 6 * 4 * sizeof(float), GL_MAP_READ_BIT);
+
+    // First triangle
+    EXPECT_EQ(mapped[0], -1.0);
+    EXPECT_EQ(mapped[1], -1.0);
+    EXPECT_EQ(mapped[2], 0.0);
+    EXPECT_EQ(mapped[3], 1.0);
+
+    EXPECT_EQ(mapped[4], 1.0);
+    EXPECT_EQ(mapped[5], -1.0);
+    EXPECT_EQ(mapped[6], 0.0);
+    EXPECT_EQ(mapped[7], 1.0);
+
+    EXPECT_EQ(mapped[8], -1.0);
+    EXPECT_EQ(mapped[9], 1.0);
+    EXPECT_EQ(mapped[10], 0.0);
+    EXPECT_EQ(mapped[11], 1.0);
+
+    // Second triangle.  The ordering of the vertices is driver-dependent.
+    // Most drivers produce (-1, 1), (1, -1), (1, 1) (variant 1). But some drivers produce
+    // (1, -1), (1, 1), (-1, 1) (variant 2).
+    const bool isVariant2 = mapped[12] == 1;
+
+    EXPECT_EQ(mapped[12], isVariant2 ? 1.0 : -1.0);
+    EXPECT_EQ(mapped[13], isVariant2 ? -1.0 : 1.0);
+    EXPECT_EQ(mapped[14], 0.0);
+    EXPECT_EQ(mapped[15], 1.0);
+
+    EXPECT_EQ(mapped[16], 1.0);
+    EXPECT_EQ(mapped[17], isVariant2 ? 1.0 : -1.0);
+    EXPECT_EQ(mapped[18], 0.0);
+    EXPECT_EQ(mapped[19], 1.0);
+
+    EXPECT_EQ(mapped[20], isVariant2 ? -1.0 : 1.0);
+    EXPECT_EQ(mapped[21], 1.0);
+    EXPECT_EQ(mapped[22], 0.0);
+    EXPECT_EQ(mapped[23], 1.0);
+
+    glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that while geometry or tessellation shader support allows transform feedback primitive to be
+// different from the draw call, the classes should still match.
+TEST_P(TransformFeedbackTestES31, ModeMismatchClassMismatch)
+{
+    // Geometry and tessellation shaders allow the transform feedback mode to match the draw call's
+    // primitive mode class but not necessarily identically.
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader") &&
+                       !IsGLExtensionEnabled("GL_OES_geometry_shader") &&
+                       !IsGLExtensionEnabled("GL_EXT_tessellation_shader") &&
+                       !IsGLExtensionEnabled("GL_OES_tessellation_shader"));
+
+    std::vector<std::string> tfVaryings;
+    tfVaryings.push_back("gl_Position");
+    mProgram = CompileProgramWithTransformFeedback(
+        essl3_shaders::vs::Simple(), essl3_shaders::fs::Red(), tfVaryings, GL_INTERLEAVED_ATTRIBS);
+
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, mTransformFeedback);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTransformFeedbackBuffer);
+    glUseProgram(mProgram);
+    glBeginTransformFeedback(GL_TRIANGLES);
+
+    GLVertexArray vao;
+    glBindVertexArray(vao);
+
+    const GLint posLoc            = glGetAttribLocation(mProgram, essl3_shaders::PositionAttrib());
+    constexpr GLfloat kVertices[] = {-1, -1, 1, -1, -1, 1, 1, 1};
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    // Create a large buffer because while the data is set up for triangle strip, other modes are
+    // also tested.
+    glBufferData(GL_ARRAY_BUFFER, 1024, nullptr, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 8, kVertices);
+    glVertexAttribPointer(posLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(posLoc);
+
+    GLBuffer indirectBuffer;
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirectBuffer);
+    constexpr uint32_t kIndirectParams[] = {4, 1, 0, 0, 0};
+    glBufferData(GL_DRAW_INDIRECT_BUFFER, sizeof(uint32_t) * 5, kIndirectParams, GL_STATIC_DRAW);
+
+    // First, use an acceptable mode to make sure everything is set up correctly.
+    glDrawArraysIndirect(GL_TRIANGLE_STRIP, nullptr);
+    glEndTransformFeedback();
+
+    const GLfloat *mapped = (const GLfloat *)glMapBufferRange(
+        GL_TRANSFORM_FEEDBACK_BUFFER, 0, 6 * 4 * sizeof(float), GL_MAP_READ_BIT);
+
+    // First triangle
+    EXPECT_EQ(mapped[0], -1.0);
+    EXPECT_EQ(mapped[1], -1.0);
+    EXPECT_EQ(mapped[2], 0.0);
+    EXPECT_EQ(mapped[3], 1.0);
+
+    EXPECT_EQ(mapped[4], 1.0);
+    EXPECT_EQ(mapped[5], -1.0);
+    EXPECT_EQ(mapped[6], 0.0);
+    EXPECT_EQ(mapped[7], 1.0);
+
+    EXPECT_EQ(mapped[8], -1.0);
+    EXPECT_EQ(mapped[9], 1.0);
+    EXPECT_EQ(mapped[10], 0.0);
+    EXPECT_EQ(mapped[11], 1.0);
+
+    // Second triangle is not verified.  The ordering of the vertices is driver-dependent, and the
+    // ModeMismatchButSameClass test above already verifies correctness for this case.
+
+    glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    // Then verify that the other modes are validated correctly.
+    glBeginTransformFeedback(GL_TRIANGLES);
+    glDrawArraysIndirect(GL_POINTS, nullptr);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glDrawArraysIndirect(GL_LINES, nullptr);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glDrawArraysIndirect(GL_LINE_STRIP, nullptr);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glDrawArraysIndirect(GL_LINE_LOOP, nullptr);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glDrawArraysIndirect(GL_TRIANGLES, nullptr);
+    EXPECT_GL_NO_ERROR();
+
+    glDrawArraysIndirect(GL_TRIANGLE_FAN, nullptr);
+    EXPECT_GL_NO_ERROR();
+
+    glDrawArraysIndirect(GL_PATCHES, nullptr);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glEndTransformFeedback();
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTest);

@@ -1,10 +1,10 @@
-Tests that ImageDataSettings with CanvasPixelFormatEnabled=false ignores storageFormat.
+Tests that ImageDataSettings with CanvasColorTypeEnabled=false ignores pixelFormat.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS created_imageData_uint8.data.constructor is Uint8ClampedArray
-PASS gotten_imageData_uint8.data.constructor is Uint8ClampedArray
+PASS created_imageData_unorm8.data.constructor is Uint8ClampedArray
+PASS gotten_imageData_unorm8.data.constructor is Uint8ClampedArray
 PASS created_imageData_float16.data.constructor is Uint8ClampedArray
 PASS gotten_imageData_float16.data.constructor is Uint8ClampedArray
 PASS created_imageData_foo.data.constructor is Uint8ClampedArray

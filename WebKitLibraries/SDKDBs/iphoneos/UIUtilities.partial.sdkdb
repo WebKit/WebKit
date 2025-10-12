@@ -1,0 +1,57 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIAxisNeither"},
+      {"access": "public", "name": "UIAxisHorizontal"},
+      {"access": "public", "name": "UIAxisVertical"},
+      {"access": "public", "name": "UIAxisBoth"}
+     ],
+     "introduced": "13.4",
+     "name": "UIAxis"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIRectEdgeNone"},
+      {"access": "public", "name": "UIRectEdgeTop"},
+      {"access": "public", "name": "UIRectEdgeLeft"},
+      {"access": "public", "name": "UIRectEdgeBottom"},
+      {"access": "public", "name": "UIRectEdgeRight"},
+      {"access": "public", "name": "UIRectEdgeAll"}
+     ],
+     "introduced": "7",
+     "name": "UIRectEdge"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "convertPoint:toCoordinateSpace:"},
+      {"access": "public", "introduced": "8", "name": "convertPoint:fromCoordinateSpace:"},
+      {"access": "public", "introduced": "8", "name": "convertRect:toCoordinateSpace:"},
+      {"access": "public", "introduced": "8", "name": "convertRect:fromCoordinateSpace:"}
+     ],
+     "name": "UICoordinateSpace",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bounds", "introduced": "8", "name": "bounds"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios26",
+   "typedefs": [
+    {"access": "public", "name": "UIAxis"},
+    {"access": "public", "name": "UIRectEdge"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

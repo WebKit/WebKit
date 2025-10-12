@@ -28,10 +28,14 @@ class SkImageFilter;
 class SkCachedData;
 class SkMatrix;
 class SkResourceCache;
-class SkPath;
+struct SkPathRaw;
 class SkRRect;
 class SkRasterClip;
 enum SkBlurStyle : int;
+
+namespace skcpu {
+class Draw;
+}
 
 class SkMaskFilterBase : public SkMaskFilter {
 public:
@@ -170,15 +174,14 @@ protected:
                                                        SkResourceCache*) const;
 
 private:
-    friend class SkDraw;
-    friend class SkDrawBase;
+    friend class skcpu::Draw;
 
-    /** Helper method that, given a path in device space, will rasterize it into a kA8_Format mask
-     and then call filterMask(). If this returns true, the specified blitter will be called
-     to render that mask. Returns false if filterMask() returned false.
+    /** Helper method that, given a raw path in device space, will rasterize it into a
+     kA8_Format mask and then call filterMask(). If this returns true, the specified blitter
+     will be called to render that mask. Returns false if filterMask() returned false.
      This method is not exported to java.
      */
-    bool filterPath(const SkPath& devPath,
+    bool filterPath(const SkPathRaw& devRaw,
                     const SkMatrix& ctm,
                     const SkRasterClip&,
                     SkBlitter*,
@@ -194,6 +197,12 @@ private:
                      const SkRasterClip&,
                      SkBlitter*,
                      SkResourceCache*) const;
+
+    FilterReturn filterRects(SkSpan<const SkRect> devRects,
+                     const SkMatrix& ctm,
+                     const SkRasterClip& clip,
+                     SkBlitter* blitter,
+                     SkResourceCache* cache) const;
 };
 
 inline SkMaskFilterBase* as_MFB(SkMaskFilter* mf) {

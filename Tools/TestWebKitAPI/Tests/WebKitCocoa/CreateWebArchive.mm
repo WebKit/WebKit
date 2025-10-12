@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/_WKArchiveConfiguration.h>
 #import <WebKit/_WKArchiveExclusionRule.h>
 
@@ -113,7 +114,7 @@ TEST(WebArchive, CreateCustomScheme)
     done = false;
 
     [webView performAfterReceivingMessage:@"done" action:[&] { done = true; }];
-    [webView loadData:archiveData.get() MIMEType:(NSString *)kUTTypeArchive characterEncodingName:@"utf-8" baseURL:[NSURL URLWithString:@"about:blank"]];
+    [webView loadData:archiveData.get() MIMEType:UTTypeArchive.identifier characterEncodingName:@"utf-8" baseURL:[NSURL URLWithString:@"about:blank"]];
 
     Util::run(&done);
     done = false;

@@ -24,7 +24,7 @@ Defines a comma-separated list of logging channels and their levels for WebKit's
 
 - `WPE_DRM_DEVICE`
 Specifies the primary device that WebKit will use for gpu buffer allocation when it needs access to the main device. It is interesting for DRM backend. You need to specify a file path.
-Example: `dev/dri/card0`
+Example: `/dev/dri/card0`
 
 - `WPE_DRM_RENDER_NODE`:
 Specifies the render device that WebKit will use for buffer allocation, this is the one used for allocating general gpu buffers. You need to specify a file path.

@@ -47,12 +47,12 @@ public:
     AccessibilityTextMarker(PlatformTextMarker);
     AccessibilityTextMarker(const AccessibilityTextMarker&);
     ~AccessibilityTextMarker();
-    
+
     PlatformTextMarker platformTextMarker() const;
-    
+
     static JSObjectRef makeJSAccessibilityTextMarker(JSContextRef, const AccessibilityTextMarker&);
     bool isEqual(AccessibilityTextMarker*);
-    
+
 private:
     static JSClassRef getJSClass();
 #if PLATFORM(MAC)
@@ -67,9 +67,9 @@ public:
     AccessibilityTextMarkerRange(PlatformTextMarkerRange);
     AccessibilityTextMarkerRange(const AccessibilityTextMarkerRange&);
     ~AccessibilityTextMarkerRange();
-    
+
     PlatformTextMarkerRange platformTextMarkerRange() const;
-    
+
     static JSObjectRef makeJSAccessibilityTextMarkerRange(JSContextRef, const AccessibilityTextMarkerRange&);
     bool isEqual(AccessibilityTextMarkerRange*);
 
@@ -83,8 +83,8 @@ private:
 #endif
 };
 
-AccessibilityTextMarker* toTextMarker(JSObjectRef object);
-AccessibilityTextMarkerRange* toTextMarkerRange(JSObjectRef object);
+AccessibilityTextMarker* toTextMarker(JSObjectRef);
+AccessibilityTextMarkerRange* toTextMarkerRange(JSObjectRef);
 
 #if !PLATFORM(COCOA)
 inline AccessibilityTextMarker::AccessibilityTextMarker(PlatformTextMarker) { }

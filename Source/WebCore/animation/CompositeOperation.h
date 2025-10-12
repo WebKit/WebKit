@@ -36,6 +36,10 @@ enum class CompositeOperation : uint8_t { Replace, Add, Accumulate };
 
 std::optional<CompositeOperation> toCompositeOperation(const CSSValue&);
 
+// MARK: - Logging
+
+TextStream& operator<<(TextStream&, CompositeOperation);
+
 } // namespace WebCore
 
 namespace WTF {

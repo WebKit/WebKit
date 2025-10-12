@@ -20,8 +20,8 @@
 #pragma once
 
 #if USE(TEXTURE_MAPPER)
-#include "Animation.h"
 #include "GraphicsLayer.h"
+#include "GraphicsLayerAnimation.h"
 
 namespace WebCore {
 
@@ -37,7 +37,7 @@ public:
     };
 
     TextureMapperAnimation() = default;
-    TextureMapperAnimation(const String&, const KeyframeValueList&, const FloatSize&, const Animation&, MonotonicTime, Seconds, State);
+    TextureMapperAnimation(const String&, const KeyframeValueList&, const GraphicsLayerAnimation&, MonotonicTime, Seconds, State);
     ~TextureMapperAnimation() = default;
 
     WEBCORE_EXPORT TextureMapperAnimation(const TextureMapperAnimation&);
@@ -62,11 +62,10 @@ private:
 
     String m_name;
     KeyframeValueList m_keyframes { AnimatedProperty::Invalid };
-    FloatSize m_boxSize;
     RefPtr<TimingFunction> m_timingFunction;
     double m_iterationCount { 0 };
     double m_duration { 0 };
-    Animation::Direction m_direction { Animation::Direction::Normal };
+    GraphicsLayerAnimation::Direction m_direction { GraphicsLayerAnimation::Direction::Normal };
     bool m_fillsForwards { false };
     MonotonicTime m_startTime;
     Seconds m_pauseTime;

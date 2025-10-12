@@ -20,6 +20,9 @@
 #include "src/gpu/graphite/ContextPriv.h"
 #include "src/gpu/graphite/ContextUtils.h"
 #include "src/gpu/graphite/Renderer.h"
+#include "src/gpu/graphite/Surface_Graphite.h"
+#include "src/gpu/graphite/TextureFormat.h"
+#include "src/gpu/graphite/TextureInfoPriv.h"
 
 namespace skgpu::graphite {
 
@@ -83,14 +86,22 @@ DEF_GRAPHITE_TEST_FOR_VULKAN_CONTEXT(VulkanDstReadsShareRenderpass, reporter, co
                                        SkAlphaType::kPremul_SkAlphaType);
     sk_sp<SkSurface> surface = SkSurfaces::RenderTarget(recorder.get(), ii);
     SkCanvas* canvas = surface->getCanvas();
+    SharedContext* sharedContext = context->priv().sharedContext();
 
-    // Select which blend modes to use for testing: one that we do expect to require a dst read
-    // and one we do not. Assert that the dst read requirements of the modes align to
+    TextureFormat targetFormat = TextureInfoPriv::ViewFormat(
+            static_cast<const Surface*>(surface.get())->backingTextureProxy()->textureInfo());
+
+    // Select which blend modes to use for testing: one that we do expect to require a dst read on
+    // most hardware and one we do not. Assert that the dst read requirements of the modes align to
     // expectations. For the sake of this test, assume Coverage::kNone.
     static const SkBlendMode simpleBlendMode = SkBlendMode::kSrcATop;
     static const SkBlendMode dstReadBlendMode = SkBlendMode::kLighten;
-    REPORTER_ASSERT(reporter, CanUseHardwareBlending(caps, simpleBlendMode, Coverage::kNone));
-    REPORTER_ASSERT(reporter, !CanUseHardwareBlending(caps, dstReadBlendMode, Coverage::kNone));
+
+    REPORTER_ASSERT(reporter,
+                    CanUseHardwareBlending(caps, targetFormat, simpleBlendMode, Coverage::kNone));
+    // VK_EXT_blend_operation_advanced is supported on Nvidia hardware which does enable hardware
+    // blending for every Skia blend mode, so the following assertion is not universal.
+    // REPORTER_ASSERT(reporter, !CanUseHardwareBlending(caps, dstReadBlendMode, Coverage::kNone));
 
     // Perform draw operations which do not read from the dst. Clear the canvas to initialize it to
     // any color, drawing a color over it afterwards using the simple blend mode.
@@ -100,7 +111,7 @@ DEF_GRAPHITE_TEST_FOR_VULKAN_CONTEXT(VulkanDstReadsShareRenderpass, reporter, co
 
     // Determine the number of renderpasses used for later comparison, asserting we have at least 1.
     ResourceTypeQuantifier renderpassQuantifier { SkString("RenderPass") };
-    recorder->dumpMemoryStatistics(&renderpassQuantifier);
+    sharedContext->dumpMemoryStatistics(&renderpassQuantifier);
     const int numRenderPassesNoDstRead = renderpassQuantifier.numResourcesWithTypeSubstr();
     REPORTER_ASSERT(reporter, numRenderPassesNoDstRead > 0);
 
@@ -109,7 +120,7 @@ DEF_GRAPHITE_TEST_FOR_VULKAN_CONTEXT(VulkanDstReadsShareRenderpass, reporter, co
     canvas->drawColor(SK_ColorYELLOW, dstReadBlendMode);
     std::unique_ptr<Recording> dstReadRecording = recorder->snap();
     renderpassQuantifier.resetCount();
-    recorder->dumpMemoryStatistics(&renderpassQuantifier);
+    sharedContext->dumpMemoryStatistics(&renderpassQuantifier);
     const int numRenderPassesAfterDstRead = renderpassQuantifier.numResourcesWithTypeSubstr();
 
     // Assert that no new renderpasses have been added to the cache, meaning that one was reused

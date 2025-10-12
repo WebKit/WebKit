@@ -122,3 +122,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-logical-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-logical-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-logical-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/forget-on-disconnect-in-iframe.html

@@ -7,6 +7,10 @@
 //   Performance tests for ANGLE draw call overhead.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "ANGLEPerfTest.h"
 #include "DrawCallPerfParams.h"
 #include "common/PackedEnums.h"

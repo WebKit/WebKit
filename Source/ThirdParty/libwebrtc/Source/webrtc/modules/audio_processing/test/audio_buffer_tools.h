@@ -22,7 +22,7 @@ namespace test {
 
 // Copies a vector into an audiobuffer.
 void CopyVectorToAudioBuffer(const StreamConfig& stream_config,
-                             rtc::ArrayView<const float> source,
+                             ArrayView<const float> source,
                              AudioBuffer* destination);
 
 // Extracts a vector from an audiobuffer.

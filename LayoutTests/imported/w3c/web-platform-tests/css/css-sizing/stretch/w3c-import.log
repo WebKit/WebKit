@@ -1,0 +1,94 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/abspos-1-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/abspos-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/abspos-2-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/abspos-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/aspect-ratio-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/auto-margins-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/auto-margins-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/bfc-next-to-float-1-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/bfc-next-to-float-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/bfc-next-to-float-2-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/bfc-next-to-float-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-006-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-009-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-010-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/cache-miss-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/cache-miss-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/cache-miss-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/cache-miss-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/content-contribution-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/fixed-table-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/fixed-table-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flex-basis-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flex-line-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flex-line-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flex-line-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flex-line-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flex-line-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-auto-minimum-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-auto-minimum-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-auto-minimum-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-auto-minimum-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-flex-base-size-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-flex-base-size-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-flex-base-size-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-flex-base-size-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/indefinite-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/indefinite-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/indefinite-3.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/indefinite-4.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/min-width-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/min-width-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/positioned-non-replaced-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/positioned-non-replaced-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/positioned-replaced-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/positioned-replaced-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/positioned-replaced-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/positioned-replaced-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/positioned-replaced-3-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/positioned-replaced-3.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-alias-block-size-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-alias-inline-size-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-alias-max-block-size-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-alias-max-inline-size-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-alias-min-block-size-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-alias-min-inline-size-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-block-size-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-block-size-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-block-size-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-inline-size-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-inline-size-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-inline-size-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-max-block-size-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-max-inline-size-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-min-block-size-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-min-inline-size-001.html

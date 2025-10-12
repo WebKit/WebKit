@@ -9,16 +9,26 @@
  */
 #include "rtc_tools/data_channel_benchmark/grpc_signaling.h"
 
-#include <grpc/support/log.h>
 #include <grpcpp/grpcpp.h>
+#include <grpcpp/security/credentials.h>
+#include <grpcpp/security/server_credentials.h>
+#include <grpcpp/support/status.h>
+#include <grpcpp/support/sync_stream.h>
 
+#include <functional>
+#include <memory>
 #include <string>
 #include <utility>
 
+#include "absl/time/clock.h"
+#include "absl/time/time.h"
 #include "api/jsep.h"
-#include "api/jsep_ice_candidate.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/thread.h"
 #include "rtc_tools/data_channel_benchmark/peer_connection_signaling.grpc.pb.h"
+#include "rtc_tools/data_channel_benchmark/peer_connection_signaling.pb.h"
+#include "rtc_tools/data_channel_benchmark/signaling_interface.h"
 
 namespace webrtc {
 namespace {
@@ -29,20 +39,15 @@ using GrpcSignaling::SessionDescription;
 using GrpcSignaling::SignalingMessage;
 
 template <class T>
-class SessionData : public webrtc::SignalingInterface {
+class SessionData : public SignalingInterface {
  public:
   SessionData() {}
   explicit SessionData(T* stream) : stream_(stream) {}
   void SetStream(T* stream) { stream_ = stream; }
 
-  void SendIceCandidate(const IceCandidateInterface* candidate) override {
+  void SendIceCandidate(const ::webrtc::IceCandidate* candidate) override {
     RTC_LOG(LS_INFO) << "SendIceCandidate";
-    std::string serialized_candidate;
-    if (!candidate->ToString(&serialized_candidate)) {
-      RTC_LOG(LS_ERROR) << "Failed to serialize ICE candidate";
-      return;
-    }
-
+    std::string serialized_candidate = candidate->ToString();
     SignalingMessage message;
     IceCandidate* proto_candidate = message.mutable_candidate();
     proto_candidate->set_description(serialized_candidate);
@@ -76,7 +81,7 @@ class SessionData : public webrtc::SignalingInterface {
   }
 
   void OnIceCandidate(
-      std::function<void(std::unique_ptr<IceCandidateInterface> candidate)>
+      std::function<void(std::unique_ptr<webrtc::IceCandidate> candidate)>
           callback) override {
     RTC_LOG(LS_INFO) << "OnIceCandidate";
     ice_candidate_callback_ = callback;
@@ -84,9 +89,9 @@ class SessionData : public webrtc::SignalingInterface {
 
   T* stream_;
 
-  std::function<void(std::unique_ptr<webrtc::IceCandidateInterface>)>
+  std::function<void(std::unique_ptr<webrtc::IceCandidate>)>
       ice_candidate_callback_;
-  std::function<void(std::unique_ptr<webrtc::SessionDescriptionInterface>)>
+  std::function<void(std::unique_ptr<SessionDescriptionInterface>)>
       remote_description_callback_;
 };
 
@@ -102,11 +107,11 @@ void ProcessMessages(StreamReader* stream, SessionData* session) {
   while (stream->Read(&message)) {
     switch (message.Content_case()) {
       case SignalingMessage::ContentCase::kCandidate: {
-        webrtc::SdpParseError error;
-        auto jsep_candidate = std::make_unique<webrtc::JsepIceCandidate>(
-            message.candidate().mid(), message.candidate().mline_index());
-        if (!jsep_candidate->Initialize(message.candidate().description(),
-                                        &error)) {
+        SdpParseError error;
+        auto jsep_candidate = ::webrtc::IceCandidate::Create(
+            message.candidate().mid(), message.candidate().mline_index(),
+            message.candidate().description(), &error);
+        if (!jsep_candidate) {
           RTC_LOG(LS_ERROR) << "Failed to deserialize ICE candidate '"
                             << message.candidate().description() << "'";
           RTC_LOG(LS_ERROR)
@@ -121,10 +126,9 @@ void ProcessMessages(StreamReader* stream, SessionData* session) {
         auto& description = message.description();
         auto content = description.content();
 
-        auto sdp = webrtc::CreateSessionDescription(
-            description.type() == SessionDescription::OFFER
-                ? webrtc::SdpType::kOffer
-                : webrtc::SdpType::kAnswer,
+        auto sdp = CreateSessionDescription(
+            description.type() == SessionDescription::OFFER ? SdpType::kOffer
+                                                            : SdpType::kAnswer,
             description.content());
         session->remote_description_callback_(std::move(sdp));
         break;
@@ -138,10 +142,9 @@ void ProcessMessages(StreamReader* stream, SessionData* session) {
 class GrpcNegotiationServer : public GrpcSignalingServerInterface,
                               public PeerConnectionSignaling::Service {
  public:
-  GrpcNegotiationServer(
-      std::function<void(webrtc::SignalingInterface*)> callback,
-      int port,
-      bool oneshot)
+  GrpcNegotiationServer(std::function<void(SignalingInterface*)> callback,
+                        int port,
+                        bool oneshot)
       : connect_callback_(std::move(callback)),
         requested_port_(port),
         oneshot_(oneshot) {}
@@ -175,14 +178,14 @@ class GrpcNegotiationServer : public GrpcSignalingServerInterface,
     if (oneshot_) {
       // Request the termination of the server early so we don't serve another
       // client in parallel.
-      server_stop_thread_ = rtc::Thread::Create();
+      server_stop_thread_ = Thread::Create();
       server_stop_thread_->Start();
       server_stop_thread_->PostTask([this] { Stop(); });
     }
 
     ServerSessionData session(stream);
 
-    auto reading_thread = rtc::Thread::Create();
+    auto reading_thread = Thread::Create();
     reading_thread->Start();
     reading_thread->PostTask([&session, &stream] {
       ProcessMessages<SignalingMessage>(stream, &session);
@@ -196,13 +199,13 @@ class GrpcNegotiationServer : public GrpcSignalingServerInterface,
   }
 
  private:
-  std::function<void(webrtc::SignalingInterface*)> connect_callback_;
+  std::function<void(SignalingInterface*)> connect_callback_;
   int requested_port_;
   int selected_port_;
   bool oneshot_;
 
   std::unique_ptr<grpc::Server> server_;
-  std::unique_ptr<rtc::Thread> server_stop_thread_;
+  std::unique_ptr<Thread> server_stop_thread_;
 };
 
 class GrpcNegotiationClient : public GrpcSignalingClientInterface {
@@ -227,7 +230,7 @@ class GrpcNegotiationClient : public GrpcSignalingClientInterface {
     stream_ = stub_->Connect(&context_);
     session_.SetStream(stream_.get());
 
-    reading_thread_ = rtc::Thread::Create();
+    reading_thread_ = Thread::Create();
     reading_thread_->Start();
     reading_thread_->PostTask([this] {
       ProcessMessages<SignalingMessage>(stream_.get(), &session_);
@@ -236,12 +239,12 @@ class GrpcNegotiationClient : public GrpcSignalingClientInterface {
     return true;
   }
 
-  webrtc::SignalingInterface* signaling_client() override { return &session_; }
+  SignalingInterface* signaling_client() override { return &session_; }
 
  private:
   std::shared_ptr<grpc::Channel> channel_;
   std::unique_ptr<PeerConnectionSignaling::Stub> stub_;
-  std::unique_ptr<rtc::Thread> reading_thread_;
+  std::unique_ptr<Thread> reading_thread_;
   grpc::ClientContext context_;
   std::unique_ptr<
       ::grpc::ClientReaderWriter<SignalingMessage, SignalingMessage>>
@@ -252,7 +255,7 @@ class GrpcNegotiationClient : public GrpcSignalingClientInterface {
 
 std::unique_ptr<GrpcSignalingServerInterface>
 GrpcSignalingServerInterface::Create(
-    std::function<void(webrtc::SignalingInterface*)> callback,
+    std::function<void(SignalingInterface*)> callback,
     int port,
     bool oneshot) {
   return std::make_unique<GrpcNegotiationServer>(std::move(callback), port,

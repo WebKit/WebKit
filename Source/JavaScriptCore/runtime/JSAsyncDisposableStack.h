@@ -37,6 +37,7 @@ public:
     using Base = JSInternalFieldObjectImpl<JSAsyncDisposableStackNumberOfInternalFields>;
 
     DECLARE_EXPORT_INFO;
+    DECLARE_VISIT_CHILDREN;
 
     enum class State : int32_t {
         Pending = 0,
@@ -71,6 +72,8 @@ public:
     static JSAsyncDisposableStack* createWithInitialValues(VM&);
     static JSAsyncDisposableStack* create(VM&, Structure*);
 
+    bool disposed();
+
 private:
     JSAsyncDisposableStack(VM& vm, Structure* structure)
         : Base(vm, structure)
@@ -78,7 +81,6 @@ private:
     }
 
     void finishCreation(VM&);
-    DECLARE_VISIT_CHILDREN;
 };
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSAsyncDisposableStack);

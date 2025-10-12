@@ -1,0 +1,41 @@
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+
+<script>
+    document.addEventListener('pointerlockchange', () => {
+        const isLocked = document.pointerLockElement !== null;
+
+        console.log("pointerlockchange event called");
+        console.log("PointerLock is locked: ", isLocked);
+
+        window.parent.postMessage({
+            type: 'pointerLockChanged',
+            locked: isLocked,
+            element: document.pointerLockElement ? document.pointerLockElement.id : null
+        }, '*');
+    });
+
+    document.addEventListener('pointerlockerror', () => {
+        console.log("Pointer lock failed");
+    });
+
+    window.onload = (event) => {
+        const element = document.getElementById('pointer-lock-element');
+        if (element) {
+            element.addEventListener('click', () => {
+                element.requestPointerLock();
+                console.log("requesting pointer lock");
+            });
+        } else {
+            console.error("Element still not found after timeout!");
+        }
+
+        if (window.eventSender) {
+            UIHelper.activateElement(element);
+        }
+    };
+</script>
+
+<div id='pointer-lock-element' style="width: 200px; height: 200px; background: lightblue; cursor: pointer;">
+    Click me to request pointer lock
+</div>

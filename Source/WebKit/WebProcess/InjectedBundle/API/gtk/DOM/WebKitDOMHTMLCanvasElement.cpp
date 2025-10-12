@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitDOMHTMLCanvasElement.h"
 
+#include <WebCore/AddEventListenerOptionsInlines.h>
 #include <WebCore/CSSImportRule.h>
 #include "DOMObjectCache.h"
 #include <WebCore/DOMException.h>
@@ -181,7 +182,7 @@ void webkit_dom_html_canvas_element_set_width(WebKitDOMHTMLCanvasElement* self, 
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_HTML_CANVAS_ELEMENT(self));
     WebCore::HTMLCanvasElement* item = WebKit::core(self);
-    item->setWidth(value);
+    item->setIntegralAttribute(WebCore::HTMLNames::widthAttr, value);
 }
 
 glong webkit_dom_html_canvas_element_get_height(WebKitDOMHTMLCanvasElement* self)
@@ -198,7 +199,7 @@ void webkit_dom_html_canvas_element_set_height(WebKitDOMHTMLCanvasElement* self,
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_HTML_CANVAS_ELEMENT(self));
     WebCore::HTMLCanvasElement* item = WebKit::core(self);
-    item->setHeight(value);
+    item->setUnsignedIntegralAttribute(WebCore::HTMLNames::heightAttr, value);
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

@@ -25,9 +25,12 @@
 
 #import "config.h"
 
+#import "PlatformUtilities.h"
 #import "Test.h"
 #import "WTFTestUtilities.h"
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKNSStringExtras.h>
+#import <WebKit/_WKNSURLExtras.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
@@ -49,7 +52,7 @@ static const char* dataAsString(NSData *data)
     if ([data length] > buffer.size() - 1)
         return "ERROR";
     auto dataSpan = span(data);
-    if (contains(dataSpan, 0))
+    if (contains(dataSpan, '\0'))
         return "ERROR";
     memcpySpan(std::span { buffer }, dataSpan);
     buffer[[data length]] = '\0';
@@ -63,7 +66,7 @@ static const char* originalDataAsString(NSURL *URL)
 
 static const char* userVisibleString(NSURL *URL)
 {
-    return [WKWebView _userVisibleStringForURL:URL].UTF8String;
+    return [URL _wk_userVisibleString].UTF8String;
 }
 
 static NSURL *literalURL(const char* literal)
@@ -79,16 +82,16 @@ TEST(URLExtras, URLExtras)
     EXPECT_STREQ("http://site.com", userVisibleString(literalURL("http://site.com")));
     EXPECT_STREQ("http://%77ebsite.com", userVisibleString(literalURL("http://%77ebsite.com")));
 
-    EXPECT_STREQ("-.example.com", [WTF::decodeHostName(@"-.example.com") UTF8String]);
-    EXPECT_STREQ("-a.example.com", [WTF::decodeHostName(@"-a.example.com") UTF8String]);
-    EXPECT_STREQ("a-.example.com", [WTF::decodeHostName(@"a-.example.com") UTF8String]);
-    EXPECT_STREQ("ab--cd.example.com", [WTF::decodeHostName(@"ab--cd.example.com") UTF8String]);
+    EXPECT_WK_STREQ("-.example.com", [@"-.example.com" _wk_decodeHostName]);
+    EXPECT_WK_STREQ("-a.example.com", [@"-a.example.com" _wk_decodeHostName]);
+    EXPECT_WK_STREQ("a-.example.com", [@"a-.example.com" _wk_decodeHostName]);
+    EXPECT_WK_STREQ("ab--cd.example.com", [@"ab--cd.example.com" _wk_decodeHostName]);
 #if HAVE(NSURL_EMPTY_PUNYCODE_CHECK)
-    EXPECT_NULL([WTF::decodeHostName(@"xn--.example.com") UTF8String]);
+    EXPECT_NULL([@"xn--.example.com" _wk_decodeHostName]);
 #else
-    EXPECT_STREQ(".example.com", [WTF::decodeHostName(@"xn--.example.com") UTF8String]);
+    EXPECT_WK_STREQ(".example.com", [@"xn--.example.com" _wk_decodeHostName]);
 #endif
-    EXPECT_STREQ("a..example.com", [WTF::decodeHostName(@"a..example.com") UTF8String]);
+    EXPECT_WK_STREQ("a..example.com", [@"a..example.com" _wk_decodeHostName]);
 }
     
 TEST(URLExtras, URLExtras_Spoof)
@@ -220,6 +223,10 @@ TEST(URLExtras, URLExtras_NotSpoofed)
 
     // Arabic
     EXPECT_STREQ("https://\u0620\u065Babc/", userVisibleString(literalURL("https://\u0620\u065Babc/")));
+    EXPECT_STREQ("https://app\u08AD\u0652e.com", userVisibleString(literalURL("https://app\u08AD\u0652e.com")));
+    EXPECT_STREQ("https://\u10F3Ddee", userVisibleString(literalURL("https://\u10F3Ddee")));
+    EXPECT_STREQ("https://\u0638\u0644\u0651\u0874\u0654", userVisibleString(literalURL("https://\u0638\u0644\u0651\u0874\u0654")));
+    EXPECT_STREQ("https://\u08AE\u064E", userVisibleString(literalURL("https://\u08AE\u064E")));
 
     // Latin
     EXPECT_STREQ("https://\u00ED\u00CDabc/", userVisibleString(literalURL("https://\u00ED\u00CDabc/")));
@@ -241,7 +248,7 @@ TEST(URLExtras, URLExtras_DivisionSign)
 
     // Separate functions that deal with just a host name on its own.
     EXPECT_STREQ("site.xn--comothersite-kjb.org", [WTF::encodeHostName(@"site.com\xC3\xB7othersite.org") UTF8String]);
-    EXPECT_STREQ("site.com\xC3\xB7othersite.org", [WTF::decodeHostName(@"site.com\xC3\xB7othersite.org") UTF8String]);
+    EXPECT_WK_STREQ("site.com\xC3\xB7othersite.org", [@"site.com\xC3\xB7othersite.org" _wk_decodeHostName]);
 }
 
 TEST(WTF, URLExtras_Solidus)
@@ -264,7 +271,7 @@ TEST(WTF, URLExtras_Solidus)
 
     // Separate functions that deal with just a host name on its own.
     EXPECT_STREQ("site.com/othersite.org", [WTF::encodeHostName(@"site.com\xEF\xBC\x8Fothersite.org") UTF8String]);
-    EXPECT_STREQ("site.com/othersite.org", [WTF::decodeHostName(@"site.com\xEF\xBC\x8Fothersite.org") UTF8String]);
+    EXPECT_WK_STREQ("site.com/othersite.org", [@"site.com\xEF\xBC\x8Fothersite.org" _wk_decodeHostName]);
 }
 
 TEST(URLExtras, URLExtras_Space)
@@ -273,7 +280,7 @@ TEST(URLExtras, URLExtras_Space)
 
     // Code path similar to the one used when typing in a URL.
     EXPECT_STREQ("", originalDataAsString(WTF::URLWithUserTypedString(@"http://site.com\xE3\x80\x80othersite.org", nil)));
-    EXPECT_STREQ("", userVisibleString(WTF::URLWithUserTypedString(@"http://site.com\xE3\x80\x80othersite.org", nil)));
+    EXPECT_NULL(userVisibleString(WTF::URLWithUserTypedString(@"http://site.com\xE3\x80\x80othersite.org", nil)));
 
     // Code paths similar to the ones used for URLs found in webpages or HTTP responses.
     EXPECT_STREQ("http://site.com\xE3\x80\x80othersite.org", originalDataAsString(literalURL("http://site.com\xE3\x80\x80othersite.org")));
@@ -283,7 +290,7 @@ TEST(URLExtras, URLExtras_Space)
 
     // Separate functions that deal with just a host name on its own.
     EXPECT_STREQ("site.com othersite.org", [WTF::encodeHostName(@"site.com\xE3\x80\x80othersite.org") UTF8String]);
-    EXPECT_STREQ("site.com\xE3\x80\x80othersite.org", [WTF::decodeHostName(@"site.com\xE3\x80\x80othersite.org") UTF8String]);
+    EXPECT_WK_STREQ("site.com\xE3\x80\x80othersite.org", [@"site.com\xE3\x80\x80othersite.org" _wk_decodeHostName]);
 }
 
 TEST(URLExtras, URLExtras_File)
@@ -303,13 +310,13 @@ TEST(URLExtras, URLExtras_ParsingError)
     WTF::URL url2 { utf16String(u"http://\u2267\u222E\uFE63\u0661\u06F1") };
     EXPECT_NULL([url2.createNSURL() absoluteString]);
 
-    std::array<UChar, 2> utf16 { 0xC2, 0xB6 };
+    std::array<char16_t, 2> utf16 { 0xC2, 0xB6 };
     WTF::URL url3 { String(utf16) };
     EXPECT_FALSE(url3.string().is8Bit());
     EXPECT_FALSE(url3.isValid());
     EXPECT_NULL([url3.createNSURL() absoluteString]);
     
-    std::array<LChar, 2> latin1 { 0xC2, 0xB6 };
+    std::array<Latin1Character, 2> latin1 { 0xC2, 0xB6 };
     WTF::URL url4 { String(latin1) };
     EXPECT_FALSE(url4.isValid());
     EXPECT_TRUE(url4.string().is8Bit());
@@ -335,6 +342,14 @@ TEST(URLExtras, CreateNSArray)
     Vector<URL> urls { URL { "https://webkit.org/"_str } };
     auto array = createNSArray(urls);
     EXPECT_TRUE([array.get()[0] isKindOfClass:NSURL.class]);
+}
+
+TEST(URLExtras, URLByRemovingUserInfo)
+{
+    URL url("https://apple.com%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40%40@foo.github.io/upload/test.zip"_s);
+    RetainPtr cfUrl = WTF::URLByRemovingUserInfo(url.createNSURL().get());
+    URL url2(cfUrl.get());
+    EXPECT_STREQ("https://foo.github.io/upload/test.zip", url2.string().utf8().data());
 }
 
 } // namespace TestWebKitAPI

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
 
 
 PASS Check http://web-platform.test:8800/html/syntax/charset/after-1kb.html

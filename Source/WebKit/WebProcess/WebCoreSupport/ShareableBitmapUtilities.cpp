@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,9 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/PlatformScreen.h>
-#include <WebCore/RenderElementInlines.h>
+#include <WebCore/RenderElementStyleInlines.h>
 #include <WebCore/RenderImage.h>
+#include <WebCore/RenderObjectInlines.h>
 #include <WebCore/RenderVideo.h>
 #include <WebCore/ShareableBitmap.h>
 
@@ -46,14 +47,14 @@ using namespace WebCore;
 RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateShareableBitmapFromImageOptions&& options)
 {
     Ref frame = renderImage.frame();
-    auto colorSpaceForBitmap = screenColorSpace(frame->mainFrame().virtualView());
+    auto colorSpaceForBitmap = screenColorSpace(frame->protectedMainFrame()->protectedVirtualView().get());
     if (!renderImage.isRenderMedia() && !renderImage.opacity() && options.useSnapshotForTransparentImages == UseSnapshotForTransparentImages::Yes) {
         auto snapshotRect = renderImage.absoluteBoundingBoxRect();
         if (snapshotRect.isEmpty())
             return { };
 
         OptionSet<SnapshotFlags> snapshotFlags { SnapshotFlags::ExcludeSelectionHighlighting, SnapshotFlags::PaintEverythingExcludingSelection };
-        auto imageBuffer = snapshotFrameRect(frame.get(), snapshotRect, { snapshotFlags, ImageBufferPixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+        auto imageBuffer = snapshotFrameRect(frame.get(), snapshotRect, { snapshotFlags, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
         if (!imageBuffer)
             return { };
 
@@ -101,7 +102,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
     if (!cachedImage || cachedImage->errorOccurred())
         return { };
 
-    auto* image = cachedImage->imageForRenderer(&renderImage);
+    RefPtr image = cachedImage->imageForRenderer(&renderImage);
     if (!image || image->width() <= 1 || image->height() <= 1)
         return { };
 

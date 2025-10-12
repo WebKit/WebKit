@@ -160,7 +160,8 @@ combine('format', kPossibleStorageTextureFormats)
 ).
 fn((t) => {
   const { returnType, textureType, format } = t.params;
-  t.skipIfTextureFormatNotUsableAsStorageTexture(format);
+  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotUsableWithStorageAccessMode('write-only', format);
 
   const returnVarType = kValuesTypes[returnType];
   const { returnType: returnRequiredType, hasLevelArg } =
@@ -170,7 +171,7 @@ fn((t) => {
   const levelWGSL = hasLevelArg ? ', 0' : '';
 
   const code = `
-@group(0) @binding(0) var t: ${textureType}<${format}, read>;
+@group(0) @binding(0) var t: ${textureType}<${format}, write>;
 @fragment fn fs() -> @location(0) vec4f {
   let v: ${varWGSL} = textureDimensions(t${levelWGSL});
   return vec4f(0);

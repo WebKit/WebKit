@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-001.html
@@ -53,6 +54,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-overflow-000.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-simple-height-change.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-table-cell.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-items-anonymous-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-items-anonymous.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-auto-margins-1-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-auto-margins-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-auto-margins-2-expected.xht

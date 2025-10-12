@@ -18,3 +18,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/README.md
 /LayoutTests/imported/w3c/web-platform-tests/svg/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/svg/sniffing-content-type.html

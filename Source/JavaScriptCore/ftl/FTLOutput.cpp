@@ -969,9 +969,21 @@ void Output::addIncomingToPhi(LValue phi, ValueFromBlock value)
 void Output::entrySwitch(const Vector<LBasicBlock>& cases)
 {
     RELEASE_ASSERT(cases.size() == m_proc.numEntrypoints());
-    m_block->appendNew<Value>(m_proc, EntrySwitch, origin());
+    m_block->appendNew<Value>(m_proc, B3::EntrySwitch, origin());
     for (LBasicBlock block : cases)
         m_block->appendSuccessor(FrequentedBlock(block));
+}
+
+TypedPointer Output::baseIndex(IndexedAbstractHeap& heap, LValue base, LValue index, JSValue indexAsConstant, ptrdiff_t offset, LValue mask)
+{
+    if (indexAsConstant.isInt32())
+        return address(base, heap.at(indexAsConstant.asInt32()), offset);
+
+    if (mask)
+        index = bitAnd(mask, index);
+    LValue result = add(base, mul(index, constIntPtr(heap.elementSize())));
+
+    return TypedPointer(heap.atAnyIndex(), addPtr(result, heap.offset() + offset));
 }
 
 } } // namespace JSC::FTL

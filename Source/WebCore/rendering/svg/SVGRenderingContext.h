@@ -2,7 +2,7 @@
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2009 Google, Inc.  All rights reserved.
+ * Copyright (C) 2009 Google, Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2012 Zoltan Herczeg <zherczeg@webkit.org>.
  * Copyright (C) 2022 Apple Inc. All rights reserved.

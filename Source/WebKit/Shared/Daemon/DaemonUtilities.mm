@@ -31,13 +31,14 @@
 #import <wtf/UniqueRef.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/ASCIILiteral.h>
 
 namespace WebKit {
 
 void startListeningForMachServiceConnections(const char* serviceName, ASCIILiteral entitlement, void(*connectionAdded)(xpc_connection_t), void(*connectionRemoved)(xpc_connection_t), void(*eventHandler)(xpc_object_t))
 {
-    static NeverDestroyed<RetainPtr<xpc_connection_t>> listener = xpc_connection_create_mach_service(serviceName, dispatch_get_main_queue(), XPC_CONNECTION_MACH_SERVICE_LISTENER);
+    static NeverDestroyed<RetainPtr<xpc_connection_t>> listener = adoptNS(xpc_connection_create_mach_service(serviceName, mainDispatchQueueSingleton(), XPC_CONNECTION_MACH_SERVICE_LISTENER));
     xpc_connection_set_event_handler(listener.get().get(), ^(xpc_object_t peer) {
         if (xpc_get_type(peer) != XPC_TYPE_CONNECTION)
             return;
@@ -69,7 +70,7 @@ void startListeningForMachServiceConnections(const char* serviceName, ASCIILiter
             }
             eventHandler(event);
         });
-        xpc_connection_set_target_queue(peer, dispatch_get_main_queue());
+        xpc_connection_set_target_queue(peer, mainDispatchQueueSingleton());
         xpc_connection_activate(peer);
 
         NSLog(@"Adding peer connection %p", peer);
@@ -87,7 +88,7 @@ OSObjectPtr<xpc_object_t> encoderToXPCData(UniqueRef<IPC::Encoder>&& encoder)
 {
     __block auto blockEncoder = WTFMove(encoder);
     auto buffer = blockEncoder->span();
-    auto dispatchData = adoptNS(dispatch_data_create(buffer.data(), buffer.size(), dispatch_get_main_queue(), ^{
+    auto dispatchData = adoptNS(dispatch_data_create(buffer.data(), buffer.size(), mainDispatchQueueSingleton(), ^{
         // Explicitly clear out the encoder, destroying it.
         blockEncoder.moveToUniquePtr();
     }));

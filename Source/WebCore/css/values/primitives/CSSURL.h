@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "CSSURLModifiers.h"
+#include <WebCore/CSSURLModifiers.h>
 #include <wtf/URL.h>
 
 namespace WebCore {

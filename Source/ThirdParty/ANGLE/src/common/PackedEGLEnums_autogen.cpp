@@ -123,6 +123,8 @@ ContextPriority FromEGLenum<ContextPriority>(EGLenum from)
             return ContextPriority::Medium;
         case EGL_CONTEXT_PRIORITY_HIGH_IMG:
             return ContextPriority::High;
+        case EGL_CONTEXT_PRIORITY_REALTIME_NV:
+            return ContextPriority::Realtime;
         default:
             return ContextPriority::InvalidEnum;
     }
@@ -138,6 +140,8 @@ EGLenum ToEGLenum(ContextPriority from)
             return EGL_CONTEXT_PRIORITY_MEDIUM_IMG;
         case ContextPriority::High:
             return EGL_CONTEXT_PRIORITY_HIGH_IMG;
+        case ContextPriority::Realtime:
+            return EGL_CONTEXT_PRIORITY_REALTIME_NV;
         default:
             UNREACHABLE();
             return 0;
@@ -156,6 +160,9 @@ std::ostream &operator<<(std::ostream &os, ContextPriority value)
             break;
         case ContextPriority::High:
             os << "EGL_CONTEXT_PRIORITY_HIGH_IMG";
+            break;
+        case ContextPriority::Realtime:
+            os << "EGL_CONTEXT_PRIORITY_REALTIME_NV";
             break;
         default:
             os << "GL_INVALID_ENUM";

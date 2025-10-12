@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,7 +79,7 @@ private:
     bool isUpdating(const PageSets&) const;
     bool isHighAccuracyEnabled(const PageSets&) const;
 
-    CheckedRef<WebProcess> m_process;
+    const CheckedRef<WebProcess> m_process;
     HashMap<WebCore::RegistrableDomain, PageSets> m_pageSets;
     WeakHashMap<WebPage, WebCore::RegistrableDomain> m_pageToRegistrableDomain;
 };

@@ -23,12 +23,12 @@
 
 #pragma once
 
-#include "Document.h"
-#include "HTMLElement.h"
-#include "HTMLNames.h"
-#include "PrivateClickMeasurement.h"
-#include "SharedStringHash.h"
-#include "URLDecomposition.h"
+#include <WebCore/Document.h>
+#include <WebCore/HTMLElement.h>
+#include <WebCore/HTMLNames.h>
+#include <WebCore/PrivateClickMeasurement.h>
+#include <WebCore/SharedStringHash.h>
+#include <WebCore/URLDecomposition.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -54,7 +54,6 @@ public:
     virtual ~HTMLAnchorElement();
 
     WEBCORE_EXPORT URL href() const;
-    void setHref(const AtomString&);
 
     const AtomString& name() const;
 
@@ -79,11 +78,14 @@ public:
     WEBCORE_EXPORT bool isSystemPreviewLink();
 #endif
 
-    void setReferrerPolicyForBindings(const AtomString&);
     String referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const;
 
     Node::InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode& parentOfInsertedTree) override;
+
+    AtomString target() const override;
+
+    void setShouldBePrefetched(bool conservative, Vector<String>&& tags, String&& referrerPolicy);
 
 protected:
     HTMLAnchorElement(const QualifiedName&, Document&);
@@ -93,12 +95,11 @@ protected:
 private:
     bool supportsFocus() const override;
     bool isMouseFocusable() const override;
-    bool isKeyboardFocusable(KeyboardEvent*) const override;
+    bool isKeyboardFocusable(const FocusEventData&) const override;
     void defaultEventHandler(Event&) final;
     void setActive(bool active, Style::InvalidationScope) final;
     bool isURLAttribute(const Attribute&) const final;
     bool canStartSelection() const final;
-    AtomString target() const override;
     int defaultTabIndex() const final;
     bool draggable() const final;
     bool isInteractiveContent() const final;
@@ -128,14 +129,26 @@ private:
     void clearRootEditableElementForSelectionOnMouseDown();
 
     URL fullURL() const final { return href(); }
-    void setFullURL(const URL& fullURL) final { setHref(AtomString { fullURL.string() }); }
+    void setFullURL(const URL&) final;
+
+    void checkForSpeculationRules();
+
+    enum class PrefetchEagerness : uint8_t {
+        None,
+        Conservative,
+        Immediate,
+    };
+
+    PrefetchEagerness m_prefetchEagerness { PrefetchEagerness::None };
+    Vector<String> m_speculationRulesTags;
+    String m_prefetchReferrerPolicy;
 
     bool m_hasRootEditableElementForSelectionOnMouseDown { false };
     bool m_wasShiftKeyDownOnMouseDown { false };
     OptionSet<Relation> m_linkRelations;
 
     // This is computed only once and must not be affected by subsequent URL changes.
-    mutable Markable<SharedStringHash, SharedStringHashMarkableTraits> m_storedVisitedLinkHash;
+    mutable Markable<SharedStringHash> m_storedVisitedLinkHash;
 
     const std::unique_ptr<DOMTokenList> m_relList;
 };

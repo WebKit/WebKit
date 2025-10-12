@@ -49,13 +49,13 @@ inline StringTypeAdapter<CFStringRef>::StringTypeAdapter(CFStringRef string)
 {
 }
 
-template<> inline void StringTypeAdapter<CFStringRef>::writeTo<LChar>(std::span<LChar> destination) const
+template<> inline void StringTypeAdapter<CFStringRef>::writeTo<Latin1Character>(std::span<Latin1Character> destination) const
 {
     if (m_string)
         memcpySpan(destination, CFStringGetLatin1CStringSpan(m_string));
 }
 
-template<> inline void StringTypeAdapter<CFStringRef>::writeTo<UChar>(std::span<UChar> destination) const
+template<> inline void StringTypeAdapter<CFStringRef>::writeTo<char16_t>(std::span<char16_t> destination) const
 {
     if (m_string)
         CFStringGetCharacters(m_string, CFRangeMake(0, CFStringGetLength(m_string)), reinterpret_cast<UniChar*>(destination.data()));

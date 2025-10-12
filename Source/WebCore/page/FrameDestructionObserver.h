@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2011 Google, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,8 @@ public:
 
     WEBCORE_EXPORT virtual void frameDestroyed();
     WEBCORE_EXPORT virtual void willDetachPage();
+
+    bool hasFrame() const { return !!m_frame; }
 
     inline LocalFrame* frame() const; // Defined in FrameDestructionObserverInlines.h.
     inline RefPtr<LocalFrame> protectedFrame() const; // Defined in FrameDestructionObserverInlines.h.

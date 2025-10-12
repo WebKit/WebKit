@@ -54,6 +54,7 @@ static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterNumberingSystem);
 static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterLanguage);
 static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterScript);
 static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterRegion);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterVariants);
 
 }
 
@@ -86,6 +87,7 @@ const ClassInfo IntlLocalePrototype::s_info = { "Intl.Locale"_s, &Base::s_info, 
   language            intlLocalePrototypeGetterLanguage          DontEnum|ReadOnly|CustomAccessor
   script              intlLocalePrototypeGetterScript            DontEnum|ReadOnly|CustomAccessor
   region              intlLocalePrototypeGetterRegion            DontEnum|ReadOnly|CustomAccessor
+  variants            intlLocalePrototypeGetterVariants          DontEnum|ReadOnly|CustomAccessor
 @end
 */
 
@@ -362,6 +364,20 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterRegion, (JSGlobalObject* globa
 
     const String& region = locale->region();
     RELEASE_AND_RETURN(scope, JSValue::encode(region.isEmpty() ? jsUndefined() : jsString(vm, region)));
+}
+
+// https://tc39.es/ecma402/#sec-Intl.Locale.prototype.variants
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterVariants, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
+    if (!locale) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.variants called on value that's not a Locale"_s);
+
+    const String& variants = locale->variants();
+    RELEASE_AND_RETURN(scope, JSValue::encode(variants.isEmpty() ? jsUndefined() : jsString(vm, variants)));
 }
 
 // https://tc39.es/proposal-intl-locale-info/#sec-Intl.Locale.prototype.getTimezones

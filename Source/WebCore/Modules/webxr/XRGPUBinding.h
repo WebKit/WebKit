@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple, Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBXR_LAYERS)
+#if ENABLE(WEBXR_LAYERS) && ENABLE(WEBGPU)
 
 #include "GPUTextureFormat.h"
 #include "WebGPUXRBinding.h"
@@ -57,10 +57,10 @@ class XRProjectionLayer;
 class XRQuadLayer;
 class XRGPUSubImage;
 
+struct XRCanvasConfiguration;
 struct XRCubeLayerInit;
 struct XRCylinderLayerInit;
 struct XREquirectLayerInit;
-struct XRGPUProjectionLayerInit;
 struct XRProjectionLayerInit;
 struct XRQuadLayerInit;
 
@@ -70,7 +70,7 @@ template<typename> class ExceptionOr;
 class XRGPUBinding : public RefCounted<XRGPUBinding> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRGPUBinding);
 public:
-    static Ref<XRGPUBinding> create(const WebXRSession& session, GPUDevice& device)
+    static Ref<XRGPUBinding> create(WebXRSession& session, GPUDevice& device)
     {
         return adoptRef(*new XRGPUBinding(session, device));
     }
@@ -78,7 +78,7 @@ public:
     double nativeProjectionScaleFactor() const;
 
     ExceptionOr<Ref<XRProjectionLayer>> createProjectionLayer(ScriptExecutionContext&, std::optional<XRGPUProjectionLayerInit>);
-    RefPtr<XRGPUSubImage> getSubImage(XRCompositionLayer&, WebXRFrame&, std::optional<XREye>/* = "none"*/);
+    ExceptionOr<Ref<XRGPUSubImage>> getSubImage(XRProjectionLayer&, WebXRFrame&, std::optional<XREye>/* = "none"*/);
     ExceptionOr<Ref<XRGPUSubImage>> getViewSubImage(XRProjectionLayer&, WebXRView&);
     GPUTextureFormat getPreferredColorFormat();
 
@@ -90,14 +90,16 @@ public:
     // XREquirectLayer createEquirectLayer(optional XRGPUEquirectLayerInit init);
     // XRCubeLayer createCubeLayer(optional XRGPUCubeLayerInit init);
 private:
-    XRGPUBinding(const WebXRSession&, GPUDevice&);
+    XRGPUBinding(WebXRSession&, GPUDevice&);
+
+    ExceptionOr<Ref<XRGPUSubImage>> getSubImage(XRProjectionLayer&, XREye);
 
     RefPtr<WebGPU::XRBinding> m_backing;
-    RefPtr<const WebXRSession> m_session;
+    RefPtr<WebXRSession> m_session;
     std::optional<XRGPUProjectionLayerInit> m_init;
-    Ref<GPUDevice> m_device;
+    const Ref<GPUDevice> m_device;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBXR_LAYERS)
+#endif // ENABLE(WEBXR_LAYERS) && ENABLE(WEBGPU)

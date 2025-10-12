@@ -40,7 +40,7 @@ inline auto constexpr DivideRoundToNearest(Dividend dividend, Divisor divisor) {
     auto half_of_divisor = divisor / 2;
     auto quotient = dividend / divisor;
     auto remainder = dividend % divisor;
-    if (rtc::SafeGt(-remainder, half_of_divisor)) {
+    if (SafeGt(-remainder, half_of_divisor)) {
       --quotient;
     }
     return quotient;
@@ -49,7 +49,7 @@ inline auto constexpr DivideRoundToNearest(Dividend dividend, Divisor divisor) {
   auto half_of_divisor = (divisor - 1) / 2;
   auto quotient = dividend / divisor;
   auto remainder = dividend % divisor;
-  if (rtc::SafeGt(remainder, half_of_divisor)) {
+  if (SafeGt(remainder, half_of_divisor)) {
     ++quotient;
   }
   return quotient;

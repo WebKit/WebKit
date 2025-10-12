@@ -1,5 +1,12 @@
 include(GLibMacros)
 
+if (NOT DEFINED JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR)
+    set(JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/JavaScriptCoreGLib/Headers")
+endif ()
+if (NOT DEFINED JavaScriptCoreGLib_DERIVED_SOURCES_DIR)
+    set(JavaScriptCoreGLib_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/JavaScriptCoreGLib/DerivedSources")
+endif ()
+
 file(MAKE_DIRECTORY ${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR})
 file(MAKE_DIRECTORY ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc)
 

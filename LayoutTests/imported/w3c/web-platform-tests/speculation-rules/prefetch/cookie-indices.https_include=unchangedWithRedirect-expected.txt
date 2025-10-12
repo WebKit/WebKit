@@ -1,0 +1,3 @@
+
+PASS Cookie-Indices should not prevent a prefetch from succeeding with unchanged cookies, even with redirect
+

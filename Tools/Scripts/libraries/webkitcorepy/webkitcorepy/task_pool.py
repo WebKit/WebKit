@@ -335,14 +335,19 @@ class _Process(object):
                             break
                     if not task:
                         task = queue.receive()
+
                     # Since queue.receive is blocking, we should check group_queues one final time before breaking the work loop
                     if not task:
                         for group_queue in group_queues:
-                            task = group_queue.receive(blocking=False)
-                            if task:
-                                break
+                            while True:
+                                grouped_task = group_queue.receive(blocking=False)
+                                if not grouped_task:
+                                    break
+                                queue.send(_Result(value=grouped_task(None), id=grouped_task.id))
+
                     if not task:
                         break
+
                     queue.send(_Result(value=task(None), id=task.id))
 
             except BaseException:

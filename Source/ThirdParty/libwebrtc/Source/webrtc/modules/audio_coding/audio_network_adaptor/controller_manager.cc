@@ -10,21 +10,30 @@
 
 #include "modules/audio_coding/audio_network_adaptor/controller_manager.h"
 
+#include <algorithm>
 #include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <map>
 #include <memory>
+#include <optional>
+#include <set>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
 #include "modules/audio_coding/audio_network_adaptor/bitrate_controller.h"
 #include "modules/audio_coding/audio_network_adaptor/channel_controller.h"
+#include "modules/audio_coding/audio_network_adaptor/controller.h"
 #include "modules/audio_coding/audio_network_adaptor/debug_dump_writer.h"
 #include "modules/audio_coding/audio_network_adaptor/dtx_controller.h"
 #include "modules/audio_coding/audio_network_adaptor/fec_controller_plr_based.h"
 #include "modules/audio_coding/audio_network_adaptor/frame_length_controller.h"
 #include "modules/audio_coding/audio_network_adaptor/frame_length_controller_v2.h"
 #include "modules/audio_coding/audio_network_adaptor/util/threshold_curve.h"
-#include "rtc_base/logging.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/time_utils.h"
 
 #if WEBRTC_ENABLE_PROTOBUF
@@ -77,7 +86,7 @@ std::unique_ptr<FecControllerPlrBased> CreateFecControllerPlrBased(
 
 std::unique_ptr<FrameLengthController> CreateFrameLengthController(
     const audio_network_adaptor::config::FrameLengthController& config,
-    rtc::ArrayView<const int> encoder_frame_lengths_ms,
+    ArrayView<const int> encoder_frame_lengths_ms,
     int initial_frame_length_ms,
     int min_encoder_bitrate_bps) {
   RTC_CHECK(config.has_fl_increasing_packet_loss_fraction());
@@ -201,7 +210,7 @@ std::unique_ptr<BitrateController> CreateBitrateController(
 
 std::unique_ptr<FrameLengthControllerV2> CreateFrameLengthControllerV2(
     const audio_network_adaptor::config::FrameLengthControllerV2& config,
-    rtc::ArrayView<const int> encoder_frame_lengths_ms) {
+    ArrayView<const int> encoder_frame_lengths_ms) {
   return std::make_unique<FrameLengthControllerV2>(
       encoder_frame_lengths_ms, config.min_payload_bitrate_bps(),
       config.use_slow_adaptation());
@@ -220,7 +229,7 @@ ControllerManagerImpl::Config::~Config() = default;
 std::unique_ptr<ControllerManager> ControllerManagerImpl::Create(
     absl::string_view config_string,
     size_t num_encoder_channels,
-    rtc::ArrayView<const int> encoder_frame_lengths_ms,
+    ArrayView<const int> encoder_frame_lengths_ms,
     int min_encoder_bitrate_bps,
     size_t intial_channels_to_encode,
     int initial_frame_length_ms,
@@ -236,7 +245,7 @@ std::unique_ptr<ControllerManager> ControllerManagerImpl::Create(
 std::unique_ptr<ControllerManager> ControllerManagerImpl::Create(
     absl::string_view config_string,
     size_t num_encoder_channels,
-    rtc::ArrayView<const int> encoder_frame_lengths_ms,
+    ArrayView<const int> encoder_frame_lengths_ms,
     int min_encoder_bitrate_bps,
     size_t intial_channels_to_encode,
     int initial_frame_length_ms,
@@ -250,7 +259,7 @@ std::unique_ptr<ControllerManager> ControllerManagerImpl::Create(
       controller_manager_config.ParseFromString(std::string(config_string)));
   if (debug_dump_writer)
     debug_dump_writer->DumpControllerManagerConfig(controller_manager_config,
-                                                   rtc::TimeMillis());
+                                                   TimeMillis());
 
   std::vector<std::unique_ptr<Controller>> controllers;
   std::map<const Controller*, std::pair<int, float>> scoring_points;
@@ -360,7 +369,7 @@ std::vector<Controller*> ControllerManagerImpl::GetSortedControllers(
   if (!metrics.uplink_bandwidth_bps || !metrics.uplink_packet_loss_fraction)
     return sorted_controllers_;
 
-  const int64_t now_ms = rtc::TimeMillis();
+  const int64_t now_ms = TimeMillis();
   if (last_reordering_time_ms_ &&
       now_ms - *last_reordering_time_ms_ < config_.min_reordering_time_ms)
     return sorted_controllers_;

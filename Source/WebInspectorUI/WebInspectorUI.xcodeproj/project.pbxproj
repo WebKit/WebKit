@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -39,6 +39,21 @@
 		1C60FFE114E79B0F006CD77D /* copy-user-interface-resources.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "copy-user-interface-resources.pl"; sourceTree = "<group>"; };
 		1C78EE131760E115002F6AA5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1C78EE1617611340002F6AA5 /* WebInspectorUI.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = WebInspectorUI.c; sourceTree = "<group>"; };
+		2B1B1C6E2E3A875600D7D9ED /* ForwardDeclCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = ForwardDeclCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C6F2E3A875600D7D9ED /* MemoryUnsafeCastCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = MemoryUnsafeCastCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C702E3A875600D7D9ED /* NoUncheckedPtrMemberCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = NoUncheckedPtrMemberCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C712E3A875600D7D9ED /* NoUncountedMemberCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = NoUncountedMemberCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C722E3A875600D7D9ED /* NoUnretainedMemberCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = NoUnretainedMemberCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C732E3A875600D7D9ED /* RefCntblBaseVirtualDtorExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = RefCntblBaseVirtualDtorExpectations; sourceTree = "<group>"; };
+		2B1B1C742E3A875600D7D9ED /* RetainPtrCtorAdoptCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = RetainPtrCtorAdoptCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C752E3A875600D7D9ED /* UncheckedCallArgsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UncheckedCallArgsCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C762E3A875600D7D9ED /* UncheckedLocalVarsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UncheckedLocalVarsCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C772E3A875600D7D9ED /* UncountedCallArgsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UncountedCallArgsCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C782E3A875600D7D9ED /* UncountedLambdaCapturesCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UncountedLambdaCapturesCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C792E3A875600D7D9ED /* UncountedLocalVarsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UncountedLocalVarsCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C7A2E3A875600D7D9ED /* UnretainedCallArgsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnretainedCallArgsCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C7B2E3A875600D7D9ED /* UnretainedLambdaCapturesCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnretainedLambdaCapturesCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C7C2E3A875600D7D9ED /* UnretainedLocalVarsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnretainedLocalVarsCheckerExpectations; sourceTree = "<group>"; };
 		A54C2257148B23DF00373FA3 /* WebInspectorUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebInspectorUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDE992FB278D078100F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDE9931C278D0D9900F60D26 /* JavaScriptCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -74,6 +89,28 @@
 			path = Scripts;
 			sourceTree = "<group>";
 		};
+		2B1B1C7D2E3A875600D7D9ED /* SaferCPPExpectations */ = {
+			isa = PBXGroup;
+			children = (
+				2B1B1C6E2E3A875600D7D9ED /* ForwardDeclCheckerExpectations */,
+				2B1B1C6F2E3A875600D7D9ED /* MemoryUnsafeCastCheckerExpectations */,
+				2B1B1C702E3A875600D7D9ED /* NoUncheckedPtrMemberCheckerExpectations */,
+				2B1B1C712E3A875600D7D9ED /* NoUncountedMemberCheckerExpectations */,
+				2B1B1C722E3A875600D7D9ED /* NoUnretainedMemberCheckerExpectations */,
+				2B1B1C732E3A875600D7D9ED /* RefCntblBaseVirtualDtorExpectations */,
+				2B1B1C742E3A875600D7D9ED /* RetainPtrCtorAdoptCheckerExpectations */,
+				2B1B1C752E3A875600D7D9ED /* UncheckedCallArgsCheckerExpectations */,
+				2B1B1C762E3A875600D7D9ED /* UncheckedLocalVarsCheckerExpectations */,
+				2B1B1C772E3A875600D7D9ED /* UncountedCallArgsCheckerExpectations */,
+				2B1B1C782E3A875600D7D9ED /* UncountedLambdaCapturesCheckerExpectations */,
+				2B1B1C792E3A875600D7D9ED /* UncountedLocalVarsCheckerExpectations */,
+				2B1B1C7A2E3A875600D7D9ED /* UnretainedCallArgsCheckerExpectations */,
+				2B1B1C7B2E3A875600D7D9ED /* UnretainedLambdaCapturesCheckerExpectations */,
+				2B1B1C7C2E3A875600D7D9ED /* UnretainedLocalVarsCheckerExpectations */,
+			);
+			path = SaferCPPExpectations;
+			sourceTree = "<group>";
+		};
 		A54C224B148B23DE00373FA3 = {
 			isa = PBXGroup;
 			children = (
@@ -85,6 +122,7 @@
 				1C60FFE014E79B0F006CD77D /* Scripts */,
 				1C60FF1014E6D992006CD77D /* UserInterface */,
 				1C78EE1617611340002F6AA5 /* WebInspectorUI.c */,
+				2B1B1C7D2E3A875600D7D9ED /* SaferCPPExpectations */,
 			);
 			sourceTree = "<group>";
 		};
@@ -169,7 +207,13 @@
 		1C60FF1214E6D9AF006CD77D /* Copy User Interface Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
 			name = "Copy User Interface Resources";
+			outputPaths = (
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [[ \"${ACTION}\" == \"installapi\" || \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit\nfi\n\n/usr/bin/perl \"${SRCROOT}/Scripts/copy-user-interface-resources.pl\"\n";

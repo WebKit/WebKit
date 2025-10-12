@@ -67,7 +67,6 @@ WebContext::WebContext()
     WKContextConfigurationSetNetworkProcessPath(contextConfiguration.get(), networkProcessPath.get());
 
     auto dataStoreConfiguration = adoptWK(WKWebsiteDataStoreConfigurationCreate());
-    WKWebsiteDataStoreConfigurationSetApplicationCacheDirectory(dataStoreConfiguration.get(), applicationCacheDirectory.get());
     WKWebsiteDataStoreConfigurationSetNetworkCacheDirectory(dataStoreConfiguration.get(), networkCacheDirectory.get());
     WKWebsiteDataStoreConfigurationSetIndexedDBDatabaseDirectory(dataStoreConfiguration.get(), indexedDBDirectory.get());
     WKWebsiteDataStoreConfigurationSetLocalStorageDirectory(dataStoreConfiguration.get(), localStorageDirectory.get());

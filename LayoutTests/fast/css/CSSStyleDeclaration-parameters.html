@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
 description("Tests that parameters to CSSStyleDeclaration API are mandatory.");
 
@@ -9,8 +9,7 @@ var style = document.body.style;
 shouldThrow("style.item()", "'TypeError: Not enough arguments'");
 shouldThrow("style.removeProperty()", "'TypeError: Not enough arguments'");
 shouldThrow("style.getPropertyPriority()", "'TypeError: Not enough arguments'");
-shouldThrow("style.getPropertyCSSValue()", "'TypeError: Not enough arguments'");
+shouldThrow("style.getPropertyValue()", "'TypeError: Not enough arguments'");
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

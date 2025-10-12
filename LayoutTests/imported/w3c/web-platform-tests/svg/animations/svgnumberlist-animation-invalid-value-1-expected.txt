@@ -1,0 +1,4 @@
+ABCD
+
+FAIL Test SVGNumberList animation with invalid values: String value in from list attribute. assert_array_equals: expected property 0 to be 15 but got 22.5 (expected array [15, 20, 30, 40] got [22.5, 45, 67.5, 40])
+

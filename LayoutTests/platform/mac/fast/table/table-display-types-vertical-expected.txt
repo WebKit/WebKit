@@ -1,8 +1,8 @@
-layer at (0,0) size 785x1238
+layer at (0,0) size 785x908
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1238
-  RenderBlock {HTML} at (0,0) size 785x1239
-    RenderBody {BODY} at (8,10) size 769x1221
+layer at (0,0) size 785x908
+  RenderBlock {HTML} at (0,0) size 785x909
+    RenderBody {BODY} at (8,10) size 769x891
       RenderBlock {TABLE} at (10,0) size 92x120 [border: (1px solid #000000)]
         RenderTable at (1,1) size 90x118
           RenderTableSection {THEAD} at (0,0) size 24x118
@@ -155,43 +155,19 @@ layer at (0,0) size 785x1238
                         RenderTableCell {TD} at (2,44) size 20x42 [r=0 c=1 rs=1 cs=1]
                           RenderText {#text} at (1,1) size 18x39
                             text run at (1,1) width 39: "Cell 4"
-      RenderTable at (0,588) size 102x633
-        RenderTableSection (anonymous) at (0,0) size 102x632
-          RenderTableRow (anonymous) at (0,0) size 102x632
-            RenderTableCell {P} at (0,0) size 102x632 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 100x630
-                text run at (1,1) width 86: "Lorem ipsum"
-                text run at (1,19) width 92: "dolor sit amet,"
-                text run at (1,37) width 73: "consectetur"
-                text run at (1,55) width 99: "adipisicing elit,"
-                text run at (1,73) width 100: "sed do eiusmod"
-                text run at (1,91) width 46: "tempor"
-                text run at (1,109) width 82: "incididunt ut"
-                text run at (1,127) width 56: "labore et"
-                text run at (1,145) width 88: "dolore magna"
-                text run at (1,163) width 100: "aliqua. Ut enim"
-                text run at (1,181) width 61: "ad minim"
-                text run at (1,199) width 82: "veniam, quis"
-                text run at (1,217) width 48: "nostrud"
-                text run at (1,235) width 76: "exercitation"
-                text run at (1,253) width 100: "ullamco laboris"
-                text run at (1,271) width 88: "nisi ut aliquip"
-                text run at (1,289) width 34: "ex ea"
-                text run at (1,307) width 64: "commodo"
-                text run at (1,325) width 68: "consequat."
-                text run at (1,343) width 96: "Duis aute irure"
-                text run at (1,361) width 51: "dolor in"
-                text run at (1,379) width 86: "reprehenderit"
-                text run at (1,397) width 76: "in voluptate"
-                text run at (1,415) width 60: "velit esse"
-                text run at (1,433) width 86: "cillum dolore"
-                text run at (1,451) width 93: "eu fugiat nulla"
-                text run at (1,469) width 53: "pariatur."
-                text run at (1,487) width 92: "Excepteur sint"
-                text run at (1,505) width 56: "occaecat"
-                text run at (1,523) width 87: "cupidatat non"
-                text run at (1,541) width 88: "proident, sunt"
-                text run at (1,559) width 76: "in culpa qui"
-                text run at (1,577) width 100: "officia deserunt"
-                text run at (1,595) width 91: "mollit anim id"
-                text run at (1,613) width 80: "est laborum."
+      RenderTable at (0,588) size 198x303
+        RenderTableSection (anonymous) at (0,0) size 198x302
+          RenderTableRow (anonymous) at (0,0) size 198x302
+            RenderTableCell {P} at (0,0) size 198x304 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 198x300
+                text run at (1,1) width 259: "Lorem ipsum dolor sit amet, consectetur"
+                text run at (19,1) width 252: "adipisicing elit, sed do eiusmod tempor"
+                text run at (37,1) width 300: "incididunt ut labore et dolore magna aliqua. Ut"
+                text run at (55,1) width 235: "enim ad minim veniam, quis nostrud"
+                text run at (73,1) width 290: "exercitation ullamco laboris nisi ut aliquip ex"
+                text run at (91,1) width 292: "ea commodo consequat. Duis aute irure dolor"
+                text run at (109,1) width 290: "in reprehenderit in voluptate velit esse cillum"
+                text run at (127,1) width 291: "dolore eu fugiat nulla pariatur. Excepteur sint"
+                text run at (145,1) width 293: "occaecat cupidatat non proident, sunt in culpa"
+                text run at (163,1) width 240: "qui officia deserunt mollit anim id est"
+                text run at (181,1) width 58: "laborum."

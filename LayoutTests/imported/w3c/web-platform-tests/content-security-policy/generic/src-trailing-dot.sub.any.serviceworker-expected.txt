@@ -1,0 +1,3 @@
+
+FAIL Fetch from host with trailing dot should be allowed by CSP. promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+

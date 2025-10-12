@@ -42,6 +42,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IPCStreamTester);
+
 RefPtr<IPCStreamTester> IPCStreamTester::create(IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle, bool ignoreInvalidMessageForTesting)
 {
     auto tester = adoptRef(*new IPCStreamTester(identifier, WTFMove(connectionHandle), ignoreInvalidMessageForTesting));
@@ -61,7 +63,7 @@ IPCStreamTester::~IPCStreamTester() = default;
 void IPCStreamTester::initialize()
 {
     protectedWorkQueue()->dispatch([this] {
-        m_streamConnection->open(protectedWorkQueue());
+        m_streamConnection->open(*this, protectedWorkQueue());
         m_streamConnection->startReceivingMessages(*this, Messages::IPCStreamTester::messageReceiverName(), m_identifier.toUInt64());
         m_streamConnection->send(Messages::IPCStreamTesterProxy::WasCreated(workQueue().wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore()), m_identifier);
     });
@@ -75,6 +77,11 @@ void IPCStreamTester::stopListeningForIPC(Ref<IPCStreamTester>&& refFromConnecti
         m_streamConnection->invalidate();
     });
     workQueue->stopAndWaitForCompletion();
+}
+
+void IPCStreamTester::didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName, const Vector<uint32_t>&)
+{
+    ++m_invalidMessages;
 }
 
 void IPCStreamTester::syncMessageReturningSharedMemory1(uint32_t byteCount, CompletionHandler<void(std::optional<WebCore::SharedMemory::Handle>&&)>&& completionHandler)
@@ -130,6 +137,11 @@ void IPCStreamTester::asyncPing(uint32_t value, CompletionHandler<void(uint32_t)
 
 void IPCStreamTester::emptyMessage()
 {
+}
+
+void IPCStreamTester::checkInvalidMessages(CompletionHandler<void(uint32_t)>&& completionHandler)
+{
+    completionHandler(std::exchange(m_invalidMessages, 0));
 }
 
 #if USE(FOUNDATION)

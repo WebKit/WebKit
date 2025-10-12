@@ -36,12 +36,14 @@
 #include <wtf/text/WTFString.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
 
 #include <webrtc/api/rtp_parameters.h>
 #include <webrtc/api/rtp_transceiver_interface.h>
 #include <webrtc/p2p/base/p2p_constants.h>
 #include <webrtc/pc/webrtc_sdp.h>
 
+IGNORE_CLANG_WARNINGS_END
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
@@ -166,6 +168,7 @@ static inline RTCRtpHeaderExtensionParameters toRTCHeaderExtensionParameters(con
 
     parameters.uri = fromStdString(rtcParameters.uri);
     parameters.id = rtcParameters.id;
+    parameters.encrypted = rtcParameters.encrypt;
 
     return parameters;
 }
@@ -176,6 +179,7 @@ static inline webrtc::RtpExtension fromRTCHeaderExtensionParameters(const RTCRtp
 
     rtcParameters.uri = parameters.uri.utf8().data();
     rtcParameters.id = parameters.id;
+    rtcParameters.encrypt = parameters.encrypted;
 
     return rtcParameters;
 }
@@ -332,14 +336,14 @@ webrtc::RtpTransceiverDirection fromRTCRtpTransceiverDirection(RTCRtpTransceiver
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-webrtc::RtpTransceiverInit fromRtpTransceiverInit(const RTCRtpTransceiverInit& init, cricket::MediaType type)
+webrtc::RtpTransceiverInit fromRtpTransceiverInit(const RTCRtpTransceiverInit& init, webrtc::MediaType type)
 {
     webrtc::RtpTransceiverInit rtcInit;
     rtcInit.direction = fromRTCRtpTransceiverDirection(init.direction);
     for (auto& stream : init.streams)
         rtcInit.stream_ids.push_back(stream->id().utf8().data());
 
-    if (type == cricket::MediaType::MEDIA_TYPE_AUDIO) {
+    if (type == webrtc::MediaType::AUDIO) {
         if (!init.sendEncodings.isEmpty())
             rtcInit.send_encodings.push_back(fromRTCEncodingParameters(init.sendEncodings[0]));
     } else {
@@ -378,7 +382,7 @@ Exception toException(const webrtc::RTCError& error)
 
 static inline RTCIceComponent toRTCIceComponent(int component)
 {
-    return component == cricket::ICE_CANDIDATE_COMPONENT_RTP ? RTCIceComponent::Rtp : RTCIceComponent::Rtcp;
+    return component == webrtc::ICE_CANDIDATE_COMPONENT_RTP ? RTCIceComponent::Rtp : RTCIceComponent::Rtcp;
 }
 
 static inline std::optional<RTCIceProtocol> toRTCIceProtocol(const std::string& protocol)
@@ -419,7 +423,7 @@ static inline std::optional<RTCIceCandidateType> toRTCIceCandidateType(webrtc::I
     return { };
 }
 
-RTCIceCandidateFields convertIceCandidate(const cricket::Candidate& candidate)
+RTCIceCandidateFields convertIceCandidate(const webrtc::Candidate& candidate)
 {
     RTCIceCandidateFields fields;
     fields.foundation = fromStdString(candidate.foundation());

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    WebCore::LayerHostingContextID hostingContextID() const final { return m_hostingContextID.value_or(0); }
+    WebCore::HostingContext hostingContext() const final { return m_hostingContext.value_or(WebCore::HostingContext()); }
 
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
@@ -60,11 +60,11 @@ private:
     // WebCore::SampleBufferDisplayLayer
     void initialize(bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, CompletionHandler<void(bool)>&&) final;
 #if !RELEASE_LOG_DISABLED
-    void setLogIdentifier(String&&) final;
+    void setLogIdentifier(uint64_t) final;
 #endif
     bool didFail() const final;
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer) final;
-    void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRight>&&) final;
+    void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRightAnnotated>&&) final;
     void flush() final;
     void flushAndRemoveImage() final;
     void play() final;
@@ -82,14 +82,14 @@ private:
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     WeakPtr<SampleBufferDisplayLayerManager> m_manager;
-    Ref<IPC::Connection> m_connection;
+    const Ref<IPC::Connection> m_connection;
 
     PlatformLayerContainer m_videoLayer;
     bool m_didFail { false };
     bool m_paused { false };
 
     SharedVideoFrameWriter m_sharedVideoFrameWriter;
-    std::optional<WebCore::LayerHostingContextID> m_hostingContextID;
+    std::optional<WebCore::HostingContext> m_hostingContext;
 };
 
 }

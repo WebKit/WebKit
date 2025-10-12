@@ -9,10 +9,10 @@ for (let i = 0; i < wasmTestLoopCount; ++i) {
     } catch (e) {
         let str = e.stack.toString()
         let trace = str.split('\n')
-        let expected = ["*", "<?>.wasm-function[g]@[wasm code]",
-            "<?>.wasm-function[f]@[wasm code]", "<?>.wasm-function[e]@[wasm code]", "<?>.wasm-function[d]@[wasm code]",
-            "<?>.wasm-function[c]@[wasm code]", "<?>.wasm-function[b]@[wasm code]", "<?>.wasm-function[a]@[wasm code]",
-            "<?>.wasm-function[main]@[wasm code]", "*"]
+        let expected = ["*", "g@wasm-function[11]",
+            "f@wasm-function[17]", "e@wasm-function[16]", "d@wasm-function[15]",
+            "c@wasm-function[14]", "b@wasm-function[13]", "a@wasm-function[12]",
+            "main@wasm-function[18]", "*"]
         if (trace.length != expected.length)
             throw "unexpected length" + str;
         for (let i = 0; i < trace.length; ++i) {

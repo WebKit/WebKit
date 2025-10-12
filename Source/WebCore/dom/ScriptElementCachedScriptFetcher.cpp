@@ -33,13 +33,13 @@ namespace WebCore {
 
 const ASCIILiteral ScriptElementCachedScriptFetcher::defaultCrossOriginModeForModule { "anonymous"_s };
 
-CachedResourceHandle<CachedScript> ScriptElementCachedScriptFetcher::requestModuleScript(Document& document, const URL& sourceURL, String&& integrity, std::optional<ServiceWorkersMode> serviceWorkersMode) const
+CachedResourceHandle<CachedScript> ScriptElementCachedScriptFetcher::requestModuleScript(Document& document, const URL& sourceURL, FetchOptionsDestination destination, String&& integrity, std::optional<ServiceWorkersMode> serviceWorkersMode) const
 {
     // https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cors-settings-attributes
     // If the fetcher is not module script, credential mode is always "same-origin" ("anonymous").
     // This code is for dynamic module import (`import` operator).
 
-    return requestScriptWithCache(document, sourceURL, isClassicScript() ? defaultCrossOriginModeForModule : m_crossOriginMode, WTFMove(integrity), { }, serviceWorkersMode);
+    return requestScriptWithCache(document, sourceURL, destination, isClassicScript() ? defaultCrossOriginModeForModule : m_crossOriginMode, WTFMove(integrity), { }, serviceWorkersMode);
 }
 
 }

@@ -10,12 +10,20 @@
 
 #include "modules/video_capture/linux/camera_portal.h"
 
-#include <gio/gio.h>
 #include <gio/gunixfdlist.h>
 
+#include <cstdint>
+#include <memory>
+#include <string>
+
 #include "modules/portal/pipewire_utils.h"
+#include "modules/portal/portal_request_response.h"
+#include "modules/portal/scoped_glib.h"
 #include "modules/portal/xdg_desktop_portal_utils.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
@@ -55,7 +63,7 @@ class CameraPortalPrivate {
                              GAsyncResult* result,
                              gpointer user_data);
 
-  webrtc::Mutex notifier_lock_;
+  Mutex notifier_lock_;
   CameraPortal::PortalNotifier* notifier_ RTC_GUARDED_BY(&notifier_lock_) =
       nullptr;
 
@@ -70,7 +78,7 @@ CameraPortalPrivate::CameraPortalPrivate(CameraPortal::PortalNotifier* notifier)
 
 CameraPortalPrivate::~CameraPortalPrivate() {
   {
-    webrtc::MutexLock lock(&notifier_lock_);
+    MutexLock lock(&notifier_lock_);
     notifier_ = nullptr;
   }
 
@@ -237,7 +245,7 @@ void CameraPortalPrivate::OnOpenResponse(GDBusProxy* proxy,
 }
 
 void CameraPortalPrivate::OnPortalDone(RequestResponse result, int fd) {
-  webrtc::MutexLock lock(&notifier_lock_);
+  MutexLock lock(&notifier_lock_);
   if (notifier_) {
     notifier_->OnCameraRequestResult(result, fd);
     notifier_ = nullptr;

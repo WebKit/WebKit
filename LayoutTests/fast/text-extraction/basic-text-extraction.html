@@ -33,7 +33,10 @@ addEventListener("load", async () => {
 
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
-    document.body.textContent = await UIHelper.requestTextExtraction();
+    document.body.textContent = await UIHelper.requestTextExtraction({
+        mergeParagraphs: true,
+        skipNearlyTransparentContent: true
+    });
     testRunner.notifyDone();
 });
 </script>

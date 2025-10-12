@@ -10,9 +10,12 @@
 
 #include "api/audio/audio_frame.h"
 
-#include <stdint.h>
-#include <string.h>  // memcmp
+#include <cstdint>
+#include <cstring>
 
+#include "api/audio/audio_view.h"
+#include "api/audio/channel_layout.h"
+#include "rtc_base/checks.h"
 #include "test/gtest.h"
 
 namespace webrtc {

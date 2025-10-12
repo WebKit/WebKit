@@ -7,6 +7,7 @@ noInline(test);
 const buffer = new ArrayBuffer(16, { maxByteLength: 32 });
 const view = new DataView(buffer, 8, 8);
 
+globalThis.testLoopCount ??= 10000;
 for (let i = 0; i < testLoopCount; i++) {
     if (i == testLoopCount - 1) {
         buffer.resize(4);

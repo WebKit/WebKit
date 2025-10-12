@@ -35,7 +35,7 @@ WARN_UNUSED_RETURN GRefPtr<GstSample> convertLibWebRTCVideoFrameToGStreamerSampl
 
 webrtc::VideoFrame convertGStreamerSampleToLibWebRTCVideoFrame(GRefPtr<GstSample>&&, uint32_t rtpTimestamp);
 
-class GStreamerVideoFrameLibWebRTC : public rtc::RefCountedObject<webrtc::VideoFrameBuffer> {
+class GStreamerVideoFrameLibWebRTC : public webrtc::RefCountedObject<webrtc::VideoFrameBuffer> {
 public:
     GStreamerVideoFrameLibWebRTC(GRefPtr<GstSample>&& sample, GstVideoInfo info)
         : m_sample(WTFMove(sample))
@@ -43,10 +43,10 @@ public:
     {
     }
 
-    static rtc::scoped_refptr<webrtc::VideoFrameBuffer> create(GRefPtr<GstSample>&&);
+    static webrtc::scoped_refptr<webrtc::VideoFrameBuffer> create(GRefPtr<GstSample>&&);
 
     GstSample* getSample() const { return m_sample.get(); }
-    rtc::scoped_refptr<webrtc::I420BufferInterface> ToI420() final;
+    webrtc::scoped_refptr<webrtc::I420BufferInterface> ToI420() final;
 
     int width() const final { return GST_VIDEO_INFO_WIDTH(&m_info); }
     int height() const final { return GST_VIDEO_INFO_HEIGHT(&m_info); }

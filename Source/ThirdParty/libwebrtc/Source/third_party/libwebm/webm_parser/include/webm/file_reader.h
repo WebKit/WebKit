@@ -67,6 +67,19 @@ class FileReader : public Reader {
   Status Skip(std::uint64_t num_to_skip,
               std::uint64_t* num_actually_skipped) override;
 
+  /**
+   Moves the reader to a new absolute byte position in the file.
+
+   It is required to call DidSeek() on the parser after successfully seeking.
+   Seeking will only work on actual files, not stdin or pipes.
+
+   \param seek_position The new absolute byte position in the file.
+   \return `Status::kOkCompleted` if reader position is now `seek_position`.
+   `Status::kSeekFailed` if the reader was unable to seek to `seek_position`
+   such as when the file is stdin.
+   */
+  Status Seek(std::uint64_t seek_position);
+
   std::uint64_t Position() const override;
 
  private:

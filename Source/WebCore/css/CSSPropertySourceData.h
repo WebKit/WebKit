@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "StyleRuleType.h"
+#include <WebCore/StyleRuleType.h>
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>

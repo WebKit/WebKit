@@ -8,12 +8,12 @@
 #include "modules/svg/include/SkSVGCircle.h"
 
 #include "include/core/SkCanvas.h"
+#include "include/core/SkPathTypes.h"
 #include "include/core/SkPoint.h"
 #include "modules/svg/include/SkSVGAttributeParser.h"
 #include "modules/svg/include/SkSVGRenderContext.h"
 
 class SkPaint;
-enum class SkPathFillType;
 
 SkSVGCircle::SkSVGCircle() : INHERITED(SkSVGTag::kCircle) {}
 
@@ -47,10 +47,7 @@ SkPath SkSVGCircle::onAsPath(const SkSVGRenderContext& ctx) const {
     SkScalar r;
     std::tie(pos, r) = this->resolve(ctx.lengthContext());
 
-    SkPath path = SkPath::Circle(pos.x(), pos.y(), r);
-    this->mapToParent(&path);
-
-    return path;
+    return this->mapToParent(SkPath::Circle(pos.x(), pos.y(), r));
 }
 
 SkRect SkSVGCircle::onTransformableObjectBoundingBox(const SkSVGRenderContext& ctx) const {

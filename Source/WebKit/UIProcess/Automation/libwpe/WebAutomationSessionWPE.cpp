@@ -39,8 +39,8 @@
 
 
 #if ENABLE(WPE_PLATFORM)
-#include "GRefPtrWPE.h"
 #include "Logging.h"
+#include <wpe/GRefPtrWPE.h>
 #include <wpe/wpe-platform.h>
 #endif
 
@@ -418,7 +418,7 @@ static uint32_t modifiersForKeyVal(unsigned keyVal)
 }
 #endif // ENABLE(WPE_PLATFORM)
 
-void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, std::variant<VirtualKey, CharKey>&& key)
+void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, Variant<VirtualKey, CharKey>&& key)
 {
     if (page.viewBackend()) {
         platformSimulateKeyboardInteractionLibWPE(page, interaction, WTFMove(key), m_currentModifiers);

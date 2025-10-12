@@ -34,6 +34,8 @@ if [[ ${INPUT_FILE_BASE} == "WebContentExtension" ]]; then
     EXTENSION_POINT_ID="com.apple.web-browser-engine.content"
 elif [[ ${INPUT_FILE_BASE} == "WebContentCaptivePortalExtension" ]]; then
     EXTENSION_POINT_ID="com.apple.web-browser-engine.content"
+elif [[ ${INPUT_FILE_BASE} == "WebContentEnhancedSecurityExtension" ]]; then
+    EXTENSION_POINT_ID="com.apple.web-browser-engine.content"
 fi
 
 if [[ -n "${EXTENSION_POINT_ID}" ]]; then

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,7 +68,7 @@ static bool sendMessage(WebPage* page, NOESCAPE const Function<bool(IPC::Connect
     std::optional<WebCore::PageIdentifier> pageIdentifier;
     if (page)
         pageIdentifier = page->identifier();
-    else if (auto* connection = SWContextManager::singleton().connection()) {
+    else if (RefPtr connection = SWContextManager::singleton().connection()) {
         // Pageless notification messages are, by default, on behalf of a service worker.
         // So use the service worker connection's page identifier.
         pageIdentifier = connection->pageIdentifier();

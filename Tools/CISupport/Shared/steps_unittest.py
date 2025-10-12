@@ -204,7 +204,7 @@ class TestPrintClangVersion(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=SUCCESS, state_string='clang version 17.0.6 (https://github.com/rniwa/llvm-project.git 34715c1b2049d8aa738ade79f003ed4b82259a89)')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('llvm_revision'), '34715c1b2049d8aa738ade79f003ed4b82259a89')
+        self.assertEqual(self.getProperty('current_llvm_revision'), '34715c1b2049d8aa738ade79f003ed4b82259a89')
         return rc
 
     def test_failure(self):
@@ -219,13 +219,38 @@ class TestPrintClangVersion(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=SUCCESS, state_string='Clang executable does not exist')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('llvm_revision'), None)
+        self.assertEqual(self.getProperty('current_llvm_revision'), None)
+        return rc
+
+
+class TestGetLLVMVersion(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(GetLLVMVersion())
+
+    def test_success(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'cat Tools/CISupport/safer-cpp-llvm-version'])
+            + ExpectShell.log('stdio', stdout='34715c1b2049d8aa738ade79f003ed4b82259a89\n')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Canonical LLVM version: 34715c1b2049d8aa738ade79f003ed4b82259a89')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('canonical_llvm_revision'), '34715c1b2049d8aa738ade79f003ed4b82259a89')
         return rc
 
 
 class TestCheckoutLLVMProject(BuildStepMixinAdditions, unittest.TestCase):
-    LLVM_REVISION = '123456'
-
     def setUp(self):
         self.longMessage = True
         return self.setUpBuildStep()
@@ -235,21 +260,17 @@ class TestCheckoutLLVMProject(BuildStepMixinAdditions, unittest.TestCase):
 
     def configureStep(self):
         self.setupStep(CheckOutLLVMProject())
-
-        def doStepIf(self, step):
-            return self.build.getProperty('llvm_revision', '') != TestCheckoutLLVMProject.LLVM_REVISION
-        CheckOutLLVMProject.doStepIf = doStepIf
+        self.setProperty('canonical_llvm_revision', '123456')
 
     def test_skipped(self):
         self.configureStep()
-        self.setProperty('llvm_revision', '123456')
+        self.setProperty('current_llvm_revision', '123456')
         self.expectOutcome(result=SKIPPED, state_string='llvm-project is already up to date')
         return self.runStep()
 
 
 class TestUpdateClang(BuildStepMixinAdditions, unittest.TestCase):
     ENV = {'PATH': '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/CMake.app/Contents/bin/:BuildDir'}
-    LLVM_REVISION = '123456'
 
     def setUp(self):
         self.longMessage = True
@@ -261,10 +282,7 @@ class TestUpdateClang(BuildStepMixinAdditions, unittest.TestCase):
     def configureStep(self):
         self.setupStep(UpdateClang())
         self.setProperty('builddir', 'BuildDir')
-
-        def doStepIf(self, step):
-            return self.build.getProperty('llvm_revision', '') != TestUpdateClang.LLVM_REVISION
-        UpdateClang.doStepIf = doStepIf
+        self.setProperty('canonical_llvm_revision', '123456')
 
     def test_success(self):
         self.configureStep()
@@ -295,8 +313,15 @@ class TestUpdateClang(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_skipped(self):
         self.configureStep()
-        self.setProperty('llvm_revision', '123456')
+        self.setProperty('current_llvm_revision', '123456')
         self.expectOutcome(result=SKIPPED, state_string='Clang is already up to date')
+        self.runStep()
+
+    def test_use_previous_build(self):
+        self.configureStep()
+        self.setProperty('canonical_llvm_revision', '')
+        self.setProperty('current_llvm_revision', '123456')
+        self.expectOutcome(result=WARNINGS, state_string='Could not find canonical revision, using previous build')
         self.runStep()
 
 

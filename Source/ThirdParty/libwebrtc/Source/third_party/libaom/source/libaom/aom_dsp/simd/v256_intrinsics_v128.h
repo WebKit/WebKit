@@ -702,24 +702,24 @@ SIMD_INLINE v256 v256_shr_s64(v256 a, const unsigned int c) {
 
 /* These intrinsics require immediate values, so we must use #defines
    to enforce that. */
-#define v256_shl_n_byte(a, n)                                              \
-  ((n) < 16 ? v256_from_v128(v128_or(v128_shl_n_byte(a.val[1], n),         \
-                                     v128_shr_n_byte(a.val[0], 16 - (n))), \
-                             v128_shl_n_byte(a.val[0], (n)))               \
-            : v256_from_v128(                                              \
-                  (n) > 16 ? v128_shl_n_byte(a.val[0], (n)-16) : a.val[0], \
+#define v256_shl_n_byte(a, n)                                                \
+  ((n) < 16 ? v256_from_v128(v128_or(v128_shl_n_byte(a.val[1], n),           \
+                                     v128_shr_n_byte(a.val[0], 16 - (n))),   \
+                             v128_shl_n_byte(a.val[0], (n)))                 \
+            : v256_from_v128(                                                \
+                  (n) > 16 ? v128_shl_n_byte(a.val[0], (n) - 16) : a.val[0], \
                   v128_zero()))
 
-#define v256_shr_n_byte(a, n)                                                \
-  (n == 0                                                                    \
-       ? a                                                                   \
-       : ((n) < 16                                                           \
-              ? v256_from_v128(v128_shr_n_byte(a.val[1], n),                 \
-                               v128_or(v128_shr_n_byte(a.val[0], n),         \
-                                       v128_shl_n_byte(a.val[1], 16 - (n)))) \
-              : v256_from_v128(                                              \
-                    v128_zero(),                                             \
-                    (n) > 16 ? v128_shr_n_byte(a.val[1], (n)-16) : a.val[1])))
+#define v256_shr_n_byte(a, n)                                                 \
+  (n == 0                                                                     \
+       ? a                                                                    \
+       : ((n) < 16                                                            \
+              ? v256_from_v128(v128_shr_n_byte(a.val[1], n),                  \
+                               v128_or(v128_shr_n_byte(a.val[0], n),          \
+                                       v128_shl_n_byte(a.val[1], 16 - (n))))  \
+              : v256_from_v128(v128_zero(),                                   \
+                               (n) > 16 ? v128_shr_n_byte(a.val[1], (n) - 16) \
+                                        : a.val[1])))
 
 #define v256_align(a, b, c) \
   ((c) ? v256_or(v256_shr_n_byte(b, c), v256_shl_n_byte(a, 32 - (c))) : b)

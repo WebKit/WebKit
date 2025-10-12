@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "IDLTypes.h"
-#include "JSDOMConvertBase.h"
-#include "JSDOMPromise.h"
-#include "WorkerGlobalScope.h"
+#include <WebCore/IDLTypes.h>
+#include <WebCore/JSDOMConvertBase.h>
+#include <WebCore/JSDOMPromise.h>
+#include <WebCore/WorkerGlobalScope.h>
 
 namespace WebCore {
 
@@ -76,12 +76,17 @@ template<typename T> struct JSConverter<IDLPromise<T>> {
 
     static JSC::JSValue convert(JSC::JSGlobalObject&, JSDOMGlobalObject&, DOMPromise& promise)
     {
-        return promise.promise();
+        return promise.guardedObject();
     }
 
     static JSC::JSValue convert(JSC::JSGlobalObject&, JSDOMGlobalObject&, const RefPtr<DOMPromise>& promise)
     {
-        return promise->promise();
+        return promise->guardedObject();
+    }
+
+    static JSC::JSValue convert(JSC::JSGlobalObject&, JSDOMGlobalObject&, const Ref<DOMPromise>& promise)
+    {
+        return promise->guardedObject();
     }
 
     template<template<typename> class U>

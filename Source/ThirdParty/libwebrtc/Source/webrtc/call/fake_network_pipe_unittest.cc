@@ -38,17 +38,14 @@ using ::testing::WithArg;
 namespace webrtc {
 class MockReceiver : public PacketReceiver {
  public:
-  MOCK_METHOD(void,
-              DeliverRtcpPacket,
-              (rtc::CopyOnWriteBuffer packet),
-              (override));
+  MOCK_METHOD(void, DeliverRtcpPacket, (CopyOnWriteBuffer packet), (override));
   MOCK_METHOD(void,
               DeliverRtpPacket,
               (MediaType media_type,
                RtpPacketReceived packet,
                OnUndemuxablePacketHandler undemuxable_packet_handler),
               (override));
-  virtual ~MockReceiver() = default;
+  ~MockReceiver() override = default;
 };
 
 class ReorderTestReceiver : public MockReceiver {
@@ -497,14 +494,14 @@ TEST_F(FakeNetworkPipeTest, DeliverRtcpPacket) {
   std::unique_ptr<FakeNetworkPipe> pipe(new FakeNetworkPipe(
       &fake_clock_, std::move(simulated_network), &receiver));
 
-  rtc::CopyOnWriteBuffer buffer(100);
+  CopyOnWriteBuffer buffer(100);
   memset(buffer.MutableData(), 0, 100);
   pipe->DeliverRtcpPacket(std::move(buffer));
 
   // Advance the network delay to get the first packet.
   fake_clock_.AdvanceTimeMilliseconds(config.queue_delay_ms);
   EXPECT_CALL(receiver,
-              DeliverRtcpPacket(Property(&rtc::CopyOnWriteBuffer::size, 100)));
+              DeliverRtcpPacket(Property(&CopyOnWriteBuffer::size, 100)));
   pipe->Process();
 }
 

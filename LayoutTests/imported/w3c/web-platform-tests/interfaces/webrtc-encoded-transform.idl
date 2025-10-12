@@ -19,8 +19,18 @@ enum SFrameTransformRole {
     "decrypt"
 };
 
+// List of supported cipher suites, as defined in [[RFC9605]] section 4.5.
+enum SFrameCipherSuite {
+     "AES_128_CTR_HMAC_SHA256_80",
+     "AES_128_CTR_HMAC_SHA256_64",
+     "AES_128_CTR_HMAC_SHA256_32",
+     "AES_128_GCM_SHA256_128",
+     "AES_256_GCM_SHA512_128"
+};
+
 dictionary SFrameTransformOptions {
     SFrameTransformRole role = "encrypt";
+    required SFrameCipherSuite cipherSuite;
 };
 
 typedef [EnforceRange] unsigned long long SmallCryptoKeyID;
@@ -55,6 +65,17 @@ dictionary SFrameTransformErrorEventInit : EventInit {
     CryptoKeyID? keyID;
 };
 
+dictionary RTCEncodedFrameMetadata {
+    unsigned long synchronizationSource;
+    octet payloadType;
+    sequence<unsigned long> contributingSources;
+    unsigned long rtpTimestamp;
+    DOMHighResTimeStamp receiveTime;
+    DOMHighResTimeStamp captureTime;
+    DOMHighResTimeStamp senderCaptureTimeOffset;
+    DOMString mimeType;
+};
+
 // New enum for video frame types. Will eventually re-use the equivalent defined
 // by WebCodecs.
 enum RTCEncodedVideoFrameType {
@@ -63,22 +84,14 @@ enum RTCEncodedVideoFrameType {
     "delta",
 };
 
-dictionary RTCEncodedVideoFrameMetadata {
+dictionary RTCEncodedVideoFrameMetadata : RTCEncodedFrameMetadata {
     unsigned long long frameId;
     sequence<unsigned long long> dependencies;
     unsigned short width;
     unsigned short height;
     unsigned long spatialIndex;
     unsigned long temporalIndex;
-    unsigned long synchronizationSource;
-    octet payloadType;
-    sequence<unsigned long> contributingSources;
     long long timestamp;    // microseconds
-    unsigned long rtpTimestamp;
-    DOMHighResTimeStamp receiveTime;
-    DOMHighResTimeStamp captureTime;
-    DOMHighResTimeStamp senderCaptureTimeOffset;
-    DOMString mimeType;
 };
 
 dictionary RTCEncodedVideoFrameOptions {
@@ -95,16 +108,9 @@ interface RTCEncodedVideoFrame {
     RTCEncodedVideoFrameMetadata getMetadata();
 };
 
-dictionary RTCEncodedAudioFrameMetadata {
-    unsigned long synchronizationSource;
-    octet payloadType;
-    sequence<unsigned long> contributingSources;
+dictionary RTCEncodedAudioFrameMetadata : RTCEncodedFrameMetadata {
     short sequenceNumber;
-    unsigned long rtpTimestamp;
-    DOMHighResTimeStamp receiveTime;
-    DOMHighResTimeStamp captureTime;
-    DOMHighResTimeStamp senderCaptureTimeOffset;
-    DOMString mimeType;
+    double audioLevel;
 };
 
 dictionary RTCEncodedAudioFrameOptions {
@@ -131,7 +137,7 @@ partial interface DedicatedWorkerGlobalScope {
 interface RTCRtpScriptTransformer : EventTarget {
     // Attributes and methods related to the transformer source
     readonly attribute ReadableStream readable;
-    Promise<unsigned long long> generateKeyFrame(optional DOMString rid);
+    Promise<undefined> generateKeyFrame(optional DOMString rid);
     Promise<undefined> sendKeyFrameRequest();
     // Attributes and methods related to the transformer sink
     readonly attribute WritableStream writable;
@@ -149,8 +155,4 @@ interface RTCRtpScriptTransform {
 interface KeyFrameRequestEvent : Event {
   constructor(DOMString type, optional DOMString rid);
   readonly attribute DOMString? rid;
-};
-
-partial interface RTCRtpSender {
-    Promise<undefined> generateKeyFrame(optional sequence <DOMString> rids);
 };

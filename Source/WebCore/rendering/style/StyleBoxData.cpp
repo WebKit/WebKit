@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,31 +26,35 @@
 #include "RenderStyleConstants.h"
 #include "RenderStyleDifference.h"
 #include "RenderStyleInlines.h"
+#include "StylePrimitiveKeyword+Logging.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
 
 namespace WebCore {
 
 struct SameSizeAsStyleBoxData : public RefCounted<SameSizeAsStyleBoxData> {
-    Length length[7];
+    Style::LengthWrapperData length[6];
+    Style::VerticalAlign verticalAlign;
+    uint8_t bitfield;
     int m_zIndex[2];
-    uint32_t bitfields;
 };
-
 static_assert(sizeof(StyleBoxData) == sizeof(SameSizeAsStyleBoxData), "StyleBoxData should not grow");
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleBoxData);
 
 StyleBoxData::StyleBoxData()
-    : m_minWidth(RenderStyle::initialMinSize())
+    : m_width(RenderStyle::initialSize())
+    , m_height(RenderStyle::initialSize())
+    , m_minWidth(RenderStyle::initialMinSize())
     , m_maxWidth(RenderStyle::initialMaxSize())
     , m_minHeight(RenderStyle::initialMinSize())
     , m_maxHeight(RenderStyle::initialMaxSize())
-    , m_specifiedZIndex(0)
-    , m_usedZIndex(0)
-    , m_hasAutoSpecifiedZIndex(true)
-    , m_hasAutoUsedZIndex(true)
-    , m_boxSizing(static_cast<unsigned>(BoxSizing::ContentBox))
-    , m_boxDecorationBreak(static_cast<unsigned>(BoxDecorationBreak::Slice))
-    , m_verticalAlign(static_cast<unsigned>(RenderStyle::initialVerticalAlign()))
+    , m_verticalAlign(RenderStyle::initialVerticalAlign())
+    , m_hasAutoSpecifiedZIndex(static_cast<uint8_t>(RenderStyle::initialSpecifiedZIndex().m_isAuto))
+    , m_hasAutoUsedZIndex(static_cast<uint8_t>(RenderStyle::initialUsedZIndex().m_isAuto))
+    , m_boxSizing(static_cast<uint8_t>(BoxSizing::ContentBox))
+    , m_boxDecorationBreak(static_cast<uint8_t>(BoxDecorationBreak::Slice))
+    , m_specifiedZIndexValue(RenderStyle::initialSpecifiedZIndex().m_value)
+    , m_usedZIndexValue(RenderStyle::initialUsedZIndex().m_value)
 {
 }
 
@@ -61,14 +66,13 @@ inline StyleBoxData::StyleBoxData(const StyleBoxData& o)
     , m_maxWidth(o.m_maxWidth)
     , m_minHeight(o.m_minHeight)
     , m_maxHeight(o.m_maxHeight)
-    , m_verticalAlignLength(o.m_verticalAlignLength)
-    , m_specifiedZIndex(o.m_specifiedZIndex)
-    , m_usedZIndex(o.m_usedZIndex)
+    , m_verticalAlign(o.m_verticalAlign)
     , m_hasAutoSpecifiedZIndex(o.m_hasAutoSpecifiedZIndex)
     , m_hasAutoUsedZIndex(o.m_hasAutoUsedZIndex)
     , m_boxSizing(o.m_boxSizing)
     , m_boxDecorationBreak(o.m_boxDecorationBreak)
-    , m_verticalAlign(o.m_verticalAlign)
+    , m_specifiedZIndexValue(o.m_specifiedZIndexValue)
+    , m_usedZIndexValue(o.m_usedZIndexValue)
 {
 }
 
@@ -85,14 +89,13 @@ bool StyleBoxData::operator==(const StyleBoxData& o) const
         && m_maxWidth == o.m_maxWidth
         && m_minHeight == o.m_minHeight
         && m_maxHeight == o.m_maxHeight
-        && m_verticalAlignLength == o.m_verticalAlignLength
-        && m_specifiedZIndex == o.m_specifiedZIndex
-        && m_hasAutoSpecifiedZIndex == o.m_hasAutoSpecifiedZIndex
-        && m_usedZIndex == o.m_usedZIndex
+        && m_verticalAlign == o.m_verticalAlign
+        && m_usedZIndexValue == o.m_usedZIndexValue
         && m_hasAutoUsedZIndex == o.m_hasAutoUsedZIndex
         && m_boxSizing == o.m_boxSizing
         && m_boxDecorationBreak == o.m_boxDecorationBreak
-        && m_verticalAlign == o.m_verticalAlign;
+        && m_specifiedZIndexValue == o.m_specifiedZIndexValue
+        && m_hasAutoSpecifiedZIndex == o.m_hasAutoSpecifiedZIndex;
 }
 
 #if !LOG_DISABLED
@@ -107,17 +110,16 @@ void StyleBoxData::dumpDifferences(TextStream& ts, const StyleBoxData& other) co
     LOG_IF_DIFFERENT(m_minHeight);
     LOG_IF_DIFFERENT(m_maxHeight);
 
-    LOG_IF_DIFFERENT(m_verticalAlignLength);
-
-    LOG_IF_DIFFERENT(m_specifiedZIndex);
-    LOG_IF_DIFFERENT(m_usedZIndex);
+    LOG_IF_DIFFERENT(m_verticalAlign);
 
     LOG_IF_DIFFERENT_WITH_CAST(bool, m_hasAutoSpecifiedZIndex);
     LOG_IF_DIFFERENT_WITH_CAST(bool, m_hasAutoUsedZIndex);
 
     LOG_IF_DIFFERENT_WITH_CAST(BoxSizing, m_boxSizing);
     LOG_IF_DIFFERENT_WITH_CAST(BoxDecorationBreak, m_boxDecorationBreak);
-    LOG_IF_DIFFERENT_WITH_CAST(VerticalAlign, m_verticalAlign);
+
+    LOG_IF_DIFFERENT(m_specifiedZIndexValue);
+    LOG_IF_DIFFERENT(m_usedZIndexValue);
 }
 #endif
 

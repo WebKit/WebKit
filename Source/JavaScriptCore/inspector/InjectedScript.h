@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "InjectedScriptBase.h"
+#include <JavaScriptCore/InjectedScriptBase.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>

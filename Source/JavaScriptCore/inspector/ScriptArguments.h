@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "Strong.h"
+#include <JavaScriptCore/Strong.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>

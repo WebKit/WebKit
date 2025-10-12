@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "PortIdentifier.h"
-#include "ProcessIdentifier.h"
+#include <WebCore/PortIdentifier.h>
+#include <WebCore/ProcessIdentifier.h>
 #include <wtf/Hasher.h>
 #include <wtf/text/MakeString.h>
 

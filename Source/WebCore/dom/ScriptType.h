@@ -28,8 +28,8 @@
 namespace WebCore {
 
 // https://html.spec.whatwg.org/multipage/scripting.html#concept-script-type
-enum class ScriptType : uint8_t { Classic, Module, ImportMap };
+enum class ScriptType : uint8_t { Classic, Module, ImportMap, SpeculationRules };
 static constexpr unsigned bitWidthOfScriptType = 2;
-static_assert(static_cast<unsigned>(ScriptType::ImportMap) <= ((1U << bitWidthOfScriptType) - 1));
+static_assert(static_cast<unsigned>(ScriptType::SpeculationRules) <= ((1U << bitWidthOfScriptType) - 1));
 
 }

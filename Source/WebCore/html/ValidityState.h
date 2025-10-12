@@ -22,8 +22,8 @@
 
 #pragma once
 
-#include "FormListedElement.h"
-#include "HTMLElement.h"
+#include <WebCore/FormListedElement.h>
+#include <WebCore/HTMLElement.h>
 
 namespace WebCore {
 

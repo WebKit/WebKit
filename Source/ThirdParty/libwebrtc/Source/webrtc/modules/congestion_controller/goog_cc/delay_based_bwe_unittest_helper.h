@@ -17,14 +17,13 @@
 #include <memory>
 #include <vector>
 
-#include "api/transport/field_trial_based_config.h"
+#include "api/field_trials.h"
 #include "api/transport/network_types.h"
 #include "api/units/timestamp.h"
 #include "modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator_interface.h"
 #include "modules/congestion_controller/goog_cc/delay_based_bwe.h"
 #include "modules/congestion_controller/goog_cc/probe_bitrate_estimator.h"
 #include "system_wrappers/include/clock.h"
-#include "test/field_trial.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -170,10 +169,7 @@ class DelayBasedBweTest : public ::testing::Test {
                               int64_t receiver_clock_offset_change_ms);
 
   static const uint32_t kDefaultSsrc;
-  FieldTrialBasedConfig field_trial_config_;
-
-  std::unique_ptr<test::ScopedFieldTrials>
-      field_trial;        // Must be initialized first.
+  FieldTrials field_trials_;
   SimulatedClock clock_;  // Time at the receiver.
   test::TestBitrateObserver bitrate_observer_;
   std::unique_ptr<AcknowledgedBitrateEstimatorInterface>

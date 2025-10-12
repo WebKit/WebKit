@@ -39,7 +39,7 @@ static String readFileIntoString(const char* fileName)
     RELEASE_ASSERT(bufferCapacity != -1);
     RELEASE_ASSERT(fseek(file, 0, SEEK_SET) != -1);
 
-    std::span<LChar> buffer;
+    std::span<Latin1Character> buffer;
     String string = String::createUninitialized(bufferCapacity, buffer);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     size_t readSize = fread(buffer.data(), 1, buffer.size(), file);

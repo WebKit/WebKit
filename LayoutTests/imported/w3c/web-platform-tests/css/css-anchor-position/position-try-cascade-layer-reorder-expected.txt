@@ -1,4 +1,4 @@
 
 PASS When in the same layer, the last rule of each name wins
-FAIL When in different layers, the rule of each name in the highest layer wins assert_equals: expected 100 but got 115
+PASS When in different layers, the rule of each name in the highest layer wins
 

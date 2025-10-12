@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "EpochTimeStamp.h"
+#include <WebCore/EpochTimeStamp.h>
 
 #include <optional>
 #include <wtf/KeyValuePair.h>

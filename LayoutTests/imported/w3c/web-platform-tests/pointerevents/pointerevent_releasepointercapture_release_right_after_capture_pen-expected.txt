@@ -1,0 +1,12 @@
+Release pointer capture right after setpointercapture
+
+Test Description: When calling releasePointer right after setPointerCapture method is invoked, the pending pointer capture should be cleared and no element should receive gotpointercapture and lostpointercapture events
+Press and hold left mouse button over black box
+Move mouse and release mouse button
+
+
+The following pointer types were detected: mouse.
+
+
+PASS Release pointer capture right after setpointercapture
+

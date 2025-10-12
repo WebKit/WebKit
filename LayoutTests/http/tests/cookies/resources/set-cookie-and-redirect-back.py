@@ -7,7 +7,7 @@ from urllib.parse import parse_qs
 
 redirect_back_to = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True).get('redirectBackTo', [''])[0]
 
-partitionedAttr = ""
+partitionedSecureSameSiteAttr = ""
 if parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True).get('isPartitioned', [None])[0]:
     partitionedSecureSameSiteAttr = "; Partitioned; Secure; SameSite=None"
 

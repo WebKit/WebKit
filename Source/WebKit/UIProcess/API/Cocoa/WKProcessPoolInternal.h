@@ -36,7 +36,9 @@
 namespace WebKit {
 
 template<> struct WrapperTraits<WebProcessPool> {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     using WrapperClass = WKProcessPool;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 };
 
 }

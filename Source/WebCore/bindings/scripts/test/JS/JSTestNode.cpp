@@ -404,7 +404,7 @@ public:
     {
         if constexpr (mode == JSC::SubspaceAccess::Concurrently)
             return nullptr;
-        return WebCore::subspaceForImpl<TestNodeIterator, UseCustomHeapCellType::No>(vm,
+        return WebCore::subspaceForImpl<TestNodeIterator, UseCustomHeapCellType::No>(vm, "TestNodeIterator"_s,
             [] (auto& spaces) { return spaces.m_clientSubspaceForTestNodeIterator.get(); },
             [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNodeIterator = std::forward<decltype(space)>(space); },
             [] (auto& spaces) { return spaces.m_subspaceForTestNodeIterator.get(); },
@@ -482,7 +482,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestNodePrototypeFunction_forEach, (JSC::JSGlobalObje
 
 JSC::GCClient::IsoSubspace* JSTestNode::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestNode, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestNode, UseCustomHeapCellType::No>(vm, "JSTestNode"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestNode.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNode = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestNode.get(); },
@@ -507,7 +507,9 @@ extern "C" { extern void (*const __identifier("??_7TestNode@WebCore@@6B@")[])();
 #else
 extern "C" { extern void* _ZTVN7WebCore8TestNodeE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestNode>, void>> static inline void verifyVTable(TestNode* ptr) {
+template<std::same_as<TestNode> T>
+static inline void verifyVTable(TestNode* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -526,8 +528,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestNode>, vo
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestNode>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestNode>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestNode>(impl.ptr());
 #endif

@@ -41,10 +41,10 @@ namespace WebCore {
 UIViewController *viewController(UIView *view)
 {
     if (!WTF::IOSApplication::isMobileSafari())
-        return [PAL::getUIViewControllerClass() viewControllerForView:view];
+        return [PAL::getUIViewControllerClassSingleton() viewControllerForView:view];
 
     auto responder = view.nextResponder;
-    if (![responder isKindOfClass:PAL::getUIViewControllerClass()])
+    if (![responder isKindOfClass:PAL::getUIViewControllerClassSingleton()])
         return nil;
 
     auto controller = static_cast<UIViewController *>(responder);

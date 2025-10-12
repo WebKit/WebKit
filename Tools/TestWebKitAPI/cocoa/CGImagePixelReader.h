@@ -38,12 +38,13 @@ namespace TestWebKitAPI {
 // FIXME: We can unify most of this helper class with the logic in `TestPDFPage::colorAtPoint`, and deploy this
 // helper class in several other tests that read pixel data from CGImages.
 class CGImagePixelReader {
-    WTF_MAKE_FAST_ALLOCATED; WTF_MAKE_NONCOPYABLE(CGImagePixelReader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CGImagePixelReader); WTF_MAKE_NONCOPYABLE(CGImagePixelReader);
 public:
     CGImagePixelReader(CGImageRef);
 
     bool isTransparentBlack(unsigned x, unsigned y) const;
     WebCore::Color at(unsigned x, unsigned y) const;
+    String cssColorAt(unsigned x, unsigned y) const;
 
     unsigned width() const { return m_width; }
     unsigned height() const { return m_height; }

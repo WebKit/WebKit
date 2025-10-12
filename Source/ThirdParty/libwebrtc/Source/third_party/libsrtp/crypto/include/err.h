@@ -49,6 +49,17 @@
 #include <stdarg.h>
 #include "srtp.h"
 
+#if defined(__clang__) || (defined(__GNUC__) && defined(__has_attribute))
+#if __has_attribute(format)
+#define LIBSRTP_FORMAT_PRINTF(fmt, args)                                       \
+    __attribute__((format(__printf__, fmt, args)))
+#else
+#define LIBSRTP_FORMAT_PRINTF(fmt, args)
+#endif
+#else
+#define LIBSRTP_FORMAT_PRINTF(fmt, args)
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -96,17 +107,8 @@ srtp_err_status_t srtp_install_err_report_handler(
  *
  */
 
-#if defined(__clang__) || (defined(__GNUC__) && defined(__has_attribute))
-#if __has_attribute(format)
-#define LIBSRTP_FORMAT_PRINTF(fmt, args) __attribute__((format(__printf__, fmt, args)))
-#else
-#define LIBSRTP_FORMAT_PRINTF(fmt, args)
-#endif
-#else
-#define LIBSRTP_FORMAT_PRINTF(fmt, args)
-#endif
-
-void srtp_err_report(srtp_err_reporting_level_t level, const char *format, ...) LIBSRTP_FORMAT_PRINTF(2, 3);
+void srtp_err_report(srtp_err_reporting_level_t level, const char *format, ...)
+    LIBSRTP_FORMAT_PRINTF(2, 3);
 
 /*
  * debug_module_t defines a debug module

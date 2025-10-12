@@ -22,10 +22,12 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import SwiftUI
-import WebKit
+@_spi(_) import WebKit
+import WebKit_Private._WKFeature
 
 private struct PermissionDecisionView: View {
-    @Binding var permissionDecision: WKPermissionDecision
+    @Binding
+    var permissionDecision: WKPermissionDecision
 
     let label: String
 
@@ -41,7 +43,8 @@ private struct PermissionDecisionView: View {
 }
 
 private struct BinaryValuePicker: View {
-    @Binding var value: Bool
+    @Binding
+    var value: Bool
 
     let description: String
 
@@ -58,14 +61,24 @@ private struct BinaryValuePicker: View {
     }
 }
 
-struct GeneralSettingsView: View {
-    @AppStorage(AppStorageKeys.homepage) private var homepage = "https://www.webkit.org"
+private struct GeneralSettingsView: View {
+    @AppStorage(AppStorageKeys.homepage)
+    private var homepage = "https://www.webkit.org"
 
-    @AppStorage(AppStorageKeys.orientationAndMotionAuthorization) private var orientationAndMotionAuthorization = WKPermissionDecision.prompt
-    @AppStorage(AppStorageKeys.mediaCaptureAuthorization) private var mediaCaptureAuthorization = WKPermissionDecision.prompt
+    @AppStorage(AppStorageKeys.orientationAndMotionAuthorization)
+    private var orientationAndMotionAuthorization = WKPermissionDecision.prompt
 
-    @AppStorage(AppStorageKeys.scrollBounceBehaviorBasedOnSize) private var scrollBounceBehaviorBasedOnSize = false
-    @AppStorage(AppStorageKeys.backgroundHidden) private var backgroundHidden = false
+    @AppStorage(AppStorageKeys.mediaCaptureAuthorization)
+    private var mediaCaptureAuthorization = WKPermissionDecision.prompt
+
+    @AppStorage(AppStorageKeys.scrollBounceBehaviorBasedOnSize)
+    private var scrollBounceBehaviorBasedOnSize = false
+
+    @AppStorage(AppStorageKeys.backgroundHidden)
+    private var backgroundHidden = false
+
+    @AppStorage(AppStorageKeys.showColorInTabBar)
+    private var showColorInTabBar = true
 
     let currentURL: URL?
 
@@ -111,7 +124,78 @@ struct GeneralSettingsView: View {
                     trueLabel: "Always Hide"
                 )
             }
+
+            Section {
+                Toggle("Show color in tab bar", isOn: $showColorInTabBar)
+                    .padding(.top)
+            }
         }
+    }
+}
+
+private struct FeatureFlagToggle: View {
+    @Binding
+    var value: Bool
+
+    let feature: _WKFeature
+
+    var body: some View {
+        Toggle(isOn: $value) {
+            VStack(alignment: .leading) {
+                Text(feature.name)
+                    .bold(value != feature.defaultValue)
+
+                Text(feature.status.description)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .toggleStyle(.switch)
+        .controlSize(.small)
+    }
+}
+
+private struct FeatureFlagsView: View {
+    @Environment(FeatureFlagsModel.self)
+    var model
+
+    private var groupedFeatures: FeatureFlagsModel.GroupedFeatures {
+        model.groups(filteredBy: model.searchQuery)
+    }
+
+    @ViewBuilder
+    private var featureList: some View {
+        @Bindable
+        var model = model
+
+        List {
+            ForEach(groupedFeatures, id: \.category.rawValue) { group in
+                Section(group.category.description) {
+                    ForEach(group.features) { feature in
+                        FeatureFlagToggle(
+                            value: $model.customizedFeatures[feature.key, default: feature.defaultValue],
+                            feature: feature
+                        )
+                    }
+                }
+            }
+        }
+        .listStyle(.inset)
+        .searchable(text: $model.searchQuery, placement: .sidebar, prompt: "Search")
+    }
+
+    var body: some View {
+        Group {
+            featureList
+
+            HStack {
+                Spacer()
+                Button("Reset Feature Flags") {
+                    model.customizedFeatures.removeAll()
+                }
+            }
+        }
+        .onChange(of: model.customizedFeatures, model.update)
     }
 }
 
@@ -123,9 +207,13 @@ struct SettingsView: View {
             Tab("General", systemImage: "gear") {
                 GeneralSettingsView(currentURL: currentURL)
             }
+
+            Tab("Feature Flags", systemImage: "flag.filled.and.flag.crossed") {
+                FeatureFlagsView()
+                    .environment(FeatureFlagsModel())
+            }
         }
         .scenePadding()
-        .frame(maxWidth: 600, minHeight: 100)
     }
 }
 

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "InlineIteratorBoxLegacyPath.h"
-#include "InlineIteratorBoxModernPath.h"
+#include <WebCore/InlineIteratorBoxLegacyPath.h>
+#include <WebCore/InlineIteratorBoxModernPath.h>
 
 namespace WebCore {
 

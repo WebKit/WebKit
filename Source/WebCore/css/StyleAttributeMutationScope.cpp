@@ -26,6 +26,8 @@
 #include "config.h"
 #include "StyleAttributeMutationScope.h"
 
+#include "NodeInlines.h"
+
 namespace WebCore {
 
 unsigned StyleAttributeMutationScope::s_scopeCount = 0;

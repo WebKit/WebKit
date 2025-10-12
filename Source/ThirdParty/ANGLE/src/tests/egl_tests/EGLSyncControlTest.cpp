@@ -7,6 +7,10 @@
 // EGLSyncControlTest.cpp:
 //   Tests pertaining to eglGetSyncValuesCHROMIUM.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include <d3d11.h>
 
 #include "test_utils/ANGLETest.h"
@@ -106,7 +110,7 @@ class EGLSyncControlTest : public testing::Test
         mOSWindow->setVisible(true);
 
         // Create an EGLDisplay using the EGLDevice
-        mDisplay = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+        mDisplay = eglGetPlatformDisplay(GetEglPlatform(),
                                          reinterpret_cast<void *>(mOSWindow->getNativeDisplay()),
                                          displayAttribs);
         ASSERT_TRUE(mDisplay != EGL_NO_DISPLAY);

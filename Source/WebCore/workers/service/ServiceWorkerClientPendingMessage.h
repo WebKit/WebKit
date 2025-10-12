@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "MessageWithMessagePorts.h"
-#include "ServiceWorkerData.h"
+#include <WebCore/MessageWithMessagePorts.h>
+#include <WebCore/ServiceWorkerData.h>
 
 namespace WebCore {
 

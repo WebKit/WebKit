@@ -10,13 +10,12 @@
 
 #include "net/dcsctp/packet/bounded_byte_writer.h"
 
+#include <cstdint>
 #include <vector>
 
 #include "api/array_view.h"
-#include "rtc_base/buffer.h"
-#include "rtc_base/checks.h"
-#include "rtc_base/gunit.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace {

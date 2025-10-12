@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<script>
+// Tests that text runs with COLR font might or might not be rendered with
+// display list that are shared across text runs.
+// The drawGlyphs decomposition affects what gets put to the display list,
+// and what is in display list affects if they can be shared or not.
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+if (window.internals)
+    internals.setForceUseGlyphDisplayListForTesting(true);
+</script>
+<body onload="run()">
+<style>
+@font-face {
+    font-family: "Ahem COLR";
+    src: url("../resources/Ahem-COLR.ttf") format("truetype");
+}
+span { font: 48px Ahem COLR; }
+</style>
+<div id=container>
+<div id=subtest1>
+    <span id=t1a>B</span>
+    <span id=t1b>B</span>
+</div>
+<div id=subtest2>
+    <span id=t2a>A</span>
+    <span id=t2b>A</span>
+</div>
+</div>
+<pre id=log></pre>
+<script>
+let subtests = [
+    // For Cocoa, sharing not available because 'B' will be drawn as black drawGlyphs.
+    // Setting color changes the context state, which turns the sharing off.
+    {name: "Text 'B'", a: t1a, b: t1b}, 
+    // For Cocoa, sharing not available because 'A' is drawn as pink and cyan fillPaths.
+    // Setting color changes the context state, which turns the sharing off.
+    {name: "Text 'A'", a: t2a, b: t2b}
+];
+
+function test(subtest) {
+    let aNoIds = internals.cachedGlyphDisplayListsForTextNode(subtest.a.firstChild);
+    let a = internals.cachedGlyphDisplayListsForTextNode(subtest.a.firstChild, internals.DISPLAY_LIST_INCLUDE_RESOURCE_IDENTIFIERS);
+    let bNoIds = internals.cachedGlyphDisplayListsForTextNode(subtest.b.firstChild);
+    let b = internals.cachedGlyphDisplayListsForTextNode(subtest.b.firstChild, internals.DISPLAY_LIST_INCLUDE_RESOURCE_IDENTIFIERS);
+    if (aNoIds == a || bNoIds == b)
+        log.textContent += `${subtest.name} FAIL: cachedGlyphDisplayListsForTextNode cannot distinquish between display lists.`;
+    if (a == b)
+        log.textContent += `${subtest.name} RESULT: Display lists are shared.\nA and B (no ids):\n${aNoIds}\n`;
+    else 
+        log.textContent += `${subtest.name} RESULT: Display lists are not shared.\n`;
+    if (aNoIds == bNoIds)
+        log.textContent += `${subtest.name} A and B (no ids):\n${aNoIds}\n`;
+    else 
+        log.textContent += `${subtest.name} A (no ids):\n${aNoIds}\nB (no ids):\n${bNoIds}`;
+    log.textContent += "\n";
+}
+
+function run() {
+    requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+            if (window.internals) {
+                for (let subtest of subtests)
+                    test(subtest);
+                internals.setForceUseGlyphDisplayListForTesting(false);
+                container.remove();
+            }
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    });
+}
+</script>

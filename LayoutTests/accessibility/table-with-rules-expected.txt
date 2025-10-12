@@ -33,7 +33,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 10}
 AXElementBusy: 0
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
@@ -80,7 +79,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 10}
 AXElementBusy: 0
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
@@ -127,7 +125,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 10}
 AXElementBusy: 0
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
@@ -174,7 +171,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 4}
 AXElementBusy: 0
 AXInlineText: 0
 
@@ -207,7 +203,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 4}
 AXElementBusy: 0
 AXInlineText: 0
 

@@ -161,7 +161,7 @@ JSValue JSTestIterable::getConstructor(VM& vm, const JSGlobalObject* globalObjec
 
 void JSTestIterable::destroy(JSC::JSCell* cell)
 {
-    JSTestIterable* thisObject = static_cast<JSTestIterable*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestIterable* thisObject = static_cast<JSTestIterable*>(cell);
     thisObject->JSTestIterable::~JSTestIterable();
 }
 
@@ -191,7 +191,7 @@ public:
     {
         if constexpr (mode == JSC::SubspaceAccess::Concurrently)
             return nullptr;
-        return WebCore::subspaceForImpl<TestIterableIterator, UseCustomHeapCellType::No>(vm,
+        return WebCore::subspaceForImpl<TestIterableIterator, UseCustomHeapCellType::No>(vm, "TestIterableIterator"_s,
             [] (auto& spaces) { return spaces.m_clientSubspaceForTestIterableIterator.get(); },
             [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestIterableIterator = std::forward<decltype(space)>(space); },
             [] (auto& spaces) { return spaces.m_subspaceForTestIterableIterator.get(); },
@@ -269,7 +269,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunction_forEach, (JSC::JSGlobal
 
 JSC::GCClient::IsoSubspace* JSTestIterable::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestIterable, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestIterable, UseCustomHeapCellType::No>(vm, "JSTestIterable"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestIterable.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestIterable = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestIterable.get(); },
@@ -296,7 +296,7 @@ bool JSTestIterableOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
 
 void JSTestIterableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestIterable = static_cast<JSTestIterable*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestIterable = static_cast<JSTestIterable*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestIterable->protectedWrapped().ptr(), jsTestIterable);
 }
@@ -309,7 +309,9 @@ extern "C" { extern void (*const __identifier("??_7TestIterable@WebCore@@6B@")[]
 #else
 extern "C" { extern void* _ZTVN7WebCore12TestIterableE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestIterable>, void>> static inline void verifyVTable(TestIterable* ptr) {
+template<std::same_as<TestIterable> T>
+static inline void verifyVTable(TestIterable* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -328,8 +330,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestIterable>
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestIterable>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestIterable>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestIterable>(impl.ptr());
 #endif

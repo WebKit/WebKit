@@ -139,7 +139,7 @@ public:
 
     // Check if the stub has weak references that are dead. If it does, then it resets itself,
     // either entirely or just enough to ensure that those dead pointers don't get used anymore.
-    void visitWeakReferences(const ConcurrentJSLockerBase&, CodeBlock*);
+    void visitWeak(const ConcurrentJSLockerBase&, CodeBlock*);
     
     // This returns true if it has marked everything that it will ever mark.
     template<typename Visitor> void propagateTransitions(Visitor&);

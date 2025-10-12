@@ -191,9 +191,6 @@ def main(user=None):
 
         # Kill all instances of python executing run-webkit-tests
         os.system("ps aux | grep -E '.+/Python3? .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs kill")
-        # FIXME: <rdar://problem/81476546> Remove stale simulator temp files
-        # Hard-code path because when run with 'sudo,' this script doesn't get the right tempfile location
-        os.system('find /var/folders -name "Deleting-*" -maxdepth 4 -exec sudo rm -rf {} +')
     elif sys.platform == 'cygwin' or sys.platform == 'win32':
         for task in tasksToKill + tasksToKillWin:
             os.system("taskkill /t /f /im " + task)

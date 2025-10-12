@@ -526,7 +526,7 @@ class SingleTestRunner(object):
 
     def _fuzzy_metadata_for_file(self, filename):
         test_doc = Parser(self._filesystem.read_binary_file(filename))
-        fuzzy_nodes = test_doc.findAll('meta', attrs={"name": "fuzzy"})
+        fuzzy_nodes = test_doc.findAll(['meta', 'html:meta'], attrs={"name": "fuzzy"})
         if not fuzzy_nodes:
             return None
 

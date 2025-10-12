@@ -1,0 +1,725 @@
+
+FAIL .child 1 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="20" data-expected-height="44" style="writing-mode: horizontal-tb; width: 20px; height: stretch;">1
+        </div>
+      </div>
+height expected 44 but got 13
+FAIL .child 2 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: horizontal-tb; width: stretch; height: 20px;">2
+        </div>
+      </div>
+width expected 50 but got 5
+FAIL .child 3 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="20" data-expected-height="44" style="writing-mode: horizontal-tb; width: 20px; height: stretch;">3
+        </div>
+      </div>
+height expected 44 but got 13
+FAIL .child 4 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: horizontal-tb; width: stretch; height: 20px;">4
+        </div>
+      </div>
+width expected 47 but got 5
+PASS .child 5
+FAIL .child 6 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: vertical-rl; width: stretch; height: 20px;">6
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 7
+FAIL .child 8 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: vertical-rl; width: stretch; height: 20px;">8
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 9
+FAIL .child 10 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: vertical-lr; width: stretch; height: 20px;">10
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 11
+FAIL .child 12 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: vertical-lr; width: stretch; height: 20px;">12
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 13
+FAIL .child 14 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: sideways-rl; width: stretch; height: 20px;">14
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 15
+FAIL .child 16 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: sideways-rl; width: stretch; height: 20px;">16
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 17
+FAIL .child 18 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: sideways-lr; width: stretch; height: 20px;">18
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 19
+FAIL .child 20 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: sideways-lr; width: stretch; height: 20px;">20
+        </div>
+      </div>
+width expected 47 but got 13
+FAIL .child 21 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="20" data-expected-height="44" style="writing-mode: horizontal-tb; width: 20px; height: stretch;">21
+        </div>
+      </div>
+height expected 44 but got 13
+FAIL .child 22 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: horizontal-tb; width: stretch; height: 20px;">22
+        </div>
+      </div>
+width expected 50 but got 10
+FAIL .child 23 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="20" data-expected-height="44" style="writing-mode: horizontal-tb; width: 20px; height: stretch;">23
+        </div>
+      </div>
+height expected 44 but got 13
+FAIL .child 24 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: horizontal-tb; width: stretch; height: 20px;">24
+        </div>
+      </div>
+width expected 47 but got 10
+PASS .child 25
+FAIL .child 26 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: vertical-rl; width: stretch; height: 20px;">26
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 27
+FAIL .child 28 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: vertical-rl; width: stretch; height: 20px;">28
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 29
+FAIL .child 30 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: vertical-lr; width: stretch; height: 20px;">30
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 31
+FAIL .child 32 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: vertical-lr; width: stretch; height: 20px;">32
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 33
+FAIL .child 34 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: sideways-rl; width: stretch; height: 20px;">34
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 35
+FAIL .child 36 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: sideways-rl; width: stretch; height: 20px;">36
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 37
+FAIL .child 38 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: sideways-lr; width: stretch; height: 20px;">38
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 39
+FAIL .child 40 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: sideways-lr; width: stretch; height: 20px;">40
+        </div>
+      </div>
+width expected 47 but got 13
+FAIL .child 41 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="20" data-expected-height="44" style="writing-mode: horizontal-tb; width: 20px; height: stretch;">41
+        </div>
+      </div>
+height expected 44 but got 13
+FAIL .child 42 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: horizontal-tb; width: stretch; height: 20px;">42
+        </div>
+      </div>
+width expected 50 but got 10
+FAIL .child 43 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="20" data-expected-height="44" style="writing-mode: horizontal-tb; width: 20px; height: stretch;">43
+        </div>
+      </div>
+height expected 44 but got 13
+FAIL .child 44 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: horizontal-tb; width: stretch; height: 20px;">44
+        </div>
+      </div>
+width expected 47 but got 10
+PASS .child 45
+FAIL .child 46 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: vertical-rl; width: stretch; height: 20px;">46
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 47
+FAIL .child 48 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: vertical-rl; width: stretch; height: 20px;">48
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 49
+FAIL .child 50 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: vertical-lr; width: stretch; height: 20px;">50
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 51
+FAIL .child 52 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: vertical-lr; width: stretch; height: 20px;">52
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 53
+FAIL .child 54 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: sideways-rl; width: stretch; height: 20px;">54
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 55
+FAIL .child 56 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: sideways-rl; width: stretch; height: 20px;">56
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 57
+FAIL .child 58 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: sideways-lr; width: stretch; height: 20px;">58
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 59
+FAIL .child 60 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: sideways-lr; width: stretch; height: 20px;">60
+        </div>
+      </div>
+width expected 47 but got 13
+FAIL .child 61 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="20" data-expected-height="44" style="writing-mode: horizontal-tb; width: 20px; height: stretch;">61
+        </div>
+      </div>
+height expected 44 but got 13
+FAIL .child 62 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: horizontal-tb; width: stretch; height: 20px;">62
+        </div>
+      </div>
+width expected 50 but got 10
+FAIL .child 63 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="20" data-expected-height="44" style="writing-mode: horizontal-tb; width: 20px; height: stretch;">63
+        </div>
+      </div>
+height expected 44 but got 13
+FAIL .child 64 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: horizontal-tb; width: stretch; height: 20px;">64
+        </div>
+      </div>
+width expected 47 but got 10
+PASS .child 65
+FAIL .child 66 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: vertical-rl; width: stretch; height: 20px;">66
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 67
+FAIL .child 68 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: vertical-rl; width: stretch; height: 20px;">68
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 69
+FAIL .child 70 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: vertical-lr; width: stretch; height: 20px;">70
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 71
+FAIL .child 72 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: vertical-lr; width: stretch; height: 20px;">72
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 73
+FAIL .child 74 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: sideways-rl; width: stretch; height: 20px;">74
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 75
+FAIL .child 76 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: sideways-rl; width: stretch; height: 20px;">76
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 77
+FAIL .child 78 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: sideways-lr; width: stretch; height: 20px;">78
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 79
+FAIL .child 80 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: sideways-lr; width: stretch; height: 20px;">80
+        </div>
+      </div>
+width expected 47 but got 13
+FAIL .child 81 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="20" data-expected-height="44" style="writing-mode: horizontal-tb; width: 20px; height: stretch;">1
+        </div>
+      </div>
+height expected 44 but got 13
+FAIL .child 82 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: horizontal-tb; width: stretch; height: 20px;">2
+        </div>
+      </div>
+width expected 50 but got 5
+FAIL .child 83 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="20" data-expected-height="44" style="writing-mode: horizontal-tb; width: 20px; height: stretch;">3
+        </div>
+      </div>
+height expected 44 but got 13
+FAIL .child 84 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: horizontal-tb; width: stretch; height: 20px;">4
+        </div>
+      </div>
+width expected 47 but got 5
+PASS .child 85
+FAIL .child 86 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: vertical-rl; width: stretch; height: 20px;">6
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 87
+FAIL .child 88 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: vertical-rl; width: stretch; height: 20px;">8
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 89
+FAIL .child 90 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: vertical-lr; width: stretch; height: 20px;">10
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 91
+FAIL .child 92 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: vertical-lr; width: stretch; height: 20px;">12
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 93
+FAIL .child 94 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: sideways-rl; width: stretch; height: 20px;">14
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 95
+FAIL .child 96 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: sideways-rl; width: stretch; height: 20px;">16
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 97
+FAIL .child 98 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: sideways-lr; width: stretch; height: 20px;">18
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 99
+FAIL .child 100 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: sideways-lr; width: stretch; height: 20px;">20
+        </div>
+      </div>
+width expected 47 but got 13
+FAIL .child 101 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="20" data-expected-height="44" style="writing-mode: horizontal-tb; width: 20px; height: stretch;">21
+        </div>
+      </div>
+height expected 44 but got 13
+FAIL .child 102 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: horizontal-tb; width: stretch; height: 20px;">22
+        </div>
+      </div>
+width expected 50 but got 10
+FAIL .child 103 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="20" data-expected-height="44" style="writing-mode: horizontal-tb; width: 20px; height: stretch;">23
+        </div>
+      </div>
+height expected 44 but got 13
+FAIL .child 104 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: horizontal-tb; width: stretch; height: 20px;">24
+        </div>
+      </div>
+width expected 47 but got 10
+PASS .child 105
+FAIL .child 106 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: vertical-rl; width: stretch; height: 20px;">26
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 107
+FAIL .child 108 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: vertical-rl; width: stretch; height: 20px;">28
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 109
+FAIL .child 110 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: vertical-lr; width: stretch; height: 20px;">30
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 111
+FAIL .child 112 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: vertical-lr; width: stretch; height: 20px;">32
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 113
+FAIL .child 114 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: sideways-rl; width: stretch; height: 20px;">34
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 115
+FAIL .child 116 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: sideways-rl; width: stretch; height: 20px;">36
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 117
+FAIL .child 118 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: sideways-lr; width: stretch; height: 20px;">38
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 119
+FAIL .child 120 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: sideways-lr; width: stretch; height: 20px;">40
+        </div>
+      </div>
+width expected 47 but got 13
+FAIL .child 121 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="20" data-expected-height="44" style="writing-mode: horizontal-tb; width: 20px; height: stretch;">41
+        </div>
+      </div>
+height expected 44 but got 13
+FAIL .child 122 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: horizontal-tb; width: stretch; height: 20px;">42
+        </div>
+      </div>
+width expected 50 but got 10
+FAIL .child 123 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="20" data-expected-height="44" style="writing-mode: horizontal-tb; width: 20px; height: stretch;">43
+        </div>
+      </div>
+height expected 44 but got 13
+FAIL .child 124 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: horizontal-tb; width: stretch; height: 20px;">44
+        </div>
+      </div>
+width expected 47 but got 10
+PASS .child 125
+FAIL .child 126 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: vertical-rl; width: stretch; height: 20px;">46
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 127
+FAIL .child 128 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: vertical-rl; width: stretch; height: 20px;">48
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 129
+FAIL .child 130 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: vertical-lr; width: stretch; height: 20px;">50
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 131
+FAIL .child 132 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: vertical-lr; width: stretch; height: 20px;">52
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 133
+FAIL .child 134 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: sideways-rl; width: stretch; height: 20px;">54
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 135
+FAIL .child 136 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: sideways-rl; width: stretch; height: 20px;">56
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 137
+FAIL .child 138 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: sideways-lr; width: stretch; height: 20px;">58
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 139
+FAIL .child 140 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: sideways-lr; width: stretch; height: 20px;">60
+        </div>
+      </div>
+width expected 47 but got 13
+FAIL .child 141 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="20" data-expected-height="44" style="writing-mode: horizontal-tb; width: 20px; height: stretch;">61
+        </div>
+      </div>
+height expected 44 but got 13
+FAIL .child 142 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: horizontal-tb; width: stretch; height: 20px;">62
+        </div>
+      </div>
+width expected 50 but got 10
+FAIL .child 143 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="20" data-expected-height="44" style="writing-mode: horizontal-tb; width: 20px; height: stretch;">63
+        </div>
+      </div>
+height expected 44 but got 13
+FAIL .child 144 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: horizontal-tb; width: stretch; height: 20px;">64
+        </div>
+      </div>
+width expected 47 but got 10
+PASS .child 145
+FAIL .child 146 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: vertical-rl; width: stretch; height: 20px;">66
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 147
+FAIL .child 148 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: vertical-rl; width: stretch; height: 20px;">68
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 149
+FAIL .child 150 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: vertical-lr; width: stretch; height: 20px;">70
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 151
+FAIL .child 152 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: vertical-lr; width: stretch; height: 20px;">72
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 153
+FAIL .child 154 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: sideways-rl; width: stretch; height: 20px;">74
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 155
+FAIL .child 156 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: sideways-rl; width: stretch; height: 20px;">76
+        </div>
+      </div>
+width expected 47 but got 13
+PASS .child 157
+FAIL .child 158 assert_equals:
+<div class="container" style="border-top-width: 5px; border-top-style: solid; border-top-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="50" data-expected-height="20" style="writing-mode: sideways-lr; width: stretch; height: 20px;">78
+        </div>
+      </div>
+width expected 50 but got 13
+PASS .child 159
+FAIL .child 160 assert_equals:
+<div class="container" style="border-right-width: 5px; border-right-style: solid; border-right-color: currentcolor; direction: rtl;">
+        <div class="child" data-expected-width="47" data-expected-height="20" style="writing-mode: sideways-lr; width: stretch; height: 20px;">80
+        </div>
+      </div>
+width expected 47 but got 13
+vertical-rl
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+vertical-lr
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+sideways-rl
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+sideways-lr
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80

@@ -56,7 +56,7 @@ bool AVStreamDataParserMIMETypeCache::isAvailable() const
     if (!PAL::AVFoundationLibrary())
         return false;
 
-    return [PAL::getAVStreamDataParserClass() respondsToSelector:@selector(audiovisualMIMETypes)];
+    return [PAL::getAVStreamDataParserClassSingleton() respondsToSelector:@selector(audiovisualMIMETypes)];
 #else
     return false;
 #endif
@@ -91,8 +91,8 @@ bool AVStreamDataParserMIMETypeCache::canDecodeExtendedType(const ContentType& t
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     ASSERT(isAvailable());
 
-    if ([PAL::getAVStreamDataParserClass() respondsToSelector:@selector(canParseExtendedMIMEType:)])
-        return [PAL::getAVStreamDataParserClass() canParseExtendedMIMEType:type.raw().createNSString().get()];
+    if ([PAL::getAVStreamDataParserClassSingleton() respondsToSelector:@selector(canParseExtendedMIMEType:)])
+        return [PAL::getAVStreamDataParserClassSingleton() canParseExtendedMIMEType:type.raw().createNSString().get()];
 
     // FIXME(rdar://50502771) AVStreamDataParser does not have an -canParseExtendedMIMEType: method on this system,
     //  so just replace the container type with a valid one from AVAssetMIMETypeCache and ask that cache if it
@@ -114,7 +114,7 @@ void AVStreamDataParserMIMETypeCache::initializeCache(HashSet<String>& cache)
     if (!isAvailable())
         return;
 
-    for (NSString* type in [PAL::getAVStreamDataParserClass() audiovisualMIMETypes])
+    for (NSString* type in [PAL::getAVStreamDataParserClassSingleton() audiovisualMIMETypes])
         cache.add(type);
 #endif
 }

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2009-2025 Apple Inc. All Rights Reserved.
- * Copyright (C) 2009, 2011 Google Inc. All Rights Reserved.
+ * Copyright (C) 2009-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,8 +60,9 @@ static void accessWorkerScriptLoaderMap(CompletionHandler<void(HashMap<ScriptExe
     callback(map.get());
 }
 
-WorkerScriptLoader::WorkerScriptLoader()
+WorkerScriptLoader::WorkerScriptLoader(AlwaysUseUTF8 alwaysUseUTF8)
     : m_script(ScriptBuffer::empty())
+    , m_alwaysUseUTF8(alwaysUseUTF8 == AlwaysUseUTF8::Yes)
 {
 }
 
@@ -82,7 +83,7 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
     m_isCOEPEnabled = scriptExecutionContext->settingsValues().crossOriginEmbedderPolicyEnabled;
     m_advancedPrivacyProtections = scriptExecutionContext->advancedPrivacyProtections();
 
-    auto* serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(workerGlobalScope);
+    RefPtr serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(workerGlobalScope);
     if (serviceWorkerGlobalScope) {
         if (auto* scriptResource = serviceWorkerGlobalScope->scriptResource(url)) {
             m_script = scriptResource->script;
@@ -130,7 +131,7 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
 
 void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, Source source, FetchOptions&& fetchOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, ServiceWorkersMode serviceWorkerMode, WorkerScriptLoaderClient& client, String&& taskMode, std::optional<ScriptExecutionContextIdentifier> clientIdentifier)
 {
-    m_client = &client;
+    m_client = client;
     m_url = scriptRequest.url();
     m_source = source;
     m_destination = fetchOptions.destination;
@@ -160,15 +161,16 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
         m_topOriginForServiceWorkerRegistration = SecurityOriginData { scriptExecutionContext.topOrigin().data() };
         options.clientIdentifier = scriptExecutionContext.identifier().object();
         options.resultingClientIdentifier = clientIdentifier->object();
-        m_serviceWorkerDataManager = ServiceWorkerDataManager::create(*clientIdentifier);
+        Ref serviceWorkerDataManager = ServiceWorkerDataManager::create(*clientIdentifier);
+        m_serviceWorkerDataManager = serviceWorkerDataManager.copyRef();
         m_context = scriptExecutionContext;
 
         // In case of blob URLs, we reuse the context controlling service worker.
         if (request->url().protocolIsBlob() && scriptExecutionContext.activeServiceWorker())
             setControllingServiceWorker(ServiceWorkerData { scriptExecutionContext.activeServiceWorker()->data() });
         else {
-            accessWorkerScriptLoaderMap([this](auto& map) mutable {
-                map.add(*m_clientIdentifier, *m_serviceWorkerDataManager);
+            accessWorkerScriptLoaderMap([clientIdentifier = *clientIdentifier, serviceWorkerDataManager = WTFMove(serviceWorkerDataManager)](auto& map) mutable {
+                map.add(clientIdentifier, serviceWorkerDataManager);
             });
             m_didAddToWorkerScriptLoaderMap = true;
         }
@@ -256,25 +258,23 @@ void WorkerScriptLoader::didReceiveResponse(ScriptExecutionContextIdentifier mai
 
     if (m_topOriginForServiceWorkerRegistration && response.source() == ResourceResponse::Source::MemoryCache && m_context) {
         m_isMatchingServiceWorkerRegistration = true;
-        auto* worker = dynamicDowncast<WorkerGlobalScope>(*m_context);
-        auto& swConnection = worker ? static_cast<SWClientConnection&>(worker->swClientConnection()) : ServiceWorkerProvider::singleton().serviceWorkerConnection();
-        swConnection.matchRegistration(WTFMove(*m_topOriginForServiceWorkerRegistration), response.url(), [this, protectedThis = Ref { *this }, response, mainContext, identifier](auto&& registrationData) mutable {
+        RefPtr worker = dynamicDowncast<WorkerGlobalScope>(*m_context);
+        Ref swConnection = worker ? static_cast<SWClientConnection&>(worker->swClientConnection()) : ServiceWorkerProvider::singleton().serviceWorkerConnection();
+        swConnection->matchRegistration(WTFMove(*m_topOriginForServiceWorkerRegistration), response.url(), [this, protectedThis = Ref { *this }, response, mainContext, identifier](auto&& registrationData) mutable {
             m_isMatchingServiceWorkerRegistration = false;
             if (registrationData && registrationData->activeWorker)
                 setControllingServiceWorker(WTFMove(*registrationData->activeWorker));
 
-            if (!m_client)
-                return;
-
-            m_client->didReceiveResponse(mainContext, identifier, response);
-            if (m_client && m_finishing)
-                m_client->notifyFinished(mainContext);
+            if (RefPtr client = m_client.get())
+                client->didReceiveResponse(mainContext, identifier, response);
+            if (RefPtr client = m_client.get(); client && m_finishing)
+                client->notifyFinished(mainContext);
         });
         return;
     }
 
-    if (m_client)
-        m_client->didReceiveResponse(mainContext, identifier, response);
+    if (RefPtr client = m_client.get())
+        client->didReceiveResponse(mainContext, identifier, response);
 }
 
 void WorkerScriptLoader::didReceiveData(const SharedBuffer& buffer)
@@ -289,8 +289,13 @@ void WorkerScriptLoader::didReceiveData(const SharedBuffer& buffer)
     }
 #endif
 
-    if (!m_decoder)
-        m_decoder = TextResourceDecoder::create("text/javascript"_s, "UTF-8"_s);
+    if (!m_decoder) {
+        // FIXME: Share more code with CachedScript / CachedScriptSourceProvider.
+        Ref decoder = TextResourceDecoder::create("text/javascript"_s, "UTF-8"_s);
+        if (m_alwaysUseUTF8)
+            decoder->setAlwaysUseUTF8();
+        lazyInitialize(m_decoder, WTFMove(decoder));
+    }
 
     if (buffer.isEmpty())
         return;
@@ -329,23 +334,25 @@ void WorkerScriptLoader::notifyError(std::optional<ScriptExecutionContextIdentif
 void WorkerScriptLoader::notifyFinished(std::optional<ScriptExecutionContextIdentifier> mainContext)
 {
     m_threadableLoader = nullptr;
-    if (!m_client || m_finishing)
+    RefPtr client = m_client.get();
+    if (!client || m_finishing)
         return;
 
     m_finishing = true;
     if (m_isMatchingServiceWorkerRegistration)
         return;
 
-    m_client->notifyFinished(mainContext);
+    client->notifyFinished(mainContext);
 }
 
 void WorkerScriptLoader::cancel()
 {
-    if (!m_threadableLoader)
+    RefPtr threadableLoader = m_threadableLoader;
+    if (!threadableLoader)
         return;
 
     m_client = nullptr;
-    m_threadableLoader->cancel();
+    threadableLoader->cancel();
     m_threadableLoader = nullptr;
 }
 
@@ -358,9 +365,9 @@ WorkerFetchResult WorkerScriptLoader::fetchResult() const
 
 std::optional<ServiceWorkerData> WorkerScriptLoader::takeServiceWorkerData()
 {
-    if (!m_serviceWorkerDataManager)
-        return { };
-    return m_serviceWorkerDataManager->takeData();
+    if (RefPtr serviceWorkerDataManager = m_serviceWorkerDataManager)
+        return serviceWorkerDataManager->takeData();
+    return { };
 }
 
 RefPtr<WorkerScriptLoader::ServiceWorkerDataManager> WorkerScriptLoader::serviceWorkerDataManagerFromIdentifier(ScriptExecutionContextIdentifier identifier)
@@ -374,14 +381,14 @@ RefPtr<WorkerScriptLoader::ServiceWorkerDataManager> WorkerScriptLoader::service
 
 void WorkerScriptLoader::setControllingServiceWorker(ServiceWorkerData&& activeServiceWorkerData)
 {
-    m_serviceWorkerDataManager->setData(WTFMove(activeServiceWorkerData));
+    Ref { *m_serviceWorkerDataManager }->setData(WTFMove(activeServiceWorkerData));
 }
 
 WorkerScriptLoader::ServiceWorkerDataManager::~ServiceWorkerDataManager()
 {
     if (!m_activeServiceWorkerData)
         return;
-    if (auto* serviceWorkerConnection = ServiceWorkerProvider::singleton().existingServiceWorkerConnection())
+    if (RefPtr serviceWorkerConnection = ServiceWorkerProvider::singleton().existingServiceWorkerConnection())
         serviceWorkerConnection->unregisterServiceWorkerClient(m_clientIdentifier);
 }
 

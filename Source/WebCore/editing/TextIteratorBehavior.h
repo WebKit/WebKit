@@ -73,7 +73,7 @@ enum class TextIteratorBehavior : uint16_t {
     // Used by accessibility to expose untransformed kana text.
     IgnoresFullSizeKana = 1 << 14,
 
-    // Used when we want to make 'content-visibility: auto' auto-expanding `<details>` or `hidden=until-found` content discoverable.
+    // Used when we want to make 'content-visibility: auto', auto-expanding `<details>` or `hidden=until-found` content discoverable.
     EntersSkippedContentRelevantToUser = 1 << 15
 };
 

@@ -9,22 +9,22 @@ features: [Temporal]
 
 const date1 = Temporal.ZonedDateTime.from({
   calendar: "gregory",
-  era: "ce",
+  era: "ad",
   eraYear: 2024,
   year: 2024,
   month: 1,
   day: 1,
   timeZone: "UTC",
 });
-assert.sameValue(date1.era, "gregory", "'ce' is accepted as alias for 'gregory'");
+assert.sameValue(date1.era, "ce", "'ad' is accepted as alias for 'ce'");
 
 const date2 = Temporal.ZonedDateTime.from({
   calendar: "gregory",
-  era: "bce",
+  era: "bc",
   eraYear: 44,
   year: -43,
   month: 3,
   day: 15,
   timeZone: "Europe/Rome",
 });
-assert.sameValue(date2.era, "gregory-inverse", "'bce' is accepted as alias for 'gregory-inverse'");
+assert.sameValue(date2.era, "bce", "'bc' is accepted as alias for 'bce'");

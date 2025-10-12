@@ -15,7 +15,7 @@ includes: [temporalHelpers.js]
 
 let d1 = new Temporal.Duration();
 TemporalHelpers.assertDuration(
-    d1.abs(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "empty");
+    d1.abs(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "blank");
 
 let d2 = new Temporal.Duration(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 TemporalHelpers.assertDuration(

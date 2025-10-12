@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,21 +26,20 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
-#include "FontTaggedSettings.h"
+#include <WebCore/CSSValue.h>
+#include <WebCore/FontTaggedSettings.h>
 
 namespace WebCore {
 
 class CSSFontFeatureValue final : public CSSValue {
 public:
-    static Ref<CSSFontFeatureValue> create(FontTag&& tag, Ref<CSSPrimitiveValue>&& value)
+    static Ref<CSSFontFeatureValue> create(FontTag&& tag, Ref<CSSValue>&& value)
     {
         return adoptRef(*new CSSFontFeatureValue(WTFMove(tag), WTFMove(value)));
     }
 
     const FontTag& tag() const { return m_tag; }
-    const CSSPrimitiveValue& value() const { return m_value; }
-    Ref<CSSPrimitiveValue> protectedValue() const { return m_value; }
+    const CSSValue& value() const { return m_value; }
     String customCSSText(const CSS::SerializationContext&) const;
 
     bool equals(const CSSFontFeatureValue&) const;
@@ -53,10 +52,10 @@ public:
     }
 
 private:
-    CSSFontFeatureValue(FontTag&&, Ref<CSSPrimitiveValue>&&);
+    CSSFontFeatureValue(FontTag&&, Ref<CSSValue>&&);
 
     FontTag m_tag;
-    Ref<CSSPrimitiveValue> m_value;
+    const Ref<CSSValue> m_value;
 };
 
 } // namespace WebCore

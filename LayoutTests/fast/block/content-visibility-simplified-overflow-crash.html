@@ -1,0 +1,20 @@
+<style>
+* {
+  -webkit-logical-width: 1px;
+}
+</style>
+<audio id=moveThis controls="controls"></audio>
+<details disabled="disabled">
+<marquee id=newParent height="0">PASS if no crash or assert.</marquee>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+setTimeout(function() {
+  newParent.style.maxWidth = "max-content";
+  newParent.prepend(moveThis);
+  testRunner?.notifyDone();
+}, 0);
+</script>

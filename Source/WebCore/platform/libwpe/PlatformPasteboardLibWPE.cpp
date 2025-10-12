@@ -91,6 +91,7 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
     CString textString = content.text.utf8();
     CString markupString = content.markup.utf8();
 
+    IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
     std::array<struct wpe_pasteboard_string_pair, 2> pairs = { {
         { { nullptr, 0 }, { nullptr, 0 } },
         { { nullptr, 0 }, { nullptr, 0 } },
@@ -100,6 +101,7 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
     wpe_pasteboard_string_initialize(&pairs[1].type, htmlText, strlen(htmlText));
     wpe_pasteboard_string_initialize(&pairs[1].string, markupString.data(), markupString.length());
     struct wpe_pasteboard_string_map map = { pairs.data(), pairs.size() };
+    IGNORE_CLANG_WARNINGS_END
 
     wpe_pasteboard_write(m_pasteboard, &map);
     m_changeCount++;
@@ -134,7 +136,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String&) 
     return { };
 }
 
-int64_t PlatformPasteboard::write(const PasteboardCustomData& customData)
+int64_t PlatformPasteboard::write(const PasteboardCustomData& customData, PasteboardDataLifetime)
 {
     PasteboardWebContent contents;
     customData.forEachPlatformStringOrBuffer([&contents] (auto& type, auto& stringOrBuffer) {
@@ -152,7 +154,7 @@ int64_t PlatformPasteboard::write(const PasteboardCustomData& customData)
     return m_changeCount;
 }
 
-int64_t PlatformPasteboard::write(const Vector<PasteboardCustomData>& data)
+int64_t PlatformPasteboard::write(const Vector<PasteboardCustomData>& data, PasteboardDataLifetime)
 {
     if (data.isEmpty() || data.size() > 1)
         return m_changeCount;

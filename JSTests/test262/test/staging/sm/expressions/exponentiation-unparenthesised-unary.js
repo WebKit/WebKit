@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-expressions-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -20,8 +17,8 @@ function assertNoError(f, msg) {
 }
 
 function assertSyntaxError(code) {
-  assertThrowsInstanceOf(function () { Function(code); }, SyntaxError, "Function:" + code);
-  assertThrowsInstanceOf(function () { AsyncFunction(code); }, SyntaxError, "AsyncFunction:" + code);
+  assert.throws(SyntaxError, function () { Function(code); }, "Function:" + code);
+  assert.throws(SyntaxError, function () { AsyncFunction(code); }, "AsyncFunction:" + code);
 }
 
 function assertNoSyntaxError(code) {

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,6 +57,7 @@ class FrameHandle;
 class FrameInfo;
 class HTTPCookieStore;
 class HitTestResult;
+class JSHandle;
 class MessageListener;
 class Navigation;
 class NavigationAction;
@@ -65,6 +66,7 @@ class NavigationResponse;
 class OpenPanelParameters;
 class PageConfiguration;
 class ProcessPoolConfiguration;
+class ScriptMessage;
 class SessionState;
 class UserScript;
 class WebsitePolicies;
@@ -136,6 +138,7 @@ WK_ADD_API_MAPPING(WKHTTPCookieStoreRef, API::HTTPCookieStore)
 WK_ADD_API_MAPPING(WKHitTestResultRef, API::HitTestResult)
 WK_ADD_API_MAPPING(WKIconDatabaseRef, WebIconDatabase)
 WK_ADD_API_MAPPING(WKInspectorRef, WebInspectorUIProxy)
+WK_ADD_API_MAPPING(WKJSHandleRef, API::JSHandle);
 WK_ADD_API_MAPPING(WKMediaKeySystemPermissionCallbackRef, MediaKeySystemPermissionCallback)
 WK_ADD_API_MAPPING(WKQueryPermissionResultCallbackRef, QueryPermissionResultCallback)
 WK_ADD_API_MAPPING(WKMessageListenerRef, API::MessageListener)
@@ -155,6 +158,7 @@ WK_ADD_API_MAPPING(WKPageRef, WebPageProxy)
 WK_ADD_API_MAPPING(WKPreferencesRef, WebPreferences)
 WK_ADD_API_MAPPING(WKProtectionSpaceRef, WebProtectionSpace)
 WK_ADD_API_MAPPING(WKResourceLoadStatisticsManagerRef, WebResourceLoadStatisticsManager)
+WK_ADD_API_MAPPING(WKScriptMessageRef, API::ScriptMessage)
 WK_ADD_API_MAPPING(WKSessionStateRef, API::SessionState)
 WK_ADD_API_MAPPING(WKSpeechRecognitionPermissionCallbackRef, SpeechRecognitionPermissionCallback)
 WK_ADD_API_MAPPING(WKTextCheckerRef, WebTextChecker)

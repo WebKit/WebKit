@@ -20,6 +20,7 @@ if (window.testRunner)
 var options = {audio: true, video: true};
 navigator.mediaDevices.getUserMedia(options)
     .then(stream => {
+       stream.getTracks().forEach(track => track.stop());
        if (permissionSet) {
             testPassed('Success callback invoked');
             finishJSTest();

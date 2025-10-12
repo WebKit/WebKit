@@ -25,7 +25,8 @@
 
 // https://w3c.github.io/pointerlock/#extensions-to-the-document-interface
 [
-    Conditional=POINTER_LOCK
+    Conditional=POINTER_LOCK,
+    EnabledBySetting=PointerLockEnabled
 ] partial interface Document {
     attribute EventHandler onpointerlockchange;
     attribute EventHandler onpointerlockerror;

@@ -44,12 +44,16 @@ void LoadShInterfaceBlock(gl::BinaryInputStream *stream, sh::InterfaceBlock *blo
 
 bool CompareShaderVar(const sh::ShaderVariable &x, const sh::ShaderVariable &y);
 
+std::string JoinShaderSources(GLsizei count, const char *const *string, const GLint *length);
+
 struct CompiledShaderState
 {
     CompiledShaderState(gl::ShaderType shaderType);
     ~CompiledShaderState();
 
-    void buildCompiledShaderState(const ShHandle compilerHandle, const bool isBinaryOutput);
+    void buildCompiledShaderState(const ShHandle compilerHandle,
+                                  const std::string &inputShaderSource,
+                                  ShShaderOutput outputType);
 
     void serialize(gl::BinaryOutputStream &stream) const;
     void deserialize(gl::BinaryInputStream &stream);

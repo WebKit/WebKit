@@ -1,16 +1,3 @@
-CONSOLE MESSAGE: Error: custom error
-CONSOLE MESSAGE: Error: custom error
-CONSOLE MESSAGE: Error: custom error
-CONSOLE MESSAGE: Error: custom error
-CONSOLE MESSAGE: Error: error 2
-CONSOLE MESSAGE: Error: error 2
-CONSOLE MESSAGE: not a real error
-CONSOLE MESSAGE: not a real error
-CONSOLE MESSAGE: not a real error
-CONSOLE MESSAGE: Error: assert_false: expected false got true
-CONSOLE MESSAGE: calling error()
-CONSOLE MESSAGE: Error: custom error
-CONSOLE MESSAGE: Error: custom error
 
 PASS Observable constructor
 PASS subscribe() can be called with no arguments

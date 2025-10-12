@@ -1,0 +1,402 @@
+
+{
+ "SDKContentRoot": [
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "printRect"}
+     ],
+     "interface": "UIPrintPaper",
+     "name": "Deprecated_Nonfunctional"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "viewPrintFormatter"},
+      {"access": "public", "name": "drawRect:forViewPrintFormatter:"}
+     ],
+     "interface": "UIView",
+     "name": "UIPrintFormatter"
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIPrintingNotAvailableError"},
+      {"access": "public", "name": "UIPrintNoContentError"},
+      {"access": "public", "name": "UIPrintUnknownImageFormatError"},
+      {"access": "public", "name": "UIPrintJobFailedError"}
+     ],
+     "introduced": "4.2",
+     "name": "UIPrintErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIPrintInfoDuplexNone"},
+      {"access": "public", "name": "UIPrintInfoDuplexLongEdge"},
+      {"access": "public", "name": "UIPrintInfoDuplexShortEdge"}
+     ],
+     "introduced": "4.2",
+     "name": "UIPrintInfoDuplex"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIPrintInfoOrientationPortrait"},
+      {"access": "public", "name": "UIPrintInfoOrientationLandscape"}
+     ],
+     "introduced": "4.2",
+     "name": "UIPrintInfoOrientation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIPrintInfoOutputGeneral"},
+      {"access": "public", "name": "UIPrintInfoOutputPhoto"},
+      {"access": "public", "name": "UIPrintInfoOutputGrayscale"},
+      {"access": "public", "introduced": "7", "name": "UIPrintInfoOutputPhotoGrayscale"}
+     ],
+     "introduced": "4.2",
+     "name": "UIPrintInfoOutputType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIPrintRenderingQualityBest"},
+      {"access": "public", "name": "UIPrintRenderingQualityResponsive"}
+     ],
+     "introduced": "14.5",
+     "name": "UIPrintRenderingQuality"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIPrinterCutterBehaviorNoCut"},
+      {"access": "public", "name": "UIPrinterCutterBehaviorPrinterDefault"},
+      {"access": "public", "name": "UIPrinterCutterBehaviorCutAfterEachPage"},
+      {"access": "public", "name": "UIPrinterCutterBehaviorCutAfterEachCopy"},
+      {"access": "public", "name": "UIPrinterCutterBehaviorCutAfterEachJob"}
+     ],
+     "introduced": "9",
+     "name": "UIPrinterCutterBehavior"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIPrinterJobTypeUnknown"},
+      {"access": "public", "name": "UIPrinterJobTypeDocument"},
+      {"access": "public", "name": "UIPrinterJobTypeEnvelope"},
+      {"access": "public", "name": "UIPrinterJobTypeLabel"},
+      {"access": "public", "name": "UIPrinterJobTypePhoto"},
+      {"access": "public", "name": "UIPrinterJobTypeReceipt"},
+      {"access": "public", "name": "UIPrinterJobTypeRoll"},
+      {"access": "public", "name": "UIPrinterJobTypeLargeFormat"},
+      {"access": "public", "name": "UIPrinterJobTypePostcard"}
+     ],
+     "introduced": "8",
+     "name": "UIPrinterJobTypes"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_UIPrintErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithMarkupText:"}
+     ],
+     "introduced": "4.2",
+     "linkage": "exported",
+     "name": "UIMarkupTextPrintFormatter",
+     "properties": [
+      {"access": "public", "getter": "markupText", "name": "markupText", "setter": "setMarkupText:"}
+     ],
+     "super": "UIPrintFormatter"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "removeFromPrintPageRenderer"},
+      {"access": "public", "name": "rectForPageAtIndex:"},
+      {"access": "public", "name": "drawInRect:forPageAtIndex:"}
+     ],
+     "introduced": "4.2",
+     "linkage": "exported",
+     "name": "UIPrintFormatter",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "printPageRenderer", "name": "printPageRenderer"},
+      {"access": "public", "getter": "maximumContentHeight", "name": "maximumContentHeight", "setter": "setMaximumContentHeight:"},
+      {"access": "public", "getter": "maximumContentWidth", "name": "maximumContentWidth", "setter": "setMaximumContentWidth:"},
+      {"access": "public", "getter": "contentInsets", "introduced": "4.2", "name": "contentInsets", "setter": "setContentInsets:"},
+      {"access": "public", "getter": "perPageContentInsets", "name": "perPageContentInsets", "setter": "setPerPageContentInsets:"},
+      {"access": "public", "getter": "startPage", "name": "startPage", "setter": "setStartPage:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pageCount", "name": "pageCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "requiresMainThread", "introduced": "16", "name": "requiresMainThread"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "printInfo"},
+      {"access": "public", "name": "printInfoWithDictionary:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithCoder:"}
+     ],
+     "introduced": "4.2",
+     "linkage": "exported",
+     "name": "UIPrintInfo",
+     "properties": [
+      {"access": "public", "getter": "printerID", "name": "printerID", "setter": "setPrinterID:"},
+      {"access": "public", "getter": "jobName", "name": "jobName", "setter": "setJobName:"},
+      {"access": "public", "getter": "outputType", "name": "outputType", "setter": "setOutputType:"},
+      {"access": "public", "getter": "orientation", "name": "orientation", "setter": "setOrientation:"},
+      {"access": "public", "getter": "duplex", "name": "duplex", "setter": "setDuplex:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dictionaryRepresentation", "name": "dictionaryRepresentation"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "canPrintURL:"},
+      {"access": "public", "name": "canPrintData:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "presentAnimated:completionHandler:"},
+      {"access": "public", "name": "presentFromRect:inView:animated:completionHandler:"},
+      {"access": "public", "name": "presentFromBarButtonItem:animated:completionHandler:"},
+      {"access": "public", "name": "printToPrinter:completionHandler:"},
+      {"access": "public", "name": "dismissAnimated:"}
+     ],
+     "introduced": "4.2",
+     "linkage": "exported",
+     "name": "UIPrintInteractionController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isPrintingAvailable", "name": "printingAvailable"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "printableUTIs", "name": "printableUTIs"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sharedPrintController", "name": "sharedPrintController"},
+      {"access": "public", "getter": "printInfo", "name": "printInfo", "setter": "setPrintInfo:"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "showsPageRange", "introduced": "4.2", "name": "showsPageRange", "setter": "setShowsPageRange:"},
+      {"access": "public", "getter": "showsNumberOfCopies", "introduced": "7", "name": "showsNumberOfCopies", "setter": "setShowsNumberOfCopies:"},
+      {"access": "public", "getter": "showsPaperSelectionForLoadedPapers", "introduced": "8", "name": "showsPaperSelectionForLoadedPapers", "setter": "setShowsPaperSelectionForLoadedPapers:"},
+      {"access": "public", "getter": "showsPaperOrientation", "introduced": "15", "name": "showsPaperOrientation", "setter": "setShowsPaperOrientation:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "printPaper", "name": "printPaper"},
+      {"access": "public", "getter": "printPageRenderer", "name": "printPageRenderer", "setter": "setPrintPageRenderer:"},
+      {"access": "public", "getter": "printFormatter", "name": "printFormatter", "setter": "setPrintFormatter:"},
+      {"access": "public", "getter": "printingItem", "name": "printingItem", "setter": "setPrintingItem:"},
+      {"access": "public", "getter": "printingItems", "name": "printingItems", "setter": "setPrintingItems:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "printFormattersForPageAtIndex:"},
+      {"access": "public", "name": "addPrintFormatter:startingAtPageAtIndex:"},
+      {"access": "public", "introduced": "14.5", "name": "currentRenderingQualityForRequestedRenderingQuality:"},
+      {"access": "public", "name": "prepareForDrawingPages:"},
+      {"access": "public", "name": "drawPageAtIndex:inRect:"},
+      {"access": "public", "name": "drawPrintFormatter:forPageAtIndex:"},
+      {"access": "public", "name": "drawHeaderForPageAtIndex:inRect:"},
+      {"access": "public", "name": "drawContentForPageAtIndex:inRect:"},
+      {"access": "public", "name": "drawFooterForPageAtIndex:inRect:"}
+     ],
+     "introduced": "4.2",
+     "linkage": "exported",
+     "name": "UIPrintPageRenderer",
+     "properties": [
+      {"access": "public", "getter": "headerHeight", "name": "headerHeight", "setter": "setHeaderHeight:"},
+      {"access": "public", "getter": "footerHeight", "name": "footerHeight", "setter": "setFooterHeight:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paperRect", "name": "paperRect"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "printableRect", "name": "printableRect"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfPages", "name": "numberOfPages"},
+      {"access": "public", "getter": "printFormatters", "name": "printFormatters", "setter": "setPrintFormatters:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Deprecated_Nonfunctional"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "bestPaperForPageSize:withPapersFromArray:"}
+     ],
+     "introduced": "4.2",
+     "linkage": "exported",
+     "name": "UIPrintPaper",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "paperSize", "name": "paperSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "printableRect", "name": "printableRect"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "printerDestinationsForPrintInfo:"}
+     ],
+     "introduced": "14.5",
+     "linkage": "exported",
+     "name": "UIPrintServiceExtension",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "printerWithURL:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "contactPrinter:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "UIPrinter",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "URL", "name": "URL"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "name": "displayName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayLocation", "name": "displayLocation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedJobTypes", "name": "supportedJobTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "makeAndModel", "name": "makeAndModel"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportsColor", "name": "supportsColor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportsDuplex", "name": "supportsDuplex"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithURL:"}
+     ],
+     "introduced": "14.5",
+     "linkage": "exported",
+     "name": "UIPrinterDestination",
+     "properties": [
+      {"access": "public", "getter": "URL", "name": "URL", "setter": "setURL:"},
+      {"access": "public", "getter": "displayName", "name": "displayName", "setter": "setDisplayName:"},
+      {"access": "public", "getter": "txtRecord", "name": "txtRecord", "setter": "setTxtRecord:"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "printerPickerControllerWithInitiallySelectedPrinter:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "presentAnimated:completionHandler:"},
+      {"access": "public", "name": "presentFromRect:inView:animated:completionHandler:"},
+      {"access": "public", "name": "presentFromBarButtonItem:animated:completionHandler:"},
+      {"access": "public", "name": "dismissAnimated:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "UIPrinterPickerController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "selectedPrinter", "name": "selectedPrinter"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithText:"},
+      {"access": "public", "introduced": "7", "name": "initWithAttributedText:"}
+     ],
+     "introduced": "4.2",
+     "linkage": "exported",
+     "name": "UISimpleTextPrintFormatter",
+     "properties": [
+      {"access": "public", "getter": "text", "name": "text", "setter": "setText:"},
+      {"access": "public", "getter": "attributedText", "introduced": "7", "name": "attributedText", "setter": "setAttributedText:"},
+      {"access": "public", "getter": "font", "name": "font", "setter": "setFont:"},
+      {"access": "public", "getter": "color", "name": "color", "setter": "setColor:"},
+      {"access": "public", "getter": "textAlignment", "name": "textAlignment", "setter": "setTextAlignment:"}
+     ],
+     "super": "UIPrintFormatter"
+    },
+    {
+     "access": "public",
+     "introduced": "4.2",
+     "linkage": "exported",
+     "name": "UIViewPrintFormatter",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "view", "name": "view"}
+     ],
+     "super": "UIPrintFormatter"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "printInteractionControllerParentViewController:", "optional": true},
+      {"access": "public", "name": "printInteractionController:choosePaper:", "optional": true},
+      {"access": "public", "name": "printInteractionControllerWillPresentPrinterOptions:", "optional": true},
+      {"access": "public", "name": "printInteractionControllerDidPresentPrinterOptions:", "optional": true},
+      {"access": "public", "name": "printInteractionControllerWillDismissPrinterOptions:", "optional": true},
+      {"access": "public", "name": "printInteractionControllerDidDismissPrinterOptions:", "optional": true},
+      {"access": "public", "name": "printInteractionControllerWillStartJob:", "optional": true},
+      {"access": "public", "name": "printInteractionControllerDidFinishJob:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "printInteractionController:cutLengthForPaper:", "optional": true},
+      {"access": "public", "introduced": "9", "name": "printInteractionController:chooseCutterBehavior:", "optional": true}
+     ],
+     "introduced": "4.2",
+     "name": "UIPrintInteractionControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "printerPickerControllerParentViewController:", "optional": true},
+      {"access": "public", "name": "printerPickerController:shouldShowPrinter:", "optional": true},
+      {"access": "public", "name": "printerPickerControllerWillPresent:", "optional": true},
+      {"access": "public", "name": "printerPickerControllerDidPresent:", "optional": true},
+      {"access": "public", "name": "printerPickerControllerWillDismiss:", "optional": true},
+      {"access": "public", "name": "printerPickerControllerDidDismiss:", "optional": true},
+      {"access": "public", "name": "printerPickerControllerDidSelectPrinter:", "optional": true}
+     ],
+     "introduced": "8",
+     "name": "UIPrinterPickerControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios",
+   "typedefs": [
+    {"access": "public", "name": "UIPrintErrorCode"},
+    {"access": "public", "name": "UIPrintInfoDuplex"},
+    {"access": "public", "name": "UIPrintInfoOrientation"},
+    {"access": "public", "name": "UIPrintInfoOutputType"},
+    {"access": "public", "introduced": "4.2", "name": "UIPrintInteractionCompletionHandler"},
+    {"access": "public", "name": "UIPrintRenderingQuality"},
+    {"access": "public", "name": "UIPrinterCutterBehavior"},
+    {"access": "public", "name": "UIPrinterJobTypes"},
+    {"access": "public", "introduced": "8", "name": "UIPrinterPickerCompletionHandler"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

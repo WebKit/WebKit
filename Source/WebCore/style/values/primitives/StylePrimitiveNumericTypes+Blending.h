@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,10 +36,27 @@ using namespace CSS::Literals;
 // MARK: Interpolation of base numeric types
 // https://drafts.csswg.org/css-values/#combining-values
 template<Numeric StyleType> struct Blending<StyleType> {
-    constexpr auto canBlend(const StyleType&, const StyleType&) -> bool
+    auto blend(const StyleType& from, const StyleType& to, const BlendingContext& context) -> StyleType
     {
-        return true;
+        if (!context.progress && context.isReplace())
+            return from;
+
+        if (context.progress == 1 && context.isReplace())
+            return to;
+
+        // FIXME: As interpolation may result in a value outside of the range allowed by the
+        // primitive, we clamp the value back down to the allowed range. The spec states that
+        // in some cases, an accumulated intermediate value should be allowed to be out of the
+        // allowed range until after interpolation has completed, but we currently don't have
+        // that concept.
+        // https://drafts.csswg.org/css-values/#combining-range
+
+        return StyleType { CSS::clampToRange<StyleType::range, typename StyleType::ResolvedValueType>(WebCore::blend(from.value, to.value, context)) };
     }
+};
+
+template<auto R, typename V> struct Blending<Length<R, V>> {
+    using StyleType = Length<R, V>;
 
     auto blend(const StyleType& from, const StyleType& to, const BlendingContext& context) -> StyleType
     {
@@ -53,27 +70,28 @@ template<Numeric StyleType> struct Blending<StyleType> {
         // primitive, we clamp the value back down to the allowed range. The spec states that
         // in some cases, an accumulated intermediate value should be allowed to be out of the
         // allowed range until after interpolation has completed, but we currently don't have
-        // that concept, and the `WebCore::Length` code path did clamping in the same fashion.
+        // that concept.
         // https://drafts.csswg.org/css-values/#combining-range
 
-        return StyleType { CSS::clampToRange<StyleType::range>(WebCore::blend(from.value, to.value, context)) };
+        return StyleType { CSS::clampToRange<StyleType::range, typename StyleType::ResolvedValueType>(WebCore::blend(from.unresolvedValue(), to.unresolvedValue(), context)) };
     }
 };
 
 // MARK: Interpolation of mixed numeric types
 // https://drafts.csswg.org/css-values/#combine-mixed
 template<auto R, typename V> struct Blending<LengthPercentage<R, V>> {
-    constexpr auto canBlend(const LengthPercentage<R, V>&, const LengthPercentage<R, V>&) -> bool
+    using StyleType = LengthPercentage<R, V>;
+    using Length = typename StyleType::Dimension;
+    using Percentage = typename StyleType::Percentage;
+    using Calc = typename StyleType::Calc;
+
+    auto requiresInterpolationForAccumulativeIteration(const StyleType& from, const StyleType& to) -> bool
     {
-        return true;
+        return WTF::holdsAlternative<Calc>(from) || WTF::holdsAlternative<Calc>(to) || from.index() != to.index();
     }
 
-    auto blend(const LengthPercentage<R, V>& from, const LengthPercentage<R, V>& to, const BlendingContext& context) -> LengthPercentage<R, V>
+    auto blend(const StyleType& from, const StyleType& to, const BlendingContext& context) -> StyleType
     {
-        using Length = typename LengthPercentage<R, V>::Dimension;
-        using Percentage = typename LengthPercentage<R, V>::Percentage;
-        using Calc = typename LengthPercentage<R, V>::Calc;
-
         // Interpolation of dimension-percentage value combinations (e.g. <length-percentage>, <frequency-percentage>,
         // <angle-percentage>, <time-percentage> or equivalent notations) is defined as:
         //
@@ -87,8 +105,8 @@ template<auto R, typename V> struct Blending<LengthPercentage<R, V>> {
             if (context.compositeOperation != CompositeOperation::Replace)
                 return Calc { Calculation::add(copyCalculation(from), copyCalculation(to)) };
 
-            bool fromIsZero = from.isZero();
-            bool toIsZero = to.isZero();
+            bool fromIsZero = from.isKnownZero();
+            bool toIsZero = to.isKnownZero();
 
             // 0% to 0px -> calc(0px + 0%) to calc(0px + 0%) -> 0px
             // 0px to 0% -> calc(0px + 0%) to calc(0px + 0%) -> 0px
@@ -97,14 +115,14 @@ template<auto R, typename V> struct Blending<LengthPercentage<R, V>> {
 
             if (!WTF::holdsAlternative<Calc>(to) && !WTF::holdsAlternative<Percentage>(from) && (context.progress == 1 || fromIsZero)) {
                 if (WTF::holdsAlternative<Length>(to))
-                    return WebCore::Style::blend<Length>(0_css_px, get<Length>(to), context);
-                return WebCore::Style::blend<Percentage>(0_css_percentage, get<Percentage>(to), context);
+                    return WebCore::Style::blend(Length(0_css_px), get<Length>(to), context);
+                return WebCore::Style::blend(Percentage(0_css_percentage), get<Percentage>(to), context);
             }
 
             if (!WTF::holdsAlternative<Calc>(from) && !WTF::holdsAlternative<Percentage>(to) && (!context.progress || toIsZero)) {
                 if (WTF::holdsAlternative<Length>(from))
-                    return WebCore::Style::blend<Length>(get<Length>(from), 0_css_px, context);
-                return WebCore::Style::blend<Percentage>(get<Percentage>(from), 0_css_percentage, context);
+                    return WebCore::Style::blend(get<Length>(from), Length(0_css_px), context);
+                return WebCore::Style::blend(get<Percentage>(from), Percentage(0_css_percentage), context);
             }
 
             return Calc { Calculation::blend(copyCalculation(from), copyCalculation(to), context.progress) };
@@ -124,11 +142,13 @@ template<auto R, typename V> struct Blending<LengthPercentage<R, V>> {
 
 // `NumberOrPercentageResolvedToNumber<nR, pR, V>` forwards to `Number<nR, V>`.
 template<auto nR, auto pR, typename V> struct Blending<NumberOrPercentageResolvedToNumber<nR, pR, V>> {
-    auto canBlend(const NumberOrPercentageResolvedToNumber<nR, pR, V>& a, const NumberOrPercentageResolvedToNumber<nR, pR, V>& b) -> bool
+    using StyleType = NumberOrPercentageResolvedToNumber<nR, pR, V>;
+
+    auto canBlend(const StyleType& a, const StyleType& b) -> bool
     {
         return Style::canBlend(a.value, b.value);
     }
-    auto blend(const NumberOrPercentageResolvedToNumber<nR, pR, V>& a, const NumberOrPercentageResolvedToNumber<nR, pR, V>& b, const BlendingContext& context) -> NumberOrPercentageResolvedToNumber<nR, pR, V>
+    auto blend(const StyleType& a, const StyleType& b, const BlendingContext& context) -> StyleType
     {
         return Style::blend(a.value, b.value, context);
     }

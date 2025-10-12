@@ -13,7 +13,7 @@ promise_test(() => {
         script.type = 'module';
         script.textContent = `window.inlineModuleIsExecuted = true`;
         script.integrity = 'sha256-deadbeef';
-        script.onload = function () {
+        window.onload = function () {
             assert_equals(window.inlineModuleIsExecuted, true);
             resolve();
         };

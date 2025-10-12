@@ -31,7 +31,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "PublicKeyCredentialType.h"
+#include <WebCore/PublicKeyCredentialType.h>
 #include <wtf/text/ASCIILiteral.h>
 
 namespace fido {

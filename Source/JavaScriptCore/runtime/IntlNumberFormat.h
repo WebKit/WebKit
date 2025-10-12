@@ -50,6 +50,7 @@ enum class IntlTrailingZeroDisplay : uint8_t { Auto, StripIfInteger };
 enum class IntlNotation : uint8_t { Standard, Scientific, Engineering, Compact };
 template<typename IntlType> void setNumberFormatDigitOptions(JSGlobalObject*, IntlType*, JSObject*, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation);
 template<typename IntlType> void appendNumberFormatDigitOptionsToSkeleton(IntlType*, StringBuilder&);
+template<typename IntlType> void appendNumberFormatNotationOptionsToSkeleton(IntlType*, StringBuilder&);
 
 struct UNumberFormatterDeleter {
     JS_EXPORT_PRIVATE void operator()(UNumberFormatter*);
@@ -155,6 +156,8 @@ public:
 
     DECLARE_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
     void initializeNumberFormat(JSGlobalObject*, JSValue locales, JSValue optionsValue);
     JSValue format(JSGlobalObject*, double) const;
     JSValue format(JSGlobalObject*, IntlMathematicalValue&&) const;
@@ -180,6 +183,8 @@ public:
     friend void setNumberFormatDigitOptions(JSGlobalObject*, IntlType*, JSObject*, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation);
     template<typename IntlType>
     friend void appendNumberFormatDigitOptionsToSkeleton(IntlType*, StringBuilder&);
+    template<typename IntlType>
+    friend void appendNumberFormatNotationOptionsToSkeleton(IntlType*, StringBuilder&);
 
     static ASCIILiteral notationString(IntlNotation);
 
@@ -187,11 +192,11 @@ public:
 
     static ASCIILiteral roundingModeString(RoundingMode);
     static ASCIILiteral roundingPriorityString(IntlRoundingType);
+    static ASCIILiteral trailingZeroDisplayString(IntlTrailingZeroDisplay);
 
 private:
     IntlNumberFormat(VM&, Structure*);
     DECLARE_DEFAULT_FINISH_CREATION;
-    DECLARE_VISIT_CHILDREN;
 
     static Vector<String> localeData(const String&, RelevantExtensionKey);
 
@@ -208,7 +213,6 @@ private:
     static ASCIILiteral unitDisplayString(UnitDisplay);
     static ASCIILiteral compactDisplayString(CompactDisplay);
     static ASCIILiteral signDisplayString(SignDisplay);
-    static ASCIILiteral trailingZeroDisplayString(IntlTrailingZeroDisplay);
     static JSValue useGroupingValue(VM&, UseGrouping);
 
     WriteBarrier<JSBoundFunction> m_boundFormat;

@@ -10,9 +10,8 @@
 
 #include "api/video_codecs/video_encoder_software_fallback_wrapper.h"
 
-#include <stddef.h>
-#include <stdint.h>
-
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <string>
@@ -40,7 +39,7 @@
 #include "modules/video_coding/include/video_error_codes.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "rtc_base/fake_clock.h"
-#include "test/explicit_key_value_config.h"
+#include "test/create_test_field_trials.h"
 #include "test/fake_encoder.h"
 #include "test/fake_texture_frame.h"
 #include "test/gmock.h"
@@ -49,18 +48,20 @@
 namespace webrtc {
 namespace {
 
-using test::ExplicitKeyValueConfig;
 using ::testing::_;
 using ::testing::Return;
 using ::testing::ValuesIn;
 
-const int kWidth = 320;
-const int kHeight = 240;
-const int kNumCores = 2;
-const uint32_t kFramerate = 30;
-const size_t kMaxPayloadSize = 800;
-const int kLowThreshold = 10;
-const int kHighThreshold = 20;
+constexpr int kWidth = 320;
+constexpr int kHeight = 240;
+constexpr int kNumCores = 2;
+constexpr uint32_t kFramerate = 30;
+constexpr size_t kMaxPayloadSize = 800;
+constexpr int kLowThreshold = 10;
+constexpr int kHighThreshold = 20;
+constexpr int kBitrateKbps = 200;
+constexpr int kMinPixelsPerFrame = 1;
+constexpr char kFieldTrial[] = "WebRTC-VP8-Forced-Fallback-Encoder-v2";
 
 const VideoEncoder::Capabilities kCapabilities(false);
 const VideoEncoder::Settings kSettings(kCapabilities,
@@ -91,6 +92,7 @@ class FakeEncodedImageCallback : public EncodedImageCallback {
   }
   int callback_count_ = 0;
 };
+
 }  // namespace
 
 class VideoEncoderSoftwareFallbackWrapperTestBase : public ::testing::Test {
@@ -214,17 +216,16 @@ void VideoEncoderSoftwareFallbackWrapperTestBase::EncodeFrame() {
 
 void VideoEncoderSoftwareFallbackWrapperTestBase::EncodeFrame(
     int expected_ret) {
-  rtc::scoped_refptr<I420Buffer> buffer =
+  scoped_refptr<I420Buffer> buffer =
       I420Buffer::Create(codec_.width, codec_.height);
   I420Buffer::SetBlack(buffer.get());
   std::vector<VideoFrameType> types(1, VideoFrameType::kVideoFrameKey);
 
-  frame_ =
-      std::make_unique<VideoFrame>(VideoFrame::Builder()
-                                       .set_video_frame_buffer(buffer)
-                                       .set_rotation(webrtc::kVideoRotation_0)
-                                       .set_timestamp_us(0)
-                                       .build());
+  frame_ = std::make_unique<VideoFrame>(VideoFrame::Builder()
+                                            .set_video_frame_buffer(buffer)
+                                            .set_rotation(kVideoRotation_0)
+                                            .set_timestamp_us(0)
+                                            .build());
   EXPECT_EQ(expected_ret, fallback_wrapper_->Encode(*frame_, &types));
 }
 
@@ -488,12 +489,6 @@ TEST_F(VideoEncoderSoftwareFallbackWrapperTest,
             fake_sw_encoder_->last_video_frame_->height());
 }
 
-namespace {
-const int kBitrateKbps = 200;
-const int kMinPixelsPerFrame = 1;
-const char kFieldTrial[] = "WebRTC-VP8-Forced-Fallback-Encoder-v2";
-}  // namespace
-
 class ForcedFallbackTest : public VideoEncoderSoftwareFallbackWrapperTestBase {
  public:
   explicit ForcedFallbackTest(const Environment& env)
@@ -555,25 +550,23 @@ class ForcedFallbackTest : public VideoEncoderSoftwareFallbackWrapperTestBase {
     CheckLastEncoderName(expected_name);
   }
 
-  rtc::ScopedFakeClock clock_;
+  ScopedFakeClock clock_;
 };
 
 class ForcedFallbackTestEnabled : public ForcedFallbackTest {
  public:
   ForcedFallbackTestEnabled()
-      : ForcedFallbackTest(
-            CreateEnvironment(std::make_unique<ExplicitKeyValueConfig>(
-                std::string(kFieldTrial) + "/Enabled-" +
-                std::to_string(kMinPixelsPerFrame) + "," +
-                std::to_string(kWidth * kHeight) + ",30000/"))) {}
+      : ForcedFallbackTest(CreateEnvironment(CreateTestFieldTrialsPtr(
+            std::string(kFieldTrial) + "/Enabled-" +
+            std::to_string(kMinPixelsPerFrame) + "," +
+            std::to_string(kWidth * kHeight) + ",30000/"))) {}
 };
 
 class ForcedFallbackTestDisabled : public ForcedFallbackTest {
  public:
   ForcedFallbackTestDisabled()
-      : ForcedFallbackTest(
-            CreateEnvironment(std::make_unique<ExplicitKeyValueConfig>(
-                std::string(kFieldTrial) + "/Disabled/"))) {}
+      : ForcedFallbackTest(CreateEnvironment(CreateTestFieldTrialsPtr(
+            std::string(kFieldTrial) + "/Disabled/"))) {}
 };
 
 TEST_F(ForcedFallbackTestDisabled, NoFallbackWithoutFieldTrial) {
@@ -1145,8 +1138,8 @@ INSTANTIATE_TEST_SUITE_P(
 
 TEST_P(ResolutionBasedFallbackTest, VerifyForcedEncoderFallback) {
   const ResolutionBasedFallbackTestParams& params = GetParam();
-  const Environment env = CreateEnvironment(
-      std::make_unique<ExplicitKeyValueConfig>(params.field_trials));
+  const Environment env =
+      CreateEnvironment(CreateTestFieldTrialsPtr(params.field_trials));
   auto primary = std::make_unique<test::FakeEncoder>(env);
   primary->SetImplementationName("primary");
   auto fallback = std::make_unique<test::FakeEncoder>(env);

@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // cl_utils.cpp: Helper functions for the CL back end
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/renderer/cl/cl_util.h"
 

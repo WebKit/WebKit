@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "ActiveDOMCallback.h"
-#include "JSDOMGlobalObject.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCell.h>
 #include <JavaScriptCore/SlotVisitorInlines.h>
 #include <JavaScriptCore/StrongInlines.h>
+#include <WebCore/ActiveDOMCallback.h>
+#include <WebCore/JSDOMGlobalObject.h>
 
 namespace WebCore {
 

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'ALLOW-SANDBOX' is an invalid sandbox flag.
 
 PASS DOMTokenList length
 PASS DOMTokenList item(index)

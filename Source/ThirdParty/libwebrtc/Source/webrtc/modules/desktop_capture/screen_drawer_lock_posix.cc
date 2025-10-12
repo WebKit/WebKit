@@ -11,7 +11,10 @@
 #include "modules/desktop_capture/screen_drawer_lock_posix.h"
 
 #include <fcntl.h>
+#include <semaphore.h>
 #include <sys/stat.h>
+
+#include <string>
 
 #include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
@@ -22,7 +25,7 @@ namespace webrtc {
 namespace {
 
 // A uuid as the name of semaphore.
-static constexpr char kSemaphoreName[] = "GSDL54fe5552804711e6a7253f429a";
+constexpr char kSemaphoreName[] = "GSDL54fe5552804711e6a7253f429a";
 
 }  // namespace
 

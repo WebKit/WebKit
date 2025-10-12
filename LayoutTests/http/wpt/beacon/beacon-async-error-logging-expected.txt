@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Not allowed to use restricted network port 1: http://localhost:1/
-CONSOLE MESSAGE: Beacon API cannot load http://localhost:1/. Not allowed to use restricted network port
 
 PASS Should log an error message in the console
 

@@ -217,7 +217,7 @@ void webkit_dom_html_o_list_element_set_start(WebKitDOMHTMLOListElement* self, g
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_HTML_O_LIST_ELEMENT(self));
     WebCore::HTMLOListElement* item = WebKit::core(self);
-    item->setStartForBindings(value);
+    item->setIntegralAttribute(WebCore::HTMLNames::startAttr, value);
 }
 
 gchar* webkit_dom_html_o_list_element_get_type_attr(WebKitDOMHTMLOListElement* self)

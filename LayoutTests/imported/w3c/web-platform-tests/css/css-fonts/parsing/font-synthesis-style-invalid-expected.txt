@@ -1,4 +1,6 @@
 
 PASS e.style['font-synthesis-style'] = "normal" should not set the property value
 PASS e.style['font-synthesis-style'] = "auto none" should not set the property value
+PASS e.style['font-synthesis-style'] = "none oblique-only" should not set the property value
+PASS e.style['font-synthesis-style'] = "oblique-only auto" should not set the property value
 

@@ -1,0 +1,4 @@
+
+PASS No violation reported for SharedWorker constructor with TrustedScriptURL.
+PASS Violation report for SharedWorker constructor with plain string.
+

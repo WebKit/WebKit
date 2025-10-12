@@ -10,9 +10,11 @@
 
 #include "rtc_base/bitrate_tracker.h"
 
+#include <cstdint>
 #include <optional>
 
 #include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/rate_statistics.h"
 

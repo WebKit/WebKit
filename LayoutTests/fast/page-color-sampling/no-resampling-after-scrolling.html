@@ -1,0 +1,72 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true TopContentInsetBackgroundCanChangeAfterScrolling=false pageTopColorSamplingEnabled=false useFlexibleViewport=true obscuredInset.top=50 ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+body, html {
+    font-family: system-ui;
+    font-size: 16px;
+    margin: 0;
+}
+
+.sticky {
+    position: sticky;
+    z-index: 100;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: rgb(255, 59, 48);
+}
+
+.short-vertical-space {
+    width: 100%;
+    height: 100px;
+}
+
+.tall-vertical-space {
+    width: 100%;
+    height: 2000px;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.scrollDown();
+    await UIHelper.waitForZoomingOrScrollingToEnd();
+
+    colorsBeforeReparenting = await UIHelper.fixedContainerEdgeColors();
+    shouldBeNull("colorsBeforeReparenting.top");
+    shouldBeNull("colorsBeforeReparenting.left");
+    shouldBeNull("colorsBeforeReparenting.right");
+    shouldBeNull("colorsBeforeReparenting.bottom");
+
+    await UIHelper.removeViewFromWindow();
+    await UIHelper.addViewToWindow();
+    await UIHelper.ensurePresentationUpdate();
+
+    document.querySelector(".short-vertical-space").remove();
+    await UIHelper.scrollDown();
+    await UIHelper.ensurePresentationUpdate();
+
+    colorsAfterReparenting = await UIHelper.fixedContainerEdgeColors();
+    shouldBeNull("colorsAfterReparenting.top");
+    shouldBeNull("colorsAfterReparenting.left");
+    shouldBeNull("colorsAfterReparenting.right");
+    shouldBeNull("colorsAfterReparenting.bottom");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="short-vertical-space"></div>
+    <div class="sticky"></div>
+    <div class="tall-vertical-space"></div>
+</body>
+</html>

@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-TypedArray-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -18,7 +15,7 @@ const typedArray = new Int32Array(0);
 
 // Throws if the comparator is neither undefined nor callable.
 for (let invalidComparator of [null, 0, true, Symbol(), {}, []]) {
-    assertThrowsInstanceOf(() => typedArray.sort(invalidComparator), TypeError);
+    assert.throws(TypeError, () => typedArray.sort(invalidComparator));
 }
 
 // Doesn't throw if the comparator is undefined or a callable object.

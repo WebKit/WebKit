@@ -27,7 +27,7 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "SystemImage.h"
+#include <WebCore/SystemImage.h>
 #include <optional>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>

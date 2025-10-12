@@ -1,6 +1,7 @@
 
 FAIL SVGPathSegment interface exists assert_not_equals: got disallowed value undefined
 FAIL Test path.getPathData() straight lines path.getPathData is not a function. (In 'path.getPathData()', 'path.getPathData' is undefined)
+FAIL Test path.getPathData() arc path.getPathData is not a function. (In 'path.getPathData()', 'path.getPathData' is undefined)
 FAIL Test path.getPathData() cubic path.getPathData is not a function. (In 'path.getPathData()', 'path.getPathData' is undefined)
 FAIL Test path.getPathData({normalize: true}) straight lines path.getPathData is not a function. (In 'path.getPathData({normalize: true})', 'path.getPathData' is undefined)
 FAIL Test path.getPathData({normalize: true}) cubic path.getPathData is not a function. (In 'path.getPathData({normalize: true})', 'path.getPathData' is undefined)

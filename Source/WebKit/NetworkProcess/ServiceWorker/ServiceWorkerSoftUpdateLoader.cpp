@@ -44,6 +44,11 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerSoftUpdateLoader);
 
+Ref<ServiceWorkerSoftUpdateLoader> ServiceWorkerSoftUpdateLoader::create(NetworkSession& session, WebCore::ServiceWorkerJobData&& jobData, bool shouldRefreshCache, WebCore::ResourceRequest&& request, Handler&& completionHandler)
+{
+    return adoptRef(*new ServiceWorkerSoftUpdateLoader(session, WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler)));
+}
+
 ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader(NetworkSession& session, ServiceWorkerJobData&& jobData, bool shouldRefreshCache, ResourceRequest&& request, Handler&& completionHandler)
     : m_completionHandler(WTFMove(completionHandler))
     , m_jobData(WTFMove(jobData))
@@ -81,7 +86,7 @@ ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader(NetworkSession& ses
                 if (!lastModified.isEmpty())
                     request.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
             }
-            loadFromNetwork(*m_session, WTFMove(request));
+            loadFromNetwork(CheckedRef { *m_session }.get(), WTFMove(request));
         });
         return;
     }

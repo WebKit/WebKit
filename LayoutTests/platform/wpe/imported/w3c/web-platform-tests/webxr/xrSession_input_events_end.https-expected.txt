@@ -1,3 +1,0 @@
-
-FAIL Calling end during an input callback stops processing at the right time assert_equals: Expected end event, but got selectstart event instead expected "end" but got "selectstart"
-

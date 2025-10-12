@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CollectionScope.h"
+#include <JavaScriptCore/CollectionScope.h>
 
 namespace JSC {
 

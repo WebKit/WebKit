@@ -145,7 +145,7 @@ WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *event, b
         unmodifiedText = text;
     }
 
-    return WebKeyboardEvent { { type, modifiers, WallTime::fromRawSeconds(timestamp) }, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, handledByInputMethod, autoRepeat, isKeypad, isSystemKey };
+    return WebKeyboardEvent { { type, modifiers, MonotonicTime::fromRawSeconds(timestamp) }, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, handledByInputMethod, autoRepeat, isKeypad, isSystemKey };
 }
 
 WebMouseEvent WebIOSEventFactory::createWebMouseEvent(::WebEvent *event)
@@ -163,7 +163,7 @@ WebMouseEvent WebIOSEventFactory::createWebMouseEvent(::WebEvent *event)
     int clickCount = 0;
     double timestamp = event.timestamp;
 
-    return WebMouseEvent({ type, OptionSet<WebEventModifier> { }, WallTime::fromRawSeconds(timestamp) }, button, buttons, position, position, deltaX, deltaY, deltaZ, clickCount);
+    return WebMouseEvent({ type, OptionSet<WebEventModifier> { }, MonotonicTime::fromRawSeconds(timestamp) }, button, buttons, position, position, deltaX, deltaY, deltaZ, clickCount);
 }
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
@@ -207,7 +207,7 @@ WebWheelEvent WebIOSEventFactory::createWebWheelEvent(WKBEScrollViewScrollUpdate
     auto delta = translationInView(update, contentView);
     WebCore::FloatSize wheelTicks = delta;
     wheelTicks.scale(1. / static_cast<float>(WebCore::Scrollbar::pixelsPerLineStep()));
-    auto timestamp = MonotonicTime::fromRawSeconds(update.timestamp).approximateWallTime();
+    auto timestamp = MonotonicTime::fromRawSeconds(update.timestamp);
     return {
         { WebEventType::Wheel, OptionSet<WebEventModifier> { }, timestamp },
         scrollLocation,

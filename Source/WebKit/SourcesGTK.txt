@@ -53,16 +53,21 @@ NetworkProcess/soup/WebSocketTaskSoup.cpp
 NetworkProcess/webrtc/LibWebRTCSocketClient.cpp
 NetworkProcess/webrtc/NetworkRTCMonitor.cpp
 NetworkProcess/webrtc/NetworkRTCProvider.cpp
+NetworkProcess/webrtc/NetworkRTCSharedMonitor.cpp
+
+Platform/IPC/glib/ConnectionGLib.cpp
 
 Platform/IPC/unix/ArgumentCodersUnix.cpp
-Platform/IPC/unix/ConnectionUnix.cpp
 Platform/IPC/unix/IPCSemaphoreUnix.cpp
+Platform/IPC/unix/IPCUtilitiesUnix.cpp
 
 Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 
 Platform/glib/ModuleGlib.cpp
 
 Platform/unix/LoggingUnix.cpp
+
+Shared/API/APISerializedScriptValue.cpp
 
 Shared/API/c/cairo/WKImageCairo.cpp
 
@@ -74,8 +79,11 @@ Shared/API/glib/WebKitURIRequest.cpp @no-unify
 Shared/API/glib/WebKitURIResponse.cpp @no-unify
 Shared/API/glib/WebKitUserMessage.cpp @no-unify
 
+Shared/Extensions/gtk/WebExtensionUtilitiesGtk.cpp
+
 Shared/glib/ArgumentCodersGLib.cpp
 Shared/glib/InputMethodState.cpp
+Shared/glib/JavaScriptEvaluationResultGLib.cpp
 Shared/glib/ProcessExecutablePathGLib.cpp
 Shared/glib/UserMessage.cpp
 Shared/glib/WebContextMenuItemGlib.cpp
@@ -112,7 +120,6 @@ UIProcess/API/C/glib/WKTextCheckerGLib.cpp
 UIProcess/API/C/gtk/WKView.cpp
 
 UIProcess/API/glib/APIContentRuleListStoreGLib.cpp @no-unify
-UIProcess/API/glib/APISerializedScriptValueGLib.cpp @no-unify
 UIProcess/API/glib/IconDatabase.cpp @no-unify
 UIProcess/API/glib/InputMethodFilter.cpp @no-unify
 UIProcess/API/glib/KeyAutoRepeatHandler.cpp @no-unify
@@ -176,7 +183,6 @@ UIProcess/API/glib/WebKitUserContentManager.cpp @no-unify
 UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitVersion.cpp @no-unify
 UIProcess/API/glib/WebKitWebContext.cpp @no-unify
-UIProcess/API/glib/WebKitWebExtensionMatchPattern.cpp @no-unify
 UIProcess/API/glib/WebKitWebResource.cpp @no-unify
 UIProcess/API/glib/WebKitWebResourceLoadManager.cpp @no-unify
 UIProcess/API/glib/WebKitWebView.cpp @no-unify
@@ -187,6 +193,7 @@ UIProcess/API/glib/WebKitWebsiteDataAccessPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitWebsiteDataManager.cpp @no-unify
 UIProcess/API/glib/WebKitWindowProperties.cpp @no-unify
 UIProcess/API/glib/WebKitWebsitePolicies.cpp @no-unify
+UIProcess/API/glib/WebKitXRPermissionRequest.cpp @no-unify
 
 UIProcess/API/gtk/DragSourceGtk3.cpp @no-unify
 UIProcess/API/gtk/DragSourceGtk4.cpp @no-unify
@@ -221,6 +228,8 @@ UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp @no-unify
 
 UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
+UIProcess/Extensions/gtk/WebExtensionGtk.cpp
+
 UIProcess/Gamepad/gtk/UIGamepadProviderGtk.cpp
 UIProcess/Gamepad/manette/UIGamepadProviderManette.cpp
 
@@ -247,10 +256,11 @@ UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 
 UIProcess/cairo/BackingStoreCairo.cpp
 
-UIProcess/glib/DRMDevice.cpp @no-unify
+UIProcess/glib/DRMMainDevice.cpp @no-unify
 UIProcess/glib/DisplayLinkGLib.cpp
 UIProcess/glib/DisplayVBlankMonitor.cpp
 UIProcess/glib/DisplayVBlankMonitorDRM.cpp
+UIProcess/glib/DisplayVBlankMonitorThreaded.cpp
 UIProcess/glib/DisplayVBlankMonitorTimer.cpp
 UIProcess/glib/FenceMonitor.cpp
 UIProcess/glib/ScreenManager.cpp
@@ -262,7 +272,6 @@ UIProcess/glib/WebProcessProxyGLib.cpp
 UIProcess/gstreamer/WebPageProxyGStreamer.cpp
 
 UIProcess/gtk/AcceleratedBackingStore.cpp @no-unify
-UIProcess/gtk/AcceleratedBackingStoreDMABuf.cpp @no-unify
 UIProcess/gtk/Clipboard.cpp
 UIProcess/gtk/ClipboardGtk3.cpp @no-unify
 UIProcess/gtk/ClipboardGtk4.cpp @no-unify
@@ -292,6 +301,14 @@ UIProcess/gtk/WebTextChecker.cpp
 UIProcess/gtk/WebTextCheckerClient.cpp
 
 UIProcess/soup/WebProcessPoolSoup.cpp
+
+UIProcess/XR/openxr/OpenXRExtensions.cpp
+UIProcess/XR/openxr/OpenXRInput.cpp
+UIProcess/XR/openxr/OpenXRInputSource.cpp
+UIProcess/XR/openxr/OpenXRLayer.cpp
+UIProcess/XR/openxr/OpenXRSwapchain.cpp
+UIProcess/XR/openxr/PlatformXROpenXR.cpp
+UIProcess/XR/openxr/PlatformXRSystemOpenXR.cpp
 
 WebProcess/GPU/graphics/gbm/RemoteGraphicsContextGLProxyGBM.cpp
 
@@ -323,16 +340,14 @@ WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp
 
 WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp
 
-WebProcess/WebPage/AcceleratedSurface.cpp
 WebProcess/WebPage/ViewGestureGeometryCollector.cpp
 
+WebProcess/WebPage/CoordinatedGraphics/AcceleratedSurface.cpp @no-unify
 WebProcess/WebPage/CoordinatedGraphics/CompositingRunLoop.cpp
 WebProcess/WebPage/CoordinatedGraphics/CoordinatedSceneState.cpp
 WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
 WebProcess/WebPage/CoordinatedGraphics/ThreadedCompositor.cpp
-
-WebProcess/WebPage/dmabuf/AcceleratedSurfaceDMABuf.cpp @no-unify
 
 WebProcess/WebPage/glib/WebPageGLib.cpp
 

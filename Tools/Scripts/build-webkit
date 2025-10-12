@@ -74,11 +74,11 @@ my $prefixPath;
 my $makeArgs = "";
 my @cmakeArgs;
 my $onlyWebKitProject = 0;
+my $xcodeScheme;
 my $coverageSupport = 0;
 my $shouldRunStaticAnalyzer = 0;
 my $noExperimentalFeatures = 0;
 my $ltoMode = "default";
-my $useWorkspace = 1;
 my $startTime = time();
 my $archs32bit = 0;
 my $useCCache = -1;
@@ -128,7 +128,6 @@ Usage: $programName [options] [options to pass to build system]
   --coverage                        Enable code coverage support (Mac only)
   --analyze                         Enable static anaylsis (Apple platforms only)
   --lto-mode=<mode>                 Set Link Time Optimization mode (full, thin, or none) (LLVM only)
-  --no-use-workspace                Build projects one at a time instead of using WebKit.xcworkspace (Apple platforms only)
   --cross-target=<target_machine>   Use the cross-toolchain-helper to build WebKit for the specified machine (Linux platforms only)
 
   --gtk                             Build the GTK+ port
@@ -147,6 +146,7 @@ Usage: $programName [options] [options to pass to build system]
   --no-experimental-features        No experimental features, unless explicitly enabled (CMake only)
 
   --only-webkit                     Build only the WebKit project
+  --only=<scheme>                   Build only the given scheme, instead of the entire project (Xcode builds only)
 
   --skip-library-update             Skip the check to see if windows libraries are up to date
 
@@ -167,11 +167,11 @@ my %options = (
     'cmakeargs=s' => \@cmakeArgs,
     'minimal' => \$minimal,
     'only-webkit' => \$onlyWebKitProject,
+    'only=s' => \$xcodeScheme,
     'coverage' => \$coverageSupport,
     'analyze' => \$shouldRunStaticAnalyzer,
     'no-experimental-features' => \$noExperimentalFeatures,
     'lto-mode=s' => \$ltoMode,
-    'use-workspace!' => \$useWorkspace,
     'use-ccache!' => \$useCCache,
     'export-compile-commands' => \$exportCompileCommands
 );
@@ -179,7 +179,7 @@ my %options = (
 # Build usage text and options list from features
 foreach (@features) {
     my $opt = sprintf("%-35s", "  --[no-]$_->{option}");
-    $usage .= "$opt $_->{desc}\n";
+    $usage .= "$opt $_->{desc}\n" if not $_->{hidden};
     $options{"$_->{option}!"} = $_->{value};
 }
 
@@ -202,29 +202,6 @@ $ENV{'EXPORT_COMPILE_COMMANDS'} = "YES" if $exportCompileCommands;
 
 my $productDir = productDir();
 
-# Check that all the project directories are there.
-my @projects = ("Source/JavaScriptCore");
-if (isAppleCocoaWebKit()) {
-    push @projects, ("Source/WebGPU");
-}
-push @projects, ("Source/WebCore");
-push @projects, ("Source/WebKitLegacy");
-
-
-# Build WTF as a separate static library on ports which support it.
-splice @projects, 0, 0, "Source/WTF" if isWin();
-
-splice @projects, 0, 0, "Source/bmalloc" if isAppleCocoaWebKit();
-
-# Ports using CMake will check if directories exist in the CMake configuration.
-if (!isCMakeBuild()) {
-    for my $dir (@projects) {
-        if (! -d $dir) {
-            die "Error: No $dir directory found. Please do a fresh checkout.\n";
-        }
-    }
-}
-
 if ((isAppleWebKit() || isPlayStation()) && !-d "WebKitLibraries") {
     die "Error: No WebKitLibraries directory found. Please do a fresh checkout.\n";
 }
@@ -236,11 +213,10 @@ if (shouldUseVcpkg() && ! defined $ENV{"VCPKG_ROOT"}) {
 my @options = ();
 
 if (isAppleCocoaWebKit()) {
-    if (!$useWorkspace) {
-        # Ignore any workspace set by set-webkit-configuration
-        overrideConfiguredXcodeWorkspace("");
+    if ($onlyWebKitProject) {
+        die "--only-webkit cannot be combined with --only\n" if defined $xcodeScheme;
+        $xcodeScheme = "WebKit";
     }
-
     if (xcodeVersion() ge "14.0" && xcodeVersion() lt "15.0" && !defined($ENV{UseSRCROOTSupportForTAPI})) {
         # The call to XcodeOptions below checks this environment variable and
         # sets TAPI_USE_SRCROOT for xcconfigs.
@@ -260,51 +236,9 @@ if (isAppleCocoaWebKit()) {
         my $option = option($_->{define}, ${$_->{value}});
         push @options, $option unless $option eq "";
     }
-
-    # In workspaces, build order is determined by XCBuild.
-    if (!$useWorkspace) {
-        print STDERR "warning: Building with --no-use-workspace is " .
-        "deprecated.\nIf you have a workflow requirement that depends " .
-        "on building targets in manual order, please document it in " .
-        "https://bugs.webkit.org/show_bug.cgi?id=241295.\n";
-        
-        # ANGLE and libwebrtc must come before WebCore
-        splice @projects, 0, 0, ("Source/ThirdParty/ANGLE");
-        # if (not $archs32bit and (portName() eq Mac or portName() eq iOS or portName() eq watchOS)) {
-        if (portName() eq Mac or portName() eq iOS) {
-            splice @projects, 0, 0, ("Source/ThirdParty/libwebrtc");
-        }
-
-        push @projects, ("Source/WebKit");
-
-        if (!isEmbeddedWebKit()) {
-            push @projects, ("Tools/MiniBrowser");
-
-            # WebInspectorUI must come after JavaScriptCore and WebCore but before WebKit and WebKit2
-            my $webKitIndex = first { $projects[$_] eq "Source/WebKitLegacy" } 0..$#projects;
-            splice(@projects, $webKitIndex, 0, "Source/WebInspectorUI");
-        }
-
-        if (isAppleMacWebKit()) {
-            push @projects, ("Tools/lldb/lldbWebKitTester");
-        }
-
-        # Build Tools needed for Apple ports (except for tvOS)
-        push @projects, ("Tools/DumpRenderTree", "Tools/WebKitTestRunner", "Source/ThirdParty/gtest", "Tools/TestWebKitAPI");
-    }
 }
-
-# If asked to build just the WebKit project, overwrite the projects
-# list after all of the port specific tweaks have been made to
-# build options, etc.
-@projects = ("Source/WebKitLegacy") if $onlyWebKitProject;
 
 my $result = 0;
-
-if (isInspectorFrontend()) {
-    die "The --inspector-frontend option is not supported for CMake-based builds." if isCMakeBuild();
-    @projects = ("Source/WebInspectorUI");
-}
 
 if (isCMakeBuild() && !isAnyWindows()) {
     if (!canUseNinja() || defined($ENV{NUMBER_OF_PROCESSORS})) {
@@ -364,33 +298,15 @@ if (isWin() || isPlayStation() || (isJSCOnly() && isWindows())) {
     ## on dependency validation errors. Other conditions (e.g. whether we're in
     ## a script phase or not) influence the actual VALIDATE_DEPENDENCIES setting
     ## recognized by the build system.
-    #push @local_options, "WK_VALIDATE_DEPENDENCIES=YES_ERROR" if $useWorkspace;
+    #push @local_options, "WK_VALIDATE_DEPENDENCIES=YES_ERROR";
  
     markBaseProductDirectoryAsCreatedByXcodeBuildSystem();
 
     # Build, and abort if the build fails.
-    if ($useWorkspace) {
-        my $scheme = $onlyWebKitProject ? "WebKitLegacy" : "Everything up to WebKit + Tools";
-        $result = buildXcodeScheme($scheme, $clean, @local_options, @ARGV);
-        if (exitStatus($result)) {
-            exit exitStatus($result);
-        }
-    } else {
-        for my $dir (@projects) {
-            chdir $dir or die;
-            $result = 0;
-
-            my $project = basename($dir);
-            my $projectPath = $project =~ /gtest/ ? "xcode/gtest" : $project;
-            $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
-
-            # Various build* calls above may change the CWD.
-            chdirWebKit();
-
-            if (exitStatus($result)) {
-                exit exitStatus($result);
-            }
-        }
+    my $scheme = $xcodeScheme // "Everything up to WebKit + Tools";
+    $result = buildXcodeScheme($scheme, $clean, @local_options, @ARGV);
+    if (exitStatus($result)) {
+        exit exitStatus($result);
     }
 
     if (isInspectorFrontend()) {
@@ -439,10 +355,11 @@ sub writeCongrats()
     my $launcherName = launcherName();
     my $endTime = time();
     my $buildTime = formatBuildTime($endTime - $startTime);
+    my $projectName = $xcodeScheme // "WebKit";
 
     print "\n";
     print "====================================================================\n";
-    print " WebKit is now built ($buildTime). \n";
+    print " $projectName is now built ($buildTime). \n";
     if ($launcherCommand && $launcherName) {
         print " To run $launcherName with this newly-built code, use\n";
         print " the command \"$launcherCommand\".\n";

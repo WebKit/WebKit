@@ -1,0 +1,53 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 4112.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 4112.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=4112)
+      )
+      (children 2
+        (GraphicsLayer
+          (position 0.00 120.00)
+          (bounds 800.00 600.00)
+          (children 1
+            (GraphicsLayer
+              (position 8.00 8.00)
+              (preserves3D 1)
+              (children 1
+                (GraphicsLayer
+                  (bounds 792.00 42.00)
+                  (drawsContent 1)
+                  (event region
+                    (rect (0,0) width=792 height=42)
+                  (editable region
+                    (rect (0,0) width=792 height=42)
+                  )
+                  )
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (offsetFromRenderer width=-28 height=-28)
+          (position -20.00 -20.00)
+          (bounds 366.00 138.00)
+          (drawsContent 1)
+          (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [20.00 100.00 1.00 1.00])
+          (event region
+            (rect (28,28) width=310 height=82)
+          (editable region
+            (rect (78,58) width=250 height=22)
+          )
+          )
+        )
+      )
+    )
+  )
+)
+

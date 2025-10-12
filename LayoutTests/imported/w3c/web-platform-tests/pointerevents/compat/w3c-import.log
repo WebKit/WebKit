@@ -20,6 +20,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-pointer-preventdefault-passive.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-pointer-preventdefault.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-pointer-updown-events.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse_target_after_pointer_target_host_of_shadow_removed.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse_target_after_pointer_target_root_element_in_shadow_removed.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse_target_after_pointer_target_slot_removed.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouseevent_key_pressed.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_touch-action-verification.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_touch-action_two-finger_interaction.html

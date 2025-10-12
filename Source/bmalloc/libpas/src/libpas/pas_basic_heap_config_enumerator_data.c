@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@ bool pas_basic_heap_config_enumerator_data_add_page_header_table(
 {
     static const bool verbose = false;
     
-    pas_lock_free_read_ptr_ptr_hashtable_table* table;
+    unsigned table_size;
     size_t index;
 
     if (!page_header_table)
@@ -50,33 +50,26 @@ bool pas_basic_heap_config_enumerator_data_add_page_header_table(
     if (verbose)
         pas_log("Have a page header hashtable at %p.\n", page_header_table->hashtable.table);
     
-    table = pas_enumerator_read(
-        enumerator, page_header_table->hashtable.table,
-        PAS_OFFSETOF(pas_lock_free_read_ptr_ptr_hashtable_table, array));
-    if (!table)
+    if (!pas_enumerator_copy_remote(
+            enumerator, &table_size, &page_header_table->hashtable.table->table_size, sizeof(unsigned)))
         return false;
     
     if (verbose)
-        pas_log("The table has size %u.\n", table->table_size);
+        pas_log("The table has size %u.\n", table_size);
     
-    table = pas_enumerator_read(
-        enumerator, page_header_table->hashtable.table,
-        PAS_OFFSETOF(pas_lock_free_read_ptr_ptr_hashtable_table, array)
-        + sizeof(pas_pair) * table->table_size);
-    if (!table)
-        return false;
-    
-    for (index = table->table_size; index--;) {
-        pas_pair* pair;
+    for (index = table_size; index--;) {
+        pas_pair pair;
         pas_ptr_hash_map_entry entry;
         
-        pair = table->array + index;
+        if (!pas_enumerator_copy_remote(
+                enumerator, &pair, page_header_table->hashtable.table->array + index, sizeof(pas_pair)))
+            return false;
         
-        if (pas_pair_low(*pair) == UINTPTR_MAX)
+        if (pas_pair_low(pair) == UINTPTR_MAX)
             continue;
         
-        entry.key = (void*)pas_pair_low(*pair);
-        entry.value = (void*)pas_pair_high(*pair);
+        entry.key = (void*)pas_pair_low(pair);
+        entry.value = (void*)pas_pair_high(pair);
         
         pas_ptr_hash_map_add_new(
             &data->page_header_table, entry, NULL, &enumerator->allocation_config);

@@ -1,4 +1,4 @@
-<html>
+<html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
 <head>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
@@ -57,6 +57,8 @@ promise_test(async (test) => {
 
 promise_test(async (test) => {
     assert_true(await doIFrameTest(frame3, "checkFiltering"));
+
+    test.add_cleanup(() => doIFrameTest(frame2, "stopCapture"));
 }, "Check filtering of frame with different origin as top and capturing frame origins");
 
 </script>

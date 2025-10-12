@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2010 Google, Inc. All rights reserved.
  * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -70,6 +70,8 @@ inline bool isScopeMarker(HTMLStackItem& item)
     case SVG::desc:
     case SVG::title:
         return true;
+    case HTML::select:
+        return item.node().document().settings().htmlEnhancedSelectParsingEnabled();
     default:
         break;
     }

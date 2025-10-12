@@ -123,7 +123,7 @@ JSValue IntlSegmenter::segment(JSGlobalObject* globalObject, JSValue stringValue
         return { };
     }
 
-    auto upconvertedCharacters = Box<Vector<UChar>>::create(expectedCharacters.value());
+    auto upconvertedCharacters = Box<Vector<char16_t>>::create(expectedCharacters.value());
 
     UErrorCode status = U_ZERO_ERROR;
     auto segmenter = std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>(cloneUBreakIterator(m_segmenter.get(), &status));
@@ -167,8 +167,11 @@ ASCIILiteral IntlSegmenter::granularityString(Granularity granularity)
 JSObject* IntlSegmenter::createSegmentDataObject(JSGlobalObject* globalObject, JSString* string, int32_t startIndex, int32_t endIndex, UBreakIterator& segmenter, Granularity granularity)
 {
     VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* result = constructEmptyObject(globalObject);
-    result->putDirect(vm, vm.propertyNames->segment, jsSubstring(globalObject, string, startIndex, endIndex - startIndex));
+    JSString* substring = jsSubstring(globalObject, string, startIndex, endIndex - startIndex);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    result->putDirect(vm, vm.propertyNames->segment, substring);
     result->putDirect(vm, vm.propertyNames->index, jsNumber(startIndex));
     result->putDirect(vm, vm.propertyNames->input, string);
     if (granularity == IntlSegmenter::Granularity::Word) {

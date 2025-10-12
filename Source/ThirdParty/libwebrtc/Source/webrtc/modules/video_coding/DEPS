@@ -1,5 +1,4 @@
 include_rules = [
-  "+vpx",
   "+call",
   "+common_video",
   "+sdk",
@@ -8,12 +7,10 @@ include_rules = [
   "+third_party/libyuv",
   "+rtc_base/system/rtc_export.h",
   "+video/config",
+  "+third_party/libvpx",
 ]
 
 specific_include_rules = {
-  "android_codec_factory_helper\.cc": [
-    "+base/android",
-  ],
   "multiplex_encoder_adapter\.cc": [
     "+media/base",
   ],

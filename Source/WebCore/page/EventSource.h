@@ -78,7 +78,8 @@ private:
     EventSource(ScriptExecutionContext&, const URL&, const Init&);
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::EventSource; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final;
+    using ActiveDOMObject::protectedScriptExecutionContext;
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
@@ -115,10 +116,10 @@ private:
     bool m_withCredentials;
     State m_state { CONNECTING };
 
-    Ref<TextResourceDecoder> m_decoder;
+    const Ref<TextResourceDecoder> m_decoder;
     RefPtr<ThreadableLoader> m_loader;
     EventLoopTimerHandle m_connectTimer;
-    Vector<UChar> m_receiveBuffer;
+    Vector<char16_t> m_receiveBuffer;
     bool m_discardTrailingNewline { false };
     bool m_requestInFlight { false };
     bool m_isSuspendedForBackForwardCache { false };
@@ -126,7 +127,7 @@ private:
     bool m_shouldReconnectOnResume { false };
 
     AtomString m_eventName;
-    Vector<UChar> m_data;
+    Vector<char16_t> m_data;
     String m_currentlyParsedEventId;
     String m_lastEventId;
     uint64_t m_reconnectDelay { defaultReconnectDelay };

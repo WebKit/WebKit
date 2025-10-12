@@ -27,10 +27,12 @@
 
 #pragma once
 
+#include <WebCore/PageIdentifier.h>
 #include <wtf/Function.h>
 
 namespace WebCore {
 
+class MediaSessionManagerInterface;
 struct MediaCapabilitiesDecodingInfo;
 struct MediaCapabilitiesEncodingInfo;
 struct MediaDecodingConfiguration;
@@ -46,7 +48,7 @@ public:
 
     WEBCORE_EXPORT static void createDecodingConfiguration(MediaDecodingConfiguration&&, DecodingConfigurationCallback&&);
     WEBCORE_EXPORT static void createEncodingConfiguration(MediaEncodingConfiguration&&, EncodingConfigurationCallback&&);
-    
+
     using CreateDecodingConfiguration = Function<void(MediaDecodingConfiguration&&, DecodingConfigurationCallback&&)>;
     using CreateEncodingConfiguration = Function<void(MediaEncodingConfiguration&&, EncodingConfigurationCallback&&)>;
 
@@ -54,13 +56,19 @@ public:
         CreateDecodingConfiguration createDecodingConfiguration;
         CreateEncodingConfiguration createEncodingConfiguration;
     };
-    
+
     WEBCORE_EXPORT static void clearFactories();
     WEBCORE_EXPORT static void resetFactories();
     WEBCORE_EXPORT static void installFactory(MediaEngineFactory&&);
-    
+
     WEBCORE_EXPORT static void enableMock();
     WEBCORE_EXPORT static void disableMock();
+
+    using MediaSessionManagerProvider = Function<RefPtr<MediaSessionManagerInterface> (PageIdentifier)>;
+    WEBCORE_EXPORT static void setMediaSessionManagerProvider(MediaSessionManagerProvider&&);
+
+    WEBCORE_EXPORT static RefPtr<MediaSessionManagerInterface> mediaSessionManagerForPageIdentifier(PageIdentifier);
+
 };
 
 } // namespace WebCore

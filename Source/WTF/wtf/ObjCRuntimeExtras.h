@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,6 +51,7 @@ WTF_EXPORT_PRIVATE MallocSpan<Method, SystemMalloc> class_copyMethodListSpan(Cla
 WTF_EXPORT_PRIVATE MallocSpan<__unsafe_unretained Protocol *, SystemMalloc> class_copyProtocolListSpan(Class);
 WTF_EXPORT_PRIVATE MallocSpan<objc_property_t, SystemMalloc> class_copyPropertyListSpan(Class);
 WTF_EXPORT_PRIVATE MallocSpan<Ivar, SystemMalloc> class_copyIvarListSpan(Class);
+WTF_EXPORT_PRIVATE MallocSpan<objc_property_attribute_t, SystemMalloc> property_copyAttributeListSpan(objc_property_t);
 WTF_EXPORT_PRIVATE MallocSpan<objc_method_description, SystemMalloc> protocol_copyMethodDescriptionListSpan(Protocol *, BOOL isRequiredMethod, BOOL isInstanceMethod);
 WTF_EXPORT_PRIVATE MallocSpan<objc_property_t, SystemMalloc> protocol_copyPropertyListSpan(Protocol *);
 WTF_EXPORT_PRIVATE MallocSpan<__unsafe_unretained Protocol *, SystemMalloc> protocol_copyProtocolListSpan(Protocol *);
@@ -82,6 +83,7 @@ using WTF::class_copyProtocolListSpan;
 using WTF::methodHasReturnType;
 using WTF::nsValueHasObjCType;
 using WTF::objcEncode;
+using WTF::property_copyAttributeListSpan;
 using WTF::protocol_copyMethodDescriptionListSpan;
 using WTF::protocol_copyPropertyListSpan;
 using WTF::protocol_copyProtocolListSpan;

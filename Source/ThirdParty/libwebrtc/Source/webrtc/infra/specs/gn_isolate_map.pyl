@@ -25,15 +25,15 @@
   },
   "android_junit_tests": {
     "label": "//:android_junit_tests",
-    "type": "junit_test",
+    "type": "raw",
   },
   "android_examples_junit_tests": {
     "label": "//examples:android_examples_junit_tests",
-    "type": "junit_test",
+    "type": "raw",
   },
   "android_sdk_junit_tests": {
     "label": "//sdk/android:android_sdk_junit_tests",
-    "type": "junit_test",
+    "type": "raw",
   },
   "apprtcmobile_tests": {
     "label": "//examples:apprtcmobile_tests",
@@ -82,6 +82,10 @@
   },
   "rtc_media_unittests": {
     "label": "//media:rtc_media_unittests",
+    "type": "console_test_launcher",
+  },
+  "rtc_p2p_unittests": {
+    "label": "//:rtc_p2p_unittests",
     "type": "console_test_launcher",
   },
   "rtc_pc_unittests": {

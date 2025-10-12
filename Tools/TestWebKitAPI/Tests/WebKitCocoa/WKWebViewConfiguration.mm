@@ -184,7 +184,7 @@ TEST(WebKit, ConfigurationHTTPSUpgrade)
         if (requestBytes.size() <= strlen(string))
             return;
         requestBytes[strlen(string)] = 0;
-        EXPECT_WK_STREQ(requestBytes.data(), string);
+        EXPECT_WK_STREQ(requestBytes.span().data(), string);
     };
 
     runTest(true);
@@ -368,4 +368,39 @@ TEST(WebKit, ConfigurationWebViewToCloneSessionStorageFrom)
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WebKit, OverrideReferrer)
+{
+    using namespace TestWebKitAPI;
+    bool done { false };
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask { while (true) {
+        auto request = co_await connection.awaitableReceiveHTTPRequest();
+        EXPECT_TRUE(strnstr(request.span().data(), "\r\nReferer: overridereferer\r\n", request.size()));
+        EXPECT_FALSE(strnstr(request.span().data(), "eferrer", request.size()));
+        EXPECT_EQ(String(request.span()).split("Referer"_s).size(), 2u);
+        auto path = HTTPServer::parsePath(request);
+        if (path == "/example"_s) {
+            co_await connection.awaitableSend(HTTPResponse("<script>window.location = 'https://webkit.org/webkit'</script>"_s).serialize());
+            continue;
+        }
+        if (path == "/webkit"_s) {
+            co_await connection.awaitableSend(HTTPResponse("<script>fetch('/subresource')</script>"_s).serialize());
+            continue;
+        }
+        if (path == "/subresource"_s) {
+            done = true;
+            continue;
+        }
+        EXPECT_FALSE(true);
+    } }, HTTPServer::Protocol::HttpsProxy);
+
+    auto configuration = server.httpsProxyConfiguration();
+    configuration._overrideReferrerForAllRequests = @"overridereferer";
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = delegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    Util::run(&done);
 }

@@ -15,4 +15,10 @@ PASS Returning  with a real iframe unloading; setting returnValue to foo
 PASS Returning false with a real iframe unloading; setting returnValue to foo
 PASS Returning true with a real iframe unloading; setting returnValue to foo
 PASS Returning 0 with a real iframe unloading; setting returnValue to foo
+PASS Returning undefined with a real iframe unloading; setting returnValue to
+PASS Returning undefined with a real iframe unloading; calling preventDefault()
+PASS Returning undefined with a real iframe unloading; setting returnValue to foo; calling preventDefault()
+PASS Returning foo with a real iframe unloading; calling preventDefault()
+PASS Returning foo with a real iframe unloading; setting returnValue to foo; calling preventDefault()
+PASS Returning true with a real iframe unloading; setting returnValue to ; calling preventDefault()
 

@@ -23,6 +23,7 @@
 #include "api/video/i422_buffer.h"
 #include "api/video/i444_buffer.h"
 #include "api/video/nv12_buffer.h"
+#include "api/video/video_frame_buffer.h"
 #include "rtc_base/race_checker.h"
 
 namespace webrtc {
@@ -46,13 +47,13 @@ class VideoFrameBufferPool {
   // Returns a buffer from the pool. If no suitable buffer exist in the pool
   // and there are less than `max_number_of_buffers` pending, a buffer is
   // created. Returns null otherwise.
-  rtc::scoped_refptr<I420Buffer> CreateI420Buffer(int width, int height);
-  rtc::scoped_refptr<I422Buffer> CreateI422Buffer(int width, int height);
-  rtc::scoped_refptr<I444Buffer> CreateI444Buffer(int width, int height);
-  rtc::scoped_refptr<I010Buffer> CreateI010Buffer(int width, int height);
-  rtc::scoped_refptr<I210Buffer> CreateI210Buffer(int width, int height);
-  rtc::scoped_refptr<I410Buffer> CreateI410Buffer(int width, int height);
-  rtc::scoped_refptr<NV12Buffer> CreateNV12Buffer(int width, int height);
+  scoped_refptr<I420Buffer> CreateI420Buffer(int width, int height);
+  scoped_refptr<I422Buffer> CreateI422Buffer(int width, int height);
+  scoped_refptr<I444Buffer> CreateI444Buffer(int width, int height);
+  scoped_refptr<I010Buffer> CreateI010Buffer(int width, int height);
+  scoped_refptr<I210Buffer> CreateI210Buffer(int width, int height);
+  scoped_refptr<I410Buffer> CreateI410Buffer(int width, int height);
+  scoped_refptr<NV12Buffer> CreateNV12Buffer(int width, int height);
 
   // Changes the max amount of buffers in the pool to the new value.
   // Returns true if change was successful and false if the amount of already
@@ -64,11 +65,11 @@ class VideoFrameBufferPool {
   void Release();
 
  private:
-  rtc::scoped_refptr<VideoFrameBuffer>
+  scoped_refptr<VideoFrameBuffer>
   GetExistingBuffer(int width, int height, VideoFrameBuffer::Type type);
 
-  rtc::RaceChecker race_checker_;
-  std::list<rtc::scoped_refptr<VideoFrameBuffer>> buffers_;
+  RaceChecker race_checker_;
+  std::list<scoped_refptr<VideoFrameBuffer>> buffers_;
   // If true, newly allocated buffers are zero-initialized. Note that recycled
   // buffers are not zero'd before reuse. This is required of buffers used by
   // FFmpeg according to http://crbug.com/390941, which only requires it for the

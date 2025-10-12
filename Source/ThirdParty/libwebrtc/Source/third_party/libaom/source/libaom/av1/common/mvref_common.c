@@ -16,14 +16,15 @@
 
 // Although we assign 32 bit integers, all the values are strictly under 14
 // bits.
-static int div_mult[32] = { 0,    16384, 8192, 5461, 4096, 3276, 2730, 2340,
-                            2048, 1820,  1638, 1489, 1365, 1260, 1170, 1092,
-                            1024, 963,   910,  862,  819,  780,  744,  712,
-                            682,  655,   630,  606,  585,  564,  546,  528 };
+static const int div_mult[32] = { 0,    16384, 8192, 5461, 4096, 3276, 2730,
+                                  2340, 2048,  1820, 1638, 1489, 1365, 1260,
+                                  1170, 1092,  1024, 963,  910,  862,  819,
+                                  780,  744,   712,  682,  655,  630,  606,
+                                  585,  564,   546,  528 };
 
 // TODO(jingning): Consider the use of lookup table for (num / den)
 // altogether.
-static inline void get_mv_projection(MV *output, MV ref, int num, int den) {
+void av1_get_mv_projection(MV *output, MV ref, int num, int den) {
   den = AOMMIN(den, MAX_FRAME_DISTANCE);
   num = num > 0 ? AOMMIN(num, MAX_FRAME_DISTANCE)
                 : AOMMAX(num, -MAX_FRAME_DISTANCE);
@@ -358,8 +359,8 @@ static int add_tpl_ref_mv(const AV1_COMMON *cm, const MACROBLOCKD *xd,
   const int force_integer_mv = cm->features.cur_frame_force_integer_mv;
 
   int_mv this_refmv;
-  get_mv_projection(&this_refmv.as_mv, prev_frame_mvs->mfmv0.as_mv,
-                    cur_offset_0, prev_frame_mvs->ref_frame_offset);
+  av1_get_mv_projection(&this_refmv.as_mv, prev_frame_mvs->mfmv0.as_mv,
+                        cur_offset_0, prev_frame_mvs->ref_frame_offset);
   lower_mv_precision(&this_refmv.as_mv, allow_high_precision_mv,
                      force_integer_mv);
 
@@ -387,8 +388,8 @@ static int add_tpl_ref_mv(const AV1_COMMON *cm, const MACROBLOCKD *xd,
     const int cur_offset_1 = get_relative_dist(&cm->seq_params->order_hint_info,
                                                cur_frame_index, frame1_index);
     int_mv comp_refmv;
-    get_mv_projection(&comp_refmv.as_mv, prev_frame_mvs->mfmv0.as_mv,
-                      cur_offset_1, prev_frame_mvs->ref_frame_offset);
+    av1_get_mv_projection(&comp_refmv.as_mv, prev_frame_mvs->mfmv0.as_mv,
+                          cur_offset_1, prev_frame_mvs->ref_frame_offset);
     lower_mv_precision(&comp_refmv.as_mv, allow_high_precision_mv,
                        force_integer_mv);
 
@@ -843,6 +844,8 @@ void av1_setup_frame_buf_refs(AV1_COMMON *cm) {
   cm->cur_frame->order_hint = cm->current_frame.order_hint;
   cm->cur_frame->display_order_hint = cm->current_frame.display_order_hint;
   cm->cur_frame->pyramid_level = cm->current_frame.pyramid_level;
+  cm->cur_frame->filter_level[0] = -1;
+  cm->cur_frame->filter_level[1] = -1;
   MV_REFERENCE_FRAME ref_frame;
   for (ref_frame = LAST_FRAME; ref_frame <= ALTREF_FRAME; ++ref_frame) {
     const RefCntBuffer *const buf = get_ref_frame_buf(cm, ref_frame);
@@ -964,8 +967,9 @@ static int motion_field_projection(AV1_COMMON *cm,
             abs(start_to_current_frame_offset) <= MAX_FRAME_DISTANCE;
 
         if (pos_valid) {
-          get_mv_projection(&this_mv.as_mv, fwd_mv,
-                            start_to_current_frame_offset, ref_frame_offset);
+          av1_get_mv_projection(&this_mv.as_mv, fwd_mv,
+                                start_to_current_frame_offset,
+                                ref_frame_offset);
           pos_valid = get_block_position(cm, &mi_r, &mi_c, blk_row, blk_col,
                                          this_mv.as_mv, dir >> 1);
         }

@@ -84,7 +84,7 @@ class BytecodeRewriter {
 WTF_MAKE_NONCOPYABLE(BytecodeRewriter);
 public:
     enum class Position : int8_t {
-        EntryPoint = -2,
+        Entrypoint = -2,
         Before = -1,
         LabelPoint = 0,
         After = 1,
@@ -218,7 +218,7 @@ public:
 
     int32_t adjustAbsoluteOffset(JSInstructionStream::Offset absoluteOffset)
     {
-        return adjustJumpTarget(InsertionPoint(0, Position::EntryPoint), InsertionPoint(absoluteOffset, Position::LabelPoint));
+        return adjustJumpTarget(InsertionPoint(0, Position::Entrypoint), InsertionPoint(absoluteOffset, Position::LabelPoint));
     }
 
     int32_t adjustJumpTarget(JSInstructionStream::Offset originalBytecodeOffset, int32_t originalJumpTarget)

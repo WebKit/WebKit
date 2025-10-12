@@ -38,7 +38,7 @@ static inline unsigned int masked_sad(const uint8_t *src, int src_stride,
   return sad;
 }
 
-#define MASKSADMxN(m, n)                                                       \
+#define MASKSADMXN(m, n)                                                       \
   unsigned int aom_masked_sad##m##x##n##_c(                                    \
       const uint8_t *src, int src_stride, const uint8_t *ref, int ref_stride,  \
       const uint8_t *second_pred, const uint8_t *msk, int msk_stride,          \
@@ -51,39 +51,38 @@ static inline unsigned int masked_sad(const uint8_t *src, int src_stride,
                         msk_stride, m, n);                                     \
   }
 
-/* clang-format off */
-MASKSADMxN(128, 128)
-MASKSADMxN(128, 64)
-MASKSADMxN(64, 128)
-MASKSADMxN(64, 64)
-MASKSADMxN(64, 32)
-MASKSADMxN(32, 64)
-MASKSADMxN(32, 32)
-MASKSADMxN(32, 16)
-MASKSADMxN(16, 32)
-MASKSADMxN(16, 16)
-MASKSADMxN(16, 8)
-MASKSADMxN(8, 16)
-MASKSADMxN(8, 8)
-MASKSADMxN(8, 4)
-MASKSADMxN(4, 8)
-MASKSADMxN(4, 4)
+MASKSADMXN(128, 128)
+MASKSADMXN(128, 64)
+MASKSADMXN(64, 128)
+MASKSADMXN(64, 64)
+MASKSADMXN(64, 32)
+MASKSADMXN(32, 64)
+MASKSADMXN(32, 32)
+MASKSADMXN(32, 16)
+MASKSADMXN(16, 32)
+MASKSADMXN(16, 16)
+MASKSADMXN(16, 8)
+MASKSADMXN(8, 16)
+MASKSADMXN(8, 8)
+MASKSADMXN(8, 4)
+MASKSADMXN(4, 8)
+MASKSADMXN(4, 4)
 #if !CONFIG_REALTIME_ONLY
-MASKSADMxN(4, 16)
-MASKSADMxN(16, 4)
-MASKSADMxN(8, 32)
-MASKSADMxN(32, 8)
-MASKSADMxN(16, 64)
-MASKSADMxN(64, 16)
+MASKSADMXN(4, 16)
+MASKSADMXN(16, 4)
+MASKSADMXN(8, 32)
+MASKSADMXN(32, 8)
+MASKSADMXN(16, 64)
+MASKSADMXN(64, 16)
 #endif  // !CONFIG_REALTIME_ONLY
-/* clang-format on */
 
 #if CONFIG_AV1_HIGHBITDEPTH
-                        static inline unsigned int highbd_masked_sad(
-                            const uint8_t *src8, int src_stride,
-                            const uint8_t *a8, int a_stride, const uint8_t *b8,
-                            int b_stride, const uint8_t *m, int m_stride,
-                            int width, int height) {
+static inline unsigned int highbd_masked_sad(const uint8_t *src8,
+                                             int src_stride, const uint8_t *a8,
+                                             int a_stride, const uint8_t *b8,
+                                             int b_stride, const uint8_t *m,
+                                             int m_stride, int width,
+                                             int height) {
   int y, x;
   unsigned int sad = 0;
   const uint16_t *src = CONVERT_TO_SHORTPTR(src8);
@@ -166,43 +165,41 @@ static inline unsigned int obmc_sad(const uint8_t *pre, int pre_stride,
   return sad;
 }
 
-#define OBMCSADMxN(m, n)                                                     \
+#define OBMCSADMXN(m, n)                                                     \
   unsigned int aom_obmc_sad##m##x##n##_c(const uint8_t *ref, int ref_stride, \
                                          const int32_t *wsrc,                \
                                          const int32_t *mask) {              \
     return obmc_sad(ref, ref_stride, wsrc, mask, m, n);                      \
   }
 
-/* clang-format off */
-OBMCSADMxN(128, 128)
-OBMCSADMxN(128, 64)
-OBMCSADMxN(64, 128)
-OBMCSADMxN(64, 64)
-OBMCSADMxN(64, 32)
-OBMCSADMxN(32, 64)
-OBMCSADMxN(32, 32)
-OBMCSADMxN(32, 16)
-OBMCSADMxN(16, 32)
-OBMCSADMxN(16, 16)
-OBMCSADMxN(16, 8)
-OBMCSADMxN(8, 16)
-OBMCSADMxN(8, 8)
-OBMCSADMxN(8, 4)
-OBMCSADMxN(4, 8)
-OBMCSADMxN(4, 4)
-OBMCSADMxN(4, 16)
-OBMCSADMxN(16, 4)
-OBMCSADMxN(8, 32)
-OBMCSADMxN(32, 8)
-OBMCSADMxN(16, 64)
-OBMCSADMxN(64, 16)
-/* clang-format on */
+OBMCSADMXN(128, 128)
+OBMCSADMXN(128, 64)
+OBMCSADMXN(64, 128)
+OBMCSADMXN(64, 64)
+OBMCSADMXN(64, 32)
+OBMCSADMXN(32, 64)
+OBMCSADMXN(32, 32)
+OBMCSADMXN(32, 16)
+OBMCSADMXN(16, 32)
+OBMCSADMXN(16, 16)
+OBMCSADMXN(16, 8)
+OBMCSADMXN(8, 16)
+OBMCSADMXN(8, 8)
+OBMCSADMXN(8, 4)
+OBMCSADMXN(4, 8)
+OBMCSADMXN(4, 4)
+OBMCSADMXN(4, 16)
+OBMCSADMXN(16, 4)
+OBMCSADMXN(8, 32)
+OBMCSADMXN(32, 8)
+OBMCSADMXN(16, 64)
+OBMCSADMXN(64, 16)
 
 #if CONFIG_AV1_HIGHBITDEPTH
-                            static inline unsigned int highbd_obmc_sad(
-                                const uint8_t *pre8, int pre_stride,
-                                const int32_t *wsrc, const int32_t *mask,
-                                int width, int height) {
+static inline unsigned int highbd_obmc_sad(const uint8_t *pre8, int pre_stride,
+                                           const int32_t *wsrc,
+                                           const int32_t *mask, int width,
+                                           int height) {
   int y, x;
   unsigned int sad = 0;
   const uint16_t *pre = CONVERT_TO_SHORTPTR(pre8);
@@ -226,7 +223,6 @@ OBMCSADMxN(64, 16)
     return highbd_obmc_sad(ref, ref_stride, wsrc, mask, m, n); \
   }
 
-/* clang-format off */
 HIGHBD_OBMCSADMXN(128, 128)
 HIGHBD_OBMCSADMXN(128, 64)
 HIGHBD_OBMCSADMXN(64, 128)
@@ -249,6 +245,5 @@ HIGHBD_OBMCSADMXN(8, 32)
 HIGHBD_OBMCSADMXN(32, 8)
 HIGHBD_OBMCSADMXN(16, 64)
 HIGHBD_OBMCSADMXN(64, 16)
-/* clang-format on */
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 #endif  // !CONFIG_REALTIME_ONLY

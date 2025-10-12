@@ -430,6 +430,38 @@ function(WEBKIT_COPY_FILES target_name)
     add_custom_target(${target_name} ALL DEPENDS ${dst_files})
 endfunction()
 
+function(WEBKIT_SYMLINK_FILES target_name)
+    set(options FLATTENED)
+    set(oneValueArgs DESTINATION)
+    set(multiValueArgs FILES)
+    cmake_parse_arguments(opt "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    set(files ${opt_FILES})
+    set(dst_files)
+    file(MAKE_DIRECTORY ${opt_DESTINATION})
+    foreach (file IN LISTS files)
+        if (IS_ABSOLUTE ${file})
+            set(src_file ${file})
+        else ()
+            set(src_file ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+        endif ()
+        if (opt_FLATTENED)
+            get_filename_component(filename ${file} NAME)
+            set(dst_file ${opt_DESTINATION}/${filename})
+        else ()
+            get_filename_component(file_dir ${file} DIRECTORY)
+            file(MAKE_DIRECTORY ${opt_DESTINATION}/${file_dir})
+            set(dst_file ${opt_DESTINATION}/${file})
+        endif ()
+        add_custom_command(OUTPUT ${dst_file}
+            COMMAND ${CMAKE_COMMAND} -E create_symlink ${src_file} ${dst_file}
+            MAIN_DEPENDENCY ${file}
+            VERBATIM
+        )
+        list(APPEND dst_files ${dst_file})
+    endforeach ()
+    add_custom_target(${target_name} ALL DEPENDS ${dst_files})
+endfunction()
+
 # Helper macros for debugging CMake problems.
 macro(WEBKIT_DEBUG_DUMP_COMMANDS)
     set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -478,4 +510,78 @@ macro(WEBKIT_CREATE_SYMLINK target src dest)
         COMMAND ln -sf ${src} ${dest}
         DEPENDS ${dest}
         COMMENT "Create symlink from ${src} to ${dest}")
+endmacro()
+
+macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_name _interop_module_path _output_header)
+    if (SWIFT_REQUIRED)
+        set_target_properties(${_target} PROPERTIES Swift_MODULE_NAME ${_module_name})
+        # Ask swiftc where to find the header files which support C/C++ builds
+        # Right now this macro is used only once; if it's used more often then
+        # we should abstract this so it's executed only once.
+        execute_process(
+            COMMAND ${CMAKE_Swift_COMPILER} -print-target-info
+            OUTPUT_VARIABLE _swift_target_info
+        )
+        string(JSON _swift_target_paths GET ${_swift_target_info} "paths")
+        string(JSON _swift_runtime_resource_path GET ${_swift_target_paths} "runtimeResourcePath")
+        target_include_directories(${_target} SYSTEM AFTER PRIVATE "${_swift_runtime_resource_path}")
+
+        # Assemble arguments which need to be passed to swiftc.
+        # Add WebKit's various feature flags as -D directives to the Swift compiler.
+        GET_WEBKIT_CONFIG_VARIABLES(_swift_definitions)
+        list(TRANSFORM _swift_definitions PREPEND "-D")
+        set(_swift_options ${_swift_definitions})
+        # Other options needed by Swift for C++ interop, including the location
+        # of the modulemap and hader for WebKit's internal "APIs" which we
+        # make available from C++ to Swift.
+        list(APPEND _swift_options "-cxx-interoperability-mode=default" "-Xcc" "-std=c++2b" "-I${_interop_module_path}")
+        # We'll use these options both for mainstream cmake invocations of swiftc (here)
+        # and for our own invocation to output an interoperability .h file (later)
+        list(TRANSFORM _swift_options PREPEND "$<$<COMPILE_LANGUAGE:Swift>:" OUTPUT_VARIABLE _swift_only_options)
+        list(TRANSFORM _swift_only_options APPEND ">")
+        target_compile_options(${_target} PRIVATE ${_swift_only_options})
+
+        # cmake's Swift interop does not respect CMAKE_SHARED_LINKER_FLAGS, so let's pass
+        # on those that we can.
+        # rdar://155519819
+        string(REPLACE " " ";" CMAKE_SHARED_LINKER_FLAGS_SPLIT "${CMAKE_SHARED_LINKER_FLAGS}")
+        foreach (_flag IN ITEMS ${CMAKE_SHARED_LINKER_FLAGS_SPLIT})
+            # We can only pass on -Wl flags.
+            string(SUBSTRING ${_flag} 0 4 _prefix)
+            if (${_prefix} STREQUAL "-Wl,")
+                string(SUBSTRING ${_flag} 4 -1 _shorter_flag)
+                # The following unfortunately deduplicates the -Xlinker
+                # target_compile_options(${_target} PUBLIC "$<$<COMPILE_LANGUAGE:Swift>:-Xlinker>")
+                target_compile_options(${_target} PUBLIC "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xlinker ${_shorter_flag}>")
+            endif ()
+        endforeach ()
+
+        # Generate the header required for C++ to call into Swift.
+        set(_swift_sources $<TARGET_PROPERTY:${_target},SOURCES>)
+        set(_swift_sources $<FILTER:${_swift_sources},INCLUDE,\\.swift$>)
+
+        cmake_path(APPEND CMAKE_CURRENT_BINARY_DIR include OUTPUT_VARIABLE _header_base_path)
+        cmake_path(APPEND _header_base_path ${_output_header} OUTPUT_VARIABLE _header_path)
+        cmake_path(APPEND CMAKE_CURRENT_BINARY_DIR "${_target}.emit-module.d" OUTPUT_VARIABLE _depfile_path)
+
+        add_custom_command(
+            OUTPUT ${_header_path}
+            DEPENDS ${_swift_sources}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            COMMAND
+                ${CMAKE_Swift_COMPILER} -typecheck
+                ${_swift_options}
+                $<LIST:TRANSFORM,$<TARGET_PROPERTY:${_target},INCLUDE_DIRECTORIES>,PREPEND,-I>
+                ${_swift_sources}
+                -module-name WebKit
+                -emit-clang-header-path ${_header_path}
+                -emit-dependencies
+            DEPFILE ${_depfile_path}
+            COMMENT
+                "Generating ${_target} C++ bindings to Swift at '${_header_path}'"
+            COMMAND_EXPAND_LISTS)
+
+        target_include_directories(${_target} PUBLIC ${_header_base_path})
+        target_sources(${_target} PRIVATE ${_header_path})
+    endif ()
 endmacro()

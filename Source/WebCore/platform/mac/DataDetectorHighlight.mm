@@ -35,6 +35,7 @@
 #import "GraphicsLayer.h"
 #import "GraphicsLayerFactory.h"
 #import "ImageBuffer.h"
+#import "Page.h"
 #import <wtf/Seconds.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 
@@ -130,20 +131,20 @@ void DataDetectorHighlight::paintContents(const GraphicsLayer*, GraphicsContext&
     if (!highlight())
         return;
 
-    CGRect highlightBoundingRect = PAL::softLink_DataDetectors_DDHighlightGetBoundingRect(highlight());
+    CGRect highlightBoundingRect = PAL::softLink_DataDetectors_DDHighlightGetBoundingRect(protectedHighlight().get());
     highlightBoundingRect.origin = CGPointZero;
 
     auto imageBuffer = graphicsContext.createImageBuffer(FloatSize(highlightBoundingRect.size), deviceScaleFactor(), DestinationColorSpace::SRGB(), graphicsContext.renderingMode(), RenderingMethod::Local);
     if (!imageBuffer)
         return;
 
-    CGContextRef cgContext = imageBuffer->context().platformContext();
+    RetainPtr cgContext = imageBuffer->context().platformContext();
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    CGLayerRef highlightLayer = PAL::softLink_DataDetectors_DDHighlightGetLayerWithContext(highlight(), cgContext);
+    RetainPtr highlightLayer = PAL::softLink_DataDetectors_DDHighlightGetLayerWithContext(protectedHighlight().get(), cgContext.get());
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-    CGContextDrawLayerInRect(cgContext, highlightBoundingRect, highlightLayer);
+    CGContextDrawLayerInRect(cgContext.get(), highlightBoundingRect, highlightLayer.get());
 
     graphicsContext.drawConsumingImageBuffer(WTFMove(imageBuffer), highlightBoundingRect);
 }

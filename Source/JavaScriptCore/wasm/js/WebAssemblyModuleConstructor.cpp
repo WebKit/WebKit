@@ -30,6 +30,7 @@
 
 #include "ArrayBuffer.h"
 #include "ButterflyInlines.h"
+#include "IteratorOperations.h"
 #include "JSArrayBuffer.h"
 #include "JSArrayBufferViewInlines.h"
 #include "JSCJSValueInlines.h"
@@ -41,6 +42,7 @@
 #include "ObjectConstructor.h"
 #include "WasmModule.h"
 #include "WasmModuleInformation.h"
+#include "WebAssemblyBuiltin.h"
 #include "WebAssemblyModulePrototype.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/MakeString.h>
@@ -119,7 +121,7 @@ static JSObject* createTypeReflectionObject(JSGlobalObject* globalObject, JSWebA
         typeObj = constructEmptyObject(globalObject, globalObject->objectPrototype(), 2);
 
         Wasm::TypeIndex typeIndex = module->moduleInformation().typeIndexFromFunctionIndexSpace(Wasm::FunctionSpaceIndex(impOrExp.kindIndex));
-        const auto& signature = Wasm::TypeInformation::getFunctionSignature(typeIndex);
+        SUPPRESS_UNCOUNTED_LOCAL const auto& signature = Wasm::TypeInformation::getFunctionSignature(typeIndex);
 
         JSArray* functionParametersTypes = constructEmptyArray(globalObject, nullptr);
         RETURN_IF_EXCEPTION(throwScope, { });
@@ -199,6 +201,10 @@ static JSObject* createTypeReflectionObject(JSGlobalObject* globalObject, JSWebA
     return typeObj;
 }
 
+/**
+ * Note https://webassembly.github.io/js-string-builtins/js-api/#dom-module-imports:
+ * imports of builtins and string constants are to be filtered out.
+ */
 JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleImports, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -212,24 +218,30 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleImports, (JSGlobalObject* globalObject
     RETURN_IF_EXCEPTION(throwScope, { });
 
     const auto& imports = module->moduleInformation().imports;
+    const auto& shouldBeHiddenMap = module->moduleInformation().importShouldBeHidden;
+    // The following would theoretically be a strict ==, but an inline FixedBitVector reports a larger size than it was created with.
+    RELEASE_ASSERT(shouldBeHiddenMap.size() >= imports.size());
     if (imports.size()) {
         Identifier moduleId = Identifier::fromString(vm, "module"_s);
         Identifier name = Identifier::fromString(vm, "name"_s);
         Identifier kind = Identifier::fromString(vm, "kind"_s);
         Identifier type = Identifier::fromString(vm, "type"_s);
-        for (const Wasm::Import& imp : imports) {
-            JSObject* obj = constructEmptyObject(globalObject);
-            RETURN_IF_EXCEPTION(throwScope, { });
-            obj->putDirect(vm, moduleId, jsString(vm, WTF::makeString(imp.module)));
-            obj->putDirect(vm, name, jsString(vm, WTF::makeString(imp.field)));
-            obj->putDirect(vm, kind, jsString(vm, String::fromLatin1(makeString(imp.kind))));
-            if (imp.kind == Wasm::ExternalKind::Function || imp.kind == Wasm::ExternalKind::Table || imp.kind == Wasm::ExternalKind::Memory || imp.kind == Wasm::ExternalKind::Global) {
-                JSObject* typeReflectionObject = createTypeReflectionObject(globalObject, module, imp);
+        for (size_t i = 0; i < imports.size(); i++) {
+            if (!shouldBeHiddenMap.test(i)) {
+                const Wasm::Import& imp = imports[i];
+                JSObject* obj = constructEmptyObject(globalObject);
                 RETURN_IF_EXCEPTION(throwScope, { });
-                obj->putDirect(vm, type, typeReflectionObject);
+                obj->putDirect(vm, moduleId, jsString(vm, WTF::makeString(imp.module)));
+                obj->putDirect(vm, name, jsString(vm, WTF::makeString(imp.field)));
+                obj->putDirect(vm, kind, jsString(vm, String::fromLatin1(makeString(imp.kind))));
+                if (imp.kind == Wasm::ExternalKind::Function || imp.kind == Wasm::ExternalKind::Table || imp.kind == Wasm::ExternalKind::Memory || imp.kind == Wasm::ExternalKind::Global) {
+                    JSObject* typeReflectionObject = createTypeReflectionObject(globalObject, module, imp);
+                    RETURN_IF_EXCEPTION(throwScope, { });
+                    obj->putDirect(vm, type, typeReflectionObject);
+                }
+                result->push(globalObject, obj);
+                RETURN_IF_EXCEPTION(throwScope, { });
             }
-            result->push(globalObject, obj);
-            RETURN_IF_EXCEPTION(throwScope, { });
         }
     }
 
@@ -271,6 +283,9 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleExports, (JSGlobalObject* globalObject
     return JSValue::encode(result);
 }
 
+/**
+ * See https://webassembly.github.io/js-string-builtins/js-api/#dom-module-module
+ */
 JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyModule, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -279,7 +294,19 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyModule, (JSGlobalObject* globalOb
     Vector<uint8_t> source = createSourceBufferFromValue(vm, globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(WebAssemblyModuleConstructor::createModule(globalObject, callFrame, WTFMove(source))));
+    JSObject* compileOptionsObject = nullptr;
+    if (Options::useWasmJSStringBuiltins()) {
+        JSValue compileOptionsArgument = callFrame->argument(1);
+        compileOptionsObject = compileOptionsArgument.getObject();
+        if (!compileOptionsArgument.isUndefined() && !compileOptionsObject) [[unlikely]] {
+            auto error = createTypeError(globalObject, "second argument to WebAssembly.Module must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(compileOptionsArgument));
+            return JSValue::encode(throwException(globalObject, scope, error));
+        }
+    }
+    auto compileOptions = WebAssemblyCompileOptions::tryCreate(globalObject, compileOptionsObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(WebAssemblyModuleConstructor::createModule(globalObject, callFrame, WTFMove(source), compileOptions)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyModule, (JSGlobalObject* globalObject, CallFrame*))
@@ -289,7 +316,7 @@ JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyModule, (JSGlobalObject* globalObject,
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "WebAssembly.Module"_s));
 }
 
-JSWebAssemblyModule* WebAssemblyModuleConstructor::createModule(JSGlobalObject* globalObject, CallFrame* callFrame, Vector<uint8_t>&& buffer)
+JSWebAssemblyModule* WebAssemblyModuleConstructor::createModule(JSGlobalObject* globalObject, CallFrame* callFrame, Vector<uint8_t>&& buffer, std::optional<WebAssemblyCompileOptions>& options)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -302,6 +329,15 @@ JSWebAssemblyModule* WebAssemblyModuleConstructor::createModule(JSGlobalObject* 
     if (!result.has_value()) [[unlikely]] {
         throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, result.error()));
         return nullptr;
+    }
+
+    if (options) {
+        auto errorMessage = options->validateBuiltinsAndImportedStrings(result.value());
+        if (errorMessage.has_value()) {
+            throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, errorMessage.value()));
+            return nullptr;
+        }
+        result.value()->applyCompileOptions(options.value());
     }
 
     RELEASE_AND_RETURN(scope, JSWebAssemblyModule::create(vm, structure, WTFMove(result.value())));

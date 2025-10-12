@@ -439,47 +439,59 @@ op,
 numInvs,
 filter)
 {
-  const mapping = new Map();
+  const sub_unique_id_to_inv_idx = new Map();
   const empty = [...iterRange(128, (x) => -1)];
-  for (let i = 0; i < numInvs; i++) {
-    const id = metadata[i];
-    const subgroup_id = metadata[i + numInvs];
-    const v = mapping.get(subgroup_id) ?? Array.from(empty);
-    v[id] = i;
-    mapping.set(subgroup_id, v);
+  for (let inv = 0; inv < numInvs; inv++) {
+    const id = metadata[inv];
+    const subgroup_unique_id = metadata[inv + numInvs];
+    const v = sub_unique_id_to_inv_idx.get(subgroup_unique_id) ?? Array.from(empty);
+    v[id] = inv;
+    sub_unique_id_to_inv_idx.set(subgroup_unique_id, v);
   }
 
-  for (let i = 0; i < numInvs; i++) {
-    const id = metadata[i];
-    const subgroup_id = metadata[i + numInvs];
+  for (let inv = 0; inv < numInvs; inv++) {
+    const id = metadata[inv];
+    const subgroup_unique_id = metadata[inv + numInvs];
+    const sub_inv_id_to_inv_idx = sub_unique_id_to_inv_idx.get(subgroup_unique_id) ?? empty;
 
-    const subgroupMapping = mapping.get(subgroup_id) ?? empty;
+    const res = output[inv];
+    const size = output[inv + numInvs];
 
-    const res = output[i];
-    const size = output[i + numInvs];
-
+    // subgroup id predicated in shader
     if (!filter(id, size)) {
       continue;
     }
 
-    let inputValue = input[i];
+    let inputValue = input[inv];
     if (op !== 'subgroupShuffle') {
-      inputValue = input[subgroupMapping[0]];
+      // Because we use 'subgroupBroadcastFirst' without predication.
+      const first_subgroup_inv_id = 0;
+      inputValue = input[sub_inv_id_to_inv_idx[first_subgroup_inv_id]];
     }
 
-    const index = getShuffledId(id, inputValue, op);
-    if (index < 0 || index >= 128 || subgroupMapping[index] === -1) {
+    const shuffled_target_id = getShuffledId(id, inputValue, op);
+    if (
+    shuffled_target_id < 0 ||
+    shuffled_target_id >= 128 ||
+    sub_inv_id_to_inv_idx[shuffled_target_id] === -1)
+    {
       continue;
     }
 
-    if (!filter(index, size)) {
+    // subgroup id predicated in shader
+    if (!filter(shuffled_target_id, size)) {
       continue;
     }
 
-    if (res !== subgroupMapping[index]) {
-      return new Error(`Invocation ${i}: unexpected result
-- expected: ${subgroupMapping[index]}
--      got: ${res}`);
+    if (res !== sub_inv_id_to_inv_idx[shuffled_target_id]) {
+      return new Error(`Invocation ${inv}: unexpected result
+- expected: ${sub_inv_id_to_inv_idx[shuffled_target_id]}
+-      got: ${res}
+-      id = ${id}
+-      size = ${size}
+-      inputValue = ${inputValue}
+-      shuffled_target_id = ${shuffled_target_id}
+-      subgroup_unique_id = ${subgroup_unique_id}`);
     }
   }
 
@@ -510,7 +522,7 @@ enable subgroups;
 diagnostic(off, subgroup_uniformity);
 
 @group(0) @binding(0)
-var<storage> input : array<u32>;
+var<storage> input : array<u32, ${wgThreads}>;
 
 struct Output {
   res : array<u32, ${wgThreads}>,
@@ -578,9 +590,9 @@ fn(async (t) => {
   const testcase = kPredicateCases[t.params.predicate];
   const wgThreads = t.params.wgSize[0] * t.params.wgSize[1] * t.params.wgSize[2];
 
-  let value = `input[id]`;
+  let value = `input[lidx]`;
   if (t.params.op !== 'subgroupShuffle') {
-    value = `subgroupBroadcastFirst(input[id])`;
+    value = `subgroupBroadcastFirst(input[lidx])`;
   }
 
   const wgsl = `
@@ -588,7 +600,7 @@ enable subgroups;
 diagnostic(off, subgroup_uniformity);
 
 @group(0) @binding(0)
-var<storage> input : array<u32>;
+var<storage> input : array<u32, ${wgThreads}>;
 
 struct Output {
   res : array<u32, ${wgThreads}>,
@@ -608,24 +620,26 @@ var<storage, read_write> metadata : Metadata;
 
 @compute @workgroup_size(${t.params.wgSize[0]}, ${t.params.wgSize[1]}, ${t.params.wgSize[2]})
 fn main(
-  @builtin(local_invocation_index) lid : u32,
+  @builtin(local_invocation_index) lidx : u32,
   @builtin(subgroup_invocation_id) id : u32,
   @builtin(subgroup_size) subgroupSize : u32,
 ) {
   _ = input[0];
-  metadata.id[lid] = id;
-  metadata.subgroup_id[lid] = subgroupBroadcastFirst(lid + 1); // avoid 0
+  metadata.id[lidx] = id;
+  // Made from lidx but not lidx to avoid value confusion.
+  var fake_unique_id = lidx + 1000;
+  metadata.subgroup_id[lidx] = subgroupBroadcastFirst(fake_unique_id);
 
-  output.size[lid] = subgroupSize;
+  output.size[lidx] = subgroupSize;
   let value = ${value};
   if ${testcase.cond} {
-    output.res[lid] = ${t.params.op}(lid, value);
+    output.res[lidx] = ${t.params.op}(lidx, value);
   } else {
     return;
   }
 }`;
 
-  const inputArray = new Uint32Array([...iterRange(128, (x) => x)]);
+  const inputArray = new Uint32Array([...iterRange(wgThreads, (x) => x % 128)]);
   const numUintsPerOutput = 2;
   await runComputeTest(
     t,

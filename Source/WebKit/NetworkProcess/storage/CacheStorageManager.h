@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,7 +85,6 @@ private:
     void initializeCacheSize(CacheStorageCache&);
     void finishInitializingSize();
     void requestSpaceAfterInitializingSize(uint64_t size, CompletionHandler<void(bool)>&&);
-    Ref<CacheStorageRegistry> protectedRegistry();
 
     bool m_isInitialized { false };
     uint64_t m_updateCounter;
@@ -93,13 +92,13 @@ private:
     std::pair<uint64_t, HashSet<WebCore::DOMCacheIdentifier>> m_pendingSize;
     String m_path;
     FileSystem::Salt m_salt;
-    Ref<CacheStorageRegistry> m_registry;
+    const Ref<CacheStorageRegistry> m_registry;
     QuotaCheckFunction m_quotaCheckFunction;
     Vector<Ref<CacheStorageCache>> m_caches;
     HashMap<WebCore::DOMCacheIdentifier, Ref<CacheStorageCache>> m_removedCaches;
     HashMap<WebCore::DOMCacheIdentifier, Vector<IPC::Connection::UniqueID>> m_cacheRefConnections;
     HashSet<IPC::Connection::UniqueID> m_activeConnections;
-    Ref<WorkQueue> m_queue;
+    const Ref<WorkQueue> m_queue;
     Deque<std::pair<uint64_t, CompletionHandler<void(bool)>>> m_pendingSpaceRequests;
 };
 

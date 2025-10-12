@@ -45,12 +45,16 @@ void TestWithIfMessage::didReceiveMessage(IPC::Connection& connection, IPC::Deco
 {
     Ref protectedThis { *this };
 #if PLATFORM(COCOA)
-    if (decoder.messageName() == Messages::TestWithIfMessage::LoadURL::name())
-        return IPC::handleMessage<Messages::TestWithIfMessage::LoadURL>(connection, decoder, this, &TestWithIfMessage::loadURL);
+    if (decoder.messageName() == Messages::TestWithIfMessage::LoadURL::name()) {
+        IPC::handleMessage<Messages::TestWithIfMessage::LoadURL>(connection, decoder, this, &TestWithIfMessage::loadURL);
+        return;
+    }
 #endif
 #if PLATFORM(GTK)
-    if (decoder.messageName() == Messages::TestWithIfMessage::LoadURL::name())
-        return IPC::handleMessage<Messages::TestWithIfMessage::LoadURL>(connection, decoder, this, &TestWithIfMessage::loadURL);
+    if (decoder.messageName() == Messages::TestWithIfMessage::LoadURL::name()) {
+        IPC::handleMessage<Messages::TestWithIfMessage::LoadURL>(connection, decoder, this, &TestWithIfMessage::loadURL);
+        return;
+    }
 #endif
     UNUSED_PARAM(connection);
     RELEASE_LOG_ERROR(IPC, "Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());

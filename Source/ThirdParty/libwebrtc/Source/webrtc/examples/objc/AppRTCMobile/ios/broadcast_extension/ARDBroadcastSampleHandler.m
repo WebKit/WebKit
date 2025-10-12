@@ -31,15 +31,18 @@
     _callbackLogger = [[RTC_OBJC_TYPE(RTCCallbackLogger) alloc] init];
     os_log_t rtc_os_log = os_log_create("com.google.AppRTCMobile", "RTCLog");
     [_callbackLogger start:^(NSString *logMessage) {
-      os_log(rtc_os_log, "%{public}s", [logMessage cStringUsingEncoding:NSUTF8StringEncoding]);
+      os_log(rtc_os_log,
+             "%{public}s",
+             [logMessage cStringUsingEncoding:NSUTF8StringEncoding]);
     }];
   }
   return self;
 }
 
-- (void)broadcastStartedWithSetupInfo:(NSDictionary<NSString *, NSObject *> *)setupInfo {
-  // User has requested to start the broadcast. Setup info from the UI extension can be supplied but
-  // optional.
+- (void)broadcastStartedWithSetupInfo:
+    (NSDictionary<NSString *, NSObject *> *)setupInfo {
+  // User has requested to start the broadcast. Setup info from the UI extension
+  // can be supplied but optional.
   ARDSettingsModel *settingsModel = [[ARDSettingsModel alloc] init];
 
   _client = [[ARDAppClient alloc] initWithDelegate:self];
@@ -57,7 +60,8 @@
 }
 
 - (void)broadcastPaused {
-  // User has requested to pause the broadcast. Samples will stop being delivered.
+  // User has requested to pause the broadcast. Samples will stop being
+  // delivered.
 }
 
 - (void)broadcastResumed {
@@ -86,7 +90,8 @@
 
 #pragma mark - ARDAppClientDelegate
 
-- (void)appClient:(ARDAppClient *)client didChangeState:(ARDAppClientState)state {
+- (void)appClient:(ARDAppClient *)client
+    didChangeState:(ARDAppClientState)state {
   switch (state) {
     case kARDAppClientStateConnected:
       RTCLog(@"Client connected.");
@@ -100,16 +105,19 @@
   }
 }
 
-- (void)appClient:(ARDAppClient *)client didChangeConnectionState:(RTCIceConnectionState)state {
+- (void)appClient:(ARDAppClient *)client
+    didChangeConnectionState:(RTCIceConnectionState)state {
   RTCLog(@"ICE state changed: %ld", (long)state);
 }
 
 - (void)appClient:(ARDAppClient *)client
-    didCreateLocalCapturer:(RTC_OBJC_TYPE(RTCCameraVideoCapturer) *)localCapturer {
+    didCreateLocalCapturer:
+        (RTC_OBJC_TYPE(RTCCameraVideoCapturer) *)localCapturer {
 }
 
 - (void)appClient:(ARDAppClient *)client
-    didCreateLocalExternalSampleCapturer:(ARDExternalSampleCapturer *)externalSampleCapturer {
+    didCreateLocalExternalSampleCapturer:
+        (ARDExternalSampleCapturer *)externalSampleCapturer {
   self.capturer = externalSampleCapturer;
 }
 
@@ -118,10 +126,12 @@
 }
 
 - (void)appClient:(ARDAppClient *)client
-    didReceiveRemoteVideoTrack:(RTC_OBJC_TYPE(RTCVideoTrack) *)remoteVideoTrack {
+    didReceiveRemoteVideoTrack:
+        (RTC_OBJC_TYPE(RTCVideoTrack) *)remoteVideoTrack {
 }
 
-- (void)appClient:(ARDAppClient *)client didGetStats:(RTC_OBJC_TYPE(RTCStatisticsReport) *)stats {
+- (void)appClient:(ARDAppClient *)client
+      didGetStats:(RTC_OBJC_TYPE(RTCStatisticsReport) *)stats {
 }
 
 - (void)appClient:(ARDAppClient *)client didError:(NSError *)error {

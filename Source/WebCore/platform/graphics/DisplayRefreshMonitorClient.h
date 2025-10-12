@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "AnimationFrameRate.h"
-#include "PlatformScreen.h"
+#include <WebCore/AnimationFrameRate.h>
+#include <WebCore/PlatformScreen.h>
 #include <optional>
 #include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>

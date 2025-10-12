@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "AbstractSlotVisitor.h"
-#include "HandleTypes.h"
+#include <JavaScriptCore/AbstractSlotVisitor.h>
+#include <JavaScriptCore/HandleTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/IterationStatus.h>
 #include <wtf/MonotonicTime.h>

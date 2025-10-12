@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
-#include "Weak.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/Weak.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -117,16 +117,6 @@ inline void* WeakImpl::context()
 inline WeakImpl* WeakImpl::asWeakImpl(JSValue* slot)
 {
     return reinterpret_cast_ptr<WeakImpl*>(reinterpret_cast_ptr<char*>(slot) + OBJECT_OFFSETOF(WeakImpl, m_jsValue));
-}
-
-template<typename T>
-inline void Weak<T>::clear()
-{
-    auto* pointer = impl();
-    if (!pointer)
-        return;
-    pointer->clear();
-    m_impl = nullptr;
 }
 
 } // namespace JSC

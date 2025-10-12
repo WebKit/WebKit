@@ -1,24 +1,24 @@
-/* Copyright (c) 2014, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2014 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-/* This header is provided in order to make compiling against code that expects
-   OpenSSL easier. */
+// This header is provided in order to make compiling against code that expects
+// OpenSSL easier.
 
 #ifndef OPENSSL_HEADER_OPENSSLCONF_H
 #define OPENSSL_HEADER_OPENSSLCONF_H
 
-/* Keep in sync with the list in rust/bssl-sys/build.rs */
+// Keep in sync with the list in rust/bssl-sys/build.rs.
 
 #define OPENSSL_NO_ASYNC
 #define OPENSSL_NO_BF
@@ -27,7 +27,6 @@
 #define OPENSSL_NO_CAMELLIA
 #define OPENSSL_NO_CAPIENG
 #define OPENSSL_NO_CAST
-#define OPENSSL_NO_CMS
 #define OPENSSL_NO_COMP
 #define OPENSSL_NO_CT
 #define OPENSSL_NO_DANE
@@ -68,5 +67,12 @@
 #define OPENSSL_NO_STORE
 #define OPENSSL_NO_WHIRLPOOL
 
+// We do not implement OpenSSL's CMS API, except for a tiny subset. Projects
+// targeting the tiny subset can define BORINGSSL_NO_NO_CMS to suppress
+// OPENSSL_NO_CMS, to make it easier to compile code that expects OpenSSL. This
+// option does not change what APIs are exposed by BoringSSL, only this macro.
+#if !defined(BORINGSSL_NO_NO_CMS)
+#define OPENSSL_NO_CMS
+#endif
 
 #endif  // OPENSSL_HEADER_OPENSSLCONF_H

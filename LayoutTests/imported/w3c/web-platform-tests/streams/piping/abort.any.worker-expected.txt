@@ -17,9 +17,12 @@ PASS (reason: 'error1: error1') abort should prevent further reads
 PASS (reason: 'null') all pending writes should complete on abort
 PASS (reason: 'undefined') all pending writes should complete on abort
 PASS (reason: 'error1: error1') all pending writes should complete on abort
+FAIL (reason: 'null') underlyingSource.cancel() should called when abort, even with pending pull assert_equals: cancel should have been called expected 2 but got 0
+FAIL (reason: 'undefined') underlyingSource.cancel() should called when abort, even with pending pull assert_equals: cancel should have been called expected 2 but got 0
+FAIL (reason: 'error1: error1') underlyingSource.cancel() should called when abort, even with pending pull assert_equals: cancel should have been called expected 2 but got 0
 PASS a rejection from underlyingSource.cancel() should be returned by pipeTo()
 PASS a rejection from underlyingSink.abort() should be returned by pipeTo()
-PASS a rejection from underlyingSink.abort() should be preferred to one from underlyingSource.cancel()
+FAIL a rejection from underlyingSink.abort() should be preferred to one from underlyingSource.cancel() promise_rejects_exactly: pipeTo should reject function "function() { throw e; }" threw object "error1: error1" but we expected it to throw object "error2: error2"
 PASS abort signal takes priority over closed readable
 PASS abort signal takes priority over errored readable
 PASS abort signal takes priority over closed writable

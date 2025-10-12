@@ -46,7 +46,6 @@ if (rtc_include_tests) {
       "../../api/audio:audio_frame_api",
       "../../rtc_base:checks",
       "../../rtc_base:logging",
-      "../../rtc_base:macromagic",
       "../../rtc_base:stringutils",
       "../../test:test_support",
       "//testing/gtest",

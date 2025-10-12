@@ -176,7 +176,12 @@ TEST(WKInspectorExtension, CanEvaluateScriptInExtensionTab)
     TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
 }
 
+// FIXME: rdar://137088246
+#if PLATFORM(MAC) && !defined(NDEBUG)
+TEST(WKInspectorExtension, DISABLED_ExtensionTabIsPersistent)
+#else
 TEST(WKInspectorExtension, ExtensionTabIsPersistent)
+#endif
 {
     resetGlobalState();
 
@@ -383,7 +388,12 @@ TEST(WKInspectorExtension, EvaluateScriptInExtensionTabCanReturnPromises)
     TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
 }
 
+// FIXME: rdar://137088246
+#if PLATFORM(MAC) && !defined(NDEBUG)
+TEST(WKInspectorExtension, DISABLED_EvaluateScriptOnPage)
+#else
 TEST(WKInspectorExtension, EvaluateScriptOnPage)
+#endif
 {
     resetGlobalState();
 

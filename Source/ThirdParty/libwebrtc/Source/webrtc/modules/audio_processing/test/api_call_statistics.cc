@@ -11,6 +11,7 @@
 #include "modules/audio_processing/test/api_call_statistics.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <fstream>
 #include <iostream>
 #include <limits>
@@ -52,12 +53,12 @@ void ApiCallStatistics::PrintReport() const {
       sum_capture += v.duration_nanos;
     }
   }
-  min_render /= rtc::kNumNanosecsPerMicrosec;
-  max_render /= rtc::kNumNanosecsPerMicrosec;
-  sum_render /= rtc::kNumNanosecsPerMicrosec;
-  min_capture /= rtc::kNumNanosecsPerMicrosec;
-  max_capture /= rtc::kNumNanosecsPerMicrosec;
-  sum_capture /= rtc::kNumNanosecsPerMicrosec;
+  min_render /= kNumNanosecsPerMicrosec;
+  max_render /= kNumNanosecsPerMicrosec;
+  sum_render /= kNumNanosecsPerMicrosec;
+  min_capture /= kNumNanosecsPerMicrosec;
+  max_capture /= kNumNanosecsPerMicrosec;
+  sum_capture /= kNumNanosecsPerMicrosec;
   avg_render = num_render > 0 ? sum_render / num_render : 0;
   avg_capture = num_capture > 0 ? sum_capture / num_capture : 0;
 
@@ -83,7 +84,7 @@ void ApiCallStatistics::WriteReportToFile(absl::string_view filename) const {
     } else {
       *out << "capture, ";
     }
-    *out << (v.duration_nanos / rtc::kNumNanosecsPerMicrosec) << std::endl;
+    *out << (v.duration_nanos / kNumNanosecsPerMicrosec) << std::endl;
   }
 }
 

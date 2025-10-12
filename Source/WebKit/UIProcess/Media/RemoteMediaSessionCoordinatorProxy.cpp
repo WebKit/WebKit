@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,7 +63,7 @@ RemoteMediaSessionCoordinatorProxy::RemoteMediaSessionCoordinatorProxy(WebPagePr
     , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
 #endif
 {
-    protectedPrivateCoordinator()->setClient(*this);
+    m_privateCoordinator->setClient(*this);
     webPageProxy.protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::RemoteMediaSessionCoordinatorProxy::messageReceiverName(), m_webPageProxy->webPageIDInMainFrameProcess(), *this);
 }
 
@@ -82,7 +82,7 @@ void RemoteMediaSessionCoordinatorProxy::join(MediaSessionCommandCompletionHandl
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier);
 
-    protectedPrivateCoordinator()->join([this, protectedThis = Ref { *this }, identifier, completionHandler = WTFMove(completionHandler)] (std::optional<ExceptionData>&& exception) mutable {
+    m_privateCoordinator->join([this, protectedThis = Ref { *this }, identifier, completionHandler = WTFMove(completionHandler)] (std::optional<ExceptionData>&& exception) mutable {
         ALWAYS_LOG(identifier, "completion");
         completionHandler(WTFMove(exception));
     });
@@ -92,7 +92,7 @@ void RemoteMediaSessionCoordinatorProxy::leave()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    protectedPrivateCoordinator()->leave();
+    m_privateCoordinator->leave();
 }
 
 void RemoteMediaSessionCoordinatorProxy::coordinateSeekTo(double time, MediaSessionCommandCompletionHandler&& completionHandler)
@@ -100,7 +100,7 @@ void RemoteMediaSessionCoordinatorProxy::coordinateSeekTo(double time, MediaSess
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier, time);
 
-    protectedPrivateCoordinator()->seekTo(time, [this, protectedThis = Ref { *this }, identifier, completionHandler = WTFMove(completionHandler)] (std::optional<ExceptionData>&& exception) mutable {
+    m_privateCoordinator->seekTo(time, [this, protectedThis = Ref { *this }, identifier, completionHandler = WTFMove(completionHandler)] (std::optional<ExceptionData>&& exception) mutable {
         ALWAYS_LOG(identifier, "completion");
         completionHandler(WTFMove(exception));
     });
@@ -111,7 +111,7 @@ void RemoteMediaSessionCoordinatorProxy::coordinatePlay(MediaSessionCommandCompl
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier);
 
-    protectedPrivateCoordinator()->play([this, protectedThis = Ref { *this }, identifier, completionHandler = WTFMove(completionHandler)] (std::optional<ExceptionData>&& exception) mutable {
+    m_privateCoordinator->play([this, protectedThis = Ref { *this }, identifier, completionHandler = WTFMove(completionHandler)] (std::optional<ExceptionData>&& exception) mutable {
         ALWAYS_LOG(identifier, "completion");
         completionHandler(WTFMove(exception));
     });
@@ -122,7 +122,7 @@ void RemoteMediaSessionCoordinatorProxy::coordinatePause(MediaSessionCommandComp
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier);
 
-    protectedPrivateCoordinator()->pause([this, protectedThis = Ref { *this }, identifier, completionHandler = WTFMove(completionHandler)] (std::optional<ExceptionData>&& exception) mutable {
+    m_privateCoordinator->pause([this, protectedThis = Ref { *this }, identifier, completionHandler = WTFMove(completionHandler)] (std::optional<ExceptionData>&& exception) mutable {
         ALWAYS_LOG(identifier, "completion");
         completionHandler(WTFMove(exception));
     });
@@ -133,7 +133,7 @@ void RemoteMediaSessionCoordinatorProxy::coordinateSetTrack(const String& track,
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier);
 
-    protectedPrivateCoordinator()->setTrack(track, [this, protectedThis = Ref { *this }, identifier, completionHandler = WTFMove(completionHandler)] (std::optional<ExceptionData>&& exception) mutable {
+    m_privateCoordinator->setTrack(track, [this, protectedThis = Ref { *this }, identifier, completionHandler = WTFMove(completionHandler)] (std::optional<ExceptionData>&& exception) mutable {
         ALWAYS_LOG(identifier, "completion");
         completionHandler(WTFMove(exception));
     });
@@ -142,25 +142,25 @@ void RemoteMediaSessionCoordinatorProxy::coordinateSetTrack(const String& track,
 void RemoteMediaSessionCoordinatorProxy::positionStateChanged(const std::optional<WebCore::MediaPositionState>& state)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    protectedPrivateCoordinator()->positionStateChanged(state);
+    m_privateCoordinator->positionStateChanged(state);
 }
 
 void RemoteMediaSessionCoordinatorProxy::playbackStateChanged(MediaSessionPlaybackState state)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    protectedPrivateCoordinator()->playbackStateChanged(state);
+    m_privateCoordinator->playbackStateChanged(state);
 }
 
 void RemoteMediaSessionCoordinatorProxy::readyStateChanged(MediaSessionReadyState state)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    protectedPrivateCoordinator()->readyStateChanged(state);
+    m_privateCoordinator->readyStateChanged(state);
 }
 
 void RemoteMediaSessionCoordinatorProxy::trackIdentifierChanged(const String& identifier)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    protectedPrivateCoordinator()->trackIdentifierChanged(identifier);
+    m_privateCoordinator->trackIdentifierChanged(identifier);
 }
 
 void RemoteMediaSessionCoordinatorProxy::seekSessionToTime(double time, CompletionHandler<void(bool)>&& callback)

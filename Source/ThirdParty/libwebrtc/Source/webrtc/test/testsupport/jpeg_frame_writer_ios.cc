@@ -8,7 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "rtc_base/checks.h"
+#include <string>
+
+#include "api/video/video_frame.h"
 #include "rtc_base/logging.h"
 #include "test/testsupport/frame_writer.h"
 

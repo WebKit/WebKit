@@ -71,16 +71,10 @@ egl::Error SurfaceNULL::getMscRate(EGLint *numerator, EGLint *denominator)
 
 void SurfaceNULL::setSwapInterval(const egl::Display *display, EGLint interval) {}
 
-EGLint SurfaceNULL::getWidth() const
+gl::Extents SurfaceNULL::getSize() const
 {
     // TODO(geofflang): Read from an actual window?
-    return 100;
-}
-
-EGLint SurfaceNULL::getHeight() const
-{
-    // TODO(geofflang): Read from an actual window?
-    return 100;
+    return gl::Extents(100, 100, 1);
 }
 
 EGLint SurfaceNULL::isPostSubBufferSupported() const

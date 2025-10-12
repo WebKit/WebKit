@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FrameIdentifier.h"
-#include "SpeechRecognitionConnectionClientIdentifier.h"
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/SpeechRecognitionConnectionClientIdentifier.h>
 
 namespace WebCore {
 

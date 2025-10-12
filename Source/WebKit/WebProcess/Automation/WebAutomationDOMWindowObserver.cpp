@@ -35,14 +35,14 @@ WebAutomationDOMWindowObserver::WebAutomationDOMWindowObserver(WebCore::LocalDOM
     : m_window(window)
     , m_callback(WTFMove(callback))
 {
-    ASSERT(m_window->frame());
-    m_window->registerObserver(*this);
+    ASSERT(window.frame());
+    window.registerObserver(*this);
 }
 
 WebAutomationDOMWindowObserver::~WebAutomationDOMWindowObserver()
 {
-    if (m_window)
-        m_window->unregisterObserver(*this);
+    if (RefPtr window = m_window.get())
+        window->unregisterObserver(*this);
 }
 
 void WebAutomationDOMWindowObserver::willDestroyGlobalObjectInCachedFrame()
@@ -56,8 +56,8 @@ void WebAutomationDOMWindowObserver::willDestroyGlobalObjectInCachedFrame()
     }
 
     ASSERT(m_window);
-    if (m_window)
-        m_window->unregisterObserver(*this);
+    if (RefPtr window = m_window.get())
+        window->unregisterObserver(*this);
     m_window = nullptr;
 }
 
@@ -71,8 +71,8 @@ void WebAutomationDOMWindowObserver::willDestroyGlobalObjectInFrame()
     }
 
     ASSERT(m_window);
-    if (m_window)
-        m_window->unregisterObserver(*this);
+    if (RefPtr window = m_window.get())
+        window->unregisterObserver(*this);
     m_window = nullptr;
 }
 
@@ -87,8 +87,8 @@ void WebAutomationDOMWindowObserver::willDetachGlobalObjectFromFrame()
     m_callback(*this);
 
     ASSERT(m_window);
-    if (m_window)
-        m_window->unregisterObserver(*this);
+    if (RefPtr window = m_window.get())
+        window->unregisterObserver(*this);
     m_window = nullptr;
 }
 

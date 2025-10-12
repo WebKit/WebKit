@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Importing binding name 'foo' cannot be resolved due to ambiguous multiple bindings.
 
 PASS Test that ambiguous star exports lead to an instantiation error, even when discovered through a star export, and that the correct module is blamed.
 

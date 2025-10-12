@@ -1,0 +1,10 @@
+Test AbortController memory leak with event listeners
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Some AbortSignals were garbage collected.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

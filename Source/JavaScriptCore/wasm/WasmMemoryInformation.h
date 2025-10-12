@@ -27,10 +27,10 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "GPRInfo.h"
-#include "PageCount.h"
-#include "RegisterSet.h"
-#include "WasmMemory.h"
+#include <JavaScriptCore/GPRInfo.h>
+#include <JavaScriptCore/PageCount.h>
+#include <JavaScriptCore/RegisterSet.h>
+#include <JavaScriptCore/WasmMemory.h>
 
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>

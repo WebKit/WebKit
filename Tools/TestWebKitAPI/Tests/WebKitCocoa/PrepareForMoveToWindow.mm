@@ -36,6 +36,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 TEST(WKWebView, PrepareForMoveToWindow)
 {
@@ -123,7 +124,7 @@ TEST(WKWebView, PrepareForMoveToWindowThenViewDeallocBeforeMoving)
         webView = nil;
     }
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         [window setFrame:NSMakeRect(0, 0, 10, 10) display:YES];
         isDone = true;
     });

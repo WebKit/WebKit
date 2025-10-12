@@ -11,8 +11,6 @@
 #ifndef MODULES_AUDIO_MIXER_DEFAULT_OUTPUT_RATE_CALCULATOR_H_
 #define MODULES_AUDIO_MIXER_DEFAULT_OUTPUT_RATE_CALCULATOR_H_
 
-#include <vector>
-
 #include "api/array_view.h"
 #include "modules/audio_mixer/output_rate_calculator.h"
 
@@ -27,7 +25,7 @@ class DefaultOutputRateCalculator : public OutputRateCalculator {
   // AudioProcessing::NativeRate. If `preferred_sample_rates` is
   // empty, returns `kDefaultFrequency`.
   int CalculateOutputRateFromRange(
-      rtc::ArrayView<const int> preferred_sample_rates) override;
+      ArrayView<const int> preferred_sample_rates) override;
   ~DefaultOutputRateCalculator() override {}
 };
 

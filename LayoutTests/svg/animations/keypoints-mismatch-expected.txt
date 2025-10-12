@@ -1,1 +1,2 @@
+CONSOLE MESSAGE: Error: Invalid value for <animateMotion> attribute keySplines="0"
 Excellent - did not crash. See bug https://bugs.webkit.org/show_bug.cgi?id=35606

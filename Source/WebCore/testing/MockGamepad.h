@@ -27,24 +27,26 @@
 
 #if ENABLE(GAMEPAD)
 
-#include "PlatformGamepad.h"
+#include <WebCore/PlatformGamepad.h>
 
 namespace WebCore {
 
 class MockGamepad : public PlatformGamepad {
 public:
-    MockGamepad(unsigned index, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble);
+    MockGamepad(unsigned index, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected);
 
     const Vector<SharedGamepadValue>& axisValues() const final { return m_axisValues; }
     const Vector<SharedGamepadValue>& buttonValues() const final { return m_buttonValues; }
 
-    void updateDetails(const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble);
+    void updateDetails(const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected);
     bool setAxisValue(unsigned index, double value);
     bool setButtonValue(unsigned index, double value);
+    bool wasConnected() { return m_wasConnected; }
 
 private:
     Vector<SharedGamepadValue> m_axisValues;
     Vector<SharedGamepadValue> m_buttonValues;
+    bool m_wasConnected;
 };
 
 }

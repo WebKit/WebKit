@@ -413,6 +413,30 @@ function testSIMDGlobal() {
       (global v128 (global.get 1))
       (global v128 (global.get 3)))
   `);
+
+  {
+    let wat = `
+    (module
+      (type $V128Array (array v128))
+  
+      (global $g1 v128 (v128.const i64x2 1 2))
+      (global $g2 (export "g2") (ref $V128Array)
+        (global.get $g1)
+        (array.new_fixed $V128Array 1)
+      )
+      (func (export "lane0") (result i64)
+        (i64x2.extract_lane 0 (array.get $V128Array (global.get $g2) (i32.const 0)))
+      )
+      (func (export "lane1") (result i64)
+        (i64x2.extract_lane 1 (array.get $V128Array (global.get $g2) (i32.const 0)))
+      )
+    )
+    `;
+  
+    let instance = instantiate(wat);
+    assert.eq(instance.exports.lane0(), 1n);
+    assert.eq(instance.exports.lane1(), 2n);
+  }
 }
 
 testSIMDStruct();

@@ -20,11 +20,9 @@
     </div>
     <div class="renderingArea" id="mathml">
       <math>
-        <semantics>
-          <annotation-xml encoding="image/svg+xml">
-            <svg></svg>
-          </annotation-xml>
-        </semantics>
+        <mtext>
+          <svg></svg>
+        </mtext>
       </math>
     </div>
     <div class="renderingArea" id="non_svg"></div>
@@ -63,15 +61,15 @@
       ["svg", "mathml", "non_svg", "svg_use", "svg_child_of_use"].forEach(id => {
           let shadowHost = document.createElement("div");
           let shadowRoot = shadowHost.attachShadow({mode: 'open'});
-          let svg = document.getElementById(id).firstElementChild.cloneNode(true);
+          let clonedChild = document.getElementById(id).firstElementChild.cloneNode(true);
           ["href", "id"].forEach(attribute => {
               // Fix duplicate ids.
-              Array.from(svg.querySelectorAll(`[${attribute}]`)).forEach(element => {
+              Array.from(clonedChild.querySelectorAll(`[${attribute}]`)).forEach(element => {
                   element.setAttribute(attribute,
                                        `${element.getAttribute(attribute)}_copy`);
               });
           });
-          shadowRoot.appendChild(svg);
+          shadowRoot.appendChild(clonedChild);
           document.getElementById(`${id}_in_shadow_tree`).appendChild(shadowHost);
 
       });

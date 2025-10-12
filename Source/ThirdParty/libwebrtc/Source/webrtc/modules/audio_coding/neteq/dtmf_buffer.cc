@@ -11,6 +11,8 @@
 #include "modules/audio_coding/neteq/dtmf_buffer.h"
 
 #include <algorithm>  // max
+#include <cstddef>
+#include <cstdint>
 
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"

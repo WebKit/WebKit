@@ -9,12 +9,13 @@
  */
 #include "rtc_base/experiments/field_trial_parser.h"
 
+#include <optional>
+#include <string>
+
 #include "absl/strings/string_view.h"
-#include "rtc_base/experiments/field_trial_list.h"
-#include "rtc_base/gunit.h"
-#include "system_wrappers/include/field_trial.h"
-#include "test/field_trial.h"
-#include "test/gmock.h"
+#include "api/field_trials.h"
+#include "api/field_trials_view.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {
@@ -30,12 +31,8 @@ struct DummyExperiment {
   FieldTrialParameter<std::string> hash =
       FieldTrialParameter<std::string>("h", "a80");
 
-  DummyExperiment()
-      : DummyExperiment([] {
-          field_trial::FieldTrialsAllowedInScopeForTesting k{
-              {kDummyExperiment}};
-          return field_trial::FindFullName(kDummyExperiment);
-        }()) {}
+  explicit DummyExperiment(const FieldTrialsView& field_trials)
+      : DummyExperiment(field_trials.Lookup(kDummyExperiment)) {}
 
   explicit DummyExperiment(absl::string_view field_trial) {
     ParseFieldTrial({&enabled, &factor, &retries, &size, &ping, &hash},
@@ -60,12 +57,14 @@ TEST(FieldTrialParserTest, ParsesValidParameters) {
   EXPECT_EQ(exp.ping.Get(), true);
   EXPECT_EQ(exp.hash.Get(), "x7c");
 }
+
 TEST(FieldTrialParserTest, InitializesFromFieldTrial) {
-  test::ScopedFieldTrials field_trials(
+  FieldTrials field_trials(
       "WebRTC-OtherExperiment/Disabled/"
       "WebRTC-DummyExperiment/Enabled,f:-1.7,r:2,s:10,p:1,h:x7c/"
       "WebRTC-AnotherExperiment/Enabled,f:-3.1,otherstuff:beef/");
-  DummyExperiment exp;
+  field_trials.RegisterKeysForTesting({kDummyExperiment});
+  DummyExperiment exp(field_trials);
   EXPECT_TRUE(exp.enabled.Get());
   EXPECT_EQ(exp.factor.Get(), -1.7);
   EXPECT_EQ(exp.retries.Get(), 2);
@@ -73,6 +72,7 @@ TEST(FieldTrialParserTest, InitializesFromFieldTrial) {
   EXPECT_EQ(exp.ping.Get(), true);
   EXPECT_EQ(exp.hash.Get(), "x7c");
 }
+
 TEST(FieldTrialParserTest, UsesDefaults) {
   DummyExperiment exp("");
   EXPECT_FALSE(exp.enabled.Get());

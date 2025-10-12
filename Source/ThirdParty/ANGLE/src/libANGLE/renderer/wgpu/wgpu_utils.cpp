@@ -23,6 +23,30 @@ DisplayWgpu *GetDisplay(const gl::Context *context)
     return contextWgpu->getDisplay();
 }
 
+const DawnProcTable *GetProcs(const gl::Context *context)
+{
+    DisplayWgpu *display = GetDisplay(context);
+    return display->getProcs();
+}
+
+const DawnProcTable *GetProcs(const ContextWgpu *context)
+{
+    DisplayWgpu *display = context->getDisplay();
+    return display->getProcs();
+}
+
+const angle::FeaturesWgpu &GetFeatures(const gl::Context *context)
+{
+    DisplayWgpu *display = GetDisplay(context);
+    return display->getFeatures();
+}
+
+const angle::FeaturesWgpu &GetFeatures(const ContextWgpu *context)
+{
+    DisplayWgpu *display = context->getDisplay();
+    return display->getFeatures();
+}
+
 webgpu::DeviceHandle GetDevice(const gl::Context *context)
 {
     DisplayWgpu *display = GetDisplay(context);
@@ -132,7 +156,8 @@ bool operator!=(const PackedRenderPassDescriptor &a, const PackedRenderPassDescr
     return !(a == b);
 }
 
-RenderPassEncoderHandle CreateRenderPass(webgpu::CommandEncoderHandle commandEncoder,
+RenderPassEncoderHandle CreateRenderPass(const DawnProcTable *wgpu,
+                                         webgpu::CommandEncoderHandle commandEncoder,
                                          const webgpu::PackedRenderPassDescriptor &packedDesc)
 {
     WGPURenderPassDescriptor renderPassDesc = WGPU_RENDER_PASS_DESCRIPTOR_INIT;
@@ -180,7 +205,7 @@ RenderPassEncoderHandle CreateRenderPass(webgpu::CommandEncoderHandle commandEnc
     }
 
     return RenderPassEncoderHandle::Acquire(
-        wgpuCommandEncoderBeginRenderPass(commandEncoder.get(), &renderPassDesc));
+        wgpu, wgpu->commandEncoderBeginRenderPass(commandEncoder.get(), &renderPassDesc));
 }
 
 void GenerateCaps(const WGPULimits &limitsWgpu,
@@ -204,6 +229,12 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
 
     glExtensions->textureStorageEXT = true;
     glExtensions->rgb8Rgba8OES      = true;
+
+    glExtensions->EGLImageOES                  = true;
+    glExtensions->EGLImageExternalOES          = true;
+    glExtensions->EGLImageExternalEssl3OES     = true;
+    glExtensions->EGLImageExternalWrapModesEXT = true;
+    glExtensions->requiredInternalformatOES    = true;
 
     // OpenGL ES caps
     glCaps->maxElementIndex       = std::numeric_limits<GLuint>::max() - 1;
@@ -369,16 +400,12 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
     eglExtensions->image                              = true;
     eglExtensions->imageBase                          = true;
     eglExtensions->glTexture2DImage                   = true;
-    eglExtensions->glTextureCubemapImage              = true;
-    eglExtensions->glTexture3DImage                   = true;
     eglExtensions->glRenderbufferImage                = true;
     eglExtensions->getAllProcAddresses                = true;
     eglExtensions->noConfigContext                    = true;
-    eglExtensions->directComposition                  = true;
     eglExtensions->createContextNoError               = true;
     eglExtensions->createContextWebGLCompatibility    = true;
     eglExtensions->createContextBindGeneratesResource = true;
-    eglExtensions->swapBuffersWithDamage              = true;
     eglExtensions->pixelFormatFloat                   = true;
     eglExtensions->surfacelessContext                 = true;
     eglExtensions->displayTextureShareGroup           = true;
@@ -386,6 +413,7 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
     eglExtensions->createContextClientArrays          = true;
     eglExtensions->programCacheControlANGLE           = true;
     eglExtensions->robustResourceInitializationANGLE  = true;
+    eglExtensions->webgpuTextureClientBuffer          = true;
 }
 
 bool IsStripPrimitiveTopology(WGPUPrimitiveTopology topology)
@@ -401,12 +429,13 @@ bool IsStripPrimitiveTopology(WGPUPrimitiveTopology topology)
     }
 }
 
-ErrorScope::ErrorScope(webgpu::InstanceHandle instance,
+ErrorScope::ErrorScope(const DawnProcTable *procTable,
+                       webgpu::InstanceHandle instance,
                        webgpu::DeviceHandle device,
                        WGPUErrorFilter errorType)
-    : mInstance(instance), mDevice(device)
+    : mProcTable(procTable), mInstance(instance), mDevice(device)
 {
-    wgpuDevicePushErrorScope(mDevice.get(), errorType);
+    mProcTable->devicePushErrorScope(mDevice.get(), errorType);
     mActive = true;
 }
 
@@ -434,10 +463,9 @@ angle::Result ErrorScope::PopScope(ContextWgpu *context,
         unsigned int line    = 0;
         bool hadError        = false;
     };
-    PopScopeContext popScopeContext{context, file, function, line, false};
 
     WGPUPopErrorScopeCallbackInfo callbackInfo = WGPU_POP_ERROR_SCOPE_CALLBACK_INFO_INIT;
-    callbackInfo.mode                          = WGPUCallbackMode_WaitAnyOnly;
+    callbackInfo.mode                          = WGPUCallbackMode_AllowSpontaneous;
     callbackInfo.callback = [](WGPUPopErrorScopeStatus status, WGPUErrorType type,
                                struct WGPUStringView message, void *userdata1, void *userdata2) {
         PopScopeContext *ctx = reinterpret_cast<PopScopeContext *>(userdata1);
@@ -448,27 +476,39 @@ angle::Result ErrorScope::PopScope(ContextWgpu *context,
             return;
         }
 
-        if (ctx->context)
+        if (ctx)
         {
             ASSERT(ctx->file);
             ASSERT(ctx->function);
             std::string msgStr(message.data, message.length);
             ctx->context->handleError(GL_INVALID_OPERATION, msgStr.c_str(), ctx->file,
                                       ctx->function, ctx->line);
+            ctx->hadError = true;
         }
         else
         {
             ERR() << "Unhandled WebGPU error: " << std::string(message.data, message.length);
         }
-        ctx->hadError = true;
     };
-    callbackInfo.userdata1 = &popScopeContext;
 
-    WGPUFutureWaitInfo future = WGPU_FUTURE_WAIT_INFO_INIT;
-    future.future             = wgpuDevicePopErrorScope(mDevice.get(), callbackInfo);
-    wgpuInstanceWaitAny(mInstance.get(), 1, &future, -1);
+    const angle::FeaturesWgpu &features = GetFeatures(context);
+    if (features.avoidWaitAny.enabled)
+    {
+        // End the error scope but don't wait on it. The error messages will be printed later.
+        mProcTable->devicePopErrorScope(mDevice.get(), callbackInfo);
+        return angle::Result::Continue;
+    }
+    else
+    {
+        PopScopeContext popScopeContext{context, file, function, line, false};
+        callbackInfo.userdata1 = &popScopeContext;
 
-    return popScopeContext.hadError ? angle::Result::Stop : angle::Result::Continue;
+        WGPUFutureWaitInfo future = WGPU_FUTURE_WAIT_INFO_INIT;
+        future.future             = mProcTable->devicePopErrorScope(mDevice.get(), callbackInfo);
+        mProcTable->instanceWaitAny(mInstance.get(), 1, &future, -1);
+
+        return popScopeContext.hadError ? angle::Result::Stop : angle::Result::Continue;
+    }
 }
 
 }  // namespace webgpu

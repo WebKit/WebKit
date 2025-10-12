@@ -28,11 +28,11 @@
 
 #include "CachedFont.h"
 #include "CachedFontClient.h"
-#include "CachedResourceHandle.h"
-#include "FontLoadRequest.h"
-#include "FontSelectionAlgorithm.h"
-#include "ScriptExecutionContext.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <WebCore/CachedResourceHandle.h>
+#include <WebCore/FontLoadRequest.h>
+#include <WebCore/FontSelectionAlgorithm.h>
+#include <WebCore/ScriptExecutionContext.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -40,7 +40,7 @@ namespace WebCore {
 class FontCreationContext;
 
 class CachedFontLoadRequest final : public FontLoadRequest, public CachedFontClient {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedFontLoadRequest, Loader);
 public:
     CachedFontLoadRequest(CachedFont& font, ScriptExecutionContext& context)
         : m_font(&font)

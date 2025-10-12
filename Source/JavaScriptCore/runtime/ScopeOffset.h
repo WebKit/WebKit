@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "GenericOffset.h"
+#include <JavaScriptCore/GenericOffset.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC {

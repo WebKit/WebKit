@@ -26,7 +26,6 @@
 // https://dom.spec.whatwg.org/#interface-shadowroot
 
 [
-    JSGenerateToJSObject,
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface ShadowRoot : DocumentFragment {

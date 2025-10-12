@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ISOProtectionSystemSpecificHeaderBox.h"
+#include <WebCore/ISOProtectionSystemSpecificHeaderBox.h>
 
 namespace WebCore {
 

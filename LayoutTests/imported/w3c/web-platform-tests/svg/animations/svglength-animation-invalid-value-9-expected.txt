@@ -1,0 +1,3 @@
+
+FAIL Test SVGLength animation with invalid value: No spaces between number and unit in values attribute. assert_equals: expected 100 but got 300
+

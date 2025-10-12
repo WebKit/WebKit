@@ -118,7 +118,7 @@ Protocol::ErrorStringOr<std::tuple<Protocol::Runtime::SyntaxErrorType, String /*
 
     if (error.syntaxErrorType() != ParserError::SyntaxErrorNone) {
         message = error.message();
-        range = buildErrorRangeObject(error.token().m_location);
+        range = buildErrorRangeObject(error.token().location());
     }
 
     return { { *result, message, WTFMove(range) } };
@@ -445,7 +445,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::TypeDescription>>> 
     return types;
 }
 
-void InspectorRuntimeAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
+void InspectorRuntimeAgent::didCreateFrontendAndBackend()
 {
 }
 

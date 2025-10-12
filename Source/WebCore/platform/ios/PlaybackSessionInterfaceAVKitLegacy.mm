@@ -114,7 +114,7 @@ void PlaybackSessionInterfaceAVKitLegacy::currentTimeChanged(double currentTime,
         return;
 
     NSTimeInterval anchorTimeStamp = ![m_playerController rate] ? NAN : anchorTime;
-    AVValueTiming *timing = [getAVValueTimingClass() valueTimingWithAnchorValue:currentTime
+    AVValueTiming *timing = [getAVValueTimingClassSingleton() valueTimingWithAnchorValue:currentTime
         anchorTimeStamp:anchorTimeStamp rate:0];
 
     [m_playerController setTiming:timing];

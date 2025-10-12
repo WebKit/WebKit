@@ -25,15 +25,15 @@
 
 #pragma once
 
-#include "IDBDatabaseConnectionIdentifier.h"
-#include "IDBDatabaseInfo.h"
-#include "IDBError.h"
-#include "IDBGetAllResult.h"
-#include "IDBGetResult.h"
-#include "IDBKeyData.h"
-#include "IDBResourceIdentifier.h"
-#include "IDBTransactionInfo.h"
-#include "ThreadSafeDataBuffer.h"
+#include <WebCore/IDBDatabaseConnectionIdentifier.h>
+#include <WebCore/IDBDatabaseInfo.h>
+#include <WebCore/IDBError.h>
+#include <WebCore/IDBGetAllResult.h>
+#include <WebCore/IDBGetResult.h>
+#include <WebCore/IDBKeyData.h>
+#include <WebCore/IDBResourceIdentifier.h>
+#include <WebCore/IDBTransactionInfo.h>
+#include <WebCore/ThreadSafeDataBuffer.h>
 #include <wtf/ArgumentCoder.h>
 
 namespace WebCore {

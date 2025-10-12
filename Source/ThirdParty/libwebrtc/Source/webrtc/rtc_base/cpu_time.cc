@@ -10,11 +10,15 @@
 
 #include "rtc_base/cpu_time.h"
 
+#include <time.h>
+
+#include <cstdint>
+
 #include "rtc_base/logging.h"
 #include "rtc_base/time_utils.h"
 
 #if defined(WEBRTC_LINUX)
-#include <time.h>
+#include <ctime>
 #elif defined(WEBRTC_MAC)
 #include <mach/mach_init.h>
 #include <mach/mach_port.h>
@@ -39,7 +43,7 @@ const int64_t kNanosecsPerFiletime = 100;
 }  // namespace
 #endif
 
-namespace rtc {
+namespace webrtc {
 
 int64_t GetProcessCpuTimeNanos() {
 #if defined(WEBRTC_FUCHSIA)
@@ -142,4 +146,4 @@ int64_t GetThreadCpuTimeNanos() {
   return -1;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

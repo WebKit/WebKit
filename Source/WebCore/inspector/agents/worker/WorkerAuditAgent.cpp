@@ -27,7 +27,6 @@
 #include "WorkerAuditAgent.h"
 
 #include "JSDOMGlobalObject.h"
-#include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
@@ -58,7 +57,7 @@ InjectedScript WorkerAuditAgent::injectedScriptForEval(Inspector::Protocol::Erro
 
     // FIXME: What guarantees m_globalScope.script() is non-null?
     // FIXME: What guarantees globalScopeWrapper() is non-null?
-    return injectedScriptManager().injectedScriptFor(m_globalScope.script()->globalScopeWrapper());
+    return injectedScriptManager().injectedScriptFor(m_globalScope->script()->globalScopeWrapper());
 }
 
 } // namespace WebCore

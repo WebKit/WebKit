@@ -41,6 +41,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-1_4.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-1_4_1.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-1_4_2.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-event-handler-on-inline-script.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-multiple-policies-multiple-hashing-algorithms.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-multiple-policies-multiple-hashing-algorithms.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-multiple-policies-one-using-hashing-algorithms.html
@@ -86,6 +87,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted_correct_nonce.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_worker-importScripts.https.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-trusted_types_eval_with_report_only_require_trusted_types_eval.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-trusted_types_eval_with_report_only_require_trusted_types_eval.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-trusted_types_eval_with_require_trusted_types_eval.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-trusted_types_eval_with_require_trusted_types_eval.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-trusted_types_eval_without_require_trusted_types_eval.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-trusted_types_eval_without_require_trusted_types_eval.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-wildcards-disallowed.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-allowed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-base64url-converts-to-base64.sub.html

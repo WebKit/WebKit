@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'referrer'.
 
 Referrer Policy: CSP 'referrer' directive should not be supported
 

@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "ErrorInstance.h"
+#include <JavaScriptCore/ErrorInstance.h>
 
 namespace JSC {
 

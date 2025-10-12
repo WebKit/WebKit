@@ -26,6 +26,7 @@
 
         const mic96KHz = deviceFromLabel(devices, "Mock audio device 3");
         stream = await navigator.mediaDevices.getUserMedia({ audio: { deviceId:mic96KHz.deviceId, sampleRate:96000 } })
+        test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
 
         assert_equals(stream.getAudioTracks()[0].getSettings().deviceId, mic96KHz.deviceId);
         assert_equals(stream.getAudioTracks()[0].getSettings().sampleRate, 96000);

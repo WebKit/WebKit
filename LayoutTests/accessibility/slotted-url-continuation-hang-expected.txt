@@ -1,0 +1,45 @@
+This test ensures we don't hang when traversing and getting the accessibility text of a link that is part of an inline continuation.
+
+
+{AXRole: AXWebArea
+	AXTitle:
+	AXDescription:
+	AXHelp:
+}
+
+{AXRole: AXHeading
+	AXTitle: Clickable
+	AXDescription:
+	AXHelp:
+}
+
+{AXRole: AXLink
+	AXTitle:
+	AXDescription:
+	AXHelp:
+}
+
+{AXRole: AXGroup
+	AXTitle:
+	AXDescription:
+	AXHelp:
+}
+
+{#link AXRole: AXLink
+	AXTitle: Clickable
+	AXDescription:
+	AXHelp:
+}
+
+{AXRole: AXStaticText AXValue: Clickable
+	AXTitle:
+	AXDescription:
+	AXHelp:
+}
+PASS: No hang.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Clickable
+

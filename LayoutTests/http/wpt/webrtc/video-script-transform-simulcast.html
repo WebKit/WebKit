@@ -25,13 +25,13 @@ function waitForMessage(port, data)
     return promise;
 }
 
-let worker;
+let localStream, worker;
 promise_test(async (test) => {
     worker = new Worker('context-transform.js');
     const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
     assert_equals(data, "registered");
 
-    const localStream = await navigator.mediaDevices.getUserMedia({video: true});
+    localStream = await navigator.mediaDevices.getUserMedia({video: true});
 
     const senderChannel = new MessageChannel;
     const receiverChannelL = new MessageChannel;
@@ -117,10 +117,11 @@ async function waitForVideoSize(video, width, height)
         return Promise.reject("Video size not expected : " + video.videoWidth + " " + video.videoHeight);
 }
 
-promise_test(async () => {
+promise_test(async test => {
     await Promise.all([videoL.play(), videoM.play()]);
     await waitForVideoSize(videoL, 320, 240);
     await waitForVideoSize(videoM, 640, 480);
+    test.add_cleanup(() => localStream.getTracks().forEach(t => t.stop()));
 }, "videos are playing with the correct resolutions");
         </script>
     </body>

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CodeLocation.h"
+#include <JavaScriptCore/CodeLocation.h>
 #include <wtf/Forward.h>
 
 namespace JSC {

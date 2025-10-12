@@ -51,6 +51,7 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setWebsiteDataStore(m_websiteDataStore.get());
     policies->setUserContentController(m_userContentController.get());
     policies->setLockdownModeEnabled(m_lockdownModeEnabled);
+    policies->setEnhancedSecurityEnabled(m_enhancedSecurityEnabled);
     return policies;
 }
 
@@ -71,14 +72,27 @@ void WebsitePolicies::setUserContentController(RefPtr<WebKit::WebUserContentCont
     m_userContentController = WTFMove(controller);
 }
 
-WebKit::WebsitePoliciesData WebsitePolicies::data()
+WebKit::WebsitePoliciesData WebsitePolicies::dataForProcess(WebKit::WebProcessProxy& process) const
 {
-    return m_data;
+    auto data = m_data;
+    if (RefPtr controller = m_userContentController)
+        data.userContentControllerParameters = controller->parametersForProcess(process);
+    return data;
 }
 
 bool WebsitePolicies::lockdownModeEnabled() const
 {
     return m_lockdownModeEnabled ? *m_lockdownModeEnabled : WebKit::lockdownModeEnabledBySystem();
+}
+
+const WebCore::ResourceRequest& WebsitePolicies::alternateRequest() const
+{
+    return m_data.alternateRequest;
+}
+
+void WebsitePolicies::setAlternateRequest(WebCore::ResourceRequest&& request)
+{
+    m_data.alternateRequest = WTFMove(request);
 }
 
 }

@@ -31,6 +31,7 @@
 #endif
 
 #include <glib-object.h>
+#include <wpe/WPEDRMDevice.h>
 #include <wpe/WPEDefines.h>
 
 G_BEGIN_DECLS
@@ -52,11 +53,11 @@ typedef enum {
     WPE_BUFFER_DMA_BUF_FORMAT_USAGE_SCANOUT
 } WPEBufferDMABufFormatUsage;
 
-WPE_API const char                *wpe_buffer_dma_buf_formats_get_device           (WPEBufferDMABufFormats *formats);
+WPE_API WPEDRMDevice              *wpe_buffer_dma_buf_formats_get_device           (WPEBufferDMABufFormats *formats);
 WPE_API guint                      wpe_buffer_dma_buf_formats_get_n_groups         (WPEBufferDMABufFormats *formats);
 WPE_API WPEBufferDMABufFormatUsage wpe_buffer_dma_buf_formats_get_group_usage      (WPEBufferDMABufFormats *formats,
                                                                                     guint                   group);
-WPE_API const char                *wpe_buffer_dma_buf_formats_get_group_device     (WPEBufferDMABufFormats *formats,
+WPE_API WPEDRMDevice              *wpe_buffer_dma_buf_formats_get_group_device     (WPEBufferDMABufFormats *formats,
                                                                                     guint                   group);
 WPE_API guint                      wpe_buffer_dma_buf_formats_get_group_n_formats  (WPEBufferDMABufFormats *formats,
                                                                                     guint                   group);
@@ -71,11 +72,11 @@ WPE_API GArray                    *wpe_buffer_dma_buf_formats_get_format_modifie
 typedef struct _WPEBufferDMABufFormatsBuilder WPEBufferDMABufFormatsBuilder;
 
 WPE_API GType                          wpe_buffer_dma_buf_formats_builder_get_type      (void);
-WPE_API WPEBufferDMABufFormatsBuilder *wpe_buffer_dma_buf_formats_builder_new           (const char *device);
+WPE_API WPEBufferDMABufFormatsBuilder *wpe_buffer_dma_buf_formats_builder_new           (WPEDRMDevice                  *device);
 WPE_API WPEBufferDMABufFormatsBuilder *wpe_buffer_dma_buf_formats_builder_ref           (WPEBufferDMABufFormatsBuilder *builder);
 WPE_API void                           wpe_buffer_dma_buf_formats_builder_unref         (WPEBufferDMABufFormatsBuilder *builder);
 WPE_API void                           wpe_buffer_dma_buf_formats_builder_append_group  (WPEBufferDMABufFormatsBuilder *builder,
-                                                                                         const char                    *device,
+                                                                                         WPEDRMDevice                  *device,
                                                                                          WPEBufferDMABufFormatUsage     usage);
 WPE_API void                           wpe_buffer_dma_buf_formats_builder_append_format (WPEBufferDMABufFormatsBuilder *builder,
                                                                                          guint32                        fourcc,

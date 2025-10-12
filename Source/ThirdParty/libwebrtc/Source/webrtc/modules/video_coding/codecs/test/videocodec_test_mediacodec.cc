@@ -8,12 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <algorithm>
+#include <cstddef>
 #include <memory>
 #include <string>
 #include <tuple>
+#include <utility>
 #include <vector>
 
 #include "api/test/create_videocodec_test_fixture.h"
+#include "api/test/videocodec_test_fixture.h"
+#include "api/video_codecs/h264_profile_level_id.h"
 #include "media/base/media_constants.h"
 #include "modules/video_coding/codecs/test/android_codec_factory_helper.h"
 #include "modules/video_coding/codecs/test/videocodec_test_fixture_impl.h"
@@ -93,7 +98,7 @@ std::unique_ptr<VideoCodecTestFixture> CreateTestFixtureWithConfig(
 
 TEST(VideoCodecTestMediaCodec, ForemanCif500kbpsVp8) {
   auto config = CreateConfig();
-  config.SetCodecSettings(cricket::kVp8CodecName, 1, 1, 1, false, false, false,
+  config.SetCodecSettings(webrtc::kVp8CodecName, 1, 1, 1, false, false, false,
                           352, 288);
   auto fixture = CreateTestFixtureWithConfig(config);
 
@@ -115,7 +120,7 @@ TEST(VideoCodecTestMediaCodec, ForemanCif500kbpsH264CBP) {
   const auto frame_checker =
       std::make_unique<VideoCodecTestFixtureImpl::H264KeyframeChecker>();
   config.encoded_frame_checker = frame_checker.get();
-  config.SetCodecSettings(cricket::kH264CodecName, 1, 1, 1, false, false, false,
+  config.SetCodecSettings(webrtc::kH264CodecName, 1, 1, 1, false, false, false,
                           352, 288);
   auto fixture = CreateTestFixtureWithConfig(config);
 
@@ -141,7 +146,7 @@ TEST(VideoCodecTestMediaCodec, DISABLED_ForemanCif500kbpsH264CHP) {
 
   config.h264_codec_settings.profile = H264Profile::kProfileConstrainedHigh;
   config.encoded_frame_checker = frame_checker.get();
-  config.SetCodecSettings(cricket::kH264CodecName, 1, 1, 1, false, false, false,
+  config.SetCodecSettings(webrtc::kH264CodecName, 1, 1, 1, false, false, false,
                           352, 288);
   auto fixture = CreateTestFixtureWithConfig(config);
 
@@ -161,8 +166,8 @@ TEST(VideoCodecTestMediaCodec, DISABLED_ForemanCif500kbpsH264CHP) {
 TEST(VideoCodecTestMediaCodec, ForemanMixedRes100kbpsVp8H264) {
   auto config = CreateConfig();
   const int kNumFrames = 30;
-  const std::vector<std::string> codecs = {cricket::kVp8CodecName,
-                                           cricket::kH264CodecName};
+  const std::vector<std::string> codecs = {webrtc::kVp8CodecName,
+                                           webrtc::kH264CodecName};
   const std::vector<std::tuple<int, int>> resolutions = {
       {128, 96}, {176, 144}, {320, 240}, {480, 272}};
   const std::vector<RateProfile> rate_profiles = {
@@ -196,7 +201,7 @@ class VideoCodecTestMediaCodecRateAdaptation
       const ::testing::TestParamInfo<
           VideoCodecTestMediaCodecRateAdaptation::ParamType>& info) {
     char buf[512];
-    rtc::SimpleStringBuilder ss(buf);
+    webrtc::SimpleStringBuilder ss(buf);
     ss << std::get<0>(info.param).name << "_" << std::get<1>(info.param);
     return ss.str();
   }
@@ -258,9 +263,9 @@ INSTANTIATE_TEST_SUITE_P(
                                          kBitRateHighLowHigh,
                                          kFrameRateLowHighLow,
                                          kFrameRateHighLowHigh),
-                       ::testing::Values(cricket::kVp8CodecName,
-                                         cricket::kVp9CodecName,
-                                         cricket::kH264CodecName)),
+                       ::testing::Values(webrtc::kVp8CodecName,
+                                         webrtc::kVp9CodecName,
+                                         webrtc::kH264CodecName)),
     VideoCodecTestMediaCodecRateAdaptation::ParamInfoToStr);
 
 }  // namespace test

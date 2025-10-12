@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,7 +88,7 @@ void WebSpeechSynthesisClient::speak(RefPtr<WebCore::PlatformSpeechSynthesisUtte
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        if (auto observer = protectedThis->corePageObserver())
+        if (RefPtr observer = protectedThis->corePageObserver())
             observer->didStartSpeaking();
     };
 
@@ -96,11 +96,11 @@ void WebSpeechSynthesisClient::speak(RefPtr<WebCore::PlatformSpeechSynthesisUtte
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        if (auto observer = protectedThis->corePageObserver())
+        if (RefPtr observer = protectedThis->corePageObserver())
             observer->didFinishSpeaking();
     };
 
-    auto voice = utterance->voice();
+    RefPtr voice = utterance->voice();
     auto voiceURI = voice ? voice->voiceURI() : emptyString();
     auto name = voice ? voice->name() : emptyString();
     auto lang = voice ? voice->lang() : emptyString();
@@ -131,7 +131,7 @@ void WebSpeechSynthesisClient::pause()
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        if (auto observer = protectedThis->corePageObserver())
+        if (RefPtr observer = protectedThis->corePageObserver())
             observer->didPauseSpeaking();
     };
 
@@ -148,7 +148,7 @@ void WebSpeechSynthesisClient::resume()
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        if (auto observer = protectedThis->corePageObserver())
+        if (RefPtr observer = protectedThis->corePageObserver())
             observer->didResumeSpeaking();
     };
 

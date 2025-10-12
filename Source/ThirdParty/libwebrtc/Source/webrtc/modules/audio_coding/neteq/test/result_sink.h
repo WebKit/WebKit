@@ -13,7 +13,6 @@
 
 #include <cstdio>
 #include <memory>
-#include <string>
 
 #include "absl/strings/string_view.h"
 #include "api/neteq/neteq.h"
@@ -35,7 +34,7 @@ class ResultSink {
 
  private:
   FILE* output_fp_;
-  std::unique_ptr<rtc::MessageDigest> digest_;
+  std::unique_ptr<MessageDigest> digest_;
 };
 
 template <typename T>

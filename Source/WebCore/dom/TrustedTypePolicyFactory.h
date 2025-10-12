@@ -44,7 +44,7 @@ class TrustedTypePolicyFactory : public ScriptWrappable, public RefCounted<Trust
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TrustedTypePolicyFactory);
 public:
     static Ref<TrustedTypePolicyFactory> create(ScriptExecutionContext&);
-    ~TrustedTypePolicyFactory() = default;
+    ~TrustedTypePolicyFactory();
 
     ExceptionOr<Ref<TrustedTypePolicy>> createPolicy(ScriptExecutionContext&, const String& policyName, const TrustedTypePolicyOptions&);
     bool isHTML(JSC::JSValue) const;

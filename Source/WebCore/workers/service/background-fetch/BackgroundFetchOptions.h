@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "BackgroundFetchUIOptions.h"
+#include <WebCore/BackgroundFetchUIOptions.h>
 #include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {

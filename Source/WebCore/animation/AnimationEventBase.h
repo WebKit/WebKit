@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Event.h"
+#include <WebCore/Event.h>
 #include <wtf/Markable.h>
 
 namespace WebCore {
@@ -50,7 +50,7 @@ protected:
 
 private:
     RefPtr<WebAnimation> m_animation;
-    Markable<Seconds, Seconds::MarkableTraits> m_scheduledTime;
+    Markable<Seconds> m_scheduledTime;
 };
 
 }

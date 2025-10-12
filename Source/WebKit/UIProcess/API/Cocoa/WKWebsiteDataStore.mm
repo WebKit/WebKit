@@ -71,6 +71,7 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/persistence/PersistentDecoder.h>
 #import <wtf/persistence/PersistentEncoder.h>
 
@@ -89,12 +90,6 @@
 @interface WKWebsiteDataStore (WKWebPushHandling)
 - (void)_handleWebPushAction:(_WKWebPushAction *)webPushAction;
 @end
-
-#if ENABLE(SCREEN_TIME)
-@interface STWebHistory (Staging_140439004)
-- (void)fetchAllHistoryWithCompletionHandler:(void (^)(NSSet<NSURL *> *urls, NSError *error))completionHandler;
-@end
-#endif
 
 class WebsiteDataStoreClient final : public WebKit::WebsiteDataStoreClient {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(WebsiteDataStoreClient);
@@ -480,7 +475,6 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
             WKWebsiteDataTypeDiskCache,
             WKWebsiteDataTypeFetchCache,
             WKWebsiteDataTypeMemoryCache,
-            WKWebsiteDataTypeOfflineWebApplicationCache,
             WKWebsiteDataTypeCookies,
             WKWebsiteDataTypeSessionStorage,
             WKWebsiteDataTypeLocalStorage,
@@ -1258,9 +1252,9 @@ struct WKWebsiteData {
     return !!WebKit::NetworkProcessProxy::defaultNetworkProcess();
 }
 
-- (void)_countNonDefaultSessionSets:(void(^)(size_t))completionHandler
+- (void)_countNonDefaultSessionSets:(void(^)(uint64_t))completionHandler
 {
-    _websiteDataStore->countNonDefaultSessionSets([completionHandler = makeBlockPtr(completionHandler)] (size_t count) {
+    _websiteDataStore->countNonDefaultSessionSets([completionHandler = makeBlockPtr(completionHandler)] (uint64_t count) {
         completionHandler(count);
     });
 }
@@ -1631,7 +1625,7 @@ struct WKWebsiteData {
     if (!webPushAction)
         return NO;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         WKWebsiteDataStore *dataStore = _WKWebsiteDataStoreBSActionHandler.shared->_webPushActionHandler.get()(webPushAction.get());
         [dataStore _handleWebPushAction:webPushAction.get()];
     });

@@ -23,7 +23,11 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-[ExceptionForEnabledBy]
+[
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo,
+    ExceptionForEnabledBy
+]
 messages -> UserMediaCaptureManager {
     ValidateUserMediaRequestConstraints(struct WebCore::MediaStreamRequest request, struct WebCore::MediaDeviceHashSalts mediaDeviceIdentifierHashSalts) -> (Expected<WebCore::RealtimeMediaSourceCenter::ValidDevices, WebCore::MediaConstraintType> result)
     GetMediaStreamDevices(bool revealIdsAndLabels) -> (Vector<WebCore::CaptureDeviceWithCapabilities> devices)

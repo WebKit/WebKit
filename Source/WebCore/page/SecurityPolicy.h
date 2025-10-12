@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "FetchOptions.h"
+#include <WebCore/FetchOptions.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

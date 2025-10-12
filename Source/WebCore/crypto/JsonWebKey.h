@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CryptoKeyUsage.h"
-#include "RsaOtherPrimesInfo.h"
+#include <WebCore/CryptoKeyUsage.h>
+#include <WebCore/RsaOtherPrimesInfo.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

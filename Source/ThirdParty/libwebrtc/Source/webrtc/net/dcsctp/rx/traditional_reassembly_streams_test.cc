@@ -10,18 +10,21 @@
 #include "net/dcsctp/rx/traditional_reassembly_streams.h"
 
 #include <cstdint>
-#include <memory>
 #include <utility>
 
 #include "net/dcsctp/common/handover_testing.h"
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/common/sequence_numbers.h"
 #include "net/dcsctp/packet/chunk/forward_tsn_chunk.h"
 #include "net/dcsctp/packet/chunk/forward_tsn_common.h"
 #include "net/dcsctp/packet/data.h"
+#include "net/dcsctp/public/dcsctp_handover_state.h"
+#include "net/dcsctp/public/dcsctp_message.h"
+#include "net/dcsctp/public/types.h"
 #include "net/dcsctp/rx/reassembly_streams.h"
 #include "net/dcsctp/testing/data_generator.h"
-#include "rtc_base/gunit.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace {

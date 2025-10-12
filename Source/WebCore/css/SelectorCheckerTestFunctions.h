@@ -26,7 +26,9 @@
 
 #pragma once
 
+#include "DocumentPage.h"
 #include "FocusController.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameSelection.h"
 #include "HTMLDialogElement.h"
 #include "HTMLFrameElement.h"
@@ -35,7 +37,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLOptionElement.h"
 #include "InspectorInstrumentation.h"
-#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "Page.h"
 #include "SelectorChecker.h"
 #include "Settings.h"

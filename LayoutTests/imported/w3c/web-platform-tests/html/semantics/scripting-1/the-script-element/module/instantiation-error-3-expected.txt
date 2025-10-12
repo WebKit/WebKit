@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Indirectly exported binding name 'x' is not found.
-CONSOLE MESSAGE: SyntaxError: Indirectly exported binding name 'x' is not found.
-CONSOLE MESSAGE: SyntaxError: Indirectly exported binding name 'x' is not found.
 
 FAIL Test that unresolvable cycles lead to SyntaxError events on window and load events on script assert_not_equals: Instantiation error objects for different root scripts got disallowed value "SyntaxError: Indirectly exported binding name 'x' is not found."
 

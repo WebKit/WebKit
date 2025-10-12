@@ -26,10 +26,13 @@
 #include "config.h"
 #include "NodeList.h"
 
+#include "ScriptWrappableInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NodeList);
+
+NodeList::~NodeList() = default;
 
 } // namespace WebCore

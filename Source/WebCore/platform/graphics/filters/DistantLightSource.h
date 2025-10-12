@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "LightSource.h"
+#include <WebCore/LightSource.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Ref.h>
 

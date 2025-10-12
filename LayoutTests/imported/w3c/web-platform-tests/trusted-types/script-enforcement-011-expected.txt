@@ -1,0 +1,4 @@
+
+PASS Changing script's type from classic to module in the default policy works.
+PASS Changing script's type from module to classic in the default policy works.
+

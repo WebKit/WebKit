@@ -33,10 +33,10 @@
 
 #if ENABLE(VIDEO)
 
-#include "ActiveDOMObject.h"
-#include "DocumentFragment.h"
-#include "EventTargetInterfaces.h"
-#include "HTMLElement.h"
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/DocumentFragment.h>
+#include <WebCore/EventTargetInterfaces.h>
+#include <WebCore/HTMLElement.h>
 #include <wtf/JSONValues.h>
 #include <wtf/MediaTime.h>
 

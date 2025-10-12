@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/abortsignal.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/add_cleanup.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/add_cleanup_async.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/add_cleanup_async_bad_return.html
@@ -29,6 +30,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/api-tests-2.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/api-tests-3.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/assert-array-equals.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/assert-throws-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/force_timeout.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/generate-callback.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/iframe-callback.html

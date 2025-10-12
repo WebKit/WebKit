@@ -26,7 +26,7 @@
 #ifndef JSContextPrivate_h
 #define JSContextPrivate_h
 
-#if JSC_OBJC_API_ENABLED
+#if JSC_OBJC_API_ENABLED && defined(__OBJC__)
 
 #import <JavaScriptCore/JSContext.h>
 

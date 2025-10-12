@@ -40,29 +40,36 @@ class XRCompositionLayer : public WebXRLayer {
 public:
     virtual ~XRCompositionLayer();
 
-    XRLayerLayout layout() const { RELEASE_ASSERT_NOT_REACHED(); }
+    XRLayerLayout layout() const { return XRLayerLayout::Stereo; }
 
-    bool blendTextureSourceAlpha() const { RELEASE_ASSERT_NOT_REACHED(); }
-    [[noreturn]] void setBlendTextureSourceAlpha(bool) { RELEASE_ASSERT_NOT_REACHED(); }
+    bool blendTextureSourceAlpha() const { return false; }
+    void setBlendTextureSourceAlpha(bool) { }
 
-    bool forceMonoPresentation() const { RELEASE_ASSERT_NOT_REACHED(); }
-    [[noreturn]] void setForceMonoPresentation(bool) { RELEASE_ASSERT_NOT_REACHED(); }
+    bool forceMonoPresentation() const { return false; }
+    void setForceMonoPresentation(bool) { }
 
-    float opacity() const { RELEASE_ASSERT_NOT_REACHED(); }
-    [[noreturn]] void setOpacity(float) { RELEASE_ASSERT_NOT_REACHED(); }
+    float opacity() const { return 1.f; }
+    void setOpacity(float) { }
 
-    uint32_t mipLevels() const { RELEASE_ASSERT_NOT_REACHED(); }
+    uint32_t mipLevels() const { return 1; }
 
-    XRLayerQuality quality() const { RELEASE_ASSERT_NOT_REACHED(); }
-    [[noreturn]] void setQuality(XRLayerQuality) { RELEASE_ASSERT_NOT_REACHED(); }
+    XRLayerQuality quality() const { return XRLayerQuality::Default; }
+    void setQuality(XRLayerQuality) { }
 
-    bool needsRedraw() const { RELEASE_ASSERT_NOT_REACHED(); }
+    bool needsRedraw() const { return true; }
 
-    [[noreturn]] void destroy() { RELEASE_ASSERT_NOT_REACHED(); }
+    void destroy() { }
 protected:
     explicit XRCompositionLayer(ScriptExecutionContext*);
+
+private:
+    bool isXRCompositionLayer() const final { return true; }
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::XRCompositionLayer)
+    static bool isType(const WebCore::WebXRLayer& layer) { return layer.isXRCompositionLayer(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEBXR_LAYERS)

@@ -10,20 +10,22 @@
 
 #include "test/pc/e2e/peer_connection_quality_test.h"
 
-#include <map>
+#include <cstddef>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
+#include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/test/create_network_emulation_manager.h"
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
+#include "api/test/network_emulation/network_emulation_interfaces.h"
 #include "api/test/network_emulation_manager.h"
 #include "api/test/pclf/media_configuration.h"
 #include "api/test/pclf/media_quality_test_params.h"
 #include "api/test/pclf/peer_configurer.h"
-#include "api/test/peerconnection_quality_test_fixture.h"
 #include "api/units/time_delta.h"
-#include "rtc_base/time_utils.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
@@ -36,7 +38,7 @@ namespace {
 using ::testing::Eq;
 using ::testing::Test;
 
-using ::webrtc::webrtc_pc_e2e::PeerConfigurer;
+using webrtc_pc_e2e::PeerConfigurer;
 
 // Remove files and directories in a directory non-recursively.
 void CleanDir(absl::string_view dir, size_t expected_output_files_count) {
@@ -116,12 +118,12 @@ TEST_F(PeerConnectionE2EQualityTestTest, OutputVideoIsDumpedWhenRequested) {
 
   VideoConfig alice_video("alice_video", 320, 180, 15);
   alice_video.output_dump_options = VideoDumpOptions(test_directory_);
-  PeerConfigurer alice(alice_network->network_dependencies());
+  PeerConfigurer alice(*alice_network);
   alice.SetName("alice");
   alice.AddVideoConfig(std::move(alice_video));
   fixture.AddPeer(std::make_unique<PeerConfigurer>(std::move(alice)));
 
-  PeerConfigurer bob(bob_network->network_dependencies());
+  PeerConfigurer bob(*bob_network);
   bob.SetName("bob");
   fixture.AddPeer(std::make_unique<PeerConfigurer>(std::move(bob)));
 

@@ -186,7 +186,8 @@ void av1_update_temporal_layer_framerate(AV1_COMP *const cpi) {
   RATE_CONTROL *const lrc = &lc->rc;
   const int tl = svc->temporal_layer_id;
   lc->framerate = cpi->framerate / lc->framerate_factor;
-  lrc->avg_frame_bandwidth = (int)round(lc->target_bandwidth / lc->framerate);
+  lrc->avg_frame_bandwidth =
+      saturate_cast_double_to_int(round(lc->target_bandwidth / lc->framerate));
   lrc->max_frame_bandwidth = cpi->rc.max_frame_bandwidth;
   // Update the average layer frame size (non-cumulative per-frame-bw).
   if (tl == 0) {
@@ -477,9 +478,13 @@ void av1_set_svc_fixed_mode(AV1_COMP *const cpi) {
   RTC_REF *const rtc_ref = &cpi->ppi->rtc_ref;
   int i;
   assert(svc->use_flexible_mode == 0);
+  assert(svc->number_spatial_layers >= 1 && svc->number_temporal_layers >= 1);
   // Fixed SVC mode only supports at most 3 spatial or temporal layers.
-  assert(svc->number_spatial_layers >= 1 && svc->number_spatial_layers <= 3 &&
-         svc->number_temporal_layers >= 1 && svc->number_temporal_layers <= 3);
+  if (svc->number_spatial_layers > 3 || svc->number_temporal_layers > 3) {
+    aom_internal_error(&cpi->ppi->error, AOM_CODEC_INVALID_PARAM,
+                       "Invalid number of spatial/temporal layers for fixed "
+                       "SVC mode (max: 3)");
+  }
   rtc_ref->set_ref_frame_config = 1;
   int superframe_cnt = svc->current_superframe;
   // Set the reference map buffer idx for the 7 references:
@@ -694,8 +699,8 @@ int av1_svc_get_min_ref_dist(const AV1_COMP *cpi) {
   for (unsigned int i = 0; i < INTER_REFS_PER_FRAME; i++) {
     if (rtc_ref->reference[i]) {
       const int ref_frame_map_idx = rtc_ref->ref_idx[i];
-      const int dist =
-          current_frame_num - rtc_ref->buffer_time_index[ref_frame_map_idx];
+      const int dist = (1 + current_frame_num) -
+                       rtc_ref->buffer_time_index[ref_frame_map_idx];
       if (dist < min_dist) min_dist = dist;
     }
   }

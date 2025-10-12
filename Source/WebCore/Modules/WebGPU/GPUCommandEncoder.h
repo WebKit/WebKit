@@ -65,10 +65,15 @@ public:
 
     void copyBufferToBuffer(
         const GPUBuffer& source,
+        const GPUBuffer& destination,
+        std::optional<GPUSize64>);
+
+    void copyBufferToBuffer(
+        const GPUBuffer& source,
         GPUSize64 sourceOffset,
         const GPUBuffer& destination,
         GPUSize64 destinationOffset,
-        GPUSize64);
+        std::optional<GPUSize64>);
 
     void copyBufferToTexture(
         const GPUImageCopyBuffer& source,
@@ -112,8 +117,11 @@ public:
 private:
     GPUCommandEncoder(Ref<WebGPU::CommandEncoder>&&, WebGPU::Device&);
 
+    Ref<WebGPU::CommandEncoder> protectedBacking() { return m_backing; }
+
     Ref<WebGPU::CommandEncoder> m_backing;
     WeakPtr<WebGPU::Device> m_device;
+    std::optional<String> m_overrideLabel;
 };
 
 }

@@ -66,6 +66,67 @@ void lowerStackArgs(Code& code)
 
         for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
             Inst& inst = block->at(instIndex);
+            bool extendedOffsetAddrRegInUse = false;
+
+            auto stackAddr = [&] (unsigned insertionIndex, Arg arg, Width width, Value::OffsetType offsetFromFP) -> Arg {
+                int32_t offsetFromSP = offsetFromFP + code.frameSize();
+
+                if (inst.admitsExtendedOffsetAddr(arg)) {
+                    // Stackmaps and patchpoints expect addr inputs relative to SP or FP only. We might as well
+                    // not even bother generating an addr with valid form for these opcodes since extended offset
+                    // addr is always valid.
+                    return Arg::extendedOffsetAddr(offsetFromFP);
+                }
+
+                Arg result = Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP);
+                if (result.isValidForm(Move, width))
+                    return result;
+
+                result = Arg::addr(Air::Tmp(MacroAssembler::stackPointerRegister), offsetFromSP);
+                if (result.isValidForm(Move, width))
+                    return result;
+
+                if (inst.kind.opcode == Patch)
+                    return Arg::extendedOffsetAddr(offsetFromFP);
+
+#if CPU(ARM64) || CPU(RISCV64)
+                RELEASE_ASSERT(!extendedOffsetAddrRegInUse);
+                Air::Tmp tmp = Air::Tmp(extendedOffsetAddrRegister());
+                extendedOffsetAddrRegInUse = true;
+
+                Arg largeOffset = Arg::isValidImmForm(offsetFromSP) ? Arg::imm(offsetFromSP) : Arg::bigImm(offsetFromSP);
+                insertionSet.insert(insertionIndex, Move, inst.origin, largeOffset, tmp);
+                insertionSet.insert(insertionIndex, Add64, inst.origin, Air::Tmp(MacroAssembler::stackPointerRegister), tmp);
+                result = Arg::addr(tmp, 0);
+                return result;
+#elif CPU(ARM)
+                // We solve this in AirAllocateRegistersAndStackAndGenerateCode.cpp.
+                UNUSED_PARAM(insertionIndex);
+                return result;
+#elif CPU(X86_64)
+                UNUSED_PARAM(insertionIndex);
+                // Can't happen on x86: immediates are always big enough for frame size.
+                RELEASE_ASSERT_NOT_REACHED();
+#else
+#error Unhandled architecture.
+#endif
+            };
+
+            auto isMove = [] (Inst& inst) -> std::optional<Width> {
+                switch (inst.kind.opcode) {
+                case Move:
+                    return pointerWidth();
+                case Move32:
+                case MoveFloat:
+                    return Width32;
+                case MoveDouble:
+                    return Width64;
+                case MoveVector:
+                    return Width128;
+                default:
+                    return std::nullopt;
+                }
+            };
 
             if (isARM64() && (inst.kind.opcode == Lea32 || inst.kind.opcode == Lea64)) {
                 // On ARM64, Lea is just an add. We can't handle this below because
@@ -106,50 +167,28 @@ void lowerStackArgs(Code& code)
                 continue;
             }
 
+            // Moves between stack spills may require using the extendedOffsetReg for both the src and dst addresses.
+            // In that case, split the move into separate load and store instructions so that the extendedOffsetReg can
+            // be used for each address, one at a time.
+            std::optional<Width> moveWidth = isMove(inst);
+            if (isARM64() && moveWidth && inst.args.size() == 3 && inst.args[0].isStack()) {
+                Arg& src = inst.args[0];
+                src = stackAddr(instIndex, src, *moveWidth, src.offset() + src.stackSlot()->offsetFromFP());
+                if (extendedOffsetAddrRegInUse) {
+                    Arg scratch = inst.args[2];
+                    ASSERT(scratch.isReg());
+                    // Insert Mov src, scratchReg
+                    insertionSet.insert(instIndex, inst.kind.opcode, inst.origin, src, scratch);
+                    extendedOffsetAddrRegInUse = false; // Used by the inserted instruction; no longer needed.
+                    // Modify inst to be 'Move scratch, dest'.
+                    src = scratch;
+                    inst.args.resize(2);
+                }
+                // Fall through to handle remainder of the original or modified inst, including potential ZDef handling.
+            }
+
             inst.forEachArg(
                 [&] (Arg& arg, Arg::Role role, Bank, Width width) {
-                    auto stackAddr = [&] (unsigned instIndex, Value::OffsetType offsetFromFP) -> Arg {
-                        int32_t offsetFromSP = offsetFromFP + code.frameSize();
-
-                        if (inst.admitsExtendedOffsetAddr(arg)) {
-                            // Stackmaps and patchpoints expect addr inputs relative to SP or FP only. We might as well
-                            // not even bother generating an addr with valid form for these opcodes since extended offset
-                            // addr is always valid.
-                            return Arg::extendedOffsetAddr(offsetFromFP);
-                        }
-
-                        Arg result = Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP);
-                        if (result.isValidForm(Move, width))
-                            return result;
-
-                        result = Arg::addr(Air::Tmp(MacroAssembler::stackPointerRegister), offsetFromSP);
-                        if (result.isValidForm(Move, width))
-                            return result;
-
-                        if (inst.kind.opcode == Patch)
-                            return Arg::extendedOffsetAddr(offsetFromFP);
-
-#if CPU(ARM64) || CPU(RISCV64)
-                        Air::Tmp tmp = Air::Tmp(extendedOffsetAddrRegister());
-
-                        Arg largeOffset = Arg::isValidImmForm(offsetFromSP) ? Arg::imm(offsetFromSP) : Arg::bigImm(offsetFromSP);
-                        insertionSet.insert(instIndex, Move, inst.origin, largeOffset, tmp);
-                        insertionSet.insert(instIndex, Add64, inst.origin, Air::Tmp(MacroAssembler::stackPointerRegister), tmp);
-                        result = Arg::addr(tmp, 0);
-                        return result;
-#elif CPU(ARM)
-                        // We solve this in AirAllocateRegistersAndStackAndGenerateCode.cpp.
-                        UNUSED_PARAM(instIndex);
-                        return result;
-#elif CPU(X86_64)
-                        UNUSED_PARAM(instIndex);
-                        // Can't happen on x86: immediates are always big enough for frame size.
-                        RELEASE_ASSERT_NOT_REACHED();
-#else
-#error Unhandled architecture.
-#endif
-                    };
-                    
                     switch (arg.kind()) {
                     case Arg::Stack: {
                         StackSlot* slot = arg.stackSlot();
@@ -179,13 +218,14 @@ void lowerStackArgs(Code& code)
                             RELEASE_ASSERT(isValidForm(storeOpcode, operandKind, Arg::Stack));
                             insertionSet.insert(
                                 instIndex + 1, storeOpcode, inst.origin, operand,
-                                stackAddr(instIndex + 1, arg.offset() + 4 + slot->offsetFromFP()));
+                                stackAddr(instIndex + 1, arg, width, arg.offset() + 4 + slot->offsetFromFP()));
+                            extendedOffsetAddrRegInUse = false;
                         }
-                        arg = stackAddr(instIndex, arg.offset() + slot->offsetFromFP());
+                        arg = stackAddr(instIndex, arg, width, arg.offset() + slot->offsetFromFP());
                         break;
                     }
                     case Arg::CallArg:
-                        arg = stackAddr(instIndex, arg.offset() - code.frameSize());
+                        arg = stackAddr(instIndex, arg, width, arg.offset() - code.frameSize());
                         break;
                     default:
                         break;

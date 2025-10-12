@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -110,7 +110,7 @@ void StorageMap::setItem(const String& key, const String& value, String& oldValu
 
     // Implement copy-on-write semantics.
     if (m_impl->refCount() > 1)
-        m_impl = m_impl->copy();
+        m_impl = Ref { m_impl }->copy();
 
     m_impl->map.set(key, value);
     m_impl->currentSize = newSize;
@@ -141,7 +141,7 @@ void StorageMap::removeItem(const String& key, String& oldValue)
         m_impl->map.remove(iter);
     else {
         // Implement copy-on-write semantics.
-        m_impl = m_impl->copy();
+        m_impl = Ref { m_impl }->copy();
         m_impl->map.remove(key);
     }
 

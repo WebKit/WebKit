@@ -80,7 +80,7 @@ public:
     bool isInDescriptionListDetail() const;
     bool isInDescriptionListTerm() const;
     bool isInCell() const;
-    
+
     AccessibilityUIElement elementAtPoint(int x, int y);
     AccessibilityUIElement getChildAtIndex(unsigned);
     unsigned indexOfChild(AccessibilityUIElement*);
@@ -97,7 +97,7 @@ public:
     JSRetainPtr<JSStringRef> allAttributes();
     JSRetainPtr<JSStringRef> attributesOfLinkedUIElements();
     AccessibilityUIElement linkedUIElementAtIndex(unsigned);
-    
+
     JSRetainPtr<JSStringRef> attributesOfDocumentLinks();
     JSRetainPtr<JSStringRef> attributesOfChildren();
     JSRetainPtr<JSStringRef> parameterizedAttributeNames();
@@ -156,7 +156,7 @@ public:
     bool isBusy() const;
     bool isEnabled();
     bool isRequired() const;
-    
+
     bool isFocused() const;
     bool isFocusable() const;
     bool isSelected() const;
@@ -169,7 +169,7 @@ public:
     void setSelectedChildAtIndex(unsigned) const;
     void removeSelectionAtIndex(unsigned) const;
     void clearSelectedChildren() const;
-    
+
     bool isExpanded() const;
     bool isChecked() const;
     bool isVisible() const;
@@ -191,7 +191,7 @@ public:
 
     // CSS3-speech properties.
     JSRetainPtr<JSStringRef> speakAs();
-    
+
     // Table-specific attributes
     JSRetainPtr<JSStringRef> attributesOfColumnHeaders();
     JSRetainPtr<JSStringRef> attributesOfRowHeaders();
@@ -227,7 +227,7 @@ public:
     bool isGrabbed() const;
     // A space concatentated string of all the drop effects.
     JSRetainPtr<JSStringRef> ariaDropEffects() const;
-    
+
     // Parameterized attributes
     int lineForIndex(int);
     JSRetainPtr<JSStringRef> rangeForLine(int);
@@ -249,16 +249,16 @@ public:
     void increaseTextSelection();
     void decreaseTextSelection();
     AccessibilityUIElement linkedElement();
-    
+
     bool scrollPageUp();
     bool scrollPageDown();
     bool scrollPageLeft();
     bool scrollPageRight();
-    
+
     bool hasTextEntryTrait();
     AccessibilityUIElement fieldsetAncestorElement();
     JSRetainPtr<JSStringRef> attributedStringForElement();
-    
+
     bool isDeletion();
     bool isInsertion();
     bool isFirstItemInSuggestion();
@@ -325,7 +325,7 @@ public:
     bool addNotificationListener(JSObjectRef functionCallback);
     // Make sure you call remove, because you can't rely on objects being deallocated in a timely fashion.
     void removeNotificationListener();
-    
+
 #if PLATFORM(IOS_FAMILY)
     JSRetainPtr<JSStringRef> traits();
     JSRetainPtr<JSStringRef> identifier();
@@ -334,10 +334,10 @@ public:
     AccessibilityUIElement headerElementAtIndex(unsigned);
     // This will simulate the accessibilityDidBecomeFocused API in UIKit.
     void assistiveTechnologySimulatedFocus();
-    
+
     bool isTextArea() const;
     bool isSearchField() const;
-    
+
     bool isMarkAnnotation() const;
 
     AccessibilityTextMarkerRange textMarkerRangeMatchesTextNearMarkers(JSStringRef, AccessibilityTextMarker*, AccessibilityTextMarker*);
@@ -346,11 +346,11 @@ public:
 #if PLATFORM(COCOA)
     JSRetainPtr<JSStringRef> embeddedImageDescription() const;
 #endif
-    
+
 #if PLATFORM(MAC)
     // Returns an ordered list of supported actions for an element.
     JSRetainPtr<JSStringRef> supportedActions();
-    
+
     // A general description of the elements making up multiscript pre/post objects.
     JSRetainPtr<JSStringRef> mathPostscriptsDescription() const;
     JSRetainPtr<JSStringRef> mathPrescriptsDescription() const;
@@ -363,7 +363,7 @@ private:
 #if !PLATFORM(COCOA)
     PlatformUIElement m_element;
 #endif
-    
+
 #if PLATFORM(COCOA)
     RetainPtr<id> m_element;
     RetainPtr<id> m_notificationHandler;

@@ -4,64 +4,50 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
-
 #include "src/gpu/graphite/DrawContext.h"
 
-#include "include/core/SkColorSpace.h"
-#include "include/core/SkPixmap.h"
-#include "src/core/SkColorData.h"
-
-#include "include/gpu/graphite/Context.h"
+#include "include/core/SkAlphaType.h"
+#include "include/core/SkColorType.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkSize.h"
+#include "include/gpu/GpuTypes.h"
 #include "include/gpu/graphite/Recorder.h"
+#include "include/private/base/SkAssert.h"
+#include "src/base/SkEnumBitMask.h"
+#include "src/core/SkColorData.h"
 #include "src/core/SkTraceEvent.h"
 #include "src/gpu/SkBackingFit.h"
+#include "src/gpu/Swizzle.h"
 #include "src/gpu/graphite/AtlasProvider.h"
-#include "src/gpu/graphite/Buffer.h"
 #include "src/gpu/graphite/Caps.h"
-#include "src/gpu/graphite/CommandBuffer.h"
 #include "src/gpu/graphite/ComputePathAtlas.h"
-#include "src/gpu/graphite/ContextPriv.h"
 #include "src/gpu/graphite/DrawList.h"
+#include "src/gpu/graphite/DrawOrder.h"
+#include "src/gpu/graphite/DrawParams.h"
 #include "src/gpu/graphite/DrawPass.h"
+#include "src/gpu/graphite/Image_Graphite.h"
 #include "src/gpu/graphite/Log.h"
-#include "src/gpu/graphite/RasterPathAtlas.h"
 #include "src/gpu/graphite/RecorderPriv.h"
 #include "src/gpu/graphite/RenderPassDesc.h"
 #include "src/gpu/graphite/ResourceTypes.h"
-#include "src/gpu/graphite/SharedContext.h"
 #include "src/gpu/graphite/TextureProxy.h"
 #include "src/gpu/graphite/TextureProxyView.h"
-#include "src/gpu/graphite/compute/DispatchGroup.h"
-#include "src/gpu/graphite/geom/BoundsManager.h"
-#include "src/gpu/graphite/geom/Geometry.h"
+#include "src/gpu/graphite/TextureUtils.h"
+#include "src/gpu/graphite/geom/Rect.h"
 #include "src/gpu/graphite/task/ComputeTask.h"
-#include "src/gpu/graphite/task/CopyTask.h"
 #include "src/gpu/graphite/task/DrawTask.h"
 #include "src/gpu/graphite/task/RenderPassTask.h"
+#include "src/gpu/graphite/task/Task.h"
 #include "src/gpu/graphite/task/UploadTask.h"
-#include "src/gpu/graphite/text/TextAtlasManager.h"
+
+#include <cstdint>
+#include <utility>
 
 namespace skgpu::graphite {
 
-namespace {
-
-// Discarding content on floating point textures can leave nans as the prior color for a pixel,
-// in which case hardware blending (when enabled) will fail even if the src, dst coefficients
-// and coverage would produce the unmodified src value.
-bool discard_op_should_use_clear(SkColorType ct) {
-    switch(ct) {
-        case kRGBA_F16Norm_SkColorType:
-        case kRGBA_F16_SkColorType:
-        case kRGBA_F32_SkColorType:
-        case kA16_float_SkColorType:
-        case kR16G16_float_SkColorType:
-            return true;
-        default:
-            return false;
-    }
-}
-
-} // anonymous namespace
+class PaintParams;
+class Renderer;
+enum class DepthStencilFlags : int;
 
 sk_sp<DrawContext> DrawContext::Make(const Caps* caps,
                                      sk_sp<TextureProxy> target,
@@ -92,18 +78,6 @@ sk_sp<DrawContext> DrawContext::Make(const Caps* caps,
     return sk_sp<DrawContext>(new DrawContext(caps, std::move(target), imageInfo, props));
 }
 
-namespace {
-DstReadStrategy determine_msaa_dstReadStrategy(DstReadStrategy singleSampledStrategy) {
-    // TODO(b/390458117): Vulkan is currently the only backend to utilize
-    // DstReadStrategy::kReadFromInput. However, it does not yet support reading from multisampled
-    // textures as input attachments. So, we must fall back to using texture copies when
-    // multisampling. Once Vulkan supports dst reads for multisampled targets, we can consolidate to
-    // using one shared dst read strategy for all targets regardless of sample count.
-    return singleSampledStrategy == DstReadStrategy::kReadFromInput ? DstReadStrategy::kTextureCopy
-                                                                    : singleSampledStrategy;
-}
-} // anonymous namespace
-
 DrawContext::DrawContext(const Caps* caps,
                          sk_sp<TextureProxy> target,
                          const SkImageInfo& ii,
@@ -111,13 +85,15 @@ DrawContext::DrawContext(const Caps* caps,
         : fTarget(std::move(target))
         , fImageInfo(ii)
         , fSurfaceProps(props)
-        , fSingleSampleDstReadStrategy(caps->getDstReadStrategy())
-        , fMSAADstReadStrategy(determine_msaa_dstReadStrategy(fSingleSampleDstReadStrategy))
+        , fDstReadStrategy(caps->getDstReadStrategy())
+        , fSupportsHardwareAdvancedBlend(caps->supportsHardwareAdvancedBlending())
+        , fAdvancedBlendsRequireBarrier(caps->blendEquationSupport() ==
+                                            Caps::BlendEquationSupport::kAdvancedNoncoherent)
         , fCurrentDrawTask(sk_make_sp<DrawTask>(fTarget))
         , fPendingDraws(std::make_unique<DrawList>())
         , fPendingUploads(std::make_unique<UploadList>()) {
     // Must determine a valid strategy to use should a dst texture read be required.
-    SkASSERT(fSingleSampleDstReadStrategy != DstReadStrategy::kNoneRequired);
+    SkASSERT(fDstReadStrategy != DstReadStrategy::kNoneRequired);
 
     if (!caps->isTexturable(fTarget->textureInfo())) {
         fReadView = {}; // Presumably this DrawContext is rendering into a swap chain
@@ -132,39 +108,27 @@ DrawContext::DrawContext(const Caps* caps,
 DrawContext::~DrawContext() = default;
 
 void DrawContext::clear(const SkColor4f& clearColor) {
-    this->discard();
-
-    fPendingLoadOp = LoadOp::kClear;
-    SkPMColor4f pmColor = clearColor.premul();
-    fPendingClearColor = pmColor.array();
+    this->resetForClearOrDiscard();
+    fPendingDraws->reset(LoadOp::kClear, clearColor);
 }
 
 void DrawContext::discard() {
+    this->resetForClearOrDiscard();
+    fPendingDraws->reset(LoadOp::kDiscard);
+}
+
+void DrawContext::resetForClearOrDiscard() {
     // Non-loading operations on a fully lazy target can corrupt data beyond the DrawContext's
     // region so should be avoided.
     SkASSERT(!fTarget->isFullyLazy());
 
-    // A fullscreen clear or discard will overwrite anything that came before, so clear the DrawList
     // NOTE: Eventually the current DrawTask should be reset, once there are no longer implicit
     // dependencies on atlas tasks between DrawContexts. When that's resolved, the only tasks in the
     // current DrawTask are those that directly impact the target, which becomes irrelevant with the
     // clear op overwriting it. For now, preserve the previous tasks that might include atlas
     // uploads that are not explicitly shared between DrawContexts.
-    if (fPendingDraws->renderStepCount() > 0) {
-        fPendingDraws = std::make_unique<DrawList>();
-    }
     if (fComputePathAtlas) {
         fComputePathAtlas->reset();
-    }
-
-    if (discard_op_should_use_clear(fImageInfo.colorType())) {
-        // In theory the clear color shouldn't matter since a discardable state should be fully
-        // overwritten by later draws, but if a previous call to clear() had injected bad data,
-        // the discard should not inherit it.
-        fPendingClearColor = {0.f, 0.f, 0.f, 0.f};
-        fPendingLoadOp = LoadOp::kClear;
-    } else {
-        fPendingLoadOp = LoadOp::kDiscard;
     }
 }
 
@@ -173,27 +137,49 @@ void DrawContext::recordDraw(const Renderer* renderer,
                              const Geometry& geometry,
                              const Clip& clip,
                              DrawOrder ordering,
-                             const PaintParams* paint,
+                             UniquePaintParamsID paintID,
+                             SkEnumBitMask<DstUsage> dstUsage,
+                             PipelineDataGatherer* gatherer,
                              const StrokeStyle* stroke) {
-    SkASSERT(SkIRect::MakeSize(this->imageInfo().dimensions()).contains(clip.scissor()));
-    fPendingDraws->recordDraw(renderer, localToDevice, geometry, clip, ordering, paint, stroke);
+    SkASSERTF(SkIRect::MakeSize(this->imageInfo().dimensions()).contains(clip.scissor()),
+              "Image %dx%d, scissor %d,%d,%d,%d",
+              this->imageInfo().width(), this->imageInfo().height(),
+              clip.scissor().left(), clip.scissor().top(),
+              clip.scissor().right(), clip.scissor().bottom());
+
+    // Determine whether a draw requies a barrier
+    BarrierType barrierBeforeDraws = BarrierType::kNone;
+    if (fDstReadStrategy == DstReadStrategy::kReadFromInput &&
+        (dstUsage & DstUsage::kDstReadRequired)) {
+        barrierBeforeDraws = BarrierType::kReadDstFromInput;
+    }
+    if ((dstUsage & DstUsage::kAdvancedBlend) &&
+        fSupportsHardwareAdvancedBlend && fAdvancedBlendsRequireBarrier) {
+        // A draw should only read from the dst OR use hardware for advanced blend modes.
+        SkASSERT(!(dstUsage & DstUsage::kDstReadRequired));
+        barrierBeforeDraws = BarrierType::kAdvancedNoncoherentBlend;
+    }
+
+    fPendingDraws->recordDraw(renderer, localToDevice, geometry, clip, ordering, paintID, dstUsage,
+                              barrierBeforeDraws, gatherer, stroke);
 }
 
 bool DrawContext::recordUpload(Recorder* recorder,
                                sk_sp<TextureProxy> targetProxy,
                                const SkColorInfo& srcColorInfo,
                                const SkColorInfo& dstColorInfo,
-                               const std::vector<MipLevel>& levels,
+                               const UploadSource& source,
                                const SkIRect& dstRect,
                                std::unique_ptr<ConditionalUploadContext> condContext) {
     // Our caller should have clipped to the bounds of the surface already.
     SkASSERT(targetProxy->isFullyLazy() ||
              SkIRect::MakeSize(targetProxy->dimensions()).contains(dstRect));
+    SkASSERT(source.isValid());
     return fPendingUploads->recordUpload(recorder,
                                          std::move(targetProxy),
                                          srcColorInfo,
                                          dstColorInfo,
-                                         levels,
+                                         source,
                                          dstRect,
                                          std::move(condContext));
 }
@@ -239,7 +225,7 @@ void DrawContext::flush(Recorder* recorder) {
         fComputePathAtlas->reset();
     } // else platform doesn't support compute or atlas was never initialized.
 
-    if (fPendingDraws->renderStepCount() == 0 && fPendingLoadOp != LoadOp::kClear) {
+    if (!fPendingDraws->modifiesTarget()) {
         // Nothing will be rasterized to the target that warrants a RenderPassTask, but we preserve
         // any added uploads or compute tasks since those could also affect the target w/o
         // rasterizing anything directly.
@@ -252,27 +238,20 @@ void DrawContext::flush(Recorder* recorder) {
     const bool drawsRequireMSAA = fPendingDraws->drawsRequireMSAA();
     const SkEnumBitMask<DepthStencilFlags> dsFlags = fPendingDraws->depthStencilFlags();
     // Determine the optimal dst read strategy for the drawpass given pending draw characteristics
-    const DstReadStrategy drawPassDstReadStrategy =
-            fPendingDraws->drawsReadDst() ? this->dstReadStrategy(fPendingDraws->drawsRequireMSAA())
-                                          : DstReadStrategy::kNoneRequired;
+    const DstReadStrategy drawPassDstReadStrategy = fPendingDraws->drawsReadDst()
+                                                            ? this->dstReadStrategy()
+                                                            : DstReadStrategy::kNoneRequired;
 
     // Convert the pending draws and load/store ops into a DrawPass that will be executed after
     // the collected uploads and compute dispatches.
     // TODO: At this point, there's only ever one DrawPass in a RenderPassTask to a target. When
     // subpasses are implemented, they will either be collected alongside fPendingDraws or added
     // to the RenderPassTask separately.
-    std::unique_ptr<DrawPass> pass = DrawPass::Make(recorder,
-                                                    std::move(fPendingDraws),
-                                                    fTarget,
-                                                    this->imageInfo(),
-                                                    std::make_pair(fPendingLoadOp, fPendingStoreOp),
-                                                    fPendingClearColor,
-                                                    drawPassDstReadStrategy);
-    fPendingDraws = std::make_unique<DrawList>();
-    // Now that there is content drawn to the target, that content must be loaded on any subsequent
-    // render pass.
-    fPendingLoadOp = LoadOp::kLoad;
-    fPendingStoreOp = StoreOp::kStore;
+    std::unique_ptr<DrawPass> pass = fPendingDraws->snapDrawPass(recorder,
+                                                                 fTarget,
+                                                                 this->imageInfo(),
+                                                                 drawPassDstReadStrategy);
+    SkASSERT(!fPendingDraws->modifiesTarget()); // Should be drained into `pass`.
 
     if (pass) {
         SkASSERT(fTarget.get() == pass->target());
@@ -284,27 +263,22 @@ void DrawContext::flush(Recorder* recorder) {
             drawPassDstReadStrategy == DstReadStrategy::kTextureCopy) {
             TRACE_EVENT_INSTANT0("skia.gpu", "DrawPass requires dst copy",
                                  TRACE_EVENT_SCOPE_THREAD);
-
-            // TODO: Right now this assert is ensuring that the dstCopy will be texturable since it
-            // uses the same texture info as fTarget. Ideally, if fTarget were not texturable but
-            // still readable, we would perform a fallback to a compatible texturable info. We also
-            // should decide whether or not a copy-as-draw fallback is necessary here too. All of
-            // this is handled inside Image::Copy() except we would need it to expose the task in
-            // order to link it correctly.
-            SkASSERT(recorder->priv().caps()->isTexturable(fTarget->textureInfo()));
-            // Use approx size for better reuse.
-            SkISize dstCopyTextureSize = GetApproxSize(dstReadPixelBounds.size());
-            dstCopy = TextureProxy::Make(recorder->priv().caps(),
-                                         recorder->priv().resourceProvider(),
-                                         dstCopyTextureSize,
-                                         fTarget->textureInfo(),
-                                         "DstCopyTexture",
-                                         skgpu::Budgeted::kYes);
+            sk_sp<Image> imageCopy = Image::Copy(
+                    recorder,
+                    this,
+                    fReadView,
+                    fImageInfo.colorInfo(),
+                    dstReadPixelBounds,
+                    Budgeted::kYes,
+                    Mipmapped::kNo,
+                    SkBackingFit::kApprox,
+                    "DstCopy");
+            if (!imageCopy) {
+                SKGPU_LOG_W("DrawContext::flush Image::Copy failed, draw pass dropped!");
+                return;
+            }
+            dstCopy = imageCopy->textureProxyView().refProxy();
             SkASSERT(dstCopy);
-
-            // Add the copy task to initialize dstCopy before the render pass task.
-            fCurrentDrawTask->addTask(CopyTextureToTextureTask::Make(
-                    fTarget, dstReadPixelBounds, dstCopy, /*dstPoint=*/{0, 0}));
         }
 
         const Caps* caps = recorder->priv().caps();
@@ -323,17 +297,19 @@ void DrawContext::flush(Recorder* recorder) {
         passes.emplace_back(std::move(pass));
         fCurrentDrawTask->addTask(RenderPassTask::Make(std::move(passes), desc, fTarget,
                                                        std::move(dstCopy), dstReadPixelBounds));
+        if (fTarget->mipmapped() == Mipmapped::kYes) {
+            if (!GenerateMipmaps(recorder, this, fTarget, fImageInfo.colorInfo())) {
+                SKGPU_LOG_W("DrawContext::flush GenerateMipmaps failed, draw pass dropped!");
+                return;
+            }
+        }
     }
     // else pass creation failed, DrawPass will have logged why. Don't discard the previously
     // accumulated tasks, however, since they may represent operations on an atlas that other
     // DrawContexts now implicitly depend on.
 }
 
-sk_sp<Task> DrawContext::snapDrawTask(Recorder* recorder) {
-    // If flush() was explicitly called earlier and no new work was recorded, this call to flush()
-    // is a no-op and shouldn't hurt performance.
-    this->flush(recorder);
-
+sk_sp<Task> DrawContext::snapDrawTask() {
     if (!fCurrentDrawTask->hasTasks()) {
         return nullptr;
     }

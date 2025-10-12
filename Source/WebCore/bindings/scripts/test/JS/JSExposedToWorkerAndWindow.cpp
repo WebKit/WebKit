@@ -215,7 +215,7 @@ JSValue JSExposedToWorkerAndWindow::getConstructor(VM& vm, const JSGlobalObject*
 
 void JSExposedToWorkerAndWindow::destroy(JSC::JSCell* cell)
 {
-    JSExposedToWorkerAndWindow* thisObject = static_cast<JSExposedToWorkerAndWindow*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSExposedToWorkerAndWindow* thisObject = static_cast<JSExposedToWorkerAndWindow*>(cell);
     thisObject->JSExposedToWorkerAndWindow::~JSExposedToWorkerAndWindow();
 }
 
@@ -246,7 +246,7 @@ JSC_DEFINE_HOST_FUNCTION(jsExposedToWorkerAndWindowPrototypeFunction_doSomething
 
 JSC::GCClient::IsoSubspace* JSExposedToWorkerAndWindow::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSExposedToWorkerAndWindow, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSExposedToWorkerAndWindow, UseCustomHeapCellType::No>(vm, "JSExposedToWorkerAndWindow"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForExposedToWorkerAndWindow.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForExposedToWorkerAndWindow = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForExposedToWorkerAndWindow.get(); },
@@ -273,7 +273,7 @@ bool JSExposedToWorkerAndWindowOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC
 
 void JSExposedToWorkerAndWindowOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsExposedToWorkerAndWindow = static_cast<JSExposedToWorkerAndWindow*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsExposedToWorkerAndWindow = static_cast<JSExposedToWorkerAndWindow*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsExposedToWorkerAndWindow->protectedWrapped().ptr(), jsExposedToWorkerAndWindow);
 }
@@ -286,7 +286,9 @@ extern "C" { extern void (*const __identifier("??_7ExposedToWorkerAndWindow@WebC
 #else
 extern "C" { extern void* _ZTVN7WebCore24ExposedToWorkerAndWindowE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, ExposedToWorkerAndWindow>, void>> static inline void verifyVTable(ExposedToWorkerAndWindow* ptr) {
+template<std::same_as<ExposedToWorkerAndWindow> T>
+static inline void verifyVTable(ExposedToWorkerAndWindow* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -305,8 +307,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, ExposedToWork
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<ExposedToWorkerAndWindow>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<ExposedToWorkerAndWindow>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<ExposedToWorkerAndWindow>(impl.ptr());
 #endif

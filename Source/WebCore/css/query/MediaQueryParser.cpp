@@ -187,20 +187,6 @@ const FeatureSchema* MediaQueryParser::schemaForFeatureName(const AtomString& na
     return schema;
 }
 
-const MediaProgressProviding* MediaQueryParser::mediaProgressProvidingSchemaForFeatureName(const AtomString& name, const CSSParserContext&)
-{
-    using Map = MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, const MediaProgressProviding*>;
-
-    static NeverDestroyed<Map> schemas = [&] {
-        Map map;
-        for (auto& entry : Features::allMediaProgressProvidingSchemas())
-            map.add(entry->name(), entry);
-        return map;
-    }();
-
-    return schemas->get(name);
-}
-
 void serialize(StringBuilder& builder, const MediaQueryList& list)
 {
     builder.append(interleave(list, serialize, ", "_s));

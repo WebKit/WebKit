@@ -9,6 +9,11 @@
 
 #include "modules/desktop_capture/mock_desktop_capturer_callback.h"
 
+#include <memory>
+
+#include "modules/desktop_capture/desktop_capturer.h"
+#include "modules/desktop_capture/desktop_frame.h"
+
 namespace webrtc {
 
 MockDesktopCapturerCallback::MockDesktopCapturerCallback() = default;

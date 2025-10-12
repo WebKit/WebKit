@@ -1,0 +1,6 @@
+
+
+
+FAIL option.form should look up the ancestor chain for a select element to get its form from. assert_equals: option1 expected Element node <form id="form">
+  <select id="select1"><div><option></op... but got null
+

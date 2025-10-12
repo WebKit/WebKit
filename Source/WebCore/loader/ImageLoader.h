@@ -22,12 +22,13 @@
 
 #pragma once
 
-#include "CachedImageClient.h"
-#include "CachedResourceHandle.h"
-#include "Element.h"
-#include "LoaderMalloc.h"
-#include "NodeInlines.h"
-#include "Timer.h"
+#include <WebCore/CachedImage.h>
+#include <WebCore/CachedImageClient.h>
+#include <WebCore/CachedResourceHandle.h>
+#include <WebCore/Element.h>
+#include <WebCore/LoaderMalloc.h>
+#include <WebCore/NodeDocument.h>
+#include <WebCore/Timer.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 
@@ -47,7 +48,7 @@ enum class RelevantMutation : bool { No, Yes };
 enum class LazyImageLoadState : uint8_t { None, Deferred, LoadImmediately, FullImage };
 
 class ImageLoader : public CachedImageClient {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ImageLoader, Loader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ImageLoader);
 public:
     virtual ~ImageLoader();
@@ -83,6 +84,7 @@ public:
     void decode(Ref<DeferredPromise>&&);
 
     void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
+    void setElementIsUserAgentShadowRootResource(bool value) { m_elementIsUserAgentShadowRootResource = value; }
 
     // FIXME: Delete this code. beforeload event no longer exists.
     bool hasPendingBeforeLoadEvent() const { return m_hasPendingBeforeLoadEvent; }
@@ -145,6 +147,7 @@ private:
     bool m_imageComplete : 1;
     bool m_loadManually : 1;
     bool m_elementIsProtected : 1;
+    bool m_elementIsUserAgentShadowRootResource : 1 { false };
     LazyImageLoadState m_lazyImageLoadState { LazyImageLoadState::None };
 };
 

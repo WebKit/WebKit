@@ -1,0 +1,20 @@
+PASS if they all say "PASS".
+PASS
+PASS
+PASS
+PASS
+PASS
+(repaint rects
+  (rect 8 26 20 20)
+  (rect 8 46 20 20)
+  (rect 8 66 20 20)
+  (rect 8 86 20 20)
+  (rect 8 106 20 20)
+  (rect 8 26 784 20)
+  (rect 8 46 784 20)
+  (rect 8 66 80 20)
+  (rect 8 26 784 20)
+  (rect 8 86 784 20)
+  (rect 8 106 784 20)
+)
+

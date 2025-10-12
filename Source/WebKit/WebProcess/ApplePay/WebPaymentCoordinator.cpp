@@ -114,11 +114,7 @@ bool WebPaymentCoordinator::showPaymentUI(const URL& originatingURL, const Vecto
     if (!webPage)
         return false;
 
-    auto linkIconURLStrings = linkIconURLs.map([](auto& linkIconURL) {
-        return linkIconURL.string();
-    });
-
-    auto sendResult = sendSync(Messages::WebPaymentCoordinatorProxy::ShowPaymentUI(webPage->identifier(), webPage->webPageProxyIdentifier(), originatingURL.string(), linkIconURLStrings, paymentRequest));
+    auto sendResult = sendSync(Messages::WebPaymentCoordinatorProxy::ShowPaymentUI(webPage->identifier(), webPage->webPageProxyIdentifier(), originatingURL, linkIconURLs, paymentRequest));
     auto [result] = sendResult.takeReplyOr(false);
     return result;
 }
@@ -183,44 +179,44 @@ uint64_t WebPaymentCoordinator::messageSenderDestinationID() const
 
 void WebPaymentCoordinator::validateMerchant(const String& validationURLString)
 {
-    paymentCoordinator().validateMerchant(URL { validationURLString });
+    protectedPaymentCoordinator()->validateMerchant(URL { validationURLString });
 }
 
 void WebPaymentCoordinator::didAuthorizePayment(const WebCore::Payment& payment)
 {
-    paymentCoordinator().didAuthorizePayment(payment);
+    protectedPaymentCoordinator()->didAuthorizePayment(payment);
 }
 
 void WebPaymentCoordinator::didSelectShippingMethod(const WebCore::ApplePayShippingMethod& shippingMethod)
 {
-    paymentCoordinator().didSelectShippingMethod(shippingMethod);
+    protectedPaymentCoordinator()->didSelectShippingMethod(shippingMethod);
 }
 
 void WebPaymentCoordinator::didSelectShippingContact(const WebCore::PaymentContact& shippingContact)
 {
-    paymentCoordinator().didSelectShippingContact(shippingContact);
+    protectedPaymentCoordinator()->didSelectShippingContact(shippingContact);
 }
 
 void WebPaymentCoordinator::didSelectPaymentMethod(const WebCore::PaymentMethod& paymentMethod)
 {
-    paymentCoordinator().didSelectPaymentMethod(paymentMethod);
+    protectedPaymentCoordinator()->didSelectPaymentMethod(paymentMethod);
 }
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
 
 void WebPaymentCoordinator::didChangeCouponCode(String&& couponCode)
 {
-    paymentCoordinator().didChangeCouponCode(WTFMove(couponCode));
+    protectedPaymentCoordinator()->didChangeCouponCode(WTFMove(couponCode));
 }
 
 #endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
 void WebPaymentCoordinator::didCancelPaymentSession(WebCore::PaymentSessionError&& sessionError)
 {
-    paymentCoordinator().didCancelPaymentSession(WTFMove(sessionError));
+    protectedPaymentCoordinator()->didCancelPaymentSession(WTFMove(sessionError));
 }
 
-WebCore::PaymentCoordinator& WebPaymentCoordinator::paymentCoordinator()
+Ref<WebCore::PaymentCoordinator> WebPaymentCoordinator::protectedPaymentCoordinator()
 {
     return m_webPage->corePage()->paymentCoordinator();
 }

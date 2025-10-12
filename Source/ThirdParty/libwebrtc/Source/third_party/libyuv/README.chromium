@@ -1,9 +1,10 @@
 Name: libyuv
 URL: https://chromium.googlesource.com/libyuv/libyuv/
-Version: 1897
-License: BSD
+Version: 1916
+License: BSD-3-Clause
 License File: LICENSE
 Shipped: yes
+Security Critical: yes
 
 Description:
 libyuv is an open source project that includes YUV conversion and scaling functionality.

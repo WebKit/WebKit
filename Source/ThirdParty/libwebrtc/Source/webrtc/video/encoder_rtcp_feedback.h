@@ -10,6 +10,7 @@
 #ifndef VIDEO_ENCODER_RTCP_FEEDBACK_H_
 #define VIDEO_ENCODER_RTCP_FEEDBACK_H_
 
+#include <cstdint>
 #include <functional>
 #include <vector>
 
@@ -17,9 +18,10 @@
 #include "api/sequence_checker.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "call/rtp_video_sender_interface.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtp_sequence_number_map.h"
 #include "rtc_base/system/no_unique_address.h"
+#include "rtc_base/thread_annotations.h"
 #include "video/video_stream_encoder_interface.h"
 
 namespace webrtc {

@@ -54,6 +54,10 @@ class TSymbolTableBase
     TSymbol *m_gl_MaxFragmentAtomicCounterBuffers            = nullptr;
     TSymbol *m_gl_MaxCombinedAtomicCounterBuffers            = nullptr;
     TSymbol *m_gl_MaxAtomicCounterBufferSize                 = nullptr;
+    TSymbol *m_gl_ShadingRateFlag2VerticalPixelsEXT          = nullptr;
+    TSymbol *m_gl_ShadingRateFlag4VerticalPixelsEXT          = nullptr;
+    TSymbol *m_gl_ShadingRateFlag2HorizontalPixelsEXT        = nullptr;
+    TSymbol *m_gl_ShadingRateFlag4HorizontalPixelsEXT        = nullptr;
     TSymbol *m_gl_MaxGeometryInputComponents                 = nullptr;
     TSymbol *m_gl_MaxGeometryInputComponentsES3_2            = nullptr;
     TSymbol *m_gl_MaxGeometryOutputComponents                = nullptr;

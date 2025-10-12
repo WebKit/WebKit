@@ -25,7 +25,7 @@
 
 #import <JavaScriptCore/JavaScriptCore.h>
 
-#if JSC_OBJC_API_ENABLED
+#if JSC_OBJC_API_ENABLED && defined(__OBJC__)
 
 #import <JavaScriptCore/JSContextPrivate.h>
 

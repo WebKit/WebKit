@@ -42,7 +42,7 @@
 - (int)width
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getIntegralAttribute(WebCore::HTMLNames::widthAttr);
+    return IMPL->integralAttribute(WebCore::HTMLNames::widthAttr);
 }
 
 - (void)setWidth:(int)newWidth

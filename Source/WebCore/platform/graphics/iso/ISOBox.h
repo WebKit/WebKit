@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "FourCC.h"
+#include <WebCore/FourCC.h>
 #include <wtf/Forward.h>
 #include <wtf/StdIntExtras.h>
 #include <wtf/TZoneMalloc.h>

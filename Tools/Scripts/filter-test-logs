@@ -24,13 +24,13 @@
 import os
 import argparse
 import sys
-
+import re
 
 def parser():
     parser = argparse.ArgumentParser(description='filter test output')
     parser.add_argument(
         'filter_type',
-        choices=['jsc', 'layout', 'scan-build', 'webdriver'],
+        choices=['jsc', 'layout', 'scan-build', 'webdriver', 'test262', 'minibrowser'],
         help='Choose which test logs to filter'
     )
     parser.add_argument(
@@ -45,26 +45,28 @@ def parser():
 def filter_jsc_tests(log_file_name):
     log_file = os.path.abspath(f'{log_file_name}')
     with open(log_file, 'w') as f:
-        print_line = False
+        print_all_lines = False
         for line in sys.stdin:
             f.write(line)
-            if print_line:
+            if print_all_lines:
                 print(line, end='')
             elif line.startswith('** The following JSC') or line.startswith('Results'):
-                print_line = True
+                print_all_lines = True
                 print(line, end='')
 
 
 def filter_layout_tests(log_file_name):
     log_file = os.path.abspath(f'{log_file_name}')
     with open(log_file, 'w') as f:
-        print_line = False
+        print_all_lines = False
         for line in sys.stdin:
-            f.write(line)
-            if print_line:
+            match = re.search(r'[\uD800-\uDFFF]', line)
+            if not match:
+                f.write(line)
+            if print_all_lines:
                 print(line, end='')
             elif line.startswith('=> Results') or 'Exiting early' in line or 'leaks found' in line:
-                print_line = True
+                print_all_lines = True
                 print(line, end='')
 
 
@@ -83,17 +85,45 @@ def filter_scan_build(log_file_name):
                 print_all_lines = True
                 print(line, end='')
 
+
 def filter_webdriver_tests(log_file_name):
     log_file = os.path.abspath(f'{log_file_name}')
     with open(log_file, 'w') as f:
-        print_line = False
+        print_all_lines = False
         for line in sys.stdin:
             f.write(line)
-            if print_line:
+            if print_all_lines:
                 print(line, end='')
             if 'tests ran as expected' in line:
-                print_line = True
+                print_all_lines = True
                 print(line, end='')
+
+
+def filter_test262(log_file_name):
+    log_file = os.path.abspath(f'{log_file_name}')
+    with open(log_file, 'w') as f:
+        print_all_lines = False
+        for line in sys.stdin:
+            f.write(line)
+            if print_all_lines or line.startswith('! NEW FAIL'):
+                print(line, end='')
+            if 'TESTS SUMMARY---' in line:
+                print_all_lines = True
+                print(line, end='')
+
+
+def filter_minibrowser_tests(log_file_name):
+    log_file = os.path.abspath(f'{log_file_name}')
+    with open(log_file, 'w') as f:
+        print_all_lines = False
+        for line in sys.stdin:
+            f.write(line)
+            if print_all_lines:
+                print(line, end='')
+            if 'Bundle passed tests on all this' in line:
+                print_all_lines = True
+                print(line, end='')
+
 
 def main():
     args = parser()
@@ -105,6 +135,10 @@ def main():
         filter_scan_build(args.output)
     elif args.filter_type == 'webdriver':
         filter_webdriver_tests(args.output)
+    elif args.filter_type == 'test262':
+        filter_test262(args.output)
+    elif args.filter_type == 'minibrowser':
+        filter_minibrowser_tests(args.output)
 
 
 if __name__ == '__main__':

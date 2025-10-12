@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: [object MessageEvent]
-CONSOLE MESSAGE: [object MessageEvent]
-CONSOLE MESSAGE: [object MessageEvent]
 
 PASS Reloaded same-host top-level form POSTs are strictly same-site
 PASS Reloaded subdomain top-level form POSTs are strictly same-site

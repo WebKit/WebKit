@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,13 +25,17 @@
 
 #pragma once
 
-#include "Debugger.h"
-#include "EntryFrame.h"
-#include "FuzzerAgent.h"
-#include "ProfilerDatabase.h"
-#include "SideDataRepository.h"
-#include "VM.h"
-#include "Watchdog.h"
+#include <JavaScriptCore/Debugger.h>
+#include <JavaScriptCore/EntryFrame.h>
+#include <JavaScriptCore/FuzzerAgent.h>
+#include <JavaScriptCore/ProfilerDatabase.h>
+#include <JavaScriptCore/SideDataRepository.h>
+#include <JavaScriptCore/VM.h>
+#include <JavaScriptCore/Watchdog.h>
+
+#if ENABLE(C_LOOP)
+#include "CLoopStackInlines.h"
+#endif
 
 namespace JSC {
 
@@ -50,21 +54,21 @@ inline ActiveScratchBufferScope::~ActiveScratchBufferScope()
         m_scratchBuffer->setActiveLength(0);
 }
 
-bool VM::ensureStackCapacityFor(Register* newTopOfStack)
+bool VM::ensureJSStackCapacityFor(Register* newTopOfStack)
 {
 #if !ENABLE(C_LOOP)
-    return newTopOfStack >= m_softStackLimit;
+    return newTopOfStack >= softStackLimit();
 #else
-    return ensureStackCapacityForCLoop(newTopOfStack);
+    return cloopStack().ensureCapacityFor(newTopOfStack);
 #endif
     
 }
 
 bool VM::isSafeToRecurseSoft() const
 {
-    bool safe = isSafeToRecurse(m_softStackLimit);
+    bool safe = isSafeToRecurse(softStackLimit());
 #if ENABLE(C_LOOP)
-    safe = safe && isSafeToRecurseSoftCLoop();
+    safe = safe && cloopStack().isSafeToRecurse();
 #endif
     return safe;
 }
@@ -83,12 +87,12 @@ inline CallFrame* VM::topJSCallFrame() const
     CallFrame* frame = topCallFrame;
     if (!frame) [[unlikely]]
         return frame;
-    if (!frame->isNativeCalleeFrame() && !frame->isPartiallyInitializedFrame()) [[likely]]
+    if (!frame->isNativeCalleeFrame() && !frame->isZombieFrame()) [[likely]]
         return frame;
     EntryFrame* entryFrame = topEntryFrame;
     do {
         frame = frame->callerFrame(entryFrame);
-        ASSERT(!frame || !frame->isPartiallyInitializedFrame());
+        ASSERT(!frame || !frame->isZombieFrame());
     } while (frame && frame->isNativeCalleeFrame());
     return frame;
 }

@@ -1,4 +1,0 @@
-
-
-PASS Test that lazy-loaded images load when near viewport.
-

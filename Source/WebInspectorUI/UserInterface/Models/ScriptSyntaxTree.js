@@ -88,9 +88,9 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
         let allNodes = [];
 
         this.forEachNode((node, state) => {
-            if (node.endPosition.isBefore(position))
+            if (node.endPosition?.isBefore(position))
                 state.skipChildNodes = true;
-            else if (node.startPosition.isAfter(position))
+            else if (node.startPosition?.isAfter(position))
                 state.shouldStopEarly = true;
             else
                 allNodes.push(node);
@@ -114,13 +114,13 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
 
             // If a node's range ends before the range we're interested in starts, we don't need to search any of its
             // enclosing ranges, because, by definition, those enclosing ranges are contained within this node's range.
-            if (node.endPosition.isBefore(startPosition)) {
+            if (node.endPosition?.isBefore(startPosition)) {
                 state.skipChildNodes = true;
                 return;
             }
 
             // We are only interested in nodes whose start position is within our range.
-            if (node.startPosition.isWithin(startPosition, endPosition)) {
+            if (node.startPosition?.isWithin(startPosition, endPosition)) {
                 allNodes.push(node);
                 return;
             }
@@ -128,7 +128,7 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
             // Once we see nodes that start beyond our range, we can quit traversing the AST. We can do this safely
             // because we know the AST is traversed using depth first search, so it will traverse into enclosing ranges
             // before it traverses into adjacent ranges.
-            if (node.startPosition.isAfter(endPosition))
+            if (node.startPosition?.isAfter(endPosition))
                 state.shouldStopEarly = true;
         }
 

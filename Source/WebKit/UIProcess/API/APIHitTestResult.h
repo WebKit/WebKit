@@ -32,11 +32,6 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebCore {
 class HitTestResult;
 }
@@ -82,6 +77,7 @@ public:
     WebKit::WebPageProxy* page() { return m_page.get(); }
 
     const std::optional<WebKit::FrameInfoData>& frameInfo() const { return m_data.frameInfo; }
+    const std::optional<WebCore::FrameIdentifier> targetFrame() const { return m_data.targetFrame; }
 
     bool allowsFollowingLink() const { return m_data.allowsFollowingLink; }
 

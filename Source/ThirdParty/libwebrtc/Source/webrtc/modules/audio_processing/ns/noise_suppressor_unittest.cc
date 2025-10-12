@@ -10,14 +10,12 @@
 
 #include "modules/audio_processing/ns/noise_suppressor.h"
 
-#include <deque>
-#include <memory>
+#include <cstddef>
 #include <string>
-#include <utility>
-#include <vector>
 
+#include "modules/audio_processing/audio_buffer.h"
+#include "modules/audio_processing/ns/ns_config.h"
 #include "rtc_base/strings/string_builder.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -26,7 +24,7 @@ namespace {
 std::string ProduceDebugText(int sample_rate_hz,
                              size_t num_channels,
                              NsConfig::SuppressionLevel level) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Sample rate: " << sample_rate_hz << ", num_channels: " << num_channels
      << ", level: " << static_cast<int>(level);
   return ss.Release();
@@ -74,7 +72,7 @@ TEST(NoiseSuppressor, IdenticalChannelEffects) {
         SCOPED_TRACE(ProduceDebugText(rate, num_channels, level));
 
         const size_t num_bands = rate / 16000;
-        // const int frame_length = rtc::CheckedDivExact(rate, 100);
+        // const int frame_length = CheckedDivExact(rate, 100);
         AudioBuffer audio(rate, num_channels, rate, num_channels, rate,
                           num_channels);
         NsConfig cfg;

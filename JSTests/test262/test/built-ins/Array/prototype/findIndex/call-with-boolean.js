@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-array.prototype.findIndex
+esid: sec-array.prototype.findindex
 description: Array.prototype.findIndex applied to boolean primitive
 ---*/
 

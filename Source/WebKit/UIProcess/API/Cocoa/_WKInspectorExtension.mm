@@ -28,7 +28,6 @@
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
-#import "APISerializedScriptValue.h"
 #import "InspectorExtensionDelegate.h"
 #import "InspectorExtensionTypes.h"
 #import "JavaScriptEvaluationResult.h"

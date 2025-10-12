@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,25 +26,22 @@
 
 #pragma once
 
-#include "CSSToLengthConversionData.h"
-#include "CSSToStyleMap.h"
-#include "CascadeLevel.h"
-#include "Document.h"
-#include "FontTaggedSettings.h"
-#include "PositionArea.h"
-#include "PositionTryFallback.h"
 #include "PropertyCascade.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
-#include "StyleForVisitedLink.h"
 #include "TreeResolutionState.h"
-#include "platform/text/TextFlags.h"
+#include <WebCore/CSSToLengthConversionData.h>
+#include <WebCore/Document.h>
+#include <WebCore/FontTaggedSettings.h>
+#include <WebCore/PositionArea.h>
+#include <WebCore/PositionTryFallback.h>
+#include <WebCore/StyleForVisitedLink.h>
+#include <WebCore/TextFlags.h>
 #include <wtf/BitSet.h>
 #include <wtf/RefCountedFixedVector.h>
 
 namespace WebCore {
 
-class FilterOperations;
 class FontCascadeDescription;
 class FontSelectionValue;
 class RenderStyle;
@@ -52,25 +50,27 @@ class StyleResolver;
 class TextAutospace;
 class TextSpacingTrim;
 
-struct FontPalette;
-struct FontSizeAdjust;
-
 namespace CSSCalc {
 struct RandomCachingKey;
 }
 
-namespace CSS {
-struct AppleColorFilterProperty;
-struct FilterProperty;
-}
-
 namespace Style {
 
-class Builder;
 class BuilderState;
 struct Color;
+struct FontFeatureSettings;
+struct FontPalette;
+struct FontSizeAdjust;
+struct FontStyle;
+struct FontVariantAlternates;
+struct FontVariantEastAsian;
+struct FontVariantLigatures;
+struct FontVariantNumeric;
+struct FontVariationSettings;
+struct FontWeight;
+struct FontWidth;
 
-void maybeUpdateFontForLetterSpacing(BuilderState&, CSSValue&);
+void maybeUpdateFontForLetterSpacingOrWordSpacing(BuilderState&, CSSValue&);
 
 enum class ApplyValueType : uint8_t { Value, Initial, Inherit };
 
@@ -80,28 +80,39 @@ struct BuilderPositionTryFallback {
 };
 
 struct BuilderContext {
-    const Ref<const Document> document;
-    const RenderStyle& parentStyle;
-    const RenderStyle* rootElementStyle = nullptr;
-    RefPtr<const Element> element = nullptr;
+    const RefPtr<const Document> document { };
+    const RenderStyle* parentStyle { };
+    const RenderStyle* rootElementStyle { };
+    RefPtr<const Element> element { };
     CheckedPtr<TreeResolutionState> treeResolutionState { };
     std::optional<BuilderPositionTryFallback> positionTryFallback { };
 };
 
-class BuilderState {
+class BuilderState : public CanMakeCheckedPtr<BuilderState> {
+    WTF_MAKE_TZONE_ALLOCATED(BuilderState);
+    WTF_MAKE_NONCOPYABLE(BuilderState);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(BuilderState);
 public:
-    BuilderState(Builder&, RenderStyle&, BuilderContext&&);
+    template<typename T, class... Args> friend WTF::UniqueRef<T> WTF::makeUniqueRefWithoutFastMallocCheck(Args&&...);
 
-    Builder& builder() { return m_builder; }
+    static UniqueRef<BuilderState> create(RenderStyle& renderStyle)
+    {
+        return makeUniqueRefWithoutRefCountedCheck<BuilderState>(renderStyle);
+    }
+
+    static UniqueRef<BuilderState> create(RenderStyle& renderStyle, BuilderContext&& builderContext)
+    {
+        return makeUniqueRefWithoutRefCountedCheck<BuilderState>(renderStyle, WTFMove(builderContext));
+    }
 
     RenderStyle& style() { return m_style; }
     const RenderStyle& style() const { return m_style; }
 
-    const RenderStyle& parentStyle() const { return m_context.parentStyle; }
+    const RenderStyle& parentStyle() const { return *m_context.parentStyle; }
     const RenderStyle* rootElementStyle() const { return m_context.rootElementStyle; }
 
-    const Document& document() const { return m_context.document.get(); }
-    Ref<const Document> protectedDocument() const { return m_context.document; }
+    const Document& document() const { return *m_context.document; }
+    Ref<const Document> protectedDocument() const { return *m_context.document; }
     const Element* element() const { return m_context.element.get(); }
 
     inline void setZoom(float);
@@ -123,23 +134,17 @@ public:
     ScopeOrdinal styleScopeOrdinal() const { return m_currentProperty->styleScopeOrdinal; }
 
     RefPtr<StyleImage> createStyleImage(const CSSValue&) const;
-    FilterOperations createFilterOperations(const CSS::FilterProperty&) const;
-    FilterOperations createFilterOperations(const CSSValue&) const;
-    FilterOperations createAppleColorFilterOperations(const CSS::AppleColorFilterProperty&) const;
-    FilterOperations createAppleColorFilterOperations(const CSSValue&) const;
-    Color createStyleColor(const CSSValue&, ForVisitedLink = ForVisitedLink::No) const;
 
     const Vector<AtomString>& registeredContentAttributes() const { return m_registeredContentAttributes; }
     void registerContentAttribute(const AtomString& attributeLocalName);
 
     const CSSToLengthConversionData& cssToLengthConversionData() const { return m_cssToLengthConversionData; }
-    CSSToStyleMap& styleMap() { return m_styleMap; }
 
     void setIsBuildingKeyframeStyle() { m_isBuildingKeyframeStyle = true; }
 
     bool isAuthorOrigin() const
     {
-        return m_currentProperty && m_currentProperty->cascadeLevel == CascadeLevel::Author;
+        return m_currentProperty && m_currentProperty->origin == PropertyCascade::Origin::Author;
     }
 
     CSSPropertyID cssPropertyID() const;
@@ -171,9 +176,10 @@ public:
     void setFontDescriptionFamilies(Vector<AtomString>&);
     void setFontDescriptionIsSpecifiedFont(bool);
     void setFontDescriptionFeatureSettings(FontFeatureSettings&&);
-    void setFontDescriptionFontPalette(const FontPalette&);
+    void setFontDescriptionFontPalette(FontPalette&&);
     void setFontDescriptionFontSizeAdjust(FontSizeAdjust);
     void setFontDescriptionFontSmoothing(FontSmoothingMode);
+    void setFontDescriptionFontStyle(FontStyle);
     void setFontDescriptionFontSynthesisSmallCaps(FontSynthesisLonghandValue);
     void setFontDescriptionFontSynthesisStyle(FontSynthesisLonghandValue);
     void setFontDescriptionFontSynthesisWeight(FontSynthesisLonghandValue);
@@ -187,29 +193,35 @@ public:
     void setFontDescriptionVariantEmoji(FontVariantEmoji);
     void setFontDescriptionVariantPosition(FontVariantPosition);
     void setFontDescriptionVariationSettings(FontVariationSettings&&);
-    void setFontDescriptionWeight(FontSelectionValue);
-    void setFontDescriptionWidth(FontSelectionValue);
-    void setFontDescriptionVariantAlternates(const FontVariantAlternates&);
+    void setFontDescriptionWeight(FontWeight);
+    void setFontDescriptionWidth(FontWidth);
+    void setFontDescriptionVariantAlternates(FontVariantAlternates&&);
+    void setFontDescriptionVariantEastAsian(FontVariantEastAsian);
     void setFontDescriptionVariantEastAsianVariant(FontVariantEastAsianVariant);
     void setFontDescriptionVariantEastAsianWidth(FontVariantEastAsianWidth);
     void setFontDescriptionVariantEastAsianRuby(FontVariantEastAsianRuby);
     void setFontDescriptionKeywordSize(unsigned);
-    void setFontDescriptionVariantCommonLigatures(FontVariantLigatures);
-    void setFontDescriptionVariantDiscretionaryLigatures(FontVariantLigatures);
-    void setFontDescriptionVariantHistoricalLigatures(FontVariantLigatures);
-    void setFontDescriptionVariantContextualAlternates(FontVariantLigatures);
+    void setFontDescriptionVariantLigatures(FontVariantLigatures);
+    void setFontDescriptionVariantCommonLigatures(WebCore::FontVariantLigatures);
+    void setFontDescriptionVariantDiscretionaryLigatures(WebCore::FontVariantLigatures);
+    void setFontDescriptionVariantHistoricalLigatures(WebCore::FontVariantLigatures);
+    void setFontDescriptionVariantContextualAlternates(WebCore::FontVariantLigatures);
+    void setFontDescriptionVariantNumeric(FontVariantNumeric);
     void setFontDescriptionVariantNumericFigure(FontVariantNumericFigure);
     void setFontDescriptionVariantNumericSpacing(FontVariantNumericSpacing);
     void setFontDescriptionVariantNumericFraction(FontVariantNumericFraction);
     void setFontDescriptionVariantNumericOrdinal(FontVariantNumericOrdinal);
     void setFontDescriptionVariantNumericSlashedZero(FontVariantNumericSlashedZero);
 
-    void disableNativeAppearanceIfNeeded(CSSPropertyID, CascadeLevel);
+    void disableNativeAppearanceIfNeeded(CSSPropertyID, PropertyCascade::Origin);
 
 private:
-    // See the comment in maybeUpdateFontForLetterSpacing() about why this needs to be a friend.
-    friend void maybeUpdateFontForLetterSpacing(BuilderState&, CSSValue&);
+    // See the comment in maybeUpdateFontForLetterSpacingOrWordSpacing() about why this needs to be a friend.
+    friend void maybeUpdateFontForLetterSpacingOrWordSpacing(BuilderState&, CSSValue&);
     friend class Builder;
+
+    BuilderState(RenderStyle&);
+    BuilderState(RenderStyle&, BuilderContext&&);
 
     void adjustStyleForInterCharacterRuby();
 
@@ -220,19 +232,16 @@ private:
     void updateFontForZoomChange();
     void updateFontForGenericFamilyChange();
     void updateFontForOrientationChange();
-
-    Builder& m_builder;
-
-    CSSToStyleMap m_styleMap;
+    void updateFontForSizeChange();
 
     RenderStyle& m_style;
     BuilderContext m_context;
 
     const CSSToLengthConversionData m_cssToLengthConversionData;
 
-    UncheckedKeyHashSet<AtomString> m_appliedCustomProperties;
-    UncheckedKeyHashSet<AtomString> m_inProgressCustomProperties;
-    UncheckedKeyHashSet<AtomString> m_inCycleCustomProperties;
+    HashSet<AtomString> m_appliedCustomProperties;
+    HashSet<AtomString> m_inProgressCustomProperties;
+    HashSet<AtomString> m_inCycleCustomProperties;
     WTF::BitSet<cssPropertyIDEnumValueCount> m_inProgressProperties;
     WTF::BitSet<cssPropertyIDEnumValueCount> m_invalidAtComputedValueTimeProperties;
 

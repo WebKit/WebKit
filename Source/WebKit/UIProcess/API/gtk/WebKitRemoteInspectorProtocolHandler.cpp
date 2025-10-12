@@ -48,25 +48,16 @@ public:
     {
     }
 
-    void didPostMessage(WebPageProxy& page, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&& jsMessage) override
+    void didPostMessage(WebPageProxy& page, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&& jsMessage, CompletionHandler<void(Expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler) override
     {
-        Ref serializedScriptValue = API::SerializedScriptValue::createFromWireBytes(jsMessage.wireBytes());
-        String message = serializedScriptValue->internalRepresentation().toString();
+        String message = jsMessage.toString();
         Vector<String> tokens = message.split(':');
         if (tokens.size() != 3)
-            return;
+            return completionHandler(makeUnexpected(String()));
 
         URL requestURL = URL({ }, page.pageLoadState().url());
         m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), parseIntegerAllowingTrailingJunk<uint64_t>(tokens[0]).value_or(0), parseIntegerAllowingTrailingJunk<uint64_t>(tokens[1]).value_or(0), tokens[2]);
-    }
-
-    bool supportsAsyncReply() override
-    {
-        return false;
-    }
-    
-    void didPostMessageWithAsyncReply(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&&, WTF::Function<void(Expected<JavaScriptEvaluationResult, String>&&)>&&) override
-    {
+        return completionHandler(makeUnexpected(String()));
     }
 
     ~ScriptMessageClient() { }

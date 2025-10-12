@@ -11,6 +11,7 @@
 #ifndef TEST_VIDEO_CODEC_TESTER_H_
 #define TEST_VIDEO_CODEC_TESTER_H_
 
+#include <cstdint>
 #include <limits>
 #include <map>
 #include <memory>
@@ -18,15 +19,20 @@
 #include <string>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/environment/environment.h"
 #include "api/numerics/samples_stats_counter.h"
-#include "api/test/metrics/metric.h"
 #include "api/test/metrics/metrics_logger.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/frequency.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "api/video/encoded_image.h"
 #include "api/video/resolution.h"
+#include "api/video_codecs/scalability_mode.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_factory.h"
 

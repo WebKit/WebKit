@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "DirectEvalExecutable.h"
+#include <JavaScriptCore/DirectEvalExecutable.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringHash.h>

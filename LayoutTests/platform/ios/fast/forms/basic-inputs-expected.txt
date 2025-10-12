@@ -32,23 +32,23 @@ layer at (0,0) size 800x600
           text run at (0,300) width 109: "and the letter \"b\""
         RenderBR {BR} at (108,300) size 1x19
         RenderBR {BR} at (0,320) size 0x19
-      RenderBlock {DIV} at (10,350) size 450x47 [border: (1px solid #FF0000)]
+      RenderBlock {DIV} at (10,350) size 450x44 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,1) size 8x19
           text run at (1,1) width 8: "a"
-        RenderTextControl {INPUT} at (8,2) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-        RenderText {#text} at (162,1) size 29x19
-          text run at (162,1) width 29: "text "
-        RenderText {#text} at (343,1) size 20x19
-          text run at (343,1) width 13: "b "
-          text run at (355,1) width 8: "a"
-        RenderTextControl {INPUT} at (1,24) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-          RenderFlexibleBox {DIV} at (6,3) size 143x15
+        RenderTextControl {INPUT} at (8,2) size 154x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+        RenderText {#text} at (161,1) size 29x19
+          text run at (161,1) width 29: "text "
+        RenderText {#text} at (341,1) size 20x19
+          text run at (341,1) width 13: "b "
+          text run at (353,1) width 8: "a"
+        RenderTextControl {INPUT} at (1,23) size 154x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+          RenderFlexibleBox {DIV} at (6,3) size 142x14
             RenderBlock {DIV} at (0,0) size 142x14
-        RenderText {#text} at (155,23) size 66x20
-          text run at (155,23) width 66: "password "
-        RenderText {#text} at (373,23) size 9x20
-          text run at (373,23) width 9: "b"
-      RenderBlock {DIV} at (10,406) size 450x25 [border: (1px solid #FF0000)]
+        RenderText {#text} at (154,22) size 66x19
+          text run at (154,22) width 66: "password "
+        RenderText {#text} at (371,22) size 9x19
+          text run at (371,22) width 9: "b"
+      RenderBlock {DIV} at (10,404) size 450x24 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,3) size 8x19
           text run at (1,3) width 8: "a"
         RenderBlock {INPUT} at (10,4) size 17x16 [bgcolor=#FFFFFF03]
@@ -57,7 +57,7 @@ layer at (0,0) size 800x600
         RenderBlock {INPUT} at (95,4) size 17x16 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#FFFFFF03]
         RenderText {#text} at (113,3) size 9x19
           text run at (113,3) width 9: "b"
-      RenderBlock {DIV} at (10,440) size 450x25 [border: (1px solid #FF0000)]
+      RenderBlock {DIV} at (10,438) size 450x24 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,3) size 8x19
           text run at (1,3) width 8: "a"
         RenderBlock {INPUT} at (10,4) size 17x16 [bgcolor=#FFFFFF03]
@@ -66,25 +66,25 @@ layer at (0,0) size 800x600
         RenderBlock {INPUT} at (66,4) size 17x16 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#FFFFFF03]
         RenderText {#text} at (84,3) size 9x19
           text run at (84,3) width 9: "b"
-layer at (33,363) size 141x14 scrollWidth 161
-  RenderBlock {DIV} at (6,3) size 143x15
+layer at (32,363) size 142x14 scrollWidth 161
+  RenderBlock {DIV} at (6,3) size 142x14
     RenderText {#text} at (0,0) size 160x14
       text run at (0,0) width 160: "foobarbazfoobarbazfoobarbaz"
-layer at (26,386) size 142x14 backgroundClip at (26,386) size 141x14 clip at (26,386) size 141x14
+layer at (25,384) size 142x14
   RenderBlock {DIV} at (0,0) size 142x14
     RenderText {#text} at (0,0) size 21x14
       text run at (0,0) width 21: "\x{F79A}\x{F79A}\x{F79A}"
-layer at (209,360) size 153x21
-  RenderTextControl {INPUT} at (190,2) size 154x22 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-layer at (215,363) size 139x14
-  RenderBlock {DIV} at (6,3) size 141x15
+layer at (208,360) size 152x20
+  RenderTextControl {INPUT} at (189,2) size 153x20 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+layer at (214,363) size 140x14
+  RenderBlock {DIV} at (6,3) size 140x14
     RenderText {#text} at (0,0) size 17x14
       text run at (0,0) width 17: "foo"
-layer at (238,382) size 153x22
-  RenderTextControl {INPUT} at (220,24) size 154x22 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-    RenderFlexibleBox {DIV} at (6,3) size 141x15
+layer at (237,381) size 152x20
+  RenderTextControl {INPUT} at (219,23) size 153x20 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+    RenderFlexibleBox {DIV} at (6,3) size 140x14
       RenderBlock {DIV} at (0,0) size 140x14
-layer at (245,386) size 140x14
+layer at (243,384) size 140x14
   RenderBlock {DIV} at (0,0) size 140x14
     RenderText {#text} at (0,0) size 21x14
       text run at (0,0) width 21: "\x{F79A}\x{F79A}\x{F79A}"

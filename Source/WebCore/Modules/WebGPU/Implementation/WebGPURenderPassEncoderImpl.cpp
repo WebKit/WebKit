@@ -51,17 +51,17 @@ RenderPassEncoderImpl::~RenderPassEncoderImpl() = default;
 
 void RenderPassEncoderImpl::setPipeline(const RenderPipeline& renderPipeline)
 {
-    wgpuRenderPassEncoderSetPipeline(m_backing.get(), protectedConvertToBackingContext()->convertToBacking(renderPipeline));
+    wgpuRenderPassEncoderSetPipeline(m_backing.get(), m_convertToBackingContext->convertToBacking(renderPipeline));
 }
 
 void RenderPassEncoderImpl::setIndexBuffer(const Buffer& buffer, IndexFormat indexFormat, std::optional<Size64> offset, std::optional<Size64> size)
 {
-    wgpuRenderPassEncoderSetIndexBuffer(m_backing.get(), protectedConvertToBackingContext()->convertToBacking(buffer), protectedConvertToBackingContext()->convertToBacking(indexFormat), offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
+    wgpuRenderPassEncoderSetIndexBuffer(m_backing.get(), m_convertToBackingContext->convertToBacking(buffer), m_convertToBackingContext->convertToBacking(indexFormat), offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
 }
 
 void RenderPassEncoderImpl::setVertexBuffer(Index32 slot, const Buffer* buffer, std::optional<Size64> offset, std::optional<Size64> size)
 {
-    wgpuRenderPassEncoderSetVertexBuffer(m_backing.get(), slot, buffer ? protectedConvertToBackingContext()->convertToBacking(*buffer) : nullptr, offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
+    wgpuRenderPassEncoderSetVertexBuffer(m_backing.get(), slot, buffer ? m_convertToBackingContext->convertToBacking(*buffer) : nullptr, offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
 }
 
 void RenderPassEncoderImpl::draw(Size32 vertexCount, std::optional<Size32> instanceCount,
@@ -80,18 +80,18 @@ void RenderPassEncoderImpl::drawIndexed(Size32 indexCount, std::optional<Size32>
 
 void RenderPassEncoderImpl::drawIndirect(const Buffer& indirectBuffer, Size64 indirectOffset)
 {
-    wgpuRenderPassEncoderDrawIndirect(m_backing.get(), protectedConvertToBackingContext()->convertToBacking(indirectBuffer), indirectOffset);
+    wgpuRenderPassEncoderDrawIndirect(m_backing.get(), m_convertToBackingContext->convertToBacking(indirectBuffer), indirectOffset);
 }
 
 void RenderPassEncoderImpl::drawIndexedIndirect(const Buffer& indirectBuffer, Size64 indirectOffset)
 {
-    wgpuRenderPassEncoderDrawIndexedIndirect(m_backing.get(), protectedConvertToBackingContext()->convertToBacking(indirectBuffer), indirectOffset);
+    wgpuRenderPassEncoderDrawIndexedIndirect(m_backing.get(), m_convertToBackingContext->convertToBacking(indirectBuffer), indirectOffset);
 }
 
 void RenderPassEncoderImpl::setBindGroup(Index32 index, const BindGroup* bindGroup,
     std::optional<Vector<BufferDynamicOffset>>&& dynamicOffsets)
 {
-    wgpuRenderPassEncoderSetBindGroup(m_backing.get(), index, bindGroup ? protectedConvertToBackingContext()->convertToBacking(*bindGroup) : nullptr, WTFMove(dynamicOffsets));
+    wgpuRenderPassEncoderSetBindGroup(m_backing.get(), index, bindGroup ? m_convertToBackingContext->convertToBacking(*bindGroup) : nullptr, WTFMove(dynamicOffsets));
 }
 
 void RenderPassEncoderImpl::setBindGroup(Index32, const BindGroup*, std::span<const uint32_t>, Size64, Size32)
@@ -129,7 +129,7 @@ void RenderPassEncoderImpl::setScissorRect(IntegerCoordinate x, IntegerCoordinat
 
 void RenderPassEncoderImpl::setBlendConstant(Color color)
 {
-    auto backingColor = protectedConvertToBackingContext()->convertToBacking(color);
+    auto backingColor = m_convertToBackingContext->convertToBacking(color);
 
     wgpuRenderPassEncoderSetBlendConstant(m_backing.get(), &backingColor);
 }
@@ -152,10 +152,10 @@ void RenderPassEncoderImpl::endOcclusionQuery()
 void RenderPassEncoderImpl::executeBundles(Vector<Ref<RenderBundle>>&& renderBundles)
 {
     auto backingBundles = renderBundles.map([&](auto renderBundle) {
-        return protectedConvertToBackingContext()->convertToBacking(renderBundle.get());
+        return m_convertToBackingContext->convertToBacking(renderBundle.get());
     });
 
-    wgpuRenderPassEncoderExecuteBundles(m_backing.get(), backingBundles.size(), backingBundles.data());
+    wgpuRenderPassEncoderExecuteBundles(m_backing.get(), backingBundles.size(), backingBundles.span().data());
 }
 
 void RenderPassEncoderImpl::end()

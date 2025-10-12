@@ -573,3 +573,7 @@ c7f336958e7af6162c20ddc84d67c7dfa9826910 *av1-1-b8-16-intra_only-intrabc-extreme
 4d1ad6d3070268ccb000d7fc3ae0f5a9447bfe82 *test_input_w1h1.yuv
 ad9942a073e245585c93f764ea299382a65939a7 *crowd_run_360p_10_150f.y4m
 9c2aa2d0f63f706f775bf661dfa81e8bb3089d8b *wikipedia_420_360p_60f.y4m
+9e4d2ba84ba62f7ea4b617a13af5db9c39e7f0f9 *screendata.1920_1080.y4m
+79ae6f87ddde75a8bfbc47251a6aefcc7c3f996b *av1.rawfile
+5605058cf45cc959c34c8407fad9b9ff2ec7ca28 *SDR_Animal_oqo7.y4m
+234e498cc29b8f4bb4f0fbaeda867fbefbddcaa8 *SDR_Health_rtd0_720p.y4m

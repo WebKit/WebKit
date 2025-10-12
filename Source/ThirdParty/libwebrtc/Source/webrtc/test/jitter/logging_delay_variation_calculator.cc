@@ -10,8 +10,14 @@
 
 #include "test/jitter/logging_delay_variation_calculator.h"
 
-#include "api/test/metrics/global_metrics_logger_and_exporter.h"
-#include "rtc_base/logging.h"
+#include <cstdint>
+#include <optional>
+
+#include "api/test/metrics/metric.h"
+#include "api/units/data_size.h"
+#include "api/units/timestamp.h"
+#include "api/video/video_frame_type.h"
+#include "test/jitter/delay_variation_calculator.h"
 
 namespace webrtc {
 namespace test {

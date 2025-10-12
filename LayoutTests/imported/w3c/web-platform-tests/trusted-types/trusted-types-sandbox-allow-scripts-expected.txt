@@ -1,0 +1,4 @@
+
+PASS window.trustedTypes.createPolicy() in a sandboxed page with allow-scripts.
+PASS Default Trusted Types policy in a sandboxed page with allow-scripts.
+

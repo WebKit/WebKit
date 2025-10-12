@@ -1,7 +1,8 @@
-<!DOCTYPE HTML>
+<!DOCTYPE HTML> <!-- webkit-test-runner [ PointerLockEnabled=true ] -->
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 </head>
 <body>
 <div id="host"><span id="target" tabindex=0>Click here</span></div>
@@ -10,6 +11,7 @@
 description('Test pointerLockElement is the node in the same tree as the context object.<br>'
     + 'To manually test, click on "Click here" below.');
 window.jsTestIsAsync = true;
+window.testRunner?.setHasMouseDeviceForTesting(true);
 
 shadowHost = document.getElementById('host');
 shadowRoot = shadowHost.attachShadow({mode: 'closed'});
@@ -24,14 +26,23 @@ target.onclick = function () {
     target.requestPointerLock();
 }
 
-function clickElement(element) {
-    eventSender.mouseMoveTo(element.offsetLeft + 5, element.offsetTop + 5);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+function requestPointerLock(element) {
+    // webkit.org/b/285901 EventSender.mouse[Up|Down|MoveTo] do not work on iOS
+    if (UIHelper.isIOSFamily()) {
+        shouldBe("document.pointerLockElement", "null");
+        shouldBe("shadowRoot.pointerLockElement", "null");
+        internals.withUserGesture(() => {
+            element.requestPointerLock();
+        });
+    } else {
+        eventSender.mouseMoveTo(element.offsetLeft + 5, element.offsetTop + 5);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
 }
 
 if (window.eventSender)
-    clickElement(target);
+    requestPointerLock(target);
 
 let state = 0;
 document.addEventListener('pointerlockchange', function () {
@@ -53,6 +64,5 @@ document.addEventListener('pointerlockchange', function () {
 });
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

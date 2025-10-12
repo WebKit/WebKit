@@ -12,7 +12,6 @@ rtc_library("flat_containers_internal") {
   sources = [
     "flat_tree.cc",
     "flat_tree.h",
-    "identity.h",
     "invoke.h",
     "move_only_int.h",
   ]
@@ -49,7 +48,9 @@ rtc_library("unittests") {
     ":flat_map",
     ":flat_set",
     "../../test:test_support",
-    "//testing/gmock:gmock",
-    "//testing/gtest:gtest",
+    "//testing/gmock",
+    "//testing/gtest",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
 }

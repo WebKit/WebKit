@@ -4,39 +4,17 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Properly handle the case of U+005C REVERSE SOLIDUS U+000D CARRIAGE RETURN at the end of source text being tokenized, in the middle of a string or template literal, where the next code point in memory (outside the bounds of the source text) is U+000A LINE FEED
+info: bugzilla.mozilla.org/show_bug.cgi?id=1476409
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 1476409;
-var summary =
-  "Properly handle the case of U+005C REVERSE SOLIDUS U+000D CARRIAGE RETURN " +
-  "at the end of source text being tokenized, in the middle of a string or " +
-  "template literal, where the next code point in memory (outside the bounds " +
-  "of the source text) is U+000A LINE FEED";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 function expectSyntaxError(code)
 {
-  try
-  {
+  assert.throws(SyntaxError, function() {
     eval(code);
-    throw new Error("didn't throw");
-  }
-  catch (e)
-  {
-    assert.sameValue(e instanceof SyntaxError, true,
-             "got " + e.name + ", expected SyntaxError");
-  }
+  });
 }
 
 // The fundamental requirements of this test:
@@ -87,7 +65,3 @@ function template()
   expectSyntaxError(containsBadTemplateLiteral.substr(2, 53));
 }
 template();
-
-/******************************************************************************/
-
-print("Tests complete");

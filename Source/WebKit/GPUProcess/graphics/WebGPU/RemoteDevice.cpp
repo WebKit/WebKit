@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,7 +86,7 @@
 #include <WebCore/WebGPUXRBinding.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_streamConnection)
 
 namespace WebKit {
 
@@ -107,32 +107,19 @@ RemoteDevice::RemoteDevice(GPUConnectionToWebProcess& gpuConnectionToWebProcess,
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_gpu(gpu)
 {
-    protectedStreamConnection()->startReceivingMessages(*this, Messages::RemoteDevice::messageReceiverName(), m_identifier.toUInt64());
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteDevice::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteDevice::~RemoteDevice() = default;
 
-RefPtr<IPC::Connection> RemoteDevice::connection() const
-{
-    RefPtr connection = m_gpuConnectionToWebProcess.get();
-    if (!connection)
-        return nullptr;
-    return &connection->connection();
-}
-
 void RemoteDevice::stopListeningForIPC()
 {
-    protectedStreamConnection()->stopReceivingMessages(Messages::RemoteDevice::messageReceiverName(), m_identifier.toUInt64());
-}
-
-Ref<RemoteQueue> RemoteDevice::queue()
-{
-    return m_queue;
+    m_streamConnection->stopReceivingMessages(Messages::RemoteDevice::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemoteDevice::destroy()
 {
-    protectedBacking()->destroy();
+    m_backing->destroy();
 }
 
 void RemoteDevice::destruct()
@@ -143,7 +130,7 @@ void RemoteDevice::destruct()
 void RemoteDevice::createXRBinding(WebGPUIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
-    auto binding = protectedBacking()->createXRBinding();
+    auto binding = m_backing->createXRBinding();
     auto remoteBinding = RemoteXRBinding::create(*m_gpuConnectionToWebProcess.get(), *binding, objectHeap, protectedGPU(), m_streamConnection.copyRef(), identifier);
     objectHeap->addObject(identifier, remoteBinding);
 }
@@ -154,7 +141,7 @@ void RemoteDevice::createBuffer(const WebGPU::BufferDescriptor& descriptor, WebG
     auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
     MESSAGE_CHECK(convertedDescriptor);
 
-    auto buffer = protectedBacking()->createBuffer(*convertedDescriptor);
+    auto buffer = m_backing->createBuffer(*convertedDescriptor);
     MESSAGE_CHECK(buffer);
     auto remoteBuffer = RemoteBuffer::create(*buffer, objectHeap, m_streamConnection.copyRef(), protectedGPU(), descriptor.mappedAtCreation, identifier);
     objectHeap->addObject(identifier, remoteBuffer);
@@ -166,7 +153,7 @@ void RemoteDevice::createTexture(const WebGPU::TextureDescriptor& descriptor, We
     auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
     MESSAGE_CHECK(convertedDescriptor);
 
-    auto texture = protectedBacking()->createTexture(*convertedDescriptor);
+    auto texture = m_backing->createTexture(*convertedDescriptor);
     MESSAGE_CHECK(texture);
     auto remoteTexture = RemoteTexture::create(*m_gpuConnectionToWebProcess.get(), protectedGPU(), texture.releaseNonNull(), objectHeap, m_streamConnection.copyRef(), identifier);
     objectHeap->addObject(identifier, remoteTexture);
@@ -178,7 +165,7 @@ void RemoteDevice::createSampler(const WebGPU::SamplerDescriptor& descriptor, We
     auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
     MESSAGE_CHECK(convertedDescriptor);
 
-    auto sampler = protectedBacking()->createSampler(*convertedDescriptor);
+    auto sampler = m_backing->createSampler(*convertedDescriptor);
     MESSAGE_CHECK(sampler);
     auto remoteSampler = RemoteSampler::create(*sampler, objectHeap, m_streamConnection.copyRef(), protectedGPU(), identifier);
     objectHeap->addObject(identifier, remoteSampler);
@@ -198,7 +185,7 @@ void RemoteDevice::setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&& han
 
 void RemoteDevice::pauseAllErrorReporting(bool pauseErrorReporting)
 {
-    protectedBacking()->pauseAllErrorReporting(pauseErrorReporting);
+    m_backing->pauseAllErrorReporting(pauseErrorReporting);
 }
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
@@ -222,7 +209,7 @@ void RemoteDevice::importExternalTextureFromVideoFrame(const WebGPU::ExternalTex
     auto convertedDescriptor = objectHeap->convertFromBacking(descriptor, pixelBuffer);
     MESSAGE_CHECK(convertedDescriptor);
 
-    auto externalTexture = protectedBacking()->importExternalTexture(*convertedDescriptor);
+    auto externalTexture = m_backing->importExternalTexture(*convertedDescriptor);
     MESSAGE_CHECK(externalTexture);
     auto remoteExternalTexture = RemoteExternalTexture::create(*externalTexture, objectHeap, m_streamConnection.copyRef(), protectedGPU(), identifier);
     objectHeap->addObject(identifier, remoteExternalTexture);
@@ -256,7 +243,7 @@ void RemoteDevice::createBindGroupLayout(const WebGPU::BindGroupLayoutDescriptor
     auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
     MESSAGE_CHECK(convertedDescriptor);
 
-    auto bindGroupLayout = protectedBacking()->createBindGroupLayout(*convertedDescriptor);
+    auto bindGroupLayout = m_backing->createBindGroupLayout(*convertedDescriptor);
     MESSAGE_CHECK(bindGroupLayout);
     auto remoteBindGroupLayout = RemoteBindGroupLayout::create(*bindGroupLayout, objectHeap, m_streamConnection.copyRef(), protectedGPU(), identifier);
     objectHeap->addObject(identifier, remoteBindGroupLayout);
@@ -268,7 +255,7 @@ void RemoteDevice::createPipelineLayout(const WebGPU::PipelineLayoutDescriptor& 
     auto convertedDescriptor =  objectHeap->convertFromBacking(descriptor);
     MESSAGE_CHECK(convertedDescriptor);
 
-    auto pipelineLayout = protectedBacking()->createPipelineLayout(*convertedDescriptor);
+    auto pipelineLayout = m_backing->createPipelineLayout(*convertedDescriptor);
     MESSAGE_CHECK(pipelineLayout);
     auto remotePipelineLayout = RemotePipelineLayout::create(*pipelineLayout,  objectHeap, m_streamConnection.copyRef(), protectedGPU(), identifier);
     objectHeap->addObject(identifier, remotePipelineLayout);
@@ -280,7 +267,7 @@ void RemoteDevice::createBindGroup(const WebGPU::BindGroupDescriptor& descriptor
     auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
     MESSAGE_CHECK(convertedDescriptor);
 
-    auto bindGroup = protectedBacking()->createBindGroup(*convertedDescriptor);
+    auto bindGroup = m_backing->createBindGroup(*convertedDescriptor);
     MESSAGE_CHECK(bindGroup);
     auto remoteBindGroup = RemoteBindGroup::create(*bindGroup, objectHeap, m_streamConnection.copyRef(), protectedGPU(), identifier);
     objectHeap->addObject(identifier, remoteBindGroup);
@@ -292,7 +279,7 @@ void RemoteDevice::createShaderModule(const WebGPU::ShaderModuleDescriptor& desc
     auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
     MESSAGE_CHECK(convertedDescriptor);
 
-    auto shaderModule = protectedBacking()->createShaderModule(*convertedDescriptor);
+    auto shaderModule = m_backing->createShaderModule(*convertedDescriptor);
     MESSAGE_CHECK(shaderModule);
     auto remoteShaderModule = RemoteShaderModule::create(*shaderModule, objectHeap, m_streamConnection.copyRef(), protectedGPU(), identifier);
     objectHeap->addObject(identifier, remoteShaderModule);
@@ -305,7 +292,7 @@ void RemoteDevice::createComputePipeline(const WebGPU::ComputePipelineDescriptor
     auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
     MESSAGE_CHECK(convertedDescriptor);
 
-    auto computePipeline = protectedBacking()->createComputePipeline(*convertedDescriptor);
+    auto computePipeline = m_backing->createComputePipeline(*convertedDescriptor);
     MESSAGE_CHECK(computePipeline);
     auto remoteComputePipeline = RemoteComputePipeline::create(*computePipeline, objectHeap, m_streamConnection.copyRef(), protectedGPU(), identifier);
     objectHeap->addObject(identifier, remoteComputePipeline);
@@ -317,7 +304,7 @@ void RemoteDevice::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& 
     auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
     MESSAGE_CHECK(convertedDescriptor);
 
-    auto renderPipeline = protectedBacking()->createRenderPipeline(*convertedDescriptor);
+    auto renderPipeline = m_backing->createRenderPipeline(*convertedDescriptor);
     MESSAGE_CHECK(renderPipeline);
     auto remoteRenderPipeline = RemoteRenderPipeline::create(*renderPipeline, objectHeap, m_streamConnection.copyRef(), protectedGPU(), identifier);
     objectHeap->addObject(identifier, remoteRenderPipeline);
@@ -333,7 +320,7 @@ void RemoteDevice::createComputePipelineAsync(const WebGPU::ComputePipelineDescr
         return;
     }
 
-    protectedBacking()->createComputePipelineAsync(*convertedDescriptor, [callback = WTFMove(callback), objectHeap, streamConnection = m_streamConnection.copyRef(), gpu = protectedGPU(), identifier] (RefPtr<WebCore::WebGPU::ComputePipeline>&& computePipeline, String&& error) mutable {
+    m_backing->createComputePipelineAsync(*convertedDescriptor, [callback = WTFMove(callback), objectHeap, streamConnection = m_streamConnection.copyRef(), gpu = protectedGPU(), identifier] (RefPtr<WebCore::WebGPU::ComputePipeline>&& computePipeline, String&& error) mutable {
         bool result = computePipeline.get();
         if (result) {
             auto remoteComputePipeline = RemoteComputePipeline::create(computePipeline.releaseNonNull(), objectHeap, WTFMove(streamConnection), gpu, identifier);
@@ -353,7 +340,7 @@ void RemoteDevice::createRenderPipelineAsync(const WebGPU::RenderPipelineDescrip
         return;
     }
 
-    protectedBacking()->createRenderPipelineAsync(*convertedDescriptor, [callback = WTFMove(callback), objectHeap, streamConnection = m_streamConnection.copyRef(), gpu = protectedGPU(), identifier] (RefPtr<WebCore::WebGPU::RenderPipeline>&& renderPipeline, String&& error) mutable {
+    m_backing->createRenderPipelineAsync(*convertedDescriptor, [callback = WTFMove(callback), objectHeap, streamConnection = m_streamConnection.copyRef(), gpu = protectedGPU(), identifier] (RefPtr<WebCore::WebGPU::RenderPipeline>&& renderPipeline, String&& error) mutable {
         bool result = renderPipeline.get();
         if (result) {
             auto remoteRenderPipeline = RemoteRenderPipeline::create(renderPipeline.releaseNonNull(), objectHeap, WTFMove(streamConnection), gpu, identifier);
@@ -372,7 +359,7 @@ void RemoteDevice::createCommandEncoder(const std::optional<WebGPU::CommandEncod
         MESSAGE_CHECK(resultDescriptor);
         convertedDescriptor = WTFMove(resultDescriptor);
     }
-    auto commandEncoder = protectedBacking()->createCommandEncoder(convertedDescriptor);
+    auto commandEncoder = m_backing->createCommandEncoder(convertedDescriptor);
     MESSAGE_CHECK(commandEncoder);
     auto remoteCommandEncoder = RemoteCommandEncoder::create(*m_gpuConnectionToWebProcess.get(), protectedGPU(), *commandEncoder, objectHeap, m_streamConnection.copyRef(), identifier);
     objectHeap->addObject(identifier, remoteCommandEncoder);
@@ -384,7 +371,7 @@ void RemoteDevice::createRenderBundleEncoder(const WebGPU::RenderBundleEncoderDe
     auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
     MESSAGE_CHECK(convertedDescriptor);
 
-    auto renderBundleEncoder = protectedBacking()->createRenderBundleEncoder(*convertedDescriptor);
+    auto renderBundleEncoder = m_backing->createRenderBundleEncoder(*convertedDescriptor);
     MESSAGE_CHECK(renderBundleEncoder);
     auto remoteRenderBundleEncoder = RemoteRenderBundleEncoder::create(*m_gpuConnectionToWebProcess.get(), protectedGPU(), *renderBundleEncoder, objectHeap, m_streamConnection.copyRef(), identifier);
     objectHeap->addObject(identifier, remoteRenderBundleEncoder);
@@ -396,7 +383,7 @@ void RemoteDevice::createQuerySet(const WebGPU::QuerySetDescriptor& descriptor, 
     auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
     MESSAGE_CHECK(convertedDescriptor);
 
-    auto querySet = protectedBacking()->createQuerySet(*convertedDescriptor);
+    auto querySet = m_backing->createQuerySet(*convertedDescriptor);
     MESSAGE_CHECK(querySet);
     auto remoteQuerySet = RemoteQuerySet::create(*querySet, objectHeap, m_streamConnection.copyRef(), protectedGPU(), identifier);
     objectHeap->addObject(identifier, remoteQuerySet);
@@ -404,12 +391,12 @@ void RemoteDevice::createQuerySet(const WebGPU::QuerySetDescriptor& descriptor, 
 
 void RemoteDevice::pushErrorScope(WebCore::WebGPU::ErrorFilter errorFilter)
 {
-    protectedBacking()->pushErrorScope(errorFilter);
+    m_backing->pushErrorScope(errorFilter);
 }
 
 void RemoteDevice::popErrorScope(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&& callback)
 {
-    protectedBacking()->popErrorScope([callback = WTFMove(callback)] (bool success, std::optional<WebCore::WebGPU::Error>&& error) mutable {
+    m_backing->popErrorScope([callback = WTFMove(callback)] (bool success, std::optional<WebCore::WebGPU::Error>&& error) mutable {
         if (!error) {
             callback(success, std::nullopt);
             return;
@@ -427,7 +414,7 @@ void RemoteDevice::popErrorScope(CompletionHandler<void(bool, std::optional<WebG
 
 void RemoteDevice::resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&& callback)
 {
-    protectedBacking()->resolveUncapturedErrorEvent([callback = WTFMove(callback)] (bool hasUncapturedError, std::optional<WebCore::WebGPU::Error>&& error) mutable {
+    m_backing->resolveUncapturedErrorEvent([callback = WTFMove(callback)] (bool hasUncapturedError, std::optional<WebCore::WebGPU::Error>&& error) mutable {
         if (!error) {
             callback(hasUncapturedError, std::nullopt);
             return;
@@ -445,28 +432,19 @@ void RemoteDevice::resolveUncapturedErrorEvent(CompletionHandler<void(bool, std:
 
 void RemoteDevice::resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&& callback)
 {
-    protectedBacking()->resolveDeviceLostPromise([callback = WTFMove(callback)] (WebCore::WebGPU::DeviceLostReason reason) mutable {
+    m_backing->resolveDeviceLostPromise([callback = WTFMove(callback)] (WebCore::WebGPU::DeviceLostReason reason) mutable {
         callback(reason);
     });
 }
 
 void RemoteDevice::setLabel(String&& label)
 {
-    protectedBacking()->setLabel(WTFMove(label));
+    m_backing->setLabel(WTFMove(label));
 }
 
-Ref<WebCore::WebGPU::Device> RemoteDevice::protectedBacking()
-{
-    return m_backing;
-}
 Ref<WebGPU::ObjectHeap> RemoteDevice::protectedObjectHeap() const
 {
     return m_objectHeap.get();
-}
-
-Ref<IPC::StreamServerConnection> RemoteDevice::protectedStreamConnection() const
-{
-    return m_streamConnection;
 }
 
 } // namespace WebKit

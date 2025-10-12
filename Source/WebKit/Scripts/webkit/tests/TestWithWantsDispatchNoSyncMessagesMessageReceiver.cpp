@@ -40,8 +40,10 @@ namespace WebKit {
 void TestWithWantsDispatchNoSyncMessages::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithWantsDispatchNoSyncMessages::TestMessage::name())
-        return IPC::handleMessage<Messages::TestWithWantsDispatchNoSyncMessages::TestMessage>(connection, decoder, this, &TestWithWantsDispatchNoSyncMessages::testMessage);
+    if (decoder.messageName() == Messages::TestWithWantsDispatchNoSyncMessages::TestMessage::name()) {
+        IPC::handleMessage<Messages::TestWithWantsDispatchNoSyncMessages::TestMessage>(connection, decoder, this, &TestWithWantsDispatchNoSyncMessages::testMessage);
+        return;
+    }
     if (dispatchMessage(connection, decoder))
         return;
     UNUSED_PARAM(connection);
@@ -49,16 +51,15 @@ void TestWithWantsDispatchNoSyncMessages::didReceiveMessage(IPC::Connection& con
     decoder.markInvalid();
 }
 
-bool TestWithWantsDispatchNoSyncMessages::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+void TestWithWantsDispatchNoSyncMessages::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     Ref protectedThis { *this };
     if (dispatchSyncMessage(connection, decoder, replyEncoder))
-        return true;
+        return;
     UNUSED_PARAM(connection);
     UNUSED_PARAM(replyEncoder);
     RELEASE_LOG_ERROR(IPC, "Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()).characters(), decoder.destinationID());
     decoder.markInvalid();
-    return false;
 }
 
 } // namespace WebKit

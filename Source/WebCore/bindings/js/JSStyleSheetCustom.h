@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "CSSImportRule.h"
-#include "CSSStyleSheet.h"
-#include "JSCSSRuleCustom.h"
-#include "JSNodeCustom.h"
-#include "WebCoreOpaqueRootInlines.h"
+#include <WebCore/CSSImportRule.h>
+#include <WebCore/CSSStyleSheet.h>
+#include <WebCore/JSCSSRuleCustom.h>
+#include <WebCore/JSNodeCustom.h>
+#include <WebCore/WebCoreOpaqueRootInlines.h>
 
 namespace WebCore {
 

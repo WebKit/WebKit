@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "GCSegmentedArray.h"
+#include <JavaScriptCore/GCSegmentedArray.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

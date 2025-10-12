@@ -35,6 +35,7 @@
 #include "JSTrustedScriptURL.h"
 #include "SVGNames.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptWrappableInlines.h"
 #include "TrustedType.h"
 #include "TrustedTypePolicyOptions.h"
 #include "XLinkNames.h"
@@ -56,7 +57,7 @@ TrustedTypePolicyFactory::TrustedTypePolicyFactory(ScriptExecutionContext& conte
 
 ExceptionOr<Ref<TrustedTypePolicy>> TrustedTypePolicyFactory::createPolicy(ScriptExecutionContext& context, const String& policyName, const TrustedTypePolicyOptions& options)
 {
-    auto csp = context.checkedContentSecurityPolicy();
+    CheckedPtr csp = context.contentSecurityPolicy();
     ASSERT(csp);
 
     AllowTrustedTypePolicy policyAllowed = csp->allowTrustedTypesPolicy(policyName, m_createdPolicyNames.contains(policyName));
@@ -131,5 +132,7 @@ String TrustedTypePolicyFactory::getPropertyType(const String& tagName, const St
 
     return nullString();
 }
+
+TrustedTypePolicyFactory::~TrustedTypePolicyFactory() = default;
 
 }

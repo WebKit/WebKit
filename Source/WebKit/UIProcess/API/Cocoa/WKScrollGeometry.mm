@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKScrollGeometry.h"
 
+#import <wtf/cocoa/TypeCastsCocoa.h>
+
 #if PLATFORM(IOS_FAMILY)
 #define CocoaEdgeInsets UIEdgeInsets
 #define CocoaEdgeInsetsEqual UIEdgeInsetsEqualToEdgeInsets

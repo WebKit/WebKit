@@ -28,6 +28,55 @@ namespace libyuv {
 extern "C" {
 #endif
 
+#ifdef HAS_SCALEARGBFILTERCOLS_RVV
+void ScaleARGBFilterCols_RVV(uint8_t* dst_argb,
+                             const uint8_t* src_argb,
+                             int dst_width,
+                             int x,
+                             int dx) {
+  assert(x >= 0);
+
+  size_t vl = __riscv_vsetvl_e32m4(dst_width);
+  vuint32m4_t vx = __riscv_vmv_v_x_u32m4(x, vl);
+  vx = __riscv_vmacc_vx_u32m4(vx, dx, __riscv_vid_v_u32m4(vl), vl);
+  do {
+    vuint32m4_t v0_argb, v1_argb;
+    vuint32m4_t v_xf0_u32, v_xf1_u32;
+    vuint8m4_t v0_argb_u8, v1_argb_u8, v_xf0_u8, v_xf1_u8;
+    vuint16m8_t _v0_argb_u16, v_row_u16;
+    // idx is x >> 16
+    vuint32m4_t v_xi_bindex = __riscv_vsrl_vx_u32m4(vx, 14, vl);
+    v_xi_bindex = __riscv_vand_vx_u32m4(v_xi_bindex, ~3u, vl);
+    // Read Packed ARGB w/ byte index.
+    __riscv_vluxseg2ei32_v_u32m4(&v0_argb, &v1_argb, (const uint32_t*)src_argb,
+                                 v_xi_bindex, vl);
+    // xf = (x >> 9) & 0x7f;
+    v_xf0_u32 = __riscv_vsrl_vx_u32m4(vx, 9, vl);
+    v_xf0_u32 = __riscv_vand_vx_u32m4(v_xf0_u32, 0x7f, vl);
+    vx = __riscv_vadd_vx_u32m4(vx, vl * dx, vl);
+    // duplicate v_xf0_u32[i] from {0,0,0,f[i]} to {f[i],f[i],f[i],f[i]}
+    v_xf0_u32 = __riscv_vmul_vx_u32m4(v_xf0_u32, 0x01010101, vl);
+    // TODO(fbarchard): Replace 0x7f ^ f with 128-f.  bug=607.
+    v_xf1_u32 = __riscv_vxor_vx_u32m4(v_xf0_u32, 0x7f7f7f7f, vl);
+
+    v0_argb_u8 = __riscv_vreinterpret_v_u32m4_u8m4(v0_argb);
+    v1_argb_u8 = __riscv_vreinterpret_v_u32m4_u8m4(v1_argb);
+    v_xf0_u8 = __riscv_vreinterpret_v_u32m4_u8m4(v_xf0_u32);
+    v_xf1_u8 = __riscv_vreinterpret_v_u32m4_u8m4(v_xf1_u32);
+    // ((a) * (0x7f ^ f) + (b)*f) >> 7
+    _v0_argb_u16 = __riscv_vwmulu_vv_u16m8(v0_argb_u8, v_xf1_u8, 4 * vl);
+    v_row_u16 =
+        __riscv_vwmaccu_vv_u16m8(_v0_argb_u16, v1_argb_u8, v_xf0_u8, 4 * vl);
+
+    __riscv_vse8_v_u8m4(dst_argb, __riscv_vnsrl_wx_u8m4(v_row_u16, 7, 4 * vl),
+                        4 * vl);
+    dst_width -= vl;
+    dst_argb += 4 * vl;
+    vl = __riscv_vsetvl_e32m4(dst_width);
+  } while (dst_width > 0);
+}
+#endif
+
 #ifdef HAS_SCALEADDROW_RVV
 void ScaleAddRow_RVV(const uint8_t* src_ptr, uint16_t* dst_ptr, int src_width) {
   size_t w = (size_t)src_width;
@@ -46,6 +95,7 @@ void ScaleAddRow_RVV(const uint8_t* src_ptr, uint16_t* dst_ptr, int src_width) {
 #endif
 
 #ifdef HAS_SCALEARGBROWDOWN2_RVV
+// TODO: Reimplement similar to linear with vlseg2 so u64 is not required
 void ScaleARGBRowDown2_RVV(const uint8_t* src_argb,
                            ptrdiff_t src_stride,
                            uint8_t* dst_argb,
@@ -100,7 +150,7 @@ void ScaleARGBRowDown2Linear_RVV(const uint8_t* src_argb,
   const uint32_t* src = (const uint32_t*)(src_argb);
   // NOTE: To match behavior on other platforms, vxrm (fixed-point rounding mode
   // register) is set to round-to-nearest-up mode(0).
-  asm volatile ("csrwi vxrm, 0");
+  asm volatile("csrwi vxrm, 0");
   do {
     vuint8m4_t v_odd, v_even, v_dst;
     vuint32m4_t v_odd_32, v_even_32;
@@ -165,7 +215,7 @@ void ScaleARGBRowDown2Box_RVV(const uint8_t* src_argb,
   const uint32_t* src1 = (const uint32_t*)(src_argb + src_stride);
   // NOTE: To match behavior on other platforms, vxrm (fixed-point rounding mode
   // register) is set to round-to-nearest-up mode(0).
-  asm volatile ("csrwi vxrm, 0");
+  asm volatile("csrwi vxrm, 0");
   do {
     vuint8m4_t v_row0_odd, v_row0_even, v_row1_odd, v_row1_even, v_dst;
     vuint16m8_t v_row0_sum, v_row1_sum, v_dst_16;
@@ -262,7 +312,7 @@ void ScaleARGBRowDownEvenBox_RVV(const uint8_t* src_argb,
   const int stride_byte = src_stepx * 4;
   // NOTE: To match behavior on other platforms, vxrm (fixed-point rounding mode
   // register) is set to round-to-nearest-up mode(0).
-  asm volatile ("csrwi vxrm, 0");
+  asm volatile("csrwi vxrm, 0");
   do {
     vuint8m4_t v_row0_low, v_row0_high, v_row1_low, v_row1_high, v_dst;
     vuint16m8_t v_row0_sum, v_row1_sum, v_sum;
@@ -340,7 +390,7 @@ void ScaleRowDown2Linear_RVV(const uint8_t* src_ptr,
   (void)src_stride;
   // NOTE: To match behavior on other platforms, vxrm (fixed-point rounding mode
   // register) is set to round-to-nearest-up mode(0).
-  asm volatile ("csrwi vxrm, 0");
+  asm volatile("csrwi vxrm, 0");
   do {
     vuint8m4_t v_s0, v_s1, v_dst;
     size_t vl = __riscv_vsetvl_e8m4(w);
@@ -395,7 +445,7 @@ void ScaleRowDown2Box_RVV(const uint8_t* src_ptr,
   size_t w = (size_t)dst_width;
   // NOTE: To match behavior on other platforms, vxrm (fixed-point rounding mode
   // register) is set to round-to-nearest-up mode(0).
-  asm volatile ("csrwi vxrm, 0");
+  asm volatile("csrwi vxrm, 0");
   do {
     size_t vl = __riscv_vsetvl_e8m4(w);
     vuint8m4_t v_s0, v_s1, v_t0, v_t1;
@@ -528,7 +578,7 @@ void ScaleRowDown4Box_RVV(const uint8_t* src_ptr,
   size_t w = (size_t)dst_width;
   // NOTE: To match behavior on other platforms, vxrm (fixed-point rounding mode
   // register) is set to round-to-nearest-up mode(0).
-  asm volatile ("csrwi vxrm, 0");
+  asm volatile("csrwi vxrm, 0");
   do {
     vuint8m2_t v_s0, v_s1, v_s2, v_s3;
     vuint8m2_t v_t0, v_t1, v_t2, v_t3;
@@ -698,7 +748,7 @@ void ScaleRowDown34_0_Box_RVV(const uint8_t* src_ptr,
   const uint8_t* t = src_ptr + src_stride;
   // NOTE: To match behavior on other platforms, vxrm (fixed-point rounding mode
   // register) is set to round-to-nearest-up mode(0).
-  asm volatile ("csrwi vxrm, 0");
+  asm volatile("csrwi vxrm, 0");
   do {
     vuint8m2_t v_s0, v_s1, v_s2, v_s3;
     vuint16m4_t v_t0_u16, v_t1_u16, v_t2_u16, v_t3_u16;
@@ -827,7 +877,7 @@ void ScaleRowDown34_1_Box_RVV(const uint8_t* src_ptr,
   const uint8_t* t = src_ptr + src_stride;
   // NOTE: To match behavior on other platforms, vxrm (fixed-point rounding mode
   // register) is set to round-to-nearest-up mode(0).
-  asm volatile ("csrwi vxrm, 0");
+  asm volatile("csrwi vxrm, 0");
   do {
     vuint8m2_t v_s0, v_s1, v_s2, v_s3;
     vuint8m2_t v_ave0, v_ave1, v_ave2, v_ave3;
@@ -1490,7 +1540,7 @@ void ScaleUVRowDown2Linear_RVV(const uint8_t* src_uv,
   (void)src_stride;
   // NOTE: To match behavior on other platforms, vxrm (fixed-point rounding mode
   // register) is set to round-to-nearest-up mode(0).
-  asm volatile ("csrwi vxrm, 0");
+  asm volatile("csrwi vxrm, 0");
   do {
     vuint8m4_t v_u0v0, v_u1v1, v_avg;
     vuint16m4_t v_u0v0_16, v_u1v1_16;
@@ -1559,7 +1609,7 @@ void ScaleUVRowDown2Box_RVV(const uint8_t* src_uv,
   size_t w = (size_t)dst_width;
   // NOTE: To match behavior on other platforms, vxrm (fixed-point rounding mode
   // register) is set to round-to-nearest-up mode(0).
-  asm volatile ("csrwi vxrm, 0");
+  asm volatile("csrwi vxrm, 0");
   do {
     vuint8m2_t v_u0_row0, v_v0_row0, v_u1_row0, v_v1_row0;
     vuint8m2_t v_u0_row1, v_v0_row1, v_u1_row1, v_v1_row1;

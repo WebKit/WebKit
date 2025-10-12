@@ -144,7 +144,6 @@ extern NSString *WebConsoleMessageJSMessageSource;
 extern NSString *WebConsoleMessageNetworkMessageSource;
 extern NSString *WebConsoleMessageConsoleAPIMessageSource;
 extern NSString *WebConsoleMessageStorageMessageSource;
-extern NSString *WebConsoleMessageAppCacheMessageSource;
 extern NSString *WebConsoleMessageRenderingMessageSource;
 extern NSString *WebConsoleMessageCSSMessageSource;
 extern NSString *WebConsoleMessageSecurityMessageSource;

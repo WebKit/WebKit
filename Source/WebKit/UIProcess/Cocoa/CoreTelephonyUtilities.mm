@@ -34,6 +34,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 
 #import <pal/cocoa/CoreTelephonySoftLink.h>
@@ -79,9 +80,9 @@ bool shouldAllowAutoFillForCellularIdentifiers(const URL& topURL)
     }
 
 #if HAVE(DELAY_INIT_LINKING)
-    static NeverDestroyed cachedClient = adoptNS([[CoreTelephonyClient alloc] initWithQueue:dispatch_get_main_queue()]);
+    static NeverDestroyed cachedClient = adoptNS([[CoreTelephonyClient alloc] initWithQueue:mainDispatchQueueSingleton()]);
 #else
-    static NeverDestroyed cachedClient = adoptNS([PAL::allocCoreTelephonyClientInstance() initWithQueue:dispatch_get_main_queue()]);
+    static NeverDestroyed cachedClient = adoptNS([PAL::allocCoreTelephonyClientInstance() initWithQueue:mainDispatchQueueSingleton()]);
 #endif
     auto client = cachedClient->get();
 

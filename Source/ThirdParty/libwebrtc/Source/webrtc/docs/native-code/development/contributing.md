@@ -81,6 +81,33 @@ for gclient to find the `.gitcookies` file.
 
 [example CL link]: https://webrtc-review.googlesource.com/c/src/+/53121
 
+### Stacked Diffs
+Stacked diffs are an advanced feature to "stack" multiple gerrit changes on top
+of each other. They show up as separate changes in gerrit codereview but the relationship
+is retained. To create a stacked diff:
+
+* Assuming you are on the main branch:
+    * `git checkout -b my-first-work-branch`
+* Make changes, build locally, run tests locally
+    * `git commit -am "Changed x, and it is working"`
+    * `git cl upload`
+* Checkout the second branch from the current branch:
+    * `git checkout -b my-second-work-branch`
+* Set the `upstream` branch to the first branch:
+    * `git cl upstream my-first-work-branch`
+* Make changes, build locally, run tests locally
+    * `git commit -am "Changed y, and it is working too"`
+    * `git cl upload`
+* You can now run tests or ask for review of my-second-work-branch independently
+  of my-first-work-branch.
+* You can go back to the first branch, update, rebase and reupload
+  the second branch afterwards:
+    * `git rebase-update --no-fetch my-second-work-branch`
+    * `git cl upload`
+
+See https://newsletter.pragmaticengineer.com/p/stacked-diffs for an in-depth
+explanation of stacked diffs.
+
 ### Trybots
 
 If you're working a lot in WebRTC, you can apply for *try rights*. This means you

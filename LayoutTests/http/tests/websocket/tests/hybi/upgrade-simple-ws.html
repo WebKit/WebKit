@@ -22,13 +22,13 @@ function endTest()
 }
 
 var ws = new WebSocket("ws://127.0.0.1:9323/websocket/tests/hybi/simple");
-debug("Created a socket to '" + ws.URL + "'; readyState " + ws.readyState + ".");
+debug("Created a socket to '" + ws.url + "'; readyState " + ws.readyState + ".");
 debug("The 'ws' protocol should be upgraded to 'wss'. If this happens, we will connect properly and the test will succeed.");
 
 ws.onopen = function()
 {
     debug("Connected; readyState " + ws.readyState);
-    debug("Resolved URL: " + ws.URL)
+    debug("Resolved URL: " + ws.url)
 };
 
 ws.onmessage = function(messageEvent)
@@ -54,7 +54,7 @@ function timeOutCallback()
     endTest();
 }
 
-var timeoutID = setTimeout(timeOutCallback, 300);
+var timeoutID = setTimeout(timeOutCallback, 3000);
 
 </script>
 <script src="/js-test-resources/js-test-post.js"></script>

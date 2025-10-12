@@ -11,7 +11,9 @@
 #include "modules/audio_coding/audio_network_adaptor/channel_controller.h"
 
 #include <algorithm>
+#include <cstddef>
 
+#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

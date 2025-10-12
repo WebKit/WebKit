@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Color.h"
+#include <WebCore/Color.h>
 #include <optional>
 #include <wtf/Forward.h>
 #include <wtf/Hasher.h>

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Element.h"
-#include "ScrollAxis.h"
+#include <WebCore/Element.h>
+#include <WebCore/ScrollAxis.h>
 
 namespace WebCore {
 

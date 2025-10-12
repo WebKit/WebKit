@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +25,17 @@
 
 #pragma once
 
+#import <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreGraphics/CoreGraphics.h>
+
+#ifdef __cplusplus
 #include <wtf/text/WTFString.h>
+#endif
 
 #if HAVE(IOSURFACE)
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
@@ -70,6 +76,7 @@ struct CGFontHMetrics {
     int minLeftSideBearing;
     int minRightSideBearing;
 };
+typedef struct CGFontHMetrics CGFontHMetrics;
 
 typedef CF_ENUM (int32_t, CGContextDelegateCallbackName)
 {
@@ -407,18 +414,12 @@ void CGPathAddUnevenCornersRoundedRect(CGMutablePathRef, const CGAffineTransform
 bool CGFontRenderingGetFontSmoothingDisabled(void);
 CGShadingRef CGShadingCreateConic(CGColorSpaceRef, CGPoint center, CGFloat angle, CGFunctionRef);
 
-#if HAVE(CORE_GRAPHICS_GRADIENT_CREATE_WITH_OPTIONS)
 CGGradientRef CGGradientCreateWithColorComponentsAndOptions(CGColorSpaceRef, const CGFloat*, const CGFloat*, size_t, CFDictionaryRef);
 CGGradientRef CGGradientCreateWithColorsAndOptions(CGColorSpaceRef, CFArrayRef, const CGFloat*, CFDictionaryRef);
-#endif
 
-#if HAVE(CORE_GRAPHICS_PREMULTIPLIED_INTERPOLATION_GRADIENT)
 extern const CFStringRef kCGGradientInterpolatesPremultiplied;
-#endif
 
-#if HAVE(CGSTYLE_CREATE_SHADOW2)
 CGStyleRef CGStyleCreateShadow2(CGSize offset, CGFloat radius, CGColorRef);
-#endif
 #if HAVE(CGSTYLE_COLORMATRIX_BLUR)
 CGStyleRef CGStyleCreateGaussianBlur(const CGGaussianBlurStyle*);
 CGStyleRef CGStyleCreateColorMatrix(const CGColorMatrixStyle*);
@@ -464,7 +465,11 @@ CG_LOCAL bool CGIsInLockdownModeForPDF();
 CG_EXTERN void CGEnterLockdownModeForFonts();
 #endif
 
+extern CGDataProviderRef __nullable CGDataProviderCreateWithCopyOfData(const void *, size_t);
+
 WTF_EXTERN_C_END
+
+#ifdef __cplusplus
 
 inline String CGPDFDictionaryGetNameString(CGPDFDictionaryRef dictionary, ASCIILiteral key)
 {
@@ -472,3 +477,5 @@ inline String CGPDFDictionaryGetNameString(CGPDFDictionaryRef dictionary, ASCIIL
     CGPDFDictionaryGetName(dictionary, key.characters(), &value);
     return value ? String::fromUTF8(value) : String();
 }
+
+#endif // __cplusplus

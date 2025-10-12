@@ -39,7 +39,23 @@ IndexingType leastUpperBoundOfIndexingTypes(IndexingType a, IndexingType b)
     return std::max(a, b);
 }
 
-IndexingType leastUpperBoundOfIndexingTypeAndType(IndexingType indexingType, SpeculatedType type)
+bool isProvenValidTypeForIndexingShapeStorage(IndexingType indexingType, SpeculatedType type)
+{
+    ASSERT(type);
+    switch (indexingType) {
+    case ALL_INT32_INDEXING_TYPES:
+        return isInt32Speculation(type);
+    case ALL_DOUBLE_INDEXING_TYPES:
+        return isBytecodeRealNumberSpeculation(type);
+    case ALL_CONTIGUOUS_INDEXING_TYPES:
+    case ALL_ARRAY_STORAGE_INDEXING_TYPES:
+        return isSubtypeSpeculation(type, SpecBytecodeTop);
+    default:
+        return false;
+    }
+}
+
+IndexingType leastUpperBoundOfIndexingTypeAndTypeForSpeculation(IndexingType indexingType, SpeculatedType type)
 {
     if (!type)
         return indexingType;
@@ -49,11 +65,13 @@ IndexingType leastUpperBoundOfIndexingTypeAndType(IndexingType indexingType, Spe
     case ALL_INT32_INDEXING_TYPES:
         if (isInt32Speculation(type))
             return (indexingType & ~IndexingShapeMask) | Int32Shape;
+        // Even though NaN wouldn't be a valid value to store in a double array many DFG nodes will say they produce one so this somewhat lies.
         // FIXME: Should this really say that it wants a double for NaNs.
         if (isFullNumberSpeculation(type))
             return (indexingType & ~IndexingShapeMask) | DoubleShape;
         return (indexingType & ~IndexingShapeMask) | ContiguousShape;
     case ALL_DOUBLE_INDEXING_TYPES:
+        // Even though NaN wouldn't be a valid value to store in a double array many DFG nodes will say they produce one so this somewhat lies.
         // FIXME: Should this really say that it wants a double for NaNs.
         if (isFullNumberSpeculation(type))
             return indexingType;

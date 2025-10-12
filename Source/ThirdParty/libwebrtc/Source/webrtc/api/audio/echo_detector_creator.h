@@ -17,7 +17,7 @@
 namespace webrtc {
 
 // Returns an instance of the WebRTC implementation of a residual echo detector.
-// It can be provided to the webrtc::BuiltinAudioProcessingBuilder to obtain the
+// It can be provided to the BuiltinAudioProcessingBuilder to obtain the
 // usual residual echo metrics.
 scoped_refptr<EchoDetector> CreateEchoDetector();
 

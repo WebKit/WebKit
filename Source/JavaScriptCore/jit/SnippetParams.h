@@ -28,9 +28,9 @@
 
 #if ENABLE(JIT)
 
-#include "CCallHelpers.h"
-#include "SnippetReg.h"
-#include "SnippetSlowPathCalls.h"
+#include <JavaScriptCore/CCallHelpers.h>
+#include <JavaScriptCore/SnippetReg.h>
+#include <JavaScriptCore/SnippetSlowPathCalls.h>
 
 namespace JSC {
 

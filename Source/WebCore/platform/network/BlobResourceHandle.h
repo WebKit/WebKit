@@ -30,8 +30,8 @@
 
 #pragma once
 
-#include "FileStreamClient.h"
-#include "ResourceHandle.h"
+#include <WebCore/FileStreamClient.h>
+#include <WebCore/ResourceHandle.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

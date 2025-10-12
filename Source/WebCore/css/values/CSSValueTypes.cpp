@@ -25,19 +25,80 @@
 #include "config.h"
 #include "CSSValueTypes.h"
 
+#include "CSSFunctionValue.h"
 #include "CSSMarkup.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSQuadValue.h"
+#include "CSSValueList.h"
+#include "CSSValuePair.h"
+#include "CSSValuePool.h"
 
 namespace WebCore {
 namespace CSS {
 
-void Serialize<CustomIdentifier>::operator()(StringBuilder& builder, const SerializationContext&, const CustomIdentifier& value)
+void serializationForCSSCustomIdentifier(StringBuilder& builder, const SerializationContext&, const CustomIdentifier& value)
 {
-    serializeIdentifier(value.value, builder);
+    WebCore::serializeIdentifier(value.value, builder);
 }
 
-void Serialize<WTF::String>::operator()(StringBuilder& builder, const SerializationContext&, const WTF::String& value)
+void serializationForCSSString(StringBuilder& builder, const SerializationContext&, const WTF::AtomString& value)
 {
-    serializeString(value, builder);
+    WebCore::serializeString(value, builder);
+}
+
+void serializationForCSSString(StringBuilder& builder, const SerializationContext&, const WTF::String& value)
+{
+    WebCore::serializeString(value, builder);
+}
+
+Ref<CSSValue> makePrimitiveCSSValue(CSSValueID value)
+{
+    return CSSPrimitiveValue::create(value);
+}
+
+Ref<CSSValue> makePrimitiveCSSValue(const CustomIdentifier& value)
+{
+    return CSSPrimitiveValue::createCustomIdent(value.value);
+}
+
+Ref<CSSValue> makePrimitiveCSSValue(const WTF::AtomString& value)
+{
+    return CSSPrimitiveValue::create(value);
+}
+
+Ref<CSSValue> makePrimitiveCSSValue(const WTF::String& value)
+{
+    return CSSPrimitiveValue::create(value);
+}
+
+Ref<CSSValue> makeFunctionCSSValue(CSSValueID name, Ref<CSSValue>&& value)
+{
+    return CSSFunctionValue::create(name, WTFMove(value));
+}
+
+template<> Ref<CSSValue> makeCoalescingPairCSSValue<SerializationSeparatorType::Space>(Ref<CSSValue>&& first, Ref<CSSValue>&& second)
+{
+    return CSSValuePair::create(WTFMove(first), WTFMove(second));
+}
+
+template<> Ref<CSSValue> makeCoalescingQuadCSSValue<SerializationSeparatorType::Space>(Ref<CSSValue>&& first, Ref<CSSValue>&& second, Ref<CSSValue>&& third, Ref<CSSValue>&& fourth)
+{
+    return CSSQuadValue::create(WTFMove(first), WTFMove(second), WTFMove(third), WTFMove(fourth));
+}
+
+template<> Ref<CSSValue> makeListCSSValue<SerializationSeparatorType::Space>(CSSValueListBuilder&& builder)
+{
+    return CSSValueList::createSpaceSeparated(WTFMove(builder));
+}
+
+template<> Ref<CSSValue> makeListCSSValue<SerializationSeparatorType::Comma>(CSSValueListBuilder&& builder)
+{
+    return CSSValueList::createCommaSeparated(WTFMove(builder));
+}
+
+template<> Ref<CSSValue> makeListCSSValue<SerializationSeparatorType::Slash>(CSSValueListBuilder&& builder)
+{
+    return CSSValueList::createSlashSeparated(WTFMove(builder));
 }
 
 } // namespace CSS

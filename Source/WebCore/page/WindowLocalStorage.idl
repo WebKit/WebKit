@@ -25,5 +25,5 @@
 
 // https://html.spec.whatwg.org/multipage/webstorage.html#the-localstorage-attribute
 interface mixin WindowLocalStorage {
-    readonly attribute Storage localStorage;
+    [EnabledBySetting=LocalStorageEnabled] readonly attribute Storage localStorage;
 };

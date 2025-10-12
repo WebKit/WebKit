@@ -1,0 +1,50 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 108x18
+          text run at (0,0) width 108: "This is a test for "
+        RenderInline {I} at (0,0) size 762x36
+          RenderInline {A} at (107,0) size 353x18 [color=#0000EE]
+            RenderText {#text} at (107,0) size 353x18
+              text run at (107,0) width 353: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9670"
+          RenderText {#text} at (0,0) size 762x36
+            text run at (459,0) width 5: " "
+            text run at (463,0) width 299: "http://bugzilla.opendarwin.org/show_bug.cgi?"
+            text run at (0,18) width 56: "id=9670"
+        RenderText {#text} at (55,18) size 5x18
+          text run at (55,18) width 5: "."
+      RenderBlock {P} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 552x18
+          text run at (0,0) width 552: "All text should be aligned with the right edge of its container and should not overflow."
+      RenderBlock {DIV} at (0,96) size 191x56 [bgcolor=#FFFF00]
+        RenderText {#text} at (-5,0) size 196x56
+          text run at (-4,0) width 8 RTL: " "
+          text run at (3,0) width 51 RTL: "\x{5E9}\x{5EA}\x{5D4}"
+          text run at (53,0) width 9 RTL: " "
+          text run at (61,0) width 64 RTL: "\x{5E4}\x{5DC}\x{5E4}\x{5DC}?"
+          text run at (124,0) width 9 RTL: " "
+          text run at (132,0) width 59 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA}"
+          text run at (147,28) width 44 RTL: "\x{5DE}\x{5D9}\x{5E5}!"
+      RenderBlock (anonymous) at (0,152) size 784x80
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (199,66) size 0x18
+      RenderBlock {DIV} at (0,232) size 191x56 [bgcolor=#FFFF00]
+        RenderText {#text} at (-5,0) size 196x56
+          text run at (-4,0) width 195 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4} "
+          text run at (147,28) width 44 RTL: "\x{5DE}\x{5D9}\x{5E5}!"
+layer at (8,94) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,86) size 784x2 [color=#808080] [border: (1px inset #808080)]
+layer at (8,178) size 199x62 clip at (9,179) size 197x60
+  RenderTextControl {TEXTAREA} at (0,18) size 199x62 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 193x56
+      RenderText {#text} at (-3,0) size 196x56
+        text run at (-2,0) width 8 RTL: " "
+        text run at (5,0) width 51 RTL: "\x{5E9}\x{5EA}\x{5D4}"
+        text run at (55,0) width 9 RTL: " "
+        text run at (63,0) width 64 RTL: "\x{5E4}\x{5DC}\x{5E4}\x{5DC}?"
+        text run at (126,0) width 9 RTL: " "
+        text run at (134,0) width 59 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA}"
+        text run at (149,28) width 44 RTL: "\x{5DE}\x{5D9}\x{5E5}!"

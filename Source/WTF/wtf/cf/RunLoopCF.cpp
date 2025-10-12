@@ -50,7 +50,7 @@ RunLoop::RunLoop()
     : m_runLoop(CFRunLoopGetCurrent())
 {
     CFRunLoopSourceContext context = { 0, this, 0, 0, 0, 0, 0, 0, 0, performWork };
-    m_runLoopSource = adoptCF(CFRunLoopSourceCreate(kCFAllocatorDefault, 0, &context));
+    lazyInitialize(m_runLoopSource, adoptCF(CFRunLoopSourceCreate(kCFAllocatorDefault, 0, &context)));
     CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), kCFRunLoopCommonModes);
 }
 
@@ -101,14 +101,17 @@ void RunLoop::dispatch(const SchedulePairHashSet& schedulePairs, Function<void()
 
 // RunLoop::Timer
 
-RunLoop::TimerBase::TimerBase(Ref<RunLoop>&& runLoop)
+RunLoop::TimerBase::TimerBase(Ref<RunLoop>&& runLoop, ASCIILiteral description)
     : m_runLoop(WTFMove(runLoop))
+    , m_description(description)
 {
+    m_runLoop->registerTimer(*this);
 }
 
 RunLoop::TimerBase::~TimerBase()
 {
     stop();
+    m_runLoop->unregisterTimer(*this);
 }
 
 void RunLoop::TimerBase::start(Seconds interval, bool repeat)

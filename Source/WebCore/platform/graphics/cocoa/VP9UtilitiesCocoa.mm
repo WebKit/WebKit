@@ -31,11 +31,11 @@
 #import "FourCC.h"
 #import "LibWebRTCProvider.h"
 #import "MediaCapabilitiesInfo.h"
-#import "MediaSample.h"
 #import "PlatformScreen.h"
 #import "ScreenProperties.h"
 #import "SharedBuffer.h"
 #import "SystemBattery.h"
+#import "TrackInfo.h"
 #import "VideoConfiguration.h"
 #import "VideoDecoder.h"
 #import <JavaScriptCore/DataView.h>
@@ -60,6 +60,13 @@ VP9TestingOverrides& VP9TestingOverrides::singleton()
 void VP9TestingOverrides::setHardwareDecoderDisabled(std::optional<bool>&& disabled)
 {
     m_hardwareDecoderDisabled = WTFMove(disabled);
+    if (m_configurationChangedCallback)
+        m_configurationChangedCallback(false);
+}
+
+void VP9TestingOverrides::setVP9HardwareDecoderEnabledOverride(std::optional<bool>&& disabled)
+{
+    m_vp9HardwareDecoderEnabledOverride = WTFMove(disabled);
     if (m_configurationChangedCallback)
         m_configurationChangedCallback(false);
 }
@@ -141,13 +148,36 @@ void registerWebKitVP9Decoder()
     LibWebRTCProvider::registerWebKitVP9Decoder();
 }
 
+static std::optional<bool> s_vp9HardwareDecoderAvailableInProcess = { };
+void setVP9HardwareDecoderAvailableInProcess(bool value)
+{
+    ASSERT(isMainThread());
+
+    ASSERT(!s_vp9HardwareDecoderAvailableInProcess || *s_vp9HardwareDecoderAvailableInProcess == value);
+    s_vp9HardwareDecoderAvailableInProcess = value;
+}
+
+static bool internalVP9HardwareDecoderAvailableInProcess()
+{
+    ASSERT(isMainThread() || !!s_vp9HardwareDecoderAvailableInProcess);
+
+    if (!s_vp9HardwareDecoderAvailableInProcess)
+        s_vp9HardwareDecoderAvailableInProcess = canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported(kCMVideoCodecType_VP9);
+    return *s_vp9HardwareDecoderAvailableInProcess;
+}
+
 void registerSupplementalVP9Decoder()
 {
+    ASSERT(isMainThread());
+
     if (!VideoToolboxLibrary(true))
         return;
 
     if (canLoad_VideoToolbox_VTRegisterSupplementalVideoDecoderIfAvailable())
         softLink_VideoToolbox_VTRegisterSupplementalVideoDecoderIfAvailable(kCMVideoCodecType_VP9);
+
+    if (s_vp9HardwareDecoderAvailableInProcess && !*s_vp9HardwareDecoderAvailableInProcess)
+        s_vp9HardwareDecoderAvailableInProcess = { };
 }
 
 bool shouldEnableVP9Decoder()
@@ -186,7 +216,18 @@ bool vp9HardwareDecoderAvailable()
     if (auto disabledForTesting = VP9TestingOverrides::singleton().hardwareDecoderDisabled())
         return !*disabledForTesting;
 
-    return canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported(kCMVideoCodecType_VP9);
+    if (auto vp9HardwareDecoderOverride = VP9TestingOverrides::singleton().vp9HardwareDecoderEnabledOverride())
+        return *vp9HardwareDecoderOverride;
+
+    return internalVP9HardwareDecoderAvailableInProcess();
+}
+
+bool vp9HardwareDecoderAvailableInProcess()
+{
+    if (auto disabledForTesting = VP9TestingOverrides::singleton().hardwareDecoderDisabled())
+        return !*disabledForTesting;
+
+    return internalVP9HardwareDecoderAvailableInProcess();
 }
 
 static bool isVP9CodecConfigurationRecordSupported(const VPCodecConfigurationRecord& codecConfiguration)

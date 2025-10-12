@@ -1,0 +1,27 @@
+<html>
+<head>
+    <meta name="color-scheme" content="dark">
+    <script>
+        function setBackground() {
+            var textfield = document.getElementById('devolved');
+
+            if (window.internals)
+                window.internals.setAutofilledAndObscured(textfield, true);
+
+            document.body.style.backgroundColor = window.getComputedStyle(textfield).backgroundColor;
+        }
+    </script>
+    <style>
+        input {
+            margin-top: 40px;
+            display: block;
+            visibility: hidden;
+            border: none;
+        }
+    </style>
+</head>
+<body onload="setBackground()">
+    <p>This tests that background and text colors properly change for autofilled and obscured native inputs. It can only be run using WKTR.</p>
+    <input id="devolved" type="text">
+</body>
+</html>

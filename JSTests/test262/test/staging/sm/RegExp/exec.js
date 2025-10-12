@@ -4,37 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-RegExp-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  RegExp.prototype.exec doesn't get the lastIndex and ToInteger() it for non-global regular expressions when it should
+info: bugzilla.mozilla.org/show_bug.cgi?id=646490
 esid: pending
 ---*/
-var BUGNUMBER = 646490;
-var summary =
-  "RegExp.prototype.exec doesn't get the lastIndex and ToInteger() it for " +
-  "non-global regular expressions when it should";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
-
-function expectThrowTypeError(fun)
-{
-  try
-  {
-    var r = fun();
-    throw new Error("didn't throw TypeError, returned " + r);
-  }
-  catch (e)
-  {
-    assert.sameValue(e instanceof TypeError, true,
-             "didn't throw TypeError, got: " + e);
-  }
-}
 
 function checkExec(description, regex, args, obj)
 {
@@ -58,15 +32,15 @@ var exec = RegExp.prototype.exec;
 var r, res, called, obj;
 
 /* 1. Let R be this RegExp object. */
-expectThrowTypeError(function() { exec.call(null); });
-expectThrowTypeError(function() { exec.call(""); });
-expectThrowTypeError(function() { exec.call(5); });
-expectThrowTypeError(function() { exec.call({}); });
-expectThrowTypeError(function() { exec.call([]); });
-expectThrowTypeError(function() { exec.call(); });
-expectThrowTypeError(function() { exec.call(true); });
-expectThrowTypeError(function() { exec.call(Object.create(RegExp.prototype)); });
-expectThrowTypeError(function() { exec.call(Object.create(/a/)); });
+assert.throws(TypeError, function() { exec.call(null); });
+assert.throws(TypeError, function() { exec.call(""); });
+assert.throws(TypeError, function() { exec.call(5); });
+assert.throws(TypeError, function() { exec.call({}); });
+assert.throws(TypeError, function() { exec.call([]); });
+assert.throws(TypeError, function() { exec.call(); });
+assert.throws(TypeError, function() { exec.call(true); });
+assert.throws(TypeError, function() { exec.call(Object.create(RegExp.prototype)); });
+assert.throws(TypeError, function() { exec.call(Object.create(/a/)); });
 
 
 /* 2. Let S be the value of ToString(string). */
@@ -120,9 +94,9 @@ assert.sameValue(r.lastIndex, obj);
  */
 r = /b/;
 r.lastIndex = { valueOf: {}, toString: {} };
-expectThrowTypeError(function() { r.exec("foopy"); });
+assert.throws(TypeError, function() { r.exec("foopy"); });
 r.lastIndex = { valueOf: function() { throw new TypeError(); } };
-expectThrowTypeError(function() { r.exec("foopy"); });
+assert.throws(TypeError, function() { r.exec("foopy"); });
 
 
 /*
@@ -239,7 +213,3 @@ checkExec("/a(b)c/g take two", r, ["00abcd"],
  * 21. Return A.
  */
 // throughout, above (and in other tests)
-
-/******************************************************************************/
-
-print("All tests passed!");

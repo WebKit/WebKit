@@ -283,7 +283,7 @@ IMP makeRequestHandler(CGImageRef image, CGRect cropRect)
 }
 
 RemoveBackgroundSwizzler::RemoveBackgroundSwizzler(CGImageRef image, CGRect cropRect)
-    : m_removeBackgroundRequestSwizzler { PAL::getVKCRemoveBackgroundRequestHandlerClass(), @selector(performRequest:completion:), makeRequestHandler(image, cropRect) }
+    : m_removeBackgroundRequestSwizzler { PAL::getVKCRemoveBackgroundRequestHandlerClassSingleton(), @selector(performRequest:completion:), makeRequestHandler(image, cropRect) }
 {
 }
 

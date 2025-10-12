@@ -384,7 +384,10 @@ void CommandDomainBackendDispatcher::command(long protocol_requestId, RefPtr<JSO
 #pragma once
 
 #include "TestProtocolObjects.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/JSONValues.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Nonmovable.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -392,9 +395,12 @@ namespace Inspector {
 class FrontendRouter;
 
 class EventDomainFrontendDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(EventDomainFrontendDispatcher);
 public:
-    EventDomainFrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
+    EventDomainFrontendDispatcher(FrontendRouter&);
+    ~EventDomainFrontendDispatcher();
+    WTF_MAKE_NONCOPYABLE(EventDomainFrontendDispatcher);
+    WTF_MAKE_NONMOVABLE(EventDomainFrontendDispatcher);
         // Named after parameter 'parameterRequired' while generating command/event event.
         enum class ParameterRequired {
             Shared = 0,
@@ -409,7 +415,7 @@ public:
         }; // enum class ParameterOptional
     void event(Protocol::TypeDomain::Enum enumRequired, std::optional<Protocol::TypeDomain::Enum>&& opt_enumOptional, const String& parameterRequired, const String& opt_parameterOptional);
 private:
-    FrontendRouter& m_frontendRouter;
+    const CheckedRef<FrontendRouter> m_frontendRouter;
 };
 
 } // namespace Inspector
@@ -452,6 +458,10 @@ private:
 
 namespace Inspector {
 
+EventDomainFrontendDispatcher::EventDomainFrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
+
+EventDomainFrontendDispatcher::~EventDomainFrontendDispatcher() = default;
+
 void EventDomainFrontendDispatcher::event(Protocol::TypeDomain::Enum enumRequired, std::optional<Protocol::TypeDomain::Enum>&& opt_enumOptional, const String& parameterRequired, const String& opt_parameterOptional)
 {
     auto protocol_jsonMessage = JSON::Object::create();
@@ -465,7 +475,7 @@ void EventDomainFrontendDispatcher::event(Protocol::TypeDomain::Enum enumRequire
         protocol_paramsObject->setString("parameterOptional"_s, opt_parameterOptional);
     protocol_jsonMessage->setObject("params"_s, WTFMove(protocol_paramsObject));
 
-    m_frontendRouter.sendEvent(protocol_jsonMessage->toJSONString());
+    m_frontendRouter->sendEvent(protocol_jsonMessage->toJSONString());
 }
 
 } // namespace Inspector
@@ -696,7 +706,7 @@ namespace Inspector {
 
 
 class ObjCInspectorCommandDomainBackendDispatcher final : public AlternateCommandDomainBackendDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ObjCInspectorCommandDomainBackendDispatcher);
 public:
     ObjCInspectorCommandDomainBackendDispatcher(id<TestProtocolCommandDomainDomainHandler> handler) { m_delegate = handler; }
     void command(long protocol_requestId, const String& enumRequired, const String& opt_enumOptional, const String& parameterRequired, const String& opt_parameterOptional) final;

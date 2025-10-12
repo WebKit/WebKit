@@ -116,7 +116,7 @@ static bool viewIsCompositing(WindowProxy* view)
 
 inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<WindowProxy>&& view)
     : UIEventWithKeyState(EventInterfaceType::KeyboardEvent, eventTypeForKeyboardEventType(key.type()), CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes,
-        key.timestamp().approximateMonotonicTime(), view.copyRef(), 0, key.modifiers(), IsTrusted::Yes)
+        key.timestamp(), view.copyRef(), 0, key.modifiers(), IsTrusted::Yes)
     , m_underlyingPlatformEvent(makeUnique<PlatformKeyboardEvent>(key))
     , m_key(key.key())
     , m_code(key.code())
@@ -208,6 +208,18 @@ int KeyboardEvent::keyCode() const
     return charCode();
 }
 
+int KeyboardEvent::keyCodeForKeyDown() const
+{
+    ASSERT(type() == eventNames().keypressEvent);
+    if (m_keyCode)
+        return m_keyCode.value();
+
+    if (!m_underlyingPlatformEvent)
+        return 0;
+
+    return windowsVirtualKeyCodeWithoutLocation(m_underlyingPlatformEvent->windowsVirtualKeyCodeWithoutKeyPressOverride());
+}
+
 int KeyboardEvent::charCode() const
 {
     if (m_charCode)
@@ -238,6 +250,11 @@ unsigned KeyboardEvent::which() const
     if (m_which)
         return m_which.value();
     return static_cast<unsigned>(keyCode());
+}
+
+FocusEventData KeyboardEvent::focusEventData() const
+{
+    return { type(), keyIdentifier(), altKey() };
 }
 
 } // namespace WebCore

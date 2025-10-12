@@ -1,11 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: Buttons attribute on pointerdown expected 2 but got 4
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerover event Reached unreachable code
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerenter event Reached unreachable code
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerdown event Reached unreachable code
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerup event Reached unreachable code
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerout event Reached unreachable code
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerleave event Reached unreachable code
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointermove event Reached unreachable code
 
 done
 

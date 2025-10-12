@@ -27,6 +27,7 @@
 #include "CGImagePixelReader.h"
 
 #include <WebCore/Color.h>
+#include <WebCore/ColorSerialization.h>
 #include <wtf/Vector.h>
 
 namespace TestWebKitAPI {
@@ -50,6 +51,11 @@ IGNORE_WARNINGS_END
 bool CGImagePixelReader::isTransparentBlack(unsigned x, unsigned y) const
 {
     return at(x, y) == Color::transparentBlack;
+}
+
+String CGImagePixelReader::cssColorAt(unsigned x, unsigned y) const
+{
+    return WebCore::serializationForCSS(at(x, y));
 }
 
 Color CGImagePixelReader::at(unsigned x, unsigned y) const

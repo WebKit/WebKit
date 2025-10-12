@@ -38,12 +38,14 @@ class WebSocketChannelClient;
 class WebTransportSession;
 class WebTransportSessionClient;
 
-using WebTransportSessionPromise = NativePromise<Ref<WebTransportSession>, void>;
+struct WebTransportOptions;
+
+using WebTransportSessionPromise = GenericPromise;
 
 class WEBCORE_EXPORT SocketProvider : public ThreadSafeRefCounted<SocketProvider> {
 public:
     virtual RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(Document&, WebSocketChannelClient&) = 0;
-    virtual Ref<WebTransportSessionPromise> initializeWebTransportSession(ScriptExecutionContext&, WebTransportSessionClient&, const URL&) = 0;
+    virtual std::pair<RefPtr<WebTransportSession>, Ref<WebTransportSessionPromise>> initializeWebTransportSession(ScriptExecutionContext&, WebTransportSessionClient&, const URL&, const WebTransportOptions&) = 0;
 
     virtual ~SocketProvider() { };
 };

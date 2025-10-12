@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/aborting.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/bad-strategies.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/bad-underlying-sinks.any.js
@@ -23,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/count-queuing-strategy.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/error.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/floating-point-total-queue-size.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/garbage-collection.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/general.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/properties.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/reentrant-strategy.any.js

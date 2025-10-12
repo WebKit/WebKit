@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "ExceptionOr.h"
-#include "JSDOMConvert.h"
-#include "JSDOMGuardedObject.h"
-#include "ScriptExecutionContext.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSPromise.h>
+#include <WebCore/ExceptionOr.h>
+#include <WebCore/JSDOMConvert.h>
+#include <WebCore/JSDOMGuardedObject.h>
+#include <WebCore/ScriptExecutionContext.h>
 
 namespace WebCore {
 
@@ -136,7 +136,7 @@ public:
         auto& vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
-        auto jsValue = toJSNewlyCreated<IDLType>(*lexicalGlobalObject, *globalObject(), createValue(*globalObject()->scriptExecutionContext()));
+        auto jsValue = toJSNewlyCreated<IDLType>(*lexicalGlobalObject, *globalObject(), createValue(*globalObject()->protectedScriptExecutionContext()));
         DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
         resolve(*lexicalGlobalObject, jsValue);
     }
@@ -182,7 +182,7 @@ public:
     }
 
     template<typename Callback>
-    void rejectWithCallback(Callback callback, RejectAsHandled rejectAsHandled = RejectAsHandled::No)
+    void rejectWithCallback(const Callback& callback, RejectAsHandled rejectAsHandled = RejectAsHandled::No)
     {
         if (shouldIgnoreRequestToFulfill())
             return;
@@ -205,7 +205,7 @@ public:
 
     void markAsHandled() const
     {
-        deferred()->markAsHandled(globalObject());
+        deferred()->markAsHandled();
     }
 
 private:
@@ -277,7 +277,7 @@ public:
     }
 
     template<typename Callback>
-    void rejectWithCallback(Callback callback, RejectAsHandled rejectAsHandled = RejectAsHandled::No)
+    void rejectWithCallback(const Callback& callback, RejectAsHandled rejectAsHandled = RejectAsHandled::No)
     {
         m_promise->rejectWithCallback(callback, rejectAsHandled);
     }
@@ -370,7 +370,7 @@ inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject
     auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
     ASSERT(promise);
 
-    promiseFunction(lexicalGlobalObject, callFrame, DeferredPromise::create(globalObject, *promise));
+    promiseFunction(globalObject, callFrame, DeferredPromise::create(globalObject, *promise));
 
     rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise, catchScope);
     // FIXME: We could have error since any JS call can throw stack-overflow errors.
@@ -389,7 +389,7 @@ inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject
     auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
     ASSERT(promise);
 
-    functor(lexicalGlobalObject, callFrame, DeferredPromise::create(globalObject, *promise));
+    functor(globalObject, callFrame, DeferredPromise::create(globalObject, *promise));
 
     rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise, catchScope);
     // FIXME: We could have error since any JS call can throw stack-overflow errors.
@@ -412,7 +412,7 @@ inline JSC::EncodedJSValue callPromisePairFunction(JSC::JSGlobalObject& lexicalG
     auto* promise2 = JSC::JSPromise::create(vm, globalObject.promiseStructure());
     ASSERT(promise2);
 
-    auto result = functor(lexicalGlobalObject, callFrame, DeferredPromise::create(globalObject, *promise, DeferredPromise::Mode::RetainPromiseOnResolve), DeferredPromise::create(globalObject, *promise2, DeferredPromise::Mode::RetainPromiseOnResolve));
+    auto result = functor(globalObject, callFrame, DeferredPromise::create(globalObject, *promise, DeferredPromise::Mode::RetainPromiseOnResolve), DeferredPromise::create(globalObject, *promise2, DeferredPromise::Mode::RetainPromiseOnResolve));
 
     rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise, catchScope);
     rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise2, catchScope);

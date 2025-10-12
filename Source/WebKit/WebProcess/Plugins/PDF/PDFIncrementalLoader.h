@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@ OBJC_CLASS PDFDocument;
 
 namespace WebCore {
 class NetscapePlugInStreamLoader;
+class SharedBuffer;
 }
 
 namespace WebKit {
@@ -145,10 +146,10 @@ private:
     RetainPtr<PDFDocument> m_backgroundThreadDocument;
     RefPtr<Thread> m_pdfThread;
 
-    Ref<PDFPluginStreamLoaderClient> m_streamLoaderClient;
+    const Ref<PDFPluginStreamLoaderClient> m_streamLoaderClient;
 
     struct RequestData;
-    std::unique_ptr<RequestData> m_requestData;
+    const UniqueRef<RequestData> m_requestData;
 
     ThreadSafeWeakHashSet<SemaphoreWrapper> m_dataSemaphores WTF_GUARDED_BY_LOCK(m_wasPDFThreadTerminationRequestedLock);
 

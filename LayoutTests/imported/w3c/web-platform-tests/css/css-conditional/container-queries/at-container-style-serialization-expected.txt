@@ -3,7 +3,7 @@ PASS Normalize spaces
 PASS Empty declaration value - spaces
 PASS Empty declaration value
 PASS No declaration value
-PASS Unknown CSS property after 'or'
+FAIL Unknown CSS property after 'or' assert_equals: expected "style((--FOO: BAR) or ( prop: val  ))" but got "style((--FOO: BAR) or ( prop: val ))"
 PASS Not a style function with space before '('
 PASS Spaces preserved in custom property value
 PASS Original string number in custom property value

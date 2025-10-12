@@ -39,7 +39,7 @@
 
 static void swizzledPresentViewController(UIViewController *, SEL, UIViewController *, BOOL, dispatch_block_t completion)
 {
-    RunLoop::protectedMain()->dispatch([completion = makeBlockPtr(completion)] {
+    RunLoop::mainSingleton().dispatch([completion = makeBlockPtr(completion)] {
         if (completion)
             completion();
     });

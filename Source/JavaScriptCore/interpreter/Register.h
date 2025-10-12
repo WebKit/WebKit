@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
+#include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/Assertions.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/VectorTraits.h>

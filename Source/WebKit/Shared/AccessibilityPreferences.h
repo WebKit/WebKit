@@ -76,20 +76,44 @@ inline AXValueState fromWebKitAXValueState(WebKitAXValueState value)
 }
 #endif
 
+inline constexpr bool initialImageAnimationEnabled = true;
+inline constexpr bool initialShouldEnhanceTextLegibilityOverall = false;
+inline constexpr bool initialPrefersNonBlinkingCursor = false;
+#if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
+inline constexpr WebKitAXValueState initialPerAppSettingsState = WebKitAXValueState::AXValueStateEmpty;
+#endif
+
 struct AccessibilityPreferences {
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
-    WebKitAXValueState reduceMotionEnabled { WebKitAXValueState::AXValueStateEmpty };
-    WebKitAXValueState increaseButtonLegibility { WebKitAXValueState::AXValueStateEmpty };
-    WebKitAXValueState enhanceTextLegibility { WebKitAXValueState::AXValueStateEmpty };
-    WebKitAXValueState darkenSystemColors { WebKitAXValueState::AXValueStateEmpty };
-    WebKitAXValueState invertColorsEnabled { WebKitAXValueState::AXValueStateEmpty };
+    WebKitAXValueState reduceMotionEnabled { initialPerAppSettingsState };
+    WebKitAXValueState increaseButtonLegibility { initialPerAppSettingsState };
+    WebKitAXValueState enhanceTextLegibility { initialPerAppSettingsState };
+    WebKitAXValueState darkenSystemColors { initialPerAppSettingsState };
+    WebKitAXValueState invertColorsEnabled { initialPerAppSettingsState };
 
 #endif
-    bool imageAnimationEnabled { true };
-    bool enhanceTextLegibilityOverall { false };
+    bool imageAnimationEnabled { initialImageAnimationEnabled };
+    bool enhanceTextLegibilityOverall { initialShouldEnhanceTextLegibilityOverall };
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
-    bool prefersNonBlinkingCursor { false };
+    bool prefersNonBlinkingCursor { initialPrefersNonBlinkingCursor };
 #endif
 };
 
 } // namespace WebKit
+
+namespace AXPreferenceHelpers {
+#if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
+WebKit::WebKitAXValueState reduceMotionEnabled();
+WebKit::WebKitAXValueState increaseButtonLegibility();
+WebKit::WebKitAXValueState enhanceTextLegibility();
+WebKit::WebKitAXValueState darkenSystemColors();
+WebKit::WebKitAXValueState invertColorsEnabled();
+#endif // HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
+
+bool imageAnimationEnabled();
+bool enhanceTextLegibilityOverall();
+
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+bool prefersNonBlinkingCursor();
+#endif
+} // namespace AXPreferenceHelpers

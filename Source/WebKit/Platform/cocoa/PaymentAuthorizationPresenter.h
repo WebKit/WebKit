@@ -60,7 +60,7 @@ class PaymentAuthorizationPresenter : public RefCountedAndCanMakeWeakPtr<Payment
     WTF_MAKE_NONCOPYABLE(PaymentAuthorizationPresenter);
 public:
     struct Client : public AbstractRefCountedAndCanMakeWeakPtr<Client> {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Client);
 
         virtual ~Client() = default;
 
@@ -78,6 +78,7 @@ public:
 
     virtual ~PaymentAuthorizationPresenter() = default;
 
+    Client* client() { return m_client.get(); }
     RefPtr<Client> protectedClient() { return m_client.get(); }
 
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
@@ -106,6 +107,7 @@ protected:
     }
 
     virtual WKPaymentAuthorizationDelegate *platformDelegate() = 0;
+    RetainPtr<WKPaymentAuthorizationDelegate> protectedPlatformDelegate();
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
     String m_sceneIdentifier;

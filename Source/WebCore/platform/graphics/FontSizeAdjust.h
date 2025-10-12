@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "FontMetrics.h"
+#include <WebCore/FontMetrics.h>
 #include <wtf/Markable.h>
 #include <wtf/text/TextStream.h>
 
@@ -74,7 +74,7 @@ struct FontSizeAdjust {
 
     Metric metric { Metric::ExHeight };
     ValueType type { ValueType::Number };
-    Markable<float, WTF::FloatMarkableTraits> value { };
+    Markable<float> value { };
 };
 
 inline void add(Hasher& hasher, const FontSizeAdjust& fontSizeAdjust)

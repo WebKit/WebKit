@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-inline JSImmutableButterfly* StringSplitCache::get(const String& subject, const String& separator)
+inline JSCellButterfly* StringSplitCache::get(const String& subject, const String& separator)
 {
     AssertNoGC assertNoGC;
     if (!subject.impl() || !subject.impl()->isAtom())
@@ -54,7 +54,7 @@ inline JSImmutableButterfly* StringSplitCache::get(const String& subject, const 
     return nullptr;
 }
 
-inline void StringSplitCache::set(const String& subject, const String& separator, JSImmutableButterfly* butterfly)
+inline void StringSplitCache::set(const String& subject, const String& separator, JSCellButterfly* butterfly)
 {
     AssertNoGC assertNoGC;
     if (!subject.impl() || !subject.impl()->isAtom())

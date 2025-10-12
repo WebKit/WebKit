@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,9 +28,9 @@
 
 #pragma once
 
-#include "JSDOMConvertInterface.h"
-#include "WindowProxy.h"
 #include <JavaScriptCore/JSGlobalProxy.h>
+#include <WebCore/JSDOMConvertInterface.h>
+#include <WebCore/WindowProxy.h>
 
 namespace JSC {
 class Debugger;
@@ -64,8 +64,7 @@ public:
     Ref<DOMWindow> protectedWrapped() const;
     static WindowProxy* toWrapped(JSC::VM&, JSC::JSValue);
 
-    DOMWrapperWorld& world();
-    Ref<DOMWrapperWorld> protectedWorld();
+    DOMWrapperWorld& world() { return m_world; }
 
     void attachDebugger(JSC::Debugger*);
 
@@ -88,7 +87,7 @@ private:
     static bool defineOwnProperty(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, const JSC::PropertyDescriptor&, bool shouldThrow);
 #endif
 
-    Ref<DOMWrapperWorld> m_world;
+    const Ref<DOMWrapperWorld> m_world;
 };
 
 // JSWindowProxy is a little odd in that it's not a traditional wrapper and has no back pointer.

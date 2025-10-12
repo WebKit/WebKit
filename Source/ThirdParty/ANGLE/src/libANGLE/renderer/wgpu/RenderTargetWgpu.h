@@ -14,6 +14,7 @@
 #include <webgpu/webgpu.h>
 
 #include "libANGLE/FramebufferAttachment.h"
+#include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/wgpu/wgpu_helpers.h"
 #include "libANGLE/renderer/wgpu/wgpu_utils.h"
 
@@ -42,6 +43,8 @@ class RenderTargetWgpu final : public FramebufferAttachmentRenderTarget
     webgpu::TextureViewHandle getTextureView() { return mTextureView; }
     webgpu::ImageHelper *getImage() { return mImage; }
     webgpu::LevelIndex getLevelIndex() const { return mLevelIndex; }
+    uint32_t getLayer() const { return mLayerIndex; }
+    gl::LevelIndex getGlLevel() const { return mImage->toGlLevel(mLevelIndex); }
 
   private:
     webgpu::ImageHelper *mImage = nullptr;

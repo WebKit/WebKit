@@ -43,10 +43,6 @@ interface TestRunner {
 
     // Downloads.
     undefined waitUntilDownloadFinished();
-    undefined setShouldLogDownloadCallbacks(boolean value);
-    undefined setShouldLogDownloadSize(boolean value);
-    undefined setShouldLogDownloadExpectedSize(boolean value);
-    undefined setShouldDownloadContentDispositionAttachments(boolean value);
 
     const unsigned short RENDER_TREE_SHOW_ALL_LAYERS            = 1;
     const unsigned short RENDER_TREE_SHOW_LAYER_NESTING         = 2;
@@ -62,7 +58,6 @@ interface TestRunner {
     undefined dumpEditingCallbacks();
     undefined dumpSelectionRect();
     undefined dumpTitleChanges();
-    undefined dumpFullScreenCallbacks();
     undefined dumpFrameLoadCallbacks();
     undefined dumpProgressFinishedCallback();
     undefined dumpResourceLoadCallbacks();
@@ -100,22 +95,11 @@ interface TestRunner {
     undefined setCacheModel(long model);
     undefined setAsynchronousSpellCheckingEnabled(boolean value);
     undefined setPrinting();
-    undefined setShouldDecideNavigationPolicyAfterDelay(boolean value);
-    undefined setShouldDecideResponsePolicyAfterDelay(boolean value);
-    undefined setNavigationGesturesEnabled(boolean value);
-    undefined setIgnoresViewportScaleLimits(boolean value);
-    undefined setUseDarkAppearanceForTesting(boolean useDarkAppearance);
-    undefined setShouldDownloadUndisplayableMIMETypes(boolean value);
-    undefined stopLoading();
 
     // Special DOM functions.
-    Promise<undefined> clearBackForwardList();
     undefined execCommand(DOMString name, DOMString showUI, DOMString value);
     boolean isCommandEnabled(DOMString name);
     unsigned long windowCount();
-
-    // Device Orientation Motion.
-    undefined setShouldAllowDeviceOrientationAndMotionAccess(boolean value);
 
     // Special DOM variables.
     attribute boolean globalFlag;
@@ -124,7 +108,6 @@ interface TestRunner {
     undefined testRepaint();
     undefined repaintSweepHorizontally();
     undefined display();
-    Promise<undefined> displayAndTrackRepaints();
     undefined displayOnLoadFinish();
     undefined dontForceRepaint();
 
@@ -152,8 +135,6 @@ interface TestRunner {
     attribute double databaseMaxQuota;
 
     // Text search testing.
-    Promise<boolean> findString(DOMString target, object optionsArray);
-    undefined findStringMatchesInPage(DOMString target, object optionsArray);
     undefined replaceFindMatchesAtIndices(object matchIndicesArray, DOMString replacementText, boolean selectionOnly);
 
     // Evaluating script in a special context.
@@ -180,24 +161,13 @@ interface TestRunner {
     readonly attribute boolean didReceiveServerRedirectForProvisionalNavigation;
     undefined clearDidReceiveServerRedirectForProvisionalNavigation();
 
-    // Focus testing.
-    undefined addChromeInputField(object callback);
-    undefined removeChromeInputField(object callback);
-    undefined focusWebView(object callback);
-    undefined setTextInChromeInputField(DOMString text, object callback);
-    undefined getSelectedTextInChromeInputField(object callback);
-    undefined selectChromeInputField(object callback);
-
     // Window/view state
-    undefined setBackingScaleFactor(double backingScaleFactor, object callback);
-
     undefined setWindowIsKey(boolean isKey);
     undefined setViewSize(double width, double height);
 
     // Cookies testing
     undefined setAlwaysAcceptCookies(boolean accept);
     undefined setOnlyAcceptFirstPartyCookies(boolean accept);
-    undefined removeAllCookies(object callback);
 
     // Page Visibility API
     undefined setPageVisibility(DOMString state);
@@ -256,13 +226,6 @@ interface TestRunner {
     undefined queueLoadingScript(DOMString script);
     undefined queueNonLoadingScript(DOMString script);
 
-    // Authentication
-    undefined setRejectsProtectionSpaceAndContinueForAuthenticationChallenges(boolean value);
-    undefined setHandlesAuthenticationChallenges(boolean value);
-    undefined setShouldLogCanAuthenticateAgainstProtectionSpace(boolean value);
-    undefined setAuthenticationUsername(DOMString username);
-    undefined setAuthenticationPassword(DOMString password);
-
     undefined setAllowsAnySSLCertificate(boolean value);
 
     undefined setShouldSwapToEphemeralSessionOnNextNavigation(boolean value);
@@ -270,35 +233,18 @@ interface TestRunner {
 
     // Secure text input mode (Mac only)
     readonly attribute boolean secureEventInputIsEnabled;
-    
-    // Override plugin load policy.
-    undefined setBlockAllPlugins(boolean shouldBlock);
-    undefined setPluginSupportedMode(DOMString mode);
 
     // Hooks to the JSC compiler.
     object failNextNewCodeBlock();
     object numberOfDFGCompiles(object function);
     object neverInlineFunction(object function);
 
-    // Swipe gestures
-    undefined installDidBeginSwipeCallback(object callback);
-    undefined installWillEndSwipeCallback(object callback);
-    undefined installDidEndSwipeCallback(object callback);
-    undefined installDidRemoveSwipeSnapshotCallback(object callback);
-
     unsigned long imageCountInGeneralPasteboard();
-
-    // UI Process Testing
-    undefined runUIScript(DOMString script, object callback);
-    undefined runUIScriptImmediately(DOMString script, object callback);
 
     undefined accummulateLogsForChannel(DOMString channel);
 
-    // Contextual menu actions
-    undefined setAllowedMenuActions(object actions);
-
     // Gamepad
-    undefined setMockGamepadDetails(unsigned long index, DOMString id, DOMString mapping, unsigned long axisCount, unsigned long buttonCount, boolean supportsDualRumble);
+    undefined setMockGamepadDetails(unsigned long index, DOMString id, DOMString mapping, unsigned long axisCount, unsigned long buttonCount, boolean supportsDualRumble, boolean wasConnected);
     undefined setMockGamepadAxisValue(unsigned long index, unsigned long axisIndex, double value);
     undefined setMockGamepadButtonValue(unsigned long index, unsigned long buttonIndex, double value);
     undefined connectMockGamepad(unsigned long index);
@@ -309,19 +255,11 @@ interface TestRunner {
     boolean doesStatisticsDomainIDExistInDatabase(unsigned long domainID);
     undefined setStatisticsEnabled(boolean value);
     boolean isStatisticsEphemeral();
-    undefined setStatisticsDebugMode(boolean value, object completionHandler);
-    undefined setStatisticsPrevalentResourceForDebugMode(DOMString hostName, object completionHandler);
-    Promise<undefined> setStatisticsLastSeen(DOMString hostName, double seconds);
-    undefined setStatisticsMergeStatistic(DOMString hostName, DOMString topFrameDomain1, DOMString topFrameDomain2, double lastSeen, boolean hadUserInteraction, double mostRecentUserInteraction, boolean isGrandfathered, boolean isPrevalent, boolean isVeryPrevalent, unsigned long dataRecordsRemoved, object completionHandler);
-    undefined setStatisticsExpiredStatistic(DOMString hostName, unsigned long numberOfOperatingDaysPassed, boolean hadUserInteraction, boolean isScheduledForAllButCookieDataRemoval, boolean isPrevalent, object completionHandler);
-    undefined setStatisticsPrevalentResource(DOMString hostName, boolean value, object completionHandler);
-    undefined setStatisticsVeryPrevalentResource(DOMString hostName, boolean value, object completionHandler);
     boolean isStatisticsPrevalentResource(DOMString hostName);
     boolean isStatisticsVeryPrevalentResource(DOMString hostName);
     boolean isStatisticsRegisteredAsSubresourceUnder(DOMString subresourceHost, DOMString topFrameHost);
     boolean isStatisticsRegisteredAsSubFrameUnder(DOMString subFrameHost, DOMString topFrameHost);
     boolean isStatisticsRegisteredAsRedirectingTo(DOMString hostRedirectedFrom, DOMString hostRedirectedTo);
-    undefined setStatisticsHasHadUserInteraction(DOMString hostName, boolean value, object completionHandler);
     boolean isStatisticsHasHadUserInteraction(DOMString hostName);
     boolean isStatisticsOnlyInDatabaseOnce(DOMString subHost, DOMString topHost);
     undefined setStatisticsGrandfathered(DOMString hostName, boolean value);
@@ -335,8 +273,6 @@ interface TestRunner {
     undefined setStatisticsCrossSiteLoadWithLinkDecoration(DOMString fromHost, DOMString toHost, boolean wasFiltered);
     undefined setStatisticsTimeToLiveUserInteraction(double seconds);
     Promise<undefined> statisticsNotifyObserver();
-    Promise<undefined> statisticsProcessStatisticsAndDataRecords();
-    undefined statisticsUpdateCookieBlocking(object completionHandler);
     undefined setStatisticsTimeAdvanceForTesting(double value);
     undefined setStatisticsIsRunningTest(boolean value);
     undefined setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(boolean value);
@@ -344,21 +280,9 @@ interface TestRunner {
     undefined setStatisticsGrandfatheringTime(double seconds);
     undefined setStatisticsMaxStatisticsEntries(unsigned long entries);
     undefined setStatisticsPruneEntriesDownTo(unsigned long entries);
-    undefined statisticsClearInMemoryAndPersistentStore(object callback);
-    undefined statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned long hours, object callback);
-    undefined statisticsClearThroughWebsiteDataRemoval(object callback);
-    Promise<undefined> statisticsDeleteCookiesForHost(DOMString hostName, boolean includeHttpOnlyCookies);
     boolean isStatisticsHasLocalStorage(DOMString hostName);
     undefined setStatisticsCacheMaxAgeCap(double seconds);
-    undefined statisticsResetToConsistentState(object completionHandler);
     boolean hasStatisticsIsolatedSession(DOMString hostName);
-    undefined setStatisticsShouldDowngradeReferrer(boolean value, object callback);
-    undefined setStatisticsShouldBlockThirdPartyCookies(boolean value, object callback, optional boolean onlyOnSitesWithoutUserInteraction, optional boolean onlyUnpartitionedCookies);
-    undefined setStatisticsFirstPartyWebsiteDataRemovalMode(boolean value, object callback);
-    undefined statisticsSetToSameSiteStrictCookies(DOMString hostName, object callback);
-    undefined statisticsSetFirstPartyHostCNAMEDomain(DOMString firstPartyURLString, DOMString cnameURLString, object callback);
-    undefined statisticsSetThirdPartyCNAMEDomain(DOMString cnameURLString, object callback);
-    undefined loadedSubresourceDomains(object callback);
 
     undefined reloadFromOrigin();
 
@@ -368,12 +292,7 @@ interface TestRunner {
     undefined installTextFieldDidEndEditingCallback(object callback);
 
     // Storage Access API
-    undefined getAllStorageAccessEntries(object callback);
     undefined setRequestStorageAccessThrowsExceptionUntilReload(boolean enabled);
-
-    // Open panel
-    undefined setOpenPanelFiles(object filesArray);
-    undefined setOpenPanelFilesMediaIcon(object mediaIcon);
 
     // Modal alerts
     undefined setShouldDismissJavaScriptAlertsAsynchronously(boolean value);
@@ -389,10 +308,6 @@ interface TestRunner {
     readonly attribute unsigned long serverTrustEvaluationCallbackCallsCount;
 
     readonly attribute boolean didCancelClientRedirect;
-
-    undefined removeAllSessionCredentials(object callback);
-
-    undefined getApplicationManifestThen(object callback);
 
     undefined installFakeHelvetica(DOMString configuration);
 
@@ -412,11 +327,9 @@ interface TestRunner {
 
     boolean hasAppBoundSession();
     undefined clearAppBoundSession();
-    undefined setAppBoundDomains(object originsArray, object callback);
     boolean didLoadAppInitiatedRequest();
     boolean didLoadNonAppInitiatedRequest();
 
-    undefined setManagedDomains(object originsArray, object callback);
 
     undefined injectUserScript(DOMString string);
     readonly attribute unsigned long userScriptInjectedCount;
@@ -426,7 +339,6 @@ interface TestRunner {
     // WebAuthn
     undefined addTestKeyToKeychain(DOMString privateKeyBase64, DOMString attrLabel, DOMString applicationTagBase64);
     undefined cleanUpKeychain(DOMString attrLabel, optional DOMString applicationLabelBase64);
-    boolean keyExistsInKeychain(DOMString attrLabel, DOMString applicationLabelBase64);
 
     undefined clearMemoryCache();
 
@@ -450,24 +362,11 @@ interface TestRunner {
     // MediaKeySystem
     undefined setIsMediaKeySystemPermissionGranted(boolean value);
 
-    undefined takeViewPortSnapshot(object callback);
-
     // Reporting API
     undefined generateTestReport(DOMString message, DOMString group);
 
-    undefined getAndClearReportedWindowProxyAccessDomains(object callback);
-    Promise<undefined> flushConsoleLogs();
-    Promise<undefined> updatePresentation();
-
-    undefined scrollDuringEnterFullscreen();
-    undefined waitBeforeFinishingFullscreenExit();
-    undefined finishFullscreenExit();
-    undefined requestExitFullscreenFromUIProcess();
-
-    Promise<undefined> setObscuredContentInsets(double top, double right, double bottom, double left);
-    Promise<undefined> setPageScaleFactor(unrestricted double scaleFactor, long x, long y);
-
     // ResourceMonitor
     readonly attribute boolean canModifyResourceMonitorList;
-    Promise<undefined> setResourceMonitorList(DOMString rulesText);
+
+    undefined setHasMouseDeviceForTesting(boolean hasMouseDevice);
 };

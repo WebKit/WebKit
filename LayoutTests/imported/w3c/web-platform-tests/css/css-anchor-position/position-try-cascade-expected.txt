@@ -5,5 +5,5 @@ PASS @position-try rule wins over inline style
 PASS @position-try rule does not win over !important
 PASS @position-try rule does not win over animations
 PASS @position-try rule does not win over transitions
-FAIL @position-try revert / revert-layer reverts to user / author origin assert_equals: top reverted back to author expected 20 but got 30
+PASS @position-try revert / revert-layer reverts to user / author origin
 

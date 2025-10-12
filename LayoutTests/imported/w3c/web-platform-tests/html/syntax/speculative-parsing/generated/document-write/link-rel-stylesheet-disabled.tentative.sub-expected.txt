@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\n"
 
     <!-- speculative case in document.write -->
     <link rel="stylesheet" href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=efab125c-1514-41db-9dbf-837ebc4c084b&amp;encodingcheck=&Gbreve;" disabled>

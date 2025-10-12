@@ -1,0 +1,14 @@
+
+PASS cookieStore.get with no arguments returns TypeError
+PASS cookieStore.get with empty options returns TypeError
+PASS cookieStore.get with positional name
+PASS cookieStore.get with name in options
+PASS cookieStore.get with name in both positional arguments and options
+PASS cookieStore.get with absolute url in options
+PASS cookieStore.get with relative url in options
+PASS cookieStore.get with invalid url path in options
+PASS cookieStore.get with invalid url host in options
+PASS cookieStore.get with absolute url with fragment in options
+PASS cookieStore.get with absolute different url in options
+PASS cookieStore.get with whitespace
+

@@ -115,6 +115,27 @@ FloatPoint StickyPositionViewportConstraints::anchorLayerPositionAtLastLayout() 
     return m_layerPositionAtLastLayout + m_anchorLayerOffsetAtLastLayout;
 }
 
+FloatRect StickyPositionViewportConstraints::computeStickyExtent() const
+{
+    float minShiftX = 0;
+    float maxShiftX = 0;
+    float minShiftY = 0;
+    float maxShiftY = 0;
+    if (hasAnchorEdge(AnchorEdgeRight))
+        minShiftX = std::min<float>(0, m_containingBlockRect.x() - m_stickyBoxRect.x());
+    if (hasAnchorEdge(AnchorEdgeLeft))
+        maxShiftX = std::max<float>(0, m_containingBlockRect.maxX() - m_stickyBoxRect.maxX());
+    if (hasAnchorEdge(AnchorEdgeBottom))
+        minShiftY = std::min<float>(0, m_containingBlockRect.y() - m_stickyBoxRect.y());
+    if (hasAnchorEdge(AnchorEdgeTop))
+        maxShiftY = std::max<float>(0, m_containingBlockRect.maxY() - m_stickyBoxRect.maxY());
+    float minX = m_stickyBoxRect.x() + minShiftX;
+    float minY = m_stickyBoxRect.y() + minShiftY;
+    float maxX = m_stickyBoxRect.maxX() + maxShiftX;
+    float maxY = m_stickyBoxRect.maxY() + maxShiftY;
+    return FloatRect(minX, minY, maxX - minX, maxY - minY);
+}
+
 TextStream& operator<<(TextStream& ts, ScrollPositioningBehavior behavior)
 {
     switch (behavior) {

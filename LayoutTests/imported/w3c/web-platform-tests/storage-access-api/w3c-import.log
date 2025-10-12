@@ -22,7 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/helpers.js
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/requestStorageAccess-ABA.sub.https.window.js
-/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/requestStorageAccess-cross-origin-fetch.sub.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/requestStorageAccess-cross-origin-fetch.sub.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/requestStorageAccess-cross-origin-iframe-navigation-relax.sub.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/requestStorageAccess-cross-origin-iframe-navigation.sub.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/requestStorageAccess-cross-site-fetch.sub.https.window.js
@@ -39,6 +39,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/requestStorageAccess-sandboxed-iframe-no-storage-access.sub.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/requestStorageAccess-web-socket.sub.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/requestStorageAccess.sub.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.BlobURLDedicatedWorker.sub.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.BlobURLSharedWorker.sub.https.tentative.window.js
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.BroadcastChannel.sub.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.SharedWorker.sub.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.blobStorage.sub.https.window.js
@@ -51,6 +53,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.locks.sub.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.none.sub.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.sessionStorage.sub.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.thirdPartyBlobStorage.sub.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.unpartitioned.sub.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/storage-access-headers.tentative.https.sub.window.js
 /LayoutTests/imported/w3c/web-platform-tests/storage-access-api/storage-access-permission.sub.https.window.js

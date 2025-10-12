@@ -23,8 +23,8 @@
 
 #pragma once
 
-#include "ScriptExecutionContextIdentifier.h"
-#include "XMLDocument.h"
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/XMLDocument.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {

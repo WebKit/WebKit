@@ -17,7 +17,7 @@
 
 namespace webrtc {
 
-rtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceModule();
+webrtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceModule();
 
 }  // namespace webrtc
 

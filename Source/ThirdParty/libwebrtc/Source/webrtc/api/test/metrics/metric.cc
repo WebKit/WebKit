@@ -9,7 +9,7 @@
  */
 #include "api/test/metrics/metric.h"
 
-#include <string>
+#include "absl/strings/string_view.h"
 
 namespace webrtc {
 namespace test {

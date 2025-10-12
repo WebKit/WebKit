@@ -33,10 +33,10 @@ static webrtc::SdpVideoFormat createH264Format(webrtc::H264Profile profile, webr
 {
     const auto profileString = webrtc::H264ProfileLevelIdToString(webrtc::H264ProfileLevelId(profile, level));
 
-    return webrtc::SdpVideoFormat(cricket::kH264CodecName,
-        { { cricket::kH264FmtpProfileLevelId, *profileString },
-            { cricket::kH264FmtpLevelAsymmetryAllowed, "1" },
-            { cricket::kH264FmtpPacketizationMode, packetizationMode } });
+    return webrtc::SdpVideoFormat(webrtc::kH264CodecName,
+        { { webrtc::kH264FmtpProfileLevelId, *profileString },
+            { webrtc::kH264FmtpLevelAsymmetryAllowed, "1" },
+            { webrtc::kH264FmtpPacketizationMode, packetizationMode } });
 }
 
 std::vector<webrtc::SdpVideoFormat> supportedH264Formats()

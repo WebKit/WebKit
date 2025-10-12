@@ -145,7 +145,7 @@ srtp_err_status_t roc_test(int num_trials)
 
         /* now update local srtp_xtd_seq_num_t as necessary */
         if (delta > 0)
-            srtp_index_advance(&local, delta);
+            srtp_index_advance(&local, (srtp_sequence_number_t)delta);
 
         if (ref != est) {
 #if ROC_VERBOSE

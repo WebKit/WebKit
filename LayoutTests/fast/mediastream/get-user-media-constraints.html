@@ -14,6 +14,7 @@
 
     promise_test(async (test) => {
         localVideo.srcObject = await navigator.mediaDevices.getUserMedia({video: {width: {exact: 300}}});
+        test.add_cleanup(() => localVideo.srcObject.getTracks().forEach(track => track.stop()));
         await localVideo.play();
 
         assert_equals(localVideo.videoWidth, 300);

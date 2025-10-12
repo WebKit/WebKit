@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2018 Yusuke Suzuki <utatane.tea@gmail.com>
- * Copyright (C) 2024 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,13 +70,13 @@ public:
         RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(m_charactersWithNullTerminator[length - 1] == '\0');
     }
 
-    unsigned hash() const;
+    constexpr unsigned hash() const;
     constexpr bool isNull() const { return m_charactersWithNullTerminator.empty(); }
 
     constexpr const char* characters() const { return m_charactersWithNullTerminator.data(); }
     constexpr size_t length() const { return !m_charactersWithNullTerminator.empty() ? m_charactersWithNullTerminator.size() - 1 : 0; }
     constexpr std::span<const char> span() const { return m_charactersWithNullTerminator.first(length()); }
-    std::span<const LChar> span8() const { return byteCast<LChar>(m_charactersWithNullTerminator.first(length())); }
+    std::span<const Latin1Character> span8() const { return byteCast<Latin1Character>(m_charactersWithNullTerminator.first(length())); }
     std::span<const char> spanIncludingNullTerminator() const { return m_charactersWithNullTerminator; }
     size_t isEmpty() const { return m_charactersWithNullTerminator.size() <= 1; }
 
@@ -118,7 +118,7 @@ inline auto operator<=>(ASCIILiteral a, ASCIILiteral b)
     return compareSpans(a.spanIncludingNullTerminator(), b.spanIncludingNullTerminator());
 }
 
-inline unsigned ASCIILiteral::hash() const
+inline constexpr unsigned ASCIILiteral::hash() const
 {
     if (isNull())
         return 0;
@@ -162,9 +162,9 @@ constexpr std::span<const char> operator""_span(const char* characters, size_t n
     return span;
 }
 
-constexpr std::span<const LChar> operator""_span8(const char* characters, size_t n)
+constexpr std::span<const Latin1Character> operator""_span8(const char* characters, size_t n)
 {
-    auto span = byteCast<LChar>(unsafeMakeSpan(characters, n));
+    auto span = byteCast<Latin1Character>(unsafeMakeSpan(characters, n));
 #if ASSERT_ENABLED
     for (size_t i = 0, size = span.size(); i < size; ++i)
         ASSERT_UNDER_CONSTEXPR_CONTEXT(isASCII(span[i]));

@@ -19,6 +19,7 @@ if (!build_with_chromium) {
     sources = [ "generator.cc" ]
     deps = [
       ":lib",
+      "../../../../rtc_base:checks",
       "../../../../test:fileutils",
       "../../../../test:test_support",
       "//third_party/abseil-cpp/absl/flags:flag",
@@ -70,6 +71,7 @@ rtc_library("unittest") {
     "../../../../api:array_view",
     "../../../../common_audio",
     "../../../../rtc_base:logging",
+    "../../../../rtc_base:safe_conversions",
     "../../../../test:fileutils",
     "../../../../test:test_support",
     "//testing/gtest",

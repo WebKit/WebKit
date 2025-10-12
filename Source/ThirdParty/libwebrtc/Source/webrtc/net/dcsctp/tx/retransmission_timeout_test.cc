@@ -9,9 +9,10 @@
  */
 #include "net/dcsctp/tx/retransmission_timeout.h"
 
+#include "api/units/time_delta.h"
 #include "net/dcsctp/public/dcsctp_options.h"
-#include "rtc_base/gunit.h"
-#include "test/gmock.h"
+#include "net/dcsctp/public/types.h"
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace {

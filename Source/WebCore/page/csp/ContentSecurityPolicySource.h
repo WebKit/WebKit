@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
@@ -52,7 +53,7 @@ private:
     bool portMatches(const URL&) const;
     bool isSchemeOnly() const;
 
-    const ContentSecurityPolicy& m_policy;
+    const CheckedRef<const ContentSecurityPolicy> m_policy;
     String m_scheme;
     String m_host;
     String m_path;

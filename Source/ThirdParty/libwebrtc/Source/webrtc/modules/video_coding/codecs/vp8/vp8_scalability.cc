@@ -10,6 +10,8 @@
 
 #include "modules/video_coding/codecs/vp8/vp8_scalability.h"
 
+#include "api/video_codecs/scalability_mode.h"
+
 namespace webrtc {
 
 bool VP8SupportsScalabilityMode(ScalabilityMode scalability_mode) {

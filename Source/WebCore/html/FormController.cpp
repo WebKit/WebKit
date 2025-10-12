@@ -43,7 +43,7 @@ HTMLFormElement* FormController::ownerForm(const FormListedElement& control)
     // Assume controls with form attribute have no owners because we restore
     // state during parsing and form owners of such controls might be
     // indeterminate.
-    return control.asHTMLElement().hasAttributeWithoutSynchronization(HTMLNames::formAttr) ? nullptr : control.form();
+    return control.asProtectedHTMLElement()->hasAttributeWithoutSynchronization(HTMLNames::formAttr) ? nullptr : control.form();
 }
 
 struct AtomStringVectorReader {
@@ -112,12 +112,12 @@ public:
     void appendReferencedFilePaths(Vector<String>&) const;
 
 private:
-    UncheckedKeyHashMap<FormElementKey, Deque<FormControlState>> m_map;
+    HashMap<FormElementKey, Deque<FormControlState>> m_map;
 };
 
 FormController::SavedFormState FormController::SavedFormState::consumeSerializedState(AtomStringVectorReader& reader)
 {
-    auto isNotFormControlTypeCharacter = [](UChar character) {
+    auto isNotFormControlTypeCharacter = [](char16_t character) {
         return !(character == '-' || isASCIILower(character));
     };
 
@@ -175,7 +175,7 @@ public:
 
 private:
     WeakHashMap<HTMLFormElement, String, WeakPtrImplWithEventTargetData> m_formToKeyMap;
-    UncheckedKeyHashMap<String, unsigned> m_formSignatureToNextIndexMap;
+    HashMap<String, unsigned> m_formSignatureToNextIndexMap;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FormController::FormKeyGenerator);
@@ -257,7 +257,7 @@ static String formStateSignature()
 
 Vector<AtomString> FormController::formElementsState(const Document& document) const
 {
-    UncheckedKeyHashMap<AtomString, Vector<Ref<const ValidatedFormListedElement>>> formKeyToControlsMap;
+    HashMap<AtomString, Vector<Ref<const ValidatedFormListedElement>>> formKeyToControlsMap;
 
     {
         // FIXME: We should be saving the state of form controls in shadow trees, too.

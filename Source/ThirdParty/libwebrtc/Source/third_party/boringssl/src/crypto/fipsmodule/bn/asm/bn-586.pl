@@ -1,10 +1,17 @@
 #! /usr/bin/env perl
 # Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved.
 #
-# Licensed under the OpenSSL license (the "License").  You may not use
-# this file except in compliance with the License.  You can obtain a copy
-# in the file LICENSE in the source distribution or at
-# https://www.openssl.org/source/license.html
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 
 $0 =~ m/(.*[\/\\])[^\/\\]+$/; $dir=$1;
@@ -20,8 +27,7 @@ $sse2=1;
 
 &bn_mul_add_words("bn_mul_add_words");
 &bn_mul_words("bn_mul_words");
-&bn_sqr_words("bn_sqr_words");
-&bn_div_words("bn_div_words");
+&bn_sqr_add_words("bn_sqr_add_words");
 &bn_add_words("bn_add_words");
 &bn_sub_words("bn_sub_words");
 
@@ -168,7 +174,7 @@ sub bn_mul_words
 	&function_end($name);
 	}
 
-sub bn_sqr_words
+sub bn_sqr_add_words
 	{
 	local($name)=@_;
 
@@ -182,12 +188,21 @@ sub bn_sqr_words
 		&mov($r,&wparam(0));
 		&mov($a,&wparam(1));
 		&mov($c,&wparam(2));
+		&pxor("mm1","mm1");		# mm1 = carry_in
 
 	&set_label("sqr_sse2_loop",16);
 		&movd("mm0",&DWP(0,$a));	# mm0 = a[i]
+		&movd("mm2",&DWP(0,$r,"",0));	# mm2 = r[i]
+		&movd("mm3",&DWP(4,$r,"",0));	# mm3 = r[i+1]
 		&pmuludq("mm0","mm0");		# a[i] *= a[i]
 		&lea($a,&DWP(4,$a));		# a++
-		&movq(&QWP(0,$r),"mm0");	# r[i] = a[i]*a[i]
+		&paddq("mm1","mm0");		# carry += a[i] * a[i]
+		&paddq("mm1","mm2");		# carry += r[i]
+		&movd(&DWP(0,$r), "mm1");
+		&psrlq("mm1",32);		# carry >>= 32
+		&paddq("mm1","mm3");		# carry += r[i+1]
+		&movd(&DWP(4,$r), "mm1");
+		&psrlq("mm1",32);		# carry >>= 32
 		&sub($c,1);
 		&lea($r,&DWP(8,$r));		# r += 2
 		&jnz(&label("sqr_sse2_loop"));
@@ -196,19 +211,6 @@ sub bn_sqr_words
 		&ret();
 	}
 	&function_end($name);
-	}
-
-sub bn_div_words
-	{
-	local($name)=@_;
-
-	&function_begin_B($name,"");
-	&mov("edx",&wparam(0));	#
-	&mov("eax",&wparam(1));	#
-	&mov("ecx",&wparam(2));	#
-	&div("ecx");
-	&ret();
-	&function_end_B($name);
 	}
 
 sub bn_add_words

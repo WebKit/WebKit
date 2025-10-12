@@ -72,7 +72,7 @@ private:
     TextureDimension m_dimension { TextureDimension::_2d };
 
     WebGPUPtr<WGPUTexture> m_backing;
-    Ref<ConvertToBackingContext> m_convertToBackingContext;
+    const Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 
 } // namespace WebCore::WebGPU

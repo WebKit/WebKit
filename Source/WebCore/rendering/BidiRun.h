@@ -46,7 +46,7 @@ public:
     void setBox(LegacyInlineBox* box) { m_box = box; }
 
 private:
-    RenderObject& m_renderer;
+    CheckedRef<RenderObject> m_renderer;
     LegacyInlineBox* m_box;
 };
 

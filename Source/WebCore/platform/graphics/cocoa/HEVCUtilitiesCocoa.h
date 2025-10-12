@@ -25,9 +25,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(COCOA)
 
-#include "HEVCUtilities.h"
+#include <WebCore/HEVCUtilities.h>
 
 namespace WebCore {
 

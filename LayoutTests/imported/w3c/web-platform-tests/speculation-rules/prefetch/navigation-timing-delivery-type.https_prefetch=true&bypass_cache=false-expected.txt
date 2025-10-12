@@ -1,0 +1,3 @@
+
+FAIL PerformanceNavigationTiming.deliveryType test, same origin prefetch. assert_equals: expected (string) "navigational-prefetch" but got (undefined) undefined
+

@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "CSSConditionRule.h"
+#include <WebCore/CSSConditionRule.h>
 
 namespace WebCore {
 

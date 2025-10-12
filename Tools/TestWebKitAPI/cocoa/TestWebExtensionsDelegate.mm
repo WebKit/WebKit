@@ -170,6 +170,46 @@
         _didUpdateSidebar(sidebar);
 }
 
+
+- (void)_webExtensionController:(WKWebExtensionController *)controller createBookmarkWithParentIdentifier:(NSString *)parentId index:(NSNumber *)index url:(NSString *)url title:(NSString *)title forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSObject<_WKWebExtensionBookmark> *, NSError *))completionHandler
+{
+    if (_createBookmarkWithParentIdentifier)
+        _createBookmarkWithParentIdentifier(parentId, index, url, title, completionHandler);
+    else if (completionHandler)
+        completionHandler(nil, nil);
+}
+
+- (void)_webExtensionController:(WKWebExtensionController *)controller bookmarksForExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSArray<NSObject<_WKWebExtensionBookmark> *> *, NSError *))completionHandler
+{
+    if (_bookmarksForExtensionContext)
+        _bookmarksForExtensionContext(completionHandler);
+    else if (completionHandler)
+        completionHandler(@[], nil);
+}
+
+- (void)_webExtensionController:(WKWebExtensionController *)controller removeBookmarkWithIdentifier:(NSString *)bookmarkId removeFolderWithChildren:(BOOL)removeFolderWithChildren forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (_removeBookmarkWithIdentifier)
+        _removeBookmarkWithIdentifier(bookmarkId, removeFolderWithChildren, completionHandler);
+    else if (completionHandler)
+        completionHandler(nil);
+}
+
+- (void)_webExtensionController:(WKWebExtensionController *)controller updateBookmarkWithIdentifier:(NSString *)bookmarkId title:(NSString *)title url:(NSString *)url forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSObject<_WKWebExtensionBookmark> *, NSError *))completionHandler
+{
+    if (_updateBookmarkWithIdentifier)
+        _updateBookmarkWithIdentifier(bookmarkId, title, url, completionHandler);
+    else if (completionHandler)
+        completionHandler(nil, nil);
+}
+
+- (void)_webExtensionController:(WKWebExtensionController *)controller moveBookmarkWithIdentifier:(NSString *)bookmarkId toParent:(NSString *)parentId atIndex:(NSNumber *)index forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSObject<_WKWebExtensionBookmark> *, NSError *))completionHandler
+{
+    if (_moveBookmarkWithIdentifier)
+        _moveBookmarkWithIdentifier(bookmarkId, parentId, index, completionHandler);
+    else if (completionHandler)
+        completionHandler(nil, nil);
+}
 @end
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

@@ -35,13 +35,15 @@
 #include "DigitalCredentialsRequestData.h"
 #include "DigitalCredentialsResponseData.h"
 #endif
-#include "Document.h"
-#include "DocumentInlines.h"
 #include "DocumentType.h"
+#include "DocumentView.h"
+#include "DocumentWindow.h"
 #include "ExceptionData.h"
 #include "FaceDetectorInterface.h"
 #include "FileList.h"
 #include "FloatRect.h"
+#include "FocusControllerTypes.h"
+#include "FocusOptions.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "Geolocation.h"
@@ -203,9 +205,9 @@ void Chrome::takeFocus(FocusDirection direction)
     m_client->takeFocus(direction);
 }
 
-void Chrome::focusedElementChanged(Element* element)
+void Chrome::focusedElementChanged(Element* element, LocalFrame* frame, FocusOptions options, BroadcastFocusedElement broadcast)
 {
-    m_client->focusedElementChanged(element);
+    m_client->focusedElementChanged(element, frame, options, broadcast);
 }
 
 void Chrome::focusedFrameChanged(Frame* frame)
@@ -251,19 +253,9 @@ void Chrome::runModal()
     m_client->runModal();
 }
 
-void Chrome::setToolbarsVisible(bool b)
-{
-    m_client->setToolbarsVisible(b);
-}
-
 bool Chrome::toolbarsVisible() const
 {
     return m_client->toolbarsVisible();
-}
-
-void Chrome::setStatusbarVisible(bool b)
-{
-    m_client->setStatusbarVisible(b);
 }
 
 bool Chrome::statusbarVisible() const
@@ -271,19 +263,9 @@ bool Chrome::statusbarVisible() const
     return m_client->statusbarVisible();
 }
 
-void Chrome::setScrollbarsVisible(bool b)
-{
-    m_client->setScrollbarsVisible(b);
-}
-
 bool Chrome::scrollbarsVisible() const
 {
     return m_client->scrollbarsVisible();
-}
-
-void Chrome::setMenubarVisible(bool b)
-{
-    m_client->setMenubarVisible(b);
 }
 
 bool Chrome::menubarVisible() const
@@ -547,7 +529,7 @@ void Chrome::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
     m_client->setCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves);
 }
 
-RefPtr<ImageBuffer> Chrome::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat) const
+RefPtr<ImageBuffer> Chrome::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferFormat pixelFormat) const
 {
     return m_client->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat);
 }

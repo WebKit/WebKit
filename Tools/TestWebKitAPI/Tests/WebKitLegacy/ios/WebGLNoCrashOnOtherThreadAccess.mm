@@ -132,7 +132,6 @@ TEST(WebKitLegacy, WebGLNoCrashOnOtherThreadAccess)
     RetainPtr<UIWebView> uiWebView = adoptNS([[UIWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [uiWindow addSubview:uiWebView.get()];
 
-    ASSERT_TRUE(WebThreadIsEnabled());
     SetContextCGL clientContextCGL1;
     SetContextEAGL clientContextEAGL1;
     UNUSED_VARIABLE(clientContextCGL1);
@@ -175,7 +174,7 @@ function runTestAsync()
 
     RetainPtr<JSContext> jsContext = [uiWebView valueForKeyPath:@"documentView.webView.mainFrame.javaScriptContext"];
     RetainPtr<JSVirtualMachine> jsVM = [jsContext virtualMachine];
-    EXPECT_TRUE([jsVM isWebThreadAware]);
+    EXPECT_TRUE(!WebThreadIsEnabled() || [jsVM isWebThreadAware]);
 
     // Start to run WebGL on web thread.
     [uiWebView stringByEvaluatingJavaScriptFromString:@"runTestAsync();"];

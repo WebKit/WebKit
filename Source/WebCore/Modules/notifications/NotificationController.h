@@ -27,7 +27,7 @@
 
 #if ENABLE(NOTIFICATIONS)
 
-#include "Page.h"
+#include <WebCore/Page.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 

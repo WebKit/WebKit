@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-
 #include "AccessibilityController.h"
 
 #include "AccessibilityUIElement.h"
@@ -72,6 +71,15 @@ static JSValueRef logScrollingStartEventsCallback(JSContextRef ctx, JSObjectRef,
     return JSValueMakeUndefined(ctx);
 }
 
+#if PLATFORM(MAC)
+static JSValueRef printTreesCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef*)
+{
+    AccessibilityController* controller = static_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
+    controller->printTrees();
+    return JSValueMakeUndefined(context);
+}
+#endif // PLATFORM(MAC)
+
 static JSValueRef logAccessibilityEventsCallback(JSContextRef ctx, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef*)
 {
     AccessibilityController* controller = static_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
@@ -87,7 +95,7 @@ static JSValueRef getElementAtPointCallback(JSContextRef context, JSObjectRef fu
         x = JSValueToNumber(context, arguments[0], exception);
         y = JSValueToNumber(context, arguments[1], exception);
     }
-    
+
     AccessibilityController* controller = static_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
     return AccessibilityUIElement::makeJSAccessibilityUIElement(context, controller->elementAtPoint(x, y));
 }
@@ -96,7 +104,7 @@ static JSValueRef getAccessibleElementByIdCallback(JSContextRef context, JSObjec
 {
     JSStringRef idAttribute = 0;
     if (argumentCount == 1)
-        idAttribute = JSValueToStringCopy(context, arguments[0], exception);    
+        idAttribute = JSValueToStringCopy(context, arguments[0], exception);
     AccessibilityController* controller = static_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
     JSValueRef result = AccessibilityUIElement::makeJSAccessibilityUIElement(context, controller->accessibleElementById(idAttribute));
     if (idAttribute)
@@ -108,7 +116,7 @@ static JSValueRef addNotificationListenerCallback(JSContextRef context, JSObject
 {
     if (argumentCount != 1)
         return JSValueMakeBoolean(context, false);
-    
+
     AccessibilityController* controller = static_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
     JSObjectRef callback = JSValueToObject(context, arguments[0], exception);
     bool succeeded = controller->addNotificationListener(callback);
@@ -157,6 +165,9 @@ JSRetainPtr<JSClassRef> AccessibilityController::createJSClass()
         { "addNotificationListener", addNotificationListenerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "removeNotificationListener", removeNotificationListenerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "enableEnhancedAccessibility", enableEnhancedAccessibilityCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+#if PLATFORM(MAC)
+        { "printTrees", printTreesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+#endif
         { 0, 0, 0 }
     };
     static constexpr JSStaticValue values[] = {

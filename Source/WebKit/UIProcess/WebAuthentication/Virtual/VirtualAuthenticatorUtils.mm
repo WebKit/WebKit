@@ -70,10 +70,11 @@ std::pair<Vector<uint8_t>, Vector<uint8_t>> credentialIdAndCosePubKeyForPrivateK
     RetainPtr<NSData> nsPublicKeyData;
     {
         RetainPtr publicKey = adoptCF(SecKeyCopyPublicKey(privateKey.get()));
-        CFErrorRef errorRef = nullptr;
-        nsPublicKeyData = bridge_cast(adoptCF(SecKeyCopyExternalRepresentation(publicKey.get(), &errorRef)));
-        RetainPtr retainError = adoptCF(errorRef);
-        ASSERT(!errorRef);
+        CFErrorRef rawError = nullptr;
+        nsPublicKeyData = bridge_cast(adoptCF(SecKeyCopyExternalRepresentation(publicKey.get(), &rawError)));
+        // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
+        SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr error = adoptCF(rawError);
+        ASSERT(!error);
         ASSERT(nsPublicKeyData.get().length == (1 + 2 * ES256FieldElementLength)); // 04 | X | Y
     }
 
@@ -88,9 +89,9 @@ std::pair<Vector<uint8_t>, Vector<uint8_t>> credentialIdAndCosePubKeyForPrivateK
     {
         // COSE Encoding
         Vector<uint8_t> x(ES256FieldElementLength);
-        [nsPublicKeyData getBytes: x.data() range:NSMakeRange(1, ES256FieldElementLength)];
+        [nsPublicKeyData getBytes:x.mutableSpan().data() range:NSMakeRange(1, ES256FieldElementLength)];
         Vector<uint8_t> y(ES256FieldElementLength);
-        [nsPublicKeyData getBytes: y.data() range:NSMakeRange(1 + ES256FieldElementLength, ES256FieldElementLength)];
+        [nsPublicKeyData getBytes:y.mutableSpan().data() range:NSMakeRange(1 + ES256FieldElementLength, ES256FieldElementLength)];
         cosePublicKey = encodeES256PublicKeyAsCBOR(WTFMove(x), WTFMove(y));
     }
     return std::pair { credentialId, cosePublicKey };
@@ -98,10 +99,10 @@ std::pair<Vector<uint8_t>, Vector<uint8_t>> credentialIdAndCosePubKeyForPrivateK
 
 String base64PrivateKey(RetainPtr<SecKeyRef> privateKey)
 {
-    CFErrorRef errorRef = nullptr;
-    RetainPtr nsPrivateKeyRep = bridge_cast(adoptCF(SecKeyCopyExternalRepresentation((__bridge SecKeyRef)((id)privateKey.get()), &errorRef)));
-    RetainPtr retainError = adoptCF(errorRef);
-    if (errorRef) {
+    CFErrorRef rawError = nullptr;
+    RetainPtr nsPrivateKeyRep = bridge_cast(adoptCF(SecKeyCopyExternalRepresentation((__bridge SecKeyRef)((id)privateKey.get()), &rawError)));
+    // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
+    SUPPRESS_RETAINPTR_CTOR_ADOPT if (RetainPtr error = adoptCF(rawError)) {
         ASSERT_NOT_REACHED();
         return emptyString();
     }
@@ -128,14 +129,15 @@ RetainPtr<SecKeyRef> privateKeyFromBase64(const String& base64PrivateKey)
 
 Vector<uint8_t> signatureForPrivateKey(RetainPtr<SecKeyRef> privateKey, const Vector<uint8_t>& authData, const Vector<uint8_t>& clientDataHash)
 {
-    RetainPtr dataToSign = adoptNS([[NSMutableData alloc] initWithBytes:authData.data() length:authData.size()]);
-    [dataToSign appendBytes:clientDataHash.data() length:clientDataHash.size()];
+    RetainPtr dataToSign = adoptNS([[NSMutableData alloc] initWithBytes:authData.span().data() length:authData.size()]);
+    [dataToSign appendBytes:clientDataHash.span().data() length:clientDataHash.size()];
     RetainPtr<CFDataRef> signature;
     {
-        CFErrorRef errorRef = nullptr;
-        signature = adoptCF(SecKeyCreateSignature((__bridge SecKeyRef)((id)privateKey.get()), kSecKeyAlgorithmECDSASignatureMessageX962SHA256, bridge_cast(dataToSign.get()), &errorRef));
-        auto retainError = adoptCF(errorRef);
-        ASSERT(!errorRef);
+        CFErrorRef rawError = nullptr;
+        signature = adoptCF(SecKeyCreateSignature((__bridge SecKeyRef)((id)privateKey.get()), kSecKeyAlgorithmECDSASignatureMessageX962SHA256, bridge_cast(dataToSign.get()), &rawError));
+        // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
+        SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr error = adoptCF(rawError);
+        ASSERT(!error);
     }
 
     return makeVector((NSData *)signature.get());

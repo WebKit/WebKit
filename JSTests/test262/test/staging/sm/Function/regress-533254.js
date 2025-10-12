@@ -4,18 +4,12 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
 ---*/
 var BUGNUMBER = 533254;
 var summary = 'init-method late in table-big initialiser screwup';
-
-printBugNumber(BUGNUMBER);
-printStatus(summary);
 
 function f() {
     var proto = {p8:8};
@@ -32,5 +26,3 @@ var expect = f(),
 expect += '';
 actual += '';
 assert.sameValue(expect, actual, summary);
-
-printStatus("All tests passed!");

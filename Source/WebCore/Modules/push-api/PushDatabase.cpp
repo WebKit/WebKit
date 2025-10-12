@@ -277,7 +277,7 @@ void PushDatabase::create(const String& path, CreationHandler&& completionHandle
     auto queue = WorkQueue::create("PushDatabase I/O Thread"_s);
     queue->dispatch([queue, path = crossThreadCopy(path), completionHandler = WTFMove(completionHandler)]() mutable {
         auto database = openAndMigrateDatabase(path);
-        WorkQueue::protectedMain()->dispatch([queue = WTFMove(queue), database = WTFMove(database), completionHandler = WTFMove(completionHandler)]() mutable {
+        WorkQueue::mainSingleton().dispatch([queue = WTFMove(queue), database = WTFMove(database), completionHandler = WTFMove(completionHandler)]() mutable {
             if (!database) {
                 completionHandler(nullptr);
                 return;
@@ -327,16 +327,16 @@ SQLiteStatementAutoResetScope PushDatabase::cachedStatementOnQueue(ASCIILiteral 
     if (it != m_statements.end())
         return SQLiteStatementAutoResetScope(it->value.ptr());
 
-    auto result = m_db->prepareHeapStatement(query);
-    if (!result) {
-        PUSHDB_RELEASE_LOG_ERROR("Failed with %d preparing statement: %" PUBLIC_LOG_STRING, result.error(), query.characters());
+    auto statement = m_db->prepareStatement(query);
+    if (!statement) {
+        PUSHDB_RELEASE_LOG_ERROR("Failed with '%" PUBLIC_LOG_STRING "' preparing statement: %" PUBLIC_LOG_STRING, m_db->lastErrorMsg(), query.characters());
         return SQLiteStatementAutoResetScope(nullptr);
     }
 
-    auto ref = WTFMove(*result);
-    auto statement = ref.ptr();
-    m_statements.add(query, WTFMove(ref));
-    return SQLiteStatementAutoResetScope(statement);
+    auto statementRef = makeUniqueRefFromNonNullUniquePtr(WTFMove(statement));
+    auto statementPtr = statementRef.ptr();
+    m_statements.add(query, WTFMove(statementRef));
+    return SQLiteStatementAutoResetScope(statementPtr);
 }
 
 template<typename... Args>
@@ -396,7 +396,7 @@ template <class T, class U>
 static void completeOnMainQueue(CompletionHandler<void(T)>&& completionHandler, U&& result)
 {
     ASSERT(!RunLoop::isMain());
-    WorkQueue::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), result = crossThreadCopy(std::forward<U>(result))]() mutable {
+    WorkQueue::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), result = crossThreadCopy(std::forward<U>(result))]() mutable {
         completionHandler(WTFMove(result));
     });
 }

@@ -47,12 +47,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPermissionControllerProxy);
 WebPermissionControllerProxy::WebPermissionControllerProxy(WebProcessProxy& process)
     : m_process(process)
 {
-    protectedProcess()->addMessageReceiver(Messages::WebPermissionControllerProxy::messageReceiverName(), *this);
+    process.addMessageReceiver(Messages::WebPermissionControllerProxy::messageReceiverName(), *this);
 }
 
 WebPermissionControllerProxy::~WebPermissionControllerProxy()
 {
-    protectedProcess()->removeMessageReceiver(Messages::WebPermissionControllerProxy::messageReceiverName());
+    m_process->removeMessageReceiver(Messages::WebPermissionControllerProxy::messageReceiverName());
 }
 
 void WebPermissionControllerProxy::ref() const
@@ -65,14 +65,9 @@ void WebPermissionControllerProxy::deref() const
     m_process->deref();
 }
 
-Ref<WebProcessProxy> WebPermissionControllerProxy::protectedProcess() const
-{
-    return m_process.get();
-}
-
 void WebPermissionControllerProxy::query(const WebCore::ClientOrigin& clientOrigin, const WebCore::PermissionDescriptor& descriptor, std::optional<WebPageProxyIdentifier> identifier, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
 {
-    auto webPageProxy = identifier ? protectedProcess()->webPage(identifier.value()) : mostReasonableWebPageProxy(clientOrigin.topOrigin, source);
+    auto webPageProxy = identifier ? m_process->webPage(identifier.value()) : mostReasonableWebPageProxy(clientOrigin.topOrigin, source);
 
     if (!webPageProxy) {
         completionHandler(WebCore::PermissionState::Prompt);
@@ -103,15 +98,15 @@ RefPtr<WebPageProxy> WebPermissionControllerProxy::mostReasonableWebPageProxy(co
         }
     };
 
-    Vector<Ref<WebProcessProxy>> currentProcess { protectedProcess() };
+    Vector<Ref<WebProcessProxy>> currentProcess { m_process.get() };
     findWebPageProxy(&currentProcess);
 
     switch (source) {
     case WebCore::PermissionQuerySource::ServiceWorker:
-        findWebPageProxy(protectedProcess()->serviceWorkerClientProcesses());
+        findWebPageProxy(m_process->serviceWorkerClientProcesses());
         break;
     case WebCore::PermissionQuerySource::SharedWorker:
-        findWebPageProxy(protectedProcess()->sharedWorkerClientProcesses());
+        findWebPageProxy(m_process->sharedWorkerClientProcesses());
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -122,7 +117,7 @@ RefPtr<WebPageProxy> WebPermissionControllerProxy::mostReasonableWebPageProxy(co
 
 std::optional<SharedPreferencesForWebProcess> WebPermissionControllerProxy::sharedPreferencesForWebProcess() const
 {
-    return m_process ? m_process->sharedPreferencesForWebProcess() : std::nullopt;
+    return m_process->sharedPreferencesForWebProcess();
 }
 
 } // namespace WebKit

@@ -566,6 +566,11 @@ nothing to commit, working tree clean
                         '{}       {}'.format('M' if value.startswith('diff') else 'A', key) for key, value in self.staged.items()
                     ]))),
             ), mocks.Subprocess.Route(
+                self.executable, 'diff', '--cached', '--quiet',
+                cwd=self.path,
+                generator=lambda *args, **kwargs:
+                    mocks.ProcessCompletion(returncode=1, stdout=''),
+            ), mocks.Subprocess.Route(
                 self.executable, 'check-ref-format', re.compile(r'.+'),
                 generator=lambda *args, **kwargs:
                     mocks.ProcessCompletion(returncode=0) if re.match(r'^[A-Za-z0-9-]+/[A-Za-z0-9/-]+$', args[2]) else mocks.ProcessCompletion(),
@@ -577,6 +582,18 @@ nothing to commit, working tree clean
                 self.executable, 'commit', '--date=now', '--amend',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.commit(amend=True, env=kwargs.get('env', dict())),
+            ), mocks.Subprocess.Route(
+                self.executable, 'commit', '-a', '-m', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.commit(message=args[4], env=kwargs.get('env', dict())),
+            ), mocks.Subprocess.Route(
+                self.executable, 'commit', '-m', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.commit(message=args[3], env=kwargs.get('env', dict())),
+            ), mocks.Subprocess.Route(
+                self.executable, 'apply', '--index', re.compile(r'.+'), '-3',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.apply(),
             ), mocks.Subprocess.Route(
                 self.executable, 'revert', '--no-commit', re.compile(r'.+'),
                 cwd=self.path,
@@ -597,6 +614,10 @@ nothing to commit, working tree clean
                 self.executable, 'restore', '--staged', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.restore(args[3], staged=True),
+            ), mocks.Subprocess.Route(
+                self.executable, 'add', '--all',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.add_all(),
             ), mocks.Subprocess.Route(
                 self.executable, 'add', re.compile(r'.+'),
                 cwd=self.path,
@@ -670,6 +691,10 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.reset(int(args[2].split('~')[-1]) if '~' in args[2] else None),
             ), mocks.Subprocess.Route(
+                self.executable, 'reset', '--hard',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.reset(int(args[2].split('~')[-1]) if '~' in args[2] else None),
+            ), mocks.Subprocess.Route(
                 self.executable, 'reset', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.reset_commit(args[2]),
@@ -737,6 +762,10 @@ nothing to commit, working tree clean
                 self.executable, 'merge-base', re.compile(r'.+'), re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.merge_base(args[2], *args[3:]),
+            ), mocks.Subprocess.Route(
+                self.executable, 'update-ref', re.compile(r'.+'), re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.update_ref(args[2], args[3]),
             ), mocks.Subprocess.Route(
                 self.executable,
                 cwd=self.path,
@@ -1055,7 +1084,11 @@ nothing to commit, working tree clean
 
         return mocks.ProcessCompletion(returncode=0)
 
-    def commit(self, amend=False, env=None):
+    def apply(self, patch=None):
+        self.staged['patch.txt'] = 'added'
+        return mocks.ProcessCompletion(returncode=0)
+
+    def commit(self, amend=False, message=None, env=None):
         env = env or dict()
         if not self.head:
             return mocks.ProcessCompletion(returncode=1, stdout='Allowed in git, but disallowed by reasonable workflows')
@@ -1075,12 +1108,15 @@ nothing to commit, working tree clean
             self.commits[self.branch].append(self.head)
 
         self.head.author = Contributor(self.config()['user.name'], [self.config()['user.email']])
-        self.head.message = '{}{}\nReviewed by Jonathan Bedard\n\n * {}\n{}'.format(
-            env.get('COMMIT_MESSAGE_TITLE', '') or '[Testing] {} commits'.format('Amending' if amend else 'Creating'),
-            ('\n' + env.get('COMMIT_MESSAGE_BUG', '')) if env.get('COMMIT_MESSAGE_BUG', '') else '',
-            '\n * '.join(self.staged.keys()),
-            env.get('COMMIT_MESSAGE_CONTENT', '')
-        )
+        if message:
+            self.head.message = message
+        else:
+            self.head.message = '{}{}\nReviewed by Jonathan Bedard\n\n * {}\n{}'.format(
+                env.get('COMMIT_MESSAGE_TITLE', '') or '[Testing] {} commits'.format('Amending' if amend else 'Creating'),
+                ('\n' + env.get('COMMIT_MESSAGE_BUG', '')) if env.get('COMMIT_MESSAGE_BUG', '') else '',
+                '\n * '.join(self.staged.keys()),
+                env.get('COMMIT_MESSAGE_CONTENT', '')
+            )
         self.head.hash = hashlib.sha256(string_utils.encode(self.head.message)).hexdigest()[:40]
         self.staged = {}
         return mocks.ProcessCompletion(returncode=0)
@@ -1180,6 +1216,12 @@ nothing to commit, working tree clean
         for key, value in self.modified.items():
             self.staged[key] = value
         del self.modified[file]
+        return mocks.ProcessCompletion(returncode=0)
+
+    def add_all(self):
+        for key, value in self.modified.items():
+            self.staged[key] = value
+        self.modified = {}
         return mocks.ProcessCompletion(returncode=0)
 
     def rebase(self, target, base, head):
@@ -1451,7 +1493,25 @@ nothing to commit, working tree clean
                     stderr='fatal: Not a valid object name {}\n'.format(ref),
                 )
 
-        return mocks.ProcessCompletion(returncode=0 if ancestor in self.rev_list(descendent)else 1)
+        return mocks.ProcessCompletion(returncode=0 if any(commit.hash == ancestor_commit.hash for commit in self.rev_list(descendent)) else 1)
+
+    def update_ref(self, ref, value):
+        commit = self.find(value)
+        if not commit:
+            return mocks.ProcessCompletion(
+                returncode=128,
+                stderr=f'fatal: Not a valid object name {value}\n',
+            )
+        remote_ref = ref[len('refs/remotes/'):]
+        if remote_ref not in self.remotes:
+            return mocks.ProcessCompletion(
+                returncode=128,
+                stderr=f'fatal: Unable to find remote reference {ref}\n',
+            )
+        if commit not in self.remotes[remote_ref]:
+            self.remotes[remote_ref] = list(reversed(self.rev_list(value)))
+        return mocks.ProcessCompletion(returncode=0)
+
 
     def add_remote(self, name):
         for existing in list(self.remotes.keys()):

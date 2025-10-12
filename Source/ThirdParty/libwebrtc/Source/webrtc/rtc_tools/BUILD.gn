@@ -76,6 +76,7 @@ rtc_library("video_file_writer") {
     "../api:scoped_refptr",
     "../api/video:video_frame",
     "../api/video:video_rtp_headers",
+    "../rtc_base:checks",
     "../rtc_base:logging",
     "//third_party/abseil-cpp/absl/strings",
   ]
@@ -139,12 +140,13 @@ if (!is_component_build) {
       ":video_file_reader",
       ":video_file_writer",
       ":video_quality_analysis",
+      "../api:array_view",
       "../api:make_ref_counted",
       "../api:scoped_refptr",
       "../api/test/metrics:chrome_perf_dashboard_metrics_exporter",
       "../api/test/metrics:global_metrics_logger_and_exporter",
+      "../api/test/metrics:metric",
       "../api/test/metrics:metrics_exporter",
-      "../api/test/metrics:stdout_metrics_exporter",
       "../rtc_base:stringutils",
       "//third_party/abseil-cpp/absl/flags:flag",
       "//third_party/abseil-cpp/absl/flags:parse",
@@ -161,92 +163,40 @@ if (!is_component_build) {
   # This target can be built from Chromium but it doesn't support
   # is_component_build=true because it depends on WebRTC testonly code
   # which is not part of //third_party/webrtc_overrides:webrtc_component.
-
-  rtc_executable("rtp_generator") {
-    visibility = [ "*" ]
-    testonly = true
-    sources = [
-      "rtp_generator/main.cc",
-      "rtp_generator/rtp_generator.cc",
-      "rtp_generator/rtp_generator.h",
-    ]
-
-    deps = [
-      "..//api/video_codecs:video_decoder_factory_template",
-      "..//api/video_codecs:video_decoder_factory_template_dav1d_adapter",
-      "..//api/video_codecs:video_decoder_factory_template_libvpx_vp8_adapter",
-      "..//api/video_codecs:video_decoder_factory_template_libvpx_vp9_adapter",
-      "..//api/video_codecs:video_decoder_factory_template_open_h264_adapter",
-      "..//api/video_codecs:video_encoder_factory_template",
-      "..//api/video_codecs:video_encoder_factory_template_libaom_av1_adapter",
-      "..//api/video_codecs:video_encoder_factory_template_libvpx_vp8_adapter",
-      "..//api/video_codecs:video_encoder_factory_template_libvpx_vp9_adapter",
-      "..//api/video_codecs:video_encoder_factory_template_open_h264_adapter",
-      "..//test/network:simulated_network",
-      "../api:create_frame_generator",
-      "../api:rtp_parameters",
-      "../api:transport_api",
-      "../api/environment",
-      "../api/environment:environment_factory",
-      "../api/video:builtin_video_bitrate_allocator_factory",
-      "../api/video_codecs:video_codecs_api",
-      "../call",
-      "../call:call_interfaces",
-      "../call:fake_network",
-      "../call:rtp_interfaces",
-      "../call:rtp_sender",
-      "../call:simulated_packet_receiver",
-      "../call:video_send_stream_api",
-      "../media:media_constants",
-      "../media:rtc_audio_video",
-      "../rtc_base:rtc_json",
-      "../rtc_base:threading",
-      "../rtc_base/system:file_wrapper",
-      "../test:fileutils",
-      "../test:frame_generator_capturer",
-      "../test:rtp_test_utils",
-      "../video/config:encoder_config",
-      "../video/config:streams_config",
-      "//third_party/abseil-cpp/absl/flags:flag",
-      "//third_party/abseil-cpp/absl/flags:parse",
-      "//third_party/abseil-cpp/absl/flags:usage",
-      "//third_party/abseil-cpp/absl/strings",
-    ]
-    if (build_with_chromium) {
-      # When building from Chromium, WebRTC's metrics and field trial
-      # implementations need to be replaced by the Chromium ones.
-      deps += [ "//third_party/webrtc_overrides:webrtc_component" ]
-    }
-  }
-
-  # This target can be built from Chromium but it doesn't support
-  # is_component_build=true because it depends on WebRTC testonly code
-  # which is not part of //third_party/webrtc_overrides:webrtc_component.
-
   rtc_executable("video_replay") {
     visibility = [ "*" ]
     testonly = true
     sources = [ "video_replay.cc" ]
     deps = [
       "../api:field_trials",
+      "../api:field_trials_view",
       "../api:rtp_parameters",
       "../api/environment",
       "../api/environment:environment_factory",
       "../api/task_queue",
       "../api/test/video:function_video_factory",
       "../api/transport:field_trial_based_config",
+      "../api/units:time_delta",
       "../api/units:timestamp",
+      "../api/video:encoded_image",
       "../api/video:video_frame",
       "../api/video_codecs:video_codecs_api",
       "../call",
       "../call:call_interfaces",
+      "../call:video_receive_stream_api",
       "../common_video",
       "../media:rtc_internal_video_codecs",
       "../modules/rtp_rtcp:rtp_rtcp_format",
+      "../modules/video_coding:video_codec_interface",
       "../modules/video_coding:video_coding_utility",
       "../rtc_base:checks",
+      "../rtc_base:copy_on_write_buffer",
+      "../rtc_base:logging",
+      "../rtc_base:rtc_event",
       "../rtc_base:rtc_json",
       "../rtc_base:stringutils",
+      "../rtc_base:threading",
+      "../rtc_base/system:file_wrapper",
       "../system_wrappers",
       "../test:call_config_utils",
       "../test:encoder_settings",
@@ -262,10 +212,11 @@ if (!is_component_build) {
       "../test:video_frame_writer",
       "../test:video_test_common",
       "../test:video_test_constants",
-      "../test/time_controller:time_controller",
+      "../test/time_controller",
       "//third_party/abseil-cpp/absl/flags:flag",
       "//third_party/abseil-cpp/absl/flags:parse",
-      "//third_party/abseil-cpp/absl/strings:strings",
+      "//third_party/abseil-cpp/absl/strings",
+      "//third_party/abseil-cpp/absl/strings:str_format",
     ]
     if (build_with_chromium) {
       # When building from Chromium, WebRTC's metrics and field trial
@@ -353,6 +304,7 @@ if (!build_with_chromium) {
         ":chart_proto",
         "../api:candidate",
         "../api:dtls_transport_interface",
+        "../api:field_trials",
         "../api:function_view",
         "../api:make_ref_counted",
         "../api:rtp_headers",
@@ -363,9 +315,9 @@ if (!build_with_chromium) {
         "../api/environment",
         "../api/environment:environment_factory",
         "../api/neteq:neteq_api",
-        "../api/rtc_event_log:rtc_event_log",
+        "../api/rtc_event_log",
         "../api/transport:bandwidth_usage",
-        "../api/transport:field_trial_based_config",
+        "../api/transport:ecn_marking",
         "../api/transport:goog_cc",
         "../api/transport:network_control",
         "../api/units:data_rate",
@@ -403,8 +355,6 @@ if (!build_with_chromium) {
         "../rtc_base:stringutils",
         "../rtc_base/network:sent_packet",
         "../system_wrappers",
-        "../system_wrappers:field_trial",
-        "../test:explicit_key_value_config",
         "//third_party/abseil-cpp/absl/algorithm:container",
         "//third_party/abseil-cpp/absl/base:core_headers",
         "//third_party/abseil-cpp/absl/functional:bind_front",
@@ -422,6 +372,7 @@ if (!build_with_chromium) {
       deps = [
         ":chart_proto",
         ":event_log_visualizer_utils",
+        "../api/environment:environment_factory",
         "//api/units:time_delta",
         "//logging:rtc_event_log_parser",
         "//rtc_base:protobuf_utils",
@@ -454,6 +405,15 @@ if (!build_with_chromium) {
       "video_encoder/video_encoder.cc",
     ]
     deps = [
+      "../api/video:encoded_image",
+      "../api/video:video_bitrate_allocation",
+      "../api/video:video_bitrate_allocator",
+      "../api/video:video_frame",
+      "../api/video:video_frame_type",
+      "../api/video_codecs:scalability_mode",
+      "../rtc_base:checks",
+      "../rtc_base:stringutils",
+      "../rtc_base/system:file_wrapper",
       "//api:create_frame_generator",
       "//api:frame_generator_api",
       "//api/environment",
@@ -462,7 +422,7 @@ if (!build_with_chromium) {
       "//api/video_codecs:builtin_video_decoder_factory",
       "//api/video_codecs:builtin_video_encoder_factory",
       "//api/video_codecs:video_codecs_api",
-      "//common_video:common_video",
+      "//common_video",
       "//media:media_constants",
       "//modules/video_coding:video_codec_interface",
       "//modules/video_coding:video_coding_utility",
@@ -473,7 +433,7 @@ if (!build_with_chromium) {
       "//third_party/abseil-cpp/absl/flags:flag",
       "//third_party/abseil-cpp/absl/flags:parse",
       "//third_party/abseil-cpp/absl/flags:usage",
-      "//third_party/abseil-cpp/absl/strings:strings",
+      "//third_party/abseil-cpp/absl/strings",
     ]
   }
 }
@@ -492,6 +452,9 @@ if (rtc_include_tests) {
         deps = [
           ":chart_proto",
           ":event_log_visualizer_utils",
+          "../api:field_trials",
+          "../api/environment",
+          "../api/environment:environment_factory",
           "../api/neteq:neteq_api",
           "../api/rtc_event_log",
           "../api/units:time_delta",
@@ -501,7 +464,6 @@ if (rtc_include_tests) {
           "../rtc_base:checks",
           "../rtc_base:logging",
           "../rtc_base:protobuf_utils",
-          "../system_wrappers:field_trial",
           "//third_party/abseil-cpp/absl/algorithm:container",
           "//third_party/abseil-cpp/absl/flags:config",
           "//third_party/abseil-cpp/absl/flags:flag",
@@ -613,7 +575,6 @@ if (rtc_include_tests) {
 
       data = tools_unittests_resources
       if (is_android) {
-        deps += [ "//testing/android/native_test:native_test_support" ]
         shard_timeout = 900
       }
       if (is_ios) {
@@ -638,6 +599,7 @@ if (rtc_include_tests) {
 
         deps = [
           "../api:function_view",
+          "../api/audio:audio_frame_api",
           "../common_audio",
           "../modules/audio_processing",
           "../modules/audio_processing:audioproc_debug_proto",

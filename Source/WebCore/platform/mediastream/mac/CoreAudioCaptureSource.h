@@ -25,15 +25,17 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(MEDIA_STREAM)
 
-#include "AudioSession.h"
-#include "CAAudioStreamDescription.h"
-#include "CaptureDevice.h"
-#include "RealtimeMediaSource.h"
-#include "RealtimeMediaSourceFactory.h"
 #include <AudioToolbox/AudioToolbox.h>
 #include <CoreAudio/CoreAudioTypes.h>
+#include <WebCore/AudioSession.h>
+#include <WebCore/BaseAudioSharedUnit.h>
+#include <WebCore/CAAudioStreamDescription.h>
+#include <WebCore/CaptureDevice.h>
+#include <WebCore/RealtimeMediaSource.h>
+#include <WebCore/RealtimeMediaSourceFactory.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -47,7 +49,6 @@ namespace WebCore {
 
 class AudioSampleBufferList;
 class AudioSampleDataSource;
-class BaseAudioSharedUnit;
 class CaptureDeviceInfo;
 class WebAudioSourceProviderAVFObjC;
 

@@ -1,0 +1,27 @@
+<html>
+<head>
+    <script src="resources/autofill-test.js"></script>
+    <style>
+        .shield {
+            display: block;
+            position: absolute;
+        }
+
+        input {
+            margin-top: 40px;
+            display: block;
+        }
+
+        #devolved {
+            border: none;
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body onload="test(true)">
+    <p>This tests that background and text colors properly change for autofilled and obscured native inputs. It can only be run using WKTR.</p>
+    <input type="text" id="textfield">
+    <input type="text" id="devolved">
+    <p id="message"></p>
+</body>
+</html>

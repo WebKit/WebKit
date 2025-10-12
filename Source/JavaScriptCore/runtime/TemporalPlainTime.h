@@ -86,6 +86,8 @@ private:
     static std::optional<ISO8601::PlainTime> parse(StringParsingBuffer<CharacterType>&);
     static ISO8601::PlainTime fromObject(JSGlobalObject*, JSObject*);
 
+    ISO8601::Duration differenceTemporalPlainTime(DifferenceOperation, JSGlobalObject*, TemporalPlainTime*, JSValue) const;
+
     ISO8601::PlainTime m_plainTime;
     LazyProperty<TemporalPlainTime, TemporalCalendar> m_calendar;
 };

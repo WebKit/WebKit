@@ -8,4 +8,6 @@ PASS Property view-transition-name value 'initial'
 PASS Property view-transition-name value 'inherit'
 PASS Property view-transition-name value 'revert'
 PASS Property view-transition-name value 'revert-layer'
+PASS Property view-transition-name value 'match-element'
+PASS Property view-transition-name value 'maTch-element'
 

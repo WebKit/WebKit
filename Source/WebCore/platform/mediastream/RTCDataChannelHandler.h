@@ -27,8 +27,8 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "RTCPriorityType.h"
-#include "ScriptExecutionContextIdentifier.h"
+#include <WebCore/RTCPriorityType.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

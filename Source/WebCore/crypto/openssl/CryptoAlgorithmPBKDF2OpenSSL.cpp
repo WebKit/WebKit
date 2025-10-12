@@ -45,7 +45,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmPBKDF2::platformDeriveBits(const Cry
         return Exception { ExceptionCode::OperationError };
 
     Vector<uint8_t> output(length / 8);
-    if (PKCS5_PBKDF2_HMAC(reinterpret_cast<const char*>(key.key().data()), key.key().size(), parameters.saltVector().data(), parameters.saltVector().size(), parameters.iterations, algorithm, output.size(), output.data()) <= 0)
+    if (PKCS5_PBKDF2_HMAC(reinterpret_cast<const char*>(key.key().span().data()), key.key().size(), parameters.saltVector().span().data(), parameters.saltVector().size(), parameters.iterations, algorithm, output.size(), output.mutableSpan().data()) <= 0)
         return Exception { ExceptionCode::OperationError };
 
     return output;

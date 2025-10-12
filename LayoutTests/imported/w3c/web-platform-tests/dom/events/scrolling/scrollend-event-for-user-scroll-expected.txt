@@ -1,7 +1,7 @@
 
 PASS Tests that the target_div gets scrollend event when touch dragging.
-FAIL Tests that the target_div gets scrollend event when clicking scrollbar. promise_test: Unhandled rejection with value: "No scrollend event received for target [object HTMLDivElement]"
-FAIL Tests that the target_div gets scrollend event when dragging the scrollbar thumb. promise_test: Unhandled rejection with value: "No scrollend event received for target [object HTMLDivElement]"
-FAIL Tests that the target_div gets scrollend event when mouse wheel scrolling. promise_test: Unhandled rejection with value: "No scrollend event received for target [object HTMLDivElement]"
-FAIL Tests that the target_div gets scrollend event when sending DOWN key to the target. promise_test: Unhandled rejection with value: "No scrollend event received for target [object HTMLDivElement]"
+PASS Tests that the target_div gets scrollend event when clicking scrollbar.
+PASS Tests that the target_div gets scrollend event when dragging the scrollbar thumb.
+PASS Tests that the target_div gets scrollend event when mouse wheel scrolling.
+PASS Tests that the target_div gets scrollend event when sending DOWN key to the target.
 

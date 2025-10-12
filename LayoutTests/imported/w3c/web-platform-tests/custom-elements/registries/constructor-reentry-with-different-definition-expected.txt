@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: TypeError: Cannot instantiate a custom element inside its own constructor during upgrades
-CONSOLE MESSAGE: TypeError: Cannot instantiate a custom element inside its own constructor during upgrades
 
 PASS Re-entry via upgrade before calling super()
 PASS Re-entry via upgrade after calling super()

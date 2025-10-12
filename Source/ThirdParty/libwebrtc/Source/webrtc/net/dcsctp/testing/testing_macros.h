@@ -10,7 +10,7 @@
 #ifndef NET_DCSCTP_TESTING_TESTING_MACROS_H_
 #define NET_DCSCTP_TESTING_TESTING_MACROS_H_
 
-#include <utility>
+#include <utility>  // IWYU pragma: keep
 
 namespace dcsctp {
 

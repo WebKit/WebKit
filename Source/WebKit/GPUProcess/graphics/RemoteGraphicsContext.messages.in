@@ -1,0 +1,144 @@
+# Copyright (C) 2021-2024 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#if ENABLE(GPU_PROCESS)
+
+[
+    ExceptionForEnabledBy,
+    DispatchedFrom=WebContent,
+    DispatchedTo=GPU
+]
+messages -> RemoteGraphicsContext Stream {
+    Save() StreamBatched
+    Restore() StreamBatched
+    Translate(float x, float y) StreamBatched
+    Rotate(float angle) StreamBatched
+    Scale(WebCore::FloatSize scale) StreamBatched
+    SetCTM(WebCore::AffineTransform ctm) StreamBatched
+    ConcatCTM(WebCore::AffineTransform ctm) StreamBatched
+    SetFillPackedColor(struct WebCore::PackedColor::RGBA color) StreamBatched
+    SetFillColor(WebCore::Color color) StreamBatched
+    SetFillCachedGradient(WebKit::RemoteGradientIdentifier identifier, WebCore::AffineTransform spaceTransform) StreamBatched
+    SetFillGradient(Ref<WebCore::Gradient> gradient, WebCore::AffineTransform spaceTransform) StreamBatched
+    SetFillPatternNativeImage(WebCore::RenderingResourceIdentifier nativeImageIdentifier, WebCore::PatternParameters pattern) StreamBatched
+    SetFillPatternImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::PatternParameters pattern) StreamBatched
+    SetFillRule(enum:bool WebCore::WindRule rule) StreamBatched
+    SetStrokePackedColor(WebCore::PackedColor::RGBA color) StreamBatched
+    SetStrokeColor(WebCore::Color color) StreamBatched
+    SetStrokeCachedGradient(WebKit::RemoteGradientIdentifier identifier, WebCore::AffineTransform spaceTransform) StreamBatched
+    SetStrokeGradient(Ref<WebCore::Gradient> gradient, WebCore::AffineTransform spaceTransform) StreamBatched
+    SetStrokePatternNativeImage(WebCore::RenderingResourceIdentifier nativeImageIdentifier, WebCore::PatternParameters pattern) StreamBatched
+    SetStrokePatternImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::PatternParameters pattern) StreamBatched
+    SetStrokePackedColorAndThickness(WebCore::PackedColor::RGBA color, float thickness) StreamBatched
+    SetStrokeThickness(float thickness) StreamBatched
+    SetStrokeStyle(enum:uint8_t WebCore::StrokeStyle style) StreamBatched
+    SetCompositeMode(struct WebCore::CompositeMode mode) StreamBatched
+    SetDropShadow(struct std::optional<WebCore::GraphicsDropShadow> dropShadow) StreamBatched
+    SetStyle(std::optional<WebCore::GraphicsStyle> style) StreamBatched
+    SetAlpha(float alpha) StreamBatched
+    SetTextDrawingMode(WebCore::TextDrawingModeFlags mode) StreamBatched
+    SetImageInterpolationQuality(enum:uint8_t WebCore::InterpolationQuality quality) StreamBatched
+    SetShouldAntialias(bool shouldAntialias) StreamBatched
+    SetShouldSmoothFonts(bool shouldSmooth) StreamBatched
+    SetShouldSubpixelQuantizeFonts(bool shouldQuantize) StreamBatched
+    SetShadowsIgnoreTransforms(bool shouldIgnore) StreamBatched
+    SetDrawLuminanceMask(bool shouldDraw) StreamBatched
+    SetLineCap(enum:uint8_t WebCore::LineCap lineCap) StreamBatched
+    SetLineDash(FixedVector<double> dashArray, float dashOffset) StreamBatched
+    SetLineJoin(enum:uint8_t WebCore::LineJoin lineJoin) StreamBatched
+    SetMiterLimit(float limit) StreamBatched
+    Clip(WebCore::FloatRect rect)
+    ClipRoundedRect(WebCore::FloatRoundedRect rect)
+    ClipOut(WebCore::FloatRect rect)
+    ClipOutRoundedRect(WebCore::FloatRoundedRect rect)
+    ClipToImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, WebCore::FloatRect destinationRect)
+    ClipOutToPath(WebCore::Path path)
+    ClipPath(WebCore::Path path, enum:bool WebCore::WindRule windRule)
+    ResetClip()
+    DrawGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::FloatSize> glyphsAdvances, WebCore::FloatPoint localAnchor, enum:uint8_t WebCore::FontSmoothingMode smoothingMode)
+    DrawDisplayList(WebKit::RemoteDisplayListIdentifier identifier)
+    DrawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, WebCore::FloatRect sourceImageRect, Ref<WebCore::Filter> filter)
+    DrawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::FloatRect destinationRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)
+    DrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)
+    DrawSystemImage(Ref<WebCore::SystemImage> systemImage, WebCore::FloatRect destinationRect)
+    DrawPatternNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect tileRect, WebCore::AffineTransform transform, WebCore::FloatPoint phase, WebCore::FloatSize spacing, struct WebCore::ImagePaintingOptions options)
+    DrawPatternImageBuffer(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect tileRect, WebCore::AffineTransform transform, WebCore::FloatPoint phase, WebCore::FloatSize spacing, struct WebCore::ImagePaintingOptions options)
+    BeginTransparencyLayer(float opacity)
+    BeginTransparencyLayerWithCompositeMode(struct WebCore::CompositeMode compositeMode)
+    EndTransparencyLayer()
+    DrawRect(WebCore::FloatRect rect, float borderThickness)
+    DrawLine(WebCore::FloatPoint point1, WebCore::FloatPoint point2)
+    DrawLinesForText(WebCore::FloatPoint point, float thickness, std::span<const WebCore::FloatSegment> lineSegments, bool printing, bool doubleLines, enum:uint8_t WebCore::StrokeStyle strokeStyle)
+    DrawDotsForDocumentMarker(WebCore::FloatRect rect, struct WebCore::DocumentMarkerLineStyle style)
+    DrawEllipse(WebCore::FloatRect rect)
+    DrawPath(WebCore::Path path)
+    DrawFocusRingPath(WebCore::Path path, float outlineWidth, WebCore::Color color)
+    DrawFocusRingRects(Vector<WebCore::FloatRect> rects, float outlineOffset, float outlineWidth, WebCore::Color color)
+    FillRect(WebCore::FloatRect rect, enum:bool WebCore::RequiresClipToRect requiresClipToRect)
+    FillRectWithColor(WebCore::FloatRect rect, WebCore::Color color)
+    FillRectWithGradient(WebCore::FloatRect rect, Ref<WebCore::Gradient> gradient)
+    FillRectWithGradientAndSpaceTransform(WebCore::FloatRect rect, Ref<WebCore::Gradient> gradient, WebCore::AffineTransform transform, enum:bool WebCore::RequiresClipToRect requiresClipToRect)
+    FillCompositedRect(WebCore::FloatRect rect, WebCore::Color color, enum:uint8_t WebCore::CompositeOperator op, enum:uint8_t WebCore::BlendMode blendMode)
+    FillRoundedRect(WebCore::FloatRoundedRect rect, WebCore::Color color, enum:uint8_t WebCore::BlendMode blendMode)
+    FillRectWithRoundedHole(WebCore::FloatRect rect, WebCore::FloatRoundedRect roundedHoleRect, WebCore::Color color)
+#if ENABLE(INLINE_PATH_DATA)
+    FillLine(struct WebCore::PathDataLine line)
+    FillArc(struct WebCore::PathArc arc)
+    FillClosedArc(struct WebCore::PathClosedArc closedArc)
+    FillQuadCurve(struct WebCore::PathDataQuadCurve curve)
+    FillBezierCurve(struct WebCore::PathDataBezierCurve curve)
+#endif
+    FillPathSegment(WebCore::PathSegment segment) StreamBatched
+    FillPath(WebCore::Path path)
+    FillEllipse(WebCore::FloatRect rect)
+    StrokeRect(WebCore::FloatRect rect, float lineWidth)
+#if ENABLE(INLINE_PATH_DATA)
+    StrokeLine(struct WebCore::PathDataLine line) StreamBatched
+    StrokeLineWithColorAndThickness(struct WebCore::PathDataLine line, std::optional<WebCore::PackedColor::RGBA> strokeColor, std::optional<float> strokeThickness) StreamBatched
+    StrokeArc(struct WebCore::PathArc arc) StreamBatched
+    StrokeClosedArc(struct WebCore::PathClosedArc closedArc) StreamBatched
+    StrokeQuadCurve(struct WebCore::PathDataQuadCurve curve) StreamBatched
+    StrokeBezierCurve(struct WebCore::PathDataBezierCurve curve) StreamBatched
+#endif
+    StrokePathSegment(WebCore::PathSegment segment) StreamBatched
+    StrokePath(WebCore::Path path) StreamBatched
+    StrokeEllipse(WebCore::FloatRect rect) StreamBatched
+    ClearRect(WebCore::FloatRect rect)
+    DrawControlPart(Ref<WebCore::ControlPart> part, WebCore::FloatRoundedRect borderRect, float deviceScaleFactor, WebCore::ControlStyle style)
+#if USE(CG)
+    ApplyStrokePattern()
+    ApplyFillPattern()
+#endif
+    ApplyDeviceScaleFactor(float scaleFactor)
+
+    BeginPage(WebCore::FloatRect pageRect)
+    EndPage()
+    SetURLForRect(URL link, WebCore::FloatRect destRect)
+
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    DrawVideoFrame(struct WebKit::SharedVideoFrame frame, WebCore::FloatRect rect, struct WebCore::ImageOrientation orientation, bool shouldDiscardAlpha) NotStreamEncodable
+    SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
+    SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable
+#endif
+}
+
+#endif // ENABLE(GPU_PROCESS)

@@ -35,6 +35,7 @@
 #import "CocoaHelpers.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
+#import <JavaScriptCore/MathCommon.h>
 #import "WebExtensionAPINamespace.h"
 #import "WebExtensionAPIPort.h"
 #import "WebExtensionContext.h"
@@ -154,8 +155,8 @@ NSDictionary *toWebAPI(const WebExtensionTabParameters& parameters)
 
     if (parameters.size) {
         auto size = parameters.size.value();
-        result[widthKey] = @(size.width);
-        result[heightKey] = @(size.height);
+        result[widthKey] = @(size.width());
+        result[heightKey] = @(size.height());
     }
 
     if (parameters.parentTabIdentifier)
@@ -193,6 +194,11 @@ NSDictionary *toWebAPI(const WebExtensionTabParameters& parameters)
     return [result copy];
 }
 
+static inline size_t clampIndex(double index)
+{
+    return static_cast<size_t>(std::max(0.0, std::min(index, static_cast<double>(JSC::maxSafeInteger()))));
+}
+
 bool WebExtensionAPITabs::parseTabCreateOptions(NSDictionary *options, WebExtensionTabParameters& parameters, NSString *sourceKey, NSString **outExceptionString)
 {
     if (!parseTabUpdateOptions(options, parameters, sourceKey, outExceptionString))
@@ -218,7 +224,7 @@ bool WebExtensionAPITabs::parseTabCreateOptions(NSDictionary *options, WebExtens
     }
 
     if (NSNumber *index = objectForKey<NSNumber>(options, indexKey))
-        parameters.index = index.unsignedIntegerValue;
+        parameters.index = clampIndex(index.doubleValue);
 
     if (NSNumber *openInReaderMode = objectForKey<NSNumber>(options, openInReaderModeKey))
         parameters.showingReaderMode = openInReaderMode.boolValue;
@@ -294,7 +300,7 @@ bool WebExtensionAPITabs::parseTabDuplicateOptions(NSDictionary *options, WebExt
         parameters.active = active.boolValue;
 
     if (NSNumber *index = objectForKey<NSNumber>(options, indexKey))
-        parameters.index = index.unsignedIntegerValue;
+        parameters.index = clampIndex(index.doubleValue);
 
     return true;
 }
@@ -386,7 +392,7 @@ bool WebExtensionAPITabs::parseTabQueryOptions(NSDictionary *options, WebExtensi
         parameters.hidden = hidden.boolValue;
 
     if (NSNumber *index = objectForKey<NSNumber>(options, indexKey))
-        parameters.index = index.unsignedIntegerValue;
+        parameters.index = clampIndex(index.doubleValue);
 
     if (NSNumber *active = objectForKey<NSNumber>(options, activeKey))
         parameters.active = active.boolValue;
@@ -436,7 +442,7 @@ bool WebExtensionAPITabs::parseCaptureVisibleTabOptions(NSDictionary *options, W
     }
 
     if (NSNumber *quality = objectForKey<NSNumber>(options, qualityKey)) {
-        if (quality.integerValue < 0 || quality.integerValue > 100) {
+        if (quality.doubleValue < 0 || quality.doubleValue > 100) {
             *outExceptionString = toErrorString(nullString(), qualityKey, @"it must specify a value between 0 and 100").createNSString().autorelease();
             return false;
         }
@@ -1237,7 +1243,7 @@ void WebExtensionContextProxy::dispatchTabsReplacedEvent(WebExtensionTabIdentifi
     });
 }
 
-void WebExtensionContextProxy::dispatchTabsDetachedEvent(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier oldWindowIdentifier, size_t oldIndex)
+void WebExtensionContextProxy::dispatchTabsDetachedEvent(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier oldWindowIdentifier, uint64_t oldIndex)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onDetached
 
@@ -1257,7 +1263,7 @@ void WebExtensionContextProxy::dispatchTabsDetachedEvent(WebExtensionTabIdentifi
     });
 }
 
-void WebExtensionContextProxy::dispatchTabsMovedEvent(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier windowIdentifier, size_t oldIndex, size_t newIndex)
+void WebExtensionContextProxy::dispatchTabsMovedEvent(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier windowIdentifier, uint64_t oldIndex, uint64_t newIndex)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onMoved
 
@@ -1268,7 +1274,7 @@ void WebExtensionContextProxy::dispatchTabsMovedEvent(WebExtensionTabIdentifier 
     });
 }
 
-void WebExtensionContextProxy::dispatchTabsAttachedEvent(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier newWindowIdentifier, size_t newIndex)
+void WebExtensionContextProxy::dispatchTabsAttachedEvent(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier newWindowIdentifier, uint64_t newIndex)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onAttached
 

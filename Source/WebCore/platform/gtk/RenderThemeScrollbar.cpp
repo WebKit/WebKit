@@ -37,9 +37,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderThemeScrollbar);
 
-static UncheckedKeyHashMap<unsigned, std::unique_ptr<RenderThemeScrollbar>>& widgetMap()
+static HashMap<unsigned, std::unique_ptr<RenderThemeScrollbar>>& widgetMap()
 {
-    static NeverDestroyed<UncheckedKeyHashMap<unsigned, std::unique_ptr<RenderThemeScrollbar>>> map;
+    static NeverDestroyed<HashMap<unsigned, std::unique_ptr<RenderThemeScrollbar>>> map;
     return map;
 }
 

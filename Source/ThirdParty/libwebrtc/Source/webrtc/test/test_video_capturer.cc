@@ -10,12 +10,17 @@
 
 #include "test/test_video_capturer.h"
 
-#include <algorithm>
+#include <optional>
+#include <utility>
 
 #include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/video_frame.h"
 #include "api/video/video_frame_buffer.h"
 #include "api/video/video_rotation.h"
+#include "api/video/video_sink_interface.h"
+#include "api/video/video_source_interface.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 namespace test {
@@ -62,7 +67,7 @@ void TestVideoCapturer::OnFrame(const VideoFrame& original_frame) {
     // Video adapter has requested a down-scale. Allocate a new buffer and
     // return scaled version.
     // For simplicity, only scale here without cropping.
-    rtc::scoped_refptr<I420Buffer> scaled_buffer =
+    scoped_refptr<I420Buffer> scaled_buffer =
         I420Buffer::Create(out_width, out_height);
     scaled_buffer->ScaleFrom(*frame.video_frame_buffer()->ToI420());
     VideoFrame::Builder new_frame_builder =
@@ -85,18 +90,17 @@ void TestVideoCapturer::OnFrame(const VideoFrame& original_frame) {
   }
 }
 
-rtc::VideoSinkWants TestVideoCapturer::GetSinkWants() {
+VideoSinkWants TestVideoCapturer::GetSinkWants() {
   return broadcaster_.wants();
 }
 
-void TestVideoCapturer::AddOrUpdateSink(
-    rtc::VideoSinkInterface<VideoFrame>* sink,
-    const rtc::VideoSinkWants& wants) {
+void TestVideoCapturer::AddOrUpdateSink(VideoSinkInterface<VideoFrame>* sink,
+                                        const VideoSinkWants& wants) {
   broadcaster_.AddOrUpdateSink(sink, wants);
   UpdateVideoAdapter();
 }
 
-void TestVideoCapturer::RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) {
+void TestVideoCapturer::RemoveSink(VideoSinkInterface<VideoFrame>* sink) {
   broadcaster_.RemoveSink(sink);
   UpdateVideoAdapter();
 }

@@ -174,7 +174,7 @@ void RTCRtpSFrameTransform::initializeTransformer(RTCRtpTransformBackend& backen
         if (!result)
             return;
 
-        frame->setData({ result.value().data(), result.value().size() });
+        frame->setData(result.value().span());
 
         backend->processTransformedFrame(frame.get());
     });
@@ -218,7 +218,7 @@ void transformFrame(Frame& frame, JSDOMGlobalObject& globalObject, RTCRtpSFrameT
 
 ExceptionOr<void> RTCRtpSFrameTransform::createStreams()
 {
-    auto* globalObject = scriptExecutionContext() ? JSC::jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject()) : nullptr;
+    auto* globalObject = scriptExecutionContext() ? JSC::jsCast<JSDOMGlobalObject*>(protectedScriptExecutionContext()->globalObject()) : nullptr;
     if (!globalObject)
         return Exception { ExceptionCode::InvalidStateError };
 
@@ -287,6 +287,11 @@ ExceptionOr<RefPtr<WritableStream>> RTCRtpSFrameTransform::writable()
 bool RTCRtpSFrameTransform::virtualHasPendingActivity() const
 {
     return (m_isAttached || m_hasWritable) && hasEventListeners();
+}
+
+ScriptExecutionContext* RTCRtpSFrameTransform::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
 }
 
 } // namespace WebCore

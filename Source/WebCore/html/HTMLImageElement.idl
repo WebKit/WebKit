@@ -28,38 +28,39 @@
     LegacyFactoryFunction=Image(optional unsigned long width, optional unsigned long height)
 ] interface HTMLImageElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString alt;
-    [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
-    [CEReactions=NotNeeded, ImplementedAs=srcsetForBindings] attribute [AtomString] USVString srcset;
+    [CEReactions=NotNeeded, ReflectURL] attribute USVString src;
+    [CEReactions=NotNeeded, ImplementedAs=srcsetForBindings, ReflectSetter] attribute [AtomString] USVString srcset;
     [CEReactions=NotNeeded, Reflect] attribute DOMString sizes;
-    [CEReactions=NotNeeded] attribute [AtomString] DOMString? crossOrigin;
+    [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString? crossOrigin;
     [CEReactions=NotNeeded, Reflect] attribute DOMString useMap;
     [CEReactions=NotNeeded, Reflect] attribute boolean isMap;
     [CEReactions=NotNeeded, Conditional=SPATIAL_IMAGE_CONTROLS, EnabledBySetting=SpatialImageControlsEnabled, Reflect] attribute boolean controls;
-    [CEReactions=NotNeeded] attribute unsigned long width;
-    [CEReactions=NotNeeded] attribute unsigned long height;
+    [CEReactions=NotNeeded, ReflectSetter] attribute unsigned long width;
+    [CEReactions=NotNeeded, ReflectSetter] attribute unsigned long height;
     readonly attribute unsigned long naturalHeight;
     readonly attribute unsigned long naturalWidth;
     readonly attribute boolean complete;
     readonly attribute USVString currentSrc;
-    [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings] attribute [AtomString] DOMString referrerPolicy;
-    [CEReactions=NotNeeded] attribute [AtomString] DOMString decoding;
-    [CEReactions=NotNeeded, EnabledBySetting=LazyImageLoadingEnabled, ImplementedAs=loadingForBindings] attribute [AtomString] DOMString loading;
+    [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings, ReflectSetter] attribute [AtomString] DOMString referrerPolicy;
+    [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString decoding;
+    [CEReactions=NotNeeded, EnabledBySetting=LazyImageLoadingEnabled, Reflect, Enumerated=HTMLImageElementLoadingValues] attribute DOMString loading;
 
     Promise<undefined> decode();
 
     // Obsolete: Still part of the HTML specification (https://html.spec.whatwg.org/multipage/obsolete.html#HTMLImageElement-partial)
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
-    [CEReactions=NotNeeded, Reflect, URL] attribute USVString lowsrc;
+    [CEReactions=NotNeeded, ReflectURL] attribute USVString lowsrc;
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
     [CEReactions=NotNeeded, Reflect] attribute unsigned long hspace;
     [CEReactions=NotNeeded, Reflect] attribute unsigned long vspace;
-    [CEReactions=NotNeeded, Reflect, URL] attribute USVString longDesc;
+    [CEReactions=NotNeeded, ReflectURL] attribute USVString longDesc;
 
     [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString border;
 
-    [CEReactions=NotNeeded, ImplementedAs=fetchPriorityForBindings] attribute [AtomString] DOMString fetchPriority;
+    [CEReactions=NotNeeded, ImplementedAs=fetchPriorityForBindings, ReflectSetter] attribute [AtomString] DOMString fetchPriority;
 
     // Non-standard
     [Conditional=ATTACHMENT_ELEMENT, EnabledByDeprecatedGlobalSetting=AttachmentElementEnabled] readonly attribute DOMString attachmentIdentifier;
 };
 
+[MissingValueDefault="eager", InvalidValueDefault="eager"] enum HTMLImageElementLoadingValues { "lazy", "eager" };

@@ -1,0 +1,6 @@
+
+FAIL The revert-rule keyword can revert to a nested rule assert_true: expected true got false
+FAIL The revert-rule keyword can revert to a CSSNestedDeclarationsRule assert_true: expected true got false
+FAIL The revert-rule keyword can revert from a CSSNestedDeclarationsRule assert_true: expected true got false
+FAIL The revert-rule keyword can revert to scoped declarations assert_true: expected true got false
+

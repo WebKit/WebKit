@@ -90,12 +90,12 @@ void MediaSampleAVFObjC::commonInit()
     auto getKeyIDs = [](CMFormatDescriptionRef description) -> Vector<Ref<SharedBuffer>> {
         if (!description)
             return { };
-        if (auto trackEncryptionData = static_cast<CFDataRef>(PAL::CMFormatDescriptionGetExtension(description, CFSTR("CommonEncryptionTrackEncryptionBox")))) {
+        if (RetainPtr trackEncryptionData = static_cast<CFDataRef>(PAL::CMFormatDescriptionGetExtension(description, CFSTR("CommonEncryptionTrackEncryptionBox")))) {
             // AVStreamDataParser will attach the 'tenc' box to each sample, not including the leading
             // size and boxType data. Extract the 'tenc' box and use that box to derive the sample's
             // keyID.
-            auto length = CFDataGetLength(trackEncryptionData);
-            auto ptr = (void*)(CFDataGetBytePtr(trackEncryptionData));
+            auto length = CFDataGetLength(trackEncryptionData.get());
+            auto ptr = (void*)(CFDataGetBytePtr(trackEncryptionData.get()));
             auto destructorFunction = createSharedTask<void(void*)>([data = WTFMove(trackEncryptionData)] (void*) { UNUSED_PARAM(data); });
             auto trackEncryptionDataBuffer = ArrayBuffer::create(JSC::ArrayBufferContents(ptr, length, std::nullopt, WTFMove(destructorFunction)));
 
@@ -118,7 +118,8 @@ void MediaSampleAVFObjC::commonInit()
 
         return { };
     };
-    m_keyIDs = getKeyIDs(PAL::CMSampleBufferGetFormatDescription(m_sample.get()));
+    RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(m_sample.get());
+    m_keyIDs = getKeyIDs(formatDescription.get());
 #endif
 }
 
@@ -151,8 +152,7 @@ size_t MediaSampleAVFObjC::sizeInBytes() const
 
 PlatformSample MediaSampleAVFObjC::platformSample() const
 {
-    PlatformSample sample = { PlatformSample::CMSampleBufferType, { .cmSampleBuffer = m_sample.get() } };
-    return sample;
+    return PlatformSample { m_sample };
 }
 
 static bool isCMSampleBufferAttachmentRandomAccess(CFDictionaryRef attachmentDict)
@@ -167,15 +167,15 @@ static bool doesCMSampleBufferHaveSyncInfo(CMSampleBufferRef sample)
 
 static bool isCMSampleBufferRandomAccess(CMSampleBufferRef sample)
 {
-    CFArrayRef attachments = PAL::CMSampleBufferGetSampleAttachmentsArray(sample, false);
+    RetainPtr attachments = PAL::CMSampleBufferGetSampleAttachmentsArray(sample, false);
     if (!attachments)
         return true;
 
-    if (CFArrayGetCount(attachments) < 1)
+    if (CFArrayGetCount(attachments.get()) < 1)
         return true;
 
-    CFDictionaryRef firstAttachment = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachments, 0));
-    return isCMSampleBufferAttachmentRandomAccess(firstAttachment);
+    RetainPtr firstAttachment = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachments.get(), 0));
+    return isCMSampleBufferAttachmentRandomAccess(firstAttachment.get());
 }
 
 static bool isCMSampleBufferAttachmentNonDisplaying(CFDictionaryRef attachmentDict)
@@ -185,12 +185,13 @@ static bool isCMSampleBufferAttachmentNonDisplaying(CFDictionaryRef attachmentDi
 
 bool MediaSampleAVFObjC::isCMSampleBufferNonDisplaying(CMSampleBufferRef sample)
 {
-    CFArrayRef attachments = PAL::CMSampleBufferGetSampleAttachmentsArray(sample, false);
+    RetainPtr attachments = PAL::CMSampleBufferGetSampleAttachmentsArray(sample, false);
     if (!attachments)
         return false;
     
-    for (CFIndex i = 0; i < CFArrayGetCount(attachments); ++i) {
-        if (isCMSampleBufferAttachmentNonDisplaying(checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachments, i))))
+    for (CFIndex i = 0; i < CFArrayGetCount(attachments.get()); ++i) {
+        RetainPtr sampleDictionary = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachments.get(), i));
+        if (isCMSampleBufferAttachmentNonDisplaying(sampleDictionary.get()))
             return true;
     }
 
@@ -220,11 +221,11 @@ MediaSample::SampleFlags MediaSampleAVFObjC::flags() const
 
 FloatSize MediaSampleAVFObjC::presentationSize() const
 {
-    CMFormatDescriptionRef formatDescription = PAL::CMSampleBufferGetFormatDescription(m_sample.get());
-    if (PAL::CMFormatDescriptionGetMediaType(formatDescription) != kCMMediaType_Video)
+    RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(m_sample.get());
+    if (PAL::CMFormatDescriptionGetMediaType(formatDescription.get()) != kCMMediaType_Video)
         return FloatSize();
     
-    return FloatSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(formatDescription, true, true));
+    return FloatSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(formatDescription.get(), true, true));
 }
 
 void MediaSampleAVFObjC::offsetTimestampsBy(const MediaTime& offset)
@@ -235,7 +236,7 @@ void MediaSampleAVFObjC::offsetTimestampsBy(const MediaTime& offset)
     
     Vector<CMSampleTimingInfo> timingInfoArray;
     timingInfoArray.grow(itemCount);
-    if (noErr != PAL::CMSampleBufferGetSampleTimingInfoArray(m_sample.get(), itemCount, timingInfoArray.data(), nullptr))
+    if (noErr != PAL::CMSampleBufferGetSampleTimingInfoArray(m_sample.get(), itemCount, timingInfoArray.mutableSpan().data(), nullptr))
         return;
     
     for (auto& timing : timingInfoArray) {
@@ -244,7 +245,7 @@ void MediaSampleAVFObjC::offsetTimestampsBy(const MediaTime& offset)
     }
     
     CMSampleBufferRef newSample;
-    if (noErr != PAL::CMSampleBufferCreateCopyWithNewTiming(kCFAllocatorDefault, m_sample.get(), itemCount, timingInfoArray.data(), &newSample))
+    if (noErr != PAL::CMSampleBufferCreateCopyWithNewTiming(kCFAllocatorDefault, m_sample.get(), itemCount, timingInfoArray.span().data(), &newSample))
         return;
     
     m_presentationTime += offset;
@@ -260,7 +261,7 @@ void MediaSampleAVFObjC::setTimestamps(const WTF::MediaTime &presentationTimesta
     
     Vector<CMSampleTimingInfo> timingInfoArray;
     timingInfoArray.grow(itemCount);
-    if (noErr != PAL::CMSampleBufferGetSampleTimingInfoArray(m_sample.get(), itemCount, timingInfoArray.data(), nullptr))
+    if (noErr != PAL::CMSampleBufferGetSampleTimingInfoArray(m_sample.get(), itemCount, timingInfoArray.mutableSpan().data(), nullptr))
         return;
     
     for (auto& timing : timingInfoArray) {
@@ -269,7 +270,7 @@ void MediaSampleAVFObjC::setTimestamps(const WTF::MediaTime &presentationTimesta
     }
     
     CMSampleBufferRef newSample;
-    if (noErr != PAL::CMSampleBufferCreateCopyWithNewTiming(kCFAllocatorDefault, m_sample.get(), itemCount, timingInfoArray.data(), &newSample))
+    if (noErr != PAL::CMSampleBufferCreateCopyWithNewTiming(kCFAllocatorDefault, m_sample.get(), itemCount, timingInfoArray.span().data(), &newSample))
         return;
     
     m_presentationTime = presentationTimestamp;
@@ -357,16 +358,16 @@ Ref<MediaSample> MediaSampleAVFObjC::createNonDisplayingCopy() const
     PAL::CMSampleBufferCreateCopy(kCFAllocatorDefault, m_sample.get(), &newSampleBuffer);
     ASSERT(newSampleBuffer);
 
-    CMFormatDescriptionRef formatDescription = PAL::CMSampleBufferGetFormatDescription(m_sample.get());
-    bool isAudio = PAL::CMFormatDescriptionGetMediaType(formatDescription) == kCMMediaType_Audio;
-    const CFStringRef attachmentKey = isAudio ? PAL::kCMSampleBufferAttachmentKey_TrimDurationAtStart : PAL::kCMSampleAttachmentKey_DoNotDisplay;
+    RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(m_sample.get());
+    bool isAudio = PAL::CMFormatDescriptionGetMediaType(formatDescription.get()) == kCMMediaType_Audio;
+    const RetainPtr attachmentKey = isAudio ? PAL::kCMSampleBufferAttachmentKey_TrimDurationAtStart : PAL::kCMSampleAttachmentKey_DoNotDisplay;
 
-    CFArrayRef attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(newSampleBuffer, true);
+    RetainPtr attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(newSampleBuffer, true);
     ASSERT(attachmentsArray);
     if (attachmentsArray) {
-        for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
-            CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
-            CFDictionarySetValue(attachments, attachmentKey, kCFBooleanTrue);
+        for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray.get()); ++i) {
+            RetainPtr attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray.get(), i));
+            CFDictionarySetValue(attachments.get(), attachmentKey.get(), kCFBooleanTrue);
         }
     }
 
@@ -375,24 +376,24 @@ Ref<MediaSample> MediaSampleAVFObjC::createNonDisplayingCopy() const
 
 bool MediaSampleAVFObjC::isHomogeneous() const
 {
-    CFArrayRef attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(m_sample.get(), true);
+    RetainPtr attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(m_sample.get(), true);
     if (!attachmentsArray)
         return true;
 
-    auto count = CFArrayGetCount(attachmentsArray);
+    auto count = CFArrayGetCount(attachmentsArray.get());
     if (count <= 1)
         return true;
 
-    CFDictionaryRef firstAttachment = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, 0));
-    bool isSync = isCMSampleBufferAttachmentRandomAccess(firstAttachment);
-    bool isNonDisplaying = isCMSampleBufferAttachmentNonDisplaying(firstAttachment);
+    RetainPtr firstAttachment = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray.get(), 0));
+    bool isSync = isCMSampleBufferAttachmentRandomAccess(firstAttachment.get());
+    bool isNonDisplaying = isCMSampleBufferAttachmentNonDisplaying(firstAttachment.get());
 
     for (CFIndex i = 1; i < count; ++i) {
-        auto attachmentDict = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
-        if (isSync != isCMSampleBufferAttachmentRandomAccess(attachmentDict))
+        RetainPtr attachmentDict = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray.get(), i));
+        if (isSync != isCMSampleBufferAttachmentRandomAccess(attachmentDict.get()))
             return false;
 
-        if (isNonDisplaying != isCMSampleBufferAttachmentNonDisplaying(attachmentDict))
+        if (isNonDisplaying != isCMSampleBufferAttachmentNonDisplaying(attachmentDict.get()))
             return false;
     };
 
@@ -403,24 +404,24 @@ Vector<Ref<MediaSampleAVFObjC>> MediaSampleAVFObjC::divideIntoHomogeneousSamples
 {
     using SampleVector = Vector<Ref<MediaSampleAVFObjC>>;
 
-    CFArrayRef attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(m_sample.get(), true);
+    RetainPtr attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(m_sample.get(), true);
     if (!attachmentsArray)
         return SampleVector::from(Ref { *this });
 
-    auto count = CFArrayGetCount(attachmentsArray);
+    auto count = CFArrayGetCount(attachmentsArray.get());
     if (count <= 1)
         return SampleVector::from(Ref { *this });
 
-    CFDictionaryRef firstAttachment = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, 0));
-    bool isSync = isCMSampleBufferAttachmentRandomAccess(firstAttachment);
-    bool isNonDisplaying = isCMSampleBufferAttachmentNonDisplaying(firstAttachment);
+    RetainPtr firstAttachment = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray.get(), 0));
+    bool isSync = isCMSampleBufferAttachmentRandomAccess(firstAttachment.get());
+    bool isNonDisplaying = isCMSampleBufferAttachmentNonDisplaying(firstAttachment.get());
     Vector<CFRange> ranges;
     CFIndex currentRangeStart = 0;
     CFIndex currentRangeLength = 1;
 
     for (CFIndex i = 1; i < count; ++i, ++currentRangeLength) {
-        CFDictionaryRef attachmentDict = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
-        if (isSync == isCMSampleBufferAttachmentRandomAccess(attachmentDict) && isNonDisplaying == isCMSampleBufferAttachmentNonDisplaying(attachmentDict))
+        RetainPtr attachmentDict = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray.get(), i));
+        if (isSync == isCMSampleBufferAttachmentRandomAccess(attachmentDict.get()) && isNonDisplaying == isCMSampleBufferAttachmentNonDisplaying(attachmentDict.get()))
             continue;
 
         ranges.append(CFRangeMake(currentRangeStart, currentRangeLength));

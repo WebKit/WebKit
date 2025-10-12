@@ -4,25 +4,10 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  array.sort compare-function gets incorrect this
+info: bugzilla.mozilla.org/show_bug.cgi?id=604971
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 604971;
-var summary = 'array.sort compare-function gets incorrect this';
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 [1, 2, 3].sort(function() { "use strict"; assert.sameValue(this, undefined); });
-
-/******************************************************************************/
-
-print("All tests passed!");

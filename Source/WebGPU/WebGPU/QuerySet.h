@@ -29,6 +29,8 @@
 #import "WebGPUExt.h"
 #import <optional>
 #import <wtf/FastMalloc.h>
+#import <wtf/Range.h>
+#import <wtf/RangeSet.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RetainReleaseSwift.h>
@@ -37,7 +39,9 @@
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
 
-struct WGPUQuerySetImpl {
+// FIXME(rdar://155970441): this annotation should be in WebGPU.h, move it once we support
+// annotating incomplete types
+struct SWIFT_SHARED_REFERENCE(wgpuQuerySetReference, wgpuQuerySetRelease) WGPUQuerySetImpl {
 };
 
 namespace WebGPU {
@@ -50,13 +54,15 @@ class Device;
 class QuerySet : public WGPUQuerySetImpl, public RefCounted<QuerySet> {
     WTF_MAKE_TZONE_ALLOCATED(QuerySet);
 public:
+    using CounterSampleBuffer = std::pair<id<MTLCounterSampleBuffer>, uint32_t>;
+
     static Ref<QuerySet> create(id<MTLBuffer> visibilityBuffer, uint32_t count, WGPUQueryType type, Device& device)
     {
         return adoptRef(*new QuerySet(visibilityBuffer, count, type, device));
     }
-    static Ref<QuerySet> create(id<MTLCounterSampleBuffer> counterSampleBuffer, uint32_t count, WGPUQueryType type, Device& device)
+    static Ref<QuerySet> create(CounterSampleBuffer&& counterSampleBuffer, uint32_t count, WGPUQueryType type, Device& device)
     {
-        return adoptRef(*new QuerySet(counterSampleBuffer, count, type, device));
+        return adoptRef(*new QuerySet(WTFMove(counterSampleBuffer), count, type, device));
     }
     static Ref<QuerySet> createInvalid(Device& device)
     {
@@ -76,17 +82,22 @@ public:
     uint32_t count() const { return m_count; }
     WGPUQueryType type() const { return m_type; }
     id<MTLBuffer> visibilityBuffer() const { return m_visibilityBuffer; }
-    id<MTLCounterSampleBuffer> counterSampleBuffer() const { return m_timestampBuffer; }
+    CounterSampleBuffer counterSampleBufferWithOffset() const;
+
     void setCommandEncoder(CommandEncoder&) const;
     bool isDestroyed() const;
+    static void destroyQuerySet(const QuerySet&);
+    static CounterSampleBuffer counterSampleBufferWithOffsetForDevice(size_t, const Device&);
+    static void createContainersIfNeeded();
+
 private:
     QuerySet(id<MTLBuffer>, uint32_t, WGPUQueryType, Device&);
-    QuerySet(id<MTLCounterSampleBuffer>, uint32_t, WGPUQueryType, Device&);
+    QuerySet(CounterSampleBuffer&&, uint32_t, WGPUQueryType, Device&);
     QuerySet(Device&);
 
     const Ref<Device> m_device;
     id<MTLBuffer> m_visibilityBuffer { nil };
-    id<MTLCounterSampleBuffer> m_timestampBuffer { nil };
+    CounterSampleBuffer m_timestampBufferWithOffset;
     uint32_t m_count { 0 };
     const WGPUQueryType m_type { WGPUQueryType_Force32 };
 
@@ -102,6 +113,12 @@ private:
     };
     mutable Vector<uint64_t> m_commandEncoders;
     bool m_destroyed { false };
+
+    // static is intentional here as the limit is per process
+    static constexpr uint32_t maxCounterSampleBuffers = 32;
+    static Lock querySetLock;
+    static std::unique_ptr<Vector<id<MTLCounterSampleBuffer>>> m_counterSampleBuffers WTF_GUARDED_BY_LOCK(querySetLock);
+    static std::unique_ptr<Vector<RangeSet<Range<uint32_t>>>> m_counterSampleBufferFreeRanges WTF_GUARDED_BY_LOCK(querySetLock);
 } SWIFT_SHARED_REFERENCE(refQuerySet, derefQuerySet);
 
 } // namespace WebGPU

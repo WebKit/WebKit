@@ -173,6 +173,12 @@ class Separator : public TIntermRebuild
         return mStmtsStack.back();
     }
 
+    bool nodeExistsInCurrStmts(TIntermNode *node)
+    {
+        const auto &currStmts = getCurrStmts();
+        return std::find(currStmts.begin(), currStmts.end(), node) != currStmts.end();
+    }
+
     std::unordered_map<const TVariable *, TIntermDeclaration *> &getCurrBindingMap()
     {
         ASSERT(!mBindingMapStack.empty());
@@ -453,7 +459,16 @@ class Separator : public TIntermRebuild
         TIntermTyped *newRight      = pullMappedExpr(right, isAssign && !isCompoundAssign);
         if (op == TOperator::EOpComma)
         {
-            pushBinding(node, *newRight);
+            // Avoid adding a redundant right child statement to the statement stack for the current
+            // block. This could occur because the right node is a TIntermAggregate type (such as
+            // EOpCallFunctionInAST type) and as part of the post traversal action for a
+            // TIntermAggregate node, it gets added to the statement stack. In that case, when the
+            // code execution reaches this point, the right node will get added again resulting in a
+            // reudundant statement.
+            if (!nodeExistsInCurrStmts(newRight))
+            {
+                pushBinding(node, *newRight);
+            }
             return node;
         }
         else

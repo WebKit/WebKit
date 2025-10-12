@@ -353,8 +353,13 @@ void WEBPImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
     //
     // In WEBP every frame depends on the previous one or none. That means that frames after clearBeforeFrame
     // won't need any frame before them to render, so we can clear them all.
+    bool skipNextComplete = true;
     for (int i = clearBeforeFrame - 1; i >= 0; i--) {
         auto& buffer = m_frameBufferCache[i];
+        if (skipNextComplete && buffer.isComplete()) {
+            skipNextComplete = false;
+            continue;
+        }
         if (!buffer.isInvalid())
             buffer.clear();
     }

@@ -79,9 +79,9 @@ private:
 #endif
 
 class SandboxExtensionHandle {
-    WTF_MAKE_NONCOPYABLE(SandboxExtensionHandle);
 public:
     SandboxExtensionHandle();
+    SandboxExtensionHandle(const SandboxExtensionHandle&);
 #if ENABLE(SANDBOX_EXTENSIONS)
     SandboxExtensionHandle(SandboxExtensionHandle&&);
     SandboxExtensionHandle& operator=(SandboxExtensionHandle&&);
@@ -159,6 +159,7 @@ String resolveAndCreateReadWriteDirectoryForSandboxExtension(StringView path);
 #if !ENABLE(SANDBOX_EXTENSIONS)
 
 inline SandboxExtensionHandle::SandboxExtensionHandle() { }
+inline SandboxExtensionHandle::SandboxExtensionHandle(const SandboxExtensionHandle&) { }
 inline SandboxExtensionHandle::~SandboxExtensionHandle() { }
 inline RefPtr<SandboxExtension> SandboxExtension::create(Handle&&) { return nullptr; }
 inline auto SandboxExtension::createHandle(StringView, Type) -> std::optional<Handle> { return Handle { }; }

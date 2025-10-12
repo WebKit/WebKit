@@ -51,16 +51,18 @@ window.onload = async function () {
 
     document.body.innerHTML = isFirstPage() ? "first" : "second";
 
+    if (window.testRunner) {
+        testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
+        testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
+        testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
+        testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);
+    }
+
     if (isFirstPage()) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
 
         await initializeSwipeTest();
-
-        testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
-        testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
-        testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
-        testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);
 
         setTimeout(function () { 
             window.location.href = window.location.href + "?second";

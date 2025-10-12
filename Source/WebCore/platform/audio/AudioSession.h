@@ -99,9 +99,10 @@ class AudioSessionConfigurationChangeObserver : public CanMakeWeakPtr<AudioSessi
 public:
     virtual ~AudioSessionConfigurationChangeObserver() = default;
 
-    virtual void hardwareMutedStateDidChange(const AudioSession&) = 0;
+    virtual void hardwareMutedStateDidChange(const AudioSession&) { }
     virtual void bufferSizeDidChange(const AudioSession&) { }
     virtual void sampleRateDidChange(const AudioSession&) { }
+    virtual void routingContextUIDDidChange(const AudioSession&) { }
 };
 
 class WEBCORE_EXPORT AudioSession : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioSession> {
@@ -110,8 +111,7 @@ class WEBCORE_EXPORT AudioSession : public ThreadSafeRefCountedAndCanMakeThreadS
 public:
     static Ref<AudioSession> create();
     static void setSharedSession(Ref<AudioSession>&&);
-    static AudioSession& sharedSession();
-    static Ref<AudioSession> protectedSharedSession() { return sharedSession(); }
+    static AudioSession& singleton();
 
     static bool enableMediaPlayback();
 
@@ -161,8 +161,8 @@ public:
     virtual void endInterruptionForTesting() { endInterruption(MayResume::Yes); }
     virtual void clearInterruptionFlagForTesting() { }
 
-    virtual void addInterruptionObserver(AudioSessionInterruptionObserver&);
-    virtual void removeInterruptionObserver(AudioSessionInterruptionObserver&);
+    static void addInterruptionObserver(AudioSessionInterruptionObserver&);
+    static void removeInterruptionObserver(AudioSessionInterruptionObserver&);
 
     virtual bool isActive() const { return m_active; }
 
@@ -196,8 +196,6 @@ protected:
     uint64_t logIdentifier() const { return 0; }
 
     mutable RefPtr<Logger> m_logger;
-
-    WeakHashSet<AudioSessionInterruptionObserver> m_interruptionObservers;
 
     WeakPtr<AudioSessionRoutingArbitrationClient> m_routingArbitrationClient;
     AudioSession::CategoryType m_categoryOverride { AudioSession::CategoryType::None };

@@ -4,27 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-extensions-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Don't assert when freshening the scope chain for a for-loop whose head contains a lexical declaration, where the loop body might add more bindings at runtime
+info: bugzilla.mozilla.org/show_bug.cgi?id=1149797
 esid: pending
 ---*/
-var gTestfile =
-  "for-loop-with-lexical-declaration-and-nested-function-statement.js";
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 1149797;
-var summary =
-  "Don't assert when freshening the scope chain for a for-loop whose head " +
-  "contains a lexical declaration, where the loop body might add more " +
-  "bindings at runtime";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 for (let x = 0; x < 9; ++x) {
   function q1() {}
@@ -129,7 +113,3 @@ function h2()
   }
 }
 h2();
-
-/******************************************************************************/
-
-print("Tests complete");

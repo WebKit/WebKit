@@ -30,10 +30,12 @@
 
 #import "Logging.h"
 #import "RestrictedOpenerType.h"
-#import "WKContentRuleListStore.h"
+#import "WKContentRuleListStoreInternal.h"
 #import <WebCore/DNS.h>
 #import <WebCore/LinkDecorationFilteringData.h>
+#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/OrganizationStorageAccessPromptQuirk.h>
+#import <WebCore/ResourceRequest.h>
 #import <numeric>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NetworkSPI.h>
@@ -72,21 +74,21 @@ SOFT_LINK_OPTIONAL(libnetwork, nw_context_set_tracker_lookup_callback, void, __c
     _callback = callback;
 
     if (PAL::isWebPrivacyFrameworkAvailable())
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdate:) name:PAL::get_WebPrivacy_WPResourceDataChangedNotificationName() object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdate:) name:PAL::get_WebPrivacy_WPResourceDataChangedNotificationNameSingleton() object:nil];
     return self;
 }
 
 - (void)dealloc
 {
     if (PAL::isWebPrivacyFrameworkAvailable())
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:PAL::get_WebPrivacy_WPResourceDataChangedNotificationName() object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:PAL::get_WebPrivacy_WPResourceDataChangedNotificationNameSingleton() object:nil];
     [super dealloc];
 }
 
 - (void)didUpdate:(NSNotification *)notification
 {
     ASSERT(PAL::isWebPrivacyFrameworkAvailable());
-    auto type = dynamic_objc_cast<NSNumber>([notification.userInfo objectForKey:PAL::get_WebPrivacy_WPNotificationUserInfoResourceTypeKey()]);
+    auto type = dynamic_objc_cast<NSNumber>([notification.userInfo objectForKey:PAL::get_WebPrivacy_WPNotificationUserInfoResourceTypeKeySingleton()]);
     if (!type)
         return;
 
@@ -157,7 +159,7 @@ void LinkDecorationFilteringController::updateList(CompletionHandler<void()>&& c
     RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
     [options setAfterUpdates:NO];
 
-    [[PAL::getWPResourcesClass() sharedInstance] requestLinkFilteringData:options.get() completionHandler:^(WPLinkFilteringData *data, NSError *error) {
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestLinkFilteringData:options.get() completionHandler:^(WPLinkFilteringData *data, NSError *error) {
         Vector<WebCore::LinkDecorationFilteringData> result;
         if (error)
             RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request query parameters from WebPrivacy.");
@@ -185,7 +187,7 @@ void requestLinkDecorationFilteringData(LinkFilteringRulesCallback&& callback)
     }
 
     static BOOL canRequestAllowedQueryParameters = [] {
-        return [PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestAllowedLinkFilteringData:completionHandler:)];
+        return [PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestAllowedLinkFilteringData:completionHandler:)];
     }();
 
     if (!canRequestAllowedQueryParameters) {
@@ -201,7 +203,7 @@ void requestLinkDecorationFilteringData(LinkFilteringRulesCallback&& callback)
     auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
     [options setAfterUpdates:NO];
 
-    [[PAL::getWPResourcesClass() sharedInstance] requestAllowedLinkFilteringData:options.get() completionHandler:^(WPLinkFilteringData *data, NSError *error) {
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestAllowedLinkFilteringData:options.get() completionHandler:^(WPLinkFilteringData *data, NSError *error) {
         Vector<WebCore::LinkDecorationFilteringData> result;
         if (error)
             RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request allowed query parameters from WebPrivacy.");
@@ -261,8 +263,8 @@ static Vector<URL> quirkPagesArrayToVector(NSArray<NSString *> *triggerPages)
 void StorageAccessPromptQuirkController::updateList(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestStorageAccessPromptQuirksData:completionHandler:)]) {
-        RunLoop::protectedMain()->dispatch(WTFMove(completionHandler));
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestStorageAccessPromptQuirksData:completionHandler:)]) {
+        RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
         return;
     }
 
@@ -274,13 +276,13 @@ void StorageAccessPromptQuirkController::updateList(CompletionHandler<void()>&& 
     RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
     [options setAfterUpdates:NO];
 
-    [[PAL::getWPResourcesClass() sharedInstance] requestStorageAccessPromptQuirksData:options.get() completionHandler:^(WPStorageAccessPromptQuirksData *data, NSError *error) {
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestStorageAccessPromptQuirksData:options.get() completionHandler:^(WPStorageAccessPromptQuirksData *data, NSError *error) {
         Vector<WebCore::OrganizationStorageAccessPromptQuirk> result;
         if (error)
             RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request storage access quirks from WebPrivacy.");
         else {
             auto quirks = [data quirks];
-            auto hasQuirkDomainsAndTriggerPages = [PAL::getWPStorageAccessPromptQuirkClass() instancesRespondToSelector:@selector(quirkDomains)] && [PAL::getWPStorageAccessPromptQuirkClass() instancesRespondToSelector:@selector(triggerPages)];
+            auto hasQuirkDomainsAndTriggerPages = [PAL::getWPStorageAccessPromptQuirkClassSingleton() instancesRespondToSelector:@selector(quirkDomains)] && [PAL::getWPStorageAccessPromptQuirkClassSingleton() instancesRespondToSelector:@selector(triggerPages)];
             for (WPStorageAccessPromptQuirk *quirk : quirks) {
                 if (hasQuirkDomainsAndTriggerPages)
                     result.append(WebCore::OrganizationStorageAccessPromptQuirk { quirk.name, quirkDomainsDictToMap(quirk.quirkDomains), quirkPagesArrayToVector(quirk.triggerPages) });
@@ -303,8 +305,8 @@ unsigned StorageAccessUserAgentStringQuirkController::resourceTypeValue() const
 void StorageAccessUserAgentStringQuirkController::updateList(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestStorageAccessUserAgentStringQuirksData:completionHandler:)]) {
-        RunLoop::protectedMain()->dispatch(WTFMove(completionHandler));
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestStorageAccessUserAgentStringQuirksData:completionHandler:)]) {
+        RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
         return;
     }
 
@@ -316,7 +318,7 @@ void StorageAccessUserAgentStringQuirkController::updateList(CompletionHandler<v
     RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
     [options setAfterUpdates:NO];
 
-    [[PAL::getWPResourcesClass() sharedInstance] requestStorageAccessUserAgentStringQuirksData:options.get() completionHandler:^(WPStorageAccessUserAgentStringQuirksData *data, NSError *error) {
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestStorageAccessUserAgentStringQuirksData:options.get() completionHandler:^(WPStorageAccessUserAgentStringQuirksData *data, NSError *error) {
         HashMap<WebCore::RegistrableDomain, String> result;
         if (error)
             RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request storage access user agent string quirks from WebPrivacy.");
@@ -332,7 +334,7 @@ void StorageAccessUserAgentStringQuirkController::updateList(CompletionHandler<v
     }];
 }
 
-RestrictedOpenerDomainsController& RestrictedOpenerDomainsController::shared()
+RestrictedOpenerDomainsController& RestrictedOpenerDomainsController::singleton()
 {
     static MainRunLoopNeverDestroyed<RestrictedOpenerDomainsController> sharedInstance;
     return sharedInstance.get();
@@ -367,13 +369,13 @@ void RestrictedOpenerDomainsController::scheduleNextUpdate(ContinuousApproximate
 void RestrictedOpenerDomainsController::update()
 {
     ASSERT(RunLoop::isMain());
-    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestRestrictedOpenerDomains:completionHandler:)])
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestRestrictedOpenerDomains:completionHandler:)])
         return;
 
     auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
     [options setAfterUpdates:NO];
 
-    [[PAL::getWPResourcesClass() sharedInstance] requestRestrictedOpenerDomains:options.get() completionHandler:^(NSArray<WPRestrictedOpenerDomain *> *domains, NSError *error) {
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestRestrictedOpenerDomains:options.get() completionHandler:^(NSArray<WPRestrictedOpenerDomain *> *domains, NSError *error) {
         if (error) {
             RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request restricted opener domains from WebPrivacy");
             return;
@@ -412,10 +414,15 @@ ResourceMonitorURLsController& ResourceMonitorURLsController::singleton()
     return sharedInstance.get();
 }
 
+void ResourceMonitorURLsController::setContentRuleListStore(API::ContentRuleListStore& store)
+{
+    m_contentRuleListStore = &store;
+}
+
 void ResourceMonitorURLsController::prepare(CompletionHandler<void(WKContentRuleList*, bool)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(prepareResouceMonitorRulesForStore:completionHandler:)]) {
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(prepareResourceMonitorRulesForStore:completionHandler:)]) {
         completionHandler(nullptr, false);
         return;
     }
@@ -425,9 +432,9 @@ void ResourceMonitorURLsController::prepare(CompletionHandler<void(WKContentRule
     if (lookupCompletionHandlers->size() > 1)
         return;
 
-    WKContentRuleListStore *store = [WKContentRuleListStore defaultStore];
+    Ref<API::ContentRuleListStore> store = m_contentRuleListStore ? *m_contentRuleListStore : API::ContentRuleListStore::defaultStoreSingleton();
 
-    [[PAL::getWPResourcesClass() sharedInstance] prepareResouceMonitorRulesForStore:store completionHandler:^(WKContentRuleList *list, bool updated, NSError *error) {
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] prepareResourceMonitorRulesForStore:protectedWrapper(store.get()).get() completionHandler:^(WKContentRuleList *list, bool updated, NSError *error) {
         if (error)
             RELEASE_LOG_ERROR(ResourceMonitoring, "Failed to request resource monitor urls from WebPrivacy: %@", error);
 
@@ -439,7 +446,7 @@ void ResourceMonitorURLsController::prepare(CompletionHandler<void(WKContentRule
 void ResourceMonitorURLsController::getSource(CompletionHandler<void(String&&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestResouceMonitorRulesSource:completionHandler:)]) {
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestResourceMonitorRulesSource:completionHandler:)]) {
         completionHandler({ });
         return;
     }
@@ -449,7 +456,7 @@ void ResourceMonitorURLsController::getSource(CompletionHandler<void(String&&)>&
     if (lookupCompletionHandlers->size() > 1)
         return;
 
-    [[PAL::getWPResourcesClass() sharedInstance] requestResouceMonitorRulesSource:nil completionHandler:^(NSString *source, NSError *error) {
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestResourceMonitorRulesSource:nil completionHandler:^(NSString *source, NSError *error) {
         if (error)
             RELEASE_LOG_ERROR(ResourceMonitoring, "Failed to request resource monitor urls source from WebPrivacy");
 
@@ -526,7 +533,7 @@ public:
             auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
             [options setAfterUpdates:YES];
 
-            [[PAL::getWPResourcesClass() sharedInstance] requestTrackerNetworkAddresses:options.get() completionHandler:^(NSArray<WPNetworkAddressRange *> *ranges, NSError *error) {
+            [[PAL::getWPResourcesClassSingleton() sharedInstance] requestTrackerNetworkAddresses:options.get() completionHandler:^(NSArray<WPNetworkAddressRange *> *ranges, NSError *error) {
                 if (error) {
                     RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request tracking IP addresses from WebPrivacy");
                     return;
@@ -652,7 +659,7 @@ public:
                 return;
 
             static BOOL canRequestTrackerDomainNames = [] {
-                return [PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestTrackerDomainNamesData:completionHandler:)];
+                return [PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestTrackerDomainNamesData:completionHandler:)];
             }();
 
             if (!canRequestTrackerDomainNames)
@@ -660,7 +667,7 @@ public:
 
             auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
             [options setAfterUpdates:YES];
-            [[PAL::getWPResourcesClass() sharedInstance] requestTrackerDomainNamesData:options.get() completionHandler:^(NSArray<WPTrackingDomain *> * domains, NSError *error) {
+            [[PAL::getWPResourcesClassSingleton() sharedInstance] requestTrackerDomainNamesData:options.get() completionHandler:^(NSArray<WPTrackingDomain *> * domains, NSError *error) {
                 if (error) {
                     RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request tracking domains from WebPrivacy");
                     return;
@@ -744,28 +751,112 @@ bool isKnownTrackerAddressOrDomain(StringView host)
     return TrackerDomainLookupInfo::find(domain.string()).owner().length();
 }
 
+IsKnownCrossSiteTracker isRequestToKnownCrossSiteTracker(const ResourceRequest& request)
+{
+    return request.isThirdParty() && isKnownTrackerAddressOrDomain(request.url().host()) ? WebCore::IsKnownCrossSiteTracker::Yes : WebCore::IsKnownCrossSiteTracker::No;
+}
 #else
 
 void configureForAdvancedPrivacyProtections(NSURLSession *) { }
 bool isKnownTrackerAddressOrDomain(StringView) { return false; }
+WebCore::IsKnownCrossSiteTracker isRequestToKnownCrossSiteTracker(const WebCore::ResourceRequest&) { return WebCore::IsKnownCrossSiteTracker::No; }
 
 #endif
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPrivacyHelpersAdditions.mm>)
-#import <WebKitAdditions/WebPrivacyHelpersAdditions.mm>
+#if ENABLE(SCRIPT_TRACKING_PRIVACY_PROTECTIONS)
+
+static WebCore::ScriptTrackingPrivacyFlags allowedScriptTrackingCategories(WPScriptAccessCategories categories)
+{
+    WebCore::ScriptTrackingPrivacyFlags result;
+    if (categories & WPScriptAccessCategoryAudio)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::Audio);
+    if (categories & WPScriptAccessCategoryCanvas)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::Canvas);
+    if (categories & WPScriptAccessCategoryCookies)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::Cookies);
+    if (categories & WPScriptAccessCategoryHardwareConcurrency)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::HardwareConcurrency);
+    if (categories & WPScriptAccessCategoryLocalStorage)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::LocalStorage);
+    if (categories & WPScriptAccessCategoryPayments)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::Payments);
+    if (categories & WPScriptAccessCategoryQueryParameters)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::QueryParameters);
+    if (categories & WPScriptAccessCategoryReferrer)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::Referrer);
+    if (categories & WPScriptAccessCategoryScreenOrViewport)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::ScreenOrViewport);
+    if (categories & WPScriptAccessCategorySpeech)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::Speech);
+    if (categories & WPScriptAccessCategoryFormControls)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::FormControls);
+    return result;
+}
+
+#endif // ENABLE(SCRIPT_TRACKING_PRIVACY_PROTECTIONS)
+
+void ScriptTrackingPrivacyController::updateList(CompletionHandler<void()>&& completion)
+{
+    ASSERT(RunLoop::isMain());
+#if ENABLE(SCRIPT_TRACKING_PRIVACY_PROTECTIONS)
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestFingerprintingScripts:completionHandler:)]) {
+        RunLoop::mainSingleton().dispatch(WTFMove(completion));
+        return;
+    }
+
+    static MainRunLoopNeverDestroyed<Vector<CompletionHandler<void()>, 1>> pendingCompletionHandlers;
+    pendingCompletionHandlers->append(WTFMove(completion));
+    if (pendingCompletionHandlers->size() > 1)
+        return;
+
+    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    [options setAfterUpdates:NO];
+
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestFingerprintingScripts:options.get() completionHandler:^(NSArray<WPFingerprintingScript *> *scripts, NSError *error) {
+        auto callCompletionHandlers = makeScopeExit([&] {
+            for (auto& completionHandler : std::exchange(pendingCompletionHandlers.get(), { }))
+                completionHandler();
+        });
+
+        if (error) {
+            RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request known fingerprinting scripts from WebPrivacy: %@", error);
+            return;
+        }
+
+        ScriptTrackingPrivacyRules result;
+        for (WPFingerprintingScript *script in scripts) {
+            static bool supportsAllowedCategories = [script respondsToSelector:@selector(allowedCategories)];
+            auto allowedCategories = allowedScriptTrackingCategories(supportsAllowedCategories ? script.allowedCategories : WPScriptAccessCategoryNone);
+            if (script.firstParty) {
+                if (script.topDomain)
+                    result.firstPartyTopDomains.append({ script.host, allowedCategories });
+                else
+                    result.firstPartyHosts.append({ script.host, allowedCategories });
+            } else {
+                if (script.topDomain)
+                    result.thirdPartyTopDomains.append({ script.host, allowedCategories });
+                else
+                    result.thirdPartyHosts.append({ script.host, allowedCategories });
+            }
+        }
+        setCachedListData(WTFMove(result));
+    }];
 #else
-void ScriptTelemetryController::updateList(CompletionHandler<void()>&& completion)
-{
-    RunLoop::protectedMain()->dispatch(WTFMove(completion));
-}
+    RunLoop::mainSingleton().dispatch(WTFMove(completion));
 #endif
-
-unsigned ScriptTelemetryController::resourceTypeValue() const
-{
-    return 9;
 }
 
-void ScriptTelemetryController::didUpdateCachedListData()
+WPResourceType ScriptTrackingPrivacyController::resourceType() const
+{
+    return WPResourceTypeFingerprintingScripts;
+}
+
+unsigned ScriptTrackingPrivacyController::resourceTypeValue() const
+{
+    return WPResourceTypeFingerprintingScripts;
+}
+
+void ScriptTrackingPrivacyController::didUpdateCachedListData()
 {
     m_cachedListData.firstPartyTopDomains.shrinkToFit();
     m_cachedListData.firstPartyHosts.shrinkToFit();

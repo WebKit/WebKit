@@ -1,13 +1,3 @@
-CONSOLE MESSAGE: Load cannot follow more than 20 redirections
-CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/fetch/api/resources/redirect.py?token=3780a438-0592-4b52-ba97-1cd2c160f8fd&max_age=0&redirect_status=301&max_count=21&location=..%2Fresources%2Fredirect.py&count=1&count=20 due to access control checks.
-CONSOLE MESSAGE: Load cannot follow more than 20 redirections
-CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/fetch/api/resources/redirect.py?token=a2814e9e-478c-4fca-9ff3-1a2dcb235adb&max_age=0&redirect_status=302&max_count=21&location=..%2Fresources%2Fredirect.py&count=1&count=20 due to access control checks.
-CONSOLE MESSAGE: Load cannot follow more than 20 redirections
-CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/fetch/api/resources/redirect.py?token=dc61bc87-0ad9-4a04-acc3-943996306e5a&max_age=0&redirect_status=303&max_count=21&location=..%2Fresources%2Fredirect.py&count=1&count=20 due to access control checks.
-CONSOLE MESSAGE: Load cannot follow more than 20 redirections
-CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/fetch/api/resources/redirect.py?token=14dfcf69-8bf1-473a-9c43-c4c72b638df3&max_age=0&redirect_status=307&max_count=21&location=..%2Fresources%2Fredirect.py&count=1&count=20 due to access control checks.
-CONSOLE MESSAGE: Load cannot follow more than 20 redirections
-CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/fetch/api/resources/redirect.py?token=b4401324-1ad3-4e00-92dd-faf1f18a4fd4&max_age=0&redirect_status=308&max_count=21&location=..%2Fresources%2Fredirect.py&count=1&count=20 due to access control checks.
 
 PASS Redirect 301 20 times
 PASS Redirect 301 21 times

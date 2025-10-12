@@ -1,0 +1,18 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.addEventListener("message", (event) => {
+	if (document.activeElement == document.getElementById("targetElement"))
+		event.source.postMessage("PASSED", "http://127.0.0.1:8000");
+	else
+		event.source.postMessage("FAILED", "http://127.0.0.1:8000");
+
+});
+
+</script>
+<div id="targetElement" tabindex="1">iframe DIV with tabindex 1</div><br>
+	

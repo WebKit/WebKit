@@ -36,6 +36,7 @@
 #import "WebExtensionMenuItem.h"
 #import "WebExtensionMenuItemContextParameters.h"
 #import "WebExtensionMenuItemParameters.h"
+#import "WebExtensionPermission.h"
 #import "WebExtensionUtilities.h"
 
 namespace WebKit {
@@ -56,9 +57,9 @@ static bool isAncestorOrSelf(WebExtensionContext& context, const String& potenti
     return false;
 }
 
-bool WebExtensionContext::isMenusMessageAllowed()
+bool WebExtensionContext::isMenusMessageAllowed(IPC::Decoder& message)
 {
-    return isLoaded() && (hasPermission(WKWebExtensionPermissionContextMenus) || hasPermission(WKWebExtensionPermissionMenus));
+    return isLoadedAndPrivilegedMessage(message) && (hasPermission(WebExtensionPermission::contextMenus()) || hasPermission(WebExtensionPermission::menus()));
 }
 
 void WebExtensionContext::menusCreate(const WebExtensionMenuItemParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)

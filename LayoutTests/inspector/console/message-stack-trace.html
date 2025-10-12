@@ -41,6 +41,12 @@ function triggerUnhandledRejectionImplicitWithException() {
     });
 }
 
+function triggerUnhandledRejectionFromModule() {
+    let script = document.createElement("script");
+    script.type = "module";
+    script.src = "resources/import-throw.js";
+    document.body.appendChild(script);
+}
 
 function test()
 {
@@ -118,6 +124,13 @@ function test()
         name: "Console.StackTrace.UnhandledPromiseRejection.ImplicitReject",
         description: "StackTrace from an unhandled promise rejection due to an uncaught exception in a promise reaction.",
         expression: `setTimeout(triggerUnhandledRejectionImplicitWithException)`,
+        condition(message) { return message.level === WI.ConsoleMessage.MessageLevel.Error; },
+    });
+
+    addTestCase({
+        name: "Console.StackTrace.UnhandledPromiseRejection.Module",
+        description: "StackTrace from an unhandled promise rejection due to an uncaught exception when loading modules.",
+        expression: `setTimeout(triggerUnhandledRejectionFromModule)`,
         condition(message) { return message.level === WI.ConsoleMessage.MessageLevel.Error; },
     });
 

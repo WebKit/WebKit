@@ -28,7 +28,6 @@
 
 #include "Chrome.h"
 #include "DetectedFace.h"
-#include "Document.h"
 #include "FaceDetectorOptions.h"
 #include "ImageBitmap.h"
 #include "ImageBitmapOptions.h"
@@ -76,7 +75,8 @@ void FaceDetector::detect(ScriptExecutionContext& scriptExecutionContext, ImageB
             return;
         }
 
-        auto imageBuffer = imageBitmap.releaseReturnValue()->takeImageBuffer();
+        // FIXME: This is a safer cpp false positive (rdar://160082559).
+        SUPPRESS_UNCOUNTED_ARG auto imageBuffer = imageBitmap.releaseReturnValue()->takeImageBuffer();
         if (!imageBuffer) {
             promise.resolve({ });
             return;

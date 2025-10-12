@@ -41,7 +41,7 @@ class FontRanges;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSSegmentedFontFace);
 class CSSSegmentedFontFace final : public RefCounted<CSSSegmentedFontFace>, public CSSFontFaceClient {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSSegmentedFontFace);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSSegmentedFontFace, CSSSegmentedFontFace);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
@@ -63,7 +63,7 @@ private:
     void fontLoaded(CSSFontFace&) final;
 
     // FIXME: Add support for font-feature-values in the key for this cache.
-    UncheckedKeyHashMap<std::tuple<FontDescriptionKey, FontPaletteValues>, FontRanges> m_cache;
+    HashMap<std::tuple<FontDescriptionKey, FontPaletteValues>, FontRanges> m_cache;
     Vector<Ref<CSSFontFace>, 1> m_fontFaces;
 };
 

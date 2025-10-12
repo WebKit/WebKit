@@ -79,7 +79,7 @@ WebArchive::WebArchive(WebArchiveResource* mainResource, RefPtr<API::Array>&& su
         return Ref<LegacyWebArchive> { *subframeWebArchive->coreLegacyWebArchive() };
     });
 
-    lazyInitialize(m_legacyWebArchive, LegacyWebArchive::create(*coreMainResource, WTFMove(coreArchiveResources), WTFMove(coreSubframeLegacyWebArchives)));
+    lazyInitialize(m_legacyWebArchive, LegacyWebArchive::create(*coreMainResource, WTFMove(coreArchiveResources), WTFMove(coreSubframeLegacyWebArchives), std::nullopt));
 }
 
 WebArchive::WebArchive(API::Data* data)

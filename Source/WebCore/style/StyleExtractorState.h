@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/PseudoElementIdentifier.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {

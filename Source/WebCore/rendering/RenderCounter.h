@@ -22,8 +22,8 @@
 
 #pragma once
 
-#include "CounterContent.h"
 #include "RenderText.h"
+#include "StyleContent.h"
 
 namespace WebCore {
 
@@ -34,7 +34,7 @@ class RenderCounter final : public RenderText {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderCounter);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderCounter);
 public:
-    RenderCounter(Document&, const CounterContent&);
+    RenderCounter(Document&, const Style::Content::Counter&);
     virtual ~RenderCounter();
 
     static void destroyCounterNodes(RenderElement&);
@@ -50,10 +50,10 @@ private:
     
     ASCIILiteral renderName() const override;
     String originalText() const override;
-    
-    RefPtr<CSSCounterStyle> counterStyle() const;
 
-    CounterContent m_counter;
+    Ref<CSSCounterStyle> counterStyle() const;
+
+    Style::Content::Counter m_counter;
     SingleThreadWeakPtr<CounterNode> m_counterNode;
     SingleThreadWeakPtr<RenderCounter> m_nextForSameCounter;
     friend class CounterNode;

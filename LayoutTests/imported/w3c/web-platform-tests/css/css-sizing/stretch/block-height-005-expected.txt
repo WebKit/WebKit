@@ -1,0 +1,20 @@
+These tests assert the behavior described at https://github.com/w3c/csswg-drafts/issues/11044#issuecomment-2599101601
+
+
+FAIL .float + div 1 assert_equals:
+<div style="height: stretch; width: 30px; margin-top: 50px; display: flow-root; border: solid magenta;" data-expected-height="100" data-offset-y="0">
+  </div>
+height expected 100 but got 6
+FAIL .float + div 2 assert_equals:
+<div style="height: stretch; width: 90px; margin-top: 50px; display: flow-root; border: solid cyan;" data-expected-height="100" data-offset-y="30">
+  </div>
+height expected 100 but got 6
+FAIL .float + div 3 assert_equals:
+<div style="height: stretch; width: 90px; margin-top: 50px; border: solid green;" data-expected-height="100" data-offset-y="0">
+  </div>
+height expected 100 but got 6
+FAIL .float + div 4 assert_equals:
+<div style="height: stretch; width: 90px; clear: both; margin-top: 50px; border: solid orange;" data-expected-height="100" data-offset-y="30">
+  </div>
+height expected 100 but got 6
+

@@ -1,16 +1,16 @@
-/* Copyright (c) 2024, Google LLC
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2024 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <openssl/base.h>
 
@@ -22,15 +22,14 @@
 #include <openssl/obj.h>
 #include <openssl/slhdsa.h>
 
+#include "../fipsmodule/slhdsa/params.h"
 #include "../test/file_test.h"
 #include "../test/test_util.h"
-#include "internal.h"
-#include "params.h"
 
 namespace {
 
 TEST(SLHDSATest, KeyGeneration) {
-  const uint8_t seed[3 * SLHDSA_SHA2_128S_N] = {0};
+  const uint8_t seed[3 * BCM_SLHDSA_SHA2_128S_N] = {0};
   const uint8_t expected_pub[] = {
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x00, 0x00, 0x00, 0x00, 0x00, 0xbe, 0x6b, 0xd7, 0xe8, 0xe1, 0x98,
@@ -47,7 +46,7 @@ TEST(SLHDSATest, KeyGeneration) {
 
   uint8_t pub[SLHDSA_SHA2_128S_PUBLIC_KEY_BYTES];
   uint8_t priv[SLHDSA_SHA2_128S_PRIVATE_KEY_BYTES];
-  SLHDSA_SHA2_128S_generate_key_from_seed(pub, priv, seed);
+  BCM_slhdsa_sha2_128s_generate_key_from_seed(pub, priv, seed);
   EXPECT_EQ(Bytes(pub), Bytes(expected_pub));
   EXPECT_EQ(Bytes(priv), Bytes(expected_priv));
 
@@ -122,7 +121,6 @@ TEST(SLHDSATest, BasicNonstandardPrehashSignVerify) {
       nullptr, 0));
 }
 
-
 static void NISTKeyGenerationFileTest(FileTest *t) {
   std::vector<uint8_t> seed, expected_pub, expected_priv;
   ASSERT_TRUE(t->GetBytes(&seed, "seed"));
@@ -132,7 +130,7 @@ static void NISTKeyGenerationFileTest(FileTest *t) {
 
   uint8_t pub[SLHDSA_SHA2_128S_PUBLIC_KEY_BYTES];
   uint8_t priv[SLHDSA_SHA2_128S_PRIVATE_KEY_BYTES];
-  SLHDSA_SHA2_128S_generate_key_from_seed(pub, priv, seed.data());
+  BCM_slhdsa_sha2_128s_generate_key_from_seed(pub, priv, seed.data());
 
   EXPECT_EQ(Bytes(pub), Bytes(expected_pub));
   EXPECT_EQ(Bytes(priv), Bytes(expected_priv));
@@ -148,13 +146,13 @@ static void NISTSignatureGenerationFileTest(FileTest *t) {
   ASSERT_EQ(priv.size(),
             static_cast<size_t>(SLHDSA_SHA2_128S_PRIVATE_KEY_BYTES));
   ASSERT_TRUE(t->GetBytes(&entropy, "entropy"));
-  ASSERT_EQ(entropy.size(), static_cast<size_t>(SLHDSA_SHA2_128S_N));
+  ASSERT_EQ(entropy.size(), static_cast<size_t>(BCM_SLHDSA_SHA2_128S_N));
   ASSERT_TRUE(t->GetBytes(&msg, "msg"));
   ASSERT_TRUE(t->GetBytes(&expected_sig, "sig"));
 
   uint8_t sig[SLHDSA_SHA2_128S_SIGNATURE_BYTES];
-  SLHDSA_SHA2_128S_sign_internal(sig, priv.data(), nullptr, nullptr, 0,
-                                 msg.data(), msg.size(), entropy.data());
+  BCM_slhdsa_sha2_128s_sign_internal(sig, priv.data(), nullptr, nullptr, 0,
+                                     msg.data(), msg.size(), entropy.data());
 
   EXPECT_EQ(Bytes(sig), Bytes(expected_sig));
 }
@@ -173,9 +171,9 @@ static void NISTSignatureVerificationFileTest(FileTest *t) {
   ASSERT_TRUE(t->GetBytes(&sig, "sig"));
   ASSERT_TRUE(t->GetAttribute(&valid, "valid"));
 
-  int ok = SLHDSA_SHA2_128S_verify_internal(sig.data(), sig.size(), pub.data(),
-                                            nullptr, nullptr, 0, msg.data(),
-                                            msg.size());
+  int ok = bcm_success(BCM_slhdsa_sha2_128s_verify_internal(
+      sig.data(), sig.size(), pub.data(), nullptr, nullptr, 0, msg.data(),
+      msg.size()));
   EXPECT_EQ(ok, valid == "true");
 }
 
@@ -184,11 +182,10 @@ TEST(SLHDSATest, NISTSignatureVerification) {
                 NISTSignatureVerificationFileTest);
 }
 
-static void NISTPrehashSignatureGenerationFileTest(FileTest *t) {
-  std::vector<uint8_t> priv, msg, sig, context;
-  ASSERT_TRUE(t->GetBytes(&priv, "priv"));
-  ASSERT_EQ(priv.size(),
-            static_cast<size_t>(SLHDSA_SHA2_128S_PRIVATE_KEY_BYTES));
+static void NISTPrehashSignatureVerificationFileTest(FileTest *t) {
+  std::vector<uint8_t> pub, msg, sig, context;
+  ASSERT_TRUE(t->GetBytes(&pub, "pub"));
+  ASSERT_EQ(pub.size(), static_cast<size_t>(SLHDSA_SHA2_128S_PUBLIC_KEY_BYTES));
   ASSERT_TRUE(t->GetBytes(&msg, "msg"));
   ASSERT_TRUE(t->GetBytes(&sig, "sig"));
   ASSERT_EQ(sig.size(), size_t{SLHDSA_SHA2_128S_SIGNATURE_BYTES});
@@ -197,23 +194,41 @@ static void NISTPrehashSignatureGenerationFileTest(FileTest *t) {
   std::string hash_func;
   ASSERT_TRUE(t->GetAttribute(&hash_func, "hash"));
   int nid = 0;
-  if (hash_func == "SHA-384") {
+  bool nonstandard = false;
+  if (hash_func == "SHA-256") {
+    nid = NID_sha256;
+  } else if (hash_func == "SHA-384") {
     nid = NID_sha384;
+    nonstandard = true;
   } else {
     abort();
   }
 
-  uint8_t pub[SLHDSA_SHA2_128S_PUBLIC_KEY_BYTES];
-  SLHDSA_SHA2_128S_public_from_private(pub, priv.data());
-  EXPECT_TRUE(SLHDSA_SHA2_128S_prehash_warning_nonstandard_verify(
-      sig.data(), sig.size(), pub, msg.data(), msg.size(), nid, context.data(),
-      context.size()));
+  if (nonstandard) {
+    EXPECT_TRUE(SLHDSA_SHA2_128S_prehash_warning_nonstandard_verify(
+        sig.data(), sig.size(), pub.data(), msg.data(), msg.size(), nid,
+        context.data(), context.size()));
+  } else {
+    EXPECT_TRUE(SLHDSA_SHA2_128S_prehash_verify(
+        sig.data(), sig.size(), pub.data(), msg.data(), msg.size(), nid,
+        context.data(), context.size()));
+  }
 }
-
 
 TEST(SLHDSATest, NISTPrehashSignatureVerification) {
   FileTestGTest("crypto/slhdsa/slhdsa_prehash.txt",
-                NISTPrehashSignatureGenerationFileTest);
+                NISTPrehashSignatureVerificationFileTest);
+}
+
+TEST(SLHDSATest, Self) { boringssl_self_test_slhdsa(); }
+
+TEST(SLHDSATest, NullptrArgumentsToCreate) {
+  // For FIPS reasons, this should fail rather than crash.
+  ASSERT_EQ(BCM_slhdsa_sha2_128s_generate_key_fips(nullptr, nullptr),
+            bcm_status::failure);
+  ASSERT_EQ(BCM_slhdsa_sha2_128s_generate_key_from_seed_fips(nullptr, nullptr,
+                                                             nullptr),
+            bcm_status::failure);
 }
 
 }  // namespace

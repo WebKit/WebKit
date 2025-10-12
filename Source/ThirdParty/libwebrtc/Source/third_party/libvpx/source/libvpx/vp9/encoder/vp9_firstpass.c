@@ -84,7 +84,7 @@
 #define HIGH_UNDERSHOOT_RATIO 2
 #define AV_WQ_FACTOR 4.0
 
-#define DOUBLE_DIVIDE_CHECK(x) ((x) < 0 ? (x)-0.000001 : (x) + 0.000001)
+#define DOUBLE_DIVIDE_CHECK(x) ((x) < 0 ? (x) - 0.000001 : (x) + 0.000001)
 
 #if ARF_STATS_OUTPUT
 unsigned int arf_count = 0;
@@ -863,30 +863,14 @@ static void accumulate_fp_mb_row_stat(TileDataEnc *this_tile,
   this_tile->fp_data.sum_mvcs += fp_acc_data->sum_mvcs;
   this_tile->fp_data.sum_in_vectors += fp_acc_data->sum_in_vectors;
   this_tile->fp_data.intra_smooth_count += fp_acc_data->intra_smooth_count;
+  const int min_start_row = VPXMIN(this_tile->fp_data.image_data_start_row,
+                                   fp_acc_data->image_data_start_row);
   this_tile->fp_data.image_data_start_row =
-      VPXMIN(this_tile->fp_data.image_data_start_row,
-             fp_acc_data->image_data_start_row) == INVALID_ROW
+      (min_start_row == INVALID_ROW)
           ? VPXMAX(this_tile->fp_data.image_data_start_row,
                    fp_acc_data->image_data_start_row)
-          : VPXMIN(this_tile->fp_data.image_data_start_row,
-                   fp_acc_data->image_data_start_row);
+          : min_start_row;
 }
-
-#if CONFIG_RATE_CTRL
-static void store_fp_motion_vector(VP9_COMP *cpi, const MV *mv,
-                                   const int mb_row, const int mb_col,
-                                   MV_REFERENCE_FRAME frame_type,
-                                   const int mv_idx) {
-  VP9_COMMON *const cm = &cpi->common;
-  const int mb_index = mb_row * cm->mb_cols + mb_col;
-  MOTION_VECTOR_INFO *this_motion_vector_info =
-      &cpi->fp_motion_vector_info[mb_index];
-  this_motion_vector_info->ref_frame[mv_idx] = frame_type;
-  if (frame_type != INTRA_FRAME) {
-    this_motion_vector_info->mv[mv_idx].as_mv = *mv;
-  }
-}
-#endif  // CONFIG_RATE_CTRL
 
 #define NZ_MOTION_PENALTY 128
 #define INTRA_MODE_PENALTY 1024
@@ -1118,13 +1102,6 @@ void vp9_first_pass_encode_tile_mb_row(VP9_COMP *cpi, ThreadData *td,
       struct buf_2d unscaled_last_source_buf_2d;
       vp9_variance_fn_ptr_t v_fn_ptr = cpi->fn_ptr[bsize];
 
-#if CONFIG_RATE_CTRL
-      if (cpi->oxcf.use_simple_encode_api) {
-        // Store zero mv as default
-        store_fp_motion_vector(cpi, &mv, mb_row, mb_col, LAST_FRAME, 0);
-      }
-#endif  // CONFIG_RAGE_CTRL
-
       xd->plane[0].pre[0].buf = first_ref_buf->y_buffer + recon_yoffset;
 #if CONFIG_VP9_HIGHBITDEPTH
       if (xd->cur_buf->flags & YV12_FLAG_HIGHBITDEPTH) {
@@ -1189,11 +1166,6 @@ void vp9_first_pass_encode_tile_mb_row(VP9_COMP *cpi, ThreadData *td,
                 vp9_get_mvpred_var(x, &tmp_mv, &zero_mv, &v_fn_ptr, 0);
           }
         }
-#if CONFIG_RATE_CTRL
-        if (cpi->oxcf.use_simple_encode_api) {
-          store_fp_motion_vector(cpi, &mv, mb_row, mb_col, LAST_FRAME, 0);
-        }
-#endif  // CONFIG_RAGE_CTRL
 
         // Search in an older reference frame.
         if ((cm->current_video_frame > 1) && gld_yv12 != NULL) {
@@ -1215,12 +1187,6 @@ void vp9_first_pass_encode_tile_mb_row(VP9_COMP *cpi, ThreadData *td,
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 
           first_pass_motion_search(cpi, x, &zero_mv, &tmp_mv, &gf_motion_error);
-#if CONFIG_RATE_CTRL
-          if (cpi->oxcf.use_simple_encode_api) {
-            store_fp_motion_vector(cpi, &tmp_mv, mb_row, mb_col, GOLDEN_FRAME,
-                                   1);
-          }
-#endif  // CONFIG_RAGE_CTRL
 
           if (gf_motion_error < motion_error && gf_motion_error < this_error)
             ++(fp_acc_data->second_ref_count);
@@ -1346,11 +1312,6 @@ void vp9_first_pass_encode_tile_mb_row(VP9_COMP *cpi, ThreadData *td,
       }
     } else {
       fp_acc_data->sr_coded_error += (int64_t)this_error;
-#if CONFIG_RATE_CTRL
-      if (cpi->oxcf.use_simple_encode_api) {
-        store_fp_motion_vector(cpi, NULL, mb_row, mb_col, INTRA_FRAME, 0);
-      }
-#endif  // CONFIG_RAGE_CTRL
     }
     fp_acc_data->coded_error += (int64_t)this_error;
 
@@ -1380,13 +1341,6 @@ static void first_pass_encode(VP9_COMP *cpi, FIRSTPASS_DATA *fp_acc_data) {
   // Tiling is ignored in the first pass.
   vp9_tile_init(tile, cm, 0, 0);
   tile_data.firstpass_top_mv = zero_mv;
-#if CONFIG_RATE_CTRL
-  if (cpi->oxcf.use_simple_encode_api) {
-    fp_motion_vector_info_reset(cpi->frame_info.frame_width,
-                                cpi->frame_info.frame_height,
-                                cpi->fp_motion_vector_info);
-  }
-#endif
 
   for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
     best_ref_mv = zero_mv;
@@ -1420,7 +1374,7 @@ void vp9_first_pass(VP9_COMP *cpi, const struct lookahead_entry *source) {
   assert(frame_is_intra_only(cm) || (lst_yv12 != NULL));
 
   set_first_pass_params(cpi);
-  vp9_set_quantizer(cpi, find_fp_qindex(cm->bit_depth));
+  vp9_set_quantizer(cpi, find_fp_qindex(cm->bit_depth), 0);
 
   vp9_setup_block_planes(&x->e_mbd, cm->subsampling_x, cm->subsampling_y);
 
@@ -1582,9 +1536,9 @@ static int get_twopass_worst_quality(VP9_COMP *cpi, const double section_err,
   last_group_rate_err =
       (double)twopass->rolling_arf_group_actual_bits /
       DOUBLE_DIVIDE_CHECK((double)twopass->rolling_arf_group_target_bits);
-  last_group_rate_err = VPXMAX(0.25, VPXMIN(4.0, last_group_rate_err));
+  last_group_rate_err = fclamp(last_group_rate_err, 0.25, 4.0);
   twopass->bpm_factor *= (3.0 + last_group_rate_err) / 4.0;
-  twopass->bpm_factor = VPXMAX(0.25, VPXMIN(4.0, twopass->bpm_factor));
+  twopass->bpm_factor = fclamp(twopass->bpm_factor, 0.25, 4.0);
 #endif
 
   if (target_rate <= 0) {
@@ -1608,9 +1562,9 @@ static int get_twopass_worst_quality(VP9_COMP *cpi, const double section_err,
     last_group_rate_err =
         (double)twopass->rolling_arf_group_actual_bits /
         DOUBLE_DIVIDE_CHECK((double)twopass->rolling_arf_group_target_bits);
-    last_group_rate_err = VPXMAX(0.25, VPXMIN(4.0, last_group_rate_err));
+    last_group_rate_err = fclamp(last_group_rate_err, 0.25, 4.0);
     twopass->bpm_factor *= (3.0 + last_group_rate_err) / 4.0;
-    twopass->bpm_factor = VPXMAX(0.25, VPXMIN(4.0, twopass->bpm_factor));
+    twopass->bpm_factor = fclamp(twopass->bpm_factor, 0.25, 4.0);
 #endif
 
     // Try and pick a max Q that will be high enough to encode the
@@ -2626,9 +2580,6 @@ typedef struct RANGE {
  *   rc->frames_since_key
  *   rc->source_alt_ref_active
  *
- * Special case: if CONFIG_RATE_CTRL is true, the external arf indexes will
- * determine the arf position.
- *
  * TODO(angiebird): Separate the dynamic fields and static fields into two
  * structs.
  */
@@ -2744,21 +2695,6 @@ static int get_gop_coding_frame_num(
   *use_alt_ref &= gop_coding_frames < lag_in_frames;
   *use_alt_ref &= gop_coding_frames >= rc->min_gf_interval;
   return gop_coding_frames;
-}
-
-static RANGE get_active_gf_inverval_range_simple(int min_gf_interval,
-                                                 int arf_active_or_kf,
-                                                 int frames_to_key) {
-  RANGE active_gf_interval;
-  active_gf_interval.min = min_gf_interval + arf_active_or_kf + 2;
-  active_gf_interval.max = 16 + arf_active_or_kf;
-
-  if ((active_gf_interval.max <= frames_to_key) &&
-      (active_gf_interval.max >= (frames_to_key - min_gf_interval))) {
-    active_gf_interval.min = frames_to_key / 2;
-    active_gf_interval.max = frames_to_key / 2;
-  }
-  return active_gf_interval;
 }
 
 static RANGE get_active_gf_inverval_range(
@@ -2883,14 +2819,9 @@ static void define_gf_group(VP9_COMP *cpi, int gf_start_show_idx) {
 
   vpx_clear_system_state();
 
-  if (oxcf->use_simple_encode_api) {
-    active_gf_interval = get_active_gf_inverval_range_simple(
-        rc->min_gf_interval, arf_active_or_kf, rc->frames_to_key);
-  } else {
-    active_gf_interval = get_active_gf_inverval_range(
-        frame_info, rc, arf_active_or_kf, gf_start_show_idx,
-        twopass->active_worst_quality, rc->last_boosted_qindex);
-  }
+  active_gf_interval = get_active_gf_inverval_range(
+      frame_info, rc, arf_active_or_kf, gf_start_show_idx,
+      twopass->active_worst_quality, rc->last_boosted_qindex);
 
   if (cpi->multi_layer_arf) {
     int arf_layers = get_arf_layers(cpi->multi_layer_arf, oxcf->enable_auto_arf,
@@ -2910,19 +2841,6 @@ static void define_gf_group(VP9_COMP *cpi, int gf_start_show_idx) {
     gop_coding_frames = gop_decision.gop_coding_frames;
     use_alt_ref = gop_decision.use_alt_ref;
   }
-
-#if CONFIG_RATE_CTRL
-  // If the external gop_command is on, we will override the decisions
-  // of gop_coding_frames and use_alt_ref.
-  if (cpi->oxcf.use_simple_encode_api) {
-    const GOP_COMMAND *gop_command = &cpi->encode_command.gop_command;
-    assert(allow_alt_ref == 1);
-    if (gop_command->use) {
-      gop_coding_frames = gop_command_coding_frame_count(gop_command);
-      use_alt_ref = gop_command->use_alt_ref;
-    }
-  }
-#endif
 
   // Was the group length constrained by the requirement for a new KF?
   rc->constrained_gf_group = (gop_coding_frames >= rc->frames_to_key) ? 1 : 0;
@@ -3015,11 +2933,6 @@ static void define_gf_group(VP9_COMP *cpi, int gf_start_show_idx) {
       int show_idx = gf_start_show_idx + j;
       const FIRSTPASS_STATS *frame_stats =
           fps_get_frame_stats(first_pass_info, show_idx);
-      // TODO(b/345831640): Why do we set gop_coding_frames as the upperbound of
-      // the for loop here? gop_coding_frames does not reflect the "show frame
-      // count" in a GOP. Therefore, it's possible to get a NULL pointer from
-      // fps_get_frame_stats(). Here we mitigate the issue using break whenever
-      // frame_stats == NULL. Show we set the upperbound to show frame count?
       if (frame_stats == NULL) {
         if (cpi->ext_ratectrl.ready &&
             (cpi->ext_ratectrl.funcs.rc_type & VPX_RC_GOP) != 0 &&
@@ -3031,9 +2944,7 @@ static void define_gf_group(VP9_COMP *cpi, int gf_start_show_idx) {
           // computing gf_group_err which will be used to compute gf_group_bits
           // for libvpx internal rate control. Since ext_ratectrl is using
           // external rate control module, this part becomes non-critical.
-          // Hence, we can safely turn off this error reporting. In the future,
-          // we should refactor the code so that this part is not used by
-          // ext_ratectrl.
+          // Hence, we can safely turn off this error reporting.
           break;
         }
         vpx_internal_error(&cm->error, VPX_CODEC_ERROR,
@@ -3507,8 +3418,8 @@ static void find_next_key_frame(VP9_COMP *cpi, int kf_show_idx) {
     kf_boost_scan_frames = (int)(VPXMAX(64 * zero_motion_avg - 16,
                                         160 * motion_compensable_avg - 112));
     kf_boost_scan_frames =
-        VPXMAX(VPXMIN(kf_boost_scan_frames, MAX_SCAN_FRAMES_FOR_KF_BOOST),
-               MIN_SCAN_FRAMES_FOR_KF_BOOST);
+        clamp(kf_boost_scan_frames, MIN_SCAN_FRAMES_FOR_KF_BOOST,
+              MAX_SCAN_FRAMES_FOR_KF_BOOST);
   }
   reset_fpf_position(twopass, start_position);
 
@@ -3935,146 +3846,6 @@ void vp9_twopass_postencode_update(VP9_COMP *cpi) {
     }
   }
 }
-
-#if CONFIG_RATE_CTRL
-void vp9_get_next_group_of_picture(const VP9_COMP *cpi, int *first_is_key_frame,
-                                   int *use_alt_ref, int *coding_frame_count,
-                                   int *first_show_idx,
-                                   int *last_gop_use_alt_ref) {
-  const GOP_COMMAND *gop_command = &cpi->encode_command.gop_command;
-  // We make a copy of rc here because we want to get information from the
-  // encoder without changing its state.
-  // TODO(angiebird): Avoid copying rc here.
-  RATE_CONTROL rc = cpi->rc;
-  const int multi_layer_arf = 0;
-  const int allow_alt_ref = 1;
-  // We assume that current_video_frame is updated to the show index of the
-  // frame we are about to called. Note that current_video_frame is updated at
-  // the end of encode_frame_to_data_rate().
-  // TODO(angiebird): Avoid this kind of fragile style.
-  *first_show_idx = cpi->common.current_video_frame;
-  *last_gop_use_alt_ref = rc.source_alt_ref_active;
-
-  *first_is_key_frame = 0;
-  if (rc.frames_to_key == 0) {
-    rc.frames_to_key = vp9_get_frames_to_next_key(
-        &cpi->oxcf, &cpi->twopass, *first_show_idx, rc.min_gf_interval);
-    rc.frames_since_key = 0;
-    *first_is_key_frame = 1;
-  }
-
-  if (gop_command->use) {
-    *coding_frame_count = gop_command_coding_frame_count(gop_command);
-    *use_alt_ref = gop_command->use_alt_ref;
-    assert(gop_command->show_frame_count <= rc.frames_to_key);
-  } else {
-    *coding_frame_count = vp9_get_gop_coding_frame_count(
-        &cpi->oxcf, &cpi->twopass, &cpi->frame_info, &rc, *first_show_idx,
-        multi_layer_arf, allow_alt_ref, *first_is_key_frame,
-        *last_gop_use_alt_ref, use_alt_ref);
-  }
-}
-
-int vp9_get_gop_coding_frame_count(const VP9EncoderConfig *oxcf,
-                                   const TWO_PASS *const twopass,
-                                   const FRAME_INFO *frame_info,
-                                   const RATE_CONTROL *rc, int show_idx,
-                                   int multi_layer_arf, int allow_alt_ref,
-                                   int first_is_key_frame,
-                                   int last_gop_use_alt_ref, int *use_alt_ref) {
-  int frame_count;
-  double gop_intra_factor;
-  const int arf_active_or_kf = last_gop_use_alt_ref || first_is_key_frame;
-  RANGE active_gf_interval;
-  int arf_layers;
-  int end_of_sequence = 0;
-  if (oxcf->use_simple_encode_api) {
-    active_gf_interval = get_active_gf_inverval_range_simple(
-        rc->min_gf_interval, arf_active_or_kf, rc->frames_to_key);
-  } else {
-    active_gf_interval = get_active_gf_inverval_range(
-        frame_info, rc, arf_active_or_kf, show_idx, /*active_worst_quality=*/0,
-        /*last_boosted_qindex=*/0);
-  }
-
-  arf_layers = get_arf_layers(multi_layer_arf, oxcf->enable_auto_arf,
-                              active_gf_interval.max);
-  if (multi_layer_arf) {
-    gop_intra_factor = 1.0 + 0.25 * arf_layers;
-  } else {
-    gop_intra_factor = 1.0;
-  }
-
-  frame_count = get_gop_coding_frame_num(
-      use_alt_ref, frame_info, twopass, rc, show_idx, &active_gf_interval,
-      gop_intra_factor, oxcf->lag_in_frames, &end_of_sequence);
-  *use_alt_ref &= allow_alt_ref;
-  return frame_count;
-}
-
-// Under CONFIG_RATE_CTRL, once the first_pass_info is ready, the number of
-// coding frames (including show frame and alt ref) can be determined.
-int vp9_get_coding_frame_num(const VP9EncoderConfig *oxcf,
-                             const TWO_PASS *const twopass,
-                             const FRAME_INFO *frame_info, int multi_layer_arf,
-                             int allow_alt_ref) {
-  const FIRST_PASS_INFO *first_pass_info = &twopass->first_pass_info;
-  int coding_frame_num = 0;
-  RATE_CONTROL rc;
-  int gop_coding_frame_count;
-  int gop_show_frames;
-  int show_idx = 0;
-  int last_gop_use_alt_ref = 0;
-  vp9_rc_init(oxcf, 1, &rc);
-
-  while (show_idx < first_pass_info->num_frames) {
-    int use_alt_ref;
-    int first_is_key_frame = 0;
-    if (rc.frames_to_key == 0) {
-      rc.frames_to_key = vp9_get_frames_to_next_key(oxcf, twopass, show_idx,
-                                                    rc.min_gf_interval);
-      rc.frames_since_key = 0;
-      first_is_key_frame = 1;
-    }
-
-    gop_coding_frame_count = vp9_get_gop_coding_frame_count(
-        oxcf, twopass, frame_info, &rc, show_idx, multi_layer_arf,
-        allow_alt_ref, first_is_key_frame, last_gop_use_alt_ref, &use_alt_ref);
-
-    rc.source_alt_ref_active = use_alt_ref;
-    last_gop_use_alt_ref = use_alt_ref;
-    gop_show_frames = gop_coding_frame_count - use_alt_ref;
-    rc.frames_to_key -= gop_show_frames;
-    rc.frames_since_key += gop_show_frames;
-    show_idx += gop_show_frames;
-    coding_frame_num += gop_show_frames + use_alt_ref;
-  }
-  return coding_frame_num;
-}
-
-void vp9_get_key_frame_map(const VP9EncoderConfig *oxcf,
-                           const TWO_PASS *const twopass, int *key_frame_map) {
-  const FIRST_PASS_INFO *first_pass_info = &twopass->first_pass_info;
-  int show_idx = 0;
-  RATE_CONTROL rc;
-  vp9_rc_init(oxcf, 1, &rc);
-
-  // key_frame_map points to an int array with size equal to
-  // first_pass_info->num_frames, which is also the number of show frames in the
-  // video.
-  memset(key_frame_map, 0,
-         sizeof(*key_frame_map) * first_pass_info->num_frames);
-  while (show_idx < first_pass_info->num_frames) {
-    int key_frame_group_size;
-    key_frame_map[show_idx] = 1;
-    key_frame_group_size =
-        vp9_get_frames_to_next_key(oxcf, twopass, show_idx, rc.min_gf_interval);
-    assert(key_frame_group_size > 0);
-    show_idx += key_frame_group_size;
-  }
-  assert(show_idx == first_pass_info->num_frames);
-}
-#endif  // CONFIG_RATE_CTRL
 
 FIRSTPASS_STATS vp9_get_frame_stats(const TWO_PASS *twopass) {
   return twopass->this_frame_stats;

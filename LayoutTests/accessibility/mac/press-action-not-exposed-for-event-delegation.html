@@ -3,6 +3,9 @@
 <head>
 <script src="../../resources/accessibility-helper.js"></script>
 <script src="../../resources/js-test.js"></script>
+<style>
+div { cursor: pointer; }
+</style>
 </head>
 <body id="body">
 
@@ -19,6 +22,7 @@ text1
 <div id="group3" role="group">
 a<br>
 <button>b</button>
+c
 </div>
 
 <div id="group4" role="group">
@@ -71,12 +75,13 @@ if (window.accessibilityController) {
         document.getElementById("group2").addEventListener("click", listener, false);
         output += await expectAsync("text2.isPressActionSupported()", "true");
 
-        output += "\nWhen a click handler is on a parent that has more than one descendant, do not expose press.\n";
+        output += "\nWhen a click handler is on a parent that has more than one descendant, only expose press on the first.\n";
         text3 = accessibilityController.accessibleElementById("group3").childAtIndex(0);
         output += await expectAsync("text3.isPressActionSupported()", "false");
 
         document.getElementById("group3").addEventListener("click", listener, false);
-        output += await expectAsync("text3.isPressActionSupported()", "false");
+        output += await expectAsync("text3.isPressActionSupported()", "true");
+        output += await expectAsync("accessibilityController.accessibleElementById('group3').childAtIndex(2).isPressActionSupported()", "false")
 
         output += "\nWhen a click handler is on a parent that has one direct descendant, but then sub-descendants below that, do not expose press.\n";
         text4 = accessibilityController.accessibleElementById("group4").childAtIndex(0).childAtIndex(2);

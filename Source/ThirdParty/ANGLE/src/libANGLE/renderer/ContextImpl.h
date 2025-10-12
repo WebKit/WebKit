@@ -226,13 +226,15 @@ class ContextImpl : public GLImplFactory
     virtual angle::Result onMakeCurrent(const gl::Context *context) = 0;
     virtual angle::Result onUnMakeCurrent(const gl::Context *context);
 
+    // EXT_fragment_shading_rate
+    virtual const angle::ShadingRateMap &getSupportedFragmentShadingRateEXTSampleCounts() const;
+
     // Native capabilities, unmodified by gl::Context.
     virtual gl::Caps getNativeCaps() const                                              = 0;
     virtual const gl::TextureCapsMap &getNativeTextureCaps() const                      = 0;
     virtual const gl::Extensions &getNativeExtensions() const                           = 0;
     virtual const gl::Limitations &getNativeLimitations() const                         = 0;
     virtual const ShPixelLocalStorageOptions &getNativePixelLocalStorageOptions() const = 0;
-
     virtual angle::Result dispatchCompute(const gl::Context *context,
                                           GLuint numGroupsX,
                                           GLuint numGroupsY,

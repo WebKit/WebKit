@@ -17,6 +17,7 @@ function waitFor(duration)
 
 promise_test(async (test) => {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     video1.srcObject = stream;
     await video1.play();
 

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 
 PASS Dedicated worker of the cached script
 PASS Dedicated worker of the fallbacked script

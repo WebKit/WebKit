@@ -1,0 +1,97 @@
+/*
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES LOSS OF USE, DATA, OR PROFITS OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=GPU,
+    EnabledBy=UseGPUProcessForMediaEnabled
+]
+messages -> RemoteAudioVideoRendererProxyManager {
+    Create(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::MediaPlayerClientIdentifier mediaElementIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier)
+    Shutdown(WebKit::RemoteAudioVideoRendererIdentifier identifier)
+
+    SetPreferences(WebKit::RemoteAudioVideoRendererIdentifier identifier, OptionSet<WebCore::VideoRendererPreference> preferences)
+    SetHasProtectedVideoContent(WebKit::RemoteAudioVideoRendererIdentifier identifier, bool isProtected)
+
+    AddTrack(WebKit::RemoteAudioVideoRendererIdentifier identifier, enum:uint8_t WebCore::TrackInfoTrackType type) -> (Expected<WebCore::SamplesRendererTrackIdentifier, WebCore::PlatformMediaError> result) Synchronous
+    RemoveTrack(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier)
+
+    EnqueueSample(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier, WebCore::MediaSamplesBlock block, std::optional<MediaTime> upcomingMinimumTime);
+    RequestMediaDataWhenReady(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier)
+    StopRequestingMediaData(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier)
+
+    NotifyTimeReachedAndStall(WebKit::RemoteAudioVideoRendererIdentifier identifier, MediaTime time)
+    CancelTimeReachedAction(WebKit::RemoteAudioVideoRendererIdentifier identifier)
+    PerformTaskAtTime(WebKit::RemoteAudioVideoRendererIdentifier identifier, MediaTime time)
+
+    Flush(WebKit::RemoteAudioVideoRendererIdentifier identifier)
+    FlushTrack(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier)
+
+    ApplicationWillResignActive(WebKit::RemoteAudioVideoRendererIdentifier identifier)
+    SetSpatialTrackingInfo(WebKit::RemoteAudioVideoRendererIdentifier identifier, bool prefersSpatialAudioExperience, enum:uint8_t WebCore::MediaPlayerSoundStageSize soundStageSize, String sceneIdentifier, String defaultLabel, String label)
+
+    Play(WebKit::RemoteAudioVideoRendererIdentifier identifier, std::optional<MonotonicTime> hostTime)
+    Pause(WebKit::RemoteAudioVideoRendererIdentifier identifier, std::optional<MonotonicTime> hostTime)
+    SetRate(WebKit::RemoteAudioVideoRendererIdentifier identifier, double rate)
+    Stall(WebKit::RemoteAudioVideoRendererIdentifier identifier)
+    PrepareToSeek(WebKit::RemoteAudioVideoRendererIdentifier identifier)
+    SeekTo(WebKit::RemoteAudioVideoRendererIdentifier identifier, MediaTime seekTime) -> (Expected<MediaTime, WebCore::PlatformMediaError> result)
+
+    SetVolume(WebKit::RemoteAudioVideoRendererIdentifier identifier, float volume)
+    SetMuted(WebKit::RemoteAudioVideoRendererIdentifier identifier, bool muted)
+    SetPreservesPitchAndCorrectionAlgorithm(WebKit::RemoteAudioVideoRendererIdentifier identifier, bool preservePitch, std::optional<WebCore::MediaPlayerPitchCorrectionAlgorithm> pitchAlgorithm)
+#if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
+    SetOutputDeviceId(WebKit::RemoteAudioVideoRendererIdentifier identifier, String deviceId)
+#endif
+
+    SetIsVisible(WebKit::RemoteAudioVideoRendererIdentifier identifier, bool isVisible)
+    SetPresentationSize(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::IntSize size)
+    SetShouldMaintainAspectRatio(WebKit::RemoteAudioVideoRendererIdentifier identifier, bool maintain)
+    AcceleratedRenderingStateChanged(WebKit::RemoteAudioVideoRendererIdentifier identifier, bool accelerated)
+    ContentBoxRectChanged(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::LayoutRect boxRect)
+    NotifyWhenHasAvailableVideoFrame(WebKit::RemoteAudioVideoRendererIdentifier identifier, bool notify)
+    ExpectMinimumUpcomingPresentationTime(WebKit::RemoteAudioVideoRendererIdentifier identifier, MediaTime expected)
+    SetShouldDisableHDR(WebKit::RemoteAudioVideoRendererIdentifier identifier, bool disable)
+    SetPlatformDynamicRangeLimit(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::PlatformDynamicRangeLimit limit)
+    SetResourceOwner(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::ProcessIdentity resourceOwner)
+    FlushAndRemoveImage(WebKit::RemoteAudioVideoRendererIdentifier identifier)
+    CurrentVideoFrame(WebKit::RemoteAudioVideoRendererIdentifier identifier) -> (struct std::optional<WebKit::RemoteVideoFrameProxyProperties> videoFrame) Synchronous
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    SetVideoFullscreenFrame(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::FloatRect frame)
+    IsInFullscreenOrPictureInPictureChanged(WebKit::RemoteAudioVideoRendererIdentifier identifier, bool changed)
+#endif
+    SyncTextTrackBounds(WebKit::RemoteAudioVideoRendererIdentifier identifier)
+
+    RequestHostingContext(WebKit::RemoteAudioVideoRendererIdentifier identifier) -> (struct WebCore::HostingContext layerHostingContext)
+
+#if PLATFORM(COCOA)
+    SetVideoLayerSizeFenced(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::FloatSize size, struct MachSendRightAnnotated sendRightAnnotated)
+#endif
+}
+
+#endif

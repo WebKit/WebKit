@@ -7,6 +7,10 @@
 // generatemip.inc: Defines the GenerateMip function, templated on the format
 // type of the image for which mip levels are being generated.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#pragma allow_unsafe_buffers
+#endif
+
 #include "common/mathutil.h"
 
 #include "image_util/imageformats.h"

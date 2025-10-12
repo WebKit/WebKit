@@ -47,11 +47,12 @@ function isGreenPixel(data, i)
     return data[i] < 50 && data[i + 1] > 100 && data[i + 1] < 150 && data[i + 2] < 50;
 }
 
-promise_test(async () => {
+promise_test(async (test) => {
     if (!window.testRunner)
         return;
 
     video.srcObject = await navigator.mediaDevices.getUserMedia({video: {width: 400, height: 200} });
+    test.add_cleanup(() => video.srcObject.getTracks().forEach(track => track.stop()));
     if (window.testRunner)
         testRunner.setMockCameraOrientation(90);
     await video.play();

@@ -10,9 +10,10 @@
 
 #include "rtc_base/test_echo_server.h"
 
+#include "rtc_base/socket_address.h"
 #include "rtc_base/socket_server.h"
 
-namespace rtc {
+namespace webrtc {
 
 TestEchoServer::TestEchoServer(Thread* thread, const SocketAddress& addr)
     : server_socket_(
@@ -29,4 +30,4 @@ TestEchoServer::~TestEchoServer() {
   }
 }
 
-}  // namespace rtc
+}  // namespace webrtc

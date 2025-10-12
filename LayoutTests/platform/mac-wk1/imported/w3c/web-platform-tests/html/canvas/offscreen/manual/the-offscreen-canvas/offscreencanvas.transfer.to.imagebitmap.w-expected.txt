@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: InvalidStateError: The object is in an invalid state.
 
 Harness Error (FAIL), message = InvalidStateError: The object is in an invalid state.
 

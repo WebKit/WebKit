@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CallEdge.h"
-#include "CallLinkInfoBase.h"
-#include "CallVariant.h"
-#include "GCAwareJITStubRoutine.h"
+#include <JavaScriptCore/CallEdge.h>
+#include <JavaScriptCore/CallLinkInfoBase.h>
+#include <JavaScriptCore/CallVariant.h>
+#include <JavaScriptCore/GCAwareJITStubRoutine.h>
 #include <wtf/ButterflyArray.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/UniqueArray.h>
@@ -55,7 +55,7 @@ public:
 
     void unlinkOrUpgradeImpl(VM&, CodeBlock*, CodeBlock*);
 
-    void clear();
+    void unlinkForcefully();
 
     PolymorphicCallStubRoutine* owner();
 
@@ -94,7 +94,7 @@ public:
     bool hasEdges() const;
     CallEdgeList edges() const;
 
-    void clearCallNodesFor(CallLinkInfo*);
+    void unlinkForcefully();
 
     template<typename Functor>
     void forEachDependentCell(const Functor& functor) const

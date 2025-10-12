@@ -1,0 +1,4 @@
+
+PASS Cloning a template via document fragment
+PASS Cloning a template via element
+

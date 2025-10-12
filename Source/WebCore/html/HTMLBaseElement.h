@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "HTMLElement.h"
+#include <WebCore/HTMLElement.h>
 
 namespace WebCore {
 
@@ -33,7 +33,6 @@ public:
     static Ref<HTMLBaseElement> create(const QualifiedName&, Document&);
 
     WEBCORE_EXPORT String href() const;
-    WEBCORE_EXPORT void setHref(const AtomString&);
 
 private:
     HTMLBaseElement(const QualifiedName&, Document&);

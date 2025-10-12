@@ -26,9 +26,9 @@
 
 #pragma once
 
-#include "DataTransfer.h"
-#include "DragActions.h"
-#include "Element.h"
+#include <WebCore/DataTransfer.h>
+#include <WebCore/DragActions.h>
+#include <WebCore/Element.h>
 
 namespace WebCore {
 

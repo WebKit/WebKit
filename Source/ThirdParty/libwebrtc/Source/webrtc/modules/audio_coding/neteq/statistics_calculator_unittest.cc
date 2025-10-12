@@ -10,6 +10,10 @@
 
 #include "modules/audio_coding/neteq/statistics_calculator.h"
 
+#include <cstddef>
+
+#include "api/neteq/neteq.h"
+#include "api/neteq/tick_timer.h"
 #include "test/gtest.h"
 
 namespace webrtc {

@@ -41,6 +41,8 @@ public:
         return adoptRef(*new NavigationActivation(type, WTFMove(entry), WTFMove(fromEntry)));
     }
 
+    ~NavigationActivation();
+
     NavigationNavigationType navigationType() { return m_navigationType; };
     NavigationHistoryEntry* from() const { return m_fromEntry.get(); };
     const NavigationHistoryEntry& entry() const { return m_entry; };
@@ -49,8 +51,8 @@ private:
     explicit NavigationActivation(NavigationNavigationType, Ref<NavigationHistoryEntry>&&, RefPtr<NavigationHistoryEntry>&& fromEntry);
 
     NavigationNavigationType m_navigationType;
-    Ref<NavigationHistoryEntry> m_entry;
-    RefPtr<NavigationHistoryEntry> m_fromEntry;
+    const Ref<NavigationHistoryEntry> m_entry;
+    const RefPtr<NavigationHistoryEntry> m_fromEntry;
 };
 
 } // namespace WebCore

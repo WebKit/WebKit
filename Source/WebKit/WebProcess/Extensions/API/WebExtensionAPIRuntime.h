@@ -68,6 +68,7 @@ public:
 
     NSURL *getURL(NSString *resourcePath, NSString **outExceptionString);
     NSDictionary *getManifest();
+    NSString *getVersion();
     void getPlatformInfo(Ref<WebExtensionCallbackHandler>&&);
     void getBackgroundPage(Ref<WebExtensionCallbackHandler>&&);
     double getFrameId(JSValue *);
@@ -120,7 +121,7 @@ public:
 #endif
 };
 
-NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters&, const URL& baseURL);
+NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters&);
 
 } // namespace WebKit
 

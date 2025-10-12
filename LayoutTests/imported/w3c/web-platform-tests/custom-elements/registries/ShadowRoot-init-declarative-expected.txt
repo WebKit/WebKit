@@ -1,0 +1,4 @@
+
+PASS Custom element inside 'shadowrootcustomelementregistry' declarative shadow root
+FAIL Built-in element inside 'shadowrootcustomelementregistry' declarative shadow root assert_equals: expected null but got object "[object CustomElementRegistry]"
+

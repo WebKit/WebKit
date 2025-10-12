@@ -26,7 +26,7 @@
 #include "config.h"
 #include "XRGPUBinding.h"
 
-#if ENABLE(WEBXR_LAYERS)
+#if ENABLE(WEBXR_LAYERS) && ENABLE(WEBGPU)
 
 #include "GPUDevice.h"
 #include "WebGPUXRBinding.h"
@@ -56,7 +56,7 @@ static WebGPU::XREye convertToBacking(XREye eye)
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(XRGPUBinding);
 
-XRGPUBinding::XRGPUBinding(const WebXRSession& session, GPUDevice& device)
+XRGPUBinding::XRGPUBinding(WebXRSession& session, GPUDevice& device)
     : m_backing(device.createXRBinding(session))
     , m_session(&session)
     , m_device(device)
@@ -70,8 +70,17 @@ GPUDevice& XRGPUBinding::device()
 
 ExceptionOr<Ref<XRProjectionLayer>> XRGPUBinding::createProjectionLayer(ScriptExecutionContext& scriptExecutionContext, std::optional<XRGPUProjectionLayerInit> init)
 {
-    if (!m_backing)
+    if (!m_backing || !m_session)
         return Exception { ExceptionCode::AbortError };
+
+    if (init) {
+        auto converted = init->convertToBacking();
+        m_session->initializeTrackingAndRendering(XRCanvasConfiguration {
+            .colorFormat = converted.colorFormat,
+            .depthStencilFormat = converted.depthStencilFormat
+        });
+    } else
+        m_session->initializeTrackingAndRendering(std::nullopt);
 
     WebGPU::XRProjectionLayerInit convertedInit;
     if (init)
@@ -89,27 +98,47 @@ double XRGPUBinding::nativeProjectionScaleFactor() const
     return m_init ? m_init->scaleFactor : 1.0;
 }
 
-RefPtr<XRGPUSubImage> XRGPUBinding::getSubImage(XRCompositionLayer&, WebXRFrame&, std::optional<XREye>/* = "none"*/)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
-ExceptionOr<Ref<XRGPUSubImage>> XRGPUBinding::getViewSubImage(XRProjectionLayer& projectionLayer, WebXRView& xrView)
+ExceptionOr<Ref<XRGPUSubImage>> XRGPUBinding::getSubImage(XRProjectionLayer& projectionLayer, XREye eye)
 {
     if (!m_backing)
         return Exception { ExceptionCode::AbortError };
 
+    auto layerData = projectionLayer.layerData();
+    if (!layerData)
+        return Exception { ExceptionCode::AbortError, "First frame is not ready"_s };
+
+    auto setupData = layerData->layerSetup;
+    auto textureData = layerData->textureData;
+    if (!setupData || !textureData)
+        return Exception { ExceptionCode::AbortError, "Layer setup or texture data is missing"_s };
+
+    unsigned eyeIndex = eye == XREye::Right ? 1 : 0;
+    auto physicalSize = setupData->physicalSize[eyeIndex];
+    if (!physicalSize[0] || !physicalSize[1])
+        physicalSize = setupData->physicalSize[0];
+    auto viewport = setupData->viewports[eyeIndex];
+    if (eyeIndex)
+        viewport.move(-setupData->viewports[0].width(), 0);
     RefPtr subImage = m_backing->getViewSubImage(projectionLayer.backing());
-    return XRGPUSubImage::create(subImage.releaseNonNull(), convertToBacking(xrView.eye()), m_device);
+    return XRGPUSubImage::create(subImage.releaseNonNull(), convertToBacking(eye), WTFMove(physicalSize), WTFMove(viewport), m_device);
+}
+
+ExceptionOr<Ref<XRGPUSubImage>> XRGPUBinding::getSubImage(XRProjectionLayer& projectionLayer, WebXRFrame&, std::optional<XREye> eye)
+{
+    return getSubImage(projectionLayer, eye.value_or(XREye::Left));
+}
+
+ExceptionOr<Ref<XRGPUSubImage>> XRGPUBinding::getViewSubImage(XRProjectionLayer& projectionLayer, WebXRView& xrView)
+{
+    return getSubImage(projectionLayer, xrView.eye());
 }
 
 GPUTextureFormat XRGPUBinding::getPreferredColorFormat()
 {
-    return GPUTextureFormat::Bgra8unormSRGB;
+    return GPUTextureFormat::Bgra8unorm;
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBXR_LAYERS)
+#endif // ENABLE(WEBXR_LAYERS) && ENABLE(WEBGPU)
 

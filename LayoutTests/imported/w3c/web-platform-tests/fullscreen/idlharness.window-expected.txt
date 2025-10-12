@@ -21,7 +21,6 @@ PASS Element includes ChildNode: member names are unique
 PASS Element includes Slottable: member names are unique
 PASS Document includes XPathEvaluatorBase: member names are unique
 PASS Document includes GlobalEventHandlers: member names are unique
-PASS Document includes DocumentAndElementEventHandlers: member names are unique
 PASS Document interface: attribute fullscreenEnabled
 PASS Document interface: attribute fullscreen
 PASS Document interface: operation exitFullscreen()

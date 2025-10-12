@@ -21,18 +21,18 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-API/JSAPIGlobalObject.mm
-API/JSAPIWrapperObject.mm
-API/JSScript.mm
-API/JSScriptSourceProvider.mm
-API/JSContext.mm
-API/JSManagedValue.mm
+API/JSAPIGlobalObject.mm @nonARC
+API/JSAPIWrapperObject.mm @nonARC
+API/JSScript.mm @nonARC
+API/JSScriptSourceProvider.mm @nonARC
+API/JSContext.mm @nonARC
+API/JSManagedValue.mm @nonARC
 API/JSRemoteInspector.cpp
 API/JSStringRefCF.cpp
-API/JSValue.mm
-API/JSVirtualMachine.mm
-API/JSWrapperMap.mm
-API/ObjCCallbackFunction.mm
+API/JSValue.mm @nonARC
+API/JSVirtualMachine.mm @nonARC
+API/JSWrapperMap.mm @nonARC
+API/ObjCCallbackFunction.mm @nonARC
 API/PASReportCrashPrivate.cpp
 
 // Use inspector/remote/SourcesCocoa.txt for Remote Inspector files

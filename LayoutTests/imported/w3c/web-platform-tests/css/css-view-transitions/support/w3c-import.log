@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/support/cat.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/support/common.js
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/support/dialog-in-rtl-iframe-child.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/support/frame-helper.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/support/iframe-scrollbar-child.html

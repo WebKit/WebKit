@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,20 +41,22 @@
 #include "DFGSSACalculator.h"
 #include "DFGValidate.h"
 #include "JSArrayIterator.h"
+#include "JSAsyncFromSyncIterator.h"
 #include "JSInternalPromise.h"
 #include "JSIteratorHelper.h"
 #include "JSMapIterator.h"
+#include "JSPromiseAllContext.h"
+#include "JSPromiseAllGlobalContext.h"
+#include "JSPromiseReaction.h"
+#include "JSRegExpStringIterator.h"
 #include "JSSetIterator.h"
+#include "JSWrapForValidIterator.h"
 #include "StructureInlines.h"
 #include <wtf/StdList.h>
 
 namespace JSC { namespace DFG {
 
 namespace {
-
-namespace DFGObjectAllocationSinkingPhaseInternal {
-static constexpr bool verbose = false;
-}
 
 // In order to sink object cycles, we use a points-to analysis coupled
 // with an escape analysis. This analysis is actually similar to an
@@ -145,7 +147,7 @@ public:
     // once it is escaped if it still has pointers to it in order to
     // replace any use of those pointers by the corresponding
     // materialization
-    enum class Kind { Escaped, Array, Object, Activation, Function, GeneratorFunction, AsyncFunction, AsyncGeneratorFunction, InternalFieldObject, RegExpObject };
+    enum class Kind { Escaped, Array, ArrayButterfly, Object, Activation, Function, GeneratorFunction, AsyncFunction, AsyncGeneratorFunction, InternalFieldObject, RegExpObject };
 
     using Fields = UncheckedKeyHashMap<PromotedLocationDescriptor, Node*>;
 
@@ -190,12 +192,12 @@ public:
         set(descriptor, nullptr);
     }
 
-    IndexingType indexingType()
+    IndexingType indexingType() const
     {
         return m_indexingType;
     }
 
-    unsigned length()
+    unsigned length() const
     {
         return m_length;
     }
@@ -295,48 +297,7 @@ public:
 
     void dumpInContext(PrintStream& out, DumpContext* context) const
     {
-        switch (m_kind) {
-        case Kind::Array:
-            out.print("Array"_s);
-            break;
-
-        case Kind::Escaped:
-            out.print("Escaped"_s);
-            break;
-
-        case Kind::Object:
-            out.print("Object"_s);
-            break;
-
-        case Kind::Function:
-            out.print("Function"_s);
-            break;
-
-        case Kind::GeneratorFunction:
-            out.print("GeneratorFunction"_s);
-            break;
-
-        case Kind::AsyncFunction:
-            out.print("AsyncFunction"_s);
-            break;
-
-        case Kind::InternalFieldObject:
-            out.print("InternalFieldObject"_s);
-            break;
-
-        case Kind::AsyncGeneratorFunction:
-            out.print("AsyncGeneratorFunction"_s);
-            break;
-
-        case Kind::Activation:
-            out.print("Activation"_s);
-            break;
-
-        case Kind::RegExpObject:
-            out.print("RegExpObject"_s);
-            break;
-        }
-        out.print("Allocation("_s);
+        out.print(m_kind, "Allocation("_s);
         if (!m_structuresForMaterialization.isEmpty())
             out.print(inContext(m_structuresForMaterialization.toStructureSet(), context));
         if (!m_fields.isEmpty()) {
@@ -821,7 +782,7 @@ public:
         if (!performSinking())
             return false;
 
-        dataLogIf(DFGObjectAllocationSinkingPhaseInternal::verbose, "Graph after elimination:\n", m_graph);
+        dataLogIf(Options::verboseObjectAllocationSinking(), "Graph after elimination:\n", m_graph);
 
         return true;
     }
@@ -843,7 +804,7 @@ private:
             graphBeforeSinking = out.toCString();
         }
 
-        dataLogIf(DFGObjectAllocationSinkingPhaseInternal::verbose, "Graph before elimination:\n", m_graph);
+        dataLogIf(Options::verboseObjectAllocationSinking(), "Graph before elimination:\n", m_graph);
 
         performAnalysis();
         ASSERT(m_rootInsertionSet.isEmpty());
@@ -851,7 +812,7 @@ private:
         if (!determineSinkCandidates())
             return false;
 
-        if constexpr (DFGObjectAllocationSinkingPhaseInternal::verbose) {
+        if (Options::verboseObjectAllocationSinking()) {
             WTF::dataFile().atomically([&](auto&) {
                 for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
                     dataLog("Heap at head of ", *block, ": \n", m_heapAtHead[block]);
@@ -876,12 +837,14 @@ private:
 
         bool changed;
         do {
-            dataLogLnIf(DFGObjectAllocationSinkingPhaseInternal::verbose, "Doing iteration of escape analysis.");
+            dataLogLnIf(Options::verboseObjectAllocationSinking(), "Doing iteration of escape analysis.");
             changed = false;
 
             for (BasicBlock* block : m_graph.blocksInPreOrder()) {
                 m_heapAtHead[block].setReached();
                 m_heap = m_heapAtHead[block];
+
+                dataLogLnIf(Options::verboseObjectAllocationSinking(), "LocalHeap of ", block, " at head: ", m_heap);
 
                 for (Node* node : *block) {
                     handleNode(
@@ -892,6 +855,7 @@ private:
                         });
                 }
 
+                dataLogLnIf(Options::verboseObjectAllocationSinking(), "LocalHeap of ", block, " at tail: ", m_heap);
                 if (m_heap == m_heapAtTail[block])
                     continue;
 
@@ -913,6 +877,7 @@ private:
                 // non-dominating allocation in the successor will
                 // trigger an escape and get pruned during the merge.
                 m_heap.pruneByLiveness(m_combinedLiveness.liveAtTail[block]);
+                dataLogLnIf(Options::verboseObjectAllocationSinking(), "LocalHeap of ", block, " after pruning by liveness: ", m_heap);
 
                 for (BasicBlock* successorBlock : block->successors()) {
                     // FIXME: Maybe we should:
@@ -951,6 +916,23 @@ private:
         }).iterator->value;
     }
 
+    bool isReasonableArraySinkingCandidate(Node* node)
+    {
+        if (!m_graph.isWatchingArrayPrototypeChainIsSaneWatchpoint(node))
+            return false;
+
+        if (hasAnyArrayStorage(node->indexingType()) || hasUndecided(node->indexingType()))
+            return false;
+
+        if (!node->child1()->isInt32Constant())
+            return false;
+        unsigned arraySize = node->child1()->asInt32();
+
+        if (arraySize >= MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)
+            return false;
+        return true;
+    }
+
     template<typename WriteFunctor, typename ResolveFunctor>
     void handleNode(
         Node* node,
@@ -965,80 +947,70 @@ private:
         PromotedLocationDescriptor exactRead;
 
         switch (node->op()) {
-        case NewArrayWithConstantSize:
-            //    D@1 Array()
-            //    D@2 GetButterfly(D@1)
-            //    D@3 GetArrayLength(D@1, D@2) <- others
-            //    D@4 CheckInBounds(@index, D@3)
-            //    D@5 PutByVal(D@1, @index, @value, D@2, D@4)
-            //    D@6 GetByVal(D@1, @index, D@2, D@4)
-            //
-            //               D@1
-            //        -----------------
-            //         ^      ^      ^
-            //         |      |      |
-            //         |     D@2 <- D@3 <- others
-            //         |      ^      ^
-            //         |      |      |
-            //         |      |     D@4
-            //         |      |      ^
-            //         |      |      |
-            //        -----------------
-            //            D@5   D@6
-            //
-            // This is the dependency graph for an array with common usage patterns in the wild.
-            // Before converting D@1 (NewArrayWithConstantSize) into a phantom node, we must
-            // first lower its dependent nodes to ensure correctness.
-            //
-            // 1. D@5 (PutByVal) and D@6 (GetByVal) are leaf nodes and the only ones that reference
-            //    D@2 (GetButterfly) and D@4 (CheckInBounds). These must be lowered first.
-            //    - For the first implementation, we only handle in-bounds reads and writes with constant
-            //      index access, since these guarantee no array hole accesses.
-            //    - Every in-bounds read with a constant index can be safely replaced with its resolved value.
-            //
-            // 2. Since only D@5 and D@6 reference D@4, D@4 (CheckInBounds) must be removed when lowering them.
-            //
-            // 3. D@3 (GetArrayLength) may be referenced by other nodes, so we replace it with a constant size node.
-            //    - This is valid because we only sink arrays where all accesses are in-bounds,
-            //      ensuring that the array size remains a known constant.
-            //
-            // 4. Since D@2 (GetButterfly) is only referenced by D@5 and D@6, it will be eliminated
-            //    once those nodes are lowered.
-            //
-            // 5. Once all dependent nodes have been properly handled, D@1 can be safely converted
-            //    into a phantom node.
-            //
-            // 6. **If any other node in the program uses D@1 as an input (other than the cases listed above),**
-            //    **sinking will be disabled.** This ensures that no other operation:
-            //    - Adds new properties to the array.
-            //    - Modifies the array’s length.
-            //    - Updates any existing fields in a way that would break our assumptions about the array.
-            //    If such an operation exists, we **must not** sink the allocation, as it would lead to
-            //    incorrect behavior.
+        // We model sinking of Arrays by splitting the allocation of the Butterfly and the Array itself into two nodes.
+        // This is necessary because this phase only considers one allocation per Node and the butterfly is not an implementation
+        // detail in FTL (i.e. the GetButterfly Node exists). This phase tries to faithfully represent the real memory layout of
+        // Arrays in the heap as it can. Thus, the length and indexed properties are stored as fields of the butterfly and the
+        // only field on the Array itself is the butterfly.
+        //
+        // We have to be careful no node escapes the Butterfly without also escaping the Array. this is subtly important, since we
+        // don't want to end up storing/reading from a Butterfly if the Array has been eliminated. If we did, the following could
+        // lead to a UAF since the GC doesn't scan Butterflies it finds on the stack (only when they're part of an object).
+        //
+        // Consider:
+        // 1: NewButterflyWithSize
+        // 2: PhantomNewArrayWithButterfly
+        // 3: NewObject
+        // -: PutByVal(@2, 1, @3, @1)
+        // ... GC
+        // 4: GetByVal(@2, 1, @1)
+        // -: Use(@4) <-- UAF
+        case NewButterflyWithSize: {
             if (Options::useArrayAllocationSinking()) {
-                if (!m_graph.isWatchingArrayPrototypeChainIsSaneWatchpoint(node))
+                if (!isReasonableArraySinkingCandidate(node))
                     goto escapeChildren;
-                unsigned arraySize = node->newArraySize();
+
+                unsigned arraySize = node->child1()->asInt32();
+                target = &m_heap.newAllocation(node, Allocation::Kind::ArrayButterfly, node->indexingType(), arraySize);
+                writes.add(PromotedLocationDescriptor(ArrayButterflyPublicLengthPLoc), LazyNode(ensureConstant(arraySize)));
+            }
+            break;
+        }
+
+        case NewArrayWithButterfly:
+            if (Options::useArrayAllocationSinking()) {
+                if (!isReasonableArraySinkingCandidate(node))
+                    goto escapeChildren;
+
+                unsigned arraySize = node->child1()->asInt32();
                 target = &m_heap.newAllocation(node, Allocation::Kind::Array, node->indexingType(), arraySize);
-                writes.add(PromotedLocationDescriptor(ArrayLengthPropertyPLoc), LazyNode(ensureConstant(arraySize)));
+                writes.add(PromotedLocationDescriptor(ArrayButterflyPLoc), LazyNode(node->child2().node()));
+                // FIXME: We don't bother tracking writes to initialize holes in the array. Maybe we should because
+                // there's probably code that reads from the holes before initializing each entry.
             } else
                 goto escapeChildren;
             break;
 
-        case GetButterfly:
-        case GetArrayLength: {
+        case GetButterfly: {
             Node* base = node->child1().node();
             target = m_heap.onlyLocalAllocation(base);
-            if (target && target->isArrayAllocation()) {
-                // No special handling is required for GetButterfly because:
-                // 1. If the array is a sink candidate, then all referrers of GetButterfly (i.e., GetArrayLength,
-                //    PutByVal, and GetByVal) will be eliminated. Consequently, GetButterfly itself
-                //    will have zero references and will be removed in a later phase.
-                // 2. If the array is not a sink candidate, then at least one node (GetByVal or PutByVal)
-                //    must have caused the array to escape.
-                if (node->op() == GetArrayLength)
-                    exactRead = PromotedLocationDescriptor(ArrayLengthPropertyPLoc);
+            if (target && target->kind() == Allocation::Kind::Array) {
+                exactRead = ArrayButterflyPLoc;
             } else
+                goto escapeChildren;
+            break;
+        }
+
+        case GetArrayLength: {
+            Node* base = node->child1().node();
+            Allocation* baseAllocation = m_heap.onlyLocalAllocation(base);
+            if (!baseAllocation || baseAllocation->kind() != Allocation::Kind::Array)
+                goto escapeChildren;
+
+            target = m_heap.onlyLocalAllocation(node->child2().node());
+            if (target && target->kind() == Allocation::Kind::ArrayButterfly)
+                exactRead = PromotedLocationDescriptor(ArrayButterflyPublicLengthPLoc);
+            else
                 goto escapeChildren;
             break;
         }
@@ -1048,8 +1020,17 @@ private:
             ArrayMode arrayMode = node->arrayMode();
             Node* base = m_graph.varArgChild(node, 0).node();
             Node* index = m_graph.varArgChild(node, 1).node();
-            target = m_heap.onlyLocalAllocation(base);
+            Node* storage = m_graph.varArgChild(node, node->storageChildIndex()).node();
 
+            if (!storage)
+                goto escapeChildren;
+
+            Allocation* butterflyAllocation = m_heap.onlyLocalAllocation(storage);
+            if (!butterflyAllocation || butterflyAllocation->kind() != Allocation::Kind::ArrayButterfly)
+                goto escapeChildren;
+
+            // FIXME: Do we actually need this? For PutByVal the useKindEnsuresValidityForIndexingType check should
+            // ensure validity. For GetByVal subsequent uses do any UseKind type checking.
             auto matchesIndexingTypeWithArrayMode = [&](IndexingType indexingType, Array::Type type) {
                 switch (indexingType) {
                 case ALL_DOUBLE_INDEXING_TYPES:
@@ -1064,17 +1045,20 @@ private:
                 }
             };
 
-            auto isWithinBounds = [&](int32_t index, unsigned length) {
-                return index >= 0 && static_cast<unsigned>(index) < length;
+            auto isWithinBounds = [](int32_t index, unsigned length) {
+                return 0 <= index && static_cast<unsigned>(index) < length;
             };
 
-            if (target && target->isArrayAllocation()
+            target = m_heap.onlyLocalAllocation(base);
+            if (target && target->kind() == Allocation::Kind::Array
                 && arrayMode.isInBounds()
                 && matchesIndexingTypeWithArrayMode(target->indexingType(), arrayMode.type())
                 && index->isInt32Constant()
                 && isWithinBounds(index->asInt32(), target->length())) {
                 if (node->op() == PutByVal) {
                     Edge value = m_graph.varArgChild(node, 2);
+                    if (!isProvenValidTypeForIndexingShapeStorage(target->indexingType(), typeFilterFor(value.useKind())))
+                        goto escapeChildren;
                     writes.add(PromotedLocationDescriptor(ArrayIndexedPropertyPLoc, index->asInt32()), LazyNode(value.node()));
                 } else
                     exactRead = PromotedLocationDescriptor(ArrayIndexedPropertyPLoc, index->asInt32());
@@ -1126,6 +1110,21 @@ private:
                 break;
             case JSIteratorHelperType:
                 target = handleInternalFieldClass<JSIteratorHelper>(node, writes);
+                break;
+            case JSWrapForValidIteratorType:
+                target = handleInternalFieldClass<JSWrapForValidIterator>(node, writes);
+                break;
+            case JSAsyncFromSyncIteratorType:
+                target = handleInternalFieldClass<JSAsyncFromSyncIterator>(node, writes);
+                break;
+            case JSPromiseAllContextType:
+                target = handleInternalFieldClass<JSPromiseAllContext>(node, writes);
+                break;
+            case JSPromiseAllGlobalContextType:
+                target = handleInternalFieldClass<JSPromiseAllGlobalContext>(node, writes);
+                break;
+            case JSRegExpStringIteratorType:
+                target = handleInternalFieldClass<JSRegExpStringIterator>(node, writes);
                 break;
             case JSPromiseType:
                 if (node->structure()->classInfoForCells() == JSInternalPromise::info())
@@ -1442,6 +1441,7 @@ escapeChildren:
         m_materializationSiteToMaterializations.clear();
         m_materializationSiteToRecoveries.clear();
         m_materializationSiteToHints.clear();
+        dataLogLnIf(Options::verboseObjectAllocationSinking(), "Determining sink candidates");
 
         // Logically we wish to consider every allocation and sink
         // it. However, it is probably not profitable to sink an
@@ -1488,6 +1488,7 @@ escapeChildren:
         bool hasUnescapedReads = false;
         for (BasicBlock* block : m_graph.blocksInPreOrder()) {
             m_heap = m_heapAtHead[block];
+            dataLogLnIf(Options::verboseObjectAllocationSinking(), "LocalHeap of ", block, " at head: ", m_heap);
 
             for (Node* node : *block) {
                 handleNode(
@@ -1521,6 +1522,8 @@ escapeChildren:
                     m_sinkCandidates.addVoid(identifier);
             }
         }
+
+        dataLogLnIf(Options::verboseObjectAllocationSinking(), "Initial candidates: ", listDump(m_sinkCandidates));
 
         auto forEachEscapee = [&] (auto callback) {
             for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
@@ -1578,8 +1581,10 @@ escapeChildren:
                     InlineCallFrame* inlineCallFrame = allocation->origin.semantic.inlineCallFrame();
                     if (!inlineCallFrame)
                         continue;
-                    if ((inlineCallFrame->isClosureCall || inlineCallFrame->isVarargs()) && inlineCallFrame != where->origin.semantic.inlineCallFrame())
+                    if ((inlineCallFrame->isClosureCall || inlineCallFrame->isVarargs()) && inlineCallFrame != where->origin.semantic.inlineCallFrame()) {
+                        dataLogLnIf(Options::verboseObjectAllocationSinking(), "Removing candidate because it escapes from a frame that has a closure: ", allocation);
                         m_sinkCandidates.remove(allocation);
+                    }
                 }
             });
         }
@@ -1599,7 +1604,7 @@ escapeChildren:
         if (m_sinkCandidates.isEmpty())
             return hasUnescapedReads;
 
-        dataLogLnIf(DFGObjectAllocationSinkingPhaseInternal::verbose, "Candidates: ", listDump(m_sinkCandidates));
+        dataLogLnIf(Options::verboseObjectAllocationSinking(), "Candidates: ", listDump(m_sinkCandidates));
 
         // Create the materialization nodes.
         forEachEscapee([&] (UncheckedKeyHashMap<Node*, Allocation>& escapees, Node* where) {
@@ -1656,13 +1661,13 @@ escapeChildren:
         // (vertex) feedback set problem. Unfortunately, this is a
         // NP-hard problem, which we don't want to solve exactly.
         //
-        // Instead, we use a simple greedy procedure, that procedes as
+        // Instead, we use a simple greedy procedure, that proceeds as
         // follow:
         //  - While there is at least one node with no outgoing edge
         //    amongst the remaining materializations, materialize it
         //    first
         //
-        //  - Similarily, while there is at least one node with no
+        //  - Similarly, while there is at least one node with no
         //    incoming edge amongst the remaining materializations,
         //    materialize it last.
         //
@@ -1836,12 +1841,17 @@ escapeChildren:
         case Allocation::Kind::Array: {
             Node* node = allocation.identifier();
             ObjectMaterializationData* data = m_graph.m_objectMaterializationData.add();
-            data->m_newArraySize = node->newArraySize();
-
             return m_graph.addNode(
-                node->prediction(), Node::VarArg, MaterializeNewArrayWithConstantSize,
+                node->prediction(), Node::VarArg, MaterializeNewArrayWithButterfly,
                 where->origin.withSemantic(node->origin.semantic),
                 OpInfo(node->indexingType()), OpInfo(data), 0, 0);
+        }
+
+        case Allocation::Kind::ArrayButterfly: {
+            Node* node = allocation.identifier();
+
+            return m_graph.addNode(node->prediction(),  NewButterflyWithSize,
+                where->origin.withSemantic(node->origin.semantic), OpInfo(node->indexingType()));
         }
 
         case Allocation::Kind::Object: {
@@ -1976,8 +1986,27 @@ escapeChildren:
         // they are inserted only once and we don't clutter the graph
         // with useless constants everywhere
         UncheckedKeyHashMap<FrozenValue*, Node*> lazyMapping;
-        if (!m_bottom)
-            m_bottom = m_insertionSet.insertConstant(0, m_graph.block(0)->at(0)->origin, jsNumber(1927));
+        m_bottom = m_insertionSet.insertConstant(0, m_graph.block(0)->at(0)->origin, jsNumber(1927));
+
+        auto defaultFor = [&](PromotedHeapLocation location) -> Node* {
+            // For objects we track the transition state of the object (i.e. which properties are conditionally initialized).
+            // Arrays have no such mechanism however they do have a hole value which we can use instead. This is fine because
+            // if the hole conditionally makes it to a materialization it will be stored to the slot and it will appear as
+            // if the slot was never written to.
+            if (location.kind() == ArrayIndexedPropertyPLoc) {
+                ASSERT(location.base()->op() == NewArrayWithButterfly);
+                if (hasDouble(location.base()->indexingType())) {
+                    if (!m_PNaN)
+                        m_PNaN = m_insertionSet.insertConstant(0, m_graph.block(0)->at(0)->origin, jsNumber(PNaN), DoubleConstant);
+                    return m_PNaN;
+                }
+                if (!m_empty)
+                    m_empty = m_insertionSet.insertConstant(0, m_graph.block(0)->at(0)->origin, JSValue());
+                return m_empty;
+            }
+            return m_bottom;
+        };
+
 
         Vector<UncheckedKeyHashSet<PromotedHeapLocation>> hintsForPhi(m_sinkCandidates.size());
 
@@ -1994,7 +2023,7 @@ escapeChildren:
                         continue;
 
                     SSACalculator::Variable* variable = m_locationToVariable.get(location);
-                    m_pointerSSA.newDef(variable, block, m_bottom);
+                    m_pointerSSA.newDef(variable, block, defaultFor(location));
                 }
 
                 for (Node* materialization : m_materializationSiteToMaterializations.get(node)) {
@@ -2070,7 +2099,8 @@ escapeChildren:
                     return nullptr;
 
                 // Don't create Phi nodes once we are escaped
-                if (m_heapAtHead[block].getAllocation(location.base()).isEscapedAllocation())
+                auto& allocation = m_heapAtHead[block].getAllocation(location.base());
+                if (allocation.isEscapedAllocation())
                     return nullptr;
 
                 // If we point to a single dead allocation, we will directly use its materialization since it would be invalid to
@@ -2080,7 +2110,11 @@ escapeChildren:
                     return nullptr;
 
                 Node* phiNode = m_graph.addNode(SpecHeapTop, Phi, block->at(0)->origin.withInvalidExit());
-                phiNode->mergeFlags(NodeResultJS);
+                if (location.kind() == ArrayIndexedPropertyPLoc && hasDouble(allocation.indexingType())) {
+                    ASSERT(allocation.kind() == Allocation::Kind::Array);
+                    phiNode->mergeFlags(NodeResultDouble);
+                } else
+                    phiNode->mergeFlags(NodeResultJS);
                 return phiNode;
             });
 
@@ -2153,8 +2187,8 @@ escapeChildren:
                 }
             }
 
-            dataLogLnIf(DFGObjectAllocationSinkingPhaseInternal::verbose,
-                "Local mapping at ", pointerDump(block), ": ", mapDump(m_localMapping),
+            dataLogLnIf(Options::verboseObjectAllocationSinking(),
+                "Local mapping at ", pointerDump(block), ": ", mapDump(m_localMapping), "\n",
                 "Local materializations at ", pointerDump(block), ": ", mapDump(m_escapeeToMaterialization));
 
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
@@ -2165,14 +2199,15 @@ escapeChildren:
                     if (location.kind() != NamedPropertyPLoc && location.kind() != ArrayIndexedPropertyPLoc)
                         continue;
 
-                    m_localMapping.set(location, m_bottom);
+                    Node* bottom = defaultFor(location);
+                    m_localMapping.set(location, bottom);
 
                     if (m_sinkCandidates.contains(node)) {
-                        dataLogLnIf(DFGObjectAllocationSinkingPhaseInternal::verbose, "For sink candidate ", node, " found location ", location);
+                        dataLogLnIf(Options::verboseObjectAllocationSinking(), "For sink candidate ", node, " found location ", location);
                         m_insertionSet.insert(
                             nodeIndex + 1,
                             location.createHint(
-                                m_graph, node->origin.takeValidExit(nextCanExit), m_bottom));
+                                m_graph, node->origin.takeValidExit(nextCanExit), bottom));
                     }
                 }
 
@@ -2182,7 +2217,7 @@ escapeChildren:
                     populateMaterialization(block, materialization, escapee);
                     m_escapeeToMaterialization.set(escapee, materialization);
                     m_insertionSet.insert(nodeIndex, materialization);
-                    dataLogLnIf(DFGObjectAllocationSinkingPhaseInternal::verbose, "Materializing ", escapee, " => ", materialization, " at ", node);
+                    dataLogLnIf(Options::verboseObjectAllocationSinking(), "Materializing ", escapee, " => ", materialization, " at ", node);
                 }
 
                 for (PromotedHeapLocation location : m_materializationSiteToRecoveries.get(node))
@@ -2244,7 +2279,7 @@ escapeChildren:
                             m_insertionSet.insertNode(nodeIndex + 1, SpecNone, Check, node->origin, Edge(value.node(), value.useKind()));
                         }
 
-                        dataLogLnIf(DFGObjectAllocationSinkingPhaseInternal::verbose, "Creating hint with value ", nodeValue, " before ", node);
+                        dataLogLnIf(Options::verboseObjectAllocationSinking(), "Creating hint with value ", nodeValue, " before ", node);
                         m_insertionSet.insert(
                             nodeIndex + 1,
                             location.createHint(
@@ -2266,8 +2301,12 @@ escapeChildren:
 
                 if (m_sinkCandidates.contains(node) || doLower) {
                     switch (node->op()) {
-                    case NewArrayWithConstantSize:
-                        node->convertToPhantomNewArrayWithConstantSize();
+                    case NewButterflyWithSize:
+                        node->convertToPhantomNewButterflyWithSize();
+                        break;
+
+                    case NewArrayWithButterfly:
+                        node->convertToPhantomNewArrayWithButterfly();
                         break;
 
                     case NewObject:
@@ -2344,6 +2383,9 @@ escapeChildren:
 
             m_insertionSet.execute(block);
         }
+
+        // Materializations can insert constants (e.g. for PutByVal)
+        m_rootInsertionSet.execute(m_graph.block(0));
     }
 
     NEVER_INLINE Node* resolve(BasicBlock* block, PromotedHeapLocation location)
@@ -2404,7 +2446,7 @@ escapeChildren:
 
     void insertOSRHintsForUpdate(unsigned nodeIndex, NodeOrigin origin, bool& canExit, AvailabilityMap& availability, Node* escapee, Node* materialization)
     {
-        dataLogLnIf(DFGObjectAllocationSinkingPhaseInternal::verbose,
+        dataLogLnIf(Options::verboseObjectAllocationSinking(),
             "Inserting OSR hints at ", origin, ":\n",
             "    Escapee: ", escapee, "\n",
             "    Materialization: ", materialization, "\n",
@@ -2463,22 +2505,30 @@ escapeChildren:
     {
         Allocation& allocation = m_heap.getAllocation(escapee);
         switch (node->op()) {
-        case MaterializeNewArrayWithConstantSize: {
+        case MaterializeNewArrayWithButterfly: {
             ObjectMaterializationData& data = node->objectMaterializationData();
-            unsigned firstChild = m_graph.m_varArgChildren.size();
+            unsigned lengthChild = m_graph.m_varArgChildren.size();
+            // Save space for it in case it's not the first value we find.
+            m_graph.m_varArgChildren.append(m_bottom);
 
-            auto useKind = [&](IndexingType indexingType) {
-                switch (indexingType) {
+            unsigned butterflyChild = m_graph.m_varArgChildren.size();
+            m_graph.m_varArgChildren.append(m_bottom);
+
+            auto useKind = [&]() {
+                switch (node->indexingType()) {
                 case ALL_DOUBLE_INDEXING_TYPES:
-                    return DoubleRepRealUse;
+                    // FIXME: There's no KnownDoubleRepRealUse
+                    // We'd like to use a DoubleRepRealUse but the value for this slot could flow in from an uninitialized value (PNaN), which is the hole value for DoubleShape.
+                    return DoubleRepUse;
                 case ALL_INT32_INDEXING_TYPES:
-                    return Int32Use;
+                    // We'd like to use KnownInt32Use here but the value for this slot could flow in from an uninitialized value (JSValue()), which is the hole value for Int32Shape.
+                    [[fallthrough]];
                 default:
                     return UntypedUse;
                 }
-            };
+            }();
 
-            Vector<PromotedHeapLocation> locations = m_locationsForAllocation.get(escapee);
+            const Vector<PromotedHeapLocation>& locations = m_locationsForAllocation.get(escapee);
             for (PromotedHeapLocation location : locations) {
                 switch (location.kind()) {
                 case ArrayIndexedPropertyPLoc: {
@@ -2488,20 +2538,41 @@ escapeChildren:
                     if (m_sinkCandidates.contains(value))
                         m_graph.m_varArgChildren.append(m_bottom);
                     else
-                        m_graph.m_varArgChildren.append(Edge(value, useKind(node->indexingType())));
+                        m_graph.m_varArgChildren.append(Edge(value, useKind));
                     break;
                 }
-                case ArrayLengthPropertyPLoc:
-                    // No need to do anything here since it's used for read only.
+                case ArrayButterflyPLoc: {
+                    Node* butterfly = resolve(block, location);
+                    m_graph.m_varArgChildren[butterflyChild] = Edge(butterfly);
+
+                    ASSERT(butterfly->op() == NewButterflyWithSize);
+                    m_graph.m_varArgChildren[lengthChild] = butterfly->child1();
                     break;
+                }
                 default:
                     DFG_CRASH(m_graph, node, "Bad location kind");
                 }
             }
 
+            ASSERT(m_graph.m_varArgChildren.size() - lengthChild == locations.size() + 1);
             node->children = AdjacencyList(
                 AdjacencyList::Variable,
-                firstChild, m_graph.m_varArgChildren.size() - firstChild);
+                lengthChild, m_graph.m_varArgChildren.size() - lengthChild);
+
+            // Right now this is constant. If we ever support out-of-bounds insertion we will need to remove this assert.
+            ASSERT(m_graph.varArgChild(node, 0)->asInt32() == escapee->child1()->asInt32());
+            break;
+        }
+
+        case NewButterflyWithSize: {
+            const auto& locations = m_locationsForAllocation.get(escapee);
+            ASSERT(locations.size() == 1);
+            ASSERT(locations[0].kind() == ArrayButterflyPublicLengthPLoc);
+            Node* size = resolve(block, locations[0]);
+            // Right now this is constant. If we ever support out-of-bounds insertion we will need to remove this assert
+            // and figure out how to teach handleNode's PutByVal case to have more than one write target.
+            ASSERT(size->isInt32Constant());
+            node->child1() = Edge(size, KnownInt32Use);
             break;
         }
 
@@ -2509,7 +2580,7 @@ escapeChildren:
             ObjectMaterializationData& data = node->objectMaterializationData();
             unsigned firstChild = m_graph.m_varArgChildren.size();
 
-            Vector<PromotedHeapLocation> locations = m_locationsForAllocation.get(escapee);
+            const Vector<PromotedHeapLocation>& locations = m_locationsForAllocation.get(escapee);
 
             PromotedHeapLocation structure(StructurePLoc, allocation.identifier());
             ASSERT(locations.contains(structure));
@@ -2675,14 +2746,14 @@ escapeChildren:
 
     Node* createRecovery(BasicBlock* block, PromotedHeapLocation location, Node* where, bool& canExit)
     {
-        dataLogLnIf(DFGObjectAllocationSinkingPhaseInternal::verbose, "Recovering ", location, " at ", where);
+        dataLogLnIf(Options::verboseObjectAllocationSinking(), "Recovering ", location, " at ", where);
         ASSERT(location.base()->isPhantomAllocation());
         Node* base = getMaterialization(block, location.base());
         Node* value = resolve(block, location);
 
         NodeOrigin origin = where->origin.withSemantic(base->origin.semantic);
 
-        dataLogLnIf(DFGObjectAllocationSinkingPhaseInternal::verbose, "Base is ", base, " and value is ", value);
+        dataLogLnIf(Options::verboseObjectAllocationSinking(), "Base is ", base, " and value is ", value);
 
         if (base->isPhantomAllocation()) {
             return PromotedHeapLocation(base, location.descriptor()).createHint(
@@ -2771,6 +2842,51 @@ escapeChildren:
                 value->defaultEdge());
         }
 
+        case ArrayIndexedPropertyPLoc: {
+            Node* butterfly = resolve(block, PromotedHeapLocation(ArrayButterflyPLoc, location.base()));
+
+            unsigned index = location.info();
+
+            ArrayMode mode = [&] {
+                switch (base->indexingType()) {
+                case ALL_INT32_INDEXING_TYPES: return ArrayMode(Array::Int32, Array::Write);
+                case ALL_DOUBLE_INDEXING_TYPES: return ArrayMode(Array::Double, Array::Write);
+                case ALL_CONTIGUOUS_INDEXING_TYPES: return ArrayMode(Array::Contiguous, Array::Write);
+                default: break;
+                }
+                RELEASE_ASSERT_NOT_REACHED();
+            }();
+
+            auto useKind = [&]() {
+                switch (base->indexingType()) {
+                case ALL_DOUBLE_INDEXING_TYPES:
+                    // Note: We can filter on the value being Real here (and we should) since this can't
+                    // have our bottom value flow into here.
+                    // FIXME: There's no KnownDoubleRepRealUse
+                    return DoubleRepRealUse;
+                case ALL_INT32_INDEXING_TYPES:
+                    return KnownInt32Use;
+                default:
+                    return UntypedUse;
+                }
+            }();
+
+            unsigned start = m_graph.m_varArgChildren.size();
+            m_graph.m_varArgChildren.append(Edge(base, KnownCellUse));
+            m_graph.m_varArgChildren.append(Edge(ensureConstant(index), KnownInt32Use));
+            m_graph.m_varArgChildren.append(Edge(value, useKind));
+            m_graph.m_varArgChildren.append(Edge(butterfly));
+            m_graph.m_varArgChildren.append(Edge()); // length, unused by Arrays.
+
+            // We should have a sane chain so this doesn't matter.
+            ECMAMode strict = ECMAMode::strict();
+
+            return m_graph.addNode(Node::VarArg, PutByVal, origin.takeValidExit(canExit),
+                OpInfo(mode.asWord()), OpInfo(strict),
+                start, m_graph.m_varArgChildren.size() - start);
+        }
+
+
         case ClosureVarPLoc: {
             return m_graph.addNode(
                 PutClosureVar,
@@ -2828,6 +2944,8 @@ escapeChildren:
         }
     }
 
+    // FIXME: Is this needed? We generate the Phi for each value before adding Upsilons, so it seems like we could do this
+    // when inserting the Upsilons.
     void fixEdge()
     {
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
@@ -2842,33 +2960,15 @@ escapeChildren:
                     Edge& edge = node->child1();
                     if (node->phi()->hasJSResult()) {
                         Node* result = nullptr;
-                        if (edge->hasDoubleResult())
+                        if (edge->hasDoubleResult()) {
+                            // We'd like to use DoubleRepRealUse but we'll insert a bottom value for every local. Since the value could be conditionally set we default to the hole value so storing it becomes non-observable.
                             result = m_insertionSet.insertNode(indexInBlock, SpecBytecodeDouble, ValueRep, node->origin, Edge(edge.node(), DoubleRepUse));
-                        else if (edge->hasInt52Result())
+                        } else if (edge->hasInt52Result())
                             result = m_insertionSet.insertNode(indexInBlock, SpecInt32Only | SpecAnyIntAsDouble, ValueRep, node->origin, Edge(edge.node(), Int52RepUse));
 
                         if (result) {
                             edge.setNode(result);
                             edge.setUseKind(UntypedUse);
-                        }
-                    }
-                    break;
-                }
-
-                case MaterializeNewArrayWithConstantSize: {
-                    for (unsigned i = 0; i < node->numChildren(); ++i) {
-                        switch (node->indexingType()) {
-                        case ALL_DOUBLE_INDEXING_TYPES:
-                            m_graph.child(node, i).setUseKind(DoubleRepRealUse);
-                            break;
-                        case ALL_INT32_INDEXING_TYPES:
-                            m_graph.child(node, i).setUseKind(Int32Use);
-                            break;
-                        case ALL_CONTIGUOUS_INDEXING_TYPES:
-                            m_graph.child(node, i).setUseKind(UntypedUse);
-                            break;
-                        default:
-                            break;
                         }
                     }
                     break;
@@ -2911,7 +3011,9 @@ escapeChildren:
 
     UncheckedKeyHashMap<JSCell*, bool> m_validInferredValues;
 
+    // This maps from a MaterializeXYZ node to the allocation identifier.
     UncheckedKeyHashMap<Node*, Node*> m_materializationToEscapee;
+    // This maps from the node where an allocation escapes to the various MaterializeXYZ nodes.
     UncheckedKeyHashMap<Node*, Vector<Node*>> m_materializationSiteToMaterializations;
     UncheckedKeyHashMap<Node*, Vector<PromotedHeapLocation>> m_materializationSiteToRecoveries;
     UncheckedKeyHashMap<Node*, Vector<std::pair<PromotedHeapLocation, Node*>>> m_materializationSiteToHints;
@@ -2925,6 +3027,8 @@ escapeChildren:
     LocalHeap m_heap;
 
     Node* m_bottom { nullptr };
+    Node* m_empty { nullptr };
+    Node* m_PNaN { nullptr };
 };
 
 }

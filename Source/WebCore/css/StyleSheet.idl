@@ -21,7 +21,6 @@
 // https://drafts.csswg.org/cssom/#the-stylesheet-interface
 
 [
-    CustomToJSObject,
     ExportToWrappedFunction,
     Exposed=Window,
     GenerateIsReachable,

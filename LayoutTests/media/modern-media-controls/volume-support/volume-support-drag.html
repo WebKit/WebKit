@@ -52,8 +52,10 @@ media.addEventListener("play", () => {
             debug("Before starting to drag the volume slider, the media should be muted still");
             shouldBeTrue("media.muted");
 
-            eventSender.mouseMoveTo(centerX, dragStartY);
+            eventSender.mouseMoveTo(Math.floor(centerX), Math.floor(dragStartY));
             eventSender.mouseDown();
+
+            document.body.style.backgroundColor = "red";
 
             debug("");
             debug("We initiated a volume slider drag, the media should no longer be muted and the volume set");
@@ -62,7 +64,7 @@ media.addEventListener("play", () => {
                 // and instead get 0.51 since the slider will only increment on whole pixels.
                 shouldBecomeEqual("media.volume", "0.51", () => {
                     for (let i = 1; i <= iterations; ++i)
-                        eventSender.mouseMoveTo(bounds.left + bounds.width / 2, dragStartY + i * Math.sign(delta));
+                        eventSender.mouseMoveTo(Math.floor(bounds.left + bounds.width / 2), Math.floor(dragStartY + i * Math.sign(delta)));
 
                     eventSender.mouseUp();
 

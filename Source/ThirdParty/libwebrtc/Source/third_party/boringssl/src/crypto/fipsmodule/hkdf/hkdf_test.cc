@@ -1,16 +1,16 @@
-/* Copyright (c) 2014, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2014 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <openssl/digest.h>
 #include <openssl/err.h>
@@ -18,12 +18,16 @@
 #include <openssl/hkdf.h>
 #include <openssl/kdf.h>
 
+#include <iterator>
+
 #include <gtest/gtest.h>
 
 #include "../../test/file_test.h"
 #include "../../test/test_util.h"
 #include "../../test/wycheproof_util.h"
 
+
+namespace {
 
 struct HKDFTestVector {
   const EVP_MD *(*md_func)(void);
@@ -41,6 +45,7 @@ struct HKDFTestVector {
 
 // These test vectors are from RFC 5869.
 static const HKDFTestVector kTests[] = {
+    // clang-format off
   {
     EVP_sha256,
     {
@@ -246,10 +251,11 @@ static const HKDFTestVector kTests[] = {
       0x70, 0xcc, 0xe7, 0xac, 0xfc, 0x48
     }
   },
+    // clang-format on
 };
 
 TEST(HKDFTest, TestVectors) {
-  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(kTests); i++) {
+  for (size_t i = 0; i < std::size(kTests); i++) {
     SCOPED_TRACE(i);
     const HKDFTestVector *test = &kTests[i];
 
@@ -416,3 +422,5 @@ TEST(HKDFTest, WycheproofSHA512) {
   RunWycheproofTest("third_party/wycheproof_testvectors/hkdf_sha512_test.txt",
                     EVP_sha512());
 }
+
+}  // namespace

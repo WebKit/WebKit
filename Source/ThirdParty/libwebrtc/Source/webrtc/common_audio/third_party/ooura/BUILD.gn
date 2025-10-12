@@ -15,8 +15,8 @@ rtc_library("fft_size_128") {
     "fft_size_128/ooura_fft_tables_common.h",
   ]
   deps = [
+    "../../../rtc_base:cpu_info",
     "../../../rtc_base/system:arch",
-    "../../../system_wrappers",
   ]
   cflags = []
 

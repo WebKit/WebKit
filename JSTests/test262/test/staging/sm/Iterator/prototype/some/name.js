@@ -4,9 +4,6 @@
 /*---
 description: |
   `name` property of Iterator.prototype.some.
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 features:
   - iterator-helpers
 info: |

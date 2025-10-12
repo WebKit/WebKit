@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPUObjectDescriptorBase.h"
-#include "WebGPUShaderModuleCompilationHint.h"
+#include <WebCore/WebGPUObjectDescriptorBase.h>
+#include <WebCore/WebGPUShaderModuleCompilationHint.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore::WebGPU {

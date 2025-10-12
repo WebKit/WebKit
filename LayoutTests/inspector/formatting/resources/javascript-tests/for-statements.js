@@ -20,6 +20,34 @@ for(;;){}for(;;){}
 for(;;){1}1
 x
 
+// optional chaining
+
+for(;a?.b;)1
+for(a;b?.c;)1
+for(a;b?.c;d)1
+for(;b?.c;d)1
+for(a?.b;;)1
+for(a?.b;c;)1
+for(a?.b;;d)1
+for(a?.b;c;d)1
+for(;;c?.d)1
+for(a;;c?.d)1
+for(;b;c?.d)1
+for(a;b;c?.d)1
+
+for(;a?.b;){1}
+for(a;b?.c;){1}
+for(a;b?.c;d){1}
+for(;b?.c;d){1}
+for(a?.b;;){1}
+for(a?.b;c;){1}
+for(a?.b;;d){1}
+for(a?.b;c;d){1}
+for(;;c?.d){1}
+for(a;;c?.d){1}
+for(;b;c?.d){1}
+for(a;b;c?.d){1}
+
 // for
 
 for(1;2;3)1;

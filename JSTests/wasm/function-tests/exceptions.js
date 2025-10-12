@@ -45,7 +45,7 @@ function makeInstance() {
     assert.eq(table.get(0), null);
 
     for (let i = 0; i < 1000; i++) {
-        assert.throws(() => foo(0, i), WebAssembly.RuntimeError, "call_indirect to a null table entry");
+        assert.throws(() => foo(0, i), WebAssembly.RuntimeError, "call_indirect to a signature that does not match");
     }
 
     table.set(0, foo);

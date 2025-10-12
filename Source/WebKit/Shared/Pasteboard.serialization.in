@@ -47,12 +47,17 @@ header: <WebCore/Pasteboard.h>
     String contentOrigin;
     bool canSmartCopyOrDelete;
     RefPtr<WebCore::SharedBuffer> dataInWebArchiveFormat;
+    RefPtr<WebCore::LegacyWebArchive> webArchive;
     RefPtr<WebCore::SharedBuffer> dataInRTFDFormat;
     RefPtr<WebCore::SharedBuffer> dataInRTFFormat;
-    RefPtr<WebCore::SharedBuffer> dataInAttributedStringFormat;
+    std::optional<WebCore::AttributedString> dataInAttributedStringFormat;
     String dataInHTMLFormat;
     String dataInStringFormat;
     Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>> clientTypesAndData;
+#endif
+#if PLATFORM(IOS_FAMILY)
+    HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>> localFrameArchives;
+    Vector<WebCore::FrameIdentifier> remoteFrameIdentifiers;
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
     String contentOrigin;

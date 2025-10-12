@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,11 +39,11 @@ CSS::Sepia toCSSSepia(Ref<BasicColorMatrixFilterOperation> operation, const Rend
     return { CSS::Sepia::Parameter { toCSS(Number<CSS::ClosedUnitRangeClampUpper> { operation->amount() }, style) } };
 }
 
-Ref<FilterOperation> createFilterOperation(const CSS::Sepia& filter, const Document&, RenderStyle&, const CSSToLengthConversionData& conversionData)
+Ref<FilterOperation> createFilterOperation(const CSS::Sepia& filter, const BuilderState& state)
 {
     double value;
     if (auto parameter = filter.value)
-        value = evaluate(toStyle(*parameter, conversionData));
+        value = evaluate<double>(toStyle(*parameter, state));
     else
         value = filterFunctionDefaultValue<CSS::SepiaFunction::name>().value;
 

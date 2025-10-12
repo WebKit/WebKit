@@ -39,20 +39,9 @@ GPRS =
      "t11",
      "t12",
      "cfr",
-     "a0",
-     "a1",
-     "a2",
-     "a3",
-     "a4",
-     "a5",
-     "a6",
-     "a7",
-     "r0",
-     "r1",
      "sp",
      "lr",
      "pc",
-     # 64-bit only registers:
      "csr0",
      "csr1",
      "csr2",
@@ -75,10 +64,8 @@ FPRS =
      "ft3",
      "ft4",
      "ft5",
-     "fa0",
-     "fa1",
-     "fa2",
-     "fa3",
+     "ft6",
+     "ft7",
      "csfr0",
      "csfr1",
      "csfr2",
@@ -91,7 +78,6 @@ FPRS =
      "csfr9",
      "csfr10",
      "csfr11",
-     "fr"
     ]
 
 VECS =
@@ -138,45 +124,10 @@ VECS =
      "v7_q",
     ]
 
-WASM_GPRS =
-    [
-     "wa0",
-     "wa1",
-     "wa2",
-     "wa3",
-     "wa4",
-     "wa5",
-     "wa6",
-     "wa7",
-    ]
-
-WASM_FPRS =
-    [
-     "wfa0",
-     "wfa1",
-     "wfa2",
-     "wfa3",
-     "wfa4",
-     "wfa5",
-     "wfa6",
-     "wfa7",
-    ]
-
-WASM_SCRATCHS =
-    [
-     "ws0",
-     "ws1",
-     # archtecture specific registers:
-     "ws2",
-     "ws3",
-    ]
-
-REGISTERS = GPRS + FPRS + VECS + WASM_GPRS + WASM_FPRS + WASM_SCRATCHS
+REGISTERS = GPRS + FPRS + VECS
 
 GPR_PATTERN = Regexp.new('\\A((' + GPRS.join(')|(') + '))\\Z')
 FPR_PATTERN = Regexp.new('\\A((' + FPRS.join(')|(') + '))\\Z')
 VEC_PATTERN = Regexp.new('\\A((' + VECS.join(')|(') + '))\\Z')
-WASM_GPR_PATTERN = Regexp.new('\\A((' + WASM_GPRS.join(')|(') + '))\\Z')
-WASM_FPR_PATTERN = Regexp.new('\\A((' + WASM_FPRS.join(')|(') + '))\\Z')
 
 REGISTER_PATTERN = Regexp.new('\\A((' + REGISTERS.join(')|(') + '))\\Z')

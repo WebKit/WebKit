@@ -29,13 +29,14 @@
 #ifndef AudioDestination_h
 #define AudioDestination_h
 
-#include "AudioBus.h"
-#include "AudioIOCallback.h"
+#include <WebCore/AudioBus.h>
+#include <WebCore/AudioIOCallback.h>
 #include <memory>
 #include <wtf/AbstractRefCounted.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
+#include <wtf/Platform.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 

@@ -93,14 +93,14 @@ private:
         void error(String&&) final;
 
         bool m_muted { false };
-        Ref<Source> m_source;
+        const Ref<Source> m_source;
     };
 
     bool m_muted { false };
     bool m_hasMutedChanged { false };
-    Ref<Sink> m_sink;
-    Ref<WritableStream> m_writable;
-    Ref<MediaStreamTrack> m_track;
+    const Ref<Sink> m_sink;
+    const Ref<WritableStream> m_writable;
+    const Ref<MediaStreamTrack> m_track;
 };
 
 } // namespace WebCore

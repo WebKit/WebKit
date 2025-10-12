@@ -38,6 +38,10 @@
 
 namespace WebCore {
 
+CSSToLengthConversionData::CSSToLengthConversionData() = default;
+CSSToLengthConversionData::CSSToLengthConversionData(const CSSToLengthConversionData&) = default;
+CSSToLengthConversionData::CSSToLengthConversionData(CSSToLengthConversionData&&) = default;
+
 CSSToLengthConversionData::CSSToLengthConversionData(const RenderStyle& style, Style::BuilderState& builderState)
     : m_style(&style)
     , m_rootStyle(builderState.rootElementStyle())
@@ -57,6 +61,8 @@ CSSToLengthConversionData::CSSToLengthConversionData(const RenderStyle& style, c
     , m_zoom(1.f)
 {
 }
+
+CSSToLengthConversionData::~CSSToLengthConversionData() = default;
 
 const FontCascade& CSSToLengthConversionData::fontCascadeForFontUnits() const
 {
@@ -131,6 +137,11 @@ void CSSToLengthConversionData::setUsesContainerUnits() const
 {
     if (m_styleBuilderState)
         m_styleBuilderState->setUsesContainerUnits();
+}
+
+CheckedPtr<Style::BuilderState> CSSToLengthConversionData::protectedStyleBuilderState() const
+{
+    return m_styleBuilderState;
 }
 
 } // namespace WebCore

@@ -1,0 +1,115 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true focusStartsInputSessionPolicy=disallow AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/basic-gestures.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+        html, body {
+            padding: 0;
+            margin: 0;
+        }
+
+        #editable {
+            display: inline-block;
+            border: 1px solid black;
+            margin: 2px;
+        }
+
+        #button {
+            font-size: 16px;
+            margin-top: 20px;
+            display: inline;
+        }
+
+        #overflow_container {
+            height: 300px;
+            overflow: scroll;
+            border: 2px solid black;
+        }
+
+        #overflow {
+            background: linear-gradient(180deg, rgba(255, 199, 153, 1) 0%, rgba(255, 0, 102, 1) 100%);
+            height: 600px;
+        }
+    </style>
+</head>
+<script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        var editableDivClicked = false;
+        var buttonClicked = false;
+
+        var fromX = overflow_container.offsetLeft + 50;
+        var fromY = overflow_container.offsetTop + overflow_container.offsetHeight - 5;
+        var toX = fromX;
+        var toY = fromY - 100;
+
+        var initialScrollPosition = overflow_container.scrollTop;
+
+        editable.addEventListener("click", (e) => {
+            editableDivClicked = true;
+            button.addEventListener("click", (e) => {
+                buttonClicked = true;
+            });
+        });
+
+        async function finish(passed, msg) {
+            overflow_container.remove();
+            editable.remove();
+            button.remove();
+            if (window.testRunner) {
+                if (passed)
+                    testPassed(msg);
+                else
+                    testFailed(msg);
+
+                finishJSTest();
+            } else {
+                let result = passed ? "PASS: " : "FAIL: ";
+                output.innerText = result + msg;
+            }
+        }
+
+        if (window.testRunner) {
+            description(`When a site programmatically focuses a contenteditable div before editing or text selections 
+                are made, and that div is then edited followed by editing ending in a manner which preserves 
+                the text selection (i.e clicking a button element), scrollable areas should remain scrollable.`);
+
+            await UIHelper.setFocusStartsInputSessionPolicy("auto");
+            await UIHelper.activateElementAndWaitForInputSession(editable);
+            await UIHelper.activateElement(button);
+            await UIHelper.waitForKeyboardToHide();
+
+            await touchAndDragFromPointToPoint(fromX, fromY, toX, toY);
+            await liftUpAtPoint(toX, toY);
+
+            if (overflow_container.scrollTop == initialScrollPosition)
+                finish(false, "The region was no longer scrollable after editing.");
+            else if (editableDivClicked && buttonClicked)
+                finish(true, "The region remained scrollable after editing.");
+            else
+                finish(false, "The editable div and button were either not pressed or pressed in the wrong order.");
+        }
+    });
+</script>
+
+<body>
+    <div id="overflow_container">
+        <div id="overflow"></div>
+    </div>
+    <div id="editable" contenteditable>
+        Do not select any text or press the done button during editing. Tap here, then press the button
+        element. After the keyboard dismisses, try to scroll the region above. The test passes if the region is
+        scrollable.
+    </div>
+    <button id="button">Button</button>
+    <p id="output"></p>
+    <script>
+        editable.focus();
+    </script>
+</body>
+</html>

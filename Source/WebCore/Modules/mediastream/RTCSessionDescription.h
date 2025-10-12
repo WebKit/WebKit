@@ -34,7 +34,9 @@
 #if ENABLE(WEB_RTC)
 
 #include "RTCSdpType.h"
-#include "ScriptWrappable.h"
+#include <WebCore/ScriptWrappable.h>
+#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -49,6 +51,8 @@ public:
     };
     static Ref<RTCSessionDescription> create(RTCSessionDescriptionInit&&);
     static Ref<RTCSessionDescription> create(RTCSdpType, String&& sdp);
+
+    ~RTCSessionDescription();
 
     RTCSdpType type() const { return m_type; }
 

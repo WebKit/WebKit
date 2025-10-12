@@ -47,7 +47,6 @@ class WebPageInjectedBundleClient : public API::Client<WKPageInjectedBundleClien
 public:
     void didReceiveMessageFromInjectedBundle(WebPageProxy*, const String&, API::Object*);
     void didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy*, const String&, API::Object*, CompletionHandler<void(RefPtr<API::Object>)>&&);
-    void didReceiveAsyncMessageFromInjectedBundle(WebPageProxy*, const String&, API::Object*, CompletionHandler<void(RefPtr<API::Object>)>&&);
 };
 
 } // namespace WebKit

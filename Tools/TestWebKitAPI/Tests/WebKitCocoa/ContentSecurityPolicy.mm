@@ -25,7 +25,6 @@
 
 #import "config.h"
 
-#import "ContentSecurityPolicyTestHelpers.h"
 #import "HTTPServer.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
@@ -126,14 +125,4 @@ TEST(ContentSecurityPolicy, InvalidRequireTrustedTypesFor)
     auto webView = adoptNS([WKWebView new]);
     [webView loadRequest:server.request()];
     [webView _test_waitForDidFinishNavigation];
-}
-
-// FIXME when rdar://141835031 is resolved.
-#if PLATFORM(IOS)
-TEST(ContentSecurityPolicy, DISABLED_LoadPDFWithSandboxCSPDirective)
-#else
-TEST(ContentSecurityPolicy, LoadPDFWithSandboxCSPDirective)
-#endif
-{
-    TestWebKitAPI::runLoadPDFWithSandboxCSPDirectiveTest([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 }

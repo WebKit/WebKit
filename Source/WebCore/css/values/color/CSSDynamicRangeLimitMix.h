@@ -45,7 +45,7 @@ DEFINE_TYPE_WRAPPER(DynamicRangeLimitMixFunction, DynamicRangeLimitMixFunctionVa
 // FIXME: Replace use of direct UniqueRef with something like std::indirect from https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3019r12.pdf to get this for free.
 inline bool operator==(const UniqueRef<DynamicRangeLimitMixFunction>& a, const UniqueRef<DynamicRangeLimitMixFunction>& b)
 {
-    return a.get() == b.get();
+    return arePointingToEqualData(a, b);
 }
 
 } // namespace CSS

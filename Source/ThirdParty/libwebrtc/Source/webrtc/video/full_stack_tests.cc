@@ -7,24 +7,20 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include <memory>
 #include <optional>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "absl/flags/flag.h"
-#include "absl/flags/parse.h"
+#include "api/rtp_parameters.h"
 #include "api/test/simulated_network.h"
-#include "api/test/test_dependency_factory.h"
 #include "api/test/video_quality_test_fixture.h"
 #include "api/units/data_rate.h"
 #include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/spatial_layer.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/vp9_profile.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
-#include "system_wrappers/include/field_trial.h"
-#include "test/field_trial.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 #include "video/config/video_encoder_config.h"
@@ -48,7 +44,7 @@ ABSL_FLAG(std::string,
 namespace webrtc {
 
 namespace {
-static const int kFullStackTestDurationSecs = 45;
+const int kFullStackTestDurationSecs = 45;
 
 struct ParamsWithLogging : public VideoQualityTest::Params {
  public:
@@ -60,19 +56,6 @@ struct ParamsWithLogging : public VideoQualityTest::Params {
     this->config = BuiltInNetworkBehaviorConfig();
   }
 };
-
-std::unique_ptr<VideoQualityTestFixtureInterface>
-CreateVideoQualityTestFixture() {
-  // The components will normally be nullptr (= use defaults), but it's possible
-  // for external test runners to override the list of injected components.
-  auto components = TestDependencyFactory::GetInstance().CreateComponents();
-  return std::make_unique<VideoQualityTest>(std::move(components));
-}
-
-// Takes the current active field trials set, and appends some new trials.
-std::string AppendFieldTrials(std::string new_trial_string) {
-  return std::string(field_trial::GetFieldTrialString()) + new_trial_string;
-}
 
 std::string ClipNameToClipPath(const char* clip_name) {
   return test::ResourcePath(clip_name, "yuv");
@@ -91,7 +74,7 @@ std::string ClipNameToClipPath(const char* clip_name) {
 
 #if defined(RTC_ENABLE_VP9)
 TEST(FullStackTest, Foreman_Cif_Net_Delay_0_0_Plr_0_VP9) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -101,12 +84,12 @@ TEST(FullStackTest, Foreman_Cif_Net_Delay_0_0_Plr_0_VP9) {
       false,  false,  true,   ClipNameToClipPath("foreman_cif")};
   foreman_cif.analyzer = {"foreman_cif_net_delay_0_0_plr_0_VP9", 0.0, 0.0,
                           kFullStackTestDurationSecs};
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 TEST(GenericDescriptorTest,
      Foreman_Cif_Delay_50_0_Plr_5_VP9_Generic_Descriptor) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -119,7 +102,7 @@ TEST(GenericDescriptorTest,
   foreman_cif.config->loss_percent = 5;
   foreman_cif.config->queue_delay_ms = 50;
   foreman_cif.call.generic_descriptor = true;
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 TEST(FullStackTest, Generator_Net_Delay_0_0_Plr_0_VP9Profile2) {
@@ -134,7 +117,7 @@ TEST(FullStackTest, Generator_Net_Delay_0_0_Plr_0_VP9Profile2) {
   }
   if (!profile_2_is_supported)
     return;
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
 
   CodecParameterMap vp92 = {
       {kVP9FmtpProfileId, VP9ProfileToString(VP9Profile::kProfile2)}};
@@ -145,7 +128,7 @@ TEST(FullStackTest, Generator_Net_Delay_0_0_Plr_0_VP9Profile2) {
       1,    0,   0,   false, false,  true,   "GeneratorI010", 0,     vp92};
   generator.analyzer = {"generator_net_delay_0_0_plr_0_VP9Profile2", 0.0, 0.0,
                         kFullStackTestDurationSecs};
-  fixture->RunWithAnalyzer(generator);
+  fixture.RunWithAnalyzer(generator);
 }
 
 #endif  // defined(RTC_ENABLE_VP9)
@@ -157,7 +140,7 @@ TEST(FullStackTest, Generator_Net_Delay_0_0_Plr_0_VP9Profile2) {
 #define MAYBE_Net_Delay_0_0_Plr_0 Net_Delay_0_0_Plr_0
 #endif
 TEST(FullStackTest, MAYBE_Net_Delay_0_0_Plr_0) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging paris_qcif;
   paris_qcif.call.send_side_bwe = true;
   paris_qcif.video[0] = {
@@ -167,12 +150,12 @@ TEST(FullStackTest, MAYBE_Net_Delay_0_0_Plr_0) {
       false,  false,  true,   ClipNameToClipPath("paris_qcif")};
   paris_qcif.analyzer = {"net_delay_0_0_plr_0", 36.0, 0.96,
                          kFullStackTestDurationSecs};
-  fixture->RunWithAnalyzer(paris_qcif);
+  fixture.RunWithAnalyzer(paris_qcif);
 }
 
 TEST(GenericDescriptorTest,
      Foreman_Cif_Net_Delay_0_0_Plr_0_Generic_Descriptor) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   // TODO(pbos): Decide on psnr/ssim thresholds for foreman_cif.
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
@@ -184,12 +167,12 @@ TEST(GenericDescriptorTest,
   foreman_cif.analyzer = {"foreman_cif_net_delay_0_0_plr_0_generic_descriptor",
                           0.0, 0.0, kFullStackTestDurationSecs};
   foreman_cif.call.generic_descriptor = true;
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 TEST(GenericDescriptorTest,
      Foreman_Cif_30kbps_Net_Delay_0_0_Plr_0_Generic_Descriptor) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -201,12 +184,12 @@ TEST(GenericDescriptorTest,
       "foreman_cif_30kbps_net_delay_0_0_plr_0_generic_descriptor", 0.0, 0.0,
       kFullStackTestDurationSecs};
   foreman_cif.call.generic_descriptor = true;
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 // Link capacity below default start rate.
 TEST(FullStackTest, Foreman_Cif_Link_150kbps_Net_Delay_0_0_Plr_0) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -217,13 +200,13 @@ TEST(FullStackTest, Foreman_Cif_Link_150kbps_Net_Delay_0_0_Plr_0) {
   foreman_cif.analyzer = {"foreman_cif_link_150kbps_net_delay_0_0_plr_0", 0.0,
                           0.0, kFullStackTestDurationSecs};
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(150);
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 // Restricted network and encoder overproducing by 30%.
 TEST(FullStackTest,
      Foreman_Cif_Link_150kbps_Delay100ms_30pkts_Queue_Overshoot30) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -238,7 +221,7 @@ TEST(FullStackTest,
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(150);
   foreman_cif.config->queue_length_packets = 30;
   foreman_cif.config->queue_delay_ms = 100;
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 // Weak 3G-style link: 250kbps, 1% loss, 100ms delay, 15 packets queue.
@@ -246,7 +229,7 @@ TEST(FullStackTest,
 // This triggers protection overhead to toggle between zero and non-zero.
 // Link queue is restrictive enough to trigger loss on probes.
 TEST(FullStackTest, Foreman_Cif_Link_250kbps_Delay100ms_10pkts_Loss1) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -261,11 +244,11 @@ TEST(FullStackTest, Foreman_Cif_Link_250kbps_Delay100ms_10pkts_Loss1) {
   foreman_cif.config->queue_length_packets = 10;
   foreman_cif.config->queue_delay_ms = 100;
   foreman_cif.config->loss_percent = 1;
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 TEST(GenericDescriptorTest, Foreman_Cif_Delay_50_0_Plr_5_Generic_Descriptor) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -278,12 +261,12 @@ TEST(GenericDescriptorTest, Foreman_Cif_Delay_50_0_Plr_5_Generic_Descriptor) {
   foreman_cif.config->loss_percent = 5;
   foreman_cif.config->queue_delay_ms = 50;
   foreman_cif.call.generic_descriptor = true;
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 TEST(GenericDescriptorTest,
      Foreman_Cif_Delay_50_0_Plr_5_Ulpfec_Generic_Descriptor) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -297,11 +280,11 @@ TEST(GenericDescriptorTest,
   foreman_cif.config->loss_percent = 5;
   foreman_cif.config->queue_delay_ms = 50;
   foreman_cif.call.generic_descriptor = true;
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 TEST(FullStackTest, Foreman_Cif_Delay_50_0_Plr_5_Flexfec) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -313,11 +296,11 @@ TEST(FullStackTest, Foreman_Cif_Delay_50_0_Plr_5_Flexfec) {
                           kFullStackTestDurationSecs};
   foreman_cif.config->loss_percent = 5;
   foreman_cif.config->queue_delay_ms = 50;
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 TEST(FullStackTest, Foreman_Cif_500kbps_Delay_50_0_Plr_3_Flexfec) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -330,11 +313,11 @@ TEST(FullStackTest, Foreman_Cif_500kbps_Delay_50_0_Plr_3_Flexfec) {
   foreman_cif.config->loss_percent = 3;
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(500);
   foreman_cif.config->queue_delay_ms = 50;
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 TEST(FullStackTest, Foreman_Cif_500kbps_Delay_50_0_Plr_3_Ulpfec) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -347,12 +330,12 @@ TEST(FullStackTest, Foreman_Cif_500kbps_Delay_50_0_Plr_3_Ulpfec) {
   foreman_cif.config->loss_percent = 3;
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(500);
   foreman_cif.config->queue_delay_ms = 50;
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 #if defined(WEBRTC_USE_H264)
 TEST(FullStackTest, Foreman_Cif_Net_Delay_0_0_Plr_0_H264) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   // TODO(pbos): Decide on psnr/ssim thresholds for foreman_cif.
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
@@ -363,11 +346,11 @@ TEST(FullStackTest, Foreman_Cif_Net_Delay_0_0_Plr_0_H264) {
       false,  false,  true,   ClipNameToClipPath("foreman_cif")};
   foreman_cif.analyzer = {"foreman_cif_net_delay_0_0_plr_0_H264", 0.0, 0.0,
                           kFullStackTestDurationSecs};
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 TEST(FullStackTest, Foreman_Cif_30kbps_Net_Delay_0_0_Plr_0_H264) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -377,12 +360,12 @@ TEST(FullStackTest, Foreman_Cif_30kbps_Net_Delay_0_0_Plr_0_H264) {
       false,  false, true,  ClipNameToClipPath("foreman_cif")};
   foreman_cif.analyzer = {"foreman_cif_30kbps_net_delay_0_0_plr_0_H264", 0.0,
                           0.0, kFullStackTestDurationSecs};
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 TEST(GenericDescriptorTest,
      Foreman_Cif_Delay_50_0_Plr_5_H264_Generic_Descriptor) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -396,13 +379,12 @@ TEST(GenericDescriptorTest,
   foreman_cif.config->loss_percent = 5;
   foreman_cif.config->queue_delay_ms = 50;
   foreman_cif.call.generic_descriptor = true;
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 TEST(FullStackTest, Foreman_Cif_Delay_50_0_Plr_5_H264_Sps_Pps_Idr) {
-  test::ScopedFieldTrials override_field_trials(
-      AppendFieldTrials("WebRTC-SpsPpsIdrIsH264Keyframe/Enabled/"));
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture(
+      {.field_trials = "WebRTC-SpsPpsIdrIsH264Keyframe/Enabled/"});
 
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
@@ -415,12 +397,12 @@ TEST(FullStackTest, Foreman_Cif_Delay_50_0_Plr_5_H264_Sps_Pps_Idr) {
                           0.0, kFullStackTestDurationSecs};
   foreman_cif.config->loss_percent = 5;
   foreman_cif.config->queue_delay_ms = 50;
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 // Verify that this is worth the bot time, before enabling.
 TEST(FullStackTest, Foreman_Cif_Delay_50_0_Plr_5_H264_Flexfec) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -432,13 +414,13 @@ TEST(FullStackTest, Foreman_Cif_Delay_50_0_Plr_5_H264_Flexfec) {
                           kFullStackTestDurationSecs};
   foreman_cif.config->loss_percent = 5;
   foreman_cif.config->queue_delay_ms = 50;
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 // Ulpfec with H264 is an unsupported combination, so this test is only useful
 // for debugging. It is therefore disabled by default.
 TEST(FullStackTest, DISABLED_Foreman_Cif_Delay_50_0_Plr_5_H264_Ulpfec) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -450,12 +432,12 @@ TEST(FullStackTest, DISABLED_Foreman_Cif_Delay_50_0_Plr_5_H264_Ulpfec) {
                           kFullStackTestDurationSecs};
   foreman_cif.config->loss_percent = 5;
   foreman_cif.config->queue_delay_ms = 50;
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 #endif  // defined(WEBRTC_USE_H264)
 
 TEST(FullStackTest, Foreman_Cif_500kbps) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -468,11 +450,11 @@ TEST(FullStackTest, Foreman_Cif_500kbps) {
   foreman_cif.config->queue_length_packets = 0;
   foreman_cif.config->queue_delay_ms = 0;
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(500);
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 TEST(FullStackTest, Foreman_Cif_500kbps_32pkts_Queue) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -485,11 +467,11 @@ TEST(FullStackTest, Foreman_Cif_500kbps_32pkts_Queue) {
   foreman_cif.config->queue_length_packets = 32;
   foreman_cif.config->queue_delay_ms = 0;
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(500);
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 TEST(FullStackTest, Foreman_Cif_500kbps_100ms) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -502,12 +484,12 @@ TEST(FullStackTest, Foreman_Cif_500kbps_100ms) {
   foreman_cif.config->queue_length_packets = 0;
   foreman_cif.config->queue_delay_ms = 100;
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(500);
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 TEST(GenericDescriptorTest,
      Foreman_Cif_500kbps_100ms_32pkts_Queue_Generic_Descriptor) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -522,11 +504,11 @@ TEST(GenericDescriptorTest,
   foreman_cif.config->queue_delay_ms = 100;
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(500);
   foreman_cif.call.generic_descriptor = true;
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 TEST(FullStackTest, Foreman_Cif_500kbps_100ms_32pkts_Queue_Recv_Bwe) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = false;
   foreman_cif.video[0] = {
@@ -539,11 +521,11 @@ TEST(FullStackTest, Foreman_Cif_500kbps_100ms_32pkts_Queue_Recv_Bwe) {
   foreman_cif.config->queue_length_packets = 32;
   foreman_cif.config->queue_delay_ms = 100;
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(500);
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 TEST(FullStackTest, Foreman_Cif_1000kbps_100ms_32pkts_Queue) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {
@@ -556,12 +538,12 @@ TEST(FullStackTest, Foreman_Cif_1000kbps_100ms_32pkts_Queue) {
   foreman_cif.config->queue_length_packets = 32;
   foreman_cif.config->queue_delay_ms = 100;
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(1000);
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 // TODO(sprang): Remove this if we have the similar ModerateLimits below?
 TEST(FullStackTest, Conference_Motion_Hd_2000kbps_100ms_32pkts_Queue) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging conf_motion_hd;
   conf_motion_hd.call.send_side_bwe = true;
   conf_motion_hd.video[0] = {
@@ -578,12 +560,12 @@ TEST(FullStackTest, Conference_Motion_Hd_2000kbps_100ms_32pkts_Queue) {
   conf_motion_hd.config->queue_length_packets = 32;
   conf_motion_hd.config->queue_delay_ms = 100;
   conf_motion_hd.config->link_capacity = DataRate::KilobitsPerSec(2000);
-  fixture->RunWithAnalyzer(conf_motion_hd);
+  fixture.RunWithAnalyzer(conf_motion_hd);
 }
 
 TEST(GenericDescriptorTest,
      Conference_Motion_Hd_2tl_Moderate_Limits_Generic_Descriptor) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging conf_motion_hd;
   conf_motion_hd.call.send_side_bwe = true;
   conf_motion_hd.video[0] = {
@@ -603,11 +585,11 @@ TEST(GenericDescriptorTest,
   conf_motion_hd.config->queue_delay_ms = 100;
   conf_motion_hd.config->link_capacity = DataRate::KilobitsPerSec(2000);
   conf_motion_hd.call.generic_descriptor = true;
-  fixture->RunWithAnalyzer(conf_motion_hd);
+  fixture.RunWithAnalyzer(conf_motion_hd);
 }
 
 TEST(FullStackTest, Conference_Motion_Hd_3tl_Moderate_Limits) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging conf_motion_hd;
   conf_motion_hd.call.send_side_bwe = true;
   conf_motion_hd.video[0] = {
@@ -625,11 +607,11 @@ TEST(FullStackTest, Conference_Motion_Hd_3tl_Moderate_Limits) {
   conf_motion_hd.config->loss_percent = 3;
   conf_motion_hd.config->queue_delay_ms = 100;
   conf_motion_hd.config->link_capacity = DataRate::KilobitsPerSec(2000);
-  fixture->RunWithAnalyzer(conf_motion_hd);
+  fixture.RunWithAnalyzer(conf_motion_hd);
 }
 
 TEST(FullStackTest, Conference_Motion_Hd_4tl_Moderate_Limits) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging conf_motion_hd;
   conf_motion_hd.call.send_side_bwe = true;
   conf_motion_hd.video[0] = {
@@ -647,11 +629,11 @@ TEST(FullStackTest, Conference_Motion_Hd_4tl_Moderate_Limits) {
   conf_motion_hd.config->loss_percent = 3;
   conf_motion_hd.config->queue_delay_ms = 100;
   conf_motion_hd.config->link_capacity = DataRate::KilobitsPerSec(2000);
-  fixture->RunWithAnalyzer(conf_motion_hd);
+  fixture.RunWithAnalyzer(conf_motion_hd);
 }
 
 TEST(FullStackTest, Foreman_Cif_30kbps_AV1) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging foreman_cif;
   foreman_cif.call.send_side_bwe = true;
   foreman_cif.video[0] = {.enabled = true,
@@ -669,11 +651,11 @@ TEST(FullStackTest, Foreman_Cif_30kbps_AV1) {
                           .test_durations_secs = kFullStackTestDurationSecs};
   foreman_cif.config->link_capacity = DataRate::KilobitsPerSec(30);
   foreman_cif.call.generic_descriptor = true;
-  fixture->RunWithAnalyzer(foreman_cif);
+  fixture.RunWithAnalyzer(foreman_cif);
 }
 
 TEST(FullStackTest, Conference_Motion_Hd_3tl_AV1) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging conf_motion_hd;
   conf_motion_hd.call.send_side_bwe = true;
   conf_motion_hd.video[0] = {
@@ -695,7 +677,7 @@ TEST(FullStackTest, Conference_Motion_Hd_3tl_AV1) {
   conf_motion_hd.config->queue_delay_ms = 100;
   conf_motion_hd.config->link_capacity = DataRate::KilobitsPerSec(1000);
   conf_motion_hd.call.generic_descriptor = true;
-  fixture->RunWithAnalyzer(conf_motion_hd);
+  fixture.RunWithAnalyzer(conf_motion_hd);
 }
 
 #if defined(WEBRTC_MAC)
@@ -706,7 +688,7 @@ TEST(FullStackTest, Conference_Motion_Hd_3tl_AV1) {
 #define MAYBE_Screenshare_Slides_Simulcast_AV1 Screenshare_Slides_Simulcast_AV1
 #endif
 TEST(FullStackTest, MAYBE_Screenshare_Slides_Simulcast_AV1) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging screenshare;
   screenshare.analyzer = {.test_label = "screenshare_slides_simulcast_AV1",
                           .test_durations_secs = kFullStackTestDurationSecs};
@@ -753,12 +735,12 @@ TEST(FullStackTest, MAYBE_Screenshare_Slides_Simulcast_AV1) {
       .streams = streams,
       .selected_stream = 1,
   };
-  fixture->RunWithAnalyzer(screenshare);
+  fixture.RunWithAnalyzer(screenshare);
 }
 
 #if defined(RTC_ENABLE_VP9)
 TEST(FullStackTest, Conference_Motion_Hd_2000kbps_100ms_32pkts_Queue_Vp9) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging conf_motion_hd;
   conf_motion_hd.call.send_side_bwe = true;
   conf_motion_hd.video[0] = {
@@ -776,12 +758,12 @@ TEST(FullStackTest, Conference_Motion_Hd_2000kbps_100ms_32pkts_Queue_Vp9) {
   conf_motion_hd.config->queue_length_packets = 32;
   conf_motion_hd.config->queue_delay_ms = 100;
   conf_motion_hd.config->link_capacity = DataRate::KilobitsPerSec(2000);
-  fixture->RunWithAnalyzer(conf_motion_hd);
+  fixture.RunWithAnalyzer(conf_motion_hd);
 }
 #endif
 
 TEST(FullStackTest, Screenshare_Slides) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging screenshare;
   screenshare.call.send_side_bwe = true;
   screenshare.video[0] = {true,    1850,  1110,  5, 50000, 200000,
@@ -790,13 +772,13 @@ TEST(FullStackTest, Screenshare_Slides) {
   screenshare.screenshare[0] = {true, false, 10};
   screenshare.analyzer = {"screenshare_slides", 0.0, 0.0,
                           kFullStackTestDurationSecs};
-  fixture->RunWithAnalyzer(screenshare);
+  fixture.RunWithAnalyzer(screenshare);
 }
 
 #if !defined(WEBRTC_MAC) && !defined(WEBRTC_WIN)
 // TODO(bugs.webrtc.org/9840): Investigate why is this test flaky on Win/Mac.
 TEST(FullStackTest, Screenshare_Slides_Simulcast) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging screenshare;
   screenshare.call.send_side_bwe = true;
   screenshare.screenshare[0] = {true, false, 10};
@@ -820,13 +802,13 @@ TEST(FullStackTest, Screenshare_Slides_Simulcast) {
   screenshare.ss[0] = {
       streams, 1, 1, 0, InterLayerPredMode::kOn, std::vector<SpatialLayer>(),
       false};
-  fixture->RunWithAnalyzer(screenshare);
+  fixture.RunWithAnalyzer(screenshare);
 }
 
 #endif  // !defined(WEBRTC_MAC) && !defined(WEBRTC_WIN)
 
 TEST(FullStackTest, Screenshare_Slides_Scrolling) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging config;
   config.call.send_side_bwe = true;
   config.video[0] = {true,    1850,  1110 / 2, 5, 50000, 200000,
@@ -835,11 +817,11 @@ TEST(FullStackTest, Screenshare_Slides_Scrolling) {
   config.screenshare[0] = {true, false, 10, 2};
   config.analyzer = {"screenshare_slides_scrolling", 0.0, 0.0,
                      kFullStackTestDurationSecs};
-  fixture->RunWithAnalyzer(config);
+  fixture.RunWithAnalyzer(config);
 }
 
 TEST(GenericDescriptorTest, Screenshare_Slides_Lossy_Net_Generic_Descriptor) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging screenshare;
   screenshare.call.send_side_bwe = true;
   screenshare.video[0] = {true,    1850,  1110,  5, 50000, 200000,
@@ -852,11 +834,11 @@ TEST(GenericDescriptorTest, Screenshare_Slides_Lossy_Net_Generic_Descriptor) {
   screenshare.config->queue_delay_ms = 200;
   screenshare.config->link_capacity = DataRate::KilobitsPerSec(500);
   screenshare.call.generic_descriptor = true;
-  fixture->RunWithAnalyzer(screenshare);
+  fixture.RunWithAnalyzer(screenshare);
 }
 
 TEST(FullStackTest, Screenshare_Slides_Very_Lossy) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging screenshare;
   screenshare.call.send_side_bwe = true;
   screenshare.video[0] = {true,    1850,  1110,  5, 50000, 200000,
@@ -868,11 +850,11 @@ TEST(FullStackTest, Screenshare_Slides_Very_Lossy) {
   screenshare.config->loss_percent = 10;
   screenshare.config->queue_delay_ms = 200;
   screenshare.config->link_capacity = DataRate::KilobitsPerSec(500);
-  fixture->RunWithAnalyzer(screenshare);
+  fixture.RunWithAnalyzer(screenshare);
 }
 
 TEST(FullStackTest, Screenshare_Slides_Lossy_Limited) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging screenshare;
   screenshare.call.send_side_bwe = true;
   screenshare.video[0] = {true,    1850,  1110,  5, 50000, 200000,
@@ -885,11 +867,11 @@ TEST(FullStackTest, Screenshare_Slides_Lossy_Limited) {
   screenshare.config->link_capacity = DataRate::KilobitsPerSec(200);
   screenshare.config->queue_length_packets = 30;
 
-  fixture->RunWithAnalyzer(screenshare);
+  fixture.RunWithAnalyzer(screenshare);
 }
 
 TEST(FullStackTest, Screenshare_Slides_Moderately_Restricted) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging screenshare;
   screenshare.call.send_side_bwe = true;
   screenshare.video[0] = {true,    1850,  1110,  5, 50000, 200000,
@@ -902,7 +884,7 @@ TEST(FullStackTest, Screenshare_Slides_Moderately_Restricted) {
   screenshare.config->link_capacity = DataRate::KilobitsPerSec(1200);
   screenshare.config->queue_length_packets = 30;
 
-  fixture->RunWithAnalyzer(screenshare);
+  fixture.RunWithAnalyzer(screenshare);
 }
 
 // Since ParamsWithLogging::Video is not trivially destructible, we can't
@@ -958,7 +940,7 @@ ParamsWithLogging::Video SimulcastVp8VideoLow() {
 #if defined(RTC_ENABLE_VP9)
 
 TEST(FullStackTest, Screenshare_Slides_Vp9_3sl_High_Fps) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging screenshare;
   screenshare.call.send_side_bwe = true;
   screenshare.video[0] = {true,    1850,  1110,  30, 50000, 200000,
@@ -970,16 +952,15 @@ TEST(FullStackTest, Screenshare_Slides_Vp9_3sl_High_Fps) {
   screenshare.ss[0] = {
       std::vector<VideoStream>(),  0,   3, 2, InterLayerPredMode::kOn,
       std::vector<SpatialLayer>(), true};
-  fixture->RunWithAnalyzer(screenshare);
+  fixture.RunWithAnalyzer(screenshare);
 }
 
 // TODO(http://bugs.webrtc.org/9506): investigate.
 #if !defined(WEBRTC_MAC)
 
 TEST(FullStackTest, Vp9ksvc_3sl_High) {
-  webrtc::test::ScopedFieldTrials override_trials(
-      AppendFieldTrials("WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"));
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture(
+      {.field_trials = "WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"});
   ParamsWithLogging simulcast;
   simulcast.call.send_side_bwe = true;
   simulcast.video[0] = SvcVp9Video();
@@ -988,13 +969,12 @@ TEST(FullStackTest, Vp9ksvc_3sl_High) {
   simulcast.ss[0] = {
       std::vector<VideoStream>(),  0,    3, 2, InterLayerPredMode::kOnKeyPic,
       std::vector<SpatialLayer>(), false};
-  fixture->RunWithAnalyzer(simulcast);
+  fixture.RunWithAnalyzer(simulcast);
 }
 
 TEST(FullStackTest, Vp9ksvc_3sl_Low) {
-  webrtc::test::ScopedFieldTrials override_trials(
-      AppendFieldTrials("WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"));
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture(
+      {.field_trials = "WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"});
   ParamsWithLogging simulcast;
   simulcast.call.send_side_bwe = true;
   simulcast.video[0] = SvcVp9Video();
@@ -1003,14 +983,12 @@ TEST(FullStackTest, Vp9ksvc_3sl_Low) {
   simulcast.ss[0] = {
       std::vector<VideoStream>(),  0,    3, 0, InterLayerPredMode::kOnKeyPic,
       std::vector<SpatialLayer>(), false};
-  fixture->RunWithAnalyzer(simulcast);
+  fixture.RunWithAnalyzer(simulcast);
 }
 
 TEST(FullStackTest, Vp9ksvc_3sl_Low_Bw_Limited) {
-  webrtc::test::ScopedFieldTrials override_trials(
-      AppendFieldTrials("WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"
-                        "WebRTC-Vp9ExternalRefCtrl/Enabled/"));
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture(
+      {.field_trials = "WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"});
   ParamsWithLogging simulcast;
   simulcast.config->link_capacity = DataRate::KilobitsPerSec(500);
   simulcast.call.send_side_bwe = true;
@@ -1020,13 +998,12 @@ TEST(FullStackTest, Vp9ksvc_3sl_Low_Bw_Limited) {
   simulcast.ss[0] = {
       std::vector<VideoStream>(),  0,    3, 0, InterLayerPredMode::kOnKeyPic,
       std::vector<SpatialLayer>(), false};
-  fixture->RunWithAnalyzer(simulcast);
+  fixture.RunWithAnalyzer(simulcast);
 }
 
 TEST(FullStackTest, Vp9ksvc_3sl_Medium_Network_Restricted) {
-  webrtc::test::ScopedFieldTrials override_trials(
-      AppendFieldTrials("WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"));
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture(
+      {.field_trials = "WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"});
   ParamsWithLogging simulcast;
   simulcast.call.send_side_bwe = true;
   simulcast.video[0] = SvcVp9Video();
@@ -1037,14 +1014,13 @@ TEST(FullStackTest, Vp9ksvc_3sl_Medium_Network_Restricted) {
       std::vector<SpatialLayer>(), false};
   simulcast.config->link_capacity = DataRate::KilobitsPerSec(1000);
   simulcast.config->queue_delay_ms = 100;
-  fixture->RunWithAnalyzer(simulcast);
+  fixture.RunWithAnalyzer(simulcast);
 }
 
 // TODO(webrtc:9722): Remove when experiment is cleaned up.
 TEST(FullStackTest, Vp9ksvc_3sl_Medium_Network_Restricted_Trusted_Rate) {
-  webrtc::test::ScopedFieldTrials override_trials(
-      AppendFieldTrials("WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"));
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture(
+      {.field_trials = "WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"});
   ParamsWithLogging simulcast;
   simulcast.call.send_side_bwe = true;
   simulcast.video[0] = SvcVp9Video();
@@ -1055,7 +1031,7 @@ TEST(FullStackTest, Vp9ksvc_3sl_Medium_Network_Restricted_Trusted_Rate) {
       std::vector<SpatialLayer>(), false};
   simulcast.config->link_capacity = DataRate::KilobitsPerSec(1000);
   simulcast.config->queue_delay_ms = 100;
-  fixture->RunWithAnalyzer(simulcast);
+  fixture.RunWithAnalyzer(simulcast);
 }
 #endif  // !defined(WEBRTC_MAC)
 
@@ -1070,7 +1046,9 @@ TEST(FullStackTest, Vp9ksvc_3sl_Medium_Network_Restricted_Trusted_Rate) {
 #endif
 
 TEST(FullStackTest, MAYBE_Simulcast_HD_High) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture(
+      {.field_trials =
+           "WebRTC-ForceSimulatedOveruseIntervalMs/1000-50000-300/"});
   ParamsWithLogging simulcast;
   simulcast.call.send_side_bwe = true;
   simulcast.video[0] = {true,    1920,  1080,  30,         800000, 2500000,
@@ -1087,13 +1065,11 @@ TEST(FullStackTest, MAYBE_Simulcast_HD_High) {
   simulcast.ss[0] = {
       streams, 2, 1, 0, InterLayerPredMode::kOn, std::vector<SpatialLayer>(),
       true};
-  webrtc::test::ScopedFieldTrials override_trials(AppendFieldTrials(
-      "WebRTC-ForceSimulatedOveruseIntervalMs/1000-50000-300/"));
-  fixture->RunWithAnalyzer(simulcast);
+  fixture.RunWithAnalyzer(simulcast);
 }
 
 TEST(FullStackTest, Simulcast_Vp8_3sl_High) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging simulcast;
   simulcast.call.send_side_bwe = true;
   simulcast.video[0] = SimulcastVp8VideoHigh();
@@ -1115,11 +1091,11 @@ TEST(FullStackTest, Simulcast_Vp8_3sl_High) {
   simulcast.ss[0] = {
       streams, 2, 1, 0, InterLayerPredMode::kOn, std::vector<SpatialLayer>(),
       false};
-  fixture->RunWithAnalyzer(simulcast);
+  fixture.RunWithAnalyzer(simulcast);
 }
 
 TEST(FullStackTest, Simulcast_Vp8_3sl_Low) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging simulcast;
   simulcast.call.send_side_bwe = true;
   simulcast.video[0] = SimulcastVp8VideoHigh();
@@ -1141,7 +1117,7 @@ TEST(FullStackTest, Simulcast_Vp8_3sl_Low) {
   simulcast.ss[0] = {
       streams, 0, 1, 0, InterLayerPredMode::kOn, std::vector<SpatialLayer>(),
       false};
-  fixture->RunWithAnalyzer(simulcast);
+  fixture.RunWithAnalyzer(simulcast);
 }
 
 // This test assumes ideal network conditions with target bandwidth being
@@ -1153,7 +1129,7 @@ TEST(FullStackTest, Simulcast_Vp8_3sl_Low) {
 #define MAYBE_High_Bitrate_With_Fake_Codec High_Bitrate_With_Fake_Codec
 #endif  // defined(WEBRTC_ANDROID)
 TEST(FullStackTest, MAYBE_High_Bitrate_With_Fake_Codec) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   const int target_bitrate = 100000000;
   ParamsWithLogging generator;
   generator.call.send_side_bwe = true;
@@ -1178,7 +1154,7 @@ TEST(FullStackTest, MAYBE_High_Bitrate_With_Fake_Codec) {
                         "Generator"};
   generator.analyzer = {"high_bitrate_with_fake_codec", 0.0, 0.0,
                         kFullStackTestDurationSecs};
-  fixture->RunWithAnalyzer(generator);
+  fixture.RunWithAnalyzer(generator);
 }
 
 #if defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS)
@@ -1190,7 +1166,7 @@ TEST(FullStackTest, MAYBE_High_Bitrate_With_Fake_Codec) {
 #endif
 
 TEST(FullStackTest, MAYBE_Largeroom_50thumb) {
-  auto fixture = CreateVideoQualityTestFixture();
+  VideoQualityTest fixture;
   ParamsWithLogging large_room;
   large_room.call.send_side_bwe = true;
   large_room.video[0] = SimulcastVp8VideoHigh();
@@ -1213,7 +1189,7 @@ TEST(FullStackTest, MAYBE_Largeroom_50thumb) {
   large_room.ss[0] = {
       streams, 2, 1, 0, InterLayerPredMode::kOn, std::vector<SpatialLayer>(),
       false};
-  fixture->RunWithAnalyzer(large_room);
+  fixture.RunWithAnalyzer(large_room);
 }
 
 }  // namespace webrtc

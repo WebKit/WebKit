@@ -37,6 +37,7 @@
 #import "DumpRenderTreePasteboard.h"
 #import "EventSendingController.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 @interface DumpRenderTreeFilePromiseReceiver : NSFilePromiseReceiver {
     RetainPtr<NSArray<NSString *>> _promisedUTIs;
@@ -125,7 +126,7 @@ static std::pair<NSURL *, NSError *> copyFile(NSURL *sourceURL, NSURL *destinati
             NSURL *destinationURL;
             std::tie(destinationURL, error) = copyFile(sourceURL, destinationDirectory);
             if (destinationURL) {
-                dispatch_async(dispatch_get_main_queue(), ^{
+                dispatch_async(mainDispatchQueueSingleton(), ^{
                     [_destinationURLs addObject:destinationURL];
                 });
             }
@@ -277,7 +278,11 @@ static NSMutableArray<NSFilePromiseReceiver *> *allFilePromiseReceivers()
         [receiver setDraggingSource:draggingSource];
         [allFilePromiseReceivers() addObject:receiver.get()];
 
-        auto item = adoptNS([[NSDraggingItem alloc] _initWithItem:receiver.get()]);
+#if HAVE(DRAGGING_ITEM_INIT_WITH_PASTEBOARD_ITEM)
+        RetainPtr item = adoptNS([[NSDraggingItem alloc] _initWithPasteboardItem:receiver.get() localItem:nil]);
+#else
+        RetainPtr item = adoptNS([[NSDraggingItem alloc] _initWithItem:receiver.get()]);
+#endif
         block(item.get(), 0, &stop);
         if (stop)
             return;

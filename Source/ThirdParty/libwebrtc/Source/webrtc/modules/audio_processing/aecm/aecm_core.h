@@ -13,12 +13,13 @@
 #ifndef MODULES_AUDIO_PROCESSING_AECM_AECM_CORE_H_
 #define MODULES_AUDIO_PROCESSING_AECM_AECM_CORE_H_
 
-extern "C" {
-#include "common_audio/ring_buffer.h"
-#include "common_audio/signal_processing/include/signal_processing_library.h"
-}
+#include <cstdint>
+
 #include "modules/audio_processing/aecm/aecm_defines.h"
 
+extern "C" {
+#include "common_audio/ring_buffer.h"
+}
 struct RealFFT;
 
 namespace webrtc {

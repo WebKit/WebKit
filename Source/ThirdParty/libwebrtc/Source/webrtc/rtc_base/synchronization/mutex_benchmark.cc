@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstdint>
+
 #include "benchmark/benchmark.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/unused.h"

@@ -60,6 +60,7 @@ bool HighlightRegistry::remove(const AtomString& key)
     m_highlightNames.removeFirst(key);
     return m_map.remove(key);
 }
+
 #if ENABLE(APP_HIGHLIGHTS)
 void HighlightRegistry::setHighlightVisibility(HighlightVisibility highlightVisibility)
 {
@@ -69,9 +70,10 @@ void HighlightRegistry::setHighlightVisibility(HighlightVisibility highlightVisi
     m_highlightVisibility = highlightVisibility;
     
     for (auto& highlight : m_map)
-        highlight.value->repaint();
+        Ref { highlight.value }->repaint();
 }
 #endif
+
 static ASCIILiteral annotationHighlightKey()
 {
     return "annotationHighlightKey"_s;
@@ -80,7 +82,7 @@ static ASCIILiteral annotationHighlightKey()
 void HighlightRegistry::addAnnotationHighlightWithRange(Ref<StaticRange>&& value)
 {
     if (m_map.contains(annotationHighlightKey()))
-        m_map.get(annotationHighlightKey())->addToSetLike(value);
+        Ref { *m_map.get(annotationHighlightKey()) }->addToSetLike(value);
     else
         setFromMapLike(annotationHighlightKey(), Highlight::create({ std::ref<AbstractRange>(value.get()) }));
 }

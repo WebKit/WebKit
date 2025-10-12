@@ -9,14 +9,14 @@ description('Test module execution order between tags.');
 // Module will be executed asynchronously.
 window.jsTestIsAsync = true;
 debug('Module is not executed yet.');
-function onLoad()
+onload = function ()
 {
     shouldBeTrue(`moduleExecuted`);
     finishJSTest();
 }
 </script>
 <script src="../../../resources/js-test-post.js"></script>
-<script type="module" onload="onLoad()">
+<script type="module">
 debug('Executing an inlined module.');
 window.moduleExecuted = true;
 </script>

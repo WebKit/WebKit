@@ -33,7 +33,7 @@ namespace WTF {
 // Simple and cheap way of tracking statistics if you're not worried about chopping on
 // the sum of squares (i.e. the sum of squares is unlikely to exceed 2^52).
 class SimpleStats {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SimpleStats);
 public:
     SimpleStats()
         : m_count(0)

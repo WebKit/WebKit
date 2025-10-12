@@ -1,0 +1,14 @@
+
+FAIL e.style['font-style'] = "oblique calc(sign(50%) * 1deg)" should not set the property value assert_equals: expected "" but got "oblique calc(1deg)"
+FAIL e.style['background'] = "linear-gradient(calc(sign(50%) * 1turn), #3f87a6, #ebf8e1, #f69d3c)" should not set the property value assert_equals: expected "" but got "linear-gradient(calc(360deg), rgb(63, 135, 166), rgb(235, 248, 225), rgb(246, 157, 60))"
+FAIL e.style['background'] = "conic-gradient(from calc(sign(50%) * 1rad) at 10% 50%, #e66465, #9198e5)" should not set the property value assert_equals: expected "" but got "conic-gradient(from calc(57.29578deg) at 10% 50%, rgb(230, 100, 101), rgb(145, 152, 229))"
+FAIL e.style['filter'] = "hue-rotate(calc(sign(50%) * 1deg))" should not set the property value assert_equals: expected "" but got "hue-rotate(calc(1deg))"
+FAIL e.style['offset-rotate'] = "calc(sign(50%) * 1deg)" should not set the property value assert_equals: expected "" but got "calc(1deg)"
+FAIL e.style['offset-path'] = "ray(calc(sign(50%) * 1deg))" should not set the property value assert_equals: expected "" but got "ray(calc(1deg))"
+FAIL e.style['color'] = "hsl(calc(sign(50%) * 1deg) 82% 43%)" should not set the property value assert_equals: expected "" but got "rgb(200, 23, 20)"
+FAIL e.style['transform'] = "rotate(calc(sign(50%) * 1deg))" should not set the property value assert_equals: expected "" but got "rotate(calc(1deg))"
+FAIL e.style['animation-duration'] = "calc(sign(50%) * 1s)" should not set the property value assert_equals: expected "" but got "calc(1s)"
+FAIL e.style['animation-delay'] = "calc(sign(50%) * 1s)" should not set the property value assert_equals: expected "" but got "calc(1s)"
+FAIL e.style['transition-duration'] = "calc(sign(50%) * 1s)" should not set the property value assert_equals: expected "" but got "calc(1s)"
+FAIL e.style['transition-delay'] = "calc(sign(50%) * 1s)" should not set the property value assert_equals: expected "" but got "calc(1s)"
+

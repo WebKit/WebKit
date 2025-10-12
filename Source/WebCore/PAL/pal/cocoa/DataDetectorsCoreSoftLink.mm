@@ -35,8 +35,8 @@ SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectorsCore, DDScannerResult, 
 
 #if PLATFORM(MAC)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectorsCore, DDBinderPhoneNumberKey, CFStringRef, PAL_EXPORT)
-#elif PLATFORM(IOS_FAMILY)
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, DataDetectorsCore, DDResultGetRange, CFRange, (DDResultRef result), (result))
+#elif PLATFORM(IOS_FAMILY)
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, DataDetectorsCore, DDResultGetType, CFStringRef, (DDResultRef result), (result))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, DataDetectorsCore, DDResultGetCategory, DDResultCategory, (DDResultRef result), (result))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, DataDetectorsCore, DDScanQueryAddTextFragment, void, (DDScanQueryRef query, CFStringRef fragment, CFRange range, void *identifier, DDTextFragmentMode mode, DDTextCoalescingType type), (query, fragment, range, identifier, mode, type))

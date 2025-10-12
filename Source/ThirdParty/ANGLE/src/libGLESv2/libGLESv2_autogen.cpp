@@ -3950,9 +3950,10 @@ void GL_APIENTRY glGetTranslatedShaderSourceANGLE(GLuint shader,
 }
 
 // GL_ANGLE_variable_rasterization_rate_metal
-void GL_APIENTRY glBindMetalRasterizationRateMapANGLE(GLuint renderbuffer, GLMTLRasterizationRateMapANGLE map)
+void GL_APIENTRY glBindMetalRasterizationRateMapANGLE(GLuint framebuffer,
+                                                      GLMTLRasterizationRateMapANGLE map)
 {
-    return GL_BindMetalRasterizationRateMapANGLE(renderbuffer, map);
+    return GL_BindMetalRasterizationRateMapANGLE(framebuffer, map);
 }
 
 // GL_ANGLE_vulkan_image
@@ -3977,6 +3978,8 @@ void GL_APIENTRY glReleaseTexturesANGLE(GLuint numTextures, const GLuint *textur
 // GL_ARM_shader_framebuffer_fetch
 
 // GL_ARM_shader_framebuffer_fetch_depth_stencil
+
+// GL_ARM_texture_unnormalized_coordinates
 
 // GL_CHROMIUM_bind_uniform_location
 void GL_APIENTRY glBindUniformLocationCHROMIUM(GLuint program, GLint location, const GLchar *name)
@@ -4403,6 +4406,37 @@ void GL_APIENTRY glBufferStorageExternalEXT(GLenum target,
 
 // GL_EXT_float_blend
 
+// GL_EXT_fragment_shading_rate
+void GL_APIENTRY glFramebufferShadingRateEXT(GLenum target,
+                                             GLenum attachment,
+                                             GLuint texture,
+                                             GLint baseLayer,
+                                             GLsizei numLayers,
+                                             GLsizei texelWidth,
+                                             GLsizei texelHeight)
+{
+    return GL_FramebufferShadingRateEXT(target, attachment, texture, baseLayer, numLayers,
+                                        texelWidth, texelHeight);
+}
+
+void GL_APIENTRY glGetFragmentShadingRatesEXT(GLsizei samples,
+                                              GLsizei maxCount,
+                                              GLsizei *count,
+                                              GLenum *shadingRates)
+{
+    return GL_GetFragmentShadingRatesEXT(samples, maxCount, count, shadingRates);
+}
+
+void GL_APIENTRY glShadingRateEXT(GLenum rate)
+{
+    return GL_ShadingRateEXT(rate);
+}
+
+void GL_APIENTRY glShadingRateCombinerOpsEXT(GLenum combinerOp0, GLenum combinerOp1)
+{
+    return GL_ShadingRateCombinerOpsEXT(combinerOp0, combinerOp1);
+}
+
 // GL_EXT_geometry_shader
 void GL_APIENTRY glFramebufferTextureEXT(GLenum target,
                                          GLenum attachment,
@@ -4729,7 +4763,9 @@ void GL_APIENTRY glBindProgramPipelineEXT(GLuint pipeline)
     return GL_BindProgramPipelineEXT(pipeline);
 }
 
-GLuint GL_APIENTRY glCreateShaderProgramvEXT(GLenum type, GLsizei count, const GLchar **strings)
+GLuint GL_APIENTRY glCreateShaderProgramvEXT(GLenum type,
+                                             GLsizei count,
+                                             const GLchar *const *strings)
 {
     return GL_CreateShaderProgramvEXT(type, count, strings);
 }
@@ -5399,6 +5435,8 @@ void GL_APIENTRY glBlitFramebufferNV(GLint srcX0,
     return GL_BlitFramebufferNV(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask,
                                 filter);
 }
+
+// GL_NV_pack_subimage
 
 // GL_NV_pixel_buffer_object
 

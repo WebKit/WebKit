@@ -11,6 +11,9 @@
 #include "common_audio/resampler/include/resampler.h"
 
 #include <array>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 
 #include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
@@ -20,15 +23,12 @@
 namespace webrtc {
 namespace {
 
-const int kNumChannels[] = {1, 2};
-const size_t kNumChannelsSize = sizeof(kNumChannels) / sizeof(*kNumChannels);
-
 // Rates we must support.
-const int kMaxRate = 96000;
-const int kRates[] = {8000, 16000, 32000, 44000, 48000, kMaxRate};
-const size_t kRatesSize = sizeof(kRates) / sizeof(*kRates);
-const int kMaxChannels = 2;
-const size_t kDataSize = static_cast<size_t>(kMaxChannels * kMaxRate / 100);
+constexpr int kMaxRate = 96000;
+constexpr int kRates[] = {8000, 16000, 32000, 44000, 48000, kMaxRate};
+constexpr size_t kRatesSize = sizeof(kRates) / sizeof(*kRates);
+constexpr int kMaxChannels = 2;
+constexpr size_t kDataSize = static_cast<size_t>(kMaxChannels * kMaxRate / 100);
 
 // TODO(andrew): should we be supporting these combinations?
 bool ValidRates(int in_rate, int out_rate) {
@@ -66,7 +66,7 @@ void ResamplerTest::TearDown() {}
 void ResamplerTest::ResetIfNeededAndPush(int in_rate,
                                          int out_rate,
                                          int num_channels) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Input rate: " << in_rate << ", output rate: " << out_rate
      << ", channel count: " << num_channels;
   SCOPED_TRACE(ss.str());
@@ -84,6 +84,9 @@ void ResamplerTest::ResetIfNeededAndPush(int in_rate,
 }
 
 TEST_F(ResamplerTest, Reset) {
+  const int kNumChannels[] = {1, 2};
+  const size_t kNumChannelsSize = std::size(kNumChannels);
+
   // The only failure mode for the constructor is if Reset() fails. For the
   // time being then (until an Init function is added), we rely on Reset()
   // to test the constructor.
@@ -92,7 +95,7 @@ TEST_F(ResamplerTest, Reset) {
   for (size_t i = 0; i < kRatesSize; ++i) {
     for (size_t j = 0; j < kRatesSize; ++j) {
       for (size_t k = 0; k < kNumChannelsSize; ++k) {
-        rtc::StringBuilder ss;
+        StringBuilder ss;
         ss << "Input rate: " << kRates[i] << ", output rate: " << kRates[j]
            << ", channels: " << kNumChannels[k];
         SCOPED_TRACE(ss.str());
@@ -111,7 +114,7 @@ TEST_F(ResamplerTest, Mono) {
   const int kChannels = 1;
   for (size_t i = 0; i < kRatesSize; ++i) {
     for (size_t j = 0; j < kRatesSize; ++j) {
-      rtc::StringBuilder ss;
+      StringBuilder ss;
       ss << "Input rate: " << kRates[i] << ", output rate: " << kRates[j];
       SCOPED_TRACE(ss.str());
 
@@ -133,7 +136,7 @@ TEST_F(ResamplerTest, Stereo) {
   const int kChannels = 2;
   for (size_t i = 0; i < kRatesSize; ++i) {
     for (size_t j = 0; j < kRatesSize; ++j) {
-      rtc::StringBuilder ss;
+      StringBuilder ss;
       ss << "Input rate: " << kRates[i] << ", output rate: " << kRates[j];
       SCOPED_TRACE(ss.str());
 

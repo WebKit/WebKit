@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CompositeOperation.h"
-#include "IterationCompositeOperation.h"
-#include "TimingFunction.h"
-#include "WebAnimationTypes.h"
+#include <WebCore/CompositeOperation.h>
+#include <WebCore/IterationCompositeOperation.h>
+#include <WebCore/TimingFunction.h>
+#include <WebCore/WebAnimationTypes.h>
 #include <optional>
 #include <wtf/Seconds.h>
 

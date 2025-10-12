@@ -69,7 +69,8 @@ Window {
                 text: initialUrl
 
                 onAccepted: {
-                    web_view.url = url_bar.text;
+                    url_bar.text = urlHelper.parseUserUrl(url_bar.text)
+                    web_view.url = url_bar.text
                 }
             }
 
@@ -79,7 +80,10 @@ Window {
                 Layout.preferredHeight: 50
                 font.pointSize: 20
                 text: qsTr("↪")
-                onClicked: function() { web_view.url = url_bar.text; }
+                onClicked: function() {
+                    url_bar.text = urlHelper.parseUserUrl(url_bar.text)
+                    web_view.url = url_bar.text
+                }
             }
 
             Button {
@@ -91,6 +95,11 @@ Window {
 
                 onClicked: function() { main_window.close(); }
             }
+        }
+
+        ProgressBar {
+            id: progress_bar
+            Layout.fillWidth: true
         }
 
         RowLayout {
@@ -112,6 +121,16 @@ Window {
 
                     if (loadRequest.errorString)
                         console.log('WPEView error: ' + loadRequest.errorString);
+                }
+
+                onUrlChanged: function() {
+                    url_bar.text = web_view.url;
+                }
+
+                onLoadProgressChanged: function() {
+                    var value = web_view.loadProgress / 100;
+                    progress_bar.value = value;
+                    progress_bar.visible = value == 1 ? false : true;
                 }
             }
         }

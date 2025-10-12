@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Did not parse stylesheet at 'data:text/plain,.test { background: red }' because non CSS MIME types are not allowed for cross-origin stylesheets.
 There should be no red.
 
 

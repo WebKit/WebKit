@@ -175,7 +175,7 @@ static std::optional<ParentAndBeforeChild> findParentAndBeforeChildForNonSibling
     if (beforeChildContainer->isInline() && child.isInline()) {
         // The before child happens to be a block level box wrapped in an anonymous inline-block in an inline context (e.g. ruby).
         // Let's attach this new child before the anonymous inline-block wrapper.
-        ASSERT(beforeChildContainer->isNonReplacedAtomicInline());
+        ASSERT(beforeChildContainer->isNonReplacedAtomicInlineLevelBox());
         return ParentAndBeforeChild { &parent, beforeChildContainer };
     }
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!beforeChildContainer->isInline() || beforeChildContainer->isRenderTable());
@@ -279,7 +279,7 @@ void RenderTreeBuilder::Block::attachIgnoringContinuation(RenderBlock& parent, R
     }
 
     // No suitable existing anonymous box - create a new one.
-    auto newBox = parent.createAnonymousBlock();
+    auto newBox = Block::createAnonymousBlockWithStyle(parent.protectedDocument(), parent.style());
     auto& box = *newBox;
     m_builder.attachToRenderElement(parent, WTFMove(newBox), beforeChild);
     m_builder.attach(box, WTFMove(child));
@@ -332,7 +332,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
         auto& previousBlock = downcast<RenderBlock>(*previousSibling);
         auto& nextBlock = downcast<RenderBlock>(*nextSibling);
 
-        previousBlock.setNeedsLayoutAndPrefWidthsRecalc();
+        previousBlock.setNeedsLayoutAndPreferredWidthsUpdate();
         if (previousBlock.childrenInline() != nextBlock.childrenInline()) {
             auto& inlineChildrenBlock = previousBlock.childrenInline() ? previousBlock : nextBlock;
             auto& blockChildrenBlock = previousBlock.childrenInline() ? nextBlock : previousBlock;
@@ -349,7 +349,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
             // Now just put the inlineChildrenBlock inside the blockChildrenBlock.
             RenderObject* beforeChild = &previousBlock == &inlineChildrenBlock ? blockChildrenBlock.firstChild() : nullptr;
             m_builder.attachToRenderElementInternal(blockChildrenBlock, WTFMove(blockToMove), beforeChild);
-            nextBlock.setNeedsLayoutAndPrefWidthsRecalc();
+            nextBlock.setNeedsLayoutAndPreferredWidthsUpdate();
 
             // inlineChildrenBlock got reparented to blockChildrenBlock, so it is no longer a child
             // of "this". we null out previousSibling or nextSibling so that is not used later in the function.
@@ -363,7 +363,8 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
             m_builder.moveAllChildrenIncludingFloats(nextBlock, previousBlock, RenderTreeBuilder::NormalizeAfterInsertion::No);
 
             // Delete the now-empty block's lines and nuke it.
-            nextBlock.deleteLines();
+            if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(nextBlock))
+                blockFlow->invalidateLineLayout(RenderBlockFlow::InvalidationReason::InternalMove);
             m_builder.destroy(nextBlock);
             nextSibling = { };
         }
@@ -403,15 +404,15 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
 
     if (!parent.firstChild()) {
         // If this was our last child be sure to clear out our line boxes.
-        if (parent.childrenInline())
-            parent.deleteLines();
+        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(parent); blockFlow && blockFlow->childrenInline())
+            blockFlow->invalidateLineLayout(RenderBlockFlow::InvalidationReason::InternalMove);
     }
     return takenChild;
 }
 
 void RenderTreeBuilder::Block::dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child)
 {
-    parent.setNeedsLayoutAndPrefWidthsRecalc();
+    parent.setNeedsLayoutAndPreferredWidthsUpdate();
     parent.setChildrenInline(child.childrenInline());
 
     // FIXME: This should really just be a moveAllChilrenTo (see webkit.org/b/182495)
@@ -419,7 +420,8 @@ void RenderTreeBuilder::Block::dropAnonymousBoxChild(RenderBlock& parent, Render
     auto toBeDeleted = m_builder.detachFromRenderElement(parent, child, WillBeDestroyed::Yes);
 
     // Delete the now-empty block's lines and nuke it.
-    child.deleteLines();
+    if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(parent))
+        blockFlow->invalidateLineLayout(RenderBlockFlow::InvalidationReason::InternalMove);
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlockFlow& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
@@ -430,6 +432,13 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlockFlow& parent
             m_builder.multiColumnBuilder().multiColumnRelativeWillBeRemoved(*fragmentedFlow, child, canCollapseAnonymousBlock);
     }
     return detach(static_cast<RenderBlock&>(parent), child, willBeDestroyed, canCollapseAnonymousBlock);
+}
+
+RenderPtr<RenderBlock> RenderTreeBuilder::Block::createAnonymousBlockWithStyle(Document& document, const RenderStyle& style)
+{
+    RenderPtr<RenderBlock> newBox = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::Block));
+    newBox->initializeStyle();
+    return newBox;
 }
 
 }

@@ -168,7 +168,7 @@ static std::span<uint8_t> encode_frame(vpx_codec_ctx_t *codec, vpx_image_t *img,
 extern "C" void usage_exit(void) { exit(EXIT_FAILURE); }
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
-  webrtc::test::FuzzDataHelper fuzz_input(rtc::MakeArrayView(data, size));
+  webrtc::test::FuzzDataHelper fuzz_input(webrtc::MakeArrayView(data, size));
 
   vpx_codec_ctx_t codec;
   vpx_codec_enc_cfg_t cfg;

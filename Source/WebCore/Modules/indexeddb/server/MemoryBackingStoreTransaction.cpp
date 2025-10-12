@@ -168,7 +168,7 @@ void MemoryBackingStoreTransaction::abort()
 
     // Restore renamed indexes.
     for (const auto& iterator : m_originalIndexNames) {
-        auto* index = iterator.key;
+        RefPtr index = iterator.key;
         auto originalName = iterator.value;
         auto identifier = index->info().identifier();
 

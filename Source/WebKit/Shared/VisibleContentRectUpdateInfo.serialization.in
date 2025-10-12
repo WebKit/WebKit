@@ -45,6 +45,7 @@ class WebKit::VisibleContentRectUpdateInfo {
     bool isFirstUpdateForNewViewSize();
     bool allowShrinkToFit();
     bool enclosedInScrollableAncestorView();
+    bool needsScrollend();
     WebCore::VelocityData scrollVelocity();
     WebKit::TransactionID lastLayerTreeTransactionID();
 };

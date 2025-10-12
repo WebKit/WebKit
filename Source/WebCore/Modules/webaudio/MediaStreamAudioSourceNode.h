@@ -65,8 +65,8 @@ private:
     // As an audio source, we will never propagate silence.
     bool propagatesSilence() const override { return false; }
 
-    Ref<MediaStream> m_mediaStream;
-    Ref<WebAudioSourceProvider> m_provider;
+    const Ref<MediaStream> m_mediaStream;
+    const Ref<WebAudioSourceProvider> m_provider;
     std::unique_ptr<MultiChannelResampler> m_multiChannelResampler WTF_GUARDED_BY_LOCK(m_processLock);
 
     Lock m_processLock;
@@ -76,5 +76,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_AUDIONODE(MediaStreamAudioSourceNode, NodeTypeMediaStreamAudioSource);
 
 #endif // ENABLE(WEB_AUDIO) && ENABLE(MEDIA_STREAM)

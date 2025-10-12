@@ -20,20 +20,6 @@ namespace webrtc {
 
 #if defined(WEBRTC_ARCH_X86_FAMILY)
 
-namespace {
-// These intrinsics were unavailable before VS 2008.
-// TODO(andrew): move to a common file.
-#if defined(_MSC_VER) && _MSC_VER < 1500
-static __inline __m128 _mm_castsi128_ps(__m128i a) {
-  return *(__m128*)&a;
-}
-static __inline __m128i _mm_castps_si128(__m128 a) {
-  return *(__m128i*)&a;
-}
-#endif
-
-}  // namespace
-
 void cft1st_128_SSE2(float* a) {
   const __m128 mm_swap_sign = _mm_load_ps(k_swap_sign);
   int j, k2;

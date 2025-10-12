@@ -23,7 +23,7 @@ typedef signed char fiat_p256_int1;
 #if defined(__GNUC__) || defined(__clang__)
 #  define FIAT_P256_FIAT_INLINE __inline__
 #else
-#  define FIAT_P256_FIAT_INLINE
+#  define FIAT_P256_FIAT_INLINE inline
 #endif
 
 /* The type fiat_p256_montgomery_domain_field_element is a field element in the Montgomery domain. */

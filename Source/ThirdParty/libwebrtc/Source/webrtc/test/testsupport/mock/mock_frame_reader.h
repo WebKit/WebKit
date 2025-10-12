@@ -11,7 +11,9 @@
 #ifndef TEST_TESTSUPPORT_MOCK_MOCK_FRAME_READER_H_
 #define TEST_TESTSUPPORT_MOCK_MOCK_FRAME_READER_H_
 
+#include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/resolution.h"
 #include "test/gmock.h"
 #include "test/testsupport/frame_reader.h"
 
@@ -20,14 +22,14 @@ namespace test {
 
 class MockFrameReader : public FrameReader {
  public:
-  MOCK_METHOD(rtc::scoped_refptr<I420Buffer>, PullFrame, (), (override));
-  MOCK_METHOD(rtc::scoped_refptr<I420Buffer>, PullFrame, (int*), (override));
-  MOCK_METHOD(rtc::scoped_refptr<I420Buffer>,
+  MOCK_METHOD(scoped_refptr<I420Buffer>, PullFrame, (), (override));
+  MOCK_METHOD(scoped_refptr<I420Buffer>, PullFrame, (int*), (override));
+  MOCK_METHOD(scoped_refptr<I420Buffer>,
               PullFrame,
               (int*, Resolution, Ratio),
               (override));
-  MOCK_METHOD(rtc::scoped_refptr<I420Buffer>, ReadFrame, (int), (override));
-  MOCK_METHOD(rtc::scoped_refptr<I420Buffer>,
+  MOCK_METHOD(scoped_refptr<I420Buffer>, ReadFrame, (int), (override));
+  MOCK_METHOD(scoped_refptr<I420Buffer>,
               ReadFrame,
               (int, Resolution),
               (override));

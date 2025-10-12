@@ -11,9 +11,8 @@
 #ifndef AUDIO_UTILITY_CHANNEL_MIXER_H_
 #define AUDIO_UTILITY_CHANNEL_MIXER_H_
 
-#include <stddef.h>
-#include <stdint.h>
-
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <vector>
 

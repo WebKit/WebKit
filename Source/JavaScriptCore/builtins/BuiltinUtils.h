@@ -26,11 +26,11 @@
 
 #pragma once
 
-#include "CommonIdentifiers.h"
-#include "ConstructAbility.h"
-#include "ConstructorKind.h"
-#include "ImplementationVisibility.h"
-#include "InlineAttribute.h"
+#include <JavaScriptCore/CommonIdentifiers.h>
+#include <JavaScriptCore/ConstructAbility.h>
+#include <JavaScriptCore/ConstructorKind.h>
+#include <JavaScriptCore/ImplementationVisibility.h>
+#include <JavaScriptCore/InlineAttribute.h>
 
 namespace JSC {
 

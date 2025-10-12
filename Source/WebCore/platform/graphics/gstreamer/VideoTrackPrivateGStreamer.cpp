@@ -198,8 +198,13 @@ void VideoTrackPrivateGStreamer::setSelected(bool selected)
     VideoTrackPrivate::setSelected(selected);
 
     RefPtr player = m_player.get();
-    if (player)
+    if (player) {
+        // On MSE, the player holds its own set of tracks, independent from the ones SourceBuffer
+        // reported to HTMLMediaElement. We need to synchronize the enabled status of the player
+        // mirror when the element one changed. Fortunately, both share the same trackId.
+        player->mirrorEnabledVideoTrackIfNeeded(*this);
         player->updateEnabledVideoTrack();
+    }
 }
 
 #undef GST_CAT_DEFAULT

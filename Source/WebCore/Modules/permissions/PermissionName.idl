@@ -41,5 +41,6 @@ enum PermissionName {
     "notifications",
     "push",
     "screen-wake-lock",
-    "speaker-selection"
+    "speaker-selection",
+    "storage-access"
 };

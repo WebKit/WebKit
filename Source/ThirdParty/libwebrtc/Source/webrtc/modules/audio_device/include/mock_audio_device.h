@@ -11,10 +11,12 @@
 #ifndef MODULES_AUDIO_DEVICE_INCLUDE_MOCK_AUDIO_DEVICE_H_
 #define MODULES_AUDIO_DEVICE_INCLUDE_MOCK_AUDIO_DEVICE_H_
 
-#include <string>
+#include <cstdint>
 
 #include "api/audio/audio_device.h"
+#include "api/audio/audio_device_defines.h"
 #include "api/make_ref_counted.h"
+#include "api/scoped_refptr.h"
 #include "test/gmock.h"
 
 namespace webrtc {
@@ -22,12 +24,11 @@ namespace test {
 
 class MockAudioDeviceModule : public AudioDeviceModule {
  public:
-  static rtc::scoped_refptr<MockAudioDeviceModule> CreateNice() {
-    return rtc::make_ref_counted<::testing::NiceMock<MockAudioDeviceModule>>();
+  static scoped_refptr<MockAudioDeviceModule> CreateNice() {
+    return make_ref_counted<::testing::NiceMock<MockAudioDeviceModule>>();
   }
-  static rtc::scoped_refptr<MockAudioDeviceModule> CreateStrict() {
-    return rtc::make_ref_counted<
-        ::testing::StrictMock<MockAudioDeviceModule>>();
+  static scoped_refptr<MockAudioDeviceModule> CreateStrict() {
+    return make_ref_counted<::testing::StrictMock<MockAudioDeviceModule>>();
   }
 
   // AudioDeviceModule.

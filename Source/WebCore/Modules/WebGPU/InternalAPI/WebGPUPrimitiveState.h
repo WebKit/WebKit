@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "WebGPUCullMode.h"
-#include "WebGPUFrontFace.h"
-#include "WebGPUIndexFormat.h"
-#include "WebGPUIntegralTypes.h"
-#include "WebGPUPrimitiveTopology.h"
+#include <WebCore/WebGPUCullMode.h>
+#include <WebCore/WebGPUFrontFace.h>
+#include <WebCore/WebGPUIndexFormat.h>
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUPrimitiveTopology.h>
 #include <optional>
 
 namespace WebCore::WebGPU {

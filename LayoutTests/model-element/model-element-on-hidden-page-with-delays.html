@@ -1,0 +1,64 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> state while page is hidden playback</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<script src="resources/model-utils.js"></script>
+<style>
+.spacer {
+    height: 200vh;
+}
+.model-element {
+    width: 300px;
+    height: 300px;
+}
+</style>
+<body>
+<script>
+
+promise_test(async t => {
+    testRunner.setPageVisibility("hidden");
+    await sleepForSeconds(0.1);
+    assert_true(document.hidden, "Page should be hidden");
+
+    const [model, source] = createModelAndSource(t, "resources/heart.usdz");
+    model.className = 'model-element';
+    assert_equals(internals.modelElementState(model), "Deferred");
+    assert_false(internals.isModelElementIntersectingViewport(model));
+
+    testRunner.setPageVisibility("visible");
+    await sleepForSeconds(0.1);
+    assert_true(!document.hidden, "Page should be visible");
+
+    await waitForModelState(model, "Loaded");
+}, `<model> remains deferred if page is hidden, loads after becoming visible`);
+
+promise_test(async t => {
+    const spacerDiv = document.createElement('div');
+    spacerDiv.className = 'spacer';
+    document.body.appendChild(spacerDiv);
+
+    const [model, source] = createModelAndSource(t, "resources/heart.usdz");
+    model.className = 'model-element';
+
+    scrollElementIntoView(model);
+    await sleepForSeconds(0.1);
+
+    testRunner.setPageVisibility("hidden");
+    await sleepForSeconds(0.1);
+    assert_true(document.hidden, "Page should be hidden");
+    const intermediateState = internals.modelElementState(model);
+    assert_true(intermediateState !== "Loaded", "Model should not be loaded");
+
+    await sleepForSeconds(0.5);
+
+    testRunner.setPageVisibility("visible");
+    await sleepForSeconds(0.1);
+    assert_true(!document.hidden, "Page should be visible");
+
+    await waitForModelState(model, "Loaded");
+}, `<model> should not load if scroll and hide the page, loads after becoming visible`);
+
+</script>
+</body>

@@ -1,0 +1,6 @@
+
+PASS Hit test overlapping elements, hittesting box1)
+PASS Hit test overlapping elements, hittesting box2)
+PASS Hit test overlapping elements, hittesting box3)
+PASS Hit test overlapping elements, hittesting overlay)
+

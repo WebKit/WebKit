@@ -28,6 +28,7 @@
 
 #include "ResizeObserver.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "Element.h"
 #include "InspectorInstrumentation.h"
 #include "JSNodeCustom.h"
@@ -91,7 +92,10 @@ void ResizeObserver::observeInternal(Element& target, const ResizeObserverBoxOpt
     // Per the specification, we should dispatch at least one observation for the target. For this reason, we make sure to keep the
     // target alive until this first observation. This, in turn, will keep the ResizeObserver's JS wrapper alive via
     // isReachableFromOpaqueRoots(), so the callback stays alive.
-    m_targetsWaitingForFirstObservation.append(target);
+    {
+        Locker locker { m_observationTargetsLock };
+        m_targetsWaitingForFirstObservation.append(target);
+    }
 
     if (m_document && isJSCallback()) {
         m_document->addResizeObserver(*this);
@@ -143,7 +147,10 @@ size_t ResizeObserver::gatherObservations(size_t deeperThan)
                 LOG_WITH_STREAM(ResizeObserver, stream << "ResizeObserver " << this << " gatherObservations - recording observation " << observation.get());
 
                 m_activeObservations.append(observation.get());
-                m_activeObservationTargets.append(*observation->protectedTarget());
+                {
+                    Locker locker { m_observationTargetsLock };
+                    m_activeObservationTargets.append(*observation->protectedTarget());
+                }
                 minObservedDepth = std::min(depth, minObservedDepth);
             } else
                 m_hasSkippedObservations = true;
@@ -161,9 +168,14 @@ void ResizeObserver::deliverObservations()
         return ResizeObserverEntry::create(observation->target(), observation->computeContentRect(), observation->borderBoxSize(), observation->contentBoxSize());
     });
     m_activeObservations.clear();
-    auto activeObservationTargets = std::exchange(m_activeObservationTargets, { });
 
-    auto targetsWaitingForFirstObservation = std::exchange(m_targetsWaitingForFirstObservation, { });
+    Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> activeObservationTargets;
+    Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> targetsWaitingForFirstObservation;
+    {
+        Locker locker { m_observationTargetsLock };
+        activeObservationTargets = std::exchange(m_activeObservationTargets, { });
+        targetsWaitingForFirstObservation = std::exchange(m_targetsWaitingForFirstObservation, { });
+    }
 
     if (isNativeCallback()) {
         std::get<NativeResizeObserverCallback>(m_JSOrNativeCallback)(entries, *this);
@@ -192,13 +204,19 @@ bool ResizeObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visito
         if (auto* target = observation->target(); target && containsWebCoreOpaqueRoot(visitor, target))
             return true;
     }
-    for (auto& target : m_activeObservationTargets) {
-        SUPPRESS_UNCOUNTED_ARG {
-            if (containsWebCoreOpaqueRoot(visitor, target.get()))
-                return true;
-        }
+
+    Locker locker { m_observationTargetsLock };
+
+    for (const auto& weakTarget : m_activeObservationTargets) {
+        RefPtr target = weakTarget.get();
+        if (target && containsWebCoreOpaqueRoot(visitor, target.get()))
+            return true;
     }
-    return !m_targetsWaitingForFirstObservation.isEmpty();
+    for (const auto& weakTarget : m_targetsWaitingForFirstObservation) {
+        if (auto* element = weakTarget.get(); element && containsWebCoreOpaqueRoot(visitor, element))
+            return true;
+    }
+    return false;
 }
 
 bool ResizeObserver::removeTarget(Element& target)
@@ -217,17 +235,23 @@ void ResizeObserver::removeAllTargets()
         bool removed = removeTarget(*observation->protectedTarget());
         ASSERT_UNUSED(removed, removed);
     }
-    m_activeObservationTargets.clear();
+    {
+        Locker locker { m_observationTargetsLock };
+        m_activeObservationTargets.clear();
+        m_targetsWaitingForFirstObservation.clear();
+    }
     m_activeObservations.clear();
-    m_targetsWaitingForFirstObservation.clear();
     m_observations.clear();
 }
 
 bool ResizeObserver::removeObservation(const Element& target)
 {
-    m_targetsWaitingForFirstObservation.removeFirstMatching([&target](auto& pendingTarget) {
-        return pendingTarget.ptr() == &target;
-    });
+    {
+        Locker locker { m_observationTargetsLock };
+        m_targetsWaitingForFirstObservation.removeFirstMatching([&target](auto& pendingTarget) {
+            return pendingTarget.get() == &target;
+        });
+    }
     return m_observations.removeFirstMatching([&target](auto& observation) {
         return observation->target() == &target;
     });

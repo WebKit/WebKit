@@ -149,7 +149,7 @@ JSObject* JSTestLegacyNoInterfaceObject::prototype(VM& vm, JSDOMGlobalObject& gl
 
 void JSTestLegacyNoInterfaceObject::destroy(JSC::JSCell* cell)
 {
-    JSTestLegacyNoInterfaceObject* thisObject = static_cast<JSTestLegacyNoInterfaceObject*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestLegacyNoInterfaceObject* thisObject = static_cast<JSTestLegacyNoInterfaceObject*>(cell);
     thisObject->JSTestLegacyNoInterfaceObject::~JSTestLegacyNoInterfaceObject();
 }
 
@@ -332,7 +332,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestLegacyNoInterfaceObjectConstructorFunction_static
 
 JSC::GCClient::IsoSubspace* JSTestLegacyNoInterfaceObject::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestLegacyNoInterfaceObject, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestLegacyNoInterfaceObject, UseCustomHeapCellType::No>(vm, "JSTestLegacyNoInterfaceObject"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestLegacyNoInterfaceObject.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestLegacyNoInterfaceObject = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestLegacyNoInterfaceObject.get(); },
@@ -359,7 +359,7 @@ bool JSTestLegacyNoInterfaceObjectOwner::isReachableFromOpaqueRoots(JSC::Handle<
 
 void JSTestLegacyNoInterfaceObjectOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestLegacyNoInterfaceObject = static_cast<JSTestLegacyNoInterfaceObject*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestLegacyNoInterfaceObject = static_cast<JSTestLegacyNoInterfaceObject*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestLegacyNoInterfaceObject->protectedWrapped().ptr(), jsTestLegacyNoInterfaceObject);
 }
@@ -372,7 +372,9 @@ extern "C" { extern void (*const __identifier("??_7TestLegacyNoInterfaceObject@W
 #else
 extern "C" { extern void* _ZTVN7WebCore27TestLegacyNoInterfaceObjectE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestLegacyNoInterfaceObject>, void>> static inline void verifyVTable(TestLegacyNoInterfaceObject* ptr) {
+template<std::same_as<TestLegacyNoInterfaceObject> T>
+static inline void verifyVTable(TestLegacyNoInterfaceObject* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -391,8 +393,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestLegacyNoI
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestLegacyNoInterfaceObject>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestLegacyNoInterfaceObject>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestLegacyNoInterfaceObject>(impl.ptr());
 #endif

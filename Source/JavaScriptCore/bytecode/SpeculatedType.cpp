@@ -251,16 +251,27 @@ void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
 
         if ((value & SpecString) == SpecString)
             strOut.print("String");
+        else if ((value & SpecStringResolved) == SpecStringResolved)
+            strOut.print("StringResolved");
         else {
             if (value & SpecStringIdent)
                 strOut.print("StringIdent");
             else
                 isTop = false;
             
-            if (value & SpecStringVar)
+            if ((value & SpecStringVar) == SpecStringVar)
                 strOut.print("StringVar");
-            else
-                isTop = false;
+            else {
+                if (value & SpecStringResolvedVar)
+                    strOut.print("StringResolvedVar");
+                else
+                    isTop = false;
+
+                if (value & SpecStringUnresolvedVar)
+                    strOut.print("StringUnresolvedVar");
+                else
+                    isTop = false;
+            }
         }
 
         if (value & SpecSymbol)
@@ -597,6 +608,7 @@ SpeculatedType speculationFromCell(JSCell* cell)
             }
             if (impl->isAtom())
                 return SpecStringIdent;
+            return SpecStringResolved;
         }
         return SpecString;
     }

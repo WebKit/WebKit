@@ -87,7 +87,7 @@ static std::optional<Vector<uint8_t>> createAndStoreMasterKey()
     RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
 
     Vector<uint8_t> masterKeyData(masterKeySizeInBytes);
-    auto rc = CCRandomGenerateBytes(masterKeyData.data(), masterKeyData.size());
+    auto rc = CCRandomGenerateBytes(masterKeyData.mutableSpan().data(), masterKeyData.size());
     RELEASE_ASSERT(rc == kCCSuccess);
 
 #if PLATFORM(IOS_FAMILY)
@@ -222,13 +222,13 @@ bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint
     if (masterKey.isEmpty())
         return false;
     Vector<uint8_t> kek(kekSizeInBytes);
-    auto rc = CCRandomGenerateBytes(kek.data(), kek.size());
+    auto rc = CCRandomGenerateBytes(kek.mutableSpan().data(), kek.size());
     RELEASE_ASSERT(rc == kCCSuccess);
 
     Vector<uint8_t> wrappedKEK(CCSymmetricWrappedSize(kCCWRAPAES, kek.size()));
 
     size_t wrappedKEKSize = wrappedKEK.size();
-    CCCryptorStatus status = CCSymmetricKeyWrap(kCCWRAPAES, CCrfc3394_iv, CCrfc3394_ivLen, masterKey.data(), masterKey.size(), kek.data(), kek.size(), wrappedKEK.data(), &wrappedKEKSize);
+    CCCryptorStatus status = CCSymmetricKeyWrap(kCCWRAPAES, CCrfc3394_iv, CCrfc3394_ivLen, masterKey.span().data(), masterKey.size(), kek.span().data(), kek.size(), wrappedKEK.mutableSpan().data(), &wrappedKEKSize);
     if (status != kCCSuccess)
         return false;
 
@@ -239,11 +239,11 @@ bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint
     uint8_t tag[expectedTagLengthAES] = { 0 };
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    status = CCCryptorGCM(kCCEncrypt, kCCAlgorithmAES128, kek.data(), kek.size(),
+    status = CCCryptorGCM(kCCEncrypt, kCCAlgorithmAES128, kek.span().data(), kek.size(),
         nullptr, 0, // iv
         nullptr, 0, // auth data
-        key.data(), key.size(),
-        encryptedKey.data(),
+        key.span().data(), key.size(),
+        encryptedKey.mutableSpan().data(),
         tag, &tagLength);
 ALLOW_DEPRECATED_DECLARATIONS_END
 
@@ -320,7 +320,7 @@ std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>& masterKey,
 
     Vector<uint8_t> kek(CCSymmetricUnwrappedSize(kCCWRAPAES, wrappedKEK.size()));
     size_t kekSize = kek.size();
-    CCCryptorStatus status = CCSymmetricKeyUnwrap(kCCWRAPAES, CCrfc3394_iv, CCrfc3394_ivLen, masterKey.data(), masterKey.size(), wrappedKEK.data(), wrappedKEK.size(), kek.data(), &kekSize);
+    CCCryptorStatus status = CCSymmetricKeyUnwrap(kCCWRAPAES, CCrfc3394_iv, CCrfc3394_ivLen, masterKey.span().data(), masterKey.span().size(), wrappedKEK.data(), wrappedKEK.size(), kek.mutableSpan().data(), &kekSize);
     if (status != kCCSuccess)
         return std::nullopt;
     kek.shrink(kekSize);
@@ -330,11 +330,11 @@ std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>& masterKey,
 
     Vector<uint8_t> key(encryptedKey.size());
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    status = CCCryptorGCM(kCCDecrypt, kCCAlgorithmAES128, kek.data(), kek.size(),
+    status = CCCryptorGCM(kCCDecrypt, kCCAlgorithmAES128, kek.span().data(), kek.size(),
         nullptr, 0, // iv
         nullptr, 0, // auth data
         encryptedKey.data(), encryptedKey.size(),
-        key.data(),
+        key.mutableSpan().data(),
         actualTag.data(), &tagLength);
 ALLOW_DEPRECATED_DECLARATIONS_END
 

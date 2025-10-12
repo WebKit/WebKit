@@ -6,6 +6,10 @@
 
 // WebGLCompatibilityTest.cpp : Tests of the GL_ANGLE_webgl_compatibility extension.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 
 #include "common/mathutil.h"
@@ -65,6 +69,13 @@ class WebGLCompatibilityTest : public ANGLETest<>
         setConfigBlueBits(8);
         setConfigAlphaBits(8);
         setWebGLCompatibilityEnabled(true);
+        setExtensionsEnabled(false);
+
+        mFloatTextureSamplingProgram                       = 0;
+        mFloatTextureSamplingProgram_texLocation           = -1;
+        mFloatTextureSamplingProgram_subtractorLocation    = -1;
+        mUniformColorRenderingProgram                      = 0;
+        mUniformColorRenderingProgram_colorUniformLocation = -1;
     }
 
     template <typename T>
@@ -109,8 +120,21 @@ void main()
     }
 })";
 
-        ANGLE_GL_PROGRAM(samplingProgram, kVS, kFS);
-        glUseProgram(samplingProgram);
+        if (mFloatTextureSamplingProgram == 0)
+        {
+            mFloatTextureSamplingProgram = CompileProgram(kVS, kFS);
+            ASSERT(mFloatTextureSamplingProgram != 0);
+            ASSERT_GL_NO_ERROR();
+
+            mFloatTextureSamplingProgram_texLocation =
+                glGetUniformLocation(mFloatTextureSamplingProgram, "tex");
+            ASSERT(mFloatTextureSamplingProgram_texLocation != -1);
+            mFloatTextureSamplingProgram_subtractorLocation =
+                glGetUniformLocation(mFloatTextureSamplingProgram, "subtractor");
+            ASSERT(mFloatTextureSamplingProgram_subtractorLocation != -1);
+            ASSERT_GL_NO_ERROR();
+        }
+        glUseProgram(mFloatTextureSamplingProgram);
 
         // Need RGBA8 renderbuffers for enough precision on the readback
         if (IsGLExtensionRequestable("GL_OES_rgb8_rgba8"))
@@ -163,16 +187,16 @@ void main()
         }
         ASSERT_GL_NO_ERROR();
 
-        glUniform1i(glGetUniformLocation(samplingProgram, "tex"), 0);
-        glUniform4fv(glGetUniformLocation(samplingProgram, "subtractor"), 1, floatData);
+        glUniform1i(mFloatTextureSamplingProgram_texLocation, 0);
+        glUniform4fv(mFloatTextureSamplingProgram_subtractorLocation, 1, floatData);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        drawQuad(samplingProgram, "position", 0.5f, 1.0f, true);
+        drawQuad(mFloatTextureSamplingProgram, "position", 0.5f, 1.0f, true);
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        drawQuad(samplingProgram, "position", 0.5f, 1.0f, true);
+        drawQuad(mFloatTextureSamplingProgram, "position", 0.5f, 1.0f, true);
 
         if (linearSamplingEnabled)
         {
@@ -201,14 +225,23 @@ void main()
         }
         ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, framebufferStatus);
 
-        ANGLE_GL_PROGRAM(renderingProgram, essl1_shaders::vs::Simple(),
-                         essl1_shaders::fs::UniformColor());
-        glUseProgram(renderingProgram);
+        if (mUniformColorRenderingProgram == 0)
+        {
+            mUniformColorRenderingProgram =
+                CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+            ASSERT(mUniformColorRenderingProgram != 0);
+            ASSERT_GL_NO_ERROR();
 
-        glUniform4fv(glGetUniformLocation(renderingProgram, essl1_shaders::ColorUniform()), 1,
-                     floatData);
+            mUniformColorRenderingProgram_colorUniformLocation =
+                glGetUniformLocation(mUniformColorRenderingProgram, essl1_shaders::ColorUniform());
+            ASSERT(mUniformColorRenderingProgram_colorUniformLocation != -1);
+            ASSERT_GL_NO_ERROR();
+        }
+        glUseProgram(mUniformColorRenderingProgram);
 
-        drawQuad(renderingProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        glUniform4fv(mUniformColorRenderingProgram_colorUniformLocation, 1, floatData);
+
+        drawQuad(mUniformColorRenderingProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
 
         EXPECT_PIXEL_COLOR32F_NEAR(
             0, 0, GLColor32F(floatData[0], floatData[1], floatData[2], floatData[3]), 1.0f);
@@ -311,6 +344,14 @@ void main()
                                          GLenum expectedError,
                                          const char *explanation);
     void testCompressedTexImage(GLenum format);
+
+  private:
+    GLuint mFloatTextureSamplingProgram;
+    GLint mFloatTextureSamplingProgram_texLocation;
+    GLint mFloatTextureSamplingProgram_subtractorLocation;
+
+    GLuint mUniformColorRenderingProgram;
+    GLint mUniformColorRenderingProgram_colorUniformLocation;
 };
 
 class WebGL2CompatibilityTest : public WebGLCompatibilityTest
@@ -791,7 +832,6 @@ TEST_P(WebGLCompatibilityTest, EnableQueryExtensions)
 {
     EXPECT_FALSE(IsGLExtensionEnabled("GL_EXT_occlusion_query_boolean"));
     EXPECT_FALSE(IsGLExtensionEnabled("GL_EXT_disjoint_timer_query"));
-    EXPECT_FALSE(IsGLExtensionEnabled("GL_CHROMIUM_sync_query"));
 
     // This extensions become core in in ES3/WebGL2.
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() >= 3);
@@ -808,9 +848,6 @@ TEST_P(WebGLCompatibilityTest, EnableQueryExtensions)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
     glQueryCounterEXT(GL_TIMESTAMP_EXT, badQuery);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
-
-    glBeginQueryEXT(GL_COMMANDS_COMPLETED_CHROMIUM, badQuery);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
     if (IsGLExtensionRequestable("GL_EXT_occlusion_query_boolean"))
@@ -836,17 +873,6 @@ TEST_P(WebGLCompatibilityTest, EnableQueryExtensions)
 
         GLQueryEXT query2;
         glQueryCounterEXT(query2, GL_TIMESTAMP_EXT);
-        EXPECT_GL_NO_ERROR();
-    }
-
-    if (IsGLExtensionRequestable("GL_CHROMIUM_sync_query"))
-    {
-        glRequestExtensionANGLE("GL_CHROMIUM_sync_query");
-        EXPECT_GL_NO_ERROR();
-
-        GLQueryEXT query;
-        glBeginQueryEXT(GL_COMMANDS_COMPLETED_CHROMIUM, query);
-        glEndQueryEXT(GL_COMMANDS_COMPLETED_CHROMIUM);
         EXPECT_GL_NO_ERROR();
     }
 }
@@ -2241,48 +2267,93 @@ oo = 1.0;
     EXPECT_EQ(0u, program);
 }
 
-// Tests bindAttribLocations for reserved prefixes and length limits
+// Tests bindAttribLocation for reserved prefixes and length limits
 TEST_P(WebGLCompatibilityTest, BindAttribLocationLimitation)
 {
-    constexpr int maxLocStringLength = 256;
-    const std::string tooLongString(maxLocStringLength + 1, '_');
+    // A program must exist for binding attribute locations
+    ANGLE_GL_PROGRAM(p, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
 
-    glBindAttribLocation(0, 0, "_webgl_var");
-
+    glBindAttribLocation(p, 0, "gl_attr");
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
-    glBindAttribLocation(0, 0, static_cast<const GLchar *>(tooLongString.c_str()));
+    glBindAttribLocation(p, 0, "webgl_attr");
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
+    glBindAttribLocation(p, 0, "_webgl_attr");
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    const int maxStringLength = getClientMajorVersion() < 3 ? 256 : 1024;
+    const std::string tooLongString(maxStringLength + 1, '_');
+
+    glBindAttribLocation(p, 0, static_cast<const GLchar *>(tooLongString.c_str()));
     EXPECT_GL_ERROR(GL_INVALID_VALUE);
 }
 
-// Tests getAttribLocation for reserved prefixes
-TEST_P(WebGLCompatibilityTest, GetAttribLocationNameLimitation)
+// Tests getAttribLocation for reserved prefixes and length limits
+TEST_P(WebGLCompatibilityTest, GetAttribLocationLimitation)
 {
-    GLint attrLocation;
+    // A program must exist for querying attribute locations
+    ANGLE_GL_PROGRAM(p, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
 
-    attrLocation = glGetAttribLocation(0, "gl_attr");
-    EXPECT_GL_NO_ERROR();
-    EXPECT_EQ(-1, attrLocation);
+    GLint location = -2;
 
-    attrLocation = glGetAttribLocation(0, "webgl_attr");
+    location = glGetAttribLocation(p, "gl_attr");
     EXPECT_GL_NO_ERROR();
-    EXPECT_EQ(-1, attrLocation);
+    EXPECT_EQ(-1, location);
 
-    attrLocation = glGetAttribLocation(0, "_webgl_attr");
+    location = glGetAttribLocation(p, "webgl_attr");
     EXPECT_GL_NO_ERROR();
-    EXPECT_EQ(-1, attrLocation);
+    EXPECT_EQ(-1, location);
+
+    location = glGetAttribLocation(p, "_webgl_attr");
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(-1, location);
+
+    const int maxStringLength = getClientMajorVersion() < 3 ? 256 : 1024;
+    const std::string tooLongString(maxStringLength + 1, '_');
+
+    location = glGetAttribLocation(p, static_cast<const GLchar *>(tooLongString.c_str()));
+    EXPECT_GL_ERROR(GL_INVALID_VALUE);
+    EXPECT_EQ(-1, location);
 }
 
-// Tests getAttribLocation for length limits
-TEST_P(WebGLCompatibilityTest, GetAttribLocationLengthLimitation)
+// Tests bindUniformLocation for reserved prefixes
+TEST_P(WebGLCompatibilityTest, BindUniformLocationLimitation)
 {
-    constexpr int maxLocStringLength = 256;
-    const std::string tooLongString(maxLocStringLength + 1, '_');
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_CHROMIUM_bind_uniform_location"));
 
-    glGetAttribLocation(0, static_cast<const GLchar *>(tooLongString.c_str()));
+    // A program must exist for binding uniform locations
+    ANGLE_GL_PROGRAM(p, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
 
-    EXPECT_GL_ERROR(GL_INVALID_VALUE);
+    glBindUniformLocationCHROMIUM(p, 0, "gl_var");
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glBindUniformLocationCHROMIUM(p, 0, "webgl_var");
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glBindUniformLocationCHROMIUM(p, 0, "_webgl_var");
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Tests getUniformLocation for reserved prefixes
+TEST_P(WebGLCompatibilityTest, GetUniformLocationLimitation)
+{
+    // A program must exist for querying uniform locations
+    ANGLE_GL_PROGRAM(p, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+
+    GLint location = -2;
+
+    location = glGetUniformLocation(p, "gl_var");
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(-1, location);
+
+    location = glGetUniformLocation(p, "webgl_var");
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(-1, location);
+
+    location = glGetUniformLocation(p, "_webgl_var");
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(-1, location);
 }
 
 // Test that having no attributes with a zero divisor is valid in WebGL2
@@ -5726,6 +5797,33 @@ TEST_P(WebGL2CompatibilityTest, TransformFeedbackDoubleBinding)
     ASSERT_GL_NO_ERROR();
     // Two varyings bound to the same buffer should be an error.
     glBeginTransformFeedback(GL_POINTS);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Writing to the contents of a currently active transform feedback buffer is invalid
+TEST_P(WebGL2CompatibilityTest, TransformFeedbackBufferModification)
+{
+    constexpr char kVS[] = R"(attribute float a; varying float b; void main() { b = a; })";
+    constexpr char kFS[] = R"(void main(){})";
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    static const char *varyings[] = {"b"};
+    glTransformFeedbackVaryings(program, 1, varyings, GL_SEPARATE_ATTRIBS);
+    glLinkProgram(program);
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    // Bind the transform feedback varyings to non-overlapping regions of the same buffer.
+    GLBuffer buffer;
+    glBindBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buffer, 0, 4);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, 8, nullptr, GL_STATIC_DRAW);
+    glBeginTransformFeedback(GL_POINTS);
+    ASSERT_GL_NO_ERROR();
+
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, 8, nullptr, GL_STATIC_DRAW);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    constexpr uint8_t data[8] = {0};
+    glBufferSubData(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 8, data);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 

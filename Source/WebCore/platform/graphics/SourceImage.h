@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "IntSize.h"
-#include "RenderingResourceIdentifier.h"
+#include <WebCore/IntSize.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 
 namespace WebCore {
 

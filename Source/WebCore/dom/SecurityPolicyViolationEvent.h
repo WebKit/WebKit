@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Event.h"
-#include "SecurityPolicyViolationEventDisposition.h"
+#include <WebCore/Event.h>
+#include <WebCore/SecurityPolicyViolationEventDisposition.h>
 
 namespace WebCore {
 

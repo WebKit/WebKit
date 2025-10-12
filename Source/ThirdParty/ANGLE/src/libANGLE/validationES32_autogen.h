@@ -18,6 +18,7 @@ namespace gl
 {
 class Context;
 class PrivateState;
+class PrivateStateCache;
 class ErrorSet;
 
 bool ValidateBlendBarrier(const Context *context, angle::EntryPoint entryPoint);

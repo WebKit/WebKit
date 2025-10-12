@@ -6,7 +6,8 @@
 <script src="../../resources/testharnessreport.js"></script>
 <script>
 promise_test(async (test) => {
-    await navigator.mediaDevices.getUserMedia({ audio : true });
+    const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
     if (window.testRunner)
        testRunner.resetUserMediaPermission();
@@ -19,7 +20,8 @@ promise_test(async (test) => {
     if (window.testRunner)
         testRunner.setMicrophonePermission(false);
 
-    await navigator.mediaDevices.getUserMedia({ audio : true });
+    const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     const devices = await navigator.mediaDevices.enumerateDevices();
     for (const device of devices)
         assert_true(device.label === "" || device.kind !== "videoinput");
@@ -29,7 +31,8 @@ promise_test(async (test) => {
     if (window.testRunner)
         testRunner.setMicrophonePermission(true);
 
-    await navigator.mediaDevices.getUserMedia({ audio : true });
+    const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     const devices = await navigator.mediaDevices.enumerateDevices();
     for (const device of devices) {
         if (device.kind === "videoinput")

@@ -7,6 +7,10 @@
 // GLES1State.cpp: Implements the GLES1State class, tracking state
 // for GLES1 contexts.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/GLES1State.h"
 
 #include "libANGLE/Context.h"

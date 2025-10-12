@@ -63,6 +63,7 @@ public:
     void didReceivePlayerMessage(IPC::Connection&, IPC::Decoder&);
 
     void unloadModelPlayer(WebCore::ModelPlayerIdentifier);
+    bool hasModelPlayers() const;
 
 private:
     explicit ModelProcessModelPlayerManagerProxy(ModelConnectionToWebProcess&);

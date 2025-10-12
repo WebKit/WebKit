@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -444,11 +444,6 @@ EventLoopTaskGroup::~EventLoopTaskGroup()
 {
     if (RefPtr eventLoop = m_eventLoop.get())
         eventLoop->unregisterGroup(*this);
-}
-
-Ref<JSC::MicrotaskDispatcher> EventLoopTaskGroup::jsMicrotaskDispatcher() const
-{
-    return m_jsMicrotaskDispatcher;
 }
 
 void EventLoopTaskGroup::markAsReadyToStop()

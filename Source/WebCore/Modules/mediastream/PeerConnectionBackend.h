@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,7 +85,7 @@ using SessionDescriptionPromise = DOMPromiseDeferred<IDLDictionary<RTCSessionDes
 using StatsPromise = DOMPromiseDeferred<IDLInterface<RTCStatsReport>>;
 }
 
-using CreatePeerConnectionBackend = const std::unique_ptr<PeerConnectionBackend> (*)(RTCPeerConnection&);
+using CreatePeerConnectionBackend = const std::unique_ptr<PeerConnectionBackend> (*)(RTCPeerConnection&, MediaEndpointConfiguration&&);
 
 class PeerConnectionBackend
     : public CanMakeWeakPtr<PeerConnectionBackend>
@@ -116,6 +116,9 @@ public:
 
     void stop();
 
+#if USE(GSTREAMER_WEBRTC)
+    virtual void prepareForClose() = 0;
+#endif
     virtual void close() = 0;
 
     virtual void restartIce() = 0;
@@ -281,7 +284,7 @@ private:
     bool m_shouldFilterICECandidates { true };
 
 #if !RELEASE_LOG_DISABLED
-    Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
 #endif
     String m_logIdentifierString;

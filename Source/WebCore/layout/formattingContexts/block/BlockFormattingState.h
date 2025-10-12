@@ -26,7 +26,7 @@
 #pragma once
 
 #include "FormattingState.h"
-#include "PlacedFloats.h"
+#include <WebCore/PlacedFloats.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -62,8 +62,8 @@ public:
 private:
     PlacedFloats m_placedFloats;
     OutOfFlowBoxList m_outOfFlowBoxes;
-    UncheckedKeyHashMap<CheckedRef<const Box>, UsedVerticalMargin> m_usedVerticalMargins;
-    UncheckedKeyHashSet<CheckedRef<const Box>> m_clearanceSet;
+    HashMap<CheckedRef<const Box>, UsedVerticalMargin> m_usedVerticalMargins;
+    HashSet<CheckedRef<const Box>> m_clearanceSet;
 };
 
 }

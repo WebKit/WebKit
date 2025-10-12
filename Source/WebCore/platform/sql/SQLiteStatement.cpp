@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include "SQLValue.h"
 #include "SQLiteDatabaseTracker.h"
+#include "SQLiteExtras.h"
 #include <sqlite3.h>
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
@@ -101,7 +102,7 @@ int SQLiteStatement::bindBlob(int index, std::span<const uint8_t> blob)
     ASSERT(static_cast<unsigned>(index) <= bindParameterCount());
     ASSERT(blob.data() || !blob.size());
 
-    return sqlite3_bind_blob(m_statement, index, blob.data(), blob.size(), SQLITE_TRANSIENT);
+    return sqliteBindBlob(m_statement, index, blob);
 }
 
 int SQLiteStatement::bindBlob(int index, const String& text)
@@ -109,8 +110,8 @@ int SQLiteStatement::bindBlob(int index, const String& text)
     // String::characters() returns 0 for the empty string, which SQLite
     // treats as a null, so we supply a non-null pointer for that case.
     auto upconvertedCharacters = StringView(text).upconvertedCharacters();
-    UChar anyCharacter = 0;
-    std::span<const UChar> characters;
+    char16_t anyCharacter = 0;
+    std::span<const char16_t> characters;
     if (text.isEmpty() && !text.isNull())
         characters = unsafeMakeSpan(&anyCharacter, 0);
     else
@@ -127,10 +128,9 @@ int SQLiteStatement::bindText(int index, StringView text)
     // Fast path when the input text is all ASCII.
     if (text.is8Bit() && text.containsOnlyASCII()) {
         auto characters = spanReinterpretCast<const char>(text.span8());
-        return sqlite3_bind_text(m_statement, index, characters.empty() ? "" : characters.data(), characters.size(), SQLITE_TRANSIENT);
+        return sqliteBindText(m_statement, index, characters.empty() ? ""_span : characters);
     }
-    auto utf8Text = text.utf8();
-    return sqlite3_bind_text(m_statement, index, utf8Text.data(), utf8Text.length(), SQLITE_TRANSIENT);
+    return sqliteBindText(m_statement, index, text.utf8());
 }
 
 int SQLiteStatement::bindInt(int index, int integer)
@@ -197,7 +197,7 @@ String SQLiteStatement::columnName(int col)
         return String();
     if (columnCount() <= col)
         return String();
-    return String::fromUTF8(sqlite3_column_name(m_statement, col));
+    return sqliteColumnName(m_statement, col);
 }
 
 SQLValue SQLiteStatement::columnValue(int col)
@@ -217,7 +217,7 @@ SQLValue SQLiteStatement::columnValue(int col)
         return sqlite3_value_double(value);
     case SQLITE_BLOB: // SQLValue and JS don't represent blobs, so use TEXT -case
     case SQLITE_TEXT:
-        return String::fromUTF8(unsafeMakeSpan(sqlite3_value_text(value), sqlite3_value_bytes(value)));
+        return sqliteValueText(value);
     case SQLITE_NULL:
         return nullptr;
     default:
@@ -235,7 +235,7 @@ String SQLiteStatement::columnText(int col)
         return String();
     if (columnCount() <= col)
         return String();
-    return String::fromUTF8(unsafeMakeSpan(sqlite3_column_text(m_statement, col), sqlite3_column_bytes(m_statement, col)));
+    return sqliteColumnText(m_statement, col);
 }
     
 double SQLiteStatement::columnDouble(int col)
@@ -278,16 +278,10 @@ String SQLiteStatement::columnBlobAsString(int col)
     if (columnCount() <= col)
         return String();
 
-    auto* blob = static_cast<const UChar*>(sqlite3_column_blob(m_statement, col));
-    if (!blob)
+    auto blob = sqliteColumnBlob<char16_t>(m_statement, col);
+    if (!blob.data())
         return emptyString();
-
-    int size = sqlite3_column_bytes(m_statement, col);
-    if (size < 0)
-        return String();
-
-    ASSERT(!(size % sizeof(UChar)));
-    return StringImpl::create8BitIfPossible(unsafeMakeSpan(blob, size / sizeof(UChar)));
+    return StringImpl::create8BitIfPossible(blob);
 }
 
 Vector<uint8_t> SQLiteStatement::columnBlob(int col)
@@ -305,15 +299,7 @@ std::span<const uint8_t> SQLiteStatement::columnBlobAsSpan(int col)
     if (columnCount() <= col)
         return { };
 
-    auto* blob = static_cast<const uint8_t*>(sqlite3_column_blob(m_statement, col));
-    if (!blob)
-        return { };
-
-    int blobSize = sqlite3_column_bytes(m_statement, col);
-    if (blobSize <= 0)
-        return { };
-
-    return unsafeMakeSpan(blob, blobSize);
+    return sqliteColumnBlob(m_statement, col);
 }
 
 bool SQLiteStatement::hasStartedStepping()

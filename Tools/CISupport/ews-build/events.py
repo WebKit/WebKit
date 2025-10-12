@@ -46,7 +46,7 @@ custom_suffix = get_custom_suffix()
 
 class Events(service.BuildbotService):
 
-    EVENT_SERVER_ENDPOINT = f'https://ews.webkit{custom_suffix}.org/results/'
+    EVENT_SERVER_ENDPOINT = load_password('EVENT_SERVER_ENDPOINT', default=f'https://ews.webkit{custom_suffix}.org/results/')
     MAX_GITHUB_DESCRIPTION = 140
     STEPS_TO_REPORT = [
         'analyze-api-tests-results', 'analyze-compile-webkit-results', 'analyze-jsc-tests-results',
@@ -62,7 +62,7 @@ class Events(service.BuildbotService):
         'build-webkit-org-unit-tests', 'buildbot-check-config', 'buildbot-check-config-for-build-webkit', 'buildbot-check-config-for-ews',
         'ews-unit-tests', 'resultsdbpy-unit-tests',
         'upload-built-product', 'upload-test-results',
-        'apply-watch-list', 'bindings-tests', 'check-webkit-style',
+        'bindings-tests', 'check-webkit-style',
         'webkitperl-tests', 're-run-webkitperl-tests', 'webkitpy-tests'
     ]
 
@@ -129,14 +129,19 @@ class Events(service.BuildbotService):
             build['properties'] = yield self.master.db.builds.getBuildProperties(build.get('buildid'))
 
         builder = yield self.master.db.builders.getBuilder(build.get('builderid'))
-        builder_display_name = builder.get('description')
+        # Handle both buildbot 2.x (dict) and 4.x (model object)
+        if isinstance(builder, dict):
+            builder_display_name = builder.get('description', '')
+        else:
+            builder_display_name = builder.description
 
         data = {
             "type": self.type_prefix + "build",
             "status": "started",
             "hostname": self.master_hostname,
             "change_id": self.extractProperty(build, 'github.head.sha') or self.extractProperty(build, 'patch_id'),
-            "pr_id": self.extractProperty(build, 'github.number') or -1,
+            "pr_author": self.extractProperty(build, 'github.head.user.login'),
+            "pr_number": self.extractProperty(build, 'github.number') or -1,
             "pr_project": self.extractProperty(build, 'project') or '',
             "build_id": build.get('buildid'),
             "builder_id": build.get('builderid'),
@@ -185,7 +190,11 @@ class Events(service.BuildbotService):
             build['steps'] = yield self.master.db.steps.getSteps(build.get('buildid'))
 
         builder = yield self.master.db.builders.getBuilder(build.get('builderid'))
-        build['description'] = builder.get('description', '?')
+        # Handle both buildbot 2.x (dict) and 4.x (model object)
+        if isinstance(builder, dict):
+            build['description'] = builder.get('description', '?')
+        else:
+            build['description'] = builder.description
 
         if self.extractProperty(build, 'github.number') and (custom_suffix == ''):
             self.buildFinishedGitHub(build)
@@ -195,7 +204,8 @@ class Events(service.BuildbotService):
             "status": "finished",
             "hostname": self.master_hostname,
             "change_id": self.extractProperty(build, 'github.head.sha') or self.extractProperty(build, 'patch_id'),
-            "pr_id": self.extractProperty(build, 'github.number') or -1,
+            "pr_author": self.extractProperty(build, 'github.head.user.login'),
+            "pr_number": self.extractProperty(build, 'github.number') or -1,
             "pr_project": self.extractProperty(build, 'project') or '',
             "build_id": build.get('buildid'),
             "builder_id": build.get('builderid'),
@@ -205,8 +215,7 @@ class Events(service.BuildbotService):
             "complete_at": build.get('complete_at'),
             "state_string": build.get('state_string'),
             "builder_name": self.getBuilderName(build),
-            "builder_display_name": builder.get('description'),
-            "steps": build.get('steps'),
+            "builder_display_name": builder.get('description', '') if isinstance(builder, dict) else builder.description,
         }
 
         self.sendDataToEWS(data)
@@ -349,7 +358,7 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
     PUBLIC_REPOS = ('WebKit/WebKit',)
     SENSATIVE_FIELDS = ('github.title',)
     LABEL_PROCESS_DELAY = 10
-    ACCOUNTS_TO_IGNORE = ('webkit-early-warning-system', 'webkit-commit-queue', 'chgibb-apple')
+    ACCOUNTS_TO_IGNORE = ('webkit-early-warning-system', 'webkit-commit-queue')
     TRAILER_RE = re.compile(r'^(?P<key>[^:()\t\/*]+): (?P<value>.+)')
 
     _commit_classes = []

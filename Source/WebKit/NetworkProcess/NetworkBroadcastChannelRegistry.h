@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Connection.h"
+#include "SharedPreferencesForWebProcess.h"
 #include <WebCore/BroadcastChannelIdentifier.h>
 #include <WebCore/ClientOrigin.h>
 #include <wtf/HashMap.h>
@@ -54,10 +55,11 @@ public:
     void unregisterChannel(IPC::Connection&, const WebCore::ClientOrigin&, const String& name);
     void postMessage(IPC::Connection&, const WebCore::ClientOrigin&, const String& name, WebCore::MessageWithMessagePorts&&, CompletionHandler<void()>&&);
 
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const;
 private:
     explicit NetworkBroadcastChannelRegistry(NetworkProcess&);
 
-    Ref<NetworkProcess> m_networkProcess;
+    const Ref<NetworkProcess> m_networkProcess;
     using NameToConnectionIdentifiersMap = HashMap<String, Vector<IPC::Connection::UniqueID>>;
     HashMap<WebCore::ClientOrigin, NameToConnectionIdentifiersMap> m_broadcastChannels;
 };

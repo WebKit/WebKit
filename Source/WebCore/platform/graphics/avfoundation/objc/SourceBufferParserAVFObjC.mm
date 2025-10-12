@@ -59,11 +59,9 @@
 #pragma mark -
 #pragma mark WebAVStreamDataParserListener
 
-#if USE(MODERN_AVCONTENTKEYSESSION)
 @interface AVContentKeySpecifier (WebCorePrivate)
 @property (readonly) NSData *initializationData;
 @end
-#endif
 
 @interface WebAVStreamDataParserListener : NSObject<AVStreamDataParserOutputHandling> {
     ThreadSafeWeakPtr<WebCore::SourceBufferParserAVFObjC> _parent;
@@ -144,7 +142,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 @end
 
-#if USE(MODERN_AVCONTENTKEYSESSION)
 @interface WebAVStreamDataParserWithKeySpecifierListener : WebAVStreamDataParserListener
 @end
 
@@ -156,7 +153,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         _parent.get()->didProvideContentKeyRequestSpecifierForTrackID(keySpecifier.initializationData, trackID);
 }
 @end
-#endif
 
 namespace WebCore {
 
@@ -189,7 +185,7 @@ private:
         if (!description)
             return emptyString();
         FourCC originalCodec = PAL::softLink_CoreMedia_CMFormatDescriptionGetMediaSubType(description);
-        CFStringRef originalFormatKey = PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_ProtectedContentOriginalFormat() ? PAL::get_CoreMedia_kCMFormatDescriptionExtension_ProtectedContentOriginalFormat() : CFSTR("CommonEncryptionOriginalFormat");
+        CFStringRef originalFormatKey = PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_ProtectedContentOriginalFormat() ? PAL::kCMFormatDescriptionExtension_ProtectedContentOriginalFormat : CFSTR("CommonEncryptionOriginalFormat");
         if (auto originalFormat = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(description, originalFormatKey)))
             CFNumberGetValue(originalFormat, kCFNumberSInt32Type, &originalCodec.value);
         return String::fromLatin1(originalCodec.string().data());
@@ -205,13 +201,13 @@ private:
 MediaPlayerEnums::SupportsType SourceBufferParserAVFObjC::isContentTypeSupported(const ContentType& type)
 {
     // Check that AVStreamDataParser is in a functional state.
-    if (!PAL::getAVStreamDataParserClass() || !adoptNS([PAL::allocAVStreamDataParserInstance() init]))
+    if (!PAL::getAVStreamDataParserClassSingleton() || !adoptNS([PAL::allocAVStreamDataParserInstance() init]))
         return MediaPlayerEnums::SupportsType::IsNotSupported;
 
     String extendedType = type.raw();
     String outputCodecs = type.parameter(ContentType::codecsParameter());
-    if (!outputCodecs.isEmpty() && [PAL::getAVStreamDataParserClass() respondsToSelector:@selector(outputMIMECodecParameterForInputMIMECodecParameter:)]) {
-        outputCodecs = [PAL::getAVStreamDataParserClass() outputMIMECodecParameterForInputMIMECodecParameter:outputCodecs.createNSString().get()];
+    if (!outputCodecs.isEmpty() && [PAL::getAVStreamDataParserClassSingleton() respondsToSelector:@selector(outputMIMECodecParameterForInputMIMECodecParameter:)]) {
+        outputCodecs = [PAL::getAVStreamDataParserClassSingleton() outputMIMECodecParameterForInputMIMECodecParameter:outputCodecs.createNSString().get()];
         extendedType = makeString(type.containerType(), "; codecs=\""_s, outputCodecs, "\""_s);
     }
 
@@ -222,12 +218,8 @@ SourceBufferParserAVFObjC::SourceBufferParserAVFObjC(const MediaSourceConfigurat
     : m_parser(adoptNS([PAL::allocAVStreamDataParserInstance() init]))
     , m_configuration(configuration)
 {
-#if USE(MODERN_AVCONTENTKEYSESSION)
-    if (MediaSessionManagerCocoa::shouldUseModernAVContentKeySession())
-        m_delegate = adoptNS([[WebAVStreamDataParserWithKeySpecifierListener alloc] initWithParser:m_parser.get() parent:this]);
-    else
-#endif
-        m_delegate = adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:this]);
+    m_delegate = adoptNS([[WebAVStreamDataParserWithKeySpecifierListener alloc] initWithParser:m_parser.get() parent:this]);
+
 #if USE(MEDIAPARSERD)
     if ([m_parser.get() respondsToSelector:@selector(setPreferSandboxedParsing:)])
         [m_parser.get() setPreferSandboxedParsing:YES];
@@ -241,11 +233,10 @@ SourceBufferParserAVFObjC::~SourceBufferParserAVFObjC()
     [m_delegate invalidate];
 }
 
-Expected<void, PlatformMediaError> SourceBufferParserAVFObjC::appendData(Segment&& segment, AppendFlags flags)
+Expected<void, PlatformMediaError> SourceBufferParserAVFObjC::appendData(Ref<const SharedBuffer>&& segment, AppendFlags flags)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    auto sharedBuffer = segment.takeSharedBuffer();
-    auto nsData = sharedBuffer->makeContiguous()->createNSData();
+    RetainPtr nsData = segment->createNSData();
     if (m_parserStateWasReset || flags == AppendFlags::Discontinuity)
         [m_parser appendStreamData:nsData.get() withFlags:AVStreamDataParserStreamDataDiscontinuity];
     else
@@ -280,7 +271,7 @@ void SourceBufferParserAVFObjC::invalidate()
 #if !RELEASE_LOG_DISABLED
 void SourceBufferParserAVFObjC::setLogger(const Logger& newLogger, uint64_t newLogIdentifier)
 {
-    m_logger = &newLogger;
+    m_logger = newLogger;
     m_logIdentifier = newLogIdentifier;
     ALWAYS_LOG(LOGIDENTIFIER);
 }

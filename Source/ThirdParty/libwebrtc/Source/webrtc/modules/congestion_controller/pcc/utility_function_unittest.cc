@@ -10,10 +10,8 @@
 
 #include "modules/congestion_controller/pcc/utility_function.h"
 
-#include <stddef.h>
-
 #include <cmath>
-#include <type_traits>
+#include <cstddef>
 #include <vector>
 
 #include "api/transport/network_types.h"
@@ -21,6 +19,7 @@
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "modules/congestion_controller/pcc/monitor_interval.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -32,13 +31,13 @@ constexpr double kThroughputPower = 0.9;
 constexpr double kThroughputCoefficient = 1;
 constexpr double kDelayGradientNegativeBound = 10;
 
-const Timestamp kStartTime = Timestamp::Micros(0);
-const TimeDelta kPacketsDelta = TimeDelta::Millis(1);
-const TimeDelta kIntervalDuration = TimeDelta::Millis(100);
-const DataRate kSendingBitrate = DataRate::BitsPerSec(1000);
+constexpr Timestamp kStartTime = Timestamp::Micros(0);
+constexpr TimeDelta kPacketsDelta = TimeDelta::Millis(1);
+constexpr TimeDelta kIntervalDuration = TimeDelta::Millis(100);
+constexpr DataRate kSendingBitrate = DataRate::BitsPerSec(1000);
 
-const DataSize kDefaultDataSize = DataSize::Bytes(100);
-const TimeDelta kDefaultDelay = TimeDelta::Millis(100);
+constexpr DataSize kDefaultDataSize = DataSize::Bytes(100);
+constexpr TimeDelta kDefaultDelay = TimeDelta::Millis(100);
 
 std::vector<PacketResult> CreatePacketResults(
     const std::vector<Timestamp>& packets_send_times,

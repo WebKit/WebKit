@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "Identifier.h"
-#include "JSGenerator.h"
-#include "JSInternalFieldObjectImpl.h"
-#include "ScriptFetchParameters.h"
+#include <JavaScriptCore/Identifier.h>
+#include <JavaScriptCore/JSGenerator.h>
+#include <JavaScriptCore/JSInternalFieldObjectImpl.h>
+#include <JavaScriptCore/ScriptFetchParameters.h>
 #include <wtf/ListHashSet.h>
 
 namespace JSC {
@@ -159,11 +159,11 @@ public:
     WriteBarrier<Unknown>& internalField(Field field) { return Base::internalField(static_cast<uint32_t>(field)); }
     WriteBarrier<Unknown> internalField(Field field) const { return Base::internalField(static_cast<uint32_t>(field)); }
 
+    DECLARE_VISIT_CHILDREN;
+
 protected:
     AbstractModuleRecord(VM&, Structure*, const Identifier&);
     void finishCreation(JSGlobalObject*, VM&);
-
-    DECLARE_VISIT_CHILDREN;
 
     void setModuleEnvironment(JSGlobalObject*, JSModuleEnvironment*);
 

@@ -14,14 +14,18 @@ rtc_library("repeating_task") {
     "repeating_task.h",
   ]
   deps = [
+    "..:checks",
     "..:logging",
+    "..:macromagic",
     "..:timeutils",
+    "../../api:location",
+    "../../api:scoped_refptr",
     "../../api:sequence_checker",
     "../../api/task_queue",
     "../../api/task_queue:pending_task_safety_flag",
     "../../api/units:time_delta",
     "../../api/units:timestamp",
-    "../../system_wrappers:system_wrappers",
+    "../../system_wrappers",
     "//third_party/abseil-cpp/absl/functional:any_invocable",
   ]
 }
@@ -34,11 +38,12 @@ if (rtc_include_tests) {
       ":repeating_task",
       "..:rtc_event",
       "..:task_queue_for_test",
+      "../../api:location",
       "../../api/task_queue",
       "../../api/task_queue/test:mock_task_queue_base",
       "../../api/units:time_delta",
       "../../api/units:timestamp",
-      "../../system_wrappers:system_wrappers",
+      "../../system_wrappers",
       "../../test:test_support",
       "//third_party/abseil-cpp/absl/functional:any_invocable",
     ]

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +28,6 @@
 #include "StyleColorMix.h"
 
 #include "CSSColorMixResolver.h"
-#include "CSSColorMixSerialization.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "ColorSerialization.h"
 #include "StyleColorResolutionState.h"
@@ -36,6 +36,8 @@
 
 namespace WebCore {
 namespace Style {
+
+using namespace CSS::Literals;
 
 // MARK: - Conversion
 
@@ -113,15 +115,81 @@ bool containsCurrentColor(const ColorMix& colorMix)
 
 // MARK: - Serialization
 
-void serializationForCSS(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMix& colorMix)
+namespace ColorMixSerializationDetails {
+
+static bool sumTo100Percent(const ColorMix::Component::Percentage& a, const ColorMix::Component::Percentage& b)
 {
-    CSS::serializationForCSSColorMix(builder, context, colorMix);
+    return a.value + b.value == 100.0;
 }
 
-String serializationForCSS(const CSS::SerializationContext& context, const ColorMix& colorMix)
+static std::optional<ColorMix::Component::Percentage> subtractFrom100Percent(const ColorMix::Component::Percentage& percentage)
+{
+    return ColorMix::Component::Percentage { 100.0 - percentage.value };
+}
+
+static void serializeColorMixPercentage(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMix::Component::Percentage& percentage)
+{
+    CSS::serializationForCSS(builder, context, CSS::PercentageRaw<> { percentage.value });
+}
+
+static void serializationForColorMixPercentage1(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMix& value)
+{
+    if (value.mixComponents1.percentage && value.mixComponents2.percentage) {
+        if (*value.mixComponents1.percentage == 50_css_percentage && *value.mixComponents2.percentage == 50_css_percentage)
+            return;
+        builder.append(' ');
+        serializeColorMixPercentage(builder, context, *value.mixComponents1.percentage);
+    } else if (value.mixComponents1.percentage) {
+        if (*value.mixComponents1.percentage == 50_css_percentage)
+            return;
+        builder.append(' ');
+        serializeColorMixPercentage(builder, context, *value.mixComponents1.percentage);
+    } else if (value.mixComponents2.percentage) {
+        if (*value.mixComponents2.percentage == 50_css_percentage)
+            return;
+
+        auto subtractedPercent = subtractFrom100Percent(*value.mixComponents2.percentage);
+        if (!subtractedPercent)
+            return;
+
+        builder.append(' ');
+        serializeColorMixPercentage(builder, context, *subtractedPercent);
+    }
+}
+
+static void serializationForColorMixPercentage2(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMix& value)
+{
+    if (value.mixComponents1.percentage && value.mixComponents2.percentage) {
+        if (sumTo100Percent(*value.mixComponents1.percentage, *value.mixComponents2.percentage))
+            return;
+
+        builder.append(' ');
+        serializeColorMixPercentage(builder, context, *value.mixComponents2.percentage);
+    }
+}
+
+} // namespace ColorMixSerializationDetails
+
+void serializationForCSSTokenization(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMix& colorMix)
+{
+    builder.append("color-mix("_s);
+    if (colorMix.colorInterpolationMethod != CSS::defaultInterpolationMethodForColorMix) {
+        builder.append("in "_s);
+        WebCore::serializationForCSS(builder, colorMix.colorInterpolationMethod);
+        builder.append(", "_s);
+    }
+    serializationForCSSTokenization(builder, context, colorMix.mixComponents1.color);
+    ColorMixSerializationDetails::serializationForColorMixPercentage1(builder, context, colorMix);
+    builder.append(", "_s);
+    serializationForCSSTokenization(builder, context, colorMix.mixComponents2.color);
+    ColorMixSerializationDetails::serializationForColorMixPercentage2(builder, context, colorMix);
+    builder.append(')');
+}
+
+String serializationForCSSTokenization(const CSS::SerializationContext& context, const ColorMix& colorMix)
 {
     StringBuilder builder;
-    serializationForCSS(builder, context, colorMix);
+    serializationForCSSTokenization(builder, context, colorMix);
     return builder.toString();
 }
 

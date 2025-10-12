@@ -27,12 +27,15 @@
 #include "WebBackForwardList.h"
 
 #include "APIArray.h"
+#include "BrowsingContextGroup.h"
+#include "LoadedWebArchive.h"
 #include "Logging.h"
 #include "SessionState.h"
 #include "WebBackForwardCache.h"
 #include "WebBackForwardListCounts.h"
 #include "WebBackForwardListFrameItem.h"
 #include "WebFrameProxy.h"
+#include "WebInspectorUtilities.h"
 #include "WebPageProxy.h"
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
@@ -73,7 +76,7 @@ WebBackForwardListItem* WebBackForwardList::itemForID(BackForwardItemIdentifier 
         return nullptr;
 
     ASSERT(item->pageID() == m_page->identifier());
-    return item.get();
+    return item.unsafeGet();
 }
 
 void WebBackForwardList::pageClosed()
@@ -633,21 +636,177 @@ Ref<FrameState> WebBackForwardList::completeFrameStateForNavigation(Ref<FrameSta
     return frameState;
 }
 
+#define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
+#define MESSAGE_CHECK_COMPLETION(process, assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process->connection(), completion)
+
+void WebBackForwardList::backForwardAddItem(IPC::Connection& connection, Ref<FrameState>&& navigatedFrameState)
+{
+    if (RefPtr webPageProxy = m_page.get())
+        backForwardAddItemShared(connection, WTFMove(navigatedFrameState), webPageProxy->didLoadWebArchive() ? LoadedWebArchive::Yes : LoadedWebArchive::No);
+}
+
+void WebBackForwardList::backForwardAddItemShared(IPC::Connection& connection, Ref<FrameState>&& navigatedFrameState, LoadedWebArchive loadedWebArchive)
+{
+    Ref process = WebProcessProxy::fromConnection(connection);
+
+    URL itemURL { navigatedFrameState->urlString };
+    URL itemOriginalURL { navigatedFrameState->originalURLString };
+#if PLATFORM(COCOA)
+    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::PushStateFilePathRestriction)
+#if PLATFORM(MAC)
+        && !WTF::MacApplication::isMimeoPhotoProject() // rdar://112445672.
+#endif // PLATFORM(MAC)
+    ) {
+#endif // PLATFORM(COCOA)
+        ASSERT(!itemURL.protocolIsFile() || process->wasPreviouslyApprovedFileURL(itemURL));
+        MESSAGE_CHECK(process, !itemURL.protocolIsFile() || process->wasPreviouslyApprovedFileURL(itemURL));
+        MESSAGE_CHECK(process, !itemOriginalURL.protocolIsFile() || process->wasPreviouslyApprovedFileURL(itemOriginalURL));
+#if PLATFORM(COCOA)
+    }
+#endif
+
+    if (RefPtr targetFrame = WebFrameProxy::webFrame(navigatedFrameState->frameID)) {
+        if (targetFrame->isPendingInitialHistoryItem()) {
+            targetFrame->setIsPendingInitialHistoryItem(false);
+            if (RefPtr parent = targetFrame->parentFrame())
+                addChildItem(parent->frameID(), WTFMove(navigatedFrameState));
+            return;
+        }
+    } else
+        return;
+
+    if (RefPtr webPageProxy = m_page.get()) {
+
+        const bool isRemoteFrameNavigation = webPageProxy->isRemoteFrameNavigation(process);
+        ASSERT(!isRemoteFrameNavigation || webPageProxy->preferences().siteIsolationEnabled());
+
+        auto navigatedFrameID = navigatedFrameState->frameID;
+        Ref item = WebBackForwardListItem::create(completeFrameStateForNavigation(WTFMove(navigatedFrameState)), webPageProxy->identifier(), navigatedFrameID, webPageProxy->protectedBrowsingContextGroup().ptr());
+        item->setResourceDirectoryURL(webPageProxy->currentResourceDirectoryURL());
+        item->setIsRemoteFrameNavigation(isRemoteFrameNavigation);
+        if (loadedWebArchive == LoadedWebArchive::Yes)
+            item->setDataStoreForWebArchive(process->websiteDataStore());
+        addItem(WTFMove(item));
+    }
+}
+
+void WebBackForwardList::backForwardSetChildItem(BackForwardFrameItemIdentifier frameItemID, Ref<FrameState>&& frameState)
+{
+    RefPtr item = currentItem();
+    if (!item)
+        return;
+
+    if (RefPtr frameItem = WebBackForwardListFrameItem::itemForID(item->identifier(), frameItemID))
+        frameItem->setChild(WTFMove(frameState));
+}
+
+void WebBackForwardList::backForwardClearChildren(BackForwardItemIdentifier itemID, BackForwardFrameItemIdentifier frameItemID)
+{
+    if (RefPtr frameItem = WebBackForwardListFrameItem::itemForID(itemID, frameItemID))
+        frameItem->clearChildren();
+}
+
+void WebBackForwardList::backForwardUpdateItem(IPC::Connection& connection, Ref<FrameState>&& frameState)
+{
+    RefPtr frameItem = frameState->itemID && frameState->frameItemID ? WebBackForwardListFrameItem::itemForID(*frameState->itemID, *frameState->frameItemID) : nullptr;
+    if (!frameItem)
+        return;
+
+    RefPtr item = frameItem->backForwardListItem();
+    if (!item)
+        return;
+
+    if (RefPtr webPageProxy = m_page.get()) {
+        ASSERT(webPageProxy->identifier() == item->pageID() && frameState->itemID == item->identifier());
+
+        Ref process = *downcast<WebProcessProxy>(AuxiliaryProcessProxy::fromConnection(connection));
+        if (!!item->backForwardCacheEntry() != frameState->hasCachedPage) {
+            if (frameState->hasCachedPage)
+            webPageProxy->protectedBackForwardCache()->addEntry(*item, process->coreProcessIdentifier());
+            else if (!item->suspendedPage())
+            webPageProxy->protectedBackForwardCache()->removeEntry(*item);
+        }
+
+        frameItem->setFrameState(WTFMove(frameState));
+    }
+}
+
+void WebBackForwardList::backForwardGoToItem(BackForwardItemIdentifier itemID, CompletionHandler<void(const WebBackForwardListCounts&)>&& completionHandler)
+{
+    // On process swap, we tell the previous process to ignore the load, which causes it so restore its current back forward item to its previous
+    // value. Since the load is really going on in a new provisional process, we want to ignore such requests from the committed process.
+    // Any real new load in the committed process would have cleared m_provisionalPage.
+    if (RefPtr webPageProxy = m_page.get()) {
+        if (webPageProxy->hasProvisionalPage())
+            return completionHandler(counts());
+    }
+
+    backForwardGoToItemShared(itemID, WTFMove(completionHandler));
+}
+
+void WebBackForwardList::backForwardListContainsItem(WebCore::BackForwardItemIdentifier itemID, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(itemForID(itemID));
+}
+
+void WebBackForwardList::backForwardGoToItemShared(BackForwardItemIdentifier itemID, CompletionHandler<void(const WebBackForwardListCounts&)>&& completionHandler)
+{
+    if (RefPtr webPageProxy = m_page.get())
+        MESSAGE_CHECK_COMPLETION(webPageProxy->protectedLegacyMainFrameProcess(), !WebKit::isInspectorPage(*webPageProxy), completionHandler(counts()));
+
+    RefPtr item = itemForID(itemID);
+    if (!item)
+        return completionHandler(counts());
+
+    goToItem(*item);
+    completionHandler(counts());
+}
+
+void WebBackForwardList::backForwardAllItems(FrameIdentifier frameID, CompletionHandler<void(Vector<Ref<FrameState>>&&)>&& completionHandler)
+{
+    Vector<Ref<FrameState>> allItems;
+
+    for (Ref item : this->allItems()) {
+        RefPtr<FrameState> frameState;
+
+        if (RefPtr frameItem = item->protectedMainFrameItem()->childItemForFrameID(frameID))
+            frameState = frameItem->copyFrameStateWithChildren();
+        else
+            frameState = item->mainFrameState();
+
+        allItems.append(frameState.releaseNonNull());
+    }
+
+    completionHandler(WTFMove(allItems));
+}
+
+void WebBackForwardList::backForwardItemAtIndex(int32_t index, FrameIdentifier frameID, CompletionHandler<void(RefPtr<FrameState>&&)>&& completionHandler)
+{
+    // FIXME: This should verify that the web process requesting the item hosts the specified frame.
+    if (RefPtr item = itemAtIndex(index)) {
+        if (RefPtr frameItem = item->protectedMainFrameItem()->childItemForFrameID(frameID))
+            return completionHandler(frameItem->copyFrameStateWithChildren());
+        completionHandler(item->mainFrameState());
+    } else
+        completionHandler(nullptr);
+}
+
+void WebBackForwardList::backForwardListCounts(CompletionHandler<void(WebBackForwardListCounts&&)>&& completionHandler)
+{
+    completionHandler(counts());
+}
+
 #if !LOG_DISABLED
 
 String WebBackForwardList::loggingString()
 {
     StringBuilder builder;
 
-    builder.append("\nWebBackForwardList 0x"_s, hex(reinterpret_cast<uintptr_t>(this)), " - "_s, m_entries.size(), " entries, has current index "_s, m_currentIndex ? "YES"_s : "NO"_s, " ("_s, m_currentIndex ? *m_currentIndex : 0, ')');
+    builder.append("\nWebBackForwardList 0x"_s, hex(reinterpret_cast<uintptr_t>(this)), " - "_s, m_entries.size(), " entries, has current index "_s, m_currentIndex ? "YES"_s : "NO"_s, " ("_s, m_currentIndex ? *m_currentIndex : 0, ")\n"_s);
 
     for (size_t i = 0; i < m_entries.size(); ++i) {
-        ASCIILiteral prefix;
-        if (m_currentIndex && *m_currentIndex == i)
-            prefix = " * "_s;
-        else
-            prefix = " - "_s;
-        builder.append('\n', prefix, m_entries[i]->loggingString());
+        ASCIILiteral prefix = (m_currentIndex && *m_currentIndex == i) ? " * "_s : " - "_s;
+        builder.append(prefix, m_entries[i]->loggingString());
     }
 
     return builder.toString();

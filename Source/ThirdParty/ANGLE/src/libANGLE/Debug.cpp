@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 // Debug.cpp: Defines debug state used for GL_KHR_debug
 
 #include "libANGLE/Debug.h"

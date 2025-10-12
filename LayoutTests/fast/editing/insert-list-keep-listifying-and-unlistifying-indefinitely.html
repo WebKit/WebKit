@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+ a  { float: inline-start; }
+ li  { float: inline-start; }
+ ul  { float: inline-start; }
+</style>
+<ul>
+  <li><a>AAAAAAAAAAAAAAAA</a></li>
+  <li>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</li>
+  <li>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</li>
+</ul>
+<script>
+  window.testRunner?.dumpAsText();
+  window.document.designMode = "on";
+  document.execCommand("selectAll",false,null);
+  document.execCommand("insertUnorderedList",false,null);
+  document.body.innerHTML = "PASS if no crash.";
+</script>

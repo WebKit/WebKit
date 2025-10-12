@@ -27,7 +27,7 @@
 
 #if HAVE(AVKIT_CONTENT_SOURCE)
 
-#include "PlaybackSessionInterfaceIOS.h"
+#include <WebCore/PlaybackSessionInterfaceIOS.h>
 #include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WebAVContentSource;

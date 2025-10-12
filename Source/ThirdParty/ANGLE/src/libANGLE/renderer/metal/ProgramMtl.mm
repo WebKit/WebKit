@@ -314,8 +314,7 @@ angle::Result ProgramMtl::compileMslShaderLibs(
         mtl::TranslatedShaderInfo *translateInfo =
             &executableMtl->mMslShaderTranslateInfo[shaderType];
         std::map<std::string, std::string> macros = GetDefaultSubstitutionDictionary();
-        const bool disableFastMath = displayMtl->getFeatures().intelDisableFastMath.enabled ||
-                                     translateInfo->hasIsnanOrIsinf;
+        const bool disableFastMath                = translateInfo->hasIsnanOrIsinf;
         const bool usesInvariance = translateInfo->hasInvariant;
 
         // Check if the shader is already in the cache and use it instead of spawning a new thread

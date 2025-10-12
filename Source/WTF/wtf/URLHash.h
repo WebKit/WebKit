@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef URLHash_h
-#define URLHash_h
+#pragma once
 
 #include <wtf/URL.h>
 #include <wtf/text/StringHash.h>
@@ -53,5 +52,3 @@ template<> struct DefaultHash<URL> : URLHash { };
 template<> struct HashTraits<URL> : SimpleClassHashTraits<URL> { };
 
 } // namespace WTF
-
-#endif // URLHash_h

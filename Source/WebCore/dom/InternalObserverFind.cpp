@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Marais Rossouw <me@marais.co>. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +29,7 @@
 
 #include "AbortSignal.h"
 #include "CallbackResult.h"
+#include "ContextDestructionObserverInlines.h"
 #include "InternalObserver.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Observable.h"
@@ -66,14 +68,14 @@ private:
             // abort signal and promise rejection.
             auto scope = DECLARE_CATCH_SCOPE(vm);
 
-            auto result = protectedCallback()->invokeRethrowingException(value, m_idx++);
+            auto result = m_callback->invokeRethrowingException(value, m_idx++);
 
             JSC::Exception* exception = scope.exception();
             if (exception) [[unlikely]] {
                 scope.clearException();
                 auto value = exception->value();
-                protectedPromise()->reject<IDLAny>(value);
-                protectedSignal()->signalAbort(value);
+                m_promise->reject<IDLAny>(value);
+                m_signal->signalAbort(value);
                 return;
             }
 
@@ -82,30 +84,26 @@ private:
         }
 
         if (hasPassed) {
-            protectedPromise()->resolve<IDLAny>(value);
-            protectedSignal()->signalAbort(JSC::jsUndefined());
+            m_promise->resolve<IDLAny>(value);
+            m_signal->signalAbort(JSC::jsUndefined());
         }
     }
 
     void error(JSC::JSValue value) final
     {
-        protectedPromise()->reject<IDLAny>(value);
+        m_promise->reject<IDLAny>(value);
     }
 
     void complete() final
     {
         InternalObserver::complete();
-        protectedPromise()->resolve();
+        m_promise->resolve();
     }
 
     void visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor) const final
     {
         m_callback->visitJSFunction(visitor);
     }
-
-    Ref<DeferredPromise> protectedPromise() const { return m_promise; }
-    Ref<PredicateCallback> protectedCallback() const { return m_callback; }
-    Ref<AbortSignal> protectedSignal() const { return m_signal; }
 
     InternalObserverFind(ScriptExecutionContext& context, Ref<PredicateCallback>&& callback, Ref<AbortSignal>&& signal, Ref<DeferredPromise>&& promise)
         : InternalObserver(context)

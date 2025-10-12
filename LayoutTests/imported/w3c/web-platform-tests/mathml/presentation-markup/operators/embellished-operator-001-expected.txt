@@ -27,10 +27,18 @@ FAIL none (embellished operator) assert_approx_equals: expected 50 +/- 1 but got
 FAIL none (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
 FAIL none (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
 FAIL none (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL unknown (embellished operator) assert_approx_equals: expected 50 +/- 1 but got -33
-FAIL unknown (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got -33
-FAIL unknown (not embellished operator) assert_approx_equals: expected 0 +/- 1 but got -33
-FAIL unknown (not embellished operator, from in-flow children) assert_approx_equals: expected 0 +/- 1 but got -33
+FAIL unknown (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
+FAIL unknown (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
+FAIL unknown (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
+FAIL unknown (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
+FAIL mfenced (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
+FAIL mfenced (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
+FAIL mfenced (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 25
+FAIL mfenced (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 83.3125
+FAIL a (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
+FAIL a (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
+FAIL a (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
+FAIL a (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
 X
 X
 X
@@ -242,18 +250,93 @@ X
 
 X
 X
+X
 
+X
+X
+X
+X
+
+01
+X
+01
+01
+X
+01
+01
+X
+01
+
+01
+X
+01
+01
+X
+01
+X
+01
+01
+X
+01
+
+X
+X
+X
+
+X
+X
 X
 X
 
 01
 X
-0101
+01
+01
+X
+01
+01
 X
 01
 
 01
 X
-0101
+01
+01
+X
+01
+X
+01
+01
+X
+01
+
+X
+X
+X
+
+X
+X
+X
+X
+
+01
+X
+01
+01
+X
+01
+01
+X
+01
+
+01
+X
+01
+01
+X
+01
+X
+01
+01
 X
 01

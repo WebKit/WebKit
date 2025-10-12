@@ -1,9 +1,9 @@
-Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o
-Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o
-Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o
-Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?version=3&hl=en_US
-Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?version=3&hl=en_US
-Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?version=3&hl=en_US
+CONSOLE MESSAGE: Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o
+CONSOLE MESSAGE: Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o
+CONSOLE MESSAGE: Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o
+CONSOLE MESSAGE: Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?version=3&hl=en_US
+CONSOLE MESSAGE: Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?version=3&hl=en_US
+CONSOLE MESSAGE: Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?version=3&hl=en_US
 Test embed youtube plugin without height or width attribute. < rdar://problem/12134474>
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

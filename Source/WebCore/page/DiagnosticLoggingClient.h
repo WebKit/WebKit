@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DiagnosticLoggingDomain.h"
+#include <WebCore/DiagnosticLoggingDomain.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HashMap.h>

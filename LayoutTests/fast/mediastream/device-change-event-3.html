@@ -13,7 +13,8 @@
         promise = new Promise(resolve => {
             navigator.mediaDevices.ondevicechange = resolve;
         });
-        await navigator.mediaDevices.getUserMedia({ audio:true, video:false });
+        const stream1 = await navigator.mediaDevices.getUserMedia({ audio:true, video:false });
+        test.add_cleanup(() => stream1.getTracks().forEach(track => track.stop()));
 
         await promise;
         const devices2 = await navigator.mediaDevices.enumerateDevices();
@@ -21,7 +22,8 @@
         promise = new Promise(resolve => {
             navigator.mediaDevices.ondevicechange = resolve;
         });
-        await navigator.mediaDevices.getUserMedia({ audio:false, video:true });
+        const stream2 = await navigator.mediaDevices.getUserMedia({ audio:false, video:true });
+        test.add_cleanup(() => stream2.getTracks().forEach(track => track.stop()));
         await promise;
 
         await promise;

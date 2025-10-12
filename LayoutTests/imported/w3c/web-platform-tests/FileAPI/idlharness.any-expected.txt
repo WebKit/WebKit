@@ -16,6 +16,7 @@ PASS Blob interface: operation slice(optional long long, optional long long, opt
 PASS Blob interface: operation stream()
 PASS Blob interface: operation text()
 PASS Blob interface: operation arrayBuffer()
+PASS Blob interface: operation bytes()
 PASS Blob must be primary interface of new Blob(["TEST"])
 PASS Stringification of new Blob(["TEST"])
 PASS Blob interface: new Blob(["TEST"]) must inherit property "size" with the proper type
@@ -25,6 +26,7 @@ PASS Blob interface: calling slice(optional long long, optional long long, optio
 PASS Blob interface: new Blob(["TEST"]) must inherit property "stream()" with the proper type
 PASS Blob interface: new Blob(["TEST"]) must inherit property "text()" with the proper type
 PASS Blob interface: new Blob(["TEST"]) must inherit property "arrayBuffer()" with the proper type
+PASS Blob interface: new Blob(["TEST"]) must inherit property "bytes()" with the proper type
 PASS File interface: existence and properties of interface object
 PASS File interface object length
 PASS File interface object name
@@ -44,6 +46,7 @@ PASS Blob interface: calling slice(optional long long, optional long long, optio
 PASS Blob interface: new File(["myFileBits"], "myFileName") must inherit property "stream()" with the proper type
 PASS Blob interface: new File(["myFileBits"], "myFileName") must inherit property "text()" with the proper type
 PASS Blob interface: new File(["myFileBits"], "myFileName") must inherit property "arrayBuffer()" with the proper type
+PASS Blob interface: new File(["myFileBits"], "myFileName") must inherit property "bytes()" with the proper type
 PASS FileList interface: existence and properties of interface object
 PASS FileList interface object length
 PASS FileList interface object name

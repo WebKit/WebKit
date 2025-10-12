@@ -14,8 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/webidl/ecmascript-binding/legacy-platform-object/DefineOwnProperty.html
-/LayoutTests/imported/w3c/web-platform-tests/webidl/ecmascript-binding/legacy-platform-object/GetOwnProperty.html
-/LayoutTests/imported/w3c/web-platform-tests/webidl/ecmascript-binding/legacy-platform-object/OwnPropertyKeys.html
-/LayoutTests/imported/w3c/web-platform-tests/webidl/ecmascript-binding/legacy-platform-object/Set.html
-/LayoutTests/imported/w3c/web-platform-tests/webidl/ecmascript-binding/legacy-platform-object/helper.js
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/legacy-platform-object/DefineOwnProperty.html
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/legacy-platform-object/GetOwnProperty.html
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/legacy-platform-object/OwnPropertyKeys.html
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/legacy-platform-object/Set.html
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/legacy-platform-object/helper.js

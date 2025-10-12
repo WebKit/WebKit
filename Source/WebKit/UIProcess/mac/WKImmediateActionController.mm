@@ -85,7 +85,7 @@
     _contentPreventsDefault = NO;
     
     RetainPtr<id> animationController = [_immediateActionRecognizer animationController];
-    if (PAL::isQuickLookUIFrameworkAvailable() && [animationController isKindOfClass:PAL::getQLPreviewMenuItemClass()]) {
+    if (PAL::isQuickLookUIFrameworkAvailable() && [animationController isKindOfClass:PAL::getQLPreviewMenuItemClassSingleton()]) {
         RetainPtr menuItem = (QLPreviewMenuItem *)animationController.get();
         menuItem.get().delegate = nil;
     }
@@ -118,7 +118,7 @@
     if (_currentActionContext && _hasActivatedActionContext) {
         _hasActivatedActionContext = NO;
         if (PAL::isDataDetectorsFrameworkAvailable())
-            [PAL::getDDActionsManagerClass() didUseActions];
+            [PAL::getDDActionsManagerClassSingleton() didUseActions];
     }
 
     _state = WebKit::ImmediateActionState::None;
@@ -211,7 +211,7 @@
     if (_currentActionContext) {
         _hasActivatedActionContext = YES;
         if (PAL::isDataDetectorsFrameworkAvailable()) {
-            if (![PAL::getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()])
+            if (![PAL::getDDActionsManagerClassSingleton() shouldUseActionsWithContext:_currentActionContext.get()])
                 [self _cancelImmediateAction];
         }
     }
@@ -349,7 +349,8 @@
         return;
     }
 
-    if (customClientAnimationController && [customClientAnimationController conformsToProtocol:@protocol(NSImmediateActionAnimationController)])
+    // No need to protect @protocol()
+    SUPPRESS_UNCOUNTED_ARG if (customClientAnimationController && [customClientAnimationController conformsToProtocol:@protocol(NSImmediateActionAnimationController)])
         [_immediateActionRecognizer setAnimationController:(id<NSImmediateActionAnimationController>)customClientAnimationController.get()];
     else
         [_immediateActionRecognizer setAnimationController:defaultAnimationController.get()];
@@ -359,7 +360,7 @@
 
 - (NSView *)menuItem:(NSMenuItem *)menuItem viewAtScreenPoint:(NSPoint)screenPoint
 {
-    return _view;
+    return _view.getAutoreleased();
 }
 
 - (id<QLPreviewItem>)menuItem:(NSMenuItem *)menuItem previewItemAtPoint:(NSPoint)point
@@ -393,7 +394,7 @@
     if (!hitTestResult)
         return NSZeroRect;
 
-    return [_view convertRect:hitTestResult->elementBoundingBox() toView:nil];
+    return [_view.get() convertRect:hitTestResult->elementBoundingBox() toView:nil];
 }
 
 - (NSSize)menuItem:(NSMenuItem *)menuItem maxSizeForPoint:(NSPoint)point
@@ -401,8 +402,9 @@
     if (!_view)
         return NSZeroSize;
 
-    NSSize screenSize = _view.window.screen.frame.size;
-    WebCore::FloatRect largestRect = WebCore::largestRectWithAspectRatioInsideRect(screenSize.width / screenSize.height, _view.bounds);
+    RetainPtr view = _view.get();
+    NSSize screenSize = view.get().window.screen.frame.size;
+    WebCore::FloatRect largestRect = WebCore::largestRectWithAspectRatioInsideRect(screenSize.width / screenSize.height, view.get().bounds);
     return NSMakeSize(largestRect.width() * 0.75, largestRect.height() * 0.75);
 }
 
@@ -423,12 +425,13 @@
 
     actionContext.get().altMode = YES;
     actionContext.get().immediate = YES;
-    if (![[PAL::getDDActionsManagerClass() sharedManager] hasActionsForResult:actionContext.get().mainResult actionContext:actionContext.get()])
+    if (![[PAL::getDDActionsManagerClassSingleton() sharedManager] hasActionsForResult:RetainPtr { actionContext.get().mainResult }.get() actionContext:actionContext.get()])
         return nil;
 
     RefPtr<WebKit::WebPageProxy> page = _page.get();
+    RetainPtr view = _view.get();
     WebCore::PageOverlay::PageOverlayID overlayID = _hitTestResultData.platformData.detectedDataOriginatingPageOverlay;
-    _currentActionContext = (WKDDActionContext *)[actionContext contextForView:_view altMode:YES interactionStartedHandler:^() {
+    _currentActionContext = (WKDDActionContext *)[actionContext contextForView:view.get() altMode:YES interactionStartedHandler:^() {
         page->protectedLegacyMainFrameProcess()->send(Messages::WebPage::DataDetectorsDidPresentUI(overlayID), page->webPageIDInMainFrameProcess());
     } interactionChangedHandler:^() {
         if (RefPtr detectedDataTextIndicator = _hitTestResultData.platformData.detectedDataTextIndicator)
@@ -439,9 +442,9 @@
         [self _clearImmediateActionState];
     }];
 
-    [_currentActionContext setHighlightFrame:[_view.window convertRectToScreen:[_view convertRect:_hitTestResultData.platformData.detectedDataBoundingBox toView:nil]]];
+    [_currentActionContext setHighlightFrame:[view.get().window convertRectToScreen:[view convertRect:_hitTestResultData.platformData.detectedDataBoundingBox toView:nil]]];
 
-    RetainPtr menuItems = [[PAL::getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
+    RetainPtr menuItems = [[PAL::getDDActionsManagerClassSingleton() sharedManager] menuItemsForResult:RetainPtr { [_currentActionContext mainResult] }.get() actionContext:_currentActionContext.get()];
 
     if (menuItems.get().count != 1)
         return nil;
@@ -454,7 +457,7 @@
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return nil;
 
-    RetainPtr actionContext = adoptNS([PAL::allocWKDDActionContextInstance() init]);
+    SUPPRESS_UNRETAINED_ARG RetainPtr actionContext = adoptNS([PAL::allocWKDDActionContextInstance() init]);
     if (!actionContext)
         return nil;
 
@@ -462,7 +465,8 @@
     [actionContext setImmediate:YES];
 
     RefPtr<WebKit::WebPageProxy> page = _page.get();
-    _currentActionContext = (WKDDActionContext *)[actionContext contextForView:_view altMode:YES interactionStartedHandler:^() {
+    RetainPtr view = _view.get();
+    _currentActionContext = (WKDDActionContext *)[actionContext contextForView:view.get() altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
         if (RefPtr linkTextIndicator = _hitTestResultData.linkTextIndicator)
             page->setTextIndicator(linkTextIndicator->data(), WebCore::TextIndicatorLifetime::Permanent);
@@ -470,13 +474,13 @@
         [self _clearImmediateActionState];
     }];
 
-    [_currentActionContext setHighlightFrame:[_view.window convertRectToScreen:[_view convertRect:_hitTestResultData.elementBoundingBox toView:nil]]];
+    [_currentActionContext setHighlightFrame:[view.get().window convertRectToScreen:[view convertRect:_hitTestResultData.elementBoundingBox toView:nil]]];
 
     RefPtr<API::HitTestResult> hitTestResult = [self _webHitTestResult];
     if (!hitTestResult)
         return nil;
 
-    RetainPtr menuItems = [[PAL::getDDActionsManagerClass() sharedManager] menuItemsForTargetURL:hitTestResult->absoluteLinkURL().createNSString().get() actionContext:_currentActionContext.get()];
+    RetainPtr menuItems = [[PAL::getDDActionsManagerClassSingleton() sharedManager] menuItemsForTargetURL:hitTestResult->absoluteLinkURL().createNSString().get() actionContext:_currentActionContext.get()];
 
     if (menuItems.get().count != 1)
         return nil;
@@ -502,8 +506,7 @@
 #endif
 
     CheckedPtr { _viewImpl.get() }->prepareForDictionaryLookup();
-
-    return WebCore::DictionaryLookup::animationControllerForPopup(dictionaryPopupInfo, _view, [self](WebCore::TextIndicator& textIndicator) {
+    return WebCore::DictionaryLookup::animationControllerForPopup(dictionaryPopupInfo, _view.get().get(), [self](WebCore::TextIndicator& textIndicator) {
         RefPtr { _page.get() }->setTextIndicator(textIndicator.data(), WebCore::TextIndicatorLifetime::Permanent);
     }, nullptr, [strongSelf = retainPtr(self)]() {
         RefPtr { strongSelf->_page.get() }->clearTextIndicatorWithAnimation(WebCore::TextIndicatorDismissalAnimation::None);

@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<details id="details">
+    <summary>Foo</summary>
+    First
+</details>
+
+<details id="details-2">
+    <summary>Foo</summary>
+    Second
+</details>
+
+<div id="hidden" hidden="until-found">
+    Third
+</div>
+
+<div aria-hidden="true">
+    <div id="permanent-hidden" hidden="until-found">
+        Fourth
+    </div>
+</div>
+
+<script>
+var output = "This test ensures that AXUIElementsForSearchPredicate queries with a search-text component auto-expands collapsed details and hidden='until-found' elements if a match is found within them.\n\n";
+
+// Normally, tests that perform dynamic page changes must be async, allowing time for updates to the isolated tree.
+// However, the expansion behavior being tested here tries to perform the expansion via synchronous main-thread hit
+// with a timeout. We should never even get close to the timeout when running layout tests.
+
+if (window.accessibilityController) {
+    var webarea = accessibilityController.rootElement.childAtIndex(0);
+    var resultElement = webarea.uiElementForSearchPredicate(webarea,
+        /* isDirectionNext */ true,
+        "AXAnyTypeSearchKey",
+        "First",
+        /* visibleOnly */ false,
+        /* immediateDescendantsOnly */ false
+    );
+    output += expect("resultElement.role", "'AXRole: AXStaticText'");
+    output += expect("resultElement.stringValue", "'AXValue: First'");
+    output += expect("document.getElementById('details').hasAttribute('open')", "true");
+
+    // Ensure we respect the visibleOnly flag, which shouldn't auto-expand revealable elements.
+    var resultElement = webarea.uiElementForSearchPredicate(webarea,
+        /* isDirectionNext */ true,
+        "AXAnyTypeSearchKey",
+        "Second",
+        /* visibleOnly */ true,
+        /* immediateDescendantsOnly */ false
+    );
+    output += expect("!!resultElement", "false");
+    output += expect("document.getElementById('details-2').hasAttribute('open')", "false");
+
+    // We should expand a hidden="until-found" container.
+    var resultElement = webarea.uiElementForSearchPredicate(webarea,
+        /* isDirectionNext */ true,
+        "AXAnyTypeSearchKey",
+        "Third",
+        /* visibleOnly */ false,
+        /* immediateDescendantsOnly */ false
+    );
+    output += expect("resultElement.role", "'AXRole: AXStaticText'");
+    output += expect("resultElement.stringValue", "'AXValue: Third'");
+    output += expect("document.getElementById('hidden').hasAttribute('hidden')", "false");
+
+    // Don't auto-expand aria-hidden hidden="until-found" containers.
+    var resultElement = webarea.uiElementForSearchPredicate(webarea,
+        /* isDirectionNext */ true,
+        "AXAnyTypeSearchKey",
+        "Fourth",
+        /* visibleOnly */ false,
+        /* immediateDescendantsOnly */ false
+    );
+    output += expect("!!resultElement", "false");
+    output += expect("document.getElementById('permanent-hidden').hasAttribute('hidden')", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

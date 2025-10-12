@@ -26,9 +26,9 @@
 #ifndef DeviceOrientationClientMock_h
 #define DeviceOrientationClientMock_h
 
-#include "DeviceOrientationClient.h"
-#include "DeviceOrientationData.h"
-#include "Timer.h"
+#include <WebCore/DeviceOrientationClient.h>
+#include <WebCore/DeviceOrientationData.h>
+#include <WebCore/Timer.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>

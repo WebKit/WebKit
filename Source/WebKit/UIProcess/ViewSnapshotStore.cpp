@@ -96,6 +96,9 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy, WebBackForwar
 #if PLATFORM(MAC)
     snapshot->setVolatile(true);
 #endif
+#if PLATFORM(IOS_FAMILY)
+    snapshot->setComputedObscuredInset(webPageProxy.computedObscuredInset());
+#endif
     snapshot->setRenderTreeSize(webPageProxy.renderTreeSize());
     snapshot->setDeviceScaleFactor(webPageProxy.deviceScaleFactor());
     snapshot->setBackgroundColor(webPageProxy.pageExtendedBackgroundColor());

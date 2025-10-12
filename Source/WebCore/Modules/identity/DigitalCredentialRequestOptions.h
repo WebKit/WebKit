@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DigitalCredentialRequest.h"
+#include <WebCore/DigitalCredentialRequest.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

@@ -32,6 +32,7 @@
 #include "config.h"
 #include "SearchInputType.h"
 
+#include "ContainerNodeInlines.h"
 #include "ElementInlines.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -40,8 +41,10 @@
 #include "KeyboardEvent.h"
 #include "NodeRenderStyle.h"
 #include "RenderSearchField.h"
+#include "RenderStyleInlines.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
+#include "StylePreferredSize.h"
 #include "TextControlInnerElements.h"
 #include "UserAgentParts.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -94,7 +97,8 @@ void SearchInputType::attributeChanged(const QualifiedName& name)
 RenderPtr<RenderElement> SearchInputType::createInputRenderer(RenderStyle&& style)
 {
     ASSERT(element());
-    return createRenderer<RenderSearchField>(*protectedElement(), WTFMove(style));
+    // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.
+    SUPPRESS_UNCOUNTED_ARG return createRenderer<RenderSearchField>(*protectedElement(), WTFMove(style));
 }
 
 const AtomString& SearchInputType::formControlType() const
@@ -112,6 +116,7 @@ void SearchInputType::createShadowSubtree()
     ASSERT(needsShadowSubtree());
     ASSERT(!m_resultsButton);
     ASSERT(!m_cancelButton);
+    ASSERT(element());
 
     TextFieldInputType::createShadowSubtree();
     Ref document = element()->document();
@@ -121,7 +126,6 @@ void SearchInputType::createShadowSubtree()
     ASSERT(container);
     ASSERT(textWrapper);
 
-    ASSERT(element());
     Ref resultsButton = SearchFieldResultsButtonElement::create(document);
     container->insertBefore(resultsButton, textWrapper.copyRef());
     updateResultButtonPseudoType(resultsButton, element()->maxResults());
@@ -145,13 +149,13 @@ HTMLElement* SearchInputType::cancelButtonElement() const
 auto SearchInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseEventHandler
 {
     ASSERT(element());
-    Ref input = *element();
-    if (!input->isMutable())
+    Ref element = *this->element();
+    if (!element->isMutable())
         return TextFieldInputType::handleKeydownEvent(event);
 
     const String& key = event.keyIdentifier();
     if (key == "U+001B"_s) {
-        input->setValue(emptyString(), DispatchChangeEvent);
+        element->setValue(emptyString(), DispatchChangeEvent);
         event.setDefaultHandled();
         return ShouldCallBaseEventHandler::Yes;
     }
@@ -179,24 +183,31 @@ void SearchInputType::didSetValueByUserEdit()
 bool SearchInputType::sizeShouldIncludeDecoration(int, int& preferredSize) const
 {
     ASSERT(element());
-    preferredSize = element()->size();
+    Ref element = *this->element();
+    preferredSize = element->size();
     // https://html.spec.whatwg.org/multipage/input.html#the-size-attribute
     // If the attribute is present, then its value must be parsed using the rules for parsing non-negative integers, and if the
     // result is a number greater than zero, then the user agent should ensure that at least that many characters are visible.
-    if (!element()->hasAttributeWithoutSynchronization(sizeAttr))
+    if (!element->hasAttributeWithoutSynchronization(sizeAttr))
         return false;
-    if (auto parsedSize = parseHTMLNonNegativeInteger(element()->attributeWithoutSynchronization(sizeAttr)))
+    if (auto parsedSize = parseHTMLNonNegativeInteger(element->attributeWithoutSynchronization(sizeAttr)))
         return static_cast<int>(parsedSize.value()) == preferredSize;
     return false;
 }
 
-float SearchInputType::decorationWidth() const
+float SearchInputType::decorationWidth(float) const
 {
     float width = 0;
-    if (RefPtr resultsButton = m_resultsButton; resultsButton && resultsButton->renderStyle())
-        width += m_resultsButton->renderStyle()->logicalWidth().value();
-    if (RefPtr cancelButton = m_cancelButton; cancelButton && cancelButton->renderStyle())
-        width += m_cancelButton->renderStyle()->logicalWidth().value();
+    if (RefPtr resultsButton = m_resultsButton; resultsButton && resultsButton->renderStyle()) {
+        // FIXME: Document what invariant holds to allow only using fixed logical widths?
+        if (auto fixedLogicalWidth = resultsButton->renderStyle()->logicalWidth().tryFixed())
+            width += fixedLogicalWidth->resolveZoom(Style::ZoomNeeded { });
+    }
+    if (RefPtr cancelButton = m_cancelButton; cancelButton && cancelButton->renderStyle()) {
+        // FIXME: Document what invariant holds to allow only using fixed logical widths?
+        if (auto fixedLogicalWidth = cancelButton->renderStyle()->logicalWidth().tryFixed())
+            width += fixedLogicalWidth->resolveZoom(Style::ZoomNeeded { });
+    }
     return width;
 }
 

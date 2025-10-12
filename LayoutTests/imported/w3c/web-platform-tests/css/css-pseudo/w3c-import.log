@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/CSSPseudoElement-identity.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/README.md
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/WEB_FEATURES.yml
@@ -66,6 +67,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/before-dynamic-display-none-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/before-dynamic-display-none.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/before-in-display-none-thcrash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/before-preceding-whitespace-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/before-preceding-whitespace-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/chrome-bug-1299142-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/chrome-first-letter-container-query-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/chrome-first-letter-inside-replaced-crash.html
@@ -181,6 +184,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-and-placeholder-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-and-placeholder-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-and-placeholder.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-below-float-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-below-float.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-change-inline-color-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-change-inline-color-nested-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-change-inline-color-nested-ref.html
@@ -204,11 +209,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-line-height-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-line-height-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-line-height-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-line-height-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-line-height-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-line-height-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-nested-gcs-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-nested-gcs.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-on-ancestor-block-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-on-ancestor-block-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-on-ancestor-block.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-on-list-item-with-block-children-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-on-list-item-with-block-children-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-on-list-item-with-block-children.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-opacity-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-opacity-001-not-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-opacity-001-ref-expected-mismatch.html
@@ -232,6 +243,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-with-out-of-flow-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-with-out-of-flow-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-with-out-of-flow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/focus-visible-originating-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/get-computed-style-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/grammar-error-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/grammar-error-001-ref.html
@@ -310,9 +322,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-003-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-003.tentative-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-003.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-z-index-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-z-index-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-z-index-001.html
@@ -320,6 +338,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-z-index-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-z-index-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/idlharness.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/input-element-pseudo-open.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/marker-and-other-pseudo-elements-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/marker-and-other-pseudo-elements-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/marker-and-other-pseudo-elements.html
@@ -519,6 +538,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/placeholder-input-number-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/placeholder-input-number-notref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/placeholder-input-number.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/pseudo-replaced-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/relative-box-order-of-pseudo-elements-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/relative-box-order-of-pseudo-elements-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/relative-box-order-of-pseudo-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/selection-background-color-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/selection-background-color-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-order-expected.html

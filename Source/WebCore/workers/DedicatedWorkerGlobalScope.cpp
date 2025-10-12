@@ -36,6 +36,7 @@
 #include "DedicatedWorkerThread.h"
 #include "EventNames.h"
 #include "EventTargetInterfaces.h"
+#include "ExceptionOr.h"
 #include "JSRTCRtpScriptTransformer.h"
 #include "LocalDOMWindow.h"
 #include "MessageEvent.h"
@@ -103,13 +104,14 @@ ExceptionOr<void> DedicatedWorkerGlobalScope::postMessage(JSC::JSGlobalObject& s
     if (channels.hasException())
         return channels.releaseException();
 
-    thread().workerObjectProxy().postMessageToWorkerObject({ message.releaseReturnValue(), channels.releaseReturnValue() });
+    if (CheckedPtr workerObjectProxy = thread()->workerObjectProxy())
+        workerObjectProxy->postMessageToWorkerObject({ message.releaseReturnValue(), channels.releaseReturnValue() });
     return { };
 }
 
-DedicatedWorkerThread& DedicatedWorkerGlobalScope::thread()
+Ref<DedicatedWorkerThread> DedicatedWorkerGlobalScope::thread()
 {
-    return static_cast<DedicatedWorkerThread&>(Base::thread());
+    return downcast<DedicatedWorkerThread>(Base::thread());
 }
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)

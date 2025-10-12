@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
-#include "Lexer.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/Lexer.h>
 #include <wtf/dtoa.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -51,12 +51,12 @@ ALWAYS_INLINE static int parseDigit(unsigned short c, int radix)
     return digit;
 }
 
-static double parseIntOverflow(std::span<const LChar> s, int radix)
+static double parseIntOverflow(std::span<const Latin1Character> s, int radix)
 {
     double number = 0.0;
     double radixMultiplier = 1.0;
 
-    for (const LChar* p = s.data() + s.size() - 1; p >= s.data(); p--) {
+    for (const Latin1Character* p = s.data() + s.size() - 1; p >= s.data(); p--) {
         if (radixMultiplier == std::numeric_limits<double>::infinity()) {
             if (*p != '0') {
                 number = std::numeric_limits<double>::infinity();
@@ -73,12 +73,12 @@ static double parseIntOverflow(std::span<const LChar> s, int radix)
     return number;
 }
 
-static double parseIntOverflow(std::span<const UChar> s, int radix)
+static double parseIntOverflow(std::span<const char16_t> s, int radix)
 {
     double number = 0.0;
     double radixMultiplier = 1.0;
 
-    for (const UChar* p = s.data() + s.size() - 1; p >= s.data(); p--) {
+    for (const char16_t* p = s.data() + s.size() - 1; p >= s.data(); p--) {
         if (radixMultiplier == std::numeric_limits<double>::infinity()) {
             if (*p != '0') {
                 number = std::numeric_limits<double>::infinity();
@@ -100,8 +100,8 @@ ALWAYS_INLINE static bool isStrWhiteSpace(CharacterType c)
 {
     // https://tc39.github.io/ecma262/#sec-tonumber-applied-to-the-string-type
     if constexpr (sizeof(c) == 1)
-        return Lexer<LChar>::isWhiteSpace(c) || Lexer<LChar>::isLineTerminator(c);
-    return Lexer<UChar>::isWhiteSpace(c) || Lexer<UChar>::isLineTerminator(c);
+        return Lexer<Latin1Character>::isWhiteSpace(c) || Lexer<Latin1Character>::isLineTerminator(c);
+    return Lexer<char16_t>::isWhiteSpace(c) || Lexer<char16_t>::isLineTerminator(c);
 }
 
 inline static std::optional<double> parseIntDouble(double n)
@@ -233,7 +233,7 @@ static ALWAYS_INLINE typename std::invoke_result<CallbackWhenNoException, String
 }
 
 // Mapping from integers 0..35 to digit identifying this value, for radix 2..36.
-const char radixDigits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+extern const char radixDigits[37]; // in JSCJSValue.cpp
 
 } // namespace JSC
 

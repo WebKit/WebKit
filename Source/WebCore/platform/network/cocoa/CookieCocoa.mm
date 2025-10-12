@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2015-2023 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -126,7 +126,7 @@ Cookie::Cookie(NSHTTPCookie *cookie)
     sameSite = coreSameSitePolicy(cookie.sameSitePolicy);
 }
 
-Cookie::operator NSHTTPCookie * _Nullable () const
+RetainPtr<NSHTTPCookie> Cookie::createNSHTTPCookie() const
 {
     if (isNull())
         return nil;
@@ -159,20 +159,20 @@ Cookie::operator NSHTTPCookie * _Nullable () const
         [properties setObject:expirationDate.get() forKey:NSHTTPCookieExpires];
     }
 
-    [properties setObject:@(created / 1000.0 - NSTimeIntervalSince1970) forKey:@"Created"];
+    SUPPRESS_UNRETAINED_ARG [properties setObject:@(created / 1000.0 - NSTimeIntervalSince1970) forKey:@"Created"];
 
     RetainPtr portString = portStringFromVector(ports);
     if (portString)
         [properties setObject:portString.get() forKey:NSHTTPCookiePort];
 
     if (secure)
-        [properties setObject:@YES forKey:NSHTTPCookieSecure];
+        SUPPRESS_UNRETAINED_ARG [properties setObject:@YES forKey:NSHTTPCookieSecure];
 
     if (session)
-        [properties setObject:@YES forKey:NSHTTPCookieDiscard];
+        SUPPRESS_UNRETAINED_ARG [properties setObject:@YES forKey:NSHTTPCookieDiscard];
     
     if (httpOnly)
-        [properties setObject:@YES forKey:@"HttpOnly"];
+        SUPPRESS_UNRETAINED_ARG [properties setObject:@YES forKey:@"HttpOnly"];
 
     if (RetainPtr sameSitePolicy = nsSameSitePolicy(sameSite))
         [properties setObject:sameSitePolicy.get() forKey:@"SameSite"];
@@ -189,14 +189,14 @@ bool Cookie::operator==(const Cookie& other) const
     bool otherNull = other.isNull();
     if (thisNull || otherNull)
         return thisNull == otherNull;
-    return [static_cast<NSHTTPCookie *>(*this) isEqual:other];
+    return [createNSHTTPCookie() isEqual:other.createNSHTTPCookie().get()];
 }
     
 unsigned Cookie::hash() const
 {
     ASSERT(!name.isHashTableDeletedValue());
     ASSERT(!isNull());
-    return static_cast<NSHTTPCookie *>(*this).hash;
+    return createNSHTTPCookie().get().hash;
 }
 
 NS_ASSUME_NONNULL_END

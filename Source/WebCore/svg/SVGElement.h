@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -85,6 +85,7 @@ public:
     void clearHasPendingResources() { setEventTargetFlag(EventTargetFlag::HasPendingResources, false); }
     virtual void buildPendingResource() { }
 
+    virtual bool isSVGAnimationElement() const { return false; }
     virtual bool isSVGTextPositioningElement() const { return false; }
     virtual bool isSVGGraphicsElement() const { return false; }
     virtual bool isSVGGeometryElement() const { return false; }
@@ -167,7 +168,7 @@ public:
     void commitPropertyChange(SVGAnimatedProperty&);
 
     const SVGElement* attributeContextElement() const override { return this; }
-    SVGPropertyAnimatorFactory& propertyAnimatorFactory() { return *m_propertyAnimatorFactory; }
+    SVGPropertyAnimatorFactory& propertyAnimatorFactory() { return m_propertyAnimatorFactory; }
     RefPtr<SVGAttributeAnimator> createAnimator(const QualifiedName&, AnimationMode, CalcMode, bool isAccumulated, bool isAdditive);
     void animatorWillBeDeleted(const QualifiedName&);
 
@@ -184,6 +185,7 @@ public:
     SVGConditionalProcessingAttributes* conditionalProcessingAttributesIfExists() const;
 
     bool hasAssociatedSVGLayoutBox() const;
+    void invalidateInstances();
 
 protected:
     SVGElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&, OptionSet<TypeFlag> = { });
@@ -222,8 +224,6 @@ private:
     virtual bool filterOutAnimatableAttribute(const QualifiedName&) const;
 #endif
 
-    void invalidateInstances();
-
     std::unique_ptr<SVGElementRareData> m_svgRareData;
 
     WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData> m_childElementsWithRelativeLengths;
@@ -231,9 +231,9 @@ private:
     bool m_selfHasRelativeLengths { false };
     bool m_hasInitializedRelativeLengthsState { false };
 
-    std::unique_ptr<SVGPropertyAnimatorFactory> m_propertyAnimatorFactory;
+    const UniqueRef<SVGPropertyAnimatorFactory> m_propertyAnimatorFactory;
 
-    UniqueRef<SVGPropertyRegistry> m_propertyRegistry;
+    const UniqueRef<SVGPropertyRegistry> m_propertyRegistry;
     Ref<SVGAnimatedString> m_className;
 };
 

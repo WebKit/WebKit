@@ -28,9 +28,12 @@
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA)
 #include "IntSize.h"
 #include "SkiaRecordingResult.h"
-#include <skia/utils/SkNWayCanvas.h>
 #include <wtf/Assertions.h>
 #include <wtf/Function.h>
+
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/utils/SkNWayCanvas.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 class SkImage;
 

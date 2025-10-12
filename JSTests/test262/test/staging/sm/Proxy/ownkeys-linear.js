@@ -4,23 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Scripted proxies' [[OwnPropertyKeys]] should have linear complexity
+info: bugzilla.mozilla.org/show_bug.cgi?id=1257779
 esid: pending
 ---*/
-var gTestfile = 'ownkeys-linear.js';
-var BUGNUMBER = 1257779;
-var summary =
-  "Scripted proxies' [[OwnPropertyKeys]] should have linear complexity";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 // Making this 50k makes cgc builds time out on tbpl.  5k takes 28s locally.
 // 10k takes 84s locally.  So pick an intermediate number, with a generous
@@ -69,7 +57,3 @@ var p = new Proxy(target, handler);
 
 // The test passes if it doesn't time out.
 assert.sameValue(Object.getOwnPropertyNames(p).length, HALF_COUNT * 2);
-
-/******************************************************************************/
-
-print("Tests complete");

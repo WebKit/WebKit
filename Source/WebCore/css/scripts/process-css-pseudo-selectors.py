@@ -436,25 +436,25 @@ class GPerfOutputGenerator:
     def write_parsing_function_definitions_for_pseudo_class(self, writer):
         longest_keyword_length = len(max(self.mapping, key=len))
         writer.write_block("""
-        static inline const SelectorPseudoClassOrCompatibilityPseudoElementEntry* findPseudoClassAndCompatibilityElementName(std::span<const LChar> characters)
+        static inline const SelectorPseudoClassOrCompatibilityPseudoElementEntry* findPseudoClassAndCompatibilityElementName(std::span<const Latin1Character> characters)
         {
             return SelectorPseudoClassAndCompatibilityElementMapHash::in_word_set(byteCast<char>(characters.data()), characters.size());
         }""")
 
         writer.write_block(f"""
-        static inline const SelectorPseudoClassOrCompatibilityPseudoElementEntry* findPseudoClassAndCompatibilityElementName(std::span<const UChar> characters)
+        static inline const SelectorPseudoClassOrCompatibilityPseudoElementEntry* findPseudoClassAndCompatibilityElementName(std::span<const char16_t> characters)
         {{
             constexpr unsigned maxKeywordLength = {longest_keyword_length};
-            std::array<LChar, maxKeywordLength> buffer;
+            std::array<Latin1Character, maxKeywordLength> buffer;
             if (characters.size() > maxKeywordLength)
                 return nullptr;
 
             for (size_t i = 0; i < characters.size(); ++i) {{
-                UChar character = characters[i];
+                char16_t character = characters[i];
                 if (!isLatin1(character))
                     return nullptr;
 
-                buffer[i] = static_cast<LChar>(character);
+                buffer[i] = static_cast<Latin1Character>(character);
             }}
             return findPseudoClassAndCompatibilityElementName(std::span {{ buffer }}.first(characters.size()));
         }}""")
@@ -476,7 +476,7 @@ class GPerfOutputGenerator:
     def write_parsing_function_definitions_for_pseudo_element(self, writer):
         longest_keyword_length = len(max(self.mapping, key=len))
         writer.write_block("""
-            static inline std::optional<CSSSelector::PseudoElement> findPseudoElementName(std::span<const LChar> characters)
+            static inline std::optional<CSSSelector::PseudoElement> findPseudoElementName(std::span<const Latin1Character> characters)
             {
                 if (auto entry = SelectorPseudoElementMapHash::in_word_set(byteCast<char>(characters.data()), characters.size()))
                     return entry->type;
@@ -484,19 +484,19 @@ class GPerfOutputGenerator:
             }""")
 
         writer.write_block(f"""
-            static inline std::optional<CSSSelector::PseudoElement> findPseudoElementName(std::span<const UChar> characters)
+            static inline std::optional<CSSSelector::PseudoElement> findPseudoElementName(std::span<const char16_t> characters)
             {{
                 constexpr unsigned maxKeywordLength = {longest_keyword_length};
-                std::array<LChar, maxKeywordLength> buffer;
+                std::array<Latin1Character, maxKeywordLength> buffer;
                 if (characters.size() > maxKeywordLength)
                     return std::nullopt;
 
                 for (size_t i = 0; i < characters.size(); ++i) {{
-                    UChar character = characters[i];
+                    char16_t character = characters[i];
                     if (!isLatin1(character))
                         return std::nullopt;
 
-                    buffer[i] = static_cast<LChar>(character);
+                    buffer[i] = static_cast<Latin1Character>(character);
                 }}
                 return findPseudoElementName(std::span {{ buffer }}.first(characters.size()));
             }}""")

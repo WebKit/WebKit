@@ -4,25 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Don't assert when an arrow function occurs at the end of a declaration init-component of a for(;;) loop head
+info: bugzilla.mozilla.org/show_bug.cgi?id=1302994
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var gTestfile = "arrow-function-in-for-statement-head.js";
-var BUGNUMBER = 1302994;
-var summary =
-  "Don't assert when an arrow function occurs at the end of a declaration " +
-  "init-component of a for(;;) loop head";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 function f1()
 {
@@ -65,7 +51,3 @@ function g2()
   {}
 }
 g2();
-
-/******************************************************************************/
-
-print("Tests complete");

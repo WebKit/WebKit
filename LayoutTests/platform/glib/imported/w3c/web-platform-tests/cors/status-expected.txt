@@ -1,9 +1,3 @@
-CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 400
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://not-web-platform.test:8800/cors/resources/cors-makeheader.py?1&origin=none&code=400 due to access control checks.
-CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://not-web-platform.test:8800/cors/resources/cors-makeheader.py?2&origin=none&preflight=200 due to access control checks.
-CONSOLE MESSAGE: Preflight response is not successful. Status code: 400
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://not-web-platform.test:8800/cors/resources/cors-makeheader.py?5&headers=x-custom&preflight=400 due to access control checks.
 The returned status code in different scenarios
 
    allowed  preflight  response  | status |

@@ -36,7 +36,7 @@ namespace WTF {
 // LastValue is the maximum value of the enum, which determines the size of the array.
 template <typename Key, typename T, Key LastValue = EnumTraits<Key>::values::max>
 class EnumeratedArray {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(EnumeratedArray);
 public:
     using value_type = T;
     using size_type = Key;

@@ -31,7 +31,7 @@ L000pic_point:
 	pxor	%xmm3,%xmm3
 	movl	$5,%eax
 L001loop_row_1:
-	movdqa	(%esi),%xmm4
+	movdqu	(%esi),%xmm4
 	leal	16(%esi),%esi
 	movdqa	%xmm2,%xmm6
 .byte	102,15,58,15,243,1
@@ -62,7 +62,7 @@ L001loop_row_1:
 	pxor	%xmm3,%xmm3
 	movl	$5,%eax
 L002loop_row_2:
-	movdqa	(%esi),%xmm4
+	movdqu	(%esi),%xmm4
 	leal	16(%esi),%esi
 	movdqa	%xmm2,%xmm6
 .byte	102,15,58,15,243,1
@@ -93,7 +93,7 @@ L002loop_row_2:
 	pxor	%xmm3,%xmm3
 	movl	$6,%eax
 L003loop_row_3:
-	movdqa	(%esi),%xmm4
+	movdqu	(%esi),%xmm4
 	leal	16(%esi),%esi
 	movdqa	%xmm2,%xmm6
 .byte	102,15,58,15,243,1
@@ -169,7 +169,7 @@ L005loop_ghash:
 	pxor	%xmm2,%xmm2
 	movl	$5,%eax
 L006loop_row_4:
-	movdqa	(%esi),%xmm4
+	movdqu	(%esi),%xmm4
 	leal	16(%esi),%esi
 	movdqa	%xmm2,%xmm6
 .byte	102,15,58,15,243,1
@@ -200,7 +200,7 @@ L006loop_row_4:
 	pxor	%xmm3,%xmm3
 	movl	$5,%eax
 L007loop_row_5:
-	movdqa	(%esi),%xmm4
+	movdqu	(%esi),%xmm4
 	leal	16(%esi),%esi
 	movdqa	%xmm2,%xmm6
 .byte	102,15,58,15,243,1
@@ -231,7 +231,7 @@ L007loop_row_5:
 	pxor	%xmm3,%xmm3
 	movl	$6,%eax
 L008loop_row_6:
-	movdqa	(%esi),%xmm4
+	movdqu	(%esi),%xmm4
 	leal	16(%esi),%esi
 	movdqa	%xmm2,%xmm6
 .byte	102,15,58,15,243,1

@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: Blocked a frame with origin "http://web-platform.test:8800" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "data". Protocols must match.
-
-

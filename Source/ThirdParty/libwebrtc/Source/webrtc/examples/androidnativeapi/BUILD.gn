@@ -31,7 +31,6 @@ if (is_android) {
     testonly = true
     sources = [ "java/org/webrtc/examples/androidnativeapi/CallClient.java" ]
     namespace = "webrtc_examples"
-    jni_generator_include = "//sdk/android/src/jni/jni_generator_helper.h"
   }
 
   rtc_shared_library("examples_androidnativeapi_jni") {
@@ -47,11 +46,20 @@ if (is_android) {
 
     deps = [
       ":generated_jni",
+      "../../api:create_modular_peer_connection_factory",
       "../../api:enable_media_with_defaults",
+      "../../api:make_ref_counted",
+      "../../api:media_stream_interface",
+      "../../api:rtc_error",
       "../../api:scoped_refptr",
       "../../api:sequence_checker",
+      "../../api/video:video_frame",
+      "../../rtc_base:checks",
+      "../../rtc_base:logging",
+      "../../rtc_base:macromagic",
       "../../rtc_base:ssl",
       "../../rtc_base:ssl_adapter",
+      "../../rtc_base:threading",
       "../../rtc_base/synchronization:mutex",
       "//api:libjingle_peerconnection_api",
       "//api/rtc_event_log:rtc_event_log_factory",

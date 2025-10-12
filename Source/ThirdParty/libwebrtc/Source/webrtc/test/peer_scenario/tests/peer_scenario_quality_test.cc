@@ -8,9 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "api/units/time_delta.h"
 #include "test/gtest.h"
 #include "test/peer_scenario/peer_scenario.h"
 #include "test/peer_scenario/peer_scenario_client.h"
+#include "test/scenario/stats_collection.h"
 
 namespace webrtc {
 namespace test {

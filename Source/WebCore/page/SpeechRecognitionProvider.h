@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "SpeechRecognitionConnection.h"
+#include <WebCore/SpeechRecognitionConnection.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
 

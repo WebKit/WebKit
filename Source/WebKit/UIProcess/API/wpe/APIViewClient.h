@@ -54,6 +54,7 @@ public:
     virtual void didChangePageID(WKWPE::View&) { }
     virtual void didReceiveUserMessage(WKWPE::View&, WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&& completionHandler) { completionHandler(WebKit::UserMessage()); }
     virtual WebKit::WebKitWebResourceLoadManager* webResourceLoadManager() { return nullptr; }
+    virtual void themeColorDidChange() { }
 
 #if ENABLE(FULLSCREEN_API)
     virtual bool enterFullScreen(WKWPE::View&) { return false; };

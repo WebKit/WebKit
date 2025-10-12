@@ -49,14 +49,15 @@ class ResourceResponse;
 }
 
 namespace WebKit {
-class WebBackForwardListFrameItem;
 class BrowsingWarning;
+class FrameProcess;
+class WebBackForwardListFrameItem;
 }
 
 namespace API {
 
 struct SubstituteData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SubstituteData);
 
     SubstituteData(Vector<uint8_t>&& content, const WTF::String& MIMEType, const WTF::String& encoding, const WTF::String& baseURL, API::Object* userData, WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility = WebCore::SubstituteData::SessionHistoryVisibility::Hidden)
         : content(WTFMove(content))
@@ -110,7 +111,7 @@ public:
     WebCore::NavigationIdentifier navigationID() const { return m_navigationID; }
 
     const WebCore::ResourceRequest& originalRequest() const { return m_originalRequest; }
-    void setCurrentRequest(WebCore::ResourceRequest&&, WebCore::ProcessIdentifier);
+    void setCurrentRequest(WebCore::ResourceRequest&&, std::optional<WebCore::ProcessIdentifier>);
     const WebCore::ResourceRequest& currentRequest() const { return m_currentRequest; }
     std::optional<WebCore::ProcessIdentifier> currentRequestProcessIdentifier() const { return m_currentRequestProcessIdentifier; }
 
@@ -188,11 +189,15 @@ public:
     bool safeBrowsingCheckOngoing();
     void setSafeBrowsingWarning(RefPtr<WebKit::BrowsingWarning>&&);
     RefPtr<WebKit::BrowsingWarning> safeBrowsingWarning();
+    void setSafeBrowsingCheckTimedOut() { m_safeBrowsingCheckTimedOut = true; }
+    bool safeBrowsingCheckTimedOut() { return m_safeBrowsingCheckTimedOut; }
     MonotonicTime requestStart() const { return m_requestStart; }
     void resetRequestStart();
 
     WebCore::ProcessIdentifier processID() const { return m_processID; }
     void setProcessID(WebCore::ProcessIdentifier processID) { m_processID = processID; }
+
+    void setPendingSharedProcess(WebKit::FrameProcess&);
 
 private:
     Navigation(WebCore::ProcessIdentifier);
@@ -223,11 +228,13 @@ private:
     bool m_isLoadedWithNavigationShared : 1 { false };
     bool m_requestIsFromClientInput : 1 { false };
     bool m_isFromLoadData : 1 { false };
+    bool m_safeBrowsingCheckTimedOut : 1 { false };
     RefPtr<API::WebsitePolicies> m_websitePolicies;
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> m_originatorAdvancedPrivacyProtections;
     MonotonicTime m_requestStart { MonotonicTime::now() };
     RefPtr<WebKit::BrowsingWarning> m_safeBrowsingWarning;
     ListHashSet<size_t> m_ongoingSafeBrowsingChecks;
+    RefPtr<WebKit::FrameProcess> m_pendingSharedProcess;
 };
 
 } // namespace API

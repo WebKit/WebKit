@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 features:
   - iterator-helpers
 info: |
@@ -22,5 +19,5 @@ class TestIterator extends Iterator {
 
 const iter = new TestIterator();
 
-assertThrowsInstanceOf(() => iter.toArray(), Error);
+assert.throws(Error, () => iter.toArray());
 

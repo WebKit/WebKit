@@ -29,18 +29,18 @@ class AtomStringTable;
 
 class AtomStringImpl final : public UniquedStringImpl {
 public:
-    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> lookUp(std::span<const LChar>);
-    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> lookUp(std::span<const UChar>);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> lookUp(std::span<const Latin1Character>);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> lookUp(std::span<const char16_t>);
     static RefPtr<AtomStringImpl> lookUp(StringImpl*);
 
     static void remove(AtomStringImpl*);
 
-    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(std::span<const LChar>);
-    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(std::span<const UChar>);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(std::span<const Latin1Character>);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(std::span<const char16_t>);
     ALWAYS_INLINE static RefPtr<AtomStringImpl> add(std::span<const char> characters);
 
-    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(HashTranslatorCharBuffer<LChar>&);
-    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(HashTranslatorCharBuffer<UChar>&);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(HashTranslatorCharBuffer<Latin1Character>&);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(HashTranslatorCharBuffer<char16_t>&);
 
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(StringImpl*, unsigned offset, unsigned length);
     ALWAYS_INLINE static RefPtr<AtomStringImpl> add(StringImpl*);
@@ -67,7 +67,7 @@ private:
 
     ALWAYS_INLINE static Ref<AtomStringImpl> add(StringImpl&);
     ALWAYS_INLINE static Ref<AtomStringImpl> add(Ref<StringImpl>&&);
-    WTF_EXPORT_PRIVATE static Ref<AtomStringImpl> addLiteral(std::span<const LChar>);
+    WTF_EXPORT_PRIVATE static Ref<AtomStringImpl> addLiteral(std::span<const Latin1Character>);
 
     ALWAYS_INLINE static Ref<AtomStringImpl> add(AtomStringTable&, StringImpl&);
 
@@ -89,7 +89,7 @@ inline RefPtr<AtomStringImpl> AtomStringImpl::lookUp(StringImpl* string)
 
 ALWAYS_INLINE RefPtr<AtomStringImpl> AtomStringImpl::add(std::span<const char> characters)
 {
-    return add(byteCast<LChar>(characters));
+    return add(byteCast<Latin1Character>(characters));
 }
 
 ALWAYS_INLINE RefPtr<AtomStringImpl> AtomStringImpl::add(StringImpl* string)

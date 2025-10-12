@@ -33,6 +33,7 @@
 #import <WebCore/FontPlatformData.h>
 #import <WebCore/StringTruncator.h>
 #import <WebCore/WebCoreJITOperations.h>
+#import <WebCore/WebCoreMainThread.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
@@ -51,9 +52,7 @@ static WebCore::FontCascade& fontFromNSFont(NSFont *font)
 
 + (void)initialize
 {
-    JSC::initialize();
-    WTF::initializeMainThread();
-    WebCore::populateJITOperations();
+    WebCore::initializeMainThreadIfNeeded();
 }
 
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth

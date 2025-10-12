@@ -1,3 +1,5 @@
+//@ $skipModes << "wasm-no-jit".to_sym if $buildType == "debug"
+
 import Builder from '../Builder.js';
 import * as assert from '../assert.js';
 import * as LLB from '../LowLevelBinary.js';

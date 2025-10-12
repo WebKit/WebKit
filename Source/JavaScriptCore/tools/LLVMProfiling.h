@@ -27,7 +27,7 @@
 
 #if ENABLE(LLVM_PROFILE_GENERATION) && PLATFORM(IOS_FAMILY)
 
-#include "JSExportMacros.h"
+#include <JavaScriptCore/JSExportMacros.h>
 
 namespace JSC {
 

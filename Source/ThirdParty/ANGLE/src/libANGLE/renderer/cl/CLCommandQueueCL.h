@@ -207,6 +207,16 @@ class CLCommandQueueCL : public CLCommandQueueImpl
     angle::Result flush() override;
     angle::Result finish() override;
 
+    angle::Result enqueueAcquireExternalMemObjectsKHR(
+        const cl::MemoryPtrs &memObjects,
+        const cl::EventPtrs &waitEvents,
+        CLEventImpl::CreateFunc *eventCreateFunc) override;
+
+    angle::Result enqueueReleaseExternalMemObjectsKHR(
+        const cl::MemoryPtrs &memObjects,
+        const cl::EventPtrs &waitEvents,
+        CLEventImpl::CreateFunc *eventCreateFunc) override;
+
   private:
     const cl_command_queue mNative;
 };

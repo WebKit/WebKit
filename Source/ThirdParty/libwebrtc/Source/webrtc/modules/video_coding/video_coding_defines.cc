@@ -10,10 +10,14 @@
 
 #include "modules/video_coding/include/video_coding_defines.h"
 
+#include <cstdint>
+
+#include "api/video_codecs/video_decoder.h"
+
 namespace webrtc {
 
-void VCMReceiveCallback::OnDroppedFrames(uint32_t frames_dropped) {}
-void VCMReceiveCallback::OnIncomingPayloadType(int payload_type) {}
+void VCMReceiveCallback::OnDroppedFrames(uint32_t /* frames_dropped */) {}
+void VCMReceiveCallback::OnIncomingPayloadType(int /* payload_type */) {}
 void VCMReceiveCallback::OnDecoderInfoChanged(
     const VideoDecoder::DecoderInfo&) {}
 

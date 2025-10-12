@@ -32,7 +32,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaConstraintType.h"
+#include <WebCore/MediaConstraintType.h>
 
 namespace WebCore {
 

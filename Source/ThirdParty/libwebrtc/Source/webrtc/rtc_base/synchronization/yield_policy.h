@@ -10,7 +10,7 @@
 #ifndef RTC_BASE_SYNCHRONIZATION_YIELD_POLICY_H_
 #define RTC_BASE_SYNCHRONIZATION_YIELD_POLICY_H_
 
-namespace rtc {
+namespace webrtc {
 class YieldInterface {
  public:
   virtual ~YieldInterface() = default;
@@ -33,6 +33,7 @@ class ScopedYieldPolicy final {
   YieldInterface* const previous_;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_SYNCHRONIZATION_YIELD_POLICY_H_

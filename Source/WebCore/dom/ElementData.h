@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Attribute.h"
-#include "SpaceSplitString.h"
+#include <WebCore/Attribute.h>
+#include <WebCore/SpaceSplitString.h>
 #include <wtf/IndexedRange.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TypeCasts.h>
@@ -42,7 +42,7 @@ class UniqueElementData;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ElementData);
 class ElementData : public RefCounted<ElementData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ElementData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ElementData, ElementData);
 public:
     // Override RefCounted's deref() to ensure operator delete is called on
     // the appropriate subclass type.
@@ -148,7 +148,7 @@ private:
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableElementData);
 class ShareableElementData : public ElementData {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ShareableElementData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ShareableElementData, ShareableElementData);
 public:
     static Ref<ShareableElementData> createWithAttributes(std::span<const Attribute>);
 
@@ -206,7 +206,7 @@ inline unsigned ElementData::length() const
 inline const Attribute* ElementData::attributeBase() const
 {
     if (auto* uniqueData = dynamicDowncast<UniqueElementData>(*this))
-        return uniqueData->m_attributeVector.data();
+        return uniqueData->m_attributeVector.span().data();
     return uncheckedDowncast<ShareableElementData>(*this).m_attributeArray;
 }
 

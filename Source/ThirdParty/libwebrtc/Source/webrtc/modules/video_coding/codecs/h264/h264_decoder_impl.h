@@ -34,13 +34,15 @@
 // some way depending on undocumented behavior. If any problems turn up, we may
 // have to add an extra copy operation, to enforce padding before buffers are
 // passed to ffmpeg.
-
 extern "C" {
 #include <libavcodec/avcodec.h>
 }  // extern "C"
 
+#include <cstdint>
 #include <memory>
 
+#include "api/video/encoded_image.h"
+#include "api/video_codecs/video_decoder.h"
 #include "common_video/h264/h264_bitstream_parser.h"
 #include "common_video/include/video_frame_buffer_pool.h"
 #include "modules/video_coding/codecs/h264/include/h264.h"
@@ -98,7 +100,7 @@ class H264DecoderImpl : public H264Decoder {
   bool has_reported_init_;
   bool has_reported_error_;
 
-  webrtc::H264BitstreamParser h264_bitstream_parser_;
+  H264BitstreamParser h264_bitstream_parser_;
 };
 
 }  // namespace webrtc

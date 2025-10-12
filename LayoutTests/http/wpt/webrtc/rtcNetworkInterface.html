@@ -18,7 +18,8 @@ function with_iframe(url) {
 
 async function testNetworkInterface(test, frame)
 {
-    await frame.contentWindow.navigator.mediaDevices.getUserMedia({ video: true });
+    const localStream = await frame.contentWindow.navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => localStream.getTracks().forEach(t => t.stop()));
 
     const pc = new frame.contentWindow.RTCPeerConnection();
     pc.createDataChannel("test");

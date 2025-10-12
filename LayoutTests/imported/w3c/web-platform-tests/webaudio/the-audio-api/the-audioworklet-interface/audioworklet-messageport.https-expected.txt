@@ -1,13 +1,20 @@
 
 PASS # AUDIT TASK RUNNER STARTED.
+FAIL Executing "Test postMessage from AudioWorklet to AudioWorkletGlobalScope" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.port.onmessage = (event) => {
+              should(event.data,
+                     'The response from AudioWorkletGlobalscope')
+                  .beEqualTo('hello world');
+              task.done();
+            }')"
 PASS Executing "Test postMessage from AudioWorkletProcessor to AudioWorkletNode"
 PASS Executing "Test postMessage from AudioWorkletNode to AudioWorkletProcessor"
 PASS Audit report
+PASS > [Test postMessage from AudioWorklet to AudioWorkletGlobalScope]
 PASS > [Test postMessage from AudioWorkletProcessor to AudioWorkletNode]
 PASS   The initial message from PortProcessor is equal to created.
 PASS < [Test postMessage from AudioWorkletProcessor to AudioWorkletNode] All assertions passed. (total 1 assertions)
 PASS > [Test postMessage from AudioWorkletNode to AudioWorkletProcessor]
 PASS   The response from PortProcessor is equal to hello.
 PASS < [Test postMessage from AudioWorkletNode to AudioWorkletProcessor] All assertions passed. (total 1 assertions)
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully.
 

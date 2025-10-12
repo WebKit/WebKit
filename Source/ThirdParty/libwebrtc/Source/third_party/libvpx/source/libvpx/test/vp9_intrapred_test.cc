@@ -28,8 +28,8 @@ using libvpx_test::ACMRandom;
 
 const int count_test_block = 100000;
 
-typedef void (*IntraPredFunc)(uint8_t *dst, ptrdiff_t stride,
-                              const uint8_t *above, const uint8_t *left);
+using IntraPredFunc = void (*)(uint8_t *dst, ptrdiff_t stride,
+                               const uint8_t *above, const uint8_t *left);
 
 struct IntraPredParam {
   IntraPredParam(IntraPredFunc pred = nullptr, IntraPredFunc ref = nullptr,
@@ -135,7 +135,7 @@ void IntraPredTest<uint8_t, IntraPredParam>::Predict() {
       params_.pred_fn(dst_, stride_, above_row_, left_col_));
 }
 
-typedef IntraPredTest<uint8_t, IntraPredParam> VP9IntraPredTest;
+using VP9IntraPredTest = IntraPredTest<uint8_t, IntraPredParam>;
 
 TEST_P(VP9IntraPredTest, IntraPredTests) {
   // max block size is 32
@@ -499,9 +499,10 @@ INSTANTIATE_TEST_SUITE_P(
 #endif  // HAVE_LSX
 
 #if CONFIG_VP9_HIGHBITDEPTH
-typedef void (*HighbdIntraPred)(uint16_t *dst, ptrdiff_t stride,
-                                const uint16_t *above, const uint16_t *left,
-                                int bps);
+using HighbdIntraPred = void (*)(uint16_t *dst, ptrdiff_t stride,
+                                 const uint16_t *above, const uint16_t *left,
+                                 int bps);
+
 struct HighbdIntraPredParam {
   HighbdIntraPredParam(HighbdIntraPred pred = nullptr,
                        HighbdIntraPred ref = nullptr, int block_size_value = 0,
@@ -524,7 +525,7 @@ void IntraPredTest<uint16_t, HighbdIntraPredParam>::Predict() {
       params_.pred_fn(dst_, stride_, above_row_, left_col_, bit_depth));
 }
 
-typedef IntraPredTest<uint16_t, HighbdIntraPredParam> VP9HighbdIntraPredTest;
+using VP9HighbdIntraPredTest = IntraPredTest<uint16_t, HighbdIntraPredParam>;
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VP9HighbdIntraPredTest);
 
 TEST_P(VP9HighbdIntraPredTest, HighbdIntraPredTests) {

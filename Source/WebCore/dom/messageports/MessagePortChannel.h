@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "MessagePortChannelProvider.h"
-#include "MessagePortIdentifier.h"
-#include "MessageWithMessagePorts.h"
-#include "ProcessIdentifier.h"
+#include <WebCore/MessagePortChannelProvider.h>
+#include <WebCore/MessagePortIdentifier.h>
+#include <WebCore/MessageWithMessagePorts.h>
+#include <WebCore/ProcessIdentifier.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
@@ -75,7 +75,7 @@ private:
     std::array<std::optional<ProcessIdentifier>, 2> m_processes;
     std::array<RefPtr<MessagePortChannel>, 2> m_entangledToProcessProtectors;
     std::array<Vector<MessageWithMessagePorts>, 2> m_pendingMessages;
-    std::array<UncheckedKeyHashSet<RefPtr<MessagePortChannel>>, 2> m_pendingMessagePortTransfers;
+    std::array<HashSet<RefPtr<MessagePortChannel>>, 2> m_pendingMessagePortTransfers;
     std::array<RefPtr<MessagePortChannel>, 2> m_pendingMessageProtectors;
     uint64_t m_messageBatchesInFlight { 0 };
 

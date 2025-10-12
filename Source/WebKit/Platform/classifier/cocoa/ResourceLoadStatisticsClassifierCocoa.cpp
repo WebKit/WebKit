@@ -54,7 +54,7 @@ bool ResourceLoadStatisticsClassifierCocoa::classify(unsigned subresourceUnderTo
     features.append({-1, -1});
 
     double score;
-    int classification = svm_predict_values(singletonPredictionModel(), features.data(), &score);
+    int classification = svm_predict_values(singletonPredictionModel(), features.span().data(), &score);
     LOG(ResourceLoadStatistics, "ResourceLoadStatisticsClassifierCocoa::classify(): Classified with CorePrediction.");
     return classification < 0;
 }

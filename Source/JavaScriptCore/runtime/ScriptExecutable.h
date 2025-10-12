@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "ExecutableBase.h"
-#include "ParserModes.h"
-#include "ProfilerJettisonReason.h"
+#include <JavaScriptCore/ExecutableBase.h>
+#include <JavaScriptCore/ParserModes.h>
+#include <JavaScriptCore/ProfilerJettisonReason.h>
 
 namespace JSC {
 

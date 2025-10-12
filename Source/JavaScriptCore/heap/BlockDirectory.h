@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "AllocationFailureMode.h"
-#include "BlockDirectoryBits.h"
-#include "CellAttributes.h"
-#include "FreeList.h"
-#include "LocalAllocator.h"
-#include "MarkedBlock.h"
+#include <JavaScriptCore/AllocationFailureMode.h>
+#include <JavaScriptCore/BlockDirectoryBits.h>
+#include <JavaScriptCore/CellAttributes.h>
+#include <JavaScriptCore/FreeList.h>
+#include <JavaScriptCore/LocalAllocator.h>
+#include <JavaScriptCore/MarkedBlock.h>
 #include <wtf/DataLog.h>
 #include <wtf/DebugHeap.h>
 #include <wtf/FastBitVector.h>
@@ -54,7 +54,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BlockDirectory);
 
 class BlockDirectory {
     WTF_MAKE_NONCOPYABLE(BlockDirectory);
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BlockDirectory);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BlockDirectory, BlockDirectory);
     
     friend class LLIntOffsetsExtractor;
 

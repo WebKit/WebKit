@@ -88,6 +88,7 @@ struct EditorState {
     bool isInPlugin { false };
 #if PLATFORM(MAC)
     bool canEnableAutomaticSpellingCorrection { true };
+    bool inputMethodUsesCorrectKeyEventOrder { false };
 #endif
 
     struct PostLayoutData {
@@ -135,8 +136,6 @@ struct EditorState {
         uint64_t surroundingContextSelectionPosition { 0 };
 #endif
 
-        std::optional<WebCore::FontAttributes> fontAttributes;
-
         bool canCut { false };
         bool canCopy { false };
         bool canPaste { false };
@@ -163,6 +162,7 @@ struct EditorState {
         std::optional<WebCore::ScrollingNodeID> scrollingNodeIDAtStart;
         std::optional<WebCore::ScrollingNodeID> scrollingNodeIDAtEnd;
         WebCore::ScrollOffset enclosingScrollOffset;
+        bool enclosingLayerUsesContentsLayer { false };
 #endif // PLATFORM(IOS_FAMILY)
     };
 

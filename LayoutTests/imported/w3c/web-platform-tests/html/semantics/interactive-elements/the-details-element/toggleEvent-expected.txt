@@ -9,6 +9,7 @@ PASS Adding open to 'details' and then calling removeAttribute('open') should fi
 PASS Setting open=true on an opened 'details' element should not fire a toggle event at the 'details' element
 PASS Setting open=false on a closed 'details' element should not fire a toggle event at the 'details' element
 PASS Adding open to 'details' (not in the document) should fire a toggle event at the 'details' element, with 'oldState: closed' and 'newState: open'
+PASS Setting open from the parser fires a toggle event
 Lorem ipsum
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 

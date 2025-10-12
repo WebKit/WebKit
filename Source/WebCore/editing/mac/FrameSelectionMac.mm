@@ -29,7 +29,8 @@
 #import "AXObjectCache.h"
 #import "Chrome.h"
 #import "ChromeClient.h"
-#import "DocumentInlines.h"
+#import "DocumentPage.h"
+#import "DocumentView.h"
 #import "LocalFrame.h"
 #import "RenderView.h"
 

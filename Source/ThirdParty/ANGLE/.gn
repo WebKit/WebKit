@@ -37,9 +37,12 @@ exec_script_allowlist = angle_dotfile_settings.exec_script_allowlist +
                         ]
 
 default_args = {
-  clang_use_chrome_plugins = false
+  clang_use_chrome_plugins = true
   build_angle_deqp_tests = true
   use_sysroot = true
+
+  # Turns on unsafe buffer warning suppressions during build.
+  clang_unsafe_buffers_paths = "//unsafe_buffers_paths.txt"
 
   # Saves on importing extra dependencies and ANGLE doesn't use JS.
   enable_js_protobuf = false
@@ -51,10 +54,15 @@ default_args = {
   tests_have_location_tags = false
 
   # Use base level API level 29 support for AHardwareBuffer ANGLE tests.
-  android32_ndk_api_level = 29
-  android64_ndk_api_level = 29
+  android_ndk_api_level = 29
 
   vma_vulkan_headers_dir = "//third_party/vulkan-headers/src"
+
+  # Use Siso instead of Ninja.
+  use_siso = true
+
+  # TODO(439777063): llvm and Dawn need to fix includes
+  use_clang_modules = false
 }
 
 no_check_targets = [ "third_party/dawn/*" ]

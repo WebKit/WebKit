@@ -1,0 +1,33 @@
+Text 'B' RESULT: Display lists are not shared.
+Text 'B' A and B (no ids):
+
+(draw-glyphs
+  (local-anchor (0,0))
+  (font-smoothing-mode antialiased)
+  (length 1))
+
+
+Text 'A' RESULT: Display lists are not shared.
+Text 'A' A and B (no ids):
+
+(concatenate-ctm
+  (ctm {m=((1.00,0.00)(0.00,-1.00)) t=(0.00,0.00)}))
+(set-state
+  (change-flags [fill-brush])
+  (fill-brush
+    (color rgb(255, 0, 255))))
+(fill-path
+  (path move to (0,38.40), add line to (48,38.40), add line to (48,-9.60), add line to (0,-9.60), close subpath))
+(set-state
+  (change-flags [fill-brush])
+  (fill-brush
+    (color rgb(0, 255, 255))))
+(fill-path
+  (path move to (9.60,38.40), add line to (19.20,38.40), add line to (19.20,-9.60), add line to (9.60,-9.60), close subpath))
+(concatenate-ctm
+  (ctm {m=((1.00,0.00)(0.00,-1.00)) t=(0.00,0.00)}))
+(set-inline-fill-color
+  (color #000000))
+
+
+

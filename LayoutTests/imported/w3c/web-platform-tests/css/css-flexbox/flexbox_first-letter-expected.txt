@@ -1,4 +1,4 @@
 Triceratops
 
-FAIL flexbox | first-letter assert_not_equals: got disallowed value "2"
+PASS flexbox | first-letter
 

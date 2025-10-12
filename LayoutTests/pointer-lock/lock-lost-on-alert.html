@@ -1,7 +1,7 @@
-<!DOCTYPE HTML>
+<!DOCTYPE HTML> <!-- webkit-test-runner [ PointerLockEnabled=true ] -->
 <html>
 <head>
-<script src="../http/tests/resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../http/tests/resources/pointer-lock/pointer-lock-test-harness.js"></script>
 </head>
 <body>
@@ -12,6 +12,7 @@
     description("Test that pointerlockchange event is dispatched when lock is lost.")
     window.jsTestIsAsync = true;
     shouldBeDefined("window.testRunner");
+    window.testRunner?.setHasMouseDeviceForTesting(true);
 
     targetDiv1 = document.getElementById("target1");
 
@@ -28,12 +29,14 @@
         function () {
             expectOnlyChangeEvent("Alert cancel targetDiv1 lock.");
             alert('Alert text');
+            setTimeout(doNextStep, 0);
+        },
+        function () {
             shouldBe("document.pointerLockElement", "null");
         },
     ];
     doNextStepWithUserGesture();
 </script>
-<script src="../http/tests/resources/js-test-post.js"></script>
 </body>
 </html>
 

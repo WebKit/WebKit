@@ -47,12 +47,12 @@ shouldThrow("new Promise({})", "'TypeError: Promise constructor takes a function
 shouldThrow("new Promise(null)", "'TypeError: Promise constructor takes a function argument'");
 shouldThrow("new Promise(undefined)", "'TypeError: Promise constructor takes a function argument'");
 
-shouldThrow("Promise(1)", "'TypeError: Cannot call a constructor without |new|'");
-shouldThrow("Promise('hello')", "'TypeError: Cannot call a constructor without |new|'");
-shouldThrow("Promise([])", "'TypeError: Cannot call a constructor without |new|'");
-shouldThrow("Promise({})", "'TypeError: Cannot call a constructor without |new|'");
-shouldThrow("Promise(null)", "'TypeError: Cannot call a constructor without |new|'");
-shouldThrow("Promise(undefined)", "'TypeError: Cannot call a constructor without |new|'");
+shouldThrow("Promise(1)", "'TypeError: Cannot call a constructor Promise without |new|'");
+shouldThrow("Promise('hello')", "'TypeError: Cannot call a constructor Promise without |new|'");
+shouldThrow("Promise([])", "'TypeError: Cannot call a constructor Promise without |new|'");
+shouldThrow("Promise({})", "'TypeError: Cannot call a constructor Promise without |new|'");
+shouldThrow("Promise(null)", "'TypeError: Cannot call a constructor Promise without |new|'");
+shouldThrow("Promise(undefined)", "'TypeError: Cannot call a constructor Promise without |new|'");
 
 // Promise statics
 debug("");
@@ -72,5 +72,4 @@ shouldNotThrow("Promise.reject(1)");
 // Should return Promise objects.
 shouldBeType("Promise.resolve(1)", "Promise");
 shouldBeType("Promise.reject(1)", "Promise");
-
 

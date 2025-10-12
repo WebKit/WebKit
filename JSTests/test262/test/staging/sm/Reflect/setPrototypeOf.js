@@ -4,9 +4,6 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-Reflect-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -25,11 +22,11 @@ assert.sameValue(Object.getPrototypeOf(obj), null);
 
 // The proto argument is required too.
 obj = {};
-assertThrowsInstanceOf(() => Reflect.setPrototypeOf(obj), TypeError);
+assert.throws(TypeError, () => Reflect.setPrototypeOf(obj));
 
 // The proto argument must be either null or an object.
 for (proto of [undefined, false, 0, 1.6, "that", Symbol.iterator]) {
-    assertThrowsInstanceOf(() => Reflect.setPrototypeOf(obj, proto), TypeError);
+    assert.throws(TypeError, () => Reflect.setPrototypeOf(obj, proto));
 }
 
 // Return false if the target isn't extensible.

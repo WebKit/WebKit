@@ -20,6 +20,7 @@
         }
 
         let stream = await navigator.mediaDevices.getUserMedia({ audio:true, video:true })
+        test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
         for (const track of stream.getAudioTracks()) {
             assert_false(track.label == originalLabel, "navigator.mediaDevices did not anonymize audio track label at all");

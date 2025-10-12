@@ -218,7 +218,7 @@
       }
     ]
   },
-  "Perf Linux Bionic": {
+  "Perf Linux": {
     "isolated_scripts": [
       {
         "args": [
@@ -239,7 +239,7 @@
         "swarming": {
           "dimensions": {
             "gce": "0",
-            "os": "Ubuntu-18.04",
+            "os": "Ubuntu-22.04",
             "pool": "WebRTC-perf"
           },
           "expiration": 10800,
@@ -272,7 +272,7 @@
         "swarming": {
           "dimensions": {
             "gce": "0",
-            "os": "Ubuntu-18.04",
+            "os": "Ubuntu-22.04",
             "pool": "WebRTC-perf"
           },
           "expiration": 10800,

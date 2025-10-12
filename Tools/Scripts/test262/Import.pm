@@ -83,7 +83,7 @@ sub processCLI {
             pod2usage(-exitstatus => 4, -verbose => 1);
         }
     } else {
-        $remoteUrl ||= 'git@github.com:tc39/test262.git';
+        $remoteUrl ||= 'https://github.com/tc39/test262.git';
         $branch ||= 'main';
     }
 
@@ -265,7 +265,7 @@ Specify the folder for Test262's repository.
 
 =item B<--remote, -r>
 
-Specify a remote Test262's repository. Defaults to 'git@github.com:tc39/test262.git'.
+Specify a remote Test262's repository. Defaults to 'https://github.com/tc39/test262.git'.
 
 =item B<--branch, -b>
 

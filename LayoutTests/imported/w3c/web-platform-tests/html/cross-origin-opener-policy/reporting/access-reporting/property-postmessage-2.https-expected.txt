@@ -1,6 +1,4 @@
-CONSOLE MESSAGE: Unable to post message to http://localhost:8800. Recipient has origin https://localhost:9443.
 
-CONSOLE MESSAGE: Unable to post message to http://localhost:8800. Recipient has origin https://127.0.0.1:9443.
 
 
 FAIL same-origin > w => w.postMessage("") promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'report.body.property')"

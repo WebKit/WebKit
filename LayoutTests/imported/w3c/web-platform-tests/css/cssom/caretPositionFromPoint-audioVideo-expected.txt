@@ -1,0 +1,5 @@
+
+
+PASS document.caretPositionFromPoint() should return a CaretPosition over audio elements
+PASS document.caretPositionFromPoint() should return a CaretPosition over video elements
+

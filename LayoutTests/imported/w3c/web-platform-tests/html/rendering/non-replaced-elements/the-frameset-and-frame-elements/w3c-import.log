@@ -14,17 +14,20 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/different-writing-modes-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/different-writing-modes.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/exceed-then-not-exceed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/frame-no-frameset-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/frameset-visibility-hidden-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/frameset-visibility-hidden.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/large-cols-abssize-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/large-cols-abssize.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/large-cols-percentage-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/large-cols-percentage.html
-/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/large-cols-relsize-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/large-cols-relsize.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/large-rows-abssize-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/large-rows-abssize.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/large-rows-percentage-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/large-rows-percentage.html
-/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/large-rows-relsize-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/large-rows-relsize.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/multicol-table-crash.html

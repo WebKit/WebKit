@@ -32,6 +32,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/MainThread.h>
 #import <wtf/RefPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #if USE(WEB_THREAD)
 #import "WebCoreThreadRun.h"
@@ -44,11 +45,11 @@ static const double diskCacheMonitorTimeout = 20;
 
 RefPtr<SharedBuffer> DiskCacheMonitor::tryGetFileBackedSharedBufferFromCFURLCachedResponse(CFCachedURLResponseRef cachedResponse)
 {
-    auto data = _CFCachedURLResponseGetMemMappedData(cachedResponse);
+    RetainPtr data = _CFCachedURLResponseGetMemMappedData(cachedResponse);
     if (!data)
         return nullptr;
 
-    return SharedBuffer::create(data);
+    return SharedBuffer::create(data.get());
 }
 
 void DiskCacheMonitor::monitorFileBackingStoreCreation(const ResourceRequest& request, PAL::SessionID sessionID, CFCachedURLResponseRef cachedResponse)
@@ -81,7 +82,7 @@ DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, PAL::SessionI
     auto cancelMonitorBlockToRun = cancelMonitorBlock;
 #endif
 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * diskCacheMonitorTimeout), dispatch_get_main_queue(), cancelMonitorBlockToRun);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * diskCacheMonitorTimeout), mainDispatchQueueSingleton(), cancelMonitorBlockToRun);
 
     // Set up the disk caching callback to create the ShareableResource and send it to the WebProcess.
     auto block = ^(CFCachedURLResponseRef cachedResponse) {
@@ -110,7 +111,7 @@ DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, PAL::SessionI
 #else
     auto blockToRun = block;
 #endif
-    _CFCachedURLResponseSetBecameFileBackedCallBackBlock(cachedResponse, blockToRun, dispatch_get_main_queue());
+    _CFCachedURLResponseSetBecameFileBackedCallBackBlock(cachedResponse, blockToRun, mainDispatchQueueSingleton());
 }
 
 void DiskCacheMonitor::resourceBecameFileBacked(SharedBuffer& fileBackedBuffer)

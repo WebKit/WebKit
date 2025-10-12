@@ -21,168 +21,168 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-WebCoreSupport/WebResourceLoadScheduler.mm
+WebCoreSupport/WebResourceLoadScheduler.mm @nonARC
 
-mac/DOM/DOM.mm
-mac/DOM/DOMAbstractView.mm
-mac/DOM/DOMAttr.mm
-mac/DOM/DOMBlob.mm
-mac/DOM/DOMCDATASection.mm
-mac/DOM/DOMCSS.mm
-mac/DOM/DOMCSSCharsetRule.mm
-mac/DOM/DOMCSSFontFaceRule.mm
-mac/DOM/DOMCSSImportRule.mm
-mac/DOM/DOMCSSMediaRule.mm
-mac/DOM/DOMCSSPageRule.mm
-mac/DOM/DOMCSSPrimitiveValue.mm
-mac/DOM/DOMCSSRule.mm
-mac/DOM/DOMCSSRuleList.mm
-mac/DOM/DOMCSSStyleDeclaration.mm
-mac/DOM/DOMCSSStyleRule.mm
-mac/DOM/DOMCSSStyleSheet.mm
-mac/DOM/DOMCSSUnknownRule.mm
-mac/DOM/DOMCSSValue.mm
-mac/DOM/DOMCSSValueList.mm
-mac/DOM/DOMCharacterData.mm
+mac/DOM/DOM.mm @nonARC
+mac/DOM/DOMAbstractView.mm @nonARC
+mac/DOM/DOMAttr.mm @nonARC
+mac/DOM/DOMBlob.mm @nonARC
+mac/DOM/DOMCDATASection.mm @nonARC
+mac/DOM/DOMCSS.mm @nonARC
+mac/DOM/DOMCSSCharsetRule.mm @nonARC
+mac/DOM/DOMCSSFontFaceRule.mm @nonARC
+mac/DOM/DOMCSSImportRule.mm @nonARC
+mac/DOM/DOMCSSMediaRule.mm @nonARC
+mac/DOM/DOMCSSPageRule.mm @nonARC
+mac/DOM/DOMCSSPrimitiveValue.mm @nonARC
+mac/DOM/DOMCSSRule.mm @nonARC
+mac/DOM/DOMCSSRuleList.mm @nonARC
+mac/DOM/DOMCSSStyleDeclaration.mm @nonARC
+mac/DOM/DOMCSSStyleRule.mm @nonARC
+mac/DOM/DOMCSSStyleSheet.mm @nonARC
+mac/DOM/DOMCSSUnknownRule.mm @nonARC
+mac/DOM/DOMCSSValue.mm @nonARC
+mac/DOM/DOMCSSValueList.mm @nonARC
+mac/DOM/DOMCharacterData.mm @nonARC
 mac/DOM/DOMComment.h
-mac/DOM/DOMComment.mm
+mac/DOM/DOMComment.mm @nonARC
 mac/DOM/DOMCommentInternal.h
-mac/DOM/DOMCounter.mm
-mac/DOM/DOMCustomXPathNSResolver.mm
-mac/DOM/DOMDocument.mm
-mac/DOM/DOMDocumentFragment.mm
-mac/DOM/DOMDocumentType.mm
-mac/DOM/DOMElement.mm
-mac/DOM/DOMEntity.mm
-mac/DOM/DOMEntityReference.mm
-mac/DOM/DOMEvent.mm
-mac/DOM/DOMEvents.mm
-mac/DOM/DOMFile.mm
-mac/DOM/DOMFileList.mm
-mac/DOM/DOMHTML.mm
-mac/DOM/DOMHTMLAnchorElement.mm
-mac/DOM/DOMHTMLAppletElement.mm
-mac/DOM/DOMHTMLAreaElement.mm
-mac/DOM/DOMHTMLBRElement.mm
-mac/DOM/DOMHTMLBaseElement.mm
-mac/DOM/DOMHTMLBaseFontElement.mm
-mac/DOM/DOMHTMLBodyElement.mm
-mac/DOM/DOMHTMLButtonElement.mm
-mac/DOM/DOMHTMLCanvasElement.mm
-mac/DOM/DOMHTMLCollection.mm
-mac/DOM/DOMHTMLDListElement.mm
-mac/DOM/DOMHTMLDirectoryElement.mm
-mac/DOM/DOMHTMLDivElement.mm
-mac/DOM/DOMHTMLDocument.mm
-mac/DOM/DOMHTMLElement.mm
-mac/DOM/DOMHTMLEmbedElement.mm
-mac/DOM/DOMHTMLFieldSetElement.mm
-mac/DOM/DOMHTMLFontElement.mm
-mac/DOM/DOMHTMLFormElement.mm
-mac/DOM/DOMHTMLFrameElement.mm
-mac/DOM/DOMHTMLFrameSetElement.mm
-mac/DOM/DOMHTMLHRElement.mm
-mac/DOM/DOMHTMLHeadElement.mm
-mac/DOM/DOMHTMLHeadingElement.mm
-mac/DOM/DOMHTMLHtmlElement.mm
-mac/DOM/DOMHTMLIFrameElement.mm
-mac/DOM/DOMHTMLImageElement.mm
-mac/DOM/DOMHTMLInputElement.mm
-mac/DOM/DOMHTMLLIElement.mm
-mac/DOM/DOMHTMLLabelElement.mm
-mac/DOM/DOMHTMLLegendElement.mm
-mac/DOM/DOMHTMLLinkElement.mm
-mac/DOM/DOMHTMLMapElement.mm
-mac/DOM/DOMHTMLMarqueeElement.mm
-mac/DOM/DOMHTMLMediaElement.mm
-mac/DOM/DOMHTMLMenuElement.mm
-mac/DOM/DOMHTMLMetaElement.mm
-mac/DOM/DOMHTMLModElement.mm
-mac/DOM/DOMHTMLOListElement.mm
-mac/DOM/DOMHTMLObjectElement.mm
-mac/DOM/DOMHTMLOptGroupElement.mm
-mac/DOM/DOMHTMLOptionElement.mm
-mac/DOM/DOMHTMLOptionsCollection.mm
-mac/DOM/DOMHTMLParagraphElement.mm
-mac/DOM/DOMHTMLParamElement.mm
-mac/DOM/DOMHTMLPreElement.mm
-mac/DOM/DOMHTMLQuoteElement.mm
-mac/DOM/DOMHTMLScriptElement.mm
-mac/DOM/DOMHTMLSelectElement.mm
-mac/DOM/DOMHTMLStyleElement.mm
-mac/DOM/DOMHTMLTableCaptionElement.mm
-mac/DOM/DOMHTMLTableCellElement.mm
-mac/DOM/DOMHTMLTableColElement.mm
-mac/DOM/DOMHTMLTableElement.mm
-mac/DOM/DOMHTMLTableRowElement.mm
-mac/DOM/DOMHTMLTableSectionElement.mm
-mac/DOM/DOMHTMLTextAreaElement.mm
-mac/DOM/DOMHTMLTitleElement.mm
-mac/DOM/DOMHTMLUListElement.mm
-mac/DOM/DOMHTMLVideoElement.mm
-mac/DOM/DOMImplementation.mm
-mac/DOM/DOMInternal.mm
-mac/DOM/DOMKeyboardEvent.mm
-mac/DOM/DOMMediaError.mm
-mac/DOM/DOMMediaList.mm
-mac/DOM/DOMMouseEvent.mm
-mac/DOM/DOMMutationEvent.mm
-mac/DOM/DOMNamedNodeMap.mm
-mac/DOM/DOMNode.mm
-mac/DOM/DOMNodeIterator.mm
-mac/DOM/DOMNodeList.mm
-mac/DOM/DOMObject.mm
-mac/DOM/DOMOverflowEvent.mm
-mac/DOM/DOMProcessingInstruction.mm
-mac/DOM/DOMProgressEvent.mm
-mac/DOM/DOMRGBColor.mm
-mac/DOM/DOMRange.mm
-mac/DOM/DOMRect.mm
-mac/DOM/DOMStyleSheet.mm
-mac/DOM/DOMStyleSheetList.mm
-mac/DOM/DOMText.mm
-mac/DOM/DOMTextEvent.mm
-mac/DOM/DOMTimeRanges.mm
-mac/DOM/DOMTokenList.mm
-mac/DOM/DOMTreeWalker.mm
-mac/DOM/DOMUIEvent.mm
-mac/DOM/DOMUIKitExtensions.mm
-mac/DOM/DOMUtility.mm
-mac/DOM/DOMWheelEvent.mm
-mac/DOM/DOMXPath.mm
-mac/DOM/DOMXPathExpression.mm
-mac/DOM/DOMXPathResult.mm
-mac/DOM/ExceptionHandlers.mm
-mac/DOM/ObjCEventListener.mm
-mac/DOM/ObjCNodeFilterCondition.mm
-mac/DOM/WebDOMOperations.mm
+mac/DOM/DOMCounter.mm @nonARC
+mac/DOM/DOMCustomXPathNSResolver.mm @nonARC
+mac/DOM/DOMDocument.mm @nonARC
+mac/DOM/DOMDocumentFragment.mm @nonARC
+mac/DOM/DOMDocumentType.mm @nonARC
+mac/DOM/DOMElement.mm @nonARC
+mac/DOM/DOMEntity.mm @nonARC
+mac/DOM/DOMEntityReference.mm @nonARC
+mac/DOM/DOMEvent.mm @nonARC
+mac/DOM/DOMEvents.mm @nonARC
+mac/DOM/DOMFile.mm @nonARC
+mac/DOM/DOMFileList.mm @nonARC
+mac/DOM/DOMHTML.mm @nonARC
+mac/DOM/DOMHTMLAnchorElement.mm @nonARC
+mac/DOM/DOMHTMLAppletElement.mm @nonARC
+mac/DOM/DOMHTMLAreaElement.mm @nonARC
+mac/DOM/DOMHTMLBRElement.mm @nonARC
+mac/DOM/DOMHTMLBaseElement.mm @nonARC
+mac/DOM/DOMHTMLBaseFontElement.mm @nonARC
+mac/DOM/DOMHTMLBodyElement.mm @nonARC
+mac/DOM/DOMHTMLButtonElement.mm @nonARC
+mac/DOM/DOMHTMLCanvasElement.mm @nonARC
+mac/DOM/DOMHTMLCollection.mm @nonARC
+mac/DOM/DOMHTMLDListElement.mm @nonARC
+mac/DOM/DOMHTMLDirectoryElement.mm @nonARC
+mac/DOM/DOMHTMLDivElement.mm @nonARC
+mac/DOM/DOMHTMLDocument.mm @nonARC
+mac/DOM/DOMHTMLElement.mm @nonARC
+mac/DOM/DOMHTMLEmbedElement.mm @nonARC
+mac/DOM/DOMHTMLFieldSetElement.mm @nonARC
+mac/DOM/DOMHTMLFontElement.mm @nonARC
+mac/DOM/DOMHTMLFormElement.mm @nonARC
+mac/DOM/DOMHTMLFrameElement.mm @nonARC
+mac/DOM/DOMHTMLFrameSetElement.mm @nonARC
+mac/DOM/DOMHTMLHRElement.mm @nonARC
+mac/DOM/DOMHTMLHeadElement.mm @nonARC
+mac/DOM/DOMHTMLHeadingElement.mm @nonARC
+mac/DOM/DOMHTMLHtmlElement.mm @nonARC
+mac/DOM/DOMHTMLIFrameElement.mm @nonARC
+mac/DOM/DOMHTMLImageElement.mm @nonARC
+mac/DOM/DOMHTMLInputElement.mm @nonARC
+mac/DOM/DOMHTMLLIElement.mm @nonARC
+mac/DOM/DOMHTMLLabelElement.mm @nonARC
+mac/DOM/DOMHTMLLegendElement.mm @nonARC
+mac/DOM/DOMHTMLLinkElement.mm @nonARC
+mac/DOM/DOMHTMLMapElement.mm @nonARC
+mac/DOM/DOMHTMLMarqueeElement.mm @nonARC
+mac/DOM/DOMHTMLMediaElement.mm @nonARC
+mac/DOM/DOMHTMLMenuElement.mm @nonARC
+mac/DOM/DOMHTMLMetaElement.mm @nonARC
+mac/DOM/DOMHTMLModElement.mm @nonARC
+mac/DOM/DOMHTMLOListElement.mm @nonARC
+mac/DOM/DOMHTMLObjectElement.mm @nonARC
+mac/DOM/DOMHTMLOptGroupElement.mm @nonARC
+mac/DOM/DOMHTMLOptionElement.mm @nonARC
+mac/DOM/DOMHTMLOptionsCollection.mm @nonARC
+mac/DOM/DOMHTMLParagraphElement.mm @nonARC
+mac/DOM/DOMHTMLParamElement.mm @nonARC
+mac/DOM/DOMHTMLPreElement.mm @nonARC
+mac/DOM/DOMHTMLQuoteElement.mm @nonARC
+mac/DOM/DOMHTMLScriptElement.mm @nonARC
+mac/DOM/DOMHTMLSelectElement.mm @nonARC
+mac/DOM/DOMHTMLStyleElement.mm @nonARC
+mac/DOM/DOMHTMLTableCaptionElement.mm @nonARC
+mac/DOM/DOMHTMLTableCellElement.mm @nonARC
+mac/DOM/DOMHTMLTableColElement.mm @nonARC
+mac/DOM/DOMHTMLTableElement.mm @nonARC
+mac/DOM/DOMHTMLTableRowElement.mm @nonARC
+mac/DOM/DOMHTMLTableSectionElement.mm @nonARC
+mac/DOM/DOMHTMLTextAreaElement.mm @nonARC
+mac/DOM/DOMHTMLTitleElement.mm @nonARC
+mac/DOM/DOMHTMLUListElement.mm @nonARC
+mac/DOM/DOMHTMLVideoElement.mm @nonARC
+mac/DOM/DOMImplementation.mm @nonARC
+mac/DOM/DOMInternal.mm @nonARC
+mac/DOM/DOMKeyboardEvent.mm @nonARC
+mac/DOM/DOMMediaError.mm @nonARC
+mac/DOM/DOMMediaList.mm @nonARC
+mac/DOM/DOMMouseEvent.mm @nonARC
+mac/DOM/DOMMutationEvent.mm @nonARC
+mac/DOM/DOMNamedNodeMap.mm @nonARC
+mac/DOM/DOMNode.mm @nonARC
+mac/DOM/DOMNodeIterator.mm @nonARC
+mac/DOM/DOMNodeList.mm @nonARC
+mac/DOM/DOMObject.mm @nonARC
+mac/DOM/DOMOverflowEvent.mm @nonARC
+mac/DOM/DOMProcessingInstruction.mm @nonARC
+mac/DOM/DOMProgressEvent.mm @nonARC
+mac/DOM/DOMRGBColor.mm @nonARC
+mac/DOM/DOMRange.mm @nonARC
+mac/DOM/DOMRect.mm @nonARC
+mac/DOM/DOMStyleSheet.mm @nonARC
+mac/DOM/DOMStyleSheetList.mm @nonARC
+mac/DOM/DOMText.mm @nonARC
+mac/DOM/DOMTextEvent.mm @nonARC
+mac/DOM/DOMTimeRanges.mm @nonARC
+mac/DOM/DOMTokenList.mm @nonARC
+mac/DOM/DOMTreeWalker.mm @nonARC
+mac/DOM/DOMUIEvent.mm @nonARC
+mac/DOM/DOMUIKitExtensions.mm @nonARC
+mac/DOM/DOMUtility.mm @nonARC
+mac/DOM/DOMWheelEvent.mm @nonARC
+mac/DOM/DOMXPath.mm @nonARC
+mac/DOM/DOMXPathExpression.mm @nonARC
+mac/DOM/DOMXPathResult.mm @nonARC
+mac/DOM/ExceptionHandlers.mm @nonARC
+mac/DOM/ObjCEventListener.mm @nonARC
+mac/DOM/ObjCNodeFilterCondition.mm @nonARC
+mac/DOM/WebDOMOperations.mm @nonARC
 
-mac/DefaultDelegates/WebDefaultContextMenuDelegate.mm
+mac/DefaultDelegates/WebDefaultContextMenuDelegate.mm @nonARC
 
-mac/Misc/WebSharingServicePickerController.mm
+mac/Misc/WebSharingServicePickerController.mm @nonARC
 
-mac/Plugins/WebBasePluginPackage.mm
-mac/Plugins/WebPluginContainerCheck.mm
-mac/Plugins/WebPluginController.mm
-mac/Plugins/WebPluginDatabase.mm
+mac/Plugins/WebBasePluginPackage.mm @nonARC
+mac/Plugins/WebPluginContainerCheck.mm @nonARC
+mac/Plugins/WebPluginController.mm @nonARC
+mac/Plugins/WebPluginDatabase.mm @nonARC
 
-mac/History/WebBackForwardList.mm
-mac/WebCoreSupport/TextIndicatorWindow.mm
-mac/WebCoreSupport/WebFrameLoaderClient.mm
+mac/History/WebBackForwardList.mm @nonARC
+mac/WebCoreSupport/TextIndicatorWindow.mm @nonARC
+mac/WebCoreSupport/WebFrameLoaderClient.mm @nonARC
 
-mac/WebInspector/WebInspector.mm
+mac/WebInspector/WebInspector.mm @nonARC
 
-mac/WebView/WebClipView.mm
-mac/WebView/WebDataSource.mm
-mac/WebView/WebFrame.mm
-mac/WebView/WebFrameView.mm
-mac/WebView/WebFullScreenController.mm
-mac/WebView/WebHTMLView.mm
-mac/WebView/WebImmediateActionController.mm
-mac/WebView/WebPDFRepresentation.mm
-mac/WebView/WebPDFView.mm
-mac/WebView/WebScriptDebugger.mm
-mac/WebView/WebScriptDebugDelegate.mm
-mac/WebView/WebScriptWorld.mm
-mac/WebView/WebView.mm
-mac/WebView/WebViewRenderingUpdateScheduler.mm
+mac/WebView/WebClipView.mm @nonARC
+mac/WebView/WebDataSource.mm @nonARC
+mac/WebView/WebFrame.mm @nonARC
+mac/WebView/WebFrameView.mm @nonARC
+mac/WebView/WebFullScreenController.mm @nonARC
+mac/WebView/WebHTMLView.mm @nonARC
+mac/WebView/WebImmediateActionController.mm @nonARC
+mac/WebView/WebPDFRepresentation.mm @nonARC
+mac/WebView/WebPDFView.mm @nonARC
+mac/WebView/WebScriptDebugger.mm @nonARC
+mac/WebView/WebScriptDebugDelegate.mm @nonARC
+mac/WebView/WebScriptWorld.mm @nonARC
+mac/WebView/WebView.mm @nonARC
+mac/WebView/WebViewRenderingUpdateScheduler.mm @nonARC

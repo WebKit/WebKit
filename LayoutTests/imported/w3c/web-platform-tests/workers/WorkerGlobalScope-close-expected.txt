@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: nonExistentFunction
 
 PASS Test type of close function.
 PASS Test sending a message after closing.

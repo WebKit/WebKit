@@ -26,7 +26,7 @@
 #pragma once
 
 #include "InlineDamage.h"
-#include "InlineDisplayContent.h"
+#include <WebCore/InlineDisplayContent.h>
 #include <optional>
 #include <wtf/Forward.h>
 

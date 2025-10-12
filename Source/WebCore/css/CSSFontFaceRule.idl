@@ -21,7 +21,6 @@
 // https://drafts.csswg.org/css-fonts/#cssfontfacerule
 
 [
-    JSGenerateToJSObject,
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface CSSFontFaceRule : CSSRule {

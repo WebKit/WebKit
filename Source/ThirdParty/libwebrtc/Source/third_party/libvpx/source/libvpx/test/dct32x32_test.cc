@@ -66,14 +66,14 @@ void reference_32x32_dct_2d(const int16_t input[kNumCoeffs],
   }
 }
 
-typedef void (*FwdTxfmFunc)(const int16_t *in, tran_low_t *out, int stride);
-typedef void (*InvTxfmFunc)(const tran_low_t *in, uint8_t *out, int stride);
+using FwdTxfmFunc = void (*)(const int16_t *in, tran_low_t *out, int stride);
+using InvTxfmFunc = void (*)(const tran_low_t *in, uint8_t *out, int stride);
 
-typedef std::tuple<FwdTxfmFunc, InvTxfmFunc, int, vpx_bit_depth_t>
-    Trans32x32Param;
+using Trans32x32Param =
+    std::tuple<FwdTxfmFunc, InvTxfmFunc, int, vpx_bit_depth_t>;
 
-typedef std::tuple<InvTxfmFunc, InvTxfmFunc, int, vpx_bit_depth_t, int, int>
-    InvTrans32x32Param;
+using InvTrans32x32Param =
+    std::tuple<InvTxfmFunc, InvTxfmFunc, int, vpx_bit_depth_t, int, int>;
 
 #if CONFIG_VP9_HIGHBITDEPTH
 void idct32x32_10(const tran_low_t *in, uint8_t *out, int stride) {

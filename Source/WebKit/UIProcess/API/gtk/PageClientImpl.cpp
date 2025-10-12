@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc. All rights reserved.
  * Copyright (C) 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -142,7 +142,7 @@ bool PageClientImpl::isViewFocused()
     return webkitWebViewBaseIsFocused(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
-bool PageClientImpl::isViewVisible()
+bool PageClientImpl::isActiveViewVisible()
 {
     return webkitWebViewBaseIsVisible(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
@@ -559,6 +559,12 @@ void PageClientImpl::didRestoreScrollPosition()
 
 void PageClientImpl::didChangeBackgroundColor()
 {
+}
+
+void PageClientImpl::themeColorDidChange()
+{
+    if (WEBKIT_IS_WEB_VIEW(m_viewWidget))
+        webkitWebViewEmitThemeColorChanged(WEBKIT_WEB_VIEW(m_viewWidget));
 }
 
 void PageClientImpl::refView()

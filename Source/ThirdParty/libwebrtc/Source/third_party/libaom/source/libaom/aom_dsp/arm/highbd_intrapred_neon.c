@@ -1052,7 +1052,7 @@ HIGHBD_SMOOTH_NXM(8, 16)
   static void highbd_smooth_##W##xh_neon(                                      \
       uint16_t *dst, ptrdiff_t stride, const uint16_t *const top_row,          \
       const uint16_t *const left_column, const int height) {                   \
-    const uint16_t top_right = top_row[(W)-1];                                 \
+    const uint16_t top_right = top_row[(W) - 1];                               \
     const uint16_t bottom_left = left_column[height - 1];                      \
     const uint16_t *const weights_y = smooth_weights_u16 + height - 4;         \
                                                                                \
@@ -1062,7 +1062,7 @@ HIGHBD_SMOOTH_NXM(8, 16)
     for (int i = 0; i < (W) >> 3; ++i) {                                       \
       const int x = i << 3;                                                    \
       const uint16x4_t weights_x_low =                                         \
-          vld1_u16(smooth_weights_u16 + (W)-4 + x);                            \
+          vld1_u16(smooth_weights_u16 + (W) - 4 + x);                          \
       weighted_tr_low[i] = vmull_n_u16(negate_s8(weights_x_low), top_right);   \
       const uint16x4_t weights_x_high =                                        \
           vld1_u16(smooth_weights_u16 + (W) + x);                              \
@@ -1084,7 +1084,7 @@ HIGHBD_SMOOTH_NXM(8, 16)
             vaddq_u32(weighted_bl, weighted_tr_high[i]);                       \
         /* Accumulate weighted edge values and store. */                       \
         const uint16x4x2_t weights_x = {                                       \
-          { vld1_u16(smooth_weights_u16 + (W)-4 + x),                          \
+          { vld1_u16(smooth_weights_u16 + (W) - 4 + x),                        \
             vld1_u16(smooth_weights_u16 + (W) + x) }                           \
         };                                                                     \
         highbd_calculate_pred8(dst_x, weighted_corners_low,                    \
@@ -1364,7 +1364,7 @@ HIGHBD_SMOOTH_H_NXM(8, 16)
   static void highbd_smooth_h_##W##xh_neon(                                   \
       uint16_t *dst, ptrdiff_t stride, const uint16_t *const top_row,         \
       const uint16_t *const left_column, const int height) {                  \
-    const uint16_t top_right = top_row[(W)-1];                                \
+    const uint16_t top_right = top_row[(W) - 1];                              \
                                                                               \
     uint16x4_t weights_x_low[(W) >> 3];                                       \
     uint16x4_t weights_x_high[(W) >> 3];                                      \
@@ -1372,7 +1372,7 @@ HIGHBD_SMOOTH_H_NXM(8, 16)
     uint32x4_t weighted_tr_high[(W) >> 3];                                    \
     for (int i = 0; i < (W) >> 3; ++i) {                                      \
       const int x = i << 3;                                                   \
-      weights_x_low[i] = vld1_u16(smooth_weights_u16 + (W)-4 + x);            \
+      weights_x_low[i] = vld1_u16(smooth_weights_u16 + (W) - 4 + x);          \
       weighted_tr_low[i] =                                                    \
           vmull_n_u16(negate_s8(weights_x_low[i]), top_right);                \
       weights_x_high[i] = vld1_u16(smooth_weights_u16 + (W) + x);             \
@@ -1442,8 +1442,8 @@ HIGHBD_SMOOTH_H_NXM_WIDE(64, 64)
 // -----------------------------------------------------------------------------
 // Z1
 
-static int16_t iota1_s16[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-static int16_t iota2_s16[] = { 0, 2, 4, 6, 8, 10, 12, 14 };
+static const int16_t iota1_s16[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+static const int16_t iota2_s16[] = { 0, 2, 4, 6, 8, 10, 12, 14 };
 
 static AOM_FORCE_INLINE uint16x4_t highbd_dr_z1_apply_shift_x4(uint16x4_t a0,
                                                                uint16x4_t a1,

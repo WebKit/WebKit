@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -128,7 +128,7 @@ static std::optional<uint64_t> readSizeFile(const String& sizeDirectoryPath)
     if (!buffer)
         return std::nullopt;
 
-    return parseInteger<uint64_t>(buffer->span());
+    return parseInteger<uint64_t>(byteCast<Latin1Character>(buffer->span()));
 }
 
 static bool writeSizeFile(const String& sizeDirectoryPath, uint64_t size)
@@ -266,13 +266,12 @@ void CacheStorageManager::reset()
         request.second(false);
     }
 
-    Ref registry = m_registry.get();
     for (Ref cache : m_caches)
-        registry->unregisterCache(cache->identifier());
+        m_registry->unregisterCache(cache->identifier());
     m_caches.clear();
 
     for (auto& identifier : m_removedCaches.keys())
-        registry->unregisterCache(identifier);
+        m_registry->unregisterCache(identifier);
     m_removedCaches.clear();
 
     m_cacheRefConnections.clear();
@@ -292,10 +291,9 @@ bool CacheStorageManager::initializeCaches()
         return false;
 
     m_isInitialized = true;
-    Ref registry = m_registry;
     for (auto& [name, uniqueName] : *cachesList) {
         Ref cache = CacheStorageCache::create(*this, name, uniqueName, m_path, m_queue.copyRef());
-        registry->registerCache(cache->identifier(), cache.get());
+        m_registry->registerCache(cache->identifier(), cache.get());
         m_caches.append(WTFMove(cache));
     }
 
@@ -311,7 +309,7 @@ void CacheStorageManager::openCache(const String& name, WebCore::DOMCacheEngine:
         return cache->name() == name;
     });
     if (index != notFound)
-        return m_caches[index]->open(WTFMove(callback));
+        return Ref { m_caches[index] }->open(WTFMove(callback));
 
     Ref cache = CacheStorageCache::create(*this, name, createVersion4UUIDString(), m_path, m_queue.copyRef());
     m_caches.append(cache);
@@ -322,7 +320,7 @@ void CacheStorageManager::openCache(const String& name, WebCore::DOMCacheEngine:
     }
 
     makeDirty();
-    protectedRegistry()->registerCache(cache->identifier(), cache);
+    m_registry->registerCache(cache->identifier(), cache);
     cache->open(WTFMove(callback));
 }
 
@@ -494,7 +492,7 @@ void CacheStorageManager::removeUnusedCache(WebCore::DOMCacheIdentifier cacheIde
 {
     if (RefPtr cache = m_removedCaches.take(cacheIdentifier)) {
         cache->removeAllRecords();
-        protectedRegistry()->unregisterCache(cacheIdentifier);
+        m_registry->unregisterCache(cacheIdentifier);
         return;
     }
 
@@ -543,11 +541,6 @@ String CacheStorageManager::representationString()
     }
     builder.append("]}\n"_s);
     return builder.toString();
-}
-
-Ref<CacheStorageRegistry> CacheStorageManager::protectedRegistry()
-{
-    return m_registry.get();
 }
 
 } // namespace WebKit

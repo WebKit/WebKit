@@ -48,15 +48,38 @@ namespace WGSL {
 
 #define ENUM_TexelFormat(value) \
     value(BGRA8unorm, bgra8unorm) \
+    value(R16float, r16float) \
+    value(R16sint, r16sint) \
+    value(R16snorm, r16snorm) \
+    value(R16uint, r16uint) \
+    value(R16unorm, r16unorm) \
     value(R32float, r32float) \
     value(R32sint, r32sint) \
     value(R32uint, r32uint) \
+    value(R8sint, r8sint) \
+    value(R8snorm, r8snorm) \
+    value(R8uint, r8uint) \
+    value(R8unorm, r8unorm) \
+    value(RG11B10ufloat, rg11b10ufloat) \
+    value(RG16float, rg16float) \
+    value(RG16sint, rg16sint)\
+    value(RG16snorm, rg16snorm) \
+    value(RG16uint, rg16uint)\
+    value(RG16unorm, rg16unorm) \
     value(RG32float, rg32float) \
     value(RG32sint, rg32sint) \
     value(RG32uint, rg32uint) \
+    value(RG8sint, rg8sint) \
+    value(RG8snorm, rg8snorm) \
+    value(RG8uint, rg8uint) \
+    value(RG8unorm, rg8unorm) \
+    value(RGB10A2uint, rgb10a2uint) \
+    value(RGB10A2unorm, rgb10a2unorm) \
     value(RGBA16float, rgba16float) \
     value(RGBA16sint, rgba16sint) \
+    value(RGBA16snorm, rgba16snorm) \
     value(RGBA16uint, rgba16uint) \
+    value(RGBA16unorm, rgba16unorm) \
     value(RGBA32float, rgba32float) \
     value(RGBA32sint, rgba32sint) \
     value(RGBA32uint, rgba32uint) \

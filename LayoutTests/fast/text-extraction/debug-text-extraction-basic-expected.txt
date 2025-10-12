@@ -1,0 +1,33 @@
+root
+    role='banner'
+        aria-label='Main Page Title','Welcome to Test Page',[…]
+    navigation,role='navigation',aria-label='Main navigation'
+        list
+            list-item
+                link,uid=…,events=[click],url='mailto:wenson_hsieh@apple.com','Section 1',[…]
+            list-item
+                link,uid=…,events=[click],url='https://example.com/','Section 2',[…]
+    role='main'
+        section,aria-label='Interactive Elements'
+            button,uid=…,events=[click],aria-label='Test button','Click Me',[…]
+            '        \nThis button does nothing\n\n        ',[…]
+            textFormControl,'text',uid=…,placeholder='Enter text here','Enter text here',[…]
+            uid=…,role='button',events=[click,keyboard],'Clickable Div',[…]
+        section,aria-label='Content with Roles'
+            article,role='article','            \n\n                \nArticle Title\n\n\n                January 1, 2024\n            \n\n            \nThis is some article content with highlighted text.\n\n\n        ',[…]
+            role='complementary',aria-label='Related information'
+                '            \nRelated Links\n\n\n            ',[…]
+                list
+                    list-item
+                        link,uid=…,events=[hover],url='https://webkit.org/','Example Link',[…]
+                    list-item
+                        link,uid=…,events=[hover],url='https://apple.com/','Test Link',[…]
+            role='region'
+                role='status','Ready',[…]
+                button,uid=…,events=[click],'Update Status',[…]
+            aria-label='Figure 1'
+                canvas,uid=…,[…]
+    role='contentinfo'
+        '    \nFooter content with ',[…]
+        role='img',aria-label='copyright symbol','©',[…]
+        ' 2024',[…]

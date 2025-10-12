@@ -24,7 +24,7 @@
 #include "ActiveDOMObject.h"
 #include "ContextDestructionObserverInlines.h"
 #include "DeprecatedGlobalSettings.h"
-#include "DocumentInlines.h"
+#include "DocumentSettingsValues.h"
 #include "ExtendedDOMClientIsoSubspaces.h"
 #include "ExtendedDOMIsoSubspaces.h"
 #include "JSDOMAttribute.h"
@@ -291,7 +291,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestDefaultToJSONInheritPrototypeFunction_toJSON, (JS
 
 JSC::GCClient::IsoSubspace* JSTestDefaultToJSONInherit::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestDefaultToJSONInherit, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestDefaultToJSONInherit, UseCustomHeapCellType::No>(vm, "JSTestDefaultToJSONInherit"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestDefaultToJSONInherit.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDefaultToJSONInherit = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestDefaultToJSONInherit.get(); },
@@ -306,6 +306,50 @@ void JSTestDefaultToJSONInherit::analyzeHeap(JSCell* cell, HeapAnalyzer& analyze
     if (RefPtr context = thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
+}
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#if ENABLE(BINDING_INTEGRITY)
+#if PLATFORM(WIN)
+#pragma warning(disable: 4483)
+extern "C" { extern void (*const __identifier("??_7TestDefaultToJSONInherit@WebCore@@6B@")[])(); }
+#else
+extern "C" { extern void* _ZTVN7WebCore24TestDefaultToJSONInheritE[]; }
+#endif
+template<std::same_as<TestDefaultToJSONInherit> T>
+static inline void verifyVTable(TestDefaultToJSONInherit* ptr)
+{
+    if constexpr (std::is_polymorphic_v<T>) {
+        const void* actualVTablePointer = getVTablePointer<T>(ptr);
+#if PLATFORM(WIN)
+        void* expectedVTablePointer = __identifier("??_7TestDefaultToJSONInherit@WebCore@@6B@");
+#else
+        void* expectedVTablePointer = &_ZTVN7WebCore24TestDefaultToJSONInheritE[2];
+#endif
+
+        // If you hit this assertion you either have a use after free bug, or
+        // TestDefaultToJSONInherit has subclasses. If TestDefaultToJSONInherit has subclasses that get passed
+        // to toJS() we currently require TestDefaultToJSONInherit you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+    }
+}
+#endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONInherit>&& impl)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    if (is<TestDefaultToJSONIndirectInheritance>(impl))
+        return toJSNewlyCreated(lexicalGlobalObject, globalObject, uncheckedDowncast<TestDefaultToJSONIndirectInheritance>(WTFMove(impl)));
+    if (is<TestDefaultToJSONInheritFinal>(impl))
+        return toJSNewlyCreated(lexicalGlobalObject, globalObject, uncheckedDowncast<TestDefaultToJSONInheritFinal>(WTFMove(impl)));
+    return createWrapper<TestDefaultToJSONInherit>(globalObject, WTFMove(impl));
+}
+
+JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestDefaultToJSONInherit& impl)
+{
+    return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
 

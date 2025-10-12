@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,8 +45,7 @@ public:
     static Ref<AbortController> create(ScriptExecutionContext&);
     ~AbortController();
 
-    AbortSignal& signal();
-    Ref<AbortSignal> protectedSignal() const;
+    AbortSignal& signal() { return m_signal; }
     void abort(JSC::JSValue reason);
 
     WebCoreOpaqueRoot opaqueRoot();
@@ -54,7 +53,7 @@ public:
 private:
     explicit AbortController(ScriptExecutionContext&);
 
-    Ref<AbortSignal> m_signal;
+    const Ref<AbortSignal> m_signal;
 };
 
 }

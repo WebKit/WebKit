@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include "Performance.h"
 #include "PerformanceEntry.h"
 #include "PerformanceObserverCallback.h"
+#include "dom/DOMHighResTimeStamp.h"
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -44,6 +46,7 @@ public:
         std::optional<Vector<String>> entryTypes;
         std::optional<String> type;
         bool buffered;
+        std::optional<DOMHighResTimeStamp> durationThreshold;
     };
 
     static Ref<PerformanceObserver> create(ScriptExecutionContext& context, Ref<PerformanceObserverCallback>&& callback)
@@ -69,6 +72,7 @@ public:
 
     bool isRegistered() const { return m_registered; }
     PerformanceObserverCallback& callback() { return m_callback.get(); }
+    Seconds durationThreshold() const { return m_durationThreshold; }
 
 private:
     PerformanceObserver(ScriptExecutionContext&, Ref<PerformanceObserverCallback>&&);
@@ -77,8 +81,9 @@ private:
 
     RefPtr<Performance> m_performance;
     Vector<Ref<PerformanceEntry>> m_entriesToDeliver;
-    Ref<PerformanceObserverCallback> m_callback;
+    const Ref<PerformanceObserverCallback> m_callback;
     OptionSet<PerformanceEntry::Type> m_typeFilter;
+    Seconds m_durationThreshold;
     bool m_registered { false };
     bool m_isTypeObserver { false };
     bool m_hasNavigationTiming { false };

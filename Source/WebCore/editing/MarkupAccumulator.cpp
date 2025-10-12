@@ -37,6 +37,7 @@
 #include "Editor.h"
 #include "ElementInlines.h"
 #include "ElementRareData.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTMLElement.h"
 #include "HTMLFrameElement.h"
@@ -49,6 +50,7 @@
 #include "NodeName.h"
 #include "ProcessingInstruction.h"
 #include "ScriptController.h"
+#include "Settings.h"
 #include "ShadowRoot.h"
 #include "TemplateContentDocumentFragment.h"
 #include "XLinkNames.h"
@@ -189,9 +191,9 @@ void MarkupAccumulator::appendCharactersReplacingEntities(StringBuilder& result,
         return;
 
     if (source.is8Bit())
-        appendCharactersReplacingEntitiesInternal<LChar>(result, source, entityMask);
+        appendCharactersReplacingEntitiesInternal<Latin1Character>(result, source, entityMask);
     else
-        appendCharactersReplacingEntitiesInternal<UChar>(result, source, entityMask);
+        appendCharactersReplacingEntitiesInternal<char16_t>(result, source, entityMask);
 }
 
 MarkupAccumulator::MarkupAccumulator(Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, SerializationSyntax serializationSyntax, SerializeShadowRoots serializeShadowRoots, Vector<Ref<ShadowRoot>>&& explicitShadowRoots, const Vector<MarkupExclusionRule>& exclusionRules)
@@ -283,7 +285,7 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
         return currentTemplate ? currentTemplate->content().firstChild() : current.firstChild();
     };
 
-    RefPtr<const Node> current = &targetNode;
+    RefPtr<const Node> current = targetNode;
     do {
         bool shouldSkipNode = false;
         if (RefPtr element = dynamicDowncast<const Element>(current); element && shouldExcludeElement(*element))
@@ -387,7 +389,7 @@ const ShadowRoot* MarkupAccumulator::suitableShadowRoot(const Node& node)
     RefPtr shadowRoot = dynamicDowncast<ShadowRoot>(node);
     if (!shadowRoot || !includeShadowRoot(*shadowRoot))
         return nullptr;
-    return shadowRoot.get();
+    return shadowRoot.unsafeGet();
 }
 
 void MarkupAccumulator::startAppendingNode(const Node& node, Namespaces* namespaces)
@@ -505,7 +507,7 @@ void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomString&
         return;
     }
 
-    // Use emptyAtom()s's impl() for null strings since this UncheckedKeyHashMap can't handle nullptr as a key
+    // Use emptyAtom()s's impl() for null strings since this HashMap can't handle nullptr as a key
     auto addResult = namespaces.add(prefix.isNull() ? emptyAtom().impl() : prefix.impl(), namespaceURI.impl());
     if (!addResult.isNewEntry) {
         if (addResult.iterator->value == namespaceURI.impl())
@@ -880,7 +882,7 @@ static bool isElementExcludedByRule(const MarkupExclusionRule& rule, const Eleme
                 continue;
             }
 
-            // FIXME: We might optimize this by using a UncheckedKeyHashMap when there are too many attributes.
+            // FIXME: We might optimize this by using a HashMap when there are too many attributes.
             for (auto& attribute : element.attributes()) {
                 if (!equalIgnoringASCIICase(attribute.localName(), attributeLocalName))
                     continue;

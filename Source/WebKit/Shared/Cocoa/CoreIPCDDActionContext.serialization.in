@@ -23,7 +23,7 @@
 #if PLATFORM(MAC) && HAVE(WK_SECURE_CODING_DATA_DETECTORS)
 secure_coding_header: <pal/mac/DataDetectorsSoftLink.h>
 
-[WebKitSecureCodingClass=PAL::getWKDDActionContextClass()] webkit_secure_coding DDSecureActionContext {
+[WebKitSecureCodingClass=PAL::getWKDDActionContextClassSingleton()] webkit_secure_coding DDSecureActionContext {
     highlightFrame: NSValue
     aimFrame: NSValue
     eventTitle: String

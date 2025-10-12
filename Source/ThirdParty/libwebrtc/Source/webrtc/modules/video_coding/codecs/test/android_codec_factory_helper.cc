@@ -10,12 +10,15 @@
 
 #include "modules/video_coding/codecs/test/android_codec_factory_helper.h"
 
+#include <bits/pthread_types.h>
 #include <jni.h>
 #include <pthread.h>
 #include <stddef.h>
 
 #include <memory>
 
+#include "api/video_codecs/video_decoder_factory.h"
+#include "api/video_codecs/video_encoder_factory.h"
 #include "modules/utility/include/jvm_android.h"
 #include "rtc_base/checks.h"
 #include "sdk/android/native_api/codecs/wrapper.h"

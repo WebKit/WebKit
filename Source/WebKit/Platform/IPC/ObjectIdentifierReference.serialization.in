@@ -25,7 +25,6 @@ additional_forward_declaration: namespace IPC { template<typename> class ObjectI
 additional_forward_declaration: namespace IPC { template<typename> class ObjectIdentifierWriteReference; }
 additional_forward_declaration: namespace IPC { template<typename> struct ObjectIdentifierReadReference; }
 additional_forward_declaration: namespace WebCore { using RenderingResourceIdentifier = AtomicObjectIdentifier<RenderingResourceIdentifierType>; }
-additional_forward_declaration: namespace WebCore { using SnapshotIdentifier = AtomicObjectIdentifier<SnapshotIdentifierType>; }
 additional_forward_declaration: namespace WebKit { using RemoteVideoFrameIdentifier = AtomicObjectIdentifier<RemoteVideoFrameIdentifierType>; }
 additional_forward_declaration: namespace WebKit { using RemoteSerializedImageBufferIdentifier = AtomicObjectIdentifier<RemoteSerializedImageBufferIdentifierType>; }
 

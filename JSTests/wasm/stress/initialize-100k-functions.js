@@ -1,3 +1,4 @@
+//@ skip if $memoryLimited
 //@ requireOptions("--useDollarVM=1")
 
 import * as assert from "../assert.js"

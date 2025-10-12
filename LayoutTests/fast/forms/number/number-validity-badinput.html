@@ -40,8 +40,8 @@ shouldNotBe('colorOf(number)', 'invalidStyleColor');
 shouldBeFalse('number.validity.badInput');
 shouldBeEqualToString('number.value', '-1');
 
-debug("Type 'a' additionally. The element becomes badInput again.");
-document.execCommand('InsertText', false, 'a');
+debug("Type 'e' additionally. The element becomes badInput again.");
+document.execCommand('InsertText', false, 'e');
 shouldBe('colorOf(number)', 'invalidStyleColor');
 shouldBeTrue('number.validity.badInput');
 shouldBeEqualToString('number.value', '');
@@ -50,7 +50,7 @@ debug("The element losts focus. The element state should not be changed.");
 document.getElementById('another').focus();
 shouldBe('colorOf(number)', 'invalidStyleColor');
 shouldBeTrue('number.validity.badInput');
-// Visible value is '-1a'.
+// Visible value is '-1e'.
 number.focus();
 document.execCommand('SelectAll');
 function visibleValue(input) {
@@ -59,7 +59,7 @@ function visibleValue(input) {
     range.selectNodeContents(shadowRoot.querySelector('[contenteditable]'));
     return internals.rangeAsText(range);
 }
-shouldBeEqualToString('visibleValue(number)', '-1a');
+shouldBeEqualToString('visibleValue(number)', '-1e');
 shouldBeEqualToString('number.value', '');
 
 debug("The element losts a renderer. The element state should not be changed.");

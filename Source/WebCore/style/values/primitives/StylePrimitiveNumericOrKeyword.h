@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "CSSPrimitiveNumericOrKeyword.h"
-#include "StylePrimitiveNumeric.h"
+#include <WebCore/CSSPrimitiveNumericOrKeyword.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 #include <algorithm>
 #include <wtf/CompactVariant.h>
 #include <wtf/FlatteningVariantAdaptor.h>

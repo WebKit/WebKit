@@ -32,7 +32,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #if ENABLE(ASSEMBLER)
 
-#include "JSCJSValue.h"
+#include <JavaScriptCore/JSCJSValue.h>
 
 #define DEFINE_SIMD_FUNC(name, func, lane) \
     template <typename ...Args> \
@@ -63,22 +63,22 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if CPU(ARM_THUMB2)
 #define TARGET_ASSEMBLER ARMv7Assembler
 #define TARGET_MACROASSEMBLER MacroAssemblerARMv7
-#include "MacroAssemblerARMv7.h"
+#include <JavaScriptCore/MacroAssemblerARMv7.h>
 
 #elif CPU(ARM64E)
 #define TARGET_ASSEMBLER ARM64EAssembler
 #define TARGET_MACROASSEMBLER MacroAssemblerARM64E
-#include "MacroAssemblerARM64E.h"
+#include <JavaScriptCore/MacroAssemblerARM64E.h>
 
 #elif CPU(ARM64)
 #define TARGET_ASSEMBLER ARM64Assembler
 #define TARGET_MACROASSEMBLER MacroAssemblerARM64
-#include "MacroAssemblerARM64.h"
+#include <JavaScriptCore/MacroAssemblerARM64.h>
 
 #elif CPU(X86_64)
 #define TARGET_ASSEMBLER X86Assembler
 #define TARGET_MACROASSEMBLER MacroAssemblerX86_64
-#include "MacroAssemblerX86_64.h"
+#include <JavaScriptCore/MacroAssemblerX86_64.h>
 
 #elif CPU(RISCV64)
 #define TARGET_ASSEMBLER RISCV64Assembler
@@ -89,7 +89,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #error "The MacroAssembler is not supported on this platform."
 #endif
 
-#include "MacroAssemblerHelpers.h"
+#include <JavaScriptCore/MacroAssemblerHelpers.h>
 
 namespace WTF {
 
@@ -599,6 +599,8 @@ public:
 
     void moveDouble(Address src, Address dest, FPRegisterID scratch)
     {
+        if (src == dest)
+            return;
         loadDouble(src, scratch);
         storeDouble(scratch, dest);
     }

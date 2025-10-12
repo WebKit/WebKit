@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ExceptionDetails.h"
+#include <WebCore/ExceptionDetails.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 #include <wtf/JSONValues.h>

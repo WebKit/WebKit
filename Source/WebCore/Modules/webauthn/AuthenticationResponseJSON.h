@@ -27,8 +27,8 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "AuthenticationExtensionsClientOutputsJSON.h"
-#include "IDLTypes.h"
+#include <WebCore/AuthenticationExtensionsClientOutputsJSON.h>
+#include <WebCore/IDLTypes.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

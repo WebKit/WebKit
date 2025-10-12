@@ -50,7 +50,7 @@ TEST(WebKit, EnableAccessibilityCrash)
         [viewConfiguration setProcessPool:pool.get()];
     }
 
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(),  getkAXSApplicationAccessibilityEnabledNotification(), NULL, NULL, false);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(),  getkAXSApplicationAccessibilityEnabledNotificationSingleton(), NULL, NULL, false);
 }
 
 #if WK_HAVE_C_SPI

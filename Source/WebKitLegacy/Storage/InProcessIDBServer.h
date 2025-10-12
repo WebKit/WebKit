@@ -56,7 +56,7 @@ class IDBServer;
 } // namespace WebCore
 
 class InProcessIDBServer final : public WebCore::IDBClient::IDBConnectionToServerDelegate, public WebCore::IDBServer::IDBConnectionToClientDelegate, public ThreadSafeRefCounted<InProcessIDBServer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(InProcessIDBServer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InProcessIDBServer);
 public:
     static Ref<InProcessIDBServer> create(PAL::SessionID);
@@ -67,6 +67,9 @@ public:
     WebCore::IDBClient::IDBConnectionToServer& connectionToServer() const;
     WebCore::IDBServer::IDBConnectionToClient& connectionToClient() const;
     WebCore::IDBServer::IDBServer& server() { return *m_server; }
+
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
 
     // IDBConnectionToServer
     void deleteDatabase(const WebCore::IDBOpenRequestData&) final;

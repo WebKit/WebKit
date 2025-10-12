@@ -1,0 +1,11 @@
+Test setting the username attribute of a URL object with a very large value does not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Setting username
+PASS url.href is 'http://example.com/'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

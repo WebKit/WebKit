@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "GCActivityCallback.h"
+#include <JavaScriptCore/GCActivityCallback.h>
 
 namespace JSC {
 

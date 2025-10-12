@@ -49,6 +49,14 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     {
         extBehavior[TExtension::EXT_frag_depth] = EBhUndefined;
     }
+    if (resources.EXT_fragment_shading_rate)
+    {
+        extBehavior[TExtension::EXT_fragment_shading_rate] = EBhUndefined;
+    }
+    if (resources.EXT_fragment_shading_rate_primitive)
+    {
+        extBehavior[TExtension::EXT_fragment_shading_rate_primitive] = EBhUndefined;
+    }
     if (resources.EXT_primitive_bounding_box)
     {
         extBehavior[TExtension::EXT_primitive_bounding_box] = EBhUndefined;

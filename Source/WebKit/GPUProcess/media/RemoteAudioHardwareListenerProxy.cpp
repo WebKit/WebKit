@@ -49,13 +49,13 @@ RemoteAudioHardwareListenerProxy::~RemoteAudioHardwareListenerProxy() = default;
 void RemoteAudioHardwareListenerProxy::audioHardwareDidBecomeActive()
 {
     if (RefPtr connection = m_gpuConnection.get())
-        connection->protectedConnection()->send(Messages::RemoteAudioHardwareListener::AudioHardwareDidBecomeActive(), m_identifier);
+        connection->connection().send(Messages::RemoteAudioHardwareListener::AudioHardwareDidBecomeActive(), m_identifier);
 }
 
 void RemoteAudioHardwareListenerProxy::audioHardwareDidBecomeInactive()
 {
     if (RefPtr connection = m_gpuConnection.get())
-        connection->protectedConnection()->send(Messages::RemoteAudioHardwareListener::AudioHardwareDidBecomeInactive(), m_identifier);
+        connection->connection().send(Messages::RemoteAudioHardwareListener::AudioHardwareDidBecomeInactive(), m_identifier);
 }
 
 void RemoteAudioHardwareListenerProxy::audioOutputDeviceChanged()
@@ -65,7 +65,7 @@ void RemoteAudioHardwareListenerProxy::audioOutputDeviceChanged()
         return;
 
     auto supportedBufferSizes = m_listener->supportedBufferSizes();
-    connection->protectedConnection()->send(Messages::RemoteAudioHardwareListener::AudioOutputDeviceChanged(supportedBufferSizes.minimum, supportedBufferSizes.maximum), m_identifier);
+    connection->connection().send(Messages::RemoteAudioHardwareListener::AudioOutputDeviceChanged(supportedBufferSizes.minimum, supportedBufferSizes.maximum), m_identifier);
 }
 
 }

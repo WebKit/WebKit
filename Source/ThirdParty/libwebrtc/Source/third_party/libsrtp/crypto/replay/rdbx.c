@@ -279,7 +279,7 @@ srtp_err_status_t srtp_rdbx_add_index(srtp_rdbx_t *rdbx, int delta)
 {
     if (delta > 0) {
         /* shift forward by delta */
-        srtp_index_advance(&rdbx->index, delta);
+        srtp_index_advance(&rdbx->index, (srtp_sequence_number_t)delta);
         bitvector_left_shift(&rdbx->bitmask, delta);
         bitvector_set_bit(&rdbx->bitmask,
                           bitvector_get_length(&rdbx->bitmask) - 1);
@@ -306,13 +306,13 @@ int32_t srtp_rdbx_estimate_index(const srtp_rdbx_t *rdbx,
                                  srtp_xtd_seq_num_t *guess,
                                  srtp_sequence_number_t s)
 {
-/*
- * if the sequence number and rollover counter in the rdbx are
- * non-zero, then use the srtp_index_guess(...) function, otherwise, just
- * set the rollover counter to zero (since the srtp_index_guess(...)
- * function might incorrectly guess that the rollover counter is
- * 0xffffffff)
- */
+    /*
+     * if the sequence number and rollover counter in the rdbx are
+     * non-zero, then use the srtp_index_guess(...) function, otherwise, just
+     * set the rollover counter to zero (since the srtp_index_guess(...)
+     * function might incorrectly guess that the rollover counter is
+     * 0xffffffff)
+     */
 
 #ifdef NO_64BIT_MATH
     /* seq_num_median = 0x8000 */

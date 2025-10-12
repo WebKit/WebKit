@@ -7,6 +7,10 @@
 //   OpenCL-specific code for the ANGLE trace replays.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "trace_fixture_cl.h"
 #include <string>
 
@@ -45,6 +49,7 @@ angle::ReplayResourceMode gReplayResourceMode = angle::ReplayResourceMode::Activ
 
 uint8_t *gBinaryData;
 uint8_t *gReadBuffer;
+angle::FrameCaptureBinaryData *gFrameCaptureBinaryData;
 std::string gBinaryDataDir = ".";
 
 template <typename T>
@@ -58,6 +63,23 @@ T *AllocateZeroedValues(size_t count)
 GLuint *AllocateZeroedUints(size_t count)
 {
     return AllocateZeroedValues<GLuint>(count);
+}
+
+void InitializeReplayCL2(const char *binaryDataFileName,
+                         size_t maxClientArraySize,
+                         size_t readBufferSize,
+                         uint32_t maxCLPlatform,
+                         uint32_t maxCLDevices,
+                         uint32_t maxCLContexts,
+                         uint32_t maxCLCommandQueues,
+                         uint32_t maxCLMem,
+                         uint32_t maxCLEvents,
+                         uint32_t maxCLPrograms,
+                         uint32_t maxCLKernels,
+                         uint32_t maxCLSamplers,
+                         uint32_t maxCLVoidPointer)
+{
+    gFrameCaptureBinaryData = gTraceCallbacks->ConfigureBinaryDataLoader(binaryDataFileName);
 }
 
 void InitializeReplayCL(const char *binaryDataFileName,
@@ -74,7 +96,11 @@ void InitializeReplayCL(const char *binaryDataFileName,
                         uint32_t maxCLSamplers,
                         uint32_t maxCLVoidPointer)
 {
-    gBinaryData = gTraceCallbacks->LoadBinaryData(binaryDataFileName);
+    if (!gFrameCaptureBinaryData)
+    {
+        gBinaryData = gTraceCallbacks->LoadBinaryData(binaryDataFileName);
+    }
+
     gReadBuffer = new uint8_t[readBufferSize];
 
     clPlatformsMap     = AllocateZeroedValues<cl_platform_id>(maxCLPlatform);
@@ -103,6 +129,13 @@ void FinishReplay()
     delete[] clKernelsMap;
     delete[] clSamplerMap;
     delete[] clVoidMap;
+
+    if (gFrameCaptureBinaryData)
+    {
+        gFrameCaptureBinaryData->closeBinaryDataLoader();
+        delete gFrameCaptureBinaryData;
+        gFrameCaptureBinaryData = nullptr;
+    }
 }
 
 angle::TraceInfo gTraceInfo;
@@ -154,4 +187,14 @@ void UpdateCLContextPropertiesWithPlatform(size_t propSize,
     UpdateCLContextPropertiesNoPlatform(propSize, propData);
     std::memcpy(&temporaryContextProps.data()[platformIdxInProps],
                 &clPlatformsMap[platformIdxInMap], sizeof(cl_platform_id));
+}
+
+const uint8_t *GetBinaryData(const size_t offset)
+{
+    return gFrameCaptureBinaryData->getData(offset);
+}
+
+void InitializeBinaryDataLoader()
+{
+    gFrameCaptureBinaryData->initializeBinaryDataLoader();
 }

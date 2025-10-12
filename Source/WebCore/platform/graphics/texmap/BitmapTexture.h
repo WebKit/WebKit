@@ -59,7 +59,6 @@ public:
         BackedByDMABuf = 1 << 2,
         ForceLinearBuffer = 1 << 3,
 #endif
-        UseNearestTextureFilter = 1 << 4
     };
 
     static Ref<BitmapTexture> create(const IntSize& size, OptionSet<Flags> flags = { })

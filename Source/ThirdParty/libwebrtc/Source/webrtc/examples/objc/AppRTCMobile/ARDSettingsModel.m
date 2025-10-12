@@ -27,19 +27,21 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<NSString *> *)availableVideoResolutions {
   NSMutableSet<NSArray<NSNumber *> *> *resolutions =
       [[NSMutableSet<NSArray<NSNumber *> *> alloc] init];
-  for (AVCaptureDevice *device in [RTC_OBJC_TYPE(RTCCameraVideoCapturer) captureDevices]) {
-    for (AVCaptureDeviceFormat *format in
-         [RTC_OBJC_TYPE(RTCCameraVideoCapturer) supportedFormatsForDevice:device]) {
+  for (AVCaptureDevice *device in
+       [RTC_OBJC_TYPE(RTCCameraVideoCapturer) captureDevices]) {
+    for (AVCaptureDeviceFormat *format in [RTC_OBJC_TYPE(RTCCameraVideoCapturer)
+             supportedFormatsForDevice:device]) {
       CMVideoDimensions resolution =
           CMVideoFormatDescriptionGetDimensions(format.formatDescription);
-      NSArray<NSNumber *> *resolutionObject = @[ @(resolution.width), @(resolution.height) ];
+      NSArray<NSNumber *> *resolutionObject =
+          @[ @(resolution.width), @(resolution.height) ];
       [resolutions addObject:resolutionObject];
     }
   }
 
-  NSArray<NSArray<NSNumber *> *> *sortedResolutions =
-      [[resolutions allObjects] sortedArrayUsingComparator:^NSComparisonResult(
-                                    NSArray<NSNumber *> *obj1, NSArray<NSNumber *> *obj2) {
+  NSArray<NSArray<NSNumber *> *> *sortedResolutions = [[resolutions allObjects]
+      sortedArrayUsingComparator:^NSComparisonResult(
+          NSArray<NSNumber *> *obj1, NSArray<NSNumber *> *obj2) {
         NSComparisonResult cmp = [obj1.firstObject compare:obj2.firstObject];
         if (cmp != NSOrderedSame) {
           return cmp;
@@ -47,10 +49,13 @@ NS_ASSUME_NONNULL_BEGIN
         return [obj1.lastObject compare:obj2.lastObject];
       }];
 
-  NSMutableArray<NSString *> *resolutionStrings = [[NSMutableArray<NSString *> alloc] init];
+  NSMutableArray<NSString *> *resolutionStrings =
+      [[NSMutableArray<NSString *> alloc] init];
   for (NSArray<NSNumber *> *resolution in sortedResolutions) {
     NSString *resolutionString =
-        [NSString stringWithFormat:@"%@x%@", resolution.firstObject, resolution.lastObject];
+        [NSString stringWithFormat:@"%@x%@",
+                                   resolution.firstObject,
+                                   resolution.lastObject];
     [resolutionStrings addObject:resolutionString];
   }
 
@@ -81,7 +86,9 @@ NS_ASSUME_NONNULL_BEGIN
   Class expectedClass = [RTC_OBJC_TYPE(RTCVideoCodecInfo) class];
   NSError *error;
   RTC_OBJC_TYPE(RTCVideoCodecInfo) *videoCodecSetting =
-      [NSKeyedUnarchiver unarchivedObjectOfClass:expectedClass fromData:codecData error:&error];
+      [NSKeyedUnarchiver unarchivedObjectOfClass:expectedClass
+                                        fromData:codecData
+                                           error:&error];
   if (!error) {
     return videoCodecSetting;
   }
@@ -176,11 +183,13 @@ NS_ASSUME_NONNULL_BEGIN
   return [self availableVideoCodecs].firstObject;
 }
 
-- (int)videoResolutionComponentAtIndex:(int)index inString:(NSString *)resolution {
+- (int)videoResolutionComponentAtIndex:(int)index
+                              inString:(NSString *)resolution {
   if (index != 0 && index != 1) {
     return 0;
   }
-  NSArray<NSString *> *components = [resolution componentsSeparatedByString:@"x"];
+  NSArray<NSString *> *components =
+      [resolution componentsSeparatedByString:@"x"];
   if (components.count != 2) {
     return 0;
   }
@@ -190,22 +199,25 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)registerStoreDefaults {
 #if defined(WEBRTC_IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_13
   NSError *error;
-  NSData *codecData = [NSKeyedArchiver archivedDataWithRootObject:[self defaultVideoCodecSetting]
-                                            requiringSecureCoding:NO
-                                                            error:&error];
+  NSData *codecData = [NSKeyedArchiver
+      archivedDataWithRootObject:[self defaultVideoCodecSetting]
+           requiringSecureCoding:NO
+                           error:&error];
   if (error) {
     return;
   }
 #else
-  NSData *codecData = [NSKeyedArchiver archivedDataWithRootObject:[self defaultVideoCodecSetting]];
+  NSData *codecData = [NSKeyedArchiver
+      archivedDataWithRootObject:[self defaultVideoCodecSetting]];
 #endif
 
-  [ARDSettingsStore setDefaultsForVideoResolution:[self defaultVideoResolutionSetting]
-                                       videoCodec:codecData
-                                          bitrate:nil
-                                        audioOnly:NO
-                                    createAecDump:NO
-                             useManualAudioConfig:YES];
+  [ARDSettingsStore
+      setDefaultsForVideoResolution:[self defaultVideoResolutionSetting]
+                         videoCodec:codecData
+                            bitrate:nil
+                          audioOnly:NO
+                      createAecDump:NO
+               useManualAudioConfig:YES];
 }
 @end
 NS_ASSUME_NONNULL_END

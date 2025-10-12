@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,6 +81,8 @@ div#bottom-gradient {
     left: 0;
     height: 33%;
     width: 100%;
+    border-bottom-right-radius: inherit;
+    border-bottom-left-radius: inherit;
 }
 
 div#label {
@@ -89,7 +91,7 @@ div#label {
     font-family: -apple-system;
     z-index: 1;
     margin-bottom: 8px;
-    margin-left: -7px;
+    margin-inline-start: -7px;
 }
 
 span#spatial-glyph {
@@ -100,7 +102,20 @@ span#spatial-glyph {
     background-repeat: no-repeat;
     display: inline-block;
     margin-bottom: -8px;
-    margin-right: -8px;
+    margin-inline-end: -8px;
 }
+#if defined(ENABLE_PANORAMA_IMAGE_CONTROLS) && ENABLE_PANORAMA_IMAGE_CONTROLS
+span#pano-glyph {
+    width: 30px;
+    height: 30px;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNDguNjI5IDEyMCI+PHBhdGggZD0iTTIwLjY1MiwxMDEuODYxYzkuMDUyLDAgMjIuODIsLTEwLjcxMiA1My42ODUsLTEwLjcxMmMzMC43NiwwIDQ0LjYwMSwxMC42NjEgNTMuNjMyLDEwLjY2MWM1LjM0OSwwIDguMTkyLC0zLjI4NiA4LjE5MiwtOC43NDJ2LTY2LjA5NWMwLC01LjQ0NSAtMi44NDMsLTguNzQxIC04LjE5MiwtOC43NDFjLTkuMDMxLDAgLTIyLjg3MiwxMC43MTIgLTUzLjYzMiwxMC43MTJjLTMwLjgxMiwwIC00NC42NTQsLTEwLjcyMyAtNTMuNjg1LC0xMC43MjNjLTUuMzM5LDAgLTguMTkxLDMuMjk2IC04LjE5MSw4Ljc0MXY2Ni4xNThjMCw1LjQ1NiAyLjg1Miw4Ljc0MSA4LjE5MSw4Ljc0MXpNMjEuNjY3LDkzLjcyOGMtMC44NjQsMCAtMS4zNTMsLTAuNDY4IC0xLjM1MywtMS40MjZ2LTY0LjUyMmMwLC0wLjk1OCAwLjQ4OSwtMS40MjYgMS4zNTMsLTEuNDI2YzQuNzg1LDAgMjEuNTk3LDEwLjAyOSA1Mi42NywxMC4wMjljMzEuMDIsMCA0OC44NjcsLTEwLjA3IDUyLjYxOCwtMTAuMDdjMC44NzQsMCAxLjM2MiwwLjQ2OCAxLjM2MiwxLjQyNnY2NC41NjNjMCwwLjk1OCAtMC40ODgsMS40MjYgLTEuMzYyLDEuNDI2Yy00Ljc4NiwwIC0yMS41OTgsLTEwLjAxOSAtNTIuNjE4LC0xMC4wMTljLTMxLjEzNiwwIC00OC44OTksMTAuMDE5IC01Mi42NywxMC4wMTl6IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjUiLz48L3N2Zz4=');
+    background-position: bottom;
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-bottom: -7px;
+    margin-inline-end: 5px;
+    margin-inline-start: 10px;
+}
+#endif // defined(ENABLE_PANORAMA_IMAGE_CONTROLS) && ENABLE_PANORAMA_IMAGE_CONTROLS
 
 #endif

@@ -10,17 +10,17 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 784x24
           RenderTableRow {TR} at (0,1) size 784x22
             RenderTableCell {TD} at (1,1) size 14x22 [r=0 c=0 rs=1 cs=1]
-              RenderMenuList {SELECT} at (1,1) size 12x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+              RenderMenuList {SELECT} at (1,1) size 12x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
                 RenderBlock (anonymous) at (6,3) size 12x14
                   RenderText at (0,0) size 20x14
                     text run at (0,0) width 20: "one"
             RenderTableCell {TD} at (16,1) size 14x22 [r=0 c=1 rs=1 cs=1]
-              RenderMenuList {SELECT} at (1,1) size 12x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+              RenderMenuList {SELECT} at (1,1) size 12x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
                 RenderBlock (anonymous) at (6,3) size 12x14
                   RenderText at (0,0) size 19x14
                     text run at (0,0) width 19: "two"
             RenderTableCell {TD} at (31,1) size 14x22 [r=0 c=2 rs=1 cs=1]
-              RenderMenuList {SELECT} at (1,1) size 12x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+              RenderMenuList {SELECT} at (1,1) size 12x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
                 RenderBlock (anonymous) at (6,3) size 12x14
                   RenderText at (0,0) size 28x14
                     text run at (0,0) width 28: "three"

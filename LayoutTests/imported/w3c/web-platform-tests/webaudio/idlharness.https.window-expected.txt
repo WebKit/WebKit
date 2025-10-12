@@ -1,10 +1,11 @@
 
 PASS idl_test setup
 PASS idl_test validation
+PASS Partial interface Element: member names are unique
 PASS HTMLElement includes GlobalEventHandlers: member names are unique
-PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
 PASS HTMLElement includes ElementContentEditable: member names are unique
 PASS HTMLElement includes HTMLOrSVGElement: member names are unique
+PASS MessagePort includes MessageEventTarget: member names are unique
 PASS Element includes ParentNode: member names are unique
 PASS Element includes NonDocumentTypeChildNode: member names are unique
 PASS Element includes ChildNode: member names are unique
@@ -20,6 +21,7 @@ PASS BaseAudioContext interface: attribute sampleRate
 PASS BaseAudioContext interface: attribute currentTime
 PASS BaseAudioContext interface: attribute listener
 PASS BaseAudioContext interface: attribute state
+FAIL BaseAudioContext interface: attribute renderQuantumSize assert_true: The prototype object must have a property "renderQuantumSize" expected true got false
 PASS BaseAudioContext interface: attribute audioWorklet
 PASS BaseAudioContext interface: attribute onstatechange
 PASS BaseAudioContext interface: operation createAnalyser()
@@ -49,10 +51,14 @@ PASS AudioContext interface: existence and properties of interface prototype obj
 PASS AudioContext interface: existence and properties of interface prototype object's @@unscopables property
 PASS AudioContext interface: attribute baseLatency
 PASS AudioContext interface: attribute outputLatency
+FAIL AudioContext interface: attribute sinkId assert_true: The prototype object must have a property "sinkId" expected true got false
+FAIL AudioContext interface: attribute onsinkchange assert_true: The prototype object must have a property "onsinkchange" expected true got false
+FAIL AudioContext interface: attribute onerror assert_true: The prototype object must have a property "onerror" expected true got false
 PASS AudioContext interface: operation getOutputTimestamp()
 PASS AudioContext interface: operation resume()
 PASS AudioContext interface: operation suspend()
 PASS AudioContext interface: operation close()
+FAIL AudioContext interface: operation setSinkId((DOMString or AudioSinkOptions)) assert_own_property: interface prototype object missing non-static operation expected property "setSinkId" missing
 PASS AudioContext interface: operation createMediaElementSource(HTMLMediaElement)
 PASS AudioContext interface: operation createMediaStreamSource(MediaStream)
 FAIL AudioContext interface: operation createMediaStreamTrackSource(MediaStreamTrack) assert_own_property: interface prototype object missing non-static operation expected property "createMediaStreamTrackSource" missing
@@ -61,10 +67,15 @@ PASS AudioContext must be primary interface of context
 PASS Stringification of context
 PASS AudioContext interface: context must inherit property "baseLatency" with the proper type
 PASS AudioContext interface: context must inherit property "outputLatency" with the proper type
+FAIL AudioContext interface: context must inherit property "sinkId" with the proper type assert_inherits: property "sinkId" not found in prototype chain
+FAIL AudioContext interface: context must inherit property "onsinkchange" with the proper type assert_inherits: property "onsinkchange" not found in prototype chain
+FAIL AudioContext interface: context must inherit property "onerror" with the proper type assert_inherits: property "onerror" not found in prototype chain
 PASS AudioContext interface: context must inherit property "getOutputTimestamp()" with the proper type
 PASS AudioContext interface: context must inherit property "resume()" with the proper type
 PASS AudioContext interface: context must inherit property "suspend()" with the proper type
 PASS AudioContext interface: context must inherit property "close()" with the proper type
+FAIL AudioContext interface: context must inherit property "setSinkId((DOMString or AudioSinkOptions))" with the proper type assert_inherits: property "setSinkId" not found in prototype chain
+FAIL AudioContext interface: calling setSinkId((DOMString or AudioSinkOptions)) on context with too few arguments must throw TypeError assert_inherits: property "setSinkId" not found in prototype chain
 PASS AudioContext interface: context must inherit property "createMediaElementSource(HTMLMediaElement)" with the proper type
 PASS AudioContext interface: calling createMediaElementSource(HTMLMediaElement) on context with too few arguments must throw TypeError
 PASS AudioContext interface: context must inherit property "createMediaStreamSource(MediaStream)" with the proper type
@@ -77,6 +88,7 @@ PASS BaseAudioContext interface: context must inherit property "sampleRate" with
 PASS BaseAudioContext interface: context must inherit property "currentTime" with the proper type
 PASS BaseAudioContext interface: context must inherit property "listener" with the proper type
 PASS BaseAudioContext interface: context must inherit property "state" with the proper type
+FAIL BaseAudioContext interface: context must inherit property "renderQuantumSize" with the proper type assert_inherits: property "renderQuantumSize" not found in prototype chain
 PASS BaseAudioContext interface: context must inherit property "audioWorklet" with the proper type
 PASS BaseAudioContext interface: context must inherit property "onstatechange" with the proper type
 PASS BaseAudioContext interface: context must inherit property "createAnalyser()" with the proper type
@@ -106,6 +118,13 @@ PASS BaseAudioContext interface: context must inherit property "createStereoPann
 PASS BaseAudioContext interface: context must inherit property "createWaveShaper()" with the proper type
 PASS BaseAudioContext interface: context must inherit property "decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?)" with the proper type
 PASS BaseAudioContext interface: calling decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?) on context with too few arguments must throw TypeError
+FAIL AudioSinkInfo interface: existence and properties of interface object assert_own_property: self does not have own property "AudioSinkInfo" expected property "AudioSinkInfo" missing
+FAIL AudioSinkInfo interface object length assert_own_property: self does not have own property "AudioSinkInfo" expected property "AudioSinkInfo" missing
+FAIL AudioSinkInfo interface object name assert_own_property: self does not have own property "AudioSinkInfo" expected property "AudioSinkInfo" missing
+FAIL AudioSinkInfo interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AudioSinkInfo" expected property "AudioSinkInfo" missing
+FAIL AudioSinkInfo interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AudioSinkInfo" expected property "AudioSinkInfo" missing
+FAIL AudioSinkInfo interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "AudioSinkInfo" expected property "AudioSinkInfo" missing
+FAIL AudioSinkInfo interface: attribute type assert_own_property: self does not have own property "AudioSinkInfo" expected property "AudioSinkInfo" missing
 PASS OfflineAudioContext interface: existence and properties of interface object
 PASS OfflineAudioContext interface object length
 PASS OfflineAudioContext interface object name
@@ -130,6 +149,7 @@ PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "currentTime" with the proper type
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "listener" with the proper type
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "state" with the proper type
+FAIL BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "renderQuantumSize" with the proper type assert_inherits: property "renderQuantumSize" not found in prototype chain
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "audioWorklet" with the proper type
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "onstatechange" with the proper type
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createAnalyser()" with the proper type
@@ -1084,8 +1104,10 @@ PASS AudioWorklet interface object name
 PASS AudioWorklet interface: existence and properties of interface prototype object
 PASS AudioWorklet interface: existence and properties of interface prototype object's "constructor" property
 PASS AudioWorklet interface: existence and properties of interface prototype object's @@unscopables property
+FAIL AudioWorklet interface: attribute port assert_true: The prototype object must have a property "port" expected true got false
 PASS AudioWorklet must be primary interface of context.audioWorklet
 PASS Stringification of context.audioWorklet
+FAIL AudioWorklet interface: context.audioWorklet must inherit property "port" with the proper type assert_inherits: property "port" not found in prototype chain
 PASS AudioWorkletGlobalScope interface: existence and properties of interface object
 PASS AudioParamMap interface: existence and properties of interface object
 PASS AudioParamMap interface object length

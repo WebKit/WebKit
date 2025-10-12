@@ -8,9 +8,9 @@ PASS Can set 'text-decoration-line' to the 'none' keyword: none
 PASS Can set 'text-decoration-line' to the 'underline' keyword: underline
 PASS Can set 'text-decoration-line' to the 'overline' keyword: overline
 PASS Can set 'text-decoration-line' to the 'line-through' keyword: line-through
-FAIL Can set 'text-decoration-line' to the 'blink' keyword: blink assert_equals: expected "blink" but got "none"
-FAIL Can set 'text-decoration-line' to the 'spelling-error' keyword: spelling-error Invalid values
-FAIL Can set 'text-decoration-line' to the 'grammar-error' keyword: grammar-error Invalid values
+PASS Can set 'text-decoration-line' to the 'blink' keyword: blink
+PASS Can set 'text-decoration-line' to the 'spelling-error' keyword: spelling-error
+PASS Can set 'text-decoration-line' to the 'grammar-error' keyword: grammar-error
 PASS Setting 'text-decoration-line' to a length: 0px throws TypeError
 PASS Setting 'text-decoration-line' to a length: -3.14em throws TypeError
 PASS Setting 'text-decoration-line' to a length: 3.14cm throws TypeError

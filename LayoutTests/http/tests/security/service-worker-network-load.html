@@ -46,10 +46,11 @@ function service_unregister(scope) {
       })
 }
 
-function wating_stat(test, worker, state) {
+function waiting_state(test, worker, state) {
   return new Promise(test.step_func(function(resolve) {
       worker.addEventListener('statechange', test.step_func(function() {
-            resolve(state);
+            if (worker.state === state)
+                resolve();
         }));
     }));
 }
@@ -60,7 +61,7 @@ trigger(t => {
 
     return service_register(script, scope)
       .then(reg => {
-          return wating_stat(t, reg.installing, 'activated');
+          return waiting_state(t, reg.installing, 'activated');
         })
       .then(frame => {
           setTimeout(() => with_iframe(scope + 'asdf.py') , 1);

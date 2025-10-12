@@ -71,7 +71,7 @@ bool EmailInputType::typeMismatchFor(const String& value) const
     if (!protectedElement()->multiple())
         return !isValidEmailAddress(value);
     for (auto& address : value.splitAllowingEmptyEntries(',')) {
-        if (!isValidEmailAddress(StringView(address).trim(isASCIIWhitespace<UChar>)))
+        if (!isValidEmailAddress(StringView(address).trim(isASCIIWhitespace<char16_t>)))
             return true;
     }
     return false;

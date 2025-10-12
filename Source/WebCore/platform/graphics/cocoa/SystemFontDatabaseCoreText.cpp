@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,7 +62,6 @@ RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createSystemUIFont(const Cascad
     return createFontByApplyingWeightWidthItalicsAndFallbackBehavior(result.get(), parameters.weight, parameters.width, parameters.italic, parameters.size, parameters.allowUserInstalledFonts);
 }
 
-#if HAVE(DESIGN_SYSTEM_UI_FONTS)
 RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createSystemDesignFont(SystemFontKind systemFontKind, const CascadeListParameters& parameters)
 {
     CFStringRef design = kCTFontUIFontDesignDefault;
@@ -81,7 +80,6 @@ RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createSystemDesignFont(SystemFo
     }
     return createFontByApplyingWeightWidthItalicsAndFallbackBehavior(nullptr, parameters.weight, parameters.width, parameters.italic, parameters.size, parameters.allowUserInstalledFonts, design);
 }
-#endif
 
 RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createTextStyleFont(const CascadeListParameters& parameters)
 {
@@ -110,9 +108,7 @@ Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(c
         case SystemFontKind::UISerif:
         case SystemFontKind::UIMonospace:
         case SystemFontKind::UIRounded:
-#if HAVE(DESIGN_SYSTEM_UI_FONTS)
             systemFont = createSystemDesignFont(systemFontKind, parameters);
-#endif
             break;
         case SystemFontKind::TextStyle:
             systemFont = createTextStyleFont(parameters);
@@ -239,7 +235,7 @@ SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::sy
     CascadeListParameters result;
     result.locale = description.computedLocale();
     result.size = description.computedSize();
-    result.italic = isItalic(description.italic());
+    result.italic = isItalic(description.fontStyleSlope());
     result.allowUserInstalledFonts = allowUserInstalledFonts;
 
     result.weight = mapWeight(description.weight());
@@ -279,14 +275,12 @@ std::optional<SystemFontKind> SystemFontDatabaseCoreText::matchSystemFontUse(con
         || equalLettersIgnoringASCIICase(string, "ui-sans-serif"_s))
         return SystemFontKind::SystemUI;
 
-#if HAVE(DESIGN_SYSTEM_UI_FONTS)
     if (equalLettersIgnoringASCIICase(string, "ui-serif"_s))
         return SystemFontKind::UISerif;
     if (equalLettersIgnoringASCIICase(string, "ui-monospace"_s))
         return SystemFontKind::UIMonospace;
     if (equalLettersIgnoringASCIICase(string, "ui-rounded"_s))
         return SystemFontKind::UIRounded;
-#endif
 
     auto compareAsPointer = [](const AtomString& lhs, const AtomString& rhs) {
         return lhs.impl() < rhs.impl();

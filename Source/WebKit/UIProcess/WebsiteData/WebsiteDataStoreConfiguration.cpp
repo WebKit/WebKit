@@ -94,7 +94,6 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const String& baseC
 
 void WebsiteDataStoreConfiguration::initializePaths()
 {
-    setApplicationCacheDirectory(WebsiteDataStore::defaultApplicationCacheDirectory(m_baseCacheDirectory));
     setCacheStorageDirectory(WebsiteDataStore::defaultCacheStorageDirectory(m_baseCacheDirectory));
     setNetworkCacheDirectory(WebsiteDataStore::defaultNetworkCacheDirectory(m_baseCacheDirectory));
     setMediaCacheDirectory(WebsiteDataStore::defaultMediaCacheDirectory(m_baseCacheDirectory));
@@ -191,8 +190,6 @@ WebPushD::WebPushDaemonConnectionConfiguration WebsiteDataStoreConfiguration::we
 WebsiteDataStoreConfiguration::Directories WebsiteDataStoreConfiguration::Directories::isolatedCopy() const &
 {
     return {
-        crossThreadCopy(applicationCacheFlatFileSubdirectoryName),
-        crossThreadCopy(applicationCacheDirectory),
         crossThreadCopy(alternativeServicesDirectory),
         crossThreadCopy(cacheStorageDirectory),
         crossThreadCopy(cookieStorageFile),
@@ -224,8 +221,6 @@ WebsiteDataStoreConfiguration::Directories WebsiteDataStoreConfiguration::Direct
 WebsiteDataStoreConfiguration::Directories WebsiteDataStoreConfiguration::Directories::isolatedCopy() &&
 {
     return {
-        crossThreadCopy(WTFMove(applicationCacheFlatFileSubdirectoryName)),
-        crossThreadCopy(WTFMove(applicationCacheDirectory)),
         crossThreadCopy(WTFMove(alternativeServicesDirectory)),
         crossThreadCopy(WTFMove(cacheStorageDirectory)),
         crossThreadCopy(WTFMove(cookieStorageFile)),

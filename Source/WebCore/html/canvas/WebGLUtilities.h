@@ -266,7 +266,7 @@ public:
     explicit ScopedClearColorAndMask(WebGLRenderingContextBase& context, GCGLclampf clearRed, GCGLclampf clearGreen, GCGLclampf clearBlue, GCGLclampf clearAlpha, GCGLboolean maskRed, GCGLboolean maskGreen, GCGLboolean maskBlue, GCGLboolean maskAlpha)
         : m_context(context)
     {
-        RefPtr gl = context.protectedGraphicsContextGL();
+        RefPtr gl = context.graphicsContextGL();
         gl->clearColor(clearRed, clearGreen, clearBlue, clearAlpha);
         if (context.m_oesDrawBuffersIndexed)
             gl->colorMaskiOES(0, maskRed, maskGreen, maskBlue, maskAlpha);
@@ -286,7 +286,7 @@ public:
         auto maskBlue  = m_context->m_colorMask[2];
         auto maskAlpha = m_context->m_colorMask[3];
 
-        RefPtr gl = m_context->protectedGraphicsContextGL();
+        RefPtr gl = m_context->graphicsContextGL();
         gl->clearColor(clearRed, clearGreen, clearBlue, clearAlpha);
         if (m_context->m_oesDrawBuffersIndexed)
             gl->colorMaskiOES(0, maskRed, maskGreen, maskBlue, maskAlpha);
@@ -307,7 +307,7 @@ public:
         if (!m_context)
             return;
 
-        RefPtr gl = context.protectedGraphicsContextGL();
+        RefPtr gl = context.graphicsContextGL();
         gl->clearDepth(clear);
         gl->depthMask(mask);
     }
@@ -317,7 +317,7 @@ public:
         if (!m_context)
             return;
 
-        RefPtr gl = m_context->protectedGraphicsContextGL();
+        RefPtr gl = m_context->graphicsContextGL();
         gl->clearDepth(m_context->m_clearDepth);
         gl->depthMask(m_context->m_depthMask);
     }
@@ -335,7 +335,7 @@ public:
         if (!m_context)
             return;
 
-        RefPtr gl = context.protectedGraphicsContextGL();
+        RefPtr gl = context.graphicsContextGL();
         gl->clearStencil(clear);
         gl->stencilMaskSeparate(GraphicsContextGL::FRONT, mask);
     }
@@ -345,7 +345,7 @@ public:
         if (!m_context)
             return;
 
-        RefPtr gl = m_context->protectedGraphicsContextGL();
+        RefPtr gl = m_context->graphicsContextGL();
         gl->clearStencil(m_context->m_clearStencil);
         gl->stencilMaskSeparate(GraphicsContextGL::FRONT, m_context->m_stencilMask);
     }

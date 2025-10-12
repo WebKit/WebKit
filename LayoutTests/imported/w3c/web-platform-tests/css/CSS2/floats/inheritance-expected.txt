@@ -1,0 +1,6 @@
+
+PASS Property float has initial value none
+PASS Property float does not inherit
+PASS Property clear has initial value none
+PASS Property clear does not inherit
+

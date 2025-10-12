@@ -40,7 +40,7 @@
 
     [PutForwards=value] readonly attribute DOMTokenList relList;
 
-    [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings] attribute [AtomString] DOMString referrerPolicy;
+    [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings, ReflectSetter] attribute [AtomString] DOMString referrerPolicy;
 };
 
 HTMLAnchorElement includes HTMLHyperlinkElementUtils;

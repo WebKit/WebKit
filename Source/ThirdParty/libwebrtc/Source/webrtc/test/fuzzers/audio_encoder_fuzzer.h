@@ -11,6 +11,7 @@
 #ifndef TEST_FUZZERS_AUDIO_ENCODER_FUZZER_H_
 #define TEST_FUZZERS_AUDIO_ENCODER_FUZZER_H_
 
+#include <cstdint>
 #include <memory>
 
 #include "api/array_view.h"
@@ -18,7 +19,7 @@
 
 namespace webrtc {
 
-void FuzzAudioEncoder(rtc::ArrayView<const uint8_t> data_view,
+void FuzzAudioEncoder(ArrayView<const uint8_t> data_view,
                       std::unique_ptr<AudioEncoder> encoder);
 
 }  // namespace webrtc

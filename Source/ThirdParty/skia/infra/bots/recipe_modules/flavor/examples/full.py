@@ -2,7 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-PYTHON_VERSION_COMPATIBILITY = "PY3"
 
 DEPS = [
   'flavor',
@@ -104,8 +103,6 @@ TEST_BUILDERS = [
   'Test-iOS-Clang-iPhone8-GPU-AppleA11-arm64-Release-All',
   'Test-iOS-Clang-iPhone8-GPU-AppleA11-arm64-Release-All-RPI',
   'Test-Mac10.13-Clang-MacBookPro11.5-CPU-AVX2-x86_64-Debug-All-ASAN',
-  ('Test-Ubuntu18-Clang-Golo-GPU-QuadroP400-x86_64-Release-All'
-   '-Valgrind_AbandonGpuContext_SK_CPU_LIMIT_SSE41'),
   'Test-Debian10-Clang-NUC7i5BNK-GPU-IntelIris640-x86_64-Debug-All-ASAN_Vulkan',
   'Test-Debian11-Clang-NUC11TZi5-GPU-IntelIrisXe-x86_64-Debug-All',
   'Test-Win10-Clang-NUC5i7RYH-CPU-AVX2-x86_64-Debug-All-NativeFonts_DWriteCore',
@@ -265,4 +262,13 @@ def GenTests(api):
     api.step_data('Scale CPU 4 to 0.600000', retcode=1)+
     api.step_data('Scale CPU 4 to 0.600000 (attempt 2)', retcode=1)+
     api.step_data('Scale CPU 4 to 0.600000 (attempt 3)', retcode=1)
+  )
+
+  internalBuilder = (
+      'Test-Android-Clang-InternalDevice-GPU-SomeGPU-arm-Release-All')
+  yield (
+    api.test('internal_hardware_label') +
+    api.properties(**(
+        defaultProps(internalBuilder) | {'internal_hardware_label': '6'}
+    ))
   )

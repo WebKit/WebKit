@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include <cstdint>
 #include <wtf/OptionSet.h>
+#include <wtf/Platform.h>
 
 // GCGL types match the corresponding GL types as defined in OpenGL ES 2.0
 // header file gl2.h from khronos.org.
@@ -81,10 +82,10 @@ using GCGLMTLRasterizationRateMapANGLE = void*;
 // Order in inverse of in GL specification, so that iteration is in GL specification order.
 enum class GCGLErrorCode : uint8_t {
     ContextLost = 1,
-    InvalidFramebufferOperation = 1 << 2,
-    OutOfMemory = 1 << 3,
-    InvalidOperation = 1 << 4,
-    InvalidValue = 1 << 5,
-    InvalidEnum = 1 << 6
+    InvalidFramebufferOperation = 1 << 1,
+    OutOfMemory = 1 << 2,
+    InvalidOperation = 1 << 3,
+    InvalidValue = 1 << 4,
+    InvalidEnum = 1 << 5
 };
 using GCGLErrorCodeSet = OptionSet<GCGLErrorCode>;

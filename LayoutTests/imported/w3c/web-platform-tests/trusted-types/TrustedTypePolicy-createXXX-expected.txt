@@ -6,29 +6,38 @@ PASS TestPolicyTrustedHTML0 (TrustedHTML: s => s)
 PASS TestPolicyTrustedHTML1 (TrustedHTML: s => null)
 PASS TestPolicyTrustedHTML2 (TrustedHTML: s => "well, " + s)
 PASS TestPolicyTrustedHTML3 (TrustedHTML: s => { throw new Error() })
-PASS TestPolicyTrustedHTML4 (TrustedHTML: s => { aGlobalVarForSideEffectTesting = s; return s })
-PASS TestPolicyTrustedHTML5 (TrustedHTML: s => aGlobalVarForSideEffectTesting + s)
-PASS TestPolicyTrustedHTML6 (TrustedHTML: function aGlobalFunction() {
+PASS TestPolicyTrustedHTML4 (TrustedHTML: callback_to_capture_this(s) {
+      return String(this);
+    })
+PASS TestPolicyTrustedHTML5 (TrustedHTML: s => { aGlobalVarForSideEffectTesting = s; return s })
+PASS TestPolicyTrustedHTML6 (TrustedHTML: s => aGlobalVarForSideEffectTesting + s)
+PASS TestPolicyTrustedHTML7 (TrustedHTML: function aGlobalFunction() {
     [native code]
 })
-PASS TestPolicyTrustedHTML7 (TrustedHTML: s => aGlobalFunction(s))
+PASS TestPolicyTrustedHTML8 (TrustedHTML: s => aGlobalFunction(s))
 PASS TestPolicyTrustedScript0 (TrustedScript: s => s)
 PASS TestPolicyTrustedScript1 (TrustedScript: s => null)
 PASS TestPolicyTrustedScript2 (TrustedScript: s => "well, " + s)
 PASS TestPolicyTrustedScript3 (TrustedScript: s => { throw new Error() })
-PASS TestPolicyTrustedScript4 (TrustedScript: s => { aGlobalVarForSideEffectTesting = s; return s })
-PASS TestPolicyTrustedScript5 (TrustedScript: s => aGlobalVarForSideEffectTesting + s)
-PASS TestPolicyTrustedScript6 (TrustedScript: function aGlobalFunction() {
+PASS TestPolicyTrustedScript4 (TrustedScript: callback_to_capture_this(s) {
+      return String(this);
+    })
+PASS TestPolicyTrustedScript5 (TrustedScript: s => { aGlobalVarForSideEffectTesting = s; return s })
+PASS TestPolicyTrustedScript6 (TrustedScript: s => aGlobalVarForSideEffectTesting + s)
+PASS TestPolicyTrustedScript7 (TrustedScript: function aGlobalFunction() {
     [native code]
 })
-PASS TestPolicyTrustedScript7 (TrustedScript: s => aGlobalFunction(s))
+PASS TestPolicyTrustedScript8 (TrustedScript: s => aGlobalFunction(s))
 PASS TestPolicyTrustedScriptURL0 (TrustedScriptURL: s => s)
 PASS TestPolicyTrustedScriptURL1 (TrustedScriptURL: s => null)
 PASS TestPolicyTrustedScriptURL2 (TrustedScriptURL: s => s + "#duck")
 PASS TestPolicyTrustedScriptURL3 (TrustedScriptURL: s => { throw new Error() })
-PASS TestPolicyTrustedScriptURL4 (TrustedScriptURL: s => s + "#" + aGlobalVarForSideEffectTesting)
-PASS TestPolicyTrustedScriptURL5 (TrustedScriptURL: function anotherGlobalFunction() {
+PASS TestPolicyTrustedScriptURL4 (TrustedScriptURL: callback_to_capture_this(s) {
+      return String(this);
+    })
+PASS TestPolicyTrustedScriptURL5 (TrustedScriptURL: s => s + "#" + aGlobalVarForSideEffectTesting)
+PASS TestPolicyTrustedScriptURL6 (TrustedScriptURL: function anotherGlobalFunction() {
     [native code]
 })
-PASS TestPolicyTrustedScriptURL6 (TrustedScriptURL: s => anotherGlobalFunction(s))
+PASS TestPolicyTrustedScriptURL7 (TrustedScriptURL: s => anotherGlobalFunction(s))
 

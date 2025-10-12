@@ -31,6 +31,7 @@
 
 #include "NodeName.h"
 #include "RenderMathMLPadded.h"
+#include "RenderObjectInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

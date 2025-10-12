@@ -17,6 +17,7 @@
                 let settings = stream.getVideoTracks()[0].getSettings();
                 defaultWidth = settings.width;
                 defaultHeight = settings.height;
+                stream.getTracks().forEach(track => track.stop());
             }, "setup");
             
             promise_test((test) => {
@@ -24,6 +25,7 @@
                     .then((stream) => {
                         let settings = stream.getVideoTracks()[0].getSettings()
                         assert_equals(settings.height, Math.floor(640 * (defaultHeight / defaultWidth)));
+                        stream.getTracks().forEach(track => track.stop());
                     })
             }, "height calculated correctly only width is specified");
 
@@ -33,6 +35,7 @@
                     .then((stream) => {
                         let settings = stream.getVideoTracks()[0].getSettings()
                         assert_equals(settings.width, Math.floor(240 * (defaultWidth / defaultHeight)));
+                        stream.getTracks().forEach(track => track.stop());
                     })
             }, "width calculated correctly only height is specified");
 

@@ -33,14 +33,16 @@ pattern requires lifting some variable declarations.
 
 Comments should be `// C99-style` for consistency with C++.
 
-When declaring pointer types, `*` should be placed next to the variable name,
-not the type. So
+When declaring pointer or reference types, `*` or `&` should be placed next to
+the variable name, not the type. So
 
     uint8_t *ptr;
+    const auto &blah;
 
 not
 
     uint8_t* ptr;
+    const auto& blah;
 
 Rather than `malloc()` and `free()`, use the wrappers `OPENSSL_malloc()`
 and `OPENSSL_free()`. Use the standard C `assert()` function freely.
@@ -143,7 +145,7 @@ instance, For instance:
 Name public headers like `include/openssl/evp.h` with header guards like
 `OPENSSL_HEADER_EVP_H`. Name internal headers like
 `crypto/ec/internal.h` with header guards like
-`OPENSSL_HEADER_EC_INTERNAL_H`.
+`OPENSSL_HEADER_CRYPTO_EC_INTERNAL_H`.
 
 Name enums like `enum unix_hacker_t`. For instance:
 

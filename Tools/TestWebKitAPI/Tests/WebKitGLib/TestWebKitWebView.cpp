@@ -21,7 +21,6 @@
 #include "config.h"
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
-#include <WebCore/SoupVersioning.h>
 #include <glib/gstdio.h>
 #include <wtf/glib/GRefPtr.h>
 
@@ -187,6 +186,50 @@ static void testWebViewWebBackend(Test* test, gconstpointer)
     webView = nullptr;
     g_assert_false(hasInstance);
 }
+
+#if ENABLE(WPE_PLATFORM)
+static void testWebViewDisplay(WebViewTest* test, gconstpointer)
+{
+    if (!test->m_display) {
+        g_test_skip(nullptr);
+        return;
+    }
+
+    // Tests are created with a headless display.
+    auto* display = webkit_web_view_get_display(test->webView());
+    g_assert_true(WPE_IS_DISPLAY_HEADLESS(display));
+
+    // A web view created without a display uses the default one (mock display for the tests).
+    GRefPtr<WebKitWebView> webView = adoptGRef(webkit_web_view_new(nullptr));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView.get()));
+    display = webkit_web_view_get_display(webView.get());
+    g_assert_true(WPE_IS_DISPLAY(display));
+    g_assert_cmpstr(G_OBJECT_TYPE_NAME(display), ==, "WPEDisplayMock");
+    g_assert_true(display == wpe_display_get_default());
+}
+
+static void testWebViewWPEView(WebViewTest* test, gconstpointer)
+{
+    if (!test->m_display) {
+        g_test_skip(nullptr);
+        return;
+    }
+
+    // Tests are created with a headless display.
+    auto* view = webkit_web_view_get_wpe_view(test->webView());
+    g_assert_true(WPE_IS_VIEW_HEADLESS(view));
+    g_assert_true(wpe_view_get_display(view) == test->m_display.get());
+
+    // A web view created without a display uses the default one (mock display for the tests).
+    GRefPtr<WebKitWebView> webView = adoptGRef(webkit_web_view_new(nullptr));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView.get()));
+    view = webkit_web_view_get_wpe_view(webView.get());
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(view));
+    g_assert_true(WPE_IS_VIEW(view));
+    g_assert_cmpstr(G_OBJECT_TYPE_NAME(view), ==, "WPEViewMock");
+    g_assert_true(wpe_view_get_display(view) == wpe_display_get_default());
+}
+#endif
 #endif // PLATFORM(WPE)
 
 static void ephemeralViewloadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebViewTest* test)
@@ -1592,6 +1635,58 @@ static void testWebViewBackgroundColor(WebViewTest* test, gconstpointer)
     // MiniBrowser --bg-color="<color-value>" for manually testing this API.
 }
 
+class ThemeColorWebViewTest : public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(ThemeColorWebViewTest);
+
+    static void themeColorChanged(GObject*, GParamSpec*, ThemeColorWebViewTest* test)
+    {
+        g_signal_handlers_disconnect_by_func(test->m_webView.get(), reinterpret_cast<void*>(themeColorChanged), test);
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
+    void testThemeColorResult()
+    {
+        ColorType rgba;
+        g_assert_true(webkit_web_view_get_theme_color(m_webView.get(), &rgba));
+        g_assert_cmpfloat(rgba.red, ==, targetColor.red);
+        g_assert_cmpfloat(rgba.green, ==, targetColor.green);
+        g_assert_cmpfloat(rgba.blue, ==, targetColor.blue);
+        g_assert_cmpfloat(rgba.alpha, ==, targetColor.alpha);
+    }
+
+    void waitUntilThemeColorChanged()
+    {
+        g_signal_connect(m_webView.get(), "notify::theme-color", G_CALLBACK(themeColorChanged), this);
+        g_main_loop_run(m_mainLoop);
+    }
+
+    ColorType targetColor { 0.0, 0.0, 0.0, 0.0 };
+};
+
+static void testWebViewThemeColor(ThemeColorWebViewTest* test, gconstpointer)
+{
+    ColorType rgba;
+
+    test->showInWindow();
+
+    g_assert_false(webkit_web_view_get_theme_color(test->m_webView.get(), &rgba));
+
+    test->targetColor = ColorType(1.0, 0.0, 0.0, 1.0);
+    test->loadHtml("<html style='width: 325px; height: 615px'><meta name='theme-color' content='#FF0000' /></html>", nullptr);
+    test->waitUntilThemeColorChanged();
+    test->testThemeColorResult();
+
+    test->targetColor = ColorType(0.0, 1.0, 0.0, 1.0);
+    test->loadHtml("<html style='width: 325px; height: 615px'><meta name='theme-color' content='#00FF00' /></html>", nullptr);
+    test->waitUntilThemeColorChanged();
+    test->testThemeColorResult();
+
+    test->loadHtml("<html style='width: 325px; height: 615px'></html>", nullptr);
+    test->waitUntilThemeColorChanged();
+    g_assert_false(webkit_web_view_get_theme_color(test->m_webView.get(), &rgba));
+}
+
 #if PLATFORM(GTK)
 static void testWebViewPreferredSize(WebViewTest* test, gconstpointer)
 {
@@ -1605,6 +1700,18 @@ static void testWebViewPreferredSize(WebViewTest* test, gconstpointer)
     g_assert_cmpint(naturalSize.width, ==, 325);
     g_assert_cmpint(naturalSize.height, ==, 615);
 }
+
+#if !USE(GTK4)
+static void testWebViewOffscreenWindow(WebViewTest* test, gconstpointer)
+{
+    GtkWidget* window = gtk_offscreen_window_new();
+    gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(test->webView()));
+    test->loadURI(gServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+    gtk_widget_show_all(window);
+    gtk_widget_destroy(window);
+}
+#endif
 #endif
 
 class WebViewTitleTest: public WebViewTest {
@@ -1670,7 +1777,7 @@ public:
                 return;
 
             if (++test->m_frameCounter == test->m_maxFrames)
-                RunLoop::protectedMain()->dispatch([test] { test->quitMainLoop(); });
+                RunLoop::mainSingleton().dispatch([test] { test->quitMainLoop(); });
         }, this, nullptr))
     {
         g_assert_cmpuint(m_id, >, 0);
@@ -2007,11 +2114,7 @@ static void testWebViewLoadAlternateHTMLFromPageWithCSP(WebViewTest* test, gcons
     g_assert_no_error(error.get());
 }
 
-#if USE(SOUP2)
-static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
-#else
 static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
-#endif
 {
     if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
         soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
@@ -2035,6 +2138,10 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "close-quickly", testWebViewCloseQuickly);
 #if PLATFORM(WPE)
     Test::add("WebKitWebView", "backend", testWebViewWebBackend);
+#if ENABLE(WPE_PLATFORM)
+    WebViewTest::add("WebKitWebView", "display", testWebViewDisplay);
+    WebViewTest::add("WebKitWebView", "wpe-view", testWebViewWPEView);
+#endif
 #endif
     WebViewTest::add("WebKitWebView", "ephemeral", testWebViewEphemeral);
     WebViewTest::add("WebKitWebView", "custom-charset", testWebViewCustomCharset);
@@ -2064,8 +2171,12 @@ void beforeAll()
 #endif
     IsPlayingAudioWebViewTest::add("WebKitWebView", "is-playing-audio", testWebViewIsPlayingAudio);
     WebViewTest::add("WebKitWebView", "background-color", testWebViewBackgroundColor);
+    ThemeColorWebViewTest::add("WebKitWebView", "theme-color", testWebViewThemeColor);
 #if PLATFORM(GTK)
     WebViewTest::add("WebKitWebView", "preferred-size", testWebViewPreferredSize);
+#if !USE(GTK4)
+    WebViewTest::add("WebKitWebView", "offscreen-window", testWebViewOffscreenWindow);
+#endif
 #endif
     WebViewTitleTest::add("WebKitWebView", "title-change", testWebViewTitleChange);
 #if PLATFORM(WPE)

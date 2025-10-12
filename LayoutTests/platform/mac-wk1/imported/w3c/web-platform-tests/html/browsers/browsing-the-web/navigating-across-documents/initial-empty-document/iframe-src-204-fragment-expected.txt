@@ -1,7 +1,0 @@
-
-FAIL src assert_equals: history.length must not change after normal navigation from initial empty document expected 7 but got 8
-FAIL location.href assert_equals: history.length must not change after normal navigation from initial empty document expected 8 but got 9
-FAIL location.assign assert_equals: expected "about:blank#1" but got "http://localhost:8800/common/blank.html?pipe=status(204)"
-FAIL window.open assert_equals: expected "about:blank#1" but got "http://localhost:8800/common/blank.html?pipe=status(204)"
-FAIL link click assert_equals: history.length must not change after fragment navigation on initial empty document expected 9 but got 10
-

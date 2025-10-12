@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "LayoutRect.h"
-#include "RenderObject.h"
+#include <WebCore/LayoutRect.h>
+#include <WebCore/RenderObject.h>
 
 namespace WebCore {
 

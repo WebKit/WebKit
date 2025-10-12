@@ -26,9 +26,9 @@
 
 #pragma once
 
-#include "DictationAlternative.h"
-#include "TextEventInputType.h"
-#include "UIEvent.h"
+#include <WebCore/DictationAlternative.h>
+#include <WebCore/TextEventInputType.h>
+#include <WebCore/UIEvent.h>
 
 namespace WebCore {
 

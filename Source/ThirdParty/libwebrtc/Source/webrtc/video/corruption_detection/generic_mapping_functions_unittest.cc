@@ -27,6 +27,7 @@ constexpr int kChromaThresholdVp8 = 6;
 constexpr int kChromaThresholdVp9 = 4;
 constexpr int kChromaThresholdAv1 = 4;
 constexpr int kChromaThresholdH264 = 2;
+constexpr int kChromaThresholdH265 = 4;
 
 TEST(GenericMappingFunctionsTest, TestVp8) {
   constexpr VideoCodecType kCodecType = VideoCodecType::kVideoCodecVP8;
@@ -86,6 +87,19 @@ TEST(GenericMappingFunctionsTest, TestH264) {
   EXPECT_THAT(GetCorruptionFilterSettings(/*qp=*/51, kCodecType),
               FieldsAre(DoubleNear(81.0346, kMaxAbsoluteError), kLumaThreshold,
                         kChromaThresholdH264));
+}
+
+TEST(GenericMappingFunctionsTest, TestH265) {
+  constexpr VideoCodecType kCodecType = VideoCodecType::kVideoCodecH265;
+  EXPECT_THAT(GetCorruptionFilterSettings(/*qp=*/10, kCodecType),
+              FieldsAre(DoubleNear(0.481, kMaxAbsoluteError), kLumaThreshold,
+                        kChromaThresholdH265));
+  EXPECT_THAT(GetCorruptionFilterSettings(/*qp=*/30, kCodecType),
+              FieldsAre(DoubleNear(2.2818, kMaxAbsoluteError), kLumaThreshold,
+                        kChromaThresholdH265));
+  EXPECT_THAT(GetCorruptionFilterSettings(/*qp=*/51, kCodecType),
+              FieldsAre(DoubleNear(81.7, kMaxAbsoluteError), kLumaThreshold,
+                        kChromaThresholdH265));
 }
 
 }  // namespace

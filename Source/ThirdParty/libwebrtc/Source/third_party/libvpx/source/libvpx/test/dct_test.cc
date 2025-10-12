@@ -34,16 +34,16 @@ using std::make_tuple;
 using std::tuple;
 
 namespace {
-typedef void (*FdctFunc)(const int16_t *in, tran_low_t *out, int stride);
-typedef void (*IdctFunc)(const tran_low_t *in, uint8_t *out, int stride);
-typedef void (*FhtFunc)(const int16_t *in, tran_low_t *out, int stride,
-                        int tx_type);
-typedef void (*FhtFuncRef)(const Buffer<int16_t> &in, Buffer<tran_low_t> *out,
-                           int size, int tx_type);
-typedef void (*IhtFunc)(const tran_low_t *in, uint8_t *out, int stride,
-                        int tx_type);
-typedef void (*IhtWithBdFunc)(const tran_low_t *in, uint8_t *out, int stride,
-                              int tx_type, int bd);
+using FdctFunc = void (*)(const int16_t *in, tran_low_t *out, int stride);
+using IdctFunc = void (*)(const tran_low_t *in, uint8_t *out, int stride);
+using FhtFunc = void (*)(const int16_t *in, tran_low_t *out, int stride,
+                         int tx_type);
+using FhtFuncRef = void (*)(const Buffer<int16_t> &in, Buffer<tran_low_t> *out,
+                            int size, int tx_type);
+using IhtFunc = void (*)(const tran_low_t *in, uint8_t *out, int stride,
+                         int tx_type);
+using IhtWithBdFunc = void (*)(const tran_low_t *in, uint8_t *out, int stride,
+                               int tx_type, int bd);
 
 template <FdctFunc fn>
 void fdct_wrapper(const int16_t *in, tran_low_t *out, int stride, int tx_type) {
@@ -67,11 +67,11 @@ void iht_wrapper(const tran_low_t *in, uint8_t *out, int stride, int tx_type,
 }
 
 #if CONFIG_VP9_HIGHBITDEPTH
-typedef void (*HighbdIdctFunc)(const tran_low_t *in, uint16_t *out, int stride,
-                               int bd);
+using HighbdIdctFunc = void (*)(const tran_low_t *in, uint16_t *out, int stride,
+                                int bd);
 
-typedef void (*HighbdIhtFunc)(const tran_low_t *in, uint16_t *out, int stride,
-                              int tx_type, int bd);
+using HighbdIhtFunc = void (*)(const tran_low_t *in, uint16_t *out, int stride,
+                               int tx_type, int bd);
 
 template <HighbdIdctFunc fn>
 void highbd_idct_wrapper(const tran_low_t *in, uint8_t *out, int stride,
@@ -95,7 +95,7 @@ struct FuncInfo {
 };
 
 /* forward transform, inverse transform, size, transform type, bit depth */
-typedef tuple<int, const FuncInfo *, int, vpx_bit_depth_t> DctParam;
+using DctParam = tuple<int, const FuncInfo *, int, vpx_bit_depth_t>;
 
 void fdct_ref(const Buffer<int16_t> &in, Buffer<tran_low_t> *out, int size,
               int /*tx_type*/) {

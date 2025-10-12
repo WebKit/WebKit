@@ -45,18 +45,20 @@ public:
     virtual ~PlaceholderRenderingContextSource() = default;
 
     // Called by the offscreen context to submit the frame.
-    void setPlaceholderBuffer(RefPtr<ImageBuffer>&&);
+    void setPlaceholderBuffer(ImageBuffer&, bool opaque);
 
     // Called by the placeholder context to attach to compositor layer.
-    void setContentsToLayer(GraphicsLayer&);
+    void setContentsToLayer(GraphicsLayer&, ImageBuffer*, bool opaque);
 
 private:
     explicit PlaceholderRenderingContextSource(PlaceholderRenderingContext&);
 
     WeakPtr<PlaceholderRenderingContext> m_placeholder; // For main thread use.
-    RefPtr<ImageBuffer> m_imageBufferForDelegate;
     Lock m_lock;
     RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> m_delegate WTF_GUARDED_BY_LOCK(m_lock);
+    unsigned m_bufferVersion { 0 }; // For OffscreenCanvas holder thread use (main or worker).
+    unsigned m_delegateBufferVersion WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    unsigned m_placeholderBufferVersion WTF_GUARDED_BY_CAPABILITY(mainThread) { 0 };
 };
 
 class PlaceholderRenderingContext final : public CanvasRenderingContext {
@@ -67,15 +69,18 @@ public:
     HTMLCanvasElement& canvas() const;
     Ref<HTMLCanvasElement> protectedCanvas() const { return canvas(); }
     IntSize size() const;
-    void setPlaceholderBuffer(Ref<ImageBuffer>&&);
+    void setPlaceholderBuffer(Ref<ImageBuffer>&&, bool opaque);
 
-    Ref<PlaceholderRenderingContextSource> source() const { return m_source; }
+    PlaceholderRenderingContextSource& source() const { return m_source; }
 
 private:
     PlaceholderRenderingContext(HTMLCanvasElement&);
     void setContentsToLayer(GraphicsLayer&) final;
+    PixelFormat pixelFormat() const final;
+    bool isOpaque() const final { return m_opaque; }
 
-    Ref<PlaceholderRenderingContextSource> m_source;
+    const Ref<PlaceholderRenderingContextSource> m_source;
+    bool m_opaque { false };
 };
 
 }

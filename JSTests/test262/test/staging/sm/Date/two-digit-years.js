@@ -4,22 +4,16 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-Date-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
 ---*/
+
 /*
  * For the sake of cross compatibility with other implementations we
  * implement date parsing heuristics which support single and double
  * digit years. See bug: 1265136
  */
-
-/**************
- * BEGIN TEST *
- **************/
 
 for (let year of Array(100).keys()) {
     for (let month of Array(12).keys()) {
@@ -70,7 +64,3 @@ for (let year of Array(1000).keys()) {
 
 assert.sameValue(new Date("may 1999 1999").getTime(), new Date(NaN).getTime());
 assert.sameValue(new Date("may 0 0").getTime(), new Date(NaN).getTime());
-
-/******************************************************************************/
-
-print("Tests complete");

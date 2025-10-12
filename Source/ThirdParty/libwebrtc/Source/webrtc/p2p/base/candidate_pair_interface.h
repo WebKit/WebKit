@@ -11,9 +11,9 @@
 #ifndef P2P_BASE_CANDIDATE_PAIR_INTERFACE_H_
 #define P2P_BASE_CANDIDATE_PAIR_INTERFACE_H_
 
-namespace cricket {
+#include "api/candidate.h"
 
-class Candidate;
+namespace webrtc {
 
 class CandidatePairInterface {
  public:
@@ -35,6 +35,7 @@ struct CandidatePair final : public CandidatePairInterface {
   Candidate remote;
 };
 
-}  // namespace cricket
+}  //  namespace webrtc
+
 
 #endif  // P2P_BASE_CANDIDATE_PAIR_INTERFACE_H_

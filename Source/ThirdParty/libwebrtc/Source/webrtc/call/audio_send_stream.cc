@@ -10,14 +10,12 @@
 
 #include "call/audio_send_stream.h"
 
-#include <stddef.h>
-
+#include <cstddef>
 #include <string>
 
+#include "absl/strings/str_cat.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/call/transport.h"
-#include "rtc_base/string_encode.h"
-#include "rtc_base/strings/audio_format_to_string.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
@@ -31,7 +29,7 @@ AudioSendStream::Config::Config(Transport* send_transport)
 AudioSendStream::Config::~Config() = default;
 
 std::string AudioSendStream::Config::ToString() const {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "{rtp: " << rtp.ToString();
   ss << ", rtcp_report_interval_ms: " << rtcp_report_interval_ms;
   ss << ", send_transport: " << (send_transport ? "(Transport)" : "null");
@@ -52,7 +50,7 @@ AudioSendStream::Config::Rtp::~Rtp() = default;
 
 std::string AudioSendStream::Config::Rtp::ToString() const {
   char buf[1024];
-  rtc::SimpleStringBuilder ss(buf);
+  SimpleStringBuilder ss(buf);
   ss << "{ssrc: " << ssrc;
   if (!rid.empty()) {
     ss << ", rid: " << rid;
@@ -60,6 +58,14 @@ std::string AudioSendStream::Config::Rtp::ToString() const {
   if (!mid.empty()) {
     ss << ", mid: " << mid;
   }
+  ss << ", csrcs: [";
+  for (size_t i = 0; i < csrcs.size(); ++i) {
+    ss << csrcs[i];
+    if (i != csrcs.size() - 1) {
+      ss << ", ";
+    }
+  }
+  ss << ']';
   ss << ", extmap-allow-mixed: " << (extmap_allow_mixed ? "true" : "false");
   ss << ", extensions: [";
   for (size_t i = 0; i < extensions.size(); ++i) {
@@ -82,17 +88,16 @@ AudioSendStream::Config::SendCodecSpec::~SendCodecSpec() = default;
 
 std::string AudioSendStream::Config::SendCodecSpec::ToString() const {
   char buf[1024];
-  rtc::SimpleStringBuilder ss(buf);
+  SimpleStringBuilder ss(buf);
   ss << "{nack_enabled: " << (nack_enabled ? "true" : "false");
-  ss << ", transport_cc_enabled: " << (transport_cc_enabled ? "true" : "false");
   ss << ", enable_non_sender_rtt: "
      << (enable_non_sender_rtt ? "true" : "false");
   ss << ", cng_payload_type: "
-     << (cng_payload_type ? rtc::ToString(*cng_payload_type) : "<unset>");
+     << (cng_payload_type ? absl::StrCat(*cng_payload_type) : "<unset>");
   ss << ", red_payload_type: "
-     << (red_payload_type ? rtc::ToString(*red_payload_type) : "<unset>");
+     << (red_payload_type ? absl::StrCat(*red_payload_type) : "<unset>");
   ss << ", payload_type: " << payload_type;
-  ss << ", format: " << rtc::ToString(format);
+  ss << ", format: " << absl::StrCat(format);
   ss << '}';
   return ss.str();
 }
@@ -100,7 +105,6 @@ std::string AudioSendStream::Config::SendCodecSpec::ToString() const {
 bool AudioSendStream::Config::SendCodecSpec::operator==(
     const AudioSendStream::Config::SendCodecSpec& rhs) const {
   if (nack_enabled == rhs.nack_enabled &&
-      transport_cc_enabled == rhs.transport_cc_enabled &&
       enable_non_sender_rtt == rhs.enable_non_sender_rtt &&
       cng_payload_type == rhs.cng_payload_type &&
       red_payload_type == rhs.red_payload_type &&

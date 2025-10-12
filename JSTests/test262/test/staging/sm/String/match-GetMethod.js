@@ -2,17 +2,12 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-String-shell.js, deepEqual.js]
-flags:
-  - noStrict
+includes: [deepEqual.js]
 description: |
-  pending
+  String.prototype.match should call GetMethod.
+info: bugzilla.mozilla.org/show_bug.cgi?id=1290655
 esid: pending
 ---*/
-var BUGNUMBER = 1290655;
-var summary = "String.prototype.match should call GetMethod.";
-
-print(BUGNUMBER + ": " + summary);
 
 function create(value) {
     return {
@@ -33,6 +28,5 @@ for (let v of [null, undefined]) {
 }
 
 for (let v of [1, true, Symbol.iterator, "", {}, []]) {
-    assertThrowsInstanceOf(() => "a-a".match(create(v)), TypeError);
+    assert.throws(TypeError, () => "a-a".match(create(v)));
 }
-

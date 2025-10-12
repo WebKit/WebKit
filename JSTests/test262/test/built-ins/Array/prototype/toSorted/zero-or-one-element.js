@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-array.prototype.toSorted
+esid: sec-array.prototype.tosorted
 description: >
   Array.prototype.toSorted returns a new array even if it has zero or one elements
 features: [change-array-by-copy]

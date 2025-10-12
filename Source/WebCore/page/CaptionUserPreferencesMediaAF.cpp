@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 
 #include "AudioTrackList.h"
+#include "CSSValueKeywords.h"
 #include "ColorSerialization.h"
 #include "CommonAtomStrings.h"
 #include "FloatConversion.h"
@@ -47,6 +48,7 @@
 #include <wtf/SoftLinking.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
+#include <wtf/cf/NotificationCenterCF.h>
 #include <wtf/cf/VectorCF.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
@@ -148,12 +150,11 @@ CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF(PageGroup& group)
 CaptionUserPreferencesMediaAF::~CaptionUserPreferencesMediaAF()
 {
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    if (RetainPtr observer = m_observer) {
-        auto center = CFNotificationCenterGetLocalCenter();
+    if (m_observer) {
         if (kMAXCaptionAppearanceSettingsChangedNotification)
-            CFNotificationCenterRemoveObserver(center, observer.get(), kMAXCaptionAppearanceSettingsChangedNotification, 0);
+            CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenterSingleton(), m_observer.get(), RetainPtr { kMAXCaptionAppearanceSettingsChangedNotification }.get(), 0);
         if (kMAAudibleMediaSettingsChangedNotification)
-            CFNotificationCenterRemoveObserver(center, observer.get(), kMAAudibleMediaSettingsChangedNotification, 0);
+            CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenterSingleton(), m_observer.get(), RetainPtr { kMAAudibleMediaSettingsChangedNotification }.get(), 0);
     }
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 }
@@ -284,15 +285,13 @@ void CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges()
     m_registeringForNotification = true;
 
     if (!m_observer)
-        m_observer = createWeakObserver(this);
-    RetainPtr observer = m_observer;
+        lazyInitialize(m_observer, createWeakObserver(this));
     auto suspensionBehavior = static_cast<CFNotificationSuspensionBehavior>(CFNotificationSuspensionBehaviorCoalesce | _CFNotificationObserverIsObjC);
-    auto center = CFNotificationCenterGetLocalCenter();
     if (kMAXCaptionAppearanceSettingsChangedNotification)
-        CFNotificationCenterAddObserver(center, observer.get(), userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, suspensionBehavior);
+        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenterSingleton(), m_observer.get(), userCaptionPreferencesChangedNotificationCallback, RetainPtr { kMAXCaptionAppearanceSettingsChangedNotification }.get(), 0, suspensionBehavior);
 
     if (canLoad_MediaAccessibility_kMAAudibleMediaSettingsChangedNotification())
-        CFNotificationCenterAddObserver(center, observer.get(), userCaptionPreferencesChangedNotificationCallback, kMAAudibleMediaSettingsChangedNotification, 0, suspensionBehavior);
+        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenterSingleton(), m_observer.get(), userCaptionPreferencesChangedNotificationCallback, RetainPtr { kMAAudibleMediaSettingsChangedNotification }.get(), 0, suspensionBehavior);
     m_registeringForNotification = false;
 
     // Generating and registering the caption stylesheet can be expensive and this method is called indirectly when the parser creates an audio or
@@ -430,6 +429,11 @@ bool CaptionUserPreferencesMediaAF::captionStrokeWidthForFont(float fontSize, co
     return true;
 }
 
+bool CaptionUserPreferencesMediaAF::testingMode() const
+{
+    return CaptionUserPreferences::testingMode() || hasNullCaptionProfile();
+}
+
 String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
 {
     MACaptionAppearanceBehavior behavior;
@@ -485,10 +489,10 @@ String CaptionUserPreferencesMediaAF::captionsDefaultFontCSS() const
     builder.append("font-family: \""_s, name.get(), '"');
     if (RetainPtr cascadeList = adoptCF(static_cast<CFArrayRef>(CTFontDescriptorCopyAttribute(font.get(), kCTFontCascadeListAttribute)))) {
         for (CFIndex i = 0; i < CFArrayGetCount(cascadeList.get()); i++) {
-            auto fontCascade = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(cascadeList.get(), i));
+            RetainPtr fontCascade = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(cascadeList.get(), i));
             if (!fontCascade)
                 continue;
-            RetainPtr fontCascadeName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fontCascade, kCTFontNameAttribute)));
+            RetainPtr fontCascadeName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fontCascade.get(), kCTFontNameAttribute)));
             if (!fontCascadeName)
                 continue;
             builder.append(", \""_s, fontCascadeName.get(), '"');
@@ -592,6 +596,16 @@ Vector<String> CaptionUserPreferencesMediaAF::preferredAudioCharacteristics() co
         return CaptionUserPreferences::preferredAudioCharacteristics();
 
     return makeVector<String>(characteristics.get());
+}
+
+bool CaptionUserPreferencesMediaAF::hasNullCaptionProfile() const
+{
+    if (!canLoad_MediaAccessibility_MACaptionAppearanceCopyActiveProfileID())
+        return false;
+
+    String captionProfile = adoptCF(MACaptionAppearanceCopyActiveProfileID()).get();
+
+    return captionProfile.isEmpty();
 }
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
@@ -727,7 +741,7 @@ static String addTrackKindDisplayNameIfNeeded(const TrackBase& track, const Stri
     return text;
 }
 
-static String trackDisplayName(const TrackBase& track)
+static String trackDisplayName(const TrackBase& track, const Vector<String>& preferredLanguages)
 {
     if (&track == &TextTrack::captionMenuOffItem())
         return textTrackOffMenuItemText();
@@ -739,7 +753,6 @@ static String trackDisplayName(const TrackBase& track)
     String label = track.label().string().trim(isASCIIWhitespace);
     String trackLanguageIdentifier = track.validBCP47Language();
 
-    auto preferredLanguages = userPreferredLanguages(ShouldMinimizeLanguages::No);
     auto defaultLanguage = !preferredLanguages.isEmpty() ? preferredLanguages[0] : emptyString(); // This matches `defaultLanguage`.
     RetainPtr currentLocale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, defaultLanguage.createCFString().get()));
     RetainPtr localeIdentifier = adoptCF(CFLocaleCreateCanonicalLocaleIdentifierFromString(kCFAllocatorDefault, trackLanguageIdentifier.createCFString().get()));
@@ -778,56 +791,12 @@ static String trackDisplayName(const TrackBase& track)
 
 String CaptionUserPreferencesMediaAF::displayNameForTrack(AudioTrack* track) const
 {
-    return trackDisplayName(*track);
+    return trackDisplayName(*track, userPreferredLanguages(ShouldMinimizeLanguages::No));
 }
 
 String CaptionUserPreferencesMediaAF::displayNameForTrack(TextTrack* track) const
 {
-    return trackDisplayName(*track);
-}
-
-static bool textTrackCompare(const RefPtr<TextTrack>& a, const RefPtr<TextTrack>& b)
-{
-    auto preferredLanguages = userPreferredLanguages(ShouldMinimizeLanguages::No);
-
-    bool aExactMatch;
-    auto aUserLanguageIndex = indexOfBestMatchingLanguageInList(a->validBCP47Language(), preferredLanguages, aExactMatch);
-
-    bool bExactMatch;
-    auto bUserLanguageIndex = indexOfBestMatchingLanguageInList(b->validBCP47Language(), preferredLanguages, bExactMatch);
-
-    if (aUserLanguageIndex != bUserLanguageIndex)
-        return aUserLanguageIndex < bUserLanguageIndex;
-    if (aExactMatch != bExactMatch)
-        return aExactMatch;
-
-    String aLanguageDisplayName = displayNameForLanguageLocale(languageIdentifier(a->validBCP47Language()));
-    String bLanguageDisplayName = displayNameForLanguageLocale(languageIdentifier(b->validBCP47Language()));
-
-    Collator collator;
-
-    // Tracks not in the user's preferred language sort first by language ...
-    if (auto languageDisplayNameComparison = collator.collate(aLanguageDisplayName, bLanguageDisplayName))
-        return languageDisplayNameComparison < 0;
-
-    // ... but when tracks have the same language, main program content sorts next highest ...
-    bool aIsMainContent = a->isMainProgramContent();
-    bool bIsMainContent = b->isMainProgramContent();
-    if (aIsMainContent != bIsMainContent)
-        return aIsMainContent;
-
-    // ... and main program tracks sort higher than CC tracks ...
-    bool aIsCC = a->isClosedCaptions();
-    bool bIsCC = b->isClosedCaptions();
-    if (aIsCC != bIsCC)
-        return aIsCC;
-
-    // ... and tracks of the same type and language sort by the menu item text.
-    if (auto trackDisplayComparison = collator.collate(trackDisplayName(*a), trackDisplayName(*b)))
-        return trackDisplayComparison < 0;
-
-    // ... and if the menu item text is the same, compare the unique IDs
-    return a->uniqueId() < b->uniqueId();
+    return trackDisplayName(*track, userPreferredLanguages(ShouldMinimizeLanguages::No));
 }
 
 Vector<RefPtr<AudioTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(AudioTrackList* trackList)
@@ -837,15 +806,17 @@ Vector<RefPtr<AudioTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu
     Vector<RefPtr<AudioTrack>> tracksForMenu;
     
     for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
-        AudioTrack* track = trackList->item(i);
+        RefPtr track = trackList->item(i);
         String language = displayNameForLanguageLocale(track->validBCP47Language());
-        tracksForMenu.append(track);
+        tracksForMenu.append(WTFMove(track));
     }
 
     Collator collator;
 
+    auto preferredLanguages = userPreferredLanguages(ShouldMinimizeLanguages::No);
+
     std::ranges::sort(tracksForMenu, [&] (auto& a, auto& b) {
-        if (auto trackDisplayComparison = collator.collate(trackDisplayName(*a), trackDisplayName(*b)))
+        if (auto trackDisplayComparison = collator.collate(trackDisplayName(*a, preferredLanguages), trackDisplayName(*b, preferredLanguages)))
             return trackDisplayComparison < 0;
 
         return a->uniqueId() < b->uniqueId();
@@ -854,12 +825,12 @@ Vector<RefPtr<AudioTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu
     return tracksForMenu;
 }
 
-Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(TextTrackList* trackList, UncheckedKeyHashSet<TextTrack::Kind> kinds)
+Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(TextTrackList* trackList, HashSet<TextTrack::Kind> kinds)
 {
     ASSERT(trackList);
 
     Vector<RefPtr<TextTrack>> tracksForMenu;
-    UncheckedKeyHashSet<String> languagesIncluded;
+    HashSet<String> languagesIncluded;
     CaptionDisplayMode displayMode = captionDisplayMode();
     bool prefersAccessibilityTracks = userPrefersCaptions();
     bool filterTrackList = shouldFilterTrackMenu();
@@ -960,7 +931,61 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
     if (tracksForMenu.isEmpty())
         return tracksForMenu;
 
-    std::ranges::sort(tracksForMenu, textTrackCompare);
+    struct TextTrackData {
+        bool exactMatch { false };
+        size_t userLanguageIndex { notFound };
+        String displayName;
+        String languageDisplayName;
+        bool isMainContent { false };
+        bool isCC { false };
+        int uniqueId { 0 };
+        RefPtr<TextTrack> track;
+    };
+
+    auto textTrackDatas = tracksForMenu.map([preferredLanguages = userPreferredLanguages(ShouldMinimizeLanguages::No)] (auto track) {
+        TextTrackData data;
+        if (!track)
+            return data;
+
+        data.userLanguageIndex = indexOfBestMatchingLanguageInList(track->validBCP47Language(), preferredLanguages, data.exactMatch);
+        data.displayName = trackDisplayName(*track, preferredLanguages);
+        data.languageDisplayName = displayNameForLanguageLocale(languageIdentifier(track->validBCP47Language()));
+        data.isMainContent = track->isMainProgramContent();
+        data.isCC = track->isClosedCaptions();
+        data.uniqueId = track->uniqueId();
+        data.track = track;
+        return data;
+    });
+
+    std::ranges::sort(textTrackDatas, [](const auto& a, const auto& b) {
+        if (a.userLanguageIndex != b.userLanguageIndex)
+            return a.userLanguageIndex < b.userLanguageIndex;
+        if (a.exactMatch != b.exactMatch)
+            return a.exactMatch;
+
+        Collator collator;
+
+        // Tracks not in the user's preferred language sort first by language ...
+        if (auto languageDisplayNameComparison = collator.collate(a.languageDisplayName, b.languageDisplayName))
+            return languageDisplayNameComparison < 0;
+
+        // ... but when tracks have the same language, main program content sorts next highest ...
+        if (a.isMainContent != b.isMainContent)
+            return a.isMainContent;
+
+        // ... and main program tracks sort higher than CC tracks ...
+        if (a.isCC != b.isCC)
+            return a.isCC;
+
+        // ... and tracks of the same type and language sort by the menu item text.
+        if (auto trackDisplayComparison = collator.collate(a.displayName, b.displayName))
+            return trackDisplayComparison < 0;
+
+        // ... and if the menu item text is the same, compare the unique IDs
+        return a.uniqueId < b.uniqueId;
+    });
+
+    tracksForMenu = textTrackDatas.map([] (auto& data) { return data.track; });
 
     if (requestingCaptionsOrDescriptionsOrSubtitles) {
         tracksForMenu.insert(0, &TextTrack::captionMenuOffItem());

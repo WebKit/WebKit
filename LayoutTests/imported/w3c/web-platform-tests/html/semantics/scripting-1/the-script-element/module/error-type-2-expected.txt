@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Importing binding name 'default' cannot be resolved by star export entries.
-CONSOLE MESSAGE: SyntaxError: Unexpected token '%'
 
 FAIL parse error has higher priority than instantiation error assert_equals: expected 4 but got 3
 

@@ -22,5 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/clear-mapped-animation-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/clear-mapped-animation.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/end-element-on-inactive-element.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/keypoints-attribute-trailing-semi.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/keytimes-attribute-trailing-semi.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/onhover-syncbases.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/paced-value-animation-overwrites-keyTimes.html

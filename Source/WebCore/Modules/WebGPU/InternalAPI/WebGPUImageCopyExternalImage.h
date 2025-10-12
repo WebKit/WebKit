@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUOrigin2D.h"
+#include <WebCore/WebGPUOrigin2D.h>
 #include <optional>
 
 namespace WebCore::WebGPU {

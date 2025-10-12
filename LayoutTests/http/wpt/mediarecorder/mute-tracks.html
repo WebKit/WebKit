@@ -138,6 +138,7 @@ async function checkVideoBlack(expected, canvas, video, errorMessage, counter)
 
 promise_test(async (test) => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
     const localTrack = stream.getAudioTracks()[0];
     localTrack.enabled = false;
@@ -164,6 +165,7 @@ promise_test(async (test) => {
 
 promise_test(async (test) => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
     const localTrack = stream.getAudioTracks()[0];
     setTimeout(() => localTrack.enabled = false, 50);
@@ -189,6 +191,7 @@ promise_test(async (test) => {
 
 promise_test(async (test) => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
     const localTrack = stream.getVideoTracks()[0];
     setTimeout(() => localTrack.enabled = false, 50);

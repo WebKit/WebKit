@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -101,7 +101,7 @@ public:
     }
 
 protected:
-    Ref<AnimatedProperty> m_animated;
+    const Ref<AnimatedProperty> m_animated;
     Vector<Ref<AnimatedProperty>> m_animatedInstances;
     AnimationFunction m_function;
 };

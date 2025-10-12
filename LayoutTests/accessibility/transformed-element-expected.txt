@@ -27,6 +27,5 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 5}
 AXElementBusy: 0
 

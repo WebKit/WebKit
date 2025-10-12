@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "StageModeOperations.h"
+#include <WebCore/StageModeOperations.h>
 
 namespace WebCore {
 

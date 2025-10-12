@@ -1785,6 +1785,11 @@ static JSValueRef setObscuredContentInsetsCallback(JSContextRef context, JSObjec
     return TestRunner::alwaysResolvePromise(context);
 }
 
+static JSValueRef setHasMouseDeviceForTestingCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
+{
+    return JSValueMakeUndefined(context);
+}
+
 static JSValueRef failNextNewCodeBlock(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 1)
@@ -2105,6 +2110,7 @@ const JSStaticFunction* TestRunner::staticFunctions()
         { "stopLoading", stopLoadingCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "forceImmediateCompletion", forceImmediateCompletionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setObscuredContentInsets", setObscuredContentInsetsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setHasMouseDeviceForTesting", setHasMouseDeviceForTestingCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setPageScaleFactor", setPageScaleFactorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #if PLATFORM(IOS_FAMILY)
         { "setPagePaused", setPagePausedCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -2279,7 +2285,7 @@ void TestRunner::runUIScript(JSContextRef context, JSStringRef script, JSValueRe
     if (!m_UIScriptContext)
         m_UIScriptContext = WTR::UIScriptContext::create(*this, WTR::UIScriptController::create);
 
-    String scriptString({ reinterpret_cast<const UChar*>(JSStringGetCharactersPtr(script)), JSStringGetLength(script) });
+    String scriptString({ reinterpret_cast<const char16_t*>(JSStringGetCharactersPtr(script)), JSStringGetLength(script) });
     m_UIScriptContext->runUIScript(scriptString, callbackID);
 }
 
@@ -2287,7 +2293,7 @@ void TestRunner::callUIScriptCallback(unsigned callbackID, JSStringRef result)
 {
     JSRetainPtr<JSStringRef> protectedResult(result);
 #if !PLATFORM(IOS_FAMILY)
-    RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, callbackID, protectedResult]() mutable {
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, callbackID, protectedResult]() mutable {
         JSContextRef context = protectedThis->mainFrameJSContext();
         JSValueRef resultValue = JSValueMakeString(context, protectedResult.get());
         protectedThis->callTestRunnerCallback(callbackID, 1, &resultValue);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,6 +86,9 @@ private:
     template<typename CharacterType>
     static std::optional<ISO8601::PlainDate> parse(StringParsingBuffer<CharacterType>&);
     static ISO8601::PlainDate fromObject(JSGlobalObject*, JSObject*);
+
+    ISO8601::Duration differenceTemporalPlainDate(JSGlobalObject*, DifferenceOperation,
+        TemporalPlainDate*, TemporalUnit, TemporalUnit, RoundingMode, double);
 
     ISO8601::PlainDate m_plainDate;
     LazyProperty<TemporalPlainDate, TemporalCalendar> m_calendar;

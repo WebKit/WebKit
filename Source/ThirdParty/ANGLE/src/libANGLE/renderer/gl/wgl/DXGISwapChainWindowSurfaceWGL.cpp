@@ -265,14 +265,9 @@ void DXGISwapChainWindowSurfaceWGL::setSwapInterval(const egl::Display *display,
     mSwapInterval = interval;
 }
 
-EGLint DXGISwapChainWindowSurfaceWGL::getWidth() const
+gl::Extents DXGISwapChainWindowSurfaceWGL::getSize() const
 {
-    return static_cast<EGLint>(mWidth);
-}
-
-EGLint DXGISwapChainWindowSurfaceWGL::getHeight() const
-{
-    return static_cast<EGLint>(mHeight);
+    return gl::Extents(static_cast<EGLint>(mWidth), static_cast<EGLint>(mHeight), 1);
 }
 
 EGLint DXGISwapChainWindowSurfaceWGL::isPostSubBufferSupported() const

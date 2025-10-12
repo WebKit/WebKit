@@ -1,0 +1,15 @@
+This test ensures we represent alt text provided by the CSS `content` property correctly.
+
+	AXLabel: alt-text-1
+
+	AXLabel: alt-text-1
+
+	AXLabel: alt-text-2
+
+	AXLabel: alt-text-2
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ Press

@@ -100,7 +100,7 @@ void Coder<String>::encodeForPersistence(Encoder& encoder, const String& string)
     encoder << string.length() << is8Bit;
 
     if (is8Bit)
-        encoder.encodeFixedLengthData(string.span8());
+        encoder.encodeFixedLengthData(asBytes(string.span8()));
     else
         encoder.encodeFixedLengthData(asBytes(string.span16()));
 }
@@ -138,8 +138,8 @@ std::optional<String> Coder<String>::decodeForPersistence(Decoder& decoder)
         return std::nullopt;
 
     if (*is8Bit)
-        return decodeStringText<LChar>(decoder, *length);
-    return decodeStringText<UChar>(decoder, *length);
+        return decodeStringText<Latin1Character>(decoder, *length);
+    return decodeStringText<char16_t>(decoder, *length);
 }
 
 void Coder<URL>::encodeForPersistence(Encoder& encoder, const URL& url)

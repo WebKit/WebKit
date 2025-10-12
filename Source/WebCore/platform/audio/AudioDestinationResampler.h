@@ -27,8 +27,8 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include "AudioDestination.h"
-#include "PushPullFIFO.h"
+#include <WebCore/AudioDestination.h>
+#include <WebCore/PushPullFIFO.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 

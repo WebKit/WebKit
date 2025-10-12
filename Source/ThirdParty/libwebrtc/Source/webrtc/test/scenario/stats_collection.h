@@ -10,13 +10,20 @@
 #ifndef TEST_SCENARIO_STATS_COLLECTION_H_
 #define TEST_SCENARIO_STATS_COLLECTION_H_
 
+#include <cstddef>
+#include <functional>
 #include <map>
 #include <memory>
 #include <optional>
+#include <vector>
 
+#include "api/rtc_event_log_output.h"
+#include "api/units/timestamp.h"
+#include "call/audio_receive_stream.h"
 #include "call/call.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 #include "rtc_base/thread.h"
-#include "test/logging/log_writer.h"
 #include "test/scenario/performance_stats.h"
 
 namespace webrtc {
@@ -24,7 +31,7 @@ namespace test {
 
 struct VideoQualityAnalyzerConfig {
   double psnr_coverage = 1;
-  rtc::Thread* thread = nullptr;
+  Thread* thread = nullptr;
 };
 
 class VideoLayerAnalyzer {

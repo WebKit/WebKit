@@ -35,6 +35,10 @@
 #include <wtf/UUID.h>
 #include <wtf/text/MakeString.h>
 
+#if OS(DARWIN)
+#include <wtf/darwin/DispatchExtras.h>
+#endif
+
 namespace WebKit {
 
 #define MDNS_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - NetworkMDNSRegister::" fmt, this, ##__VA_ARGS__)
@@ -75,7 +79,7 @@ void NetworkMDNSRegister::unregisterMDNSNames(WebCore::ScriptExecutionContextIde
 }
 
 struct PendingRegistrationRequest {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(PendingRegistrationRequest);
     PendingRegistrationRequest(Ref<NetworkConnectionToWebProcess>&& connection, String&& name, PAL::SessionID sessionID, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&& completionHandler)
         : connection(WTFMove(connection))
         , name(WTFMove(name))
@@ -138,7 +142,7 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
             MDNS_RELEASE_LOG("registerMDNSName DNSServiceCreateConnection error %d", error);
             return completionHandler(name, WebCore::MDNSRegisterError::DNSSD);
         }
-        error = DNSServiceSetDispatchQueue(service, dispatch_get_main_queue());
+        error = DNSServiceSetDispatchQueue(service, mainDispatchQueueSingleton());
         if (error) {
             MDNS_RELEASE_LOG("registerMDNSName DNSServiceCreateConnection error %d", error);
             return completionHandler(name, WebCore::MDNSRegisterError::DNSSD);
@@ -205,6 +209,15 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
 PAL::SessionID NetworkMDNSRegister::sessionID() const
 {
     return m_connection->sessionID();
+}
+
+std::optional<SharedPreferencesForWebProcess> NetworkMDNSRegister::sharedPreferencesForWebProcess() const
+{
+    RefPtr connectionToWebProcess = m_connection.get();
+    if (!connectionToWebProcess)
+        return std::nullopt;
+
+    return connectionToWebProcess->sharedPreferencesForWebProcess();
 }
 
 } // namespace WebKit

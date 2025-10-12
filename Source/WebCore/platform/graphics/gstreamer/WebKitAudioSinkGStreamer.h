@@ -48,6 +48,6 @@ GType webkit_audio_sink_get_type(void);
 
 G_END_DECLS
 
-GstElement* webkitAudioSinkNew();
+GstElement* webkitAudioSinkNew(const String&);
 
 #endif // USE(GSTREAMER)

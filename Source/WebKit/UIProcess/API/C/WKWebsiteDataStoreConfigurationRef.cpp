@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,16 +44,6 @@ WKWebsiteDataStoreConfigurationRef WKWebsiteDataStoreConfigurationCreate()
     return toAPILeakingRef(WTFMove(configuration));
 }
 
-WKStringRef WKWebsiteDataStoreConfigurationCopyApplicationCacheDirectory(WKWebsiteDataStoreConfigurationRef configuration)
-{
-    return WebKit::toCopiedAPI(WebKit::toImpl(configuration)->applicationCacheDirectory());
-}
-
-void WKWebsiteDataStoreConfigurationSetApplicationCacheDirectory(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef directory)
-{
-    WebKit::toImpl(configuration)->setApplicationCacheDirectory(WebKit::toImpl(directory)->string());
-}
-
 WKStringRef WKWebsiteDataStoreConfigurationCopyNetworkCacheDirectory(WKWebsiteDataStoreConfigurationRef configuration)
 {
     return WebKit::toCopiedAPI(WebKit::toImpl(configuration)->networkCacheDirectory());
@@ -61,7 +51,7 @@ WKStringRef WKWebsiteDataStoreConfigurationCopyNetworkCacheDirectory(WKWebsiteDa
 
 void WKWebsiteDataStoreConfigurationSetNetworkCacheDirectory(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef directory)
 {
-    WebKit::toImpl(configuration)->setNetworkCacheDirectory(WebKit::toImpl(directory)->string());
+    WebKit::toImpl(configuration)->setNetworkCacheDirectory(WebKit::toProtectedImpl(directory)->string());
 }
 
 WKStringRef WKWebsiteDataStoreConfigurationCopyIndexedDBDatabaseDirectory(WKWebsiteDataStoreConfigurationRef configuration)
@@ -71,7 +61,7 @@ WKStringRef WKWebsiteDataStoreConfigurationCopyIndexedDBDatabaseDirectory(WKWebs
 
 void WKWebsiteDataStoreConfigurationSetIndexedDBDatabaseDirectory(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef directory)
 {
-    WebKit::toImpl(configuration)->setIndexedDBDatabaseDirectory(WebKit::toImpl(directory)->string());
+    WebKit::toImpl(configuration)->setIndexedDBDatabaseDirectory(WebKit::toProtectedImpl(directory)->string());
 }
 
 WKStringRef WKWebsiteDataStoreConfigurationCopyLocalStorageDirectory(WKWebsiteDataStoreConfigurationRef configuration)
@@ -81,7 +71,7 @@ WKStringRef WKWebsiteDataStoreConfigurationCopyLocalStorageDirectory(WKWebsiteDa
 
 void WKWebsiteDataStoreConfigurationSetLocalStorageDirectory(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef directory)
 {
-    WebKit::toImpl(configuration)->setLocalStorageDirectory(WebKit::toImpl(directory)->string());
+    WebKit::toImpl(configuration)->setLocalStorageDirectory(WebKit::toProtectedImpl(directory)->string());
 }
 
 WKStringRef WKWebsiteDataStoreConfigurationCopyWebSQLDatabaseDirectory(WKWebsiteDataStoreConfigurationRef configuration)
@@ -91,7 +81,7 @@ WKStringRef WKWebsiteDataStoreConfigurationCopyWebSQLDatabaseDirectory(WKWebsite
 
 void WKWebsiteDataStoreConfigurationSetWebSQLDatabaseDirectory(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef directory)
 {
-    WebKit::toImpl(configuration)->setWebSQLDatabaseDirectory(WebKit::toImpl(directory)->string());
+    WebKit::toImpl(configuration)->setWebSQLDatabaseDirectory(WebKit::toProtectedImpl(directory)->string());
 }
 
 WKStringRef WKWebsiteDataStoreConfigurationCopyCacheStorageDirectory(WKWebsiteDataStoreConfigurationRef configuration)
@@ -101,7 +91,7 @@ WKStringRef WKWebsiteDataStoreConfigurationCopyCacheStorageDirectory(WKWebsiteDa
 
 void WKWebsiteDataStoreConfigurationSetCacheStorageDirectory(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef directory)
 {
-    WebKit::toImpl(configuration)->setCacheStorageDirectory(WebKit::toImpl(directory)->string());
+    WebKit::toImpl(configuration)->setCacheStorageDirectory(WebKit::toProtectedImpl(directory)->string());
 }
 
 WKStringRef WKWebsiteDataStoreConfigurationCopyGeneralStorageDirectory(WKWebsiteDataStoreConfigurationRef configuration)
@@ -111,7 +101,7 @@ WKStringRef WKWebsiteDataStoreConfigurationCopyGeneralStorageDirectory(WKWebsite
 
 void WKWebsiteDataStoreConfigurationSetGeneralStorageDirectory(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef directory)
 {
-    WebKit::toImpl(configuration)->setGeneralStorageDirectory(WebKit::toImpl(directory)->string());
+    WebKit::toImpl(configuration)->setGeneralStorageDirectory(WebKit::toProtectedImpl(directory)->string());
 }
 
 WKStringRef WKWebsiteDataStoreConfigurationCopyMediaKeysStorageDirectory(WKWebsiteDataStoreConfigurationRef configuration)
@@ -121,7 +111,7 @@ WKStringRef WKWebsiteDataStoreConfigurationCopyMediaKeysStorageDirectory(WKWebsi
 
 void WKWebsiteDataStoreConfigurationSetMediaKeysStorageDirectory(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef directory)
 {
-    WebKit::toImpl(configuration)->setMediaKeysStorageDirectory(WebKit::toImpl(directory)->string());
+    WebKit::toImpl(configuration)->setMediaKeysStorageDirectory(WebKit::toProtectedImpl(directory)->string());
 }
 
 WKStringRef WKWebsiteDataStoreConfigurationCopyResourceLoadStatisticsDirectory(WKWebsiteDataStoreConfigurationRef configuration)
@@ -131,7 +121,7 @@ WKStringRef WKWebsiteDataStoreConfigurationCopyResourceLoadStatisticsDirectory(W
 
 void WKWebsiteDataStoreConfigurationSetResourceLoadStatisticsDirectory(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef directory)
 {
-    WebKit::toImpl(configuration)->setResourceLoadStatisticsDirectory(WebKit::toImpl(directory)->string());
+    WebKit::toImpl(configuration)->setResourceLoadStatisticsDirectory(WebKit::toProtectedImpl(directory)->string());
 }
 
 WKStringRef WKWebsiteDataStoreConfigurationCopyServiceWorkerRegistrationDirectory(WKWebsiteDataStoreConfigurationRef configuration)
@@ -141,7 +131,7 @@ WKStringRef WKWebsiteDataStoreConfigurationCopyServiceWorkerRegistrationDirector
 
 void WKWebsiteDataStoreConfigurationSetServiceWorkerRegistrationDirectory(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef directory)
 {
-    WebKit::toImpl(configuration)->setServiceWorkerRegistrationDirectory(WebKit::toImpl(directory)->string());
+    WebKit::toImpl(configuration)->setServiceWorkerRegistrationDirectory(WebKit::toProtectedImpl(directory)->string());
 }
 
 WKStringRef WKWebsiteDataStoreConfigurationCopyCookieStorageFile(WKWebsiteDataStoreConfigurationRef configuration)
@@ -151,7 +141,7 @@ WKStringRef WKWebsiteDataStoreConfigurationCopyCookieStorageFile(WKWebsiteDataSt
 
 void WKWebsiteDataStoreConfigurationSetCookieStorageFile(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef cookieStorageFile)
 {
-    WebKit::toImpl(configuration)->setCookieStorageFile(WebKit::toImpl(cookieStorageFile)->string());
+    WebKit::toImpl(configuration)->setCookieStorageFile(WebKit::toProtectedImpl(cookieStorageFile)->string());
 }
 
 uint64_t WKWebsiteDataStoreConfigurationGetPerOriginStorageQuota(WKWebsiteDataStoreConfigurationRef configuration)
@@ -201,7 +191,7 @@ WKStringRef WKWebsiteDataStoreConfigurationCopyPCMMachServiceName(WKWebsiteDataS
 
 void WKWebsiteDataStoreConfigurationSetPCMMachServiceName(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef name)
 {
-    WebKit::toImpl(configuration)->setPCMMachServiceName(name ? WebKit::toImpl(name)->string() : String());
+    WebKit::toImpl(configuration)->setPCMMachServiceName(name ? WebKit::toProtectedImpl(name)->string() : String());
 }
 
 bool WKWebsiteDataStoreConfigurationHasOriginQuotaRatio(WKWebsiteDataStoreConfigurationRef configuration)
@@ -236,6 +226,6 @@ WKStringRef WKWebsiteDataStoreConfigurationCopyResourceMonitorThrottlerDirectory
 void WKWebsiteDataStoreConfigurationSetResourceMonitorThrottlerDirectory(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef directory)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    WebKit::toImpl(configuration)->setResourceMonitorThrottlerDirectory(WebKit::toImpl(directory)->string());
+    WebKit::toImpl(configuration)->setResourceMonitorThrottlerDirectory(WebKit::toProtectedImpl(directory)->string());
 #endif
 }

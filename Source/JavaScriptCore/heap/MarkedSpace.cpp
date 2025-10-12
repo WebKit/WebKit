@@ -235,7 +235,7 @@ void MarkedSpace::registerPreciseAllocation(PreciseAllocation* allocation, bool 
     ASSERT(allocation->isNewlyAllocated());
     ASSERT(!allocation->isMarked());
     m_preciseAllocations.append(allocation);
-    if (auto* set = preciseAllocationSet())
+    if (auto& set = preciseAllocationSet())
         set->add(allocation->cell());
     if (isNewAllocation) {
         // Existing code's ordering is calling `didAllocate` and increasing capacity.
@@ -254,7 +254,7 @@ void MarkedSpace::sweepPreciseAllocations()
         PreciseAllocation* allocation = m_preciseAllocations[srcIndex++];
         allocation->sweep();
         if (allocation->isEmpty()) {
-            if (auto* set = preciseAllocationSet())
+            if (auto& set = preciseAllocationSet())
                 set->remove(allocation->cell());
             if (allocation->isLowerTierPrecise())
                 static_cast<IsoSubspace*>(allocation->subspace())->sweepLowerTierPreciseCell(allocation);
@@ -288,7 +288,7 @@ void MarkedSpace::prepareForAllocation()
 
 void MarkedSpace::enablePreciseAllocationTracking()
 {
-    m_preciseAllocationSet = makeUnique<UncheckedKeyHashSet<HeapCell*>>();
+    m_preciseAllocationSet = UncheckedKeyHashSet<HeapCell*> { };
     for (auto* allocation : m_preciseAllocations)
         m_preciseAllocationSet->add(allocation->cell());
 }
@@ -398,16 +398,6 @@ void MarkedSpace::freeBlock(MarkedBlock::Handle* block)
     m_capacity -= MarkedBlock::blockSize;
     m_blocks.remove(&block->block());
     delete block;
-}
-
-void MarkedSpace::freeOrShrinkBlock(MarkedBlock::Handle* block)
-{
-    if (!block->isEmpty()) {
-        block->shrink();
-        return;
-    }
-
-    freeBlock(block);
 }
 
 void MarkedSpace::shrink()

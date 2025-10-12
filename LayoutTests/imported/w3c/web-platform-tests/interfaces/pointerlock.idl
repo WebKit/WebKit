@@ -3,8 +3,12 @@
 // (https://github.com/w3c/webref)
 // Source: Pointer Lock 2.0 (https://w3c.github.io/pointerlock/)
 
+dictionary PointerLockOptions {
+  boolean unadjustedMovement = false;
+};
+
 partial interface Element {
-  undefined requestPointerLock();
+  Promise<undefined> requestPointerLock(optional PointerLockOptions options = {});
 };
 
 partial interface Document {
@@ -14,15 +18,15 @@ partial interface Document {
 };
 
 partial interface mixin DocumentOrShadowRoot {
-  readonly attribute Element ? pointerLockElement;
+  readonly attribute Element? pointerLockElement;
 };
 
 partial interface MouseEvent {
-  readonly attribute long movementX;
-  readonly attribute long movementY;
+  readonly attribute double movementX;
+  readonly attribute double movementY;
 };
 
 partial dictionary MouseEventInit {
-  long movementX = 0;
-  long movementY = 0;
+  double movementX = 0;
+  double movementY = 0;
 };

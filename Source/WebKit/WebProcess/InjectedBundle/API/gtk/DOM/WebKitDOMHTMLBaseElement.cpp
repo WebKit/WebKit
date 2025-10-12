@@ -184,7 +184,7 @@ void webkit_dom_html_base_element_set_href(WebKitDOMHTMLBaseElement* self, const
     g_return_if_fail(WEBKIT_DOM_IS_HTML_BASE_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLBaseElement* item = WebKit::core(self);
-    item->setHref(WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::hrefAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_base_element_get_target(WebKitDOMHTMLBaseElement* self)

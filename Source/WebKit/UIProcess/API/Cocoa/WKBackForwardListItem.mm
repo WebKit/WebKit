@@ -75,10 +75,12 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     return *_item;
 }
 
-- (CGImageRef)_copySnapshotForTesting
+- (CGImageRef)_copySnapshotForTesting CF_RETURNS_RETAINED
 {
-    if (RefPtr snapshot = _item->snapshot())
-        return snapshot->asImageForTesting().leakRef();
+    if (RefPtr snapshot = _item->snapshot()) {
+        // FIXME(rdar://162218496): SaferCPP should notice that our API is a copy.
+        SUPPRESS_RETAINPTR_CTOR_ADOPT return snapshot->asImageForTesting().leakRef();
+    }
     return nullptr;
 }
 

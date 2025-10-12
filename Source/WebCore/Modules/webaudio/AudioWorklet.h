@@ -52,6 +52,8 @@ public:
 private:
     explicit AudioWorklet(BaseAudioContext&);
 
+    bool isAudioWorklet() const final { return true; }
+
     // Worklet.
     Vector<Ref<WorkletGlobalScopeProxy>> createGlobalScopes() final;
 
@@ -59,5 +61,9 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AudioWorklet)
+    static bool isType(const WebCore::Worklet& worklet) { return worklet.isAudioWorklet(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEB_AUDIO)

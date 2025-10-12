@@ -44,7 +44,7 @@ static ExceptionOr<Vector<uint8_t>> encryptAESGCM(const Vector<uint8_t>& iv, con
     Vector<uint8_t> tag(desiredTagLengthInBytes);
     // tagLength is actual an input <rdar://problem/30660074>
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    CCCryptorStatus status = CCCryptorGCM(kCCEncrypt, kCCAlgorithmAES, key.data(), key.size(), iv.data(), iv.size(), additionalData.data(), additionalData.size(), plainText.data(), plainText.size(), cipherText.data(), tag.data(), &desiredTagLengthInBytes);
+    CCCryptorStatus status = CCCryptorGCM(kCCEncrypt, kCCAlgorithmAES, key.span().data(), key.size(), iv.span().data(), iv.size(), additionalData.span().data(), additionalData.size(), plainText.span().data(), plainText.size(), cipherText.mutableSpan().data(), tag.mutableSpan().data(), &desiredTagLengthInBytes);
 ALLOW_DEPRECATED_DECLARATIONS_END
     if (status)
         return Exception { ExceptionCode::OperationError };
@@ -70,7 +70,7 @@ static ExceptionOr<Vector<uint8_t>> decyptAESGCM(const Vector<uint8_t>& iv, cons
     size_t offset = cipherText.size() - desiredTagLengthInBytes;
     // tagLength is actual an input <rdar://problem/30660074>
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    CCCryptorStatus status = CCCryptorGCM(kCCDecrypt, kCCAlgorithmAES, key.data(), key.size(), iv.data(), iv.size(), additionalData.data(), additionalData.size(), cipherText.data(), offset, plainText.data(), tag.data(), &desiredTagLengthInBytes);
+    CCCryptorStatus status = CCCryptorGCM(kCCDecrypt, kCCAlgorithmAES, key.span().data(), key.size(), iv.span().data(), iv.size(), additionalData.span().data(), additionalData.size(), cipherText.span().data(), offset, plainText.mutableSpan().data(), tag.mutableSpan().data(), &desiredTagLengthInBytes);
 ALLOW_DEPRECATED_DECLARATIONS_END
     if (status)
         return Exception { ExceptionCode::OperationError };

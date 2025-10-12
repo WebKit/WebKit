@@ -27,8 +27,8 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsContextGL.h"
-#include "GraphicsTypesGL.h"
+#include <WebCore/GraphicsContextGL.h>
+#include <WebCore/GraphicsTypesGL.h>
 #include <optional>
 #include <wtf/Noncopyable.h>
 
@@ -141,35 +141,6 @@ public:
     }
 private:
     GCGLuint m_object { 0 };
-};
-
-class ScopedGLFence {
-    WTF_MAKE_NONCOPYABLE(ScopedGLFence);
-
-public:
-    ScopedGLFence() = default;
-    ScopedGLFence(ScopedGLFence&& other)
-        : m_object(std::exchange(other.m_object, { }))
-    {
-    }
-    ~ScopedGLFence() { reset(); }
-    ScopedGLFence& operator=(ScopedGLFence&& other)
-    {
-        if (this != &other) {
-            reset();
-            m_object = std::exchange(other.m_object, { });
-        }
-        return *this;
-    }
-    void reset();
-    void abandon() { m_object = { }; }
-    void fenceSync();
-    GCGLsync get() const { return m_object; }
-    operator GCGLsync() const { return m_object; }
-    operator bool() const { return m_object; }
-
-private:
-    GCGLsync m_object { };
 };
 
 class ScopedGLCapability {

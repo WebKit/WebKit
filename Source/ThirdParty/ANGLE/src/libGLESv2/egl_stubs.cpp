@@ -6,6 +6,10 @@
 // egl_stubs.cpp: Stubs for EGL entry points.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libGLESv2/egl_stubs_autogen.h"
 
 #include "common/angle_version_info.h"
@@ -625,8 +629,10 @@ EGLBoolean QuerySurface(Thread *thread,
     const gl::Context *context;
     switch (attribute)
     {
-        // EGL_BUFFER_AGE_EXT uses Context, so lock was taken in GetContextLock_QuerySurface().
+        // EGL_BUFFER_AGE_EXT and EGL_SURFACE_COMPRESSION_EXT uses Context,
+        // so lock was taken in GetContextLock_QuerySurface().
         case EGL_BUFFER_AGE_EXT:
+        case EGL_SURFACE_COMPRESSION_EXT:
             context = thread->getContext();
             break;
         // Other attributes are not using Context, pass nullptr to be explicit about that.

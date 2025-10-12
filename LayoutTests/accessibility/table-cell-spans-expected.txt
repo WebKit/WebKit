@@ -44,6 +44,8 @@ AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 {0, 2}, {0, 2}
@@ -86,6 +88,8 @@ AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 {0, 2}, {0, 2}
@@ -128,6 +132,8 @@ AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 {2, 2}, {0, 1}
@@ -170,6 +176,8 @@ AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 {2, 2}, {0, 1}
@@ -212,6 +220,8 @@ AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 {2, 1}, {3, 1}

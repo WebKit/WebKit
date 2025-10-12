@@ -29,6 +29,7 @@
 #import "config.h"
 #import "FormDataStreamMac.h"
 
+#import "FormData.h"
 #import "FormDataStreamCFNet.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 

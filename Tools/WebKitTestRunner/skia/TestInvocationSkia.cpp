@@ -31,11 +31,11 @@
 #include "PlatformWebView.h"
 #include "TestController.h"
 #include <WebKit/WKImageSkia.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkStream.h>
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/encode/SkPngEncoder.h>
-IGNORE_CLANG_WARNINGS_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/ASCIICType.h>
 #include <wtf/SHA1.h>
 

@@ -22,6 +22,7 @@
 #if ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)
 #include "GStreamerWebRTCUtils.h"
 
+#include "ExceptionOr.h"
 #include "GStreamerRegistryScanner.h"
 #include "OpenSSLCryptoUniquePtr.h"
 #include "RTCIceCandidate.h"
@@ -32,6 +33,7 @@
 #include <openssl/rsa.h>
 #include <openssl/ssl.h>
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WallTime.h>
 #include <wtf/WeakRandomNumber.h>
@@ -42,6 +44,8 @@ GST_DEBUG_CATEGORY_STATIC(webkit_webrtc_utils_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_utils_debug
 
 namespace WebCore {
+
+IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage")
 
 static inline RTCIceComponent toRTCIceComponent(int component)
 {
@@ -166,7 +170,7 @@ static inline RTCRtpEncodingParameters toRTCEncodingParameters(const GstStructur
         parameters.maxFramerate = *maxFramerate;
 
     if (auto rid = gstStructureGetString(rtcParameters, "rid"_s))
-        parameters.rid = makeString(rid);
+        parameters.rid = rid.toString();
 
     if (auto scaleResolutionDownBy = gstStructureGet<double>(rtcParameters, "scale-resolution-down-by"_s))
         parameters.scaleResolutionDownBy = *scaleResolutionDownBy;
@@ -209,7 +213,7 @@ RTCRtpSendParameters toRTCRtpSendParameters(const GstStructure* rtcParameters)
 
     RTCRtpSendParameters parameters;
     if (auto transactionId = gstStructureGetString(rtcParameters, "transaction-id"_s))
-        parameters.transactionId = makeString(transactionId);
+        parameters.transactionId = transactionId.toString();
 
     auto encodings = gstStructureGetList<const GstStructure*>(rtcParameters, "encodings"_s);
     parameters.encodings.reserveInitialCapacity(encodings.size());
@@ -583,7 +587,7 @@ uint32_t UniqueSSRCGenerator::generateSSRC()
     return std::numeric_limits<uint32_t>::max();
 }
 
-std::optional<int> payloadTypeForEncodingName(StringView encodingName)
+std::optional<int> payloadTypeForEncodingName(const String& encodingName)
 {
     static HashMap<String, int> staticPayloadTypes = {
         { "PCMU"_s, 0 },
@@ -591,9 +595,8 @@ std::optional<int> payloadTypeForEncodingName(StringView encodingName)
         { "G722"_s, 9 },
     };
 
-    const auto key = encodingName.toStringWithoutCopying();
-    if (staticPayloadTypes.contains(key))
-        return staticPayloadTypes.get(key);
+    if (staticPayloadTypes.contains(encodingName))
+        return staticPayloadTypes.get(encodingName);
     return { };
 }
 
@@ -603,7 +606,7 @@ GRefPtr<GstCaps> capsFromRtpCapabilities(const RTCRtpCapabilities& capabilities,
     for (unsigned index = 0; auto& codec : capabilities.codecs) {
         auto components = codec.mimeType.split('/');
         auto* codecStructure = gst_structure_new("application/x-rtp", "media", G_TYPE_STRING, components[0].ascii().data(),
-            "encoding-name", G_TYPE_STRING, components[1].convertToASCIIUppercase().ascii().data() , "clock-rate", G_TYPE_INT, codec.clockRate, nullptr);
+            "encoding-name", G_TYPE_STRING, components[1].convertToASCIIUppercase().ascii().data(), "clock-rate", G_TYPE_INT, codec.clockRate, nullptr);
 
         if (!codec.sdpFmtpLine.isEmpty()) {
             for (auto& fmtp : codec.sdpFmtpLine.split(';')) {
@@ -616,7 +619,7 @@ GRefPtr<GstCaps> capsFromRtpCapabilities(const RTCRtpCapabilities& capabilities,
             gst_structure_set(codecStructure, "encoding-params", G_TYPE_STRING, makeString(*codec.channels).ascii().data(), nullptr);
 
         if (auto encodingName = gstStructureGetString(codecStructure, "encoding-name"_s)) {
-            if (auto payloadType = payloadTypeForEncodingName(encodingName))
+            if (auto payloadType = payloadTypeForEncodingName(encodingName.toString()))
                 gst_structure_set(codecStructure, "payload", G_TYPE_INT, *payloadType, nullptr);
         }
 
@@ -689,7 +692,7 @@ GRefPtr<GstCaps> capsFromSDPMedia(const GstSDPMedia* media)
                 "a-sendonly", "a-recvonly", "a-end-of-candidates", nullptr);
 
             if (auto name = gstStructureGetString(structure, "encoding-name"_s)) {
-                auto encodingName = name.convertToASCIIUppercase();
+                auto encodingName = name.toString().convertToASCIIUppercase();
                 gst_structure_set(structure, "encoding-name", G_TYPE_STRING, encodingName.ascii().data(), nullptr);
             }
 
@@ -1002,7 +1005,9 @@ bool sdpMediaHasRTPHeaderExtension(const GstSDPMedia* media, const String& uri)
 
 GRefPtr<GstCaps> extractMidAndRidFromRTPBuffer(const GstMappedRtpBuffer& buffer, const GstSDPMessage* sdp)
 {
+    ensureDebugCategoryInitialized();
     unsigned totalMedias = gst_sdp_message_medias_len(sdp);
+    GST_DEBUG("Looking for mid and rid ext ids in %u SDP medias", totalMedias);
     for (unsigned i = 0; i < totalMedias; i++) {
         const auto media = gst_sdp_message_get_media(sdp, i);
         auto mediaCaps = adoptGRef(gst_caps_new_empty_simple("application/x-rtp"));
@@ -1012,19 +1017,20 @@ GRefPtr<GstCaps> extractMidAndRidFromRTPBuffer(const GstMappedRtpBuffer& buffer,
         gst_sdp_media_attributes_to_caps(media, mediaCaps.get());
         auto s = gst_caps_get_structure(mediaCaps.get(), 0);
         for (int ii = 0; ii < gst_structure_n_fields(s); ii++) {
-            auto name = StringView::fromLatin1(gst_structure_nth_field_name(s, ii));
-            if (!name.startsWith("extmap-"_s))
+            auto name = CStringView::unsafeFromUTF8(gst_structure_nth_field_name(s, ii));
+            auto nameAsString = name.toString();
+            if (!nameAsString.startsWith("extmap-"_s))
                 continue;
 
             auto value = gstStructureGetString(s, name);
-            if (value == StringView::fromLatin1(GST_RTP_HDREXT_BASE "sdes:mid")) {
-                auto id = parseInteger<uint8_t>(name.substring(7));
+            if (value == GST_RTP_HDREXT_BASE "sdes:mid"_s) {
+                auto id = parseInteger<uint8_t>(nameAsString.substring(7));
                 if (!id) [[unlikely]]
                     continue;
                 if (*id && *id < 15)
                     midExtID = *id;
-            } else if (value == StringView::fromLatin1(GST_RTP_HDREXT_BASE "sdes:rtp-stream-id")) {
-                auto id = parseInteger<uint8_t>(name.substring(7));
+            } else if (value == GST_RTP_HDREXT_BASE "sdes:rtp-stream-id"_s) {
+                auto id = parseInteger<uint8_t>(nameAsString.substring(7));
                 if (!id) [[unlikely]]
                     continue;
                 if (*id && *id < 15)
@@ -1123,6 +1129,56 @@ GRefPtr<GstCaps> extractMidAndRidFromRTPBuffer(const GstMappedRtpBuffer& buffer,
     }
     return nullptr;
 }
+
+static HashMap<String, unsigned> getRTPHeaderExtensionMappingFromSDPMedia(const GstSDPMedia* media)
+{
+    HashMap<String, unsigned> result;
+    for (unsigned i = 0; i < gst_sdp_media_attributes_len(media); i++) {
+        const auto attribute = gst_sdp_media_get_attribute(media, i);
+        auto key = StringView::fromLatin1(attribute->key);
+        if (key != "extmap"_s)
+            continue;
+
+        auto value = String::fromUTF8(attribute->value);
+        auto tokens = value.split(' ');
+        if (tokens.size() < 2) [[unlikely]]
+            continue;
+
+        auto id = parseInteger<unsigned>(tokens[0]);
+        if (!id) [[unlikely]]
+            continue;
+
+        result.add(tokens[1], *id);
+    }
+    return result;
+}
+
+bool validateRTPHeaderExtensions(const GstSDPMessage* previousSDP, const GstSDPMessage* newSDP)
+{
+    ensureDebugCategoryInitialized();
+    unsigned totalMedias = gst_sdp_message_medias_len(previousSDP);
+    for (unsigned i = 0; i < totalMedias; i++) {
+        const auto previousMedia = gst_sdp_message_get_media(previousSDP, i);
+        const auto newMedia = gst_sdp_message_get_media(newSDP, i);
+        if (!newMedia)
+            break;
+
+        auto previousMapping = getRTPHeaderExtensionMappingFromSDPMedia(previousMedia);
+        auto newMapping = getRTPHeaderExtensionMappingFromSDPMedia(newMedia);
+        for (const auto& [uri, id] : newMapping) {
+            const auto& previousId = previousMapping.getOptional(uri);
+            if (!previousId)
+                continue;
+            if (*previousId != id) {
+                GST_WARNING("RTP header extension id changed from %u to %u for %s", *previousId, id, uri.utf8().data());
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+IGNORE_CLANG_WARNINGS_END
 
 #undef GST_CAT_DEFAULT
 

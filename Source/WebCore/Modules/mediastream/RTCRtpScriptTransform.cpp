@@ -115,7 +115,7 @@ void RTCRtpScriptTransform::initializeTransformer(RTCRtpTransformBackend& backen
 {
     m_isAttached = true;
     if (!setupTransformer(backend))
-        m_backend = &backend;
+        m_backend = backend;
 }
 
 bool RTCRtpScriptTransform::setupTransformer(Ref<RTCRtpTransformBackend>&& backend)

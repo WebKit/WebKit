@@ -5,6 +5,8 @@ const cspDirectives = [
   "trusted-types",
   // https://w3c.github.io/webappsec-csp/#script-src
   "script-src",
+  // https://w3c.github.io/webappsec-csp/#directive-script-src-elem
+  "script-src-elem",
 ];
 
 // A generic helper that runs function fn and returns a promise resolving with
@@ -15,7 +17,7 @@ const cspDirectives = [
 // the CSP directive connect-src 'none' and that fn is not itself triggering
 // a "connect-src" violation report.
 function trusted_type_violations_and_exception_for(fn) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     // Listen for security policy violations.
     let result = { violations: [], exception: null };
     let handler = e => {
@@ -33,7 +35,7 @@ function trusted_type_violations_and_exception_for(fn) {
 
     // Run the specified function and record any exception.
     try {
-      fn();
+      await fn();
     } catch(e) {
       result.exception = e;
     }
@@ -110,6 +112,21 @@ function trySendingPlainStringToTrustedTypeSink(sinkGroups, cspHeaders) {
     let iframe = document.createElement("iframe");
     let url = `/trusted-types/support/send-plain-string-to-trusted-type-sink.html?sinkGroups=${sinkGroups.map(name => encodeURIComponent(name)).toString()}`;
     url += "&pipe=header(Content-Security-Policy,connect-src 'none')"
+    if (cspHeaders)
+      url += `|${cspHeaders}`;
+    iframe.src = url;
+    document.head.appendChild(iframe);
+  });
+}
+
+function tryNavigatingToJavaScriptURLInSubframe(cspHeaders) {
+  return new Promise(resolve => {
+    window.addEventListener("message", event => {
+      resolve(event.data);
+    }, {once: true});
+    let iframe = document.createElement("iframe");
+    let url = "/trusted-types/support/navigate-to-javascript-url.html";
+    url += "?pipe=header(Content-Security-Policy,connect-src 'none')"
     if (cspHeaders)
       url += `|${cspHeaders}`;
     iframe.src = url;

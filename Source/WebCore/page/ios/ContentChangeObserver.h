@@ -27,14 +27,14 @@
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 
-#include "CSSPropertyNames.h"
-#include "Document.h"
-#include "Element.h"
-#include "PlatformEvent.h"
-#include "RenderStyleConstants.h"
-#include "Timer.h"
-#include "WKContentObservation.h"
-#include "WebAnimationTypes.h"
+#include <WebCore/CSSPropertyNames.h>
+#include <WebCore/Document.h>
+#include <WebCore/Element.h>
+#include <WebCore/PlatformEvent.h>
+#include <WebCore/RenderStyleConstants.h>
+#include <WebCore/Timer.h>
+#include <WebCore/WKContentObservation.h>
+#include <WebCore/WebAnimationTypes.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/Seconds.h>
@@ -67,7 +67,6 @@ public:
     void ref() const { m_document->ref(); }
     void deref() const { m_document->deref(); }
 
-    void didAddTransition(const Element&, const Animation&);
     void didFinishTransition(const Element&, CSSPropertyID);
     void didRemoveTransition(const Element&, CSSPropertyID);
 
@@ -222,7 +221,7 @@ private:
     };
     void adjustObservedState(Event);
 
-    CheckedRef<Document> m_document;
+    const CheckedRef<Document> m_document;
     Timer m_contentObservationTimer;
     WeakHashSet<const DOMTimer> m_DOMTimerList;
     WeakHashSet<const Element, WeakPtrImplWithEventTargetData> m_elementsWithTransition;

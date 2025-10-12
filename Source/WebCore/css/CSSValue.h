@@ -54,7 +54,7 @@ struct SerializationContext;
 DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValue);
 class CSSValue : public NoVirtualDestructorBase {
     WTF_MAKE_NONCOPYABLE(CSSValue);
-    WTF_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSValue);
+    WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSValue, CSSValue);
 public:
     static constexpr unsigned refCountFlagIsStatic = 0x1;
     static constexpr unsigned refCountIncrement = 0x2; // This allows us to ref / deref without disturbing the static CSSValue flag.
@@ -66,7 +66,7 @@ public:
 
     WEBCORE_EXPORT String cssText(const CSS::SerializationContext&) const;
 
-    bool isAppleColorFilterPropertyValue() const { return m_classType == ClassType::AppleColorFilterProperty; }
+    bool isAppleColorFilterValue() const { return m_classType == ClassType::AppleColorFilter; }
     bool isAttrValue() const { return m_classType == ClassType::Attr; }
     bool isBackgroundRepeatValue() const { return m_classType == ClassType::BackgroundRepeat; }
     bool isBasicShape() const { return m_classType == ClassType::BasicShape; }
@@ -87,7 +87,7 @@ public:
     bool isDynamicRangeLimitValue() const { return m_classType == ClassType::DynamicRangeLimit; }
     bool isEasingFunctionValue() const { return m_classType == ClassType::EasingFunction; }
     bool isFilterImageValue() const { return m_classType == ClassType::FilterImage; }
-    bool isFilterPropertyValue() const { return m_classType == ClassType::FilterProperty; }
+    bool isFilterValue() const { return m_classType == ClassType::Filter; }
     bool isFontFaceSrcLocalValue() const { return m_classType == ClassType::FontFaceSrcLocal; }
     bool isFontFaceSrcResourceValue() const { return m_classType == ClassType::FontFaceSrcResource; }
     bool isFontFeatureValue() const { return m_classType == ClassType::FontFeature; }
@@ -173,14 +173,15 @@ public:
     inline bool isCustomIdent() const;
     inline String customIdent() const;
 
+    inline bool isString() const;
+    inline String string() const;
+
     inline bool isInteger() const;
     inline int integer(const CSSToLengthConversionData&) const;
     inline int integerDeprecated() const;
 
     inline const CSSValue& first() const; // CSSValuePair
-    Ref<CSSValue> protectedFirst() const; // CSSValuePair
     inline const CSSValue& second() const; // CSSValuePair
-    Ref<CSSValue> protectedSecond() const; // CSSValuePair
     inline const Quad& quad() const; // CSSValueQuad
     inline const Rect& rect() const; // CSSSValueRect
 
@@ -190,6 +191,8 @@ public:
 
     bool customMayDependOnBaseURL() const { return false; }
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const { return IterationStatus::Continue; }
+
+    static ASCIILiteral separatorCSSText(ValueSeparator);
 
 protected:
     static const size_t ClassTypeBits = 7;
@@ -210,7 +213,7 @@ protected:
         Gradient,
 
         // Other non-list classes.
-        AppleColorFilterProperty,
+        AppleColorFilter,
         Attr,
         BackgroundRepeat,
         BasicShape,
@@ -227,7 +230,7 @@ protected:
         CustomProperty,
         DynamicRangeLimit,
         EasingFunction,
-        FilterProperty,
+        Filter,
         Font,
         FontFaceSrcLocal,
         FontFaceSrcResource,
@@ -286,7 +289,6 @@ protected:
     WEBCORE_EXPORT void operator delete(CSSValue*, std::destroying_delete_t);
 
     ValueSeparator separator() const { return static_cast<ValueSeparator>(m_valueSeparator); }
-    static ASCIILiteral separatorCSSText(ValueSeparator);
     ASCIILiteral separatorCSSText() const { return separatorCSSText(separator()); };
 
 private:

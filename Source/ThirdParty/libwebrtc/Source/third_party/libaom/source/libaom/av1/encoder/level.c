@@ -12,13 +12,20 @@
 #include "av1/encoder/encoder.h"
 #include "av1/encoder/level.h"
 
-#define UNDEFINED_LEVEL                                                 \
-  {                                                                     \
-    .level = SEQ_LEVEL_MAX, .max_picture_size = 0, .max_h_size = 0,     \
-    .max_v_size = 0, .max_display_rate = 0, .max_decode_rate = 0,       \
-    .max_header_rate = 0, .main_mbps = 0, .high_mbps = 0, .main_cr = 0, \
-    .high_cr = 0, .max_tiles = 0, .max_tile_cols = 0                    \
-  }
+#define UNDEFINED_LEVEL     \
+  { .level = SEQ_LEVEL_MAX, \
+    .max_picture_size = 0,  \
+    .max_h_size = 0,        \
+    .max_v_size = 0,        \
+    .max_display_rate = 0,  \
+    .max_decode_rate = 0,   \
+    .max_header_rate = 0,   \
+    .main_mbps = 0,         \
+    .high_mbps = 0,         \
+    .main_cr = 0,           \
+    .high_cr = 0,           \
+    .max_tiles = 0,         \
+    .max_tile_cols = 0 }
 
 static const AV1LevelSpec av1_level_defs[SEQ_LEVELS] = {
   { .level = SEQ_LEVEL_2_0,

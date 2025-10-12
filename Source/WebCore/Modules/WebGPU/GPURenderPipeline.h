@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,9 +36,9 @@ namespace WebCore {
 
 class GPURenderPipeline : public RefCounted<GPURenderPipeline> {
 public:
-    static Ref<GPURenderPipeline> create(Ref<WebGPU::RenderPipeline>&& backing)
+    static Ref<GPURenderPipeline> create(Ref<WebGPU::RenderPipeline>&& backing, uint64_t uniqueId)
     {
-        return adoptRef(*new GPURenderPipeline(WTFMove(backing)));
+        return adoptRef(*new GPURenderPipeline(WTFMove(backing), uniqueId));
     }
 
     String label() const;
@@ -50,12 +50,14 @@ public:
     const WebGPU::RenderPipeline& backing() const { return m_backing; }
 
 private:
-    GPURenderPipeline(Ref<WebGPU::RenderPipeline>&& backing)
+    GPURenderPipeline(Ref<WebGPU::RenderPipeline>&& backing, uint64_t uniqueId)
         : m_backing(WTFMove(backing))
+        , m_uniqueId(uniqueId)
     {
     }
 
-    Ref<WebGPU::RenderPipeline> m_backing;
+    const Ref<WebGPU::RenderPipeline> m_backing;
+    const uint64_t m_uniqueId;
 };
 
 }

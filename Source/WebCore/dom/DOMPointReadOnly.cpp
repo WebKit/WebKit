@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 
 #include "DOMMatrixReadOnly.h"
 #include "DOMPoint.h"
+#include "ScriptWrappableInlines.h"
 #include "WebCoreOpaqueRoot.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -60,6 +61,8 @@ WebCoreOpaqueRoot root(DOMPointReadOnly* point)
 {
     return WebCoreOpaqueRoot { point };
 }
+
+DOMPointReadOnly::~DOMPointReadOnly() = default;
 
 } // namespace WebCore
 

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: bar
 
 PASS correct url passed to window.onerror
 PASS correct line number passed to window.onerror

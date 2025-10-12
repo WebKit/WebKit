@@ -796,11 +796,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module WKApplicationCacheManager {
-    header "WKApplicationCacheManager.h"
-    export *
-  }
-
   explicit module WKArray {
     header "WKArray.h"
     export *
@@ -1041,6 +1036,11 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module WKCast {
+    header "WKCast.h"
+    export *
+  }
+  
   explicit module WKCertificateInfo {
     header "WKCertificateInfo.h"
     export *
@@ -1348,6 +1348,11 @@ framework module WebKit_Private [system] {
 
   explicit module WKInspectorPrivateMac {
     header "WKInspectorPrivateMac.h"
+    export *
+  }
+
+  explicit module WKJSHandleRef {
+    header "WKJSHandleRef.h"
     export *
   }
 
@@ -1673,6 +1678,11 @@ framework module WebKit_Private [system] {
 
   explicit module WKSerializedScriptValue {
     header "WKSerializedScriptValue.h"
+    export *
+  }
+
+  explicit module WKScriptMessageRef {
+    header "WKScriptMessageRef.h"
     export *
   }
 
@@ -2760,6 +2770,11 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKJSHandle {
+    header "_WKJSHandle.h"
+    export *
+  }
+
   explicit module _WKLinkIconParameters {
     header "_WKLinkIconParameters.h"
     export *
@@ -2772,6 +2787,16 @@ framework module WebKit_Private [system] {
 
   explicit module _WKNSFileManagerExtras {
     header "_WKNSFileManagerExtras.h"
+    export *
+  }
+
+  explicit module _WKNSStringExtras {
+    header "_WKNSStringExtras.h"
+    export *
+  }
+
+  explicit module _WKNSURLExtras {
+    header "_WKNSURLExtras.h"
     export *
   }
 
@@ -2867,6 +2892,11 @@ framework module WebKit_Private [system] {
 
   explicit module _WKSameDocumentNavigationType {
     header "_WKSameDocumentNavigationType.h"
+    export *
+  }
+
+  explicit module _WKSerializedNode {
+    header "_WKSerializedNode.h"
     export *
   }
 
@@ -2970,6 +3000,11 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKWebExtensionBookmark {
+    header "_WKWebExtensionBookmarks.h"
+    export *
+  }
+  
   explicit module WKWebExtensionCommandPrivate {
     header "WKWebExtensionCommandPrivate.h"
     export *

@@ -140,7 +140,7 @@ void CachedResourceMediaLoader::notifyFinished(CachedResource& resource, const N
 void CachedResourceMediaLoader::dataReceived(CachedResource& resource, const SharedBuffer&)
 {
     ASSERT(&resource == m_resource);
-    if (auto* data = resource.resourceBuffer())
+    if (RefPtr data = resource.resourceBuffer())
         m_parent.newDataStoredInSharedBuffer(*data);
 }
 
@@ -169,19 +169,18 @@ private:
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) final { loadFinished(); }
 
     WebCoreAVFResourceLoader& m_parent;
-    Ref<GuaranteedSerialFunctionDispatcher> m_targetDispatcher;
+    const Ref<GuaranteedSerialFunctionDispatcher> m_targetDispatcher;
     RefPtr<PlatformMediaResource> m_resource WTF_GUARDED_BY_CAPABILITY(m_targetDispatcher.get());
     SharedBufferBuilder m_buffer WTF_GUARDED_BY_CAPABILITY(m_targetDispatcher.get());
 };
 
 RefPtr<PlatformResourceMediaLoader> PlatformResourceMediaLoader::create(WebCoreAVFResourceLoader& parent, PlatformMediaResourceLoader& loader, ResourceRequest&& request)
 {
-    auto resource = loader.requestResource(WTFMove(request), PlatformMediaResourceLoader::LoadOption::DisallowCaching);
+    RefPtr resource = loader.requestResource(WTFMove(request), PlatformMediaResourceLoader::LoadOption::DisallowCaching);
     if (!resource)
         return nullptr;
-    auto* resourcePointer = resource.get();
-    auto client = adoptRef(*new PlatformResourceMediaLoader { parent, resource.releaseNonNull() });
-    resourcePointer->setClient(client.copyRef());
+    Ref client = adoptRef(*new PlatformResourceMediaLoader { parent, *resource });
+    resource->setClient(client.copyRef());
     return client;
 }
 
@@ -326,7 +325,7 @@ void WebCoreAVFResourceLoader::startLoading()
     m_isBlob = request.url().protocolIsBlob();
 #endif
 
-    if (auto* loader = parent->player()->cachedResourceLoader()) {
+    if (RefPtr loader = parent->player()->cachedResourceLoader()) {
         m_resourceMediaLoader = CachedResourceMediaLoader::create(*this, *loader, ResourceRequest(request));
         if (m_resourceMediaLoader)
             return;
@@ -368,8 +367,7 @@ bool WebCoreAVFResourceLoader::responseReceived(const String& mimeType, int stat
         return true;
     }
 
-    if (contentRange.isValid())
-        m_responseOffset = static_cast<NSUInteger>(contentRange.firstBytePosition());
+    m_responseOffset = contentRange.isValid() ? static_cast<NSUInteger>(contentRange.firstBytePosition()) : 0;
 
     if (AVAssetResourceLoadingContentInformationRequest* contentInfo = [m_avRequest contentInformationRequest]) {
         String uti = UTIFromMIMEType(mimeType);
@@ -438,42 +436,40 @@ bool WebCoreAVFResourceLoader::newDataStoredInSharedBuffer(const FragmentedShare
     auto bytesToSkip = m_currentOffset - m_responseOffset;
     auto array = data.createNSDataArray();
     for (NSData* segment in array.get()) {
+        if (!remainingLength)
+            break;
+        NSUInteger usableBytes = segment.length;
+        NSUInteger bytesOffset = 0;
         if (bytesToSkip) {
             if (bytesToSkip > segment.length) {
                 bytesToSkip -= segment.length;
                 continue;
             }
-            auto bytesToUse = segment.length - bytesToSkip;
-            [dataRequest respondWithData:[segment subdataWithRange:NSMakeRange(static_cast<NSUInteger>(bytesToSkip), static_cast<NSUInteger>(bytesToUse))]];
+            usableBytes = segment.length - bytesToSkip;
+            bytesOffset = bytesToSkip;
             bytesToSkip = 0;
-            remainingLength -= bytesToUse;
-            m_currentOffset += bytesToUse;
-            continue;
         }
-        if (segment.length <= remainingLength) {
+        m_currentOffset += usableBytes;
+        if (!bytesOffset && usableBytes <= remainingLength)
             [dataRequest respondWithData:segment];
-            remainingLength -= segment.length;
-            m_currentOffset += segment.length;
-            continue;
+        else {
+            usableBytes = std::min(usableBytes, remainingLength);
+            [dataRequest respondWithData:[segment subdataWithRange:NSMakeRange(bytesOffset, usableBytes)]];
         }
-        [dataRequest respondWithData:[segment subdataWithRange:NSMakeRange(0, remainingLength)]];
-        m_currentOffset += remainingLength;
-        remainingLength = 0;
-        break;
+        remainingLength -= usableBytes;
     }
 
     // There was not enough data in the buffer to satisfy the data request.
     if (remainingLength)
         return false;
 
-    if (m_currentOffset >= m_requestedOffset + m_requestedLength) {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS
-        [m_avRequest finishLoading];
-        END_BLOCK_OBJC_EXCEPTIONS
-        stopLoading();
-        return true;
-    }
-    return false;
+    ASSERT(m_currentOffset >= m_requestedOffset + m_requestedLength);
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [m_avRequest finishLoading];
+    END_BLOCK_OBJC_EXCEPTIONS
+    stopLoading();
+    return true;
 }
 
 }

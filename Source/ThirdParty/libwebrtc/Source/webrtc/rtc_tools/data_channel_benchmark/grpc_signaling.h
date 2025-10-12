@@ -10,10 +10,10 @@
 #ifndef RTC_TOOLS_DATA_CHANNEL_BENCHMARK_GRPC_SIGNALING_H_
 #define RTC_TOOLS_DATA_CHANNEL_BENCHMARK_GRPC_SIGNALING_H_
 
+#include <functional>
 #include <memory>
 #include <string>
 
-#include "api/jsep.h"
 #include "rtc_tools/data_channel_benchmark/signaling_interface.h"
 
 namespace webrtc {
@@ -40,7 +40,7 @@ class GrpcSignalingServerInterface {
   // Create a gRPC server listening on |port| that will run |callback| on each
   // request. If |oneshot| is true, it will terminate after serving one request.
   static std::unique_ptr<GrpcSignalingServerInterface> Create(
-      std::function<void(webrtc::SignalingInterface*)> callback,
+      std::function<void(SignalingInterface*)> callback,
       int port,
       bool oneshot);
 };
@@ -53,7 +53,7 @@ class GrpcSignalingClientInterface {
 
   // Connect the client to the gRPC server.
   virtual bool Start() = 0;
-  virtual webrtc::SignalingInterface* signaling_client() = 0;
+  virtual SignalingInterface* signaling_client() = 0;
 
   // Create a client to connnect to a server at |server_address|.
   static std::unique_ptr<GrpcSignalingClientInterface> Create(

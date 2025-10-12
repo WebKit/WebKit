@@ -10,17 +10,19 @@
 
 #include "modules/video_coding/timing/inter_frame_delay_variation_calculator.h"
 
+#include <cstdint>
 #include <optional>
 
 #include "api/units/frequency.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/include/module_common_types_public.h"
 
 namespace webrtc {
 
 namespace {
 constexpr Frequency k90kHz = Frequency::KiloHertz(90);
-}
+}  // namespace
 
 InterFrameDelayVariationCalculator::InterFrameDelayVariationCalculator() {
   Reset();

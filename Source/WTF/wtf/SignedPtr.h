@@ -35,7 +35,7 @@ namespace WTF {
 template<typename T, const uintptr_t Tag>
 class SignedPtr {
 public:
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SignedPtr);
 public:
     constexpr SignedPtr()
         : m_value(nullptr)

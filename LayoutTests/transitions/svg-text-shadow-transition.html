@@ -21,8 +21,8 @@
     <script type="text/javascript">
         const expectedValues = [
             // [time, element-id, property, expected-value, tolerance]
-            [0, 'text', 'text-shadow', [-25, -5, 0, 15], 4],
-            [1, 'text', 'text-shadow', [5, 5, 0, 15], 4]
+            [0, 'text', 'text-shadow', [[255, 0, 0], -25, -5, 15], 4],
+            [1, 'text', 'text-shadow', [[0, 128, 0], 5, 5, 15], 4]
         ];
 
         function setupTest()
@@ -30,8 +30,7 @@
             document.getElementById('text').className.baseVal = 'text final';
         }
 
-        var doPixelTest = true;
-        runTransitionTest(expectedValues, setupTest, usePauseAPI, doPixelTest);
+        runTransitionTest(expectedValues, setupTest);
     </script>
 </head>
 <body>

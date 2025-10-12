@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: SecurityError: Attempted to use a non-registrable domain.
 
 PASS No timeline entry for about:blank
 FAIL Setting 'document.domain' does not effect same-origin checks Test bug: need to pass exception to assert_throws()

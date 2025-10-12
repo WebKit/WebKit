@@ -101,11 +101,16 @@ void SpeechRecognitionServer::requestPermissionForRequest(WebCore::SpeechRecogni
     });
 }
 
+CheckedPtr<WebCore::SpeechRecognizer> SpeechRecognitionServer::checkedRecognizer() const
+{
+    return m_recognizer.get();
+}
+
 void SpeechRecognitionServer::handleRequest(UniqueRef<WebCore::SpeechRecognitionRequest>&& request)
 {
-    if (m_recognizer) {
-        m_recognizer->abort(WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::Aborted, "Another request is started"_s });
-        m_recognizer->prepareForDestruction();
+    if (CheckedPtr recognizer = m_recognizer.get()) {
+        recognizer->abort(WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::Aborted, "Another request is started"_s });
+        recognizer->prepareForDestruction();
     }
 
     auto clientIdentifier = request->clientIdentifier();
@@ -117,9 +122,9 @@ void SpeechRecognitionServer::handleRequest(UniqueRef<WebCore::SpeechRecognition
         protectedThis->sendUpdate(update);
 
         if (update.type() == WebCore::SpeechRecognitionUpdateType::Error)
-            protectedThis->m_recognizer->abort();
+            protectedThis->checkedRecognizer()->abort();
         else if (update.type() == WebCore::SpeechRecognitionUpdateType::End)
-            protectedThis->m_recognizer->setInactive();
+            protectedThis->checkedRecognizer()->setInactive();
     }, WTFMove(request));
 
 #if ENABLE(MEDIA_STREAM)
@@ -131,7 +136,7 @@ void SpeechRecognitionServer::handleRequest(UniqueRef<WebCore::SpeechRecognition
 
     WebProcessProxy::muteCaptureInPagesExcept(m_identifier);
     bool mockDeviceCapturesEnabled = m_checkIfMockSpeechRecognitionEnabled();
-    m_recognizer->start(sourceOrError.source(), mockDeviceCapturesEnabled);
+    checkedRecognizer()->start(sourceOrError.source(), mockDeviceCapturesEnabled);
 #else
     sendUpdate(clientIdentifier, WebCore::SpeechRecognitionUpdateType::Error, WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::AudioCapture, "Audio capture is not implemented"_s });
 #endif
@@ -144,8 +149,10 @@ void SpeechRecognitionServer::stop(WebCore::SpeechRecognitionConnectionClientIde
         return;
     }
 
-    if (m_recognizer && m_recognizer->clientIdentifier() == clientIdentifier)
-        m_recognizer->stop();
+    if (CheckedPtr recognizer = m_recognizer.get()) {
+        if (recognizer->clientIdentifier() == clientIdentifier)
+            recognizer->stop();
+    }
 }
 
 void SpeechRecognitionServer::abort(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
@@ -155,14 +162,18 @@ void SpeechRecognitionServer::abort(WebCore::SpeechRecognitionConnectionClientId
         return;
     }
 
-    if (m_recognizer && m_recognizer->clientIdentifier() == clientIdentifier)
-        m_recognizer->abort();
+    if (CheckedPtr recognizer = m_recognizer.get()) {
+        if (recognizer->clientIdentifier() == clientIdentifier)
+            recognizer->abort();
+    }
 }
 
 void SpeechRecognitionServer::invalidate(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
 {
-    if (m_recognizer && m_recognizer->clientIdentifier() == clientIdentifier)
-        m_recognizer->abort();
+    if (CheckedPtr recognizer = m_recognizer.get()) {
+        if (recognizer->clientIdentifier() == clientIdentifier)
+            recognizer->abort();
+    }
 }
 
 void SpeechRecognitionServer::sendUpdate(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, WebCore::SpeechRecognitionUpdateType type, std::optional<WebCore::SpeechRecognitionError> error, std::optional<Vector<WebCore::SpeechRecognitionResultData>> result)

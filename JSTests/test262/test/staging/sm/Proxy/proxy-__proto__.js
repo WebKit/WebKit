@@ -4,22 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Behavior of __proto__ on ES6 proxies
+info: bugzilla.mozilla.org/show_bug.cgi?id=950407
 esid: pending
 ---*/
-var gTestfile = 'proxy-__proto__.js';
-var BUGNUMBER = 950407;
-var summary = "Behavior of __proto__ on ES6 proxies";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 var protoDesc = Object.getOwnPropertyDescriptor(Object.prototype, "__proto__");
 var protoGetter = protoDesc.get;
@@ -27,8 +16,6 @@ var protoSetter = protoDesc.set;
 
 function testProxy(target, initialProto)
 {
-  print("Now testing behavior for new Proxy(" + ("" + target) + ", {})");
-
   var pobj = new Proxy(target, {});
 
   // Check [[Prototype]] before attempted mutation
@@ -58,7 +45,3 @@ testProxy(target, null);
 var callForCallOnly = function () { };
 callForCallOnly.toString = function() { return "callable target"; };
 testProxy(callForCallOnly, Function.prototype);
-
-/******************************************************************************/
-
-print("Tests complete");

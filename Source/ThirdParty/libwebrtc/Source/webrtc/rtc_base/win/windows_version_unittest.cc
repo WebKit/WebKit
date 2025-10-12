@@ -10,10 +10,12 @@
 
 #include "rtc_base/win/windows_version.h"
 
-#include "rtc_base/gunit.h"
-#include "rtc_base/logging.h"
+#include <string>
 
-namespace rtc {
+#include "rtc_base/logging.h"
+#include "test/gtest.h"
+
+namespace webrtc {
 namespace rtc_win {
 namespace {
 
@@ -44,4 +46,4 @@ TEST(WindowsVersion, ProcessorModelName) {
 
 }  // namespace
 }  // namespace rtc_win
-}  // namespace rtc
+}  // namespace webrtc

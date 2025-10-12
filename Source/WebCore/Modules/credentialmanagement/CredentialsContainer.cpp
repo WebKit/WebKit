@@ -34,7 +34,6 @@
 #include "CredentialRequestOptions.h"
 #include "DigitalCredential.h"
 #include "Document.h"
-#include "DocumentInlines.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDigitalCredential.h"
 #include "LocalFrame.h"

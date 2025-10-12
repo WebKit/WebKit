@@ -41,13 +41,15 @@ function isVideoRed(startX, startY, grabbedWidth, grabbedHeight)
     return true;
 }
 var stream;
-promise_test(async (t) => {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640 } });
+promise_test(async test => {
+    const stream1 = await navigator.mediaDevices.getUserMedia({ video: { width: 640 } });
+    test.add_cleanup(() => stream1.getTracks().forEach(track => track.stop()));
 
-    assert_equals(stream.getVideoTracks()[0].getSettings().zoom, undefined, "settings");
-    assert_equals(stream.getVideoTracks()[0].getCapabilities().zoom, undefined, "capabilities");
+    assert_equals(stream1.getVideoTracks()[0].getSettings().zoom, undefined, "settings");
+    assert_equals(stream1.getVideoTracks()[0].getCapabilities().zoom, undefined, "capabilities");
 
-    stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, facingMode: "environment" } });
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, facingMode: "environment" } });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
     assert_equals(stream.getVideoTracks()[0].getSettings().zoom, 1, "settings2");
     assert_equals(stream.getVideoTracks()[0].getCapabilities().zoom.min, 1, "min2");

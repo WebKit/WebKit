@@ -29,9 +29,9 @@
 
 #pragma once
 
+#include "LayoutRoundedRect.h"
 #include "RectEdges.h"
 #include "RenderStyleConstants.h"
-#include "RoundedRect.h"
 
 namespace WebCore {
 
@@ -51,11 +51,14 @@ public:
     // overrideBorderWidths describe custom insets from the border box, used instead of the border widths from the style.
     static BorderShape shapeForBorderRect(const RenderStyle&, const LayoutRect& borderRect, const RectEdges<LayoutUnit>& overrideBorderWidths, RectEdges<bool> closedEdges = { true });
 
-    // Create a BorderShape suitable for rendering an outline. borderRect is provided to allow for scaling the corner radii.
-    static BorderShape shapeForOutlineRect(const RenderStyle&, const LayoutRect& borderRect, const LayoutRect& outlineBoxRect, const RectEdges<LayoutUnit>& outlineWidths, RectEdges<bool> closedEdges = { true });
+    // Create a BorderShape suitable for rendering an outline or outset shadow. borderRect is provided to allow for scaling the corner radii.
+    static BorderShape shapeForOutsetRect(const RenderStyle&, const LayoutRect& borderRect, const LayoutRect& outlineBoxRect, const RectEdges<LayoutUnit>& outlineWidths, RectEdges<bool> closedEdges = { true });
+
+    // Create a BorderShape suitable for rendering a shape inset from the box. borderRect is provided to allow for scaling the corner radii.
+    static BorderShape shapeForInsetRect(const RenderStyle&, const LayoutRect& borderRect, const LayoutRect& insetRect);
 
     BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths);
-    BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths, const RoundedRectRadii&);
+    BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths, const LayoutRoundedRectRadii&);
 
     BorderShape(const BorderShape&) = default;
 
@@ -67,8 +70,8 @@ public:
     // Takes `closedEdges` into account.
     const RectEdges<LayoutUnit>& borderWidths() const { return m_borderWidths; }
 
-    RoundedRect deprecatedRoundedRect() const;
-    RoundedRect deprecatedInnerRoundedRect() const;
+    LayoutRoundedRect deprecatedRoundedRect() const;
+    LayoutRoundedRect deprecatedInnerRoundedRect() const;
     FloatRoundedRect deprecatedPixelSnappedRoundedRect(float deviceScaleFactor) const;
     FloatRoundedRect deprecatedPixelSnappedInnerRoundedRect(float deviceScaleFactor) const;
 
@@ -76,11 +79,11 @@ public:
     bool innerShapeContains(const LayoutRect&) const;
     bool outerShapeContains(const LayoutRect&) const;
 
-    const RoundedRectRadii& radii() const { return m_borderRect.radii(); }
-    void setRadii(const RoundedRectRadii& radii) { m_borderRect.setRadii(radii); }
+    const LayoutRoundedRectRadii& radii() const { return m_borderRect.radii(); }
+    void setRadii(const LayoutRoundedRectRadii& radii) { m_borderRect.setRadii(radii); }
 
     // Note that the inner edge isn't necessarily a rounded rect, but the radii still represent where the straight edge sections terminate.
-    const RoundedRectRadii& innerEdgeRadii() const { return m_innerEdgeRect.radii(); }
+    const LayoutRoundedRectRadii& innerEdgeRadii() const { return m_innerEdgeRect.radii(); }
 
     FloatRect snappedOuterRect(float deviceScaleFactor) const;
     FloatRect snappedInnerRect(float deviceScaleFactor) const;
@@ -117,10 +120,10 @@ public:
     void fillRectWithInnerHoleShape(GraphicsContext&, const LayoutRect& outerRect, const Color&, float deviceScaleFactor) const;
 
 private:
-    static RoundedRect computeInnerEdgeRoundedRect(const RoundedRect& borderRoundedRect, const RectEdges<LayoutUnit>& borderWidths);
+    static LayoutRoundedRect computeInnerEdgeRoundedRect(const LayoutRoundedRect& borderRoundedRect, const RectEdges<LayoutUnit>& borderWidths);
 
-    RoundedRect m_borderRect;
-    RoundedRect m_innerEdgeRect;
+    LayoutRoundedRect m_borderRect;
+    LayoutRoundedRect m_innerEdgeRect;
     RectEdges<LayoutUnit> m_borderWidths;
 };
 

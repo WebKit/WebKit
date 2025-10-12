@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CustomElementFormValue.h"
-#include "Element.h"
-#include "GCReachableRef.h"
-#include "QualifiedName.h"
+#include <WebCore/CustomElementFormValue.h>
+#include <WebCore/Element.h>
+#include <WebCore/GCReachableRef.h>
+#include <WebCore/QualifiedName.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -160,7 +160,7 @@ private:
 
     using Item = CustomElementReactionQueueItem;
 
-    Ref<JSCustomElementInterface> m_interface;
+    const Ref<JSCustomElementInterface> m_interface;
     Vector<Item, 1> m_items;
     bool m_elementInternalsAttached { false };
 };

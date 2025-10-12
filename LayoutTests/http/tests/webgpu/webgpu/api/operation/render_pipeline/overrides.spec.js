@@ -7,7 +7,7 @@ import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
 
 
 class F extends AllFeaturesMaxLimitsGPUTest {
-  async ExpectShaderOutputWithConstants(
+  async expectShaderOutputWithConstants(
   isAsync,
   format,
   expected,
@@ -149,7 +149,7 @@ combineWithParams([
 ).
 fn(async (t) => {
   const format = 'bgra8unorm';
-  await t.ExpectShaderOutputWithConstants(
+  await t.expectShaderOutputWithConstants(
     t.params.isAsync,
     format,
     t.params.expected,
@@ -193,7 +193,7 @@ combineWithParams([
 ).
 fn(async (t) => {
   const format = kPrecisionTestFormat;
-  await t.ExpectShaderOutputWithConstants(
+  await t.expectShaderOutputWithConstants(
     t.params.isAsync,
     format,
     t.params.expected,
@@ -435,7 +435,7 @@ fn(async (t) => {
       }
       `
   });
-  await t.ExpectShaderOutputWithConstants(
+  await t.expectShaderOutputWithConstants(
     t.params.isAsync,
     format,
     t.params.expected,

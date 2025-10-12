@@ -27,6 +27,7 @@
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
 #include "SVGPathUtilities.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

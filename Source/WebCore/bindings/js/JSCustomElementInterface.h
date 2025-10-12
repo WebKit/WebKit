@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,7 +108,7 @@ public:
     bool hasFormStateRestoreCallback() const { return !!m_formStateRestoreCallback; }
     void invokeFormStateRestoreCallback(Element&, CustomElementFormValue state);
 
-    ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const;
     JSC::JSObject* constructor() { return m_constructor.get(); }
 
     const QualifiedName& name() const { return m_name; }
@@ -138,7 +138,7 @@ private:
     JSC::Weak<JSC::JSObject> m_formResetCallback;
     JSC::Weak<JSC::JSObject> m_formDisabledCallback;
     JSC::Weak<JSC::JSObject> m_formStateRestoreCallback;
-    Ref<DOMWrapperWorld> m_isolatedWorld;
+    const Ref<DOMWrapperWorld> m_isolatedWorld;
     Vector<RefPtr<Element>, 1> m_constructionStack;
     MemoryCompactRobinHoodHashSet<AtomString> m_observedAttributes;
     bool m_isElementInternalsDisabled : 1;

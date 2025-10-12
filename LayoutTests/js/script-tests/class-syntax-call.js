@@ -32,9 +32,9 @@ function shouldNotThrow(s) {
 }
 
 shouldNotThrow('new A');
-shouldThrow('A()', '"TypeError: Cannot call a class constructor without |new|"');
+shouldThrow('A()', '"TypeError: Cannot call a class constructor A without |new|"');
 shouldNotThrow('new B');
-shouldThrow('B()', '"TypeError: Cannot call a class constructor without |new|"');
+shouldThrow('B()', '"TypeError: Cannot call a class constructor B without |new|"');
 shouldNotThrow('new (class { constructor() {} })()');
 shouldThrow('(class { constructor() {} })()', '"TypeError: Cannot call a class constructor without |new|"');
 shouldThrow('new (class extends null { constructor() { super() } })()', '"TypeError: function is not a constructor (evaluating \'super()\')"');

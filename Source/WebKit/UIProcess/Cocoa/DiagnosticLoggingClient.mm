@@ -105,7 +105,7 @@ void DiagnosticLoggingClient::logDiagnosticMessageWithEnhancedPrivacy(WebKit::We
 void DiagnosticLoggingClient::logDiagnosticMessageWithValueDictionary(WebPageProxy*, const String& message, const String& description, Ref<API::Dictionary>&& valueDictionary)
 {
     if (m_delegateMethods.webviewLogDiagnosticMessageWithValueDictionary)
-        [m_delegate.get() _webView:m_webView.get().get() logDiagnosticMessage:message.createNSString().get() description:description.createNSString().get() valueDictionary:static_cast<NSDictionary*>(valueDictionary->wrapper())];
+        [m_delegate.get() _webView:m_webView.get().get() logDiagnosticMessage:message.createNSString().get() description:description.createNSString().get() valueDictionary:RetainPtr { checked_objc_cast<NSDictionary>(valueDictionary->wrapper()) }.get()];
 }
 
 void DiagnosticLoggingClient::logDiagnosticMessageWithDomain(WebPageProxy*, const String& message, WebCore::DiagnosticLoggingDomain domain)

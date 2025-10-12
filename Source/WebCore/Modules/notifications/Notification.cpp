@@ -35,8 +35,10 @@
 
 #include "Notification.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "DedicatedWorkerGlobalScope.h"
 #include "Document.h"
+#include "DocumentEventLoop.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
@@ -262,7 +264,7 @@ void Notification::show(CompletionHandler<void()>&& callback)
     // Wait for any fetches to complete and notification's image resource, icon resource, and badge resource to be set (if any),
     // as well as the icon resources for the notification's actions (if any).
     m_resourcesLoader = makeUnique<NotificationResourcesLoader>(*this);
-    m_resourcesLoader->start([this, client, callback = scope.release()](RefPtr<NotificationResources>&& resources) mutable {
+    m_resourcesLoader->start([this, protectedThis = Ref { *this }, client, callback = scope.release()](RefPtr<NotificationResources>&& resources) mutable {
         CompletionHandlerCallingScope scope { WTFMove(callback) };
 
         RefPtr context = scriptExecutionContext();
@@ -399,7 +401,7 @@ auto Notification::permission(ScriptExecutionContext& context) -> Permission
 void Notification::requestPermission(Document& document, RefPtr<NotificationPermissionCallback>&& callback, Ref<DeferredPromise>&& promise)
 {
     auto resolvePromiseAndCallback = [document = Ref { document }, callback = WTFMove(callback), promise = WTFMove(promise)](Permission permission) mutable {
-        document->eventLoop().queueTask(TaskSource::DOMManipulation, [callback = WTFMove(callback), promise = WTFMove(promise), permission]() mutable {
+        document->checkedEventLoop()->queueTask(TaskSource::DOMManipulation, [callback = WTFMove(callback), promise = WTFMove(promise), permission]() mutable {
             if (callback)
                 callback->invoke(permission);
             promise->resolve<IDLEnumeration<NotificationPermission>>(permission);
@@ -415,7 +417,8 @@ void Notification::requestPermission(Document& document, RefPtr<NotificationPerm
         return resolvePromiseAndCallback(Permission::Denied);
     }
 
-    RefPtr window = document.frame() ? document.frame()->window() : nullptr;
+    RefPtr frame = document.frame();
+    RefPtr window = frame ? frame->window() : nullptr;
     if (!window || !window->consumeTransientActivation()) {
         document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Notification prompting can only be done from a user gesture."_s);
         return resolvePromiseAndCallback(Permission::Denied);
@@ -443,8 +446,8 @@ bool Notification::virtualHasPendingActivity() const
 
 NotificationData Notification::data() const
 {
-    auto& context = *scriptExecutionContext();
-    auto sessionID = context.sessionID();
+    Ref context = *scriptExecutionContext();
+    auto sessionID = context->sessionID();
     RELEASE_ASSERT(sessionID);
 
     return {
@@ -459,15 +462,20 @@ NotificationData Notification::data() const
         m_tag,
         m_lang,
         m_direction,
-        scriptExecutionContext()->securityOrigin()->toString(),
+        context->protectedSecurityOrigin()->toString(),
         m_serviceWorkerRegistrationURL,
         identifier(),
-        context.identifier(),
+        context->identifier(),
         *sessionID,
         MonotonicTime::now(),
         m_dataForBindings->wireBytes(),
         m_silent
     };
+}
+
+ScriptExecutionContext* Notification::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 void Notification::ensureOnNotificationThread(ScriptExecutionContextIdentifier contextIdentifier, WTF::UUID notificationIdentifier, Function<void(Notification*)>&& task)

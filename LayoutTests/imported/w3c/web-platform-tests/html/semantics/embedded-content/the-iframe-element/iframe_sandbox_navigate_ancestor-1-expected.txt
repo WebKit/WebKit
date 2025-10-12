@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'http://localhost:8800/html/semantics/embedded-content/the-iframe-element/support/iframe-tried-to-be-navigated-by-its-child.html' from frame with URL 'http://localhost:8800/html/semantics/embedded-content/the-iframe-element/support/iframe-that-tries-to-navigate-parent-and-sends-result-to-grandparent.html'. The frame attempting navigation is sandboxed, and is therefore disallowed from navigating its ancestors.
-
 
 
 PASS Check that sandboxed iframe can not navigate their ancestors

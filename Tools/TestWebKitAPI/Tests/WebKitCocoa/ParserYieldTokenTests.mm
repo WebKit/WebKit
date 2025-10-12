@@ -35,6 +35,7 @@
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Seconds.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 @interface ParserYieldTokenTestWebView : TestWKWebView <ParserYieldTokenTestRunner>
 @property (nonatomic, readonly) BOOL finishedDocumentLoad;
@@ -83,7 +84,7 @@
 static void waitForDelay(Seconds delay)
 {
     __block bool done = false;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delay.nanoseconds()), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delay.nanoseconds()), mainDispatchQueueSingleton(), ^{
         done = true;
     });
     TestWebKitAPI::Util::run(&done);
@@ -167,7 +168,7 @@ TEST(ParserYieldTokenTests, AsyncScriptRunsWhenFetched)
     [webView schemeHandler].startURLSchemeTaskHandler = [] (WKWebView *, id <WKURLSchemeTask> task) {
         auto script = retainPtr(@"window.eventMessages.push('Running async script.');");
         auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/javascript" expectedContentLength:[script length] textEncodingName:nil]);
-        dispatch_async(dispatch_get_main_queue(), [task = retainPtr(task), response = WTFMove(response), script = WTFMove(script)] {
+        dispatch_async(mainDispatchQueueSingleton(), [task = retainPtr(task), response = WTFMove(response), script = WTFMove(script)] {
             [task didReceiveResponse:response.get()];
             [task didReceiveData:[script dataUsingEncoding:NSUTF8StringEncoding]];
             [task didFinish];

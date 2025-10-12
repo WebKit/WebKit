@@ -21,8 +21,8 @@
 
 #pragma once
 
-#include "CSSStyleSheet.h"
-#include "StyleScope.h"
+#include <WebCore/CSSStyleSheet.h>
+#include <WebCore/StyleScope.h>
 #include <wtf/text/TextPosition.h>
 
 namespace WebCore {

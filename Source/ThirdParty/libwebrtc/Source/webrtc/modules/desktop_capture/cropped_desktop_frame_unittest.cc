@@ -10,10 +10,13 @@
 
 #include "modules/desktop_capture/cropped_desktop_frame.h"
 
+#include <cstdint>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/shared_desktop_frame.h"
 #include "test/gtest.h"
 

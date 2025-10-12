@@ -562,6 +562,30 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>WebCore thread timers firing</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>5058</string>
+                 <key>CodeEnd</key>
+                 <string>5059</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Timer execution</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>5060</string>
+                 <key>CodeEnd</key>
+                 <string>5061</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Paint WebHTMLView</string>
                  <key>Type</key>
                  <string>Interval</string>

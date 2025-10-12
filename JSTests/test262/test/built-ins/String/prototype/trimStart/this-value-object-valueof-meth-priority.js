@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-string.prototype.trimStart
+esid: sec-string.prototype.trimstart
 description: >
   Priority of valueOf when converting object to string for trimming
 info: |

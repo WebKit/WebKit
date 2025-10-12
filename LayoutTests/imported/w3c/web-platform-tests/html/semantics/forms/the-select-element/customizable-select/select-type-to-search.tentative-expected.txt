@@ -1,0 +1,4 @@
+
+
+FAIL Type to search should focus but not select an option until selection is confirmed. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+

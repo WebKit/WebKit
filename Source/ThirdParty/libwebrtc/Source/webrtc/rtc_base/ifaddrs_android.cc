@@ -11,20 +11,25 @@
 #if defined(WEBRTC_ANDROID)
 #include "rtc_base/ifaddrs_android.h"
 
-#include <errno.h>
+#include <linux/if.h>
+#include <linux/if_addr.h>
+#include <linux/in.h>
+#include <linux/in6.h>
 #include <linux/netlink.h>
 #include <linux/rtnetlink.h>
+#include <linux/sockios.h>
 #include <net/if.h>
-#include <netinet/in.h>  // no-presubmit-check
-#include <stdlib.h>
-#include <string.h>
-#include <sys/ioctl.h>
 #include <sys/socket.h>  // no-presubmit-check
 #include <sys/types.h>
-#include <sys/utsname.h>
 #include <unistd.h>
 
+#include <cstdlib>
+#include <cstring>
+#include <utility>
+
 #include "absl/cleanup/cleanup.h"
+
+namespace webrtc {
 
 namespace {
 
@@ -33,11 +38,9 @@ struct netlinkrequest {
   ifaddrmsg msg;
 };
 
-const int kMaxReadSize = 4096;
+constexpr int kMaxReadSize = 4096;
 
 }  // namespace
-
-namespace rtc {
 
 int set_ifname(struct ifaddrs* ifaddr, int interface) {
   char buf[IFNAMSIZ] = {0};
@@ -223,5 +226,5 @@ void freeifaddrs(struct ifaddrs* addrs) {
   }
 }
 
-}  // namespace rtc
+}  // namespace webrtc
 #endif  // defined(WEBRTC_ANDROID)

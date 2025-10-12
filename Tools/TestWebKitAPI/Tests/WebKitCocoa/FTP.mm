@@ -31,6 +31,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKPreferencesPrivate.h>
@@ -43,32 +44,19 @@
 
 namespace TestWebKitAPI {
 
-static RetainPtr<NSMutableArray> consoleMessages;
-
-static void didReceivePageMessageFromInjectedBundle(WKPageRef, WKStringRef messageName, WKTypeRef message, const void*)
-{
-    if (WKStringIsEqualToUTF8CString(messageName, "ConsoleMessage"))
-        [consoleMessages addObject:Util::toNS((WKStringRef)message)];
-}
-
-static void setInjectedBundleClient(WKWebView *webView)
-{
-    WKPageInjectedBundleClientV0 injectedBundleClient = {
-        { 0, nullptr },
-        didReceivePageMessageFromInjectedBundle,
-        nullptr,
-    };
-    WKPageSetPageInjectedBundleClient(webView._pageRefForTransitionToWKWebView, &injectedBundleClient.base);
-}
-
 TEST(WKWebView, FTPMainResource)
 {
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundlePageConsoleMessage"];
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
-    setInjectedBundleClient(webView.get());
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get()._shouldSendConsoleLogsToUIProcessForTesting = YES;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     
-    consoleMessages = [NSMutableArray arrayWithCapacity:2];
- 
+    RetainPtr consoleMessages = [NSMutableArray arrayWithCapacity:2];
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
+        [consoleMessages addObject:log];
+    };
+    webView.get().UIDelegate = uiDelegate.get();
+
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"ftp://example.com/main.html"]]];
     [webView _test_waitForDidFailProvisionalNavigation];
 
@@ -82,11 +70,16 @@ TEST(WKWebView, FTPMainResourceRedirect)
         { "/ftp_redirect"_s, { 301, {{ "Location"_s, "ftp://example.com/"_s }} } },
     });
     
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundlePageConsoleMessage"];
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
-    setInjectedBundleClient(webView.get());
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get()._shouldSendConsoleLogsToUIProcessForTesting = YES;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     
-    consoleMessages = [NSMutableArray arrayWithCapacity:2];
+    RetainPtr consoleMessages = [NSMutableArray arrayWithCapacity:2];
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
+        [consoleMessages addObject:log];
+    };
+    webView.get().UIDelegate = uiDelegate.get();
 
     [webView loadRequest:httpServer.request("/ftp_redirect"_s)];
     [webView _test_waitForDidFailProvisionalNavigation];
@@ -104,11 +97,17 @@ Goodbye
 
 TEST(WKWebView, FTPSubresource)
 {
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundlePageConsoleMessage"];
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
-    setInjectedBundleClient(webView.get());
-    
-    consoleMessages = [NSMutableArray arrayWithCapacity:2];
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get()._shouldSendConsoleLogsToUIProcessForTesting = YES;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr consoleMessages = [NSMutableArray arrayWithCapacity:2];
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
+        [consoleMessages addObject:log];
+    };
+    webView.get().UIDelegate = uiDelegate.get();
+
     [webView synchronouslyLoadHTMLString:[NSString stringWithUTF8String:subresourceBytes]];
 
     EXPECT_EQ([consoleMessages count], 2u);
@@ -123,17 +122,21 @@ TEST(WKWebView, FTPSubresourceRedirect)
         { "/webkitten.png"_s, { 301, {{ "Location"_s, "ftp://example.com/webkitten.png"_s }} } },
     });
         
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundlePageConsoleMessage"];
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get()._shouldSendConsoleLogsToUIProcessForTesting = YES;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     
     // Allow HTTP to redirect away from HTTP for subresources for the purposes of this test
     auto preferences = (__bridge WKPreferencesRef)[[webView configuration] preferences];
     WKPreferencesSetRestrictedHTTPResponseAccess(preferences, false);
     
-    setInjectedBundleClient(webView.get());
-    
-    consoleMessages = [NSMutableArray arrayWithCapacity:2];
-    
+    RetainPtr consoleMessages = [NSMutableArray arrayWithCapacity:2];
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
+        [consoleMessages addObject:log];
+    };
+    webView.get().UIDelegate = uiDelegate.get();
+
     auto htmlString = makeString("<img src='http://127.0.0.1:"_s, httpServer.port(), "/webkitten.png'>"_s);
     [webView synchronouslyLoadHTMLString:[NSString stringWithUTF8String:htmlString.utf8().data()]];
 

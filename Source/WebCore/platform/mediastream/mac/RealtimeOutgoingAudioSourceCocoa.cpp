@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -150,14 +150,14 @@ void RealtimeOutgoingAudioSourceCocoa::pullAudioData()
     auto& firstBuffer = span(bufferList)[0];
     firstBuffer.mNumberChannels = numberOfChannels;
     firstBuffer.mDataByteSize = bufferSize;
-    firstBuffer.mData = m_audioBuffer.data();
+    firstBuffer.mData = m_audioBuffer.mutableSpan().data();
 
     if (isSilenced() != m_sampleConverter->muted())
         m_sampleConverter->setMuted(isSilenced());
 
     m_sampleConverter->pullAvailableSamplesAsChunks(bufferList, chunkSampleCount, m_readCount, [this, numberOfChannels] {
         m_readCount += chunkSampleCount;
-        sendAudioFrames(m_audioBuffer.data(), LibWebRTCAudioFormat::sampleSize, LibWebRTCAudioFormat::sampleRate, numberOfChannels, chunkSampleCount);
+        sendAudioFrames(m_audioBuffer.span(), LibWebRTCAudioFormat::sampleSize, LibWebRTCAudioFormat::sampleRate, numberOfChannels, chunkSampleCount);
     });
 }
 

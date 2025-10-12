@@ -9,7 +9,7 @@ function shouldBe(actual, expected) {
         throw new Error('bad value: ' + actual + ' expected value: ' + expected);
 }
 
-function shouldBeOneOfThem(actual, expectedArray) {
+function shouldBeOneOf(actual, expectedArray) {
     // Tolerate different space characters used by different ICU versions.
     // Older ICU uses U+2009 Thin Space in ranges, whereas newer ICU uses
     // regular old U+0020. Let's ignore these differences.
@@ -71,9 +71,9 @@ function test() {
         timeZone: 'America/Los_Angeles',
         calendar: 'chinese'
     });
-    shouldBe(fmt2.format(date1), `11/22/2006, 2:00 AM`);
+    shouldBeOneOf(fmt2.format(date1), [`11/22/2006, 2:00 AM`, `2006-11-22, 2:00 AM`]);
     shouldBe(fmt2.formatRange(date1, date2), `11/22/2006, 2:00 – 3:00 AM`);
-    shouldBe(fmt2.formatRange(date1, date3), `11/22/2006, 2:00 AM – 12/2/2006, 2:00 AM`);
+    shouldBeOneOf(fmt2.formatRange(date1, date3), [`11/22/2006, 2:00 AM – 12/2/2006, 2:00 AM`, `11/22/2006, 2:00 AM – 12/02/2006, 2:00 AM`]);
 
     let fmt3 = new Intl.DateTimeFormat("en", {
         year: 'numeric',
@@ -143,7 +143,7 @@ function test() {
     });
     shouldBe(fmt7.format(date1), `1/10/07, 10:00 AM`);
     shouldBe(fmt7.format(date8), `1/11/07, 0:00 AM`);
-    shouldBeOneOfThem(fmt7.formatRange(date1, date2), [ `1/10/07, 10:00 AM – 11:00 AM`, `1/10/07, 10:00 – 11:00 AM` ]);
+    shouldBeOneOf(fmt7.formatRange(date1, date2), [ `1/10/07, 10:00 AM – 11:00 AM`, `1/10/07, 10:00 – 11:00 AM` ]);
     shouldBe(fmt7.formatRange(date1, date3), `1/10/07, 10:00 AM – 1/20/07, 10:00 AM`);
     shouldBe(fmt7.formatRange(date1, date5), `1/10/07, 10:00 AM – 0:00 PM`);
     shouldBe(fmt7.formatRange(date1, date6), `1/10/07, 10:00 AM – 2:00 PM`);
@@ -216,7 +216,7 @@ function test() {
     });
     shouldBe(fmt11.format(date1), `1/10/07, 10:00 AM`);
     shouldBe(fmt11.format(date8), `1/11/07, 00:00 AM`);
-    shouldBeOneOfThem(fmt11.formatRange(date1, date2), [ `1/10/07, 10:00 AM – 11:00 AM`, `1/10/07, 10:00 – 11:00 AM` ]);
+    shouldBeOneOf(fmt11.formatRange(date1, date2), [ `1/10/07, 10:00 AM – 11:00 AM`, `1/10/07, 10:00 – 11:00 AM` ]);
     shouldBe(fmt11.formatRange(date1, date3), `1/10/07, 10:00 AM – 1/20/07, 10:00 AM`);
     shouldBe(fmt11.formatRange(date1, date5), `1/10/07, 10:00 AM – 0:00 PM`);
     shouldBe(fmt11.formatRange(date1, date6), `1/10/07, 10:00 AM – 2:00 PM`);

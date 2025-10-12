@@ -25,6 +25,7 @@ struct WebKit::ProvisionalFrameCreationParameters {
     std::optional<WebCore::FrameIdentifier> frameIDBeforeProvisionalNavigation;
     std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier;
     WebCore::SandboxFlags effectiveSandboxFlags;
+    WebCore::ReferrerPolicy effectiveReferrerPolicy;
     WebCore::ScrollbarMode scrollingMode;
     std::optional<WebCore::IntSize> initialSize;
 };

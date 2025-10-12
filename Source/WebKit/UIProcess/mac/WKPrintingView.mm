@@ -127,7 +127,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_autodisplayResumeTimer) {
         _autodisplayResumeTimer = [NSTimer timerWithTimeInterval:0 target:self selector:@selector(_delayedResumeAutodisplayTimerFired) userInfo:nil repeats:NO];
         // The timer must be scheduled on main thread, because printing thread may finish before it fires.
-        [[NSRunLoop mainRunLoop] addTimer:_autodisplayResumeTimer forMode:NSDefaultRunLoopMode];
+        [[NSRunLoop mainRunLoop] addTimer:_autodisplayResumeTimer.get() forMode:NSDefaultRunLoopMode];
     }
 }
 
@@ -277,7 +277,7 @@ static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&&
 
     ASSERT(firstPage > 0);
     ASSERT(firstPage <= lastPage);
-    LOG(Printing, "WKPrintingView requesting PDF data for pages %u...%u", firstPage, lastPage);
+    LOG(Printing, "WKPrintingView requesting PDF data for pages %zu...%zu", firstPage, lastPage);
 
     WebKit::PrintInfo printInfo([_printOperation.get() printInfo]);
     // Return to printing mode if we're already back to screen (e.g. due to window resizing).
@@ -423,7 +423,7 @@ static void prepareDataForPrintingOnSecondaryThread(WKPrintingView *view)
         ASSERT(![self _isPrintingPreview]);
         Locker lock { _printingCallbackMutex };
 
-        RunLoop::protectedMain()->dispatch([strongSelf = retainPtr(self)] {
+        RunLoop::mainSingleton().dispatch([strongSelf = retainPtr(self)] {
             prepareDataForPrintingOnSecondaryThread(strongSelf.get());
         });
 
@@ -491,7 +491,7 @@ static RetainPtr<NSString> linkDestinationName(PDFDocument *document, PDFDestina
     }
 
     for (PDFAnnotation *annotation in [pdfPage annotations]) {
-        if (![[annotation valueForAnnotationKey:WebKit::get_PDFKit_PDFAnnotationKeySubtype()] isEqualToString:WebKit::get_PDFKit_PDFAnnotationSubtypeLink()])
+        if (![[annotation valueForAnnotationKey:WebKit::get_PDFKit_PDFAnnotationKeySubtypeSingleton()] isEqualToString:WebKit::get_PDFKit_PDFAnnotationSubtypeLinkSingleton()])
             continue;
 
         RetainPtr<NSURL> url = annotation.URL;
@@ -598,7 +598,7 @@ static RetainPtr<NSString> linkDestinationName(PDFDocument *document, PDFDestina
         for (unsigned i = 0; i < pageCount; i++) {
             RetainPtr page = [_printedPagesPDFDocument pageAtIndex:i];
             for (PDFAnnotation *annotation in page.get().annotations) {
-                if (![[annotation valueForAnnotationKey:WebKit::get_PDFKit_PDFAnnotationKeySubtype()] isEqualToString:WebKit::get_PDFKit_PDFAnnotationSubtypeLink()])
+                if (![[annotation valueForAnnotationKey:WebKit::get_PDFKit_PDFAnnotationKeySubtypeSingleton()] isEqualToString:WebKit::get_PDFKit_PDFAnnotationSubtypeLinkSingleton()])
                     continue;
 
                 if (annotation.URL)

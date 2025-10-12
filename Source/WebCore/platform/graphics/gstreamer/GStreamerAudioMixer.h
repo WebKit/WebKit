@@ -33,8 +33,10 @@ public:
     static GStreamerAudioMixer& singleton();
 
     void ensureState(GstStateChange);
-    GRefPtr<GstPad> registerProducer(GstElement*);
+    GRefPtr<GstPad> registerProducer(GstElement*, std::optional<int> forcedSampleRate);
     void unregisterProducer(const GRefPtr<GstPad>&);
+
+    void configureSourcePeriodTime(StringView sourceName, uint64_t periodTime);
 
 private:
     GStreamerAudioMixer();

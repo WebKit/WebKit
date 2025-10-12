@@ -12,6 +12,9 @@
 // It's intended to set sane defaults, such as removing logging for further
 // fuzzing efficiency.
 
+#include <cstddef>
+#include <cstdint>
+
 #include "rtc_base/logging.h"
 
 namespace {
@@ -23,7 +26,7 @@ void InitializeWebRtcFuzzDefaults() {
 // Remove default logging to prevent huge slowdowns.
 // TODO(pbos): Disable in Chromium: http://crbug.com/561667
 #if !defined(WEBRTC_CHROMIUM_BUILD)
-  rtc::LogMessage::LogToDebug(rtc::LS_NONE);
+  webrtc::LogMessage::LogToDebug(webrtc::LS_NONE);
 #endif  // !defined(WEBRTC_CHROMIUM_BUILD)
 
   g_initialized = true;

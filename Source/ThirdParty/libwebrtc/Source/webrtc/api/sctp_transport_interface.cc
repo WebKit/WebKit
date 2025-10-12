@@ -23,7 +23,7 @@ SctpTransportInformation::SctpTransportInformation(SctpTransportState state)
 
 SctpTransportInformation::SctpTransportInformation(
     SctpTransportState state,
-    rtc::scoped_refptr<DtlsTransportInterface> dtls_transport,
+    scoped_refptr<DtlsTransportInterface> dtls_transport,
     std::optional<double> max_message_size,
     std::optional<int> max_channels)
     : state_(state),

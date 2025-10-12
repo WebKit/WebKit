@@ -25,7 +25,7 @@
 
 #pragma once
 
-#import "PlatformExportMacros.h"
+#import <WebCore/PlatformExportMacros.h>
 #import <wtf/Forward.h>
 
 namespace WebCore {

@@ -13,23 +13,39 @@ if (rtc_include_tests) {
     testonly = true
     sources = [
       "bwe_ramp_up_test.cc",
+      "l4s_test.cc",
       "peer_scenario_quality_test.cc",
       "remote_estimate_test.cc",
       "unsignaled_stream_test.cc",
     ]
     deps = [
       "..:peer_scenario",
-      "../../:create_frame_generator_capturer",
-      "../../:field_trial",
-      "../../:test_support",
+      "../..:create_frame_generator_capturer",
+      "../..:test_support",
+      "../../../api:audio_options_api",
+      "../../../api:libjingle_peerconnection_api",
+      "../../../api:make_ref_counted",
       "../../../api:rtc_stats_api",
+      "../../../api:rtp_parameters",
+      "../../../api:rtp_transceiver_direction",
+      "../../../api:scoped_refptr",
+      "../../../api/test/network_emulation",
+      "../../../api/test/network_emulation:network_queue",
+      "../../../api/transport:ecn_marking",
       "../../../api/units:data_rate",
       "../../../api/units:time_delta",
+      "../../../api/video:video_frame",
       "../../../media:stream_params",
       "../../../modules/rtp_rtcp:rtp_rtcp_format",
       "../../../pc:media_session",
       "../../../pc:pc_test_utils",
       "../../../pc:session_description",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:copy_on_write_buffer",
+      "../../../rtc_base:logging",
+      "../../../rtc_base:network_constants",
+      "../../scenario",
+      "//third_party/abseil-cpp/absl/strings",
     ]
     if (rtc_enable_protobuf) {
       deps += [

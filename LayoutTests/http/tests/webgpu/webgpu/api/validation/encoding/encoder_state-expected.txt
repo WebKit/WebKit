@@ -5,8 +5,14 @@ PASS :pass_end_invalid_order:pass0Type="render";pass1Type="compute"
 PASS :pass_end_invalid_order:pass0Type="render";pass1Type="render"
 PASS :call_after_successful_finish:callCmd="beginComputePass"
 PASS :call_after_successful_finish:callCmd="beginRenderPass"
+PASS :call_after_successful_finish:callCmd="finishAndSubmitFirst"
+PASS :call_after_successful_finish:callCmd="finishAndSubmitSecond"
 PASS :call_after_successful_finish:callCmd="insertDebugMarker"
 PASS :pass_end_none:
 PASS :pass_end_twice,basic:
 PASS :pass_end_twice,render_pass_invalid:
+PASS :pass_begin_invalid_encoder:pass0Type="compute";pass1Type="compute"
+PASS :pass_begin_invalid_encoder:pass0Type="compute";pass1Type="render"
+PASS :pass_begin_invalid_encoder:pass0Type="render";pass1Type="compute"
+PASS :pass_begin_invalid_encoder:pass0Type="render";pass1Type="render"
 

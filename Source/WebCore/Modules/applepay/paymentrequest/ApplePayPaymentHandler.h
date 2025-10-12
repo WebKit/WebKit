@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,7 +55,9 @@ private:
     explicit ApplePayPaymentHandler(Document&, const PaymentRequest::MethodIdentifier&, PaymentRequest&);
 
     Document& document() const;
+    Ref<Document> protectedDocument() const;
     PaymentCoordinator& paymentCoordinator() const;
+    Ref<PaymentCoordinator> protectedPaymentCoordinator() const;
 
     ExceptionOr<Vector<ApplePayShippingMethod>> computeShippingMethods() const;
     ExceptionOr<std::tuple<ApplePayLineItem, Vector<ApplePayLineItem>>> computeTotalAndLineItems() const;
@@ -94,7 +96,7 @@ private:
     void didCancelPaymentSession(PaymentSessionError&&) final;
 
     PaymentRequest::MethodIdentifier m_identifier;
-    Ref<PaymentRequest> m_paymentRequest;
+    const Ref<PaymentRequest> m_paymentRequest;
     std::optional<ApplePayRequest> m_applePayRequest;
     std::optional<ApplePayPaymentMethodType> m_selectedPaymentMethodType;
 

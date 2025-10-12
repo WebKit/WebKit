@@ -31,12 +31,26 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/PlatformLayer.h>
+#include <wtf/AbstractThreadSafeRefCountedAndCanMakeWeakPtr.h>
+
+#if PLATFORM(COCOA)
+namespace WTF {
+struct MachSendRightAnnotated;
+}
+#endif
 
 namespace WebKit {
 
-class MediaPlayerPrivateRemote;
+class VideoLayerRemoteParent : public AbstractThreadSafeRefCountedAndCanMakeWeakPtr {
+public:
+    virtual bool inVideoFullscreenOrPictureInPicture() const = 0;
+    virtual WebCore::FloatSize naturalSize() const = 0;
+#if PLATFORM(COCOA)
+    virtual void setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRightAnnotated&&) = 0;
+#endif
+};
 
-PlatformLayerContainer createVideoLayerRemote(MediaPlayerPrivateRemote*, LayerHostingContextID, WebCore::MediaPlayerEnums::VideoGravity, WebCore::IntSize);
+PlatformLayerContainer createVideoLayerRemote(VideoLayerRemoteParent&, LayerHostingContextID, WebCore::MediaPlayerEnums::VideoGravity, WebCore::IntSize);
 
 } // namespace WebKit
 

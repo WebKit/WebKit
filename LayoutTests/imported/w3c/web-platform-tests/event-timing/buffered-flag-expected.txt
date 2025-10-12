@@ -1,4 +1,4 @@
 Generate a 'click' event
 
-FAIL PerformanceObserver with buffered flag sees previous Event Timing entries assert_implements: Event Timing is not supported. undefined
+PASS PerformanceObserver with buffered flag sees previous Event Timing entries
 

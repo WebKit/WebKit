@@ -6,6 +6,10 @@
 
 // BinaryStream_unittest.cpp: Unit tests of the binary stream classes.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <gtest/gtest.h>
 
 #include "common/BinaryStream.h"

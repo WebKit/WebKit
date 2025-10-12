@@ -36,6 +36,7 @@ enum class MemoryRestriction {
 };
 
 #if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/FastJITPermissionsAdditions.h>
 #include <WebKitAdditions/JSGlobalObjectAdditions.h>
 #endif
 
@@ -59,7 +60,7 @@ static ALWAYS_INLINE void threadSelfRestrict()
 #else // Not defined(OS_THREAD_SELF_RESTRICT) && defined(OS_THREAD_SELF_RESTRICT_SUPPORTED)
 #if OS(DARWIN) && CPU(ARM64)
 
-#include "JSCConfig.h"
+#include <JavaScriptCore/JSCConfig.h>
 
 #include <wtf/Platform.h>
 
@@ -110,31 +111,6 @@ static ALWAYS_INLINE void threadSelfRestrict()
         pthread_jit_write_protect_np(false);
     else if constexpr (restriction == MemoryRestriction::kRwxToRx)
         pthread_jit_write_protect_np(true);
-    else
-        RELEASE_ASSERT_NOT_REACHED();
-}
-
-#elif USE(APPLE_INTERNAL_SDK)
-#include <os/thread_self_restrict.h>
-
-template <MemoryRestriction restriction>
-SUPPRESS_ASAN static ALWAYS_INLINE bool threadSelfRestrictSupported()
-{
-    if constexpr ((restriction == MemoryRestriction::kRwxToRw)
-        || (restriction == MemoryRestriction::kRwxToRx)) {
-        return !!os_thread_self_restrict_rwx_is_supported();
-    }
-    return false;
-}
-
-template <MemoryRestriction restriction>
-static ALWAYS_INLINE void threadSelfRestrict()
-{
-    ASSERT(g_jscConfig.useFastJITPermissions);
-    if constexpr (restriction == MemoryRestriction::kRwxToRw)
-        os_thread_self_restrict_rwx_to_rw();
-    else if constexpr (restriction == MemoryRestriction::kRwxToRx)
-        os_thread_self_restrict_rwx_to_rx();
     else
         RELEASE_ASSERT_NOT_REACHED();
 }

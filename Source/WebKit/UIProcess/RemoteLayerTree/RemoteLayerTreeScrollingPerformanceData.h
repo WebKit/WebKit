@@ -71,7 +71,7 @@ private:
     void appendBlankPixelCount(ScrollingLogEvent::EventType, uint64_t blankPixelCount);
     void appendSynchronousScrollingChange(WTF::MonotonicTime, uint64_t);
 
-    CheckedRef<RemoteLayerTreeDrawingAreaProxy> m_drawingArea;
+    const CheckedRef<RemoteLayerTreeDrawingAreaProxy> m_drawingArea;
     Vector<ScrollingLogEvent> m_events;
 #if PLATFORM(MAC)
     uint64_t m_lastUnfilledArea;

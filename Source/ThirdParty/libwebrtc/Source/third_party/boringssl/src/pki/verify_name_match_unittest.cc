@@ -1,10 +1,23 @@
 // Copyright 2015 The Chromium Authors
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include "verify_name_match.h"
 
 #include <gtest/gtest.h>
+
+#include <openssl/span.h>
+
 #include "string_util.h"
 #include "test_helpers.h"
 
@@ -498,7 +511,8 @@ TEST(VerifyNameMatchTest, EmptyNameMatching) {
   CertErrors errors;
   EXPECT_TRUE(NormalizeName(SequenceValueFromString(empty),
                             &normalized_empty_der, &errors));
-  EXPECT_EQ(SequenceValueFromString(empty), der::Input(normalized_empty_der));
+  EXPECT_EQ(SequenceValueFromString(empty),
+            der::Input(StringAsBytes(normalized_empty_der)));
 
   // An empty name is not equal to non-empty name.
   std::string non_empty;
@@ -585,11 +599,11 @@ TEST(NameNormalizationTest, TestEverything) {
   ASSERT_TRUE(NormalizeName(SequenceValueFromString(raw_der), &normalized_der,
                             &errors));
   EXPECT_EQ(SequenceValueFromString(expected_normalized_der),
-            der::Input(normalized_der));
+            der::Input(StringAsBytes(normalized_der)));
   // Re-normalizing an already normalized Name should not change it.
   std::string renormalized_der;
   ASSERT_TRUE(
-      NormalizeName(der::Input(normalized_der), &renormalized_der, &errors));
+      NormalizeName(StringAsBytes(normalized_der), &renormalized_der, &errors));
   EXPECT_EQ(normalized_der, renormalized_der);
 }
 
@@ -602,7 +616,8 @@ TEST(NameNormalizationTest, NormalizeCustom) {
   CertErrors errors;
   ASSERT_TRUE(NormalizeName(SequenceValueFromString(raw_der), &normalized_der,
                             &errors));
-  EXPECT_EQ(SequenceValueFromString(raw_der), der::Input(normalized_der));
+  EXPECT_EQ(SequenceValueFromString(raw_der),
+            der::Input(StringAsBytes(normalized_der)));
 }
 
 BSSL_NAMESPACE_END

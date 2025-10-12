@@ -26,7 +26,7 @@
 #pragma once
 
 #if HAVE(SWIFT_CPP_INTEROP) // FIXME: rdar://136787800
-#include <swift/bridging>
+#include <wtf/SwiftBridging.h>
 #else
 
 #ifndef SWIFT_SHARED_REFERENCE // FIXME: rdar://136787800

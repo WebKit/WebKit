@@ -20,9 +20,9 @@
 
 #pragma once
 
-#include "JSDOMWrapper.h"
 #include "JSTestDefaultToJSONInherit.h"
 #include "TestDefaultToJSONIndirectInheritance.h"
+#include <WebCore/JSDOMWrapper.h>
 
 namespace WebCore {
 
@@ -70,6 +70,11 @@ protected:
     DECLARE_DEFAULT_FINISH_CREATION;
 };
 
+JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestDefaultToJSONIndirectInheritance&);
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestDefaultToJSONIndirectInheritance* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestDefaultToJSONIndirectInheritance>&&);
+ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestDefaultToJSONIndirectInheritance& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
+inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestDefaultToJSONIndirectInheritance>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<TestDefaultToJSONIndirectInheritance> {
     using WrapperClass = JSTestDefaultToJSONIndirectInheritance;

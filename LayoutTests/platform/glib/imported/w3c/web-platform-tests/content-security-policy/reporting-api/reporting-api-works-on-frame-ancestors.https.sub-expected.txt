@@ -1,6 +1,4 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'report-to'.
 
-CONSOLE MESSAGE: Refused to load https://not-web-platform.test:9443/content-security-policy/reporting-api/support/non-embeddable-frame.html?id=9ab0f605-6fad-4b75-8e90-7f133abf5e4f because it does not appear in the frame-ancestors directive of the Content Security Policy.
 
 
 FAIL Violation report status OK. undefined is not an object (evaluating 'data[0]["body"]')

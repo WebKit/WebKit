@@ -12,7 +12,6 @@
 #define MODULES_DESKTOP_CAPTURE_WIN_DXGI_FRAME_H_
 
 #include <memory>
-#include <vector>
 
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_capturer.h"

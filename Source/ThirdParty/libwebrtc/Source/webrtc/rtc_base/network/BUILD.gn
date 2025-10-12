@@ -16,12 +16,6 @@ rtc_library("sent_packet") {
   deps = [ "../system:rtc_export" ]
 }
 
-rtc_source_set("ecn_marking") {
-  visibility = [ "*" ]
-  sources = [ "ecn_marking.h" ]
-  deps = [ "../../api/transport:ecn_marking" ]
-}
-
 rtc_library("received_packet") {
   visibility = [ "*" ]
   sources = [
@@ -29,9 +23,10 @@ rtc_library("received_packet") {
     "received_packet.h",
   ]
   deps = [
-    ":ecn_marking",
+    "..:checks",
     "..:socket_address",
     "../../api:array_view",
+    "../../api/transport:ecn_marking",
     "../../api/units:timestamp",
     "../system:rtc_export",
   ]

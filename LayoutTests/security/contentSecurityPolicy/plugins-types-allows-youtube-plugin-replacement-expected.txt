@@ -1,2 +1,2 @@
-Blocked access to external URL https://www.youtube.com/embed/UF8uR6Z6KLc
+CONSOLE MESSAGE: Blocked access to external URL https://www.youtube.com/embed/UF8uR6Z6KLc
 

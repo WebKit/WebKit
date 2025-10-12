@@ -27,6 +27,7 @@
 #include "WebAudioBufferList.h"
 
 #include "CAAudioStreamDescription.h"
+#include "Logging.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/IndexedRange.h>
 #include <wtf/StdLibExtras.h>
@@ -49,7 +50,7 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format)
     CheckedSize bufferListSize = offsetof(AudioBufferList, mBuffers);
     bufferListSize += CheckedSize { sizeof(AudioBuffer) } * std::max(1U, bufferCount);
     m_listBufferSize = bufferListSize;
-    m_canonicalList = std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (m_listBufferSize)));
+    lazyInitialize(m_canonicalList, std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (m_listBufferSize))));
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     memset(m_canonicalList.get(), 0, m_listBufferSize);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
@@ -180,7 +181,7 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, C
 void WebAudioBufferList::reset()
 {
     if (!m_list)
-        m_list = std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (m_listBufferSize)));
+        lazyInitialize(m_list, std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (m_listBufferSize))));
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     memcpy(m_list.get(), m_canonicalList.get(), m_listBufferSize);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

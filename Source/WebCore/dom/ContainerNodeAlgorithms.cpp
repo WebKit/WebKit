@@ -50,7 +50,7 @@ static void notifyNodeInsertedIntoDocument(ContainerNode& parentOfInsertedTree, 
     ASSERT(parentOfInsertedTree.isConnected());
     ASSERT(!node.isConnected());
 
-    for (RefPtr currentNode = &node; currentNode; currentNode = NodeTraversal::next(*currentNode, &node)) {
+    for (RefPtr currentNode = node; currentNode; currentNode = NodeTraversal::next(*currentNode, &node)) {
         auto result = currentNode->insertedIntoAncestor(Node::InsertionType { /* connectedToDocument */ true, treeScopeChange == TreeScopeChange::Changed }, parentOfInsertedTree);
         if (result == Node::InsertedIntoAncestorResult::NeedsPostInsertionCallback)
             postInsertionNotificationTargets.append(*currentNode);
@@ -64,7 +64,7 @@ static void notifyNodeInsertedIntoTree(ContainerNode& parentOfInsertedTree, Node
     ASSERT(!parentOfInsertedTree.isConnected());
     ASSERT(!node.isConnected());
 
-    for (RefPtr currentNode = &node; currentNode; currentNode = NodeTraversal::next(*currentNode, &node)) {
+    for (RefPtr currentNode = node; currentNode; currentNode = NodeTraversal::next(*currentNode, &node)) {
         auto result = currentNode->insertedIntoAncestor(Node::InsertionType { /* connectedToDocument */ false, treeScopeChange == TreeScopeChange::Changed }, parentOfInsertedTree);
         UNUSED_PARAM(result);
         if (RefPtr root = currentNode->shadowRoot())
@@ -112,7 +112,7 @@ static RemovedSubtreeResult notifyNodeRemovedFromDocument(ContainerNode& oldPare
     RemovedSubtreeObservability observability = RemovedSubtreeObservability::NotObservable;
     auto canDelayNodeDeletion = ContainerNode::CanDelayNodeDeletion::Yes;
     unsigned subTreeSize = 0;
-    for (RefPtr currentNode = &node; currentNode; currentNode = NodeTraversal::next(*currentNode)) {
+    for (RefPtr currentNode = node; currentNode; currentNode = NodeTraversal::next(*currentNode)) {
         ++subTreeSize;
         currentNode->removedFromAncestor(Node::RemovalType { /* disconnectedFromDocument */ true, treeScopeChange == TreeScopeChange::Changed }, oldParentOfRemovedTree);
         updateCanDelayNodeDeletion(canDelayNodeDeletion, AsyncNodeDeletionQueue::canNodeBeDeletedAsync(node));
@@ -134,7 +134,7 @@ static RemovedSubtreeResult notifyNodeRemovedFromTree(ContainerNode& oldParentOf
     unsigned subTreeSize = 0;
     auto canDelayNodeDeletion = ContainerNode::CanDelayNodeDeletion::Yes;
     RemovedSubtreeObservability observability = RemovedSubtreeObservability::NotObservable;
-    for (RefPtr currentNode = &node; currentNode; currentNode = NodeTraversal::next(*currentNode)) {
+    for (RefPtr currentNode = node; currentNode; currentNode = NodeTraversal::next(*currentNode)) {
         ++subTreeSize;
         currentNode->removedFromAncestor(Node::RemovalType { /* disconnectedFromDocument */ false, treeScopeChange == TreeScopeChange::Changed }, oldParentOfRemovedTree);
         updateCanDelayNodeDeletion(canDelayNodeDeletion, AsyncNodeDeletionQueue::canNodeBeDeletedAsync(node));

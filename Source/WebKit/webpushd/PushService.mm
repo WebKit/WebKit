@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/MakeString.h>
@@ -89,7 +90,7 @@ static void performAfterFirstUnlock(Function<void()>&& function)
         RELEASE_LOG(Push, "Device has unlocked. Running initialization.");
 
         for (auto& function : functions.get())
-            WorkQueue::protectedMain()->dispatch(WTFMove(function));
+            WorkQueue::mainSingleton().dispatch(WTFMove(function));
         functions->clear();
 
         if (notifyToken != NOTIFY_TOKEN_INVALID) {
@@ -107,7 +108,7 @@ static void performAfterFirstUnlock(Function<void()>&& function)
     RELEASE_LOG(Push, "Device is locked. Delaying init until it unlocks for the first time.");
 
     if (notifyToken == NOTIFY_TOKEN_INVALID) {
-        notify_register_dispatch(kMobileKeyBagLockStatusNotifyToken, &notifyToken, dispatch_get_main_queue(), ^(int token) {
+        notify_register_dispatch(kMobileKeyBagLockStatusNotifyToken, &notifyToken, mainDispatchQueueSingleton(), ^(int token) {
             if (!notify_is_valid_token(token) || !hasUnlockedAtLeastOnce())
                 return;
             runFunctions();
@@ -419,7 +420,7 @@ void SubscribeRequest::startImpl(IsRetry isRetry)
                 return;
             }
 
-            auto clientKeys = protectedThis->service().protectedConnection()->generateClientKeys();
+            auto clientKeys = protectedThis->service().connection().generateClientKeys();
             IGNORE_CLANG_WARNINGS_BEGIN("missing-designated-field-initializers")
             PushRecord record {
                 .subscriptionSetIdentifier = protectedThis->m_identifier,
@@ -460,7 +461,7 @@ void SubscribeRequest::attemptToRecoverFromTopicAlreadyInFilterError(String&& to
 #if !HAVE(APPLE_PUSH_SERVICE_URL_TOKEN_SUPPORT)
     UNUSED_PARAM(topic);
 #else
-    WorkQueue::protectedMain()->dispatch([weakThis = WeakPtr { *this }, topic = WTFMove(topic)]() mutable {
+    WorkQueue::mainSingleton().dispatch([weakThis = WeakPtr { *this }, topic = WTFMove(topic)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -473,7 +474,7 @@ void SubscribeRequest::attemptToRecoverFromTopicAlreadyInFilterError(String&& to
         connection->setIgnoredTopics(WTFMove(augmentedTopics));
         connection->setIgnoredTopics(WTFMove(originalTopics));
 
-        WorkQueue::protectedMain()->dispatch([weakThis = WTFMove(weakThis)]() mutable {
+        WorkQueue::mainSingleton().dispatch([weakThis = WTFMove(weakThis)]() mutable {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->startImpl(IsRetry::Yes);
         });
@@ -586,7 +587,7 @@ void PushService::finishedPushServiceRequest(PushServiceRequestMap& map, PushSer
         nextRequest = requestQueue.first().copyRef();
 
     // Even if there's no next request to start, hold on to currentRequest until the next turn of the run loop since we're in the middle of executing the finish() member function of currentRequest.
-    WorkQueue::protectedMain()->dispatch([currentRequest = WTFMove(currentRequest), nextRequest = WTFMove(nextRequest)] {
+    WorkQueue::mainSingleton().dispatch([currentRequest = WTFMove(currentRequest), nextRequest = WTFMove(nextRequest)] {
         if (nextRequest)
             nextRequest->start();
     });
@@ -653,7 +654,7 @@ void PushService::incrementSilentPushCount(const PushSubscriptionSetIdentifier& 
         return;
     }
 
-    protectedDatabase()->incrementSilentPushCount(identifier, securityOrigin, [weakThis = WeakPtr { *this }, identifier, securityOrigin, handler = WTFMove(handler)](unsigned silentPushCount) mutable {
+    m_database->incrementSilentPushCount(identifier, securityOrigin, [weakThis = WeakPtr { *this }, identifier, securityOrigin, handler = WTFMove(handler)](unsigned silentPushCount) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return handler(0);
@@ -678,7 +679,7 @@ void PushService::setPushesEnabledForSubscriptionSetAndOrigin(const PushSubscrip
         return handler();
     }
 
-    protectedDatabase()->setPushesEnabledForOrigin(identifier, securityOrigin, enabled, [weakThis = WeakPtr { *this }, handler = WTFMove(handler)](bool recordsChanged) mutable {
+    m_database->setPushesEnabledForOrigin(identifier, securityOrigin, enabled, [weakThis = WeakPtr { *this }, handler = WTFMove(handler)](bool recordsChanged) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !recordsChanged)
             return handler();
@@ -724,15 +725,15 @@ void PushService::removeRecordsImpl(const PushSubscriptionSetIdentifier& identif
     };
 
     if (securityOrigin)
-        protectedDatabase()->removeRecordsBySubscriptionSetAndSecurityOrigin(identifier, *securityOrigin, WTFMove(removedRecordsHandler));
+        m_database->removeRecordsBySubscriptionSetAndSecurityOrigin(identifier, *securityOrigin, WTFMove(removedRecordsHandler));
     else
-        protectedDatabase()->removeRecordsBySubscriptionSet(identifier, WTFMove(removedRecordsHandler));
+        m_database->removeRecordsBySubscriptionSet(identifier, WTFMove(removedRecordsHandler));
 }
 
 void PushService::removeRecordsForBundleIdentifierAndDataStore(const String& bundleIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, CompletionHandler<void(unsigned)>&& handler)
 {
     RELEASE_LOG(Push, "Removing push subscriptions associated with %{public}s | ds: %{public}s", bundleIdentifier.utf8().data(), dataStoreIdentifier ? dataStoreIdentifier->toString().ascii().data() : "default");
-    protectedDatabase()->removeRecordsByBundleIdentifierAndDataStore(bundleIdentifier, dataStoreIdentifier, [weakThis = WeakPtr { *this }, handler = WTFMove(handler)](auto&& removedRecords) mutable {
+    m_database->removeRecordsByBundleIdentifierAndDataStore(bundleIdentifier, dataStoreIdentifier, [weakThis = WeakPtr { *this }, handler = WTFMove(handler)](auto&& removedRecords) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return handler(removedRecords.size());
@@ -754,7 +755,7 @@ void PushService::removeRecordsForBundleIdentifierAndDataStore(const String& bun
 
 void PushService::updateSubscriptionSetState(const String& allowedBundleIdentifier, const HashSet<String>& installedWebClipIdentifiers, CompletionHandler<void()>&& completionHandler)
 {
-    protectedDatabase()->getPushSubscriptionSetRecords([weakThis = WeakPtr { *this }, allowedBundleIdentifier, installedWebClipIdentifiers, completionHandler = WTFMove(completionHandler)](auto&& records) mutable {
+    m_database->getPushSubscriptionSetRecords([weakThis = WeakPtr { *this }, allowedBundleIdentifier, installedWebClipIdentifiers, completionHandler = WTFMove(completionHandler)](auto&& records) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return completionHandler();
@@ -805,7 +806,7 @@ void PushService::updateSubscriptionSetState(const String& allowedBundleIdentifi
 
 void PushService::updateTopicLists(CompletionHandler<void()>&& completionHandler)
 {
-    protectedDatabase()->getTopics([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](auto&& topics) mutable {
+    m_database->getTopics([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](auto&& topics) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return completionHandler();
@@ -813,7 +814,7 @@ void PushService::updateTopicLists(CompletionHandler<void()>&& completionHandler
         PushServiceConnection::TopicLists topicLists;
         topicLists.enabledTopics = WTFMove(topics.enabledTopics);
         topicLists.ignoredTopics = WTFMove(topics.ignoredTopics);
-        protectedThis->protectedConnection()->setTopicLists(WTFMove(topicLists));
+        protectedThis->m_connection->setTopicLists(WTFMove(topicLists));
         protectedThis->m_topicCount = topicLists.enabledTopics.size() + topicLists.ignoredTopics.size();
         completionHandler();
     });
@@ -902,12 +903,12 @@ static std::optional<RawPushMessage> makeRawPushMessage(NSString *topic, NSDicti
 
 void PushService::setPublicTokenForTesting(Vector<uint8_t>&& token)
 {
-    protectedConnection()->setPublicTokenForTesting(WTFMove(token));
+    m_connection->setPublicTokenForTesting(WTFMove(token));
 }
 
 void PushService::didReceivePublicToken(Vector<uint8_t>&& token)
 {
-    protectedDatabase()->updatePublicToken(token, [weakThis = WeakPtr { *this }](auto result) mutable {
+    m_database->updatePublicToken(token, [weakThis = WeakPtr { *this }](auto result) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -930,7 +931,7 @@ void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo,
     if (!messageResult)
         return;
 
-    protectedDatabase()->getRecordByTopic(topic, [weakThis = WeakPtr { *this }, message = WTFMove(*messageResult), completionHandler = WTFMove(completionHandler), transaction = WTFMove(transaction)](auto&& recordResult) mutable {
+    m_database->getRecordByTopic(topic, [weakThis = WeakPtr { *this }, message = WTFMove(*messageResult), completionHandler = WTFMove(completionHandler), transaction = WTFMove(transaction)](auto&& recordResult) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return completionHandler();

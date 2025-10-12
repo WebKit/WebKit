@@ -11,15 +11,16 @@
 #ifndef MODULES_CONGESTION_CONTROLLER_INCLUDE_RECEIVE_SIDE_CONGESTION_CONTROLLER_H_
 #define MODULES_CONGESTION_CONTROLLER_INCLUDE_RECEIVE_SIDE_CONGESTION_CONTROLLER_H_
 
+#include <cstdint>
 #include <memory>
 
-#include "absl/base/nullability.h"
 #include "api/environment/environment.h"
+#include "api/media_types.h"
 #include "api/sequence_checker.h"
-#include "api/transport/network_control.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "modules/congestion_controller/remb_throttler.h"
+#include "modules/include/module_common_types.h"
 #include "modules/remote_bitrate_estimator/congestion_control_feedback_generator.h"
 #include "modules/remote_bitrate_estimator/transport_sequence_number_feedback_generator.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
@@ -39,12 +40,11 @@ class ReceiveSideCongestionController : public CallStatsObserver {
   ReceiveSideCongestionController(
       const Environment& env,
       TransportSequenceNumberFeedbackGenenerator::RtcpSender feedback_sender,
-      RembThrottler::RembSender remb_sender,
-      absl::Nullable<NetworkStateEstimator*> network_state_estimator);
+      RembThrottler::RembSender remb_sender);
 
   ~ReceiveSideCongestionController() override = default;
 
-  void EnablSendCongestionControlFeedbackAccordingToRfc8888();
+  void EnableSendCongestionControlFeedbackAccordingToRfc8888();
 
   void OnReceivedPacket(const RtpPacketReceived& packet, MediaType media_type);
 
@@ -57,8 +57,6 @@ class ReceiveSideCongestionController : public CallStatsObserver {
   // Ensures the remote party is notified of the receive bitrate no larger than
   // `bitrate` using RTCP REMB.
   void SetMaxDesiredReceiveBitrate(DataRate bitrate);
-
-  void SetTransportOverhead(DataSize overhead_per_packet);
 
   // Returns latest receive side bandwidth estimation.
   // Returns zero if receive side bandwidth estimation is unavailable.

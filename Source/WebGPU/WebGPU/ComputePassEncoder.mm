@@ -91,20 +91,7 @@ struct BindGroupId {
 };
 static bool addTextureToActiveResources(const void* resourceAddress, id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> initialUsage, TextureEntryMapContainer& usagesForResource, BindGroupId bindGroup, uint32_t baseMipLevel, uint32_t baseArrayLayer, WGPUTextureAspect aspect)
 {
-    if (isTextureBindGroupEntryUsage(initialUsage)) {
-        ASSERT([mtlResource conformsToProtocol:@protocol(MTLTexture)]);
-        id<MTLTexture> textureView = (id<MTLTexture>)mtlResource;
-        if (id<MTLTexture> parentTexture = textureView.parentTexture) {
-            mtlResource = parentTexture;
-            ASSERT(textureView.parentRelativeLevel <= std::numeric_limits<uint32_t>::max() && textureView.parentRelativeSlice <= std::numeric_limits<uint32_t>::max());
-            if (baseMipLevel || baseArrayLayer) {
-                ASSERT(textureView.parentRelativeLevel == baseMipLevel);
-                ASSERT(textureView.parentRelativeSlice == baseArrayLayer);
-            }
-            baseMipLevel = static_cast<uint32_t>(textureView.parentRelativeLevel);
-            baseArrayLayer = static_cast<uint32_t>(textureView.parentRelativeSlice);
-        }
-    }
+    UNUSED_PARAM(mtlResource);
 
     auto mapKey = BindGroup::makeEntryMapKey(baseMipLevel, baseArrayLayer, aspect);
     EntryUsage resourceUsage = initialUsage;
@@ -156,6 +143,13 @@ static bool addResourceToActiveResources(const TextureView& texture, OptionSet<B
     return addTextureToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, usagesForResource, bindGroup, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_DepthOnly) && addTextureToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, usagesForResource, bindGroup, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_StencilOnly);
 }
 
+static bool addResourceToActiveResources(const Texture& texture, OptionSet<BindGroupEntryUsage> resourceUsage, BindGroupId bindGroup, auto& usagesForResource)
+{
+    constexpr uint32_t baseMipLevel = 0;
+    constexpr uint32_t baseArrayLayer = 0;
+    return addTextureToActiveResources(&texture, texture.texture(), resourceUsage, usagesForResource, bindGroup, baseMipLevel, baseArrayLayer, WGPUTextureAspect_DepthOnly) && addTextureToActiveResources(&texture, texture.texture(), resourceUsage, usagesForResource, bindGroup, baseMipLevel, baseArrayLayer, WGPUTextureAspect_StencilOnly);
+}
+
 static bool addResourceToActiveResources(const BindGroupEntryUsageData::Resource& resource, OptionSet<BindGroupEntryUsage> resourceUsage, BindGroupId bindGroup, EntryMapContainer& usagesForResource, TextureEntryMapContainer& textureUsagesForResource, CommandEncoder& parentEncoder)
 {
     return WTF::switchOn(resource, [&](const RefPtr<Buffer>& buffer) {
@@ -164,6 +158,10 @@ static bool addResourceToActiveResources(const BindGroupEntryUsageData::Resource
                 buffer->indirectBufferInvalidated(parentEncoder);
             return addResourceToActiveResources(buffer.get(), resourceUsage, usagesForResource);
         }
+        return true;
+    }, [&](const RefPtr<const Texture>& texture) {
+        if (texture.get())
+            return addResourceToActiveResources(*texture.get(), resourceUsage, bindGroup, textureUsagesForResource);
         return true;
     }, [&](const RefPtr<const TextureView>& textureView) {
         if (textureView.get())
@@ -208,7 +206,7 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
             protectedParentEncoder()->rebindSamplersPreCommit(group.get());
 
         if (!group->previouslyValidatedBindGroup(bindGroupIndex, pipelineIdentifier, m_maxDynamicOffsetAtIndex[bindGroupIndex])) {
-            if (group->makeSubmitInvalid(ShaderStage::Compute, pipelineLayout->optionalBindGroupLayout(bindGroupIndex))) {
+            if (group->makeSubmitInvalid(ShaderStage::Compute, pipelineLayout->protectedOptionalBindGroupLayout(bindGroupIndex).get())) {
                 protectedParentEncoder()->makeSubmitInvalid();
                 return;
             }
@@ -293,8 +291,8 @@ id<MTLBuffer> ComputePassEncoder::runPredispatchIndirectCallValidation(const Buf
     static id<MTLFunction> function = nil;
     id<MTLDevice> mtlDevice = m_device->device();
     static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
-        auto dimensionMax = m_device->limits().maxComputeWorkgroupsPerDimension;
+    std::call_once(onceFlag, [protectedThis = Ref { *this }, &mtlDevice] {
+        auto dimensionMax = protectedThis->m_device->limits().maxComputeWorkgroupsPerDimension;
         MTLCompileOptions* options = [MTLCompileOptions new];
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         options.fastMathEnabled = YES;
@@ -440,6 +438,9 @@ static void setCommandEncoder(const BindGroupEntryUsageData::Resource& resource,
     WTF::switchOn(resource, [&](const RefPtr<Buffer>& buffer) {
         if (buffer)
             buffer->setCommandEncoder(parentEncoder);
+        }, [&](const RefPtr<const Texture>& texture) {
+            if (texture)
+                texture->setCommandEncoder(parentEncoder);
         }, [&](const RefPtr<const TextureView>& textureView) {
             if (textureView)
                 textureView->setCommandEncoder(parentEncoder);
@@ -453,7 +454,7 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* grou
 {
     RETURN_IF_FINISHED();
 
-    auto dynamicOffsetCount = (groupPtr && groupPtr->bindGroupLayout()) ? groupPtr->bindGroupLayout()->dynamicBufferCount() : 0;
+    auto dynamicOffsetCount = (groupPtr && groupPtr->bindGroupLayout()) ? groupPtr->protectedBindGroupLayout()->dynamicBufferCount() : 0;
     if (groupIndex >= m_device->limits().maxBindGroups || (dynamicOffsets && dynamicOffsetCount != dynamicOffsets->size())) {
         makeInvalid(@"GPUComputePassEncoder.setBindGroup: groupIndex >= limits.maxBindGroups");
         return;
@@ -514,9 +515,8 @@ void ComputePassEncoder::setPipeline(const ComputePipeline& pipeline)
         return;
     }
 
-    m_pipeline = &pipeline;
-    m_computeDynamicOffsets.resize(m_pipeline->protectedPipelineLayout()->sizeOfComputeDynamicOffsets());
-    m_computeDynamicOffsets.fill(0);
+    m_pipeline = pipeline;
+    m_computeDynamicOffsets.fill(0, m_pipeline->protectedPipelineLayout()->sizeOfComputeDynamicOffsets());
     m_maxDynamicOffsetAtIndex.fill(0);
 
     ASSERT(pipeline.computePipelineState());

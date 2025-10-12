@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2024 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@ import traceback
 
 from ews.common.bugzilla import Bugzilla
 from ews.common.buildbot import Buildbot
+from ews.common.github import GitHubEWS
 from ews.config import ERR_BUG_CLOSED, ERR_OBSOLETE_CHANGE, ERR_UNABLE_TO_FETCH_CHANGE
 from ews.models.patch import Change
 from ews.views.statusbubble import StatusBubble
@@ -46,6 +47,8 @@ class FetchLoop():
         thread.start()
 
     def run(self):
+        if util.load_password('ENABLE_APPLE_INTERNAL_BUILDS') is not None:
+            GitHubEWS.update_approved_user_list_for_apple_internal_builds()
         Buildbot.update_icons_for_queues_mapping()
         Buildbot.update_builder_name_to_id_mapping()
         custom_suffix = util.get_custom_suffix()

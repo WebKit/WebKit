@@ -123,6 +123,12 @@ srtp_err_status_t srtp_auth_type_test(const srtp_auth_type_t *at,
             return status;
         }
 
+        status = srtp_auth_start(a);
+        if (status) {
+            srtp_auth_dealloc(a);
+            return status;
+        }
+
         /* zeroize tag then compute */
         octet_string_set_to_zero(tag, test_case->tag_length_octets);
         status = srtp_auth_compute(a, test_case->data,

@@ -451,8 +451,8 @@ static int vp8_rdcost_mby(MACROBLOCK *mb) {
   ENTROPY_CONTEXT *ta;
   ENTROPY_CONTEXT *tl;
 
-  memcpy(&t_above, mb->e_mbd.above_context, sizeof(ENTROPY_CONTEXT_PLANES));
-  memcpy(&t_left, mb->e_mbd.left_context, sizeof(ENTROPY_CONTEXT_PLANES));
+  t_above = *mb->e_mbd.above_context;
+  t_left = *mb->e_mbd.left_context;
 
   ta = (ENTROPY_CONTEXT *)&t_above;
   tl = (ENTROPY_CONTEXT *)&t_left;
@@ -597,8 +597,8 @@ static int rd_pick_intra4x4mby_modes(MACROBLOCK *mb, int *Rate, int *rate_y,
   ENTROPY_CONTEXT *tl;
   const int *bmode_costs;
 
-  memcpy(&t_above, mb->e_mbd.above_context, sizeof(ENTROPY_CONTEXT_PLANES));
-  memcpy(&t_left, mb->e_mbd.left_context, sizeof(ENTROPY_CONTEXT_PLANES));
+  t_above = *mb->e_mbd.above_context;
+  t_left = *mb->e_mbd.left_context;
 
   ta = (ENTROPY_CONTEXT *)&t_above;
   tl = (ENTROPY_CONTEXT *)&t_left;
@@ -689,8 +689,8 @@ static int rd_cost_mbuv(MACROBLOCK *mb) {
   ENTROPY_CONTEXT *ta;
   ENTROPY_CONTEXT *tl;
 
-  memcpy(&t_above, mb->e_mbd.above_context, sizeof(ENTROPY_CONTEXT_PLANES));
-  memcpy(&t_left, mb->e_mbd.left_context, sizeof(ENTROPY_CONTEXT_PLANES));
+  t_above = *mb->e_mbd.above_context;
+  t_left = *mb->e_mbd.left_context;
 
   ta = (ENTROPY_CONTEXT *)&t_above;
   tl = (ENTROPY_CONTEXT *)&t_left;
@@ -962,8 +962,8 @@ static void rd_check_segment(VP8_COMP *cpi, MACROBLOCK *x, BEST_SEG_INFO *bsi,
   ENTROPY_CONTEXT_PLANES t_above, t_left;
   ENTROPY_CONTEXT_PLANES t_above_b, t_left_b;
 
-  memcpy(&t_above, x->e_mbd.above_context, sizeof(ENTROPY_CONTEXT_PLANES));
-  memcpy(&t_left, x->e_mbd.left_context, sizeof(ENTROPY_CONTEXT_PLANES));
+  t_above = *x->e_mbd.above_context;
+  t_left = *x->e_mbd.left_context;
 
   vp8_zero(t_above_b);
   vp8_zero(t_left_b);
@@ -1003,8 +1003,8 @@ static void rd_check_segment(VP8_COMP *cpi, MACROBLOCK *x, BEST_SEG_INFO *bsi,
       ENTROPY_CONTEXT *ta_s;
       ENTROPY_CONTEXT *tl_s;
 
-      memcpy(&t_above_s, &t_above, sizeof(ENTROPY_CONTEXT_PLANES));
-      memcpy(&t_left_s, &t_left, sizeof(ENTROPY_CONTEXT_PLANES));
+      t_above_s = t_above;
+      t_left_s = t_left;
 
       ta_s = (ENTROPY_CONTEXT *)&t_above_s;
       tl_s = (ENTROPY_CONTEXT *)&t_left_s;
@@ -1146,13 +1146,13 @@ static void rd_check_segment(VP8_COMP *cpi, MACROBLOCK *x, BEST_SEG_INFO *bsi,
         mode_selected = this_mode;
         best_label_rd = this_rd;
 
-        memcpy(&t_above_b, &t_above_s, sizeof(ENTROPY_CONTEXT_PLANES));
-        memcpy(&t_left_b, &t_left_s, sizeof(ENTROPY_CONTEXT_PLANES));
+        t_above_b = t_above_s;
+        t_left_b = t_left_s;
       }
     } /*for each 4x4 mode*/
 
-    memcpy(&t_above, &t_above_b, sizeof(ENTROPY_CONTEXT_PLANES));
-    memcpy(&t_left, &t_left_b, sizeof(ENTROPY_CONTEXT_PLANES));
+    t_above = t_above_b;
+    t_left = t_left_b;
 
     labels2mode(x, labels, i, mode_selected, &mode_mv[mode_selected],
                 bsi->ref_mv, x->mvcost);
@@ -1736,9 +1736,8 @@ static void update_best_mode(BEST_MODE *best_mode, int this_rd,
              (rd->distortion2 - rd->distortion_uv));
 
   best_mode->rd = this_rd;
-  memcpy(&best_mode->mbmode, &x->e_mbd.mode_info_context->mbmi,
-         sizeof(MB_MODE_INFO));
-  memcpy(&best_mode->partition, x->partition_info, sizeof(PARTITION_INFO));
+  best_mode->mbmode = x->e_mbd.mode_info_context->mbmi;
+  best_mode->partition = *x->partition_info;
 
   if ((this_mode == B_PRED) || (this_mode == SPLITMV)) {
     int i;
@@ -2348,8 +2347,7 @@ void vp8_rd_pick_inter_mode(VP8_COMP *cpi, MACROBLOCK *x, int recon_yoffset,
   }
 
   /* macroblock modes */
-  memcpy(&x->e_mbd.mode_info_context->mbmi, &best_mode.mbmode,
-         sizeof(MB_MODE_INFO));
+  x->e_mbd.mode_info_context->mbmi = best_mode.mbmode;
 
   if (best_mode.mbmode.mode == B_PRED) {
     for (i = 0; i < 16; ++i) {
@@ -2362,7 +2360,7 @@ void vp8_rd_pick_inter_mode(VP8_COMP *cpi, MACROBLOCK *x, int recon_yoffset,
       xd->mode_info_context->bmi[i].mv.as_int = best_mode.bmodes[i].mv.as_int;
     }
 
-    memcpy(x->partition_info, &best_mode.partition, sizeof(PARTITION_INFO));
+    *x->partition_info = best_mode.partition;
 
     x->e_mbd.mode_info_context->mbmi.mv.as_int =
         x->partition_info->bmi[15].mv.as_int;

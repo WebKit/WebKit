@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,7 +83,7 @@ inline void* handleHostCall(VM& vm, JSCell* owner, CallFrame* calleeFrame, JSVal
 
     calleeFrame->setCodeBlock(nullptr);
 
-    if (callLinkInfo->specializationKind() == CodeForCall) {
+    if (callLinkInfo->specializationKind() == CodeSpecializationKind::CodeForCall) {
         auto callData = JSC::getCallData(callee);
         ASSERT(callData.type != CallData::Type::JS);
 
@@ -98,12 +98,12 @@ inline void* handleHostCall(VM& vm, JSCell* owner, CallFrame* calleeFrame, JSVal
         }
 
         auto* globalObject = callLinkInfo->globalObjectForSlowPath(owner);
-        calleeFrame->setCallee(globalObject->partiallyInitializedFrameCallee());
+        calleeFrame->setCallee(globalObject->zombieFrameCallee());
         ASSERT(callData.type == CallData::Type::None);
         RELEASE_AND_RETURN(scope, throwNotAFunctionErrorFromCallIC(globalObject, owner, callee, callLinkInfo));
     }
 
-    ASSERT(callLinkInfo->specializationKind() == CodeForConstruct);
+    ASSERT(callLinkInfo->specializationKind() == CodeSpecializationKind::CodeForConstruct);
 
     auto constructData = JSC::getConstructData(callee);
     ASSERT(constructData.type != CallData::Type::JS);
@@ -119,7 +119,7 @@ inline void* handleHostCall(VM& vm, JSCell* owner, CallFrame* calleeFrame, JSVal
     }
 
     auto* globalObject = callLinkInfo->globalObjectForSlowPath(owner);
-    calleeFrame->setCallee(globalObject->partiallyInitializedFrameCallee());
+    calleeFrame->setCallee(globalObject->zombieFrameCallee());
     ASSERT(constructData.type == CallData::Type::None);
     RELEASE_AND_RETURN(scope, throwNotAConstructorErrorFromCallIC(globalObject, owner, callee, callLinkInfo));
 }
@@ -147,7 +147,7 @@ ALWAYS_INLINE void* linkFor(VM& vm, JSCell* owner, CallFrame* calleeFrame, CallL
             }
             case CallLinkInfo::Mode::Monomorphic:
             case CallLinkInfo::Mode::Polymorphic: {
-                if (kind == CodeForCall) {
+                if (kind == CodeSpecializationKind::CodeForCall) {
                     linkPolymorphicCall(vm, owner, calleeFrame, *callLinkInfo, CallVariant(internalFunction));
                     break;
                 }
@@ -175,13 +175,13 @@ ALWAYS_INLINE void* linkFor(VM& vm, JSCell* owner, CallFrame* calleeFrame, CallL
     if (executable->isHostFunction()) {
         codePtr = jsToWasmICCodePtr(kind, callee);
         if (!codePtr)
-            codePtr = executable->entrypointFor(kind, MustCheckArity);
+            codePtr = executable->entrypointFor(kind, ArityCheckMode::MustCheckArity);
     } else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
         if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct) {
             auto* globalObject = callLinkInfo->globalObjectForSlowPath(owner);
-            calleeFrame->setCallee(globalObject->partiallyInitializedFrameCallee());
+            calleeFrame->setCallee(globalObject->zombieFrameCallee());
             RELEASE_AND_RETURN(throwScope, throwNotAConstructorErrorFromCallIC(globalObject, owner, callee, callLinkInfo));
         }
 
@@ -194,9 +194,9 @@ ALWAYS_INLINE void* linkFor(VM& vm, JSCell* owner, CallFrame* calleeFrame, CallL
 
         ArityCheckMode arity;
         if (calleeFrame->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo->isVarargs())
-            arity = MustCheckArity;
+            arity = ArityCheckMode::MustCheckArity;
         else
-            arity = ArityCheckNotRequired;
+            arity = ArityCheckMode::ArityCheckNotRequired;
         codePtr = functionExecutable->entrypointFor(kind, arity);
     }
 
@@ -210,7 +210,7 @@ ALWAYS_INLINE void* linkFor(VM& vm, JSCell* owner, CallFrame* calleeFrame, CallL
     }
     case CallLinkInfo::Mode::Monomorphic:
     case CallLinkInfo::Mode::Polymorphic: {
-        if (kind == CodeForCall) {
+        if (kind == CodeSpecializationKind::CodeForCall) {
             linkPolymorphicCall(vm, owner, calleeFrame, *callLinkInfo, CallVariant(callee));
             break;
         }
@@ -252,7 +252,7 @@ ALWAYS_INLINE void* virtualForWithFunction(VM& vm, JSCell* owner, CallFrame* cal
 
         if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct) {
             auto* globalObject = callLinkInfo->globalObjectForSlowPath(owner);
-            calleeFrame->setCallee(globalObject->partiallyInitializedFrameCallee());
+            calleeFrame->setCallee(globalObject->zombieFrameCallee());
             RELEASE_AND_RETURN(throwScope, throwNotAConstructorErrorFromCallIC(globalObject, owner, function, callLinkInfo));
         }
 
@@ -263,7 +263,7 @@ ALWAYS_INLINE void* virtualForWithFunction(VM& vm, JSCell* owner, CallFrame* cal
 
     // FIXME: Support wasm IC.
     // https://bugs.webkit.org/show_bug.cgi?id=220339
-    return executable->entrypointFor(kind, MustCheckArity).taggedPtr();
+    return executable->entrypointFor(kind, ArityCheckMode::MustCheckArity).taggedPtr();
 }
 
 } // namespace JSC

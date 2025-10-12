@@ -11,9 +11,11 @@
 #ifndef RTC_BASE_TEST_CERTIFICATE_VERIFIER_H_
 #define RTC_BASE_TEST_CERTIFICATE_VERIFIER_H_
 
+#include <cstddef>
+
 #include "rtc_base/ssl_certificate.h"
 
-namespace rtc {
+namespace webrtc {
 
 class TestCertificateVerifier : public SSLCertificateVerifier {
  public:
@@ -29,6 +31,7 @@ class TestCertificateVerifier : public SSLCertificateVerifier {
   bool verify_certificate_ = true;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_TEST_CERTIFICATE_VERIFIER_H_

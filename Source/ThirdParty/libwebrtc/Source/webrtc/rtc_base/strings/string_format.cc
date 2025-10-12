@@ -11,10 +11,12 @@
 #include "rtc_base/strings/string_format.h"
 
 #include <cstdarg>
+#include <cstdio>
+#include <string>
 
 #include "rtc_base/checks.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 
@@ -38,4 +40,4 @@ std::string StringFormat(const char* fmt, ...) {
   return std::string(buffer);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

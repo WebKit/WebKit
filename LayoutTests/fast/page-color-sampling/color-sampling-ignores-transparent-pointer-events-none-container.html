@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true TopContentInsetBackgroundCanChangeAfterScrolling=true ] -->
 <html>
 <head>
     <meta charset="utf-8">
@@ -9,16 +9,6 @@
             width: 100%;
             height: 100%;
             margin: 0;
-        }
-
-        .content {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            top: 0;
-            overflow-y: scroll;
-            padding: 0 1em;
         }
 
         .box {
@@ -49,7 +39,7 @@
             top: 0;
             left: 0;
             right: 0;
-            bottom: 0;
+            height: 50px;
             color: white;
             text-align: center;
             line-height: 100vh;
@@ -81,9 +71,9 @@
 
         colorsAfterShowingPopup = await UIHelper.fixedContainerEdgeColors();
         shouldBeEqualToString("colorsAfterShowingPopup.top", "rgb(255, 59, 48)");
-        shouldBeEqualToString("colorsAfterShowingPopup.left", "rgb(255, 59, 48)");
-        shouldBeEqualToString("colorsAfterShowingPopup.right", "rgb(255, 59, 48)");
-        shouldBeEqualToString("colorsAfterShowingPopup.bottom", "rgb(255, 59, 48)");
+        shouldBeNull("colorsAfterShowingPopup.left");
+        shouldBeNull("colorsAfterShowingPopup.right");
+        shouldBeEqualToString("colorsAfterShowingPopup.bottom", "rgb(0, 122, 255)");
 
         finishJSTest();
     });

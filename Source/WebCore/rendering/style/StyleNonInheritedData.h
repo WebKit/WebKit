@@ -43,7 +43,7 @@ class StyleRareNonInheritedData;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleNonInheritedData);
 class StyleNonInheritedData : public RefCounted<StyleNonInheritedData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleNonInheritedData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleNonInheritedData, StyleNonInheritedData);
 public:
     static Ref<StyleNonInheritedData> create();
     Ref<StyleNonInheritedData> copy() const;

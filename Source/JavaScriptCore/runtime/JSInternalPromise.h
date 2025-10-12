@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSPromise.h"
+#include <JavaScriptCore/JSPromise.h>
 
 namespace JSC {
 
@@ -49,7 +49,7 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JS_EXPORT_PRIVATE JSInternalPromise* then(JSGlobalObject*, JSFunction* = nullptr, JSFunction* = nullptr);
+    JS_EXPORT_PRIVATE JSInternalPromise* then(JSGlobalObject*, JSFunction*, JSFunction*);
 
     JS_EXPORT_PRIVATE JSInternalPromise* rejectWithCaughtException(JSGlobalObject*, ThrowScope&);
 

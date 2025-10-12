@@ -77,6 +77,8 @@ public:
 private:
 #if PLATFORM(MAC)
     explicit PageBanner(CALayer *, int height, std::unique_ptr<Client>&&);
+
+    RefPtr<WebPage> protectedWebPage();
 #endif
 
     std::unique_ptr<Client> m_client;

@@ -1,33 +1,3 @@
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: Cannot load image http://127.0.0.1:8800/preload/resources/square.png?label=image due to access control checks.
-CONSOLE MESSAGE: Refused to load http://127.0.0.1:8801/preload/resources/square.png?pipe=header(Access-Control-Allow-Origin,*) because it appears in neither the img-src directive nor the default-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Cannot load image http://localhost:8800/common/redirect.py?location=http%3A%2F%2F127.0.0.1%3A8801%2Fpreload%2Fresources%2Fsquare.png%3Fpipe%3Dheader%28Access-Control-Allow-Origin%2C*%29&label=image due to access control checks.
-CONSOLE MESSAGE: Refused to load http://127.0.0.1:8801/preload/resources/square.png?pipe=header(Access-Control-Allow-Origin,*) because it appears in neither the img-src directive nor the default-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: Refused to load http://127.0.0.1:8801/preload/resources/dummy.css?pipe=header(Access-Control-Allow-Origin,*) because it appears in neither the style-src directive nor the default-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
-CONSOLE MESSAGE: Refused to load http://127.0.0.1:8801/preload/resources/dummy.js?pipe=header(Access-Control-Allow-Origin,*) because it appears in neither the script-src directive nor the default-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/preload/resources/dummy.xml?label=xhr due to access control checks.
-CONSOLE MESSAGE: Refused to connect to http://127.0.0.1:8801/preload/resources/dummy.xml?pipe=header(Access-Control-Allow-Origin,*) because it appears in neither the connect-src directive nor the default-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Blocked by Content Security Policy.
-CONSOLE MESSAGE: Refused to connect to http://127.0.0.1:8801/preload/resources/dummy.xml?pipe=header(Access-Control-Allow-Origin,*) because it appears in neither the connect-src directive nor the default-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Blocked by Content Security Policy.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8801/preload/resources/dummy.xml?pipe=header(Access-Control-Allow-Origin,*) due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/preload/resources/dummy.xml?label=fetch due to access control checks.
-CONSOLE MESSAGE: Refused to connect to http://127.0.0.1:8801/preload/resources/dummy.xml?pipe=header(Access-Control-Allow-Origin,*) because it appears in neither the connect-src directive nor the default-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Blocked by Content Security Policy.
-CONSOLE MESSAGE: Refused to connect to http://127.0.0.1:8801/preload/resources/dummy.xml?pipe=header(Access-Control-Allow-Origin,*) because it appears in neither the connect-src directive nor the default-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Blocked by Content Security Policy.
-CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8801/preload/resources/dummy.xml?pipe=header(Access-Control-Allow-Origin,*) due to access control checks.
-CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/preload/resources/dummy.js?pipe=header%28Content-Type%2Cnot%2Fcss%29&label=style' because non CSS MIME types are not allowed in strict mode.
-CONSOLE MESSAGE: Refused to execute http://localhost:8800/preload/resources/dummy.css?pipe=header%28Content-Type%2Cimage%2Fnot-javascript%29&label=script as script because image/not-javascript is not a script MIME type.
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/preload/resources/dummy.js?pipe=header%28Content-Type%2Cnot%2Fcss%29%7Cheader%28X-Content-Type-Options%2Cnosniff%29&label=style' because non CSS MIME types are not allowed in strict mode.
-CONSOLE MESSAGE: Refused to execute http://localhost:8800/preload/resources/dummy.css?pipe=header%28Content-Type%2Ctext%2Fnotjavascript%29%7Cheader%28X-Content-Type-Options%2Cnosniff%29&label=script as script because "X-Content-Type-Options: nosniff" was given and its Content-Type is not a script MIME type.
 
 PASS success (image): preload events
 FAIL success (image): main assert_less_than_equal: http://localhost:8800/preload/resources/square.png?label=image should be downloaded from network at most once expected a number less than or equal to 1 but got 2

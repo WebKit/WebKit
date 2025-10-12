@@ -55,14 +55,14 @@ void VisitedLinkStore::removePage(Page& page)
 
 void VisitedLinkStore::invalidateStylesForAllLinks()
 {
-    for (auto& page : m_pages)
-        page.invalidateStylesForAllLinks();
+    for (Ref page : m_pages)
+        page->invalidateStylesForAllLinks();
 }
 
 void VisitedLinkStore::invalidateStylesForLink(SharedStringHash linkHash)
 {
-    for (auto& page : m_pages)
-        page.invalidateStylesForLink(linkHash);
+    for (Ref page : m_pages)
+        page->invalidateStylesForLink(linkHash);
 }
 
 } // namespace WebCore

@@ -36,6 +36,7 @@
 // * No tests with min_allocator and no tests counting allocations.
 //   Flat sets currently don't support allocators.
 
+#include <algorithm>
 #include <array>
 #include <deque>
 #include <forward_list>
@@ -43,9 +44,12 @@
 #include <iterator>
 #include <list>
 #include <string>
+#include <tuple>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
-#include "rtc_base/containers/identity.h"
+#include "absl/algorithm/container.h"
 #include "rtc_base/containers/move_only_int.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -157,22 +161,30 @@ struct LessByFirst {
 // Common test trees.
 template <typename ContainerT>
 using TypedTree = flat_tree<typename ContainerT::value_type,
-                            identity,
+                            std::identity,
                             std::less<>,
                             ContainerT>;
 using IntTree = TypedTree<std::vector<int>>;
 using IntPair = std::pair<int, int>;
-using IntPairTree =
-    flat_tree<IntPair, identity, LessByFirst<IntPair>, std::vector<IntPair>>;
-using MoveOnlyTree =
-    flat_tree<MoveOnlyInt, identity, std::less<>, std::vector<MoveOnlyInt>>;
-using EmplaceableTree =
-    flat_tree<Emplaceable, identity, std::less<>, std::vector<Emplaceable>>;
+using IntPairTree = flat_tree<IntPair,
+                              std::identity,
+                              LessByFirst<IntPair>,
+                              std::vector<IntPair>>;
+using MoveOnlyTree = flat_tree<MoveOnlyInt,
+                               std::identity,
+                               std::less<>,
+                               std::vector<MoveOnlyInt>>;
+using EmplaceableTree = flat_tree<Emplaceable,
+                                  std::identity,
+                                  std::less<>,
+                                  std::vector<Emplaceable>>;
 using ReversedTree =
-    flat_tree<int, identity, std::greater<int>, std::vector<int>>;
+    flat_tree<int, std::identity, std::greater<int>, std::vector<int>>;
 
-using TreeWithStrangeCompare =
-    flat_tree<int, identity, NonDefaultConstructibleCompare, std::vector<int>>;
+using TreeWithStrangeCompare = flat_tree<int,
+                                         std::identity,
+                                         NonDefaultConstructibleCompare,
+                                         std::vector<int>>;
 
 using ::testing::ElementsAre;
 using ::testing::IsEmpty;
@@ -203,8 +215,8 @@ TEST(FlatTree, NoExcept) {
     MoveThrows& operator=(MoveThrows&&) noexcept(false) { return *this; }
   };
 
-  using MoveThrowsTree =
-      flat_tree<MoveThrows, identity, std::less<>, std::array<MoveThrows, 1>>;
+  using MoveThrowsTree = flat_tree<MoveThrows, std::identity, std::less<>,
+                                   std::array<MoveThrows, 1>>;
 
   static_assert(std::is_nothrow_move_constructible<IntTree>::value,
                 "Error: IntTree is not nothrow move constructible");
@@ -225,7 +237,7 @@ TEST(FlatTree, NoExcept) {
 
 TEST(FlatTree, IncompleteType) {
   struct A {
-    using Tree = flat_tree<A, identity, std::less<A>, std::vector<A>>;
+    using Tree = flat_tree<A, std::identity, std::less<A>, std::vector<A>>;
     int data;
     Tree set_with_incomplete_type;
     Tree::iterator it;
@@ -240,7 +252,8 @@ TEST(FlatTree, IncompleteType) {
 TEST(FlatTree, Stability) {
   using Pair = std::pair<int, int>;
 
-  using Tree = flat_tree<Pair, identity, LessByFirst<Pair>, std::vector<Pair>>;
+  using Tree =
+      flat_tree<Pair, std::identity, LessByFirst<Pair>, std::vector<Pair>>;
 
   // Constructors are stable.
   Tree cont({{0, 0}, {1, 0}, {0, 1}, {2, 0}, {0, 2}, {1, 1}});
@@ -388,7 +401,8 @@ TEST(FlatTree, ContainerMoveConstructor) {
   storage.push_back(Pair(1, MoveOnlyInt(0)));
   storage.push_back(Pair(2, MoveOnlyInt(1)));
 
-  using Tree = flat_tree<Pair, identity, LessByFirst<Pair>, std::vector<Pair>>;
+  using Tree =
+      flat_tree<Pair, std::identity, LessByFirst<Pair>, std::vector<Pair>>;
   Tree tree(std::move(storage));
 
   // The list should be two items long, with only the first "2" saved.
@@ -470,7 +484,8 @@ TEST(FlatTree, SortedUniqueVectorMoveConstructor) {
   storage.push_back(Pair(1, MoveOnlyInt(0)));
   storage.push_back(Pair(2, MoveOnlyInt(0)));
 
-  using Tree = flat_tree<Pair, identity, LessByFirst<Pair>, std::vector<Pair>>;
+  using Tree =
+      flat_tree<Pair, std::identity, LessByFirst<Pair>, std::vector<Pair>>;
   Tree tree(sorted_unique, std::move(storage));
 
   ASSERT_EQ(2u, tree.size());
@@ -997,7 +1012,7 @@ TYPED_TEST_P(FlatTreeTest, ErasePosition) {
   {
     using T = TemplateConstructor;
 
-    flat_tree<T, identity, std::less<>, std::vector<T>> cont;
+    flat_tree<T, std::identity, std::less<>, std::vector<T>> cont;
     T v(0);
 
     auto it = cont.find(v);

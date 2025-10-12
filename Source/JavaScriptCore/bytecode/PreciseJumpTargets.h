@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CodeBlock.h"
+#include <JavaScriptCore/CodeBlock.h>
 
 namespace JSC {
 

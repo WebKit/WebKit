@@ -28,10 +28,12 @@
 
 #pragma once
 
-#include "ChromeClient.h"
-#include "CryptoClient.h"
-#include "ExceptionOr.h"
+#include <WebCore/ChromeClient.h>
+#include <WebCore/CryptoClient.h>
+#include <WebCore/ExceptionOr.h>
+#include <WebCore/PageIdentifier.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
@@ -40,12 +42,18 @@
 // First created for SVGImage as it had no way to access the current Page (nor should it, since Images are not tied to a page).
 // See http://bugs.webkit.org/show_bug.cgi?id=5971 for the original discussion about this file.
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 
 class DiagnosticLoggingClient;
 class EditorClient;
 class HTMLImageElement;
 class PageConfiguration;
+enum class BroadcastFocusedElement : bool;
+struct FocusOptions;
 
 class EmptyChromeClient : public ChromeClient {
     WTF_MAKE_TZONE_ALLOCATED(EmptyChromeClient);
@@ -63,7 +71,7 @@ class EmptyChromeClient : public ChromeClient {
     bool canTakeFocus(FocusDirection) const final { return false; }
     void takeFocus(FocusDirection) final { }
 
-    void focusedElementChanged(Element*) final { }
+    void focusedElementChanged(Element*, LocalFrame*, FocusOptions, BroadcastFocusedElement) final { }
     void focusedFrameChanged(Frame*) final { }
 
     RefPtr<Page> createWindow(LocalFrame&, const String&, const WindowFeatures&, const NavigationAction&) final { return nullptr; }
@@ -72,22 +80,14 @@ class EmptyChromeClient : public ChromeClient {
     bool canRunModal() const final { return false; }
     void runModal() final { }
 
-    void setToolbarsVisible(bool) final { }
     bool toolbarsVisible() const final { return false; }
-
-    void setStatusbarVisible(bool) final { }
     bool statusbarVisible() const final { return false; }
-
-    void setScrollbarsVisible(bool) final { }
     bool scrollbarsVisible() const final { return false; }
-
-    void setMenubarVisible(bool) final { }
     bool menubarVisible() const final { return false; }
 
     void setResizable(bool) final { }
 
-    void addMessageToConsole(MessageSource, MessageLevel, const String&, unsigned, unsigned, const String&) final { }
-    void addMessageWithArgumentsToConsole(MessageSource, MessageLevel, const String&, std::span<const String>, unsigned, unsigned, const String&) final { }
+    void addMessageToConsole(JSC::MessageSource, JSC::MessageLevel, const String&, unsigned, unsigned, const String&) final { }
 
     bool canRunBeforeUnloadConfirmPanel() final { return false; }
     bool runBeforeUnloadConfirmPanel(String&&, LocalFrame&) final { return true; }
@@ -108,6 +108,7 @@ class EmptyChromeClient : public ChromeClient {
 
     KeyboardUIMode keyboardUIMode() final { return KeyboardAccessDefault; }
 
+    bool hasAccessoryMousePointingDevice() const final { return false; }
     bool hoverSupportedByPrimaryPointingDevice() const final { return false; };
     bool hoverSupportedByAnyAvailablePointingDevice() const final { return false; }
     std::optional<PointerCharacteristics> pointerCharacteristicsOfPrimaryPointingDevice() const final { return std::nullopt; };
@@ -140,7 +141,6 @@ class EmptyChromeClient : public ChromeClient {
     void exceededDatabaseQuota(LocalFrame&, const String&, DatabaseDetails) final { }
 
     void reachedMaxAppCacheSize(int64_t) final { }
-    void reachedApplicationCacheOriginQuota(SecurityOrigin&, int64_t) final { }
 
     RefPtr<ColorChooser> createColorChooser(ColorChooserClient&, const Color&) final;
 
@@ -220,7 +220,7 @@ class EmptyChromeClient : public ChromeClient {
     
     bool isEmptyChromeClient() const final { return true; }
 
-    void didAssociateFormControls(const Vector<RefPtr<Element>>&, LocalFrame&) final { }
+    void didAssociateFormControls(const Vector<Ref<Element>>&, LocalFrame&) final { }
     bool shouldNotifyOnFormChanges() final { return false; }
 
     RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) final;

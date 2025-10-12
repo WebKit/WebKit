@@ -28,7 +28,7 @@
 #if ENABLE(REVEAL)
 
 #import <pal/spi/cocoa/RevealSPI.h>
-#import <wtf/SoftLinking.h>
+#import <wtf/cocoa/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, Reveal, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, Reveal, RVPresenter, PAL_EXPORT)

@@ -23,8 +23,8 @@
 
 #pragma once
 
+#include <WebCore/HTMLElement.h>
 #include <wtf/Forward.h>
-#include "HTMLElement.h"
 
 namespace WebCore {
 

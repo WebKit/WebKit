@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DecomposedAttributedText.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -459,6 +460,94 @@ TEST(WKWebView, AttributedStringFromList)
     checkListAtIndex(7, @"Four", secondList);
 }
 
+TEST(WKWebView, AttributedStringFromListWithNegativeStartValue)
+{
+    static constexpr auto html = R"""(
+    <body contenteditable dir='auto'>
+        <ol start='-4'>
+            <li>A</li>
+        </ol>
+    </body>
+    )"""_s;
+
+    const DecomposedAttributedText expected { {
+        DecomposedAttributedText::OrderedList { -4, {
+            "\t-4\tA\n"_s,
+        } },
+    } };
+
+    RetainPtr webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadHTMLString:html.createNSString().get()];
+
+    RetainPtr string = [webView _contentsAsAttributedString];
+    auto actual = decompose(string.get());
+
+    TextStream stream;
+    stream << "expected " << actual << " to equal " << expected;
+    EXPECT_EQ(actual, expected) << stream.release().utf8().data();
+}
+
+TEST(WKWebView, AttributedStringFromListWithCustomListStyleTypes)
+{
+    static constexpr auto html = R"""(
+    <body contenteditable dir='auto'>
+        <ol start='4' style='list-style-type: lower-roman;'>
+            <li>A</li>
+            <li>B</li>
+            <li>C</li>
+        </ol>
+        <ol start='4' style='list-style-type: "#";'>
+            <li>D</li>
+            <li>E</li>
+            <li>F</li>
+        </ol>
+        <ul style='list-style-type: "#";'>
+            <li>G</li>
+            <li>H</li>
+            <li>I</li>
+        </ul>
+        <ul style='list-style-type: decimal;'>
+            <li>J</li>
+            <li>K</li>
+            <li>L</li>
+        </ul>
+    </body>
+    )"""_s;
+
+    const DecomposedAttributedText expected { {
+        DecomposedAttributedText::OrderedList { 4, DecomposedAttributedText::ListMarker::LowercaseRoman, {
+            "\tiv\tA\n"_s,
+            "\tv\tB\n"_s,
+            "\tvi\tC\n"_s,
+        } },
+        DecomposedAttributedText::OrderedList { 4, DecomposedAttributedText::ListMarker { "{#}"_s }, {
+            "\t4\tD\n"_s,
+            "\t5\tE\n"_s,
+            "\t6\tF\n"_s,
+        } },
+        DecomposedAttributedText::UnorderedList { DecomposedAttributedText::ListMarker { "#"_s }, {
+            "\t#\tG\n"_s,
+            "\t#\tH\n"_s,
+            "\t#\tI\n"_s,
+        } },
+        DecomposedAttributedText::OrderedList { 0, DecomposedAttributedText::ListMarker::Decimal, {
+            "\t0\tJ\n"_s,
+            "\t1\tK\n"_s,
+            "\t2\tL\n"_s,
+        } },
+    } };
+
+    RetainPtr webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadHTMLString:html.createNSString().get()];
+
+    RetainPtr string = [webView _contentsAsAttributedString];
+    auto actual = decompose(string.get());
+
+    TextStream stream;
+    stream << "expected " << actual << " to equal " << expected;
+    EXPECT_EQ(actual, expected) << stream.release().utf8().data();
+}
+
 TEST(WKWebView, AttributedStringWithoutNetworkLoads)
 {
     [TestProtocol registerWithScheme:@"https"];
@@ -608,30 +697,30 @@ TEST(WKWebView, RequestAllTextRunsWithSubframes)
 
     Vector<std::pair<const char*, CGRect>> expectedResults {
 #if PLATFORM(MAC)
-        { "Here's to the crazy", CGRectMake(0, 18, 298, 33) },
-        { "ones.", CGRectMake(0, 18, 298, 33) },
-        { "The round", CGRectMake(9, 84, 160, 64) },
-        { "pegs in", CGRectMake(9, 84, 160, 64) },
-        { "the square", CGRectMake(9, 84, 160, 64) },
-        { "holes.", CGRectMake(9, 84, 160, 64) },
-        { "The", CGRectMake(18, 157, 192, 96) },
-        { "ones", CGRectMake(18, 157, 192, 96) },
-        { "who", CGRectMake(18, 157, 192, 96) },
-        { "see", CGRectMake(18, 157, 192, 96) },
-        { "things", CGRectMake(18, 157, 192, 96) },
-        { "differently.", CGRectMake(18, 157, 192, 96) },
+        { "Here's to the crazy", CGRectMake(0, 18, 298, 16) },
+        { "ones.", CGRectMake(0, 34, 80, 17) },
+        { "The round", CGRectMake(9, 84, 144, 16) },
+        { "pegs in", CGRectMake(9, 100, 112, 16) },
+        { "the square", CGRectMake(9, 116, 160, 16) },
+        { "holes.", CGRectMake(9, 132, 96, 16) },
+        { "The", CGRectMake(18, 157, 48, 16) },
+        { "ones", CGRectMake(18, 173, 64, 16) },
+        { "who", CGRectMake(18, 189, 48, 16) },
+        { "see", CGRectMake(18, 205, 48, 16) },
+        { "things", CGRectMake(18, 221, 96, 16) },
+        { "differently.", CGRectMake(18, 237, 192, 16) },
 #else
         { "Here's to the crazy ones.", CGRectMake(0, 18, 394, 17) },
-        { "The round", CGRectMake(9, 68, 176, 68) },
-        { "pegs in the", CGRectMake(9, 68, 176, 68) },
-        { "square", CGRectMake(9, 68, 176, 68) },
-        { "holes.", CGRectMake(9, 68, 176, 68) },
-        { "The", CGRectMake(18, 145, 192, 102) },
-        { "ones", CGRectMake(18, 145, 192, 102) },
-        { "who", CGRectMake(18, 145, 192, 102) },
-        { "see", CGRectMake(18, 145, 192, 102) },
-        { "things", CGRectMake(18, 145, 192, 102) },
-        { "differently.", CGRectMake(18, 145, 192, 102) },
+        { "The round", CGRectMake(9, 68, 144, 17) },
+        { "pegs in the", CGRectMake(9, 85, 176, 17) },
+        { "square", CGRectMake(9, 102, 96, 17) },
+        { "holes.", CGRectMake(9, 119, 96, 17) },
+        { "The", CGRectMake(18, 145, 48, 17) },
+        { "ones", CGRectMake(18, 162, 64, 17) },
+        { "who", CGRectMake(18, 179, 48, 17) },
+        { "see", CGRectMake(18, 196, 48, 17) },
+        { "things", CGRectMake(18, 213, 96, 17) },
+        { "differently.", CGRectMake(18, 230, 192, 17) },
 #endif
     };
 

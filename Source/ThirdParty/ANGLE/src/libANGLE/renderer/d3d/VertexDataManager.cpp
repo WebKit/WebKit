@@ -4,8 +4,12 @@
 // found in the LICENSE file.
 //
 
-// VertexDataManager.h: Defines the VertexDataManager, a class that
+// VertexDataManager.cpp: Defines the VertexDataManager, a class that
 // runs the Buffer translation process.
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/renderer/d3d/VertexDataManager.h"
 
@@ -72,7 +76,8 @@ int ElementsInBuffer(const gl::VertexAttribute &attrib,
 // Warning: you should ensure binding really matches attrib.bindingIndex before using this function.
 bool DirectStoragePossible(const gl::Context *context,
                            const gl::VertexAttribute &attrib,
-                           const gl::VertexBinding &binding)
+                           const gl::VertexBinding &binding,
+                           const gl::Buffer *buffer)
 {
     // Current value attribs may not use direct storage.
     if (!attrib.enabled)
@@ -80,7 +85,6 @@ bool DirectStoragePossible(const gl::Context *context,
         return false;
     }
 
-    gl::Buffer *buffer = binding.getBuffer().get();
     if (!buffer)
     {
         return false;
@@ -128,6 +132,7 @@ TranslatedAttribute::TranslatedAttribute()
     : active(false),
       attribute(nullptr),
       binding(nullptr),
+      bufferBindingPointer(nullptr),
       currentValueType(gl::VertexAttribType::InvalidEnum),
       baseOffset(0),
       usesFirstVertexOffset(false),
@@ -162,7 +167,8 @@ angle::Result TranslatedAttribute::computeOffset(const gl::Context *context,
 // Warning: you should ensure binding really matches attrib.bindingIndex before using this function.
 VertexStorageType ClassifyAttributeStorage(const gl::Context *context,
                                            const gl::VertexAttribute &attrib,
-                                           const gl::VertexBinding &binding)
+                                           const gl::VertexBinding &binding,
+                                           const gl::Buffer *buffer)
 {
     // If attribute is disabled, we use the current value.
     if (!attrib.enabled)
@@ -171,14 +177,13 @@ VertexStorageType ClassifyAttributeStorage(const gl::Context *context,
     }
 
     // If specified with immediate data, we must use dynamic storage.
-    gl::Buffer *buffer = binding.getBuffer().get();
     if (!buffer)
     {
         return VertexStorageType::DYNAMIC;
     }
 
     // Check if the buffer supports direct storage.
-    if (DirectStoragePossible(context, attrib, binding))
+    if (DirectStoragePossible(context, attrib, binding, buffer))
     {
         return VertexStorageType::DIRECT;
     }
@@ -276,10 +281,13 @@ angle::Result VertexDataManager::prepareVertexData(
         translated->active           = true;
         translated->attribute        = &attrib;
         translated->binding          = &binding;
+        translated->bufferBindingPointer =
+            &vertexArray->getBufferBindingPointers()[attrib.bindingIndex];
         translated->currentValueType = currentValueData.Type;
         translated->divisor          = binding.getDivisor();
 
-        switch (ClassifyAttributeStorage(context, attrib, binding))
+        switch (ClassifyAttributeStorage(context, attrib, binding,
+                                         vertexArray->getVertexArrayBuffer(attrib.bindingIndex)))
         {
             case VertexStorageType::STATIC:
             {
@@ -328,11 +336,12 @@ void VertexDataManager::StoreDirectAttrib(const gl::Context *context,
     const auto &attrib  = *directAttrib->attribute;
     const auto &binding = *directAttrib->binding;
 
-    gl::Buffer *buffer = binding.getBuffer().get();
+    ASSERT(directAttrib->bufferBindingPointer);
+    gl::Buffer *buffer = directAttrib->bufferBindingPointer->get();
     ASSERT(buffer);
     BufferD3D *bufferD3D = GetImplAs<BufferD3D>(buffer);
 
-    ASSERT(DirectStoragePossible(context, attrib, binding));
+    ASSERT(DirectStoragePossible(context, attrib, binding, buffer));
     directAttrib->vertexBuffer.set(nullptr);
     directAttrib->storage = bufferD3D;
     directAttrib->serial  = bufferD3D->getSerial();
@@ -352,8 +361,9 @@ angle::Result VertexDataManager::StoreStaticAttrib(const gl::Context *context,
     const auto &attrib  = *translated->attribute;
     const auto &binding = *translated->binding;
 
-    gl::Buffer *buffer = binding.getBuffer().get();
-    ASSERT(buffer && attrib.enabled && !DirectStoragePossible(context, attrib, binding));
+    ASSERT(translated->bufferBindingPointer);
+    gl::Buffer *buffer = translated->bufferBindingPointer->get();
+    ASSERT(buffer && attrib.enabled && !DirectStoragePossible(context, attrib, binding, buffer));
     BufferD3D *bufferD3D = GetImplAs<BufferD3D>(buffer);
 
     // Compute source data pointer
@@ -468,9 +478,8 @@ void VertexDataManager::PromoteDynamicAttribs(
     {
         const auto &dynamicAttrib = translatedAttribs[attribIndex];
         ASSERT(dynamicAttrib.attribute && dynamicAttrib.binding);
-        const auto &binding = *dynamicAttrib.binding;
-
-        gl::Buffer *buffer = binding.getBuffer().get();
+        ASSERT(dynamicAttrib.bufferBindingPointer);
+        gl::Buffer *buffer = dynamicAttrib.bufferBindingPointer->get();
         if (buffer)
         {
             // Note: this multiplication can overflow. It should not be a security problem.
@@ -493,10 +502,11 @@ angle::Result VertexDataManager::reserveSpaceForAttrib(const gl::Context *contex
     ASSERT(translatedAttrib.attribute && translatedAttrib.binding);
     const auto &attrib  = *translatedAttrib.attribute;
     const auto &binding = *translatedAttrib.binding;
+    ASSERT(translatedAttrib.bufferBindingPointer);
+    gl::Buffer *buffer = translatedAttrib.bufferBindingPointer->get();
 
-    ASSERT(!DirectStoragePossible(context, attrib, binding));
+    ASSERT(!buffer || !DirectStoragePossible(context, attrib, binding, buffer));
 
-    gl::Buffer *buffer   = binding.getBuffer().get();
     BufferD3D *bufferD3D = buffer ? GetImplAs<BufferD3D>(buffer) : nullptr;
     ASSERT(!bufferD3D || bufferD3D->getStaticVertexBuffer(attrib, binding) == nullptr);
 
@@ -538,8 +548,8 @@ angle::Result VertexDataManager::storeDynamicAttrib(const gl::Context *context,
     ASSERT(translated->attribute && translated->binding);
     const auto &attrib  = *translated->attribute;
     const auto &binding = *translated->binding;
-
-    gl::Buffer *buffer = binding.getBuffer().get();
+    ASSERT(translated->bufferBindingPointer);
+    gl::Buffer *buffer = translated->bufferBindingPointer->get();
     ASSERT(buffer || attrib.pointer);
     ASSERT(attrib.enabled);
 

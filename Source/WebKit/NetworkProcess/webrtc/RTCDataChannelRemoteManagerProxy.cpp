@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,32 +33,30 @@
 
 namespace WebKit {
 
-RTCDataChannelRemoteManagerProxy::RTCDataChannelRemoteManagerProxy()
+RTCDataChannelRemoteManagerProxy::RTCDataChannelRemoteManagerProxy(NetworkProcess& networkProcess)
     : m_queue(WorkQueue::create("RTCDataChannelRemoteManagerProxy"_s))
+    , m_networkProcess(networkProcess)
 {
-}
-
-Ref<WorkQueue> RTCDataChannelRemoteManagerProxy::protectedQueue()
-{
-    return m_queue;
 }
 
 void RTCDataChannelRemoteManagerProxy::registerConnectionToWebProcess(NetworkConnectionToWebProcess& connectionToWebProcess)
 {
-    protectedQueue()->dispatch([this, protectedThis = Ref { *this }, identifier = connectionToWebProcess.webProcessIdentifier(), connectionID = connectionToWebProcess.connection().uniqueID()]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, identifier = connectionToWebProcess.webProcessIdentifier(), connectionID = connectionToWebProcess.connection().uniqueID(), sharedPreferences = connectionToWebProcess.sharedPreferencesForWebProcessValue()]() mutable {
         ASSERT(!m_webProcessConnections.contains(identifier));
         m_webProcessConnections.add(identifier, connectionID);
+        m_sharedPreferencesForConnections.add(connectionID, WTFMove(sharedPreferences));
     });
-    connectionToWebProcess.protectedConnection()->addWorkQueueMessageReceiver(Messages::RTCDataChannelRemoteManagerProxy::messageReceiverName(), m_queue, *this);
+    connectionToWebProcess.connection().addWorkQueueMessageReceiver(Messages::RTCDataChannelRemoteManagerProxy::messageReceiverName(), m_queue, *this);
 }
 
 void RTCDataChannelRemoteManagerProxy::unregisterConnectionToWebProcess(NetworkConnectionToWebProcess& connectionToWebProcess)
 {
-    protectedQueue()->dispatch([this, protectedThis = Ref { *this }, identifier = connectionToWebProcess.webProcessIdentifier()] {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, identifier = connectionToWebProcess.webProcessIdentifier(), connectionID = connectionToWebProcess.connection().uniqueID()] {
         ASSERT(m_webProcessConnections.contains(identifier));
         m_webProcessConnections.remove(identifier);
+        m_sharedPreferencesForConnections.remove(connectionID);
     });
-    connectionToWebProcess.protectedConnection()->removeWorkQueueMessageReceiver(Messages::RTCDataChannelRemoteManagerProxy::messageReceiverName());
+    connectionToWebProcess.connection().removeWorkQueueMessageReceiver(Messages::RTCDataChannelRemoteManagerProxy::messageReceiverName());
 }
 
 void RTCDataChannelRemoteManagerProxy::sendData(WebCore::RTCDataChannelIdentifier identifier, bool isRaw, std::span<const uint8_t> data)
@@ -91,10 +89,19 @@ void RTCDataChannelRemoteManagerProxy::detectError(WebCore::RTCDataChannelIdenti
         IPC::Connection::send(*connectionID, Messages::RTCDataChannelRemoteManager::DetectError { identifier, detail, message }, 0);
 }
 
-void RTCDataChannelRemoteManagerProxy::bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier identifier, size_t amount)
+void RTCDataChannelRemoteManagerProxy::bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier identifier, uint64_t amount)
 {
     if (auto connectionID = m_webProcessConnections.getOptional(identifier.processIdentifier()))
         IPC::Connection::send(*connectionID, Messages::RTCDataChannelRemoteManager::BufferedAmountIsDecreasing { identifier, amount }, 0);
+}
+
+std::optional<SharedPreferencesForWebProcess> RTCDataChannelRemoteManagerProxy::sharedPreferencesForWebProcess(const IPC::Connection& connection)
+{
+    auto iterator = m_sharedPreferencesForConnections.find(connection.uniqueID());
+    if (iterator != m_sharedPreferencesForConnections.end())
+        return iterator->value;
+
+    return std::nullopt;
 }
 
 }

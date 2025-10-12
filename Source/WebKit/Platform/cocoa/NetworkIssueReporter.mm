@@ -63,14 +63,10 @@ bool NetworkIssueReporter::shouldReport(NSURLSessionTaskMetrics *metrics)
 NetworkIssueReporter::NetworkIssueReporter()
 {
     if (auto* copyStacktrace = ne_tracker_copy_current_stacktracePtr())
-        m_stackTrace = copyStacktrace(&m_stackTraceSize);
+        m_stackTrace = adoptSystem(copyStacktrace(&m_stackTraceSize));
 }
 
-NetworkIssueReporter::~NetworkIssueReporter()
-{
-    if (m_stackTrace)
-        free(m_stackTrace);
-}
+NetworkIssueReporter::~NetworkIssueReporter() = default;
 
 void NetworkIssueReporter::report(const URL& requestURL)
 {
@@ -82,7 +78,7 @@ void NetworkIssueReporter::report(const URL& requestURL)
         return;
 
     if (auto createIssue = ne_tracker_create_xcode_issuePtr())
-        createIssue(host.utf8().data(), m_stackTrace, m_stackTraceSize);
+        createIssue(host.utf8().data(), m_stackTrace.get(), m_stackTraceSize);
 }
 
 } // namespace WebKit

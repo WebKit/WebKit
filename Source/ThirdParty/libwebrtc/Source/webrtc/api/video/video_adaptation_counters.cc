@@ -35,7 +35,7 @@ VideoAdaptationCounters VideoAdaptationCounters::operator+(
 }
 
 std::string VideoAdaptationCounters::ToString() const {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "{ res=" << resolution_adaptations << " fps=" << fps_adaptations
      << " }";
   return ss.Release();

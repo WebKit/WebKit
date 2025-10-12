@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2025 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  * Copyright (C) 2019 Sony Interactive Entertainment Inc.
  *
@@ -27,7 +27,7 @@
 
 #pragma once
 
-#include "ResourceRequestBase.h"
+#include <WebCore/ResourceRequestBase.h>
 
 namespace WebCore {
 

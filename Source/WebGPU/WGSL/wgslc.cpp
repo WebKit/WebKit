@@ -28,6 +28,7 @@
 #include "AST/ASTStringDumper.h"
 #include "WGSL.h"
 #include "WGSLShaderModule.h"
+#include <cstdlib>
 #include <wtf/DataLog.h>
 #include <wtf/FileSystem.h>
 #include <wtf/WTFProcess.h>
@@ -39,6 +40,8 @@
     fprintf(stderr, "  --dump-ast-after-checking  Dumps the AST after parsing and checking\n");
     fprintf(stderr, "  --dump-ast-at-end  Dumps the AST after generating code\n");
     fprintf(stderr, "  --dump-generated-code  Dumps the generated Metal code\n");
+    fprintf(stderr, "  --apple-gpu-family=N  Sets the value for the Apple GPU family (default: 4)\n");
+    fprintf(stderr, "  --enable-shader-validation  Enables Metal shader validation (default: false)\n");
     fprintf(stderr, "\n");
 
     exitProcess(help ? EXIT_SUCCESS : EXIT_FAILURE);
@@ -56,6 +59,8 @@ public:
     bool dumpASTAfterCheck() const { return m_dumpASTAfterCheck; }
     bool dumpASTAtEnd() const { return m_dumpASTAtEnd; }
     bool dumpGeneratedCode() const { return m_dumpGeneratedCode; }
+    bool shaderValidationEnabled() const { return m_enableShaderValidation; }
+    unsigned appleGPUFamily() const { return m_appleGPUFamily; }
 
 private:
     void parseArguments(int, char**);
@@ -65,6 +70,8 @@ private:
     bool m_dumpASTAfterCheck { false };
     bool m_dumpASTAtEnd { false };
     bool m_dumpGeneratedCode { false };
+    bool m_enableShaderValidation { false };
+    unsigned m_appleGPUFamily { 4 };
 };
 
 void CommandLine::parseArguments(int argc, char** argv)
@@ -90,6 +97,23 @@ void CommandLine::parseArguments(int argc, char** argv)
             m_dumpGeneratedCode = true;
             continue;
         }
+
+        if (!strncmp(arg, "--apple-gpu-family=", 19)) {
+            const char* argNum = arg + 19;
+            int family = atoi(argNum);
+            if (family < 4 || family > 9) {
+                fprintf(stderr, "Invalid Apple GPU family: %d\n", family);
+                exitProcess(EXIT_FAILURE);
+            }
+            m_appleGPUFamily = family;
+            continue;
+        }
+
+        if (!strcmp(arg, "--enable-shader-validation")) {
+            m_enableShaderValidation = true;
+            continue;
+        }
+
 #pragma clang diagnostic pop
 
         if (!m_file)
@@ -120,10 +144,7 @@ static int runWGSL(const CommandLine& options)
 
     auto source = emptyString();
     if (readResult.has_value())
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunsafe-buffer-usage"
-        source = String::fromUTF8WithLatin1Fallback(std::span(readResult->data(), readResult->size()));
-#pragma clang diagnostic pop
+        source = String::fromUTF8WithLatin1Fallback(readResult->span());
 
     auto checkResult = WGSL::staticCheck(source, std::nullopt, configuration);
     if (auto* failedCheck = std::get_if<WGSL::FailedCheck>(&checkResult)) {
@@ -158,22 +179,27 @@ static int runWGSL(const CommandLine& options)
     }
 
     HashMap<String, WGSL::ConstantValue> constantValues;
-    const auto& entryPointInformation = result.entryPoints.get(entrypointName);
-    for (const auto& [originalName, constant] : entryPointInformation.specializationConstants) {
-        if (!constant.defaultValue) {
-            dataLogLn("Cannot use override without default value in wgslc: '", originalName, "'");
-            return EXIT_FAILURE;
-        }
+    for (const auto& [entrypointName, _] : pipelineLayouts) {
+        const auto& entryPointInformation = result.entryPoints.get(entrypointName);
+        for (const auto& [originalName, constant] : entryPointInformation.specializationConstants) {
+            if (!constant.defaultValue) {
+                dataLogLn("Cannot use override without default value in wgslc: '", originalName, "'");
+                return EXIT_FAILURE;
+            }
 
-        auto defaultValue = WGSL::evaluate(*constant.defaultValue, constantValues);
-        if (!defaultValue) {
-            dataLogLn("Failed to evaluate override's default value: '", originalName, "'");
-            return EXIT_FAILURE;
-        }
+            auto defaultValue = WGSL::evaluate(*constant.defaultValue, constantValues);
+            if (!defaultValue) {
+                dataLogLn("Failed to evaluate override's default value: '", originalName, "'");
+                return EXIT_FAILURE;
+            }
 
-        constantValues.add(constant.mangledName, *defaultValue);
+            constantValues.add(constant.mangledName, *defaultValue);
+        }
     }
-    auto generationResult = WGSL::generate(shaderModule, result, constantValues);
+    auto generationResult = WGSL::generate(shaderModule, result, constantValues, WGSL::DeviceState {
+        .appleGPUFamily = options.appleGPUFamily(),
+        .shaderValidationEnabled = options.shaderValidationEnabled(),
+    });
 
     if (auto* error = std::get_if<WGSL::Error>(&generationResult)) {
         dataLogLn(*error);

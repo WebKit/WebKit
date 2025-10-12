@@ -30,31 +30,62 @@ _log = logging.getLogger(__name__)
 
 
 class SharedObjectResolver():
-    def __init__(self, ldd):
+    def __init__(self, ldd, resolver_environment=None):
         self._ldd = ldd
-        if shutil.which('patchelf') is None:
-            _log.error("Could not find `patchelf` in $PATH")
-            raise Exception("Missing required binary `patchelf`")
+        self._get_interpreter_method = None
+        self._resolver_environment = resolver_environment
+        binaries_for_implemented_get_interpreter_methods = ['patchelf', 'readelf']
+        for required_binary in binaries_for_implemented_get_interpreter_methods:
+            if shutil.which(required_binary):
+                self._get_interpreter_method = required_binary
+                break
+        if self._get_interpreter_method is None:
+            string_methods = f"`{'` or `'.join(binaries_for_implemented_get_interpreter_methods)}`"
+            _log.error(f"Could not find any of the programs {string_methods} in $PATH")
+            raise Exception(f"Missing required program. Need any of {string_methods}")
 
     def _run_cmd_and_get_output(self, command):
         _log.debug("EXEC %s" % command)
-        command_process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding='utf-8')
+        command_process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding='utf-8', env=self._resolver_environment)
         stdout, stderr = command_process.communicate()
         return command_process.returncode, stdout, stderr
 
-    def _get_interpreter_objname(self, object):
-        # Note: we use patchelf to get the object name (not the path!)
-        # of the interpreter because this works regardless of the
-        # architecture of the ELF file.
+    def _get_patchelf_interpreter_objname(self, object):
         retcode, stdout, stderr = self._run_cmd_and_get_output(['patchelf', '--print-interpreter', object])
         if retcode != 0:
-            _log.debug("patchelf stdout:\n%s\nPatchelf stderr:\n%s" % (stdout, stderr))
+            _log.debug("patchelf stdout:\n%s\npatchelf stderr:\n%s" % (stdout, stderr))
             if 'cannot find section' in stdout:
                 # This is fine; we only expect an interpreter in the main binary.
                 return None
-            raise RuntimeError('The patchelf command returned non-zero status for object %s' % object)
-        interpreter_path = PurePath(stdout.strip())
-        return interpreter_path.name
+            raise RuntimeError(f'The patchelf command returned non-zero status for object {object}.\nstdout:{stdout}\n%s\nstderr:{stderr}\n')
+        return stdout.strip()
+
+    def _get_readelf_interpreter_objname(self, object):
+        retcode, stdout, stderr = self._run_cmd_and_get_output(['readelf', '-l', object])
+        if retcode != 0:
+            _log.debug("readelf stdout:\n%s\nreadelf stderr:\n%s" % (stdout, stderr))
+            raise RuntimeError(f'The readelf command returned non-zero status for object {object}.\nstdout:{stdout}\n%s\nstderr:{stderr}\n')
+        found_interp_line = False
+        for line in stdout.splitlines():
+            if '.interp' in line:
+                found_interp_line = True
+            if 'Requesting program interpreter' in line:
+                return line.split(':', 1)[1].removesuffix(']').strip()
+        if found_interp_line:
+            raise RuntimeError(f'readelf found a .interp line but not the interpreter path.\nstdout:{stdout}\n%s\nstderr:{stderr}\n')
+        # This is fine, it didn't found an 'interp' section so there is no interpreter (is likely a library)
+        return None
+
+    def _get_interpreter_objname(self, object):
+        # Note: we use patchelf/readelf to get the interpreter because
+        # this works regardless of the architecture of the ELF file.
+        if self._get_interpreter_method == 'patchelf':
+            interpreter_path_str = self._get_patchelf_interpreter_objname(object)
+        elif self._get_interpreter_method == 'readelf':
+            interpreter_path_str = self._get_readelf_interpreter_objname(object)
+        else:
+            assert(False), 'Not reached'
+        return PurePath(interpreter_path_str).name if interpreter_path_str else None
 
     def _get_libs_and_interpreter(self, object):
         interpreter = None
@@ -65,10 +96,11 @@ class SharedObjectResolver():
         libs = []
         for line in stdout.splitlines():
             line = line.strip()
+            orig_line = line
             if '=>' in line:
                 line = line.split('=>')[1].strip()
                 if 'not found' in line:
-                    raise RuntimeError('ldd can not resolve all dependencies for object %s.' % object)
+                    raise RuntimeError(f'ldd can not resolve all dependencies for object "{object}". Error in line "{orig_line}".')
                 line = line.split(' ')[0].strip()
                 if os.path.isfile(line):
                     libs.append(line)

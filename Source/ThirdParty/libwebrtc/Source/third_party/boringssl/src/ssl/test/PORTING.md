@@ -8,7 +8,7 @@ BoringSSL and some incomplete integrations with NSS and OpenSSL.
 
 Note that supporting non-BoringSSL implementations is a work in
 progress and interfaces may change in the future. Consumers should pin
-to a particular revision rather than using BoringSSL’s master branch
+to a particular revision rather than using BoringSSL’s `main` branch
 directly. As we gain experience with other implementations, we hope to
 make further improvements to portability, so please contact
 davidben@google.com and ekr@rtfm.com if implementing a new shim.

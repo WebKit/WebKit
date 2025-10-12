@@ -11,7 +11,7 @@
  * The Initial Developer of the Original Code is
  * Netscape Communications Corporation.
  * Portions created by the Initial Developer are Copyright (C) 1998
- * the Initial Developer. All Rights Reserved.
+ * the Initial Developer. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -116,7 +116,7 @@ void OpaqueICUTimeZoneDeleter::operator()(OpaqueICUTimeZone* timeZone)
 // NOTE: The implementation relies on the fact that no time zones have
 // more than one daylight savings offset change per month.
 // If this function is called with NaN it returns random value.
-LocalTimeOffset DateCache::calculateLocalTimeOffset(double millisecondsFromEpoch, WTF::TimeType inputTimeType)
+LocalTimeOffset DateCache::calculateLocalTimeOffset(double millisecondsFromEpoch, TimeType inputTimeType)
 {
     int32_t rawOffset = 0;
     int32_t dstOffset = 0;
@@ -131,7 +131,7 @@ LocalTimeOffset DateCache::calculateLocalTimeOffset(double millisecondsFromEpoch
     if (U_FAILURE(status))
         return failed;
 
-    if (inputTimeType != WTF::LocalTime) {
+    if (inputTimeType != TimeType::LocalTime) {
         rawOffset = ucal_get(timeZoneCache.m_calendar.get(), UCAL_ZONE_OFFSET, &status);
         if (U_FAILURE(status))
             return failed;
@@ -216,7 +216,7 @@ void DateCache::DSTCache::extendTheAfterCache(int64_t millisecondsFromEpoch, Loc
     }
 }
 
-LocalTimeOffset DateCache::DSTCache::localTimeOffset(DateCache& dateCache, int64_t millisecondsFromEpoch, WTF::TimeType inputTimeType)
+LocalTimeOffset DateCache::DSTCache::localTimeOffset(DateCache& dateCache, int64_t millisecondsFromEpoch, TimeType inputTimeType)
 {
     if (millisecondsFromEpoch >= WTF::Int64Milliseconds::minECMAScriptTime && millisecondsFromEpoch <= WTF::Int64Milliseconds::maxECMAScriptTime) {
         // Do nothing. Use millisecondsFromEpoch directly
@@ -324,20 +324,20 @@ LocalTimeOffset DateCache::DSTCache::localTimeOffset(DateCache& dateCache, int64
     return { };
 }
 
-double DateCache::gregorianDateTimeToMS(const GregorianDateTime& t, double milliseconds, WTF::TimeType inputTimeType)
+double DateCache::gregorianDateTimeToMS(const GregorianDateTime& t, double milliseconds, TimeType inputTimeType)
 {
     double day = dateToDaysFrom1970(t.year(), t.month(), t.monthDay());
     double ms = timeToMS(t.hour(), t.minute(), t.second(), milliseconds);
     double localTimeResult = (day * WTF::msPerDay) + ms;
 
-    if (inputTimeType == WTF::LocalTime && std::isfinite(localTimeResult))
+    if (inputTimeType == TimeType::LocalTime && std::isfinite(localTimeResult))
         return localTimeResult - localTimeOffset(static_cast<int64_t>(localTimeResult), inputTimeType).offset;
     return localTimeResult;
 }
 
-double DateCache::localTimeToMS(double milliseconds, WTF::TimeType inputTimeType)
+double DateCache::localTimeToMS(double milliseconds, TimeType inputTimeType)
 {
-    if (inputTimeType == WTF::LocalTime && std::isfinite(milliseconds))
+    if (inputTimeType == TimeType::LocalTime && std::isfinite(milliseconds))
         return milliseconds - localTimeOffset(static_cast<int64_t>(milliseconds), inputTimeType).offset;
     return milliseconds;
 }
@@ -362,10 +362,10 @@ std::tuple<int32_t, int32_t, int32_t> DateCache::yearMonthDayFromDaysWithCache(i
 }
 
 // input is UTC
-void DateCache::msToGregorianDateTime(double millisecondsFromEpoch, WTF::TimeType outputTimeType, GregorianDateTime& tm)
+void DateCache::msToGregorianDateTime(double millisecondsFromEpoch, TimeType outputTimeType, GregorianDateTime& tm)
 {
     LocalTimeOffset localTime;
-    if (outputTimeType == WTF::LocalTime && std::isfinite(millisecondsFromEpoch)) {
+    if (outputTimeType == TimeType::LocalTime && std::isfinite(millisecondsFromEpoch)) {
         localTime = localTimeOffset(static_cast<int64_t>(millisecondsFromEpoch));
         millisecondsFromEpoch += localTime.offset;
     }
@@ -412,13 +412,13 @@ double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& 
             value = WTF::parseDate(dateString, isLocalTime);
 
         if (isLocalTime && std::isfinite(value))
-            value -= localTimeOffset(static_cast<int64_t>(value), WTF::LocalTime).offset;
+            value -= localTimeOffset(static_cast<int64_t>(value), TimeType::LocalTime).offset;
 
         return value;
     };
 
     // FIXME: expectedString is UTF-8 but parseDateImpl requires Latin1. Which is correct?
-    double value = parseDateImpl(byteCast<LChar>(expectedString.value().span()));
+    double value = parseDateImpl(byteCast<Latin1Character>(expectedString.value().span()));
     m_cachedDateString = date;
     m_cachedDateStringValue = value;
     return value;
@@ -436,13 +436,13 @@ String DateCache::timeZoneDisplayName(bool isDST)
         auto& timeZoneCache = *this->timeZoneCache();
         CString language = defaultLanguage().utf8();
         {
-            Vector<UChar, 32> standardDisplayNameBuffer;
+            Vector<char16_t, 32> standardDisplayNameBuffer;
             auto status = callBufferProducingFunction(ucal_getTimeZoneDisplayName, timeZoneCache.m_calendar.get(), UCAL_STANDARD, language.data(), standardDisplayNameBuffer);
             if (U_SUCCESS(status))
                 m_timeZoneStandardDisplayNameCache = String::adopt(WTFMove(standardDisplayNameBuffer));
         }
         {
-            Vector<UChar, 32> dstDisplayNameBuffer;
+            Vector<char16_t, 32> dstDisplayNameBuffer;
             auto status = callBufferProducingFunction(ucal_getTimeZoneDisplayName, timeZoneCache.m_calendar.get(), UCAL_DST, language.data(), dstDisplayNameBuffer);
             if (U_SUCCESS(status))
                 m_timeZoneDSTDisplayNameCache = String::adopt(WTFMove(dstDisplayNameBuffer));
@@ -475,10 +475,10 @@ DateCache::DateCache()
 #endif
 }
 
-static std::tuple<String, Vector<UChar, 32>> retrieveTimeZoneInformation()
+static std::tuple<String, Vector<char16_t, 32>> retrieveTimeZoneInformation()
 {
     Locker locker { timeZoneCacheLock };
-    static NeverDestroyed<std::tuple<String, Vector<UChar, 32>, uint64_t>> globalCache;
+    static NeverDestroyed<std::tuple<String, Vector<char16_t, 32>, uint64_t>> globalCache;
 
     bool isCacheStale = true;
     uint64_t currentID = 0;
@@ -487,7 +487,7 @@ static std::tuple<String, Vector<UChar, 32>> retrieveTimeZoneInformation()
     isCacheStale = std::get<2>(globalCache.get()) != currentID;
 #endif
     if (isCacheStale) {
-        Vector<UChar, 32> timeZoneID;
+        Vector<char16_t, 32> timeZoneID;
         getTimeZoneOverride(timeZoneID);
         String canonical;
         UErrorCode status = U_ZERO_ERROR;
@@ -496,7 +496,7 @@ static std::tuple<String, Vector<UChar, 32>> retrieveTimeZoneInformation()
             ASSERT_UNUSED(status, U_SUCCESS(status));
         }
         if (U_SUCCESS(status)) {
-            Vector<UChar, 32> canonicalBuffer;
+            Vector<char16_t, 32> canonicalBuffer;
             auto status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, timeZoneID.mutableSpan().data(), timeZoneID.size(), canonicalBuffer, nullptr);
             if (U_SUCCESS(status))
                 canonical = String(canonicalBuffer);

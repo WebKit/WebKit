@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-UserMessageHandler::UserMessageHandler(LocalFrame& frame, UserMessageHandlerDescriptor& descriptor)
+UserMessageHandler::UserMessageHandler(LocalFrame& frame, const UserMessageHandlerDescriptor& descriptor)
     : FrameDestructionObserver(&frame)
     , m_descriptor(&descriptor)
 {
@@ -63,6 +63,13 @@ ExceptionOr<void> UserMessageHandler::postMessage(JSC::JSGlobalObject& globalObj
         promise->reject<IDLAny>(JSC::createError(globalObject, errorMessage));
     });
     return { };
+}
+
+JSC::JSValue UserMessageHandler::postLegacySynchronousMessage(JSC::JSGlobalObject& globalObject, JSC::JSValue value)
+{
+    if (!m_descriptor)
+        return JSC::jsUndefined();
+    return m_descriptor->didPostLegacySynchronousMessage(*this, globalObject, value);
 }
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,21 +27,20 @@
 #import "UTIUtilities.h"
 
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <pal/spi/cg/ImageIOSPI.h>
+#import <pal/spi/cocoa/UniformTypeIdentifiersSPI.h>
 #import <wtf/HashSet.h>
 #import <wtf/Lock.h>
 #import <wtf/MainThread.h>
 #import <wtf/SortedArrayMap.h>
 #import <wtf/TinyLRUCache.h>
 #import <wtf/cf/TypeCastsCF.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
-#include <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
-#endif
-
-#if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
-#include <pal/spi/cg/ImageIOSPI.h>
 #endif
 
 namespace WebCore {
@@ -52,9 +51,9 @@ String MIMETypeFromUTI(const String& uti)
     return type.get().preferredMIMEType;
 }
 
-UncheckedKeyHashSet<String> RequiredMIMETypesFromUTI(const String& uti)
+HashSet<String> RequiredMIMETypesFromUTI(const String& uti)
 {
-    UncheckedKeyHashSet<String> mimeTypes;
+    HashSet<String> mimeTypes;
 
     auto mainMIMEType = MIMETypeFromUTI(uti);
     if (!mainMIMEType.isEmpty())
@@ -66,35 +65,38 @@ UncheckedKeyHashSet<String> RequiredMIMETypesFromUTI(const String& uti)
     return mimeTypes;
 }
 
+
+RetainPtr<NSString> mimeTypeFromUTITree(UTType *utType)
+{
+    if (utType.declared || utType.dynamic)
+        return utType.preferredMIMEType;
+
+    // If not, walk the ancestory of this UTI to find a valid MIME type:
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // Note: We have to silence deprecated declarations because some types this
+    // method returns are deprecated.
+    RetainPtr<NSOrderedSet<UTType *>> parentTypes = utType._parentTypes;
+ALLOW_DEPRECATED_DECLARATIONS_END
+    if (!parentTypes)
+        return nullptr;
+
+    for (UTType *parentType : parentTypes.get()) {
+        if (auto&& type = mimeTypeFromUTITree(parentType))
+            return WTFMove(type);
+    }
+
+    return nullptr;
+}
+
 RetainPtr<CFStringRef> mimeTypeFromUTITree(CFStringRef uti)
 {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // Check if this UTI has a MIME type.
-    if (auto type = adoptCF(UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType)))
-        return type;
-
-    // If not, walk the ancestory of this UTI via its "ConformsTo" tags and return the first MIME type we find.
-    auto declaration = adoptCF(UTTypeCopyDeclaration(uti));
-    if (!declaration)
+    RetainPtr utType = [UTType typeWithIdentifier:bridge_cast(uti)];
+    if (!utType)
         return nullptr;
 
-    auto value = CFDictionaryGetValue(declaration.get(), kUTTypeConformsToKey);
-ALLOW_DEPRECATED_DECLARATIONS_END
-    if (!value)
-        return nullptr;
-
-    if (auto string = dynamic_cf_cast<CFStringRef>(value))
-        return mimeTypeFromUTITree(string);
-
-    if (auto array = dynamic_cf_cast<CFArrayRef>(value)) {
-        CFIndex count = CFArrayGetCount(array);
-        for (CFIndex i = 0; i < count; ++i) {
-            if (auto string = dynamic_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(array, i))) {
-                if (auto type = mimeTypeFromUTITree(string))
-                    return type;
-            }
-        }
-    }
+    if (auto mimeType = mimeTypeFromUTITree(utType.get()))
+        return bridge_cast(mimeType.get());
 
     return nullptr;
 }
@@ -115,7 +117,7 @@ struct UTIFromMIMETypeCachePolicy : TinyLRUCachePolicy<String, RetainPtr<NSStrin
 public:
     static RetainPtr<NSString> createValueForKey(const String& mimeType)
     {
-        if (auto type = UTIFromPotentiallyUnknownMIMEType(mimeType))
+        if (RetainPtr type = UTIFromPotentiallyUnknownMIMEType(mimeType))
             return type;
 
         if (RetainPtr type = [UTType typeWithMIMEType:mimeType.createNSString().get()])
@@ -148,7 +150,6 @@ bool isDeclaredUTI(const String& uti)
 
 void setImageSourceAllowableTypes(const Vector<String>& supportedImageTypes)
 {
-#if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
     // A WebPage might be reinitialized. So restrict ImageIO to the default and
     // the additional supported image formats only once.
     static std::once_flag onceFlag;
@@ -157,9 +158,6 @@ void setImageSourceAllowableTypes(const Vector<String>& supportedImageTypes)
         auto status = CGImageSourceSetAllowableTypes((__bridge CFArrayRef)allowableTypes.get());
         RELEASE_ASSERT_WITH_MESSAGE(supportedImageTypes.isEmpty() || status == noErr, "CGImageSourceSetAllowableTypes() returned error: %d.", status);
     });
-#else
-    UNUSED_PARAM(supportedImageTypes);
-#endif
 }
 
 } // namespace WebCore

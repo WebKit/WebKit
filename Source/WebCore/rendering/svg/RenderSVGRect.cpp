@@ -30,6 +30,7 @@
 #include "RenderSVGRect.h"
 
 #include "RenderSVGShapeInlines.h"
+#include "RenderStyleInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGRectElement.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -68,9 +69,8 @@ void RenderSVGRect::updateShapeFromElement()
     if (boundingBoxSize.isEmpty())
         return;
 
-    Ref svgStyle = style().svgStyle();
-    if (lengthContext.valueForLength(svgStyle->rx(), SVGLengthMode::Width) > 0
-        || lengthContext.valueForLength(svgStyle->ry(), SVGLengthMode::Height) > 0)
+    if (lengthContext.valueForLength(style().rx(), SVGLengthMode::Width) > 0
+        || lengthContext.valueForLength(style().ry(), SVGLengthMode::Height) > 0)
         m_shapeType = ShapeType::RoundedRectangle;
     else
         m_shapeType = ShapeType::Rectangle;
@@ -81,17 +81,17 @@ void RenderSVGRect::updateShapeFromElement()
         return;
     }
 
-    m_fillBoundingBox = FloatRect(FloatPoint(lengthContext.valueForLength(svgStyle->x(), SVGLengthMode::Width),
-        lengthContext.valueForLength(svgStyle->y(), SVGLengthMode::Height)),
+    m_fillBoundingBox = FloatRect(FloatPoint(lengthContext.valueForLength(style().x(), SVGLengthMode::Width),
+        lengthContext.valueForLength(style().y(), SVGLengthMode::Height)),
         boundingBoxSize);
 
     auto strokeBoundingBox = m_fillBoundingBox;
-    if (svgStyle->hasStroke())
+    if (style().hasStroke())
         strokeBoundingBox.inflate(this->strokeWidth() / 2);
 
 #if USE(CG)
     // CoreGraphics can inflate the stroke by 1px when drawing a rectangle with antialiasing disabled at non-integer coordinates, we need to compensate.
-    if (svgStyle->shapeRendering() == ShapeRendering::CrispEdges)
+    if (style().shapeRendering() == ShapeRendering::CrispEdges)
         strokeBoundingBox.inflate(1);
 #endif
 
@@ -151,12 +151,14 @@ bool RenderSVGRect::definitelyHasSimpleStroke() const
     // miterlimits, the join style used might not be correct (e.g. a miterlimit
     // of 1.4142135 should result in bevel joins, but may be drawn using miter
     // joins).
-    return style().svgStyle().strokeDashArray().isEmpty() && style().joinStyle() == LineJoin::Miter && style().strokeMiterLimit() >= 1.5;
+    return style().strokeDashArray().isNone()
+        && style().joinStyle() == LineJoin::Miter
+        && style().strokeMiterLimit() >= 1.5;
 }
 
 void RenderSVGRect::strokeShape(GraphicsContext& context) const
 {
-    if (!style().hasVisibleStroke())
+    if (!style().hasStroke() || !style().strokeWidth().isPossiblyPositive())
         return;
 
     if (hasPath()) {

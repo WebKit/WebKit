@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-enum class SlotAssignmentMode : uint8_t {
+enum class SlotAssignmentMode : bool {
     Manual,
     Named,
 };

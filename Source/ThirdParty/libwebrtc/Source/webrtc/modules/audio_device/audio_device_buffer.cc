@@ -10,16 +10,22 @@
 
 #include "modules/audio_device/audio_device_buffer.h"
 
-#include <string.h>
-
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
+#include <optional>
 
+#include "api/audio/audio_device_defines.h"
+#include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_factory.h"
+#include "api/units/time_delta.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/time_utils.h"
+#include "rtc_base/timestamp_aligner.h"
 #include "rtc_base/trace_event.h"
 #include "system_wrappers/include/metrics.h"
 
@@ -30,13 +36,13 @@ static const char kTimerQueueName[] = "AudioDeviceBufferTimer";
 // Time between two sucessive calls to LogStats().
 static const size_t kTimerIntervalInSeconds = 10;
 static const size_t kTimerIntervalInMilliseconds =
-    kTimerIntervalInSeconds * rtc::kNumMillisecsPerSec;
+    kTimerIntervalInSeconds * kNumMillisecsPerSec;
 // Min time required to qualify an audio session as a "call". If playout or
 // recording has been active for less than this time we will not store any
 // logs or UMA stats but instead consider the call as too short.
 static const size_t kMinValidCallTimeTimeInSeconds = 10;
 static const size_t kMinValidCallTimeTimeInMilliseconds =
-    kMinValidCallTimeTimeInSeconds * rtc::kNumMillisecsPerSec;
+    kMinValidCallTimeTimeInSeconds * kNumMillisecsPerSec;
 #ifdef AUDIO_DEVICE_PLAYS_SINUS_TONE
 static const double k2Pi = 6.28318530717959;
 #endif
@@ -119,7 +125,7 @@ void AudioDeviceBuffer::StartPlayout() {
   if (!recording_) {
     StartPeriodicLogging();
   }
-  const int64_t now_time = rtc::TimeMillis();
+  const int64_t now_time = TimeMillis();
   // Clear members that are only touched on the main (creating) thread.
   play_start_time_ = now_time;
   playing_ = true;
@@ -139,7 +145,7 @@ void AudioDeviceBuffer::StartRecording() {
     StartPeriodicLogging();
   }
   // Clear members that will be touched on the main (creating) thread.
-  rec_start_time_ = rtc::TimeMillis();
+  rec_start_time_ = TimeMillis();
   recording_ = true;
   // And finally a member which can be modified on the native audio thread.
   // It is safe to do so since we know by design that the owning ADM has not
@@ -158,8 +164,7 @@ void AudioDeviceBuffer::StopPlayout() {
   if (!recording_) {
     StopPeriodicLogging();
   }
-  RTC_LOG(LS_INFO) << "total playout time: "
-                   << rtc::TimeSince(play_start_time_);
+  RTC_LOG(LS_INFO) << "total playout time: " << TimeSince(play_start_time_);
 }
 
 void AudioDeviceBuffer::StopRecording() {
@@ -183,7 +188,7 @@ void AudioDeviceBuffer::StopRecording() {
   // the fact that `only_silence_recorded_` can be affected during the complete
   // call makes chances of conflicts with potentially one last callback very
   // small.
-  const size_t time_since_start = rtc::TimeSince(rec_start_time_);
+  const size_t time_since_start = TimeSince(rec_start_time_);
   if (time_since_start > kMinValidCallTimeTimeInMilliseconds) {
     const int only_zeros = static_cast<int>(only_silence_recorded_);
     RTC_HISTOGRAM_BOOLEAN("WebRTC.Audio.RecordedOnlyZeros", only_zeros);
@@ -263,15 +268,14 @@ int32_t AudioDeviceBuffer::SetRecordedBuffer(
   }
 
   if (capture_timestamp_ns) {
-    int64_t align_offsync_estimation_time = rtc::TimeMicros();
-    if (align_offsync_estimation_time -
-            rtc::TimestampAligner::kMinFrameIntervalUs >
+    int64_t align_offsync_estimation_time = TimeMicros();
+    if (align_offsync_estimation_time - TimestampAligner::kMinFrameIntervalUs >
         align_offsync_estimation_time_) {
       align_offsync_estimation_time_ = align_offsync_estimation_time;
       capture_timestamp_ns_ =
-          rtc::kNumNanosecsPerMicrosec *
+          kNumNanosecsPerMicrosec *
           timestamp_aligner_.TranslateTimestamp(
-              *capture_timestamp_ns / rtc::kNumNanosecsPerMicrosec,
+              *capture_timestamp_ns / kNumNanosecsPerMicrosec,
               align_offsync_estimation_time);
     } else {
       // The Timestamp aligner is designed to prevent timestamps that are too
@@ -281,9 +285,9 @@ int32_t AudioDeviceBuffer::SetRecordedBuffer(
       // the clock offset estimation. This get us timestamps without generating
       // warnings, but could generate two timestamps within a millisecond.
       capture_timestamp_ns_ =
-          rtc::kNumNanosecsPerMicrosec *
+          kNumNanosecsPerMicrosec *
           timestamp_aligner_.TranslateTimestamp(*capture_timestamp_ns /
-                                                rtc::kNumNanosecsPerMicrosec);
+                                                kNumNanosecsPerMicrosec);
     }
   }
   // Derive a new level value twice per second and check if it is non-zero.
@@ -408,7 +412,7 @@ void AudioDeviceBuffer::StopPeriodicLogging() {
 
 void AudioDeviceBuffer::LogStats(LogState state) {
   RTC_DCHECK_RUN_ON(task_queue_.get());
-  int64_t now_time = rtc::TimeMillis();
+  int64_t now_time = TimeMillis();
 
   if (state == AudioDeviceBuffer::LOG_START) {
     // Reset counters at start. We will not add any logging in this state but
@@ -429,7 +433,7 @@ void AudioDeviceBuffer::LogStats(LogState state) {
   }
 
   int64_t next_callback_time = now_time + kTimerIntervalInMilliseconds;
-  int64_t time_since_last = rtc::TimeDiff(now_time, last_timer_task_time_);
+  int64_t time_since_last = TimeDiff(now_time, last_timer_task_time_);
   last_timer_task_time_ = now_time;
 
   Stats stats;
@@ -504,7 +508,7 @@ void AudioDeviceBuffer::LogStats(LogState state) {
   }
   last_stats_ = stats;
 
-  int64_t time_to_wait_ms = next_callback_time - rtc::TimeMillis();
+  int64_t time_to_wait_ms = next_callback_time - TimeMillis();
   RTC_DCHECK_GT(time_to_wait_ms, 0) << "Invalid timer interval";
 
   // Keep posting new (delayed) tasks until state is changed to kLogStop.

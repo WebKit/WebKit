@@ -138,18 +138,3 @@ static void wpe_view_headless_class_init(WPEViewHeadlessClass* viewHeadlessClass
     WPEViewClass* viewClass = WPE_VIEW_CLASS(viewHeadlessClass);
     viewClass->render_buffer = wpeViewHeadlessRenderBuffer;
 }
-
-/**
- * wpe_view_headless_new:
- * @display: a #WPEDisplayHeadless
- *
- * Create a new #WPEViewHeadless
- *
- * Returns: (transfer full): a #WPEView
- */
-WPEView* wpe_view_headless_new(WPEDisplayHeadless* display)
-{
-    g_return_val_if_fail(WPE_IS_DISPLAY_HEADLESS(display), nullptr);
-
-    return WPE_VIEW(g_object_new(WPE_TYPE_VIEW_HEADLESS, "display", display, nullptr));
-}

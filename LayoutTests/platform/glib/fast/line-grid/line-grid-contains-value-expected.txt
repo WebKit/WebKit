@@ -6,25 +6,25 @@ layer at (10,10) size 620x312
     RenderBlock {DIV} at (10,10) size 600x292 [color=#00FF00]
       RenderText {#text} at (0,4) size 612x36
         text run at (0,4) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (612,4) size 0x36
       RenderText {#text} at (0,46) size 612x36
         text run at (0,46) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (612,46) size 0x36
       RenderText {#text} at (0,88) size 612x36
         text run at (0,88) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (612,88) size 0x36
       RenderText {#text} at (0,130) size 612x36
         text run at (0,130) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (612,130) size 0x36
       RenderText {#text} at (0,172) size 612x36
         text run at (0,172) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (612,172) size 0x36
       RenderText {#text} at (0,214) size 612x36
         text run at (0,214) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (612,214) size 0x36
       RenderText {#text} at (0,256) size 612x36
         text run at (0,256) width 612: "xxxxxxxxxxxxxxxxx"
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (612,256) size 0x36
 layer at (0,0) size 800x600 layerType: foreground only
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
@@ -37,7 +37,7 @@ layer at (10,10) size 620x309
     RenderBlock {DIV} at (10,163) size 600x136
       RenderText {#text} at (0,36) size 101x14
         text run at (0,36) width 101: "This text should snap"
-      RenderBR {BR} at (100,36) size 1x14
+      RenderBR {BR} at (101,36) size 0x14
       RenderText {#text} at (0,78) size 113x14
         text run at (0,78) width 113: "to a 36px font-size grid."
       RenderBR {BR} at (113,78) size 0x14

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,8 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsContextGL.h"
+#include <WebCore/GraphicsContextGL.h>
+#include <WebCore/PlatformImage.h>
 #include <wtf/MallocSpan.h>
 
 namespace WebCore {
@@ -66,7 +67,7 @@ private:
     sk_sp<SkData> m_pixelData;
     sk_sp<SkImage> m_skImage;
 #endif
-    Ref<Image> m_image;
+    const Ref<Image> m_image;
     DOMSource m_imageHtmlDomSource;
     bool m_extractSucceeded;
     std::span<const uint8_t> m_imagePixelData;

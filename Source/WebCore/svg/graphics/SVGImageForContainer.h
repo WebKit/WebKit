@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "AffineTransform.h"
-#include "FloatRect.h"
-#include "FloatSize.h"
-#include "Image.h"
-#include "SVGImage.h"
+#include <WebCore/AffineTransform.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/Image.h>
+#include <WebCore/SVGImage.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -48,7 +48,7 @@ public:
     bool usesContainerSize() const final { return m_image->usesContainerSize(); }
     bool hasRelativeWidth() const final { return m_image->hasRelativeWidth(); }
     bool hasRelativeHeight() const final { return m_image->hasRelativeHeight(); }
-    void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) final
+    void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) final
     {
         protectedImage()->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
     }
@@ -59,6 +59,7 @@ public:
 
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const final { return false; }
+    bool currentFrameIsComplete() const final { return !!m_image; }
 
     RefPtr<NativeImage> currentNativeImage() final;
 

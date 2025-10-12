@@ -11,9 +11,11 @@
 
 #include <assert.h>
 #include <float.h>
+#include <inttypes.h>
 #include <limits.h>
 #include <math.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -153,6 +155,73 @@ static inline void Scale2Ratio(AOM_SCALING_MODE mode, int *hr, int *hs) {
   }
 }
 
+static int check_seg_range(int seg_data[8], int range) {
+  for (int i = 0; i < 8; ++i) {
+    // Note abs() alone can't be used as the behavior of abs(INT_MIN) is
+    // undefined.
+    if (seg_data[i] > range || seg_data[i] < -range) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+int av1_set_roi_map(AV1_COMP *cpi, unsigned char *map, unsigned int rows,
+                    unsigned int cols, int delta_q[8], int delta_lf[8],
+                    int skip[8], int ref_frame[8]) {
+  AV1_COMMON *cm = &cpi->common;
+  aom_roi_map_t *roi = &cpi->roi;
+  const int range = 63;
+  const int ref_frame_range = REF_FRAMES;
+  const int skip_range = 1;
+  const int frame_rows = cpi->common.mi_params.mi_rows;
+  const int frame_cols = cpi->common.mi_params.mi_cols;
+
+  // Check number of rows and columns match
+  if (frame_rows != (int)rows || frame_cols != (int)cols) {
+    return AOM_CODEC_INVALID_PARAM;
+  }
+
+  if (!check_seg_range(delta_q, range) || !check_seg_range(delta_lf, range) ||
+      !check_seg_range(ref_frame, ref_frame_range) ||
+      !check_seg_range(skip, skip_range))
+    return AOM_CODEC_INVALID_PARAM;
+
+  // Also disable segmentation if no deltas are specified.
+  if (!map ||
+      (!(delta_q[0] | delta_q[1] | delta_q[2] | delta_q[3] | delta_q[4] |
+         delta_q[5] | delta_q[6] | delta_q[7] | delta_lf[0] | delta_lf[1] |
+         delta_lf[2] | delta_lf[3] | delta_lf[4] | delta_lf[5] | delta_lf[6] |
+         delta_lf[7] | skip[0] | skip[1] | skip[2] | skip[3] | skip[4] |
+         skip[5] | skip[6] | skip[7]) &&
+       (ref_frame[0] == -1 && ref_frame[1] == -1 && ref_frame[2] == -1 &&
+        ref_frame[3] == -1 && ref_frame[4] == -1 && ref_frame[5] == -1 &&
+        ref_frame[6] == -1 && ref_frame[7] == -1))) {
+    av1_disable_segmentation(&cm->seg);
+    cpi->roi.enabled = 0;
+    return AOM_CODEC_OK;
+  }
+
+  if (roi->roi_map) {
+    aom_free(roi->roi_map);
+    roi->roi_map = NULL;
+  }
+  roi->roi_map = aom_malloc(rows * cols);
+  if (!roi->roi_map) return AOM_CODEC_MEM_ERROR;
+
+  // Copy to ROI structure in the compressor.
+  memcpy(roi->roi_map, map, rows * cols);
+  memcpy(&roi->delta_q, delta_q, MAX_SEGMENTS * sizeof(delta_q[0]));
+  memcpy(&roi->delta_lf, delta_lf, MAX_SEGMENTS * sizeof(delta_lf[0]));
+  memcpy(&roi->skip, skip, MAX_SEGMENTS * sizeof(skip[0]));
+  memcpy(&roi->ref_frame, ref_frame, MAX_SEGMENTS * sizeof(ref_frame[0]));
+  roi->enabled = 1;
+  roi->rows = rows;
+  roi->cols = cols;
+
+  return AOM_CODEC_OK;
+}
+
 int av1_set_active_map(AV1_COMP *cpi, unsigned char *new_map_16x16, int rows,
                        int cols) {
   const CommonModeInfoParams *const mi_params = &cpi->common.mi_params;
@@ -277,6 +346,8 @@ static void auto_tile_size_balancing(AV1_COMMON *const cm, int num_sbs,
 
   tiles->uniform_spacing = 0;
 
+  const int max_size_sb =
+      tile_col_row ? tiles->max_width_sb : tiles->max_height_sb;
   for (i = 0, start_sb = 0; start_sb < num_sbs && i < MAX_TILE_COLS; ++i) {
     if (i == inc_index) ++size_sb;
     if (tile_col_row)
@@ -284,7 +355,7 @@ static void auto_tile_size_balancing(AV1_COMMON *const cm, int num_sbs,
     else
       tiles->row_start_sb[i] = start_sb;
 
-    start_sb += AOMMIN(size_sb, tiles->max_width_sb);
+    start_sb += AOMMIN(size_sb, max_size_sb);
   }
 
   if (tile_col_row) {
@@ -487,6 +558,32 @@ static void set_bitstream_level_tier(AV1_PRIMARY *const ppi, int width,
   }
 }
 
+void av1_set_svc_seq_params(AV1_PRIMARY *const ppi) {
+  SequenceHeader *const seq = &ppi->seq_params;
+  if (seq->operating_points_cnt_minus_1 == 0) {
+    seq->operating_point_idc[0] = 0;
+    seq->has_nonzero_operating_point_idc = false;
+  } else {
+    // Set operating_point_idc[] such that the i=0 point corresponds to the
+    // highest quality operating point (all layers), and subsequent
+    // operarting points (i > 0) are lower quality corresponding to
+    // skip decoding enhancement  layers (temporal first).
+    int i = 0;
+    assert(seq->operating_points_cnt_minus_1 ==
+           (int)(ppi->number_spatial_layers * ppi->number_temporal_layers - 1));
+    for (unsigned int sl = 0; sl < ppi->number_spatial_layers; sl++) {
+      for (unsigned int tl = 0; tl < ppi->number_temporal_layers; tl++) {
+        seq->operating_point_idc[i] =
+            (~(~0u << (ppi->number_spatial_layers - sl)) << 8) |
+            ~(~0u << (ppi->number_temporal_layers - tl));
+        assert(seq->operating_point_idc[i] != 0);
+        i++;
+      }
+    }
+    seq->has_nonzero_operating_point_idc = true;
+  }
+}
+
 static void init_seq_coding_tools(AV1_PRIMARY *const ppi,
                                   const AV1EncoderConfig *oxcf,
                                   int disable_frame_id_numbers) {
@@ -551,29 +648,7 @@ static void init_seq_coding_tools(AV1_PRIMARY *const ppi,
 
   set_bitstream_level_tier(ppi, frm_dim_cfg->width, frm_dim_cfg->height,
                            oxcf->input_cfg.init_framerate);
-
-  if (seq->operating_points_cnt_minus_1 == 0) {
-    seq->operating_point_idc[0] = 0;
-    seq->has_nonzero_operating_point_idc = false;
-  } else {
-    // Set operating_point_idc[] such that the i=0 point corresponds to the
-    // highest quality operating point (all layers), and subsequent
-    // operarting points (i > 0) are lower quality corresponding to
-    // skip decoding enhancement  layers (temporal first).
-    int i = 0;
-    assert(seq->operating_points_cnt_minus_1 ==
-           (int)(ppi->number_spatial_layers * ppi->number_temporal_layers - 1));
-    for (unsigned int sl = 0; sl < ppi->number_spatial_layers; sl++) {
-      for (unsigned int tl = 0; tl < ppi->number_temporal_layers; tl++) {
-        seq->operating_point_idc[i] =
-            (~(~0u << (ppi->number_spatial_layers - sl)) << 8) |
-            ~(~0u << (ppi->number_temporal_layers - tl));
-        assert(seq->operating_point_idc[i] != 0);
-        i++;
-      }
-    }
-    seq->has_nonzero_operating_point_idc = true;
-  }
+  av1_set_svc_seq_params(ppi);
 }
 
 static void init_config_sequence(struct AV1_PRIMARY *ppi,
@@ -770,6 +845,11 @@ void av1_change_config_seq(struct AV1_PRIMARY *ppi,
 
   // Init sequence level coding tools
   // This should not be called after the first key frame.
+  // Note that for SVC encoding the sequence parameters
+  // (operating_points_cnt_minus_1, operating_point_idc[],
+  // has_nonzero_operating_point_idc) should be updated whenever the
+  // number of layers is changed. This is done in the
+  // ctrl_set_svc_params().
   if (!ppi->seq_params_locked) {
     seq_params->operating_points_cnt_minus_1 =
         (ppi->number_spatial_layers > 1 || ppi->number_temporal_layers > 1)
@@ -1078,129 +1158,115 @@ AV1_PRIMARY *av1_create_primary_compressor(
     }
   }
 
-#define BFP(BT, SDF, SDAF, VF, SVF, SVAF, SDX4DF, SDX3DF, JSDAF, JSVAF) \
-  ppi->fn_ptr[BT].sdf = SDF;                                            \
-  ppi->fn_ptr[BT].sdaf = SDAF;                                          \
-  ppi->fn_ptr[BT].vf = VF;                                              \
-  ppi->fn_ptr[BT].svf = SVF;                                            \
-  ppi->fn_ptr[BT].svaf = SVAF;                                          \
-  ppi->fn_ptr[BT].sdx4df = SDX4DF;                                      \
-  ppi->fn_ptr[BT].jsdaf = JSDAF;                                        \
-  ppi->fn_ptr[BT].jsvaf = JSVAF;                                        \
+#define BFP(BT, SDF, SDAF, VF, SVF, SVAF, SDX4DF, SDX3DF) \
+  ppi->fn_ptr[BT].sdf = SDF;                              \
+  ppi->fn_ptr[BT].sdaf = SDAF;                            \
+  ppi->fn_ptr[BT].vf = VF;                                \
+  ppi->fn_ptr[BT].svf = SVF;                              \
+  ppi->fn_ptr[BT].svaf = SVAF;                            \
+  ppi->fn_ptr[BT].sdx4df = SDX4DF;                        \
   ppi->fn_ptr[BT].sdx3df = SDX3DF;
 
 // Realtime mode doesn't use 4x rectangular blocks.
 #if !CONFIG_REALTIME_ONLY
-  BFP(BLOCK_4X16, aom_sad4x16, aom_sad4x16_avg, aom_variance4x16,
+  // sdaf (used in compound prediction, get_mvpred_compound_sad()) is unused
+  // for 4xN and Nx4 blocks.
+  BFP(BLOCK_4X16, aom_sad4x16, /*SDAF=*/NULL, aom_variance4x16,
       aom_sub_pixel_variance4x16, aom_sub_pixel_avg_variance4x16,
-      aom_sad4x16x4d, aom_sad4x16x3d, aom_dist_wtd_sad4x16_avg,
-      aom_dist_wtd_sub_pixel_avg_variance4x16)
+      aom_sad4x16x4d, aom_sad4x16x3d)
 
-  BFP(BLOCK_16X4, aom_sad16x4, aom_sad16x4_avg, aom_variance16x4,
+  // sdaf (used in compound prediction, get_mvpred_compound_sad()) is unused
+  // for 4xN and Nx4 blocks.
+  BFP(BLOCK_16X4, aom_sad16x4, /*SDAF=*/NULL, aom_variance16x4,
       aom_sub_pixel_variance16x4, aom_sub_pixel_avg_variance16x4,
-      aom_sad16x4x4d, aom_sad16x4x3d, aom_dist_wtd_sad16x4_avg,
-      aom_dist_wtd_sub_pixel_avg_variance16x4)
+      aom_sad16x4x4d, aom_sad16x4x3d)
 
   BFP(BLOCK_8X32, aom_sad8x32, aom_sad8x32_avg, aom_variance8x32,
       aom_sub_pixel_variance8x32, aom_sub_pixel_avg_variance8x32,
-      aom_sad8x32x4d, aom_sad8x32x3d, aom_dist_wtd_sad8x32_avg,
-      aom_dist_wtd_sub_pixel_avg_variance8x32)
+      aom_sad8x32x4d, aom_sad8x32x3d)
 
   BFP(BLOCK_32X8, aom_sad32x8, aom_sad32x8_avg, aom_variance32x8,
       aom_sub_pixel_variance32x8, aom_sub_pixel_avg_variance32x8,
-      aom_sad32x8x4d, aom_sad32x8x3d, aom_dist_wtd_sad32x8_avg,
-      aom_dist_wtd_sub_pixel_avg_variance32x8)
+      aom_sad32x8x4d, aom_sad32x8x3d)
 
   BFP(BLOCK_16X64, aom_sad16x64, aom_sad16x64_avg, aom_variance16x64,
       aom_sub_pixel_variance16x64, aom_sub_pixel_avg_variance16x64,
-      aom_sad16x64x4d, aom_sad16x64x3d, aom_dist_wtd_sad16x64_avg,
-      aom_dist_wtd_sub_pixel_avg_variance16x64)
+      aom_sad16x64x4d, aom_sad16x64x3d)
 
   BFP(BLOCK_64X16, aom_sad64x16, aom_sad64x16_avg, aom_variance64x16,
       aom_sub_pixel_variance64x16, aom_sub_pixel_avg_variance64x16,
-      aom_sad64x16x4d, aom_sad64x16x3d, aom_dist_wtd_sad64x16_avg,
-      aom_dist_wtd_sub_pixel_avg_variance64x16)
+      aom_sad64x16x4d, aom_sad64x16x3d)
 #endif  // !CONFIG_REALTIME_ONLY
 
   BFP(BLOCK_128X128, aom_sad128x128, aom_sad128x128_avg, aom_variance128x128,
       aom_sub_pixel_variance128x128, aom_sub_pixel_avg_variance128x128,
-      aom_sad128x128x4d, aom_sad128x128x3d, aom_dist_wtd_sad128x128_avg,
-      aom_dist_wtd_sub_pixel_avg_variance128x128)
+      aom_sad128x128x4d, aom_sad128x128x3d)
 
   BFP(BLOCK_128X64, aom_sad128x64, aom_sad128x64_avg, aom_variance128x64,
       aom_sub_pixel_variance128x64, aom_sub_pixel_avg_variance128x64,
-      aom_sad128x64x4d, aom_sad128x64x3d, aom_dist_wtd_sad128x64_avg,
-      aom_dist_wtd_sub_pixel_avg_variance128x64)
+      aom_sad128x64x4d, aom_sad128x64x3d)
 
   BFP(BLOCK_64X128, aom_sad64x128, aom_sad64x128_avg, aom_variance64x128,
       aom_sub_pixel_variance64x128, aom_sub_pixel_avg_variance64x128,
-      aom_sad64x128x4d, aom_sad64x128x3d, aom_dist_wtd_sad64x128_avg,
-      aom_dist_wtd_sub_pixel_avg_variance64x128)
+      aom_sad64x128x4d, aom_sad64x128x3d)
 
   BFP(BLOCK_32X16, aom_sad32x16, aom_sad32x16_avg, aom_variance32x16,
       aom_sub_pixel_variance32x16, aom_sub_pixel_avg_variance32x16,
-      aom_sad32x16x4d, aom_sad32x16x3d, aom_dist_wtd_sad32x16_avg,
-      aom_dist_wtd_sub_pixel_avg_variance32x16)
+      aom_sad32x16x4d, aom_sad32x16x3d)
 
   BFP(BLOCK_16X32, aom_sad16x32, aom_sad16x32_avg, aom_variance16x32,
       aom_sub_pixel_variance16x32, aom_sub_pixel_avg_variance16x32,
-      aom_sad16x32x4d, aom_sad16x32x3d, aom_dist_wtd_sad16x32_avg,
-      aom_dist_wtd_sub_pixel_avg_variance16x32)
+      aom_sad16x32x4d, aom_sad16x32x3d)
 
   BFP(BLOCK_64X32, aom_sad64x32, aom_sad64x32_avg, aom_variance64x32,
       aom_sub_pixel_variance64x32, aom_sub_pixel_avg_variance64x32,
-      aom_sad64x32x4d, aom_sad64x32x3d, aom_dist_wtd_sad64x32_avg,
-      aom_dist_wtd_sub_pixel_avg_variance64x32)
+      aom_sad64x32x4d, aom_sad64x32x3d)
 
   BFP(BLOCK_32X64, aom_sad32x64, aom_sad32x64_avg, aom_variance32x64,
       aom_sub_pixel_variance32x64, aom_sub_pixel_avg_variance32x64,
-      aom_sad32x64x4d, aom_sad32x64x3d, aom_dist_wtd_sad32x64_avg,
-      aom_dist_wtd_sub_pixel_avg_variance32x64)
+      aom_sad32x64x4d, aom_sad32x64x3d)
 
   BFP(BLOCK_32X32, aom_sad32x32, aom_sad32x32_avg, aom_variance32x32,
       aom_sub_pixel_variance32x32, aom_sub_pixel_avg_variance32x32,
-      aom_sad32x32x4d, aom_sad32x32x3d, aom_dist_wtd_sad32x32_avg,
-      aom_dist_wtd_sub_pixel_avg_variance32x32)
+      aom_sad32x32x4d, aom_sad32x32x3d)
 
   BFP(BLOCK_64X64, aom_sad64x64, aom_sad64x64_avg, aom_variance64x64,
       aom_sub_pixel_variance64x64, aom_sub_pixel_avg_variance64x64,
-      aom_sad64x64x4d, aom_sad64x64x3d, aom_dist_wtd_sad64x64_avg,
-      aom_dist_wtd_sub_pixel_avg_variance64x64)
+      aom_sad64x64x4d, aom_sad64x64x3d)
 
   BFP(BLOCK_16X16, aom_sad16x16, aom_sad16x16_avg, aom_variance16x16,
       aom_sub_pixel_variance16x16, aom_sub_pixel_avg_variance16x16,
-      aom_sad16x16x4d, aom_sad16x16x3d, aom_dist_wtd_sad16x16_avg,
-      aom_dist_wtd_sub_pixel_avg_variance16x16)
+      aom_sad16x16x4d, aom_sad16x16x3d)
 
   BFP(BLOCK_16X8, aom_sad16x8, aom_sad16x8_avg, aom_variance16x8,
       aom_sub_pixel_variance16x8, aom_sub_pixel_avg_variance16x8,
-      aom_sad16x8x4d, aom_sad16x8x3d, aom_dist_wtd_sad16x8_avg,
-      aom_dist_wtd_sub_pixel_avg_variance16x8)
+      aom_sad16x8x4d, aom_sad16x8x3d)
 
   BFP(BLOCK_8X16, aom_sad8x16, aom_sad8x16_avg, aom_variance8x16,
       aom_sub_pixel_variance8x16, aom_sub_pixel_avg_variance8x16,
-      aom_sad8x16x4d, aom_sad8x16x3d, aom_dist_wtd_sad8x16_avg,
-      aom_dist_wtd_sub_pixel_avg_variance8x16)
+      aom_sad8x16x4d, aom_sad8x16x3d)
 
   BFP(BLOCK_8X8, aom_sad8x8, aom_sad8x8_avg, aom_variance8x8,
       aom_sub_pixel_variance8x8, aom_sub_pixel_avg_variance8x8, aom_sad8x8x4d,
-      aom_sad8x8x3d, aom_dist_wtd_sad8x8_avg,
-      aom_dist_wtd_sub_pixel_avg_variance8x8)
+      aom_sad8x8x3d)
 
-  BFP(BLOCK_8X4, aom_sad8x4, aom_sad8x4_avg, aom_variance8x4,
+  // sdaf (used in compound prediction, get_mvpred_compound_sad()) is unused
+  // for 4xN and Nx4 blocks.
+  BFP(BLOCK_8X4, aom_sad8x4, /*SDAF=*/NULL, aom_variance8x4,
       aom_sub_pixel_variance8x4, aom_sub_pixel_avg_variance8x4, aom_sad8x4x4d,
-      aom_sad8x4x3d, aom_dist_wtd_sad8x4_avg,
-      aom_dist_wtd_sub_pixel_avg_variance8x4)
+      aom_sad8x4x3d)
 
-  BFP(BLOCK_4X8, aom_sad4x8, aom_sad4x8_avg, aom_variance4x8,
+  // sdaf (used in compound prediction, get_mvpred_compound_sad()) is unused
+  // for 4xN and Nx4 blocks.
+  BFP(BLOCK_4X8, aom_sad4x8, /*SDAF=*/NULL, aom_variance4x8,
       aom_sub_pixel_variance4x8, aom_sub_pixel_avg_variance4x8, aom_sad4x8x4d,
-      aom_sad4x8x3d, aom_dist_wtd_sad4x8_avg,
-      aom_dist_wtd_sub_pixel_avg_variance4x8)
+      aom_sad4x8x3d)
 
-  BFP(BLOCK_4X4, aom_sad4x4, aom_sad4x4_avg, aom_variance4x4,
+  // sdaf (used in compound prediction, get_mvpred_compound_sad()) is unused
+  // for 4xN and Nx4 blocks.
+  BFP(BLOCK_4X4, aom_sad4x4, /*SDAF=*/NULL, aom_variance4x4,
       aom_sub_pixel_variance4x4, aom_sub_pixel_avg_variance4x4, aom_sad4x4x4d,
-      aom_sad4x4x3d, aom_dist_wtd_sad4x4_avg,
-      aom_dist_wtd_sub_pixel_avg_variance4x4)
+      aom_sad4x4x3d)
 
 #if !CONFIG_REALTIME_ONLY
 #define OBFP(BT, OSDF, OVF, OSVF) \
@@ -1511,15 +1577,15 @@ AV1_COMP *av1_create_compressor(AV1_PRIMARY *ppi, const AV1EncoderConfig *oxcf,
   if (cpi->oxcf.kf_cfg.key_freq_max != 0)
     alloc_obmc_buffers(&cpi->td.mb.obmc_buffer, cm->error);
 
-  for (int x = 0; x < 2; x++)
-    for (int y = 0; y < 2; y++)
-      CHECK_MEM_ERROR(
-          cm, cpi->td.mb.intrabc_hash_info.hash_value_buffer[x][y],
-          (uint32_t *)aom_malloc(
-              AOM_BUFFER_SIZE_FOR_BLOCK_HASH *
-              sizeof(*cpi->td.mb.intrabc_hash_info.hash_value_buffer[0][0])));
+  for (int x = 0; x < 2; x++) {
+    CHECK_MEM_ERROR(
+        cm, cpi->td.mb.intrabc_hash_info.hash_value_buffer[x],
+        (uint32_t *)aom_malloc(
+            AOM_BUFFER_SIZE_FOR_BLOCK_HASH *
+            sizeof(*cpi->td.mb.intrabc_hash_info.hash_value_buffer[x])));
+  }
 
-  cpi->td.mb.intrabc_hash_info.g_crc_initialized = 0;
+  cpi->td.mb.intrabc_hash_info.crc_initialized = 0;
 
   av1_set_speed_features_framesize_independent(cpi, oxcf->speed);
   av1_set_speed_features_framesize_dependent(cpi, oxcf->speed);
@@ -1632,7 +1698,7 @@ AV1_COMP *av1_create_compressor(AV1_PRIMARY *ppi, const AV1EncoderConfig *oxcf,
   prev_deltaq_params->v_ac_delta_q = INT_MAX;
 
   av1_init_quantizer(&cpi->enc_quant_dequant_params, &cm->quant_params,
-                     cm->seq_params->bit_depth);
+                     cm->seq_params->bit_depth, cpi->oxcf.algo_cfg.sharpness);
   av1_qm_init(&cm->quant_params, av1_num_planes(cm));
 
   av1_loop_filter_init(cm);
@@ -1867,7 +1933,7 @@ int av1_set_reference_enc(AV1_COMP *cpi, int idx, YV12_BUFFER_CONFIG *sd) {
 }
 
 #ifdef OUTPUT_YUV_REC
-void aom_write_one_yuv_frame(AV1_COMMON *cm, YV12_BUFFER_CONFIG *s) {
+static void aom_write_one_yuv_frame(AV1_COMMON *cm, YV12_BUFFER_CONFIG *s) {
   uint8_t *src = s->y_buffer;
   int h = cm->height;
   if (yuv_rec_file == NULL) return;
@@ -1959,9 +2025,407 @@ void av1_set_mv_search_params(AV1_COMP *cpi) {
   }
 }
 
-void av1_set_screen_content_options(AV1_COMP *cpi, FeatureFlags *features) {
+// Estimate if the source frame is screen content, based on the portion of
+// blocks that have few luma colors.
+static void estimate_screen_content(AV1_COMP *cpi, FeatureFlags *features) {
   const AV1_COMMON *const cm = &cpi->common;
   const MACROBLOCKD *const xd = &cpi->td.mb.e_mbd;
+  const uint8_t *src = cpi->unfiltered_source->y_buffer;
+  assert(src != NULL);
+  const int use_hbd = cpi->unfiltered_source->flags & YV12_FLAG_HIGHBITDEPTH;
+  const int stride = cpi->unfiltered_source->y_stride;
+  const int width = cpi->unfiltered_source->y_width;
+  const int height = cpi->unfiltered_source->y_height;
+  const int64_t area = (int64_t)width * height;
+  const int bd = cm->seq_params->bit_depth;
+  const int kBlockWidth = 16;
+  const int kBlockHeight = 16;
+  const int kBlockArea = kBlockWidth * kBlockHeight;
+  // These threshold values are selected experimentally.
+  const int kColorThresh = 4;
+  const unsigned int kVarThresh = 0;
+  // Counts of blocks with no more than kColorThresh colors.
+  int64_t counts_1 = 0;
+  // Counts of blocks with no more than kColorThresh colors and variance larger
+  // than kVarThresh.
+  int64_t counts_2 = 0;
+
+  for (int r = 0; r + kBlockHeight <= height; r += kBlockHeight) {
+    for (int c = 0; c + kBlockWidth <= width; c += kBlockWidth) {
+      int count_buf[1 << 8];  // Maximum (1 << 8) bins for hbd path.
+      const uint8_t *const this_src = src + r * stride + c;
+      int n_colors;
+      if (use_hbd) {
+        av1_count_colors_highbd(this_src, stride, /*rows=*/kBlockHeight,
+                                /*cols=*/kBlockWidth, bd, NULL, count_buf,
+                                &n_colors, NULL);
+      } else {
+        av1_count_colors(this_src, stride, /*rows=*/kBlockHeight,
+                         /*cols=*/kBlockWidth, count_buf, &n_colors);
+      }
+      if (n_colors > 1 && n_colors <= kColorThresh) {
+        ++counts_1;
+        struct buf_2d buf;
+        buf.stride = stride;
+        buf.buf = (uint8_t *)this_src;
+        const unsigned int var = av1_get_perpixel_variance(
+            cpi, xd, &buf, BLOCK_16X16, AOM_PLANE_Y, use_hbd);
+        if (var > kVarThresh) ++counts_2;
+      }
+    }
+  }
+
+  // The threshold values are selected experimentally.
+  features->allow_screen_content_tools = counts_1 * kBlockArea * 10 > area;
+  // IntraBC would force loop filters off, so we use more strict rules that also
+  // requires that the block has high variance.
+  features->allow_intrabc =
+      features->allow_screen_content_tools && counts_2 * kBlockArea * 12 > area;
+  cpi->use_screen_content_tools = features->allow_screen_content_tools;
+  cpi->is_screen_content_type =
+      features->allow_intrabc || (counts_1 * kBlockArea * 10 > area * 4 &&
+                                  counts_2 * kBlockArea * 30 > area);
+}
+
+// Macro that helps debug the screen content mode 2 mechanism
+// #define OUTPUT_SCR_DET_MODE2_STATS
+
+/*!\brief Helper function that finds the dominant value of a block.
+ *
+ * This function builds a histogram of all 256 possible (8 bit) values, and
+ * returns with the value with the greatest count (i.e. the dominant value).
+ */
+uint8_t av1_find_dominant_value(const uint8_t *src, int stride, int rows,
+                                int cols) {
+  uint32_t value_count[1 << 8] = { 0 };  // Maximum (1 << 8) value levels.
+  uint32_t dominant_value_count = 0;
+  uint8_t dominant_value = 0;
+
+  for (int r = 0; r < rows; ++r) {
+    for (int c = 0; c < cols; ++c) {
+      const uint8_t value = src[r * (ptrdiff_t)stride + c];
+
+      value_count[value]++;
+
+      if (value_count[value] > dominant_value_count) {
+        dominant_value = value;
+        dominant_value_count = value_count[value];
+      }
+    }
+  }
+
+  return dominant_value;
+}
+
+/*!\brief Helper function that performs one round of image dilation on a block.
+ *
+ * This function finds the dominant value (i.e. the value that appears most
+ * often within a block), then performs a round of dilation by "extending" all
+ * occurrences of the dominant value outwards in all 8 directions (4 sides + 4
+ * corners).
+ *
+ * For a visual example, let:
+ *  - D: the dominant value
+ *  - [a-p]: different non-dominant values (usually anti-aliased pixels)
+ *  - .: the most common non-dominant value
+ *
+ * Before dilation:       After dilation:
+ * . . a b D c d . .     . . D D D D D . .
+ * . e f D D D g h .     D D D D D D D D D
+ * . D D D D D D D .     D D D D D D D D D
+ * . D D D D D D D .     D D D D D D D D D
+ * . i j D D D k l .     D D D D D D D D D
+ * . . m n D o p . .     . . D D D D D . .
+ */
+void av1_dilate_block(const uint8_t *src, int src_stride, uint8_t *dilated,
+                      int dilated_stride, int rows, int cols) {
+  uint8_t dominant_value = av1_find_dominant_value(src, src_stride, rows, cols);
+
+  for (int r = 0; r < rows; ++r) {
+    for (int c = 0; c < cols; ++c) {
+      const uint8_t value = src[r * (ptrdiff_t)src_stride + c];
+
+      dilated[r * (ptrdiff_t)dilated_stride + c] = value;
+    }
+  }
+
+  for (int r = 0; r < rows; ++r) {
+    for (int c = 0; c < cols; ++c) {
+      const uint8_t value = src[r * (ptrdiff_t)src_stride + c];
+
+      if (value == dominant_value) {
+        // Dilate up
+        if (r != 0) {
+          dilated[(r - 1) * (ptrdiff_t)dilated_stride + c] = value;
+        }
+        // Dilate down
+        if (r != rows - 1) {
+          dilated[(r + 1) * (ptrdiff_t)dilated_stride + c] = value;
+        }
+        // Dilate left
+        if (c != 0) {
+          dilated[r * (ptrdiff_t)dilated_stride + (c - 1)] = value;
+        }
+        // Dilate right
+        if (c != cols - 1) {
+          dilated[r * (ptrdiff_t)dilated_stride + (c + 1)] = value;
+        }
+        // Dilate upper-left corner
+        if (r != 0 && c != 0) {
+          dilated[(r - 1) * (ptrdiff_t)dilated_stride + (c - 1)] = value;
+        }
+        // Dilate upper-right corner
+        if (r != 0 && c != cols - 1) {
+          dilated[(r - 1) * (ptrdiff_t)dilated_stride + (c + 1)] = value;
+        }
+        // Dilate lower-left corner
+        if (r != rows - 1 && c != 0) {
+          dilated[(r + 1) * (ptrdiff_t)dilated_stride + (c - 1)] = value;
+        }
+        // Dilate lower-right corner
+        if (r != rows - 1 && c != cols - 1) {
+          dilated[(r + 1) * (ptrdiff_t)dilated_stride + (c + 1)] = value;
+        }
+      }
+    }
+  }
+}
+
+/*!\brief Estimates if the source frame is a candidate to enable palette mode
+ * and intra block copy, with an accurate detection of anti-aliased text and
+ * graphics.
+ *
+ * Screen content detection is done by dividing frame's luma plane (Y) into
+ * small blocks, counting how many unique colors each block contains and
+ * their per-pixel variance, and classifying these blocks into three main
+ * categories:
+ * 1. Palettizable blocks, low variance (can use palette mode)
+ * 2. Palettizable blocks, high variance (can use palette mode and IntraBC)
+ * 3. Non palettizable, photo-like blocks (can neither use palette mode nor
+ *    IntraBC)
+ * Finally, this function decides whether the frame could benefit from
+ * enabling palette mode with or without IntraBC, based on the ratio of the
+ * three categories mentioned above.
+ */
+static void estimate_screen_content_antialiasing_aware(AV1_COMP *cpi,
+                                                       FeatureFlags *features) {
+  enum {
+    kBlockWidth = 16,
+    kBlockHeight = 16,
+    kBlockArea = kBlockWidth * kBlockHeight
+  };
+
+  const bool fast_detection =
+      cpi->sf.hl_sf.screen_detection_mode2_fast_detection;
+  const AV1_COMMON *const cm = &cpi->common;
+  const MACROBLOCKD *const xd = &cpi->td.mb.e_mbd;
+  const uint8_t *src = cpi->unfiltered_source->y_buffer;
+  assert(src != NULL);
+  const int use_hbd = cpi->unfiltered_source->flags & YV12_FLAG_HIGHBITDEPTH;
+  const int stride = cpi->unfiltered_source->y_stride;
+  const int width = cpi->unfiltered_source->y_width;
+  const int height = cpi->unfiltered_source->y_height;
+  const int64_t area = (int64_t)width * height;
+  const int bd = cm->seq_params->bit_depth;
+  // Holds the down-converted block to 8 bit (if source is HBD)
+  uint8_t downconv_blk[kBlockArea];
+  // Holds the block after a round of dilation
+  uint8_t dilated_blk[kBlockArea];
+
+  // These threshold values are selected experimentally
+  // Detects text and glyphs without anti-aliasing, and graphics with a 4-color
+  // palette
+  const int kSimpleColorThresh = 4;
+  // Detects potential text and glyphs with anti-aliasing, and graphics with a
+  // more extended color palette
+  const int kComplexInitialColorThresh = 40;
+  // Detects text and glyphs with anti-aliasing, and graphics with a more
+  // extended color palette
+  const int kComplexFinalColorThresh = 6;
+  // Threshold used to classify low-variance and high-variance blocks
+  const int kVarThresh = 5;
+  // Count of blocks that are candidates for using palette mode
+  int64_t count_palette = 0;
+  // Count of blocks that are candidates for using IntraBC
+  int64_t count_intrabc = 0;
+  // Count of "photo-like" blocks (i.e. can't use palette mode or IntraBC)
+  int64_t count_photo = 0;
+
+#ifdef OUTPUT_SCR_DET_MODE2_STATS
+  FILE *stats_file;
+  stats_file = fopen("scrdetm2.stt", "a");
+
+  fprintf(stats_file, "\n");
+  fprintf(stats_file, "Screen detection mode 2 image map legend\n");
+  if (fast_detection) {
+    fprintf(stats_file, "Fast detection enabled\n");
+  }
+  fprintf(stats_file,
+          "-------------------------------------------------------\n");
+  fprintf(stats_file,
+          "S: simple block, high var    C: complex block, high var\n");
+  fprintf(stats_file,
+          "-: simple block, low var     =: complex block, low var \n");
+  fprintf(stats_file,
+          "x: photo-like block          .: non-palettizable block \n");
+  fprintf(stats_file,
+          "(whitespace): solid block                              \n");
+  fprintf(stats_file,
+          "-------------------------------------------------------\n");
+#endif
+
+  // Skip every other block and weigh each block twice as much when performing
+  // fast detection
+  const int multiplier = fast_detection ? 2 : 1;
+
+  for (int r = 0; r + kBlockHeight <= height; r += kBlockHeight) {
+    // Alternate skipping in a "checkerboard" pattern when performing fast
+    // detection
+    const int initial_col =
+        (fast_detection && (r / kBlockHeight) % 2) ? kBlockWidth : 0;
+
+    for (int c = initial_col; c + kBlockWidth <= width;
+         c += kBlockWidth * multiplier) {
+      const uint8_t *blk_src = src + r * (ptrdiff_t)stride + c;
+      const uint8_t *blk = blk_src;
+      int blk_stride = stride;
+
+      // Down-convert pixels to 8-bit domain if source is HBD
+      if (use_hbd) {
+        const uint16_t *blk_src_hbd = CONVERT_TO_SHORTPTR(blk_src);
+
+        for (int blk_r = 0; blk_r < kBlockHeight; ++blk_r) {
+          for (int blk_c = 0; blk_c < kBlockWidth; ++blk_c) {
+            const int downconv_val =
+                (blk_src_hbd[blk_r * (ptrdiff_t)stride + blk_c]) >> (bd - 8);
+
+            // Ensure down-converted value is 8-bit
+            assert(downconv_val < (1 << 8));
+            downconv_blk[blk_r * (ptrdiff_t)kBlockWidth + blk_c] = downconv_val;
+          }
+        }
+
+        // Switch block source and stride to down-converted buffer and its width
+        blk = downconv_blk;
+        blk_stride = kBlockWidth;
+      }
+
+      // First, find if the block could be palettized
+      int number_of_colors;
+      bool under_threshold = av1_count_colors_with_threshold(
+          blk, blk_stride, /*rows=*/kBlockHeight,
+          /*cols=*/kBlockWidth, kComplexInitialColorThresh, &number_of_colors);
+      if (number_of_colors > 1 && under_threshold) {
+        struct buf_2d buf;
+        buf.stride = stride;
+        buf.buf = (uint8_t *)blk_src;
+
+        if (number_of_colors <= kSimpleColorThresh) {
+          // Simple block detected, add to block count with no further
+          // processing required
+          ++count_palette;
+          // Variance always comes from the source image with no down-conversion
+          int var = av1_get_perpixel_variance(cpi, xd, &buf, BLOCK_16X16,
+                                              AOM_PLANE_Y, use_hbd);
+
+          if (var > kVarThresh) {
+            ++count_intrabc;
+#ifdef OUTPUT_SCR_DET_MODE2_STATS
+            fprintf(stats_file, "S");
+          } else {
+            fprintf(stats_file, "-");
+#endif
+          }
+        } else {
+          // Complex block detected, try to find if it's palettizable
+          // Dilate block with dominant color, to exclude anti-aliased pixels
+          // from final palette count
+          av1_dilate_block(blk, blk_stride, dilated_blk, kBlockWidth,
+                           /*rows=*/kBlockHeight, /*cols=*/kBlockWidth);
+          under_threshold = av1_count_colors_with_threshold(
+              dilated_blk, kBlockWidth, /*rows=*/kBlockHeight,
+              /*cols=*/kBlockWidth, kComplexFinalColorThresh,
+              &number_of_colors);
+
+          if (under_threshold) {
+            // Variance always comes from the source image with no
+            // down-conversion
+            int var = av1_get_perpixel_variance(cpi, xd, &buf, BLOCK_16X16,
+                                                AOM_PLANE_Y, use_hbd);
+
+            if (var > kVarThresh) {
+              ++count_palette;
+              ++count_intrabc;
+#ifdef OUTPUT_SCR_DET_MODE2_STATS
+              fprintf(stats_file, "C");
+            } else {
+              fprintf(stats_file, "=");
+#endif
+            }
+#ifdef OUTPUT_SCR_DET_MODE2_STATS
+          } else {
+            fprintf(stats_file, ".");
+#endif
+          }
+        }
+      } else {
+        if (number_of_colors > kComplexInitialColorThresh) {
+          ++count_photo;
+#ifdef OUTPUT_SCR_DET_MODE2_STATS
+          fprintf(stats_file, "x");
+        } else {
+          fprintf(stats_file, " ");  // Solid block (1 color)
+#endif
+        }
+      }
+    }
+#ifdef OUTPUT_SCR_DET_MODE2_STATS
+    fprintf(stats_file, "\n");
+#endif
+  }
+
+  // Normalize counts to account for the blocks that were skipped
+  if (fast_detection) {
+    count_photo *= multiplier;
+    count_palette *= multiplier;
+    count_intrabc *= multiplier;
+  }
+
+  // The threshold values are selected experimentally.
+  // Penalize presence of photo-like blocks (1/16th the weight of a palettizable
+  // block)
+  features->allow_screen_content_tools =
+      ((count_palette - count_photo / 16) * kBlockArea * 10 > area);
+
+  // IntraBC would force loop filters off, so we use more strict rules that also
+  // requires that the block has high variance.
+  // Penalize presence of photo-like blocks (1/16th the weight of a palettizable
+  // block)
+  features->allow_intrabc =
+      features->allow_screen_content_tools &&
+      ((count_intrabc - count_photo / 16) * kBlockArea * 12 > area);
+  cpi->use_screen_content_tools = features->allow_screen_content_tools;
+  cpi->is_screen_content_type =
+      features->allow_intrabc || (count_palette * kBlockArea * 15 > area * 4 &&
+                                  count_intrabc * kBlockArea * 30 > area);
+
+#ifdef OUTPUT_SCR_DET_MODE2_STATS
+  fprintf(stats_file,
+          "block count palette: %" PRId64 ", count intrabc: %" PRId64
+          ", count photo: %" PRId64 ", total: %d\n",
+          count_palette, count_intrabc, count_photo,
+          (int)(ceil(width / kBlockWidth) * ceil(height / kBlockHeight)));
+  fprintf(stats_file, "sc palette value: %" PRId64 ", threshold %" PRId64 "\n",
+          (count_palette - count_photo / 16) * kBlockArea * 10, area);
+  fprintf(stats_file, "sc ibc value: %" PRId64 ", threshold %" PRId64 "\n",
+          (count_intrabc - count_photo / 16) * kBlockArea * 12, area);
+  fprintf(stats_file, "allow sct: %d, allow ibc: %d\n",
+          features->allow_screen_content_tools, features->allow_intrabc);
+#endif
+}
+
+void av1_set_screen_content_options(AV1_COMP *cpi, FeatureFlags *features) {
+  const AV1_COMMON *const cm = &cpi->common;
 
   if (cm->seq_params->force_screen_content_tools != 2) {
     features->allow_screen_content_tools = features->allow_intrabc =
@@ -1993,59 +2457,12 @@ void av1_set_screen_content_options(AV1_COMP *cpi, FeatureFlags *features) {
     return;
   }
 
-  // Estimate if the source frame is screen content, based on the portion of
-  // blocks that have few luma colors.
-  const uint8_t *src = cpi->unfiltered_source->y_buffer;
-  assert(src != NULL);
-  const int use_hbd = cpi->unfiltered_source->flags & YV12_FLAG_HIGHBITDEPTH;
-  const int stride = cpi->unfiltered_source->y_stride;
-  const int width = cpi->unfiltered_source->y_width;
-  const int height = cpi->unfiltered_source->y_height;
-  const int64_t area = (int64_t)width * height;
-  const int bd = cm->seq_params->bit_depth;
-  const int blk_w = 16;
-  const int blk_h = 16;
-  // These threshold values are selected experimentally.
-  const int color_thresh = 4;
-  const unsigned int var_thresh = 0;
-  // Counts of blocks with no more than color_thresh colors.
-  int64_t counts_1 = 0;
-  // Counts of blocks with no more than color_thresh colors and variance larger
-  // than var_thresh.
-  int64_t counts_2 = 0;
-
-  for (int r = 0; r + blk_h <= height; r += blk_h) {
-    for (int c = 0; c + blk_w <= width; c += blk_w) {
-      int count_buf[1 << 8];  // Maximum (1 << 8) bins for hbd path.
-      const uint8_t *const this_src = src + r * stride + c;
-      int n_colors;
-      if (use_hbd)
-        av1_count_colors_highbd(this_src, stride, blk_w, blk_h, bd, NULL,
-                                count_buf, &n_colors, NULL);
-      else
-        av1_count_colors(this_src, stride, blk_w, blk_h, count_buf, &n_colors);
-      if (n_colors > 1 && n_colors <= color_thresh) {
-        ++counts_1;
-        struct buf_2d buf;
-        buf.stride = stride;
-        buf.buf = (uint8_t *)this_src;
-        const unsigned int var = av1_get_perpixel_variance(
-            cpi, xd, &buf, BLOCK_16X16, AOM_PLANE_Y, use_hbd);
-        if (var > var_thresh) ++counts_2;
-      }
-    }
+  if (cpi->oxcf.algo_cfg.screen_detection_mode ==
+      AOM_SCREEN_DETECTION_ANTIALIASING_AWARE) {
+    estimate_screen_content_antialiasing_aware(cpi, features);
+  } else {
+    estimate_screen_content(cpi, features);
   }
-
-  // The threshold values are selected experimentally.
-  features->allow_screen_content_tools = counts_1 * blk_h * blk_w * 10 > area;
-  // IntraBC would force loop filters off, so we use more strict rules that also
-  // requires that the block has high variance.
-  features->allow_intrabc = features->allow_screen_content_tools &&
-                            counts_2 * blk_h * blk_w * 12 > area;
-  cpi->use_screen_content_tools = features->allow_screen_content_tools;
-  cpi->is_screen_content_type =
-      features->allow_intrabc || (counts_1 * blk_h * blk_w * 10 > area * 4 &&
-                                  counts_2 * blk_h * blk_w * 30 > area);
 }
 
 static void init_motion_estimation(AV1_COMP *cpi) {
@@ -2290,7 +2707,12 @@ void av1_set_frame_size(AV1_COMP *cpi, int width, int height) {
       if (av1_is_scaled(sf)) aom_extend_frame_borders(&buf->buf, num_planes);
     }
   }
-  if (!frame_is_intra_only(cm) && !has_valid_ref_frame) {
+  // For 1 pass CBR mode: we can skip this check for spatial enhancement
+  // layer if the target_bandwidth is zero, since it will be dropped.
+  const bool dropped_frame =
+      has_no_stats_stage(cpi) && cpi->oxcf.rc_cfg.mode == AOM_CBR &&
+      cpi->svc.spatial_layer_id > 0 && cpi->oxcf.rc_cfg.target_bandwidth == 0;
+  if (!frame_is_intra_only(cm) && !has_valid_ref_frame && !dropped_frame) {
     aom_internal_error(
         cm->error, AOM_CODEC_CORRUPT_FRAME,
         "Can't find at least one reference frame with valid size");
@@ -2676,10 +3098,10 @@ static int encode_without_recode(AV1_COMP *cpi) {
 
   av1_set_quantizer(cm, q_cfg->qm_minlevel, q_cfg->qm_maxlevel, q,
                     q_cfg->enable_chroma_deltaq, q_cfg->enable_hdr_deltaq,
-                    cpi->oxcf.mode == ALLINTRA);
+                    cpi->oxcf.mode == ALLINTRA, cpi->oxcf.tune_cfg.tuning);
   av1_set_speed_features_qindex_dependent(cpi, cpi->oxcf.speed);
   av1_init_quantizer(&cpi->enc_quant_dequant_params, &cm->quant_params,
-                     cm->seq_params->bit_depth);
+                     cm->seq_params->bit_depth, cpi->oxcf.algo_cfg.sharpness);
   av1_set_variance_partition_thresholds(cpi, q, 0);
   av1_setup_frame(cpi);
 
@@ -2691,10 +3113,11 @@ static int encode_without_recode(AV1_COMP *cpi) {
     if (av1_encodedframe_overshoot_cbr(cpi, &q)) {
       av1_set_quantizer(cm, q_cfg->qm_minlevel, q_cfg->qm_maxlevel, q,
                         q_cfg->enable_chroma_deltaq, q_cfg->enable_hdr_deltaq,
-                        cpi->oxcf.mode == ALLINTRA);
+                        cpi->oxcf.mode == ALLINTRA, cpi->oxcf.tune_cfg.tuning);
       av1_set_speed_features_qindex_dependent(cpi, cpi->oxcf.speed);
       av1_init_quantizer(&cpi->enc_quant_dequant_params, &cm->quant_params,
-                         cm->seq_params->bit_depth);
+                         cm->seq_params->bit_depth,
+                         cpi->oxcf.algo_cfg.sharpness);
       av1_set_variance_partition_thresholds(cpi, q, 0);
       if (frame_is_intra_only(cm) || cm->features.error_resilient_mode ||
           cm->features.primary_ref_frame == PRIMARY_REF_NONE)
@@ -2702,7 +3125,12 @@ static int encode_without_recode(AV1_COMP *cpi) {
     }
   }
   av1_apply_active_map(cpi);
-  if (q_cfg->aq_mode == CYCLIC_REFRESH_AQ) av1_cyclic_refresh_setup(cpi);
+  if (cpi->roi.enabled) {
+    // For now if roi map is used: don't setup cyclic refresh.
+    av1_apply_roi_map(cpi);
+  } else if (q_cfg->aq_mode == CYCLIC_REFRESH_AQ) {
+    av1_cyclic_refresh_setup(cpi);
+  }
   if (cm->seg.enabled) {
     if (!cm->seg.update_data && cm->prev_frame) {
       segfeatures_copy(&cm->seg, &cm->prev_frame->seg);
@@ -2996,16 +3424,12 @@ static int encode_with_recode_loop(AV1_COMP *cpi, size_t *size, uint8_t *dest,
 
     av1_set_quantizer(cm, q_cfg->qm_minlevel, q_cfg->qm_maxlevel, q,
                       q_cfg->enable_chroma_deltaq, q_cfg->enable_hdr_deltaq,
-                      oxcf->mode == ALLINTRA);
+                      oxcf->mode == ALLINTRA, oxcf->tune_cfg.tuning);
     av1_set_speed_features_qindex_dependent(cpi, oxcf->speed);
     av1_init_quantizer(&cpi->enc_quant_dequant_params, &cm->quant_params,
-                       cm->seq_params->bit_depth);
+                       cm->seq_params->bit_depth, cpi->oxcf.algo_cfg.sharpness);
 
     av1_set_variance_partition_thresholds(cpi, q, 0);
-
-    // printf("Frame %d/%d: q = %d, frame_type = %d superres_denom = %d\n",
-    //        cm->current_frame.frame_number, cm->show_frame, q,
-    //        cm->current_frame.frame_type, cm->superres_scale_denominator);
 
     if (loop_count == 0) {
       av1_setup_frame(cpi);
@@ -3415,6 +3839,7 @@ static int encode_with_and_without_superres(AV1_COMP *cpi, size_t *size,
         const int this_index = denom - (SCALE_NUMERATOR + 1);
         superres_sses[this_index] = INT64_MAX;
         superres_rates[this_index] = INT64_MAX;
+        superres_largest_tile_ids[this_index] = 0;
       }
     }
     // Encode without superres.
@@ -3425,7 +3850,8 @@ static int encode_with_and_without_superres(AV1_COMP *cpi, size_t *size,
 
     // Note: Both use common rdmult based on base qindex of fullres.
     const int64_t rdmult = av1_compute_rd_mult_based_on_qindex(
-        bit_depth, update_type, cm->quant_params.base_qindex);
+        bit_depth, update_type, cm->quant_params.base_qindex,
+        cpi->oxcf.tune_cfg.tuning);
 
     // Find the best rdcost among all superres denoms.
     int best_denom = -1;
@@ -3489,7 +3915,8 @@ static int encode_with_and_without_superres(AV1_COMP *cpi, size_t *size,
 
     // Note: Both use common rdmult based on base qindex of fullres.
     const int64_t rdmult = av1_compute_rd_mult_based_on_qindex(
-        bit_depth, update_type, cm->quant_params.base_qindex);
+        bit_depth, update_type, cm->quant_params.base_qindex,
+        cpi->oxcf.tune_cfg.tuning);
     proj_rdcost1 =
         RDCOST_DBL_WITH_NATIVE_BD_DIST(rdmult, rate1, sse1, bit_depth);
     const double proj_rdcost2 =
@@ -3815,6 +4242,7 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size, uint8_t *dest,
   }
 
   if (oxcf->tune_cfg.tuning == AOM_TUNE_SSIM ||
+      oxcf->tune_cfg.tuning == AOM_TUNE_IQ ||
       oxcf->tune_cfg.tuning == AOM_TUNE_SSIMULACRA2) {
     av1_set_mb_ssim_rdmult_scaling(cpi);
   }
@@ -4019,8 +4447,10 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size, uint8_t *dest,
     cpi->frames_since_last_update = 1;
   }
 
-  if (cpi->svc.spatial_layer_id == cpi->svc.number_spatial_layers - 1)
+  if (cpi->svc.spatial_layer_id == cpi->svc.number_spatial_layers - 1) {
     cpi->svc.prev_number_spatial_layers = cpi->svc.number_spatial_layers;
+  }
+  cpi->svc.prev_number_temporal_layers = cpi->svc.number_temporal_layers;
 
   // Clear the one shot update flags for segmentation map and mode/ref loop
   // filter deltas.
@@ -4583,10 +5013,10 @@ static void update_end_of_frame_stats(AV1_COMP *cpi) {
     if (!cpi->common.show_existing_frame) {
       AV1_COMMON *const cm = &cpi->common;
       struct loopfilter *const lf = &cm->lf;
-      cpi->ppi->filter_level[0] = lf->filter_level[0];
-      cpi->ppi->filter_level[1] = lf->filter_level[1];
-      cpi->ppi->filter_level_u = lf->filter_level_u;
-      cpi->ppi->filter_level_v = lf->filter_level_v;
+      cpi->ppi->filter_level[0] = lf->backup_filter_level[0];
+      cpi->ppi->filter_level[1] = lf->backup_filter_level[1];
+      cpi->ppi->filter_level_u = lf->backup_filter_level_u;
+      cpi->ppi->filter_level_v = lf->backup_filter_level_v;
     }
   }
   // Store frame level mv_stats from cpi to ppi.
@@ -5454,7 +5884,8 @@ aom_fixed_buf_t *av1_get_global_headers(AV1_PRIMARY *ppi) {
 
   if (av1_write_obu_header(&ppi->level_params, &ppi->cpi->frame_header_count,
                            OBU_SEQUENCE_HEADER,
-                           ppi->seq_params.has_nonzero_operating_point_idc, 0,
+                           ppi->seq_params.has_nonzero_operating_point_idc,
+                           /*is_layer_specific_obu=*/false, 0,
                            &header_buf[0]) != obu_header_size) {
     return NULL;
   }

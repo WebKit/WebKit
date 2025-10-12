@@ -158,17 +158,15 @@ bool ImageDecoder::supportsMediaType(MediaType type)
 bool ImageDecoder::fetchFrameMetaDataAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options, ImageFrame& frame) const
 {
     if (options.hasSizeForDrawing()) {
-        ASSERT(frame.hasNativeImage());
-        frame.m_size = frame.nativeImage()->size();
+        ASSERT(frame.hasNativeImage(options.shouldDecodeToHDR()));
+        frame.m_size = frame.nativeImage(options.shouldDecodeToHDR())->size();
     } else
         frame.m_size = frameSizeAtIndex(index, subsamplingLevel);
 
     frame.m_densityCorrectedSize = frameDensityCorrectedSizeAtIndex(index);
     frame.m_subsamplingLevel = subsamplingLevel;
-    frame.m_decodingOptions = options;
     frame.m_hasAlpha = frameHasAlphaAtIndex(index);
     frame.m_orientation = frameOrientationAtIndex(index);
-    frame.m_headroom = frameHeadroomAtIndex(index);
     frame.m_decodingStatus = frameIsCompleteAtIndex(index) ? DecodingStatus::Complete : DecodingStatus::Partial;
     return true;
 }

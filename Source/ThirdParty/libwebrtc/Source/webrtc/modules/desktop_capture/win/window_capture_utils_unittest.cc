@@ -25,29 +25,8 @@
 namespace webrtc {
 namespace {
 
-const char kWindowThreadName[] = "window_capture_utils_test_thread";
+constexpr char kWindowThreadName[] = "window_capture_utils_test_thread";
 const WCHAR kWindowTitle[] = L"Window Capture Utils Test";
-
-std::unique_ptr<rtc::Thread> SetUpUnresponsiveWindow(std::mutex& mtx,
-                                                     WindowInfo& info) {
-  std::unique_ptr<rtc::Thread> window_thread;
-  window_thread = rtc::Thread::Create();
-  window_thread->SetName(kWindowThreadName, nullptr);
-  window_thread->Start();
-
-  SendTask(window_thread.get(), [&] { info = CreateTestWindow(kWindowTitle); });
-
-  // Intentionally create a deadlock to cause the window to become unresponsive.
-  mtx.lock();
-  window_thread->PostTask([&mtx]() {
-    mtx.lock();
-    mtx.unlock();
-  });
-
-  return window_thread;
-}
-
-}  // namespace
 
 TEST(WindowCaptureUtilsTest, GetWindowList) {
   WindowInfo info = CreateTestWindow(kWindowTitle);
@@ -63,11 +42,33 @@ TEST(WindowCaptureUtilsTest, GetWindowList) {
   DestroyTestWindow(info);
 }
 
+// Disable thread-safety-analysis in order to test unresponsive Windows.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wthread-safety-analysis"
+
+std::unique_ptr<Thread> SetUpUnresponsiveWindow(std::mutex& mtx,
+                                                WindowInfo& info) {
+  std::unique_ptr<Thread> window_thread;
+  window_thread = Thread::Create();
+  window_thread->SetName(kWindowThreadName, nullptr);
+  window_thread->Start();
+
+  SendTask(window_thread.get(), [&] { info = CreateTestWindow(kWindowTitle); });
+
+  // Intentionally create a deadlock to cause the window to become unresponsive.
+  mtx.lock();
+  window_thread->PostTask([&mtx]() {
+    mtx.lock();
+    mtx.unlock();
+  });
+
+  return window_thread;
+}
+
 TEST(WindowCaptureUtilsTest, IncludeUnresponsiveWindows) {
   std::mutex mtx;
   WindowInfo info;
-  std::unique_ptr<rtc::Thread> window_thread =
-      SetUpUnresponsiveWindow(mtx, info);
+  std::unique_ptr<Thread> window_thread = SetUpUnresponsiveWindow(mtx, info);
 
   EXPECT_FALSE(IsWindowResponding(info.hwnd));
 
@@ -89,8 +90,7 @@ TEST(WindowCaptureUtilsTest, IncludeUnresponsiveWindows) {
 TEST(WindowCaptureUtilsTest, IgnoreUnresponsiveWindows) {
   std::mutex mtx;
   WindowInfo info;
-  std::unique_ptr<rtc::Thread> window_thread =
-      SetUpUnresponsiveWindow(mtx, info);
+  std::unique_ptr<Thread> window_thread = SetUpUnresponsiveWindow(mtx, info);
 
   EXPECT_FALSE(IsWindowResponding(info.hwnd));
 
@@ -108,6 +108,8 @@ TEST(WindowCaptureUtilsTest, IgnoreUnresponsiveWindows) {
   SendTask(window_thread.get(), [&info]() { DestroyTestWindow(info); });
   window_thread->Stop();
 }
+
+#pragma clang diagnostic pop
 
 TEST(WindowCaptureUtilsTest, IncludeUntitledWindows) {
   WindowInfo info = CreateTestWindow(L"");
@@ -150,4 +152,5 @@ TEST(WindowCaptureUtilsTest, IgnoreCurrentProcessWindows) {
   DestroyTestWindow(info);
 }
 
+}  // namespace
 }  // namespace webrtc

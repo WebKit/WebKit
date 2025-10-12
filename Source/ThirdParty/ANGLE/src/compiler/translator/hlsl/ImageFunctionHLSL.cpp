@@ -6,6 +6,10 @@
 // ImageFunctionHLSL: Class for writing implementations of ESSL image functions into HLSL output.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "compiler/translator/hlsl/ImageFunctionHLSL.h"
 #include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/hlsl/UtilsHLSL.h"

@@ -1,7 +1,7 @@
 // Copyright (C) 2021 Microsoft. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-esid: sec-%typedarray%.prototype.findLast
+esid: sec-%typedarray%.prototype.findlast
 description: >
   "findLast" property of TypedArrayPrototype
 info: |

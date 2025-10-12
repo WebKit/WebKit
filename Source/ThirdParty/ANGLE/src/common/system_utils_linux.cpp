@@ -6,6 +6,10 @@
 
 // system_utils_linux.cpp: Implementation of OS-specific functions for Linux
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "common/debug.h"
 #include "system_utils.h"
 

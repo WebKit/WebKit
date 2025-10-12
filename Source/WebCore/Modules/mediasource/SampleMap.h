@@ -101,7 +101,7 @@ public:
     WEBCORE_EXPORT iterator findSyncSampleAfterPresentationTime(const MediaTime&, const MediaTime& threshold = MediaTime::positiveInfiniteTime());
     WEBCORE_EXPORT iterator findSyncSampleAfterDecodeIterator(iterator);
     WEBCORE_EXPORT reverse_iterator_range findDependentSamples(const MediaSample&);
-    WEBCORE_EXPORT iterator_range findSamplesBetweenDecodeKeys(const KeyType&, const KeyType&);
+    WEBCORE_EXPORT Vector<value_type> findSamplesBetweenDecodeKeys(const KeyType&, const KeyType&);
 
 private:
     MapType m_samples;

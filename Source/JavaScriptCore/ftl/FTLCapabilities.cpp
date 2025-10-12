@@ -204,6 +204,7 @@ inline CapabilityLevel canCompile(Node* node)
     case TailCallForwardVarargsInlinedCaller:
     case ConstructForwardVarargs:
     case CallWasm:
+    case TailCallInlinedCallerWasm:
     case CallCustomAccessorGetter:
     case CallCustomAccessorSetter:
     case VarargsLength:
@@ -250,7 +251,8 @@ inline CapabilityLevel canCompile(Node* node)
     case MakeRope:
     case MakeAtomString:
     case NewArrayWithSize:
-    case NewArrayWithConstantSize:
+    case NewArrayWithButterfly:
+    case NewButterflyWithSize:
     case NewArrayWithSpecies:
     case NewArrayWithSizeAndStructure:
     case TryGetById:
@@ -313,6 +315,7 @@ inline CapabilityLevel canCompile(Node* node)
     case NumberIsNaN:
     case GlobalIsFinite:
     case NumberIsFinite:
+    case NumberIsSafeInteger:
     case IsObject:
     case IsCallable:
     case IsConstructor:
@@ -342,7 +345,8 @@ inline CapabilityLevel canCompile(Node* node)
     case EnumeratorPutByVal:
     case BottomValue:
     case PhantomNewObject:
-    case PhantomNewArrayWithConstantSize:
+    case PhantomNewArrayWithButterfly:
+    case PhantomNewButterflyWithSize:
     case PhantomNewFunction:
     case PhantomNewGeneratorFunction:
     case PhantomNewAsyncGeneratorFunction:
@@ -353,7 +357,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PutHint:
     case CheckStructureImmediate:
     case MaterializeNewObject:
-    case MaterializeNewArrayWithConstantSize:
+    case MaterializeNewArrayWithButterfly:
     case MaterializeCreateActivation:
     case MaterializeNewInternalFieldObject:
     case PhantomDirectArguments:
@@ -388,6 +392,7 @@ inline CapabilityLevel canCompile(Node* node)
     case RegExpTestInline:
     case RegExpMatchFast:
     case RegExpMatchFastGlobal:
+    case RegExpSearch:
     case NewRegExp:
     case NewMap:
     case NewSet:
@@ -489,6 +494,9 @@ inline CapabilityLevel canCompile(Node* node)
     case DateGetInt32OrNaN:
     case DateGetTime:
     case DateSetTime:
+    case ResolvePromiseFirstResolving:
+    case RejectPromiseFirstResolving:
+    case FulfillPromiseFirstResolving:
         // These are OK.
         break;
 

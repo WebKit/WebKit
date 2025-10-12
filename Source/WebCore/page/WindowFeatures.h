@@ -28,10 +28,11 @@
 
 #pragma once
 
-#include "DisabledAdaptations.h"
-#include "FloatRect.h"
+#include <WebCore/DisabledAdaptations.h>
+#include <WebCore/FloatRect.h>
 #include <wtf/Function.h>
 #include <wtf/OptionSet.h>
+#include <wtf/Platform.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

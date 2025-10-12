@@ -27,7 +27,8 @@
 // [-1, 2) * WARPEDPIXEL_PREC_SHIFTS.
 // We need an extra 2 taps to fit this in, for a total of 8 taps.
 /* clang-format off */
-const int16_t av1_warped_filter[WARPEDPIXEL_PREC_SHIFTS * 3 + 1][8] = {
+const WarpedFilterCoeff av1_warped_filter[WARPEDPIXEL_PREC_SHIFTS * 3 + 1]
+                                         [8] = {
   // [-1, 0)
   { 0,   0, 127,   1,   0, 0, 0, 0 }, { 0, - 1, 127,   2,   0, 0, 0, 0 },
   { 1, - 3, 127,   4, - 1, 0, 0, 0 }, { 1, - 4, 126,   6, - 2, 1, 0, 0 },
@@ -344,7 +345,7 @@ void av1_highbd_warp_affine_c(const int32_t *mat, const uint16_t *ref,
           const int offs = ROUND_POWER_OF_TWO(sx, WARPEDDIFF_PREC_BITS) +
                            WARPEDPIXEL_PREC_SHIFTS;
           assert(offs >= 0 && offs <= WARPEDPIXEL_PREC_SHIFTS * 3);
-          const int16_t *coeffs = av1_warped_filter[offs];
+          const WarpedFilterCoeff *coeffs = av1_warped_filter[offs];
 
           int32_t sum = 1 << offset_bits_horiz;
           for (int m = 0; m < 8; ++m) {
@@ -365,7 +366,7 @@ void av1_highbd_warp_affine_c(const int32_t *mat, const uint16_t *ref,
           const int offs = ROUND_POWER_OF_TWO(sy, WARPEDDIFF_PREC_BITS) +
                            WARPEDPIXEL_PREC_SHIFTS;
           assert(offs >= 0 && offs <= WARPEDPIXEL_PREC_SHIFTS * 3);
-          const int16_t *coeffs = av1_warped_filter[offs];
+          const WarpedFilterCoeff *coeffs = av1_warped_filter[offs];
 
           int32_t sum = 1 << offset_bits_vert;
           for (int m = 0; m < 8; ++m) {
@@ -575,7 +576,7 @@ void av1_warp_affine_c(const int32_t *mat, const uint8_t *ref, int width,
           const int offs = ROUND_POWER_OF_TWO(sx, WARPEDDIFF_PREC_BITS) +
                            WARPEDPIXEL_PREC_SHIFTS;
           assert(offs >= 0 && offs <= WARPEDPIXEL_PREC_SHIFTS * 3);
-          const int16_t *coeffs = av1_warped_filter[offs];
+          const WarpedFilterCoeff *coeffs = av1_warped_filter[offs];
 
           int32_t sum = 1 << offset_bits_horiz;
           for (int m = 0; m < 8; ++m) {
@@ -599,7 +600,7 @@ void av1_warp_affine_c(const int32_t *mat, const uint8_t *ref, int width,
           const int offs = ROUND_POWER_OF_TWO(sy, WARPEDDIFF_PREC_BITS) +
                            WARPEDPIXEL_PREC_SHIFTS;
           assert(offs >= 0 && offs <= WARPEDPIXEL_PREC_SHIFTS * 3);
-          const int16_t *coeffs = av1_warped_filter[offs];
+          const WarpedFilterCoeff *coeffs = av1_warped_filter[offs];
 
           int32_t sum = 1 << offset_bits_vert;
           for (int m = 0; m < 8; ++m) {
@@ -705,14 +706,14 @@ void av1_warp_plane(WarpedMotionParams *wm, int use_hbd, int bd,
 
 // By setting LS_STEP = 8, the least 2 bits of every elements in A, Bx, By are
 // 0. So, we can reduce LS_MAT_RANGE_BITS(2) bits here.
-#define LS_SQUARE(a)                                          \
-  (((a) * (a)*4 + (a)*4 * LS_STEP + LS_STEP * LS_STEP * 2) >> \
+#define LS_SQUARE(a)                                              \
+  (((a) * (a) * 4 + (a) * 4 * LS_STEP + LS_STEP * LS_STEP * 2) >> \
    (2 + LS_MAT_DOWN_BITS))
-#define LS_PRODUCT1(a, b)                                           \
-  (((a) * (b)*4 + ((a) + (b)) * 2 * LS_STEP + LS_STEP * LS_STEP) >> \
+#define LS_PRODUCT1(a, b)                                             \
+  (((a) * (b) * 4 + ((a) + (b)) * 2 * LS_STEP + LS_STEP * LS_STEP) >> \
    (2 + LS_MAT_DOWN_BITS))
-#define LS_PRODUCT2(a, b)                                               \
-  (((a) * (b)*4 + ((a) + (b)) * 2 * LS_STEP + LS_STEP * LS_STEP * 2) >> \
+#define LS_PRODUCT2(a, b)                                                 \
+  (((a) * (b) * 4 + ((a) + (b)) * 2 * LS_STEP + LS_STEP * LS_STEP * 2) >> \
    (2 + LS_MAT_DOWN_BITS))
 
 #define USE_LIMITED_PREC_MULT 0

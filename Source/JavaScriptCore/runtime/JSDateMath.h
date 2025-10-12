@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is
  * Netscape Communications Corporation.
  * Portions created by the Initial Developer are Copyright (C) 1998
- * the Initial Developer. All Rights Reserved.
+ * the Initial Developer. All rights reserved.
  *
  * Contributor(s):
  *
@@ -43,7 +43,7 @@
 
 #pragma once
 
-#include "DateInstanceCache.h"
+#include <JavaScriptCore/DateInstanceCache.h>
 #include <wtf/DateMath.h>
 #include <wtf/GregorianDateTime.h>
 #include <wtf/SaturatedArithmetic.h>
@@ -53,6 +53,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
+class DateInstance;
 class JSGlobalObject;
 class OpaqueICUTimeZone;
 class VM;
@@ -112,10 +113,11 @@ public:
     String timeZoneDisplayName(bool isDST);
     Ref<DateInstanceData> cachedDateInstanceData(double millisecondsFromEpoch);
 
-    void msToGregorianDateTime(double millisecondsFromEpoch, WTF::TimeType outputTimeType, GregorianDateTime&);
-    double gregorianDateTimeToMS(const GregorianDateTime&, double milliseconds, WTF::TimeType);
-    double localTimeToMS(double milliseconds, WTF::TimeType);
+    void msToGregorianDateTime(double millisecondsFromEpoch, TimeType outputTimeType, GregorianDateTime&);
+    double gregorianDateTimeToMS(const GregorianDateTime&, double milliseconds, TimeType);
+    double localTimeToMS(double milliseconds, TimeType);
     JS_EXPORT_PRIVATE double parseDate(JSGlobalObject*, VM&, const WTF::String&);
+    std::tuple<int32_t, int32_t, int32_t> yearMonthDayFromDaysWithCache(int32_t days);
 
     static void timeZoneChanged();
 
@@ -150,7 +152,7 @@ private:
             m_epoch = 0;
         }
 
-        LocalTimeOffset localTimeOffset(DateCache&, int64_t millisecondsFromEpoch, WTF::TimeType);
+        LocalTimeOffset localTimeOffset(DateCache&, int64_t millisecondsFromEpoch, TimeType);
 
     private:
         LocalTimeOffsetCache* leastRecentlyUsed(LocalTimeOffsetCache* exclude);
@@ -171,14 +173,15 @@ private:
     };
 
     void timeZoneCacheSlow();
-    LocalTimeOffset localTimeOffset(int64_t millisecondsFromEpoch, WTF::TimeType inputTimeType = WTF::UTCTime)
+    LocalTimeOffset localTimeOffset(int64_t millisecondsFromEpoch, TimeType inputTimeType = TimeType::UTCTime)
     {
-        static_assert(!WTF::UTCTime);
-        static_assert(WTF::LocalTime == 1);
+        using Underlying = std::underlying_type_t<TimeType>;
+        static_assert(!static_cast<Underlying>(TimeType::UTCTime));
+        static_assert(static_cast<Underlying>(TimeType::LocalTime) == 1);
         return m_caches[static_cast<unsigned>(inputTimeType)].localTimeOffset(*this, millisecondsFromEpoch, inputTimeType);
     }
 
-    LocalTimeOffset calculateLocalTimeOffset(double millisecondsFromEpoch, WTF::TimeType inputTimeType);
+    LocalTimeOffset calculateLocalTimeOffset(double millisecondsFromEpoch, TimeType inputTimeType);
 
     OpaqueICUTimeZone* timeZoneCache()
     {
@@ -186,8 +189,6 @@ private:
             timeZoneCacheSlow();
         return m_timeZoneCache.get();
     }
-
-    std::tuple<int32_t, int32_t, int32_t> yearMonthDayFromDaysWithCache(int32_t days);
 
     std::unique_ptr<OpaqueICUTimeZone, OpaqueICUTimeZoneDeleter> m_timeZoneCache;
     std::array<DSTCache, 2> m_caches;

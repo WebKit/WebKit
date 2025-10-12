@@ -11,6 +11,10 @@
 #ifndef MODULES_AUDIO_DEVICE_INCLUDE_MOCK_AUDIO_TRANSPORT_H_
 #define MODULES_AUDIO_DEVICE_INCLUDE_MOCK_AUDIO_TRANSPORT_H_
 
+#include <cstddef>
+#include <cstdint>
+#include <optional>
+
 #include "api/audio/audio_device_defines.h"
 #include "test/gmock.h"
 

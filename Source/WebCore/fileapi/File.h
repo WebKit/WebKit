@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Blob.h"
+#include <WebCore/Blob.h>
 #include <wtf/FileSystem.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>

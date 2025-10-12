@@ -26,8 +26,8 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "DoubleRange.h"
-#include "LongRange.h"
+#include <WebCore/DoubleRange.h>
+#include <WebCore/LongRange.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

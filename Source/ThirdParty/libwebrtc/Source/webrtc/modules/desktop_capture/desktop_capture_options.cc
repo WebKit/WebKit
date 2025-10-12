@@ -10,7 +10,8 @@
 
 #include "modules/desktop_capture/desktop_capture_options.h"
 
-#include "api/make_ref_counted.h"
+#include "api/make_ref_counted.h"  // IWYU pragma: keep
+#include "modules/desktop_capture/linux/x11/shared_x_display.h"
 
 #if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
 #include "modules/desktop_capture/mac/full_screen_mac_application_handler.h"
@@ -46,13 +47,13 @@ DesktopCaptureOptions DesktopCaptureOptions::CreateDefault() {
 #endif
 #if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
   result.set_configuration_monitor(
-      rtc::make_ref_counted<DesktopConfigurationMonitor>());
+      make_ref_counted<DesktopConfigurationMonitor>());
   result.set_full_screen_window_detector(
-      rtc::make_ref_counted<FullScreenWindowDetector>(
+      make_ref_counted<FullScreenWindowDetector>(
           CreateFullScreenMacApplicationHandler));
 #elif defined(WEBRTC_WIN)
   result.set_full_screen_window_detector(
-      rtc::make_ref_counted<FullScreenWindowDetector>(
+      make_ref_counted<FullScreenWindowDetector>(
           CreateFullScreenWinApplicationHandler));
 #endif
   return result;

@@ -25,52 +25,41 @@
 
 #pragma once
 
-#if USE(LIBDRM)
-
+#if USE(GBM)
+#include "DRMDevice.h"
+#include <optional>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
-#if USE(GBM)
-struct gbm_device;
-#endif
-
-namespace WTF {
-class CString;
-class String;
-}
-
 namespace WebCore {
-
-class DRMDeviceNode;
+class GBMDevice;
 
 class DRMDeviceManager {
     WTF_MAKE_NONCOPYABLE(DRMDeviceManager);
-    WTF_MAKE_FAST_ALLOCATED();
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED();
 public:
     static DRMDeviceManager& singleton();
 
     DRMDeviceManager() = default;
     ~DRMDeviceManager();
 
-    void initializeMainDevice(const WTF::String&);
+    void initializeMainDevice(DRMDevice&&);
     bool isInitialized() const { return m_mainDevice.isInitialized; }
+    const DRMDevice& mainDevice() const { return m_mainDevice.device; }
 
     enum class NodeType : bool { Primary, Render };
-    RefPtr<DRMDeviceNode> mainDeviceNode(NodeType) const;
-    RefPtr<DRMDeviceNode> deviceNode(const WTF::CString&);
-
-#if USE(GBM)
-    struct gbm_device* mainGBMDeviceNode(NodeType) const;
-#endif
+    RefPtr<GBMDevice> mainGBMDevice(NodeType) const;
+    RefPtr<GBMDevice> gbmDevice(const DRMDevice&, NodeType) const;
 
 private:
     struct {
         bool isInitialized { false };
-        RefPtr<DRMDeviceNode> primaryNode;
-        RefPtr<DRMDeviceNode> renderNode;
+        DRMDevice device;
+        mutable std::optional<RefPtr<GBMDevice>> gbmPrimaryNode;
+        mutable std::optional<RefPtr<GBMDevice>> gbmRenderNode;
     } m_mainDevice;
 };
 
 } // namespace WebCore
 
-#endif // USE(LIBDRM)
+#endif // USE(GBM)

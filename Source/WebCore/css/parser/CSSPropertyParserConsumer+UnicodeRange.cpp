@@ -38,7 +38,7 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-static bool consumeOptionalDelimiter(CSSParserTokenRange& range, UChar value)
+static bool consumeOptionalDelimiter(CSSParserTokenRange& range, char16_t value)
 {
     if (!(range.peek().type() == DelimiterToken && range.peek().delimiter() == value))
         return false;
@@ -64,7 +64,7 @@ static bool consumeAndAppendOptionalNumber(StringBuilder& builder, CSSParserToke
     return true;
 }
 
-static bool consumeAndAppendOptionalDelimiter(StringBuilder& builder, CSSParserTokenRange& range, UChar value)
+static bool consumeAndAppendOptionalDelimiter(StringBuilder& builder, CSSParserTokenRange& range, char16_t value)
 {
     if (!consumeOptionalDelimiter(range, value))
         return false;

@@ -23,8 +23,8 @@
 
 #pragma once
 
-#include "Event.h"
-#include "Node.h"
+#include <WebCore/Event.h>
+#include <WebCore/Node.h>
 
 namespace WebCore {
 

@@ -10,14 +10,15 @@
 
 #include "test/testsupport/y4m_frame_generator.h"
 
-#include <stdio.h>
-#include <string.h>
-
+#include <cstdio>
+#include <cstring>
 #include <string>
 
 #include "absl/strings/string_view.h"
 #include "api/scoped_refptr.h"
+#include "api/test/frame_generator_interface.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/video_frame.h"
 #include "rtc_base/checks.h"
 #include "test/testsupport/frame_reader.h"
 
@@ -36,7 +37,7 @@ Y4mFrameGenerator::Y4mFrameGenerator(absl::string_view filename,
     : filename_(filename), repeat_mode_(repeat_mode) {
   // Read resolution from the Y4M header.
   FILE* file = fopen(filename_.c_str(), "r");
-  RTC_CHECK(file != NULL) << "Cannot open " << filename_;
+  RTC_CHECK(file != nullptr) << "Cannot open " << filename_;
   char header[kHeaderBytesToRead];
   RTC_CHECK(fgets(header, sizeof(header), file) != nullptr)
       << "File " << filename_ << " is too small";
@@ -50,15 +51,14 @@ Y4mFrameGenerator::Y4mFrameGenerator(absl::string_view filename,
   RTC_CHECK_GT(height_, 0);
 
   // Delegate the actual reads (from NextFrame) to a Y4mReader.
-  frame_reader_ = webrtc::test::CreateY4mFrameReader(
+  frame_reader_ = test::CreateY4mFrameReader(
       filename_, ToYuvFrameReaderRepeatMode(repeat_mode_));
 }
 
 Y4mFrameGenerator::VideoFrameData Y4mFrameGenerator::NextFrame() {
-  webrtc::VideoFrame::UpdateRect update_rect{0, 0, static_cast<int>(width_),
-                                             static_cast<int>(height_)};
-  rtc::scoped_refptr<webrtc::I420Buffer> next_frame_buffer =
-      frame_reader_->PullFrame();
+  VideoFrame::UpdateRect update_rect{0, 0, static_cast<int>(width_),
+                                     static_cast<int>(height_)};
+  scoped_refptr<I420Buffer> next_frame_buffer = frame_reader_->PullFrame();
 
   if (!next_frame_buffer ||
       (static_cast<size_t>(next_frame_buffer->width()) == width_ &&
@@ -67,9 +67,8 @@ Y4mFrameGenerator::VideoFrameData Y4mFrameGenerator::NextFrame() {
   }
 
   // Allocate a new buffer and return scaled version.
-  rtc::scoped_refptr<webrtc::I420Buffer> scaled_buffer(
-      I420Buffer::Create(width_, height_));
-  webrtc::I420Buffer::SetBlack(scaled_buffer.get());
+  scoped_refptr<I420Buffer> scaled_buffer(I420Buffer::Create(width_, height_));
+  I420Buffer::SetBlack(scaled_buffer.get());
   scaled_buffer->ScaleFrom(*next_frame_buffer->ToI420());
   return VideoFrameData(scaled_buffer, update_rect);
 }

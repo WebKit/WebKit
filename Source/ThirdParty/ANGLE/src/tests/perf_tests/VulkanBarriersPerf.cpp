@@ -7,6 +7,10 @@
 //   Performance tests for ANGLE's Vulkan backend w.r.t barrier efficiency.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <sstream>
 
 #include "ANGLEPerfTest.h"

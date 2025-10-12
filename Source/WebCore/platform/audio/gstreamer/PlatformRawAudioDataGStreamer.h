@@ -50,7 +50,7 @@ public:
     const GstAudioInfo* info() const { return &m_info; }
 
     bool isInterleaved() const;
-    std::optional<std::variant<Vector<std::span<uint8_t>>, Vector<std::span<int16_t>>, Vector<std::span<int32_t>>, Vector<std::span<float>>>> planesOfSamples(size_t);
+    std::optional<Variant<Vector<std::span<uint8_t>>, Vector<std::span<int16_t>>, Vector<std::span<int32_t>>, Vector<std::span<float>>>> planesOfSamples(size_t);
 
 private:
     PlatformRawAudioDataGStreamer(GRefPtr<GstSample>&&);

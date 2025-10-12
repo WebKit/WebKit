@@ -38,12 +38,12 @@
 #import "WebViewInternal.h"
 #import <WebCore/DataDetection.h>
 #import <WebCore/DictionaryLookup.h>
+#import <WebCore/EditingHTMLConverter.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FontMetrics.h>
 #import <WebCore/GeometryUtilities.h>
-#import <WebCore/HTMLConverter.h>
 #import <WebCore/ImmediateActionStage.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/LocalFrameView.h>
@@ -91,7 +91,7 @@
     _webView = nil;
 
     id animationController = [_immediateActionRecognizer animationController];
-    if (PAL::isQuickLookUIFrameworkAvailable() && [animationController isKindOfClass:PAL::getQLPreviewMenuItemClass()]) {
+    if (PAL::isQuickLookUIFrameworkAvailable() && [animationController isKindOfClass:PAL::getQLPreviewMenuItemClassSingleton()]) {
         QLPreviewMenuItem *menuItem = (QLPreviewMenuItem *)animationController;
         menuItem.delegate = nil;
     }
@@ -145,12 +145,12 @@
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return;
 
-    DDActionsManager *actionsManager = [PAL::getDDActionsManagerClass() sharedManager];
+    DDActionsManager *actionsManager = [PAL::getDDActionsManagerClassSingleton() sharedManager];
     [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
 
     if (_currentActionContext && _hasActivatedActionContext) {
         _hasActivatedActionContext = NO;
-        [PAL::getDDActionsManagerClass() didUseActions];
+        [PAL::getDDActionsManagerClassSingleton() didUseActions];
     }
 
     _type = WebImmediateActionNone;
@@ -203,7 +203,7 @@
 
     if (![_immediateActionRecognizer animationController]) {
         // FIXME: We should be able to remove the dispatch_async when rdar://problem/19502927 is resolved.
-        RunLoop::protectedMain()->dispatch([self, strongSelf = retainPtr(self)] {
+        RunLoop::mainSingleton().dispatch([self, strongSelf = retainPtr(self)] {
             [self _cancelImmediateAction];
         });
     }
@@ -219,7 +219,7 @@
 
     if (_currentActionContext) {
         _hasActivatedActionContext = YES;
-        if (![PAL::getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()])
+        if (![PAL::getDDActionsManagerClassSingleton() shouldUseActionsWithContext:_currentActionContext.get()])
             [self _cancelImmediateAction];
     }
 }
@@ -450,7 +450,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
 
     [detectedItem->actionContext setAltMode:YES];
     [detectedItem->actionContext setImmediate:YES];
-    if (![[PAL::getDDActionsManagerClass() sharedManager] hasActionsForResult:[detectedItem->actionContext mainResult] actionContext:detectedItem->actionContext.get()])
+    if (![[PAL::getDDActionsManagerClassSingleton() sharedManager] hasActionsForResult:[detectedItem->actionContext mainResult] actionContext:detectedItem->actionContext.get()])
         return nil;
 
     auto indicator = WebCore::TextIndicator::createWithRange(detectedItem->range, { }, WebCore::TextIndicatorPresentationTransition::FadeIn);
@@ -465,7 +465,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
 
     [_currentActionContext setHighlightFrame:[_webView.window convertRectToScreen:detectedItem->boundingBox]];
 
-    NSArray *menuItems = [[PAL::getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
+    NSArray *menuItems = [[PAL::getDDActionsManagerClassSingleton() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
     if (menuItems.count != 1)
         return nil;
 
@@ -498,7 +498,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
 
     [_currentActionContext setHighlightFrame:[_webView.window convertRectToScreen:elementBoundingBoxInWindowCoordinatesFromNode(_hitTestResult.URLElement())]];
 
-    NSArray *menuItems = [[PAL::getDDActionsManagerClass() sharedManager] menuItemsForTargetURL:_hitTestResult.absoluteLinkURL().string().createNSString().get() actionContext:_currentActionContext.get()];
+    NSArray *menuItems = [[PAL::getDDActionsManagerClassSingleton() sharedManager] menuItemsForTargetURL:_hitTestResult.absoluteLinkURL().string().createNSString().get() actionContext:_currentActionContext.get()];
     if (menuItems.count != 1)
         return nil;
     
@@ -562,7 +562,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
 
 - (id<NSImmediateActionAnimationController>)_animationControllerForText
 {
-    if (!PAL::getLULookupDefinitionModuleClass())
+    if (!PAL::getLULookupDefinitionModuleClassSingleton())
         return nil;
 
     auto node = _hitTestResult.innerNode();

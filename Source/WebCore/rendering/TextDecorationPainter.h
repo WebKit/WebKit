@@ -31,16 +31,14 @@
 
 namespace WebCore {
 
-class FilterOperations;
 class FontCascade;
 class RenderObject;
 class RenderStyle;
-class ShadowData;
 class TextRun;
     
 class TextDecorationPainter {
 public:
-    TextDecorationPainter(GraphicsContext&, const FontCascade&, const ShadowData*, const FilterOperations*, bool isPrinting, WritingMode);
+    TextDecorationPainter(GraphicsContext&, const FontCascade&, const Style::TextShadows&, const Style::AppleColorFilter&, bool isPrinting, WritingMode);
 
     struct Styles {
         bool operator==(const Styles&) const;
@@ -64,7 +62,7 @@ public:
         float clippingOffset { 0.f };
         WavyStrokeParameters wavyStrokeParameters;
     };
-    void paintBackgroundDecorations(const RenderStyle&, const TextRun&, const BackgroundDecorationGeometry&, OptionSet<TextDecorationLine>, const Styles&);
+    void paintBackgroundDecorations(const RenderStyle&, const TextRun&, const BackgroundDecorationGeometry&, Style::TextDecorationLine, const Styles&);
 
     struct ForegroundDecorationGeometry {
         FloatPoint boxOrigin;
@@ -76,8 +74,8 @@ public:
     void paintForegroundDecorations(const ForegroundDecorationGeometry&, const Styles&);
 
     static Color decorationColor(const RenderStyle&, OptionSet<PaintBehavior> paintBehavior = { });
-    static Styles stylesForRenderer(const RenderObject&, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle = false, OptionSet<PaintBehavior> paintBehavior = { }, PseudoId = PseudoId::None);
-    static OptionSet<TextDecorationLine> textDecorationsInEffectForStyle(const TextDecorationPainter::Styles&);
+    static Styles stylesForRenderer(const RenderObject&, Style::TextDecorationLine requestedDecorations, bool firstLineStyle = false, OptionSet<PaintBehavior> paintBehavior = { }, PseudoId = PseudoId::None);
+    static Style::TextDecorationLine textDecorationsInEffectForStyle(const TextDecorationPainter::Styles&);
 
 private:
     void paintLineThrough(const ForegroundDecorationGeometry&, const Color&, const Styles&);
@@ -85,8 +83,8 @@ private:
     GraphicsContext& m_context;
     bool m_isPrinting { false };
     WritingMode m_writingMode;
-    const ShadowData* m_shadow { nullptr };
-    const FilterOperations* m_shadowColorFilter { nullptr };
+    const Style::TextShadows& m_shadow;
+    const Style::AppleColorFilter& m_shadowColorFilter;
     const FontCascade& m_font;
 };
 

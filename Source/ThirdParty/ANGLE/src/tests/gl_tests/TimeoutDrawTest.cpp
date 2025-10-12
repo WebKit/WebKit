@@ -1,18 +1,23 @@
+
 //
-// Copyright 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2025 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-
 #include "test_utils/ANGLETest.h"
-
 #include "test_utils/gl_raii.h"
 #include "util/shader_utils.h"
 
-using namespace angle;
-
 namespace
 {
+
+// To inspect current behavior, run the tests in following manner:
+// clang-format off
+// ANGLE_FEATURE_OVERRIDES_DISABLED=injectAsmStatementIntoLoopBodies GMD_STDOUT=1 ./out/Debug/angle_end2end_tests --gtest_also_run_disabled_tests --gtest_filter=TimeoutDrawTest.DISABLED_DynamicInfiniteLoop2VS/ES3_Metal
+// GMD_STDOUT=1 ./out/Debug/angle_end2end_tests --gtest_also_run_disabled_tests --gtest_filter=TimeoutDrawTest.DISABLED_DynamicInfiniteLoop2VS/ES3_Metal_EnsureLoopForwardProgress
+// clang-format on
+
+using namespace angle;
 class TimeoutDrawTest : public ANGLETest<>
 {
   protected:
@@ -43,7 +48,7 @@ class TimeoutDrawTest : public ANGLETest<>
 };
 
 // Tests that trivial infinite loops in vertex shaders hang instead of progress.
-TEST_P(TimeoutDrawTest, TrivialInfiniteLoopVS)
+TEST_P(TimeoutDrawTest, DISABLED_TrivialInfiniteLoopVS)
 {
     constexpr char kVS[] = R"(precision highp float;
 attribute vec4 a_position;
@@ -55,12 +60,15 @@ void main()
     ANGLE_GL_PROGRAM(program, kVS, essl1_shaders::fs::Red());
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     glFinish();
-    EXPECT_GL_ERROR(GL_CONTEXT_LOST);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);  // Should read through client buffer since context should be lost.
+    if (glGetError() != GL_CONTEXT_LOST)
+    {
+        FAIL();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);
+    }
 }
 
 // Tests that trivial infinite loops in fragment shaders hang instead of progress.
-TEST_P(TimeoutDrawTest, TrivialInfiniteLoopFS)
+TEST_P(TimeoutDrawTest, DISABLED_TrivialInfiniteLoopFS)
 {
     constexpr char kFS[] = R"(precision mediump float;
 void main()
@@ -71,14 +79,16 @@ void main()
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     glFinish();
-    EXPECT_GL_ERROR(GL_CONTEXT_LOST);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);  // Should read through client buffer since context should be lost.
+    if (glGetError() != GL_CONTEXT_LOST)
+    {
+        FAIL();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);
+    }
 }
-
-
-// Tests that infinite loops based on user-supplied values in vertex shaders hang instead of progress.
-// Otherwise optimizer would be able to assume something about the domain of the user-supplied value.
-TEST_P(TimeoutDrawTest, DynamicInfiniteLoopVS)
+// Tests that infinite loops based on user-supplied values in vertex shaders hang instead of
+// progress. Otherwise optimizer would be able to assume something about the domain of the
+// user-supplied value.
+TEST_P(TimeoutDrawTest, DISABLED_DynamicInfiniteLoopVS)
 {
     constexpr char kVS[] = R"(precision highp float;
 attribute vec4 a_position;
@@ -89,20 +99,21 @@ void main()
     gl_Position = a_position;
 })";
     ANGLE_GL_PROGRAM(program, kVS, essl1_shaders::fs::Red());
-
     glUseProgram(program);
     GLint uniformLocation = glGetUniformLocation(program, "f");
     glUniform1i(uniformLocation, 77);
-
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     glFinish();
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);  // Should read through client buffer since context should be lost.
-    EXPECT_GL_ERROR(GL_CONTEXT_LOST);
+    if (glGetError() != GL_CONTEXT_LOST)
+    {
+        FAIL();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);
+    }
 }
-
-// Tests that infinite loops based on user-supplied values in fragment shaders hang instead of progress.
-// Otherwise optimizer would be able to assume something about the domain of the user-supplied value.
-TEST_P(TimeoutDrawTest, DynamicInfiniteLoopFS)
+// Tests that infinite loops based on user-supplied values in fragment shaders hang instead of
+// progress. Otherwise optimizer would be able to assume something about the domain of the
+// user-supplied value.
+TEST_P(TimeoutDrawTest, DISABLED_DynamicInfiniteLoopFS)
 {
     constexpr char kFS[] = R"(precision mediump float;
 uniform int f;
@@ -118,14 +129,16 @@ void main()
     EXPECT_GL_NO_ERROR();
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     glFinish();
-    EXPECT_GL_ERROR(GL_CONTEXT_LOST);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);  // Should read through client buffer since context should be lost.
+    if (glGetError() != GL_CONTEXT_LOST)
+    {
+        FAIL();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);
+    }
 }
-
-// Tests that infinite loops based on user-supplied values in vertex shaders hang instead of progress.
-// Otherwise optimizer would be able to assume something about the domain of the user-supplied value.
-// Explicit value break variant.
-TEST_P(TimeoutDrawTest, DynamicInfiniteLoop2VS)
+// Tests that infinite loops based on user-supplied values in vertex shaders hang instead of
+// progress. Otherwise optimizer would be able to assume something about the domain of the
+// user-supplied value. Explicit value break variant.
+TEST_P(TimeoutDrawTest, DISABLED_DynamicInfiniteLoop2VS)
 {
     constexpr char kVS[] = R"(precision highp float;
 attribute vec4 a_position;
@@ -142,14 +155,17 @@ void main()
     EXPECT_GL_NO_ERROR();
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     glFinish();
-    EXPECT_GL_ERROR(GL_CONTEXT_LOST);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);  // Should read through client buffer since context should be lost.
+    if (glGetError() != GL_CONTEXT_LOST)
+    {
+        FAIL();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);
+    }
 }
 
-// Tests that infinite loops based on user-supplied values in fragment shaders hang instead of progress.
-// Otherwise optimizer would be able to assume something about the domain of the user-supplied value.
-// Explicit value break variant.
-TEST_P(TimeoutDrawTest, DynamicInfiniteLoop2FS)
+// Tests that infinite loops based on user-supplied values in fragment shaders hang instead of
+// progress. Otherwise optimizer would be able to assume something about the domain of the
+// user-supplied value. Explicit value break variant.
+TEST_P(TimeoutDrawTest, DISABLED_DynamicInfiniteLoop2FS)
 {
     constexpr char kFS[] = R"(precision mediump float;
 uniform float f;
@@ -165,12 +181,21 @@ void main()
     EXPECT_GL_NO_ERROR();
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     glFinish();
-    EXPECT_GL_ERROR(GL_CONTEXT_LOST);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);  // Should read through client buffer since context should be lost.
+    if (glGetError() != GL_CONTEXT_LOST)
+    {
+        FAIL();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);
+    }
 }
+}  // namespace
 
-}
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TimeoutDrawTest);
 
-ANGLE_INSTANTIATE_TEST(TimeoutDrawTest,
-                       WithRobustness(ES2_METAL().enable(Feature::InjectAsmStatementIntoLoopBodies)),
-                       WithRobustness(ES3_METAL().enable(Feature::InjectAsmStatementIntoLoopBodies)));
+ANGLE_INSTANTIATE_TEST(
+    TimeoutDrawTest,
+    WithRobustness(ES2_METAL()),
+    WithRobustness(ES3_METAL()),
+    WithRobustness(ES2_METAL().enable(Feature::InjectAsmStatementIntoLoopBodies)),
+    WithRobustness(ES3_METAL().enable(Feature::InjectAsmStatementIntoLoopBodies)),
+    WithRobustness(ES2_METAL().enable(Feature::EnsureLoopForwardProgress)),
+    WithRobustness(ES3_METAL().enable(Feature::EnsureLoopForwardProgress)));

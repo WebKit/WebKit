@@ -77,8 +77,8 @@ private:
     WebCore::MediaKeySystemRequestIdentifier m_mediaKeySystemID;
     WebCore::FrameIdentifier m_mainFrameID;
     WebCore::FrameIdentifier m_frameID;
-    Ref<WebCore::SecurityOrigin> m_mediaKeyRequestSecurityOrigin;
-    Ref<WebCore::SecurityOrigin> m_topLevelDocumentSecurityOrigin;
+    const Ref<WebCore::SecurityOrigin> m_mediaKeyRequestSecurityOrigin;
+    const Ref<WebCore::SecurityOrigin> m_topLevelDocumentSecurityOrigin;
     String m_keySystem;
     String m_mediaKeysHashSalt;
 };

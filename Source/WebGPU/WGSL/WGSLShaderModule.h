@@ -175,11 +175,11 @@ public:
     {
         m_replacements.append([&current, currentCopy = current]() mutable {
             std::bit_cast<AST::IdentityExpression*>(&current)->~IdentityExpression();
-            new (&current) CurrentType(WTFMove(currentCopy));
+            new (std::bit_cast<void*>(&current)) CurrentType(WTFMove(currentCopy));
         });
 
         current.~CurrentType();
-        new (&current) AST::IdentityExpression(replacement.span(), replacement);
+        new (std::bit_cast<void*>(&current)) AST::IdentityExpression(replacement.span(), replacement);
     }
 
     template<typename CurrentType, typename ReplacementType>

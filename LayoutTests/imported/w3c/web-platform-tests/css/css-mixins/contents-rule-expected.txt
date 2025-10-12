@@ -1,0 +1,12 @@
+This text should be green.
+This text should be green.
+This text should be green.
+This text should be green.
+This text should be green.
+
+FAIL Simple @contents with no fallback assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Implicit semicolon after @contents, at end of block assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Block in @apply overrides fallback assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Fallback is used if @apply has no block assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL @contents is ignored if there is no @contents parameter assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+

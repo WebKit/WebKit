@@ -27,12 +27,12 @@
 #import "NetworkCacheData.h"
 
 #import <WebCore/SharedMemory.h>
-#import <dispatch/dispatch.h>
 #import <sys/mman.h>
 #import <sys/stat.h>
 #import <wtf/FileHandle.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 namespace WebKit {
 namespace NetworkCache {
@@ -51,6 +51,11 @@ Data::Data(OSObjectPtr<dispatch_data_t>&& dispatchData, Backing backing)
 Data::Data(Vector<uint8_t>&& data)
     : Data(makeDispatchData(WTFMove(data)).get(), Backing::Buffer)
 {
+}
+
+RetainPtr<dispatch_data_t> Data::protectedDispatchData() const
+{
+    return dispatchData();
 }
 
 Data Data::empty()
@@ -90,7 +95,7 @@ bool Data::apply(NOESCAPE const Function<bool(std::span<const uint8_t>)>& applie
 
 Data Data::subrange(size_t offset, size_t size) const
 {
-    return { adoptOSObject(dispatch_data_create_subrange(dispatchData(), offset, size)) };
+    return { adoptOSObject(dispatch_data_create_subrange(protectedDispatchData().get(), offset, size)) };
 }
 
 Data concatenate(const Data& a, const Data& b)
@@ -99,7 +104,7 @@ Data concatenate(const Data& a, const Data& b)
         return b;
     if (b.isNull())
         return a;
-    return { adoptOSObject(dispatch_data_create_concat(a.dispatchData(), b.dispatchData())) };
+    return { adoptOSObject(dispatch_data_create_concat(a.protectedDispatchData().get(), b.protectedDispatchData().get())) };
 }
 
 Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::FileHandle&& outputHandle)
@@ -108,7 +113,7 @@ Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::FileHan
     ASSERT(span.data());
     ASSERT(span.data() != MAP_FAILED);
     outputHandle = { };
-    auto bodyMap = adoptOSObject(dispatch_data_create(span.data(), span.size(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [span] {
+    auto bodyMap = adoptOSObject(dispatch_data_create(span.data(), span.size(), globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [span] {
         munmap(span.data(), span.size());
     }));
     return { WTFMove(bodyMap), Data::Backing::Map };

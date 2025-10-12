@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,14 +43,14 @@ Color toStyleColor(const CSS::ResolvedColor& unresolved, ColorResolutionState&)
 
 // MARK: - Serialization
 
-void serializationForCSS(StringBuilder& builder, const CSS::SerializationContext&, const ResolvedColor& absoluteColor)
+void serializationForCSSTokenization(StringBuilder& builder, const CSS::SerializationContext&, const ResolvedColor& absoluteColor)
 {
-    builder.append(serializationForCSS(absoluteColor.color));
+    builder.append(WebCore::serializationForCSS(absoluteColor.color));
 }
 
-String serializationForCSS(const CSS::SerializationContext&, const ResolvedColor& absoluteColor)
+String serializationForCSSTokenization(const CSS::SerializationContext&, const ResolvedColor& absoluteColor)
 {
-    return serializationForCSS(absoluteColor.color);
+    return WebCore::serializationForCSS(absoluteColor.color);
 }
 
 // MARK: - TextStream

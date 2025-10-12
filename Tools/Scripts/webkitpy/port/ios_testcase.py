@@ -20,15 +20,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitcorepy import Version
-
 from webkitpy.port import darwin_testcase
+from webkitpy.port.ios import IOSPort
 
 
 class IOSTest(darwin_testcase.DarwinTest):
     disable_setup = True
 
-    def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=Version(18), **kwargs):
+    def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=IOSPort.CURRENT_VERSION, **kwargs):
         port = super(IOSTest, self).make_port(host=host, port_name=port_name, options=options, os_name=os_name, os_version=None, kwargs=kwargs)
         port.set_option('version', str(os_version))
         return port

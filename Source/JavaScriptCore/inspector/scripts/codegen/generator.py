@@ -138,7 +138,7 @@ class Generator:
         includes = set()
         for entry in entries:
             (allowed_framework_names, data) = entry
-            (framework_name, header_path) = data
+            (framework_name, header_path, is_system_header) = (data + (False,))[:3]
 
             allowed_frameworks = allowed_framework_names + ["Test"]
             if self.model().framework.name not in allowed_frameworks:
@@ -146,7 +146,7 @@ class Generator:
 
             if framework_name == "WTF" or framework_name == "std":
                 includes.add("#include <%s>" % header_path)
-            elif self.model().framework.name != framework_name:
+            elif (is_system_header is True and framework_name == "JavaScriptCore") or self.model().framework.name != framework_name:
                 includes.add("#include <%s/%s>" % (framework_name, os.path.basename(header_path)))
             else:
                 includes.add("#include \"%s\"" % os.path.basename(header_path))

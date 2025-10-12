@@ -29,7 +29,7 @@
 #include "config.h"
 #include "CSSValue.h"
 
-#include "CSSAppleColorFilterPropertyValue.h"
+#include "CSSAppleColorFilterValue.h"
 #include "CSSAttrValue.h"
 #include "CSSBackgroundRepeatValue.h"
 #include "CSSBasicShapeValue.h"
@@ -48,7 +48,7 @@
 #include "CSSDynamicRangeLimitValue.h"
 #include "CSSEasingFunctionValue.h"
 #include "CSSFilterImageValue.h"
-#include "CSSFilterPropertyValue.h"
+#include "CSSFilterValue.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFontStyleRangeValue.h"
@@ -111,8 +111,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
 {
     using enum CSSValue::ClassType;
     switch (m_classType) {
-    case AppleColorFilterProperty:
-        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSAppleColorFilterPropertyValue>(*this));
+    case AppleColorFilter:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSAppleColorFilterValue>(*this));
     case Attr:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSAttrValue>(*this));
     case BackgroundRepeat:
@@ -151,8 +151,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSEasingFunctionValue>(*this));
     case FilterImage:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSFilterImageValue>(*this));
-    case FilterProperty:
-        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSFilterPropertyValue>(*this));
+    case Filter:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSFilterValue>(*this));
     case Font:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSFontValue>(*this));
     case FontFaceSrcLocal:
@@ -391,12 +391,12 @@ Ref<DeprecatedCSSOMValue> CSSValue::createDeprecatedCSSOMWrapper(CSSStyleDeclara
 
     // To maintain existing behavior, properties that used to be CSSValueLists that now have strong value representations
     // need custom wrapper code to create a `DeprecatedCSSOMValueList`.
-    case AppleColorFilterProperty:
-        return uncheckedDowncast<CSSAppleColorFilterPropertyValue>(*this).createDeprecatedCSSOMWrapper(styleDeclaration);
+    case AppleColorFilter:
+        return uncheckedDowncast<CSSAppleColorFilterValue>(*this).createDeprecatedCSSOMWrapper(styleDeclaration);
     case BoxShadowProperty:
         return uncheckedDowncast<CSSBoxShadowPropertyValue>(*this).createDeprecatedCSSOMWrapper(styleDeclaration);
-    case FilterProperty:
-        return uncheckedDowncast<CSSFilterPropertyValue>(*this).createDeprecatedCSSOMWrapper(styleDeclaration);
+    case Filter:
+        return uncheckedDowncast<CSSFilterValue>(*this).createDeprecatedCSSOMWrapper(styleDeclaration);
     case TextShadowProperty:
         return uncheckedDowncast<CSSTextShadowPropertyValue>(*this).createDeprecatedCSSOMWrapper(styleDeclaration);
 

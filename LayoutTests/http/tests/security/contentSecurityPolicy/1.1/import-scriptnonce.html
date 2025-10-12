@@ -57,36 +57,42 @@
 
         <script type="module" nonce="noncynonce" id="allow1">
             import("./resources/import-scriptnonce-allowed1.js");
+            modules.delete('allow1');
         </script>
         <script type="module" nonce="noncynonce noncynonce" id="block1">
             import("./resources/import-scriptnonce-blocked1.js");
         </script>
         <script type="module" nonce="noncynonce" id="allow2">
             import("./resources/import-scriptnonce-allowed2.js");
+            modules.delete('allow2');
         </script>
         <script type="module" id="block2">
             import("./resources/import-scriptnonce-blocked2.js");
         </script>
         <script type="module" nonce="noncy+/=nonce" id="allow3">
             import("./resources/import-scriptnonce-allowed3.js");
+            modules.delete('allow3');
         </script>
         <script type="module" nonce="noncynonceno?" id="block3">
             import("./resources/import-scriptnonce-blocked3.js");
         </script>
         <script nonce="noncynonce" id="allow4">
             import("./resources/import-scriptnonce-allowed4.js");
+            modules.delete('allow4');
         </script>
         <script nonce="noncynonce noncynonce" id="block4">
             import("./resources/import-scriptnonce-blocked4.js");
         </script>
         <script nonce="noncynonce" id="allow5">
             import("./resources/import-scriptnonce-allowed5.js");
+            modules.delete('allow5');
         </script>
         <script id="block5">
             import("./resources/import-scriptnonce-blocked5.js");
         </script>
         <script nonce="noncy+/=nonce" id="allow6">
             import("./resources/import-scriptnonce-allowed6.js");
+            modules.delete('allow6');
         </script>
         <script nonce="noncynonceno?" id="block6">
             import("./resources/import-scriptnonce-blocked6.js");

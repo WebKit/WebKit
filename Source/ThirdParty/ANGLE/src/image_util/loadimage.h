@@ -22,6 +22,7 @@ struct ImageLoadContext
     ImageLoadContext();
     ~ImageLoadContext();
     ImageLoadContext(const ImageLoadContext &other);
+    ImageLoadContext &operator=(const ImageLoadContext &other);
 
     // Passed to Load* functions as the context
     std::shared_ptr<WorkerThreadPool> singleThreadPool;

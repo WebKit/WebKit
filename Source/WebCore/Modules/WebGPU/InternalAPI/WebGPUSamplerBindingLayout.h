@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUSamplerBindingType.h"
+#include <WebCore/WebGPUSamplerBindingType.h>
 
 namespace WebCore::WebGPU {
 

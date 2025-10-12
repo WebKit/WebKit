@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "ImageFrame.h"
-#include "ImageOrientation.h"
-#include "ImageTypes.h"
+#include <WebCore/ImageFrame.h>
+#include <WebCore/ImageOrientation.h>
+#include <WebCore/ImageTypes.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
@@ -83,7 +83,6 @@ public:
     virtual bool hasHDRGainMap() const { return false; }
     virtual bool hasHDRContent() const = 0;
 
-    ShouldDecodeToHDR shouldDecodeToHDR() const { return hasHDRGainMap() ? ShouldDecodeToHDR::Yes : ShouldDecodeToHDR::No; }
     bool hasSolidColor() const;
 
     virtual String uti() const { return String(); }
@@ -99,6 +98,10 @@ public:
 
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
     virtual bool isSpatial() const { return false; }
+#endif
+
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    virtual bool isMaybePanoramic() const { return false; }
 #endif
 
     // ImageFrame Metadata

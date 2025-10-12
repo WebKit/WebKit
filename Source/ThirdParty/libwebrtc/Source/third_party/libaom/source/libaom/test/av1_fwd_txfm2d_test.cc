@@ -15,6 +15,7 @@
 #include <tuple>
 #include <vector>
 
+#include "config/aom_config.h"
 #include "config/av1_rtcd.h"
 
 #include "test/acm_random.h"
@@ -142,7 +143,7 @@ class AV1FwdTxfm2d : public ::testing::TestWithParam<AV1FwdTxfm2dParam> {
   int lr_flip_;  // flip left to right
 };
 
-static double avg_error_ls[TX_SIZES_ALL] = {
+static constexpr double avg_error_ls[TX_SIZES_ALL] = {
   0.5,   // 4x4 transform
   0.5,   // 8x8 transform
   1.2,   // 16x16 transform
@@ -164,7 +165,7 @@ static double avg_error_ls[TX_SIZES_ALL] = {
   4.7,   // 64x16 transform
 };
 
-static double max_error_ls[TX_SIZES_ALL] = {
+static constexpr double max_error_ls[TX_SIZES_ALL] = {
   3,    // 4x4 transform
   5,    // 8x8 transform
   11,   // 16x16 transform
@@ -246,7 +247,6 @@ void AV1FwdTxfm2dMatchTest(TX_SIZE tx_size, lowbd_fwd_txfm_func target_func) {
   memset(&param, 0, sizeof(param));
   const int rows = tx_size_high[tx_size];
   const int cols = tx_size_wide[tx_size];
-  // printf("%d x %d\n", cols, rows);
   for (int tx_type = 0; tx_type < TX_TYPES; ++tx_type) {
     if (libaom_test::IsTxSizeTypeValid(
             tx_size, static_cast<TX_TYPE>(tx_type)) == false) {
@@ -444,7 +444,7 @@ using ::testing::Values;
 using ::testing::ValuesIn;
 
 #if AOM_ARCH_X86 && HAVE_SSE2
-static TX_SIZE fwd_txfm_for_sse2[] = {
+static constexpr TX_SIZE fwd_txfm_for_sse2[] = {
   TX_4X4,
   TX_8X8,
   TX_16X16,
@@ -472,11 +472,11 @@ INSTANTIATE_TEST_SUITE_P(SSE2, AV1FwdTxfm2dTest,
 #endif  // AOM_ARCH_X86 && HAVE_SSE2
 
 #if HAVE_SSE4_1
-static TX_SIZE fwd_txfm_for_sse41[] = { TX_4X4,   TX_8X8,   TX_16X16, TX_32X32,
-                                        TX_64X64, TX_4X8,   TX_8X4,   TX_8X16,
-                                        TX_16X8,  TX_16X32, TX_32X16, TX_32X64,
-                                        TX_64X32, TX_4X16,  TX_16X4,  TX_8X32,
-                                        TX_32X8,  TX_16X64, TX_64X16 };
+static constexpr TX_SIZE fwd_txfm_for_sse41[] = {
+  TX_4X4,  TX_8X8,  TX_16X16, TX_32X32, TX_64X64, TX_4X8,   TX_8X4,
+  TX_8X16, TX_16X8, TX_16X32, TX_32X16, TX_32X64, TX_64X32, TX_4X16,
+  TX_16X4, TX_8X32, TX_32X8,  TX_16X64, TX_64X16
+};
 
 INSTANTIATE_TEST_SUITE_P(SSE4_1, AV1FwdTxfm2dTest,
                          Combine(ValuesIn(fwd_txfm_for_sse41),
@@ -484,7 +484,7 @@ INSTANTIATE_TEST_SUITE_P(SSE4_1, AV1FwdTxfm2dTest,
 #endif  // HAVE_SSE4_1
 
 #if HAVE_AVX2
-static TX_SIZE fwd_txfm_for_avx2[] = {
+static constexpr TX_SIZE fwd_txfm_for_avx2[] = {
   TX_4X4,  TX_8X8,  TX_16X16, TX_32X32, TX_64X64, TX_4X8,   TX_8X4,
   TX_8X16, TX_16X8, TX_16X32, TX_32X16, TX_32X64, TX_64X32, TX_4X16,
   TX_16X4, TX_8X32, TX_32X8,  TX_16X64, TX_64X16,
@@ -495,13 +495,25 @@ INSTANTIATE_TEST_SUITE_P(AVX2, AV1FwdTxfm2dTest,
                                  Values(av1_lowbd_fwd_txfm_avx2)));
 #endif  // HAVE_AVX2
 
+#if CONFIG_HIGHWAY && HAVE_AVX512
+static constexpr TX_SIZE fwd_txfm_for_avx512[] = {
+  TX_4X4,  TX_8X8,  TX_16X16, TX_32X32, TX_64X64, TX_4X8,   TX_8X4,
+  TX_8X16, TX_16X8, TX_16X32, TX_32X16, TX_32X64, TX_64X32, TX_4X16,
+  TX_16X4, TX_8X32, TX_32X8,  TX_16X64, TX_64X16,
+};
+
+INSTANTIATE_TEST_SUITE_P(AVX512, AV1FwdTxfm2dTest,
+                         Combine(ValuesIn(fwd_txfm_for_avx512),
+                                 Values(av1_lowbd_fwd_txfm_avx512)));
+#endif  // HAVE_AVX512
+
 #if HAVE_NEON
 
-static TX_SIZE fwd_txfm_for_neon[] = { TX_4X4,   TX_8X8,   TX_16X16, TX_32X32,
-                                       TX_64X64, TX_4X8,   TX_8X4,   TX_8X16,
-                                       TX_16X8,  TX_16X32, TX_32X16, TX_32X64,
-                                       TX_64X32, TX_4X16,  TX_16X4,  TX_8X32,
-                                       TX_32X8,  TX_16X64, TX_64X16 };
+static constexpr TX_SIZE fwd_txfm_for_neon[] = {
+  TX_4X4,  TX_8X8,  TX_16X16, TX_32X32, TX_64X64, TX_4X8,   TX_8X4,
+  TX_8X16, TX_16X8, TX_16X32, TX_32X16, TX_32X64, TX_64X32, TX_4X16,
+  TX_16X4, TX_8X32, TX_32X8,  TX_16X64, TX_64X16
+};
 
 INSTANTIATE_TEST_SUITE_P(NEON, AV1FwdTxfm2dTest,
                          Combine(ValuesIn(fwd_txfm_for_neon),
@@ -655,7 +667,7 @@ using ::testing::Values;
 using ::testing::ValuesIn;
 
 #if HAVE_SSE4_1
-static TX_SIZE Highbd_fwd_txfm_for_sse4_1[] = {
+static constexpr TX_SIZE Highbd_fwd_txfm_for_sse4_1[] = {
   TX_4X4,  TX_8X8,  TX_16X16, TX_32X32, TX_64X64, TX_4X8,   TX_8X4,
   TX_8X16, TX_16X8, TX_16X32, TX_32X16, TX_32X64, TX_64X32,
 #if !CONFIG_REALTIME_ONLY
@@ -668,8 +680,9 @@ INSTANTIATE_TEST_SUITE_P(SSE4_1, AV1HighbdFwdTxfm2dTest,
                                  Values(av1_highbd_fwd_txfm)));
 #endif  // HAVE_SSE4_1
 #if HAVE_AVX2
-static TX_SIZE Highbd_fwd_txfm_for_avx2[] = { TX_8X8,   TX_16X16, TX_32X32,
-                                              TX_64X64, TX_8X16,  TX_16X8 };
+static constexpr TX_SIZE Highbd_fwd_txfm_for_avx2[] = { TX_8X8,   TX_16X16,
+                                                        TX_32X32, TX_64X64,
+                                                        TX_8X16,  TX_16X8 };
 
 INSTANTIATE_TEST_SUITE_P(AVX2, AV1HighbdFwdTxfm2dTest,
                          Combine(ValuesIn(Highbd_fwd_txfm_for_avx2),
@@ -677,7 +690,7 @@ INSTANTIATE_TEST_SUITE_P(AVX2, AV1HighbdFwdTxfm2dTest,
 #endif  // HAVE_AVX2
 
 #if HAVE_NEON
-static TX_SIZE Highbd_fwd_txfm_for_neon[] = {
+static constexpr TX_SIZE Highbd_fwd_txfm_for_neon[] = {
   TX_4X4,  TX_8X8,  TX_16X16, TX_32X32, TX_64X64, TX_4X8,   TX_8X4,
   TX_8X16, TX_16X8, TX_16X32, TX_32X16, TX_32X64, TX_64X32,
 #if !CONFIG_REALTIME_ONLY

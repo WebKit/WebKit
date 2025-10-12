@@ -11,9 +11,12 @@ value = query.get('value', [''])[0]
 id = query.get('id', [''])[0]
 page_content = '''
         <script>\r\n
-        onmessage = (msg) => top.postMessage(msg.data, "*");\r\n
+        onmessage = (msg) => {{
+            msg.data.isTestingMultipart = "{}";\r\n
+            top.postMessage(msg.data, "*"); \r\n
+        }};\r\n
         window.open("{}security/resources/postReferrer.py?id={}", "innerPopup{}", "popup");\r\n
-        </script>\r\n'''.format(destination_origin, id, id)
+        </script>\r\n'''.format(is_testing_multipart, destination_origin, id, id)
 
 sys.stdout.write('Referrer-Policy: {}\r\n'.format(value))
 if is_testing_multipart is not None and is_testing_multipart == '1':

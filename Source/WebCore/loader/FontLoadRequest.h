@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "FontTaggedSettings.h"
+#include <WebCore/FontTaggedSettings.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 

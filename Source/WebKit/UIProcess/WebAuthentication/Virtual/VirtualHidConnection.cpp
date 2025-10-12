@@ -37,6 +37,7 @@
 #include <wtf/BlockPtr.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/RunLoop.h>
+#include <wtf/darwin/DispatchExtras.h>
 
 namespace WebKit {
 using namespace cbor;
@@ -79,7 +80,7 @@ void VirtualHidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callb
     ASSERT(isInitialized());
     auto task = makeBlockPtr([weakThis = WeakPtr { *this }, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
         ASSERT(!RunLoop::isMain());
-        RunLoop::protectedMain()->dispatch([weakThis, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
+        RunLoop::mainSingleton().dispatch([weakThis, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
             if (!weakThis) {
                 callback(DataSent::No);
                 return;
@@ -90,7 +91,7 @@ void VirtualHidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callb
             callback(DataSent::Yes);
         });
     });
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), task.get());
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), task.get());
 }
 
 void VirtualHidConnection::assembleRequest(Vector<uint8_t>&& data)
@@ -111,7 +112,7 @@ void VirtualHidConnection::receiveHidMessage(fido::FidoHidMessage&& message)
 {
     while (message.numPackets()) {
         auto report = message.popNextPacket();
-        RunLoop::protectedMain()->dispatch([report = WTFMove(report), weakThis = WeakPtr { *this }]() mutable {
+        RunLoop::mainSingleton().dispatch([report = WTFMove(report), weakThis = WeakPtr { *this }]() mutable {
             if (!weakThis)
                 return;
             weakThis->receiveReport(WTFMove(report));

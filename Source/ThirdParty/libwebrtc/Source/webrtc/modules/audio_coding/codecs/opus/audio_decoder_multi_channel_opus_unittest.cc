@@ -10,6 +10,13 @@
 
 #include "api/audio_codecs/opus/audio_decoder_multi_channel_opus.h"
 
+#include <memory>
+#include <optional>
+#include <string>
+#include <vector>
+
+#include "api/audio_codecs/audio_decoder.h"
+#include "api/audio_codecs/audio_format.h"
 #include "modules/audio_coding/codecs/opus/audio_coder_opus_common.h"
 #include "test/gmock.h"
 #include "test/gtest.h"

@@ -54,7 +54,7 @@ typedef struct WKPageFullScreenClientV0 {
 
 } WKPageFullScreenClientV0;
 
-WK_EXPORT void WKCompletionListenerComplete(WKCompletionListenerRef listener);
+WK_EXPORT void WKCompletionListenerComplete(WKCompletionListenerRef listener, WKTypeRef result);
 
 #ifdef __cplusplus
 }

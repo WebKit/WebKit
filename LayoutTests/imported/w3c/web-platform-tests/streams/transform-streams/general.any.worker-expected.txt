@@ -19,7 +19,10 @@ PASS closing the writable should close the readable when there are no queued chu
 PASS enqueue() should throw after controller.terminate()
 PASS enqueue() should throw after readable.cancel()
 PASS controller.terminate() should do nothing the second time it is called
-PASS terminate() should do nothing after readable.cancel()
+FAIL terminate() should abort writable immediately after readable.cancel() promise_rejects_js: closed should reject with TypeError function "function() { throw e; }" threw object "[object Object]" ("cancelReason") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS terminate() should do nothing after readable.cancel() resolves
 PASS start() should not be called twice
 PASS specifying a defined readableType should throw
 PASS specifying a defined writableType should throw

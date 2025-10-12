@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # This script updates the copy of ANGLE in Source/ThirdParty/ANGLE
 # with the latest changes from upstream.
@@ -8,6 +8,8 @@ set -e
 cd "$(dirname "$0")/../../Source/ThirdParty/ANGLE"
 ANGLE_DIR="$PWD"
 ANGLE_TARGET_COMMIT="origin/main"
+WEBKIT_TARGET_COMMIT=$(git rev-parse HEAD)
+WEBKIT_TARGET_COMMIT_SHORT=$(git rev-parse --abbrev-ref HEAD)
 q="-q"
 
 # Check for modified files in WebKit ignoring untracked file except in ANGLE dir
@@ -38,6 +40,7 @@ generate_changes_diff() {
         ':(exclude)WebKit' \
         ':(exclude)WebKitBuild' \
         ':(exclude)third_party/r8/custom_d8.jar' \
+        ':(exclude)third_party/googletest' \
         ':(exclude)parsetab.py' \
         > changes.diff
 }
@@ -79,6 +82,7 @@ while [[ $# -gt 0 ]]; do
             exit 0
             ;;
         -v|--verbose)
+            echo "WEBKIT_TARGET_COMMIT: $WEBKIT_TARGET_COMMIT ($WEBKIT_TARGET_COMMIT_SHORT)"
             q=""
             ;;
         --generate-changes)
@@ -179,12 +183,10 @@ if wait_for_rebase_to_complete ; then
     cleanup_after_successful_rebase_and_exit
 fi
 
-PREVIOUS_ANGLE_COMMIT_HASH=$(grep -m 1 -o -E "[a-z0-9]{40}" ANGLE.plist)
-
 cd ../../..
 echo "Creating WebKit branch that only contains ANGLE changes, using git-filter-repo."
 echo "This may take a few minutes, but massively speeds up rebasing later."
-git branch -f just-angle main && git-filter-repo --refs refs/heads/just-angle --path Source/ThirdParty/ANGLE --path-rename Source/ThirdParty/ANGLE/: --force
+git branch -f just-angle ${WEBKIT_TARGET_COMMIT} && git-filter-repo --refs refs/heads/just-angle --path Source/ThirdParty/ANGLE --path-rename Source/ThirdParty/ANGLE/: --force
 cd "$ANGLE_DIR"
 
 echo "Downloading latest ANGLE via git clone."

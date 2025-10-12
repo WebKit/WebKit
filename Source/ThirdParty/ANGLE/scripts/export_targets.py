@@ -232,6 +232,7 @@ IGNORED_INCLUDES = {
     b'vulkan_ios.h',
     b'vulkan_macos.h',
     b'vulkan_metal.h',
+    b'vulkan_ohos.h',
     b'vulkan_sci.h',
     b'vulkan_vi.h',
     b'vulkan_wayland.h',
@@ -247,6 +248,7 @@ IGNORED_INCLUDES = {
     b'parallel_hashmap/phmap.h',
     # Validation layers optionally use mimalloc
     b'mimalloc-new-delete.h',
+    b'mimalloc-stats.h',
     # From the Vulkan-Loader
     b'winres.h',
     # From a comment in vulkan-validation-layers/src/layers/vk_mem_alloc.h

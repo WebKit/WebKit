@@ -76,8 +76,8 @@ bool CertificateInfo::containsNonRootSHA1SignedCertificate() const
         auto chain = adoptCF(SecTrustCopyCertificateChain(trust().get()));
         // Allow only the root certificate (the last in the chain) to be SHA1.
         for (CFIndex i = 0, size = SecTrustGetCertificateCount(trust().get()) - 1; i < size; ++i) {
-            auto certificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain.get(), i));
-            if (SecCertificateGetSignatureHashAlgorithm(certificate) == kSecSignatureHashAlgorithmSHA1)
+            RetainPtr certificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain.get(), i));
+            if (SecCertificateGetSignatureHashAlgorithm(certificate.get()) == kSecSignatureHashAlgorithmSHA1)
                 return true;
         }
 
@@ -95,43 +95,43 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
         return std::nullopt;
 
 #if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
-    auto leafCertificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain.get(), 0));
-    auto subjectCF = adoptCF(SecCertificateCopySubjectSummary(leafCertificate));
+    RetainPtr leafCertificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain.get(), 0));
+    RetainPtr subjectCF = adoptCF(SecCertificateCopySubjectSummary(leafCertificate.get()));
     summaryInfo.subject = subjectCF.get();
 #endif
 
 #if PLATFORM(MAC)
-    if (auto certificateDictionary = adoptCF(SecCertificateCopyValues(leafCertificate, nullptr, nullptr))) {
-        if (auto validNotBefore = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(certificateDictionary.get(), kSecOIDX509V1ValidityNotBefore))) {
-            if (auto number = checked_cf_cast<CFNumberRef>(CFDictionaryGetValue(validNotBefore, CFSTR("value")))) {
+    if (auto certificateDictionary = adoptCF(SecCertificateCopyValues(leafCertificate.get(), nullptr, nullptr))) {
+        if (RetainPtr validNotBefore = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(certificateDictionary.get(), kSecOIDX509V1ValidityNotBefore))) {
+            if (RetainPtr number = checked_cf_cast<CFNumberRef>(CFDictionaryGetValue(validNotBefore.get(), CFSTR("value")))) {
                 double numberValue;
-                if (CFNumberGetValue(number, kCFNumberDoubleType, &numberValue))
+                if (CFNumberGetValue(number.get(), kCFNumberDoubleType, &numberValue))
                     summaryInfo.validFrom = Seconds(kCFAbsoluteTimeIntervalSince1970 + numberValue);
             }
         }
 
-        if (auto validNotAfter = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(certificateDictionary.get(), kSecOIDX509V1ValidityNotAfter))) {
-            if (auto number = checked_cf_cast<CFNumberRef>(CFDictionaryGetValue(validNotAfter, CFSTR("value")))) {
+        if (RetainPtr validNotAfter = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(certificateDictionary.get(), kSecOIDX509V1ValidityNotAfter))) {
+            if (RetainPtr number = checked_cf_cast<CFNumberRef>(CFDictionaryGetValue(validNotAfter.get(), CFSTR("value")))) {
                 double numberValue;
-                if (CFNumberGetValue(number, kCFNumberDoubleType, &numberValue))
+                if (CFNumberGetValue(number.get(), kCFNumberDoubleType, &numberValue))
                     summaryInfo.validUntil = Seconds(kCFAbsoluteTimeIntervalSince1970 + numberValue);
             }
         }
 
-        if (auto dnsNames = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(certificateDictionary.get(), CFSTR("DNSNAMES")))) {
-            if (auto dnsNamesArray = checked_cf_cast<CFArrayRef>(CFDictionaryGetValue(dnsNames, CFSTR("value")))) {
-                for (CFIndex i = 0, count = CFArrayGetCount(dnsNamesArray); i < count; ++i) {
-                    if (auto dnsName = checked_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(dnsNamesArray, i)))
-                        summaryInfo.dnsNames.append(dnsName);
+        if (RetainPtr dnsNames = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(certificateDictionary.get(), CFSTR("DNSNAMES")))) {
+            if (RetainPtr dnsNamesArray = checked_cf_cast<CFArrayRef>(CFDictionaryGetValue(dnsNames.get(), CFSTR("value")))) {
+                for (CFIndex i = 0, count = CFArrayGetCount(dnsNamesArray.get()); i < count; ++i) {
+                    if (RetainPtr dnsName = checked_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(dnsNamesArray.get(), i)))
+                        summaryInfo.dnsNames.append(dnsName.get());
                 }
             }
         }
 
-        if (auto ipAddresses = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(certificateDictionary.get(), CFSTR("IPADDRESSES")))) {
-            if (auto ipAddressesArray = checked_cf_cast<CFArrayRef>(CFDictionaryGetValue(ipAddresses, CFSTR("value")))) {
-                for (CFIndex i = 0, count = CFArrayGetCount(ipAddressesArray); i < count; ++i) {
-                    if (auto ipAddress = checked_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(ipAddressesArray, i)))
-                        summaryInfo.ipAddresses.append(ipAddress);
+        if (RetainPtr ipAddresses = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(certificateDictionary.get(), CFSTR("IPADDRESSES")))) {
+            if (RetainPtr ipAddressesArray = checked_cf_cast<CFArrayRef>(CFDictionaryGetValue(ipAddresses.get(), CFSTR("value")))) {
+                for (CFIndex i = 0, count = CFArrayGetCount(ipAddressesArray.get()); i < count; ++i) {
+                    if (RetainPtr ipAddress = checked_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(ipAddressesArray.get(), i)))
+                        summaryInfo.ipAddresses.append(ipAddress.get());
                 }
             }
         }

@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-invert-invertible.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-invert-non-invertible.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-invert-preserves-2d.html
+/LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-invertSelf.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-newobject.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-stringifier.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup.html

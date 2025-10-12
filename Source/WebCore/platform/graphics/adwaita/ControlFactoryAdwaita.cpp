@@ -57,9 +57,9 @@ Ref<ControlFactory> ControlFactory::create()
     return adoptRef(*new ControlFactoryAdwaita());
 }
 
-ControlFactoryAdwaita& ControlFactoryAdwaita::shared()
+ControlFactoryAdwaita& ControlFactoryAdwaita::singleton()
 {
-    return static_cast<ControlFactoryAdwaita&>(ControlFactory::shared());
+    return downcast<ControlFactoryAdwaita>(ControlFactory::singleton());
 }
 
 #if ENABLE(APPLE_PAY)

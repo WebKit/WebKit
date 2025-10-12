@@ -6,6 +6,10 @@
 
 // WindowSurfaceCGL.cpp: CGL implementation of egl::Surface for windows
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #import "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
 
 #import <Cocoa/Cocoa.h>
@@ -205,8 +209,9 @@ egl::Error WindowSurfaceCGL::initialize(const egl::Display *display)
 {
     EnsureCGLContextIsCurrent ensureContextCurrent(mContext);
 
-    unsigned width  = getWidth();
-    unsigned height = getHeight();
+    gl::Extents size = getSize();
+    unsigned width   = size.width;
+    unsigned height  = size.height;
 
     for (size_t i = 0; i < ArraySize(mSwapState.textures); ++i)
     {
@@ -254,9 +259,10 @@ egl::Error WindowSurfaceCGL::swap(const gl::Context *context, SurfaceSwapFeedbac
     }
     pthread_mutex_unlock(&mSwapState.mutex);
 
-    unsigned width  = getWidth();
-    unsigned height = getHeight();
-    auto &texture   = *mSwapState.beingRendered;
+    gl::Extents size = getSize();
+    unsigned width   = size.width;
+    unsigned height  = size.height;
+    auto &texture    = *mSwapState.beingRendered;
 
     if (texture.width != width || texture.height != height)
     {
@@ -315,14 +321,29 @@ void WindowSurfaceCGL::setSwapInterval(const egl::Display *display, EGLint inter
     // TODO(cwallez) investigate implementing swap intervals other than 0
 }
 
-EGLint WindowSurfaceCGL::getWidth() const
+gl::Extents WindowSurfaceCGL::getSize() const
 {
-    return static_cast<EGLint>(CGRectGetWidth([mLayer frame]) * [mLayer contentsScale]);
+    EGLint width, height;
+    egl::Error error = WindowSurfaceCGL::getUserSize(nullptr, &width, &height);
+    ASSERT(!error.isError());
+    return gl::Extents(width, height, 1);
 }
 
-EGLint WindowSurfaceCGL::getHeight() const
+egl::Error WindowSurfaceCGL::getUserSize(const egl::Display *display,
+                                         EGLint *width,
+                                         EGLint *height) const
 {
-    return static_cast<EGLint>(CGRectGetHeight([mLayer frame]) * [mLayer contentsScale]);
+    CGRect frame  = [mLayer frame];
+    CGFloat scale = [mLayer contentsScale];
+    if (width != nullptr)
+    {
+        *width = static_cast<EGLint>(CGRectGetWidth(frame) * scale);
+    }
+    if (height != nullptr)
+    {
+        *height = static_cast<EGLint>(CGRectGetHeight(frame) * scale);
+    }
+    return egl::NoError();
 }
 
 EGLint WindowSurfaceCGL::isPostSubBufferSupported() const

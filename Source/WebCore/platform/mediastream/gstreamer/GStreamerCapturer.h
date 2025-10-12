@@ -57,7 +57,7 @@ public:
     GStreamerCapturer(const PipeWireCaptureDevice&);
     virtual ~GStreamerCapturer();
 
-    void tearDown(bool disconnectSignals = true);
+    virtual void tearDown(bool disconnectSignals);
 
     void setDevice(std::optional<GStreamerCaptureDevice>&&);
 
@@ -90,6 +90,11 @@ public:
     const String& devicePersistentId() const { return m_device ? m_device->persistentId() : emptyString(); }
 
     void stopDevice(bool disconnectSignals);
+
+    struct SinkSignalsHolder {
+        unsigned long prerollSignalId;
+        unsigned long newSampleSignalId;
+    };
 
 protected:
     GRefPtr<GstElement> m_sink;

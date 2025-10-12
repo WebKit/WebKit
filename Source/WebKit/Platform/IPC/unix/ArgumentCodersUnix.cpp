@@ -42,9 +42,11 @@ void ArgumentCoder<UnixFileDescriptor>::encode(Encoder& encoder, UnixFileDescrip
     encoder.addAttachment(WTFMove(fd));
 }
 
+#if !OS(ANDROID)
 std::optional<UnixFileDescriptor> ArgumentCoder<UnixFileDescriptor>::decode(Decoder& decoder)
 {
     return decoder.takeLastAttachment();
 }
+#endif // OS(ANDROID)
 
 }

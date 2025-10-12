@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,11 +38,11 @@ CSS::HueRotate toCSSHueRotate(Ref<BasicColorMatrixFilterOperation> operation, co
     return { CSS::HueRotate::Parameter { toCSS(Angle<> { operation->amount() }, style) } };
 }
 
-Ref<FilterOperation> createFilterOperation(const CSS::HueRotate& filter, const Document&, RenderStyle&, const CSSToLengthConversionData& conversionData)
+Ref<FilterOperation> createFilterOperation(const CSS::HueRotate& filter, const BuilderState& state)
 {
     double value;
     if (auto parameter = filter.value)
-        value = toStyle(*parameter, conversionData).value;
+        value = toStyle(*parameter, state).value;
     else
         value = filterFunctionDefaultValue<CSS::HueRotateFunction::name>().value;
 

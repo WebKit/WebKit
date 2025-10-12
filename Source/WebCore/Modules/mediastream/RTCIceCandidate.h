@@ -32,8 +32,8 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "RTCIceCandidateFields.h"
-#include "ScriptWrappable.h"
+#include <WebCore/RTCIceCandidateFields.h>
+#include <WebCore/ScriptWrappable.h>
 
 namespace WebCore {
 

@@ -32,21 +32,15 @@
 #include "WasmBBQPlan.h"
 #include "WasmCallee.h"
 #include "WasmIPIntPlan.h"
-#include "WasmLLIntPlan.h"
 #include "WasmMachineThreads.h"
 #include "WasmWorklist.h"
 #include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
 
-Ref<CalleeGroup> CalleeGroup::createFromLLInt(VM& vm, MemoryMode mode, ModuleInformation& moduleInformation, RefPtr<LLIntCallees> llintCallees)
+Ref<CalleeGroup> CalleeGroup::createFromIPInt(VM& vm, MemoryMode mode, ModuleInformation& moduleInformation, Ref<IPIntCallees>&& ipintCallees)
 {
-    return adoptRef(*new CalleeGroup(vm, mode, moduleInformation, llintCallees));
-}
-
-Ref<CalleeGroup> CalleeGroup::createFromIPInt(VM& vm, MemoryMode mode, ModuleInformation& moduleInformation, RefPtr<IPIntCallees> ipintCallees)
-{
-    return adoptRef(*new CalleeGroup(vm, mode, moduleInformation, ipintCallees));
+    return adoptRef(*new CalleeGroup(vm, mode, moduleInformation, WTFMove(ipintCallees)));
 }
 
 Ref<CalleeGroup> CalleeGroup::createFromExisting(MemoryMode mode, const CalleeGroup& other)
@@ -58,10 +52,9 @@ CalleeGroup::CalleeGroup(MemoryMode mode, const CalleeGroup& other)
     : m_calleeCount(other.m_calleeCount)
     , m_mode(mode)
     , m_ipintCallees(other.m_ipintCallees)
-    , m_llintCallees(other.m_llintCallees)
-    , m_jsEntrypointCallees(other.m_jsEntrypointCallees)
+    , m_jsToWasmCallees(other.m_jsToWasmCallees)
     , m_callers(m_calleeCount)
-    , m_wasmIndirectCallEntryPoints(other.m_wasmIndirectCallEntryPoints)
+    , m_wasmIndirectCallEntrypoints(other.m_wasmIndirectCallEntrypoints)
     , m_wasmIndirectCallWasmCallees(other.m_wasmIndirectCallWasmCallees)
     , m_wasmToWasmExitStubs(other.m_wasmToWasmExitStubs)
 {
@@ -69,19 +62,14 @@ CalleeGroup::CalleeGroup(MemoryMode mode, const CalleeGroup& other)
     setCompilationFinished();
 }
 
-CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInformation, RefPtr<LLIntCallees> llintCallees)
+CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInformation, Ref<IPIntCallees>&& ipintCallees)
     : m_calleeCount(moduleInformation.internalFunctionCount())
     , m_mode(mode)
-    , m_llintCallees(llintCallees)
+    , m_ipintCallees(WTFMove(ipintCallees))
     , m_callers(m_calleeCount)
 {
     RefPtr<CalleeGroup> protectedThis = this;
-    m_plan = adoptRef(*new LLIntPlan(vm, moduleInformation, m_llintCallees->data(), createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
-        if (!m_plan) {
-            m_errorMessage = makeString("Out of memory while creating LLInt CalleeGroup"_s);
-            setCompilationFinished();
-            return;
-        }
+    m_plan = adoptRef(*new IPIntPlan(vm, moduleInformation, m_ipintCallees->span().data(), createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
         Locker locker { m_lock };
         if (m_plan->failed()) {
             m_errorMessage = m_plan->errorMessage();
@@ -89,56 +77,16 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
             return;
         }
 
-        m_wasmIndirectCallEntryPoints = FixedVector<CodePtr<WasmEntryPtrTag>>(m_calleeCount);
-        m_wasmIndirectCallWasmCallees = FixedVector<RefPtr<Wasm::Callee>>(m_calleeCount);
+        m_wasmIndirectCallEntrypoints = FixedVector<CodePtr<WasmEntryPtrTag>>(m_calleeCount);
+        m_wasmIndirectCallWasmCallees = FixedVector<RefPtr<Wasm::IPIntCallee>>(m_calleeCount);
 
         for (unsigned i = 0; i < m_calleeCount; ++i) {
-            m_wasmIndirectCallEntryPoints[i] = m_llintCallees->at(i)->entrypoint();
-            m_wasmIndirectCallWasmCallees[i] = m_llintCallees->at(i).ptr();
-        }
-
-        m_wasmToWasmExitStubs = m_plan->takeWasmToWasmExitStubs();
-        m_jsEntrypointCallees = static_cast<LLIntPlan*>(m_plan.get())->takeJSCallees();
-
-        setCompilationFinished();
-    })));
-    m_plan->setMode(mode);
-    {
-        Ref plan { *m_plan };
-        if (plan->completeSyncIfPossible())
-            return;
-    }
-
-    auto& worklist = Wasm::ensureWorklist();
-    // Note, immediately after we enqueue the plan, there is a chance the above callback will be called.
-    worklist.enqueue(*m_plan.get());
-}
-
-CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInformation, RefPtr<IPIntCallees> ipintCallees)
-    : m_calleeCount(moduleInformation.internalFunctionCount())
-    , m_mode(mode)
-    , m_ipintCallees(ipintCallees)
-    , m_callers(m_calleeCount)
-{
-    RefPtr<CalleeGroup> protectedThis = this;
-    m_plan = adoptRef(*new IPIntPlan(vm, moduleInformation, m_ipintCallees->data(), createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
-        Locker locker { m_lock };
-        if (m_plan->failed()) {
-            m_errorMessage = m_plan->errorMessage();
-            setCompilationFinished();
-            return;
-        }
-
-        m_wasmIndirectCallEntryPoints = FixedVector<CodePtr<WasmEntryPtrTag>>(m_calleeCount);
-        m_wasmIndirectCallWasmCallees = FixedVector<RefPtr<Wasm::Callee>>(m_calleeCount);
-
-        for (unsigned i = 0; i < m_calleeCount; ++i) {
-            m_wasmIndirectCallEntryPoints[i] = m_ipintCallees->at(i)->entrypoint();
+            m_wasmIndirectCallEntrypoints[i] = m_ipintCallees->at(i)->entrypoint();
             m_wasmIndirectCallWasmCallees[i] = m_ipintCallees->at(i).ptr();
         }
 
         m_wasmToWasmExitStubs = m_plan->takeWasmToWasmExitStubs();
-        m_jsEntrypointCallees = static_cast<IPIntPlan*>(m_plan.get())->takeJSCallees();
+        m_jsToWasmCallees = static_cast<IPIntPlan*>(m_plan.get())->takeJSToWasmCallees();
 
         setCompilationFinished();
     })));
@@ -193,55 +141,178 @@ void CalleeGroup::compileAsync(VM& vm, AsyncCompilationCallback&& task)
     task->run(Ref { *this }, isAsync);
 }
 
-#if ENABLE(WEBASSEMBLY_BBQJIT)
-BBQCallee* CalleeGroup::tryGetBBQCalleeForLoopOSR(const AbstractLocker&, VM& vm, FunctionCodeIndex functionIndex)
+RefPtr<JITCallee> CalleeGroup::tryGetReplacementConcurrently(FunctionCodeIndex functionIndex) const
 {
-    if (m_bbqCallees.isEmpty())
+    if (m_optimizedCallees.isEmpty())
         return nullptr;
 
-    auto& maybeCallee = m_bbqCallees[functionIndex];
-    if (maybeCallee.isStrong())
-        return maybeCallee.ptr();
+    // Do not use optimizedCalleesTuple. optimizedCalleesTuple handles currently-installing Callee. But we do not want to handle it actually.
+    // We would like to peek the callee when it is stored into m_optimizedCallees without taking a lock.
+    auto* tuple = &m_optimizedCallees[functionIndex];
+    UNUSED_PARAM(tuple);
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+    if (RefPtr callee = tuple->m_omgCallee)
+        return callee;
+#endif
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+    {
+        Locker locker { tuple->m_bbqCalleeLock };
+        if (RefPtr callee = tuple->m_bbqCallee.get())
+            return callee;
+    }
+#endif
+    return nullptr;
+}
 
-    RefPtr bbqCallee = maybeCallee.get();
-    if (!bbqCallee)
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+RefPtr<BBQCallee> CalleeGroup::tryGetBBQCalleeForLoopOSRConcurrently(VM& vm, FunctionCodeIndex functionIndex)
+{
+    if (m_optimizedCallees.isEmpty())
         return nullptr;
+
+    // Do not use optimizedCalleesTuple. optimizedCalleesTuple handles currently-installing Callee. But we do not want to handle it actually.
+    // We would like to peek the callee when it is stored into m_optimizedCallees without taking a lock.
+    auto* tuple = &m_optimizedCallees[functionIndex];
+    RefPtr<BBQCallee> bbqCallee;
+    {
+        Locker bbqLocker { tuple->m_bbqCalleeLock };
+        bbqCallee = tuple->m_bbqCallee.get();
+        if (!bbqCallee)
+            return nullptr;
+
+        if (tuple->m_bbqCallee.isStrong())
+            return bbqCallee;
+    }
 
     // This means this callee has been released but hasn't yet been destroyed. We're safe to use it
     // as long as this VM knows to look for it the next time it scans for conservative roots.
-    BBQCallee* result = bbqCallee.get();
-    vm.heap.reportWasmCalleePendingDestruction(bbqCallee.releaseNonNull());
-    return result;
+    vm.heap.reportWasmCalleePendingDestruction(Ref { *bbqCallee });
+    return bbqCallee;
 }
 
-void CalleeGroup::releaseBBQCallee(const AbstractLocker&, FunctionCodeIndex functionIndex)
+void CalleeGroup::releaseBBQCallee(const AbstractLocker& locker, FunctionCodeIndex functionIndex)
 {
-    if (!Options::freeRetiredWasmCode())
-        return;
+    ASSERT(Options::freeRetiredWasmCode());
 
-    // It's possible there are still a LLInt/IPIntCallee around even when the BBQCallee
+    // It's possible there are still a IPIntCallee around even when the BBQCallee
     // is destroyed. Since this function was clearly hot enough to get to OMG we should
     // tier it up soon.
-    if (m_ipintCallees)
-        m_ipintCallees->at(functionIndex)->tierUpCounter().resetAndOptimizeSoon(m_mode);
-    else if (m_llintCallees)
-        m_llintCallees->at(functionIndex)->tierUpCounter().resetAndOptimizeSoon(m_mode);
+    m_ipintCallees->at(functionIndex)->tierUpCounter().resetAndOptimizeSoon(m_mode);
 
     // We could have triggered a tier up from a BBQCallee has MemoryMode::BoundsChecking
     // but is currently running a MemoryMode::Signaling memory. In that case there may
     // be nothing to release.
-    if (!m_bbqCallees.isEmpty()) [[likely]] {
-        if (RefPtr bbqCallee = m_bbqCallees[functionIndex].convertToWeak()) {
-            bbqCallee->reportToVMsForDestruction();
-            return;
+    if (auto* tuple = optimizedCalleesTuple(locker, functionIndex)) [[likely]] {
+        RefPtr<BBQCallee> bbqCallee;
+        {
+            Locker bbqLocker { tuple->m_bbqCalleeLock };
+            bbqCallee = tuple->m_bbqCallee.convertToWeak();
         }
+        bbqCallee->reportToVMsForDestruction();
+        return;
     }
 
     ASSERT(mode() == MemoryMode::Signaling);
 }
 #endif
 
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+RefPtr<OMGCallee> CalleeGroup::tryGetOMGCalleeConcurrently(FunctionCodeIndex functionIndex)
+{
+    if (m_optimizedCallees.isEmpty())
+        return nullptr;
+
+    // Do not use optimizedCalleesTuple. optimizedCalleesTuple handles currently-installing Callee. But we do not want to handle it actually.
+    // We would like to peek the callee when it is stored into m_optimizedCallees without taking a lock.
+    auto* tuple = &m_optimizedCallees[functionIndex];
+    return tuple->m_omgCallee;
+}
+#endif
+
 #if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
+bool CalleeGroup::startInstallingCallee(const AbstractLocker& locker, FunctionCodeIndex functionIndex, OptimizingJITCallee& callee)
+{
+    auto* slot = optimizedCalleesTuple(locker, functionIndex);
+    if (!slot) [[unlikely]] {
+        ensureOptimizedCalleesSlow(locker);
+        slot = optimizedCalleesTuple(locker, functionIndex);
+    }
+    ASSERT(slot);
+
+    if (callee.compilationMode() == CompilationMode::OMGMode) {
+        // Why does it happen? It is possible that some code is still running IPIntCallee, and OMGCallee is installed and BBQCallee gets retired.
+        // But since IPIntCallee can only tier up to BBQCallee, it may spin up BBQCallee again.
+        // And because of BBQCallee's new TierUpCounter, we may start introducing OMGCallee again.
+        // For now, we make this defensive: making installation failed when OMGCallee is already installed.
+        if (slot->m_omgCallee) [[unlikely]]
+            return false;
+        m_currentlyInstallingOptimizedCallees.m_omgCallee = Ref { uncheckedDowncast<OMGCallee>(callee) };
+    } else
+        m_currentlyInstallingOptimizedCallees.m_omgCallee = slot->m_omgCallee;
+
+    {
+        Locker replacerLocker { m_currentlyInstallingOptimizedCallees.m_bbqCalleeLock };
+        Locker locker { slot->m_bbqCalleeLock };
+        if (callee.compilationMode() == CompilationMode::BBQMode)
+            m_currentlyInstallingOptimizedCallees.m_bbqCallee = Ref { uncheckedDowncast<BBQCallee>(callee) };
+        else
+            m_currentlyInstallingOptimizedCallees.m_bbqCallee = slot->m_bbqCallee;
+    }
+    m_currentlyInstallingOptimizedCalleesIndex = functionIndex;
+    return true;
+}
+
+void CalleeGroup::finalizeInstallingCallee(const AbstractLocker&, FunctionCodeIndex functionIndex)
+{
+    RELEASE_ASSERT(m_currentlyInstallingOptimizedCalleesIndex == functionIndex);
+    auto* slot = &m_optimizedCallees[functionIndex];
+    {
+        Locker replacerLocker { m_currentlyInstallingOptimizedCallees.m_bbqCalleeLock };
+        Locker locker { slot->m_bbqCalleeLock };
+        slot->m_bbqCallee = m_currentlyInstallingOptimizedCallees.m_bbqCallee;
+        m_currentlyInstallingOptimizedCallees.m_bbqCallee = nullptr;
+    }
+    slot->m_omgCallee = std::exchange(m_currentlyInstallingOptimizedCallees.m_omgCallee, nullptr);
+    m_currentlyInstallingOptimizedCalleesIndex = { };
+}
+
+bool CalleeGroup::installOptimizedCallee(const AbstractLocker& locker, const ModuleInformation& info, FunctionCodeIndex functionIndex, Ref<OptimizingJITCallee>&& callee, const FixedBitVector& outgoingJITDirectCallees)
+{
+    // We want to make sure we publish our callee at the same time as we link our callsites. This enables us to ensure we
+    // always call the fastest code. Any function linked after us will see our new code and the new callsites, which they
+    // will update. It's also ok if they publish their code before we reset the instruction caches because after we release
+    // the lock our code is ready to be published too.
+
+    if (!startInstallingCallee(locker, functionIndex, callee.get()))
+        return false;
+    reportCallees(locker, callee.ptr(), outgoingJITDirectCallees);
+
+    for (auto& call : callee->wasmToWasmCallsites()) {
+        CodePtr<WasmEntryPtrTag> entrypoint;
+        if (call.functionIndexSpace < info.importFunctionCount())
+            entrypoint = m_wasmToWasmExitStubs[call.functionIndexSpace].code();
+        else {
+            Ref calleeCallee = wasmEntrypointCalleeFromFunctionIndexSpace(locker, call.functionIndexSpace);
+            entrypoint = calleeCallee->entrypoint().retagged<WasmEntryPtrTag>();
+        }
+
+        // FIXME: This does an icache flush for each of these... which doesn't make any sense since this code isn't runnable here
+        // and any stale cache will be evicted when updateCallsitesToCallUs is called.
+        MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
+    }
+    {
+        Ref calleeCallee = wasmEntrypointCalleeFromFunctionIndexSpace(locker, callee->index());
+        if (calleeCallee == callee) [[likely]] {
+            auto entrypoint = calleeCallee->entrypoint().retagged<WasmEntryPtrTag>();
+            updateCallsitesToCallUs(locker, CodeLocationLabel<WasmEntryPtrTag>(entrypoint), functionIndex);
+        } else
+            resetInstructionCacheOnAllThreads();
+    }
+    WTF::storeStoreFence();
+    finalizeInstallingCallee(locker, functionIndex);
+    return true;
+}
+
 void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLocationLabel<WasmEntryPtrTag> entrypoint, FunctionCodeIndex functionIndex)
 {
     constexpr bool verbose = false;
@@ -276,16 +347,25 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
     auto handleCallerIndex = [&](size_t caller) {
         auto callerIndex = FunctionCodeIndex(caller);
         assertIsHeld(m_lock);
+        auto* tuple = optimizedCalleesTuple(locker, callerIndex);
+        if (!tuple)
+            return;
+
 #if ENABLE(WEBASSEMBLY_BBQJIT)
         // This callee could be weak but we still need to update it since it could call our BBQ callee
         // that we're going to want to destroy.
-        if (RefPtr<BBQCallee> bbqCallee = m_bbqCallees[callerIndex].get()) {
+        RefPtr<BBQCallee> bbqCallee;
+        {
+            Locker locker { tuple->m_bbqCalleeLock };
+            bbqCallee = tuple->m_bbqCallee.get();
+        }
+        if (bbqCallee) {
             collectCallsites(bbqCallee.get());
             ASSERT(!bbqCallee->osrEntryCallee() || m_osrEntryCallees.find(callerIndex) != m_osrEntryCallees.end());
         }
 #endif
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-        collectCallsites(omgCallee(locker, callerIndex));
+        collectCallsites(tuple->m_omgCallee.get());
         if (auto iter = m_osrEntryCallees.find(callerIndex); iter != m_osrEntryCallees.end()) {
             if (RefPtr callee = iter->value.get()) {
                 collectCallsites(callee.get());
@@ -315,7 +395,7 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
     resetInstructionCacheOnAllThreads();
     WTF::storeStoreFence(); // This probably isn't necessary but it's good to be paranoid.
 
-    m_wasmIndirectCallEntryPoints[functionIndex] = entrypoint;
+    m_wasmIndirectCallEntrypoints[functionIndex] = entrypoint;
 
     // FIXME: This does an icache flush for each repatch but we
     // 1) only need one at the end.
@@ -359,28 +439,44 @@ void CalleeGroup::reportCallees(const AbstractLocker&, JITCallee* caller, const 
 }
 #endif
 
-TriState CalleeGroup::calleeIsReferenced(const AbstractLocker&, Wasm::Callee* callee) const
+TriState CalleeGroup::calleeIsReferenced(const AbstractLocker& locker, Wasm::Callee* callee) const
 {
+    UNUSED_PARAM(locker);
     switch (callee->compilationMode()) {
-    case CompilationMode::LLIntMode:
     case CompilationMode::IPIntMode:
         return TriState::True;
 #if ENABLE(WEBASSEMBLY_BBQJIT)
     case CompilationMode::BBQMode: {
         FunctionCodeIndex index = toCodeIndex(callee->index());
-        if (m_bbqCallees.at(index).isWeak())
-            return m_bbqCallees.at(index).get() ? TriState::Indeterminate : TriState::False;
-        return triState(m_bbqCallees.at(index).ptr());
+        const auto* tuple = optimizedCalleesTuple(locker, index);
+        if (!tuple)
+            return TriState::Indeterminate;
+
+        Locker locker { tuple->m_bbqCalleeLock };
+        RefPtr bbqCallee = tuple->m_bbqCallee.get();
+        if (tuple->m_bbqCallee.isWeak())
+            return bbqCallee ? TriState::Indeterminate : TriState::False;
+        return triState(bbqCallee);
     }
 #endif
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-    case CompilationMode::OMGMode:
-        return triState(m_omgCallees.at(toCodeIndex(callee->index())).get());
+    case CompilationMode::OMGMode: {
+        FunctionCodeIndex index = toCodeIndex(callee->index());
+        const auto* tuple = optimizedCalleesTuple(locker, index);
+        if (!tuple)
+            return TriState::Indeterminate;
+        return triState(tuple->m_omgCallee.get());
+    }
     case CompilationMode::OMGForOSREntryMode: {
         FunctionCodeIndex index = toCodeIndex(callee->index());
         if (m_osrEntryCallees.get(index).get()) {
             // The BBQCallee really owns the OMGOSREntryCallee so as long as that's around the OMGOSREntryCallee is referenced.
-            if (m_bbqCallees.at(index).get())
+            const auto* tuple = optimizedCalleesTuple(locker, index);
+            if (!tuple)
+                return TriState::Indeterminate;
+
+            Locker locker { tuple->m_bbqCalleeLock };
+            if (tuple->m_bbqCallee.get())
                 return TriState::True;
             return TriState::Indeterminate;
         }
@@ -388,10 +484,11 @@ TriState CalleeGroup::calleeIsReferenced(const AbstractLocker&, Wasm::Callee* ca
     }
 #endif
     // FIXME: This doesn't record the index its associated with so we can't validate anything here.
-    case CompilationMode::JSToWasmEntrypointMode:
+    case CompilationMode::JSToWasmMode:
     // FIXME: These are owned by JS, it's not clear how to verify they're still alive here.
     case CompilationMode::JSToWasmICMode:
     case CompilationMode::WasmToJSMode:
+    case CompilationMode::WasmBuiltinMode:
         return TriState::True;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -418,11 +515,22 @@ bool CalleeGroup::isSafeToRun(MemoryMode memoryMode)
     return false;
 }
 
-
 void CalleeGroup::setCompilationFinished()
 {
     m_plan = nullptr;
     m_compilationFinished.store(true);
+}
+
+void CalleeGroup::ensureOptimizedCalleesSlow(const AbstractLocker&)
+{
+    // We must use FixedVector. This is pointer size, and we can ensure that we can expose it atomically.
+    static_assert(sizeof(FixedVector<OptimizedCallees>) <= sizeof(CPURegister));
+    FixedVector<OptimizedCallees> vector(m_calleeCount);
+
+    // We would like to expose this vector concurrently for optimization. Thus we must ensure that fields are fully initialized.
+    WTF::storeStoreFence();
+
+    m_optimizedCallees = WTFMove(vector);
 }
 
 } } // namespace JSC::Wasm

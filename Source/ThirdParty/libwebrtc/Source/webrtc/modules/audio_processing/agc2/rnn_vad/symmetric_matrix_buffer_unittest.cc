@@ -10,6 +10,10 @@
 
 #include "modules/audio_processing/agc2/rnn_vad/symmetric_matrix_buffer.h"
 
+#include <algorithm>
+#include <array>
+#include <utility>
+
 #include "modules/audio_processing/agc2/rnn_vad/ring_buffer.h"
 #include "test/gtest.h"
 

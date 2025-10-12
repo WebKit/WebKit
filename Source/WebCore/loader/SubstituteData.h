@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ResourceResponse.h"
-#include "SharedBuffer.h"
+#include <WebCore/ResourceResponse.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/URL.h>
 
 namespace WebCore {

@@ -12,15 +12,18 @@
 #define MODULES_DESKTOP_CAPTURE_LINUX_WAYLAND_SCREENCAST_PORTAL_H_
 
 #include <gio/gio.h>
+#include <glib-object.h>
+#include <glib.h>
 
+#include <cstdint>
 #include <string>
 
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/linux/wayland/screen_capture_portal_interface.h"
 #include "modules/portal/pipewire_utils.h"
 #include "modules/portal/portal_request_response.h"
-#include "modules/portal/xdg_desktop_portal_utils.h"
 #include "modules/portal/xdg_session_details.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 

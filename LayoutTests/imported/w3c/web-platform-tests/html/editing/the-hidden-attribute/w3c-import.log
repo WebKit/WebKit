@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/beforematch-element-fragment-navigation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/beforematch-infinite-loop.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/beforematch-scroll-to-text-fragment.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-1a-expected.html

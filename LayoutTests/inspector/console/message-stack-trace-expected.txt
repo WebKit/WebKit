@@ -3,6 +3,7 @@ CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating '[].x.x')
 CONSOLE MESSAGE: Unhandled Promise Rejection: rejection-1
 CONSOLE MESSAGE: Unhandled Promise Rejection: rejection-2
 CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating '[].x.x')
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating '[].x.x')
 Test for the Console.stackTrace in different cases.
 
 
@@ -53,7 +54,10 @@ ASYNC CALL STACK:
 CALL STACK:
 0: [F] (anonymous function)
 ASYNC CALL STACK:
-0: --- enqueueJob ---
-1: [N] then
-2: [F] triggerUnhandledRejectionImplicitWithException
+0: --- then ---
+1: [F] triggerUnhandledRejectionImplicitWithException
+
+-- Running test case: Console.StackTrace.UnhandledPromiseRejection.Module
+CALL STACK:
+0: [F] wrapper
 

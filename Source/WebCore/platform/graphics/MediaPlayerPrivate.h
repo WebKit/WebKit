@@ -25,19 +25,21 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(VIDEO)
 
-#include "MediaPlayer.h"
-#include "MediaPlayerIdentifier.h"
-#include "NativeImage.h"
-#include "PlatformTimeRanges.h"
-#include "ProcessIdentity.h"
+#include <WebCore/HostingContext.h>
+#include <WebCore/MediaPlayer.h>
+#include <WebCore/MediaPlayerIdentifier.h>
+#include <WebCore/NativeImage.h>
+#include <WebCore/PlatformTimeRanges.h>
+#include <WebCore/ProcessIdentity.h>
 #include <optional>
 #include <wtf/AbstractRefCounted.h>
 #include <wtf/CompletionHandler.h>
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-#include "LegacyCDMSession.h"
+#include <WebCore/LegacyCDMSession.h>
 #endif
 
 namespace WebCore {
@@ -85,17 +87,17 @@ public:
     virtual RetainPtr<PlatformLayer> createVideoFullscreenLayer() { return nullptr; }
     virtual void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) { completionHandler(); }
     virtual void updateVideoFullscreenInlineImage() { }
-    virtual void setVideoFullscreenFrame(FloatRect) { }
+    virtual void setVideoFullscreenFrame(const FloatRect&) { }
     virtual void setVideoFullscreenGravity(MediaPlayer::VideoGravity) { }
     virtual void setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode) { }
     virtual void videoFullscreenStandbyChanged() { }
 #endif
 
-    using LayerHostingContextIDCallback = CompletionHandler<void(LayerHostingContextID)>;
-    virtual void requestHostingContextID(LayerHostingContextIDCallback&& completionHandler) { completionHandler({ }); }
-    virtual LayerHostingContextID hostingContextID() const { return 0; }
+    using LayerHostingContextCallback = CompletionHandler<void(HostingContext)>;
+    virtual void requestHostingContext(LayerHostingContextCallback&& completionHandler) { completionHandler({ }); }
+    virtual HostingContext hostingContext() const { return { }; }
     virtual FloatSize videoLayerSize() const { return { }; }
-    virtual void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRight&&) { }
+    virtual void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRightAnnotated&&) { }
 
 #if PLATFORM(IOS_FAMILY)
     virtual NSArray *timedMetadata() const { return nil; }
@@ -244,9 +246,9 @@ public:
     virtual unsigned audioDecodedByteCount() const { return 0; }
     virtual unsigned videoDecodedByteCount() const { return 0; }
 
-    UncheckedKeyHashSet<SecurityOriginData> originsInMediaCache(const String&) { return { }; }
+    HashSet<SecurityOriginData> originsInMediaCache(const String&) { return { }; }
     void clearMediaCache(const String&, WallTime) { }
-    void clearMediaCacheForOrigins(const String&, const UncheckedKeyHashSet<SecurityOriginData>&) { }
+    void clearMediaCacheForOrigins(const String&, const HashSet<SecurityOriginData>&) { }
 
     virtual void setPrivateBrowsingMode(bool) { }
 
@@ -318,7 +320,7 @@ public:
     virtual AVPlayer *objCAVFoundationAVPlayer() const { return nullptr; }
 #endif
 
-    virtual bool performTaskAtTime(Function<void()>&&, const MediaTime&) { return false; }
+    virtual bool performTaskAtTime(Function<void(const MediaTime&)>&&, const MediaTime&) { return false; }
 
     virtual bool shouldIgnoreIntrinsicSize() { return false; }
 
@@ -379,6 +381,8 @@ public:
     virtual void soundStageSizeDidChange() { }
 
     virtual void setMessageClientForTesting(WeakPtr<MessageClientForTesting>) { }
+
+    virtual void elementIdChanged(const String&) const { }
 
 protected:
     mutable PlatformTimeRanges m_seekable;

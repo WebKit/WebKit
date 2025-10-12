@@ -26,7 +26,10 @@ div.transparent {
 addEventListener("load", async () => {
     jsTestIsAsync = true;
 
-    document.body.textContent = await UIHelper.requestTextExtraction();
+    document.body.textContent = await UIHelper.requestTextExtraction({
+        mergeParagraphs: true,
+        skipNearlyTransparentContent: true
+    });
     finishJSTest();
 });
 </script>

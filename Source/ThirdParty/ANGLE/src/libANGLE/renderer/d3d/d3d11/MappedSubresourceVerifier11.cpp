@@ -9,6 +9,10 @@
 // mapped memory so that ASAN and MSAN can catch memory errors done with a
 // pointer to the mapped texture memory.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d11/MappedSubresourceVerifier11.h"
 
 #include "libANGLE/renderer/d3d/d3d11/formatutils11.h"

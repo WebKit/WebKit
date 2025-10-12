@@ -63,7 +63,7 @@ static WebCore::AccessibilityObjectAtspi* findAccessibleObjectById(WebCore::Acce
 
 RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSContextRef context, JSStringRef id)
 {
-    auto* rootObject = static_cast<WebCore::AccessibilityObjectAtspi*>(WKAccessibilityRootObject(WKBundleFrameForJavaScriptContext(context)));
+    auto* rootObject = static_cast<WebCore::AccessibilityObjectAtspi*>(_WKAccessibilityRootObjectForTesting(WKBundleFrameForJavaScriptContext(context)));
     if (!rootObject)
         return nullptr;
 
@@ -85,13 +85,13 @@ void AccessibilityController::injectAccessibilityPreference(JSStringRef domain, 
 
 Ref<AccessibilityUIElement> AccessibilityController::rootElement(JSContextRef context)
 {
-    auto* element = static_cast<WebCore::AccessibilityObjectAtspi*>(WKAccessibilityRootObject(WKBundleFrameForJavaScriptContext(context)));
+    auto* element = static_cast<WebCore::AccessibilityObjectAtspi*>(_WKAccessibilityRootObjectForTesting(WKBundleFrameForJavaScriptContext(context)));
     return AccessibilityUIElement::create(element);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement(JSContextRef context)
 {
-    if (!WKAccessibilityRootObject(WKBundleFrameForJavaScriptContext(context)))
+    if (!_WKAccessibilityRootObjectForTesting(WKBundleFrameForJavaScriptContext(context)))
         return nullptr;
 
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();

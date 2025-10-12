@@ -8,7 +8,7 @@ function shouldBe(actual, expected) {
         throw new Error(`Bad value: ${actual}!`);
 }
 
-for (var i = 0; i < 1e4; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     shouldBe(Math.sumPrecise([1, 2, 3]), 6);
     shouldBe(Math.sumPrecise([1e308]), 1e308);
     shouldBe(Math.sumPrecise([1e308, -1e308]), 0);

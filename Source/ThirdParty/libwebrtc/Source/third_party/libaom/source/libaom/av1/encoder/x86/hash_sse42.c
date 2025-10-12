@@ -30,7 +30,7 @@
  * polynomial is 0x11EDC6F41
  * @return A 32-bit unsigned integer representing the CRC
  */
-uint32_t av1_get_crc32c_value_sse4_2(void *crc_calculator, uint8_t *p,
+uint32_t av1_get_crc32c_value_sse4_2(void *crc_calculator, const uint8_t *p,
                                      size_t len) {
   (void)crc_calculator;
   const uint8_t *buf = p;

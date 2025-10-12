@@ -1,5 +1,4 @@
-Blocked access to external URL http://www.localhost:8800/webmessaging/multi-globals/support/current-document-domain.sub.html
 
 
-FAIL The current page being cross-origin must prevent the BroadcastChannel message from being seen assert_unreached: message event fired Reached unreachable code
+PASS The current page being cross-origin must prevent the BroadcastChannel message from being seen
 

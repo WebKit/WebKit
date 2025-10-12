@@ -4,23 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-object-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Implement Object.preventExtensions, Object.isExtensible
+info: bugzilla.mozilla.org/show_bug.cgi?id=492849
 esid: pending
 ---*/
-var gTestfile = '15.2.3.4-01.js';
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 492849;
-var summary = 'ES5: Implement Object.preventExtensions, Object.isExtensible';
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 assert.sameValue(typeof Object.isExtensible, "function");
 assert.sameValue(Object.isExtensible.length, 1);
@@ -40,7 +28,3 @@ for (var i = 0, sz = objs.length; i < sz; i++)
 
   assert.sameValue(Object.isExtensible(o), false, "object " + i + " is extensible?");
 }
-
-/******************************************************************************/
-
-print("All tests passed!");

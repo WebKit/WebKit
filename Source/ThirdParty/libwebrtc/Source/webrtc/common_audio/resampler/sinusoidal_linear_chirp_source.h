@@ -14,6 +14,8 @@
 #ifndef COMMON_AUDIO_RESAMPLER_SINUSOIDAL_LINEAR_CHIRP_SOURCE_H_
 #define COMMON_AUDIO_RESAMPLER_SINUSOIDAL_LINEAR_CHIRP_SOURCE_H_
 
+#include <cstddef>
+
 #include "common_audio/resampler/sinc_resampler.h"
 
 namespace webrtc {

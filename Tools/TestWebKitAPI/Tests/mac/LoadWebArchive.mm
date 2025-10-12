@@ -688,4 +688,52 @@ TEST(LoadWebArchive, PreferCachedImageSourceOverBrokenImage)
     EXPECT_EQ(naturalHeight, 400);
 }
 
+TEST(LoadWebArchive, FailNavigationFromNonClientOrUserInitiatedWindowOpen)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] setJavaScriptCanOpenWindowsAutomatically:YES];
+
+    for (_WKFeature *feature in WKPreferences._features) {
+        NSString *key = feature.key;
+        if ([key isEqualToString:@"LoadWebArchiveWithEphemeralStorageEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+
+    __block bool failed = false;
+    __block bool finished = false;
+
+    navigationDelegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
+        failed = true;
+        finished = true;
+    };
+
+    navigationDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finished = true;
+    };
+
+    RetainPtr uiDelegate = adoptNS([[TestUIDelegate alloc] init]);
+
+    __block RetainPtr<WKWebView> openedWebView;
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        openedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        openedWebView.get().navigationDelegate = navigationDelegate.get();
+        openedWebView.get().UIDelegate = uiDelegate.get();
+        return openedWebView.get();
+    };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView evaluateJavaScript:@"window.open('file:///usr/local/lib/WebKitAdditions.resources/iframe.webarchive', '_blank', 'noopener');" completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+    }];
+
+    Util::run(&finished);
+
+    EXPECT_TRUE(failed);
+}
+
 } // namespace TestWebKitAPI

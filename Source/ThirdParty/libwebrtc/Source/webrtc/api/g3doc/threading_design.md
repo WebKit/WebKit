@@ -47,6 +47,13 @@ void ObserverClass::Handler(event) {
   // Process event, we're now on the right thread
 }
 ```
+It is generally NOT safe to call WebRTC library functions from the callback;
+if this is wanted, one should instead dispatch a task on an appropriate
+thread to do so.
+
+In the future, the implementation may evolve to crash or return an error
+if this happens.
+
 In the future, the implementation may change to always call the callbacks
 and event handlers on the client thread.
 

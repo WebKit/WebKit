@@ -38,7 +38,8 @@ STATIC_ANALYZER_UNEXPECTED = 'StaticAnalyzerUnexpectedRegressions'
 UNEXPECTED_PASS = {'actual': 'PASS', 'expected': 'FAIL'}
 UNEXPECTED_FAILURE = {'actual': 'FAIL', 'expected': 'PASS'}
 EXPECTED_FAILURE = {'actual': 'FAIL', 'expected': 'FAIL'}
-DERIVED_SOURCES_RE = r'.*\/DerivedSources\/.*\/JS.*'
+DERIVED_SOURCES_RE = r'(^|.*\/)DerivedSources\/.*\/JS.*'
+EXPECTATION_LINE_RE = r'(\s*\[\s*(?P<platform>\w+)\s*\]\s*)?(?P<path>.+)'
 
 
 def parser():
@@ -86,7 +87,7 @@ def parser():
     )
     config_options = parser.add_argument_group('Configuration options')
     config_options.add_argument('--architecture')
-    config_options.add_argument('--platform')
+    config_options.add_argument('--platform', default='mac')
     config_options.add_argument('--version')
     config_options.add_argument('--version-name')
     config_options.add_argument('--style')
@@ -95,20 +96,32 @@ def parser():
     return parser.parse_args()
 
 
-def find_diff(args, file1, file2):
+def find_diff(args, expectation_file_path, results_file_path):
     # Create empty file if the corresponding one doesn't exist - this happens if a checker is added or removed
-    if not os.path.exists(file1):
-        os.makedirs(os.path.dirname(file1), exist_ok=True)
-        f = open(file1, 'a')
+    if not os.path.exists(expectation_file_path):
+        os.makedirs(os.path.dirname(expectation_file_path), exist_ok=True)
+        f = open(expectation_file_path, 'a')
         f.close()
 
-    if not os.path.exists(file2):
-        os.makedirs(os.path.dirname(file2), exist_ok=True)
-        f = open(file2, 'a')
+    if not os.path.exists(results_file_path):
+        os.makedirs(os.path.dirname(results_file_path), exist_ok=True)
+        f = open(results_file_path, 'a')
         f.close()
 
-    with open(file1) as baseline_file, open(file2) as new_file:
-        baseline_list = [line for line in baseline_file.read().splitlines() if not line.startswith('//') and line.strip()]  # Remove lines from the copyright
+    with open(expectation_file_path) as baseline_file, open(results_file_path) as new_file:
+        baseline_list = []
+        expectation_line_re = re.compile(EXPECTATION_LINE_RE)
+        for line in baseline_file.read().splitlines():
+            if line.startswith('//') or line.startswith('#'):
+                continue
+            match = expectation_line_re.match(line)
+            if not match:
+                print(f'Unexpected line: {line}')
+                continue
+            platform = match.group('platform')
+            if platform and args.platform.lower() != platform.lower():
+                continue
+            baseline_list.append(match.group('path'))
         new_file_list = new_file.read().splitlines()
         # Find new regressions
         diff_new_from_baseline = set(new_file_list) - set(baseline_list)

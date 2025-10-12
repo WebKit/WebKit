@@ -83,7 +83,7 @@ OptionSet<WebCore::PlatformEvent::Modifier> platform(OptionSet<WebEventModifier>
 OptionSet<WebKit::WebEventModifier> kit(OptionSet<WebCore::PlatformEvent::Modifier>);
 
 #if PLATFORM(GTK) || PLATFORM(WPE) || USE(LIBWPE)
-WallTime wallTimeForEventTimeInMilliseconds(uint64_t);
+MonotonicTime monotonicTimeForEventTimeInMilliseconds(uint64_t);
 #endif
 
 } // namespace WebKit

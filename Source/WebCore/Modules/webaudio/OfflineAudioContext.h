@@ -70,7 +70,7 @@ private:
     void uninitialize() final;
     bool isOfflineContext() const final { return true; }
 
-    UniqueRef<OfflineAudioDestinationNode> m_destinationNode;
+    const UniqueRef<OfflineAudioDestinationNode> m_destinationNode;
     RefPtr<DeferredPromise> m_pendingRenderingPromise;
     HashMap<unsigned /* frame */, RefPtr<DeferredPromise>, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_suspendRequests;
     unsigned m_length;

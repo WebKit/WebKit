@@ -31,7 +31,10 @@
 import json
 import logging
 import os
+from pathlib import PurePath
 
+from webkitcorepy import Terminal, run
+from webkitscmpy import local
 
 WPT_GH_ORG = os.environ.get('WPT_GH_ORG', 'web-platform-tests')
 WPT_GH_REPO_NAME = os.environ.get('WPT_GH_REPO_NAME', 'wpt')
@@ -58,13 +61,31 @@ def read_credentials(host, credentials_json):
 
 
 class WPTPaths:
-    CHECKOUT_DIRECTORY = ["w3c-tests"]
-    WPT_CHECKOUT_PATH = CHECKOUT_DIRECTORY + ["web-platform-tests"]
-
     @staticmethod
     def checkout_directory(finder):
-        return finder.path_from_webkit_outputdir(*WPTPaths.CHECKOUT_DIRECTORY)
+        return os.path.dirname(WPTPaths.default_wpt_checkout_path(finder))
 
     @staticmethod
-    def wpt_checkout_path(finder):
-        return finder.path_from_webkit_outputdir(*WPTPaths.WPT_CHECKOUT_PATH)
+    def default_wpt_checkout_path(finder):
+        return os.path.join(os.path.dirname(finder.webkit_base()), "wpt")
+
+    def ensure_wpt_repository(finder, repository_directory=None, *, non_interactive=True):
+        if not repository_directory:
+            repository_directory = WPTPaths.default_wpt_checkout_path(finder)
+
+        repository_directory = finder._filesystem.abspath(repository_directory)
+        d = PurePath(repository_directory)
+
+        if finder._filesystem.isdir(repository_directory):
+            if finder._filesystem.isfile(str(d / "resources" / "testharness.js")) and finder._filesystem.isfile(str(d / "wpt")):
+                _log.info(f'Using the WPT repository found at `{repository_directory}`')
+                return repository_directory
+        else:
+            _log.info(f'The default WPT repository location is `{repository_directory}`.')
+            if not non_interactive:
+                user_directory = Terminal.input(f'Press `Enter` to use the default or input a directory of your choice: ')
+                repository_directory = user_directory.strip() or repository_directory
+
+        if run([local.Git.executable(), 'clone', f'{WPT_GH_URL}.git', repository_directory]).returncode:
+            return None
+        return repository_directory

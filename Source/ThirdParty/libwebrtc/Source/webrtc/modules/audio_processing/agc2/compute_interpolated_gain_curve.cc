@@ -11,7 +11,7 @@
 #include "modules/audio_processing/agc2/compute_interpolated_gain_curve.h"
 
 #include <algorithm>
-#include <cmath>
+#include <cstddef>
 #include <queue>
 #include <tuple>
 #include <utility>

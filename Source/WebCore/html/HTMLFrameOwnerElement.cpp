@@ -22,9 +22,12 @@
 #include "config.h"
 #include "HTMLFrameOwnerElement.h"
 
+#include "ContainerNodeInlines.h"
+#include "FrameInlines.h"
 #include "FrameLoader.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "NodeInlines.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameClient.h"
 #include "RenderWidget.h"
@@ -78,6 +81,8 @@ void HTMLFrameOwnerElement::clearContentFrame()
 void HTMLFrameOwnerElement::disconnectContentFrame()
 {
     if (RefPtr frame = m_contentFrame.get()) {
+        if (RefPtr innerDocument = contentDocument())
+            innerDocument->willBeDisconnectedFromFrame(protectedDocument());
         frame->frameDetached();
         if (frame == m_contentFrame.get())
             frame->disconnectOwnerElement();
@@ -115,9 +120,9 @@ void HTMLFrameOwnerElement::setSandboxFlags(SandboxFlags flags)
         contentFrame->updateSandboxFlags(flags, Frame::NotifyUIProcess::Yes);
 }
 
-bool HTMLFrameOwnerElement::isKeyboardFocusable(KeyboardEvent* event) const
+bool HTMLFrameOwnerElement::isKeyboardFocusable(const FocusEventData& focusEventData) const
 {
-    return m_contentFrame && HTMLElement::isKeyboardFocusable(event);
+    return m_contentFrame && HTMLElement::isKeyboardFocusable(focusEventData);
 }
 
 Document* HTMLFrameOwnerElement::getSVGDocument() const
@@ -159,7 +164,7 @@ bool HTMLFrameOwnerElement::isProhibitedSelfReference(const URL& completeURL) co
 
 bool SubframeLoadingDisabler::canLoadFrame(HTMLFrameOwnerElement& owner)
 {
-    for (RefPtr<ContainerNode> node = &owner; node; node = node->parentOrShadowHostNode()) {
+    for (RefPtr<ContainerNode> node = owner; node; node = node->parentOrShadowHostNode()) {
         if (disabledSubtreeRoots().contains(node.get()))
             return false;
     }

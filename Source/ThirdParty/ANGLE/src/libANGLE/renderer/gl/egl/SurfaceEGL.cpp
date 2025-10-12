@@ -129,20 +129,27 @@ void SurfaceEGL::setSwapInterval(const egl::Display *display, EGLint interval)
     }
 }
 
-EGLint SurfaceEGL::getWidth() const
+gl::Extents SurfaceEGL::getSize() const
 {
-    EGLint value;
-    EGLBoolean success = mEGL->querySurface(mSurface, EGL_WIDTH, &value);
-    ASSERT(success == EGL_TRUE);
-    return value;
+    EGLint width, height;
+    egl::Error error = SurfaceEGL::getUserSize(nullptr, &width, &height);
+    ASSERT(!error.isError());
+    return gl::Extents(width, height, 1);
 }
 
-EGLint SurfaceEGL::getHeight() const
+egl::Error SurfaceEGL::getUserSize(const egl::Display *display, EGLint *width, EGLint *height) const
 {
-    EGLint value;
-    EGLBoolean success = mEGL->querySurface(mSurface, EGL_HEIGHT, &value);
-    ASSERT(success == EGL_TRUE);
-    return value;
+    if (width != nullptr)
+    {
+        EGLBoolean success = mEGL->querySurface(mSurface, EGL_WIDTH, width);
+        ASSERT(success == EGL_TRUE);
+    }
+    if (height != nullptr)
+    {
+        EGLBoolean success = mEGL->querySurface(mSurface, EGL_HEIGHT, height);
+        ASSERT(success == EGL_TRUE);
+    }
+    return egl::NoError();
 }
 
 EGLint SurfaceEGL::isPostSubBufferSupported() const

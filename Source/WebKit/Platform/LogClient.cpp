@@ -28,31 +28,14 @@
 
 namespace WebKit {
 
-#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-LogClient::LogClient(IPC::StreamClientConnection& connection, const LogStreamIdentifier &identifier)
-    : m_logStreamConnection(connection)
-    , m_logStreamIdentifier(identifier)
+LogClient::LogClient(Ref<ConnectionType>&& connection)
+    : m_connection(connection)
 {
 }
-#else
-LogClient::LogClient(IPC::Connection& connection, const LogStreamIdentifier& identifier)
-    : m_logConnection(connection)
-    , m_logStreamIdentifier(identifier)
-{
-}
-#endif
 
 void LogClient::log(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, os_log_type_t type)
 {
-#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-    Locker locker { m_logStreamLock };
-    m_logStreamConnection->send(Messages::LogStream::LogOnBehalfOfWebContent(logChannel, logCategory, logString, type), m_logStreamIdentifier);
-#else
-    if (RefPtr connection = m_logConnection.get()) {
-        connection->send(Messages::LogStream::LogOnBehalfOfWebContent(logChannel, logCategory, logString, type), m_logStreamIdentifier);
-        return;
-    }
-#endif
+    send(Messages::LogStream::LogOnBehalfOfWebContent(logChannel, logCategory, logString, type));
 }
 
 }

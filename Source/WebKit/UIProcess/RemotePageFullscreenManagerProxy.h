@@ -48,7 +48,6 @@ private:
     RemotePageFullscreenManagerProxy(WebCore::PageIdentifier, WebFullScreenManagerProxy*, WebProcessProxy&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     const WebCore::PageIdentifier m_identifier;
     const WeakPtr<WebFullScreenManagerProxy> m_manager;

@@ -1,8 +1,31 @@
-from __future__ import absolute_import
+# Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 from collections import namedtuple
 from webkitpy.port.config import apple_additions
 from xml.dom import minidom
 import os
+import re
 
 
 class Buildable(namedtuple('Buildable', ('id', 'name', 'project_name', 'action_set'))):
@@ -15,7 +38,6 @@ class BuildActionSet(namedtuple('BuildActionSet', ('analyze', 'test', 'run', 'pr
         return ' '.join(
             key for key, enabled in self._asdict().items() if enabled
         ) or 'nothing'
-
 
 def targets_built_for_scheme(scheme_path):
     dom = minidom.parse(scheme_path)
@@ -64,8 +86,9 @@ class XcodeSchemeChecker:
     def __init__(self, file_path, handle_style_error):
         self._handle_style_error = handle_style_error
         self._file_path = file_path
+        self._internal_ios_launch_style_regex = re.compile(r'internalIOSLaunchStyle')
 
-    def check(self, lines, rules=None):
+    def _check_inclusion_rules(self, rules=None):
         rules = rules or self.RULES
         targets = None  # lazily computed below
         for path_prefix, predicates in rules.items():
@@ -101,3 +124,14 @@ class XcodeSchemeChecker:
                     if relation == '==' and targets - other_targets:
                         msg += '\n\tRemove:\n\t- {}'.format('\n\t- '.join(map(str, targets - other_targets)))
                     self._handle_style_error(0, 'xcscheme/sync', 5, msg)
+
+    def _check_invalide_launch_style(self, lines):
+        for line_index, line in enumerate(lines):
+            if self._internal_ios_launch_style_regex.search(line):
+                self._handle_style_error(line_index + 1,
+                                         'xcscheme/sync', 5,
+                                         'internal attribute \'internalIOSLaunchStyle\' used')
+
+    def check(self, lines, rules=None):
+        self._check_inclusion_rules(rules)
+        self._check_invalide_launch_style(lines)

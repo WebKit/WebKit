@@ -67,7 +67,7 @@ private:
 };
 
 struct CacheStorageRecord {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CacheStorageRecord);
     CacheStorageRecord(const CacheStorageRecord&) = delete;
     CacheStorageRecord& operator=(const CacheStorageRecord&) = delete;
     CacheStorageRecord() = default;

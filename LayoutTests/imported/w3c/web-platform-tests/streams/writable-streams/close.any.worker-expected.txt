@@ -24,4 +24,5 @@ PASS close() on an erroring stream should reject
 PASS close() on an errored stream should reject
 PASS close() on an closed stream should reject
 PASS close() on a stream with a pending close should reject
+PASS write() on a closed stream should reject
 

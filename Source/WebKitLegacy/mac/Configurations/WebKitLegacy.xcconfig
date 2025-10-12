@@ -105,7 +105,7 @@ WK_NO_STATIC_INITIALIZERS_Release_NO_ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INIT
 WK_NO_STATIC_INITIALIZERS_Production__ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS);
 WK_NO_STATIC_INITIALIZERS_Production_NO_ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS);
 
-OTHER_LDFLAGS = $(inherited) -lobjc -lsqlite3 -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework ImageIO -framework IOKit $(WK_APPKIT_LDFLAGS) $(WK_CARBON_LDFLAGS) $(WK_GRAPHICS_SERVICES_LDFLAGS) $(WK_MOBILE_CORE_SERVICES_LDFLAGS) $(WK_MOBILE_GESTALT_LDFLAGS) $(WK_SECURITY_INTERFACE_LDFLAGS) $(WK_WEBINSPECTORUI_LDFLAGS) $(SOURCE_VERSION_LDFLAGS) $(WK_NO_STATIC_INITIALIZERS);
+OTHER_LDFLAGS = $(inherited) -lobjc -lsqlite3 -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework ImageIO -framework IOKit -framework UniformTypeIdentifiers $(WK_APPKIT_LDFLAGS) $(WK_CARBON_LDFLAGS) $(WK_GRAPHICS_SERVICES_LDFLAGS) $(WK_MOBILE_CORE_SERVICES_LDFLAGS) $(WK_MOBILE_GESTALT_LDFLAGS) $(WK_SECURITY_INTERFACE_LDFLAGS) $(WK_WEBINSPECTORUI_LDFLAGS) $(SOURCE_VERSION_LDFLAGS) $(WK_NO_STATIC_INITIALIZERS);
 
 SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION));
 SECTORDER_FLAGS_Production[sdk=macosx*] = -Wl,-order_file,mac/WebKit.order;
@@ -118,6 +118,9 @@ SUPPORTS_TEXT_BASED_API_YES = YES;
 TAPI_USE_SRCROOT = $(TAPI_USE_SRCROOT$(WK_XCODE_15));
 TAPI_USE_SRCROOT_XCODE_SINCE_15 = YES;
 TAPI_VERIFY_MODE = Pedantic;
+
+WK_AUDIT_SPI_ALLOWLISTS = $(SRCROOT)/mac/Configurations/AllowedSPI.toml $(SRCROOT)/mac/Configurations/AllowedSPI-legacy.toml $(WK_AUDIT_SPI_ALLOWLISTS_$(USE_INTERNAL_SDK));
+WK_AUDIT_SPI_ALLOWLISTS_YES = $(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/AllowedSPI/AllowedSPI-WebKitLegacy.toml;
 
 // FIXME: Replace -extra-*-header and -exclude-*-header flags with build setting equivalents once rdar://99885053 is completed in all needed toolchains.
 OTHER_TAPI_FLAGS = $(inherited) $(WK_CFLAGS_BUILD_FOR_TESTING_$(WK_BUILD_FOR_TESTING)) -DRELEASE_WITHOUT_OPTIMIZATIONS -extra-private-header $(SOURCE_ROOT)/mac/TestingFunctions.h -extra-private-header $(SOURCE_ROOT)/mac/ExtraPrivateSymbolsForTAPI.h $(OTHER_TAPI_FLAGS_SRCROOT_$(TAPI_USE_SRCROOT));

@@ -296,7 +296,7 @@ static NSURL *URLByRemovingComponentAndSubsequentCharacter(NSURL *URL, CFURLComp
     if (numBytes < range.location + range.length)
         range.length = numBytes - range.location;
 
-    memmoveSpan(urlBytes.subspan(range.location), urlBytes.subspan(range.location + range.length, numBytes - range.location + range.length));
+    memmoveSpan(urlBytes.subspan(range.location), urlBytes.subspan(range.location + range.length));
 
     auto result = adoptCF(CFURLCreateWithBytes(nullptr, urlBytes.data(), numBytes - range.length, kCFStringEncodingUTF8, nullptr));
     if (!result)
@@ -322,7 +322,7 @@ NSData *originalURLData(NSURL *URL)
 
 NSString *userVisibleString(NSURL *URL)
 {
-    return URLHelpers::userVisibleURL(span(originalURLData(URL))).createNSString().autorelease();
+    return URLHelpers::userVisibleURL(byteCast<Latin1Character>(span(originalURLData(URL)))).createNSString().autorelease();
 }
 
 BOOL isUserVisibleURL(NSString *string)

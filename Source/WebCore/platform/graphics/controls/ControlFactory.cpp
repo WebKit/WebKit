@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ Ref<ControlFactory> ControlFactory::create()
 }
 #endif
 
-ControlFactory& ControlFactory::shared()
+ControlFactory& ControlFactory::singleton()
 {
     static MainThreadNeverDestroyed<RefPtr<ControlFactory>> shared { create() };
     return *shared.get();

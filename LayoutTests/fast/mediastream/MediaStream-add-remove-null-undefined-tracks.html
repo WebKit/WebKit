@@ -24,6 +24,7 @@
                 shouldThrow("stream.removeTrack(undefined);");
 
                 finishJSTest();
+                stream.getTracks().forEach(track => track.stop());
             }
 
             getUserMedia("allow", {audio:true, video:true}, gotStream);

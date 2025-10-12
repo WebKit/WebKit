@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: GitHub OAuth Sign-in
-Description: Provides federated authentication via Discord
+Description: Provides federated authentication via GitHub
 Version:     1.0
 Author:      Apple, Inc.
 Author URI:  https://webkit.org

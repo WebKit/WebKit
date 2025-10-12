@@ -1,5 +1,3 @@
 http://localhost:8800/WebKit/content-security-policy/sandbox-manifest-blocked.html - didFinishLoading
-CONSOLE MESSAGE: Origin null is not allowed by Access-Control-Allow-Origin. Status code: 200
 http://localhost:8800/WebKit/content-security-policy/manifest.json - didFailLoadingWithError: <NSError domain , code 0, failing URL "http://localhost:8800/WebKit/content-security-policy/manifest.json">
-CONSOLE MESSAGE: Fetched manifest: http://localhost:8800/WebKit/content-security-policy/manifest.json
 

@@ -11,13 +11,20 @@
 #include "modules/audio_processing/aec3/signal_dependent_erle_estimator.h"
 
 #include <algorithm>
-#include <iostream>
-#include <string>
+#include <array>
+#include <cstddef>
+#include <memory>
+#include <tuple>
+#include <vector>
 
+#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/block.h"
 #include "modules/audio_processing/aec3/render_buffer.h"
 #include "modules/audio_processing/aec3/render_delay_buffer.h"
-#include "rtc_base/strings/string_builder.h"
+#include "modules/audio_processing/aec3/spectrum_buffer.h"
+#include "rtc_base/checks.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -49,15 +56,15 @@ class TestInputs {
              size_t num_capture_channels);
   ~TestInputs();
   const RenderBuffer& GetRenderBuffer() { return *render_buffer_; }
-  rtc::ArrayView<const float, kFftLengthBy2Plus1> GetX2() { return X2_; }
-  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> GetY2() const {
+  ArrayView<const float, kFftLengthBy2Plus1> GetX2() { return X2_; }
+  ArrayView<const std::array<float, kFftLengthBy2Plus1>> GetY2() const {
     return Y2_;
   }
-  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> GetE2() const {
+  ArrayView<const std::array<float, kFftLengthBy2Plus1>> GetE2() const {
     return E2_;
   }
-  rtc::ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
-  GetH2() const {
+  ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>> GetH2()
+      const {
     return H2_;
   }
   const std::vector<bool>& GetConvergedFilters() const {

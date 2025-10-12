@@ -14,12 +14,15 @@
 #include <memory>
 #include <vector>
 
-#include "api/test/frame_generator_interface.h"
+#include "api/scoped_refptr.h"
+#include "api/task_queue/task_queue_factory.h"
 #include "api/test/pclf/media_configuration.h"
 #include "api/test/pclf/peer_configurer.h"
+#include "system_wrappers/include/clock.h"
 #include "test/pc/e2e/analyzer/video/video_quality_analyzer_injection_helper.h"
 #include "test/pc/e2e/media/test_video_capturer_video_track_source.h"
 #include "test/pc/e2e/test_peer.h"
+#include "test/test_video_capturer.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
@@ -37,8 +40,8 @@ class MediaHelper {
 
   void MaybeAddAudio(TestPeer* peer);
 
-  std::vector<rtc::scoped_refptr<TestVideoCapturerVideoTrackSource>>
-  MaybeAddVideo(TestPeer* peer);
+  std::vector<scoped_refptr<TestVideoCapturerVideoTrackSource>> MaybeAddVideo(
+      TestPeer* peer);
 
  private:
   std::unique_ptr<test::TestVideoCapturer> CreateVideoCapturer(

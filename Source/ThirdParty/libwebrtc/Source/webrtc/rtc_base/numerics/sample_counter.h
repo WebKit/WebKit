@@ -15,7 +15,7 @@
 
 #include <optional>
 
-namespace rtc {
+namespace webrtc {
 
 // Simple utility class for counting basic statistics (max./avg./variance) on
 // stream of samples.
@@ -56,5 +56,6 @@ class SampleCounterWithVariance : public SampleCounter {
   int64_t sum_squared_ = 0;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 #endif  // RTC_BASE_NUMERICS_SAMPLE_COUNTER_H_

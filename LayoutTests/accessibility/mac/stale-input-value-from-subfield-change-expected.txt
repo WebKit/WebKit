@@ -1,0 +1,8 @@
+This test ensures that an input's accessibility value is reported correctly after a subfield changes.
+
+PASS: getMonth(date.dateValue) === '03'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

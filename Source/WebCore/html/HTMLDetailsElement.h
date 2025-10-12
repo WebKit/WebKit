@@ -35,7 +35,7 @@ public:
     static Ref<HTMLDetailsElement> create(const QualifiedName& tagName, Document&);
     ~HTMLDetailsElement();
 
-    void toggleOpen() { setBooleanAttribute(HTMLNames::openAttr, !hasAttribute(HTMLNames::openAttr)); }
+    void toggleOpen();
 
     bool isActiveSummary(const HTMLSummaryElement&) const;
 

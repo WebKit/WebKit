@@ -38,14 +38,15 @@
 #include "WKData.h"
 #include "WebFrame.h"
 #include "WebPage.h"
+#include <WebCore/AXIsolatedObject.h>
 #include <WebCore/AXObjectCache.h>
-#include <WebCore/Document.h>
 #include <WebCore/DocumentInlines.h>
+#include <WebCore/DocumentPage.h>
+#include <WebCore/DocumentSecurityOrigin.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
-#include <WebCore/Page.h>
 #include <WebCore/ReportingScope.h>
 
 WKTypeID WKBundleFrameGetTypeID()
@@ -75,7 +76,7 @@ WKURLRef WKBundleFrameCopyProvisionalURL(WKBundleFrameRef frameRef)
 
 WKFrameLoadState WKBundleFrameGetFrameLoadState(WKBundleFrameRef frameRef)
 {
-    auto* coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
+    RefPtr coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!coreFrame)
         return kWKFrameLoadStateFinished;
 
@@ -251,7 +252,7 @@ WKDataRef WKBundleFrameCopyWebArchiveFilteringSubframes(WKBundleFrameRef frameRe
     UNUSED_PARAM(context);
 #endif
     
-    return 0;
+    return nullptr;
 }
 
 bool WKBundleFrameCallShouldCloseOnWebView(WKBundleFrameRef frameRef)
@@ -259,7 +260,7 @@ bool WKBundleFrameCallShouldCloseOnWebView(WKBundleFrameRef frameRef)
     if (!frameRef)
         return true;
 
-    auto* coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
+    RefPtr coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!coreFrame)
         return true;
 
@@ -274,7 +275,7 @@ WKBundleHitTestResultRef WKBundleFrameCreateHitTestResult(WKBundleFrameRef frame
 
 WKSecurityOriginRef WKBundleFrameCopySecurityOrigin(WKBundleFrameRef frameRef)
 {
-    auto* coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
+    RefPtr coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!coreFrame)
         return 0;
 
@@ -287,7 +288,7 @@ void WKBundleFrameFocus(WKBundleFrameRef frameRef)
     if (!coreFrame)
         return;
 
-    coreFrame->page()->checkedFocusController()->setFocusedFrame(coreFrame.get());
+    coreFrame->protectedPage()->focusController().setFocusedFrame(coreFrame.get());
 }
 
 void _WKBundleFrameGenerateTestReport(WKBundleFrameRef frameRef, WKStringRef message, WKStringRef group)
@@ -303,25 +304,40 @@ void _WKBundleFrameGenerateTestReport(WKBundleFrameRef frameRef, WKStringRef mes
         document->reportingScope().generateTestReport(WebKit::toWTFString(message), WebKit::toWTFString(group));
 }
 
-void* WKAccessibilityRootObject(WKBundleFrameRef frameRef)
+void* _WKAccessibilityRootObjectForTesting(WKBundleFrameRef frameRef)
 {
     if (!frameRef)
         return nullptr;
 
-    RefPtr frame = WebKit::toImpl(frameRef)->coreLocalFrame();
-    if (!frame)
-        return nullptr;
+    auto getAXObjectCache = [&frameRef] () -> CheckedPtr<WebCore::AXObjectCache> {
+        WebCore::AXObjectCache::enableAccessibility();
 
-    WebCore::AXObjectCache::enableAccessibility();
+        RefPtr frame = WebKit::toImpl(frameRef)->coreLocalFrame();
+        RefPtr document = frame ? frame->rootFrame().document() : nullptr;
+        return document ? document->axObjectCache() : nullptr;
+    };
 
-    RefPtr document = frame->rootFrame().document();
-    if (!document)
-        return nullptr;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (!isMainRunLoop()) {
+        // AXIsolatedTree is threadsafe ref-counted, so it's OK to hold a reference here.
+        RefPtr<WebCore::AXIsolatedTree> tree;
+        // However, to get the tree, we need to use the AXObjectCache, which must be used on the main-thread only.
+        callOnMainRunLoopAndWait([&] {
+            CheckedPtr cache = getAXObjectCache();
+            tree = cache ? cache->getOrCreateIsolatedTree() : nullptr;
+        });
 
-    CheckedPtr axObjectCache = document->axObjectCache();
-    if (!axObjectCache)
-        return nullptr;
+        if (!tree)
+            return nullptr;
+        // AXIsolatedTree::rootNode and applyPendingChanges are safe to call off the main-thread (in fact,
+        // they're only safe to call off the main-thread).
+        tree->applyPendingChanges();
+        RefPtr root = tree ? tree->rootNode() : nullptr;
+        return root ? root->wrapper() : nullptr;
+    }
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
-    auto* root = axObjectCache->rootObjectForFrame(*frame);
+    CheckedPtr cache = getAXObjectCache();
+    RefPtr root = cache ? cache->rootObjectForFrame(*WebKit::toImpl(frameRef)->coreLocalFrame()) : nullptr;
     return root ? root->wrapper() : nullptr;
 }

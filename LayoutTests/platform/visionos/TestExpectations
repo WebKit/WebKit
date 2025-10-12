@@ -39,6 +39,7 @@ mathml [ Skip ]
 media [ Skip ]
 memory [ Skip ]
 mhtml [ Skip ]
+overflow [ Skip ]
 overlay-region [ Skip ]
 pageoverlay [ Skip ]
 perf [ Skip ]
@@ -81,10 +82,12 @@ interaction-region [ Pass ]
 media/media-css-volume-locked.html [ Pass ]
 overlay-region [ Pass ]
 platform/visionos/transforms [ Pass ]
+fast/images/spatial-image-controls-rtl.html [ Pass ]
 
 imported/w3c/web-platform-tests/webxr [ Pass ]
 http/wpt/webxr [ Pass ]
 webxr [ Pass ]
+http/tests/iframe-monitor [ Pass ]
 
 ###################################################################################################
 ### START OF Legitimate failures (due to platform behavioral differences)
@@ -148,6 +151,7 @@ interaction-region/interaction-layers-culling-layer-type-change.html [ Failure ]
 interaction-region/interaction-layers-culling.html [ Failure ]
 interaction-region/layer-tree-shape-reset.html [ Failure ]
 interaction-region/layer-tree.html [ Failure ]
+platform/visionos/transforms/separated-image-animated.html [ Failure ]
 platform/visionos/transforms/separated-image-downgrade-content.html [ Failure ]
 platform/visionos/transforms/separated-image-downgrade-tiled.html [ Failure ]
 platform/visionos/transforms/separated-image-downgrade.html [ Failure ]
@@ -156,6 +160,19 @@ platform/visionos/transforms/separated-image-upgrade.html [ Failure ]
 platform/visionos/transforms/separated-update.html [ Failure ]
 platform/visionos/transforms/separated-video.html [ Failure ]
 platform/visionos/transforms/separated.html [ Failure ]
+
+# Passing as of visionOS 26
+http/wpt/model-element [ Pass ]
+http/tests/security/model-element [ Pass ]
+
+# Tests which pass only with form control refresh enabled (visionOS 26)
+fast/forms/form-control-refresh [ Pass ]
+
+# Window inactive appearance is only used on macOS.
+fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-dark-bg-light-color-scheme.html [ Skip ]
+fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-light-bg-dark-color-scheme.html [ Skip ]
+fast/forms/form-control-refresh/progress-window-inactive-state-dark-mode.html [ Skip ]
+fast/forms/form-control-refresh/progress-window-inactive-state-light-mode.html [ Skip ]
 
 ### END OF Triaged failures
 ###################################################################################################

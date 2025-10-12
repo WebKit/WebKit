@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2015 Canon Inc.
  * Copyright (C) 2015 Igalia S.L.
+ * Copyright (C) 2025 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -27,12 +28,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+dictionary QueuingStrategyInit {
+  required unrestricted double highWaterMark;
+};
+
 [
-    JSBuiltin,
     Exposed=*,
 ] interface ByteLengthQueuingStrategy {
-    constructor(object init);
+    constructor(QueuingStrategyInit init);
 
     readonly attribute unrestricted double highWaterMark;
-    double size();
+    [CallWith=RelevantGlobalObject] readonly attribute any size;
 };

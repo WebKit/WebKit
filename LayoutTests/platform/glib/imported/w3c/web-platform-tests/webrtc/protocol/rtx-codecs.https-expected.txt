@@ -1,6 +1,0 @@
-
-PASS Initial offer should have sensible RTX mappings
-PASS Self-negotiated answer should have sensible RTX parameters
-PASS A remote offer generates sensible RTX references in answer
-PASS A remote offer with duplicate codecs generates sensible RTX references in answer
-

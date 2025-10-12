@@ -27,14 +27,16 @@
 #include "PermissionStatus.h"
 
 #include "ClientOrigin.h"
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
-#include "DocumentInlines.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
 #include "MainThreadPermissionObserver.h"
 #include "PermissionController.h"
 #include "PermissionState.h"
 #include "Permissions.h"
+#include "RegistrableDomain.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "WorkerGlobalScope.h"
@@ -113,9 +115,26 @@ bool PermissionStatus::virtualHasPendingActivity() const
     return true;
 }
 
+ScriptExecutionContext* PermissionStatus::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
 void PermissionStatus::eventListenersDidChange()
 {
-    m_hasChangeEventListener = hasEventListeners(eventNames().changeEvent);
+    RefPtr context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    bool hasChangeEventListener = hasEventListeners(eventNames().changeEvent);
+    if (hasChangeEventListener != m_hasChangeEventListener) {
+        auto changeListenerAction = hasChangeEventListener ? &MainThreadPermissionObserver::addChangeListener : &MainThreadPermissionObserver::removeChangeListener;
+        callOnMainThread([identifier = m_mainThreadPermissionObserverIdentifier, topFrameDomain = RegistrableDomain { context->topOrigin().data() }.isolatedCopy(), subFrameDomain = RegistrableDomain { context->url() }.isolatedCopy(), changeListenerAction] {
+            if (auto* mainThreadPermissionObserver = allMainThreadPermissionObservers().get(identifier))
+                (mainThreadPermissionObserver->*changeListenerAction)(topFrameDomain, subFrameDomain);
+        });
+    }
+    m_hasChangeEventListener = hasChangeEventListener;
 }
 
 } // namespace WebCore

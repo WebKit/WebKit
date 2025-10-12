@@ -9,6 +9,7 @@
 #define SkSGPath_DEFINED
 
 #include "include/core/SkPath.h"
+#include "include/core/SkPathTypes.h"
 #include "include/core/SkRect.h"
 #include "include/core/SkRefCnt.h"
 #include "modules/sksg/include/SkSGGeometryNode.h"
@@ -17,7 +18,6 @@
 class SkCanvas;
 class SkMatrix;
 class SkPaint;
-enum class SkPathFillType;
 struct SkPoint;
 
 namespace sksg {
@@ -26,7 +26,7 @@ class InvalidationController;
 /**
  * Concrete Geometry node, wrapping an SkPath.
  */
-class Path : public GeometryNode {
+class Path final : public GeometryNode {
 public:
     static sk_sp<Path> Make()                { return sk_sp<Path>(new Path(SkPath())); }
     static sk_sp<Path> Make(const SkPath& r) { return sk_sp<Path>(new Path(r)); }

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Not allowed to download due to sandboxing
 
 
 PASS Navigation resulted download in sandbox is blocked.

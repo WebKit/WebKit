@@ -4,22 +4,13 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
 flags:
   - noStrict
 description: |
-  pending
+  eval called from a native function is indirect
+info: bugzilla.mozilla.org/show_bug.cgi?id=604504
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 604504;
-var summary = "eval called from a native function is indirect";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 var originalEval = eval;
 
@@ -33,7 +24,3 @@ function testBound()
   assert.sameValue(eval(), true);
 }
 testBound();
-
-/******************************************************************************/
-
-print("All tests passed!");

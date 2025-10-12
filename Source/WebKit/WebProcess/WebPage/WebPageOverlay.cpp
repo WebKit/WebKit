@@ -58,10 +58,11 @@ WebPageOverlay::WebPageOverlay(std::unique_ptr<WebPageOverlay::Client> client, P
 
 WebPageOverlay::~WebPageOverlay()
 {
-    if (!m_overlay)
+    RefPtr overlay = m_overlay;
+    if (!overlay)
         return;
 
-    overlayMap().remove(*m_overlay);
+    overlayMap().remove(*overlay);
     m_overlay = nullptr;
 }
 
@@ -72,17 +73,17 @@ WebPageOverlay* WebPageOverlay::fromCoreOverlay(PageOverlay& overlay)
 
 void WebPageOverlay::setNeedsDisplay(const IntRect& dirtyRect)
 {
-    m_overlay->setNeedsDisplay(dirtyRect);
+    protectedCoreOverlay()->setNeedsDisplay(dirtyRect);
 }
 
 void WebPageOverlay::setNeedsDisplay()
 {
-    m_overlay->setNeedsDisplay();
+    protectedCoreOverlay()->setNeedsDisplay();
 }
 
 void WebPageOverlay::clear()
 {
-    m_overlay->clear();
+    protectedCoreOverlay()->clear();
 }
 
 void WebPageOverlay::willMoveToPage(PageOverlay&, Page* page)

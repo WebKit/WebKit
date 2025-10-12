@@ -2,11 +2,12 @@
 <script>
   window.addEventListener("load", () => {
     window.testRunner?.dumpAsText();
+    let rawData, audioData, copyDestination;
 
     // Bug 288440: assertion/crash in audioElementSpan() because copyDestination
     // is not castable to a buffer of 16bits elements.
-    let rawData = new Uint8ClampedArray(4);
-    let audioData = new AudioData({
+    rawData = new Uint8ClampedArray(4);
+    audioData = new AudioData({
       format: "s16-planar",
       sampleRate: 1,
       numberOfFrames: 1,
@@ -14,7 +15,37 @@
       timestamp: 0,
       data: rawData
     });
-    let copyDestination = new Uint8ClampedArray(3);
+    copyDestination = new Uint8ClampedArray(3);
+    audioData.copyTo(copyDestination, {planeIndex: 0});
+
+    // Bug 289885: release assertion in GstMappedAudioBuffer::samples() because
+    // GST_AUDIO_INFO_IS_VALID returns false.
+    try {
+      rawData = new Uint8ClampedArray(4);
+      audioData = new AudioData({
+        format: "s16-planar",
+        sampleRate: 0.1,
+        numberOfFrames: 1,
+        numberOfChannels: 2,
+        timestamp: 0,
+        data: rawData
+      });
+      copyDestination = new Uint8ClampedArray(2);
+      audioData.copyTo(copyDestination, {planeIndex: 0});
+    } catch {}
+
+    // Bug 289885: crash in PlatformRawAudioData::copyTo() because the copied
+    // buffer is smaller than the result of "Compute Copy Element Count".
+    rawData = new Uint8ClampedArray(12);
+    audioData = new AudioData({
+      format: "s16-planar",
+      sampleRate: 1,
+      numberOfFrames: 1,
+      numberOfChannels: 2,
+      timestamp: 0,
+      data: rawData
+    });
+    copyDestination = new Uint8ClampedArray(6);
     audioData.copyTo(copyDestination, {planeIndex: 0});
 
     document.body.innerHTML = "PASS if no crash.";

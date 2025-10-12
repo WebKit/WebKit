@@ -14,7 +14,7 @@
 #include <cstdint>
 #include <optional>
 
-#include "common_video/corruption_detection_message.h"
+#include "api/transport/rtp/corruption_detection_message.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -23,6 +23,7 @@ namespace {
 
 using ::testing::DoubleEq;
 using ::testing::ElementsAre;
+using ::testing::ElementsAreArray;
 
 TEST(CorruptionDetectionExtensionTest, ValueSizeIs1UnlessSamplesAreSpecified) {
   const std::optional<CorruptionDetectionMessage> kMessage =
@@ -117,7 +118,7 @@ TEST(CorruptionDetectionExtensionTest,
       CorruptionDetectionMessage::Builder()
           .WithSequenceIndex(0b0110'1111)
           .WithInterpretSequenceIndexAsMostSignificantBits(true)
-          .WithStdDev(34.5098)  // 220 / (255.0 * 40.0)
+          .WithStdDev(34.5098)  // 220 / 255.0 * 40.0
           .WithLumaErrorThreshold(0b1110)
           .WithChromaErrorThreshold(0b1111)
           .WithSampleValues(kSampleValues)
@@ -138,7 +139,7 @@ TEST(CorruptionDetectionExtensionTest,
       CorruptionDetectionMessage::Builder()
           .WithSequenceIndex(0b0110'1111)
           .WithInterpretSequenceIndexAsMostSignificantBits(false)
-          .WithStdDev(34.5098)  // 220 / (255.0 * 40.0)
+          .WithStdDev(34.5098)  // 220 / 255.0 * 40.0
           .WithLumaErrorThreshold(0b1110)
           .WithChromaErrorThreshold(0b1111)
           .WithSampleValues(kSampleValues)
@@ -201,13 +202,10 @@ TEST(CorruptionDetectionExtensionTest,
   EXPECT_EQ(message.sequence_index(), 0b0100'0100);
   EXPECT_TRUE(message.interpret_sequence_index_as_most_significant_bits());
   EXPECT_THAT(message.std_dev(),
-              DoubleEq(34.509803921568626));  // 220 / (255.0 * 40.0)
+              DoubleEq(34.509803921568626));  // 220 / 255.0 * 40.0
   EXPECT_EQ(message.luma_error_threshold(), 0b1110);
   EXPECT_EQ(message.chroma_error_threshold(), 0b1111);
-  EXPECT_EQ(message.sample_values().size(), sizeof(kSampleValues));
-  for (size_t i = 0; i < sizeof(kSampleValues); ++i) {
-    EXPECT_EQ(message.sample_values()[i], kSampleValues[i]);
-  }
+  EXPECT_THAT(message.sample_values(), ElementsAreArray(kSampleValues));
 }
 
 TEST(CorruptionDetectionExtensionTest,
@@ -227,13 +225,10 @@ TEST(CorruptionDetectionExtensionTest,
   EXPECT_EQ(message.sequence_index(), 0b0100'0100);
   EXPECT_FALSE(message.interpret_sequence_index_as_most_significant_bits());
   EXPECT_THAT(message.std_dev(),
-              DoubleEq(34.509803921568626));  // 220 / (255.0 * 40.0)
+              DoubleEq(34.509803921568626));  // 220 / 255.0 * 40.0
   EXPECT_EQ(message.luma_error_threshold(), 0b1110);
   EXPECT_EQ(message.chroma_error_threshold(), 0b1111);
-  EXPECT_EQ(message.sample_values().size(), sizeof(kSampleValues));
-  for (size_t i = 0; i < sizeof(kSampleValues); ++i) {
-    EXPECT_EQ(message.sample_values()[i], kSampleValues[i]);
-  }
+  EXPECT_THAT(message.sample_values(), ElementsAreArray(kSampleValues));
 }
 
 TEST(CorruptionDetectionExtensionTest, FailsToParseWhenGivenNullptrAsOutput) {

@@ -145,6 +145,58 @@ type echClientOuter struct {
 	payload  []byte
 }
 
+type pakeShare struct {
+	id  uint16
+	msg []byte
+}
+
+type flagSet struct {
+	bytes       []byte
+	mustInclude bool
+	padding     int
+}
+
+func (f *flagSet) hasFlag(bit uint) bool {
+	idx := bit / 8
+	mask := byte(1 << (bit % 8))
+	return idx < uint(len(f.bytes)) && f.bytes[idx]&mask != 0
+}
+
+func (f *flagSet) setFlag(bit uint) {
+	idx := bit / 8
+	mask := byte(1 << (bit % 8))
+	for uint(len(f.bytes)) <= idx {
+		f.bytes = append(f.bytes, 0)
+	}
+	f.bytes[idx] |= mask
+}
+
+func (f *flagSet) unmarshalExtensionValue(s cryptobyte.String) bool {
+	if !readUint8LengthPrefixedBytes(&s, &f.bytes) || !s.Empty() || len(f.bytes) == 0 {
+		return false
+	}
+	// Flags must be minimally-encoded.
+	if f.bytes[len(f.bytes)-1] == 0 {
+		return false
+	}
+	return true
+}
+
+func (f *flagSet) marshalExtension(b *cryptobyte.Builder) {
+	if len(f.bytes) == 0 && !f.mustInclude {
+		return
+	}
+	b.AddUint16(extensionTLSFlags)
+	b.AddUint16LengthPrefixed(func(value *cryptobyte.Builder) {
+		value.AddUint8LengthPrefixed(func(flags *cryptobyte.Builder) {
+			flags.AddBytes(f.bytes)
+			for range f.padding {
+				flags.AddUint8(0)
+			}
+		})
+	})
+}
+
 type clientHelloMsg struct {
 	raw                                      []byte
 	isDTLS                                   bool
@@ -197,6 +249,11 @@ type clientHelloMsg struct {
 	delegatedCredential                      []signatureAlgorithm
 	alpsProtocols                            []string
 	alpsProtocolsOld                         []string
+	pakeClientID                             []byte
+	pakeServerID                             []byte
+	pakeShares                               []pakeShare
+	certificateAuthorities                   [][]byte
+	trustAnchors                             [][]byte
 	outerExtensions                          []uint16
 	reorderOuterExtensionsWithoutCompressing bool
 	prefixExtensions                         []uint16
@@ -537,7 +594,46 @@ func (m *clientHelloMsg) marshalBody(hello *cryptobyte.Builder, typ clientHelloT
 			body: body.BytesOrPanic(),
 		})
 	}
-
+	if len(m.pakeShares) > 0 {
+		body := cryptobyte.NewBuilder(nil)
+		addUint16LengthPrefixedBytes(body, m.pakeClientID)
+		addUint16LengthPrefixedBytes(body, m.pakeServerID)
+		body.AddUint16LengthPrefixed(func(shares *cryptobyte.Builder) {
+			for _, share := range m.pakeShares {
+				shares.AddUint16(share.id)
+				addUint16LengthPrefixedBytes(shares, share.msg)
+			}
+		})
+		extensions = append(extensions, extension{
+			id:   extensionPAKE,
+			body: body.BytesOrPanic(),
+		})
+	}
+	if len(m.certificateAuthorities) > 0 {
+		body := cryptobyte.NewBuilder(nil)
+		body.AddUint16LengthPrefixed(func(certificateAuthorities *cryptobyte.Builder) {
+			for _, ca := range m.certificateAuthorities {
+				addUint16LengthPrefixedBytes(certificateAuthorities, ca)
+			}
+		})
+		extensions = append(extensions, extension{
+			id:   extensionCertificateAuthorities,
+			body: body.BytesOrPanic(),
+		})
+	}
+	// Check against nil to distinguish missing and empty.
+	if m.trustAnchors != nil {
+		body := cryptobyte.NewBuilder(nil)
+		body.AddUint16LengthPrefixed(func(trustAnchorList *cryptobyte.Builder) {
+			for _, id := range m.trustAnchors {
+				addUint8LengthPrefixedBytes(trustAnchorList, id)
+			}
+		})
+		extensions = append(extensions, extension{
+			id:   extensionTrustAnchors,
+			body: body.BytesOrPanic(),
+		})
+	}
 	// The PSK extension must be last. See https://tools.ietf.org/html/rfc8446#section-4.2.11
 	if len(m.pskIdentities) > 0 {
 		pskExtension := cryptobyte.NewBuilder(nil)
@@ -759,6 +855,9 @@ func (m *clientHelloMsg) unmarshal(data []byte) bool {
 	m.delegatedCredential = nil
 	m.alpsProtocols = nil
 	m.alpsProtocolsOld = nil
+	m.pakeClientID = nil
+	m.pakeServerID = nil
+	m.pakeShares = nil
 
 	if len(reader) == 0 {
 		// ClientHello is optionally followed by extension data
@@ -1057,6 +1156,36 @@ func (m *clientHelloMsg) unmarshal(data []byte) bool {
 				}
 				m.alpsProtocolsOld = append(m.alpsProtocolsOld, string(protocol))
 			}
+		case extensionPAKE:
+			var clientId, serverId, shares cryptobyte.String
+			if !body.ReadUint16LengthPrefixed(&clientId) ||
+				!body.ReadUint16LengthPrefixed(&serverId) ||
+				!body.ReadUint16LengthPrefixed(&shares) ||
+				len(body) != 0 {
+				return false
+			}
+			for len(shares) > 0 {
+				var id uint16
+				var msg cryptobyte.String
+				if !shares.ReadUint16(&id) ||
+					!shares.ReadUint16LengthPrefixed(&msg) {
+					return false
+				}
+				m.pakeClientID = []byte(clientId)
+				m.pakeServerID = []byte(serverId)
+				m.pakeShares = append(m.pakeShares, pakeShare{id: id, msg: msg})
+			}
+		case extensionCertificateAuthorities:
+			if !parseCAs(&body, &m.certificateAuthorities) || len(body) != 0 ||
+				// If present, the CA extension may not be empty.
+				len(m.certificateAuthorities) == 0 {
+				return false
+			}
+		case extensionTrustAnchors:
+			// An empty list is allowed here.
+			if !parseTrustAnchors(&body, &m.trustAnchors) || len(body) != 0 {
+				return false
+			}
 		}
 
 		if isGREASEValue(extension) {
@@ -1069,12 +1198,19 @@ func (m *clientHelloMsg) unmarshal(data []byte) bool {
 
 func decodeClientHelloInner(config *Config, encoded []byte, helloOuter *clientHelloMsg) (*clientHelloMsg, error) {
 	reader := cryptobyte.String(encoded)
-	var versAndRandom, sessionID, cipherSuites, compressionMethods []byte
+	var versAndRandom, sessionID, cookie, cipherSuites, compressionMethods []byte
 	var extensions cryptobyte.String
 	if !reader.ReadBytes(&versAndRandom, 2+32) ||
 		!readUint8LengthPrefixedBytes(&reader, &sessionID) ||
-		len(sessionID) != 0 || // Copied from |helloOuter|
-		!readUint16LengthPrefixedBytes(&reader, &cipherSuites) ||
+		len(sessionID) != 0 { // Copied from |helloOuter|
+		return nil, errors.New("tls: error parsing EncodedClientHelloInner")
+	}
+	if helloOuter.isDTLS {
+		if !readUint8LengthPrefixedBytes(&reader, &cookie) || len(cookie) != 0 {
+			return nil, errors.New("tls: error parsing EncodedClientHelloInner")
+		}
+	}
+	if !readUint16LengthPrefixedBytes(&reader, &cipherSuites) ||
 		!readUint8LengthPrefixedBytes(&reader, &compressionMethods) ||
 		!reader.ReadUint16LengthPrefixed(&extensions) {
 		return nil, errors.New("tls: error parsing EncodedClientHelloInner")
@@ -1093,6 +1229,9 @@ func decodeClientHelloInner(config *Config, encoded []byte, helloOuter *clientHe
 	builder.AddUint24LengthPrefixed(func(body *cryptobyte.Builder) {
 		body.AddBytes(versAndRandom)
 		addUint8LengthPrefixedBytes(body, helloOuter.sessionID)
+		if helloOuter.isDTLS {
+			addUint8LengthPrefixedBytes(body, cookie)
+		}
 		addUint16LengthPrefixedBytes(body, cipherSuites)
 		addUint8LengthPrefixedBytes(body, compressionMethods)
 		body.AddUint16LengthPrefixed(func(newExtensions *cryptobyte.Builder) {
@@ -1171,7 +1310,7 @@ func decodeClientHelloInner(config *Config, encoded []byte, helloOuter *clientHe
 		}
 	}
 
-	ret := new(clientHelloMsg)
+	ret := &clientHelloMsg{isDTLS: helloOuter.isDTLS}
 	if !ret.unmarshal(bytes) {
 		return nil, errors.New("tls: error parsing reconstructed ClientHello")
 	}
@@ -1199,6 +1338,8 @@ type serverHelloMsg struct {
 	omitExtensions        bool
 	emptyExtensions       bool
 	extensions            serverExtensions
+	pakeID                uint16
+	pakeMessage           []byte
 }
 
 func (m *serverHelloMsg) marshal() []byte {
@@ -1255,6 +1396,13 @@ func (m *serverHelloMsg) marshal() []byte {
 					} else {
 						extensions.AddUint16(m.vers)
 					}
+				}
+				if len(m.pakeMessage) != 0 {
+					extensions.AddUint16(extensionPAKE)
+					extensions.AddUint16LengthPrefixed(func(share *cryptobyte.Builder) {
+						share.AddUint16(m.pakeID)
+						addUint16LengthPrefixedBytes(share, m.pakeMessage)
+					})
 				}
 				if len(m.customExtension) > 0 {
 					extensions.AddUint16(extensionCustom)
@@ -1366,6 +1514,10 @@ func (m *serverHelloMsg) unmarshal(data []byte) bool {
 				m.hasPSKIdentity = true
 			case extensionSupportedVersions:
 				// Parsed above.
+			case extensionPAKE:
+				if !body.ReadUint16(&m.pakeID) || !readUint16LengthPrefixedBytes(&body, &m.pakeMessage) {
+					return false
+				}
 			default:
 				// Only allow the 3 extensions that are sent in
 				// the clear in TLS 1.3.
@@ -1444,6 +1596,7 @@ type serverExtensions struct {
 	applicationSettingsOld    []byte
 	hasApplicationSettingsOld bool
 	echRetryConfigs           []byte
+	trustAnchors              [][]byte
 }
 
 func (m *serverExtensions) marshal(extensions *cryptobyte.Builder) {
@@ -1578,6 +1731,16 @@ func (m *serverExtensions) marshal(extensions *cryptobyte.Builder) {
 		extensions.AddUint16(extensionEncryptedClientHello)
 		addUint16LengthPrefixedBytes(extensions, m.echRetryConfigs)
 	}
+	if len(m.trustAnchors) > 0 {
+		extensions.AddUint16(extensionTrustAnchors)
+		extensions.AddUint16LengthPrefixed(func(extension *cryptobyte.Builder) {
+			extension.AddUint16LengthPrefixed(func(trustAnchorList *cryptobyte.Builder) {
+				for _, id := range m.trustAnchors {
+					addUint8LengthPrefixedBytes(trustAnchorList, id)
+				}
+			})
+		})
+	}
 }
 
 func (m *serverExtensions) unmarshal(data cryptobyte.String, version uint16) bool {
@@ -1620,11 +1783,11 @@ func (m *serverExtensions) unmarshal(data cryptobyte.String, version uint16) boo
 				return false
 			}
 		case extensionALPN:
-			var protocols, protocol cryptobyte.String
-			if !body.ReadUint16LengthPrefixed(&protocols) ||
+			var pakes, protocol cryptobyte.String
+			if !body.ReadUint16LengthPrefixed(&pakes) ||
 				len(body) != 0 ||
-				!protocols.ReadUint8LengthPrefixed(&protocol) ||
-				len(protocols) != 0 {
+				!pakes.ReadUint8LengthPrefixed(&protocol) ||
+				len(pakes) != 0 {
 				return false
 			}
 			m.alpnProtocol = string(protocol)
@@ -1707,6 +1870,14 @@ func (m *serverExtensions) unmarshal(data cryptobyte.String, version uint16) boo
 				}
 			}
 			if len(body) > 0 {
+				return false
+			}
+		case extensionTrustAnchors:
+			if version < VersionTLS13 {
+				return false
+			}
+			// The list cannot be empty here. If empty, the peer should have omitted the extension.
+			if !parseTrustAnchors(&body, &m.trustAnchors) || len(m.trustAnchors) == 0 || len(body) != 0 {
 				return false
 			}
 		default:
@@ -1805,6 +1976,8 @@ type helloRetryRequestMsg struct {
 	echConfirmation       []byte
 	echConfirmationOffset int
 	duplicateExtensions   bool
+	pakeID                uint16
+	pakeMessage           []byte
 }
 
 func (m *helloRetryRequestMsg) marshal() []byte {
@@ -1840,6 +2013,13 @@ func (m *helloRetryRequestMsg) marshal() []byte {
 					extensions.AddUint16(2) // length
 					extensions.AddUint16(uint16(m.selectedGroup))
 				}
+				if len(m.pakeMessage) != 0 {
+					extensions.AddUint16(extensionPAKE)
+					extensions.AddUint16LengthPrefixed(func(share *cryptobyte.Builder) {
+						share.AddUint16(m.pakeID)
+						addUint16LengthPrefixedBytes(share, m.pakeMessage)
+					})
+				}
 				// m.cookie may be a non-nil empty slice for empty cookie tests.
 				if m.cookie != nil {
 					extensions.AddUint16(extensionCookie)
@@ -1864,6 +2044,11 @@ func (m *helloRetryRequestMsg) marshal() []byte {
 }
 
 func (m *helloRetryRequestMsg) unmarshal(data []byte) bool {
+	expectedLegacyVers := uint16(VersionTLS12)
+	if m.isDTLS {
+		expectedLegacyVers = VersionDTLS12
+	}
+
 	m.raw = data
 	reader := cryptobyte.String(data[4:])
 	var legacyVers uint16
@@ -1871,7 +2056,7 @@ func (m *helloRetryRequestMsg) unmarshal(data []byte) bool {
 	var compressionMethod byte
 	var extensions cryptobyte.String
 	if !reader.ReadUint16(&legacyVers) ||
-		legacyVers != VersionTLS12 ||
+		legacyVers != expectedLegacyVers ||
 		!reader.ReadBytes(&random, 32) ||
 		!readUint8LengthPrefixedBytes(&reader, &m.sessionID) ||
 		!reader.ReadUint16(&m.cipherSuite) ||
@@ -1942,10 +2127,13 @@ type delegatedCredential struct {
 }
 
 type certificateMsg struct {
-	raw               []byte
-	hasRequestContext bool
-	requestContext    []byte
-	certificates      []certificateEntry
+	raw                             []byte
+	hasRequestContext               bool
+	requestContext                  []byte
+	certificates                    []certificateEntry
+	matchedTrustAnchor              bool
+	sendTrustAnchorWrongCertificate bool
+	sendNonEmptyTrustAnchorMatch    bool
 }
 
 func (m *certificateMsg) marshal() (x []byte) {
@@ -1960,10 +2148,18 @@ func (m *certificateMsg) marshal() (x []byte) {
 			addUint8LengthPrefixedBytes(certificate, m.requestContext)
 		}
 		certificate.AddUint24LengthPrefixed(func(certificateList *cryptobyte.Builder) {
-			for _, cert := range m.certificates {
+			for i, cert := range m.certificates {
 				addUint24LengthPrefixedBytes(certificateList, cert.data)
 				if m.hasRequestContext {
 					certificateList.AddUint16LengthPrefixed(func(extensions *cryptobyte.Builder) {
+						if (i == 0 && m.matchedTrustAnchor) || (i == 1 && m.sendTrustAnchorWrongCertificate) {
+							extensions.AddUint16(extensionTrustAnchors)
+							if m.sendNonEmptyTrustAnchorMatch {
+								addUint16LengthPrefixedBytes(extensions, []byte{0x03, 0xba, 0xdb, 0x0b})
+							} else {
+								extensions.AddUint16(0) // Empty extension
+							}
+						}
 						count := 1
 						if cert.duplicateExtensions {
 							count = 2
@@ -1990,7 +2186,6 @@ func (m *certificateMsg) marshal() (x []byte) {
 				}
 			}
 		})
-
 	})
 
 	m.raw = certMsg.BytesOrPanic()
@@ -2062,6 +2257,14 @@ func (m *certificateMsg) unmarshal(data []byte) bool {
 					dc.raw = origBody
 					dc.signedBytes = []byte(origBody)[:4+2+3+len(dc.pkixPublicKey)]
 					cert.delegatedCredential = dc
+				case extensionTrustAnchors:
+					if len(m.certificates) != 0 {
+						return false // Only allowed in first certificate.
+					}
+					if len(body) != 0 {
+						return false
+					}
+					m.matchedTrustAnchor = true
 				default:
 					return false
 				}
@@ -2311,7 +2514,6 @@ type certificateRequestMsg struct {
 	signatureAlgorithms     []signatureAlgorithm
 	signatureAlgorithmsCert []signatureAlgorithm
 	certificateAuthorities  [][]byte
-	hasCAExtension          bool
 	customExtension         uint16
 }
 
@@ -2357,7 +2559,6 @@ func (m *certificateRequestMsg) marshal() []byte {
 						})
 					})
 				}
-
 				if m.customExtension > 0 {
 					extensions.AddUint16(m.customExtension)
 					extensions.AddUint16(0) // Empty extension
@@ -2393,10 +2594,27 @@ func parseCAs(reader *cryptobyte.String, out *[][]byte) bool {
 	}
 	for len(cas) > 0 {
 		var ca []byte
-		if !readUint16LengthPrefixedBytes(&cas, &ca) {
+		if !readUint16LengthPrefixedBytes(&cas, &ca) || len(ca) == 0 {
 			return false
 		}
 		*out = append(*out, ca)
+	}
+	return true
+}
+
+func parseTrustAnchors(reader *cryptobyte.String, out *[][]byte) bool {
+	var ids cryptobyte.String
+	if !reader.ReadUint16LengthPrefixed(&ids) {
+		return false
+	}
+	// Distinguish nil and empty.
+	*out = [][]byte{}
+	for len(ids) > 0 {
+		var id []byte
+		if !readUint8LengthPrefixedBytes(&ids, &id) {
+			return false
+		}
+		*out = append(*out, id)
 	}
 	return true
 }
@@ -2430,10 +2648,11 @@ func (m *certificateRequestMsg) unmarshal(data []byte) bool {
 					return false
 				}
 			case extensionCertificateAuthorities:
-				if !parseCAs(&body, &m.certificateAuthorities) || len(body) != 0 {
+				if !parseCAs(&body, &m.certificateAuthorities) || len(body) != 0 ||
+					// If present, the CA extension may not be empty.
+					len(m.certificateAuthorities) == 0 {
 					return false
 				}
-				m.hasCAExtension = true
 			}
 		}
 	} else {
@@ -2509,6 +2728,7 @@ type newSessionTicketMsg struct {
 	customExtension             string
 	duplicateEarlyDataExtension bool
 	hasGREASEExtension          bool
+	flags                       flagSet
 }
 
 func (m *newSessionTicketMsg) marshal() []byte {
@@ -2551,6 +2771,7 @@ func (m *newSessionTicketMsg) marshal() []byte {
 					extensions.AddUint16(extensionCustom)
 					addUint16LengthPrefixedBytes(extensions, []byte(m.customExtension))
 				}
+				m.flags.marshalExtension(extensions)
 			})
 		}
 	})
@@ -2601,6 +2822,10 @@ func (m *newSessionTicketMsg) unmarshal(data []byte) bool {
 			switch extension {
 			case extensionEarlyData:
 				if !body.ReadUint32(&m.maxEarlyDataSize) || !body.Empty() {
+					return false
+				}
+			case extensionTLSFlags:
+				if !m.flags.unmarshalExtensionValue(body) {
 					return false
 				}
 			default:
@@ -2698,8 +2923,7 @@ func (m *channelIDMsg) unmarshal(data []byte) bool {
 	return true
 }
 
-type helloRequestMsg struct {
-}
+type helloRequestMsg struct{}
 
 func (*helloRequestMsg) marshal() []byte {
 	return []byte{typeHelloRequest, 0, 0, 0}

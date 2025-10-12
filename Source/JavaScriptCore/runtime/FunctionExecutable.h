@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "JSFunction.h"
-#include "ScriptExecutable.h"
-#include "SourceCode.h"
+#include <JavaScriptCore/JSFunction.h>
+#include <JavaScriptCore/ScriptExecutable.h>
+#include <JavaScriptCore/SourceCode.h>
 #include <wtf/Box.h>
 #include <wtf/Markable.h>
 
@@ -54,7 +54,7 @@ public:
         executable->finishCreation(vm);
         return executable;
     }
-    static FunctionExecutable* fromGlobalCode(const Identifier& name, JSGlobalObject*, const SourceCode&, LexicallyScopedFeatures, JSObject*& exception, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition, FunctionConstructionMode);
+    static FunctionExecutable* fromGlobalCode(const Identifier& name, JSGlobalObject*, String&& program, const SourceOrigin&, SourceTaintedOrigin, const String& sourceURL, const TextPosition&, LexicallyScopedFeatures, JSObject*& exception, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition, FunctionConstructionMode);
 
     static void destroy(JSCell*);
         
@@ -95,17 +95,17 @@ public:
         
     bool isGeneratedFor(CodeSpecializationKind kind)
     {
-        if (kind == CodeForCall)
+        if (kind == CodeSpecializationKind::CodeForCall)
             return isGeneratedForCall();
-        ASSERT(kind == CodeForConstruct);
+        ASSERT(kind == CodeSpecializationKind::CodeForConstruct);
         return isGeneratedForConstruct();
     }
         
     FunctionCodeBlock* codeBlockFor(CodeSpecializationKind kind)
     {
-        if (kind == CodeForCall)
+        if (kind == CodeSpecializationKind::CodeForCall)
             return codeBlockForCall();
-        ASSERT(kind == CodeForConstruct);
+        ASSERT(kind == CodeSpecializationKind::CodeForConstruct);
         return codeBlockForConstruct();
     }
 
@@ -282,9 +282,9 @@ public:
     static constexpr ptrdiff_t offsetOfCodeBlockFor(CodeSpecializationKind kind)
     {
         switch (kind) {
-        case CodeForCall:
+        case CodeSpecializationKind::CodeForCall:
             return OBJECT_OFFSETOF(FunctionExecutable, m_codeBlockForCall);
-        case CodeForConstruct:
+        case CodeSpecializationKind::CodeForConstruct:
             return OBJECT_OFFSETOF(FunctionExecutable, m_codeBlockForConstruct);
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -292,14 +292,14 @@ public:
     }
 
     struct RareData {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RareData);
 
         static constexpr ptrdiff_t offsetOfAsString() { return OBJECT_OFFSETOF(RareData, m_asString); }
 
         RefPtr<TypeSet> m_returnStatementTypeSet;
         unsigned m_lineCount;
         unsigned m_endColumn;
-        Markable<int, IntegralMarkableTraits<int, -1>> m_overrideLineNumber;
+        Markable<int> m_overrideLineNumber;
         unsigned m_parametersStartOffset { 0 };
         WriteBarrierStructureID m_cachedPolyProtoStructureID;
         std::unique_ptr<TemplateObjectMap> m_templateObjectMap;

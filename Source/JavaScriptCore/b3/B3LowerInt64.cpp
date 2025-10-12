@@ -1005,6 +1005,8 @@ private:
         case Nop:
         case WasmAddress:
         case WasmBoundsCheck:
+        case MemoryCopy:
+        case MemoryFill:
             return;
         case Set: {
             if (m_value->child(0)->type() != Int64)

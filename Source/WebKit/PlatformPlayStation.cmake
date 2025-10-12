@@ -43,6 +43,7 @@ list(APPEND WebKit_SOURCES
     Platform/IPC/unix/ArgumentCodersUnix.cpp
     Platform/IPC/unix/ConnectionUnix.cpp
     Platform/IPC/unix/IPCSemaphoreUnix.cpp
+    Platform/IPC/unix/IPCUtilitiesUnix.cpp
 
     Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 
@@ -91,11 +92,8 @@ list(APPEND WebKit_SOURCES
 
     WebProcess/InjectedBundle/playstation/InjectedBundlePlayStation.cpp
 
-    WebProcess/WebPage/AcceleratedSurface.cpp
-
+    WebProcess/WebPage/CoordinatedGraphics/AcceleratedSurface.cpp
     WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
-
-    WebProcess/WebPage/libwpe/AcceleratedSurfaceLibWPE.cpp
 
     WebProcess/WebPage/playstation/WebPagePlayStation.cpp
 
@@ -151,9 +149,9 @@ if (USE_COORDINATED_GRAPHICS)
     list(APPEND WebKit_SOURCES
         WebProcess/WebPage/CoordinatedGraphics/CompositingRunLoop.cpp
         WebProcess/WebPage/CoordinatedGraphics/CoordinatedSceneState.cpp
-        WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
-        WebProcess/WebPage/CoordinatedGraphics/ThreadedCompositor.cpp
-        WebProcess/WebPage/CoordinatedGraphics/ThreadedDisplayRefreshMonitor.cpp
+        WebProcess/WebPage/CoordinatedGraphics/LayerTreeHostPlayStation.cpp
+        WebProcess/WebPage/CoordinatedGraphics/ThreadedCompositorPlayStation.cpp
+        WebProcess/WebPage/CoordinatedGraphics/ThreadedDisplayRefreshMonitorPlayStation.cpp
     )
 endif ()
 

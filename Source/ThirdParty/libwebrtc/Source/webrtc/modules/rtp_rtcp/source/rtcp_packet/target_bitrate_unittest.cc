@@ -10,9 +10,13 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/target_bitrate.h"
 
-#include "modules/rtp_rtcp/source/byte_io.h"
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+#include <optional>
+#include <vector>
+
 #include "modules/rtp_rtcp/source/rtcp_packet/extended_reports.h"
-#include "rtc_base/buffer.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
 
@@ -25,13 +29,14 @@ using test::ParseSinglePacket;
 constexpr uint32_t kSsrc = 0x12345678;
 
 // clang-format off
-const uint8_t kPacket[] = { TargetBitrate::kBlockType,  // Block ID.
-                                  0x00,                 // Reserved.
-                                        0x00, 0x04,     // Length = 4 words.
-                            0x00, 0x01, 0x02, 0x03,     // S0T0 0x010203 kbps.
-                            0x01, 0x02, 0x03, 0x04,     // S0T1 0x020304 kbps.
-                            0x10, 0x03, 0x04, 0x05,     // S1T0 0x030405 kbps.
-                            0x11, 0x04, 0x05, 0x06 };   // S1T1 0x040506 kbps.
+constexpr uint8_t kPacket[] = {
+    TargetBitrate::kBlockType,  // Block ID.
+          0x00,                 // Reserved.
+                0x00, 0x04,     // Length = 4 words.
+    0x00, 0x01, 0x02, 0x03,     // S0T0 0x010203 kbps.
+    0x01, 0x02, 0x03, 0x04,     // S0T1 0x020304 kbps.
+    0x10, 0x03, 0x04, 0x05,     // S1T0 0x030405 kbps.
+    0x11, 0x04, 0x05, 0x06 };   // S1T1 0x040506 kbps.
 constexpr size_t kPacketLengthBlocks = ((sizeof(kPacket) + 3) / 4) - 1;
 // clang-format on
 

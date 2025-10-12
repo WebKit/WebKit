@@ -29,19 +29,19 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "B3AbstractHeapRepository.h"
 #include "B3BasicBlockInlines.h"
 #include "B3CCallValue.h"
 #include "B3FrequentedBlock.h"
 #include "B3Procedure.h"
 #include "B3SwitchValue.h"
+#include "B3TypedPointer.h"
 #include "B3Width.h"
 #include "FTLAbbreviatedTypes.h"
-#include "FTLAbstractHeapRepository.h"
 #include "FTLCommonValues.h"
 #include "FTLSelectPredictability.h"
 #include "FTLState.h"
 #include "FTLSwitchCase.h"
-#include "FTLTypedPointer.h"
 #include "FTLValueFromBlock.h"
 #include "FTLWeight.h"
 #include "FTLWeightedTarget.h"
@@ -123,17 +123,19 @@ public:
     template<typename T>
     LValue constIntPtr(T* value)
     {
-        static_assert(!std::is_base_of<HeapCell, T>::value, "To use a GC pointer, the graph must be aware of it. Use gcPointer instead and make sure the graph is aware of this reference.");
-        if (sizeof(void*) == 8)
+        static_assert(!std::derived_from<T, HeapCell>, "To use a GC pointer, the graph must be aware of it. Use gcPointer instead and make sure the graph is aware of this reference.");
+        if constexpr (sizeof(void*) == 8)
             return constInt64(std::bit_cast<intptr_t>(value));
-        return constInt32(std::bit_cast<intptr_t>(value));
+        else
+            return constInt32(std::bit_cast<intptr_t>(value));
     }
     template<typename T>
     LValue constIntPtr(T value)
     {
-        if (sizeof(void*) == 8)
+        if constexpr (sizeof(void*) == 8)
             return constInt64(static_cast<intptr_t>(value));
-        return constInt32(static_cast<intptr_t>(value));
+        else
+            return constInt32(static_cast<intptr_t>(value));
     }
     LValue constInt64(int64_t value);
     LValue constDouble(double value);
@@ -307,10 +309,7 @@ public:
     {
         return TypedPointer(heap, baseIndex(base, index, scale, offset));
     }
-    TypedPointer baseIndex(IndexedAbstractHeap& heap, LValue base, LValue index, JSValue indexAsConstant = JSValue(), ptrdiff_t offset = 0, LValue mask = nullptr)
-    {
-        return heap.baseIndex(*this, base, index, indexAsConstant, offset, mask);
-    }
+    TypedPointer baseIndex(IndexedAbstractHeap&, LValue base, LValue index, JSValue indexAsConstant = JSValue(), ptrdiff_t offset = 0, LValue mask = nullptr);
 
     TypedPointer absolute(const void* address);
 

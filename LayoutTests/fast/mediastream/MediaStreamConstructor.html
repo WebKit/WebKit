@@ -73,6 +73,7 @@
                 verifyStream("new MediaStream([stream.getVideoTracks()[0], stream.getAudioTracks()[0], stream.getVideoTracks()[0]])", 1, 1);
 
                 finishJSTest();
+                stream.getTracks().forEach(track => track.stop());
             }
 
             function verifyStream(script, numAudioTracks, numVideoTracks) {

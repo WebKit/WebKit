@@ -70,9 +70,8 @@ static CheckedUint32 computeRawPixelCount(const IntSize& size)
 
 static CheckedUint32 computeRawPixelComponentCount(PixelFormat pixelFormat, const IntSize& size)
 {
-    ASSERT_UNUSED(pixelFormat, PixelBuffer::supportedPixelFormat(pixelFormat));
-    constexpr unsigned componentsPerPixel = 4;
-    return computeRawPixelCount(size) * componentsPerPixel;
+    ASSERT(PixelBuffer::supportedPixelFormat(pixelFormat));
+    return computeRawPixelCount(size) * PixelBuffer::componentsPerPixel(pixelFormat);
 }
 
 CheckedUint32 PixelBuffer::computePixelCount(const IntSize& size)
@@ -87,13 +86,7 @@ CheckedUint32 PixelBuffer::computePixelComponentCount(PixelFormat pixelFormat, c
 
 CheckedUint32 PixelBuffer::computeBufferSize(PixelFormat pixelFormat, const IntSize& size)
 {
-    // FIXME: Implement a better way to deal with sizes of diffferent formats.
-    unsigned bytesPerPixelComponent =
-#if ENABLE(PIXEL_FORMAT_RGBA16F)
-        (pixelFormat == PixelFormat::RGBA16F) ? 2 :
-#endif
-        1;
-    return mustFitInInt32(computeRawPixelComponentCount(pixelFormat, size) * bytesPerPixelComponent);
+    return mustFitInInt32(computeRawPixelComponentCount(pixelFormat, size) * bytesPerPixelComponent(pixelFormat));
 }
 
 PixelBuffer::PixelBuffer(const PixelBufferFormat& format, const IntSize& size, std::span<uint8_t> bytes)
@@ -101,7 +94,7 @@ PixelBuffer::PixelBuffer(const PixelBufferFormat& format, const IntSize& size, s
     , m_size(size)
     , m_bytes(bytes)
 {
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION((m_size.area() * 4) <= m_bytes.size());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(computeBufferSize(format.pixelFormat, size).value() <= bytes.size());
 }
 
 PixelBuffer::~PixelBuffer() = default;

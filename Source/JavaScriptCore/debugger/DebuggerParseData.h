@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ParserTokens.h"
+#include <JavaScriptCore/ParserTokens.h>
 #include <wtf/Function.h>
 #include <wtf/Vector.h>
 

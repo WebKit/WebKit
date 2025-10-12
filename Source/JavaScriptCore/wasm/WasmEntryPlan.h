@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WasmModuleDebugInfo.h"
 #include "WasmModuleInformation.h"
 #include "WasmPlan.h"
 #include "WasmStreamingParser.h"
@@ -61,6 +62,8 @@ public:
     Ref<ModuleInformation>&& takeModuleInformation()
     {
         RELEASE_ASSERT(!failed() && !hasWork());
+        if (Options::enableWasmDebugger()) [[unlikely]]
+            m_moduleInformation->debugInfo->takeSource(WTFMove(m_source));
         return WTFMove(m_moduleInformation);
     }
 

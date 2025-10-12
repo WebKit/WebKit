@@ -37,7 +37,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
 
 namespace WebKit {
 
-GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::ProcessLauncher::LaunchOptions& launchOptions, char** argv, int childProcessSocket, int pidSocket, GError** error)
+GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::ProcessLauncher::LaunchOptions& launchOptions, char** argv, int childProcessSocket, GError** error)
 {
     ASSERT(launcher);
 
@@ -46,11 +46,9 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
     // for us using flatpak-spawn.
 
     GUniquePtr<char> childProcessSocketArg(g_strdup_printf("--forward-fd=%d", childProcessSocket));
-    GUniquePtr<char> pidSocketArg(g_strdup_printf("--forward-fd=%d", pidSocket));
     Vector<CString> flatpakArgs = {
         "flatpak-spawn",
         childProcessSocketArg.get(),
-        pidSocketArg.get(),
         "--expose-pids",
         "--watch-bus"
     };

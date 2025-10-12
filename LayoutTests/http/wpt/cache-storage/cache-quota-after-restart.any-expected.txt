@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Cache API operation failed: Quota exceeded
-CONSOLE MESSAGE: Cache API operation failed: Quota exceeded
 
 PASS Increasing quota
 PASS After network process restart, verify quota is computed according space being used

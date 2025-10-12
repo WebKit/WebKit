@@ -10,54 +10,51 @@
 
 #include "call/adaptation/video_stream_adapter.h"
 
+#include <cstddef>
 #include <optional>
 #include <string>
-#include <utility>
 
+#include "absl/strings/str_cat.h"
+#include "api/adaptation/resource.h"
+#include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
-#include "api/video/video_adaptation_reason.h"
-#include "api/video_codecs/video_codec.h"
+#include "api/video/video_adaptation_counters.h"
 #include "api/video_codecs/video_encoder.h"
 #include "call/adaptation/adaptation_constraint.h"
-#include "call/adaptation/encoder_settings.h"
 #include "call/adaptation/test/fake_frame_rate_provider.h"
 #include "call/adaptation/test/fake_resource.h"
 #include "call/adaptation/test/fake_video_stream_input_state_provider.h"
 #include "call/adaptation/video_source_restrictions.h"
 #include "call/adaptation/video_stream_input_state.h"
-#include "rtc_base/string_encode.h"
+#include "rtc_base/checks.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-#include "test/scoped_key_value_config.h"
-#include "test/testsupport/rtc_expect_death.h"
-#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 
 using ::testing::_;
-using ::testing::DoAll;
 using ::testing::Return;
-using ::testing::SaveArg;
 
 namespace {
 
-const int kBalancedHighResolutionPixels = 1280 * 720;
-const int kBalancedHighFrameRateFps = 30;
+constexpr int kBalancedHighResolutionPixels = 1280 * 720;
+constexpr int kBalancedHighFrameRateFps = 30;
 
-const int kBalancedMediumResolutionPixels = 640 * 480;
-const int kBalancedMediumFrameRateFps = 20;
+constexpr int kBalancedMediumResolutionPixels = 640 * 480;
+constexpr int kBalancedMediumFrameRateFps = 20;
 
-const int kBalancedLowResolutionPixels = 320 * 240;
-const int kBalancedLowFrameRateFps = 10;
+constexpr int kBalancedLowResolutionPixels = 320 * 240;
+constexpr int kBalancedLowFrameRateFps = 10;
 
 std::string BalancedFieldTrialConfig() {
   return "WebRTC-Video-BalancedDegradationSettings/pixels:" +
-         rtc::ToString(kBalancedLowResolutionPixels) + "|" +
-         rtc::ToString(kBalancedMediumResolutionPixels) + "|" +
-         rtc::ToString(kBalancedHighResolutionPixels) +
-         ",fps:" + rtc::ToString(kBalancedLowFrameRateFps) + "|" +
-         rtc::ToString(kBalancedMediumFrameRateFps) + "|" +
-         rtc::ToString(kBalancedHighFrameRateFps) + "/";
+         absl::StrCat(kBalancedLowResolutionPixels) + "|" +
+         absl::StrCat(kBalancedMediumResolutionPixels) + "|" +
+         absl::StrCat(kBalancedHighResolutionPixels) +
+         ",fps:" + absl::StrCat(kBalancedLowFrameRateFps) + "|" +
+         absl::StrCat(kBalancedMediumFrameRateFps) + "|" +
+         absl::StrCat(kBalancedHighFrameRateFps) + "/";
 }
 
 // Responsible for adjusting the inputs to VideoStreamAdapter (SetInput), such
@@ -116,7 +113,7 @@ class FakeVideoStreamAdapterListner : public VideoSourceRestrictionsListener {
   void OnVideoSourceRestrictionsUpdated(
       VideoSourceRestrictions /* restrictions */,
       const VideoAdaptationCounters& /* adaptation_counters */,
-      rtc::scoped_refptr<Resource> /* reason */,
+      scoped_refptr<Resource> /* reason */,
       const VideoSourceRestrictions& unfiltered_restrictions) override {
     calls_++;
     last_restrictions_ = unfiltered_restrictions;
@@ -151,16 +148,14 @@ class MockAdaptationConstraint : public AdaptationConstraint {
 class VideoStreamAdapterTest : public ::testing::Test {
  public:
   VideoStreamAdapterTest()
-      : field_trials_(BalancedFieldTrialConfig()),
-        resource_(FakeResource::Create("FakeResource")),
+      : resource_(FakeResource::Create("FakeResource")),
         adapter_(&input_state_provider_,
                  &encoder_stats_observer_,
-                 field_trials_) {}
+                 CreateTestFieldTrials(BalancedFieldTrialConfig())) {}
 
  protected:
-  webrtc::test::ScopedKeyValueConfig field_trials_;
   FakeVideoStreamInputStateProvider input_state_provider_;
-  rtc::scoped_refptr<Resource> resource_;
+  scoped_refptr<Resource> resource_;
   testing::StrictMock<MockVideoStreamEncoderObserver> encoder_stats_observer_;
   VideoStreamAdapter adapter_;
 };
@@ -921,11 +916,10 @@ TEST_F(VideoStreamAdapterTest, AdaptationConstraintDisallowsAdaptationsUp) {
 
 TEST(VideoStreamAdapterDeathTest,
      SetDegradationPreferenceInvalidatesAdaptations) {
-  webrtc::test::ScopedKeyValueConfig field_trials;
   FakeVideoStreamInputStateProvider input_state_provider;
   testing::StrictMock<MockVideoStreamEncoderObserver> encoder_stats_observer_;
   VideoStreamAdapter adapter(&input_state_provider, &encoder_stats_observer_,
-                             field_trials);
+                             CreateTestFieldTrials());
   adapter.SetDegradationPreference(DegradationPreference::MAINTAIN_FRAMERATE);
   input_state_provider.SetInputState(1280 * 720, 30, kDefaultMinPixelsPerFrame);
   Adaptation adaptation = adapter.GetAdaptationDown();
@@ -934,11 +928,10 @@ TEST(VideoStreamAdapterDeathTest,
 }
 
 TEST(VideoStreamAdapterDeathTest, AdaptDownInvalidatesAdaptations) {
-  webrtc::test::ScopedKeyValueConfig field_trials;
   FakeVideoStreamInputStateProvider input_state_provider;
   testing::StrictMock<MockVideoStreamEncoderObserver> encoder_stats_observer_;
   VideoStreamAdapter adapter(&input_state_provider, &encoder_stats_observer_,
-                             field_trials);
+                             CreateTestFieldTrials());
   adapter.SetDegradationPreference(DegradationPreference::MAINTAIN_RESOLUTION);
   input_state_provider.SetInputState(1280 * 720, 30, kDefaultMinPixelsPerFrame);
   Adaptation adaptation = adapter.GetAdaptationDown();

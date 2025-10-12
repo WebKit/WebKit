@@ -34,6 +34,8 @@
 #import "GPUProcessCreationParameters.h"
 #import "Logging.h"
 #import "RemoteRenderingBackend.h"
+#import <WebCore/AV1UtilitiesCocoa.h>
+#import <WebCore/VP9UtilitiesCocoa.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/MetalSPI.h>
 #import <wtf/RetainPtr.h>
@@ -95,7 +97,7 @@ void GPUProcess::ensureAVCaptureServerConnection()
 {
     RELEASE_LOG(WebRTC, "GPUProcess::ensureAVCaptureServerConnection: Entering.");
 #if HAVE(AVCAPTUREDEVICE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    RetainPtr deviceClass = PAL::getAVCaptureDeviceClass();
+    RetainPtr deviceClass = PAL::getAVCaptureDeviceClassSingleton();
     if ([deviceClass respondsToSelector:@selector(ensureServerConnection)]) {
         RELEASE_LOG(WebRTC, "GPUProcess::ensureAVCaptureServerConnection: Calling [AVCaptureDevice ensureServerConnection]");
         [deviceClass ensureServerConnection];
@@ -120,11 +122,7 @@ void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters& para
     updateProcessName();
 
     // Close connection to launch services.
-#if HAVE(HAVE_LS_SERVER_CONNECTION_STATUS_RELEASE_NOTIFICATIONS_MASK)
     _LSSetApplicationLaunchServicesServerConnectionStatus(kLSServerConnectionStatusDoNotConnectToServerMask | kLSServerConnectionStatusReleaseNotificationsMask, nullptr);
-#else
-    _LSSetApplicationLaunchServicesServerConnectionStatus(kLSServerConnectionStatusDoNotConnectToServerMask, nullptr);
-#endif
 
     if (launchServicesExtension)
         launchServicesExtension->revoke();
@@ -143,6 +141,15 @@ void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters& para
         setenv("MTL_SHADER_VALIDATION_GPUOPT_ENABLE_RUNTIME_STACKTRACE", "0", 1);
     }
 
+#if ENABLE(VP9)
+    if (parameters.hasVP9HardwareDecoder)
+        setVP9HardwareDecoderAvailableInProcess(*parameters.hasVP9HardwareDecoder);
+#endif
+#if ENABLE(AV1)
+    if (parameters.hasAV1HardwareDecoder)
+        setAV1HardwareDecoderAvailable(*parameters.hasAV1HardwareDecoder);
+#endif
+
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS) && USE(EXTENSIONKIT)
     MTLSetShaderCachePath(parameters.containerCachesDirectory.createNSString().get());
 #endif
@@ -151,6 +158,8 @@ void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters& para
     if (WKProcessExtension.sharedInstance)
         [WKProcessExtension.sharedInstance lockdownSandbox:@"2.0"];
 #endif
+
+    increaseFileDescriptorLimit();
 }
 
 #if USE(EXTENSIONKIT)
@@ -208,6 +217,23 @@ void GPUProcess::unregisterMemoryAttributionID(const String& attributionID, Comp
 }
 #endif
 #endif
+
+void GPUProcess::postWillTakeSnapshotNotification(CompletionHandler<void()>&& completionHandler)
+{
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
+    [NSNotificationCenter.defaultCenter postNotificationName:@"CoreMediaPleaseHideTheDRMFallbackForAWhile" object:nil];
+
+    [CATransaction commit];
+    completionHandler();
+}
+
+void GPUProcess::registerFonts(Vector<SandboxExtension::Handle>&& sandboxExtensions)
+{
+    for (auto& sandboxExtension : sandboxExtensions)
+        SandboxExtension::consumePermanently(sandboxExtension);
+}
 
 } // namespace WebKit
 

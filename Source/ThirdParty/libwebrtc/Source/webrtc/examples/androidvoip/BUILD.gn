@@ -40,7 +40,6 @@ if (is_android) {
     testonly = true
     sources = [ "java/org/webrtc/examples/androidvoip/VoipClient.java" ]
     namespace = "webrtc_examples"
-    jni_generator_include = "//sdk/android/src/jni/jni_generator_helper.h"
   }
 
   rtc_shared_library("examples_androidvoip_jni") {
@@ -56,10 +55,14 @@ if (is_android) {
 
     deps = [
       ":generated_jni",
+      "../../api:array_view",
       "../../api/audio:builtin_audio_processing_builder",
+      "../../api/environment:environment_factory",
       "../../rtc_base:async_packet_socket",
       "../../rtc_base:async_udp_socket",
+      "../../rtc_base:checks",
       "../../rtc_base:logging",
+      "../../rtc_base:macromagic",
       "../../rtc_base:network",
       "../../rtc_base:socket_address",
       "../../rtc_base:socket_server",
@@ -69,7 +72,6 @@ if (is_android) {
       "//api/audio_codecs:audio_codecs_api",
       "//api/audio_codecs:builtin_audio_decoder_factory",
       "//api/audio_codecs:builtin_audio_encoder_factory",
-      "//api/task_queue:default_task_queue_factory",
       "//api/units:time_delta",
       "//api/voip:voip_api",
       "//api/voip:voip_engine_factory",
@@ -77,7 +79,8 @@ if (is_android) {
       "//sdk/android:native_api_audio_device_module",
       "//sdk/android:native_api_base",
       "//sdk/android:native_api_jni",
-      "//third_party/abseil-cpp/absl/memory:memory",
+      "//third_party/abseil-cpp/absl/memory",
+      "//third_party/jni_zero",
     ]
   }
 

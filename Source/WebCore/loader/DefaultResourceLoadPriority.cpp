@@ -33,6 +33,7 @@ ResourceLoadPriority DefaultResourceLoadPriority::forResourceType(CachedResource
     case CachedResource::Type::MainResource:
         return ResourceLoadPriority::VeryHigh;
     case CachedResource::Type::CSSStyleSheet:
+    case CachedResource::Type::JSON:
     case CachedResource::Type::Script:
         return ResourceLoadPriority::High;
     case CachedResource::Type::SVGFontResource:

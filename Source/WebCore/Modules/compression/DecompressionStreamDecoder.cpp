@@ -26,11 +26,22 @@
 #include "DecompressionStreamDecoder.h"
 
 #include "BufferSource.h"
+#include "ExceptionOr.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 
 namespace WebCore {
+
+ExceptionOr<Ref<DecompressionStreamDecoder>> DecompressionStreamDecoder::create(unsigned char formatChar)
+{
+    auto format = static_cast<Formats::CompressionFormat>(formatChar);
+#if !PLATFORM(COCOA)
+    if (format == Formats::CompressionFormat::Brotli)
+        return Exception { ExceptionCode::NotSupportedError, "Unsupported algorithm"_s };
+#endif
+    return adoptRef(*new DecompressionStreamDecoder(format));
+}
 
 ExceptionOr<RefPtr<Uint8Array>> DecompressionStreamDecoder::decode(const BufferSource&& input)
 {
@@ -133,7 +144,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib(st
 
         output.grow(allocateSize);
 
-        m_zstream.getPlatformStream().next_out = output.data();
+        m_zstream.getPlatformStream().next_out = output.mutableSpan().data();
         m_zstream.getPlatformStream().avail_out = output.size();
 
         result = inflate(&m_zstream.getPlatformStream(), m_didFinish ? Z_FINISH : Z_NO_FLUSH);

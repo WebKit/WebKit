@@ -52,7 +52,7 @@ public:
 private:
     CoordinatedBackingStore() = default;
 
-    UncheckedKeyHashMap<uint32_t, CoordinatedBackingStoreTile> m_tiles;
+    HashMap<uint32_t, CoordinatedBackingStoreTile> m_tiles;
     FloatSize m_size;
     float m_scale { 1. };
 };

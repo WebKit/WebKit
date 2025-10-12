@@ -1,0 +1,4 @@
+
+
+PASS Able to observe a video's poster image.
+

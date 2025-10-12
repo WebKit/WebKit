@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,8 +55,8 @@ private:
 
     static constexpr size_t s_blockMask = ~(blockSize - 1);
 
-    HandleBlock* m_prev;
-    HandleBlock* m_next;
+    HandleBlock* m_prev; // Required by DoublyLinkedListNode.
+    HandleBlock* m_next; // Required by DoublyLinkedListNode.
     HandleSet* m_handleSet;
 };
 

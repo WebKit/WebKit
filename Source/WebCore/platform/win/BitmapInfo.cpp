@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Brent Fulgham
- * Copyright (C) 2007-2009 Torch Mobile, Inc. All Rights Reserved.
+ * Copyright (C) 2007-2009 Torch Mobile, Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without

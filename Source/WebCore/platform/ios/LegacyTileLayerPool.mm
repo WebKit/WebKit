@@ -33,6 +33,7 @@
 #import "Logging.h"
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 namespace WebCore {
 
@@ -59,7 +60,7 @@ unsigned LegacyTileLayerPool::bytesBackingLayerWithPixelSize(const IntSize& size
 LegacyTileLayerPool::LayerList& LegacyTileLayerPool::listOfLayersWithSize(const IntSize& size, AccessType accessType)
 {
     ASSERT(!m_layerPoolMutex.tryLock());
-    UncheckedKeyHashMap<IntSize, LayerList>::iterator it = m_reuseLists.find(size);
+    HashMap<IntSize, LayerList>::iterator it = m_reuseLists.find(size);
     if (it == m_reuseLists.end()) {
         it = m_reuseLists.add(size, LayerList()).iterator;
         m_sizesInPruneOrder.append(size);
@@ -127,7 +128,7 @@ void LegacyTileLayerPool::schedulePrune()
         return;
     m_needsPrune = true;
     dispatch_time_t nextPruneTime = dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC);
-    dispatch_after(nextPruneTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_after(nextPruneTime, globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         prune();
     });
 }

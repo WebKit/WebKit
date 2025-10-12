@@ -27,8 +27,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSFunction.h"
-#include "WasmFormat.h"
+#include <JavaScriptCore/JSFunction.h>
+#include <JavaScriptCore/WasmFormat.h>
 
 namespace JSC {
 
@@ -38,6 +38,8 @@ using Wasm::WasmToWasmImportableFunction;
 using Wasm::WasmOrJSImportableFunctionCallLinkInfo;
 
 class WebAssemblyFunctionBase : public JSFunction {
+    friend JSC::LLIntOffsetsExtractor;
+
 public:
     using Base = JSFunction;
 
@@ -45,37 +47,33 @@ public:
 
     DECLARE_INFO;
 
-    JSWebAssemblyInstance* instance() const { return m_instance.get(); }
+    DECLARE_VISIT_CHILDREN;
+
+    JSWebAssemblyInstance* instance() const { return m_importableFunction.targetInstance.get(); }
 
     Wasm::TypeIndex typeIndex() const { return m_importableFunction.typeIndex; }
     Wasm::Type type() const { return { Wasm::TypeKind::Ref, typeIndex() }; }
     WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation() const { return m_importableFunction.entrypointLoadLocation; }
-    const CalleeBits* boxedWasmCalleeLoadLocation() const { return m_importableFunction.boxedWasmCalleeLoadLocation; }
+    CalleeBits boxedCallee() const { return m_importableFunction.boxedCallee; }
     const Wasm::WasmOrJSImportableFunction& importableFunction() const { return m_importableFunction; }
     const Wasm::RTT* rtt() const { return m_importableFunction.rtt; }
     const Wasm::FunctionSignature& signature() const;
     WasmOrJSImportableFunctionCallLinkInfo* callLinkInfo() const { return m_callLinkInfo; }
 
-    static constexpr ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_instance); }
-
-    static constexpr ptrdiff_t offsetOfSignatureIndex() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfSignatureIndex(); }
-
     static constexpr ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation(); }
-    static constexpr ptrdiff_t offsetOfBoxedWasmCalleeLoadLocation() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfBoxedWasmCalleeLoadLocation(); }
-
+    static constexpr ptrdiff_t offsetOfBoxedCallee() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfBoxedCallee(); }
+    static constexpr ptrdiff_t offsetOfTargetInstance() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfTargetInstance(); }
     static constexpr ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfRTT(); }
 
 protected:
-    DECLARE_VISIT_CHILDREN;
     void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name);
-    WebAssemblyFunctionBase(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSWebAssemblyInstance*, Wasm::WasmOrJSImportableFunction&&, Wasm::WasmOrJSImportableFunctionCallLinkInfo*);
+    WebAssemblyFunctionBase(VM&, NativeExecutable*, JSGlobalObject*, Structure*, Wasm::WasmOrJSImportableFunction&&, Wasm::WasmOrJSImportableFunctionCallLinkInfo*);
 
     Wasm::WasmOrJSImportableFunction m_importableFunction;
     // It's safe to just hold the raw WasmToWasmImportableFunctionCallLinkInfo because we have a reference
     // to our Instance, which points to the CodeBlock, which points to the Module
     // that exported us, which ensures that the actual Signature/RTT/code doesn't get deallocated.
     Wasm::WasmOrJSImportableFunctionCallLinkInfo* m_callLinkInfo;
-    WriteBarrier<JSWebAssemblyInstance> m_instance;
 };
 
 } // namespace JSC

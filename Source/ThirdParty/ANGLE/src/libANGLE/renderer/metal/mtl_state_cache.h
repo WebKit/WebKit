@@ -11,6 +11,10 @@
 #ifndef LIBANGLE_RENDERER_METAL_MTL_STATE_CACHE_H_
 #define LIBANGLE_RENDERER_METAL_MTL_STATE_CACHE_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #import <Metal/Metal.h>
 
 #include <unordered_map>
@@ -306,7 +310,7 @@ struct RenderPassAttachmentDesc
     bool operator==(const RenderPassAttachmentDesc &other) const;
 
     ANGLE_INLINE bool hasResolveTexture() const { return resolveTexture.get(); }
- 
+
     // When rendering with implicit multisample, |texture| is the texture that
     // will be rendered into and discarded at the end of a render pass. Its
     // result will be automatically resolved into |resolveTexture|.

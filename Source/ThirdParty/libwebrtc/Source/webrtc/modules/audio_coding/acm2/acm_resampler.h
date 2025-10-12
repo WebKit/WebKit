@@ -14,28 +14,13 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <array>
+
 #include "api/audio/audio_frame.h"
 #include "common_audio/resampler/include/push_resampler.h"
 
 namespace webrtc {
 namespace acm2 {
-
-class ACMResampler {
- public:
-  ACMResampler();
-  ~ACMResampler();
-
-  // TODO: b/335805780 - Change to accept InterleavedView<>.
-  int Resample10Msec(const int16_t* in_audio,
-                     int in_freq_hz,
-                     int out_freq_hz,
-                     size_t num_audio_channels,
-                     size_t out_capacity_samples,
-                     int16_t* out_audio);
-
- private:
-  PushResampler<int16_t> resampler_;
-};
 
 // Helper class to perform resampling if needed, meant to be used after
 // receiving the audio_frame from NetEq. Provides reasonably glitch free
@@ -48,7 +33,7 @@ class ResamplerHelper {
   bool MaybeResample(int desired_sample_rate_hz, AudioFrame* audio_frame);
 
  private:
-  ACMResampler resampler_;
+  PushResampler<int16_t> resampler_;
   bool resampled_last_output_frame_ = true;
   std::array<int16_t, AudioFrame::kMaxDataSizeSamples> last_audio_buffer_;
 };

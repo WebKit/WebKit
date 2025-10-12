@@ -7,6 +7,10 @@
 // SystemInfo_vulkan.cpp: Generic vulkan implementation of SystemInfo.h
 // TODO: Use VK_KHR_driver_properties. http://anglebug.com/42263671
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "gpu_info_util/SystemInfo_vulkan.h"
 
 #include <vulkan/vulkan.h>
@@ -283,7 +287,7 @@ class VulkanLibrary final : NonCopyable
         }
 
         mPfnEnumerateInstanceExtensionProperties =
-            getProc<PFN_vkEnumerateInstanceExtensionProperties>(
+            getProcWithDLSym<PFN_vkEnumerateInstanceExtensionProperties>(
                 "vkEnumerateInstanceExtensionProperties");
         if (!mPfnEnumerateInstanceExtensionProperties)
         {

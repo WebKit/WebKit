@@ -146,6 +146,11 @@ Color::Color(AbsoluteColor<ColorRGBFunction<ExtendedDisplayP3<float>>>&& color)
 {
 }
 
+Color::Color(AbsoluteColor<ColorRGBFunction<ExtendedLinearDisplayP3<float>>>&& color)
+    : value { makeIndirectColor(WTFMove(color)) }
+{
+}
+
 Color::Color(AbsoluteColor<ColorRGBFunction<ExtendedProPhotoRGB<float>>>&& color)
     : value { makeIndirectColor(WTFMove(color)) }
 {
@@ -217,6 +222,11 @@ Color::Color(RelativeColor<ColorRGBFunction<ExtendedA98RGB<float>>>&& color)
 }
 
 Color::Color(RelativeColor<ColorRGBFunction<ExtendedDisplayP3<float>>>&& color)
+    : value { makeIndirectColor(WTFMove(color)) }
+{
+}
+
+Color::Color(RelativeColor<ColorRGBFunction<ExtendedLinearDisplayP3<float>>>&& color)
     : value { makeIndirectColor(WTFMove(color)) }
 {
 }
@@ -355,18 +365,6 @@ Color::ColorKind Color::copy(const Color::ColorKind& other)
 template<typename T> Color::ColorKind Color::makeIndirectColor(T&& color)
 {
     return { makeUniqueRef<T>(WTFMove(color)) };
-}
-
-// MARK: - Markable Traits
-
-bool Color::MarkableTraits::isEmptyValue(const Color& value)
-{
-    return std::holds_alternative<EmptyToken>(value.value);
-}
-
-Color Color::MarkableTraits::emptyValue()
-{
-    return Color(EmptyToken());
 }
 
 WebCore::Color createColor(const Color& value, PlatformColorResolutionState& state)

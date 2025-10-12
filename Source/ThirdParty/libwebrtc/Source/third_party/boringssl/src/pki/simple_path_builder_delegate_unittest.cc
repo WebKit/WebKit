@@ -1,13 +1,27 @@
 // Copyright 2017 The Chromium Authors
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #include "simple_path_builder_delegate.h"
 
 #include <memory>
 #include <set>
 
 #include <gtest/gtest.h>
+
 #include <openssl/nid.h>
+#include <openssl/span.h>
+
 #include "cert_errors.h"
 #include "input.h"
 #include "parse_values.h"
@@ -38,11 +52,11 @@ void ReadTestCase(const char *file_name,
   ASSERT_TRUE(ReadTestDataFromPemFile(path, mappings));
 
   std::optional<SignatureAlgorithm> sigalg_opt =
-      ParseSignatureAlgorithm(der::Input(algorithm_str));
+      ParseSignatureAlgorithm(StringAsBytes(algorithm_str));
   ASSERT_TRUE(sigalg_opt);
   *signature_algorithm = *sigalg_opt;
 
-  ASSERT_TRUE(ParsePublicKey(der::Input(public_key_str), public_key));
+  ASSERT_TRUE(ParsePublicKey(StringAsBytes(public_key_str), public_key));
 }
 
 class SimplePathBuilderDelegate1024SuccessTest

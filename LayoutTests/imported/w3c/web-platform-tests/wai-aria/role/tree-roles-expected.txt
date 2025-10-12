@@ -8,8 +8,6 @@ x	x	x
 x	x	x
 x	x	x
 x	x	x
-x
-x
 
 PASS role is tree
 PASS role is treeitem (in tree)
@@ -18,6 +16,4 @@ PASS role is treeitem (in group, in treeitem)
 PASS role is treegrid
 PASS role is row (in treegrid)
 PASS role is gridcell (in row, in treegrid)
-PASS orphaned treeitem outside the context of tree
-PASS orphaned button with treeitem role outside tree context
 

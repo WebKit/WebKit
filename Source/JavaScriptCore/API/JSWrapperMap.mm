@@ -39,6 +39,7 @@
 #import "ObjectConstructor.h"
 #import "WeakGCMap.h"
 #import "WeakGCMapInlines.h"
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
@@ -295,23 +296,20 @@ struct Property {
 static bool parsePropertyAttributes(objc_property_t objcProperty, Property& property)
 {
     bool readonly = false;
-    unsigned attributeCount;
-    auto attributes = adoptSystem<objc_property_attribute_t[]>(property_copyAttributeList(objcProperty, &attributeCount));
-    if (attributeCount) {
-        for (unsigned i = 0; i < attributeCount; ++i) {
-            switch (*(attributes[i].name)) {
-            case 'G':
-                property.getterName = @(attributes[i].value);
-                break;
-            case 'S':
-                property.setterName = @(attributes[i].value);
-                break;
-            case 'R':
-                readonly = true;
-                break;
-            default:
-                break;
-            }
+    auto attributes = property_copyAttributeListSpan(objcProperty);
+    for (auto& attribute : attributes.span()) {
+        switch (*(attribute.name)) {
+        case 'G':
+            property.getterName = @(attribute.value);
+            break;
+        case 'S':
+            property.setterName = @(attribute.value);
+            break;
+        case 'R':
+            readonly = true;
+            break;
+        default:
+            break;
         }
     }
     return readonly;

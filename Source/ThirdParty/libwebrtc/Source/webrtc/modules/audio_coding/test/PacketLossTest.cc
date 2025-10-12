@@ -10,14 +10,23 @@
 
 #include "modules/audio_coding/test/PacketLossTest.h"
 
+#include <cstdint>
 #include <memory>
+#include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
 #include "api/neteq/default_neteq_factory.h"
+#include "api/neteq/neteq.h"
 #include "api/units/timestamp.h"
+#include "modules/audio_coding/include/audio_coding_module.h"
+#include "modules/audio_coding/test/EncodeDecodeTest.h"
+#include "modules/audio_coding/test/RTPFile.h"
 #include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
@@ -41,7 +50,7 @@ void ReceiverWithPacketLoss::Setup(NetEq* neteq,
   loss_rate_ = loss_rate;
   burst_length_ = burst_length;
   burst_lost_counter_ = burst_length_;  // To prevent first packet gets lost.
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << out_file_name << "_" << loss_rate_ << "_" << burst_length_ << "_";
   Receiver::Setup(neteq, rtpStream, ss.str(), channels, file_num);
 }
@@ -62,10 +71,10 @@ bool ReceiverWithPacketLoss::IncomingPacket() {
     }
 
     if (!PacketLost()) {
-      _neteq->InsertPacket(_rtpHeader,
-                           rtc::ArrayView<const uint8_t>(_incomingPayload,
-                                                         _realPayloadSizeBytes),
-                           Timestamp::Millis(_nextTime));
+      _neteq->InsertPacket(
+          _rtpHeader,
+          ArrayView<const uint8_t>(_incomingPayload, _realPayloadSizeBytes),
+          Timestamp::Millis(_nextTime));
     }
     packet_counter_++;
     _realPayloadSizeBytes = _rtpStream->Read(&_rtpHeader, _incomingPayload,
@@ -150,8 +159,8 @@ void PacketLossTest::Perform() {
     send_format.parameters = {{"stereo", "1"}};
   }
 
-  std::string fileName = webrtc::test::TempFilename(webrtc::test::OutputPath(),
-                                                    "packet_loss_test");
+  std::string fileName =
+      test::TempFilename(test::OutputPath(), "packet_loss_test");
   rtpFile.Open(fileName.c_str(), "wb+");
   rtpFile.WriteHeader();
   SenderWithFEC sender;

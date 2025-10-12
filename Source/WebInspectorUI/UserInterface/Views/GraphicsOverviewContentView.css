@@ -54,6 +54,7 @@
 
 .content-view.graphics-overview > section > .header > h1 {
     margin: 0;
+    font-size: 1.5em;
 }
 
 .content-view.graphics-overview > section > .header > .navigation-bar {

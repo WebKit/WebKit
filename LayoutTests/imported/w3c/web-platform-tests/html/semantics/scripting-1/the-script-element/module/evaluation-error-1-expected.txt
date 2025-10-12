@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: [object Object]
 
 FAIL Test that exceptions during evaluation lead to error events on window, and that exceptions are remembered.
  assert_array_equals: lengths differ, expected array ["throw", object "[object Object]", "load", [...], "load", [...], "load", [...], "load"] length 9, got ["throw", object "[object Object]", "load", "load", "load", "load"] length 6

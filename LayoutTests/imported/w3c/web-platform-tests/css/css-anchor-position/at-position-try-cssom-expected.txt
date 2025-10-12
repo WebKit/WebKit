@@ -242,9 +242,9 @@ PASS CSSPositionTryDescriptors.setProperty(background)
 PASS CSSPositionTryDescriptors[background] (set)
 PASS CSSPositionTryDescriptors[background] (get)
 PASS CSSPositionTryDescriptors.getPropertyValue(display)
-FAIL CSSPositionTryDescriptors.setProperty(display) assert_equals: expected "" but got "unset"
+PASS CSSPositionTryDescriptors.setProperty(display)
 PASS CSSPositionTryDescriptors[display] (set)
-FAIL CSSPositionTryDescriptors[display] (get) assert_equals: expected "" but got "unset"
+PASS CSSPositionTryDescriptors[display] (get)
 PASS CSSPositionTryDescriptors.getPropertyValue(position)
 PASS CSSPositionTryDescriptors.setProperty(position)
 PASS CSSPositionTryDescriptors[position] (set)

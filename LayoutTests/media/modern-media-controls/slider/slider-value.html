@@ -47,13 +47,13 @@ function dragSlider(fromPx, toPx) {
     const minX = bounds.left + KNOB_WIDTH / 2;
     const centerY = bounds.top + bounds.height / 2;
 
-    eventSender.mouseMoveTo(minX + fromPx, centerY);
+    eventSender.mouseMoveTo(Math.floor(minX + fromPx), Math.floor(centerY));
     eventSender.mouseDown();
 
     const delta = toPx - fromPx;
     const iterations = Math.abs(delta);
     for (let i = 1; i <= iterations; ++i)
-        eventSender.mouseMoveTo(minX + fromPx + i * Math.sign(delta), centerY);
+        eventSender.mouseMoveTo(Math.floor(minX + fromPx + i * Math.sign(delta)), Math.floor(centerY));
 
     eventSender.mouseUp();
 }

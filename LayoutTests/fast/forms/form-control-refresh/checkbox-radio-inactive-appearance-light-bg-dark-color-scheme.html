@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="color-scheme" content="dark" />
+</head>
+<body style="background: white;">
+    <p style="color: black;">This tests that a checked checkbox or radio button with dark color-scheme does not disappear on a white background when the window is inactive.</p>
+    <input type="checkbox" checked>
+    <input type="radio" checked>
+</body>
+<script>
+if (window.testRunner)
+    window.testRunner.setWindowIsKey(false);
+</script>
+</html>

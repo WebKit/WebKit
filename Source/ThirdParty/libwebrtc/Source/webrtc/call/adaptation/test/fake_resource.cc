@@ -10,17 +10,18 @@
 
 #include "call/adaptation/test/fake_resource.h"
 
-#include <algorithm>
-#include <utility>
+#include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/adaptation/resource.h"
 #include "api/make_ref_counted.h"
+#include "api/scoped_refptr.h"
 
 namespace webrtc {
 
 // static
-rtc::scoped_refptr<FakeResource> FakeResource::Create(absl::string_view name) {
-  return rtc::make_ref_counted<FakeResource>(name);
+scoped_refptr<FakeResource> FakeResource::Create(absl::string_view name) {
+  return make_ref_counted<FakeResource>(name);
 }
 
 FakeResource::FakeResource(absl::string_view name)
@@ -30,7 +31,7 @@ FakeResource::~FakeResource() {}
 
 void FakeResource::SetUsageState(ResourceUsageState usage_state) {
   if (listener_) {
-    listener_->OnResourceUsageStateMeasured(rtc::scoped_refptr<Resource>(this),
+    listener_->OnResourceUsageStateMeasured(scoped_refptr<Resource>(this),
                                             usage_state);
   }
 }

@@ -6,6 +6,10 @@
 // EGLMultiContextTest.cpp:
 //   Tests relating to multiple non-shared Contexts.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <gtest/gtest.h>
 
 #include "test_utils/ANGLETest.h"
@@ -365,7 +369,7 @@ TEST_P(EGLMultiContextTest, RepeatedEglInitAndTerminate)
     for (int i = 0; i < 50; i++)  // Note: this test is fairly slow b/303089709
     {
         std::thread thread = std::thread([&]() {
-            dpy = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+            dpy = eglGetPlatformDisplay(GetEglPlatform(),
                                         reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
             EXPECT_TRUE(dpy != EGL_NO_DISPLAY);
             EXPECT_EGL_TRUE(eglInitialize(dpy, nullptr, nullptr));
@@ -410,8 +414,8 @@ TEST_P(EGLMultiContextTest, ReuseUnterminatedDisplay)
                              EGL_NONE};
 
     std::thread threadA = std::thread([&]() {
-        dpy = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
-                                    reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+        dpy = eglGetPlatformDisplay(GetEglPlatform(), reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY),
+                                    dispattrs);
         EXPECT_TRUE(dpy != EGL_NO_DISPLAY);
         EXPECT_EGL_TRUE(eglInitialize(dpy, nullptr, nullptr));
     });

@@ -11,10 +11,13 @@
 #include "modules/audio_processing/agc2/vad_wrapper.h"
 
 #include <array>
+#include <memory>
 #include <utility>
 
+#include "api/audio/audio_view.h"
 #include "common_audio/resampler/include/push_resampler.h"
 #include "modules/audio_processing/agc2/agc2_common.h"
+#include "modules/audio_processing/agc2/cpu_features.h"
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
 #include "modules/audio_processing/agc2/rnn_vad/features_extraction.h"
 #include "modules/audio_processing/agc2/rnn_vad/rnn.h"
@@ -31,7 +34,7 @@ class MonoVadImpl : public VoiceActivityDetectorWrapper::MonoVad {
       : features_extractor_(cpu_features), rnn_vad_(cpu_features) {}
   MonoVadImpl(const MonoVadImpl&) = delete;
   MonoVadImpl& operator=(const MonoVadImpl&) = delete;
-  ~MonoVadImpl() = default;
+  ~MonoVadImpl() override = default;
 
   int SampleRateHz() const override { return rnn_vad::kSampleRate24kHz; }
   void Reset() override { rnn_vad_.Reset(); }
@@ -71,12 +74,12 @@ VoiceActivityDetectorWrapper::VoiceActivityDetectorWrapper(
     std::unique_ptr<MonoVad> vad,
     int sample_rate_hz)
     : vad_reset_period_frames_(
-          rtc::CheckedDivExact(vad_reset_period_ms, kFrameDurationMs)),
-      frame_size_(rtc::CheckedDivExact(sample_rate_hz, kNumFramesPerSecond)),
+          CheckedDivExact(vad_reset_period_ms, kFrameDurationMs)),
+      frame_size_(CheckedDivExact(sample_rate_hz, kNumFramesPerSecond)),
       time_to_vad_reset_(vad_reset_period_frames_),
       vad_(std::move(vad)),
       resampled_buffer_(
-          rtc::CheckedDivExact(vad_->SampleRateHz(), kNumFramesPerSecond)),
+          CheckedDivExact(vad_->SampleRateHz(), kNumFramesPerSecond)),
       resampler_(frame_size_,
                  resampled_buffer_.size(),
                  /*num_channels=*/1) {

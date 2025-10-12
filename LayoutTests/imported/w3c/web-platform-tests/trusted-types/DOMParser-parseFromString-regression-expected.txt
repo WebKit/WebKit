@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'blabla'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'blabla'.
-
 
 probe
 

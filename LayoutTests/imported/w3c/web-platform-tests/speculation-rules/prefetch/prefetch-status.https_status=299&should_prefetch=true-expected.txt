@@ -1,0 +1,3 @@
+
+PASS Check that only prefetched requests with status in 200-299 range are used.
+

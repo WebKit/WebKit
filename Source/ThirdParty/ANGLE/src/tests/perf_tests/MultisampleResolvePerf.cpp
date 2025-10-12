@@ -7,6 +7,10 @@
 //   Performance tests for glBlitFramebuffer and glInvalidateFramebuffer where the framebuffer is
 //   multisampled.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "ANGLEPerfTest.h"
 
 #include "util/shader_utils.h"

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ProfilerBytecodeSequence.h"
-#include "ProfilerBytecodes.h"
+#include <JavaScriptCore/ProfilerBytecodeSequence.h>
+#include <JavaScriptCore/ProfilerBytecodes.h>
 
 namespace JSC { namespace Profiler {
 

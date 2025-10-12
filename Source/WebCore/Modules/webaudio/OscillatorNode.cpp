@@ -434,7 +434,7 @@ void OscillatorNode::setPeriodicWave(PeriodicWave& periodicWave)
     
     // This synchronizes with process().
     Locker locker { m_processLock };
-    m_periodicWave = &periodicWave;
+    m_periodicWave = periodicWave;
     m_type = OscillatorType::Custom;
 }
 

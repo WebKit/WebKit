@@ -4,7 +4,6 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
 flags:
   - noStrict
 description: |
@@ -24,9 +23,6 @@ test();
 
 function test()
 {
-  printBugNumber(BUGNUMBER);
-  printStatus (summary);
- 
   function f(s) {
     return this.eval(s);
   }

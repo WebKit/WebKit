@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "JITCompilationMode.h"
+#include <JavaScriptCore/JITCompilationMode.h>
 
 #if ENABLE(DFG_JIT)
 
-#include "Options.h"
+#include <JavaScriptCore/Options.h>
 #include <limits.h>
 #include <wtf/text/StringImpl.h>
 

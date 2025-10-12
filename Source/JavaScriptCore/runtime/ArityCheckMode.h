@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-enum ArityCheckMode : uint8_t {
+enum class ArityCheckMode : uint8_t {
     ArityCheckNotRequired,
     MustCheckArity
 };

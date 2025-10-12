@@ -13,7 +13,9 @@
 #include <bitset>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
+#include "api/video/video_bitrate_allocation.h"
 #include "common_video/generic_frame_descriptor/generic_frame_info.h"
 #include "modules/video_coding/svc/scalable_video_controller.h"
 

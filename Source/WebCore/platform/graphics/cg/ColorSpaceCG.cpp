@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,189 +37,153 @@ namespace WebCore {
 
 template<const CFStringRef& colorSpaceNameGlobalConstant> static CGColorSpaceRef namedColorSpace()
 {
-    static NeverDestroyed<RetainPtr<CGColorSpaceRef>> colorSpace;
+    static LazyNeverDestroyed<RetainPtr<CGColorSpaceRef>> colorSpace;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        colorSpace.get() = adoptCF(CGColorSpaceCreateWithName(colorSpaceNameGlobalConstant));
+        colorSpace.construct(adoptCF(CGColorSpaceCreateWithName(RetainPtr { colorSpaceNameGlobalConstant }.get())));
         ASSERT(colorSpace.get());
     });
     return colorSpace.get().get();
 }
 
-#if HAVE(CORE_GRAPHICS_CREATE_EXTENDED_COLOR_SPACE)
 template<const CFStringRef& colorSpaceNameGlobalConstant> static CGColorSpaceRef extendedNamedColorSpace()
 {
-    static NeverDestroyed<RetainPtr<CGColorSpaceRef>> colorSpace;
+    static LazyNeverDestroyed<RetainPtr<CGColorSpaceRef>> colorSpace;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        colorSpace.get() = adoptCF(CGColorSpaceCreateExtended(namedColorSpace<colorSpaceNameGlobalConstant>()));
+        colorSpace.construct(adoptCF(CGColorSpaceCreateExtended(RetainPtr { namedColorSpace<colorSpaceNameGlobalConstant>() }.get())));
         ASSERT(colorSpace.get());
     });
     return colorSpace.get().get();
 }
-#endif
 
-CGColorSpaceRef sRGBColorSpaceRef()
+CGColorSpaceRef sRGBColorSpaceSingleton()
 {
     return namedColorSpace<kCGColorSpaceSRGB>();
 }
 
-#if HAVE(CORE_GRAPHICS_ADOBE_RGB_1998_COLOR_SPACE)
-CGColorSpaceRef adobeRGB1998ColorSpaceRef()
+CGColorSpaceRef adobeRGB1998ColorSpaceSingleton()
 {
     return namedColorSpace<kCGColorSpaceAdobeRGB1998>();
 }
-#endif
 
-#if HAVE(CORE_GRAPHICS_DISPLAY_P3_COLOR_SPACE)
-CGColorSpaceRef displayP3ColorSpaceRef()
+CGColorSpaceRef displayP3ColorSpaceSingleton()
 {
     return namedColorSpace<kCGColorSpaceDisplayP3>();
 }
-#endif
 
-#if HAVE(CORE_GRAPHICS_EXTENDED_ADOBE_RGB_1998_COLOR_SPACE)
-CGColorSpaceRef extendedAdobeRGB1998ColorSpaceRef()
+CGColorSpaceRef extendedAdobeRGB1998ColorSpaceSingleton()
 {
     return extendedNamedColorSpace<kCGColorSpaceAdobeRGB1998>();
 }
-#endif
 
-#if HAVE(CORE_GRAPHICS_EXTENDED_DISPLAY_P3_COLOR_SPACE)
-CGColorSpaceRef extendedDisplayP3ColorSpaceRef()
+CGColorSpaceRef extendedDisplayP3ColorSpaceSingleton()
 {
     return namedColorSpace<kCGColorSpaceExtendedDisplayP3>();
 }
-#endif
 
-#if HAVE(CORE_GRAPHICS_EXTENDED_ITUR_2020_COLOR_SPACE)
-CGColorSpaceRef extendedITUR_2020ColorSpaceRef()
+CGColorSpaceRef extendedITUR_2020ColorSpaceSingleton()
 {
     return namedColorSpace<kCGColorSpaceExtendedITUR_2020>();
 }
-#endif
 
-#if HAVE(CORE_GRAPHICS_EXTENDED_LINEAR_SRGB_COLOR_SPACE)
-CGColorSpaceRef extendedLinearSRGBColorSpaceRef()
+CGColorSpaceRef extendedLinearDisplayP3ColorSpaceSingleton()
+{
+    return namedColorSpace<kCGColorSpaceExtendedLinearDisplayP3>();
+}
+
+CGColorSpaceRef extendedLinearSRGBColorSpaceSingleton()
 {
     return namedColorSpace<kCGColorSpaceExtendedLinearSRGB>();
 }
-#endif
 
-#if HAVE(CORE_GRAPHICS_EXTENDED_ROMMRGB_COLOR_SPACE)
-CGColorSpaceRef extendedROMMRGBColorSpaceRef()
+CGColorSpaceRef extendedROMMRGBColorSpaceSingleton()
 {
     return extendedNamedColorSpace<kCGColorSpaceROMMRGB>();
 }
-#endif
 
-#if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
-CGColorSpaceRef extendedSRGBColorSpaceRef()
+CGColorSpaceRef extendedSRGBColorSpaceSingleton()
 {
     return namedColorSpace<kCGColorSpaceExtendedSRGB>();
 }
-#endif
 
-#if HAVE(CORE_GRAPHICS_ITUR_2020_COLOR_SPACE)
-CGColorSpaceRef ITUR_2020ColorSpaceRef()
+CGColorSpaceRef ITUR_2020ColorSpaceSingleton()
 {
     return namedColorSpace<kCGColorSpaceITUR_2020>();
 }
-#endif
 
-#if HAVE(CORE_GRAPHICS_LINEAR_SRGB_COLOR_SPACE)
-CGColorSpaceRef linearSRGBColorSpaceRef()
+CGColorSpaceRef linearDisplayP3ColorSpaceSingleton()
+{
+    return namedColorSpace<kCGColorSpaceLinearDisplayP3>();
+}
+
+CGColorSpaceRef linearSRGBColorSpaceSingleton()
 {
     return namedColorSpace<kCGColorSpaceLinearSRGB>();
 }
-#endif
 
-#if HAVE(CORE_GRAPHICS_ROMMRGB_COLOR_SPACE)
-CGColorSpaceRef ROMMRGBColorSpaceRef()
+CGColorSpaceRef ROMMRGBColorSpaceSingleton()
 {
     return namedColorSpace<kCGColorSpaceROMMRGB>();
 }
-#endif
 
-#if HAVE(CORE_GRAPHICS_XYZ_D50_COLOR_SPACE)
-CGColorSpaceRef xyzD50ColorSpaceRef()
+CGColorSpaceRef xyzD50ColorSpaceSingleton()
 {
     return namedColorSpace<kCGColorSpaceGenericXYZ>();
 }
 
 // FIXME: Figure out how to create a CoreGraphics XYZ-D65 color space and add a xyzD65ColorSpaceRef(). Perhaps CGColorSpaceCreateCalibratedRGB() with identify black point, D65 white point, and identity matrix.
 
-#endif
-
 std::optional<ColorSpace> colorSpaceForCGColorSpace(CGColorSpaceRef colorSpace)
 {
     // First test for the four most common spaces, sRGB, Extended sRGB, DisplayP3 and Linear sRGB, and then test
     // the reset in alphabetical order.
-    // FIXME: Consider using a UncheckedKeyHashMap (with CFHash based keys) rather than the linear set of tests.
+    // FIXME: Consider using a HashMap (with CFHash based keys) rather than the linear set of tests.
 
-    if (CGColorSpaceEqualToColorSpace(colorSpace, sRGBColorSpaceRef()))
+    if (CGColorSpaceEqualToColorSpace(colorSpace, sRGBColorSpaceSingleton()))
         return ColorSpace::SRGB;
 
-#if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
-    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedSRGBColorSpaceRef()))
+    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedSRGBColorSpaceSingleton()))
         return ColorSpace::ExtendedSRGB;
-#endif
 
-#if HAVE(CORE_GRAPHICS_DISPLAY_P3_COLOR_SPACE)
-    if (CGColorSpaceEqualToColorSpace(colorSpace, displayP3ColorSpaceRef()))
+    if (CGColorSpaceEqualToColorSpace(colorSpace, displayP3ColorSpaceSingleton()))
         return ColorSpace::DisplayP3;
-#endif
 
-#if HAVE(CORE_GRAPHICS_LINEAR_SRGB_COLOR_SPACE)
-    if (CGColorSpaceEqualToColorSpace(colorSpace, linearSRGBColorSpaceRef()))
+    if (CGColorSpaceEqualToColorSpace(colorSpace, linearSRGBColorSpaceSingleton()))
         return ColorSpace::LinearSRGB;
-#endif
 
-
-#if HAVE(CORE_GRAPHICS_ADOBE_RGB_1998_COLOR_SPACE)
-    if (CGColorSpaceEqualToColorSpace(colorSpace, adobeRGB1998ColorSpaceRef()))
+    if (CGColorSpaceEqualToColorSpace(colorSpace, adobeRGB1998ColorSpaceSingleton()))
         return ColorSpace::A98RGB;
-#endif
 
-#if HAVE(CORE_GRAPHICS_EXTENDED_ADOBE_RGB_1998_COLOR_SPACE)
-    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedAdobeRGB1998ColorSpaceRef()))
+    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedAdobeRGB1998ColorSpaceSingleton()))
         return ColorSpace::ExtendedA98RGB;
-#endif
 
-#if HAVE(CORE_GRAPHICS_EXTENDED_DISPLAY_P3_COLOR_SPACE)
-    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedDisplayP3ColorSpaceRef()))
+    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedDisplayP3ColorSpaceSingleton()))
         return ColorSpace::ExtendedDisplayP3;
-#endif
 
-#if HAVE(CORE_GRAPHICS_EXTENDED_LINEAR_SRGB_COLOR_SPACE)
-    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedLinearSRGBColorSpaceRef()))
+    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedLinearDisplayP3ColorSpaceSingleton()))
+        return ColorSpace::ExtendedLinearDisplayP3;
+
+    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedLinearSRGBColorSpaceSingleton()))
         return ColorSpace::ExtendedLinearSRGB;
-#endif
 
-#if HAVE(CORE_GRAPHICS_EXTENDED_ITUR_2020_COLOR_SPACE)
-    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedITUR_2020ColorSpaceRef()))
+    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedITUR_2020ColorSpaceSingleton()))
         return ColorSpace::ExtendedRec2020;
-#endif
 
-#if HAVE(CORE_GRAPHICS_EXTENDED_ROMMRGB_COLOR_SPACE)
-    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedROMMRGBColorSpaceRef()))
+    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedROMMRGBColorSpaceSingleton()))
         return ColorSpace::ExtendedProPhotoRGB;
-#endif
 
-#if HAVE(CORE_GRAPHICS_ITUR_2020_COLOR_SPACE)
-    if (CGColorSpaceEqualToColorSpace(colorSpace, ITUR_2020ColorSpaceRef()))
+    if (CGColorSpaceEqualToColorSpace(colorSpace, ITUR_2020ColorSpaceSingleton()))
         return ColorSpace::Rec2020;
-#endif
 
-#if HAVE(CORE_GRAPHICS_ROMMRGB_COLOR_SPACE)
-    if (CGColorSpaceEqualToColorSpace(colorSpace, ROMMRGBColorSpaceRef()))
+    if (CGColorSpaceEqualToColorSpace(colorSpace, linearDisplayP3ColorSpaceSingleton()))
+        return ColorSpace::LinearDisplayP3;
+
+    if (CGColorSpaceEqualToColorSpace(colorSpace, ROMMRGBColorSpaceSingleton()))
         return ColorSpace::ProPhotoRGB;
-#endif
 
-#if HAVE(CORE_GRAPHICS_XYZ_D50_COLOR_SPACE)
-    if (CGColorSpaceEqualToColorSpace(colorSpace, xyzD50ColorSpaceRef()))
+    if (CGColorSpaceEqualToColorSpace(colorSpace, xyzD50ColorSpaceSingleton()))
         return ColorSpace::XYZ_D50;
-#endif
 
     // FIXME: Add support for remaining color spaces to support more direct conversions.
 

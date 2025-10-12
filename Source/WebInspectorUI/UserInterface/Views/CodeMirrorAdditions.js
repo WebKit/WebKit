@@ -266,12 +266,11 @@
         var style = this._token(stream, state);
 
         if (style) {
-            if (style === "atom") {
-                if (stream.current() === "url") {
-                    // If the current text is "url" then we should expect the next string token to be a link.
-                    state._expectLink = true;
-                } else if (hexColorRegex.test(stream.current()))
-                    style = style + " hex-color";
+            if (/\batom\b/.test(style) && hexColorRegex.test(stream.current())) {
+                style = style + " hex-color";
+            } else if (/\bvariable\b/.test(style) && /\bcallee\b/.test(style) && stream.current() === "url") {
+                // If the current text is "url" then we should expect the next string token to be a link.
+                state._expectLink = true;
             } else if (style === "error") {
                 if (state.state=== "atBlock" || state.state === "atBlock_parens") {
                     switch (stream.current()) {
@@ -451,16 +450,6 @@
         var uniqueBookmark = this.setBookmark(position, options);
         uniqueBookmark.__uniqueBookmark = true;
         return uniqueBookmark;
-    });
-
-    CodeMirror.defineExtension("toggleLineClass", function(line, where, className) {
-        if (this.hasLineClass(line, where, className)) {
-            this.removeLineClass(line, where, className);
-            return false;
-        }
-
-        this.addLineClass(line, where, className);
-        return true;
     });
 
     CodeMirror.defineExtension("alterNumberInRange", function(amount, startPosition, endPosition, updateSelection) {

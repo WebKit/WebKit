@@ -299,8 +299,11 @@ enum class SPIRVExtensions
     // GL_ARB_fragment_shader_interlock / SPV_EXT_fragment_shader_interlock
     FragmentShaderInterlockARB = 1,
 
-    InvalidEnum = 2,
-    EnumCount   = 2,
+    // GL_EXT_fragment_shading_rate / SPV_KHR_fragment_shading_rate
+    FragmentShadingRate = 2,
+
+    InvalidEnum = 3,
+    EnumCount   = 3,
 };
 
 // Helper class to construct SPIR-V

@@ -229,7 +229,7 @@ ALWAYS_INLINE uint64_t toWebAssemblyValue(JSGlobalObject* globalObject, const Wa
             RELEASE_ASSERT_NOT_REACHED();
         else {
             value = Wasm::internalizeExternref(value);
-            if (!Wasm::TypeInformation::castReference(value, type.isNullable(), type.index)) {
+            if (!Wasm::TypeInformation::isReferenceValueAssignable(value, type.isNullable(), type.index)) {
                 // FIXME: provide a better error message here
                 // https://bugs.webkit.org/show_bug.cgi?id=247746
                 return throwVMTypeError(globalObject, scope, "Argument value did not match the reference type"_s);

@@ -1,0 +1,73 @@
+
+Checking cursors with device pixel ratio of 1
+----------------------------------------------
+SUBTEST: top of view
+TEST CASE: y=0: Used custom cursor.
+TEST CASE: y=2: Ignored custom cursor.
+TEST CASE: y=24: Ignored custom cursor.
+TEST CASE: hidpi, y=0: Used custom cursor.
+TEST CASE: hidpi, y=2: Ignored custom cursor.
+TEST CASE: hidpi, y=49: Ignored custom cursor.
+
+SUBTEST: middle of view
+TEST CASE: y=0: Used custom cursor.
+TEST CASE: y=2: Used custom cursor.
+TEST CASE: y=24: Used custom cursor.
+TEST CASE: hidpi, y=0: Used custom cursor.
+TEST CASE: hidpi, y=2: Used custom cursor.
+TEST CASE: hidpi, y=49: Used custom cursor.
+
+SUBTEST: top of view (by scrolling)
+TEST CASE: y=0: Used custom cursor.
+TEST CASE: y=2: Ignored custom cursor.
+TEST CASE: y=24: Ignored custom cursor.
+TEST CASE: hidpi, y=0: Used custom cursor.
+TEST CASE: hidpi, y=2: Ignored custom cursor.
+TEST CASE: hidpi, y=49: Ignored custom cursor.
+
+SUBTEST: out of view (by scrolling)
+TEST CASE: y=0: Ignored custom cursor.
+TEST CASE: y=2: Ignored custom cursor.
+TEST CASE: y=24: Ignored custom cursor.
+TEST CASE: hidpi, y=0: Ignored custom cursor.
+TEST CASE: hidpi, y=2: Ignored custom cursor.
+TEST CASE: hidpi, y=49: Ignored custom cursor.
+
+Checking cursors with device pixel ratio of 2
+----------------------------------------------
+SUBTEST: top of view
+TEST CASE: y=0: Used custom cursor.
+TEST CASE: y=2: Ignored custom cursor.
+TEST CASE: y=24: Ignored custom cursor.
+TEST CASE: hidpi, y=0: Used custom cursor.
+TEST CASE: hidpi, y=2: Ignored custom cursor.
+TEST CASE: hidpi, y=49: Ignored custom cursor.
+
+SUBTEST: middle of view
+TEST CASE: y=0: Used custom cursor.
+TEST CASE: y=2: Used custom cursor.
+TEST CASE: y=24: Used custom cursor.
+TEST CASE: hidpi, y=0: Used custom cursor.
+TEST CASE: hidpi, y=2: Used custom cursor.
+TEST CASE: hidpi, y=49: Used custom cursor.
+
+SUBTEST: top of view (by scrolling)
+TEST CASE: y=0: Used custom cursor.
+TEST CASE: y=2: Ignored custom cursor.
+TEST CASE: y=24: Ignored custom cursor.
+TEST CASE: hidpi, y=0: Used custom cursor.
+TEST CASE: hidpi, y=2: Ignored custom cursor.
+TEST CASE: hidpi, y=49: Ignored custom cursor.
+
+SUBTEST: out of view (by scrolling)
+TEST CASE: y=0: Ignored custom cursor.
+TEST CASE: y=2: Ignored custom cursor.
+TEST CASE: y=24: Ignored custom cursor.
+TEST CASE: hidpi, y=0: Ignored custom cursor.
+TEST CASE: hidpi, y=2: Ignored custom cursor.
+TEST CASE: hidpi, y=49: Ignored custom cursor.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

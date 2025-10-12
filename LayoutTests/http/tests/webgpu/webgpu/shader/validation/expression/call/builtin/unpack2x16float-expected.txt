@@ -2,88 +2,55 @@
 PASS :values:stage="constant";type="u32"
 PASS :values:stage="constant";type="abstract-int"
 FAIL :values:stage="override";type="u32" assert_unreached:
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=178956970
-    OK
-  - INFO: subcase: value=357913941
-    OK
-  - INFO: subcase: value=715827882
-    OK
-  - INFO: subcase: value=894784853
-    OK
-  - INFO: subcase: value=1252698794
-    OK
-  - INFO: subcase: value=1431655765
-    OK
-  - INFO: subcase: value=1789569706
-    OK
-  - INFO: subcase: value=1968526676
-    OK
-  - INFO: subcase: value=2326440618
-    OK
-  - INFO: subcase: value=2505397588
-    OK
-  - INFO: subcase: value=2863311530
-    OK
-  - INFO: subcase: value=3042268500
-    OK
-  - INFO: subcase: value=3400182441
-    OK
-  - INFO: subcase: value=3579139412
-    OK
-  - INFO: subcase: value=3937053353
-    OK
-  - INFO: subcase: value=4116010324
-    OK
-  - EXPECTATION FAILED: subcase: value=536870911
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: value=0) INFO: subcase ran
+  - (in subcase: value=178956970) INFO: subcase ran
+  - (in subcase: value=357913941) INFO: subcase ran
+  - (in subcase: value=536870911) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/unpack2x16float.spec.js:86:37
-  - EXPECTATION FAILED: subcase: value=1073741823
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: value=536870911) INFO: subcase ran
+  - (in subcase: value=715827882) INFO: subcase ran
+  - (in subcase: value=894784853) INFO: subcase ran
+  - (in subcase: value=1073741823) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/unpack2x16float.spec.js:86:37
-  - EXPECTATION FAILED: subcase: value=1610612735
-    Expected validation error
+  - (in subcase: value=1073741823) INFO: subcase ran
+  - (in subcase: value=1252698794) INFO: subcase ran
+  - (in subcase: value=1431655765) INFO: subcase ran
+  - (in subcase: value=1610612735) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: value=2147483647
-    Expected validation error
+  - (in subcase: value=1610612735) INFO: subcase ran
+  - (in subcase: value=1789569706) INFO: subcase ran
+  - (in subcase: value=1968526676) INFO: subcase ran
+  - (in subcase: value=2147483647) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: value=2684354559
-    Expected validation error
+  - (in subcase: value=2147483647) INFO: subcase ran
+  - (in subcase: value=2326440618) INFO: subcase ran
+  - (in subcase: value=2505397588) INFO: subcase ran
+  - (in subcase: value=2684354559) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: value=3221225471
-    Expected validation error
+  - (in subcase: value=2684354559) INFO: subcase ran
+  - (in subcase: value=2863311530) INFO: subcase ran
+  - (in subcase: value=3042268500) INFO: subcase ran
+  - (in subcase: value=3221225471) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: value=3758096383
-    Expected validation error
+  - (in subcase: value=3221225471) INFO: subcase ran
+  - (in subcase: value=3400182441) INFO: subcase ran
+  - (in subcase: value=3579139412) INFO: subcase ran
+  - (in subcase: value=3758096383) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: value=4294967295
-    Expected validation error
+  - (in subcase: value=3758096383) INFO: subcase ran
+  - (in subcase: value=3937053353) INFO: subcase ran
+  - (in subcase: value=4116010324) INFO: subcase ran
+  - (in subcase: value=4294967295) EXPECTATION FAILED: Expected validation error
       at (elided: only 2 shown)
-  - INFO: subcase: value=536870911
-    OK
-  - INFO: subcase: value=1073741823
-    OK
-  - INFO: subcase: value=1610612735
-    OK
-  - INFO: subcase: value=2147483647
-    OK
-  - INFO: subcase: value=2684354559
-    OK
-  - INFO: subcase: value=3221225471
-    OK
-  - INFO: subcase: value=3758096383
-    OK
-  - INFO: subcase: value=4294967295
-    OK
+  - (in subcase: value=4294967295) INFO: subcase ran
  Reached unreachable code
 PASS :arguments:args="good"
 PASS :arguments:args="bad_no_args"

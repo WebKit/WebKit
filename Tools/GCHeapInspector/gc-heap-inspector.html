@@ -52,18 +52,25 @@
         }
 
         .node-id::before {
-            content: '@';
+            content: '#';
         }
 
         .node-id {
-            font-size: smaller;
-            color: silver;
-            display: none; /* Remove if you want to see cell identifiers. */
+            color: #888;
+            text-decoration: none;
+        }
+
+        .node-id:hover {
+            text-decoration: underline;
         }
 
         .node-address, .node-size, .node-label {
             font-family: monospace;
             color: gray;
+        }
+
+        .node-address {
+            display: none;
         }
         
         .retained-size {
@@ -90,6 +97,39 @@
             color: gray;
         }
 
+        .panel {
+            position: relative;
+            background-color: #f5f5fa;
+            border-radius: 6px;
+            padding: 6px;
+            margin: 3px;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #c25757;
+            color: white;
+            border: none;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-button:hover {
+            background-color: #ff8521;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
         .edge::after {
             content: ' ⟹';
             color: gray;
@@ -104,6 +144,15 @@
             list-style-type: none;
         }
         
+        .dominator-summary p {
+            margin: 0;
+            margin-left: 1.5em;
+        }
+
+        #details-clear-all {
+            margin-left: 20px;
+        }
+
         #description {
             position: fixed;
             margin: 300px calc((100vw - 500px) / 2);
@@ -143,7 +192,7 @@
     </header>
 
     <section id="description">
-        <h1>GC heap debugger</h2>
+        <h1>GC heap inspector</h2>
         <p>This page is for analyzing JSON dumps of the GC heap. To debug an issue that you think might be a leaked or abandoned object (often a Document or JSGlobalObject), load the test page, then navigate to about:blank or other simple page. Now simulate a memory warning (to clear the page cache) by issuing the following command in a Terminal window:
         <code>notifyutil -p org.WebKit.lowMemory</code>
         
@@ -156,7 +205,7 @@
         That command will generate a JSON file in /tmp (or equivalent); the file path is dumped to the system log. Drag that file onto the drop target in the top right (or use the ?filename= URL parameter).
         </p>
         <p>
-        For more information, see the wiki page on <a href="https://trac.webkit.org/wiki/Inspecting%20the%20GC%20heap">Inspecting the GC heap</a>.
+        For more information, see <a href="README.md">the README</a> and the wiki page on <a href="https://trac.webkit.org/wiki/Inspecting%20the%20GC%20heap">Inspecting the GC heap</a>.
         </p>
     </section>
 

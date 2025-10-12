@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
-#include "JSCell.h"
-#include "Options.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSCell.h>
+#include <JavaScriptCore/Options.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

@@ -42,7 +42,7 @@ namespace WebCore {
 class MediaSourceTrackGStreamer final: public ThreadSafeRefCounted<MediaSourceTrackGStreamer> {
 public:
     static Ref<MediaSourceTrackGStreamer> create(TrackPrivateBaseGStreamer::TrackType, TrackID, GRefPtr<GstCaps>&& initialCaps);
-    virtual ~MediaSourceTrackGStreamer();
+    ~MediaSourceTrackGStreamer();
 
     TrackPrivateBaseGStreamer::TrackType type() const { return m_type; }
     TrackID id() const { return m_id; }

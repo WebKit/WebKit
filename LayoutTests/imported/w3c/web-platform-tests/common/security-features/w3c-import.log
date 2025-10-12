@@ -15,4 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/README.md
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/types.md

@@ -6,46 +6,46 @@ layer at (0,0) size 800x600
       RenderBlock {H3} at (0,0) size 784x23
         RenderText {#text} at (0,0) size 194x22
           text run at (0,0) width 194: "With long hidden values"
-      RenderTable {TABLE} at (0,41) size 198x70 [border: (1px solid #FF0000)]
-        RenderTableSection {TBODY} at (1,1) size 196x67
-          RenderTableRow {TR} at (0,2) size 196x61
-            RenderTableCell {TD} at (2,2) size 192x61 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (1,1) size 190x43
-                RenderTextControl {INPUT} at (0,1) size 106x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-                RenderText {#text} at (105,0) size 5x19
-                  text run at (105,0) width 5: " "
-                RenderButton {INPUT} at (109,1) size 47x20 [color=#FFFFFF] [bgcolor=#007AFF] [border: (1px solid #FFFFFF)]
+      RenderTable {TABLE} at (0,41) size 198x68 [border: (1px solid #FF0000)]
+        RenderTableSection {TBODY} at (1,1) size 196x65
+          RenderTableRow {TR} at (0,2) size 196x59
+            RenderTableCell {TD} at (2,2) size 192x59 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {FORM} at (1,1) size 190x41
+                RenderTextControl {INPUT} at (0,1) size 105x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+                RenderText {#text} at (104,0) size 5x19
+                  text run at (104,0) width 5: " "
+                RenderButton {INPUT} at (108,1) size 47x20 [color=#FFFFFF] [bgcolor=#0088FF] [border: (1px solid #FFFFFF)]
                   RenderBlock (anonymous) at (12,3) size 22x14
                     RenderText at (0,0) size 22x14
                       text run at (0,0) width 22: " Go "
                 RenderText {#text} at (0,0) size 0x0
-                RenderBR {BR} at (155,0) size 1x19
-                RenderText {#text} at (0,22) size 190x20
-                  text run at (0,22) width 190: "Enter City Name or Zip Code"
-          RenderTableRow {TR} at (0,64) size 196x0
-      RenderBlock {H3} at (0,138) size 784x24
+                RenderBR {BR} at (154,0) size 1x19
+                RenderText {#text} at (0,21) size 190x19
+                  text run at (0,21) width 190: "Enter City Name or Zip Code"
+          RenderTableRow {TR} at (0,63) size 196x0
+      RenderBlock {H3} at (0,137) size 784x24
         RenderText {#text} at (0,0) size 201x22
           text run at (0,0) width 201: "With short hidden values"
-      RenderTable {TABLE} at (0,180) size 198x70 [border: (1px solid #FF0000)]
-        RenderTableSection {TBODY} at (1,1) size 196x67
-          RenderTableRow {TR} at (0,2) size 196x61
-            RenderTableCell {TD} at (2,2) size 192x61 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (1,1) size 190x43
-                RenderTextControl {INPUT} at (0,1) size 106x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-                RenderText {#text} at (105,0) size 5x19
-                  text run at (105,0) width 5: " "
-                RenderButton {INPUT} at (109,1) size 47x20 [color=#FFFFFF] [bgcolor=#007AFF] [border: (1px solid #FFFFFF)]
+      RenderTable {TABLE} at (0,179) size 198x68 [border: (1px solid #FF0000)]
+        RenderTableSection {TBODY} at (1,1) size 196x65
+          RenderTableRow {TR} at (0,2) size 196x59
+            RenderTableCell {TD} at (2,2) size 192x59 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {FORM} at (1,1) size 190x41
+                RenderTextControl {INPUT} at (0,1) size 105x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+                RenderText {#text} at (104,0) size 5x19
+                  text run at (104,0) width 5: " "
+                RenderButton {INPUT} at (108,1) size 47x20 [color=#FFFFFF] [bgcolor=#0088FF] [border: (1px solid #FFFFFF)]
                   RenderBlock (anonymous) at (12,3) size 22x14
                     RenderText at (0,0) size 22x14
                       text run at (0,0) width 22: " Go "
                 RenderText {#text} at (0,0) size 0x0
-                RenderBR {BR} at (155,0) size 1x19
-                RenderText {#text} at (0,22) size 190x20
-                  text run at (0,22) width 190: "Enter City Name or Zip Code"
-          RenderTableRow {TR} at (0,64) size 196x0
-layer at (19,58) size 92x14
-  RenderBlock {DIV} at (6,3) size 94x15
-layer at (8,126) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,118) size 784x3 [color=#808080] [border: (1px inset #808080)]
-layer at (19,197) size 92x14
-  RenderBlock {DIV} at (6,3) size 94x15
+                RenderBR {BR} at (154,0) size 1x19
+                RenderText {#text} at (0,21) size 190x19
+                  text run at (0,21) width 190: "Enter City Name or Zip Code"
+          RenderTableRow {TR} at (0,63) size 196x0
+layer at (18,58) size 93x14
+  RenderBlock {DIV} at (6,3) size 93x14
+layer at (8,125) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,116) size 784x3 [color=#808080] [border: (1px inset #808080)]
+layer at (18,195) size 93x14
+  RenderBlock {DIV} at (6,3) size 93x14

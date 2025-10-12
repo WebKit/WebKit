@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 features:
   - iterator-helpers
 description: |
@@ -18,7 +15,7 @@ function *gen() {
   yield 1;
 }
 
-assertThrowsInstanceOf(() => iteratorHelperProto.next.call(gen()), TypeError);
-assertThrowsInstanceOf(() => iteratorHelperProto.return.call(gen()), TypeError);
-assertThrowsInstanceOf(() => iteratorHelperProto.throw.call(gen()), TypeError);
+assert.throws(TypeError, () => iteratorHelperProto.next.call(gen()));
+assert.throws(TypeError, () => iteratorHelperProto.return.call(gen()));
+assert.throws(TypeError, () => iteratorHelperProto.throw.call(gen()));
 

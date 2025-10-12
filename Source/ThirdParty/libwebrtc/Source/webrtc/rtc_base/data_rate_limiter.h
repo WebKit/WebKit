@@ -15,7 +15,7 @@
 
 #include "rtc_base/system/rtc_export.h"
 
-namespace rtc {
+namespace webrtc {
 
 // Limits the rate of use to a certain maximum quantity per period of
 // time.  Use, for example, for simple bandwidth throttling.
@@ -53,6 +53,7 @@ class RTC_EXPORT DataRateLimiter {
   double period_start_;
   double period_end_;
 };
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_DATA_RATE_LIMITER_H_

@@ -8,9 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stdio.h>
-
+#include <cstdint>
+#include <cstdio>
 #include <iostream>
+#include <string>
 #include <vector>
 
 #include "absl/flags/flag.h"

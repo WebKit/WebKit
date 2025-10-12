@@ -1,16 +1,16 @@
-/* Copyright (c) 2018, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2018 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include "cpu_arm_linux.h"
 
@@ -18,6 +18,8 @@
 
 #include <gtest/gtest.h>
 
+
+namespace {
 
 TEST(ARMLinuxTest, CPUInfo) {
   struct CPUInfoTest {
@@ -93,7 +95,8 @@ TEST(ARMLinuxTest, CPUInfo) {
           // (Extra processors omitted.)
           "\n"
           "Hardware        : Qualcomm Technologies, Inc MSM8998\n",
-          HWCAP2_AES | HWCAP2_PMULL | HWCAP2_SHA1 | HWCAP2_SHA2,
+          CRYPTO_HWCAP2_AES | CRYPTO_HWCAP2_PMULL | CRYPTO_HWCAP2_SHA1 |
+              CRYPTO_HWCAP2_SHA2,
       },
       // Garbage should be tolerated.
       {
@@ -105,23 +108,24 @@ TEST(ARMLinuxTest, CPUInfo) {
       {
           "Features        : aes pmull sha1 sha2\n"
           "CPU architecture: 8\n",
-          HWCAP2_AES | HWCAP2_PMULL | HWCAP2_SHA1 | HWCAP2_SHA2,
+          CRYPTO_HWCAP2_AES | CRYPTO_HWCAP2_PMULL | CRYPTO_HWCAP2_SHA1 |
+              CRYPTO_HWCAP2_SHA2,
       },
       // Various combinations of ARMv8 flags.
       {
           "Features        : aes sha1 sha2\n"
           "CPU architecture: 8\n",
-          HWCAP2_AES | HWCAP2_SHA1 | HWCAP2_SHA2,
+          CRYPTO_HWCAP2_AES | CRYPTO_HWCAP2_SHA1 | CRYPTO_HWCAP2_SHA2,
       },
       {
           "Features        : pmull sha2\n"
           "CPU architecture: 8\n",
-          HWCAP2_PMULL | HWCAP2_SHA2,
+          CRYPTO_HWCAP2_PMULL | CRYPTO_HWCAP2_SHA2,
       },
       {
           "Features        : aes aes   aes not_aes aes aes \n"
           "CPU architecture: 8\n",
-          HWCAP2_AES,
+          CRYPTO_HWCAP2_AES,
       },
       {
           "Features        : \n"
@@ -146,3 +150,5 @@ TEST(ARMLinuxTest, CPUInfo) {
     EXPECT_EQ(t.hwcap2, crypto_get_arm_hwcap2_from_cpuinfo(&sp));
   }
 }
+
+}  // namespace

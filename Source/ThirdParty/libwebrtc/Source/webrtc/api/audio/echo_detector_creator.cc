@@ -9,13 +9,15 @@
  */
 #include "api/audio/echo_detector_creator.h"
 
+#include "api/audio/audio_processing.h"
 #include "api/make_ref_counted.h"
+#include "api/scoped_refptr.h"
 #include "modules/audio_processing/residual_echo_detector.h"
 
 namespace webrtc {
 
-rtc::scoped_refptr<EchoDetector> CreateEchoDetector() {
-  return rtc::make_ref_counted<ResidualEchoDetector>();
+scoped_refptr<EchoDetector> CreateEchoDetector() {
+  return make_ref_counted<ResidualEchoDetector>();
 }
 
 }  // namespace webrtc

@@ -1099,7 +1099,7 @@ JSValue JSTestGlobalObject::getConstructor(VM& vm, const JSGlobalObject* globalO
 
 void JSTestGlobalObject::destroy(JSC::JSCell* cell)
 {
-    JSTestGlobalObject* thisObject = static_cast<JSTestGlobalObject*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestGlobalObject* thisObject = static_cast<JSTestGlobalObject*>(cell);
     thisObject->JSTestGlobalObject::~JSTestGlobalObject();
 }
 
@@ -2263,7 +2263,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_testFeatureGetSecret
 
 JSC::GCClient::IsoSubspace* JSTestGlobalObject::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestGlobalObject, UseCustomHeapCellType::Yes>(vm,
+    return WebCore::subspaceForImpl<JSTestGlobalObject, UseCustomHeapCellType::Yes>(vm, "JSTestGlobalObject"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestGlobalObject.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestGlobalObject = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestGlobalObject.get(); },
@@ -2291,7 +2291,7 @@ bool JSTestGlobalObjectOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknow
 
 void JSTestGlobalObjectOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestGlobalObject = static_cast<JSTestGlobalObject*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestGlobalObject = static_cast<JSTestGlobalObject*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestGlobalObject->protectedWrapped().ptr(), jsTestGlobalObject);
 }

@@ -1,0 +1,9 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "target": "arm64e-apple-ios"
+  }
+ ],
+ "version": "1.0"
+}

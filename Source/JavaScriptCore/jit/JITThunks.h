@@ -27,14 +27,14 @@
 
 #if ENABLE(JIT)
 
-#include "CallData.h"
-#include "ImplementationVisibility.h"
-#include "Intrinsic.h"
-#include "MacroAssemblerCodeRef.h"
-#include "SlowPathFunction.h"
-#include "ThunkGenerator.h"
-#include "Weak.h"
-#include "WeakHandleOwner.h"
+#include <JavaScriptCore/CallData.h>
+#include <JavaScriptCore/ImplementationVisibility.h>
+#include <JavaScriptCore/Intrinsic.h>
+#include <JavaScriptCore/MacroAssemblerCodeRef.h>
+#include <JavaScriptCore/SlowPathFunction.h>
+#include <JavaScriptCore/ThunkGenerator.h>
+#include <JavaScriptCore/Weak.h>
+#include <JavaScriptCore/WeakHandleOwner.h>
 #include <tuple>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>

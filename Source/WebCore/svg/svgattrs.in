@@ -9,6 +9,7 @@ amplitude
 animate
 arabic-form
 ascent
+async
 attributeName
 attributeType
 autofocus
@@ -79,6 +80,7 @@ horiz-adv-x
 horiz-origin-x
 horiz-origin-y
 href
+hreflang
 image-rendering
 in
 in2
@@ -119,6 +121,7 @@ numOctaves
 offset
 onbegin
 onend
+onrepeat
 onzoom
 opacity
 operator
@@ -146,6 +149,7 @@ radius
 refX
 refY
 rel
+repeat
 repeatCount
 repeatDur
 requiredExtensions

@@ -38,7 +38,7 @@
 
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-static NSMapTable<WKDownload *, _WKDownload *> *downloadWrapperMap()
+static NSMapTable<WKDownload *, _WKDownload *> *downloadWrapperMapSingleton()
 {
     static NeverDestroyed<RetainPtr<NSMapTable>> table;
     if (!table.get())
@@ -63,10 +63,10 @@ IGNORE_WARNINGS_END
 
 + (instancetype)downloadWithDownload:(WKDownload *)download
 {
-    if (_WKDownload *wrapper = [downloadWrapperMap() objectForKey:download])
+    if (_WKDownload *wrapper = [downloadWrapperMapSingleton() objectForKey:download])
         return wrapper;
     auto wrapper = adoptNS([[_WKDownload alloc] initWithDownload2:download]);
-    [downloadWrapperMap() setObject:wrapper.get() forKey:download];
+    [downloadWrapperMapSingleton() setObject:wrapper.get() forKey:download];
     return wrapper.autorelease();
 }
 

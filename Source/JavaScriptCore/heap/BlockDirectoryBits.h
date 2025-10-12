@@ -38,7 +38,7 @@ namespace JSC {
     macro(live, Live) /* The set of block indices that have actual blocks. */\
     macro(empty, Empty) /* The set of all blocks that have no live objects and are not free listed. */ \
     macro(allocated, Allocated) /* The set of all blocks that are full of live objects. */\
-    macro(canAllocateButNotEmpty, CanAllocateButNotEmpty) /* The set of all blocks are neither empty nor retired (i.e. are more than minMarkedBlockUtilization full). */ \
+    macro(canAllocate, CanAllocate) /* The set of all blocks are live, not allocated yet, and not retired (i.e. are more than minMarkedBlockUtilization full). */ \
     macro(destructible, Destructible) /* The set of all blocks that may have destructors to run. */\
     macro(eden, Eden) /* The set of all blocks that have new objects since the last GC. */\
     macro(unswept, Unswept) /* The set of all blocks that could be swept by the incremental sweeper. */\
@@ -47,20 +47,6 @@ namespace JSC {
     /* These are computed during marking. */\
     macro(markingNotEmpty, MarkingNotEmpty) /* The set of all blocks that are not empty. */ \
     macro(markingRetired, MarkingRetired) /* The set of all blocks that are retired. */
-
-// FIXME: We defined canAllocateButNotEmpty and empty to be exclusive:
-//
-//     canAllocateButNotEmpty & empty == 0
-//
-// Instead of calling it canAllocate and making it inclusive:
-//
-//     canAllocate & empty == empty
-//
-// The latter is probably better. I'll leave it to a future bug to fix that, since breathing on
-// this code leads to regressions for days, and it's not clear that making this change would
-// improve perf since it would not change the collector's behavior, and either way the directory
-// has to look at both bitvectors.
-// https://bugs.webkit.org/show_bug.cgi?id=162121
 
 class BlockDirectoryBits {
     WTF_MAKE_TZONE_ALLOCATED(BlockDirectoryBits);

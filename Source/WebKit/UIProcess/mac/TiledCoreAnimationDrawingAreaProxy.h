@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if !PLATFORM(IOS_FAMILY)
+#if ENABLE(TILED_CA_DRAWING_AREA)
 
 #include "DrawingAreaProxy.h"
 #include <wtf/RefCounted.h>
@@ -45,6 +45,10 @@ public:
 
 private:
     TiledCoreAnimationDrawingAreaProxy(WebPageProxy&, WebProcessProxy&);
+
+#if ENABLE(TILED_CA_DRAWING_AREA)
+    DrawingAreaType type() const final { return DrawingAreaType::TiledCoreAnimation; }
+#endif
 
     // DrawingAreaProxy
     void deviceScaleFactorDidChange(CompletionHandler<void()>&&) override;
@@ -92,4 +96,4 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_DRAWING_AREA_PROXY(TiledCoreAnimationDrawingAreaProxy, DrawingAreaType::TiledCoreAnimation)
 
-#endif // !PLATFORM(IOS_FAMILY)
+#endif // ENABLE(TILED_CA_DRAWING_AREA)

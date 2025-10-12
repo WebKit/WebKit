@@ -28,15 +28,15 @@
 
 namespace TestWebKitAPI {
 
-static const LChar nullLChars[2] = { 0, 0 };
-static const UChar nullUChars[2] = { 0, 0 };
+static const Latin1Character nullLatin1Characters[2] = { 0, 0 };
+static const char16_t nullUTF16CodeUnits[2] = { 0, 0 };
 
 static const unsigned emptyStringHash = 0x4EC889EU;
 static const unsigned singleNullCharacterHash = 0x3D3ABF44U;
 
-static const LChar testALChars[6] = { 0x41, 0x95, 0xFF, 0x50, 0x01, 0 };
-static const UChar testAUChars[6] = { 0x41, 0x95, 0xFF, 0x50, 0x01, 0 };
-static const UChar testBUChars[6] = { 0x41, 0x95, 0xFFFF, 0x1080, 0x01, 0 };
+static const Latin1Character testALatin1Characters[6] = { 0x41, 0x95, 0xFF, 0x50, 0x01, 0 };
+static const char16_t testAUTF16CodeUnits[6] = { 0x41, 0x95, 0xFF, 0x50, 0x01, 0 };
+static const char16_t testBUTF16CodeUnits[6] = { 0x41, 0x95, 0xFFFF, 0x1080, 0x01, 0 };
 
 static const unsigned testAHash1 = 0xEA32B004;
 static const unsigned testAHash2 = 0x93F0F71E;
@@ -71,37 +71,37 @@ TEST(WTF, SuperFastHash_addCharacter)
 
     // Hashing five characters, checking the intermediate state after each is added.
     hasher = SuperFastHash();
-    hasher.addCharacter(testAUChars[0]);
+    hasher.addCharacter(testAUTF16CodeUnits[0]);
     ASSERT_EQ(testAHash1, hasher.hash());
     ASSERT_EQ(testAHash1 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacter(testAUChars[1]);
+    hasher.addCharacter(testAUTF16CodeUnits[1]);
     ASSERT_EQ(testAHash2, hasher.hash());
     ASSERT_EQ(testAHash2 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacter(testAUChars[2]);
+    hasher.addCharacter(testAUTF16CodeUnits[2]);
     ASSERT_EQ(testAHash3, hasher.hash());
     ASSERT_EQ(testAHash3 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacter(testAUChars[3]);
+    hasher.addCharacter(testAUTF16CodeUnits[3]);
     ASSERT_EQ(testAHash4, hasher.hash());
     ASSERT_EQ(testAHash4 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacter(testAUChars[4]);
+    hasher.addCharacter(testAUTF16CodeUnits[4]);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 
     // Hashing a second set of five characters, including non-Latin-1 characters.
     hasher = SuperFastHash();
-    hasher.addCharacter(testBUChars[0]);
+    hasher.addCharacter(testBUTF16CodeUnits[0]);
     ASSERT_EQ(testBHash1, hasher.hash());
     ASSERT_EQ(testBHash1 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacter(testBUChars[1]);
+    hasher.addCharacter(testBUTF16CodeUnits[1]);
     ASSERT_EQ(testBHash2, hasher.hash());
     ASSERT_EQ(testBHash2 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacter(testBUChars[2]);
+    hasher.addCharacter(testBUTF16CodeUnits[2]);
     ASSERT_EQ(testBHash3, hasher.hash());
     ASSERT_EQ(testBHash3 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacter(testBUChars[3]);
+    hasher.addCharacter(testBUTF16CodeUnits[3]);
     ASSERT_EQ(testBHash4, hasher.hash());
     ASSERT_EQ(testBHash4 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacter(testBUChars[4]);
+    hasher.addCharacter(testBUTF16CodeUnits[4]);
     ASSERT_EQ(testBHash5, hasher.hash());
     ASSERT_EQ(testBHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 }
@@ -112,192 +112,192 @@ TEST(WTF, SuperFastHash_addCharacters)
 
     // Hashing zero characters.
     hasher = SuperFastHash();
-    hasher.addCharacters(static_cast<LChar*>(0), 0);
+    hasher.addCharacters(static_cast<Latin1Character*>(0), 0);
     ASSERT_EQ(emptyStringHash, hasher.hash());
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(nullLChars, 0);
+    hasher.addCharacters(nullLatin1Characters, 0);
     ASSERT_EQ(emptyStringHash, hasher.hash());
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(nullLChars);
+    hasher.addCharacters(nullLatin1Characters);
     ASSERT_EQ(emptyStringHash, hasher.hash());
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(static_cast<UChar*>(0), 0);
+    hasher.addCharacters(static_cast<char16_t*>(0), 0);
     ASSERT_EQ(emptyStringHash, hasher.hash());
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(nullUChars, 0);
+    hasher.addCharacters(nullUTF16CodeUnits, 0);
     ASSERT_EQ(emptyStringHash, hasher.hash());
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(nullUChars);
+    hasher.addCharacters(nullUTF16CodeUnits);
     ASSERT_EQ(emptyStringHash, hasher.hash());
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 
     // Hashing one character.
     hasher = SuperFastHash();
-    hasher.addCharacters(nullLChars, 1);
+    hasher.addCharacters(nullLatin1Characters, 1);
     ASSERT_EQ(singleNullCharacterHash, hasher.hash());
     ASSERT_EQ(singleNullCharacterHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(nullUChars, 1);
+    hasher.addCharacters(nullUTF16CodeUnits, 1);
     ASSERT_EQ(singleNullCharacterHash, hasher.hash());
     ASSERT_EQ(singleNullCharacterHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 
     // Hashing five characters, all at once.
     hasher = SuperFastHash();
-    hasher.addCharacters(testALChars, 5);
+    hasher.addCharacters(testALatin1Characters, 5);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(testALChars);
+    hasher.addCharacters(testALatin1Characters);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(testAUChars, 5);
+    hasher.addCharacters(testAUTF16CodeUnits, 5);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(testAUChars);
+    hasher.addCharacters(testAUTF16CodeUnits);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(testBUChars, 5);
+    hasher.addCharacters(testBUTF16CodeUnits, 5);
     ASSERT_EQ(testBHash5, hasher.hash());
     ASSERT_EQ(testBHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(testBUChars);
+    hasher.addCharacters(testBUTF16CodeUnits);
     ASSERT_EQ(testBHash5, hasher.hash());
     ASSERT_EQ(testBHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 
     // Hashing five characters, in groups of two, then the last one.
     hasher = SuperFastHash();
-    hasher.addCharacters(testALChars, 2);
+    hasher.addCharacters(testALatin1Characters, 2);
     ASSERT_EQ(testAHash2, hasher.hash());
     ASSERT_EQ(testAHash2 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacters(testALChars + 2, 2);
+    hasher.addCharacters(testALatin1Characters + 2, 2);
     ASSERT_EQ(testAHash4, hasher.hash());
     ASSERT_EQ(testAHash4 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacters(testALChars + 4, 1);
+    hasher.addCharacters(testALatin1Characters + 4, 1);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(testALChars, 2);
-    hasher.addCharacters(testALChars + 2, 2);
-    hasher.addCharacters(testALChars + 4);
+    hasher.addCharacters(testALatin1Characters, 2);
+    hasher.addCharacters(testALatin1Characters + 2, 2);
+    hasher.addCharacters(testALatin1Characters + 4);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(testAUChars, 2);
+    hasher.addCharacters(testAUTF16CodeUnits, 2);
     ASSERT_EQ(testAHash2, hasher.hash());
     ASSERT_EQ(testAHash2 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacters(testAUChars + 2, 2);
+    hasher.addCharacters(testAUTF16CodeUnits + 2, 2);
     ASSERT_EQ(testAHash4, hasher.hash());
     ASSERT_EQ(testAHash4 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacters(testAUChars + 4, 1);
+    hasher.addCharacters(testAUTF16CodeUnits + 4, 1);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(testAUChars, 2);
-    hasher.addCharacters(testAUChars + 2, 2);
-    hasher.addCharacters(testAUChars + 4);
+    hasher.addCharacters(testAUTF16CodeUnits, 2);
+    hasher.addCharacters(testAUTF16CodeUnits + 2, 2);
+    hasher.addCharacters(testAUTF16CodeUnits + 4);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(testBUChars, 2);
+    hasher.addCharacters(testBUTF16CodeUnits, 2);
     ASSERT_EQ(testBHash2, hasher.hash());
     ASSERT_EQ(testBHash2 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacters(testBUChars + 2, 2);
+    hasher.addCharacters(testBUTF16CodeUnits + 2, 2);
     ASSERT_EQ(testBHash4, hasher.hash());
     ASSERT_EQ(testBHash4 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacters(testBUChars + 4, 1);
+    hasher.addCharacters(testBUTF16CodeUnits + 4, 1);
     ASSERT_EQ(testBHash5, hasher.hash());
     ASSERT_EQ(testBHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(testBUChars, 2);
-    hasher.addCharacters(testBUChars + 2, 2);
-    hasher.addCharacters(testBUChars + 4);
+    hasher.addCharacters(testBUTF16CodeUnits, 2);
+    hasher.addCharacters(testBUTF16CodeUnits + 2, 2);
+    hasher.addCharacters(testBUTF16CodeUnits + 4);
     ASSERT_EQ(testBHash5, hasher.hash());
     ASSERT_EQ(testBHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 
     // Hashing five characters, the first three, then the last two.
     hasher = SuperFastHash();
-    hasher.addCharacters(testALChars, 3);
+    hasher.addCharacters(testALatin1Characters, 3);
     ASSERT_EQ(testAHash3, hasher.hash());
     ASSERT_EQ(testAHash3 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacters(testALChars + 3, 2);
+    hasher.addCharacters(testALatin1Characters + 3, 2);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(testALChars, 3);
+    hasher.addCharacters(testALatin1Characters, 3);
     ASSERT_EQ(testAHash3, hasher.hash());
     ASSERT_EQ(testAHash3 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacters(testALChars + 3);
+    hasher.addCharacters(testALatin1Characters + 3);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(testAUChars, 3);
+    hasher.addCharacters(testAUTF16CodeUnits, 3);
     ASSERT_EQ(testAHash3, hasher.hash());
     ASSERT_EQ(testAHash3 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacters(testAUChars + 3, 2);
+    hasher.addCharacters(testAUTF16CodeUnits + 3, 2);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(testAUChars, 3);
+    hasher.addCharacters(testAUTF16CodeUnits, 3);
     ASSERT_EQ(testAHash3, hasher.hash());
     ASSERT_EQ(testAHash3 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacters(testAUChars + 3, 2);
+    hasher.addCharacters(testAUTF16CodeUnits + 3, 2);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(testBUChars, 3);
+    hasher.addCharacters(testBUTF16CodeUnits, 3);
     ASSERT_EQ(testBHash3, hasher.hash());
     ASSERT_EQ(testBHash3 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacters(testBUChars + 3, 2);
+    hasher.addCharacters(testBUTF16CodeUnits + 3, 2);
     ASSERT_EQ(testBHash5, hasher.hash());
     ASSERT_EQ(testBHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharacters(testBUChars, 3);
-    hasher.addCharacters(testBUChars + 3);
+    hasher.addCharacters(testBUTF16CodeUnits, 3);
+    hasher.addCharacters(testBUTF16CodeUnits + 3);
     ASSERT_EQ(testBHash5, hasher.hash());
     ASSERT_EQ(testBHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 
     // Hashing zero characters after hashing other characters.
     hasher = SuperFastHash();
-    hasher.addCharacters(nullLChars, 0);
-    hasher.addCharacters(nullLChars, 0);
+    hasher.addCharacters(nullLatin1Characters, 0);
+    hasher.addCharacters(nullLatin1Characters, 0);
     ASSERT_EQ(emptyStringHash, hasher.hash());
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 
     hasher = SuperFastHash();
-    hasher.addCharacters(testALChars, 1);
-    hasher.addCharacters(nullLChars, 0);
+    hasher.addCharacters(testALatin1Characters, 1);
+    hasher.addCharacters(nullLatin1Characters, 0);
     ASSERT_EQ(testAHash1, hasher.hash());
     ASSERT_EQ(testAHash1 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 
     hasher = SuperFastHash();
-    hasher.addCharacters(testALChars, 2);
-    hasher.addCharacters(nullLChars, 0);
+    hasher.addCharacters(testALatin1Characters, 2);
+    hasher.addCharacters(nullLatin1Characters, 0);
     ASSERT_EQ(testAHash2, hasher.hash());
     ASSERT_EQ(testAHash2 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 
     hasher = SuperFastHash();
-    hasher.addCharacters(testAUChars, 3);
-    hasher.addCharacters(nullLChars, 0);
+    hasher.addCharacters(testAUTF16CodeUnits, 3);
+    hasher.addCharacters(nullLatin1Characters, 0);
     ASSERT_EQ(testAHash3, hasher.hash());
     ASSERT_EQ(testAHash3 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 
     hasher = SuperFastHash();
-    hasher.addCharacters(testALChars, 4);
-    hasher.addCharacters(nullLChars, 0);
+    hasher.addCharacters(testALatin1Characters, 4);
+    hasher.addCharacters(nullLatin1Characters, 0);
     ASSERT_EQ(testAHash4, hasher.hash());
     ASSERT_EQ(testAHash4 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 
     hasher = SuperFastHash();
-    hasher.addCharacters(testALChars, 5);
-    hasher.addCharacters(nullLChars, 0);
+    hasher.addCharacters(testALatin1Characters, 5);
+    hasher.addCharacters(nullLatin1Characters, 0);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 }
@@ -308,125 +308,125 @@ TEST(WTF, SuperFastHash_addCharactersAssumingAligned)
 
     // Hashing zero characters.
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(static_cast<LChar*>(0), 0);
+    hasher.addCharactersAssumingAligned(static_cast<Latin1Character*>(0), 0);
     ASSERT_EQ(emptyStringHash, hasher.hash());
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(nullLChars, 0);
+    hasher.addCharactersAssumingAligned(nullLatin1Characters, 0);
     ASSERT_EQ(emptyStringHash, hasher.hash());
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(static_cast<UChar*>(0), 0);
+    hasher.addCharactersAssumingAligned(static_cast<char16_t*>(0), 0);
     ASSERT_EQ(emptyStringHash, hasher.hash());
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(nullUChars, 0);
+    hasher.addCharactersAssumingAligned(nullUTF16CodeUnits, 0);
     ASSERT_EQ(emptyStringHash, hasher.hash());
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(nullUChars);
+    hasher.addCharactersAssumingAligned(nullUTF16CodeUnits);
     ASSERT_EQ(emptyStringHash, hasher.hash());
     ASSERT_EQ(emptyStringHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 
     // Hashing one character.
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(nullLChars, 1);
+    hasher.addCharactersAssumingAligned(nullLatin1Characters, 1);
     ASSERT_EQ(singleNullCharacterHash, hasher.hash());
     ASSERT_EQ(singleNullCharacterHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(nullUChars, 1);
+    hasher.addCharactersAssumingAligned(nullUTF16CodeUnits, 1);
     ASSERT_EQ(singleNullCharacterHash, hasher.hash());
     ASSERT_EQ(singleNullCharacterHash & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 
     // Hashing five characters, all at once.
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(testALChars, 5);
+    hasher.addCharactersAssumingAligned(testALatin1Characters, 5);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(testALChars);
+    hasher.addCharactersAssumingAligned(testALatin1Characters);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(testAUChars, 5);
+    hasher.addCharactersAssumingAligned(testAUTF16CodeUnits, 5);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(testAUChars);
+    hasher.addCharactersAssumingAligned(testAUTF16CodeUnits);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(testBUChars, 5);
+    hasher.addCharactersAssumingAligned(testBUTF16CodeUnits, 5);
     ASSERT_EQ(testBHash5, hasher.hash());
     ASSERT_EQ(testBHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(testBUChars);
+    hasher.addCharactersAssumingAligned(testBUTF16CodeUnits);
     ASSERT_EQ(testBHash5, hasher.hash());
     ASSERT_EQ(testBHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 
     // Hashing five characters, in groups of two, then the last one.
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(testALChars, 2);
+    hasher.addCharactersAssumingAligned(testALatin1Characters, 2);
     ASSERT_EQ(testAHash2, hasher.hash());
     ASSERT_EQ(testAHash2 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharactersAssumingAligned(testALChars + 2, 2);
+    hasher.addCharactersAssumingAligned(testALatin1Characters + 2, 2);
     ASSERT_EQ(testAHash4, hasher.hash());
     ASSERT_EQ(testAHash4 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharactersAssumingAligned(testALChars + 4, 1);
+    hasher.addCharactersAssumingAligned(testALatin1Characters + 4, 1);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(testALChars, 2);
-    hasher.addCharactersAssumingAligned(testALChars + 2, 2);
-    hasher.addCharactersAssumingAligned(testALChars + 4);
+    hasher.addCharactersAssumingAligned(testALatin1Characters, 2);
+    hasher.addCharactersAssumingAligned(testALatin1Characters + 2, 2);
+    hasher.addCharactersAssumingAligned(testALatin1Characters + 4);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(testAUChars, 2);
+    hasher.addCharactersAssumingAligned(testAUTF16CodeUnits, 2);
     ASSERT_EQ(testAHash2, hasher.hash());
     ASSERT_EQ(testAHash2 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharactersAssumingAligned(testAUChars + 2, 2);
+    hasher.addCharactersAssumingAligned(testAUTF16CodeUnits + 2, 2);
     ASSERT_EQ(testAHash4, hasher.hash());
     ASSERT_EQ(testAHash4 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharactersAssumingAligned(testAUChars + 4, 1);
+    hasher.addCharactersAssumingAligned(testAUTF16CodeUnits + 4, 1);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(testAUChars, 2);
-    hasher.addCharactersAssumingAligned(testAUChars + 2, 2);
-    hasher.addCharactersAssumingAligned(testAUChars + 4);
+    hasher.addCharactersAssumingAligned(testAUTF16CodeUnits, 2);
+    hasher.addCharactersAssumingAligned(testAUTF16CodeUnits + 2, 2);
+    hasher.addCharactersAssumingAligned(testAUTF16CodeUnits + 4);
     ASSERT_EQ(testAHash5, hasher.hash());
     ASSERT_EQ(testAHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(testBUChars, 2);
+    hasher.addCharactersAssumingAligned(testBUTF16CodeUnits, 2);
     ASSERT_EQ(testBHash2, hasher.hash());
     ASSERT_EQ(testBHash2 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharactersAssumingAligned(testBUChars + 2, 2);
+    hasher.addCharactersAssumingAligned(testBUTF16CodeUnits + 2, 2);
     ASSERT_EQ(testBHash4, hasher.hash());
     ASSERT_EQ(testBHash4 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharactersAssumingAligned(testBUChars + 4, 1);
+    hasher.addCharactersAssumingAligned(testBUTF16CodeUnits + 4, 1);
     ASSERT_EQ(testBHash5, hasher.hash());
     ASSERT_EQ(testBHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
     hasher = SuperFastHash();
-    hasher.addCharactersAssumingAligned(testBUChars, 2);
-    hasher.addCharactersAssumingAligned(testBUChars + 2, 2);
-    hasher.addCharactersAssumingAligned(testBUChars + 4);
+    hasher.addCharactersAssumingAligned(testBUTF16CodeUnits, 2);
+    hasher.addCharactersAssumingAligned(testBUTF16CodeUnits + 2, 2);
+    hasher.addCharactersAssumingAligned(testBUTF16CodeUnits + 4);
     ASSERT_EQ(testBHash5, hasher.hash());
     ASSERT_EQ(testBHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 
     // Hashing five characters, first two characters one at a time,
     // then two more, then the last one.
     hasher = SuperFastHash();
-    hasher.addCharacter(testBUChars[0]);
+    hasher.addCharacter(testBUTF16CodeUnits[0]);
     ASSERT_EQ(testBHash1, hasher.hash());
     ASSERT_EQ(testBHash1 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharacter(testBUChars[1]);
+    hasher.addCharacter(testBUTF16CodeUnits[1]);
     ASSERT_EQ(testBHash2, hasher.hash());
     ASSERT_EQ(testBHash2 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharactersAssumingAligned(testBUChars[2], testBUChars[3]);
+    hasher.addCharactersAssumingAligned(testBUTF16CodeUnits[2], testBUTF16CodeUnits[3]);
     ASSERT_EQ(testBHash4, hasher.hash());
     ASSERT_EQ(testBHash4 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
-    hasher.addCharactersAssumingAligned(testBUChars + 4);
+    hasher.addCharactersAssumingAligned(testBUTF16CodeUnits + 4);
     ASSERT_EQ(testBHash5, hasher.hash());
     ASSERT_EQ(testBHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 }
@@ -437,17 +437,17 @@ TEST(WTF, SuperFastHash_computeHash)
     // Ambiguous constructor call error when calling std::span<T>(T*, 0).
     // https://bugs.llvm.org/show_bug.cgi?id=49295
     static constexpr size_t zeroLength = 0;
-    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(std::span { static_cast<const LChar*>(0), zeroLength }));
-    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(std::span { nullLChars, zeroLength }));
-    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(std::span { static_cast<const UChar*>(0), zeroLength }));
-    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(std::span { nullUChars, zeroLength }));
+    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(std::span { static_cast<const Latin1Character*>(0), zeroLength }));
+    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(std::span { nullLatin1Characters, zeroLength }));
+    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(std::span { static_cast<const char16_t*>(0), zeroLength }));
+    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(std::span { nullUTF16CodeUnits, zeroLength }));
 
-    ASSERT_EQ(singleNullCharacterHash, SuperFastHash::computeHash(std::span { nullLChars, 1 }));
-    ASSERT_EQ(singleNullCharacterHash, SuperFastHash::computeHash(std::span { nullUChars, 1 }));
+    ASSERT_EQ(singleNullCharacterHash, SuperFastHash::computeHash(std::span { nullLatin1Characters, 1 }));
+    ASSERT_EQ(singleNullCharacterHash, SuperFastHash::computeHash(std::span { nullUTF16CodeUnits, 1 }));
 
-    ASSERT_EQ(testAHash5, SuperFastHash::computeHash(std::span { testALChars, 5 }));
-    ASSERT_EQ(testAHash5, SuperFastHash::computeHash(std::span { testAUChars, 5 }));
-    ASSERT_EQ(testBHash5, SuperFastHash::computeHash(std::span { testBUChars, 5 }));
+    ASSERT_EQ(testAHash5, SuperFastHash::computeHash(std::span { testALatin1Characters, 5 }));
+    ASSERT_EQ(testAHash5, SuperFastHash::computeHash(std::span { testAUTF16CodeUnits, 5 }));
+    ASSERT_EQ(testBHash5, SuperFastHash::computeHash(std::span { testBUTF16CodeUnits, 5 }));
 }
 
 TEST(WTF, SuperFastHash_computeHashAndMaskTop8Bits)
@@ -456,17 +456,17 @@ TEST(WTF, SuperFastHash_computeHashAndMaskTop8Bits)
     // Ambiguous constructor call error when calling std::span<T>(T*, 0).
     // https://bugs.llvm.org/show_bug.cgi?id=49295
     static constexpr size_t zeroLength = 0;
-    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { static_cast<const LChar*>(0), zeroLength }));
-    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { nullLChars, zeroLength }));
-    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { static_cast<const UChar*>(0), zeroLength }));
-    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { nullUChars, zeroLength }));
+    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { static_cast<const Latin1Character*>(0), zeroLength }));
+    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { nullLatin1Characters, zeroLength }));
+    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { static_cast<const char16_t*>(0), zeroLength }));
+    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { nullUTF16CodeUnits, zeroLength }));
 
-    ASSERT_EQ(singleNullCharacterHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { nullLChars, 1 }));
-    ASSERT_EQ(singleNullCharacterHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { nullUChars, 1 }));
+    ASSERT_EQ(singleNullCharacterHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { nullLatin1Characters, 1 }));
+    ASSERT_EQ(singleNullCharacterHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { nullUTF16CodeUnits, 1 }));
 
-    ASSERT_EQ(testAHash5 & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { testALChars, 5 }));
-    ASSERT_EQ(testAHash5 & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { testAUChars, 5 }));
-    ASSERT_EQ(testBHash5 & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { testBUChars, 5 }));
+    ASSERT_EQ(testAHash5 & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { testALatin1Characters, 5 }));
+    ASSERT_EQ(testAHash5 & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { testAUTF16CodeUnits, 5 }));
+    ASSERT_EQ(testBHash5 & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { testBUTF16CodeUnits, 5 }));
 }
 
 } // namespace TestWebKitAPI

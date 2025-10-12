@@ -60,7 +60,7 @@ U_CDECL_BEGIN
  * @see u_getUnicodeVersion
  * @stable ICU 2.0
  */
-#define U_UNICODE_VERSION "14.0"
+#define U_UNICODE_VERSION "15.1"
 
 /**
  * \file
@@ -483,63 +483,82 @@ typedef enum UProperty {
      * @stable ICU 62
      */
     UCHAR_EXTENDED_PICTOGRAPHIC=64,
-#ifndef U_HIDE_DRAFT_API
     /**
      * Binary property of strings Basic_Emoji.
      * See https://www.unicode.org/reports/tr51/#Emoji_Sets
      *
-     * @draft ICU 70
+     * @stable ICU 70
      */
     UCHAR_BASIC_EMOJI=65,
     /**
      * Binary property of strings Emoji_Keycap_Sequence.
      * See https://www.unicode.org/reports/tr51/#Emoji_Sets
      *
-     * @draft ICU 70
+     * @stable ICU 70
      */
     UCHAR_EMOJI_KEYCAP_SEQUENCE=66,
     /**
      * Binary property of strings RGI_Emoji_Modifier_Sequence.
      * See https://www.unicode.org/reports/tr51/#Emoji_Sets
      *
-     * @draft ICU 70
+     * @stable ICU 70
      */
     UCHAR_RGI_EMOJI_MODIFIER_SEQUENCE=67,
     /**
      * Binary property of strings RGI_Emoji_Flag_Sequence.
      * See https://www.unicode.org/reports/tr51/#Emoji_Sets
      *
-     * @draft ICU 70
+     * @stable ICU 70
      */
     UCHAR_RGI_EMOJI_FLAG_SEQUENCE=68,
     /**
      * Binary property of strings RGI_Emoji_Tag_Sequence.
      * See https://www.unicode.org/reports/tr51/#Emoji_Sets
      *
-     * @draft ICU 70
+     * @stable ICU 70
      */
     UCHAR_RGI_EMOJI_TAG_SEQUENCE=69,
     /**
      * Binary property of strings RGI_Emoji_ZWJ_Sequence.
      * See https://www.unicode.org/reports/tr51/#Emoji_Sets
      *
-     * @draft ICU 70
+     * @stable ICU 70
      */
     UCHAR_RGI_EMOJI_ZWJ_SEQUENCE=70,
     /**
      * Binary property of strings RGI_Emoji.
      * See https://www.unicode.org/reports/tr51/#Emoji_Sets
      *
-     * @draft ICU 70
+     * @stable ICU 70
      */
     UCHAR_RGI_EMOJI=71,
+#ifndef U_HIDE_DRAFT_API
+    /**
+     * Binary property IDS_Unary_Operator.
+     * For programmatic determination of Ideographic Description Sequences.
+     *
+     * @draft ICU 74
+     */
+    UCHAR_IDS_UNARY_OPERATOR=72,
+    /**
+     * Binary property ID_Compat_Math_Start.
+     * Used in mathematical identifier profile in UAX #31.
+     * @draft ICU 74
+     */
+    UCHAR_ID_COMPAT_MATH_START=73,
+    /**
+     * Binary property ID_Compat_Math_Continue.
+     * Used in mathematical identifier profile in UAX #31.
+     * @draft ICU 74
+     */
+    UCHAR_ID_COMPAT_MATH_CONTINUE=74,
 #endif  // U_HIDE_DRAFT_API
 #ifndef U_HIDE_DEPRECATED_API
     /**
      * One more than the last constant for binary Unicode properties.
      * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
      */
-    UCHAR_BINARY_LIMIT=72,
+    UCHAR_BINARY_LIMIT=75,
 #endif  // U_HIDE_DEPRECATED_API
 
     /** Enumerated property Bidi_Class.
@@ -1885,6 +1904,28 @@ enum UBlockCode {
     /** @stable ICU 70 */
     UBLOCK_ZNAMENNY_MUSICAL_NOTATION = 320, /*[1CF00]*/
 
+    // New blocks in Unicode 15.0
+
+    /** @stable ICU 72 */
+    UBLOCK_ARABIC_EXTENDED_C = 321, /*[10EC0]*/
+    /** @stable ICU 72 */
+    UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_H = 322, /*[31350]*/
+    /** @stable ICU 72 */
+    UBLOCK_CYRILLIC_EXTENDED_D = 323, /*[1E030]*/
+    /** @stable ICU 72 */
+    UBLOCK_DEVANAGARI_EXTENDED_A = 324, /*[11B00]*/
+    /** @stable ICU 72 */
+    UBLOCK_KAKTOVIK_NUMERALS = 325, /*[1D2C0]*/
+    /** @stable ICU 72 */
+    UBLOCK_KAWI = 326, /*[11F00]*/
+    /** @stable ICU 72 */
+    UBLOCK_NAG_MUNDARI = 327, /*[1E4D0]*/
+
+    // New block in Unicode 15.1
+
+    /** @stable ICU 74 */
+    UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_I = 328, /*[2EBF0]*/
+
 #ifndef U_HIDE_DEPRECATED_API
     /**
      * One more than the highest normal UBlockCode value.
@@ -1892,7 +1933,7 @@ enum UBlockCode {
      *
      * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
      */
-    UBLOCK_COUNT = 321,
+    UBLOCK_COUNT = 329,
 #endif  // U_HIDE_DEPRECATED_API
 
     /** @stable ICU 2.0 */
@@ -2424,6 +2465,16 @@ typedef enum ULineBreak {
     U_LB_E_MODIFIER = 41,        /*[EM]*/
     /** @stable ICU 58 */
     U_LB_ZWJ = 42,               /*[ZWJ]*/
+    /** @stable ICU 74 */
+    U_LB_AKSARA = 43,            /*[AK]*/
+    /** @stable ICU 74 */
+    U_LB_AKSARA_PREBASE = 44,    /*[AP]*/
+    /** @stable ICU 74 */
+    U_LB_AKSARA_START = 45,      /*[AS]*/
+    /** @stable ICU 74 */
+    U_LB_VIRAMA_FINAL = 46,      /*[VF]*/
+    /** @stable ICU 74 */
+    U_LB_VIRAMA = 47,            /*[VI]*/
 #ifndef U_HIDE_DEPRECATED_API
     /**
      * One more than the highest normal ULineBreak value.
@@ -2431,7 +2482,7 @@ typedef enum ULineBreak {
      *
      * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
      */
-    U_LB_COUNT = 43
+    U_LB_COUNT = 48
 #endif  // U_HIDE_DEPRECATED_API
 } ULineBreak;
 
@@ -2680,8 +2731,6 @@ typedef enum UVerticalOrientation {
 U_CAPI UBool U_EXPORT2
 u_hasBinaryProperty(UChar32 c, UProperty which);
 
-#ifndef U_HIDE_DRAFT_API
-
 /**
  * Returns true if the property is true for the string.
  * Same as u_hasBinaryProperty(single code point, which)
@@ -2704,12 +2753,10 @@ u_hasBinaryProperty(UChar32 c, UProperty which);
  * @see u_getBinaryPropertySet
  * @see u_getIntPropertyValue
  * @see u_getUnicodeVersion
- * @draft ICU 70
+ * @stable ICU 70
  */
 U_CAPI UBool U_EXPORT2
 u_stringHasBinaryProperty(const UChar *s, int32_t length, UProperty which);
-
-#endif  // U_HIDE_DRAFT_API
 
 /**
  * Returns a frozen USet for a binary property.
@@ -3825,13 +3872,10 @@ u_getPropertyValueEnum(UProperty property,
                        const char* alias);
 
 /**
- * Determines if the specified character is permissible as the
- * first character in an identifier according to Unicode
- * (The Unicode Standard, Version 3.0, chapter 5.16 Identifiers).
- * True for characters with general categories "L" (letters) and "Nl" (letter numbers).
+ * Determines if the specified character is permissible as the first character in an identifier
+ * according to UAX #31 Unicode Identifier and Pattern Syntax.
  *
- * Same as java.lang.Character.isUnicodeIdentifierStart().
- * Same as UCHAR_ID_START
+ * Same as Unicode ID_Start (UCHAR_ID_START).
  *
  * @param c the code point to be tested
  * @return true if the code point may start an identifier
@@ -3845,20 +3889,13 @@ U_CAPI UBool U_EXPORT2
 u_isIDStart(UChar32 c);
 
 /**
- * Determines if the specified character is permissible
- * in an identifier according to Java.
- * True for characters with general categories "L" (letters),
- * "Nl" (letter numbers), "Nd" (decimal digits),
- * "Mc" and "Mn" (combining marks), "Pc" (connecting punctuation), and
- * u_isIDIgnorable(c).
+ * Determines if the specified character is permissible as a non-initial character of an identifier
+ * according to UAX #31 Unicode Identifier and Pattern Syntax.
  *
- * Same as java.lang.Character.isUnicodeIdentifierPart().
- * Almost the same as Unicode's ID_Continue (UCHAR_ID_CONTINUE)
- * except that Unicode recommends to ignore Cf which is less than
- * u_isIDIgnorable(c).
+ * Same as Unicode ID_Continue (UCHAR_ID_CONTINUE).
  *
  * @param c the code point to be tested
- * @return true if the code point may occur in an identifier according to Java
+ * @return true if the code point may occur as a non-initial character of an identifier
  *
  * @see UCHAR_ID_CONTINUE
  * @see u_isIDStart

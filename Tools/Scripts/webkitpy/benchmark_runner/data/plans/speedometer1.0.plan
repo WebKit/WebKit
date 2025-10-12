@@ -1,7 +1,8 @@
 {
     "timeout": 300,
     "count": 5,
-    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/Speedometer/@r183695",
+    "local_git_archive": "PerformanceTests/Speedometer@4a78b14015a1ea8545d964a8a0a3c57e5b0bf869",
+    "github_source": "https://github.com/WebKit/WebKit/tree/4a78b14015a1ea8545d964a8a0a3c57e5b0bf869/PerformanceTests/Speedometer",
     "webserver_benchmark_patch": "data/patches/webserver/Speedometer.patch",
     "webdriver_benchmark_patch": "data/patches/webdriver/Speedometer.patch",
     "entry_point": "Full.html",

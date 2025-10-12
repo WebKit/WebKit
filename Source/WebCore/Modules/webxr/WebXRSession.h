@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L. All rights reserved.
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "EventTarget.h"
 #include "EventTargetInterfaces.h"
 #include "JSDOMPromiseDeferredForward.h"
+#include "VisibilityChangeClient.h"
 #include "WebXRFrame.h"
 #include "WebXRInputSourceArray.h"
 #include "WebXRRenderState.h"
@@ -54,9 +55,10 @@ class WebCoreOpaqueRoot;
 class WebXRSystem;
 class WebXRView;
 class WebXRViewerSpace;
+struct XRCanvasConfiguration;
 struct XRRenderStateInit;
 
-class WebXRSession final : public RefCounted<WebXRSession>, public EventTarget, public ActiveDOMObject, public PlatformXR::TrackingAndRenderingClient {
+class WebXRSession final : public RefCounted<WebXRSession>, public EventTarget, public ActiveDOMObject, public PlatformXR::TrackingAndRenderingClient, VisibilityChangeClient {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRSession);
 public:
     void ref() const final { RefCounted::ref(); }
@@ -75,7 +77,7 @@ public:
     XRInteractionMode interactionMode() const;
     XRVisibilityState visibilityState() const;
     const WebXRRenderState& renderState() const;
-    const WebXRInputSourceArray& inputSources() const;
+    const WebXRInputSourceArray& inputSources() const { return m_inputSources; }
     RefPtr<PlatformXR::Device> device() const { return m_device.get(); }
 
     const Vector<String> enabledFeatures() const;
@@ -114,6 +116,8 @@ public:
     bool isHandTrackingEnabled() const;
 #endif
 
+    void initializeTrackingAndRendering(std::optional<XRCanvasConfiguration>&&);
+
 private:
     WebXRSession(Document&, WebXRSystem&, XRSessionMode, PlatformXR::Device&, FeatureList&&);
 
@@ -130,6 +134,9 @@ private:
     void sessionDidEnd() final;
     void updateSessionVisibilityState(PlatformXR::VisibilityState) final;
 
+    // VisibilityChangeClient
+    void visibilityStateChanged() final;
+
     enum class InitiatedBySystem : bool { No, Yes };
     void shutdown(InitiatedBySystem);
     void didCompleteShutdown();
@@ -145,7 +152,7 @@ private:
     XREnvironmentBlendMode m_environmentBlendMode { XREnvironmentBlendMode::Opaque };
     XRInteractionMode m_interactionMode { XRInteractionMode::WorldSpace };
     XRVisibilityState m_visibilityState { XRVisibilityState::Visible };
-    UniqueRef<WebXRInputSourceArray> m_inputSources;
+    const UniqueRef<WebXRInputSourceArray> m_inputSources;
     bool m_ended { false };
     bool m_shouldServiceRequestVideoFrameCallbacks { false };
     std::unique_ptr<EndPromise> m_endPromise;
@@ -156,7 +163,7 @@ private:
     FeatureList m_requestedFeatures;
     RefPtr<WebXRRenderState> m_activeRenderState;
     RefPtr<WebXRRenderState> m_pendingRenderState;
-    Ref<WebXRViewerSpace> m_viewerReferenceSpace;
+    const Ref<WebXRViewerSpace> m_viewerReferenceSpace;
     MonotonicTime m_timeOrigin;
 
     unsigned m_nextCallbackId { 1 };

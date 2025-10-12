@@ -27,6 +27,8 @@
 
 #include "modules/audio_device/linux/pulseaudiosymboltable_linux.h"
 
+#include "modules/audio_device/linux/latebindingsymboltable_linux.h"
+
 namespace webrtc {
 namespace adm_linux_pulse {
 

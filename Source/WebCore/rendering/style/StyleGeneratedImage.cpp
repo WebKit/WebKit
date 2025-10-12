@@ -24,8 +24,10 @@
 #include "config.h"
 #include "StyleGeneratedImage.h"
 
+#include "Document.h"
 #include "GeneratedImage.h"
 #include "RenderElement.h"
+#include "RenderObjectInlines.h"
 #include "StyleResolver.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -126,12 +128,12 @@ FloatSize StyleGeneratedImage::imageSize(const RenderElement* renderer, float mu
     return { width, height };
 }
 
-void StyleGeneratedImage::computeIntrinsicDimensions(const RenderElement* renderer, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
+void StyleGeneratedImage::computeIntrinsicDimensions(const RenderElement* renderer, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
 {
     // At a zoom level of 1 the image is guaranteed to have a device pixel size.
     FloatSize size = floorSizeToDevicePixels(LayoutSize(this->imageSize(renderer, 1)), renderer ? renderer->document().deviceScaleFactor() : 1);
-    intrinsicWidth = Length(size.width(), LengthType::Fixed);
-    intrinsicHeight = Length(size.height(), LengthType::Fixed);
+    intrinsicWidth = size.width();
+    intrinsicHeight = size.height();
     intrinsicRatio = size;
 }
 

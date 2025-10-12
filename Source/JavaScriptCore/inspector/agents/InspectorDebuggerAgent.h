@@ -29,15 +29,15 @@
 
 #pragma once
 
-#include "Breakpoint.h"
-#include "ContentSearchUtilities.h"
-#include "Debugger.h"
-#include "DebuggerPrimitives.h"
-#include "InspectorAgentBase.h"
-#include "InspectorBackendDispatchers.h"
-#include "InspectorFrontendDispatchers.h"
-#include "Microtask.h"
-#include "RegularExpression.h"
+#include <JavaScriptCore/Breakpoint.h>
+#include <JavaScriptCore/ContentSearchUtilities.h>
+#include <JavaScriptCore/Debugger.h>
+#include <JavaScriptCore/DebuggerPrimitives.h>
+#include <JavaScriptCore/InspectorAgentBase.h>
+#include <JavaScriptCore/InspectorBackendDispatchers.h>
+#include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <JavaScriptCore/Microtask.h>
+#include <JavaScriptCore/RegularExpression.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -67,7 +67,7 @@ public:
     static const ASCIILiteral backtraceObjectGroup;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;
+    void didCreateFrontendAndBackend() final;
     void willDestroyFrontendAndBackend(DisconnectReason) final;
     virtual bool enabled() const { return m_enabled; }
 
@@ -246,8 +246,8 @@ private:
     using AsyncCallIdentifier = std::pair<unsigned, uint64_t>;
     static AsyncCallIdentifier asyncCallIdentifier(AsyncCallType, uint64_t callbackId);
 
-    std::unique_ptr<DebuggerFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<DebuggerBackendDispatcher> m_backendDispatcher;
+    const UniqueRef<DebuggerFrontendDispatcher> m_frontendDispatcher;
+    const Ref<DebuggerBackendDispatcher> m_backendDispatcher;
 
     JSC::Debugger& m_debugger;
     InjectedScriptManager& m_injectedScriptManager;

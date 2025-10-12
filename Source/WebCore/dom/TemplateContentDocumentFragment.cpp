@@ -26,11 +26,28 @@
 #include "config.h"
 #include "TemplateContentDocumentFragment.h"
 
+#include "HTMLTemplateElement.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TemplateContentDocumentFragment);
+
+TemplateContentDocumentFragment::TemplateContentDocumentFragment(Document& document, const HTMLTemplateElement& host)
+    : DocumentFragment(document)
+    , m_host(host)
+{
+}
+
+const HTMLTemplateElement* TemplateContentDocumentFragment::host() const
+{
+    return m_host.get();
+}
+
+void TemplateContentDocumentFragment::clearHost()
+{
+    m_host = nullptr;
+}
 
 } // namespace WebCore
 

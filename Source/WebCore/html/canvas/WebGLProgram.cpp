@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGL)
 
+#include "ContextDestructionObserverInlines.h"
 #include "InspectorInstrumentation.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreOpaqueRootInlines.h"
@@ -43,9 +44,9 @@ namespace WebCore {
 
 Lock WebGLProgram::s_instancesLock;
 
-UncheckedKeyHashMap<WebGLProgram*, WebGLRenderingContextBase*>& WebGLProgram::instances()
+HashMap<WebGLProgram*, WebGLRenderingContextBase*>& WebGLProgram::instances()
 {
-    static NeverDestroyed<UncheckedKeyHashMap<WebGLProgram*, WebGLRenderingContextBase*>> instances;
+    static NeverDestroyed<HashMap<WebGLProgram*, WebGLRenderingContextBase*>> instances;
     return instances;
 }
 
@@ -100,12 +101,12 @@ void WebGLProgram::contextDestroyed()
 void WebGLProgram::deleteObjectImpl(const AbstractLocker& locker, GraphicsContextGL* context3d, PlatformGLObject obj)
 {
     context3d->deleteProgram(obj);
-    if (m_vertexShader) {
-        m_vertexShader->onDetached(locker, context3d);
+    if (RefPtr vertexShader = m_vertexShader) {
+        vertexShader->onDetached(locker, context3d);
         m_vertexShader = nullptr;
     }
-    if (m_fragmentShader) {
-        m_fragmentShader->onDetached(locker, context3d);
+    if (RefPtr fragmentShader = m_fragmentShader) {
+        fragmentShader->onDetached(locker, context3d);
         m_fragmentShader = nullptr;
     }
 }

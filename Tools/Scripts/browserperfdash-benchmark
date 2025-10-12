@@ -24,9 +24,18 @@
 
 
 import logging
+import os
 import sys
 
 from webkitpy.browserperfdash.browserperfdash_runner import main, format_logger
+
+
+if sys.platform.startswith('linux'):
+    top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
+    sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'flatpak'))
+
+    import flatpakutils
+    flatpakutils.run_in_sandbox_if_available(sys.argv)
 
 
 _log = logging.getLogger()

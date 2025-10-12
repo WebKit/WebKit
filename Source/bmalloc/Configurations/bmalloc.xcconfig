@@ -21,6 +21,27 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
+// A bmalloc modulemap confuses the building of PALSwift on older SDKs
+// For now we enable only on the most recent macOS SDKs and we will
+// gradually expand to the most recent of all platforms.
+GENERATE_BMALLOC_MODULEMAP[sdk=macosx*] = YES;
+GENERATE_BMALLOC_MODULEMAP[sdk=macosx14*] = ;
+GENERATE_BMALLOC_MODULEMAP[sdk=macosx15*] = ;
+// Work around SDKs which do not have the bug fix for rdar://157124281.
+// Building with modules locally is fine in those configurations, but not in
+// install-style builds.
+GENERATE_BMALLOC_MODULEMAP[sdk=macosx26.0*] = $(WK_NOT_$(DEPLOYMENT_LOCATION));
+GENERATE_BMALLOC_MODULEMAP[sdk=macosx26.1*] = $(WK_NOT_$(DEPLOYMENT_LOCATION));
+GENERATE_BMALLOC_MODULEMAP[sdk=macosx26.2*] = $(WK_NOT_$(DEPLOYMENT_LOCATION));
+GENERATE_BMALLOC_MODULEMAP[sdk=macosx26.3*] = $(WK_NOT_$(DEPLOYMENT_LOCATION));
+
+GENERATE_BMALLOC_MODULEMAP[sdk=iphone*] = $(GENERATE_WTF_MODULEMAP$(WK_IOS_26));
+GENERATE_BMALLOC_MODULEMAP_IOS_SINCE_26 = YES;
+
+EXCLUDED_SOURCE_FILE_NAMES = $(inherited) $(EXCLUDED_SOURCE_FILE_NAMES_$(GENERATE_BMALLOC_MODULEMAP));
+EXCLUDED_SOURCE_FILE_NAMES_ = module.modulemap;
+EXCLUDED_SOURCE_FILE_NAMES_NO = module.modulemap;
+
 EXECUTABLE_PREFIX = lib;
 INSTALL_PATH = $(BMALLOC_INSTALL_PATH_PREFIX)$(WK_LIBRARY_INSTALL_PATH);
 INSTALLHDRS_SCRIPT_PHASE = YES;

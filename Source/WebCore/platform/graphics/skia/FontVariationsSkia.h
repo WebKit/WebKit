@@ -45,7 +45,7 @@ struct FontVariationDefaults {
     float maximumValue;
 };
 
-typedef UncheckedKeyHashMap<FontTag, FontVariationDefaults, FourCharacterTagHash, FourCharacterTagHashTraits> FontVariationDefaultsMap;
+using FontVariationDefaultsMap = HashMap<FontTag, FontVariationDefaults, FourCharacterTagHash, FourCharacterTagHashTraits>;
 FontVariationDefaultsMap defaultFontVariationValues(const SkTypeface&);
 
 } // namespace WebCore

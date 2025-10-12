@@ -30,7 +30,7 @@ std::optional<AudioDecoderG722::Config> AudioDecoderG722::SdpToConfig(
   if (absl::EqualsIgnoreCase(format.name, "G722") &&
       format.clockrate_hz == 8000 &&
       (format.num_channels == 1 || format.num_channels == 2)) {
-    return Config{rtc::dchecked_cast<int>(format.num_channels)};
+    return Config{dchecked_cast<int>(format.num_channels)};
   }
   return std::nullopt;
 }

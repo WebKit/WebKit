@@ -6,6 +6,10 @@
 
 // X11Pixmap.cpp: Implementation of OSPixmap for X11
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "util/linux/x11/X11Pixmap.h"
 
 X11Pixmap::X11Pixmap() : mPixmap(0), mDisplay(nullptr) {}

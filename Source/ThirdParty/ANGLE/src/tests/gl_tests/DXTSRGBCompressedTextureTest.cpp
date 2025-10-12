@@ -3,9 +3,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// DXTSRGBCompressedTextureTest.cpp
+// DXTSRGBCompressedTextureTest.cpp:
 //   Tests for sRGB DXT textures (GL_EXT_texture_compression_s3tc_srgb)
 //
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"

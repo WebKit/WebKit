@@ -39,7 +39,7 @@ WI.AnimationObserver = class AnimationObserver extends InspectorBackend.Dispatch
 
     effectChanged(animationId, effect)
     {
-        // COMPATIBILITY (iOS 18.X, macOS 15.X): `Animation.effectChanged` removed the `effect` parameter in favor of `Animation.requestEffect`.`
+        // COMPATIBILITY (iOS 26.0, macOS 26.0): `Animation.effectChanged` removed the `effect` parameter in favor of `Animation.requestEffect`.`
         WI.animationManager.effectChanged(animationId, effect);
     }
 

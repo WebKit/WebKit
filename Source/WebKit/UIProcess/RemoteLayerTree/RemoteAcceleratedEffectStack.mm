@@ -139,7 +139,7 @@ void RemoteAcceleratedEffectStack::initEffectsFromMainThread(PlatformLayer *laye
     }
 
     if (m_affectedLayerProperties.contains(LayerProperty::Opacity)) {
-        RetainPtr opacity = @(computedValues.opacity);
+        RetainPtr opacity = @(computedValues.opacity.value);
         m_opacityPresentationModifier = adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"opacity" initialValue:opacity.get() additive:NO group:m_presentationModifierGroup.get()]);
         [layer addPresentationModifier:m_opacityPresentationModifier.get()];
     }
@@ -164,7 +164,7 @@ void RemoteAcceleratedEffectStack::applyEffectsFromScrollingThread(MonotonicTime
         WebCore::PlatformCAFilters::updatePresentationModifiers(computedValues.filter, m_filterPresentationModifiers);
 
     if (m_opacityPresentationModifier) {
-        RetainPtr opacity = @(computedValues.opacity);
+        RetainPtr opacity = @(computedValues.opacity.value);
         [m_opacityPresentationModifier setValue:opacity.get()];
     }
 
@@ -186,7 +186,7 @@ void RemoteAcceleratedEffectStack::applyEffectsFromMainThread(PlatformLayer *lay
         WebCore::PlatformCAFilters::setFiltersOnLayer(layer, computedValues.filter, backdropRootIsOpaque);
 
     if (m_affectedLayerProperties.contains(LayerProperty::Opacity))
-        [layer setOpacity:computedValues.opacity];
+        [layer setOpacity:computedValues.opacity.value];
 
     if (m_affectedLayerProperties.contains(LayerProperty::Transform)) {
         auto computedTransform = computedValues.computedTransformationMatrix(m_bounds);
@@ -199,7 +199,7 @@ WebCore::AcceleratedEffectValues RemoteAcceleratedEffectStack::computeValues(Mon
     auto values = m_baseValues;
     auto currentTime = now.secondsSinceEpoch() - m_acceleratedTimelineTimeOrigin;
     for (auto& effect : m_backdropLayerEffects.isEmpty() ? m_primaryLayerEffects : m_backdropLayerEffects)
-        effect->apply(currentTime, values, m_bounds);
+        effect->apply(currentTime, values);
     return values;
 }
 

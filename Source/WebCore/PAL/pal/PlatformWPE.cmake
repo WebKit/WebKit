@@ -19,10 +19,6 @@ list(APPEND PAL_SOURCES
     system/glib/SleepDisablerGLib.cpp
 
     text/KillRing.cpp
-
-    unix/LoggingUnix.cpp
 )
 
-list(APPEND PAL_SYSTEM_INCLUDE_DIRECTORIES
-    ${GLIB_INCLUDE_DIRS}
-)
+list(APPEND PAL_LIBRARIES GLib::GLib)

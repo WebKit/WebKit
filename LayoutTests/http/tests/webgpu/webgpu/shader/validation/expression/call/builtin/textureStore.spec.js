@@ -153,7 +153,8 @@ combine('value', [0, 1, 2])
 ).
 fn((t) => {
   const { textureType, valueType, format, value } = t.params;
-  t.skipIfTextureFormatNotUsableAsStorageTexture(format);
+  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotUsableWithStorageAccessMode('write-only', format);
 
   const valueArgType = kValuesTypes[valueType];
   const args = [valueArgType.create(value)];

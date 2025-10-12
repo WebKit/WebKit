@@ -60,11 +60,12 @@ public:
 
     InjectedBundlePage* page() const;
     WKBundlePageRef pageRef() const;
+    uint64_t testIdentifier() const { return m_testIdentifier; }
     size_t pageCount() const { return m_pages.size(); }
 
     void dumpBackForwardListsForAllPages(StringBuilder&);
 
-    void done(bool forceRepaint);
+    void done();
     void setAudioResult(WKDataRef audioData) { m_audioResult = audioData; }
     void setPixelResult(WKImageRef image) { m_pixelResult = image; m_pixelResultIsPending = false; }
     void setPixelResultIsPending(bool isPending) { m_pixelResultIsPending = isPending; }
@@ -125,6 +126,8 @@ public:
 
     bool isAllowedHost(WKStringRef);
 
+    bool isPrinting() const;
+
     unsigned imageCountInGeneralPasteboard() const;
 
     void setAllowsAnySSLCertificate(bool);
@@ -149,6 +152,8 @@ public:
     WKRetainPtr<WKStringRef> lastRemovedBackgroundFetchIdentifier() const;
     WKRetainPtr<WKStringRef> lastUpdatedBackgroundFetchIdentifier() const;
     WKRetainPtr<WKStringRef> backgroundFetchState(WKStringRef);
+
+    bool shouldForceRepaint() const;
 
 private:
     InjectedBundle() = default;
@@ -187,6 +192,7 @@ private:
     bool m_dumpPixels { false };
     bool m_pixelResultIsPending { false };
     bool m_accessibilityIsolatedTreeMode { false };
+    uint64_t m_testIdentifier { 0 };
 
     WTF::Seconds m_timeout;
 
@@ -221,6 +227,7 @@ void postSynchronousMessage(const char* name, const void* value) = delete;
 
 void postPageMessage(const char* name);
 void postPageMessage(const char* name, bool value);
+void postPageMessage(const char* name, unsigned value);
 void postPageMessage(const char* name, const char* value);
 void postPageMessage(const char* name, WKStringRef value);
 void postPageMessage(const char* name, WKDataRef value);
@@ -258,8 +265,4 @@ template<typename T> void postSynchronousPageMessage(const char* name, const WKR
         WKBundlePagePostSynchronousMessageForTesting(page, toWK(name).get(), value.get(), nullptr);
     }
 }
-
-void postMessageWithAsyncReply(JSContextRef, const char* messageName, JSValueRef callback);
-void postMessageWithAsyncReply(JSContextRef, const char* messageName, WKRetainPtr<WKTypeRef> value, JSValueRef callback);
-
 } // namespace WTR

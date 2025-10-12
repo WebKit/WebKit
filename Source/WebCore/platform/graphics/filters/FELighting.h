@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 University of Szeged
  * Copyright (C) 2010 Zoltan Herczeg
- * Copyright (C) 2021-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,18 +27,18 @@
 
 #pragma once
 
-#include "Color.h"
-#include "DistantLightSource.h"
-#include "FilterEffect.h"
-#include "PointLightSource.h"
-#include "SpotLightSource.h"
+#include <WebCore/Color.h>
+#include <WebCore/DistantLightSource.h>
+#include <WebCore/FilterEffect.h>
+#include <WebCore/PointLightSource.h>
+#include <WebCore/SpotLightSource.h>
 
 namespace WebCore {
 
 struct FELightingPaintingDataForNeon;
 
 class FELighting : public FilterEffect {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FELighting);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FELighting);
 public:
     bool operator==(const FELighting&) const;
@@ -59,7 +59,7 @@ public:
     float kernelUnitLengthY() const { return m_kernelUnitLengthY; }
     bool setKernelUnitLengthY(float);
 
-    Ref<LightSource> lightSource() const { return m_lightSource; }
+    LightSource& lightSource() const { return m_lightSource; }
 
 protected:
     FELighting(Type, const Color& lightingColor, float surfaceScale, float diffuseConstant, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&, DestinationColorSpace);
@@ -77,7 +77,7 @@ protected:
     float m_specularExponent;
     float m_kernelUnitLengthX;
     float m_kernelUnitLengthY;
-    Ref<LightSource> m_lightSource;
+    const Ref<LightSource> m_lightSource;
 };
 
 } // namespace WebCore

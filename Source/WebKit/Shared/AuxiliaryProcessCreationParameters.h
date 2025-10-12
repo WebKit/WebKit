@@ -36,6 +36,11 @@ struct AuxiliaryProcessCreationParameters {
     String webCoreLoggingChannels;
     String webKitLoggingChannels;
     std::unique_ptr<HashSet<String>> classNamesExemptFromSecureCodingCrash;
+
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+    bool shouldEnableIPCSignposts { false };
+    bool shouldEnableStreamingIPCSignposts { false };
+#endif
 };
 
 } // namespace WebKit

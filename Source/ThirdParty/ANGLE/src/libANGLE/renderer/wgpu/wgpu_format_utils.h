@@ -138,6 +138,8 @@ class FormatTable final : angle::NonCopyable
         return mFormatData[static_cast<size_t>(formatID)];
     }
 
+    const Format *findClosestTextureFormat(WGPUTextureFormat wgpuFormat) const;
+
   private:
     // The table data is indexed by angle::FormatID.
     std::array<Format, angle::kNumANGLEFormats> mFormatData;

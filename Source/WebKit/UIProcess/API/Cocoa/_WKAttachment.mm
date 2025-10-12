@@ -57,7 +57,7 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
     if (!(self = [super init]))
         return nil;
 
-    _attachment = &attachment;
+    _attachment = attachment;
     _filePath = attachment.filePath().createNSString();
     _mimeType = attachment.mimeType().createNSString();
     _utiType = attachment.utiType().createNSString();

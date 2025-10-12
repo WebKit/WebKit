@@ -31,6 +31,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "InspectorInstrumentation.h"
 #include "MessagePort.h"
+#include "Performance.h"
 #include "PerformanceMarkOptions.h"
 #include "PerformanceMeasureOptions.h"
 #include "PerformanceTiming.h"

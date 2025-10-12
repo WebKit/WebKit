@@ -7,6 +7,10 @@
 //    Implements the class methods for BufferPool.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/metal/mtl_buffer_pool.h"
 
 #include "libANGLE/renderer/metal/ContextMtl.h"

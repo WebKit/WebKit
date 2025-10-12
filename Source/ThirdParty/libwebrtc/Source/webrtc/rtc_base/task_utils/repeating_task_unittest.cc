@@ -13,8 +13,10 @@
 #include <atomic>
 #include <memory>
 #include <optional>
+#include <utility>
 
 #include "absl/functional/any_invocable.h"
+#include "api/location.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/task_queue/test/mock_task_queue_base.h"
 #include "api/units/time_delta.h"
@@ -208,7 +210,7 @@ TEST(RepeatingTaskTest, CompensatesForShortRunTime) {
 }
 
 TEST(RepeatingTaskTest, CancelDelayedTaskBeforeItRuns) {
-  rtc::Event done;
+  Event done;
   MockClosure mock;
   EXPECT_CALL(mock, Call).Times(0);
   EXPECT_CALL(mock, Delete).WillOnce(Invoke([&done] { done.Set(); }));
@@ -221,7 +223,7 @@ TEST(RepeatingTaskTest, CancelDelayedTaskBeforeItRuns) {
 }
 
 TEST(RepeatingTaskTest, CancelTaskAfterItRuns) {
-  rtc::Event done;
+  Event done;
   MockClosure mock;
   EXPECT_CALL(mock, Call).WillOnce(Return(TimeDelta::Millis(100)));
   EXPECT_CALL(mock, Delete).WillOnce(Invoke([&done] { done.Set(); }));
@@ -264,7 +266,7 @@ TEST(RepeatingTaskTest, TaskCanStopItselfByReturningInfinity) {
 
 TEST(RepeatingTaskTest, ZeroReturnValueRepostsTheTask) {
   NiceMock<MockClosure> closure;
-  rtc::Event done;
+  Event done;
   EXPECT_CALL(closure, Call())
       .WillOnce(Return(TimeDelta::Zero()))
       .WillOnce(Invoke([&] {
@@ -278,7 +280,7 @@ TEST(RepeatingTaskTest, ZeroReturnValueRepostsTheTask) {
 
 TEST(RepeatingTaskTest, StartPeriodicTask) {
   MockFunction<TimeDelta()> closure;
-  rtc::Event done;
+  Event done;
   EXPECT_CALL(closure, Call())
       .WillOnce(Return(TimeDelta::Millis(20)))
       .WillOnce(Return(TimeDelta::Millis(20)))
@@ -331,7 +333,7 @@ TEST(RepeatingTaskTest, ClockIntegration) {
 
   NiceMock<MockTaskQueue> task_queue;
   ON_CALL(task_queue, PostDelayedTaskImpl)
-      .WillByDefault([&](absl::AnyInvocable<void() &&> task, TimeDelta delay,
+      .WillByDefault([&](absl::AnyInvocable<void()&&> task, TimeDelta delay,
                          const MockTaskQueue::PostDelayedTaskTraits&,
                          const Location&) {
         EXPECT_EQ(delay, expected_delay);
@@ -350,7 +352,7 @@ TEST(RepeatingTaskTest, ClockIntegration) {
       TaskQueueBase::DelayPrecision::kLow, &clock);
 
   clock.AdvanceTimeMilliseconds(100);
-  absl::AnyInvocable<void()&&> task_to_run = std::move(delayed_task);
+  absl::AnyInvocable<void() &&> task_to_run = std::move(delayed_task);
   expected_delay = TimeDelta::Millis(90);
   std::move(task_to_run)();
   EXPECT_NE(delayed_task, nullptr);
@@ -362,7 +364,7 @@ TEST(RepeatingTaskTest, CanBeStoppedAfterTaskQueueDeletedTheRepeatingTask) {
 
   MockTaskQueue task_queue;
   EXPECT_CALL(task_queue, PostDelayedTaskImpl)
-      .WillOnce(WithArg<0>([&](absl::AnyInvocable<void() &&> task) {
+      .WillOnce(WithArg<0>([&](absl::AnyInvocable<void()&&> task) {
         repeating_task = std::move(task);
       }));
 

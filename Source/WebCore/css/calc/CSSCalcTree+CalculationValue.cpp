@@ -37,7 +37,6 @@
 #include "CalculationExecutor.h"
 #include "CalculationTree.h"
 #include "CalculationValue.h"
-#include "RenderStyle.h"
 #include "RenderStyleInlines.h"
 #include "StyleBuilderState.h"
 #include "StyleLengthResolution.h"
@@ -82,8 +81,6 @@ static auto toCalculationValue(const NonCanonicalDimension&, const ToConversionO
 static auto toCalculationValue(const Symbol&, const ToConversionOptions&) -> Calculation::Child;
 static auto toCalculationValue(const SiblingCount&, const ToConversionOptions&) -> Calculation::Child;
 static auto toCalculationValue(const SiblingIndex&, const ToConversionOptions&) -> Calculation::Child;
-static auto toCalculationValue(const IndirectNode<MediaProgress>&, const ToConversionOptions&) -> Calculation::Child;
-static auto toCalculationValue(const IndirectNode<ContainerProgress>&, const ToConversionOptions&) -> Calculation::Child;
 static auto toCalculationValue(const IndirectNode<Anchor>&, const ToConversionOptions&) -> Calculation::Child;
 static auto toCalculationValue(const IndirectNode<AnchorSize>&, const ToConversionOptions&) -> Calculation::Child;
 template<typename Op> auto toCalculationValue(const IndirectNode<Op>&, const ToConversionOptions&) -> Calculation::Child;
@@ -229,7 +226,7 @@ auto toCalculationValue(const Random::Sharing& randomSharing, const ToConversion
                 ASSERT(options.evaluation.conversionData->styleBuilderState()->element());
             }
 
-            auto baseValue = options.evaluation.conversionData->styleBuilderState()->lookupCSSRandomBaseValue(
+            auto baseValue = options.evaluation.conversionData->protectedStyleBuilderState()->lookupCSSRandomBaseValue(
                 sharingOptions.identifier,
                 sharingOptions.elementShared
             );
@@ -242,7 +239,7 @@ auto toCalculationValue(const Random::Sharing& randomSharing, const ToConversion
                     return Calculation::Random::Fixed { raw.value };
                 },
                 [&](const CSS::Number<CSS::ClosedUnitRange>::Calc& calc) -> Calculation::Random::Fixed {
-                    return Calculation::Random::Fixed { calc.evaluate(Calculation::Category::Number, *options.evaluation.conversionData->styleBuilderState()) };
+                    return Calculation::Random::Fixed { calc.evaluate(Calculation::Category::Number, *options.evaluation.conversionData->protectedStyleBuilderState()) };
                 }
             );
         }
@@ -326,18 +323,6 @@ Calculation::Child toCalculationValue(const SiblingCount&, const ToConversionOpt
 Calculation::Child toCalculationValue(const SiblingIndex&, const ToConversionOptions&)
 {
     ASSERT_NOT_REACHED("Unevaluated sibling-index() functions are not supported in the Calculation::Tree");
-    return Calculation::number(0);
-}
-
-Calculation::Child toCalculationValue(const IndirectNode<MediaProgress>&, const ToConversionOptions&)
-{
-    ASSERT_NOT_REACHED("Unevaluated media-progress() functions are not supported in the Calculation::Tree");
-    return Calculation::number(0);
-}
-
-Calculation::Child toCalculationValue(const IndirectNode<ContainerProgress>&, const ToConversionOptions&)
-{
-    ASSERT_NOT_REACHED("Unevaluated container-progress() functions are not supported in the Calculation::Tree");
     return Calculation::number(0);
 }
 

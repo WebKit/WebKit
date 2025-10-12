@@ -39,33 +39,16 @@
 
 namespace JSC { namespace Wasm {
 
-struct PatchpointExceptionHandleBase {
-    static constexpr unsigned s_invalidCallSiteIndex = std::numeric_limits<unsigned>::max();
-};
+static constexpr unsigned wasmInvalidCallSiteIndex = std::numeric_limits<unsigned>::max();
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 
-struct PatchpointExceptionHandle : public PatchpointExceptionHandleBase {
-    PatchpointExceptionHandle(std::optional<bool> hasExceptionHandlers, unsigned callSiteIndex)
-        : m_hasExceptionHandlers(hasExceptionHandlers)
-        , m_callSiteIndex(callSiteIndex)
-    { }
-
-    PatchpointExceptionHandle(std::optional<bool> hasExceptionHandlers, unsigned callSiteIndex, unsigned numLiveValues, unsigned firstStackmapParamOffset, unsigned firstStackmapChildOffset)
-        : m_hasExceptionHandlers(hasExceptionHandlers)
-        , m_callSiteIndex(callSiteIndex)
-        , m_numLiveValues(numLiveValues)
-        , m_firstStackmapParamOffset(firstStackmapParamOffset)
-        , m_firstStackmapChildOffset(firstStackmapChildOffset)
-    { }
-
+class PatchpointExceptionHandle final : public RefCounted<PatchpointExceptionHandle> {
+public:
     template <typename Generator>
-    void generate(CCallHelpers& jit, const B3::StackmapGenerationParams& params, Generator* generator) const
+    void collectStackMap(Generator* generator, const B3::StackmapGenerationParams& params) const
     {
-        JIT_COMMENT(jit, "Store call site index ", m_callSiteIndex, " at throw or call site.");
-        jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
-
-        if (m_hasExceptionHandlers && !*m_hasExceptionHandlers)
+        if (!m_hasExceptionHandlers)
             return;
         if (!m_numLiveValues)
             return;
@@ -77,19 +60,28 @@ struct PatchpointExceptionHandle : public PatchpointExceptionHandleBase {
         generator->addStackMap(m_callSiteIndex, WTFMove(values));
     }
 
-    std::optional<bool> m_hasExceptionHandlers;
-    unsigned m_callSiteIndex { s_invalidCallSiteIndex };
+    static Ref<PatchpointExceptionHandle> create(bool hasExceptionHandlers, unsigned callSiteIndex, unsigned numLiveValues, unsigned firstStackmapParamOffset, unsigned firstStackmapChildOffset)
+    {
+        return adoptRef(*new PatchpointExceptionHandle(hasExceptionHandlers, callSiteIndex, numLiveValues, firstStackmapParamOffset, firstStackmapChildOffset));
+    }
+
+private:
+    PatchpointExceptionHandle(bool hasExceptionHandlers, unsigned callSiteIndex, unsigned numLiveValues, unsigned firstStackmapParamOffset, unsigned firstStackmapChildOffset)
+        : m_hasExceptionHandlers(hasExceptionHandlers)
+        , m_callSiteIndex(callSiteIndex)
+        , m_numLiveValues(numLiveValues)
+        , m_firstStackmapParamOffset(firstStackmapParamOffset)
+        , m_firstStackmapChildOffset(firstStackmapChildOffset)
+    { }
+
+    bool m_hasExceptionHandlers;
+    unsigned m_callSiteIndex { wasmInvalidCallSiteIndex };
     std::optional<unsigned> m_numLiveValues { };
     unsigned m_firstStackmapParamOffset { };
     unsigned m_firstStackmapChildOffset { };
 };
 
-#else
-
-using PatchpointExceptionHandle = PatchpointExceptionHandleBase;
-
 #endif
-
 
 static inline void computeExceptionHandlerAndLoopEntrypointLocations(Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>& handlers, Vector<CodeLocationLabel<WasmEntryPtrTag>>& loopEntrypoints, const InternalFunction* function, const CompilationContext& context, LinkBuffer& linkBuffer)
 {
@@ -174,10 +166,10 @@ static inline void emitThrowImpl(CCallHelpers& jit, unsigned exceptionIndex)
 template<SavedFPWidth savedFPWidth>
 static ALWAYS_INLINE void buildEntryBufferForCatch(Probe::Context& context)
 {
-    unsigned valueSize = (savedFPWidth == SavedFPWidth::SaveVectors) ? 2 : 1;
+    unsigned valueSize = Context::scratchBufferSlotsPerValue(savedFPWidth);
     CallFrame* callFrame = context.fp<CallFrame*>();
     CallSiteIndex callSiteIndex = callFrame->callSiteIndex();
-    OptimizingJITCallee* callee = std::bit_cast<OptimizingJITCallee*>(callFrame->callee().asNativeCallee());
+    OptimizingJITCallee* callee = uncheckedDowncast<OptimizingJITCallee>(uncheckedDowncast<Wasm::Callee>(callFrame->callee().asNativeCallee()));
     const StackMap& stackmap = callee->stackmap(callSiteIndex);
     JSWebAssemblyInstance* instance = context.gpr<JSWebAssemblyInstance*>(GPRInfo::wasmContextInstancePointer);
     EncodedJSValue exception = context.gpr<EncodedJSValue>(GPRInfo::returnValueGPR);

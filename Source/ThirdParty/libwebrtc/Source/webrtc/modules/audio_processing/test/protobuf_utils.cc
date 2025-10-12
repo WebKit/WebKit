@@ -10,8 +10,13 @@
 
 #include "modules/audio_processing/test/protobuf_utils.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
 #include <memory>
+#include <sstream>  // no-presubmit-check TODO(webrtc:8982)
 
+#include "rtc_base/protobuf_utils.h"
 #include "rtc_base/system/arch.h"
 
 namespace {

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <CoreText/CTFontDescriptor.h>
 #include <wtf/Assertions.h>
 
 #ifndef CF_BRIDGED_TYPE
@@ -88,6 +89,7 @@ WTF_DECLARE_CF_TYPE_TRAIT(CFDictionary);
 WTF_DECLARE_CF_TYPE_TRAIT(CFNumber);
 WTF_DECLARE_CF_TYPE_TRAIT(CFString);
 WTF_DECLARE_CF_TYPE_TRAIT(CFURL);
+WTF_DECLARE_CF_TYPE_TRAIT(CTFontDescriptor);
 
 #define WTF_DECLARE_CF_MUTABLE_TYPE_TRAIT(ClassName, MutableClassName) \
 template <> \

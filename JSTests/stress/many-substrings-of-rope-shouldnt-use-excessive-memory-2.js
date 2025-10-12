@@ -380,10 +380,14 @@ function test(round_){
         string_list.push(lg)
         string_list.push(lj)
         string_list.push(lm)
+
+        // Force gc since we want to measure memory used by `string_list`
+        // rather than memory used by eden (which is large when gc rate limiting).
+        gc();
     }
 }
 
 let footprint = MemoryFootprint()
-if (footprint.peak > 150000000)
-    throw new Error("substring's used to use ~82000000 bytes but are now using " + footprint.peak);
+if (footprint.peak > 125000000)
+    throw new Error("substring's used to use ~70000000 bytes but are now using " + footprint.peak);
 

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2005-2025 Apple Inc.  All rights reserved.
- * Copyright (C) 2016-2020 Google Inc.  All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Google Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without

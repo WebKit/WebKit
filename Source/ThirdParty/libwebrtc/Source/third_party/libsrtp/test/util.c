@@ -101,8 +101,6 @@ static inline int hex_char_to_nibble(uint8_t c)
     default:
         return -1; /* this flags an error */
     }
-    /* NOTREACHED */
-    return -1; /* this keeps compilers from complaining */
 }
 
 uint8_t nibble_to_hex_char(uint8_t nibble)
@@ -129,7 +127,7 @@ int hex_string_to_octet_string(char *raw, char *hex, int len)
         if (tmp == -1) {
             return hex_len;
         }
-        x = (tmp << 4);
+        x = (uint8_t)(tmp << 4);
         hex_len++;
         tmp = hex_char_to_nibble(hex[1]);
         if (tmp == -1) {
@@ -176,7 +174,7 @@ static int base64_block_to_octet_triple(char *out, char *in)
     for (i = 0; i < 4; i++) {
         char *p = strchr(b64chars, in[i]);
         if (p != NULL) {
-            sextets[i] = p - b64chars;
+            sextets[i] = (unsigned char)(p - b64chars);
         } else {
             j++;
         }

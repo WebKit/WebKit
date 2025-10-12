@@ -22,6 +22,7 @@
 #include "RenderSVGHiddenContainer.h"
 
 #include "RenderLayer.h"
+#include "VisibleRectContext.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -46,4 +47,14 @@ void RenderSVGHiddenContainer::layout()
     clearNeedsLayout();    
 }
 
+LayoutRect RenderSVGHiddenContainer::clippedOverflowRect(const RenderLayerModelObject*, VisibleRectContext) const
+{
+    return { };
 }
+
+std::optional<RenderObject::RepaintRects> RenderSVGHiddenContainer::computeVisibleRectsInContainer(const RenderObject::RepaintRects& rects, const RenderLayerModelObject*, VisibleRectContext) const
+{
+    return rects;
+}
+
+} // namespace WebCore

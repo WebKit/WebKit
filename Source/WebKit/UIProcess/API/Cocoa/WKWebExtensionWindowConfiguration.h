@@ -37,7 +37,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  @discussion This class holds various options that influence the behavior and initial state of a window.
  The app retains the discretion to disregard any or all of these options, or even opt not to create a window.
  */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_CLASS_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
 WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.WindowConfiguration)
 @interface WKWebExtensionWindowConfiguration : NSObject
 

@@ -38,7 +38,7 @@
     [super layoutSublayers];
 
     if (RefPtr strongPlayer = _player.get())
-        strongPlayer->updateTransform();
+        strongPlayer->updateTransformAfterLayout();
 }
 
 @end

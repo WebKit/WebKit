@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSRunLoopTimer.h"
+#include <JavaScriptCore/JSRunLoopTimer.h>
 
 namespace JSC {
 

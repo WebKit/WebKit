@@ -47,10 +47,16 @@ class LinuxBrowserDriver(BrowserDriver):
 
     def __init__(self, browser_args):
         super().__init__(browser_args)
+        self._temp_profiledir = None
         self.process_name = self._get_first_executable_path_from_list(self.process_search_list)
         if self.process_name is None:
             raise ValueError('Cant find executable for browser {browser_name}. Searched list: {browser_process_list}'.format(
                               browser_name=self.browser_name, browser_process_list=self.process_search_list))
+
+    def _clean_temp_profiledir(self):
+        if self._temp_profiledir:
+            force_remove(self._temp_profiledir)
+            self._temp_profiledir = None
 
     def prepare_env(self, config):
         self._browser_process = None
@@ -63,7 +69,7 @@ class LinuxBrowserDriver(BrowserDriver):
         pass
 
     def restore_env(self):
-        force_remove(self._temp_profiledir)
+        self._clean_temp_profiledir()
 
     def restore_env_after_all_testing(self):
         pass
@@ -98,6 +104,7 @@ class LinuxBrowserDriver(BrowserDriver):
                 _log.error('Browser {browser_name} with pid {browser_pid} ended prematurely with return code {browser_retcode}.'.format(
                             browser_name=self.browser_name, browser_pid=self._browser_process.pid,
                             browser_retcode=self._browser_process.returncode))
+        self._clean_temp_profiledir()
 
     def launch_url(self, url, options, browser_build_path, browser_path):
         if not self._default_browser_arguments:
@@ -106,12 +113,23 @@ class LinuxBrowserDriver(BrowserDriver):
             self.browser_args = []
         exec_args = [self.process_name] + self.browser_args + self._default_browser_arguments
         _log.info('Executing: {browser_cmdline}'.format(browser_cmdline=' '.join(exec_args)))
+
+        pass_fds = ()
+        if os.environ.get("SYSPROF_CONTROL_FD"):
+            try:
+                control_fd = int(os.environ.get("SYSPROF_CONTROL_FD"))
+                copy_fd = os.dup(control_fd)
+                pass_fds += (copy_fd, )
+                self._test_environ["SYSPROF_CONTROL_FD"] = str(copy_fd)
+            except (ValueError):
+                pass
+
         # The browser process is not expected to exit on its own, it gets killed when the benchmark ends
         # and at that time is already too late to read the stdour/stderr pipes when there is lot of text
         # because if the pipe gets full then the browser process gets frozen.
         # So do not capture stdout/stderr, let the subprocess flush it to the default stdout/stderr.
         self._browser_process = subprocess.Popen(
-            exec_args, env=self._test_environ,
+            exec_args, env=self._test_environ, pass_fds=pass_fds,
             encoding='utf-8',
         )
 

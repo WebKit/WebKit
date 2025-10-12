@@ -47,7 +47,7 @@ extern "C" {
 // register) is set to round-to-nearest-up mode(0).
 #define YUVTORGB_SETUP(yuvconst, ub, vr, ug, vg, yg, bb, bg, br) \
   {                                                              \
-    asm volatile ("csrwi vxrm, 0");                               \
+    asm volatile("csrwi vxrm, 0");                               \
     ub = yuvconst->kUVCoeff[0];                                  \
     vr = yuvconst->kUVCoeff[1];                                  \
     ug = yuvconst->kUVCoeff[2];                                  \
@@ -1238,7 +1238,7 @@ void I400ToARGBRow_RVV(const uint8_t* src_y,
   vuint16m4_t v_yg = __riscv_vmv_v_x_u16m4(yuvconstants->kRGBCoeffBias[0], vl);
   // To match behavior on other platforms, vxrm (fixed-point rounding mode
   // register) sets to round-to-nearest-up mode(0).
-  asm volatile ("csrwi vxrm, 0");
+  asm volatile("csrwi vxrm, 0");
   if (is_yb_positive) {
     v_yb = __riscv_vmv_v_x_u16m4(yuvconstants->kRGBCoeffBias[4] - 32, vl);
   } else {
@@ -1632,7 +1632,7 @@ void InterpolateRow_RVV(uint8_t* dst_ptr,
   }
   // To match behavior on other platforms, vxrm (fixed-point rounding mode
   // register) is set to round-to-nearest-up(0).
-  asm volatile ("csrwi vxrm, 0");
+  asm volatile("csrwi vxrm, 0");
   // Blend 50 / 50.
   if (y1_fraction == 128) {
     do {

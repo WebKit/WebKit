@@ -25,7 +25,7 @@
 #include "modules/congestion_controller/goog_cc/delay_based_bwe.h"
 #include "modules/congestion_controller/goog_cc/probe_bitrate_estimator.h"
 #include "rtc_base/checks.h"
-#include "test/field_trial.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -58,7 +58,7 @@ int64_t RtpStream::GenerateFrame(int64_t time_now_us,
   if (time_now_us < next_rtp_time_) {
     return next_rtp_time_;
   }
-  RTC_CHECK(packets != NULL);
+  RTC_CHECK(packets != nullptr);
   size_t bits_per_frame = (bitrate_bps_ + fps_ / 2) / fps_;
   size_t n_packets =
       std::max<size_t>((bits_per_frame + 4 * kMtu) / (8 * kMtu), 1u);
@@ -137,7 +137,7 @@ void StreamGenerator::SetBitrateBps(int bitrate_bps) {
 int64_t StreamGenerator::GenerateFrame(int64_t time_now_us,
                                        int64_t* next_sequence_number,
                                        std::vector<PacketResult>* packets) {
-  RTC_CHECK(packets != NULL);
+  RTC_CHECK(packets != nullptr);
   RTC_CHECK(packets->empty());
   RTC_CHECK_GT(capacity_, 0);
   auto it =
@@ -159,14 +159,13 @@ int64_t StreamGenerator::GenerateFrame(int64_t time_now_us,
 }  // namespace test
 
 DelayBasedBweTest::DelayBasedBweTest()
-    : field_trial(std::make_unique<test::ScopedFieldTrials>(
+    : field_trials_(CreateTestFieldTrials(
           "WebRTC-Bwe-RobustThroughputEstimatorSettings/enabled:true/")),
       clock_(100000000),
       acknowledged_bitrate_estimator_(
-          AcknowledgedBitrateEstimatorInterface::Create(&field_trial_config_)),
+          AcknowledgedBitrateEstimatorInterface::Create(&field_trials_)),
       probe_bitrate_estimator_(new ProbeBitrateEstimator(nullptr)),
-      bitrate_estimator_(
-          new DelayBasedBwe(&field_trial_config_, nullptr, nullptr)),
+      bitrate_estimator_(new DelayBasedBwe(&field_trials_, nullptr, nullptr)),
       stream_generator_(new test::StreamGenerator(1e6,  // Capacity.
                                                   clock_.TimeInMicroseconds())),
       arrival_time_offset_ms_(0),

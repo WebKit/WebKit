@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/absolute-positioning-grid-container-parent-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/absolute-positioning-grid-container-parent-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/absolute-positioning-grid-container-parent-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/abspos-in-flexbox-in-grid-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-001.html

@@ -10,7 +10,7 @@
 
 #include "rtc_base/network_route.h"
 
-namespace rtc {
+namespace webrtc {
 
 bool RouteEndpoint::operator==(const RouteEndpoint& other) const {
   return adapter_type_ == other.adapter_type_ &&
@@ -24,4 +24,4 @@ bool NetworkRoute::operator==(const NetworkRoute& other) const {
          last_sent_packet_id == other.last_sent_packet_id;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

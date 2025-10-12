@@ -13,6 +13,7 @@
 
 #include <vector>
 
+#include "modules/audio_coding/audio_network_adaptor/controller.h"
 #include "modules/audio_coding/audio_network_adaptor/controller_manager.h"
 #include "test/gmock.h"
 

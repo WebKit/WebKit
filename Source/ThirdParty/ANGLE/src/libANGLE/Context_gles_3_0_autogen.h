@@ -153,7 +153,6 @@
     void uniformMatrix4x3fv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,    \
                             const GLfloat *value);                                                 \
     GLboolean unmapBuffer(BufferBinding targetPacked);                                             \
-    void vertexAttribDivisor(GLuint index, GLuint divisor);                                        \
     void vertexAttribIPointer(GLuint index, GLint size, VertexAttribType typePacked,               \
                               GLsizei stride, const void *pointer);                                \
     void waitSync(SyncID syncPacked, GLbitfield flags, GLuint64 timeout);

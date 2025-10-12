@@ -2,8 +2,18 @@
 PASS Serialization of conditionText
 PASS Serialization of inner @container rule
 PASS Serialization of nested @container rule
-PASS Serialization of boolean condition syntax
-PASS Serialization of colon condition syntax
-PASS Serialization of range condition syntax
-PASS Serialization of calc()
+PASS @container conditionText serialization: (  wiDTh  )
+PASS @container conditionText serialization: (width:100px)
+PASS @container conditionText serialization: (min-width:  100px)
+PASS @container conditionText serialization: (   MAX-WIDTH:100px  )
+PASS @container conditionText serialization: (width > 100px)
+PASS @container conditionText serialization: (width < 100px)
+PASS @container conditionText serialization: (widTH >= 100px)
+PASS @container conditionText serialization: (width <= 100px)
+PASS @container conditionText serialization: (10px < width < 100px)
+PASS @container conditionText serialization: (10px <=  width  <=  100px)
+PASS @container conditionText serialization: (100px>WIDTH>10px)
+PASS @container conditionText serialization: (  100px >= width >= 10px  )
+PASS @container conditionText serialization: (calc(1em + 1px) >= width >= max(10em, 10px))
+FAIL @container conditionText serialization: (width),(height) ,--foo ,--bar assert_equals: expected 1 but got 0
 

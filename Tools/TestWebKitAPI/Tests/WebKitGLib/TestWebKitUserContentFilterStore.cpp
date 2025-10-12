@@ -59,20 +59,7 @@ static const char* kSimpleJSONSource =
     "}]\n";
 
 namespace WTF {
-
-template <> WebKitUserContentFilter* refGPtr(WebKitUserContentFilter* ptr)
-{
-    if (ptr)
-        webkit_user_content_filter_ref(ptr);
-    return ptr;
-}
-
-template <> void derefGPtr(WebKitUserContentFilter* ptr)
-{
-    if (ptr)
-        webkit_user_content_filter_unref(ptr);
-}
-
+WTF_DEFINE_GREF_TRAITS_INLINE(WebKitUserContentFilter, webkit_user_content_filter_ref, webkit_user_content_filter_unref)
 }
 
 class UserContentFilterStoreTest: public Test {

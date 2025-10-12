@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-typedef UncheckedKeyHashMap<HWND, WindowMessageBroadcaster*> InstanceMap;
+using InstanceMap = HashMap<HWND, WindowMessageBroadcaster*>;
 
 static InstanceMap& instancesMap()
 {

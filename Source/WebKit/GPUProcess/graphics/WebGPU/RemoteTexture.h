@@ -80,8 +80,6 @@ private:
     WebCore::WebGPU::Texture& backing() { return m_backing; }
     Ref<WebCore::WebGPU::Texture> protectedBacking();
 
-    RefPtr<IPC::Connection> connection() const;
-
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void createView(const std::optional<WebGPU::TextureViewDescriptor>&, WebGPUIdentifier);

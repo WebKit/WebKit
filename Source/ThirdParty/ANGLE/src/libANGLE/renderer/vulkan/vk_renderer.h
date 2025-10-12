@@ -54,13 +54,9 @@ using ExtensionNameList                    = angle::FixedVector<const char *, kM
 
 static constexpr size_t kMaxSyncValExtraProperties = 9;
 // Information used to accurately skip known synchronization issues in ANGLE.
-// TODO: remove messageContents1 and messageContents2 fields after all
-// supressions have transitioned to using extraProperties.
 struct SkippedSyncvalMessage
 {
     const char *messageId;
-    const char *messageContents1;
-    const char *messageContents2                            = "";
     bool isDueToNonConformantCoherentColorFramebufferFetch  = false;
     const char *extraProperties[kMaxSyncValExtraProperties] = {};
 };
@@ -198,6 +194,12 @@ class Renderer : angle::NonCopyable
     {
         return mPhysicalDeviceFeatures;
     }
+    const VkPhysicalDeviceShaderIntegerDotProductProperties &
+    getPhysicalDeviceShaderIntegerDotProductProperties() const
+    {
+        return mShaderIntegerDotProductProperties;
+    }
+
     const VkPhysicalDeviceFeatures2KHR &getEnabledFeatures() const { return mEnabledFeatures; }
     VkDevice getDevice() const { return mDevice; }
 
@@ -207,6 +209,12 @@ class Renderer : angle::NonCopyable
     angle::Result checkQueueForSurfacePresent(vk::ErrorContext *context,
                                               VkSurfaceKHR surface,
                                               bool *supportedOut);
+
+    const VkPhysicalDeviceExternalMemoryHostPropertiesEXT &
+    getPhysicalDeviceExternalMemoryHostProperties() const
+    {
+        return mExternalMemoryHostProperties;
+    }
 
     const gl::Caps &getNativeCaps() const;
     const gl::TextureCapsMap &getNativeTextureCaps() const;
@@ -274,6 +282,8 @@ class Renderer : angle::NonCopyable
         const VkFormatFeatureFlags featureBits) const;
     VkFormatFeatureFlags getImageFormatFeatureBits(angle::FormatID format,
                                                    const VkFormatFeatureFlags featureBits) const;
+    VkFormatFeatureFlags getBufferFormatFeatureBits(angle::FormatID format,
+                                                    const VkFormatFeatureFlags featureBits) const;
     bool hasImageFormatFeatureBits(angle::FormatID format,
                                    const VkFormatFeatureFlags featureBits) const;
     bool hasBufferFormatFeatureBits(angle::FormatID format,
@@ -404,9 +414,6 @@ class Renderer : angle::NonCopyable
 
     bool enableDebugUtils() const { return mEnableDebugUtils; }
     bool angleDebuggerMode() const { return mAngleDebuggerMode; }
-
-    SamplerCache &getSamplerCache() { return mSamplerCache; }
-    SamplerYcbcrConversionCache &getYuvConversionCache() { return mYuvConversionCache; }
 
     void onAllocateHandle(vk::HandleType handleType);
     void onDeallocateHandle(vk::HandleType handleType, uint32_t count);
@@ -567,7 +574,13 @@ class Renderer : angle::NonCopyable
 
     bool isShadingRateSupported(gl::ShadingRate shadingRate) const
     {
-        return mSupportedFragmentShadingRates.test(shadingRate);
+        return mSupportedFragmentShadingRatesEXT.test(shadingRate);
+    }
+
+    const angle::ShadingRateMap &getSupportedFragmentShadingRateEXTSampleCounts() const
+    {
+        ASSERT(mFeatures.supportsFragmentShadingRate.enabled);
+        return mSupportedFragmentShadingRateEXTSampleCounts;
     }
 
     VkExtent2D getMaxFragmentShadingRateAttachmentTexelSize() const
@@ -577,6 +590,8 @@ class Renderer : angle::NonCopyable
     }
 
     void addBufferBlockToOrphanList(vk::BufferBlock *block) { mOrphanedBufferBlockList.add(block); }
+    void addSamplerToOrphanList(SharedSamplerPtr sampler);
+    void addSamplerYcbcrConversionToOrphanList(VkSamplerYcbcrConversion conversion);
 
     VkDeviceSize getSuballocationDestroyedSize() const
     {
@@ -696,6 +711,11 @@ class Renderer : angle::NonCopyable
 
     bool supportsAstcHdr() const;
 
+    uint32_t getNativeVectorWidthDouble() const { return mNativeVectorWidthDouble; }
+    uint32_t getNativeVectorWidthHalf() const { return mNativeVectorWidthHalf; }
+    uint32_t getPreferredVectorWidthDouble() const { return mPreferredVectorWidthDouble; }
+    uint32_t getPreferredVectorWidthHalf() const { return mPreferredVectorWidthHalf; }
+
   private:
     angle::Result setupDevice(vk::ErrorContext *context,
                               const angle::FeatureOverrides &featureOverrides,
@@ -776,6 +796,8 @@ class Renderer : angle::NonCopyable
     // Find the threshold for pending suballocation and image garbage sizes before the context
     // should be flushed.
     void calculatePendingGarbageSizeLimit();
+
+    bool cleanupOrphanedSamplers();
 
     template <typename CommandBufferHelperT, typename RecyclerT>
     angle::Result getCommandBufferImpl(vk::ErrorContext *context,
@@ -870,7 +892,7 @@ class Renderer : angle::NonCopyable
         mRasterizationOrderAttachmentAccessFeatures;
     VkPhysicalDeviceShaderAtomicFloatFeaturesEXT mShaderAtomicFloatFeatures;
     VkPhysicalDeviceMaintenance5FeaturesKHR mMaintenance5Features;
-    VkPhysicalDeviceSwapchainMaintenance1FeaturesEXT mSwapchainMaintenance1Features;
+    VkPhysicalDeviceSwapchainMaintenance1FeaturesKHR mSwapchainMaintenance1Features;
     VkPhysicalDeviceLegacyDitheringFeaturesEXT mDitheringFeatures;
     VkPhysicalDeviceDrmPropertiesEXT mDrmProperties;
     VkPhysicalDeviceTimelineSemaphoreFeaturesKHR mTimelineSemaphoreFeatures;
@@ -894,12 +916,18 @@ class Renderer : angle::NonCopyable
     VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR mUniformBufferStandardLayoutFeatures;
     VkPhysicalDeviceMaintenance3Properties mMaintenance3Properties;
     VkPhysicalDeviceFaultFeaturesEXT mFaultFeatures;
+    VkPhysicalDeviceASTCDecodeFeaturesEXT mPhysicalDeviceAstcDecodeFeatures;
+    VkPhysicalDeviceShaderIntegerDotProductFeatures mShaderIntegerDotProductFeatures;
+    VkPhysicalDeviceShaderIntegerDotProductProperties mShaderIntegerDotProductProperties;
+    VkPhysicalDeviceGlobalPriorityQueryFeaturesEXT mPhysicalDeviceGlobalPriorityQueryFeatures;
+    VkPhysicalDeviceExternalMemoryHostPropertiesEXT mExternalMemoryHostProperties;
 
     uint32_t mLegacyDitheringVersion = 0;
 
-    angle::PackedEnumBitSet<gl::ShadingRate, uint8_t> mSupportedFragmentShadingRates;
-    angle::PackedEnumMap<gl::ShadingRate, VkSampleCountFlags>
-        mSupportedFragmentShadingRateSampleCounts;
+    // EXT_fragment_shading_rate
+    angle::ShadingRateSet mSupportedFragmentShadingRatesEXT;
+    angle::ShadingRateMap mSupportedFragmentShadingRateEXTSampleCounts;
+
     std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;
     uint32_t mCurrentQueueFamilyIndex;
     uint32_t mMaxVertexAttribDivisor;
@@ -919,6 +947,11 @@ class Renderer : angle::NonCopyable
     vk::BufferBlockGarbageList mOrphanedBufferBlockList;
     // Holds RefCountedEvent that are free and ready to reuse
     vk::RefCountedEventRecycler mRefCountedEventRecycler;
+
+    // Holds orphaned VkSampler and VkSamplerYcbcrConversion objects when ShareGroup gets destroyed
+    angle::SimpleMutex mOrphanedSamplerMutex;
+    std::vector<SharedSamplerPtr> mOrphanedSamplers;
+    std::vector<VkSamplerYcbcrConversion> mOrphanedSamplerYcbcrConversions;
 
     VkDeviceSize mPendingGarbageSizeLimit;
 
@@ -1007,8 +1040,6 @@ class Renderer : angle::NonCopyable
         mOutsideRenderPassCommandBufferRecycler;
     vk::CommandBufferRecycler<vk::RenderPassCommandBufferHelper> mRenderPassCommandBufferRecycler;
 
-    SamplerCache mSamplerCache;
-    SamplerYcbcrConversionCache mYuvConversionCache;
     angle::HashMap<VkFormat, uint32_t> mVkFormatDescriptorCountMap;
     vk::ActiveHandleCounter mActiveHandleCounts;
     angle::SimpleMutex mActiveHandleCountsMutex;
@@ -1074,6 +1105,12 @@ class Renderer : angle::NonCopyable
 
     // Record submitted queue serials not belongs to any context.
     vk::ResourceUse mSubmittedResourceUse;
+
+    // Potentially vendor & feature-specific device info.
+    uint32_t mNativeVectorWidthDouble;
+    uint32_t mNativeVectorWidthHalf;
+    uint32_t mPreferredVectorWidthDouble;
+    uint32_t mPreferredVectorWidthHalf;
 };
 
 ANGLE_INLINE Serial Renderer::generateQueueSerial(SerialIndex index)

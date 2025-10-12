@@ -122,7 +122,7 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
         CFIndex attributeCount = CFDictionaryGetCount(attributes);
         Vector<const void*> keys(attributeCount);
         Vector<const void*> values(attributeCount);
-        CFDictionaryGetKeysAndValues(attributes, keys.data(), values.data());
+        CFDictionaryGetKeysAndValues(attributes, keys.mutableSpan().data(), values.mutableSpan().data());
 
         for (CFIndex i = 0; i < attributeCount; ++i) {
             auto key = dynamic_cf_cast<CFStringRef>(keys[i]);

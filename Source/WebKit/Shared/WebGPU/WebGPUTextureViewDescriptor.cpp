@@ -40,7 +40,7 @@ std::optional<TextureViewDescriptor> ConvertToBackingContext::convertToBacking(c
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), textureViewDescriptor.format, textureViewDescriptor.dimension, textureViewDescriptor.aspect, textureViewDescriptor.baseMipLevel, textureViewDescriptor.mipLevelCount, textureViewDescriptor.baseArrayLayer, textureViewDescriptor.arrayLayerCount } };
+    return { { WTFMove(*base), textureViewDescriptor.format, textureViewDescriptor.dimension, textureViewDescriptor.usage, textureViewDescriptor.aspect, textureViewDescriptor.baseMipLevel, textureViewDescriptor.mipLevelCount, textureViewDescriptor.baseArrayLayer, textureViewDescriptor.arrayLayerCount } };
 }
 
 std::optional<WebCore::WebGPU::TextureViewDescriptor> ConvertFromBackingContext::convertFromBacking(const TextureViewDescriptor& textureViewDescriptor)
@@ -49,7 +49,7 @@ std::optional<WebCore::WebGPU::TextureViewDescriptor> ConvertFromBackingContext:
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), textureViewDescriptor.format, textureViewDescriptor.dimension, textureViewDescriptor.aspect, textureViewDescriptor.baseMipLevel, textureViewDescriptor.mipLevelCount, textureViewDescriptor.baseArrayLayer, textureViewDescriptor.arrayLayerCount } };
+    return { { WTFMove(*base), textureViewDescriptor.format, textureViewDescriptor.dimension, textureViewDescriptor.usage, textureViewDescriptor.aspect, textureViewDescriptor.baseMipLevel, textureViewDescriptor.mipLevelCount, textureViewDescriptor.baseArrayLayer, textureViewDescriptor.arrayLayerCount } };
 }
 
 } // namespace WebKit

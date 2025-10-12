@@ -114,7 +114,7 @@ $L$oop_outer:
 	mov	QWORD[((64+0))+rsp],rbp
 	mov	ebp,10
 	mov	QWORD[((64+8))+rsp],rsi
-DB	102,72,15,126,214
+	movq	rsi,xmm2
 	mov	QWORD[((64+16))+rsp],rdi
 	mov	rdi,rsi
 	shr	rdi,32
@@ -392,7 +392,7 @@ ALIGN	32
 $L$oop_ssse3:
 	paddd	xmm0,xmm1
 	pxor	xmm3,xmm0
-DB	102,15,56,0,222
+	pshufb	xmm3,xmm6
 	paddd	xmm2,xmm3
 	pxor	xmm1,xmm2
 	movdqa	xmm4,xmm1
@@ -401,7 +401,7 @@ DB	102,15,56,0,222
 	por	xmm1,xmm4
 	paddd	xmm0,xmm1
 	pxor	xmm3,xmm0
-DB	102,15,56,0,223
+	pshufb	xmm3,xmm7
 	paddd	xmm2,xmm3
 	pxor	xmm1,xmm2
 	movdqa	xmm4,xmm1
@@ -414,7 +414,7 @@ DB	102,15,56,0,223
 	nop
 	paddd	xmm0,xmm1
 	pxor	xmm3,xmm0
-DB	102,15,56,0,222
+	pshufb	xmm3,xmm6
 	paddd	xmm2,xmm3
 	pxor	xmm1,xmm2
 	movdqa	xmm4,xmm1
@@ -423,7 +423,7 @@ DB	102,15,56,0,222
 	por	xmm1,xmm4
 	paddd	xmm0,xmm1
 	pxor	xmm3,xmm0
-DB	102,15,56,0,223
+	pshufb	xmm3,xmm7
 	paddd	xmm2,xmm3
 	pxor	xmm1,xmm2
 	movdqa	xmm4,xmm1
@@ -603,8 +603,8 @@ $L$oop4x:
 	paddd	xmm9,xmm13
 	pxor	xmm0,xmm8
 	pxor	xmm1,xmm9
-DB	102,15,56,0,199
-DB	102,15,56,0,207
+	pshufb	xmm0,xmm7
+	pshufb	xmm1,xmm7
 	paddd	xmm4,xmm0
 	paddd	xmm5,xmm1
 	pxor	xmm12,xmm4
@@ -622,8 +622,8 @@ DB	102,15,56,0,207
 	paddd	xmm9,xmm13
 	pxor	xmm0,xmm8
 	pxor	xmm1,xmm9
-DB	102,15,56,0,198
-DB	102,15,56,0,206
+	pshufb	xmm0,xmm6
+	pshufb	xmm1,xmm6
 	paddd	xmm4,xmm0
 	paddd	xmm5,xmm1
 	pxor	xmm12,xmm4
@@ -645,8 +645,8 @@ DB	102,15,56,0,206
 	paddd	xmm11,xmm15
 	pxor	xmm2,xmm10
 	pxor	xmm3,xmm11
-DB	102,15,56,0,215
-DB	102,15,56,0,223
+	pshufb	xmm2,xmm7
+	pshufb	xmm3,xmm7
 	paddd	xmm4,xmm2
 	paddd	xmm5,xmm3
 	pxor	xmm14,xmm4
@@ -664,8 +664,8 @@ DB	102,15,56,0,223
 	paddd	xmm11,xmm15
 	pxor	xmm2,xmm10
 	pxor	xmm3,xmm11
-DB	102,15,56,0,214
-DB	102,15,56,0,222
+	pshufb	xmm2,xmm6
+	pshufb	xmm3,xmm6
 	paddd	xmm4,xmm2
 	paddd	xmm5,xmm3
 	pxor	xmm14,xmm4
@@ -683,8 +683,8 @@ DB	102,15,56,0,222
 	paddd	xmm9,xmm14
 	pxor	xmm3,xmm8
 	pxor	xmm0,xmm9
-DB	102,15,56,0,223
-DB	102,15,56,0,199
+	pshufb	xmm3,xmm7
+	pshufb	xmm0,xmm7
 	paddd	xmm4,xmm3
 	paddd	xmm5,xmm0
 	pxor	xmm13,xmm4
@@ -702,8 +702,8 @@ DB	102,15,56,0,199
 	paddd	xmm9,xmm14
 	pxor	xmm3,xmm8
 	pxor	xmm0,xmm9
-DB	102,15,56,0,222
-DB	102,15,56,0,198
+	pshufb	xmm3,xmm6
+	pshufb	xmm0,xmm6
 	paddd	xmm4,xmm3
 	paddd	xmm5,xmm0
 	pxor	xmm13,xmm4
@@ -725,8 +725,8 @@ DB	102,15,56,0,198
 	paddd	xmm11,xmm12
 	pxor	xmm1,xmm10
 	pxor	xmm2,xmm11
-DB	102,15,56,0,207
-DB	102,15,56,0,215
+	pshufb	xmm1,xmm7
+	pshufb	xmm2,xmm7
 	paddd	xmm4,xmm1
 	paddd	xmm5,xmm2
 	pxor	xmm15,xmm4
@@ -744,8 +744,8 @@ DB	102,15,56,0,215
 	paddd	xmm11,xmm12
 	pxor	xmm1,xmm10
 	pxor	xmm2,xmm11
-DB	102,15,56,0,206
-DB	102,15,56,0,214
+	pshufb	xmm1,xmm6
+	pshufb	xmm2,xmm6
 	paddd	xmm4,xmm1
 	paddd	xmm5,xmm2
 	pxor	xmm15,xmm4

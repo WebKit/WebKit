@@ -154,6 +154,11 @@ void PageConfiguration::setInitialSandboxFlags(WebCore::SandboxFlags sandboxFlag
     m_data.initialSandboxFlags = sandboxFlags;
 }
 
+void PageConfiguration::setInitialReferrerPolicy(WebCore::ReferrerPolicy referrerPolicy)
+{
+    m_data.initialReferrerPolicy = referrerPolicy;
+}
+
 WebProcessPool& PageConfiguration::processPool() const
 {
     return m_data.processPool.get();
@@ -268,6 +273,11 @@ WebPageProxy* PageConfiguration::relatedPage() const
     return m_data.relatedPage.get();
 }
 
+RefPtr<WebPageProxy> PageConfiguration::protectedRelatedPage() const
+{
+    return relatedPage();
+}
+
 WebPageProxy* PageConfiguration::pageToCloneSessionStorageFrom() const
 {
     return m_data.pageToCloneSessionStorageFrom.get();
@@ -360,6 +370,23 @@ bool PageConfiguration::lockdownModeEnabled() const
     if (RefPtr policies = m_data.defaultWebsitePolicies.getIfExists())
         return policies->lockdownModeEnabled();
     return lockdownModeEnabledBySystem();
+}
+
+bool PageConfiguration::enhancedSecurityEnabled() const
+{
+    if (RefPtr policies = m_data.defaultWebsitePolicies.getIfExists())
+        return policies->enhancedSecurityEnabled();
+    return false;
+}
+
+void PageConfiguration::setAllowPostingLegacySynchronousMessages(bool allow)
+{
+    m_data.allowPostingLegacySynchronousMessages = allow;
+}
+
+bool PageConfiguration::allowPostingLegacySynchronousMessages() const
+{
+    return m_data.allowPostingLegacySynchronousMessages;
 }
 
 void PageConfiguration::setDelaysWebProcessLaunchUntilFirstLoad(bool delaysWebProcessLaunchUntilFirstLoad)

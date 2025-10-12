@@ -10,8 +10,14 @@
 
 #include "video/adaptation/video_stream_encoder_resource.h"
 
-#include <algorithm>
+#include <string>
 #include <utility>
+
+#include "api/adaptation/resource.h"
+#include "api/scoped_refptr.h"
+#include "api/task_queue/task_queue_base.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 
@@ -51,7 +57,7 @@ void VideoStreamEncoderResource::OnResourceUsageStateMeasured(
     ResourceUsageState usage_state) {
   MutexLock crit(&lock_);
   if (listener_) {
-    listener_->OnResourceUsageStateMeasured(rtc::scoped_refptr<Resource>(this),
+    listener_->OnResourceUsageStateMeasured(scoped_refptr<Resource>(this),
                                             usage_state);
   }
 }

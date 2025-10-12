@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 // FramebufferGL.cpp: Implements the class methods for FramebufferGL.
 
 #include "libANGLE/renderer/gl/FramebufferGL.h"

@@ -17,14 +17,18 @@ import {
   kMinDynamicBufferOffsetAlignment } from
 '../../../../capability_info.js';
 import { GPUConst } from '../../../../constants.js';
-import { kResourceStates } from '../../../../gpu_test.js';
+import {
+  kResourceStates,
+
+  AllFeaturesMaxLimitsGPUTest } from
+'../../../../gpu_test.js';
 import {
   kProgrammableEncoderTypes } from
 
 '../../../../util/command_buffer_maker.js';
-import { AllFeaturesMaxLimitsValidationTest } from '../../validation_test.js';
+import * as vtu from '../../validation_test_utils.js';
 
-class F extends AllFeaturesMaxLimitsValidationTest {
+class F extends AllFeaturesMaxLimitsGPUTest {
   encoderTypeToStageFlag(encoderType) {
     switch (encoderType) {
       case 'compute pass':
@@ -43,7 +47,7 @@ class F extends AllFeaturesMaxLimitsValidationTest {
   {
     switch (resourceType) {
       case 'texture':{
-          const texture = this.createTextureWithState('valid');
+          const texture = vtu.createTextureWithState(this, 'valid');
           const view = texture.createView();
           if (state === 'destroyed') {
             texture.destroy();
@@ -52,7 +56,7 @@ class F extends AllFeaturesMaxLimitsValidationTest {
         }
       case 'buffer':
         return {
-          buffer: this.createBufferWithState(state, {
+          buffer: vtu.createBufferWithState(this, state, {
             size: 4,
             usage: GPUBufferUsage.UNIFORM
           })
@@ -358,7 +362,7 @@ fn((t) => {
     entries: range(dynamicOffsetsDataLength, (i) => ({
       binding: i,
       resource: {
-        buffer: t.createBufferWithState('valid', {
+        buffer: vtu.createBufferWithState(t, 'valid', {
           size: kBindingSize,
           usage: GPUBufferUsage.UNIFORM
         }),

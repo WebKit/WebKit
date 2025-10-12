@@ -27,8 +27,8 @@
 #include "config.h"
 #include "BorderData.h"
 
-#include "OutlineValue.h"
 #include "RenderStyle.h"
+#include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/PointerComparison.h>
 #include <wtf/text/TextStream.h>
@@ -58,19 +58,6 @@ bool BorderData::isEquivalentForPainting(const BorderData& other, bool currentCo
     return !containsCurrentColor();
 }
 
-TextStream& operator<<(TextStream& ts, const BorderValue& borderValue)
-{
-    ts << borderValue.width() << ' ' << borderValue.style() << ' ' << borderValue.color();
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, const OutlineValue& outlineValue)
-{
-    ts << static_cast<const BorderValue&>(outlineValue);
-    ts.dumpProperty("outline-offset"_s, outlineValue.offset());
-    return ts;
-}
-
 void BorderData::dump(TextStream& ts, DumpStyleValues behavior) const
 {
     if (behavior == DumpStyleValues::All || left() != BorderValue())
@@ -93,13 +80,13 @@ void BorderData::dump(TextStream& ts, DumpStyleValues behavior) const
 
     ts.dumpProperty("image"_s, image());
 
-    if (behavior == DumpStyleValues::All || !topLeftRadius().isZero())
+    if (behavior == DumpStyleValues::All || !Style::isKnownZero(topLeftRadius()))
         ts.dumpProperty("top-left"_s, topLeftRadius());
-    if (behavior == DumpStyleValues::All || !topRightRadius().isZero())
+    if (behavior == DumpStyleValues::All || !Style::isKnownZero(topRightRadius()))
         ts.dumpProperty("top-right"_s, topRightRadius());
-    if (behavior == DumpStyleValues::All || !bottomLeftRadius().isZero())
+    if (behavior == DumpStyleValues::All || !Style::isKnownZero(bottomLeftRadius()))
         ts.dumpProperty("bottom-left"_s, bottomLeftRadius());
-    if (behavior == DumpStyleValues::All || !bottomRightRadius().isZero())
+    if (behavior == DumpStyleValues::All || !Style::isKnownZero(bottomRightRadius()))
         ts.dumpProperty("bottom-right"_s, bottomRightRadius());
 }
 

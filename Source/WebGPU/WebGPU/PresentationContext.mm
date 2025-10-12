@@ -28,7 +28,6 @@
 
 #import "APIConversions.h"
 #import "Adapter.h"
-#import "PresentationContextCoreAnimation.h"
 #import "PresentationContextIOSurface.h"
 #import <wtf/TZoneMallocInlines.h>
 
@@ -44,17 +43,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PresentationContext);
 
 Ref<PresentationContext> PresentationContext::create(const WGPUSurfaceDescriptor& descriptor, const Instance& instance)
 {
-    if (!descriptor.nextInChain || descriptor.nextInChain->next)
-        return PresentationContext::createInvalid();
-
-    switch (static_cast<unsigned>(descriptor.nextInChain->sType)) {
-    case WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking:
-        return PresentationContextIOSurface::create(descriptor, instance);
-    case WGPUSType_SurfaceDescriptorFromMetalLayer:
-        return PresentationContextCoreAnimation::create(descriptor);
-    default:
-        return PresentationContext::createInvalid();
-    }
+    return PresentationContextIOSurface::create(descriptor, instance);
 }
 
 PresentationContext::PresentationContext() = default;

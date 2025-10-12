@@ -288,7 +288,7 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, const CustomizeSucc
     CLONE_STATUS(MultiPutByOffset, Common) \
     CLONE_STATUS(NewArray, Common) \
     CLONE_STATUS(NewArrayBuffer, Common) \
-    CLONE_STATUS(NewArrayWithConstantSize, Common) \
+    CLONE_STATUS(NewArrayWithButterfly, Common) \
     CLONE_STATUS(NewArrayWithSize, Common) \
     CLONE_STATUS(NewArrayWithSpread, Common) \
     CLONE_STATUS(NewFunction, Common) \

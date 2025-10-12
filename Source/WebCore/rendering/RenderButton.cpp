@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2005-2022 Apple Inc.
+ * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -94,13 +94,13 @@ void RenderButton::updateAnonymousChildStyle(RenderStyle& childStyle) const
     // Use margin-block:auto instead of align-items:center to get safe centering, i.e.
     // when the content overflows, treat it the same as align-items: flex-start.
     if (isHorizontalWritingMode()) {
-        childStyle.setMinWidth(Length(0, LengthType::Fixed));
-        childStyle.setMarginTop(Length());
-        childStyle.setMarginBottom(Length());
+        childStyle.setMinWidth(0_css_px);
+        childStyle.setMarginTop(CSS::Keyword::Auto { });
+        childStyle.setMarginBottom(CSS::Keyword::Auto { });
     } else {
-        childStyle.setMinHeight(Length(0, LengthType::Fixed));
-        childStyle.setMarginLeft(Length());
-        childStyle.setMarginRight(Length());
+        childStyle.setMinHeight(0_css_px);
+        childStyle.setMarginLeft(CSS::Keyword::Auto { });
+        childStyle.setMarginRight(CSS::Keyword::Auto { });
     }
     childStyle.setTextBoxTrim(style().textBoxTrim());
 }
@@ -159,22 +159,6 @@ LayoutRect RenderButton::controlClipRect(const LayoutPoint& additionalOffset) co
 {
     // Clip to the padding box to at least give content the extra padding space.
     return LayoutRect(additionalOffset.x() + borderLeft(), additionalOffset.y() + borderTop(), width() - borderLeft() - borderRight(), height() - borderTop() - borderBottom());
-}
-
-static LayoutUnit synthesizedBaselineFromContentBox(const RenderBox& box, LineDirectionMode direction)
-{
-    return direction == HorizontalLine ? box.borderTop() + box.paddingTop() + box.contentBoxHeight() : box.borderRight() + box.paddingRight() + box.contentBoxWidth();
-}
-
-LayoutUnit RenderButton::baselinePosition(FontBaseline fontBaseline, bool firstLine, LineDirectionMode direction, LinePositionMode mode) const
-{
-    if (shouldApplyLayoutContainment())
-        return RenderFlexibleBox::baselinePosition(fontBaseline, firstLine, direction, mode);
-    // We cannot rely on RenderFlexibleBox::baselinePosition() because of flexboxes have some special behavior
-    // regarding baselines that shouldn't apply to buttons.
-    LayoutUnit baseline = firstLineBaseline().value_or(synthesizedBaselineFromContentBox(*this, direction));
-    LayoutUnit marginAscent = direction == HorizontalLine ? marginTop() : marginRight();
-    return baseline + marginAscent;
 }
 
 #if PLATFORM(IOS_FAMILY)

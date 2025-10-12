@@ -48,7 +48,9 @@
               finishJSTest();
             }
 
-            navigator.mediaDevices.getUserMedia({ "video": true }).then(function (stream) {
+            let stream;
+            navigator.mediaDevices.getUserMedia({ "video": true }).then(function (s) {
+                stream = s;
                 pc.addTrack(stream.getTracks()[0], stream);
                 return pc.createOffer();
             }).then(function (offer) {
@@ -60,6 +62,7 @@
                     window.internals.emulateRTCPeerConnectionPlatformEvent(pc, "dispatch-fake-ice-candidates");
                 shouldDoChecking = true;
                 checkCandidates();
+                stream.getTracks().forEach(track => track.stop());
             }).catch(function (error) {
                 testFailed("Error in promise chain: " + error);
                 finishJSTest();

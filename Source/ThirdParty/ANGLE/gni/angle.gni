@@ -23,7 +23,9 @@ declare_args() {
   # Don't build dEQP by default.
   build_angle_deqp_tests = false
 
-  build_angle_end2end_tests_aosp = false
+  # Build the ANGLE end2end tests as a shared library. This shared library can (for example) be
+  # loaded by an Android APK to execute the end2end tests outside of the normal GTest framework.
+  build_angle_end2end_tests_library = false
 
   # List of traces for benchmark mode
   angle_standalone_benchmark_traces = []
@@ -67,7 +69,7 @@ if (angle_has_build) {
   }
 
   declare_args() {
-    angle_use_gbm = ozone_platform_gbm
+    angle_use_gbm = ozone_platform_drm
     angle_use_x11 = ozone_platform_x11 && (is_linux || is_chromeos)
     angle_use_wayland = ozone_platform_wayland && is_linux && !is_castos
     angle_use_vulkan_display = is_linux || is_chromeos
@@ -82,8 +84,9 @@ if (angle_has_build) {
     dcheck_always_on = false
     angle_use_x11 = is_linux || is_chromeos
     angle_use_wayland = is_linux
+    angle_use_gbm = false
     use_ozone = false
-    ozone_platform_gbm = false
+    ozone_platform_drm = false
     ozone_platform_wayland = false
     ozone_platform_headless = false
     use_fuzzing_engine = false
@@ -140,9 +143,7 @@ declare_args() {
   if (!is_android) {
     ndk_api_level_at_least_26 = false
   } else {
-    ndk_api_level_at_least_26 =
-        (!angle_64bit_current_cpu && android32_ndk_api_level >= 26) ||
-        (angle_64bit_current_cpu && android64_ndk_api_level >= 26)
+    ndk_api_level_at_least_26 = android_ndk_api_level >= 26
   }
 
   # Vulkan loader is statically linked on Mac. http://anglebug.com/40096682
@@ -181,7 +182,7 @@ declare_args() {
   angle_enable_d3d9 = is_win && !angle_is_winuwp
   angle_enable_d3d11 = is_win
   angle_enable_gl =
-      (ozone_platform_gbm || ozone_platform_wayland || !is_linux ||
+      (ozone_platform_drm || ozone_platform_wayland || !is_linux ||
        ((angle_use_x11 && !is_chromeos) || angle_use_wayland || is_castos)) &&
       !is_fuchsia && !angle_is_winuwp && !is_win_arm64 && !is_ios
 
@@ -221,6 +222,11 @@ declare_args() {
 }
 
 declare_args() {
+  # Test the system EGL.
+  # If "true", this disables testing any ANGLE libraries packaged with the
+  # end2end tests. Meaning, only either System EGL or ANGLE EGL libraries can
+  # be tested with the full suite, including all supported/enabled backends, but
+  # not both drivers at the same time.
   angle_test_enable_system_egl = false
 }
 
@@ -333,6 +339,7 @@ if (!defined(angle_zlib_compression_utils_dir)) {
 angle_common_configs = [
   angle_root + ":angle_asserts_config",
   angle_root + ":constructor_and_destructor_warnings",
+  angle_root + ":no_thread_safety_warnings",
   angle_root + ":extra_warnings",
   angle_root + ":internal_config",
   angle_root + ":angle_uwp_env",
@@ -343,7 +350,7 @@ angle_remove_configs = []
 if (angle_has_build) {
   angle_remove_configs += [ "//build/config/compiler:default_include_dirs" ]
 
-  if (is_clang && !is_nacl) {
+  if (is_clang) {
     angle_remove_configs += [ "//build/config/clang:find_bad_constructs" ]
   }
 
@@ -537,7 +544,8 @@ template("angle_static_library") {
   }
 }
 
-if (angle_standalone || build_with_chromium || build_angle_end2end_tests_aosp) {
+if (angle_standalone || build_with_chromium ||
+    build_angle_end2end_tests_library) {
   template("angle_test") {
     test(target_name) {
       forward_variables_from(invoker,
@@ -575,7 +583,7 @@ if (angle_standalone || build_with_chromium || build_angle_end2end_tests_aosp) {
                       "//third_party/googletest:gtest",
                     ]
       if (angle_has_rapidjson) {
-        public_deps += [ "$angle_root/third_party/rapidjson:rapidjson" ]
+        public_deps += [ "$angle_root/third_party/rapidjson" ]
       }
 
       data = invoker.data + [

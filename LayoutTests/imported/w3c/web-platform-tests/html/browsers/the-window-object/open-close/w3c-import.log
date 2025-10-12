@@ -17,6 +17,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/callback.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/close_beforeunload-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/close_beforeunload.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/close_noopener_beforeunload.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/close_pagehide-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/close_pagehide.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/close_script_defer-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/close_script_defer.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/close_unload-1.html
@@ -42,3 +45,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-screenx-screeny.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-top-left.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-width-height.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open_initial_size.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/script-closable.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/self-close.html

@@ -74,7 +74,7 @@ public:
 
     void triggerSystemPreviewAction();
 
-    void triggerSystemPreviewActionWithTargetForTesting(uint64_t elementID, NSString* documentID, uint64_t pageID);
+    void triggerSystemPreviewActionWithTargetForTesting(uint64_t nodeID, NSString* documentID, uint64_t pageID);
     void setCompletionHandlerForLoadTesting(CompletionHandler<void(bool)>&&);
 
 private:

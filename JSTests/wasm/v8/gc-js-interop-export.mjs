@@ -1,4 +1,4 @@
-//@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1")
+//@ requireOptions("--useBBQJIT=1")
 //@ skip
 // gc-js-interop-helpers.js needs to have %function remapping and then we can add it to run-jsc-stress-test loading..
 

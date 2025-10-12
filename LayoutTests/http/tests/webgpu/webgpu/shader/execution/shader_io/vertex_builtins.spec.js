@@ -4,9 +4,9 @@
 
 * test builtin(clip_distances)
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
-import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
 
-class VertexBuiltinTest extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {}
+class VertexBuiltinTest extends AllFeaturesMaxLimitsGPUTest {}
 
 export const g = makeTestGroup(VertexBuiltinTest);
 

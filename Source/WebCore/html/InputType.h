@@ -32,9 +32,9 @@
 
 #pragma once
 
-#include "HTMLInputElement.h"
-#include "HTMLTextFormControlElement.h"
-#include "RenderPtr.h"
+#include <WebCore/HTMLInputElement.h>
+#include <WebCore/HTMLTextFormControlElement.h>
+#include <WebCore/RenderPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
@@ -250,7 +250,7 @@ public:
     double minimum() const;
     double maximum() const;
     virtual bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const;
-    virtual float decorationWidth() const;
+    virtual float decorationWidth(float inputWidth) const;
     bool stepMismatch(const String&) const;
     virtual bool getAllowedValueStep(Decimal*) const;
     virtual StepRange createStepRange(AnyStepHandling) const;
@@ -299,7 +299,7 @@ public:
 
     virtual bool shouldSubmitImplicitly(Event&);
     virtual bool hasCustomFocusLogic() const;
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
+    virtual bool isKeyboardFocusable(const FocusEventData&) const;
     virtual bool isMouseFocusable() const;
     virtual bool shouldUseInputMethod() const;
     virtual void handleFocusEvent(Node* oldFocusedNode, FocusDirection);

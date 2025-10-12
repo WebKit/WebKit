@@ -1,7 +1,0 @@
-
-PASS HTTP set/overwrite/delete observed in CookieStore
-FAIL CookieStore agreed with HTTP headers agree on encoding non-ASCII cookies assert_equals: Cookie we wrote using HTTP in cookie jar expected "HTTP-🍪=🔵" but got "HTTP-ðª=ðµ"
-PASS CookieStore set/overwrite/delete observed in HTTP headers
-FAIL HTTP headers agreed with CookieStore on encoding non-ASCII cookies assert_equals: HTTP cookie jar contains only cookie we set expected "🍪=🔵" but got ""
-FAIL Binary HTTP set/overwrite/delete observed in CookieStore assert_equals: Binary cookie we wrote using HTTP in cookie jar expected "HTTP-cookie=value\ufffd" but got "HTTP-cookie=valueï¿½"
-

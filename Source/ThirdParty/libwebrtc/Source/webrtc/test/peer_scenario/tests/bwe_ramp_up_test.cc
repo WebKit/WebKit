@@ -9,9 +9,18 @@
  */
 
 #include <atomic>
+#include <string>
 #include <utility>
 
+#include "api/jsep.h"
+#include "api/make_ref_counted.h"
+#include "api/media_types.h"
+#include "api/rtp_sender_interface.h"
+#include "api/rtp_transceiver_direction.h"
+#include "api/scoped_refptr.h"
+#include "api/stats/rtc_stats_report.h"
 #include "api/stats/rtcstats_objects.h"
+#include "api/test/network_emulation/network_emulation_interfaces.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
@@ -20,6 +29,7 @@
 #include "modules/rtp_rtcp/source/rtp_util.h"
 #include "pc/media_session.h"
 #include "pc/test/mock_peer_connection_observers.h"
+#include "rtc_base/checks.h"
 #include "test/create_frame_generator_capturer.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -27,6 +37,7 @@
 #include "test/peer_scenario/peer_scenario_client.h"
 
 #if WEBRTC_ENABLE_PROTOBUF
+#include "api/test/network_emulation/network_config_schedule.pb.h"
 #include "api/test/network_emulation/schedulable_network_node_builder.h"
 #endif
 
@@ -38,11 +49,10 @@ using ::testing::Test;
 using ::testing::ValuesIn;
 using ::testing::WithParamInterface;
 
-rtc::scoped_refptr<const RTCStatsReport> GetStatsAndProcess(
+scoped_refptr<const RTCStatsReport> GetStatsAndProcess(
     PeerScenario& s,
     PeerScenarioClient* client) {
-  auto stats_collector =
-      rtc::make_ref_counted<webrtc::MockRTCStatsCollectorCallback>();
+  auto stats_collector = make_ref_counted<MockRTCStatsCollectorCallback>();
   client->pc()->GetStats(stats_collector.get());
   s.ProcessMessages(TimeDelta::Millis(0));
   RTC_CHECK(stats_collector->called());
@@ -50,7 +60,7 @@ rtc::scoped_refptr<const RTCStatsReport> GetStatsAndProcess(
 }
 
 DataRate GetAvailableSendBitrate(
-    const rtc::scoped_refptr<const RTCStatsReport>& report) {
+    const scoped_refptr<const RTCStatsReport>& report) {
   auto stats = report->GetStatsOfType<RTCIceCandidatePairStats>();
   if (stats.empty()) {
     return DataRate::Zero();
@@ -136,11 +146,11 @@ TEST(BweRampupTest, RampUpWithUndemuxableRtpPackets) {
   signaling.NegotiateSdp(
       [&](SessionDescriptionInterface* offer) {
         RtpHeaderExtensionMap extension_map(
-            cricket::GetFirstVideoContentDescription(offer->description())
+            GetFirstVideoContentDescription(offer->description())
                 ->rtp_header_extensions());
         ASSERT_TRUE(extension_map.IsRegistered(kRtpExtensionMid));
         const std::string video_mid =
-            cricket::GetFirstVideoContent(offer->description())->mid();
+            GetFirstVideoContent(offer->description())->mid();
         send_node->router()->SetFilter([extension_map, video_mid, &send_node](
                                            const EmulatedIpPacket& packet) {
           if (IsRtpPacket(packet.data)) {
@@ -181,7 +191,7 @@ TEST(BweRampupTest, RampUpWithUndemuxableRtpPackets) {
 
   DataRate final_bwe = GetAvailableSendBitrate(GetStatsAndProcess(s, caller));
   // Ensure BWE has increased from the initial BWE. BWE will not increase unless
-  // RTCP feedback is recevied. The increase is just an arbitrary value to
+  // RTCP feedback is received. The increase is just an arbitrary value to
   // ensure BWE has increased beyond noise levels.
   EXPECT_GT(final_bwe, initial_bwe + DataRate::KilobitsPerSec(345));
 }
@@ -203,13 +213,13 @@ INSTANTIATE_TEST_SUITE_P(
              .expected_bwe_min = DataRate::KilobitsPerSec(2500),
          },
          {
-             .network_capacity = webrtc::DataRate::KilobitsPerSec(500),
-             .expected_bwe_min = webrtc::DataRate::KilobitsPerSec(400),
+             .network_capacity = DataRate::KilobitsPerSec(500),
+             .expected_bwe_min = DataRate::KilobitsPerSec(400),
          }}));
 
 class MockRtpSenderObserver : public RtpSenderObserverInterface {
  public:
-  MOCK_METHOD(void, OnFirstPacketSent, (cricket::MediaType));
+  MOCK_METHOD(void, OnFirstPacketSent, (MediaType));
 };
 
 // Test that caller and callee BWE rampup even if no media packets are sent.
@@ -222,7 +232,7 @@ TEST_P(BweRampupWithInitialProbeTest, BweRampUpBothDirectionsWithoutMedia) {
   PeerScenarioClient* caller = s.CreateClient({});
   PeerScenarioClient* callee = s.CreateClient({});
 
-  auto transceiver = caller->pc()->AddTransceiver(cricket::MEDIA_TYPE_VIDEO);
+  auto transceiver = caller->pc()->AddTransceiver(MediaType::VIDEO);
   ASSERT_TRUE(transceiver.error().ok());
 
   MockRtpSenderObserver observer;
@@ -315,7 +325,7 @@ TEST(BweRampupTest, CanReconfigureBweAfterStopingVideo) {
 
   // Send a TCP messages to the receiver using the same downlink node.
   // This is done just to force a lower BWE than the link capacity.
-  webrtc::TcpMessageRoute* tcp_route = s.net()->CreateTcpRoute(
+  TcpMessageRoute* tcp_route = s.net()->CreateTcpRoute(
       s.net()->CreateRoute({caller_node}), s.net()->CreateRoute({callee_node}));
   DataRate bwe_before_restart = DataRate::Zero();
 

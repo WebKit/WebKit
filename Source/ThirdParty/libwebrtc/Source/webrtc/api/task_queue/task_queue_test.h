@@ -27,7 +27,7 @@ namespace webrtc {
 // using ::testing::Values;
 // using ::webrtc::TaskQueueTest;
 //
-// std::unique_ptr<webrtc::TaskQueueFactory> CreateMyFactory();
+// std::unique_ptr<TaskQueueFactory> CreateMyFactory();
 //
 // INSTANTIATE_TEST_SUITE_P(My, TaskQueueTest, Values(CreateMyFactory));
 //

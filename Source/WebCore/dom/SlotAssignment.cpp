@@ -45,7 +45,7 @@ using namespace HTMLNames;
 struct SameSizeAsNamedSlotAssignment {
     virtual ~SameSizeAsNamedSlotAssignment() = default;
     uint32_t values[4];
-    UncheckedKeyHashMap<void*, void*> pointer;
+    HashMap<void*, void*> pointer;
 #if ASSERT_ENABLED
     WeakHashSet<Element> hashSet;
 #endif
@@ -524,7 +524,7 @@ void ManualSlotAssignment::removeSlotElementByName(const AtomString&, HTMLSlotEl
 void ManualSlotAssignment::slotManualAssignmentDidChange(HTMLSlotElement& slot, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& previous, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& current, ShadowRoot& shadowRoot)
 {
     auto effectivePrevious = effectiveAssignedNodes(shadowRoot, previous);
-    UncheckedKeyHashSet<Ref<HTMLSlotElement>> affectedSlots;
+    HashSet<Ref<HTMLSlotElement>> affectedSlots;
     for (auto& node : current) {
         RefPtr protectedNode = node.get();
         if (RefPtr previousSlot = protectedNode->manuallyAssignedSlot()) {

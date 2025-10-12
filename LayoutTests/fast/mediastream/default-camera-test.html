@@ -25,12 +25,15 @@
 
         let stream = await navigator.mediaDevices.getUserMedia({ video: true });
         assert_equals(stream.getVideoTracks()[0].label, "my new camera");
+        stream.getTracks().forEach(track => track.stop());
 
         stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
         assert_equals(stream.getVideoTracks()[0].label, "Mock video device 1");
+        stream.getTracks().forEach(track => track.stop());
 
         stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
         assert_equals(stream.getVideoTracks()[0].label, "Mock video device 2");
+        stream.getTracks().forEach(track => track.stop());
     }, "Check default cameras in case of default device having an unknown facing mode");
     </script>
 </body>

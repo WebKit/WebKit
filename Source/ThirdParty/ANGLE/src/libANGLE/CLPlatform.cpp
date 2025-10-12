@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // CLPlatform.cpp: Implements the cl::Platform class.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/Context.h"
 #include "libANGLE/capture/FrameCapture.h"
@@ -160,6 +165,11 @@ angle::Result Platform::getInfo(PlatformInfo name,
             copyValue = kIcdSuffix;
             copySize  = sizeof(kIcdSuffix);
             break;
+        case PlatformInfo::ExternalMemory:
+            copyValue = mInfo.externalMemoryHandleSupportList.data();
+            copySize  = mInfo.externalMemoryHandleSupportList.size() *
+                       sizeof(*mInfo.externalMemoryHandleSupportList.data());
+            break;
         default:
             ASSERT(false);
             ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
@@ -283,8 +293,8 @@ Platform::~Platform() = default;
 
 Platform::Platform(const rx::CLPlatformImpl::CreateFunc &createFunc)
     : mImpl(createFunc(*this)),
-      mInfo(mImpl ? mImpl->createInfo() : rx::CLPlatformImpl::Info{}),
       mDevices(mImpl ? createDevices(mImpl->createDevices()) : DevicePtrs{}),
+      mInfo(mImpl ? mImpl->createInfo() : rx::CLPlatformImpl::Info{}),
       mMultiThreadPool(mImpl ? angle::WorkerThreadPool::Create(0, ANGLEPlatformCurrent()) : nullptr)
 {}
 

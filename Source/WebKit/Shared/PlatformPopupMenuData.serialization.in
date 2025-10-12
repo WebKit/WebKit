@@ -22,7 +22,8 @@
 
 struct WebKit::PlatformPopupMenuData {
 #if PLATFORM(COCOA)
-    WebKit::PlatformFontInfo fontInfo;
+    String postScriptName;
+    double pointSize;
     bool shouldPopOver;
     bool hideArrows;
     WebCore::PopupMenuStyle::Size menuSize;

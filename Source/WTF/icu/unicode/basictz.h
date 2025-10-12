@@ -107,7 +107,7 @@ public:
     /**
      * Gets the <code>InitialTimeZoneRule</code> and the set of <code>TimeZoneRule</code>
      * which represent time transitions for this time zone.  On successful return,
-     * the argument initial points to non-NULL <code>InitialTimeZoneRule</code> and
+     * the argument initial points to non-nullptr <code>InitialTimeZoneRule</code> and
      * the array trsrules is filled with 0 or multiple <code>TimeZoneRule</code>
      * instances up to the size specified by trscount.  The results are referencing the
      * rule instance held by this time zone instance.  Therefore, after this time zone
@@ -139,30 +139,28 @@ public:
      * The time zone rule objects returned by this method is owned by the caller, so the caller is
      * responsible for deleting them after use.
      * @param date      The date used for extracting time zone rules.
-     * @param initial   Receives the <code>InitialTimeZone</code>, always not NULL.
+     * @param initial   Receives the <code>InitialTimeZone</code>, always not nullptr.
      * @param std       Receives the <code>AnnualTimeZoneRule</code> for standard time transitions.
      *                  When this time time zone does not observe daylight saving times around the
-     *                  specified date, NULL is set.
+     *                  specified date, nullptr is set.
      * @param dst       Receives the <code>AnnualTimeZoneRule</code> for daylight saving time
      *                  transitions.  When this time zone does not observer daylight saving times
-     *                  around the specified date, NULL is set.
+     *                  around the specified date, nullptr is set.
      * @param status    Receives error status code.
      * @stable ICU 3.8
      */
     virtual void getSimpleRulesNear(UDate date, InitialTimeZoneRule*& initial,
         AnnualTimeZoneRule*& std, AnnualTimeZoneRule*& dst, UErrorCode& status) const;
 
-#ifndef U_FORCE_HIDE_DRAFT_API
     /**
      * Get time zone offsets from local wall time.
-     * @draft ICU 69
+     * @stable ICU 69
      */
     virtual void getOffsetFromLocal(
         UDate date, UTimeZoneLocalOption nonExistingTimeOpt,
         UTimeZoneLocalOption duplicatedTimeOpt, int32_t& rawOffset,
         int32_t& dstOffset, UErrorCode& status) const;
 
-#endif /* U_FORCE_HIDE_DRAFT_API */
 
 #ifndef U_HIDE_INTERNAL_API
     /**
@@ -188,13 +186,15 @@ protected:
 
 #ifndef U_HIDE_INTERNAL_API
     /**
-     * The time type option bit masks used by getOffsetFromLocal
+     * A time type option bit mask used by getOffsetFromLocal.
      * @internal
      */
-    enum {
-        kStdDstMask = kDaylight,
-        kFormerLatterMask = kLatter
-    };
+    static constexpr int32_t kStdDstMask = kDaylight;
+    /**
+     * A time type option bit mask used by getOffsetFromLocal.
+     * @internal
+     */
+    static constexpr int32_t kFormerLatterMask = kLatter;
 #endif  /* U_HIDE_INTERNAL_API */
 
     /**

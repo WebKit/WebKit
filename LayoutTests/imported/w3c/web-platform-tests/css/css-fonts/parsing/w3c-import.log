@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/ahem-ex-500.otf
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-face-size-adjust.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-face-src-format.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-face-src-list.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-face-src-local.html
@@ -49,9 +50,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-size-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-size-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-size-valid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-stretch-computed.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-stretch-invalid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-stretch-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-stretch-alias.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-style-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-style-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-style-valid.html
@@ -96,3 +95,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-weight-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-weight-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-weight-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-width-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-width-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-width-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/w3c-import.log

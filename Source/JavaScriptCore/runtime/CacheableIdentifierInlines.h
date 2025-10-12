@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "CacheableIdentifier.h"
+#include <JavaScriptCore/CacheableIdentifier.h>
 
-#include "Identifier.h"
-#include "JSCJSValueInlines.h"
-#include "JSCell.h"
-#include "VM.h"
+#include <JavaScriptCore/Identifier.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSCell.h>
+#include <JavaScriptCore/VM.h>
 #include <wtf/text/UniquedStringImpl.h>
 
 namespace JSC {

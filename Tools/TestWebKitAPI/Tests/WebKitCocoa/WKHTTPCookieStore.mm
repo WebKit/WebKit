@@ -41,6 +41,7 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Seconds.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/WTFString.h>
 
@@ -847,8 +848,8 @@ TEST(WKHTTPCookieStore, WebSocketCookies)
                 "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
                 "\r\n"_s);
         } else if (path == "/websocket"_s) {
-            EXPECT_TRUE(strnstr(request.data(), "Host: 127.0.0.1:", request.size()));
-            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
+            EXPECT_TRUE(contains(request.span(), "Host: 127.0.0.1:"_span));
+            EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
             receivedThirdRequest = true;
         } else if (path == "/ninja"_s) {
             auto html = [NSString stringWithFormat:@"<script>new WebSocket('ws://127.0.0.1:%d/websocket')</script>", serverPort];
@@ -896,16 +897,16 @@ TEST(WKHTTPCookieStore, WebSocketCookiesFromRedirect)
                     "Content-Length: 0\r\n"
                     "\r\n"_s));
         } else if (path == "/destination"_s) {
-            EXPECT_TRUE(strnstr(request.data(), "Host: 127.0.0.1:", request.size()));
-            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
+            EXPECT_TRUE(contains(request.span(), "Host: 127.0.0.1:"_span));
+            EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
             co_await connection.awaitableSend(
                 "HTTP/1.1 200 OK\r\n"
                 "Content-Length: 0\r\n"
                 "\r\n"_s);
         } else if (path == "/websocket"_s) {
-            EXPECT_TRUE(strnstr(request.data(), "Host: localhost:", request.size()));
-            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
-            EXPECT_TRUE(strnstr(request.data(), "Origin: http://127.0.0.1:", request.size()));
+            EXPECT_TRUE(contains(request.span(), "Host: localhost:"_span));
+            EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
+            EXPECT_TRUE(contains(request.span(), "Origin: http://127.0.0.1:"_span));
             receivedWebSocket = true;
         } else if (path == "/ninja"_s) {
             auto html = [NSString stringWithFormat:@"<script>new WebSocket('ws://localhost:%d/websocket')</script>", serverPort];
@@ -953,13 +954,13 @@ TEST(WKHTTPCookieStore, WebSocketCookiesThroughRedirect)
                     "Content-Length: 0\r\n"
                     "\r\n"_s));
         } else if (path == "/websocket"_s) {
-            EXPECT_TRUE(strnstr(request.data(), "Host: localhost:", request.size()));
-            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
-            EXPECT_TRUE(strnstr(request.data(), "Origin: http://127.0.0.1:", request.size()));
+            EXPECT_TRUE(contains(request.span(), "Host: localhost:"_span));
+            EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
+            EXPECT_TRUE(contains(request.span(), "Origin: http://127.0.0.1:"_span));
             receivedWebSocket = true;
         } else if (path == "/ninja"_s) {
-            EXPECT_TRUE(strnstr(request.data(), "Host: 127.0.0.1:", request.size()));
-            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
+            EXPECT_TRUE(contains(request.span(), "Host: 127.0.0.1:"_span));
+            EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
             auto html = [NSString stringWithFormat:@"<script>new WebSocket('ws://localhost:%d/websocket')</script>", serverPort];
             co_await connection.awaitableSend(HTTPResponse(html).serialize());
         } else
@@ -995,13 +996,13 @@ TEST(WKHTTPCookieStore, WebSocketSetCookiesThroughFirstPartyRedirect)
                     "Content-Length: 0\r\n"
                     "\r\n"_s));
         } else if (path == "/websocket"_s) {
-            EXPECT_TRUE(strnstr(request.data(), "Host: localhost:", request.size()));
-            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
-            EXPECT_FALSE(strnstr(request.data(), "Origin: http://127.0.0.1:", request.size()));
+            EXPECT_TRUE(contains(request.span(), "Host: localhost:"_span));
+            EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
+            EXPECT_FALSE(contains(request.span(), "Origin: http://127.0.0.1:"_span));
             receivedWebSocket = true;
         } else if (path == "/ninja"_s) {
-            EXPECT_TRUE(strnstr(request.data(), "Host: 127.0.0.1:", request.size()));
-            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
+            EXPECT_TRUE(contains(request.span(), "Host: 127.0.0.1:"_span));
+            EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
             auto html = [NSString stringWithFormat:@"<script>new WebSocket('ws://127.0.0.1:%d/redirect')</script>", serverPort];
             co_await connection.awaitableSend(HTTPResponse(html).serialize());
         } else
@@ -1051,12 +1052,12 @@ TEST(WKHTTPCookieStore, WebSocketSetCookiesThroughRedirectToThirdParty)
                     "Content-Length: 0\r\n"
                     "\r\n"_s));
         } else if (path == "/websocket"_s) {
-            EXPECT_TRUE(strnstr(request.data(), "Host: localhost:", request.size()));
-            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
+            EXPECT_TRUE(contains(request.span(), "Host: localhost:"_span));
+            EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
             receivedWebSocket = true;
         } else if (path == "/ninja"_s) {
-            EXPECT_TRUE(strnstr(request.data(), "Host: 127.0.0.1:", request.size()));
-            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
+            EXPECT_TRUE(contains(request.span(), "Host: 127.0.0.1:"_span));
+            EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
             auto html = [NSString stringWithFormat:@"<script>new WebSocket('ws://127.0.0.1:%d/redirect')</script>", serverPort];
             co_await connection.awaitableSend(HTTPResponse(html).serialize());
         } else
@@ -1179,3 +1180,40 @@ TEST(WKHTTPCookieStore, SetCookies)
     TestWebKitAPI::Util::run(&done);
     done = false;
 }
+
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
+TEST(WKHTTPCookieStore, PartitionedCookieShouldNotHavePartitionProperty)
+{
+    using namespace TestWebKitAPI;
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s }, { "Set-Cookie"_s, "test=value;Secure;SameSite=None;Partitioned"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:viewConfiguration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
+    [delegate waitForDidFinishNavigation];
+
+    __block bool gotCookieCallback { false };
+    [viewConfiguration.get().websiteDataStore.httpCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+        EXPECT_EQ(cookies.count, 1u);
+        EXPECT_WK_STREQ(cookies[0].name, @"test");
+        EXPECT_WK_STREQ(cookies[0].value, @"value");
+        EXPECT_WK_STREQ(cookies[0].properties[NSHTTPCookieName], @"test");
+        EXPECT_WK_STREQ(cookies[0].properties[NSHTTPCookieValue], @"value");
+        EXPECT_NULL(cookies[0].properties[@"StoragePartition"]);
+        gotCookieCallback = true;
+    }];
+    Util::run(&gotCookieCallback);
+}
+#endif

@@ -27,10 +27,10 @@
 
 namespace JSC {
 
-Ref<AtomStringImpl> Identifier::add8(VM& vm, std::span<const UChar> s)
+Ref<AtomStringImpl> Identifier::add8(VM& vm, std::span<const char16_t> s)
 {
     if (s.size() == 1) {
-        UChar c = s.front();
+        char16_t c = s.front();
         ASSERT(isLatin1(c));
         if (canUseSingleCharacterString(c))
             return vm.smallStrings.singleCharacterStringRep(c);

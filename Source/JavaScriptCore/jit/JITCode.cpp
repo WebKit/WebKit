@@ -257,10 +257,10 @@ void DirectJITCode::initializeCodeRefForDFG(JITCode::CodeRef<JSEntryPtrTag> ref,
 CodePtr<JSEntryPtrTag> DirectJITCode::addressForCall(ArityCheckMode arity)
 {
     switch (arity) {
-    case ArityCheckNotRequired:
+    case ArityCheckMode::ArityCheckNotRequired:
         RELEASE_ASSERT(m_addressForCall);
         return m_addressForCall;
-    case MustCheckArity:
+    case ArityCheckMode::MustCheckArity:
         RELEASE_ASSERT(m_withArityCheck);
         return m_withArityCheck;
     }
@@ -284,7 +284,7 @@ NativeJITCode::~NativeJITCode() = default;
 CodePtr<JSEntryPtrTag> NativeJITCode::addressForCall(ArityCheckMode arity)
 {
     RELEASE_ASSERT(m_addressForCall);
-    ASSERT_UNUSED(arity, arity == ArityCheckNotRequired || arity == MustCheckArity);
+    ASSERT_UNUSED(arity, arity == ArityCheckMode::ArityCheckNotRequired || arity == ArityCheckMode::MustCheckArity);
     return m_addressForCall;
 }
 

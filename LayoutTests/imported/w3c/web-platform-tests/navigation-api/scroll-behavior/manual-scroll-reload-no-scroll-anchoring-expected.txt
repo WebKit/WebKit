@@ -1,0 +1,3 @@
+
+PASS scroll: scroll() should work on a reload navigation
+

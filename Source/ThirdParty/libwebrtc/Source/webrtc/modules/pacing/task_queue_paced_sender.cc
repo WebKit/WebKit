@@ -261,7 +261,7 @@ void TaskQueuePacedSender::MaybeProcessPackets(
     DataRate pacing_rate = pacing_controller_.pacing_rate();
     if (max_hold_back_window_in_packets_ != kNoPacketHoldback &&
         !pacing_rate.IsZero() &&
-        packet_size_.filtered() != rtc::ExpFilter::kValueUndefined) {
+        packet_size_.filtered() != ExpFilter::kValueUndefined) {
       TimeDelta avg_packet_send_time =
           DataSize::Bytes(packet_size_.filtered()) / pacing_rate;
       hold_back_window =

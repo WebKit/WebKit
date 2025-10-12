@@ -24,6 +24,7 @@
 #include "FloatRect.h"
 #include "FloatSize.h"
 #include "Image.h"
+#include "NativeImage.h"
 
 namespace WebCore {
 

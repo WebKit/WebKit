@@ -27,6 +27,7 @@
 #include "GStreamerCommon.h"
 #include "GStreamerMediaStreamSource.h"
 #include "GStreamerRegistryScanner.h"
+#include "GStreamerWebRTCCommon.h"
 #include "MediaStreamTrack.h"
 #include "NotImplemented.h"
 #include <wtf/text/MakeString.h>
@@ -63,6 +64,43 @@ void RealtimeOutgoingAudioSourceGStreamer::initialize()
     });
     static Atomic<uint64_t> sourceCounter = 0;
     gst_element_set_name(m_bin.get(), makeString("outgoing-audio-source-"_s, sourceCounter.exchangeAdd(1)).ascii().data());
+}
+
+void RealtimeOutgoingAudioSourceGStreamer::setInitialParameters(GUniquePtr<GstStructure>&& parameters)
+{
+    for (const auto& codec : gstStructureGetList<const GstStructure*>(parameters.get(), "codecs"_s)) {
+        auto encodingName = gstStructureGetString(codec, "mime-type"_s);
+        if (encodingName.isEmpty() || encodingName.isNull())
+            continue;
+
+        if (encodingName != "audio/telephone-event"_s)
+            continue;
+
+        auto pt = gstStructureGet<unsigned>(codec, "pt"_s);
+        if (!pt) [[unlikely]]
+            continue;
+
+        // We're picking up only the first encoding. Maybe we should check clock-rate too.
+        setupDTMFSource(*pt);
+        break;
+    }
+
+    RealtimeOutgoingMediaSourceGStreamer::setInitialParameters(WTFMove(parameters));
+}
+
+void RealtimeOutgoingAudioSourceGStreamer::setupDTMFSource(int pt)
+{
+    m_dtmfSource = makeGStreamerElement("rtpdtmfsrc"_s, "dtmfSource"_s);
+    if (!m_dtmfSource) {
+        gst_printerrln("RTP DTMF element(s) missing, DTMF tones sending support disabled.");
+        return;
+    }
+
+    gstPayloaderSetPayloadType(m_dtmfSource, pt);
+    gst_bin_add(GST_BIN_CAST(m_bin.get()), m_dtmfSource.get());
+    auto srcPad = adoptGRef(gst_element_get_static_pad(m_dtmfSource.get(), "src"));
+    auto sinkPad = adoptGRef(gst_element_request_pad_simple(m_rtpFunnel.get(), "sink_%u"));
+    gst_pad_link(srcPad.get(), sinkPad.get());
 }
 
 RTCRtpCapabilities RealtimeOutgoingAudioSourceGStreamer::rtpCapabilities() const

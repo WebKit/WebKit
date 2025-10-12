@@ -87,6 +87,7 @@ class GLibPort(Port):
 
         environment['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('lib', 'libTestRunnerInjectedBundle.so')
         environment['WEBKIT_EXEC_PATH'] = self._build_path('bin')
+        environment['WEBKIT_INSPECTOR_RESOURCES_PATH'] = self._build_path('share')
         environment['WEBKIT_TOP_LEVEL'] = self.path_from_webkit_base()
         environment['LD_LIBRARY_PATH'] = self._prepend_to_env_value(self._build_path('lib'), environment.get('LD_LIBRARY_PATH', ''))
         self._copy_value_from_environ_if_set(environment, 'LIBGL_ALWAYS_SOFTWARE')
@@ -154,6 +155,9 @@ class GLibPort(Port):
                 "--xml-file=%s " \
                 "--suppressions=%s" % (xmlfile, suppressionsfile)
 
+        # WTF_DateMath.calculateLocalTimeOffset test only pass in Pacific Time Zone
+        environment['TZ'] = 'PST8PDT'
+
         return environment
 
     def setup_environ_for_minibrowser(self):
@@ -196,3 +200,14 @@ class GLibPort(Port):
         if self._should_use_jhbuild():
             command = self._jhbuild_wrapper + command
         return self._executive.run_command(command + args, cwd=self.webkit_base(), stdout=None, return_stderr=False, decode_output=False, env=env)
+
+    API_TEST_BINARY_NAMES = ['TestWTF', 'TestJavaScriptCore', 'TestWebCore', 'TestWebKit']
+
+    def path_to_api_test(self, program_name):
+        return self._built_executables_path('TestWebKitAPI', program_name)
+
+    def environment_for_api_tests(self):
+        environment = super(GLibPort, self).environment_for_api_tests()
+        environment['TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH'] = self.path_from_webkit_base('Tools', 'TestWebKitAPI', 'Tests', 'WebKit')
+        environment['TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH'] = self._build_path('lib')
+        return environment

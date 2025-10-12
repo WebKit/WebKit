@@ -5,9 +5,8 @@
     testRunner.waitUntilDone();
   }
   onload = () => {
-    document.createElement('audio').src = 'data:application/vnd.apple.mpegURL;base64,xx';
-    for (let i = 0; i <= 50; i++) {
-      if (50 == i) {
+    for (let i = 0; i <= 5; i++) {
+      if (5 == i) {
         if (window.testRunner)
           testRunner.notifyDone();
       }

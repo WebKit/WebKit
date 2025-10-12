@@ -1,5 +1,5 @@
 2d.drawImage.broken
 
 
-FAIL OffscreenCanvas test: 2d.drawImage.broken assert_unreached: Should have rejected: The source image could not be decoded. Reached unreachable code
+PASS OffscreenCanvas test: 2d.drawImage.broken
 

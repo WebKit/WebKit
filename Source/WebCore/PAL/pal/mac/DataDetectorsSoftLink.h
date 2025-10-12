@@ -62,12 +62,12 @@ inline WKDDActionContext *allocWKDDActionContextInstance()
 }
 
 #ifdef __OBJC__
-inline Class getWKDDActionContextClass()
+inline Class getWKDDActionContextClassSingleton()
 {
 #if HAVE(SECURE_ACTION_CONTEXT)
-    return getDDSecureActionContextClass();
+    return getDDSecureActionContextClassSingleton();
 #else
-    return getDDActionContextClass();
+    return getDDActionContextClassSingleton();
 #endif
 }
 #endif

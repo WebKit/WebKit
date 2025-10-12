@@ -57,10 +57,10 @@ void TextDetectorImpl::detect(Ref<ImageBuffer>&& imageBuffer, CompletionHandler<
         return;
     }
 
-    auto request = adoptNS([PAL::allocVNRecognizeTextRequestInstance() init]);
+    RetainPtr request = adoptNS([PAL::allocVNRecognizeTextRequestInstance() init]);
     configureRequestToUseCPUOrGPU(request.get());
 
-    auto imageRequestHandler = adoptNS([PAL::allocVNImageRequestHandlerInstance() initWithCGImage:platformImage.get() options:@{ }]);
+    RetainPtr imageRequestHandler = adoptNS([PAL::allocVNImageRequestHandlerInstance() initWithCGImage:platformImage.get() options:@{ }]);
 
     NSError *error = nil;
     auto result = [imageRequestHandler performRequests:@[request.get()] error:&error];

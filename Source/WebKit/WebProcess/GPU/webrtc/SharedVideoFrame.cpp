@@ -126,7 +126,7 @@ std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(cons
         return writeBuffer(*webrtcFrame->buffer(), newSemaphoreCallback, newMemoryCallback);
 #endif
 
-    return writeBuffer(frame.pixelBuffer(), newSemaphoreCallback, newMemoryCallback);
+    return writeBuffer(frame.protectedPixelBuffer().get(), newSemaphoreCallback, newMemoryCallback);
 }
 
 std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(CVPixelBufferRef pixelBuffer, NOESCAPE const Function<void(IPC::Semaphore&)>& newSemaphoreCallback, NOESCAPE const Function<void(SharedMemory::Handle&&)>& newMemoryCallback, bool canUseIOSurface)
@@ -247,7 +247,7 @@ RetainPtr<CVPixelBufferRef> SharedVideoFrameReader::readBufferFromSharedMemory()
         return { };
     }
 
-    auto result = info->createPixelBufferFromMemory(data.subspan(SharedVideoFrameInfoEncodingLength), pixelBufferPool(*info));
+    auto result = info->createPixelBufferFromMemory(data.subspan(SharedVideoFrameInfoEncodingLength), protectedPixelBufferPool(*info).get());
     if (result && m_resourceOwner && m_useIOSurfaceBufferPool == UseIOSurfaceBufferPool::Yes)
         setOwnershipIdentityForCVPixelBuffer(result.get(), m_resourceOwner);
     return result;
@@ -277,7 +277,7 @@ RetainPtr<CVPixelBufferRef> SharedVideoFrameReader::readBuffer(SharedVideoFrame:
             RELEASE_LOG_ERROR(WebRTC, "SharedVideoFrameReader::readBuffer no surface");
             return nullptr;
         }
-        return WebCore::createCVPixelBuffer(surface->surface()).value_or(nullptr);
+        return WebCore::createCVPixelBuffer(surface->protectedSurface().get()).value_or(nullptr);
     }, [this](std::nullptr_t representation) -> RetainPtr<CVPixelBufferRef> {
         return readBufferFromSharedMemory();
     }, [this](IntSize size) -> RetainPtr<CVPixelBufferRef> {
@@ -313,6 +313,11 @@ CVPixelBufferPoolRef SharedVideoFrameReader::pixelBufferPool(const SharedVideoFr
     }
 
     return m_bufferPool.get();
+}
+
+RetainPtr<CVPixelBufferPoolRef> SharedVideoFrameReader::protectedPixelBufferPool(const SharedVideoFrameInfo& info)
+{
+    return pixelBufferPool(info);
 }
 
 bool SharedVideoFrameReader::setSharedMemory(SharedMemory::Handle&& handle)

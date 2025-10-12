@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-PlatformLayerContainer createVideoLayerRemote(MediaPlayerPrivateRemote*, LayerHostingContextID, WebCore::MediaPlayerEnums::VideoGravity, WebCore::IntSize)
+PlatformLayerContainer createVideoLayerRemote(VideoLayerRemoteParent&, LayerHostingContextID, WebCore::MediaPlayerEnums::VideoGravity, WebCore::IntSize)
 {
     notImplemented();
     return nullptr;

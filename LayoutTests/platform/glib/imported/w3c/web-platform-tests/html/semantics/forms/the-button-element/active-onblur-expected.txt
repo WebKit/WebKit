@@ -1,4 +1,0 @@
-button one button two
-
-FAIL Buttons should clear :active when the user tabs away from them while holding spacebar. assert_equals: Buttons should be :active while the spacebar is pressed down. expected Element node <button id="b1">button one</button> but got null
-

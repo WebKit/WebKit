@@ -24,6 +24,7 @@
 #include "BaseTarget.xcconfig"
 
 PRODUCT_NAME = libWebKitSwift;
+PRODUCT_MODULE_NAME = WebKitSwift;
 
 INSTALL_PATH = $(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/$(WK_FRAMEWORK_VERSION_PREFIX)Frameworks;
 
@@ -32,22 +33,9 @@ DYLIB_INSTALL_NAME_BASE = $(NORMAL_WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/$(WK_
 WK_EXCLUDED_CREDENTIAL_UPDATER_FILES = $(WK_EXCLUDED_CREDENTIAL_UPDATER_FILES_$(USE_INTERNAL_SDK));
 WK_EXCLUDED_CREDENTIAL_UPDATER_FILES_ = CredentialUpdaterShim.swift;
 
-WK_EXCLUDED_IDENTITY_SERVICES_FILES = $(WK_EXCLUDED_IDENTITY_SERVICES_FILES_$(USE_INTERNAL_SDK));
-WK_EXCLUDED_IDENTITY_SERVICES_FILES_ = \
-    ISO18013MobileDocumentRequest+Extras.swift \
-    WKIdentityDocumentPresentmentController.swift \
-    WKIdentityDocumentPresentmentMobileDocumentRequest.swift \
-    WKIdentityDocumentPresentmentMobileDocumentRequest+Extras.swift \
-    WKIdentityDocumentPresentmentRawRequest.swift \
-    WKIdentityDocumentPresentmentRequest.swift \
-    WKIdentityDocumentPresentmentResponse.swift \
-    WKIdentityDocumentRawRequestValidator.swift \
-#
-
-EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_IOS_RESOURCE_FILE_NAMES) $(EXCLUDED_MACOS_PLUGIN_FILE_NAMES) $(WK_EXCLUDED_CREDENTIAL_UPDATER_FILES) $(WK_EXCLUDED_IDENTITY_SERVICES_FILES);
+EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_IOS_RESOURCE_FILE_NAMES) $(EXCLUDED_MACOS_PLUGIN_FILE_NAMES) $(WK_EXCLUDED_CREDENTIAL_UPDATER_FILES);
 
 SWIFT_INSTALL_OBJC_HEADER = NO;
-SWIFT_VERSION = 5.0;
 
 OTHER_SWIFT_FLAGS = $(inherited) $(OTHER_SWIFT_FLAGS$(WK_XCODE_16_3));
 OTHER_SWIFT_FLAGS_XCODE_BEFORE_16_3 = -enable-experimental-feature ObjCImplementation;
@@ -62,7 +50,7 @@ FRAMEWORK_LDFLAGS_xrsimulator[sdk=xr*2.*] = -framework LinearMediaKit;
 
 // Use handwritten SPI modules on public SDKs.
 SWIFT_INCLUDE_PATHS = $(SWIFT_INCLUDE_PATHS_$(USE_INTERNAL_SDK));
-SWIFT_INCLUDE_PATHS_ = $(SRCROOT)/Platform/spi/visionos $(SRCROOT)/Platform/spi/ios $(SRCROOT)/Platform/spi/Cocoa/Modules $(inherited);
+SWIFT_INCLUDE_PATHS_ = $(SRCROOT)/Platform/spi/visionos $(SRCROOT)/Platform/spi/ios $(SRCROOT)/Platform/spi/Cocoa $(SRCROOT)/Platform/spi/Cocoa/Modules $(inherited);
 
 USER_HEADER_SEARCH_PATHS = $(inherited) $(SRCROOT)/Platform/spi/Cocoa/Modules;
 

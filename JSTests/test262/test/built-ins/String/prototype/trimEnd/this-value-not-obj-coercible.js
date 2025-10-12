@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-string.prototype.trimEnd
+esid: sec-string.prototype.trimend
 description: The "this" value must be object-coercible
 info: |
   1. Let O be ? RequireObjectCoercible(this value).

@@ -10,11 +10,14 @@
 
 #include "modules/audio_coding/neteq/dsp_helper.h"
 
-#include <string.h>  // Access to memset.
-
 #include <algorithm>  // Access to min, max.
+#include <cstdint>
+#include <cstring>  // Access to memset.
 
 #include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "modules/audio_coding/neteq/audio_multi_vector.h"
+#include "modules/audio_coding/neteq/audio_vector.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

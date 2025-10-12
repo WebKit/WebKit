@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "Timer.h"
+#include <WebCore/Timer.h>
 #include <memory>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>

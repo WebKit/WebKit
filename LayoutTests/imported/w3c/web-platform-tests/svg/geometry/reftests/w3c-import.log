@@ -36,6 +36,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-003.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-004-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-004.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-005-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-005.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-006-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-006.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-calc-dynamic-viewport-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-calc-dynamic-viewport-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/reftests/ellipse-calc-dynamic-viewport.html

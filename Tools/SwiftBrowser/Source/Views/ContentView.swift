@@ -24,127 +24,7 @@
 import SwiftUI
 import UniformTypeIdentifiers
 import WebKit
-@_spi(Private) import _WebKit_SwiftUI
-
-private struct ToolbarBackForwardMenuView: View {
-    struct LabelConfiguration {
-        let text: String
-        let systemImage: String
-        let key: KeyEquivalent
-    }
-
-    let list: [WebPage.BackForwardList.Item]
-    let label: LabelConfiguration
-    let navigateToItem: (WebPage.BackForwardList.Item) -> Void
-
-    var body: some View {
-        Menu {
-            ForEach(list) { item in
-                Button(item.title ?? item.url.absoluteString) {
-                    navigateToItem(item)
-                }
-            }
-        } label: {
-            Label(label.text, systemImage: label.systemImage)
-                .labelStyle(.iconOnly)
-        } primaryAction: {
-            navigateToItem(list.first!)
-        }
-        .menuIndicator(.hidden)
-        .disabled(list.isEmpty)
-        .keyboardShortcut(label.key)
-    }
-}
-
-private struct MediaCaptureStateButtonView: View {
-    struct LabelConfiguration {
-        let activeSystemImage: String
-        let mutedSystemImage: String
-    }
-
-    let captureState: WKMediaCaptureState
-    let configuration: LabelConfiguration
-    let action: (WKMediaCaptureState) -> Void
-
-    var body: some View {
-        switch captureState {
-        case .none:
-            EmptyView()
-
-        case .active:
-            Button {
-                action(.muted)
-            } label: {
-                Label("Mute", systemImage: configuration.activeSystemImage)
-                    .labelStyle(.iconOnly)
-            }
-
-        case .muted:
-            Button {
-                action(.active)
-            } label: {
-                Label("Unmute", systemImage: configuration.mutedSystemImage)
-                    .labelStyle(.iconOnly)
-            }
-
-        @unknown default:
-            fatalError()
-        }
-    }
-}
-
-private struct PrincipalToolbarGroup: View {
-    @Environment(BrowserViewModel.self) private var viewModel
-
-    var body: some View {
-        HStack {
-            @Bindable var viewModel = viewModel
-
-            VStack(spacing: 0) {
-                TextField("URL", text: $viewModel.displayedURL)
-                    .textContentType(.URL)
-                    .onSubmit {
-                        viewModel.navigateToSubmittedURL()
-                    }
-                    .textFieldStyle(.roundedBorder)
-
-                ProgressView(value: viewModel.page.estimatedProgress, total: 1.0)
-                    .padding(.horizontal, 2)
-                    .padding(.top, -4)
-                    .padding(.bottom, -8)
-            }
-            .frame(minWidth: 300)
-
-            if viewModel.page.isLoading {
-                Button {
-                    viewModel.page.stopLoading()
-                } label: {
-                    Image(systemName: "xmark")
-                }
-                .keyboardShortcut(".")
-            } else {
-                Button {
-                    viewModel.page.reload()
-                } label: {
-                    Image(systemName: "arrow.clockwise")
-                }
-                .keyboardShortcut("r")
-            }
-
-            MediaCaptureStateButtonView(
-                captureState: viewModel.page.cameraCaptureState,
-                configuration: .init(activeSystemImage: "video.fill", mutedSystemImage: "video.slash.fill"),
-                action: viewModel.setCameraCaptureState(_:)
-            )
-
-            MediaCaptureStateButtonView(
-                captureState: viewModel.page.microphoneCaptureState,
-                configuration: .init(activeSystemImage: "microphone.fill", mutedSystemImage: "microphone.slash.fill"),
-                action: viewModel.setMicrophoneCaptureState(_:)
-            )
-        }
-    }
-}
+@_spi(Testing) import _WebKit_SwiftUI
 
 private struct DialogActionsView: View {
     private let dialog: DialogPresenter.Dialog
@@ -206,23 +86,28 @@ private struct DialogMessageView: View {
 }
 
 struct ContentView: View {
-    @Binding var url: URL?
+    @Binding
+    var url: URL?
 
     let initialRequest: URLRequest
 
-    @State private var findNavigatorIsPresented = false
+    @State
+    private var findNavigatorIsPresented = false
 
-    @Environment(\.openWindow) private var openWindow
-    @Environment(BrowserViewModel.self) private var viewModel
+    @Environment(\.openWindow)
+    private var openWindow
 
-    @AppStorage(AppStorageKeys.scrollBounceBehaviorBasedOnSize) private var scrollBounceBehaviorBasedOnSize: Bool?
-    @AppStorage(AppStorageKeys.backgroundHidden) private var backgroundHidden: Bool?
+    @Environment(BrowserViewModel.self)
+    private var viewModel
 
-    #if os(iOS)
-    private static let navigationToolbarItemPlacement = ToolbarItemPlacement.bottomBar
-    #else
-    private static let navigationToolbarItemPlacement = ToolbarItemPlacement.navigation
-    #endif
+    @AppStorage(AppStorageKeys.scrollBounceBehaviorBasedOnSize)
+    private var scrollBounceBehaviorBasedOnSize: Bool?
+
+    @AppStorage(AppStorageKeys.backgroundHidden)
+    private var backgroundHidden: Bool?
+
+    @AppStorage(AppStorageKeys.showColorInTabBar)
+    private var showColorInTabBar: Bool = true
 
     var body: some View {
         NavigationStack {
@@ -235,7 +120,20 @@ struct ContentView: View {
                 .webViewElementFullscreenBehavior(.enabled)
                 .findNavigator(isPresented: $findNavigatorIsPresented)
                 .task {
-                    // FIXME: Observe navigation changes.
+                    do {
+                        #if compiler(>=6.2)
+                        // Safety: this is actually safe; false positive is rdar://154775389
+                        for try await unsafe event in viewModel.page.navigations {
+                            print(event)
+                        }
+                        #else
+                        for try await event in viewModel.page.navigations {
+                            print(event)
+                        }
+                        #endif
+                    } catch {
+                        print(error)
+                    }
                 }
                 .onAppear {
                     viewModel.displayedURL = initialRequest.url!.absoluteString
@@ -267,67 +165,9 @@ struct ContentView: View {
                 }
                 .scrollBounceBehavior(scrollBounceBehaviorBasedOnSize == true ? .basedOnSize : .automatic)
                 .webViewContentBackground(backgroundHidden == true ? .hidden : .automatic)
-#if os(macOS)
-                .webViewContextMenu { element in
-                    if let url = element.linkURL {
-                        Button("Open Link in New Window") {
-                            let request = URLRequest(url: url)
-                            openWindow(value: CodableURLRequest(request))
-                        }
-                    } else {
-                        if let previousItem = viewModel.page.backForwardList.backList.last {
-                            Button("Back") {
-                                viewModel.page.load(previousItem)
-                            }
-                        }
-
-                        if let nextItem = viewModel.page.backForwardList.forwardList.first {
-                            Button("Forward") {
-                                viewModel.page.load(nextItem)
-                            }
-                        }
-
-                        Button("Reload") {
-                            viewModel.page.reload()
-                        }
-                    }
-                }
-#endif
-                .toolbar {
-                    ToolbarItemGroup(placement: Self.navigationToolbarItemPlacement) {
-                        ToolbarBackForwardMenuView(
-                            list: viewModel.page.backForwardList.backList.reversed(),
-                            label: .init(text: "Backward", systemImage: "chevron.backward", key: "[")
-                        ) {
-                            viewModel.page.load($0)
-                        }
-
-                        #if os(iOS)
-                        Spacer()
-                        #endif
-
-                        ToolbarBackForwardMenuView(
-                            list: viewModel.page.backForwardList.forwardList,
-                            label: .init(text: "Forward", systemImage: "chevron.forward", key: "]")
-                        ) {
-                            viewModel.page.load($0)
-                        }
-
-                        Spacer()
-
-                        Button {
-                            findNavigatorIsPresented.toggle()
-                        } label: {
-                            Label("Find", systemImage: "magnifyingglass")
-                                .labelStyle(.iconOnly)
-                        }
-                        .keyboardShortcut("f")
-                    }
-                    
-                    ToolbarItemGroup(placement: .principal) {
-                        PrincipalToolbarGroup()
-                    }
-                }
+                .webViewScrollEdgeEffectStyle(showColorInTabBar ? .soft : .hard, for: .all)
+                .webContextMenu()
+                .webToolbar(findNavigatorIsPresented: $findNavigatorIsPresented)
         }
     }
 }

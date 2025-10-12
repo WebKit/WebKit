@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="fuzzy" content="maxDifference=0-32; totalPixels=0-62403" />
+    <link rel="stylesheet" href="resources/filter-helpers.css">
+</head>
+<script>
+    if (window.internals)
+        internals.settings.setGraphicsContextBlurFilterEnabled?.(true);
+</script>
+<body>
+    <img src="resources/reference.png" style="filter: blur(0)">
+    <img src="resources/reference.png" style="filter: blur(2px)">
+    <img src="resources/reference.png" style="filter: blur(3px)">
+    <img src="resources/reference.png" style="filter: blur(10px)"> 
+</body>
+</html>

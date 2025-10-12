@@ -1,4 +1,4 @@
-<!-- webkit-test-runner [ CanvasPixelFormatEnabled=false ] -->
+<!-- webkit-test-runner [ CanvasColorTypeEnabled=false ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,29 +6,29 @@
 </head>
 <body>
 <script>
-description("Tests that ImageDataSettings with CanvasPixelFormatEnabled=false ignores storageFormat.");
+description("Tests that ImageDataSettings with CanvasColorTypeEnabled=false ignores pixelFormat.");
 
 var canvas = document.createElement("canvas");
 canvas.width = 10;
 canvas.height = 10;
 var context = canvas.getContext("2d");
 
-var created_imageData_uint8 = context.createImageData(1, 1, { storageFormat: "uint8" });
-shouldBe('created_imageData_uint8.data.constructor', 'Uint8ClampedArray');
+var created_imageData_unorm8 = context.createImageData(1, 1, { pixelFormat: "rgba-unorm8" });
+shouldBe('created_imageData_unorm8.data.constructor', 'Uint8ClampedArray');
 
-var gotten_imageData_uint8 = context.getImageData(0, 0, 1, 1, { storageFormat: "uint8" });
-shouldBe('gotten_imageData_uint8.data.constructor', 'Uint8ClampedArray');
+var gotten_imageData_unorm8 = context.getImageData(0, 0, 1, 1, { pixelFormat: "rgba-unorm8" });
+shouldBe('gotten_imageData_unorm8.data.constructor', 'Uint8ClampedArray');
 
-var created_imageData_float16 = context.createImageData(1, 1, { storageFormat: "float16" });
+var created_imageData_float16 = context.createImageData(1, 1, { pixelFormat: "rgba-float16" });
 shouldBe('created_imageData_float16.data.constructor', 'Uint8ClampedArray');
 
-var gotten_imageData_float16 = context.getImageData(0, 0, 1, 1, { storageFormat: "float16" });
+var gotten_imageData_float16 = context.getImageData(0, 0, 1, 1, { pixelFormat: "rgba-float16" });
 shouldBe('gotten_imageData_float16.data.constructor', 'Uint8ClampedArray');
 
-var created_imageData_foo = context.createImageData(1, 1, { storageFormat: "foo" });
+var created_imageData_foo = context.createImageData(1, 1, { pixelFormat: "foo" });
 shouldBe('created_imageData_foo.data.constructor', 'Uint8ClampedArray');
 
-var gotten_imageData_foo = context.getImageData(0, 0, 1, 1, { storageFormat: "foo" });
+var gotten_imageData_foo = context.getImageData(0, 0, 1, 1, { pixelFormat: "foo" });
 shouldBe('gotten_imageData_foo.data.constructor', 'Uint8ClampedArray');
 </script>
 <script src="../../resources/js-test-post.js"></script>

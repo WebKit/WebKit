@@ -56,7 +56,7 @@ public:
 
 #if !USE(UNIX_DOMAIN_SOCKETS)
     struct SerializableBuffer {
-        size_t size;
+        uint64_t size;
         std::optional<WebCore::SharedMemory::Handle> handle;
     };
     SharedBufferReference(std::optional<SerializableBuffer>&&);

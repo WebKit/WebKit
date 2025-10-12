@@ -1,7 +1,6 @@
 API/JSObjectRef.cpp
 BytecodeStructs.h
 assembler/Printer.h
-b3/B3StackmapGenerationParams.h
 b3/B3Value.h
 b3/B3VariableValue.h
 b3/air/AirCode.h
@@ -20,7 +19,6 @@ dfg/DFGNode.h
 dfg/DFGPromotedHeapLocation.h
 ftl/FTLFormattedValue.h
 ftl/FTLState.h
-ftl/FTLValueRange.h
 heap/AbstractSlotVisitor.h
 heap/HandleSet.h
 heap/Heap.h
@@ -29,11 +27,9 @@ heap/HeapProfiler.h
 heap/HeapSnapshotBuilder.h
 heap/MarkedBlock.h
 heap/SlotVisitor.h
-heap/WeakImpl.h
 heap/WeakSet.h
 inspector/InspectorAgentBase.h
 inspector/InspectorBackendDispatchers.h
-inspector/InspectorFrontendDispatchers.h
 inspector/JSGlobalObjectConsoleClient.h
 inspector/JSGlobalObjectInspectorController.h
 inspector/agents/InspectorDebuggerAgent.h

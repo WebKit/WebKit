@@ -77,6 +77,11 @@ static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
         _forwardTransitionController = adoptNS([_UINavigationInteractiveTransitionBase alloc]);
         _forwardTransitionController = [_forwardTransitionController initWithGestureRecognizerView:gestureRecognizerView animator:nil delegate:self];
         [_forwardTransitionController setShouldReverseTranslation:YES];
+
+#if HAVE(CONTENT_SWIPE_GESTURE_RECOGNIZER)
+        [[_backTransitionController contentSwipeGestureRecognizer] setEnabled:NO];
+        [[_forwardTransitionController contentSwipeGestureRecognizer] setEnabled:NO];
+#endif
     }
     return self;
 }
@@ -103,6 +108,9 @@ static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 
 - (BOOL)shouldBeginInteractiveTransition:(_UINavigationInteractiveTransitionBase *)transition
 {
+    if (_gestureController->hasActiveSwipeGesture())
+        return NO;
+
     using enum WebKit::ViewGestureController::DeferToConflictingGestures;
     auto deferToConflictingGestures = transition.gestureRecognizer.state == UIGestureRecognizerStateFailed ? Yes : No;
     return _gestureController->canSwipeInDirection([self directionForTransition:transition], deferToConflictingGestures);
@@ -118,7 +126,7 @@ static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
     return YES;
 }
 
-static Class interactiveTransitionGestureRecognizerClass()
+static Class interactiveTransitionGestureRecognizerClassSingleton()
 {
 #if HAVE(UI_PARALLAX_TRANSITION_GESTURE_RECOGNIZER)
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
@@ -131,7 +139,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (UIPanGestureRecognizer *)gestureRecognizerForInteractiveTransition:(_UINavigationInteractiveTransitionBase *)transition WithTarget:(id)target action:(SEL)action
 {
-    RetainPtr recognizer = adoptNS([[interactiveTransitionGestureRecognizerClass() alloc] initWithTarget:target action:action]);
+    RetainPtr recognizer = adoptNS([[interactiveTransitionGestureRecognizerClassSingleton() alloc] initWithTarget:target action:action]);
 
     bool isLTR = [UIView userInterfaceLayoutDirectionForSemanticContentAttribute:[_gestureRecognizerView.get() semanticContentAttribute]] == UIUserInterfaceLayoutDirectionLeftToRight;
 
@@ -151,7 +159,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     if (recognizer == [_backTransitionController gestureRecognizer] || recognizer == [_forwardTransitionController gestureRecognizer])
         return YES;
 
-    if ([recognizer isKindOfClass:interactiveTransitionGestureRecognizerClass()])
+    if ([recognizer isKindOfClass:interactiveTransitionGestureRecognizerClassSingleton()])
         return recognizer.delegate == _backTransitionController || recognizer.delegate == _forwardTransitionController;
 
     return NO;
@@ -198,7 +206,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     m_webPageProxyForBackForwardListForCurrentSwipe = alternateBackForwardListSourcePage ? alternateBackForwardListSourcePage.get() : page.get();
 
     auto& backForwardList = m_webPageProxyForBackForwardListForCurrentSwipe->backForwardList();
-    RefPtr targetItem = direction == SwipeDirection::Back ? backForwardList.goBackItemSkippingItemsWithoutUserGesture() : backForwardList.goForwardItemSkippingItemsWithoutUserGesture();
+    RefPtr targetItem = itemForSwipeDirection(direction);
     if (!targetItem) {
         RELEASE_LOG_ERROR(ViewGestures, "Failed to find %s item when beginning swipe.", direction == SwipeDirection::Back ? "back" : "forward");
         didEndGesture();
@@ -236,8 +244,34 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
         BOOL shouldRestoreScrollPosition = targetItem->mainFrameState()->shouldRestoreScrollPosition;
         WebCore::IntPoint currentScrollPosition = WebCore::roundedIntPoint(page->viewScrollPosition());
 
-        if (snapshot->hasImage() && snapshot->size() == swipeLayerSizeInDeviceCoordinates && deviceScaleFactor == snapshot->deviceScaleFactor() && (shouldRestoreScrollPosition || (currentScrollPosition == snapshot->viewScrollPosition())))
+        bool canUseSnapshot = [&] {
+            if (!snapshot->hasImage())
+                return false;
+
+            if (snapshot->size() != swipeLayerSizeInDeviceCoordinates)
+                return false;
+
+            if (deviceScaleFactor != snapshot->deviceScaleFactor())
+                return false;
+
+            if (!shouldRestoreScrollPosition && (currentScrollPosition != snapshot->viewScrollPosition()))
+                return false;
+
+            auto insetDelta = snapshot->computedObscuredInset() - m_webPageProxyForBackForwardListForCurrentSwipe->computedObscuredInset();
+            bool insetChangedSignificantly = insetDelta.anyOf([](auto value) {
+                static constexpr auto minimumSignificantChange = 100;
+                return std::abs(value) >= minimumSignificantChange;
+            });
+
+            if (insetChangedSignificantly)
+                return false;
+
+            return true;
+        }();
+
+        if (canUseSnapshot)
             [m_snapshotView layer].contents = snapshot->asLayerContents();
+
         WebCore::Color coreColor = snapshot->backgroundColor();
         if (coreColor.isValid())
             backgroundColor = cocoaColor(coreColor);
@@ -484,6 +518,11 @@ bool ViewGestureController::completeSimulatedSwipeInDirectionForTesting(SwipeDir
     [transition _completeStoppedInteractiveTransition];
 
     return true;
+}
+
+WebBackForwardList* ViewGestureController::backForwardListForNavigation() const
+{
+    return &m_webPageProxyForBackForwardListForCurrentSwipe->backForwardList();
 }
 
 } // namespace WebKit

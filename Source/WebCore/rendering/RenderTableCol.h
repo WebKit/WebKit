@@ -26,8 +26,6 @@
 #pragma once
 
 #include "RenderBox.h"
-#include <wtf/CheckedPtr.h>
-#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
@@ -51,12 +49,12 @@ public:
     bool isTableColumn() const { return style().display() == DisplayType::TableColumn; }
     bool isTableColumnGroup() const { return style().display() == DisplayType::TableColumnGroup; }
 
-    CheckedPtr<RenderTableCol> enclosingColumnGroup() const;
-    CheckedPtr<RenderTableCol> enclosingColumnGroupIfAdjacentBefore() const;
-    CheckedPtr<RenderTableCol> enclosingColumnGroupIfAdjacentAfter() const;
+    RenderTableCol* enclosingColumnGroup() const;
+    RenderTableCol* enclosingColumnGroupIfAdjacentBefore() const;
+    RenderTableCol* enclosingColumnGroupIfAdjacentAfter() const;
 
     // Returns the next column or column-group.
-    CheckedPtr<RenderTableCol> nextColumn() const;
+    RenderTableCol* nextColumn() const;
 
     const BorderValue& borderAdjoiningCellStartBorder() const;
     const BorderValue& borderAdjoiningCellEndBorder() const;
@@ -89,19 +87,20 @@ private:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     void paint(PaintInfo&, const LayoutPoint&) override { }
 
-    CheckedPtr<RenderTable> table() const;
+    RenderTable* table() const;
+    CheckedPtr<RenderTable> checkedTable() const;
 
     unsigned m_span { 1 };
 };
 
-inline CheckedPtr<RenderTableCol> RenderTableCol::enclosingColumnGroupIfAdjacentBefore() const
+inline RenderTableCol* RenderTableCol::enclosingColumnGroupIfAdjacentBefore() const
 {
     if (previousSibling())
         return nullptr;
     return enclosingColumnGroup();
 }
 
-inline CheckedPtr<RenderTableCol> RenderTableCol::enclosingColumnGroupIfAdjacentAfter() const
+inline RenderTableCol* RenderTableCol::enclosingColumnGroupIfAdjacentAfter() const
 {
     if (nextSibling())
         return nullptr;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "ExecutableInfo.h"
-#include "JSCBuiltins.h"
-#include "ParserModes.h"
-#include "SourceCode.h"
-#include "Weak.h"
-#include "WeakHandleOwner.h"
+#include <JavaScriptCore/ExecutableInfo.h>
+#include <JavaScriptCore/JSCBuiltins.h>
+#include <JavaScriptCore/ParserModes.h>
+#include <JavaScriptCore/SourceCode.h>
+#include <JavaScriptCore/Weak.h>
+#include <JavaScriptCore/WeakHandleOwner.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC {
@@ -72,7 +72,7 @@ private:
 
     UnlinkedFunctionExecutable* createBuiltinExecutable(const SourceCode&, const Identifier&, ImplementationVisibility, ConstructorKind, ConstructAbility, InlineAttribute);
 
-    Ref<StringSourceProvider> m_combinedSourceProvider;
+    const Ref<StringSourceProvider> m_combinedSourceProvider;
     UnlinkedFunctionExecutable* m_unlinkedExecutables[static_cast<unsigned>(BuiltinCodeIndex::NumberOfBuiltinCodes)] { };
 };
 

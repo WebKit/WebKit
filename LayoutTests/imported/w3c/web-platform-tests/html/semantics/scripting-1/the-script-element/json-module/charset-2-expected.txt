@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
 
-Harness Error (TIMEOUT), message = null
-
+PASS JSON module should be loaded as utf-8 even if it is encoded in windows-1250 and served with a windows-1250 charset response header, and this document's encoding is windows-1250
 

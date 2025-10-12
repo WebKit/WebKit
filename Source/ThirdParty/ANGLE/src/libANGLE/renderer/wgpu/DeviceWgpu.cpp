@@ -10,6 +10,8 @@
 #include "libANGLE/renderer/wgpu/DeviceWgpu.h"
 
 #include "common/debug.h"
+#include "libANGLE/Display.h"
+#include "libANGLE/renderer/wgpu/DisplayWgpu.h"
 
 namespace rx
 {
@@ -25,10 +27,35 @@ egl::Error DeviceWgpu::initialize()
 
 egl::Error DeviceWgpu::getAttribute(const egl::Display *display, EGLint attribute, void **outValue)
 {
-    UNIMPLEMENTED();
-    return egl::Error(EGL_BAD_ACCESS);
+    DisplayWgpu *displayWgpu  = webgpu::GetImpl(display);
+    const DawnProcTable *wgpu = displayWgpu->getProcs();
+
+    switch (attribute)
+    {
+        case EGL_WEBGPU_DEVICE_ANGLE:
+        {
+            webgpu::DeviceHandle device = displayWgpu->getDevice();
+            wgpu->deviceAddRef(device.get());
+            *outValue = device.get();
+            break;
+        }
+        case EGL_WEBGPU_ADAPTER_ANGLE:
+        {
+            webgpu::AdapterHandle adapater = displayWgpu->getAdapter();
+            wgpu->adapterAddRef(adapater.get());
+            *outValue = adapater.get();
+            break;
+        }
+        default:
+            return egl::Error(EGL_BAD_ATTRIBUTE);
+    }
+
+    return egl::NoError();
 }
 
-void DeviceWgpu::generateExtensions(egl::DeviceExtensions *outExtensions) const {}
+void DeviceWgpu::generateExtensions(egl::DeviceExtensions *outExtensions) const
+{
+    outExtensions->deviceWebGPU = true;
+}
 
 }  // namespace rx

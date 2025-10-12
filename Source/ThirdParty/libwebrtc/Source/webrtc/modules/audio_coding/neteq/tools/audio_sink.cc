@@ -10,6 +10,9 @@
 
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
 
+#include <cstddef>
+#include <cstdint>
+
 namespace webrtc {
 namespace test {
 

@@ -38,7 +38,11 @@
 
 namespace WebCore {
 class Exception;
+
 struct WebTransportStreamIdentifierType;
+struct WebTransportSendStreamStats;
+struct WebTransportReceiveStreamStats;
+
 using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
 using WebTransportStreamErrorCode = uint64_t;
 }
@@ -60,6 +64,9 @@ public:
     void cancelReceive(std::optional<WebCore::WebTransportStreamErrorCode>);
     void cancelSend(std::optional<WebCore::WebTransportStreamErrorCode>);
     void cancel(std::optional<WebCore::WebTransportStreamErrorCode>);
+    WebCore::WebTransportSendStreamStats getSendStreamStats();
+    WebCore::WebTransportReceiveStreamStats getReceiveStreamStats();
+
 protected:
 #if PLATFORM(COCOA)
     NetworkTransportStream(NetworkTransportSession&, nw_connection_t, NetworkTransportStreamType);
@@ -78,6 +85,8 @@ private:
 #endif
     const NetworkTransportStreamType m_streamType;
     NetworkTransportStreamState m_streamState;
+    uint64_t m_bytesSent { 0 };
+    uint64_t m_bytesReceived { 0 };
 };
 
 }

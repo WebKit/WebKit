@@ -55,28 +55,27 @@ public:
 
     void clear()
     {
-        ScriptExecutionContext* scriptExecutionContextPtr;
-        T* callback;
+        RefPtr<ScriptExecutionContext> scriptExecutionContextToRelease;
+        RefPtr<T> callbackToRelease;
         {
             Locker locker { m_lock };
             if (!m_callback) {
                 ASSERT(!m_scriptExecutionContext);
                 return;
             }
-            if (m_scriptExecutionContext->isContextThread()) {
+            if (CheckedRef { *m_scriptExecutionContext }->isContextThread()) {
                 m_callback = nullptr;
                 m_scriptExecutionContext = nullptr;
                 return;
             }
-            scriptExecutionContextPtr = m_scriptExecutionContext.leakRef();
-            callback = m_callback.leakRef();
+            scriptExecutionContextToRelease = std::exchange(m_scriptExecutionContext, nullptr);
+            callbackToRelease = std::exchange(m_callback, nullptr);
         }
-        scriptExecutionContextPtr->postTask({
+        CheckedPtr context = scriptExecutionContextToRelease.get();
+        context->postTask({
             ScriptExecutionContext::Task::CleanupTask,
-            [callback, scriptExecutionContextPtr] (ScriptExecutionContext& context) {
-                ASSERT_UNUSED(context, &context == scriptExecutionContextPtr && context.isContextThread());
-                callback->deref();
-                scriptExecutionContextPtr->deref();
+            [callbackToRelease = WTFMove(callbackToRelease), scriptExecutionContextToRelease = WTFMove(scriptExecutionContextToRelease)](ScriptExecutionContext& context) {
+                ASSERT_UNUSED(context, &context == scriptExecutionContextToRelease.get() && context.isContextThread());
             }
         });
     }

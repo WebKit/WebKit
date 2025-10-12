@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,17 +24,16 @@
 
 #pragma once
 
-#include "AXTextStateChangeIntent.h"
-#include "ContainerNode.h"
-#include "ElementIdentifier.h"
-#include "EventOptions.h"
-#include "FocusOptions.h"
-#include "HitTestRequest.h"
-#include "QualifiedName.h"
-#include "RenderPtr.h"
-#include "ScrollTypes.h"
-#include "SimulatedClickOptions.h"
 #include <JavaScriptCore/Forward.h>
+#include <WebCore/AXTextStateChangeIntent.h>
+#include <WebCore/ContainerNode.h>
+#include <WebCore/EventOptions.h>
+#include <WebCore/FocusOptions.h>
+#include <WebCore/HitTestRequest.h>
+#include <WebCore/QualifiedName.h>
+#include <WebCore/RenderPtr.h>
+#include <WebCore/ScrollTypes.h>
+#include <WebCore/SimulatedClickOptions.h>
 
 #define DUMP_NODE_STATISTICS 0
 
@@ -113,6 +112,7 @@ enum class ShadowRootDelegatesFocus : bool { No, Yes };
 enum class ShadowRootMode : uint8_t;
 enum class ShadowRootClonable : bool { No, Yes };
 enum class ShadowRootSerializable : bool { No, Yes };
+enum class AllowScrollingOverflowHidden : bool { No, Yes };
 enum class VisibilityAdjustment : uint8_t;
 
 // https://github.com/whatwg/html/pull/9841
@@ -131,6 +131,7 @@ enum class CommandType: uint8_t {
 };
 
 struct CheckVisibilityOptions;
+struct FocusEventData;
 struct FullscreenOptions;
 struct GetAnimationsOptions;
 struct GetHTMLOptions;
@@ -144,11 +145,11 @@ struct SecurityPolicyViolationEventInit;
 struct ShadowRootInit;
 
 using AnimatableCSSProperty = Variant<CSSPropertyID, AtomString>;
-using AnimatableCSSPropertyToTransitionMap = UncheckedKeyHashMap<AnimatableCSSProperty, Ref<CSSTransition>>;
+using AnimatableCSSPropertyToTransitionMap = HashMap<AnimatableCSSProperty, Ref<CSSTransition>>;
 using AnimationCollection = ListHashSet<Ref<WebAnimation>>;
 using CSSAnimationCollection = ListHashSet<Ref<CSSAnimation>>;
 using ElementName = NodeName;
-using ExplicitlySetAttrElementsMap = UncheckedKeyHashMap<QualifiedName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>>;
+using ExplicitlySetAttrElementsMap = HashMap<QualifiedName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>>;
 using TrustedTypeOrString = Variant<RefPtr<TrustedHTML>, RefPtr<TrustedScript>, RefPtr<TrustedScriptURL>, AtomString>;
 
 // https://drafts.csswg.org/css-contain/#relevant-to-the-user
@@ -196,9 +197,11 @@ public:
     Vector<String> getAttributeNames() const;
 
     // Typed getters and setters for language bindings.
-    WEBCORE_EXPORT int getIntegralAttribute(const QualifiedName& attributeName) const;
+    WEBCORE_EXPORT int integralAttribute(const QualifiedName& attributeName) const;
+    WEBCORE_EXPORT unsigned unsignedIntegralAttribute(const QualifiedName& attributeName) const;
+    WEBCORE_EXPORT void setBooleanAttribute(const QualifiedName& attributeName, bool);
     WEBCORE_EXPORT void setIntegralAttribute(const QualifiedName& attributeName, int value);
-    WEBCORE_EXPORT unsigned getUnsignedIntegralAttribute(const QualifiedName& attributeName) const;
+    WEBCORE_EXPORT void setNumericAttribute(const QualifiedName& attributeName, double value);
     WEBCORE_EXPORT void setUnsignedIntegralAttribute(const QualifiedName& attributeName, unsigned value);
     WEBCORE_EXPORT RefPtr<Element> getElementAttributeForBindings(const QualifiedName& attributeName) const;
     WEBCORE_EXPORT void setElementAttribute(const QualifiedName& attributeName, Element* value);
@@ -219,6 +222,30 @@ public:
 
     enum class TopLayerElementType : bool { Other, Popover };
     HTMLElement* topmostPopoverAncestor(TopLayerElementType topLayerType);
+
+    // https://github.com/w3c/aria/pull/2484
+    // These ARIA attributes will become enumerated. Currently, they use [ReflectSetter] with custom getters
+    // rather than [Reflect, Enumerated] to facilitate testing behind the EnumeratedARIAAttributeReflectionEnabled flag.
+    const AtomString& ariaAtomic() const;
+    const AtomString& ariaAutoComplete() const;
+    const AtomString& ariaBusy() const;
+    const AtomString& ariaChecked() const;
+    const AtomString& ariaCurrent() const;
+    const AtomString& ariaDisabled() const;
+    const AtomString& ariaExpanded() const;
+    const AtomString& ariaHasPopup() const;
+    const AtomString& ariaHidden() const;
+    const AtomString& ariaInvalid() const;
+    const AtomString& ariaLive() const;
+    const AtomString& ariaModal() const;
+    const AtomString& ariaMultiLine() const;
+    const AtomString& ariaMultiSelectable() const;
+    const AtomString& ariaOrientation() const;
+    const AtomString& ariaPressed() const;
+    const AtomString& ariaReadOnly() const;
+    const AtomString& ariaRequired() const;
+    const AtomString& ariaSelected() const;
+    const AtomString& ariaSort() const;
 
 #if DUMP_NODE_STATISTICS
     bool hasNamedNodeMap() const;
@@ -273,7 +300,7 @@ public:
     WEBCORE_EXPORT void scrollIntoView(std::optional<Variant<bool, ScrollIntoViewOptions>>&& arg);
     WEBCORE_EXPORT void scrollIntoView(bool alignToTop = true);
     WEBCORE_EXPORT void scrollIntoViewIfNeeded(bool centerIfNeeded = true);
-    WEBCORE_EXPORT void scrollIntoViewIfNotVisible(bool centerIfNotVisible = true);
+    WEBCORE_EXPORT void scrollIntoViewIfNotVisible(bool centerIfNotVisible = true, AllowScrollingOverflowHidden = AllowScrollingOverflowHidden::Yes);
 
     void scrollBy(const ScrollToOptions&);
     void scrollBy(double x, double y);
@@ -300,6 +327,7 @@ public:
     WEBCORE_EXPORT int clientTop();
     WEBCORE_EXPORT int clientWidth();
     WEBCORE_EXPORT int clientHeight();
+    double currentCSSZoom();
 
     virtual int scrollLeft();
     virtual int scrollTop();
@@ -366,12 +394,10 @@ public:
 
     String nodeName() const override;
 
-    Ref<Element> cloneElementWithChildren(Document&, CustomElementRegistry*);
-    Ref<Element> cloneElementWithoutChildren(Document&, CustomElementRegistry*);
+    Ref<Element> cloneElementWithChildren(Document&, CustomElementRegistry*) const;
+    Ref<Element> cloneElementWithoutChildren(Document&, CustomElementRegistry*) const;
 
     void normalizeAttributes();
-
-    WEBCORE_EXPORT void setBooleanAttribute(const QualifiedName& name, bool);
 
     // For exposing to DOM only.
     WEBCORE_EXPORT NamedNodeMap& attributesMap() const;
@@ -417,16 +443,20 @@ public:
 
     virtual RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&);
     virtual bool rendererIsNeeded(const RenderStyle&);
-    virtual bool isReplaced(const RenderStyle&) const { return false; }
+    virtual bool isReplaced(const RenderStyle* = nullptr) const { return false; }
 
     inline ShadowRoot* shadowRoot() const; // Defined in ElementRareData.h
     RefPtr<ShadowRoot> shadowRootForBindings(JSC::JSGlobalObject&) const;
+    RefPtr<ShadowRoot> openOrClosedShadowRoot() const;
     RefPtr<Element> resolveReferenceTarget() const;
     RefPtr<Element> retargetReferenceTargetForBindings(RefPtr<Element>) const;
 
+    void didDispatchShadowRootAttachedEvent() { clearStateFlag(StateFlag::IsShadowRootAttachedEventPending); }
+    void dispatchShadowRootAttachedEvent();
+
     enum class CustomElementRegistryKind : bool { Window, Null };
 
-    WEBCORE_EXPORT ExceptionOr<ShadowRoot&> attachShadow(const ShadowRootInit&, CustomElementRegistryKind = CustomElementRegistryKind::Window);
+    WEBCORE_EXPORT ExceptionOr<ShadowRoot&> attachShadow(const ShadowRootInit&, std::optional<CustomElementRegistryKind> = std::nullopt);
     ExceptionOr<ShadowRoot&> attachDeclarativeShadow(ShadowRootMode, ShadowRootDelegatesFocus, ShadowRootClonable, ShadowRootSerializable, String referenceTarget, CustomElementRegistryKind);
 
     WEBCORE_EXPORT ShadowRoot* userAgentShadowRoot() const;
@@ -468,7 +498,7 @@ public:
     bool hasFocusableStyle() const;
     virtual bool supportsFocus() const;
     virtual bool isFocusable() const;
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
+    virtual bool isKeyboardFocusable(const FocusEventData&) const;
     virtual bool isMouseFocusable() const;
 
     virtual bool shouldUseInputMethod();
@@ -566,7 +596,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> setOuterHTML(Variant<RefPtr<TrustedHTML>, String>&&);
     WEBCORE_EXPORT String innerText();
     WEBCORE_EXPORT String outerText();
- 
+
     virtual String title() const;
 
     WEBCORE_EXPORT const AtomString& userAgentPart() const;
@@ -591,6 +621,9 @@ public:
     PseudoElement& ensurePseudoElement(PseudoId);
     WEBCORE_EXPORT PseudoElement* beforePseudoElement() const;
     WEBCORE_EXPORT PseudoElement* afterPseudoElement() const;
+    RefPtr<PseudoElement> pseudoElementIfExists(Style::PseudoElementIdentifier);
+    RefPtr<const PseudoElement> pseudoElementIfExists(Style::PseudoElementIdentifier) const;
+
     bool childNeedsShadowWalker() const;
     void didShadowTreeAwareChildrenChange();
 
@@ -833,11 +866,9 @@ public:
     ExceptionOr<Ref<WebAnimation>> animate(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&, std::optional<Variant<double, KeyframeAnimationOptions>>&&);
     Vector<RefPtr<WebAnimation>> getAnimations(std::optional<GetAnimationsOptions>);
 
-    WEBCORE_EXPORT ElementIdentifier identifier() const;
-    WEBCORE_EXPORT static Element* fromIdentifier(ElementIdentifier);
-
     String description() const override;
     String debugDescription() const override;
+    String attributesForDescription() const;
 
     bool hasDuplicateAttribute() const;
     void setHasDuplicateAttribute(bool);
@@ -869,6 +900,8 @@ public:
     double lookupCSSRandomBaseValue(const std::optional<Style::PseudoElementIdentifier>&, const CSSCalc::RandomCachingKey&) const;
     bool hasRandomCachingKeyMap() const;
 
+    void addShadowRoot(Ref<ShadowRoot>&&);
+
 protected:
     Element(const QualifiedName&, Document&, OptionSet<TypeFlag>);
 
@@ -882,8 +915,6 @@ protected:
     void classAttributeChanged(const AtomString& newClassString, AttributeModificationReason);
     void partAttributeChanged(const AtomString& newValue);
 
-    void addShadowRoot(Ref<ShadowRoot>&&);
-
     ExceptionOr<void> replaceChildrenWithMarkup(const String&, OptionSet<ParserContentPolicy>);
 
     static ExceptionOr<void> mergeWithNextTextNode(Text&);
@@ -896,6 +927,9 @@ protected:
 
     void disconnectFromIntersectionObservers();
     static AtomString makeTargetBlankIfHasDanglingMarkup(const AtomString& target);
+
+    template<typename ShadowRoot> std::optional<ShadowRoot> serializeShadowRoot() const;
+    template<typename Attribute> Vector<Attribute> serializeAttributes() const;
 
 private:
     LocalFrame* documentFrameWithNonNullView() const;
@@ -960,9 +994,12 @@ private:
     void disconnectFromResizeObserversSlow(ResizeObserverData&);
 
     // The cloneNode function is private so that non-virtual cloneElementWith/WithoutChildren are used instead.
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) override;
-    void cloneShadowTreeIfPossible(Element& newHost, CustomElementRegistry*);
-    virtual Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*);
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;
+    SerializedNode serializeNode(CloningOperation) const override;
+    void cloneShadowTreeIfPossible(Element& newHost) const;
+    virtual Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) const;
+
+    void enqueueShadowRootAttachedEvent();
 
     inline void removeShadowRoot(); // Defined in ElementRareData.h.
     void removeShadowRootSlow(ShadowRoot&);
@@ -988,9 +1025,9 @@ private:
 
     // Anyone thinking of using this should call document instead of ownerDocument.
     void ownerDocument() const = delete;
-    
+
     void attachAttributeNodeIfNeeded(Attr&);
-    
+
 #if ASSERT_ENABLED
     WEBCORE_EXPORT bool fastAttributeLookupAllowed(const QualifiedName&) const;
 #endif

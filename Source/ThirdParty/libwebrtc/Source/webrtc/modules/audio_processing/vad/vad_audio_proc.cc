@@ -10,11 +10,13 @@
 
 #include "modules/audio_processing/vad/vad_audio_proc.h"
 
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
+#include <cmath>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
 
 #include "common_audio/third_party/ooura/fft_size_256/fft4g.h"
+#include "modules/audio_processing/vad/common.h"
 #include "modules/audio_processing/vad/pitch_internal.h"
 #include "modules/audio_processing/vad/pole_zero_filter.h"
 #include "modules/audio_processing/vad/vad_audio_proc_internal.h"

@@ -25,7 +25,7 @@
 
 // https://html.spec.whatwg.org/multipage/links.html#htmlhyperlinkelementutils
 interface mixin HTMLHyperlinkElementUtils {
-    [CEReactions=NotNeeded, Reflect, URL] stringifier attribute USVString href;
+    [CEReactions=NotNeeded, ReflectURL] stringifier attribute USVString href;
     readonly attribute USVString origin;
     [CEReactions=NotNeeded] attribute USVString protocol;
     [CEReactions=NotNeeded] attribute USVString username;

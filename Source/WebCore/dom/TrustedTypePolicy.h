@@ -51,7 +51,7 @@ class TrustedTypePolicy : public ScriptWrappable, public RefCounted<TrustedTypeP
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TrustedTypePolicy);
 public:
     static Ref<TrustedTypePolicy> create(const String&, const TrustedTypePolicyOptions&);
-    ~TrustedTypePolicy() = default;
+    ~TrustedTypePolicy();
     ExceptionOr<Ref<TrustedHTML>> createHTML(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
     ExceptionOr<Ref<TrustedScript>> createScript(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
     ExceptionOr<Ref<TrustedScriptURL>> createScriptURL(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&);

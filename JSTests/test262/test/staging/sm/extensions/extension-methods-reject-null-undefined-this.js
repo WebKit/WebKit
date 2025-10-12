@@ -4,25 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-extensions-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  ECMAScript built-in methods that immediately throw when |this| is |undefined| or |null| (due to CheckObjectCoercible, ToObject, or ToString)
+info: bugzilla.mozilla.org/show_bug.cgi?id=619283
 esid: pending
 ---*/
-
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 619283;
-var summary =
-  "ECMAScript built-in methods that immediately throw when |this| is " +
-  "|undefined| or |null| (due to CheckObjectCoercible, ToObject, or ToString)";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 // This test fills out for the non-standard methods which
 // non262/misc/builtin-methods-reject-null-undefined-this.js declines to test.
@@ -52,44 +38,23 @@ function testMethod(Class, className, method)
     var badThis = badThisValues[i];
 
     expr = className + ".prototype." + method + ".call(" + badThis + ")";
-    try
-    {
+    assert.throws(TypeError, function() {
       Class.prototype[method].call(badThis);
-      throw new Error(expr + " didn't throw a TypeError");
-    }
-    catch (e)
-    {
-      assert.sameValue(e instanceof TypeError, true,
-               "wrong error for " + expr + ", instead threw " + e);
-    }
+    }, "wrong error for " + expr);
 
     expr = className + ".prototype." + method + ".apply(" + badThis + ")";
-    try
-    {
+    assert.throws(TypeError, function() {
       Class.prototype[method].apply(badThis);
-      throw new Error(expr + " didn't throw a TypeError");
-    }
-    catch (e)
-    {
-      assert.sameValue(e instanceof TypeError, true,
-               "wrong error for " + expr + ", instead threw " + e);
-    }
+    }, "wrong error for " + expr);
   }
 
   // ..and for good measure..
 
   expr = "(0, " + className + ".prototype." + method + ")()"
-  try
-  {
+  assert.throws(TypeError, function() {
     // comma operator to call GetValue() on the method and de-Reference it
     (0, Class.prototype[method])();
-    throw new Error(expr + " didn't throw a TypeError");
-  }
-  catch (e)
-  {
-    assert.sameValue(e instanceof TypeError, true,
-             "wrong error for " + expr + ", instead threw " + e);
-  }
+  }, "wrong error for " + expr);
 }
 
 for (var className in ClassToMethodMap)
@@ -103,7 +68,3 @@ for (var className in ClassToMethodMap)
     testMethod(Class, className, method);
   }
 }
-
-/******************************************************************************/
-
-print("All tests passed!");

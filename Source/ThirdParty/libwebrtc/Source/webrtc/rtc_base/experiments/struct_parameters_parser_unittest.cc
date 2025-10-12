@@ -9,7 +9,11 @@
  */
 #include "rtc_base/experiments/struct_parameters_parser.h"
 
-#include "rtc_base/gunit.h"
+#include <memory>
+#include <optional>
+
+#include "api/units/time_delta.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {

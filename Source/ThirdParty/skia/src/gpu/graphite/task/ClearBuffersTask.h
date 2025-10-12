@@ -33,11 +33,13 @@ public:
 
     Status prepareResources(ResourceProvider*,
                             ScratchResourceManager*,
-                            const RuntimeEffectDictionary*) override {
+                            sk_sp<const RuntimeEffectDictionary>) override {
         return Status::kSuccess;
     }
 
     Status addCommands(Context*, CommandBuffer*, ReplayTargetData) override;
+
+    SK_DUMP_TASKS_CODE(const char* getTaskName() const override { return "Clear Buffers Task"; })
 
 private:
     explicit ClearBuffersTask(skia_private::TArray<BindBufferInfo> clearList)

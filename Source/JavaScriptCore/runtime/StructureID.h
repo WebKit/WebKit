@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSCConfig.h"
-#include "MarkedBlock.h"
+#include <JavaScriptCore/JSCConfig.h>
+#include <JavaScriptCore/MarkedBlock.h>
 #include <compare>
 #include <wtf/HashTraits.h>
 #include <wtf/StdIntExtras.h>

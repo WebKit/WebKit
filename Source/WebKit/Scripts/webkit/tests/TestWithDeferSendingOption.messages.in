@@ -20,7 +20,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-[EnabledBy=SomeFeature]
+[
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo,
+    EnabledBy=SomeFeature
+]
 messages -> TestWithDeferSendingOption {
     NoOptions(String url)
     [DeferSendingIfSuspended] NoIndices(String url)

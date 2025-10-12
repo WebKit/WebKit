@@ -1375,12 +1375,18 @@ static inline void init_mc_flow_dispenser(AV1_COMP *cpi, int frame_idx,
 
   const int base_qindex =
       cpi->use_ducky_encode ? gf_group->q_val[frame_idx] : pframe_qindex;
+  // The TPL model is only meant to be run in inter mode, so ensure that we are
+  // not running in all intra mode, which implies we are not tuning for image
+  // quality (IQ) or SSIMULACRA2.
+  assert(cpi->oxcf.tune_cfg.tuning != AOM_TUNE_IQ &&
+         cpi->oxcf.tune_cfg.tuning != AOM_TUNE_SSIMULACRA2 &&
+         cpi->oxcf.mode != ALLINTRA);
   // Get rd multiplier set up.
-  rdmult = (int)av1_compute_rd_mult(
+  rdmult = av1_compute_rd_mult(
       base_qindex, cm->seq_params->bit_depth,
       cpi->ppi->gf_group.update_type[cpi->gf_frame_index], layer_depth,
       boost_index, frame_type, cpi->oxcf.q_cfg.use_fixed_qp_offsets,
-      is_stat_consumption_stage(cpi));
+      is_stat_consumption_stage(cpi), cpi->oxcf.tune_cfg.tuning);
 
   if (rdmult < 1) rdmult = 1;
   av1_set_error_per_bit(&x->errorperbit, rdmult);
@@ -1395,7 +1401,8 @@ static inline void init_mc_flow_dispenser(AV1_COMP *cpi, int frame_idx,
   const FRAME_UPDATE_TYPE update_type =
       gf_group->update_type[cpi->gf_frame_index];
   tpl_frame->base_rdmult = av1_compute_rd_mult_based_on_qindex(
-                               bd_info.bit_depth, update_type, base_qindex) /
+                               bd_info.bit_depth, update_type, base_qindex,
+                               cpi->oxcf.tune_cfg.tuning) /
                            6;
 
   if (cpi->use_ducky_encode)
@@ -2105,7 +2112,7 @@ void av1_tpl_rdmult_setup_sb(AV1_COMP *cpi, MACROBLOCK *const x,
       orig_qindex_rdmult, cm->seq_params->bit_depth,
       cpi->ppi->gf_group.update_type[cpi->gf_frame_index], layer_depth,
       boost_index, frame_type, cpi->oxcf.q_cfg.use_fixed_qp_offsets,
-      is_stat_consumption_stage(cpi));
+      is_stat_consumption_stage(cpi), cpi->oxcf.tune_cfg.tuning);
 
   const int new_qindex_rdmult = quant_params->base_qindex +
                                 x->rdmult_delta_qindex +
@@ -2114,7 +2121,7 @@ void av1_tpl_rdmult_setup_sb(AV1_COMP *cpi, MACROBLOCK *const x,
       new_qindex_rdmult, cm->seq_params->bit_depth,
       cpi->ppi->gf_group.update_type[cpi->gf_frame_index], layer_depth,
       boost_index, frame_type, cpi->oxcf.q_cfg.use_fixed_qp_offsets,
-      is_stat_consumption_stage(cpi));
+      is_stat_consumption_stage(cpi), cpi->oxcf.tune_cfg.tuning);
 
   const double scaling_factor = (double)new_rdmult / (double)orig_rdmult;
 

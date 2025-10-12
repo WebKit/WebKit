@@ -4,7 +4,11 @@
 // found in the LICENSE file.
 //
 
-// Buffer9.cpp Defines the Buffer9 class.
+// Buffer9.cpp: Defines the Buffer9 class.
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/renderer/d3d/d3d9/Buffer9.h"
 

@@ -10,16 +10,16 @@ PASS :composites:case="const_let_matrix_vec"
 PASS :composites:case="const_let_matrix_comp"
 FAIL :composites:case="override_scalar" assert_unreached:
   - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/early_evaluation.spec.js:133:27
  Reached unreachable code
 FAIL :composites:case="override_vector" assert_unreached:
   - EXPECTATION FAILED: Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/early_evaluation.spec.js:133:27
  Reached unreachable code
 PASS :composites:case="override_let_vector"

@@ -676,7 +676,7 @@ CallbackResult<typename IDLPromise<IDLUndefined>::CallbackReturnType> JSTestCall
     auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackThatTreatsExceptionAsRejectedPromise"_s), returnedException);
     if (returnedException) {
         auto* jsPromise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
-        jsPromise->reject(&globalObject, returnedException->value());
+        jsPromise->rejectAsHandled(&globalObject, returnedException->value());
         return { DOMPromise::create(globalObject, *jsPromise) };
      }
 
@@ -769,6 +769,10 @@ JSC::JSValue toJS(TestCallbackInterface& impl)
     return static_cast<JSTestCallbackInterface&>(impl).callbackData()->callback();
 }
 
+ScriptExecutionContext* JSTestCallbackInterface::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
+}
 } // namespace WebCore
 
 #endif // ENABLE(TEST_CONDITIONAL)

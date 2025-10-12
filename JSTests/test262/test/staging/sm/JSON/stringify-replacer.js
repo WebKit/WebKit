@@ -2,13 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-JSON-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
 ---*/
+
 /**
  * These return* functions are used by the
  * replacer tests taken from bug 512447
@@ -127,37 +125,15 @@ assert.sameValue(x, '{"0":0,"1":null,"2":2}');
 x = JSON.stringify(foo, returnStringForUndefined);
 assert.sameValue(x, '{"0":0,"1":1,"2":2,"3":"undefined value"}');
 
-try
-{
+assert.throws(TypeError, function() {
   JSON.stringify(foo, returnCycleObjectFor1);
-  throw new Error("no error thrown");
-}
-catch (e)
-{
-  assert.sameValue(e instanceof TypeError, true, "no TypeError thrown: " + e);
-}
+});
 
-try
-{
+assert.throws(TypeError, function() {
   JSON.stringify(foo, returnCycleArrayFor1);
-  throw new Error("no error thrown");
-}
-catch (e)
-{
-  assert.sameValue(e instanceof TypeError, true, "no TypeError thrown: " + e);
-}
+});
 
 foo = [0, 1, 2, undefined];
-try
-{
+assert.throws(TypeError, function() {
   JSON.stringify(foo, returnCycleObjectFor1);
-  throw new Error("no error thrown");
-}
-catch (e)
-{
-  assert.sameValue(e instanceof TypeError, true, "no TypeError thrown: " + e);
-}
-
-/******************************************************************************/
-
-print("Tests complete");
+});

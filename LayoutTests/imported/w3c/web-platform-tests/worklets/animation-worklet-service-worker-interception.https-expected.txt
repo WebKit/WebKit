@@ -1,2 +1,1 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
 

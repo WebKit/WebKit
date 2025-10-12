@@ -90,6 +90,15 @@ class SingleTestRunnerTest(unittest.TestCase):
         fuzzy_data = single_test_runner._fuzzy_tolerance_for_reference('/test.checkout/LayoutTests/fast/resources/common-ref.html')
         self.assertEqual(fuzzy_data, {'max_difference': [5, 8], 'total_pixels': [78, 84]})
 
+    def test_fuzzy_matching_values_for_xml_document(self):
+        test_name = 'fuzzy-test.svg'
+        single_test_runner = self._make_test_runner(test_name)
+        self._add_file(single_test_runner._port, test_name, """<svg width="340" height="140" xmlns="http://www.w3.org/2000/svg" xmlns:html="http://www.w3.org/1999/xhtml">
+            <html:meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-2"/>
+        """)
+        fuzzy_data = single_test_runner._fuzzy_tolerance_for_reference('/test.checkout/LayoutTests/fuzzy-test-expected.svg')
+        self.assertEqual(fuzzy_data, {'max_difference': [0, 1], 'total_pixels': [0, 2]})
+
     def test_fuzzy_matching_values_no_common_data(self):
         test_name = 'fast/borders/fuzzy-test.html'
         single_test_runner = self._make_test_runner(test_name)

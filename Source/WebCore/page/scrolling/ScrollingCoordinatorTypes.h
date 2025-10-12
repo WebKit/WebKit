@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "FloatPoint.h"
-#include "KeyboardScroll.h"
-#include "ScrollTypes.h"
+#include <WebCore/FloatPoint.h>
+#include <WebCore/KeyboardScroll.h>
+#include <WebCore/ScrollTypes.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -89,6 +89,7 @@ struct ScrollableAreaParameters {
     NativeScrollbarVisibility verticalNativeScrollbarVisibility { NativeScrollbarVisibility::Visible };
 
     ScrollbarWidth scrollbarWidthStyle { ScrollbarWidth::Auto };
+    std::optional<ScrollbarColor> scrollbarColorStyle;
 
     friend bool operator==(const ScrollableAreaParameters&, const ScrollableAreaParameters&) = default;
 };
@@ -157,6 +158,7 @@ enum class ScrollUpdateType : uint8_t {
     AnimatedScrollDidEnd,
     WheelEventScrollWillStart,
     WheelEventScrollDidEnd,
+    ProgrammaticScrollDidEnd,
 };
 
 struct ScrollUpdate {
@@ -168,7 +170,7 @@ struct ScrollUpdate {
     
     bool canMerge(const ScrollUpdate& other) const
     {
-        return nodeID == other.nodeID && updateLayerPositionAction == other.updateLayerPositionAction && updateType == other.updateType;
+        return nodeID == other.nodeID && updateLayerPositionAction == other.updateLayerPositionAction && updateType == other.updateType && updateType == ScrollUpdateType::PositionUpdate;
     }
     
     void merge(ScrollUpdate&& other)
@@ -213,6 +215,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelEventHandlingR
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelEventProcessingSteps);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollRequestType);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollUpdateType);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const ScrollUpdate&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const RequestedScrollData&);
 
 } // namespace WebCore

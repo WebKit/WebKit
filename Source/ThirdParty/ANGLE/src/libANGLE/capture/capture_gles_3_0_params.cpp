@@ -3,8 +3,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// capture_gles3_params.cpp:
+// capture_gles_3_0_params.cpp:
 //   Pointer parameter capture functions for the OpenGL ES 3.0 entry points.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/capture/capture_gles_2_0_autogen.h"
 #include "libANGLE/capture/capture_gles_3_0_autogen.h"

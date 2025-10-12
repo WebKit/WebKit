@@ -22,13 +22,13 @@
 
 #pragma once
 
-#include "ErrorInstance.h"
-#include "ErrorType.h"
-#include "Exception.h"
-#include "InternalFunction.h"
-#include "JSObject.h"
-#include "LineColumn.h"
-#include "ThrowScope.h"
+#include <JavaScriptCore/ErrorInstance.h>
+#include <JavaScriptCore/ErrorType.h>
+#include <JavaScriptCore/Exception.h>
+#include <JavaScriptCore/InternalFunction.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/LineColumn.h>
+#include <JavaScriptCore/ThrowScope.h>
 #include <stdint.h>
 
 
@@ -66,7 +66,7 @@ JS_EXPORT_PRIVATE JSObject* createOutOfMemoryError(JSGlobalObject*, const String
 JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, ErrorType, const String&);
 JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, ErrorTypeWithExtension, const String&);
 
-std::unique_ptr<Vector<StackFrame>> getStackTrace(VM&, JSObject*, bool useCurrentFrame, JSCell* ownerOfCallLinkInfo = nullptr, CallLinkInfo* = nullptr);
+std::unique_ptr<Vector<StackFrame>> getStackTrace(VM&, JSObject*, bool useCurrentFrame, JSCell* ownerOfCallLinkInfo = nullptr, CallLinkInfo* = nullptr, JSCell* subclassCaller = nullptr);
 std::tuple<CodeBlock*, BytecodeIndex> getBytecodeIndex(VM&, CallFrame*);
 bool getLineColumnAndSource(VM&, Vector<StackFrame>* stackTrace, LineColumn&, String& sourceURL);
 bool addErrorInfo(VM&, Vector<StackFrame>*, JSObject*);

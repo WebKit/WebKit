@@ -37,7 +37,7 @@ public:
     }
 
     WARN_UNUSED_RETURN GRefPtr<GstCaps> caps() const { return adoptGRef(gst_device_get_caps(m_device.get())); }
-    GstDevice* device() { return m_device.get(); }
+    GstDevice* device() const { return m_device.get(); }
 
 private:
     GRefPtr<GstDevice> m_device;

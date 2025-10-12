@@ -1,4 +1,6 @@
 
-Harness Error (TIMEOUT), message = null
-
+PASS [nested-cross-site-frame] document.requestStorageAccess() should exist on the document interface
+PASS [nested-cross-site-frame] document.requestStorageAccess() should resolve in top-level frame or same-site iframe, otherwise reject with a NotAllowedError with no user gesture.
+PASS [nested-cross-site-frame] document.requestStorageAccess() should be resolved with no user gesture when a permission grant exists, and should allow cookie access
+PASS [nested-cross-site-frame] document.requestStorageAccess() should be rejected with a NotAllowedError with denied permission
 

@@ -1,6 +1,7 @@
 // This test seems to require 64 MB for the executable memory pool, but only
 // arm64 and x86_64 have that much by default.
 //@ requireOptions("--jitMemoryReservationSize=67108864") if !["arm64", "x86_64"].include?($architecture)
+//@ $skipModes << "no-llint".to_sym # because this test is designed to exhaust JIT memory. We need LLInt to continue executing.
 "use strict";
 
 function assert(b) {

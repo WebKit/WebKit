@@ -24,7 +24,7 @@
 #include "ActiveDOMObject.h"
 #include "ContextDestructionObserverInlines.h"
 #include "DeprecatedGlobalSettings.h"
-#include "DocumentInlines.h"
+#include "DocumentSettingsValues.h"
 #include "EventNames.h"
 #include "ExtendedDOMClientIsoSubspaces.h"
 #include "ExtendedDOMIsoSubspaces.h"
@@ -45,6 +45,7 @@
 #include "JSDOMWrapperCache.h"
 #include "JSEventListener.h"
 #include "JSTestDefaultToJSONIndirectInheritance.h"
+#include "JSTestDefaultToJSONInherit.h"
 #include "JSTestDefaultToJSONInheritFinal.h"
 #include "JSTestException.h"
 #include "ScriptExecutionContext.h"
@@ -246,7 +247,7 @@ JSValue JSTestDefaultToJSON::getConstructor(VM& vm, const JSGlobalObject* global
 
 void JSTestDefaultToJSON::destroy(JSC::JSCell* cell)
 {
-    JSTestDefaultToJSON* thisObject = static_cast<JSTestDefaultToJSON*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestDefaultToJSON* thisObject = static_cast<JSTestDefaultToJSON*>(cell);
     thisObject->JSTestDefaultToJSON::~JSTestDefaultToJSON();
 }
 
@@ -305,7 +306,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_enabledByConditionalAttribute, (JSG
 static inline JSValue jsTestDefaultToJSON_eventHandlerAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return eventHandlerAttribute(thisObject.protectedWrapped(), eventNames().entHandlerAttributeEvent, worldForDOMObject(thisObject));
+    return eventHandlerAttribute(thisObject.protectedWrapped(), eventNames().entHandlerAttributeEvent, protectedWorldForDOMObject(thisObject));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_eventHandlerAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -827,7 +828,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestDefaultToJSONPrototypeFunction_toJSON, (JSGlobalO
 
 JSC::GCClient::IsoSubspace* JSTestDefaultToJSON::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestDefaultToJSON, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestDefaultToJSON, UseCustomHeapCellType::No>(vm, "JSTestDefaultToJSON"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestDefaultToJSON.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDefaultToJSON = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestDefaultToJSON.get(); },
@@ -854,7 +855,7 @@ bool JSTestDefaultToJSONOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unkno
 
 void JSTestDefaultToJSONOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestDefaultToJSON = static_cast<JSTestDefaultToJSON*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestDefaultToJSON = static_cast<JSTestDefaultToJSON*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestDefaultToJSON->protectedWrapped().ptr(), jsTestDefaultToJSON);
 }
@@ -867,7 +868,9 @@ extern "C" { extern void (*const __identifier("??_7TestDefaultToJSON@WebCore@@6B
 #else
 extern "C" { extern void* _ZTVN7WebCore17TestDefaultToJSONE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestDefaultToJSON>, void>> static inline void verifyVTable(TestDefaultToJSON* ptr) {
+template<std::same_as<TestDefaultToJSON> T>
+static inline void verifyVTable(TestDefaultToJSON* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -886,11 +889,11 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestDefaultTo
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSON>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSON>&& impl)
 {
-#if ENABLE(BINDING_INTEGRITY)
-    verifyVTable<TestDefaultToJSON>(impl.ptr());
-#endif
+    UNUSED_PARAM(lexicalGlobalObject);
+    if (is<TestDefaultToJSONInherit>(impl))
+        return toJSNewlyCreated(lexicalGlobalObject, globalObject, uncheckedDowncast<TestDefaultToJSONInherit>(WTFMove(impl)));
     return createWrapper<TestDefaultToJSON>(globalObject, WTFMove(impl));
 }
 

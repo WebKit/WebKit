@@ -11,16 +11,11 @@
 #ifndef MODULES_DESKTOP_CAPTURE_LINUX_WAYLAND_MOUSE_CURSOR_MONITOR_PIPEWIRE_H_
 #define MODULES_DESKTOP_CAPTURE_LINUX_WAYLAND_MOUSE_CURSOR_MONITOR_PIPEWIRE_H_
 
-#include <memory>
-
-#include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
-#include "modules/desktop_capture/desktop_capture_types.h"
-#include "modules/desktop_capture/linux/wayland/shared_screencast_stream.h"
-#include "modules/desktop_capture/mouse_cursor.h"
 #include "modules/desktop_capture/mouse_cursor_monitor.h"
 #include "rtc_base/system/no_unique_address.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 

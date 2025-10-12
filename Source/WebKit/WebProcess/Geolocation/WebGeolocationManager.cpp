@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@ using namespace WebCore;
 
 static RegistrableDomain registrableDomainForPage(WebPage& page)
 {
-    RefPtr corePage = page.protectedCorePage();
+    RefPtr corePage = page.corePage();
     if (!corePage)
         return { };
 
@@ -91,13 +91,13 @@ void WebGeolocationManager::registerWebPage(WebPage& page, const String& authori
     m_pageToRegistrableDomain.add(page, registrableDomain);
 
     if (!wasUpdating) {
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebGeolocationManagerProxy::StartUpdating(registrableDomain, page.webPageProxyIdentifier(), authorizationToken, needsHighAccuracy), 0);
+        WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebGeolocationManagerProxy::StartUpdating(registrableDomain, page.webPageProxyIdentifier(), authorizationToken, needsHighAccuracy), 0);
         return;
     }
 
     bool highAccuracyShouldBeEnabled = isHighAccuracyEnabled(pageSets);
     if (highAccuracyWasEnabled != highAccuracyShouldBeEnabled)
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebGeolocationManagerProxy::SetEnableHighAccuracy(registrableDomain, highAccuracyShouldBeEnabled), 0);
+        WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebGeolocationManagerProxy::SetEnableHighAccuracy(registrableDomain, highAccuracyShouldBeEnabled), 0);
 }
 
 void WebGeolocationManager::unregisterWebPage(WebPage& page)
@@ -117,11 +117,11 @@ void WebGeolocationManager::unregisterWebPage(WebPage& page)
     pageSets.highAccuracyPageSet.remove(page);
 
     if (!isUpdating(pageSets))
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebGeolocationManagerProxy::StopUpdating(registrableDomain), 0);
+        WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebGeolocationManagerProxy::StopUpdating(registrableDomain), 0);
     else {
         bool highAccuracyShouldBeEnabled = isHighAccuracyEnabled(pageSets);
         if (highAccuracyWasEnabled != highAccuracyShouldBeEnabled)
-            WebProcess::singleton().parentProcessConnection()->send(Messages::WebGeolocationManagerProxy::SetEnableHighAccuracy(registrableDomain, highAccuracyShouldBeEnabled), 0);
+            WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebGeolocationManagerProxy::SetEnableHighAccuracy(registrableDomain, highAccuracyShouldBeEnabled), 0);
     }
 
     if (pageSets.pageSet.isEmptyIgnoringNullReferences() && pageSets.highAccuracyPageSet.isEmptyIgnoringNullReferences())
@@ -149,7 +149,7 @@ void WebGeolocationManager::setEnableHighAccuracyForPage(WebPage& page, bool ena
 
     bool highAccuracyShouldBeEnabled = isHighAccuracyEnabled(pageSets);
     if (highAccuracyWasEnabled != isHighAccuracyEnabled(pageSets))
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebGeolocationManagerProxy::SetEnableHighAccuracy(registrableDomain, highAccuracyShouldBeEnabled), 0);
+        WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebGeolocationManagerProxy::SetEnableHighAccuracy(registrableDomain, highAccuracyShouldBeEnabled), 0);
 }
 
 void WebGeolocationManager::didChangePosition(const WebCore::RegistrableDomain& registrableDomain, const GeolocationPositionData& position)
@@ -157,8 +157,8 @@ void WebGeolocationManager::didChangePosition(const WebCore::RegistrableDomain& 
 #if ENABLE(GEOLOCATION)
     if (auto it = m_pageSets.find(registrableDomain); it != m_pageSets.end()) {
         for (auto& page : copyToVector(it->value.pageSet)) {
-            if (page->corePage())
-                GeolocationController::from(page->corePage())->positionChanged(position);
+            if (RefPtr corePage = page->corePage())
+                GeolocationController::from(corePage.get())->positionChanged(position);
         }
     }
 #else
@@ -175,8 +175,8 @@ void WebGeolocationManager::didFailToDeterminePosition(const WebCore::Registrabl
         auto error = GeolocationError::create(GeolocationError::PositionUnavailable, errorMessage);
 
         for (auto& page : copyToVector(it->value.pageSet)) {
-            if (page->corePage())
-                GeolocationController::from(page->corePage())->errorOccurred(error.get());
+            if (RefPtr corePage = page->corePage())
+                GeolocationController::from(corePage.get())->errorOccurred(error.get());
         }
     }
 #else

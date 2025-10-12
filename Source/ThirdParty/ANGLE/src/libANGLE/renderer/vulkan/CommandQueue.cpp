@@ -1241,12 +1241,14 @@ void CommandQueue::popInFlightBatchLocked()
 }
 
 // QueuePriorities:
-constexpr float kVulkanQueuePriorityLow    = 0.0;
-constexpr float kVulkanQueuePriorityMedium = 0.4;
-constexpr float kVulkanQueuePriorityHigh   = 1.0;
+constexpr float kVulkanQueuePriorityLow      = 0.0;
+constexpr float kVulkanQueuePriorityMedium   = 0.4;
+constexpr float kVulkanQueuePriorityHigh     = 0.8;
+constexpr float kVulkanQueuePriorityRealtime = 1.0;
 
 const float QueueFamily::kQueuePriorities[static_cast<uint32_t>(egl::ContextPriority::EnumCount)] =
-    {kVulkanQueuePriorityMedium, kVulkanQueuePriorityHigh, kVulkanQueuePriorityLow};
+    {kVulkanQueuePriorityMedium, kVulkanQueuePriorityHigh, kVulkanQueuePriorityRealtime,
+     kVulkanQueuePriorityLow};
 
 DeviceQueueMap::~DeviceQueueMap() {}
 
@@ -1274,9 +1276,10 @@ void DeviceQueueMap::initialize(VkDevice device,
                                 uint32_t queueCount)
 {
     // QueueIndexing:
-    constexpr uint32_t kQueueIndexMedium = 0;
-    constexpr uint32_t kQueueIndexHigh   = 1;
-    constexpr uint32_t kQueueIndexLow    = 2;
+    constexpr uint32_t kQueueIndexMedium   = 0;
+    constexpr uint32_t kQueueIndexHigh     = 1;
+    constexpr uint32_t kQueueIndexRealtime = 2;
+    constexpr uint32_t kQueueIndexLow      = 3;
 
     ASSERT(queueCount);
     ASSERT((queueIndex + queueCount) <= queueFamily.getProperties()->queueCount);
@@ -1302,8 +1305,29 @@ void DeviceQueueMap::initialize(VkDevice device,
         mQueueAndIndices[egl::ContextPriority::High] =
             mQueueAndIndices[egl::ContextPriority::Medium];
     }
-    // If at least 3 queues, Low has its own queue. Adjust Low priority.
+
+    // If at least 3 queues, Realtime has its own queue
     if (queueCount > 2)
+    {
+        GetDeviceQueue(device, makeProtected, mQueueFamilyIndex, queueIndex + kQueueIndexRealtime,
+                       &queue);
+        mQueueAndIndices[egl::ContextPriority::Realtime] = {egl::ContextPriority::Realtime, queue,
+                                                            queueIndex + kQueueIndexRealtime};
+    }
+    else if (queueCount > 1)
+    {
+        // If only 2 queues, Realtime uses queue of High priority
+        mQueueAndIndices[egl::ContextPriority::Realtime] =
+            mQueueAndIndices[egl::ContextPriority::High];
+    }
+    else
+    {
+        mQueueAndIndices[egl::ContextPriority::Realtime] =
+            mQueueAndIndices[egl::ContextPriority::Medium];
+    }
+
+    // If at least 4 queues, Low has its own queue. Adjust Low priority.
+    if (queueCount > 3)
     {
         GetDeviceQueue(device, makeProtected, mQueueFamilyIndex, queueIndex + kQueueIndexLow,
                        &queue);

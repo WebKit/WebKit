@@ -10,7 +10,13 @@
 
 #include "test/drifting_clock.h"
 
+#include <cstdint>
+
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
+#include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
 namespace test {

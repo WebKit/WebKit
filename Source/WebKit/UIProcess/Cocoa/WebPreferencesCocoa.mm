@@ -75,14 +75,12 @@ bool WebPreferences::platformGetUInt32UserValueForKey(const String& key, uint32_
     if (!m_identifier)
         return false;
 
-    RetainPtr object = [[NSUserDefaults standardUserDefaults] objectForKey:makeKey(m_identifier, m_keyPrefix, key).get()];
-    if (!object)
-        return false;
-    if (![object respondsToSelector:@selector(intValue)])
-        return false;
+    if (RetainPtr object = checked_objc_cast<NSNumber>([[NSUserDefaults standardUserDefaults] objectForKey:makeKey(m_identifier, m_keyPrefix, key).get()])) {
+        userValue = [object intValue];
+        return true;
+    }
 
-    userValue = [object intValue];
-    return true;
+    return false;
 }
 
 bool WebPreferences::platformGetDoubleUserValueForKey(const String& key, double& userValue)

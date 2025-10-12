@@ -44,6 +44,7 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKContentWorldConfiguration.h>
 #import <WebKit/_WKFrameTreeNode.h>
+#import <WebKit/_WKInputDelegate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserContentWorld.h>
 #import <WebKit/_WKUserStyleSheet.h>
@@ -52,6 +53,23 @@
 #import <wtf/WeakObjCPtr.h>
 
 static bool isDoneWithNavigation;
+static bool isDoneWithFormSubmission;
+
+@interface InputDelegateForFormSubmission : NSObject <_WKInputDelegate>
+@end
+
+@implementation InputDelegateForFormSubmission {
+}
+
+- (void)_webView:(WKWebView *)webView willSubmitFormValues:(NSDictionary *)values frameInfo:(WKFrameInfo *)frameInfo sourceFrameInfo:(WKFrameInfo *)sourceFrameInfo userObject:(NSObject <NSSecureCoding> *)userObject submissionHandler:(void (^)(void))submissionHandler
+{
+    auto *dictionary = (NSDictionary *)userObject;
+    EXPECT_WK_STREQ((NSString *)dictionary[@"foo"], @"bar");
+    submissionHandler();
+    isDoneWithFormSubmission = true;
+}
+
+@end
 
 @interface SimpleNavigationDelegate : NSObject <WKNavigationDelegate>
 @end
@@ -1262,6 +1280,42 @@ TEST(WKUserContentController, AllowAutofill)
     EXPECT_WK_STREQ(@"undefined", resultValue.get());
 }
 
+TEST(WKUserContentController, DidAssociateFormControls)
+{
+    RetainPtr webView = adoptNS([TestWKWebView new]);
+    RetainPtr configuration = adoptNS([_WKContentWorldConfiguration new]);
+    configuration.get().allowAutofill = YES;
+    RetainPtr autofillWorld = [WKContentWorld _worldWithConfiguration:configuration.get()];
+    NSString *pageWorldJS = @"window.addEventListener('webkitassociateformcontrols', () => alert('fail') )";
+    NSString *autofillWorldJS = @"window.addEventListener('webkitassociateformcontrols', (e) => { setTimeout(() => alert('pass ' + e.target), 50)})";
+    RetainPtr pageWorldScript = adoptNS([[WKUserScript alloc] initWithSource:pageWorldJS injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
+    RetainPtr autofillWorldScript = adoptNS([[WKUserScript alloc] initWithSource:autofillWorldJS injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES inContentWorld:autofillWorld.get()]);
+    RetainPtr<WKUserContentController> userContentController = [webView configuration].userContentController;
+    [userContentController addUserScript:pageWorldScript.get()];
+    [userContentController addUserScript:autofillWorldScript.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"associate-form-controls" withExtension:@"html"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "pass [object HTMLFormElement]");
+    [webView evaluateJavaScript:@"addPasswordFieldToForm()" completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "pass [object HTMLInputElement]");
+}
+
+TEST(WKUserContentController, ShadowRootAttachedEvent)
+{
+    RetainPtr webView = adoptNS([TestWKWebView new]);
+    RetainPtr configuration = adoptNS([_WKContentWorldConfiguration new]);
+    configuration.get().allowAccessToClosedShadowRoots = YES;
+    RetainPtr shadowRootWorld = [WKContentWorld _worldWithConfiguration:configuration.get()];
+    NSString *pageWorldJS = @"window.addEventListener('webkitshadowrootattached', () => alert('fail') ); onload = () => { setTimeout(() => alert('fail'), 100); }";
+    NSString *shadowRootWorldJS = @"window.addEventListener('webkitshadowrootattached', (e) => { setTimeout(() => alert('pass ' + e.target.localName), 50)})";
+    RetainPtr pageWorldScript = adoptNS([[WKUserScript alloc] initWithSource:pageWorldJS injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
+    RetainPtr shadowRootScript = adoptNS([[WKUserScript alloc] initWithSource:shadowRootWorldJS injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES inContentWorld:shadowRootWorld.get()]);
+    RetainPtr<WKUserContentController> userContentController = [webView configuration].userContentController;
+    [userContentController addUserScript:pageWorldScript.get()];
+    [userContentController addUserScript:shadowRootScript.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"closed-shadow-tree-test" withExtension:@"html"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "pass shadow-host");
+}
+
 #if WK_HAVE_C_SPI
 
 TEST(WKUserContentController, DisableAutofillSpellcheck)
@@ -1409,7 +1463,10 @@ TEST(WKUserContentController, AllowAccessToClosedShadowRoots)
 
     __block bool isDoneEvaluatingScript = false;
     __block RetainPtr resultValue = @"";
-    [webView evaluateJavaScript:@"document.body.appendChild(document.createElement('div')).attachShadow({mode: 'closed'}).textContent = 'PASS';" completionHandler:^(id value, NSError *error) {
+    [webView evaluateJavaScript:@"host = document.createElement('div');"
+        "document.body.appendChild(host);"
+        "host.innerHTML = '<span id=target></span>';"
+        "host.attachShadow({mode: 'closed'}).innerHTML = 'PASS<slot></slot>';" completionHandler:^(id value, NSError *error) {
         resultValue = value;
         isDoneEvaluatingScript = true;
     }];
@@ -1424,6 +1481,18 @@ TEST(WKUserContentController, AllowAccessToClosedShadowRoots)
     TestWebKitAPI::Util::run(&isDoneEvaluatingScript);
     isDoneEvaluatingScript = false;
     EXPECT_WK_STREQ(@"PASS", resultValue.get());
+
+    [webView evaluateJavaScript:@"let path = '';"
+        "target.addEventListener('custom-event', (event) => { path = Array.from(event.composedPath()).map((target) => target.localName || target.__proto__.constructor.name).join(','); });"
+        "target.dispatchEvent(new CustomEvent('custom-event'));"
+        "path" inFrame:nil inContentWorld:world.get() completionHandler:^(id value, NSError *error) {
+        resultValue = value;
+        isDoneEvaluatingScript = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDoneEvaluatingScript);
+    isDoneEvaluatingScript = false;
+    EXPECT_WK_STREQ(@"span,slot,ShadowRoot,div,body,html,HTMLDocument,Window", resultValue.get());
 }
 
 TEST(WKUserContentController, DisableLegacyBuiltinOverrides)
@@ -1467,4 +1536,30 @@ TEST(WKUserContentController, DisableLegacyBuiltinOverrides)
     TestWebKitAPI::Util::run(&isDoneEvaluatingScript);
     isDoneEvaluatingScript = false;
     EXPECT_WK_STREQ(@"function", resultValue.get());
+}
+
+TEST(WKUserContentController, FormSubmissionWithUserInfo)
+{
+    auto inputDelegate = adoptNS([[InputDelegateForFormSubmission alloc] init]);
+    isDoneWithFormSubmission = false;
+
+    RetainPtr contentWorldConfiguration = adoptNS([[_WKContentWorldConfiguration alloc] init]);
+    [contentWorldConfiguration setName:@"TestWillWithSubmitFormWithAllowElementUserInfo"];
+    [contentWorldConfiguration setAllowElementUserInfo:YES];
+
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:contentWorldConfiguration.get()];
+    RetainPtr userScript = adoptNS([[WKUserScript alloc] _initWithSource:@"window.addEventListener(\"load\", function() { document.getElementById(\"formID\").setUserInfo({foo: \"bar\"}); document.getElementById(\"formID\").submit()});"
+        injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] associatedURL:nil contentWorld:world.get() deferRunningUntilNotification:NO]);
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addUserScript:userScript.get()];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView _setInputDelegate:inputDelegate.get()];
+    [webView loadHTMLString:@"<body><form id='formID' method='post' action='https://webkit.org/'>"
+        "<input type='text' name='testname1' value='testvalue1'/>"
+        "<input type='password' name='testname2' value='testvalue2'/>"
+        "<input type='hidden' name='testname3' value='testvalue3'/>"
+    "</form></body>" baseURL:nil];
+    TestWebKitAPI::Util::run(&isDoneWithFormSubmission);
 }

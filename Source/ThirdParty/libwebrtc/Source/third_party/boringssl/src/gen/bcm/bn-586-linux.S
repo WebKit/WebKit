@@ -136,21 +136,30 @@ bn_mul_words:
 	popl	%ebp
 	ret
 .size	bn_mul_words,.-.L_bn_mul_words_begin
-.globl	bn_sqr_words
-.hidden	bn_sqr_words
-.type	bn_sqr_words,@function
+.globl	bn_sqr_add_words
+.hidden	bn_sqr_add_words
+.type	bn_sqr_add_words,@function
 .align	16
-bn_sqr_words:
-.L_bn_sqr_words_begin:
+bn_sqr_add_words:
+.L_bn_sqr_add_words_begin:
 	movl	4(%esp),%eax
 	movl	8(%esp),%edx
 	movl	12(%esp),%ecx
+	pxor	%mm1,%mm1
 .align	16
 .L005sqr_sse2_loop:
 	movd	(%edx),%mm0
+	movd	(%eax),%mm2
+	movd	4(%eax),%mm3
 	pmuludq	%mm0,%mm0
 	leal	4(%edx),%edx
-	movq	%mm0,(%eax)
+	paddq	%mm0,%mm1
+	paddq	%mm2,%mm1
+	movd	%mm1,(%eax)
+	psrlq	$32,%mm1
+	paddq	%mm3,%mm1
+	movd	%mm1,4(%eax)
+	psrlq	$32,%mm1
 	subl	$1,%ecx
 	leal	8(%eax),%eax
 	jnz	.L005sqr_sse2_loop
@@ -161,19 +170,7 @@ bn_sqr_words:
 	popl	%ebx
 	popl	%ebp
 	ret
-.size	bn_sqr_words,.-.L_bn_sqr_words_begin
-.globl	bn_div_words
-.hidden	bn_div_words
-.type	bn_div_words,@function
-.align	16
-bn_div_words:
-.L_bn_div_words_begin:
-	movl	4(%esp),%edx
-	movl	8(%esp),%eax
-	movl	12(%esp),%ecx
-	divl	%ecx
-	ret
-.size	bn_div_words,.-.L_bn_div_words_begin
+.size	bn_sqr_add_words,.-.L_bn_sqr_add_words_begin
 .globl	bn_add_words
 .hidden	bn_add_words
 .type	bn_add_words,@function

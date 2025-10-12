@@ -33,7 +33,7 @@ namespace WebCore {
 
 class ControlFactoryAdwaita final : public ControlFactory {
 public:
-    static ControlFactoryAdwaita& shared();
+    static ControlFactoryAdwaita& singleton();
 
 private:
     std::unique_ptr<PlatformControl> createPlatformButton(ButtonPart&) final;
@@ -56,8 +56,14 @@ private:
     std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) final;
     std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) final;
     std::unique_ptr<PlatformControl> createPlatformToggleButton(ToggleButtonPart&) final;
+
+    Type type() const final { return Type::Adwaita; }
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ControlFactoryAdwaita)
+    static bool isType(const WebCore::ControlFactory& factory) { return factory.type() == WebCore::ControlFactory::Type::Adwaita; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // USE(THEME_ADWAITA)

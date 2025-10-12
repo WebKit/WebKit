@@ -23,8 +23,8 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
 struct WebKit::RemoteGraphicsContextGLInitializationState {
-    String availableExtensions;
-    String requestableExtensions;
+    CString availableExtensions;
+    CString requestableExtensions;
     GCGLenum externalImageTarget;
     GCGLenum externalImageBindingQuery;
 };

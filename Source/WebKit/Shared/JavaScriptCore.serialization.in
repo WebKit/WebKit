@@ -27,7 +27,6 @@ enum class JSC::MessageSource : uint8_t {
     Network,
     ConsoleAPI,
     Storage,
-    AppCache,
     Rendering,
     CSS,
     Security,

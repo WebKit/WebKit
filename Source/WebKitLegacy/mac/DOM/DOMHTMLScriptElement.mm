@@ -55,7 +55,7 @@
 - (NSString *)htmlFor
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::forAttr).createNSString().autorelease();
+    return IMPL->attributeWithoutSynchronization(WebCore::HTMLNames::forAttr).createNSString().autorelease();
 }
 
 - (void)setHtmlFor:(NSString *)newHtmlFor
@@ -67,7 +67,7 @@
 - (NSString *)event
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::eventAttr).createNSString().autorelease();
+    return IMPL->attributeWithoutSynchronization(WebCore::HTMLNames::eventAttr).createNSString().autorelease();
 }
 
 - (void)setEvent:(NSString *)newEvent
@@ -79,7 +79,7 @@
 - (NSString *)charset
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::charsetAttr).createNSString().autorelease();
+    return IMPL->attributeWithoutSynchronization(WebCore::HTMLNames::charsetAttr).createNSString().autorelease();
 }
 
 - (void)setCharset:(NSString *)newCharset
@@ -127,7 +127,7 @@
 - (NSString *)type
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::typeAttr).createNSString().autorelease();
+    return IMPL->attributeWithoutSynchronization(WebCore::HTMLNames::typeAttr).createNSString().autorelease();
 }
 
 - (void)setType:(NSString *)newType
@@ -145,13 +145,13 @@
 - (void)setCrossOrigin:(NSString *)newCrossOrigin
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setCrossOrigin(newCrossOrigin);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::crossoriginAttr, newCrossOrigin);
 }
 
 - (NSString *)nonce
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::nonceAttr).createNSString().autorelease();
+    return IMPL->attributeWithoutSynchronization(WebCore::HTMLNames::nonceAttr).createNSString().autorelease();
 }
 
 - (void)setNonce:(NSString *)newNonce

@@ -71,7 +71,7 @@ void WebGLMultiDrawInstancedBaseVertexBaseInstance::multiDrawArraysInstancedBase
     if (!context->validateVertexArrayObject("multiDrawArraysInstancedBaseInstanceWEBGL"_s))
         return;
 
-    if (context->m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context.get(), *context->m_currentProgram))
+    if (RefPtr currentProgram = context->m_currentProgram; currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context.get(), *currentProgram))
         return;
 
     context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
@@ -103,7 +103,7 @@ void WebGLMultiDrawInstancedBaseVertexBaseInstance::multiDrawElementsInstancedBa
     if (!context->validateVertexArrayObject("multiDrawElementsInstancedBaseVertexBaseInstanceWEBGL"_s))
         return;
 
-    if (context->m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context.get(), *context->m_currentProgram))
+    if (RefPtr currentProgram = context->m_currentProgram; currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context.get(), *currentProgram))
         return;
 
     context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);

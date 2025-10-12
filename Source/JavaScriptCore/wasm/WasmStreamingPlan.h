@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,7 @@ private:
         runCompletionTasks();
     }
 
-    Ref<EntryPlan> m_plan;
+    const Ref<EntryPlan> m_plan;
     FunctionCodeIndex m_functionIndex;
     bool m_completed { false };
 };

@@ -14,21 +14,18 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <algorithm>
 #include <memory>
 #include <string>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
+#include "absl/algorithm/container.h"
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
 #include "api/media_types.h"
 #include "api/rtp_parameters.h"
 #include "api/rtp_transceiver_direction.h"
-#include "api/rtp_transceiver_interface.h"
 #include "media/base/codec.h"
-#include "media/base/media_channel.h"
 #include "media/base/media_constants.h"
 #include "media/base/rid_description.h"
 #include "media/base/stream_params.h"
@@ -40,9 +37,9 @@
 #include "rtc_base/socket_address.h"
 #include "rtc_base/system/rtc_export.h"
 
-namespace cricket {
+namespace webrtc {
 
-using RtpHeaderExtensions = std::vector<webrtc::RtpExtension>;
+using RtpHeaderExtensions = std::vector<RtpExtension>;
 
 // Options to control how session descriptions are generated.
 const int kAutoBandwidth = -1;
@@ -59,7 +56,7 @@ class MediaContentDescription {
   MediaContentDescription() = default;
   virtual ~MediaContentDescription() = default;
 
-  virtual MediaType type() const = 0;
+  virtual webrtc::MediaType type() const = 0;
 
   // Try to cast this media description to an AudioContentDescription. Returns
   // nullptr if the cast fails.
@@ -94,8 +91,8 @@ class MediaContentDescription {
     protocol_ = std::string(protocol);
   }
 
-  webrtc::RtpTransceiverDirection direction() const { return direction_; }
-  void set_direction(webrtc::RtpTransceiverDirection direction) {
+  RtpTransceiverDirection direction() const { return direction_; }
+  void set_direction(RtpTransceiverDirection direction) {
     direction_ = direction;
   }
 
@@ -138,22 +135,10 @@ class MediaContentDescription {
   }
   void set_rtp_header_extensions(const RtpHeaderExtensions& extensions) {
     rtp_header_extensions_ = extensions;
-    rtp_header_extensions_set_ = true;
   }
-  void AddRtpHeaderExtension(const webrtc::RtpExtension& ext) {
+  void AddRtpHeaderExtension(const RtpExtension& ext) {
     rtp_header_extensions_.push_back(ext);
-    rtp_header_extensions_set_ = true;
   }
-  void ClearRtpHeaderExtensions() {
-    rtp_header_extensions_.clear();
-    rtp_header_extensions_set_ = true;
-  }
-  // We can't always tell if an empty list of header extensions is
-  // because the other side doesn't support them, or just isn't hooked up to
-  // signal them. For now we assume an empty list means no signaling, but
-  // provide the ClearRtpHeaderExtensions method to allow "no support" to be
-  // clearly indicated (i.e. when derived from other information).
-  bool rtp_header_extensions_set() const { return rtp_header_extensions_set_; }
   const StreamParamsVec& streams() const { return send_streams_; }
   // TODO(pthatcher): Remove this by giving mediamessage.cc access
   // to MediaContentDescription
@@ -190,10 +175,10 @@ class MediaContentDescription {
   // https://tools.ietf.org/html/rfc4566#section-5.7
   // May be present at the media or session level of SDP. If present at both
   // levels, the media-level attribute overwrites the session-level one.
-  void set_connection_address(const rtc::SocketAddress& address) {
+  void set_connection_address(const SocketAddress& address) {
     connection_address_ = address;
   }
-  const rtc::SocketAddress& connection_address() const {
+  const SocketAddress& connection_address() const {
     return connection_address_;
   }
 
@@ -234,7 +219,7 @@ class MediaContentDescription {
   void set_codecs(const std::vector<Codec>& codecs) { codecs_ = codecs; }
   virtual bool has_codecs() const { return !codecs_.empty(); }
   bool HasCodec(int id) {
-    return absl::c_find_if(codecs_, [id](const cricket::Codec codec) {
+    return absl::c_find_if(codecs_, [id](const Codec codec) {
              return codec.id == id;
            }) != codecs_.end();
   }
@@ -268,13 +253,11 @@ class MediaContentDescription {
   int bandwidth_ = kAutoBandwidth;
   std::string bandwidth_type_ = kApplicationSpecificBandwidth;
 
-  std::vector<webrtc::RtpExtension> rtp_header_extensions_;
-  bool rtp_header_extensions_set_ = false;
+  std::vector<RtpExtension> rtp_header_extensions_;
   StreamParamsVec send_streams_;
   bool conference_mode_ = false;
-  webrtc::RtpTransceiverDirection direction_ =
-      webrtc::RtpTransceiverDirection::kSendRecv;
-  rtc::SocketAddress connection_address_;
+  RtpTransceiverDirection direction_ = RtpTransceiverDirection::kSendRecv;
+  SocketAddress connection_address_;
   ExtmapAllowMixed extmap_allow_mixed_enum_ = kMedia;
 
   SimulcastDescription simulcast_;
@@ -296,7 +279,7 @@ class AudioContentDescription : public RtpMediaContentDescription {
     RTC_DCHECK(IsRtpProtocol(protocol));
     protocol_ = std::string(protocol);
   }
-  MediaType type() const override { return MEDIA_TYPE_AUDIO; }
+  webrtc::MediaType type() const override { return webrtc::MediaType::AUDIO; }
   AudioContentDescription* as_audio() override { return this; }
   const AudioContentDescription* as_audio() const override { return this; }
 
@@ -312,7 +295,7 @@ class VideoContentDescription : public RtpMediaContentDescription {
     RTC_DCHECK(IsRtpProtocol(protocol));
     protocol_ = std::string(protocol);
   }
-  MediaType type() const override { return MEDIA_TYPE_VIDEO; }
+  webrtc::MediaType type() const override { return webrtc::MediaType::VIDEO; }
   VideoContentDescription* as_video() override { return this; }
   const VideoContentDescription* as_video() const override { return this; }
 
@@ -330,7 +313,7 @@ class SctpDataContentDescription : public MediaContentDescription {
         use_sctpmap_(o.use_sctpmap_),
         port_(o.port_),
         max_message_size_(o.max_message_size_) {}
-  MediaType type() const override { return MEDIA_TYPE_DATA; }
+  webrtc::MediaType type() const override { return webrtc::MediaType::DATA; }
   SctpDataContentDescription* as_sctp() override { return this; }
   const SctpDataContentDescription* as_sctp() const override { return this; }
 
@@ -364,7 +347,9 @@ class UnsupportedContentDescription : public MediaContentDescription {
  public:
   explicit UnsupportedContentDescription(absl::string_view media_type)
       : media_type_(media_type) {}
-  MediaType type() const override { return MEDIA_TYPE_UNSUPPORTED; }
+  webrtc::MediaType type() const override {
+    return webrtc::MediaType::UNSUPPORTED;
+  }
 
   UnsupportedContentDescription* as_unsupported() override { return this; }
   const UnsupportedContentDescription* as_unsupported() const override {
@@ -399,37 +384,45 @@ enum class MediaProtocolType {
 class RTC_EXPORT ContentInfo {
  public:
   explicit ContentInfo(MediaProtocolType type) : type(type) {}
+  ContentInfo(MediaProtocolType type,
+              absl::string_view mid,
+              std::unique_ptr<MediaContentDescription> description,
+              bool rejected = false,
+              bool bundle_only = false)
+      : type(type),
+        rejected(rejected),
+        bundle_only(bundle_only),
+        mid_(mid),
+        description_(std::move(description)) {}
   ~ContentInfo();
-  // Copy
+
+  // Copy ctor and assignment will clone `description_`.
   ContentInfo(const ContentInfo& o);
-  ContentInfo& operator=(const ContentInfo& o);
+  // Const ref assignment operator removed. Instead, use the explicit ctor.
+  ContentInfo& operator=(const ContentInfo& o) = delete;
+
   ContentInfo(ContentInfo&& o) = default;
   ContentInfo& operator=(ContentInfo&& o) = default;
 
-  // Alias for `name`.
-  std::string mid() const { return name; }
-  void set_mid(const std::string& mid) { this->name = mid; }
+  // TODO(tommi): change return type to string_view.
+  const std::string& mid() const { return mid_; }
+  void set_mid(absl::string_view mid) { mid_ = std::string(mid); }
 
   // Alias for `description`.
   MediaContentDescription* media_description();
   const MediaContentDescription* media_description() const;
 
-  void set_media_description(std::unique_ptr<MediaContentDescription> desc) {
-    description_ = std::move(desc);
-  }
-
-  // TODO(bugs.webrtc.org/8620): Rename this to mid.
-  std::string name;
   MediaProtocolType type;
   bool rejected = false;
   bool bundle_only = false;
 
  private:
+  std::string mid_;
   friend class SessionDescription;
   std::unique_ptr<MediaContentDescription> description_;
 };
 
-typedef std::vector<std::string> ContentNames;
+using ContentNames = std::vector<std::string>;
 
 // This class provides a mechanism to aggregate different media contents into a
 // group. This group can also be shared with the peers in a pre-defined format.
@@ -459,13 +452,8 @@ class ContentGroup {
   ContentNames content_names_;
 };
 
-typedef std::vector<ContentInfo> ContentInfos;
-typedef std::vector<ContentGroup> ContentGroups;
-
-const ContentInfo* FindContentInfoByName(const ContentInfos& contents,
-                                         const std::string& name);
-const ContentInfo* FindContentInfoByType(const ContentInfos& contents,
-                                         const std::string& type);
+using ContentInfos = std::vector<ContentInfo>;
+using ContentGroups = std::vector<ContentGroup>;
 
 // Determines how the MSID will be signaled in the SDP.
 // These can be used as bit flags to indicate both or the special value none.
@@ -502,8 +490,8 @@ class SessionDescription {
   const ContentInfo* GetContentByName(const std::string& name) const;
   ContentInfo* GetContentByName(const std::string& name);
   const MediaContentDescription* GetContentDescriptionByName(
-      const std::string& name) const;
-  MediaContentDescription* GetContentDescriptionByName(const std::string& name);
+      absl::string_view name) const;
+  MediaContentDescription* GetContentDescriptionByName(absl::string_view name);
   const ContentInfo* FirstContentByType(MediaProtocolType type) const;
   const ContentInfo* FirstContent() const;
 
@@ -596,6 +584,7 @@ class SessionDescription {
 // received from the remote client.
 enum ContentSource { CS_LOCAL, CS_REMOTE };
 
-}  // namespace cricket
+}  //  namespace webrtc
+
 
 #endif  // PC_SESSION_DESCRIPTION_H_

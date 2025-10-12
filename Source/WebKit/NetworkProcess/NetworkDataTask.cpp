@@ -77,7 +77,7 @@ Ref<NetworkDataTask> NetworkDataTask::create(NetworkSession& session, NetworkDat
     return dataTask;
 }
 
-NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& requestWithCredentials, StoredCredentialsPolicy storedCredentialsPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation)
+NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& requestWithCredentials, StoredCredentialsPolicy storedCredentialsPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation, bool isInitiatedByDedicatedWorker)
     : m_session(session)
     , m_client(client)
     , m_partition(requestWithCredentials.cachePartition())
@@ -86,6 +86,7 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
     , m_firstRequest(requestWithCredentials)
     , m_shouldClearReferrerOnHTTPSToHTTPRedirect(shouldClearReferrerOnHTTPSToHTTPRedirect)
     , m_dataTaskIsForMainFrameNavigation(dataTaskIsForMainFrameNavigation)
+    , m_isInitiatedByDedicatedWorker(isInitiatedByDedicatedWorker)
 {
     ASSERT(RunLoop::isMain());
 
@@ -105,7 +106,7 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
         return;
     }
 
-    m_session->registerNetworkDataTask(*this);
+    checkedNetworkSession()->registerNetworkDataTask(*this);
 }
 
 NetworkDataTask::~NetworkDataTask()
@@ -113,14 +114,14 @@ NetworkDataTask::~NetworkDataTask()
     ASSERT(RunLoop::isMain());
     ASSERT(!m_client);
 
-    if (m_session)
-        m_session->unregisterNetworkDataTask(*this);
+    if (CheckedPtr session = m_session.get())
+        session->unregisterNetworkDataTask(*this);
 }
 
 void NetworkDataTask::scheduleFailure(FailureType type)
 {
     m_failureScheduled = true;
-    RunLoop::protectedMain()->dispatch([weakThis = ThreadSafeWeakPtr { *this }, type] {
+    RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, type] {
         auto protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -208,30 +209,17 @@ void NetworkDataTask::setH2PingCallback(const URL& url, CompletionHandler<void(E
     completionHandler(makeUnexpected(internalError(url)));
 }
 
-PAL::SessionID NetworkDataTask::sessionID() const
-{
-    return m_session->sessionID();
-}
-
-const NetworkSession* NetworkDataTask::networkSession() const
-{
-    return m_session.get();
-}
-
-NetworkSession* NetworkDataTask::networkSession()
-{
-    return m_session.get();
-}
-
 void NetworkDataTask::restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest& request)
 {
-    if ((m_session->sessionID().isEphemeral() || m_session->isTrackingPreventionEnabled()) && m_session->shouldDowngradeReferrer() && request.isThirdParty())
+    CheckedPtr session = m_session.get();
+
+    if ((session->sessionID().isEphemeral() || session->isTrackingPreventionEnabled()) && session->shouldDowngradeReferrer() && request.isThirdParty())
         request.setExistingHTTPReferrerToOriginString();
 }
 
 String NetworkDataTask::attributedBundleIdentifier(WebPageProxyIdentifier pageID)
 {
-    if (auto* session = networkSession())
+    if (CheckedPtr session = m_session.get())
         return session->attributedBundleIdentifierFromPageIdentifier(pageID);
     return { };
 }

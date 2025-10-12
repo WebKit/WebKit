@@ -27,8 +27,8 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "ContentExtensionRule.h"
-#include "DFABytecode.h"
+#include <WebCore/ContentExtensionRule.h>
+#include <WebCore/DFABytecode.h>
 #include <span>
 #include <wtf/ThreadSafeRefCounted.h>
 

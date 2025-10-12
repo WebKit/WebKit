@@ -63,8 +63,4 @@ interface GPUSupportedLimits {
     readonly attribute unsigned long maxComputeWorkgroupSizeY;
     readonly attribute unsigned long maxComputeWorkgroupSizeZ;
     readonly attribute unsigned long maxComputeWorkgroupsPerDimension;
-    readonly attribute unsigned long maxStorageBuffersInFragmentStage;
-    readonly attribute unsigned long maxStorageTexturesInFragmentStage;
-    readonly attribute unsigned long maxStorageBuffersInVertexStage;
-    readonly attribute unsigned long maxStorageTexturesInVertexStage;
 };

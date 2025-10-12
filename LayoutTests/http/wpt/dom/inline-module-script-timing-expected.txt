@@ -1,0 +1,4 @@
+This timing is critical to run with wpt testharness.js
+
+PASS DOM loading state verification (module script)
+

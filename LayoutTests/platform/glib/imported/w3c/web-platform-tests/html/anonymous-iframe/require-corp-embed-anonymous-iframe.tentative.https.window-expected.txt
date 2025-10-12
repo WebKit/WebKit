@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Refused to display 'https://web-platform.test:9443/html/cross-origin-embedder-policy/resources/navigate-none.sub.html?postMessageTo=top' in a frame because of Cross-Origin-Embedder-Policy.
 
 FAIL Loading an anonymous iframe with COEP: require-corp is allowed. assert_true: The anonymous iframe should be allowed. expected true got false
 

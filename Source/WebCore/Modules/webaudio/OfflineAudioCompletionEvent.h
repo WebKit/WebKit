@@ -45,7 +45,7 @@ private:
     explicit OfflineAudioCompletionEvent(Ref<AudioBuffer>&& renderedBuffer);
     OfflineAudioCompletionEvent(const AtomString& eventType, OfflineAudioCompletionEventInit&&);
 
-    Ref<AudioBuffer> m_renderedBuffer;
+    const Ref<AudioBuffer> m_renderedBuffer;
 };
 
 } // namespace WebCore

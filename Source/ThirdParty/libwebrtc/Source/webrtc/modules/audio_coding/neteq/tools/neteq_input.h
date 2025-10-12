@@ -12,12 +12,12 @@
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_INPUT_H_
 
 #include <algorithm>
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <string>
 
-#include "modules/audio_coding/neteq/tools/packet.h"
-#include "modules/audio_coding/neteq/tools/packet_source.h"
+#include "api/rtp_headers.h"
 #include "rtc_base/buffer.h"
 
 namespace webrtc {
@@ -32,7 +32,7 @@ class NetEqInput {
     std::string ToString() const;
 
     RTPHeader header;
-    rtc::Buffer payload;
+    Buffer payload;
     int64_t time_ms;
   };
 

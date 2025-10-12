@@ -63,7 +63,7 @@ RenderBundle::RenderBundle(NSArray<RenderBundleICBWithResources*> *resources, Ve
 {
     m_descriptor.colorFormats = m_descriptorColorFormats.size() ? &m_descriptorColorFormats[0] : nullptr;
 
-    ASSERT(m_renderBundleEncoder || m_renderBundlesResources.count);
+    ASSERT(m_renderBundleEncoder || m_renderBundlesResources);
 }
 
 RenderBundle::RenderBundle(Device& device, NSString* errorString)
@@ -76,7 +76,7 @@ RenderBundle::~RenderBundle() = default;
 
 bool RenderBundle::isValid() const
 {
-    return m_renderBundleEncoder || m_renderBundlesResources.count;
+    return m_renderBundleEncoder || m_renderBundlesResources;
 }
 
 void RenderBundle::setLabel(String&& label)

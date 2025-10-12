@@ -30,6 +30,7 @@
 #include "pas_race_test_hooks.h"
 #include "pas_utils.h"
 #include "pas_thread.h"
+#include "pas_zero_memory.h"
 
 PAS_BEGIN_EXTERN_C;
 
@@ -122,7 +123,7 @@ PAS_END_EXTERN_C;
 #define PAS_USE_ULOCK_SPI 1
 #define PAS_USE_ULOCK_FLAGS_API 0
 #if !defined(OS_UNFAIR_LOCK_INLINE) || !OS_UNFAIR_LOCK_INLINE
-#error "OS_UNFAIR_LOCK_INLINE needs to be enabled."
+#pragma message "OS_UNFAIR_LOCK_INLINE needs to be enabled."
 #endif
 #include <os/lock_private.h>
 
@@ -178,7 +179,12 @@ static inline void pas_lock_lock(pas_lock* lock)
     pas_race_test_will_lock(lock);
 #if PAS_USE_ULOCK_SPI
     const os_unfair_lock_options_t options = (os_unfair_lock_options_t)(OS_UNFAIR_LOCK_DATA_SYNCHRONIZATION | OS_UNFAIR_LOCK_ADAPTIVE_SPIN);
+#if defined(OS_UNFAIR_LOCK_INLINE) && OS_UNFAIR_LOCK_INLINE
     os_unfair_lock_lock_with_options_inline(&lock->lock, options);
+#else
+    PAS_UNUSED_PARAM(options);
+    PAS_ASSERT_IF(true, !"Should not be reached");
+#endif // defined(OS_UNFAIR_LOCK_INLINE) && OS_UNFAIR_LOCK_INLINE
 #elif PAS_USE_ULOCK_FLAGS_API
     const os_unfair_lock_flags_t options = (os_unfair_lock_flags_t)(OS_UNFAIR_LOCK_DATA_SYNCHRONIZATION | OS_UNFAIR_LOCK_ADAPTIVE_SPIN);
     os_unfair_lock_lock_with_flags(&lock->lock, options);
@@ -193,7 +199,12 @@ static inline bool pas_lock_try_lock(pas_lock* lock)
     bool result;
     if (PAS_LOCK_VERBOSE)
         pas_log("Thread %p Trylocking lock %p\n", pthread_self(), lock);
+#if PAS_USE_ULOCK_SPI && (!defined(OS_UNFAIR_LOCK_INLINE) || !OS_UNFAIR_LOCK_INLINE)
+    result = false;
+    PAS_ASSERT_IF(true, !"Should not be reached");
+#else
     result = os_unfair_lock_trylock_inline(&lock->lock);
+#endif
     if (result)
         pas_race_test_did_try_lock(lock);
     return result;
@@ -204,7 +215,11 @@ static inline void pas_lock_unlock(pas_lock* lock)
     if (PAS_LOCK_VERBOSE)
         pas_log("Thread %p Unlocking lock %p\n", pthread_self(), lock);
     pas_race_test_will_unlock(lock);
+#if PAS_USE_ULOCK_SPI && (!defined(OS_UNFAIR_LOCK_INLINE) || !OS_UNFAIR_LOCK_INLINE)
+    PAS_ASSERT_IF(true, !"Should not be reached");
+#else
     os_unfair_lock_unlock_inline(&lock->lock);
+#endif
 }
 
 static inline void pas_lock_assert_held(pas_lock* lock)

@@ -32,6 +32,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Seconds.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 static const char* markup =
     "<head>"
@@ -68,7 +69,7 @@ TEST(RunScriptAfterDocumentLoad, ExecutionOrderOfScriptsInDocument)
         // Delay request responses for the other two scripts for a short duration to ensure that in the absence
         // of the deferred asynchronous scripts configuration flag, we will normally execute the asynchronous script
         // before the other scripts.
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (0.25_s).nanoseconds()), dispatch_get_main_queue(), responseBlock);
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (0.25_s).nanoseconds()), mainDispatchQueueSingleton(), responseBlock);
     }];
 
     auto messages = adoptNS([NSMutableArray new]);

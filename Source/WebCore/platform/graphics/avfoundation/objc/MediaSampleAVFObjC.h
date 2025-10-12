@@ -25,8 +25,9 @@
 
 #pragma once
 
-#include "MediaSample.h"
 #include <JavaScriptCore/Forward.h>
+#include <WebCore/MediaSample.h>
+#include <WebCore/SharedBuffer.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <wtf/Forward.h>
 #include <wtf/TypeCasts.h>
@@ -35,7 +36,6 @@ typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
 
 namespace WebCore {
 
-class SharedBuffer;
 class PixelBuffer;
 class VideoFrameCV;
 
@@ -54,7 +54,7 @@ public:
 
     SampleFlags flags() const override;
     PlatformSample platformSample() const override;
-    PlatformSample::Type platformSampleType() const override { return PlatformSample::CMSampleBufferType; }
+    Type type() const override { return Type::CMSampleBuffer; }
     void offsetTimestampsBy(const MediaTime&) override;
     void setTimestamps(const MediaTime&, const MediaTime&) override;
     WEBCORE_EXPORT bool isDivisable() const override;
@@ -64,6 +64,7 @@ public:
     WEBCORE_EXPORT Ref<MediaSample> createNonDisplayingCopy() const override;
 
     CMSampleBufferRef sampleBuffer() const { return m_sample.get(); }
+    RetainPtr<CMSampleBufferRef> protectedSampleBuffer() const { return m_sample; }
 
     bool isHomogeneous() const;
     Vector<Ref<MediaSampleAVFObjC>> divideIntoHomogeneousSamples();
@@ -113,5 +114,5 @@ struct LogArgument<WebCore::MediaSampleAVFObjC> {
 } // namespace WTF
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaSampleAVFObjC)
-static bool isType(const WebCore::MediaSample& sample) { return sample.platformSampleType() == WebCore::PlatformSample::CMSampleBufferType; }
+static bool isType(const WebCore::MediaSample& sample) { return sample.type() == WebCore::MediaSample::Type::CMSampleBuffer; }
 SPECIALIZE_TYPE_TRAITS_END()

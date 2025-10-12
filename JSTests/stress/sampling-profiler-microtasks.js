@@ -12,7 +12,7 @@ if (platformSupportsSamplingProfiler()) {
         else
             updateCallingContextTree(tree);
 
-        let result = doesTreeHaveStackTrace(tree, ["jar", "hello", "promiseReactionJob"], false);
+        let result = doesTreeHaveStackTrace(tree, ["jar", "hello"], false);
         return result;
     }
 

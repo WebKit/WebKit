@@ -59,8 +59,8 @@ PASS TrustedTypePolicyFactory interface: operation isScript(any)
 PASS TrustedTypePolicyFactory interface: operation isScriptURL(any)
 PASS TrustedTypePolicyFactory interface: attribute emptyHTML
 PASS TrustedTypePolicyFactory interface: attribute emptyScript
-PASS TrustedTypePolicyFactory interface: operation getAttributeType(DOMString, DOMString, optional DOMString, optional DOMString)
-PASS TrustedTypePolicyFactory interface: operation getPropertyType(DOMString, DOMString, optional DOMString)
+PASS TrustedTypePolicyFactory interface: operation getAttributeType(DOMString, DOMString, optional DOMString?, optional DOMString?)
+PASS TrustedTypePolicyFactory interface: operation getPropertyType(DOMString, DOMString, optional DOMString?)
 PASS TrustedTypePolicyFactory interface: attribute defaultPolicy
 PASS TrustedTypePolicyFactory must be primary interface of window.trustedTypes
 PASS Stringification of window.trustedTypes
@@ -74,10 +74,10 @@ PASS TrustedTypePolicyFactory interface: window.trustedTypes must inherit proper
 PASS TrustedTypePolicyFactory interface: calling isScriptURL(any) on window.trustedTypes with too few arguments must throw TypeError
 PASS TrustedTypePolicyFactory interface: window.trustedTypes must inherit property "emptyHTML" with the proper type
 PASS TrustedTypePolicyFactory interface: window.trustedTypes must inherit property "emptyScript" with the proper type
-PASS TrustedTypePolicyFactory interface: window.trustedTypes must inherit property "getAttributeType(DOMString, DOMString, optional DOMString, optional DOMString)" with the proper type
-PASS TrustedTypePolicyFactory interface: calling getAttributeType(DOMString, DOMString, optional DOMString, optional DOMString) on window.trustedTypes with too few arguments must throw TypeError
-PASS TrustedTypePolicyFactory interface: window.trustedTypes must inherit property "getPropertyType(DOMString, DOMString, optional DOMString)" with the proper type
-PASS TrustedTypePolicyFactory interface: calling getPropertyType(DOMString, DOMString, optional DOMString) on window.trustedTypes with too few arguments must throw TypeError
+PASS TrustedTypePolicyFactory interface: window.trustedTypes must inherit property "getAttributeType(DOMString, DOMString, optional DOMString?, optional DOMString?)" with the proper type
+PASS TrustedTypePolicyFactory interface: calling getAttributeType(DOMString, DOMString, optional DOMString?, optional DOMString?) on window.trustedTypes with too few arguments must throw TypeError
+PASS TrustedTypePolicyFactory interface: window.trustedTypes must inherit property "getPropertyType(DOMString, DOMString, optional DOMString?)" with the proper type
+PASS TrustedTypePolicyFactory interface: calling getPropertyType(DOMString, DOMString, optional DOMString?) on window.trustedTypes with too few arguments must throw TypeError
 PASS TrustedTypePolicyFactory interface: window.trustedTypes must inherit property "defaultPolicy" with the proper type
 PASS TrustedTypePolicy interface: existence and properties of interface object
 PASS TrustedTypePolicy interface object length

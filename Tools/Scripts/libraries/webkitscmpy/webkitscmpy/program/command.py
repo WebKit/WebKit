@@ -155,7 +155,7 @@ class FilteredCommand(Command):
                 child_error = child.stderr.read()
                 if child_error:
                     sys.stderr.buffer.write(b'\n' + child_error)
-                return child.returncode
+            return child.returncode
 
         with Terminal.override_atty(sys.stdout, isatty=kwargs.get('isatty')), Terminal.override_atty(sys.stderr, isatty=kwargs.get('isatty')):
             return FilteredCommand.main(args, repository, command=cls.name, **kwargs)

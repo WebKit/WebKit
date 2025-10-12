@@ -26,7 +26,7 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "RTCRtpCodecCapability.h"
+#include <WebCore/RTCRtpCodecCapability.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

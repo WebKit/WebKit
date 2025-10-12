@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ ImageControlsButtonMac::~ImageControlsButtonMac() = default;
 
 IntSize ImageControlsButtonMac::servicesRolloverButtonCellSize()
 {
-    auto& controlFactory = ControlFactoryMac::shared();
+    auto& controlFactory = ControlFactoryMac::singleton();
     if (auto* servicesRolloverButtonCell = controlFactory.servicesRolloverButtonCell())
         return IntSize { [servicesRolloverButtonCell cellSize] };
     return { };

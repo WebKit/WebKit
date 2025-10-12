@@ -30,11 +30,13 @@
 #include "CORPViolationReportBody.h"
 #include "CSPViolationReportBody.h"
 #include "DeprecationReportBody.h"
+#include "IntegrityPolicyViolationReportBody.h"
 #include "JSCOEPInheritenceViolationReportBody.h"
 #include "JSCORPViolationReportBody.h"
 #include "JSCSPViolationReportBody.h"
 #include "JSDOMBinding.h"
 #include "JSDeprecationReportBody.h"
+#include "JSIntegrityPolicyViolationReportBody.h"
 #include "JSTestReportBody.h"
 #include "ReportBody.h"
 #include "TestReportBody.h"
@@ -42,26 +44,6 @@
 
 namespace WebCore {
 using namespace JSC;
-
-JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<ReportBody>&& reportBody)
-{
-    if (is<CSPViolationReportBody>(reportBody))
-        return createWrapper<CSPViolationReportBody>(globalObject, WTFMove(reportBody));
-    if (is<COEPInheritenceViolationReportBody>(reportBody))
-        return createWrapper<COEPInheritenceViolationReportBody>(globalObject, WTFMove(reportBody));
-    if (is<CORPViolationReportBody>(reportBody))
-        return createWrapper<CORPViolationReportBody>(globalObject, WTFMove(reportBody));
-    if (is<DeprecationReportBody>(reportBody))
-        return createWrapper<DeprecationReportBody>(globalObject, WTFMove(reportBody));
-    if (is<TestReportBody>(reportBody))
-        return createWrapper<TestReportBody>(globalObject, WTFMove(reportBody));
-    return createWrapper<ReportBody>(globalObject, WTFMove(reportBody));
-}
-
-JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, ReportBody& reportBody)
-{
-    return wrap(lexicalGlobalObject, globalObject, reportBody);
-}
 
 JSValue JSReportBody::toJSON(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {

@@ -26,18 +26,30 @@
 public import Foundation
 internal import WebKit_Internal
 
+// SPI for the cross-import overlay.
+// swift-format-ignore: AllPublicDeclarationsHaveDocumentation
 @_spi(CrossImportOverlay)
 public struct WKScrollGeometryAdapter {
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public let containerSize: CGSize
 
     #if canImport(UIKit)
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public let contentInsets: UIEdgeInsets
     #else
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public let contentInsets: NSEdgeInsets
     #endif
 
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public let contentOffset: CGPoint
 
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public let contentSize: CGSize
 
     init(_ geometry: WKScrollGeometry) {

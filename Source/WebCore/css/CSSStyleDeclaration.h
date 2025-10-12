@@ -20,9 +20,9 @@
 
 #pragma once
 
-#include "CSSProperty.h"
-#include "CSSPropertyNames.h"
-#include "ScriptWrappable.h"
+#include <WebCore/CSSProperty.h>
+#include <WebCore/CSSPropertyNames.h>
+#include <WebCore/ScriptWrappable.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CheckedRef.h>
 
@@ -42,14 +42,15 @@ enum class StyleDeclarationType : uint8_t {
     Style,
     FontFace,
     Page,
-    PositionTry
+    PositionTry,
+    Function
 };
 
 class CSSStyleDeclaration : public ScriptWrappable, public AbstractRefCountedAndCanMakeSingleThreadWeakPtr<CSSStyleDeclaration> {
     WTF_MAKE_NONCOPYABLE(CSSStyleDeclaration);
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSStyleDeclaration);
 public:
-    virtual ~CSSStyleDeclaration() = default;
+    virtual ~CSSStyleDeclaration();
 
     virtual StyleDeclarationType styleDeclarationType() const = 0;
 

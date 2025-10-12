@@ -38,7 +38,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class WebColorPickerClient : public CanMakeCheckedPtr<WebColorPickerClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebColorPickerClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebColorPickerClient);
 public:
     virtual void didChooseColor(const WebCore::Color&) = 0;

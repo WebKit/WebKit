@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderGrid.h"
+#include "RenderObjectStyle.h"
 #include "RenderText.h"
 
 namespace WebCore {
@@ -50,7 +51,7 @@ PositionIterator::PositionIterator(const Position& pos)
 
 PositionIterator::operator Position() const
 {
-    auto anchorNode = protectedNode();
+    RefPtr anchorNode = node();
     if (m_nodeAfterPositionInAnchor) {
         ASSERT(m_nodeAfterPositionInAnchor->parentNode() == anchorNode.get());
         // FIXME: This check is inadaquete because any ancestor could be ignored by editing
@@ -77,7 +78,7 @@ void PositionIterator::increment()
         return;
     }
 
-    auto anchorNode = protectedNode();
+    RefPtr anchorNode = node();
     if (anchorNode->renderer() && !anchorNode->hasChildNodes() && m_offsetInAnchor < lastOffsetForEditing(*anchorNode))
         m_offsetInAnchor = Position::uncheckedNextOffset(anchorNode.get(), m_offsetInAnchor);
     else {
@@ -95,7 +96,7 @@ void PositionIterator::decrement()
 
     if (m_nodeAfterPositionInAnchor) {
         m_anchorNode = m_nodeAfterPositionInAnchor->previousSibling();
-        if (auto anchorNode = protectedNode()) {
+        if (RefPtr anchorNode = node()) {
             m_nodeAfterPositionInAnchor = nullptr;
             m_offsetInAnchor = anchorNode->hasChildNodes() ? 0 : lastOffsetForEditing(*anchorNode);
         } else {
@@ -130,7 +131,7 @@ bool PositionIterator::atStart() const
 
 bool PositionIterator::atEnd() const
 {
-    auto anchorNode = protectedNode();
+    RefPtr anchorNode = node();
     if (!anchorNode)
         return true;
     if (m_nodeAfterPositionInAnchor)
@@ -149,7 +150,7 @@ bool PositionIterator::atStartOfNode() const
 
 bool PositionIterator::atEndOfNode() const
 {
-    auto anchorNode = protectedNode();
+    RefPtr anchorNode = node();
     if (!anchorNode)
         return true;
     if (m_nodeAfterPositionInAnchor)
@@ -160,7 +161,7 @@ bool PositionIterator::atEndOfNode() const
 // This function should be kept in sync with Position::isCandidate().
 bool PositionIterator::isCandidate() const
 {
-    auto anchorNode = protectedNode();
+    RefPtr anchorNode = node();
     if (!anchorNode)
         return false;
 

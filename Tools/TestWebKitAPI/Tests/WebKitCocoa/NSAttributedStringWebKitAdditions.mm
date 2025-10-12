@@ -27,6 +27,7 @@
 
 #import "TestCocoa.h"
 #import "TestWKWebView.h"
+#import <WebCore/FontCocoa.h>
 #import <WebKit/NSAttributedString.h>
 #import <wtf/RetainPtr.h>
 
@@ -121,6 +122,33 @@ TEST(NSAttributedStringWebKitAdditions, FontDataURL)
         [attributedString enumerateAttributesInRange:NSMakeRange(0, attributedString.length) options:0 usingBlock:^(NSDictionary *attributes, NSRange attributeRange, BOOL *stop) {
             if (attributes[NSFontAttributeName])
                 foundFont = true;
+        }];
+        EXPECT_TRUE(foundFont);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(NSAttributedStringWebKitAdditions, InstalledFont)
+{
+    NSString *html = [NSString stringWithFormat:@""
+        "<html>"
+        "<head>"
+        "<style>"
+        "div { font-family: Helvetica; }"
+        "</style>"
+        "</head>"
+        "<body><div>hello!</div></body>"
+        "</html>"];
+
+    __block bool done = false;
+    [NSAttributedString loadFromHTMLWithString:html options:@{ } completionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *attributes, NSError *error) {
+        __block bool foundFont { false };
+        [attributedString enumerateAttributesInRange:NSMakeRange(0, attributedString.length) options:0 usingBlock:^(NSDictionary *attributes, NSRange attributeRange, BOOL *stop) {
+            if (attributes[NSFontAttributeName]) {
+                foundFont = true;
+                EXPECT_WK_STREQ(((WebCore::CocoaFont *)attributes[NSFontAttributeName]).fontName, "Helvetica"_s);
+            }
         }];
         EXPECT_TRUE(foundFont);
         done = true;

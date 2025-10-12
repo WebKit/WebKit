@@ -1,4 +1,4 @@
-//@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1")
+//@ requireOptions("--useBBQJIT=1")
 //@ skip
 // Failure:
 // Exception: TypeError: WebAssembly.Table.prototype.grow expects the second argument to be null or an instance of WebAssembly.Function

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'window.opener.functionCalledByOpenee')
 
 Harness Error (TIMEOUT), message = null
 

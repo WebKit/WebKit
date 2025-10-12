@@ -23,24 +23,26 @@
 
 static void testDegenerates(skiatest::Reporter* reporter, const char* filename) {
     SkPath doubleback;
-    SkPath simple;
 
     doubleback.lineTo(1, 0);
-    REPORTER_ASSERT(reporter, Simplify(doubleback, &simple));
-    REPORTER_ASSERT(reporter, simple.isEmpty());
+    auto simple = Simplify(doubleback);
+    REPORTER_ASSERT(reporter, simple.has_value());
+    REPORTER_ASSERT(reporter, simple->isEmpty());
 
     doubleback.reset();
     doubleback.lineTo(1, 0);
     doubleback.lineTo(2, 0);
-    REPORTER_ASSERT(reporter, Simplify(doubleback, &simple));
-    REPORTER_ASSERT(reporter, simple.isEmpty());
+    simple = Simplify(doubleback);
+    REPORTER_ASSERT(reporter, simple.has_value());
+    REPORTER_ASSERT(reporter, simple->isEmpty());
 
     doubleback.reset();
     doubleback.lineTo(-1, 0);
     doubleback.lineTo(-1, 1);
     doubleback.lineTo(-1, 0);
-    REPORTER_ASSERT(reporter, Simplify(doubleback, &simple));
-    REPORTER_ASSERT(reporter, simple.isEmpty());
+    simple = Simplify(doubleback);
+    REPORTER_ASSERT(reporter, simple.has_value());
+    REPORTER_ASSERT(reporter, simple->isEmpty());
 
     doubleback.reset();
     doubleback.lineTo(1, 0);
@@ -48,8 +50,9 @@ static void testDegenerates(skiatest::Reporter* reporter, const char* filename) 
     doubleback.lineTo(1, 1);
     doubleback.lineTo(1, 1);
     doubleback.lineTo(1, 0);
-    REPORTER_ASSERT(reporter, Simplify(doubleback, &simple));
-    REPORTER_ASSERT(reporter, simple.isEmpty());
+    simple = Simplify(doubleback);
+    REPORTER_ASSERT(reporter, simple.has_value());
+    REPORTER_ASSERT(reporter, simple->isEmpty());
 }
 
 static void testLine1(skiatest::Reporter* reporter, const char* filename) {
@@ -9420,7 +9423,7 @@ static void bug11958_a(skiatest::Reporter* reporter, const char* filename) {
     path.lineTo(SkBits2Float(0x440f9d71), SkBits2Float(0x00000000));  // 574.46f, 0
     path.close();
 
-    // TODO(skbug:11958) - This should not fail to simplify
+    // TODO(skbug.com/40043047) - This should not fail to simplify
     testSimplifyFail(reporter, path, filename);
 }
 

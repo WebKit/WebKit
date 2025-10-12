@@ -704,7 +704,7 @@ int aom_noise_model_init(aom_noise_model_t *model,
     return 0;
   }
 
-  memcpy(&model->params, &params, sizeof(params));
+  model->params = params;
   for (c = 0; c < 3; ++c) {
     if (!noise_state_init(&model->combined_state[c], n + (c > 0), bit_depth)) {
       fprintf(stderr, "Failed to allocate noise state for channel %d\n", c);

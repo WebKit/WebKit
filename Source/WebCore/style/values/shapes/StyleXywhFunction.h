@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "CSSXywhFunction.h"
-#include "StyleInsetFunction.h"
+#include <WebCore/CSSXywhFunction.h>
+#include <WebCore/StyleInsetFunction.h>
 
 namespace WebCore {
 namespace Style {

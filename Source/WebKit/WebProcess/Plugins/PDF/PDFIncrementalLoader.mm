@@ -33,6 +33,7 @@
 #import "PDFPluginBase.h"
 #import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/NetscapePlugInStreamLoader.h>
+#import <WebCore/SharedBuffer.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/Identified.h>
@@ -267,7 +268,7 @@ void PDFPluginStreamLoaderClient::didFinishLoading(NetscapePlugInStreamLoader* s
 #pragma mark -
 
 struct PDFIncrementalLoader::RequestData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RequestData);
 
     HashMap<ByteRangeRequestIdentifier, ByteRangeRequest> outstandingByteRangeRequests;
     HashMap<RefPtr<WebCore::NetscapePlugInStreamLoader>, ByteRangeRequestIdentifier> streamLoaderMap;
@@ -285,9 +286,9 @@ Ref<PDFIncrementalLoader> PDFIncrementalLoader::create(PDFPluginBase& plugin)
 PDFIncrementalLoader::PDFIncrementalLoader(PDFPluginBase& plugin)
     : m_plugin(plugin)
     , m_streamLoaderClient(adoptRef(*new PDFPluginStreamLoaderClient(*this)))
-    , m_requestData(makeUnique<RequestData>())
+    , m_requestData(makeUniqueRef<RequestData>())
 {
-    m_pdfThread = Thread::create("PDF document thread"_s, [protectedThis = Ref { *this }, this] () mutable {
+    m_pdfThread = Thread::create("PDF document thread"_s, [protectedThis = Ref { *this }, this] mutable {
         threadEntry(WTFMove(protectedThis));
     });
 }
@@ -644,7 +645,7 @@ size_t PDFIncrementalLoader::dataProviderGetBytesAtPosition(std::span<uint8_t> b
     if (!dataSemaphore)
         return 0;
 
-    RunLoop::protectedMain()->dispatch([protectedLoader = Ref { *this }, dataSemaphore, position, buffer, &bytesProvided] {
+    RunLoop::mainSingleton().dispatch([protectedLoader = Ref { *this }, dataSemaphore, position, buffer, &bytesProvided] {
         if (dataSemaphore->wasSignaled())
             return;
         protectedLoader->getResourceBytesAtPosition(buffer.size(), position, [buffer, dataSemaphore, &bytesProvided](std::span<const uint8_t> bytes) {
@@ -716,7 +717,7 @@ void PDFIncrementalLoader::dataProviderGetByteRanges(CFMutableArrayRef buffers, 
     Vector<RetainPtr<CFDataRef>> dataResults(ranges.size());
 
     // FIXME: Once we support multi-range requests, make a single request for all ranges instead of <ranges.size()> individual requests.
-    RunLoop::protectedMain()->dispatch([protectedLoader = Ref { *this }, &dataResults, ranges, dataSemaphore]() mutable {
+    RunLoop::mainSingleton().dispatch([protectedLoader = Ref { *this }, &dataResults, ranges, dataSemaphore]() mutable {
         if (dataSemaphore->wasSignaled())
             return;
         Ref callbackAggregator = CallbackAggregator::create([dataSemaphore] {
@@ -756,8 +757,8 @@ void PDFIncrementalLoader::transitionToMainThreadDocument()
     plugin->adoptBackgroundThreadDocument(WTFMove(m_backgroundThreadDocument));
 
     // If the plugin was manually destroyed, the m_pdfThread might already be gone.
-    if (m_pdfThread) {
-        RefPtr { m_pdfThread }->waitForCompletion();
+    if (RefPtr pdfThread = m_pdfThread) {
+        pdfThread->waitForCompletion();
         m_pdfThread = nullptr;
     }
 }
@@ -771,7 +772,7 @@ void PDFIncrementalLoader::threadEntry(Ref<PDFIncrementalLoader>&& protectedLoad
         dataProviderReleaseInfoCallback,
     };
 
-    auto scopeExit = makeScopeExit([protectedLoader = WTFMove(protectedLoader)] () mutable {
+    auto scopeExit = makeScopeExit([protectedLoader = WTFMove(protectedLoader)] mutable {
         // Keep the PDFPlugin alive until the end of this function and the end
         // of the last main thread task submitted by this function.
         callOnMainRunLoop([protectedLoader = WTFMove(protectedLoader)] { });

@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "pas_config.h"
@@ -36,7 +36,6 @@
 #include "pas_page_sharing_pool.h"
 #include "pas_physical_memory_transaction.h"
 #include "pas_range16.h"
-#include "pas_segregated_page_inlines.h"
 #include "pas_segregated_shared_handle.h"
 #include "pas_segregated_shared_page_directory.h"
 #include "pas_segregated_shared_view_inlines.h"
@@ -47,7 +46,7 @@ size_t pas_segregated_shared_view_count = 0;
 pas_segregated_shared_view* pas_segregated_shared_view_create(size_t index)
 {
     pas_segregated_shared_view* result;
-    
+
     result = pas_immortal_heap_allocate(
         sizeof(pas_segregated_shared_view),
         "pas_segregated_shared_view",
@@ -60,7 +59,7 @@ pas_segregated_shared_view* pas_segregated_shared_view_create(size_t index)
     /* NULL must look like a page. Code that tests if things are pages can implicitly assume that
        this is true, but it's not fundamental. */
     PAS_ASSERT(pas_is_wrapped_page_boundary(result->shared_handle_or_page_boundary));
-    
+
     pas_lock_construct(&result->commit_lock);
     pas_lock_construct(&result->ownership_lock);
 
@@ -68,7 +67,7 @@ pas_segregated_shared_view* pas_segregated_shared_view_create(size_t index)
     result->bump_offset = 0;
 
     result->is_in_use_for_allocation_count = 0;
-    
+
     result->index = (unsigned)index;
     PAS_ASSERT(result->index == index);
     result->is_owned = false;
@@ -91,7 +90,7 @@ pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
     PAS_UNUSED_PARAM(partial_view);
 
     page_config = *page_config_ptr;
-    
+
     PAS_ASSERT(pas_is_wrapped_page_boundary(view->shared_handle_or_page_boundary));
 
     directory = &shared_page_directory->base;
@@ -105,7 +104,7 @@ pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
             held_lock = &view->commit_lock;
             pas_lock_assert_held(held_lock);
         }
-        
+
         pas_physical_page_sharing_pool_take_for_page_config(
             page_config.base.page_size, &page_config_ptr->base,
             pas_segregated_page_config_heap_lock_hold_mode(page_config),
@@ -123,7 +122,7 @@ pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
 
         pas_heap_lock_unlock_conditionally(
             pas_segregated_page_config_heap_lock_hold_mode(page_config));
-        
+
         pas_physical_memory_transaction_construct(&transaction);
         do {
             PAS_ASSERT(!page_boundary);
@@ -137,7 +136,7 @@ pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
             pas_heap_lock_unlock_conditionally(
                 pas_segregated_page_config_heap_lock_hold_mode(page_config));
         } while (!pas_physical_memory_transaction_end(&transaction));
-        
+
         pas_heap_lock_lock_conditionally(
             pas_segregated_page_config_heap_lock_hold_mode(page_config));
         if (!page_boundary) {
@@ -146,14 +145,14 @@ pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
                 pas_segregated_page_config_heap_lock_hold_mode(page_config));
             return NULL;
         }
-        
+
         page = (pas_segregated_page*)
             page_config.base.create_page_header(
                 page_boundary,
                 pas_page_kind_for_segregated_variant_and_role(
                     page_config.variant, pas_segregated_page_shared_role),
                 pas_lock_is_held);
-        
+
         pas_heap_lock_unlock_conditionally(
             pas_segregated_page_config_heap_lock_hold_mode(page_config));
 
@@ -167,7 +166,7 @@ pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
                 shared_page_directory, pas_segregated_shared_page_directory_dump_for_spectrum,
                 page_config.base.page_size);
         }
-        
+
         pas_heap_lock_unlock_conditionally(
             pas_segregated_page_config_heap_lock_hold_mode(page_config));
 
@@ -206,7 +205,7 @@ static bool compute_summary_for_each_live_object_callback(
     void* arg)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
-    
+
     compute_summary_data* data;
     unsigned index;
     unsigned insertion_point;
@@ -257,7 +256,7 @@ static pas_heap_summary compute_summary(pas_segregated_shared_view* view,
                                         const pas_segregated_page_config* page_config_ptr)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
-    
+
     pas_segregated_page_config page_config;
     pas_segregated_page* page;
     uintptr_t start_of_page;
@@ -282,7 +281,7 @@ static pas_heap_summary compute_summary(pas_segregated_shared_view* view,
 
     if (verbose)
         pas_log("index = %d, bump_offset = %zu/%zu.\n", view->index, end_of_payload, end_of_page);
-    
+
     PAS_ASSERT(start_of_payload >= start_of_page);
     PAS_ASSERT(end_of_payload >= start_of_payload);
     PAS_ASSERT(end_of_page >= end_of_payload);
@@ -309,7 +308,7 @@ static pas_heap_summary compute_summary(pas_segregated_shared_view* view,
 
     if (verbose)
         pas_log("    owned.\n");
-    
+
     pas_segregated_page_add_commit_range(
         page, &result, pas_range_create(start_of_page, end_of_page));
 
@@ -379,7 +378,7 @@ bool pas_segregated_shared_view_is_empty(pas_segregated_shared_view* view)
         /* This happens when the page is empty and we free it. */
         return true;
     }
-    
+
     return PAS_SEGREGATED_DIRECTORY_GET_BIT(
         &pas_unwrap_shared_handle_no_liveness_checks(
             shared_handle_or_page_boundary)->directory->base,

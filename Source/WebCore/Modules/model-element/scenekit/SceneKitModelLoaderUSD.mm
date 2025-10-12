@@ -36,6 +36,7 @@
 #import "SceneKitModelLoaderClient.h"
 #import <pal/spi/cocoa/SceneKitSPI.h>
 #import <wtf/FileHandle.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 namespace WebCore {
 
@@ -116,7 +117,7 @@ Ref<SceneKitModelLoader> loadSceneKitModelUsingUSDLoader(Model& modelSource, Sce
 {
     auto loader = SceneKitModelLoaderUSD::create();
     
-    dispatch_async(dispatch_get_main_queue(), [weakClient = WeakPtr { client }, loader, modelSource = Ref { modelSource }] () mutable {
+    dispatch_async(mainDispatchQueueSingleton(), [weakClient = WeakPtr { client }, loader, modelSource = Ref { modelSource }] () mutable {
         // If the client has gone away, there is no reason to do any work.
         auto strongClient = weakClient.get();
         if (!strongClient)

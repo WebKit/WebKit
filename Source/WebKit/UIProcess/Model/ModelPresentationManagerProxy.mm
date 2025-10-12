@@ -61,6 +61,7 @@ RetainPtr<WKPageHostedModelView> ModelPresentationManagerProxy::setUpModelView(R
     [view setShouldDisablePortal:modelContext->disablePortal() == WebCore::ModelContextDisablePortal::Yes];
     [view applyBackgroundColor:modelContext->backgroundColor()];
 
+    pageScaleDidChange(webPageProxy->pageScaleFactor());
     return view;
 }
 
@@ -101,6 +102,18 @@ void ModelPresentationManagerProxy::doneWithCurrentDragSession()
     }
 
     m_activelyDraggedModelLayerIDs.clear();
+}
+
+void ModelPresentationManagerProxy::pageScaleDidChange(CGFloat newScale)
+{
+    for (auto& modelPresentation : m_modelPresentations.values()) {
+        // This is safe because only the pageHostedView is part of the RemoteLayerTree
+        if (RetainPtr modelView = modelPresentation->remoteModelView) {
+            CATransform3D newTransform = [modelView transform3D];
+            newTransform.m33 = newScale;
+            modelView.get().transform3D = newTransform;
+        }
+    }
 }
 
 void ModelPresentationManagerProxy::invalidateModel(const WebCore::PlatformLayerIdentifier& layerIdentifier)

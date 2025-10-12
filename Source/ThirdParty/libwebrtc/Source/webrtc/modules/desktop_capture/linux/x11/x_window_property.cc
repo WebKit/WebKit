@@ -10,6 +10,9 @@
 
 #include "modules/desktop_capture/linux/x11/x_window_property.h"
 
+#include <X11/X.h>
+#include <X11/Xlib.h>
+
 namespace webrtc {
 
 XWindowPropertyBase::XWindowPropertyBase(Display* display,

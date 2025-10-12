@@ -138,17 +138,17 @@ RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(CVPixelBufferRef pixe
 
 RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(VideoFrame& videoFrame, const RotationProperties& rotation, IsCGImageCompatible cgImageCompatible)
 {
-    auto pixelBuffer = videoFrame.pixelBuffer();
+    RetainPtr pixelBuffer = videoFrame.pixelBuffer();
     ASSERT(pixelBuffer);
     if (!pixelBuffer)
         return nullptr;
 
-    m_pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
-    IntSize size { (int)CVPixelBufferGetWidth(pixelBuffer), (int)CVPixelBufferGetHeight(pixelBuffer) };
+    m_pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer.get());
+    IntSize size { static_cast<int>(CVPixelBufferGetWidth(pixelBuffer.get())), static_cast<int>(CVPixelBufferGetHeight(pixelBuffer.get())) };
     if (rotation != m_rotationProperties || m_size != size)
         initialize(rotation, size, cgImageCompatible);
 
-    return rotate(pixelBuffer);
+    return rotate(pixelBuffer.get());
 }
 
 RefPtr<VideoFrame> ImageRotationSessionVT::applyRotation(VideoFrame& videoFrame, IsCGImageCompatible cgImageCompatible)

@@ -38,8 +38,6 @@ G_BEGIN_DECLS
 #define WPE_TYPE_SCREEN_DRM (wpe_screen_drm_get_type())
 WPE_API G_DECLARE_FINAL_TYPE (WPEScreenDRM, wpe_screen_drm, WPE, SCREEN_DRM, WPEScreen)
 
-WPE_API guint wpe_screen_drm_get_crtc_index(WPEScreenDRM *screen);
-
 G_END_DECLS
 
 #endif /* WPEScreenDRM_h */

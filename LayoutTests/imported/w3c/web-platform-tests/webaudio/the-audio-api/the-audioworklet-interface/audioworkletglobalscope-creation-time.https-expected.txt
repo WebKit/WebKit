@@ -1,0 +1,3 @@
+
+FAIL currentTime vs currentFrames in Audio Worklet global scope assert_equals: Expected workletFrame (0) to be equal to contextTime * sampleRate (41728) expected 0 but got 41728
+

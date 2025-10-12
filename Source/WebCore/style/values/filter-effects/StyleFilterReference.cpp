@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "CSSFilterReference.h"
 #include "Document.h"
 #include "ReferenceFilterOperation.h"
+#include "StyleBuilderState.h"
 
 namespace WebCore {
 namespace Style {
@@ -37,9 +38,9 @@ CSS::FilterReference toCSSFilterReference(Ref<ReferenceFilterOperation> operatio
     return { .url = toCSS(operation->url(), style) };
 }
 
-Ref<FilterOperation> createFilterOperation(const CSS::FilterReference& filter, const Document& document, RenderStyle&, const CSSToLengthConversionData&)
+Ref<FilterOperation> createFilterOperation(const CSS::FilterReference& filter, const BuilderState& state)
 {
-    auto url = toStyleWithScriptExecutionContext(filter.url, document);
+    auto url = toStyleWithScriptExecutionContext(filter.url, state.document());
 
     // FIXME: Unify all the fragment accessing/construction.
     auto fragment = url.resolved.string().startsWith('#')

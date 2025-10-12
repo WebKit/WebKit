@@ -1704,6 +1704,153 @@ void testUMulHigh32()
     }
 }
 
+void testMemoryCopy()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<void*, void*, void*>(proc, root);
+    root->appendNew<BulkMemoryValue>(proc, MemoryCopy, Origin(), arguments[0], arguments[1], arguments[2]);
+    root->appendNewControlValue(proc, Return, Origin());
+
+    auto code = compileProc(proc);
+    Vector<uint8_t> src(4096 + 1024);
+    Vector<uint8_t> dst(4096 + 1024);
+
+    for (unsigned base = 1; base < 4096; base <<= 1) {
+        unsigned offset = 0;
+        for (auto a : int32Operands()) {
+            dst.fill(0);
+            src.fill(static_cast<uint8_t>(a.value));
+            invoke<void>(*code, dst.mutableSpan().data(), src.span().data(), static_cast<uintptr_t>(base + offset));
+            for (unsigned i = 0; i < (base + offset); ++i)
+                CHECK_EQ(dst[i], static_cast<uint8_t>(a.value));
+            CHECK_EQ(dst[(base + offset)], 0);
+            ++offset;
+        }
+    }
+
+    for (unsigned base = 1; base < 4096; base <<= 1) {
+        for (unsigned i = 0; i < src.size(); ++i)
+            src[i] = i;
+        invoke<void>(*code, src.mutableSpan().data(), src.span().data() + 1, static_cast<uintptr_t>(base));
+        for (unsigned i = 0; i < base; ++i)
+            CHECK_EQ(src[i], static_cast<uint8_t>(i + 1));
+        CHECK_EQ(src[base], static_cast<uint8_t>(base));
+    }
+
+    for (unsigned base = 1; base < 4096; base <<= 1) {
+        for (unsigned i = 0; i < src.size(); ++i)
+            src[i] = i;
+        invoke<void>(*code, src.mutableSpan().data() + 1, src.span().data(), static_cast<uintptr_t>(base));
+        for (unsigned i = 0; i < base; ++i)
+            CHECK_EQ(src[i + 1], static_cast<uint8_t>(i));
+        CHECK_EQ(src[0], 0);
+    }
+}
+
+void testMemoryCopyConstant()
+{
+    Vector<uint8_t> src(4096 + 1024);
+    Vector<uint8_t> dst(4096 + 1024);
+
+    for (unsigned width = 0; width < 128; ++width) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        auto arguments = cCallArgumentValues<void*, void*>(proc, root);
+        root->appendNew<BulkMemoryValue>(proc, MemoryCopy, Origin(), arguments[0], arguments[1], root->appendIntConstant(proc, Origin(), pointerType(), width));
+        root->appendNewControlValue(proc, Return, Origin());
+        auto code = compileProc(proc);
+
+        for (auto a : int32Operands()) {
+            dst.fill(0);
+            src.fill(static_cast<uint8_t>(a.value));
+            invoke<void>(*code, dst.mutableSpan().data(), src.span().data());
+            for (unsigned i = 0; i < width; ++i)
+                CHECK_EQ(dst[i], static_cast<uint8_t>(a.value));
+            CHECK_EQ(dst[width], 0);
+        }
+
+        for (unsigned i = 0; i < src.size(); ++i)
+            src[i] = i;
+        invoke<void>(*code, src.mutableSpan().data(), src.span().data() + 1);
+        for (unsigned i = 0; i < width; ++i)
+            CHECK_EQ(src[i], static_cast<uint8_t>(i + 1));
+        CHECK_EQ(src[width], static_cast<uint8_t>(width));
+
+        for (unsigned i = 0; i < src.size(); ++i)
+            src[i] = i;
+        invoke<void>(*code, src.mutableSpan().data() + 1, src.span().data());
+        for (unsigned i = 0; i < width; ++i)
+            CHECK_EQ(src[i + 1], static_cast<uint8_t>(i));
+        CHECK_EQ(src[0], 0);
+    }
+}
+
+void testMemoryFill()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<void*, uint32_t, void*>(proc, root);
+    root->appendNew<BulkMemoryValue>(proc, MemoryFill, Origin(), arguments[0], arguments[1], arguments[2]);
+    root->appendNewControlValue(proc, Return, Origin());
+
+    auto code = compileProc(proc);
+    Vector<uint8_t> src(4096 + 1024);
+
+    for (unsigned base = 1; base < 4096; base <<= 1) {
+        unsigned offset = 0;
+        for (auto a : int32Operands()) {
+            src.fill(0);
+            invoke<void>(*code, src.mutableSpan().data(), static_cast<uint8_t>(a.value), static_cast<uintptr_t>(base + offset));
+            for (unsigned i = 0; i < (base + offset); ++i)
+                CHECK_EQ(src[i], static_cast<uint8_t>(a.value));
+            CHECK_EQ(src[(base + offset)], 0);
+            ++offset;
+        }
+    }
+}
+
+void testMemoryFillConstant()
+{
+    Vector<uint8_t> src(4096 + 1024);
+
+    for (unsigned width = 0; width < 128; ++width) {
+        for (auto a : int32Operands()) {
+            Procedure proc;
+            BasicBlock* root = proc.addBlock();
+            auto arguments = cCallArgumentValues<void*>(proc, root);
+            root->appendNew<BulkMemoryValue>(proc, MemoryFill, Origin(), arguments[0], root->appendIntConstant(proc, Origin(), Int32, a.value), root->appendIntConstant(proc, Origin(), pointerType(), width));
+            root->appendNewControlValue(proc, Return, Origin());
+            auto code = compileProc(proc);
+
+            src.fill(0);
+            invoke<void>(*code, src.mutableSpan().data(), static_cast<uint8_t>(a.value));
+            for (unsigned i = 0; i < width; ++i)
+                CHECK_EQ(src[i], static_cast<uint8_t>(a.value));
+            CHECK_EQ(src[width], 0);
+        }
+    }
+}
+
+void testLoadImmutable()
+{
+    Vector<uint64_t> memory(4);
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<void*, void*>(proc, root);
+
+    auto* value1 = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), arguments[0]);
+    value1->setReadsMutability(B3::Mutability::Immutable);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0), arguments[1]);
+    auto* value2 = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), arguments[0]);
+    value2->setReadsMutability(B3::Mutability::Immutable);
+    root->appendNewControlValue(proc, Return, Origin(), root->appendNew<Value>(proc, Add, Origin(), value1, value2));
+    auto code = compileProc(proc);
+
+    memory.fill(42);
+    CHECK_EQ(invoke<uint64_t>(*code, memory.mutableSpan().data(), memory.mutableSpan().data() + 1), 84U);
+}
+
 #endif // ENABLE(B3_JIT)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

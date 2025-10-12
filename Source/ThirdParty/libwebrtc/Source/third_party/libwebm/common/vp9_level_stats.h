@@ -40,20 +40,13 @@ enum Vp9Level {
 };
 
 struct Vp9LevelRow {
-  Vp9LevelRow() = default;
-  ~Vp9LevelRow() = default;
-  Vp9LevelRow(Vp9LevelRow&& other) = default;
-  Vp9LevelRow(const Vp9LevelRow& other) = default;
-  Vp9LevelRow& operator=(Vp9LevelRow&& other) = delete;
-  Vp9LevelRow& operator=(const Vp9LevelRow& other) = delete;
-
   Vp9Level level;
   int64_t max_luma_sample_rate;
   int64_t max_luma_picture_size;
   int64_t max_luma_picture_breadth;
   double average_bitrate;
   double max_cpb_size;
-  double compresion_ratio;
+  double compression_ratio;
   int max_tiles;
   int min_altref_distance;
   int max_ref_frames;

@@ -25,11 +25,13 @@
 
 #pragma once
 
-#include "IntPoint.h"
-#include "MouseEventTypes.h"
-#include "PlatformEvent.h"
-#include "PointerEventTypeNames.h"
-#include "PointerID.h"
+#include <WebCore/DoublePoint.h>
+#include <WebCore/IntPoint.h>
+#include <WebCore/MouseEventTypes.h>
+#include <WebCore/PlatformEvent.h>
+#include <WebCore/PointerEventTypeNames.h>
+#include <WebCore/PointerID.h>
+#include <wtf/Platform.h>
 #include <wtf/UUID.h>
 #include <wtf/WindowsExtras.h>
 
@@ -42,7 +44,7 @@ public:
     {
     }
 
-    PlatformMouseEvent(const IntPoint& position, const IntPoint& globalPosition, MouseButton button, PlatformEvent::Type type, int clickCount, OptionSet<PlatformEvent::Modifier> modifiers, WallTime timestamp, double force, SyntheticClickType syntheticClickType, PointerID pointerId = mousePointerID)
+    PlatformMouseEvent(const DoublePoint& position, const DoublePoint& globalPosition, MouseButton button, PlatformEvent::Type type, int clickCount, OptionSet<PlatformEvent::Modifier> modifiers, MonotonicTime timestamp, double force, SyntheticClickType syntheticClickType, PointerID pointerId = mousePointerID)
         : PlatformEvent(type, modifiers, timestamp)
         , m_button(button)
         , m_syntheticClickType(syntheticClickType)
@@ -56,11 +58,11 @@ public:
 
     // This position is relative to the enclosing NSWindow in WebKit1, and is WKWebView-relative in WebKit2.
     // Use ScrollView::windowToContents() to convert it to into the contents of a given view.
-    const IntPoint& position() const { return m_position; }
-    const IntPoint& globalPosition() const { return m_globalPosition; }
-    const IntPoint& movementDelta() const { return m_movementDelta; }
+    const DoublePoint& position() const { return m_position; }
+    const DoublePoint& globalPosition() const { return m_globalPosition; }
+    const DoublePoint& movementDelta() const { return m_movementDelta; }
     // Unaccelerated pointer movement
-    const IntPoint& unadjustedMovementDelta() const { return m_unadjustedMovementDelta; }
+    const DoublePoint& unadjustedMovementDelta() const { return m_unadjustedMovementDelta; }
 
     MouseButton button() const { return m_button; }
     unsigned short buttons() const { return m_buttons; }
@@ -95,10 +97,10 @@ protected:
     MouseButton m_button { MouseButton::None };
     SyntheticClickType m_syntheticClickType { SyntheticClickType::NoTap };
 
-    IntPoint m_position;
-    IntPoint m_globalPosition;
-    IntPoint m_movementDelta;
-    IntPoint m_unadjustedMovementDelta;
+    DoublePoint m_position;
+    DoublePoint m_globalPosition;
+    DoublePoint m_movementDelta;
+    DoublePoint m_unadjustedMovementDelta;
     double m_force { 0 };
     PointerID m_pointerId { mousePointerID };
     String m_pointerType { mousePointerEventType() };

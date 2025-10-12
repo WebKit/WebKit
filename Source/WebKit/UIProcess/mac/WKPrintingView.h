@@ -70,7 +70,7 @@ class WebFrameProxy;
     Lock _printingCallbackMutex;
     Condition _printingCallbackCondition;
 
-    NSTimer *_autodisplayResumeTimer;
+    RetainPtr<NSTimer> _autodisplayResumeTimer;
 }
 
 - (id)initWithFrameProxy:(WebKit::WebFrameProxy&)frame view:(NSView *)wkView;

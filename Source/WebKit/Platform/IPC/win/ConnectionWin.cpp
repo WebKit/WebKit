@@ -46,7 +46,7 @@ bool createServerAndClientIdentifiers(HANDLE& serverIdentifier, HANDLE& clientId
     do {
         pipeName = makeString("\\\\.\\pipe\\com.apple.WebKit."_s, hex(cryptographicallyRandomNumber<unsigned>()));
 
-        serverIdentifier = ::CreateNamedPipe(pipeName.wideCharacters().data(),
+        serverIdentifier = ::CreateNamedPipe(pipeName.wideCharacters().span().data(),
             PIPE_ACCESS_DUPLEX | FILE_FLAG_FIRST_PIPE_INSTANCE | FILE_FLAG_OVERLAPPED,
             PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE, 1, inlineMessageMaxSize, inlineMessageMaxSize,
             0, 0);
@@ -55,7 +55,7 @@ bool createServerAndClientIdentifiers(HANDLE& serverIdentifier, HANDLE& clientId
     if (!serverIdentifier)
         return false;
 
-    clientIdentifier = ::CreateFileW(pipeName.wideCharacters().data(), GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
+    clientIdentifier = ::CreateFileW(pipeName.wideCharacters().span().data(), GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
     if (!clientIdentifier) {
         ::CloseHandle(serverIdentifier);
         return false;
@@ -125,7 +125,7 @@ void Connection::readEventHandler()
                     break;
 
                 m_readBuffer.grow(m_readBuffer.size() + bytesToRead);
-                if (!::ReadFile(m_connectionPipe, m_readBuffer.data() + numberOfBytesRead, bytesToRead, 0, &m_readListener.state())) {
+                if (!::ReadFile(m_connectionPipe, m_readBuffer.mutableSpan().subspan(numberOfBytesRead).data(), bytesToRead, 0, &m_readListener.state())) {
                     ASSERT_NOT_REACHED();
                     return;
                 }
@@ -175,7 +175,7 @@ void Connection::readEventHandler()
 
         // Either read the next available message (which should occur synchronously), or start an
         // asynchronous read of the next message that becomes available.
-        BOOL result = ::ReadFile(m_connectionPipe, m_readBuffer.data(), m_readBuffer.size(), 0, &m_readListener.state());
+        BOOL result = ::ReadFile(m_connectionPipe, m_readBuffer.mutableSpan().data(), m_readBuffer.size(), 0, &m_readListener.state());
         if (result) {
             // There was already a message waiting in the pipe, and we read it synchronously.
             // Process it.

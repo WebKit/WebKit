@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "DeprecatedCSSOMPrimitiveValue.h"
-#include "Rect.h"
+#include <WebCore/DeprecatedCSSOMPrimitiveValue.h>
+#include <WebCore/Rect.h>
 
 namespace WebCore {
 
@@ -51,10 +51,10 @@ private:
     {
     }
 
-    Ref<DeprecatedCSSOMPrimitiveValue> m_top;
-    Ref<DeprecatedCSSOMPrimitiveValue> m_right;
-    Ref<DeprecatedCSSOMPrimitiveValue> m_bottom;
-    Ref<DeprecatedCSSOMPrimitiveValue> m_left;
+    const Ref<DeprecatedCSSOMPrimitiveValue> m_top;
+    const Ref<DeprecatedCSSOMPrimitiveValue> m_right;
+    const Ref<DeprecatedCSSOMPrimitiveValue> m_bottom;
+    const Ref<DeprecatedCSSOMPrimitiveValue> m_left;
 };
 
 } // namespace WebCore

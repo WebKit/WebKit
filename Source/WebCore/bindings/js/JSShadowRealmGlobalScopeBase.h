@@ -40,6 +40,8 @@ public:
 
     DECLARE_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
     ShadowRealmGlobalScope& wrapped() const { return *m_wrapped; }
 
     const JSDOMGlobalObject* incubatingRealm() const;
@@ -59,8 +61,6 @@ private:
 protected:
     JSShadowRealmGlobalScopeBase(JSC::VM&, JSC::Structure*, RefPtr<ShadowRealmGlobalScope>&&);
     void finishCreation(JSC::VM&, JSC::JSGlobalProxy*);
-
-    DECLARE_VISIT_CHILDREN;
 
     static const JSC::GlobalObjectMethodTable* globalObjectMethodTable();
 

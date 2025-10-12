@@ -36,7 +36,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 
-static void id(void*, void*) { }
+static void bytesDeallocatorNoCopy(void*, void*) { }
 static void freePtr(void* ptr, void*)
 {
     free(ptr);
@@ -175,7 +175,7 @@ static int testConstructors(JSGlobalContextRef context, JSTypedArrayType type, u
     failed = failed || exception;
 
     // Test create with existing ptr.
-    typedArray = JSObjectMakeTypedArrayWithBytesNoCopy(context, type, ptr, length * byteSizes[type], id, nullptr, &exception);
+    typedArray = JSObjectMakeTypedArrayWithBytesNoCopy(context, type, ptr, length * byteSizes[type], bytesDeallocatorNoCopy, nullptr, &exception);
     failed = failed || exception || testAccess(context, typedArray, type, length, ptr);
 
     // Test create with existing ArrayBuffer.
@@ -254,7 +254,7 @@ int testTypedArrayCAPI()
     failed = failed || assertEqualsAsNumber(context, v, 1);
 
     // Test passing a buffer from a new array to an old array
-    typedArray = JSObjectMakeTypedArrayWithBytesNoCopy(context, kJSTypedArrayTypeUint32Array, buffer, 40, id, nullptr, nullptr);
+    typedArray = JSObjectMakeTypedArrayWithBytesNoCopy(context, kJSTypedArrayTypeUint32Array, buffer, 40, bytesDeallocatorNoCopy, nullptr, nullptr);
     buffer = static_cast<unsigned*>(JSObjectGetTypedArrayBytesPtr(context, typedArray, nullptr));
     ASSERT(buffer[1] == 1);
     buffer[1] = 20;

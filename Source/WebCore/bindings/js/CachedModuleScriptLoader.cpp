@@ -63,7 +63,8 @@ bool CachedModuleScriptLoader::load(Document& document, URL&& sourceURL, std::op
     ASSERT(m_promise);
     ASSERT(!m_cachedScript);
     String integrity = m_parameters ? m_parameters->integrity() : String { };
-    m_cachedScript = scriptFetcher().requestModuleScript(document, sourceURL, WTFMove(integrity), serviceWorkersMode);
+    auto destination = m_parameters && m_parameters->type() == JSC::ScriptFetchParameters::Type::JSON ? FetchOptionsDestination::Json : FetchOptionsDestination::Script;
+    m_cachedScript = scriptFetcher().requestModuleScript(document, sourceURL, destination, WTFMove(integrity), serviceWorkersMode);
     if (!m_cachedScript)
         return false;
     m_sourceURL = WTFMove(sourceURL);

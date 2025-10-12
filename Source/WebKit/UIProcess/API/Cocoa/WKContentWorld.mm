@@ -109,6 +109,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         optionSet.add(WebKit::ContentWorldOption::AllowElementUserInfo);
     if (configuration.disableLegacyBuiltinOverrides)
         optionSet.add(WebKit::ContentWorldOption::DisableLegacyBuiltinOverrides);
+    if (configuration.allowJSHandleCreation)
+        optionSet.add(WebKit::ContentWorldOption::AllowJSHandleCreation);
+    if (configuration.allowNodeSerialization)
+        optionSet.add(WebKit::ContentWorldOption::AllowNodeSerialization);
     Ref world = API::ContentWorld::sharedWorldWithName(configuration.name, optionSet);
     checkContentWorldOptions(world, configuration);
     return wrapper(WTFMove(world)).autorelease();

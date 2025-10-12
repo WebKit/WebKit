@@ -57,7 +57,7 @@ StyleMultiImage::~StyleMultiImage() = default;
 
 bool StyleMultiImage::equals(const StyleMultiImage& other) const
 {
-    return (!m_isPending && !other.m_isPending && m_selectedImage.get() == other.m_selectedImage.get());
+    return !m_isPending && !other.m_isPending && arePointingToEqualData(m_selectedImage, other.m_selectedImage);
 }
 
 void StyleMultiImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
@@ -140,7 +140,7 @@ bool StyleMultiImage::imageHasRelativeHeight() const
     return m_selectedImage && m_selectedImage->imageHasRelativeHeight();
 }
 
-void StyleMultiImage::computeIntrinsicDimensions(const RenderElement* element, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
+void StyleMultiImage::computeIntrinsicDimensions(const RenderElement* element, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
 {
     if (!m_selectedImage)
         return;
@@ -180,11 +180,11 @@ bool StyleMultiImage::hasClient(RenderElement& renderer) const
     return m_selectedImage->hasClient(renderer);
 }
 
-RefPtr<Image> StyleMultiImage::image(const RenderElement* renderer, const FloatSize& size, bool isForFirstLine) const
+RefPtr<Image> StyleMultiImage::image(const RenderElement* renderer, const FloatSize& size, const GraphicsContext& destinationContext, bool isForFirstLine) const
 {
     if (!m_selectedImage)
         return nullptr;
-    return m_selectedImage->image(renderer, size, isForFirstLine);
+    return m_selectedImage->image(renderer, size, destinationContext, isForFirstLine);
 }
 
 float StyleMultiImage::imageScaleFactor() const

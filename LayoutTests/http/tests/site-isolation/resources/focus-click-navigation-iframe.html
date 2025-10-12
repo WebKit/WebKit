@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<script>
+function handleMessage(event) {
+    if (event.data.type === 'checkActiveElement') {
+        let activeElement = document.activeElement;
+        let activeElementTag = activeElement ? activeElement.tagName : 'null';
+        let expected = event.data.expected;
+        let description = event.data.description || `Inner Document.activeElement is ${expected}`;
+
+        let success = activeElementTag === expected;
+        let message = success ? description : `Expected inner activeElement to be ${expected}, but was ${activeElementTag}`;
+
+        let messageType = description.includes('When inner input focused') ? 'finalCheck' : 'activeElementCheck';
+
+        event.source.postMessage({
+            type: messageType,
+            success: success,
+            message: message
+        }, event.origin);
+    }
+}
+
+function onInnerInputFocus() {
+    let activeElement = document.activeElement;
+    let activeElementTag = activeElement ? activeElement.tagName : 'null';
+
+    if (activeElementTag === 'INPUT') {
+        parent.postMessage({
+            type: 'innerInputFocused'
+        }, '*');
+    }
+}
+
+window.addEventListener('message', handleMessage);
+window.addEventListener('load', function() {
+    document.getElementById('innerInput').addEventListener('focus', onInnerInputFocus);
+});
+</script>
+
+<body>
+<p>Inner frame content</p>
+<input type="text" id="innerInput" placeholder="Inner frame input">
+</body>
+</html>

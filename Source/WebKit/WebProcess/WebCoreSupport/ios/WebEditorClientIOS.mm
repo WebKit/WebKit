@@ -38,7 +38,7 @@ using namespace WebCore;
     
 void WebEditorClient::handleKeyboardEvent(KeyboardEvent& event)
 {
-    if (m_page->handleEditingKeyboardEvent(event))
+    if (RefPtr page = m_page.get(); page && page->handleEditingKeyboardEvent(event))
         event.setDefaultHandled();
 }
 
@@ -66,7 +66,8 @@ void WebEditorClient::stopDelayingAndCoalescingContentChangeNotifications()
 
 bool WebEditorClient::hasRichlyEditableSelection()
 {
-    return m_page->hasRichlyEditableSelection();
+    RefPtr page = m_page.get();
+    return page ? page->hasRichlyEditableSelection() : false;
 }
 
 int WebEditorClient::getPasteboardItemsCount()
@@ -89,42 +90,50 @@ bool WebEditorClient::performsTwoStepPaste(WebCore::DocumentFragment*)
 
 void WebEditorClient::updateStringForFind(const String& findString)
 {
-    m_page->updateStringForFind(findString);
+    if (RefPtr page = m_page.get())
+        page->updateStringForFind(findString);
 }
 
 void WebEditorClient::overflowScrollPositionChanged()
 {
-    m_page->didScrollSelection();
+    if (RefPtr page = m_page.get())
+        page->didScrollSelection();
 }
 
 void WebEditorClient::subFrameScrollPositionChanged()
 {
-    m_page->didScrollSelection();
+    if (RefPtr page = m_page.get())
+        page->didScrollSelection();
 }
 
 bool WebEditorClient::shouldAllowSingleClickToChangeSelection(WebCore::Node& targetNode, const WebCore::VisibleSelection& newSelection) const
 {
-    return m_page->shouldAllowSingleClickToChangeSelection(targetNode, newSelection);
+    RefPtr page = m_page.get();
+    return page ? page->shouldAllowSingleClickToChangeSelection(targetNode, newSelection) : false;
 }
 
 bool WebEditorClient::shouldRevealCurrentSelectionAfterInsertion() const
 {
-    return m_page->shouldRevealCurrentSelectionAfterInsertion();
+    RefPtr page = m_page.get();
+    return page ? page->shouldRevealCurrentSelectionAfterInsertion() : false;
 }
 
 bool WebEditorClient::shouldSuppressPasswordEcho() const
 {
-    return m_page->screenIsBeingCaptured() || m_page->hardwareKeyboardIsAttached();
+    RefPtr page = m_page.get();
+    return page ? (page->screenIsBeingCaptured() || page->hardwareKeyboardIsAttached()) : false;
 }
 
 bool WebEditorClient::shouldRemoveDictationAlternativesAfterEditing() const
 {
-    return m_page->shouldRemoveDictationAlternativesAfterEditing();
+    RefPtr page = m_page.get();
+    return page ? page->shouldRemoveDictationAlternativesAfterEditing() : false;
 }
 
 bool WebEditorClient::shouldDrawVisuallyContiguousBidiSelection() const
 {
-    return m_page->shouldDrawVisuallyContiguousBidiSelection();
+    RefPtr page = m_page.get();
+    return page ? page->shouldDrawVisuallyContiguousBidiSelection() : false;
 }
 
 } // namespace WebKit

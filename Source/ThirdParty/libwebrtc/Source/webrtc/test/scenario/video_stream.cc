@@ -10,25 +10,61 @@
 #include "test/scenario/video_stream.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <functional>
 #include <memory>
+#include <optional>
+#include <string>
 #include <utility>
+#include <vector>
 
 #include "absl/strings/match.h"
+#include "api/call/transport.h"
+#include "api/environment/environment.h"
+#include "api/make_ref_counted.h"
+#include "api/media_types.h"
+#include "api/rtp_headers.h"
+#include "api/rtp_parameters.h"
+#include "api/scoped_refptr.h"
 #include "api/test/create_frame_generator.h"
 #include "api/test/frame_generator_interface.h"
+#include "api/test/video/function_video_decoder_factory.h"
 #include "api/test/video/function_video_encoder_factory.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
 #include "api/video/builtin_video_bitrate_allocator_factory.h"
-#include "media/base/media_constants.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
+#include "api/video_codecs/scalability_mode.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_codec.h"
+#include "api/video_codecs/video_encoder.h"
+#include "call/flexfec_receive_stream.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 #include "media/engine/internal_decoder_factory.h"
 #include "media/engine/internal_encoder_factory.h"
 #include "media/engine/webrtc_video_engine.h"
 #include "modules/video_coding/svc/scalability_mode_util.h"
-#include "test/call_test.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/strings/string_builder.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "system_wrappers/include/clock.h"
+#include "test/encoder_settings.h"
+#include "test/fake_decoder.h"
 #include "test/fake_encoder.h"
+#include "test/fake_vp8_encoder.h"
+#include "test/frame_generator_capturer.h"
+#include "test/scenario/call_client.h"
+#include "test/scenario/column_printer.h"
 #include "test/scenario/hardware_codecs.h"
+#include "test/scenario/scenario_config.h"
+#include "test/scenario/video_frame_matcher.h"
 #include "test/testsupport/file_utils.h"
 #include "test/video_test_constants.h"
-#include "video/config/encoder_stream_factory.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 namespace test {
@@ -115,7 +151,7 @@ VideoSendStream::Config CreateVideoSendStreamConfig(
   }
   return send_config;
 }
-rtc::scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
+scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
 CreateVp9SpecificSettings(VideoStreamConfig video_config) {
   constexpr auto kScreen = VideoStreamConfig::Encoder::ContentType::kScreen;
   VideoStreamConfig::Encoder conf = video_config.encoder;
@@ -143,11 +179,10 @@ CreateVp9SpecificSettings(VideoStreamConfig video_config) {
     vp9.automaticResizeOn = conf.single.automatic_scaling;
     vp9.denoisingOn = conf.single.denoising;
   }
-  return rtc::make_ref_counted<VideoEncoderConfig::Vp9EncoderSpecificSettings>(
-      vp9);
+  return make_ref_counted<VideoEncoderConfig::Vp9EncoderSpecificSettings>(vp9);
 }
 
-rtc::scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
+scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
 CreateVp8SpecificSettings(VideoStreamConfig config) {
   VideoCodecVP8 vp8_settings = VideoEncoder::GetDefaultVp8Settings();
   vp8_settings.keyFrameInterval = config.encoder.key_frame_interval.value_or(0);
@@ -164,11 +199,11 @@ CreateVp8SpecificSettings(VideoStreamConfig config) {
     vp8_settings.automaticResizeOn = config.encoder.single.automatic_scaling;
     vp8_settings.denoisingOn = config.encoder.single.denoising;
   }
-  return rtc::make_ref_counted<VideoEncoderConfig::Vp8EncoderSpecificSettings>(
+  return make_ref_counted<VideoEncoderConfig::Vp8EncoderSpecificSettings>(
       vp8_settings);
 }
 
-rtc::scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
+scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
 CreateH264SpecificSettings(VideoStreamConfig config) {
   RTC_DCHECK_EQ(config.encoder.simulcast_streams.size(), 1);
   RTC_DCHECK(config.encoder.simulcast_streams[0] == ScalabilityMode::kL1T1);
@@ -178,7 +213,7 @@ CreateH264SpecificSettings(VideoStreamConfig config) {
   return nullptr;
 }
 
-rtc::scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
+scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
 CreateEncoderSpecificSettings(VideoStreamConfig config) {
   using Codec = VideoStreamConfig::Encoder::Codec;
   switch (config.encoder.codec) {
@@ -196,7 +231,7 @@ CreateEncoderSpecificSettings(VideoStreamConfig config) {
 }
 
 VideoEncoderConfig CreateVideoEncoderConfig(VideoStreamConfig config) {
-  webrtc::VideoEncoder::EncoderInfo encoder_info;
+  VideoEncoder::EncoderInfo encoder_info;
   VideoEncoderConfig encoder_config;
   encoder_config.codec_type = config.encoder.codec;
   encoder_config.content_type = ConvertContentType(config.encoder.content_type);
@@ -283,7 +318,7 @@ VideoReceiveStreamInterface::Config CreateVideoReceiveStreamConfig(
     Transport* feedback_transport,
     VideoDecoderFactory* decoder_factory,
     VideoReceiveStreamInterface::Decoder decoder,
-    rtc::VideoSinkInterface<VideoFrame>* renderer,
+    VideoSinkInterface<VideoFrame>* renderer,
     uint32_t local_ssrc,
     uint32_t ssrc,
     uint32_t rtx_ssrc) {
@@ -492,7 +527,7 @@ VideoSendStream::Stats SendVideoStream::GetStats() const {
 ColumnPrinter SendVideoStream::StatsPrinter() {
   return ColumnPrinter::Lambda(
       "video_target_rate video_sent_rate width height",
-      [this](rtc::SimpleStringBuilder& sb) {
+      [this](SimpleStringBuilder& sb) {
         VideoSendStream::Stats video_stats = send_stream_->GetStats();
         int width = 0;
         int height = 0;
@@ -528,7 +563,7 @@ ReceiveVideoStream::ReceiveVideoStream(CallClient* receiver,
                             CodecTypeToPayloadString(config.encoder.codec));
   size_t num_streams = config.encoder.simulcast_streams.size();
   for (size_t i = 0; i < num_streams; ++i) {
-    rtc::VideoSinkInterface<VideoFrame>* renderer = &fake_renderer_;
+    VideoSinkInterface<VideoFrame>* renderer = &fake_renderer_;
     if (matcher->Active()) {
       render_taps_.emplace_back(std::make_unique<DecodedFrameTap>(
           &receiver_->env_.clock(), matcher, i));

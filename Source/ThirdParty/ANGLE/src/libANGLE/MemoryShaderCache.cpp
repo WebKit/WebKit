@@ -94,6 +94,17 @@ angle::Result MemoryShaderCache::putShader(const Context *context,
     angle::MemoryBuffer serializedShader;
     ANGLE_TRY(shader->serialize(nullptr, &serializedShader));
 
+    if (serializedShader.size() > kMaxUncompressedShaderSize)
+    {
+        std::ostringstream warningMessage;
+        warningMessage << "Shader is too large to cache: ";
+        warningMessage << "shader size: " << serializedShader.size()
+                       << ", max size: " << kMaxUncompressedShaderSize;
+        ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW, "%s",
+                           warningMessage.str().c_str());
+        return angle::Result::Continue;
+    }
+
     size_t compressedSize;
     if (!mBlobCache.compressAndPut(context, shaderHash, std::move(serializedShader),
                                    &compressedSize))

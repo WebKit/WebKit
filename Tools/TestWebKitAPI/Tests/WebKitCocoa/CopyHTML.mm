@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,12 +69,12 @@ NSString *readHTMLStringFromPasteboard()
 
 NSData *readHTMLDataFromPasteboard()
 {
-    return [[UIPasteboard generalPasteboard] dataForPasteboardType:(__bridge NSString *)kUTTypeHTML];
+    return [[UIPasteboard generalPasteboard] dataForPasteboardType:UTTypeHTML.identifier];
 }
 
 NSString *readHTMLStringFromPasteboard()
 {
-    RetainPtr<id> value = [[UIPasteboard generalPasteboard] valueForPasteboardType:(__bridge NSString *)kUTTypeHTML];
+    RetainPtr<id> value = [[UIPasteboard generalPasteboard] valueForPasteboardType:UTTypeHTML.identifier];
     if ([value isKindOfClass:[NSData class]])
         value = adoptNS([[NSString alloc] initWithData:(NSData *)value encoding:NSUTF8StringEncoding]);
     ASSERT([value isKindOfClass:[NSString class]]);
@@ -123,7 +123,12 @@ TEST(CopyHTML, SanitizationPreservesCharacterSetInSelectedText)
     EXPECT_WK_STREQ("我叫謝文昇", [attributedString string]);
 }
 
+// FIXME: rdar://158345822
+#if PLATFORM(IOS)
+TEST(CopyHTML, DISABLED_SanitizationPreservesCharacterSet)
+#else
 TEST(CopyHTML, SanitizationPreservesCharacterSet)
+#endif
 {
     Vector<std::pair<RetainPtr<NSString>, RetainPtr<NSData>>, 3> markupStringsAndData;
     auto webView = createWebViewWithCustomPasteboardDataEnabled();
@@ -256,10 +261,10 @@ TEST(CopyHTML, ItemTypesWhenCopyingWebContent)
     EXPECT_EQ(1U, items.count);
 
     NSArray<NSPasteboardType> *types = items.firstObject.types;
-    EXPECT_TRUE([types containsObject:(__bridge NSString *)kUTTypeWebArchive]);
-    EXPECT_TRUE([types containsObject:(__bridge NSString *)NSPasteboardTypeRTF]);
-    EXPECT_TRUE([types containsObject:(__bridge NSString *)NSPasteboardTypeString]);
-    EXPECT_TRUE([types containsObject:(__bridge NSString *)NSPasteboardTypeHTML]);
+    EXPECT_TRUE([types containsObject:UTTypeWebArchive.identifier]);
+    EXPECT_TRUE([types containsObject:NSPasteboardTypeRTF]);
+    EXPECT_TRUE([types containsObject:NSPasteboardTypeString]);
+    EXPECT_TRUE([types containsObject:NSPasteboardTypeHTML]);
 }
 
 TEST(CopyHTML, WriteRichTextSelectionToPasteboard)
@@ -270,9 +275,9 @@ TEST(CopyHTML, WriteRichTextSelectionToPasteboard)
     [webView waitForNextPresentationUpdate];
 
     auto pasteboard = [NSPasteboard pasteboardWithUniqueName];
-    [webView writeSelectionToPasteboard:pasteboard types:@[ (__bridge NSString *)kUTTypeWebArchive ]];
+    [webView writeSelectionToPasteboard:pasteboard types:@[ UTTypeWebArchive.identifier ]];
 
-    EXPECT_GT([pasteboard dataForType:(__bridge NSString *)kUTTypeWebArchive].length, 0U);
+    EXPECT_GT([pasteboard dataForType:UTTypeWebArchive.identifier].length, 0U);
 }
 
 #endif // PLATFORM(MAC)

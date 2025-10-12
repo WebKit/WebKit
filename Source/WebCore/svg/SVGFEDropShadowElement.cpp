@@ -21,13 +21,14 @@
 #include "config.h"
 #include "SVGFEDropShadowElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "NodeName.h"
 #include "RenderElement.h"
-#include "RenderStyle.h"
-#include "SVGFilter.h"
+#include "RenderStyleInlines.h"
+#include "SVGFilterRenderer.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include "SVGRenderStyle.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -125,10 +126,10 @@ bool SVGFEDropShadowElement::setFilterEffectAttribute(FilterEffect& filterEffect
         return effect.setDy(dy());
     case AttributeNames::flood_colorAttr: {
         auto& style = renderer()->style();
-        return effect.setShadowColor(style.colorResolvingCurrentColor(style.svgStyle().floodColor()));
+        return effect.setShadowColor(style.colorResolvingCurrentColor(style.floodColor()));
     }
     case AttributeNames::flood_opacityAttr:
-        return effect.setShadowOpacity(renderer()->style().svgStyle().floodOpacity());
+        return effect.setShadowOpacity(renderer()->style().floodOpacity().value.value);
     default:
         break;
     }
@@ -143,8 +144,8 @@ bool SVGFEDropShadowElement::isIdentity() const
 
 IntOutsets SVGFEDropShadowElement::outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const
 {
-    auto offset = SVGFilter::calculateResolvedSize({ dx(), dy() }, targetBoundingBox, primitiveUnits);
-    auto stdDeviation = SVGFilter::calculateResolvedSize({ stdDeviationX(), stdDeviationY() }, targetBoundingBox, primitiveUnits);
+    auto offset = SVGFilterRenderer::calculateResolvedSize({ dx(), dy() }, targetBoundingBox, primitiveUnits);
+    auto stdDeviation = SVGFilterRenderer::calculateResolvedSize({ stdDeviationX(), stdDeviationY() }, targetBoundingBox, primitiveUnits);
     return FEDropShadow::calculateOutsets(offset, stdDeviation);
 }
 
@@ -158,12 +159,8 @@ RefPtr<FilterEffect> SVGFEDropShadowElement::createFilterEffect(const FilterEffe
         return nullptr;
 
     auto& style = renderer->style();
-    const SVGRenderStyle& svgStyle = style.svgStyle();
-    
-    Color color = style.colorWithColorFilter(svgStyle.floodColor());
-    float opacity = svgStyle.floodOpacity();
 
-    return FEDropShadow::create(stdDeviationX(), stdDeviationY(), dx(), dy(), color, opacity);
+    return FEDropShadow::create(stdDeviationX(), stdDeviationY(), dx(), dy(), style.colorWithColorFilter(style.floodColor()), style.floodOpacity().value.value);
 }
 
 } // namespace WebCore

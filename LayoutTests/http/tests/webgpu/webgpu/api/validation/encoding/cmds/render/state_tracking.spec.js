@@ -4,9 +4,9 @@
 Validation tests for setVertexBuffer/setIndexBuffer state (not validation). See also operation tests.
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import { range } from '../../../../../../common/util/util.js';
-import { AllFeaturesMaxLimitsValidationTest } from '../../../validation_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../../../gpu_test.js';
 
-class F extends AllFeaturesMaxLimitsValidationTest {
+class F extends AllFeaturesMaxLimitsGPUTest {
   getVertexBuffer() {
     return this.createBufferTracked({
       size: 256,

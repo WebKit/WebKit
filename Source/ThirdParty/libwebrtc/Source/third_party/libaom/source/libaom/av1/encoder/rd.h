@@ -14,8 +14,8 @@
 
 #include <limits.h>
 
+#include "aom/aomcx.h"
 #include "av1/common/blockd.h"
-
 #include "av1/encoder/block.h"
 #include "av1/encoder/context_tree.h"
 #include "av1/encoder/cost.h"
@@ -232,19 +232,21 @@ struct macroblock;
  * \param[in]       bit_depth       bit depth
  * \param[in]       update_type     frame update type
  * \param[in]       qindex          q index
+ * \param[in]       tuning          visual tuning metric
  *
  * \return rdmult
  */
 int av1_compute_rd_mult_based_on_qindex(aom_bit_depth_t bit_depth,
                                         FRAME_UPDATE_TYPE update_type,
-                                        int qindex);
+                                        int qindex, aom_tune_metric tuning);
 
 int av1_compute_rd_mult(const int qindex, const aom_bit_depth_t bit_depth,
                         const FRAME_UPDATE_TYPE update_type,
                         const int layer_depth, const int boost_index,
                         const FRAME_TYPE frame_type,
                         const int use_fixed_qp_offsets,
-                        const int is_stat_consumption_stage);
+                        const int is_stat_consumption_stage,
+                        const aom_tune_metric tuning);
 
 void av1_initialize_rd_consts(struct AV1_COMP *cpi);
 

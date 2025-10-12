@@ -82,10 +82,9 @@ bool WillChangeData::createsContainingBlockForOutOfFlowPositioned(bool isRootEle
         // CSS containment
         || containsProperty(CSSPropertyContain)
         // CSS filter & backdrop-filter
-        // FIXME: exclude root element for those properties (bug 225034)
         || (containsProperty(CSSPropertyBackdropFilter) && !isRootElement)
         || (containsProperty(CSSPropertyWebkitBackdropFilter) && !isRootElement)
-        || containsProperty(CSSPropertyFilter);
+        || (containsProperty(CSSPropertyFilter) && !isRootElement);
 }
 
 bool WillChangeData::canBeBackdropRoot() const
@@ -128,7 +127,7 @@ bool WillChangeData::propertyCreatesStackingContext(CSSPropertyID property)
     case CSSPropertyMaskImage:
     case CSSPropertyMaskBorder:
     case CSSPropertyWebkitMaskBoxImage:
-#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
+#if ENABLE(WEBKIT_OVERFLOW_SCROLLING_CSS_PROPERTY)
     case CSSPropertyWebkitOverflowScrolling:
 #endif
     case CSSPropertyViewTransitionName:

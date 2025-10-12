@@ -155,7 +155,7 @@ void SceneKitModelPlayer::setIsMuted(bool, CompletionHandler<void(bool success)>
 
 void SceneKitModelPlayer::didFinishLoading(SceneKitModelLoader& loader, Ref<SceneKitModel> model)
 {
-    dispatch_assert_queue(dispatch_get_main_queue());
+    dispatch_assert_queue(mainDispatchQueueSingleton());
     ASSERT_UNUSED(loader, &loader == m_loader.get());
 
     m_loader = nullptr;
@@ -169,7 +169,7 @@ void SceneKitModelPlayer::didFinishLoading(SceneKitModelLoader& loader, Ref<Scen
 
 void SceneKitModelPlayer::didFailLoading(SceneKitModelLoader& loader, const ResourceError& error)
 {
-    dispatch_assert_queue(dispatch_get_main_queue());
+    dispatch_assert_queue(mainDispatchQueueSingleton());
     ASSERT_UNUSED(loader, &loader == m_loader.get());
 
     m_loader = nullptr;

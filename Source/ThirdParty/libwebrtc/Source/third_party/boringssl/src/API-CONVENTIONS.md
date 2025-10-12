@@ -299,11 +299,11 @@ If documented to output a *newly-allocated* object or a *reference* or *copy* of
 one, the caller is responsible for releasing the object when it is done.
 
 By convention, functions named `get0` return non-owning pointers. Functions
-named `new` or `get1` return owning pointers. Functions named `set0` take
-ownership of arguments. Functions named `set1` do not. They typically take a
-reference or make a copy internally. These names originally referred to the
-effect on a reference count, but the convention applies equally to
-non-reference-counted types.
+named `new` or `get1` return owning pointers. Functions named `set0` or `add0`
+take ownership of arguments. Functions named `set1` or `add1` do not. They
+typically take a reference or make a copy internally. These names originally
+referred to the effect on a reference count, but the convention applies equally
+to non-reference-counted types.
 
 API documentation may also describe more complex obligations. For instance, an
 object may borrow a pointer for longer than the duration of a single function
@@ -322,3 +322,132 @@ it as needed. Consult the API documentation for the threading guarantees of
 particular objects. In general, stateless reference-counted objects like `RSA`
 or `EVP_PKEY` which represent keys may typically be used from multiple threads
 simultaneously, provided no thread mutates the key.
+
+
+## Callbacks and Closures
+
+Several BoringSSL APIs, particularly in libssl, allow applications to configure
+callbacks to customize behavior. Often, an application may wish to pass in some
+[closure](https://en.wikipedia.org/wiki/Closure_(computer_programming)), where
+the callback is bound to some additional state. For example, a callback for TLS
+private key offload may need a handle to the application-specific private key.
+
+BoringSSL's APIs are C-based and use C function pointers, which do not support
+bound variables. Instead, C callback APIs split the closure into a function
+pointer and some `void *` data parameter. This is sometimes called "arg",
+"callback data", "context", "data", or "user data".
+
+For example, the `SSL_CTX_set_cert_cb` function takes an `arg` parameter, which
+is passed back into the user-supplied callback, `cb`. The user would pass a
+function that casts `arg` back to the expected type and looks up bound data as
+needed:
+
+```
+OPENSSL_EXPORT void SSL_CTX_set_cert_cb(SSL_CTX *ctx,
+                                        int (*cb)(SSL *ssl, void *arg),
+                                        void *arg);
+```
+
+An application might use it with a C++ `std::function` as follows:
+
+```
+int RunCertCallback(SSL *ssl, void *arg) {
+  auto *f = static_cast<std::function<int(SSL*)>*>(arg);
+  return (*f)(ssl);
+}
+
+std::function<int(SSL*)> cert_cb = ...;
+SSL_CTX_set_cert_cb(ctx, RunCertCallback, &cert_cb);
+```
+
+Note that such an application would additionally need to ensure that `cert_cb`
+outlives `ctx`, e.g. by storing it in the `SSL_CTX`'s owning object.
+
+BoringSSL APIs, however, commonly take callbacks without an explicit data
+parameter. For example, the `SSL_set_custom_verify` takes an undecorated
+`callback` parameter:
+
+```
+OPENSSL_EXPORT void SSL_set_custom_verify(
+    SSL *ssl, int mode,
+    enum ssl_verify_result_t (*callback)(SSL *ssl, uint8_t *out_alert));
+```
+
+In such APIs, the callback is expected to look up data through the owning
+object, here the `ssl`. Many types in BoringSSL, including `SSL`, support
+`ex_data`. `ex_data` lets applications associate extra data with the object. See
+the [API documentation](https://commondatastorage.googleapis.com/chromium-boringssl-docs/ex_data.h.html)
+for more details. `ex_data` also supports registering a `free_func` callback,
+which can give the application more options to ensure callback data outlives the
+object.
+
+Often, for a callback-heavy object like `SSL`, the application will already have
+some owning object that wraps the `SSL`. The application can then register a
+single `ex_data` index, pointering back to the owning object, and store all the
+callback state there.
+
+For example, this code snippet connects `SSL` callbacks to methods on some
+wrapper `MySSLConnection` class.
+
+```
+class MySSLConnection {
+ private:
+  void Init() {
+    ssl_.reset(SSL_new(...));
+    // Save a pointer in `ssl_` back to `this`. `this` owns and thus outlives
+    // `ssl_`. (To have `ssl_` own its ex_data, use `SSL_get_ex_new_index`'s
+    // `free_func` parameter.)
+    CHECK(SSL_set_ex_data(ssl_.get(), ExDataIndex(), this));
+    // Register callbacks.
+    SSL_set_custom_verify(ssl_.get(), SSL_VERIFY_PEER,
+                          &MySSLConnection::DoVerifyCallback);
+    SSL_set_info_callback(ssl_.get(), &MySSLConnection::DoInfoCallback);
+    ...
+  }
+
+  static int ExDataIndex() {
+    static const int kIndex = [] {
+      int idx = SSL_get_ex_new_index(0, nullptr, nullptr, nullptr);
+      CHECK(idx >= 0);
+      return idx;
+    }();
+    return kIndex;
+  }
+
+  static MySSLConnection *FromSSL(const SSL *ssl) {
+    return static_cast<MySSLConnection*>(
+        SSL_get_ex_data(ssl_.get(), ExDataIndex()));
+  }
+
+  // Callback functions passed to BoringSSL:
+  static ssl_verify_result_t DoVerifyCallback(SSL *ssl, uint8_t *out_alert)) {
+    return FromSSL(ssl)->Verify(out_alert);
+  }
+  static void DoInfoCallback(const SSL *ssl, int type, int value) {
+    return FromSSL(ssl)->InfoCallback(type, value);
+  }
+
+  // The underlying methods that the callback functions forward to:
+  ssl_verify_result_t VerifyCallback(uint8_t *out_alert)) { ... }
+  void InfoCallback(int type, int value) { ... }
+
+  bssl::UniquePtr<SSL> ssl_;
+};
+```
+
+In other cases, the callback may live on a different object than is passed into
+the callback. The application can then use ex_data on either the passed-in
+object, or follow accessors to parent objects. For example, an `SSL_get_SSL_CTX`
+returns the `SSL_CTX` of an `SSL` and
+[`SSL_CTX_set_cert_verify_callback`'s documentation](https://commondatastorage.googleapis.com/chromium-boringssl-docs/ssl.h.html#SSL_CTX_set_cert_verify_callback)
+mentions that `SSL_get_ex_data_X509_STORE_CTX_idx` may be used to find the `SSL`
+corresponding to the `X509_STORE_CTX`.
+
+```
+OPENSSL_EXPORT void SSL_CTX_sess_set_new_cb(
+    SSL_CTX *ctx, int (*new_session_cb)(SSL *ssl, SSL_SESSION *session));
+
+OPENSSL_EXPORT void SSL_CTX_set_cert_verify_callback(
+    SSL_CTX *ctx, int (*callback)(X509_STORE_CTX *store_ctx, void *arg),
+    void *arg);
+```

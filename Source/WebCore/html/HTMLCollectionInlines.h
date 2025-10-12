@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "HTMLCollection.h"
-#include "LiveNodeListInlines.h"
-#include "TreeScopeInlines.h"
+#include <WebCore/HTMLCollection.h>
+#include <WebCore/LiveNodeListInlines.h>
+#include <WebCore/TreeScopeInlines.h>
 
 namespace WebCore {
 
@@ -91,14 +91,14 @@ inline NodeListInvalidationType HTMLCollection::invalidationType() const
     return static_cast<NodeListInvalidationType>(m_invalidationType);
 }
 
-inline CollectionType HTMLCollection::type() const
-{
-    return static_cast<CollectionType>(m_collectionType);
-}
-
 inline Document& HTMLCollection::document() const
 {
     return m_ownerNode->document();
+}
+
+inline Ref<Document> HTMLCollection::protectedDocument() const
+{
+    return document();
 }
 
 inline void HTMLCollection::invalidateCacheForAttribute(const QualifiedName& attributeName)
@@ -106,12 +106,12 @@ inline void HTMLCollection::invalidateCacheForAttribute(const QualifiedName& att
     if (shouldInvalidateTypeOnAttributeChange(invalidationType(), attributeName))
         invalidateCache();
     else if (hasNamedElementCache() && (attributeName == HTMLNames::idAttr || attributeName == HTMLNames::nameAttr))
-        invalidateNamedElementCache(document());
+        invalidateNamedElementCache(protectedDocument().get());
 }
 
 inline void HTMLCollection::invalidateCache()
 {
-    invalidateCacheForDocument(document());
+    invalidateCacheForDocument(protectedDocument().get());
 }
 
 inline bool HTMLCollection::hasNamedElementCache() const
@@ -128,7 +128,7 @@ inline void HTMLCollection::setNamedItemCache(std::unique_ptr<CollectionNamedEle
         Locker locker { m_namedElementCacheAssignmentLock };
         m_namedElementCache = WTFMove(cache);
     }
-    document().collectionCachedIdNameMap(*this);
+    protectedDocument()->collectionCachedIdNameMap(*this);
 }
 
 inline const CollectionNamedElementCache& HTMLCollection::namedItemCaches() const

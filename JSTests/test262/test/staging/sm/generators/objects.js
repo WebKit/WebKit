@@ -2,13 +2,12 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-generators-shell.js, deepEqual.js]
-flags:
-  - noStrict
+includes: [compareArray.js]
 description: |
   pending
 esid: pending
 ---*/
+
 // This file was written by Andy Wingo <wingo@igalia.com> and originally
 // contributed to V8 as generators-objects.js, available here:
 //
@@ -22,10 +21,10 @@ function TestGeneratorObject() {
 
   var iter = g();
   assert.sameValue(Object.getPrototypeOf(iter), g.prototype);
-  assertTrue(iter instanceof g);
+  assert.sameValue(iter instanceof g, true);
   assert.sameValue(String(iter), "[object Generator]");
-  assert.deepEqual(Object.getOwnPropertyNames(iter), []);
-  assertNotEq(g(), iter);
+  assert.compareArray(Object.getOwnPropertyNames(iter), []);
+  assert.notSameValue(g(), iter);
 }
 TestGeneratorObject();
 
@@ -40,11 +39,11 @@ function TestGeneratorObjectMethods() {
   assert.sameValue(iter.throw.length, 1);
 
   function TestNonGenerator(non_generator) {
-    assertThrowsInstanceOf(function() { iter.next.call(non_generator); }, TypeError);
-    assertThrowsInstanceOf(function() { iter.next.call(non_generator, 1); }, TypeError);
-    assertThrowsInstanceOf(function() { iter.return.call(non_generator, 1); }, TypeError);
-    assertThrowsInstanceOf(function() { iter.throw.call(non_generator, 1); }, TypeError);
-    assertThrowsInstanceOf(function() { iter.close.call(non_generator); }, TypeError);
+    assert.throws(TypeError, function() { iter.next.call(non_generator); });
+    assert.throws(TypeError, function() { iter.next.call(non_generator, 1); });
+    assert.throws(TypeError, function() { iter.return.call(non_generator, 1); });
+    assert.throws(TypeError, function() { iter.throw.call(non_generator, 1); });
+    assert.throws(TypeError, function() { iter.close.call(non_generator); });
   }
 
   TestNonGenerator(1);

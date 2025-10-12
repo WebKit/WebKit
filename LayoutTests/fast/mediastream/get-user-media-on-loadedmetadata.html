@@ -18,6 +18,7 @@
                     return Promise.reject("this test needs internals API");
 
                 return navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then((stream) => {
+                    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
                     window.internals.delayMediaStreamTrackSamples(stream.getAudioTracks()[0], .5);
                     window.internals.delayMediaStreamTrackSamples(stream.getVideoTracks()[0], .5);
 

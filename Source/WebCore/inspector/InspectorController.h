@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,9 +31,9 @@
 
 #pragma once
 
-#include "InspectorOverlay.h"
 #include <JavaScriptCore/InspectorAgentRegistry.h>
 #include <JavaScriptCore/InspectorEnvironment.h>
+#include <WebCore/InspectorOverlay.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -51,7 +51,7 @@ namespace WebCore {
 
 class DOMWrapperWorld;
 class GraphicsContext;
-class InspectorClient;
+class InspectorBackendClient;
 class InspectorDOMAgent;
 class InspectorFrontendClient;
 class InspectorInstrumentation;
@@ -68,7 +68,7 @@ class InspectorController final : public Inspector::InspectorEnvironment, public
     WTF_MAKE_NONCOPYABLE(InspectorController);
     WTF_MAKE_TZONE_ALLOCATED(InspectorController);
 public:
-    InspectorController(Page&, std::unique_ptr<InspectorClient>&&);
+    InspectorController(Page&, std::unique_ptr<InspectorBackendClient>&&);
     ~InspectorController() override;
 
     WEBCORE_EXPORT void ref() const;
@@ -78,6 +78,7 @@ public:
 
     WEBCORE_EXPORT bool enabled() const;
     Page& inspectedPage() const;
+    Ref<Page> protectedInspectedPage() const;
 
     WEBCORE_EXPORT void show();
 
@@ -114,7 +115,7 @@ public:
     WEBCORE_EXPORT unsigned flexOverlayCount() const;
     WEBCORE_EXPORT unsigned paintRectCount() const;
 
-    InspectorClient* inspectorClient() const { return m_inspectorClient.get(); }
+    InspectorBackendClient* inspectorBackendClient() const { return m_inspectorBackendClient.get(); }
     InspectorFrontendClient* inspectorFrontendClient() const { return m_inspectorFrontendClient; }
 
     Inspector::InspectorAgent& ensureInspectorAgent();
@@ -138,16 +139,16 @@ private:
     void createLazyAgents();
 
     WeakRef<Page> m_page;
-    Ref<InstrumentingAgents> m_instrumentingAgents;
-    std::unique_ptr<WebInjectedScriptManager> m_injectedScriptManager;
-    Ref<Inspector::FrontendRouter> m_frontendRouter;
-    Ref<Inspector::BackendDispatcher> m_backendDispatcher;
+    const Ref<InstrumentingAgents> m_instrumentingAgents;
+    const UniqueRef<WebInjectedScriptManager> m_injectedScriptManager;
+    const Ref<Inspector::FrontendRouter> m_frontendRouter;
+    const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     const UniqueRef<InspectorOverlay> m_overlay;
-    Ref<WTF::Stopwatch> m_executionStopwatch;
+    const Ref<WTF::Stopwatch> m_executionStopwatch;
     std::unique_ptr<PageDebugger> m_debugger;
     Inspector::AgentRegistry m_agents;
 
-    std::unique_ptr<InspectorClient> m_inspectorClient;
+    std::unique_ptr<InspectorBackendClient> m_inspectorBackendClient;
     InspectorFrontendClient* m_inspectorFrontendClient { nullptr };
 
     // Lazy, but also on-demand agents.

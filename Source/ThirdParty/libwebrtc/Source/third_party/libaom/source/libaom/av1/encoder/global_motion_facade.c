@@ -91,13 +91,15 @@ static inline void compute_global_motion_for_ref_frame(
   GlobalMotionMethod global_motion_method = default_global_motion_method;
   int downsample_level = cpi->sf.gm_sf.downsample_level;
   int num_refinements = cpi->sf.gm_sf.num_refinement_steps;
+  int gm_erroradv_tr_level = cpi->sf.gm_sf.gm_erroradv_tr_level;
   bool mem_alloc_failed = false;
 
+  assert(gm_erroradv_tr_level < 2);
   // Select the best model based on fractional error reduction.
   // By initializing this to erroradv_tr, the same logic which is used to
   // select the best model will automatically filter out any model which
   // doesn't meet the required quality threshold
-  double best_erroradv = erroradv_tr;
+  double best_erroradv = erroradv_tr[gm_erroradv_tr_level];
   for (TransformationType model = FIRST_GLOBAL_TRANS_TYPE;
        model <= LAST_GLOBAL_TRANS_TYPE; ++model) {
     if (!aom_compute_global_motion(model, cpi->source, ref_buf[frame],
@@ -148,7 +150,8 @@ static inline void compute_global_motion_for_ref_frame(
           ref_buf[frame]->y_buffer, ref_buf[frame]->y_crop_width,
           ref_buf[frame]->y_crop_height, ref_buf[frame]->y_stride,
           cpi->source->y_buffer, src_width, src_height, src_stride,
-          num_refinements, ref_frame_error, segment_map, segment_map_w);
+          num_refinements, ref_frame_error, segment_map, segment_map_w,
+          erroradv_tr[gm_erroradv_tr_level]);
 
       // av1_refine_integerized_param() can return a simpler model type than
       // its input, so re-check model type here
@@ -160,7 +163,8 @@ static inline void compute_global_motion_for_ref_frame(
       if (!av1_is_enough_erroradvantage(
               erroradvantage,
               gm_get_params_cost(&tmp_wm_params, ref_params,
-                                 cm->features.allow_high_precision_mv))) {
+                                 cm->features.allow_high_precision_mv),
+              erroradv_tr[gm_erroradv_tr_level])) {
         continue;
       }
 

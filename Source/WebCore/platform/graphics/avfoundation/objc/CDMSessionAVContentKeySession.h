@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,18 +70,10 @@ public:
     RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const override;
 
     // CDMSessionMediaSourceAVFObjC
-    void addParser(AVStreamDataParser *) override;
-    void removeParser(AVStreamDataParser *) override;
     bool isAnyKeyUsable(const Keys&) const override;
     void attachContentKeyToSample(const MediaSampleAVFObjC&) override;
 
     void didProvideContentKeyRequest(AVContentKeyRequest *);
-
-    bool hasContentKeySession() const { return !!m_contentKeySession; }
-    AVContentKeySession* contentKeySession();
-
-    bool hasContentKeyRequest() const;
-    RetainPtr<AVContentKeyRequest> contentKeyRequest() const;
 
 protected:
     CDMSessionAVContentKeySession(Vector<int>&& protocolVersions, int cdmVersion, CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient&);
@@ -92,9 +84,17 @@ protected:
     ASCIILiteral logClassName() const { return "CDMSessionAVContentKeySession"_s; }
 #endif
 
-    RetainPtr<AVContentKeySession> m_contentKeySession;
-    RetainPtr<WebCDMSessionAVContentKeySessionDelegate> m_contentKeySessionDelegate;
-    Ref<WTF::WorkQueue> m_delegateQueue;
+private:
+    static RetainPtr<AVContentKeySession> createContentKeySession(NSURL *);
+    bool hasContentKeySession() const { return !!m_contentKeySession; }
+    AVContentKeySession* contentKeySession();
+
+    bool hasContentKeyRequest() const;
+    RetainPtr<AVContentKeyRequest> contentKeyRequest() const;
+
+    const RetainPtr<AVContentKeySession> m_contentKeySession;
+    const RetainPtr<WebCDMSessionAVContentKeySessionDelegate> m_contentKeySessionDelegate;
+    const Ref<WTF::WorkQueue> m_delegateQueue;
     Semaphore m_hasKeyRequestSemaphore;
     mutable Lock m_keyRequestLock;
     RetainPtr<AVContentKeyRequest> m_keyRequest;
@@ -103,11 +103,10 @@ protected:
     RetainPtr<NSData> m_expiredSession;
     Vector<int> m_protocolVersions;
     int m_cdmVersion;
-    int32_t m_protectedTrackID { 1 };
     enum { Normal, KeyRelease } m_mode;
 
 #if !RELEASE_LOG_DISABLED
-    Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
 #endif
 };

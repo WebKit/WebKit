@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,15 +26,16 @@
 
 #pragma once
 
-#include "BackForwardFrameItemIdentifier.h"
-#include "BackForwardItemIdentifier.h"
-#include "FloatRect.h"
-#include "FrameIdentifier.h"
-#include "FrameLoaderTypes.h"
-#include "IntPoint.h"
-#include "IntRect.h"
-#include "PolicyContainer.h"
+#include <WebCore/BackForwardFrameItemIdentifier.h>
+#include <WebCore/BackForwardItemIdentifier.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/IntPoint.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/PolicyContainer.h>
 #include <memory>
+#include <wtf/Platform.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
@@ -42,12 +43,11 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include "ViewportArguments.h"
+#include <WebCore/ViewportArguments.h>
 #endif
 
 #if PLATFORM(COCOA)
 #import <wtf/RetainPtr.h>
-typedef struct objc_object* id;
 #endif
 
 namespace WebCore {
@@ -296,7 +296,7 @@ private:
     BackForwardFrameItemIdentifier m_frameItemID;
     WTF::UUID m_uuidIdentifier;
     std::optional<PolicyContainer> m_policyContainer;
-    Ref<Client> m_client;
+    const Ref<Client> m_client;
 };
 
 } // namespace WebCore

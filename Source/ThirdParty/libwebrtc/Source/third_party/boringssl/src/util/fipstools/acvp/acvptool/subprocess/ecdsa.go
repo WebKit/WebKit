@@ -1,16 +1,16 @@
-// Copyright (c) 2019, Google Inc.
+// Copyright 2019 The BoringSSL Authors
 //
-// Permission to use, copy, modify, and/or distribute this software for any
-// purpose with or without fee is hereby granted, provided that the above
-// copyright notice and this permission notice appear in all copies.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-// WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-// SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-// OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-// CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package subprocess
 
@@ -26,6 +26,7 @@ import (
 
 type ecdsaTestVectorSet struct {
 	Groups []ecdsaTestGroup `json:"testGroups"`
+	Algorithm string        `json:"algorithm"`
 	Mode   string           `json:"mode"`
 }
 
@@ -76,6 +77,10 @@ func (e *ecdsa) Process(vectorSet []byte, m Transactable) (any, error) {
 	var parsed ecdsaTestVectorSet
 	if err := json.Unmarshal(vectorSet, &parsed); err != nil {
 		return nil, err
+	}
+
+	if parsed.Algorithm == "DetECDSA" && parsed.Mode != "sigGen" {
+		return nil, fmt.Errorf("DetECDSA only specifies sigGen mode")
 	}
 
 	var ret []ecdsaTestGroupResponse
@@ -139,6 +144,10 @@ func (e *ecdsa) Process(vectorSet []byte, m Transactable) (any, error) {
 				})
 
 			case "sigGen":
+				if group.ComponentTest && parsed.Algorithm == "DetECDSA" {
+					return nil, fmt.Errorf("DetECDSA does not support component tests")
+				}
+
 				p := e.primitives[group.HashAlgo]
 				h, ok := p.(*hashPrimitive)
 				if !ok {
@@ -147,7 +156,13 @@ func (e *ecdsa) Process(vectorSet []byte, m Transactable) (any, error) {
 
 				if len(sigGenPrivateKey) == 0 {
 					// Ask the subprocess to generate a key for this test group.
-					result, err := m.Transact(e.algo+"/"+"keyGen", 3, []byte(group.Curve))
+					cmd := e.algo + "/keyGen"
+					if e.algo == "DetECDSA" {
+						// Use "ECDSA/keyGen" for DetECDSA to avoid the module wrapper needing to support a second
+						// keyGen command for DetECDSA.
+						cmd = "ECDSA/keyGen"
+					}
+					result, err := m.Transact(cmd, 3, []byte(group.Curve))
 					if err != nil {
 						return nil, fmt.Errorf("key generation failed for test case %d/%d: %s", group.ID, test.ID, err)
 					}

@@ -38,11 +38,11 @@ require "risc"
 #  x6 => scratch            (callee-save)
 #  x7 => cfr
 #  x8 => t6                 (callee-save)
-#  x9 => t7, also scratch!  (callee-save)
+#  x9 => t7, scratch        (callee-save)
 # x10 => csr0               (callee-save, metadataTable)
 # x11 => csr1               (callee-save, PB)
-# x12 => scratch            (callee-save)
-#  lr => lr
+# x12 => csr2               (callee-save)
+#  lr => lr, scratch
 #  sp => sp
 #  pc => pc
 #
@@ -84,12 +84,10 @@ class SpecialRegister
     end
 end
 
-# These are allocated from the end. Use the low order r6 first, ast it's often
-# cheaper to encode. r12 and r9 are equivalent, but r9 conflicts with t7, so r9
-# only as last resort.
-ARM_EXTRA_GPRS = [SpecialRegister.new("r9"), SpecialRegister.new("r12"), SpecialRegister.new("r6")]
-ARM_EXTRA_FPRS = [SpecialRegister.new("d7")]
-ARM_SCRATCH_FPR = SpecialRegister.new("d15")
+# These are allocated from the end. Use the low order r6 first, as it's often
+# cheaper to encode.
+ARM_EXTRA_GPRS = [SpecialRegister.new("r9"), SpecialRegister.new("lr"), SpecialRegister.new("r6")]
+ARM_SCRATCH_FPR = SpecialRegister.new("d7")
 OS_DARWIN = ((RUBY_PLATFORM =~ /darwin/i) != nil)
 
 def armMoveImmediate(value, register)
@@ -111,28 +109,30 @@ end
 class RegisterID
     def armOperand
         case name
-        when "t0", "a0", "wa0", "r0"
+        when "t0"
             "r0"
-        when "t1", "a1", "wa1", "r1"
+        when "t1"
             "r1"
-        when "t2", "a2", "wa2"
+        when "t2"
             "r2"
-        when "t3", "a3", "wa3"
+        when "t3"
             "r3"
-        when "t4" # LLInt PC
+        when "t4"
             "r4"
-        when "t5", "ws0" # ws0 must be a non-argument/non-return GPR
+        when "t5"
             "r5"
         when "cfr"
             "r7"
-        when "t6", "ws1" # ws1 must be a non-argument/non-return GPR
+        when "t6"
             "r8"
         when "t7"
-            "r9" # r9 is also a scratch register, so use carefully!
+            "r9" # Also scratch, be careful!
         when "csr0"
             "r10"
         when "csr1"
             "r11"
+        when "csr2"
+            "r12"
         when "lr"
             "lr"
         when "sp"
@@ -148,21 +148,21 @@ end
 class FPRegisterID
     def armOperand
         case name
-        when "ft0", "fr", "fa0", "wfa0"
+        when "ft0"
             "d0"
-        when "ft1", "fa1", "wfa1"
+        when "ft1"
             "d1"
-        when "ft2", "wfa2"
+        when "ft2"
             "d2"
-        when "ft3", "wfa3"
+        when "ft3"
             "d3"
-        when "ft4", "wfa4"
+        when "ft4"
             "d4"
-        when "ft5", "wfa5"
+        when "ft5"
             "d5"
-        when "ft6", "wfa6"
+        when "ft6"
             "d6"
-        when "ft7", "wfa7"
+        when "ft7"
             "d7"
         when "csfr0"
             "d8"
@@ -176,6 +176,10 @@ class FPRegisterID
             "d12"
         when "csfr5"
             "d13"
+        when "csfr6"
+            "d14"
+        when "csfr7" # This is a scratch, be careful!
+            "d15"
         else
             raise "Bad register #{name} for ARM at #{codeOriginString}"
         end
@@ -363,7 +367,6 @@ class Sequence
         result = riscLowerMisplacedAddresses(result)
         result = riscLowerRegisterReuse(result)
         result = assignRegistersToTemporaries(result, :gpr, ARM_EXTRA_GPRS)
-        result = assignRegistersToTemporaries(result, :fpr, ARM_EXTRA_FPRS)
         result = armLowerStackPointerInComparison(result)
         return result
     end
@@ -469,7 +472,7 @@ def rawInstruction(codeOrigin, text)
 end
 
 def emitArmTruncateFloat(codeOrigin, to, from, operands)
-    tmp = ARM_EXTRA_FPRS[-1]
+    tmp = ARM_SCRATCH_FPR
     src = from == "f32" ? operands[0].armSingle : operands[0].armOperand
     Sequence.new(codeOrigin, [
         rawInstruction(codeOrigin, "vcvt.#{to}.#{from} #{tmp.armSingle}, #{src}"),

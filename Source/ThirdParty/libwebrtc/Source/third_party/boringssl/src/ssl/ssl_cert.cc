@@ -1,116 +1,17 @@
-/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
- * All rights reserved.
- *
- * This package is an SSL implementation written
- * by Eric Young (eay@cryptsoft.com).
- * The implementation was written so as to conform with Netscapes SSL.
- *
- * This library is free for commercial and non-commercial use as long as
- * the following conditions are aheared to.  The following conditions
- * apply to all code found in this distribution, be it the RC4, RSA,
- * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
- * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- *
- * Copyright remains Eric Young's, and as such any Copyright notices in
- * the code are not to be removed.
- * If this package is used in a product, Eric Young should be given attribution
- * as the author of the parts of the library used.
- * This can be in the form of a textual message at program startup or
- * in documentation (online or textual) provided with the package.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *    "This product includes cryptographic software written by
- *     Eric Young (eay@cryptsoft.com)"
- *    The word 'cryptographic' can be left out if the rouines from the library
- *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from
- *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- *
- * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * The licence and distribution terms for any publically available version or
- * derivative of this code cannot be changed.  i.e. this code cannot simply be
- * copied and put under another distribution licence
- * [including the GNU Public Licence.]
- */
-/* ====================================================================
- * Copyright (c) 1998-2007 The OpenSSL Project.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
- *
- * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission. For written permission, please contact
- *    openssl-core@openssl.org.
- *
- * 5. Products derived from this software may not be called "OpenSSL"
- *    nor may "OpenSSL" appear in their names without prior written
- *    permission of the OpenSSL Project.
- *
- * 6. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit (http://www.openssl.org/)"
- *
- * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
- *
- * This product includes cryptographic software written by Eric Young
- * (eay@cryptsoft.com).  This product includes software written by Tim
- * Hudson (tjh@cryptsoft.com).
- *
- */
-/* ====================================================================
- * Copyright 2002 Sun Microsystems, Inc. ALL RIGHTS RESERVED.
- * ECC cipher suite support in OpenSSL originally developed by
- * SUN MICROSYSTEMS, INC., and contributed to the OpenSSL project. */
+// Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved.
+// Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <openssl/ssl.h>
 
@@ -122,10 +23,12 @@
 
 #include <openssl/bn.h>
 #include <openssl/bytestring.h>
+#include <openssl/ec.h>
 #include <openssl/ec_key.h>
 #include <openssl/err.h>
+#include <openssl/evp.h>
 #include <openssl/mem.h>
-#include <openssl/sha.h>
+#include <openssl/sha2.h>
 #include <openssl/x509.h>
 
 #include "../crypto/internal.h"
@@ -178,7 +81,7 @@ static void ssl_cert_set_cert_cb(CERT *cert, int (*cb)(SSL *ssl, void *arg),
 static int cert_set_chain_and_key(
     CERT *cert, CRYPTO_BUFFER *const *certs, size_t num_certs,
     EVP_PKEY *privkey, const SSL_PRIVATE_KEY_METHOD *privkey_method) {
-  if (num_certs == 0 ||
+  if (num_certs == 0 ||  //
       (privkey == NULL && privkey_method == NULL)) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
@@ -268,7 +171,7 @@ bool ssl_parse_cert_chain(uint8_t *out_alert,
 
     UniquePtr<CRYPTO_BUFFER> buf(
         CRYPTO_BUFFER_new_from_CBS(&certificate, pool));
-    if (!buf ||
+    if (!buf ||  //
         !PushToStack(chain.get(), std::move(buf))) {
       *out_alert = SSL_AD_INTERNAL_ERROR;
       return false;
@@ -302,13 +205,14 @@ static bool ssl_cert_skip_to_spki(const CBS *in, CBS *out_tbs_cert) {
   CBS buf = *in;
 
   CBS toplevel;
-  if (!CBS_get_asn1(&buf, &toplevel, CBS_ASN1_SEQUENCE) ||
-      CBS_len(&buf) != 0 ||
-      !CBS_get_asn1(&toplevel, out_tbs_cert, CBS_ASN1_SEQUENCE) ||
+  if (!CBS_get_asn1(&buf, &toplevel, CBS_ASN1_SEQUENCE) ||          //
+      CBS_len(&buf) != 0 ||                                         //
+      !CBS_get_asn1(&toplevel, out_tbs_cert, CBS_ASN1_SEQUENCE) ||  //
       // version
       !CBS_get_optional_asn1(
           out_tbs_cert, NULL, NULL,
-          CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 0) ||
+          CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 0) ||  //
+
       // serialNumber
       !CBS_get_asn1(out_tbs_cert, NULL, CBS_ASN1_INTEGER) ||
       // signature algorithm
@@ -330,17 +234,17 @@ bool ssl_cert_extract_issuer(const CBS *in, CBS *out_dn) {
 
   CBS toplevel;
   CBS cert;
-  if (!CBS_get_asn1(&buf, &toplevel, CBS_ASN1_SEQUENCE) || //
-      CBS_len(&buf) != 0 || //
-      !CBS_get_asn1(&toplevel, &cert, CBS_ASN1_SEQUENCE) || //
+  if (!CBS_get_asn1(&buf, &toplevel, CBS_ASN1_SEQUENCE) ||   //
+      CBS_len(&buf) != 0 ||                                  //
+      !CBS_get_asn1(&toplevel, &cert, CBS_ASN1_SEQUENCE) ||  //
       // version
       !CBS_get_optional_asn1(
           &cert, NULL, NULL,
-          CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 0) ||
+          CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 0) ||  //
       // serialNumber
-      !CBS_get_asn1(&cert, NULL, CBS_ASN1_INTEGER) ||
+      !CBS_get_asn1(&cert, NULL, CBS_ASN1_INTEGER) ||  //
       // signature algorithm
-      !CBS_get_asn1(&cert, NULL, CBS_ASN1_SEQUENCE) ||
+      !CBS_get_asn1(&cert, NULL, CBS_ASN1_SEQUENCE) ||  //
       // issuer
       !CBS_get_asn1_element(&cert, out_dn, CBS_ASN1_SEQUENCE)) {
     return false;
@@ -358,13 +262,14 @@ bool ssl_cert_matches_issuer(const CBS *in, const CBS *dn) {
 }
 
 UniquePtr<EVP_PKEY> ssl_cert_parse_pubkey(const CBS *in) {
-  CBS buf = *in, tbs_cert;
-  if (!ssl_cert_skip_to_spki(&buf, &tbs_cert)) {
+  CBS buf = *in, tbs_cert, spki;
+  if (!ssl_cert_skip_to_spki(&buf, &tbs_cert) ||
+      !CBS_get_asn1_element(&tbs_cert, &spki, CBS_ASN1_SEQUENCE)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_CANNOT_PARSE_LEAF_CERT);
     return nullptr;
   }
 
-  return UniquePtr<EVP_PKEY>(EVP_parse_public_key(&tbs_cert));
+  return ssl_parse_peer_subject_public_key_info(spki);
 }
 
 bool ssl_compare_public_and_private_key(const EVP_PKEY *pubkey,
@@ -497,7 +402,7 @@ UniquePtr<STACK_OF(CRYPTO_BUFFER)> SSL_parse_CA_list(SSL *ssl,
 
     UniquePtr<CRYPTO_BUFFER> buffer(
         CRYPTO_BUFFER_new_from_CBS(&distinguished_name, pool));
-    if (!buffer ||
+    if (!buffer ||  //
         !PushToStack(ret.get(), std::move(buffer))) {
       *out_alert = SSL_AD_INTERNAL_ERROR;
       return nullptr;
@@ -528,7 +433,8 @@ static bool CA_names_non_empty(const STACK_OF(CRYPTO_BUFFER) *config_names,
 static bool marshal_CA_names(const STACK_OF(CRYPTO_BUFFER) *config_names,
                              const STACK_OF(CRYPTO_BUFFER) *ctx_names,
                              CBB *cbb) {
-  const STACK_OF(CRYPTO_BUFFER) *names = config_names == nullptr ? ctx_names : config_names;
+  const STACK_OF(CRYPTO_BUFFER) *names =
+      config_names == nullptr ? ctx_names : config_names;
   CBB child, name_cbb;
 
   if (!CBB_add_u16_length_prefixed(cbb, &child)) {
@@ -551,7 +457,8 @@ static bool marshal_CA_names(const STACK_OF(CRYPTO_BUFFER) *config_names,
 }
 
 bool ssl_has_client_CAs(const SSL_CONFIG *cfg) {
-  return CA_names_non_empty(cfg->client_CA.get(), cfg->ssl->ctx->client_CA.get());
+  return CA_names_non_empty(cfg->client_CA.get(),
+                            cfg->ssl->ctx->client_CA.get());
 }
 
 bool ssl_has_CA_names(const SSL_CONFIG *cfg) {
@@ -559,11 +466,13 @@ bool ssl_has_CA_names(const SSL_CONFIG *cfg) {
 }
 
 bool ssl_add_client_CA_list(const SSL_HANDSHAKE *hs, CBB *cbb) {
-  return marshal_CA_names(hs->config->client_CA.get(), hs->ssl->ctx->client_CA.get(), cbb);
+  return marshal_CA_names(hs->config->client_CA.get(),
+                          hs->ssl->ctx->client_CA.get(), cbb);
 }
 
 bool ssl_add_CA_names(const SSL_HANDSHAKE *hs, CBB *cbb) {
-  return marshal_CA_names(hs->config->CA_names.get(), hs->ssl->ctx->CA_names.get(), cbb);
+  return marshal_CA_names(hs->config->CA_names.get(),
+                          hs->ssl->ctx->CA_names.get(), cbb);
 }
 
 bool ssl_check_leaf_certificate(SSL_HANDSHAKE *hs, EVP_PKEY *pkey,
@@ -582,12 +491,11 @@ bool ssl_check_leaf_certificate(SSL_HANDSHAKE *hs, EVP_PKEY *pkey,
 
   if (EVP_PKEY_id(pkey) == EVP_PKEY_EC) {
     // Check the key's group and point format are acceptable.
-    EC_KEY *ec_key = EVP_PKEY_get0_EC_KEY(pkey);
     uint16_t group_id;
-    if (!ssl_nid_to_group_id(
-            &group_id, EC_GROUP_get_curve_name(EC_KEY_get0_group(ec_key))) ||
+    if (!ssl_nid_to_group_id(&group_id, EVP_PKEY_get_ec_curve_nid(pkey)) ||
         !tls1_check_group_id(hs, group_id) ||
-        EC_KEY_get_conv_form(ec_key) != POINT_CONVERSION_UNCOMPRESSED) {
+        EVP_PKEY_get_ec_point_conv_form(pkey) !=
+            POINT_CONVERSION_UNCOMPRESSED) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECC_CERT);
       return false;
     }

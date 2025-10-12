@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,15 +97,15 @@ protected:
 
 private:
 
-    Ref<AudioParam> m_positionX;
-    Ref<AudioParam> m_positionY;
-    Ref<AudioParam> m_positionZ;
-    Ref<AudioParam> m_forwardX;
-    Ref<AudioParam> m_forwardY;
-    Ref<AudioParam> m_forwardZ;
-    Ref<AudioParam> m_upX;
-    Ref<AudioParam> m_upY;
-    Ref<AudioParam> m_upZ;
+    const Ref<AudioParam> m_positionX;
+    const Ref<AudioParam> m_positionY;
+    const Ref<AudioParam> m_positionZ;
+    const Ref<AudioParam> m_forwardX;
+    const Ref<AudioParam> m_forwardY;
+    const Ref<AudioParam> m_forwardZ;
+    const Ref<AudioParam> m_upX;
+    const Ref<AudioParam> m_upY;
+    const Ref<AudioParam> m_upZ;
 
     // Last time that the automations were updated.
     double m_lastUpdateTime { -1 };

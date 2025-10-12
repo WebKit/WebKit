@@ -10,6 +10,7 @@
 
 #include <assert.h>
 #include <limits.h>
+#include <stdint.h>
 
 #include "vpx_scale/yv12config.h"
 #include "vpx_mem/vpx_mem.h"
@@ -26,7 +27,7 @@
  *
  ****************************************************************************/
 #define yv12_align_addr(addr, align) \
-  (void *)(((size_t)(addr) + ((align)-1)) & (size_t) - (align))
+  (void *)(((size_t)(addr) + ((align) - 1)) & (size_t)-(align))
 
 int vp8_yv12_de_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf) {
   if (ybf) {
@@ -199,11 +200,13 @@ int vpx_realloc_frame_buffer(YV12_BUFFER_CONFIG *ybf, int width, int height,
     if (frame_size > VPX_MAX_ALLOCABLE_MEMORY / REF_FRAMES) return -1;
 #endif  // VPX_MAX_ALLOCABLE_MEMORY
 
+#if UINT64_MAX > SIZE_MAX
     // frame_size is stored in buffer_alloc_sz, which is a size_t. If it won't
     // fit, fail early.
     if (frame_size > SIZE_MAX) {
       return -1;
     }
+#endif
 
     if (cb != NULL) {
       const int align_addr_extra_size = 31;

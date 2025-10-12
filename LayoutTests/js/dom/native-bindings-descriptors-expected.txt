@@ -1,14 +1,14 @@
 CONSOLE MESSAGE: [object Object]
-CONSOLE MESSAGE: function get nodeType() {
+CONSOLE MESSAGE: function nodeType() {
     [native code]
 }
 document.title
 PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title') is not Object.getOwnPropertyDescriptor(Document.prototype, 'title')
 PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').get is Object.getOwnPropertyDescriptor(Document.prototype, 'title').get
 PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').set is Object.getOwnPropertyDescriptor(Document.prototype, 'title').set
-PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.toString() is "function get title() {\n    [native code]\n}"
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.toString() is "function title() {\n    [native code]\n}"
 PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.length is 0
-PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').set.toString() is "function set title() {\n    [native code]\n}"
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').set.toString() is "function title() {\n    [native code]\n}"
 PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').set.length is 1
 PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.call(document) is document.title
 PASS document.title is "old title"
@@ -27,7 +27,7 @@ document.readyState
 PASS Object.getOwnPropertyDescriptor(Document.prototype, 'readyState') is not Object.getOwnPropertyDescriptor(Document.prototype, 'readyState')
 PASS Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').get is Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').get
 PASS Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').set is Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').set
-PASS Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').get.toString() is "function get readyState() {\n    [native code]\n}"
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').get.toString() is "function readyState() {\n    [native code]\n}"
 PASS Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').get.length is 0
 PASS Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').get.call(document) is document.readyState
 PASS Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').set is undefined.

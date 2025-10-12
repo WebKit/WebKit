@@ -1,0 +1,4 @@
+
+PASS SVGAElement.type getter
+PASS Test anchor's type getter when type attribute missing
+

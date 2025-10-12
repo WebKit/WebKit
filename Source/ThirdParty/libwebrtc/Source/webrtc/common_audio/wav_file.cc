@@ -10,17 +10,19 @@
 
 #include "common_audio/wav_file.h"
 
-#include <errno.h>
-
 #include <algorithm>
 #include <array>
+#include <cstdint>
 #include <cstdio>
 #include <type_traits>
 #include <utility>
 
+#include "absl/strings/string_view.h"
 #include "common_audio/include/audio_util.h"
+#include "common_audio/wav_header.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/system/arch.h"
+#include "rtc_base/system/file_wrapper.h"
 
 namespace webrtc {
 namespace {

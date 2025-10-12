@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: SecurityError: Attempted to use a non-registrable domain.
 
 
 Harness Error (TIMEOUT), message = null

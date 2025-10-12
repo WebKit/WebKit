@@ -29,6 +29,7 @@
 #if USE(GRAPHICS_LAYER_WC)
 
 #include <WebCore/GLContext.h>
+#include <WebCore/PlatformDisplay.h>
 #include <WebCore/TextureMapper.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -38,7 +39,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WCSceneContext);
 
 WCSceneContext::WCSceneContext(uint64_t nativeWindow)
 {
-    m_glContext = WebCore::GLContext::create(reinterpret_cast<GLNativeWindowType>(nativeWindow), WebCore::PlatformDisplay::sharedDisplay());
+    m_glContext = WebCore::GLContext::create(WebCore::PlatformDisplay::sharedDisplay(), reinterpret_cast<GLNativeWindowType>(nativeWindow));
 }
 
 WCSceneContext::~WCSceneContext() = default;

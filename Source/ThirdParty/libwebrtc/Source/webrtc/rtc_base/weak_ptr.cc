@@ -10,10 +10,12 @@
 
 #include "rtc_base/weak_ptr.h"
 
+#include "api/sequence_checker.h"
+
 // The implementation is borrowed from chromium except that it does not
 // implement SupportsWeakPtr.
 
-namespace rtc {
+namespace webrtc {
 namespace internal {
 
 void WeakReference::Flag::Invalidate() {
@@ -55,7 +57,7 @@ WeakReference WeakReferenceOwner::GetRef() const {
 }
 
 void WeakReferenceOwner::Invalidate() {
-  if (flag_.get()) {
+  if (flag_) {
     flag_->Invalidate();
     flag_ = nullptr;
   }
@@ -68,4 +70,4 @@ WeakPtrBase::~WeakPtrBase() {}
 WeakPtrBase::WeakPtrBase(const WeakReference& ref) : ref_(ref) {}
 
 }  // namespace internal
-}  // namespace rtc
+}  // namespace webrtc

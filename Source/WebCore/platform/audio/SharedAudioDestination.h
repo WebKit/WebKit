@@ -25,10 +25,11 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(WEB_AUDIO)
 
-#include "AudioDestination.h"
-#include "PageIdentifier.h"
+#include <WebCore/AudioDestination.h>
+#include <WebCore/PageIdentifier.h>
 
 namespace WebCore {
 

@@ -12,7 +12,6 @@
 #define P2P_BASE_WRAPPING_ACTIVE_ICE_CONTROLLER_H_
 
 #include <memory>
-#include <optional>
 
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "p2p/base/active_ice_controller_interface.h"
@@ -26,7 +25,7 @@
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_annotations.h"
 
-namespace cricket {
+namespace webrtc {
 
 // WrappingActiveIceController provides the functionality of a legacy passive
 // ICE controller but packaged as an active ICE Controller.
@@ -79,8 +78,8 @@ class WrappingActiveIceController : public ActiveIceControllerInterface {
 
   void PruneConnections();
 
-  rtc::Thread* const network_thread_;
-  webrtc::ScopedTaskSafety task_safety_;
+  Thread* const network_thread_;
+  ScopedTaskSafety task_safety_;
 
   bool started_pinging_ RTC_GUARDED_BY(network_thread_) = false;
   bool sort_pending_ RTC_GUARDED_BY(network_thread_) = false;
@@ -92,6 +91,7 @@ class WrappingActiveIceController : public ActiveIceControllerInterface {
   IceAgentInterface& agent_ RTC_GUARDED_BY(network_thread_);
 };
 
-}  // namespace cricket
+}  //  namespace webrtc
+
 
 #endif  // P2P_BASE_WRAPPING_ACTIVE_ICE_CONTROLLER_H_

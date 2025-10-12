@@ -348,9 +348,6 @@ struct VideoConfig {
 
 // Contains properties for audio in the call.
 struct AudioConfig {
-  AudioConfig() = default;
-  explicit AudioConfig(absl::string_view stream_label);
-
   // Have to be unique among all specified configs for all peers in the call.
   // Will be auto generated if omitted.
   std::optional<std::string> stream_label;
@@ -362,7 +359,7 @@ struct AudioConfig {
   std::optional<std::string> output_dump_file_name;
 
   // Audio options to use.
-  cricket::AudioOptions audio_options;
+  AudioOptions audio_options;
   // Sampling frequency of input audio data (from file or generated).
   int sampling_frequency_in_hz = 48000;
   // If specified, determines a sync group to which this audio stream belongs.
@@ -397,9 +394,9 @@ class VideoSubscription {
   // Returns the resolution constructed as maximum from all resolution
   // dimensions: width, height and fps.
   static std::optional<VideoResolution> GetMaxResolution(
-      rtc::ArrayView<const VideoConfig> video_configs);
+      ArrayView<const VideoConfig> video_configs);
   static std::optional<VideoResolution> GetMaxResolution(
-      rtc::ArrayView<const VideoResolution> resolutions);
+      ArrayView<const VideoResolution> resolutions);
 
   bool operator==(const VideoSubscription& other) const;
   bool operator!=(const VideoSubscription& other) const;

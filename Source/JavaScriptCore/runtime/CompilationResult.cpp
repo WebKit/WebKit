@@ -33,16 +33,16 @@ using namespace JSC;
 void printInternal(PrintStream& out, CompilationResult result)
 {
     switch (result) {
-    case CompilationFailed:
+    case CompilationResult::CompilationFailed:
         out.print("CompilationFailed");
         return;
-    case CompilationInvalidated:
+    case CompilationResult::CompilationInvalidated:
         out.print("CompilationInvalidated");
         return;
-    case CompilationSuccessful:
+    case CompilationResult::CompilationSuccessful:
         out.print("CompilationSuccessful");
         return;
-    case CompilationDeferred:
+    case CompilationResult::CompilationDeferred:
         out.print("CompilationDeferred");
         return;
     }

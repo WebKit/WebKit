@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "ExecutableBaseInlines.h"
-#include "FunctionExecutable.h"
-#include "JSBoundFunction.h"
-#include "JSFunction.h"
-#include "JSRemoteFunction.h"
-#include "NativeExecutable.h"
+#include <JavaScriptCore/ExecutableBaseInlines.h>
+#include <JavaScriptCore/FunctionExecutable.h>
+#include <JavaScriptCore/JSBoundFunction.h>
+#include <JavaScriptCore/JSFunction.h>
+#include <JavaScriptCore/JSRemoteFunction.h>
+#include <JavaScriptCore/NativeExecutable.h>
 #include <wtf/text/MakeString.h>
 
 namespace JSC {

@@ -1,4 +1,4 @@
 Click me
 
-FAIL PerformanceObserver observes events according to its durationThreshold assert_implements: Event Timing is not supported. undefined
+PASS PerformanceObserver observes events according to its durationThreshold
 

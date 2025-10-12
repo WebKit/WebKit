@@ -44,6 +44,11 @@ RenderMathMLPadded::RenderMathMLPadded(MathMLPaddedElement& element, RenderStyle
 
 RenderMathMLPadded::~RenderMathMLPadded() = default;
 
+MathMLPaddedElement& RenderMathMLPadded::element() const
+{
+    return static_cast<MathMLPaddedElement&>(nodeForNonAnonymous());
+}
+
 LayoutUnit RenderMathMLPadded::voffset() const
 {
     return toUserUnits(element().voffset(), style(), 0);
@@ -128,10 +133,6 @@ void RenderMathMLPadded::layoutBlock(RelayoutChildren relayoutChildren, LayoutUn
     adjustLayoutForBorderAndPadding();
 
     layoutOutOfFlowBoxes(relayoutChildren);
-
-    updateScrollInfoAfterLayout();
-
-    clearNeedsLayout();
 }
 
 std::optional<LayoutUnit> RenderMathMLPadded::firstLineBaseline() const

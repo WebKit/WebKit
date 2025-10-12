@@ -28,7 +28,7 @@
 #include <wtf/CheckedPtr.h>
 
 #if ASSERT_ENABLED
-#include "ElementIteratorAssertions.h"
+#include <WebCore/ElementIteratorAssertions.h>
 #endif
 
 namespace WebCore {

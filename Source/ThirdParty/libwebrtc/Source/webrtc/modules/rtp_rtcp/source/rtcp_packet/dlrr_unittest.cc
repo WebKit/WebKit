@@ -10,6 +10,10 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/dlrr.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "test/gtest.h"
 
@@ -18,12 +22,12 @@ using webrtc::rtcp::ReceiveTimeInfo;
 
 namespace webrtc {
 namespace {
-const uint32_t kSsrc = 0x12345678;
-const uint32_t kLastRR = 0x23344556;
-const uint32_t kDelay = 0x33343536;
-const uint8_t kBlock[] = {0x05, 0x00, 0x00, 0x03, 0x12, 0x34, 0x56, 0x78,
-                          0x23, 0x34, 0x45, 0x56, 0x33, 0x34, 0x35, 0x36};
-const size_t kBlockSizeBytes = sizeof(kBlock);
+constexpr uint32_t kSsrc = 0x12345678;
+constexpr uint32_t kLastRR = 0x23344556;
+constexpr uint32_t kDelay = 0x33343536;
+constexpr uint8_t kBlock[] = {0x05, 0x00, 0x00, 0x03, 0x12, 0x34, 0x56, 0x78,
+                              0x23, 0x34, 0x45, 0x56, 0x33, 0x34, 0x35, 0x36};
+constexpr size_t kBlockSizeBytes = sizeof(kBlock);
 }  // namespace
 
 TEST(RtcpPacketDlrrTest, Empty) {

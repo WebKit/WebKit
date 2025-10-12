@@ -1,0 +1,13 @@
+Verify the series of sub-tests that are executed for namespace attributes.
+
+
+PASS foo namespace: extended attributes
+PASS foo namespace: property descriptor
+PASS foo namespace: [[Extensible]] is true
+PASS foo namespace: [[Prototype]] is Object.prototype
+PASS foo namespace: typeof is "object"
+PASS foo namespace: has no length property
+PASS foo namespace: has no name property
+PASS foo namespace: attribute truth
+FAIL foo namespace: attribute lies assert_own_property: foo does not have property "lies" expected property "lies" missing
+

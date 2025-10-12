@@ -26,6 +26,7 @@
 
 // Currently DispatchedFrom=Networking when APPLE_PAY_REMOTE_UI and DispatchedFrom=UI when !APPLE_PAY_REMOTE_UI
 [
+    ExceptionForDispatchedFrom,
     DispatchedTo=WebContent
 ]
 messages -> WebPaymentCoordinator {

@@ -29,7 +29,7 @@ extern "C" {
 // Border for Loop restoration buffer
 #define AOM_RESTORATION_FRAME_BORDER 32
 #define CLIP(x, lo, hi) ((x) < (lo) ? (lo) : (x) > (hi) ? (hi) : (x))
-#define RINT(x) ((x) < 0 ? (int)((x)-0.5) : (int)((x) + 0.5))
+#define RINT(x) ((x) < 0 ? (int)((x) - 0.5) : (int)((x) + 0.5))
 
 #define RESTORATION_PROC_UNIT_SIZE 64
 
@@ -87,8 +87,8 @@ extern "C" {
   (RESTORATION_UNITPELS_HORZ_MAX * RESTORATION_UNITPELS_VERT_MAX)
 
 // Two 32-bit buffers needed for the restored versions from two filters
-// TODO(debargha, rupert): Refactor to not need the large tilesize to be stored
-// on the decoder side.
+// TODO(debargha, rupert): Refactor to not need the large tile size to be
+// stored on the decoder side.
 #define SGRPROJ_TMPBUF_SIZE (RESTORATION_UNITPELS_MAX * 2 * sizeof(int32_t))
 
 #define SGRPROJ_EXTBUF_SIZE (0)

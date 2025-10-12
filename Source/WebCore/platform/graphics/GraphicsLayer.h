@@ -25,40 +25,42 @@
 
 #pragma once
 
-#include "Color.h"
-#include "EventRegion.h"
-#include "FilterOperations.h"
-#include "FloatPoint.h"
-#include "FloatPoint3D.h"
-#include "FloatRoundedRect.h"
-#include "FloatSize.h"
-#include "GraphicsLayerClient.h"
-#include "GraphicsTypes.h"
-#include "HTMLMediaElementIdentifier.h"
-#include "LayerHostingContextIdentifier.h"
-#include "MediaPlayerEnums.h"
-#include "Path.h"
-#include "PlatformLayer.h"
-#include "PlatformLayerIdentifier.h"
-#include "ProcessIdentifier.h"
-#include "ProcessQualified.h"
-#include "Region.h"
-#include "ScrollableArea.h"
-#include "ScrollTypes.h"
-#include "TimingFunction.h"
-#include "TransformOperations.h"
-#include "WindRule.h"
+#include <WebCore/Color.h>
+#include <WebCore/EventRegion.h>
+#include <WebCore/FilterOperations.h>
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatPoint3D.h>
+#include <WebCore/FloatRoundedRect.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/GraphicsLayerClient.h>
+#include <WebCore/GraphicsLayerEnums.h>
+#include <WebCore/GraphicsTypes.h>
+#include <WebCore/HTMLMediaElementIdentifier.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/MediaPlayerEnums.h>
+#include <WebCore/Path.h>
+#include <WebCore/PlatformLayer.h>
+#include <WebCore/PlatformLayerIdentifier.h>
+#include <WebCore/ProcessIdentifier.h>
+#include <WebCore/ProcessQualified.h>
+#include <WebCore/Region.h>
+#include <WebCore/ScrollTypes.h>
+#include <WebCore/ScrollableArea.h>
+#include <WebCore/TimingFunction.h>
+#include <WebCore/TransformOperations.h>
+#include <WebCore/WindRule.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
-#include "AcceleratedEffectStack.h"
+#include <WebCore/AcceleratedEffectStack.h>
 #endif
 
 #if HAVE(CORE_MATERIAL)
-#include "AppleVisualEffect.h"
+#include <WebCore/AppleVisualEffect.h>
 #endif
 
 namespace WTF {
@@ -67,8 +69,8 @@ class TextStream;
 
 namespace WebCore {
 
-class Animation;
 class GraphicsContext;
+class GraphicsLayerAnimation;
 class GraphicsLayerFactory;
 class GraphicsLayerContentsDisplayDelegate;
 class GraphicsLayerAsyncContentsDisplayDelegate;
@@ -278,20 +280,15 @@ protected:
 class GraphicsLayer : public RefCounted<GraphicsLayer> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(GraphicsLayer, WEBCORE_EXPORT);
 public:
-    enum class Type : uint8_t {
-        Normal,
-        Structural, // Supports position and transform only, and doesn't flatten (i.e. behaves like preserves3D is true). Uses CATransformLayer on Cocoa platforms.
-        PageTiledBacking,
-        TiledBacking,
-        ScrollContainer,
-        ScrolledContents,
-        Shape
-    };
-    
-    enum class LayerMode : uint8_t {
-        PlatformLayer,
-        LayerHostingContextId
-    };
+    // Enums from GraphicsLayerEnums.h:
+    using Type = GraphicsLayerType;
+    using LayerMode = GraphicsLayerMode;
+    using ShouldSetNeedsDisplay = GraphicsLayerShouldSetNeedsDisplay;
+    using ShouldClipToLayer = GraphicsLayerShouldClipToLayer;
+    using CompositingCoordinatesOrientation = GraphicsLayerCompositingCoordinatesOrientation;
+    using ScalingFilter = GraphicsLayerScalingFilter;
+    using CustomAppearance = GraphicsLayerCustomAppearance;
+    using ContentsLayerPurpose = GraphicsLayerContentsLayerPurpose;
 
     virtual LayerMode layerMode() const { return LayerMode::PlatformLayer; }
     
@@ -312,6 +309,7 @@ public:
     virtual void initialize(Type) { }
 
     virtual std::optional<PlatformLayerIdentifier> primaryLayerID() const { return std::nullopt; }
+    virtual std::optional<PlatformLayerIdentifier> layerIDIgnoringStructuralLayer() const { return primaryLayerID(); }
 
     GraphicsLayerClient& client() const { return *m_client; }
 
@@ -320,7 +318,8 @@ public:
     virtual void setName(const String& name) { m_name = name; }
     WEBCORE_EXPORT virtual String debugName() const;
 
-    GraphicsLayer* parent() const { return m_parent; };
+    GraphicsLayer* parent() const { return m_parent; }
+    RefPtr<GraphicsLayer> protectedParent() const { return m_parent; }
     void setParent(GraphicsLayer*); // Internal use only.
     
     // Returns true if the layer has the given layer as an ancestor (excluding self).
@@ -362,18 +361,13 @@ public:
     const FloatPoint& replicatedLayerPosition() const { return m_replicatedLayerPosition; }
     void setReplicatedLayerPosition(const FloatPoint& p) { m_replicatedLayerPosition = p; }
 
-    enum ShouldSetNeedsDisplay {
-        DontSetNeedsDisplay,
-        SetNeedsDisplay
-    };
-
     // Offset is origin of the renderer minus origin of the graphics layer.
     FloatSize offsetFromRenderer() const { return m_offsetFromRenderer; }
-    void setOffsetFromRenderer(const FloatSize&, ShouldSetNeedsDisplay = SetNeedsDisplay);
+    void setOffsetFromRenderer(const FloatSize&, ShouldSetNeedsDisplay = ShouldSetNeedsDisplay::Set);
 
     // Scroll offset of the content layer inside its scrolling parent layer.
     ScrollOffset scrollOffset() const { return m_scrollOffset; }
-    void setScrollOffset(const ScrollOffset&, ShouldSetNeedsDisplay = SetNeedsDisplay);
+    void setScrollOffset(const ScrollOffset&, ShouldSetNeedsDisplay = ShouldSetNeedsDisplay::Set);
 
 #if ENABLE(SCROLLING_THREAD)
     std::optional<ScrollingNodeID> scrollingNodeID() const { return m_scrollingNodeID; }
@@ -427,6 +421,11 @@ public:
 #if HAVE(SUPPORT_HDR_DISPLAY)
     bool drawsHDRContent() const { return m_drawsHDRContent; }
     WEBCORE_EXPORT virtual void setDrawsHDRContent(bool);
+
+    bool tonemappingEnabled() const { return m_tonemappingEnabled; }
+    WEBCORE_EXPORT virtual void setTonemappingEnabled(bool);
+
+    WEBCORE_EXPORT virtual void setNeedsDisplayIfEDRHeadroomExceeds(float);
 #endif
 
     bool contentsAreVisible() const { return m_contentsVisible; }
@@ -494,16 +493,12 @@ public:
     OptionSet<GraphicsLayerPaintingPhase> paintingPhase() const { return m_paintingPhase; }
     void setPaintingPhase(OptionSet<GraphicsLayerPaintingPhase>);
 
-    enum ShouldClipToLayer {
-        DoNotClipToLayer,
-        ClipToLayer
-    };
-
     virtual void setNeedsDisplay() = 0;
     // mark the given rect (in layer coords) as needing dispay. Never goes deep.
-    virtual void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) = 0;
+    virtual void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ShouldClipToLayer::Clip) = 0;
 
     virtual void setContentsNeedsDisplay() { };
+    virtual void setContentsNeedsDisplayInRect(const FloatRect&) { setContentsNeedsDisplay(); }
 
     // The tile phase is relative to the GraphicsLayer bounds.
     virtual void setContentsTilePhase(const FloatSize& p) { m_contentsTilePhase = p; }
@@ -542,7 +537,7 @@ public:
     static String animationNameForTransition(AnimatedProperty);
 
     // Return true if the animation is handled by the compositing system.
-    virtual bool addAnimation(const KeyframeValueList&, const FloatSize& /*boxSize*/, const Animation*, const String& /*animationName*/, double /*timeOffset*/)  { return false; }
+    virtual bool addAnimation(const KeyframeValueList&, const GraphicsLayerAnimation*, const String& /*animationName*/, double /*timeOffset*/)  { return false; }
     virtual void pauseAnimation(const String& /*animationName*/, double /*timeOffset*/) { }
     virtual void removeAnimation(const String& /*animationName*/, std::optional<AnimatedProperty>) { }
     virtual void transformRelatedPropertyDidChange() { }
@@ -563,18 +558,6 @@ public:
     virtual PlatformLayer* contentsLayerForMedia() const { return 0; }
 #endif
 
-    enum class ContentsLayerPurpose : uint8_t {
-        None = 0,
-        Image,
-        Media,
-        Canvas,
-        BackgroundColor,
-        Plugin,
-        Model,
-        HostedModel,
-        Host,
-    };
-
     // Pass an invalid color to remove the contents layer.
     virtual void setContentsToSolidColor(const Color&) { }
     virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) { }
@@ -586,7 +569,7 @@ public:
     virtual void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose);
     WEBCORE_EXPORT virtual RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate(GraphicsLayerAsyncContentsDisplayDelegate* existing);
 #if ENABLE(MODEL_ELEMENT)
-    enum class ModelInteraction : uint8_t { Enabled, Disabled };
+    using ModelInteraction = GraphicsLayerModelInteraction;
     virtual void setContentsToModel(RefPtr<Model>&&, ModelInteraction) { }
     virtual std::optional<PlatformLayerIdentifier> contentsLayerIDForModel() const { return std::nullopt; }
 #endif
@@ -597,14 +580,14 @@ public:
 
     // For hosting this GraphicsLayer in a native layer hierarchy.
     virtual PlatformLayer* platformLayer() const { return nullptr; }
-
-    enum class CompositingCoordinatesOrientation : uint8_t { TopDown, BottomUp };
+#if PLATFORM(COCOA)
+    RetainPtr<CALayer> protectedPlatformLayer() const;
+#endif
 
     // Flippedness of the contents of this layer. Does not affect sublayer geometry.
     virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation) { m_contentsOrientation = orientation; }
     CompositingCoordinatesOrientation contentsOrientation() const { return m_contentsOrientation; }
 
-    enum class ScalingFilter { Linear, Nearest, Trilinear };
     virtual void setContentsMinificationFilter(ScalingFilter filter) { m_contentsMinificationFilter = filter; }
     ScalingFilter contentsMinificationFilter() const { return m_contentsMinificationFilter; }
     virtual void setContentsMagnificationFilter(ScalingFilter filter) { m_contentsMagnificationFilter = filter; }
@@ -628,10 +611,6 @@ public:
     virtual void setDebugBackgroundColor(const Color&) { }
     virtual void setDebugBorder(const Color&, float /*borderWidth*/) { }
 
-    enum class CustomAppearance : bool {
-        None,
-        ScrollingShadow
-    };
     virtual void setCustomAppearance(CustomAppearance customAppearance) { m_customAppearance = customAppearance; }
     CustomAppearance customAppearance() const { return m_customAppearance; }
 
@@ -696,6 +675,7 @@ public:
     virtual bool backingStoreAttachedForTesting() const { return backingStoreAttached(); }
 
     virtual TiledBacking* tiledBacking() const { return 0; }
+    CheckedPtr<TiledBacking> checkedTiledBacking() const { return tiledBacking(); }
     WEBCORE_EXPORT virtual void setTileCoverage(TileCoverage);
 
     void resetTrackedRepaints();
@@ -827,6 +807,7 @@ protected:
     bool m_drawsContent : 1;
 #if HAVE(SUPPORT_HDR_DISPLAY)
     bool m_drawsHDRContent : 1 { false };
+    bool m_tonemappingEnabled : 1 { false };
 #endif
     bool m_contentsVisible : 1;
     bool m_contentsRectClipsDescendants : 1;

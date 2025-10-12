@@ -1,0 +1,12 @@
+
+PASS e.style['math-depth'] = "auto" should not set the property value
+PASS e.style['math-depth'] = "invalid" should not set the property value
+PASS e.style['math-depth'] = "add" should not set the property value
+PASS e.style['math-depth'] = "add(0.5)" should not set the property value
+PASS e.style['math-depth'] = "add(1px)" should not set the property value
+PASS e.style['math-depth'] = "0.5" should not set the property value
+PASS e.style['math-depth'] = "1px" should not set the property value
+PASS e.style['math-depth'] = "auto-add add(1)" should not set the property value
+PASS e.style['math-depth'] = "auto-add 1" should not set the property value
+PASS e.style['math-depth'] = "add(1) 1" should not set the property value
+

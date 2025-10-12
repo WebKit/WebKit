@@ -100,7 +100,7 @@ void ProcessLauncher::launchProcess()
     startupInfo.dwFlags = STARTF_USESHOWWINDOW;
     startupInfo.wShowWindow = SW_HIDE;
     PROCESS_INFORMATION processInformation { };
-    BOOL result = ::CreateProcess(0, commandLine.data(), 0, 0, true, 0, 0, 0, &startupInfo, &processInformation);
+    BOOL result = ::CreateProcess(0, commandLine.mutableSpan().data(), 0, 0, true, 0, 0, 0, &startupInfo, &processInformation);
 
     // We can now close the client identifier handle.
     ::CloseHandle(clientIdentifier);
@@ -118,7 +118,7 @@ void ProcessLauncher::launchProcess()
     m_hProcess = Win32Handle::adopt(processInformation.hProcess);
     WTF::ProcessID pid = processInformation.dwProcessId;
 
-    RunLoop::protectedMain()->dispatch([protectedThis, pid, serverIdentifier] {
+    RunLoop::mainSingleton().dispatch([protectedThis, pid, serverIdentifier] {
         protectedThis->didFinishLaunchingProcess(pid, IPC::Connection::Identifier { serverIdentifier });
     });
 }

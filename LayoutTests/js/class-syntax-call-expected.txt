@@ -4,9 +4,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS new A
-PASS A():::"TypeError: Cannot call a class constructor without |new|"
+PASS A():::"TypeError: Cannot call a class constructor A without |new|"
 PASS new B
-PASS B():::"TypeError: Cannot call a class constructor without |new|"
+PASS B():::"TypeError: Cannot call a class constructor B without |new|"
 PASS new (class { constructor() {} })()
 PASS (class { constructor() {} })():::"TypeError: Cannot call a class constructor without |new|"
 PASS new (class extends null { constructor() { super() } })():::"TypeError: function is not a constructor (evaluating 'super()')"

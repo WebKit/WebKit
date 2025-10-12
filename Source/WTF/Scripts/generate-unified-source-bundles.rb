@@ -71,6 +71,7 @@ $outputXCFilelistPath = nil
 $maxCppBundleCount = nil
 $maxCBundleCount = nil
 $maxObjCBundleCount = nil
+$maxNonARCObjCBundleCount = nil
 $maxBundleSize = 8
 $denseBundleFilters = []
 $bundleFilenamePrefix = ''
@@ -91,6 +92,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--max-cpp-bundle-count', GetoptLong::REQUIRED_ARGUMENT],
                ['--max-c-bundle-count', GetoptLong::REQUIRED_ARGUMENT],
                ['--max-obj-c-bundle-count', GetoptLong::REQUIRED_ARGUMENT],
+               ['--max-non-arc-obj-c-bundle-count', GetoptLong::REQUIRED_ARGUMENT],
                ['--max-bundle-size', GetoptLong::REQUIRED_ARGUMENT],
                ['--dense-bundle-filter', GetoptLong::REQUIRED_ARGUMENT],
                ['--bundle-filename-prefix', GetoptLong::REQUIRED_ARGUMENT]).each {
@@ -121,6 +123,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $maxCBundleCount = arg.to_i
     when '--max-obj-c-bundle-count'
         $maxObjCBundleCount = arg.to_i
+    when '--max-non-arc-obj-c-bundle-count'
+        $maxNonARCObjCBundleCount = arg.to_i
     when '--max-bundle-size'
         $maxBundleSize = arg.to_i
     when '--dense-bundle-filter'
@@ -146,10 +150,11 @@ $inputSources = []
 $outputSources = []
 
 class SourceFile
-    attr_reader :unifiable, :fileIndex, :path
+    attr_reader :unifiable, :fileIndex, :path, :bundleManagerKey
     def initialize(file, fileIndex)
         @unifiable = true
         @fileIndex = fileIndex
+        @nonARC = false
 
         attributeStart = file =~ /@/
         if attributeStart
@@ -160,6 +165,8 @@ class SourceFile
                 case attribute.strip
                 when "no-unify"
                     @unifiable = false
+                when "nonARC"
+                    @nonARC = true
                 else
                     raise "unknown attribute: #{attribute}"
                 end
@@ -168,6 +175,15 @@ class SourceFile
         end
 
         @path = Pathname.new(file.strip)
+        @bundleManagerKey = @path.extname
+        if @nonARC
+            case @bundleManagerKey
+            when ".mm"
+                @bundleManagerKey = ".nonARC-mm"
+            else
+                raise "used @nonARC with source file that does not have a .mm extension"
+            end
+        end
     end
 
     def <=>(other)
@@ -197,10 +213,11 @@ class SourceFile
 end
 
 class BundleManager
-    attr_reader :bundleCount, :extension, :fileCount, :currentBundleText, :maxCount, :extraFiles
+    attr_reader :bundleCount, :extension, :suffix, :fileCount, :currentBundleText, :maxCount, :extraFiles
 
-    def initialize(extension, max)
+    def initialize(extension, suffix, max)
         @extension = extension
+        @suffix = suffix
         @fileCount = 0
         @bundleCount = 0
         @currentBundleText = ""
@@ -231,7 +248,7 @@ class BundleManager
                 hash = Digest::SHA1.hexdigest(@currentDirectory.to_s)[0..7]
                 "-#{hash}-#{@bundleCount}"
             end
-        @extension == "cpp" ? "#{$bundleFilenamePrefix}UnifiedSource#{id}.#{extension}" : "#{$bundleFilenamePrefix}UnifiedSource#{id}-#{extension}.#{extension}"
+        "#{$bundleFilenamePrefix}UnifiedSource#{id}#{suffix}"
     end
 
     def flush
@@ -254,7 +271,6 @@ class BundleManager
 
     def addFile(sourceFile)
         path = sourceFile.path
-        raise "wrong extension: #{path.extname} expected #{@extension}" unless path.extname == ".#{@extension}"
         bundlePrefix, bundleSize = BundlePrefixAndSizeForPath(path)
         if (@lastBundlingPrefix != bundlePrefix)
             unless @fileCount.zero?
@@ -298,7 +314,7 @@ def ProcessFileForUnifiedSourceGeneration(sourceFile)
     path = sourceFile.path
     $inputSources << sourceFile.to_s
 
-    bundle = $bundleManagers[path.extname]
+    bundle = $bundleManagers[sourceFile.bundleManagerKey]
     if !bundle
         log("No bundle for #{path.extname} files, building #{path} standalone")
         $generatedSources << sourceFile
@@ -311,9 +327,10 @@ def ProcessFileForUnifiedSourceGeneration(sourceFile)
 end
 
 $bundleManagers = {
-    ".cpp" => BundleManager.new("cpp", $maxCppBundleCount),
-    ".c" => BundleManager.new("c", $maxCBundleCount),
-    ".mm" => BundleManager.new("mm", $maxObjCBundleCount)
+    ".cpp" => BundleManager.new("cpp", ".cpp", $maxCppBundleCount),
+    ".c" => BundleManager.new("c", "-c.c", $maxCBundleCount),
+    ".mm" => BundleManager.new("mm", "-ARC.mm", $maxObjCBundleCount),
+    ".nonARC-mm" => BundleManager.new("mm", "-nonARC.mm", $maxNonARCObjCBundleCount)
 }
 
 seen = {}

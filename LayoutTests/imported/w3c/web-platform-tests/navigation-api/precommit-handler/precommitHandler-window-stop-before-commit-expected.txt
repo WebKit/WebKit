@@ -1,0 +1,3 @@
+
+FAIL  precommitHandler with window.stop() before commit assert_equals: expected "" but got "#ShouldNotCommit"
+

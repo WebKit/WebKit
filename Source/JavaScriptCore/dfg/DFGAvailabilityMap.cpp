@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,16 +35,25 @@
 
 namespace JSC { namespace DFG {
 
-void AvailabilityMap::pruneHeap()
+AvailabilityMap AvailabilityMap::filterByLiveness(Graph& graph, CodeOrigin where)
 {
+    AvailabilityMap filtered;
+    filtered.m_locals = Operands<Availability>(OperandsLike, m_locals, Availability::unavailable());
+    graph.forAllLiveInBytecode(
+        where,
+        [&] (Operand reg) {
+            filtered.m_locals.operand(reg) = m_locals.operand(reg);
+        });
+
+    // filter the heap.
     if (m_heap.isEmpty())
-        return;
-    
+        return filtered;
+
     NodeSet possibleNodes;
-    
-    for (unsigned i = m_locals.size(); i--;) {
-        if (m_locals[i].hasNode())
-            possibleNodes.addVoid(m_locals[i].node());
+
+    for (unsigned i = filtered.m_locals.size(); i--;) {
+        if (filtered.m_locals[i].hasNode())
+            possibleNodes.addVoid(filtered.m_locals[i].node());
     }
 
     closeOverNodes(
@@ -54,25 +63,18 @@ void AvailabilityMap::pruneHeap()
         [&] (Node* node) -> bool {
             return possibleNodes.add(node).isNewEntry;
         });
-    
-    UncheckedKeyHashMap<PromotedHeapLocation, Availability> newHeap;
+
     for (auto pair : m_heap) {
         if (possibleNodes.contains(pair.key.base()))
-            newHeap.add(pair.key, pair.value);
+            filtered.m_heap.add(pair.key, pair.value);
     }
-    m_heap = WTFMove(newHeap);
+
+    return filtered;
 }
 
 void AvailabilityMap::pruneByLiveness(Graph& graph, CodeOrigin where)
 {
-    Operands<Availability> localsCopy(OperandsLike, m_locals, Availability::unavailable());
-    graph.forAllLiveInBytecode(
-        where,
-        [&] (Operand reg) {
-            localsCopy.operand(reg) = m_locals.operand(reg);
-        });
-    m_locals = WTFMove(localsCopy);
-    pruneHeap();
+    *this = filterByLiveness(graph, where);
 }
 
 void AvailabilityMap::clear()
@@ -94,6 +96,38 @@ void AvailabilityMap::merge(const AvailabilityMap& other)
     for (auto pair : other.m_heap) {
         auto result = m_heap.add(pair.key, Availability());
         result.iterator->value = pair.value.merge(result.iterator->value);
+    }
+}
+
+void AvailabilityMap::validateAvailability(Graph& graph, Node* where) const
+{
+    if (where->origin.exitOK) {
+        for (auto& heapPair : m_heap) {
+            if (heapPair.value.isFlushUseful()) {
+                FlushedAt heapFlushLocation = heapPair.value.flushedAt();
+                // We should always have an SSA value to use for materializations in the heap.
+                DFG_ASSERT(graph, where, heapPair.value.hasNode());
+
+                if (!heapFlushLocation.virtualRegister().isValid()) {
+                    // If we don't have a location on the stack yet then there's not much to validate.
+                    continue;
+                }
+
+                for (unsigned i = 0; i < m_locals.size(); ++i) {
+                    // Look for our flush in the locals it should be there and match our heap location.
+                    Availability localAvailability = m_locals[i];
+
+                    if (localAvailability.flushedAt().virtualRegister() == heapFlushLocation.virtualRegister()) {
+                        if (localAvailability.hasNode() && heapPair.value.node() != localAvailability.node())
+                            DFG_CRASH(graph, where, toCString("Materialization flushed availability ", heapPair.value, " and local flushed availability ", localAvailability, " disagree on which DFG node the same stack slot holds in ", *this).data());
+
+                        if (heapFlushLocation.format() != localAvailability.flushedAt().format())
+                            DFG_CRASH(graph, where, toCString("Materialization should be flushed (", heapPair.value, ") but corresponding local doesn't exist or match (", localAvailability, ") in ", *this).data());
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
 

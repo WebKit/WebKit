@@ -130,13 +130,6 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void print_rdbx(srtp_rdbx_t *rdbx)
-{
-    char buf[2048];
-    printf("rdbx: {%llu, %s}\n", (unsigned long long)(rdbx->index),
-           bitvector_bit_string(&rdbx->bitmask, buf, sizeof(buf)));
-}
-
 /*
  * rdbx_check_add(rdbx, idx) checks a known-to-be-good idx against
  * rdbx, then adds it.  if a failure is detected (i.e., the check
@@ -150,7 +143,7 @@ srtp_err_status_t rdbx_check_add(srtp_rdbx_t *rdbx, uint32_t idx)
     int delta;
     srtp_xtd_seq_num_t est;
 
-    delta = srtp_index_guess(&rdbx->index, &est, idx);
+    delta = srtp_index_guess(&rdbx->index, &est, (srtp_sequence_number_t)idx);
 
     if (srtp_rdbx_check(rdbx, delta) != srtp_err_status_ok) {
         printf("replay_check failed at index %u\n", idx);
@@ -183,7 +176,7 @@ srtp_err_status_t rdbx_check_expect_failure(srtp_rdbx_t *rdbx, uint32_t idx)
     srtp_xtd_seq_num_t est;
     srtp_err_status_t status;
 
-    delta = srtp_index_guess(&rdbx->index, &est, idx);
+    delta = srtp_index_guess(&rdbx->index, &est, (srtp_sequence_number_t)idx);
 
     status = srtp_rdbx_check(rdbx, delta);
     if (status == srtp_err_status_ok) {
@@ -201,7 +194,7 @@ srtp_err_status_t rdbx_check_add_unordered(srtp_rdbx_t *rdbx, uint32_t idx)
     srtp_xtd_seq_num_t est;
     srtp_err_status_t rstat;
 
-    delta = srtp_index_guess(&rdbx->index, &est, idx);
+    delta = srtp_index_guess(&rdbx->index, &est, (srtp_sequence_number_t)idx);
 
     rstat = srtp_rdbx_check(rdbx, delta);
     if ((rstat != srtp_err_status_ok) &&
@@ -340,7 +333,7 @@ double rdbx_check_adds_per_second(int num_trials, unsigned long ws)
     failures = 0;
     timer = clock();
     for (i = 0; (int)i < num_trials; i++) {
-        delta = srtp_index_guess(&rdbx.index, &est, i);
+        delta = srtp_index_guess(&rdbx.index, &est, (srtp_sequence_number_t)i);
 
         if (srtp_rdbx_check(&rdbx, delta) != srtp_err_status_ok)
             ++failures;

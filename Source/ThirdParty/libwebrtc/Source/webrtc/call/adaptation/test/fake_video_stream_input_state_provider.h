@@ -11,6 +11,7 @@
 #ifndef CALL_ADAPTATION_TEST_FAKE_VIDEO_STREAM_INPUT_STATE_PROVIDER_H_
 #define CALL_ADAPTATION_TEST_FAKE_VIDEO_STREAM_INPUT_STATE_PROVIDER_H_
 
+#include "call/adaptation/video_stream_input_state.h"
 #include "call/adaptation/video_stream_input_state_provider.h"
 
 namespace webrtc {

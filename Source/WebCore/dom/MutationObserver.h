@@ -31,10 +31,10 @@
 
 #pragma once
 
-#include "GCReachableRef.h"
+#include <WebCore/GCReachableRef.h>
+#include <WebCore/MutationObserverOptions.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
-#include <wtf/OptionSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
@@ -53,24 +53,6 @@ class MutationRecord;
 class Node;
 class WindowEventLoop;
 template<typename> class ExceptionOr;
-
-enum class MutationObserverOptionType : uint8_t {
-    // MutationType
-    ChildList = 1 << 0,
-    Attributes = 1 << 1,
-    CharacterData = 1 << 2,
-
-    // ObservationFlags
-    Subtree = 1 << 3,
-    AttributeFilter = 1 << 4,
-
-    // DeliveryFlags
-    AttributeOldValue = 1 << 5,
-    CharacterDataOldValue = 1 << 6,
-};
-
-using MutationObserverOptions = OptionSet<MutationObserverOptionType>;
-using MutationRecordDeliveryOptions = OptionSet<MutationObserverOptionType>;
 
 class MutationObserver final : public RefCounted<MutationObserver> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MutationObserver);
@@ -93,7 +75,7 @@ public:
     
     struct TakenRecords {
         Vector<Ref<MutationRecord>> records;
-        UncheckedKeyHashSet<GCReachableRef<Node>> pendingTargets;
+        HashSet<GCReachableRef<Node>> pendingTargets;
     };
     TakenRecords takeRecords();
     void disconnect();
@@ -107,9 +89,9 @@ public:
     bool isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor&) const;
 
     MutationCallback& callback() const { return m_callback.get(); }
-    Ref<MutationCallback> protectedCallback() const;
 
     static void enqueueSlotChangeEvent(HTMLSlotElement&);
+    static void enqueueShadowRootAttachedEvent(Element&);
 
     static void notifyMutationObservers(WindowEventLoop&);
 
@@ -124,9 +106,9 @@ private:
 
     static bool validateOptions(MutationObserverOptions);
 
-    Ref<MutationCallback> m_callback;
+    const Ref<MutationCallback> m_callback;
     Vector<Ref<MutationRecord>> m_records;
-    UncheckedKeyHashSet<GCReachableRef<Node>> m_pendingTargets;
+    HashSet<GCReachableRef<Node>> m_pendingTargets;
     WeakHashSet<MutationObserverRegistration> m_registrations;
     unsigned m_priority;
 };

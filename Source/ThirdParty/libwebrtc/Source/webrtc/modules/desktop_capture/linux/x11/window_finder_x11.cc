@@ -14,7 +14,10 @@
 
 #include <memory>
 
+#include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/linux/x11/window_list_utils.h"
+#include "modules/desktop_capture/window_finder.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

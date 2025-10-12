@@ -28,8 +28,10 @@
 
 #if ENABLE(MEDIA_SESSION)
 
-#include "DocumentInlines.h"
+#include "ContextDestructionObserverInlines.h"
 #include "DocumentLoader.h"
+#include "DocumentPage.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "HTMLMediaElement.h"
 #include "JSDOMPromiseDeferred.h"
@@ -42,8 +44,8 @@
 #include "MediaSessionCoordinator.h"
 #include "Navigator.h"
 #include "NowPlayingInfo.h"
-#include "Page.h"
 #include "PlatformMediaSessionManager.h"
+#include "Settings.h"
 #include "UserMediaController.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/JSONValues.h>
@@ -152,10 +154,10 @@ MediaSession::MediaSession(Navigator& navigator)
     : ActiveDOMObject(navigator.scriptExecutionContext())
     , m_navigator(navigator)
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    , m_coordinator(MediaSessionCoordinator::create(navigator.scriptExecutionContext()))
+    , m_coordinator(MediaSessionCoordinator::create(navigator.protectedScriptExecutionContext().get()))
 #endif
 {
-    m_logger = &Document::sharedLogger();
+    m_logger = Document::sharedLogger();
     m_logIdentifier = nextLogIdentifier();
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
@@ -270,21 +272,27 @@ ExceptionOr<void> MediaSession::setActionHandler(MediaSessionAction action, RefP
         return Exception { ExceptionCode::TypeError, makeString("Argument 1 ('action') to MediaSession.setActionHandler must be a value other than '"_s, convertEnumerationToString(action), "'"_s) };
 #endif
 
-    if (action == MediaSessionAction::Voiceactivity) {
-        if (RefPtr document = this->document())
-            document->setShouldListenToVoiceActivity(!!handler);
-    }
+    if (document && action == MediaSessionAction::Voiceactivity)
+        document->setShouldListenToVoiceActivity(!!handler);
 #endif
 
+    RefPtr sessionManager = this->sessionManager();
+    if (!sessionManager)
+        ERROR_LOG(LOGIDENTIFIER, "NULL session manager");
     if (handler) {
         ALWAYS_LOG(LOGIDENTIFIER, "adding ", action);
         {
             Locker lock { m_actionHandlersLock };
             m_actionHandlers.set(action, handler);
         }
-        auto platformCommand = platformCommandForMediaSessionAction(action);
-        if (platformCommand != PlatformMediaSession::RemoteControlCommandType::NoCommand)
-            PlatformMediaSessionManager::singleton().addSupportedCommand(platformCommand);
+
+        if (sessionManager) {
+            auto platformCommand = platformCommandForMediaSessionAction(action);
+            if (platformCommand != PlatformMediaSession::RemoteControlCommandType::NoCommand) {
+                ALWAYS_LOG(LOGIDENTIFIER, "adding ", action);
+                sessionManager->addSupportedCommand(platformCommand);
+            }
+        }
     } else {
         bool containedAction;
         {
@@ -292,9 +300,11 @@ ExceptionOr<void> MediaSession::setActionHandler(MediaSessionAction action, RefP
             containedAction = m_actionHandlers.remove(action);
         }
 
-        if (containedAction)
-            ALWAYS_LOG(LOGIDENTIFIER, "removing ", action);
-        PlatformMediaSessionManager::singleton().removeSupportedCommand(platformCommandForMediaSessionAction(action));
+        if (sessionManager) {
+            if (containedAction)
+                ALWAYS_LOG(LOGIDENTIFIER, "removing ", action);
+            sessionManager->removeSupportedCommand(platformCommandForMediaSessionAction(action));
+        }
     }
 
     notifyActionHandlerObservers();
@@ -392,6 +402,24 @@ Document* MediaSession::document() const
     return m_navigator->window()->document();
 }
 
+RefPtr<Document> MediaSession::protectedDocument() const
+{
+    return document();
+}
+
+RefPtr<MediaSessionManagerInterface> MediaSession::sessionManager() const
+{
+    RefPtr document = this->document();
+    if (!document)
+        return nullptr;
+
+    RefPtr page = document->page();
+    if (!page)
+        return nullptr;
+
+    return page->mediaSessionManager();
+}
+
 void MediaSession::metadataUpdated(const MediaMetadata& metadata)
 {
     notifyMetadataObservers(const_cast<MediaMetadata*>(&metadata));
@@ -456,7 +484,11 @@ RefPtr<HTMLMediaElement> MediaSession::activeMediaElement() const
     if (!document)
         return nullptr;
 
-    return HTMLMediaElement::bestMediaElementForRemoteControls(MediaElementSession::PlaybackControlsPurpose::MediaSession, document.get());
+    RefPtr page = document->page();
+    if (!page)
+        return nullptr;
+
+    return page->bestMediaElementForRemoteControls(MediaElementSession::PlaybackControlsPurpose::MediaSession, document.get());
 }
 
 void MediaSession::updateReportedPosition()
@@ -514,7 +546,7 @@ void MediaSession::updateNowPlayingInfo(NowPlayingInfo& info)
 
     if (!m_defaultArtworkAttempted && (!m_metadata || m_metadata->artwork().isEmpty())) {
         m_defaultArtworkAttempted = true;
-        if (auto images = fallbackArtwork(document() ? document()->loader() : nullptr); images.size())
+        if (auto images = fallbackArtwork(protectedDocument() ? protectedDocument()->loader() : nullptr); images.size())
             m_defaultMetadata = MediaMetadata::create(*this, WTFMove(images));
     }
 
@@ -533,7 +565,7 @@ void MediaSession::updateNowPlayingInfo(NowPlayingInfo& info)
 void MediaSession::updateCaptureState(bool isActive, DOMPromiseDeferred<void>&& promise, MediaProducerMediaCaptureKind kind)
 {
     RefPtr document = this->document();
-    if (!document->isFullyActive()) {
+    if (!document || !document->isFullyActive()) {
         promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active or does not have focus"_s });
         return;
     }

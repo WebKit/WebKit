@@ -141,6 +141,11 @@ String contextMenuItemTagSmartLinks()
     return WEB_UI_STRING("Smart Links", "Smart Links context menu item");
 }
 
+String contextMenuItemTagSmartLists()
+{
+    return WEB_UI_STRING("Smart Lists", "Smart Lists context menu item");
+}
+
 String contextMenuItemTagTextReplacement()
 {
     return WEB_UI_STRING("Text Replacement", "Text Replacement context menu item");

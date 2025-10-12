@@ -1,0 +1,54 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
+        RenderInline {I} at (0,0) size 744x35
+          RenderInline {A} at (51,0) size 302x17 [color=#0000EE]
+            RenderText {#text} at (51,0) size 302x17
+              text run at (51,0) width 302: "http://bugs.webkit.org/show_bug.cgi?id=15181"
+          RenderText {#text} at (0,0) size 744x35
+            text run at (352,0) width 5: " "
+            text run at (356,0) width 388: "text-transform: uppercase not working in input (submit, reset,"
+            text run at (0,18) width 104: "button) elements"
+        RenderText {#text} at (104,18) size 4x17
+          text run at (104,18) width 4: "."
+      RenderBlock {P} at (0,52) size 784x27
+        RenderButton {BUTTON} at (0,0) size 109x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 93x18
+            RenderText {#text} at (0,0) size 93x17
+              text run at (0,0) width 93: "UPPERCASE"
+        RenderText {#text} at (109,4) size 4x17
+          text run at (109,4) width 4: " "
+        RenderButton {BUTTON} at (113,0) size 79x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 63x18
+            RenderText {#text} at (0,0) size 63x17
+              text run at (0,0) width 63: "lowercase"
+        RenderText {#text} at (192,4) size 4x17
+          text run at (192,4) width 4: " "
+        RenderButton {BUTTON} at (196,0) size 79x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 63x18
+            RenderText {#text} at (0,0) size 63x17
+              text run at (0,0) width 63: "Capitalize"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,95) size 784x27
+        RenderButton {INPUT} at (0,0) size 109x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 93x18
+            RenderText at (0,0) size 93x17
+              text run at (0,0) width 93: "UPPERCASE"
+        RenderText {#text} at (109,4) size 4x17
+          text run at (109,4) width 4: " "
+        RenderButton {INPUT} at (113,0) size 79x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 63x18
+            RenderText at (0,0) size 63x17
+              text run at (0,0) width 63: "lowercase"
+        RenderText {#text} at (192,4) size 4x17
+          text run at (192,4) width 4: " "
+        RenderButton {INPUT} at (196,0) size 79x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 63x18
+            RenderText at (0,0) size 63x17
+              text run at (0,0) width 63: "Capitalize"
+        RenderText {#text} at (0,0) size 0x0

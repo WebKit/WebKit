@@ -62,13 +62,13 @@ BlobRegistryImpl::~BlobRegistryImpl() = default;
 
 static Ref<ResourceHandle> createBlobResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
 {
-    return blobRegistry().blobRegistryImpl()->createResourceHandle(request, client);
+    return blobRegistry()->blobRegistryImpl()->createResourceHandle(request, client);
 }
 
 static void loadBlobResourceSynchronously(NetworkingContext*, const ResourceRequest& request, StoredCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
 {
     // This seems like it is only used from WebKitLegacy, so it does not support blob registry partitioning
-    RefPtr blobData = blobRegistry().blobRegistryImpl()->blobDataFromURL(request.url());
+    RefPtr blobData = blobRegistry()->blobRegistryImpl()->blobDataFromURL(request.url());
     BlobResourceHandle::loadResourceSynchronously(blobData.get(), request, error, response, data);
 }
 
@@ -190,7 +190,7 @@ void BlobRegistryImpl::registerInternalBlobURL(const URL& url, Vector<BlobPart>&
     for (BlobPart& part : blobParts) {
         switch (part.type()) {
         case BlobPart::Type::Data: {
-            blobData->appendData(createDataSegment(part.moveData(), blobData));
+            blobData->appendData(createDataSegment(part.takeData(), blobData));
             break;
         }
         case BlobPart::Type::Blob: {

@@ -30,11 +30,11 @@ namespace {
 using libvpx_test::ACMRandom;
 using std::make_tuple;
 
-typedef void (*PredictFunc)(uint8_t *src_ptr, int src_pixels_per_line,
-                            int xoffset, int yoffset, uint8_t *dst_ptr,
-                            int dst_pitch);
+using PredictFunc = void (*)(uint8_t *src_ptr, int src_pixels_per_line,
+                             int xoffset, int yoffset, uint8_t *dst_ptr,
+                             int dst_pitch);
 
-typedef std::tuple<int, int, PredictFunc> PredictParam;
+using PredictParam = std::tuple<int, int, PredictFunc>;
 
 class PredictTestBase : public AbstractBench,
                         public ::testing::TestWithParam<PredictParam> {

@@ -234,6 +234,7 @@ void RemoteInspectorServer::setTargetList(SocketConnection& remoteInspectorConne
     clientConnection->sendMessage("SetTargetList", g_variant_new("(t@a(tsssb))", addResult.iterator->value, targetList.get()));
 }
 
+IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 GVariant* RemoteInspectorServer::setupInspectorClient(SocketConnection& clientConnection, const char* clientBackendCommandsHash)
 {
     ASSERT(!m_clientConnection);
@@ -252,6 +253,7 @@ GVariant* RemoteInspectorServer::setupInspectorClient(SocketConnection& clientCo
 
     return backendCommands;
 }
+IGNORE_CLANG_WARNINGS_END
 
 void RemoteInspectorServer::setup(SocketConnection& clientConnection, uint64_t connectionID, uint64_t targetID)
 {
@@ -288,6 +290,12 @@ void RemoteInspectorServer::connectionDidClose(SocketConnection& clientConnectio
         for (auto connectionTargetPair : copyToVector(m_automationTargets))
             close(clientConnection, connectionTargetPair.first, connectionTargetPair.second);
         m_automationConnection = nullptr;
+#if USE(GLIB)
+        // As we support single sessions, there's no need to send a sessionID like we do when setting up the automation connection
+        // in startAutomationSession(). If we ever support multiple sessions, we should eventually map the sessionID to the connectionID and
+        // send it here.
+        RemoteInspector::singleton().automationConnectionDidClose();
+#endif
     } else if (&clientConnection == m_clientConnection) {
         for (auto connectionTargetPair : copyToVector(m_inspectionTargets))
             close(clientConnection, connectionTargetPair.first, connectionTargetPair.second);

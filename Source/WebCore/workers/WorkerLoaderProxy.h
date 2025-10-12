@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "ScriptExecutionContext.h"
+#include <WebCore/ScriptExecutionContext.h>
 
 namespace WebCore {
 

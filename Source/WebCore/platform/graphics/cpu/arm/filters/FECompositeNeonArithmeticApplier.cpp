@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 University of Szeged
  * Copyright (C) 2011 Felician Marton
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,20 +98,20 @@ inline void FECompositeNeonArithmeticApplier::applyPlatform(const uint8_t* sourc
 
 bool FECompositeNeonArithmeticApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
-    Ref input = inputs[0];
-    Ref input2 = inputs[1];
+    auto& input = inputs[0].get();
+    auto& input2 = inputs[1].get();
 
     auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
 
     IntRect effectADrawingRect = result.absoluteImageRectRelativeTo(input);
-    auto sourcePixelBuffer = input->getPixelBuffer(AlphaPremultiplication::Premultiplied, effectADrawingRect, m_effect->operatingColorSpace());
+    auto sourcePixelBuffer = input.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectADrawingRect, m_effect->operatingColorSpace());
     if (!sourcePixelBuffer)
         return false;
 
     IntRect effectBDrawingRect = result.absoluteImageRectRelativeTo(input2);
-    input2->copyPixelBuffer(*destinationPixelBuffer, effectBDrawingRect);
+    input2.copyPixelBuffer(*destinationPixelBuffer, effectBDrawingRect);
 
     auto* sourcePixelBytes = sourcePixelBuffer->bytes().data();
     auto* destinationPixelBytes = destinationPixelBuffer->bytes().data();

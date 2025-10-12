@@ -41,31 +41,31 @@
             type = legacyType.bridgingAutorelease();
     }
 
-    if ([type isEqualToString:WebCore::legacyStringPasteboardType()])
+    if ([type isEqualToString:WebCore::legacyStringPasteboardTypeSingleton()])
         return NSPasteboardTypeString;
 
-    if ([type isEqualToString:WebCore::legacyHTMLPasteboardType()])
+    if ([type isEqualToString:WebCore::legacyHTMLPasteboardTypeSingleton()])
         return NSPasteboardTypeHTML;
 
-    if ([type isEqualToString:WebCore::legacyTIFFPasteboardType()])
+    if ([type isEqualToString:WebCore::legacyTIFFPasteboardTypeSingleton()])
         return NSPasteboardTypeTIFF;
 
-    if ([type isEqualToString:WebCore::legacyURLPasteboardType()])
+    if ([type isEqualToString:WebCore::legacyURLPasteboardTypeSingleton()])
         return NSPasteboardTypeURL;
 
-    if ([type isEqualToString:WebCore::legacyPDFPasteboardType()])
+    if ([type isEqualToString:WebCore::legacyPDFPasteboardTypeSingleton()])
         return NSPasteboardTypePDF;
 
-    if ([type isEqualToString:WebCore::legacyRTFDPasteboardType()])
+    if ([type isEqualToString:WebCore::legacyRTFDPasteboardTypeSingleton()])
         return NSPasteboardTypeRTFD;
 
-    if ([type isEqualToString:WebCore::legacyRTFPasteboardType()])
+    if ([type isEqualToString:WebCore::legacyRTFPasteboardTypeSingleton()])
         return NSPasteboardTypeRTF;
 
-    if ([type isEqualToString:WebCore::legacyColorPasteboardType()])
+    if ([type isEqualToString:WebCore::legacyColorPasteboardTypeSingleton()])
         return NSPasteboardTypeColor;
 
-    if ([type isEqualToString:WebCore::legacyFontPasteboardType()])
+    if ([type isEqualToString:WebCore::legacyFontPasteboardTypeSingleton()])
         return NSPasteboardTypeFont;
 
     return type;

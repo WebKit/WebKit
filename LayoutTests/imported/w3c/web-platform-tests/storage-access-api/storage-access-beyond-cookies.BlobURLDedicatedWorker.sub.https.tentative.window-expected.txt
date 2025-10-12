@@ -1,0 +1,3 @@
+
+FAIL Verify that if the third-party context creates a blob URL using the StorageAccessHandle and sends it to the dedicated worker, the dedicated worker fetch succeeds. assert_equals: expected "Blob URL DedicatedWorker tests completed successfully." but got "Unable to load handle in same-origin context for BlobURLDedicatedWorker"
+

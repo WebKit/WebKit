@@ -8,7 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stdlib.h>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
 
 #include "common_audio/vad/vad_unittest.h"
 #include "test/gtest.h"
@@ -21,7 +23,7 @@ extern "C" {
 namespace webrtc {
 namespace test {
 
-const int kNumValidFrameLengths = 3;
+constexpr int kNumValidFrameLengths = 3;
 
 TEST_F(VadTest, vad_filterbank) {
   VadInstT* self = reinterpret_cast<VadInstT*>(malloc(sizeof(VadInstT)));

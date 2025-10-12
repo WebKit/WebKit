@@ -63,6 +63,14 @@ export const listing = [
       "api",
       "operation",
       "buffers",
+      "createBindGroup"
+    ]
+  },
+  {
+    "file": [
+      "api",
+      "operation",
+      "buffers",
       "map"
     ]
   },
@@ -525,14 +533,6 @@ export const listing = [
       "api",
       "operation",
       "sampling",
-      "lod_clamp"
-    ]
-  },
-  {
-    "file": [
-      "api",
-      "operation",
-      "sampling",
       "sampler_texture"
     ]
   },
@@ -687,6 +687,24 @@ export const listing = [
       "capability_checks",
       "features",
       "texture_formats"
+    ]
+  },
+  {
+    "file": [
+      "api",
+      "validation",
+      "capability_checks",
+      "features",
+      "texture_formats_tier1"
+    ]
+  },
+  {
+    "file": [
+      "api",
+      "validation",
+      "capability_checks",
+      "features",
+      "texture_formats_tier2"
     ]
   },
   {

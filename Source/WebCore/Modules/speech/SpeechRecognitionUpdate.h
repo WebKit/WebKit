@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "SpeechRecognitionConnectionClientIdentifier.h"
-#include "SpeechRecognitionError.h"
-#include "SpeechRecognitionResultData.h"
+#include <WebCore/SpeechRecognitionConnectionClientIdentifier.h>
+#include <WebCore/SpeechRecognitionError.h>
+#include <WebCore/SpeechRecognitionResultData.h>
 #include <wtf/ArgumentCoder.h>
 
 namespace WebCore {

@@ -10,8 +10,8 @@
 
 #include "common_audio/wav_header.h"
 
-#include <string.h>
-
+#include <cstdint>
+#include <cstring>
 #include <limits>
 
 #include "test/gtest.h"

@@ -6,7 +6,7 @@ layer at (0,0) size 800x777
       RenderBlock {DIV} at (0,0) size 784x94
         RenderText {#text} at (0,31) size 47x19
           text run at (0,31) width 47: "Blank: "
-        RenderAttachment {ATTACHMENT} at (47,1) size 339x92 [color=#007AFF]
+        RenderAttachment {ATTACHMENT} at (47,1) size 339x92 [color=#0088FF]
           RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#FFFFFF]
             RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
               RenderGrid {DIV} at (10,10) size 0x72
@@ -16,7 +16,7 @@ layer at (0,0) size 800x777
       RenderBlock {DIV} at (0,94) size 784x94
         RenderText {#text} at (0,31) size 39x19
           text run at (0,31) width 39: "Title: "
-        RenderAttachment {ATTACHMENT} at (39,1) size 339x92 [color=#007AFF]
+        RenderAttachment {ATTACHMENT} at (39,1) size 339x92 [color=#0088FF]
           RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#FFFFFF]
             RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
               RenderGrid {DIV} at (10,10) size 0x72
@@ -26,7 +26,7 @@ layer at (0,0) size 800x777
       RenderBlock {DIV} at (0,188) size 784x94
         RenderText {#text} at (0,31) size 83x19
           text run at (0,31) width 83: "and subtitle: "
-        RenderAttachment {ATTACHMENT} at (83,1) size 339x92 [color=#007AFF]
+        RenderAttachment {ATTACHMENT} at (83,1) size 339x92 [color=#0088FF]
           RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#FFFFFF]
             RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
               RenderGrid {DIV} at (10,10) size 0x72
@@ -36,7 +36,7 @@ layer at (0,0) size 800x777
       RenderBlock {DIV} at (0,282) size 784x94
         RenderText {#text} at (0,31) size 52x19
           text run at (0,31) width 52: "Action: "
-        RenderAttachment {ATTACHMENT} at (52,1) size 339x92 [color=#007AFF]
+        RenderAttachment {ATTACHMENT} at (52,1) size 339x92 [color=#0088FF]
           RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#FFFFFF]
             RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
               RenderGrid {DIV} at (10,10) size 0x72
@@ -46,7 +46,7 @@ layer at (0,0) size 800x777
       RenderBlock {DIV} at (0,376) size 784x94
         RenderText {#text} at (0,31) size 40x19
           text run at (0,31) width 40: "Save: "
-        RenderAttachment {ATTACHMENT} at (40,1) size 339x92 [color=#007AFF]
+        RenderAttachment {ATTACHMENT} at (40,1) size 339x92 [color=#0088FF]
           RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#FFFFFF]
             RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
               RenderGrid {DIV} at (10,10) size 0x72
@@ -59,7 +59,7 @@ layer at (0,0) size 800x777
       RenderBlock {DIV} at (0,470) size 784x97
         RenderText {#text} at (0,77) size 97x19
           text run at (0,77) width 97: "Zero progress: "
-        RenderAttachment {ATTACHMENT} at (97,1) size 339x92 [color=#007AFF]
+        RenderAttachment {ATTACHMENT} at (97,1) size 339x92 [color=#0088FF]
           RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#FFFFFF]
             RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
               RenderGrid {DIV} at (10,10) size 54x72
@@ -68,7 +68,7 @@ layer at (0,0) size 800x777
       RenderBlock {DIV} at (0,567) size 784x97
         RenderText {#text} at (0,77) size 96x19
           text run at (0,77) width 96: "75% progress: "
-        RenderAttachment {ATTACHMENT} at (96,1) size 339x92 [color=#007AFF]
+        RenderAttachment {ATTACHMENT} at (96,1) size 339x92 [color=#0088FF]
           RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#FFFFFF]
             RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
               RenderGrid {DIV} at (10,10) size 54x72
@@ -79,7 +79,7 @@ layer at (0,0) size 800x777
       RenderBlock {DIV} at (0,664) size 784x97
         RenderText {#text} at (0,77) size 104x19
           text run at (0,77) width 104: "100% progress: "
-        RenderAttachment {ATTACHMENT} at (104,1) size 339x92 [color=#007AFF]
+        RenderAttachment {ATTACHMENT} at (104,1) size 339x92 [color=#0088FF]
           RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#FFFFFF]
             RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
               RenderGrid {DIV} at (10,10) size 54x72
@@ -147,6 +147,6 @@ layer at (187,711) size 238x17
       RenderText {#text} at (0,0) size 56x17
         text run at (0,0) width 56: "\x{200E}\x{2068}Title\x{2069}\x{200B}.pdf"
 layer at (321,411) size 40x40
-  RenderBlock (generated) at (0,0) size 40x40 [bgcolor=#007AFF]
+  RenderBlock (generated) at (0,0) size 40x40 [bgcolor=#0088FF]
 layer at (116,498) size 54x54
   RenderBlock {DIV} at (0,9) size 54x54 [bgcolor=#000000]

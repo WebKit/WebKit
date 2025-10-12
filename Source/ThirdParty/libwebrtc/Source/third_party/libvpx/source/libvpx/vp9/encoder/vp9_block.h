@@ -19,12 +19,6 @@
 extern "C" {
 #endif
 
-typedef struct {
-  unsigned int sse;
-  int sum;
-  unsigned int var;
-} Diff;
-
 struct macroblock_plane {
   DECLARE_ALIGNED(16, int16_t, src_diff[64 * 64]);
   tran_low_t *qcoeff;

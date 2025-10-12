@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "RenderBlockFlow.h"
+#include <WebCore/RenderBlockFlow.h>
 #include "RenderListMarker.h"
 
 namespace WebCore {

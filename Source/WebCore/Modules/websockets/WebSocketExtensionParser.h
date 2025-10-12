@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc.  All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -38,7 +38,7 @@ namespace WebCore {
 
 class WebSocketExtensionParser {
 public:
-    // FIXME: What character encoding are we parsing? Specify LChar, char8_t, UChar, or something else here.
+    // FIXME: What character encoding are we parsing? Specify Latin1Character, char8_t, char16_t, or something else here.
     explicit WebSocketExtensionParser(std::span<const uint8_t> data)
         : m_data(data)
     {
@@ -46,7 +46,7 @@ public:
     bool finished();
     bool parsedSuccessfully();
 
-    // FIXME: What character encoding are we parsing? Specify LChar, char8_t, UChar, or something else here.
+    // FIXME: What character encoding are we parsing? Specify Latin1Character, char8_t, char16_t, or something else here.
     bool parseExtension(String& extensionToken, HashMap<String, String>& parameters);
 
 private:

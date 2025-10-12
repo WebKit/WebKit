@@ -37,20 +37,24 @@ namespace CSSPropertyParserHelpers {
 
 RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange& range, CSS::PropertyParserState&)
 {
-    // <'scroll-snap-type'> = none | [ x | y | block | inline | both ] [ mandatory | proximity ]?
+    // <'scroll-snap-type'> = none | [ x | y | block | inline | both ] [ mandatory | proximity ]?@(default=proximity)
     // https://drafts.csswg.org/css-scroll-snap-1/#scroll-snap-type
 
-    auto firstValue = consumeIdent<CSSValueNone, CSSValueX, CSSValueY, CSSValueBlock, CSSValueInline, CSSValueBoth>(range);
+    auto firstValue = consumeIdentRaw<CSSValueNone, CSSValueX, CSSValueY, CSSValueBlock, CSSValueInline, CSSValueBoth>(range);
     if (!firstValue)
         return nullptr;
 
+    if (*firstValue == CSSValueNone)
+        return CSSPrimitiveValue::create(CSSValueNone);
+
     // We only add the second value if it is not the initial value as described in specification
     // so that serialization of this CSSValueList produces the canonical serialization.
-    auto secondValue = consumeIdent<CSSValueProximity, CSSValueMandatory>(range);
-    if (secondValue && secondValue->valueID() != CSSValueProximity)
-        return CSSValueList::createSpaceSeparated(firstValue.releaseNonNull(), secondValue.releaseNonNull());
 
-    return CSSValueList::createSpaceSeparated(firstValue.releaseNonNull());
+    auto secondValue = consumeIdentRaw<CSSValueProximity, CSSValueMandatory>(range);
+    if (secondValue.value_or(CSSValueProximity) == CSSValueProximity)
+        return CSSPrimitiveValue::create(*firstValue);
+
+    return CSSValueList::createSpaceSeparated(CSSPrimitiveValue::create(*firstValue), CSSPrimitiveValue::create(CSSValueMandatory));
 }
 
 } // namespace CSSPropertyParserHelpers

@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "IDBIndexIdentifier.h"
-#include "IDBKeyPath.h"
-#include "IDBObjectStoreIdentifier.h"
+#include <WebCore/IDBIndexIdentifier.h>
+#include <WebCore/IDBKeyPath.h>
+#include <WebCore/IDBObjectStoreIdentifier.h>
 #include <wtf/HashTraits.h>
 #include <wtf/text/WTFString.h>
 

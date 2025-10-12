@@ -25,11 +25,12 @@
 
 #pragma once
 
-#include "ActivityState.h"
-#include "FocusOptions.h"
-#include "LayoutRect.h"
-#include "LocalFrame.h"
-#include "Timer.h"
+#include <WebCore/ActivityState.h>
+#include <WebCore/FocusControllerTypes.h>
+#include <WebCore/FocusOptions.h>
+#include <WebCore/LayoutRect.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/Timer.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -49,6 +50,7 @@ class Page;
 class TreeScope;
 
 struct FocusCandidate;
+struct FocusEventData;
 
 class FocusController final : public CanMakeCheckedPtr<FocusController> {
     WTF_MAKE_TZONE_ALLOCATED(FocusController);
@@ -56,7 +58,6 @@ class FocusController final : public CanMakeCheckedPtr<FocusController> {
 public:
     explicit FocusController(Page&, OptionSet<ActivityState>);
 
-    enum class BroadcastFocusedFrame : bool { No, Yes };
     WEBCORE_EXPORT void setFocusedFrame(Frame*, BroadcastFocusedFrame = BroadcastFocusedFrame::Yes);
     Frame* focusedFrame() const { return m_focusedFrame.get(); }
     LocalFrame* focusedLocalFrame() const { return dynamicDowncast<LocalFrame>(m_focusedFrame.get()); }
@@ -66,7 +67,7 @@ public:
     WEBCORE_EXPORT bool setInitialFocus(FocusDirection, KeyboardEvent*);
     bool advanceFocus(FocusDirection, KeyboardEvent*, bool initialFocus = false);
 
-    WEBCORE_EXPORT bool setFocusedElement(Element*, LocalFrame&, const FocusOptions& = { });
+    WEBCORE_EXPORT bool setFocusedElement(Element*, Frame*, const FocusOptions& = { }, BroadcastFocusedElement = BroadcastFocusedElement::Yes);
 
     void setActivityState(OptionSet<ActivityState>);
 
@@ -78,30 +79,36 @@ public:
 
     bool contentIsVisible() const { return m_activityState.contains(ActivityState::IsVisible); }
 
-    // These methods are used in WebCore/bindings/objc/DOM.mm.
-    WEBCORE_EXPORT Element* nextFocusableElement(Node&);
-    WEBCORE_EXPORT Element* previousFocusableElement(Node&);
+    WEBCORE_EXPORT FocusableElementSearchResult nextFocusableElement(Node&);
+    WEBCORE_EXPORT FocusableElementSearchResult previousFocusableElement(Node&);
 
     void setFocusedElementNeedsRepaint();
     Seconds timeSinceFocusWasSet() const;
 
     WEBCORE_EXPORT bool relinquishFocusToChrome(FocusDirection);
 
+    WEBCORE_EXPORT FocusableElementSearchResult findAndFocusElementStartingWithLocalFrame(FocusDirection, const FocusEventData&, LocalFrame&);
+
 private:
     void setActiveInternal(bool);
     void setFocusedInternal(bool);
     void setIsVisibleAndActiveInternal(bool);
 
-    bool advanceFocusDirectionally(FocusDirection, KeyboardEvent*);
-    bool advanceFocusInDocumentOrder(FocusDirection, KeyboardEvent*, bool initialFocus);
+    enum class InitialFocus : bool { No, Yes };
+    enum class ContinuingRemoteSearch : bool { No, Yes };
 
-    Element* findFocusableElementAcrossFocusScope(FocusDirection, const FocusNavigationScope& startScope, Node* start, KeyboardEvent*);
+    bool advanceFocusDirectionally(FocusDirection, const FocusEventData&);
+    bool advanceFocusInDocumentOrder(FocusDirection, const FocusEventData&, InitialFocus);
 
-    Element* findFocusableElementWithinScope(FocusDirection, const FocusNavigationScope&, Node* start, KeyboardEvent*);
-    Element* nextFocusableElementWithinScope(const FocusNavigationScope&, Node* start, KeyboardEvent*);
-    Element* previousFocusableElementWithinScope(const FocusNavigationScope&, Node* start, KeyboardEvent*);
+    FocusableElementSearchResult findAndFocusElementInDocumentOrderStartingWithFrame(Ref<LocalFrame>, RefPtr<Node> scopeNode, RefPtr<Node> startingNode, FocusDirection, const FocusEventData&, InitialFocus, ContinuingRemoteSearch);
 
-    Element* findFocusableElementDescendingIntoSubframes(FocusDirection, Element*, KeyboardEvent*);
+    FocusableElementSearchResult findFocusableElementAcrossFocusScope(FocusDirection, const FocusNavigationScope& startScope, Node* start, const FocusEventData&);
+
+    FocusableElementSearchResult findFocusableElementWithinScope(FocusDirection, const FocusNavigationScope&, Node* start, const FocusEventData&);
+    FocusableElementSearchResult nextFocusableElementWithinScope(const FocusNavigationScope&, Node* start, const FocusEventData&);
+    FocusableElementSearchResult previousFocusableElementWithinScope(const FocusNavigationScope&, Node* start, const FocusEventData&);
+
+    FocusableElementSearchResult findFocusableElementDescendingIntoSubframes(FocusDirection, Element*, const FocusEventData&);
 
     // Searches through the given tree scope, starting from start node, for the next/previous selectable element that comes after/before start node.
     // The order followed is as specified in section 17.11.1 of the HTML4 spec, which is elements with tab indexes
@@ -112,21 +119,22 @@ private:
     // @return The focus node that comes after/before start node.
     //
     // See http://www.w3.org/TR/html4/interact/forms.html#h-17.11.1
-    Element* findFocusableElementOrScopeOwner(FocusDirection, const FocusNavigationScope&, Node* start, KeyboardEvent*);
+    Element* findFocusableElementOrScopeOwner(FocusDirection, const FocusNavigationScope&, Node* start, const FocusEventData&);
 
-    Element* findElementWithExactTabIndex(const FocusNavigationScope&, Node* start, int tabIndex, KeyboardEvent*, FocusDirection);
+    Element* findElementWithExactTabIndex(const FocusNavigationScope&, Node* start, int tabIndex, const FocusEventData&, FocusDirection);
     
-    Element* nextFocusableElementOrScopeOwner(const FocusNavigationScope&, Node* start, KeyboardEvent*);
-    Element* previousFocusableElementOrScopeOwner(const FocusNavigationScope&, Node* start, KeyboardEvent*);
+    Element* nextFocusableElementOrScopeOwner(const FocusNavigationScope&, Node* start, const FocusEventData&);
+    Element* previousFocusableElementOrScopeOwner(const FocusNavigationScope&, Node* start, const FocusEventData&);
 
-    bool advanceFocusDirectionallyInContainer(const ContainerNode&, const LayoutRect& startingRect, FocusDirection, KeyboardEvent*);
-    void findFocusCandidateInContainer(const ContainerNode&, const LayoutRect& startingRect, FocusDirection, KeyboardEvent*, FocusCandidate& closest);
+    bool advanceFocusDirectionallyInContainer(const ContainerNode&, const LayoutRect& startingRect, FocusDirection, const FocusEventData&);
+    void findFocusCandidateInContainer(const ContainerNode&, const LayoutRect& startingRect, FocusDirection, const FocusEventData&, FocusCandidate& closest);
 
     void focusRepaintTimerFired();
     Ref<Page> protectedPage() const;
 
     WeakRef<Page> m_page;
     WeakPtr<Frame> m_focusedFrame;
+    WeakPtr<LocalFrame> m_focusedFrameBeforeRemoteFocusBroadcast;
     bool m_isChangingFocusedFrame;
     OptionSet<ActivityState> m_activityState;
 

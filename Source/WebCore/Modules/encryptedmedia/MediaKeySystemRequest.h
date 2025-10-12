@@ -26,10 +26,10 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "ActiveDOMObject.h"
-#include "IDLTypes.h"
-#include "JSDOMPromiseDeferredForward.h"
-#include "MediaKeySystemRequestIdentifier.h"
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/IDLTypes.h>
+#include <WebCore/JSDOMPromiseDeferredForward.h>
+#include <WebCore/MediaKeySystemRequestIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Identified.h>

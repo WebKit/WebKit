@@ -10,6 +10,10 @@
 #ifndef COMPILER_TRANSLATOR_IMMUTABLESTRINGBUILDER_H_
 #define COMPILER_TRANSLATOR_IMMUTABLESTRINGBUILDER_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <cstring>
 
 #include "compiler/translator/ImmutableString.h"

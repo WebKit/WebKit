@@ -13,9 +13,12 @@
 
 #include "api/test/network_emulation/create_cross_traffic.h"
 #include "api/test/network_emulation/cross_traffic.h"
-#include "test/field_trial.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "call/video_send_stream.h"
 #include "test/gtest.h"
 #include "test/logging/memory_log_writer.h"
+#include "test/scenario/scenario_config.h"
 #include "test/scenario/stats_collection.h"
 
 namespace webrtc {
@@ -146,12 +149,10 @@ TEST(ScenarioTest, WritesToRtcEventLog) {
 
 TEST(ScenarioTest,
      RetransmitsVideoPacketsInAudioAndVideoCallWithSendSideBweAndLoss) {
-  // Make sure audio packets are included in transport feedback.
-  test::ScopedFieldTrials override_field_trials(
-      "WebRTC-Audio-ABWENoTWCC/Disabled/");
-
   Scenario s;
   CallClientConfig call_client_config;
+  // Make sure audio packets are included in transport feedback.
+  call_client_config.field_trials.Set("WebRTC-Audio-ABWENoTWCC", "Disabled");
   call_client_config.transport.rates.start_rate = DataRate::KilobitsPerSec(300);
   auto* alice = s.CreateClient("alice", call_client_config);
   auto* bob = s.CreateClient("bob", call_client_config);

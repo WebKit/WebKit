@@ -34,6 +34,6 @@
  with the same process pool end up sharing web content processes.
  */
 WK_SWIFT_UI_ACTOR
-WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
+WK_EXTERN WK_API_DEPRECATED("Creating and using multiple instances of WKProcessPool no longer has any effect.", macos(10.10, 12.0), ios(8.0, 15.0), visionos(1.0, 1.0))
 @interface WKProcessPool : NSObject <NSSecureCoding>
 @end

@@ -23,6 +23,7 @@
 #include "config.h"
 #include "SVGFELightElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "LegacyRenderSVGResource.h"
 #include "NodeName.h"

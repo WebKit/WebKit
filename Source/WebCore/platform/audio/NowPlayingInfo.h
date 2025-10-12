@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Image.h"
-#include "MediaUniqueIdentifier.h"
+#include <WebCore/Image.h>
+#include <WebCore/MediaUniqueIdentifier.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

@@ -76,6 +76,9 @@ webkit_web_extension_match_pattern_new_with_scheme (const gchar  *scheme,
                                                     GError      **error);
 
 WEBKIT_API void
+webkit_web_extension_match_pattern_register_custom_url_scheme (const gchar *urlScheme);
+
+WEBKIT_DEPRECATED_FOR(webkit_web_extension_match_pattern_register_custom_url_scheme) void
 webkit_web_extension_match_pattern_register_custom_URL_scheme (const gchar *urlScheme);
 
 WEBKIT_API const gchar *

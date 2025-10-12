@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,8 +73,8 @@ private:
     }
 
     String m_label;
-    Ref<VoidCallback> m_undoHandler;
-    Ref<VoidCallback> m_redoHandler;
+    const Ref<VoidCallback> m_undoHandler;
+    const Ref<VoidCallback> m_redoHandler;
     WeakPtr<UndoManager> m_undoManager;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };

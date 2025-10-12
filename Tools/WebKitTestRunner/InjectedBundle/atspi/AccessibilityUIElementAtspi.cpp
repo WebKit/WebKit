@@ -397,7 +397,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
 
     m_element->updateBackingStore();
     auto attributes = m_element->attributes();
-    
+
     if (attributeName == "AXPlaceholderValue"_s)
         return OpaqueJSString::tryCreate(attributes.get("placeholder-text"_s)).leakRef();
 
@@ -417,7 +417,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
 
     if (attributeName == "AXAutocompleteValue"_s)
         return OpaqueJSString::tryCreate(attributes.get("autocomplete"_s)).leakRef();
-    
+
     if (attributeName == "AXKeyShortcutsValue"_s)
         return OpaqueJSString::tryCreate(attributes.get("keyshortcuts"_s)).leakRef();
 
@@ -467,7 +467,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::sortDirection() const
         return OpaqueJSString::tryCreate("AXDescendingSortDirection"_s).leakRef();
     if (sort == "other"_s)
         return OpaqueJSString::tryCreate("AXUnknownSortDirection"_s).leakRef();
-    
+
     return nullptr;
 }
 
@@ -747,8 +747,6 @@ static String roleValueToString(WebCore::Atspi::Role roleValue)
         return "AXEmbedded"_s;
     case WebCore::Atspi::Role::Entry:
         return "AXTextField"_s;
-    case WebCore::Atspi::Role::Footer:
-        return "AXFooter"_s;
     case WebCore::Atspi::Role::Footnote:
         return "AXFootnote"_s;
     case WebCore::Atspi::Role::Form:
@@ -815,6 +813,10 @@ static String roleValueToString(WebCore::Atspi::Role roleValue)
         return "AXRowHeader"_s;
     case WebCore::Atspi::Role::Ruler:
         return "AXRuler"_s;
+    case WebCore::Atspi::Role::SectionFooter:
+        return "AXSectionFooter"_s;
+    case WebCore::Atspi::Role::SectionHeader:
+        return "AXSectionHeader"_s;
     case WebCore::Atspi::Role::ScrollBar:
         return "AXScrollBar"_s;
     case WebCore::Atspi::Role::ScrollPane:
@@ -1724,6 +1726,11 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::accessibilityElementForTe
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*)
+{
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForTextMarkerRangeWithDidSpellCheck(AccessibilityTextMarkerRange*)
 {
     return nullptr;
 }

@@ -28,11 +28,11 @@
 
 #import "Logging.h"
 #import "NetworkCacheFileSystem.h"
-#import <dispatch/dispatch.h>
 #import <mach/vm_param.h>
 #import <sys/mman.h>
 #import <sys/stat.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/CString.h>
 
 namespace WebKit {
@@ -79,7 +79,7 @@ IOChannel::IOChannel(const String& filePath, Type type, std::optional<WorkQueue:
     }
 
     int fd = ::open(path.data(), oflag, mode);
-    m_dispatchIO = adoptOSObject(dispatch_io_create(DISPATCH_IO_RANDOM, fd, dispatch_get_global_queue(dispatchQueueIdentifier(dispatchQOS), 0), [fd](int) {
+    m_dispatchIO = adoptOSObject(dispatch_io_create(DISPATCH_IO_RANDOM, fd, globalDispatchQueueSingleton(dispatchQueueIdentifier(dispatchQOS), 0), [fd](int) {
         close(fd);
     }));
     ASSERT(m_dispatchIO.get());
@@ -96,7 +96,7 @@ IOChannel::~IOChannel()
 void IOChannel::read(size_t offset, size_t size, Ref<WTF::WorkQueueBase>&& queue, Function<void(Data&&, int error)>&& completionHandler)
 {
     bool didCallCompletionHandler = false;
-    dispatch_io_read(m_dispatchIO.get(), offset, size, queue->dispatchQueue(), makeBlockPtr([protectedThis = Ref { *this }, queue, completionHandler = WTFMove(completionHandler), didCallCompletionHandler](bool done, dispatch_data_t fileData, int error) mutable {
+    dispatch_io_read(m_dispatchIO.get(), offset, size, queue->protectedDispatchQueue().get(), makeBlockPtr([protectedThis = Ref { *this }, queue, completionHandler = WTFMove(completionHandler), didCallCompletionHandler](bool done, dispatch_data_t fileData, int error) mutable {
         ASSERT_UNUSED(done, done || !didCallCompletionHandler);
         if (didCallCompletionHandler)
             return;
@@ -110,7 +110,7 @@ void IOChannel::read(size_t offset, size_t size, Ref<WTF::WorkQueueBase>&& queue
 void IOChannel::write(size_t offset, const Data& data, Ref<WTF::WorkQueueBase>&& queue, Function<void(int error)>&& completionHandler)
 {
     RetainPtr dispatchData = data.dispatchData();
-    dispatch_io_write(m_dispatchIO.get(), offset, dispatchData.get(), queue->dispatchQueue(), makeBlockPtr([protectedThis = Ref { *this }, queue, completionHandler = WTFMove(completionHandler)](bool done, dispatch_data_t, int error) mutable {
+    dispatch_io_write(m_dispatchIO.get(), offset, dispatchData.get(), queue->protectedDispatchQueue().get(), makeBlockPtr([protectedThis = Ref { *this }, queue, completionHandler = WTFMove(completionHandler)](bool done, dispatch_data_t, int error) mutable {
         if (!done) {
             RELEASE_LOG_ERROR(NetworkCacheStorage, "IOChannel::write only part of data is written.");
             return;

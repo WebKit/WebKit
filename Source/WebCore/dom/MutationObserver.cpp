@@ -33,6 +33,7 @@
 
 #include "MutationObserver.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "GCReachableRef.h"
 #include "HTMLSlotElement.h"
@@ -166,6 +167,17 @@ void MutationObserver::enqueueSlotChangeEvent(HTMLSlotElement& slot)
     eventLoop->queueMutationObserverCompoundMicrotask();
 }
 
+void MutationObserver::enqueueShadowRootAttachedEvent(Element& element)
+{
+    ASSERT(isMainThread());
+    Ref eventLoop = element.document().windowEventLoop();
+    auto& list = eventLoop->shadowRootAttachedElements();
+    ASSERT(list.findIf([&element](auto& entry) { return entry.ptr() == &element; }) == notFound);
+    list.append(element);
+
+    eventLoop->queueMutationObserverCompoundMicrotask();
+}
+
 void MutationObserver::setHasTransientRegistration(Document& document)
 {
     Ref eventLoop = document.windowEventLoop();
@@ -194,8 +206,8 @@ void MutationObserver::deliver()
     // Calling takeTransientRegistrations() can modify m_registrations, so it's necessary
     // to make a copy of the transient registrations before operating on them.
     Vector<WeakPtr<MutationObserverRegistration>, 1> transientRegistrations;
-    Vector<UncheckedKeyHashSet<GCReachableRef<Node>>, 1> nodesToKeepAlive;
-    UncheckedKeyHashSet<GCReachableRef<Node>> pendingTargets;
+    Vector<HashSet<GCReachableRef<Node>>, 1> nodesToKeepAlive;
+    HashSet<GCReachableRef<Node>> pendingTargets;
     pendingTargets.swap(m_pendingTargets);
     for (auto& registration : m_registrations) {
         if (registration.hasTransientRegistrations())
@@ -219,14 +231,9 @@ void MutationObserver::deliver()
             return;
 
         InspectorInstrumentation::willFireObserverCallback(*context, "MutationObserver"_s);
-        protectedCallback()->invoke(*this, records, *this);
+        m_callback->invoke(*this, records, *this);
         InspectorInstrumentation::didFireObserverCallback(*context);
     }
-}
-
-Ref<MutationCallback> MutationObserver::protectedCallback() const
-{
-    return m_callback;
 }
 
 // https://dom.spec.whatwg.org/#notify-mutation-observers
@@ -242,7 +249,7 @@ void MutationObserver::notifyMutationObservers(WindowEventLoop& eventLoop)
         }
     }
 
-    while (!eventLoop.activeMutationObservers().isEmpty() || !eventLoop.signalSlotList().isEmpty()) {
+    while (!eventLoop.activeMutationObservers().isEmpty() || !eventLoop.signalSlotList().isEmpty() || !eventLoop.shadowRootAttachedElements().isEmpty()) {
         // 2. Let notify list be a copy of unit of related similar-origin browsing contexts' list of MutationObserver objects.
         auto notifyList = copyToVector(eventLoop.activeMutationObservers());
         eventLoop.activeMutationObservers().clear();
@@ -259,6 +266,10 @@ void MutationObserver::notifyMutationObservers(WindowEventLoop& eventLoop)
                 slot->didRemoveFromSignalSlotList();
         }
 
+        Vector<GCReachableRef<Element>> shadowRootAttachedElements = std::exchange(eventLoop.shadowRootAttachedElements(), { });
+        for (auto& element : shadowRootAttachedElements)
+            element->didDispatchShadowRootAttachedEvent();
+
         // 5. For each MutationObserver object mo in notify list, execute a compound microtask subtask
         for (auto& observer : notifyList) {
             if (observer->canDeliver())
@@ -270,6 +281,9 @@ void MutationObserver::notifyMutationObservers(WindowEventLoop& eventLoop)
         // 6. For each slot slot in signalList, in order, fire an event named slotchange, with its bubbles attribute set to true, at slot.
         for (auto& slot : slotList)
             slot->dispatchSlotChangeEvent();
+
+        for (auto& element : shadowRootAttachedElements)
+            element->dispatchShadowRootAttachedEvent();
     }
 }
 

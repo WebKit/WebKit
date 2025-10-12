@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "BasicBlockLocation.h"
-#include "SourceID.h"
+#include <JavaScriptCore/BasicBlockLocation.h>
+#include <JavaScriptCore/SourceID.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 

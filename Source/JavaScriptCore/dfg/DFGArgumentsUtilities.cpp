@@ -28,7 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "JSImmutableButterfly.h"
+#include "JSCellButterfly.h"
 
 namespace JSC { namespace DFG {
 
@@ -110,7 +110,7 @@ Node* emitCodeToGetArgumentsArrayLength(
 
     if (arguments->op() == NewArrayBuffer || arguments->op() == PhantomNewArrayBuffer) {
         return insertionSet.insertConstant(
-            nodeIndex, origin, jsNumber(arguments->castOperand<JSImmutableButterfly*>()->length() + addThis));
+            nodeIndex, origin, jsNumber(arguments->castOperand<JSCellButterfly*>()->length() + addThis));
     }
     
     InlineCallFrame* inlineCallFrame = arguments->origin.semantic.inlineCallFrame();

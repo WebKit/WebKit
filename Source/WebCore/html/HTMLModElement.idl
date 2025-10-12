@@ -20,7 +20,7 @@
 [
     Exposed=Window
 ] interface HTMLModElement : HTMLElement {
-    [CEReactions=NotNeeded, Reflect, URL] attribute USVString cite;
+    [CEReactions=NotNeeded, ReflectURL] attribute USVString cite;
     [CEReactions=NotNeeded, Reflect] attribute DOMString dateTime;
 };
 

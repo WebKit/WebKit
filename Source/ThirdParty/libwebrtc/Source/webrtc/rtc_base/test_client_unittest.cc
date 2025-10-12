@@ -10,38 +10,39 @@
 
 #include "rtc_base/test_client.h"
 
+#include <memory>
 #include <utility>
 
 #include "absl/memory/memory.h"
 #include "rtc_base/async_tcp_socket.h"
 #include "rtc_base/async_udp_socket.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/net_helpers.h"
 #include "rtc_base/net_test_helpers.h"
 #include "rtc_base/physical_socket_server.h"
 #include "rtc_base/socket.h"
+#include "rtc_base/socket_address.h"
 #include "rtc_base/test_echo_server.h"
 #include "rtc_base/thread.h"
 #include "test/gtest.h"
 
-namespace rtc {
-namespace {
-
 #define MAYBE_SKIP_IPV4                        \
-  if (!HasIPv4Enabled()) {                     \
+  if (!::webrtc::HasIPv4Enabled()) {           \
     RTC_LOG(LS_INFO) << "No IPv4... skipping"; \
     return;                                    \
   }
 
 #define MAYBE_SKIP_IPV6                        \
-  if (!HasIPv6Enabled()) {                     \
+  if (!::webrtc::HasIPv6Enabled()) {           \
     RTC_LOG(LS_INFO) << "No IPv6... skipping"; \
     return;                                    \
   }
 
+namespace webrtc {
+namespace {
+
 void TestUdpInternal(const SocketAddress& loopback) {
-  rtc::PhysicalSocketServer socket_server;
-  rtc::AutoSocketServerThread main_thread(&socket_server);
+  PhysicalSocketServer socket_server;
+  AutoSocketServerThread main_thread(&socket_server);
   Socket* socket = socket_server.CreateSocket(loopback.family(), SOCK_DGRAM);
   socket->Bind(loopback);
 
@@ -54,8 +55,8 @@ void TestUdpInternal(const SocketAddress& loopback) {
 }
 
 void TestTcpInternal(const SocketAddress& loopback) {
-  rtc::PhysicalSocketServer socket_server;
-  rtc::AutoSocketServerThread main_thread(&socket_server);
+  PhysicalSocketServer socket_server;
+  AutoSocketServerThread main_thread(&socket_server);
   TestEchoServer server(&main_thread, loopback);
 
   Socket* socket = socket_server.CreateSocket(loopback.family(), SOCK_STREAM);
@@ -105,4 +106,4 @@ TEST(TestClientTest, MAYBE_TestTcpIPv6) {
 }
 
 }  // namespace
-}  // namespace rtc
+}  // namespace webrtc

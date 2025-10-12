@@ -1,4 +1,4 @@
-<!doctype html>
+<!doctype html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
 <html>
 <script src="../../../../resources/js-test-pre.js"></script>
 <body onload="start()">
@@ -14,6 +14,7 @@
             testRunner.waitUntilDone();
         }
 
+        let stream;
         let count = new Set();
         let success = true;
         let results = [];
@@ -29,6 +30,8 @@
             if (results.length == 4) {
                 setTimeout(() => {
                     result.innerHTML = results.sort().join('<br>');
+                    if (stream)
+                        stream.getTracks().forEach(track => track.stop());
                     if (window.testRunner) {
                         testRunner.notifyDone();
                         testRunner.resetMockMediaDevices();
@@ -39,7 +42,7 @@
         
         async function start()
         {
-            await window.navigator.mediaDevices.getUserMedia({audio:true});
+            stream = await window.navigator.mediaDevices.getUserMedia({audio:true});
 
             navigator.mediaDevices.ondevicechange = () => { countEvent('main'); };
             window.onmessage = (event) => { countEvent(event.data); };

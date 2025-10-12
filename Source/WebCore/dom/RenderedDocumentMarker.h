@@ -26,7 +26,8 @@
 
 #pragma once
 
-#include "DocumentMarker.h"
+#include <WebCore/DocumentMarker.h>
+#include <WebCore/FloatRect.h>
 #include <wtf/Markable.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>

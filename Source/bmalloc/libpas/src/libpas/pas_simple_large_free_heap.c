@@ -35,6 +35,7 @@
 #include "pas_large_free.h"
 #include "pas_large_free_heap_config.h"
 #include "pas_log.h"
+#include "pas_zero_memory.h"
 #include <stdio.h>
 
 static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_LARGE_HEAPS);

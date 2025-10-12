@@ -32,7 +32,7 @@ extension WebPage {
     /// Create a `NavigationPreferences` value when you want to change the default rendering behavior of
     /// your web page. Typically, iOS devices render web content for a mobile experience, and Mac devices
     /// render content for a desktop experience.
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct NavigationPreferences: Sendable {
@@ -86,15 +86,15 @@ extension WebPage {
         /// The `WebPage.Configuration.upgradeKnownHostsToHTTPS` property supersedes this property for known hosts.
         public var preferredHTTPSNavigationPolicy: UpgradeToHTTPSPolicy = .keepAsRequested
 
-        var _isLockdownModeEnabled: Bool? = nil
+        var backingIsLockdownModeEnabled: Bool? = nil
 
         /// A Boolean value that indicates whether to use Lockdown Mode in the web page.
         ///
         /// By default, this reflects whether the user has enabled Lockdown Mode on the device. Update this preference to
         /// override the device setting when you implement a per-website or similar setting.
         public var isLockdownModeEnabled: Bool {
-            get { _isLockdownModeEnabled ?? false }
-            set { _isLockdownModeEnabled = newValue }
+            get { backingIsLockdownModeEnabled ?? false }
+            set { backingIsLockdownModeEnabled = newValue }
         }
     }
 }

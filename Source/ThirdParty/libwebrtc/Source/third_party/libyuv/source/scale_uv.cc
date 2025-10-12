@@ -104,14 +104,6 @@ static void ScaleUVDown2(int src_width,
     }
   }
 #endif
-#if defined(HAS_SCALEUVROWDOWN2BOX_NEON)
-  if (TestCpuFlag(kCpuHasNEON) && filtering) {
-    ScaleUVRowDown2 = ScaleUVRowDown2Box_Any_NEON;
-    if (IS_ALIGNED(dst_width, 8)) {
-      ScaleUVRowDown2 = ScaleUVRowDown2Box_NEON;
-    }
-  }
-#endif
 #if defined(HAS_SCALEUVROWDOWN2_NEON)
   if (TestCpuFlag(kCpuHasNEON)) {
     ScaleUVRowDown2 =
@@ -126,6 +118,13 @@ static void ScaleUVDown2(int src_width,
               : (filtering == kFilterLinear ? ScaleUVRowDown2Linear_NEON
                                             : ScaleUVRowDown2Box_NEON);
     }
+  }
+#endif
+#if defined(HAS_SCALEUVROWDOWN2_SME)
+  if (TestCpuFlag(kCpuHasSME)) {
+    ScaleUVRowDown2 = filtering == kFilterNone     ? ScaleUVRowDown2_SME
+                      : filtering == kFilterLinear ? ScaleUVRowDown2Linear_SME
+                                                   : ScaleUVRowDown2Box_SME;
   }
 #endif
 #if defined(HAS_SCALEUVROWDOWN2_RVV)
@@ -242,6 +241,11 @@ static int ScaleUVDown4Box(int src_width,
     }
   }
 #endif
+#if defined(HAS_SCALEUVROWDOWN2BOX_SME)
+  if (TestCpuFlag(kCpuHasSME)) {
+    ScaleUVRowDown2 = ScaleUVRowDown2Box_SME;
+  }
+#endif
 #if defined(HAS_SCALEUVROWDOWN2BOX_RVV)
   if (TestCpuFlag(kCpuHasRVV)) {
     ScaleUVRowDown2 = ScaleUVRowDown2Box_RVV;
@@ -329,14 +333,14 @@ static void ScaleUVDownEven(int src_width,
 #endif
 #if defined(HAS_SCALEUVROWDOWNEVEN_RVV) || defined(HAS_SCALEUVROWDOWN4_RVV)
   if (TestCpuFlag(kCpuHasRVV) && !filtering) {
-    #if defined(HAS_SCALEUVROWDOWNEVEN_RVV)
-      ScaleUVRowDownEven = ScaleUVRowDownEven_RVV;
-    #endif
-    #if defined(HAS_SCALEUVROWDOWN4_RVV)
-      if (col_step == 4) {
-        ScaleUVRowDownEven = ScaleUVRowDown4_RVV;
-      }
-    #endif
+#if defined(HAS_SCALEUVROWDOWNEVEN_RVV)
+    ScaleUVRowDownEven = ScaleUVRowDownEven_RVV;
+#endif
+#if defined(HAS_SCALEUVROWDOWN4_RVV)
+    if (col_step == 4) {
+      ScaleUVRowDownEven = ScaleUVRowDown4_RVV;
+    }
+#endif
   }
 #endif
 
@@ -408,6 +412,11 @@ static int ScaleUVBilinearDown(int src_width,
     if (IS_ALIGNED(clip_src_width, 16)) {
       InterpolateRow = InterpolateRow_NEON;
     }
+  }
+#endif
+#if defined(HAS_INTERPOLATEROW_SME)
+  if (TestCpuFlag(kCpuHasSME)) {
+    InterpolateRow = InterpolateRow_SME;
   }
 #endif
 #if defined(HAS_INTERPOLATEROW_MSA)
@@ -529,6 +538,11 @@ static int ScaleUVBilinearUp(int src_width,
     if (IS_ALIGNED(dst_width, 8)) {
       InterpolateRow = InterpolateRow_NEON;
     }
+  }
+#endif
+#if defined(HAS_INTERPOLATEROW_SME)
+  if (TestCpuFlag(kCpuHasSME)) {
+    InterpolateRow = InterpolateRow_SME;
   }
 #endif
 #if defined(HAS_INTERPOLATEROW_MSA)

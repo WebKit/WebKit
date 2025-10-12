@@ -39,18 +39,20 @@ using StructureMap        = angle::HashMap<const TStructure *, StructureData>;
 using StructureUniformMap = angle::HashMap<const TVariable *, const TVariable *>;
 using ExtractedSamplerMap = angle::HashMap<std::string, const TVariable *>;
 
-TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
+bool RewriteModifiedStructFieldSelectionExpression(
     TCompiler *compiler,
     TIntermBinary *node,
     const StructureMap &structureMap,
     const StructureUniformMap &structureUniformMap,
-    const ExtractedSamplerMap &extractedSamplers);
+    const ExtractedSamplerMap &extractedSamplers,
+    TIntermTyped **rewritten);
 
-TIntermTyped *RewriteExpressionVisitBinaryHelper(TCompiler *compiler,
+bool RewriteExpressionVisitBinaryHelper(TCompiler *compiler,
                                                  TIntermBinary *node,
                                                  const StructureMap &structureMap,
                                                  const StructureUniformMap &structureUniformMap,
-                                                 const ExtractedSamplerMap &extractedSamplers)
+                                                 const ExtractedSamplerMap &extractedSamplers,
+                                                 TIntermTyped **rewritten)
 {
     // Only interested in EOpIndex* binary nodes.
     switch (node->getOp())
@@ -61,20 +63,22 @@ TIntermTyped *RewriteExpressionVisitBinaryHelper(TCompiler *compiler,
         case EOpIndexDirectStruct:
             break;
         default:
-            return nullptr;
+			*rewritten = nullptr;
+            return true;
     }
 
     const TStructure *structure = node->getLeft()->getType().getStruct();
     if (structure == nullptr)
     {
-        return nullptr;
+        return true;
     }
 
     // If the result of the index is not a sampler and the struct is not replaced, there's nothing
     // to do.
     if (!node->getType().isSampler() && structureMap.find(structure) == structureMap.end())
     {
-        return nullptr;
+		*rewritten = nullptr;
+        return true;
     }
 
     // Otherwise, replace the whole expression such that:
@@ -84,8 +88,14 @@ TIntermTyped *RewriteExpressionVisitBinaryHelper(TCompiler *compiler,
     //   the intermediate nodes would have the correct type (and therefore fields).
     ASSERT(structureMap.find(structure) != structureMap.end());
 
-    return RewriteModifiedStructFieldSelectionExpression(compiler, node, structureMap,
-                                                         structureUniformMap, extractedSamplers);
+    if (!RewriteModifiedStructFieldSelectionExpression(compiler, node, structureMap,
+                                                       structureUniformMap, extractedSamplers,
+                                                       rewritten))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 // Given an expression, this traverser calculates a new expression where sampler-in-structs are
@@ -103,13 +113,17 @@ class RewriteExpressionTraverser final : public TIntermTraverser
           mCompiler(compiler),
           mStructureMap(structureMap),
           mStructureUniformMap(structureUniformMap),
-          mExtractedSamplers(extractedSamplers)
+          mExtractedSamplers(extractedSamplers),
+          mUnsupportedError(false)
     {}
 
     bool visitBinary(Visit visit, TIntermBinary *node) override
     {
-        TIntermTyped *rewritten = RewriteExpressionVisitBinaryHelper(
-            mCompiler, node, mStructureMap, mStructureUniformMap, mExtractedSamplers);
+        TIntermTyped *rewritten = nullptr;
+        if (!RewriteExpressionVisitBinaryHelper(mCompiler, node, mStructureMap, mStructureUniformMap, mExtractedSamplers, &rewritten))
+        {
+            mUnsupportedError = true;
+        }
 
         if (rewritten == nullptr)
         {
@@ -138,6 +152,10 @@ class RewriteExpressionTraverser final : public TIntermTraverser
     const StructureMap &mStructureMap;
     const StructureUniformMap &mStructureUniformMap;
     const ExtractedSamplerMap &mExtractedSamplers;
+
+    // FIXME: Used to communicate that an error occurred during the rewrite process that is currently not
+    // supported so that a failure can be returned to callers of sh::RewriteStructSamplers().
+    bool mUnsupportedError;
 };
 
 // Rewrite the index of an EOpIndexIndirect expression.  The root can never need replacing, because
@@ -179,12 +197,13 @@ void RewriteIndexExpression(TCompiler *compiler,
 //
 // If the expression is not a sampler, it only replaces the struct with the modified one, while
 // still processing the EOpIndexIndirect expressions (which may contain more structs to map).
-TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
+bool RewriteModifiedStructFieldSelectionExpression(
     TCompiler *compiler,
     TIntermBinary *node,
     const StructureMap &structureMap,
     const StructureUniformMap &structureUniformMap,
-    const ExtractedSamplerMap &extractedSamplers)
+    const ExtractedSamplerMap &extractedSamplers,
+    TIntermTyped **rewritten)
 {
     const bool isSampler = node->getType().isSampler();
 
@@ -221,18 +240,17 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
         iter = iter->getLeft()->getAsBinaryNode();
     }
 
-    TIntermTyped *rewritten = nullptr;
 
     if (isSampler)
     {
         ASSERT(extractedSamplers.find(samplerName) != extractedSamplers.end());
-        rewritten = new TIntermSymbol(extractedSamplers.at(samplerName));
+        *rewritten = new TIntermSymbol(extractedSamplers.at(samplerName));
     }
     else
     {
         const TVariable *baseUniformVar = &baseUniform->variable();
         ASSERT(structureUniformMap.find(baseUniformVar) != structureUniformMap.end());
-        rewritten = new TIntermSymbol(structureUniformMap.at(baseUniformVar));
+        *rewritten = new TIntermSymbol(structureUniformMap.at(baseUniformVar));
     }
 
     // Iterate again and build the expression from bottom up.
@@ -245,13 +263,27 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
             case EOpIndexDirectStruct:
                 if (!isSampler)
                 {
-                    rewritten =
-                        new TIntermBinary(EOpIndexDirectStruct, rewritten, indexNode->getRight());
+                    // FIXME: Fix accessing fields of structs containing other structs that only contain samplers.
+                    // Currently, given the following example definitions:
+                    //   (e.g., struct S1 { sampler2D sampler; }; struct S2 { int i; S1 s; }; uniform S2 uni;)
+                    // an out of bounds access can occur when trying to access uni.s.sampler because s has been stripped
+                    // out of the replacement structure definition for S2. For now, check that indexing into the field
+                    // list of a structure will not result in an out of bounds array access before attempting to
+                    // create the binary operator node.
+                    const TFieldList &fields = (*rewritten)->getType().getStruct()->fields();
+                    const size_t fieldIndex  = indexNode->getRight()->getAsConstantUnion()->getIConst(0);
+                    if (fieldIndex >= fields.size())
+                    {
+                        return false;
+                    }
+
+                    *rewritten =
+                        new TIntermBinary(EOpIndexDirectStruct, *rewritten, indexNode->getRight());
                 }
                 break;
 
             case EOpIndexDirect:
-                rewritten = new TIntermBinary(EOpIndexDirect, rewritten, indexNode->getRight());
+                *rewritten = new TIntermBinary(EOpIndexDirect, *rewritten, indexNode->getRight());
                 break;
 
             case EOpIndexIndirect:
@@ -262,7 +294,7 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
                 TIntermTyped *indexExpression = indexNode->getRight();
                 RewriteIndexExpression(compiler, indexExpression, structureMap, structureUniformMap,
                                        extractedSamplers);
-                rewritten = new TIntermBinary(EOpIndexIndirect, rewritten, indexExpression);
+                *rewritten = new TIntermBinary(EOpIndexIndirect, *rewritten, indexExpression);
                 break;
             }
 
@@ -272,7 +304,7 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
         }
     }
 
-    return rewritten;
+    return true;
 }
 
 class RewriteStructSamplersTraverser final : public TIntermTraverser
@@ -281,7 +313,8 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
     explicit RewriteStructSamplersTraverser(TCompiler *compiler, TSymbolTable *symbolTable)
         : TIntermTraverser(true, false, false, symbolTable),
           mCompiler(compiler),
-          mRemovedUniformsCount(0)
+          mRemovedUniformsCount(0),
+          mUnsupportedError(false)
     {}
 
     int removedUniformsCount() const { return mRemovedUniformsCount; }
@@ -344,8 +377,11 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
     // Same implementation as in RewriteExpressionTraverser.  That traverser cannot replace root.
     bool visitBinary(Visit visit, TIntermBinary *node) override
     {
-        TIntermTyped *rewritten = RewriteExpressionVisitBinaryHelper(
-            mCompiler, node, mStructureMap, mStructureUniformMap, mExtractedSamplers);
+        TIntermTyped *rewritten = nullptr;
+        if (!RewriteExpressionVisitBinaryHelper(mCompiler, node, mStructureMap, mStructureUniformMap, mExtractedSamplers, &rewritten))
+        {
+            mUnsupportedError = true;
+        }
 
         if (rewritten == nullptr)
         {
@@ -368,6 +404,8 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
             queueReplacement(new TIntermSymbol(replacement->second), OriginalNode::IS_DROPPED);
         }
     }
+
+    bool hasUnsupportedError() const { return mUnsupportedError; }
 
   private:
     bool isActiveUniform(const ImmutableString &rootStructureName)
@@ -635,6 +673,10 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
 
     // Caches the names of all inactive uniforms.
     TSet<ImmutableString> *mActiveUniforms = nullptr;
+
+	// FIXME: Used to communicate that an error occurred during the rewrite process that is currently not
+    // supported so that a failure can be returned to callers of sh::RewriteStructSamplers().
+    bool mUnsupportedError;
 };
 }  // anonymous namespace
 
@@ -645,6 +687,8 @@ bool RewriteStructSamplers(TCompiler *compiler,
 {
     RewriteStructSamplersTraverser traverser(compiler, symbolTable);
     root->traverse(&traverser);
+    if (traverser.hasUnsupportedError())
+        return false;
     *removedUniformsCountOut = traverser.removedUniformsCount();
     return traverser.updateTree(compiler, root);
 }

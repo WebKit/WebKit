@@ -28,7 +28,8 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "DocumentInlines.h"
+#include "ContextDestructionObserverInlines.h"
+#include "DocumentPage.h"
 #include "JSApplePaySetupFeature.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Page.h"
@@ -58,7 +59,7 @@ void ApplePaySetup::getSetupFeatures(Document& document, SetupFeaturesPromise&& 
         return;
     }
 
-    auto page = document.page();
+    RefPtr page = document.page();
     if (!page) {
         promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
@@ -77,7 +78,7 @@ void ApplePaySetup::getSetupFeatures(Document& document, SetupFeaturesPromise&& 
 
     m_setupFeaturesPromise = WTFMove(promise);
 
-    page->paymentCoordinator().getSetupFeatures(m_configuration, document.url(), [pendingActivity = makePendingActivity(*this)](Vector<Ref<ApplePaySetupFeature>>&& setupFeatures) {
+    page->protectedPaymentCoordinator()->getSetupFeatures(m_configuration, document.url(), [pendingActivity = makePendingActivity(*this)](Vector<Ref<ApplePaySetupFeature>>&& setupFeatures) {
         if (pendingActivity->object().m_setupFeaturesPromise)
             std::exchange(pendingActivity->object().m_setupFeaturesPromise, std::nullopt)->resolve(WTFMove(setupFeatures));
     });
@@ -109,7 +110,7 @@ void ApplePaySetup::begin(Document& document, Vector<Ref<ApplePaySetupFeature>>&
 
     m_beginPromise = WTFMove(promise);
 
-    page->paymentCoordinator().beginApplePaySetup(m_configuration, page->mainFrameURL(), WTFMove(features), [pendingActivity = makePendingActivity(*this)](bool result) {
+    page->protectedPaymentCoordinator()->beginApplePaySetup(m_configuration, page->mainFrameURL(), WTFMove(features), [pendingActivity = makePendingActivity(*this)](bool result) {
         if (pendingActivity->object().m_beginPromise)
             std::exchange(pendingActivity->object().m_beginPromise, std::nullopt)->resolve(result);
     });
@@ -136,8 +137,8 @@ void ApplePaySetup::stop()
     if (m_beginPromise)
         std::exchange(m_beginPromise, std::nullopt)->reject(Exception { ExceptionCode::AbortError });
 
-    if (auto page = downcast<Document>(*scriptExecutionContext()).page())
-        page->paymentCoordinator().endApplePaySetup();
+    if (RefPtr page = downcast<Document>(*scriptExecutionContext()).page())
+        page->protectedPaymentCoordinator()->endApplePaySetup();
 }
 
 void ApplePaySetup::suspend(ReasonForSuspension)

@@ -26,6 +26,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/line-with-svg-background-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/line-with-svg-background.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/opacity-and-transform-animation-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-background-contain-hidden-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-background-image-opaque-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-001.html
@@ -35,6 +37,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-background-margin-opacity-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-background-margin-opacity-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-background-margin-opacity.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-background-transparency-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-background-transparency-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-background-transparency.html

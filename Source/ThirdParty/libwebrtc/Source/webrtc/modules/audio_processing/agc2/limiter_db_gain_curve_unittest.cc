@@ -10,7 +10,7 @@
 
 #include "modules/audio_processing/agc2/limiter_db_gain_curve.h"
 
-#include "rtc_base/gunit.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

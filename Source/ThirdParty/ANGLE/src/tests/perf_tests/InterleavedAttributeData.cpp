@@ -7,6 +7,10 @@
 //   Performance test for draws using interleaved attribute data in vertex buffers.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <sstream>
 
 #include "ANGLEPerfTest.h"

@@ -38,7 +38,7 @@ public:
         return adoptRef(*new JSTestCallbackInterface(callback, globalObject));
     }
 
-    ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const;
 
     ~JSTestCallbackInterface() final;
     JSCallbackData* callbackData() { return m_data; }

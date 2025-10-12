@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,17 +27,10 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmCallee.h"
+#include <JavaScriptCore/WasmCallee.h>
 
 extern "C" void SYSV_ABI ipint_entry();
 extern "C" void SYSV_ABI ipint_entry_simd();
-extern "C" void SYSV_ABI ipint_catch_entry();
-extern "C" void SYSV_ABI ipint_catch_all_entry();
-
-extern "C" void SYSV_ABI ipint_table_catch_entry();
-extern "C" void SYSV_ABI ipint_table_catch_ref_entry();
-extern "C" void SYSV_ABI ipint_table_catch_all_entry();
-extern "C" void SYSV_ABI ipint_table_catch_allref_entry();
 
 #define IPINT_VALIDATE_DEFINE_FUNCTION(opcode, name) \
     extern "C" void SYSV_ABI ipint_ ## name ## _validate() REFERENCED_FROM_ASM WTF_INTERNAL NO_REORDER;
@@ -294,13 +287,13 @@ extern "C" void SYSV_ABI ipint_table_catch_allref_entry();
     m(0xf8, reserved_0xf8) \
     m(0xf9, reserved_0xf9) \
     m(0xfa, reserved_0xfa) \
-    m(0xfb, fb_block) \
-    m(0xfc, fc_block) \
-    m(0xfd, simd) \
-    m(0xfe, atomic) \
+    m(0xfb, gc_prefix) \
+    m(0xfc, conversion_prefix) \
+    m(0xfd, simd_prefix) \
+    m(0xfe, atomic_prefix) \
     m(0xff, reserved_0xff)
 
-#define FOR_EACH_IPINT_0xFB_OPCODE(m) \
+#define FOR_EACH_IPINT_GC_OPCODE(m) \
     m(0x00, struct_new) \
     m(0x01, struct_new_default) \
     m(0x02, struct_get) \
@@ -333,7 +326,7 @@ extern "C" void SYSV_ABI ipint_table_catch_allref_entry();
     m(0x1d, i31_get_s) \
     m(0x1e, i31_get_u)
 
-#define FOR_EACH_IPINT_0xFC_TRUNC_OPCODE(m) \
+#define FOR_EACH_IPINT_CONVERSION_OPCODE(m) \
     m(0x00, i32_trunc_sat_f32_s) \
     m(0x01, i32_trunc_sat_f32_u) \
     m(0x02, i32_trunc_sat_f64_s) \
@@ -710,7 +703,8 @@ extern "C" void SYSV_ABI ipint_table_catch_allref_entry();
     m(0x0e, argumINT_fa6) \
     m(0x0f, argumINT_fa7) \
     m(0x10, argumINT_stack) \
-    m(0x11, argumINT_end) \
+    m(0x11, argumINT_stack_vector) \
+    m(0x12, argumINT_end) \
 
 #define FOR_EACH_IPINT_SLOW_PATH(m) \
     m(0x00, local_get_slow_path) \
@@ -734,14 +728,18 @@ extern "C" void SYSV_ABI ipint_table_catch_allref_entry();
     m(0x0d, mint_fa5) \
     m(0x0e, mint_fa6) \
     m(0x0f, mint_fa7) \
-    m(0x10, mint_stackzero) \
-    m(0x11, mint_stackeight) \
-    m(0x12, mint_tail_stackzero) \
-    m(0x13, mint_tail_stackeight) \
-    m(0x14, mint_gap) \
-    m(0x15, mint_tail_gap) \
-    m(0x16, mint_tail_call) \
-    m(0x17, mint_call) \
+    m(0x10, mint_call_argument_dec_sp) \
+    m(0x11, mint_call_argument_store_0) \
+    m(0x12, mint_call_argument_dec_sp_store_8) \
+    m(0x13, mint_call_argument_dec_sp_store_vector_0) \
+    m(0x14, mint_call_argument_dec_sp_store_vector_8) \
+    m(0x15, mint_tail_call_argument_dec_sp) \
+    m(0x16, mint_tail_call_argument_store_0) \
+    m(0x17, mint_tail_call_argument_dec_sp_store_8) \
+    m(0x18, mint_tail_call_argument_dec_sp_store_vector_0) \
+    m(0x19, mint_tail_call_argument_dec_sp_store_vector_8) \
+    m(0x1a, mint_tail_call) \
+    m(0x1b, mint_call) \
 
 #define FOR_EACH_IPINT_MINT_RETURN_OPCODE(m) \
     m(0x00, mint_r0) \
@@ -760,8 +758,8 @@ extern "C" void SYSV_ABI ipint_table_catch_allref_entry();
     m(0x0d, mint_fr5) \
     m(0x0e, mint_fr6) \
     m(0x0f, mint_fr7) \
-    m(0x10, mint_stack) \
-    m(0x11, mint_stack_gap) \
+    m(0x10, mint_result_stack) \
+    m(0x11, mint_result_stack_vector) \
     m(0x12, mint_end) \
 
 #define FOR_EACH_IPINT_UINT_OPCODE(m) \
@@ -782,12 +780,13 @@ extern "C" void SYSV_ABI ipint_table_catch_allref_entry();
     m(0x0e, uint_fr6) \
     m(0x0f, uint_fr7) \
     m(0x10, uint_stack) \
-    m(0x11, uint_ret) \
+    m(0x11, uint_stack_vector) \
+    m(0x12, uint_ret) \
 
 #if !ENABLE(C_LOOP) && (CPU(ADDRESS64) && (CPU(ARM64) || CPU(X86_64)) || (CPU(ADDRESS32) && CPU(ARM_THUMB2)))
 FOR_EACH_IPINT_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
-FOR_EACH_IPINT_0xFB_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
-FOR_EACH_IPINT_0xFC_TRUNC_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
+FOR_EACH_IPINT_GC_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
+FOR_EACH_IPINT_CONVERSION_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 FOR_EACH_IPINT_SIMD_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 FOR_EACH_IPINT_ATOMIC_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 FOR_EACH_IPINT_ARGUMINT_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
@@ -799,7 +798,14 @@ FOR_EACH_IPINT_UINT_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 
 namespace JSC { namespace IPInt {
 
+constexpr uint64_t alignIPInt = 256;
+constexpr uint64_t alignArgumInt = 64;
+constexpr uint64_t alignUInt = 64;
+constexpr uint64_t alignMInt = 64;
+
+
 void initialize();
+void verifyInitialization();
 
 } }
 

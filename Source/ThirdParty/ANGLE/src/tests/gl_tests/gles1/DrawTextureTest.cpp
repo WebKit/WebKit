@@ -339,4 +339,314 @@ TEST_P(DrawTextureTest, DrawWithTexCoordPtrThenDisableTexture2DAndDrawAnother)
                          kColorCornerTR);
 }
 
+// Tests that vertex and tex coord pointers are used correctly.
+// Draw same non-zero texture twice with same vertex and tex coord pointers, but do not disable
+// texture.
+TEST_P(DrawTextureTest, DrawNonZeroSameTexWithSameVertexPtrWithoutDisabledTexture2D)
+{
+    // Set up texture with four colors; one color per corner to verify if the texture will be
+    // uploaded with appropriate vertex attributes.
+    std::vector<GLColor> textureColors = {GLColor::red, GLColor::yellow, GLColor::green,
+                                          GLColor::blue};
+    GLTexture tex2D;
+    glBindTexture(GL_TEXTURE_2D, tex2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 textureColors.data());
+
+    // Set up vertex and texture coordinate pointers.
+    std::vector<GLfloat> vertexPtrData   = {-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f};
+    std::vector<GLfloat> texCoordPtrData = {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f};
+    glVertexPointer(2, GL_FLOAT, 0, vertexPtrData.data());
+    glTexCoordPointer(2, GL_FLOAT, 0, texCoordPtrData.data());
+
+    glEnable(GL_TEXTURE_2D);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    // Bind tex2D and draw.
+    // -----------------------
+    // | Green    |   Blue   |
+    // | Red      |   Yellow |
+    // -----------------------
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindTexture(GL_TEXTURE_2D, tex2D);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWindowWidth / 2, kWindowHeight / 2, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(kWindowWidth / 2, 0, kWindowWidth / 2, kWindowHeight / 2, GLColor::yellow);
+    EXPECT_PIXEL_RECT_EQ(0, kWindowHeight / 2, kWindowWidth / 2, kWindowHeight / 2, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(kWindowWidth / 2, kWindowHeight / 2, kWindowWidth / 2, kWindowHeight / 2,
+                         GLColor::blue);
+
+    // Bind tex2D and draw again. Expect the vertex attributes remain.
+    // -----------------------
+    // | Green    |   Blue   |
+    // | Red      |   Yellow |
+    // -----------------------
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindTexture(GL_TEXTURE_2D, tex2D);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWindowWidth / 2, kWindowHeight / 2, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(kWindowWidth / 2, 0, kWindowWidth / 2, kWindowHeight / 2, GLColor::yellow);
+    EXPECT_PIXEL_RECT_EQ(0, kWindowHeight / 2, kWindowWidth / 2, kWindowHeight / 2, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(kWindowWidth / 2, kWindowHeight / 2, kWindowWidth / 2, kWindowHeight / 2,
+                         GLColor::blue);
+}
+
+// Tests that vertex and tex coord pointers are used correctly.
+// Draw same non-zero texture twice with different vertex pointer, but do not disable texture.
+TEST_P(DrawTextureTest, DrawNonZeroSameTexWithDifferentVertexPtrWithoutDisabledTexture2D)
+{
+    // Set up texture with four colors; one color per corner to verify if the texture will be
+    // uploaded with appropriate vertex attributes.
+    std::vector<GLColor> textureColors = {GLColor::red, GLColor::yellow, GLColor::green,
+                                          GLColor::blue};
+    GLTexture tex2D;
+    glBindTexture(GL_TEXTURE_2D, tex2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 textureColors.data());
+
+    // Set up vertex and texture coordinate pointers.
+    std::vector<GLfloat> vertexPtrData_1 = {-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f};
+    std::vector<GLfloat> texCoordPtrData = {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f};
+    glVertexPointer(2, GL_FLOAT, 0, vertexPtrData_1.data());
+    glTexCoordPointer(2, GL_FLOAT, 0, texCoordPtrData.data());
+
+    glEnable(GL_TEXTURE_2D);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    // Bind tex2D and draw.
+    // -----------------------
+    // | Green    |   Blue   |
+    // | Red      |   Yellow |
+    // -----------------------
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindTexture(GL_TEXTURE_2D, tex2D);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWindowWidth / 2, kWindowHeight / 2, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(kWindowWidth / 2, 0, kWindowWidth / 2, kWindowHeight / 2, GLColor::yellow);
+    EXPECT_PIXEL_RECT_EQ(0, kWindowHeight / 2, kWindowWidth / 2, kWindowHeight / 2, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(kWindowWidth / 2, kWindowHeight / 2, kWindowWidth / 2, kWindowHeight / 2,
+                         GLColor::blue);
+
+    // Change vertex data.
+    std::vector<GLfloat> vertexPtrData_2 = {-1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f};
+    glVertexPointer(2, GL_FLOAT, 0, vertexPtrData_2.data());
+
+    // Bind tex2D and draw.
+    // -----------------------
+    // | Yellow   |   Blue   |
+    // | Red      |   Green  |
+    // -----------------------
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindTexture(GL_TEXTURE_2D, tex2D);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWindowWidth / 2, kWindowHeight / 2, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(kWindowWidth / 2, 0, kWindowWidth / 2, kWindowHeight / 2, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(0, kWindowHeight / 2, kWindowWidth / 2, kWindowHeight / 2,
+                         GLColor::yellow);
+    EXPECT_PIXEL_RECT_EQ(kWindowWidth / 2, kWindowHeight / 2, kWindowWidth / 2, kWindowHeight / 2,
+                         GLColor::blue);
+}
+
+// Test that vertex and tex coord pointers are used correctly.
+// Draw two different non-zero textures with different vertex pointer, but do not disable texture.
+TEST_P(DrawTextureTest, DrawNonZeroTwoTexWithDifferentVertexPtrWithoutDisableTexture2D)
+{
+    // Set up texture with four colors; one color per corner to verify if the texture will be
+    // uploaded with appropriate vertex attributes.
+    std::vector<GLColor> textureColors_1 = {GLColor::red, GLColor::yellow, GLColor::green,
+                                            GLColor::blue};
+    GLTexture tex2D_1;
+    glBindTexture(GL_TEXTURE_2D, tex2D_1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 textureColors_1.data());
+
+    // Set up vertex and texture coordinate pointers.
+    std::vector<GLfloat> vertexPtrData_1 = {-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f};
+    std::vector<GLfloat> texCoordPtrData = {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f};
+    glVertexPointer(2, GL_FLOAT, 0, vertexPtrData_1.data());
+    glTexCoordPointer(2, GL_FLOAT, 0, texCoordPtrData.data());
+
+    glEnable(GL_TEXTURE_2D);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    // Bind tex2D and draw.
+    // -----------------------
+    // | Green    |   Blue   |
+    // | Red      |   Yellow |
+    // -----------------------
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWindowWidth / 2, kWindowHeight / 2, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(kWindowWidth / 2, 0, kWindowWidth / 2, kWindowHeight / 2, GLColor::yellow);
+    EXPECT_PIXEL_RECT_EQ(0, kWindowHeight / 2, kWindowWidth / 2, kWindowHeight / 2, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(kWindowWidth / 2, kWindowHeight / 2, kWindowWidth / 2, kWindowHeight / 2,
+                         GLColor::blue);
+
+    // Change texture to bind.
+    std::vector<GLColor> textureColors_2 = {GLColor::magenta, GLColor::transparentBlack,
+                                            GLColor::white, GLColor::cyan};
+    GLTexture tex2D_2;
+    glBindTexture(GL_TEXTURE_2D, tex2D_2);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 textureColors_2.data());
+
+    // Change vertex data.
+    std::vector<GLfloat> vertexPtrData_2 = {-1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f};
+    glVertexPointer(2, GL_FLOAT, 0, vertexPtrData_2.data());
+
+    // Bind tex2D and draw.
+    // -----------------------------------
+    // | TransparentBlack | Cyan         |
+    // | Magenta          | White        |
+    // -----------------------------------
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWindowWidth / 2, kWindowHeight / 2, GLColor::magenta);
+    EXPECT_PIXEL_RECT_EQ(kWindowWidth / 2, 0, kWindowWidth / 2, kWindowHeight / 2, GLColor::white);
+    EXPECT_PIXEL_RECT_EQ(0, kWindowHeight / 2, kWindowWidth / 2, kWindowHeight / 2,
+                         GLColor::transparentBlack);
+    EXPECT_PIXEL_RECT_EQ(kWindowWidth / 2, kWindowHeight / 2, kWindowWidth / 2, kWindowHeight / 2,
+                         GLColor::cyan);
+}
+
+// Tests that vertex and tex coord pointers are used correctly.
+// Draw zero texture first then draw tex2D with same vertex and tex coord pointers, but do not
+// disable texture.
+TEST_P(DrawTextureTest, DrawZeroTexWithSameVertexPtrWithoutDisableTexture2D)
+{
+    // Set up texture with four colors; one color per corner to verify if the texture will be
+    // uploaded with appropriate vertex attributes.
+    std::vector<GLColor> textureColors = {GLColor::red, GLColor::yellow, GLColor::green,
+                                          GLColor::blue};
+    GLTexture tex2D;
+    glBindTexture(GL_TEXTURE_2D, tex2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 textureColors.data());
+
+    // Set up vertex and texture coordinate pointers.
+    std::vector<GLfloat> vertexPtrData   = {-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f};
+    std::vector<GLfloat> texCoordPtrData = {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f};
+    glVertexPointer(2, GL_FLOAT, 0, vertexPtrData.data());
+    glTexCoordPointer(2, GL_FLOAT, 0, texCoordPtrData.data());
+
+    glEnable(GL_TEXTURE_2D);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    // Bind zero texture and draw.
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    EXPECT_GL_NO_ERROR();
+
+    // Bind tex2D and draw. Expect the vertex attributes remain.
+    // -----------------------
+    // | Green    |   Blue   |
+    // | Red      |   Yellow |
+    // -----------------------
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindTexture(GL_TEXTURE_2D, tex2D);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWindowWidth / 2, kWindowHeight / 2, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(kWindowWidth / 2, 0, kWindowWidth / 2, kWindowHeight / 2, GLColor::yellow);
+    EXPECT_PIXEL_RECT_EQ(0, kWindowHeight / 2, kWindowWidth / 2, kWindowHeight / 2, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(kWindowWidth / 2, kWindowHeight / 2, kWindowWidth / 2, kWindowHeight / 2,
+                         GLColor::blue);
+}
+
+// Tests that vertex and tex coord pointers are used correctly.
+// Draw zero texture first then draw tex2D with different vertex pointers, but do not disable
+// texture.
+TEST_P(DrawTextureTest, DrawZeroTexWithDifferentVertexPtrWithoutDisableTexture2D)
+{
+    // Set up texture with four colors; one color per corner to verify if the texture will be
+    // uploaded with appropriate vertex attributes.
+    std::vector<GLColor> textureColors = {GLColor::red, GLColor::yellow, GLColor::green,
+                                          GLColor::blue};
+    GLTexture tex2D;
+    glBindTexture(GL_TEXTURE_2D, tex2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 textureColors.data());
+
+    // Set up vertex and texture coordinate pointers.
+    std::vector<GLfloat> vertexPtrData_1 = {-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f};
+    std::vector<GLfloat> texCoordPtrData = {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f};
+    glVertexPointer(2, GL_FLOAT, 0, vertexPtrData_1.data());
+    glTexCoordPointer(2, GL_FLOAT, 0, texCoordPtrData.data());
+
+    glEnable(GL_TEXTURE_2D);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    // Bind zero texture and draw.
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    EXPECT_GL_NO_ERROR();
+
+    // Change vertex data.
+    std::vector<GLfloat> vertexPtrData_2 = {-1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f};
+    glVertexPointer(2, GL_FLOAT, 0, vertexPtrData_2.data());
+
+    // Bind tex2D and draw.
+    // -----------------------
+    // | Yellow   |   Blue   |
+    // | Red      |   Green  |
+    // -----------------------
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindTexture(GL_TEXTURE_2D, tex2D);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWindowWidth / 2, kWindowHeight / 2, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(kWindowWidth / 2, 0, kWindowWidth / 2, kWindowHeight / 2, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(0, kWindowHeight / 2, kWindowWidth / 2, kWindowHeight / 2,
+                         GLColor::yellow);
+    EXPECT_PIXEL_RECT_EQ(kWindowWidth / 2, kWindowHeight / 2, kWindowWidth / 2, kWindowHeight / 2,
+                         GLColor::blue);
+}
+
 ANGLE_INSTANTIATE_TEST_ES1(DrawTextureTest);

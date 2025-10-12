@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,14 +76,14 @@ GPUProcessConnection& RemoteCDMFactory::gpuProcessConnection()
 
 bool RemoteCDMFactory::supportsKeySystem(const String& keySystem)
 {
-    auto sendResult = gpuProcessConnection().protectedConnection()->sendSync(Messages::RemoteCDMFactoryProxy::SupportsKeySystem(keySystem), { });
+    auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteCDMFactoryProxy::SupportsKeySystem(keySystem), { });
     auto [supported] = sendResult.takeReplyOr(false);
     return supported;
 }
 
 std::unique_ptr<CDMPrivate> RemoteCDMFactory::createCDM(const String& keySystem, const String& mediaKeysHashSalt, const CDMPrivateClient&)
 {
-    auto sendResult = gpuProcessConnection().protectedConnection()->sendSync(Messages::RemoteCDMFactoryProxy::CreateCDM(keySystem, mediaKeysHashSalt), { });
+    auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteCDMFactoryProxy::CreateCDM(keySystem, mediaKeysHashSalt), { });
     auto [identifier, configuration] = sendResult.takeReplyOr(std::nullopt, RemoteCDMConfiguration { });
     if (!identifier)
         return nullptr;
@@ -100,12 +100,12 @@ void RemoteCDMFactory::removeSession(RemoteCDMInstanceSessionIdentifier identifi
 {
     ASSERT(m_sessions.contains(identifier));
     m_sessions.remove(identifier);
-    gpuProcessConnection().protectedConnection()->send(Messages::RemoteCDMFactoryProxy::RemoveSession(identifier), { });
+    gpuProcessConnection().connection().send(Messages::RemoteCDMFactoryProxy::RemoveSession(identifier), { });
 }
 
 void RemoteCDMFactory::removeInstance(RemoteCDMInstanceIdentifier identifier)
 {
-    gpuProcessConnection().protectedConnection()->send(Messages::RemoteCDMFactoryProxy::RemoveInstance(identifier), { });
+    gpuProcessConnection().connection().send(Messages::RemoteCDMFactoryProxy::RemoveInstance(identifier), { });
 }
 
 void RemoteCDMFactory::didReceiveSessionMessage(IPC::Connection& connection, IPC::Decoder& decoder)

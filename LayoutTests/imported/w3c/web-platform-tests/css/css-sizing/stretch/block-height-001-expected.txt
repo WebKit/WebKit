@@ -1,0 +1,56 @@
+
+FAIL [data-expected-height] 1 assert_equals:
+<div data-expected-height="100" style="display: block; height: stretch;">
+    <div class="content"></div>
+  </div>
+height expected 100 but got 20
+FAIL [data-expected-height] 2 assert_equals:
+<div data-expected-height="100" style="display: flex; height: stretch;">
+    <div class="content"></div>
+  </div>
+height expected 100 but got 20
+FAIL [data-expected-height] 3 assert_equals:
+<div data-expected-height="100" style="display: grid; height: stretch;">
+    <div class="content"></div>
+  </div>
+height expected 100 but got 20
+PASS [data-expected-height] 4
+PASS [data-expected-height] 5
+PASS [data-expected-height] 6
+FAIL [data-expected-height] 7 assert_equals:
+<div data-expected-height="100" style="display: block; min-height: stretch;">
+    <div class="content"></div>
+  </div>
+height expected 100 but got 20
+FAIL [data-expected-height] 8 assert_equals:
+<div data-expected-height="100" style="display: flex; min-height: stretch;">
+    <div class="content"></div>
+  </div>
+height expected 100 but got 20
+FAIL [data-expected-height] 9 assert_equals:
+<div data-expected-height="100" style="display: grid; min-height: stretch;">
+    <div class="content"></div>
+  </div>
+height expected 100 but got 20
+PASS [data-expected-height] 10
+PASS [data-expected-height] 11
+PASS [data-expected-height] 12
+FAIL [data-expected-height] 13 assert_equals:
+<div data-expected-height="100" style="display: block; max-height: stretch;">
+    <div class="tall-content"></div>
+  </div>
+height expected 100 but got 120
+FAIL [data-expected-height] 14 assert_equals:
+<div data-expected-height="100" style="display: flex; max-height: stretch;">
+    <div class="tall-content"></div>
+  </div>
+height expected 100 but got 120
+FAIL [data-expected-height] 15 assert_equals:
+<div data-expected-height="100" style="display: grid; max-height: stretch;">
+    <div class="tall-content"></div>
+  </div>
+height expected 100 but got 120
+PASS [data-expected-height] 16
+PASS [data-expected-height] 17
+PASS [data-expected-height] 18
+

@@ -58,7 +58,7 @@
 
 namespace WTR {
 
-Class webAccessibilityObjectWrapperClass()
+Class webAccessibilityObjectWrapperClassSingleton()
 {
     static Class cls = objc_getClass("WebAccessibilityObjectWrapper");
     ASSERT(cls);
@@ -95,7 +95,7 @@ JSValueRef makeValueRefForValue(JSContextRef context, id value)
             return JSValueMakeBoolean(context, [value boolValue]);
         return JSValueMakeNumber(context, [value doubleValue]);
     }
-    if ([value isKindOfClass:webAccessibilityObjectWrapperClass()])
+    if ([value isKindOfClass:webAccessibilityObjectWrapperClassSingleton()])
         return toJS(context, WTR::AccessibilityUIElement::create(static_cast<PlatformUIElement>(value)).ptr());
     if ([value isKindOfClass:[NSDictionary class]])
         return makeJSObject(context, value);
@@ -152,4 +152,3 @@ NSDictionary *searchPredicateForSearchCriteria(JSContextRef context, Accessibili
 }
 
 } // namespace WTR
-

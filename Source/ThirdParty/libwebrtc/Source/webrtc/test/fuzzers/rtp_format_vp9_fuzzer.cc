@@ -11,10 +11,12 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "api/video/video_frame_type.h"
+#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_format_vp9.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/video_coding/codecs/interface/common_constants.h"
+#include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #if WEBRTC_WEBKIT_BUILD
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer_vp9.h"
 #endif
@@ -23,7 +25,7 @@
 
 namespace webrtc {
 void FuzzOneInput(const uint8_t* data, size_t size) {
-  test::FuzzDataHelper fuzz_input(rtc::MakeArrayView(data, size));
+  test::FuzzDataHelper fuzz_input(webrtc::MakeArrayView(data, size));
 
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 1200;
@@ -38,9 +40,9 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
 #if WEBRTC_WEBKIT_BUILD
   RTPVideoHeader video_header;
   if (int offset = VideoRtpDepacketizerVp9::ParseRtpPayload(
-        rtc::MakeArrayView(&data[fuzz_input.BytesRead()], fuzz_input.BytesLeft()), &video_header)) {
+        webrtc::MakeArrayView(&data[fuzz_input.BytesRead()], fuzz_input.BytesLeft()), &video_header)) {
     (void)fuzz_input.ReadByteArray(offset);
-    hdr_info = absl::get<RTPVideoHeaderVP9>(video_header.video_type_header);
+    hdr_info = std::get<RTPVideoHeaderVP9>(video_header.video_type_header);
   } else {
 #endif
   hdr_info.InitRTPVideoHeaderVP9();

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -39,7 +39,8 @@
 #include "AudioTrackPrivate.h"
 #include "ContentType.h"
 #include "ContentTypeUtilities.h"
-#include "DocumentInlines.h"
+#include "ContextDestructionObserverInlines.h"
+#include "DocumentQuirks.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "EventTargetInterfaces.h"
@@ -56,8 +57,8 @@
 #include "MediaSourcePrivate.h"
 #include "MediaSourceRegistry.h"
 #include "MediaStrategy.h"
+#include "NodeInlines.h"
 #include "PlatformStrategies.h"
-#include "Quirks.h"
 #include "ScriptExecutionContextInlines.h"
 #include "Settings.h"
 #include "SourceBuffer.h"
@@ -164,17 +165,6 @@ private:
         return promise;
     }
 
-    Ref<MediaPromise> seekToTime(const MediaTime& time) final
-    {
-        MediaPromise::AutoRejectProducer producer(PlatformMediaError::SourceRemoved);
-        auto promise = producer.promise();
-
-        ensureWeakOnDispatcher([producer = WTFMove(producer), time](MediaSource& parent) mutable {
-            parent.seekToTime(time)->chainTo(WTFMove(producer));
-        });
-        return promise;
-    }
-
     RefPtr<MediaSourcePrivate> mediaSourcePrivate() const final
     {
         Locker locker { m_lock };
@@ -200,7 +190,7 @@ private:
     WeakPtr<MediaSource> m_parent;
     const ScriptExecutionContextIdentifier m_identifier;
 #if !RELEASE_LOG_DISABLED
-    Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
 #endif
     mutable Lock m_lock;
     RefPtr<MediaSourcePrivate> m_private WTF_GUARDED_BY_LOCK(m_lock);
@@ -225,8 +215,8 @@ Ref<MediaSource> MediaSource::create(ScriptExecutionContext& context, MediaSourc
 MediaSource::MediaSource(ScriptExecutionContext& context, MediaSourceInit&& options)
     : ActiveDOMObject(&context)
     , m_detachable(context.settingsValues().detachableMediaSourceEnabled ? options.detachable : false)
-    , m_sourceBuffers(SourceBufferList::create(scriptExecutionContext()))
-    , m_activeSourceBuffers(SourceBufferList::create(scriptExecutionContext()))
+    , m_sourceBuffers(SourceBufferList::create(protectedScriptExecutionContext().get()))
+    , m_activeSourceBuffers(SourceBufferList::create(protectedScriptExecutionContext().get()))
 #if !RELEASE_LOG_DISABLED
     , m_logger(logger(context))
 #endif
@@ -320,9 +310,9 @@ void MediaSource::open()
     // ↳ Otherwise
     // 1. Set the MediaSource's [[has ever been attached]] internal slot to true.
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
-    if (m_handle) {
-        m_handle->setHasEverBeenAssignedAsSrcObject();
-        m_handle->mediaSourceDidOpen(*m_private);
+    if (RefPtr handle = m_handle) {
+        handle->setHasEverBeenAssignedAsSrcObject();
+        handle->mediaSourceDidOpen(Ref { *m_private });
     }
 #endif
 
@@ -363,7 +353,7 @@ MediaTime MediaSource::duration() const
     // 1. If the readyState attribute is "closed" then return NaN and abort these steps.
     // 2. Return the current value of the attribute.
 
-    if (RefPtr msp = protectedPrivate())
+    if (RefPtr msp = m_private)
         return msp->duration();
     return MediaTime::invalidTime();
 }
@@ -373,7 +363,7 @@ MediaTime MediaSource::currentTime() const
     if (m_pendingSeekTarget)
         return m_pendingSeekTarget->time;
 
-    if (RefPtr msp = protectedPrivate())
+    if (RefPtr msp = m_private)
         return msp->currentTime();
     return MediaTime::zeroTime();
 }
@@ -390,7 +380,7 @@ Ref<MediaTimePromise> MediaSource::waitForTarget(const SeekTarget& target)
     // 2.4.3 Seeking
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#mediasource-seeking
 
-    RefPtr msp = protectedPrivate();
+    RefPtr msp = m_private;
     if (!msp)
         return MediaTimePromise::createAndReject(PlatformMediaError::SourceRemoved);
 
@@ -446,11 +436,11 @@ void MediaSource::completeSeek()
     MediaTimePromise::AutoRejectProducer producer(PlatformMediaError::SourceRemoved);
     Ref promise = producer.promise();
 
-    scriptExecutionContext()->enqueueTaskWhenSettled(SourceBuffer::ComputeSeekPromise::all(WTF::map(m_activeSourceBuffers.get(), [&](auto&& sourceBuffer) {
+    protectedScriptExecutionContext()->enqueueTaskWhenSettled(SourceBuffer::ComputeSeekPromise::all(WTF::map(m_activeSourceBuffers.get(), [&](auto&& sourceBuffer) {
         return sourceBuffer->computeSeekTime(seekTarget);
-    })), TaskSource::MediaElement, [producer = WTFMove(producer), weakThis = WeakPtr { *this }, this, time = seekTarget.time](auto&& results) {
+    })), TaskSource::MediaElement, [producer = WTFMove(producer), weakThis = WeakPtr { *this }, time = seekTarget.time](auto&& results) {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || isClosed())
+        if (!protectedThis || protectedThis->isClosed())
             return;
 
         if (!results)
@@ -463,7 +453,7 @@ void MediaSource::completeSeek()
         }
 
         // 4. Resume the seek algorithm at the "Await a stable state" step.
-        monitorSourceBuffers();
+        protectedThis->monitorSourceBuffers();
 
         producer.resolve(seekTime);
     });
@@ -471,16 +461,9 @@ void MediaSource::completeSeek()
     m_seekTargetPromise.reset();
 }
 
-Ref<MediaPromise> MediaSource::seekToTime(const MediaTime& time)
-{
-    for (Ref sourceBuffer : m_activeSourceBuffers.get())
-        sourceBuffer->seekToTime(time);
-    return MediaPromise::createAndResolve();
-}
-
 PlatformTimeRanges MediaSource::seekable()
 {
-    if (RefPtr mediaSourcePrivate = protectedPrivate())
+    if (RefPtr mediaSourcePrivate = m_private)
         return mediaSourcePrivate->seekable();
     return { };
 }
@@ -766,7 +749,7 @@ void MediaSource::setReadyState(ReadyState state)
     if (oldState == state)
         return;
 
-    if (RefPtr msp = protectedPrivate())
+    if (RefPtr msp = m_private)
         msp->setReadyState(state);
 
     onReadyStateChange(oldState, readyState());
@@ -1313,7 +1296,7 @@ void MediaSource::detachFromElement()
     m_mediaElement = nullptr;
     m_isAttached = false;
 
-    if (RefPtr msp = protectedPrivate()) {
+    if (RefPtr msp = m_private) {
         msp->shutdown();
         setPrivate(nullptr);
     }
@@ -1354,15 +1337,16 @@ void MediaSource::openIfDeferredOpen()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    ensureWeakOnHTMLMediaElementContext([client = m_client, this](auto& mediaElement) {
+    ensureWeakOnHTMLMediaElementContext([client = m_client, weakThis = WeakPtr { *this }](auto& mediaElement) mutable {
         if (!mediaElement.deferredMediaSourceOpenCanProgress())
             return;
-        client->ensureWeakOnDispatcher([this](MediaSource&) {
-            if (!m_openDeferred)
+        client->ensureWeakOnDispatcher([weakThis = WTFMove(weakThis)](MediaSource&) {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis || !protectedThis->m_openDeferred)
                 return;
-            m_openDeferred = false;
-            onReadyStateChange(ReadyState::Closed, m_readyStateBeforeDetached.value_or(ReadyState::Open));
-            m_readyStateBeforeDetached.reset();
+            protectedThis->m_openDeferred = false;
+            protectedThis->onReadyStateChange(ReadyState::Closed, protectedThis->m_readyStateBeforeDetached.value_or(ReadyState::Open));
+            protectedThis->m_readyStateBeforeDetached.reset();
         }, true);
     });
 }
@@ -1457,7 +1441,7 @@ ExceptionOr<Ref<SourceBufferPrivate>> MediaSource::createSourceBufferPrivate(con
 
     RefPtr<SourceBufferPrivate> sourceBufferPrivate;
     MediaSourceConfiguration configuration = {
-        scriptExecutionContext()->settingsValues().textTracksInMSEEnabled
+        protectedScriptExecutionContext()->settingsValues().textTracksInMSEEnabled
     };
     switch (msp->addSourceBuffer(type, configuration, sourceBufferPrivate)) {
     case MediaSourcePrivate::AddStatus::Ok:
@@ -1551,7 +1535,7 @@ void MediaSource::updateBufferedIfNeeded(bool force)
         sourceBuffer->setBufferedDirty(false);
 
     PlatformTimeRanges buffered;
-    auto updatePrivate = makeScopeExit([&] {
+    auto updatePrivate = makeScopeExit([&, protectedThis = Ref { *this }] {
         if (buffered == msp->buffered())
             return;
         msp->bufferedChanged(buffered);
@@ -1617,7 +1601,7 @@ void MediaSource::failedToCreateRenderer(RendererType type)
 
 void MediaSource::sourceBufferReceivedFirstInitializationSegmentChanged()
 {
-    RefPtr msp = protectedPrivate();
+    RefPtr msp = m_private;
 
     if (msp && msp->mediaPlayerReadyState() == MediaPlayer::ReadyState::HaveNothing) {
         // 6.1 If one or more objects in sourceBuffers have first initialization segment flag set to false, then abort these steps.
@@ -1633,7 +1617,7 @@ void MediaSource::sourceBufferReceivedFirstInitializationSegmentChanged()
 
 void MediaSource::sourceBufferActiveTrackFlagChanged(bool activeTrackFlag)
 {
-    if (RefPtr msp = protectedPrivate()) {
+    if (RefPtr msp = m_private) {
         if (activeTrackFlag && msp->mediaPlayerReadyState() > MediaPlayer::ReadyState::HaveCurrentData)
             setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveMetadata);
     }
@@ -1641,7 +1625,7 @@ void MediaSource::sourceBufferActiveTrackFlagChanged(bool activeTrackFlag)
 
 void MediaSource::setMediaPlayerReadyState(MediaPlayer::ReadyState readyState)
 {
-    if (RefPtr msp = protectedPrivate())
+    if (RefPtr msp = m_private)
         msp->setMediaPlayerReadyState(readyState);
 }
 
@@ -1668,15 +1652,19 @@ void MediaSource::addTextTrackToElement(Ref<TextTrack>&& track)
 
 void MediaSource::addVideoTrackToElement(Ref<VideoTrack>&& track)
 {
-    ensureWeakOnHTMLMediaElementContext([track = WTFMove(track)](auto& mediaElement) mutable {
+    ensureWeakOnHTMLMediaElementContext([track = WTFMove(track)](HTMLMediaElement& mediaElement) mutable {
+        // Select the first video track being added and unselect the next ones, since only one
+        // video track can be selected at once.
+        RefPtr videoTracks = mediaElement.videoTracks();
+        track->setSelected(!(videoTracks && videoTracks->length()));
         mediaElement.addVideoTrack(WTFMove(track));
     });
 }
 
 void MediaSource::addAudioTrackMirrorToElement(Ref<AudioTrackPrivate>&& track, bool enabled)
 {
-    ensureWeakOnHTMLMediaElementContext([track = WTFMove(track), enabled](auto& mediaElement) mutable {
-        auto audioTrack = AudioTrack::create(mediaElement.scriptExecutionContext(), track);
+    ensureWeakOnHTMLMediaElementContext([track = WTFMove(track), enabled](HTMLMediaElement& mediaElement) mutable {
+        Ref audioTrack = AudioTrack::create(mediaElement.protectedScriptExecutionContext().get(), track);
         audioTrack->setEnabled(enabled);
         mediaElement.addAudioTrack(WTFMove(audioTrack));
     });
@@ -1684,17 +1672,17 @@ void MediaSource::addAudioTrackMirrorToElement(Ref<AudioTrackPrivate>&& track, b
 
 void MediaSource::addTextTrackMirrorToElement(Ref<InbandTextTrackPrivate>&& track)
 {
-    ensureWeakOnHTMLMediaElementContext([track = WTFMove(track)](auto& mediaElement) mutable {
+    ensureWeakOnHTMLMediaElementContext([track = WTFMove(track)](HTMLMediaElement& mediaElement) mutable {
         if (!mediaElement.scriptExecutionContext())
             return;
-        mediaElement.addTextTrack(InbandTextTrack::create(*mediaElement.scriptExecutionContext(), track));
+        mediaElement.addTextTrack(InbandTextTrack::create(*mediaElement.protectedScriptExecutionContext(), track));
     });
 }
 
 void MediaSource::addVideoTrackMirrorToElement(Ref<VideoTrackPrivate>&& track, bool selected)
 {
-    ensureWeakOnHTMLMediaElementContext([track = WTFMove(track), selected](auto& mediaElement) mutable {
-        auto videoTrack = VideoTrack::create(mediaElement.scriptExecutionContext(), track);
+    ensureWeakOnHTMLMediaElementContext([track = WTFMove(track), selected](HTMLMediaElement& mediaElement) mutable {
+        auto videoTrack = VideoTrack::create(mediaElement.protectedScriptExecutionContext().get(), track);
         videoTrack->setSelected(selected);
         mediaElement.addVideoTrack(WTFMove(videoTrack));
     });
@@ -1718,7 +1706,7 @@ bool MediaSource::enabledForContext(ScriptExecutionContext& context)
     UNUSED_PARAM(context);
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
     if (context.isWorkerGlobalScope())
-        return context.settingsValues().mediaSourceInWorkerEnabled && platformStrategies()->mediaStrategy().hasThreadSafeMediaSourceSupport();
+        return context.settingsValues().mediaSourceInWorkerEnabled && platformStrategies()->mediaStrategy()->hasThreadSafeMediaSourceSupport();
 #endif
 
     ASSERT(context.isDocument());
@@ -1755,7 +1743,7 @@ Ref<MediaSourceHandle> MediaSource::handle()
 
 bool MediaSource::canConstructInDedicatedWorker(ScriptExecutionContext& context)
 {
-    return context.settingsValues().mediaSourceInWorkerEnabled && platformStrategies()->mediaStrategy().hasThreadSafeMediaSourceSupport();
+    return context.settingsValues().mediaSourceInWorkerEnabled && platformStrategies()->mediaStrategy()->hasThreadSafeMediaSourceSupport();
 }
 
 #endif

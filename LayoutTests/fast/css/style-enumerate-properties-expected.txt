@@ -1,5 +1,5 @@
 This test makes sure that CSSStyleDeclaration enumerates JavaScript properties for defined and non-defined CSS properties, indexed properties, and properties defined on the prototype. See Bug 23946.
-PASS document.body.style.length is 2
+PASS document.body.style.length is 5
 PASS '0' in document.body.style is true
 PASS '1' in document.body.style is true
 PASS 'textDecoration' in document.body.style is true
@@ -15,7 +15,7 @@ PASS initialIndexOfGroup3 > initialIndexOfGroup2 is true
 PASS initialIndexOfGroup4 > initialIndexOfGroup3 is true
 PASS initialIndexOfGroup5 > initialIndexOfGroup4 is true
 PASS initialIndexOfGroup6 > initialIndexOfGroup5 is true
-PASS group1 is ["0", "1", "cssFloat"]
+PASS group1 is ["0", "1", "2", "3", "4", "cssFloat"]
 PASS group2 is group2Clone
 PASS group2.some(property => property.startsWith("Webkit")) is true
 PASS group2.some(property => property.startsWith("Epub")) is true

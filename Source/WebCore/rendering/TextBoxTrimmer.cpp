@@ -30,6 +30,7 @@
 #include "InlineIteratorLineBox.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderObjectDocument.h"
 #include "RenderView.h"
 
 namespace WebCore {

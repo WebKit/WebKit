@@ -1,4 +1,6 @@
 
 PASS innerHTML on a disconnected element should use the scoped registry it was created with
+PASS nested descendants in innerHTML on a disconnected element should use the scoped registry the element was created with
+PASS innerHTML on a disconnected element should use the scoped registry it was created with when parsing a simple HTML
 PASS innerHTML on an inserted element should continue to use the scoped registry it was created with
 

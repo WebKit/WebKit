@@ -309,22 +309,18 @@ bool EntryPlan::generateWasmToWasmStubs()
         if (import->kind != ExternalKind::Function)
             continue;
         dataLogLnIf(WasmEntryPlanInternal::verbose, "Processing import function number "_s, importFunctionIndex, ": "_s, makeString(import->module), ": "_s, makeString(import->field));
+
 #if ENABLE(JIT)
-        if (Options::useWasmJIT()) {
+        if (Options::useJIT()) {
             auto binding = wasmToWasm(importFunctionIndex);
             if (!binding) [[unlikely]]
                 return false;
             m_wasmToWasmExitStubs[importFunctionIndex++] = binding.value();
+            continue;
         }
-#else
-        if (false);
 #endif // ENABLE(JIT)
-        else {
-            if (Options::useWasmIPInt())
-                m_wasmToWasmExitStubs[importFunctionIndex++] = LLInt::getCodeRef<WasmEntryPtrTag>(wasm_to_wasm_ipint_wrapper_entry);
-            else
-                m_wasmToWasmExitStubs[importFunctionIndex++] = LLInt::getCodeRef<WasmEntryPtrTag>(wasm_to_wasm_wrapper_entry);
-        }
+
+        m_wasmToWasmExitStubs[importFunctionIndex++] = LLInt::getCodeRef<WasmEntryPtrTag>(wasm_to_wasm_ipint_wrapper_entry);
     }
     ASSERT(importFunctionIndex == m_wasmToWasmExitStubs.size());
     return true;
@@ -338,17 +334,16 @@ bool EntryPlan::generateWasmToJSStubs()
     for (unsigned importIndex = 0; importIndex < importFunctionCount; ++importIndex) {
 #if ENABLE(JIT)
         Wasm::TypeIndex typeIndex = m_moduleInformation->importFunctionTypeIndices.at(importIndex);
-        if (Options::useWasmJIT()) {
+        if (Options::useJIT()) {
             auto binding = wasmToJS(typeIndex, importIndex);
             if (!binding) [[unlikely]]
                 return false;
             m_wasmToJSExitStubs[importIndex] = binding.value();
+            continue;
         }
-#else
-        if (false);
 #endif // ENABLE(JIT)
-        else
-            m_wasmToJSExitStubs[importIndex] = LLInt::getCodeRef<WasmEntryPtrTag>(wasm_to_js_wrapper_entry);
+
+        m_wasmToJSExitStubs[importIndex] = LLInt::getCodeRef<WasmEntryPtrTag>(wasm_to_js_wrapper_entry);
     }
     return true;
 }

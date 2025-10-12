@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "SecurityOriginData.h"
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 

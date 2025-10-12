@@ -3,7 +3,9 @@ PASS idl_test setup
 PASS idl_test validation
 PASS Partial interface mixin WindowOrWorkerGlobalScope: original interface mixin defined
 PASS Partial interface mixin WindowOrWorkerGlobalScope: member names are unique
+PASS Partial interface Window: original interface defined
 PASS Partial interface Window: member names are unique
+PASS Partial interface Window[2]: member names are unique
 PASS Request includes Body: member names are unique
 PASS Response includes Body: member names are unique
 PASS Window includes GlobalEventHandlers: member names are unique
@@ -66,6 +68,7 @@ PASS Request interface: attribute body
 PASS Request interface: attribute bodyUsed
 PASS Request interface: operation arrayBuffer()
 PASS Request interface: operation blob()
+PASS Request interface: operation bytes()
 PASS Request interface: operation formData()
 PASS Request interface: operation json()
 PASS Request interface: operation text()
@@ -92,6 +95,7 @@ PASS Request interface: new Request('about:blank') must inherit property "body" 
 PASS Request interface: new Request('about:blank') must inherit property "bodyUsed" with the proper type
 PASS Request interface: new Request('about:blank') must inherit property "arrayBuffer()" with the proper type
 PASS Request interface: new Request('about:blank') must inherit property "blob()" with the proper type
+PASS Request interface: new Request('about:blank') must inherit property "bytes()" with the proper type
 PASS Request interface: new Request('about:blank') must inherit property "formData()" with the proper type
 PASS Request interface: new Request('about:blank') must inherit property "json()" with the proper type
 PASS Request interface: new Request('about:blank') must inherit property "text()" with the proper type
@@ -103,7 +107,7 @@ PASS Response interface: existence and properties of interface prototype object'
 PASS Response interface: existence and properties of interface prototype object's @@unscopables property
 PASS Response interface: operation error()
 PASS Response interface: operation redirect(USVString, optional unsigned short)
-FAIL Response interface: operation json(any, optional ResponseInit) assert_equals: property has wrong .length expected 0 but got 1
+PASS Response interface: operation json(any, optional ResponseInit)
 PASS Response interface: attribute type
 PASS Response interface: attribute url
 PASS Response interface: attribute redirected
@@ -116,6 +120,7 @@ PASS Response interface: attribute body
 PASS Response interface: attribute bodyUsed
 PASS Response interface: operation arrayBuffer()
 PASS Response interface: operation blob()
+PASS Response interface: operation bytes()
 PASS Response interface: operation formData()
 PASS Response interface: operation json()
 PASS Response interface: operation text()
@@ -138,10 +143,21 @@ PASS Response interface: new Response() must inherit property "body" with the pr
 PASS Response interface: new Response() must inherit property "bodyUsed" with the proper type
 PASS Response interface: new Response() must inherit property "arrayBuffer()" with the proper type
 PASS Response interface: new Response() must inherit property "blob()" with the proper type
+PASS Response interface: new Response() must inherit property "bytes()" with the proper type
 PASS Response interface: new Response() must inherit property "formData()" with the proper type
 PASS Response interface: new Response() must inherit property "json()" with the proper type
 PASS Response interface: new Response() must inherit property "text()" with the proper type
+FAIL FetchLaterResult interface: existence and properties of interface object assert_own_property: self does not have own property "FetchLaterResult" expected property "FetchLaterResult" missing
+FAIL FetchLaterResult interface object length assert_own_property: self does not have own property "FetchLaterResult" expected property "FetchLaterResult" missing
+FAIL FetchLaterResult interface object name assert_own_property: self does not have own property "FetchLaterResult" expected property "FetchLaterResult" missing
+FAIL FetchLaterResult interface: existence and properties of interface prototype object assert_own_property: self does not have own property "FetchLaterResult" expected property "FetchLaterResult" missing
+FAIL FetchLaterResult interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "FetchLaterResult" expected property "FetchLaterResult" missing
+FAIL FetchLaterResult interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "FetchLaterResult" expected property "FetchLaterResult" missing
+FAIL FetchLaterResult interface: attribute activated assert_own_property: self does not have own property "FetchLaterResult" expected property "FetchLaterResult" missing
+FAIL Window interface: operation fetchLater(RequestInfo, optional DeferredRequestInit) assert_own_property: global object missing non-static operation expected property "fetchLater" missing
 PASS Window interface: operation fetch(RequestInfo, optional RequestInit)
+FAIL Window interface: window must inherit property "fetchLater(RequestInfo, optional DeferredRequestInit)" with the proper type assert_own_property: expected property "fetchLater" missing
+FAIL Window interface: calling fetchLater(RequestInfo, optional DeferredRequestInit) on window with too few arguments must throw TypeError assert_own_property: expected property "fetchLater" missing
 PASS Window interface: window must inherit property "fetch(RequestInfo, optional RequestInit)" with the proper type
 PASS Window interface: calling fetch(RequestInfo, optional RequestInit) on window with too few arguments must throw TypeError
 

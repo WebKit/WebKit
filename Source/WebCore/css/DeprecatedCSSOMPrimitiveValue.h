@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CSSParserIdioms.h"
-#include "CSSPrimitiveValue.h"
-#include "DeprecatedCSSOMValue.h"
+#include <WebCore/CSSParserIdioms.h>
+#include <WebCore/CSSPrimitiveValue.h>
+#include <WebCore/DeprecatedCSSOMValue.h>
 
 namespace WebCore {
 

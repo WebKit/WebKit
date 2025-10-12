@@ -46,7 +46,12 @@ protected:
     virtual bool setCustomProperty(Document&, const AtomString&, Ref<CSSVariableReferenceValue>&&) = 0;
 
 private:
+    bool isStylePropertyMap() const final { return true; }
     RefPtr<CSSStyleValue> shorthandPropertyValue(Document&, CSSPropertyID) const;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StylePropertyMap)
+    static bool isType(const WebCore::StylePropertyMapReadOnly& map) { return map.isStylePropertyMap(); }
+SPECIALIZE_TYPE_TRAITS_END()

@@ -59,8 +59,7 @@ bool GStreamerQuirkWesteros::isPlatformSupported() const
 
 void GStreamerQuirkWesteros::configureElement(GstElement* element, const OptionSet<ElementRuntimeCharacteristics>& characteristics)
 {
-    auto view = StringView::fromLatin1(GST_ELEMENT_NAME(element));
-    if (view.startsWith("uridecodebin3"_s)) {
+    if (equalIgnoringASCIICase(G_OBJECT_TYPE_NAME(G_OBJECT(element)), "GstURIDecodeBin3")) {
         GRefPtr<GstCaps> defaultCaps;
         g_object_get(element, "caps", &defaultCaps.outPtr(), nullptr);
         defaultCaps = adoptGRef(gst_caps_merge(gst_caps_ref(m_sinkCaps.get()), defaultCaps.leakRef()));

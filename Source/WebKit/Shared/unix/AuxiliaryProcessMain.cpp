@@ -26,13 +26,13 @@
 #include "config.h"
 #include "AuxiliaryProcessMain.h"
 
-#include "IPCUtilities.h"
 #include <JavaScriptCore/Options.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/text/StringToIntegerConversion.h>
+#include <wtf/unix/UnixFileDescriptor.h>
 
 #if ENABLE(BREAKPAD)
 #include "unix/BreakpadExceptionHandler.h"
@@ -73,19 +73,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     if (!m_parameters.processIdentifier->toRawValue() || m_parameters.connectionIdentifier.handle.value() <= 0)
         return false;
 
-#if USE(GLIB) && OS(LINUX)
-    // Parse pidSocket if available
-    if (argc > argIndex) {
-        auto pidSocket = parseInteger<int>(unsafeSpan(argv[argIndex]));
-        if (pidSocket && *pidSocket >= 0) {
-            IPC::sendPIDToPeer(*pidSocket);
-            RELEASE_ASSERT(!close(*pidSocket));
-            ++argIndex;
-        } else
-            return false;
-    }
-#endif
-
 #if ENABLE(DEVELOPER_MODE)
     // Check last remaining options for JSC testing
     for (; argIndex < argc; ++argIndex) {
@@ -97,6 +84,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return true;
 }
 
+IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationParameters&)
 {
     struct sigaction signalAction;
@@ -105,5 +93,6 @@ void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationPa
     signalAction.sa_handler = SIG_IGN;
     RELEASE_ASSERT(!sigaction(SIGPIPE, &signalAction, nullptr));
 }
+IGNORE_CLANG_WARNINGS_END
 
 } // namespace WebKit

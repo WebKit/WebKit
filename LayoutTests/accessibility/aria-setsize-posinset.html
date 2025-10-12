@@ -37,19 +37,30 @@
         output += "Update aria-posinset to 4 for the item1.\n";
         item1.ariaPosInSet = "4";
         setTimeout(async function() {
-            await waitFor(() => axItem1.numberAttributeValue('AXARIAPosInSet') === 4);
-            output += expect("axItem1.numberAttributeValue('AXARIAPosInSet')", "4");
+            output += await expectAsync("axItem1.numberAttributeValue('AXARIAPosInSet')", "4"); 
+
+            output += "Set aria-posinset to foo and verify that posinset = 1 for invalid value fallback.\n";
+            item1.ariaPosInSet = "foo";
+            output += await expectAsync("axItem1.numberAttributeValue('AXARIAPosInSet')", "1"); 
+    
+            output += "Set aria-posinset to -50 and verify that posinset = 1 for invalid value fallback.\n";
+            item1.ariaPosInSet = "-50";
+            output += await expectAsync("axItem1.numberAttributeValue('AXARIAPosInSet')", "1"); 
 
             output += "Update aria-setsize to 101.\n";
             list.ariaSetSize = "101";
-            await waitFor(() => axList.numberAttributeValue("AXARIASetSize") === 101);
-            output += expect("axList.numberAttributeValue('AXARIASetSize')", "101");
+            output += await expectAsync("axList.numberAttributeValue('AXARIASetSize')", "101");
+
 
             output += "Set aria-setsize to -1 and verify that the list still exposes the number of items.\n";
             list.ariaSetSize = "-1";
-            await waitFor(() => axList.numberAttributeValue("AXARIASetSize") === -1);
-            output += expect("axList.numberAttributeValue('AXARIASetSize')", "-1");
-            output += expect("axList.isAttributeSupported('AXARIASetSize')", "true");
+            output += await expectAsync("axList.numberAttributeValue('AXARIASetSize')", "-1"); 
+            output += await expectAsync("axList.isAttributeSupported('AXARIASetSize')", "true");
+
+            output += "Set aria-setsize to foo and verify that the list still exposes the number of items.\n";
+            list.ariaSetSize = "foo";
+            output += await expectAsync("axList.numberAttributeValue('AXARIASetSize')", "-1"); 
+            output += await expectAsync("axList.isAttributeSupported('AXARIASetSize')", "true");
 
             list.style.visibility = 'hidden';
             debug(output);

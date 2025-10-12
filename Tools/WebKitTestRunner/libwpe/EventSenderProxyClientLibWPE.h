@@ -42,12 +42,14 @@ public:
     ~EventSenderProxyClientLibWPE();
 
 private:
-    void mouseDown(unsigned, double, WKEventModifiers, double, double, unsigned&) override;
+    void mouseDown(unsigned, double, WKEventModifiers, double, double, int /*clickCount*/, unsigned&) override;
     void mouseUp(unsigned, double, WKEventModifiers, double, double, unsigned&) override;
     void mouseMoveTo(double, double, double, WKEventMouseButton, unsigned) override;
     void mouseScrollBy(int, int, double, double, double) override;
 
     void keyDown(WKStringRef, double, WKEventModifiers, unsigned) override;
+    void rawKeyDown(WKStringRef, WKEventModifiers, unsigned) override;
+    void rawKeyUp(WKStringRef, WKEventModifiers, unsigned) override;
 
 #if ENABLE(TOUCH_EVENTS)
     void addTouchPoint(int, int, double) override;

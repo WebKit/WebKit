@@ -55,8 +55,10 @@ CoreIPCArray::CoreIPCArray(Vector<CoreIPCNSCFObject>&& array)
 RetainPtr<id> CoreIPCArray::toID() const
 {
     auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:m_array.size()]);
-    for (auto& object : m_array)
-        [result addObject:object.toID().get()];
+    for (auto& object : m_array) {
+        if (RetainPtr objectID = object.toID())
+            [result addObject:objectID.get()];
+    }
     return result;
 }
 

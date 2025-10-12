@@ -23,17 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "LinearMediaKitExtras.h"
-#import "RealityKitBridging.h"
+#import "WKGroupSession.h"
 #import "WKIntelligenceReplacementTextEffectCoordinator.h"
 #import "WKIntelligenceSmartReplyTextEffectCoordinator.h"
 #import "WKIntelligenceTextEffectCoordinator.h"
 #import "WKMarketplaceKit.h"
 #import "WKPreviewWindowController.h"
+#import "WKRKEntity.h"
 #import "WKSLinearMediaPlayer.h"
 #import "WKSLinearMediaTypes.h"
-#import "WKSTextAnimationSourceDelegate.h"
 #import "WKStageMode.h"
+#import "WKTextAnimationManagerIOS.h"
 
 #if HAVE(DIGITAL_CREDENTIALS_UI)
 #import "WKIdentityDocumentPresentmentController.h"

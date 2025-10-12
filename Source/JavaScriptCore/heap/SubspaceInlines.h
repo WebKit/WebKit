@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "BlockDirectoryInlines.h"
-#include "HeapCellType.h"
-#include "JSCast.h"
-#include "MarkedBlock.h"
-#include "MarkedSpace.h"
-#include "Subspace.h"
+#include <JavaScriptCore/BlockDirectoryInlines.h>
+#include <JavaScriptCore/HeapCellType.h>
+#include <JavaScriptCore/JSCast.h>
+#include <JavaScriptCore/MarkedBlock.h>
+#include <JavaScriptCore/MarkedSpace.h>
+#include <JavaScriptCore/Subspace.h>
 
 namespace JSC {
 

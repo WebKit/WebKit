@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,7 +37,7 @@ LocalCurrentContextSaver::LocalCurrentContextSaver(CGContextRef cgContext, bool 
     if (cgContext == [[NSGraphicsContext currentContext] CGContext])
         return;
 
-    m_savedNSGraphicsContext = [NSGraphicsContext currentContext];
+    lazyInitialize(m_savedNSGraphicsContext, RetainPtr { [NSGraphicsContext currentContext] });
     NSGraphicsContext* newContext = [NSGraphicsContext graphicsContextWithCGContext:cgContext flipped:isFlipped];
     [NSGraphicsContext setCurrentContext:newContext];
     m_didSetGraphicsContext = true;

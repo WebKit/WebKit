@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "BuiltinUtils.h"
-#include "BytecodeIntrinsicRegistry.h"
-#include "CommonIdentifiers.h"
-#include "JSCBuiltins.h"
+#include <JavaScriptCore/BuiltinUtils.h>
+#include <JavaScriptCore/BytecodeIntrinsicRegistry.h>
+#include <JavaScriptCore/CommonIdentifiers.h>
+#include <JavaScriptCore/JSCBuiltins.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/TZoneMalloc.h>
@@ -57,7 +57,6 @@ namespace JSC {
     macro(iteratedObject) \
     macro(iteratedString) \
     macro(promise) \
-    macro(promiseOrCapability) \
     macro(Object) \
     macro(Number) \
     macro(Array) \
@@ -73,24 +72,35 @@ namespace JSC {
     macro(Map) \
     macro(throwTypeErrorFunction) \
     macro(typedArrayLength) \
-    macro(typedArrayContentType) \
-    macro(typedArrayGetOriginalConstructor) \
     macro(BuiltinLog) \
     macro(BuiltinDescribe) \
     macro(homeObject) \
-    macro(enqueueJob) \
-    macro(hostPromiseRejectionTracker) \
-    macro(onFulfilled) \
-    macro(onRejected) \
+    macro(resolvePromise) \
+    macro(rejectPromise) \
+    macro(fulfillPromise) \
+    macro(resolveWithoutPromise) \
+    macro(rejectWithoutPromise) \
+    macro(fulfillWithoutPromise) \
+    macro(resolvePromiseWithFirstResolvingFunctionCallCheck) \
+    macro(rejectPromiseWithFirstResolvingFunctionCallCheck) \
+    macro(fulfillPromiseWithFirstResolvingFunctionCallCheck) \
+    macro(resolveWithoutPromiseForAsyncAwait) \
+    macro(awaitValue) \
+    macro(newHandledRejectedPromise) \
+    macro(promiseOnRejectedWithContext) \
+    macro(promiseAllOnFulfilled) \
+    macro(promiseEmptyOnFulfilled) \
+    macro(promiseEmptyOnRejected) \
+    macro(performPromiseThen) \
     macro(push) \
     macro(repeatCharacter) \
     macro(starDefault) \
     macro(starNamespace) \
+    macro(then) \
     macro(keys) \
     macro(values) \
     macro(set) \
     macro(clear) \
-    macro(context) \
     macro(defer) \
     macro(delete) \
     macro(size) \
@@ -185,6 +195,7 @@ namespace JSC {
     macro(handlePositiveProxySetTrapResult) \
     macro(handleProxyGetTrapResult) \
     macro(importModule) \
+    macro(moduleFetchFailureKind) \
     macro(copyDataProperties) \
     macro(cloneObject) \
     macro(meta) \
@@ -196,7 +207,6 @@ namespace JSC {
     macro(hasOwnPropertyFunction) \
     macro(createPrivateSymbol) \
     macro(entries) \
-    macro(outOfLineReactionCounts) \
     macro(emptyPropertyNameEnumerator) \
     macro(sentinelString) \
     macro(createRemoteFunction) \
@@ -216,6 +226,8 @@ namespace JSC {
     macro(pop) \
     macro(wrapForValidIteratorCreate) \
     macro(asyncFromSyncIteratorCreate) \
+    macro(promiseAllContextCreate) \
+    macro(promiseAllGlobalContextCreate) \
     macro(regExpStringIteratorCreate) \
     macro(iteratorHelperCreate) \
     macro(syncIterator) \
@@ -223,6 +235,7 @@ namespace JSC {
     macro(ReferenceError) \
     macro(SuppressedError) \
     macro(DisposableStack) \
+    macro(AsyncDisposableStack) \
 
 
 namespace Symbols {
@@ -252,13 +265,13 @@ public:
 
     PrivateSymbolImpl* lookUpPrivateName(const Identifier&) const;
     PrivateSymbolImpl* lookUpPrivateName(const String&) const;
-    PrivateSymbolImpl* lookUpPrivateName(std::span<const LChar>) const;
-    PrivateSymbolImpl* lookUpPrivateName(std::span<const UChar>) const;
+    PrivateSymbolImpl* lookUpPrivateName(std::span<const Latin1Character>) const;
+    PrivateSymbolImpl* lookUpPrivateName(std::span<const char16_t>) const;
 
     SymbolImpl* lookUpWellKnownSymbol(const Identifier&) const;
     SymbolImpl* lookUpWellKnownSymbol(const String&) const;
-    SymbolImpl* lookUpWellKnownSymbol(std::span<const LChar>) const;
-    SymbolImpl* lookUpWellKnownSymbol(std::span<const UChar>) const;
+    SymbolImpl* lookUpWellKnownSymbol(std::span<const Latin1Character>) const;
+    SymbolImpl* lookUpWellKnownSymbol(std::span<const char16_t>) const;
     
     void appendExternalName(const Identifier& publicName, const Identifier& privateName);
 

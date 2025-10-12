@@ -26,14 +26,15 @@
 
 #pragma once
 
-#include "EditorInsertAction.h"
-#include "FrameIdentifier.h"
-#include "SerializedAttachmentData.h"
-#include "TextAffinity.h"
-#include "TextChecking.h"
-#include "UndoStep.h"
+#include <WebCore/EditorInsertAction.h>
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/SerializedAttachmentData.h>
+#include <WebCore/TextAffinity.h>
+#include <WebCore/TextChecking.h>
+#include <WebCore/UndoStep.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -182,6 +183,8 @@ public:
     virtual void toggleAutomaticTextReplacement() = 0;
     virtual bool isAutomaticSpellingCorrectionEnabled() = 0;
     virtual void toggleAutomaticSpellingCorrection() = 0;
+    virtual bool isSmartListsEnabled() = 0;
+    virtual void toggleSmartLists() = 0;
 #endif
     
 #if PLATFORM(GTK)

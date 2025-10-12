@@ -68,165 +68,165 @@ promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("a"));
   assert_false(details.open)
-}, "Clicking an <a> link doesn’t open <details>");
+}, "Clicking an <a> link doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("svg_a"));
   assert_false(details.open)
-}, "Clicking an SVG <a> link doesn’t open <details>");
+}, "Clicking an SVG <a> link doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("svg_foreignObject_a"));
   assert_false(details.open)
-}, "Clicking an HTML <a> link in an SVG <foreignObject> doesn’t open <details>");
+}, "Clicking an HTML <a> link in an SVG <foreignObject> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("audio"));
   assert_false(details.open)
-}, "Clicking an <audio> element doesn’t open <details>");
+}, "Clicking an <audio> element doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("button"));
   assert_false(details.open)
-}, "Clicking a <button> doesn’t open <details>");
+}, "Clicking a <button> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("embed"));
   assert_false(details.open)
-}, "Clicking the content of an <embed> doesn’t open <details>");
+}, "Clicking the content of an <embed> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("iframe"));
   assert_false(details.open)
-}, "Clicking in an <iframe> doesn’t open <details>");
+}, "Clicking in an <iframe> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("img_usemap"));
   assert_false(details.open)
-}, "Clicking an <img> with a “usemap” attribute doesn’t open <details>");
+}, "Clicking an <img> with a 'usemap' attribute doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("img"));
   assert_true(details.open)
-}, "Clicking an <img> without a “usemap” attribute opens <details>");
+}, "Clicking an <img> without a 'usemap' attribute opens <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_button"));
   assert_false(details.open)
-}, "Clicking an <input type=button> doesn’t open <details>");
+}, "Clicking an <input type=button> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_reset"));
   assert_false(details.open)
-}, "Clicking an <input type=reset> doesn’t open <details>");
+}, "Clicking an <input type=reset> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_submit"));
   assert_false(details.open)
-}, "Clicking an <input type=submit> doesn’t open <details>");
+}, "Clicking an <input type=submit> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_text"));
   assert_false(details.open)
-}, "Clicking an <input type=text> doesn’t open <details>");
+}, "Clicking an <input type=text> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_search"));
   assert_false(details.open)
-}, "Clicking an <input type=search> doesn’t open <details>");
+}, "Clicking an <input type=search> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_tel"));
   assert_false(details.open)
-}, "Clicking an <input type=tel> doesn’t open <details>");
+}, "Clicking an <input type=tel> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_url"));
   assert_false(details.open)
-}, "Clicking an <input type=url> doesn’t open <details>");
+}, "Clicking an <input type=url> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_email"));
   assert_false(details.open)
-}, "Clicking an <input type=email> doesn’t open <details>");
+}, "Clicking an <input type=email> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_password"));
   assert_false(details.open)
-}, "Clicking an <input type=password> doesn’t open <details>");
+}, "Clicking an <input type=password> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_date"));
   assert_false(details.open)
-}, "Clicking an <input type=date> doesn’t open <details>");
+}, "Clicking an <input type=date> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_month"));
   assert_false(details.open)
-}, "Clicking an <input type=month> doesn’t open <details>");
+}, "Clicking an <input type=month> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_week"));
   assert_false(details.open)
-}, "Clicking an <input type=week> doesn’t open <details>");
+}, "Clicking an <input type=week> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_time"));
   assert_false(details.open)
-}, "Clicking an <input type=time> doesn’t open <details>");
+}, "Clicking an <input type=time> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_datetime-local"));
   assert_false(details.open)
-}, "Clicking an <input type=datetime-local> doesn’t open <details>");
+}, "Clicking an <input type=datetime-local> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_number"));
   assert_false(details.open)
-}, "Clicking an <input type=number> doesn’t open <details>");
+}, "Clicking an <input type=number> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_range"));
   assert_false(details.open)
-}, "Clicking an <input type=range> doesn’t open <details>");
+}, "Clicking an <input type=range> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_color"));
   assert_false(details.open)
-}, "Clicking an <input type=color> doesn’t open <details>");
+}, "Clicking an <input type=color> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_checkbox"));
   assert_false(details.open)
-}, "Clicking an <input type=checkbox> doesn’t open <details>");
+}, "Clicking an <input type=checkbox> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_radio"));
   assert_false(details.open)
-}, "Clicking an <input type=radio> doesn’t open <details>");
+}, "Clicking an <input type=radio> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_file"));
   assert_false(details.open)
-}, "Clicking an <input type=file> doesn’t open <details>");
+}, "Clicking an <input type=file> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("input_image"));
   assert_false(details.open)
-}, "Clicking an <input type=image> doesn’t open <details>");
+}, "Clicking an <input type=image> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("label"));
   assert_false(details.open)
-}, "Clicking a <label> doesn’t open <details>");
+}, "Clicking a <label> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("textarea"));
   assert_false(details.open)
-}, "Clicking in a <textarea> doesn’t open <details>");
+}, "Clicking in a <textarea> doesn't open <details>");
 promise_test(async () => {
   details.open = false;
   await test_driver.click(document.getElementById("video"));
   assert_false(details.open)
-}, "Clicking a <video> doesn’t open <details>");
+}, "Clicking a <video> doesn't open <details>");
 </script>

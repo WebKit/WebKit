@@ -11,6 +11,7 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_PITCH_FILTER_H_
 #define MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_PITCH_FILTER_H_
 
+#include "modules/audio_coding/codecs/isac/main/source/settings.h"
 #include "modules/audio_coding/codecs/isac/main/source/structs.h"
 
 void WebRtcIsac_PitchfilterPre(double* indat,

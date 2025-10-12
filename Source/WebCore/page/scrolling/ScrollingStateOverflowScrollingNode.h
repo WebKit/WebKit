@@ -27,7 +27,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "ScrollingStateScrollingNode.h"
+#include <WebCore/ScrollingStateScrollingNode.h>
 
 namespace WebCore {
 
@@ -69,6 +69,7 @@ private:
         MouseLocationState&&,
         ScrollbarHoverState&&,
         ScrollbarEnabledState&&,
+        std::optional<ScrollbarColor>&&,
         UserInterfaceLayoutDirection,
         ScrollbarWidth,
         bool useDarkAppearanceForScrollbars,

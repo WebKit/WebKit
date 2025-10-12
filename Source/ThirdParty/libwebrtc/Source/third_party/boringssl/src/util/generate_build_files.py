@@ -1,18 +1,18 @@
 # coding=utf8
 
-# Copyright (c) 2015, Google Inc.
+# Copyright 2015 The BoringSSL Authors
 #
-# Permission to use, copy, modify, and/or distribute this software for any
-# purpose with or without fee is hereby granted, provided that the above
-# copyright notice and this permission notice appear in all copies.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-# SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-# OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-# CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 """Enumerates source files for consumption by various build systems."""
 
@@ -24,26 +24,28 @@ import json
 
 
 PREFIX = None
-EMBED_TEST_DATA = False
 
 
 def PathOf(x):
   return x if not PREFIX else os.path.join(PREFIX, x)
 
 
-LICENSE_TEMPLATE = """Copyright (c) 2015, Google Inc.
+TARGET_PREFIX = ''
 
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
 
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.""".split("\n")
+LICENSE_TEMPLATE = """Copyright 2015 The BoringSSL Authors
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.""".split("\n")
 
 def LicenseHeader(comment):
   lines = []
@@ -64,6 +66,7 @@ class Android(object):
 """
 
   def PrintVariableSection(self, out, name, files):
+    name = f'{TARGET_PREFIX}{name}'
     out.write('%s := \\\n' % name)
     for f in sorted(files):
       out.write('  %s\\\n' % f)
@@ -99,6 +102,7 @@ class Android(object):
 
   def PrintDefaults(self, blueprint, name, files, asm_files=[], data=[]):
     """Print a cc_defaults section from a list of C files and optionally assembly outputs"""
+    name = f'{TARGET_PREFIX}{name}'
     if asm_files:
       blueprint.write('\n')
       blueprint.write('%s_asm = [\n' % name)
@@ -404,7 +408,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(BoringSSL LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -620,13 +624,6 @@ def main(platforms):
   crypto_nasm = sorted(sources['bcm']['nasm'] + sources['crypto']['nasm'] +
                        sources['test_support']['nasm'])
 
-  if EMBED_TEST_DATA:
-    with open('crypto_test_data.cc', 'w+') as out:
-      subprocess.check_call(
-          ['go', 'run', 'util/embed_test_data.go'] + sources['crypto_test']['data'],
-          cwd='src',
-          stdout=out)
-
   files = {
       'bcm_crypto': PrefixWithSrc(sources['bcm']['srcs']),
       'crypto': PrefixWithSrc(crypto),
@@ -676,18 +673,15 @@ ALL_PLATFORMS = {
 
 if __name__ == '__main__':
   parser = optparse.OptionParser(
-      usage='Usage: %%prog [--prefix=<path>] [all|%s]' %
+      usage='Usage: %%prog [--prefix=<path>] [--target-prefix=<prefix>] [all|%s]' %
       '|'.join(sorted(ALL_PLATFORMS.keys())))
   parser.add_option('--prefix', dest='prefix',
       help='For Bazel, prepend argument to all source files')
-  parser.add_option(
-      '--embed_test_data', dest='embed_test_data', action='store_true',
-      help='Generates the legacy crypto_test_data.cc file. To use, build with' +
-           ' -DBORINGSSL_CUSTOM_GET_TEST_DATA and add this file to ' +
-           'crypto_test.')
+  parser.add_option('--target-prefix', dest='target_prefix', default='',
+      help='For Android, prepend argument to all target names')
   options, args = parser.parse_args(sys.argv[1:])
   PREFIX = options.prefix
-  EMBED_TEST_DATA = options.embed_test_data
+  TARGET_PREFIX = options.target_prefix
 
   if not args:
     parser.print_help()

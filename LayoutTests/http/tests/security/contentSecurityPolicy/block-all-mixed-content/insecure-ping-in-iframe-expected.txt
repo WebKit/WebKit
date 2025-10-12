@@ -1,3 +1,0 @@
-This test loads a secure iframe that triggers an insecure ping load. We should trigger a mixed content block because the child frame has CSP directive block-all-mixed-content.
-
-

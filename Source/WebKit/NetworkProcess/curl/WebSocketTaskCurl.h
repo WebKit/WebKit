@@ -33,6 +33,7 @@
 #include <WebCore/WebSocketDeflateFramer.h>
 #include <WebCore/WebSocketFrame.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebKit {
 class WebSocketTask;
@@ -51,11 +52,10 @@ namespace WebKit {
 class NetworkSocketChannel;
 struct SessionSet;
 
-class WebSocketTask : public CanMakeWeakPtr<WebSocketTask>, public CanMakeCheckedPtr<WebSocketTask>, public WebCore::CurlStream::Client {
+class WebSocketTask : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebSocketTask>, public WebCore::CurlStream::Client {
     WTF_MAKE_TZONE_ALLOCATED(WebSocketTask);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebSocketTask);
 public:
-    WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&);
+    static Ref<WebSocketTask> create(NetworkSocketChannel&, WebPageProxyIdentifier, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&);
     virtual ~WebSocketTask();
 
     void sendString(std::span<const uint8_t>, CompletionHandler<void()>&&);
@@ -73,6 +73,8 @@ public:
     const WebCore::SecurityOriginData& topOrigin() const { return m_topOrigin; }
 
 private:
+    WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&);
+
     enum class State : uint8_t {
         Connecting,
         Handshaking,
@@ -86,7 +88,7 @@ private:
     void didReceiveData(WebCore::CurlStreamID, const WebCore::SharedBuffer&) final;
     void didFail(WebCore::CurlStreamID, CURLcode, WebCore::CertificateInfo&&) final;
 
-    Ref<NetworkSocketChannel> protectedChannel() const;
+    RefPtr<NetworkSocketChannel> protectedChannel() const;
 
     void tryServerTrustEvaluation(WebCore::AuthenticationChallenge&&, String&&);
 
@@ -106,7 +108,7 @@ private:
     bool isStreamInvalidated() { return m_streamID == WebCore::invalidCurlStreamID; }
     void destructStream();
 
-    WeakRef<NetworkSocketChannel> m_channel;
+    WeakPtr<NetworkSocketChannel> m_channel;
     WebPageProxyIdentifier m_webProxyPageID;
     WebCore::ResourceRequest m_request;
     String m_protocol;

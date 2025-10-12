@@ -2,17 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  CloneArrayBuffer should be called with byteLength of source typedArray
+info: bugzilla.mozilla.org/show_bug.cgi?id=1264941
 esid: pending
 ---*/
-var BUGNUMBER = 1264941;
-var summary = 'CloneArrayBuffer should be called with byteLength of source typedArray';
-
-print(BUGNUMBER + ": " + summary);
 
 function test(ctor, byteLength) {
   var abuf = new ctor(byteLength);
@@ -41,4 +35,3 @@ test(ArrayBuffer, 128);
 class MyArrayBuffer extends ArrayBuffer {}
 test(MyArrayBuffer, 16);
 test(MyArrayBuffer, 128);
-

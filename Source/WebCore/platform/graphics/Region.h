@@ -26,7 +26,7 @@
 #ifndef Region_h
 #define Region_h
 
-#include "IntRect.h"
+#include <WebCore/IntRect.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/PointerComparison.h>
 #include <wtf/TZoneMalloc.h>
@@ -36,7 +36,7 @@ namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Region);
 class Region {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Region);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Region, Region);
 public:
     WEBCORE_EXPORT Region();
     WEBCORE_EXPORT Region(const IntRect&);
@@ -75,7 +75,7 @@ public:
 
     struct Span {
         int y { 0 };
-        size_t segmentIndex { 0 };
+        uint64_t segmentIndex { 0 };
 
         friend bool operator==(const Span&, const Span&) = default;
     };

@@ -27,8 +27,8 @@
 
 #if ENABLE(ASSEMBLER)
 
-#include "MacroAssembler.h"
-#include "Width.h"
+#include <JavaScriptCore/MacroAssembler.h>
+#include <JavaScriptCore/Width.h>
 
 namespace JSC {
 

@@ -747,6 +747,7 @@ CODEC_INTERFACE(vpx_codec_vp8_dx) = {
       NULL,    /* vpx_codec_enc_config_set_fn_t */
       NULL,    /* vpx_codec_get_global_headers_fn_t */
       NULL,    /* vpx_codec_get_preview_frame_fn_t */
-      NULL     /* vpx_codec_enc_mr_get_mem_loc_fn_t */
+      NULL,    /* vpx_codec_enc_mr_get_mem_loc_fn_t */
+      NULL     /* vpx_codec_enc_mr_free_mem_loc_fn_t */
   }
 };

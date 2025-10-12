@@ -78,7 +78,7 @@ void WebGLDrawBuffers::drawBuffersWEBGL(const Vector<GCGLenum>& buffers)
                 return;
             }
         }
-        context->m_framebufferBinding->drawBuffers(buffers);
+        context->protectedFramebufferBinding()->drawBuffers(buffers);
     }
 }
 

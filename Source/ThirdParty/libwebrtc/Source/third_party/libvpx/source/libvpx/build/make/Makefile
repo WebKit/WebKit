@@ -150,8 +150,8 @@ $(BUILD_PFX)%_neon_i8mm.c.d: CFLAGS += -march=armv8.2-a+dotprod+i8mm
 $(BUILD_PFX)%_neon_i8mm.c.o: CFLAGS += -march=armv8.2-a+dotprod+i8mm
 $(BUILD_PFX)%_sve.c.d: CFLAGS += -march=armv8.2-a+dotprod+i8mm+sve
 $(BUILD_PFX)%_sve.c.o: CFLAGS += -march=armv8.2-a+dotprod+i8mm+sve
-$(BUILD_PFX)%_sve2.c.d: CFLAGS += -march=armv9-a+sve2
-$(BUILD_PFX)%_sve2.c.o: CFLAGS += -march=armv9-a+sve2
+$(BUILD_PFX)%_sve2.c.d: CFLAGS += -march=armv9-a+i8mm+sve2
+$(BUILD_PFX)%_sve2.c.o: CFLAGS += -march=armv9-a+i8mm+sve2
 
 # POWER
 $(BUILD_PFX)%_vsx.c.d: CFLAGS += -maltivec -mvsx

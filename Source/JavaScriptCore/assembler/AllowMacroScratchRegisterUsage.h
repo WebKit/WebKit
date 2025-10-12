@@ -29,7 +29,7 @@
 
 #if ENABLE(ASSEMBLER)
 
-#include "MacroAssembler.h"
+#include <JavaScriptCore/MacroAssembler.h>
 
 namespace JSC {
 

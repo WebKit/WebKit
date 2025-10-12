@@ -5,6 +5,7 @@ PASS controller argument should not be passed to close method
 PASS highWaterMark should be reflected to desiredSize
 PASS WritableStream should be writable and ready should fulfill immediately if the strategy does not apply backpressure
 PASS WritableStream should be constructible with no arguments
+PASS WritableStream can't be constructed with a defined type
 PASS underlyingSink argument should be converted after queuingStrategy argument
 PASS WritableStream instances should have standard methods and properties
 PASS WritableStreamDefaultController constructor should throw

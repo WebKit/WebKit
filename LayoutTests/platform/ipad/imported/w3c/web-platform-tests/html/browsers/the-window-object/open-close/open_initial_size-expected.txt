@@ -1,0 +1,3 @@
+
+PASS Window geometry is available in opener context immediately
+

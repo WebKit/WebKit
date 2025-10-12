@@ -145,7 +145,7 @@ JSValue JSTestNamespaceObject::getConstructor(VM& vm, const JSGlobalObject* glob
 
 void JSTestNamespaceObject::destroy(JSC::JSCell* cell)
 {
-    JSTestNamespaceObject* thisObject = static_cast<JSTestNamespaceObject*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestNamespaceObject* thisObject = static_cast<JSTestNamespaceObject*>(cell);
     thisObject->JSTestNamespaceObject::~JSTestNamespaceObject();
 }
 
@@ -273,7 +273,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestNamespaceObjectConstructorFunction_namespaceOpera
 
 JSC::GCClient::IsoSubspace* JSTestNamespaceObject::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestNamespaceObject, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestNamespaceObject, UseCustomHeapCellType::No>(vm, "JSTestNamespaceObject"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamespaceObject.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamespaceObject = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestNamespaceObject.get(); },

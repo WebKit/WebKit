@@ -33,7 +33,10 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
+#include "Document.h"
 #include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "Page.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -76,8 +79,10 @@ SpeechSynthesis* LocalDOMWindowSpeechSynthesis::speechSynthesis(DOMWindow& windo
 
 SpeechSynthesis* LocalDOMWindowSpeechSynthesis::speechSynthesis()
 {
-    if (!m_speechSynthesis && frame() && frame()->document())
-        m_speechSynthesis = SpeechSynthesis::create(*frame()->document());
+    if (!m_speechSynthesis && frame()) {
+        if (RefPtr document = frame()->document())
+            m_speechSynthesis = SpeechSynthesis::create(*document);
+    }
     return m_speechSynthesis.get();
 }
 

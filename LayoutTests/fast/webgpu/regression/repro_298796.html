@@ -1,0 +1,56 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+    let storageBuffer = device.createBuffer({size: 260, usage: GPUBufferUsage.STORAGE});
+    let outputBuffer = device.createBuffer({size: 4, usage: GPUBufferUsage.MAP_READ});
+    let code = `
+@group(0) @binding(0) var<storage, read_write> oob: u32;
+
+@compute @workgroup_size(1)
+fn c() {
+  oob = 11223344;
+}
+`;
+    let bindGroupLayout = device.createBindGroupLayout({
+      entries: [
+        {binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: {type: 'storage', hasDynamicOffset: true}},
+      ],
+    });
+    let bindGroup0 = device.createBindGroup({
+      layout: bindGroupLayout, entries: [
+        {binding: 0, resource: {buffer: storageBuffer, size: 4, offset: 256}},
+      ],
+    });
+    let module = device.createShaderModule({code});
+    let pipeline = device.createComputePipeline({
+      layout: device.createPipelineLayout({bindGroupLayouts: [bindGroupLayout]}),
+      compute: {module},
+    });
+    let commandEncoder = device.createCommandEncoder();
+    let computePassEncoder = commandEncoder.beginComputePass({});
+    computePassEncoder.setPipeline(pipeline);
+    computePassEncoder.setPipeline(pipeline);
+    computePassEncoder.setBindGroup(0, bindGroup0, [256]);
+    computePassEncoder.dispatchWorkgroups(1);
+    computePassEncoder.end();
+    device.queue.submit([commandEncoder.finish()]);
+    await device.queue.onSubmittedWorkDone();
+    await outputBuffer.mapAsync(GPUMapMode.READ);
+    let outputU32 = new Uint32Array(outputBuffer.getMappedRange());
+    log(outputU32);
+    outputBuffer.unmap();
+    let error = await device.popErrorScope();
+    if (error) {
+      log('validation error');
+      log(error.message);
+    } else {
+      log('no validation error');
+    }
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

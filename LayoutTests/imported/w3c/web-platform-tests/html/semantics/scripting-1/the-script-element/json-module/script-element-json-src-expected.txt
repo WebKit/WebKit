@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: 'application/json' is not a valid JavaScript MIME type.
 
 PASS Test that <script> doesn't load when the src is JSON.
 

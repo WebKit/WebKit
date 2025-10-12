@@ -8,7 +8,6 @@
 #include "mkvparser/mkvparser.h"
 
 #if defined(_MSC_VER) && _MSC_VER < 1800
-#include <float.h>  // _isnan() / _finite()
 #define MSC_COMPAT
 #endif
 
@@ -16,6 +15,7 @@
 #include <cfloat>
 #include <climits>
 #include <cmath>
+#include <cstdint>
 #include <cstring>
 #include <memory>
 #include <new>
@@ -55,7 +55,7 @@ Type* SafeArrayAlloc(unsigned long long num_elements,
 void GetVersion(int& major, int& minor, int& build, int& revision) {
   major = 1;
   minor = 1;
-  build = 0;
+  build = 4;
   revision = 0;
 }
 
@@ -246,7 +246,8 @@ long UnserializeFloat(IMkvReader* pReader, long long pos, long long size_,
   if (size == 4) {
     union {
       float f;
-      unsigned long ff;
+      uint32_t ff;
+      static_assert(sizeof(float) == sizeof(uint32_t), "");
     };
 
     ff = 0;
@@ -264,7 +265,8 @@ long UnserializeFloat(IMkvReader* pReader, long long pos, long long size_,
   } else {
     union {
       double d;
-      unsigned long long dd;
+      uint64_t dd;
+      static_assert(sizeof(double) == sizeof(uint64_t), "");
     };
 
     dd = 0;
@@ -298,7 +300,7 @@ long UnserializeInt(IMkvReader* pReader, long long pos, long long size,
   if (status < 0)
     return status;
 
-  unsigned long long result = first_byte;
+  unsigned long long result = static_cast<unsigned long long>(first_byte);
   ++pos;
 
   for (long i = 1; i < size; ++i) {
@@ -1533,14 +1535,15 @@ long SeekHead::Parse() {
     return E_FILE_FORMAT_INVALID;
 
   if (entry_count > 0) {
-    m_entries = new (std::nothrow) Entry[entry_count];
+    m_entries = new (std::nothrow) Entry[static_cast<size_t>(entry_count)];
 
     if (m_entries == NULL)
       return -1;
   }
 
   if (void_element_count > 0) {
-    m_void_elements = new (std::nothrow) VoidElement[void_element_count];
+    m_void_elements =
+        new (std::nothrow) VoidElement[static_cast<size_t>(void_element_count)];
 
     if (m_void_elements == NULL)
       return -1;
@@ -2431,7 +2434,7 @@ bool CuePoint::TrackPosition::Parse(IMkvReader* pReader, long long start_,
     pos += size;  // consume payload
   }
 
-  if ((m_pos < 0) || (m_track <= 0)) {
+  if ((m_pos < 0) || (m_track <= 0) || (m_block < 0) || (m_block > LONG_MAX)) {
     return false;
   }
 
@@ -4234,16 +4237,16 @@ long ContentEncoding::ParseContentEncodingEntry(long long start, long long size,
     return -1;
 
   if (compression_count > 0) {
-    compression_entries_ =
-        new (std::nothrow) ContentCompression*[compression_count];
+    compression_entries_ = new (std::nothrow)
+        ContentCompression*[static_cast<size_t>(compression_count)];
     if (!compression_entries_)
       return -1;
     compression_entries_end_ = compression_entries_;
   }
 
   if (encryption_count > 0) {
-    encryption_entries_ =
-        new (std::nothrow) ContentEncryption*[encryption_count];
+    encryption_entries_ = new (std::nothrow)
+        ContentEncryption*[static_cast<size_t>(encryption_count)];
     if (!encryption_entries_) {
       delete[] compression_entries_;
       compression_entries_ = NULL;
@@ -4568,7 +4571,8 @@ int Track::Info::CopyStr(char* Info::*str, Info& dst_) const {
   if (dst == NULL)
     return -1;
 
-  strcpy(dst, src);
+  memcpy(dst, src, len);
+  dst[len] = '\0';
 
   return 0;
 }
@@ -4956,7 +4960,8 @@ long Track::ParseContentEncodingsEntry(long long start, long long size) {
   if (count <= 0)
     return -1;
 
-  content_encoding_entries_ = new (std::nothrow) ContentEncoding*[count];
+  content_encoding_entries_ =
+      new (std::nothrow) ContentEncoding*[static_cast<size_t>(count)];
   if (!content_encoding_entries_)
     return -1;
 
@@ -5009,7 +5014,7 @@ bool PrimaryChromaticity::Parse(IMkvReader* reader, long long read_pos,
     return false;
 
   if (!*chromaticity)
-    *chromaticity = new PrimaryChromaticity();
+    *chromaticity = new (std::nothrow) PrimaryChromaticity();
 
   if (!*chromaticity)
     return false;
@@ -5037,8 +5042,9 @@ bool MasteringMetadata::Parse(IMkvReader* reader, long long mm_start,
   if (!reader || *mm)
     return false;
 
-  std::unique_ptr<MasteringMetadata> mm_ptr(new MasteringMetadata());
-  if (!mm_ptr.get())
+  std::unique_ptr<MasteringMetadata> mm_ptr(new (std::nothrow)
+                                                MasteringMetadata());
+  if (!mm_ptr)
     return false;
 
   const long long mm_end = mm_start + mm_size;
@@ -5126,8 +5132,8 @@ bool Colour::Parse(IMkvReader* reader, long long colour_start,
   if (!reader || *colour)
     return false;
 
-  std::unique_ptr<Colour> colour_ptr(new Colour());
-  if (!colour_ptr.get())
+  std::unique_ptr<Colour> colour_ptr(new (std::nothrow) Colour());
+  if (!colour_ptr)
     return false;
 
   const long long colour_end = colour_start + colour_size;
@@ -5224,8 +5230,8 @@ bool Projection::Parse(IMkvReader* reader, long long start, long long size,
   if (!reader || *projection)
     return false;
 
-  std::unique_ptr<Projection> projection_ptr(new Projection());
-  if (!projection_ptr.get())
+  std::unique_ptr<Projection> projection_ptr(new (std::nothrow) Projection());
+  if (!projection_ptr)
     return false;
 
   const long long end = start + size;
@@ -5703,7 +5709,7 @@ long Tracks::Parse() {
   if (count <= 0)
     return 0;  // success
 
-  m_trackEntries = new (std::nothrow) Track*[count];
+  m_trackEntries = new (std::nothrow) Track*[static_cast<size_t>(count)];
 
   if (m_trackEntries == NULL)
     return -1;
@@ -7885,8 +7891,10 @@ long Block::Parse(const Cluster* pCluster) {
     if (frame_size <= 0)
       return E_FILE_FORMAT_INVALID;
 
+#if LLONG_MAX > LONG_MAX
     if (frame_size > LONG_MAX)
       return E_FILE_FORMAT_INVALID;
+#endif
 
     if ((pos + len) > stop)
       return E_FILE_FORMAT_INVALID;
@@ -7952,8 +7960,10 @@ long Block::Parse(const Cluster* pCluster) {
       if (frame_size <= 0)
         return E_FILE_FORMAT_INVALID;
 
+#if LLONG_MAX > LONG_MAX
       if (frame_size > LONG_MAX)
         return E_FILE_FORMAT_INVALID;
+#endif
 
       curr.len = static_cast<long>(frame_size);
       // Check if size + curr.len could overflow.

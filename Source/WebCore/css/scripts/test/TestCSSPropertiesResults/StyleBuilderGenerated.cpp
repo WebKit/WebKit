@@ -44,6 +44,54 @@ public:
         }
         builderState.style().setTestHighPriority(fromCSSValueDeducingType(builderState, value));
     }
+    static void applyInitialBackgroundFillLayerTestPrimary(BuilderState& builderState)
+    {
+        applyInitialPrimaryFillLayerProperty<&RenderStyle::setBackgroundLayers, &RenderStyle::initialBackgroundLayers>(builderState);
+    }
+    static void applyInheritBackgroundFillLayerTestPrimary(BuilderState& builderState)
+    {
+        applyInheritPrimaryFillLayerProperty<&RenderStyle::setBackgroundLayers, &RenderStyle::backgroundLayers, &BackgroundLayers::Layer::backgroundFillLayerTestPrimary, BackgroundLayers>(builderState);
+    }
+    static void applyValueBackgroundFillLayerTestPrimary(BuilderState& builderState, CSSValue& value)
+    {
+        applyValuePrimaryFillLayerProperty<&RenderStyle::setBackgroundLayers, &fromCSSValueDeducingType, BackgroundLayers>(builderState, value);
+    }
+    static void applyInitialTestMediumPriority(BuilderState& builderState)
+    {
+        builderState.style().setTestMediumPriority(RenderStyle::initialTestMediumPriority());
+    }
+    static void applyInheritTestMediumPriority(BuilderState& builderState)
+    {
+        builderState.style().setTestMediumPriority(forwardInheritedValue(builderState.parentStyle().testMediumPriority()));
+    }
+    static void applyValueTestMediumPriority(BuilderState& builderState, CSSValue& value)
+    {
+        builderState.style().setTestMediumPriority(fromCSSValueDeducingType(builderState, value));
+    }
+    static void applyInitialBackgroundFillLayerTestSecondary(BuilderState& builderState)
+    {
+        applyInitialSecondaryFillLayerProperty<&RenderStyle::ensureBackgroundLayers, &BackgroundLayers::Layer::setBackgroundFillLayerTestSecondary, &BackgroundLayers::Layer::initialFillBackgroundFillLayerTestSecondary>(builderState);
+    }
+    static void applyInheritBackgroundFillLayerTestSecondary(BuilderState& builderState)
+    {
+        applyInheritSecondaryFillLayerProperty<&RenderStyle::ensureBackgroundLayers, &RenderStyle::backgroundLayers, &BackgroundLayers::Layer::setBackgroundFillLayerTestSecondary, &BackgroundLayers::Layer::backgroundFillLayerTestSecondary>(builderState);
+    }
+    static void applyValueBackgroundFillLayerTestSecondary(BuilderState& builderState, CSSValue& value)
+    {
+        applyValueSecondaryFillLayerProperty<&RenderStyle::ensureBackgroundLayers, &BackgroundLayers::Layer::setBackgroundFillLayerTestSecondary, &BackgroundLayers::Layer::backgroundFillLayerTestSecondary, &BackgroundLayers::Layer::initialFillBackgroundFillLayerTestSecondary, &fromCSSValueDeducingType>(builderState, value);
+    }
+    static void applyInitialBackgroundFillLayerTestSecondaryWithConverter(BuilderState& builderState)
+    {
+        applyInitialSecondaryFillLayerProperty<&RenderStyle::ensureBackgroundLayers, &BackgroundLayers::Layer::setBackgroundFillLayerTestSecondaryWithConverter, &BackgroundLayers::Layer::initialFillBackgroundFillLayerTestSecondaryWithConverter>(builderState);
+    }
+    static void applyInheritBackgroundFillLayerTestSecondaryWithConverter(BuilderState& builderState)
+    {
+        applyInheritSecondaryFillLayerProperty<&RenderStyle::ensureBackgroundLayers, &RenderStyle::backgroundLayers, &BackgroundLayers::Layer::setBackgroundFillLayerTestSecondaryWithConverter, &BackgroundLayers::Layer::backgroundFillLayerTestSecondaryWithConverter>(builderState);
+    }
+    static void applyValueBackgroundFillLayerTestSecondaryWithConverter(BuilderState& builderState, CSSValue& value)
+    {
+        applyValueSecondaryFillLayerProperty<&RenderStyle::ensureBackgroundLayers, &BackgroundLayers::Layer::setBackgroundFillLayerTestSecondaryWithConverter, &BackgroundLayers::Layer::backgroundFillLayerTestSecondaryWithConverter, &BackgroundLayers::Layer::initialFillBackgroundFillLayerTestSecondaryWithConverter, &BuilderConverter::convertFillTestConverter>(builderState, value);
+    }
     static void applyInitialTestAnimationWrapper(BuilderState& builderState)
     {
         builderState.style().setTestAnimationWrapper(RenderStyle::initialTestAnimationWrapper());
@@ -79,26 +127,6 @@ public:
     static void applyValueTestAnimationWrapperAccelerationThreadedOnly(BuilderState& builderState, CSSValue& value)
     {
         builderState.style().setTestAnimationWrapperAccelerationThreadedOnly(fromCSSValueDeducingType(builderState, value));
-    }
-    static void applyInitialTestAutoFunctions(BuilderState& builderState)
-    {
-        builderState.style().setHasAutoTestAutoFunctions();
-    }
-    static void applyInheritTestAutoFunctions(BuilderState& builderState)
-    {
-        if (builderState.parentStyle().hasAutoTestAutoFunctions()) {
-            builderState.style().setHasAutoTestAutoFunctions();
-            return;
-        }
-        builderState.style().setTestAutoFunctions(forwardInheritedValue(builderState.parentStyle().testAutoFunctions()));
-    }
-    static void applyValueTestAutoFunctions(BuilderState& builderState, CSSValue& value)
-    {
-        if (value.valueID() == CSSValueAuto) {
-            builderState.style().setHasAutoTestAutoFunctions();
-            return;
-        }
-        builderState.style().setTestAutoFunctions(fromCSSValueDeducingType(builderState, value));
     }
     static void applyInitialTestBoundedRepetitionWithCommas(BuilderState& builderState)
     {
@@ -254,7 +282,7 @@ public:
     }
     static void applyValueTestColor(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestColor(builderState.createStyleColor(value, ForVisitedLink::No));
+        builderState.style().setTestColor(BuilderConverter::convertStyleType<Color>(builderState, value, ForVisitedLink::No));
     }
     static void applyInitialTestColorAllowsTypesAbsolute(BuilderState& builderState)
     {
@@ -266,7 +294,7 @@ public:
     }
     static void applyValueTestColorAllowsTypesAbsolute(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestColorAllowsTypesAbsolute(builderState.createStyleColor(value, ForVisitedLink::No));
+        builderState.style().setTestColorAllowsTypesAbsolute(BuilderConverter::convertStyleType<Color>(builderState, value, ForVisitedLink::No));
     }
     static void applyInitialTestColorPropertyWithNoVisitedLinkSupport(BuilderState& builderState)
     {
@@ -278,7 +306,7 @@ public:
     }
     static void applyValueTestColorPropertyWithNoVisitedLinkSupport(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestColorPropertyWithNoVisitedLinkSupport(builderState.createStyleColor(value, ForVisitedLink::No));
+        builderState.style().setTestColorPropertyWithNoVisitedLinkSupport(BuilderConverter::convertStyleType<Color>(builderState, value, ForVisitedLink::No));
     }
     static void applyInitialTestColorPropertyWithVisitedLinkSupport(BuilderState& builderState)
     {
@@ -290,16 +318,16 @@ public:
     static void applyInheritTestColorPropertyWithVisitedLinkSupport(BuilderState& builderState)
     {
         if (builderState.applyPropertyToRegularStyle())
-            builderState.style().setTestColorPropertyWithVisitedLinkSupport(builderState.parentStyle().testColorPropertyWithVisitedLinkSupport());
+            builderState.style().setTestColorPropertyWithVisitedLinkSupport(forwardInheritedValue(builderState.parentStyle().testColorPropertyWithVisitedLinkSupport()));
         if (builderState.applyPropertyToVisitedLinkStyle())
-            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(builderState.parentStyle().testColorPropertyWithVisitedLinkSupport());
+            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(forwardInheritedValue(builderState.parentStyle().testColorPropertyWithVisitedLinkSupport()));
     }
     static void applyValueTestColorPropertyWithVisitedLinkSupport(BuilderState& builderState, CSSValue& value)
     {
         if (builderState.applyPropertyToRegularStyle())
-            builderState.style().setTestColorPropertyWithVisitedLinkSupport(builderState.createStyleColor(fromCSSValueDeducingType(builderState, value), ForVisitedLink::No));
+            builderState.style().setTestColorPropertyWithVisitedLinkSupport(BuilderConverter::convertStyleType<Color>(builderState, value, ForVisitedLink::No));
         if (builderState.applyPropertyToVisitedLinkStyle())
-            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(builderState.createStyleColor(fromCSSValueDeducingType(builderState, value), ForVisitedLink::Yes));
+            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(BuilderConverter::convertStyleType<Color>(builderState, value, ForVisitedLink::Yes));
     }
     static void applyInitialTestCustomExtractor(BuilderState& builderState)
     {
@@ -1277,6 +1305,58 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
             break;
         }
         break;
+    case CSSPropertyID::CSSPropertyBackgroundFillLayerTestPrimary:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialBackgroundFillLayerTestPrimary(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritBackgroundFillLayerTestPrimary(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueBackgroundFillLayerTestPrimary(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestMediumPriority:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestMediumPriority(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestMediumPriority(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestMediumPriority(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyBackgroundFillLayerTestSecondary:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialBackgroundFillLayerTestSecondary(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritBackgroundFillLayerTestSecondary(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueBackgroundFillLayerTestSecondary(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyBackgroundFillLayerTestSecondaryWithConverter:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialBackgroundFillLayerTestSecondaryWithConverter(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritBackgroundFillLayerTestSecondaryWithConverter(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueBackgroundFillLayerTestSecondaryWithConverter(builderState, value);
+            break;
+        }
+        break;
     case CSSPropertyID::CSSPropertyFirstTestDescriptorForFirstDescriptor:
         break;
     case CSSPropertyID::CSSPropertyFirstTestDescriptorForSecondDescriptor:
@@ -1317,19 +1397,6 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
             break;
         case ApplyValueType::Value:
             BuilderFunctions::applyValueTestAnimationWrapperAccelerationThreadedOnly(builderState, value);
-            break;
-        }
-        break;
-    case CSSPropertyID::CSSPropertyTestAutoFunctions:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestAutoFunctions(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestAutoFunctions(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestAutoFunctions(builderState, value);
             break;
         }
         break;

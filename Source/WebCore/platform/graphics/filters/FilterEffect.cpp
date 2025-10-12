@@ -206,7 +206,7 @@ FilterStyleVector FilterEffect::createFilterStyles(GraphicsContext& context, con
 
 FilterStyle FilterEffect::createFilterStyle(GraphicsContext& context, const Filter& filter, const FilterStyle& input, const std::optional<FilterEffectGeometry>& geometry) const
 {
-    ASSERT(supportedFilterRenderingModes().contains(FilterRenderingMode::GraphicsContext));
+    ASSERT(filter.filterRenderingModes().contains(FilterRenderingMode::GraphicsContext));
 
     auto primitiveSubregion = calculatePrimitiveSubregion(filter, { &input.primitiveSubregion, 1 }, geometry);
     auto imageRect = calculateImageRect(filter, { &input.imageRect, 1 }, primitiveSubregion);

@@ -2,6 +2,7 @@ partial interface DOMWindow {
     attribute DOMWindowConstructor DOMWindow;
     attribute ExposedStarConstructor ExposedStar;
     attribute ExposedToWorkerAndWindowConstructor ExposedToWorkerAndWindow;
+    attribute TestConditionalConstructor TestConditional;
     attribute TestConditionalIncludesConstructor TestConditionalIncludes;
     attribute TestConditionallyReadWriteConstructor TestConditionallyReadWrite;
     attribute TestDefaultToJSONConstructor TestDefaultToJSON;

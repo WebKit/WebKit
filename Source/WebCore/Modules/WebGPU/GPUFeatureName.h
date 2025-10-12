@@ -50,6 +50,7 @@ enum class GPUFeatureName : uint8_t {
     Float16Renderable,
     Float32Renderable,
     CoreFeaturesAndLimits,
+    TextureFormatsTier1,
 };
 
 inline WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
@@ -93,6 +94,8 @@ inline WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
         return WebGPU::FeatureName::ClipDistances;
     case GPUFeatureName::CoreFeaturesAndLimits:
         return WebGPU::FeatureName::CoreFeaturesAndLimits;
+    case GPUFeatureName::TextureFormatsTier1:
+        return WebGPU::FeatureName::TextureFormatsTier1;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

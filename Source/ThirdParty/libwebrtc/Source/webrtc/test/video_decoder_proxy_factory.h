@@ -11,11 +11,16 @@
 #ifndef TEST_VIDEO_DECODER_PROXY_FACTORY_H_
 #define TEST_VIDEO_DECODER_PROXY_FACTORY_H_
 
+#include <cstdint>
 #include <memory>
 #include <vector>
 
+#include "api/environment/environment.h"
+#include "api/video/encoded_image.h"
+#include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_decoder.h"
 #include "api/video_codecs/video_decoder_factory.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {

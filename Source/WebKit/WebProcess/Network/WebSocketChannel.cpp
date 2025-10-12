@@ -34,13 +34,12 @@
 #include <WebCore/AdvancedPrivacyProtections.h>
 #include <WebCore/Blob.h>
 #include <WebCore/ClientOrigin.h>
-#include <WebCore/Document.h>
 #include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/DocumentPage.h>
 #include <WebCore/ExceptionCode.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
-#include <WebCore/LocalFrame.h>
-#include <WebCore/Page.h>
+#include <WebCore/LocalFrameInlines.h>
 #include <WebCore/ThreadableWebSocketChannel.h>
 #include <WebCore/WebSocketChannelClient.h>
 #include <wtf/CheckedArithmetic.h>
@@ -145,14 +144,13 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
 
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections;
     bool allowPrivacyProxy { true };
-    std::optional<FrameIdentifier> frameID;
     std::optional<PageIdentifier> pageID;
     StoredCredentialsPolicy storedCredentialsPolicy { StoredCredentialsPolicy::Use };
     RefPtr frame = document->frame();
     RefPtr mainFrame = document->localMainFrame();
     if (!mainFrame)
         return ConnectStatus::KO;
-    frameID = mainFrame->frameID();
+    auto frameID = frame ? std::optional(frame->frameID()) : std::nullopt;
     pageID = mainFrame->pageID();
     if (RefPtr policySourceDocumentLoader = mainFrame->document() ? mainFrame->protectedDocument()->loader() : nullptr) {
         if (!policySourceDocumentLoader->request().url().hasSpecialScheme() && frame->document()->url().protocolIsInHTTPFamily())
@@ -355,7 +353,7 @@ void WebSocketChannel::didReceiveMessageError(String&& errorMessage)
 
 void WebSocketChannel::networkProcessCrashed()
 {
-    didReceiveMessageError("WebSocket network error: Network process crashed."_s);
+    fail("WebSocket network error: Network process crashed."_s);
 }
 
 void WebSocketChannel::suspend()

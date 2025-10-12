@@ -65,9 +65,12 @@ typedef size_t (*pas_bitfit_page_config_specialized_page_get_allocation_size_wit
 typedef void (*pas_bitfit_page_config_specialized_page_shrink_with_page)(
     pas_bitfit_page* page, uintptr_t begin, size_t new_size);
 
-#define PAS_MAX_BITFIT_OBJECT_SIZE(payload_size, min_align_shift) \
+#define PAS_MAX_BITFIT_OBJECT_SIZE_WITH_MAX_BITS(payload_size, min_align_shift, max_bits) \
     PAS_MIN_CONST(PAS_MAX_OBJECT_SIZE((payload_size)), \
-                  PAS_BITFIT_MAX_FREE_MAX_VALID * (1u << (min_align_shift)))
+                  max_bits * (1u << (min_align_shift)))
+
+#define PAS_MAX_BITFIT_OBJECT_SIZE(payload_size, min_align_shift) \
+    PAS_MAX_BITFIT_OBJECT_SIZE_WITH_MAX_BITS(payload_size, min_align_shift, PAS_BITFIT_MAX_FREE_MAX_VALID)
 
 struct pas_bitfit_page_config {
     pas_page_base_config base;

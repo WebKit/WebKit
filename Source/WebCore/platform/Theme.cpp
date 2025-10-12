@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,66 +27,11 @@
 #include "Theme.h"
 
 #include "Color.h"
+#include "FloatPoint.h"
 #include "GraphicsContext.h"
-#include "LengthBox.h"
-#include "LengthSize.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-std::optional<FontCascadeDescription> Theme::controlFont(StyleAppearance, const FontCascade&, float) const
-{
-    return std::nullopt;
-}
-
-LengthSize Theme::controlSize(StyleAppearance, const FontCascade&, const LengthSize& zoomedSize, float) const
-{
-    return zoomedSize;
-}
-
-LengthSize Theme::minimumControlSize(StyleAppearance appearance, const FontCascade& fontCascade, const LengthSize& zoomedSize, const LengthSize& nonShrinkableZoomedSize, float zoom) const
-{
-    auto minSize = minimumControlSize(appearance, fontCascade, zoomedSize, zoom);
-    // Other StyleAppearance types are composed controls with shadow subtree.
-    if (appearance == StyleAppearance::Radio || appearance == StyleAppearance::Checkbox) {
-        if (zoomedSize.width.isIntrinsicOrAuto())
-            minSize.width = nonShrinkableZoomedSize.width;
-        if (zoomedSize.height.isIntrinsicOrAuto())
-            minSize.height = nonShrinkableZoomedSize.height;
-    }
-    return minSize;
-}
-
-LengthSize Theme::minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize&, float) const
-{
-    return { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
-}
-
-LengthBox Theme::controlBorder(StyleAppearance appearance, const FontCascade&, const LengthBox& zoomedBox, float) const
-{
-    switch (appearance) {
-    case StyleAppearance::PushButton:
-    case StyleAppearance::Menulist:
-    case StyleAppearance::SearchField:
-    case StyleAppearance::Checkbox:
-    case StyleAppearance::Radio:
-        return LengthBox(0);
-    default:
-        return zoomedBox;
-    }
-}
-
-LengthBox Theme::controlPadding(StyleAppearance appearance, const FontCascade&, const LengthBox& zoomedBox, float) const
-{
-    switch (appearance) {
-    case StyleAppearance::Menulist:
-    case StyleAppearance::MenulistButton:
-    case StyleAppearance::Checkbox:
-    case StyleAppearance::Radio:
-        return LengthBox(0);
-    default:
-        return zoomedBox;
-    }
-}
 
 void Theme::drawNamedImage(const String& name, GraphicsContext& context, const FloatSize& size) const
 {

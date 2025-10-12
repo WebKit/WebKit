@@ -30,6 +30,7 @@
 
 #include "CryptoAlgorithmAesCtrParams.h"
 #include "CryptoKeyAES.h"
+#include "ExceptionOr.h"
 #include <pal/crypto/gcrypt/Handle.h>
 #include <pal/crypto/gcrypt/Utilities.h>
 
@@ -45,7 +46,7 @@ static std::optional<Vector<uint8_t>> callOperation(PAL::GCrypt::CipherOperation
         return std::nullopt;
     }
 
-    error = gcry_cipher_setctr(handle, counter.data(), counter.size());
+    error = gcry_cipher_setctr(handle, counter.span().data(), counter.size());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;
@@ -58,7 +59,7 @@ static std::optional<Vector<uint8_t>> callOperation(PAL::GCrypt::CipherOperation
     }
 
     Vector<uint8_t> output(size);
-    error = operation(handle, output.data(), output.size(), data, size);
+    error = operation(handle, output.mutableSpan().data(), output.size(), data, size);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;
@@ -83,7 +84,7 @@ static std::optional<Vector<uint8_t>> gcryptAESCTR(PAL::GCrypt::CipherOperation 
         return std::nullopt;
     }
 
-    error = gcry_cipher_setkey(handle, key.data(), key.size());
+    error = gcry_cipher_setkey(handle, key.span().data(), key.size());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;
@@ -115,12 +116,12 @@ static std::optional<Vector<uint8_t>> gcryptAESCTR(PAL::GCrypt::CipherOperation 
     // use any part of the counter Vector<> as nonce. This allows us to directly encrypt or
     // decrypt all the provided data in a single step.
     if (counterLength == counter.size() * 8)
-        return callOperation(operation, handle, counter, inputText.data(), inputText.size());
+        return callOperation(operation, handle, counter, inputText.span().data(), inputText.size());
 
     // Scan the counter data into the MPI format. We'll do all the counter computations with
     // the MPI API.
     PAL::GCrypt::Handle<gcry_mpi_t> counterDataMPI;
-    error = gcry_mpi_scan(&counterDataMPI, GCRYMPI_FMT_USG, counter.data(), counter.size(), nullptr);
+    error = gcry_mpi_scan(&counterDataMPI, GCRYMPI_FMT_USG, counter.span().data(), counter.size(), nullptr);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;
@@ -142,7 +143,7 @@ static std::optional<Vector<uint8_t>> gcryptAESCTR(PAL::GCrypt::CipherOperation 
         // encrypt or decrypt the provided data in a single step since it's ensured that the
         // counter won't overflow.
         if (gcry_mpi_cmp(counterLeewayMPI, blockCountMPI) >= 0)
-            return callOperation(operation, handle, counter, inputText.data(), inputText.size());
+            return callOperation(operation, handle, counter, inputText.span().data(), inputText.size());
     }
 
     // From here onwards we're dealing with a counter of which the length doesn't match the
@@ -170,7 +171,7 @@ static std::optional<Vector<uint8_t>> gcryptAESCTR(PAL::GCrypt::CipherOperation 
         PAL::GCrypt::Handle<gcry_mpi_t> blockCounterMPI(gcry_mpi_new(0));
         gcry_mpi_add(blockCounterMPI, nonceMPI, counterMPI);
 
-        error = gcry_mpi_print(GCRYMPI_FMT_USG, blockCounterData.data(), blockCounterData.size(), nullptr, blockCounterMPI);
+        error = gcry_mpi_print(GCRYMPI_FMT_USG, blockCounterData.mutableSpan().data(), blockCounterData.size(), nullptr, blockCounterMPI);
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
             return std::nullopt;

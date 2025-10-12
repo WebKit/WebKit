@@ -23,7 +23,7 @@
 #include "config.h"
 #include "SVGTRefElement.h"
 
-#include "AddEventListenerOptions.h"
+#include "AddEventListenerOptionsInlines.h"
 #include "ElementRareData.h"
 #include "EventListener.h"
 #include "EventNames.h"

@@ -26,7 +26,8 @@
 #include "config.h"
 #include "StorageNamespaceProvider.h"
 
-#include "Document.h"
+#include "DocumentPage.h"
+#include "DocumentSecurityOrigin.h"
 #include "Page.h"
 #include "SecurityOriginData.h"
 #include "StorageArea.h"
@@ -53,11 +54,11 @@ Ref<StorageArea> StorageNamespaceProvider::localStorageArea(Document& document)
 
     RefPtr<StorageNamespace> storageNamespace;
     if (document.canAccessResource(ScriptExecutionContext::ResourceType::LocalStorage) == ScriptExecutionContext::HasResourceAccess::DefaultForThirdParty)
-        storageNamespace = &transientLocalStorageNamespace(document.topOrigin(), document.page()->sessionID());
+        storageNamespace = transientLocalStorageNamespace(document.protectedTopOrigin().get(), document.protectedPage()->sessionID());
     else
-        storageNamespace = &localStorageNamespace(document.page()->sessionID());
+        storageNamespace = localStorageNamespace(document.protectedPage()->sessionID());
 
-    return storageNamespace->storageArea(document.securityOrigin());
+    return storageNamespace->storageArea(document.protectedSecurityOrigin().get());
 }
 
 Ref<StorageArea> StorageNamespaceProvider::sessionStorageArea(Document& document)
@@ -66,13 +67,13 @@ Ref<StorageArea> StorageNamespaceProvider::sessionStorageArea(Document& document
     // so the Document had better still actually have a Page.
     ASSERT(document.page());
 
-    return sessionStorageNamespace(document.topOrigin(), *document.page())->storageArea(document.securityOrigin());
+    return sessionStorageNamespace(document.protectedTopOrigin().get(), *document.protectedPage())->storageArea(document.protectedSecurityOrigin().get());
 }
 
 StorageNamespace& StorageNamespaceProvider::localStorageNamespace(PAL::SessionID sessionID)
 {
     if (!m_localStorageNamespace)
-        m_localStorageNamespace = createLocalStorageNamespace(localStorageDatabaseQuotaInBytes, sessionID);
+        lazyInitialize(m_localStorageNamespace, createLocalStorageNamespace(localStorageDatabaseQuotaInBytes, sessionID));
 
     ASSERT(m_localStorageNamespace->sessionID() == sessionID);
     return *m_localStorageNamespace;

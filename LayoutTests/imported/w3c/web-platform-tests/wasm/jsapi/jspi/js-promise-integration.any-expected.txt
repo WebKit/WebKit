@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not a constructor (evaluating 'new WebAssembly.Suspending(() => suspend ? Promise.resolve(42) : 43)')
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not a constructor (evaluating 'new WebAssembly.Suspending(() => suspend ? Promise.resolve(42) : 43)')
 
 PASS Valid use of API
 FAIL Promising function always entered WebAssembly.promising is not a function. (In 'WebAssembly.promising(instance.exports.test)', 'WebAssembly.promising' is undefined)

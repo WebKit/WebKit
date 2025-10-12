@@ -20,7 +20,7 @@ namespace webrtc {
 // callback is invoked such that the state of the peer connection can be
 // examined to accurately reflect the effects of the SetRemoteDescription
 // operation.
-class SetRemoteDescriptionObserverInterface : public webrtc::RefCountInterface {
+class SetRemoteDescriptionObserverInterface : public RefCountInterface {
  public:
   // On success, `error.ok()` is true.
   virtual void OnSetRemoteDescriptionComplete(RTCError error) = 0;

@@ -1,0 +1,8 @@
+
+PASS document.cookie set/overwrite/delete observed by CookieStore
+PASS document.cookie set already-expired cookie should not be observed by CookieStore
+PASS document.cookie duplicate cookie should not be observed by CookieStore
+PASS CookieStore set/overwrite/delete observed by document.cookie
+FAIL CookieStore agrees with document.cookie on encoding non-ASCII cookies assert_equals: Cookie we wrote using document.cookie in cookie jar expected (string) "DOCUMENT-🍪=🔵" but got (undefined) undefined
+PASS document.cookie agrees with CookieStore on encoding non-ASCII cookies
+

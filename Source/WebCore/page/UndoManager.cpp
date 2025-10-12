@@ -29,8 +29,10 @@
 #include "CustomUndoStep.h"
 #include "Document.h"
 #include "Editor.h"
+#include "ExceptionOr.h"
 #include "FrameDestructionObserverInlines.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "UndoItem.h"
 #include <wtf/TZoneMallocInlines.h>
 

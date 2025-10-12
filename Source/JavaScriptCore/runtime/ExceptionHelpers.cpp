@@ -125,7 +125,7 @@ static StringView functionCallBase(StringView sourceText)
     // Note that we're scanning text right to left instead of the more common left to right, 
     // so syntax detection is backwards.
     while (parenStack && idx) {
-        UChar curChar = sourceText[idx];
+        char16_t curChar = sourceText[idx];
         if (isInMultiLineComment) {
             if (curChar == '*' && sourceText[idx - 1] == '/') {
                 isInMultiLineComment = false;
@@ -338,6 +338,11 @@ JSObject* createErrorForInvalidGlobalFunctionDeclaration(JSGlobalObject* globalO
 JSObject* createErrorForInvalidGlobalVarDeclaration(JSGlobalObject* globalObject, const Identifier& ident)
 {
     return createTypeError(globalObject, makeString("Can't declare global variable '"_s, ident.string(), "': global object must be extensible"_s));
+}
+
+JSObject* createTDZError(JSGlobalObject* globalObject, StringView ident)
+{
+    return createReferenceError(globalObject, makeString("Cannot access '"_s, ident, "' before initialization."_s));
 }
 
 JSObject* createTDZError(JSGlobalObject* globalObject)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@ private:
     EditAction editingAction() const override;
     bool shouldDispatchInputEvents() const final { return false; }
     
-    Ref<DocumentFragment> m_fragment;
+    const Ref<DocumentFragment> m_fragment;
     Position m_position;
     bool m_smartInsert;
     bool m_smartDelete;

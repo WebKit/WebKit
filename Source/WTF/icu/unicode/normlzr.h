@@ -740,8 +740,8 @@ private:
   // Private functions
   //-------------------------------------------------------------------------
 
-  Normalizer(); // default constructor not implemented
-  Normalizer &operator=(const Normalizer &that); // assignment operator not implemented
+  Normalizer() = delete; // default constructor not implemented
+  Normalizer &operator=(const Normalizer &that) = delete; // assignment operator not implemented
 
   // Private utility methods for iteration
   // For documentation, see the source code
@@ -755,7 +755,7 @@ private:
   // Private data
   //-------------------------------------------------------------------------
 
-  FilteredNormalizer2*fFilteredNorm2;  // owned if not NULL
+  FilteredNormalizer2*fFilteredNorm2;  // owned if not nullptr
   const Normalizer2  *fNorm2;  // not owned; may be equal to fFilteredNorm2
   UNormalizationMode  fUMode;  // deprecated
   int32_t             fOptions;

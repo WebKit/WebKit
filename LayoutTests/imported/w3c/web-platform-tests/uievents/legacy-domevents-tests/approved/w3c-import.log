@@ -14,8 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/approved/ProcessingInstruction.DOMCharacterDataModified.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/approved/dispatchEvent.click.checkbox.html
-/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/approved/domnodeinserted.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/approved/stopImmediatePropagation.effect.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/approved/stopPropagation.deferred.effect.html

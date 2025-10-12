@@ -22,7 +22,7 @@
 
 #if ENABLE(DATA_DETECTION) && HAVE(WK_SECURE_CODING_DATA_DETECTORS)
 secure_coding_header: <pal/cocoa/DataDetectorsCoreSoftLink.h>
-[WebKitSecureCodingClass=PAL::getDDScannerResultClass()] webkit_secure_coding DDScannerResult {
+[WebKitSecureCodingClass=PAL::getDDScannerResultClassSingleton()] webkit_secure_coding DDScannerResult {
     AR: NSValue
     MS: String
     T: String

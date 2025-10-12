@@ -38,16 +38,16 @@ const double kPi = 3.141592653589793238462643383279502884;
 const int kSignBiasMaxDiff255 = 1500;
 const int kSignBiasMaxDiff15 = 10000;
 
-typedef void (*FdctFunc)(const int16_t *in, tran_low_t *out, int stride);
-typedef void (*IdctFunc)(const tran_low_t *in, uint8_t *out, int stride);
-typedef void (*FhtFunc)(const int16_t *in, tran_low_t *out, int stride,
-                        int tx_type);
-typedef void (*IhtFunc)(const tran_low_t *in, uint8_t *out, int stride,
-                        int tx_type);
+using FdctFunc = void (*)(const int16_t *in, tran_low_t *out, int stride);
+using IdctFunc = void (*)(const tran_low_t *in, uint8_t *out, int stride);
+using FhtFunc = void (*)(const int16_t *in, tran_low_t *out, int stride,
+                         int tx_type);
+using IhtFunc = void (*)(const tran_low_t *in, uint8_t *out, int stride,
+                         int tx_type);
 
-typedef std::tuple<FdctFunc, IdctFunc, int, vpx_bit_depth_t> Dct8x8Param;
-typedef std::tuple<FhtFunc, IhtFunc, int, vpx_bit_depth_t> Ht8x8Param;
-typedef std::tuple<IdctFunc, IdctFunc, int, vpx_bit_depth_t> Idct8x8Param;
+using Dct8x8Param = std::tuple<FdctFunc, IdctFunc, int, vpx_bit_depth_t>;
+using Ht8x8Param = std::tuple<FhtFunc, IhtFunc, int, vpx_bit_depth_t>;
+using Idct8x8Param = std::tuple<IdctFunc, IdctFunc, int, vpx_bit_depth_t>;
 
 void reference_8x8_dct_1d(const double in[8], double out[8]) {
   const double kInvSqrt2 = 0.707106781186547524400844362104;
@@ -133,13 +133,16 @@ void idct8x8_64_add_12_sse2(const tran_low_t *in, uint8_t *out, int stride) {
 #endif  // HAVE_SSE2
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 
-// Visual Studio 2022 (cl.exe) targeting AArch64 with optimizations enabled
-// produces invalid code in RunExtremalCheck() and RunInvAccuracyCheck().
-// See:
+// Visual Studio 2022 (cl.exe) < 17.12.3 targeting AArch64 with optimizations
+// enabled produces invalid code in RunExtremalCheck() and
+// RunInvAccuracyCheck(). See:
 // https://developercommunity.visualstudio.com/t/1770-preview-1:-Misoptimization-for-AR/10369786
-// TODO(jzern): check the compiler version after a fix for the issue is
-// released.
-#if defined(_MSC_VER) && defined(_M_ARM64) && !defined(__clang__)
+#if defined(_MSC_FULL_VER) && _MSC_FULL_VER < 194234435 && \
+    defined(_M_ARM64) && !defined(__clang__)
+#define AOM_WORK_AROUND_MSVC_BUG_10369786
+#endif
+
+#ifdef AOM_WORK_AROUND_MSVC_BUG_10369786
 #pragma optimize("", off)
 #endif
 class FwdTrans8x8TestBase {
@@ -533,7 +536,7 @@ class FwdTrans8x8TestBase {
   vpx_bit_depth_t bit_depth_;
   int mask_;
 };
-#if defined(_MSC_VER) && defined(_M_ARM64) && !defined(__clang__)
+#ifdef AOM_WORK_AROUND_MSVC_BUG_10369786
 #pragma optimize("", on)
 #endif
 

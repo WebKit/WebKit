@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "RenderElementInlines.h"
 #include "RenderLayerModelObject.h"
 #include <wtf/WeakPtr.h>
 

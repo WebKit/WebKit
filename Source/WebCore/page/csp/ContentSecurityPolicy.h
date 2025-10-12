@@ -26,11 +26,13 @@
 
 #pragma once
 
-#include "ContentSecurityPolicyHash.h"
-#include "ContentSecurityPolicyResponseHeaders.h"
-#include "SecurityContext.h"
-#include "SecurityOrigin.h"
-#include "SecurityOriginHash.h"
+#include <WebCore/ContentSecurityPolicyClient.h>
+#include <WebCore/ContentSecurityPolicyHash.h>
+#include <WebCore/ContentSecurityPolicyResponseHeaders.h>
+#include <WebCore/ReportingClient.h>
+#include <WebCore/SecurityContext.h>
+#include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityOriginHash.h>
 #include <functional>
 #include <wtf/CheckedPtr.h>
 #include <wtf/FixedVector.h>
@@ -65,8 +67,6 @@ class LocalFrame;
 class ResourceRequest;
 class ScriptExecutionContext;
 class SecurityOrigin;
-struct ContentSecurityPolicyClient;
-struct ReportingClient;
 
 enum class ParserInserted : bool { No, Yes };
 static constexpr unsigned bitWidthOfParserInserted = 1;
@@ -170,8 +170,6 @@ public:
 
     void gatherReportURIs(DOMStringList&) const;
 
-    bool allowRunningOrDisplayingInsecureContent(const URL&);
-
     // The following functions are used by internal data structures to call back into this object when parsing, validating,
     // and applying a Content Security Policy.
     // FIXME: We should make the various directives serve only as state stores for the parsed policy and remove these functions.
@@ -223,9 +221,9 @@ public:
     WEBCORE_EXPORT void upgradeInsecureRequestIfNeeded(ResourceRequest&, InsecureRequestType, AlwaysUpgradeRequest = AlwaysUpgradeRequest::No) const;
     WEBCORE_EXPORT void upgradeInsecureRequestIfNeeded(URL&, InsecureRequestType, AlwaysUpgradeRequest = AlwaysUpgradeRequest::No) const;
 
-    UncheckedKeyHashSet<SecurityOriginData> takeNavigationRequestsToUpgrade();
+    HashSet<SecurityOriginData> takeNavigationRequestsToUpgrade();
     void inheritInsecureNavigationRequestsToUpgradeFromOpener(const ContentSecurityPolicy&);
-    void setInsecureNavigationRequestsToUpgrade(UncheckedKeyHashSet<SecurityOriginData>&&);
+    void setInsecureNavigationRequestsToUpgrade(HashSet<SecurityOriginData>&&);
 
     void setClient(ContentSecurityPolicyClient* client) { m_client = client; }
     void updateSourceSelf(const SecurityOrigin&);
@@ -295,7 +293,7 @@ private:
     int m_httpStatusCode { 0 };
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineScripts;
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineStylesheets;
-    UncheckedKeyHashSet<SecurityOriginData> m_insecureNavigationRequestsToUpgrade;
+    HashSet<SecurityOriginData> m_insecureNavigationRequestsToUpgrade;
     mutable std::optional<ContentSecurityPolicyResponseHeaders> m_cachedResponseHeaders;
     ContentSecurityPolicyModeForExtension m_contentSecurityPolicyModeForExtension { ContentSecurityPolicyModeForExtension::None };
     HashAlgorithmSetCollection m_hashesToReport;

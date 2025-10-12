@@ -241,6 +241,7 @@ libangle_includes = [
   "include/platform/autogen/FeaturesGL_autogen.h",
   "include/platform/autogen/FeaturesMtl_autogen.h",
   "include/platform/autogen/FeaturesVk_autogen.h",
+  "include/platform/autogen/FeaturesWgpu_autogen.h",
   "include/platform/autogen/FrontendFeatures_autogen.h",
   "include/platform/PlatformMethods.h",
   "include/vulkan/vulkan_fuchsia_ext.h",
@@ -584,6 +585,7 @@ libangle_mac_sources = [ "src/libANGLE/renderer/driver_utils_mac.mm" ]
 
 # The frame capture headers are always visible to libANGLE.
 libangle_sources += [
+  "src/common/frame_capture_binary_data.h",
   "src/common/frame_capture_utils.h",
   "src/common/frame_capture_utils_autogen.h",
   "src/common/gl_enum_utils.h",

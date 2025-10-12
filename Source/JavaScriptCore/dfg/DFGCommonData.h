@@ -30,6 +30,7 @@
 #include "BaselineJITCode.h"
 #include "CallLinkInfo.h"
 #include "CodeBlockJettisoningWatchpoint.h"
+#include "ConcatKeyAtomStringCache.h"
 #include "DFGAdaptiveInferredPropertyValueWatchpoint.h"
 #include "DFGAdaptiveStructureWatchpoint.h"
 #include "DFGCodeOriginPool.h"
@@ -130,6 +131,7 @@ public:
     std::unique_ptr<RecordedStatuses> recordedStatuses;
     FixedVector<JumpReplacement> m_jumpReplacements;
     FixedVector<std::unique_ptr<BoyerMooreHorspoolTable<uint8_t>>> m_stringSearchTable8;
+    FixedVector<std::unique_ptr<ConcatKeyAtomStringCache>> m_concatKeyAtomStringCaches;
     Bag<StructureStubInfo> m_stubInfos;
     Bag<OptimizingCallLinkInfo> m_callLinkInfos;
     Bag<DirectCallLinkInfo> m_directCallLinkInfos;

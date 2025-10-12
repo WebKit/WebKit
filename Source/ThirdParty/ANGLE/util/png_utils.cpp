@@ -6,6 +6,10 @@
 // png_utils: Wrapper around libpng.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "util/png_utils.h"
 
 #include <array>

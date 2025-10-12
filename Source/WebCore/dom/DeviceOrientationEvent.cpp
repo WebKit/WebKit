@@ -123,7 +123,7 @@ void DeviceOrientationEvent::initDeviceOrientationEvent(const AtomString& type, 
 #if ENABLE(DEVICE_ORIENTATION)
 void DeviceOrientationEvent::requestPermission(Document& document, PermissionPromise&& promise)
 {
-    RefPtr window = document.domWindow();
+    RefPtr window = document.window();
     if (!window || !document.page())
         return promise.reject(Exception { ExceptionCode::InvalidStateError, "No browsing context"_s });
 

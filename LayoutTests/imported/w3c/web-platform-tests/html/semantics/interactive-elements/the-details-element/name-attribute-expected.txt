@@ -16,4 +16,5 @@ PASS exclusivity enforcement with attachment scenario connected-in-template
 PASS handling of name attribute changes
 PASS closing as a result of parsing doesn't depend on attribute order
 PASS handling of insertion of elements into group
+PASS basic handling of mutually exclusive details when the element isn't connected
 

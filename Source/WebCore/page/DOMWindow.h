@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "DocumentEnums.h"
-#include "EventTarget.h"
-#include "EventTargetInterfaces.h"
-#include "GlobalWindowIdentifier.h"
-#include "ImageBitmap.h"
-#include "ScrollTypes.h"
+#include <WebCore/DocumentEnums.h>
+#include <WebCore/EventTarget.h>
+#include <WebCore/EventTargetInterfaces.h>
+#include <WebCore/GlobalWindowIdentifier.h>
+#include <WebCore/ImageBitmap.h>
+#include <WebCore/ScrollTypes.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -50,6 +50,7 @@ class Element;
 class EventListener;
 class FloatRect;
 class Frame;
+class FrameConsoleClient;
 class HTMLFrameOwnerElement;
 class History;
 class IdleRequestCallback;
@@ -63,7 +64,6 @@ class Navigator;
 class Node;
 class NodeList;
 class Page;
-class PageConsoleClient;
 class Performance;
 class PushManager;
 class RequestAnimationFrameCallback;
@@ -92,6 +92,7 @@ struct StructuredSerializeOptions;
 struct WindowFeatures;
 struct WindowPostMessageOptions;
 
+enum class IncludeTargetOrigin : bool { No, Yes };
 enum class SetLocationLocking : bool { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
 enum class NavigationHistoryBehavior : uint8_t;
 
@@ -121,11 +122,12 @@ public:
     void close(Document&);
     virtual void closePage() = 0;
 
-    PageConsoleClient* console() const;
-    CheckedPtr<PageConsoleClient> checkedConsole() const;
+    FrameConsoleClient* console() const;
+    CheckedPtr<FrameConsoleClient> checkedConsole() const;
 
     WindowProxy* opener() const;
     Document* documentIfLocal();
+    RefPtr<Document> protectedDocumentIfLocal();
 
     WindowProxy* top() const;
     WindowProxy* parent() const;
@@ -223,7 +225,17 @@ public:
     ExceptionOr<PushManager&> pushManager();
 #endif
 
+    // FIXME: When this LocalDOMWindow is no longer the active LocalDOMWindow (i.e.,
+    // when its document is no longer the document that is displayed in its
+    // frame), we would like to zero out m_frame to avoid being confused
+    // by the document that is currently active in m_frame.
+    bool isCurrentlyDisplayedInFrame() const;
+    void printErrorMessage(const String&) const;
+    String crossDomainAccessErrorMessage(const LocalDOMWindow& activeWindow, IncludeTargetOrigin);
+
 protected:
+    bool isInsecureScriptAccess(const LocalDOMWindow& activeWindow, const String& urlString);
+    bool passesSetLocationSecurityChecks(const LocalDOMWindow& activeWindow, const URL& completedURL, CanNavigateState& navigationState);
     explicit DOMWindow(GlobalWindowIdentifier&&, DOMWindowType);
 
     ExceptionOr<RefPtr<SecurityOrigin>> createTargetOriginForPostMessage(const String&, Document&);

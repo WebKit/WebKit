@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "InlineDisplayBox.h"
-#include "InlineDisplayLine.h"
+#include <WebCore/InlineDisplayBox.h>
+#include <WebCore/InlineDisplayLine.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -36,7 +36,7 @@ using Boxes = Vector<Box>;
 using Lines = Vector<Line>;
 
 struct Content {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Content);
 
     void clear();
     void set(Content&& newContent);

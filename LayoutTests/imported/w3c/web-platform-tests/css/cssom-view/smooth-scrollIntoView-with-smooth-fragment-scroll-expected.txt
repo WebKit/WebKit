@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Smooth scroll to hash fragment (on pageload) alongside smooth scrollIntoView runs to completion. Test timed out
-NOTRUN Smooth scroll to hash fragment (on click) alongside smooth scrollIntoView runs to completion.
+PASS Smooth scroll to hash fragment (on pageload) alongside smooth scrollIntoView runs to completion.
+PASS Smooth scroll to hash fragment (on click) alongside smooth scrollIntoView runs to completion.
 

@@ -11,7 +11,11 @@
 #include "api/stats/rtc_stats.h"
 
 #include <cstdio>
+#include <string>
+#include <vector>
 
+#include "api/stats/attribute.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
@@ -40,7 +44,7 @@ bool RTCStats::operator!=(const RTCStats& other) const {
 }
 
 std::string RTCStats::ToJson() const {
-  rtc::StringBuilder sb;
+  StringBuilder sb;
   sb << "{\"type\":\"" << type()
      << "\","
         "\"id\":\""

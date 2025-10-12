@@ -42,7 +42,7 @@ class MediaQueryEvaluator;
 
 namespace Style {
 
-enum class CascadeLevel : uint8_t;
+enum class DeclarationOrigin : uint8_t;
 class InspectorCSSOMWrappers;
 class Resolver;
 
@@ -69,7 +69,7 @@ public:
     RuleSet* dynamicViewTransitionsStyle() const;
     RuleSet& authorStyle() const { return *m_authorStyle; }
     RuleSet* userStyle() const;
-    RuleSet* styleForCascadeLevel(CascadeLevel);
+    RuleSet* styleForDeclarationOrigin(DeclarationOrigin);
 
     const RuleFeatureSet& features() const;
     RuleSet* scopeBreakingHasPseudoClassInvalidationRuleSet() const { return m_scopeBreakingHasPseudoClassInvalidationRuleSet.get(); }
@@ -80,7 +80,7 @@ public:
     const Vector<InvalidationRuleSet>* pseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey&) const;
     const Vector<InvalidationRuleSet>* hasPseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey&) const;
 
-    const UncheckedKeyHashSet<AtomString>& customPropertyNamesInStyleContainerQueries() const;
+    const HashSet<AtomString>& customPropertyNamesInStyleContainerQueries() const;
 
     SelectorsForStyleAttribute selectorsForStyleAttribute() const;
 
@@ -124,13 +124,13 @@ private:
     Resolver& m_styleResolver;
     mutable RuleFeatureSet m_features;
     mutable RefPtr<RuleSet> m_scopeBreakingHasPseudoClassInvalidationRuleSet;
-    mutable UncheckedKeyHashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_idInvalidationRuleSets;
-    mutable UncheckedKeyHashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_classInvalidationRuleSets;
-    mutable UncheckedKeyHashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;
-    mutable UncheckedKeyHashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<InvalidationRuleSet>>> m_pseudoClassInvalidationRuleSets;
-    mutable UncheckedKeyHashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<InvalidationRuleSet>>> m_hasPseudoClassInvalidationRuleSets;
+    mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_idInvalidationRuleSets;
+    mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_classInvalidationRuleSets;
+    mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;
+    mutable HashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<InvalidationRuleSet>>> m_pseudoClassInvalidationRuleSets;
+    mutable HashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<InvalidationRuleSet>>> m_hasPseudoClassInvalidationRuleSets;
 
-    mutable std::optional<UncheckedKeyHashSet<AtomString>> m_customPropertyNamesInStyleContainerQueries;
+    mutable std::optional<HashSet<AtomString>> m_customPropertyNamesInStyleContainerQueries;
 
     mutable std::optional<SelectorsForStyleAttribute> m_cachedSelectorsForStyleAttribute;
 

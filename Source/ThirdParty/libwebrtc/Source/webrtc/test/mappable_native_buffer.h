@@ -11,14 +11,16 @@
 #ifndef TEST_MAPPABLE_NATIVE_BUFFER_H_
 #define TEST_MAPPABLE_NATIVE_BUFFER_H_
 
-#include <utility>
+#include <cstdint>
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/scoped_refptr.h"
 #include "api/video/video_frame.h"
-#include "common_video/include/video_frame_buffer.h"
+#include "api/video/video_frame_buffer.h"
 #include "rtc_base/ref_counted_object.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 namespace test {
@@ -30,7 +32,7 @@ VideoFrame CreateMappableNativeFrame(int64_t ntp_time_ms,
                                      int width,
                                      int height);
 
-rtc::scoped_refptr<MappableNativeBuffer> GetMappableNativeBufferFromVideoFrame(
+scoped_refptr<MappableNativeBuffer> GetMappableNativeBufferFromVideoFrame(
     const VideoFrame& frame);
 
 // A for-testing native buffer that is scalable and mappable. The contents of
@@ -53,21 +55,20 @@ class MappableNativeBuffer : public VideoFrameBuffer {
   int width() const override { return width_; }
   int height() const override { return height_; }
 
-  rtc::scoped_refptr<VideoFrameBuffer> CropAndScale(int offset_x,
-                                                    int offset_y,
-                                                    int crop_width,
-                                                    int crop_height,
-                                                    int scaled_width,
-                                                    int scaled_height) override;
+  scoped_refptr<VideoFrameBuffer> CropAndScale(int offset_x,
+                                               int offset_y,
+                                               int crop_width,
+                                               int crop_height,
+                                               int scaled_width,
+                                               int scaled_height) override;
 
-  rtc::scoped_refptr<I420BufferInterface> ToI420() override;
-  rtc::scoped_refptr<VideoFrameBuffer> GetMappedFrameBuffer(
-      rtc::ArrayView<VideoFrameBuffer::Type> types) override;
+  scoped_refptr<I420BufferInterface> ToI420() override;
+  scoped_refptr<VideoFrameBuffer> GetMappedFrameBuffer(
+      ArrayView<VideoFrameBuffer::Type> types) override;
 
   // Gets all the buffers that have been mapped so far, including mappings of
   // cropped and scaled buffers.
-  std::vector<rtc::scoped_refptr<VideoFrameBuffer>> GetMappedFramedBuffers()
-      const;
+  std::vector<scoped_refptr<VideoFrameBuffer>> GetMappedFramedBuffers() const;
   bool DidConvertToI420() const;
 
  private:
@@ -75,7 +76,7 @@ class MappableNativeBuffer : public VideoFrameBuffer {
 
   class ScaledBuffer : public VideoFrameBuffer {
    public:
-    ScaledBuffer(rtc::scoped_refptr<MappableNativeBuffer> parent,
+    ScaledBuffer(scoped_refptr<MappableNativeBuffer> parent,
                  int width,
                  int height);
     ~ScaledBuffer() override;
@@ -84,35 +85,34 @@ class MappableNativeBuffer : public VideoFrameBuffer {
     int width() const override { return width_; }
     int height() const override { return height_; }
 
-    rtc::scoped_refptr<VideoFrameBuffer> CropAndScale(
-        int offset_x,
-        int offset_y,
-        int crop_width,
-        int crop_height,
-        int scaled_width,
-        int scaled_height) override;
+    scoped_refptr<VideoFrameBuffer> CropAndScale(int offset_x,
+                                                 int offset_y,
+                                                 int crop_width,
+                                                 int crop_height,
+                                                 int scaled_width,
+                                                 int scaled_height) override;
 
-    rtc::scoped_refptr<I420BufferInterface> ToI420() override;
-    rtc::scoped_refptr<VideoFrameBuffer> GetMappedFrameBuffer(
-        rtc::ArrayView<VideoFrameBuffer::Type> types) override;
+    scoped_refptr<I420BufferInterface> ToI420() override;
+    scoped_refptr<VideoFrameBuffer> GetMappedFrameBuffer(
+        ArrayView<VideoFrameBuffer::Type> types) override;
 
    private:
     friend class RefCountedObject<ScaledBuffer>;
 
-    const rtc::scoped_refptr<MappableNativeBuffer> parent_;
+    const scoped_refptr<MappableNativeBuffer> parent_;
     const int width_;
     const int height_;
   };
 
-  rtc::scoped_refptr<ScaledBuffer> FullSizeBuffer();
-  rtc::scoped_refptr<VideoFrameBuffer> GetOrCreateMappedBuffer(int width,
-                                                               int height);
+  scoped_refptr<ScaledBuffer> FullSizeBuffer();
+  scoped_refptr<VideoFrameBuffer> GetOrCreateMappedBuffer(int width,
+                                                          int height);
 
   const VideoFrameBuffer::Type mappable_type_;
   const int width_;
   const int height_;
   mutable Mutex lock_;
-  std::vector<rtc::scoped_refptr<VideoFrameBuffer>> mapped_buffers_
+  std::vector<scoped_refptr<VideoFrameBuffer>> mapped_buffers_
       RTC_GUARDED_BY(&lock_);
 };
 

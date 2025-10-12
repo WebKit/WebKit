@@ -27,6 +27,7 @@
 #include "PerformanceNavigationTiming.h"
 
 #include "CachedResource.h"
+#include "Performance.h"
 #include "ResourceTiming.h"
 
 namespace WebCore {
@@ -139,7 +140,7 @@ double PerformanceNavigationTiming::duration() const
     return loadEventEnd() - startTime();
 }
 
-void PerformanceNavigationTiming::navigationFinished(const NetworkLoadMetrics& metrics)
+void PerformanceNavigationTiming::documentLoadFinished(const NetworkLoadMetrics& metrics)
 {
     m_documentLoadTiming.markEndTime();
     m_resourceTiming.networkLoadMetrics().updateFromFinalMetrics(metrics);

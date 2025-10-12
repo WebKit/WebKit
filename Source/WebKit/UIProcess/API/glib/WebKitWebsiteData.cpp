@@ -68,7 +68,6 @@ static bool recordContainsSupportedDataTypes(const WebsiteDataRecord& record)
     return record.types.containsAny({
         WebsiteDataType::MemoryCache,
         WebsiteDataType::DiskCache,
-        WebsiteDataType::OfflineWebApplicationCache,
         WebsiteDataType::SessionStorage,
         WebsiteDataType::LocalStorage,
 #if !ENABLE(2022_GLIB_API)
@@ -91,8 +90,6 @@ static WebKitWebsiteDataTypes toWebKitWebsiteDataTypes(OptionSet<WebsiteDataType
         returnValue |= WEBKIT_WEBSITE_DATA_MEMORY_CACHE;
     if (types.contains(WebsiteDataType::DiskCache))
         returnValue |= WEBKIT_WEBSITE_DATA_DISK_CACHE;
-    if (types.contains(WebsiteDataType::OfflineWebApplicationCache))
-        returnValue |= WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE;
     if (types.contains(WebsiteDataType::SessionStorage))
         returnValue |= WEBKIT_WEBSITE_DATA_SESSION_STORAGE;
     if (types.contains(WebsiteDataType::LocalStorage))

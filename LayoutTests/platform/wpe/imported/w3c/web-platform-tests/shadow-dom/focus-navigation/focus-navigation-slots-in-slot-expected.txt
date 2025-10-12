@@ -1,8 +1,0 @@
-Tests for moving focus by pressing tab key across nodes in slot scope.
-outside
-
-single nested slot  single nested slot  single nested slot  double nested slot  double nested slot  single nested slot double nested slot  Triple nested slot  Triple nested slot  double nested slot  single nested slot
-outside
-
-FAIL Focus should cover assigned nodes of slot, especially for nested slots in slot scope. assert_equals: Focus should move forward from b1 to 1A expected Element node <button id="1A">single nested slot</button> but got Element node <button id="b1">outside</button>
-

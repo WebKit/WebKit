@@ -73,13 +73,13 @@ angle_requestable_extensions = [
     "GL_ANGLE_texture_compression_dxt5",
     "GL_ANGLE_texture_external_update",
     "GL_ANGLE_texture_multisample",
+    "GL_ANGLE_texture_rectangle",
     "GL_ANGLE_variable_rasterization_rate_metal",
     "GL_ANGLE_vulkan_image",
     "GL_ANGLE_yuv_internal_format",
     "GL_CHROMIUM_color_buffer_float_rgb",
     "GL_CHROMIUM_color_buffer_float_rgba",
     "GL_CHROMIUM_lose_context",
-    "GL_CHROMIUM_sync_query",
     "GL_WEBKIT_explicit_resolve_target",
 ]
 
@@ -92,6 +92,7 @@ gles_requestable_extensions = [
     "GL_ARM_rgba8",
     "GL_ARM_shader_framebuffer_fetch",
     "GL_ARM_shader_framebuffer_fetch_depth_stencil",
+    "GL_ARM_texture_unnormalized_coordinates",
     "GL_EXT_base_instance",
     "GL_EXT_blend_func_extended",
     "GL_EXT_blend_minmax",
@@ -117,6 +118,9 @@ gles_requestable_extensions = [
     "GL_EXT_external_buffer",
     "GL_EXT_float_blend",
     "GL_EXT_frag_depth",
+    "GL_EXT_fragment_shading_rate",
+    "GL_EXT_fragment_shading_rate_attachment",
+    "GL_EXT_fragment_shading_rate_primitive",
     "GL_EXT_geometry_shader",
     "GL_EXT_gpu_shader5",
     "GL_EXT_instanced_arrays",
@@ -328,6 +332,8 @@ gles_skipped_commands = [
     "glTextureStorage1DEXT",
     "glTextureStorage2DEXT",
     "glTextureStorage3DEXT",
+    # GL_OVR_multiview
+    "glNamedFramebufferTextureMultiviewOVR",
 ]
 
 def check_sorted(name, l):
@@ -415,6 +421,7 @@ supported_egl_extensions = [
     "EGL_KHR_surfaceless_context",
     "EGL_KHR_swap_buffers_with_damage",
     "EGL_KHR_wait_sync",
+    "EGL_NV_context_priority_realtime",
     "EGL_NV_post_sub_buffer",
     "EGL_NV_stream_consumer_gltexture_yuv",
 ]
@@ -434,12 +441,16 @@ supported_cl_extensions = [
     "cl_khr_depth_images",
     "cl_khr_image2d_from_buffer",
 
+    # OpenCL 3.0
+    "cl_khr_external_memory",
+
     # Optional
     "cl_khr_extended_versioning",
     "cl_khr_fp64",
     "cl_khr_icd",
     "cl_khr_int64_base_atomics",
     "cl_khr_int64_extended_atomics",
+    "cl_khr_priority_hints",
 ]
 
 # Strip these suffixes from Context entry point names. NV is excluded (for now).

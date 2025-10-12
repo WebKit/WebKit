@@ -1,0 +1,1034 @@
+
+PASS PointerEvent.pointerdown.screenX
+PASS PointerEvent.pointerdown.screenY
+PASS PointerEvent.pointerdown.clientX
+PASS PointerEvent.pointerdown.clientY
+PASS PointerEvent.pointerdown.pageX
+PASS PointerEvent.pointerdown.pageY
+PASS PointerEvent.pointerdown.offsetX
+PASS PointerEvent.pointerdown.offsetY
+PASS PointerEvent.pointerup.screenX
+PASS PointerEvent.pointerup.screenY
+PASS PointerEvent.pointerup.clientX
+PASS PointerEvent.pointerup.clientY
+PASS PointerEvent.pointerup.pageX
+PASS PointerEvent.pointerup.pageY
+PASS PointerEvent.pointerup.offsetX
+PASS PointerEvent.pointerup.offsetY
+PASS PointerEvent.pointermove.screenX
+PASS PointerEvent.pointermove.screenY
+PASS PointerEvent.pointermove.clientX
+PASS PointerEvent.pointermove.clientY
+PASS PointerEvent.pointermove.pageX
+PASS PointerEvent.pointermove.pageY
+PASS PointerEvent.pointermove.offsetX
+PASS PointerEvent.pointermove.offsetY
+PASS PointerEvent.pointercancel.screenX
+PASS PointerEvent.pointercancel.screenY
+PASS PointerEvent.pointercancel.clientX
+PASS PointerEvent.pointercancel.clientY
+PASS PointerEvent.pointercancel.pageX
+PASS PointerEvent.pointercancel.pageY
+PASS PointerEvent.pointercancel.offsetX
+PASS PointerEvent.pointercancel.offsetY
+PASS PointerEvent.gotpointercapture.screenX
+PASS PointerEvent.gotpointercapture.screenY
+PASS PointerEvent.gotpointercapture.clientX
+PASS PointerEvent.gotpointercapture.clientY
+PASS PointerEvent.gotpointercapture.pageX
+PASS PointerEvent.gotpointercapture.pageY
+PASS PointerEvent.gotpointercapture.offsetX
+PASS PointerEvent.gotpointercapture.offsetY
+PASS PointerEvent.lostpointercapture.screenX
+PASS PointerEvent.lostpointercapture.screenY
+PASS PointerEvent.lostpointercapture.clientX
+PASS PointerEvent.lostpointercapture.clientY
+PASS PointerEvent.lostpointercapture.pageX
+PASS PointerEvent.lostpointercapture.pageY
+PASS PointerEvent.lostpointercapture.offsetX
+PASS PointerEvent.lostpointercapture.offsetY
+PASS PointerEvent.pointerrawupdate.screenX
+PASS PointerEvent.pointerrawupdate.screenY
+PASS PointerEvent.pointerrawupdate.clientX
+PASS PointerEvent.pointerrawupdate.clientY
+PASS PointerEvent.pointerrawupdate.pageX
+PASS PointerEvent.pointerrawupdate.pageY
+PASS PointerEvent.pointerrawupdate.offsetX
+PASS PointerEvent.pointerrawupdate.offsetY
+PASS PointerEvent.pointerover.screenX
+PASS PointerEvent.pointerover.screenY
+PASS PointerEvent.pointerover.clientX
+PASS PointerEvent.pointerover.clientY
+PASS PointerEvent.pointerover.pageX
+PASS PointerEvent.pointerover.pageY
+PASS PointerEvent.pointerover.offsetX
+PASS PointerEvent.pointerover.offsetY
+PASS PointerEvent.pointerout.screenX
+PASS PointerEvent.pointerout.screenY
+PASS PointerEvent.pointerout.clientX
+PASS PointerEvent.pointerout.clientY
+PASS PointerEvent.pointerout.pageX
+PASS PointerEvent.pointerout.pageY
+PASS PointerEvent.pointerout.offsetX
+PASS PointerEvent.pointerout.offsetY
+PASS PointerEvent.pointerenter.screenX
+PASS PointerEvent.pointerenter.screenY
+PASS PointerEvent.pointerenter.clientX
+PASS PointerEvent.pointerenter.clientY
+PASS PointerEvent.pointerenter.pageX
+PASS PointerEvent.pointerenter.pageY
+PASS PointerEvent.pointerenter.offsetX
+PASS PointerEvent.pointerenter.offsetY
+PASS PointerEvent.pointerleave.screenX
+PASS PointerEvent.pointerleave.screenY
+PASS PointerEvent.pointerleave.clientX
+PASS PointerEvent.pointerleave.clientY
+PASS PointerEvent.pointerleave.pageX
+PASS PointerEvent.pointerleave.pageY
+PASS PointerEvent.pointerleave.offsetX
+PASS PointerEvent.pointerleave.offsetY
+PASS PointerEvent.foo.screenX
+PASS PointerEvent.foo.screenY
+PASS PointerEvent.foo.clientX
+PASS PointerEvent.foo.clientY
+PASS PointerEvent.foo.pageX
+PASS PointerEvent.foo.pageY
+PASS PointerEvent.foo.offsetX
+PASS PointerEvent.foo.offsetY
+PASS 0.0 - 0.5: PointerEvent.click.screenX
+PASS 0.0 - 0.5: PointerEvent.click.screenY
+PASS 0.0 - 0.5: PointerEvent.click.clientX
+PASS 0.0 - 0.5: PointerEvent.click.clientY
+PASS 0.0 - 0.5: PointerEvent.click.pageX
+PASS 0.0 - 0.5: PointerEvent.click.pageY
+PASS 0.0 - 0.5: PointerEvent.click.offsetX
+PASS 0.0 - 0.5: PointerEvent.click.offsetY
+PASS 0.5 - 1.0: PointerEvent.click.screenX
+PASS 0.5 - 1.0: PointerEvent.click.screenY
+PASS 0.5 - 1.0: PointerEvent.click.clientX
+PASS 0.5 - 1.0: PointerEvent.click.clientY
+PASS 0.5 - 1.0: PointerEvent.click.pageX
+PASS 0.5 - 1.0: PointerEvent.click.pageY
+PASS 0.5 - 1.0: PointerEvent.click.offsetX
+PASS 0.5 - 1.0: PointerEvent.click.offsetY
+PASS 1.0 - 1.5: PointerEvent.click.screenX
+PASS 1.0 - 1.5: PointerEvent.click.screenY
+PASS 1.0 - 1.5: PointerEvent.click.clientX
+PASS 1.0 - 1.5: PointerEvent.click.clientY
+PASS 1.0 - 1.5: PointerEvent.click.pageX
+PASS 1.0 - 1.5: PointerEvent.click.pageY
+PASS 1.0 - 1.5: PointerEvent.click.offsetX
+PASS 1.0 - 1.5: PointerEvent.click.offsetY
+PASS -0.5 - 0.0: PointerEvent.click.screenX
+PASS -0.5 - 0.0: PointerEvent.click.screenY
+PASS -0.5 - 0.0: PointerEvent.click.clientX
+PASS -0.5 - 0.0: PointerEvent.click.clientY
+PASS -0.5 - 0.0: PointerEvent.click.pageX
+PASS -0.5 - 0.0: PointerEvent.click.pageY
+PASS -0.5 - 0.0: PointerEvent.click.offsetX
+PASS -0.5 - 0.0: PointerEvent.click.offsetY
+PASS -1.0 - -0.5: PointerEvent.click.screenX
+PASS -1.0 - -0.5: PointerEvent.click.screenY
+PASS -1.0 - -0.5: PointerEvent.click.clientX
+PASS -1.0 - -0.5: PointerEvent.click.clientY
+PASS -1.0 - -0.5: PointerEvent.click.pageX
+PASS -1.0 - -0.5: PointerEvent.click.pageY
+PASS -1.0 - -0.5: PointerEvent.click.offsetX
+PASS -1.0 - -0.5: PointerEvent.click.offsetY
+PASS -1.5 - -1.0: PointerEvent.click.screenX
+PASS -1.5 - -1.0: PointerEvent.click.screenY
+PASS -1.5 - -1.0: PointerEvent.click.clientX
+PASS -1.5 - -1.0: PointerEvent.click.clientY
+PASS -1.5 - -1.0: PointerEvent.click.pageX
+PASS -1.5 - -1.0: PointerEvent.click.pageY
+PASS -1.5 - -1.0: PointerEvent.click.offsetX
+PASS -1.5 - -1.0: PointerEvent.click.offsetY
+PASS 0.0 - 0.5: PointerEvent.auxclick.screenX
+PASS 0.0 - 0.5: PointerEvent.auxclick.screenY
+PASS 0.0 - 0.5: PointerEvent.auxclick.clientX
+PASS 0.0 - 0.5: PointerEvent.auxclick.clientY
+PASS 0.0 - 0.5: PointerEvent.auxclick.pageX
+PASS 0.0 - 0.5: PointerEvent.auxclick.pageY
+PASS 0.0 - 0.5: PointerEvent.auxclick.offsetX
+PASS 0.0 - 0.5: PointerEvent.auxclick.offsetY
+PASS 0.5 - 1.0: PointerEvent.auxclick.screenX
+PASS 0.5 - 1.0: PointerEvent.auxclick.screenY
+PASS 0.5 - 1.0: PointerEvent.auxclick.clientX
+PASS 0.5 - 1.0: PointerEvent.auxclick.clientY
+PASS 0.5 - 1.0: PointerEvent.auxclick.pageX
+PASS 0.5 - 1.0: PointerEvent.auxclick.pageY
+PASS 0.5 - 1.0: PointerEvent.auxclick.offsetX
+PASS 0.5 - 1.0: PointerEvent.auxclick.offsetY
+PASS 1.0 - 1.5: PointerEvent.auxclick.screenX
+PASS 1.0 - 1.5: PointerEvent.auxclick.screenY
+PASS 1.0 - 1.5: PointerEvent.auxclick.clientX
+PASS 1.0 - 1.5: PointerEvent.auxclick.clientY
+PASS 1.0 - 1.5: PointerEvent.auxclick.pageX
+PASS 1.0 - 1.5: PointerEvent.auxclick.pageY
+PASS 1.0 - 1.5: PointerEvent.auxclick.offsetX
+PASS 1.0 - 1.5: PointerEvent.auxclick.offsetY
+PASS -0.5 - 0.0: PointerEvent.auxclick.screenX
+PASS -0.5 - 0.0: PointerEvent.auxclick.screenY
+PASS -0.5 - 0.0: PointerEvent.auxclick.clientX
+PASS -0.5 - 0.0: PointerEvent.auxclick.clientY
+PASS -0.5 - 0.0: PointerEvent.auxclick.pageX
+PASS -0.5 - 0.0: PointerEvent.auxclick.pageY
+PASS -0.5 - 0.0: PointerEvent.auxclick.offsetX
+PASS -0.5 - 0.0: PointerEvent.auxclick.offsetY
+PASS -1.0 - -0.5: PointerEvent.auxclick.screenX
+PASS -1.0 - -0.5: PointerEvent.auxclick.screenY
+PASS -1.0 - -0.5: PointerEvent.auxclick.clientX
+PASS -1.0 - -0.5: PointerEvent.auxclick.clientY
+PASS -1.0 - -0.5: PointerEvent.auxclick.pageX
+PASS -1.0 - -0.5: PointerEvent.auxclick.pageY
+PASS -1.0 - -0.5: PointerEvent.auxclick.offsetX
+PASS -1.0 - -0.5: PointerEvent.auxclick.offsetY
+PASS -1.5 - -1.0: PointerEvent.auxclick.screenX
+PASS -1.5 - -1.0: PointerEvent.auxclick.screenY
+PASS -1.5 - -1.0: PointerEvent.auxclick.clientX
+PASS -1.5 - -1.0: PointerEvent.auxclick.clientY
+PASS -1.5 - -1.0: PointerEvent.auxclick.pageX
+PASS -1.5 - -1.0: PointerEvent.auxclick.pageY
+PASS -1.5 - -1.0: PointerEvent.auxclick.offsetX
+PASS -1.5 - -1.0: PointerEvent.auxclick.offsetY
+PASS 0.0 - 0.5: PointerEvent.contextmenu.screenX
+PASS 0.0 - 0.5: PointerEvent.contextmenu.screenY
+PASS 0.0 - 0.5: PointerEvent.contextmenu.clientX
+PASS 0.0 - 0.5: PointerEvent.contextmenu.clientY
+PASS 0.0 - 0.5: PointerEvent.contextmenu.pageX
+PASS 0.0 - 0.5: PointerEvent.contextmenu.pageY
+PASS 0.0 - 0.5: PointerEvent.contextmenu.offsetX
+PASS 0.0 - 0.5: PointerEvent.contextmenu.offsetY
+PASS 0.5 - 1.0: PointerEvent.contextmenu.screenX
+PASS 0.5 - 1.0: PointerEvent.contextmenu.screenY
+PASS 0.5 - 1.0: PointerEvent.contextmenu.clientX
+PASS 0.5 - 1.0: PointerEvent.contextmenu.clientY
+PASS 0.5 - 1.0: PointerEvent.contextmenu.pageX
+PASS 0.5 - 1.0: PointerEvent.contextmenu.pageY
+PASS 0.5 - 1.0: PointerEvent.contextmenu.offsetX
+PASS 0.5 - 1.0: PointerEvent.contextmenu.offsetY
+PASS 1.0 - 1.5: PointerEvent.contextmenu.screenX
+PASS 1.0 - 1.5: PointerEvent.contextmenu.screenY
+PASS 1.0 - 1.5: PointerEvent.contextmenu.clientX
+PASS 1.0 - 1.5: PointerEvent.contextmenu.clientY
+PASS 1.0 - 1.5: PointerEvent.contextmenu.pageX
+PASS 1.0 - 1.5: PointerEvent.contextmenu.pageY
+PASS 1.0 - 1.5: PointerEvent.contextmenu.offsetX
+PASS 1.0 - 1.5: PointerEvent.contextmenu.offsetY
+PASS -0.5 - 0.0: PointerEvent.contextmenu.screenX
+PASS -0.5 - 0.0: PointerEvent.contextmenu.screenY
+PASS -0.5 - 0.0: PointerEvent.contextmenu.clientX
+PASS -0.5 - 0.0: PointerEvent.contextmenu.clientY
+PASS -0.5 - 0.0: PointerEvent.contextmenu.pageX
+PASS -0.5 - 0.0: PointerEvent.contextmenu.pageY
+PASS -0.5 - 0.0: PointerEvent.contextmenu.offsetX
+PASS -0.5 - 0.0: PointerEvent.contextmenu.offsetY
+PASS -1.0 - -0.5: PointerEvent.contextmenu.screenX
+PASS -1.0 - -0.5: PointerEvent.contextmenu.screenY
+PASS -1.0 - -0.5: PointerEvent.contextmenu.clientX
+PASS -1.0 - -0.5: PointerEvent.contextmenu.clientY
+PASS -1.0 - -0.5: PointerEvent.contextmenu.pageX
+PASS -1.0 - -0.5: PointerEvent.contextmenu.pageY
+PASS -1.0 - -0.5: PointerEvent.contextmenu.offsetX
+PASS -1.0 - -0.5: PointerEvent.contextmenu.offsetY
+PASS -1.5 - -1.0: PointerEvent.contextmenu.screenX
+PASS -1.5 - -1.0: PointerEvent.contextmenu.screenY
+PASS -1.5 - -1.0: PointerEvent.contextmenu.clientX
+PASS -1.5 - -1.0: PointerEvent.contextmenu.clientY
+PASS -1.5 - -1.0: PointerEvent.contextmenu.pageX
+PASS -1.5 - -1.0: PointerEvent.contextmenu.pageY
+PASS -1.5 - -1.0: PointerEvent.contextmenu.offsetX
+PASS -1.5 - -1.0: PointerEvent.contextmenu.offsetY
+PASS 0.0 - 0.5: MouseEvent.click.screenX
+PASS 0.0 - 0.5: MouseEvent.click.screenY
+PASS 0.0 - 0.5: MouseEvent.click.clientX
+PASS 0.0 - 0.5: MouseEvent.click.clientY
+PASS 0.0 - 0.5: MouseEvent.click.pageX
+PASS 0.0 - 0.5: MouseEvent.click.pageY
+PASS 0.0 - 0.5: MouseEvent.click.offsetX
+PASS 0.0 - 0.5: MouseEvent.click.offsetY
+PASS 0.5 - 1.0: MouseEvent.click.screenX
+PASS 0.5 - 1.0: MouseEvent.click.screenY
+PASS 0.5 - 1.0: MouseEvent.click.clientX
+PASS 0.5 - 1.0: MouseEvent.click.clientY
+PASS 0.5 - 1.0: MouseEvent.click.pageX
+PASS 0.5 - 1.0: MouseEvent.click.pageY
+FAIL 0.5 - 1.0: MouseEvent.click.offsetX assert_equals: expected 0 but got 1
+FAIL 0.5 - 1.0: MouseEvent.click.offsetY assert_equals: expected 0 but got 1
+PASS 1.0 - 1.5: MouseEvent.click.screenX
+PASS 1.0 - 1.5: MouseEvent.click.screenY
+PASS 1.0 - 1.5: MouseEvent.click.clientX
+PASS 1.0 - 1.5: MouseEvent.click.clientY
+PASS 1.0 - 1.5: MouseEvent.click.pageX
+PASS 1.0 - 1.5: MouseEvent.click.pageY
+PASS 1.0 - 1.5: MouseEvent.click.offsetX
+PASS 1.0 - 1.5: MouseEvent.click.offsetY
+PASS -0.5 - 0.0: MouseEvent.click.screenX
+PASS -0.5 - 0.0: MouseEvent.click.screenY
+PASS -0.5 - 0.0: MouseEvent.click.clientX
+PASS -0.5 - 0.0: MouseEvent.click.clientY
+PASS -0.5 - 0.0: MouseEvent.click.pageX
+PASS -0.5 - 0.0: MouseEvent.click.pageY
+FAIL -0.5 - 0.0: MouseEvent.click.offsetX assert_equals: expected -1 but got -0
+FAIL -0.5 - 0.0: MouseEvent.click.offsetY assert_equals: expected -1 but got -0
+PASS -1.0 - -0.5: MouseEvent.click.screenX
+PASS -1.0 - -0.5: MouseEvent.click.screenY
+PASS -1.0 - -0.5: MouseEvent.click.clientX
+PASS -1.0 - -0.5: MouseEvent.click.clientY
+PASS -1.0 - -0.5: MouseEvent.click.pageX
+PASS -1.0 - -0.5: MouseEvent.click.pageY
+PASS -1.0 - -0.5: MouseEvent.click.offsetX
+PASS -1.0 - -0.5: MouseEvent.click.offsetY
+PASS -1.5 - -1.0: MouseEvent.click.screenX
+PASS -1.5 - -1.0: MouseEvent.click.screenY
+PASS -1.5 - -1.0: MouseEvent.click.clientX
+PASS -1.5 - -1.0: MouseEvent.click.clientY
+PASS -1.5 - -1.0: MouseEvent.click.pageX
+PASS -1.5 - -1.0: MouseEvent.click.pageY
+FAIL -1.5 - -1.0: MouseEvent.click.offsetX assert_equals: expected -2 but got -1
+FAIL -1.5 - -1.0: MouseEvent.click.offsetY assert_equals: expected -2 but got -1
+PASS 0.0 - 0.5: MouseEvent.auxclick.screenX
+PASS 0.0 - 0.5: MouseEvent.auxclick.screenY
+PASS 0.0 - 0.5: MouseEvent.auxclick.clientX
+PASS 0.0 - 0.5: MouseEvent.auxclick.clientY
+PASS 0.0 - 0.5: MouseEvent.auxclick.pageX
+PASS 0.0 - 0.5: MouseEvent.auxclick.pageY
+PASS 0.0 - 0.5: MouseEvent.auxclick.offsetX
+PASS 0.0 - 0.5: MouseEvent.auxclick.offsetY
+PASS 0.5 - 1.0: MouseEvent.auxclick.screenX
+PASS 0.5 - 1.0: MouseEvent.auxclick.screenY
+PASS 0.5 - 1.0: MouseEvent.auxclick.clientX
+PASS 0.5 - 1.0: MouseEvent.auxclick.clientY
+PASS 0.5 - 1.0: MouseEvent.auxclick.pageX
+PASS 0.5 - 1.0: MouseEvent.auxclick.pageY
+FAIL 0.5 - 1.0: MouseEvent.auxclick.offsetX assert_equals: expected 0 but got 1
+FAIL 0.5 - 1.0: MouseEvent.auxclick.offsetY assert_equals: expected 0 but got 1
+PASS 1.0 - 1.5: MouseEvent.auxclick.screenX
+PASS 1.0 - 1.5: MouseEvent.auxclick.screenY
+PASS 1.0 - 1.5: MouseEvent.auxclick.clientX
+PASS 1.0 - 1.5: MouseEvent.auxclick.clientY
+PASS 1.0 - 1.5: MouseEvent.auxclick.pageX
+PASS 1.0 - 1.5: MouseEvent.auxclick.pageY
+PASS 1.0 - 1.5: MouseEvent.auxclick.offsetX
+PASS 1.0 - 1.5: MouseEvent.auxclick.offsetY
+PASS -0.5 - 0.0: MouseEvent.auxclick.screenX
+PASS -0.5 - 0.0: MouseEvent.auxclick.screenY
+PASS -0.5 - 0.0: MouseEvent.auxclick.clientX
+PASS -0.5 - 0.0: MouseEvent.auxclick.clientY
+PASS -0.5 - 0.0: MouseEvent.auxclick.pageX
+PASS -0.5 - 0.0: MouseEvent.auxclick.pageY
+FAIL -0.5 - 0.0: MouseEvent.auxclick.offsetX assert_equals: expected -1 but got -0
+FAIL -0.5 - 0.0: MouseEvent.auxclick.offsetY assert_equals: expected -1 but got -0
+PASS -1.0 - -0.5: MouseEvent.auxclick.screenX
+PASS -1.0 - -0.5: MouseEvent.auxclick.screenY
+PASS -1.0 - -0.5: MouseEvent.auxclick.clientX
+PASS -1.0 - -0.5: MouseEvent.auxclick.clientY
+PASS -1.0 - -0.5: MouseEvent.auxclick.pageX
+PASS -1.0 - -0.5: MouseEvent.auxclick.pageY
+PASS -1.0 - -0.5: MouseEvent.auxclick.offsetX
+PASS -1.0 - -0.5: MouseEvent.auxclick.offsetY
+PASS -1.5 - -1.0: MouseEvent.auxclick.screenX
+PASS -1.5 - -1.0: MouseEvent.auxclick.screenY
+PASS -1.5 - -1.0: MouseEvent.auxclick.clientX
+PASS -1.5 - -1.0: MouseEvent.auxclick.clientY
+PASS -1.5 - -1.0: MouseEvent.auxclick.pageX
+PASS -1.5 - -1.0: MouseEvent.auxclick.pageY
+FAIL -1.5 - -1.0: MouseEvent.auxclick.offsetX assert_equals: expected -2 but got -1
+FAIL -1.5 - -1.0: MouseEvent.auxclick.offsetY assert_equals: expected -2 but got -1
+PASS 0.0 - 0.5: MouseEvent.contextmenu.screenX
+PASS 0.0 - 0.5: MouseEvent.contextmenu.screenY
+PASS 0.0 - 0.5: MouseEvent.contextmenu.clientX
+PASS 0.0 - 0.5: MouseEvent.contextmenu.clientY
+PASS 0.0 - 0.5: MouseEvent.contextmenu.pageX
+PASS 0.0 - 0.5: MouseEvent.contextmenu.pageY
+PASS 0.0 - 0.5: MouseEvent.contextmenu.offsetX
+PASS 0.0 - 0.5: MouseEvent.contextmenu.offsetY
+PASS 0.5 - 1.0: MouseEvent.contextmenu.screenX
+PASS 0.5 - 1.0: MouseEvent.contextmenu.screenY
+PASS 0.5 - 1.0: MouseEvent.contextmenu.clientX
+PASS 0.5 - 1.0: MouseEvent.contextmenu.clientY
+PASS 0.5 - 1.0: MouseEvent.contextmenu.pageX
+PASS 0.5 - 1.0: MouseEvent.contextmenu.pageY
+FAIL 0.5 - 1.0: MouseEvent.contextmenu.offsetX assert_equals: expected 0 but got 1
+FAIL 0.5 - 1.0: MouseEvent.contextmenu.offsetY assert_equals: expected 0 but got 1
+PASS 1.0 - 1.5: MouseEvent.contextmenu.screenX
+PASS 1.0 - 1.5: MouseEvent.contextmenu.screenY
+PASS 1.0 - 1.5: MouseEvent.contextmenu.clientX
+PASS 1.0 - 1.5: MouseEvent.contextmenu.clientY
+PASS 1.0 - 1.5: MouseEvent.contextmenu.pageX
+PASS 1.0 - 1.5: MouseEvent.contextmenu.pageY
+PASS 1.0 - 1.5: MouseEvent.contextmenu.offsetX
+PASS 1.0 - 1.5: MouseEvent.contextmenu.offsetY
+PASS -0.5 - 0.0: MouseEvent.contextmenu.screenX
+PASS -0.5 - 0.0: MouseEvent.contextmenu.screenY
+PASS -0.5 - 0.0: MouseEvent.contextmenu.clientX
+PASS -0.5 - 0.0: MouseEvent.contextmenu.clientY
+PASS -0.5 - 0.0: MouseEvent.contextmenu.pageX
+PASS -0.5 - 0.0: MouseEvent.contextmenu.pageY
+FAIL -0.5 - 0.0: MouseEvent.contextmenu.offsetX assert_equals: expected -1 but got -0
+FAIL -0.5 - 0.0: MouseEvent.contextmenu.offsetY assert_equals: expected -1 but got -0
+PASS -1.0 - -0.5: MouseEvent.contextmenu.screenX
+PASS -1.0 - -0.5: MouseEvent.contextmenu.screenY
+PASS -1.0 - -0.5: MouseEvent.contextmenu.clientX
+PASS -1.0 - -0.5: MouseEvent.contextmenu.clientY
+PASS -1.0 - -0.5: MouseEvent.contextmenu.pageX
+PASS -1.0 - -0.5: MouseEvent.contextmenu.pageY
+PASS -1.0 - -0.5: MouseEvent.contextmenu.offsetX
+PASS -1.0 - -0.5: MouseEvent.contextmenu.offsetY
+PASS -1.5 - -1.0: MouseEvent.contextmenu.screenX
+PASS -1.5 - -1.0: MouseEvent.contextmenu.screenY
+PASS -1.5 - -1.0: MouseEvent.contextmenu.clientX
+PASS -1.5 - -1.0: MouseEvent.contextmenu.clientY
+PASS -1.5 - -1.0: MouseEvent.contextmenu.pageX
+PASS -1.5 - -1.0: MouseEvent.contextmenu.pageY
+FAIL -1.5 - -1.0: MouseEvent.contextmenu.offsetX assert_equals: expected -2 but got -1
+FAIL -1.5 - -1.0: MouseEvent.contextmenu.offsetY assert_equals: expected -2 but got -1
+PASS 0.0 - 0.5: MouseEvent.mousedown.screenX
+PASS 0.0 - 0.5: MouseEvent.mousedown.screenY
+PASS 0.0 - 0.5: MouseEvent.mousedown.clientX
+PASS 0.0 - 0.5: MouseEvent.mousedown.clientY
+PASS 0.0 - 0.5: MouseEvent.mousedown.pageX
+PASS 0.0 - 0.5: MouseEvent.mousedown.pageY
+PASS 0.0 - 0.5: MouseEvent.mousedown.offsetX
+PASS 0.0 - 0.5: MouseEvent.mousedown.offsetY
+PASS 0.5 - 1.0: MouseEvent.mousedown.screenX
+PASS 0.5 - 1.0: MouseEvent.mousedown.screenY
+PASS 0.5 - 1.0: MouseEvent.mousedown.clientX
+PASS 0.5 - 1.0: MouseEvent.mousedown.clientY
+PASS 0.5 - 1.0: MouseEvent.mousedown.pageX
+PASS 0.5 - 1.0: MouseEvent.mousedown.pageY
+FAIL 0.5 - 1.0: MouseEvent.mousedown.offsetX assert_equals: expected 0 but got 1
+FAIL 0.5 - 1.0: MouseEvent.mousedown.offsetY assert_equals: expected 0 but got 1
+PASS 1.0 - 1.5: MouseEvent.mousedown.screenX
+PASS 1.0 - 1.5: MouseEvent.mousedown.screenY
+PASS 1.0 - 1.5: MouseEvent.mousedown.clientX
+PASS 1.0 - 1.5: MouseEvent.mousedown.clientY
+PASS 1.0 - 1.5: MouseEvent.mousedown.pageX
+PASS 1.0 - 1.5: MouseEvent.mousedown.pageY
+PASS 1.0 - 1.5: MouseEvent.mousedown.offsetX
+PASS 1.0 - 1.5: MouseEvent.mousedown.offsetY
+PASS -0.5 - 0.0: MouseEvent.mousedown.screenX
+PASS -0.5 - 0.0: MouseEvent.mousedown.screenY
+PASS -0.5 - 0.0: MouseEvent.mousedown.clientX
+PASS -0.5 - 0.0: MouseEvent.mousedown.clientY
+PASS -0.5 - 0.0: MouseEvent.mousedown.pageX
+PASS -0.5 - 0.0: MouseEvent.mousedown.pageY
+FAIL -0.5 - 0.0: MouseEvent.mousedown.offsetX assert_equals: expected -1 but got -0
+FAIL -0.5 - 0.0: MouseEvent.mousedown.offsetY assert_equals: expected -1 but got -0
+PASS -1.0 - -0.5: MouseEvent.mousedown.screenX
+PASS -1.0 - -0.5: MouseEvent.mousedown.screenY
+PASS -1.0 - -0.5: MouseEvent.mousedown.clientX
+PASS -1.0 - -0.5: MouseEvent.mousedown.clientY
+PASS -1.0 - -0.5: MouseEvent.mousedown.pageX
+PASS -1.0 - -0.5: MouseEvent.mousedown.pageY
+PASS -1.0 - -0.5: MouseEvent.mousedown.offsetX
+PASS -1.0 - -0.5: MouseEvent.mousedown.offsetY
+PASS -1.5 - -1.0: MouseEvent.mousedown.screenX
+PASS -1.5 - -1.0: MouseEvent.mousedown.screenY
+PASS -1.5 - -1.0: MouseEvent.mousedown.clientX
+PASS -1.5 - -1.0: MouseEvent.mousedown.clientY
+PASS -1.5 - -1.0: MouseEvent.mousedown.pageX
+PASS -1.5 - -1.0: MouseEvent.mousedown.pageY
+FAIL -1.5 - -1.0: MouseEvent.mousedown.offsetX assert_equals: expected -2 but got -1
+FAIL -1.5 - -1.0: MouseEvent.mousedown.offsetY assert_equals: expected -2 but got -1
+PASS 0.0 - 0.5: MouseEvent.mousemove.screenX
+PASS 0.0 - 0.5: MouseEvent.mousemove.screenY
+PASS 0.0 - 0.5: MouseEvent.mousemove.clientX
+PASS 0.0 - 0.5: MouseEvent.mousemove.clientY
+PASS 0.0 - 0.5: MouseEvent.mousemove.pageX
+PASS 0.0 - 0.5: MouseEvent.mousemove.pageY
+PASS 0.0 - 0.5: MouseEvent.mousemove.offsetX
+PASS 0.0 - 0.5: MouseEvent.mousemove.offsetY
+PASS 0.5 - 1.0: MouseEvent.mousemove.screenX
+PASS 0.5 - 1.0: MouseEvent.mousemove.screenY
+PASS 0.5 - 1.0: MouseEvent.mousemove.clientX
+PASS 0.5 - 1.0: MouseEvent.mousemove.clientY
+PASS 0.5 - 1.0: MouseEvent.mousemove.pageX
+PASS 0.5 - 1.0: MouseEvent.mousemove.pageY
+FAIL 0.5 - 1.0: MouseEvent.mousemove.offsetX assert_equals: expected 0 but got 1
+FAIL 0.5 - 1.0: MouseEvent.mousemove.offsetY assert_equals: expected 0 but got 1
+PASS 1.0 - 1.5: MouseEvent.mousemove.screenX
+PASS 1.0 - 1.5: MouseEvent.mousemove.screenY
+PASS 1.0 - 1.5: MouseEvent.mousemove.clientX
+PASS 1.0 - 1.5: MouseEvent.mousemove.clientY
+PASS 1.0 - 1.5: MouseEvent.mousemove.pageX
+PASS 1.0 - 1.5: MouseEvent.mousemove.pageY
+PASS 1.0 - 1.5: MouseEvent.mousemove.offsetX
+PASS 1.0 - 1.5: MouseEvent.mousemove.offsetY
+PASS -0.5 - 0.0: MouseEvent.mousemove.screenX
+PASS -0.5 - 0.0: MouseEvent.mousemove.screenY
+PASS -0.5 - 0.0: MouseEvent.mousemove.clientX
+PASS -0.5 - 0.0: MouseEvent.mousemove.clientY
+PASS -0.5 - 0.0: MouseEvent.mousemove.pageX
+PASS -0.5 - 0.0: MouseEvent.mousemove.pageY
+FAIL -0.5 - 0.0: MouseEvent.mousemove.offsetX assert_equals: expected -1 but got -0
+FAIL -0.5 - 0.0: MouseEvent.mousemove.offsetY assert_equals: expected -1 but got -0
+PASS -1.0 - -0.5: MouseEvent.mousemove.screenX
+PASS -1.0 - -0.5: MouseEvent.mousemove.screenY
+PASS -1.0 - -0.5: MouseEvent.mousemove.clientX
+PASS -1.0 - -0.5: MouseEvent.mousemove.clientY
+PASS -1.0 - -0.5: MouseEvent.mousemove.pageX
+PASS -1.0 - -0.5: MouseEvent.mousemove.pageY
+PASS -1.0 - -0.5: MouseEvent.mousemove.offsetX
+PASS -1.0 - -0.5: MouseEvent.mousemove.offsetY
+PASS -1.5 - -1.0: MouseEvent.mousemove.screenX
+PASS -1.5 - -1.0: MouseEvent.mousemove.screenY
+PASS -1.5 - -1.0: MouseEvent.mousemove.clientX
+PASS -1.5 - -1.0: MouseEvent.mousemove.clientY
+PASS -1.5 - -1.0: MouseEvent.mousemove.pageX
+PASS -1.5 - -1.0: MouseEvent.mousemove.pageY
+FAIL -1.5 - -1.0: MouseEvent.mousemove.offsetX assert_equals: expected -2 but got -1
+FAIL -1.5 - -1.0: MouseEvent.mousemove.offsetY assert_equals: expected -2 but got -1
+PASS 0.0 - 0.5: MouseEvent.mouseup.screenX
+PASS 0.0 - 0.5: MouseEvent.mouseup.screenY
+PASS 0.0 - 0.5: MouseEvent.mouseup.clientX
+PASS 0.0 - 0.5: MouseEvent.mouseup.clientY
+PASS 0.0 - 0.5: MouseEvent.mouseup.pageX
+PASS 0.0 - 0.5: MouseEvent.mouseup.pageY
+PASS 0.0 - 0.5: MouseEvent.mouseup.offsetX
+PASS 0.0 - 0.5: MouseEvent.mouseup.offsetY
+PASS 0.5 - 1.0: MouseEvent.mouseup.screenX
+PASS 0.5 - 1.0: MouseEvent.mouseup.screenY
+PASS 0.5 - 1.0: MouseEvent.mouseup.clientX
+PASS 0.5 - 1.0: MouseEvent.mouseup.clientY
+PASS 0.5 - 1.0: MouseEvent.mouseup.pageX
+PASS 0.5 - 1.0: MouseEvent.mouseup.pageY
+FAIL 0.5 - 1.0: MouseEvent.mouseup.offsetX assert_equals: expected 0 but got 1
+FAIL 0.5 - 1.0: MouseEvent.mouseup.offsetY assert_equals: expected 0 but got 1
+PASS 1.0 - 1.5: MouseEvent.mouseup.screenX
+PASS 1.0 - 1.5: MouseEvent.mouseup.screenY
+PASS 1.0 - 1.5: MouseEvent.mouseup.clientX
+PASS 1.0 - 1.5: MouseEvent.mouseup.clientY
+PASS 1.0 - 1.5: MouseEvent.mouseup.pageX
+PASS 1.0 - 1.5: MouseEvent.mouseup.pageY
+PASS 1.0 - 1.5: MouseEvent.mouseup.offsetX
+PASS 1.0 - 1.5: MouseEvent.mouseup.offsetY
+PASS -0.5 - 0.0: MouseEvent.mouseup.screenX
+PASS -0.5 - 0.0: MouseEvent.mouseup.screenY
+PASS -0.5 - 0.0: MouseEvent.mouseup.clientX
+PASS -0.5 - 0.0: MouseEvent.mouseup.clientY
+PASS -0.5 - 0.0: MouseEvent.mouseup.pageX
+PASS -0.5 - 0.0: MouseEvent.mouseup.pageY
+FAIL -0.5 - 0.0: MouseEvent.mouseup.offsetX assert_equals: expected -1 but got -0
+FAIL -0.5 - 0.0: MouseEvent.mouseup.offsetY assert_equals: expected -1 but got -0
+PASS -1.0 - -0.5: MouseEvent.mouseup.screenX
+PASS -1.0 - -0.5: MouseEvent.mouseup.screenY
+PASS -1.0 - -0.5: MouseEvent.mouseup.clientX
+PASS -1.0 - -0.5: MouseEvent.mouseup.clientY
+PASS -1.0 - -0.5: MouseEvent.mouseup.pageX
+PASS -1.0 - -0.5: MouseEvent.mouseup.pageY
+PASS -1.0 - -0.5: MouseEvent.mouseup.offsetX
+PASS -1.0 - -0.5: MouseEvent.mouseup.offsetY
+PASS -1.5 - -1.0: MouseEvent.mouseup.screenX
+PASS -1.5 - -1.0: MouseEvent.mouseup.screenY
+PASS -1.5 - -1.0: MouseEvent.mouseup.clientX
+PASS -1.5 - -1.0: MouseEvent.mouseup.clientY
+PASS -1.5 - -1.0: MouseEvent.mouseup.pageX
+PASS -1.5 - -1.0: MouseEvent.mouseup.pageY
+FAIL -1.5 - -1.0: MouseEvent.mouseup.offsetX assert_equals: expected -2 but got -1
+FAIL -1.5 - -1.0: MouseEvent.mouseup.offsetY assert_equals: expected -2 but got -1
+PASS 0.0 - 0.5: MouseEvent.mouseover.screenX
+PASS 0.0 - 0.5: MouseEvent.mouseover.screenY
+PASS 0.0 - 0.5: MouseEvent.mouseover.clientX
+PASS 0.0 - 0.5: MouseEvent.mouseover.clientY
+PASS 0.0 - 0.5: MouseEvent.mouseover.pageX
+PASS 0.0 - 0.5: MouseEvent.mouseover.pageY
+PASS 0.0 - 0.5: MouseEvent.mouseover.offsetX
+PASS 0.0 - 0.5: MouseEvent.mouseover.offsetY
+PASS 0.5 - 1.0: MouseEvent.mouseover.screenX
+PASS 0.5 - 1.0: MouseEvent.mouseover.screenY
+PASS 0.5 - 1.0: MouseEvent.mouseover.clientX
+PASS 0.5 - 1.0: MouseEvent.mouseover.clientY
+PASS 0.5 - 1.0: MouseEvent.mouseover.pageX
+PASS 0.5 - 1.0: MouseEvent.mouseover.pageY
+FAIL 0.5 - 1.0: MouseEvent.mouseover.offsetX assert_equals: expected 0 but got 1
+FAIL 0.5 - 1.0: MouseEvent.mouseover.offsetY assert_equals: expected 0 but got 1
+PASS 1.0 - 1.5: MouseEvent.mouseover.screenX
+PASS 1.0 - 1.5: MouseEvent.mouseover.screenY
+PASS 1.0 - 1.5: MouseEvent.mouseover.clientX
+PASS 1.0 - 1.5: MouseEvent.mouseover.clientY
+PASS 1.0 - 1.5: MouseEvent.mouseover.pageX
+PASS 1.0 - 1.5: MouseEvent.mouseover.pageY
+PASS 1.0 - 1.5: MouseEvent.mouseover.offsetX
+PASS 1.0 - 1.5: MouseEvent.mouseover.offsetY
+PASS -0.5 - 0.0: MouseEvent.mouseover.screenX
+PASS -0.5 - 0.0: MouseEvent.mouseover.screenY
+PASS -0.5 - 0.0: MouseEvent.mouseover.clientX
+PASS -0.5 - 0.0: MouseEvent.mouseover.clientY
+PASS -0.5 - 0.0: MouseEvent.mouseover.pageX
+PASS -0.5 - 0.0: MouseEvent.mouseover.pageY
+FAIL -0.5 - 0.0: MouseEvent.mouseover.offsetX assert_equals: expected -1 but got -0
+FAIL -0.5 - 0.0: MouseEvent.mouseover.offsetY assert_equals: expected -1 but got -0
+PASS -1.0 - -0.5: MouseEvent.mouseover.screenX
+PASS -1.0 - -0.5: MouseEvent.mouseover.screenY
+PASS -1.0 - -0.5: MouseEvent.mouseover.clientX
+PASS -1.0 - -0.5: MouseEvent.mouseover.clientY
+PASS -1.0 - -0.5: MouseEvent.mouseover.pageX
+PASS -1.0 - -0.5: MouseEvent.mouseover.pageY
+PASS -1.0 - -0.5: MouseEvent.mouseover.offsetX
+PASS -1.0 - -0.5: MouseEvent.mouseover.offsetY
+PASS -1.5 - -1.0: MouseEvent.mouseover.screenX
+PASS -1.5 - -1.0: MouseEvent.mouseover.screenY
+PASS -1.5 - -1.0: MouseEvent.mouseover.clientX
+PASS -1.5 - -1.0: MouseEvent.mouseover.clientY
+PASS -1.5 - -1.0: MouseEvent.mouseover.pageX
+PASS -1.5 - -1.0: MouseEvent.mouseover.pageY
+FAIL -1.5 - -1.0: MouseEvent.mouseover.offsetX assert_equals: expected -2 but got -1
+FAIL -1.5 - -1.0: MouseEvent.mouseover.offsetY assert_equals: expected -2 but got -1
+PASS 0.0 - 0.5: MouseEvent.mouseout.screenX
+PASS 0.0 - 0.5: MouseEvent.mouseout.screenY
+PASS 0.0 - 0.5: MouseEvent.mouseout.clientX
+PASS 0.0 - 0.5: MouseEvent.mouseout.clientY
+PASS 0.0 - 0.5: MouseEvent.mouseout.pageX
+PASS 0.0 - 0.5: MouseEvent.mouseout.pageY
+PASS 0.0 - 0.5: MouseEvent.mouseout.offsetX
+PASS 0.0 - 0.5: MouseEvent.mouseout.offsetY
+PASS 0.5 - 1.0: MouseEvent.mouseout.screenX
+PASS 0.5 - 1.0: MouseEvent.mouseout.screenY
+PASS 0.5 - 1.0: MouseEvent.mouseout.clientX
+PASS 0.5 - 1.0: MouseEvent.mouseout.clientY
+PASS 0.5 - 1.0: MouseEvent.mouseout.pageX
+PASS 0.5 - 1.0: MouseEvent.mouseout.pageY
+FAIL 0.5 - 1.0: MouseEvent.mouseout.offsetX assert_equals: expected 0 but got 1
+FAIL 0.5 - 1.0: MouseEvent.mouseout.offsetY assert_equals: expected 0 but got 1
+PASS 1.0 - 1.5: MouseEvent.mouseout.screenX
+PASS 1.0 - 1.5: MouseEvent.mouseout.screenY
+PASS 1.0 - 1.5: MouseEvent.mouseout.clientX
+PASS 1.0 - 1.5: MouseEvent.mouseout.clientY
+PASS 1.0 - 1.5: MouseEvent.mouseout.pageX
+PASS 1.0 - 1.5: MouseEvent.mouseout.pageY
+PASS 1.0 - 1.5: MouseEvent.mouseout.offsetX
+PASS 1.0 - 1.5: MouseEvent.mouseout.offsetY
+PASS -0.5 - 0.0: MouseEvent.mouseout.screenX
+PASS -0.5 - 0.0: MouseEvent.mouseout.screenY
+PASS -0.5 - 0.0: MouseEvent.mouseout.clientX
+PASS -0.5 - 0.0: MouseEvent.mouseout.clientY
+PASS -0.5 - 0.0: MouseEvent.mouseout.pageX
+PASS -0.5 - 0.0: MouseEvent.mouseout.pageY
+FAIL -0.5 - 0.0: MouseEvent.mouseout.offsetX assert_equals: expected -1 but got -0
+FAIL -0.5 - 0.0: MouseEvent.mouseout.offsetY assert_equals: expected -1 but got -0
+PASS -1.0 - -0.5: MouseEvent.mouseout.screenX
+PASS -1.0 - -0.5: MouseEvent.mouseout.screenY
+PASS -1.0 - -0.5: MouseEvent.mouseout.clientX
+PASS -1.0 - -0.5: MouseEvent.mouseout.clientY
+PASS -1.0 - -0.5: MouseEvent.mouseout.pageX
+PASS -1.0 - -0.5: MouseEvent.mouseout.pageY
+PASS -1.0 - -0.5: MouseEvent.mouseout.offsetX
+PASS -1.0 - -0.5: MouseEvent.mouseout.offsetY
+PASS -1.5 - -1.0: MouseEvent.mouseout.screenX
+PASS -1.5 - -1.0: MouseEvent.mouseout.screenY
+PASS -1.5 - -1.0: MouseEvent.mouseout.clientX
+PASS -1.5 - -1.0: MouseEvent.mouseout.clientY
+PASS -1.5 - -1.0: MouseEvent.mouseout.pageX
+PASS -1.5 - -1.0: MouseEvent.mouseout.pageY
+FAIL -1.5 - -1.0: MouseEvent.mouseout.offsetX assert_equals: expected -2 but got -1
+FAIL -1.5 - -1.0: MouseEvent.mouseout.offsetY assert_equals: expected -2 but got -1
+PASS 0.0 - 0.5: MouseEvent.mouseenter.screenX
+PASS 0.0 - 0.5: MouseEvent.mouseenter.screenY
+PASS 0.0 - 0.5: MouseEvent.mouseenter.clientX
+PASS 0.0 - 0.5: MouseEvent.mouseenter.clientY
+PASS 0.0 - 0.5: MouseEvent.mouseenter.pageX
+PASS 0.0 - 0.5: MouseEvent.mouseenter.pageY
+PASS 0.0 - 0.5: MouseEvent.mouseenter.offsetX
+PASS 0.0 - 0.5: MouseEvent.mouseenter.offsetY
+PASS 0.5 - 1.0: MouseEvent.mouseenter.screenX
+PASS 0.5 - 1.0: MouseEvent.mouseenter.screenY
+PASS 0.5 - 1.0: MouseEvent.mouseenter.clientX
+PASS 0.5 - 1.0: MouseEvent.mouseenter.clientY
+PASS 0.5 - 1.0: MouseEvent.mouseenter.pageX
+PASS 0.5 - 1.0: MouseEvent.mouseenter.pageY
+FAIL 0.5 - 1.0: MouseEvent.mouseenter.offsetX assert_equals: expected 0 but got 1
+FAIL 0.5 - 1.0: MouseEvent.mouseenter.offsetY assert_equals: expected 0 but got 1
+PASS 1.0 - 1.5: MouseEvent.mouseenter.screenX
+PASS 1.0 - 1.5: MouseEvent.mouseenter.screenY
+PASS 1.0 - 1.5: MouseEvent.mouseenter.clientX
+PASS 1.0 - 1.5: MouseEvent.mouseenter.clientY
+PASS 1.0 - 1.5: MouseEvent.mouseenter.pageX
+PASS 1.0 - 1.5: MouseEvent.mouseenter.pageY
+PASS 1.0 - 1.5: MouseEvent.mouseenter.offsetX
+PASS 1.0 - 1.5: MouseEvent.mouseenter.offsetY
+PASS -0.5 - 0.0: MouseEvent.mouseenter.screenX
+PASS -0.5 - 0.0: MouseEvent.mouseenter.screenY
+PASS -0.5 - 0.0: MouseEvent.mouseenter.clientX
+PASS -0.5 - 0.0: MouseEvent.mouseenter.clientY
+PASS -0.5 - 0.0: MouseEvent.mouseenter.pageX
+PASS -0.5 - 0.0: MouseEvent.mouseenter.pageY
+FAIL -0.5 - 0.0: MouseEvent.mouseenter.offsetX assert_equals: expected -1 but got -0
+FAIL -0.5 - 0.0: MouseEvent.mouseenter.offsetY assert_equals: expected -1 but got -0
+PASS -1.0 - -0.5: MouseEvent.mouseenter.screenX
+PASS -1.0 - -0.5: MouseEvent.mouseenter.screenY
+PASS -1.0 - -0.5: MouseEvent.mouseenter.clientX
+PASS -1.0 - -0.5: MouseEvent.mouseenter.clientY
+PASS -1.0 - -0.5: MouseEvent.mouseenter.pageX
+PASS -1.0 - -0.5: MouseEvent.mouseenter.pageY
+PASS -1.0 - -0.5: MouseEvent.mouseenter.offsetX
+PASS -1.0 - -0.5: MouseEvent.mouseenter.offsetY
+PASS -1.5 - -1.0: MouseEvent.mouseenter.screenX
+PASS -1.5 - -1.0: MouseEvent.mouseenter.screenY
+PASS -1.5 - -1.0: MouseEvent.mouseenter.clientX
+PASS -1.5 - -1.0: MouseEvent.mouseenter.clientY
+PASS -1.5 - -1.0: MouseEvent.mouseenter.pageX
+PASS -1.5 - -1.0: MouseEvent.mouseenter.pageY
+FAIL -1.5 - -1.0: MouseEvent.mouseenter.offsetX assert_equals: expected -2 but got -1
+FAIL -1.5 - -1.0: MouseEvent.mouseenter.offsetY assert_equals: expected -2 but got -1
+PASS 0.0 - 0.5: MouseEvent.mouseleave.screenX
+PASS 0.0 - 0.5: MouseEvent.mouseleave.screenY
+PASS 0.0 - 0.5: MouseEvent.mouseleave.clientX
+PASS 0.0 - 0.5: MouseEvent.mouseleave.clientY
+PASS 0.0 - 0.5: MouseEvent.mouseleave.pageX
+PASS 0.0 - 0.5: MouseEvent.mouseleave.pageY
+PASS 0.0 - 0.5: MouseEvent.mouseleave.offsetX
+PASS 0.0 - 0.5: MouseEvent.mouseleave.offsetY
+PASS 0.5 - 1.0: MouseEvent.mouseleave.screenX
+PASS 0.5 - 1.0: MouseEvent.mouseleave.screenY
+PASS 0.5 - 1.0: MouseEvent.mouseleave.clientX
+PASS 0.5 - 1.0: MouseEvent.mouseleave.clientY
+PASS 0.5 - 1.0: MouseEvent.mouseleave.pageX
+PASS 0.5 - 1.0: MouseEvent.mouseleave.pageY
+FAIL 0.5 - 1.0: MouseEvent.mouseleave.offsetX assert_equals: expected 0 but got 1
+FAIL 0.5 - 1.0: MouseEvent.mouseleave.offsetY assert_equals: expected 0 but got 1
+PASS 1.0 - 1.5: MouseEvent.mouseleave.screenX
+PASS 1.0 - 1.5: MouseEvent.mouseleave.screenY
+PASS 1.0 - 1.5: MouseEvent.mouseleave.clientX
+PASS 1.0 - 1.5: MouseEvent.mouseleave.clientY
+PASS 1.0 - 1.5: MouseEvent.mouseleave.pageX
+PASS 1.0 - 1.5: MouseEvent.mouseleave.pageY
+PASS 1.0 - 1.5: MouseEvent.mouseleave.offsetX
+PASS 1.0 - 1.5: MouseEvent.mouseleave.offsetY
+PASS -0.5 - 0.0: MouseEvent.mouseleave.screenX
+PASS -0.5 - 0.0: MouseEvent.mouseleave.screenY
+PASS -0.5 - 0.0: MouseEvent.mouseleave.clientX
+PASS -0.5 - 0.0: MouseEvent.mouseleave.clientY
+PASS -0.5 - 0.0: MouseEvent.mouseleave.pageX
+PASS -0.5 - 0.0: MouseEvent.mouseleave.pageY
+FAIL -0.5 - 0.0: MouseEvent.mouseleave.offsetX assert_equals: expected -1 but got -0
+FAIL -0.5 - 0.0: MouseEvent.mouseleave.offsetY assert_equals: expected -1 but got -0
+PASS -1.0 - -0.5: MouseEvent.mouseleave.screenX
+PASS -1.0 - -0.5: MouseEvent.mouseleave.screenY
+PASS -1.0 - -0.5: MouseEvent.mouseleave.clientX
+PASS -1.0 - -0.5: MouseEvent.mouseleave.clientY
+PASS -1.0 - -0.5: MouseEvent.mouseleave.pageX
+PASS -1.0 - -0.5: MouseEvent.mouseleave.pageY
+PASS -1.0 - -0.5: MouseEvent.mouseleave.offsetX
+PASS -1.0 - -0.5: MouseEvent.mouseleave.offsetY
+PASS -1.5 - -1.0: MouseEvent.mouseleave.screenX
+PASS -1.5 - -1.0: MouseEvent.mouseleave.screenY
+PASS -1.5 - -1.0: MouseEvent.mouseleave.clientX
+PASS -1.5 - -1.0: MouseEvent.mouseleave.clientY
+PASS -1.5 - -1.0: MouseEvent.mouseleave.pageX
+PASS -1.5 - -1.0: MouseEvent.mouseleave.pageY
+FAIL -1.5 - -1.0: MouseEvent.mouseleave.offsetX assert_equals: expected -2 but got -1
+FAIL -1.5 - -1.0: MouseEvent.mouseleave.offsetY assert_equals: expected -2 but got -1
+PASS 0.0 - 0.5: MouseEvent.dblclick.screenX
+PASS 0.0 - 0.5: MouseEvent.dblclick.screenY
+PASS 0.0 - 0.5: MouseEvent.dblclick.clientX
+PASS 0.0 - 0.5: MouseEvent.dblclick.clientY
+PASS 0.0 - 0.5: MouseEvent.dblclick.pageX
+PASS 0.0 - 0.5: MouseEvent.dblclick.pageY
+PASS 0.0 - 0.5: MouseEvent.dblclick.offsetX
+PASS 0.0 - 0.5: MouseEvent.dblclick.offsetY
+PASS 0.5 - 1.0: MouseEvent.dblclick.screenX
+PASS 0.5 - 1.0: MouseEvent.dblclick.screenY
+PASS 0.5 - 1.0: MouseEvent.dblclick.clientX
+PASS 0.5 - 1.0: MouseEvent.dblclick.clientY
+PASS 0.5 - 1.0: MouseEvent.dblclick.pageX
+PASS 0.5 - 1.0: MouseEvent.dblclick.pageY
+FAIL 0.5 - 1.0: MouseEvent.dblclick.offsetX assert_equals: expected 0 but got 1
+FAIL 0.5 - 1.0: MouseEvent.dblclick.offsetY assert_equals: expected 0 but got 1
+PASS 1.0 - 1.5: MouseEvent.dblclick.screenX
+PASS 1.0 - 1.5: MouseEvent.dblclick.screenY
+PASS 1.0 - 1.5: MouseEvent.dblclick.clientX
+PASS 1.0 - 1.5: MouseEvent.dblclick.clientY
+PASS 1.0 - 1.5: MouseEvent.dblclick.pageX
+PASS 1.0 - 1.5: MouseEvent.dblclick.pageY
+PASS 1.0 - 1.5: MouseEvent.dblclick.offsetX
+PASS 1.0 - 1.5: MouseEvent.dblclick.offsetY
+PASS -0.5 - 0.0: MouseEvent.dblclick.screenX
+PASS -0.5 - 0.0: MouseEvent.dblclick.screenY
+PASS -0.5 - 0.0: MouseEvent.dblclick.clientX
+PASS -0.5 - 0.0: MouseEvent.dblclick.clientY
+PASS -0.5 - 0.0: MouseEvent.dblclick.pageX
+PASS -0.5 - 0.0: MouseEvent.dblclick.pageY
+FAIL -0.5 - 0.0: MouseEvent.dblclick.offsetX assert_equals: expected -1 but got -0
+FAIL -0.5 - 0.0: MouseEvent.dblclick.offsetY assert_equals: expected -1 but got -0
+PASS -1.0 - -0.5: MouseEvent.dblclick.screenX
+PASS -1.0 - -0.5: MouseEvent.dblclick.screenY
+PASS -1.0 - -0.5: MouseEvent.dblclick.clientX
+PASS -1.0 - -0.5: MouseEvent.dblclick.clientY
+PASS -1.0 - -0.5: MouseEvent.dblclick.pageX
+PASS -1.0 - -0.5: MouseEvent.dblclick.pageY
+PASS -1.0 - -0.5: MouseEvent.dblclick.offsetX
+PASS -1.0 - -0.5: MouseEvent.dblclick.offsetY
+PASS -1.5 - -1.0: MouseEvent.dblclick.screenX
+PASS -1.5 - -1.0: MouseEvent.dblclick.screenY
+PASS -1.5 - -1.0: MouseEvent.dblclick.clientX
+PASS -1.5 - -1.0: MouseEvent.dblclick.clientY
+PASS -1.5 - -1.0: MouseEvent.dblclick.pageX
+PASS -1.5 - -1.0: MouseEvent.dblclick.pageY
+FAIL -1.5 - -1.0: MouseEvent.dblclick.offsetX assert_equals: expected -2 but got -1
+FAIL -1.5 - -1.0: MouseEvent.dblclick.offsetY assert_equals: expected -2 but got -1
+PASS 0.0 - 0.5: DragEvent.dragstart.screenX
+PASS 0.0 - 0.5: DragEvent.dragstart.screenY
+PASS 0.0 - 0.5: DragEvent.dragstart.clientX
+PASS 0.0 - 0.5: DragEvent.dragstart.clientY
+PASS 0.0 - 0.5: DragEvent.dragstart.pageX
+PASS 0.0 - 0.5: DragEvent.dragstart.pageY
+PASS 0.0 - 0.5: DragEvent.dragstart.offsetX
+PASS 0.0 - 0.5: DragEvent.dragstart.offsetY
+PASS 0.5 - 1.0: DragEvent.dragstart.screenX
+PASS 0.5 - 1.0: DragEvent.dragstart.screenY
+PASS 0.5 - 1.0: DragEvent.dragstart.clientX
+PASS 0.5 - 1.0: DragEvent.dragstart.clientY
+PASS 0.5 - 1.0: DragEvent.dragstart.pageX
+PASS 0.5 - 1.0: DragEvent.dragstart.pageY
+FAIL 0.5 - 1.0: DragEvent.dragstart.offsetX assert_equals: expected 0 but got 1
+FAIL 0.5 - 1.0: DragEvent.dragstart.offsetY assert_equals: expected 0 but got 1
+PASS 1.0 - 1.5: DragEvent.dragstart.screenX
+PASS 1.0 - 1.5: DragEvent.dragstart.screenY
+PASS 1.0 - 1.5: DragEvent.dragstart.clientX
+PASS 1.0 - 1.5: DragEvent.dragstart.clientY
+PASS 1.0 - 1.5: DragEvent.dragstart.pageX
+PASS 1.0 - 1.5: DragEvent.dragstart.pageY
+PASS 1.0 - 1.5: DragEvent.dragstart.offsetX
+PASS 1.0 - 1.5: DragEvent.dragstart.offsetY
+PASS -0.5 - 0.0: DragEvent.dragstart.screenX
+PASS -0.5 - 0.0: DragEvent.dragstart.screenY
+PASS -0.5 - 0.0: DragEvent.dragstart.clientX
+PASS -0.5 - 0.0: DragEvent.dragstart.clientY
+PASS -0.5 - 0.0: DragEvent.dragstart.pageX
+PASS -0.5 - 0.0: DragEvent.dragstart.pageY
+FAIL -0.5 - 0.0: DragEvent.dragstart.offsetX assert_equals: expected -1 but got -0
+FAIL -0.5 - 0.0: DragEvent.dragstart.offsetY assert_equals: expected -1 but got -0
+PASS -1.0 - -0.5: DragEvent.dragstart.screenX
+PASS -1.0 - -0.5: DragEvent.dragstart.screenY
+PASS -1.0 - -0.5: DragEvent.dragstart.clientX
+PASS -1.0 - -0.5: DragEvent.dragstart.clientY
+PASS -1.0 - -0.5: DragEvent.dragstart.pageX
+PASS -1.0 - -0.5: DragEvent.dragstart.pageY
+PASS -1.0 - -0.5: DragEvent.dragstart.offsetX
+PASS -1.0 - -0.5: DragEvent.dragstart.offsetY
+PASS -1.5 - -1.0: DragEvent.dragstart.screenX
+PASS -1.5 - -1.0: DragEvent.dragstart.screenY
+PASS -1.5 - -1.0: DragEvent.dragstart.clientX
+PASS -1.5 - -1.0: DragEvent.dragstart.clientY
+PASS -1.5 - -1.0: DragEvent.dragstart.pageX
+PASS -1.5 - -1.0: DragEvent.dragstart.pageY
+FAIL -1.5 - -1.0: DragEvent.dragstart.offsetX assert_equals: expected -2 but got -1
+FAIL -1.5 - -1.0: DragEvent.dragstart.offsetY assert_equals: expected -2 but got -1
+PASS 0.0 - 0.5: DragEvent.dragover.screenX
+PASS 0.0 - 0.5: DragEvent.dragover.screenY
+PASS 0.0 - 0.5: DragEvent.dragover.clientX
+PASS 0.0 - 0.5: DragEvent.dragover.clientY
+PASS 0.0 - 0.5: DragEvent.dragover.pageX
+PASS 0.0 - 0.5: DragEvent.dragover.pageY
+PASS 0.0 - 0.5: DragEvent.dragover.offsetX
+PASS 0.0 - 0.5: DragEvent.dragover.offsetY
+PASS 0.5 - 1.0: DragEvent.dragover.screenX
+PASS 0.5 - 1.0: DragEvent.dragover.screenY
+PASS 0.5 - 1.0: DragEvent.dragover.clientX
+PASS 0.5 - 1.0: DragEvent.dragover.clientY
+PASS 0.5 - 1.0: DragEvent.dragover.pageX
+PASS 0.5 - 1.0: DragEvent.dragover.pageY
+FAIL 0.5 - 1.0: DragEvent.dragover.offsetX assert_equals: expected 0 but got 1
+FAIL 0.5 - 1.0: DragEvent.dragover.offsetY assert_equals: expected 0 but got 1
+PASS 1.0 - 1.5: DragEvent.dragover.screenX
+PASS 1.0 - 1.5: DragEvent.dragover.screenY
+PASS 1.0 - 1.5: DragEvent.dragover.clientX
+PASS 1.0 - 1.5: DragEvent.dragover.clientY
+PASS 1.0 - 1.5: DragEvent.dragover.pageX
+PASS 1.0 - 1.5: DragEvent.dragover.pageY
+PASS 1.0 - 1.5: DragEvent.dragover.offsetX
+PASS 1.0 - 1.5: DragEvent.dragover.offsetY
+PASS -0.5 - 0.0: DragEvent.dragover.screenX
+PASS -0.5 - 0.0: DragEvent.dragover.screenY
+PASS -0.5 - 0.0: DragEvent.dragover.clientX
+PASS -0.5 - 0.0: DragEvent.dragover.clientY
+PASS -0.5 - 0.0: DragEvent.dragover.pageX
+PASS -0.5 - 0.0: DragEvent.dragover.pageY
+FAIL -0.5 - 0.0: DragEvent.dragover.offsetX assert_equals: expected -1 but got -0
+FAIL -0.5 - 0.0: DragEvent.dragover.offsetY assert_equals: expected -1 but got -0
+PASS -1.0 - -0.5: DragEvent.dragover.screenX
+PASS -1.0 - -0.5: DragEvent.dragover.screenY
+PASS -1.0 - -0.5: DragEvent.dragover.clientX
+PASS -1.0 - -0.5: DragEvent.dragover.clientY
+PASS -1.0 - -0.5: DragEvent.dragover.pageX
+PASS -1.0 - -0.5: DragEvent.dragover.pageY
+PASS -1.0 - -0.5: DragEvent.dragover.offsetX
+PASS -1.0 - -0.5: DragEvent.dragover.offsetY
+PASS -1.5 - -1.0: DragEvent.dragover.screenX
+PASS -1.5 - -1.0: DragEvent.dragover.screenY
+PASS -1.5 - -1.0: DragEvent.dragover.clientX
+PASS -1.5 - -1.0: DragEvent.dragover.clientY
+PASS -1.5 - -1.0: DragEvent.dragover.pageX
+PASS -1.5 - -1.0: DragEvent.dragover.pageY
+FAIL -1.5 - -1.0: DragEvent.dragover.offsetX assert_equals: expected -2 but got -1
+FAIL -1.5 - -1.0: DragEvent.dragover.offsetY assert_equals: expected -2 but got -1
+PASS 0.0 - 0.5: DragEvent.dragend.screenX
+PASS 0.0 - 0.5: DragEvent.dragend.screenY
+PASS 0.0 - 0.5: DragEvent.dragend.clientX
+PASS 0.0 - 0.5: DragEvent.dragend.clientY
+PASS 0.0 - 0.5: DragEvent.dragend.pageX
+PASS 0.0 - 0.5: DragEvent.dragend.pageY
+PASS 0.0 - 0.5: DragEvent.dragend.offsetX
+PASS 0.0 - 0.5: DragEvent.dragend.offsetY
+PASS 0.5 - 1.0: DragEvent.dragend.screenX
+PASS 0.5 - 1.0: DragEvent.dragend.screenY
+PASS 0.5 - 1.0: DragEvent.dragend.clientX
+PASS 0.5 - 1.0: DragEvent.dragend.clientY
+PASS 0.5 - 1.0: DragEvent.dragend.pageX
+PASS 0.5 - 1.0: DragEvent.dragend.pageY
+FAIL 0.5 - 1.0: DragEvent.dragend.offsetX assert_equals: expected 0 but got 1
+FAIL 0.5 - 1.0: DragEvent.dragend.offsetY assert_equals: expected 0 but got 1
+PASS 1.0 - 1.5: DragEvent.dragend.screenX
+PASS 1.0 - 1.5: DragEvent.dragend.screenY
+PASS 1.0 - 1.5: DragEvent.dragend.clientX
+PASS 1.0 - 1.5: DragEvent.dragend.clientY
+PASS 1.0 - 1.5: DragEvent.dragend.pageX
+PASS 1.0 - 1.5: DragEvent.dragend.pageY
+PASS 1.0 - 1.5: DragEvent.dragend.offsetX
+PASS 1.0 - 1.5: DragEvent.dragend.offsetY
+PASS -0.5 - 0.0: DragEvent.dragend.screenX
+PASS -0.5 - 0.0: DragEvent.dragend.screenY
+PASS -0.5 - 0.0: DragEvent.dragend.clientX
+PASS -0.5 - 0.0: DragEvent.dragend.clientY
+PASS -0.5 - 0.0: DragEvent.dragend.pageX
+PASS -0.5 - 0.0: DragEvent.dragend.pageY
+FAIL -0.5 - 0.0: DragEvent.dragend.offsetX assert_equals: expected -1 but got -0
+FAIL -0.5 - 0.0: DragEvent.dragend.offsetY assert_equals: expected -1 but got -0
+PASS -1.0 - -0.5: DragEvent.dragend.screenX
+PASS -1.0 - -0.5: DragEvent.dragend.screenY
+PASS -1.0 - -0.5: DragEvent.dragend.clientX
+PASS -1.0 - -0.5: DragEvent.dragend.clientY
+PASS -1.0 - -0.5: DragEvent.dragend.pageX
+PASS -1.0 - -0.5: DragEvent.dragend.pageY
+PASS -1.0 - -0.5: DragEvent.dragend.offsetX
+PASS -1.0 - -0.5: DragEvent.dragend.offsetY
+PASS -1.5 - -1.0: DragEvent.dragend.screenX
+PASS -1.5 - -1.0: DragEvent.dragend.screenY
+PASS -1.5 - -1.0: DragEvent.dragend.clientX
+PASS -1.5 - -1.0: DragEvent.dragend.clientY
+PASS -1.5 - -1.0: DragEvent.dragend.pageX
+PASS -1.5 - -1.0: DragEvent.dragend.pageY
+FAIL -1.5 - -1.0: DragEvent.dragend.offsetX assert_equals: expected -2 but got -1
+FAIL -1.5 - -1.0: DragEvent.dragend.offsetY assert_equals: expected -2 but got -1
+PASS 0.0 - 0.5: DragEvent.drop.screenX
+PASS 0.0 - 0.5: DragEvent.drop.screenY
+PASS 0.0 - 0.5: DragEvent.drop.clientX
+PASS 0.0 - 0.5: DragEvent.drop.clientY
+PASS 0.0 - 0.5: DragEvent.drop.pageX
+PASS 0.0 - 0.5: DragEvent.drop.pageY
+PASS 0.0 - 0.5: DragEvent.drop.offsetX
+PASS 0.0 - 0.5: DragEvent.drop.offsetY
+PASS 0.5 - 1.0: DragEvent.drop.screenX
+PASS 0.5 - 1.0: DragEvent.drop.screenY
+PASS 0.5 - 1.0: DragEvent.drop.clientX
+PASS 0.5 - 1.0: DragEvent.drop.clientY
+PASS 0.5 - 1.0: DragEvent.drop.pageX
+PASS 0.5 - 1.0: DragEvent.drop.pageY
+FAIL 0.5 - 1.0: DragEvent.drop.offsetX assert_equals: expected 0 but got 1
+FAIL 0.5 - 1.0: DragEvent.drop.offsetY assert_equals: expected 0 but got 1
+PASS 1.0 - 1.5: DragEvent.drop.screenX
+PASS 1.0 - 1.5: DragEvent.drop.screenY
+PASS 1.0 - 1.5: DragEvent.drop.clientX
+PASS 1.0 - 1.5: DragEvent.drop.clientY
+PASS 1.0 - 1.5: DragEvent.drop.pageX
+PASS 1.0 - 1.5: DragEvent.drop.pageY
+PASS 1.0 - 1.5: DragEvent.drop.offsetX
+PASS 1.0 - 1.5: DragEvent.drop.offsetY
+PASS -0.5 - 0.0: DragEvent.drop.screenX
+PASS -0.5 - 0.0: DragEvent.drop.screenY
+PASS -0.5 - 0.0: DragEvent.drop.clientX
+PASS -0.5 - 0.0: DragEvent.drop.clientY
+PASS -0.5 - 0.0: DragEvent.drop.pageX
+PASS -0.5 - 0.0: DragEvent.drop.pageY
+FAIL -0.5 - 0.0: DragEvent.drop.offsetX assert_equals: expected -1 but got -0
+FAIL -0.5 - 0.0: DragEvent.drop.offsetY assert_equals: expected -1 but got -0
+PASS -1.0 - -0.5: DragEvent.drop.screenX
+PASS -1.0 - -0.5: DragEvent.drop.screenY
+PASS -1.0 - -0.5: DragEvent.drop.clientX
+PASS -1.0 - -0.5: DragEvent.drop.clientY
+PASS -1.0 - -0.5: DragEvent.drop.pageX
+PASS -1.0 - -0.5: DragEvent.drop.pageY
+PASS -1.0 - -0.5: DragEvent.drop.offsetX
+PASS -1.0 - -0.5: DragEvent.drop.offsetY
+PASS -1.5 - -1.0: DragEvent.drop.screenX
+PASS -1.5 - -1.0: DragEvent.drop.screenY
+PASS -1.5 - -1.0: DragEvent.drop.clientX
+PASS -1.5 - -1.0: DragEvent.drop.clientY
+PASS -1.5 - -1.0: DragEvent.drop.pageX
+PASS -1.5 - -1.0: DragEvent.drop.pageY
+FAIL -1.5 - -1.0: DragEvent.drop.offsetX assert_equals: expected -2 but got -1
+FAIL -1.5 - -1.0: DragEvent.drop.offsetY assert_equals: expected -2 but got -1
+PASS 0.0 - 0.5: WheelEvent.wheel.screenX
+PASS 0.0 - 0.5: WheelEvent.wheel.screenY
+PASS 0.0 - 0.5: WheelEvent.wheel.clientX
+PASS 0.0 - 0.5: WheelEvent.wheel.clientY
+PASS 0.0 - 0.5: WheelEvent.wheel.pageX
+PASS 0.0 - 0.5: WheelEvent.wheel.pageY
+PASS 0.0 - 0.5: WheelEvent.wheel.offsetX
+PASS 0.0 - 0.5: WheelEvent.wheel.offsetY
+PASS 0.5 - 1.0: WheelEvent.wheel.screenX
+PASS 0.5 - 1.0: WheelEvent.wheel.screenY
+PASS 0.5 - 1.0: WheelEvent.wheel.clientX
+PASS 0.5 - 1.0: WheelEvent.wheel.clientY
+PASS 0.5 - 1.0: WheelEvent.wheel.pageX
+PASS 0.5 - 1.0: WheelEvent.wheel.pageY
+FAIL 0.5 - 1.0: WheelEvent.wheel.offsetX assert_equals: expected 0 but got 1
+FAIL 0.5 - 1.0: WheelEvent.wheel.offsetY assert_equals: expected 0 but got 1
+PASS 1.0 - 1.5: WheelEvent.wheel.screenX
+PASS 1.0 - 1.5: WheelEvent.wheel.screenY
+PASS 1.0 - 1.5: WheelEvent.wheel.clientX
+PASS 1.0 - 1.5: WheelEvent.wheel.clientY
+PASS 1.0 - 1.5: WheelEvent.wheel.pageX
+PASS 1.0 - 1.5: WheelEvent.wheel.pageY
+PASS 1.0 - 1.5: WheelEvent.wheel.offsetX
+PASS 1.0 - 1.5: WheelEvent.wheel.offsetY
+PASS -0.5 - 0.0: WheelEvent.wheel.screenX
+PASS -0.5 - 0.0: WheelEvent.wheel.screenY
+PASS -0.5 - 0.0: WheelEvent.wheel.clientX
+PASS -0.5 - 0.0: WheelEvent.wheel.clientY
+PASS -0.5 - 0.0: WheelEvent.wheel.pageX
+PASS -0.5 - 0.0: WheelEvent.wheel.pageY
+FAIL -0.5 - 0.0: WheelEvent.wheel.offsetX assert_equals: expected -1 but got -0
+FAIL -0.5 - 0.0: WheelEvent.wheel.offsetY assert_equals: expected -1 but got -0
+PASS -1.0 - -0.5: WheelEvent.wheel.screenX
+PASS -1.0 - -0.5: WheelEvent.wheel.screenY
+PASS -1.0 - -0.5: WheelEvent.wheel.clientX
+PASS -1.0 - -0.5: WheelEvent.wheel.clientY
+PASS -1.0 - -0.5: WheelEvent.wheel.pageX
+PASS -1.0 - -0.5: WheelEvent.wheel.pageY
+PASS -1.0 - -0.5: WheelEvent.wheel.offsetX
+PASS -1.0 - -0.5: WheelEvent.wheel.offsetY
+PASS -1.5 - -1.0: WheelEvent.wheel.screenX
+PASS -1.5 - -1.0: WheelEvent.wheel.screenY
+PASS -1.5 - -1.0: WheelEvent.wheel.clientX
+PASS -1.5 - -1.0: WheelEvent.wheel.clientY
+PASS -1.5 - -1.0: WheelEvent.wheel.pageX
+PASS -1.5 - -1.0: WheelEvent.wheel.pageY
+FAIL -1.5 - -1.0: WheelEvent.wheel.offsetX assert_equals: expected -2 but got -1
+FAIL -1.5 - -1.0: WheelEvent.wheel.offsetY assert_equals: expected -2 but got -1
+PASS PointerEvent.pointerdown.width
+PASS PointerEvent.pointerdown.height
+PASS PointerEvent.pointerup.width
+PASS PointerEvent.pointerup.height
+PASS PointerEvent.pointermove.width
+PASS PointerEvent.pointermove.height
+PASS PointerEvent.pointercancel.width
+PASS PointerEvent.pointercancel.height
+PASS PointerEvent.gotpointercapture.width
+PASS PointerEvent.gotpointercapture.height
+PASS PointerEvent.lostpointercapture.width
+PASS PointerEvent.lostpointercapture.height
+PASS PointerEvent.pointerrawupdate.width
+PASS PointerEvent.pointerrawupdate.height
+PASS PointerEvent.pointerover.width
+PASS PointerEvent.pointerover.height
+PASS PointerEvent.pointerout.width
+PASS PointerEvent.pointerout.height
+PASS PointerEvent.pointerenter.width
+PASS PointerEvent.pointerenter.height
+PASS PointerEvent.pointerleave.width
+PASS PointerEvent.pointerleave.height
+PASS PointerEvent.foo.width
+PASS PointerEvent.foo.height
+

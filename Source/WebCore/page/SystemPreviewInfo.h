@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include "ElementContext.h"
-#include "IntRect.h"
+#include <WebCore/ElementContext.h>
+#include <WebCore/IntRect.h>
 
 namespace WebCore {
 

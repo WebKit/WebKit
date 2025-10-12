@@ -46,7 +46,7 @@ struct PrefixTreeEdge {
 typedef Vector<PrefixTreeEdge, 0, CrashOnOverflow, 1> PrefixTreeEdges;
 
 struct PrefixTreeVertex {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(PrefixTreeVertex);
 
     PrefixTreeEdges edges;
 };
@@ -78,15 +78,13 @@ static size_t recursiveMemoryUsed(const PrefixTreeVertex& vertex)
 
 size_t CombinedURLFilters::memoryUsed() const
 {
-    ASSERT(m_prefixTreeRoot);
-
     size_t actionsSize = 0;
     for (const auto& slot : m_actions)
         actionsSize += slot.value.capacity() * sizeof(uint64_t);
 
     return sizeof(CombinedURLFilters)
         + m_alphabet.memoryUsed()
-        + recursiveMemoryUsed(*m_prefixTreeRoot.get())
+        + recursiveMemoryUsed(m_prefixTreeRoot)
         + sizeof(HashMap<PrefixTreeVertex*, ActionList>)
         + m_actions.capacity() * (sizeof(PrefixTreeVertex*) + sizeof(ActionList))
         + actionsSize;
@@ -126,12 +124,12 @@ static void recursivePrint(const PrefixTreeVertex& vertex, const HashMap<const P
 
 void CombinedURLFilters::print() const
 {
-    recursivePrint(*m_prefixTreeRoot.get(), m_actions, 0);
+    recursivePrint(m_prefixTreeRoot, m_actions, 0);
 }
 #endif
 
 CombinedURLFilters::CombinedURLFilters()
-    : m_prefixTreeRoot(makeUnique<PrefixTreeVertex>())
+    : m_prefixTreeRoot(makeUniqueRef<PrefixTreeVertex>())
 {
 }
 
@@ -150,7 +148,7 @@ void CombinedURLFilters::addPattern(uint64_t actionId, const Vector<Term>& patte
         return;
 
     // Extend the prefix tree with the new pattern.
-    PrefixTreeVertex* lastPrefixTree = m_prefixTreeRoot.get();
+    auto* lastPrefixTree = m_prefixTreeRoot.ptr();
 
     for (const Term& term : pattern) {
         size_t nextEntryIndex = notFound;
@@ -254,7 +252,7 @@ static void generateSuffixWithReverseSuffixTree(NFA& nfa, Vector<ActiveSubtree>&
     auto rootAddResult = reverseSuffixTreeRoots.add(hashableActionList, ReverseSuffixTreeVertex());
     if (rootAddResult.isNewEntry) {
         ImmutableCharNFANodeBuilder newNode(nfa);
-        newNode.setActions(actionList.begin(), actionList.end());
+        newNode.setActions(WTFMove(actionList));
         rootAddResult.iterator->value.nodeId = newNode.nodeId();
     }
 
@@ -408,7 +406,7 @@ bool CombinedURLFilters::processNFAs(size_t maxNFASize, Function<bool(NFA&&)>&& 
     while (true) {
         // Traverse out to a leaf.
         Vector<PrefixTreeVertex*, 128> stack;
-        PrefixTreeVertex* vertex = m_prefixTreeRoot.get();
+        auto* vertex = m_prefixTreeRoot.ptr();
         while (true) {
             ASSERT(vertex);
             stack.append(vertex);

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: target0.requestPointerLock is not a function. (In 'target0.requestPointerLock()', 'target0.requestPointerLock' is undefined)
 pointerlock
 
 Test Description: This test checks if pointermove is dispatched correctly while in pointerlock mode.

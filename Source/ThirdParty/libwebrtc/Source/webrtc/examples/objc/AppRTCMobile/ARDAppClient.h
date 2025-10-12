@@ -33,12 +33,15 @@ typedef NS_ENUM(NSInteger, ARDAppClientState) {
 // main queue.
 @protocol ARDAppClientDelegate <NSObject>
 
-- (void)appClient:(ARDAppClient *)client didChangeState:(ARDAppClientState)state;
-
-- (void)appClient:(ARDAppClient *)client didChangeConnectionState:(RTCIceConnectionState)state;
+- (void)appClient:(ARDAppClient *)client
+    didChangeState:(ARDAppClientState)state;
 
 - (void)appClient:(ARDAppClient *)client
-    didCreateLocalCapturer:(RTC_OBJC_TYPE(RTCCameraVideoCapturer) *)localCapturer;
+    didChangeConnectionState:(RTCIceConnectionState)state;
+
+- (void)appClient:(ARDAppClient *)client
+    didCreateLocalCapturer:
+        (RTC_OBJC_TYPE(RTCCameraVideoCapturer) *)localCapturer;
 
 - (void)appClient:(ARDAppClient *)client
     didReceiveLocalVideoTrack:(RTC_OBJC_TYPE(RTCVideoTrack) *)localVideoTrack;
@@ -48,14 +51,17 @@ typedef NS_ENUM(NSInteger, ARDAppClientState) {
 
 - (void)appClient:(ARDAppClient *)client didError:(NSError *)error;
 
-- (void)appClient:(ARDAppClient *)client didGetStats:(RTC_OBJC_TYPE(RTCStatisticsReport) *)stats;
+- (void)appClient:(ARDAppClient *)client
+      didGetStats:(RTC_OBJC_TYPE(RTCStatisticsReport) *)stats;
 
 @optional
 - (void)appClient:(ARDAppClient *)client
-    didCreateLocalFileCapturer:(RTC_OBJC_TYPE(RTCFileVideoCapturer) *)fileCapturer;
+    didCreateLocalFileCapturer:
+        (RTC_OBJC_TYPE(RTCFileVideoCapturer) *)fileCapturer;
 
 - (void)appClient:(ARDAppClient *)client
-    didCreateLocalExternalSampleCapturer:(ARDExternalSampleCapturer *)externalSampleCapturer;
+    didCreateLocalExternalSampleCapturer:
+        (ARDExternalSampleCapturer *)externalSampleCapturer;
 
 @end
 

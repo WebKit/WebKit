@@ -176,7 +176,7 @@ sub main() {
             printLine($line, $target, $project, STYLE_PLAIN);
         } elsif ($line =~ /\*\* BUILD SUCCEEDED \*\*/) {
             printLine("Build Succeeded", $target, $project, STYLE_SUCCESS);
-        } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|RuleScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|ProcessProductPackagingDER|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution|CreateBuildDirectory|WriteAuxiliaryFile|RegisterWithLaunchServices|RegisterExecutionPolicyException|MkDir|Strip|MetalLink|CompileMetalFile|ValidateEmbeddedBinary|Copy|ScanDependencies)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
+        } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|RuleScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|ProcessProductPackagingDER|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution|CreateBuildDirectory|WriteAuxiliaryFile|RegisterWithLaunchServices|RegisterExecutionPolicyException|MkDir|Strip|MetalLink|CompileMetalFile|ValidateEmbeddedBinary|Copy|ScanDependencies|SwiftDriver|SwiftMergeGeneratedHeaders|SwiftDriverJobDiscovery|SwiftEmitModule|EmitSwiftModule|SwiftCompile|VerifyModule|ExecuteExternalTool|Unifdef|MergeInfoPlistFile|CompileAssetCatalogVariant|LinkAssetCatalog|GenerateAssetSymbols|GeneratedAssetSymbols|CopySwiftLibs|CopySwiftLibs)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
             my ($command, $path) = ($2, basename($4));
             $command = "ScanDeps" if $command eq "ScanDependencies";
             $path =~ s/("|\\|\.[ah]$)//g;
@@ -198,9 +198,24 @@ sub main() {
         } elsif ($line =~ /^cp (\S+)/) {
             my $path = basename($1);
             printLine("cp $path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^mv (\S+)/) {
+            my $path = basename($1);
+            printLine("mv $path", $target, $project, STYLE_PLAIN);
         } elsif ($line =~ /python(\d\.\d+)? (\S+) (.+)/) {
-            my ($command, $path) = (basename($2), basename($3));
-            printLine("python $command $path", $target, $project, STYLE_PLAIN);
+            my ($command, $arguments) = (basename($2), $3);
+            my ($content) = $arguments;
+            $command =~ s/"//g;
+            if (($command eq "process-css-properties.py") || ($command eq "process-css-values.py") || ($command eq "process-css-pseudo-selectors.py")) {
+                $content = "";
+            } elsif ($command eq "generate-derived-log-sources.py") {
+                $arguments =~ /(\S+) +(\S+ +\S+ +\S+ +\S+ +\S+ +\S+).+/;
+                $content = "$1 $2";
+            } else {
+                $content = basename($arguments);
+            }
+            printLine("python $command $content", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^Generating bindings for the (\S+) builtin\./) {
+            printLine("Generating $1 builtin", $target, $project, STYLE_PLAIN);
         } elsif ($line =~ /^\/\S+?(strip|WebCoreExportFileGenerator) .*?(\/|\> )(\S+)/) {
             my ($command, $path) = (basename($1), basename($3));
             printLine("$command $path", $target, $project, STYLE_PLAIN);
@@ -222,6 +237,8 @@ sub main() {
             printLine($line, $target, $project, STYLE_PLAIN);
         } elsif ($line =~ /^Pre-processing (\S+) sandbox profile/) {
             printLine($line, $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /compile-sandbox.sh\s+(\S+)/) {
+            printLine("compile-sandbox.sh ".$1, $target, $project, STYLE_PLAIN);
         } elsif ($line =~ /^Scripts\/generate-unified-source-bundles.rb/) {
             printLine("Generating unified sources", $target, $project, STYLE_PLAIN);
         } elsif ($line =~ /^ruby JavaScriptCore\/generator\/main.rb JavaScriptCore\/bytecode\/BytecodeList.rb.*/) {
@@ -240,7 +257,7 @@ sub main() {
             printLine("Converting WHLSLStandardLibrary", $target, $project, STYLE_PLAIN);
         } elsif ($line =~ /^sh .*\/generate-https-upgrade-database\.sh .*\/HTTPSUpgradeList.txt HTTPSUpgradeList.db/) {
             printLine("Converting HTTPSUpgradeList", $target, $project, STYLE_PLAIN);
-        } elsif ($line =~ /^ruby .*\/GeneratePreferences\.rb\s+--frontend\s+(\S+)\s+.*\s+--template\s+.*(\/\S+).erb/) {
+        } elsif ($line =~ /^ruby .*\/GeneratePreferences\.rb\s+--frontend\s+(\S+)\s+--template\s+.*(\/\S+).erb.+/) {
             my $path = basename($2);
             printLine("Generating preferences $1 $path", $target, $project, STYLE_PLAIN);
         } elsif ($line =~ /^### (Generating \.xcfilelists for .*)$/) {
@@ -261,6 +278,29 @@ sub main() {
             printLine("$1", $target, $project, STYLE_PLAIN);
         } elsif ($line =~ /^(running build command .*+)$/) {
             printLine("$1", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^.+(platform-enabled-swift-args.+):.+$/) {
+            printLine("$1", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /(\w+\.framework.+\.xpc) -> (.+)/) {
+            printLine("$1 -> $2", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /(\w+\.framework.+\.dylib) -> (.+)/) {
+            printLine("$1 -> $2", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /(\w+\.framework.+XPCServices) -> (.+)/) {
+            printLine("$1 -> $2", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^ExtractAppIntentsMetadata/) {
+            printLine("$line", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^.+(appintentsmetadataprocessor)\[\d+:\d+\] (.+)$/) {
+            printLine("$1 $2", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(Creating.+log definitions.+)$/) {
+            printLine("$1", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(Generating derived log sources from.+)$/) {
+            printLine("$1", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(Copying .+ from)\s+(\S+) to (\S+)$/) {
+            my ($source) = basename($2);
+            my ($dest) = basename($3);
+            printLine("$1 $source to $dest", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(Setting fixed entry values for )(\S+)/) {
+            my ($file) = basename($2);
+            printLine("$1 $file", $target, $project, STYLE_PLAIN);
         } else {
             # This only gets hit if stderr is redirected to stdout.
             if (($line =~ /\*\* BUILD FAILED \*\*/) || ($line =~ /^Build FAILED./)) {
@@ -396,6 +436,14 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ /^User defaults from command line:/;
     return 1 if $line =~ /^Prepare build/;
     return 1 if $line =~ /^Build system information/;
+    return 1 if $line =~ /^CreateBuildRequest/;
+    return 1 if $line =~ /^SendProjectDescription/;
+    return 1 if $line =~ /^CreateBuildOperation/;
+    return 1 if $line =~ /^ComputeTargetDependencyGraph/;
+    return 1 if $line =~ /^ComputePackagePrebuildTargetDependencyGraph/;
+    return 1 if $line =~ /^GatherProvisioningInputs/;
+    return 1 if $line =~ /^CreateBuildDescription/;
+    return 1 if $line =~ /Xcode.app loaded specs from/;
     return 1 if $line =~ /^note: Planning build/;
     return 1 if $line =~ /^note: Constructing build description/;
     return 1 if $line =~ /^note: Build description (constructed|loaded) in .*/;
@@ -436,6 +484,8 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ /.* com.apple.actool.compilation-results .*/;
     return 1 if $line =~ /.*\/Assets.car/;
     return 1 if $line =~ /.*\/assetcatalog_generated_info.plist/;
+    return 1 if $line =~ /assetcatalog_output/;
+    return 1 if $line =~ /GeneratedAssetSymbols/;
     return 1 if $line =~ /^mount: .+ failed with/;
     return 1 if $line =~ /^Using .+ production environment.$/;
     return 1 if $line =~ /replacing existing signature$/;
@@ -456,6 +506,10 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ /^Build description signature:/;
     return 1 if $line =~ /^Build description path:/;
     return 1 if $line =~ /^note: Building targets in dependency order/;
+    return 1 if $line =~ /Xfrontend/;
+    return 1 if $line =~ /SwiftDriver\\ Compilation/;
+    return 1 if $line =~ /SwiftExplicitDependencyGeneratePcm/;
+    return 1 if $line =~ /SwiftExplicitDependencyCompileModuleFromInterface/;
     return 1 if $line =~ /^warning: .*libtool: archive library: .* the table of contents is empty \(no object file members in the library define global symbols\)/;
     # Investigate these in https://bugs.webkit.org/show_bug.cgi?id=245263.
     return 1 if $line =~ /warning: Could not read serialized diagnostics file: error\(\"Failed to open diagnostics file\"\)/;

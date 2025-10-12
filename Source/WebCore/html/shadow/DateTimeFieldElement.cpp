@@ -33,6 +33,7 @@
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
+#include "NodeDocument.h"
 #include "PlatformLocale.h"
 #include "RenderStyle.h"
 #include "RenderTheme.h"
@@ -60,12 +61,13 @@ std::optional<Style::UnadjustedStyle> DateTimeFieldElement::resolveCustomStyle(c
 {
     auto elementStyle = resolveStyle(resolutionContext);
 
-    adjustMinInlineSize(*elementStyle.style);
+    CheckedRef elementStyleStyle = *elementStyle.style;
+    adjustMinInlineSize(elementStyleStyle.get());
 
     if (!hasValue() && shadowHostStyle) {
         auto textColor = shadowHostStyle->visitedDependentColorWithColorFilter(CSSPropertyColor);
         auto backgroundColor = shadowHostStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
-        elementStyle.style->setColor(RenderTheme::singleton().datePlaceholderTextColor(textColor, backgroundColor));
+        elementStyleStyle->setColor(RenderTheme::singleton().datePlaceholderTextColor(textColor, backgroundColor));
     }
 
     return elementStyle;
@@ -174,7 +176,7 @@ void DateTimeFieldElement::handleBlurEvent(Event& event)
 
 Locale& DateTimeFieldElement::localeForOwner() const
 {
-    return document().getCachedLocale(localeIdentifier());
+    return protectedDocument()->getCachedLocale(localeIdentifier());
 }
 
 AtomString DateTimeFieldElement::localeIdentifier() const
@@ -192,7 +194,7 @@ String DateTimeFieldElement::visibleValue() const
 void DateTimeFieldElement::updateVisibleValue(EventBehavior eventBehavior)
 {
     if (!firstChild())
-        appendChild(Text::create(document(), String { emptyString() }));
+        appendChild(Text::create(protectedDocument().get(), String { emptyString() }));
 
     Ref textNode = downcast<Text>(*firstChild());
     String newVisibleValue = visibleValue();

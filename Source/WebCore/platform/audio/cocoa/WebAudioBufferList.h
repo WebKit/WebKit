@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "PlatformAudioData.h"
-#include "SpanCoreAudio.h"
 #include <CoreAudio/CoreAudioTypes.h>
+#include <WebCore/PlatformAudioData.h>
+#include <WebCore/SpanCoreAudio.h>
 #include <wtf/IteratorRange.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -87,8 +87,8 @@ private:
     uint32_t m_bytesPerFrame { 0 };
     uint32_t m_channelCount { 0 };
     size_t m_sampleCount { 0 };
-    std::unique_ptr<AudioBufferList> m_canonicalList;
-    std::unique_ptr<AudioBufferList> m_list;
+    const std::unique_ptr<AudioBufferList> m_canonicalList;
+    const std::unique_ptr<AudioBufferList> m_list;
     RetainPtr<CMBlockBufferRef> m_blockBuffer;
     Vector<uint8_t> m_flatBuffer;
 };

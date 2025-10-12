@@ -645,14 +645,16 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
         bridge_cast(options.get()),
         &errorRef
     ));
-    if (errorRef) {
+    // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
+    SUPPRESS_RETAINPTR_CTOR_ADOPT if (RetainPtr adoptedErrorRef = adoptCF(errorRef)) {
         createNSErrorFromWKErrorIfNecessary(error, WKErrorMalformedCredential);
         return nullptr;
     }
 
     auto publicKey = adoptCF(SecKeyCopyPublicKey(key.get()));
     RetainPtr nsPublicKeyData = bridge_cast(adoptCF(SecKeyCopyExternalRepresentation(publicKey.get(), &errorRef)));
-    if (errorRef) {
+    // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
+    SUPPRESS_RETAINPTR_CTOR_ADOPT if (RetainPtr adoptedErrorRef = adoptCF(errorRef)) {
         createNSErrorFromWKErrorIfNecessary(error, WKErrorMalformedCredential);
         return nullptr;
     }
@@ -755,12 +757,12 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
     auto privateKey = adoptCF(privateKeyRef);
     CFErrorRef errorRef = nullptr;
     auto privateKeyRep = adoptCF(SecKeyCopyExternalRepresentation((__bridge SecKeyRef)((id)privateKeyRef), &errorRef));
-    auto retainError = adoptCF(errorRef);
-    if (errorRef) {
+    // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
+    SUPPRESS_RETAINPTR_CTOR_ADOPT if (RetainPtr adoptedErrorRef = adoptCF(errorRef)) {
         createNSErrorFromWKErrorIfNecessary(error, WKErrorCredentialNotFound);
         return nullptr;
     }
-        
+
     [query removeObjectForKey:(id)kSecReturnRef];
     [query setObject: @YES forKey:(id)kSecReturnAttributes];
     CFTypeRef attributesArrayRef = nullptr;

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<meta name="fuzzy" content="maxDifference=0-14; totalPixels=0-80000" />
+<meta name="fuzzy" content="maxDifference=0-13; totalPixels=0-80000" />
 <style>
     .container {
         width: 200px;
@@ -8,13 +8,13 @@
         will-change: transform;
     }
     .sdr {
-        background-image: url('resources/green-400x400.png');
+        background-image: url('resources/red-400x400.png');
     }
     .hdr {
-        background-image: url('resources/red-100x100.png');
+        background-image: url('resources/gainmap-red-green-1920x1920.jpg');
     }
     .hdr-sdr {
-        background-image: url('resources/red-100x100.png'), url('resources/green-400x400.png');
+        background-image: url('resources/gainmap-red-green-1920x1920.jpg'), url('resources/red-400x400.png');
         background-repeat: no-repeat;
     }
 </style>
@@ -36,7 +36,7 @@
         }
 
         let images = [];
-        let imageSources = ["resources/green-400x400.png", "resources/red-100x100.png"];
+        let imageSources = ["resources/red-400x400.png", "resources/gainmap-red-green-1920x1920.jpg"];
 
         function loadImages() {
             return imageSources.map((imageSource) => {

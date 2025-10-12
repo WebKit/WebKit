@@ -1,8 +1,8 @@
 
 PASS no width/height attributes
-PASS only width attribute
-PASS only height attribute
+FAIL only width attribute assert_equals: height expected 150 but got 50
+FAIL only height attribute assert_equals: width expected 300 but got 200
 PASS both width/height attributes
 PASS both width/height attributes and style
-FAIL both width/height attributes and style keeping aspect-ratio assert_equals: height expected 300 but got 150
+FAIL both width/height attributes and style keeping aspect-ratio assert_equals: width expected 500 but got 300
 

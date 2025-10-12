@@ -1,7 +1,7 @@
 Name: C++ Signal/Slot Library
 Short Name: sigslot
 URL: http://sigslot.sourceforge.net/
-Version: 0
+Version: N/A
 Date: 2018-07-09
 License: Ignorable
 License File: LICENSE
@@ -19,3 +19,7 @@ If has_slots is single threaded the user must ensure that it is not trying
 to connect or disconnect to signalx concurrently or data race may occur.
 If signalx is single threaded the user must ensure that disconnect, connect
 or signal is not happening concurrently or data race may occur.
+
+note: sigslot at sourceforge has only one released version - version 1.0.0
+released on 2002-03-31. There is a read-only CVS repository from which the
+dated version (2018-07-09) can be retrieved if necessary.

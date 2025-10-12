@@ -108,8 +108,8 @@ PASS 'use strict'; var VarA = class A { constructor() {} }; var VarB = class B e
 Class statement binding in other circumstances
 PASS var result = A; result:::ReferenceError: Can't find variable: A
 PASS 'use strict'; var result = A; result:::ReferenceError: Can't find variable: A
-PASS var result = A; class A {}; result:::ReferenceError: Cannot access uninitialized variable.
-PASS 'use strict'; var result = A; class A {}; result:::ReferenceError: Cannot access uninitialized variable.
+PASS var result = A; class A {}; result:::ReferenceError: Cannot access 'A' before initialization.
+PASS 'use strict'; var result = A; class A {}; result:::ReferenceError: Cannot access 'A' before initialization.
 PASS class A { constructor() { A = 1; } }; new A:::TypeError: Attempted to assign to readonly property.
 PASS 'use strict'; class A { constructor() { A = 1; } }; new A:::TypeError: Attempted to assign to readonly property.
 PASS class A { constructor() { } }; A = 1; A:::1

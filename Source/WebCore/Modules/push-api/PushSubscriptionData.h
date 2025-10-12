@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "EpochTimeStamp.h"
-#include "PushSubscriptionIdentifier.h"
+#include <WebCore/EpochTimeStamp.h>
+#include <WebCore/PushSubscriptionIdentifier.h>
 
 #include <wtf/text/WTFString.h>
 

@@ -200,7 +200,7 @@ RenderingResourceIdentifier FontInternalAttributes::ensureRenderingResourceIdent
     return *renderingResourceIdentifier;
 }
 
-static bool fillGlyphPage(GlyphPage& pageToFill, std::span<const UChar> buffer, const Font& font)
+static bool fillGlyphPage(GlyphPage& pageToFill, std::span<const char16_t> buffer, const Font& font)
 {
     bool hasGlyphs = pageToFill.fill(buffer);
 #if ENABLE(OPENTYPE_VERTICAL)
@@ -328,9 +328,9 @@ static std::optional<size_t> codePointSupportIndex(char32_t codePoint)
 }
 
 #if PLATFORM(WIN)
-static void overrideControlCharacters(Vector<UChar>& buffer, unsigned start, unsigned end)
+static void overrideControlCharacters(Vector<char16_t>& buffer, unsigned start, unsigned end)
 {
-    auto overwriteCodePoints = [&](unsigned minimum, unsigned maximum, UChar newCodePoint) {
+    auto overwriteCodePoints = [&](unsigned minimum, unsigned maximum, char16_t newCodePoint) {
         unsigned begin = std::max(start, minimum);
         unsigned complete = std::min(end, maximum);
         for (unsigned i = begin; i < complete; ++i) {
@@ -339,7 +339,7 @@ static void overrideControlCharacters(Vector<UChar>& buffer, unsigned start, uns
         }
     };
 
-    auto overwriteCodePoint = [&](UChar codePoint, UChar newCodePoint) {
+    auto overwriteCodePoint = [&](char16_t codePoint, char16_t newCodePoint) {
         ASSERT(codePointSupportIndex(codePoint));
         if (codePoint >= start && codePoint < end)
             buffer[codePoint - start] = newCodePoint;
@@ -383,7 +383,7 @@ static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font&
     unsigned glyphPageSize = GlyphPage::sizeForPageNumber(pageNumber);
 
     unsigned start = GlyphPage::startingCodePointInPageNumber(pageNumber);
-    Vector<UChar> buffer(glyphPageSize * 2 + 2);
+    Vector<char16_t> buffer(glyphPageSize * 2 + 2);
     unsigned bufferLength;
     if (U_IS_BMP(start)) {
         bufferLength = glyphPageSize;
@@ -671,8 +671,10 @@ ColorGlyphType Font::colorGlyphType(Glyph glyph) const
 
     return WTF::switchOn(m_emojiType, [](NoEmojiGlyphs) {
         return ColorGlyphType::Outline;
+#if USE(SKIA)
     }, [](AllEmojiGlyphs) {
         return ColorGlyphType::Color;
+#endif
     }, [glyph](const SomeEmojiGlyphs& someEmojiGlyphs) {
         return someEmojiGlyphs.colorGlyphs.get(glyph) ? ColorGlyphType::Color : ColorGlyphType::Outline;
     });
@@ -701,7 +703,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const GlyphBuffer& glyphBuffer)
         ts << ", font: " <<  &font;
         ts << ", advance: width:" <<  width(advance) << " height:" << height(advance);
         ts << ", string index: "  << glyphBuffer.uncheckedStringOffsetAt(index);
-        ts << ", origin: " << glyphBuffer.originAt(index);
+        ts << ", origin: " << DoublePoint(glyphBuffer.originAt(index));
         ts << ", glyph bounds: " << bounds;
     }
     return ts;

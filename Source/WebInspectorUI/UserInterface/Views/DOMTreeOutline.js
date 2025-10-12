@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2013, 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008, 2013, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2009 Joseph Pecoraro
  *
@@ -173,18 +173,16 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
         this.removeChildren();
 
-        const elementCloseTag = false;
-
         var treeElement;
         if (this._includeRootDOMNode) {
-            treeElement = new WI.DOMTreeElement(this.rootDOMNode, elementCloseTag, {showBadges: this._showBadges});
+            treeElement = new WI.DOMTreeElement(this.rootDOMNode, {showBadges: this._showBadges});
             treeElement.selectable = this.selectable;
             this.appendChild(treeElement);
         } else {
             // FIXME: this could use findTreeElement to reuse a tree element if it already exists
             var node = this.rootDOMNode.firstChild;
             while (node) {
-                treeElement = new WI.DOMTreeElement(node, elementCloseTag, {showBadges: this._showBadges});
+                treeElement = new WI.DOMTreeElement(node, {showBadges: this._showBadges});
                 treeElement.selectable = this.selectable;
                 this.appendChild(treeElement);
                 node = node.nextSibling;
@@ -210,7 +208,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         // as its parent.
         selectedTreeElements = selectedTreeElements.map((oldTreeElement) => {
             let treeElement = this.findTreeElement(oldTreeElement.representedObject);
-            if (treeElement && oldTreeElement.isCloseTag()) {
+            if (treeElement && oldTreeElement.isElementCloseTag) {
                 console.assert(treeElement.closeTagTreeElement, "Missing close tag TreeElement.", treeElement);
                 if (treeElement.closeTagTreeElement)
                     treeElement = treeElement.closeTagTreeElement;
@@ -371,7 +369,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
         this._treeElementsToRemove = null;
 
-        if (this.selectedTreeElement && !this.selectedTreeElement.isCloseTag()) {
+        if (this.selectedTreeElement && !this.selectedTreeElement.isElementCloseTag) {
             console.assert(this.selectedTreeElements.length === 1);
             this.selectedTreeElement.reveal();
         }
@@ -418,10 +416,10 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
     objectForSelection(treeElement)
     {
-        if (treeElement instanceof WI.DOMTreeElement && treeElement.isCloseTag()) {
+        if (treeElement instanceof WI.DOMTreeElement && treeElement.isElementCloseTag) {
             // SelectionController requires every selectable item to be unique.
             // The DOMTreeElement for a close tag has the same represented object
-            // as it's parent (the open tag). Return a proxy object associated
+            // as its parent (the open tag). Return a proxy object associated
             // with the tree element for the close tag so it can be selected.
             if (!treeElement.__closeTagProxyObject)
                 treeElement.__closeTagProxyObject = {__proxyObjectTreeElement: treeElement};
@@ -609,7 +607,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
             let parentNode = null;
             let anchorNode = null;
 
-            if (treeElement._elementCloseTag) {
+            if (treeElement.isElementCloseTag) {
                 // Drop onto closing tag -> insert as last child.
                 parentNode = treeElement.representedObject;
             } else {

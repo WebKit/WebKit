@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All Rights Reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "SecurityContext.h"
 
 #include "ContentSecurityPolicy.h"
+#include "IntegrityPolicy.h"
 #include "PolicyContainer.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
@@ -207,10 +208,11 @@ PolicyContainer SecurityContext::policyContainer() const
 {
     ASSERT(m_contentSecurityPolicy);
     return {
-        m_contentSecurityPolicy->responseHeaders(),
+        CheckedRef { *m_contentSecurityPolicy }->responseHeaders(),
         crossOriginEmbedderPolicy(),
         crossOriginOpenerPolicy(),
-        referrerPolicy()
+        referrerPolicy(),
+        ipAddressSpace()
     };
 }
 
@@ -223,6 +225,7 @@ void SecurityContext::inheritPolicyContainerFrom(const PolicyContainer& policyCo
     setCrossOriginOpenerPolicy(policyContainer.crossOriginOpenerPolicy);
     setCrossOriginEmbedderPolicy(policyContainer.crossOriginEmbedderPolicy);
     setReferrerPolicy(policyContainer.referrerPolicy);
+    setIPAddressSpace(policyContainer.ipAddressSpace);
 }
 
 CheckedPtr<ContentSecurityPolicy> SecurityContext::checkedContentSecurityPolicy()
@@ -230,4 +233,24 @@ CheckedPtr<ContentSecurityPolicy> SecurityContext::checkedContentSecurityPolicy(
     return contentSecurityPolicy();
 }
 
+const IntegrityPolicy* SecurityContext::integrityPolicy() const
+{
+    return m_integrityPolicy.get();
 }
+
+void SecurityContext::setIntegrityPolicy(std::unique_ptr<IntegrityPolicy>&& policy)
+{
+    m_integrityPolicy = WTFMove(policy);
+}
+
+const IntegrityPolicy* SecurityContext::integrityPolicyReportOnly() const
+{
+    return m_integrityPolicyReportOnly.get();
+}
+
+void SecurityContext::setIntegrityPolicyReportOnly(std::unique_ptr<IntegrityPolicy>&& policy)
+{
+    m_integrityPolicyReportOnly = WTFMove(policy);
+}
+
+} // namespace WebCore

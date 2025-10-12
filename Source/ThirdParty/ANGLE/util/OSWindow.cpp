@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "OSWindow.h"
 
 #include <cstring>
@@ -23,21 +27,21 @@
 #endif
 
 #if DEBUG_EVENTS
-static const char *MouseButtonName(MouseButton button)
+static const char *MouseButtonName(angle::MouseButtonType button)
 {
     switch (button)
     {
-        case MOUSEBUTTON_UNKNOWN:
+        case angle::MouseButtonType::UNKNOWN:
             return "Unknown";
-        case MOUSEBUTTON_LEFT:
+        case angle::MouseButtonType::LEFT:
             return "Left";
-        case MOUSEBUTTON_RIGHT:
+        case angle::MouseButtonType::RIGHT:
             return "Right";
-        case MOUSEBUTTON_MIDDLE:
+        case angle::MouseButtonType::MIDDLE:
             return "Middle";
-        case MOUSEBUTTON_BUTTON4:
+        case angle::MouseButtonType::BUTTON4:
             return "Button4";
-        case MOUSEBUTTON_BUTTON5:
+        case angle::MouseButtonType::BUTTON5:
             return "Button5";
         default:
             UNREACHABLE();
@@ -45,213 +49,213 @@ static const char *MouseButtonName(MouseButton button)
     }
 }
 
-static const char *KeyName(Key key)
+static const char *KeyName(angle::KeyType key)
 {
     switch (key)
     {
-        case KEY_UNKNOWN:
+        case angle::KeyType::UNKNOWN:
             return "Unknown";
-        case KEY_A:
+        case angle::KeyType::A:
             return "A";
-        case KEY_B:
+        case angle::KeyType::B:
             return "B";
-        case KEY_C:
+        case angle::KeyType::C:
             return "C";
-        case KEY_D:
+        case angle::KeyType::D:
             return "D";
-        case KEY_E:
+        case angle::KeyType::E:
             return "E";
-        case KEY_F:
+        case angle::KeyType::F:
             return "F";
-        case KEY_G:
+        case angle::KeyType::G:
             return "G";
-        case KEY_H:
+        case angle::KeyType::H:
             return "H";
-        case KEY_I:
+        case angle::KeyType::I:
             return "I";
-        case KEY_J:
+        case angle::KeyType::J:
             return "J";
-        case KEY_K:
+        case angle::KeyType::K:
             return "K";
-        case KEY_L:
+        case angle::KeyType::L:
             return "L";
-        case KEY_M:
+        case angle::KeyType::M:
             return "M";
-        case KEY_N:
+        case angle::KeyType::N:
             return "N";
-        case KEY_O:
+        case angle::KeyType::O:
             return "O";
-        case KEY_P:
+        case angle::KeyType::P:
             return "P";
-        case KEY_Q:
+        case angle::KeyType::Q:
             return "Q";
-        case KEY_R:
+        case angle::KeyType::R:
             return "R";
-        case KEY_S:
+        case angle::KeyType::S:
             return "S";
-        case KEY_T:
+        case angle::KeyType::T:
             return "T";
-        case KEY_U:
+        case angle::KeyType::U:
             return "U";
-        case KEY_V:
+        case angle::KeyType::V:
             return "V";
-        case KEY_W:
+        case angle::KeyType::W:
             return "W";
-        case KEY_X:
+        case angle::KeyType::X:
             return "X";
-        case KEY_Y:
+        case angle::KeyType::Y:
             return "Y";
-        case KEY_Z:
+        case angle::KeyType::Z:
             return "Z";
-        case KEY_NUM0:
+        case angle::KeyType::NUM0:
             return "Num0";
-        case KEY_NUM1:
+        case angle::KeyType::NUM1:
             return "Num1";
-        case KEY_NUM2:
+        case angle::KeyType::NUM2:
             return "Num2";
-        case KEY_NUM3:
+        case angle::KeyType::NUM3:
             return "Num3";
-        case KEY_NUM4:
+        case angle::KeyType::NUM4:
             return "Num4";
-        case KEY_NUM5:
+        case angle::KeyType::NUM5:
             return "Num5";
-        case KEY_NUM6:
+        case angle::KeyType::NUM6:
             return "Num6";
-        case KEY_NUM7:
+        case angle::KeyType::NUM7:
             return "Num7";
-        case KEY_NUM8:
+        case angle::KeyType::NUM8:
             return "Num8";
-        case KEY_NUM9:
+        case angle::KeyType::NUM9:
             return "Num9";
-        case KEY_ESCAPE:
+        case angle::KeyType::ESCAPE:
             return "Escape";
-        case KEY_LCONTROL:
+        case angle::KeyType::LCONTROL:
             return "Left Control";
-        case KEY_LSHIFT:
+        case angle::KeyType::LSHIFT:
             return "Left Shift";
-        case KEY_LALT:
+        case angle::KeyType::LALT:
             return "Left Alt";
-        case KEY_LSYSTEM:
+        case angle::KeyType::LSYSTEM:
             return "Left System";
-        case KEY_RCONTROL:
+        case angle::KeyType::RCONTROL:
             return "Right Control";
-        case KEY_RSHIFT:
+        case angle::KeyType::RSHIFT:
             return "Right Shift";
-        case KEY_RALT:
+        case angle::KeyType::RALT:
             return "Right Alt";
-        case KEY_RSYSTEM:
+        case angle::KeyType::RSYSTEM:
             return "Right System";
-        case KEY_MENU:
+        case angle::KeyType::MENU:
             return "Menu";
-        case KEY_LBRACKET:
+        case angle::KeyType::LBRACKET:
             return "Left Bracket";
-        case KEY_RBRACKET:
+        case angle::KeyType::RBRACKET:
             return "Right Bracket";
-        case KEY_SEMICOLON:
+        case angle::KeyType::SEMICOLON:
             return "Semicolon";
-        case KEY_COMMA:
+        case angle::KeyType::COMMA:
             return "Comma";
-        case KEY_PERIOD:
+        case angle::KeyType::PERIOD:
             return "Period";
-        case KEY_QUOTE:
+        case angle::KeyType::QUOTE:
             return "Quote";
-        case KEY_SLASH:
+        case angle::KeyType::SLASH:
             return "Slash";
-        case KEY_BACKSLASH:
+        case angle::KeyType::BACKSLASH:
             return "Backslash";
-        case KEY_TILDE:
+        case angle::KeyType::TILDE:
             return "Tilde";
-        case KEY_EQUAL:
+        case angle::KeyType::EQUAL:
             return "Equal";
-        case KEY_DASH:
+        case angle::KeyType::DASH:
             return "Dash";
-        case KEY_SPACE:
+        case angle::KeyType::SPACE:
             return "Space";
-        case KEY_RETURN:
+        case angle::KeyType::RETURN:
             return "Return";
-        case KEY_BACK:
+        case angle::KeyType::BACK:
             return "Back";
-        case KEY_TAB:
+        case angle::KeyType::TAB:
             return "Tab";
-        case KEY_PAGEUP:
+        case angle::KeyType::PAGEUP:
             return "Page Up";
-        case KEY_PAGEDOWN:
+        case angle::KeyType::PAGEDOWN:
             return "Page Down";
-        case KEY_END:
+        case angle::KeyType::END:
             return "End";
-        case KEY_HOME:
+        case angle::KeyType::HOME:
             return "Home";
-        case KEY_INSERT:
+        case angle::KeyType::INSERT:
             return "Insert";
-        case KEY_DELETE:
+        case angle::KeyType::DEL:
             return "Delete";
-        case KEY_ADD:
+        case angle::KeyType::ADD:
             return "Add";
-        case KEY_SUBTRACT:
+        case angle::KeyType::SUBTRACT:
             return "Substract";
-        case KEY_MULTIPLY:
+        case angle::KeyType::MULTIPLY:
             return "Multiply";
-        case KEY_DIVIDE:
+        case angle::KeyType::DIVIDE:
             return "Divide";
-        case KEY_LEFT:
+        case angle::KeyType::LEFT:
             return "Left";
-        case KEY_RIGHT:
+        case angle::KeyType::RIGHT:
             return "Right";
-        case KEY_UP:
+        case angle::KeyType::UP:
             return "Up";
-        case KEY_DOWN:
+        case angle::KeyType::DOWN:
             return "Down";
-        case KEY_NUMPAD0:
+        case angle::KeyType::NUMPAD0:
             return "Numpad 0";
-        case KEY_NUMPAD1:
+        case angle::KeyType::NUMPAD1:
             return "Numpad 1";
-        case KEY_NUMPAD2:
+        case angle::KeyType::NUMPAD2:
             return "Numpad 2";
-        case KEY_NUMPAD3:
+        case angle::KeyType::NUMPAD3:
             return "Numpad 3";
-        case KEY_NUMPAD4:
+        case angle::KeyType::NUMPAD4:
             return "Numpad 4";
-        case KEY_NUMPAD5:
+        case angle::KeyType::NUMPAD5:
             return "Numpad 5";
-        case KEY_NUMPAD6:
+        case angle::KeyType::NUMPAD6:
             return "Numpad 6";
-        case KEY_NUMPAD7:
+        case angle::KeyType::NUMPAD7:
             return "Numpad 7";
-        case KEY_NUMPAD8:
+        case angle::KeyType::NUMPAD8:
             return "Numpad 8";
-        case KEY_NUMPAD9:
+        case angle::KeyType::NUMPAD9:
             return "Numpad 9";
-        case KEY_F1:
+        case angle::KeyType::F1:
             return "F1";
-        case KEY_F2:
+        case angle::KeyType::F2:
             return "F2";
-        case KEY_F3:
+        case angle::KeyType::F3:
             return "F3";
-        case KEY_F4:
+        case angle::KeyType::F4:
             return "F4";
-        case KEY_F5:
+        case angle::KeyType::F5:
             return "F5";
-        case KEY_F6:
+        case angle::KeyType::F6:
             return "F6";
-        case KEY_F7:
+        case angle::KeyType::F7:
             return "F7";
-        case KEY_F8:
+        case angle::KeyType::F8:
             return "F8";
-        case KEY_F9:
+        case angle::KeyType::F9:
             return "F9";
-        case KEY_F10:
+        case angle::KeyType::F10:
             return "F10";
-        case KEY_F11:
+        case angle::KeyType::F11:
             return "F11";
-        case KEY_F12:
+        case angle::KeyType::F12:
             return "F12";
-        case KEY_F13:
+        case angle::KeyType::F13:
             return "F13";
-        case KEY_F14:
+        case angle::KeyType::F14:
             return "F14";
-        case KEY_F15:
+        case angle::KeyType::F15:
             return "F15";
-        case KEY_PAUSE:
+        case angle::KeyType::PAUSE:
             return "Pause";
         default:
             return "Unknown Key";

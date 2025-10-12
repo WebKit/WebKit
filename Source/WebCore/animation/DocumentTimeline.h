@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "AnimationFrameRate.h"
-#include "AnimationTimeline.h"
-#include "DocumentTimelineOptions.h"
-#include "Timer.h"
+#include <WebCore/AnimationFrameRate.h>
+#include <WebCore/AnimationTimeline.h>
+#include <WebCore/DocumentTimelineOptions.h>
+#include <WebCore/Timer.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
 
@@ -57,7 +57,7 @@ public:
 
     Document* document() const { return m_document.get(); }
 
-    std::optional<WebAnimationTime> currentTime() override;
+    std::optional<WebAnimationTime> currentTime(UseCachedCurrentTime = UseCachedCurrentTime::Yes) override;
     ExceptionOr<Ref<WebAnimation>> animate(Ref<CustomEffectCallback>&&, std::optional<Variant<double, CustomAnimationOptions>>&&);
 
     void animationTimingDidChange(WebAnimation&) override;
@@ -103,7 +103,7 @@ private:
     bool shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState() const;
 
     Timer m_tickScheduleTimer;
-    UncheckedKeyHashSet<RefPtr<WebAnimation>> m_acceleratedAnimationsPendingRunningStateChange;
+    HashSet<RefPtr<WebAnimation>> m_acceleratedAnimationsPendingRunningStateChange;
     AnimationEvents m_pendingAnimationEvents;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     Seconds m_originTime;

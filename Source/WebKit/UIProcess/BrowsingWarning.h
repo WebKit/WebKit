@@ -70,8 +70,8 @@ public:
 #endif
     const Data& data() const { return m_data; }
 
-    static NSURL *visitUnsafeWebsiteSentinel();
-    static NSURL *confirmMalwareSentinel();
+    static RetainPtr<NSURL> visitUnsafeWebsiteSentinel();
+    static RetainPtr<NSURL> confirmMalwareSentinel();
 
 private:
 #if HAVE(SAFE_BROWSING)

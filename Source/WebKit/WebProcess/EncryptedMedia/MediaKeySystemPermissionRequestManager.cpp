@@ -34,10 +34,10 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/DocumentInlines.h>
+#include <WebCore/DocumentPage.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/LocalFrame.h>
-#include <WebCore/Page.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -67,7 +67,7 @@ void MediaKeySystemPermissionRequestManager::startMediaKeySystemRequest(MediaKey
         return;
     }
 
-    auto& pendingRequests = m_pendingMediaKeySystemRequests.add(document, Vector<Ref<MediaKeySystemRequest>>()).iterator->value;
+    auto& pendingRequests = m_pendingMediaKeySystemRequests.add(document.get(), Vector<Ref<MediaKeySystemRequest>>()).iterator->value;
     if (pendingRequests.isEmpty())
         document->addMediaCanStartListener(*this);
     pendingRequests.append(request);
@@ -104,7 +104,7 @@ void MediaKeySystemPermissionRequestManager::cancelMediaKeySystemRequest(MediaKe
     if (!document)
         return;
 
-    auto iterator = m_pendingMediaKeySystemRequests.find(document);
+    auto iterator = m_pendingMediaKeySystemRequests.find(document.get());
     if (iterator == m_pendingMediaKeySystemRequests.end())
         return;
 

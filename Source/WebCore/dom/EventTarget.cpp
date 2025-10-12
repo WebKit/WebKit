@@ -32,7 +32,7 @@
 #include "config.h"
 #include "EventTarget.h"
 
-#include "AddEventListenerOptions.h"
+#include "AddEventListenerOptionsInlines.h"
 #include "DOMWrapperWorld.h"
 #include "EventNames.h"
 #include "EventPath.h"
@@ -76,6 +76,11 @@ EventTarget::~EventTarget()
     // Explicitly tearing down since WeakPtrImpl can be alive longer than EventTarget.
     if (auto* eventTargetData = this->eventTargetData())
         eventTargetData->clear();
+}
+
+RefPtr<ScriptExecutionContext> EventTarget::protectedScriptExecutionContext() const
+{
+    return scriptExecutionContext();
 }
 
 bool EventTarget::isPaymentRequest() const
@@ -362,6 +367,11 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
                 continue; // webkitrequestautofill only fires in a world with autofill capability.
         }
 
+        if (event.isShadowRootAttachedEvent()) [[unlikely]] {
+            if (!worldForDOMObject(*callback->jsFunction()).canAccessAnyShadowRoot())
+                continue; // webkitshadowrootattached only fires in a world with access to all shadow roots.
+        }
+
         // Do this before invocation to avoid reentrancy issues.
         if (registeredListener->isOnce())
             removeEventListener(event.type(), callback, registeredListener->useCapture());
@@ -401,7 +411,7 @@ const EventListenerVector& EventTarget::eventListeners(const AtomString& eventTy
 
 void EventTarget::removeAllEventListeners()
 {
-    Ref threadData = threadGlobalData();
+    Ref threadData = threadGlobalDataSingleton();
     RELEASE_ASSERT(!threadData->isInRemoveAllEventListeners());
 
     threadData->setIsInRemoveAllEventListeners(true);

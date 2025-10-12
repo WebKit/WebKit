@@ -25,8 +25,9 @@
 
 #pragma once
 
-#include "AlternativeTextClient.h"
-#include "PlatformTextAlternatives.h"
+#include <WebCore/AlternativeTextClient.h>
+#include <WebCore/PlatformTextAlternatives.h>
+#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {

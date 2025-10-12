@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@
 #include "pas_root.h"
 #include "pas_segregated_page_config_inlines.h"
 #include "pas_stream.h"
+#include "pas_zero_memory.h"
 
 #if defined(PAS_BMALLOC)
 #include "BPlatform.h"
@@ -276,42 +277,47 @@ pas_aligned_allocation_result jit_aligned_allocator(
 void* jit_prepare_to_enumerate(pas_enumerator* enumerator)
 {
     pas_basic_heap_config_enumerator_data* result;
-    const pas_heap_config** configs;
-    const pas_heap_config* config;
-    jit_heap_config_root_data* root_data;
 
-    configs = (const pas_heap_config**)pas_enumerator_read(
-        enumerator, enumerator->root->heap_configs,
-        sizeof(const pas_heap_config*) * pas_heap_config_kind_num_kinds);
-    if (!configs)
-        return NULL;
-    
-    config = (const pas_heap_config*)pas_enumerator_read(
-        enumerator, (void*)(uintptr_t)configs[pas_heap_config_kind_jit], sizeof(pas_heap_config));
-    if (!config)
+    pas_heap_config* config_ptr;
+    jit_heap_config_root_data* root_data_ptr;
+    jit_heap_config_root_data root_data;
+    pas_page_header_table small_page_header_table;
+    pas_page_header_table medium_page_header_table;
+
+    if (!pas_enumerator_copy_remote(
+            enumerator, &config_ptr, enumerator->root->heap_configs + pas_heap_config_kind_jit, sizeof(pas_heap_config*)))
         return NULL;
 
-    root_data = (jit_heap_config_root_data*)pas_enumerator_read(
-        enumerator, config->root_data, sizeof(jit_heap_config_root_data));
-    if (!root_data)
+    if (!pas_enumerator_copy_remote(
+            enumerator, &root_data_ptr, &config_ptr->root_data, sizeof(jit_heap_config_root_data*)))
         return NULL;
 
-    result = (pas_basic_heap_config_enumerator_data*)pas_enumerator_allocate(enumerator, sizeof(pas_basic_heap_config_enumerator_data));
+    if (!pas_enumerator_copy_remote(
+            enumerator, &root_data, root_data_ptr, sizeof(jit_heap_config_root_data)))
+        return NULL;
+
+    result = pas_enumerator_allocate(enumerator, sizeof(pas_basic_heap_config_enumerator_data));
     
     pas_ptr_hash_map_construct(&result->page_header_table);
 
+    if (!pas_enumerator_copy_remote(
+            enumerator, &small_page_header_table, root_data.small_page_header_table, sizeof(pas_page_header_table)))
+        return NULL;
+
     if (!pas_basic_heap_config_enumerator_data_add_page_header_table(
             result,
             enumerator,
-            (pas_page_header_table*)pas_enumerator_read(
-                enumerator, root_data->small_page_header_table, sizeof(pas_page_header_table))))
+            &small_page_header_table))
         return NULL;
     
+    if (!pas_enumerator_copy_remote(
+            enumerator, &medium_page_header_table, root_data.medium_page_header_table, sizeof(pas_page_header_table)))
+        return NULL;
+
     if (!pas_basic_heap_config_enumerator_data_add_page_header_table(
             result,
             enumerator,
-            (pas_page_header_table*)pas_enumerator_read(
-                enumerator, root_data->medium_page_header_table, sizeof(pas_page_header_table))))
+            &medium_page_header_table))
         return NULL;
     
     return result;

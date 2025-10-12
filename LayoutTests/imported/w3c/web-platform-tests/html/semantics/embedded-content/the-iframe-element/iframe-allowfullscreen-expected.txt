@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: Permission policy 'Fullscreen' check failed for document with origin ''.
-CONSOLE MESSAGE: Permission policy 'Fullscreen' check failed for document with origin ''.
-CONSOLE MESSAGE: Permission policy 'Fullscreen' check failed for document with origin ''.
 
 PASS iframe-same-origin-allowfullscreen
 PASS iframe-cross-origin-allowfullscreen

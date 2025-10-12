@@ -31,6 +31,7 @@
 #import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
 #import "TestProtocol.h"
+#import "TestScriptMessageHandler.h"
 #import "TestUIDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
@@ -56,6 +57,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
@@ -229,7 +231,7 @@ TEST(WebpagePreferences, WebsitePoliciesContentBlockersEnabled)
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         auto websitePolicies = adoptNS([[WKWebpagePreferences alloc] init]);
         if (_allowedAutoplayQuirksForURL)
             [websitePolicies _setAllowedAutoplayQuirks:_allowedAutoplayQuirksForURL(navigationAction.request.URL)];
@@ -1002,7 +1004,7 @@ static void respond(id <WKURLSchemeTask>task, NSString *html = nil)
     [preferences _setCustomHeaderFields:@[headerFields.get()]];
     
     if ([navigationAction.request.URL.path isEqualToString:@"/mainresource"]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             decisionHandler(WKNavigationActionPolicyAllow, preferences);
         });
     } else
@@ -1687,8 +1689,8 @@ TEST(WebpagePreferences, WebsitePoliciesDataStore)
 
 TEST(WebpagePreferences, WebsitePoliciesUserContentController)
 {
-    auto makeScript = [] (NSString *script) {
-        return adoptNS([[WKUserScript alloc] initWithSource:script injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
+    auto makeScript = [] (NSString *script, BOOL forMainFrameOnly = YES) {
+        return adoptNS([[WKUserScript alloc] initWithSource:script injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:forMainFrameOnly]);
     };
     auto configuration = adoptNS([WKWebViewConfiguration new]);
     [[configuration userContentController] addUserScript:makeScript(@"alert('testAlert1')").get()];
@@ -1696,19 +1698,17 @@ TEST(WebpagePreferences, WebsitePoliciesUserContentController)
     auto uiDelegate = adoptNS([TestUIDelegate new]);
     [webView setUIDelegate:uiDelegate.get()];
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
-    __block bool iframeExceptionThrown = false;
     __block RetainPtr<WKUserContentController> replacementUserContentController;
+    __block RetainPtr iframeController = adoptNS([WKUserContentController new]);
+    RetainPtr messageHandler = adoptNS([TestScriptMessageHandler new]);
+    [iframeController addScriptMessageHandler:messageHandler.get() name:@"testMessageHandler"];
     navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         if ([action.request.URL.path hasSuffix:@"/simple-iframe.html"])
             return completionHandler(WKNavigationActionPolicyAllow, nil);
         if ([action.request.URL.path hasSuffix:@"/simple.html"]) {
-            @try {
-                auto preferences = adoptNS([WKWebpagePreferences new]);
-                [preferences _setUserContentController:adoptNS([WKUserContentController new]).get()];
-                return completionHandler(WKNavigationActionPolicyAllow, preferences.get());
-            } @catch (NSException *exception) {
-                iframeExceptionThrown = true;
-            }
+            auto preferences = adoptNS([WKWebpagePreferences new]);
+            [preferences _setUserContentController:iframeController.get()];
+            completionHandler(WKNavigationActionPolicyAllow, preferences.get());
             return;
         }
         
@@ -1723,7 +1723,13 @@ TEST(WebpagePreferences, WebsitePoliciesUserContentController)
 
     [webView loadTestPageNamed:@"simple-iframe"];
     EXPECT_WK_STREQ([uiDelegate waitForAlert], "testAlert1");
-    TestWebKitAPI::Util::run(&iframeExceptionThrown);
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [iframeController _addUserScriptImmediately:makeScript(@"alert('has parent: ' + !!window.parent);", NO).get()];
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "has parent: true");
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"!!window.webkit + ''"], "false");
+    [webView evaluateJavaScript:@"window.webkit.messageHandlers.testMessageHandler.postMessage('hi')" inFrame:[webView firstChildFrame] inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
+    EXPECT_WK_STREQ([messageHandler waitForMessage].body, "hi");
 
     [webView loadTestPageNamed:@"simple2"];
     EXPECT_WK_STREQ([uiDelegate waitForAlert], "testAlert2");
@@ -2157,4 +2163,45 @@ TEST(WebpagePreferences, PushAndNotificationsDisabled)
 
     id result = [webView objectByEvaluatingJavaScript:@"'PushManager' in window && 'Notification' in window"];
     EXPECT_FALSE([result boolValue]);
+}
+
+TEST(WebpagePreferences, LoadHTMLString)
+{
+    auto webView = adoptNS([TestWKWebView new]);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    __block RetainPtr replacement = adoptNS([WKUserContentController new]);
+    RetainPtr messageHandler = adoptNS([TestScriptMessageHandler new]);
+    [replacement addScriptMessageHandler:messageHandler.get() name:@"testMessageHandler"];
+    navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences._userContentController = replacement.get();
+        completionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    NSString *html = @"<script>alert(!!window.webkit + '')</script>";
+    [webView loadHTMLString:html baseURL:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "true");
+    [webView setNavigationDelegate:nil];
+    [webView loadHTMLString:html baseURL:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "false");
+
+    [webView _loadAlternateHTMLString:html baseURL:nil forUnreachableURL:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "false");
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView _loadAlternateHTMLString:html baseURL:nil forUnreachableURL:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "true");
+
+    navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        EXPECT_FALSE(true);
+    };
+    NSURL *url = [NSURL URLWithString:@"https://webkit.org/"];
+    [webView _loadAlternateHTMLString:html baseURL:url forUnreachableURL:url withWebpagePreferences:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "false");
+    RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
+    preferences.get()._userContentController = replacement.get();
+    [webView _loadAlternateHTMLString:html baseURL:url forUnreachableURL:url withWebpagePreferences:preferences.get()];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "true");
+    [webView setNavigationDelegate:nil];
+    [webView loadHTMLString:html baseURL:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "false");
 }

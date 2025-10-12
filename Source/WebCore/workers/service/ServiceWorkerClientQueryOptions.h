@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ServiceWorkerClientType.h"
+#include <WebCore/ServiceWorkerClientType.h>
 #include <optional>
 
 namespace WebCore {

@@ -49,6 +49,8 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     DestroySession(PAL::SessionID sessionID) -> ()
     EnsureSessionWithDataStoreIdentifierRemoved(WTF::UUID identifier) -> ()
 
+    FetchWebsitesWithUserInteractions(PAL::SessionID sessionID) -> (HashSet<WebCore::RegistrableDomain> websites)
+
     FetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, OptionSet<WebKit::WebsiteDataFetchOption> fetchOptions) -> (struct WebKit::WebsiteData websiteData)
     DeleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, WallTime modifiedSince, HashSet<WebCore::ProcessIdentifier> activeWebProcesses) -> ()
     DeleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins, Vector<String> cookieHostNames, Vector<String> HSTSCacheHostNames, Vector<WebCore::RegistrableDomain> registrableDomains) -> ()
@@ -146,6 +148,8 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     SetCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain fromDomain, WebCore::RegistrableDomain toDomain, enum:bool WebKit::DidFilterKnownLinkDecoration didFilterKnownLinkDecoration) -> ()
     ResetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID sessionID) -> ()
     GrantStorageAccessForTesting(PAL::SessionID sessionID, Vector<WebCore::RegistrableDomain> subFrameDomain, WebCore::RegistrableDomain topFrameDomain) -> ()
+    SetStorageAccessPermissionForTesting(PAL::SessionID sessionID, bool granted, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::RegistrableDomain topFrameDomain, WebCore::RegistrableDomain subFrameDomain) -> ()
+    ClearStorageAccessForTesting(PAL::SessionID sessionID) -> ()
     DeleteCookiesForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain domain, bool includeHttpOnlyCookies) -> ()
     HasIsolatedSession(PAL::SessionID sessionID, WebCore::RegistrableDomain domain) -> (bool hasIsolatedSession)
     CloseITPDatabase(PAL::SessionID sessionID) -> ()
@@ -166,7 +170,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     SetPrivateClickMeasurementDebugMode(PAL::SessionID sessionID, bool debugMode)
 
     SetShouldSendPrivateTokenIPCForTesting(PAL::SessionID sessionID, bool enabled)
-#if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     SetOptInCookiePartitioningEnabled(PAL::SessionID sessionID, bool enabled)
 #endif
 
@@ -175,7 +179,9 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     RegisterURLSchemeAsSecure(String scheme)
     RegisterURLSchemeAsBypassingContentSecurityPolicy(String scheme)
     RegisterURLSchemeAsLocal(String scheme)
+#if ENABLE(ALL_LEGACY_REGISTERED_SPECIAL_URL_SCHEMES)
     RegisterURLSchemeAsNoAccess(String scheme)
+#endif
 
     SyncLocalStorage() -> ()
     StoreServiceWorkerRegistrations(PAL::SessionID sessionID) -> ()
@@ -228,7 +234,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
     AddWebPageNetworkParameters(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier pageID, WebKit::WebPageNetworkParameters parameters)
     RemoveWebPageNetworkParameters(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier pageID)
-    CountNonDefaultSessionSets(PAL::SessionID sessionID) -> (size_t count)
+    CountNonDefaultSessionSets(PAL::SessionID sessionID) -> (uint64_t count)
 
     AllowFileAccessFromWebProcess(WebCore::ProcessIdentifier processIdentifier, String url) -> ()
     AllowFilesAccessFromWebProcess(WebCore::ProcessIdentifier processIdentifier, Vector<String> urls) -> () ReplyCanDispatchOutOfOrder
@@ -275,5 +281,11 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
 #if ENABLE(CONTENT_EXTENSIONS)
     ResetResourceMonitorThrottlerForTesting(PAL::SessionID sessionID) -> ();
+#endif
+
+    SetDefaultRequestTimeoutInterval(double timeoutInterval)
+
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    AllowEvaluatedURL(struct WebCore::ParentalControlsURLFilterParameters parameters) -> (bool allowed)
 #endif
 }

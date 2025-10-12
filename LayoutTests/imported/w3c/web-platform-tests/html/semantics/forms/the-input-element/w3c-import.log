@@ -86,9 +86,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-value-invalidstateerr.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate-invalidstateerr.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate-stepping.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate-typeerror.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasnumber-invalidstateerr.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasnumber-stepping.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasnumber-typeerror.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasnumber.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-whitespace.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-width.html
@@ -118,6 +120,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/placeholder-update.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-disconnected-group-owner.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-double-activate-pseudo.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-focus-navigation-checked.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-focus-navigation-disabled.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-focus-navigation-group-first-focus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-focus-navigation-group-focusable-focus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-focused-and-scrolled-into-view.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-groupname-case.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-input-cancel.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-keyboard-navigation-order.html

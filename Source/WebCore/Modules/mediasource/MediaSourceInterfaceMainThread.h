@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +57,7 @@ private:
 
     explicit MediaSourceInterfaceMainThread(Ref<MediaSource>&&);
 
-    Ref<MediaSource> m_mediaSource;
+    const Ref<MediaSource> m_mediaSource;
 };
 
 } // namespace WebCore

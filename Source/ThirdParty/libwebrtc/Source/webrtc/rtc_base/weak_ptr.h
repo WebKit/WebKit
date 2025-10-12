@@ -11,16 +11,16 @@
 #ifndef RTC_BASE_WEAK_PTR_H_
 #define RTC_BASE_WEAK_PTR_H_
 
-#include <memory>
+#include <cstddef>
 #include <utility>
 
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/ref_count.h"
 #include "rtc_base/ref_counted_object.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/thread_annotations.h"
+#include "rtc_base/weak_ptr.h"
 
 // The implementation is borrowed from chromium except that it does not
 // implement SupportsWeakPtr.
@@ -86,7 +86,7 @@
 // the correct thread to enforce that other WeakPtr objects will enforce they
 // are used on the desired thread.
 
-namespace rtc {
+namespace webrtc {
 
 namespace internal {
 
@@ -102,11 +102,11 @@ class WeakReference {
     bool IsValid() const;
 
    private:
-    friend class webrtc::FinalRefCountedObject<Flag>;
+    friend class FinalRefCountedObject<Flag>;
 
     ~Flag() = default;
 
-    RTC_NO_UNIQUE_ADDRESS ::webrtc::SequenceChecker checker_{
+    RTC_NO_UNIQUE_ADDRESS SequenceChecker checker_{
         webrtc::SequenceChecker::kDetached};
     bool is_valid_ RTC_GUARDED_BY(checker_) = true;
   };
@@ -276,6 +276,7 @@ class WeakPtrFactory {
   T* ptr_;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_WEAK_PTR_H_

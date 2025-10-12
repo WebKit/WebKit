@@ -47,13 +47,13 @@ MainThreadPermissionObserver::MainThreadPermissionObserver(ThreadSafeWeakPtr<Per
     , m_origin(WTFMove(origin))
 {
     ASSERT(isMainThread());
-    PermissionController::shared().addObserver(*this);
+    PermissionController::singleton().addObserver(*this);
 }
 
 MainThreadPermissionObserver::~MainThreadPermissionObserver()
 {
     ASSERT(isMainThread());
-    PermissionController::shared().removeObserver(*this);
+    PermissionController::singleton().removeObserver(*this);
 }
 
 void MainThreadPermissionObserver::stateChanged(PermissionState newPermissionState)
@@ -64,6 +64,18 @@ void MainThreadPermissionObserver::stateChanged(PermissionState newPermissionSta
         if (RefPtr permissionStatus = weakPermissionStatus.get())
             permissionStatus->stateChanged(newPermissionState);
     });
+}
+
+void MainThreadPermissionObserver::addChangeListener(const RegistrableDomain& topFrameDomain, const RegistrableDomain& subFrameDomain)
+{
+    ASSERT(isMainThread());
+    PermissionController::singleton().addChangeListener(m_descriptor.name, topFrameDomain, subFrameDomain);
+}
+
+void MainThreadPermissionObserver::removeChangeListener(const RegistrableDomain& topFrameDomain, const RegistrableDomain& subFrameDomain)
+{
+    ASSERT(isMainThread());
+    PermissionController::singleton().removeChangeListener(m_descriptor.name, topFrameDomain, subFrameDomain);
 }
 
 }

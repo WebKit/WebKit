@@ -1,51 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
 <body>
 
-<div id="content" contenteditable tabindex="0">helloworld</div>
-
-<div id="console"></div>
+<div id="contenteditable" contenteditable tabindex="0">helloworld</div>
 
 <script>
-    if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
+var output = "This test exercises a combination of selectedTextRange, stringForRange, and newline manipulation.\n\n";
 
-        var content = document.getElementById("content");
-        content.focus();
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-        var text = accessibilityController.focusedElement;
-        text.setSelectedTextRange(5, 0);
-        shouldBecomeEqual("text.selectedTextRange", "'{5, 0}'", function() {
-            // Insert a linebreak between "hello" and "world".
-            text.replaceTextInRange("\n", 5, 0);
+    var newlineRegex = new RegExp('(?:\\r\\n|\\r|\\n)', 'g');
+    var contenteditable;
+    setTimeout(async function() {
+        contenteditable = await waitForFocus("contenteditable");
+        contenteditable.setSelectedTextRange(5, 0);
+        output += await expectAsync("contenteditable.selectedTextRange", "'{5, 0}'");
 
-            var t = text.stringForRange(0, 11);
-            t = t.replace(/(?:\r\n|\r|\n)/g, '[newline]');
-            debug("There must be only one [newline] between hello and world: " + t);
+        // Insert a linebreak between "hello" and "world".
+        contenteditable.replaceTextInRange("\n", 5, 0);
+        output += await expectAsync("contenteditable.stringForRange(0, 11).replace(newlineRegex, '[newline]')", "'hello[newline]world'");
 
-            text.setSelectedTextRange(6, 0);
-            shouldBecomeEqual("text.selectedTextRange", "'{6, 0}'", function() {
-                // Insert another linebreak before "world".
-                text.replaceTextInRange("\n", 6, 0);
+        contenteditable.setSelectedTextRange(6, 0);
+        output += await expectAsync("contenteditable.selectedTextRange", "'{6, 0}'");
+        // Insert another linebreak before "world".
+        contenteditable.replaceTextInRange("\n", 6, 0);
 
-                var t = text.stringForRange(0, 12);
-                t = t.replace(/(?:\r\n|\r|\n)/g, '[newline]');
-                debug("There must be two [newline] between hello and world: " + t);
+        output += await expectAsync("contenteditable.stringForRange(0, 12).replace(newlineRegex, '[newline]')", "'hello[newline][newline]world'");
+        contenteditable.setSelectedTextRange(7, 0);
+        output += await expectAsync("contenteditable.selectedTextRange", "'{7, 0}'");
+        output += await expectAsync("contenteditable.stringForRange(7, 5)", "'world'");
 
-                text.setSelectedTextRange(7, 0);
-                shouldBecomeEqual("text.selectedTextRange", "'{7, 0}'", function() {
-                    var t = text.stringForRange(7, 5);
-                    t = t.replace(/(?:\r\n|\r|\n)/g, '[newline]');
-                    debug("The text after the newline should be world: " + t);
-
-                    finishJSTest();
-                });
-            });
-        });
-    }
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
+

@@ -100,7 +100,7 @@ void IconLoadingDelegate::IconLoadingClient::getLoadDecisionForIcon(const WebCor
         ASSERT(RunLoop::isMain());
         if (loadCompletionHandler) {
             completionHandler([loadCompletionHandler = makeBlockPtr(loadCompletionHandler)](API::Data* data) {
-                loadCompletionHandler(wrapper(data));
+                loadCompletionHandler(RetainPtr { wrapper(data) }.get());
             });
         } else
             completionHandler(nullptr);

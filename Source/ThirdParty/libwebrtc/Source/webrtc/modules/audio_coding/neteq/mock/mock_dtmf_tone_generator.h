@@ -11,6 +11,9 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_DTMF_TONE_GENERATOR_H_
 #define MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_DTMF_TONE_GENERATOR_H_
 
+#include <cstddef>
+
+#include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "modules/audio_coding/neteq/dtmf_tone_generator.h"
 #include "test/gmock.h"
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2011, 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  * Copyright 2010, The Android Open Source Project
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,11 +28,10 @@
 
 #if ENABLE(GEOLOCATION)
 
-#include "PositionOptions.h"
-#include "Timer.h"
+#include <WebCore/PositionOptions.h>
+#include <WebCore/Timer.h>
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 
@@ -42,7 +41,7 @@ class GeolocationPositionError;
 class PositionCallback;
 class PositionErrorCallback;
 
-class GeoNotifier : public RefCounted<GeoNotifier> {
+class GeoNotifier : public RefCountedAndCanMakeWeakPtr<GeoNotifier> {
 public:
     static Ref<GeoNotifier> create(Geolocation& geolocation, Ref<PositionCallback>&& positionCallback, RefPtr<PositionErrorCallback>&& positionErrorCallback, PositionOptions&& options)
     {
@@ -63,14 +62,12 @@ public:
     void timerFired();
     bool hasZeroTimeout() const;
 
-    Ref<PositionCallback> protectedSuccessCallback() { return m_successCallback; }
-
 private:
     GeoNotifier(Geolocation&, Ref<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, PositionOptions&&);
 
-    Ref<Geolocation> m_geolocation;
-    Ref<PositionCallback> m_successCallback;
-    RefPtr<PositionErrorCallback> m_errorCallback;
+    const Ref<Geolocation> m_geolocation;
+    const Ref<PositionCallback> m_successCallback;
+    const RefPtr<PositionErrorCallback> m_errorCallback;
     PositionOptions m_options;
     Timer m_timer;
     RefPtr<GeolocationPositionError> m_fatalError;

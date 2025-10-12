@@ -49,7 +49,7 @@ webkit_platform_headers: "CoreIPCContacts.h"
 
 [CustomHeader, WebKitPlatform, LegacyPopulateFromEmptyConstructor] class WebKit::CoreIPCCNContact {
     String m_identifier;
-    [Validator='WebKit::CoreIPCCNContact::isValidCNContactType(*m_contactType)'] NSInteger m_contactType;
+    bool m_personContactType;
 
     String m_namePrefix;
     String m_givenName;

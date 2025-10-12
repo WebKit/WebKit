@@ -154,15 +154,6 @@
     return _impl->hasFlagsChangedEventMonitor();
 }
 
-- (NSView *)_contentInsetFillViewForTesting
-{
-#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
-    return _impl->topContentInsetFillView();
-#else
-    return nil;
-#endif
-}
-
 @end
 
 #endif // PLATFORM(MAC)

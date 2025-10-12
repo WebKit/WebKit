@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: Cannot load image http://not-web-platform.test:8800/html/semantics/embedded-content/the-img-element/resources/image.png due to access control checks.
 
 
 PASS Test that when deferred image is loaded, it uses the latest crossorigin attribute.

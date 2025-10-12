@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "InstructionStream.h"
+#include <JavaScriptCore/InstructionStream.h>
 #include <wtf/HashSet.h>
 
 namespace JSC {

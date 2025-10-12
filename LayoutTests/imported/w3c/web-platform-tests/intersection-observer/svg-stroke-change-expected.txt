@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error: Invalid value for <rect> attribute y="100vh"
 
 PASS IntersectionObserver observing an SVG element while its stroke is changed
 FAIL First rAF. assert_approx_equals: entries[0].boundingClientRect.right expected 108 +/- 0 but got 8

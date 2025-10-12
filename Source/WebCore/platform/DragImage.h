@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,23 +25,25 @@
 
 #pragma once
 
-#include "FloatSize.h"
-#include "ImageOrientation.h"
-#include "IntSize.h"
-#include "Path.h"
-#include "TextFlags.h"
-#include "TextIndicator.h"
+#include <WebCore/FloatSize.h>
+#include <WebCore/ImageOrientation.h>
+#include <WebCore/IntSize.h>
+#include <WebCore/Path.h>
+#include <WebCore/TextFlags.h>
+#include <WebCore/TextIndicator.h>
 #include <wtf/Forward.h>
 
+#include <wtf/Platform.h>
 #if PLATFORM(IOS_FAMILY)
 #include <wtf/RetainPtr.h>
 typedef struct CGImage *CGImageRef;
 #elif PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS NSImage;
-#elif PLATFORM(WIN)
-typedef struct HBITMAP__* HBITMAP;
 #elif USE(CAIRO)
+#if PLATFORM(WIN)
+typedef struct HBITMAP__* HBITMAP;
+#endif
 #include "RefPtrCairo.h"
 #elif USE(SKIA)
 #include <skia/core/SkImage.h>
@@ -60,7 +62,7 @@ class Node;
 typedef RetainPtr<CGImageRef> DragImageRef;
 #elif PLATFORM(MAC)
 typedef RetainPtr<NSImage> DragImageRef;
-#elif PLATFORM(WIN)
+#elif USE(CAIRO) && PLATFORM(WIN)
 typedef HBITMAP DragImageRef;
 #elif USE(CAIRO)
 typedef RefPtr<cairo_surface_t> DragImageRef;
@@ -89,13 +91,18 @@ DragImageRef dissolveDragImageToFraction(DragImageRef, float delta);
 DragImageRef createDragImageFromImage(Image*, ImageOrientation, GraphicsClient* = nullptr, float deviceScaleFactor = 1);
 DragImageRef createDragImageIconForCachedImageFilename(const String&);
 
+struct DragImageData {
+    DragImageRef dragImageRef;
+    RefPtr<TextIndicator> textIndicator;
+};
 // FIXME: These platform helpers should be refactored to avoid using `LocalFrame` and `Node`.
 WEBCORE_EXPORT DragImageRef createDragImageForNode(LocalFrame&, Node&);
-WEBCORE_EXPORT DragImageRef createDragImageForSelection(LocalFrame&, TextIndicatorData&, bool forceBlackText = false);
+WEBCORE_EXPORT DragImageData createDragImageForSelection(LocalFrame&, bool forceBlackText = false);
 WEBCORE_EXPORT DragImageRef createDragImageForRange(LocalFrame&, const SimpleRange&, bool forceBlackText = false);
 DragImageRef createDragImageForColor(const Color&, const FloatRect&, float, Path&);
 DragImageRef createDragImageForImage(LocalFrame&, Node&, IntRect& imageRect, IntRect& elementRect);
-DragImageRef createDragImageForLink(Element&, URL&, const String& label, TextIndicatorData&, float deviceScaleFactor);
+
+DragImageData createDragImageForLink(Element&, URL&, const String& label, float deviceScaleFactor);
 void deleteDragImage(DragImageRef);
 
 IntPoint dragOffsetForLinkDragImage(DragImageRef);

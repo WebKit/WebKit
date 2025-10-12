@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #include "StyleContrastColor.h"
 
 #include "CSSContrastColorResolver.h"
-#include "CSSContrastColorSerialization.h"
 #include "CSSSerializationContext.h"
 #include "ColorSerialization.h"
 #include "StyleBuilderState.h"
@@ -79,15 +78,17 @@ bool containsCurrentColor(const ContrastColor& contrastColor)
 
 // MARK: - Serialization
 
-void serializationForCSS(StringBuilder& builder, const CSS::SerializationContext& context, const ContrastColor& contrastColor)
+void serializationForCSSTokenization(StringBuilder& builder, const CSS::SerializationContext& context, const ContrastColor& contrastColor)
 {
-    CSS::serializationForCSSContrastColor(builder, context, contrastColor);
+    builder.append("contrast-color("_s);
+    serializationForCSSTokenization(builder, context, contrastColor.color);
+    builder.append(')');
 }
 
-String serializationForCSS(const CSS::SerializationContext& context, const ContrastColor& contrastColor)
+String serializationForCSSTokenization(const CSS::SerializationContext& context, const ContrastColor& contrastColor)
 {
     StringBuilder builder;
-    serializationForCSS(builder, context, contrastColor);
+    serializationForCSSTokenization(builder, context, contrastColor);
     return builder.toString();
 }
 
@@ -95,7 +96,7 @@ String serializationForCSS(const CSS::SerializationContext& context, const Contr
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const ContrastColor& contrastColor)
 {
-    return ts << serializationForCSS(CSS::defaultSerializationContext(), contrastColor);
+    return ts << "contrast-color("_s << contrastColor.color << ")"_s;
 }
 
 } // namespace Style

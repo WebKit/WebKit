@@ -6,6 +6,10 @@
 
 // SwapChain11.cpp: Implements a back-end specific class for the D3D11 swap chain.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d11/SwapChain11.h"
 
 #include <EGL/eglext.h>

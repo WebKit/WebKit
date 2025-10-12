@@ -5,11 +5,11 @@ export const B = 256;
 
 shouldThrow(() => {
     print(namespace.A);
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'A' before initialization.`);
 
 shouldThrow(() => {
     Reflect.getOwnPropertyDescriptor(namespace, 'A');
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'A' before initialization.`);
 
 // Not throw any errors even if the field is not initialized yet.
 shouldBe('A' in namespace, true);

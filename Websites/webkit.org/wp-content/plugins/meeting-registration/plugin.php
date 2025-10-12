@@ -19,12 +19,20 @@ class WebKit_Meeting_Registration {
     const MEETING_REGISTRATION_STATE_SETTING = 'meeting-registration-state';
     const CONTRIBUTORS_JSON = '/var/www/data/contributors.json';
     const EXTRA_FIELDS = [
-        'slack'       => FILTER_SANITIZE_STRING,
-        'affiliation' => FILTER_SANITIZE_STRING,
-        'interests'   => FILTER_SANITIZE_STRING,
-        'claim'       => FILTER_SANITIZE_STRING,
-        'attendance'  => FILTER_SANITIZE_STRING,
-        'optingame'   => FILTER_SANITIZE_STRING
+        'slack'         => FILTER_SANITIZE_STRING,
+        'affiliation'   => FILTER_SANITIZE_STRING,
+        'interests'     => FILTER_SANITIZE_STRING,
+        'claim'         => FILTER_SANITIZE_STRING,
+        'attendance'    => FILTER_SANITIZE_STRING,
+        'optingame'     => FILTER_SANITIZE_STRING,
+        'boftopic'      => FILTER_SANITIZE_STRING,
+        'accessibility' => FILTER_SANITIZE_STRING,
+        'dietneeds'     => FILTER_SANITIZE_STRING
+    ];
+    const VALIDATION_ERRORS = [
+        'invalid-user'   => 'No valid GitHub user. Log out of github.com and try to register again with a different GitHub account.',
+        'invalid-status' => 'The WebKit Contributors Meeting requires that you are a contributor to the project to attend.',
+        'invalid-email'  => 'No valid email address is associated with your GitHub account. You can: add an email address to your GitHub account and make sure it is public during registration, or add your GitHub username and an email address to <code><a href="https://github.com/WebKit/WebKit/blob/main/metadata/contributors.json" target="_blank">contributors.json</a></code> and try registering again.'
     ];
 
     static $refresh = false;
@@ -165,23 +173,8 @@ class WebKit_Meeting_Registration {
             wp_die('Invalid WebKit Meeting Registration submission.');
 
         $User = self::get_github_user();
-        if (!$User)
+        if (!$User || empty($User->login))
             return 'invalid-user';
-
-        if ($posted_data['claim'] !== 'on')
-            return 'invalid-claim';
-
-        $post_id = wp_insert_post([
-            'post_status' => 'publish',
-            'post_type' => 'meeting_registration',
-            'post_title' => self::$current_meeting . '-' . $User->id,
-            'post_content' => wp_hash($User->email, 'logged_in'),
-            'post_author' => $User->id
-        ]);
-        $post = get_post($post_id);
-
-        // Associate registration with the current meeting
-        wp_set_object_terms($post_id, self::$current_meeting, self::MEETING_TAXONOMY, false );
 
         if (!empty($User->email))
             $posted_data['github_email'] = $User->email;
@@ -191,6 +184,26 @@ class WebKit_Meeting_Registration {
 
         if (!empty($User->login))
             $posted_data['github_login'] = $User->login;
+
+        $contributor = self::get_github_contributor($User->login);
+
+        if ($contributor->status === 'bot')
+            return 'invalid-status';
+
+        if (empty($contributor->emails) && empty($User->email))
+            return 'invalid-email';
+            
+        $post_id = wp_insert_post([
+            'post_status' => 'publish',
+            'post_type' => 'meeting_registration',
+            'post_title' => self::$current_meeting . '-' . $User->id,
+            'post_content' => wp_hash($User->login, 'logged_in'),
+            'post_author' => $User->id
+        ]);
+        $post = get_post($post_id);
+
+        // Associate registration with the current meeting
+        wp_set_object_terms($post_id, self::$current_meeting, self::MEETING_TAXONOMY, false );
 
         foreach ($posted_data as $name => $value) {
             add_post_meta($post_id, $name, $value);
@@ -222,6 +235,12 @@ class WebKit_Meeting_Registration {
 
         return false;
     }
+    
+    public static function registration_error($error_string) {
+        if (isset(self::VALIDATION_ERRORS[$error_string]))
+            return self::VALIDATION_ERRORS[$error_string];
+        return false;
+    }
 
     public static function registration_data_from_post($post) {
         if (empty($post->ID) || empty($post->post_content))
@@ -243,7 +262,6 @@ class WebKit_Meeting_Registration {
             return false;
 
         $custom = get_post_custom($registration->id);
-
         if (isset($index[$registration->hash]))
             $contributor = $index[$registration->hash];
 
@@ -265,6 +283,11 @@ class WebKit_Meeting_Registration {
             $property = "contributor_$key";
             if (isset($custom[$key][0]))
                 $registration->$property = $custom[$key][0];
+
+            if (is_array($entry)) {
+                $registration->$property = unserialize($registration->$property);
+                $registration->$property = implode(', ', (array)$registration->$property);
+            }
         }
 
         return $registration;
@@ -279,14 +302,24 @@ class WebKit_Meeting_Registration {
         $contributors_data = json_decode($contributors_file);
         $indexed_contributors = [];
         foreach ((array)$contributors_data as $id => $entry) {
-            foreach($entry->emails as $email) {
-                $hash = wp_hash(trim($email), 'logged_in');
-                $indexed_contributors[$hash] = $entry;
-            }
+            if (!isset($entry->github))
+                continue;
+            $index = wp_hash(trim($entry->github), 'logged_in');
+            $indexed_contributors[$index] = $entry;
         }
-
+        
         set_transient($cachekey, serialize($indexed_contributors), 300);
         return $indexed_contributors;
+    }
+    
+    public static function get_github_contributor($github_login) {
+        $index = WebKit_Meeting_Registration::get_indexed_contributors();
+        $userhash = wp_hash(trim($github_login), 'logged_in');
+
+        if (isset($index[ $userhash ]))
+            return $index[ $userhash ];
+
+        return false;
     }
 
     public static function get_github_user() {

@@ -1,5 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT event and promise ordering for same-document navigation.navigate() intercepted by intercept() with { commit: 'after-transition' } Test timed out
-

@@ -1,0 +1,142 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2025 Keita Nonaka <iKonnyaku40@gmail.com>.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ''AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+
+import argparse
+import urllib.request
+import sys
+from pathlib import Path
+
+
+def get_udc_file_list(version: str) -> list[dict[str, str]]:
+    UDC_FILE_LIST = [
+        {
+            "name": "CaseFolding.txt",
+            "url": f"https://unicode.org/Public/{version}/ucd/CaseFolding.txt",
+        },
+        {
+            "name": "DerivedBinaryProperties.txt",
+            "url": f"https://unicode.org/Public/{version}/ucd/extracted/DerivedBinaryProperties.txt",
+        },
+        {
+            "name": "DerivedCoreProperties.txt",
+            "url": f"https://unicode.org/Public/{version}/ucd/DerivedCoreProperties.txt",
+        },
+        {
+            "name": "DerivedNormalizationProps.txt",
+            "url": f"https://unicode.org/Public/{version}/ucd/DerivedNormalizationProps.txt",
+        },
+        {
+            "name": "emoji-data.txt",
+            "url": f"https://unicode.org/Public/{version}/ucd/emoji/emoji-data.txt",
+        },
+        {
+            "name": "emoji-sequences.txt",
+            "url": f"https://unicode.org/Public/{version}/emoji/emoji-sequences.txt",
+        },
+        {
+            "name": "emoji-zwj-sequences.txt",
+            "url": f"https://unicode.org/Public/{version}/emoji/emoji-zwj-sequences.txt",
+        },
+        {
+            "name": "PropertyAliases.txt",
+            "url": f"https://unicode.org/Public/{version}/ucd/PropertyAliases.txt",
+        },
+        {
+            "name": "PropertyValueAliases.txt",
+            "url": f"https://unicode.org/Public/{version}/ucd/PropertyValueAliases.txt",
+        },
+        {
+            "name": "PropList.txt",
+            "url": f"https://unicode.org/Public/{version}/ucd/PropList.txt",
+        },
+        {
+            "name": "ScriptExtensions.txt",
+            "url": f"https://unicode.org/Public/{version}/ucd/ScriptExtensions.txt",
+        },
+        {
+            "name": "Scripts.txt",
+            "url": f"https://unicode.org/Public/{version}/ucd/Scripts.txt",
+        },
+        {
+            "name": "UnicodeData.txt",
+            "url": f"https://unicode.org/Public/{version}/ucd/UnicodeData.txt",
+        },
+    ]
+    return UDC_FILE_LIST
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        prog="update-ucd",
+        description="Update UCD (Unicode Character Database) for a given version",
+        epilog="""
+How to Use:
+  update-ucd 17.0.0
+
+Available versions:
+  https://unicode.org/Public/
+""",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument(
+        "ucd_version",
+        help="e.g., `17.0.0`. See available versions in https://unicode.org/Public/",
+    )
+    args = parser.parse_args()
+    ucd_version = args.ucd_version
+    file_list = get_udc_file_list(ucd_version)
+
+    root_path = Path("Source/JavaScriptCore/ucd")
+    root_path.mkdir(parents=True, exist_ok=True)
+
+    for file in file_list:
+        # fetch url
+        try:
+            req = urllib.request.Request(file["url"])
+            with urllib.request.urlopen(req) as res:
+                print(f"fetching {file['url']}")
+                content = res.read().decode("utf-8")
+        except Exception as err:
+            print(f"error: failed to fetch {file['url']}")
+            print(err)
+            return 1
+
+        # write data to file
+        try:
+            file_path = root_path / file["name"]
+            with open(file_path, mode="w") as f:
+                print(f"writing {file_path}")
+                f.write(content)
+        except Exception as err:
+            print(f"error: failed to write file at {file_path}")
+            print(err)
+            return 1
+    print("Successfully done! 🎉🎉🎉")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -10,8 +10,13 @@
 
 #include "modules/rtp_rtcp/source/absolute_capture_time_sender.h"
 
+#include <cstdint>
+#include <optional>
+
+#include "api/rtp_headers.h"
+#include "api/units/time_delta.h"
+#include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/ntp_time.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {

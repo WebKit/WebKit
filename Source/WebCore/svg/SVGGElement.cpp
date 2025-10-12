@@ -25,9 +25,12 @@
 #include "LegacyRenderSVGHiddenContainer.h"
 #include "LegacyRenderSVGResource.h"
 #include "LegacyRenderSVGTransformableContainer.h"
+#include "NodeDocument.h"
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGTransformableContainer.h"
 #include "SVGNames.h"
+#include "SVGPropertyOwnerRegistry.h"
+#include "Settings.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 

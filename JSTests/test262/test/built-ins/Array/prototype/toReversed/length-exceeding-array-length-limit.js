@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-array.prototype.toReversed
+esid: sec-array.prototype.toreversed
 description: >
   Array.prototype.toReversed limits the length to 2 ** 32 - 1
 info: |

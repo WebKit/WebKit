@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "DOMRectReadOnly.h"
 #include "ExceptionOr.h"
+#include "ScriptWrappableInlines.h"
 #include "VideoColorSpace.h"
 
 namespace WebCore {
@@ -237,8 +238,8 @@ ExceptionOr<CombinedPlaneLayout> parseVideoFrameCopyToOptions(const WebCodecsVid
     ASSERT(!frame.isDetached());
     ASSERT(frame.format());
 
-    auto& visibleRect = *frame.visibleRect();
-    auto parsedRect = parseVisibleRect({ visibleRect.x(), visibleRect.y(), visibleRect.width(), visibleRect.height() }, options.rect, frame.codedWidth(), frame.codedHeight(), *frame.format());
+    Ref visibleRect = *frame.visibleRect();
+    auto parsedRect = parseVisibleRect({ visibleRect->x(), visibleRect->y(), visibleRect->width(), visibleRect->height() }, options.rect, frame.codedWidth(), frame.codedHeight(), *frame.format());
 
     if (parsedRect.hasException())
         return parsedRect.releaseException();

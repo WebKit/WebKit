@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,16 +27,7 @@
 #include "config.h"
 #include "CSSCustomPropertyValue.h"
 
-#include "CSSCalcValue.h"
-#include "CSSFunctionValue.h"
-#include "CSSMarkup.h"
-#include "CSSParserIdioms.h"
 #include "CSSSerializationContext.h"
-#include "CSSTokenizer.h"
-#include "CalculationValue.h"
-#include "RenderStyle.h"
-#include "StyleExtractorConverter.h"
-#include "StyleURL.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -46,79 +38,75 @@ Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createEmpty(const AtomString
     return createSyntaxAll(name, Ref { empty.get() });
 }
 
-Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createWithID(const AtomString& name, CSSValueID id)
+Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createUnresolved(const AtomString& name, Ref<CSSVariableReferenceValue>&& value)
 {
-    ASSERT(WebCore::isCSSWideKeyword(id) || id == CSSValueInvalid);
-    return adoptRef(*new CSSCustomPropertyValue(name, { id }));
+    return adoptRef(*new CSSCustomPropertyValue(name, VariantValue { WTF::InPlaceType<Ref<CSSVariableReferenceValue>>, WTFMove(value) }));
+}
+
+Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createSyntaxAll(const AtomString& name, Ref<CSSVariableData>&& value)
+{
+    return adoptRef(*new CSSCustomPropertyValue(name, VariantValue { WTF::InPlaceType<Ref<CSSVariableData>>, WTFMove(value) }));
+}
+
+Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createWithCSSWideKeyword(const AtomString& name, CSSWideKeyword keyword)
+{
+    return adoptRef(*new CSSCustomPropertyValue(name, VariantValue { keyword }));
+}
+
+bool CSSCustomPropertyValue::isVariableReference() const
+{
+    return std::holds_alternative<Ref<CSSVariableReferenceValue>>(m_value);
+}
+
+bool CSSCustomPropertyValue::isVariableData() const
+{
+    return std::holds_alternative<Ref<CSSVariableData>>(m_value);
+}
+
+bool CSSCustomPropertyValue::isCSSWideKeyword() const
+{
+    return std::holds_alternative<CSSWideKeyword>(m_value);
+}
+
+std::optional<CSSWideKeyword> CSSCustomPropertyValue::tryCSSWideKeyword() const
+{
+    if (auto* keyword = std::get_if<CSSWideKeyword>(&m_value))
+        return *keyword;
+    return { };
 }
 
 bool CSSCustomPropertyValue::equals(const CSSCustomPropertyValue& other) const
 {
     if (m_name != other.m_name || m_value.index() != other.m_value.index())
         return false;
-    return WTF::switchOn(m_value, [&](const Ref<CSSVariableReferenceValue>& value) {
-        auto& otherValue = std::get<Ref<CSSVariableReferenceValue>>(other.m_value);
-        return value.ptr() == otherValue.ptr() || value.get() == otherValue.get();
-    }, [&](const CSSValueID& value) {
-        return value == std::get<CSSValueID>(other.m_value);
-    }, [&](const Ref<CSSVariableData>& value) {
-        auto& otherValue = std::get<Ref<CSSVariableData>>(other.m_value);
-        return value.ptr() == otherValue.ptr() || value.get() == otherValue.get();
-    }, [&](const SyntaxValue& value) {
-        return value == std::get<SyntaxValue>(other.m_value);
-    }, [&](const SyntaxValueList& value) {
-        return value == std::get<SyntaxValueList>(other.m_value);
-    });
+
+    return WTF::switchOn(m_value,
+        [&](const Ref<CSSVariableReferenceValue>& value) {
+            return arePointingToEqualData(value, std::get<Ref<CSSVariableReferenceValue>>(other.m_value));
+        },
+        [&](const Ref<CSSVariableData>& value) {
+            return arePointingToEqualData(value, std::get<Ref<CSSVariableData>>(other.m_value));
+        },
+        [&](const CSSWideKeyword& keyword) {
+            return keyword == std::get<CSSWideKeyword>(other.m_value);
+        }
+    );
 }
 
 String CSSCustomPropertyValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    auto serializeSyntaxValue = [&](const SyntaxValue& syntaxValue) -> String {
-        return WTF::switchOn(syntaxValue, [&](const Length& value) {
-            if (value.type() == LengthType::Calculated) {
-                // FIXME: Implement serialization for CalculationValue directly.
-                auto calcValue = CSSCalcValue::create(value.protectedCalculationValue(), RenderStyle::defaultStyleSingleton());
-                return calcValue->cssText(context);
-            }
-            return CSSPrimitiveValue::create(value, RenderStyle::defaultStyleSingleton())->cssText(context);
-        }, [&](const NumericSyntaxValue& value) {
-            return CSSPrimitiveValue::create(value.value, value.unitType)->cssText(context);
-        }, [&](const Style::Color& value) {
-            return serializationForCSS(context, value);
-        }, [&](const RefPtr<StyleImage>& value) {
-            // FIXME: This is not right for gradients that use `currentcolor`. There should be a way preserve it.
-            return value->computedStyleValue(RenderStyle::defaultStyleSingleton())->cssText(context);
-        }, [&](const Style::URL& value) {
-            return serializationForCSS(context, Style::toCSS(value, RenderStyle::defaultStyleSingleton()));
-        }, [&](const String& value) {
-            return value;
-        }, [&](const TransformSyntaxValue& value) {
-            auto cssValue = Style::ExtractorConverter::convertTransformOperation(RenderStyle::defaultStyleSingleton(), value.transform);
-            if (!cssValue)
-                return emptyString();
-            return cssValue->cssText(context);
-        });
-    };
-
     auto serialize = [&] {
-        return WTF::switchOn(m_value, [&](const Ref<CSSVariableReferenceValue>& value) {
-            return value->cssText(context);
-        }, [&](const CSSValueID& value) {
-            return nameString(value).string();
-        }, [&](const Ref<CSSVariableData>& value) {
-            return value->serialize();
-        }, [&](const SyntaxValue& syntaxValue) {
-            return serializeSyntaxValue(syntaxValue);
-        }, [&](const SyntaxValueList& syntaxValueList) {
-            StringBuilder builder;
-            auto separator = separatorCSSText(syntaxValueList.separator);
-            for (auto& syntaxValue : syntaxValueList.values) {
-                if (!builder.isEmpty())
-                    builder.append(separator);
-                builder.append(serializeSyntaxValue(syntaxValue));
+        return WTF::switchOn(m_value,
+            [&](const Ref<CSSVariableReferenceValue>& value) {
+                return value->cssText(context);
+            },
+            [&](const Ref<CSSVariableData>& value) {
+                return value->serialize();
+            },
+            [&](const CSSWideKeyword& value) {
+                return nameStringForSerialization(toValueID(value)).string();
             }
-            return builder.toString();
-        });
+        );
     };
 
     if (m_cachedCSSText.isNull())
@@ -131,49 +119,50 @@ const Vector<CSSParserToken>& CSSCustomPropertyValue::tokens() const
 {
     static NeverDestroyed<Vector<CSSParserToken>> emptyTokens;
 
-    return WTF::switchOn(m_value, [&](const Ref<CSSVariableReferenceValue>&) -> const Vector<CSSParserToken>& {
-        ASSERT_NOT_REACHED();
-        return emptyTokens;
-    }, [&](const CSSValueID&) -> const Vector<CSSParserToken>& {
-        // Do nothing.
-        return emptyTokens;
-    }, [&](const Ref<CSSVariableData>& value) -> const Vector<CSSParserToken>& {
-        return value->tokens();
-    }, [&](auto&) -> const Vector<CSSParserToken>& {
-        if (!m_cachedTokens) {
-            CSSTokenizer tokenizer { customCSSText(CSS::defaultSerializationContext()) };
-            m_cachedTokens = CSSVariableData::create(tokenizer.tokenRange());
+    return WTF::switchOn(m_value,
+        [&](const Ref<CSSVariableReferenceValue>&) -> const Vector<CSSParserToken>& {
+            ASSERT_NOT_REACHED();
+            return emptyTokens;
+        },
+        [&](const Ref<CSSVariableData>& value) -> const Vector<CSSParserToken>& {
+            return value->tokens();
+        },
+        [&](const CSSWideKeyword&) -> const Vector<CSSParserToken>& {
+            // Do nothing.
+            return emptyTokens;
         }
-        return m_cachedTokens->tokens();
-    });
-}
-
-bool CSSCustomPropertyValue::containsCSSWideKeyword() const
-{
-    return std::holds_alternative<CSSValueID>(m_value) && WebCore::isCSSWideKeyword(std::get<CSSValueID>(m_value));
+    );
 }
 
 Ref<const CSSVariableData> CSSCustomPropertyValue::asVariableData() const
 {
-    return WTF::switchOn(m_value, [&](const Ref<CSSVariableData>& value) -> Ref<const CSSVariableData> {
-        return value.get();
-    }, [&](const Ref<CSSVariableReferenceValue>& value) -> Ref<const CSSVariableData> {
-        return value->data();
-    }, [&](auto&) -> Ref<const CSSVariableData> {
-        return CSSVariableData::create(tokens());
-    });
+    return WTF::switchOn(m_value,
+        [&](const Ref<CSSVariableReferenceValue>& value) -> Ref<const CSSVariableData> {
+            return value->data();
+        },
+        [&](const Ref<CSSVariableData>& value) -> Ref<const CSSVariableData> {
+            return value.get();
+        },
+        [&](const CSSWideKeyword&) -> Ref<const CSSVariableData> {
+            return CSSVariableData::create(tokens());
+        }
+    );
 }
 
 bool CSSCustomPropertyValue::isCurrentColor() const
 {
     // FIXME: Registered properties?
-    auto tokenRange = switchOn(m_value, [&](const Ref<CSSVariableReferenceValue>& variableReferenceValue) {
-        return variableReferenceValue->data().tokenRange();
-    }, [&](const Ref<CSSVariableData>& data) {
-        return data->tokenRange();
-    }, [&](auto&) {
-        return CSSParserTokenRange { };
-    });
+    auto tokenRange = switchOn(m_value,
+        [&](const Ref<CSSVariableReferenceValue>& variableReferenceValue) {
+            return variableReferenceValue->data().tokenRange();
+        },
+        [&](const Ref<CSSVariableData>& data) {
+            return data->tokenRange();
+        },
+        [&](const CSSWideKeyword&) {
+            return CSSParserTokenRange { };
+        }
+    );
 
     if (tokenRange.atEnd())
         return false;
@@ -186,59 +175,13 @@ bool CSSCustomPropertyValue::isCurrentColor() const
     return token.id() == CSSValueCurrentcolor;
 }
 
-bool CSSCustomPropertyValue::isAnimatable() const
+IterationStatus CSSCustomPropertyValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
-    return std::holds_alternative<SyntaxValue>(m_value) || std::holds_alternative<SyntaxValueList>(m_value);
+    if (auto* value = std::get_if<Ref<CSSVariableReferenceValue>>(&m_value)) {
+        if (func(*value) == IterationStatus::Done)
+            return IterationStatus::Done;
+    }
+    return IterationStatus::Continue;
 }
 
-static bool mayDependOnBaseURL(const CSSCustomPropertyValue::SyntaxValue& syntaxValue)
-{
-    return WTF::switchOn(syntaxValue,
-        [](const Length&) {
-            return false;
-        },
-        [](const CSSCustomPropertyValue::NumericSyntaxValue&) {
-            return false;
-        },
-        [](const Style::Color&) {
-            return false;
-        },
-        [](const RefPtr<StyleImage>&) {
-            return true;
-        },
-        [](const Style::URL&) {
-            return true;
-        },
-        [](const String&) {
-            return false;
-        },
-        [](const CSSCustomPropertyValue::TransformSyntaxValue&) {
-            return false;
-        });
-}
-
-bool CSSCustomPropertyValue::customMayDependOnBaseURL() const
-{
-    return WTF::switchOn(m_value,
-        [](const Ref<CSSVariableReferenceValue>&) {
-            return false;
-        },
-        [](const CSSValueID&) {
-            return false;
-        },
-        [](const Ref<CSSVariableData>&) {
-            return false;
-        },
-        [](const SyntaxValue& syntaxValue) {
-            return WebCore::mayDependOnBaseURL(syntaxValue);
-        },
-        [](const SyntaxValueList& syntaxValueList) {
-            for (auto& syntaxValue : syntaxValueList.values) {
-                if (WebCore::mayDependOnBaseURL(syntaxValue))
-                    return true;
-            }
-            return false;
-        });
-}
-
-}
+} // namespace WebCore

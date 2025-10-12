@@ -4,22 +4,13 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-strict-shell.js, sm/non262-shell.js]
 flags:
   - noStrict
 description: |
-  pending
+  JSOP_CALLEE should push undefined, not null, for this
+info: bugzilla.mozilla.org/show_bug.cgi?id=611276
 esid: pending
 ---*/
-var gTestfile = 'this-for-function-expression-recursion.js';
-var BUGNUMBER = 611276;
-var summary = "JSOP_CALLEE should push undefined, not null, for this";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 // Calling a named function expression (not function statement) uses the
 // JSOP_CALLEE opcode.  This opcode pushes its own |this|, distinct from the
@@ -43,7 +34,3 @@ var calleeThisStrictFun =
     return calleeThisStrictFun(true);
   };
 assert.sameValue(calleeThisStrictFun(false), undefined);
-
-/******************************************************************************/
-
-print("All tests passed!");

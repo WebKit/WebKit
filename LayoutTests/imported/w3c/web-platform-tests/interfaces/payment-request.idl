@@ -7,7 +7,8 @@
 interface PaymentRequest : EventTarget {
   constructor(
     sequence<PaymentMethodData> methodData,
-    PaymentDetailsInit details
+    PaymentDetailsInit details,
+    optional PaymentOptions options = {}
   );
   [NewObject]
   Promise<PaymentResponse> show(optional Promise<PaymentDetailsUpdate> detailsPromise);
@@ -17,7 +18,12 @@ interface PaymentRequest : EventTarget {
   Promise<boolean> canMakePayment();
 
   readonly attribute DOMString id;
+  readonly attribute ContactAddress? shippingAddress;
+  readonly attribute DOMString? shippingOption;
+  readonly attribute PaymentShippingType? shippingType;
 
+  attribute EventHandler onshippingaddresschange;
+  attribute EventHandler onshippingoptionchange;
   attribute EventHandler onpaymentmethodchange;
 };
 
@@ -33,6 +39,7 @@ dictionary PaymentCurrencyAmount {
 
 dictionary PaymentDetailsBase {
   sequence<PaymentItem> displayItems;
+  sequence<PaymentShippingOption> shippingOptions;
   sequence<PaymentDetailsModifier> modifiers;
 };
 
@@ -42,7 +49,10 @@ dictionary PaymentDetailsInit : PaymentDetailsBase {
 };
 
 dictionary PaymentDetailsUpdate : PaymentDetailsBase {
+  DOMString error;
   PaymentItem total;
+  AddressErrors shippingAddressErrors;
+  PayerErrors payerErrors;
   object paymentMethodErrors;
 };
 
@@ -53,16 +63,42 @@ dictionary PaymentDetailsModifier {
   object data;
 };
 
+enum PaymentShippingType {
+  "shipping",
+  "delivery",
+  "pickup"
+};
+
+dictionary PaymentOptions {
+  boolean requestPayerName = false;
+  boolean requestBillingAddress = false;
+  boolean requestPayerEmail = false;
+  boolean requestPayerPhone = false;
+  boolean requestShipping = false;
+  PaymentShippingType shippingType = "shipping";
+};
+
 dictionary PaymentItem {
   required DOMString label;
   required PaymentCurrencyAmount amount;
   boolean pending = false;
 };
 
+dictionary PaymentCompleteDetails {
+  object? data = null;
+};
+
 enum PaymentComplete {
   "fail",
   "success",
   "unknown"
+};
+
+dictionary PaymentShippingOption {
+  required DOMString id;
+  required DOMString label;
+  required PaymentCurrencyAmount amount;
+  boolean selected = false;
 };
 
 [SecureContext, Exposed=Window]
@@ -72,16 +108,47 @@ interface PaymentResponse : EventTarget  {
   readonly attribute DOMString requestId;
   readonly attribute DOMString methodName;
   readonly attribute object details;
+  readonly attribute ContactAddress? shippingAddress;
+  readonly attribute DOMString? shippingOption;
+  readonly attribute DOMString? payerName;
+  readonly attribute DOMString? payerEmail;
+  readonly attribute DOMString? payerPhone;
 
   [NewObject]
-  Promise<undefined> complete(optional PaymentComplete result = "unknown");
+  Promise<undefined> complete(
+    optional PaymentComplete result = "unknown",
+    optional PaymentCompleteDetails details = {}
+  );
   [NewObject]
   Promise<undefined> retry(optional PaymentValidationErrors errorFields = {});
+
+  attribute EventHandler onpayerdetailchange;
 };
 
 dictionary PaymentValidationErrors {
+  PayerErrors payer;
+  AddressErrors shippingAddress;
   DOMString error;
   object paymentMethod;
+};
+
+dictionary PayerErrors {
+  DOMString email;
+  DOMString name;
+  DOMString phone;
+};
+
+dictionary AddressErrors {
+  DOMString addressLine;
+  DOMString city;
+  DOMString country;
+  DOMString dependentLocality;
+  DOMString organization;
+  DOMString phone;
+  DOMString postalCode;
+  DOMString recipient;
+  DOMString region;
+  DOMString sortingCode;
 };
 
 [SecureContext, Exposed=Window]
@@ -103,31 +170,3 @@ interface PaymentRequestUpdateEvent : Event {
 };
 
 dictionary PaymentRequestUpdateEventInit : EventInit {};
-
-[SecureContext, Exposed=(Window)]
-interface PaymentAddress {
-  [Default] object toJSON();
-  readonly attribute DOMString city;
-  readonly attribute DOMString country;
-  readonly attribute DOMString dependentLocality;
-  readonly attribute DOMString organization;
-  readonly attribute DOMString phone;
-  readonly attribute DOMString postalCode;
-  readonly attribute DOMString recipient;
-  readonly attribute DOMString region;
-  readonly attribute DOMString sortingCode;
-  readonly attribute FrozenArray<DOMString> addressLine;
-};
-
-dictionary AddressErrors {
-  DOMString addressLine;
-  DOMString city;
-  DOMString country;
-  DOMString dependentLocality;
-  DOMString organization;
-  DOMString phone;
-  DOMString postalCode;
-  DOMString recipient;
-  DOMString region;
-  DOMString sortingCode;
-};

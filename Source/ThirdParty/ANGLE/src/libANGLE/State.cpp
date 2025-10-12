@@ -6,6 +6,10 @@
 
 // State.cpp: Implements the State class, encapsulating raw GL state.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 // Older clang versions have a false positive on this warning here.
 #pragma clang diagnostic ignored "-Wglobal-constructors"
 
@@ -271,30 +275,7 @@ template <>
 void State::setGenericBufferBinding<BufferBinding::ElementArray>(const Context *context,
                                                                  Buffer *buffer)
 {
-    Buffer *oldBuffer = mVertexArray->mState.mElementArrayBuffer.get();
-    if (oldBuffer)
-    {
-        oldBuffer->removeObserver(&mVertexArray->mState.mElementArrayBuffer);
-        oldBuffer->removeContentsObserver(mVertexArray, kElementArrayBufferIndex);
-        if (context->isWebGL())
-        {
-            oldBuffer->onNonTFBindingChanged(-1);
-        }
-        oldBuffer->release(context);
-    }
-    mVertexArray->mState.mElementArrayBuffer.assign(buffer);
-    if (buffer)
-    {
-        buffer->addObserver(&mVertexArray->mState.mElementArrayBuffer);
-        buffer->addContentsObserver(mVertexArray, kElementArrayBufferIndex);
-        if (context->isWebGL())
-        {
-            buffer->onNonTFBindingChanged(1);
-        }
-        buffer->addRef();
-    }
-    mVertexArray->mDirtyBits.set(VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER);
-    mVertexArray->mIndexRangeInlineCache = {};
+    mVertexArray->bindElementBuffer(context, buffer);
     mDirtyObjects.set(state::DIRTY_OBJECT_VERTEX_ARRAY);
 }
 
@@ -409,7 +390,10 @@ PrivateState::PrivateState(const Version &clientVersion,
       mBoundingBoxMaxZ(1.0f),
       mBoundingBoxMaxW(1.0f),
       mShadingRatePreserveAspectRatio(false),
-      mShadingRate(ShadingRate::Undefined),
+      mShadingRateQCOM(ShadingRate::Undefined),
+      // If the shading rate has not been set, the shading rate will be SHADING_RATE_1X1_PIXELS_EXT
+      mShadingRateEXT(ShadingRate::_1x1),
+      mCombinerOps{CombinerOp::Keep, CombinerOp::Keep},
       mFetchPerSample(false),
       mIsPerfMonitorActive(false),
       mTiledRendering(false),
@@ -417,6 +401,7 @@ PrivateState::PrivateState(const Version &clientVersion,
       mClientArraysEnabled(clientArraysEnabled),
       mRobustResourceInit(robustResourceInit),
       mProgramBinaryCacheEnabled(programBinaryCacheEnabled),
+      mVertexArrayPrivate(nullptr),
       mDebug(debug)
 {}
 
@@ -1127,11 +1112,26 @@ void PrivateState::setViewportParams(GLint x, GLint y, GLsizei width, GLsizei he
     }
 }
 
-void PrivateState::setShadingRate(GLenum rate)
+void PrivateState::setShadingRateQCOM(ShadingRate rate)
 {
-    mShadingRate = FromGLenum<ShadingRate>(rate);
+    mShadingRateQCOM = rate;
     mDirtyBits.set(state::DIRTY_BIT_EXTENDED);
-    mExtendedDirtyBits.set(state::EXTENDED_DIRTY_BIT_SHADING_RATE);
+    mExtendedDirtyBits.set(state::EXTENDED_DIRTY_BIT_SHADING_RATE_QCOM);
+}
+
+void PrivateState::setShadingRateEXT(ShadingRate rate)
+{
+    mShadingRateEXT = rate;
+    mDirtyBits.set(state::DIRTY_BIT_EXTENDED);
+    mExtendedDirtyBits.set(state::EXTENDED_DIRTY_BIT_SHADING_RATE_EXT);
+}
+
+void PrivateState::setShadingRateCombinerOps(CombinerOp combinerOp0, CombinerOp combinerOp1)
+{
+    mCombinerOps[0] = combinerOp0;
+    mCombinerOps[1] = combinerOp1;
+    mDirtyBits.set(state::DIRTY_BIT_EXTENDED);
+    mExtendedDirtyBits.set(state::EXTENDED_DIRTY_BIT_SHADING_RATE_EXT);
 }
 
 void PrivateState::setPackAlignment(GLint alignment)
@@ -1229,7 +1229,10 @@ void PrivateState::setFramebufferSRGB(bool sRGB)
         mFramebufferSRGB = sRGB;
         mDirtyBits.set(state::DIRTY_BIT_FRAMEBUFFER_SRGB_WRITE_CONTROL_MODE);
         mDirtyObjects.set(state::DIRTY_OBJECT_DRAW_FRAMEBUFFER);
-        mDirtyObjects.set(state::DIRTY_OBJECT_DRAW_ATTACHMENTS);
+        if (isRobustResourceInitEnabled())
+        {
+            mDirtyObjects.set(state::DIRTY_OBJECT_DRAW_ATTACHMENTS);
+        }
     }
 }
 
@@ -1963,6 +1966,11 @@ void PrivateState::getBooleanv(GLenum pname, GLboolean *params) const
         case GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM:
             *params = mCaps.fragmentShaderFramebufferFetchMRT;
             break;
+        // EXT_fragment_shading_rate
+        case GL_FRAGMENT_SHADING_RATE_NON_TRIVIAL_COMBINERS_SUPPORTED_EXT:
+            *params =
+                mCaps.fragmentShadingRateProperties.fragmentShadingRateNonTrivialCombinersSupport;
+            break;
         default:
             if (mClientVersion < ES_2_0)
             {
@@ -2301,7 +2309,12 @@ void PrivateState::getIntegerv(GLenum pname, GLint *params) const
 
         // GL_QCOM_shading_rate
         case GL_SHADING_RATE_QCOM:
-            *params = ToGLenum(mShadingRate);
+            *params = ToGLenum(mShadingRateQCOM);
+            break;
+
+        // GL_EXT_fragment_shading_rate
+        case GL_SHADING_RATE_EXT:
+            *params = ToGLenum(mShadingRateEXT);
             break;
 
         // GL_ANGLE_shader_pixel_local_storage
@@ -2393,6 +2406,12 @@ void PrivateState::getBooleani_v(GLenum target, GLuint index, GLboolean *data) c
     }
 }
 
+VertexArrayID PrivateState::getVertexArrayId() const
+{
+    ASSERT(mVertexArrayPrivate != nullptr);
+    return mVertexArrayPrivate->id();
+}
+
 State::State(const State *shareContextState,
              egl::ShareGroup *shareGroup,
              TextureManager *shareTextures,
@@ -2408,12 +2427,14 @@ State::State(const State *shareContextState,
              EGLenum contextPriority,
              bool hasRobustAccess,
              bool hasProtectedContent,
-             bool isExternal)
+             bool isExternal,
+             bool passthroughShaders)
     : mID({gIDCounter++}),
       mContextPriority(contextPriority),
       mHasRobustAccess(hasRobustAccess),
       mHasProtectedContent(hasProtectedContent),
       mIsDebugContext(debug),
+      mPassthroughShaders(passthroughShaders),
       mShareGroup(shareGroup),
       mContextMutex(contextMutex),
       mBufferManager(AllocateOrGetSharedResourceManager(shareContextState, &State::mBufferManager)),
@@ -2934,6 +2955,7 @@ void State::setDrawFramebufferBinding(Framebuffer *framebuffer)
         if (isRobustResourceInitEnabled() && mDrawFramebuffer->hasResourceThatNeedsInit())
         {
             mDirtyObjects.set(state::DIRTY_OBJECT_DRAW_ATTACHMENTS);
+            mDirtyObjects.set(state::DIRTY_OBJECT_DRAW_FRAMEBUFFER);
         }
     }
 }
@@ -3000,6 +3022,8 @@ void State::setVertexArrayBinding(const Context *context, VertexArray *vertexArr
     }
 
     mVertexArray = vertexArray;
+    mPrivateState.setVertexArrayPrivate(vertexArray);
+
     mDirtyBits.set(state::DIRTY_BIT_VERTEX_ARRAY_BINDING);
 
     if (mVertexArray && mVertexArray->hasAnyDirtyBit())
@@ -3014,6 +3038,7 @@ bool State::removeVertexArrayBinding(const Context *context, VertexArrayID verte
     {
         mVertexArray->onBindingChanged(context, -1);
         mVertexArray = nullptr;
+        mPrivateState.setVertexArrayPrivate(nullptr);
         mDirtyBits.set(state::DIRTY_BIT_VERTEX_ARRAY_BINDING);
         mDirtyObjects.set(state::DIRTY_OBJECT_VERTEX_ARRAY);
         return true;
@@ -3038,21 +3063,27 @@ void State::bindVertexBuffer(const Context *context,
     mDirtyObjects.set(state::DIRTY_OBJECT_VERTEX_ARRAY);
 }
 
-void State::setVertexAttribFormat(GLuint attribIndex,
-                                  GLint size,
-                                  VertexAttribType type,
-                                  bool normalized,
-                                  bool pureInteger,
-                                  GLuint relativeOffset)
+void PrivateState::setVertexAttribFormat(GLuint attribIndex,
+                                         GLint size,
+                                         VertexAttribType type,
+                                         bool normalized,
+                                         bool pureInteger,
+                                         GLuint relativeOffset)
 {
-    getVertexArray()->setVertexAttribFormat(attribIndex, size, type, normalized, pureInteger,
-                                            relativeOffset);
+    mVertexArrayPrivate->setVertexAttribFormat(attribIndex, size, type, normalized, pureInteger,
+                                               relativeOffset);
     mDirtyObjects.set(state::DIRTY_OBJECT_VERTEX_ARRAY);
 }
 
-void State::setVertexBindingDivisor(const Context *context, GLuint bindingIndex, GLuint divisor)
+void PrivateState::setVertexAttribBinding(GLuint attribIndex, GLuint bindingIndex)
 {
-    getVertexArray()->setVertexBindingDivisor(context, bindingIndex, divisor);
+    mVertexArrayPrivate->setVertexAttribBinding(attribIndex, bindingIndex);
+    mDirtyObjects.set(state::DIRTY_OBJECT_VERTEX_ARRAY);
+}
+
+void PrivateState::setVertexBindingDivisor(GLuint bindingIndex, GLuint divisor)
+{
+    mVertexArrayPrivate->setVertexBindingDivisor(bindingIndex, divisor);
     mDirtyObjects.set(state::DIRTY_OBJECT_VERTEX_ARRAY);
 }
 
@@ -3236,13 +3267,28 @@ angle::Result State::setIndexedBufferBinding(const Context *context,
             setBufferBinding(context, target, buffer);
             break;
         case BufferBinding::Uniform:
+        {
             mBoundUniformBuffersMask.set(index, buffer != nullptr);
+            BufferDirtyTypeBitMask dirtyTypeMask = {};
+            if (mUniformBuffers[index].get() != buffer)
+            {
+                dirtyTypeMask.set();
+            }
+            else
+            {
+                dirtyTypeMask.set(BufferDirtyType::Offset,
+                                  buffer && mUniformBuffers[index].getOffset() != offset);
+                dirtyTypeMask.set(BufferDirtyType::Size,
+                                  buffer && mUniformBuffers[index].getSize() != size);
+            }
+            mUniformBufferBlocksDirtyTypeMask |= dirtyTypeMask;
             if (UpdateIndexedBufferBinding(context, &mUniformBuffers[index], buffer, target, offset,
                                            size))
             {
-                onUniformBufferStateChange(index);
+                onUniformBufferStateChange(index, angle::SubjectMessage::SubjectChanged);
             }
-            break;
+        }
+        break;
         case BufferBinding::AtomicCounter:
             mBoundAtomicCounterBuffersMask.set(index, buffer != nullptr);
             if (UpdateIndexedBufferBinding(context, &mAtomicCounterBuffers[index], buffer, target,
@@ -3300,13 +3346,13 @@ angle::Result State::detachBuffer(Context *context, const Buffer *buffer)
     if (curTransformFeedback)
     {
         ANGLE_TRY(curTransformFeedback->detachBuffer(context, bufferID));
-        context->getStateCache().onActiveTransformFeedbackChange(context);
+        context->onActiveTransformFeedbackChange();
     }
 
     if (mVertexArray && mVertexArray->detachBuffer(context, bufferID))
     {
         mDirtyObjects.set(state::DIRTY_OBJECT_VERTEX_ARRAY);
-        context->getStateCache().onVertexArrayStateChange(context);
+        context->getMutablePrivateStateCache()->onVertexArrayStateChange();
     }
 
     for (size_t uniformBufferIndex : mBoundUniformBuffersMask)
@@ -3347,15 +3393,15 @@ angle::Result State::detachBuffer(Context *context, const Buffer *buffer)
     return angle::Result::Continue;
 }
 
-void State::setEnableVertexAttribArray(unsigned int attribNum, bool enabled)
+void PrivateState::setEnableVertexAttribArray(unsigned int attribNum, bool enabled)
 {
-    getVertexArray()->enableAttribute(attribNum, enabled);
+    mVertexArrayPrivate->enableAttribute(attribNum, enabled);
     mDirtyObjects.set(state::DIRTY_OBJECT_VERTEX_ARRAY);
 }
 
-void State::setVertexAttribDivisor(const Context *context, GLuint index, GLuint divisor)
+void PrivateState::setVertexAttribDivisor(GLuint index, GLuint divisor)
 {
-    getVertexArray()->setVertexAttribDivisor(context, index, divisor);
+    mVertexArrayPrivate->setVertexAttribDivisor(index, divisor);
     mDirtyObjects.set(state::DIRTY_OBJECT_VERTEX_ARRAY);
 }
 
@@ -3702,7 +3748,7 @@ void State::getIntegeri_v(const Context *context, GLenum target, GLuint index, G
             break;
         case GL_VERTEX_BINDING_BUFFER:
             ASSERT(static_cast<size_t>(index) < mVertexArray->getMaxBindings());
-            *data = mVertexArray->getVertexBinding(index).getBuffer().id().value;
+            *data = mVertexArray->getVertexArrayBufferID(index).value;
             break;
         case GL_VERTEX_BINDING_DIVISOR:
             ASSERT(static_cast<size_t>(index) < mVertexArray->getMaxBindings());
@@ -3978,7 +4024,7 @@ angle::Result State::syncProgramPipelineObject(const Context *context, Command c
     return angle::Result::Continue;
 }
 
-angle::Result State::syncDirtyObject(const Context *context, GLenum target)
+angle::Result State::syncDirtyObject(const Context *context, GLenum target, Command command)
 {
     state::DirtyObjects localSet;
 
@@ -3986,16 +4032,24 @@ angle::Result State::syncDirtyObject(const Context *context, GLenum target)
     {
         case GL_READ_FRAMEBUFFER:
             localSet.set(state::DIRTY_OBJECT_READ_FRAMEBUFFER);
+            if (mDirtyObjects.test(state::DIRTY_OBJECT_READ_ATTACHMENTS))
+            {
+                localSet.set(state::DIRTY_OBJECT_READ_ATTACHMENTS);
+            }
             break;
         case GL_DRAW_FRAMEBUFFER:
             localSet.set(state::DIRTY_OBJECT_DRAW_FRAMEBUFFER);
+            if (mDirtyObjects.test(state::DIRTY_OBJECT_DRAW_ATTACHMENTS))
+            {
+                localSet.set(state::DIRTY_OBJECT_DRAW_ATTACHMENTS);
+            }
             break;
         default:
             UNREACHABLE();
             break;
     }
 
-    return syncDirtyObjects(context, localSet, Command::Other);
+    return syncDirtyObjects(context, localSet, command);
 }
 
 void State::setObjectDirty(GLenum target)
@@ -4103,9 +4157,10 @@ angle::Result State::onExecutableChange(const Context *context)
         }
     }
 
-    // Mark uniform blocks as _not_ dirty. When an executable changes, the backends should already
-    // reprocess all uniform blocks.  These dirty bits only track what's made dirty afterwards.
-    mDirtyUniformBlocks.reset();
+    // Set all active blocks dirty on executable change
+    mDirtyUniformBlocks = mExecutable->getActiveUniformBufferBlocks();
+    // Set all types dirty on executable change
+    mUniformBufferBlocksDirtyTypeMask.set();
 
     return angle::Result::Continue;
 }
@@ -4207,14 +4262,27 @@ void State::onImageStateChange(const Context *context, size_t unit)
     }
 }
 
-void State::onUniformBufferStateChange(size_t uniformBufferIndex)
+void State::onUniformBufferStateChange(size_t uniformBufferIndex, angle::SubjectMessage message)
 {
     if (mExecutable)
     {
         // When a buffer at a given binding changes, set all blocks mapped to it dirty.
         mDirtyUniformBlocks |=
             mExecutable->getUniformBufferBlocksMappedToBinding(uniformBufferIndex);
+
+        if (message == angle::SubjectMessage::InternalMemoryAllocationChanged)
+        {
+            mUniformBufferBlocksDirtyTypeMask.set(BufferDirtyType::Binding);
+        }
+        else
+        {
+            ASSERT(message == angle::SubjectMessage::SubjectChanged ||   // buffer state change
+                   message == angle::SubjectMessage::SubjectMapped ||    // buffer map
+                   message == angle::SubjectMessage::SubjectUnmapped ||  // buffer unmap
+                   message == angle::SubjectMessage::BindingChanged);    // XFB state change
+        }
     }
+
     // This could be represented by a different dirty bit. Using the same one keeps it simple.
     mDirtyBits.set(state::DIRTY_BIT_UNIFORM_BUFFER_BINDINGS);
 }

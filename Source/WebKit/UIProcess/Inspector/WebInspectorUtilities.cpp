@@ -114,7 +114,7 @@ bool isInspectorPage(WebPageProxy& webPage)
 }
 
 #if PLATFORM(COCOA)
-CFStringRef bundleIdentifierForSandboxBroker()
+CFStringRef bundleIdentifierForSandboxBrokerSingleton()
 {
     if (applicationBundleIdentifier() == "com.apple.SafariTechnologyPreview"_s)
         return CFSTR("com.apple.SafariTechnologyPreview.SandboxBroker");

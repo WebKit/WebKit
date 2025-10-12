@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ISO18013DocumentRequest.h"
-#include "ISO18013DocumentRequestSet.h"
-#include "ISO18013ElementInfo.h"
-#include "ISO18013PresentmentRequest.h"
+#include <WebCore/ISO18013DocumentRequest.h>
+#include <WebCore/ISO18013DocumentRequestSet.h>
+#include <WebCore/ISO18013ElementInfo.h>
+#include <WebCore/ISO18013PresentmentRequest.h>

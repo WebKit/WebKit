@@ -2,29 +2,29 @@
 PASS requestViewportScale valid viewport for inline session - webgl
 PASS requestViewportScale valid viewport for inline session - webgl2
 PASS requestViewportScale valid viewport w/ null scale for inline session - webgl
-FAIL requestViewportScale valid viewport w/ null scale for inline session - webgl2 promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale valid viewport w/ undefined scale for inline session - webgl promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale valid viewport w/ undefined scale for inline session - webgl2 promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale valid viewport w/ very small scale for inline session - webgl promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale valid viewport w/ very small scale for inline session - webgl2 promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale applied next frame for inline session - webgl promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale applied next frame for inline session - webgl2 promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale same frame for inline session - webgl promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale same frame for inline session - webgl2 promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL recommendedViewportScale for inline session - webgl promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL recommendedViewportScale for inline session - webgl2 promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale valid viewport for immersive-vr session - webgl promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale valid viewport for immersive-vr session - webgl2 promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale valid viewport w/ null scale for immersive-vr session - webgl promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale valid viewport w/ null scale for immersive-vr session - webgl2 promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale valid viewport w/ undefined scale for immersive-vr session - webgl promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale valid viewport w/ undefined scale for immersive-vr session - webgl2 promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale valid viewport w/ very small scale for immersive-vr session - webgl promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale valid viewport w/ very small scale for immersive-vr session - webgl2 promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale applied next frame for immersive-vr session - webgl promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale applied next frame for immersive-vr session - webgl2 promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale same frame for immersive-vr session - webgl promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL requestViewportScale same frame for immersive-vr session - webgl2 promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL recommendedViewportScale for immersive-vr session - webgl promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
-FAIL recommendedViewportScale for immersive-vr session - webgl2 promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
+PASS requestViewportScale valid viewport w/ null scale for inline session - webgl2
+PASS requestViewportScale valid viewport w/ undefined scale for inline session - webgl
+PASS requestViewportScale valid viewport w/ undefined scale for inline session - webgl2
+PASS requestViewportScale valid viewport w/ very small scale for inline session - webgl
+PASS requestViewportScale valid viewport w/ very small scale for inline session - webgl2
+NOTRUN requestViewportScale applied next frame for inline session - webgl requestViewportScale has no effect
+NOTRUN requestViewportScale applied next frame for inline session - webgl2 requestViewportScale has no effect
+NOTRUN requestViewportScale same frame for inline session - webgl requestViewportScale has no effect
+NOTRUN requestViewportScale same frame for inline session - webgl2 requestViewportScale has no effect
+NOTRUN recommendedViewportScale for inline session - webgl recommendedViewportScale not provided
+NOTRUN recommendedViewportScale for inline session - webgl2 recommendedViewportScale not provided
+PASS requestViewportScale valid viewport for immersive-vr session - webgl
+PASS requestViewportScale valid viewport for immersive-vr session - webgl2
+PASS requestViewportScale valid viewport w/ null scale for immersive-vr session - webgl
+PASS requestViewportScale valid viewport w/ null scale for immersive-vr session - webgl2
+PASS requestViewportScale valid viewport w/ undefined scale for immersive-vr session - webgl
+PASS requestViewportScale valid viewport w/ undefined scale for immersive-vr session - webgl2
+PASS requestViewportScale valid viewport w/ very small scale for immersive-vr session - webgl
+PASS requestViewportScale valid viewport w/ very small scale for immersive-vr session - webgl2
+NOTRUN requestViewportScale applied next frame for immersive-vr session - webgl requestViewportScale has no effect
+NOTRUN requestViewportScale applied next frame for immersive-vr session - webgl2 requestViewportScale has no effect
+NOTRUN requestViewportScale same frame for immersive-vr session - webgl requestViewportScale has no effect
+NOTRUN requestViewportScale same frame for immersive-vr session - webgl2 requestViewportScale has no effect
+NOTRUN recommendedViewportScale for immersive-vr session - webgl recommendedViewportScale not provided
+NOTRUN recommendedViewportScale for immersive-vr session - webgl2 recommendedViewportScale not provided
 

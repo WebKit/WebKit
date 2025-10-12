@@ -110,22 +110,24 @@ class SerializedType(object):
                     key, value = attribute.split('=')
                     if key == 'AdditionalEncoder':
                         self.encoders.append(value)
-                    if key == 'ConstructSubclass':
+                    elif key == 'ConstructSubclass':
                         self.construct_subclass = value
-                    if key == 'CreateUsing':
+                    elif key == 'CreateUsing':
                         self.create_using = value
-                    if key == 'Alias':
+                    elif key == 'Alias':
                         self.alias = value
-                    if key == 'ToCFMethod':
+                    elif key == 'ToCFMethod':
                         self.to_cf_method = value
-                    if key == 'FromCFMethod':
+                    elif key == 'FromCFMethod':
                         self.from_cf_method = value
-                    if key == 'ForwardDeclaration':
+                    elif key == 'ForwardDeclaration':
                         self.forward_declaration = value
-                    if key == 'WebKitSecureCodingClass':
+                    elif key == 'WebKitSecureCodingClass':
                         self.custom_secure_coding_class = value
-                    if key == 'Wrapper':
+                    elif key == 'Wrapper':
                         self.generic_wrapper = value
+                    else:
+                        raise Exception(f'Invalid attribute ({key}={value}) found on struct: {self.namespace}::{self.name}')
                 else:
                     if attribute == 'Nested':
                         self.nested = True
@@ -145,6 +147,10 @@ class SerializedType(object):
                         self.support_wkkeyedcoder = True
                     elif attribute == 'DebugDecodingFailure':
                         self.debug_decoding_failure = True
+                    elif attribute in ['CustomHeader']:
+                        pass
+                    else:
+                        raise Exception(f'Invalid attribute ({attribute}) found on struct: {self.namespace}::{self.name}')
         self.templates = templates
         if other_metadata:
             if other_metadata == 'subclasses':
@@ -372,6 +378,8 @@ class MemberVariable(object):
             return 'NSPersonNameComponents'
         if value.startswith('Array'):
             return 'NSArray'
+        if value == 'Set':
+            return 'NSSet'
         return value
 
     def ns_type_pointer(self):
@@ -543,10 +551,12 @@ def one_argument_coder_declaration(type, template_argument):
     return result
 
 
-def argument_coder_declarations(serialized_types, skip_nested):
+def argument_coder_declarations(serialized_types, skip_nested, webkit_platform):
     result = []
     for type in serialized_types:
         if type.nested == skip_nested:
+            continue
+        if (webkit_platform is not None and type.webkit_platform != webkit_platform):
             continue
         if type.templates:
             for template in type.templates:
@@ -561,7 +571,7 @@ def typenames(alias):
 
 
 def remove_template_parameters(alias):
-    match = re.search(r'(struct|class) (.*)<', alias)
+    match = re.search(r'(struct|class) ([^<]*)<', alias)
     assert match
     return match.groups()[1]
 
@@ -675,6 +685,14 @@ def generate_header(serialized_types, serialized_enums, additional_forward_decla
     for header in ['<wtf/ArgumentCoder.h>', '<wtf/OptionSet.h>', '<wtf/Ref.h>', '<wtf/RetainPtr.h>']:
         result.append(f'#include {header}')
 
+    result.append('#if USE(CF)')
+    result.append('#ifdef __swift__')
+    result.append('#include <Security/SecTrust.h>')
+    result.append('#else')
+    result.append('typedef struct CF_BRIDGED_TYPE(id) __SecTrust *SecTrustRef;')
+    result.append('#endif')
+    result.append('#endif')
+
     result += generate_forward_declarations(serialized_types, serialized_enums, additional_forward_declarations)
     result.append('')
     result.append('namespace IPC {')
@@ -682,7 +700,7 @@ def generate_header(serialized_types, serialized_enums, additional_forward_decla
     result.append('class Decoder;')
     result.append('class Encoder;')
     result.append('class StreamConnectionEncoder;')
-    result = result + argument_coder_declarations(serialized_types, True)
+    result = result + argument_coder_declarations(serialized_types, True, None)
     result.append('')
     result.append('} // namespace IPC\n')
     result.append('')
@@ -843,13 +861,21 @@ def decode_cf_type(type):
         result.append('    return result->toCF();')
     return result
 
-def decode_type(type):
+
+def should_decode_ref(member, serialized_types):
+    for serialized_type in serialized_types:
+        if serialized_type.namespace_and_name() == member.type:
+            return serialized_type.members_are_subclasses
+    return False
+
+
+def decode_type(type, serialized_types):
     if type.cf_type is not None:
         return decode_cf_type(type)
 
     result = []
     if type.parent_class is not None:
-        result = result + decode_type(type.parent_class)
+        result = result + decode_type(type.parent_class, serialized_types)
 
     if type.members_are_subclasses:
         result.append(f'    auto type = decoder.decode<{type.subclass_enum_name()}>();')
@@ -860,6 +886,9 @@ def decode_type(type):
 
     if type.has_optional_tuple_bits() and type.populate_from_empty_constructor:
         result.append(f'    {type.namespace_and_name()} result;')
+
+    if type.debug_decoding_failure:
+        result.append('    bool addedDecodingFailureIndex = false;')
 
     for i in range(len(type.serialized_members())):
         member = type.serialized_members()[i]
@@ -916,15 +945,20 @@ def decode_type(type):
                 result.append('    }')
         else:
             assert len(decodable_classes) == 0
-            result.append(f'    auto {sanitized_variable_name} = decoder.decode<{member.type}>();')
+            if should_decode_ref(member, serialized_types):
+                result.append(f'    auto {sanitized_variable_name} = decoder.decode<Ref<{member.type}>>();')
+            else:
+                result.append(f'    auto {sanitized_variable_name} = decoder.decode<{member.type}>();')
             if 'EncodeRequestBody' in member.attributes:
                 result.append(f'    if ({sanitized_variable_name}) {{')
                 result.append(f'        if (auto {sanitized_variable_name}Body = decoder.decode<IPC::FormDataReference>())')
                 result.append(f'            {sanitized_variable_name}->setHTTPBody({sanitized_variable_name}Body->takeData());')
                 result.append('    }')
             if type.debug_decoding_failure:
-                result.append(f'    if (!{sanitized_variable_name}) [[unlikely]]')
-                result.append(f'        decoder.setIndexOfDecodingFailure({str(i)});')
+                result.append(f'    if (!{sanitized_variable_name} && !addedDecodingFailureIndex) [[unlikely]] {{')
+                result.append(f'        decoder.addIndexOfDecodingFailure({str(i)});')
+                result.append('        addedDecodingFailureIndex = true;')
+                result.append('    }')
         for attribute in member.attributes:
             match = re.search(r'Validator=\'(.*)\'', attribute)
             if match:
@@ -989,7 +1023,7 @@ def construct_type(type, specialization, indentation):
     return result
 
 
-def generate_one_impl(type, template_argument):
+def generate_one_impl(type, template_argument, serialized_types):
     result = []
     name_with_template = type.namespace_and_name()
     if template_argument is not None:
@@ -1045,7 +1079,7 @@ def generate_one_impl(type, template_argument):
     else:
         result.append(f'std::optional<{name_with_template}> ArgumentCoder<{name_with_template}>::decode(Decoder& decoder)')
     result.append('{')
-    result = result + decode_type(type)
+    result = result + decode_type(type, serialized_types)
     if type.cf_type is None:
         if not type.members_are_subclasses:
             result.append('    if (!decoder.isValid()) [[unlikely]]')
@@ -1147,17 +1181,17 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
             result.append(f'#endif // {type.condition}')
         result.append('')
 
-    if not generating_webkit_platform_impl:
-        result = result + argument_coder_declarations(serialized_types, False)
-        result.append('')
+    result = result + argument_coder_declarations(serialized_types, False, generating_webkit_platform_impl)
+    result.append('')
+
     for type in serialized_types:
         if type.webkit_platform != generating_webkit_platform_impl:
             continue
         if type.templates:
             for template in type.templates:
-                result.extend(generate_one_impl(type, template))
+                result.extend(generate_one_impl(type, template, serialized_types))
         else:
-            result.extend(generate_one_impl(type, None))
+            result.extend(generate_one_impl(type, None, serialized_types))
     result.append('} // namespace IPC')
     result.append('')
     result.append('namespace WTF {')
@@ -1795,7 +1829,8 @@ def generate_webkit_secure_coding_impl(serialized_types, headers):
     result.append('        return { };')
     result.append('    Vector<RetainPtr<T>> result;')
     result.append('    for (id element in array) {')
-    result.append('        if ([element isKindOfClass:IPC::getClass<T>()])')
+    # FIXME: isKindOfClass call can cause a static analysis false positive (https://github.com/llvm/llvm-project/issues/162979).
+    result.append('        SUPPRESS_UNRETAINED_ARG if ([element isKindOfClass:retainPtr(IPC::getClass<T>()).get()])')
     result.append('            result.append((T *)element);')
     result.append('    }')
     result.append('    return result;')
@@ -1846,7 +1881,8 @@ def generate_webkit_secure_coding_impl(serialized_types, headers):
                         result.append(f'    m_{member.type} = vectorFromArray<{member.array_contents()}>(({member.ns_type_pointer()})[dictionary objectForKey:@"{member.type}"]);')
             else:
                 result.append(f'    m_{member.type} = ({member.ns_type_pointer()})[dictionary objectForKey:@"{member.type}"];')
-                result.append(f'    if (!{member.type_check()})')
+                # FIXME: isKindOfClass call from type_check() can cause a static analysis false positive (https://github.com/llvm/llvm-project/issues/162979).
+                result.append(f'    SUPPRESS_UNRETAINED_ARG if (!{member.type_check()})')
                 result.append(f'        m_{member.type} = nullptr;')
                 # FIXME: We ought to be able to ASSERT_NOT_REACHED() here once all the question marks are in the right places.
                 result.append('')

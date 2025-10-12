@@ -65,9 +65,14 @@ if (!$getOptionsResult || $showHelp) {
 
 my @directoriesToIgnoreList = (
     "expected",
-    "icu",
 );
 my %directoriesToIgnore = map { $_ => 1 } @directoriesToIgnoreList;
+
+my @pathsToIgnoreList = (
+    "Source/WTF/icu",
+    "Source/WebKitLegacy/mac/icu",
+);
+my %pathsToIgnore = map { $_ => 1 } @pathsToIgnoreList;
 
 # find all files we want to process
 
@@ -76,6 +81,7 @@ find(\&wanted, "Source/JavaScriptCore");
 find(\&wanted, "Source/WTF");
 find(\&wanted, "Source/WebCore");
 find(\&wanted, "Source/WebDriver");
+find(\&wanted, "Source/WebGPU");
 find(\&wanted, "Source/WebKitLegacy");
 find(\&wanted, "Source/WebKit");
 find(\&wanted, "Tools/gdb");
@@ -90,6 +96,14 @@ find(\&wanted, "Tools/WebKitTestRunner");
 sub wanted
 {
     my $file = $_;
+    my $fullPath = $File::Find::name;
+
+    # Check for specific full paths to ignore
+    if ($pathsToIgnore{$fullPath}) {
+        print "Ignoring $fullPath\n" if $verbose;
+        $File::Find::prune = 1;
+        return;
+    }
 
     # Ignore excluded and hidden files/directories.
     if ($directoriesToIgnore{$file} or $file =~ /^\../ or $file =~ /^ChangeLog/) {
@@ -108,16 +122,14 @@ sub wanted
 my $isDOMTypeRename = 0;
 my %renames = (
     # Renames go here in the form of:
-    "xpc_dictionary_get_data_span" => "xpcDictionaryGetData",
-    "xpc_dictionary_get_wtfstring" => "xpcDictionaryGetString",
-    "xpc_string_get_wtfstring" => "xpcStringGetString",
+    "LChar" => "Latin1Character",
 );
 
 my %renamesContemplatedForTheFuture = (
-    "HTMLPlugInImageElement" => "HTMLEmbeddedObjectElement",
-    "isPlugInImageElement" => "isEmbeddedObjectElement",
-    "isHTMLPlugInImageElement" => "isHTMLEmbeddedObjectElement",
-    "toHTMLPlugInImageElement" => "toHTMLEmbeddedObjectElement",
+    "HTMLPlugInElement" => "HTMLEmbeddedObjectElement",
+    "isPlugInElement" => "isEmbeddedObjectElement",
+    "isHTMLPlugInElement" => "isHTMLEmbeddedObjectElement",
+    "toHTMLPlugInElement" => "toHTMLEmbeddedObjectElement",
 
     "DOMObject" => "JSDOMObject",
 

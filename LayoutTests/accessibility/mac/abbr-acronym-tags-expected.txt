@@ -1,18 +1,16 @@
+This tests that 'alternate text' for certain tags works correctly, including abbr tag, acronym tag and abbr attribute.
+
+PASS: abbr.stringAttributeValue('AXExpandedTextValue') === 'World Wide Web'
+PASS: content.attributedStringForTextMarkerRangeContainsAttribute('AXExpandedTextValue', markerRange) === true
+PASS: acronym.stringAttributeValue('AXExpandedTextValue') === 'WebKit2'
+PASS: content.attributedStringForTextMarkerRangeContainsAttribute('AXExpandedTextValue', markerRange) === true
+PASS: headerCell.stringAttributeValue('AXExpandedTextValue') === 'Test'
+PASS: headerCell.stringAttributeValue('AXExpandedTextValue') === 'foo'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
 WWW
 WK2
 Longer Test
 test
-This tests that 'alternate text' for certain tags works correctly, including abbr tag, acronym tag and abbr attribute.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS abbr.stringAttributeValue('AXExpandedTextValue') is 'World Wide Web'
-PASS content.attributedStringForTextMarkerRangeContainsAttribute('AXExpandedTextValue', markerRange) is true
-PASS acronym.stringAttributeValue('AXExpandedTextValue') is 'WebKit2'
-PASS content.attributedStringForTextMarkerRangeContainsAttribute('AXExpandedTextValue', markerRange) is true
-PASS headerCell.stringAttributeValue('AXExpandedTextValue') is 'Test'
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

@@ -524,6 +524,12 @@ def get_min_reqs(args, traces):
                 if extension[0] in recurse_reqs and extension[1] in recurse_reqs:
                     recurse_reqs.remove(extension[1])
 
+            # For replay portability, if GL_EXT_separate_shader_sources is required
+            #  bump version to 3.1 where this functionality is core
+            if "GL_EXT_separate_shader_objects" in recurse_reqs and min_version < (3, 1):
+                set_gles_version(json_data, (3, 1))
+                recurse_reqs.remove("GL_EXT_separate_shader_objects")
+
             json_data['RequiredExtensions'] = recurse_reqs
             save_trace_json(trace, json_data)
 

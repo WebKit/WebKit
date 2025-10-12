@@ -56,14 +56,14 @@ ExceptionOr<Vector<uint8_t>> transformAESCTR(CCOperation operation, const Vector
 
     // first part: compute the first n=capacity blocks of data if capacity is insufficient. Otherwise, return the result.
     CCCryptorRef cryptor;
-    CCCryptorStatus status = CCCryptorCreateWithMode(operation, kCCModeCTR, kCCAlgorithmAES128, ccNoPadding, counter.data(), key.data(), key.size(), 0, 0, 0, kCCModeOptionCTR_BE, &cryptor);
+    CCCryptorStatus status = CCCryptorCreateWithMode(operation, kCCModeCTR, kCCAlgorithmAES128, ccNoPadding, counter.span().data(), key.span().data(), key.size(), 0, 0, 0, kCCModeOptionCTR_BE, &cryptor);
     if (status)
         return Exception { ExceptionCode::OperationError };
 
     Vector<uint8_t> head(CCCryptorGetOutputLength(cryptor, headSize, true));
 
     size_t bytesWritten;
-    status = CCCryptorUpdate(cryptor, data.data(), headSize, head.data(), head.size(), &bytesWritten);
+    status = CCCryptorUpdate(cryptor, data.data(), headSize, head.mutableSpan().data(), head.size(), &bytesWritten);
     if (status)
         return Exception { ExceptionCode::OperationError };
 
@@ -83,7 +83,7 @@ ExceptionOr<Vector<uint8_t>> transformAESCTR(CCOperation operation, const Vector
     // second part: compute the remaining data and append them to the head.
     // reset counter
     Vector<uint8_t> remainingCounter = counterBlockHelper.counterVectorAfterOverflow();
-    status = CCCryptorCreateWithMode(operation, kCCModeCTR, kCCAlgorithmAES128, ccNoPadding, remainingCounter.data(), key.data(), key.size(), 0, 0, 0, kCCModeOptionCTR_BE, &cryptor);
+    status = CCCryptorCreateWithMode(operation, kCCModeCTR, kCCAlgorithmAES128, ccNoPadding, remainingCounter.span().data(), key.span().data(), key.size(), 0, 0, 0, kCCModeOptionCTR_BE, &cryptor);
     if (status)
         return Exception { ExceptionCode::OperationError };
 
@@ -91,7 +91,7 @@ ExceptionOr<Vector<uint8_t>> transformAESCTR(CCOperation operation, const Vector
     Vector<uint8_t> tail(CCCryptorGetOutputLength(cryptor, tailSize, true));
 
     auto dataAfterHeader = data.subspan(headSize);
-    status = CCCryptorUpdate(cryptor, dataAfterHeader.data(), dataAfterHeader.size(), tail.data(), tail.size(), &bytesWritten);
+    status = CCCryptorUpdate(cryptor, dataAfterHeader.data(), dataAfterHeader.size(), tail.mutableSpan().data(), tail.size(), &bytesWritten);
     if (status)
         return Exception { ExceptionCode::OperationError };
 
@@ -116,7 +116,7 @@ CCStatus keyDerivationHMAC(CCDigestAlgorithm digest, std::span<const uint8_t> ke
     if (rv != kCCSuccess)
         return rv;
 
-    rv = CCDeriveKey(params, digest, keyDerivationKey.data(), keyDerivationKey.size(), derivedKey.data(), derivedKey.size());
+    rv = CCDeriveKey(params, digest, keyDerivationKey.data(), keyDerivationKey.size(), derivedKey.mutableSpan().data(), derivedKey.size());
     CCKDFParametersDestroy(params);
 
     return rv;
@@ -164,7 +164,7 @@ Vector<uint8_t> calculateHMACSignature(CCHmacAlgorithm algorithm, const Vector<u
     }
 
     Vector<uint8_t> result(digestLength);
-    CCHmac(algorithm, key.data(), key.size(), data.data(), data.size(), result.data());
+    CCHmac(algorithm, key.span().data(), key.size(), data.data(), data.size(), result.mutableSpan().data());
     return result;
 }
 

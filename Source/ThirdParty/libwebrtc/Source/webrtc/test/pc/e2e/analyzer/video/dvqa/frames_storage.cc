@@ -10,12 +10,14 @@
 
 #include "test/pc/e2e/analyzer/video/dvqa/frames_storage.h"
 
+#include <cstddef>
 #include <cstdint>
 #include <optional>
 #include <utility>
 
 #include "api/units/timestamp.h"
 #include "api/video/video_frame.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

@@ -11,7 +11,7 @@
 #ifndef VIDEO_ADAPTATION_OVERUSE_FRAME_DETECTOR_H_
 #define VIDEO_ADAPTATION_OVERUSE_FRAME_DETECTOR_H_
 
-#include <list>
+#include <cstdint>
 #include <memory>
 #include <optional>
 
@@ -19,8 +19,8 @@
 #include "api/field_trials_view.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
+#include "api/units/time_delta.h"
 #include "rtc_base/experiments/field_trial_parser.h"
-#include "rtc_base/numerics/exp_filter.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "rtc_base/thread_annotations.h"

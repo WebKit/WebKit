@@ -44,14 +44,14 @@ LibWebRTCLogSink::~LibWebRTCLogSink()
     ASSERT(!m_loggingLevel);
 }
 
-void LibWebRTCLogSink::logMessage(const std::string& message, rtc::LoggingSeverity severity)
+void LibWebRTCLogSink::logMessage(const std::string& message, webrtc::LoggingSeverity severity)
 {
     m_callback(severity, message);
 }
 
-void LibWebRTCLogSink::start(rtc::LoggingSeverity level)
+void LibWebRTCLogSink::start(webrtc::LoggingSeverity level)
 {
-    if (level == rtc::LoggingSeverity::LS_NONE) {
+    if (level == webrtc::LoggingSeverity::LS_NONE) {
         stop();
         return;
     }
@@ -59,11 +59,11 @@ void LibWebRTCLogSink::start(rtc::LoggingSeverity level)
     if (m_loggingLevel) {
         if (*m_loggingLevel == level)
             return;
-        rtc::LogMessage::RemoveLogToStream(this);
+        webrtc::LogMessage::RemoveLogToStream(this);
     }
 
     m_loggingLevel = level;
-    rtc::LogMessage::AddLogToStream(this, level);
+    webrtc::LogMessage::AddLogToStream(this, level);
 }
 
 void LibWebRTCLogSink::stop()
@@ -72,7 +72,7 @@ void LibWebRTCLogSink::stop()
         return;
 
     m_loggingLevel = { };
-    rtc::LogMessage::RemoveLogToStream(this);
+    webrtc::LogMessage::RemoveLogToStream(this);
 }
 
 } // namespace WebCore

@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
-#include "ProfilerBytecodes.h"
-#include "ProfilerCompilation.h"
-#include "ProfilerEvent.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/ProfilerBytecodes.h>
+#include <JavaScriptCore/ProfilerCompilation.h>
+#include <JavaScriptCore/ProfilerEvent.h>
 #include <wtf/HashMap.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Lock.h>

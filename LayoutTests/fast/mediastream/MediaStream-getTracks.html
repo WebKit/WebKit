@@ -50,6 +50,8 @@
                 shouldBeNull('stream2.getTrackById("foo-id")');
 
                 finishJSTest();
+                stream1.getTracks().forEach(track => track.stop());
+                stream2.getTracks().forEach(track => track.stop());
             }
 
             function gotStream2(s)

@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -13,7 +10,7 @@ esid: pending
 new Function('(() => new.target)()');
 
 // It's also good inside eval, but not global eval
-assertThrowsInstanceOf(() => eval('() => new.target'), SyntaxError);
+assert.throws(SyntaxError, () => eval('() => new.target'));
 
 function assertNewTarget(expected) {
     assert.sameValue((()=>new.target)(), expected);

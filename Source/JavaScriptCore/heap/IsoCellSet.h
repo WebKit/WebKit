@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "MarkedBlock.h"
+#include <JavaScriptCore/MarkedBlock.h>
 #include <wtf/BitSet.h>
 #include <wtf/ConcurrentVector.h>
 #include <wtf/FastBitVector.h>

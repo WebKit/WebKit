@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "BytecodeIndex.h"
-#include "Instruction.h"
+#include <JavaScriptCore/BytecodeIndex.h>
+#include <JavaScriptCore/Instruction.h>
 #include <wtf/Vector.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -42,7 +42,7 @@ struct InstructionStreamBufferMalloc final : public InstructionStreamMalloc {
 
 template<typename InstructionType>
 class InstructionStream {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(InstructionStream);
 
     template<typename> friend class InstructionStreamWriter;
     friend class CachedInstructionStream;
@@ -59,7 +59,7 @@ public:
 private:
     template<class InstructionBuffer>
     class BaseRef {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(BaseRef);
 
         template<typename> friend class InstructionStream;
 
@@ -191,8 +191,8 @@ public:
 
     bool contains(InstructionType* instruction) const
     {
-        const uint8_t* pointer = std::bit_cast<const uint8_t*>(instruction);
-        return pointer >= m_instructions.data() && pointer < (m_instructions.data() + m_instructions.size());
+        auto* pointer = std::bit_cast<const uint8_t*>(instruction);
+        return pointer >= m_instructions.begin() && pointer < m_instructions.end();
     }
 
 protected:
@@ -363,7 +363,6 @@ private:
 
 using JSInstructionStream = InstructionStream<JSInstruction>;
 using JSInstructionStreamWriter = InstructionStreamWriter<JSInstruction>;
-using WasmInstructionStream = InstructionStream<WasmInstruction>;
 
 } // namespace JSC
 

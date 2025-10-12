@@ -49,7 +49,10 @@ WK_CLASS_AVAILABLE(macos(12.0))
  This process pool is also used to obtain web content processes for tabs created via _WKInspectorExtension.
  If unspecified, all Web Inspector instances will use a private process pool that is separate from web content.
 */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @property (nonatomic, strong, nullable) WKProcessPool *processPool;
+#pragma clang diagnostic pop
 
 /*! @abstract An identifier that is set for all pages associated with this inspector configuration.
  @discussion This can be used to uniquely identify Web Inspector-related pages from within the injected bundle.

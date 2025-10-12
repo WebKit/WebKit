@@ -13,6 +13,7 @@
                 shouldBe('tabState', "'foreground'");
                 stream = s;
                 shouldBe('stream.getAudioTracks().length', '1');
+                stream.getTracks().forEach(track => track.stop());
                 if (++streams == streamCount)
                     finishJSTest();
             }

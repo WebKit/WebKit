@@ -24,8 +24,7 @@
  */
 
 #include "config.h"
-
-#include "AccessibilityTextMarker.h"
+#include "AccessibilityTextMarkerRange.h"
 
 #include "AccessibilityUIElement.h"
 #include "JSAccessibilityTextMarkerRange.h"

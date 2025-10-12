@@ -8,7 +8,8 @@
 
         const iframeUrls = {
             echoCookies : "http://localhost:8000/cookies/resources/echo-cookies.py",
-            resetCookies : "http://localhost:8000/cookies/resources/reset-cookies.html"
+            resetCookies : "http://localhost:8000/cookies/resources/reset-cookies.html",
+            setCookie : "http://localhost:8000/cookies/resources/set-cookie-and-serve.py?cookie-name=test_cookie&cookie-value=1234"
         };
 
         function injectThirdPartyIframe(url) {
@@ -56,9 +57,25 @@
                     break;
                 case "#5":
                     document.location.hash = "6";
-                    injectThirdPartyIframe(iframeUrls.resetCookies);
+                    testRunner.setOnlyAcceptFirstPartyCookies(true);
+                    injectThirdPartyIframe(iframeUrls.setCookie);
                     break;
                 case "#6":
+                    document.location.hash = "7";
+                    // Should not see any cookies.
+                    injectThirdPartyIframe(iframeUrls.echoCookies);
+                    break;
+                case "#7":
+                    document.location.hash = "8";
+                    // Should see one cookie.
+                    testRunner.setOnlyAcceptFirstPartyCookies(false);
+                    injectThirdPartyIframe(iframeUrls.echoCookies);
+                    break;
+                case "#8":
+                    document.location.hash = "9";
+                    injectThirdPartyIframe(iframeUrls.resetCookies);
+                    break;
+                case "#9":
                     finishJSTest();
                     break;
                 default:

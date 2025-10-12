@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,10 +32,11 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-#include "CachedBytecode.h"
-#include "CodeSpecializationKind.h"
-#include "SourceOrigin.h"
-#include "SourceTaintedOrigin.h"
+#include <JavaScriptCore/CachedBytecode.h>
+#include <JavaScriptCore/CodeBlockHash.h>
+#include <JavaScriptCore/CodeSpecializationKind.h>
+#include <JavaScriptCore/SourceOrigin.h>
+#include <JavaScriptCore/SourceTaintedOrigin.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
@@ -73,7 +74,7 @@ public:
     virtual void updateCache(const UnlinkedFunctionExecutable*, const SourceCode&, CodeSpecializationKind, const UnlinkedFunctionCodeBlock*) const { }
     virtual void commitCachedBytecode() const { }
 
-    StringView getRange(int start, int end) const
+    StringView getRange(int start, int end) const LIFETIME_BOUND
     {
         return source().substring(start, end - start);
     }
@@ -89,6 +90,7 @@ public:
 
     TextPosition startPosition() const { return m_startPosition; }
     SourceProviderSourceType sourceType() const { return m_sourceType; }
+    bool isModuleType() const { return m_sourceType == SourceProviderSourceType::Module || m_sourceType == SourceProviderSourceType::JSON; }
 
     SourceID asID()
     {
@@ -106,6 +108,7 @@ public:
 
     JS_EXPORT_PRIVATE void lockUnderlyingBuffer();
     JS_EXPORT_PRIVATE void unlockUnderlyingBuffer();
+    JS_EXPORT_PRIVATE virtual CodeBlockHash codeBlockHashConcurrently(int startOffset, int endOffset, CodeSpecializationKind);
 
 private:
     JS_EXPORT_PRIVATE virtual void lockUnderlyingBufferImpl();
@@ -128,7 +131,7 @@ private:
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringSourceProvider);
 class StringSourceProvider : public SourceProvider {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StringSourceProvider);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StringSourceProvider, StringSourceProvider);
 public:
     static Ref<StringSourceProvider> create(const String& source, const SourceOrigin& sourceOrigin, String sourceURL, SourceTaintedOrigin taintedness, const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
     {
@@ -153,7 +156,7 @@ protected:
     }
 
 private:
-    Ref<StringImpl> m_source;
+    const Ref<StringImpl> m_source;
 };
 
 #if ENABLE(WEBASSEMBLY)
@@ -225,6 +228,8 @@ public:
         if (m_sourceProvider)
             m_sourceProvider->unlockUnderlyingBuffer();
     }
+
+    SourceProvider* provider() { return m_sourceProvider; }
 
 private:
     // This must not be RefPtr. It is possible that this is used by the concurrent compiler and

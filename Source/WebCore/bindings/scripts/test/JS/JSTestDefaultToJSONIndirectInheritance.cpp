@@ -157,7 +157,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONIndirectInheritanceConstructor, (JSG
 
 JSC::GCClient::IsoSubspace* JSTestDefaultToJSONIndirectInheritance::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestDefaultToJSONIndirectInheritance, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestDefaultToJSONIndirectInheritance, UseCustomHeapCellType::No>(vm, "JSTestDefaultToJSONIndirectInheritance"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestDefaultToJSONIndirectInheritance.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDefaultToJSONIndirectInheritance = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestDefaultToJSONIndirectInheritance.get(); },
@@ -172,6 +172,49 @@ void JSTestDefaultToJSONIndirectInheritance::analyzeHeap(JSCell* cell, HeapAnaly
     if (RefPtr context = thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
+}
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#if ENABLE(BINDING_INTEGRITY)
+#if PLATFORM(WIN)
+#pragma warning(disable: 4483)
+extern "C" { extern void (*const __identifier("??_7TestDefaultToJSONIndirectInheritance@WebCore@@6B@")[])(); }
+#else
+extern "C" { extern void* _ZTVN7WebCore36TestDefaultToJSONIndirectInheritanceE[]; }
+#endif
+template<std::same_as<TestDefaultToJSONIndirectInheritance> T>
+static inline void verifyVTable(TestDefaultToJSONIndirectInheritance* ptr)
+{
+    if constexpr (std::is_polymorphic_v<T>) {
+        const void* actualVTablePointer = getVTablePointer<T>(ptr);
+#if PLATFORM(WIN)
+        void* expectedVTablePointer = __identifier("??_7TestDefaultToJSONIndirectInheritance@WebCore@@6B@");
+#else
+        void* expectedVTablePointer = &_ZTVN7WebCore36TestDefaultToJSONIndirectInheritanceE[2];
+#endif
+
+        // If you hit this assertion you either have a use after free bug, or
+        // TestDefaultToJSONIndirectInheritance has subclasses. If TestDefaultToJSONIndirectInheritance has subclasses that get passed
+        // to toJS() we currently require TestDefaultToJSONIndirectInheritance you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+    }
+}
+#endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONIndirectInheritance>&& impl)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+#if ENABLE(BINDING_INTEGRITY)
+    verifyVTable<TestDefaultToJSONIndirectInheritance>(impl.ptr());
+#endif
+    return createWrapper<TestDefaultToJSONIndirectInheritance>(globalObject, WTFMove(impl));
+}
+
+JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestDefaultToJSONIndirectInheritance& impl)
+{
+    return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
 

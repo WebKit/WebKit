@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "WebGPUDeviceDescriptor.h"
-#include "WebGPUSupportedFeatures.h"
-#include "WebGPUSupportedLimits.h"
+#include <WebCore/WebGPUDeviceDescriptor.h>
+#include <WebCore/WebGPUSupportedFeatures.h>
+#include <WebCore/WebGPUSupportedLimits.h>
 #include <optional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
@@ -67,8 +67,8 @@ private:
     Adapter& operator=(Adapter&&) = delete;
 
     String m_name;
-    Ref<SupportedFeatures> m_features;
-    Ref<SupportedLimits> m_limits;
+    const Ref<SupportedFeatures> m_features;
+    const Ref<SupportedLimits> m_limits;
     bool m_isFallbackAdapter;
 };
 

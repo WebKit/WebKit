@@ -413,6 +413,21 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='compiled')
         return self.runStep()
 
+    def test_custom_timeout_specified_in_factory(self):
+        self.setupStep(CompileWebKit(timeout=2 * 60 * 60))
+        self.setProperty('fullPlatform', 'ios-simulator-11')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=True,
+                command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='compiled')
+        return self.runStep()
+
     def test_success_architecture(self):
         self.setupStep(CompileWebKit())
         self.setProperty('platform', 'mac')
@@ -1225,11 +1240,11 @@ class TestRunAPITests(BuildStepMixinAdditions, unittest.TestCase):
         self.configureStep(platform='mac', fullPlatform='mac-highsierra', configuration='release')
         next_steps = []
         self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
-        command = f'python3 Tools/Scripts/run-api-tests --no-build --json-output={self.jsonFileName} --release --verbose --buildbot-master {CURRENT_HOSTNAME} --builder-name API-Tests --build-number 101 --buildbot-worker bot100 --report https://results.webkit.org'
+        command = f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --json-output={self.jsonFileName} --release --verbose --buildbot-master {CURRENT_HOSTNAME} --builder-name API-Tests --build-number 101 --buildbot-worker bot100 --report https://results.webkit.org'
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', command + ' > logs.txt 2>&1 ; grep "Ran " logs.txt'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', command + ' > logs.txt 2>&1 ; ret=$? ; grep "Ran " logs.txt ; exit $ret'],
                         logfiles={'json': self.jsonFileName},
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
                         timeout=10800,
@@ -1697,33 +1712,37 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
     def test_success_test_minibrowser_bundle(self):
         self.setupStep(TestMiniBrowserBundle())
         self.setUpPropertiesForTest()
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['Tools/Scripts/test-bundle', '--platform=gtk', '--bundle-type=universal', 'WebKitBuild/MiniBrowser_gtk_release.tar.xz'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test-bundle --platform=gtk --bundle-type=universal WebKitBuild/MiniBrowser_gtk_release.tar.xz 2>&1 | python3 Tools/Scripts/filter-test-logs minibrowser'],
                         logEnviron=True,
-                        timeout=1200,
+                        timeout=10800,
                         )
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='tested minibrowser bundle')
         rc = self.runStep()
-        self.assertTrue(UploadMiniBrowserBundleViaSftp() in self.build.addedStepsAfterCurrentStep)
+        self.assertEqual([GenerateS3URL('gtk-None-release-test-minibrowser-bundle', extension='txt', content_type='text/plain', additions='13'), UploadFileToS3('logs.txt', links={'test-minibrowser-bundle': 'Full logs'}, content_type='text/plain'), UploadMiniBrowserBundleViaSftp()], next_steps)
         return rc
 
     def test_failure_test_minibrowser_bundle(self):
         self.setupStep(TestMiniBrowserBundle())
         self.setUpPropertiesForTest()
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['Tools/Scripts/test-bundle', '--platform=gtk', '--bundle-type=universal', 'WebKitBuild/MiniBrowser_gtk_release.tar.xz'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test-bundle --platform=gtk --bundle-type=universal WebKitBuild/MiniBrowser_gtk_release.tar.xz 2>&1 | python3 Tools/Scripts/filter-test-logs minibrowser'],
                         logEnviron=True,
-                        timeout=1200,
+                        timeout=10800,
                         )
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='tested minibrowser bundle (failure)')
         rc = self.runStep()
-        self.assertTrue(UploadMiniBrowserBundleViaSftp() not in self.build.addedStepsAfterCurrentStep)
+        self.assertEqual([GenerateS3URL('gtk-None-release-test-minibrowser-bundle', extension='txt', content_type='text/plain', additions='13'), UploadFileToS3('logs.txt', links={'test-minibrowser-bundle': 'Full logs'}, content_type='text/plain')], next_steps)
         return rc
 
     def test_success_generate_jsc_bundle(self):
@@ -1898,7 +1917,7 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 logEnviron=True,
                 logfiles={'json': self.jsonFileName},
-                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --json-output=webdriver_tests.json --release > logs.txt 2>&1'],
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
                 timeout=5400
             ) + 0,
         )
@@ -1914,7 +1933,7 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 logEnviron=True,
                 logfiles={'json': self.jsonFileName},
-                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --json-output=webdriver_tests.json --release > logs.txt 2>&1'],
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
                 timeout=5400
             ) + 1,
         )
@@ -2120,6 +2139,10 @@ class TestScanBuild(BuildStepMixinAdditions, unittest.TestCase):
         self.configureStep()
         self.setProperty('builddir', self.WORK_DIR)
         self.setProperty('configuration', 'release')
+        self.setProperty('fullPlatform', 'mac-sonoma')
+        self.setProperty('architecture', 'arm64')
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
 
         self.expectRemoteCommands(
             ExpectShell(workdir=self.WORK_DIR,
@@ -2133,7 +2156,21 @@ class TestScanBuild(BuildStepMixinAdditions, unittest.TestCase):
             + 0
         )
         self.expectOutcome(result=SUCCESS, state_string='scan-build found 0 issues')
-        return self.runStep()
+        rc = self.runStep()
+        self.assertEqual(
+            [
+                GenerateS3URL('mac-sonoma-arm64-release-scan-build', extension='txt', content_type='text/plain', additions='13'),
+                UploadFileToS3('build-log.txt', links={'scan-build': 'Full build log'}, content_type='text/plain'),
+                ParseStaticAnalyzerResults(),
+                FindUnexpectedStaticAnalyzerResults(),
+                ArchiveStaticAnalyzerResults(),
+                UploadStaticAnalyzerResults(),
+                ExtractStaticAnalyzerTestResults(),
+                DisplaySaferCPPResults(),
+                CleanSaferCPPArchive(),
+                SetBuildSummary()
+            ], next_steps)
+        return rc
 
     def test_success_with_issues(self):
         self.configureStep()
@@ -2264,6 +2301,34 @@ class TestUpdateSaferCPPBaseline(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
+class TestCleanSaferCPPArchive(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(CleanSaferCPPArchive())
+
+    def test_success(self):
+        self.configureStep()
+        self.setProperty('builddir', 'wkdir')
+        self.setProperty('buildnumber', 2)
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['rm', '-rf', 'wkdir/smart-pointer-result-archive/2'],
+                        logEnviron=False,
+                        timeout=1200,
+                        env={})
+            + ExpectShell.log('stdio', stdout='')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='cleaned safer cpp archive')
+        return self.runStep()
+
+
 class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         return self.setUpBuildStep()
@@ -2329,4 +2394,46 @@ class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('unexpected_failing_files', 1)
 
         self.expectOutcome(result=FAILURE, state_string='Unexpected failing files: 1 Unexpected passing files: 1')
+        return self.runStep()
+
+
+class TestRunTest262Tests(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(RunTest262Tests())
+        self.setProperty('fullPlatform', 'mac-sonoma')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=7200,
+                        logEnviron=True,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/test262-runner --verbose --release 2>&1 | python3 Tools/Scripts/filter-test-logs test262'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='test262-test')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(RunTest262Tests())
+        self.setProperty('fullPlatform', 'mac-sonoma')
+        self.setProperty('configuration', 'debug')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=7200,
+                        logEnviron=True,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/test262-runner --verbose --debug 2>&1 | python3 Tools/Scripts/filter-test-logs test262'],
+                        )
+            + ExpectShell.log('stdio', stdout='''! NEW FAIL: test/built-ins/Array/prototype/at/index-non-numeric.js
+! NEW FAIL: test/built-ins/Array/prototype/at/index-out-of-range.js
+! NEW FAIL: test/built-ins/Array/prototype/at/index-string.js''')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='3 Test262 tests failed')
         return self.runStep()

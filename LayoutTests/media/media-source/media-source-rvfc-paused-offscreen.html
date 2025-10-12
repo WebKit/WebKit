@@ -1,7 +1,7 @@
 <html>
 <head>
 <title>requestVideoFrameCallback with paused MSE while offscreen</title>
-<script src="../resources/testharness.js"></script>
+<script src="../../resources/testharness.js"></script>
 <script src="../video-test.js"></script>
 <script src="../utilities.js"></script>
 <script>
@@ -25,6 +25,7 @@
         let video = document.createElement('video');
 
         let rvfcPromise = waitForVideoFrame(video);
+        let loadedDataPromise = waitFor(video, 'loadeddata', true);
         await setupMSE(video, "content/test-fragmented-video.mp4", "video/mp4; codecs=avc1.4d401e");
         const frame1 = await rvfcPromise;
 
@@ -33,18 +34,18 @@
         testExpected(frame1[1].width, 640);
         testExpected(frame1[1].height, 480);
 
+        await loadedDataPromise;
+        rvfcPromise = waitForVideoFrame(video);
         // FIXME: Last frame has a time of 9.958333, seeking on B-Framce webkit.org/b/283564
         // location of the last frame.
         video.currentTime = 9.916667;
 
-        const seekPromise = waitFor(video, 'seeked');
-        const frame2 = await waitForVideoFrame(video);
+        await waitFor(video, 'seeked');
+        const frame2 = await rvfcPromise;
         testExpectedEqualWithTolerance(video.currentTime, 9.916667, 0.000001);
         testExpectedEqualWithTolerance(frame2[1].mediaTime, 9.916667, 0.000001);
         testExpected(frame2[1].width, 640);
         testExpected(frame2[1].height, 480);
-
-        await seekPromise;
 
         if (window.testRunner)
             testRunner.notifyDone();

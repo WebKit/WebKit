@@ -8,6 +8,10 @@
 //     https://github.com/google/skia/blob/master/tools/CrashHandler.cpp
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "util/test_utils.h"
 
 #include "common/FixedVector.h"

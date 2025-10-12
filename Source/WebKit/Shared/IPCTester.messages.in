@@ -22,7 +22,11 @@
 
 #if ENABLE(IPC_TESTING_API)
 
-[ExceptionForEnabledBy]
+[
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo,
+    ExceptionForEnabledBy
+]
 messages -> IPCTester {
     StartMessageTesting(String driverName)
     StopMessageTesting() -> () Synchronous
@@ -42,6 +46,9 @@ messages -> IPCTester {
 
     SendAsyncMessageToReceiver(uint32_t arg0)
     AsyncOptionalExceptionData(bool sendEngaged) -> (struct std::optional<WebCore::ExceptionData> exceptionData, String other)
+
+    EmptyMessage()
+    EmptyMessageWithReply() -> (uint64_t valueq)
 }
 
 #endif

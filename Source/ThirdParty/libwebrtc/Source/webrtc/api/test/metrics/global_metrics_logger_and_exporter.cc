@@ -10,12 +10,11 @@
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
 
 #include <memory>
-#include <utility>
 #include <vector>
 
+#include "api/test/metrics/metric.h"
 #include "api/test/metrics/metrics_exporter.h"
 #include "api/test/metrics/metrics_logger.h"
-#include "rtc_base/checks.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {

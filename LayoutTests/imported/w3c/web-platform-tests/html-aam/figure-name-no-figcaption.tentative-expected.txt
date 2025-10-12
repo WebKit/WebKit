@@ -20,28 +20,13 @@ figcaption
 figcaption
 labelledby
 
-FAIL figure with figcaption - no name assert_equals: <figure data-testname="figure with figcaption - no name" data-expectedlabel="" class="ex">
-  x
-  <figcaption>y</figcaption>
-</figure> expected "" but got "y"
-FAIL figure with figcaption and aria-label assert_equals: <figure data-testname="figure with figcaption and aria-label" aria-label="label" data-expectedlabel="label" class="ex">
-  x
-  <figcaption>y</figcaption>
-</figure> expected "label" but got "y"
-FAIL figure with figcaption and aria-labelledby pointing to another element assert_equals: <figure data-testname="figure with figcaption and aria-labelledby pointing to another element" aria-labelledby="labelledby" data-expectedlabel="labelledby" class="ex">
-  x
-  <figcaption>y</figcaption>
-</figure> expected "labelledby" but got "labelledby y"
+PASS figure with figcaption - no name
+PASS figure with figcaption and aria-label
+PASS figure with figcaption and aria-labelledby pointing to another element
 PASS figure with aria-labelledby pointing to figcaption
-FAIL figure with figcaption and title assert_equals: <figure data-testname="figure with figcaption and title" title="title" data-expectedlabel="title" class="ex">
-  x
-  <figcaption>y</figcaption>
-</figure> expected "title" but got "y"
-FAIL figure with figcaption and img without alt assert_equals: <figure data-testname="figure with figcaption and img without alt" data-expectedlabel="" class="ex">
-  <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" data-testname="img without alt within a figure with figcaption" data-expectedlabel="figcaption" class="ex">
-  <figcaption>figcaption</figcaption>
-</figure> expected "" but got "figcaption"
-FAIL img without alt within a figure with figcaption assert_equals: <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" data-testname="img without alt within a figure with figcaption" data-expectedlabel="figcaption" class="ex"> expected "figcaption" but got ""
+PASS figure with figcaption and title
+PASS figure with figcaption and img without alt
+PASS img without alt within a figure with figcaption
 PASS img without alt but with title within a figure with figcaption
 PASS img without alt within a figure with figcaption, and with other flow content within the figure
 

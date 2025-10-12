@@ -40,7 +40,12 @@ namespace ContentExtensions {
 
 class ContentExtensionRule;
 
-WEBCORE_EXPORT Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const String&);
+enum class CSSSelectorsAllowed : bool {
+    No,
+    Yes
+};
+
+WEBCORE_EXPORT Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const String&, CSSSelectorsAllowed);
 WEBCORE_EXPORT bool isValidCSSSelector(const String&);
 
 CSSParserContext contentExtensionCSSParserContext();

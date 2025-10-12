@@ -1,0 +1,113 @@
+
+FAIL .child 1 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+  <div class="child" data-expected-width="20" data-expected-height="49" data-offset-y="1" style="width: 20px; height: stretch;">1</div>
+</div>
+height expected 49 but got 13
+PASS .child 2
+FAIL .child 3 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+  <div class="child" data-expected-width="20" data-expected-height="50" data-offset-y="0" style="width: 20px; height: stretch;">3</div>
+</div>
+height expected 50 but got 13
+PASS .child 4
+FAIL .child 5 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+  <div class="child" data-expected-width="20" data-expected-height="49" data-offset-y="1" style="writing-mode: vertical-rl; width: 20px; height: stretch;">5</div>
+</div>
+height expected 49 but got 5
+FAIL .child 6 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+  <div class="child" data-expected-width="40" data-expected-height="20" data-offset-y="1" style="writing-mode: vertical-rl; width: stretch; height: 20px;">6</div>
+</div>
+width expected 40 but got 13
+FAIL .child 7 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+  <div class="child" data-expected-width="20" data-expected-height="50" data-offset-y="0" style="writing-mode: vertical-rl; width: 20px; height: stretch;">7</div>
+</div>
+height expected 50 but got 5
+FAIL .child 8 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+  <div class="child" data-expected-width="40" data-expected-height="20" data-offset-y="0" style="writing-mode: vertical-rl; width: stretch; height: 20px;">8</div>
+</div>
+width expected 40 but got 13
+FAIL .child 9 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+  <div class="child" data-expected-width="20" data-expected-height="49" data-offset-y="1" style="writing-mode: vertical-lr; width: 20px; height: stretch;">9</div>
+</div>
+height expected 49 but got 5
+FAIL .child 10 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+  <div class="child" data-expected-width="40" data-expected-height="20" data-offset-y="1" style="writing-mode: vertical-lr; width: stretch; height: 20px;">10</div>
+</div>
+width expected 40 but got 13
+FAIL .child 11 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+  <div class="child" data-expected-width="20" data-expected-height="50" data-offset-y="0" style="writing-mode: vertical-lr; width: 20px; height: stretch;">11</div>
+</div>
+height expected 50 but got 10
+FAIL .child 12 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+  <div class="child" data-expected-width="40" data-expected-height="20" data-offset-y="0" style="writing-mode: vertical-lr; width: stretch; height: 20px;">12</div>
+</div>
+width expected 40 but got 13
+FAIL .child 13 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+  <div class="child" data-expected-width="20" data-expected-height="49" data-offset-y="1" style="writing-mode: sideways-rl; width: 20px; height: stretch;">13</div>
+</div>
+height expected 49 but got 10
+FAIL .child 14 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+  <div class="child" data-expected-width="40" data-expected-height="20" data-offset-y="1" style="writing-mode: sideways-rl; width: stretch; height: 20px;">14</div>
+</div>
+width expected 40 but got 13
+FAIL .child 15 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+  <div class="child" data-expected-width="20" data-expected-height="50" data-offset-y="0" style="writing-mode: sideways-rl; width: 20px; height: stretch;">15</div>
+</div>
+height expected 50 but got 10
+FAIL .child 16 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+  <div class="child" data-expected-width="40" data-expected-height="20" data-offset-y="0" style="writing-mode: sideways-rl; width: stretch; height: 20px;">16</div>
+</div>
+width expected 40 but got 13
+FAIL .child 17 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+  <div class="child" data-expected-width="20" data-expected-height="49" data-offset-y="1" style="writing-mode: sideways-lr; width: 20px; height: stretch;">17</div>
+</div>
+height expected 49 but got 10
+FAIL .child 18 assert_equals:
+<div class="container" style="border-top: 5px solid;">
+  <div class="child" data-expected-width="40" data-expected-height="20" data-offset-y="1" style="writing-mode: sideways-lr; width: stretch; height: 20px;">18</div>
+</div>
+width expected 40 but got 13
+FAIL .child 19 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+  <div class="child" data-expected-width="20" data-expected-height="50" data-offset-y="0" style="writing-mode: sideways-lr; width: 20px; height: stretch;">19</div>
+</div>
+height expected 50 but got 10
+FAIL .child 20 assert_equals:
+<div class="container" style="border-right: 5px solid;">
+  <div class="child" data-expected-width="40" data-expected-height="20" data-offset-y="0" style="writing-mode: sideways-lr; width: stretch; height: 20px;">20</div>
+</div>
+width expected 40 but got 13
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20

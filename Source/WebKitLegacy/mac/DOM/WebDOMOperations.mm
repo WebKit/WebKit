@@ -91,14 +91,16 @@ using namespace JSC;
 
 - (WebArchive *)webArchive
 {
-    return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self), { }, { }, { }, false)]).autorelease();
+    WebCore::LegacyWebArchive::ArchiveOptions options { WebCore::LegacyWebArchive::ShouldSaveScriptsFromMemoryCache::No };
+    return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self), WTFMove(options))]).autorelease();
 }
 
 - (WebArchive *)webArchiveByFilteringSubframes:(WebArchiveSubframeFilter)webArchiveSubframeFilter
 {
-    auto webArchive = adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self), [webArchiveSubframeFilter](LocalFrame& subframe) -> bool {
+    WebCore::LegacyWebArchive::ArchiveOptions options { WebCore::LegacyWebArchive::ShouldSaveScriptsFromMemoryCache::No };
+    auto webArchive = adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self), WTFMove(options), [webArchiveSubframeFilter](LocalFrame& subframe) -> bool {
         return webArchiveSubframeFilter(kit(&subframe));
-    }, { }, { }, false)]);
+    })]);
 
     return webArchive.autorelease();
 }
@@ -190,7 +192,8 @@ using namespace JSC;
 
 - (WebArchive *)webArchive
 {
-    return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(makeSimpleRange(*core(self)), false)]).autorelease();
+    WebCore::LegacyWebArchive::ArchiveOptions options { WebCore::LegacyWebArchive::ShouldSaveScriptsFromMemoryCache::No };
+    return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(makeSimpleRange(*core(self)), WTFMove(options))]).autorelease();
 }
 
 - (NSString *)markupString
@@ -270,6 +273,8 @@ static NSEventPhase toNSEventPhase(PlatformWheelEventPhase platformPhase)
         return NSEventPhaseCancelled;
     case PlatformWheelEventPhase::MayBegin:
         return NSEventPhaseMayBegin;
+    case PlatformWheelEventPhase::WillBegin:
+        return NSEventPhaseNone;
     }
 
     return NSEventPhaseNone;

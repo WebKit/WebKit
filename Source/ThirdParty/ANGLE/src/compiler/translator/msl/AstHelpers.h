@@ -116,14 +116,12 @@ bool HasArrayField(const TStructure &structure);
 // Coerces `fromNode` to `toType` by a constructor call of `toType` if their types differ.
 // Vector and matrix dimensions are retained.
 // Array types are not allowed.
-TIntermTyped &CoerceSimple(TBasicType toBasicType,
-                           TIntermTyped &fromNode,
-                           bool needsExplicitBoolCast);
+TIntermTyped &CoerceSimple(TBasicType toBasicType, TIntermTyped &fromNode);
 
 // Coerces `fromNode` to `toType` by a constructor call of `toType` if their types differ.
 // Vector and matrix dimensions must coincide between to and from.
 // Array types are not allowed.
-TIntermTyped &CoerceSimple(const TType &toType, TIntermTyped &fromNode, bool needsExplicitBoolCast);
+TIntermTyped &CoerceSimple(const TType &toType, TIntermTyped &fromNode);
 
 TIntermTyped &AsType(SymbolEnv &symbolEnv, const TType &toType, TIntermTyped &fromNode);
 

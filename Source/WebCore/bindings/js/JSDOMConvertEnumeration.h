@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "IDLTypes.h"
-#include "JSDOMConvertBase.h"
-#include "JSDOMGlobalObject.h"
+#include <WebCore/IDLTypes.h>
+#include <WebCore/JSDOMConvertBase.h>
+#include <WebCore/JSDOMGlobalObject.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

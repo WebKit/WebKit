@@ -31,10 +31,12 @@
 #include "RenderBlockFlow.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
+#include "RenderGrid.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
 #include "RenderListMarker.h"
+#include "RenderObjectInlines.h"
 #include "RenderSVGBlock.h"
 #include "RenderSVGForeignObject.h"
 #include "RenderStyleInlines.h"
@@ -102,7 +104,7 @@ enum class IncludeReasons : bool {
 
 static inline bool mayHaveScrollbarOrScrollableOverflow(const RenderStyle& style)
 {
-    return !style.isOverflowVisible() || style.scrollbarGutter() != RenderStyle::initialScrollbarGutter();
+    return !style.isOverflowVisible() || !style.scrollbarGutter().isAuto();
 }
 
 static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlexibleBox& flexBox, IncludeReasons includeReasons)
@@ -193,7 +195,7 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
         if (mayHaveScrollbarOrScrollableOverflow(flexItemStyle))
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasUnsupportedOverflow, reasons, includeReasons);
 
-        if (flexItem.hasIntrinsicAspectRatio() || flexItemStyle.hasAspectRatio())
+        if ((is<RenderBox>(flexItem) && downcast<RenderBox>(flexItem).hasIntrinsicAspectRatio()) || flexItemStyle.hasAspectRatio())
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasAspectRatio, reasons, includeReasons);
 
         auto alignValue = flexItemStyle.alignSelf().position() != ItemPosition::Auto ? flexItemStyle.alignSelf().position() : flexBoxStyle.alignItems().position();
@@ -215,7 +217,7 @@ static void printTextForSubtree(const RenderElement& renderer, size_t& character
     for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(renderer))) {
         if (is<RenderText>(child)) {
             auto text = downcast<RenderText>(child).text();
-            auto textView = StringView { text }.trim(isASCIIWhitespace<UChar>);
+            auto textView = StringView { text }.trim(isASCIIWhitespace<char16_t>);
             auto length = std::min<size_t>(charactersLeft, textView.length());
             stream << textView.left(length);
             charactersLeft -= length;
@@ -394,4 +396,3 @@ bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
 
 }
 }
-

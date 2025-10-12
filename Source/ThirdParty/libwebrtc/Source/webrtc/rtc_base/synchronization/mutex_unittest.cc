@@ -10,29 +10,22 @@
 
 #include "rtc_base/synchronization/mutex.h"
 
-#include <stddef.h>
-#include <stdint.h>
-
 #include <atomic>
+#include <cstddef>
 #include <memory>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
+#include "api/units/time_delta.h"
 #include "benchmark/benchmark.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/event.h"
-#include "rtc_base/platform_thread.h"
 #include "rtc_base/synchronization/yield.h"
 #include "rtc_base/thread.h"
+#include "rtc_base/thread_annotations.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
-
-using ::rtc::Event;
-using ::rtc::Thread;
-
 constexpr int kNumThreads = 16;
 
 template <class MutexType>

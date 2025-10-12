@@ -1001,7 +1001,6 @@ void vp9_set_speed_features_framesize_independent(VP9_COMP *cpi, int speed) {
   // This setting only takes effect when partition_search_type is set
   // to FIXED_PARTITION.
   sf->always_this_block_size = BLOCK_16X16;
-  sf->search_type_check_frequency = 50;
   sf->encode_breakout_thresh = 0;
   // Recode loop tolerance %.
   sf->recode_tolerance_low = 12;

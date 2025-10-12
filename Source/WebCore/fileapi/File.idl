@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@ typedef (BufferSource or Blob or USVString) BlobPart;
 [
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
-    JSGenerateToJSObject,
     JSGenerateToNativeObject,
 ] interface File : Blob {
     [CallWith=CurrentScriptExecutionContext] constructor(sequence<BlobPart> fileBits, USVString fileName, optional FilePropertyBag options);

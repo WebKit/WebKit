@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2007, 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -44,7 +44,7 @@ TagCollectionNS::TagCollectionNS(ContainerNode& rootNode, const AtomString& name
 
 TagCollectionNS::~TagCollectionNS()
 {
-    protectedOwnerNode()->nodeLists()->removeCachedTagCollectionNS(*this, m_namespaceURI, m_localName);
+    ownerNode().nodeLists()->removeCachedTagCollectionNS(*this, m_namespaceURI, m_localName);
 }
 
 TagCollection::TagCollection(ContainerNode& rootNode, const AtomString& qualifiedName)
@@ -56,7 +56,7 @@ TagCollection::TagCollection(ContainerNode& rootNode, const AtomString& qualifie
 
 TagCollection::~TagCollection()
 {
-    protectedOwnerNode()->nodeLists()->removeCachedCollection(this, m_qualifiedName);
+    ownerNode().nodeLists()->removeCachedCollection(this, m_qualifiedName);
 }
 
 HTMLTagCollection::HTMLTagCollection(ContainerNode& rootNode, const AtomString& qualifiedName)
@@ -69,7 +69,7 @@ HTMLTagCollection::HTMLTagCollection(ContainerNode& rootNode, const AtomString& 
 
 HTMLTagCollection::~HTMLTagCollection()
 {
-    protectedOwnerNode()->nodeLists()->removeCachedCollection(this, m_qualifiedName);
+    ownerNode().nodeLists()->removeCachedCollection(this, m_qualifiedName);
 }
 
 } // namespace WebCore

@@ -3,8 +3,8 @@ PASS hidden-ua-stylesheet
 PASS div.removeAttribute('hidden')
 PASS div.setAttribute('hidden', '')
 PASS div.setAttribute('hidden', 'asdf')
-FAIL div.setAttribute('hidden', 'until-found') assert_equals: div.setAttribute('hidden', 'until-found') should not affect the div's display property. expected "block" but got "none"
-FAIL div.setAttribute('hidden', 'UNTIL-FOUND') assert_equals: div.setAttribute('hidden', 'UNTIL-FOUND') should not affect the div's display property. expected "block" but got "none"
-FAIL div.setAttribute('hidden', 'UnTiL-FoUnD') assert_equals: div.setAttribute('hidden', 'UnTiL-FoUnD') should not affect the div's display property. expected "block" but got "none"
+PASS div.setAttribute('hidden', 'until-found')
+PASS div.setAttribute('hidden', 'UNTIL-FOUND')
+PASS div.setAttribute('hidden', 'UnTiL-FoUnD')
 PASS div.setAttribute('hidden', '0')
 

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "DeferredWorkTimer.h"
-#include "JSCellInlines.h"
+#include <JavaScriptCore/DeferredWorkTimer.h>
+#include <JavaScriptCore/JSCellInlines.h>
 
 namespace JSC {
 

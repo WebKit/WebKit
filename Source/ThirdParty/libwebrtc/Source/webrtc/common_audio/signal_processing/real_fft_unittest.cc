@@ -10,6 +10,10 @@
 
 #include "common_audio/signal_processing/include/real_fft.h"
 
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
+
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "test/gtest.h"
 
@@ -17,16 +21,16 @@ namespace webrtc {
 namespace {
 
 // FFT order.
-const int kOrder = 5;
+constexpr int kOrder = 5;
 // Lengths for real FFT's time and frequency bufffers.
 // For N-point FFT, the length requirements from API are N and N+2 respectively.
-const int kTimeDataLength = 1 << kOrder;
-const int kFreqDataLength = (1 << kOrder) + 2;
+constexpr int kTimeDataLength = 1 << kOrder;
+constexpr int kFreqDataLength = (1 << kOrder) + 2;
 // For complex FFT's time and freq buffer. The implementation requires
 // 2*N 16-bit words.
-const int kComplexFftDataLength = 2 << kOrder;
+constexpr int kComplexFftDataLength = 2 << kOrder;
 // Reference data for time signal.
-const int16_t kRefData[kTimeDataLength] = {
+constexpr int16_t kRefData[kTimeDataLength] = {
     11739,  6848,  -8688,  31980, -30295, 25242, 27085,  19410,
     -26299, 15607, -10791, 11778, -23819, 14498, -25772, 10076,
     1173,   6848,  -8688,  31980, -30295, 2522,  27085,  19410,

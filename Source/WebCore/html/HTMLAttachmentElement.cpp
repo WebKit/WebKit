@@ -28,9 +28,10 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-#include "AddEventListenerOptions.h"
+#include "AddEventListenerOptionsInlines.h"
 #include "AttachmentAssociatedElement.h"
 #include "AttachmentElementClient.h"
+#include "ContainerNodeInlines.h"
 #include "CSSPropertyNames.h"
 #include "CSSUnits.h"
 #include "DOMRectReadOnly.h"
@@ -53,6 +54,7 @@
 #include "NodeName.h"
 #include "RenderAttachment.h"
 #include "RenderObjectInlines.h"
+#include "Settings.h"
 #include "ShadowRoot.h"
 #include "SharedBuffer.h"
 #include "UserAgentStyleSheets.h"
@@ -94,12 +96,8 @@ static CString compactStackTrace(StackTrace& stackTrace)
 {
     StringPrintStream stack;
     stackTrace.forEachFrame([&stack](int, void*, const char* fullName) {
-        constexpr size_t maxWorkLen = 1023;
-        constexpr bool is8Bit = true;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        StringView name { fullName ? fullName : "?", fullName ? unsigned(std::min(strlen(fullName), maxWorkLen)) : 1u, is8Bit };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-
+        constexpr size_t maxWorkLength = 1023;
+        auto name = StringView::fromLatin1(fullName ? fullName : "?").left(maxWorkLength);
         for (const auto& prefix : { "auto void "_s, "auto "_s }) {
             if (name.startsWith(prefix)) {
                 name = name.substring(prefix.length());
@@ -861,11 +859,11 @@ void HTMLAttachmentElement::updateImage()
 
     if (!m_iconForWideLayout.isEmpty()) {
         dispatchEvent(Event::create(eventNames().loadeddataEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        m_imageElement->setSrc(AtomString { DOMURL::createObjectURL(document(), Blob::create(protectedDocument().ptr(), Vector<uint8_t>(m_iconForWideLayout), "image/png"_s)) });
+        m_imageElement->setAttributeWithoutSynchronization(srcAttr, AtomString { DOMURL::createObjectURL(document(), Blob::create(protectedDocument().ptr(), Vector<uint8_t>(m_iconForWideLayout), "image/png"_s)) });
         return;
     }
 
-    m_imageElement->setSrc(nullAtom());
+    m_imageElement->removeAttribute(srcAttr);
 }
 
 void HTMLAttachmentElement::updateIconForNarrowLayout(const RefPtr<Image>& icon, const WebCore::FloatSize& iconSize)

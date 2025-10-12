@@ -21,16 +21,17 @@
 
 #pragma once
 
-#include "FrameLoaderTypes.h"
-#include "JSWindowProxy.h"
-#include "LoadableScript.h"
-#include "SerializedScriptValue.h"
-#include "WindowProxy.h"
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/ScriptFetchParameters.h>
 #include <JavaScriptCore/Strong.h>
+#include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/JSWindowProxy.h>
+#include <WebCore/LoadableScript.h>
+#include <WebCore/SerializedScriptValue.h>
+#include <WebCore/WindowProxy.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -84,7 +85,7 @@ class ScriptController final : public CanMakeWeakPtr<ScriptController>, public C
     WTF_MAKE_TZONE_ALLOCATED(ScriptController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScriptController);
 
-    using RootObjectMap = UncheckedKeyHashMap<void*, Ref<JSC::Bindings::RootObject>>;
+    using RootObjectMap = HashMap<void*, Ref<JSC::Bindings::RootObject>>;
 
 public:
     explicit ScriptController(LocalFrame&);
@@ -175,6 +176,7 @@ public:
     void reportExceptionFromScriptError(LoadableScript::Error, bool);
 
     void registerImportMap(const ScriptSourceCode&, const URL& baseURL);
+    bool registerSpeculationRules(const ScriptSourceCode&, const URL& baseURL);
 
 private:
     ValueOrException executeScriptInWorld(DOMWrapperWorld&, RunJavaScriptParameters&&);

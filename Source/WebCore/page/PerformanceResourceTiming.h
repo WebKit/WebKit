@@ -82,3 +82,11 @@ protected:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PerformanceResourceTiming)
+static bool isType(const WebCore::PerformanceEntry& entry)
+{
+    auto type = entry.performanceEntryType();
+    return type == WebCore::PerformanceEntry::Type::Resource || type == WebCore::PerformanceEntry::Type::Navigation;
+}
+SPECIALIZE_TYPE_TRAITS_END()

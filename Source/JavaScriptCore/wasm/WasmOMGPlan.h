@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,13 +48,13 @@ public:
     static FunctionAllowlist& ensureGlobalOMGAllowlist();
 
     // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
-    OMGPlan(VM&, Ref<Module>&&, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, MemoryMode, CompletionTask&&);
+    OMGPlan(VM&, Ref<Module>&&, FunctionCodeIndex functionIndex, MemoryMode, CompletionTask&&);
 
 private:
     // For some reason friendship doesn't extend to parent classes...
     using Base::m_lock;
 
-    void dumpDisassembly(CompilationContext&, LinkBuffer&, FunctionCodeIndex functionIndex, const TypeDefinition&, FunctionSpaceIndex functionIndexSpace);
+    void dumpDisassembly(CompilationContext&, LinkBuffer&, const TypeDefinition&, FunctionSpaceIndex functionIndexSpace);
     bool isComplete() const final { return m_completed; }
     void complete() WTF_REQUIRES_LOCK(m_lock) final
     {
@@ -62,10 +62,9 @@ private:
         runCompletionTasks();
     }
     
-    Ref<Module> m_module;
-    Ref<CalleeGroup> m_calleeGroup;
+    const Ref<Module> m_module;
+    const Ref<CalleeGroup> m_calleeGroup;
     bool m_completed { false };
-    std::optional<bool> m_hasExceptionHandlers;
     FunctionCodeIndex m_functionIndex;
 };
 

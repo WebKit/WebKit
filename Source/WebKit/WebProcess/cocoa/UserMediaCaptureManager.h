@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,6 +78,7 @@ public:
     void addSource(Ref<RemoteRealtimeVideoSource>&&);
     void removeSource(WebCore::RealtimeMediaSourceIdentifier);
 
+    Ref<RemoteCaptureSampleManager> protectedRemoteCaptureSampleManager() { return m_remoteCaptureSampleManager; }
     RemoteCaptureSampleManager& remoteCaptureSampleManager() { return m_remoteCaptureSampleManager; }
     bool shouldUseGPUProcessRemoteFrames() const { return m_shouldUseGPUProcessRemoteFrames; }
 
@@ -93,7 +94,7 @@ private:
         WebCore::CaptureDeviceManager& audioCaptureDeviceManager() final { return m_manager->m_noOpCaptureDeviceManager; }
         const Vector<WebCore::CaptureDevice>& speakerDevices() const final { return m_speakerDevices; }
 
-        CheckedRef<UserMediaCaptureManager> m_manager;
+        const CheckedRef<UserMediaCaptureManager> m_manager;
         bool m_shouldCaptureInGPUProcess { false };
         Vector<WebCore::CaptureDevice> m_speakerDevices;
     };
@@ -106,7 +107,7 @@ private:
         WebCore::CaptureSourceOrError createVideoCaptureSource(const WebCore::CaptureDevice&, WebCore::MediaDeviceHashSalts&&, const WebCore::MediaConstraints*, std::optional<WebCore::PageIdentifier>) final;
         WebCore::CaptureDeviceManager& videoCaptureDeviceManager() final { return m_manager->m_noOpCaptureDeviceManager; }
 
-        CheckedRef<UserMediaCaptureManager> m_manager;
+        const CheckedRef<UserMediaCaptureManager> m_manager;
         bool m_shouldCaptureInGPUProcess { false };
     };
     class DisplayFactory : public WebCore::DisplayCaptureFactory {
@@ -118,7 +119,7 @@ private:
         WebCore::CaptureSourceOrError createDisplayCaptureSource(const WebCore::CaptureDevice&, WebCore::MediaDeviceHashSalts&&, const WebCore::MediaConstraints*, std::optional<WebCore::PageIdentifier>) final;
         WebCore::DisplayCaptureManager& displayCaptureDeviceManager() final { return m_manager->m_noOpCaptureDeviceManager; }
 
-        CheckedRef<UserMediaCaptureManager> m_manager;
+        const CheckedRef<UserMediaCaptureManager> m_manager;
         bool m_shouldCaptureInGPUProcess { false };
     };
 
@@ -148,7 +149,7 @@ private:
     void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceIdentifier, WebCore::RealtimeMediaSourceSettings&&);
     void applyConstraintsFailed(WebCore::RealtimeMediaSourceIdentifier, WebCore::MediaConstraintType, String&&);
 
-    CheckedRef<WebProcess> m_process;
+    const CheckedRef<WebProcess> m_process;
     using Source = Variant<std::nullptr_t, Ref<RemoteRealtimeAudioSource>, Ref<RemoteRealtimeVideoSource>>;
     HashMap<WebCore::RealtimeMediaSourceIdentifier, Source> m_sources;
     NoOpCaptureDeviceManager m_noOpCaptureDeviceManager;

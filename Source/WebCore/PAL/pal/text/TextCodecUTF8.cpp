@@ -167,7 +167,7 @@ static inline int decodeNonASCIISequence(std::span<const uint8_t> sequence, uint
     return ((sequence[0] << 18) + (sequence[1] << 12) + (sequence[2] << 6) + sequence[3]) - 0x03C82080;
 }
 
-static inline std::span<UChar> appendCharacter(std::span<UChar> destination, int character)
+static inline std::span<char16_t> appendCharacter(std::span<char16_t> destination, int character)
 {
     ASSERT(character != nonCharacter);
     ASSERT(!U_IS_SURROGATE(character));
@@ -187,7 +187,7 @@ void TextCodecUTF8::consumePartialSequenceByte()
     memmoveSpan(std::span { m_partialSequence }, std::span { m_partialSequence }.subspan(1, m_partialSequenceSize));
 }
 
-bool TextCodecUTF8::handlePartialSequence(std::span<LChar>& destination, std::span<const uint8_t>& source, bool flush)
+bool TextCodecUTF8::handlePartialSequence(std::span<Latin1Character>& destination, std::span<const uint8_t>& source, bool flush)
 {
     ASSERT(m_partialSequenceSize);
     do {
@@ -237,7 +237,7 @@ bool TextCodecUTF8::handlePartialSequence(std::span<LChar>& destination, std::sp
     return false;
 }
 
-void TextCodecUTF8::handlePartialSequence(std::span<UChar>& destination, std::span<const uint8_t>& source, bool flush, bool stopOnError, bool& sawError)
+void TextCodecUTF8::handlePartialSequence(std::span<char16_t>& destination, std::span<const uint8_t>& source, bool flush, bool stopOnError, bool& sawError)
 {
     ASSERT(m_partialSequenceSize);
     do {
@@ -310,7 +310,7 @@ String TextCodecUTF8::decode(std::span<const uint8_t> bytes, bool flush, bool st
         sawError = true;
         return { };
     }
-    StringBuffer<LChar> buffer(bufferSize);
+    StringBuffer<Latin1Character> buffer(bufferSize);
 
     auto source = bytes;
     auto* alignedEnd = WTF::alignToMachineWord(std::to_address(source.end()));
@@ -336,7 +336,7 @@ String TextCodecUTF8::decode(std::span<const uint8_t> bytes, bool flush, bool st
                 if (WTF::isAlignedToMachineWord(source.data())) {
                     while (source.data() < alignedEnd) {
                         auto chunk = reinterpretCastSpanStartTo<const WTF::MachineWord>(source);
-                        if (!WTF::containsOnlyASCII<LChar>(chunk))
+                        if (!WTF::containsOnlyASCII<Latin1Character>(chunk))
                             break;
                         copyASCIIMachineWord(destination, source);
                         skip(source, sizeof(WTF::MachineWord));
@@ -392,7 +392,7 @@ String TextCodecUTF8::decode(std::span<const uint8_t> bytes, bool flush, bool st
     return String::adopt(WTFMove(buffer));
 
 upConvertTo16Bit:
-    StringBuffer<UChar> buffer16(bufferSize);
+    StringBuffer<char16_t> buffer16(bufferSize);
 
     auto destination16 = buffer16.span();
 
@@ -421,7 +421,7 @@ upConvertTo16Bit:
                 if (WTF::isAlignedToMachineWord(source.data())) {
                     while (source.data() < alignedEnd) {
                         auto chunk = reinterpretCastSpanStartTo<const WTF::MachineWord>(source);
-                        if (!WTF::containsOnlyASCII<LChar>(chunk))
+                        if (!WTF::containsOnlyASCII<Latin1Character>(chunk))
                             break;
                         copyASCIIMachineWord(destination16, source);
                         skip(source, sizeof(WTF::MachineWord));

@@ -10,6 +10,7 @@
 async function doTest(test, isVideo, badConstraints)
 {
     const stream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: !isVideo });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     const track = stream.getTracks()[0];
 
     await track.applyConstraints(badConstraints).then(() => {

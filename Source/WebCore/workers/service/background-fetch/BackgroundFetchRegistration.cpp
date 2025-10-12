@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "BackgroundFetchManager.h"
 #include "BackgroundFetchRecordInformation.h"
 #include "CacheQueryOptions.h"
+#include "ContextDestructionObserverInlines.h"
 #include "EventNames.h"
 #include "FetchRequest.h"
 #include "FetchResponse.h"
@@ -40,15 +41,6 @@
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerRegistrationBackgroundFetchAPI.h"
 #include <wtf/TZoneMallocInlines.h>
-
-namespace WebCore {
-class BackgroundFetchResponseBodyLoader;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::BackgroundFetchResponseBodyLoader> : std::true_type { };
-}
 
 namespace WebCore {
 
@@ -93,14 +85,17 @@ static ExceptionOr<ResourceRequest> requestFromInfo(ScriptExecutionContext& cont
         return ResourceRequest { };
 
     ResourceRequest resourceRequest;
-    auto requestOrException = FetchRequest::create(context, WTFMove(*info), { });
+    ExceptionOr<Ref<FetchRequest>> requestOrException = FetchRequest::create(context, WTFMove(*info), { });
     if (requestOrException.hasException())
         return requestOrException.releaseException();
 
-    return requestOrException.releaseReturnValue()->resourceRequest();
+    Ref<FetchRequest> request = requestOrException.releaseReturnValue();
+    return request->resourceRequest();
 }
 
-class BackgroundFetchResponseBodyLoader : public FetchResponseBodyLoader, public CanMakeWeakPtr<BackgroundFetchResponseBodyLoader> {
+class BackgroundFetchResponseBodyLoader final : public FetchResponseBodyLoader, public CanMakeWeakPtr<BackgroundFetchResponseBodyLoader>, public CanMakeCheckedPtr<BackgroundFetchResponseBodyLoader> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(BackgroundFetchResponseBodyLoader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(BackgroundFetchResponseBodyLoader);
 public:
     BackgroundFetchResponseBodyLoader(ScriptExecutionContext& context, FetchResponse& response, BackgroundFetchRecordIdentifier recordIdentifier)
         : FetchResponseBodyLoader(response)
@@ -113,20 +108,21 @@ private:
     void start() final
     {
         m_connection->retrieveRecordResponseBody(m_recordIdentifier, [weakThis = WeakPtr { *this }](auto&& result) {
-            if (!weakThis || !weakThis->m_response)
+            CheckedPtr checkedThis = weakThis.get();
+            if (!checkedThis || !checkedThis->m_response)
                 return;
 
-            Ref protectedResponse = *weakThis->m_response;
+            Ref protectedResponse = *checkedThis->m_response;
 
             if (!result.has_value()) {
-                weakThis->m_response = nullptr;
+                checkedThis->m_response = nullptr;
                 protectedResponse->receivedError(WTFMove(result.error()));
                 return;
             }
 
             auto buffer = WTFMove(result.value());
             if (!buffer) {
-                weakThis->m_response = nullptr;
+                checkedThis->m_response = nullptr;
                 protectedResponse->didSucceed({ });
                 return;
             }
@@ -140,7 +136,7 @@ private:
         m_response = nullptr;
     }
 
-    Ref<SWClientConnection> m_connection;
+    const Ref<SWClientConnection> m_connection;
     BackgroundFetchRecordIdentifier m_recordIdentifier;
 };
 
@@ -149,7 +145,8 @@ static Ref<BackgroundFetchRecord> createRecord(ScriptExecutionContext& context, 
     auto recordIdentifier = information.identifier;
     auto record = BackgroundFetchRecord::create(context, WTFMove(information));
     SWClientConnection::fromScriptExecutionContext(context)->retrieveRecordResponse(recordIdentifier, [weakContext = WeakPtr { context }, record, recordIdentifier](auto&& result) {
-        if (!weakContext)
+        RefPtr context = weakContext.get();
+        if (!context)
             return;
 
         if (result.hasException()) {
@@ -157,9 +154,9 @@ static Ref<BackgroundFetchRecord> createRecord(ScriptExecutionContext& context, 
             return;
         }
 
-        auto response = FetchResponse::create(weakContext.get(), { }, FetchHeaders::Guard::Immutable, { });
+        auto response = FetchResponse::create(context.get(), { }, FetchHeaders::Guard::Immutable, { });
         response->setReceivedInternalResponse(result.releaseReturnValue(), FetchOptions::Credentials::Omit);
-        response->setBodyLoader(makeUniqueRef<BackgroundFetchResponseBodyLoader>(*weakContext, response.get(), recordIdentifier));
+        response->setBodyLoader(makeUniqueRef<BackgroundFetchResponseBodyLoader>(*context, response.get(), recordIdentifier));
         record->settleResponseReadyPromise(WTFMove(response));
     });
     return record;
@@ -181,7 +178,7 @@ void BackgroundFetchRegistration::match(ScriptExecutionContext& context, Request
     bool shouldRetrieveResponses = false;
     RetrieveRecordsOptions retrieveOptions { requestOrException.releaseReturnValue(), context.crossOriginEmbedderPolicy(), *context.securityOrigin(), options.ignoreSearch, options.ignoreMethod, options.ignoreVary, shouldRetrieveResponses };
 
-    SWClientConnection::fromScriptExecutionContext(context)->matchBackgroundFetch(registrationIdentifier(), id(), WTFMove(retrieveOptions), [weakContext = WeakPtr { context }, promise = WTFMove(promise)](auto&& results) mutable {
+    SWClientConnection::fromScriptExecutionContext(context)->matchBackgroundFetch(registrationIdentifier(), id(), WTFMove(retrieveOptions), [weakContext = WeakPtr { context }, promise = WTFMove(promise)](Vector<BackgroundFetchRecordInformation>&& results) mutable {
         if (!weakContext)
             return;
 
@@ -240,6 +237,11 @@ void BackgroundFetchRegistration::updateInformation(const BackgroundFetchInforma
     m_information.recordsAvailable = information.recordsAvailable;
     
     dispatchEvent(Event::create(eventNames().progressEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+
+ScriptExecutionContext* BackgroundFetchRegistration::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 void BackgroundFetchRegistration::stop()

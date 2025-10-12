@@ -127,8 +127,8 @@ DECLARE_SYSTEM_HEADER
 #endif
 
 #if HAVE(UIFINDINTERACTION)
+#import <UIKit/UIFindInteraction.h>
 #import <UIKit/UIFindSession_Private.h>
-#import <UIKit/_UIFindInteraction.h>
 #import <UIKit/_UITextSearching.h>
 #endif
 
@@ -150,6 +150,10 @@ DECLARE_SYSTEM_HEADER
 #import <UIKit/UIView+SpatialComputing.h>
 #endif
 
+#if HAVE(UITOOLTIPINTERACTION)
+#import <UIKitMacHelper/UINSWindow.h>
+#endif
+
 #if PLATFORM(IOS)
 @interface UIWebClip(Staging_134304426)
 + (NSString *)pathForWebClipWithIdentifier:(NSString *)identifier;
@@ -161,6 +165,12 @@ DECLARE_SYSTEM_HEADER
 #endif
 
 #else // USE(APPLE_INTERNAL_SDK)
+
+#if HAVE(UITOOLTIPINTERACTION)
+@protocol UINSWindow <NSObject>
+@property (nonatomic, readonly, weak) NSObject *sceneView;
+@end
+#endif
 
 @interface UIWebClip : NSObject
 + (UIWebClip *)webClipWithIdentifier:(NSString *)identifier;
@@ -243,7 +253,6 @@ WTF_EXTERN_C_END
 - (void)_cancelAllTouches;
 - (BOOL)isSuspendedUnderLock;
 - (void)_enqueueHIDEvent:(IOHIDEventRef)event;
-- (BOOL)_appAdoptsUISceneLifecycle;
 - (void)_registerBSActionHandler:(id<_UIApplicationBSActionHandler>)handler;
 @end
 
@@ -313,10 +322,6 @@ typedef id<NSCoding, NSCopying> _UITextSearchDocumentIdentifier;
 
 - (BOOL)supportsTextReplacement;
 
-@end
-
-@interface _UIFindInteraction : NSObject <UIInteraction>
-@property (nonatomic, strong) id<_UITextSearching> searchableObject;
 @end
 
 @interface UIFindInteraction ()
@@ -476,6 +481,10 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 @property (nonatomic, setter=_setAllowsParentToBeginVertically:) BOOL _allowsParentToBeginVertically;
 @property (nonatomic) BOOL tracksImmediatelyWhileDecelerating;
 @property (nonatomic, getter=_avoidsJumpOnInterruptedBounce, setter=_setAvoidsJumpOnInterruptedBounce:) BOOL _avoidsJumpOnInterruptedBounce;
+#if HAVE(UIKIT_SCROLLBAR_COLOR_SPI)
+@property (nonatomic, nullable, setter=_setVerticalScrollIndicatorColor:) UIColor *_verticalScrollIndicatorColor;
+@property (nonatomic, nullable, setter=_setHorizontalScrollIndicatorColor:) UIColor *_horizontalScrollIndicatorColor;
+#endif
 @end
 
 typedef NS_ENUM(NSUInteger, UIScrollPhase) {
@@ -628,6 +637,9 @@ extern NSString * const UIPresentationControllerDismissalTransitionDidEndComplet
 #if PLATFORM(VISION)
 @interface UIActivityViewController ()
 @property (nonatomic) BOOL allowsCustomPresentationStyle;
+@end
+@interface UIView ()
+- (void)_requestRemoteEffects:(NSArray *)effects forKey:(NSString *)key;
 @end
 #endif // PLATFORM(VISION)
 
@@ -803,6 +815,9 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 @property (nonatomic, weak) UIPanGestureRecognizer *gestureRecognizer;
 @property (nonatomic, assign) BOOL shouldReverseTranslation;
 @property (nonatomic, retain) _UINavigationParallaxTransition *animationController;
+#if HAVE(CONTENT_SWIPE_GESTURE_RECOGNIZER)
+@property (nonatomic, readonly) UIPanGestureRecognizer *contentSwipeGestureRecognizer;
+#endif
 @end
 
 @protocol _UINavigationInteractiveTransitionBaseDelegate <NSObject>
@@ -813,10 +828,7 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (UIPanGestureRecognizer *)gestureRecognizerForInteractiveTransition:(_UINavigationInteractiveTransitionBase *)interactiveTransition WithTarget:(id)target action:(SEL)action;
 @end
 
-@class BKSAnimationFenceHandle;
-
 @interface UIWindow ()
-+ (BKSAnimationFenceHandle *)_synchronizedDrawingFence;
 + (mach_port_t)_synchronizeDrawingAcrossProcesses;
 - (void)_setWindowResolution:(CGFloat)resolution displayIfChanged:(BOOL)displayIfChanged;
 - (uint32_t)_contextId;
@@ -1066,6 +1078,21 @@ extern void _UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor(UIUserIn
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+#if HAVE(UITOOLTIPINTERACTION)
+@interface NSObject (NSViewDynamicToolTipManager)
+@property (readonly) NSObject *_dynamicToolTipManager;
+- (void)windowChangedKeyState;
+@end
+
+@protocol UINSApplicationDelegate <NSObject>
+- (id<UINSWindow>)hostWindowForUIWindow:(id)window;
+@end
+
+WTF_EXTERN_C_BEGIN
+extern id<UINSApplicationDelegate> UINSSharedApplicationDelegate(void);
+WTF_EXTERN_C_END
+#endif
+
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
     _UIScrollDeviceCategoryOverlayScroll = 6
@@ -1217,19 +1244,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @property (nonatomic, copy, setter=_setSuggestedColors:) NSArray<UIColor *> *_suggestedColors;
 @end
 
-#if HAVE(UIFINDINTERACTION)
-
-@interface _UIFindInteraction (Staging_84486967)
-
-- (void)presentFindNavigatorShowingReplace:(BOOL)replaceVisible;
-
-- (void)findNext;
-- (void)findPrevious;
-
-@end
-
-#endif // HAVE(UIFINDINTERACTION)
-
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)
 @interface UIWKDocumentContext (Staging_112795757)
 @property (nonatomic, copy) NSArray<NSValue *> *autocorrectedRanges;
@@ -1267,6 +1281,15 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @interface UIWindowSceneGeometry (Staging_143004359)
 @property (nonatomic, readonly, getter=isInteractivelyResizing) BOOL interactivelyResizing;
 @end
+
+#if HAVE(LIQUID_GLASS)
+
+@interface UIScrollView ()
+- (void)_setPrefersSolidColorHardPocket:(BOOL)prefersSolidColorHardPocket forEdge:(UIRectEdge)edge;
+- (void)_setPocketColor:(UIColor *)color forEdge:(UIRectEdge)edge;
+@end
+
+#endif // HAVE(LIQUID_GLASS)
 
 WTF_EXTERN_C_BEGIN
 

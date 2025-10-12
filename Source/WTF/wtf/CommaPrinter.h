@@ -31,7 +31,7 @@
 namespace WTF {
 
 class CommaPrinter final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CommaPrinter);
 public:
     CommaPrinter(ASCIILiteral comma = ", "_s, ASCIILiteral start = ""_s)
         : m_comma(comma)

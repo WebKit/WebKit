@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "WebGPUBufferUsage.h"
-#include "WebGPUIntegralTypes.h"
-#include "WebGPUObjectDescriptorBase.h"
+#include <WebCore/WebGPUBufferUsage.h>
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUObjectDescriptorBase.h>
 
 namespace WebCore::WebGPU {
 

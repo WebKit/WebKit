@@ -55,26 +55,28 @@ test test test test test test test test test test test test test test test test 
 </div>
 
 <script>
-    var testOutput = "This tests that visibleCharacterRange returns expected visible ranges.\n\n";
+var output = "This tests that visibleCharacterRange returns expected visible ranges.\n\n";
 
-    if (window.accessibilityController) {
-        const textlessDiv = accessibilityController.accessibleElementById("textless-div") 
-        testOutput += `Range of text-less div: ${textlessDiv.stringDescriptionOfAttributeValue("AXVisibleCharacterRange")}\n`;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-        const text = accessibilityController.accessibleElementById("text-div").childAtIndex(0);
-        testOutput += `Range of text div with default view size: ${text.stringDescriptionOfAttributeValue("AXVisibleCharacterRange")}\n`;
+    var textlessDiv = accessibilityController.accessibleElementById("textless-div");
+    var text = accessibilityController.accessibleElementById("text-div").childAtIndex(0);
 
-        testOutput += visibleRange(text, {width: 0, height: 500, scrollTop: 0});
-        testOutput += visibleRange(text, {width: 500, height: 0, scrollTop: 0});
-        testOutput += visibleRange(text, {width: 1, height: 500, scrollTop: 0});
-        testOutput += visibleRange(text, {width: 500, height: 1, scrollTop: 0});
-        testOutput += visibleRange(text, {width: 80, height: 80, scrollTop: 0});
-        testOutput += visibleRange(text, {width: 500, height: 200, scrollTop: 0});
+    setTimeout(async function() {
+        output += `Range of text-less div is empty: ${textlessDiv.stringDescriptionOfAttributeValue("AXVisibleCharacterRange").includes("{0, 0}")}\n`;
+        // Test empty windows (zero width or height).
+        output += await verifyVisibleRange(text, {width: 0, height: 500, scrollTop: 0}, ["{9223372036854775807, 0}"]);
+        output += await verifyVisibleRange(text, {width: 500, height: 0, scrollTop: 0}, ["{9223372036854775807, 0}"]);
 
-        debug(testOutput);
-        document.getElementById("text-div").style.visibility = "hidden";
-    }
+        output += await verifyVisibleRange(text, {width: 80, height: 80, scrollTop: 0}, ["{0, 20}", "{0, 30}"]);
+
+        debug(output);
+        document.getElementById("text-div").style.display = "none";
+        finishJSTest();
+    }, 0);
+
+}
 </script>
-
 </body>
 </html>

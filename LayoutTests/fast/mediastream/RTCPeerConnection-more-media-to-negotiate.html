@@ -68,6 +68,7 @@
                     testPassed("Answer set");
 
                     finishJSTest();
+                    stream.getTracks().forEach(track => track.stop());
                 })
                 .catch(function (error) {
                     testFailed("Error in promise chain: " + error);

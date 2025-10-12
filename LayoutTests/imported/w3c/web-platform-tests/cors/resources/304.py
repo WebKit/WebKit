@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # A header used to correlate requests and responses
 state_header = b"content-language"
 
@@ -36,12 +34,12 @@ def main(request, response):
             # what are you doing here? This should be a fresh request.
             return error(u"If-None-Match on first request")
         else:
-            status = 200, u"OK"
+            status = 200, b"OK"
             headers.append((b"Access-Control-Allow-Origin", b"*"))
             headers.append((b"Content-Type", b"text/plain"))
             headers.append((b"Cache-Control", b"private, max-age=3, must-revalidate"))
             headers.append((b"ETag", etag))
-            return status, headers, u"Success"
+            return status, headers, b"Success"
     else:  # even requests are the second in a pair, and should have a good INM.
         if inm != etag:
             # Bad browser.
@@ -58,5 +56,5 @@ def main(request, response):
                 headers.append((b"Access-Control-Expose-Headers", b"a"))
             elif req_num == 8:
                 headers.append((b"Access-Control-Allow-Origin", b"other.origin.example:80"))
-            status = 304, u"Not Modified"
-            return status, headers, u""
+            status = 304, b"Not Modified"
+            return status, headers, b""

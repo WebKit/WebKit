@@ -68,15 +68,17 @@ TestPage.registerInitializer(() => {
             let topCallFrameIsBoundary = stackTrace.topCallFrameIsBoundary;
             let truncated = stackTrace.truncated;
             stackTrace = stackTrace.parentStackTrace;
-            if (!callFrames || !callFrames.length)
+            if (!callFrames) {
+                InspectorTest.log("EMPTY CALL STACK:");
                 continue;
+            }
 
             if (topCallFrameIsBoundary) {
                 if (!foundAsyncBoundary) {
                     InspectorTest.log("ASYNC CALL STACK:");
                     foundAsyncBoundary = true;
                 }
-                await logCallFrame(callFrames[0], true);
+                await logCallFrame(callFrames[0] || "(async)", true);
             }
 
             for (let i = topCallFrameIsBoundary ? 1 : 0; i < callFrames.length; ++i) {

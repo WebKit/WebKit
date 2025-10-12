@@ -40,7 +40,8 @@
 #include "IntRect.h"
 #include "NoiseInjectionPolicy.h"
 #include "RenderElementInlines.h"
-#include "ScriptTelemetryCategory.h"
+#include "RenderStyleInlines.h"
+#include "ScriptTrackingPrivacyCategory.h"
 #include "StyleCanvasImage.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WorkerClient.h"
@@ -61,7 +62,7 @@ static std::optional<uint64_t> canvasNoiseHashSaltIfNeeded(ScriptExecutionContex
 {
     auto policies = context.noiseInjectionPolicies();
     if (policies.contains(NoiseInjectionPolicy::Minimal)
-        || (policies.contains(NoiseInjectionPolicy::Enhanced) && context.requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Canvas)))
+        || (policies.contains(NoiseInjectionPolicy::Enhanced) && context.requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::Canvas)))
         return context.noiseInjectionHashSalt();
     return { };
 }
@@ -89,7 +90,7 @@ ImageBuffer* CanvasBase::buffer() const
 
 RefPtr<ImageBuffer> CanvasBase::makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
 {
-    if (auto* context = renderingContext()) {
+    if (RefPtr context = renderingContext()) {
         RefPtr buffer = context->surfaceBufferToImageBuffer(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
         if (m_canvasNoiseHashSalt && shouldApplyPostProcessingToDirtyRect == ShouldApplyPostProcessingToDirtyRect::Yes)
             m_canvasNoiseInjection.postProcessDirtyCanvasBuffer(buffer.get(), *m_canvasNoiseHashSalt, context->is2d() ? CanvasNoiseInjectionPostProcessArea::DirtyRect : CanvasNoiseInjectionPostProcessArea::FullBuffer);
@@ -211,18 +212,18 @@ void CanvasBase::notifyObserversCanvasDisplayBufferPrepared()
         observer.canvasDisplayBufferPrepared(*this);
 }
 
-UncheckedKeyHashSet<Element*> CanvasBase::cssCanvasClients() const
+HashSet<Element*> CanvasBase::cssCanvasClients() const
 {
-    UncheckedKeyHashSet<Element*> cssCanvasClients;
+    HashSet<Element*> cssCanvasClients;
     for (auto& observer : m_observers) {
-        auto* image = dynamicDowncast<StyleCanvasImage>(observer);
+        RefPtr image = dynamicDowncast<StyleCanvasImage>(observer);
         if (!image)
             continue;
 
         for (auto entry : image->clients()) {
-            auto& client = entry.key;
-            if (auto element = client.element())
-                cssCanvasClients.add(element);
+            CheckedRef client = entry.key;
+            if (RefPtr element = client->element())
+                cssCanvasClients.add(element.get());
         }
     }
     return cssCanvasClients;
@@ -230,7 +231,7 @@ UncheckedKeyHashSet<Element*> CanvasBase::cssCanvasClients() const
 
 bool CanvasBase::hasActiveInspectorCanvasCallTracer() const
 {
-    auto* context = renderingContext();
+    RefPtr context = renderingContext();
     return context && context->hasActiveInspectorCanvasCallTracer();
 }
 
@@ -241,7 +242,7 @@ void CanvasBase::setSize(const IntSize& size)
 
     m_size = size;
 
-    if (auto* context = renderingContext())
+    if (RefPtr context = renderingContext())
         InspectorInstrumentation::didChangeCanvasSize(*context);
 }
 
@@ -263,11 +264,12 @@ RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) con
     }
     m_imageBufferMemoryCost.store(newMemoryCost, std::memory_order_relaxed);
     if (newMemoryCost) {
-        RefPtr scriptExecutionContext = this->scriptExecutionContext();
-        JSC::JSLockHolder lock(scriptExecutionContext->vm());
-        scriptExecutionContext->vm().heap.reportExtraMemoryAllocated(static_cast<JSCell*>(nullptr), newMemoryCost);
+        if (RefPtr scriptExecutionContext = this->scriptExecutionContext()) {
+            JSC::JSLockHolder lock(scriptExecutionContext->vm());
+            scriptExecutionContext->vm().heap.reportExtraMemoryAllocated(static_cast<JSCell*>(nullptr), newMemoryCost);
+        }
     }
-    if (auto* context = renderingContext()) {
+    if (RefPtr context = renderingContext()) {
         if (oldSize != m_size)
             InspectorInstrumentation::didChangeCanvasSize(*context);
         if (oldMemoryCost != newMemoryCost)
@@ -312,7 +314,7 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer() const
         return nullptr;
     }
 
-    auto* context = renderingContext();
+    RefPtr context = renderingContext();
     bool willReadFrequently = context ? context->willReadFrequently() : false;
 
     RenderingMode renderingMode;
@@ -322,7 +324,7 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer() const
         renderingMode = !willReadFrequently && shouldAccelerate(area) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
 
     auto colorSpace = context ? context->colorSpace() : DestinationColorSpace::SRGB();
-    auto pixelFormat = context ? context->pixelFormat() : ImageBufferPixelFormat::BGRA8;
+    auto pixelFormat = context ? context->pixelFormat() : PixelFormat::BGRA8;
 
     return ImageBuffer::create(size(), renderingMode, RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, scriptExecutionContext->graphicsClient());
 }
@@ -342,24 +344,24 @@ void CanvasBase::recordLastFillText(const String& text)
 
 void CanvasBase::addCanvasNeedingPreparationForDisplayOrFlush()
 {
-    auto* context = renderingContext();
+    RefPtr context = renderingContext();
     if (!context)
         return;
     if (context->isInPreparationForDisplayOrFlush())
         return;
-    if (auto* document = dynamicDowncast<Document>(scriptExecutionContext()))
+    if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext()))
         document->addCanvasNeedingPreparationForDisplayOrFlush(*context);
     // FIXME: WorkerGlobalContext does not have prepare phase yet.
 }
 
 void CanvasBase::removeCanvasNeedingPreparationForDisplayOrFlush()
 {
-    auto* context = renderingContext();
+    RefPtr context = renderingContext();
     if (!context)
         return;
     if (!context->isInPreparationForDisplayOrFlush())
         return;
-    if (auto* document = dynamicDowncast<Document>(scriptExecutionContext()))
+    if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext()))
         document->removeCanvasNeedingPreparationForDisplayOrFlush(*context);
     // FIXME: WorkerGlobalContext does not have prepare phase yet.
 }
@@ -378,7 +380,7 @@ RefPtr<ImageBuffer> CanvasBase::createImageForNoiseInjection() const
         return { };
 
     auto seed = static_cast<unsigned>(context->noiseInjectionHashSalt().value_or(0));
-    auto buffer = ImageBuffer::create(size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
+    auto buffer = ImageBuffer::create(size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!buffer)
         return { };
 
@@ -406,6 +408,16 @@ void CanvasBase::resetGraphicsContextState() const
 WebCoreOpaqueRoot root(CanvasBase* canvas)
 {
     return WebCoreOpaqueRoot { canvas };
+}
+
+RefPtr<ScriptExecutionContext> CanvasBase::protectedCanvasBaseScriptExecutionContext() const
+{
+    return canvasBaseScriptExecutionContext();
+}
+
+RefPtr<ScriptExecutionContext> CanvasBase::protectedScriptExecutionContext() const
+{
+    return scriptExecutionContext();
 }
 
 } // namespace WebCore

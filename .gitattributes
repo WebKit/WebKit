@@ -29,3 +29,11 @@ objc/*.h diff=objcppheader
 # Exclude these git specific files from archives created via git-archive.
 .gitignore      export-ignore
 .gitattributes  export-ignore
+
+# Annotate test files explicitly.
+/Source/JavaScriptCore/API/tests/*.* test=1
+/Source/JavaScriptCore/assembler/testmasm.cpp test=1
+/Source/JavaScriptCore/b3/testb3*.cpp test=1
+/Source/JavaScriptCore/b3/air/testair.cpp test=1
+/Source/JavaScriptCore/dfg/testdfg.cpp test=1
+/Tools/TestWebKitAPI/**/* test=1

@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unknown source type "key".
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unknown source type "key".
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unknown source type "key".
 
 Harness Error (FAIL), message = Unhandled rejection: Unknown source type "key".
 

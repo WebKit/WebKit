@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    height: 2000px;
+}
+
+#target {
+    position: fixed;
+    top: 100px;
+    width: 100px;
+    height: 200px;
+    background-color: silver;
+}
+</style>
+
+<body onload="runTest()">
+    <div id="target"></div>
+</body>
+
+<script>
+jsTestIsAsync = true;
+
+let unexpectedValue = undefined;
+
+async function runTest()
+{
+    description("Verifies that getBoundingClientRect() on a fixedpos always returns the layout value.");
+
+    window.addEventListener('scroll', () => {
+        if (unexpectedValue !== undefined)
+            return;
+
+        const targetTop = document.getElementById('target').getBoundingClientRect().top;
+        
+        if (targetTop != 100)
+            unexpectedValue = targetTop;
+    }, false);
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.dragFromPointToPoint(150, 300, 150, 50, 0.1);
+    await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+    shouldBe("unexpectedValue", "undefined");
+
+   finishJSTest();
+}
+</script>
+</html>

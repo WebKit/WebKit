@@ -41,7 +41,6 @@
 #import "EditorClient.h"
 #import "FontAttributes.h"
 #import "FontShadow.h"
-#import "HTMLConverter.h"
 #import "HTMLElement.h"
 #import "HTMLNames.h"
 #import "LegacyNSPasteboardTypes.h"
@@ -49,6 +48,7 @@
 #import "LocalFrame.h"
 #import "LocalFrameView.h"
 #import "MutableStyleProperties.h"
+#import "NodeHTMLConverter.h"
 #import "PagePasteboardContext.h"
 #import "Pasteboard.h"
 #import "PasteboardStrategy.h"
@@ -97,7 +97,7 @@ void Editor::platformCopyFont()
 
     PasteboardBuffer pasteboardBuffer;
     pasteboardBuffer.contentOrigin = document().originIdentifierForPasteboard();
-    pasteboardBuffer.type = legacyFontPasteboardType();
+    pasteboardBuffer.type = legacyFontPasteboardTypeSingleton();
     pasteboardBuffer.data = SharedBuffer::create(fontData.get());
     pasteboard.write(pasteboardBuffer);
 }
@@ -109,7 +109,7 @@ void Editor::platformPasteFont()
     client()->setInsertionPasteboard(pasteboard.name());
 
     RetainPtr<NSData> fontData;
-    if (auto buffer = pasteboard.readBuffer(std::nullopt, legacyFontPasteboardType()))
+    if (auto buffer = pasteboard.readBuffer(std::nullopt, legacyFontPasteboardTypeSingleton()))
         fontData = buffer->createNSData();
     auto fontSampleString = adoptNS([[NSAttributedString alloc] initWithRTF:fontData.get() documentAttributes:nil]);
     auto fontAttributes = RetainPtr([fontSampleString fontAttributesInRange:NSMakeRange(0, 1)]);
@@ -184,10 +184,10 @@ RefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboard
     if (pasteboardType == WebArchivePboardType || pasteboardType == String(UTTypeWebArchive.identifier))
         return selectionInWebArchiveFormat();
 
-    if (pasteboardType == String(legacyRTFDPasteboardType()))
+    if (pasteboardType == String(legacyRTFDPasteboardTypeSingleton()))
         return dataInRTFDFormat(attributedString(*adjustedSelectionRange(), IgnoreUserSelectNone::Yes).nsAttributedString().get());
 
-    if (pasteboardType == String(legacyRTFPasteboardType())) {
+    if (pasteboardType == String(legacyRTFPasteboardTypeSingleton())) {
         auto string = attributedString(*adjustedSelectionRange(), IgnoreUserSelectNone::Yes).nsAttributedString();
         // FIXME: Why is this stripping needed here, but not in writeSelectionToPasteboard?
         if ([string containsAttachments])

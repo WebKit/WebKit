@@ -23,6 +23,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 struct WebKit::WebExtensionMessageTargetParameters {
+    std::optional<WebKit::WebPageProxyIdentifier> pageProxyIdentifier;
     std::optional<WebKit::WebExtensionFrameIdentifier> frameIdentifier;
     Markable<WTF::UUID> documentIdentifier;
 };

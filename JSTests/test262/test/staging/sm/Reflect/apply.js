@@ -4,7 +4,7 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-Reflect-shell.js]
+includes: [sm/assertThrowsValue.js]
 flags:
   - noStrict
 description: |
@@ -17,14 +17,13 @@ assert.sameValue(Reflect.apply(Math.floor, undefined, [1.75]), 1);
 // Reflect.apply requires a target object that's callable.
 var nonCallable = [{}, [], (class clsX { constructor() {} })];
 for (var value of nonCallable) {
-    assertThrowsInstanceOf(() => Reflect.apply(nonCallable), TypeError);
+    assert.throws(TypeError, () => Reflect.apply(nonCallable));
 }
 
 // When target is not callable, Reflect.apply does not try to get argumentList.length before throwing.
 var hits = 0;
 var bogusArgumentList = {get length() { hit++; throw "FAIL";}};
-assertThrowsInstanceOf(() => Reflect.apply({callable: false}, null, bogusArgumentList),
-                       TypeError);
+assert.throws(TypeError, () => Reflect.apply({callable: false}, null, bogusArgumentList));
 assert.sameValue(hits, 0);
 
 // Reflect.apply works on a range of different callable objects.
@@ -71,7 +70,7 @@ assert.sameValue(Reflect.apply(new Proxy(f, {}),
          13);
 
 // Cross-compartment wrappers:
-var gw = createNewGlobal();
+var gw = $262.createRealm().global;
 assert.sameValue(Reflect.apply(gw.parseInt,
                        undefined,
                        ["45"]),

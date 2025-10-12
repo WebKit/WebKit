@@ -55,11 +55,15 @@
             }
 
             function gotStreamWithConstraints3(s) {
+                if (stream)
+                    stream.getTracks().forEach(track => track.stop());
                 stream = s;
                 testPassed("Stream 7 generated.");
 
                 shouldBeEqualToString("stream.getVideoTracks()[0].getSettings().facingMode", "user");
                 shouldBe("stream.getAudioTracks().length", "0");
+
+                stream.getTracks().forEach(t => t.stop());
 
                 audioConstraints = {
                     sampleRate: {
@@ -76,11 +80,15 @@
             }
 
             function gotStreamWithConstraints2(s) {
+                if (stream)
+                    stream.getTracks().forEach(track => track.stop());
                 stream = s;
                 testPassed("Stream 6 generated.");
 
                 shouldBe("stream.getAudioTracks().length", "0");
                 shouldBe("stream.getVideoTracks().length", "1");
+
+                stream.getTracks().forEach(t => t.stop());
 
                 videoConstraints = {
                     facingMode: {
@@ -92,11 +100,15 @@
             }
 
             function gotStreamWithConstraints1(s) {
+                if (stream)
+                    stream.getTracks().forEach(track => track.stop());
                 stream = s;
                 testPassed("Stream 5 generated.");
 
                 shouldBe("stream.getAudioTracks().length", "1");
                 shouldBe("stream.getVideoTracks().length", "0");
+
+                stream.getTracks().forEach(t => t.stop());
 
                 videoConstraints = {
                     width: {
@@ -114,10 +126,14 @@
             }
 
             function gotStream4(s) {
+                if (stream)
+                    stream.getTracks().forEach(track => track.stop());
                 stream = s;
                 testPassed("Stream 4 generated.");
                 shouldBe("stream.getAudioTracks().length", "1");
                 shouldBe("stream.getVideoTracks().length", "1");
+
+                stream.getTracks().forEach(t => t.stop());
 
                 audioConstraints = {
                     sampleRate: {
@@ -133,30 +149,42 @@
             }
 
             function gotStream3(s) {
+                if (stream)
+                    stream.getTracks().forEach(track => track.stop());
                 stream = s;
                 testPassed("Stream 3 generated.");
                 shouldBe("stream.getAudioTracks().length", "1");
                 shouldBe("stream.getVideoTracks().length", "1");
+
+                stream.getTracks().forEach(t => t.stop());
 
                 debug("");
                 shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:{}, video:{}}).then(gotStream4);");
             }
 
             function gotStream2(s) {
+                if (stream)
+                    stream.getTracks().forEach(track => track.stop());
                 stream = s;
                 testPassed("Stream 2 generated.");
                 shouldBe("stream.getAudioTracks().length", "0");
                 shouldBe("stream.getVideoTracks().length", "1");
+
+                stream.getTracks().forEach(t => t.stop());
 
                 debug("");
                 shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(gotStream3);");
             }
 
             function gotStream1(s) {
+                if (stream)
+                    stream.getTracks().forEach(track => track.stop());
                 stream = s;
                 testPassed("Stream 1 generated.");
                 shouldBe("stream.getAudioTracks().length", "1");
                 shouldBe("stream.getVideoTracks().length", "0");
+
+                stream.getTracks().forEach(t => t.stop());
 
                 debug("");
                 shouldNotThrow("navigator.mediaDevices.getUserMedia({video:true}).then(gotStream2);")

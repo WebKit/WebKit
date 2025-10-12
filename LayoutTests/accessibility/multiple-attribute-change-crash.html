@@ -32,7 +32,6 @@
         // AXObjectCache::rendererNeedsDeferredUpdate to be true for this element, deferring any
         // subsequent attribute changes to be processed after a timer elapses.
         document.getElementById("grid").setAttribute("style", "margin-left: 300px; background-color: red;");
-        // Change the element's role such that we attempt to remove and re-create the object.
         document.getElementById("grid").setAttribute("role", "presentation");
         // If we behave correctly, processing this 'class' attribute change should not cause a crash.
         document.getElementById("grid").setAttribute("class", "foo");

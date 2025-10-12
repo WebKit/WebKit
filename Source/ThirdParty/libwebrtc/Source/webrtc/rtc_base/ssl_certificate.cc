@@ -10,23 +10,32 @@
 
 #include "rtc_base/ssl_certificate.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/string_view.h"
-#include "rtc_base/checks.h"
+#include "api/array_view.h"
+#include "rtc_base/base64.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/openssl.h"
+#include "rtc_base/ssl_fingerprint.h"
+
+// IWYU pragma: begin_keep
 #ifdef OPENSSL_IS_BORINGSSL
+#include "rtc_base/boringssl_certificate.h"
 #include "rtc_base/boringssl_identity.h"
 #else
+#include "rtc_base/openssl_certificate.h"
 #include "rtc_base/openssl_identity.h"
 #endif
-#include "rtc_base/ssl_fingerprint.h"
-#include "rtc_base/third_party/base64/base64.h"
+// IWYU pragma: end_keep
 
-namespace rtc {
+namespace webrtc {
 
 //////////////////////////////////////////////////////////////////////
 // SSLCertificateStats
@@ -74,8 +83,8 @@ std::unique_ptr<SSLCertificateStats> SSLCertificate::GetStats() const {
 
   Buffer der_buffer;
   ToDER(&der_buffer);
-  std::string der_base64;
-  Base64::EncodeFromArray(der_buffer.data(), der_buffer.size(), &der_base64);
+  ArrayView<const uint8_t> der_view(der_buffer);
+  std::string der_base64 = Base64Encode(der_view);
 
   return std::make_unique<SSLCertificateStats>(std::move(fingerprint),
                                                std::move(digest_algorithm),
@@ -136,4 +145,4 @@ std::unique_ptr<SSLCertificate> SSLCertificate::FromPEMString(
 #endif
 }
 
-}  // namespace rtc
+}  // namespace webrtc

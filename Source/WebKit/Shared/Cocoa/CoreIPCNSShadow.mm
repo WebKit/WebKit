@@ -50,7 +50,7 @@ CoreIPCNSShadow::CoreIPCNSShadow(NSShadow *shadow)
 RetainPtr<id> CoreIPCNSShadow::toID() const
 {
     RetainPtr<NSShadow> result = adoptNS([PlatformNSShadow new]);
-    [result setShadowOffset:m_shadowOffset];
+    [result setShadowOffset:m_shadowOffset.toCG()];
     [result setShadowBlurRadius:m_shadowBlurRadius];
     [result setShadowColor:m_shadowColor.get()];
     return result;

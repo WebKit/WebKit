@@ -53,7 +53,7 @@ static bool isThermalMitigationEnabled()
     if (!self)
         return nil;
 
-    _notifier = &notifier;
+    _notifier = notifier;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(thermalStateDidChange) name:NSProcessInfoThermalStateDidChangeNotification object:nil];
     return self;
 }

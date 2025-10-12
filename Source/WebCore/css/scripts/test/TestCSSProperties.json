@@ -57,6 +57,42 @@
                 "parser-grammar": "<number>"
             }
         },
+        "test-medium-priority": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "codegen-properties": {
+                "medium-priority": true,
+                "parser-grammar": "<number>"
+            }
+        },
+        "background-fill-layer-test-primary": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "codegen-properties": {
+                "animation-wrapper": "DiscreteFillLayerWrapper",
+                "medium-priority": true,
+                "fill-layer-property": true,
+                "fill-layer-primary": true,
+                "parser-grammar": "<number>#"
+            }
+        },
+        "background-fill-layer-test-secondary": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "codegen-properties": {
+                "fill-layer-property": true,
+                "parser-grammar": "<number>#"
+            }
+        },
+        "background-fill-layer-test-secondary-with-converter": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "codegen-properties": {
+                "fill-layer-property": true,
+                "style-converter": "FillTestConverter",
+                "parser-grammar": "<number>#"
+            }
+        },
         "test-numeric-value-range": {
             "animation-type": "discrete",
             "initial": "0",
@@ -777,14 +813,6 @@
             "codegen-properties": {
                 "style-extractor-custom": true,
                 "parser-grammar": "<number>"
-            }
-        },
-        "test-auto-functions": {
-            "animation-type": "discrete",
-            "initial": "0",
-            "codegen-properties": {
-                "auto-functions": true,
-                "parser-grammar": "auto | <number>"
             }
         },
         "test-color-property-with-no-visited-link-support": {

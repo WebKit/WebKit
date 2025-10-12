@@ -1,5 +1,0 @@
-
-(repaint rects
-  (rect 10 21 5 5)
-)
-

@@ -18,12 +18,14 @@ promise_test((test) => {
         assert_equals(settings.frameRate, 30, "frame rate");
         assert_equals(settings.width, settings.height == 640 ? 480 : 640, "frame width");
         assert_equals(settings.height, settings.width = 640 ? 480 : 640, "frame height");
+        stream.getTracks().forEach(t => t.stop());
     });
 }, "Checking default video tracks settings");
 
 promise_test((test) => {
     return navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then((stream) => {
         assert_equals(stream.getVideoTracks().length, 0);
+        stream.getTracks().forEach(t => t.stop());
     });
 }, "Checking only audio capture");
 
@@ -32,6 +34,7 @@ promise_test((test) => {
         let settings = stream.getVideoTracks()[0].getSettings();
         assert_equals(settings.frameRate, 30, "frame rate");
         assert_equals(settings.height, 240, "frame height");
+        stream.getTracks().forEach(t => t.stop());
     });
 }, "Checking default video tracks settings except width and height");
 
@@ -40,6 +43,7 @@ promise_test((test) => {
         let settings = stream.getVideoTracks()[0].getSettings();
         assert_equals(settings.frameRate, 30, "frame rate");
         assert_equals(settings.height, 240, "frame height");
+        stream.getTracks().forEach(t => t.stop());
     });
 }, "Checking default video tracks settings except height");
 
@@ -49,6 +53,7 @@ promise_test((test) => {
         assert_equals(settings.frameRate, 60, "frame rate");
         assert_equals(settings.width, settings.height == 640 ? 480 : 640, "frame width");
         assert_equals(settings.height, settings.width = 640 ? 480 : 640, "frame height");
+        stream.getTracks().forEach(t => t.stop());
     });
 }, "Checking default video tracks settings except frameRate");
         </script>

@@ -1,0 +1,3 @@
+
+PASS documentElement clientWidth should be equal to device-width even if overflow:hidden region is visible
+

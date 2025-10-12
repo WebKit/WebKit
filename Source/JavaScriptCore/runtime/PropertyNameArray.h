@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "Identifier.h"
+#include <JavaScriptCore/Identifier.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ColorComponents.h"
-#include "ColorTypes.h"
+#include <WebCore/ColorComponents.h>
+#include <WebCore/ColorTypes.h>
 #include <algorithm>
 #include <cmath>
 #include <functional>

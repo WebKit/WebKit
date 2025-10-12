@@ -28,7 +28,6 @@
 #include "GraphicsContext.h"
 #include "RenderSVGText.h"
 #include "RenderStyleInlines.h"
-#include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -97,6 +96,9 @@ GradientData* LegacyRenderSVGResourceGradient::gradientDataForRenderer(RenderEle
         return makeUnique<GradientData>();
     }).iterator->value;
 
+    if (!gradientTransform().isInvertible())
+        return nullptr;
+
     if (gradientData.invalidate(inputs)) {
         gradientData.gradient = buildGradient(style);
         ASSERT(gradientData.userspaceTransform.isIdentity());
@@ -129,17 +131,16 @@ static inline void applyGradientResource(RenderElement& renderer, const RenderSt
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToText))
         context.setTextDrawingMode(resourceMode.contains(RenderSVGResourceMode::ApplyToFill) ? TextDrawingMode::Fill : TextDrawingMode::Stroke);
 
-    auto& svgStyle = style.svgStyle();
     auto userspaceTransform = gradientData.userspaceTransform;
 
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToFill)) {
-        context.setAlpha(svgStyle.fillOpacity());
+        context.setAlpha(style.fillOpacity().value.value);
         context.setFillGradient(*gradientData.gradient, userspaceTransform);
-        context.setFillRule(svgStyle.fillRule());
+        context.setFillRule(style.fillRule());
     } else if (resourceMode.contains(RenderSVGResourceMode::ApplyToStroke)) {
-        if (svgStyle.vectorEffect() == VectorEffect::NonScalingStroke)
+        if (style.vectorEffect() == VectorEffect::NonScalingStroke)
             userspaceTransform = LegacyRenderSVGResourceContainer::transformOnNonScalingStroke(&renderer, gradientData.userspaceTransform);
-        context.setAlpha(svgStyle.strokeOpacity());
+        context.setAlpha(style.strokeOpacity().value.value);
         context.setStrokeGradient(*gradientData.gradient, userspaceTransform);
         SVGRenderSupport::applyStrokeStyleToContext(context, style, renderer);
     }

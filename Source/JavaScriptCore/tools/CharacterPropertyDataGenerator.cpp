@@ -37,14 +37,14 @@
 namespace JSC {
 
 //
-// Generate a line break pair table in `Source/WebCore/rendering/BreakLines.cpp`.
+// Generate a line break pair table in `Source/WebCore/rendering/BreakablePositions.cpp`.
 //
 // See [UAX14](https://unicode.org/reports/tr14/).
 //
 class LineBreakData {
 public:
-    static constexpr UChar minChar = '!';
-    static constexpr UChar maxChar = 0xFF;
+    static constexpr char16_t minChar = '!';
+    static constexpr char16_t maxChar = 0xFF;
     static constexpr unsigned numChars = maxChar - minChar + 1;
     static constexpr unsigned numCharsRoundUp8 = (numChars + 7) / 8 * 8;
 
@@ -61,8 +61,8 @@ public:
 private:
     void fill()
     {
-        for (UChar ch = minChar; ch <= maxChar; ++ch) {
-            for (UChar chNext = minChar; chNext <= maxChar; ++chNext) {
+        for (char16_t ch = minChar; ch <= maxChar; ++ch) {
+            for (char16_t chNext = minChar; chNext <= maxChar; ++chNext) {
                 auto string = makeString(ch, chNext);
                 CachedTextBreakIterator iterator(string, { }, WTF::TextBreakIterator::LineMode { WTF::TextBreakIterator::LineMode::Behavior::Default }, AtomString("en"_str));
                 setPairValue(ch, chNext, iterator.isBoundary(1));
@@ -155,7 +155,7 @@ private:
         dataLogLn(" */");
         dataLogLn("");
         dataLogLn("#include \"config.h\"");
-        dataLogLn("#include \"BreakLines.h\"");
+        dataLogLn("#include \"BreakablePositions.h\"");
         dataLogLn("");
         dataLogLn("#include <wtf/ASCIICType.h>");
         dataLogLn("#include <wtf/StdLibExtras.h>");
@@ -172,11 +172,11 @@ private:
         dataLogLn("    ((a) | ((b) << 1) | ((c) << 2) | ((d) << 3) | ((e) << 4) | ((f) << 5) | ((g) << 6) | ((h) << 7))");
         dataLogLn("");
 
-        dataLogLn("const uint8_t BreakLines::LineBreakTable::breakTable[", numChars, "][", numCharsRoundUp8 / 8, "] = {");
+        dataLogLn("const uint8_t BreakablePositions::LineBreakTable::breakTable[", numChars, "][", numCharsRoundUp8 / 8, "] = {");
 
         // Print the column comment.
         dataLog("           /*");
-        for (UChar ch = minChar; ch <= maxChar; ++ch) {
+        for (char16_t ch = minChar; ch <= maxChar; ++ch) {
             if (ch != minChar && (ch - minChar) % 8 == 0)
                 dataLog("   ");
             dataLogF(ch < 0x7F ? " %c" : "%02X", ch);
@@ -185,7 +185,7 @@ private:
 
         // Print the data array.
         for (unsigned y = 0; y < numChars; ++y) {
-            const UChar ch = y + minChar;
+            const char16_t ch = y + minChar;
             dataLogF("/* %02X %c */ {B(", ch, ch < 0x7F ? ch : ' ');
             const char* prefix = "";
             for (unsigned x = 0; x < numCharsRoundUp8; ++x) {
@@ -201,16 +201,16 @@ private:
         dataLogLn("} // namespace WebCore");
     }
 
-    void setPairValue(UChar ch1Min, UChar ch1Max, UChar ch2Min, UChar ch2Max, bool value)
+    void setPairValue(char16_t ch1Min, char16_t ch1Max, char16_t ch2Min, char16_t ch2Max, bool value)
     {
-        for (UChar ch1 = ch1Min; ch1 <= ch1Max; ++ch1) {
-            for (UChar ch2 = ch2Min; ch2 <= ch2Max; ++ch2)
+        for (char16_t ch1 = ch1Min; ch1 <= ch1Max; ++ch1) {
+            for (char16_t ch2 = ch2Min; ch2 <= ch2Max; ++ch2)
                 setPairValue(ch1, ch2, value);
         }
     }
 
     // Set the breakability between `ch1` and `ch2`.
-    void setPairValue(UChar ch1, UChar ch2, bool value)
+    void setPairValue(char16_t ch1, char16_t ch2, bool value)
     {
         RELEASE_ASSERT(ch1 >= minChar);
         RELEASE_ASSERT(ch1 <= maxChar);

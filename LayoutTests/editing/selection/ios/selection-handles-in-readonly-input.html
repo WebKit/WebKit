@@ -43,9 +43,10 @@ async function runTest() {
     await UIHelper.activateAt(100, 50);
     await UIHelper.waitForDoubleTapDelay();
 
-    // Then, select 'aa' with a tap-and-half gesture.
+    // Then, select 'aa' with a tap-and-drag gesture.
     await UIHelper.activateAt(100, 50);
-    await longPressAtPoint(100, 50);
+    await touchAndDragFromPointToPoint(100, 50, 125, 50);
+    await liftUpAtPoint(125, 50);
 
     let grabberEndRect = null;
     while (!grabberEndRect || !grabberEndRect.width || !grabberEndRect.height)

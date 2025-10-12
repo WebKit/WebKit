@@ -47,10 +47,10 @@ public:
         RebalanceAllWhitespaces
     };
 
-    static Ref<InsertTextCommand> create(Ref<Document>&& document, const String& text, bool selectInsertedText = false,
-        RebalanceType rebalanceType = RebalanceLeadingAndTrailingWhitespaces, EditAction editingAction = EditAction::Insert)
+    static Ref<InsertTextCommand> create(Ref<Document>&& document, const String& text, AllowPasswordEcho allowPasswordEcho
+        , bool selectInsertedText = false, RebalanceType rebalanceType = RebalanceLeadingAndTrailingWhitespaces, EditAction editingAction = EditAction::Insert)
     {
-        return adoptRef(*new InsertTextCommand(WTFMove(document), text, selectInsertedText, rebalanceType, editingAction));
+        return adoptRef(*new InsertTextCommand(WTFMove(document), text, allowPasswordEcho, selectInsertedText, rebalanceType, editingAction));
     }
 
     static Ref<InsertTextCommand> createWithMarkerSupplier(Ref<Document>&& document, const String& text, Ref<TextInsertionMarkerSupplier>&& markerSupplier, EditAction editingAction = EditAction::Insert)
@@ -60,7 +60,7 @@ public:
 
 protected:
     InsertTextCommand(Ref<Document>&&, const String& text, Ref<TextInsertionMarkerSupplier>&&, EditAction);
-    InsertTextCommand(Ref<Document>&&, const String& text, bool selectInsertedText, RebalanceType, EditAction);
+    InsertTextCommand(Ref<Document>&&, const String& text, AllowPasswordEcho, bool selectInsertedText, RebalanceType, EditAction);
 
 private:
 
@@ -75,9 +75,12 @@ private:
     bool performOverwrite(const String&, bool selectInsertedText);
     void setEndingSelectionWithoutValidation(const Position& startPosition, const Position& endPosition);
 
+    bool applySmartListsIfNeeded();
+
     friend class TypingCommand;
 
     String m_text;
+    AllowPasswordEcho m_allowPasswordEcho { AllowPasswordEcho::Yes };
     bool m_selectInsertedText;
     RebalanceType m_rebalanceType;
     RefPtr<TextInsertionMarkerSupplier> m_markerSupplier;

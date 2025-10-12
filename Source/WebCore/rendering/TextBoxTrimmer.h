@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "LocalFrameViewLayoutContext.h"
+#include <WebCore/LocalFrameViewLayoutContext.h>
 #include <wtf/CheckedPtr.h>
 
 namespace WebCore {

@@ -29,10 +29,13 @@
 #include "config.h"
 #include "ScriptWrappable.h"
 
+#include <JavaScriptCore/WeakInlines.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ScriptWrappable);
+
+ScriptWrappable::~ScriptWrappable() = default;
 
 } // namespace WebCore

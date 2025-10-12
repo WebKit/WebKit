@@ -25,20 +25,20 @@
 
 #pragma once
 
-#include "CallFrame.h"
-#include "Identifier.h"
-#include "Symbol.h"
-#include "VM.h"
+#include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/Identifier.h>
+#include <JavaScriptCore/Symbol.h>
+#include <JavaScriptCore/VM.h>
 
 namespace JSC  {
 
-inline Identifier::Identifier(VM& vm, std::span<const LChar> string)
+inline Identifier::Identifier(VM& vm, std::span<const Latin1Character> string)
     : m_string(add(vm, string))
 {
     ASSERT(m_string.impl()->isAtom());
 }
 
-inline Identifier::Identifier(VM& vm, std::span<const UChar> string)
+inline Identifier::Identifier(VM& vm, std::span<const char16_t> string)
     : m_string(add(vm, string))
 {
     ASSERT(m_string.impl()->isAtom());
@@ -138,12 +138,12 @@ ALWAYS_INLINE Identifier Identifier::fromString(VM& vm, ASCIILiteral s)
     return Identifier(vm, s);
 }
 
-inline Identifier Identifier::fromString(VM& vm, std::span<const LChar> s)
+inline Identifier Identifier::fromString(VM& vm, std::span<const Latin1Character> s)
 {
     return Identifier(vm, s);
 }
 
-inline Identifier Identifier::fromString(VM& vm, std::span<const UChar> s)
+inline Identifier Identifier::fromString(VM& vm, std::span<const char16_t> s)
 {
     return Identifier(vm, s);
 }

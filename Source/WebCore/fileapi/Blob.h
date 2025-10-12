@@ -31,15 +31,15 @@
 
 #pragma once
 
-#include "ActiveDOMObject.h"
-#include "BlobPropertyBag.h"
-#include "BlobURL.h"
-#include "FileReaderLoader.h"
-#include "ScriptExecutionContext.h"
-#include "ScriptWrappable.h"
-#include "SecurityOriginData.h"
-#include "URLKeepingBlobAlive.h"
-#include "URLRegistry.h"
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/BlobPropertyBag.h>
+#include <WebCore/BlobURL.h>
+#include <WebCore/FileReaderLoader.h>
+#include <WebCore/ScriptExecutionContext.h>
+#include <WebCore/ScriptWrappable.h>
+#include <WebCore/SecurityOriginData.h>
+#include <WebCore/URLKeepingBlobAlive.h>
+#include <WebCore/URLRegistry.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 
@@ -53,6 +53,7 @@ namespace WebCore {
 class Blob;
 class BlobLoader;
 class DeferredPromise;
+class FragmentedSharedBuffer;
 class ReadableStream;
 class ScriptExecutionContext;
 class FragmentedSharedBuffer;
@@ -73,21 +74,28 @@ public:
 
     static Ref<Blob> create(ScriptExecutionContext* context)
     {
-        auto blob = adoptRef(*new Blob(context));
+        Ref blob = adoptRef(*new Blob(context));
         blob->suspendIfNeeded();
         return blob;
     }
 
     static Ref<Blob> create(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
     {
-        auto blob = adoptRef(*new Blob(context, WTFMove(blobPartVariants), propertyBag));
+        Ref blob = adoptRef(*new Blob(context, WTFMove(blobPartVariants), propertyBag));
         blob->suspendIfNeeded();
         return blob;
     }
 
     static Ref<Blob> create(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
     {
-        auto blob = adoptRef(*new Blob(context, WTFMove(data), contentType));
+        Ref blob = adoptRef(*new Blob(context, WTFMove(data), contentType));
+        blob->suspendIfNeeded();
+        return blob;
+    }
+
+    static Ref<Blob> create(ScriptExecutionContext* context, Ref<FragmentedSharedBuffer>&& buffer, const String& contentType)
+    {
+        Ref blob = adoptRef(*new Blob(context, WTFMove(buffer), contentType));
         blob->suspendIfNeeded();
         return blob;
     }
@@ -95,7 +103,7 @@ public:
     static Ref<Blob> deserialize(ScriptExecutionContext* context, const URL& srcURL, const String& type, long long size, long long memoryCost, const String& fileBackedPath)
     {
         ASSERT(Blob::isNormalizedContentType(type));
-        auto blob = adoptRef(*new Blob(deserializationContructor, context, srcURL, type, size, memoryCost, fileBackedPath));
+        Ref blob = adoptRef(*new Blob(deserializationContructor, context, srcURL, type, size, memoryCost, fileBackedPath));
         blob->suspendIfNeeded();
         return blob;
     }
@@ -138,6 +146,7 @@ protected:
     WEBCORE_EXPORT explicit Blob(ScriptExecutionContext*);
     Blob(ScriptExecutionContext&, Vector<BlobPartVariant>&&, const BlobPropertyBag&);
     Blob(ScriptExecutionContext*, Vector<uint8_t>&&, const String& contentType);
+    Blob(ScriptExecutionContext*, Ref<FragmentedSharedBuffer>&&, const String& contentType);
 
     enum ReferencingExistingBlobConstructor { referencingExistingBlobConstructor };
     Blob(ReferencingExistingBlobConstructor, ScriptExecutionContext*, const Blob&);
@@ -163,7 +172,7 @@ private:
     // into an HTML or for FileRead'ing, public blob URLs must be used for those purposes.
     URL m_internalURL;
 
-    UncheckedKeyHashSet<std::unique_ptr<BlobLoader>> m_blobLoaders;
+    HashSet<RefPtr<BlobLoader>> m_blobLoaders;
 };
 
 WebCoreOpaqueRoot root(Blob*);

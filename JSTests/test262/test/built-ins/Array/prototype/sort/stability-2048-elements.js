@@ -12,6 +12,7 @@ info: |
   uses merge sort for arrays with 2048 or more elements. It uses
   insertion sort for smaller arrays.
   https://github.com/Microsoft/ChakraCore/pull/5724/files#diff-85203ec16f5961eb4c18e4253bb42140R337
+features: [stable-array-sort]
 ---*/
 
 const array = [

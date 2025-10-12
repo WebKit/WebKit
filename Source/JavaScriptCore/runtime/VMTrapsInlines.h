@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,19 +25,24 @@
 
 #pragma once
 
-#include "VM.h"
+#include <JavaScriptCore/VM.h>
 
 namespace JSC {
 
 ALWAYS_INLINE VM& VMTraps::vm() const
 {
-    return *std::bit_cast<VM*>(std::bit_cast<uintptr_t>(this) - OBJECT_OFFSETOF(VM, m_traps));
+    return *std::bit_cast<VM*>(std::bit_cast<uintptr_t>(this) - VM::offsetOfTraps());
 }
 
 inline void VMTraps::deferTermination(DeferAction deferAction)
 {
     auto originalCount = m_deferTerminationCount++;
     ASSERT(m_deferTerminationCount < UINT_MAX);
+    // Strictly speaking, we're only interested in vm.hasPendingTerminationException() here.
+    // However, vm.exception() is a necessary condition for vm.hasPendingTerminationException().
+    // Since this checks is intended to be cheap, we'll just do the cheaper check of vm.exception()
+    // which itself rarely returns true. We'll let the slow path do the full
+    // vm.hasPendingTerminationException() check instead.
     if (!originalCount && vm().exception()) [[unlikely]]
         deferTerminationSlow(deferAction);
 }
@@ -52,16 +57,14 @@ inline void VMTraps::undoDeferTermination(DeferAction deferAction)
 
 ALWAYS_INLINE DeferTraps::DeferTraps(VM& vm)
     : m_traps(vm.traps())
-    , m_isActive(!m_traps.hasTrapBit(VMTraps::DeferTrapHandling))
+    , m_previousTrapsDeferred(m_traps.m_trapsDeferred)
 {
-    if (m_isActive)
-        m_traps.setTrapBit(VMTraps::DeferTrapHandling);
+    m_traps.m_trapsDeferred = true;
 }
 
 ALWAYS_INLINE DeferTraps::~DeferTraps()
 {
-    if (m_isActive)
-        m_traps.clearTrapBit(VMTraps::DeferTrapHandling);
+    m_traps.m_trapsDeferred = m_previousTrapsDeferred;
 }
 
 } // namespace JSC

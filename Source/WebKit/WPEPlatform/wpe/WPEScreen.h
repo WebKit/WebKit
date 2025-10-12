@@ -32,6 +32,7 @@
 
 #include <glib-object.h>
 #include <wpe/WPEDefines.h>
+#include <wpe/WPEScreenSyncObserver.h>
 
 G_BEGIN_DECLS
 
@@ -42,34 +43,36 @@ struct _WPEScreenClass
 {
     GObjectClass parent_class;
 
-    void (* invalidate) (WPEScreen *screen);
+    void                   (* invalidate)        (WPEScreen *screen);
+    WPEScreenSyncObserver *(* get_sync_observer) (WPEScreen *screen);
 
     gpointer padding[32];
 };
 
-WPE_API guint32 wpe_screen_get_id               (WPEScreen *screen);
-WPE_API void    wpe_screen_invalidate           (WPEScreen *screen);
-WPE_API int     wpe_screen_get_x                (WPEScreen *screen);
-WPE_API int     wpe_screen_get_y                (WPEScreen *screen);
-WPE_API void    wpe_screen_set_position         (WPEScreen *screen,
-                                                 int         x,
-                                                 int         y);
-WPE_API int     wpe_screen_get_width            (WPEScreen *screen);
-WPE_API int     wpe_screen_get_height           (WPEScreen *screen);
-WPE_API void    wpe_screen_set_size             (WPEScreen *screen,
-                                                 int         width,
-                                                 int         height);
-WPE_API int     wpe_screen_get_physical_width   (WPEScreen *screen);
-WPE_API int     wpe_screen_get_physical_height  (WPEScreen *screen);
-WPE_API void    wpe_screen_set_physical_size    (WPEScreen *screen,
-                                                 int         width,
-                                                 int         height);
-WPE_API gdouble wpe_screen_get_scale            (WPEScreen *screen);
-WPE_API void    wpe_screen_set_scale            (WPEScreen *screen,
-                                                 gdouble     scale);
-WPE_API int     wpe_screen_get_refresh_rate     (WPEScreen *screen);
-WPE_API void    wpe_screen_set_refresh_rate     (WPEScreen *screen,
-                                                 int         refresh_rate);
+WPE_API guint32                wpe_screen_get_id               (WPEScreen *screen);
+WPE_API void                   wpe_screen_invalidate           (WPEScreen *screen);
+WPE_API int                    wpe_screen_get_x                (WPEScreen *screen);
+WPE_API int                    wpe_screen_get_y                (WPEScreen *screen);
+WPE_API void                   wpe_screen_set_position         (WPEScreen *screen,
+                                                                int        x,
+                                                                int        y);
+WPE_API int                    wpe_screen_get_width            (WPEScreen *screen);
+WPE_API int                    wpe_screen_get_height           (WPEScreen *screen);
+WPE_API void                   wpe_screen_set_size             (WPEScreen *screen,
+                                                                int        width,
+                                                                int        height);
+WPE_API int                    wpe_screen_get_physical_width   (WPEScreen *screen);
+WPE_API int                    wpe_screen_get_physical_height  (WPEScreen *screen);
+WPE_API void                   wpe_screen_set_physical_size    (WPEScreen *screen,
+                                                                int        width,
+                                                                int        height);
+WPE_API gdouble                wpe_screen_get_scale            (WPEScreen *screen);
+WPE_API void                   wpe_screen_set_scale            (WPEScreen *screen,
+                                                                gdouble    scale);
+WPE_API int                    wpe_screen_get_refresh_rate     (WPEScreen *screen);
+WPE_API void                   wpe_screen_set_refresh_rate     (WPEScreen *screen,
+                                                                int        refresh_rate);
+WPE_API WPEScreenSyncObserver *wpe_screen_get_sync_observer    (WPEScreen *screen);
 
 G_END_DECLS
 

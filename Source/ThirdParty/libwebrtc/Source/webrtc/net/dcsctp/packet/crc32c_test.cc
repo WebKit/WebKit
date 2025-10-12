@@ -9,7 +9,10 @@
  */
 #include "net/dcsctp/packet/crc32c.h"
 
-#include "test/gmock.h"
+#include <array>
+#include <cstdint>
+
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace {

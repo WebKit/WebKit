@@ -53,6 +53,7 @@
 #import <WebKit/WebSecurityOriginPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/Assertions.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #if !PLATFORM(IOS_FAMILY)
 #import "AppleScriptController.h"
@@ -221,7 +222,7 @@ IGNORE_WARNINGS_END
         [sender setDefersCallbacks:YES];
         int64_t deferredWaitTime = 5 * NSEC_PER_MSEC;
         dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
-        dispatch_after(when, dispatch_get_main_queue(), ^{
+        dispatch_after(when, mainDispatchQueueSingleton(), ^{
 #if PLATFORM(IOS_FAMILY)
             WebThreadLock();
 #endif
@@ -423,18 +424,6 @@ IGNORE_WARNINGS_END
         NSString *string = [NSString stringWithFormat:@"%@ - didHandleOnloadEventsForFrame", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
-}
-
-- (void)webViewDidDisplayInsecureContent:(WebView *)sender
-{
-    if (!done && gTestRunner->dumpFrameLoadCallbacks())
-        printf ("didDisplayInsecureContent\n");
-}
-
-- (void)webView:(WebView *)sender didRunInsecureContent:(WebSecurityOrigin *)origin
-{
-    if (!done && gTestRunner->dumpFrameLoadCallbacks())
-        printf ("didRunInsecureContent\n");
 }
 
 - (void)webView:(WebView *)sender didDetectXSS:(NSURL *)insecureURL

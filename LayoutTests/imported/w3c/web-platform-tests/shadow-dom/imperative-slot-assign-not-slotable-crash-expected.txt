@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: document.getElementById('slot').assign is not a function. (In 'document.getElementById('slot').assign(nonSlotable)', 'document.getElementById('slot').assign' is undefined)
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x50

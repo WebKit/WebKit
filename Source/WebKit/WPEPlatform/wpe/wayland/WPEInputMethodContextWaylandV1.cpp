@@ -26,11 +26,10 @@
 #include "config.h"
 #include "WPEInputMethodContextWaylandV1.h"
 
+#include "GRefPtrWPE.h"
 #include "WPEDisplayWaylandPrivate.h"
 #include "WPEViewWayland.h"
-
 #include "text-input-unstable-v1-client-protocol.h"
-
 #include <algorithm>
 #include <cstdlib>
 #include <wayland-client-protocol.h>
@@ -456,10 +455,9 @@ static const struct zwp_text_input_v1_listener textInputListenerV1 = {
         if (modifiers & priv->modifiers.controlMask)
             wpe_modifiers |= WPE_MODIFIER_KEYBOARD_CONTROL;
 
-        auto* event = wpe_event_keyboard_new(state ? WPE_EVENT_KEYBOARD_KEY_DOWN : WPE_EVENT_KEYBOARD_KEY_UP, view,
-            WPE_INPUT_SOURCE_KEYBOARD, time, static_cast<WPEModifiers>(wpe_modifiers), 0, sym);
-        wpe_view_event(view, event);
-        wpe_event_unref(event);
+        GRefPtr<WPEEvent> event = adoptGRef(wpe_event_keyboard_new(state ? WPE_EVENT_KEYBOARD_KEY_DOWN : WPE_EVENT_KEYBOARD_KEY_UP, view,
+            WPE_INPUT_SOURCE_KEYBOARD, time, static_cast<WPEModifiers>(wpe_modifiers), 0, sym));
+        wpe_view_event(view, event.get());
     },
     // language
     [](void* /*data*/, struct zwp_text_input_v1* /*text_input*/, uint32_t /*serial*/, const char* /*language*/)

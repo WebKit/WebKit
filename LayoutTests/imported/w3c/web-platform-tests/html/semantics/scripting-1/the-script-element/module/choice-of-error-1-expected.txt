@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Unexpected token '%'
-CONSOLE MESSAGE: SyntaxError: Unexpected token '%'
 
 FAIL Parse errors in different files should be reported depending on different roots assert_equals: expected 4 but got 2
 

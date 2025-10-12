@@ -59,6 +59,7 @@
 #import "UserData.h"
 #import "VideoPresentationManagerProxy.h"
 #import "ViewUpdateDispatcherMessages.h"
+#import "WKMouseDeviceObserver.h"
 #import "WebAuthenticatorCoordinatorProxy.h"
 #import "WebAutocorrectionContext.h"
 #import "WebAutocorrectionData.h"
@@ -69,8 +70,8 @@
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import "WebScreenOrientationManagerProxy.h"
-#import <WebCore/ElementIdentifier.h>
 #import <WebCore/LocalFrameView.h>
+#import <WebCore/NodeIdentifier.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/Quirks.h>
@@ -629,10 +630,8 @@ void WebPageProxy::applicationDidEnterBackground()
 
 void WebPageProxy::applicationDidFinishSnapshottingAfterEnteringBackground()
 {
-    if (m_drawingArea) {
-        m_drawingArea->prepareForAppSuspension();
+    if (m_drawingArea)
         m_drawingArea->hideContentUntilPendingUpdate();
-    }
     m_legacyMainFrameProcess->send(Messages::WebPage::ApplicationDidFinishSnapshottingAfterEnteringBackground(), webPageIDInMainFrameProcess());
 }
 
@@ -1162,7 +1161,27 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToPDFiOS(FrameIde
         return std::nullopt;
     }
 
-    return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawToPDFiOS(frameID, printInfo, pageCount), WTFMove(completionHandler));
+    Ref preferences = this->preferences();
+    if (!(preferences->remoteSnapshottingEnabled() && preferences->useGPUProcessForDOMRenderingEnabled()))
+        return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawToPDFiOS(frameID, printInfo, pageCount), WTFMove(completionHandler));
+
+    auto snapshotIdentifier = RemoteSnapshotIdentifier::generate();
+    Ref gpuProcess = GPUProcessProxy::getOrCreate();
+    CompletionHandler<void(std::optional<FloatSize>&&)> snapshotCallback = [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, completionHandler = WTFMove(completionHandler), rootFrameIdentifier = frameID](std::optional<FloatSize> result) mutable {
+        RefPtr gpuProcess = weakGPUProcess.get();
+        if (!gpuProcess || !gpuProcess->hasConnection()) {
+            completionHandler({ });
+            return;
+        }
+        if (!result) {
+            gpuProcess->releaseSnapshot(snapshotIdentifier);
+            completionHandler({ });
+            return;
+        }
+        gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, *result, rootFrameIdentifier, WTFMove(completionHandler));
+    };
+
+    return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingPagesToSnapshotiOS(snapshotIdentifier, frameID, printInfo, pageCount), WTFMove(snapshotCallback));
 }
 
 std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToImage(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
@@ -1172,7 +1191,27 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToImage(FrameIden
         return std::nullopt;
     }
 
-    return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawToImage(frameID, printInfo), WTFMove(completionHandler));
+    Ref preferences = this->preferences();
+    if (!(preferences->remoteSnapshottingEnabled() && preferences->useGPUProcessForDOMRenderingEnabled()))
+        return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawToImage(frameID, printInfo), WTFMove(completionHandler));
+
+    auto snapshotIdentifier = RemoteSnapshotIdentifier::generate();
+    Ref gpuProcess = GPUProcessProxy::getOrCreate();
+    CompletionHandler<void(std::optional<FloatSize>&&)> snapshotCallback = [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, completionHandler = WTFMove(completionHandler), rootFrameIdentifier = frameID](std::optional<FloatSize> result) mutable {
+        RefPtr gpuProcess = weakGPUProcess.get();
+        if (!gpuProcess || !gpuProcess->hasConnection()) {
+            completionHandler({ });
+            return;
+        }
+        if (!result) {
+            gpuProcess->releaseSnapshot(snapshotIdentifier);
+            completionHandler({ });
+            return;
+        }
+        gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, *result, rootFrameIdentifier, WTFMove(completionHandler));
+    };
+
+    return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingToSnapshotiOS(snapshotIdentifier, frameID, printInfo), WTFMove(snapshotCallback));
 }
 
 void WebPageProxy::contentSizeCategoryDidChange(const String& contentSizeCategory)
@@ -1358,10 +1397,10 @@ void WebPageProxy::willReceiveEditDragSnapshot()
         pageClient->willReceiveEditDragSnapshot();
 }
 
-void WebPageProxy::didReceiveEditDragSnapshot(std::optional<TextIndicatorData> data)
+void WebPageProxy::didReceiveEditDragSnapshot(RefPtr<WebCore::TextIndicator>&& textIndicator)
 {
     if (RefPtr pageClient = this->pageClient())
-        pageClient->didReceiveEditDragSnapshot(data);
+        pageClient->didReceiveEditDragSnapshot(WTFMove(textIndicator));
 }
 
 void WebPageProxy::didConcludeDrop()
@@ -1371,10 +1410,10 @@ void WebPageProxy::didConcludeDrop()
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-void WebPageProxy::didReceiveInteractiveModelElement(std::optional<WebCore::ElementIdentifier> elementID)
+void WebPageProxy::didReceiveInteractiveModelElement(std::optional<WebCore::NodeIdentifier> nodeID)
 {
     if (RefPtr pageClient = this->pageClient())
-        pageClient->didReceiveInteractiveModelElement(elementID);
+        pageClient->didReceiveInteractiveModelElement(nodeID);
 }
 #endif
 
@@ -1502,7 +1541,7 @@ bool WebPageProxy::isDesktopClassBrowsingRecommended(const WebCore::ResourceRequ
 #else
         // While desktop-class browsing is supported on all iPad models, it is not recommended for iPad mini.
         auto screenClass = MGGetSInt32Answer(kMGQMainScreenClass, MGScreenClassPad2);
-        shouldRecommendDesktopClassBrowsing = screenClass != MGScreenClassPad3 && screenClass != MGScreenClassPad4 && desktopClassBrowsingSupported();
+        shouldRecommendDesktopClassBrowsing = screenClass != MGScreenClassPad3 && screenClass != MGScreenClassPad4 && screenClass != MGScreenClassPad11 && desktopClassBrowsingSupported();
 #endif
         if (!m_navigationClient->shouldBypassContentModeSafeguards() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ModernCompabilityModeByDefault)) {
             // Opt out apps that haven't yet built against the iOS 13 SDK to limit any incompatibilities as a result of enabling desktop-class browsing by default in
@@ -1657,7 +1696,7 @@ void WebPageProxy::willOpenAppLink()
     // We chose 25 seconds because the system only gives us 30 seconds and we don't want to get too close to that limit
     // to avoid assertion invalidation (or even termination).
     takeOpeningAppLinkActivity();
-    WorkQueue::protectedMain()->dispatchAfter(25_s, [weakThis = WeakPtr { *this }] {
+    WorkQueue::mainSingleton().dispatchAfter(25_s, [weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->dropOpeningAppLinkActivity();
     });
@@ -1794,14 +1833,27 @@ FloatRect WebPageProxy::layoutViewportRect() const
     return { };
 }
 
+FloatBoxExtent WebPageProxy::computedObscuredInset() const
+{
+    if (RefPtr pageClient = this->pageClient())
+        return pageClient->computedObscuredInset();
+
+    return { };
+}
+
 FloatSize WebPageProxy::viewLayoutSize() const
 {
     return internals().viewportConfigurationViewLayoutSize;
 }
 
+void WebPageProxy::didRefreshDisplay()
+{
+    m_configuration->protectedProcessPool()->didRefreshDisplay();
+}
+
 #if ENABLE(PDF_PAGE_NUMBER_INDICATOR)
 
-void WebPageProxy::createPDFPageNumberIndicator(PDFPluginIdentifier identifier, const IntRect& rect, size_t pageCount)
+void WebPageProxy::createPDFPageNumberIndicator(PDFPluginIdentifier identifier, const IntRect& rect, uint64_t pageCount)
 {
     if (RefPtr pageClient = this->pageClient())
         pageClient->createPDFPageNumberIndicator(identifier, rect, pageCount);
@@ -1819,7 +1871,7 @@ void WebPageProxy::updatePDFPageNumberIndicatorLocation(PDFPluginIdentifier iden
         pageClient->updatePDFPageNumberIndicatorLocation(identifier, rect);
 }
 
-void WebPageProxy::updatePDFPageNumberIndicatorCurrentPage(PDFPluginIdentifier identifier, size_t pageIndex)
+void WebPageProxy::updatePDFPageNumberIndicatorCurrentPage(PDFPluginIdentifier identifier, uint64_t pageIndex)
 {
     if (RefPtr pageClient = this->pageClient())
         pageClient->updatePDFPageNumberIndicatorCurrentPage(identifier, pageIndex);
@@ -1871,6 +1923,29 @@ void WebPageProxy::didEndContextMenuInteraction()
 }
 
 #endif // USE(UICONTEXTMENU)
+
+#if ENABLE(POINTER_LOCK)
+
+void WebPageProxy::platformLockPointer()
+{
+    if (RefPtr pageClient = this->pageClient())
+        pageClient->beginPointerLockMouseTracking();
+}
+
+void WebPageProxy::platformUnlockPointer()
+{
+    if (RefPtr pageClient = this->pageClient())
+        pageClient->endPointerLockMouseTracking();
+}
+
+#endif
+
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+bool WebPageProxy::hasMouseDevice()
+{
+    return [[WKMouseDeviceObserver sharedInstance] hasMouseDevice];
+}
+#endif
 
 } // namespace WebKit
 

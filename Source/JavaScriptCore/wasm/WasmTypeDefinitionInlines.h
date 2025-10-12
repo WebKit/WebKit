@@ -28,7 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmTypeDefinition.h"
+#include <JavaScriptCore/WasmTypeDefinition.h>
 
 namespace JSC { namespace Wasm {
 

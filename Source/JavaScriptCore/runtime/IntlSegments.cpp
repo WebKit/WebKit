@@ -39,7 +39,7 @@ namespace JSC {
 
 const ClassInfo IntlSegments::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlSegments) };
 
-IntlSegments* IntlSegments::create(VM& vm, Structure* structure, std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>&& segmenter, Box<Vector<UChar>>&& buffer, JSString* string, IntlSegmenter::Granularity granularity)
+IntlSegments* IntlSegments::create(VM& vm, Structure* structure, std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>&& segmenter, Box<Vector<char16_t>>&& buffer, JSString* string, IntlSegmenter::Granularity granularity)
 {
     auto* object = new (NotNull, allocateCell<IntlSegments>(vm)) IntlSegments(vm, structure, WTFMove(segmenter), WTFMove(buffer), granularity, string);
     object->finishCreation(vm);
@@ -51,7 +51,7 @@ Structure* IntlSegments::createStructure(VM& vm, JSGlobalObject* globalObject, J
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-IntlSegments::IntlSegments(VM& vm, Structure* structure, std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>&& segmenter, Box<Vector<UChar>>&& buffer, IntlSegmenter::Granularity granularity, JSString* string)
+IntlSegments::IntlSegments(VM& vm, Structure* structure, std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>&& segmenter, Box<Vector<char16_t>>&& buffer, IntlSegmenter::Granularity granularity, JSString* string)
     : Base(vm, structure)
     , m_segmenter(WTFMove(segmenter))
     , m_buffer(WTFMove(buffer))

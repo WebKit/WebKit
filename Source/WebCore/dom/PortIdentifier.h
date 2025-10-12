@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ProcessIdentifier.h"
+#include <WebCore/ProcessIdentifier.h>
 
 namespace WebCore {
 

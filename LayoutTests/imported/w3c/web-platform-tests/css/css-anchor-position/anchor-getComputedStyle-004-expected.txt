@@ -1,0 +1,4 @@
+
+PASS position-area does not affect resolved inset properties
+FAIL 'auto' inset properties resolve to 0px when position-area is non-initial assert_equals: expected "0px" but got "50px"
+

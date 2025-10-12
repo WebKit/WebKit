@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // CLImage.cpp: Implements the cl::Image class.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/CLImage.h"
 #include "libANGLE/CLContext.h"

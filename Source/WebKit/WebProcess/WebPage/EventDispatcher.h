@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,7 +87,7 @@ class EventDispatcher final :
     public MomentumEventDispatcher::Client,
 #endif
     public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(EventDispatcher);
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventDispatcher);
 #endif
@@ -168,8 +168,8 @@ private:
 
     void pageScreenDidChange(WebCore::PageIdentifier, WebCore::PlatformDisplayID, std::optional<unsigned> nominalFramesPerSecond);
 
-    CheckedRef<WebProcess> m_process;
-    Ref<WorkQueue> m_queue;
+    const CheckedRef<WebProcess> m_process;
+    const Ref<WorkQueue> m_queue;
 
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
     Lock m_scrollingTreesLock;

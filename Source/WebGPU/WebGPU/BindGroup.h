@@ -29,6 +29,7 @@
 #import "ShaderStage.h"
 #import <wtf/EnumeratedArray.h>
 #import <wtf/FastMalloc.h>
+#import <wtf/HashTraits.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCountedAndCanMakeWeakPtr.h>
 #import <wtf/TZoneMalloc.h>

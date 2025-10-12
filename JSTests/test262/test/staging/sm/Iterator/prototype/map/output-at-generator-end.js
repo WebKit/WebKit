@@ -7,9 +7,6 @@ description: |
   %Iterator.prototype%.map outputs correct value at end of iterator.
 features:
   - iterator-helpers
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 ---*/
 const iterator = [0].values().map(x => x);
 

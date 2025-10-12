@@ -42,7 +42,7 @@ messages -> VideoPresentationManager {
     DidEnterExternalPlayback(WebCore::MediaPlayerClientIdentifier contextId)
     DidExitExternalPlayback(WebCore::MediaPlayerClientIdentifier contextId)
 #endif
-    SetVideoLayerFrameFenced(WebCore::MediaPlayerClientIdentifier contextId, WebCore::FloatRect bounds, MachSendRight machSendRight)
+    SetVideoLayerFrameFenced(WebCore::MediaPlayerClientIdentifier contextId, WebCore::FloatRect bounds, struct MachSendRightAnnotated sendRightAnnotated)
     SetVideoLayerGravityEnum(WebCore::MediaPlayerClientIdentifier contextId, unsigned gravity)
     SetVideoFullscreenFrame(WebCore::MediaPlayerClientIdentifier contextId, WebCore::FloatRect frame)
     FullscreenModeChanged(WebCore::MediaPlayerClientIdentifier contextId, uint32_t videoFullscreenMode)

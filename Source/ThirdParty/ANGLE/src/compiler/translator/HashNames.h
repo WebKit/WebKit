@@ -21,12 +21,16 @@ class ImmutableString;
 class TSymbol;
 
 ImmutableString HashName(const ImmutableString &name,
+                         char prefix,
                          ShHashFunction64 hashFunction,
                          NameMap *nameMap);
 
 // Hash user-defined name for GLSL output, with special handling for internal names.
 // The nameMap parameter is optional and is used to cache hashed names if set.
-ImmutableString HashName(const TSymbol *symbol, ShHashFunction64 hashFunction, NameMap *nameMap);
+ImmutableString HashName(const TSymbol *symbol,
+                         char prefix,
+                         ShHashFunction64 hashFunction,
+                         NameMap *nameMap);
 
 }  // namespace sh
 

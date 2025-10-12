@@ -1,0 +1,8 @@
+Some text.
+Some text.
+Some text.
+
+FAIL invalidation of @mixin from same stylesheet assert_equals: expected (string) "--m1" but got (undefined) undefined
+FAIL invalidation of @mixin from different stylesheet undefined is not an object (evaluating 'ss.cssRules[1].name')
+FAIL invalidation on adding @apply rule undefined is not an object (evaluating 'ss.cssRules[1].insertRule')
+

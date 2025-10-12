@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,19 +27,20 @@
 #include "WebInspectorInternal.h"
 
 #include "WebFrame.h"
+#include "WebInspectorBackendProxyMessages.h"
 #include "WebInspectorMessages.h"
 #include "WebInspectorUIMessages.h"
-#include "WebInspectorUIProxyMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/Chrome.h>
-#include <WebCore/Document.h>
+#include <WebCore/DocumentView.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/InspectorPageAgent.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/NavigationAction.h>
 #include <WebCore/NotImplemented.h>
@@ -66,8 +67,8 @@ WebInspector::WebInspector(WebPage& page)
 
 WebInspector::~WebInspector()
 {
-    if (m_frontendConnection)
-        m_frontendConnection->invalidate();
+    if (RefPtr frontendConnection = m_frontendConnection)
+        frontendConnection->invalidate();
 }
 
 WebPage* WebInspector::page() const
@@ -77,7 +78,7 @@ WebPage* WebInspector::page() const
 
 void WebInspector::openLocalInspectorFrontend()
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::RequestOpenLocalInspectorFrontend(), m_page->identifier());
+    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebInspectorBackendProxy::RequestOpenLocalInspectorFrontend(), m_page->identifier());
 }
 
 void WebInspector::setFrontendConnection(IPC::Connection::Handle&& connectionHandle)
@@ -101,11 +102,11 @@ void WebInspector::setFrontendConnection(IPC::Connection::Handle&& connectionHan
 
 void WebInspector::closeFrontendConnection()
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::DidClose(), m_page->identifier());
+    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebInspectorBackendProxy::DidClose(), m_page->identifier());
 
     // If we tried to close the frontend before it was created, then no connection exists yet.
-    if (m_frontendConnection) {
-        m_frontendConnection->invalidate();
+    if (RefPtr frontendConnection = m_frontendConnection) {
+        frontendConnection->invalidate();
         m_frontendConnection = nullptr;
     }
 
@@ -117,7 +118,7 @@ void WebInspector::closeFrontendConnection()
 
 void WebInspector::bringToFront()
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::BringToFront(), m_page->identifier());
+    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebInspectorBackendProxy::BringToFront(), m_page->identifier());
 }
 
 void WebInspector::whenFrontendConnectionEstablished(Function<void(IPC::Connection&)>&& callback)
@@ -182,14 +183,14 @@ void WebInspector::showResources()
 
 void WebInspector::showMainResourceForFrame(WebCore::FrameIdentifier frameIdentifier)
 {
-    WebFrame* frame = WebProcess::singleton().webFrame(frameIdentifier);
+    RefPtr frame = WebProcess::singleton().webFrame(frameIdentifier);
     if (!frame)
         return;
 
     if (!m_page->corePage())
         return;
 
-    String inspectorFrameIdentifier = m_page->corePage()->inspectorController().ensurePageAgent().frameId(frame->coreLocalFrame());
+    String inspectorFrameIdentifier = m_page->corePage()->inspectorController().ensurePageAgent().frameId(frame->protectedCoreLocalFrame().get());
 
     whenFrontendConnectionEstablished([inspectorFrameIdentifier](auto& frontendConnection) {
         frontendConnection.send(Messages::WebInspectorUI::ShowMainResourceForFrame(inspectorFrameIdentifier), 0);
@@ -238,24 +239,24 @@ void WebInspector::stopElementSelection()
 
 void WebInspector::elementSelectionChanged(bool active)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::ElementSelectionChanged(active), m_page->identifier());
+    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebInspectorBackendProxy::ElementSelectionChanged(active), m_page->identifier());
 }
 
 void WebInspector::timelineRecordingChanged(bool active)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::TimelineRecordingChanged(active), m_page->identifier());
+    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebInspectorBackendProxy::TimelineRecordingChanged(active), m_page->identifier());
 }
 
-void WebInspector::setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
+void WebInspector::setDeveloperPreferenceOverride(InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::SetDeveloperPreferenceOverride(developerPreference, overrideValue), m_page->identifier());
+    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebInspectorBackendProxy::SetDeveloperPreferenceOverride(developerPreference, overrideValue), m_page->identifier());
 }
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
 void WebInspector::setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::SetEmulatedConditions(WTFMove(bytesPerSecondLimit)), m_page->identifier());
+    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebInspectorBackendProxy::SetEmulatedConditions(WTFMove(bytesPerSecondLimit)), m_page->identifier());
 }
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
@@ -276,11 +277,11 @@ bool WebInspector::canAttachWindow()
         return true;
 
     // Don't allow the attach if the window would be too small to accommodate the minimum inspector size.
-    RefPtr localMainFrame = m_page->localMainFrame();
+    RefPtr localMainFrame = RefPtr { m_page.get() }->localMainFrame();
     if (!localMainFrame)
         return false;
-    unsigned inspectedPageHeight = localMainFrame->view()->visibleHeight();
-    unsigned inspectedPageWidth = localMainFrame->view()->visibleWidth();
+    unsigned inspectedPageHeight = localMainFrame->protectedView()->visibleHeight();
+    unsigned inspectedPageWidth = localMainFrame->protectedView()->visibleWidth();
     unsigned maximumAttachedHeight = inspectedPageHeight * maximumAttachedHeightRatio;
     return minimumAttachedHeight <= maximumAttachedHeight && minimumAttachedWidth <= inspectedPageWidth;
 }
@@ -296,7 +297,7 @@ void WebInspector::updateDockingAvailability()
 
     m_previousCanAttach = canAttachWindow;
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::AttachAvailabilityChanged(canAttachWindow), m_page->identifier());
+    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebInspectorBackendProxy::AttachAvailabilityChanged(canAttachWindow), m_page->identifier());
 }
 
 } // namespace WebKit

@@ -62,7 +62,6 @@ LLINT_SLOW_PATH_HIDDEN_DECL(entry_osr_function_for_call_arityCheck);
 LLINT_SLOW_PATH_HIDDEN_DECL(entry_osr_function_for_construct_arityCheck);
 LLINT_SLOW_PATH_HIDDEN_DECL(loop_osr);
 LLINT_SLOW_PATH_HIDDEN_DECL(replace);
-LLINT_SLOW_PATH_HIDDEN_DECL(stack_check);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_object);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_array);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_array_with_size);
@@ -160,9 +159,11 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_log_shadow_chicken_tail);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_out_of_line_jump_target);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_arityCheck);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_instanceof);
+
+extern "C" UGPRPair SYSV_ABI llint_check_stack_and_vm_traps(CallFrame*, const JSInstruction* pc, void* newStackPointer) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI llint_throw_stack_overflow_error(VM*, ProtoCallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit(CallFrame* callFrame, EncodedJSValue unused) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit_from_inlined_call(CallFrame* callFrame, EncodedJSValue callResult) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit(CallFrame*, EncodedJSValue unused) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit_from_inlined_call(CallFrame*, EncodedJSValue callResult) REFERENCED_FROM_ASM WTF_INTERNAL;
 #if ENABLE(C_LOOP)
 extern "C" UGPRPair SYSV_ABI llint_stack_check_at_vm_entry(VM*, Register*) REFERENCED_FROM_ASM WTF_INTERNAL;
 #endif

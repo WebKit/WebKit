@@ -6,7 +6,7 @@
     const layoutTestsPath = window.location.href.substr(0, window.location.href.indexOf("/LayoutTests/"));
     const modulePath = layoutTestsPath ? layoutTestsPath + "/Source/WebCore/Modules/modern-media-controls" : "/modern-media-controls";
 
-    ["activity-indicator", "airplay-button", "background-tint", "button", "buttons-container", "controls-bar", "inline-media-controls", "macos-fullscreen-media-controls", "macos-inline-media-controls", "media-controls", "media-document", "placard", "slider-base", "slider", "status-label", "text-tracks", "time-label"].forEach(cssFile => {
+    ["activity-indicator", "airplay-button", "background-tint", "button", "buttons-container", "controls-bar", "inline-media-controls", "macos-fullscreen-media-controls", "macos-inline-media-controls", "media-controls", "media-document", "placard", "slider-base", "slider", "status-label", "text-tracks", "time-control", "time-label"].forEach(cssFile => {
         document.write(`<link rel="stylesheet" type="text/css" href="${modulePath}/controls/${cssFile}.css">`);
     });
 

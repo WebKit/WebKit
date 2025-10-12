@@ -2,20 +2,19 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-String-shell.js, deepEqual.js]
-flags:
-  - noStrict
+includes: [deepEqual.js]
 description: |
   pending
 esid: pending
 ---*/
+
 // Test that we can't confuse %StringIteratorPrototype% for a
 // StringIterator object.
 function TestStringIteratorPrototypeConfusion() {
     var iter = ""[Symbol.iterator]();
-    assertThrowsInstanceOfWithMessage(
-        () => iter.next.call(Object.getPrototypeOf(iter)),
+    assert.throws(
         TypeError,
+        () => iter.next.call(Object.getPrototypeOf(iter)),
         "next method called on incompatible String Iterator");
 }
 TestStringIteratorPrototypeConfusion();
@@ -24,10 +23,7 @@ TestStringIteratorPrototypeConfusion();
 // cross-compartment iterator.
 function TestStringIteratorWrappers() {
     var iter = ""[Symbol.iterator]();
-    assert.deepEqual(iter.next.call(createNewGlobal().eval('"x"[Symbol.iterator]()')),
+    assert.deepEqual(iter.next.call($262.createRealm().global.eval('"x"[Symbol.iterator]()')),
 		 { value: "x", done: false })
 }
-if (typeof createNewGlobal === "function") {
-    TestStringIteratorWrappers();
-}
-
+TestStringIteratorWrappers();

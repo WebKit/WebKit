@@ -28,20 +28,29 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 //
 // Roles
 //
 
-#define NSAccessibilityHeadingRole @"AXHeading"
+#if !HAVE(ADDITIONAL_NS_ACCESSIBILITY_CONSTANTS)
 #define NSAccessibilityDateTimeAreaRole @"AXDateTimeArea"
-#define NSAccessibilityImageMapRole @"AXImageMap"
-#define NSAccessibilityIncrementorArrowRole @"AXIncrementorArrow"
+#define NSAccessibilityHeadingRole @"AXHeading"
 #define NSAccessibilityListMarkerRole @"AXListMarker"
 #define NSAccessibilityWebAreaRole @"AXWebArea"
+#endif
+
+#define NSAccessibilityImageMapRole @"AXImageMap"
+#define NSAccessibilityIncrementorArrowRole @"AXIncrementorArrow"
 
 //
 // Subroles
 //
+
+#if !HAVE(ADDITIONAL_NS_ACCESSIBILITY_CONSTANTS)
+#define NSAccessibilitySuggestionSubrole @"AXSuggestion"
+#endif
 
 #define NSAccessibilityApplicationAlertSubrole @"AXApplicationAlert"
 #define NSAccessibilityApplicationAlertDialogSubrole @"AXApplicationAlertDialog"
@@ -98,8 +107,9 @@
 #define NSAccessibilityRubyInlineSubrole @"AXRubyInline"
 #define NSAccessibilityRubyTextSubrole @"AXRubyText"
 #define NSAccessibilitySampleStyleGroupSubrole @"AXSampleStyleGroup"
+#define NSAccessibilitySectionFooterSubrole @"AXSectionFooter"
+#define NSAccessibilitySectionHeaderSubrole @"AXSectionHeader"
 #define NSAccessibilitySubscriptStyleGroupSubrole @"AXSubscriptStyleGroup"
-#define NSAccessibilitySuggestionSubrole @"AXSuggestion"
 #define NSAccessibilitySummarySubrole @"AXSummary"
 #define NSAccessibilitySuperscriptStyleGroupSubrole @"AXSuperscriptStyleGroup"
 #define NSAccessibilityTabPanelSubrole @"AXTabPanel"
@@ -113,6 +123,21 @@
 //
 // Attributes
 //
+
+#if !HAVE(ADDITIONAL_NS_ACCESSIBILITY_CONSTANTS)
+#define NSAccessibilityAutoInteractableAttribute @"AXAutoInteractable"
+#define NSAccessibilityBlockQuoteLevelAttribute @"AXBlockQuoteLevel"
+#define NSAccessibilityChildrenInNavigationOrderAttribute @"AXChildrenInNavigationOrder"
+#define NSAccessibilityDateTimeComponentsAttribute @"AXDateTimeComponents"
+#define NSAccessibilityEmbeddedImageDescriptionAttribute @"AXEmbeddedImageDescription"
+#define NSAccessibilityHeadingLevelAttribute @"AXHeadingLevel"
+#define NSAccessibilityLanguageAttribute @"AXLanguage"
+#define NSAccessibilityPathAttribute @"AXPath"
+#define NSAccessibilitySelectedCellsAttribute @"AXSelectedCells"
+#define NSAccessibilityTextCompletionAttribute @"AXTextCompletion"
+#define NSAccessibilityTextInputMarkedRangeAttribute @"AXTextInputMarkedRange"
+#define NSAccessibilityVisitedAttribute @"AXVisited"
+#endif
 
 #define NSAccessibilityARIAAtomicAttribute @"AXARIAAtomic"
 #define NSAccessibilityARIAColumnCountAttribute @"AXARIAColumnCount"
@@ -130,19 +155,16 @@
 #define NSAccessibilityActiveElementAttribute @"AXActiveElement"
 #define NSAccessibilityAssociatedPluginParentAttribute @"_AXAssociatedPluginParent"
 #define NSAccessibilityAutocompleteValueAttribute @"AXAutocompleteValue"
-#define NSAccessibilityAutoInteractableAttribute @"AXAutoInteractable"
-#define NSAccessibilityBlockQuoteLevelAttribute @"AXBlockQuoteLevel"
 #define NSAccessibilityBrailleLabelAttribute @"AXBrailleLabel"
 #define NSAccessibilityBrailleRoleDescriptionAttribute @"AXBrailleRoleDescription"
 #define NSAccessibilityCaretBrowsingEnabledAttribute @"AXCaretBrowsingEnabled"
-#define NSAccessibilityChildrenInNavigationOrderAttribute @"AXChildrenInNavigationOrder"
 #define NSAccessibilityClickPointAttribute @"AXClickPoint"
+#define NSAccessibilityColumnIndexDescriptionAttribute @"AXColumnIndexDescription"
 #define NSAccessibilityControllerForAttribute @"AXControllerFor"
 #define NSAccessibilityControllersAttribute @"AXControllers"
 #define NSAccessibilityDOMClassListAttribute @"AXDOMClassList"
 #define NSAccessibilityDOMIdentifierAttribute @"AXDOMIdentifier"
 #define NSAccessibilityDRTSpeechAttributeAttribute @"AXDRTSpeechAttribute"
-#define NSAccessibilityDateTimeComponentsAttribute @"AXDateTimeComponents"
 #define NSAccessibilityDateTimeComponentsTypeAttribute @"AXDateTimeComponentsType"
 #define NSAccessibilityDatetimeValueAttribute @"AXDateTimeValue"
 #define NSAccessibilityDescribedByAttribute @"AXDescribedBy"
@@ -152,7 +174,6 @@
 #define NSAccessibilityDropEffectsAttribute @"AXDropEffects"
 #define NSAccessibilityEditableAncestorAttribute @"AXEditableAncestor"
 #define NSAccessibilityElementBusyAttribute @"AXElementBusy"
-#define NSAccessibilityEmbeddedImageDescriptionAttribute @"AXEmbeddedImageDescription"
 #define NSAccessibilityEndTextMarkerAttribute @"AXEndTextMarker"
 #define NSAccessibilityEndTextMarkerForTextMarkerRangeAttribute @"_AXEndTextMarkerForTextMarkerRange"
 #define NSAccessibilityErrorMessageElementsAttribute @"AXErrorMessageElements"
@@ -163,7 +184,6 @@
 #define NSAccessibilityFocusableAncestorAttribute @"AXFocusableAncestor"
 #define NSAccessibilityGrabbedAttribute @"AXGrabbed"
 #define NSAccessibilityHasPopupAttribute @"AXHasPopup"
-#define NSAccessibilityHeadingLevelAttribute @"AXHeadingLevel"
 #define NSAccessibilityHighestEditableAncestorAttribute @"AXHighestEditableAncestor"
 #define NSAccessibilityImageOverlayElementsAttribute @"AXImageOverlayElements"
 #define NSAccessibilityInfoStringForTestingAttribute @"AXInfoStringForTesting"
@@ -180,7 +200,6 @@
 #define NSAccessibilityKeyShortcutsAttribute @"AXKeyShortcutsValue"
 #define NSAccessibilityLabelForAttribute @"AXLabelFor"
 #define NSAccessibilityLabelledByAttribute @"AXLabelledBy"
-#define NSAccessibilityLanguageAttribute @"AXLanguage"
 #define NSAccessibilityLayoutCountAttribute @"AXLayoutCount"
 #define NSAccessibilityLineRectsAndTextAttribute @"AXLineRectsAndText"
 #define NSAccessibilityLinkRelationshipTypeAttribute @"AXLinkRelationshipType"
@@ -190,19 +209,16 @@
 #define NSAccessibilityOwnersAttribute @"AXOwners"
 #define NSAccessibilityOwnsAttribute @"AXOwns"
 #define NSAccessibilityPageRelativePositionAttribute @"_AXPageRelativePosition"
-#define NSAccessibilityPathAttribute @"AXPath"
 #define NSAccessibilityPopupValueAttribute @"AXPopupValue"
 #define NSAccessibilityPreventKeyboardDOMEventDispatchAttribute @"AXPreventKeyboardDOMEventDispatch"
 #define NSAccessibilityPrimaryScreenHeightAttribute @"_AXPrimaryScreenHeight"
 #define NSAccessibilityRelativeFrameAttribute @"AXRelativeFrame"
-#define NSAccessibilitySelectedCellsAttribute @"AXSelectedCells"
+#define NSAccessibilityRowIndexDescriptionAttribute @"AXRowIndexDescription"
 #define NSAccessibilitySelectedTextMarkerRangeAttribute @"AXSelectedTextMarkerRange"
 #define NSAccessibilityStartTextMarkerAttribute @"AXStartTextMarker"
 #define NSAccessibilityStartTextMarkerForTextMarkerRangeAttribute @"_AXStartTextMarkerForTextMarkerRange"
 #define NSAccessibilityStringValueAttribute @"AXStringValue"
 #define NSAccessibilityTableLevelAttribute @"AXTableLevel"
-#define NSAccessibilityTextCompletionAttribute @"AXTextCompletion"
-#define NSAccessibilityTextInputMarkedRangeAttribute @"AXTextInputMarkedRange"
 #define NSAccessibilityTextInputMarkedTextMarkerRangeAttribute @"AXTextInputMarkedTextMarkerRange"
 #define NSAccessibilityTextMarkerDebugDescriptionAttribute @"AXTextMarkerDebugDescription"
 #define NSAccessibilityTextMarkerNodeDebugDescriptionAttribute @"AXTextMarkerNodeDebugDescription"
@@ -211,11 +227,14 @@
 #define NSAccessibilityTextMarkerRangeForNSRangeAttribute @"_AXTextMarkerRangeForNSRange"
 #define NSAccessibilityValueAutofillAvailableAttribute @"AXValueAutofillAvailable"
 #define NSAccessibilityValueAutofillTypeAttribute @"AXValueAutofillType"
-#define NSAccessibilityVisitedAttribute @"AXVisited"
 
 //
 // Parameterized Attributes
 //
+
+#if !HAVE(ADDITIONAL_NS_ACCESSIBILITY_CONSTANTS)
+#define NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute @"AXUIElementsForSearchPredicate"
+#endif
 
 #define NSAccessibilityAttributedStringForTextMarkerRangeAttribute @"AXAttributedStringForTextMarkerRange"
 #define NSAccessibilityAttributedStringForTextMarkerRangeWithOptionsAttribute @"AXAttributedStringForTextMarkerRangeWithOptions"
@@ -260,14 +279,16 @@
 #define NSAccessibilityTextMarkerRangeForUnorderedTextMarkersAttribute @"AXTextMarkerRangeForUnorderedTextMarkers"
 #define NSAccessibilityTextMarkerRangeIsValidParameterizedAttribute @"AXTextMarkerRangeIsValid"
 #define NSAccessibilityUIElementForTextMarkerAttribute @"AXUIElementForTextMarker"
-#define NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute @"AXUIElementsForSearchPredicate"
 
 //
 // Actions
 //
 
-#define NSAccessibilityDismissAction @"AXDismissAction"
+#if !HAVE(ADDITIONAL_NS_ACCESSIBILITY_CONSTANTS)
 #define NSAccessibilityScrollToVisibleAction @"AXScrollToVisible"
+#endif
+
+#define NSAccessibilityDismissAction @"AXDismissAction"
 #define NSAccessibilitySyncDecrementAction @"AXSyncDecrementAction"
 #define NSAccessibilitySyncIncrementAction @"AXSyncIncrementAction"
 #define NSAccessibilitySyncPressAction @"AXSyncPressAction"
@@ -276,9 +297,12 @@
 // Attributed string attribute names
 //
 
-#define NSAccessibilityDidSpellCheckAttribute @"AXDidSpellCheck"
+#if !HAVE(ADDITIONAL_NS_ACCESSIBILITY_CONSTANTS)
 #define NSAccessibilityFontBoldAttribute @"AXFontBold"
 #define NSAccessibilityFontItalicAttribute @"AXFontItalic"
+#endif
+
+#define NSAccessibilityDidSpellCheckAttribute @"AXDidSpellCheck"
 #define NSAccessibilityHighlightAttribute @"AXHighlight"
 #define NSAccessibilityIsSuggestedInsertionAttribute @"AXIsSuggestedInsertion"
 #define NSAccessibilityIsSuggestedDeletionAttribute @"AXIsSuggestedDeletion"
@@ -288,16 +312,21 @@
 // Notifications
 //
 
-#define NSAccessibilityActiveElementChangedNotification @"AXActiveElementChanged"
+#if !HAVE(ADDITIONAL_NS_ACCESSIBILITY_CONSTANTS)
 #define NSAccessibilityAutocorrectionOccurredNotification @"AXAutocorrectionOccurred"
-#define NSAccessibilityCurrentStateChangedNotification @"AXCurrentStateChanged"
-#define NSAccessibilityDRTNotificationNotification @"AXDRTNotification"
 #define NSAccessibilityDraggingDestinationDragAcceptedNotification CFSTR("AXDraggingDestinationDragAccepted")
 #define NSAccessibilityDraggingDestinationDragNotAcceptedNotification CFSTR("AXDraggingDestinationDragNotAccepted")
 #define NSAccessibilityDraggingDestinationDropAllowedNotification CFSTR("AXDraggingDestinationDropAllowed")
 #define NSAccessibilityDraggingDestinationDropNotAllowedNotification CFSTR("AXDraggingDestinationDropNotAllowed")
 #define NSAccessibilityDraggingSourceDragBeganNotification CFSTR("AXDraggingSourceDragBegan")
 #define NSAccessibilityDraggingSourceDragEndedNotification CFSTR("AXDraggingSourceDragEnded")
+#define NSAccessibilityTextInputMarkingSessionBeganNotification @"AXTextInputMarkingSessionBegan"
+#define NSAccessibilityTextInputMarkingSessionEndedNotification @"AXTextInputMarkingSessionEnded"
+#endif
+
+#define NSAccessibilityActiveElementChangedNotification @"AXActiveElementChanged"
+#define NSAccessibilityCurrentStateChangedNotification @"AXCurrentStateChanged"
+#define NSAccessibilityDRTNotificationNotification @"AXDRTNotification"
 #define NSAccessibilityElementBusyChangedNotification @"AXElementBusyChanged"
 #define NSAccessibilityExpandedChangedNotification @"AXExpandedChanged"
 #define NSAccessibilityFocusChangedNotification @"AXFocusChanged"
@@ -310,15 +339,16 @@
 #define NSAccessibilityPressDidFailNotification @"AXPressDidFail"
 #define NSAccessibilityPressDidSucceedNotification @"AXPressDidSucceed"
 #define NSAccessibilitySortDirectionChangedNotification @"AXSortDirectionChanged"
-#define NSAccessibilityTextInputMarkingSessionBeganNotification @"AXTextInputMarkingSessionBegan"
-#define NSAccessibilityTextInputMarkingSessionEndedNotification @"AXTextInputMarkingSessionEnded"
 
 //
 // Additional attributes in text change notifications
 //
 
+#if !HAVE(ADDITIONAL_NS_ACCESSIBILITY_CONSTANTS)
 #define NSAccessibilityTextStateChangeTypeKey @"AXTextStateChangeType"
 #define NSAccessibilityTextStateSyncKey @"AXTextStateSync"
+#endif
+
 #define NSAccessibilityTextSelectionDirection @"AXTextSelectionDirection"
 #define NSAccessibilityTextSelectionGranularity @"AXTextSelectionGranularity"
 #define NSAccessibilityTextSelectionChangedFocus @"AXTextSelectionChangedFocus"
@@ -348,24 +378,27 @@
 //   NSAccessibilityRangesForSearchPredicateParameterizedAttribute
 //
 
+#if !HAVE(ADDITIONAL_NS_ACCESSIBILITY_CONSTANTS)
 #define NSAccessibilitySearchCurrentElementKey @"AXStartElement"
 #define NSAccessibilitySearchCurrentRangeKey @"AXStartRange"
 #define NSAccessibilitySearchDirectionKey @"AXDirection"
-#define NSAccessibilityImmediateDescendantsOnlyKey @"AXImmediateDescendantsOnly"
-#define NSAccessibilitySearchResultsLimitKey @"AXResultsLimit"
-#define NSAccessibilitySearchTextKey @"AXSearchText"
-#define NSAccessibilityVisibleOnlyKey @"AXVisibleOnly"
-#define NSAccessibilitySearchIdentifiersKey @"AXSearchKey"
-
-// Values for NSAccessibilitySearchDirectionKey
-#define NSAccessibilitySearchDirectionNext @"AXDirectionNext"
 
 //
 // Used for the return value from NSAccessibilityRangesForSearchPredicateParameterizedAttribute
 //
-
 #define NSAccessibilitySearchResultElementKey @"AXSearchResultElement"
 #define NSAccessibilitySearchResultRangeKey @"AXSearchResultRange"
+
+#define NSAccessibilitySearchResultsLimitKey @"AXResultsLimit"
+#define NSAccessibilitySearchTextKey @"AXSearchText"
+#define NSAccessibilitySearchIdentifiersKey @"AXSearchKey"
+
+// Values for NSAccessibilitySearchDirectionKey
+#define NSAccessibilitySearchDirectionNext @"AXDirectionNext"
+#endif // !HAVE(ADDITIONAL_NS_ACCESSIBILITY_CONSTANTS)
+
+#define NSAccessibilityImmediateDescendantsOnlyKey @"AXImmediateDescendantsOnly"
+#define NSAccessibilityVisibleOnlyKey @"AXVisibleOnly"
 
 //
 // For use with NSAccessibilitySelectTextWithCriteriaParameterizedAttribute

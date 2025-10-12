@@ -1,0 +1,4 @@
+
+PASS A repeated setPointerCapture call does not redispatch capture events
+PASS A failed setPointerCapture call does not affect existing capture
+

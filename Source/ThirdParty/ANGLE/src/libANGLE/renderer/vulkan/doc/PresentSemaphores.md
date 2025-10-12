@@ -94,8 +94,9 @@ old swapchains must now be deferred to when the first QP of the new swapchain ha
 If an application resizes the window constantly and at a high rate, ANGLE would keep accumulating
 old swapchains and not free them until it stops.
 
-## VK_EXT_swapchain_maintenance1
+## VK_KHR_swapchain_maintenance1 / VK_EXT_swapchain_maintenance1
 
-With the VK_EXT_swapchain_maintenance1, all the above is unnecessary.  Each QP operation can have an
-associated fence, which can be used to know when the semaphore associated with it can be recycled.
-The old swapchains are destroyed when QP fences are signaled.
+With the VK_KHR_swapchain_maintenance1 or VK_EXT_swapchain_maintenance1 extension, all the above is
+unnecessary.  Each QP operation can have an associated fence, which can be used to know when the
+semaphore associated with it can be recycled.  The old swapchains are destroyed when QP fences are
+signaled.

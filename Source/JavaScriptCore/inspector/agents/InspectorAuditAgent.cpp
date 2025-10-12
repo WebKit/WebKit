@@ -52,7 +52,7 @@ InspectorAuditAgent::InspectorAuditAgent(AgentContext& context)
 
 InspectorAuditAgent::~InspectorAuditAgent() = default;
 
-void InspectorAuditAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
+void InspectorAuditAgent::didCreateFrontendAndBackend()
 {
 }
 

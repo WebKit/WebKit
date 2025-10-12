@@ -48,6 +48,7 @@
 #include "ImageSmoothingQuality.h"
 #include "Path.h"
 #include "PlatformLayer.h"
+#include "StyleFilter.h"
 #include "Timer.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -71,7 +72,6 @@ class TextMetrics;
 class WebCodecsVideoFrame;
 
 struct DOMMatrix2DInit;
-
 
 using CanvasImageSource = Variant<RefPtr<HTMLImageElement>
     , RefPtr<SVGImageElement>
@@ -210,14 +210,17 @@ public:
     ExceptionOr<void> drawImage(CanvasImageSource&&, float dx, float dy, float dw, float dh);
     ExceptionOr<void> drawImage(CanvasImageSource&&, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh);
 
-    void drawImageFromRect(HTMLImageElement&, float sx = 0, float sy = 0, float sw = 0, float sh = 0, float dx = 0, float dy = 0, float dw = 0, float dh = 0, const String& compositeOperation = emptyString());
     void clearCanvas();
 
     using StyleVariant = Variant<String, RefPtr<CanvasGradient>, RefPtr<CanvasPattern>>;
     StyleVariant strokeStyle() const;
-    void setStrokeStyle(StyleVariant&&);
+    void setStrokeStyle(String&&);
+    void setStrokeStyle(RefPtr<CanvasGradient>&&);
+    void setStrokeStyle(RefPtr<CanvasPattern>&&);
     StyleVariant fillStyle() const;
-    void setFillStyle(StyleVariant&&);
+    void setFillStyle(String&&);
+    void setFillStyle(RefPtr<CanvasGradient>&&);
+    void setFillStyle(RefPtr<CanvasPattern>&&);
 
     ExceptionOr<Ref<CanvasGradient>> createLinearGradient(float x0, float y0, float x1, float y1);
     ExceptionOr<Ref<CanvasGradient>> createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
@@ -273,10 +276,10 @@ public:
         const FontCascade& fontCascade() const { return m_font; }
 
         float letterSpacing() const { return m_font.letterSpacing(); }
-        void setLetterSpacing(const Length& letterSpacing) { m_font.setLetterSpacing(letterSpacing); }
+        void setLetterSpacing(float letterSpacing) { m_font.setLetterSpacing(letterSpacing); }
 
         float wordSpacing() const { return m_font.wordSpacing(); }
-        void setWordSpacing(const Length& wordSpacing) { m_font.setWordSpacing(wordSpacing); }
+        void setWordSpacing(float wordSpacing) { m_font.setWordSpacing(wordSpacing); }
 
     private:
         void update(FontSelector&);
@@ -303,7 +306,7 @@ public:
         CompositeOperator globalComposite;
         BlendMode globalBlend;
         AffineTransform transform;
-        bool hasInvertibleTransform;
+        std::optional<AffineTransform> transformInverse;
         Vector<double> lineDash;
         double lineDashOffset;
         bool imageSmoothingEnabled;
@@ -313,7 +316,7 @@ public:
         Direction direction;
 
         String filterString;
-        FilterOperations filterOperations;
+        Style::Filter filter;
 
         String letterSpacing;
         String wordSpacing;
@@ -379,7 +382,7 @@ protected:
     void didDraw(bool entireCanvas, const FloatRect&, OptionSet<DidDrawOption> options = defaultDidDrawOptions());
     template<typename RectProvider> void didDraw(bool entireCanvas, NOESCAPE const RectProvider&, OptionSet<DidDrawOption> options = defaultDidDrawOptions());
 
-    virtual std::optional<FilterOperations> setFilterStringWithoutUpdatingStyle(const String&) { return std::nullopt; }
+    virtual std::optional<Style::Filter> setFilterStringWithoutUpdatingStyle(const String&) { return std::nullopt; }
 
     virtual RefPtr<Filter> createFilter(const FloatRect&) const { return nullptr; }
     virtual IntOutsets calculateFilterOutsets(const FloatRect&) const { return { }; }
@@ -394,6 +397,7 @@ protected:
 
     bool usesCSSCompatibilityParseMode() const { return m_usesCSSCompatibilityParseMode; }
 
+    void updateStateTransform(const AffineTransform&);
 private:
     struct CachedContentsTransparent {
     };
@@ -406,7 +410,6 @@ private:
         DeferrableOneShotTimer evictionTimer;
     };
 
-    void setHasInvertibleTransform(bool);
     void applyLineDash() const;
     void setShadow(const FloatSize& offset, float blur, const Color&);
     void applyShadow();
@@ -419,7 +422,7 @@ private:
     bool isEntireBackingStoreDirty() const;
     FloatRect backingStoreBounds() const { return FloatRect { { }, FloatSize { canvasBase().size() } }; }
 
-    ImageBufferPixelFormat pixelFormat() const final;
+    PixelFormat pixelFormat() const final;
     DestinationColorSpace colorSpace() const final;
     bool willReadFrequently() const final;
 

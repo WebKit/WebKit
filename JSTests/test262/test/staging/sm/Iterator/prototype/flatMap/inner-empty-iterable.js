@@ -15,9 +15,6 @@ info: |
       v. If innerComplete is true, set innerAlive to false.
 features:
   - iterator-helpers
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 ---*/
 let iter = [0, 1, 2, 3].values().flatMap(x => x % 2 ? [] : [x]);
 

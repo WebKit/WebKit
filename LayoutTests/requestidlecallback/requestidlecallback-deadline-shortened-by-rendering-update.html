@@ -2,6 +2,7 @@
 <html>
 <body>
 <script src="../resources/js-test.js"></script>
+<script src="../resources/ui-helper.js"></script>
 <script>
 
 description('This tests that the deadline can be reached.');
@@ -9,8 +10,11 @@ description('This tests that the deadline can be reached.');
 jsTestIsAsync = true;
 
 let didRunIdleCallback = false;
-onload = () => {
-    requestAnimationFrame(() => {
+onload = async () => {
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    
+    await new Promise(resolve => {
         requestIdleCallback((idleDeadline) => {
             didRunIdleCallback = true;
             window.idleDeadline = idleDeadline;
@@ -23,12 +27,15 @@ onload = () => {
             shouldBeTrue('idleDeadline.timeRemaining() <= preferredRenderingUpdateInterval + 0.5');
             if (idleDeadline.timeRemaining() > preferredRenderingUpdateInterval + 0.5) 
                 console.log(idleDeadline.timeRemaining() + ' > ' + preferredRenderingUpdateInterval);
+            
+            resolve();
         });
-        setTimeout(() => {
-            shouldBeTrue('didRunIdleCallback');
-            finishJSTest();
-        }, 200);
     });
+
+    setTimeout(() => {
+        shouldBeTrue('didRunIdleCallback');
+        finishJSTest();
+    }, 200);
 }
 
 </script>

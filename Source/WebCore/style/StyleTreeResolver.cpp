@@ -4,7 +4,7 @@
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *           (C) 2007 Eric Seidel (eric@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -34,8 +34,10 @@
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
 #include "Document.h"
-#include "DocumentInlines.h"
+#include "DocumentPage.h"
+#include "DocumentQuirks.h"
 #include "DocumentTimeline.h"
+#include "DocumentView.h"
 #include "HTMLBodyElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLMeterElement.h"
@@ -52,7 +54,7 @@
 #include "PositionTryFallback.h"
 #include "PositionTryOrder.h"
 #include "PositionedLayoutConstraints.h"
-#include "Quirks.h"
+#include "RenderBoxInlines.h"
 #include "RenderElement.h"
 #include "RenderStyleSetters.h"
 #include "RenderView.h"
@@ -146,6 +148,25 @@ void TreeResolver::popScope()
     return m_scopeStack.removeLast();
 }
 
+// Takes an old style (from previous style resolution) and new style (from current
+// style resolution), determine if the last successful position option should be
+// invalidated. This follows the criterias in the spec:
+// https://drafts.csswg.org/css-anchor-position-1/#last-successful-position-option
+static bool shouldInvalidateLastSuccessfulPositionOptionIndex(const RenderStyle* oldStyle, const RenderStyle* newStyle)
+{
+    if (oldStyle && newStyle) {
+        if (oldStyle->positionTryFallbacks() != newStyle->positionTryFallbacks())
+            return true;
+
+        if (oldStyle->positionTryOrder() != newStyle->positionTryOrder())
+            return true;
+
+        // FIXME: add missing invalidation criterias in the spec.
+    }
+
+    return false;
+}
+
 ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, ResolutionType resolutionType, const ResolutionContext& resolutionContext, const RenderStyle* existingStyle)
 {
     if (resolutionType == ResolutionType::AnimationOnly && styleable.lastStyleChangeEventStyle() && !styleable.hasPropertiesOverridenAfterAnimation())
@@ -153,7 +174,7 @@ ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, Resolu
 
     auto& element = styleable.element;
 
-    if (auto optionStyle = tryChoosePositionOption(styleable, existingStyle))
+    if (auto optionStyle = tryChoosePositionOption(styleable, resolutionContext))
         return WTFMove(*optionStyle);
 
     if (resolutionType == ResolutionType::FastPathInherit) {
@@ -194,11 +215,21 @@ ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, Resolu
         adjuster.adjust(*style);
     }
 
-    return {
+    ResolvedStyle resolvedStyle {
         .style = WTFMove(style),
         .relations = { },
         .matchResult = WTFMove(unadjustedStyle.matchResult)
     };
+
+    // Invalidate the last successful position option here. This is the only place where
+    // we have access to the old and new style, and hence we could determine whether the
+    // style changes enough to invalidate.
+    if (shouldInvalidateLastSuccessfulPositionOptionIndex(existingStyle, resolvedStyle.style.get()))
+        m_document->styleScope().forgetLastSuccessfulPositionOptionIndex(styleable);
+
+    generatePositionOptionsIfNeeded(resolvedStyle, styleable, resolutionContext);
+
+    return resolvedStyle;
 }
 
 static void resetStyleForNonRenderedDescendants(Element& current)
@@ -292,7 +323,6 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     Styleable styleable { element, { } };
     auto resolvedStyle = styleForStyleable(styleable, resolutionType, resolutionContext, existingStyle);
 
-    generatePositionOptionsIfNeeded(resolvedStyle, styleable, resolutionContext);
     updateForPositionVisibility(*resolvedStyle.style, styleable);
 
     auto update = createAnimatedElementUpdate(WTFMove(resolvedStyle), styleable, parent().changes, resolutionContext, parent().isInDisplayNoneTree);
@@ -330,7 +360,9 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     }
 
     auto resolveAndAddPseudoElementStyle = [&](const PseudoElementIdentifier& pseudoElementIdentifier) {
-        auto pseudoElementUpdate = resolvePseudoElement(element, pseudoElementIdentifier, update, parent().isInDisplayNoneTree);
+        const RenderStyle* existingPseudoStyle = existingStyle ? existingStyle->getCachedPseudoStyle(pseudoElementIdentifier) : nullptr;
+        auto pseudoElementUpdate = resolvePseudoElement(element, pseudoElementIdentifier, update, parent().isInDisplayNoneTree, existingPseudoStyle);
+
         auto pseudoElementChanges = [&]() -> OptionSet<Change> {
             if (pseudoElementUpdate) {
                 if (pseudoElementIdentifier.pseudoId == PseudoId::WebKitScrollbar)
@@ -393,18 +425,7 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     return { WTFMove(update), descendantsToResolve };
 }
 
-inline bool supportsFirstLineAndLetterPseudoElement(const RenderStyle& style)
-{
-    auto display = style.display();
-    return display == DisplayType::Block
-        || display == DisplayType::ListItem
-        || display == DisplayType::InlineBlock
-        || display == DisplayType::TableCell
-        || display == DisplayType::TableCaption
-        || display == DisplayType::FlowRoot;
-};
-
-std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element, const PseudoElementIdentifier& pseudoElementIdentifier, const ElementUpdate& elementUpdate, IsInDisplayNoneTree isInDisplayNoneTree)
+std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element, const PseudoElementIdentifier& pseudoElementIdentifier, const ElementUpdate& elementUpdate, IsInDisplayNoneTree isInDisplayNoneTree, const RenderStyle* existingStyle)
 {
     if (elementUpdate.style->display() == DisplayType::None)
         return { };
@@ -413,10 +434,28 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
         return { };
     if (pseudoElementIdentifier.pseudoId == PseudoId::Marker && elementUpdate.style->display() != DisplayType::ListItem)
         return { };
-    if (pseudoElementIdentifier.pseudoId == PseudoId::FirstLine && !scope().resolver->usesFirstLineRules())
-        return { };
-    if (pseudoElementIdentifier.pseudoId == PseudoId::FirstLetter && !scope().resolver->usesFirstLetterRules())
-        return { };
+
+    auto userAgentShadowTreeEnclosingResolver = [&] -> Resolver* {
+        if (element.isInUserAgentShadowTree())
+            return scope().enclosingScope->resolver.ptr();
+        return nullptr;
+    };
+
+    if (pseudoElementIdentifier.pseudoId == PseudoId::FirstLine && !scope().resolver->usesFirstLineRules()) {
+        // For user-agent shadow tree elements, also check the enclosing (document) scope
+        // because user-agent pseudo-elements like details::details-content::first-line
+        // are defined in the document scope but target elements in the shadow tree
+        RefPtr resolver = userAgentShadowTreeEnclosingResolver();
+        if (!resolver || !resolver->usesFirstLineRules())
+            return { };
+    }
+
+    if (pseudoElementIdentifier.pseudoId == PseudoId::FirstLetter && !scope().resolver->usesFirstLetterRules()) {
+        RefPtr resolver = userAgentShadowTreeEnclosingResolver();
+        if (!resolver || !resolver->usesFirstLetterRules())
+            return { };
+    }
+
     if (pseudoElementIdentifier.pseudoId == PseudoId::WebKitScrollbar && elementUpdate.style->overflowX() != Overflow::Scroll && elementUpdate.style->overflowY() != Overflow::Scroll)
         return { };
 
@@ -435,11 +474,34 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
 
     auto resolutionContext = makeResolutionContextForPseudoElement(elementUpdate, pseudoElementIdentifier);
 
-    auto resolvedStyle = scope().resolver->styleForPseudoElement(element, pseudoElementIdentifier, resolutionContext);
+    bool pseudoSupportsPositionTry = pseudoElementIdentifier.pseudoId == PseudoId::Before || pseudoElementIdentifier.pseudoId == PseudoId::After || pseudoElementIdentifier.pseudoId == PseudoId::Backdrop;
+
+    Styleable styleable { element, pseudoElementIdentifier };
+
+    auto resolvedStyle = [&] () {
+        std::optional<ResolvedStyle> resolvedStyle;
+
+        if (pseudoSupportsPositionTry)
+            resolvedStyle = tryChoosePositionOption(styleable, resolutionContext);
+
+        if (!resolvedStyle) {
+            resolvedStyle = scope().resolver->styleForPseudoElement(element, pseudoElementIdentifier, resolutionContext);
+
+            if (resolvedStyle && pseudoSupportsPositionTry) {
+                if (shouldInvalidateLastSuccessfulPositionOptionIndex(existingStyle, resolvedStyle->style.get()))
+                    m_document->styleScope().forgetLastSuccessfulPositionOptionIndex(styleable);
+
+                generatePositionOptionsIfNeeded(*resolvedStyle, styleable, resolutionContext);
+            }
+        }
+
+        return resolvedStyle;
+    }();
+
     if (!resolvedStyle)
         return { };
 
-    auto animatedUpdate = createAnimatedElementUpdate(WTFMove(*resolvedStyle), { element, pseudoElementIdentifier }, elementUpdate.changes, resolutionContext, isInDisplayNoneTree);
+    auto animatedUpdate = createAnimatedElementUpdate(WTFMove(*resolvedStyle), styleable, elementUpdate.changes, resolutionContext, isInDisplayNoneTree);
 
     if (pseudoElementIdentifier.pseudoId == PseudoId::Before || pseudoElementIdentifier.pseudoId == PseudoId::After) {
         if (scope().resolver->usesFirstLineRules()) {
@@ -696,7 +758,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     }();
 
     auto unanimatedDisplay = resolvedStyle.style->display();
-    auto hasUnresolvedAnchorPosition = this->hasUnresolvedAnchorPosition(element);
+    auto hasUnresolvedAnchorPosition = this->hasUnresolvedAnchorPosition(styleable);
 
     WeakStyleOriginatedAnimations newStyleOriginatedAnimations;
 
@@ -744,7 +806,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
         styleable.setLastStyleChangeEventStyle(RenderStyle::clonePtr(*resolvedStyle.style));
 
         // Apply all keyframe effects to the new style.
-        UncheckedKeyHashSet<AnimatableCSSProperty> animatedProperties;
+        HashSet<AnimatableCSSProperty> animatedProperties;
         auto animatedStyle = RenderStyle::clonePtr(*resolvedStyle.style);
 
         auto animationImpact = styleable.applyKeyframeEffects(*animatedStyle, animatedProperties, previousLastStyleChangeEventStyle.get(), resolutionContext);
@@ -790,6 +852,8 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     if (element.hasInvalidRenderer() || parentChanges.contains(Change::Renderer))
         changes.add(Change::Renderer);
 
+    collectChangedAnchorNames(*newStyle, currentStyle);
+
     auto animationsAffectedDisplay = [&, animatedDisplay = newStyle->display()]() {
         auto* keyframeEffectStack = styleable.keyframeEffectStack();
         if (!keyframeEffectStack)
@@ -833,7 +897,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
 
 std::unique_ptr<RenderStyle> TreeResolver::resolveStartingStyle(const ResolvedStyle& resolvedStyle, const Styleable& styleable, const ResolutionContext& resolutionContext)
 {
-    if (!resolvedStyle.matchResult || !resolvedStyle.matchResult->hasStartingStyle)
+    if (!resolvedStyle.matchResult || !resolvedStyle.matchResult->usedRuleTypes.contains(UsedRuleType::StartingStyle))
         return nullptr;
 
     // "Starting style inherits from the parent’s after-change style just like after-change style does."
@@ -873,12 +937,13 @@ std::unique_ptr<RenderStyle> TreeResolver::resolveAgainInDifferentContext(const 
     auto newStyle = RenderStyle::createPtr();
     newStyle->inheritFrom(parentStyle);
 
-    if (styleable.pseudoElementIdentifier)
-        newStyle->setPseudoElementType(styleable.pseudoElementIdentifier->pseudoId);
+    newStyle->setPseudoElementType(resolvedStyle.style->pseudoElementType());
+    newStyle->setPseudoElementNameArgument(resolvedStyle.style->pseudoElementNameArgument());
+    newStyle->copyPseudoElementBitsFrom(*resolvedStyle.style);
 
     auto builderContext = BuilderContext {
         m_document.get(),
-        parentStyle,
+        &parentStyle,
         resolutionContext.documentElementStyle,
         &styleable.element,
         &m_treeResolutionState,
@@ -889,7 +954,6 @@ std::unique_ptr<RenderStyle> TreeResolver::resolveAgainInDifferentContext(const 
         *newStyle,
         WTFMove(builderContext),
         *resolvedStyle.matchResult,
-        CascadeLevel::Author,
         { properties }
     };
 
@@ -913,11 +977,11 @@ const RenderStyle& TreeResolver::parentAfterChangeStyle(const Styleable& styleab
     return *resolutionContext.parentStyle;
 }
 
-UncheckedKeyHashSet<AnimatableCSSProperty> TreeResolver::applyCascadeAfterAnimation(RenderStyle& animatedStyle, const UncheckedKeyHashSet<AnimatableCSSProperty>& animatedProperties, bool isTransition, const MatchResult& matchResult, const Element& element, const ResolutionContext& resolutionContext)
+HashSet<AnimatableCSSProperty> TreeResolver::applyCascadeAfterAnimation(RenderStyle& animatedStyle, const HashSet<AnimatableCSSProperty>& animatedProperties, bool isTransition, const MatchResult& matchResult, const Element& element, const ResolutionContext& resolutionContext)
 {
     auto builderContext = BuilderContext {
         m_document.get(),
-        *resolutionContext.parentStyle,
+        resolutionContext.parentStyle,
         resolutionContext.documentElementStyle,
         &element,
         &m_treeResolutionState
@@ -927,7 +991,6 @@ UncheckedKeyHashSet<AnimatableCSSProperty> TreeResolver::applyCascadeAfterAnimat
         animatedStyle,
         WTFMove(builderContext),
         matchResult,
-        CascadeLevel::Author,
         { isTransition ? PropertyCascade::PropertyType::AfterTransition : PropertyCascade::PropertyType::AfterAnimation },
         &animatedProperties
     };
@@ -1207,7 +1270,7 @@ void TreeResolver::resolveComposedTree()
             resetStyleForNonRenderedDescendants(element);
 
         auto queryContainerAction = updateStateForQueryContainer(element, style, descendantsToResolve);
-        auto anchorPositionedElementAction = updateAnchorPositioningState(element, style, changes);
+        auto anchorPositionedElementAction = updateAnchorPositioningState(element, style);
 
         resumeDescendantResolutionIfNeeded(element, changes, descendantsToResolve);
 
@@ -1291,7 +1354,7 @@ auto TreeResolver::updateStateForQueryContainer(Element& element, const RenderSt
     if (!style)
         return LayoutInterleavingAction::None;
 
-    if (m_queryContainerStates.contains(element))
+    if (m_queryContainerStates.get(element).invalidated)
         return LayoutInterleavingAction::None;
 
     auto* existingStyle = element.renderOrDisplayContentsStyle();
@@ -1312,6 +1375,8 @@ auto TreeResolver::updateStateForQueryContainer(Element& element, const RenderSt
 std::unique_ptr<Update> TreeResolver::resolve()
 {
     auto didInterleavedLayout = std::exchange(m_needsInterleavedLayout, false);
+    if (didInterleavedLayout)
+        m_didFirstInterleavedLayout = true;
 
     Element* documentElement = m_document->documentElement();
     if (!documentElement) {
@@ -1349,48 +1414,112 @@ std::unique_ptr<Update> TreeResolver::resolve()
         }
     }
 
-    for (auto elementAndState : m_treeResolutionState.anchorPositionedStates) {
+    for (auto& elementAndState : m_treeResolutionState.anchorPositionedStates) {
         // Ensure that style resolution visits any unresolved anchor-positioned elements.
         if (elementAndState.value->stage < AnchorPositionResolutionStage::Resolved) {
-            elementAndState.key.invalidateForResumingAnchorPositionedElementResolution();
+            const_cast<Element&>(*elementAndState.key.first).invalidateForResumingAnchorPositionedElementResolution();
             m_needsInterleavedLayout = true;
-            saveBeforeResolutionStyleForInterleaving(elementAndState.key);
+            saveBeforeResolutionStyleForInterleaving(*elementAndState.key.first);
         }
     }
 
-    for (auto& elementAndOptions : m_positionOptions) {
-        if (!elementAndOptions.value.chosen) {
-            elementAndOptions.key->invalidateForResumingAnchorPositionedElementResolution();
+    for (auto& [styleable, options] : m_positionOptions) {
+        if (!options.chosen) {
+            ASSERT(styleable.first);
+            const_cast<Element&>(*styleable.first).invalidateForResumingAnchorPositionedElementResolution();
             m_needsInterleavedLayout = true;
-            saveBeforeResolutionStyleForInterleaving(elementAndOptions.key);
+            saveBeforeResolutionStyleForInterleaving(*styleable.first);
         }
+    }
+
+    if (!m_changedAnchorNames.isEmpty() || m_allAnchorNamesInvalid) {
+        // If there are changes to the anchor names then loop through the existing anchors and see if any of them references those names.
+        for (auto entry : m_document->styleScope().anchorPositionedToAnchorMap()) {
+            CheckedRef anchorPositionedElement = entry.key;
+            auto& anchors = entry.value;
+
+            bool anchorPositionedReferencesChangedAnchorNames = [&] {
+                if (m_allAnchorNamesInvalid)
+                    return true;
+
+                for (auto anchor : anchors.anchors) {
+                    if (m_changedAnchorNames.contains(anchor.name.name()))
+                        return true;
+                }
+
+                return false;
+            }();
+
+            if (anchorPositionedReferencesChangedAnchorNames) {
+                // Invalidate the anchor-positioned element, so subsequent style resolution rounds would visit it.
+                anchorPositionedElement->invalidateForResumingAnchorPositionedElementResolution();
+
+                // Mark that additional style resolution round is needed.
+                m_needsInterleavedLayout = true;
+
+                // If the anchor-positioned element is currently being tracked for resolution,
+                // reset the resolution stage to FindAnchor. This re-runs anchor resolution to
+                // pick up new anchor name changes.
+                AnchorPositionedKey anchorPositionedKey { anchorPositionedElement.ptr(), anchors.pseudoElementIdentifier };
+                auto stateIt = m_treeResolutionState.anchorPositionedStates.find(anchorPositionedKey);
+                if (stateIt != m_treeResolutionState.anchorPositionedStates.end()) {
+                    ASSERT(stateIt->value);
+                    stateIt->value->stage = AnchorPositionResolutionStage::FindAnchors;
+                }
+            }
+        }
+
+        m_changedAnchorNames = { };
+        m_allAnchorNamesInvalid = false;
     }
 
     if (m_update->roots().isEmpty())
         return { };
+
+    // Ensure we do at least one interleaved layout as any style change may affect existing anchor positions.
+    if (!m_didFirstInterleavedLayout && !m_document->styleScope().anchorPositionedToAnchorMap().isEmptyIgnoringNullReferences())
+        m_needsInterleavedLayout = true;
 
     Adjuster::propagateToDocumentElementAndInitialContainingBlock(*m_update, m_document);
 
     return WTFMove(m_update);
 }
 
-auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderStyle* style, OptionSet<Change> changes) -> LayoutInterleavingAction
+auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderStyle* style) -> LayoutInterleavingAction
 {
     if (!style)
         return LayoutInterleavingAction::None;
 
-    AnchorPositionEvaluator::updateAnchorPositionedStateForLayoutTimePositioned(element, *style, m_treeResolutionState.anchorPositionedStates);
+    auto update = [&](const RenderStyle* style) {
+        if (!style)
+            return;
+        AnchorPositionEvaluator::updateAnchorPositionedStateForDefaultAnchorAndPositionVisibility(element, *style, m_treeResolutionState.anchorPositionedStates);
+    };
 
-    if (changes && !style->anchorNames().isEmpty()) {
-        // Existing anchor positions may change due to a style change. We need a round of interleaving.
-        m_needsInterleavedLayout = true;
-    }
+    update(style);
+    update(style->getCachedPseudoStyle({ PseudoId::Before }));
+    update(style->getCachedPseudoStyle({ PseudoId::After }));
 
-    auto needsInterleavedLayout = hasUnresolvedAnchorPosition(element);
+    auto needsInterleavedLayout = hasUnresolvedAnchorPosition({ element, { } });
     if (needsInterleavedLayout)
         return LayoutInterleavingAction::SkipDescendants;
 
     return LayoutInterleavingAction::None;
+}
+
+static std::optional<LayoutSize> scrollContainerSizeForPositionOptions(const Styleable& anchored)
+{
+    CheckedPtr anchoredRenderer = anchored.renderer();
+    if (!anchoredRenderer)
+        return { };
+    // Overlay scrollbars can't affect anchor() function resolution so we don't need to save the size.
+    CheckedRef containingBlock = *anchoredRenderer->containingBlock();
+    if (containingBlock->canUseOverlayScrollbars())
+        return { };
+    bool isOverflowScroller = containingBlock->isScrollContainerY() || containingBlock->isScrollContainerY();
+    if (!containingBlock->isRenderView() && !isOverflowScroller)
+        return { };
+    return containingBlock->contentBoxSize();
 }
 
 void TreeResolver::generatePositionOptionsIfNeeded(const ResolvedStyle& resolvedStyle, const Styleable& styleable, const ResolutionContext& resolutionContext)
@@ -1403,28 +1532,41 @@ void TreeResolver::generatePositionOptionsIfNeeded(const ResolvedStyle& resolved
     if (!resolvedStyle.style->hasOutOfFlowPosition())
         return;
 
-    if (m_positionOptions.contains(styleable.element))
+    AnchorPositionedKey positionOptionsKey { styleable.element, styleable.pseudoElementIdentifier };
+
+    if (m_positionOptions.contains(positionOptionsKey))
         return;
 
     auto generatePositionOptions = [&] {
-        auto options = PositionOptions { .originalStyle = RenderStyle::clonePtr(*resolvedStyle.style) };
-        options.optionStyles.reserveInitialCapacity(resolvedStyle.style->positionTryFallbacks().size());
-        for (auto& fallback : resolvedStyle.style->positionTryFallbacks()) {
-            auto optionStyle = generatePositionOption(fallback, resolvedStyle, styleable, resolutionContext);
+        ResolvedStyle clonedResolvedStyle {
+            .style = RenderStyle::clonePtr(*resolvedStyle.style),
+            .relations = { },
+            .matchResult = resolvedStyle.matchResult
+        };
+        PositionOptions options { .originalResolvedStyle = WTFMove(clonedResolvedStyle) };
+
+        auto scrollContainerSizeOnGeneration = scrollContainerSizeForPositionOptions(styleable);
+        options.optionStyles.append({ RenderStyle::clonePtr(*resolvedStyle.style), { }, scrollContainerSizeOnGeneration });
+
+        for (auto [i, fallback] : indexedRange(resolvedStyle.style->positionTryFallbacks())) {
+            auto optionStyle = generatePositionOption(fallback, options.originalResolvedStyle, styleable, resolutionContext);
             if (!optionStyle)
                 continue;
-            options.optionStyles.append(WTFMove(optionStyle));
+            optionStyle->setUsedPositionOptionIndex(i);
+
+            options.optionStyles.append({ WTFMove(optionStyle), fallback, scrollContainerSizeOnGeneration });
         }
+
         return options;
     };
 
     auto options = generatePositionOptions();
 
     // If the fallbacks contain anchor references we need to resolve the anchors first and regenerate the options.
-    if (hasUnresolvedAnchorPosition(styleable.element))
+    if (hasUnresolvedAnchorPosition(styleable))
         return;
 
-    m_positionOptions.add(styleable.element, WTFMove(options));
+    m_positionOptions.add(positionOptionsKey, WTFMove(options));
 }
 
 std::unique_ptr<RenderStyle> TreeResolver::generatePositionOption(const PositionTryFallback& fallback, const ResolvedStyle& resolvedStyle, const Styleable& styleable, const ResolutionContext& resolutionContext)
@@ -1442,14 +1584,16 @@ std::unique_ptr<RenderStyle> TreeResolver::generatePositionOption(const Position
         }
         if (!fallback.positionTryRuleName)
             return nullptr;
-        auto* styleScope = Style::Scope::forOrdinal(styleable.element, fallback.positionTryRuleName->scopeOrdinal);
-        if (!styleScope)
-            return nullptr;
-        auto& ruleSet = styleScope->resolver().ruleSets().authorStyle();
-        auto rule = ruleSet.positionTryRuleForName(fallback.positionTryRuleName->name);
-        if (!rule)
-            return nullptr;
-        return rule->protectedProperties();
+
+        // "If an at-rule or property defines a name that other CSS constructs can refer to it by, ... it must be defined as a tree-scoped name."
+        // https://drafts.csswg.org/css-scoping-1/#shadow-names
+        return Style::Scope::resolveTreeScopedReference(styleable.element, *fallback.positionTryRuleName, [](const Style::Scope& scope, const AtomString& name) -> RefPtr<const StyleProperties> {
+            auto& ruleSet = scope.resolverIfExists()->ruleSets().authorStyle();
+            auto rule = ruleSet.positionTryRuleForName(name);
+            if (!rule)
+                return nullptr;
+            return rule->properties();
+        });
     };
 
     auto builderFallback = BuilderPositionTryFallback {
@@ -1460,49 +1604,82 @@ std::unique_ptr<RenderStyle> TreeResolver::generatePositionOption(const Position
     return resolveAgainInDifferentContext(resolvedStyle, styleable, *resolutionContext.parentStyle, PropertyCascade::normalPropertyTypes(), WTFMove(builderFallback), resolutionContext);
 }
 
+const RenderStyle& TreeResolver::PositionOptions::originalStyle() const
+{
+    ASSERT(optionStyles.size());
+    ASSERT(optionStyles[0].style);
+    return *optionStyles[0].style;
+}
+
+std::unique_ptr<RenderStyle> TreeResolver::PositionOptions::currentOption() const
+{
+    ASSERT(index < optionStyles.size());
+    ASSERT(optionStyles[index].style);
+    return RenderStyle::clonePtr(*optionStyles[index].style);
+}
+
 void TreeResolver::sortPositionOptionsIfNeeded(PositionOptions& options, const Styleable& styleable)
 {
     if (options.sorted)
         return;
     options.sorted = true;
 
-    auto order = options.originalStyle->positionTryOrder();
-    if (order == PositionTryOrder::Normal || options.optionStyles.size() < 2)
-        return;
-
     CheckedPtr box = dynamicDowncast<RenderBox>(styleable.renderer());
     if (!box || !box->isOutOfFlowPositioned())
         return;
 
-    // "For each entry in the position options list, apply that position option to the box, and find
-    // the specified inset-modified containing block size that results from those styles."
-    // https://drafts.csswg.org/css-anchor-position-1/#position-try-order-property
-    auto boxAxis = boxAxisForPositionTryOrder(order, options.originalStyle->writingMode());
+    auto order = options.originalStyle().positionTryOrder();
+    if (order != PositionTryOrder::Normal && options.optionStyles.size() > 2) {
+        // "For each entry in the position options list, apply that position option to the box, and find
+        // the specified inset-modified containing block size that results from those styles."
+        // https://drafts.csswg.org/css-anchor-position-1/#position-try-order-property
+        auto boxAxis = boxAxisForPositionTryOrder(order, options.originalStyle().writingMode());
 
-    struct SortingOption {
-        std::unique_ptr<RenderStyle> style;
-        LayoutUnit containingBlockSize;
-    };
-    Vector<SortingOption> optionsForSorting;
-    optionsForSorting.reserveInitialCapacity(options.optionStyles.size());
+        struct SortingOption {
+            PositionOption option;
+            LayoutUnit containingBlockSize;
+        };
+        Vector<SortingOption> optionsForSorting;
+        optionsForSorting.reserveInitialCapacity(options.optionStyles.size());
 
-    for (auto& optionStyle : options.optionStyles) {
-        auto constraints = PositionedLayoutConstraints { *box, *optionStyle, boxAxis };
-        optionsForSorting.append({ WTFMove(optionStyle), constraints.insetModifiedContainingSize() });
+        for (size_t i = 1; i < options.optionStyles.size(); ++i) {
+            auto constraints = PositionedLayoutConstraints { *box, *options.optionStyles[i].style, boxAxis };
+            constraints.computeInsets();
+            optionsForSorting.append({ WTFMove(options.optionStyles[i]), constraints.insetModifiedContainingSize() });
+        }
+
+        // "Stably sort the position options list according to this size, with the largest coming first."
+        std::ranges::stable_sort(optionsForSorting, std::ranges::greater { }, &SortingOption::containingBlockSize);
+
+        for (size_t i = 0; i < optionsForSorting.size(); ++i)
+            options.optionStyles[i + 1] = WTFMove(optionsForSorting[i].option);
     }
 
-    // "Stably sort the position options list according to this size, with the largest coming first."
-    std::ranges::stable_sort(optionsForSorting, std::ranges::greater { }, &SortingOption::containingBlockSize);
+    // If the styleable has a last successful position option...
+    if (auto lastSuccessfulIndex = m_document->styleScope().lastSuccessfulPositionOptionIndexFor(styleable)) {
+        // ... find which style in options.optionStyles has that index
+        auto lastSuccessfulIndexInOptionStyles = options.optionStyles.findIf([lastSuccessfulIndex] (const auto& option) {
+            ASSERT(option.style);
+            return option.style->usedPositionOptionIndex() == *lastSuccessfulIndex;
+        });
 
-    for (size_t i = 0; i < optionsForSorting.size(); ++i)
-        options.optionStyles[i] = WTFMove(optionsForSorting[i].style);
+        // If there's one, move it to the beginning.
+        // (if it's at index zero, do nothing since it's already at the beginning)
+        if (lastSuccessfulIndexInOptionStyles > 0) {
+            auto lastSuccessfulOption = WTFMove(options.optionStyles[lastSuccessfulIndexInOptionStyles]);
+            options.optionStyles.removeAt(lastSuccessfulIndexInOptionStyles);
+            options.optionStyles.insert(0, WTFMove(lastSuccessfulOption));
+        }
+    }
 }
 
-std::optional<ResolvedStyle> TreeResolver::tryChoosePositionOption(const Styleable& styleable, const RenderStyle* existingStyle)
+std::optional<ResolvedStyle> TreeResolver::tryChoosePositionOption(const Styleable& styleable, const ResolutionContext& resolutionContext)
 {
     // https://drafts.csswg.org/css-anchor-position-1/#fallback-apply
 
-    auto optionIt = m_positionOptions.find(styleable.element);
+    AnchorPositionedKey anchorPositionedKey { styleable.element, styleable.pseudoElementIdentifier };
+
+    auto optionIt = m_positionOptions.find(anchorPositionedKey);
     if (optionIt == m_positionOptions.end())
         return { };
 
@@ -1510,50 +1687,87 @@ std::optional<ResolvedStyle> TreeResolver::tryChoosePositionOption(const Styleab
 
     sortPositionOptionsIfNeeded(options, styleable);
 
-    if (!existingStyle) {
-        options.chosen = true;
-        return ResolvedStyle { RenderStyle::clonePtr(*options.originalStyle) };
-    }
+    auto invalidateQueryContainer = [&] () {
+        // Pseudo-elements can't be query containers, so skip invalidating for pseudo-elements.
+        if (styleable.pseudoElementIdentifier)
+            return;
+
+        auto iter = m_queryContainerStates.find(styleable.element);
+        if (iter == m_queryContainerStates.end())
+            return;
+
+        iter->value.invalidated = false;
+    };
 
     auto renderer = dynamicDowncast<RenderBox>(styleable.renderer());
     if (!renderer) {
+        invalidateQueryContainer();
+
         options.chosen = true;
-        return ResolvedStyle { RenderStyle::clonePtr(*options.originalStyle) };
+        options.index = 0;
+        return ResolvedStyle { RenderStyle::clonePtr(options.originalStyle()) };
+    }
+
+    // On the first try, we force apply the original style (which _could_ be different from
+    // the existing style, since the original style might have a fallback applied to it)
+    if (options.isFirstTry) {
+        invalidateQueryContainer();
+
+        options.isFirstTry = false;
+        options.index = 0;
+        return ResolvedStyle { options.currentOption() };
+    }
+
+    if (!options.chosen) {
+        ASSERT(options.index < options.optionStyles.size());
+
+        auto& option = options.optionStyles[options.index];
+        auto newScrollContainerSize = scrollContainerSizeForPositionOptions(styleable);
+
+        // Re-generate the options if a scrollbar change changes the view size. It may affect anchor() function resolution.
+        if (option.scrollContainerSizeOnGeneration != newScrollContainerSize) {
+            option.scrollContainerSizeOnGeneration = newScrollContainerSize;
+            if (option.option)
+                option.style = generatePositionOption(*option.option, options.originalResolvedStyle, styleable, resolutionContext);
+
+            return ResolvedStyle { options.currentOption() };
+        }
     }
 
     // We can't test for overflow before the box has been positioned.
-    auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get(styleable.element);
+    auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get({ &styleable.element, styleable.pseudoElementIdentifier });
     if (anchorPositionedState && anchorPositionedState->stage < AnchorPositionResolutionStage::Positioned)
-        return ResolvedStyle { RenderStyle::clonePtr(*existingStyle) };
+        return ResolvedStyle { options.currentOption() };
 
     if (!AnchorPositionEvaluator::overflowsInsetModifiedContainingBlock(*renderer)) {
         // We don't overflow anymore so this is a good style.
         options.chosen = true;
-        return ResolvedStyle { RenderStyle::clonePtr(*existingStyle) };
+        return ResolvedStyle { options.currentOption() };
     }
 
     if (options.chosen) {
         // We have already chosen.
-        return ResolvedStyle { RenderStyle::clonePtr(*existingStyle) };
+        return ResolvedStyle { options.currentOption() };
     }
-
-    if (options.index >= options.optionStyles.size()) {
-        // None of the options worked, return back to the original.
-        options.chosen = true;
-        return ResolvedStyle { RenderStyle::clonePtr(*options.originalStyle) };
-    }
-
-    auto& optionStyle = options.optionStyles[options.index];
 
     // Next option to try if this doesn't work.
     ++options.index;
 
-    return ResolvedStyle { RenderStyle::clonePtr(*optionStyle) };
+    invalidateQueryContainer();
+
+    if (options.index >= options.optionStyles.size()) {
+        // None of the options worked, return back to the original.
+        options.index = 0;
+        options.chosen = true;
+        return ResolvedStyle { options.currentOption() };
+    }
+
+    return ResolvedStyle { options.currentOption() };
 }
 
 void TreeResolver::updateForPositionVisibility(RenderStyle& style, const Styleable& styleable)
 {
-    if (!hasResolvedAnchorPosition(styleable.element))
+    if (!hasResolvedAnchorPosition(styleable))
         return;
 
     auto shouldHideAnchorPositioned = [&] {
@@ -1566,7 +1780,19 @@ void TreeResolver::updateForPositionVisibility(RenderStyle& style, const Styleab
             if (AnchorPositionEvaluator::isDefaultAnchorInvisibleOrClippedByInterveningBoxes(*anchored))
                 return true;
         }
-        // FIXME: Remaining `position-visibility` values.
+        if (style.positionVisibility().contains(PositionVisibility::NoOverflow)) {
+            if (AnchorPositionEvaluator::overflowsInsetModifiedContainingBlock(*anchored))
+                return true;
+        }
+        if (style.positionVisibility().contains(PositionVisibility::AnchorsValid)) {
+            auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get({ &styleable.element, styleable.pseudoElementIdentifier });
+            if (anchorPositionedState) {
+                for (auto& anchorElement : anchorPositionedState->anchorElements.values()) {
+                    if (!anchorElement)
+                        return true;
+                }
+            }
+        }
         return false;
     };
 
@@ -1601,22 +1827,60 @@ void TreeResolver::saveBeforeResolutionStyleForInterleaving(const Element& eleme
     });
 }
 
-bool TreeResolver::hasUnresolvedAnchorPosition(const Element& element) const
+bool TreeResolver::hasUnresolvedAnchorPosition(const Styleable& styleable) const
 {
-    auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get(element);
+    auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get({ &styleable.element, styleable.pseudoElementIdentifier });
     if (anchorPositionedState && anchorPositionedState->stage < AnchorPositionResolutionStage::Resolved)
         return true;
 
     return false;
 }
 
-bool TreeResolver::hasResolvedAnchorPosition(const Element& element) const
+bool TreeResolver::hasResolvedAnchorPosition(const Styleable& styleable) const
 {
-    auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get(element);
+    auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get({ &styleable.element, styleable.pseudoElementIdentifier });
     if (anchorPositionedState && anchorPositionedState->stage >= AnchorPositionResolutionStage::Resolved)
         return true;
 
     return false;
+}
+
+void TreeResolver::collectChangedAnchorNames(const RenderStyle& newStyle, const RenderStyle* currentStyle)
+{
+    // A changed anchor name is either a name being added, a name being removed, or a name whose interpretation changes.
+    // This may change which elements get anchored to it.
+
+    if (!currentStyle || currentStyle->anchorNames() != newStyle.anchorNames()) {
+        // This could check which individual names differ but usually there is just one.
+        auto addChanged = [&](auto& style) {
+            for (auto& name : style.anchorNames())
+                m_changedAnchorNames.add(name.name);
+        };
+        if (currentStyle)
+            addChanged(*currentStyle);
+        addChanged(newStyle);
+    }
+
+    // Only anchor-names in self and descendants are affected by anchor-scope so we need to check only if there is an existing style.
+    if (currentStyle && currentStyle->anchorScope() != newStyle.anchorScope()) {
+        auto addChanged = [&](auto& style) {
+            switch (style.anchorScope().type) {
+            case NameScope::Type::None:
+                break;
+            case NameScope::Type::All:
+                // This affects desdendants too so lets just say all names are invalid.
+                m_allAnchorNamesInvalid = true;
+                break;
+            case NameScope::Type::Ident:
+                // A scope change changes interpretation of these names.
+                for (auto& name : style.anchorScope().names)
+                    m_changedAnchorNames.add(name);
+                break;
+            }
+        };
+        addChanged(*currentStyle);
+        addChanged(newStyle);
+    }
 }
 
 static Vector<Function<void ()>>& postResolutionCallbackQueue()
@@ -1625,9 +1889,9 @@ static Vector<Function<void ()>>& postResolutionCallbackQueue()
     return vector;
 }
 
-static Vector<RefPtr<LocalFrame>>& memoryCacheClientCallsResumeQueue()
+static Vector<RefPtr<Frame>>& memoryCacheClientCallsResumeQueue()
 {
-    static NeverDestroyed<Vector<RefPtr<LocalFrame>>> vector;
+    static NeverDestroyed<Vector<RefPtr<Frame>>> vector;
     return vector;
 }
 
@@ -1644,8 +1908,8 @@ static void suspendMemoryCacheClientCalls(Document& document)
 
     page->setMemoryCacheClientCallsEnabled(false);
 
-    if (RefPtr localMainFrame = page->localMainFrame())
-        memoryCacheClientCallsResumeQueue().append(localMainFrame);
+    if (RefPtr mainFrame = page->mainFrame())
+        memoryCacheClientCallsResumeQueue().append(mainFrame);
 }
 
 static unsigned resolutionNestingDepth;

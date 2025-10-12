@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FloatRect.h"
-#include "LandmarkInterface.h"
+#include <WebCore/FloatRect.h>
+#include <WebCore/LandmarkInterface.h>
 #include <optional>
 #include <wtf/Vector.h>
 

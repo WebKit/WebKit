@@ -25,11 +25,12 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
-#include "NowPlayingMetadataObserver.h"
-#include "PlatformMediaSession.h"
-#include "VideoReceiverEndpoint.h"
+#include <WebCore/NowPlayingMetadataObserver.h>
+#include <WebCore/PlatformMediaSession.h>
+#include <WebCore/VideoReceiverEndpoint.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -120,6 +121,7 @@ public:
     virtual double bufferedTime() const = 0;
 
     using PlaybackState = PlaybackSessionModelPlaybackState;
+    virtual OptionSet<PlaybackState> playbackState() const = 0;
 
     virtual bool isPlaying() const = 0;
     virtual bool isStalled() const = 0;
@@ -148,6 +150,9 @@ public:
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     virtual bool supportsLinearMediaPlayer() const { return false; }
 #endif
+
+    virtual bool prefersAutoDimming() const { return false; }
+    virtual void setPrefersAutoDimming(bool) { }
 
 #if !RELEASE_LOG_DISABLED
     virtual uint64_t logIdentifier() const { return 0; }
@@ -197,5 +202,21 @@ public:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template <>
+struct LogArgument<OptionSet<WebCore::PlaybackSessionModel::PlaybackState>> {
+    static String toString(const OptionSet<WebCore::PlaybackSessionModel::PlaybackState> state)
+    {
+        if (!state.toRaw())
+            return "Paused"_s;
+        if (state.contains(WebCore::PlaybackSessionModel::PlaybackState::Stalled))
+            return "Stalled"_s;
+        return "Playing"_s;
+    }
+};
+
+}
 
 #endif // PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

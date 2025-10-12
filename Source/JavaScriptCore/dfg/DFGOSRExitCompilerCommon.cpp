@@ -198,6 +198,8 @@ static CodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlockForCall
                 jumpTarget = LLINT_RETURN_LOCATION(op_get_by_val);
             else if (callInstruction.opcodeID() == op_enumerator_get_by_val)
                 jumpTarget = LLINT_RETURN_LOCATION(op_enumerator_get_by_val);
+            else if (callInstruction.opcodeID() == op_instanceof)
+                jumpTarget = LLINT_RETURN_LOCATION(op_instanceof);
             else
                 RELEASE_ASSERT_NOT_REACHED();
             break;

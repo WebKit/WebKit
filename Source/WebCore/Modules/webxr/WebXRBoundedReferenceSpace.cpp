@@ -30,6 +30,9 @@
 
 #include "DOMPointReadOnly.h"
 #include "Document.h"
+#include "Exception.h"
+#include "ExceptionOr.h"
+#include "ScriptWrappableInlines.h"
 #include "WebXRRigidTransform.h"
 #include "WebXRSession.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -38,9 +41,9 @@ namespace WebCore {
 
 // https://immersive-web.github.io/webxr/#xrboundedreferencespace-native-bounds-geometry
 // It is suggested that points of the native bounds geometry be quantized to the nearest 5cm.
-static constexpr float BoundsPrecisionInMeters = 0.05; 
+static constexpr float BoundsPrecisionInMeters = 0.05;
 // A valid polygon has at least 3 vertices.
-static constexpr int MinimumBoundsVertices = 3; 
+static constexpr int MinimumBoundsVertices = 3;
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRBoundedReferenceSpace);
 

@@ -24,6 +24,7 @@ async function grabNextMetadata(video)
 
 promise_test(async (test) => {
     const localStream = await navigator.mediaDevices.getUserMedia({video: { width: 640, height: 480 } });
+    test.add_cleanup(() => localStream.getTracks().forEach(track => track.stop()));
     video.srcObject = localStream;
     await video.play();
 
@@ -47,6 +48,7 @@ promise_test(async (test) => {
 
 promise_test(async (test) => {
     const localStream = await navigator.mediaDevices.getUserMedia({video: { width: 640, height: 480 } });
+    test.add_cleanup(() => localStream.getTracks().forEach(track => track.stop()));
     video.srcObject = localStream;
     await video.play();
 
@@ -69,6 +71,7 @@ promise_test(async (test) => {
 
 promise_test(async (test) => {
     const localStream = await navigator.mediaDevices.getUserMedia({video: { width: 640, height: 480 } });
+    test.add_cleanup(() => localStream.getTracks().forEach(track => track.stop()));
     video.srcObject = localStream;
     await video.play();
 
@@ -87,6 +90,7 @@ promise_test(async (test) => {
 
 promise_test(async (test) => {
     const localStream = await navigator.mediaDevices.getUserMedia({video: { width: 640, height: 480 } });
+    test.add_cleanup(() => localStream.getTracks().forEach(track => track.stop()));
     video.srcObject = localStream;
     await video.play();
     localStream.getVideoTracks()[0].enabled = false;

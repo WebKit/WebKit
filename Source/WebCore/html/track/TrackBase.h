@@ -27,8 +27,8 @@
 
 #if ENABLE(VIDEO)
 
-#include "ContextDestructionObserver.h"
-#include "WebCoreOpaqueRoot.h"
+#include <WebCore/ContextDestructionObserver.h>
+#include <WebCore/WebCoreOpaqueRoot.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>

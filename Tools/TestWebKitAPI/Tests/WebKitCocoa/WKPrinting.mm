@@ -36,6 +36,7 @@
 #import <WebKit/WKWebpagePreferences.h>
 #import <WebKit/_WKFrameHandle.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 typedef void (^CallCompletionBlock)();
 
@@ -51,7 +52,7 @@ typedef void (^CallCompletionBlock)();
 
 - (void)callBlockAsync:(CallCompletionBlock)callCompletionBlock
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         callCompletionBlock();
     });
 }

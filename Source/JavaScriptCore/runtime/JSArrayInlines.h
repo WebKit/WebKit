@@ -19,15 +19,15 @@
 
 #pragma once
 
-#include "ArrayPrototype.h"
-#include "ButterflyInlines.h"
-#include "ClonedArguments.h"
-#include "DirectArguments.h"
-#include "Error.h"
-#include "JSArray.h"
-#include "JSCellInlines.h"
-#include "ScopedArguments.h"
-#include "Structure.h"
+#include <JavaScriptCore/ArrayPrototype.h>
+#include <JavaScriptCore/ButterflyInlines.h>
+#include <JavaScriptCore/ClonedArguments.h>
+#include <JavaScriptCore/DirectArguments.h>
+#include <JavaScriptCore/Error.h>
+#include <JavaScriptCore/JSArray.h>
+#include <JavaScriptCore/JSCellInlines.h>
+#include <JavaScriptCore/ScopedArguments.h>
+#include <JavaScriptCore/Structure.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

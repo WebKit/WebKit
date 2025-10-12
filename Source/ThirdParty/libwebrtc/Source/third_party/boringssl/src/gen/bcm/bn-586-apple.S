@@ -132,20 +132,29 @@ L004mw_sse2_loop:
 	popl	%ebx
 	popl	%ebp
 	ret
-.globl	_bn_sqr_words
-.private_extern	_bn_sqr_words
+.globl	_bn_sqr_add_words
+.private_extern	_bn_sqr_add_words
 .align	4
-_bn_sqr_words:
-L_bn_sqr_words_begin:
+_bn_sqr_add_words:
+L_bn_sqr_add_words_begin:
 	movl	4(%esp),%eax
 	movl	8(%esp),%edx
 	movl	12(%esp),%ecx
+	pxor	%mm1,%mm1
 .align	4,0x90
 L005sqr_sse2_loop:
 	movd	(%edx),%mm0
+	movd	(%eax),%mm2
+	movd	4(%eax),%mm3
 	pmuludq	%mm0,%mm0
 	leal	4(%edx),%edx
-	movq	%mm0,(%eax)
+	paddq	%mm0,%mm1
+	paddq	%mm2,%mm1
+	movd	%mm1,(%eax)
+	psrlq	$32,%mm1
+	paddq	%mm3,%mm1
+	movd	%mm1,4(%eax)
+	psrlq	$32,%mm1
 	subl	$1,%ecx
 	leal	8(%eax),%eax
 	jnz	L005sqr_sse2_loop
@@ -155,16 +164,6 @@ L005sqr_sse2_loop:
 	popl	%esi
 	popl	%ebx
 	popl	%ebp
-	ret
-.globl	_bn_div_words
-.private_extern	_bn_div_words
-.align	4
-_bn_div_words:
-L_bn_div_words_begin:
-	movl	4(%esp),%edx
-	movl	8(%esp),%eax
-	movl	12(%esp),%ecx
-	divl	%ecx
 	ret
 .globl	_bn_add_words
 .private_extern	_bn_add_words

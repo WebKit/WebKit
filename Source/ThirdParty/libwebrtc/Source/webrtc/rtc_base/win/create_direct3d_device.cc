@@ -12,8 +12,6 @@
 
 #include <libloaderapi.h>
 
-#include <utility>
-
 namespace {
 
 FARPROC LoadD3D11Function(const char* function_name) {

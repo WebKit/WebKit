@@ -16,8 +16,10 @@
 #include <utility>
 #include <vector>
 
-#include "api/peer_connection_interface.h"
+#include "absl/strings/string_view.h"
+#include "api/scoped_refptr.h"
 #include "api/stats/rtc_stats_collector_callback.h"
+#include "api/stats/rtc_stats_report.h"
 #include "api/test/stats_observer_interface.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
@@ -41,7 +43,7 @@ class InternalStatsObserver : public RTCStatsCollectorCallback {
   void PollStats();
 
   void OnStatsDelivered(
-      const rtc::scoped_refptr<const RTCStatsReport>& report) override;
+      const scoped_refptr<const RTCStatsReport>& report) override;
 
  private:
   std::string pc_label_;
@@ -70,7 +72,7 @@ class StatsPoller {
  private:
   const std::vector<StatsObserverInterface*> observers_;
   webrtc::Mutex mutex_;
-  std::vector<rtc::scoped_refptr<InternalStatsObserver>> pollers_
+  std::vector<scoped_refptr<InternalStatsObserver>> pollers_
       RTC_GUARDED_BY(mutex_);
 };
 

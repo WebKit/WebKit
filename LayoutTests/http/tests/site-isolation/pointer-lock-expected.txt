@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: requesting pointer lock
+CONSOLE MESSAGE: pointerlockchange event called
+CONSOLE MESSAGE: PointerLock is locked:
+CONSOLE MESSAGE: Iframe pointer lock changed:
+CONSOLE MESSAGE: Parent document locked:
+CONSOLE MESSAGE: Site isolation working correctly
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

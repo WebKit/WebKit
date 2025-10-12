@@ -25,10 +25,11 @@
 
 #pragma once
 
-#include "FontSelectionAlgorithm.h"
+#include <WebCore/FontSelectionAlgorithm.h>
 #include <array>
 #include <optional>
 #include <wtf/EnumeratedArray.h>
+#include <wtf/Platform.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {

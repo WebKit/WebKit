@@ -1,0 +1,6 @@
+
+PASS HttpOnly cookies are not observed
+PASS HttpOnly cookies can not be set by document.cookie
+PASS HttpOnly cookies can not be set by CookieStore
+FAIL HttpOnly cookies are not deleted/overwritten assert_equals: HttpOnly cookie is not overwritten expected (undefined) undefined but got (string) "HTTPONLY-cookie=dummy"
+

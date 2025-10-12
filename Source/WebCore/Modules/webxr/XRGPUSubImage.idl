@@ -25,10 +25,9 @@
 
 // https://github.com/immersive-web/WebXR-WebGPU-Binding/blob/main/explainer.md
 [
-    Conditional=WEBXR_LAYERS,
+    Conditional=WEBXR_LAYERS&WEBGPU,
     EnabledBySetting=WebXRWebGPUBindingsEnabled,
     Exposed=Window,
-    JSGenerateToJSObject,
     JSGenerateToNativeObject,
 ] interface XRGPUSubImage : XRSubImage {
     [SameObject] readonly attribute GPUTexture colorTexture;

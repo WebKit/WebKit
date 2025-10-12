@@ -28,9 +28,9 @@
 #include "LegacyRenderSVGRoot.h"
 #include "LocalFrameView.h"
 #include "NativeImage.h"
+#include "RenderStyleInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFitToViewBox.h"
-#include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
@@ -131,6 +131,9 @@ PatternData* LegacyRenderSVGResourcePattern::buildPattern(RenderElement& rendere
     patternData->transform.scale(tileBoundaries.size() / tileImageSize);
 
     AffineTransform patternTransform = m_attributes.patternTransform();
+    if (!patternTransform.isInvertible())
+        return nullptr;
+
     if (!patternTransform.isIdentity())
         patternData->transform = patternTransform * patternData->transform;
 
@@ -176,16 +179,14 @@ auto LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, cons
     // Draw pattern
     context->save();
 
-    Ref svgStyle = style.svgStyle();
-
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToFill)) {
-        context->setAlpha(svgStyle->fillOpacity());
+        context->setAlpha(style.fillOpacity().value.value);
         context->setFillPattern(*patternData->pattern);
-        context->setFillRule(svgStyle->fillRule());
+        context->setFillRule(style.fillRule());
     } else if (resourceMode.contains(RenderSVGResourceMode::ApplyToStroke)) {
-        if (svgStyle->vectorEffect() == VectorEffect::NonScalingStroke)
+        if (style.vectorEffect() == VectorEffect::NonScalingStroke)
             patternData->pattern->setPatternSpaceTransform(transformOnNonScalingStroke(&renderer, patternData->transform));
-        context->setAlpha(svgStyle->strokeOpacity());
+        context->setAlpha(style.strokeOpacity().value.value);
         context->setStrokePattern(*patternData->pattern);
         SVGRenderSupport::applyStrokeStyleToContext(*context, style, renderer);
     }
@@ -257,7 +258,7 @@ RefPtr<ImageBuffer> LegacyRenderSVGResourcePattern::createTileImage(GraphicsCont
     auto tileSize = roundedUnscaledImageBufferSize(size, scale);
 
     // FIXME: Use createImageBuffer(rect, scale), delete the above calculations and fix 'tileImageTransform'
-    auto tileImage = context.createScaledImageBuffer(tileSize, scale);
+    auto tileImage = context.createScaledImageBuffer(tileSize, scale.expandedTo(context.scaleFactor()));
     if (!tileImage)
         return nullptr;
 

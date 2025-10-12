@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include "JSRunLoopTimer.h"
-#include "Synchronousness.h"
+#include <JavaScriptCore/JSRunLoopTimer.h>
+#include <JavaScriptCore/Synchronousness.h>
 #include <wtf/RefPtr.h>
 
 namespace JSC {

@@ -1,0 +1,3 @@
+
+PASS Match style(--foo: unset) on :root element
+

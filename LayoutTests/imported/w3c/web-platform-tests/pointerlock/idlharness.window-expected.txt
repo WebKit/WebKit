@@ -17,9 +17,9 @@ PASS Partial interface UIEvent[2]: member names are unique
 PASS Partial dictionary UIEventInit: member names are unique
 PASS Partial interface Document[2]: member names are unique
 PASS Partial interface mixin DocumentOrShadowRoot[2]: member names are unique
+PASS Partial interface Element[2]: member names are unique
 PASS Partial interface Document[3]: member names are unique
 PASS Document includes GlobalEventHandlers: member names are unique
-PASS Document includes DocumentAndElementEventHandlers: member names are unique
 PASS Document includes NonElementParentNode: member names are unique
 PASS DocumentFragment includes NonElementParentNode: member names are unique
 PASS Document includes DocumentOrShadowRoot: member names are unique
@@ -44,6 +44,7 @@ PASS Document interface: window.document must inherit property "onpointerlockerr
 PASS Document interface: window.document must inherit property "exitPointerLock()" with the proper type
 PASS Document interface: window.document must inherit property "pointerLockElement" with the proper type
 PASS ShadowRoot interface: attribute pointerLockElement
-PASS Element interface: operation requestPointerLock()
-PASS Element interface: window.document.documentElement must inherit property "requestPointerLock()" with the proper type
+FAIL Element interface: operation requestPointerLock(optional PointerLockOptions) assert_unreached: Throws "TypeError: Can only call Element.requestPointerLock on instances of Element" instead of rejecting promise Reached unreachable code
+PASS Element interface: window.document.documentElement must inherit property "requestPointerLock(optional PointerLockOptions)" with the proper type
+PASS Element interface: calling requestPointerLock(optional PointerLockOptions) on window.document.documentElement with too few arguments must throw TypeError
 

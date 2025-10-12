@@ -11,8 +11,10 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_SUBTRACTOR_OUTPUT_ANALYZER_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_SUBTRACTOR_OUTPUT_ANALYZER_H_
 
+#include <cstddef>
 #include <vector>
 
+#include "api/array_view.h"
 #include "modules/audio_processing/aec3/subtractor_output.h"
 
 namespace webrtc {
@@ -24,7 +26,7 @@ class SubtractorOutputAnalyzer {
   ~SubtractorOutputAnalyzer() = default;
 
   // Analyses the subtractor output.
-  void Update(rtc::ArrayView<const SubtractorOutput> subtractor_output,
+  void Update(ArrayView<const SubtractorOutput> subtractor_output,
               bool* any_filter_converged,
               bool* any_coarse_filter_converged,
               bool* all_filters_diverged);

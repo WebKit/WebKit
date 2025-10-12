@@ -40,3 +40,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-multiple-re-add-option-via-document-fragment-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-multiple-re-add-option-via-document-fragment-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-multiple-re-add-option-via-document-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-text-decoration-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-text-decoration-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-text-decoration.html

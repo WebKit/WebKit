@@ -35,6 +35,7 @@
 #include "B3ConstFloatValue.h"
 #include "B3ConstPtrValue.h"
 #include "B3InsertionSetInlines.h"
+#include "B3Operations.h"
 #include "B3PhaseScope.h"
 #include "B3ValueInlines.h"
 
@@ -203,7 +204,37 @@ private:
                 }
                 break;
             }
-                
+
+            case MemoryCopy: {
+                Value* functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(operationMemoryCopy));
+                Value* result = m_insertionSet.insert<CCallValue>(
+                    m_index,
+                    m_value->type(),
+                    m_origin,
+                    m_value->effects(),
+                    functionAddress,
+                    m_value->child(0),
+                    m_value->child(1),
+                    m_value->child(2));
+                m_value->replaceWithIdentity(result);
+                break;
+            }
+
+            case MemoryFill: {
+                Value* functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(operationMemoryFill));
+                Value* result = m_insertionSet.insert<CCallValue>(
+                    m_index,
+                    m_value->type(),
+                    m_origin,
+                    m_value->effects(),
+                    functionAddress,
+                    m_value->child(0),
+                    m_value->child(1),
+                    m_value->child(2));
+                m_value->replaceWithIdentity(result);
+                break;
+            }
+
             default:
                 break;
             }

@@ -85,7 +85,7 @@ LineSegment RectangleLayoutShape::getExcludedInterval(LayoutUnit logicalTop, Lay
         }
     }
 
-    if (writingMode().isBidiRTL())
+    if (shouldFlipStartAndEndPoints(writingMode()))
         return { std::max(0.f, m_boxLogicalWidth - x2), std::max(0.f, m_boxLogicalWidth - x1) };
     return { x1, x2 };
 }

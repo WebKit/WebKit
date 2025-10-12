@@ -365,7 +365,7 @@ void AttachmentLayout::buildWrappedLines(String& text, CTFontRef font, NSDiction
         return;
     
     origins.resize(lineCount);
-    CTFrameGetLineOrigins(textFrame.get(), CFRangeMake(0, 0), origins.data());
+    CTFrameGetLineOrigins(textFrame.get(), CFRangeMake(0, 0), origins.mutableSpan().data());
     // Lay out and record the first (maximumLineCount - 1) lines.
     CFIndex lineIndex = 0;
     auto nonTruncatedLineCount = std::min<CFIndex>(maximumLineCount - 1, lineCount);

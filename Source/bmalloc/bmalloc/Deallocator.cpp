@@ -45,7 +45,7 @@ namespace bmalloc {
 Deallocator::Deallocator(Heap& heap)
     : m_heap(heap)
 {
-    BASSERT(!Environment::get()->isDebugHeapEnabled());
+    BASSERT(!Environment::get()->isSystemHeapEnabled());
 }
 
 Deallocator::~Deallocator()

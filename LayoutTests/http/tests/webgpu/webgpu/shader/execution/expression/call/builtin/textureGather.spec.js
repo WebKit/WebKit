@@ -31,6 +31,7 @@ import {
   kDepthStencilFormats,
   kAllTextureFormats } from
 '../../../../../format_info.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../../../gpu_test.js';
 
 import {
   appendComponentTypeForFormatToTextureType,
@@ -46,14 +47,13 @@ import {
   kShortAddressModes,
   kShortAddressModeToAddressMode,
   kShortShaderStages,
-  skipIfTextureFormatNotSupportedOrNeedsFilteringAndIsUnfilterable,
+  skipIfTextureFormatNotSupportedOrNeedsFilteringAndIsUnfilterable } from
 
 
 
-  WGSLTextureSampleTest } from
 './texture_utils.js';
 
-export const g = makeTestGroup(WGSLTextureSampleTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 g.test('sampled_2d_coords').
 specURL('https://www.w3.org/TR/WGSL/#texturegather').

@@ -15,15 +15,15 @@
 #include <stdint.h>
 
 #include <functional>
-#include <memory>
 #include <optional>
 #include <vector>
 
-#include "api/video/video_bitrate_allocation.h"
+#include "api/fec_controller_override.h"
+#include "api/video/video_codec_type.h"
 #include "api/video/video_frame.h"
+#include "api/video/video_frame_type.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
-#include "modules/video_coding/include/video_codec_interface.h"
 
 namespace webrtc {
 namespace test {

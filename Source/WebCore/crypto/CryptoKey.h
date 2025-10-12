@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "CryptoAesKeyAlgorithm.h"
-#include "CryptoEcKeyAlgorithm.h"
-#include "CryptoHmacKeyAlgorithm.h"
-#include "CryptoKeyAlgorithm.h"
-#include "CryptoKeyData.h"
-#include "CryptoRsaHashedKeyAlgorithm.h"
-#include "CryptoRsaKeyAlgorithm.h"
+#include <WebCore/CryptoAesKeyAlgorithm.h>
+#include <WebCore/CryptoEcKeyAlgorithm.h>
+#include <WebCore/CryptoHmacKeyAlgorithm.h>
+#include <WebCore/CryptoKeyAlgorithm.h>
+#include <WebCore/CryptoKeyData.h>
+#include <WebCore/CryptoRsaHashedKeyAlgorithm.h>
+#include <WebCore/CryptoRsaKeyAlgorithm.h>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>

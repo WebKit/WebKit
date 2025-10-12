@@ -1,4 +1,4 @@
 
 
-FAIL The interactionId of the first input entry should match the same keydown entry of event timing when press a key. assert_implements: Event Timing is not supported. undefined
+PASS The interactionId of the first input entry should match the same keydown entry of event timing when press a key.
 

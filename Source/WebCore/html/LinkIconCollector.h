@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "LinkIcon.h"
+#include <WebCore/LinkIcon.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {

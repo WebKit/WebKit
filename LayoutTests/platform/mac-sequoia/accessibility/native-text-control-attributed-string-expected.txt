@@ -1,0 +1,87 @@
+Tests that attributedStringForRange works properly for native text and password fields, including for ranges out of bound.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Attributed string for range (0, 9): some word{
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
+    AXFont =     {
+        AXFontFamily = ".AppleSystemUIFont";
+        AXFontName = ".SFNS-Regular";
+        AXFontSize = 11;
+    };
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
+}
+Attributed string for range (0, 3): som{
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
+    AXFont =     {
+        AXFontFamily = ".AppleSystemUIFont";
+        AXFontName = ".SFNS-Regular";
+        AXFontSize = 11;
+    };
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
+}
+Attributed string for range (5, 4): word{
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
+    AXFont =     {
+        AXFontFamily = ".AppleSystemUIFont";
+        AXFontName = ".SFNS-Regular";
+        AXFontSize = 11;
+    };
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
+}
+Attributed string for range (5, 10): null
+Attributed string for range (10, 1): null
+Attributed string for range (-1, 1): s{
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
+    AXFont =     {
+        AXFontFamily = ".AppleSystemUIFont";
+        AXFontName = ".SFNS-Regular";
+        AXFontSize = 11;
+    };
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
+}
+
+Attributed string for range (0, 3): •••{
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
+    AXFont =     {
+        AXFontFamily = ".AppleSystemUIFont";
+        AXFontName = ".SFNS-Regular";
+        AXFontSize = 11;
+    };
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
+}
+Attributed string for range (0, 2): ••{
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
+    AXFont =     {
+        AXFontFamily = ".AppleSystemUIFont";
+        AXFontName = ".SFNS-Regular";
+        AXFontSize = 11;
+    };
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
+}
+Attributed string for range (1, 2): ••{
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
+    AXFont =     {
+        AXFontFamily = ".AppleSystemUIFont";
+        AXFontName = ".SFNS-Regular";
+        AXFontSize = 11;
+    };
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
+}
+Attributed string for range (1, 10): null
+Attributed string for range (10, 1): null
+Attributed string for range (-1, 1): •{
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
+    AXFont =     {
+        AXFontFamily = ".AppleSystemUIFont";
+        AXFontName = ".SFNS-Regular";
+        AXFontSize = 11;
+    };
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
+}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

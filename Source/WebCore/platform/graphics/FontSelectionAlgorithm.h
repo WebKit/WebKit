@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "TextFlags.h"
+#include <WebCore/TextFlags.h>
 #include <algorithm>
 #include <tuple>
 #include <wtf/Hasher.h>

@@ -12,11 +12,16 @@
 
 #include <memory>
 
+#include "api/environment/environment.h"
 #include "api/video_codecs/video_decoder.h"
 
 namespace webrtc {
 
+// TODO: b/405341160 - Delete after downstream projects switched to version with
+// `Environment`.
 std::unique_ptr<VideoDecoder> CreateDav1dDecoder();
+
+std::unique_ptr<VideoDecoder> CreateDav1dDecoder(const Environment& env);
 
 }  // namespace webrtc
 

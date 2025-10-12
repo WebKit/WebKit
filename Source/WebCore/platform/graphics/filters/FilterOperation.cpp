@@ -35,7 +35,6 @@
 #include "FEGaussianBlur.h"
 #include "FilterEffect.h"
 #include "ImageBuffer.h"
-#include "LengthFunctions.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -368,25 +367,22 @@ RefPtr<FilterOperation> BlurFilterOperation::blend(const FilterOperation* from, 
     if (from && !from->isSameType(*this))
         return this;
 
-    LengthType lengthType = m_stdDeviation.type();
-
     if (blendToPassthrough)
-        return BlurFilterOperation::create(WebCore::blend(m_stdDeviation, Length(lengthType), context));
+        return BlurFilterOperation::create(std::max(0.0f, WebCore::blend(m_stdDeviation, 0.0f, context)));
 
     const BlurFilterOperation* fromOperation = downcast<BlurFilterOperation>(from);
-    Length fromLength = fromOperation ? fromOperation->m_stdDeviation : Length(lengthType);
-    return BlurFilterOperation::create(WebCore::blend(fromLength, m_stdDeviation, context, ValueRange::NonNegative));
+    auto fromStdDeviation = fromOperation ? fromOperation->m_stdDeviation : 0.0f;
+    return BlurFilterOperation::create(std::max(0.0f, WebCore::blend(fromStdDeviation, m_stdDeviation, context)));
 }
 
 bool BlurFilterOperation::isIdentity() const
 {
-    return floatValueForLength(m_stdDeviation, 0) <= 0;
+    return m_stdDeviation <= 0;
 }
 
 IntOutsets BlurFilterOperation::outsets() const
 {
-    float stdDeviation = floatValueForLength(m_stdDeviation, 0);
-    return FEGaussianBlur::calculateOutsets({ stdDeviation, stdDeviation });
+    return FEGaussianBlur::calculateOutsets({ m_stdDeviation, m_stdDeviation });
 }
 
 bool DropShadowFilterOperationBase::nonColorEqual(const DropShadowFilterOperationBase& other) const
@@ -477,7 +473,7 @@ TextStream& operator<<(TextStream& ts, const FilterOperation& filter)
     }
     case FilterOperation::Type::Blur: {
         const auto& blurFilter = downcast<BlurFilterOperation>(filter);
-        ts << "blur("_s << blurFilter.stdDeviation().value() << ')'; // FIXME: should call floatValueForLength() but that's outisde of platform/.
+        ts << "blur("_s << blurFilter.stdDeviation() << ')';
         break;
     }
     case FilterOperation::Type::DropShadow:

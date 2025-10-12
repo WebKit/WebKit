@@ -46,7 +46,7 @@ public:
 private:
     WebCacheStorageProvider() = default;
 
-    RefPtr<WebCacheStorageConnection> m_connection;
+    const RefPtr<WebCacheStorageConnection> m_connection;
 };
 
 }

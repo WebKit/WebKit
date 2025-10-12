@@ -7,6 +7,10 @@
 //   dEQP and GoogleTest integration logic. Calls through to the random
 //   order executor.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <stdint.h>
 #include <array>
 #include <fstream>
@@ -72,6 +76,7 @@ const char *gCaseListFiles[] = {
     GLES_CTS_DIR("khronos_mustpass/main/gles3-khr-main.txt"),
     GLES_CTS_DIR("khronos_mustpass/main/gles31-khr-main.txt"),
     GLES_CTS_DIR("khronos_mustpass/main/gles32-khr-main.txt"),
+    GLES_CTS_DIR("khronos_mustpass/main/gles32-khr-glesext.txt"),
     GLES_CTS_DIR("khronos_mustpass_noctx/main/gles2-khr-noctx-main.txt"),
     GLES_CTS_DIR("khronos_mustpass_noctx/main/gles32-khr-noctx-main.txt"),
     GLES_CTS_DIR("khronos_mustpass_single/main/gles32-khr-single.txt"),
@@ -96,6 +101,7 @@ const std::vector<const char *> gTestSuiteConfigParameters[] = {
     {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles3_khr
     {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles31_khr
     {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles32_khr
+    {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // glesext_khr
     {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles2_khr_noctx
     {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles32_khr_noctx
     {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles32_khr_single
@@ -123,6 +129,7 @@ const char *gTestExpectationsFiles[] = {
     "deqp_khr_gles3_test_expectations.txt",
     "deqp_khr_gles31_test_expectations.txt",
     "deqp_khr_gles32_test_expectations.txt",
+    "deqp_khr_glesext_test_expectations.txt",
     "deqp_khr_noctx_gles2_test_expectations.txt",
     "deqp_khr_noctx_gles32_test_expectations.txt",
     "deqp_khr_single_gles32_test_expectations.txt",
@@ -318,56 +325,60 @@ size_t GetTestModuleIndex()
     return 7;
 #endif
 
-#ifdef ANGLE_DEQP_KHR_NOCTX_GLES2_TESTS
+#ifdef ANGLE_DEQP_KHR_GLESEXT_TESTS
     return 8;
 #endif
 
-#ifdef ANGLE_DEQP_KHR_NOCTX_GLES32_TESTS
+#ifdef ANGLE_DEQP_KHR_NOCTX_GLES2_TESTS
     return 9;
 #endif
 
-#ifdef ANGLE_DEQP_KHR_SINGLE_GLES32_TESTS
+#ifdef ANGLE_DEQP_KHR_NOCTX_GLES32_TESTS
     return 10;
 #endif
 
-#ifdef ANGLE_DEQP_GLES3_ROTATE90_TESTS
+#ifdef ANGLE_DEQP_KHR_SINGLE_GLES32_TESTS
     return 11;
 #endif
 
-#ifdef ANGLE_DEQP_GLES3_ROTATE180_TESTS
+#ifdef ANGLE_DEQP_GLES3_ROTATE90_TESTS
     return 12;
 #endif
 
-#ifdef ANGLE_DEQP_GLES3_ROTATE270_TESTS
+#ifdef ANGLE_DEQP_GLES3_ROTATE180_TESTS
     return 13;
 #endif
 
-#ifdef ANGLE_DEQP_GLES31_ROTATE90_TESTS
+#ifdef ANGLE_DEQP_GLES3_ROTATE270_TESTS
     return 14;
 #endif
 
-#ifdef ANGLE_DEQP_GLES31_ROTATE180_TESTS
+#ifdef ANGLE_DEQP_GLES31_ROTATE90_TESTS
     return 15;
 #endif
 
-#ifdef ANGLE_DEQP_GLES31_ROTATE270_TESTS
+#ifdef ANGLE_DEQP_GLES31_ROTATE180_TESTS
     return 16;
 #endif
 
-#ifdef ANGLE_DEQP_GLES3_MULTISAMPLE_TESTS
+#ifdef ANGLE_DEQP_GLES31_ROTATE270_TESTS
     return 17;
 #endif
 
-#ifdef ANGLE_DEQP_GLES3_565_NO_DEPTH_NO_STENCIL_TESTS
+#ifdef ANGLE_DEQP_GLES3_MULTISAMPLE_TESTS
     return 18;
 #endif
 
-#ifdef ANGLE_DEQP_GLES31_MULTISAMPLE_TESTS
+#ifdef ANGLE_DEQP_GLES3_565_NO_DEPTH_NO_STENCIL_TESTS
     return 19;
 #endif
 
-#ifdef ANGLE_DEQP_GLES31_565_NO_DEPTH_NO_STENCIL_TESTS
+#ifdef ANGLE_DEQP_GLES31_MULTISAMPLE_TESTS
     return 20;
+#endif
+
+#ifdef ANGLE_DEQP_GLES31_565_NO_DEPTH_NO_STENCIL_TESTS
+    return 21;
 #endif
 }
 

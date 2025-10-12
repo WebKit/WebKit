@@ -15,10 +15,15 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a-download-click.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.hreflang-getter-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.hreflang-setter-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.rel-getter-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.rel-noopener-policy.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.rel-noreferrer-policy.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.rel-setter-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.type-getter-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.type-getter-02.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.type-setter-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/href-animate-element.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/href-mpath-element.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/href-script-element-markup.html

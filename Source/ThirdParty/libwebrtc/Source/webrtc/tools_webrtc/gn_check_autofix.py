@@ -101,6 +101,21 @@ def fix_errors(filename, missing_deps, deleted_sources):
     Run(['gn', 'format', filename])
 
 
+def fix_source_set(filename, line_to_replace):
+    with open(filename) as file:
+        lines = file.readlines()
+    fixed_file = ''
+    for line in lines:
+        if line.strip() == line_to_replace.strip():
+            fixed_file += line.replace('rtc_source_set', 'rtc_library')
+        else:
+            fixed_file += line
+
+    with open(filename, 'w') as file:
+        file.write(fixed_file)
+
+    Run(['gn', 'format', filename])
+
 def first_non_empty(iterable):
     """Return first item which evaluates to True, or fallback to None."""
     return next((x for x in iterable if x), None)
@@ -195,12 +210,14 @@ useful to check for different configurations."""
         if target_msg not in error:
             target_msg = 'It is not in any dependency of'
         if target_msg not in error:
+            target_msg = 'rtc_source_set shall not contain cc files'
+        if target_msg not in error:
             print('\n'.join(error))
             continue
         index = error.index(target_msg) + 1
-        path, target = error[index].strip().split(':')
         if error[index + 1] in ('is including a file from the target:',
                                 'The include file is in the target(s):'):
+            path, target = error[index].strip().split(':')
             dep = error[index + 2].strip()
             dep_path, dep = dep.split(':')
             dep = rebase(path, dep_path, dep)
@@ -214,6 +231,12 @@ useful to check for different configurations."""
             deleted_file = '"' + os.path.basename(
                 error[index + 2].strip()) + '",'
             deleted_sources.add(deleted_file)
+        elif target_msg == 'rtc_source_set shall not contain cc files':
+            path = error[index].strip().split(':',
+                                              maxsplit=1)[0].split(' ')[1][2:]
+            print('Turning', error[index + 1].strip().split(' ')[0], 'in',
+                  path, 'into an rtc_library...')
+            fix_source_set(path, error[index + 1])
         else:
             print('\n'.join(error))
             continue

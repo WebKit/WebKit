@@ -6,6 +6,10 @@
 
 // CopyTextureTest.cpp: Tests of the GL_CHROMIUM_copy_texture extension
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 
 #include "test_utils/gl_raii.h"
@@ -503,7 +507,9 @@ class CopyTextureVariationsTest : public ANGLETest<CopyTextureVariationsTestPara
 
         const bool hasMesaFbFlipYExt = IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y");
         if (mesaYFlipParam && !hasMesaFbFlipYExt)
+        {
             ASSERT_TRUE(hasMesaFbFlipYExt);
+        }
 
         if (sourceFormat == GL_LUMINANCE || sourceFormat == GL_LUMINANCE_ALPHA ||
             sourceFormat == GL_ALPHA || destFormat == GL_LUMINANCE ||
@@ -596,7 +602,9 @@ class CopyTextureVariationsTest : public ANGLETest<CopyTextureVariationsTestPara
 
         const bool hasMesaFbFlipYExt = IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y");
         if (mesaYFlipParam && !hasMesaFbFlipYExt)
+        {
             ASSERT_TRUE(hasMesaFbFlipYExt);
+        }
 
         if (sourceFormat == GL_LUMINANCE || sourceFormat == GL_LUMINANCE_ALPHA ||
             sourceFormat == GL_ALPHA || destFormat == GL_LUMINANCE ||
@@ -2059,6 +2067,8 @@ TEST_P(CopyTextureTestWebGL, NPOT)
 
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
+    // The final GL_INVALID_VALUE check is invalid if the device supports NPOT.
+    ANGLE_SKIP_TEST_IF(IsGLExtensionEnabled("GL_OES_texture_npot"));
     // Do the same operation with destLevel 1, which should fail
     glCopyTextureCHROMIUM(mTextures[0], 0, GL_TEXTURE_2D, mTextures[1], 1, GL_RGBA,
                           GL_UNSIGNED_BYTE, false, false, false);

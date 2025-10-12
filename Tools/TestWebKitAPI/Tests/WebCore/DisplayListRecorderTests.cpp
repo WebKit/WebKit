@@ -55,7 +55,7 @@ constexpr unsigned testContextHeight = 88;
 static RefPtr<WebCore::ImageBuffer> createReferenceTarget()
 {
     auto colorSpace = WebCore::DestinationColorSpace::SRGB();
-    auto pixelFormat = WebCore::ImageBufferPixelFormat::BGRA8;
+    auto pixelFormat = WebCore::PixelFormat::BGRA8;
     WebCore::FloatSize logicalSize { testContextWidth, testContextHeight };
     float scale = 1;
     return WebCore::ImageBuffer::create(logicalSize, WebCore::RenderingMode::Unaccelerated, WebCore::RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
@@ -73,7 +73,7 @@ static WebCore::Path createTestPath()
 static Ref<WebCore::ImageBuffer> createTestImageBuffer()
 {
     auto colorSpace = WebCore::DestinationColorSpace::SRGB();
-    auto pixelFormat = WebCore::ImageBufferPixelFormat::BGRA8;
+    auto pixelFormat = WebCore::PixelFormat::BGRA8;
     WebCore::FloatSize logicalSize { 3, 7 };
     float scale = 1;
     auto result = WebCore::ImageBuffer::create(logicalSize, WebCore::RenderingMode::Unaccelerated, WebCore::RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);

@@ -26,88 +26,52 @@
 #include "StyleScrollMargin.h"
 
 #include "LayoutRect.h"
-#include "StyleBuilderConverter.h"
 #include "StyleBuilderState.h"
-#include "StyleExtractorConverter.h"
+#include "StylePrimitiveNumericTypes+CSSValueConversion.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Style {
 
-LayoutUnit ScrollMarginEdge::evaluate(LayoutUnit referenceLength) const
+// MARK: - Conversion
+
+auto CSSValueConversion<ScrollMarginEdge>::operator()(BuilderState& state, const CSSValue& value) -> ScrollMarginEdge
 {
-    switch (m_value.type()) {
-    case LengthType::Fixed:
-        return LayoutUnit(m_value.value());
-
-    case LengthType::Percent:
-        return LayoutUnit(static_cast<float>(referenceLength * m_value.percent() / 100.0f));
-
-    case LengthType::Calculated:
-        return LayoutUnit(m_value.nonNanCalculatedValue(referenceLength));
-
-    case LengthType::FillAvailable:
-    case LengthType::Auto:
-    case LengthType::Normal:
-    case LengthType::Content:
-    case LengthType::Relative:
-    case LengthType::Intrinsic:
-    case LengthType::MinIntrinsic:
-    case LengthType::MinContent:
-    case LengthType::MaxContent:
-    case LengthType::FitContent:
-    case LengthType::Undefined:
-        break;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return 0_lu;
+    return ScrollMarginEdge { toStyleFromCSSValue<Length<>>(state, value) };
 }
 
-float ScrollMarginEdge::evaluate(float referenceLength) const
+// MARK: - Evaluation
+
+auto Evaluation<ScrollMarginEdge, LayoutUnit>::operator()(const ScrollMarginEdge& edge, LayoutUnit, ZoomNeeded token) -> LayoutUnit
 {
-    switch (m_value.type()) {
-    case LengthType::Fixed:
-        return m_value.value();
-
-    case LengthType::Percent:
-        return referenceLength * m_value.percent() / 100.0f;
-
-    case LengthType::Calculated:
-        return m_value.nonNanCalculatedValue(referenceLength);
-
-    case LengthType::FillAvailable:
-    case LengthType::Auto:
-    case LengthType::Normal:
-    case LengthType::Content:
-    case LengthType::Relative:
-    case LengthType::Intrinsic:
-    case LengthType::MinIntrinsic:
-    case LengthType::MinContent:
-    case LengthType::MaxContent:
-    case LengthType::FitContent:
-    case LengthType::Undefined:
-        break;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return 0.0f;
+    return evaluate<LayoutUnit>(edge.m_value, token);
 }
 
-Ref<CSSValue> ScrollMarginEdge::toCSS(ExtractorState& state) const
+auto Evaluation<ScrollMarginEdge, LayoutUnit>::operator()(const ScrollMarginEdge& edge, ZoomNeeded token) -> LayoutUnit
 {
-    return ExtractorConverter::convertLength(state, m_value);
+    return evaluate<LayoutUnit>(edge.m_value, token);
 }
 
-ScrollMarginEdge scrollMarginEdgeFromCSSValue(const CSSValue& value, BuilderState& state)
+auto Evaluation<ScrollMarginEdge, float>::operator()(const ScrollMarginEdge& edge, float, ZoomNeeded token) -> float
 {
-    return ScrollMarginEdge { BuilderConverter::convertLength(state, value) };
+    return evaluate<float>(edge.m_value, token);
 }
 
-LayoutBoxExtent extentForRect(const ScrollMargin& margin, const LayoutRect& rect)
+auto Evaluation<ScrollMarginEdge, float>::operator()(const ScrollMarginEdge& edge, ZoomNeeded token) -> float
+{
+    return evaluate<float>(edge.m_value, token);
+}
+
+// MARK: - Extent
+
+LayoutBoxExtent extentForRect(const ScrollMarginBox& margin, const LayoutRect& rect)
 {
     return LayoutBoxExtent {
-        Style::evaluate(margin.top(), rect.height()),
-        Style::evaluate(margin.right(), rect.width()),
-        Style::evaluate(margin.bottom(), rect.height()),
-        Style::evaluate(margin.left(), rect.width()),
+        evaluate<LayoutUnit>(margin.top(), rect.height(), ZoomNeeded { }),
+        evaluate<LayoutUnit>(margin.right(), rect.width(), ZoomNeeded { }),
+        evaluate<LayoutUnit>(margin.bottom(), rect.height(), ZoomNeeded { }),
+        evaluate<LayoutUnit>(margin.left(), rect.width(), ZoomNeeded { }),
     };
 }
 

@@ -29,13 +29,13 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (3,3) size 61x20
                     text run at (3,3) width 61: "6:00 a.m."
           RenderBlock {P} at (0,102) size 704x21
-            RenderButton {INPUT} at (281,1) size 71x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+            RenderButton {INPUT} at (281,1) size 71x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
               RenderBlock (anonymous) at (12,3) size 46x14
                 RenderText at (0,0) size 46x14
                   text run at (0,0) width 46: "separate"
             RenderText {#text} at (351,0) size 5x19
               text run at (351,0) width 5: " "
-            RenderButton {INPUT} at (355,1) size 68x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+            RenderButton {INPUT} at (355,1) size 68x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
               RenderBlock (anonymous) at (12,3) size 44x14
                 RenderText at (0,0) size 44x14
                   text run at (0,0) width 44: "collapse"

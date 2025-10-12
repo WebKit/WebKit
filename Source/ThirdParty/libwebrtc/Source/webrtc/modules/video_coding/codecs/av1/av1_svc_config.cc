@@ -13,7 +13,13 @@
 #include <algorithm>
 #include <cmath>
 #include <memory>
+#include <optional>
 
+#include "absl/container/inlined_vector.h"
+#include "api/video/video_codec_type.h"
+#include "api/video_codecs/scalability_mode.h"
+#include "api/video_codecs/spatial_layer.h"
+#include "api/video_codecs/video_codec.h"
 #include "modules/video_coding/svc/create_scalability_structure.h"
 #include "modules/video_coding/svc/scalability_mode_util.h"
 #include "modules/video_coding/svc/scalable_video_controller.h"
@@ -42,7 +48,7 @@ int GetLimitedNumSpatialLayers(int width, int height) {
 std::optional<ScalabilityMode> BuildScalabilityMode(int num_temporal_layers,
                                                     int num_spatial_layers) {
   char name[20];
-  rtc::SimpleStringBuilder ss(name);
+  SimpleStringBuilder ss(name);
   ss << "L" << num_spatial_layers << "T" << num_temporal_layers;
   if (num_spatial_layers > 1) {
     ss << "_KEY";

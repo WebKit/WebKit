@@ -25,7 +25,7 @@
 [
     DispatchedFrom=Model,
     DispatchedTo=WebContent,
-    ExceptionForEnabledBy
+    EnabledBy=ModelElementEnabled && ModelProcessEnabled
 ]
 messages -> ModelProcessModelPlayer {
     DidCreateLayer(WebCore::LayerHostingContextIdentifier identifier)

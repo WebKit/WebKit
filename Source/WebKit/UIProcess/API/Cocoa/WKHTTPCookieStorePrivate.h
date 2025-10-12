@@ -32,6 +32,6 @@
 
 #if !TARGET_OS_IPHONE
 // FIXME: Promote this to API (rdar://147591774).
-- (void)_setCookies:(NSArray<NSHTTPCookie *> *)cookies completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA));
+- (void)_setCookies:(NSArray<NSHTTPCookie *> *)cookies completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(26.0));
 #endif
 @end

@@ -22,7 +22,11 @@
 
 #if ENABLE(GPU_PROCESS)
 
-[ExceptionForEnabledBy]
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=GPU,
+    ExceptionForEnabledBy
+]
 messages -> RemoteSharedResourceCache {
     void ReleaseSerializedImageBuffer(WebKit::RemoteSerializedImageBufferIdentifier identifier)
 }

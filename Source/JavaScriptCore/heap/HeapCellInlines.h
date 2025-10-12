@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CellContainer.h"
-#include "HeapCell.h"
-#include "PreciseAllocation.h"
-#include "VM.h"
+#include <JavaScriptCore/CellContainer.h>
+#include <JavaScriptCore/HeapCell.h>
+#include <JavaScriptCore/PreciseAllocation.h>
+#include <JavaScriptCore/VM.h>
 
 namespace JSC {
 

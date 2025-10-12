@@ -106,7 +106,7 @@
 - (void)setAutocomplete:(NSString *)newAutocomplete
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAutocomplete(newAutocomplete);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::autocompleteAttr, newAutocomplete);
 }
 
 - (BOOL)autofocus
@@ -198,7 +198,7 @@
 - (void)setFormAction:(NSString *)newFormAction
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setFormAction(newFormAction);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::formactionAttr, newFormAction);
 }
 
 - (NSString *)formEnctype
@@ -210,7 +210,7 @@
 - (void)setFormEnctype:(NSString *)newFormEnctype
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setFormEnctype(newFormEnctype);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::formenctypeAttr, newFormEnctype);
 }
 
 - (NSString *)formMethod
@@ -222,7 +222,7 @@
 - (void)setFormMethod:(NSString *)newFormMethod
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setFormMethod(newFormMethod);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::formmethodAttr, newFormMethod);
 }
 
 - (BOOL)formNoValidate
@@ -258,7 +258,7 @@
 - (void)setHeight:(unsigned)newHeight
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setHeight(newHeight);
+    IMPL->setUnsignedIntegralAttribute(WebCore::HTMLNames::heightAttr, newHeight);
 }
 
 - (BOOL)indeterminate
@@ -282,7 +282,7 @@
 - (NSString *)max
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::maxAttr).createNSString().autorelease();
+    return IMPL->attributeWithoutSynchronization(WebCore::HTMLNames::maxAttr).createNSString().autorelease();
 }
 
 - (void)setMax:(NSString *)newMax
@@ -306,7 +306,7 @@
 - (NSString *)min
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::minAttr).createNSString().autorelease();
+    return IMPL->attributeWithoutSynchronization(WebCore::HTMLNames::minAttr).createNSString().autorelease();
 }
 
 - (void)setMin:(NSString *)newMin
@@ -342,7 +342,7 @@
 - (NSString *)pattern
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::patternAttr).createNSString().autorelease();
+    return IMPL->attributeWithoutSynchronization(WebCore::HTMLNames::patternAttr).createNSString().autorelease();
 }
 
 - (void)setPattern:(NSString *)newPattern
@@ -354,7 +354,7 @@
 - (NSString *)placeholder
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::placeholderAttr).createNSString().autorelease();
+    return IMPL->attributeWithoutSynchronization(WebCore::HTMLNames::placeholderAttr).createNSString().autorelease();
 }
 
 - (void)setPlaceholder:(NSString *)newPlaceholder
@@ -414,7 +414,7 @@
 - (NSString *)step
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::stepAttr).createNSString().autorelease();
+    return IMPL->attributeWithoutSynchronization(WebCore::HTMLNames::stepAttr).createNSString().autorelease();
 }
 
 - (void)setStep:(NSString *)newStep
@@ -432,19 +432,19 @@
 - (void)setType:(NSString *)newType
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setType(newType);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, newType);
 }
 
 - (NSString *)defaultValue
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->defaultValue().createNSString().autorelease();
+    return IMPL->attributeWithoutSynchronization(WebCore::HTMLNames::valueAttr).createNSString().autorelease();
 }
 
 - (void)setDefaultValue:(NSString *)newDefaultValue
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setDefaultValue(newDefaultValue);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::valueAttr, newDefaultValue);
 }
 
 - (NSString *)value
@@ -492,7 +492,7 @@
 - (void)setWidth:(unsigned)newWidth
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setWidth(newWidth);
+    IMPL->setUnsignedIntegralAttribute(WebCore::HTMLNames::widthAttr, newWidth);
 }
 
 - (BOOL)willValidate
@@ -597,7 +597,7 @@
 - (NSString *)altDisplayString
 {
     WebCore::JSMainThreadNullState state;
-    return WebCore::displayString(IMPL->alt(), core(self)).createNSString().autorelease();
+    return WebCore::displayString(IMPL->attributeWithoutSynchronization(WebCore::HTMLNames::altAttr), core(self)).createNSString().autorelease();
 }
 
 - (NSURL *)absoluteImageURL

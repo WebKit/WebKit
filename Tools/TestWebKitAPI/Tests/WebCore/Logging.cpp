@@ -32,12 +32,16 @@
 
 #define LOG_CHANNEL_PREFIX Test
 
-const char* logTestingSubsystem = "com.webkit.testing";
+#ifdef LOG_CHANNEL_WEBKIT_SUBSYSTEM
+#undef LOG_CHANNEL_WEBKIT_SUBSYSTEM
+#endif
 
-DEFINE_LOG_CHANNEL(Channel1, logTestingSubsystem);
-DEFINE_LOG_CHANNEL(Channel2, logTestingSubsystem);
-DEFINE_LOG_CHANNEL(Channel3, logTestingSubsystem);
-DEFINE_LOG_CHANNEL(Channel4, logTestingSubsystem);
+#define LOG_CHANNEL_WEBKIT_SUBSYSTEM "com.webkit.testing"
+
+DEFINE_LOG_CHANNEL(Channel1);
+DEFINE_LOG_CHANNEL(Channel2);
+DEFINE_LOG_CHANNEL(Channel3);
+DEFINE_LOG_CHANNEL(Channel4);
 
 static WTFLogChannel* testLogChannels[] = {
     &TestChannel1,

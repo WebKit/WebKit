@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,9 +23,10 @@
 #include "SVGScriptElement.h"
 
 #include "Document.h"
-#include "DocumentInlines.h"
+#include "ElementInlines.h"
 #include "Event.h"
 #include "NodeInlines.h"
+#include "ScriptElement.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -48,8 +49,21 @@ Ref<SVGScriptElement> SVGScriptElement::create(const QualifiedName& tagName, Doc
 
 void SVGScriptElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    if (name == SVGNames::asyncAttr)
+        handleAsyncAttribute();
+
     SVGURIReference::parseAttribute(name, newValue);
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+}
+
+bool SVGScriptElement::async() const
+{
+    return hasAsyncAttribute() || forceAsync();
+}
+
+bool SVGScriptElement::hasAsyncAttribute() const
+{
+    return hasAttributeWithoutSynchronization(SVGNames::asyncAttr);
 }
 
 void SVGScriptElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -94,7 +108,7 @@ void SVGScriptElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 
     addSubresourceURL(urls, protectedDocument()->completeURL(href()));
 }
-Ref<Element> SVGScriptElement::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry*)
+Ref<Element> SVGScriptElement::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry*) const
 {
     return adoptRef(*new SVGScriptElement(tagQName(), document, false, alreadyStarted()));
 }

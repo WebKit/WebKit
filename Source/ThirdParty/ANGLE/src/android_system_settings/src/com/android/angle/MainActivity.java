@@ -15,12 +15,17 @@
  */
 package com.android.angle;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.view.ViewGroup.MarginLayoutParams;
+
+import androidx.core.view.WindowInsetsCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceFragmentCompat;
+
 
 import com.android.angle.common.*;
 
-public class MainActivity extends Activity
+public class MainActivity extends AppCompatActivity
 {
     private final String TAG = this.getClass().getSimpleName();
 
@@ -28,6 +33,13 @@ public class MainActivity extends Activity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment);
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(android.R.id.content, new MainFragment())
+                    .commit();
+        }
     }
 }
+

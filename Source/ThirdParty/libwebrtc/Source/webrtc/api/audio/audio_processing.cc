@@ -55,8 +55,6 @@ std::string GainController1ModeToString(const Agc1Config::Mode& mode) {
 
 }  // namespace
 
-constexpr int AudioProcessing::kNativeSampleRatesHz[];
-
 void CustomProcessing::SetRuntimeSetting(
     AudioProcessing::RuntimeSetting /* setting */) {}
 
@@ -128,7 +126,7 @@ operator==(const AudioProcessing::Config::CaptureLevelAdjustment::
 
 std::string AudioProcessing::Config::ToString() const {
   char buf[2048];
-  rtc::SimpleStringBuilder builder(buf);
+  SimpleStringBuilder builder(buf);
   builder << "AudioProcessing::Config{ "
              "pipeline: { "
              "maximum_internal_processing_rate: "
@@ -214,21 +212,21 @@ std::string AudioProcessing::Config::ToString() const {
   return builder.str();
 }
 
-absl::Nonnull<std::unique_ptr<AudioProcessingBuilderInterface>>
+absl_nonnull std::unique_ptr<AudioProcessingBuilderInterface>
 CustomAudioProcessing(
-    absl::Nonnull<scoped_refptr<AudioProcessing>> audio_processing) {
+    absl_nonnull scoped_refptr<AudioProcessing> audio_processing) {
   class Builder : public AudioProcessingBuilderInterface {
    public:
-    explicit Builder(absl::Nonnull<scoped_refptr<AudioProcessing>> ap)
+    explicit Builder(absl_nonnull scoped_refptr<AudioProcessing> ap)
         : ap_(std::move(ap)) {}
 
-    absl::Nullable<scoped_refptr<AudioProcessing>> Build(
+    absl_nullable scoped_refptr<AudioProcessing> Build(
         const Environment& /*env*/) override {
       return std::move(ap_);
     }
 
    private:
-    absl::Nonnull<scoped_refptr<AudioProcessing>> ap_;
+    absl_nonnull scoped_refptr<AudioProcessing> ap_;
   };
 
   RTC_CHECK(audio_processing);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +27,16 @@
 
 #import <wtf/Forward.h>
 
+OBJC_CLASS UTType;
+
 namespace WebCore {
 
 WEBCORE_EXPORT String MIMETypeFromUTI(const String&);
-WEBCORE_EXPORT UncheckedKeyHashSet<String> RequiredMIMETypesFromUTI(const String&);
+WEBCORE_EXPORT HashSet<String> RequiredMIMETypesFromUTI(const String&);
 RetainPtr<CFStringRef> mimeTypeFromUTITree(CFStringRef);
+#ifdef __OBJC__
+RetainPtr<NSString> mimeTypeFromUTITree(UTType *);
+#endif
 WEBCORE_EXPORT String UTIFromMIMEType(const String&);
 bool isDeclaredUTI(const String&);
 WEBCORE_EXPORT void setImageSourceAllowableTypes(const Vector<String>&);

@@ -1775,21 +1775,6 @@
         }
     },
     {
-        "name": "Strict Mixed Content Checking",
-        "status": {
-            "status": "Supported"
-        },
-        "url": "https://w3c.github.io/webappsec-mixed-content/#strict-checking",
-        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=165438",
-        "keywords": ["csp", "content security policy", "blockable", "optionally-blockable", "block-all-mixed-content", "HTTPS", "security"],
-        "category": "webapps",
-        "description": "Allows developers to opt into blocking display and running of all insecure content on an HTTPS page.",
-        "contact": {
-            "name": "Daniel Bates",
-            "email": "dbates@webkit.org"
-        }
-    },
-    {
         "name": "Subresource Integrity",
         "status": {
             "status": "Supported"

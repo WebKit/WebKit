@@ -12,38 +12,49 @@
 #define VIDEO_VIDEO_STREAM_ENCODER_H_
 
 #include <atomic>
-#include <map>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
-#include <string>
+#include <optional>
 #include <vector>
 
 #include "absl/container/inlined_vector.h"
 #include "api/adaptation/resource.h"
 #include "api/environment/environment.h"
+#include "api/fec_controller_override.h"
+#include "api/rtp_parameters.h"
 #include "api/rtp_sender_interface.h"
+#include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/timestamp.h"
 #include "api/video/encoded_image.h"
+#include "api/video/video_adaptation_counters.h"
+#include "api/video/video_adaptation_reason.h"
+#include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_bitrate_allocator.h"
-#include "api/video/video_rotation.h"
-#include "api/video/video_sink_interface.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_type.h"
+#include "api/video/video_source_interface.h"
 #include "api/video/video_stream_encoder_settings.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
+#include "api/video_codecs/video_encoder_factory.h"
 #include "call/adaptation/adaptation_constraint.h"
-#include "call/adaptation/resource_adaptation_processor.h"
 #include "call/adaptation/resource_adaptation_processor_interface.h"
 #include "call/adaptation/video_source_restrictions.h"
+#include "call/adaptation/video_stream_adapter.h"
 #include "call/adaptation/video_stream_input_state_provider.h"
 #include "modules/video_coding/utility/frame_dropper.h"
 #include "modules/video_coding/utility/qp_parser.h"
 #include "rtc_base/experiments/rate_control_settings.h"
-#include "rtc_base/numerics/exp_filter.h"
-#include "rtc_base/race_checker.h"
-#include "rtc_base/rate_statistics.h"
 #include "rtc_base/thread_annotations.h"
+#include "video/adaptation/overuse_frame_detector.h"
 #include "video/adaptation/video_stream_encoder_resource_manager.h"
+#include "video/config/video_encoder_config.h"
 #include "video/corruption_detection/frame_instrumentation_generator.h"
 #include "video/encoder_bitrate_adjuster.h"
 #include "video/frame_cadence_adapter.h"
@@ -81,20 +92,19 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
       const VideoStreamEncoderSettings& settings,
       std::unique_ptr<OveruseFrameDetector> overuse_detector,
       std::unique_ptr<FrameCadenceAdapterInterface> frame_cadence_adapter,
-      std::unique_ptr<webrtc::TaskQueueBase, webrtc::TaskQueueDeleter>
-          encoder_queue,
+      std::unique_ptr<TaskQueueBase, TaskQueueDeleter> encoder_queue,
       BitrateAllocationCallbackType allocation_cb_type,
-      webrtc::VideoEncoderFactory::EncoderSelectorInterface* encoder_selector =
+      VideoEncoderFactory::EncoderSelectorInterface* encoder_selector =
           nullptr);
   ~VideoStreamEncoder() override;
 
   VideoStreamEncoder(const VideoStreamEncoder&) = delete;
   VideoStreamEncoder& operator=(const VideoStreamEncoder&) = delete;
 
-  void AddAdaptationResource(rtc::scoped_refptr<Resource> resource) override;
-  std::vector<rtc::scoped_refptr<Resource>> GetAdaptationResources() override;
+  void AddAdaptationResource(scoped_refptr<Resource> resource) override;
+  std::vector<scoped_refptr<Resource>> GetAdaptationResources() override;
 
-  void SetSource(rtc::VideoSourceInterface<VideoFrame>* source,
+  void SetSource(VideoSourceInterface<VideoFrame>* source,
                  const DegradationPreference& degradation_preference) override;
 
   void SetSink(EncoderSink* sink, bool rotation_applied) override;
@@ -121,8 +131,7 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
       const VideoEncoder::LossNotification& loss_notification) override;
 
   void OnBitrateUpdated(DataRate target_bitrate,
-                        DataRate stable_target_bitrate,
-                        DataRate target_headroom,
+                        DataRate link_allocation,
                         uint8_t fraction_lost,
                         int64_t round_trip_time_ms,
                         double cwnd_reduce_ratio) override;
@@ -140,12 +149,12 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
   void OnVideoSourceRestrictionsUpdated(
       VideoSourceRestrictions restrictions,
       const VideoAdaptationCounters& adaptation_counters,
-      rtc::scoped_refptr<Resource> reason,
+      scoped_refptr<Resource> reason,
       const VideoSourceRestrictions& unfiltered_restrictions) override;
 
   // Used for injected test resources.
   // TODO(eshr): Move all adaptation tests out of VideoStreamEncoder tests.
-  void InjectAdaptationResource(rtc::scoped_refptr<Resource> resource,
+  void InjectAdaptationResource(scoped_refptr<Resource> resource,
                                 VideoAdaptationReason reason);
   void InjectAdaptationConstraint(AdaptationConstraint* adaptation_constraint);
 
@@ -191,8 +200,7 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
     EncoderRateSettings(const VideoBitrateAllocation& bitrate,
                         double framerate_fps,
                         DataRate bandwidth_allocation,
-                        DataRate encoder_target,
-                        DataRate stable_encoder_target);
+                        DataRate encoder_target);
     bool operator==(const EncoderRateSettings& rhs) const;
     bool operator!=(const EncoderRateSettings& rhs) const;
 
@@ -204,7 +212,6 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
     // |using last_encoder_rate_setings_->bitrate.get_sum_bps()|, may trick it
     // into thinking the available bitrate has decreased since the last call.
     DataRate encoder_target;
-    DataRate stable_encoder_target;
   };
 
   class DegradationPreferenceManager;
@@ -276,7 +283,7 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
   const BitrateAllocationCallbackType allocation_cb_type_;
   const RateControlSettings rate_control_settings_;
 
-  webrtc::VideoEncoderFactory::EncoderSelectorInterface* const
+  VideoEncoderFactory::EncoderSelectorInterface* const
       encoder_selector_from_constructor_;
   std::unique_ptr<VideoEncoderFactory::EncoderSelectorInterface> const
       encoder_selector_from_factory_;
@@ -324,8 +331,6 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
   // initialization.
   bool was_encode_called_since_last_initialization_
       RTC_GUARDED_BY(encoder_queue_) = false;
-
-  bool encoder_failed_ RTC_GUARDED_BY(encoder_queue_) = false;
 
   // Used to make sure incoming time stamp is increasing for every frame.
   int64_t last_captured_timestamp_ RTC_GUARDED_BY(encoder_queue_) = 0;
@@ -382,6 +387,8 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
   // Provides video stream input states: current resolution and frame rate.
   VideoStreamInputStateProvider input_state_provider_;
 
+  bool encoder_fallback_requested_ RTC_GUARDED_BY(encoder_queue_) = false;
+
   const std::unique_ptr<VideoStreamAdapter> video_stream_adapter_
       RTC_GUARDED_BY(encoder_queue_);
   // Responsible for adapting input resolution or frame rate to ensure resources
@@ -402,7 +409,7 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
   // and its resource list is accessible from any thread.
   VideoStreamEncoderResourceManager stream_resource_manager_
       RTC_GUARDED_BY(encoder_queue_);
-  std::vector<rtc::scoped_refptr<Resource>> additional_resources_
+  std::vector<scoped_refptr<Resource>> additional_resources_
       RTC_GUARDED_BY(encoder_queue_);
   // Carries out the VideoSourceRestrictions provided by the
   // ResourceAdaptationProcessor, i.e. reconfigures the source of video frames

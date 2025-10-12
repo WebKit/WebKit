@@ -255,7 +255,7 @@ Error Surface::initialize(const Display *display)
     }
     if (mBuftype == EGL_D3D_TEXTURE_ANGLE)
     {
-        const angle::Format *colorFormat = mImplementation->getD3DTextureColorFormat();
+        const angle::Format *colorFormat = mImplementation->getClientBufferTextureColorFormat();
         ASSERT(colorFormat != nullptr);
         GLenum internalFormat = colorFormat->fboImplementationInternalFormat;
         mColorFormat          = gl::Format(internalFormat, colorFormat->componentType);
@@ -533,39 +533,31 @@ EGLint Surface::isFixedSize() const
     return mFixedSize;
 }
 
-EGLint Surface::getWidth() const
+gl::Extents Surface::getSize() const
 {
-    return mFixedSize ? static_cast<EGLint>(mFixedWidth) : mImplementation->getWidth();
+    return mFixedSize
+               ? gl::Extents(static_cast<EGLint>(mFixedWidth), static_cast<EGLint>(mFixedHeight), 1)
+               : mImplementation->getSize();
 }
 
-EGLint Surface::getHeight() const
+egl::Error Surface::getUserSize(const egl::Display *display, EGLint *width, EGLint *height) const
 {
-    return mFixedSize ? static_cast<EGLint>(mFixedHeight) : mImplementation->getHeight();
-}
-
-egl::Error Surface::getUserWidth(const egl::Display *display, EGLint *value) const
-{
+    ASSERT(width != nullptr || height != nullptr);
     if (mFixedSize)
     {
-        *value = static_cast<EGLint>(mFixedWidth);
+        if (width != nullptr)
+        {
+            *width = static_cast<EGLint>(mFixedWidth);
+        }
+        if (height != nullptr)
+        {
+            *height = static_cast<EGLint>(mFixedHeight);
+        }
         return NoError();
     }
     else
     {
-        return mImplementation->getUserWidth(display, value);
-    }
-}
-
-egl::Error Surface::getUserHeight(const egl::Display *display, EGLint *value) const
-{
-    if (mFixedSize)
-    {
-        *value = static_cast<EGLint>(mFixedHeight);
-        return NoError();
-    }
-    else
-    {
-        return mImplementation->getUserHeight(display, value);
+        return mImplementation->getUserSize(display, width, height);
     }
 }
 
@@ -617,6 +609,11 @@ Error Surface::releaseTexImageFromTexture(const gl::Context *context)
     return releaseRef(context->getDisplay());
 }
 
+angle::Result Surface::ensureSizeResolved(const gl::Context *context) const
+{
+    return mImplementation->ensureSizeResolved(context);
+}
+
 bool Surface::isAttachmentSpecified(const gl::ImageIndex & /*imageIndex*/) const
 {
     // Surface is always specified even if it has 0 sizes.
@@ -625,7 +622,7 @@ bool Surface::isAttachmentSpecified(const gl::ImageIndex & /*imageIndex*/) const
 
 gl::Extents Surface::getAttachmentSize(const gl::ImageIndex & /*target*/) const
 {
-    return gl::Extents(getWidth(), getHeight(), 1);
+    return getSize();
 }
 
 gl::Format Surface::getAttachmentFormat(GLenum binding, const gl::ImageIndex &target) const
@@ -904,9 +901,11 @@ EGLAttribKHR Surface::getBitmapPointer() const
     return static_cast<EGLAttribKHR>((intptr_t)mLockBufferPtr);
 }
 
-EGLint Surface::getCompressionRate(const egl::Display *display) const
+egl::Error Surface::getCompressionRate(const egl::Display *display,
+                                       const gl::Context *context,
+                                       EGLint *rate)
 {
-    return mImplementation->getCompressionRate(display);
+    return mImplementation->getCompressionRate(display, context, rate);
 }
 
 egl::Error Surface::lockSurfaceKHR(const egl::Display *display, const AttributeMap &attributes)

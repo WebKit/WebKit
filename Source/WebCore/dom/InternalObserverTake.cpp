@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InternalObserverTake.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "InternalObserver.h"
 #include "Observable.h"
 #include "ScriptExecutionContext.h"
@@ -62,7 +63,7 @@ public:
             }
 
             SubscribeOptions options;
-            options.signal = &subscriber.signal();
+            options.signal = subscriber.signal();
             m_sourceObservable->subscribeInternal(*context, InternalObserverTake::create(*context, subscriber, m_amount), options);
 
             return { };

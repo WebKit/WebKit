@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,13 +66,13 @@ public:
 
     void enqueueMessage(Connection& connection, UniqueRef<Decoder>&& message) final
     {
-        Ref { m_queue }->dispatch([connection = Ref { connection }, message = WTFMove(message), receiver = m_receiver]() mutable {
+        m_queue->dispatch([connection = Ref { connection }, message = WTFMove(message), receiver = m_receiver]() mutable {
             connection->dispatchMessageReceiverMessage(receiver.get(), WTFMove(message));
         });
     }
 private:
-    Ref<WorkQueue> m_queue;
-    Ref<WorkQueueMessageReceiverBase> m_receiver;
+    const Ref<WorkQueue> m_queue;
+    const Ref<WorkQueueMessageReceiverBase> m_receiver;
 };
 
 } // namespace IPC

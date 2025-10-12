@@ -1,0 +1,8 @@
+unzoomed lorem ipsum
+zoomed lorem ipsum
+zoomed inherited lorem ipsum
+
+PASS computed inherited word-spacing
+PASS computed zoomed word-spacing
+PASS computed zoomed inherited word-spacing
+

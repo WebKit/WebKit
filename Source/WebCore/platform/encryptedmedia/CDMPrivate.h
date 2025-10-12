@@ -27,9 +27,9 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "CDMInstance.h"
-#include "CDMRequirement.h"
-#include "CDMSessionType.h"
+#include <WebCore/CDMInstance.h>
+#include <WebCore/CDMRequirement.h>
+#include <WebCore/CDMSessionType.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 

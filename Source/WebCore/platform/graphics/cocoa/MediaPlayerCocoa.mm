@@ -34,7 +34,7 @@ namespace WebCore {
 
 void MediaPlayer::setVideoTarget(const PlatformVideoTarget& target)
 {
-    m_private->setVideoTarget(target);
+    protectedPrivate()->setVideoTarget(target);
 }
 
 } // namespace WebCore

@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "SVGTextMetrics.h"
+#include <WebCore/SVGTextMetrics.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -41,7 +41,7 @@ struct SVGCharacterData {
     float rotate;
 };
 
-typedef UncheckedKeyHashMap<unsigned, SVGCharacterData> SVGCharacterDataMap;
+typedef HashMap<unsigned, SVGCharacterData> SVGCharacterDataMap;
 
 class SVGTextLayoutAttributes {
     WTF_MAKE_NONCOPYABLE(SVGTextLayoutAttributes);

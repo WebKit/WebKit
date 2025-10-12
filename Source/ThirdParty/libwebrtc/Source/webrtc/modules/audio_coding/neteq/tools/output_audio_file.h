@@ -13,10 +13,12 @@
 
 #include <stdio.h>
 
+#include <cstdint>
 #include <string>
 
 #include "absl/strings/string_view.h"
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {

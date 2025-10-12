@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LLIntData.h"
 
+#include "InPlaceInterpreter.h"
 #include "JSCConfig.h"
 #include "LLIntCLoop.h"
 #include "LLIntEntrypoint.h"
@@ -33,22 +34,32 @@
 #include "LLIntThunks.h"
 #include "Opcode.h"
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/Entitlements.h>
+#endif
+
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
 namespace LLInt {
 
-Opcode g_opcodeMap[numOpcodeIDs + numWasmOpcodeIDs] = { };
-Opcode g_opcodeMapWide16[numOpcodeIDs + numWasmOpcodeIDs] = { };
-Opcode g_opcodeMapWide32[numOpcodeIDs + numWasmOpcodeIDs] = { };
+#if COMPILER(CLANG)
+// The purpose of applying this attribute is to move the g_opcodeConfigStorage away from other
+// global variables, and allow the linker to pack them in more efficiently. Without this, the
+// linker currently leaves multiple KBs of unused padding before this page though there are many
+// other variables that come afterwards that would have fit in there. Adding this attribute was
+// shown to resolve a memory regression on our small memory footprint benchmark.
+#define LLINT_OPCODE_CONFIG_SECTION __attribute__((used, section("__DATA,__jsc_opcodes")))
+#else
+#define LLINT_OPCODE_CONFIG_SECTION
+#endif
+
+alignas(OpcodeConfigAlignment) Opcode LLINT_OPCODE_CONFIG_SECTION g_opcodeConfigStorage[OpcodeConfigSizeToProtect / sizeof(Opcode)];
+static_assert(sizeof(OpcodeConfig) <= OpcodeConfigSizeToProtect);
 
 #if !ENABLE(C_LOOP)
 extern "C" void SYSV_ABI llint_entry(void*, void*, void*);
-
-#if ENABLE(WEBASSEMBLY)
-extern "C" void SYSV_ABI wasm_entry(void*, void*, void*);
-#endif // ENABLE(WEBASSEMBLY)
 
 #endif // !ENABLE(C_LOOP)
 
@@ -67,54 +78,92 @@ extern "C" void SYSV_ABI vmEntryToCSSJITAfter(void);
 JSC_ANNOTATE_JIT_OPERATION_RETURN(vmEntryToCSSJITAfter);
 #endif
 
-#if !ENABLE(C_LOOP)
-static void neuterOpcodeMaps()
+#if PLATFORM(COCOA)
+static bool scriptingIsForbidden()
 {
-#if CPU(ARM64E)
-#define SET_CRASH_TARGET(entry) do { \
-        void* crashTarget = reinterpret_cast<void*>(llint_check_vm_entry_permission); \
-        uint64_t address = std::bit_cast<uint64_t>(&entry); \
-        uint64_t newTag = (std::bit_cast<uint64_t>(BytecodePtrTag) << 48) | address; \
-        void* signedTarget = ptrauth_auth_and_resign(crashTarget, ptrauth_key_function_pointer, 0, ptrauth_key_process_dependent_code, newTag); \
-        entry = std::bit_cast<Opcode>(signedTarget); \
-    } while (false)
-#else
-#define SET_CRASH_TARGET(entry) do { \
-        entry = reinterpret_cast<Opcode>(llint_check_vm_entry_permission); \
-    } while (false)
-#endif
-    for (unsigned i = 0; i < numOpcodeIDs + numWasmOpcodeIDs; ++i) {
-        SET_CRASH_TARGET(g_opcodeMap[i]);
-        SET_CRASH_TARGET(g_opcodeMapWide16[i]);
-        SET_CRASH_TARGET(g_opcodeMapWide32[i]);
-    }
-#undef SET_CRASH_TARGET
+    return processHasEntitlement("com.apple.security.script-restrictions"_s);
 }
+#else
+static constexpr bool scriptingIsForbidden() { return false; }
 #endif
+
 
 void initialize()
 {
+    WTF::makePagesFreezable(&g_opcodeConfigStorage, OpcodeConfigSizeToProtect);
+
+    if (g_jscConfig.vmEntryDisallowed || scriptingIsForbidden()) [[unlikely]] {
+        // FIXME: Check if we can do this in a more performant way. See rdar://158509720.
+        g_jscConfig.vmEntryDisallowed = true;
+        WTF::permanentlyFreezePages(&g_opcodeConfigStorage, OpcodeConfigSizeToProtect, WTF::FreezePagePermission::None);
+        return;
+    }
+    WTF::compilerFence();
+
 #if ENABLE(C_LOOP)
     CLoop::initialize();
 
 #else // !ENABLE(C_LOOP)
 
-    if (g_jscConfig.vmEntryDisallowed) [[unlikely]]
-        neuterOpcodeMaps();
-    else {
-        llint_entry(&g_opcodeMap, &g_opcodeMapWide16, &g_opcodeMapWide32);
-    
+    static_assert(numOpcodeIDs >= 256, "nextInstruction() relies on this for bounding the dispatch");
+
+#if CPU(ARM64E)
+    RELEASE_ASSERT(!g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::vmEntryToJavaScript)]);
+
+    JSC::Opcode tempOpcodeMap[numOpcodeIDs];
+    JSC::Opcode tempOpcodeMapWide16[numOpcodeIDs];
+    JSC::Opcode tempOpcodeMapWide32[numOpcodeIDs];
+    JSC::Opcode* opcodeMap = tempOpcodeMap;
+    JSC::Opcode* opcodeMapWide16 = tempOpcodeMapWide16;
+    JSC::Opcode* opcodeMapWide32 = tempOpcodeMapWide32;
+#else
+    JSC::Opcode* opcodeMap = g_opcodeMap;
+    JSC::Opcode* opcodeMapWide16 = g_opcodeMapWide16;
+    JSC::Opcode* opcodeMapWide32 = g_opcodeMapWide32;
+#endif
+
+    // Step 1: fill in opcodeMaps.
+    llint_entry(opcodeMap, opcodeMapWide16, opcodeMapWide32);
+
 #if ENABLE(WEBASSEMBLY)
-        wasm_entry(&g_opcodeMap[numOpcodeIDs], &g_opcodeMapWide16[numOpcodeIDs], &g_opcodeMapWide32[numOpcodeIDs]);
-#endif // ENABLE(WEBASSEMBLY)
+    if (Options::useWasm())
+        IPInt::initialize();
+#endif
+
+#if CPU(ARM64E)
+    for (size_t i = 0; i < numOpcodeIDs; ++i) {
+        g_opcodeMap[i] = removeCodePtrTag(opcodeMap[i]);
+        g_opcodeMapWide16[i] = removeCodePtrTag(opcodeMapWide16[i]);
+        g_opcodeMapWide32[i] = removeCodePtrTag(opcodeMapWide32[i]);
     }
+#endif
+
+    // Step 2: freeze opcodeMaps.
+    WTF::compilerFence();
+    WTF::permanentlyFreezePages(&g_opcodeConfigStorage, OpcodeConfigSizeToProtect, WTF::FreezePagePermission::ReadOnly);
+    WTF::compilerFence();
+
+    // Step 3: verify that the opcodeMap is expected after freezing.
+#if CPU(ARM64E)
+    for (size_t i = 0; i < numOpcodeIDs; ++i) {
+        uintptr_t tag = (static_cast<uintptr_t>(BytecodePtrTag) << 48) | std::bit_cast<uintptr_t>(&opcodeMap[i]);
+        uintptr_t tag16 = (static_cast<uintptr_t>(BytecodePtrTag) << 48) | std::bit_cast<uintptr_t>(&opcodeMapWide16[i]);
+        uintptr_t tag32 = (static_cast<uintptr_t>(BytecodePtrTag) << 48) | std::bit_cast<uintptr_t>(&opcodeMapWide32[i]);
+
+        RELEASE_ASSERT(g_opcodeMap[i] == __builtin_ptrauth_auth(opcodeMap[i], ptrauth_key_process_dependent_code, tag));
+        RELEASE_ASSERT(g_opcodeMapWide16[i] == __builtin_ptrauth_auth(opcodeMapWide16[i], ptrauth_key_process_dependent_code, tag16));
+        RELEASE_ASSERT(g_opcodeMapWide32[i] == __builtin_ptrauth_auth(opcodeMapWide32[i], ptrauth_key_process_dependent_code, tag32));
+    }
+#endif
+
+#if ENABLE(WEBASSEMBLY)
+    if (Options::useWasm())
+        IPInt::verifyInitialization();
+#endif
 
     static_assert(llint_throw_from_slow_path_trampoline < UINT8_MAX);
-    static_assert(wasm_throw_from_slow_path_trampoline < UINT8_MAX);
-    for (unsigned i = 0; i < maxBytecodeStructLength + 1; ++i) {
+    for (unsigned i = 0; i < maxBytecodeStructLength + 1; ++i)
         g_jscConfig.llint.exceptionInstructions[i] = llint_throw_from_slow_path_trampoline;
-        g_jscConfig.llint.wasmExceptionInstructions[i] = wasm_throw_from_slow_path_trampoline;
-    }
 
     JITOperationList::populatePointersInJavaScriptCoreForLLInt();
 
@@ -171,14 +220,23 @@ void initialize()
 
 #endif // ENABLE(WEBASSEMBLY)
 
+    // Step 4: Initialize g_jscConfig.llint.gateMap[Gate::vmEntryToJavaScript].
+    // This is key to entering the interpreter.
     {
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef;
-        if (Options::useJIT())
-            codeRef.construct(createJSGateThunk(retagCodePtr<void*, CFunctionPtrTag, OperationPtrTag>(&vmEntryToJavaScriptGateAfter), JSEntryPtrTag, "vmEntryToJavaScript"));
-        else
-            codeRef.construct(MacroAssemblerCodeRef<NativeToJITGatePtrTag>::createSelfManagedCodeRef(CodePtr<NativeToJITGatePtrTag>::fromTaggedPtr(retagCodePtr<void*, CFunctionPtrTag, NativeToJITGatePtrTag>(&vmEntryToJavaScriptTrampoline))));
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<VMEntryToJITGatePtrTag>> codeRef;
+        if (Options::useJIT()) {
+            auto gateCodeRef = createJSGateThunk(retagCodePtr<void*, CFunctionPtrTag, OperationPtrTag>(&vmEntryToJavaScriptGateAfter), JSEntryPtrTag, "vmEntryToJavaScript");
+            codeRef.construct(gateCodeRef.retagged<VMEntryToJITGatePtrTag>());
+        } else
+            codeRef.construct(MacroAssemblerCodeRef<VMEntryToJITGatePtrTag>::createSelfManagedCodeRef(CodePtr<VMEntryToJITGatePtrTag>::fromTaggedPtr(retagCodePtr<void*, CFunctionPtrTag, VMEntryToJITGatePtrTag>(&vmEntryToJavaScriptTrampoline))));
         g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::vmEntryToJavaScript)] = codeRef.get().code().taggedPtr();
     }
+    // We want to make sure that we didn't inadvertantly authorize entry into the
+    // LLInt unintentionally (due to corrupted jumps that skipped the check at the
+    // top, or otherwise). So, verify again that we are allowed to enter the LLInt.
+    WTF::compilerFence();
+    RELEASE_ASSERT(!scriptingIsForbidden());
+
     {
         static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef;
         if (Options::useJIT())
@@ -270,6 +328,9 @@ void initialize()
     if (Options::useJIT())
         g_jscConfig.arityFixupThunk = arityFixupThunk().code().taggedPtr();
 #endif
+
+    WTF::compilerFence();
+    RELEASE_ASSERT(!scriptingIsForbidden());
 }
 
 } } // namespace JSC::LLInt

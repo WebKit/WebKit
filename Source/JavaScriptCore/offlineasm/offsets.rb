@@ -250,7 +250,7 @@ def configurationIndicesForVariants(file, variants)
         end
         results << configurationIndices(file + suffix)
     }
-    return results.flatten(1)
+    return results.flatten(1).uniq
 end
 
 #

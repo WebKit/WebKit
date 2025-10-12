@@ -1,7 +1,7 @@
-<!DOCTYPE HTML>
+<!DOCTYPE HTML> <!-- webkit-test-runner [ PointerLockEnabled=true ] -->
 <html>
 <head>
-<script src="../http/tests/resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../http/tests/resources/pointer-lock/pointer-lock-test-harness.js"></script>
 </head>
 <body>
@@ -12,6 +12,7 @@
 <script>
     description("Test calling lock when already in a locked state.")
     window.jsTestIsAsync = true;
+    window.testRunner?.setHasMouseDeviceForTesting(true);
 
     targetdiv1 = document.getElementById("target1");
     targetdiv2 = document.getElementById("target2");
@@ -59,6 +60,5 @@
     ];
     doNextStepWithUserGesture();
 </script>
-<script src="../http/tests/resources/js-test-post.js"></script>
 </body>
 </html>

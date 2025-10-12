@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,8 @@
 #include "AbortController.h"
 
 #include "AbortSignal.h"
+#include "JSAbortController.h"
+#include "ScriptWrappableInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -45,14 +47,9 @@ AbortController::AbortController(ScriptExecutionContext& context)
 
 AbortController::~AbortController() = default;
 
-AbortSignal& AbortController::signal()
-{
-    return m_signal.get();
-}
-
 void AbortController::abort(JSC::JSValue reason)
 {
-    protectedSignal()->signalAbort(reason);
+    m_signal->signalAbort(reason);
 }
 
 WebCoreOpaqueRoot AbortController::opaqueRoot()
@@ -60,9 +57,12 @@ WebCoreOpaqueRoot AbortController::opaqueRoot()
     return root(&signal());
 }
 
-Ref<AbortSignal> AbortController::protectedSignal() const
+template<typename Visitor>
+void JSAbortController::visitAdditionalChildren(Visitor& visitor)
 {
-    return m_signal;
+    wrapped().signal().reason().visit(visitor);
 }
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSAbortController);
 
 }

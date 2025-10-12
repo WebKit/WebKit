@@ -1,12 +1,3 @@
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL https://:invalid-url:/
-CONSOLE MESSAGE: value in specifier map needs to be a string
-CONSOLE MESSAGE: address https://example.com/x does not end with '/' while key without-trailing-slashes/b/ ends with '/'
-CONSOLE MESSAGE: value in specifier map needs to be a string
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL https://:invalid-url:/
-CONSOLE MESSAGE: address https://example.com/x does not end with '/' while key without-trailing-slashes/ ends with '/'
-CONSOLE MESSAGE: value in specifier map cannot be parsed as URL https://:invalid-url:/
-CONSOLE MESSAGE: address https://example.com/x does not end with '/' while key https://example.com/without-trailing-slashes/ ends with '/'
-CONSOLE MESSAGE: value in specifier map needs to be a string
 
 
 PASS Test helper: fetching and sanity checking test JSON: resolving-null.json

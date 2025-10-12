@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 #ifndef AuthenticationMac_h
 #define AuthenticationMac_h
 
-#import "PlatformExportMacros.h"
+#import <WebCore/PlatformExportMacros.h>
 
 @class NSURLAuthenticationChallenge;
 
@@ -34,6 +34,7 @@ namespace WebCore {
 class AuthenticationChallenge;
 
 WEBCORE_EXPORT NSURLAuthenticationChallenge *mac(const AuthenticationChallenge&);
+WEBCORE_EXPORT RetainPtr<NSURLAuthenticationChallenge> protectedMac(const AuthenticationChallenge&);
 
 WEBCORE_EXPORT AuthenticationChallenge core(NSURLAuthenticationChallenge *);
 

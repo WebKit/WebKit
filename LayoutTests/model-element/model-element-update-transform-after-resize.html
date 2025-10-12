@@ -1,0 +1,68 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> update transform after resize</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<script src="resources/model-utils.js"></script>
+<script src="../resources/js-test-pre.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const model1 = document.createElement("model");
+    model1.setAttribute("stagemode", "none");
+    model1.setAttribute("width", "300px");
+    model1.setAttribute("height", "1px");
+    document.body.appendChild(model1);
+    model1.appendChild(makeSource("resources/flat-rectangle.usdz"));
+    
+    const model2 = document.createElement("model");
+    model2.setAttribute("stagemode", "none");
+    model2.setAttribute("width", "300px");
+    model2.setAttribute("height", "300px");
+    document.body.appendChild(model2);
+    model2.appendChild(makeSource("resources/flat-rectangle.usdz"));
+
+    await model1.ready;
+    await model2.ready;
+
+    assert_3d_matrix_not_equals(model1.entityTransform, model2.entityTransform);
+    let originalTransformForModel1 = model1.entityTransform;
+
+    model1.setAttribute("height", "300px");
+    await sleepForSeconds(0.1);
+    assert_3d_matrix_not_equals(model1.entityTransform, model2.entityTransform);
+    assert_3d_matrix_approx_equals(model1.entityTransform, originalTransformForModel1);
+}, `<model> should not update entity transform after resize if stagemode=none`);
+
+promise_test(async t => {
+    const model1 = document.createElement("model");
+    model1.setAttribute("stagemode", "orbit");
+    model1.setAttribute("width", "300px");
+    model1.setAttribute("height", "1px");
+    document.body.appendChild(model1);
+    model1.appendChild(makeSource("resources/flat-rectangle.usdz"));
+    
+    const model2 = document.createElement("model");
+    model2.setAttribute("stagemode", "orbit");
+    model2.setAttribute("width", "300px");
+    model2.setAttribute("height", "300px");
+    document.body.appendChild(model2);
+    model2.appendChild(makeSource("resources/flat-rectangle.usdz"));
+
+    await model1.ready;
+    await model2.ready;
+
+    assert_3d_matrix_not_equals(model1.entityTransform, model2.entityTransform);
+    let originalTransformForModel1 = model1.entityTransform;
+
+    model1.setAttribute("height", "300px");
+    await sleepForSeconds(0.1);
+    assert_3d_matrix_approx_equals(model1.entityTransform, model2.entityTransform);
+    assert_3d_matrix_not_equals(model1.entityTransform, originalTransformForModel1);
+}, `<model> should update entity transform after resize if stagemode=orbit`);
+
+</script>
+</body>

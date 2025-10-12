@@ -11,7 +11,6 @@
 #ifndef RTC_BASE_BORINGSSL_CERTIFICATE_H_
 #define RTC_BASE_BORINGSSL_CERTIFICATE_H_
 
-#include <openssl/base.h>
 #include <openssl/ossl_typ.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -21,12 +20,12 @@
 
 #include "absl/strings/string_view.h"
 #include "rtc_base/buffer.h"
+#include "rtc_base/openssl.h"
+#include "rtc_base/openssl_key_pair.h"
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_identity.h"
 
-namespace rtc {
-
-class OpenSSLKeyPair;
+namespace webrtc {
 
 // BoringSSLCertificate encapsulates a BoringSSL CRYPTO_BUFFER object holding a
 // certificate, which is also reference counted inside the BoringSSL library.
@@ -58,16 +57,7 @@ class BoringSSLCertificate final : public SSLCertificate {
 
   // Compute the digest of the certificate given `algorithm`.
   bool ComputeDigest(absl::string_view algorithm,
-                     unsigned char* digest,
-                     size_t size,
-                     size_t* length) const override;
-
-  // Compute the digest of a certificate as a CRYPTO_BUFFER.
-  static bool ComputeDigest(const CRYPTO_BUFFER* cert_buffer,
-                            absl::string_view algorithm,
-                            unsigned char* digest,
-                            size_t size,
-                            size_t* length);
+                     Buffer& digest) const override;
 
   bool GetSignatureDigestAlgorithm(std::string* algorithm) const override;
 
@@ -78,6 +68,7 @@ class BoringSSLCertificate final : public SSLCertificate {
   bssl::UniquePtr<CRYPTO_BUFFER> cert_buffer_;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_BORINGSSL_CERTIFICATE_H_

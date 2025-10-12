@@ -13,11 +13,11 @@
 
 #include <openssl/ossl_typ.h>
 
-#include <string>
+#include <cstdint>
 
 #include "absl/strings/string_view.h"
 
-namespace rtc {
+namespace webrtc {
 // The openssl namespace holds static helper methods. All methods related
 // to OpenSSL that are commonly used and don't require global state should be
 // placed here.
@@ -55,6 +55,7 @@ CRYPTO_BUFFER_POOL* GetBufferPool();
 #endif
 
 }  // namespace openssl
-}  // namespace rtc
+}  // namespace webrtc
+
 
 #endif  // RTC_BASE_OPENSSL_UTILITY_H_

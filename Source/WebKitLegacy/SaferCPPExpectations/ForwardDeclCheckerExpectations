@@ -4,5 +4,6 @@ ios/WebCoreSupport/PopupMenuIOS.h
 mac/DOM/DOMAbstractView.mm
 mac/DOM/DOMObject.mm
 mac/WebCoreSupport/PopupMenuMac.h
-mac/WebCoreSupport/WebChromeClient.mm
-mac/WebView/WebView.mm
+[ Mac ] mac/WebCoreSupport/WebChromeClient.mm
+[ Mac ] mac/WebView/WebView.mm
+[ iOS ] ios/WebCoreSupport/WebChromeClientIOS.mm

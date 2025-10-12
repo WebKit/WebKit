@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2020 Apple Inc. All rights reserved.
+* Copyright (C) 2020-2025 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -59,7 +59,7 @@ void TextTrackPrivateRemote::setMode(TextTrackMode mode)
     if (mode == InbandTextTrackPrivate::mode())
         return;
 
-    gpuProcessConnection->protectedConnection()->send(Messages::RemoteMediaPlayerProxy::TextTrackSetMode(m_id, mode), m_playerIdentifier);
+    gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::TextTrackSetMode(m_id, mode), m_playerIdentifier);
     InbandTextTrackPrivate::setMode(mode);
 }
 

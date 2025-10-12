@@ -24,6 +24,8 @@
           },
           () => {
               var damage = latestFrameDamage();
+              // In case of accelerated canvas, the layer with contents is being created in a lazy fashion,
+              // and therefore during the rendering of the first canvas frame, the whole layer is damaged.
               assertRectsEq(damage.rects, [[0, 0, Math.min(window.innerWidth, 2000), Math.min(window.innerHeight, 2000)]]);
           },
           () => {
@@ -32,7 +34,15 @@
           },
           () => {
               var damage = latestFrameDamage();
-              assertRectsEq(damage.rects, [[0, 0, Math.min(window.innerWidth, 2000), Math.min(window.innerHeight, 2000)]]);
+              assertRectsEq(damage.rects, [[4, 4, 7, 7]]);
+          },
+          () => {
+              ctx.fillStyle = "green";
+              ctx.fillRect(10, 10, 5, 5);
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertRectsEq(damage.rects, [[9, 9, 7, 7]]);
           },
       ], 0);
     </script>

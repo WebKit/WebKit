@@ -59,13 +59,13 @@ enum class ImageType {
 static ImageType cocoaTypeToImageType(const String& cocoaType)
 {
 #if PLATFORM(MAC)
-    if (cocoaType == String(legacyTIFFPasteboardType()))
+    if (cocoaType == String(legacyTIFFPasteboardTypeSingleton()))
         return ImageType::TIFF;
 #endif
     if (cocoaType == String(UTTypeTIFF.identifier))
         return ImageType::TIFF;
 #if PLATFORM(MAC)
-    if (cocoaType == String(legacyPNGPasteboardType())) // NSPNGPboardType
+    if (cocoaType == String(legacyPNGPasteboardTypeSingleton())) // NSPNGPboardType
         return ImageType::PNG;
 #endif
     if (cocoaType == String(UTTypePNG.identifier))
@@ -79,7 +79,7 @@ static ImageType cocoaTypeToImageType(const String& cocoaType)
 }
 
 // String literals returned by this function must be defined exactly once
-// since read(PasteboardFileReader&) uses UncheckedKeyHashMap<const char*> to check uniqueness.
+// since read(PasteboardFileReader&) uses HashMap<const char*> to check uniqueness.
 static ASCIILiteral imageTypeToMIMEType(ImageType type)
 {
     switch (type) {
@@ -159,7 +159,7 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
 
         auto indexOfURL = cocoaTypes.findIf([](auto& cocoaType) {
 #if PLATFORM(MAC)
-            if (cocoaType == String(legacyURLPasteboardType()))
+            if (cocoaType == String(legacyURLPasteboardTypeSingleton()))
                 return true;
 #endif
             return cocoaType == String(UTTypeURL.identifier);

@@ -23,10 +23,10 @@
 
 #pragma once
 
-#include "ContainerNode.h"
-#include "NodeInlines.h"
-#include "RenderElement.h"
-#include "TreeScopeInlines.h"
+#include <WebCore/ContainerNode.h>
+#include <WebCore/NodeInlines.h>
+#include <WebCore/RenderElement.h>
+#include <WebCore/TreeScopeInlines.h>
 
 namespace WebCore {
 

@@ -965,8 +965,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
         data = data_end;
       }
     } else {
-      memcpy(&xd->pre, yv12_fb_new, sizeof(YV12_BUFFER_CONFIG));
-      memcpy(&xd->dst, yv12_fb_new, sizeof(YV12_BUFFER_CONFIG));
+      xd->pre = *yv12_fb_new;
+      xd->dst = *yv12_fb_new;
     }
   }
   if ((!pbi->decoded_key_frame && pc->frame_type != KEY_FRAME)) {
@@ -1156,7 +1156,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   if (pbi->ec_active && xd->corrupted) pc->refresh_entropy_probs = 0;
 #endif
   if (pc->refresh_entropy_probs == 0) {
-    memcpy(&pc->lfc, &pc->fc, sizeof(pc->fc));
+    pc->lfc = pc->fc;
   }
 
   pc->refresh_last_frame = pc->frame_type == KEY_FRAME || vp8_read_bit(bc);
@@ -1245,7 +1245,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
    * \n",bc->pos+pbi->bc2.pos); */
 
   if (pc->refresh_entropy_probs == 0) {
-    memcpy(&pc->fc, &pc->lfc, sizeof(pc->fc));
+    pc->fc = pc->lfc;
     pbi->independent_partitions = prev_independent_partitions;
   }
 

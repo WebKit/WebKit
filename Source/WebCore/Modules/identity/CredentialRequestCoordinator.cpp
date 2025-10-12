@@ -33,8 +33,7 @@
 #include "DigitalCredential.h"
 #include "DigitalCredentialsRequestData.h"
 #include "DigitalCredentialsResponseData.h"
-#include "Document.h"
-#include "DocumentInlines.h"
+#include "DocumentSecurityOrigin.h"
 #include "ExceptionData.h"
 #include "ExceptionOr.h"
 #include "JSDigitalCredential.h"
@@ -175,7 +174,7 @@ void CredentialRequestCoordinator::presentPicker(const Document& document, Crede
 
     setState(PickerState::Presenting);
     setCurrentPromise(WTFMove(promise));
-    observeContext(document.scriptExecutionContext());
+    observeContext(document.protectedScriptExecutionContext().get());
 
     auto validatedCredentialRequests = validatedRequestsOrException.releaseReturnValue();
     DigitalCredentialsRequestData requestData {

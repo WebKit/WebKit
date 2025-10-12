@@ -35,13 +35,13 @@ const double kPsnrThreshold[][5] = {
   { 28.4, 31.0, 31.0, 31.0, 31.0 }, { 27.5, 30.0, 30.0, 30.0, 30.0 },
 };
 
-typedef struct {
+struct TestVideoParam {
   const char *filename;
   unsigned int input_bit_depth;
   vpx_img_fmt fmt;
   vpx_bit_depth_t bit_depth;
   unsigned int profile;
-} TestVideoParam;
+};
 
 const TestVideoParam kTestVectors[] = {
   { "park_joy_90p_8_420.y4m", 8, VPX_IMG_FMT_I420, VPX_BITS_8, 0 },

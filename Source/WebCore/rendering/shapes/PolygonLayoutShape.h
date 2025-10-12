@@ -29,9 +29,9 @@
 
 #pragma once
 
-#include "FloatPolygon.h"
-#include "LayoutShape.h"
-#include "ShapeInterval.h"
+#include <WebCore/FloatPolygon.h>
+#include <WebCore/LayoutShape.h>
+#include <WebCore/ShapeInterval.h>
 
 namespace WebCore {
 

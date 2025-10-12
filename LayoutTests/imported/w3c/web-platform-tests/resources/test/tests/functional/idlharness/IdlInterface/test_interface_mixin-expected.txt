@@ -1,0 +1,12 @@
+Verify the series of sub-tests that are executed for "interface mixin" objects.
+
+
+PASS I1 includes M1: member names are unique
+PASS Partial interface mixin M2: original interface mixin defined
+PASS Partial interface mixin M2: member names are unique
+PASS I2 includes M2: member names are unique
+FAIL Partial interface mixin M3: original interface mixin defined assert_true: Original interface mixin should be defined expected true got false
+PASS Partial interface mixin M4: original interface mixin defined
+FAIL Partial interface mixin M4: member names are unique assert_true: member a4 is unique expected true got false
+FAIL I5 includes M5: member names are unique assert_true: member a5 is unique expected true got false
+

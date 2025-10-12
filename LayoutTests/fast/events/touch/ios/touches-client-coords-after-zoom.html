@@ -56,7 +56,7 @@ function doTest()
 {
     var button = document.getElementById('button');
     button.addEventListener('touchstart', function(event) {
-        logString('Received event ' + event.type + ' with client coords ' + event.touches[0].clientX + ', ' + event.touches[0].clientY);
+        logString('Received event ' + event.type + ' with client coords ' + Math.floor(event.touches[0].clientX) + ', ' + Math.floor(event.touches[0].clientY));
         gotTouch = true;
         checkForCompletion();
     });
@@ -81,7 +81,7 @@ window.addEventListener('load', doTest, false);
 
 <body>
     <button id="button"></button>
-    <p>These two events should have the same client coordinates:</p>
+    <p>The floored coordinates of this touchstart event should equal the coordinates of the click event:</p>
 <pre id="log"></pre>
 </body>
 

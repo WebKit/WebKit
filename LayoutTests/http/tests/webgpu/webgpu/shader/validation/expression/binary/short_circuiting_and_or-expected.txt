@@ -812,8 +812,7 @@ PASS :invalid_types:op="%7C%7C";type="sampler";control=false
 PASS :invalid_types:op="%7C%7C";type="struct";control=true
 PASS :invalid_types:op="%7C%7C";type="struct";control=false
 FAIL :invalid_rhs_const:op="%26%26";rhs="overflow";short_circuit=true assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Unexpected compilationInfo 'error' message.
+  - (in subcase: ) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
     8:22: error: value 2147483648 cannot be represented as 'i32'
 
     ---- shader ----
@@ -828,17 +827,14 @@ FAIL :invalid_rhs_const:op="%26%26";rhs="overflow";short_circuit=true assert_unr
     }
 
       at (elided: below max severity)
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     8:21: value 2147483648 cannot be represented as 'i32'
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :invalid_rhs_const:op="%26%26";rhs="overflow";short_circuit=false
 FAIL :invalid_rhs_const:op="%26%26";rhs="div_zero_i32";short_circuit=true assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Unexpected compilationInfo 'error' message.
+  - (in subcase: ) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
     8:25: error: invalid division by zero
 
     ---- shader ----
@@ -853,17 +849,14 @@ FAIL :invalid_rhs_const:op="%26%26";rhs="div_zero_i32";short_circuit=true assert
     }
 
       at (elided: below max severity)
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     8:24: invalid division by zero
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :invalid_rhs_const:op="%26%26";rhs="div_zero_i32";short_circuit=false
 FAIL :invalid_rhs_const:op="%26%26";rhs="div_zero_f32";short_circuit=true assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Unexpected compilationInfo 'error' message.
+  - (in subcase: ) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
     8:31: error: value Infinity cannot be represented as 'f32'
 
     ---- shader ----
@@ -878,17 +871,14 @@ FAIL :invalid_rhs_const:op="%26%26";rhs="div_zero_f32";short_circuit=true assert
     }
 
       at (elided: below max severity)
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     8:30: value Infinity cannot be represented as 'f32'
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :invalid_rhs_const:op="%26%26";rhs="div_zero_f32";short_circuit=false
 FAIL :invalid_rhs_const:op="%26%26";rhs="builtin";short_circuit=true assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Unexpected compilationInfo 'error' message.
+  - (in subcase: ) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
     8:22: error: value NaN cannot be represented as 'f32'
 
     ---- shader ----
@@ -903,17 +893,14 @@ FAIL :invalid_rhs_const:op="%26%26";rhs="builtin";short_circuit=true assert_unre
     }
 
       at (elided: below max severity)
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     8:21: value NaN cannot be represented as 'f32'
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :invalid_rhs_const:op="%26%26";rhs="builtin";short_circuit=false
 FAIL :invalid_rhs_const:op="%7C%7C";rhs="overflow";short_circuit=true assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Unexpected compilationInfo 'error' message.
+  - (in subcase: ) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
     8:21: error: value 2147483648 cannot be represented as 'i32'
 
     ---- shader ----
@@ -928,17 +915,14 @@ FAIL :invalid_rhs_const:op="%7C%7C";rhs="overflow";short_circuit=true assert_unr
     }
 
       at (elided: below max severity)
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     8:20: value 2147483648 cannot be represented as 'i32'
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :invalid_rhs_const:op="%7C%7C";rhs="overflow";short_circuit=false
 FAIL :invalid_rhs_const:op="%7C%7C";rhs="div_zero_i32";short_circuit=true assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Unexpected compilationInfo 'error' message.
+  - (in subcase: ) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
     8:24: error: invalid division by zero
 
     ---- shader ----
@@ -953,17 +937,14 @@ FAIL :invalid_rhs_const:op="%7C%7C";rhs="div_zero_i32";short_circuit=true assert
     }
 
       at (elided: below max severity)
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     8:23: invalid division by zero
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :invalid_rhs_const:op="%7C%7C";rhs="div_zero_i32";short_circuit=false
 FAIL :invalid_rhs_const:op="%7C%7C";rhs="div_zero_f32";short_circuit=true assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Unexpected compilationInfo 'error' message.
+  - (in subcase: ) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
     8:30: error: value Infinity cannot be represented as 'f32'
 
     ---- shader ----
@@ -978,17 +959,14 @@ FAIL :invalid_rhs_const:op="%7C%7C";rhs="div_zero_f32";short_circuit=true assert
     }
 
       at (elided: below max severity)
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     8:29: value Infinity cannot be represented as 'f32'
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :invalid_rhs_const:op="%7C%7C";rhs="div_zero_f32";short_circuit=false
 FAIL :invalid_rhs_const:op="%7C%7C";rhs="builtin";short_circuit=true assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Unexpected compilationInfo 'error' message.
+  - (in subcase: ) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
     8:21: error: value NaN cannot be represented as 'f32'
 
     ---- shader ----
@@ -1003,250 +981,200 @@ FAIL :invalid_rhs_const:op="%7C%7C";rhs="builtin";short_circuit=true assert_unre
     }
 
       at (elided: below max severity)
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     8:20: value NaN cannot be represented as 'f32'
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :invalid_rhs_const:op="%7C%7C";rhs="builtin";short_circuit=false
 PASS :invalid_rhs_fn_override:op="%26%26";rhs="overflow";short_circuit=true
 FAIL :invalid_rhs_fn_override:op="%26%26";rhs="overflow";short_circuit=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:213:25
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :invalid_rhs_fn_override:op="%26%26";rhs="div_zero_i32";short_circuit=true
 FAIL :invalid_rhs_fn_override:op="%26%26";rhs="div_zero_i32";short_circuit=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:213:25
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :invalid_rhs_fn_override:op="%26%26";rhs="div_zero_f32";short_circuit=true
 FAIL :invalid_rhs_fn_override:op="%26%26";rhs="div_zero_f32";short_circuit=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:213:25
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :invalid_rhs_fn_override:op="%26%26";rhs="builtin";short_circuit=true
 FAIL :invalid_rhs_fn_override:op="%26%26";rhs="builtin";short_circuit=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:213:25
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :invalid_rhs_fn_override:op="%7C%7C";rhs="overflow";short_circuit=true
 FAIL :invalid_rhs_fn_override:op="%7C%7C";rhs="overflow";short_circuit=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:213:25
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :invalid_rhs_fn_override:op="%7C%7C";rhs="div_zero_i32";short_circuit=true
 FAIL :invalid_rhs_fn_override:op="%7C%7C";rhs="div_zero_i32";short_circuit=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:213:25
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :invalid_rhs_fn_override:op="%7C%7C";rhs="div_zero_f32";short_circuit=true
 FAIL :invalid_rhs_fn_override:op="%7C%7C";rhs="div_zero_f32";short_circuit=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:213:25
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :invalid_rhs_fn_override:op="%7C%7C";rhs="builtin";short_circuit=true
 FAIL :invalid_rhs_fn_override:op="%7C%7C";rhs="builtin";short_circuit=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:213:25
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :invalid_rhs_override:op="%26%26";rhs="overflow";short_circuit=true assert_unreached:
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :invalid_rhs_override:op="%26%26";rhs="overflow";short_circuit=false
 FAIL :invalid_rhs_override:op="%26%26";rhs="div_zero_i32";short_circuit=true assert_unreached:
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :invalid_rhs_override:op="%26%26";rhs="div_zero_i32";short_circuit=false
 FAIL :invalid_rhs_override:op="%26%26";rhs="div_zero_f32";short_circuit=true assert_unreached:
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :invalid_rhs_override:op="%26%26";rhs="div_zero_f32";short_circuit=false
 FAIL :invalid_rhs_override:op="%26%26";rhs="builtin";short_circuit=true assert_unreached:
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :invalid_rhs_override:op="%26%26";rhs="builtin";short_circuit=false
 FAIL :invalid_rhs_override:op="%7C%7C";rhs="overflow";short_circuit=true assert_unreached:
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :invalid_rhs_override:op="%7C%7C";rhs="overflow";short_circuit=false
 FAIL :invalid_rhs_override:op="%7C%7C";rhs="div_zero_i32";short_circuit=true assert_unreached:
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :invalid_rhs_override:op="%7C%7C";rhs="div_zero_i32";short_circuit=false
 FAIL :invalid_rhs_override:op="%7C%7C";rhs="div_zero_f32";short_circuit=true assert_unreached:
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :invalid_rhs_override:op="%7C%7C";rhs="div_zero_f32";short_circuit=false
 FAIL :invalid_rhs_override:op="%7C%7C";rhs="builtin";short_circuit=true assert_unreached:
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :invalid_rhs_override:op="%7C%7C";rhs="builtin";short_circuit=false
 PASS :nested_invalid_rhs_override:op_a="%26%26";op_b="%26%26";cond_a_val=false;cond_b_val=false
 PASS :nested_invalid_rhs_override:op_a="%26%26";op_b="%26%26";cond_a_val=false;cond_b_val=true
 PASS :nested_invalid_rhs_override:op_a="%26%26";op_b="%26%26";cond_a_val=true;cond_b_val=false
 FAIL :nested_invalid_rhs_override:op_a="%26%26";op_b="%26%26";cond_a_val=true;cond_b_val=true assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:287:25
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :nested_invalid_rhs_override:op_a="%26%26";op_b="%7C%7C";cond_a_val=false;cond_b_val=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:287:25
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :nested_invalid_rhs_override:op_a="%26%26";op_b="%7C%7C";cond_a_val=false;cond_b_val=true assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:287:25
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :nested_invalid_rhs_override:op_a="%26%26";op_b="%7C%7C";cond_a_val=true;cond_b_val=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:287:25
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :nested_invalid_rhs_override:op_a="%26%26";op_b="%7C%7C";cond_a_val=true;cond_b_val=true
 PASS :nested_invalid_rhs_override:op_a="%7C%7C";op_b="%26%26";cond_a_val=false;cond_b_val=false
 FAIL :nested_invalid_rhs_override:op_a="%7C%7C";op_b="%26%26";cond_a_val=false;cond_b_val=true assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:287:25
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :nested_invalid_rhs_override:op_a="%7C%7C";op_b="%26%26";cond_a_val=true;cond_b_val=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:287:25
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :nested_invalid_rhs_override:op_a="%7C%7C";op_b="%26%26";cond_a_val=true;cond_b_val=true assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:287:25
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :nested_invalid_rhs_override:op_a="%7C%7C";op_b="%7C%7C";cond_a_val=false;cond_b_val=false assert_unreached:
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1252:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:205:24
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.spec.js:287:25
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :nested_invalid_rhs_override:op_a="%7C%7C";op_b="%7C%7C";cond_a_val=false;cond_b_val=true
 PASS :nested_invalid_rhs_override:op_a="%7C%7C";op_b="%7C%7C";cond_a_val=true;cond_b_val=false
@@ -1267,32 +1195,24 @@ PASS :array_override:op="%26%26";a_val=0;b_val=0
 PASS :array_override:op="%26%26";a_val=0;b_val=1
 PASS :array_override:op="%26%26";a_val=1;b_val=0
 FAIL :array_override:op="%26%26";a_val=1;b_val=1 assert_unreached:
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :array_override:op="%7C%7C";a_val=0;b_val=0
 FAIL :array_override:op="%7C%7C";a_val=0;b_val=1 assert_unreached:
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 FAIL :array_override:op="%7C%7C";a_val=1;b_val=0 assert_unreached:
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 FAIL :array_override:op="%7C%7C";a_val=1;b_val=1 assert_unreached:
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 

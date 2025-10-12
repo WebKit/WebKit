@@ -31,10 +31,10 @@
 
 #pragma once
 
-#include "RenderBox.h"
-#include "RenderLayerModelObject.h"
-#include "SVGBoundingBoxComputation.h"
-#include "SVGRenderSupport.h"
+#include <WebCore/RenderBox.h>
+#include <WebCore/RenderLayerModelObject.h>
+#include <WebCore/SVGBoundingBoxComputation.h>
+#include <WebCore/SVGRenderSupport.h>
 
 namespace WebCore {
 
@@ -96,7 +96,7 @@ protected:
     void mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const final;
     LayoutRect outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap* = nullptr) const final;
     const RenderElement* pushMappingToContainer(const RenderLayerModelObject*, RenderGeometryMap&) const override;
-    LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
+    LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
 
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const override;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;

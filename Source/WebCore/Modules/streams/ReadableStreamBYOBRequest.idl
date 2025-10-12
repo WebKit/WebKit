@@ -27,14 +27,12 @@
  */
 
 [
+    EnabledBySetting=ReadableByteStreamAPIEnabled,
     Exposed=*,
-    JSBuiltin,
-    PrivateIdentifier
+    JSCustomMarkFunction
 ] interface ReadableStreamBYOBRequest {
-    constructor(ReadableByteStreamController controller, TypedArray view);
+    readonly attribute ArrayBufferView? view;
 
-    [NotEnumerable] undefined respond(optional any bytesWritten);
-    [NotEnumerable] undefined respondWithNewView(optional any view);
-
-    [NotEnumerable] readonly attribute TypedArray view;
+    [CallWith=CurrentGlobalObject] undefined respond([EnforceRange] unsigned long long bytesWritten);
+    [CallWith=CurrentGlobalObject] undefined respondWithNewView(ArrayBufferView view);
 };

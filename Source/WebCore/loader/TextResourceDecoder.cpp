@@ -41,8 +41,8 @@ namespace WebCore {
 using namespace HTMLNames;
 
 // You might think we should put these find functions elsewhere, perhaps with the
-// similar functions that operate on UChar, but arguably only the decoder has
-// a reason to process strings of char rather than UChar.
+// similar functions that operate on char16_t, but arguably only the decoder has
+// a reason to process strings of char rather than char16_t.
 
 static size_t find(std::span<const uint8_t> subject, std::span<const uint8_t> target)
 {
@@ -64,7 +64,7 @@ static size_t find(std::span<const uint8_t> subject, std::span<const uint8_t> ta
     return notFound;
 }
 
-static PAL::TextEncoding findTextEncoding(std::span<const LChar> encodingName)
+static PAL::TextEncoding findTextEncoding(std::span<const Latin1Character> encodingName)
 {
     return StringView { encodingName };
 }
@@ -284,16 +284,22 @@ const PAL::TextEncoding& TextResourceDecoder::defaultEncoding(ContentType conten
     return specifiedDefaultEncoding;
 }
 
-inline TextResourceDecoder::TextResourceDecoder(const String& mimeType, const PAL::TextEncoding& specifiedDefaultEncoding, bool usesEncodingDetector)
-    : m_contentType(determineContentType(mimeType))
-    , m_encoding(defaultEncoding(m_contentType, specifiedDefaultEncoding))
+inline TextResourceDecoder::TextResourceDecoder(ContentType contentType, const PAL::TextEncoding& encoding, bool usesEncodingDetector)
+    : m_contentType(contentType)
+    , m_encoding(encoding)
     , m_usesEncodingDetector(usesEncodingDetector)
 {
 }
 
-Ref<TextResourceDecoder> TextResourceDecoder::create(const String& mimeType, const PAL::TextEncoding& defaultEncoding, bool usesEncodingDetector)
+Ref<TextResourceDecoder> TextResourceDecoder::create(const String& mimeType, const PAL::TextEncoding& encoding, bool usesEncodingDetector)
 {
-    return adoptRef(*new TextResourceDecoder(mimeType, defaultEncoding, usesEncodingDetector));
+    auto contentType = determineContentType(mimeType);
+    return adoptRef(*new TextResourceDecoder(contentType, defaultEncoding(contentType, encoding), usesEncodingDetector));
+}
+
+Ref<TextResourceDecoder> TextResourceDecoder::create(ContentType contentType, const PAL::TextEncoding& encoding, bool usesEncodingDetector)
+{
+    return adoptRef(*new TextResourceDecoder(contentType, encoding, usesEncodingDetector));
 }
 
 TextResourceDecoder::~TextResourceDecoder() = default;
@@ -339,7 +345,7 @@ bool TextResourceDecoder::hasEqualEncodingForCharset(const String& charset) cons
 // Returns the position of the encoding string.
 static size_t findXMLEncoding(std::span<const uint8_t> string, size_t& encodingLength)
 {
-    size_t position = find(string, "encoding"_span8);
+    size_t position = find(string, byteCast<uint8_t>("encoding"_span));
     if (position == notFound)
         return notFound;
     position += 8;
@@ -436,7 +442,7 @@ bool TextResourceDecoder::checkForCSSCharset(std::span<const uint8_t> data, bool
 
     data = m_buffer.span();
 
-    if (skipCharactersExactly(data, "@charset \""_span8)) {
+    if (skipCharactersExactly(data, byteCast<uint8_t>("@charset \""_span))) {
         size_t index = 0;
         while (index < data.size() && data[index] != '"')
             ++index;
@@ -444,8 +450,8 @@ bool TextResourceDecoder::checkForCSSCharset(std::span<const uint8_t> data, bool
         if (index == data.size())
             return false;
 
-        auto encodingName = data.first(index);
-        
+        auto encodingName = byteCast<Latin1Character>(data.first(index));
+
         ++index;
         if (index == data.size())
             return false;
@@ -486,9 +492,9 @@ bool TextResourceDecoder::checkForHeadCharset(std::span<const uint8_t> data, boo
 
     // Handle XML declaration, which can have encoding in it. This encoding is honored even for HTML documents.
     // It is an error for an XML declaration not to be at the start of an XML document, and it is ignored in HTML documents in such case.
-    static constexpr std::array<uint8_t, 5> xmlPrefix { '<', '?', 'x', 'm', 'l' };
-    static constexpr std::array<uint8_t, 6> xmlPrefixLittleEndian { '<', 0, '?', 0, 'x', 0 };
-    static constexpr std::array<uint8_t, 6> xmlPrefixBigEndian { 0, '<', 0, '?', 0, 'x' };
+    static constexpr std::array<Latin1Character, 5> xmlPrefix { '<', '?', 'x', 'm', 'l' };
+    static constexpr std::array<Latin1Character, 6> xmlPrefixLittleEndian { '<', 0, '?', 0, 'x', 0 };
+    static constexpr std::array<Latin1Character, 6> xmlPrefixBigEndian { 0, '<', 0, '?', 0, 'x' };
     if (spanHasPrefix(bufferData, std::span { xmlPrefix })) {
         auto xmlDeclarationEnd = bufferData;
         skipUntil(xmlDeclarationEnd, '>');
@@ -498,7 +504,7 @@ bool TextResourceDecoder::checkForHeadCharset(std::span<const uint8_t> data, boo
         size_t length = 0;
         size_t position = findXMLEncoding(bufferData.first(xmlDeclarationEnd.data() - bufferData.data()), length);
         if (position != notFound)
-            setEncoding(findTextEncoding(bufferData.subspan(position, length)), EncodingFromXMLHeader);
+            setEncoding(findTextEncoding(byteCast<Latin1Character>(bufferData.subspan(position, length))), EncodingFromXMLHeader);
         // continue looking for a charset - it may be specified in an HTTP-Equiv meta
     } else if (spanHasPrefix(bufferData, std::span { xmlPrefixLittleEndian })) {
         setEncoding(PAL::UTF16LittleEndianEncoding(), AutoDetectedEncoding);

@@ -12,15 +12,18 @@
 #include "modules/desktop_capture/linux/wayland/test/test_screencast_stream_provider.h"
 
 #include <fcntl.h>
+#include <pipewire/pipewire.h>
+#include <spa/param/video/format-utils.h>
 #include <sys/mman.h>
-#include <sys/types.h>
 #include <unistd.h>
 
-#include <string>
-#include <utility>
+#include <cstdint>
 #include <vector>
 
+#include "modules/desktop_capture/linux/wayland/screencast_stream_utils.h"
+#include "modules/desktop_capture/rgba_color.h"
 #include "modules/portal/pipewire_utils.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {

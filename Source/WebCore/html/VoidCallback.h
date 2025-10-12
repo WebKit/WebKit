@@ -25,9 +25,8 @@
 
 #pragma once
 
-#include "ActiveDOMCallback.h"
-#include "CallbackResult.h"
-#include "ContextDestructionObserverInlines.h"
+#include <WebCore/ActiveDOMCallback.h>
+#include <WebCore/CallbackResult.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

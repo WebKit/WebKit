@@ -18,8 +18,7 @@
 #include <utility>
 
 #include "rtc_base/containers/flat_map.h"
-#include "rtc_base/gunit.h"
-#include "test/gmock.h"
+#include "test/gtest.h"
 
 // This is a copy of
 // https://source.chromium.org/chromium/chromium/src/+/main:base/types/strong_alias_unittest.cc
@@ -282,7 +281,7 @@ TEST(StrongAliasTest, CanWrapComplexStructures) {
 
 TYPED_TEST(StrongAliasTest, CanBeKeysInFlatMap) {
   using FooAlias = StrongAlias<class FooTag, TypeParam>;
-  webrtc::flat_map<FooAlias, std::string> map;
+  flat_map<FooAlias, std::string> map;
 
   FooAlias k1(GetExampleValue<TypeParam>(0));
   FooAlias k2(GetExampleValue<TypeParam>(1));
@@ -313,8 +312,8 @@ TYPED_TEST(StrongAliasTest, CanDifferentiateOverloads) {
   using BarAlias = StrongAlias<class BarTag, TypeParam>;
   class Scope {
    public:
-    static std::string Overload(FooAlias) { return "FooAlias"; }
-    static std::string Overload(BarAlias) { return "BarAlias"; }
+    static std::string Overload(FooAlias /*unused*/) { return "FooAlias"; }
+    static std::string Overload(BarAlias /*unused*/) { return "BarAlias"; }
   };
   EXPECT_EQ("FooAlias", Scope::Overload(FooAlias()));
   EXPECT_EQ("BarAlias", Scope::Overload(BarAlias()));

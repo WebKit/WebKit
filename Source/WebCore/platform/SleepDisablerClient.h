@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "PageIdentifier.h"
-#include "SleepDisablerIdentifier.h"
+#include <WebCore/PageIdentifier.h>
+#include <WebCore/SleepDisablerIdentifier.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

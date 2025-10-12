@@ -23,14 +23,16 @@
 #include "config.h"
 #include "SVGGeometryElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "DOMPoint.h"
-#include "DocumentInlines.h"
 #include "LegacyRenderSVGResource.h"
 #include "LegacyRenderSVGShape.h"
+#include "NodeDocument.h"
 #include "RenderSVGShape.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGPathUtilities.h"
 #include "SVGPoint.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

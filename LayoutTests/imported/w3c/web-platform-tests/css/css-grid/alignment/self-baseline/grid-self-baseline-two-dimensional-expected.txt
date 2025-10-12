@@ -1,0 +1,303 @@
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+PASS .grid 5
+PASS .grid 6
+PASS .grid 7
+FAIL .grid 8 assert_equals:
+<div class="grid fit-content itemsBaseline verticalRL">
+        <span class="firstRowFirstColumn verticalLR font20" data-offset-x="315" data-offset-y="73">A</span>
+        <span class="firstRowSecondColumn horizontalTB font30" data-offset-x="311" data-offset-y="162">A</span>
+        <span class="firstRowThirdColumn verticalLR font40 extraTopPadding" data-offset-x="311" data-offset-y="235">A</span>
+        <span class="firstRowFourthColumn horizontalTB font60 extraRightPadding" data-offset-x="311" data-offset-y="336">A</span>
+        <span class="secondRowFirstColumn verticalLR font30" data-offset-x="213" data-offset-y="63">A</span>
+        <span class="secondRowSecondColumn horizontalTB font40 extraTopPadding" data-offset-x="213" data-offset-y="130">A</span>
+        <span class="secondRowThirdColumn verticalLR font20" data-offset-x="215" data-offset-y="279">A</span>
+        <span class="secondRowFourthColumn horizontalTB font60" data-offset-x="213" data-offset-y="336">A</span>
+        <span class="thirdRowFirstColumn verticalLR font60 extraBottomPadding" data-offset-x="115" data-offset-y="10">A</span>
+        <span class="thirdRowSecondColumn horizontalTB font20" data-offset-x="145" data-offset-y="170">A</span>
+        <span class="thirdRowThirdColumn verticalLR font40" data-offset-x="119" data-offset-y="259">A</span>
+        <span class="thirdRowFourthColumn horizontalTB font30" data-offset-x="145" data-offset-y="360">A</span>
+        <span class="fourthRowFirstColumn verticalLR font40 extraTopPadding" data-offset-x="17" data-offset-y="29">A</span>
+        <span class="fourthRowSecondColumn horizontalTB font60" data-offset-x="17" data-offset-y="138">A</span>
+        <span class="fourthRowThirdColumn verticalLR font30 extraBottomPadding" data-offset-x="19" data-offset-y="246">A</span>
+        <span class="fourthRowFourthColumn horizontalTB font20" data-offset-x="17" data-offset-y="368">A</span>
+    </div>
+offsetLeft expected 315 but got 327
+FAIL .grid 9 assert_equals:
+<div class="grid fit-content itemsBaseline verticalRL">
+        <span class="firstRowFirstColumn verticalLR font20" data-offset-x="315" data-offset-y="50">A</span>
+        <span class="firstRowSecondColumn horizontalTB font30 extraBottomPadding" data-offset-x="311" data-offset-y="202">A</span>
+        <span class="firstRowThirdColumn verticalLR font40" data-offset-x="311" data-offset-y="292">A</span>
+        <span class="firstRowFourthColumn horizontalTB font60" data-offset-x="311" data-offset-y="440">A</span>
+        <span class="secondRowFirstColumn horizontalTB font30 extraBottomPadding" data-offset-x="243" data-offset-y="61">A</span>
+        <span class="secondRowSecondColumn verticalLR font40" data-offset-x="217" data-offset-y="171">A</span>
+        <span class="secondRowThirdColumn horizontalTB font20" data-offset-x="243" data-offset-y="331">A</span>
+        <span class="secondRowFourthColumn verticalLR font60" data-offset-x="213" data-offset-y="413">A</span>
+        <span class="thirdRowFirstColumn verticalLR font60" data-offset-x="115" data-offset-y="10">A</span>
+        <span class="thirdRowSecondColumn horizontalTB font20 extraLeftPadding" data-offset-x="133" data-offset-y="210">A</span>
+        <span class="thirdRowThirdColumn verticalLR font40" data-offset-x="119" data-offset-y="292">A</span>
+        <span class="thirdRowFourthColumn horizontalTB font30" data-offset-x="133" data-offset-y="464">A</span>
+        <span class="fourthRowFirstColumn horizontalTB font40" data-offset-x="37" data-offset-y="53">A</span>
+        <span class="fourthRowSecondColumn verticalLR font60" data-offset-x="17" data-offset-y="151">A</span>
+        <span class="fourthRowThirdColumn horizontalTB font30 extraBottomPadding" data-offset-x="37" data-offset-y="323">A</span>
+        <span class="fourthRowFourthColumn verticalLR font20" data-offset-x="25" data-offset-y="453">A</span>
+    </div>
+offsetLeft expected 315 but got 327
+PASS .grid 10
+PASS .grid 11
+PASS .grid 12
+This test checks that baseline is applied correctly on a grid aling both axis and different writing-modes when using symbolic fonts, which will use middle-baseline.
+
+X
+X
+X
+X
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A

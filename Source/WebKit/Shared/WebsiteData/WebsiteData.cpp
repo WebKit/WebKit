@@ -44,7 +44,7 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
         return WebsiteDataProcessType::Network;
     case WebsiteDataType::MemoryCache:
         return WebsiteDataProcessType::Web;
-    case WebsiteDataType::OfflineWebApplicationCache:
+    case WebsiteDataType::LegacyOfflineWebApplicationCachePlaceholder:
         return WebsiteDataProcessType::UI;
     case WebsiteDataType::SessionStorage:
         return WebsiteDataProcessType::Network;

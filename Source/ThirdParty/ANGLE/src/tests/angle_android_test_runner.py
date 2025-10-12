@@ -52,6 +52,7 @@ def AddCommonParserArgs(parser):
             'angle_deqp_khr_gles31_tests',
             'angle_deqp_khr_gles32_tests',
             'angle_deqp_khr_gles3_tests',
+            'angle_deqp_khr_glesext_tests',
             'angle_deqp_khr_noctx_gles2_tests',
             'angle_deqp_khr_noctx_gles32_tests',
             'angle_deqp_khr_single_gles32_tests',

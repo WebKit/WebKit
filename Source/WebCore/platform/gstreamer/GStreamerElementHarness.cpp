@@ -659,7 +659,7 @@ String MermaidBuilder::describeCaps(const GRefPtr<GstCaps>& caps)
     for (unsigned i = 0; i < capsSize; i++) {
         auto* features = gst_caps_get_features(caps.get(), i);
         const auto* structure = gst_caps_get_structure(caps.get(), i);
-        builder.append(gstStructureGetName(structure), "<br/>"_s);
+        builder.append(gstStructureGetName(structure).toString(), "<br/>"_s);
         if (features && (gst_caps_features_is_any(features) || !gst_caps_features_is_equal(features, GST_CAPS_FEATURES_MEMORY_SYSTEM_MEMORY))) {
             GUniquePtr<char> serializedFeature(gst_caps_features_to_string(features));
             builder.append('(', unsafeSpan(serializedFeature.get()), ')');
@@ -683,7 +683,7 @@ String MermaidBuilder::describeCaps(const GRefPtr<GstCaps>& caps)
 
 std::span<const uint8_t> MermaidBuilder::span() const
 {
-    return m_stringBuilder.span<uint8_t>();
+    return byteCast<uint8_t>(m_stringBuilder.span8());
 }
 #endif
 

@@ -27,7 +27,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "CachedResource.h"
+#include <WebCore/CachedResource.h>
 #include <wtf/OptionSet.h>
 #include <wtf/URL.h>
 
@@ -102,6 +102,7 @@ std::optional<OptionSet<LoadContext>> readLoadContext(StringView);
 std::optional<RequestMethod> readRequestMethod(StringView);
 
 ASCIILiteral resourceTypeToString(OptionSet<ResourceType>);
+ASCIILiteral resourceTypeToStringForMatchedRule(OptionSet<ResourceType>);
 
 struct ResourceLoadInfo {
     URL resourceURL;

@@ -54,12 +54,12 @@ private:
     void loadVerticalGlyphSubstitutions(const FontPlatformData&);
     bool hasVORG() const { return !m_vertOriginY.isEmpty(); }
 
-    UncheckedKeyHashMap<Glyph, Glyph> m_verticalGlyphMap;
+    HashMap<Glyph, Glyph> m_verticalGlyphMap;
     Vector<uint16_t> m_advanceWidths;
     Vector<uint16_t> m_advanceHeights;
     Vector<int16_t> m_topSideBearings;
     int16_t m_defaultVertOriginY { 0 };
-    UncheckedKeyHashMap<Glyph, int16_t> m_vertOriginY;
+    HashMap<Glyph, int16_t> m_vertOriginY;
 };
 
 } // namespace WebCore

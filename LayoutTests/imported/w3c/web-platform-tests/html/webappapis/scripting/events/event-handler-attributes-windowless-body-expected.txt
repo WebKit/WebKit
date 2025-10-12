@@ -31,8 +31,12 @@ PASS Return null when getting the online event handler of a windowless body
 PASS Ignore setting of online window event handlers on windowless body
 PASS Return null when getting the pagehide event handler of a windowless body
 PASS Ignore setting of pagehide window event handlers on windowless body
+PASS Return null when getting the pagereveal event handler of a windowless body
+PASS Ignore setting of pagereveal window event handlers on windowless body
 PASS Return null when getting the pageshow event handler of a windowless body
 PASS Ignore setting of pageshow window event handlers on windowless body
+PASS Return null when getting the pageswap event handler of a windowless body
+PASS Ignore setting of pageswap window event handlers on windowless body
 PASS Return null when getting the popstate event handler of a windowless body
 PASS Ignore setting of popstate window event handlers on windowless body
 PASS Return null when getting the rejectionhandled event handler of a windowless body
@@ -46,6 +50,7 @@ PASS Ignore setting of unload window event handlers on windowless body
 PASS abort is unaffected on a windowless body
 PASS auxclick is unaffected on a windowless body
 PASS beforeinput is unaffected on a windowless body
+PASS beforematch is unaffected on a windowless body
 PASS beforetoggle is unaffected on a windowless body
 PASS cancel is unaffected on a windowless body
 PASS canplay is unaffected on a windowless body
@@ -57,7 +62,9 @@ PASS command is unaffected on a windowless body
 FAIL contextlost is unaffected on a windowless body assert_equals: expected (object) null but got (undefined) undefined
 PASS contextmenu is unaffected on a windowless body
 FAIL contextrestored is unaffected on a windowless body assert_equals: expected (object) null but got (undefined) undefined
+PASS copy is unaffected on a windowless body
 PASS cuechange is unaffected on a windowless body
+PASS cut is unaffected on a windowless body
 PASS dblclick is unaffected on a windowless body
 PASS drag is unaffected on a windowless body
 PASS dragend is unaffected on a windowless body
@@ -85,12 +92,14 @@ PASS mousemove is unaffected on a windowless body
 PASS mouseout is unaffected on a windowless body
 PASS mouseover is unaffected on a windowless body
 PASS mouseup is unaffected on a windowless body
+PASS paste is unaffected on a windowless body
 PASS pause is unaffected on a windowless body
 PASS play is unaffected on a windowless body
 PASS playing is unaffected on a windowless body
 PASS progress is unaffected on a windowless body
 PASS ratechange is unaffected on a windowless body
 PASS reset is unaffected on a windowless body
+PASS scrollend is unaffected on a windowless body
 PASS securitypolicyviolation is unaffected on a windowless body
 PASS seeked is unaffected on a windowless body
 PASS seeking is unaffected on a windowless body
@@ -140,8 +149,12 @@ PASS Return null when getting the online event handler of a windowless frameset
 PASS Ignore setting of online window event handlers on windowless frameset
 PASS Return null when getting the pagehide event handler of a windowless frameset
 PASS Ignore setting of pagehide window event handlers on windowless frameset
+PASS Return null when getting the pagereveal event handler of a windowless frameset
+PASS Ignore setting of pagereveal window event handlers on windowless frameset
 PASS Return null when getting the pageshow event handler of a windowless frameset
 PASS Ignore setting of pageshow window event handlers on windowless frameset
+PASS Return null when getting the pageswap event handler of a windowless frameset
+PASS Ignore setting of pageswap window event handlers on windowless frameset
 PASS Return null when getting the popstate event handler of a windowless frameset
 PASS Ignore setting of popstate window event handlers on windowless frameset
 PASS Return null when getting the rejectionhandled event handler of a windowless frameset
@@ -155,6 +168,7 @@ PASS Ignore setting of unload window event handlers on windowless frameset
 PASS abort is unaffected on a windowless frameset
 PASS auxclick is unaffected on a windowless frameset
 PASS beforeinput is unaffected on a windowless frameset
+PASS beforematch is unaffected on a windowless frameset
 PASS beforetoggle is unaffected on a windowless frameset
 PASS cancel is unaffected on a windowless frameset
 PASS canplay is unaffected on a windowless frameset
@@ -166,7 +180,9 @@ PASS command is unaffected on a windowless frameset
 FAIL contextlost is unaffected on a windowless frameset assert_equals: expected (object) null but got (undefined) undefined
 PASS contextmenu is unaffected on a windowless frameset
 FAIL contextrestored is unaffected on a windowless frameset assert_equals: expected (object) null but got (undefined) undefined
+PASS copy is unaffected on a windowless frameset
 PASS cuechange is unaffected on a windowless frameset
+PASS cut is unaffected on a windowless frameset
 PASS dblclick is unaffected on a windowless frameset
 PASS drag is unaffected on a windowless frameset
 PASS dragend is unaffected on a windowless frameset
@@ -194,12 +210,14 @@ PASS mousemove is unaffected on a windowless frameset
 PASS mouseout is unaffected on a windowless frameset
 PASS mouseover is unaffected on a windowless frameset
 PASS mouseup is unaffected on a windowless frameset
+PASS paste is unaffected on a windowless frameset
 PASS pause is unaffected on a windowless frameset
 PASS play is unaffected on a windowless frameset
 PASS playing is unaffected on a windowless frameset
 PASS progress is unaffected on a windowless frameset
 PASS ratechange is unaffected on a windowless frameset
 PASS reset is unaffected on a windowless frameset
+PASS scrollend is unaffected on a windowless frameset
 PASS securitypolicyviolation is unaffected on a windowless frameset
 PASS seeked is unaffected on a windowless frameset
 PASS seeking is unaffected on a windowless frameset

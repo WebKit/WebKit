@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PlatformGamepadWPE.h"
 
+#include "GamepadProviderWPE.h"
+
 #if ENABLE(GAMEPAD) && ENABLE(WPE_PLATFORM)
 #include <wpe/wpe-platform.h>
 

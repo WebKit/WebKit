@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error: assert_equals: expected "true_value" but got "if(style(--x: 3): true_value; else: false_value;)"
 
 FAIL CSS Values and Units Test: if() style() condition invalidation Error: assert_equals: expected "true_value" but got "if(style(--x: 3): true_value; else: false_value;)"
 

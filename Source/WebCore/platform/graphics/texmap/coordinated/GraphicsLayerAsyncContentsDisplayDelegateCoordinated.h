@@ -27,6 +27,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "GraphicsLayerContentsDisplayDelegate.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -46,11 +47,11 @@ private:
     explicit GraphicsLayerAsyncContentsDisplayDelegateCoordinated(GraphicsLayer&);
 
     void setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&) override { RELEASE_ASSERT_NOT_REACHED(); }
-    bool display(CoordinatedPlatformLayer&) override { RELEASE_ASSERT_NOT_REACHED(); }
+    bool display(CoordinatedPlatformLayer&, std::optional<Damage>&&) override { RELEASE_ASSERT_NOT_REACHED(); }
 
-    bool tryCopyToLayer(ImageBuffer&) override;
+    bool tryCopyToLayer(ImageBuffer&, bool opaque) override;
 
-    Ref<GraphicsLayerContentsDisplayDelegate> m_delegate;
+    const Ref<GraphicsLayerContentsDisplayDelegate> m_delegate;
 };
 
 } // namespace WebCore

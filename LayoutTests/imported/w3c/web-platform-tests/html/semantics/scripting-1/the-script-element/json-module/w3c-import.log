@@ -30,6 +30,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/crossorigin-import-without-cors.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/data.json
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/false.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/http-accept-header-checker.py
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/http-accept-header.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/integrity-matches.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/integrity-mismatches.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/integrity.html
@@ -41,6 +43,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/module.json
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/non-object.any.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/null.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/parse-error-location.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/parse-error.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/parse-error.json
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/referrer-checker.py

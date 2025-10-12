@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CodeSpecializationKind.h"
+#include <JavaScriptCore/CodeSpecializationKind.h>
 
 namespace JSC {
 
@@ -36,9 +36,9 @@ enum FrameAction { KeepTheFrame = 0, ReuseTheFrame };
 inline CodeSpecializationKind specializationKindFor(CallMode callMode)
 {
     if (callMode == CallMode::Construct)
-        return CodeForConstruct;
+        return CodeSpecializationKind::CodeForConstruct;
 
-    return CodeForCall;
+    return CodeSpecializationKind::CodeForCall;
 }
 
 } // namespace JSC

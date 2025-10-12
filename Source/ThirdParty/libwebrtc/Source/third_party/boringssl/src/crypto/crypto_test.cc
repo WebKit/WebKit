@@ -1,26 +1,27 @@
-/* Copyright (c) 2020, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2020 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <stdio.h>
 #include <string.h>
 
+#include <array>
 #include <string>
 
-#include <openssl/base.h>
 #include <openssl/aead.h>
-#include <openssl/crypto.h>
+#include <openssl/base.h>
 #include <openssl/cipher.h>
+#include <openssl/crypto.h>
 #include <openssl/mem.h>
 
 #include <gtest/gtest.h>
@@ -159,9 +160,7 @@ TEST(Crypto, QueryAlgorithmStatus) {
 }
 
 #if defined(BORINGSSL_FIPS) && !defined(OPENSSL_ASAN)
-TEST(Crypto, OnDemandIntegrityTest) {
-  BORINGSSL_integrity_test();
-}
+TEST(Crypto, OnDemandIntegrityTest) { BORINGSSL_integrity_test(); }
 #endif
 
 OPENSSL_DEPRECATED static void DeprecatedFunction() {}
@@ -172,3 +171,77 @@ TEST(CryptoTest, DeprecatedFunction) {
   DeprecatedFunction();
 }
 OPENSSL_END_ALLOW_DEPRECATED
+
+
+#if (defined(OPENSSL_X86) || defined(OPENSSL_X86_64)) && \
+    !defined(OPENSSL_NO_ASM) && !defined(BORINGSSL_SHARED_LIBRARY)
+TEST(Crypto, CPUIDEnvVariable) {
+  const struct {
+    std::array<uint32_t, 4> in;
+    const char *env;
+    std::array<uint32_t, 4> out;
+  } kTests[] = {
+      // It should be possible to disable RDRAND with OPENSSL_ia32cap_P.
+      {{0x12345678, 0xffffffff, 0x12345678, 0x12345678},
+       "~0x4000000000000000",
+       {0x12345678, 0xbfffffff, 0x12345678, 0x12345678}},
+
+      // Disable RDRAND in decimal and also all post-AVX extensions. RR does
+      // this, though they probably meant to just disable RDRAND.
+      {{0x12345678, 0xffffffff, 0x12345678, 0x12345678},
+       "~4611686018427387904:0",
+       {0x12345678, 0xbfffffff, 0x00000000, 0x00000000}},
+
+      // Set the bitmasks to something else.
+      {{0x12345678, 0x12345678, 0x12345678, 0x12345678},
+       "0x8877665544332211:0x1122334455667788",
+       {0x44332211, 0x88776655, 0x55667788, 0x11223344}},
+      {{0x12345678, 0x12345678, 0x12345678, 0x12345678},
+       "1",
+       {0x00000001, 0x00000000, 0x12345678, 0x12345678}},
+      {{0x12345678, 0x12345678, 0x12345678, 0x12345678},
+       "1:2",
+       {0x00000001, 0x00000000, 0x00000002, 0x00000000}},
+      {{0x12345678, 0x12345678, 0x12345678, 0x12345678},
+       "0:0",
+       {0x00000000, 0x00000000, 0x00000000, 0x00000000}},
+
+      // Enable bits.
+      {{0x12345678, 0x12345678, 0x12345678, 0x12345678},
+        "|0xf0f0f0f0f0f0f0f0:|0x0f0f0f0f0f0f0f0f",
+       {0xf2f4f6f8, 0xf2f4f6f8, 0x1f3f5f7f, 0x1f3f5f7f}},
+
+      // Clear bits.
+      {{0x12345678, 0x12345678, 0x12345678, 0x12345678},
+        "~0xf0f0f0f0f0f0f0f0:~0x0f0f0f0f0f0f0f0f",
+       {0x02040608, 0x02040608, 0x10305070, 0x10305070}},
+
+      // Syntax errors are silently ignored.
+      // TODO(davidben): We should also test something like " 1: 2", but that
+      // currently fails because |strtoull| skips leading spaces.
+      {{0x12345678, 0x12345678, 0x12345678, 0x12345678},
+       "nope",
+       {0x12345678, 0x12345678, 0x12345678, 0x12345678}},
+      {{0x12345678, 0x12345678, 0x12345678, 0x12345678},
+       "1nope:2nope",
+       {0x12345678, 0x12345678, 0x12345678, 0x12345678}},
+
+      // Overflows are caught and silently ignored.
+      {{0x12345678, 0x12345678, 0x12345678, 0x12345678},
+       "0x10000000000000000:0x10000000000000000",
+       {0x12345678, 0x12345678, 0x12345678, 0x12345678}},
+      {{0x12345678, 0x12345678, 0x12345678, 0x12345678},
+       "~0x1ffffffffffffffff:~0x1ffffffffffffffff",
+       {0x12345678, 0x12345678, 0x12345678, 0x12345678}},
+      {{0x12345678, 0x12345678, 0x12345678, 0x12345678},
+       "|0x1ffffffffffffffff:|0x1ffffffffffffffff",
+       {0x12345678, 0x12345678, 0x12345678, 0x12345678}},
+  };
+  for (const auto &t : kTests) {
+    SCOPED_TRACE(t.env);
+    std::array<uint32_t, 4> cap = t.in;
+    OPENSSL_adjust_ia32cap(cap.data(), t.env);
+    EXPECT_EQ(cap, t.out);
+  }
+}
+#endif

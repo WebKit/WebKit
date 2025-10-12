@@ -27,12 +27,15 @@
 #include "include/effects/SkHighContrastFilter.h"
 #include "include/effects/SkImageFilters.h"
 #include "include/effects/SkShaderMaskFilter.h"
-#include "include/gpu/ganesh/GrDirectContext.h"
-#include "include/gpu/ganesh/SkImageGanesh.h"
 #include "src/core/SkCanvasPriv.h"
 #include "tools/DecodeUtils.h"
 #include "tools/Resources.h"
 #include "tools/ToolUtils.h"
+
+#if defined(SK_GANESH)
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/SkImageGanesh.h"
+#endif
 
 #include <utility>
 
@@ -41,7 +44,7 @@
  *  that we apply the xfermode *after* the image has been created and filtered, and not during
  *  the creation step (i.e. before it is filtered).
  *
- *  see https://bug.skia.org/3741
+ *  see skbug.com/40034872
  */
 static void do_draw(SkCanvas* canvas, SkBlendMode mode, sk_sp<SkImageFilter> imf) {
         SkAutoCanvasRestore acr(canvas, true);
@@ -203,12 +206,13 @@ DEF_GM(return new SaveLayerWithBackdropGM();)
 // normally be a sprite draw that could avoid an auto-saveLayer.
 DEF_SIMPLE_GM(imagefilters_effect_order, canvas, 512, 512) {
     sk_sp<SkImage> image(ToolUtils::GetResourceAsImage("images/mandrill_256.png"));
-    auto direct = GrAsDirectContext(canvas->recordingContext());
-    if (direct) {
+#if defined(SK_GANESH)
+    if (auto direct = GrAsDirectContext(canvas->recordingContext())) {
         if (sk_sp<SkImage> gpuImage = SkImages::TextureFromImage(direct, image)) {
             image = std::move(gpuImage);
         }
     }
+#endif
 
     SkISize kernelSize = SkISize::Make(3, 3);
     SkIPoint kernelOffset = SkIPoint::Make(1, 1);

@@ -30,11 +30,11 @@
 
 #pragma once
 
-#include "CSSParserEnum.h"
-#include "CSSParserTokenRange.h"
-#include "CSSProperty.h"
-#include "CSSPropertyNames.h"
-#include "StyleRule.h"
+#include <WebCore/CSSParserEnum.h>
+#include <WebCore/CSSParserTokenRange.h>
+#include <WebCore/CSSProperty.h>
+#include <WebCore/CSSPropertyNames.h>
+#include <WebCore/StyleRule.h>
 #include <memory>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -55,6 +55,7 @@ class StyleRuleFontFace;
 class StyleRuleFontFeatureValues;
 class StyleRuleFontFeatureValuesBlock;
 class StyleRuleFontPaletteValues;
+class StyleRuleFunction;
 class StyleRuleImport;
 class StyleRuleKeyframes;
 class StyleRuleLayer;
@@ -97,6 +98,7 @@ public:
         RegularRules,
         KeyframeRules,
         FontFeatureValuesRules,
+        ConditionalGroupRules,
         NoRules, // For parsing at-rules inside declaration lists (without nesting support)
     };
 
@@ -172,18 +174,22 @@ private:
     RefPtr<StyleRuleStartingStyle> consumeStartingStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleViewTransition> consumeViewTransitionRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRulePositionTry> consumePositionTryRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
+    RefPtr<StyleRuleFunction> consumeFunctionRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
+    RefPtr<StyleRuleInternalBaseAppearance> consumeInternalBaseAppearanceRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
 
     RefPtr<StyleRuleKeyframe> consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleBase> consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     ParsedPropertyVector consumeDeclarationListInNewNestingContext(CSSParserTokenRange, StyleRuleType);
+    Vector<Ref<StyleRuleBase>> consumeDeclarationRuleListInNewNestingContext(CSSParserTokenRange, StyleRuleType);
 
-    enum class OnlyDeclarations : bool { No, Yes };
+    enum class BlockAllowedRule : uint8_t { QualifiedRules = 1 << 0, Declarations = 1 << 1, AtRules = 1 << 2, };
 
     enum class ParsingStyleDeclarationsInRuleList : bool { No, Yes };
 
     // FIXME: We should return value for all those functions instead of using class member attributes.
-    void consumeBlockContent(CSSParserTokenRange, StyleRuleType, OnlyDeclarations, ParsingStyleDeclarationsInRuleList = ParsingStyleDeclarationsInRuleList::No);
+    void consumeBlockContent(CSSParserTokenRange, StyleRuleType, OptionSet<BlockAllowedRule>, ParsingStyleDeclarationsInRuleList = ParsingStyleDeclarationsInRuleList::No);
     void consumeDeclarationList(CSSParserTokenRange, StyleRuleType);
+    void consumeDeclarationRuleList(CSSParserTokenRange, StyleRuleType);
     void consumeStyleBlock(CSSParserTokenRange, StyleRuleType, ParsingStyleDeclarationsInRuleList = ParsingStyleDeclarationsInRuleList::No);
     bool consumeDeclaration(CSSParserTokenRange, StyleRuleType);
     void consumeDeclarationValue(CSSParserTokenRange, CSSPropertyID, IsImportant, StyleRuleType);
@@ -201,7 +207,12 @@ private:
 
     bool isStyleNestedContext() const
     {
-        return !m_ancestorRuleTypeStack.isEmpty();
+        return !m_ancestorRuleTypeStack.isEmpty() && m_ancestorRuleTypeStack.last() != CSSParserEnum::NestedContextType::Function;
+    }
+
+    bool isFunctionNestedContext() const
+    {
+        return !m_ancestorRuleTypeStack.isEmpty() && m_ancestorRuleTypeStack.last() == CSSParserEnum::NestedContextType::Function;
     }
 
     bool hasStyleRuleAncestor() const

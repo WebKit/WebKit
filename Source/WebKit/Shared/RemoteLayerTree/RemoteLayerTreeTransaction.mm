@@ -31,7 +31,7 @@
 #import "PlatformCALayerRemote.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/EventRegion.h>
-#import <WebCore/LengthFunctions.h>
+#import <WebCore/GraphicsLayer.h>
 #import <WebCore/Model.h>
 #import <WebCore/TimingFunction.h>
 #import <ranges>
@@ -154,9 +154,6 @@ static void dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedL
         if (layerProperties.changedProperties & LayerChange::MasksToBoundsChanged)
             ts.dumpProperty("masksToBounds"_s, layerProperties.masksToBounds);
 
-        if (layerProperties.changedProperties & LayerChange::OpaqueChanged)
-            ts.dumpProperty("opaque"_s, layerProperties.opaque);
-
         if (layerProperties.changedProperties & LayerChange::ContentsHiddenChanged)
             ts.dumpProperty("contentsHidden"_s, layerProperties.contentsHidden);
 
@@ -247,8 +244,6 @@ static void dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedL
             ts.dumpProperty("isDescendentOfSeparatedPortal"_s, layerProperties.isDescendentOfSeparatedPortal);
 #endif
 #endif
-        if (layerProperties.changedProperties & LayerChange::ContentsFormatChanged)
-            ts.dumpProperty("contentsFormat"_s, layerProperties.contentsFormat);
 
         if (layerProperties.changedProperties & LayerChange::VideoGravityChanged)
             ts.dumpProperty("videoGravity"_s, layerProperties.videoGravity);
@@ -274,6 +269,7 @@ String RemoteLayerTreeTransaction::description() const
 
     ts.dumpProperty("transactionID"_s, m_transactionID);
     ts.dumpProperty("contentsSize"_s, m_contentsSize);
+    ts.dumpProperty("scrollGeometryContentSize"_s, m_scrollGeometryContentSize);
     if (m_scrollOrigin != WebCore::IntPoint::zero())
         ts.dumpProperty("scrollOrigin"_s, m_scrollOrigin);
 
@@ -422,6 +418,15 @@ uint32_t RemoteLayerTreeTransaction::LayerCreationProperties::hostingContextID()
         return customData->hostingContextID;
     return 0;
 }
+
+#if ENABLE(MACH_PORT_LAYER_HOSTING)
+std::optional<WTF::MachSendRightAnnotated> RemoteLayerTreeTransaction::LayerCreationProperties::sendRightAnnotated() const
+{
+    if (auto* customData = std::get_if<CustomData>(&additionalData))
+        return customData->sendRightAnnotated;
+    return std::nullopt;
+}
+#endif
 
 bool RemoteLayerTreeTransaction::LayerCreationProperties::preservesFlip() const
 {

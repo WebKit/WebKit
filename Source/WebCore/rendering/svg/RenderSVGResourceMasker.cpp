@@ -36,7 +36,6 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGGraphicsElement.h"
 #include "SVGLengthContext.h"
-#include "SVGRenderStyle.h"
 #include "SVGVisitedRendererTracking.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -62,7 +61,7 @@ static RefPtr<ImageBuffer> createImageBuffer(const FloatRect& targetRect, const 
     FloatSize clampedSize = ImageBuffer::clampedSize(paintRect.size(), scale);
 
     UNUSED_PARAM(context);
-    auto imageBuffer = ImageBuffer::create(clampedSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, colorSpace, ImageBufferPixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(clampedSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
     if (!imageBuffer)
         return nullptr;
 
@@ -106,8 +105,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     auto maskColorSpace = DestinationColorSpace::SRGB();
     auto drawColorSpace = DestinationColorSpace::SRGB();
 
-    Ref svgStyle = style().svgStyle();
-    if (svgStyle->colorInterpolation() == ColorInterpolation::LinearRGB) {
+    if (style().colorInterpolation() == ColorInterpolation::LinearRGB) {
 #if USE(CG) || USE(SKIA)
         maskColorSpace = DestinationColorSpace::LinearSRGB();
 #endif
@@ -135,7 +133,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
         UNUSED_PARAM(drawColorSpace);
 #endif
 
-        if (svgStyle->maskType() == MaskType::Luminance)
+        if (style().maskType() == MaskType::Luminance)
             maskImage->convertToLuminanceMask();
         m_masker.set(targetRenderer, maskImage);
     }

@@ -1,4 +1,4 @@
 Generate a 'click' event
 
-FAIL Event Timing: make sure event-timing entries are not retrievable by performance.getEntries*. assert_implements: Event Timing is not supported. undefined
+PASS Event Timing: make sure event-timing entries are not retrievable by performance.getEntries*.
 

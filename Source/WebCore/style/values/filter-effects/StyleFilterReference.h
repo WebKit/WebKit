@@ -28,8 +28,6 @@
 
 namespace WebCore {
 
-class CSSToLengthConversionData;
-class Document;
 class FilterOperation;
 class RenderStyle;
 
@@ -39,10 +37,11 @@ struct FilterReference;
 
 namespace Style {
 
+class BuilderState;
 class ReferenceFilterOperation;
 
 CSS::FilterReference toCSSFilterReference(Ref<ReferenceFilterOperation>, const RenderStyle&);
-Ref<FilterOperation> createFilterOperation(const CSS::FilterReference&, const Document&, RenderStyle&, const CSSToLengthConversionData&);
+Ref<FilterOperation> createFilterOperation(const CSS::FilterReference&, const BuilderState&);
 
 } // namespace Style
 } // namespace WebCore

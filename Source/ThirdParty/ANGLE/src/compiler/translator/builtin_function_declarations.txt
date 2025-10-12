@@ -875,6 +875,8 @@ GROUP END MetalFragmentSample
 
 // MSL common functions
 GROUP BEGIN MetalCommon
+  DEFAULT METADATA {"essl_level": "ESSL_INTERNAL_BACKEND_BUILTINS", "hasSideEffects": true}
+    void loopForwardProgress();
   DEFAULT METADATA {"essl_level": "ESSL_INTERNAL_BACKEND_BUILTINS"}
     genType saturate(genType);
 GROUP END MetalCommon

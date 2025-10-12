@@ -10,19 +10,31 @@
 
 #include "test/pc/e2e/analyzer/audio/default_audio_quality_analyzer.h"
 
-#include "api/stats/rtc_stats.h"
+#include <cmath>
+#include <cstdint>
+#include <map>
+#include <string>
+#include <utility>
+
+#include "absl/flags/flag.h"
+#include "absl/strings/string_view.h"
+#include "api/scoped_refptr.h"
+#include "api/stats/rtc_stats_report.h"
 #include "api/stats/rtcstats_objects.h"
 #include "api/test/metrics/metric.h"
+#include "api/test/metrics/metrics_logger.h"
 #include "api/test/track_id_stream_info_map.h"
+#include "api/units/time_delta.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "test/pc/e2e/metric_metadata_keys.h"
+#include "test/test_flags.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
 
-using ::webrtc::test::ImprovementDirection;
-using ::webrtc::test::Unit;
+using test::ImprovementDirection;
+using test::Unit;
 
 DefaultAudioQualityAnalyzer::DefaultAudioQualityAnalyzer(
     test::MetricsLogger* const metrics_logger)
@@ -38,7 +50,7 @@ void DefaultAudioQualityAnalyzer::Start(std::string test_case_name,
 
 void DefaultAudioQualityAnalyzer::OnStatsReports(
     absl::string_view pc_label,
-    const rtc::scoped_refptr<const RTCStatsReport>& report) {
+    const scoped_refptr<const RTCStatsReport>& report) {
   auto stats = report->GetStatsOfType<RTCInboundRtpStreamStats>();
 
   for (auto& stat : stats) {
@@ -126,49 +138,49 @@ void DefaultAudioQualityAnalyzer::OnStatsReports(
 
 std::string DefaultAudioQualityAnalyzer::GetTestCaseName(
     const std::string& stream_label) const {
-  return test_case_name_ + "/" + stream_label;
+  if (!absl::GetFlag(FLAGS_isolated_script_test_perf_output).empty()) {
+    return test_case_name_ + "/" + stream_label;
+  }
+  return test_case_name_;
 }
 
 void DefaultAudioQualityAnalyzer::Stop() {
   MutexLock lock(&lock_);
   for (auto& item : streams_stats_) {
+    std::string test_case_name = GetTestCaseName(item.first);
     const TrackIdStreamInfoMap::StreamInfo& stream_info =
         stream_info_[item.first];
-    // TODO(bugs.webrtc.org/14757): Remove kExperimentalTestNameMetadataKey.
     std::map<std::string, std::string> metric_metadata{
         {MetricMetadataKey::kAudioStreamMetadataKey, item.first},
         {MetricMetadataKey::kPeerMetadataKey, stream_info.receiver_peer},
-        {MetricMetadataKey::kReceiverMetadataKey, stream_info.receiver_peer},
-        {MetricMetadataKey::kExperimentalTestNameMetadataKey, test_case_name_}};
+        {MetricMetadataKey::kReceiverMetadataKey, stream_info.receiver_peer}};
 
-    metrics_logger_->LogMetric("expand_rate", GetTestCaseName(item.first),
-                               item.second.expand_rate, Unit::kUnitless,
-                               ImprovementDirection::kSmallerIsBetter,
-                               metric_metadata);
-    metrics_logger_->LogMetric("accelerate_rate", GetTestCaseName(item.first),
+    metrics_logger_->LogMetric(
+        "expand_rate", test_case_name, item.second.expand_rate, Unit::kUnitless,
+        ImprovementDirection::kSmallerIsBetter, metric_metadata);
+    metrics_logger_->LogMetric("accelerate_rate", test_case_name,
                                item.second.accelerate_rate, Unit::kUnitless,
                                ImprovementDirection::kSmallerIsBetter,
                                metric_metadata);
-    metrics_logger_->LogMetric("preemptive_rate", GetTestCaseName(item.first),
+    metrics_logger_->LogMetric("preemptive_rate", test_case_name,
                                item.second.preemptive_rate, Unit::kUnitless,
                                ImprovementDirection::kSmallerIsBetter,
                                metric_metadata);
+    metrics_logger_->LogMetric("speech_expand_rate", test_case_name,
+                               item.second.speech_expand_rate, Unit::kUnitless,
+                               ImprovementDirection::kSmallerIsBetter,
+                               metric_metadata);
     metrics_logger_->LogMetric(
-        "speech_expand_rate", GetTestCaseName(item.first),
-        item.second.speech_expand_rate, Unit::kUnitless,
-        ImprovementDirection::kSmallerIsBetter, metric_metadata);
-    metrics_logger_->LogMetric(
-        "average_jitter_buffer_delay_ms", GetTestCaseName(item.first),
+        "average_jitter_buffer_delay_ms", test_case_name,
         item.second.average_jitter_buffer_delay_ms, Unit::kMilliseconds,
         ImprovementDirection::kNeitherIsBetter, metric_metadata);
     metrics_logger_->LogMetric(
-        "preferred_buffer_size_ms", GetTestCaseName(item.first),
+        "preferred_buffer_size_ms", test_case_name,
         item.second.preferred_buffer_size_ms, Unit::kMilliseconds,
         ImprovementDirection::kNeitherIsBetter, metric_metadata);
-    metrics_logger_->LogMetric("energy", GetTestCaseName(item.first),
-                               item.second.energy, Unit::kUnitless,
-                               ImprovementDirection::kNeitherIsBetter,
-                               metric_metadata);
+    metrics_logger_->LogMetric(
+        "energy", test_case_name, item.second.energy, Unit::kUnitless,
+        ImprovementDirection::kNeitherIsBetter, metric_metadata);
   }
 }
 

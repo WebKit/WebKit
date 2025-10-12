@@ -6,4 +6,3 @@ WGSL/CallGraph.h
 WGSL/Types.h
 WGSL/WGSL.h
 WebGPU.h
-WebGPUExt.h

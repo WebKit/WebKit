@@ -161,31 +161,15 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(const CreationOptions& opti
 
     GstElement* audioConvert = makeGStreamerElement("audioconvert"_s);
     GstElement* audioResample = makeGStreamerElement("audioresample"_s);
+    auto clockSync = gst_element_factory_make("clocksync", nullptr);
 
-    auto queue = gst_element_factory_make("queue", nullptr);
-    g_object_set(queue, "max-size-buffers", 2, "max-size-bytes", 0, "max-size-time", 0, nullptr);
+    gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), m_src.get(), audioConvert, audioResample, clockSync, audioSink.get(), nullptr);
 
-    gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), m_src.get(), audioConvert, audioResample, queue, audioSink.get(), nullptr);
-
-    // Link src pads from webkitAudioSrc to audioConvert ! audioResample ! [capsfilter !] queue ! autoaudiosink.
-    gst_element_link_pads_full(m_src.get(), "src", audioConvert, "sink", GST_PAD_LINK_CHECK_NOTHING);
+    // Link src pads from webkitAudioSrc to clocksync ! audioConvert ! audioResample ! audiosink.
+    gst_element_link_pads_full(m_src.get(), "src", clockSync, "sink", GST_PAD_LINK_CHECK_NOTHING);
+    gst_element_link_pads_full(clockSync, "src", audioConvert, "sink", GST_PAD_LINK_CHECK_NOTHING);
     gst_element_link_pads_full(audioConvert, "src", audioResample, "sink", GST_PAD_LINK_CHECK_NOTHING);
-
-    if (!webkitGstCheckVersion(1, 20, 4)) {
-        // Force audio conversion to 'interleaved' format (by audioconvert element).
-        // 1) Some platform sinks don't support non-interleaved audio without special caps (rialtowebaudiosink).
-        // 2) Interaudio sink/src doesn't fully support non-interleaved audio (webkit audio sink)
-        // 3) audiomixer doesn't support non-interleaved audio in output pipeline (webkit audio sink)
-        GstElement* capsFilter = makeGStreamerElement("capsfilter"_s);
-        GRefPtr<GstCaps> caps = adoptGRef(gst_caps_new_simple("audio/x-raw", "layout", G_TYPE_STRING, "interleaved", nullptr));
-        g_object_set(capsFilter, "caps", caps.get(), nullptr);
-        gst_bin_add(GST_BIN_CAST(m_pipeline.get()), capsFilter);
-        gst_element_link_pads_full(audioResample, "src", capsFilter, "sink", GST_PAD_LINK_CHECK_NOTHING);
-        gst_element_link_pads_full(capsFilter, "src", queue, "sink", GST_PAD_LINK_CHECK_NOTHING);
-    } else
-        gst_element_link_pads_full(audioResample, "src", queue, "sink", GST_PAD_LINK_CHECK_NOTHING);
-
-    gst_element_link_pads_full(queue, "src", audioSink.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
+    gst_element_link_pads_full(audioResample, "src", audioSink.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
 }
 
 AudioDestinationGStreamer::~AudioDestinationGStreamer()

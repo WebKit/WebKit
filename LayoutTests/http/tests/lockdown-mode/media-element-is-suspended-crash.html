@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<body>
+<p>This tests adopting a video elements to a disconnected iframe's content document. WebKit should not hit any assertions.</p>
+<div id="result"></div>
+<script>
+
+function addFrame() {
+    const iframe = document.createElement('iframe');
+    iframe.srcdoc = `<script>
+    function runTest() {
+        const span = document.querySelector("span");
+        const iframe = document.querySelector('iframe');
+        const domImpl = iframe.contentDocument.implementation;
+        const newDoc = domImpl.createHTMLDocument("foo");
+        iframe.remove();
+        newDoc.adoptNode(document.querySelector('section'));
+        span.replaceWith(document.querySelector('video'));
+        if (window.GCController)
+            GCController.collect();
+        top.postMessage({ }, '*');
+    }
+    </` + `script><body onload="runTest()"><iframe></iframe><video controls></video><section><span>`;
+    document.body.appendChild(iframe);
+}
+
+let frameCount = 2;
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    let count = 0;
+    window.onmessage = () => {
+        ++count;
+        if (count < frameCount)
+            return;
+        result.textContent = 'PASS';
+        testRunner.notifyDone();
+    }
+}
+
+for (let i = 0; i < frameCount; ++i)
+    addFrame();
+
+</script>

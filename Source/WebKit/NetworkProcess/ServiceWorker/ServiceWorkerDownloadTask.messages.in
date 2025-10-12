@@ -21,7 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 [
-    ExceptionForEnabledBy,
+    SharedPreferencesNeedsConnection,
+    EnabledBy=ServiceWorkersEnabled,
     DispatchedFrom=WebContent,
     DispatchedTo=Networking
 ]

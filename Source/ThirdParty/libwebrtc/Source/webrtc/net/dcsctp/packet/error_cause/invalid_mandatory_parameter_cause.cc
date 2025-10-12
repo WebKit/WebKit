@@ -9,9 +9,9 @@
  */
 #include "net/dcsctp/packet/error_cause/invalid_mandatory_parameter_cause.h"
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <optional>
+#include <string>
 #include <vector>
 
 #include "api/array_view.h"
@@ -26,7 +26,7 @@ namespace dcsctp {
 constexpr int InvalidMandatoryParameterCause::kType;
 
 std::optional<InvalidMandatoryParameterCause>
-InvalidMandatoryParameterCause::Parse(rtc::ArrayView<const uint8_t> data) {
+InvalidMandatoryParameterCause::Parse(webrtc::ArrayView<const uint8_t> data) {
   if (!ParseTLV(data).has_value()) {
     return std::nullopt;
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,7 @@ RemoteRenderPassEncoderProxy::~RemoteRenderPassEncoderProxy()
 
 void RemoteRenderPassEncoderProxy::setPipeline(const WebCore::WebGPU::RenderPipeline& renderPipeline)
 {
-    auto convertedRenderPipeline = protectedConvertToBackingContext()->convertToBacking(renderPipeline);
+    auto convertedRenderPipeline = m_convertToBackingContext->convertToBacking(renderPipeline);
 
     auto sendResult = send(Messages::RemoteRenderPassEncoder::SetPipeline(convertedRenderPipeline));
     UNUSED_VARIABLE(sendResult);
@@ -60,7 +60,7 @@ void RemoteRenderPassEncoderProxy::setPipeline(const WebCore::WebGPU::RenderPipe
 
 void RemoteRenderPassEncoderProxy::setIndexBuffer(const WebCore::WebGPU::Buffer& buffer, WebCore::WebGPU::IndexFormat indexFormat, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
 {
-    auto convertedBuffer = protectedConvertToBackingContext()->convertToBacking(buffer);
+    auto convertedBuffer = m_convertToBackingContext->convertToBacking(buffer);
 
     auto sendResult = send(Messages::RemoteRenderPassEncoder::SetIndexBuffer(convertedBuffer, indexFormat, offset, size));
     UNUSED_VARIABLE(sendResult);
@@ -74,7 +74,7 @@ void RemoteRenderPassEncoderProxy::setVertexBuffer(WebCore::WebGPU::Index32 slot
         return;
     }
 
-    auto convertedBuffer = protectedConvertToBackingContext()->convertToBacking(*buffer);
+    auto convertedBuffer = m_convertToBackingContext->convertToBacking(*buffer);
 
     auto sendResult = send(Messages::RemoteRenderPassEncoder::SetVertexBuffer(slot, convertedBuffer, offset, size));
     UNUSED_VARIABLE(sendResult);
@@ -98,7 +98,7 @@ void RemoteRenderPassEncoderProxy::drawIndexed(WebCore::WebGPU::Size32 indexCoun
 
 void RemoteRenderPassEncoderProxy::drawIndirect(const WebCore::WebGPU::Buffer& indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
 {
-    auto convertedIndirectBuffer = protectedConvertToBackingContext()->convertToBacking(indirectBuffer);
+    auto convertedIndirectBuffer = m_convertToBackingContext->convertToBacking(indirectBuffer);
 
     auto sendResult = send(Messages::RemoteRenderPassEncoder::DrawIndirect(convertedIndirectBuffer, indirectOffset));
     UNUSED_VARIABLE(sendResult);
@@ -106,7 +106,7 @@ void RemoteRenderPassEncoderProxy::drawIndirect(const WebCore::WebGPU::Buffer& i
 
 void RemoteRenderPassEncoderProxy::drawIndexedIndirect(const WebCore::WebGPU::Buffer& indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
 {
-    auto convertedIndirectBuffer = protectedConvertToBackingContext()->convertToBacking(indirectBuffer);
+    auto convertedIndirectBuffer = m_convertToBackingContext->convertToBacking(indirectBuffer);
 
     auto sendResult = send(Messages::RemoteRenderPassEncoder::DrawIndexedIndirect(convertedIndirectBuffer, indirectOffset));
     UNUSED_VARIABLE(sendResult);
@@ -117,7 +117,7 @@ void RemoteRenderPassEncoderProxy::setBindGroup(WebCore::WebGPU::Index32 index, 
 {
     std::optional<WebGPUIdentifier> convertedBindGroup;
     if (bindGroup)
-        convertedBindGroup = protectedConvertToBackingContext()->convertToBacking(*bindGroup);
+        convertedBindGroup = m_convertToBackingContext->convertToBacking(*bindGroup);
 
     auto sendResult = send(Messages::RemoteRenderPassEncoder::SetBindGroup(index, convertedBindGroup, dynamicOffsets));
     UNUSED_VARIABLE(sendResult);
@@ -130,7 +130,7 @@ void RemoteRenderPassEncoderProxy::setBindGroup(WebCore::WebGPU::Index32 index, 
 {
     std::optional<WebGPUIdentifier> convertedBindGroup;
     if (bindGroup)
-        convertedBindGroup = protectedConvertToBackingContext()->convertToBacking(*bindGroup);
+        convertedBindGroup = m_convertToBackingContext->convertToBacking(*bindGroup);
 
     auto sendResult = send(Messages::RemoteRenderPassEncoder::SetBindGroup(index, convertedBindGroup, Vector<WebCore::WebGPU::BufferDynamicOffset>(dynamicOffsetsArrayBuffer.subspan(dynamicOffsetsDataStart, dynamicOffsetsDataLength))));
     UNUSED_VARIABLE(sendResult);
@@ -171,7 +171,7 @@ void RemoteRenderPassEncoderProxy::setScissorRect(WebCore::WebGPU::IntegerCoordi
 
 void RemoteRenderPassEncoderProxy::setBlendConstant(WebCore::WebGPU::Color color)
 {
-    auto convertedColor = protectedConvertToBackingContext()->convertToBacking(color);
+    auto convertedColor = m_convertToBackingContext->convertToBacking(color);
     ASSERT(convertedColor);
     if (!convertedColor)
         return;
@@ -201,7 +201,7 @@ void RemoteRenderPassEncoderProxy::endOcclusionQuery()
 void RemoteRenderPassEncoderProxy::executeBundles(Vector<Ref<WebCore::WebGPU::RenderBundle>>&& renderBundles)
 {
     auto convertedRenderBundles = WTF::compactMap(renderBundles, [&](auto& renderBundle) -> std::optional<WebGPUIdentifier> {
-        return protectedConvertToBackingContext()->convertToBacking(renderBundle);
+        return m_convertToBackingContext->convertToBacking(renderBundle);
     });
 
     auto sendResult = send(Messages::RemoteRenderPassEncoder::ExecuteBundles(WTFMove(convertedRenderBundles)));
@@ -218,11 +218,6 @@ void RemoteRenderPassEncoderProxy::setLabelInternal(const String& label)
 {
     auto sendResult = send(Messages::RemoteRenderPassEncoder::SetLabel(label));
     UNUSED_VARIABLE(sendResult);
-}
-
-Ref<ConvertToBackingContext> RemoteRenderPassEncoderProxy::protectedConvertToBackingContext() const
-{
-    return m_convertToBackingContext;
 }
 
 } // namespace WebKit::WebGPU

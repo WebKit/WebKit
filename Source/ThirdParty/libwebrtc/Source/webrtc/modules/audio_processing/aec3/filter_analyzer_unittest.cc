@@ -10,9 +10,10 @@
 
 #include "modules/audio_processing/aec3/filter_analyzer.h"
 
-#include <algorithm>
+#include <cstddef>
+#include <vector>
 
-#include "test/gmock.h"
+#include "api/audio/echo_canceller3_config.h"
 #include "test/gtest.h"
 
 namespace webrtc {

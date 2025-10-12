@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="radiogroup" role="radiogroup">
+    <input type="radio" id="cat" name="pet" value="cat" checked />
+    <label id="cat-label" for="cat">Cat</label>
+
+    <input type="radio" id="dog" name="pet" value="dog" />
+    <label for="dog">Dog</label>
+</div>
+
+<script>
+var output = "This test ensures we compute the correct selected radio button after dynamic page changes.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var radiogroup = accessibilityController.accessibleElementById("radiogroup");
+    output += expect("radiogroup.uiElementAttributeValue('AXValue').domIdentifier.includes('cat')", "true");
+    // Change the object's accessibility text, causing a full AXIsolatedObject update.
+    document.getElementById("cat").setAttribute("title", "Cats label");
+
+    setTimeout(async function() {
+        document.getElementById("cat").removeAttribute("checked");
+        document.getElementById("dog").setAttribute("checked", "");
+        output += await expectAsync("radiogroup.uiElementAttributeValue('AXValue')?.domIdentifier?.includes('dog')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

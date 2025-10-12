@@ -11,24 +11,22 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_VECTOR_MATH_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_VECTOR_MATH_H_
 
+#include <algorithm>
+#include <cmath>
+#include <functional>
+
+#include "api/array_view.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "rtc_base/checks.h"
+
 // Defines WEBRTC_ARCH_X86_FAMILY, used below.
 #include "rtc_base/system/arch.h"
-
 #if defined(WEBRTC_HAS_NEON)
 #include <arm_neon.h>
 #endif
 #if defined(WEBRTC_ARCH_X86_FAMILY)
 #include <emmintrin.h>
 #endif
-#include <math.h>
-
-#include <algorithm>
-#include <array>
-#include <functional>
-
-#include "api/array_view.h"
-#include "modules/audio_processing/aec3/aec3_common.h"
-#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace aec3 {
@@ -40,8 +38,8 @@ class VectorMath {
       : optimization_(optimization) {}
 
   // Elementwise square root.
-  void SqrtAVX2(rtc::ArrayView<float> x);
-  void Sqrt(rtc::ArrayView<float> x) {
+  void SqrtAVX2(ArrayView<float> x);
+  void Sqrt(ArrayView<float> x) {
     switch (optimization_) {
 #if defined(WEBRTC_ARCH_X86_FAMILY)
       case Aec3Optimization::kSse2: {
@@ -116,12 +114,12 @@ class VectorMath {
   }
 
   // Elementwise vector multiplication z = x * y.
-  void MultiplyAVX2(rtc::ArrayView<const float> x,
-                    rtc::ArrayView<const float> y,
-                    rtc::ArrayView<float> z);
-  void Multiply(rtc::ArrayView<const float> x,
-                rtc::ArrayView<const float> y,
-                rtc::ArrayView<float> z) {
+  void MultiplyAVX2(ArrayView<const float> x,
+                    ArrayView<const float> y,
+                    ArrayView<float> z);
+  void Multiply(ArrayView<const float> x,
+                ArrayView<const float> y,
+                ArrayView<float> z) {
     RTC_DCHECK_EQ(z.size(), x.size());
     RTC_DCHECK_EQ(z.size(), y.size());
     switch (optimization_) {
@@ -171,8 +169,8 @@ class VectorMath {
   }
 
   // Elementwise vector accumulation z += x.
-  void AccumulateAVX2(rtc::ArrayView<const float> x, rtc::ArrayView<float> z);
-  void Accumulate(rtc::ArrayView<const float> x, rtc::ArrayView<float> z) {
+  void AccumulateAVX2(ArrayView<const float> x, ArrayView<float> z);
+  void Accumulate(ArrayView<const float> x, ArrayView<float> z) {
     RTC_DCHECK_EQ(z.size(), x.size());
     switch (optimization_) {
 #if defined(WEBRTC_ARCH_X86_FAMILY)

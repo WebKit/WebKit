@@ -56,8 +56,9 @@
 #include "CSSPropertyNames.h"
 #include "CommonVM.h"
 #include "CookieJar.h"
-#include "DocumentInlines.h"
 #include "DocumentLoader.h"
+#include "DocumentQuirks.h"
+#include "DocumentSettingsValues.h"
 #include "DocumentType.h"
 #include "ElementChildIteratorInlines.h"
 #include "FocusController.h"
@@ -75,7 +76,6 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
-#include "Quirks.h"
 #include "ScriptController.h"
 #include "StyleResolver.h"
 #include <ranges>
@@ -123,8 +123,8 @@ std::optional<Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollectio
 
     Ref element = *documentNamedItem(name);
     if (auto* iframe = dynamicDowncast<HTMLIFrameElement>(element.get()); iframe) [[unlikely]] {
-        if (RefPtr domWindow = iframe->contentWindow())
-            return Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { WTFMove(domWindow) };
+        if (RefPtr window = iframe->contentWindow())
+            return Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { WTFMove(window) };
     }
 
     return Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { RefPtr<Element> { WTFMove(element) } };
@@ -236,11 +236,6 @@ bool HTMLDocument::isFrameSet() const
     if (!documentElement())
         return false;
     return !!childrenOfType<HTMLFrameSetElement>(*documentElement()).first();
-}
-
-Ref<Document> HTMLDocument::cloneDocumentWithoutChildren() const
-{
-    return create(nullptr, settings(), url());
 }
 
 }

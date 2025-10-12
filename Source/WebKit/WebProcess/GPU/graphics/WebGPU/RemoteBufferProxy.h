@@ -89,8 +89,8 @@ private:
     void setLabelInternal(const String&) final;
 
     WebGPUIdentifier m_backing;
-    Ref<ConvertToBackingContext> m_convertToBackingContext;
-    Ref<RemoteDeviceProxy> m_parent;
+    const Ref<ConvertToBackingContext> m_convertToBackingContext;
+    const Ref<RemoteDeviceProxy> m_parent;
     WebCore::WebGPU::MapModeFlags m_mapModeFlags;
 };
 

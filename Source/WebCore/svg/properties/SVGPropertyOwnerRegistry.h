@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -285,9 +285,9 @@ public:
 
     // Enumerate recursively the SVGMemberAccessors of the OwnerType and all its BaseTypes.
     // Collect all the pairs <AttributeName, String> only for the dirty properties.
-    UncheckedKeyHashMap<QualifiedName, String> synchronizeAllAttributes() const override
+    HashMap<QualifiedName, String> synchronizeAllAttributes() const override
     {
-        UncheckedKeyHashMap<QualifiedName, String> map;
+        HashMap<QualifiedName, String> map;
         enumerateRecursively([&](const auto& entry) -> bool {
             if (auto string = entry.value->synchronize(m_owner))
                 map.add(entry.key, *string);
@@ -310,7 +310,7 @@ public:
 
     bool isAnimatedStylePropertyAttribute(const QualifiedName& attributeName) const override
     {
-        static NeverDestroyed<UncheckedKeyHashSet<QualifiedName::QualifiedNameImpl*>> animatedStyleAttributes = std::initializer_list<QualifiedName::QualifiedNameImpl*> {
+        static NeverDestroyed<HashSet<QualifiedName::QualifiedNameImpl*>> animatedStyleAttributes = std::initializer_list<QualifiedName::QualifiedNameImpl*> {
             SVGNames::cxAttr->impl(),
             SVGNames::cyAttr->impl(),
             SVGNames::rAttr->impl(),
@@ -342,7 +342,7 @@ public:
 
 private:
     // Singleton map for every OwnerType.
-    using QualifiedNameAccessorHashMap = UncheckedKeyHashMap<QualifiedName, const SVGMemberAccessor<OwnerType>*, SVGAttributeHashTranslator>;
+    using QualifiedNameAccessorHashMap = HashMap<QualifiedName, const SVGMemberAccessor<OwnerType>*, SVGAttributeHashTranslator>;
 
     static QualifiedNameAccessorHashMap& attributeNameToAccessorMap()
     {
@@ -355,21 +355,22 @@ private:
         attributeNameToAccessorMap().add(attributeName, &propertyAccessor);
     }
 
-    // This is a template function with parameter 'I' whose default value = 0. So you can call it without any parameter
-    // from enumerateRecursively(). It returns true and is enable_if<I == sizeof...(BaseTypes)>. So it is mainly for
-    // breaking the recursion.
     template<typename Functor, size_t I = 0>
-    static typename std::enable_if<I == sizeof...(BaseTypes), bool>::type enumerateRecursivelyBaseTypes(NOESCAPE const Functor&) { return true; }
-
-    // This version of animatedTypesBaseTypes() is enable_if<I < sizeof...(BaseTypes)>.
-    template<typename Functor, size_t I = 0>
-    static typename std::enable_if<I < sizeof...(BaseTypes), bool>::type enumerateRecursivelyBaseTypes(NOESCAPE const Functor& functor)
+    static bool enumerateRecursivelyBaseTypes(NOESCAPE const Functor&)
+        requires (I == sizeof...(BaseTypes))
     {
-        // Get the base type at index 'I' using std::tuple and std::tuple_element.
-        using BaseType = typename std::tuple_element<I, typename std::tuple<BaseTypes...>>::type;
+        return true;
+    }
+
+    template<typename Functor, size_t I = 0>
+    static bool enumerateRecursivelyBaseTypes(NOESCAPE const Functor& functor)
+        requires (I < sizeof...(BaseTypes))
+    {
+        using BaseType = std::tuple_element_t<I, std::tuple<BaseTypes...>>;
+
         if (!BaseType::PropertyRegistry::enumerateRecursively(functor))
             return false;
-        // BaseType does not want to break the recursion. So recurse to the next BaseType.
+
         return enumerateRecursivelyBaseTypes<Functor, I + 1>(functor);
     }
 
@@ -380,16 +381,21 @@ private:
     }
 
     template<typename Functor, size_t I = 0>
-    static typename std::enable_if<I == sizeof...(BaseTypes), bool>::type lookupRecursivelyAndApplyBaseTypes(const QualifiedName&, NOESCAPE const Functor&) { return false; }
+    static bool lookupRecursivelyAndApplyBaseTypes(const QualifiedName&, NOESCAPE const Functor&)
+        requires (I == sizeof...(BaseTypes))
+    {
+        return false;
+    }
 
     template<typename Functor, size_t I = 0>
-    static typename std::enable_if<I < sizeof...(BaseTypes), bool>::type lookupRecursivelyAndApplyBaseTypes(const QualifiedName& attributeName, NOESCAPE const Functor& functor)
+    static bool lookupRecursivelyAndApplyBaseTypes(const QualifiedName& attributeName, NOESCAPE const Functor& functor)
+        requires (I < sizeof...(BaseTypes))
     {
-        // Get the base type at index 'I' using std::tuple and std::tuple_element.
-        using BaseType = typename std::tuple_element<I, typename std::tuple<BaseTypes...>>::type;
+        using BaseType = std::tuple_element_t<I, std::tuple<BaseTypes...>>;
+
         if (BaseType::PropertyRegistry::lookupRecursivelyAndApply(attributeName, functor))
             return true;
-        // BaseType does not want to break the recursion. So recurse to the next BaseType.
+
         return lookupRecursivelyAndApplyBaseTypes<Functor, I + 1>(attributeName, functor);
     }
 

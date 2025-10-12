@@ -30,10 +30,10 @@
 #ifndef FloatRoundedRect_h
 #define FloatRoundedRect_h
 
-#include "FloatRect.h"
-#include "FloatSize.h"
-#include "Region.h"
-#include "RoundedRect.h"
+#include <WebCore/FloatRect.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/LayoutRoundedRect.h>
+#include <WebCore/Region.h>
 #include <wtf/TZoneMalloc.h>
 
 #if USE(SKIA)
@@ -41,6 +41,8 @@ class SkRRect;
 #endif
 
 namespace WebCore {
+
+class Path;
 
 class FloatRoundedRect {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(FloatRoundedRect, WEBCORE_EXPORT);
@@ -57,7 +59,7 @@ public:
         {
         }
 
-        Radii(const RoundedRect::Radii& intRadii)
+        Radii(const LayoutRoundedRect::Radii& intRadii)
             : m_topLeft(intRadii.topLeft())
             , m_topRight(intRadii.topRight())
             , m_bottomLeft(intRadii.bottomLeft())
@@ -113,7 +115,7 @@ public:
 
     WEBCORE_EXPORT explicit FloatRoundedRect(const FloatRect& = FloatRect(), const Radii& = Radii());
     WEBCORE_EXPORT FloatRoundedRect(const FloatRect&, const FloatSize& topLeft, const FloatSize& topRight, const FloatSize& bottomLeft, const FloatSize& bottomRight);
-    explicit FloatRoundedRect(const RoundedRect&);
+    explicit FloatRoundedRect(const LayoutRoundedRect&);
     FloatRoundedRect(float x, float y, float width, float height);
 
     const FloatRect& rect() const { return m_rect; }
@@ -153,6 +155,8 @@ public:
     bool xInterceptsAtY(float y, float& minXIntercept, float& maxXIntercept) const;
 
     bool intersectionIsRectangular(const FloatRect&) const;
+
+    Path path() const;
 
     friend bool operator==(const FloatRoundedRect&, const FloatRoundedRect&) = default;
 

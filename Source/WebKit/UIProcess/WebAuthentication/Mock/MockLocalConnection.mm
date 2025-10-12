@@ -60,7 +60,7 @@ MockLocalConnection::MockLocalConnection(const MockWebAuthenticationConfiguratio
 void MockLocalConnection::verifyUser(const String&, ClientDataType, SecAccessControlRef, WebCore::UserVerificationRequirement, UserVerificationCallback&& callback)
 {
     // Mock async operations.
-    RunLoop::protectedMain()->dispatch([configuration = m_configuration, callback = WTFMove(callback)]() mutable {
+    RunLoop::mainSingleton().dispatch([configuration = m_configuration, callback = WTFMove(callback)]() mutable {
         ASSERT(configuration.local);
 
         UserVerification userVerification = UserVerification::No;
@@ -85,7 +85,7 @@ void MockLocalConnection::verifyUser(const String&, ClientDataType, SecAccessCon
 void MockLocalConnection::verifyUser(SecAccessControlRef, LAContext *, CompletionHandler<void(UserVerification)>&& callback)
 {
     // Mock async operations.
-    RunLoop::protectedMain()->dispatch([configuration = m_configuration, callback = WTFMove(callback)]() mutable {
+    RunLoop::mainSingleton().dispatch([configuration = m_configuration, callback = WTFMove(callback)]() mutable {
         ASSERT(configuration.local);
 
         UserVerification userVerification = UserVerification::No;
@@ -180,7 +180,8 @@ RetainPtr<NSArray> MockLocalConnection::getExistingCredentials(const String& rpI
     OSStatus status = SecItemCopyMatching(bridge_cast(query.get()), &attributesArrayRef);
     if (status && status != errSecItemNotFound)
         return nullptr;
-    RetainPtr nsAttributesArray = bridge_cast(adoptCF(checked_cf_cast<CFArrayRef>(attributesArrayRef)));
+    // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr nsAttributesArray = bridge_cast(adoptCF(checked_cf_cast<CFArrayRef>(attributesArrayRef)));
     return [nsAttributesArray sortedArrayUsingComparator:^(NSDictionary *a, NSDictionary *b) {
         return [b[(id)kSecAttrModificationDate] compare:a[(id)kSecAttrModificationDate]];
     }];

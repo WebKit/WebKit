@@ -7,15 +7,18 @@
 #ifndef SAMPLE_UTIL_MOUSE_H
 #define SAMPLE_UTIL_MOUSE_H
 
-enum MouseButton
+namespace angle
 {
-    MOUSEBUTTON_UNKNOWN,
-    MOUSEBUTTON_LEFT,
-    MOUSEBUTTON_RIGHT,
-    MOUSEBUTTON_MIDDLE,
-    MOUSEBUTTON_BUTTON4,
-    MOUSEBUTTON_BUTTON5,
-    MOUSEBUTTON_COUNT,
+enum class MouseButtonType
+{
+    UNKNOWN,
+    LEFT,
+    RIGHT,
+    MIDDLE,
+    BUTTON4,
+    BUTTON5,
+    COUNT,
 };
+}  // namespace angle
 
 #endif  // SAMPLE_UTIL_MOUSE_H

@@ -29,14 +29,17 @@
 #if PLATFORM(COCOA)
 
 #import "CAAudioStreamDescription.h"
+#import "FormatDescriptionUtilities.h"
 #import "Logging.h"
 #import "MediaSampleAVFObjC.h"
+#import "MediaSamplesBlock.h"
 #import "MediaUtilities.h"
 #import "SharedBuffer.h"
 #import "WebMAudioUtilitiesCocoa.h"
 #import <CoreMedia/CMFormatDescription.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AudioToolboxSPI.h>
+#import <wtf/Expected.h>
 #import <wtf/Scope.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cf/TypeCastsCF.h>
@@ -62,17 +65,21 @@ CAAudioStreamDescription audioStreamDescriptionFromAudioInfo(const AudioInfo& in
     asbd.mFormatID = info.codecName.value;
     std::span<const uint8_t> cookieDataSpan { };
     RefPtr cookieData = info.cookieData;
-    if (cookieData)
+    bool filled = false;
+    if (cookieData && cookieData->size()) {
         cookieDataSpan = cookieData->span();
-    UInt32 size = sizeof(asbd);
-    if (auto error = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, cookieDataSpan.size(), cookieDataSpan.data(), &size, &asbd)) {
-        RELEASE_LOG_DEBUG(Media, "kAudioFormatProperty_FormatInfo failed with error %d (%.4s)", static_cast<int>(error), (char *)&error);
+        UInt32 size = sizeof(asbd);
+        if (auto error = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, cookieDataSpan.size(), cookieDataSpan.data(), &size, &asbd))
+            RELEASE_LOG_DEBUG(Media, "kAudioFormatProperty_FormatInfo failed with error %d (%.4s)", static_cast<int>(error), (char *)&error);
+        else
+            filled = true;
+    }
+    if (!filled) {
         asbd.mSampleRate = info.rate;
         asbd.mFramesPerPacket = info.framesPerPacket;
         asbd.mChannelsPerFrame = info.channels;
         asbd.mBitsPerChannel = info.bitDepth;
     }
-
     return asbd;
 }
 
@@ -125,7 +132,7 @@ static CFStringRef convertToCMTransferFunction(PlatformVideoTransferCharacterist
     case PlatformVideoTransferCharacteristics::AribStdB67Hlg:
         return PAL::kCMFormatDescriptionTransferFunction_ITU_R_2100_HLG;
     case PlatformVideoTransferCharacteristics::Iec6196621:
-        return PAL::canLoad_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB() ? PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB() : nullptr;
+        return PAL::canLoad_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB() ? PAL::kCMFormatDescriptionTransferFunction_sRGB : nullptr;
     case PlatformVideoTransferCharacteristics::Linear:
         return PAL::kCMFormatDescriptionTransferFunction_Linear;
     default:
@@ -155,19 +162,16 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
     ASSERT(info.isVideo() || info.isAudio());
 
     if (auto* audioInfo = dynamicDowncast<AudioInfo>(info)) {
-        if (audioInfo->codecName.value != kAudioFormatLinearPCM && (!audioInfo->cookieData || !audioInfo->cookieData->size()))
-            return nullptr;
-
         switch (audioInfo->codecName.value) {
 #if ENABLE(OPUS)
         case kAudioFormatOpus:
-            if (!isOpusDecoderAvailable())
+            if (!isOpusDecoderAvailable() || (!audioInfo->cookieData || !audioInfo->cookieData->size()))
                 return nullptr;
             return createAudioFormatDescription(*audioInfo);
 #endif
 #if ENABLE(VORBIS)
         case kAudioFormatVorbis:
-            if (!isVorbisDecoderAvailable())
+            if (!isVorbisDecoderAvailable() || (!audioInfo->cookieData || !audioInfo->cookieData->size()))
                 return nullptr;
             return createAudioFormatDescription(*audioInfo);
 #endif
@@ -192,24 +196,29 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
 
     if (RefPtr atomData = videoInfo.atomData) {
         RetainPtr data = atomData->createCFData();
-        ASSERT(videoInfo.codecName == kCMVideoCodecType_VP9 || videoInfo.codecName == 'vp08' || videoInfo.codecName == kCMVideoCodecType_H264 || videoInfo.codecName == kCMVideoCodecType_HEVC || videoInfo.codecName == kCMVideoCodecType_AV1);
-        CFStringRef keyName = [](auto codec) {
-            switch (codec) {
-            case kCMVideoCodecType_VP9:
-            case 'vp08':
-                return CFSTR("vpcC");
-            case kCMVideoCodecType_H264:
-                return CFSTR("avcC");
-            case kCMVideoCodecType_HEVC:
-                return CFSTR("hvcC");
-            case kCMVideoCodecType_AV1:
-                return CFSTR("av1C");
-            default:
-                ASSERT_NOT_REACHED();
-                return CFSTR("baad");
-            }
-        }(videoInfo.codecName.value);
-        CFTypeRef configurationKeys[] = { keyName };
+        RetainPtr<CFStringRef> keyName;
+        if (!videoInfo.boxType.isEmpty())
+            keyName = videoInfo.boxType.createCFString();
+        else {
+            ASSERT(videoInfo.codecName == kCMVideoCodecType_VP9 || videoInfo.codecName == 'vp08' || videoInfo.codecName == kCMVideoCodecType_H264 || videoInfo.codecName == kCMVideoCodecType_HEVC || videoInfo.codecName == kCMVideoCodecType_AV1);
+            keyName = [](auto codec) {
+                switch (codec) {
+                case kCMVideoCodecType_VP9:
+                case 'vp08':
+                    return CFSTR("vpcC");
+                case kCMVideoCodecType_H264:
+                    return CFSTR("avcC");
+                case kCMVideoCodecType_HEVC:
+                    return CFSTR("hvcC");
+                case kCMVideoCodecType_AV1:
+                    return CFSTR("av1C");
+                default:
+                    ASSERT_NOT_REACHED();
+                    return CFSTR("baad");
+                }
+            }(videoInfo.codecName.value);
+        }
+        CFTypeRef configurationKeys[] = { keyName.get() };
         CFTypeRef configurationValues[] = { data.get() };
         RetainPtr configurationDict = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, configurationKeys, configurationValues, std::size(configurationKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CFDictionaryAddValue(extensions.get(), PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms, configurationDict.get());
@@ -234,9 +243,9 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
     if (videoInfo.size != videoInfo.displaySize) {
         double horizontalRatio = videoInfo.displaySize.width() / videoInfo.size.width();
         double verticalRatio = videoInfo.displaySize.height() / videoInfo.size.height();
-        CFDictionaryAddValue(extensions.get(), PAL::get_CoreMedia_kCMFormatDescriptionExtension_PixelAspectRatio(), @{
-            (__bridge NSString*)PAL::get_CoreMedia_kCMFormatDescriptionKey_PixelAspectRatioHorizontalSpacing() : @(horizontalRatio),
-            (__bridge NSString*)PAL::get_CoreMedia_kCMFormatDescriptionKey_PixelAspectRatioVerticalSpacing() : @(verticalRatio)
+        CFDictionaryAddValue(extensions.get(), PAL::get_CoreMedia_kCMFormatDescriptionExtension_PixelAspectRatioSingleton(), @{
+            (__bridge NSString*)PAL::get_CoreMedia_kCMFormatDescriptionKey_PixelAspectRatioHorizontalSpacingSingleton() : @(horizontalRatio),
+            (__bridge NSString*)PAL::get_CoreMedia_kCMFormatDescriptionKey_PixelAspectRatioVerticalSpacingSingleton() : @(verticalRatio)
         });
     }
 
@@ -271,6 +280,53 @@ RefPtr<AudioInfo> createAudioInfoFromFormatDescription(CMFormatDescriptionRef de
     if (cookieSize)
         audioInfo->cookieData = SharedBuffer::create(unsafeMakeSpan(static_cast<const uint8_t*>(cookie), cookieSize));
     return audioInfo;
+}
+
+RefPtr<VideoInfo> createVideoInfoFromFormatDescription(CMFormatDescriptionRef description)
+{
+    // This method currently only works for compressed content.
+    auto mediaType = PAL::CMFormatDescriptionGetMediaType(description);
+    if (mediaType != kCMMediaType_Video)
+        return nullptr;
+
+    Ref videoInfo = VideoInfo::create();
+    videoInfo->codecName = PAL::CMFormatDescriptionGetMediaSubType(description);
+    auto dimensions = PAL::CMVideoFormatDescriptionGetDimensions(description);
+    videoInfo->size = IntSize { dimensions.width, dimensions.height };
+    videoInfo->displaySize = presentationSizeFromFormatDescription(description);
+
+    RetainPtr<CFDataRef> atomData;
+    RetainPtr extensionAtoms = PAL::CMFormatDescriptionGetExtension(description, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms);
+    if (RetainPtr atomDictionary = dynamic_cf_cast<CFDictionaryRef>(extensionAtoms.get())) {
+        CFIndex extensionCount = CFDictionaryGetCount(atomDictionary.get());
+        if (extensionCount != 1)
+            RELEASE_LOG_INFO(Media, "kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms having %ld keys keys expected only 1", extensionCount);
+        else {
+            Vector<const void*, 1> keys(extensionCount);
+            Vector<const void*, 1> values(extensionCount);
+            CFDictionaryGetKeysAndValues(atomDictionary.get(), keys.mutableSpan().data(), values.mutableSpan().data());
+            if (RetainPtr key = dynamic_cf_cast<CFStringRef>(keys[0]))
+                videoInfo->boxType = key.get();
+            atomData = dynamic_cf_cast<CFDataRef>(values[0]);
+        }
+    } else if (RetainPtr atomArray = dynamic_cf_cast<CFArrayRef>(extensionAtoms.get()); atomArray && CFArrayGetCount(atomArray.get()) > 0)
+        atomData = dynamic_cf_cast<CFDataRef>(CFArrayGetValueAtIndex(atomArray.get(), 0));
+    if (atomData)
+        videoInfo->atomData = SharedBuffer::create(atomData.get());
+    else
+        RELEASE_LOG_ERROR(Media, "Couldn't retrieve atomData from CMFormatDescription");
+
+    int bitDepth;
+    if (RetainPtr bitsPerComponent = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(description, PAL::kCMFormatDescriptionExtension_BitsPerComponent))) {
+        CFNumberGetValue(bitsPerComponent.get(), kCFNumberIntType, &bitDepth);
+        videoInfo->bitDepth = bitDepth;
+    } else
+        videoInfo->bitDepth = 8;
+
+    if (auto colorSpace = colorSpaceFromFormatDescription(description))
+        videoInfo->colorSpace = *colorSpace;
+
+    return videoInfo;
 }
 
 Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const MediaSamplesBlock& samples, CMFormatDescriptionRef formatDescription)
@@ -316,7 +372,7 @@ Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const MediaSamp
     }
 
     CMSampleBufferRef rawSampleBuffer = nullptr;
-    if (PAL::CMSampleBufferCreateReady(kCFAllocatorDefault, completeBlockBuffers.get(), format.get(), packetSizes.size(), packetTimings.size(), packetTimings.data(), packetSizes.size(), packetSizes.data(), &rawSampleBuffer))
+    if (PAL::CMSampleBufferCreateReady(kCFAllocatorDefault, completeBlockBuffers.get(), format.get(), packetSizes.size(), packetTimings.size(), packetTimings.span().data(), packetSizes.size(), packetSizes.span().data(), &rawSampleBuffer))
         return makeUnexpected("CMSampleBufferCreateReady failed: OOM");
 
     if (samples.isVideo() && samples.size()) {
@@ -330,6 +386,9 @@ Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const MediaSamp
             if (!(samples[i].flags & MediaSample::SampleFlags::IsSync))
                 CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_NotSync, kCFBooleanTrue);
 
+            if (samples[i].flags & MediaSample::SampleFlags::IsNonDisplaying)
+                CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_DoNotDisplay, kCFBooleanTrue);
+
             // Attach HDR10+ (aka SMPTE ST 2094-40) metadata, if present:
             if (samples[i].hdrMetadataType == HdrMetadataType::SmpteSt209440 && samples[i].hdrMetadata)
                 CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_HDR10PlusPerFrameData, Ref { *samples[i].hdrMetadata }->createCFData().get());
@@ -339,21 +398,25 @@ Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const MediaSamp
 
     if (cumulativeTrimDuration > MediaTime::zeroTime()) {
         auto trimDurationDict = adoptCF(PAL::softLink_CoreMedia_CMTimeCopyAsDictionary(PAL::toCMTime(cumulativeTrimDuration), kCFAllocatorDefault));
-        PAL::CMSetAttachment(rawSampleBuffer, PAL::get_CoreMedia_kCMSampleBufferAttachmentKey_TrimDurationAtStart(), trimDurationDict.get(), kCMAttachmentMode_ShouldPropagate);
+        PAL::CMSetAttachment(rawSampleBuffer, PAL::kCMSampleBufferAttachmentKey_TrimDurationAtStart, trimDurationDict.get(), kCMAttachmentMode_ShouldPropagate);
     }
 
     return adoptCF(rawSampleBuffer);
 }
 
-UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef cmSample, TrackInfo* trackInfo)
+UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef cmSample, const TrackInfo* trackInfo)
 {
     ASSERT(cmSample);
     RefPtr info = trackInfo;
     if (!trackInfo) {
         // While this path is currently unused; we only support creating a TrackInfo from an Audio CMFormatDescription
         if (RetainPtr description = PAL::CMSampleBufferGetFormatDescription(cmSample)) {
-            ASSERT(PAL::CMFormatDescriptionGetMediaType(description.get()) == kCMMediaType_Audio);
-            info = createAudioInfoFromFormatDescription(description.get());
+            if (PAL::CMFormatDescriptionGetMediaType(description.get()) == kCMMediaType_Audio)
+                info = createAudioInfoFromFormatDescription(description.get());
+            else {
+                ASSERT(PAL::CMFormatDescriptionGetMediaType(description.get()) == kCMMediaType_Video);
+                info = createVideoInfoFromFormatDescription(description.get());
+            }
         }
     }
 
@@ -361,10 +424,10 @@ UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef cm
         MediaTime duration = sample->duration();
         RetainPtr blockBuffer = PAL::CMSampleBufferGetDataBuffer(sample->sampleBuffer());
         auto trimDurationAtStart = MediaTime::zeroTime();
-        if (auto* trimDurationDict = static_cast<CFDictionaryRef>(PAL::CMGetAttachment(sample->sampleBuffer(), PAL::get_CoreMedia_kCMSampleBufferAttachmentKey_TrimDurationAtStart(), nullptr)))
+        if (auto* trimDurationDict = static_cast<CFDictionaryRef>(PAL::CMGetAttachment(sample->sampleBuffer(), PAL::kCMSampleBufferAttachmentKey_TrimDurationAtStart, nullptr)))
             trimDurationAtStart = PAL::toMediaTime(PAL::CMTimeMakeFromDictionary(trimDurationDict));
         auto trimDurationAtEnd = MediaTime::zeroTime();
-        if (auto* trimDurationDict = static_cast<CFDictionaryRef>(PAL::CMGetAttachment(sample->sampleBuffer(), PAL::get_CoreMedia_kCMSampleBufferAttachmentKey_TrimDurationAtEnd(), nullptr)))
+        if (auto* trimDurationDict = static_cast<CFDictionaryRef>(PAL::CMGetAttachment(sample->sampleBuffer(), PAL::kCMSampleBufferAttachmentKey_TrimDurationAtEnd, nullptr)))
             trimDurationAtEnd = PAL::toMediaTime(PAL::CMTimeMakeFromDictionary(trimDurationDict));
         return MediaSamplesBlock::MediaSampleItem {
             .presentationTime = sample->presentationTime(),
@@ -538,7 +601,7 @@ Vector<AudioStreamPacketDescription> getPacketDescriptions(CMSampleBufferRef sam
         return { };
     }
     Vector<AudioStreamPacketDescription> descriptions(numDescriptions);
-    if (PAL::CMSampleBufferGetAudioStreamPacketDescriptions(sampleBuffer, packetDescriptionsSize, descriptions.data(), nullptr) != noErr) {
+    if (PAL::CMSampleBufferGetAudioStreamPacketDescriptions(sampleBuffer, packetDescriptionsSize, descriptions.mutableSpan().data(), nullptr) != noErr) {
         RELEASE_LOG_FAULT(Media, "Unable to get packet description list");
         return { };
     }

@@ -6,6 +6,10 @@
 // D3DImageFormatConversionTest:
 //   Basic tests to validate code relating to D3D Image format conversions.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 
 #include "image_util/imageformats.h"

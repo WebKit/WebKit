@@ -1,7 +1,7 @@
 
-PASS Property column-rule value '10px'
+FAIL Property column-rule value '10px' assert_equals: expected "0px rgb(0, 255, 0)" but got "0px none rgb(0, 255, 0)"
 PASS Property column-rule value 'dotted'
-PASS Property column-rule value '0px none rgb(255, 0, 255)'
+FAIL Property column-rule value '0px none rgb(255, 0, 255)' assert_equals: expected "0px rgb(255, 0, 255)" but got "0px none rgb(255, 0, 255)"
 PASS Property column-rule value '10px dotted rgb(255, 0, 255)'
 PASS Property column-rule value 'medium hidden currentcolor'
 PASS Property column-rule value 'medium solid currentcolor'

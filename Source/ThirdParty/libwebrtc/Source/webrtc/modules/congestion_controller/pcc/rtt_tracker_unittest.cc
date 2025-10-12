@@ -10,15 +10,18 @@
 
 #include "modules/congestion_controller/pcc/rtt_tracker.h"
 
+#include "api/transport/network_types.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace pcc {
 namespace test {
 namespace {
-const TimeDelta kInitialRtt = TimeDelta::Micros(10);
+constexpr TimeDelta kInitialRtt = TimeDelta::Micros(10);
 constexpr double kAlpha = 0.9;
-const Timestamp kStartTime = Timestamp::Seconds(0);
+constexpr Timestamp kStartTime = Timestamp::Seconds(0);
 
 PacketResult GetPacketWithRtt(TimeDelta rtt) {
   SentPacket packet;

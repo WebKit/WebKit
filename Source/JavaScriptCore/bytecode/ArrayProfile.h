@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ConcurrentJSLock.h"
-#include "Structure.h"
+#include <JavaScriptCore/ConcurrentJSLock.h>
+#include <JavaScriptCore/Structure.h>
 #include <wtf/OptionSet.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

@@ -68,7 +68,6 @@ class TypeStore {
 public:
     TypeStore();
 
-    const Type* bottomType() const { return m_bottom; }
     const Type* voidType() const { return m_void; }
     const Type* boolType() const { return m_bool; }
 
@@ -102,7 +101,7 @@ public:
     const Type* referenceType(AddressSpace, const Type*, AccessMode, bool isVectorComponent = false);
     const Type* pointerType(AddressSpace, const Type*, AccessMode);
     const Type* atomicType(const Type*);
-    const Type* typeConstructorType(ASCIILiteral, std::function<const Type*(AST::ElaboratedTypeExpression&)>&&);
+    const Type* typeConstructorType(ASCIILiteral, std::function<Result<const Type*>(AST::ElaboratedTypeExpression&)>&&);
     const Type* frexpResultType(const Type*, const Type*);
     const Type* modfResultType(const Type*, const Type*);
     const Type* atomicCompareExchangeResultType(const Type*);
@@ -114,7 +113,6 @@ private:
     Vector<std::unique_ptr<const Type>> m_types;
     TypeCache m_cache;
 
-    const Type* m_bottom;
     const Type* m_abstractInt;
     const Type* m_abstractFloat;
     const Type* m_void;

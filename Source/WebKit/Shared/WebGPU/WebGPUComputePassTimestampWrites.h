@@ -37,8 +37,8 @@ namespace WebKit::WebGPU {
 
 struct ComputePassTimestampWrites {
     WebGPUIdentifier querySet;
-    WebCore::WebGPU::Size32 beginningOfPassWriteIndex { 0 };
-    WebCore::WebGPU::Size32 endOfPassWriteIndex { 1 };
+    WebCore::WebGPU::Size32 beginningOfPassWriteIndex { WebCore::WebGPU::kQuerySetIndexUndefined };
+    WebCore::WebGPU::Size32 endOfPassWriteIndex { WebCore::WebGPU::kQuerySetIndexUndefined };
 };
 
 } // namespace WebKit::WebGPU

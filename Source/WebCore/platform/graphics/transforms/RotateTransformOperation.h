@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "TransformOperation.h"
+#include <WebCore/TransformOperation.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -55,32 +55,23 @@ public:
     bool operator==(const RotateTransformOperation& other) const { return operator==(static_cast<const TransformOperation&>(other)); }
     bool operator==(const TransformOperation&) const final;
 
-    Ref<TransformOperation> blend(const TransformOperation* from, const BlendingContext&, bool blendToIdentity = false) final;
+    Ref<TransformOperation> blend(const TransformOperation* from, const BlendingContext&, bool blendToIdentity = false) const final;
 
-    bool isIdentity() const final { return !m_angle; }
-
-    bool isRepresentableIn2D() const final { return (!m_x && !m_y) || !m_angle; }
-
-    bool isAffectedByTransformOrigin() const final { return !isIdentity(); }
-
-    bool apply(TransformationMatrix& transform, const FloatSize& /*borderBoxSize*/) const final
+    void apply(TransformationMatrix& transform) const final
     {
         if (type() == TransformOperation::Type::Rotate)
             transform.rotate(m_angle);
         else
             transform.rotate3d(m_x, m_y, m_z, m_angle);
-        return false;
     }
 
-    bool applyUnrounded(TransformationMatrix& transform, const FloatSize& /*borderBoxSize*/) const final
+    void applyUnrounded(TransformationMatrix& transform) const final
     {
         if (type() == TransformOperation::Type::Rotate)
             transform.rotate(m_angle, TransformationMatrix::RotationSnapping::None);
         else
             transform.rotate3d(m_x, m_y, m_z, m_angle, TransformationMatrix::RotationSnapping::None);
-        return false;
     }
-
 
     void dump(WTF::TextStream&) const final;
 

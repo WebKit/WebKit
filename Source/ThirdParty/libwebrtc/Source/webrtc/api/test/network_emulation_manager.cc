@@ -9,12 +9,15 @@
  */
 #include "api/test/network_emulation_manager.h"
 
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
 
 #include "absl/strings/string_view.h"
+#include "api/test/network_emulation/leaky_bucket_network_queue.h"
+#include "api/test/network_emulation/network_queue.h"
 #include "api/test/simulated_network.h"
 #include "api/units/data_rate.h"
 #include "rtc_base/checks.h"
@@ -51,6 +54,13 @@ NetworkEmulationManager::SimulatedNetworkNode::Builder&
 NetworkEmulationManager::SimulatedNetworkNode::Builder::config(
     BuiltInNetworkBehaviorConfig config) {
   config_ = config;
+  return *this;
+}
+
+NetworkEmulationManager::SimulatedNetworkNode::Builder&
+NetworkEmulationManager::SimulatedNetworkNode::Builder::queue_factory(
+    NetworkQueueFactory& queue_factory) {
+  queue_factory_ = &queue_factory;
   return *this;
 }
 
@@ -143,8 +153,15 @@ NetworkEmulationManager::SimulatedNetworkNode::Builder::Build(
     uint64_t random_seed) const {
   RTC_CHECK(net);
   RTC_CHECK(net_ == nullptr || net_ == net);
+  std::unique_ptr<NetworkQueue> network_queue;
+  if (queue_factory_ != nullptr) {
+    network_queue = queue_factory_->CreateQueue();
+  } else {
+    network_queue = std::make_unique<LeakyBucketNetworkQueue>();
+  }
   SimulatedNetworkNode res;
-  auto behavior = std::make_unique<SimulatedNetwork>(config_, random_seed);
+  auto behavior = std::make_unique<SimulatedNetwork>(config_, random_seed,
+                                                     std::move(network_queue));
   res.simulation = behavior.get();
   res.node = net->CreateEmulatedNode(std::move(behavior));
   return res;

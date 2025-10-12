@@ -449,6 +449,8 @@ auto StreamingParser::finalize() -> State
             if (Options::useEagerWasmModuleHashing()) [[unlikely]]
                 m_info->nameSection->setHash(m_hasher.computeHexDigest());
 
+            m_info->importShouldBeHidden = FixedBitVector(m_info->imports.size());
+
             m_state = State::Finished;
             m_client.didFinishParsing();
         } else

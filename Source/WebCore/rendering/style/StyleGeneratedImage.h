@@ -23,9 +23,9 @@
 
 #pragma once
 
-#include "FloatSize.h"
-#include "FloatSizeHash.h"
-#include "StyleImage.h"
+#include <WebCore/FloatSize.h>
+#include <WebCore/FloatSizeHash.h>
+#include <WebCore/StyleImage.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakHashCountedSet.h>
 
@@ -51,7 +51,7 @@ protected:
     WrappedImagePtr data() const final { return this; }
 
     FloatSize imageSize(const RenderElement*, float multiplier) const final;
-    void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) final;
+    void computeIntrinsicDimensions(const RenderElement*, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) final;
     bool imageHasRelativeWidth() const final { return !m_fixedSize; }
     bool imageHasRelativeHeight() const final { return !m_fixedSize; }
     bool usesImageContainerSize() const final { return !m_fixedSize; }
@@ -77,7 +77,7 @@ protected:
     FloatSize m_containerSize;
     bool m_fixedSize;
     SingleThreadWeakHashCountedSet<RenderElement> m_clients;
-    UncheckedKeyHashMap<FloatSize, std::unique_ptr<CachedGeneratedImage>> m_images;
+    HashMap<FloatSize, std::unique_ptr<CachedGeneratedImage>> m_images;
 };
 
 } // namespace WebCore

@@ -28,8 +28,8 @@
 #if ENABLE(WEB_CODECS) && USE(AVFOUNDATION)
 
 #include "AudioDecoder.h"
-#include "AudioStreamDescription.h"
-#include "FourCC.h"
+#include <WebCore/AudioStreamDescription.h>
+#include <WebCore/FourCC.h>
 #include <wtf/Expected.h>
 #include <wtf/TZoneMalloc.h>
 

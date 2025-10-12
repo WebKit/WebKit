@@ -16,57 +16,13 @@ PASS :precedence:expr="mul_add";decl="override";strip_spaces=true
 PASS :precedence:expr="mul_add";decl="var%3Cprivate%3E";strip_spaces=false
 PASS :precedence:expr="mul_add";decl="var%3Cprivate%3E";strip_spaces=true
 PASS :precedence:expr="sub_neg";decl="literal";strip_spaces=false
-FAIL :precedence:expr="sub_neg";decl="literal";strip_spaces=true assert_unreached:
-  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
-     Starting at index 0:
-       actual == 0x: -21524111
-       failed ->            xx
-     expected ==      0000000a
-      at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
-    17:8: Expected a ;, but got a --
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
- Reached unreachable code
+PASS :precedence:expr="sub_neg";decl="literal";strip_spaces=true
 PASS :precedence:expr="sub_neg";decl="const";strip_spaces=false
-FAIL :precedence:expr="sub_neg";decl="const";strip_spaces=true assert_unreached:
-  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
-     Starting at index 0:
-       actual == 0x: -21524111
-       failed ->            xx
-     expected ==      0000000a
-      at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
-    17:8: Expected a ;, but got a --
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
- Reached unreachable code
+PASS :precedence:expr="sub_neg";decl="const";strip_spaces=true
 PASS :precedence:expr="sub_neg";decl="override";strip_spaces=false
-FAIL :precedence:expr="sub_neg";decl="override";strip_spaces=true assert_unreached:
-  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
-     Starting at index 0:
-       actual == 0x: -21524111
-       failed ->            xx
-     expected ==      0000000a
-      at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
-    17:8: Expected a ;, but got a --
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
- Reached unreachable code
+PASS :precedence:expr="sub_neg";decl="override";strip_spaces=true
 PASS :precedence:expr="sub_neg";decl="var%3Cprivate%3E";strip_spaces=false
-FAIL :precedence:expr="sub_neg";decl="var%3Cprivate%3E";strip_spaces=true assert_unreached:
-  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
-     Starting at index 0:
-       actual == 0x: -21524111
-       failed ->            xx
-     expected ==      0000000a
-      at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
-    17:8: Expected a ;, but got a --
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
- Reached unreachable code
+PASS :precedence:expr="sub_neg";decl="var%3Cprivate%3E";strip_spaces=true
 PASS :precedence:expr="neg_shl";decl="literal";strip_spaces=false
 PASS :precedence:expr="neg_shl";decl="literal";strip_spaces=true
 PASS :precedence:expr="neg_shl";decl="const";strip_spaces=false

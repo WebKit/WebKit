@@ -22,6 +22,7 @@
 
     promise_test(async (t) => {
         const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+        t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
         setTimeout(() => {
             stream.getAudioTracks()[0].applyConstraints({sampleRate:48000});
@@ -41,6 +42,7 @@
 
     promise_test(async (t) => {
         const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+        t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
         setTimeout(() => {
             stream.getAudioTracks()[0].applyConstraints({sampleRate:48000});

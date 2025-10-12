@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "BlockDirectory.h"
-#include "JSCast.h"
-#include "MarkedBlock.h"
-#include "MarkedSpace.h"
-#include "Scribble.h"
-#include "SuperSampler.h"
-#include "VM.h"
+#include <JavaScriptCore/BlockDirectory.h>
+#include <JavaScriptCore/JSCast.h>
+#include <JavaScriptCore/MarkedBlock.h>
+#include <JavaScriptCore/MarkedSpace.h>
+#include <JavaScriptCore/Scribble.h>
+#include <JavaScriptCore/SuperSampler.h>
+#include <JavaScriptCore/VM.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -217,7 +217,6 @@ inline bool MarkedBlock::Handle::areMarksStaleForSweep()
 // sweepMode == SweepToFreeList
 // scribbleMode == DontScribble
 // newlyAllocatedMode == DoesNotHaveNewlyAllocated
-// destructionMode != BlockHasDestructorsAndCollectorIsRunning
 //
 // emptyMode = IsEmpty
 //     destructionMode = DoesNotNeedDestruction
@@ -233,30 +232,10 @@ inline bool MarkedBlock::Handle::areMarksStaleForSweep()
 //
 // Only the DoesNotNeedDestruction one should be specialized by MarkedBlock.
 
-template<size_t storageSize, bool alwaysFitsOnStack>
-class DeadCellStorage {
-public:
-    DeadCellStorage() = default;
-    void append(MarkedBlock::AtomNumberType cell) { return m_deadCells.append(cell); }
-    std::span<const MarkedBlock::AtomNumberType> span() const LIFETIME_BOUND { return m_deadCells.span(); }
-private:
-    Vector<MarkedBlock::AtomNumberType, storageSize> m_deadCells;
-};
-
-template<size_t storageSize>
-class DeadCellStorage<storageSize, true> {
-public:
-    DeadCellStorage() = default;
-    void append(MarkedBlock::AtomNumberType cell) { m_deadCells[m_size++] = cell; }
-    std::span<const MarkedBlock::AtomNumberType> span() const { return { m_deadCells.data(), m_size }; }
-private:
-    std::array<MarkedBlock::AtomNumberType, storageSize> m_deadCells;
-    size_t m_size { 0 };
-};
-
 template<bool specialize, MarkedBlock::Handle::EmptyMode specializedEmptyMode, MarkedBlock::Handle::SweepMode specializedSweepMode, MarkedBlock::Handle::SweepDestructionMode specializedDestructionMode, MarkedBlock::Handle::ScribbleMode specializedScribbleMode, MarkedBlock::Handle::NewlyAllocatedMode specializedNewlyAllocatedMode, MarkedBlock::Handle::MarksMode specializedMarksMode, typename DestroyFunc>
 void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Handle::EmptyMode emptyMode, MarkedBlock::Handle::SweepMode sweepMode, MarkedBlock::Handle::SweepDestructionMode destructionMode, MarkedBlock::Handle::ScribbleMode scribbleMode, MarkedBlock::Handle::NewlyAllocatedMode newlyAllocatedMode, MarkedBlock::Handle::MarksMode marksMode, const DestroyFunc& destroyFunc)
 {
+    constexpr bool verbose = false;
     if (specialize) {
         emptyMode = specializedEmptyMode;
         sweepMode = specializedSweepMode;
@@ -273,13 +252,17 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     MarkedBlock& block = this->block();
     MarkedBlock::Header& header = block.header();
 
-    if (false)
-        dataLog(RawPointer(this), "/", RawPointer(&block), ": MarkedBlock::Handle::specializedSweep!\n");
+    dataLogLnIf(verbose, RawPointer(this), "/", RawPointer(&block), ": MarkedBlock::Handle::specializedSweep!");
 
     unsigned cellSize = this->cellSize();
+    char* payloadEnd = std::bit_cast<char*>(block.atoms() + numberOfAtoms);
+    char* payloadBegin = std::bit_cast<char*>(block.atoms() + m_startAtom);
+    RELEASE_ASSERT(static_cast<size_t>(payloadEnd - payloadBegin) <= payloadSize, payloadBegin, payloadEnd, &block, cellSize, m_startAtom);
 
     VM& vm = this->vm();
+    bool isMarking = space()->isMarking();
     uint64_t secret = vm.heapRandom().getUint64();
+
     auto destroy = [&] (void* cell) {
         JSCell* jsCell = static_cast<JSCell*>(cell);
         if (!jsCell->isZapped()) {
@@ -290,6 +273,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
 
     auto setBits = [&] (bool isEmpty) ALWAYS_INLINE_LAMBDA {
         Locker locker { m_directory->bitvectorLock() };
+        bool wasUnswept = m_directory->isUnswept(this);
         m_directory->setIsUnswept(this, false);
         m_directory->setIsDestructible(this, m_attributes.destruction == DestructionMode::MayNeedDestruction && destructionMode != BlockHasNoDestructors && !isEmpty && m_directory->isDestructible(this));
         m_directory->setIsEmpty(this, false);
@@ -297,15 +281,12 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
             m_isFreeListed = true;
         else if (isEmpty)
             m_directory->setIsEmpty(this, true);
+        return wasUnswept;
     };
-    UNUSED_PARAM(setBits);
 
-    if (Options::useBumpAllocator()
-        && emptyMode == IsEmpty
-        && newlyAllocatedMode == DoesNotHaveNewlyAllocated) {
-
+    if (emptyMode == IsEmpty || (marksMode != MarksNotStale && newlyAllocatedMode != HasNewlyAllocated)) {
         // This is an incredibly powerful assertion that checks the sanity of our block bits.
-        if (marksMode == MarksNotStale && !header.m_marks.isEmpty()) {
+        if (marksMode == MarksNotStale && !header.m_marks.isEmpty()) [[unlikely]] {
             WTF::dataFile().atomically(
                 [&] (PrintStream& out) {
                     out.print("Block ", RawPointer(&block), ": marks not empty!\n");
@@ -316,16 +297,19 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
                 });
         }
 
-        char* payloadEnd = std::bit_cast<char*>(block.atoms() + numberOfAtoms);
-        char* payloadBegin = std::bit_cast<char*>(block.atoms() + m_startAtom);
-        RELEASE_ASSERT(static_cast<size_t>(payloadEnd - payloadBegin) <= payloadSize, payloadBegin, payloadEnd, &block, cellSize, m_startAtom);
+        // We only want to discard the newlyAllocated bits if we're creating a FreeList,
+        // otherwise we would lose information on what's currently alive.
+        if (sweepMode == SweepToFreeList && newlyAllocatedMode == HasNewlyAllocated)
+            header.m_newlyAllocatedVersion = MarkedSpace::nullVersion;
 
-        setBits(true);
-        if (space()->isMarking())
+        bool wasUnswept = setBits(true);
+        if (isMarking)
             header.m_lock.unlock();
-        if (destructionMode != BlockHasNoDestructors) {
-            for (char* cell = payloadBegin; cell < payloadEnd; cell += cellSize)
-                destroy(cell);
+        if (destructionMode == BlockHasDestructors) {
+            if (wasUnswept) {
+                for (char* cell = payloadBegin; cell < payloadEnd; cell += cellSize)
+                    destroy(cell);
+            }
         }
         if (sweepMode == SweepToFreeList) {
             if (scribbleMode == Scribble) [[unlikely]]
@@ -334,108 +318,85 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
             interval->makeLast(payloadEnd - payloadBegin, secret);
             freeList->initialize(interval, secret, payloadEnd - payloadBegin);
         }
-        if (false)
-            dataLog("Quickly swept block ", RawPointer(this), " with cell size ", cellSize, " and attributes ", m_attributes, ": ", pointerDump(freeList), "\n");
+        dataLogLnIf(verbose, "Quickly swept block ", RawPointer(this), " with cell size ", cellSize, " and attributes ", m_attributes, ": ", pointerDump(freeList), " isMarking: ", isMarking, " sweepMode: ", sweepMode);
         return;
     }
 
-    // This produces a free list that is ordered in reverse through the block.
-    // This is fine, since the allocation code makes no assumptions about the
-    // order of the free list.
-    size_t freedBytes = 0;
-    bool isEmpty = true;
-    FreeCell* head = nullptr;
-    size_t currentInterval = 0;
-    size_t previousDeadCell = 0;
-
-    // We try to allocate the deadCells vector entirely on the stack if possible.
-    // Otherwise, we use the maximum permitted space (currently 8kB) to store as
-    // many elements as possible. If we know that all the atoms in the block will
-    // fit in the stack buffer, however, we can use unchecked append instead of
-    // checked.
-    constexpr size_t maxDeadCellBufferBytes = 8 * KB; // Arbitrary limit of 8kB for stack buffer.
-    constexpr size_t deadCellBufferBytes = std::min(atomsPerBlock * sizeof(AtomNumberType), maxDeadCellBufferBytes);
-    static_assert(deadCellBufferBytes <= maxDeadCellBufferBytes);
-    constexpr bool deadCellsAlwaysFitsOnStack = (deadCellBufferBytes / sizeof(AtomNumberType)) <= atomsPerBlock;
-    DeadCellStorage<deadCellBufferBytes / sizeof(AtomNumberType), deadCellsAlwaysFitsOnStack> deadCells;
-
-    auto handleDeadCell = [&] (size_t i) {
-        HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&block.atoms()[i]);
-        if (destructionMode != BlockHasNoDestructors)
-            destroy(cell);
-        if (sweepMode == SweepToFreeList) {
-            if (scribbleMode == Scribble) [[unlikely]]
-                scribble(cell, cellSize);
-
-            // The following check passing implies there was at least one live cell
-            // between us and the last dead cell, meaning that the previous dead
-            // cell is the start of its interval.
-            if (i + m_atomsPerCell < previousDeadCell) {
-                size_t intervalLength = currentInterval * atomSize;
-                FreeCell* cell = reinterpret_cast_ptr<FreeCell*>(&block.atoms()[previousDeadCell]);
-                if (head) [[likely]]
-                    cell->setNext(head, intervalLength, secret);
-                else
-                    cell->makeLast(intervalLength, secret);
-                freedBytes += intervalLength;
-                head = cell;
-                currentInterval = 0;
-            }
-            currentInterval += m_atomsPerCell;
-            previousDeadCell = i;
-        }
-    };
-
-    auto checkForFinalInterval = [&] () {
-        if (sweepMode == SweepToFreeList && currentInterval) {
-            size_t intervalLength = currentInterval * atomSize;
-            FreeCell* cell = reinterpret_cast_ptr<FreeCell*>(&block.atoms()[previousDeadCell]);
-
-            if (head) [[likely]]
-                cell->setNext(head, intervalLength, secret);
-            else
-                cell->makeLast(intervalLength, secret);
-            freedBytes += intervalLength;
-            head = cell;
-        }
-    };
-
-    for (int i = endAtom - m_atomsPerCell; i >= static_cast<int>(m_startAtom); i -= m_atomsPerCell) {
-        if (emptyMode == NotEmpty
-            && ((marksMode == MarksNotStale && header.m_marks.get(i))
-                || (newlyAllocatedMode == HasNewlyAllocated && header.m_newlyAllocated.get(i)))) {
-            isEmpty = false;
-            continue;
-        }
-
-        if (destructionMode == BlockHasDestructorsAndCollectorIsRunning)
-            deadCells.append(i);
-        else
-            handleDeadCell(i);
-    }
-    if (destructionMode != BlockHasDestructorsAndCollectorIsRunning)
-        checkForFinalInterval(); // We need this to handle the first interval in the block, since it has no dead cells before it.
+    WTF::BitSet<atomsPerBlock> live;
+    if (marksMode == MarksNotStale && newlyAllocatedMode == HasNewlyAllocated) {
+        live = header.m_marks;
+        live.merge(header.m_newlyAllocated);
+    } else if (marksMode == MarksNotStale)
+        live = header.m_marks;
+    else
+        live = header.m_newlyAllocated;
 
     // We only want to discard the newlyAllocated bits if we're creating a FreeList,
     // otherwise we would lose information on what's currently alive.
     if (sweepMode == SweepToFreeList && newlyAllocatedMode == HasNewlyAllocated)
         header.m_newlyAllocatedVersion = MarkedSpace::nullVersion;
 
-    if (space()->isMarking())
+    bool wasUnswept = setBits(false);
+
+    // We captured a snapshot of liveness information, so we no longer need to hold a lock!
+    // Only thing we need at this point is just |live| BitSet.
+    if (isMarking)
         header.m_lock.unlock();
 
-    if (destructionMode == BlockHasDestructorsAndCollectorIsRunning) {
-        for (size_t i : deadCells.span())
-            handleDeadCell(i);
-        checkForFinalInterval();
-    }
+    auto sweepBlock = [&]<bool needsDestruction>() ALWAYS_INLINE_LAMBDA {
+        size_t freedBytes = 0;
+        FreeCell* head = nullptr;
+        FreeCell* cursor = nullptr;
+        size_t cursorIntervalBytes = 0;
+        auto pushInterval = [&](FreeCell* cell, size_t intervalBytes) {
+            if constexpr (needsDestruction) {
+                for (char* target = std::bit_cast<char*>(cell); target < (std::bit_cast<char*>(cell) + intervalBytes); target += cellSize)
+                    destroy(target);
+            }
 
-    if (sweepMode == SweepToFreeList)
-        freeList->initialize(head, secret, freedBytes);
-    setBits(isEmpty);
+            if (sweepMode == SweepToFreeList) {
+                if (scribbleMode == Scribble) [[unlikely]]
+                    scribble(cell, intervalBytes);
 
-    if (false)
-        dataLog("Slowly swept block ", RawPointer(&block), " with cell size ", cellSize, " and attributes ", m_attributes, ": ", pointerDump(freeList), "\n");
+                if (!head)
+                    head = cell;
+
+                if (cursor) [[likely]]
+                    cursor->setNext(cell, cursorIntervalBytes, secret);
+
+                cursor = cell;
+                cursorIntervalBytes = intervalBytes;
+                freedBytes += intervalBytes;
+            }
+        };
+
+        unsigned potentiallyFreeCell = m_startAtom;
+        auto handleLiveCell = [&](unsigned index) {
+            ASSERT(!((index - m_startAtom) % m_atomsPerCell));
+            if (potentiallyFreeCell != index) {
+                FreeCell* cell = std::bit_cast<FreeCell*>(&block.atoms()[potentiallyFreeCell]);
+                pushInterval(cell, (index - potentiallyFreeCell) * atomSize);
+            }
+            potentiallyFreeCell = index + m_atomsPerCell;
+        };
+        live.forEachSetBit([&](unsigned index) {
+            handleLiveCell(index);
+        });
+        handleLiveCell(endAtom);
+
+        if (sweepMode == SweepToFreeList) {
+            if (cursor)
+                cursor->makeLast(cursorIntervalBytes, secret);
+            freeList->initialize(head, secret, freedBytes);
+        }
+    };
+
+    if (destructionMode == BlockHasNoDestructors || !wasUnswept)
+        sweepBlock.template operator()</* needsDestruction */ false>();
+    else
+        sweepBlock.template operator()</* needsDestruction */ true>();
+
+    dataLogLnIf(verbose, "Slowly swept block ", RawPointer(&block), " with cell size ", cellSize, " and attributes ", m_attributes, ": ", pointerDump(freeList), " isMarking: ", isMarking, " sweepMode: ", sweepMode);
 }
 
 template<typename DestroyFunc>
@@ -516,11 +477,8 @@ void MarkedBlock::Handle::finishSweepKnowingHeapCellType(FreeList* freeList, con
 
 inline MarkedBlock::Handle::SweepDestructionMode MarkedBlock::Handle::sweepDestructionMode()
 {
-    if (m_attributes.destruction != DoesNotNeedDestruction) {
-        if (space()->isMarking())
-            return BlockHasDestructorsAndCollectorIsRunning;
+    if (m_attributes.destruction != DoesNotNeedDestruction)
         return BlockHasDestructors;
-    }
     return BlockHasNoDestructors;
 }
 
@@ -620,16 +578,13 @@ inline IterationStatus MarkedBlock::Handle::forEachMarkedCell(const Functor& fun
     WTF::loadLoadFence();
     if (areMarksStale)
         return IterationStatus::Continue;
-    for (size_t i = m_startAtom; i < endAtom; i += m_atomsPerCell) {
-        if (!block.header().m_marks.get(i))
-            continue;
-
+    IterationStatus result = IterationStatus::Continue;
+    block.header().m_marks.forEachSetBit([&](size_t i) ALWAYS_INLINE_LAMBDA {
         HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&m_block->atoms()[i]);
-
-        if (functor(i, cell, kind) == IterationStatus::Done)
-            return IterationStatus::Done;
-    }
-    return IterationStatus::Continue;
+        result = functor(i, cell, kind);
+        return result;
+    });
+    return result;
 }
 
 } // namespace JSC

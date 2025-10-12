@@ -10,6 +10,13 @@
 
 #include "modules/audio_device/dummy/audio_device_dummy.h"
 
+#include <cstdint>
+
+#include "api/audio/audio_device.h"
+#include "api/audio/audio_device_defines.h"
+#include "modules/audio_device/audio_device_buffer.h"
+#include "modules/audio_device/audio_device_generic.h"
+
 namespace webrtc {
 
 int32_t AudioDeviceDummy::ActiveAudioLayer(

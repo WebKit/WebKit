@@ -31,9 +31,9 @@
 
 #pragma once
 
-#include "BlobData.h"
-#include "BlobRegistry.h"
-#include "SecurityOriginData.h"
+#include <WebCore/BlobData.h>
+#include <WebCore/BlobRegistry.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/TZoneMalloc.h>

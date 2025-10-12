@@ -576,23 +576,23 @@ CompilationResult Plan::finalize()
     CompilationResult result = [&] {
         if (m_finalizer->isFailed()) {
             CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("failed"));
-            return CompilationFailed;
+            return CompilationResult::CompilationFailed;
         }
 
         if (!isStillValidCodeBlock()) {
             CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("invalidated"));
-            return CompilationInvalidated;
+            return CompilationResult::CompilationInvalidated;
         }
 
         bool result = m_finalizer->finalize();
         if (!result) {
             CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("failed"));
-            return CompilationFailed;
+            return CompilationResult::CompilationFailed;
         }
 
         if (!reallyAdd(m_codeBlock->jitCode()->dfgCommon())) {
             CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("invalidated"));
-            return CompilationInvalidated;
+            return CompilationResult::CompilationInvalidated;
         }
 
         {
@@ -604,7 +604,7 @@ CompilationResult Plan::finalize()
         // it is possible that the current CodeBlock is now invalidated & jettisoned.
         if (m_codeBlock->isJettisoned()) {
             CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("invalidated"));
-            return CompilationInvalidated;
+            return CompilationResult::CompilationInvalidated;
         }
 
         if (validationEnabled()) [[unlikely]] {
@@ -628,7 +628,7 @@ CompilationResult Plan::finalize()
         }
 
         CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("succeeded"));
-        return CompilationSuccessful;
+        return CompilationResult::CompilationSuccessful;
     }();
 
     // We will establish new references from the code block to things. So, we need a barrier.

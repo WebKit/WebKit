@@ -10,26 +10,33 @@
 
 #include "modules/audio_processing/aec3/comfort_noise_generator.h"
 
-// Defines WEBRTC_ARCH_X86_FAMILY, used below.
-#include "rtc_base/system/arch.h"
-
-#if defined(WEBRTC_ARCH_X86_FAMILY)
-#include <emmintrin.h>
-#endif
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstddef>
 #include <cstdint>
-#include <functional>
+#include <memory>
+#include <numbers>
 #include <numeric>
+#include <vector>
 
-#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "api/array_view.h"
+#include "api/audio/echo_canceller3_config.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/fft_data.h"
 #include "modules/audio_processing/aec3/vector_math.h"
-#include "rtc_base/checks.h"
+
+// Defines WEBRTC_ARCH_X86_FAMILY, used below.
+#include "rtc_base/system/arch.h"
+#if defined(WEBRTC_ARCH_X86_FAMILY)
+#include <emmintrin.h>
+#endif
 
 namespace webrtc {
 
 namespace {
+
+using std::numbers::sqrt2_v;
 
 // Computes the noise floor value that matches a WGN input of noise_floor_dbfs.
 float GetNoiseFloorFactor(float noise_floor_dbfs) {
@@ -39,14 +46,16 @@ float GetNoiseFloorFactor(float noise_floor_dbfs) {
 }
 
 // Table of sqrt(2) * sin(2*pi*i/32).
+// clang-format off
 constexpr float kSqrt2Sin[32] = {
     +0.0000000f, +0.2758994f, +0.5411961f, +0.7856950f, +1.0000000f,
-    +1.1758756f, +1.3065630f, +1.3870398f, +1.4142136f, +1.3870398f,
+    +1.1758756f, +1.3065630f, +1.3870398f, +sqrt2_v<float>, +1.3870398f,
     +1.3065630f, +1.1758756f, +1.0000000f, +0.7856950f, +0.5411961f,
     +0.2758994f, +0.0000000f, -0.2758994f, -0.5411961f, -0.7856950f,
-    -1.0000000f, -1.1758756f, -1.3065630f, -1.3870398f, -1.4142136f,
+    -1.0000000f, -1.1758756f, -1.3065630f, -1.3870398f, -sqrt2_v<float>,
     -1.3870398f, -1.3065630f, -1.1758756f, -1.0000000f, -0.7856950f,
     -0.5411961f, -0.2758994f};
+// clang-format on
 
 void GenerateComfortNoise(Aec3Optimization optimization,
                           const std::array<float, kFftLengthBy2Plus1>& N2,
@@ -122,10 +131,9 @@ ComfortNoiseGenerator::~ComfortNoiseGenerator() = default;
 
 void ComfortNoiseGenerator::Compute(
     bool saturated_capture,
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
-        capture_spectrum,
-    rtc::ArrayView<FftData> lower_band_noise,
-    rtc::ArrayView<FftData> upper_band_noise) {
+    ArrayView<const std::array<float, kFftLengthBy2Plus1>> capture_spectrum,
+    ArrayView<FftData> lower_band_noise,
+    ArrayView<FftData> upper_band_noise) {
   const auto& Y2 = capture_spectrum;
 
   if (!saturated_capture) {

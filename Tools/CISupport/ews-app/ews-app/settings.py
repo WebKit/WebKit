@@ -121,6 +121,7 @@ else:
             'USER': util.load_password('DB_USERNAME'),
             'PASSWORD': util.load_password('DB_PASSWORD'),
             'HOST': util.load_password('DB_URL'),
+            'PORT': util.load_password('DB_PORT', default='5432')
         }
     }
 
@@ -149,7 +150,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Los_Angeles'
 
 USE_I18N = True
 

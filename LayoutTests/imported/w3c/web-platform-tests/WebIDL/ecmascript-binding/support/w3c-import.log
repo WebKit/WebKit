@@ -14,6 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/webidl/ecmascript-binding/support/constructors-support.html
-/LayoutTests/imported/w3c/web-platform-tests/webidl/ecmascript-binding/support/create-realm.js
-/LayoutTests/imported/w3c/web-platform-tests/webidl/ecmascript-binding/support/dummy-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/support/constructors-support.html
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/support/create-realm.js
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/support/dummy-iframe.html

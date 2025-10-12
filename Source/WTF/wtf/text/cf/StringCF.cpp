@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,16 +41,16 @@ String::String(CFStringRef str)
     }
 
     {
-        StringBuffer<LChar> buffer(size);
+        StringBuffer<Latin1Character> buffer(size);
         CFIndex usedBufLen;
-        CFIndex convertedSize = CFStringGetBytes(str, CFRangeMake(0, size), kCFStringEncodingISOLatin1, 0, false, buffer.characters(), size, &usedBufLen);
+        CFIndex convertedSize = CFStringGetBytes(str, CFRangeMake(0, size), kCFStringEncodingISOLatin1, 0, false, byteCast<UInt8>(buffer.characters()), size, &usedBufLen);
         if (convertedSize == size && usedBufLen == size) {
             m_impl = StringImpl::adopt(WTFMove(buffer));
             return;
         }
     }
 
-    StringBuffer<UChar> ucharBuffer(size);
+    StringBuffer<char16_t> ucharBuffer(size);
     CFStringGetCharacters(str, CFRangeMake(0, size), reinterpret_cast<UniChar *>(ucharBuffer.characters()));
     m_impl = StringImpl::adopt(WTFMove(ucharBuffer));
 }

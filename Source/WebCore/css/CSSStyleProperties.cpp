@@ -32,7 +32,6 @@
 #include "CSSStyleSheet.h"
 #include "DeprecatedCSSOMValue.h"
 #include "Document.h"
-#include "DocumentInlines.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMGlobalObject.h"
@@ -93,7 +92,7 @@ static PropertyNamePrefix propertyNamePrefix(const StringImpl& propertyName)
     ASSERT(propertyName.length());
 
     // First character of the prefix within the property name may be upper or lowercase.
-    UChar firstChar = toASCIILower(propertyName[0]);
+    char16_t firstChar = toASCIILower(propertyName[0]);
     switch (firstChar) {
     case 'e':
         if (matchesCSSPropertyNamePrefix(propertyName, "epub"_s))
@@ -121,7 +120,7 @@ static inline void writeEpubPrefix(std::span<char>& buffer)
 
 static CSSPropertyID parseJavaScriptCSSPropertyName(const AtomString& propertyName)
 {
-    using CSSPropertyIDMap = UncheckedKeyHashMap<AtomString, CSSPropertyID>;
+    using CSSPropertyIDMap = HashMap<AtomString, CSSPropertyID>;
     static NeverDestroyed<CSSPropertyIDMap> propertyIDCache;
 
     auto* propertyNameString = propertyName.impl();
@@ -165,7 +164,7 @@ static CSSPropertyID parseJavaScriptCSSPropertyName(const AtomString& propertyNa
         return CSSPropertyInvalid;
 
     for (; i < length; ++i) {
-        UChar c = (*propertyNameString)[i];
+        char16_t c = (*propertyNameString)[i];
         if (!c || !isASCII(c))
             return CSSPropertyInvalid; // illegal character
         if (isASCIIUpper(c)) {
@@ -204,7 +203,7 @@ enum class CSSPropertyLookupMode { ConvertUsingDashPrefix, ConvertUsingNoDashPre
 
 template<CSSPropertyLookupMode mode> static CSSPropertyID lookupCSSPropertyFromIDLAttribute(const AtomString& attribute)
 {
-    static NeverDestroyed<UncheckedKeyHashMap<AtomString, CSSPropertyID>> cache;
+    static NeverDestroyed<HashMap<AtomString, CSSPropertyID>> cache;
 
     if (auto id = cache.get().get(attribute))
         return id;
@@ -585,6 +584,11 @@ void StyleRuleCSSStyleProperties::didMutate(MutationType type)
 CSSStyleSheet* StyleRuleCSSStyleProperties::parentStyleSheet() const
 {
     return m_parentRule ? m_parentRule->parentStyleSheet() : nullptr;
+}
+
+CSSRule* StyleRuleCSSStyleProperties::parentRule() const
+{
+    return m_parentRule.get();
 }
 
 OptionalOrReference<CSSParserContext> StyleRuleCSSStyleProperties::cssParserContext() const

@@ -1,0 +1,8 @@
+
+== Running test suite: SiteIsolation.Target
+-- Running test case: SiteIsolation.Target.FrameTargetLifecycleEvents
+{"eventType":"target-manager-target-added","targetType":"frame"}
+{"eventType":"target-manager-target-added","targetType":"frame"}
+{"eventType":"target-manager-target-removed","targetType":"frame"}
+{"eventType":"target-manager-target-removed","targetType":"frame"}
+

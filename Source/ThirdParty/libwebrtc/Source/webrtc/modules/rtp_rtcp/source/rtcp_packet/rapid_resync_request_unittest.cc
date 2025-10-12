@@ -10,6 +10,9 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/rapid_resync_request.h"
 
+#include <cstdint>
+
+#include "rtc_base/buffer.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
@@ -20,11 +23,11 @@ using webrtc::rtcp::RapidResyncRequest;
 
 namespace webrtc {
 namespace {
-const uint32_t kSenderSsrc = 0x12345678;
-const uint32_t kRemoteSsrc = 0x23456789;
+constexpr uint32_t kSenderSsrc = 0x12345678;
+constexpr uint32_t kRemoteSsrc = 0x23456789;
 // Manually created packet matching constants above.
-const uint8_t kPacket[] = {0x85, 205,  0x00, 0x02, 0x12, 0x34,
-                           0x56, 0x78, 0x23, 0x45, 0x67, 0x89};
+constexpr uint8_t kPacket[] = {0x85, 205,  0x00, 0x02, 0x12, 0x34,
+                               0x56, 0x78, 0x23, 0x45, 0x67, 0x89};
 }  // namespace
 
 TEST(RtcpPacketRapidResyncRequestTest, Parse) {
@@ -41,7 +44,7 @@ TEST(RtcpPacketRapidResyncRequestTest, Create) {
   rrr.SetSenderSsrc(kSenderSsrc);
   rrr.SetMediaSsrc(kRemoteSsrc);
 
-  rtc::Buffer packet = rrr.Build();
+  Buffer packet = rrr.Build();
 
   EXPECT_THAT(make_tuple(packet.data(), packet.size()),
               ElementsAreArray(kPacket));

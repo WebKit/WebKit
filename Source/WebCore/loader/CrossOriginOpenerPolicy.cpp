@@ -174,7 +174,7 @@ static std::pair<Ref<SecurityOrigin>, CrossOriginOpenerPolicy> computeResponseOr
     // if the initiator and its top level document are same-origin, or default (unsafe-none) otherwise.
     // https://github.com/whatwg/html/issues/6913
     if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(response.url()) && requester)
-        return { requester->securityOrigin, requester->securityOrigin->isSameOriginAs(requester->topOrigin) ? requester->policyContainer.crossOriginOpenerPolicy : CrossOriginOpenerPolicy { } };
+        return { requester->securityOrigin, Ref { requester->securityOrigin }->isSameOriginAs(requester->topOrigin) ? requester->policyContainer.crossOriginOpenerPolicy : CrossOriginOpenerPolicy { } };
 
     // If the HTTP response contains a CSP header, it may set sandbox flags, which would cause the origin to become opaque.
     auto responseOrigin = responseCSP && !responseCSP->sandboxFlags().isEmpty() ? SecurityOrigin::createOpaque() : SecurityOrigin::create(response.url());
@@ -292,7 +292,7 @@ std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandl
 CrossOriginOpenerPolicyEnforcementResult CrossOriginOpenerPolicyEnforcementResult::from(const URL& currentURL, Ref<SecurityOrigin>&& currentOrigin, const CrossOriginOpenerPolicy& crossOriginOpenerPolicy, std::optional<NavigationRequester> requester, const URL& openerURL)
 {
     CrossOriginOpenerPolicyEnforcementResult result { currentURL, WTFMove(currentOrigin), crossOriginOpenerPolicy };
-    result.isCurrentContextNavigationSource = requester && result.currentOrigin->isSameOriginAs(requester->securityOrigin);
+    result.isCurrentContextNavigationSource = requester && Ref { result.currentOrigin }->isSameOriginAs(requester->securityOrigin);
     if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(currentURL) && openerURL.isValid())
         result.url = openerURL;
     return result;

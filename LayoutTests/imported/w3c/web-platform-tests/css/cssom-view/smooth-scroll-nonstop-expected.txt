@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: test.step_timeout is not a function. (In 'test.step_timeout(() => {
       reject(`No ${eventName} event received for target ${target}`);
     }, timeoutMs)', 'test.step_timeout' is undefined...
 

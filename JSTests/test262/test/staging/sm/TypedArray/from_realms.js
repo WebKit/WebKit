@@ -2,20 +2,18 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-TypedArray-shell.js]
-flags:
-  - noStrict
+includes: [sm/non262-TypedArray-shell.js]
 description: |
   pending
 esid: pending
 ---*/
-for (var constructor of anyTypedArrayConstructors) {
-    if (typeof createNewGlobal !== 'function')
-        break;
 
+var g = $262.createRealm().global;
+var h = $262.createRealm().global;
+
+for (var constructor of anyTypedArrayConstructors) {
     // G[constructor.name].from, where G is any global, produces an array whose prototype
     // is G[constructor.name].prototype.
-    var g = createNewGlobal();
     var ga = g[constructor.name].from([1, 2, 3]);
     assert.sameValue(ga instanceof g[constructor.name], true);
 
@@ -27,7 +25,7 @@ for (var constructor of anyTypedArrayConstructors) {
 
     // The default 'this' value received by a non-strict mapping function is
     // that function's global, not %TypedArray%.from's global or the caller's global.
-    var h = createNewGlobal(), result = undefined;
+    var result = undefined;
     h.mainGlobal = this;
     h.eval("function f() { mainGlobal.result = this; }");
     g[constructor.name].from.call(constructor, [5, 6, 7], h.f);

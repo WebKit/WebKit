@@ -10,8 +10,8 @@
 
 #include "test/testsupport/test_artifacts.h"
 
-#include <string.h>
-
+#include <cstdint>
+#include <cstring>
 #include <string>
 
 #include "absl/flags/declare.h"

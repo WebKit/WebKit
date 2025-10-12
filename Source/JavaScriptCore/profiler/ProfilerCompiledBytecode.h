@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
-#include "ProfilerOriginStack.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/ProfilerOriginStack.h>
 #include <wtf/text/CString.h>
 
 namespace JSC { namespace Profiler {

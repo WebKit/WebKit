@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Timer.h"
+#include <WebCore/NodeDocument.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>

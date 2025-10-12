@@ -67,10 +67,9 @@ struct lookahead_ctx {
  * may be done when buffers are enqueued.
  */
 struct lookahead_ctx *av1_lookahead_init(
-    unsigned int width, unsigned int height, unsigned int subsampling_x,
-    unsigned int subsampling_y, int use_highbitdepth, unsigned int depth,
-    const int border_in_pixels, int byte_alignment, int num_lap_buffers,
-    bool is_all_intra, bool alloc_pyramid);
+    int width, int height, int subsampling_x, int subsampling_y,
+    int use_highbitdepth, int depth, int border_in_pixels, int byte_alignment,
+    int num_lap_buffers, bool is_all_intra, bool alloc_pyramid);
 
 /**\brief Destroys the lookahead stage
  */
@@ -124,8 +123,7 @@ struct lookahead_entry *av1_lookahead_peek(struct lookahead_ctx *ctx, int index,
 
 /**\brief Get the number of frames currently in the lookahead queue
  */
-unsigned int av1_lookahead_depth(struct lookahead_ctx *ctx,
-                                 COMPRESSOR_STAGE stage);
+int av1_lookahead_depth(struct lookahead_ctx *ctx, COMPRESSOR_STAGE stage);
 
 /**\brief Get pop_sz value
  */

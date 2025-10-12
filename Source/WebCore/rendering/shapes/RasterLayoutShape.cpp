@@ -156,13 +156,13 @@ LineSegment RasterLayoutShape::getExcludedInterval(LayoutUnit logicalTop, Layout
 {
     const RasterShapeIntervals& intervals = marginIntervals();
     if (intervals.isEmpty())
-        return LineSegment();
+        return { };
 
     int y1 = logicalTop;
     int y2 = logicalTop + logicalHeight;
     ASSERT(y2 >= y1);
     if (y2 < intervals.bounds().y() || y1 >= intervals.bounds().maxY())
-        return LineSegment();
+        return { };
 
     y1 = std::max(y1, intervals.bounds().y());
     y2 = std::min(y2, intervals.bounds().maxY());
@@ -175,7 +175,11 @@ LineSegment RasterLayoutShape::getExcludedInterval(LayoutUnit logicalTop, Layout
             excludedInterval.unite(intervals.intervalAt(y));
     }
 
-    return LineSegment(excludedInterval.x1(), excludedInterval.x2());
+    if (!shouldFlipStartAndEndPoints(writingMode()))
+        return LineSegment(excludedInterval.x1(), excludedInterval.x2());
+
+    auto x1 = m_marginRectSize.width() - excludedInterval.x2();
+    return LineSegment(x1, x1 + excludedInterval.width());
 }
 
 } // namespace WebCore

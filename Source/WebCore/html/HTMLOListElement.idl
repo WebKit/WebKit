@@ -21,7 +21,7 @@
     Exposed=Window
 ] interface HTMLOListElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute boolean compact;
-    [CEReactions=NotNeeded, ImplementedAs=startForBindings] attribute long start;
+    [CEReactions=NotNeeded, ImplementedAs=startForBindings, ReflectSetter] attribute long start;
     [CEReactions=NotNeeded, Reflect] attribute boolean reversed;
     [CEReactions=NotNeeded, Reflect] attribute DOMString type;
 };

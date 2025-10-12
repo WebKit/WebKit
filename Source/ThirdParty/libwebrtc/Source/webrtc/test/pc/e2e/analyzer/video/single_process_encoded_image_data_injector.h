@@ -11,14 +11,13 @@
 #ifndef TEST_PC_E2E_ANALYZER_VIDEO_SINGLE_PROCESS_ENCODED_IMAGE_DATA_INJECTOR_H_
 #define TEST_PC_E2E_ANALYZER_VIDEO_SINGLE_PROCESS_ENCODED_IMAGE_DATA_INJECTOR_H_
 
+#include <cstddef>
 #include <cstdint>
 #include <map>
-#include <memory>
-#include <utility>
-#include <vector>
 
 #include "api/video/encoded_image.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 #include "test/pc/e2e/analyzer/video/encoded_image_data_injector.h"
 
 namespace webrtc {

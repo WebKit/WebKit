@@ -31,12 +31,12 @@ namespace WebCore {
 // Describe an SVG <hkern>/<vkern> element
 struct SVGKerningPair {
     UnicodeRanges unicodeRange1;
-    UncheckedKeyHashSet<String> unicodeName1;
-    UncheckedKeyHashSet<String> glyphName1;
+    HashSet<String> unicodeName1;
+    HashSet<String> glyphName1;
 
     UnicodeRanges unicodeRange2;
-    UncheckedKeyHashSet<String> unicodeName2;
-    UncheckedKeyHashSet<String> glyphName2;
+    HashSet<String> unicodeName2;
+    HashSet<String> glyphName2;
     float kerning { 0 };
 };
 

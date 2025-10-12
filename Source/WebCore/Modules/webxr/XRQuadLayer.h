@@ -37,6 +37,8 @@ class WebXRSpace;
 // https://immersive-web.github.io/layers/#xrquadlayertype
 class XRQuadLayer : public XRCompositionLayer {
 public:
+    virtual ~XRQuadLayer();
+
     const WebXRSpace& space() const { RELEASE_ASSERT_NOT_REACHED(); }
     [[noreturn]] void setSpace(const WebXRSpace&) { RELEASE_ASSERT_NOT_REACHED(); }
     const WebXRRigidTransform& transform() const { RELEASE_ASSERT_NOT_REACHED(); }
@@ -46,9 +48,20 @@ public:
     [[noreturn]] void setWidth(float) { RELEASE_ASSERT_NOT_REACHED(); }
     float height() const { RELEASE_ASSERT_NOT_REACHED(); }
     [[noreturn]] void setHeight(float) { RELEASE_ASSERT_NOT_REACHED(); }
+
+private:
+    bool isXRQuadLayer() const final { return true; }
+
+    // WebXRLayer.
+    [[noreturn]] void startFrame(PlatformXR::FrameData&) final { RELEASE_ASSERT_NOT_REACHED(); }
+    [[noreturn]] PlatformXR::Device::Layer endFrame() final { RELEASE_ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::XRQuadLayer)
+    static bool isType(const WebCore::WebXRLayer& layer) { return layer.isXRQuadLayer(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEBXR_LAYERS)
 

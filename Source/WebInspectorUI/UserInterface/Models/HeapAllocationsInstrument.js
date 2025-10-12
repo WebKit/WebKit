@@ -45,7 +45,7 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
         // FIXME: Include a periodic snapshot interval option for this instrument.
 
         if (!initiatedByBackend) {
-            for (let target of WI.targets)
+            for (let target of this.#allSupportedTargets())
                 target.HeapAgent.startTracking();
         }
 
@@ -57,7 +57,7 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
     stopInstrumentation(initiatedByBackend)
     {
         if (!initiatedByBackend) {
-            for (let target of WI.targets)
+            for (let target of this.#allSupportedTargets())
                 target.HeapAgent.stopTracking();
         }
 
@@ -69,7 +69,7 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
 
     _takeHeapSnapshot()
     {
-        for (let target of WI.targets) {
+        for (let target of this.#allSupportedTargets()) {
             WI.heapManager.snapshot(target, (error, timestamp, snapshotStringData) => {
                 let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
                 workerProxy.createSnapshot(target.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
@@ -78,6 +78,14 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
                     WI.timelineManager.heapSnapshotAdded(timestamp, snapshot);
                 });
             });
+        }
+    }
+
+    // FIXME: <https://webkit.org/b/298984> Add Heap support for FrameTarget.
+    *#allSupportedTargets() {
+        for (let target of WI.targets) {
+            if (!(target instanceof WI.FrameTarget))
+                yield target;
         }
     }
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,18 +27,10 @@
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "LibWebRTCMacros.h"
+#include "LibWebRTCRefWrappers.h"
 #include "LibWebRTCRtpSenderBackend.h"
 #include "RTCRtpTransceiverBackend.h"
 #include <wtf/TZoneMalloc.h>
-
-ALLOW_UNUSED_PARAMETERS_BEGIN
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-
-#include <webrtc/api/rtp_transceiver_interface.h>
-#include <webrtc/api/scoped_refptr.h>
-
-ALLOW_DEPRECATED_DECLARATIONS_END
-ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
 
@@ -47,7 +39,7 @@ class LibWebRTCRtpReceiverBackend;
 class LibWebRTCRtpTransceiverBackend final : public RTCRtpTransceiverBackend {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCRtpTransceiverBackend);
 public:
-    explicit LibWebRTCRtpTransceiverBackend(rtc::scoped_refptr<webrtc::RtpTransceiverInterface>&& rtcTransceiver)
+    explicit LibWebRTCRtpTransceiverBackend(Ref<webrtc::RtpTransceiverInterface>&& rtcTransceiver)
         : m_rtcTransceiver(WTFMove(rtcTransceiver))
     {
     }
@@ -55,7 +47,7 @@ public:
     std::unique_ptr<LibWebRTCRtpReceiverBackend> createReceiverBackend();
     std::unique_ptr<LibWebRTCRtpSenderBackend> createSenderBackend(LibWebRTCPeerConnectionBackend&, LibWebRTCRtpSenderBackend::Source&&);
 
-    webrtc::RtpTransceiverInterface* rtcTransceiver() { return m_rtcTransceiver.get(); }
+    webrtc::RtpTransceiverInterface* rtcTransceiver() { return m_rtcTransceiver.ptr(); }
 
 private:
     RTCRtpTransceiverDirection direction() const final;
@@ -66,7 +58,7 @@ private:
     bool stopped() const final;
     ExceptionOr<void> setCodecPreferences(const Vector<RTCRtpCodecCapability>&) final;
 
-    rtc::scoped_refptr<webrtc::RtpTransceiverInterface> m_rtcTransceiver;
+    const Ref<webrtc::RtpTransceiverInterface> m_rtcTransceiver;
 };
 
 } // namespace WebCore

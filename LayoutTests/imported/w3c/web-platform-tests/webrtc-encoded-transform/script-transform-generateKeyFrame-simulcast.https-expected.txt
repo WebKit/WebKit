@@ -1,6 +1,6 @@
 
 
 PASS generateKeyFrame works with simulcast rids
-FAIL generateKeyFrame for rid that was negotiated away fails assert_equals: expected "failure" but got "success"
+PASS generateKeyFrame for rid that was negotiated away fails
 FAIL generateKeyFrame with rid after simulcast->unicast negotiation fails assert_equals: expected "failure" but got "success"
 

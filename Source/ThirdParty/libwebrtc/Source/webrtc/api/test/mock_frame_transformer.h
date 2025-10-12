@@ -28,11 +28,11 @@ class MockFrameTransformer : public FrameTransformerInterface {
               (override));
   MOCK_METHOD(void,
               RegisterTransformedFrameCallback,
-              (rtc::scoped_refptr<TransformedFrameCallback>),
+              (scoped_refptr<TransformedFrameCallback>),
               (override));
   MOCK_METHOD(void,
               RegisterTransformedFrameSinkCallback,
-              (rtc::scoped_refptr<TransformedFrameCallback>, uint32_t),
+              (scoped_refptr<TransformedFrameCallback>, uint32_t),
               (override));
   MOCK_METHOD(void, UnregisterTransformedFrameCallback, (), (override));
   MOCK_METHOD(void,

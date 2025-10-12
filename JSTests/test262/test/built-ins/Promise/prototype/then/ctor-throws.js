@@ -18,7 +18,7 @@ info: |
     [...]
     6. Let promise be Construct(C, «executor»).
     7. ReturnIfAbrupt(promise).
-    features: [Symbol.species]
+features: [Symbol.species]
 ---*/
 
 var BadCtor = function() {

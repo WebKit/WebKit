@@ -77,7 +77,7 @@ function assertDataProperty(restObj, prop, value) {
         let {...rest} = obj;
         assert(false);
     } catch (e) {
-        assert(e.message == "Right side of assignment cannot be destructured");
+        assert(e.message == "Cannot destructure null or undefined value");
     }
 
 })();
@@ -90,7 +90,7 @@ function assertDataProperty(restObj, prop, value) {
         let {...rest} = obj;
         assert(false);
     } catch (e) {
-        assert(e.message == "Right side of assignment cannot be destructured");
+        assert(e.message == "Cannot destructure null or undefined value");
     }
 
 })();

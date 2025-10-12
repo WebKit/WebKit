@@ -27,6 +27,7 @@
 
 #import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
+#import "PDFTestHelpers.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -130,17 +131,21 @@ TEST(WebKit, WKNavigationResponseUnknownMIMEType)
 TEST(WebKit, WKNavigationResponsePDFType)
 {
     isDone = false;
-    auto schemeHandler = adoptNS([[WKNavigationResponseTestSchemeHandler alloc] init]);
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr schemeHandler = adoptNS([[WKNavigationResponseTestSchemeHandler alloc] init]);
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+#else
+    RetainPtr configuration = TestWebKitAPI::configurationForWebViewTestingUnifiedPDF();
+#endif
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-    auto navigationDelegate = adoptNS([[WKNavigationResponseTestNavigationDelegate alloc] init]);
-    webView.get().navigationDelegate = navigationDelegate.get();
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([[WKNavigationResponseTestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
 
     [[[webView configuration] processPool] _addSupportedPlugin: @"" named: @"com.apple.webkit.builtinpdfplugin" withMimeTypes: [NSSet setWithArray: @[ @"application/pdf" ]] withExtensions: [NSSet setWithArray: @[ ]]];
 
-    schemeHandler.get().mimeType = @"application/pdf";
-    navigationDelegate.get().expectation = YES;
+    [schemeHandler setMimeType:@"application/pdf"];
+    [navigationDelegate setExpectation:YES];
 
     NSURL *testURL = [NSURL URLWithString:@"test:///pdf-response"];
     [webView loadRequest:[NSURLRequest requestWithURL:testURL]];
@@ -250,10 +255,9 @@ TEST(WebKit, SkipDecidePolicyForResponse)
         { "/1"_s, { { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
         { "/2"_s, { { { "Content-Type"_s, "text/plain"_s } }, "hi"_s } },
         { "/3"_s, { "hi"_s } },
-        { "/4"_s, { 204, { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
-        { "/5"_s, { 404, { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
-        { "/6"_s, { 503, { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
-        { "/7"_s, { { { "Content-Type"_s, "text/html"_s }, { "Content-Disposition"_s, "attachment ; other stuff"_s } }, "hi"_s } },
+        { "/4"_s, { 404, { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
+        { "/5"_s, { 503, { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
+        { "/6"_s, { { { "Content-Type"_s, "text/html"_s }, { "Content-Disposition"_s, "attachment ; other stuff"_s } }, "hi"_s } },
     });
 
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"SkipDecidePolicyForResponsePlugIn"];
@@ -275,7 +279,7 @@ TEST(WebKit, SkipDecidePolicyForResponse)
     [delegate waitForDidFinishNavigation];
     EXPECT_TRUE(std::exchange(responseDelegateCalled, false));
 
-    for (auto& path : Vector { "/2"_s, "/3"_s, "/4"_s, "/5"_s, "/6"_s, "/7"_s }) {
+    for (auto& path : Vector { "/2"_s, "/3"_s, "/4"_s, "/5"_s, "/6"_s }) {
         [webView loadRequest:server.request(path)];
         [delegate waitForDidFinishNavigation];
         EXPECT_TRUE(std::exchange(responseDelegateCalled, false));

@@ -27,3 +27,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/row-background-paint-remove-last-cell-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/row-background-paint-remove-last-cell-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/row-background-paint-remove-last-cell.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/table-border-paint-caption-change-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/table-border-paint-caption-change-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/paint/table-border-paint-caption-change.html

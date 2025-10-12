@@ -1,4 +1,4 @@
-// META: global=window,worker,jsshell
+// META: global=window,worker,shadowrealm
 'use strict';
 
 const error1 = new Error('error1');
@@ -86,6 +86,10 @@ promise_test(() => {
 test(() => {
   new WritableStream();
 }, 'WritableStream should be constructible with no arguments');
+
+test(() => {
+  assert_throws_js(RangeError, () => new WritableStream({ type: 'bytes' }), 'constructor should throw');
+}, `WritableStream can't be constructed with a defined type`);
 
 test(() => {
   const underlyingSink = { get start() { throw error1; } };

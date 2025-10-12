@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CustomElementDefaultARIA.h"
 
+#include "ContainerNodeInlines.h"
 #include "Element.h"
 #include "ElementInlines.h"
 #include "HTMLNames.h"

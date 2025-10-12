@@ -73,8 +73,8 @@ static NSMutableDictionary *descriptions = nil;
     NSString *localizedDescription = [[descriptions objectForKey:domain] objectForKey:@(code)];
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-        URL, @"NSErrorFailingURLKey",
-        [URL absoluteString], NSURLErrorFailingURLStringErrorKey,
+        URL, NSURLErrorFailingURLErrorKey,
+        [URL absoluteString], @"NSErrorFailingURLStringKey",
         localizedDescription, NSLocalizedDescriptionKey,
         nil];
     ALLOW_DEPRECATED_DECLARATIONS_END
@@ -145,7 +145,7 @@ static NSMutableDictionary *descriptions = nil;
         [userInfo setObject:localizedDescription forKey:NSLocalizedDescriptionKey];
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (contentURL) {
-        [userInfo setObject:contentURL forKey:@"NSErrorFailingURLKey"];
+        [userInfo setObject:contentURL forKey:NSURLErrorFailingURLErrorKey];
         [userInfo setObject:[contentURL _web_userVisibleString] forKey:NSURLErrorFailingURLStringErrorKey];
     }
     ALLOW_DEPRECATED_DECLARATIONS_END

@@ -10,9 +10,14 @@
 #include "modules/audio_processing/aec3/echo_path_delay_estimator.h"
 
 #include <array>
+#include <cstddef>
+#include <optional>
 
+#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/block.h"
+#include "modules/audio_processing/aec3/delay_estimate.h"
 #include "modules/audio_processing/aec3/downsampled_render_buffer.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
@@ -62,8 +67,8 @@ std::optional<DelayEstimate> EchoPathDelayEstimator::EstimateDelay(
     const DownsampledRenderBuffer& render_buffer,
     const Block& capture) {
   std::array<float, kBlockSize> downsampled_capture_data;
-  rtc::ArrayView<float> downsampled_capture(downsampled_capture_data.data(),
-                                            sub_block_size_);
+  ArrayView<float> downsampled_capture(downsampled_capture_data.data(),
+                                       sub_block_size_);
 
   std::array<float, kBlockSize> downmixed_capture;
   capture_mixer_.ProduceOutput(capture, downmixed_capture);

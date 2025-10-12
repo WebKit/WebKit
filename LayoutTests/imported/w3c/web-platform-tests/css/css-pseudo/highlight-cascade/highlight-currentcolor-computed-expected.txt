@@ -3,6 +3,8 @@ PASS getComputedStyle() for ::selection at #target1
 PASS getComputedStyle() for ::selection at #target2
 PASS getComputedStyle() for ::target-text at #target1
 PASS getComputedStyle() for ::target-text at #target2
+FAIL getComputedStyle() for ::search-text at #target1 assert_equals: Background color is lime. expected "rgb(0, 255, 0)" but got ""
+FAIL getComputedStyle() for ::search-text at #target2 assert_equals: Background color is lime. expected "rgb(0, 255, 0)" but got ""
 PASS getComputedStyle() for ::spelling-error at #target1
 PASS getComputedStyle() for ::spelling-error at #target2
 PASS getComputedStyle() for ::grammar-error at #target1

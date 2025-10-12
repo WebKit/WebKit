@@ -12,6 +12,9 @@
                 testExpected("video.canPlayType('audio/webm; codecs=vorbis')", "probably");
                 testExpected("video.canPlayType('video/webm; codecs=vp8,vorbis')", "probably");
 
+                testExpected("video.canPlayType('audio/webm; codecs=opus')", "probably");
+                testExpected("video.canPlayType('video/webm; codecs=vp8,opus')", "probably");
+
                 endTest();
             }
         </script>

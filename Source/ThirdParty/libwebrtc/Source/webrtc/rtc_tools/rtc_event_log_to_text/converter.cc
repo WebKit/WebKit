@@ -10,8 +10,7 @@
 
 #include "rtc_tools/rtc_event_log_to_text/converter.h"
 
-#include <inttypes.h>
-
+#include <cinttypes>
 #include <cstdio>
 #include <map>
 #include <string>

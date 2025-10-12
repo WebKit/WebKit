@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style id="style">
+</style>
+</head>
+<body>
+
+<div id="div" role="group" onclick="console.log('performed important action')" style="width: 75px; height: 75px;">4:00pm</div>
+
+<script>
+var output = "This test ensures we support the press action for elements that gain cursor:pointer on hover.\n\n";
+
+function replaceStyle(styleString) { document.getElementById("style").textContent = styleString; }
+function appendStyle(styleString) { document.getElementById("style").textContent += styleString; }
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var text = accessibilityController.accessibleElementById("div").childAtIndex(0);
+    output += expect("text.role", "'AXRole: AXStaticText'");
+    output += expect("text.isPressActionSupported()", "false");
+
+    // For performance, we only perform the heuristic to check for cursor:pointer on hover for things that have borders.
+    const borderStyle = "#div { border: 2px solid black; }\n";
+
+    replaceStyle(borderStyle.concat("#div:hover { cursor:pointer; }"));
+    setTimeout(async function() {
+        output += await expectAsync("text.isPressActionSupported()", "true");
+
+        appendStyle("#div { pointer-events: none; }");
+        output += await expectAsync("text.isPressActionSupported()", "false");
+
+        document.getElementById("div").setAttribute("custom-button", "true");
+        replaceStyle(borderStyle.concat("[custom-button='true']:hover { cursor: pointer; }"));
+        output += await expectAsync("text.isPressActionSupported()", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

@@ -290,7 +290,7 @@ TEST(BifurcatedGraphicsContextTests, ClipToImageBuffer)
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
 
-    auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     ctx.clipToImageBuffer(*imageBuffer, { 0, 0, 100, 100 });
 
     auto runTest = [&] (const DisplayList& displayList) {

@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "AllocationFailureMode.h"
-#include "AllocatorForMode.h"
-#include "Allocator.h"
-#include "MarkedBlock.h"
-#include "MarkedSpace.h"
+#include <JavaScriptCore/AllocationFailureMode.h>
+#include <JavaScriptCore/Allocator.h>
+#include <JavaScriptCore/AllocatorForMode.h>
+#include <JavaScriptCore/MarkedBlock.h>
+#include <JavaScriptCore/MarkedSpace.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/CString.h>
 

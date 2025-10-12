@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FrameView.h"
-#include "RemoteFrame.h"
+#include <WebCore/FrameView.h>
+#include <WebCore/RemoteFrame.h>
 
 #include <wtf/TZoneMalloc.h>
 

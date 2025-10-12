@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "JSArray.h"
+#include <JavaScriptCore/JSArray.h>
 
 namespace JSC {
 

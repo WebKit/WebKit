@@ -162,6 +162,8 @@ void JIT::compileCallDirectEval(const OpCallDirectEval& bytecode)
     using BaselineJITRegisters::CallDirectEval::SlowPath::calleeFrameGPR;
     using BaselineJITRegisters::CallDirectEval::SlowPath::thisValueJSR;
     using BaselineJITRegisters::CallDirectEval::SlowPath::scopeGPR;
+    using BaselineJITRegisters::CallDirectEval::SlowPath::codeBlockGPR;
+    using BaselineJITRegisters::CallDirectEval::SlowPath::bytecodeIndexGPR;
 
     addPtr(TrustedImm32(-static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC))), stackPointerRegister, calleeFrameGPR);
     storePtr(callFrameRegister, Address(calleeFrameGPR, CallFrame::callerFrameOffset()));
@@ -170,7 +172,9 @@ void JIT::compileCallDirectEval(const OpCallDirectEval& bytecode)
 
     emitGetVirtualRegister(bytecode.m_thisValue, thisValueJSR);
     emitGetVirtualRegisterPayload(bytecode.m_scope, scopeGPR);
-    callOperation(selectCallDirectEvalOperation(bytecode.m_lexicallyScopedFeatures), calleeFrameGPR, scopeGPR, thisValueJSR);
+    loadPtr(addressFor(CallFrameSlot::codeBlock), codeBlockGPR);
+    move(TrustedImm32(m_bytecodeIndex.asBits()), bytecodeIndexGPR);
+    callOperation(selectCallDirectEvalOperation(bytecode.m_lexicallyScopedFeatures), calleeFrameGPR, scopeGPR, thisValueJSR, codeBlockGPR, bytecodeIndexGPR);
     addSlowCase(branchIfEmpty(returnValueJSR));
 
     setFastPathResumePoint();

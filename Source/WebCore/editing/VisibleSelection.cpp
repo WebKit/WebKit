@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2025 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +28,10 @@
 
 #include "BoundaryPointInlines.h"
 #include "Document.h"
-#include "DocumentInlines.h"
 #include "Editing.h"
 #include "ElementInlines.h"
 #include "HTMLInputElement.h"
+#include "NodeInlines.h"
 #include "PositionInlines.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -240,7 +240,7 @@ void VisibleSelection::appendTrailingWhitespace()
 
     CharacterIterator charIt(*makeSimpleRange(m_end, makeBoundaryPointAfterNodeContents(*scope)), TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
     for (; !charIt.atEnd() && charIt.text().length(); charIt.advance(1)) {
-        UChar c = charIt.text()[0];
+        char16_t c = charIt.text()[0];
         if ((!deprecatedIsSpaceOrNewline(c) && c != noBreakSpace) || c == '\n')
             break;
         m_end = makeDeprecatedLegacyPosition(charIt.range().end);
@@ -523,7 +523,7 @@ static bool isInUserAgentShadowRootOrHasEditableShadowAncestor(Node& node)
     if (shadowRoot->mode() == ShadowRootMode::UserAgent)
         return true;
 
-    for (RefPtr currentNode = &node; currentNode; currentNode = currentNode->parentOrShadowHostNode()) {
+    for (RefPtr currentNode = node; currentNode; currentNode = currentNode->parentOrShadowHostNode()) {
         if (currentNode->hasEditableStyle())
             return true;
     }
@@ -679,6 +679,11 @@ bool VisibleSelection::isContentRichlyEditable() const
 Element* VisibleSelection::rootEditableElement() const
 {
     return editableRootForPosition(start());
+}
+
+RefPtr<Element> VisibleSelection::protectedRootEditableElement() const
+{
+    return rootEditableElement();
 }
 
 Node* VisibleSelection::nonBoundaryShadowTreeRootNode() const

@@ -33,6 +33,7 @@
 
 namespace WTF {
 
+IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 void currentProcessMemoryStatus(ProcessMemoryStatus& memoryStatus)
 {
     FILE* file = fopen("/proc/self/statm", "r");
@@ -62,5 +63,6 @@ void currentProcessMemoryStatus(ProcessMemoryStatus& memoryStatus)
     intValue = strtoull(end, &end, 10);
     memoryStatus.dt = intValue * pageSize;
 }
+IGNORE_CLANG_WARNINGS_END
 
 } // namespace WTF

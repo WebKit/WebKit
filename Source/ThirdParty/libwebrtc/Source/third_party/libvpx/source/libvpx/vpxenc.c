@@ -719,7 +719,7 @@ static void validate_positive_rational(const char *msg,
     rat->den *= -1;
   }
 
-  if (rat->num < 0) die("Error: %s must be positive\n", msg);
+  if (rat->num <= 0) die("Error: %s must be positive\n", msg);
 
   if (!rat->den) die("Error: %s has zero denominator\n", msg);
 }
@@ -852,7 +852,7 @@ static struct stream_state *new_stream(struct VpxEncoderConfig *global,
   }
 
   if (prev) {
-    memcpy(stream, prev, sizeof(*stream));
+    *stream = *prev;
     stream->index++;
     prev->next = stream;
   } else {

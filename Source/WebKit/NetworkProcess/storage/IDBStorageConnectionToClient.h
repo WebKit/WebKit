@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,6 @@ public:
     std::optional<WebCore::IDBConnectionIdentifier> identifier() const final { return m_identifier; }
     IPC::Connection::UniqueID ipcConnection() const { return m_connection; }
     WebCore::IDBServer::IDBConnectionToClient& connectionToClient();
-    Ref<WebCore::IDBServer::IDBConnectionToClient> protectedConnectionToClient();
 
 private:
     // IDBConnectionToClientDelegate
@@ -73,7 +72,7 @@ private:
 
     IPC::Connection::UniqueID m_connection;
     WebCore::IDBConnectionIdentifier m_identifier;
-    Ref<WebCore::IDBServer::IDBConnectionToClient> m_connectionToClient;
+    const Ref<WebCore::IDBServer::IDBConnectionToClient> m_connectionToClient;
 };
 
 } // namespace WebKit

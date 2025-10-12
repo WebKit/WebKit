@@ -28,18 +28,18 @@
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
-#import "AddEventListenerOptions.h"
+#import "AddEventListenerOptionsInlines.h"
 #import "AudioTrackList.h"
-#import "DocumentInlines.h"
+#import "DocumentPage.h"
 #import "Event.h"
 #import "EventListener.h"
 #import "EventNames.h"
+#import "ExceptionOr.h"
 #import "HTMLVideoElement.h"
 #import "Logging.h"
 #import "MediaControlsHost.h"
 #import "MediaSelectionOption.h"
-#import "NodeInlines.h"
-#import "Page.h"
+#import "NodeDocument.h"
 #import "PageGroup.h"
 #import "TextTrackList.h"
 #import "TimeRanges.h"
@@ -185,18 +185,8 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomString&
         || eventName == eventNames().playEvent
         || eventName == eventNames().ratechangeEvent
         || eventName == eventNames().waitingEvent
-        || eventName == eventNames().canplayEvent) {
-        OptionSet<PlaybackSessionModel::PlaybackState> playbackState;
-        if (isPlaying())
-            playbackState.add(PlaybackSessionModel::PlaybackState::Playing);
-        if (isStalled())
-            playbackState.add(PlaybackSessionModel::PlaybackState::Stalled);
-
-        double playbackRate =  this->playbackRate();
-        double defaultPlaybackRate = this->defaultPlaybackRate();
-        for (auto& client : m_clients)
-            client->rateChanged(playbackState, playbackRate, defaultPlaybackRate);
-    }
+        || eventName == eventNames().canplayEvent)
+        updateRate();
 
     if (all
         || eventName == eventNames().timeupdateEvent) {
@@ -283,12 +273,22 @@ void PlaybackSessionModelMediaElement::play()
 {
     if (RefPtr mediaElement = m_mediaElement)
         mediaElement->play();
+
+    // If the media element is already playing, it will not result in a "play"
+    // event, so explicitly send a rateChanged() notification, to update the
+    // cached playback state:
+    updateRate();
 }
 
 void PlaybackSessionModelMediaElement::pause()
 {
     if (RefPtr mediaElement = m_mediaElement)
         mediaElement->pause();
+
+    // If the media element is already paused, it will not result in a "pause"
+    // event, so explicitly send a rateChanged() notification, to update the
+    // cached playback state:
+    updateRate();
 }
 
 void PlaybackSessionModelMediaElement::togglePlayState()
@@ -567,6 +567,15 @@ void PlaybackSessionModelMediaElement::maybeUpdateVideoMetadata()
     }
 }
 
+void PlaybackSessionModelMediaElement::updateRate()
+{
+    auto playbackState = this->playbackState();
+    double playbackRate =  this->playbackRate();
+    double defaultPlaybackRate = this->defaultPlaybackRate();
+    for (auto& client : m_clients)
+        client->rateChanged(playbackState, playbackRate, defaultPlaybackRate);
+}
+
 void PlaybackSessionModelMediaElement::updateMediaSelectionIndices()
 {
     auto audioIndex = audioMediaSelectedIndex();
@@ -633,6 +642,16 @@ double PlaybackSessionModelMediaElement::bufferedTime() const
     if (RefPtr mediaElement = m_mediaElement)
         return mediaElement->maxBufferedTime();
     return 0;
+}
+
+auto PlaybackSessionModelMediaElement::playbackState() const -> OptionSet<PlaybackState>
+{
+    OptionSet<PlaybackSessionModel::PlaybackState> playbackState;
+    if (isPlaying())
+        playbackState.add(PlaybackSessionModel::PlaybackState::Playing);
+    if (isStalled())
+        playbackState.add(PlaybackSessionModel::PlaybackState::Stalled);
+    return playbackState;
 }
 
 bool PlaybackSessionModelMediaElement::isPlaying() const

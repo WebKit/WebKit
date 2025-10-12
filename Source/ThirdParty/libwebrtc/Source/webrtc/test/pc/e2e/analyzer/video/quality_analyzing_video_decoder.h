@@ -11,6 +11,7 @@
 #ifndef TEST_PC_E2E_ANALYZER_VIDEO_QUALITY_ANALYZING_VIDEO_DECODER_H_
 #define TEST_PC_E2E_ANALYZER_VIDEO_QUALITY_ANALYZING_VIDEO_DECODER_H_
 
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <optional>
@@ -19,13 +20,16 @@
 
 #include "absl/strings/string_view.h"
 #include "api/environment/environment.h"
+#include "api/scoped_refptr.h"
 #include "api/test/video_quality_analyzer_interface.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_frame.h"
+#include "api/video/video_frame_buffer.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_decoder.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 #include "test/pc/e2e/analyzer/video/encoded_image_data_injector.h"
 
 namespace webrtc {
@@ -86,11 +90,11 @@ class QualityAnalyzingVideoDecoder : public VideoDecoder {
                                              uint32_t timestamp_ms);
 
    private:
-    rtc::scoped_refptr<webrtc::VideoFrameBuffer> GetDummyFrameBuffer();
+    scoped_refptr<webrtc::VideoFrameBuffer> GetDummyFrameBuffer();
 
     QualityAnalyzingVideoDecoder* const decoder_;
 
-    rtc::scoped_refptr<webrtc::VideoFrameBuffer> dummy_frame_buffer_;
+    scoped_refptr<webrtc::VideoFrameBuffer> dummy_frame_buffer_;
 
     Mutex callback_mutex_;
     DecodedImageCallback* delegate_callback_ RTC_GUARDED_BY(callback_mutex_);

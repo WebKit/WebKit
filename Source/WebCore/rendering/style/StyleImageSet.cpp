@@ -28,7 +28,7 @@
 #include "CSSImageSetOptionValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSPrimitiveValue.h"
-#include "DocumentInlines.h"
+#include "DocumentPage.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "StyleInvalidImage.h"

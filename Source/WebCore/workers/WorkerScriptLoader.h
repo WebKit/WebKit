@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2009 Apple Inc. All Rights Reserved.
- * Copyright (C) 2009, 2011 Google Inc. All Rights Reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,19 +26,19 @@
 
 #pragma once
 
-#include "AdvancedPrivacyProtections.h"
-#include "CertificateInfo.h"
-#include "ContentSecurityPolicyResponseHeaders.h"
-#include "CrossOriginEmbedderPolicy.h"
-#include "FetchOptions.h"
-#include "ResourceError.h"
-#include "ResourceRequest.h"
-#include "ResourceResponse.h"
-#include "ScriptBuffer.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include "ServiceWorkerRegistrationData.h"
-#include "ThreadableLoader.h"
-#include "ThreadableLoaderClient.h"
+#include <WebCore/AdvancedPrivacyProtections.h>
+#include <WebCore/CertificateInfo.h>
+#include <WebCore/ContentSecurityPolicyResponseHeaders.h>
+#include <WebCore/CrossOriginEmbedderPolicy.h>
+#include <WebCore/FetchOptions.h>
+#include <WebCore/ResourceError.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
+#include <WebCore/ScriptBuffer.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/ServiceWorkerRegistrationData.h>
+#include <WebCore/ThreadableLoader.h>
+#include <WebCore/ThreadableLoaderClient.h>
 #include <memory>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
@@ -61,9 +61,10 @@ class WorkerScriptLoader final : public RefCounted<WorkerScriptLoader>, public T
     WTF_MAKE_TZONE_ALLOCATED(WorkerScriptLoader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerScriptLoader);
 public:
-    static Ref<WorkerScriptLoader> create()
+    enum class AlwaysUseUTF8 : bool { No, Yes };
+    static Ref<WorkerScriptLoader> create(AlwaysUseUTF8 alwaysUseUTF8 = AlwaysUseUTF8::No)
     {
-        return adoptRef(*new WorkerScriptLoader);
+        return adoptRef(*new WorkerScriptLoader(alwaysUseUTF8));
     }
 
     enum class Source : uint8_t { ClassicWorkerScript, ClassicWorkerImport, ModuleScript };
@@ -131,7 +132,7 @@ private:
     friend class RefCounted<WorkerScriptLoader>;
     friend struct std::default_delete<WorkerScriptLoader>;
 
-    WorkerScriptLoader();
+    WorkerScriptLoader(AlwaysUseUTF8);
     ~WorkerScriptLoader();
 
     std::unique_ptr<ResourceRequest> createResourceRequest(const String& initiatorIdentifier);
@@ -139,7 +140,7 @@ private:
 
     WeakPtr<WorkerScriptLoaderClient> m_client;
     RefPtr<ThreadableLoader> m_threadableLoader;
-    RefPtr<TextResourceDecoder> m_decoder;
+    const RefPtr<TextResourceDecoder> m_decoder;
     ScriptBuffer m_script;
     URL m_url;
     URL m_responseURL;
@@ -151,6 +152,7 @@ private:
     String m_referrerPolicy;
     CrossOriginEmbedderPolicy m_crossOriginEmbedderPolicy;
     Markable<ResourceLoaderIdentifier> m_identifier;
+    bool m_alwaysUseUTF8 { false };
     bool m_failed { false };
     bool m_finishing { false };
     bool m_isRedirected { false };

@@ -91,13 +91,13 @@ CompilationResult BaselineJITPlan::finalize()
 {
     CompilationResult result = JIT::finalizeOnMainThread(m_codeBlock, *this, m_jitCode);
     switch (result) {
-    case CompilationFailed:
+    case CompilationResult::CompilationFailed:
         CODEBLOCK_LOG_EVENT(m_codeBlock, "delayJITCompile", ("compilation failed"));
         dataLogLnIf(Options::verboseOSR(), "    JIT compilation failed.");
         m_codeBlock->dontJITAnytimeSoon();
         m_codeBlock->m_didFailJITCompilation = true;
         break;
-    case CompilationSuccessful:
+    case CompilationResult::CompilationSuccessful:
         WTF::crossModifyingCodeFence();
         dataLogLnIf(Options::verboseOSR(), "    JIT compilation successful.");
         m_codeBlock->ownerExecutable()->installCode(m_codeBlock);

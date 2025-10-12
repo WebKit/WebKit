@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: Error: Invalid value for <ellipse> attribute cx="calc(80px + 25% - 2em)"
-CONSOLE MESSAGE: Error: Invalid value for <ellipse> attribute cy="calc(80px + 60% - 2em)"
-CONSOLE MESSAGE: Error: Invalid value for <ellipse> attribute rx="calc(4 * 5%)"
-CONSOLE MESSAGE: Error: Invalid value for <ellipse> attribute ry="calc(5 * 5%)"
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 300x200

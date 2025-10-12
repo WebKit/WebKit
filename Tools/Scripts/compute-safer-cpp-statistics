@@ -1,0 +1,195 @@
+#!/usr/bin/env python3
+# Copyright (C) 2025 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import os
+import re
+
+from webkitpy.safer_cpp.checkers import Checker
+
+# FIXME: Make this configurable
+EXCLUDED_DIRNAMES = ['CoordinatedGraphics', 'atoms', 'cairo', 'curl', 'gbm', 'glib', 'gstreamer', 'gtk', 'libwpe', 'linux', 'manette', 'playstation', 'skia', 'socket', 'soup', 'unified-sources', 'unix', 'wc', 'win', 'wpe']
+RELEVANT_FILE_EXTENSIONS = ['.c', '.cpp', '.h', '.m', '.mm']
+EXPECTATION_LINE_RE = r'(\s*\[\s*(?P<platform>\w+)\s*\]\s*)?(?P<path>.+)'
+
+
+def parser():
+    parser = argparse.ArgumentParser(description='Automated tooling for gathering statistics about safer CPP', epilog='Example: compute-safer-cpp-statisticsfor -p WebKit --build-configuration Release')
+    parser.add_argument(
+        '--project', '-p',
+        choices=Checker.projects(),
+        required=True,
+        help='Specify which project expectations you want to update'
+    )
+    parser.add_argument(
+        '--build-configuration', '-b',
+        required=True,
+        help='Specify build configuration (e.g. Debug, Release-iphonesimulator) to look for derived sources'
+    )
+    parser.add_argument(
+        '--checker', '-c',
+        choices=[checker.name() for checker in Checker.enumerate()],
+        help='Specify the checker to gather statistics (e.g. UncountedCallArgsChecker). When omitted, all checkers are included'
+    )
+    parser.add_argument(
+        '--ignore', '-i',
+        help='Specify the directory to ignore relative to the project root (e.g. WebProcess for Source/WebKit/WebProcess)'
+    )
+    parser.add_argument(
+        '--platform',
+        help='Specify the platform to compute statistics for. e.g. mac'
+    )
+    parser.add_argument(
+        '--csv',
+        help='Specify a path to a CSV file to be generated. CSV file will not be generated if omitted'
+    )
+    return parser.parse_args()
+
+
+def matching_checkers(checker):
+    if not checker:
+        return Checker.enumerate()
+    matching_checker = Checker.find_checker_by_name(checker)
+    if not checker:
+        print('Did not find a checker matching {}'.format(checker))
+        return None
+    return [matching_checker]
+
+
+def load_expectations(checker_list, project, platform):
+    file_to_expectations_map = {}
+    expectation_line_re = re.compile(EXPECTATION_LINE_RE)
+    for checker in checker_list:
+        expectations_path = checker.expectations_path(project)
+        if not os.path.isfile(expectations_path):
+            return
+        with open(expectations_path) as expectation_file:
+            for line in expectation_file:
+                if line.startswith('//') or line.startswith('#'):
+                    continue
+                match = expectation_line_re.match(line)
+                if not match:
+                    print(f'Unexpected line: {line}')
+                    continue
+                expectation_platform = match.group('platform')
+                file_key = match.group('path')
+                if platform and expectation_platform and expectation_platform.lower() != platform.lower():
+                    print(f'Excluding: {file_key} ({expectation_platform})')
+                    continue
+                file_to_expectations_map.setdefault(file_key, set())
+                file_to_expectations_map[file_key].add(checker.name())
+    return file_to_expectations_map
+
+
+def count_number_of_lines(file_path):
+    with open(file_path) as file_handle:
+        return sum(1 for _ in file_handle)
+    
+
+def enumerate_relevant_files(root_dir_path, dir_to_ignore=None):
+    file_path_list = []
+    for (dirpath, dirnames, filenames) in os.walk(root_dir_path):
+        dirname, base = os.path.split(dirpath)
+        is_excluded_dir = base in EXCLUDED_DIRNAMES or os.path.basename(dirname) in EXCLUDED_DIRNAMES
+        relative_path = os.path.relpath(dirpath, root_dir_path)
+        if is_excluded_dir or (dir_to_ignore and relative_path.startswith(dir_to_ignore)):
+            print('Excluding: ' + relative_path)
+            continue
+        for filename in filenames:
+            file_path = os.path.abspath(os.path.join(dirpath, filename))
+            (_, ext) = os.path.splitext(file_path)
+            if ext not in RELEVANT_FILE_EXTENSIONS:
+                continue
+            file_path_list.append(file_path)
+    return file_path_list
+
+
+def gather_statistics(line_counts, checkers, file_to_expectations_map, dir_path, dir_to_ignore=None):
+    for file_path in enumerate_relevant_files(dir_path, dir_to_ignore):
+        file_key = os.path.relpath(file_path, dir_path)
+        number_of_lines = count_number_of_lines(file_path)
+        expected_checkers = file_to_expectations_map.get(file_key)
+        if expected_checkers:
+            line_counts['unsafe'] += number_of_lines
+            line_counts['unsafeFiles'] += 1
+        else:
+            line_counts['safe'] += number_of_lines
+            line_counts['safeFiles'] += 1
+        for checker in checkers:
+            per_checker_counts = line_counts['checkers'][checker.name()]
+            if expected_checkers and checker.name() in expected_checkers:
+                per_checker_counts['unsafe'] += number_of_lines
+                per_checker_counts['unsafeFiles'] += 1
+            else:
+                per_checker_counts['safe'] += number_of_lines
+                per_checker_counts['safeFiles'] += 1
+
+
+def safe_ratio(line_counts):
+    return line_counts['safe'] / (line_counts['safe'] + line_counts['unsafe'])
+
+
+def print_percentage(label, line_counts):
+    return print('{}: {:.2f}% safe ({} safe files / {} unsafe files)'.format(label, safe_ratio(line_counts) * 100, line_counts['safeFiles'], line_counts['unsafeFiles']))
+
+
+def main():
+    args = parser()
+
+    checkers = matching_checkers(args.checker)
+    if not checkers:
+        return
+
+    file_to_expectations_map = load_expectations(checkers, args.project, args.platform)
+    line_counts = {'safe': 0, 'unsafe': 0, 'safeFiles': 0, 'unsafeFiles': 0, 'checkers': {}}
+    for checker in checkers:
+        line_counts['checkers'][checker.name()] = {'safe': 0, 'unsafe': 0, 'safeFiles': 0, 'unsafeFiles': 0}
+
+    project = args.project
+    project_path = Checker.enumerate()[0].project_path(project)
+    gather_statistics(line_counts, checkers, file_to_expectations_map, project_path, args.ignore)
+
+    derived_sources_path = Checker.enumerate()[0].derived_sources_path(project, args.build_configuration)
+    gather_statistics(line_counts, checkers, file_to_expectations_map, derived_sources_path)
+
+    print_percentage('Overall', line_counts)
+    for checker in checkers:
+        print_percentage(checker.name(), line_counts['checkers'][checker.name()])
+
+    if not args.csv:
+        return
+
+    with open(args.csv, 'w') as csv_file:
+        print(',' + ','.join([checker.name() for checker in checkers]), file=csv_file)
+        print('Coverage,' + ','.join([str(safe_ratio(line_counts['checkers'][checker.name()])) for checker in checkers]), file=csv_file)
+        for file_key in sorted(file_to_expectations_map.keys()):
+            if args.ignore and file_key.startswith(args.ignore):
+                continue
+            csv_file.write(file_key + ',')
+            for checker in checkers:
+                csv_file.write('FAIL,' if checker.name() in file_to_expectations_map[file_key] else ',')
+            csv_file.write('\n')
+
+
+if __name__ == '__main__':
+    main()

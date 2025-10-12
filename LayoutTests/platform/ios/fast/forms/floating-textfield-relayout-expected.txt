@@ -20,8 +20,8 @@ layer at (8,64) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,56) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,74) size 784x0
   RenderBlock (relative positioned) {DIV} at (0,66) size 784x0
-    RenderTextControl {INPUT} at (0,0) size 392x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-layer at (15,77) size 379x14
-  RenderBlock {DIV} at (6,3) size 380x15
+    RenderTextControl {INPUT} at (0,0) size 392x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+layer at (14,77) size 380x14
+  RenderBlock {DIV} at (6,3) size 380x14
     RenderText {#text} at (0,0) size 17x14
       text run at (0,0) width 17: "foo"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@
 #import "RemoteScrollingUIState.h"
 #import "WebPage.h"
 #import "WebProcess.h"
+#import <WebCore/AXObjectCache.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/LocalFrameView.h>
@@ -77,9 +78,17 @@ void RemoteScrollingCoordinator::scheduleTreeStateCommit()
     m_webPage->drawingArea()->triggerRenderingUpdate();
 }
 
+void RemoteScrollingCoordinator::applyScrollUpdate(ScrollUpdate&& update, ScrollType scrollType)
+{
+    if (RefPtr webPage = m_webPage.get())
+        webPage->markPendingLocalScrollPositionChange();
+
+    AsyncScrollingCoordinator::applyScrollUpdate(WTFMove(update), scrollType);
+}
+
 bool RemoteScrollingCoordinator::coordinatesScrollingForFrameView(const LocalFrameView& frameView) const
 {
-    RenderView* renderView = frameView.renderView();
+    CheckedPtr renderView = frameView.renderView();
     return renderView && renderView->usesCompositing();
 }
 
@@ -122,20 +131,12 @@ RemoteScrollingCoordinatorTransaction RemoteScrollingCoordinator::buildTransacti
 }
 
 // Notification from the UI process that we scrolled.
-void RemoteScrollingCoordinator::scrollPositionChangedForNode(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, std::optional<FloatPoint> layoutViewportOrigin, bool syncLayerPosition, CompletionHandler<void()>&& completionHandler)
+void RemoteScrollingCoordinator::scrollUpdateForNode(ScrollUpdate update, CompletionHandler<void()>&& completionHandler)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinator::scrollingTreeNodeDidScroll " << nodeID << " to " << scrollPosition << " layoutViewportOrigin " << layoutViewportOrigin);
+    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinator::scrollUpdateForNode: " << update);
 
-    auto scrollUpdate = ScrollUpdate { nodeID, scrollPosition, layoutViewportOrigin, ScrollUpdateType::PositionUpdate, syncLayerPosition ? ScrollingLayerPositionAction::Sync : ScrollingLayerPositionAction::Set };
-    applyScrollUpdate(WTFMove(scrollUpdate));
-
+    applyScrollUpdate(WTFMove(update));
     completionHandler();
-}
-
-void RemoteScrollingCoordinator::animatedScrollDidEndForNode(ScrollingNodeID nodeID)
-{
-    auto scrollUpdate = ScrollUpdate { nodeID, { }, { }, ScrollUpdateType::AnimatedScrollDidEnd };
-    applyScrollUpdate(WTFMove(scrollUpdate));
 }
 
 void RemoteScrollingCoordinator::currentSnapPointIndicesChangedForNode(ScrollingNodeID nodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical)
@@ -203,21 +204,21 @@ WheelEventHandlingResult RemoteScrollingCoordinator::handleWheelEventForScrollin
 
 void RemoteScrollingCoordinator::scrollingTreeNodeScrollbarVisibilityDidChange(ScrollingNodeID nodeID, ScrollbarOrientation orientation, bool isVisible)
 {
-    auto* frameView = frameViewForScrollingNode(nodeID);
+    RefPtr frameView = frameViewForScrollingNode(nodeID);
     if (!frameView)
         return;
 
-    if (auto* scrollableArea = frameView->scrollableAreaForScrollingNodeID(nodeID))
+    if (CheckedPtr scrollableArea = frameView->scrollableAreaForScrollingNodeID(nodeID))
         scrollableArea->scrollbarsController().setScrollbarVisibilityState(orientation, isVisible);
 }
 
 void RemoteScrollingCoordinator::scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(ScrollingNodeID nodeID, ScrollbarOrientation orientation, int minimumThumbLength)
 {
-    auto* frameView = frameViewForScrollingNode(nodeID);
+    RefPtr frameView = frameViewForScrollingNode(nodeID);
     if (!frameView)
         return;
 
-    if (auto* scrollableArea = frameView->scrollableAreaForScrollingNodeID(nodeID))
+    if (CheckedPtr scrollableArea = frameView->scrollableAreaForScrollingNodeID(nodeID))
         scrollableArea->scrollbarsController().setScrollbarMinimumThumbLength(orientation, minimumThumbLength);
 }
 

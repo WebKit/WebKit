@@ -36,7 +36,7 @@ namespace WTF {
 static UText* uTextUTF16ContextAwareClone(UText*, const UText*, UBool, UErrorCode*);
 static int64_t uTextUTF16ContextAwareNativeLength(UText*);
 static UBool uTextUTF16ContextAwareAccess(UText*, int64_t, UBool);
-static int32_t uTextUTF16ContextAwareExtract(UText*, int64_t, int64_t, UChar*, int32_t, UErrorCode*);
+static int32_t uTextUTF16ContextAwareExtract(UText*, int64_t, int64_t, char16_t*, int32_t, UErrorCode*);
 static void uTextUTF16ContextAwareClose(UText*);
 
 static const struct UTextFuncs textUTF16ContextAwareFuncs = {
@@ -86,7 +86,7 @@ static void textUTF16ContextAwareMoveInPrimaryContext(UText* text, int64_t nativ
 static void textUTF16ContextAwareSwitchToPrimaryContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
 {
     ASSERT(!text->chunkContents || text->chunkContents == text->q);
-    text->chunkContents = static_cast<const UChar*>(text->p);
+    text->chunkContents = static_cast<const char16_t*>(text->p);
     textUTF16ContextAwareMoveInPrimaryContext(text, nativeIndex, nativeLength, forward);
 }
 
@@ -108,7 +108,7 @@ static void textUTF16ContextAwareMoveInPriorContext(UText* text, int64_t nativeI
 static void textUTF16ContextAwareSwitchToPriorContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
 {
     ASSERT(!text->chunkContents || text->chunkContents == text->p);
-    text->chunkContents = static_cast<const UChar*>(text->q);
+    text->chunkContents = static_cast<const char16_t*>(text->q);
     textUTF16ContextAwareMoveInPriorContext(text, nativeIndex, nativeLength, forward);
 }
 
@@ -148,7 +148,7 @@ static UBool uTextUTF16ContextAwareAccess(UText* text, int64_t nativeIndex, UBoo
     return true;
 }
 
-static int32_t uTextUTF16ContextAwareExtract(UText*, int64_t, int64_t, UChar*, int32_t, UErrorCode* errorCode)
+static int32_t uTextUTF16ContextAwareExtract(UText*, int64_t, int64_t, char16_t*, int32_t, UErrorCode* errorCode)
 {
     // In the present context, this text provider is used only with ICU functions
     // that do not perform an extract operation.
@@ -162,7 +162,7 @@ static void uTextUTF16ContextAwareClose(UText* text)
     text->context = nullptr;
 }
 
-UText* openUTF16ContextAwareUTextProvider(UText* text, std::span<const UChar> string, std::span<const UChar> priorContext, UErrorCode* status)
+UText* openUTF16ContextAwareUTextProvider(UText* text, std::span<const char16_t> string, std::span<const char16_t> priorContext, UErrorCode* status)
 {
     if (U_FAILURE(*status))
         return nullptr;

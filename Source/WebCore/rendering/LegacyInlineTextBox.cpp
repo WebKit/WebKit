@@ -23,7 +23,7 @@
 #include "config.h"
 #include "LegacyInlineTextBox.h"
 
-#include "BreakLines.h"
+#include "BreakablePositions.h"
 #include "CompositionHighlight.h"
 #include "DashArray.h"
 #include "Document.h"
@@ -47,8 +47,9 @@
 #include "RenderElementInlines.h"
 #include "RenderHighlight.h"
 #include "RenderLineBreak.h"
-#include "RenderStyleInlines.h"
+#include "RenderObjectStyle.h"
 #include "RenderSVGInlineText.h"
+#include "RenderStyleInlines.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
@@ -74,7 +75,7 @@ struct SameSizeAsLegacyInlineTextBox : public LegacyInlineBox {
 
 static_assert(sizeof(LegacyInlineTextBox) == sizeof(SameSizeAsLegacyInlineTextBox), "LegacyInlineTextBox should stay small");
 
-typedef UncheckedKeyHashMap<const LegacyInlineTextBox*, LayoutRect> LegacyInlineTextBoxOverflowMap;
+typedef HashMap<const LegacyInlineTextBox*, LayoutRect> LegacyInlineTextBoxOverflowMap;
 static LegacyInlineTextBoxOverflowMap* gTextBoxesWithOverflow;
 
 LegacyInlineTextBox::LegacyInlineTextBox(RenderSVGInlineText& renderer)
@@ -120,24 +121,6 @@ void LegacyInlineTextBox::setLogicalOverflowRect(const LayoutRect& rect)
     if (!gTextBoxesWithOverflow)
         gTextBoxesWithOverflow = new LegacyInlineTextBoxOverflowMap;
     gTextBoxesWithOverflow->add(this, rect);
-}
-
-LayoutUnit LegacyInlineTextBox::baselinePosition(FontBaseline baselineType) const
-{
-    if (!parent())
-        return 0;
-    if (&parent()->renderer() == renderer().parent())
-        return parent()->baselinePosition(baselineType);
-    return downcast<RenderBoxModelObject>(*renderer().parent()).baselinePosition(baselineType, isFirstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
-}
-
-LayoutUnit LegacyInlineTextBox::lineHeight() const
-{
-    if (!renderer().parent())
-        return 0;
-    if (&parent()->renderer() == renderer().parent())
-        return parent()->lineHeight();
-    return downcast<RenderBoxModelObject>(*renderer().parent()).lineHeight(isFirstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
 
 LayoutUnit LegacyInlineTextBox::selectionTop() const
@@ -266,7 +249,7 @@ TextRun LegacyInlineTextBox::createTextRun() const
 {
     const auto& style = lineStyle();
     TextRun textRun { text(), textPos(), 0, ExpansionBehavior::forbidAll(), direction(), style.rtlOrdering() == Order::Visual, !renderer().canUseSimpleFontCodePath() };
-    textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
+    textRun.setTabSize(!style.collapseWhiteSpace(), Style::toPlatform(style.tabSize()));
     return textRun;
 }
 

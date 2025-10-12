@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,7 +59,7 @@ RemoteCDM::RemoteCDM(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMIdentifier&& 
 void RemoteCDM::setLogIdentifier(uint64_t logIdentifier)
 {
     if (RefPtr factory = m_factory.get())
-        factory->gpuProcessConnection().protectedConnection()->send(Messages::RemoteCDMProxy::SetLogIdentifier(logIdentifier), m_identifier);
+        factory->gpuProcessConnection().connection().send(Messages::RemoteCDMProxy::SetLogIdentifier(logIdentifier), m_identifier);
 }
 #endif
 
@@ -71,7 +71,7 @@ void RemoteCDM::getSupportedConfiguration(CDMKeySystemConfiguration&& configurat
         return;
     }
 
-    factory->gpuProcessConnection().protectedConnection()->sendWithAsyncReply(Messages::RemoteCDMProxy::GetSupportedConfiguration(WTFMove(configuration), access), WTFMove(callback), m_identifier);
+    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMProxy::GetSupportedConfiguration(WTFMove(configuration), access), WTFMove(callback), m_identifier);
 }
 
 bool RemoteCDM::supportsConfiguration(const CDMKeySystemConfiguration&) const
@@ -122,7 +122,7 @@ RefPtr<CDMInstance> RemoteCDM::createInstance()
     if (!factory)
         return nullptr;
 
-    auto sendResult = factory->gpuProcessConnection().protectedConnection()->sendSync(Messages::RemoteCDMProxy::CreateInstance(), m_identifier);
+    auto sendResult = factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMProxy::CreateInstance(), m_identifier);
     auto [identifier, configuration] = sendResult.takeReplyOr(std::nullopt, RemoteCDMInstanceConfiguration { });
     if (!identifier)
         return nullptr;
@@ -132,7 +132,7 @@ RefPtr<CDMInstance> RemoteCDM::createInstance()
 void RemoteCDM::loadAndInitialize()
 {
     if (RefPtr factory = m_factory.get())
-        factory->gpuProcessConnection().protectedConnection()->send(Messages::RemoteCDMProxy::LoadAndInitialize(), m_identifier);
+        factory->gpuProcessConnection().connection().send(Messages::RemoteCDMProxy::LoadAndInitialize(), m_identifier);
 }
 
 RefPtr<SharedBuffer> RemoteCDM::sanitizeResponse(const SharedBuffer& response) const

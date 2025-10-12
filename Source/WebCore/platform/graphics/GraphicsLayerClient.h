@@ -25,9 +25,10 @@
 
 #pragma once
 
-#include "LayerTreeAsTextOptions.h"
-#include "TiledBacking.h"
-#include "TransformationMatrix.h"
+#include <WebCore/ContentsFormat.h>
+#include <WebCore/LayerTreeAsTextOptions.h>
+#include <WebCore/TiledBacking.h>
+#include <WebCore/TransformationMatrix.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 
@@ -72,6 +73,9 @@ enum class PlatformLayerTreeAsTextFlags : uint8_t {
 enum class GraphicsLayerPaintBehavior : uint8_t {
     DefaultAsynchronousImageDecode = 1 << 0,
     ForceSynchronousImageDecode = 1 << 1,
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    TonemapHDRToDisplayHeadroom = 1 << 2,
+#endif
 };
     
 class GraphicsLayerClient {
@@ -144,6 +148,8 @@ public:
     virtual bool layerNeedsPlatformContext(const GraphicsLayer*) const { return false; }
 
     virtual bool backdropRootIsOpaque(const GraphicsLayer*) const { return false; }
+
+    virtual OptionSet<ContentsFormat> screenContentsFormats() const { return { }; }
 
 #ifndef NDEBUG
     // RenderLayerBacking overrides this to verify that it is not

@@ -146,7 +146,7 @@ template<> struct Coder<WTF::String> {
         encoder << string.length() << is8Bit;
 
         if (is8Bit)
-            encoder.encodeFixedLengthData(string.span8());
+            encoder.encodeFixedLengthData(byteCast<uint8_t>(string.span8()));
         else
             encoder.encodeFixedLengthData(asBytes(string.span16()));
     }
@@ -185,8 +185,8 @@ template<> struct Coder<WTF::String> {
             return std::nullopt;
 
         if (*is8Bit)
-            return decodeStringText<LChar>(decoder, *length);
-        return decodeStringText<UChar>(decoder, *length);
+            return decodeStringText<Latin1Character>(decoder, *length);
+        return decodeStringText<char16_t>(decoder, *length);
     }
 };
 

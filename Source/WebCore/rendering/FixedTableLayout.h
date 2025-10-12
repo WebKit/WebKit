@@ -21,11 +21,14 @@
 #pragma once
 
 #include "LayoutUnit.h"
-#include "Length.h"
 #include "TableLayout.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+namespace Style {
+struct PreferredSize;
+}
 
 class RenderTable;
 
@@ -40,7 +43,7 @@ public:
 private:
     float calcWidthArray();
 
-    Vector<Length> m_width;
+    Vector<Style::PreferredSize> m_width;
 };
 
 } // namespace WebCore

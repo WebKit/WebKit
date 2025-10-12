@@ -43,10 +43,11 @@ bool appleVisualEffectNeedsBackdrop(AppleVisualEffect effect)
         return true;
     case AppleVisualEffect::None:
 #if HAVE(MATERIAL_HOSTING)
-    case AppleVisualEffect::HostedBlurMaterial:
-    case AppleVisualEffect::HostedThinBlurMaterial:
-    case AppleVisualEffect::HostedMediaControlsMaterial:
-    case AppleVisualEffect::HostedThinMediaControlsMaterial:
+    case AppleVisualEffect::GlassMaterial:
+    case AppleVisualEffect::GlassClearMaterial:
+    case AppleVisualEffect::GlassSubduedMaterial:
+    case AppleVisualEffect::GlassMediaControlsMaterial:
+    case AppleVisualEffect::GlassSubduedMediaControlsMaterial:
 #endif
     case AppleVisualEffect::VibrancyLabel:
     case AppleVisualEffect::VibrancySecondaryLabel:
@@ -73,10 +74,11 @@ bool appleVisualEffectAppliesFilter(AppleVisualEffect effect)
     case AppleVisualEffect::BlurThickMaterial:
     case AppleVisualEffect::BlurChromeMaterial:
 #if HAVE(MATERIAL_HOSTING)
-    case AppleVisualEffect::HostedBlurMaterial:
-    case AppleVisualEffect::HostedThinBlurMaterial:
-    case AppleVisualEffect::HostedMediaControlsMaterial:
-    case AppleVisualEffect::HostedThinMediaControlsMaterial:
+    case AppleVisualEffect::GlassMaterial:
+    case AppleVisualEffect::GlassClearMaterial:
+    case AppleVisualEffect::GlassSubduedMaterial:
+    case AppleVisualEffect::GlassMediaControlsMaterial:
+    case AppleVisualEffect::GlassSubduedMediaControlsMaterial:
 #endif
         return false;
     case AppleVisualEffect::VibrancyLabel:
@@ -98,10 +100,11 @@ bool appleVisualEffectAppliesFilter(AppleVisualEffect effect)
 bool appleVisualEffectIsHostedMaterial(AppleVisualEffect effect)
 {
     switch (effect) {
-    case AppleVisualEffect::HostedBlurMaterial:
-    case AppleVisualEffect::HostedThinBlurMaterial:
-    case AppleVisualEffect::HostedMediaControlsMaterial:
-    case AppleVisualEffect::HostedThinMediaControlsMaterial:
+    case AppleVisualEffect::GlassMaterial:
+    case AppleVisualEffect::GlassClearMaterial:
+    case AppleVisualEffect::GlassSubduedMaterial:
+    case AppleVisualEffect::GlassMediaControlsMaterial:
+    case AppleVisualEffect::GlassSubduedMediaControlsMaterial:
         return true;
     case AppleVisualEffect::None:
     case AppleVisualEffect::BlurUltraThinMaterial:
@@ -147,17 +150,20 @@ TextStream& operator<<(TextStream& ts, AppleVisualEffect effect)
         ts << "blur-material-chrome"_s;
         break;
 #if HAVE(MATERIAL_HOSTING)
-    case AppleVisualEffect::HostedBlurMaterial:
-        ts << "hosted-blur-material"_s;
+    case AppleVisualEffect::GlassMaterial:
+        ts << "glass-material"_s;
         break;
-    case AppleVisualEffect::HostedThinBlurMaterial:
-        ts << "hosted-thin-blur-material"_s;
+    case AppleVisualEffect::GlassClearMaterial:
+        ts << "glass-material-clear"_s;
         break;
-    case AppleVisualEffect::HostedMediaControlsMaterial:
-        ts << "hosted-media-controls-material";
+    case AppleVisualEffect::GlassSubduedMaterial:
+        ts << "glass-material-subdued"_s;
         break;
-    case AppleVisualEffect::HostedThinMediaControlsMaterial:
-        ts << "hosted-thin-media-controls-material";
+    case AppleVisualEffect::GlassMediaControlsMaterial:
+        ts << "glass-material-media-controls";
+        break;
+    case AppleVisualEffect::GlassSubduedMediaControlsMaterial:
+        ts << "glass-material-media-controls-subdued";
         break;
 #endif
     case AppleVisualEffect::VibrancyLabel:

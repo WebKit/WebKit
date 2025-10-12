@@ -25,22 +25,22 @@ assert.throws(TypeError, () => Temporal.PlainYearMonth.from({
   calendar: "iso8601",
 }), "era and eraYear cannot replace year for calendar not using eras (iso8601)");
 
-const resultHebrew = Temporal.PlainYearMonth.from({
+const resultChinese = Temporal.PlainYearMonth.from({
   era: "foobar",
   eraYear: 1,
-  year: 5780,
+  year: 2025,
   monthCode: "M01",
-  calendar: "hebrew",
+  calendar: "chinese",
 });
-TemporalHelpers.assertPlainYearMonth(resultHebrew, 5780, 1, "M01",
-  "era and eraYear are ignored for calendar not using eras (Hebrew)",
-  undefined, undefined, 30);
-assert.sameValue(resultHebrew.calendarId, "hebrew");
+TemporalHelpers.assertPlainYearMonth(resultChinese, 2025, 1, "M01",
+  "era and eraYear are ignored for calendar not using eras (Chinese)",
+  undefined, undefined, 29);
+assert.sameValue(resultChinese.calendarId, "chinese");
 
 assert.throws(TypeError, () => Temporal.PlainYearMonth.from({
   era: "foobar",
   eraYear: 1,
   monthCode: "M01",
   day: 1,
-  calendar: "hebrew",
-}), "era and eraYear cannot replace year for calendar not using eras (Hebrew)");
+  calendar: "chinese",
+}), "era and eraYear cannot replace year for calendar not using eras (Chinese)");

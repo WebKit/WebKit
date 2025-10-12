@@ -62,7 +62,7 @@ namespace TestWebKitAPI {
 using namespace WebCore;
 using Shape = Region::Shape;
 
-TEST(r, ShapeEmptyIsRepresentable)
+TEST(RegionTests, ShapeEmptyIsRepresentable)
 {
     EXPECT_TRUE(Shape::isValidShape({ }, { }));
     Shape s1 = Shape::createForTesting({ }, { });

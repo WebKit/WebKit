@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // CLKernel.cpp: Implements the cl::Kernel class.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
 
 #include "libANGLE/CLKernel.h"
 

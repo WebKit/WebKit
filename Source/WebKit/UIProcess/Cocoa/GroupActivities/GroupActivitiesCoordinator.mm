@@ -32,6 +32,7 @@
 #import <WebCore/NotImplemented.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -54,7 +55,7 @@
 }
 
 -(void)playbackCoordinator:(AVDelegatingPlaybackCoordinator *)coordinator didIssuePlayCommand:(AVDelegatingPlaybackCoordinatorPlayCommand *)playCommand completionHandler:(void (^)(void))completionHandler {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         RefPtr parent = _parent.get();
         if (!parent) {
             completionHandler();
@@ -68,7 +69,7 @@
 }
 
 -(void)playbackCoordinator:(AVDelegatingPlaybackCoordinator *)coordinator didIssuePauseCommand:(AVDelegatingPlaybackCoordinatorPauseCommand *)pauseCommand completionHandler:(void (^)(void))completionHandler {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         RefPtr parent = _parent.get();
         if (!parent) {
             completionHandler();
@@ -82,7 +83,7 @@
 }
 
 -(void)playbackCoordinator:(AVDelegatingPlaybackCoordinator *)coordinator didIssueSeekCommand:(AVDelegatingPlaybackCoordinatorSeekCommand *)seekCommand completionHandler:(void (^)(void))completionHandler {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         RefPtr parent = _parent.get();
         if (!parent) {
             completionHandler();
@@ -96,7 +97,7 @@
 }
 
 -(void)playbackCoordinator:(AVDelegatingPlaybackCoordinator *)coordinator didIssueBufferingCommand:(AVDelegatingPlaybackCoordinatorBufferingCommand *)bufferingCommand completionHandler:(void (^)(void))completionHandler {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         RefPtr parent = _parent.get();
         if (!parent) {
             completionHandler();
@@ -110,7 +111,7 @@
 }
 
 -(void)playbackCoordinator:(AVDelegatingPlaybackCoordinator *)coordinator didIssuePrepareTransitionCommand:(AVDelegatingPlaybackCoordinatorPrepareTransitionCommand *)prepareTransitionCommand {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         RefPtr parent = _parent.get();
         if (!parent)
             return;
@@ -136,14 +137,14 @@ GroupActivitiesCoordinator::GroupActivitiesCoordinator(GroupActivitiesSession& s
     , m_playbackCoordinator(adoptNS([PAL::allocAVDelegatingPlaybackCoordinatorInstance() initWithPlaybackControlDelegate:m_delegate.get()]))
     , m_stateChangeObserver([this] (auto& session, auto state) { sessionStateChanged(session, state); })
 {
-    [session.groupSession() coordinateWithCoordinator:m_playbackCoordinator.get()];
+    [session.protectedGroupSession() coordinateWithCoordinator:m_playbackCoordinator.get()];
     session.addStateChangeObserver(m_stateChangeObserver);
 }
 
 GroupActivitiesCoordinator::~GroupActivitiesCoordinator()
 {
-    m_session->groupSession().newActivityCallback = nil;
-    m_session->groupSession().stateChangedCallback = nil;
+    m_session->protectedGroupSession().get().newActivityCallback = nil;
+    m_session->protectedGroupSession().get().stateChangedCallback = nil;
 }
 
 void GroupActivitiesCoordinator::sessionStateChanged(const GroupActivitiesSession& session, GroupActivitiesSession::State state)

@@ -75,10 +75,6 @@ class MultiFrameCL
         {
             int gid = get_global_id(0);
             output[gid] = gid;
-            if (gid == 0)
-            {
-                printf("Frame 4!\n");
-            }
         }
 
         __kernel void frame5(__global float *output)

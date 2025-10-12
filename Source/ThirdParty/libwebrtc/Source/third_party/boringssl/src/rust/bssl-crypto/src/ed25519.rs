@@ -1,17 +1,16 @@
-/* Copyright (c) 2023, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */
+// Copyright 2023 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 //! Ed25519, a signature scheme.
 //!
@@ -35,7 +34,9 @@
 //! assert!(public_key.verify(signed_message, &sig).is_ok());
 //! ```
 
-use crate::{FfiMutSlice, FfiSlice, InvalidSignatureError};
+use crate::{
+    cbb_to_buffer, scoped, with_output_array, Buffer, FfiMutSlice, FfiSlice, InvalidSignatureError,
+};
 
 /// The length in bytes of an Ed25519 public key.
 pub const PUBLIC_KEY_LEN: usize = bssl_sys::ED25519_PUBLIC_KEY_LEN as usize;
@@ -150,6 +151,46 @@ impl PublicKey {
         &self.0
     }
 
+    /// Parse a public key in SubjectPublicKeyInfo format.
+    pub fn from_der_subject_public_key_info(spki: &[u8]) -> Option<Self> {
+        // Safety: `EVP_pkey_ed25519` is always safe to call.
+        let alg = unsafe { bssl_sys::EVP_pkey_ed25519() };
+        let mut pkey =
+            scoped::EvpPkey::from_der_subject_public_key_info(spki, core::slice::from_ref(&alg))?;
+        let raw_pkey: [u8; PUBLIC_KEY_LEN] = unsafe {
+            with_output_array(|out, mut out_len| {
+                // We only passed one key type, so `pkey` must be an Ed25519
+                // key. The raw public key then must be available, and must be
+                // `PUBLIC_KEY_LEN` bytes.
+                assert_eq!(
+                    1,
+                    bssl_sys::EVP_PKEY_get_raw_public_key(pkey.as_ffi_ptr(), out, &mut out_len)
+                );
+                assert_eq!(out_len, PUBLIC_KEY_LEN);
+            })
+        };
+        Some(PublicKey(raw_pkey))
+    }
+
+    /// Serialize this key in SubjectPublicKeyInfo format.
+    pub fn to_der_subject_public_key_info(&self) -> Buffer {
+        // Safety: this only copies from the `self.0` buffer.
+        let mut pkey = scoped::EvpPkey::from_ptr(unsafe {
+            bssl_sys::EVP_PKEY_from_raw_public_key(
+                bssl_sys::EVP_pkey_ed25519(),
+                self.0.as_ffi_ptr(),
+                PUBLIC_KEY_LEN,
+            )
+        });
+        assert!(!pkey.as_ffi_ptr().is_null());
+
+        cbb_to_buffer(PUBLIC_KEY_LEN + 32, |cbb| unsafe {
+            // The arguments are valid so this will only fail if out of memory,
+            // which this crate doesn't handle.
+            assert_eq!(1, bssl_sys::EVP_marshal_public_key(cbb, pkey.as_ffi_ptr()));
+        })
+    }
+
     /// Verifies that `signature` is a valid signature, by this key, of `msg`.
     pub fn verify(&self, msg: &[u8], signature: &Signature) -> Result<(), InvalidSignatureError> {
         let ret = unsafe {
@@ -181,6 +222,37 @@ mod test {
         let seed = private_key.to_seed();
         let new_private_key = PrivateKey::from_seed(&seed);
         assert_eq!(private_key.0, new_private_key.0);
+    }
+
+    #[test]
+    fn der_subject_public_key_info() {
+        let priv_key = PrivateKey::generate();
+        let msg = [0u8; 0];
+        let sig = priv_key.sign(&msg);
+
+        let pub_key = priv_key.to_public();
+        assert!(pub_key.verify(&msg, &sig).is_ok());
+
+        let pub_key_der = pub_key.to_der_subject_public_key_info();
+        let pub_key_from_der =
+            PublicKey::from_der_subject_public_key_info(pub_key_der.as_ref()).unwrap();
+        assert_eq!(pub_key.as_bytes(), pub_key_from_der.as_bytes());
+        assert!(pub_key_from_der.verify(&msg, &sig).is_ok());
+
+        assert!(PublicKey::from_der_subject_public_key_info(
+            &pub_key_from_der.as_bytes()[0..PUBLIC_KEY_LEN / 2]
+        )
+        .is_none());
+
+        assert!(PublicKey::from_der_subject_public_key_info(b"").is_none());
+    }
+
+    #[test]
+    fn der_subject_public_key_info_wrong_type() {
+        // This is an X25519 key, not an Ed25519 key.
+        let spki = test_helpers::decode_hex_into_vec("302a300506032b656e032100e6db6867583030db3594c1a424b15f7c726624ec26b3353b10a903a6d0ab1c4c");
+        // `from_der_subject_public_key_info` should reject it.
+        assert!(PublicKey::from_der_subject_public_key_info(&spki).is_none());
     }
 
     #[test]

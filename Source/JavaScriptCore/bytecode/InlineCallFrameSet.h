@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "InlineCallFrame.h"
+#include <JavaScriptCore/InlineCallFrame.h>
 
 #include <wtf/Bag.h>
 #include <wtf/RefCounted.h>

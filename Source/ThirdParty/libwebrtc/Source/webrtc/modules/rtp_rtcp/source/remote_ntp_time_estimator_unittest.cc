@@ -10,12 +10,14 @@
 
 #include "modules/rtp_rtcp/include/remote_ntp_time_estimator.h"
 
+#include <cstdint>
 #include <optional>
 
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/source/ntp_time_util.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/ntp_time.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -27,6 +29,9 @@ constexpr Timestamp kRemoteClockInitialTime = Timestamp::Millis(373);
 constexpr uint32_t kTimestampOffset = 567;
 constexpr int64_t kRemoteToLocalClockOffsetNtp =
     ToNtpUnits(kLocalClockInitialTime - kRemoteClockInitialTime);
+// There can be small rounding differences when converting to the
+// sub nano second precision of the NTP timestamps.
+constexpr int64_t kEpsilon = 1;
 
 class RemoteNtpTimeEstimatorTest : public ::testing::Test {
  protected:
@@ -85,10 +90,14 @@ TEST_F(RemoteNtpTimeEstimatorTest, Estimate) {
   // Remote sends second RTCP SR.
   SendRtcpSr();
 
+  AdvanceTime(TimeDelta::Millis(800));
+  // Remote sends third RTCP SR.
+  SendRtcpSr();
+
   // Local peer gets enough RTCP SR to calculate the capture time.
   EXPECT_EQ(capture_ntp_time_ms, estimator_.Estimate(rtp_timestamp));
-  EXPECT_EQ(estimator_.EstimateRemoteToLocalClockOffset(),
-            kRemoteToLocalClockOffsetNtp);
+  EXPECT_NEAR(*estimator_.EstimateRemoteToLocalClockOffset(),
+              kRemoteToLocalClockOffsetNtp, kEpsilon);
 }
 
 TEST_F(RemoteNtpTimeEstimatorTest, AveragesErrorsOut) {
@@ -103,8 +112,8 @@ TEST_F(RemoteNtpTimeEstimatorTest, AveragesErrorsOut) {
   int64_t capture_ntp_time_ms = local_clock_.CurrentNtpInMilliseconds();
   // Local peer gets enough RTCP SR to calculate the capture time.
   EXPECT_EQ(capture_ntp_time_ms, estimator_.Estimate(rtp_timestamp));
-  EXPECT_EQ(kRemoteToLocalClockOffsetNtp,
-            estimator_.EstimateRemoteToLocalClockOffset());
+  EXPECT_NEAR(kRemoteToLocalClockOffsetNtp,
+              *estimator_.EstimateRemoteToLocalClockOffset(), kEpsilon);
 
   // Remote sends corrupted RTCP SRs
   AdvanceTime(TimeDelta::Seconds(1));
@@ -121,8 +130,8 @@ TEST_F(RemoteNtpTimeEstimatorTest, AveragesErrorsOut) {
 
   // Errors should be averaged out.
   EXPECT_EQ(capture_ntp_time_ms, estimator_.Estimate(rtp_timestamp));
-  EXPECT_EQ(kRemoteToLocalClockOffsetNtp,
-            estimator_.EstimateRemoteToLocalClockOffset());
+  EXPECT_NEAR(kRemoteToLocalClockOffsetNtp,
+              *estimator_.EstimateRemoteToLocalClockOffset(), kEpsilon);
 }
 
 }  // namespace

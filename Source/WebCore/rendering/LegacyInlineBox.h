@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,10 +21,10 @@
 
 #pragma once
 
-#include "HitTestRequest.h"
-#include "RenderBoxModelObject.h"
-#include "RenderText.h"
-#include "TextFlags.h"
+#include <WebCore/HitTestRequest.h>
+#include <WebCore/RenderBoxModelObject.h>
+#include <WebCore/RenderText.h>
+#include <WebCore/TextFlags.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/WeakPtr.h>
@@ -191,9 +192,6 @@ public:
     FloatRect logicalFrameRect() const { return isHorizontal() ? FloatRect(m_topLeft.x(), m_topLeft.y(), m_logicalWidth, logicalHeight()) : FloatRect(m_topLeft.y(), m_topLeft.x(), m_logicalWidth, logicalHeight()); }
     FloatRect frameRect() const { return FloatRect(topLeft(), size()); }
 
-    WEBCORE_EXPORT virtual LayoutUnit baselinePosition(FontBaseline baselineType) const;
-    WEBCORE_EXPORT virtual LayoutUnit lineHeight() const;
-
     WEBCORE_EXPORT virtual int caretMinOffset() const;
     WEBCORE_EXPORT virtual int caretMaxOffset() const;
 
@@ -216,9 +214,9 @@ public:
     void invalidateParentChildList();
 #endif
 
-    const RenderStyle& lineStyle() const { return m_bitfields.firstLine() ? renderer().firstLineStyle() : renderer().style(); }
+    const RenderStyle& lineStyle() const;
     
-    VerticalAlign verticalAlign() const { return lineStyle().verticalAlign(); }
+    const Style::VerticalAlign& verticalAlign() const { return lineStyle().verticalAlign(); }
 
     // Use with caution! The type is not checked!
     RenderBoxModelObject* boxModelObject() const

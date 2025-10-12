@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstdint>
+
 #include "common_audio/vad/vad_unittest.h"
 #include "test/gtest.h"
 

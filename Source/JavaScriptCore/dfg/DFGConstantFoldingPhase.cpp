@@ -741,7 +741,7 @@ private:
             case GetPrivateNameById: {
                 Edge childEdge = node->child1();
                 Node* child = childEdge.node();
-                UniquedStringImpl* uid = node->cacheableIdentifier().uid();
+                CacheableIdentifier identifier = node->cacheableIdentifier();
                 
                 AbstractValue baseValue = m_state.forNode(child);
 
@@ -754,26 +754,19 @@ private:
                 if (!baseValue.m_structure.isFinite()
                     || (node->child1().useKind() == UntypedUse || (baseValue.m_type & ~SpecCell)))
                     break;
-                
-                GetByStatus status = GetByStatus::computeFor(baseValue.m_structure.toStructureSet(), uid);
+
+                GetByStatus status = GetByStatus::computeFor(m_graph.globalObjectFor(node->origin.semantic), baseValue.m_structure.toStructureSet(), identifier);
                 if (!status.isSimple())
                     break;
-                
-                for (unsigned i = status.numVariants(); i--;) {
-                    if (!status[i].conditionSet().isEmpty()) {
-                        // FIXME: We could handle prototype cases.
-                        // https://bugs.webkit.org/show_bug.cgi?id=110386
-                        break;
-                    }
-                }
-                
+
+
                 auto addFilterStatus = [&] () {
                     m_insertionSet.insertNode(
                         indexInBlock, SpecNone, FilterGetByStatus, node->origin,
                         OpInfo(m_graph.m_plan.recordedStatuses().addGetByStatus(node->origin.semantic, status)),
                         Edge(child));
                 };
-                
+
                 // AI already concluded this was a constant so we're safe to do so as well.
                 if (AbstractValue constantResult = m_state.forNode(node); constantResult.value()) {
                     addFilterStatus();
@@ -783,7 +776,18 @@ private:
                 }
 
                 if (status.numVariants() == 1) {
-                    unsigned identifierNumber = m_graph.identifiers().ensure(uid);
+                    auto variant = status[0];
+                    if (!variant.conditionSet().isEmpty())
+                        break;
+                }
+
+                for (unsigned i = status.numVariants(); i--;) {
+                    if (!status[i].conditionSet().isEmpty())
+                        break;
+                }
+
+                if (status.numVariants() == 1) {
+                    unsigned identifierNumber = m_graph.identifiers().ensure(identifier.uid());
                     addFilterStatus();
                     emitGetByOffset(indexInBlock, node, baseValue, status[0], identifierNumber);
                     changed = true;
@@ -793,7 +797,7 @@ private:
                 if (!m_graph.m_plan.isFTL())
                     break;
                 
-                unsigned identifierNumber = m_graph.identifiers().ensure(uid);
+                unsigned identifierNumber = m_graph.identifiers().ensure(identifier.uid());
                 addFilterStatus();
                 MultiGetByOffsetData* data = m_graph.m_multiGetByOffsetData.add();
                 for (const GetByVariant& variant : status.variants()) {
@@ -1085,7 +1089,7 @@ private:
                         Edge use = m_graph.varArgChild(node, 0);
                         if (use->op() == PhantomSpread) {
                             if (use->child1()->op() == PhantomNewArrayBuffer) {
-                                auto* immutableButterfly = use->child1()->castOperand<JSImmutableButterfly*>();
+                                auto* immutableButterfly = use->child1()->castOperand<JSCellButterfly*>();
                                 if (hasContiguous(immutableButterfly->indexingType())) {
                                     node->convertToNewArrayBuffer(m_graph.freeze(immutableButterfly));
                                     changed = true;
@@ -1102,10 +1106,14 @@ private:
                 if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
                     if (node->child1().useKind() == Int32Use && node->child1()->isInt32Constant()) {
                         int32_t length = node->child1()->asInt32();
-                        if (length >= 0
+                        if (0 <= length
                             && length < MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH
-                            && isNewArrayWithConstantSizeIndexingType(node->indexingType())) {
-                                node->convertToNewArrayWithConstantSize(m_graph, length);
+                            && !hasAnyArrayStorage(node->indexingType())) {
+                                m_interpreter.execute(indexInBlock); // Push CFA over this node after we get the state before.
+                                alreadyHandled = true; // Don't allow the default constant folder to do things to this.
+
+                                Node* butterfly = m_insertionSet.insertNode(indexInBlock, SpecNone, NewButterflyWithSize, node->origin, OpInfo(node->indexingType()), node->child1());
+                                node->convertToNewArrayWithButterfly(m_graph, butterfly);
                                 changed = true;
                         }
                     }
@@ -1114,7 +1122,7 @@ private:
             }
 
             case ResolveRope: {
-                if (m_state.forNode(node->child1()).m_type & ~SpecStringIdent)
+                if (!m_state.forNode(node->child1()).isType(SpecStringResolved))
                     break;
 
                 node->convertToIdentity();
@@ -1180,6 +1188,10 @@ private:
                 if (m_graph.m_plan.isUnlinked())
                     break;
 
+                // Don't constant fold for tainted code
+                if (m_graph.m_profiledBlock->couldBeTainted())
+                    break;
+
                 JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                 Edge target = m_graph.child(node, 0);
                 AbstractValue& targetValue = m_state.forNode(target);
@@ -1187,7 +1199,7 @@ private:
                 if (!(targetValue.m_type & ~SpecFunction) && structureSet.isFinite() && structureSet.size() == 1) {
                     RegisteredStructure structure = structureSet.onlyStructure();
                     if (JSBoundFunction::canSkipNameAndLengthMaterialization(globalObject, structure.get())) {
-                        node->convertToNewBoundFunction(m_graph.freeze(m_graph.m_vm.getBoundFunction(/* isJSFunction */ true)));
+                        node->convertToNewBoundFunction(m_graph.freeze(m_graph.m_vm.getBoundFunction(/* isJSFunction */ true, SourceTaintedOrigin::Untainted)));
                         changed = true;
                         break;
                     }
@@ -1649,6 +1661,32 @@ private:
                 break;
             }
 
+            case ResolvePromiseFirstResolving: {
+                AbstractValue& argument = m_state.forNode(node->child2());
+                if (argument.isType(~SpecObject)) {
+                    node->setOpAndDefaultFlags(FulfillPromiseFirstResolving);
+                    changed = true;
+                    break;
+                }
+
+                // SpecObject | something.
+                // Only for types having structures, we check "then" existence.
+                auto& structureSet = argument.m_structure;
+                if (structureSet.isFinite() && structureSet.size() == 1) {
+                    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                    auto conditionSet = m_graph.tryEnsureAbsence(globalObject, structureSet.toStructureSet(), CacheableIdentifier::createFromImmortalIdentifier(m_graph.m_vm.propertyNames->then.impl()));
+                    if (conditionSet.isValid()) {
+                        if (m_graph.watchConditions(conditionSet)) {
+                            node->setOpAndDefaultFlags(FulfillPromiseFirstResolving);
+                            changed = true;
+                            break;
+                        }
+                    }
+                }
+
+                break;
+            }
+
             case DoubleRep: {
                 switch (node->child1().useKind()) {
                 case NotCellNorBigIntUse:
@@ -1668,7 +1706,8 @@ private:
             }
 
             case PhantomNewObject:
-            case PhantomNewArrayWithConstantSize:
+            case PhantomNewArrayWithButterfly:
+            case PhantomNewButterflyWithSize:
             case PhantomNewFunction:
             case PhantomNewGeneratorFunction:
             case PhantomNewAsyncGeneratorFunction:

@@ -33,11 +33,11 @@
 
 #if ENABLE(VIDEO)
 
-#include "CSSValueKeywords.h"
-#include "HTMLElement.h"
-#include "SpeechSynthesisUtterance.h"
-#include "TextTrackCue.h"
-#include "VTTRegion.h"
+#include <WebCore/CSSValueKeywords.h>
+#include <WebCore/HTMLElement.h>
+#include <WebCore/SpeechSynthesisUtterance.h>
+#include <WebCore/TextTrackCue.h>
+#include <WebCore/VTTRegion.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/TypeCasts.h>
 

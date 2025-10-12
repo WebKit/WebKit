@@ -27,9 +27,9 @@
 
 #pragma once
 
-#include "Yarr.h"
-#include "YarrPattern.h"
-#include "YarrUnicodeProperties.h"
+#include <JavaScriptCore/Yarr.h>
+#include <JavaScriptCore/YarrPattern.h>
+#include <JavaScriptCore/YarrUnicodeProperties.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringBuilder.h>
@@ -56,8 +56,8 @@ template <class T> concept YarrSyntaxCheckable = requires (T& checker, Vector<Ve
     { checker.atomBuiltInCharacterClass(BuiltInCharacterClassID { }, bool { }) } -> std::same_as<void>;
     { checker.atomCharacterClassBegin(bool { }) } -> std::same_as<void>;
     { checker.atomCharacterClassBegin() } -> std::same_as<void>;
-    { checker.atomCharacterClassAtom(UChar { }) } -> std::same_as<void>;
-    { checker.atomCharacterClassRange(UChar { }, UChar { }) } -> std::same_as<void>;
+    { checker.atomCharacterClassAtom(char16_t { }) } -> std::same_as<void>;
+    { checker.atomCharacterClassRange(char16_t { }, char16_t { }) } -> std::same_as<void>;
     { checker.atomPatternCharacter(char32_t { }, bool { }) } -> std::same_as<void>;
     { checker.atomCharacterClassBuiltIn(BuiltInCharacterClassID { }, bool { }) } -> std::same_as<void>;
     { checker.atomClassStringDisjunction(disjunctionStrings) } -> std::same_as<void>;
@@ -163,13 +163,12 @@ private:
 
         void nextAlternative()
         {
-            m_nestedCaptureGroupNames.last().formUnion(m_activeCaptureGroupNames.last());
-            m_activeCaptureGroupNames.last().clear();
+            m_nestedCaptureGroupNames.last().addAll(std::exchange(m_activeCaptureGroupNames.last(), { }));
 
             // For nested parenthesis, we need to seed the new alternative with the already seen
             // named captures from the containing alternative.
             if (m_activeCaptureGroupNames.size() > 1)
-                m_activeCaptureGroupNames.last().formUnion(m_activeCaptureGroupNames[m_activeCaptureGroupNames.size() - 2]);
+                m_activeCaptureGroupNames.last().addAll(m_activeCaptureGroupNames[m_activeCaptureGroupNames.size() - 2]);
         }
 
         void pushParenthesis()
@@ -183,10 +182,10 @@ private:
         {
             ASSERT(m_nestedCaptureGroupNames.size() > 1);
             ASSERT(m_activeCaptureGroupNames.size() > 1);
-            m_nestedCaptureGroupNames.last().formUnion(m_activeCaptureGroupNames.last());
+            m_nestedCaptureGroupNames.last().addAll(WTFMove(m_activeCaptureGroupNames.last()));
 
             // Add all the names seen in this parenthesis to the containing alternative.
-            m_activeCaptureGroupNames[m_activeCaptureGroupNames.size() - 2].formUnion(m_nestedCaptureGroupNames.last());
+            m_activeCaptureGroupNames[m_activeCaptureGroupNames.size() - 2].addAll(WTFMove(m_nestedCaptureGroupNames.last()));
 
             m_nestedCaptureGroupNames.removeLast();
             m_activeCaptureGroupNames.removeLast();
@@ -2079,7 +2078,7 @@ private:
         return octal;
     }
 
-    bool tryConsume(UChar ch)
+    bool tryConsume(char16_t ch)
     {
         if (atEndOfPattern() || (m_data[m_index] != ch))
             return false;
@@ -2298,8 +2297,8 @@ template<YarrSyntaxCheckable Delegate>
 ErrorCode parse(Delegate& delegate, const StringView pattern, CompileMode compileMode, unsigned backReferenceLimit = quantifyInfinite, bool isNamedForwardReferenceAllowed = true)
 {
     if (pattern.is8Bit())
-        return Parser<Delegate, LChar>(delegate, pattern, compileMode, backReferenceLimit, isNamedForwardReferenceAllowed).parse();
-    return Parser<Delegate, UChar>(delegate, pattern, compileMode, backReferenceLimit, isNamedForwardReferenceAllowed).parse();
+        return Parser<Delegate, Latin1Character>(delegate, pattern, compileMode, backReferenceLimit, isNamedForwardReferenceAllowed).parse();
+    return Parser<Delegate, char16_t>(delegate, pattern, compileMode, backReferenceLimit, isNamedForwardReferenceAllowed).parse();
 }
 
 } } // namespace JSC::Yarr

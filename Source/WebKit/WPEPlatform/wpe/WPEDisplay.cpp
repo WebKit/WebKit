@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WPEDisplay.h"
 
+#include "WPEDRMDevicePrivate.h"
 #include "WPEDisplayPrivate.h"
 #include "WPEEGLError.h"
 #include "WPEExtensions.h"
@@ -66,6 +67,7 @@ struct _WPEDisplayPrivate {
     GRefPtr<WPEClipboard> clipboard;
     GRefPtr<WPESettings> settings;
     WPEAvailableInputDevices availableInputDevices;
+    GRefPtr<WPEDRMDevice> overridenDRMDevice;
 };
 
 WEBKIT_DEFINE_ABSTRACT_TYPE(WPEDisplay, wpe_display, G_TYPE_OBJECT)
@@ -457,7 +459,7 @@ static GRefPtr<WPEBufferDMABufFormats> wpeDisplayPreferredDMABufFormats(WPEDispl
         return nullptr;
 
     Vector<EGLint> formats(formatsCount);
-    if (!s_eglQueryDmaBufFormatsEXT(eglDisplay, formatsCount, reinterpret_cast<EGLint*>(formats.data()), &formatsCount))
+    if (!s_eglQueryDmaBufFormatsEXT(eglDisplay, formatsCount, reinterpret_cast<EGLint*>(formats.mutableSpan().data()), &formatsCount))
         return nullptr;
 
     static PFNEGLQUERYDMABUFMODIFIERSEXTPROC s_eglQueryDmaBufModifiersEXT = wpeDisplayCheckEGLExtension(display, "EXT_image_dma_buf_import_modifiers") ?
@@ -472,13 +474,13 @@ static GRefPtr<WPEBufferDMABufFormats> wpeDisplayPreferredDMABufFormats(WPEDispl
             return { DRM_FORMAT_MOD_INVALID };
 
         Vector<EGLuint64KHR> modifiers(modifiersCount);
-        if (!s_eglQueryDmaBufModifiersEXT(eglDisplay, format, modifiersCount, reinterpret_cast<EGLuint64KHR*>(modifiers.data()), nullptr, &modifiersCount))
+        if (!s_eglQueryDmaBufModifiersEXT(eglDisplay, format, modifiersCount, reinterpret_cast<EGLuint64KHR*>(modifiers.mutableSpan().data()), nullptr, &modifiersCount))
             return { DRM_FORMAT_MOD_INVALID };
 
         return modifiers;
     };
 
-    auto* builder = wpe_buffer_dma_buf_formats_builder_new(wpe_display_get_drm_render_node(display));
+    auto* builder = wpe_buffer_dma_buf_formats_builder_new(wpe_display_get_drm_device(display));
     wpe_buffer_dma_buf_formats_builder_append_group(builder, nullptr, WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING);
     for (auto format : formats) {
         auto modifiers = modifiersForFormat(format);
@@ -609,46 +611,35 @@ static bool isSotfwareRast()
  * wpe_display_get_drm_device:
  * @display: a #WPEDisplay
  *
- * Get the DRM device of @display.
+ * Get the DRM device of @display. This is the main device that
+ * will be used to initialize the EGL display and allocate GBM
+ * buffers by default. The DRM device required to allocate GBM
+ * buffers for direct scanout will be set as main or group device
+ * in #WPEBufferDMABufFormats.
  *
- * Returns: (transfer none) (nullable): the filename of the DRM device node, or %NULL
+ * Returns: (transfer none) (nullable): a #WPEDRMDevice or %NULL
  */
-const char* wpe_display_get_drm_device(WPEDisplay* display)
+WPEDRMDevice* wpe_display_get_drm_device(WPEDisplay* display)
 {
     g_return_val_if_fail(WPE_IS_DISPLAY(display), nullptr);
 
     if (isSotfwareRast())
         return nullptr;
 
+    if (display->priv->overridenDRMDevice)
+        return display->priv->overridenDRMDevice.get();
+
     static const char* envDeviceFile = getenv("WPE_DRM_DEVICE");
-    if (envDeviceFile && *envDeviceFile)
-        return envDeviceFile;
+    if (envDeviceFile && *envDeviceFile) {
+        display->priv->overridenDRMDevice = wpeDRMDeviceCreateForDevice(envDeviceFile);
+        if (display->priv->overridenDRMDevice)
+            return display->priv->overridenDRMDevice.get();
+
+        g_warning("Invalid device %s set in WPE_DRM_DEVICE, ignoring...", envDeviceFile);
+    }
 
     auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
     return wpeDisplayClass->get_drm_device ? wpeDisplayClass->get_drm_device(display) : nullptr;
-}
-
-/**
- * wpe_display_get_drm_render_node:
- * @display: a #WPEDisplay
- *
- * Get the DRM render node of @display.
- *
- * Returns: (transfer none) (nullable): the filename of the DRM render node, or %NULL
- */
-const char* wpe_display_get_drm_render_node(WPEDisplay* display)
-{
-    g_return_val_if_fail(WPE_IS_DISPLAY(display), nullptr);
-
-    if (isSotfwareRast())
-        return nullptr;
-
-    static const char* envDeviceFile = getenv("WPE_DRM_RENDER_NODE");
-    if (envDeviceFile && *envDeviceFile)
-        return envDeviceFile;
-
-    auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
-    return wpeDisplayClass->get_drm_render_node ? wpeDisplayClass->get_drm_render_node(display) : nullptr;
 }
 
 /**

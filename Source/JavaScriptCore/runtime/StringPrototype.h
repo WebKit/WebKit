@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include "JITOperations.h"
-#include "StringObject.h"
+#include <JavaScriptCore/JITOperations.h>
+#include <JavaScriptCore/StringObject.h>
 
 namespace JSC {
 

@@ -118,7 +118,7 @@ class UVector32;
 * @see     RuleBasedCollator
 * @version 1.8 Jan 16 2001
 */
-class U_I18N_API CollationElementIterator U_FINAL : public UObject {
+class U_I18N_API CollationElementIterator final : public UObject {
 public: 
 
     // CollationElementIterator public data member ------------------------------
@@ -351,7 +351,7 @@ private:
     const CollationElementIterator&
         operator=(const CollationElementIterator& other);
 
-    CollationElementIterator(); // default constructor not implemented
+    CollationElementIterator() = delete; // default constructor not implemented
 
     /** Normalizes dir_=1 (just after setOffset()) to dir_=0 (just after reset()). */
     inline int8_t normalizeDir() const { return dir_ == 1 ? 0 : dir_; }

@@ -1,0 +1,9 @@
+
+FAIL var() in attribute value substitutes locally assert_equals: expected "PASS" but got "--f()"
+FAIL var() in attribute value substitutes locally, argument assert_equals: expected "PASS" but got "--f(PASS)"
+FAIL var() in attribute value substitutes locally, typed assert_equals: expected "12px" but got "--f()"
+FAIL attr() fallback substitutes locally assert_equals: expected "PASS" but got "--f()"
+FAIL attr() cycle through local assert_equals: expected "PASS" but got "--f()"
+FAIL attr() cycle through unused fallback in local assert_equals: expected "PASS" but got "--f()"
+FAIL attr() cycle through function assert_equals: expected "PASS" but got "--f()"
+

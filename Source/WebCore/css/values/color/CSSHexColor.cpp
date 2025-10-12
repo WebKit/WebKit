@@ -35,7 +35,7 @@ namespace CSS {
 
 void Serialize<HexColor>::operator()(StringBuilder& builder, const SerializationContext&, const HexColor& value)
 {
-    builder.append(serializationForCSS(WebCore::Color { value.value }));
+    builder.append(WebCore::serializationForCSS(WebCore::Color { value.value }));
 }
 
 } // namespace CSS

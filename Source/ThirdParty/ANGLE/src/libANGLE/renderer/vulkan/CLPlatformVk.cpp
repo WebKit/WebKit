@@ -78,7 +78,21 @@ CLPlatformImpl::Info CLPlatformVk::createInfo() const
     info.hostTimerRes = 0u;
     info.version      = GetVersion();
 
+    CLExtensions::ExternalMemoryHandleBitset supportedHandles;
+    supportedHandles.set();  // set support for all types initially
+    for (const cl::DevicePtr &platformDevice : mPlatform.getDevices())
+    {
+        supportedHandles &= platformDevice->getInfo().externalMemoryHandleSupport;
+    }
+
+    // Populate other extensions based on feature support
+    if (info.populateSupportedExternalMemoryHandleTypes(supportedHandles))
+    {
+        extList.push_back(cl_name_version{CL_MAKE_VERSION(1, 0, 0), "cl_khr_external_memory"});
+    }
+
     info.initializeVersionedExtensions(std::move(extList));
+
     return info;
 }
 

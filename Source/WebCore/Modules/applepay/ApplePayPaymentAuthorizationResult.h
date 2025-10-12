@@ -27,8 +27,8 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePayError.h"
-#include "ApplePayPaymentOrderDetails.h"
+#include <WebCore/ApplePayError.h>
+#include <WebCore/ApplePayPaymentOrderDetails.h>
 #include <optional>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>

@@ -27,11 +27,9 @@
 #include "RenderStyleConstants.h"
 
 #include "CSSPrimitiveValueMappings.h"
-#include "TabSize.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
-
 
 bool alwaysPageBreak(BreakBetween between)
 {
@@ -57,6 +55,17 @@ CSSBoxType transformBoxToCSSBoxType(TransformBox transformBox)
     }
 }
 
+TextStream& operator<<(TextStream& ts, AnimationDirection direction)
+{
+    switch (direction) {
+    case AnimationDirection::Normal: ts << "normal"_s; break;
+    case AnimationDirection::Alternate: ts << "alternate"_s; break;
+    case AnimationDirection::Reverse: ts << "reverse"_s; break;
+    case AnimationDirection::AlternateReverse: ts << "alternate-reverse"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, AnimationFillMode fillMode)
 {
     switch (fillMode) {
@@ -71,7 +80,7 @@ TextStream& operator<<(TextStream& ts, AnimationFillMode fillMode)
 TextStream& operator<<(TextStream& ts, AnimationPlayState playState)
 {
     switch (playState) {
-    case AnimationPlayState::Playing: ts << "playing"_s; break;
+    case AnimationPlayState::Running: ts << "running"_s; break;
     case AnimationPlayState::Paused: ts << "paused"_s; break;
     }
     return ts;
@@ -722,6 +731,7 @@ TextStream& operator<<(TextStream& ts, ItemPosition position)
     case ItemPosition::Left: ts << "left"_s; break;
     case ItemPosition::Right: ts << "right"_s; break;
     case ItemPosition::AnchorCenter: ts << "anchor-center"_s; break;
+    case ItemPosition::Dialog: ts << "dialog"_s; break;
     }
     return ts;
 }
@@ -832,6 +842,17 @@ TextStream& operator<<(TextStream& ts, NBSPMode mode)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, NinePieceImageRule rule)
+{
+    switch (rule) {
+    case NinePieceImageRule::Stretch: ts << "stretch"_s; break;
+    case NinePieceImageRule::Round: ts << "round"_s; break;
+    case NinePieceImageRule::Space: ts << "space"_s; break;
+    case NinePieceImageRule::Repeat: ts << "repeat"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, ObjectFit objectFit)
 {
     switch (objectFit) {
@@ -849,6 +870,23 @@ TextStream& operator<<(TextStream& ts, Order order)
     switch (order) {
     case Order::Logical: ts << "logical"_s; break;
     case Order::Visual: ts << "visual"_s; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, OutlineStyle outlineStyle)
+{
+    switch (outlineStyle) {
+    case OutlineStyle::Auto: ts << "auto"_s; break;
+    case OutlineStyle::None: ts << "none"_s; break;
+    case OutlineStyle::Inset: ts << "inset"_s; break;
+    case OutlineStyle::Groove: ts << "groove"_s; break;
+    case OutlineStyle::Outset: ts << "outset"_s; break;
+    case OutlineStyle::Ridge: ts << "ridge"_s; break;
+    case OutlineStyle::Dotted: ts << "dotted"_s; break;
+    case OutlineStyle::Dashed: ts << "dashed"_s; break;
+    case OutlineStyle::Solid: ts << "solid"_s; break;
+    case OutlineStyle::Double: ts << "double"_s; break;
     }
     return ts;
 }
@@ -1067,7 +1105,6 @@ TextStream& operator<<(TextStream& ts, ScrollSnapAxisAlignType alignType)
 TextStream& operator<<(TextStream& ts, ScrollSnapStrictness strictness)
 {
     switch (strictness) {
-    case ScrollSnapStrictness::None: ts << "none"_s; break;
     case ScrollSnapStrictness::Proximity: ts << "proximity"_s; break;
     case ScrollSnapStrictness::Mandatory: ts << "mandatory"_s; break;
     }
@@ -1082,6 +1119,17 @@ TextStream& operator<<(TextStream& ts, ScrollSnapStop stop)
     }
     return ts;
 }
+
+TextStream& operator<<(TextStream& ts, Scroller scroller)
+{
+    switch (scroller) {
+    case Scroller::Nearest: ts << "nearest"_s; break;
+    case Scroller::Root: ts << "root"_s; break;
+    case Scroller::Self: ts << "self"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, SpeakAs speakAs)
 {
     switch (speakAs) {
@@ -1101,9 +1149,9 @@ TextStream& operator<<(TextStream& ts, StyleDifference diff)
     case StyleDifference::Repaint: ts << "repaint"_s; break;
     case StyleDifference::RepaintIfText: ts << "repaint if text"_s; break;
     case StyleDifference::RepaintLayer: ts << "repaint layer"_s; break;
-    case StyleDifference::LayoutPositionedMovementOnly: ts << "layout positioned movement only"_s; break;
+    case StyleDifference::LayoutOutOfFlowMovementOnly: ts << "layout positioned movement only"_s; break;
     case StyleDifference::Overflow: ts << "overflow"_s; break;
-    case StyleDifference::OverflowAndPositionedMovement: ts << "overflow and positioned movement"_s; break;
+    case StyleDifference::OverflowAndOutOfFlowMovement: ts << "overflow and positioned movement"_s; break;
     case StyleDifference::Layout: ts << "layout"_s; break;
     case StyleDifference::NewStyle: ts << "new style"_s; break;
     }
@@ -1159,17 +1207,6 @@ TextStream& operator<<(TextStream& ts, TextCombine textCombine)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, TextDecorationLine line)
-{
-    switch (line) {
-    case TextDecorationLine::Underline: ts << "underline"_s; break;
-    case TextDecorationLine::Overline: ts << "overline"_s; break;
-    case TextDecorationLine::LineThrough: ts << "line-through"_s; break;
-    case TextDecorationLine::Blink: ts << "blink"_s; break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, TextDecorationSkipInk skip)
 {
     switch (skip) {
@@ -1204,14 +1241,11 @@ TextStream& operator<<(TextStream& ts, TextEmphasisFill fill)
 TextStream& operator<<(TextStream& ts, TextEmphasisMark mark)
 {
     switch (mark) {
-    case TextEmphasisMark::None: ts << "none"_s; break;
-    case TextEmphasisMark::Auto: ts << "auto"_s; break;
     case TextEmphasisMark::Dot: ts << "dot"_s; break;
     case TextEmphasisMark::Circle: ts << "circle"_s; break;
     case TextEmphasisMark::DoubleCircle: ts << "double-circle"_s; break;
     case TextEmphasisMark::Triangle: ts << "triangle"_s; break;
     case TextEmphasisMark::Sesame: ts << "sesame"_s; break;
-    case TextEmphasisMark::Custom: ts << "custom"_s; break;
     }
     return ts;
 }
@@ -1327,17 +1361,25 @@ TextStream& operator<<(TextStream& ts, TextBoxTrim textBoxTrim)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, TextEdgeType textEdgeType)
+TextStream& operator<<(TextStream& ts, TextEdgeOver textEdgeOver)
 {
-    switch (textEdgeType) {
-    case TextEdgeType::Auto: ts << "auto"_s; break;
-    case TextEdgeType::Leading: ts << "half-leading"_s; break;
-    case TextEdgeType::Text: ts << "text-over/under baseline"_s; break;
-    case TextEdgeType::CapHeight: ts << "cap-height baseline"_s; break;
-    case TextEdgeType::ExHeight: ts << "x-height baseline"_s; break;
-    case TextEdgeType::Alphabetic: ts << "alphabetic baseline"_s; break;
-    case TextEdgeType::CJKIdeographic: ts << "ideographic-over baseline"_s; break;
-    case TextEdgeType::CJKIdeographicInk: ts << "ideographic-ink-over/ink-under baseline"_s; break;
+    switch (textEdgeOver) {
+    case TextEdgeOver::Text: ts << "text"_s; break;
+    case TextEdgeOver::Ideographic: ts << "ideographic"_s; break;
+    case TextEdgeOver::IdeographicInk: ts << "ideographic-ink"_s; break;
+    case TextEdgeOver::Cap: ts << "cap"_s; break;
+    case TextEdgeOver::Ex: ts << "ex"_s; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, TextEdgeUnder textEdgeUnder)
+{
+    switch (textEdgeUnder) {
+    case TextEdgeUnder::Text: ts << "text"_s; break;
+    case TextEdgeUnder::Ideographic: ts << "ideographic"_s; break;
+    case TextEdgeUnder::IdeographicInk: ts << "ideographic-ink"_s; break;
+    case TextEdgeUnder::Alphabetic: ts << "alphabetic"_s; break;
     }
     return ts;
 }
@@ -1375,6 +1417,15 @@ TextStream& operator<<(TextStream& ts, TransformStyle3D transformStyle)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, TransitionBehavior transitionBehavior)
+{
+    switch (transitionBehavior) {
+    case TransitionBehavior::Normal: ts << "normal"_s; break;
+    case TransitionBehavior::AllowDiscrete: ts << "allow-discrete"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, UserDrag userDrag)
 {
     switch (userDrag) {
@@ -1401,23 +1452,6 @@ TextStream& operator<<(TextStream& ts, UserSelect userSelect)
     case UserSelect::None: ts << "none"_s; break;
     case UserSelect::Text: ts << "text"_s; break;
     case UserSelect::All: ts << "all"_s; break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, VerticalAlign verticalAlign)
-{
-    switch (verticalAlign) {
-    case VerticalAlign::Baseline: ts << "baseline"_s; break;
-    case VerticalAlign::Middle: ts << "middle"_s; break;
-    case VerticalAlign::Sub: ts << "sub"_s; break;
-    case VerticalAlign::Super: ts << "super"_s; break;
-    case VerticalAlign::TextTop: ts << "text-top"_s; break;
-    case VerticalAlign::TextBottom: ts << "text-bottom"_s; break;
-    case VerticalAlign::Top: ts << "top"_s; break;
-    case VerticalAlign::Bottom: ts << "bottom"_s; break;
-    case VerticalAlign::BaselineMiddle: ts << "baseline-middle"_s; break;
-    case VerticalAlign::Length: ts << "length"_s; break;
     }
     return ts;
 }
@@ -1465,6 +1499,15 @@ TextStream& operator<<(TextStream& ts, WordBreak wordBreak)
     case WordBreak::KeepAll: ts << "keep-all"_s; break;
     case WordBreak::BreakWord: ts << "break-word"_s; break;
     case WordBreak::AutoPhrase: ts << "auto-phrase"_s; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, MathShift mathShift)
+{
+    switch (mathShift) {
+    case MathShift::Normal: ts << "normal"_s; break;
+    case MathShift::Compact: ts << "compact"_s; break;
     }
     return ts;
 }
@@ -1521,6 +1564,114 @@ TextStream& operator<<(TextStream& ts, StyleDifferenceContextSensitiveProperty p
     case StyleDifferenceContextSensitiveProperty::ClipRect: ts << "clipRect"_s; break;
     case StyleDifferenceContextSensitiveProperty::ClipPath: ts << "clipPath"_s; break;
     case StyleDifferenceContextSensitiveProperty::WillChange: ts << "willChange"_s; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, AlignmentBaseline value)
+{
+    switch (value) {
+    case AlignmentBaseline::Baseline: ts << "baseline"_s; break;
+    case AlignmentBaseline::BeforeEdge: ts << "before-edge"_s; break;
+    case AlignmentBaseline::TextBeforeEdge: ts << "text-before-edge"_s; break;
+    case AlignmentBaseline::Middle: ts << "middle"_s; break;
+    case AlignmentBaseline::Central: ts << "central"_s; break;
+    case AlignmentBaseline::AfterEdge: ts << "after-edge"_s; break;
+    case AlignmentBaseline::TextAfterEdge: ts << "text-after-edge"_s; break;
+    case AlignmentBaseline::Ideographic: ts << "ideographic"_s; break;
+    case AlignmentBaseline::Alphabetic: ts << "alphabetic"_s; break;
+    case AlignmentBaseline::Hanging: ts << "hanging"_s; break;
+    case AlignmentBaseline::Mathematical: ts << "mathematical"_s; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, BufferedRendering value)
+{
+    switch (value) {
+    case BufferedRendering::Auto: ts << "auto"_s; break;
+    case BufferedRendering::Dynamic: ts << "dynamic"_s; break;
+    case BufferedRendering::Static: ts << "static"_s; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, ColorInterpolation value)
+{
+    switch (value) {
+    case ColorInterpolation::Auto: ts << "auto"_s; break;
+    case ColorInterpolation::SRGB: ts << "sRGB"_s; break;
+    case ColorInterpolation::LinearRGB: ts << "linearRGB"_s; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, DominantBaseline value)
+{
+    switch (value) {
+    case DominantBaseline::Auto: ts << "auto"_s; break;
+    case DominantBaseline::UseScript: ts << "use-script"_s; break;
+    case DominantBaseline::NoChange: ts << "no-change"_s; break;
+    case DominantBaseline::ResetSize: ts << "reset-size"_s; break;
+    case DominantBaseline::Ideographic: ts << "ideographic"_s; break;
+    case DominantBaseline::Alphabetic: ts << "alphabetic"_s; break;
+    case DominantBaseline::Hanging: ts << "hanging"_s; break;
+    case DominantBaseline::Mathematical: ts << "mathematical"_s; break;
+    case DominantBaseline::Central: ts << "central"_s; break;
+    case DominantBaseline::Middle: ts << "middle"_s; break;
+    case DominantBaseline::TextAfterEdge: ts << "text-after-edge"_s; break;
+    case DominantBaseline::TextBeforeEdge: ts << "text-before-edge"_s; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, GlyphOrientation value)
+{
+    switch (value) {
+    case GlyphOrientation::Degrees0: ts << '0'; break;
+    case GlyphOrientation::Degrees90: ts << "90"_s; break;
+    case GlyphOrientation::Degrees180: ts << "180"_s; break;
+    case GlyphOrientation::Degrees270: ts << "270"_s; break;
+    case GlyphOrientation::Auto: ts << "Auto"_s; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, MaskType value)
+{
+    switch (value) {
+    case MaskType::Luminance: ts << "luminance"_s; break;
+    case MaskType::Alpha: ts << "alpha"_s; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, ShapeRendering value)
+{
+    switch (value) {
+    case ShapeRendering::Auto: ts << "auto"_s; break;
+    case ShapeRendering::OptimizeSpeed: ts << "optimizeSpeed"_s; break;
+    case ShapeRendering::CrispEdges: ts << "crispEdges"_s; break;
+    case ShapeRendering::GeometricPrecision: ts << "geometricPrecision"_s; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, TextAnchor value)
+{
+    switch (value) {
+    case TextAnchor::Start: ts << "start"_s; break;
+    case TextAnchor::Middle: ts << "middle"_s; break;
+    case TextAnchor::End: ts << "end"_s; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, VectorEffect value)
+{
+    switch (value) {
+    case VectorEffect::None: ts << "none"_s; break;
+    case VectorEffect::NonScalingStroke: ts << "non-scaling-stroke"_s; break;
     }
     return ts;
 }

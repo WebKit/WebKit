@@ -9,9 +9,9 @@
  */
 #include "net/dcsctp/packet/chunk/reconfig_chunk.h"
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <optional>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -19,7 +19,6 @@
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
-#include "net/dcsctp/packet/tlv_trait.h"
 
 namespace dcsctp {
 
@@ -41,7 +40,7 @@ namespace dcsctp {
 constexpr int ReConfigChunk::kType;
 
 std::optional<ReConfigChunk> ReConfigChunk::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -57,7 +56,7 @@ std::optional<ReConfigChunk> ReConfigChunk::Parse(
 }
 
 void ReConfigChunk::SerializeTo(std::vector<uint8_t>& out) const {
-  rtc::ArrayView<const uint8_t> parameters = parameters_.data();
+  webrtc::ArrayView<const uint8_t> parameters = parameters_.data();
   BoundedByteWriter<kHeaderSize> writer = AllocateTLV(out, parameters.size());
   writer.CopyToVariableData(parameters);
 }

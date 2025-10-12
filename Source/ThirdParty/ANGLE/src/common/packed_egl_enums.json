@@ -38,7 +38,8 @@
     "ContextPriority": {
         "Low": "EGL_CONTEXT_PRIORITY_LOW_IMG",
         "Medium": "EGL_CONTEXT_PRIORITY_MEDIUM_IMG",
-        "High": "EGL_CONTEXT_PRIORITY_HIGH_IMG"
+        "High": "EGL_CONTEXT_PRIORITY_HIGH_IMG",
+        "Realtime": "EGL_CONTEXT_PRIORITY_REALTIME_NV"
     },
     "ColorSpace": {
         "sRGB": "EGL_COLORSPACE_sRGB",

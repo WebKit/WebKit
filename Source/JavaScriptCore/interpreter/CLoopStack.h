@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 
 #if ENABLE(C_LOOP)
 
-#include "Register.h"
+#include <JavaScriptCore/Register.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PageReservation.h>
 
@@ -39,6 +39,7 @@ namespace JSC {
     class CodeBlockSet;
     class ConservativeRoots;
     class JITStubRoutineSet;
+    class StackManager;
     class VM;
     class LLIntOffsetsExtractor;
 
@@ -48,7 +49,7 @@ namespace JSC {
         // Allow 8k of excess registers before we start trying to reap the stack
         static constexpr ptrdiff_t maxExcessCapacity = 8 * 1024;
 
-        CLoopStack(VM&);
+        CLoopStack();
         ~CLoopStack();
         
         bool ensureCapacityFor(Register* newTopOfStack);
@@ -59,7 +60,15 @@ namespace JSC {
         void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&);
         void sanitizeStack();
 
-        inline void* currentStackPointer() const;
+        inline void* currentStackPointer() const
+        {
+            // One might be tempted to assert that m_currentStackPointer <= m_topCallFrame->topOfFrame()
+            // here. That assertion would be incorrect because this function may be called from function
+            // prologues (e.g. during a stack check) where m_currentStackPointer may be higher than
+            // m_topCallFrame->topOfFrame() because the stack pointer has not been initialized to point
+            // to frame top yet.
+            return m_currentStackPointer;
+        }
         void setCurrentStackPointer(void* sp) { m_currentStackPointer = sp; }
 
         size_t size() const { return highAddress() - lowAddress(); }
@@ -68,6 +77,9 @@ namespace JSC {
         bool isSafeToRecurse() const;
 
     private:
+        StackManager& stackManager() const;
+        VM& vm() const;
+
         Register* lowAddress() const
         {
             return m_end;
@@ -93,9 +105,6 @@ namespace JSC {
         void addToCommittedByteCount(long);
 
         void setCLoopStackLimit(Register* newTopOfStack);
-
-        VM& m_vm;
-        CallFrame*& m_topCallFrame;
 
         // The following is always true:
         //    reservationTop() <= m_commitTop <= m_end <= m_currentStackPointer <= highAddress()

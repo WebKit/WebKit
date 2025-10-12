@@ -25,22 +25,11 @@
 
 #pragma once
 
-#include "ScreenOrientationLockType.h"
-#include "ScreenOrientationType.h"
+#include <WebCore/ScreenOrientationLockType.h>
+#include <WebCore/ScreenOrientationType.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class ScreenOrientationManager;
-class ScreenOrientationManagerObserver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ScreenOrientationManager> : std::true_type { };
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ScreenOrientationManagerObserver> : std::true_type { };
-}
 
 namespace WebCore {
 
@@ -48,13 +37,13 @@ class DeferredPromise;
 class Exception;
 class ScreenOrientation;
 
-class ScreenOrientationManagerObserver : public CanMakeWeakPtr<ScreenOrientationManagerObserver> {
+class ScreenOrientationManagerObserver : public AbstractRefCountedAndCanMakeWeakPtr<ScreenOrientationManagerObserver> {
 public:
     virtual ~ScreenOrientationManagerObserver() { }
     virtual void screenOrientationDidChange(ScreenOrientationType) = 0;
 };
 
-class ScreenOrientationManager : public CanMakeWeakPtr<ScreenOrientationManager> {
+class ScreenOrientationManager : public AbstractRefCountedAndCanMakeWeakPtr<ScreenOrientationManager> {
 public:
     WEBCORE_EXPORT virtual ~ScreenOrientationManager();
 

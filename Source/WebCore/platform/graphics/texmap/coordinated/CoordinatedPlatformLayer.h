@@ -98,6 +98,7 @@ public:
 
 #if ENABLE(DAMAGE_TRACKING)
     void setDamagePropagationEnabled(bool enabled) { m_damagePropagationEnabled = enabled; }
+    void setDamageInGlobalCoordinateSpace(std::shared_ptr<Damage> damage) { m_damageInGlobalCoordinateSpace = WTFMove(damage); }
 #endif
 
     void setPosition(FloatPoint&&);
@@ -143,7 +144,7 @@ public:
     void setContentsClippingRect(const FloatRoundedRect&);
     void setContentsScale(float);
     enum class RequireComposition : bool { No, Yes };
-    void setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&, RequireComposition = RequireComposition::Yes);
+    void setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&, std::optional<Damage>&& = std::nullopt, RequireComposition = RequireComposition::Yes);
 #if ENABLE(VIDEO) && USE(GSTREAMER)
     void replaceCurrentContentsBufferWithCopy();
 #endif
@@ -196,6 +197,10 @@ private:
     bool needsBackingStore() const;
     void purgeBackingStores();
 
+#if ENABLE(DAMAGE_TRACKING)
+    void addDamage(Damage&&);
+#endif
+
     enum class Change : uint32_t {
         Position                     = 1 << 0,
         BoundsOrigin                 = 1 << 1,
@@ -246,6 +251,7 @@ private:
 
 #if ENABLE(DAMAGE_TRACKING)
     bool m_damagePropagationEnabled { false };
+    std::shared_ptr<Damage> m_damageInGlobalCoordinateSpace;
 #endif
 
     Lock m_lock;

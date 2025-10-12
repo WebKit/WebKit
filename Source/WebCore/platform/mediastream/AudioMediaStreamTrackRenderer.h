@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #if USE(LIBWEBRTC)
-#include "LibWebRTCAudioModule.h"
+#include <WebCore/LibWebRTCAudioModule.h>
 #endif
 
 #include <wtf/Function.h>
@@ -101,7 +101,7 @@ private:
 #endif
 
 #if !RELEASE_LOG_DISABLED
-    Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
 #endif
 };

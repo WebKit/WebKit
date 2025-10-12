@@ -31,10 +31,10 @@
 
 #pragma once
 
-#include "Exception.h"
-#include "InspectorEnvironment.h"
-#include "InspectorProtocolObjects.h"
-#include "ScriptFunctionCall.h"
+#include <JavaScriptCore/Exception.h>
+#include <JavaScriptCore/InspectorEnvironment.h>
+#include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <JavaScriptCore/ScriptFunctionCall.h>
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>

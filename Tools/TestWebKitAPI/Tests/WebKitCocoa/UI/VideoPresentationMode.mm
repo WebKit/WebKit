@@ -30,36 +30,86 @@
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <AVKit/AVKit.h>
+#import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WebKit.h>
 
-static bool didEnterFullscreen;
-static bool didExitFullscreen;
-
 @interface VideoPresentationModeUIDelegate : NSObject <WKUIDelegate>
+- (void)waitForDidEnterFullscreen;
+- (void)waitForDidExitFullscreen;
+- (void)waitForDidEnterStandby;
+- (void)waitForDidExitStandby;
 @end
 
-@implementation VideoPresentationModeUIDelegate
+@implementation VideoPresentationModeUIDelegate {
+    bool _willEnterFullscreen;
+    bool _didEnterFullscreen;
+    bool _didExitFullscreen;
+    bool _didEnterStandby;
+    bool _didExitStandby;
+}
+
+- (void)waitForDidEnterFullscreen
+{
+    _willEnterFullscreen = false;
+    _didEnterFullscreen = false;
+    TestWebKitAPI::Util::run(&_willEnterFullscreen);
+    TestWebKitAPI::Util::run(&_didEnterFullscreen);
+}
+
+- (void)waitForDidExitFullscreen
+{
+    _didExitFullscreen = false;
+    TestWebKitAPI::Util::run(&_didExitFullscreen);
+}
+
+- (void)waitForDidEnterStandby
+{
+    _didEnterStandby = false;
+    TestWebKitAPI::Util::run(&_didEnterStandby);
+}
+
+- (void)waitForDidExitStandby
+{
+    _didExitStandby = false;
+    TestWebKitAPI::Util::run(&_didExitStandby);
+}
+
+#pragma mark WKUIDelegate
+
+- (void)_webViewWillEnterFullscreen:(WKWebView *)webView
+{
+    _willEnterFullscreen = true;
+}
 
 - (void)_webViewDidEnterFullscreen:(WKWebView *)webView
 {
-    didEnterFullscreen = true;
+    _didEnterFullscreen = true;
 }
 
 - (void)_webViewDidExitFullscreen:(WKWebView *)webView
 {
-    didExitFullscreen = true;
+    _didExitFullscreen = true;
+}
+
+- (void)_webViewDidEnterStandbyForTesting:(WKWebView *)webView
+{
+    _didEnterStandby = true;
+}
+
+- (void)_webViewDidExitStandbyForTesting:(WKWebView *)webView
+{
+    _didExitStandby = true;
 }
 
 @end
+
+#pragma mark -
 
 TEST(VideoPresentationMode, Fullscreen)
 {
     // This test must run in TestWebKitAPI.app
     if (![NSBundle.mainBundle.bundleIdentifier isEqualToString:@"org.webkit.TestWebKitAPI"])
         return;
-
-    didEnterFullscreen = false;
-    didExitFullscreen = false;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setAllowsInlineMediaPlayback:YES];
@@ -71,7 +121,7 @@ TEST(VideoPresentationMode, Fullscreen)
     [webView evaluateJavaScript:@"document.querySelector('video').play()" completionHandler:nil];
     [webView evaluateJavaScript:@"document.querySelector('video').webkitSetPresentationMode('fullscreen')" completionHandler:nil];
 
-    TestWebKitAPI::Util::run(&didEnterFullscreen);
+    [uiDelegate waitForDidEnterFullscreen];
 
     UIApplication *application = UIApplication.sharedApplication;
     EXPECT_EQ(application.connectedScenes.count, 1U);
@@ -106,6 +156,10 @@ TEST(VideoPresentationMode, Fullscreen)
         [viewStack addObjectsFromArray:[view subviews]];
     }
     EXPECT_TRUE(!!playerLayerView);
+
+    [webView evaluateJavaScript:@"document.querySelector('video').webkitSetPresentationMode('inline')" completionHandler:nil];
+
+    [uiDelegate waitForDidExitFullscreen];
 }
 
 TEST(VideoPresentationMode, Inline)
@@ -113,9 +167,6 @@ TEST(VideoPresentationMode, Inline)
     // This test must run in TestWebKitAPI.app
     if (![NSBundle.mainBundle.bundleIdentifier isEqualToString:@"org.webkit.TestWebKitAPI"])
         return;
-
-    didEnterFullscreen = false;
-    didExitFullscreen = false;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setAllowsInlineMediaPlayback:YES];
@@ -127,11 +178,11 @@ TEST(VideoPresentationMode, Inline)
     [webView evaluateJavaScript:@"document.querySelector('video').play()" completionHandler:nil];
     [webView evaluateJavaScript:@"document.querySelector('video').webkitSetPresentationMode('fullscreen')" completionHandler:nil];
 
-    TestWebKitAPI::Util::run(&didEnterFullscreen);
+    [uiDelegate waitForDidEnterFullscreen];
 
     [webView evaluateJavaScript:@"document.querySelector('video').webkitSetPresentationMode('inline')" completionHandler:nil];
 
-    TestWebKitAPI::Util::run(&didExitFullscreen);
+    [uiDelegate waitForDidExitFullscreen];
 
     UIApplication *application = UIApplication.sharedApplication;
     EXPECT_EQ(application.connectedScenes.count, 1U);
@@ -167,6 +218,61 @@ TEST(VideoPresentationMode, Inline)
     EXPECT_TRUE(!!playerLayerView);
 }
 
+TEST(VideoPresentationMode, Standby)
+{
+    // This test must run in TestWebKitAPI.app
+    if (![NSBundle.mainBundle.bundleIdentifier isEqualToString:@"org.webkit.TestWebKitAPI"])
+        return;
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setAllowsInlineMediaPlayback:YES];
+    [configuration preferences].elementFullscreenEnabled = YES;
+    RetainPtr uiDelegate = adoptNS([[VideoPresentationModeUIDelegate alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 playsinline loop controls></video>"];
+    [webView evaluateJavaScript:@"document.querySelector('video').play()" completionHandler:nil];
+    [webView evaluateJavaScript:@"document.querySelector('body').requestFullscreen()" completionHandler:nil];
+
+    [uiDelegate waitForDidEnterStandby];
+
+    UIApplication *application = UIApplication.sharedApplication;
+    EXPECT_EQ(application.connectedScenes.count, 1U);
+
+    UIScene *scene = application.connectedScenes.anyObject;
+    RELEASE_ASSERT([scene isKindOfClass:UIWindowScene.class]);
+
+    RetainPtr<UIViewController> playerViewController;
+    for (UIWindow *window in [(UIWindowScene *)scene windows]) {
+        UIViewController *rootViewController = window.rootViewController;
+        RetainPtr viewControllerStack = adoptNS([[NSMutableArray alloc] initWithObjects:rootViewController, nil]);
+        while ([viewControllerStack count]) {
+            RetainPtr viewController = (UIViewController *)[viewControllerStack lastObject];
+            [viewControllerStack removeLastObject];
+
+            if ([viewController isKindOfClass:AVPlayerViewController.class]) {
+                playerViewController = WTFMove(viewController);
+                EXPECT_TRUE(window.isHidden);
+                break;
+            }
+
+            [viewControllerStack addObjectsFromArray:[viewController childViewControllers]];
+        }
+
+        if (!!playerViewController)
+            break;
+    }
+    EXPECT_TRUE(!!playerViewController);
+
+    UIView *playerView = [playerViewController viewIfLoaded];
+    EXPECT_TRUE(playerView.isHidden);
+
+    [webView evaluateJavaScript:@"document.exitFullscreen()" completionHandler:nil];
+
+    [uiDelegate waitForDidExitStandby];
+}
+
 #if !PLATFORM(IOS_SIMULATOR)
 
 TEST(VideoPresentationMode, PictureInPicture)
@@ -174,9 +280,6 @@ TEST(VideoPresentationMode, PictureInPicture)
     // This test must run in TestWebKitAPI.app
     if (![NSBundle.mainBundle.bundleIdentifier isEqualToString:@"org.webkit.TestWebKitAPI"])
         return;
-
-    didEnterFullscreen = false;
-    didExitFullscreen = false;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setAllowsInlineMediaPlayback:YES];
@@ -188,7 +291,7 @@ TEST(VideoPresentationMode, PictureInPicture)
     [webView evaluateJavaScript:@"document.querySelector('video').play()" completionHandler:nil];
     [webView evaluateJavaScript:@"document.querySelector('video').webkitSetPresentationMode('picture-in-picture')" completionHandler:nil];
 
-    TestWebKitAPI::Util::run(&didEnterFullscreen);
+    [uiDelegate waitForDidEnterFullscreen];
 
     UIApplication *application = UIApplication.sharedApplication;
     EXPECT_EQ(application.connectedScenes.count, 1U);
@@ -234,6 +337,10 @@ TEST(VideoPresentationMode, PictureInPicture)
         [viewStack addObjectsFromArray:[view subviews]];
     }
     EXPECT_TRUE(!!playerLayerView);
+
+    [webView evaluateJavaScript:@"document.querySelector('video').webkitSetPresentationMode('inline')" completionHandler:nil];
+
+    [uiDelegate waitForDidExitFullscreen];
 }
 
 #endif // !PLATFORM(IOS_SIMULATOR)

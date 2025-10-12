@@ -88,7 +88,7 @@ ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registra
     auto scriptPath = this->scriptPath(registrationKey, scriptURL);
     FileSystem::makeAllDirectories(FileSystem::parentPath(scriptPath));
 
-    size_t size = script.buffer() ? script.buffer()->size() : 0;
+    size_t size = script.size();
 
     auto iterateOverBufferAndWriteData = [&](NOESCAPE const Function<bool(std::span<const uint8_t>)>& writeData) {
         script.protectedBuffer()->forEachSegment([&](std::span<const uint8_t> span) {

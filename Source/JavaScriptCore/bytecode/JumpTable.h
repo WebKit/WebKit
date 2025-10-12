@@ -29,8 +29,8 @@
 
 #pragma once
 
-#include "CodeLocation.h"
-#include "UnlinkedCodeBlock.h"
+#include <JavaScriptCore/CodeLocation.h>
+#include <JavaScriptCore/UnlinkedCodeBlock.h>
 #include <wtf/FixedVector.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/Vector.h>

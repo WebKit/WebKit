@@ -75,7 +75,7 @@
 - (void)setAutocomplete:(NSString *)newAutocomplete
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAutocomplete(newAutocomplete);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::autocompleteAttr, newAutocomplete);
 }
 
 - (NSString *)enctype
@@ -87,7 +87,7 @@
 - (void)setEnctype:(NSString *)newEnctype
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setEnctype(newEnctype);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::enctypeAttr, newEnctype);
 }
 
 - (NSString *)encoding
@@ -99,7 +99,7 @@
 - (void)setEncoding:(NSString *)newEncoding
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setEnctype(newEncoding);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::enctypeAttr, newEncoding);
 }
 
 - (NSString *)method
@@ -111,7 +111,7 @@
 - (void)setMethod:(NSString *)newMethod
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setMethod(newMethod);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::methodAttr, newMethod);
 }
 
 - (NSString *)name

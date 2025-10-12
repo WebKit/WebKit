@@ -10,8 +10,12 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/fir.h"
 
+#include <cstddef>
+#include <cstdint>
+
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/psfb.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 

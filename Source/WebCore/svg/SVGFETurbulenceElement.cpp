@@ -22,9 +22,13 @@
 #include "config.h"
 #include "SVGFETurbulenceElement.h"
 
+#include "NodeDocument.h"
 #include "NodeName.h"
+#include "NodeInlines.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -76,9 +80,18 @@ void SVGFETurbulenceElement::attributeChanged(const QualifiedName& name, const A
     case AttributeNames::seedAttr:
         Ref { m_seed }->setBaseValInternal(newValue.toFloat());
         break;
-    case AttributeNames::numOctavesAttr:
-        Ref { m_numOctaves }->setBaseValInternal(parseInteger<unsigned>(newValue).value_or(0));
+    case AttributeNames::numOctavesAttr: {
+        auto result = parseInteger<int>(newValue);
+        if (!result)
+            Ref { m_numOctaves }->setBaseValInternal(initialOctavesValue);
+        else {
+            Ref { m_numOctaves }->setBaseValInternal(*result);
+
+            if (*result <= 0)
+                protectedDocument()->checkedSVGExtensions()->reportWarning(makeString("feTurbulence: problem parsing numOctaves=\""_s, newValue, "\". numOctaves must be > 0. Filtered element will not be displayed."_s));
+        }
         break;
+    }
     default:
         break;
     }

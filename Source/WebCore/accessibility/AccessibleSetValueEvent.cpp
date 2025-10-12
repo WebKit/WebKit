@@ -40,4 +40,4 @@ AccessibleSetValueEvent::AccessibleSetValueEvent(const AtomString& type, const A
 
 AccessibleSetValueEvent::~AccessibleSetValueEvent() = default;
 
-}
+} // namespace WebCore

@@ -44,8 +44,8 @@ struct GPUComputePassTimestampWrites {
     }
 
     WeakPtr<GPUQuerySet> querySet;
-    GPUSize32 beginningOfPassWriteIndex { 0 };
-    GPUSize32 endOfPassWriteIndex { 1 };
+    GPUSize32 beginningOfPassWriteIndex { WebGPU::kQuerySetIndexUndefined };
+    GPUSize32 endOfPassWriteIndex { WebGPU::kQuerySetIndexUndefined };
 };
 
 }

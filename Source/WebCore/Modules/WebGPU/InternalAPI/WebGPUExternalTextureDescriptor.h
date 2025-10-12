@@ -25,10 +25,11 @@
 
 #pragma once
 
-#include "MediaPlayerIdentifier.h"
-#include "VideoFrame.h"
-#include "WebGPUObjectDescriptorBase.h"
-#include "WebGPUPredefinedColorSpace.h"
+#include <WebCore/MediaPlayerIdentifier.h>
+#include <WebCore/VideoFrame.h>
+#include <WebCore/WebGPUObjectDescriptorBase.h>
+#include <WebCore/WebGPUPredefinedColorSpace.h>
+#include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(VIDEO) && PLATFORM(COCOA)

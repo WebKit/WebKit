@@ -95,3 +95,19 @@
 .media-controls.fullscreen.tvos > .controls-bar.bottom > .time-control {
     margin-bottom: var(--tvos-time-control-bottom-margin);
 }
+
+.media-controls.fullscreen.tvos button.center {
+    width: 40px !important;
+    height: 40px !important;
+}
+
+.media-controls.fullscreen.tvos .background-tint > .blur {
+    display: none;
+}
+
+.media-controls.fullscreen.tvos .background-tint > .tint {
+    background-color: unset;
+    color-scheme: dark;
+    mix-blend-mode: unset;
+    -apple-visual-effect: -apple-system-glass-material-media-controls;
+}

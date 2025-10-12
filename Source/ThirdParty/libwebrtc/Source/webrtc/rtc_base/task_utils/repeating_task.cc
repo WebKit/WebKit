@@ -10,9 +10,20 @@
 
 #include "rtc_base/task_utils/repeating_task.h"
 
+#include <algorithm>
+#include <utility>
+
 #include "absl/functional/any_invocable.h"
+#include "api/location.h"
+#include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
-#include "rtc_base/logging.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace {
@@ -24,7 +35,7 @@ class RepeatingTask {
                 TimeDelta first_delay,
                 absl::AnyInvocable<TimeDelta()> task,
                 Clock* clock,
-                rtc::scoped_refptr<PendingTaskSafetyFlag> alive_flag,
+                scoped_refptr<PendingTaskSafetyFlag> alive_flag,
                 const Location& location);
   RepeatingTask(RepeatingTask&&) = default;
   RepeatingTask& operator=(RepeatingTask&&) = delete;
@@ -40,18 +51,16 @@ class RepeatingTask {
   absl::AnyInvocable<TimeDelta()> task_;
   // This is always finite.
   Timestamp next_run_time_ RTC_GUARDED_BY(task_queue_);
-  rtc::scoped_refptr<PendingTaskSafetyFlag> alive_flag_
-      RTC_GUARDED_BY(task_queue_);
+  scoped_refptr<PendingTaskSafetyFlag> alive_flag_ RTC_GUARDED_BY(task_queue_);
 };
 
-RepeatingTask::RepeatingTask(
-    TaskQueueBase* task_queue,
-    TaskQueueBase::DelayPrecision precision,
-    TimeDelta first_delay,
-    absl::AnyInvocable<TimeDelta()> task,
-    Clock* clock,
-    rtc::scoped_refptr<PendingTaskSafetyFlag> alive_flag,
-    const Location& location)
+RepeatingTask::RepeatingTask(TaskQueueBase* task_queue,
+                             TaskQueueBase::DelayPrecision precision,
+                             TimeDelta first_delay,
+                             absl::AnyInvocable<TimeDelta()> task,
+                             Clock* clock,
+                             scoped_refptr<PendingTaskSafetyFlag> alive_flag,
+                             const Location& location)
     : task_queue_(task_queue),
       precision_(precision),
       clock_(clock),

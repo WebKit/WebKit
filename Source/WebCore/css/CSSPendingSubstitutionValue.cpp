@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-RefPtr<CSSValue> CSSPendingSubstitutionValue::resolveValue(Style::BuilderState& builderState, CSSPropertyID propertyID) const
+RefPtr<CSSValue> CSSPendingSubstitutionValue::resolveValue(Style::Builder& builder, CSSPropertyID propertyID) const
 {
     auto cacheValue = [&](auto data) {
         ParsedPropertyVector parsedProperties;
@@ -43,7 +43,7 @@ RefPtr<CSSValue> CSSPendingSubstitutionValue::resolveValue(Style::BuilderState& 
         m_cachedPropertyValues = parsedProperties;
     };
 
-    if (!m_shorthandValue->resolveAndCacheValue(builderState, cacheValue))
+    if (!m_shorthandValue->resolveAndCacheValue(builder, cacheValue))
         return nullptr;
 
     for (auto& property : m_cachedPropertyValues) {

@@ -29,6 +29,7 @@
 #include "NodeName.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -63,28 +64,6 @@ void SVGStyleElement::setDisabled(bool setDisabled)
 {
     if (RefPtr styleSheet = sheet())
         styleSheet->setDisabled(setDisabled);
-}
-
-const AtomString& SVGStyleElement::type() const
-{
-    auto& typeValue = getAttribute(SVGNames::typeAttr);
-    return typeValue.isNull() ? cssContentTypeAtom() : typeValue;
-}
-
-void SVGStyleElement::setType(const AtomString& type)
-{
-    setAttribute(SVGNames::typeAttr, type);
-}
-
-const AtomString& SVGStyleElement::media() const
-{
-    auto& value = attributeWithoutSynchronization(SVGNames::mediaAttr);
-    return value.isNull() ? allAtom() : value;
-}
-
-void SVGStyleElement::setMedia(const AtomString& media)
-{
-    setAttributeWithoutSynchronization(SVGNames::mediaAttr, media);
 }
 
 String SVGStyleElement::title() const

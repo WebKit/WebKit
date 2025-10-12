@@ -26,13 +26,21 @@
 #include "config.h"
 #include "MediaStrategy.h"
 
+#include "AudioVideoRenderer.h"
+#if USE(AVFOUNDATION)
+#include "AudioVideoRendererAVFObjC.h"
+#endif
 #include "MediaPlayer.h"
+#include <wtf/TZoneMallocInlines.h>
+
 #if ENABLE(MEDIA_SOURCE)
 #include "DeprecatedGlobalSettings.h"
 #include "MockMediaPlayerMediaSource.h"
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaStrategy);
 
 MediaStrategy::MediaStrategy() = default;
 
@@ -79,12 +87,27 @@ void MediaStrategy::addMockMediaSourceEngine()
 }
 #endif
 
-#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
-std::unique_ptr<MediaRecorderPrivateWriter> MediaStrategy::createMediaRecorderPrivateWriter(const String&, MediaRecorderPrivateWriterListener&) const
+#if ENABLE(VIDEO)
+RefPtr<AudioVideoRenderer> MediaStrategy::createAudioVideoRenderer(WTF::LoggerHelper* loggerHelper, HTMLMediaElementIdentifier, MediaPlayerIdentifier) const
 {
+#if USE(AVFOUNDATION)
+    ASSERT(loggerHelper);
+    return AudioVideoRendererAVFObjC::create(Ref { loggerHelper->logger() }, loggerHelper->logIdentifier());
+#else
+    UNUSED_PARAM(loggerHelper);
     return nullptr;
+#endif
 }
 
+bool MediaStrategy::hasRemoteRendererFor(MediaPlayerMediaEngineIdentifier type) const
+{
+    return m_remoteRenderersEnabled.get(static_cast<uint16_t>(type));
+}
+
+void MediaStrategy::enableRemoteRenderer(MediaPlayerMediaEngineIdentifier type, bool enabled)
+{
+    m_remoteRenderersEnabled.set(static_cast<uint16_t>(type), enabled);
+}
 #endif
 
 }

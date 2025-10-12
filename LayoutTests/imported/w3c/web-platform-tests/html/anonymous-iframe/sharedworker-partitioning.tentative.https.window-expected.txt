@@ -1,3 +1,3 @@
 
-FAIL Anonymous iframes get partitioned shared workers. assert_true: The "normal" iframe's sharedworker should return {"normal": true, "normal_control": true}, but instead returned {"anonymous":true,"anonymous_control":true,"normal":true,"normal_control":true} expected true got false
+FAIL credentialless iframes get partitioned shared workers. assert_true: The "normal" iframe's sharedworker should return {"normal": true, "normal_control": true}, but instead returned {"normal_control":true,"normal":true,"credentialless":true,"credentialless_control":true} expected true got false
 

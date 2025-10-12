@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "BufferSource.h"
+#include <WebCore/BufferSource.h>
 
 namespace WebCore {
 

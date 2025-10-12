@@ -260,7 +260,7 @@ class VisionInlineMediaControls extends VisionMediaControls
         this.overflowButton.style = Button.Styles.Rounded;
         this.overflowButton.circular = true;
 
-        this.timeControl.timeLabelsAttachment = TimeControl.TimeLabelsAttachment.Above;
+        this.timeControl.style = TimeControl.Style.Above;
 
         this.bottomControlsBar.hasBackgroundTint = false;
 
@@ -377,7 +377,7 @@ class VisionInlineMediaControls extends VisionMediaControls
         this.muteButton.circular = true;
         this.overflowButton.style = Button.Styles.Bar;
 
-        this.timeControl.timeLabelsAttachment = TimeControl.TimeLabelsAttachment.Side;
+        this.timeControl.style = TimeControl.Style.Side;
 
         this.bottomControlsBar.hasBackgroundTint = true;
         

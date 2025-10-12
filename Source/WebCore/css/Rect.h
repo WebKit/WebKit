@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "RectBase.h"
+#include <WebCore/RectBase.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {

@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "ContextDestructionObserver.h"
+#include <WebCore/ContextDestructionObserver.h>
 
 namespace JSC {
 class AbstractSlotVisitor;

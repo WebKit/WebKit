@@ -25,12 +25,13 @@
 
 #pragma once
 
-#include "GraphicsLayer.h"
-#include "GraphicsLayerContentsDisplayDelegate.h"
-#include "PlatformCAAnimation.h"
-#include "PlatformCALayer.h"
-#include "PlatformCALayerClient.h"
+#include <WebCore/GraphicsLayer.h>
+#include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
+#include <WebCore/PlatformCAAnimation.h>
+#include <WebCore/PlatformCALayer.h>
+#include <WebCore/PlatformCALayerClient.h>
 #include <wtf/HashMap.h>
+#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/MakeString.h>
@@ -68,6 +69,7 @@ public:
     WEBCORE_EXPORT String debugName() const override;
 
     WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> primaryLayerID() const override;
+    WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> layerIDIgnoringStructuralLayer() const final;
 
     WEBCORE_EXPORT PlatformLayer* platformLayer() const override;
     PlatformCALayer* platformCALayer() const { return primaryLayer(); }
@@ -102,6 +104,8 @@ public:
     WEBCORE_EXPORT void setDrawsContent(bool) override;
 #if HAVE(SUPPORT_HDR_DISPLAY)
     WEBCORE_EXPORT void setDrawsHDRContent(bool) override;
+    WEBCORE_EXPORT void setTonemappingEnabled(bool) override;
+    WEBCORE_EXPORT void setNeedsDisplayIfEDRHeadroomExceeds(float) override;
 #endif
     WEBCORE_EXPORT void setContentsVisible(bool) override;
     WEBCORE_EXPORT void setAcceleratesDrawing(bool) override;
@@ -138,7 +142,7 @@ public:
     WEBCORE_EXPORT void setBlendMode(BlendMode) override;
 
     WEBCORE_EXPORT void setNeedsDisplay() override;
-    WEBCORE_EXPORT void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
+    WEBCORE_EXPORT void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ShouldClipToLayer::Clip) override;
     WEBCORE_EXPORT void setContentsNeedsDisplay() override;
     
     WEBCORE_EXPORT void setContentsRect(const FloatRect&) override;
@@ -158,7 +162,7 @@ public:
     WEBCORE_EXPORT void suspendAnimations(MonotonicTime) override;
     WEBCORE_EXPORT void resumeAnimations() override;
 
-    WEBCORE_EXPORT bool addAnimation(const KeyframeValueList&, const FloatSize& boxSize, const Animation*, const String& animationName, double timeOffset) override;
+    WEBCORE_EXPORT bool addAnimation(const KeyframeValueList&, const GraphicsLayerAnimation*, const String& animationName, double timeOffset) override;
     WEBCORE_EXPORT void pauseAnimation(const String& animationName, double timeOffset) override;
     WEBCORE_EXPORT void removeAnimation(const String& animationName, std::optional<AnimatedProperty>) override;
     WEBCORE_EXPORT void transformRelatedPropertyDidChange() override;
@@ -203,7 +207,7 @@ public:
     FloatSize pixelAlignmentOffset() const override { return m_pixelAlignmentOffset; }
 
     struct CommitState {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CommitState);
         unsigned treeDepth { 0 };
         unsigned totalBackdropFilterArea { 0 };
         bool ancestorHadChanges { false };
@@ -275,11 +279,14 @@ private:
     bool platformCALayerAllowsDynamicContentScaling(const PlatformCALayer*) const override { return client().layerAllowsDynamicContentScaling(this); }
 #endif
 
+    WEBCORE_EXPORT OptionSet<ContentsFormat> screenContentsFormats() const override;
+
     bool isCommittingChanges() const override { return m_isCommittingChanges; }
     bool isUsingDisplayListDrawing(PlatformCALayer*) const override { return m_usesDisplayListDrawing; }
 #if HAVE(SUPPORT_HDR_DISPLAY)
     bool drawsHDRContent() const override { return m_drawsHDRContent; }
     void updateDrawsHDRContent();
+    void updateTonemappingEnabled();
 #endif
 
     WEBCORE_EXPORT void setAllowsBackingStoreDetaching(bool) override;
@@ -328,34 +335,34 @@ private:
 
     WEBCORE_EXPORT void setTileCoverage(TileCoverage) override;
 
-    typedef String CloneID; // Identifier for a given clone, based on original/replica branching down the tree.
+    using CloneID = String; // Identifier for a given clone, based on original/replica branching down the tree.
     static bool isReplicatedRootClone(const CloneID& cloneID) { return cloneID[0U] & 1; }
 
-    typedef UncheckedKeyHashMap<CloneID, RefPtr<PlatformCALayer>> LayerMap;
+    using LayerMap = HashMap<CloneID, RefPtr<PlatformCALayer>>;
     LayerMap* primaryLayerClones() const;
     LayerMap* animatedLayerClones(AnimatedProperty) const;
     static void clearClones(LayerMap&);
 
-    bool createAnimationFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
-    bool createTransformAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, Seconds timeOffset, const FloatSize& boxSize, bool keyframesShouldUseAnimationWideTimingFunction);
-    bool createFilterAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool createAnimationFromKeyframes(const KeyframeValueList&, const GraphicsLayerAnimation*, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool createTransformAnimationsFromKeyframes(const KeyframeValueList&, const GraphicsLayerAnimation*, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool createFilterAnimationsFromKeyframes(const KeyframeValueList&, const GraphicsLayerAnimation*, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
 
     // Return autoreleased animation (use RetainPtr?)
-    Ref<PlatformCAAnimation> createBasicAnimation(const Animation*, const String& keyPath, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
-    Ref<PlatformCAAnimation> createKeyframeAnimation(const Animation*, const String&, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
-    Ref<PlatformCAAnimation> createSpringAnimation(const Animation*, const String&, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
-    void setupAnimation(PlatformCAAnimation*, const Animation*, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
+    Ref<PlatformCAAnimation> createBasicAnimation(const GraphicsLayerAnimation*, const String& keyPath, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
+    Ref<PlatformCAAnimation> createKeyframeAnimation(const GraphicsLayerAnimation*, const String&, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
+    Ref<PlatformCAAnimation> createSpringAnimation(const GraphicsLayerAnimation*, const String&, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
+    void setupAnimation(PlatformCAAnimation*, const GraphicsLayerAnimation*, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
     
-    const TimingFunction& timingFunctionForAnimationValue(const AnimationValue&, const Animation&, bool keyframesShouldUseAnimationWideTimingFunction);
+    const TimingFunction& timingFunctionForAnimationValue(const AnimationValue&, const GraphicsLayerAnimation&, bool keyframesShouldUseAnimationWideTimingFunction);
     
-    bool setAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*);
-    bool setAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool setAnimationEndpoints(const KeyframeValueList&, const GraphicsLayerAnimation*, PlatformCAAnimation*);
+    bool setAnimationKeyframes(const KeyframeValueList&, const GraphicsLayerAnimation*, PlatformCAAnimation*, bool keyframesShouldUseAnimationWideTimingFunction);
 
-    bool setTransformAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, TransformOperation::Type, bool isMatrixAnimation, const FloatSize& boxSize);
-    bool setTransformAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, TransformOperation::Type, bool isMatrixAnimation, const FloatSize& boxSize, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool setTransformAnimationEndpoints(const KeyframeValueList&, const GraphicsLayerAnimation*, PlatformCAAnimation*, int functionIndex, TransformOperation::Type, bool isMatrixAnimation);
+    bool setTransformAnimationKeyframes(const KeyframeValueList&, const GraphicsLayerAnimation*, PlatformCAAnimation*, int functionIndex, TransformOperation::Type, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction);
     
-    bool setFilterAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex);
-    bool setFilterAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, FilterOperation::Type, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool setFilterAnimationEndpoints(const KeyframeValueList&, const GraphicsLayerAnimation*, PlatformCAAnimation*, int functionIndex);
+    bool setFilterAnimationKeyframes(const KeyframeValueList&, const GraphicsLayerAnimation*, PlatformCAAnimation*, int functionIndex, FilterOperation::Type, bool keyframesShouldUseAnimationWideTimingFunction);
 
     bool isRunningTransformAnimation() const;
 
@@ -397,7 +404,7 @@ private:
     typedef unsigned ComputeVisibleRectFlags;
     
     struct VisibleAndCoverageRects {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(VisibleAndCoverageRects);
         FloatRect visibleRect;
         FloatRect coverageRect;
         TransformationMatrix animatingTransform;
@@ -422,7 +429,7 @@ private:
 
     // Used to track the path down the tree for replica layers.
     struct ReplicaState {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ReplicaState);
         static const size_t maxReplicaDepth = 16;
         enum ReplicaBranchType { ChildBranch = 0, ReplicaBranch = 1 };
         ReplicaState(ReplicaBranchType firstBranch)
@@ -608,8 +615,8 @@ private:
         moveOrCopyAnimations(Copy, fromLayer, toLayer);
     }
 
-    bool appendToUncommittedAnimations(const KeyframeValueList&, const TransformOperation::Type, const Animation*, const String& animationName, const FloatSize& boxSize, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction);
-    bool appendToUncommittedAnimations(const KeyframeValueList&, const FilterOperation&, const Animation*, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool appendToUncommittedAnimations(const KeyframeValueList&, const TransformOperation::Type, const GraphicsLayerAnimation*, const String& animationName, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool appendToUncommittedAnimations(const KeyframeValueList&, const FilterOperation&, const GraphicsLayerAnimation*, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
 
     enum LayerChange : uint64_t {
         NoChange                                = 0,
@@ -668,6 +675,7 @@ private:
 #endif
 #if HAVE(SUPPORT_HDR_DISPLAY)
         DrawsHDRContentChanged                  = 1LLU << 47,
+        TonemappingEnabledChanged               = 1LLU << 48,
 #endif
     };
     typedef uint64_t LayerChangeFlags;
@@ -701,7 +709,7 @@ private:
 
     // References to clones of our layers, for replicated layers.
     struct LayerClones {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LayerClones);
         LayerMap primaryLayerClones;
         LayerMap structuralLayerClones;
         LayerMap contentsLayerClones;

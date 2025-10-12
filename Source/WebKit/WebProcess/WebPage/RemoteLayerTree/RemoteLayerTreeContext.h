@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,12 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
+namespace WebCore {
+class HTMLVideoElement;
+enum class GraphicsLayerType : uint8_t;
+enum class UseLosslessCompression : bool;
+}
+
 namespace WebKit {
 
 class GraphicsLayerCARemote;
@@ -75,6 +81,8 @@ public:
 
     std::optional<DrawingAreaIdentifier> drawingAreaIdentifier() const;
 
+    WebCore::UseLosslessCompression useIOSurfaceLosslessCompression() const;
+
     void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer, WebCore::FrameIdentifier);
 
     void layerPropertyChangedWhileBuildingTransaction(PlatformCALayerRemote&);
@@ -85,8 +93,7 @@ public:
 
     void willStartAnimationOnLayer(PlatformCALayerRemote&);
 
-    RemoteLayerBackingStoreCollection& backingStoreCollection() { return *m_backingStoreCollection; }
-    Ref<RemoteLayerBackingStoreCollection> protectedBackingStoreCollection() { return *m_backingStoreCollection; }
+    RemoteLayerBackingStoreCollection& backingStoreCollection() { return m_backingStoreCollection; }
     
     void setNextRenderingUpdateRequiresSynchronousImageDecoding() { m_nextRenderingUpdateRequiresSynchronousImageDecoding = true; }
     bool nextRenderingUpdateRequiresSynchronousImageDecoding() const { return m_nextRenderingUpdateRequiresSynchronousImageDecoding; }
@@ -112,7 +119,7 @@ private:
     explicit RemoteLayerTreeContext(WebPage&);
 
     // WebCore::GraphicsLayerFactory
-    Ref<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
+    Ref<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerType, WebCore::GraphicsLayerClient&) override;
 
     WeakRef<WebPage> m_webPage;
 
@@ -122,12 +129,12 @@ private:
     HashMap<WebCore::PlatformLayerIdentifier, WeakPtr<PlatformCALayerRemote>> m_livePlatformLayers;
     HashMap<WebCore::PlatformLayerIdentifier, WeakPtr<PlatformCALayerRemote>> m_layersWithAnimations;
 #if HAVE(AVKIT)
-    HashMap<WebCore::PlatformLayerIdentifier, PlaybackSessionContextIdentifier> m_videoLayers;
+    HashMap<WebCore::PlatformLayerIdentifier, WebCore::MediaPlayerClientIdentifier> m_videoLayers;
 #endif
 
     HashSet<WeakRef<GraphicsLayerCARemote>> m_liveGraphicsLayers;
 
-    UniqueRef<RemoteLayerBackingStoreCollection> m_backingStoreCollection;
+    const UniqueRef<RemoteLayerBackingStoreCollection> m_backingStoreCollection;
 
     WebCore::LayerPool m_layerPool;
 

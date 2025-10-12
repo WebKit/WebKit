@@ -10,7 +10,9 @@
 
 #include "modules/audio_processing/aec3/block_delay_buffer.h"
 
+#include <cstddef>
 #include <string>
+#include <tuple>
 
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/audio_buffer.h"
@@ -39,7 +41,7 @@ void PopulateInputFrame(size_t frame_length,
 
 std::string ProduceDebugText(int sample_rate_hz, size_t delay) {
   char log_stream_buffer[8 * 1024];
-  rtc::SimpleStringBuilder ss(log_stream_buffer);
+  SimpleStringBuilder ss(log_stream_buffer);
   ss << "Sample rate: " << sample_rate_hz;
   ss << ", Delay: " << delay;
   return ss.str();

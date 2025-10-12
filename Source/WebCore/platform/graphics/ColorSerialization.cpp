@@ -65,6 +65,10 @@ static String serializationForCSS(const ExtendedDisplayP3<float>&, bool useColor
 static String serializationForHTML(const ExtendedDisplayP3<float>&, bool useColorFunctionSerialization);
 static String serializationForRenderTreeAsText(const ExtendedDisplayP3<float>&, bool useColorFunctionSerialization);
 
+static String serializationForCSS(const ExtendedLinearDisplayP3<float>&, bool useColorFunctionSerialization);
+static String serializationForHTML(const ExtendedLinearDisplayP3<float>&, bool useColorFunctionSerialization);
+static String serializationForRenderTreeAsText(const ExtendedLinearDisplayP3<float>&, bool useColorFunctionSerialization);
+
 static String serializationForCSS(const ExtendedLinearSRGBA<float>&, bool useColorFunctionSerialization);
 static String serializationForHTML(const ExtendedLinearSRGBA<float>&, bool useColorFunctionSerialization);
 static String serializationForRenderTreeAsText(const ExtendedLinearSRGBA<float>&, bool useColorFunctionSerialization);
@@ -96,6 +100,10 @@ static String serializationForRenderTreeAsText(const LCHA<float>&, bool useColor
 static String serializationForCSS(const Lab<float>&, bool useColorFunctionSerialization);
 static String serializationForHTML(const Lab<float>&, bool useColorFunctionSerialization);
 static String serializationForRenderTreeAsText(const Lab<float>&, bool useColorFunctionSerialization);
+
+static String serializationForCSS(const LinearDisplayP3<float>&, bool useColorFunctionSerialization);
+static String serializationForHTML(const LinearDisplayP3<float>&, bool useColorFunctionSerialization);
+static String serializationForRenderTreeAsText(const LinearDisplayP3<float>&, bool useColorFunctionSerialization);
 
 static String serializationForCSS(const LinearSRGBA<float>&, bool useColorFunctionSerialization);
 static String serializationForHTML(const LinearSRGBA<float>&, bool useColorFunctionSerialization);
@@ -171,6 +179,9 @@ ASCIILiteral serialization(ColorSpace colorSpace)
         return "lch"_s;
     case ColorSpace::Lab:
         return "lab"_s;
+    case ColorSpace::LinearDisplayP3:
+    case ColorSpace::ExtendedLinearDisplayP3:
+        return "display-p3-linear"_s;
     case ColorSpace::LinearSRGB:
     case ColorSpace::ExtendedLinearSRGB:
         return "srgb-linear"_s;
@@ -302,6 +313,23 @@ String serializationForHTML(const ExtendedDisplayP3<float>& color, bool)
 }
 
 String serializationForRenderTreeAsText(const ExtendedDisplayP3<float>& color, bool)
+{
+    return serializationUsingColorFunction(color);
+}
+
+// MARK: ExtendedLinearDisplayP3<float> overloads
+
+String serializationForCSS(const ExtendedLinearDisplayP3<float>& color, bool)
+{
+    return serializationUsingColorFunction(color);
+}
+
+String serializationForHTML(const ExtendedLinearDisplayP3<float>& color, bool)
+{
+    return serializationUsingColorFunction(color);
+}
+
+String serializationForRenderTreeAsText(const ExtendedLinearDisplayP3<float>& color, bool)
 {
     return serializationUsingColorFunction(color);
 }
@@ -454,6 +482,23 @@ String serializationForHTML(const Lab<float>& color, bool useColorFunctionSerial
 String serializationForRenderTreeAsText(const Lab<float>& color, bool useColorFunctionSerialization)
 {
     return serializationForCSS(color, useColorFunctionSerialization);
+}
+
+// MARK: LinearDisplayP3<float> overloads
+
+String serializationForCSS(const LinearDisplayP3<float>& color, bool)
+{
+    return serializationUsingColorFunction(color);
+}
+
+String serializationForHTML(const LinearDisplayP3<float>& color, bool)
+{
+    return serializationUsingColorFunction(color);
+}
+
+String serializationForRenderTreeAsText(const LinearDisplayP3<float>& color, bool)
+{
+    return serializationUsingColorFunction(color);
 }
 
 // MARK: LinearSRGBA<float> overloads

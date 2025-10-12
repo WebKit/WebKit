@@ -27,10 +27,5 @@ list(APPEND WebKitGLibAPITest_LIBRARIES
 )
 
 if (ENABLE_WPE_PLATFORM)
-    list(APPEND WebKitGLibAPITestsCore_LIBRARIES
-        WPEPlatform-${WPE_API_VERSION}
-    )
-    list(APPEND WebKitGLibAPITest_LIBRARIES
-        WPEPlatform-${WPE_API_VERSION}
-    )
+    add_subdirectory(WPEPlatform)
 endif ()

@@ -10,14 +10,15 @@
 
 #include "common_video/frame_rate_estimator.h"
 
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "system_wrappers/include/clock.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
 constexpr TimeDelta kDefaultWindow = TimeDelta::Millis(1000);
-}
+}  // namespace
 
 class FrameRateEstimatorTest : public ::testing::Test {
  public:

@@ -16,7 +16,7 @@
 #include "test/gmock.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 namespace {
 class MockYieldHandler : public YieldInterface {
  public:
@@ -65,4 +65,4 @@ TEST(YieldPolicyTest, IsThreadLocal) {
   events[2].Wait(Event::kForever);
   other_thread.join();
 }
-}  // namespace rtc
+}  // namespace webrtc

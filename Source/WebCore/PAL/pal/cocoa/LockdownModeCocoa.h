@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,9 @@
 
 #pragma once
 
-#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
+#include <wtf/Platform.h>
+
+#if ENABLE(LOCKDOWN_MODE_API)
 
 namespace PAL {
 
@@ -35,4 +37,4 @@ PAL_EXPORT void setLockdownModeEnabledForCurrentProcess(bool);
 
 }
 
-#endif // HAVE(LOCKDOWN_MODE_FRAMEWORK)
+#endif // ENABLE(LOCKDOWN_MODE_API)

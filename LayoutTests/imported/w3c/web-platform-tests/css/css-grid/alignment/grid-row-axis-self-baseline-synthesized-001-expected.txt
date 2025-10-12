@@ -17,7 +17,7 @@ FAIL .grid 1 assert_equals:
   <div class="secondRowFirstColumn bigFont paddingRight verticalRL" data-offset-x="75" data-offset-y="100" data-expected-width="125" data-expected-height="200">É É ÉÉ</div>
   <div class="autoRowSpanning2AutoColumn width25"></div>
 </div>
-offsetLeft expected 0 but got 60
+offsetLeft expected 75 but got 0
 PASS .grid 2
 PASS .grid 3
 PASS .grid 4

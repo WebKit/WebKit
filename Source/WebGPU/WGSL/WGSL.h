@@ -221,6 +221,7 @@ struct EntryPointInformation {
     Variant<Vertex, Fragment, Compute> typedEntryPoint;
     size_t sizeForWorkgroupVariables { 0 };
     size_t bindingCount { 0 };
+    bool usesInvariant { false };
 };
 
 } // namespace Reflection
@@ -233,6 +234,7 @@ struct PrepareResult {
 struct DeviceState {
     unsigned appleGPUFamily { 4 };
     bool shaderValidationEnabled { false };
+    bool usesInvariant { false };
 };
 
 Variant<PrepareResult, Error> prepare(ShaderModule&, const HashMap<String, PipelineLayout*>&);

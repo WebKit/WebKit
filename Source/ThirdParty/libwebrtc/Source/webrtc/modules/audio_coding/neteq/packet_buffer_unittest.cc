@@ -12,14 +12,21 @@
 
 #include "modules/audio_coding/neteq/packet_buffer.h"
 
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
+#include <utility>
+#include <vector>
 
-#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "api/array_view.h"
+#include "api/audio_codecs/audio_decoder.h"
 #include "api/neteq/tick_timer.h"
 #include "modules/audio_coding/neteq/mock/mock_decoder_database.h"
 #include "modules/audio_coding/neteq/mock/mock_statistics_calculator.h"
 #include "modules/audio_coding/neteq/packet.h"
-#include "test/field_trial.h"
+#include "rtc_base/checks.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -38,7 +45,7 @@ class MockEncodedAudioFrame : public webrtc::AudioDecoder::EncodedAudioFrame {
 
   MOCK_METHOD(std::optional<DecodeResult>,
               Decode,
-              (rtc::ArrayView<int16_t> decoded),
+              (webrtc::ArrayView<int16_t> decoded),
               (const, override));
 };
 
@@ -195,7 +202,6 @@ TEST(PacketBuffer, OverfillBuffer) {
 
   EXPECT_CALL(decoder_database, Die());  // Called when object is deleted.
 }
-
 
 TEST(PacketBuffer, ExtractOrderRedundancy) {
   TickTimer tick_timer;
@@ -385,7 +391,7 @@ TEST(PacketBuffer, Failures) {
   EXPECT_EQ(PacketBuffer::kBufferEmpty, buffer.NextTimestamp(&temp_ts));
   EXPECT_EQ(PacketBuffer::kBufferEmpty,
             buffer.NextHigherTimestamp(0, &temp_ts));
-  EXPECT_EQ(NULL, buffer.PeekNextPacket());
+  EXPECT_EQ(nullptr, buffer.PeekNextPacket());
   EXPECT_FALSE(buffer.GetNextPacket());
 
   // Discarding packets will not invoke mock_stats.PacketDiscarded() because the

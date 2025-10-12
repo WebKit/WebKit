@@ -28,14 +28,12 @@
 
 #include "CommonVM.h"
 #include "CustomElementReactionQueue.h"
-#include "Document.h"
-#include "DocumentInlines.h"
+#include "DocumentPage.h"
 #include "HTMLSlotElement.h"
 #include "IdleCallbackController.h"
 #include "Microtasks.h"
 #include "MutationObserver.h"
 #include "OpportunisticTaskScheduler.h"
-#include "Page.h"
 #include "SecurityOrigin.h"
 #include "ThreadGlobalData.h"
 #include "ThreadTimers.h"
@@ -290,9 +288,9 @@ void WindowEventLoop::breakToAllowRenderingUpdate()
     // Avoid running timers and doing other work (like processing asyncronous IPC) until it is completed.
 
     // FIXME: Also bail out from the task loop in EventLoop::run().
-    threadGlobalData().threadTimers().breakFireLoopForRenderingUpdate();
+    threadGlobalDataSingleton().threadTimers().breakFireLoopForRenderingUpdate();
 
-    RunLoop::protectedMain()->suspendFunctionDispatchForCurrentCycle();
+    RunLoop::mainSingleton().suspendFunctionDispatchForCurrentCycle();
 #endif
 }
 

@@ -1,0 +1,38 @@
+
+PASS Adoption with global registry
+PASS Adoption with explicit global registry
+PASS Adoption with scoped registry
+PASS Adoption with global registry into a scoped registry
+PASS Adoption with explicit global registry into a scoped registry
+PASS Adoption with scoped registry into a scoped registry
+PASS Adoption including shadow root with global registry
+PASS Adoption including shadow root with explicit global registry
+PASS Adoption including shadow root with scoped registry
+PASS Adoption including shadow root with global registry into a scoped registry
+PASS Adoption including shadow root with explicit global registry into a scoped registry
+PASS Adoption including shadow root with scoped registry into a scoped registry
+PASS Adoption with global registry (null registry target)
+PASS Adoption with explicit global registry (null registry target)
+PASS Adoption with scoped registry (null registry target)
+PASS Adoption with global registry into a scoped registry (null registry target)
+PASS Adoption with explicit global registry into a scoped registry (null registry target)
+PASS Adoption with scoped registry into a scoped registry (null registry target)
+PASS Adoption including shadow root with global registry (null registry target)
+PASS Adoption including shadow root with explicit global registry (null registry target)
+PASS Adoption including shadow root with scoped registry (null registry target)
+PASS Adoption including shadow root with global registry into a scoped registry (null registry target)
+PASS Adoption including shadow root with explicit global registry into a scoped registry (null registry target)
+PASS Adoption including shadow root with scoped registry into a scoped registry (null registry target)
+FAIL Adoption with global registry (scoped registry target) assert_equals: expected null but got object "[object CustomElementRegistry]"
+FAIL Adoption with explicit global registry (scoped registry target) assert_equals: expected null but got object "[object CustomElementRegistry]"
+PASS Adoption with scoped registry (scoped registry target)
+FAIL Adoption with global registry into a scoped registry (scoped registry target) assert_equals: expected null but got object "[object CustomElementRegistry]"
+FAIL Adoption with explicit global registry into a scoped registry (scoped registry target) assert_equals: expected null but got object "[object CustomElementRegistry]"
+PASS Adoption with scoped registry into a scoped registry (scoped registry target)
+PASS Adoption including shadow root with global registry (scoped registry target)
+PASS Adoption including shadow root with explicit global registry (scoped registry target)
+PASS Adoption including shadow root with scoped registry (scoped registry target)
+PASS Adoption including shadow root with global registry into a scoped registry (scoped registry target)
+PASS Adoption including shadow root with explicit global registry into a scoped registry (scoped registry target)
+PASS Adoption including shadow root with scoped registry into a scoped registry (scoped registry target)
+

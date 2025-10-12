@@ -25,7 +25,13 @@
 
 #pragma once
 
-#include "BoundaryPoint.h"
+#include <WebCore/BoundaryPoint.h>
+#include <WebCore/EventTarget.h>
+#include <WebCore/PlatformExportMacros.h>
+#include <wtf/Ref.h>
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WeakPtrImpl.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -56,6 +62,8 @@ struct SimpleRange {
 
     WEBCORE_EXPORT SimpleRange(const BoundaryPoint&, const BoundaryPoint&);
     WEBCORE_EXPORT SimpleRange(BoundaryPoint&&, BoundaryPoint&&);
+
+    String debugDescription() const;
 };
 
 SimpleRange makeSimpleRangeHelper(BoundaryPoint&&, BoundaryPoint&&);

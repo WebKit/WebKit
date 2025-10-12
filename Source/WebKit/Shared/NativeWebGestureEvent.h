@@ -30,6 +30,7 @@
 #include "WebGestureEvent.h"
 
 OBJC_CLASS NSEvent;
+OBJC_CLASS NSView;
 
 namespace WebKit {
 

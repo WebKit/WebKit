@@ -47,7 +47,7 @@ RefPtr<JSC::ArrayBuffer> RTCEncodedFrame::data() const
 
 void RTCEncodedFrame::setData(JSC::ArrayBuffer& buffer)
 {
-    m_data = &buffer;
+    m_data = buffer;
 }
 
 uint64_t RTCEncodedFrame::timestamp() const

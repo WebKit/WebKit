@@ -35,6 +35,8 @@ WK_CLASS_AVAILABLE(macos(10.13.4), ios(12.2))
 @property (nonatomic) BOOL acceptInsecureCertificates;
 @property (nonatomic) BOOL allowsInsecureMediaCapture;
 @property (nonatomic) BOOL suppressesICECandidateFiltering;
+@property (nonatomic) BOOL alwaysAllowAutoplay;
+@property (nonatomic) BOOL siteIsolationEnabled;
 
 @end
 

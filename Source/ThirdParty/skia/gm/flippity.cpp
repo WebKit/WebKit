@@ -23,17 +23,20 @@
 #include "include/core/SkSurface.h"
 #include "include/core/SkTypeface.h"
 #include "include/core/SkTypes.h"
-#include "include/gpu/ganesh/GrDirectContext.h"
-#include "include/gpu/ganesh/GrRecordingContext.h"
-#include "include/gpu/ganesh/GrTypes.h"
 #include "include/private/base/SkTArray.h"
-#include "src/gpu/ganesh/GrDirectContextPriv.h"
-#include "src/gpu/ganesh/GrPixmap.h"
-#include "src/gpu/ganesh/image/SkImage_Ganesh.h"
 #include "src/image/SkImage_Base.h"
 #include "tools/ToolUtils.h"
 #include "tools/fonts/FontToolUtils.h"
-#include "tools/gpu/ProxyUtils.h"
+
+#if defined(SK_GANESH)
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
+#include "src/gpu/ganesh/GrDirectContextPriv.h"
+#include "src/gpu/ganesh/GrPixmap.h"
+#include "src/gpu/ganesh/image/SkImage_Ganesh.h"
+#include "tools/ganesh/ProxyUtils.h"
+#endif
 
 #include <string.h>
 #include <utility>
@@ -94,7 +97,8 @@ static sk_sp<SkImage> make_text_image(const char* text, SkColor color) {
 
     SkRect bounds;
     font.measureText(text, strlen(text), SkTextEncoding::kUTF8, &bounds);
-    const SkMatrix mat = SkMatrix::RectToRect(bounds, SkRect::MakeWH(kLabelSize, kLabelSize));
+    const SkMatrix mat = SkMatrix::RectToRectOrIdentity(bounds,
+                                                        SkRect::MakeWH(kLabelSize, kLabelSize));
 
     const SkImageInfo ii = SkImageInfo::MakeN32Premul(kLabelSize, kLabelSize);
     sk_sp<SkSurface> surf = SkSurfaces::Raster(ii);
@@ -133,8 +137,9 @@ static sk_sp<SkImage> make_reference_image(SkCanvas* mainCanvas,
         bm.setImmutable();
     }
 
-    auto dContext = GrAsDirectContext(mainCanvas->recordingContext());
-    if (dContext && !dContext->abandoned()) {
+#if defined(SK_GANESH)
+    if (auto dContext = GrAsDirectContext(mainCanvas->recordingContext());
+        dContext && !dContext->abandoned()) {
         auto origin = bottomLeftOrigin ? kBottomLeft_GrSurfaceOrigin : kTopLeft_GrSurfaceOrigin;
 
         auto view = sk_gpu_test::MakeTextureProxyViewFromData(dContext, GrRenderable::kNo, origin,
@@ -146,6 +151,7 @@ static sk_sp<SkImage> make_reference_image(SkCanvas* mainCanvas,
         return sk_make_sp<SkImage_Ganesh>(
                 sk_ref_sp(dContext), kNeedNewImageUniqueID, std::move(view), ii.colorInfo());
     }
+#endif
 
     return SkImages::RasterFromBitmap(bm);
 }

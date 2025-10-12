@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-CSSReflectValue::CSSReflectValue(CSSValueID direction, Ref<CSSPrimitiveValue> offset, RefPtr<CSSValue> mask)
+CSSReflectValue::CSSReflectValue(CSSValueID direction, Ref<CSSValue> offset, RefPtr<CSSValue> mask)
     : CSSValue(ClassType::Reflect)
     , m_direction(direction)
     , m_offset(WTFMove(offset))
@@ -38,7 +38,7 @@ CSSReflectValue::CSSReflectValue(CSSValueID direction, Ref<CSSPrimitiveValue> of
 {
 }
 
-Ref<CSSReflectValue> CSSReflectValue::create(CSSValueID direction, Ref<CSSPrimitiveValue> offset, RefPtr<CSSValue> mask)
+Ref<CSSReflectValue> CSSReflectValue::create(CSSValueID direction, Ref<CSSValue> offset, RefPtr<CSSValue> mask)
 {
     return adoptRef(*new CSSReflectValue(direction, WTFMove(offset), WTFMove(mask)));
 }

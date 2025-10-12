@@ -60,7 +60,7 @@ CDMSessionMediaSourceAVFObjC::~CDMSessionMediaSourceAVFObjC()
     m_sourceBuffers.clear();
 }
 
-void CDMSessionMediaSourceAVFObjC::videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *error, bool& shouldIgnore)
+void CDMSessionMediaSourceAVFObjC::videoRendererDidReceiveError(NSError *error, bool& shouldIgnore)
 {
     if (!m_client)
         return;
@@ -73,7 +73,7 @@ void CDMSessionMediaSourceAVFObjC::videoRendererDidReceiveError(WebSampleBufferV
         m_client->sendError(LegacyCDMSessionClient::MediaKeyErrorDomain, code);
 }
 
-void CDMSessionMediaSourceAVFObjC::audioRendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *error, bool& shouldIgnore)
+void CDMSessionMediaSourceAVFObjC::audioRendererDidReceiveError(NSError *error, bool& shouldIgnore)
 {
     if (!m_client)
         return;

@@ -98,3 +98,19 @@ header: <WebCore/ProcessQualified.h>
     WebKit::TransactionIdentifier object();
     WebCore::ProcessIdentifier processIdentifier();
 };
+
+[Alias=class WebCore::ProcessQualified<ObjectIdentifier<WebCore::MediaPlayerClientIdentifierType>>, CustomHeader] alias WebKit::PlaybackSessionContextIdentifier {
+    WebCore::MediaPlayerClientIdentifier object();
+    WebCore::ProcessIdentifier processIdentifier();
+};
+
+header: <WebCore/WebKitJSHandle.h>
+[Alias=class ProcessQualified<ObjectIdentifier<WebCore::JSHandleIdentifierType>>, CustomHeader] alias WebCore::JSHandleIdentifier {
+    WebCore::WebProcessJSHandleIdentifier object();
+    WebCore::ProcessIdentifier processIdentifier();
+};
+
+[Alias=class WebCore::ProcessQualified<ObjectIdentifier<WebKit::ContentWorldIdentifierType>>, CustomHeader] alias WebKit::ContentWorldIdentifier {
+    WebKit::NonProcessQualifiedContentWorldIdentifier object();
+    WebCore::ProcessIdentifier processIdentifier();
+};

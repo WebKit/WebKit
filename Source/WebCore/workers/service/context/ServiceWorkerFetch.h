@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "FetchIdentifier.h"
-#include "ResourceResponse.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include "ServiceWorkerTypes.h"
+#include <WebCore/FetchIdentifier.h>
+#include <WebCore/ResourceResponse.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/ServiceWorkerTypes.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -45,7 +45,7 @@ class ServiceWorkerGlobalScope;
 class SharedBuffer;
 
 namespace ServiceWorkerFetch {
-class Client : public ThreadSafeRefCounted<Client, WTF::DestructionThread::Main> {
+class Client : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Client, WTF::DestructionThread::Main> {
 public:
     virtual ~Client() = default;
 

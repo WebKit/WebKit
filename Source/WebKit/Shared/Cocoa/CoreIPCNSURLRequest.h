@@ -137,6 +137,7 @@ struct CoreIPCNSURLRequestData {
     bool privacyProxyFailClosed { false };
     bool privacyProxyFailClosedForUnreachableNonMainHosts { false };
     bool privacyProxyFailClosedForUnreachableHosts { false };
+    bool privacyProxyStrictFailClosed { false };
     std::optional<bool> requiresDNSSECValidation;
     bool allowsPersistentDNS { false };
     bool prohibitPrivacyProxy { false };

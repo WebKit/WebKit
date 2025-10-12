@@ -38,6 +38,7 @@ public:
 
 protected:
     explicit UIScriptControllerCocoa(UIScriptContext&);
+    void doAsyncTask(JSValueRef) override;
 };
 
 } // namespace WTR

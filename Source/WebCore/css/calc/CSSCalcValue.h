@@ -31,8 +31,8 @@
 
 #pragma once
 
-#include "CSSCalcTree.h"
-#include "CSSValue.h"
+#include <WebCore/CSSCalcTree.h>
+#include <WebCore/CSSValue.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 
@@ -56,7 +56,6 @@ class RenderStyle;
 
 struct CSSParserContext;
 struct CSSPropertyParserOptions;
-struct Length;
 struct NoConversionDataRequiredToken;
 
 enum CSSValueID : uint16_t;

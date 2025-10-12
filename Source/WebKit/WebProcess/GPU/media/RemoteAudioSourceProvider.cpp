@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,7 +62,7 @@ RemoteAudioSourceProvider::RemoteAudioSourceProvider(MediaPlayerIdentifier ident
 
 #if ENABLE(WEB_AUDIO)
     auto gpuProcessConnection = m_gpuProcessConnection.get();
-    gpuProcessConnection->protectedConnection()->send(Messages::RemoteMediaPlayerProxy::CreateAudioSourceProvider { }, identifier);
+    gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::CreateAudioSourceProvider { }, identifier);
 #endif
 }
 
@@ -80,7 +80,7 @@ void RemoteAudioSourceProvider::close()
 void RemoteAudioSourceProvider::hasNewClient(AudioSourceProviderClient* client)
 {
     if (RefPtr gpuProcessConnection = m_gpuProcessConnection.get())
-        gpuProcessConnection->protectedConnection()->send(Messages::RemoteMediaPlayerProxy::SetShouldEnableAudioSourceProvider { !!client }, m_identifier);
+        gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::SetShouldEnableAudioSourceProvider { !!client }, m_identifier);
 }
 
 void RemoteAudioSourceProvider::audioSamplesAvailable(const PlatformAudioData& data, const AudioStreamDescription& description, size_t size, bool needsFlush)

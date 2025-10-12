@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderTextControl {INPUT} at (0,0) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderTextControl {INPUT} at (0,0) size 154x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,37) size 784x21
+      RenderBlock {P} at (0,36) size 784x20
         RenderText {#text} at (0,0) size 748x19
           text run at (0,0) width 748: "Tests drag-selecting down. If the test succeeds, the text from the center to the end of the text field should be selected."
-layer at (15,11) size 141x14
-  RenderBlock {DIV} at (6,3) size 143x15
+layer at (14,11) size 142x14
+  RenderBlock {DIV} at (6,3) size 142x14
     RenderText {#text} at (0,0) size 120x14
       text run at (0,0) width 120: "This is a bunch of text."

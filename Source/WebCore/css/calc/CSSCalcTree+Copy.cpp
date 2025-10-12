@@ -30,11 +30,8 @@
 namespace WebCore {
 namespace CSSCalc {
 
-static auto copy(const MQ::MediaProgressProviding*) -> const MQ::MediaProgressProviding*;
-static auto copy(const CQ::ContainerProgressProviding*) -> const CQ::ContainerProgressProviding*;
 static auto copy(const Random::Sharing&) -> Random::Sharing;
 static auto copy(const CSSValueID&) -> CSSValueID;
-static auto copy(const AtomString&) -> AtomString;
 static auto copy(const CSS::Keyword::None&) -> CSS::Keyword::None;
 static auto copy(const std::optional<Child>& root) -> std::optional<Child>;
 static auto copy(const ChildOrNone&) -> ChildOrNone;
@@ -47,27 +44,12 @@ static auto copy(const IndirectNode<AnchorSize>&) -> Child;
 
 // MARK: Copying
 
-const MQ::MediaProgressProviding* copy(const MQ::MediaProgressProviding* root)
-{
-    return root;
-}
-
-const CQ::ContainerProgressProviding* copy(const CQ::ContainerProgressProviding* root)
-{
-    return root;
-}
-
 Random::Sharing copy(const Random::Sharing& root)
 {
     return root;
 }
 
 CSSValueID copy(const CSSValueID& root)
-{
-    return root;
-}
-
-AtomString copy(const AtomString& root)
 {
     return root;
 }

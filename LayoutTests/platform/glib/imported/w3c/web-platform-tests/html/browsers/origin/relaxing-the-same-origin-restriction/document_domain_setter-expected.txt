@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Blocked a frame with origin "http://web-platform.test:8800" from accessing a frame with origin "http://www1.web-platform.test:8800". The frame requesting access set "document.domain" to "test", the frame being accessed set it to "web-platform.test". Both must set "document.domain" to the same value to allow access.
 
 
 FAIL failed setting of document.domain assert_throws_dom: function "function() { document.domain = SUFFIX_HOST; }" did not throw

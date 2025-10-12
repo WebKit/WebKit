@@ -69,6 +69,7 @@
 #import <wtf/FileHandle.h>
 #import <wtf/FileSystem.h>
 #import <wtf/RuntimeApplicationChecks.h>
+#import <wtf/SystemFree.h>
 #import <wtf/URL.h>
 #import <wtf/text/cf/StringConcatenateCF.h>
 
@@ -905,28 +906,28 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 - (NSArray *)pasteboardTypesForSelection
 {
-    return @[WebCore::legacyRTFDPasteboardType(), WebCore::legacyRTFPasteboardType(), WebCore::legacyStringPasteboardType()];
+    return @[WebCore::legacyRTFDPasteboardTypeSingleton(), WebCore::legacyRTFPasteboardTypeSingleton(), WebCore::legacyStringPasteboardTypeSingleton()];
 }
 
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
     NSAttributedString *attributedString = [self selectedAttributedString];
     
-    if ([types containsObject:WebCore::legacyRTFDPasteboardType()]) {
+    if ([types containsObject:WebCore::legacyRTFDPasteboardTypeSingleton()]) {
         NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:@{ }];
-        [pasteboard setData:RTFDData forType:WebCore::legacyRTFDPasteboardType()];
+        [pasteboard setData:RTFDData forType:WebCore::legacyRTFDPasteboardTypeSingleton()];
     }        
     
-    if ([types containsObject:WebCore::legacyRTFPasteboardType()]) {
+    if ([types containsObject:WebCore::legacyRTFPasteboardTypeSingleton()]) {
         if ([attributedString containsAttachments])
             attributedString = WebCore::attributedStringByStrippingAttachmentCharacters(attributedString);
 
         NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:@{ }];
-        [pasteboard setData:RTFData forType:WebCore::legacyRTFPasteboardType()];
+        [pasteboard setData:RTFData forType:WebCore::legacyRTFPasteboardTypeSingleton()];
     }
     
-    if ([types containsObject:WebCore::legacyStringPasteboardType()])
-        [pasteboard setString:[self selectedString] forType:WebCore::legacyStringPasteboardType()];
+    if ([types containsObject:WebCore::legacyStringPasteboardTypeSingleton()])
+        [pasteboard setString:[self selectedString] forType:WebCore::legacyStringPasteboardTypeSingleton()];
 }
 
 // MARK: PDFView DELEGATE METHODS
@@ -1171,7 +1172,7 @@ IGNORE_WARNINGS_END
                 [itemCopy setTarget:PDFSubviewProxy];
             }
         } else
-            LOG_ERROR("PDF context menu item %@ came with tag %d, so no WebKit tag was applied. This could mean that the item doesn't appear in clients such as Safari.", [itemCopy title], [itemCopy tag]);
+            LOG_ERROR("PDF context menu item %@ came with tag %zd, so no WebKit tag was applied. This could mean that the item doesn't appear in clients such as Safari.", [itemCopy title], [itemCopy tag]);
     }
     
     // Since we might have removed elements supplied by PDFKit, and we want to minimize our hardwired
@@ -1371,18 +1372,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     
     if (!_temporaryPDFDirectoryPath) {
         NSString *temporaryDirectoryTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitPDFs-XXXXXX"];
-        char *cTemplate = strdup([temporaryDirectoryTemplate fileSystemRepresentation]);
+        auto cTemplate = adoptSystem(strdup([temporaryDirectoryTemplate fileSystemRepresentation]));
         
-        if (!mkdtemp(cTemplate)) {
+        if (!mkdtemp(cTemplate.get())) {
             // This should never happen; if it does we'll fail silently on non-debug builds.
             ASSERT_NOT_REACHED();
         } else {
             // cTemplate has now been modified to be the just-created directory name. This directory has 700 permissions,
             // so only the current user can add to it or view its contents.
-            _temporaryPDFDirectoryPath = [[[NSFileManager defaultManager] stringWithFileSystemRepresentation:cTemplate length:strlen(cTemplate)] retain];
+            _temporaryPDFDirectoryPath = [[[NSFileManager defaultManager] stringWithFileSystemRepresentation:cTemplate.get() length:strlen(cTemplate.get())] retain];
         }
-        
-        free(cTemplate);
     }
     
     return _temporaryPDFDirectoryPath;

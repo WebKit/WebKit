@@ -29,6 +29,7 @@
 #import <Foundation/Foundation.h>
 #import <objc/objc.h>
 #import <objc/runtime.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #if JSC_OBJC_API_ENABLED
 
@@ -281,7 +282,7 @@ static void __JSTRunLoopSourceCancelCallBack(void* info, CFRunLoopRef rl, CFStri
 - (void)_callCompletionHandler:(void(^)(NSError* error))completionHandler ifNeededWithError:(NSError*)error
 {
     if (completionHandler) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             completionHandler(error);
         });
     }
@@ -355,7 +356,7 @@ void runRegress141275()
 
         void (^showErrorIfNeeded)(NSError* error) = ^(NSError* error) {
             if (error) {
-                dispatch_async(dispatch_get_main_queue(), ^{
+                dispatch_async(mainDispatchQueueSingleton(), ^{
                     NSLog(@"Error: %@", error);
                 });
             }
@@ -371,7 +372,7 @@ void runRegress141275()
             };
         } completion:^(NSError* error) {
             if (error) {
-                dispatch_async(dispatch_get_main_queue(), ^{
+                dispatch_async(mainDispatchQueueSingleton(), ^{
                     NSLog(@"Error: %@", error);
                 });
             }

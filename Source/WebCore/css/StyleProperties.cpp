@@ -63,20 +63,6 @@ Ref<ImmutableStyleProperties> StyleProperties::immutableCopyIfNeeded() const
 
 String serializeLonghandValue(const CSS::SerializationContext& context, CSSPropertyID property, const CSSValue& value)
 {
-    switch (property) {
-    case CSSPropertyFillOpacity:
-    case CSSPropertyFloodOpacity:
-    case CSSPropertyOpacity:
-    case CSSPropertyStopOpacity:
-    case CSSPropertyStrokeOpacity:
-        // FIXME: Handle this when creating the CSSValue for opacity, to be consistent with other CSS value serialization quirks.
-        // Opacity percentage values serialize as a fraction in the range 0-1, not "%".
-        if (auto* primitive = dynamicDowncast<CSSPrimitiveValue>(value); primitive && primitive->isPercentage())
-            return makeString(primitive->resolveAsPercentageDeprecated() / 100);
-        break;
-    default:
-        break;
-    }
     // Longhands set by mask and background shorthands can have comma-separated lists with implicit initial values in them.
     // We need to serialize those lists with the actual values, not as "initial".
     // Doing this for all CSSValueList with comma separators is better than checking the property is one of those longhands.
@@ -226,7 +212,6 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
     case CSSPropertyWebkitColumnBreakInside:
     case CSSPropertyWebkitMaskPosition:
     case CSSPropertyWebkitPerspective:
-    case CSSPropertyWebkitTextDecoration:
     case CSSPropertyWebkitTextOrientation:
         return false;
 

@@ -46,7 +46,27 @@
 		DD403C5828500FE300D899FC /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1DAFC11D70E12D00017CF0 /* WebKit.framework */; };
 		DDC9E8CC2A91DEDE00B015C1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD954C942A90280800C6843C /* UIKit.framework */; };
 		DDC9E8CD2A91E0F400B015C1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD954C942A90280800C6843C /* UIKit.framework */; };
+		E3EE46DB2DF3473D009ED72B /* GPUExtension.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = E3EE46DA2DF3473D009ED72B /* GPUExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E3EE46DD2DF3475B009ED72B /* NetworkingExtension.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = E3EE46DC2DF3475B009ED72B /* NetworkingExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E3EE46DF2DF34770009ED72B /* WebContentExtension.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = E3EE46DE2DF34770009ED72B /* WebContentExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		E3EE46E02DF34897009ED72B /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.appex";
+			fileType = pattern.proxy;
+			inputFiles = (
+				"$(SRCROOT)/../TestRunnerShared/Scripts/install-extensions-rule.sh",
+			);
+			isEditable = 1;
+			outputFiles = (
+				"$(BUILT_PRODUCTS_DIR)/$(EXTENSIONS_FOLDER_PATH)/$(INPUT_FILE_NAME)",
+			);
+			script = "echo \"source root $(SRCROOT)\"\n\"${SCRIPT_INPUT_FILE_0}\"\n";
+		};
+/* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
 		CD1DAFAC1D709E3600017CF0 /* PBXContainerItemProxy */ = {
@@ -84,6 +104,18 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E3EE46D92DF345E9009ED72B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				E3EE46DB2DF3473D009ED72B /* GPUExtension.appex in CopyFiles */,
+				E3EE46DD2DF3475B009ED72B /* NetworkingExtension.appex in CopyFiles */,
+				E3EE46DF2DF34770009ED72B /* WebContentExtension.appex in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -118,6 +150,9 @@
 		CDC279292935417100151088 /* looping2s.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = looping2s.html; sourceTree = "<group>"; };
 		DD954C942A90280800C6843C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		E3C8BD852BBF286D00181A2E /* MobileMiniBrowser.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = MobileMiniBrowser.entitlements; sourceTree = "<group>"; };
+		E3EE46DA2DF3473D009ED72B /* GPUExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; name = GPUExtension.appex; path = "GPUExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3EE46DC2DF3475B009ED72B /* NetworkingExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; name = NetworkingExtension.appex; path = "NetworkingExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3EE46DE2DF34770009ED72B /* WebContentExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; name = WebContentExtension.appex; path = "WebContentExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +188,9 @@
 		CD1DAF891D709E3600017CF0 = {
 			isa = PBXGroup;
 			children = (
+				E3EE46DE2DF34770009ED72B /* WebContentExtension.appex */,
+				E3EE46DC2DF3475B009ED72B /* NetworkingExtension.appex */,
+				E3EE46DA2DF3473D009ED72B /* GPUExtension.appex */,
 				CD4DEEE11D78C6F400625986 /* Configurations */,
 				CD1DAFC01D70E12D00017CF0 /* Frameworks */,
 				CD1DAF941D709E3600017CF0 /* MobileMiniBrowser App */,
@@ -271,8 +309,10 @@
 				CD1DAF8F1D709E3600017CF0 /* Frameworks */,
 				CD1DAF901D709E3600017CF0 /* Resources */,
 				CD498B231D76341700681FA7 /* Embed Frameworks */,
+				E3EE46D92DF345E9009ED72B /* CopyFiles */,
 			);
 			buildRules = (
+				E3EE46E02DF34897009ED72B /* PBXBuildRule */,
 			);
 			dependencies = (
 				CD498B411D76348000681FA7 /* PBXTargetDependency */,
@@ -441,7 +481,6 @@
 			isa = PBXTargetDependency;
 			platformFilters = (
 				ios,
-				xros,
 			);
 			target = CD1DAF911D709E3600017CF0 /* MobileMiniBrowser */;
 			targetProxy = DD2A1D092888D1D300342472 /* PBXContainerItemProxy */;

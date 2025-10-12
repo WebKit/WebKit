@@ -10,6 +10,14 @@
 
 #include "modules/audio_processing/aec3/erl_estimator.h"
 
+#include <algorithm>
+#include <array>
+#include <cstddef>
+#include <string>
+#include <tuple>
+#include <vector>
+
+#include "modules/audio_processing/aec3/aec3_common.h"
 #include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
@@ -18,7 +26,7 @@ namespace webrtc {
 namespace {
 std::string ProduceDebugText(size_t num_render_channels,
                              size_t num_capture_channels) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Render channels: " << num_render_channels;
   ss << ", Capture channels: " << num_capture_channels;
   return ss.Release();

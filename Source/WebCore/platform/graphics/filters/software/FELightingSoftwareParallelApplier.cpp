@@ -45,7 +45,6 @@ void FELightingSoftwareParallelApplier::applyPlatformPaint(const LightingData& d
     ASSERT(startY);
     ASSERT(endY > startY);
 
-    RefPtr pixels = data.pixels;
     for (int y = startY; y < endY; ++y) {
         int rowStartOffset = y * data.widthMultipliedByPixelSize;
         int previousRowStart = rowStartOffset - data.widthMultipliedByPixelSize;
@@ -55,14 +54,14 @@ void FELightingSoftwareParallelApplier::applyPlatformPaint(const LightingData& d
         // Fill the two right columns putting the left edge value in the center column.
         // For each pixel, we shift each row left then fill the right column.
         AlphaWindow alphaWindow;
-        alphaWindow.setTop(pixels->item(previousRowStart + cAlphaChannelOffset));
-        alphaWindow.setTopRight(pixels->item(previousRowStart + cPixelSize + cAlphaChannelOffset));
+        alphaWindow.setTop(data.pixels->item(previousRowStart + cAlphaChannelOffset));
+        alphaWindow.setTopRight(data.pixels->item(previousRowStart + cPixelSize + cAlphaChannelOffset));
 
-        alphaWindow.setCenter(pixels->item(rowStartOffset + cAlphaChannelOffset));
-        alphaWindow.setRight(pixels->item(rowStartOffset + cPixelSize + cAlphaChannelOffset));
+        alphaWindow.setCenter(data.pixels->item(rowStartOffset + cAlphaChannelOffset));
+        alphaWindow.setRight(data.pixels->item(rowStartOffset + cPixelSize + cAlphaChannelOffset));
 
-        alphaWindow.setBottom(pixels->item(nextRowStart + cAlphaChannelOffset));
-        alphaWindow.setBottomRight(pixels->item(nextRowStart + cPixelSize + cAlphaChannelOffset));
+        alphaWindow.setBottom(data.pixels->item(nextRowStart + cAlphaChannelOffset));
+        alphaWindow.setBottomRight(data.pixels->item(nextRowStart + cPixelSize + cAlphaChannelOffset));
 
         int offset = rowStartOffset + cPixelSize;
         for (int x = 1; x < data.width - 1; ++x, offset += cPixelSize) {

@@ -25,6 +25,7 @@
 #include "config.h"
 #include "CSSPropertyParserResult.h"
 
+#include "CSSParserContext.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserState.h"
 #include "StylePropertyShorthand.h"

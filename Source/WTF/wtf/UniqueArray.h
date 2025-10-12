@@ -87,7 +87,7 @@ struct UniqueArrayMaker<false, T> {
     // UniqueArrayElement has new [] and delete [] operators for FastMalloc. We allocate UniqueArrayElement[] and cast
     // it to T[]. When deleting, the custom deleter casts T[] to UniqueArrayElement[] and deletes it.
     class UniqueArrayElement {
-        WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(UniqueArrayElement);
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(UniqueArrayElement, UniqueArrayElement);
     public:
         struct Deleter {
             void operator()(T* pointer)

@@ -29,9 +29,9 @@
 
 #pragma once
 
-#include "Font.h"
-#include "Glyph.h"
-#include "TextFlags.h"
+#include <WebCore/Font.h>
+#include <WebCore/Glyph.h>
+#include <WebCore/TextFlags.h>
 #include <unicode/utypes.h>
 #include <wtf/BitSet.h>
 #include <wtf/CheckedPtr.h>
@@ -51,6 +51,7 @@ struct GlyphData {
     }
 
     bool isValid() const { return !!font; }
+    RefPtr<const Font> protectedFont() const { return font.get(); }
 
     Glyph glyph;
     ColorGlyphType colorGlyphType;
@@ -125,7 +126,7 @@ public:
     }
 
     // Implemented by the platform.
-    bool fill(std::span<const UChar> characterBuffer);
+    bool fill(std::span<const char16_t> characterBuffer);
 
 private:
     explicit GlyphPage(const Font& font)

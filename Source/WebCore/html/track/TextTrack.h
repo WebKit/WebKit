@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2011-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,11 +28,10 @@
 
 #if ENABLE(VIDEO)
 
-#include "ContextDestructionObserverInlines.h"
-#include "EventTargetInterfaces.h"
-#include "PlatformTimeRanges.h"
-#include "TextTrackCue.h"
-#include "TrackBase.h"
+#include <WebCore/EventTargetInterfaces.h>
+#include <WebCore/PlatformTimeRanges.h>
+#include <WebCore/TextTrackCue.h>
+#include <WebCore/TrackBase.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -96,6 +95,7 @@ public:
     virtual ExceptionOr<void> removeCue(TextTrackCue&);
 
     VTTRegionList* regions();
+    RefPtr<VTTRegionList> protectedRegions();
 
     void cueWillChange(TextTrackCue&);
     void cueDidChange(TextTrackCue&, bool);
@@ -141,7 +141,7 @@ public:
     virtual bool shouldPurgeCuesFromUnbufferedRanges() const { return false; }
     virtual void removeCuesNotInTimeRanges(const PlatformTimeRanges&);
 
-    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final;
 
 protected:
     TextTrack(ScriptExecutionContext*, const AtomString& kind, TrackID, const AtomString& label, const AtomString& language, TextTrackType);

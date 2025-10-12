@@ -1,0 +1,9 @@
+layer at (0,0) size 785x1016
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x1016
+  RenderBlock {HTML} at (0,0) size 785x1016
+    RenderBody {BODY} at (8,8) size 769x1000
+layer at (10,10) size 600x100
+  RenderBlock (positioned) {DIV} at (10,10) size 600x100 [bgcolor=#808080]
+    RenderText {#text} at (0,0) size 49x17
+      text run at (0,0) width 49: "Top bar"

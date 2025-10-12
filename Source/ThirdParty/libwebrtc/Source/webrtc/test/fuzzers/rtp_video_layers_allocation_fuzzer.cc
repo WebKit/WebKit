@@ -28,7 +28,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   if (size > kMaxSize) {
     return;
   }
-  auto raw = rtc::MakeArrayView(data, size);
+  auto raw = webrtc::MakeArrayView(data, size);
 
   VideoLayersAllocation allocation1;
   if (!RtpVideoLayersAllocationExtension::Parse(raw, &allocation1)) {
@@ -43,7 +43,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   RTC_CHECK_LE(value_size, raw.size());
   uint8_t some_memory[kMaxSize];
   RTC_CHECK_LE(value_size, kMaxSize);
-  rtc::ArrayView<uint8_t> write_buffer(some_memory, value_size);
+  webrtc::ArrayView<uint8_t> write_buffer(some_memory, value_size);
   RTC_CHECK(
       RtpVideoLayersAllocationExtension::Write(write_buffer, allocation1));
 

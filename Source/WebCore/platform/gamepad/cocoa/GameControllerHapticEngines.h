@@ -63,10 +63,10 @@ private:
 
     RefPtr<GameControllerHapticEffect>& currentEffectForType(GamepadHapticEffectType);
 
-    RetainPtr<CHHapticEngine> m_leftHandleEngine;
-    RetainPtr<CHHapticEngine> m_rightHandleEngine;
-    RetainPtr<CHHapticEngine> m_leftTriggerEngine;
-    RetainPtr<CHHapticEngine> m_rightTriggerEngine;
+    const RetainPtr<CHHapticEngine> m_leftHandleEngine;
+    const RetainPtr<CHHapticEngine> m_rightHandleEngine;
+    const RetainPtr<CHHapticEngine> m_leftTriggerEngine;
+    const RetainPtr<CHHapticEngine> m_rightTriggerEngine;
     RefPtr<GameControllerHapticEffect> m_currentDualRumbleEffect;
     RefPtr<GameControllerHapticEffect> m_currentTriggerRumbleEffect;
 };

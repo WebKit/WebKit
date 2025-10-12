@@ -25,14 +25,16 @@
 #include "RenderStyleInlines.h"
 #include "RenderStyleDifference.h"
 #include "StyleFontData.h"
+#include "StylePrimitiveKeyword+Logging.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
 
 namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleInheritedData);
 
 StyleInheritedData::StyleInheritedData()
-    : horizontalBorderSpacing(RenderStyle::initialHorizontalBorderSpacing())
-    , verticalBorderSpacing(RenderStyle::initialVerticalBorderSpacing())
+    : borderHorizontalSpacing(RenderStyle::initialBorderHorizontalSpacing())
+    , borderVerticalSpacing(RenderStyle::initialBorderVerticalSpacing())
     , lineHeight(RenderStyle::initialLineHeight())
 #if ENABLE(TEXT_AUTOSIZING)
     , specifiedLineHeight(RenderStyle::initialLineHeight())
@@ -45,8 +47,8 @@ StyleInheritedData::StyleInheritedData()
 
 inline StyleInheritedData::StyleInheritedData(const StyleInheritedData& o)
     : RefCounted<StyleInheritedData>()
-    , horizontalBorderSpacing(o.horizontalBorderSpacing)
-    , verticalBorderSpacing(o.verticalBorderSpacing)
+    , borderHorizontalSpacing(o.borderHorizontalSpacing)
+    , borderVerticalSpacing(o.borderVerticalSpacing)
     , lineHeight(o.lineHeight)
 #if ENABLE(TEXT_AUTOSIZING)
     , specifiedLineHeight(o.specifiedLineHeight)
@@ -83,8 +85,8 @@ bool StyleInheritedData::nonFastPathInheritedEqual(const StyleInheritedData& oth
         && specifiedLineHeight == other.specifiedLineHeight
 #endif
         && fontData == other.fontData
-        && horizontalBorderSpacing == other.horizontalBorderSpacing
-        && verticalBorderSpacing == other.verticalBorderSpacing;
+        && borderHorizontalSpacing == other.borderHorizontalSpacing
+        && borderVerticalSpacing == other.borderVerticalSpacing;
 }
 
 void StyleInheritedData::fastPathInheritFrom(const StyleInheritedData& inheritParent)
@@ -98,8 +100,8 @@ void StyleInheritedData::dumpDifferences(TextStream& ts, const StyleInheritedDat
 {
     fontData->dumpDifferences(ts, *other.fontData);
 
-    LOG_IF_DIFFERENT(horizontalBorderSpacing);
-    LOG_IF_DIFFERENT(verticalBorderSpacing);
+    LOG_IF_DIFFERENT(borderHorizontalSpacing);
+    LOG_IF_DIFFERENT(borderVerticalSpacing);
     LOG_IF_DIFFERENT(lineHeight);
 
 #if ENABLE(TEXT_AUTOSIZING)

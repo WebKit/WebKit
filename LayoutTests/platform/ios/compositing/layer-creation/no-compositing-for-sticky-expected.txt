@@ -10,68 +10,104 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
       (contentsOpaque 1)
       (children 6
         (GraphicsLayer
-          (position 820.00 61.00)
-          (preserves3D 1)
+          (position 800.00 0.00)
+          (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (bounds 300.00 60.00)
-              (contentsOpaque 1)
-              (drawsContent 1)
+              (position 20.00 61.00)
+              (preserves3D 1)
+              (children 1
+                (GraphicsLayer
+                  (bounds 300.00 60.00)
+                  (contentsOpaque 1)
+                  (drawsContent 1)
+                )
+              )
             )
           )
         )
         (GraphicsLayer
-          (position 812.00 129.00)
-          (preserves3D 1)
+          (position 800.00 0.00)
+          (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (bounds 300.00 60.00)
-              (contentsOpaque 1)
-              (drawsContent 1)
+              (position 12.00 129.00)
+              (preserves3D 1)
+              (children 1
+                (GraphicsLayer
+                  (bounds 300.00 60.00)
+                  (contentsOpaque 1)
+                  (drawsContent 1)
+                )
+              )
             )
           )
         )
         (GraphicsLayer
-          (position 960.00 197.00)
-          (preserves3D 1)
+          (position 800.00 0.00)
+          (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (bounds 300.00 60.00)
-              (contentsOpaque 1)
-              (drawsContent 1)
+              (position 160.00 197.00)
+              (preserves3D 1)
+              (children 1
+                (GraphicsLayer
+                  (bounds 300.00 60.00)
+                  (contentsOpaque 1)
+                  (drawsContent 1)
+                )
+              )
             )
           )
         )
         (GraphicsLayer
-          (position 812.00 265.00)
-          (preserves3D 1)
+          (position 800.00 0.00)
+          (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (bounds 300.00 60.00)
-              (contentsOpaque 1)
-              (drawsContent 1)
+              (position 12.00 265.00)
+              (preserves3D 1)
+              (children 1
+                (GraphicsLayer
+                  (bounds 300.00 60.00)
+                  (contentsOpaque 1)
+                  (drawsContent 1)
+                )
+              )
             )
           )
         )
         (GraphicsLayer
-          (position 820.00 333.00)
-          (preserves3D 1)
+          (position 800.00 0.00)
+          (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (bounds 300.00 60.00)
-              (contentsOpaque 1)
-              (drawsContent 1)
+              (position 20.00 333.00)
+              (preserves3D 1)
+              (children 1
+                (GraphicsLayer
+                  (bounds 300.00 60.00)
+                  (contentsOpaque 1)
+                  (drawsContent 1)
+                )
+              )
             )
           )
         )
         (GraphicsLayer
-          (position 960.00 401.00)
-          (preserves3D 1)
+          (position 800.00 0.00)
+          (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (bounds 300.00 60.00)
-              (contentsOpaque 1)
-              (drawsContent 1)
+              (position 160.00 401.00)
+              (preserves3D 1)
+              (children 1
+                (GraphicsLayer
+                  (bounds 300.00 60.00)
+                  (contentsOpaque 1)
+                  (drawsContent 1)
+                )
+              )
             )
           )
         )

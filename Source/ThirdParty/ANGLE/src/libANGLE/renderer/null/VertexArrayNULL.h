@@ -18,7 +18,8 @@ namespace rx
 class VertexArrayNULL : public VertexArrayImpl
 {
   public:
-    VertexArrayNULL(const gl::VertexArrayState &data);
+    VertexArrayNULL(const gl::VertexArrayState &data,
+                    const gl::VertexArrayBuffers &vertexArrayBuffers);
 
     angle::Result syncState(const gl::Context *context,
                             const gl::VertexArray::DirtyBits &dirtyBits,

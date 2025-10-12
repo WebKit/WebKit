@@ -7,6 +7,10 @@
 //    Implements the class methods for FramebufferVk.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/vulkan/FramebufferVk.h"
 
 #include <array>
@@ -407,6 +411,38 @@ bool AllowAddingResolveAttachmentsToSubpass(const vk::RenderPassDesc &desc)
     // For the same reason, adding resolve attachments after the fact is disabled with YUV resolve.
     return !desc.isRenderToTexture() && !desc.hasYUVResolveAttachment();
 }
+
+angle::Result UnresolveYuvImage(ContextVk *contextVk,
+                                RenderTargetVk *colorRenderTarget,
+                                const gl::Rectangle &renderArea)
+{
+    vk::ImageHelper *dst = &colorRenderTarget->getImageForRenderPass();
+    vk::ImageHelper *src = &colorRenderTarget->getResolveImageForRenderPass();
+
+    // The Y2Y sampler is used for the source image in the unresolve copy.
+    vk::DeviceScoped<vk::ImageView> srcViewY2Y(contextVk->getDevice());
+    ANGLE_TRY(src->initLayerImageViewWithYuvModeOverride(
+        contextVk, gl::TextureType::_2D, VK_IMAGE_ASPECT_COLOR_BIT, gl::SwizzleState(),
+        &srcViewY2Y.get(), vk::LevelIndex(0), 1, 0, 1, gl::YuvSamplingMode::Y2Y,
+        VK_IMAGE_USAGE_SAMPLED_BIT, GL_NONE));
+    const vk::ImageView *dstView = nullptr;
+    ANGLE_TRY(colorRenderTarget->getImageView(contextVk, &dstView));
+
+    UtilsVk::CopyImageParameters params  = {};
+    params.srcOffset[0]                  = renderArea.x;
+    params.srcOffset[1]                  = renderArea.y;
+    params.srcExtents[0]                 = renderArea.width;
+    params.srcExtents[1]                 = renderArea.height;
+    params.copyYuvWithoutColorConversion = true;
+
+    ANGLE_TRY(
+        contextVk->getUtils().copyImage(contextVk, dst, dstView, src, &srcViewY2Y.get(), params));
+
+    // Mark our temp view as garbage immediately
+    vk::ImageView srcViewObject = srcViewY2Y.release();
+    contextVk->addGarbage(&srcViewObject);
+    return angle::Result::Continue;
+}
 }  // anonymous namespace
 
 FramebufferVk::FramebufferVk(vk::Renderer *renderer, const gl::FramebufferState &state)
@@ -421,6 +457,7 @@ FramebufferVk::FramebufferVk(vk::Renderer *renderer, const gl::FramebufferState 
 
     mIsCurrentFramebufferCached = !renderer->getFeatures().supportsImagelessFramebuffer.enabled;
     mIsYUVResolve               = false;
+    mRasterizationSamples       = -1;
 }
 
 FramebufferVk::~FramebufferVk() = default;
@@ -1007,6 +1044,8 @@ angle::Result FramebufferVk::readPixels(const gl::Context *context,
                                         gl::Buffer *packBuffer,
                                         void *pixels)
 {
+    ASSERT(mDeferredClears.empty());
+
     // Clip read area to framebuffer.
     const gl::Extents &fbSize = getState().getReadPixelsAttachment(format)->getSize();
     const gl::Rectangle fbRect(0, 0, fbSize.width, fbSize.height);
@@ -1018,9 +1057,6 @@ angle::Result FramebufferVk::readPixels(const gl::Context *context,
         // nothing to read
         return angle::Result::Continue;
     }
-
-    // Flush any deferred clears.
-    ANGLE_TRY(flushDeferredClears(contextVk));
 
     GLuint outputSkipBytes = 0;
     PackPixelsParams params;
@@ -2585,6 +2621,10 @@ angle::Result FramebufferVk::syncState(const gl::Context *context,
         }
     }
 
+    // Update cached value of samples. Always ensure we have at least one sample since
+    // GraphicsPipelineDesc can't handle 0 samples.
+    mRasterizationSamples = std::max(getSamplesImpl(), 1);
+
     // A shared attachment's colospace could have been modified in another context, update
     // colorspace of all attachments to reflect current context's colorspace.
     gl::SrgbWriteControlMode srgbWriteControlMode = mState.getWriteControlMode();
@@ -2608,49 +2648,80 @@ angle::Result FramebufferVk::syncState(const gl::Context *context,
         ANGLE_TRY(updateFoveationState(contextVk, *newFoveationState, foveatedAttachmentSize));
     }
 
-    // Defer clears for draw framebuffer ops.  Note that this will result in a render area that
-    // completely covers the framebuffer, even if the operation that follows is scissored.
-    //
-    // Additionally, defer clears for read framebuffer attachments that are not taking part in a
-    // blit operation.
-    const bool isBlitCommand = command >= gl::Command::Blit && command <= gl::Command::BlitAll;
+    // Note that deferring clears may result in a render area that completely covers the
+    // framebuffer, even if the operation that follows is scissored.
+    bool deferColorClears, deferDepthStencilClears;
 
-    bool deferColorClears        = binding == GL_DRAW_FRAMEBUFFER;
-    bool deferDepthStencilClears = binding == GL_DRAW_FRAMEBUFFER;
-    if (binding == GL_READ_FRAMEBUFFER && isBlitCommand)
+    switch (command)
     {
-        uint32_t blitMask =
-            static_cast<uint32_t>(command) - static_cast<uint32_t>(gl::Command::Blit);
-        if ((blitMask & gl::CommandBlitBufferColor) == 0)
-        {
-            deferColorClears = true;
-        }
-        if ((blitMask & (gl::CommandBlitBufferDepth | gl::CommandBlitBufferStencil)) == 0)
-        {
+        // These commands always expect deferred clears (to perform potential optimization).
+        case gl::Command::Clear:
+        case gl::Command::Draw:
+            ASSERT(binding == GL_DRAW_FRAMEBUFFER);
+            deferColorClears        = true;
             deferDepthStencilClears = true;
-        }
+            break;
+        // Defer clears only for draw framebuffer attachments for the invalidate operation.
+        case gl::Command::Invalidate:
+            ASSERT(binding == GL_DRAW_FRAMEBUFFER || binding == GL_READ_FRAMEBUFFER);
+            deferColorClears        = (binding == GL_DRAW_FRAMEBUFFER);
+            deferDepthStencilClears = (binding == GL_DRAW_FRAMEBUFFER);
+            break;
+        // These commands do not expect (handle) deferred clears.  There is no reason to defer
+        // clears for CopyImage and ReadPixels, as they need to read from the image right away.
+        // GetMultisample does not access attachments at all and clears are flushed for simplicity.
+        // Other enum may be used for different cases, where deferred clears may be handled or not.
+        // Clears are not deferred to avoid bugs.  If clears need to be deferred, operation must not
+        // use the Command::Other enumeration.
+        case gl::Command::CopyImage:
+        case gl::Command::ReadPixels:
+        case gl::Command::GetMultisample:
+        case gl::Command::Other:
+            // Binding for Command::Other reflects current code and may be updated as necessary.
+            ASSERT(((command == gl::Command::CopyImage || command == gl::Command::ReadPixels) &&
+                    binding == GL_READ_FRAMEBUFFER) ||
+                   (command == gl::Command::GetMultisample && binding == GL_DRAW_FRAMEBUFFER) ||
+                   (command == gl::Command::Other && binding == GL_FRAMEBUFFER));
+            deferColorClears        = false;
+            deferDepthStencilClears = false;
+            break;
+        // Defer clears for read framebuffer attachments that are not taking part in a blit
+        // operation in order to restage them and possibly use as clear op in a future render pass.
+        default:
+            ASSERT(command >= gl::Command::Blit && command <= gl::Command::BlitAll);
+            if (binding == GL_READ_FRAMEBUFFER)
+            {
+                const uint32_t blitMask =
+                    static_cast<uint32_t>(command) - static_cast<uint32_t>(gl::Command::Blit);
+                deferColorClears        = ((blitMask & gl::CommandBlitBufferColor) == 0);
+                deferDepthStencilClears = ((blitMask & gl::CommandBlitBufferDepthStencil) == 0);
+            }
+            else
+            {
+                ASSERT(binding == GL_DRAW_FRAMEBUFFER);
+                deferColorClears        = true;
+                deferDepthStencilClears = true;
+            }
+            break;
     }
 
-    // If we are notified that any attachment is dirty, but we have deferred clears for them, a
-    // flushDeferredClears() call is missing somewhere.  ASSERT this to catch these bugs.
-    vk::ClearValuesArray previousDeferredClears = mDeferredClears;
+    // If we have deferred clears, a flushDeferredClears() or restageDeferredClears() call is
+    // missing somewhere.  ASSERT this to catch these bugs.
+    ASSERT(mDeferredClears.empty());
 
     for (size_t colorIndexGL : dirtyColorAttachments)
     {
-        ASSERT(!previousDeferredClears.test(colorIndexGL));
         ANGLE_TRY(flushColorAttachmentUpdates(context, deferColorClears,
                                               static_cast<uint32_t>(colorIndexGL)));
     }
     if (dirtyDepthStencilAttachment)
     {
-        ASSERT(!previousDeferredClears.testDepth());
-        ASSERT(!previousDeferredClears.testStencil());
         ANGLE_TRY(flushDepthStencilAttachmentUpdates(context, deferDepthStencilClears));
     }
 
     // No-op redundant changes to prevent closing the RenderPass.
     if (mCurrentFramebufferDesc == priorFramebufferDesc &&
-        mCurrentFramebufferDesc.attachmentCount() > 0)
+        mCurrentFramebufferDesc.attachmentCount() > 0 && mRenderPassDesc.samples() == getSamples())
     {
         return angle::Result::Continue;
     }
@@ -2775,7 +2846,7 @@ void FramebufferVk::updateRenderPassDesc(ContextVk *contextVk)
 }
 
 angle::Result FramebufferVk::getAttachmentsAndRenderTargets(
-    vk::ErrorContext *context,
+    ContextVk *contextVk,
     vk::FramebufferAttachmentsVector<VkImageView> *unpackedAttachments,
     vk::FramebufferAttachmentsVector<RenderTargetInfo> *packedRenderTargetsInfoOut)
 {
@@ -2792,14 +2863,14 @@ angle::Result FramebufferVk::getAttachmentsAndRenderTargets(
         if (colorRenderTarget->isYuvResolve())
         {
             mIsYUVResolve = true;
-            if (context->getRenderer()->nullColorAttachmentWithExternalFormatResolve())
+            if (contextVk->getRenderer()->nullColorAttachmentWithExternalFormatResolve())
             {
                 // Because the color attachment will be null if
                 // nullColorAttachmentWithExternalFormatResolve is VK_TRUE, push YUV resolve as
                 // color attachment to ensure the coherency of other attachment information, like
                 // ops and clearValues.
                 const vk::ImageView *resolveImageView = nullptr;
-                ANGLE_TRY(colorRenderTarget->getResolveImageView(context, &resolveImageView));
+                ANGLE_TRY(colorRenderTarget->getResolveImageView(contextVk, &resolveImageView));
                 unpackedAttachments->push_back(resolveImageView->getHandle());
 
                 packedRenderTargetsInfoOut->emplace_back(
@@ -2811,7 +2882,7 @@ angle::Result FramebufferVk::getAttachmentsAndRenderTargets(
         }
         const vk::ImageView *imageView = nullptr;
         ANGLE_TRY(colorRenderTarget->getImageViewWithColorspace(
-            context, mCurrentFramebufferDesc.getWriteControlMode(), &imageView));
+            contextVk, mCurrentFramebufferDesc.getWriteControlMode(), &imageView));
         unpackedAttachments->push_back(imageView->getHandle());
 
         packedRenderTargetsInfoOut->emplace_back(
@@ -2823,7 +2894,7 @@ angle::Result FramebufferVk::getAttachmentsAndRenderTargets(
     if (depthStencilRenderTarget)
     {
         const vk::ImageView *imageView = nullptr;
-        ANGLE_TRY(depthStencilRenderTarget->getImageView(context, &imageView));
+        ANGLE_TRY(depthStencilRenderTarget->getImageView(contextVk, &imageView));
 
         unpackedAttachments->push_back(imageView->getHandle());
         packedRenderTargetsInfoOut->emplace_back(
@@ -2855,13 +2926,13 @@ angle::Result FramebufferVk::getAttachmentsAndRenderTargets(
         if (colorRenderTarget->hasResolveAttachment())
         {
             if (colorRenderTarget->isYuvResolve() &&
-                context->getRenderer()->nullColorAttachmentWithExternalFormatResolve())
+                contextVk->getRenderer()->nullColorAttachmentWithExternalFormatResolve())
             {
                 continue;
             }
 
             const vk::ImageView *resolveImageView = nullptr;
-            ANGLE_TRY(colorRenderTarget->getResolveImageView(context, &resolveImageView));
+            ANGLE_TRY(colorRenderTarget->getResolveImageView(contextVk, &resolveImageView));
 
             constexpr size_t kBaseIndex = vk::RenderPassFramebuffer::kColorResolveAttachmentBegin;
             (*unpackedAttachments)[kBaseIndex + colorIndexGL] = resolveImageView->getHandle();
@@ -2876,7 +2947,7 @@ angle::Result FramebufferVk::getAttachmentsAndRenderTargets(
     if (depthStencilRenderTarget && depthStencilRenderTarget->hasResolveAttachment())
     {
         const vk::ImageView *imageView = nullptr;
-        ANGLE_TRY(depthStencilRenderTarget->getResolveImageView(context, &imageView));
+        ANGLE_TRY(depthStencilRenderTarget->getResolveImageView(contextVk, &imageView));
 
         (*unpackedAttachments)[vk::RenderPassFramebuffer::kDepthStencilResolveAttachment] =
             imageView->getHandle();
@@ -3003,8 +3074,15 @@ angle::Result FramebufferVk::createNewFramebuffer(
             continue;
         }
 
+        // Use the resolve image for both draw and resolve attachments when rendering to YUV
+        // with the nullColorAttachmentWithExternalFormatResolve feature enabled.
+        // If nullColorAttachmentWithExternalFormatResolve is not supported, follow default
+        // behaviour.
+        const bool overrideDrawAttachmentWithResolveAttachment =
+            info.renderTarget->isYuvResolve() &&
+            contextVk->getRenderer()->nullColorAttachmentWithExternalFormatResolve();
         vk::ImageHelper *image = (info.renderTargetImage == RenderTargetImage::Resolve ||
-                                  info.renderTarget->isYuvResolve())
+                                  overrideDrawAttachmentWithResolveAttachment)
                                      ? &info.renderTarget->getResolveImageForRenderPass()
                                      : &info.renderTarget->getImageForRenderPass();
 
@@ -3566,10 +3644,20 @@ angle::Result FramebufferVk::startNewRenderPass(ContextVk *contextVk,
         {
             if (renderPassAttachmentOps[colorIndexVk].loadOp == VK_ATTACHMENT_LOAD_OP_LOAD)
             {
-                renderPassAttachmentOps[colorIndexVk].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+                // Unresolve for YUV render targets is done using a separate renderpass
+                if (colorRenderTarget->isYuvResolve())
+                {
+                    ASSERT(!mRenderPassDesc.getColorUnresolveAttachmentMask().test(colorIndexGL));
+                    ANGLE_TRY(UnresolveYuvImage(contextVk, colorRenderTarget, renderArea));
+                }
+                else
+                {
+                    renderPassAttachmentOps[colorIndexVk].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 
-                // Update the render pass desc to specify that this attachment should be unresolved.
-                mRenderPassDesc.packColorUnresolveAttachment(colorIndexGL);
+                    // Update the render pass desc to specify that this attachment should be
+                    // unresolved.
+                    mRenderPassDesc.packColorUnresolveAttachment(colorIndexGL);
+                }
             }
             else
             {
@@ -3689,20 +3777,21 @@ angle::Result FramebufferVk::startNewRenderPass(ContextVk *contextVk,
                 }
             }
 
-            if (unresolveDepth || unresolveStencil)
+            if (unresolveDepth)
             {
-                if (unresolveDepth)
-                {
-                    mRenderPassDesc.packDepthUnresolveAttachment();
-                }
-                if (unresolveStencil)
-                {
-                    mRenderPassDesc.packStencilUnresolveAttachment();
-                }
+                mRenderPassDesc.packDepthUnresolveAttachment();
             }
             else
             {
-                mRenderPassDesc.removeDepthStencilUnresolveAttachment();
+                mRenderPassDesc.removeDepthUnresolveAttachment();
+            }
+            if (unresolveStencil)
+            {
+                mRenderPassDesc.packStencilUnresolveAttachment();
+            }
+            else
+            {
+                mRenderPassDesc.removeStencilUnresolveAttachment();
             }
         }
 
@@ -3868,7 +3957,7 @@ gl::Rectangle FramebufferVk::getRotatedScissoredRenderArea(ContextVk *contextVk)
     return rotatedScissoredArea;
 }
 
-GLint FramebufferVk::getSamples() const
+GLint FramebufferVk::getSamplesImpl() const
 {
     const gl::FramebufferAttachment *lastAttachment = nullptr;
 
@@ -3896,7 +3985,7 @@ GLint FramebufferVk::getSamples() const
 
     // If none of the attachments are multisampled-render-to-texture, take the sample count from the
     // last attachment (any would have worked, as they would all have the same sample count).
-    return std::max(lastAttachment ? lastAttachment->getSamples() : 1, 1);
+    return lastAttachment ? lastAttachment->getSamples() : 1;
 }
 
 angle::Result FramebufferVk::flushDepthStencilDeferredClear(ContextVk *contextVk,

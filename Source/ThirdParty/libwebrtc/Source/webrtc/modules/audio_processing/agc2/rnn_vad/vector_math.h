@@ -40,8 +40,7 @@ class VectorMath {
       : cpu_features_(cpu_features) {}
 
   // Computes the dot product between two equally sized vectors.
-  float DotProduct(rtc::ArrayView<const float> x,
-                   rtc::ArrayView<const float> y) const {
+  float DotProduct(ArrayView<const float> x, ArrayView<const float> y) const {
     RTC_DCHECK_EQ(x.size(), y.size());
 #if defined(WEBRTC_ARCH_X86_FAMILY)
 #if !defined(WEBRTC_WEBKIT_BUILD)
@@ -70,8 +69,8 @@ class VectorMath {
       accumulator = _mm_add_ps(accumulator, high);
       float dot_product = _mm_cvtss_f32(accumulator);
       // Add the result for the last block if incomplete.
-      for (int i = incomplete_block_index;
-           i < rtc::dchecked_cast<int>(x.size()); ++i) {
+      for (int i = incomplete_block_index; i < dchecked_cast<int>(x.size());
+           ++i) {
         dot_product += x[i] * y[i];
       }
       return dot_product;
@@ -95,7 +94,7 @@ class VectorMath {
       float dot_product = vget_lane_f32(vpadd_f32(tmp, vrev64_f32(tmp)), 0);
       // Add the result for the last block if incomplete.
       for (int i = incomplete_block_index;
-           i < rtc::dchecked_cast<int>(x.size()); ++i) {
+           i < webrtc::dchecked_cast<int>(x.size()); ++i) {
         dot_product += x[i] * y[i];
       }
       return dot_product;
@@ -105,8 +104,8 @@ class VectorMath {
   }
 
  private:
-  float DotProductAvx2(rtc::ArrayView<const float> x,
-                       rtc::ArrayView<const float> y) const;
+  float DotProductAvx2(ArrayView<const float> x,
+                       ArrayView<const float> y) const;
 
   const AvailableCpuFeatures cpu_features_;
 };

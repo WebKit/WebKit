@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
 
@@ -90,6 +94,19 @@ void TOutputTraverser::visitSymbol(TIntermSymbol *node)
     OutputTreeText(mOut, node, getCurrentIndentDepth());
     OutputVariable(mOut, node->variable());
     mOut << "\n";
+
+    const TType &type = node->getType();
+    if (type.getStruct() != nullptr && type.isStructSpecifier())
+    {
+        const TFieldList &fields = type.getStruct()->fields();
+        for (TField *field : fields)
+        {
+            OutputTreeText(mOut, node, getCurrentIndentDepth() + 1);
+            mOut << "member: ";
+            mOut << *field << " (" << *field->type() << ")";
+            mOut << "\n";
+        }
+    }
 }
 
 bool TOutputTraverser::visitSwizzle(Visit visit, TIntermSwizzle *node)

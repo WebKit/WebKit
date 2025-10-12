@@ -31,10 +31,10 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "AuthenticatorSupportedOptions.h"
-#include "AuthenticatorTransport.h"
-#include "FidoConstants.h"
-#include "PublicKeyCredentialParameters.h"
+#include <WebCore/AuthenticatorSupportedOptions.h>
+#include <WebCore/AuthenticatorTransport.h>
+#include <WebCore/FidoConstants.h>
+#include <WebCore/PublicKeyCredentialParameters.h>
 #include <wtf/StdSet.h>
 
 namespace fido {

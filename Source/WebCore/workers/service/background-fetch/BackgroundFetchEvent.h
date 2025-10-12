@@ -44,7 +44,13 @@ protected:
     BackgroundFetchEvent(enum EventInterfaceType, const AtomString&, ExtendableEventInit&&, RefPtr<BackgroundFetchRegistration>&&, IsTrusted);
 
 private:
+    bool isBackgroundFetchEvent() const final { return true; }
+
     RefPtr<BackgroundFetchRegistration> m_registration;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::BackgroundFetchEvent)
+    static bool isType(const WebCore::ExtendableEvent& event) { return event.isBackgroundFetchEvent(); }
+SPECIALIZE_TYPE_TRAITS_END()

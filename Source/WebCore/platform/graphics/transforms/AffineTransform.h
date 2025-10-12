@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2005-2016 Apple Inc.  All rights reserved.
- * Copyright (C) 2014 Google Inc.  All rights reserved.
+ * Copyright (C) 2005-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *               2010 Dirk Schulze <krit@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,13 +27,14 @@
 
 #pragma once
 
-#include "CompositeOperation.h"
-#include "FloatConversion.h"
-#include "FloatPoint.h"
-#include "FloatSize.h"
+#include <WebCore/CompositeOperation.h>
+#include <WebCore/FloatConversion.h>
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatSize.h>
 #include <array>
 #include <optional>
 #include <span>
+#include <wtf/Compiler.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 

@@ -1,22 +1,22 @@
-/* Copyright (c) 2020, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2020 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-#ifndef OPENSSL_HEADER_CRYPTO_HPKE_INTERNAL_H
-#define OPENSSL_HEADER_CRYPTO_HPKE_INTERNAL_H
+#ifndef OPENSSL_HEADER_HPKE_H
+#define OPENSSL_HEADER_HPKE_H
 
 #include <openssl/aead.h>
-#include <openssl/base.h>
+#include <openssl/base.h>  // IWYU pragma: export
 #include <openssl/curve25519.h>
 #include <openssl/digest.h>
 
@@ -42,12 +42,14 @@ extern "C" {
 // The following constants are KEM identifiers.
 #define EVP_HPKE_DHKEM_P256_HKDF_SHA256 0x0010
 #define EVP_HPKE_DHKEM_X25519_HKDF_SHA256 0x0020
+#define EVP_HPKE_XWING 0x647a
 
 // The following functions are KEM algorithms which may be used with HPKE. Note
 // that, while some HPKE KEMs use KDFs internally, this is separate from the
 // |EVP_HPKE_KDF| selection.
 OPENSSL_EXPORT const EVP_HPKE_KEM *EVP_hpke_x25519_hkdf_sha256(void);
 OPENSSL_EXPORT const EVP_HPKE_KEM *EVP_hpke_p256_hkdf_sha256(void);
+OPENSSL_EXPORT const EVP_HPKE_KEM *EVP_hpke_xwing(void);
 
 // EVP_HPKE_KEM_id returns the HPKE KEM identifier for |kem|, which
 // will be one of the |EVP_HPKE_KEM_*| constants.
@@ -55,7 +57,7 @@ OPENSSL_EXPORT uint16_t EVP_HPKE_KEM_id(const EVP_HPKE_KEM *kem);
 
 // EVP_HPKE_MAX_PUBLIC_KEY_LENGTH is the maximum length of an encoded public key
 // for all KEMs currently supported by this library.
-#define EVP_HPKE_MAX_PUBLIC_KEY_LENGTH 65
+#define EVP_HPKE_MAX_PUBLIC_KEY_LENGTH 1216
 
 // EVP_HPKE_KEM_public_key_len returns the length of a public key for |kem|.
 // This value will be at most |EVP_HPKE_MAX_PUBLIC_KEY_LENGTH|.
@@ -71,7 +73,7 @@ OPENSSL_EXPORT size_t EVP_HPKE_KEM_private_key_len(const EVP_HPKE_KEM *kem);
 
 // EVP_HPKE_MAX_ENC_LENGTH is the maximum length of "enc", the encapsulated
 // shared secret, for all KEMs currently supported by this library.
-#define EVP_HPKE_MAX_ENC_LENGTH 65
+#define EVP_HPKE_MAX_ENC_LENGTH 1120
 
 // EVP_HPKE_KEM_enc_len returns the length of the "enc", the encapsulated shared
 // secret, for |kem|. This value will be at most |EVP_HPKE_MAX_ENC_LENGTH|.
@@ -406,4 +408,4 @@ BSSL_NAMESPACE_END
 }  // extern C++
 #endif
 
-#endif  // OPENSSL_HEADER_CRYPTO_HPKE_INTERNAL_H
+#endif  // OPENSSL_HEADER_HPKE_H

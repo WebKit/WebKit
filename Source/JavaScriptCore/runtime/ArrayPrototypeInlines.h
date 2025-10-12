@@ -32,7 +32,12 @@
 #include "ExceptionHelpers.h"
 #include "GetVM.h"
 #include "JSGlobalObject.h"
+#include "JSStringJoiner.h"
+#include "JSStringInlines.h"
 #include "ObjectPrototype.h"
+#include "StringRecursionChecker.h"
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -168,7 +173,7 @@ ALWAYS_INLINE void setLength(JSGlobalObject* globalObject, VM& vm, JSObject* obj
 template<JSArray::ShiftCountMode shiftCountMode>
 void shift(JSGlobalObject* globalObject, JSObject* thisObj, uint64_t header, uint64_t currentCount, uint64_t resultCount, uint64_t length)
 {
-    VM& vm = globalObject->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     RELEASE_ASSERT(currentCount > resultCount);
@@ -220,7 +225,7 @@ inline void unshift(JSGlobalObject* globalObject, JSObject* thisObj, uint64_t he
     ASSERT(resultCount <= maxSafeInteger());
     ASSERT(length <= maxSafeInteger());
 
-    VM& vm = globalObject->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     RELEASE_ASSERT(resultCount > currentCount);
@@ -269,4 +274,166 @@ inline Structure* ArrayPrototype::createStructure(VM& vm, JSGlobalObject* global
     return Structure::create(vm, globalObject, prototype, TypeInfo(DerivedArrayType, StructureFlags), info(), ArrayClass);
 }
 
+inline bool holesMustForwardToPrototype(JSObject* object)
+{
+    return object->structure()->holesMustForwardToPrototype(object);
+}
+
+inline bool canUseFastArrayJoin(const JSObject* thisObject)
+{
+    switch (thisObject->indexingType()) {
+    case ALL_CONTIGUOUS_INDEXING_TYPES:
+    case ALL_INT32_INDEXING_TYPES:
+    case ALL_DOUBLE_INDEXING_TYPES:
+    case ALL_UNDECIDED_INDEXING_TYPES:
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+
+// This is intentionally supporting non-JSArray as well.
+ALWAYS_INLINE JSString* fastArrayJoin(JSGlobalObject* globalObject, JSObject* thisObject, StringView separator, unsigned length, bool& sawHoles, bool& genericCase)
+{
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSStringJoiner joiner(separator);
+
+    unsigned i = 0;
+    switch (thisObject->indexingType()) {
+    case ALL_INT32_INDEXING_TYPES: {
+        auto& butterfly = *thisObject->butterfly();
+        if (length > butterfly.publicLength()) [[unlikely]]
+            break;
+        joiner.reserveCapacity(globalObject, length);
+        RETURN_IF_EXCEPTION(scope, { });
+        auto data = butterfly.contiguous().data();
+        bool holesKnownToBeOK = false;
+        for (; i < length; ++i) {
+            JSValue value = data[i].get();
+            if (value) [[likely]]
+                joiner.appendNumber(vm, value.asInt32());
+            else {
+                sawHoles = true;
+                if (!holesKnownToBeOK) {
+                    if (holesMustForwardToPrototype(thisObject))
+                        goto generalCase;
+                    holesKnownToBeOK = true;
+                }
+                joiner.appendEmptyString();
+            }
+        }
+        RELEASE_AND_RETURN(scope, joiner.join(globalObject));
+    }
+    case ALL_CONTIGUOUS_INDEXING_TYPES: {
+        auto& butterfly = *thisObject->butterfly();
+        unsigned originalLength = butterfly.publicLength();
+        if (length > originalLength) [[unlikely]]
+            break;
+        auto data = butterfly.contiguous().data();
+        bool holesKnownToBeOK = false;
+
+        JSOnlyStringsAndInt32sJoiner onlyStringsJoiner(separator);
+        if (auto joined = onlyStringsJoiner.tryJoin(globalObject, data, length))
+            RELEASE_AND_RETURN(scope, joined);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        for (; i < length; ++i) {
+            if (JSValue value = data[i].get()) {
+                bool withoutSideEffect = joiner.append(globalObject, value);
+                RETURN_IF_EXCEPTION(scope, { });
+                if (!withoutSideEffect) {
+                    genericCase = true;
+                    if (thisObject->butterfly() == &butterfly && originalLength == butterfly.publicLength()) [[likely]]
+                        continue;
+                    ++i;
+                    goto generalCase;
+                }
+            } else {
+                sawHoles = true;
+                if (!holesKnownToBeOK) {
+                    if (holesMustForwardToPrototype(thisObject))
+                        goto generalCase;
+                    holesKnownToBeOK = true;
+                }
+                joiner.appendEmptyString();
+            }
+        }
+        RELEASE_AND_RETURN(scope, joiner.join(globalObject));
+    }
+    case ALL_DOUBLE_INDEXING_TYPES: {
+        auto& butterfly = *thisObject->butterfly();
+        if (length > butterfly.publicLength()) [[unlikely]]
+            break;
+        joiner.reserveCapacity(globalObject, length);
+        RETURN_IF_EXCEPTION(scope, { });
+        auto data = butterfly.contiguousDouble().data();
+        bool holesKnownToBeOK = false;
+        for (; i < length; ++i) {
+            double value = data[i];
+            if (!isHole(value)) [[likely]]
+                joiner.appendNumber(vm, value);
+            else {
+                sawHoles = true;
+                if (!holesKnownToBeOK) {
+                    if (holesMustForwardToPrototype(thisObject))
+                        goto generalCase;
+                    holesKnownToBeOK = true;
+                }
+                joiner.appendEmptyString();
+            }
+        }
+        RELEASE_AND_RETURN(scope, joiner.join(globalObject));
+    }
+    case ALL_UNDECIDED_INDEXING_TYPES: {
+        if (length && holesMustForwardToPrototype(thisObject))
+            goto generalCase;
+        switch (separator.length()) {
+        case 0:
+            RELEASE_AND_RETURN(scope, jsEmptyString(vm));
+        case 1: {
+            if (length <= 1)
+                RELEASE_AND_RETURN(scope, jsEmptyString(vm));
+            if (separator.is8Bit())
+                RELEASE_AND_RETURN(scope, repeatCharacter(globalObject, separator.span8().front(), length - 1));
+            RELEASE_AND_RETURN(scope, repeatCharacter(globalObject, separator.span16().front(), length - 1));
+        default:
+            JSString* result = jsEmptyString(vm);
+            if (length <= 1)
+                return result;
+
+            JSString* operand = jsString(vm, separator);
+            RETURN_IF_EXCEPTION(scope, { });
+            unsigned count = length - 1;
+            for (;;) {
+                if (count & 1) {
+                    result = jsString(globalObject, result, operand);
+                    RETURN_IF_EXCEPTION(scope, { });
+                }
+                count >>= 1;
+                if (!count)
+                    return result;
+                operand = jsString(globalObject, operand, operand);
+                RETURN_IF_EXCEPTION(scope, { });
+            }
+        }
+        }
+    }
+    }
+
+generalCase:
+    genericCase = true;
+    for (; i < length; ++i) {
+        JSValue element = thisObject->getIndex(globalObject, i);
+        RETURN_IF_EXCEPTION(scope, { });
+        joiner.append(globalObject, element);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    RELEASE_AND_RETURN(scope, joiner.join(globalObject));
+}
+
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

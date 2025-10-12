@@ -18,7 +18,9 @@
 
 namespace webrtc {
 // Implementation using the field trial API fo the key value lookup.
-class RTC_EXPORT FieldTrialBasedConfig : public FieldTrialsRegistry {
+// TODO: bugs.webrtc.org/42220378 - Remove from public api after August 1, 2025.
+class [[deprecated]] RTC_EXPORT FieldTrialBasedConfig
+    : public FieldTrialsRegistry {
  private:
   std::string GetValue(absl::string_view key) const override;
 };

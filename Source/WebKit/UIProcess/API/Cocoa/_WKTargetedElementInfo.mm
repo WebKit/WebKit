@@ -167,8 +167,10 @@
 - (NSSet<NSURL *> *)mediaAndLinkURLs
 {
     RetainPtr result = adoptNS([NSMutableSet<NSURL *> new]);
-    for (auto& url : _info->mediaAndLinkURLs())
-        [result addObject:url.createNSURL().get()];
+    for (auto& url : _info->mediaAndLinkURLs()) {
+        if (RetainPtr nsURL = url.createNSURL())
+            [result addObject:nsURL.get()];
+    }
     return result.autorelease();
 }
 
@@ -194,7 +196,7 @@
             return completion(nullptr);
 
         if (RefPtr bitmap = WebCore::ShareableBitmap::create(WTFMove(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly))
-            return completion(bitmap->makeCGImage().get());
+            return completion(bitmap->createPlatformImage(WebCore::DontCopyBackingStore).get());
 
         completion(nullptr);
     });

@@ -151,7 +151,7 @@ function shouldThrow(fn, error, message) {
     for (const invalidChunkSize of invalidChunkSizes) {
         shouldThrow(function () {
             Iterator.prototype.chunks.call(validIter, invalidChunkSize);
-        }, RangeError, "Iterator.prototype.chunks requires that argument not be NaN.");
+        }, RangeError, "Iterator.prototype.chunks requires that first argument not be NaN.");
     }
 }
 
@@ -166,6 +166,6 @@ function shouldThrow(fn, error, message) {
     for (const invalidChunkSize of invalidChunkSizes) {
         shouldThrow(function () {
             Iterator.prototype.chunks.call(validIter, invalidChunkSize);
-        }, RangeError, "Iterator.prototype.chunks requires that argument be between 1 and 2**32 - 1.");
+        }, RangeError, "Iterator.prototype.chunks requires that first argument be between 1 and 2**32 - 1.");
     }
 }

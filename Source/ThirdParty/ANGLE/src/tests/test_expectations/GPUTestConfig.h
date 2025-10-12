@@ -58,6 +58,7 @@ struct GPUTestConfig
         kConditionVMWare,
         kConditionApple,
         kConditionQualcomm,
+        kConditionARM,
         kConditionRelease,
         kConditionDebug,
         kConditionD3D9,

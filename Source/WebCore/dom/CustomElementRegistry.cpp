@@ -28,7 +28,7 @@
 
 #include "CustomElementReactionQueue.h"
 #include "Document.h"
-#include "DocumentInlines.h"
+#include "DocumentQuirks.h"
 #include "ElementRareData.h"
 #include "ElementTraversal.h"
 #include "HTMLElementFactory.h"
@@ -37,7 +37,6 @@
 #include "LocalDOMWindow.h"
 #include "MathMLNames.h"
 #include "QualifiedName.h"
-#include "Quirks.h"
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -191,12 +190,15 @@ void CustomElementRegistry::upgrade(Node& root)
     upgradeElementsInShadowIncludingDescendants(*this, *containerNode);
 }
 
-void CustomElementRegistry::initialize(Node& root)
+ExceptionOr<void> CustomElementRegistry::initialize(Node& root)
 {
+    if (!isScoped() && (is<Document>(root) || this != root.document().customElementRegistry()))
+        return Exception { ExceptionCode::NotSupportedError };
+
     auto* containerRoot = dynamicDowncast<ContainerNode>(root);
     if (!containerRoot) {
         ASSERT(!root.usesNullCustomElementRegistry()); // Flag is only set on ShadowRoot and Element.
-        return;
+        return { };
     }
 
     if (RefPtr document = dynamicDowncast<Document>(*containerRoot); document && document->usesNullCustomElementRegistry()) {
@@ -222,6 +224,7 @@ void CustomElementRegistry::initialize(Node& root)
         updateRegistryIfNeeded(*element);
     for (Ref element : descendantsOfType<Element>(*containerRoot))
         updateRegistryIfNeeded(element);
+    return { };
 }
 
 void CustomElementRegistry::addToScopedCustomElementRegistryMap(Element& element, CustomElementRegistry& registry)

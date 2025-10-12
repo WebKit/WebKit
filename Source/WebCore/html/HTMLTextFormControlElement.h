@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "HTMLFormControlElement.h"
-#include "PointerEventTypeNames.h"
+#include <WebCore/HTMLFormControlElement.h>
+#include <WebCore/PointerEventTypeNames.h>
 #include <wtf/ValueOrReference.h>
 
 namespace WebCore {

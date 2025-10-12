@@ -1,0 +1,5 @@
+
+FAIL The transform property with ease on ::view-transition-group() assert_equals: transform with ease at 50% expected "matrix(1, 0, 0, 1, 260.480682, 0)" but got "matrix(1, 0, 0, 1, 260.480678, 0)"
+PASS The sizing properties with linear on ::view-transition-group()
+FAIL Changing the timing function of ::view-transition-group() when animating assert_equals: transform at 50% with linear expected "matrix(1, 0, 0, 1, 200, 0)" but got "matrix(1, 0, 0, 1, 300, 0)"
+

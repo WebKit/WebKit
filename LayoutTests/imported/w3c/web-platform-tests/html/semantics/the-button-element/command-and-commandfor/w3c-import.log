@@ -28,7 +28,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-audio-invalid-behavior.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-details-behavior.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-details-invalid-behavior.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-dialog-behavior-request-close.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-dialog-behavior.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-dialog-disconnect.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-dialog-invalid-behavior.html
@@ -37,3 +36,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-popover-disconnect.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-popover-invalid-behavior.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-video-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/source-attribute-retargeting.tentative.html

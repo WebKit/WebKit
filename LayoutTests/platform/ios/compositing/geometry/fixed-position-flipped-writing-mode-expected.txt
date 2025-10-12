@@ -9,12 +9,18 @@
       (contentsOpaque 1)
       (children 2
         (GraphicsLayer
-          (position 4308.00 0.00)
-          (preserves3D 1)
+          (position -300.00 0.00)
+          (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (bounds 200.00 600.00)
-              (contentsOpaque 1)
+              (position 4608.00 0.00)
+              (preserves3D 1)
+              (children 1
+                (GraphicsLayer
+                  (bounds 200.00 600.00)
+                  (contentsOpaque 1)
+                )
+              )
             )
           )
         )

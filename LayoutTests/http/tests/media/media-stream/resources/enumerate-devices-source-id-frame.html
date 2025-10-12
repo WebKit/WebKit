@@ -12,12 +12,13 @@
 
             async function test(event)
             {
-                await navigator.mediaDevices.getUserMedia({video: true, audio: true });
+                const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: true });
                 let devices = await navigator.mediaDevices.enumerateDevices();
                 let result = {
                     origin: self.origin, 
                     devices: devices.map(device => { return {deviceId: device.deviceId, kind: device.kind} }),
                 };
+                stream.getTracks().forEach(t => t.stop());
 
                 parent.postMessage(result, "*");
                 

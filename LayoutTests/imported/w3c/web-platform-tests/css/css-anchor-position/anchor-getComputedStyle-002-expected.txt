@@ -1,6 +1,6 @@
 Lorem ipsum dolor sit amet.
 Lorem ipsum dolor sit amet.
 
-FAIL getComputedStyle() with fragmented containing block in multicolumn layout assert_equals: expected "25px" but got "135px"
-FAIL getComputedStyle() with fragmented containing block in inline layout assert_equals: expected "0px" but got "20px"
+PASS getComputedStyle() with fragmented containing block in multicolumn layout
+PASS getComputedStyle() with fragmented containing block in inline layout
 

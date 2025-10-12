@@ -78,8 +78,8 @@ String PlatformPasteboard::urlStringSuitableForLoading(String& title)
     String urlPasteboardType = UTTypeURL.identifier;
     String stringPasteboardType = UTTypeText.identifier;
 #else
-    String urlPasteboardType = legacyURLPasteboardType();
-    String stringPasteboardType = legacyStringPasteboardType();
+    String urlPasteboardType = legacyURLPasteboardTypeSingleton();
+    String stringPasteboardType = legacyStringPasteboardTypeSingleton();
 #endif
 
     if (types.contains(urlPasteboardType)) {
@@ -99,9 +99,9 @@ String PlatformPasteboard::urlStringSuitableForLoading(String& title)
     }
 
 #if PLATFORM(MAC)
-    if (types.contains(String(legacyFilenamesPasteboardType()))) {
+    if (types.contains(String(legacyFilenamesPasteboardTypeSingleton()))) {
         Vector<String> files;
-        getPathnamesForType(files, String(legacyFilenamesPasteboardType()));
+        getPathnamesForType(files, String(legacyFilenamesPasteboardTypeSingleton()));
         if (files.size() == 1) {
             RetainPtr firstFile = files[0].createNSString();
             BOOL isDirectory;

@@ -25,16 +25,16 @@ PROXY_PRIMARY_THREAD_DESTRUCTOR()
 BYPASS_PROXY_CONSTMETHOD0(std::string, id)
 PROXY_METHOD0(AudioTrackVector, GetAudioTracks)
 PROXY_METHOD0(VideoTrackVector, GetVideoTracks)
-PROXY_METHOD1(rtc::scoped_refptr<AudioTrackInterface>,
+PROXY_METHOD1(scoped_refptr<AudioTrackInterface>,
               FindAudioTrack,
               const std::string&)
-PROXY_METHOD1(rtc::scoped_refptr<VideoTrackInterface>,
+PROXY_METHOD1(scoped_refptr<VideoTrackInterface>,
               FindVideoTrack,
               const std::string&)
-PROXY_METHOD1(bool, AddTrack, rtc::scoped_refptr<AudioTrackInterface>)
-PROXY_METHOD1(bool, AddTrack, rtc::scoped_refptr<VideoTrackInterface>)
-PROXY_METHOD1(bool, RemoveTrack, rtc::scoped_refptr<AudioTrackInterface>)
-PROXY_METHOD1(bool, RemoveTrack, rtc::scoped_refptr<VideoTrackInterface>)
+PROXY_METHOD1(bool, AddTrack, scoped_refptr<AudioTrackInterface>)
+PROXY_METHOD1(bool, AddTrack, scoped_refptr<VideoTrackInterface>)
+PROXY_METHOD1(bool, RemoveTrack, scoped_refptr<AudioTrackInterface>)
+PROXY_METHOD1(bool, RemoveTrack, scoped_refptr<VideoTrackInterface>)
 PROXY_METHOD1(void, RegisterObserver, ObserverInterface*)
 PROXY_METHOD1(void, UnregisterObserver, ObserverInterface*)
 END_PROXY_MAP(MediaStream)

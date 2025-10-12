@@ -34,7 +34,7 @@
 #include "PaintInfo.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
-#include "RoundedRect.h"
+#include "LayoutRoundedRect.h"
 #include <numbers>
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -210,10 +210,6 @@ void RenderMathMLMenclose::layoutBlock(RelayoutChildren relayoutChildren, Layout
     m_contentRect.moveBy(LayoutPoint(borderLeft() + paddingLeft(), borderAndPaddingBefore()));
 
     layoutOutOfFlowBoxes(relayoutChildren);
-
-    updateScrollInfoAfterLayout();
-
-    clearNeedsLayout();
 }
 
 // GraphicsContext::drawLine does not seem appropriate to draw menclose lines.
@@ -317,8 +313,8 @@ void RenderMathMLMenclose::paint(PaintInfo& info, const LayoutPoint& paintOffset
     // by inflating the content box by 3\xi_8 + \xi_8/2 = 7\xi_8/2
     if (hasNotation(MathMLMencloseElement::RoundedBox)) {
         LayoutSize radiiSize(3 * thickness, 3 * thickness);
-        RoundedRect::Radii radii(radiiSize, radiiSize, radiiSize, radiiSize);
-        RoundedRect roundedRect(m_contentRect, radii);
+        LayoutRoundedRect::Radii radii(radiiSize, radiiSize, radiiSize, radiiSize);
+        LayoutRoundedRect roundedRect(m_contentRect, radii);
         roundedRect.inflate(7 * thickness / 2);
         Path path;
         path.addRoundedRect(roundedRect);

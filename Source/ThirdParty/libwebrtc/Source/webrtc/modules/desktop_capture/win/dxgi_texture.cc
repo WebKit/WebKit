@@ -12,9 +12,12 @@
 
 #include <comdef.h>
 #include <d3d11.h>
+#include <dxgi.h>
+#include <dxgi1_2.h>
+#include <winerror.h>
 #include <wrl/client.h>
 
-#include "modules/desktop_capture/desktop_region.h"
+#include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/win/desktop_capture_utils.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"

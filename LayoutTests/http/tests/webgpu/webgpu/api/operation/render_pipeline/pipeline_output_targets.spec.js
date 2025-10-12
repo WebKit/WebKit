@@ -11,7 +11,8 @@ import {
   isSintOrUintFormat,
   kPossibleColorRenderableTextureFormats } from
 '../../../format_info.js';
-import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
+import * as ttu from '../../../texture_test_utils.js';
 import { getFragmentShaderCodeWithOutput, getPlainTypeInfo } from '../../../util/shader.js';
 import { kTexelRepresentationInfo } from '../../../util/texture/texel_data.js';
 
@@ -27,7 +28,7 @@ const kVertexShader = `
 }
 `;
 
-export const g = makeTestGroup(TextureTestMixin(AllFeaturesMaxLimitsGPUTest));
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 // Values to write into each attachment
 // We make values different for each attachment index and each channel
@@ -139,7 +140,7 @@ fn((t) => {
     if (i === emptyAttachmentId) {
       continue;
     }
-    t.expectSinglePixelComparisonsAreOkInTexture({ texture: renderTargets[i] }, [
+    ttu.expectSinglePixelComparisonsAreOkInTexture(t, { texture: renderTargets[i] }, [
     { coord: { x: 0, y: 0 }, exp: writeValues[i] }]
     );
   }

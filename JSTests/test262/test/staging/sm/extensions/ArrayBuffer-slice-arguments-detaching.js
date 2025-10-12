@@ -4,25 +4,12 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-extensions-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  ArrayBuffer.prototype.slice shouldn't misbehave horribly if index-argument conversion detaches the ArrayBuffer being sliced
+info: bugzilla.mozilla.org/show_bug.cgi?id=991981
 esid: pending
+features: [host-gc-required]
 ---*/
-var gTestfile = "ArrayBuffer-slice-arguments-detaching.js";
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 991981;
-var summary =
-  "ArrayBuffer.prototype.slice shouldn't misbehave horribly if " +
-  "index-argument conversion detaches the ArrayBuffer being sliced";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 function testStart()
 {
@@ -38,16 +25,9 @@ function testStart()
       }
     };
 
-  var ok = false;
-  try
-  {
+  assert.throws(TypeError, function() {
     ab.slice(start);
-  }
-  catch (e)
-  {
-    ok = true;
-  }
-  assert.sameValue(ok, true, "start weirdness should have thrown");
+  }, "start weirdness should have thrown");
   assert.sameValue(ab.byteLength, 0, "detaching should work for start weirdness");
 }
 testStart();
@@ -66,20 +46,9 @@ function testEnd()
       }
     };
 
-  var ok = false;
-  try
-  {
+  assert.throws(TypeError, function() {
     ab.slice(0x800, end);
-  }
-  catch (e)
-  {
-    ok = true;
-  }
-  assert.sameValue(ok, true, "byteLength weirdness should have thrown");
+  }, "byteLength weirdness should have thrown");
   assert.sameValue(ab.byteLength, 0, "detaching should work for byteLength weirdness");
 }
 testEnd();
-
-/******************************************************************************/
-
-print("Tests complete");

@@ -25,13 +25,14 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
-#include "EventListener.h"
-#include "HTMLMediaElementEnums.h"
-#include "PlaybackSessionModel.h"
-#include "SpatialVideoMetadata.h"
-#include "VideoProjectionMetadata.h"
+#include <WebCore/EventListener.h>
+#include <WebCore/HTMLMediaElementEnums.h>
+#include <WebCore/PlaybackSessionModel.h>
+#include <WebCore/SpatialVideoMetadata.h>
+#include <WebCore/VideoProjectionMetadata.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashSet.h>
 #include <wtf/Observer.h>
@@ -110,6 +111,7 @@ public:
     double duration() const final;
     double currentTime() const final;
     double bufferedTime() const final;
+    OptionSet<PlaybackState> playbackState() const final;
     bool isPlaying() const final;
     bool isStalled() const final;
     bool isScrubbing() const final { return false; }
@@ -146,6 +148,7 @@ private:
     void updateMediaSelectionOptions();
     void updateMediaSelectionIndices();
     void maybeUpdateVideoMetadata();
+    void updateRate();
 
     void videoTrackConfigurationChanged();
 
@@ -158,7 +161,7 @@ private:
 
     RefPtr<HTMLMediaElement> m_mediaElement;
     bool m_isListening { false };
-    UncheckedKeyHashSet<CheckedPtr<PlaybackSessionModelClient>> m_clients;
+    HashSet<CheckedPtr<PlaybackSessionModelClient>> m_clients;
     Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;
     Vector<RefPtr<AudioTrack>> m_audioTracksForMenu;
     AudioSessionSoundStageSize m_soundStageSize;

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CallFrame.h"
-#include "VirtualRegister.h"
+#include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/VirtualRegister.h>
 
 #include <wtf/FixedVector.h>
 #include <wtf/PrintStream.h>

@@ -71,6 +71,12 @@ public:
     const HeapRange& fenceRange() const { return m_fenceRange; }
     void setFenceRange(const HeapRange& range) { m_fenceRange = range; }
 
+    Mutability readsMutability() const { return m_readsMutability; }
+    void setReadsMutability(Mutability value) { m_readsMutability = value; }
+
+    bool controlDependent() const { return m_controlDependent; }
+    void setControlDependent(bool value) { m_controlDependent = value; }
+
     bool isStore() const { return B3::isStore(opcode()); }
     bool isLoad() const { return B3::isLoad(opcode()); }
 
@@ -152,6 +158,8 @@ private:
     OffsetType m_offset { 0 };
     HeapRange m_range { HeapRange::top() };
     HeapRange m_fenceRange { HeapRange() };
+    Mutability m_readsMutability : 1 { Mutability::Mutable };
+    bool m_controlDependent : 1 { true };
 };
 
 } } // namespace JSC::B3

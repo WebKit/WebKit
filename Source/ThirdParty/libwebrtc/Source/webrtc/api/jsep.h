@@ -9,13 +9,13 @@
  */
 
 // This file contains declarations of interfaces that wrap SDP-related
-// constructs; session descriptions and ICE candidates. The inner "cricket::"
+// constructs; session descriptions and ICE candidates. The inner "webrtc::"
 // objects shouldn't be accessed directly; the intention is that an application
 // using the PeerConnection API only creates these objects from strings, and
 // them passes them into the PeerConnection.
 //
 // Though in the future, we're planning to provide an SDP parsing API, with a
-// structure more friendly than cricket::SessionDescription.
+// structure more friendly than webrtc::SessionDescription.
 
 #ifndef API_JSEP_H_
 #define API_JSEP_H_
@@ -25,18 +25,20 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
+#include "absl/base/nullability.h"
+#include "absl/strings/str_format.h"
+#include "absl/strings/string_view.h"
+#include "api/candidate.h"
 #include "api/ref_count.h"
 #include "api/rtc_error.h"
 #include "rtc_base/system/rtc_export.h"
 
-namespace cricket {
-class Candidate;
-class SessionDescription;
-}  // namespace cricket
-
 namespace webrtc {
+
+class SessionDescription;
 
 struct SdpParseError {
  public:
@@ -47,54 +49,131 @@ struct SdpParseError {
 };
 
 // Class representation of an ICE candidate.
-//
-// An instance of this interface is supposed to be owned by one class at
-// a time and is therefore not expected to be thread safe.
-//
-// An instance can be created by CreateIceCandidate.
-class RTC_EXPORT IceCandidateInterface {
+class RTC_EXPORT IceCandidate final {
  public:
-  virtual ~IceCandidateInterface() {}
+  IceCandidate(absl::string_view sdp_mid,
+               int sdp_mline_index,
+               const Candidate& candidate);
+  ~IceCandidate() = default;
+
+  IceCandidate(const IceCandidate&) = delete;
+  IceCandidate& operator=(const IceCandidate&) = delete;
+
+  // Parses an sdp candidate string (only the first line) to construct an
+  // IceCandidate instance. If an error occurs, details about the error can
+  // optionally be returned via the `error` paramter, and the function returns
+  // nullptr.
+  static std::unique_ptr<IceCandidate> Create(
+      absl::string_view mid,
+      int sdp_mline_index,
+      absl::string_view sdp,
+      SdpParseError* absl_nullable error = nullptr);
+
   // If present, this is the value of the "a=mid" attribute of the candidate's
   // m= section in SDP, which identifies the m= section.
-  virtual std::string sdp_mid() const = 0;
+  // TODO: webrtc:406795492 - string_view.
+  std::string sdp_mid() const { return sdp_mid_; }
+
   // This indicates the index (starting at zero) of m= section this candidate
   // is associated with. Needed when an endpoint doesn't support MIDs.
-  virtual int sdp_mline_index() const = 0;
+  int sdp_mline_index() const { return sdp_mline_index_; }
+
   // Only for use internally.
-  virtual const cricket::Candidate& candidate() const = 0;
+  const Candidate& candidate() const { return candidate_; }
+
   // The URL of the ICE server which this candidate was gathered from.
-  // TODO(zhihuang): Remove the default implementation once the subclasses
-  // implement this method.
-  virtual std::string server_url() const;
+  // TODO: webrtc:406795492 - string_view.
+  std::string server_url() const { return candidate_.url(); }
+
   // Creates a SDP-ized form of this candidate.
-  virtual bool ToString(std::string* out) const = 0;
+  std::string ToString() const;
+
+  // TODO: webrtc:406795492 - Deprecate and remove this method.
+  // [[deprecated("Use ToString()")]]
+  bool ToString(std::string* out) const {
+    if (!out)
+      return false;
+    *out = ToString();
+    return !out->empty();
+  }
+
+  template <typename Sink>
+  friend void AbslStringify(Sink& sink, const IceCandidate& c) {
+    absl::Format(&sink, "IceCandidate: {'%s', %i, '%s'}", c.sdp_mid_.c_str(),
+                 c.sdp_mline_index_, c.ToString().c_str());
+  }
+
+ private:
+  const std::string sdp_mid_;
+  const int sdp_mline_index_;
+  const Candidate candidate_;
 };
 
-// Creates a IceCandidateInterface based on SDP string.
+// TODO: webrtc:406795492 - Deprecate and eventually remove these types when no
+// longer referenced. They're provided here for backwards compatiblity.
+using JsepIceCandidate = IceCandidate;
+using IceCandidateInterface = IceCandidate;
+
+// Creates an IceCandidate based on SDP string.
 // Returns null if the sdp string can't be parsed.
 // `error` may be null.
-RTC_EXPORT IceCandidateInterface* CreateIceCandidate(const std::string& sdp_mid,
-                                                     int sdp_mline_index,
-                                                     const std::string& sdp,
-                                                     SdpParseError* error);
+RTC_EXPORT IceCandidate* CreateIceCandidate(const std::string& sdp_mid,
+                                            int sdp_mline_index,
+                                            const std::string& sdp,
+                                            SdpParseError* error);
 
-// Creates an IceCandidateInterface based on a parsed candidate structure.
-RTC_EXPORT std::unique_ptr<IceCandidateInterface> CreateIceCandidate(
+// Creates an IceCandidate based on a parsed candidate structure.
+RTC_EXPORT std::unique_ptr<IceCandidate> CreateIceCandidate(
     const std::string& sdp_mid,
     int sdp_mline_index,
-    const cricket::Candidate& candidate);
+    const Candidate& candidate);
 
 // This class represents a collection of candidates for a specific m= section.
 // Used in SessionDescriptionInterface.
-class IceCandidateCollection {
+class IceCandidateCollection final {
  public:
-  virtual ~IceCandidateCollection() {}
-  virtual size_t count() const = 0;
+  IceCandidateCollection() = default;
+  explicit IceCandidateCollection(
+      std::vector<std::unique_ptr<IceCandidate>>&& candidates)
+      : candidates_(std::move(candidates)) {}
+  ~IceCandidateCollection() = default;
+
+  // Move constructor is defined so that a vector of IceCandidateCollections
+  // can be resized.
+  IceCandidateCollection(IceCandidateCollection&& o) = default;
+
+  IceCandidateCollection(const IceCandidateCollection&) = delete;
+  IceCandidateCollection& operator=(const IceCandidateCollection&) = delete;
+
+  size_t count() const { return candidates_.size(); }
+  bool empty() const { return candidates_.empty(); }
+  const IceCandidate* at(size_t index) const;
+
+  // Adds and takes ownership of the IceCandidate.
+  void add(std::unique_ptr<IceCandidate> candidate);
+  [[deprecated("Use unique_ptr version")]]
+  void add(IceCandidate* candidate);
+
+  // Removes the candidate that has a matching address and protocol.
+  //
+  // Returns the number of candidates that were removed.
+  size_t remove(const IceCandidate* candidate);
+
+  const std::vector<std::unique_ptr<IceCandidate>>& candidates() const {
+    return candidates_;
+  }
+
   // Returns true if an equivalent `candidate` exist in the collection.
-  virtual bool HasCandidate(const IceCandidateInterface* candidate) const = 0;
-  virtual const IceCandidateInterface* at(size_t index) const = 0;
+  bool HasCandidate(const IceCandidate* candidate) const;
+
+  IceCandidateCollection Clone() const;
+
+ private:
+  std::vector<std::unique_ptr<IceCandidate>> candidates_;
 };
+
+// TODO: webrtc:406795492 - Deprecate.
+using JsepCandidateCollection = IceCandidateCollection;
 
 // Enum that describes the type of the SessionDescriptionInterface.
 // Corresponds to RTCSdpType in the WebRTC specification.
@@ -113,6 +192,11 @@ enum class SdpType {
 // Returns the string form of the given SDP type. String forms are defined in
 // SessionDescriptionInterface.
 RTC_EXPORT const char* SdpTypeToString(SdpType type);
+
+template <typename Sink>
+void AbslStringify(Sink& sink, SdpType sdp_type) {
+  sink.Append(SdpTypeToString(sdp_type));
+}
 
 // Returns the SdpType from its string form. The string form can be one of the
 // constants defined in SessionDescriptionInterface. Passing in any other string
@@ -144,8 +228,8 @@ class RTC_EXPORT SessionDescriptionInterface {
   }
 
   // Only for use internally.
-  virtual cricket::SessionDescription* description() = 0;
-  virtual const cricket::SessionDescription* description() const = 0;
+  virtual SessionDescription* description() = 0;
+  virtual const SessionDescription* description() const = 0;
 
   // Get the session id and session version, which are defined based on
   // RFC 4566 for the SDP o= line.
@@ -169,13 +253,15 @@ class RTC_EXPORT SessionDescriptionInterface {
   // Returns false if the session description does not have a media section
   // that corresponds to `candidate.sdp_mid()` or
   // `candidate.sdp_mline_index()`.
-  virtual bool AddCandidate(const IceCandidateInterface* candidate) = 0;
+  virtual bool AddCandidate(const IceCandidate* candidate) = 0;
 
-  // Removes the candidates from the description, if found.
+  // Removes the first matching candidate (at most 1) from the description
+  // that meets the `Candidate::MatchesForRemoval()` requirement and matches
+  // either the `IceCandidate::sdp_mid()` property or
+  // `IceCandidate::sdp_mline_index()`.
   //
-  // Returns the number of candidates removed.
-  virtual size_t RemoveCandidates(
-      const std::vector<cricket::Candidate>& candidates);
+  // Returns false if no matching candidate was found (and removed).
+  virtual bool RemoveCandidate(const IceCandidate* candidate) = 0;
 
   // Returns the number of m= sections in the session description.
   virtual size_t number_of_mediasections() const = 0;
@@ -190,7 +276,7 @@ class RTC_EXPORT SessionDescriptionInterface {
   template <typename Sink>
   friend void AbslStringify(Sink& sink, const SessionDescriptionInterface& p) {
     sink.Append("\n--- BEGIN SDP ");
-    sink.Append(SdpTypeToString(p.GetType()));
+    absl::Format(&sink, "%v", p.GetType());
     sink.Append(" ---\n");
     std::string temp;
     if (p.ToString(&temp)) {
@@ -231,11 +317,10 @@ std::unique_ptr<SessionDescriptionInterface> CreateSessionDescription(
     SdpType type,
     const std::string& session_id,
     const std::string& session_version,
-    std::unique_ptr<cricket::SessionDescription> description);
+    std::unique_ptr<SessionDescription> description);
 
 // CreateOffer and CreateAnswer callback interface.
-class RTC_EXPORT CreateSessionDescriptionObserver
-    : public webrtc::RefCountInterface {
+class RTC_EXPORT CreateSessionDescriptionObserver : public RefCountInterface {
  public:
   // This callback transfers the ownership of the `desc`.
   // TODO(deadbeef): Make this take an std::unique_ptr<> to avoid confusion
@@ -254,8 +339,7 @@ class RTC_EXPORT CreateSessionDescriptionObserver
 };
 
 // SetLocalDescription and SetRemoteDescription callback interface.
-class RTC_EXPORT SetSessionDescriptionObserver
-    : public webrtc::RefCountInterface {
+class RTC_EXPORT SetSessionDescriptionObserver : public RefCountInterface {
  public:
   virtual void OnSuccess() = 0;
   // See description in CreateSessionDescriptionObserver for OnFailure.

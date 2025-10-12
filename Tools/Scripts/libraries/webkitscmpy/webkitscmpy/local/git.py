@@ -80,7 +80,7 @@ class Git(Scm):
             default_branch = self.repo.default_branch
             if branch == default_branch:
                 branch_point = None
-            elif self._ordered_commits[branch]:
+            elif self._ordered_commits[branch] and self._ordered_commits[branch][0] in self._hash_to_identifiers:
                 branch_point = int(self._hash_to_identifiers[self._ordered_commits[branch][0]].split('@')[0])
             else:
                 return
@@ -167,10 +167,10 @@ class Git(Scm):
                 if hash:
                     intersected = _append(branch, hash, revision=revision)
 
-            finally:
-                # If our `git log` operation failed, we can't count on the validity of our cache
-                if log and log.returncode:
+                if log and log.poll():
                     return
+
+            finally:
                 if log and log.poll() is None:
                     log.kill()
 
@@ -616,16 +616,55 @@ class Git(Scm):
             return False
         return True
 
+    @decorators.Memoize()
+    def _maybe_update_default_branch_ref_from_fetch_head(self):
+        # The way the buildbot workers update the git repository does not always update the remote/origin/main reference.
+        # Workaround that by checking if remote/origin/main is an ancestor of FETCH_HEAD and then updating it here of needed.
+        # See https://webkit.org/b/299395 for more details.
+        fh_path = os.path.join(self.common_directory, 'FETCH_HEAD')
+        if not os.path.isfile(fh_path):
+            return
+        repo_url = self.url().removesuffix('.git')
+        # FETCH_HEAD can contain more than one line, ensure that only the ones matching this repo and default_branch are considered.
+        default_branch_pattern = re.compile(rf'(?P<hash>[0-9a-f]{{40}})\s+(branch [\'"]?{self.default_branch}[\'"]? of\s+)?[\'"]?{repo_url}(\.git)?[\'"]?$')
+        merge_candidates = set()
+        with open(fh_path, 'r') as fh_fd:
+            for line in fh_fd:
+                line = line.strip()
+                fh_match = default_branch_pattern.match(line)
+                if fh_match:
+                    merge_candidates.add(fh_match.group('hash'))
+        if len(merge_candidates) == 0:
+            return
+        if len(merge_candidates) > 1:
+            log.warning(f'Not updating the ref on remotes/origin/{self.default_branch} because more than one candidate was found (that is unexpected): {merge_candidates}')
+            return
+        fh_hash = merge_candidates.pop()
+        # Check if the ref on remotes/origin/defrbranch is strictly an ancestor of FETCH_HEAD and in that case update the ref of it
+        is_defrbranch_ancestor_of_fh = run([self.executable(), 'merge-base', '--is-ancestor', f'remotes/origin/{self.default_branch}', f'{fh_hash}'],
+                                           cwd=self.root_path).returncode == 0
+        if not is_defrbranch_ancestor_of_fh:
+            log.warning(f'Hash {fh_hash} at FETCH_HEAD is not a fast-foward update for remotes/origin/{self.default_branch}')
+            return
+        is_fh_not_ancestor_of_defrbranch = run([self.executable(), 'merge-base', '--is-ancestor', f'{fh_hash}', f'remotes/origin/{self.default_branch}'],
+                                               cwd=self.root_path).returncode == 1
+        is_fh_strictly_fast_forward_of_defrbranch = is_defrbranch_ancestor_of_fh and is_fh_not_ancestor_of_defrbranch
+        if is_fh_strictly_fast_forward_of_defrbranch:
+            result = run([self.executable(), 'update-ref', f'refs/remotes/origin/{self.default_branch}', f'{fh_hash}'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            if result.returncode:
+                log.warning(f'Error updating remotes/origin/{self.default_branch} to FETCH_HEAD: {result.stderr}')
+
     def _is_on_default_branch(self, hash):
+        self._maybe_update_default_branch_ref_from_fetch_head()
         branches = self.branches_for(remote=None)
         remote_keys = [None] + self.source_remotes()
         default_branch = self.default_branch
         for key in remote_keys:
             if default_branch in branches.get(key, []):
-                return run([
-                    self.executable(), 'merge-base', '--is-ancestor', hash,
-                    'remotes/{}/{}'.format(key, default_branch) if key else default_branch,
-                ], cwd=self.root_path, capture_output=True, encoding='utf-8').returncode == 0
+                if run([self.executable(), 'merge-base', '--is-ancestor', hash,
+                       f'remotes/{key}/{default_branch}' if key else default_branch],
+                       cwd=self.root_path, capture_output=True, encoding='utf-8').returncode == 0:
+                    return True
         return default_branch in self.branches_for(hash)
 
     def branch_point(self, ref='HEAD'):

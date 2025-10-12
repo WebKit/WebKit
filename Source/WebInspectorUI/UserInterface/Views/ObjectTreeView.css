@@ -125,8 +125,12 @@
 .tree-outline.object ol {
     display: none;
     margin: 0;
-    padding-inline-start: 16px;
     list-style: none;
+}
+
+/* Prevent overriding styles on a descendant `.tree-outline.dom ol` which has the same specificity but is defined earlier. */
+.tree-outline.object:not(:has(.tree-outline.dom)) ol {
+    padding-inline-start: 16px;
 }
 
 .tree-outline.object ol.expanded {

@@ -37,6 +37,7 @@ public:
     }
     ~RealtimeOutgoingAudioSourceGStreamer();
 
+    void setInitialParameters(GUniquePtr<GstStructure>&&) final;
     WARN_UNUSED_RETURN GRefPtr<GstPad> outgoingSourcePad() const final;
     RefPtr<GStreamerRTPPacketizer> createPacketizer(RefPtr<UniqueSSRCGenerator>, const GstStructure*, GUniquePtr<GstStructure>&&) final;
 
@@ -48,8 +49,11 @@ protected:
 
 private:
     void initialize();
+    void setupDTMFSource(int pt);
 
     RTCRtpCapabilities rtpCapabilities() const final;
+
+    GRefPtr<GstElement> m_dtmfSource;
 };
 
 } // namespace WebCore

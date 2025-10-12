@@ -100,7 +100,7 @@ function(WEBKIT_ADD_COMPILER_FLAGS _compiler _kind _subject)
     foreach (_flag IN LISTS ARGN)
         WEBKIT_CHECK_COMPILER_FLAGS(${_compiler} flag_supported "${_flag}")
         if (flag_supported)
-            set_property(${_kind} ${_subject} APPEND PROPERTY COMPILE_OPTIONS "${_flag}")
+            set_property(${_kind} ${_subject} APPEND PROPERTY COMPILE_OPTIONS "$<$<COMPILE_LANGUAGE:C,CXX,OBJC,OBJCXX>:${_flag}>")
         endif ()
     endforeach ()
 endfunction()
@@ -123,6 +123,7 @@ endmacro()
 
 
 option(DEVELOPER_MODE_FATAL_WARNINGS "Build with warnings as errors if DEVELOPER_MODE is also enabled" ON)
+set(DEVELOPER_MODE_CXX_FLAGS)
 if (DEVELOPER_MODE AND DEVELOPER_MODE_FATAL_WARNINGS)
     if (MSVC)
         set(FATAL_WARNINGS_FLAG /WX)
@@ -134,6 +135,11 @@ if (DEVELOPER_MODE AND DEVELOPER_MODE_FATAL_WARNINGS)
     if (CXX_COMPILER_SUPPORTS_WERROR)
         set(DEVELOPER_MODE_CXX_FLAGS ${FATAL_WARNINGS_FLAG})
     endif ()
+endif ()
+
+if (DEVELOPER_MODE OR ARM)
+    # This lets us get good backtraces, in particular when using JSC_useGdbJITInfo=1.
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-fno-omit-frame-pointer)
 endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG)
@@ -236,6 +242,9 @@ if (COMPILER_IS_GCC_OR_CLANG)
 
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Werror=undefined-inline
                                          -Werror=undefined-internal)
+
+    # FIXME: https://bugs.webkit.org/show_bug.cgi?id=299689
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-character-conversion)
 endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG AND NOT MSVC)

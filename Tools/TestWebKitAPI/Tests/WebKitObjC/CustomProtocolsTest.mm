@@ -37,6 +37,7 @@
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 static bool testFinished;
 
@@ -77,7 +78,7 @@ static RetainPtr<WKWebView> wkView;
 
 - (void)startLoading
 {
-    dispatch_async(dispatch_get_main_queue(), ^ {
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         kill(WKWebsiteDataStoreGetNetworkProcessIdentifier(WKPageGetWebsiteDataStore([wkView _pageRefForTransitionToWKWebView])), SIGKILL);
         [self.client URLProtocol:self didFailWithError:[NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:nil]];
     });
@@ -85,7 +86,7 @@ static RetainPtr<WKWebView> wkView;
 
 - (void)stopLoading
 {
-    dispatch_async(dispatch_get_main_queue(), ^ {
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         testFinished = true;
     });
 }

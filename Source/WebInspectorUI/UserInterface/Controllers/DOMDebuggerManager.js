@@ -375,7 +375,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         this.dispatchEventToListeners(WI.DOMDebuggerManager.Event.EventBreakpointAdded, {breakpoint});
 
         if (!breakpoint.disabled) {
-            for (let target of WI.targets)
+            for (let target of this.#allSupportedTargets())
                 this._setEventBreakpoint(breakpoint, target);
         }
 
@@ -484,7 +484,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         this.dispatchEventToListeners(WI.DOMDebuggerManager.Event.URLBreakpointAdded, {breakpoint});
 
         if (!breakpoint.disabled) {
-            for (let target of WI.targets)
+            for (let target of this.#allSupportedTargets())
                 this._setURLBreakpoint(breakpoint, target);
         }
 
@@ -823,7 +823,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         if (breakpoint.eventListener)
             return;
 
-        for (let target of WI.targets) {
+        for (let target of this.#allSupportedTargets()) {
             if (breakpoint.disabled)
                 this._removeEventBreakpoint(breakpoint, target);
             else
@@ -849,7 +849,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             return;
 
         this._restoringBreakpoints = true;
-        for (let target of WI.targets) {
+        for (let target of this.#allSupportedTargets()) {
             // Clear the old breakpoint from the backend before setting the new one.
             this._removeEventBreakpoint(breakpoint, target);
             this._setEventBreakpoint(breakpoint, target);
@@ -874,7 +874,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
     {
         let breakpoint = event.target;
 
-        for (let target of WI.targets) {
+        for (let target of this.#allSupportedTargets()) {
             if (breakpoint.disabled)
                 this._removeURLBreakpoint(breakpoint, target);
             else
@@ -896,7 +896,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             return;
 
         this._restoringBreakpoints = true;
-        for (let target of WI.targets) {
+        for (let target of this.#allSupportedTargets()) {
             // Clear the old breakpoint from the backend before setting the new one.
             this._removeURLBreakpoint(breakpoint, target)
             this._setURLBreakpoint(breakpoint, target);
@@ -1006,6 +1006,14 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
                     break;
                 }
             }
+        }
+    }
+
+    // FIXME: <https://webkit.org/b/298981> Add DOMDebugger support for FrameTarget.
+    *#allSupportedTargets() {
+        for (let target of WI.targets) {
+            if (!(target instanceof WI.FrameTarget))
+                yield target;
         }
     }
 };

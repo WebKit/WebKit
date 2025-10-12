@@ -33,10 +33,12 @@
 #import "ChromeClient.h"
 #import "DataTransfer.h"
 #import "DictionaryLookup.h"
+#import "DocumentPage.h"
+#import "DocumentQuirks.h"
+#import "DocumentView.h"
 #import "DragController.h"
 #import "Editor.h"
 #import "FocusController.h"
-#import "FrameInlines.h"
 #import "FrameLoader.h"
 #import "HTMLBodyElement.h"
 #import "HTMLDocument.h"
@@ -45,7 +47,7 @@
 #import "HTMLIFrameElement.h"
 #import "HandleUserInputEventResult.h"
 #import "KeyboardEvent.h"
-#import "LocalFrame.h"
+#import "LocalFrameInlines.h"
 #import "LocalFrameView.h"
 #import "Logging.h"
 #import "MouseEventWithHitTestResults.h"
@@ -117,12 +119,12 @@ public:
     ~CurrentEventScope();
 
 private:
-    RetainPtr<NSEvent> m_savedCurrentEvent;
+    const RetainPtr<NSEvent> m_savedCurrentEvent;
 #if ASSERT_ENABLED
-    RetainPtr<NSEvent> m_event;
+    const RetainPtr<NSEvent> m_event;
 #endif
-    RetainPtr<NSEvent> m_savedPressureEvent;
-    RetainPtr<NSEvent> m_correspondingPressureEvent;
+    const RetainPtr<NSEvent> m_savedPressureEvent;
+    const RetainPtr<NSEvent> m_correspondingPressureEvent;
 };
 
 inline CurrentEventScope::CurrentEventScope(NSEvent *event, NSEvent *correspondingPressureEvent)
@@ -192,7 +194,7 @@ void EventHandler::focusDocumentView()
     }
 
     RELEASE_ASSERT(page == m_frame->page());
-    page->checkedFocusController()->setFocusedFrame(protectedFrame().ptr());
+    page->focusController().setFocusedFrame(protectedFrame().ptr());
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
@@ -1020,10 +1022,10 @@ IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
 {
     RefPtr page = m_frame->page();
     if (!page)
-        return valueOrDefault(m_lastKnownMousePosition);
+        return flooredIntPoint(valueOrDefault(m_lastKnownMousePosition));
 
     auto frame = toUserSpaceForPrimaryScreen(screenRectForDisplay(page->chrome().displayID()));
-    return valueOrDefault(m_lastKnownMousePosition) + autoscrollAdjustmentFactorForScreenBoundaries(m_lastKnownMouseGlobalPosition, frame);
+    return flooredIntPoint(valueOrDefault(m_lastKnownMousePosition)) + autoscrollAdjustmentFactorForScreenBoundaries(flooredIntPoint(m_lastKnownMouseGlobalPosition), frame);
 }
 
 }

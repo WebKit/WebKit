@@ -5,4 +5,4 @@ export let A = "A";
 
 shouldThrow(() => {
     eval("B");
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'B' before initialization.`);

@@ -7,6 +7,10 @@
 //   Tests pertaining to EGL_ANGLE_sync_mtl_shared_event extension.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <gtest/gtest.h>
 
 #include "test_utils/ANGLETest.h"

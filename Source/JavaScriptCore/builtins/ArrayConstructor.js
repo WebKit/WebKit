@@ -23,18 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function of(/* items... */)
-{
-    "use strict";
-
-    var length = @argumentCount();
-    var array = this !== @Array && @isConstructor(this) ? new this(length) : @newArrayWithSize(length);
-    for (var k = 0; k < length; ++k)
-        @putByValDirect(array, k, arguments[k]);
-    array.length = length;
-    return array;
-}
-
 function from(items /*, mapFn, thisArg */)
 {
     "use strict";

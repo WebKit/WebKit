@@ -65,6 +65,16 @@ namespace Layout {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InlineContentCache);
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InlineFormattingContext);
 
+static size_t estimatedDisplayBoxSize(size_t inlineItemSize)
+{
+    if (inlineItemSize == 1) {
+        // Common case of blocks with only one word where we produce 2 boxes (root inline and text box)
+        return 2;
+    }
+    // This value represents a simple average derived from typical web page content.
+    return inlineItemSize * 0.6;
+}
+
 static std::optional<InlineItemRange> partialRangeForDamage(const InlineItemList& inlineItemList, const InlineDamage& lineDamage)
 {
     auto layoutStartPosition = lineDamage.layoutStartPosition()->inlineItemPosition;
@@ -148,7 +158,7 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
         }
         auto lastLineIndex = lineDamage->layoutStartPosition()->lineIndex - 1;
         // FIXME: We should be able to extract the last line information and provide it to layout as "previous line" (ends in line break and inline direction).
-        return PreviousLine { lastLineIndex, { }, { }, true, { }, { } };
+        return PreviousLine { lastLineIndex, { }, { }, { }, { } };
     };
 
     auto textWrapStyle = root().style().textWrapStyle();
@@ -204,7 +214,8 @@ std::pair<LayoutUnit, LayoutUnit> InlineFormattingContext::minimumMaximumContent
     // This also undermines the idea of computing min/max values independently.
     if (*minimumContentSize > *maximumContentSize) {
         auto hasNegativeImplicitMargin = [](auto& style) {
-            return (style.textIndent().isFixed() && style.textIndent().value() < 0) || style.wordSpacing() < 0 || style.letterSpacing() < 0;
+            auto textIndentFixedLength = style.textIndent().length.tryFixed();
+            return (textIndentFixedLength && textIndentFixedLength->isNegative()) || style.usedWordSpacing() < 0 || style.usedLetterSpacing() < 0;
         };
         auto contentHasNegativeImplicitMargin = hasNegativeImplicitMargin(root().style());
         if (!contentHasNegativeImplicitMargin) {
@@ -288,13 +299,14 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
 
     auto layoutResult = InlineLayoutResult { };
     if (!needsLayoutRange.start)
-        layoutResult.displayContent.boxes.reserveInitialCapacity(inlineItemList.size());
+        layoutResult.displayContent.boxes.reserveInitialCapacity(estimatedDisplayBoxSize(inlineItemList.size()));
 
     auto floatingContext = this->floatingContext();
     auto lineLogicalTop = InlineLayoutUnit { constraints.logicalTop() };
     auto previousLineEnd = std::optional<InlineItemPosition> { };
     auto leadingInlineItemPosition = needsLayoutRange.start;
     auto partialLayoutStartIndex = previousLine ? std::make_optional(previousLine->lineIndex) : std::nullopt;
+    auto isFirstFormattedLineCandidate = true;
     size_t numberOfContentfulLines = partialLayoutStartIndex ? *partialLayoutStartIndex + 1 : 0lu;
     while (true) {
 
@@ -302,7 +314,7 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
         auto lineInput = LineInput { { leadingInlineItemPosition, needsLayoutRange.end }, lineInitialRect };
         auto lineIndex = previousLine ? (previousLine->lineIndex + 1) : 0lu;
 
-        auto lineLayoutResult = lineBuilder.layoutInlineContent(lineInput, previousLine);
+        auto lineLayoutResult = lineBuilder.layoutInlineContent(lineInput, previousLine, isFirstFormattedLineCandidate);
         auto lineBox = LineBoxBuilder { *this, lineLayoutResult }.build(lineIndex);
         auto lineLogicalRect = createDisplayContentForInlineContent(lineBox, lineLayoutResult, constraints, layoutResult.displayContent, numberOfContentfulLines);
         updateBoxGeometryForPlacedFloats(lineLayoutResult.floatContent.placedFloats);
@@ -328,10 +340,9 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
             break;
         }
 
-        auto lineHasInlineContent = !lineLayoutResult.inlineContent.isEmpty();
-        auto hasEverSeenInlineContent = lineHasInlineContent || (previousLine && previousLine->hasInlineContent);
-        previousLine = PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, lineHasInlineContent && lineLayoutResult.inlineContent.last().isLineBreak(), hasEverSeenInlineContent, lineLayoutResult.directionality.inlineBaseDirection, WTFMove(lineLayoutResult.floatContent.suspendedFloats) };
+        previousLine = PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, lineLayoutResult.endsWithLineBreak(), lineLayoutResult.directionality.inlineBaseDirection, WTFMove(lineLayoutResult.floatContent.suspendedFloats) };
         previousLineEnd = lineContentEnd;
+        isFirstFormattedLineCandidate &= !lineLayoutResult.hasInlineContent();
         lineLogicalTop = formattingUtils().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext);
     }
     InlineDisplayLineBuilder::addLegacyLineClampTrailingLinkBoxIfApplicable(*this, layoutState(), layoutResult.displayContent);
@@ -379,7 +390,7 @@ void InlineFormattingContext::updateInlineLayoutStateWithLineLayoutResult(const 
     if (lineLayoutResult.isFirstLast.isLastLineWithInlineContent)
         layoutState.setClearGapAfterLastLine(formattingUtils().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
 
-    lineLayoutResult.endsWithHyphen ? layoutState.incrementSuccessiveHyphenatedLineCount() : layoutState.resetSuccessiveHyphenatedLineCount();
+    lineLayoutResult.endsWithHyphen() ? layoutState.incrementSuccessiveHyphenatedLineCount() : layoutState.resetSuccessiveHyphenatedLineCount();
     layoutState.setFirstLineStartTrimForInitialLetter(lineLayoutResult.firstLineStartTrim);
 }
 
@@ -405,7 +416,7 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
     auto isLegacyLineClamp = lineClamp && lineClamp->isLegacy;
     auto numberOfVisibleLinesAllowed = lineClamp ? std::make_optional(lineClamp->maximumLines) : std::nullopt;
 
-    auto numberOfLinesWithInlineContent = numberOfPreviousLContentfulLines + (!lineLayoutResult.inlineContent.isEmpty() ? 1 : 0);
+    auto numberOfLinesWithInlineContent = numberOfPreviousLContentfulLines + (lineLayoutResult.hasInlineContent() ? 1 : 0);
     auto lineIsFullyTruncatedInBlockDirection = numberOfLinesWithInlineContent > numberOfVisibleLinesAllowed.value_or(numberOfLinesWithInlineContent);
     auto displayLine = InlineDisplayLineBuilder { *this, constraints }.build(lineLayoutResult, lineBox, lineIsFullyTruncatedInBlockDirection);
     auto boxes = InlineDisplayContentBuilder { *this, constraints, lineBox, displayLine }.build(lineLayoutResult);
@@ -468,7 +479,7 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
             return { };
         if (ceiledLayoutUnit(lineContent.contentGeometry.logicalWidth) + LayoutUnit::epsilon() <= horizontalAvailableSpace)
             return { };
-        if (!Line::restoreTrimmedTrailingWhitespace(lineContent.trimmedTrailingWhitespaceWidth, lineContent.inlineContent)) {
+        if (!Line::restoreTrimmedTrailingWhitespace(lineContent.trimmedTrailingWhitespaceWidth, lineContent.inlineAndOpaqueContent)) {
             ASSERT_NOT_REACHED();
             return false;
         }
@@ -485,7 +496,7 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
 
     lineContent.lineGeometry.logicalTopLeft = { constraints.horizontal().logicalLeft, constraints.logicalTop() };
     lineContent.lineGeometry.logicalWidth = constraints.horizontal().logicalWidth;
-    lineContent.contentGeometry.logicalLeft = InlineFormattingUtils::horizontalAlignmentOffset(root().style(), lineContent.contentGeometry.logicalWidth, lineContent.lineGeometry.logicalWidth, lineContent.hangingContent.logicalWidth, lineContent.inlineContent, true);
+    lineContent.contentGeometry.logicalLeft = InlineFormattingUtils::horizontalAlignmentOffset(root().style(), lineContent.contentGeometry.logicalWidth, lineContent.lineGeometry.logicalWidth, lineContent.hangingContent.logicalWidth, lineContent.inlineAndOpaqueContent, true);
     auto lineBox = LineBoxBuilder { *this, lineContent }.build({ });
     size_t numberOfContentfulLines = 0;
     createDisplayContentForInlineContent(lineBox, lineContent, constraints, layoutResult.displayContent, numberOfContentfulLines);
@@ -505,12 +516,14 @@ void InlineFormattingContext::initializeInlineLayoutState(const LayoutState& glo
 {
     auto& inlineLayoutState = layoutState();
 
-    if (auto limitLinesValue = root().style().hyphenationLimitLines(); limitLinesValue != RenderStyle::initialHyphenationLimitLines())
-        inlineLayoutState.setHyphenationLimitLines(limitLinesValue);
+    if (auto limitLinesValue = root().style().hyphenateLimitLines().tryValue())
+        inlineLayoutState.setHyphenationLimitLines(limitLinesValue->value);
     // FIXME: Remove when IFC takes care of running layout on inline-blocks.
     inlineLayoutState.setShouldNotSynthesizeInlineBlockBaseline();
     if (globalLayoutState.inStandardsMode())
         inlineLayoutState.setInStandardsMode();
+    if (globalLayoutState.isTextShapingAcrossInlineBoxesEnabled())
+        inlineLayoutState.setShouldShapeTextAcrossInlineBoxes();
 }
 
 #if ASSERT_ENABLED

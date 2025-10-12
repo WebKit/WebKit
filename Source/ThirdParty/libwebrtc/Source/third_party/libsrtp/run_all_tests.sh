@@ -10,7 +10,6 @@ run_all_tests() {
 
   ./cipher_driver -v &&
     ./datatypes_driver -v &&
-    ./dtls_srtp_driver &&
     ./kernel_driver -v &&
     ./rdbx_driver -v &&
     ./replay_driver -v &&

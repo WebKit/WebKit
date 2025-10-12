@@ -11,6 +11,11 @@
 #include "modules/audio_processing/aec3/spectrum_buffer.h"
 
 #include <algorithm>
+#include <array>
+#include <cstddef>
+#include <vector>
+
+#include "modules/audio_processing/aec3/aec3_common.h"
 
 namespace webrtc {
 

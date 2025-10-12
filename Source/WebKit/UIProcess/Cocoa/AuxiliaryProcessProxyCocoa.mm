@@ -113,7 +113,7 @@ void AuxiliaryProcessProxy::platformStartConnectionTerminationWatchdog()
     };
 #endif
 
-    RunLoop::protectedMain()->dispatchAfter(30_s, WTFMove(terminationHandler));
+    RunLoop::mainSingleton().dispatchAfter(30_s, WTFMove(terminationHandler));
 #endif // USE(RUNNINGBOARD)
 }
 

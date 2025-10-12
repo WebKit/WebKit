@@ -36,6 +36,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -77,7 +78,7 @@ private:
     std::span<const uint8_t> m_data;
     float m_sampleRate { 0 };
     int m_channels { 0 };
-    UncheckedKeyHashMap<int, GRefPtr<GstBufferList>> m_buffers;
+    HashMap<int, GRefPtr<GstBufferList>> m_buffers;
     GRefPtr<GstElement> m_pipeline;
     std::optional<int> m_firstChannelType;
     unsigned m_channelSize { 0 };
@@ -384,6 +385,8 @@ void AudioFileReader::plugDeinterleave(GstPad* pad)
 void AudioFileReader::decodeAudioForBusCreation()
 {
     assertIsCurrent(m_runLoop);
+    if (m_data.empty())
+        return;
 
     // Build the pipeline giostreamsrc ! decodebin
     // A deinterleave element is added once a src pad becomes available in decodebin.
@@ -409,7 +412,6 @@ void AudioFileReader::decodeAudioForBusCreation()
         return GST_BUS_DROP;
     }, this, nullptr);
 
-    ASSERT(!m_data.empty());
     auto* source = makeGStreamerElement("giostreamsrc"_s);
     auto memoryStream = adoptGRef(g_memory_input_stream_new_from_data(m_data.data(), m_data.size(), nullptr));
     g_object_set(source, "stream", memoryStream.get(), nullptr);

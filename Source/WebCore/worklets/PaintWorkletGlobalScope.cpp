@@ -56,9 +56,9 @@ PaintWorkletGlobalScope::PaintWorkletGlobalScope(Document& document, Ref<VM>&& v
 
 double PaintWorkletGlobalScope::devicePixelRatio() const
 {
-    if (!responsibleDocument() || !responsibleDocument()->domWindow())
+    if (!responsibleDocument() || !responsibleDocument()->window())
         return 1.0;
-    return responsibleDocument()->domWindow()->devicePixelRatio();
+    return responsibleDocument()->window()->devicePixelRatio();
 }
 
 PaintDefinition::PaintDefinition(const AtomString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&& paintCallback, Vector<AtomString>&& inputProperties, Vector<String>&& inputArguments)

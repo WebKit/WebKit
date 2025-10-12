@@ -63,18 +63,22 @@
 #import <WebCore/ColorMac.h>
 #import <WebCore/DataDetection.h>
 #import <WebCore/DictionaryLookup.h>
+#import <WebCore/DocumentPage.h>
+#import <WebCore/DocumentQuirks.h>
+#import <WebCore/DocumentView.h>
 #import <WebCore/Editing.h>
+#import <WebCore/EditingHTMLConverter.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/FocusController.h>
+#import <WebCore/FrameDestructionObserverInlines.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/HTMLAttachmentElement.h>
-#import <WebCore/HTMLConverter.h>
 #import <WebCore/HTMLImageElement.h>
-#import <WebCore/HTMLPlugInImageElement.h>
+#import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/ImageOverlay.h>
 #import <WebCore/ImmediateActionStage.h>
@@ -83,12 +87,14 @@
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/NetworkStorageSession.h>
+#import <WebCore/NodeHTMLConverter.h>
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageOverlayController.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PluginDocument.h>
 #import <WebCore/PointerCharacteristics.h>
+#import <WebCore/Quirks.h>
 #import <WebCore/RemoteFrameView.h>
 #import <WebCore/RemoteUserInputEventData.h>
 #import <WebCore/RenderElement.h>
@@ -138,11 +144,7 @@ void WebPage::platformInitializeAccessibility(ShouldInitializeNSAccessibility sh
         accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
 
     // Close Mach connection to Launch Services.
-#if HAVE(LS_SERVER_CONNECTION_STATUS_RELEASE_NOTIFICATIONS_MASK)
     _LSSetApplicationLaunchServicesServerConnectionStatus(kLSServerConnectionStatusDoNotConnectToServerMask | kLSServerConnectionStatusReleaseNotificationsMask, nullptr);
-#else
-    _LSSetApplicationLaunchServicesServerConnectionStatus(kLSServerConnectionStatusDoNotConnectToServerMask, nullptr);
-#endif
 
     WebProcess::singleton().revokeLaunchServicesSandboxExtension();
 }
@@ -157,7 +159,7 @@ void WebPage::createMockAccessibilityElement(pid_t pid)
     m_mockAccessibilityElement = WTFMove(mockAccessibilityElement);
 }
 
-void WebPage::platformReinitialize()
+void WebPage::platformReinitializeAccessibilityToken()
 {
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
@@ -181,6 +183,8 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
     getPlatformEditorStateCommon(frame, result);
 
     result.canEnableAutomaticSpellingCorrection = result.isContentEditable && frame.protectedEditor()->canEnableAutomaticSpellingCorrection();
+    RefPtr document = frame.document();
+    result.inputMethodUsesCorrectKeyEventOrder = frame.settings().inputMethodUsesCorrectKeyEventOrder() || (document && document->quirks().inputMethodUsesCorrectKeyEventOrder());
 
     if (!result.hasPostLayoutAndVisualData())
         return;
@@ -219,17 +223,6 @@ void WebPage::handleAcceptedCandidate(WebCore::TextCheckingResult acceptedCandid
 {
     if (RefPtr frame = m_page->focusController().focusedLocalFrame())
         frame->protectedEditor()->handleAcceptedCandidate(acceptedCandidate);
-}
-
-NSObject *WebPage::accessibilityObjectForMainFramePlugin()
-{
-    if (!m_page)
-        return nil;
-    
-    if (RefPtr pluginView = mainFramePlugIn())
-        return pluginView->accessibilityObject();
-
-    return nil;
 }
 
 static String commandNameForSelectorName(const String& selectorName)
@@ -274,23 +267,27 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
     Ref editor = frame->editor();
     bool eventWasHandled = false;
     for (size_t i = 0; i < commands.size(); ++i) {
-        if (commands[i].commandName == "insertText:"_s) {
+        auto& currentCommand = commands[i];
+        if (currentCommand.commandName == "insertText:"_s) {
             if (editor->hasComposition()) {
                 eventWasHandled = true;
-                editor->confirmComposition(commands[i].text);
+                editor->confirmComposition(currentCommand.text);
             } else {
                 if (!editor->canEdit())
                     continue;
 
                 // An insertText: might be handled by other responders in the chain if we don't handle it.
                 // One example is space bar that results in scrolling down the page.
-                eventWasHandled |= editor->insertText(commands[i].text, event);
+                eventWasHandled |= editor->insertText(currentCommand.text, event);
             }
+        } else if (currentCommand.commandName == "setMarkedText:"_s) {
+            setCompositionAsync(currentCommand.text, currentCommand.underlines, currentCommand.highlights, { },
+                EditingRange { currentCommand.selectedRange }, EditingRange { currentCommand.replacementRange });
         } else {
-            if (commands[i].commandName == "scrollPageDown:"_s || commands[i].commandName == "scrollPageUp:"_s)
+            if (currentCommand.commandName == "scrollPageDown:"_s || currentCommand.commandName == "scrollPageUp:"_s)
                 frame->eventHandler().setProcessingKeyRepeatForPotentialScroll(event && event->repeat());
 
-            Editor::Command command = editor->command(commandNameForSelectorName(commands[i].commandName));
+            Editor::Command command = editor->command(commandNameForSelectorName(currentCommand.commandName));
             if (command.isSupported()) {
                 bool commandExecutedByEditor = command.execute(event);
                 eventWasHandled |= commandExecutedByEditor;
@@ -448,7 +445,7 @@ void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, std::span<const 
     auto remoteElement = [elementTokenData length] ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:elementTokenData.get()]) : nil;
 
     createMockAccessibilityElement(pid);
-    [accessibilityRemoteObject() setRemoteParent:remoteElement.get()];
+    [accessibilityRemoteObject() setRemoteParent:remoteElement.get() token:elementTokenData.get()];
     [accessibilityRemoteObject() setFrameIdentifier:frameID];
 }
 
@@ -462,7 +459,7 @@ void WebPage::registerUIProcessAccessibilityTokens(std::span<const uint8_t> elem
     [remoteElement setWindowUIElement:remoteWindow.get()];
     [remoteElement setTopLevelUIElement:remoteWindow.get()];
     [accessibilityRemoteObject() setWindow:remoteWindow.get()];
-    [accessibilityRemoteObject() setRemoteParent:remoteElement.get()];
+    [accessibilityRemoteObject() setRemoteParent:remoteElement.get() token:elementTokenData.get()];
 }
 
 void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&& completionHandler)
@@ -535,7 +532,12 @@ bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
         return true;
 
     // FIXME: Return true if this scheme is any one WebKit2 knows how to handle.
+#if ENABLE(SWIFT_DEMO_URI_SCHEME)
+    return request.url().protocolIs("applewebdata"_s)
+        || request.url().protocolIs("x-swift-demo"_s);
+#else
     return request.url().protocolIs("applewebdata"_s);
+#endif
 }
 
 void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event, CompletionHandler<void(bool)>&& completionHandler)
@@ -547,7 +549,7 @@ void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event,
     bool result = false;
 #if ENABLE(DRAG_SUPPORT)
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
-    HitTestResult hitResult = frame->eventHandler().hitTestResultAtPoint(frame->protectedView()->windowToContents(event.position()), hitType);
+    HitTestResult hitResult = frame->eventHandler().hitTestResultAtPoint(frame->protectedView()->windowToContents(flooredIntPoint(event.position())), hitType);
     if (hitResult.isSelected())
         result = frame->eventHandler().eventMayStartDrag(platform(event));
 #endif
@@ -568,7 +570,7 @@ void WebPage::requestAcceptsFirstMouse(int eventNumber, const WebKit::WebMouseEv
         return;
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
-    HitTestResult hitResult = frame->eventHandler().hitTestResultAtPoint(frame->protectedView()->windowToContents(event.position()), hitType);
+    HitTestResult hitResult = frame->eventHandler().hitTestResultAtPoint(frame->protectedView()->windowToContents(flooredIntPoint(event.position())), hitType);
     frame->eventHandler().setActivationEventNumber(eventNumber);
     bool result = false;
 #if ENABLE(DRAG_SUPPORT)
@@ -587,7 +589,7 @@ void WebPage::setTopOverhangImage(WebImage* image)
     if (!frameView)
         return;
 
-    RefPtr layer = frameView->setWantsLayerForTopOverHangArea(image);
+    RefPtr layer = frameView->setWantsLayerForTopOverhangImage(image);
     if (!layer)
         return;
 
@@ -829,7 +831,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
     }
 
 #if ENABLE(PDF_PLUGIN)
-    if (RefPtr embedOrObject = dynamicDowncast<HTMLPlugInImageElement>(element)) {
+    if (RefPtr embedOrObject = dynamicDowncast<HTMLPlugInElement>(element)) {
         if (RefPtr pluginView = downcast<PluginView>(embedOrObject->pluginWidget())) {
             if (pluginView->performImmediateActionHitTestAtLocation(locationInViewCoordinates, immediateActionResult)) {
                 // FIXME (144030): Focus does not seem to get set to the PDF when invoking the menu.
@@ -1070,24 +1072,6 @@ void WebPage::removePDFHUD(PDFPluginBase& plugin)
 }
 
 #endif // ENABLE(PDF_PLUGIN)
-
-#if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
-void WebPage::initializeAccessibility(Vector<SandboxExtension::Handle>&& handles)
-{
-    RELEASE_LOG(Process, "WebPage::initializeAccessibility, pid = %d", getpid());
-    auto extensions = WTF::compactMap(WTFMove(handles), [](SandboxExtension::Handle&& handle) -> RefPtr<SandboxExtension> {
-        auto extension = SandboxExtension::create(WTFMove(handle));
-        if (extension)
-            extension->consume();
-        return extension;
-    });
-
-    [NSApplication _accessibilityInitialize];
-
-    for (auto& extension : extensions)
-        extension->revoke();
-}
-#endif
 
 } // namespace WebKit
 

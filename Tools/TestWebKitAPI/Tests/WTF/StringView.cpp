@@ -117,15 +117,15 @@ bool compareLoopIterations(StringView::CodePoints codePoints, std::vector<char32
     return actual == expected;
 }
 
-static bool compareLoopIterations(StringView::CodeUnits codeUnits, std::vector<UChar> expected)
+static bool compareLoopIterations(StringView::CodeUnits codeUnits, std::vector<char16_t> expected)
 {
-    std::vector<UChar> actual;
+    std::vector<char16_t> actual;
     for (auto codeUnit : codeUnits)
         actual.push_back(codeUnit);
     return actual == expected;
 }
 
-static void build(StringBuilder& builder, std::vector<UChar> input)
+static void build(StringBuilder& builder, std::vector<char16_t> input)
 {
     builder.clear();
     for (auto codeUnit : input)
@@ -187,7 +187,7 @@ TEST(WTF, StringViewIterators)
     build(b, {0xD800, 0xD801}); // Two leading surrogates
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0xD800, 0xD801}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0xD800, 0xD801}));
-    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), { StringView(b.span<UChar>().subspan(0, 1)), StringView(b.span<UChar>().subspan(1, 1)) }));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), { StringView(b.span<char16_t>().subspan(0, 1)), StringView(b.span<char16_t>().subspan(1, 1)) }));
 
     build(b, {0xDD55}); // Trailing surrogate only
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0xDD55}));
@@ -197,7 +197,7 @@ TEST(WTF, StringViewIterators)
     build(b, {0xD800, 'h'}); // Leading surrogate followed by non-surrogate
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0xD800, 'h'}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0xD800, 'h'}));
-    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), { StringView(b.span<UChar>().subspan(0, 1)), StringView(b.span<UChar>().subspan(1, 1)) }));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), { StringView(b.span<char16_t>().subspan(0, 1)), StringView(b.span<char16_t>().subspan(1, 1)) }));
 
     build(b, {0x0306}); // "COMBINING BREVE"
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0x0306}));
@@ -208,12 +208,12 @@ TEST(WTF, StringViewIterators)
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0x0306, 0x10155, 'h', 'e', 'l', 'o'}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0x0306, 0xD800, 0xDD55, 'h', 'e', 'l', 'o'}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {
-        StringView(b.span<UChar>().subspan(0, 1)),
-        StringView(b.span<UChar>().subspan(1, 2)),
-        StringView(b.span<UChar>().subspan(3, 1)),
-        StringView(b.span<UChar>().subspan(4, 1)),
-        StringView(b.span<UChar>().subspan(5, 1)),
-        StringView(b.span<UChar>().subspan(6, 1)) }));
+        StringView(b.span<char16_t>().subspan(0, 1)),
+        StringView(b.span<char16_t>().subspan(1, 2)),
+        StringView(b.span<char16_t>().subspan(3, 1)),
+        StringView(b.span<char16_t>().subspan(4, 1)),
+        StringView(b.span<char16_t>().subspan(5, 1)),
+        StringView(b.span<char16_t>().subspan(6, 1)) }));
 
     build(b, {'e', 0x0301}); // "COMBINING ACUTE"
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {'e', 0x0301}));
@@ -224,16 +224,16 @@ TEST(WTF, StringViewIterators)
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {'e', 0x0301, 0x0306, 'a'}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {'e', 0x0301, 0x0306, 'a'}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {
-        StringView(b.span<UChar>().subspan(0, 3)),
-        StringView(b.span<UChar>().subspan(3, 1)),
+        StringView(b.span<char16_t>().subspan(0, 3)),
+        StringView(b.span<char16_t>().subspan(3, 1)),
         }));
 
     build(b, {0x1112, 0x116f, 0x11b6, 0x1107, 0x1161, 0x11B8}); // Korean combining Jamo
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0x1112, 0x116f, 0x11b6, 0x1107, 0x1161, 0x11B8}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0x1112, 0x116f, 0x11b6, 0x1107, 0x1161, 0x11B8}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {
-        StringView(b.span<UChar>().subspan(0, 3)),
-        StringView(b.span<UChar>().subspan(3, 3)) }));
+        StringView(b.span<char16_t>().subspan(0, 3)),
+        StringView(b.span<char16_t>().subspan(3, 3)) }));
 }
 
 static Vector<String> vectorFromSplitResult(const StringView::SplitResult& substrings)
@@ -324,7 +324,7 @@ TEST(WTF, StringViewEqualBasic)
     EXPECT_FALSE(a == "Hello World!!"_s);
 
     auto test = "Hell\0";
-    a = StringView { std::span { (const LChar*)test, 5 } };
+    a = StringView { std::span { (const Latin1Character*)test, 5 } };
     EXPECT_FALSE(a == "Hell\0"_s);
     EXPECT_FALSE(a == "Hell"_s);
 
@@ -394,10 +394,10 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseWithEmpty)
 
 TEST(WTF, StringViewEqualIgnoringASCIICaseWithLatin1Characters)
 {
-    RefPtr<StringImpl> a = StringImpl::create(std::span { reinterpret_cast<const LChar*>("aBcéeFG"), 7 });
-    RefPtr<StringImpl> b = StringImpl::create(std::span { reinterpret_cast<const LChar*>("ABCÉEFG"), 7 });
-    RefPtr<StringImpl> c = StringImpl::create(std::span { reinterpret_cast<const LChar*>("ABCéEFG"), 7 });
-    RefPtr<StringImpl> d = StringImpl::create(std::span { reinterpret_cast<const LChar*>("abcéefg"), 7 });
+    RefPtr<StringImpl> a = StringImpl::create(byteCast<Latin1Character>(std::span { "aBcéeFG", 7 }));
+    RefPtr<StringImpl> b = StringImpl::create(byteCast<Latin1Character>(std::span { "ABCÉEFG", 7 }));
+    RefPtr<StringImpl> c = StringImpl::create(byteCast<Latin1Character>(std::span { "ABCéEFG", 7 }));
+    RefPtr<StringImpl> d = StringImpl::create(byteCast<Latin1Character>(std::span { "abcéefg", 7 }));
     StringView stringViewA(*a.get());
     StringView stringViewB(*b.get());
     StringView stringViewC(*c.get());
@@ -894,8 +894,8 @@ TEST(WTF, StringView8Bit)
     EXPECT_TRUE(StringView().is8Bit());
     EXPECT_TRUE(emptyStringView().is8Bit());
 
-    std::span<const LChar> lcharSpan;
-    std::span<const UChar> ucharSpan;
+    std::span<const Latin1Character> lcharSpan;
+    std::span<const char16_t> ucharSpan;
     EXPECT_TRUE(StringView(lcharSpan).is8Bit());
     EXPECT_FALSE(StringView(ucharSpan).is8Bit());
 
@@ -956,7 +956,7 @@ TEST(WTF, StringViewReverseFindBasic)
 
 TEST(WTF, StringViewTrim)
 {
-    auto isA = [] (UChar c) { 
+    auto isA = [] (char16_t c) { 
         return c == 'A';
     };
 
@@ -983,7 +983,7 @@ TEST(WTF, StringViewContainsOnlyASCII)
     EXPECT_FALSE(StringView(String::fromLatin1("📱")).containsOnlyASCII());
     EXPECT_FALSE(StringView(String::fromLatin1("\u0080")).containsOnlyASCII());
     constexpr size_t zeroLength = 0;
-    EXPECT_TRUE(StringView(String({ reinterpret_cast<const UChar*>(u"Hello"), zeroLength })).containsOnlyASCII());
+    EXPECT_TRUE(StringView(String({ reinterpret_cast<const char16_t*>(u"Hello"), zeroLength })).containsOnlyASCII());
 }
 
 TEST(WTF, StringViewUpconvert)

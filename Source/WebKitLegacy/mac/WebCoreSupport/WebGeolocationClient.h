@@ -24,6 +24,8 @@
  */
 
 #import <WebCore/GeolocationClient.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 #import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -33,14 +35,17 @@ class GeolocationPositionData;
 
 @class WebView;
 
-class WebGeolocationClient : public WebCore::GeolocationClient {
+class WebGeolocationClient : public WebCore::GeolocationClient, public RefCounted<WebGeolocationClient> {
     WTF_MAKE_TZONE_ALLOCATED(WebGeolocationClient);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebGeolocationClient);
 public:
-    WebGeolocationClient(WebView *);
+    static Ref<WebGeolocationClient> create(WebView * webView) { return adoptRef(*new WebGeolocationClient(webView)); }
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     WebView *webView() { return m_webView; }
 
-    void geolocationDestroyed() override;
+    void geolocationDestroyed() final { }
     void startUpdating(const String& authorizationToken, bool enableHighAccuracy) override;
     void stopUpdating() override;
 #if PLATFORM(IOS_FAMILY)
@@ -56,5 +61,7 @@ public:
     void cancelPermissionRequest(WebCore::Geolocation&) override { };
 
 private:
+    explicit WebGeolocationClient(WebView *);
+
     WebView *m_webView;
 };

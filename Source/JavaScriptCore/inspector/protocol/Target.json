@@ -9,7 +9,7 @@
             "description": "Description of a target.",
             "properties": [
                 { "name": "targetId", "type": "string", "description": "Unique identifier for the target." },
-                { "name": "type", "type": "string", "enum": ["page", "service-worker", "worker"] },
+                { "name": "type", "type": "string", "enum": ["page", "frame", "service-worker", "worker"] },
                 { "name": "isProvisional", "type": "boolean", "optional": true, "description": "Whether this is a provisional page target." },
                 { "name": "isPaused", "type": "boolean", "optional": true, "description": "Whether the target is paused on start and has to be explicitely resumed by inspector." }
             ]

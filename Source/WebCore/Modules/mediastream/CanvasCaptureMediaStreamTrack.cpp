@@ -210,7 +210,6 @@ RefPtr<VideoFrame> CanvasCaptureMediaStreamTrack::Source::grabFrame()
 void CanvasCaptureMediaStreamTrack::Source::captureCanvas()
 {
     ASSERT(m_canvas);
-
     RefPtr canvas = m_canvas.get();
     if (!canvas || !isProducingData())
         return;
@@ -224,9 +223,18 @@ void CanvasCaptureMediaStreamTrack::Source::captureCanvas()
     if (!canvas->originClean())
         return;
 
-    RefPtr videoFrame = grabFrame();
+    RefPtr videoFrame = [&]() -> RefPtr<VideoFrame> {
+#if ENABLE(WEBGL)
+        if (RefPtr gl = dynamicDowncast<WebGLRenderingContextBase>(canvas->renderingContext()))
+            return gl->surfaceBufferToVideoFrame(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
+#endif
+        return canvas->toVideoFrame();
+    }();
     if (!videoFrame)
         return;
+
+    VideoFrameTimeMetadata metadata;
+    metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
 
 #if USE(GSTREAMER)
     auto gstVideoFrame = downcast<VideoFrameGStreamer>(videoFrame);
@@ -236,12 +244,11 @@ void CanvasCaptureMediaStreamTrack::Source::captureCanvas()
         static const double s_frameRate = 60;
         gstVideoFrame->setMaxFrameRate(s_frameRate);
         gstVideoFrame->setPresentationTime(m_presentationTimeStamp);
+        gstVideoFrame->setMetadataAndContentHint({ metadata }, VideoFrameContentHint::Canvas);
         m_presentationTimeStamp = m_presentationTimeStamp + MediaTime::createWithDouble(1.0 / s_frameRate);
     }
 #endif
 
-    VideoFrameTimeMetadata metadata;
-    metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
     videoFrameAvailable(*videoFrame, metadata);
 }
 

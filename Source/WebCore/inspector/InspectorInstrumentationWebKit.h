@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "InspectorInstrumentationPublic.h"
-#include "ResourceLoader.h"
+#include <WebCore/InspectorInstrumentationPublic.h>
+#include <WebCore/ResourceLoader.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 

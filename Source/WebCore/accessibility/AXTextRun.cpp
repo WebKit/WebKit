@@ -25,27 +25,33 @@
 
 #include "config.h"
 #include "AXTextRun.h"
+
 #include "Logging.h"
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
 
-#define TEXT_RUN_ASSERT_AND_LOG(assertion, methodName) do { \
-    if (!(assertion)) { \
-        RELEASE_LOG(Accessibility, "[AX Thread Text Run] hit assertion in %" PUBLIC_LOG_STRING, methodName); \
-        ASSERT(assertion); \
-    } \
-} while (0)
-#define TEXT_RUN_ASSERT_NOT_REACHED_AND_LOG(methodName) do { \
-    TEXT_RUN_ASSERT_AND_LOG(false, methodName); \
-} while (0)
-
+#include <algorithm>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
 String AXTextRuns::debugDescription() const
 {
-    return makeString('[', interleave(runs, [&](auto& run) { return run.debugDescription(containingBlock); }, ", "_s), ']');
+    StringBuilder builder;
+    builder.append('[');
+    for (size_t i = 0; i < runs.size(); i++) {
+        AXTextRunLineID lineID = { containingBlock, runs[i].lineIndex };
+        builder.append(makeString(
+            lineID.debugDescription(),
+            ": |"_s, makeStringByReplacingAll(runString(i), '\n', "{newline}"_s),
+            "|(len "_s, runs[i].length(), ")"_s
+        ));
+        if (i != runs.size() - 1)
+            builder.append(", "_s);
+    }
+    builder.append(']');
+
+    return builder.toString();
 }
 
 size_t AXTextRuns::indexForOffset(unsigned textOffset, Affinity affinity) const
@@ -76,36 +82,6 @@ unsigned AXTextRuns::runLengthSumTo(size_t index) const
     return length;
 }
 
-String AXTextRuns::substring(unsigned start, unsigned length) const
-{
-    if (!length)
-        return emptyString();
-
-    StringBuilder result;
-    size_t charactersSeen = 0;
-    auto remaining = [&] () {
-        return result.length() >= length ? 0 : length - result.length();
-    };
-    for (unsigned i = 0; i < runs.size() && result.length() < length; i++) {
-        size_t runLength = this->runLength(i);
-        if (charactersSeen >= start) {
-            // The start points entirely within bounds of this run.
-            result.append(runs[i].text.left(remaining()));
-        } else if (charactersSeen + runLength > start) {
-            // start points somewhere in the middle of the current run, collect part of the text.
-            unsigned startInRun = start - charactersSeen;
-            TEXT_RUN_ASSERT_AND_LOG(startInRun < runLength, "substring");
-            if (startInRun >= runLength)
-                startInRun = runLength - 1;
-            result.append(runs[i].text.substring(startInRun, remaining()));
-        }
-        // If charactersSeen + runLength == start, the start points to the end of the run, and there is no text to gather.
-
-        charactersSeen += runLength;
-    }
-    return result.toString();
-}
-
 unsigned AXTextRuns::domOffset(unsigned renderedTextOffset) const
 {
     unsigned cumulativeDomOffset = 0;
@@ -113,7 +89,7 @@ unsigned AXTextRuns::domOffset(unsigned renderedTextOffset) const
     for (size_t i = 0; i < size(); i++) {
         const auto& domOffsets = at(i).domOffsets();
         for (const auto& domOffsetPair : domOffsets) {
-            TEXT_RUN_ASSERT_AND_LOG(domOffsetPair[0] >= previousEndDomOffset, "domOffset");
+            ASSERT(domOffsetPair[0] >= previousEndDomOffset);
             if (domOffsetPair[0] < previousEndDomOffset)
                 return renderedTextOffset;
             // domOffsetPair[0] represents the start DOM offset of this run. Subtracting it
@@ -141,7 +117,7 @@ unsigned AXTextRuns::domOffset(unsigned renderedTextOffset) const
     }
     // We were provided with a rendered-text offset that didn't actually fit into our
     // runs. This should never happen.
-    TEXT_RUN_ASSERT_NOT_REACHED_AND_LOG("renderedTextOffset");
+    ASSERT_NOT_REACHED();
     return renderedTextOffset;
 }
 
@@ -161,7 +137,9 @@ FloatRect AXTextRuns::localRect(unsigned start, unsigned end, FontOrientation or
         float totalAdvance = 0;
         unsigned startIndexInRun = startIndex - offsetOfFirstCharacterInRun;
         unsigned endIndexInRun = endIndex - offsetOfFirstCharacterInRun;
-        RELEASE_ASSERT(startIndexInRun <= endIndexInRun);
+        ASSERT(startIndexInRun <= endIndexInRun);
+        ASSERT(endIndexInRun <= characterAdvances.size());
+        endIndexInRun = std::min(endIndexInRun, static_cast<unsigned>(characterAdvances.size()));
         for (size_t i = startIndexInRun; i < endIndexInRun; i++)
             totalAdvance += (float)characterAdvances[i];
         return totalAdvance;
@@ -182,7 +160,7 @@ FloatRect AXTextRuns::localRect(unsigned start, unsigned end, FontOrientation or
             unsigned measuredWidthInDirection = 0;
             if (i == runIndexOfSmallerOffset) {
                 unsigned offsetOfFirstCharacterInRun = !i ? 0 : runLengthSumTo(i - 1);
-                TEXT_RUN_ASSERT_AND_LOG(smallerOffset >= offsetOfFirstCharacterInRun, "localRect (1)");
+                ASSERT(smallerOffset >= offsetOfFirstCharacterInRun);
                 if (smallerOffset < offsetOfFirstCharacterInRun)
                     smallerOffset = offsetOfFirstCharacterInRun;
                 // Measure the characters in this run (accomplished by smallerOffset - offsetOfFirstCharacterInRun)
@@ -194,7 +172,7 @@ FloatRect AXTextRuns::localRect(unsigned start, unsigned end, FontOrientation or
                 // If the larger offset goes beyond this line, use the end of the current line to for computing this run's bounds.
                 unsigned endOffsetInLine = runIndexOfSmallerOffset == runIndexOfLargerOffset
                     ? largerOffset
-                    : !i ? run.text.length() : runLengthSumTo(i - 1) + run.text.length();
+                    : !i ? run.length() : runLengthSumTo(i - 1) + run.length();
 
                 if (endOffsetInLine - smallerOffset > 0)
                     measuredWidthInDirection = computeAdvance(run, offsetOfFirstCharacterInRun, smallerOffset, endOffsetInLine);
@@ -219,7 +197,7 @@ FloatRect AXTextRuns::localRect(unsigned start, unsigned end, FontOrientation or
             } else if (i == runIndexOfLargerOffset) {
                 // We're measuring the end of the range, so measure from the first character in the run up to largerOffset.
                 unsigned offsetOfFirstCharacterInRun = !i ? 0 : runLengthSumTo(i - 1);
-                TEXT_RUN_ASSERT_AND_LOG(largerOffset >= offsetOfFirstCharacterInRun, "localRect (3)");
+                ASSERT(largerOffset >= offsetOfFirstCharacterInRun);
                 if (largerOffset < offsetOfFirstCharacterInRun)
                     largerOffset = offsetOfFirstCharacterInRun;
 
@@ -240,7 +218,7 @@ FloatRect AXTextRuns::localRect(unsigned start, unsigned end, FontOrientation or
                 // bbb
                 // cc|c
                 unsigned offsetOfFirstCharacterInRun = !i ? 0 : runLengthSumTo(i - 1);
-                measuredWidthInDirection = computeAdvance(run, offsetOfFirstCharacterInRun, offsetOfFirstCharacterInRun, offsetOfFirstCharacterInRun + run.text.length());
+                measuredWidthInDirection = computeAdvance(run, offsetOfFirstCharacterInRun, offsetOfFirstCharacterInRun, offsetOfFirstCharacterInRun + run.length());
                 if (measuredWidthInDirection) {
                     // Since we are measuring from the beginning of a run, x should be 0.
                     offsetFromOriginInDirection = 0;
@@ -258,10 +236,18 @@ FloatRect AXTextRuns::localRect(unsigned start, unsigned end, FontOrientation or
         }
     }
 
-    if (orientation == FontOrientation::Horizontal)
-        return { static_cast<float>(offsetFromOriginInDirection), heightBeforeRuns, static_cast<float>(maxWidthInDirection), measuredHeightInDirection };
+    // Compared to the main-thread implementation, we regularly produce rects that are 1-3px smaller due to the various
+    // levels of float rounding that happen to get here. It's better to be a bit wider to ensure AT cursors capture the
+    // entire range of text than it is to be too small. Concretely, too-wide is better than too-small for low-vision
+    // VoiceOver users who magnify the VoiceOver cursor's contents. Subjectively, the main-thread implementation feels
+    // a bit too large, even favoring too-wide sizes, so only bump by 1px. This is especially impactful when navigating
+    // character-by-character in small text.
+    static constexpr unsigned sizeBump = 1;
 
-    return { heightBeforeRuns, static_cast<float>(offsetFromOriginInDirection), measuredHeightInDirection, static_cast<float>(maxWidthInDirection) };
+    if (orientation == FontOrientation::Horizontal)
+        return { static_cast<float>(offsetFromOriginInDirection), heightBeforeRuns, static_cast<float>(maxWidthInDirection) + sizeBump, measuredHeightInDirection };
+
+    return { heightBeforeRuns, static_cast<float>(offsetFromOriginInDirection), measuredHeightInDirection + sizeBump, static_cast<float>(maxWidthInDirection) };
 }
 
 } // namespace WebCore

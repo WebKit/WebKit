@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,11 +28,13 @@
 #include "PathUtilities.h"
 
 #include "AffineTransform.h"
-#include "BorderData.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
 #include "GeometryUtilities.h"
+#include "Path.h"
+#include "StyleBorderRadius.h"
+#include "WritingMode.h"
 #include <math.h>
 #include <numbers>
 #include <ranges>
@@ -453,13 +455,10 @@ static std::pair<FloatPoint, FloatPoint> controlPointsForBezierCurve(CornerType 
     return std::make_pair(cp1, cp2);
 }
 
-static FloatRoundedRect::Radii adjustedRadiiForHuggingCurve(const FloatSize& topLeftRadius, const FloatSize& topRightRadius,
-    const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius, float outlineOffset)
+static FloatRoundedRect::Radii adjustedRadiiForHuggingCurve(const FloatRoundedRect::Radii& inputRadii, float outlineOffset)
 {
-    FloatRoundedRect::Radii radii;
     // This adjusts the radius so that it follows the border curve even when offset is present.
-    auto adjustedRadius = [outlineOffset](const FloatSize& radius)
-    {
+    auto adjustedRadius = [outlineOffset](const FloatSize& radius) {
         FloatSize expandSize;
         if (radius.width() > outlineOffset)
             expandSize.setWidth(std::min(outlineOffset, radius.width() - outlineOffset));
@@ -471,13 +470,14 @@ static FloatRoundedRect::Radii adjustedRadiiForHuggingCurve(const FloatSize& top
         return adjustedRadius.expandedTo(FloatSize(0, 0));
     };
 
-    radii.setTopLeft(adjustedRadius(topLeftRadius));
-    radii.setTopRight(adjustedRadius(topRightRadius));
-    radii.setBottomRight(adjustedRadius(bottomRightRadius));
-    radii.setBottomLeft(adjustedRadius(bottomLeftRadius));
-    return radii;
+    return {
+        adjustedRadius(inputRadii.topLeft()),
+        adjustedRadius(inputRadii.topRight()),
+        adjustedRadius(inputRadii.bottomLeft()),
+        adjustedRadius(inputRadii.bottomRight()),
+    };
 }
-    
+
 static std::optional<FloatRect> rectFromPolygon(const FloatPointGraph::Polygon& poly)
 {
     if (poly.size() != 4)
@@ -502,20 +502,22 @@ static std::optional<FloatRect> rectFromPolygon(const FloatPointGraph::Polygon& 
     return FloatRect(topLeft.value(), bottomRight.value());
 }
 
-Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>& rects, const BorderData& borderData,
+Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>& rects, const Style::BorderRadius& radii,
     float outlineOffset, WritingMode writingMode, float deviceScaleFactor)
 {
-    FloatSize topLeftRadius { borderData.topLeftRadius().width.value(), borderData.topLeftRadius().height.value() };
-    FloatSize topRightRadius { borderData.topRightRadius().width.value(), borderData.topRightRadius().height.value() };
-    FloatSize bottomRightRadius { borderData.bottomRightRadius().width.value(), borderData.bottomRightRadius().height.value() };
-    FloatSize bottomLeftRadius { borderData.bottomLeftRadius().width.value(), borderData.bottomLeftRadius().height.value() };
+    auto roundedRect = [radii, outlineOffset, deviceScaleFactor](const FloatRect& rect) {
+        auto adjustedRadii = adjustedRadiiForHuggingCurve(Style::evaluate<FloatRoundedRect::Radii>(radii, rect.size(), Style::ZoomNeeded { }), outlineOffset);
+        adjustedRadii.scale(calcBorderRadiiConstraintScaleFor(rect, adjustedRadii));
 
-    auto roundedRect = [topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius, outlineOffset, deviceScaleFactor] (const FloatRect& rect)
-    {
-        auto radii = adjustedRadiiForHuggingCurve(topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius, outlineOffset);
-        radii.scale(calcBorderRadiiConstraintScaleFor(rect, radii));
-        RoundedRect roundedRect(LayoutRect(rect),
-            RoundedRect::Radii(LayoutSize(radii.topLeft()), LayoutSize(radii.topRight()), LayoutSize(radii.bottomLeft()), LayoutSize(radii.bottomRight())));
+        LayoutRoundedRect roundedRect(
+            LayoutRect(rect),
+            LayoutRoundedRect::Radii(
+                LayoutSize(adjustedRadii.topLeft()),
+                LayoutSize(adjustedRadii.topRight()),
+                LayoutSize(adjustedRadii.bottomLeft()),
+                LayoutSize(adjustedRadii.bottomRight())
+            )
+        );
         Path path;
         path.addRoundedRect(roundedRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor));
         return path;
@@ -541,14 +543,11 @@ Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>
     auto firstLineRect = isLeftToRight ? rects.at(0) : rects.at(rects.size() - 1);
     auto lastLineRect = isLeftToRight ? rects.at(rects.size() - 1) : rects.at(0);
     // Adjust radius so that it matches the box border.
-    auto firstLineRadii = FloatRoundedRect::Radii(topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
-    auto lastLineRadii = FloatRoundedRect::Radii(topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+    auto firstLineRadii = Style::evaluate<FloatRoundedRect::Radii>(radii, firstLineRect.size(), Style::ZoomNeeded { });
+    auto lastLineRadii = Style::evaluate<FloatRoundedRect::Radii>(radii, lastLineRect.size(), Style::ZoomNeeded { });
     firstLineRadii.scale(calcBorderRadiiConstraintScaleFor(firstLineRect, firstLineRadii));
     lastLineRadii.scale(calcBorderRadiiConstraintScaleFor(lastLineRect, lastLineRadii));
-    topLeftRadius = firstLineRadii.topLeft();
-    bottomLeftRadius = firstLineRadii.bottomLeft();
-    topRightRadius = lastLineRadii.topRight();
-    bottomRightRadius = lastLineRadii.bottomRight();
+
     // physical topLeft/topRight/bottomRight/bottomLeft
     auto isHorizontal = writingMode.isHorizontal();
     auto corners = Vector<FloatPoint>::from(
@@ -571,27 +570,22 @@ Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>
         FloatSize radius;
         auto corner = cornerTypeForMultiline(fromEdge, toEdge, corners);
         switch (corner) {
-        case CornerType::TopLeft: {
-            radius = topLeftRadius;
+        case CornerType::TopLeft:
+            radius = firstLineRadii.topLeft();
             break;
-        }
-        case CornerType::TopRight: {
-            radius = topRightRadius;
+        case CornerType::TopRight:
+            radius = lastLineRadii.topRight();
             break;
-        }
-        case CornerType::BottomRight: {
-            radius = bottomRightRadius;
+        case CornerType::BottomRight:
+            radius = lastLineRadii.bottomRight();
             break;
-        }
-        case CornerType::BottomLeft: {
-            radius = bottomLeftRadius;
+        case CornerType::BottomLeft:
+            radius = firstLineRadii.bottomLeft();
             break;
-        }
-        case CornerType::Other: {
+        case CornerType::Other:
             // Do not apply border radius on corners that normal border painting skips. (multiline content)
             moveOrAddLineTo(*fromEdge.second);
             continue;
-        }
         }
         auto [startPoint, endPoint] = startAndEndPointsForCorner(fromEdge, toEdge, radius);
         moveOrAddLineTo(startPoint);

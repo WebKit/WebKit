@@ -31,6 +31,10 @@
 #include "SandboxExtension.h"
 #include <wtf/ProcessID.h>
 
+#if USE(GBM)
+#include <WebCore/DRMDevice.h>
+#endif
+
 namespace IPC {
 class Decoder;
 class Encoder;
@@ -47,9 +51,6 @@ struct GPUProcessCreationParameters {
     SandboxExtension::Handle launchServicesExtensionHandle;
 #endif
 #endif
-#if USE(MODERN_AVCONTENTKEYSESSION)
-    bool shouldUseModernAVContentKeySession { false };
-#endif
 
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
     SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
@@ -64,12 +65,19 @@ struct GPUProcessCreationParameters {
     String applicationVisibleName;
 
 #if USE(GBM)
-    String renderDeviceFile;
+    WebCore::DRMDevice drmDevice;
 #endif
+
     Vector<String> overrideLanguages;
 #if PLATFORM(COCOA)
     bool enableMetalDebugDeviceForTesting { false };
     bool enableMetalShaderValidationForTesting { false };
+#if ENABLE(VP9)
+    std::optional<bool> hasVP9HardwareDecoder;
+#endif
+#if ENABLE(AV1)
+    std::optional<bool> hasAV1HardwareDecoder;
+#endif
 #endif
 };
 

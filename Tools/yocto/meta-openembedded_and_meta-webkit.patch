@@ -100,39 +100,280 @@ index 8352bf2..c81cfe9 100644
             "
  
  SRC_URI:append:class-target = "\
+diff --git a/sources/meta-openembedded/meta-gnome/recipes-gnome/libdex/libdex_0.10.1.bb b/sources/meta-openembedded/meta-gnome/recipes-gnome/libdex/libdex_0.10.1.bb
+new file mode 100644
+index 0000000000..3b83273272
+--- /dev/null
++++ b/sources/meta-openembedded/meta-gnome/recipes-gnome/libdex/libdex_0.10.1.bb
+@@ -0,0 +1,19 @@
++LICENSE = "LGPL-2.1-only"
++LIC_FILES_CHKSUM = "file://COPYING;md5=4fbd65380cdd255951079008b364516c"
++
++GNOMEBASEBUILDCLASS = "meson"
++inherit features_check gnomebase upstream-version-is-even gobject-introspection
++
++DEPENDS += " \
++    glib-2.0 \
++"
++DEPENDS:append:libc-musl = " libucontext"
++
++LDFLAGS:append:libc-musl = " -lucontext"
++
++SRC_URI[archive.sha256sum] = "7472e88090db2b228307505edeba4483e872681340cb0404ae64ac3da5bed0a6"
++
++PACKAGECONFIG ?= ""
++EXTRA_OEMESON += "-Dintrospection=enabled -Dvapi=false"
++
++REQUIRED_DISTRO_FEATURES = "gobject-introspection-data"
+diff --git a/sources/meta-openembedded/meta-gnome/recipes-gnome/libpanel/libpanel_1.6.0.bb b/sources/meta-openembedded/meta-gnome/recipes-gnome/libpanel/libpanel_1.6.0.bb
+new file mode 100644
+index 0000000..a4f4017
+--- /dev/null
++++ b/sources/meta-openembedded/meta-gnome/recipes-gnome/libpanel/libpanel_1.6.0.bb
+@@ -0,0 +1,22 @@
++# your responsibility to verify that the values are complete and correct.
++LICENSE = "LGPL-2.1-only"
++LIC_FILES_CHKSUM = "file://COPYING;md5=3000208d539ec061b899bce1d9ce9404"
++
++GNOMEBASEBUILDCLASS = "meson"
++inherit gnomebase upstream-version-is-even gobject-introspection gtk-icon-cache
++
++DEPENDS += " \
++    glib-2.0 \
++    gtk4 \
++    libadwaita \
++"
++
++SRC_URI[archive.sha256sum] = "b773494a3c69300345cd8e27027448d1189183026cc137802f886417c6ea30b6"
++
++PACKAGECONFIG ?= ""
++#EXTRA_OEMESON += "-Ddocs=disabled"
++#GTKDOC_MESON_DISABLE_FLAG = "disabled"
++
++EXTRA_OEMESON += "-Ddocs=disabled  -Dintrospection=enabled -Dvapi=false"
++
++REQUIRED_DISTRO_FEATURES = "gobject-introspection-data"
 diff --git a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0001-meson-Check-for-libunwind-instead-of-libunwind-gener.patch b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0001-meson-Check-for-libunwind-instead-of-libunwind-gener.patch
-index dc702a0e37..1082fe4ffc 100644
+index dc702a0..3d78e18 100644
 --- a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0001-meson-Check-for-libunwind-instead-of-libunwind-gener.patch
 +++ b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0001-meson-Check-for-libunwind-instead-of-libunwind-gener.patch
-@@ -13,15 +13,15 @@ Signed-off-by: Khem Raj <raj.khem@gmail.com>
+@@ -1,30 +1,32 @@
+-From 19188367bee87b0084ab34869455155da5cb1731 Mon Sep 17 00:00:00 2001
+-From: Khem Raj <raj.khem@gmail.com>
+-Date: Wed, 13 Apr 2022 08:47:39 -0700
++From 3d547c043f772fe1352c7beb0e3331e35c77e63e Mon Sep 17 00:00:00 2001
++From: Pablo Saavedra <psaavedra@igalia.com>
++Date: Mon, 11 Nov 2024 13:05:15 +0100
+ Subject: [PATCH] meson: Check for libunwind instead of libunwind-generic
+ 
+ This helps it to use llvm unwinder since libunwind-generic is specific
+ to nongnu libunwind.
+ 
+-Upstream-Status: Pending
++Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/sysprof/-/merge_requests/95]
++
++Original-by: Khem Raj <raj.khem@gmail.com>
++Modified-by: Pablo Saavedra <psaavedra@igalia.com>
++
+ Signed-off-by: Khem Raj <raj.khem@gmail.com>
++Signed-off-by: Pablo Saavedra <psaavedra@igalia.com>
+ ---
+  meson.build | 2 +-
   1 file changed, 1 insertion(+), 1 deletion(-)
  
  diff --git a/meson.build b/meson.build
 -index 2835782..0fdb39a 100644
-+index 3d3d8b5..4a1963d 100644
++index 3907354..783f558 100644
  --- a/meson.build
  +++ b/meson.build
 -@@ -81,7 +81,7 @@ config_h.set10('HAVE_POLKIT_AGENT', polkit_agent_dep.found())
 - config_h.set10('HAVE_POLKIT', polkit_dep.found())
-- 
-+@@ -96,7 +96,7 @@ config_h.set10('HAVE_POLKIT', polkit_dep.found())
-  if get_option('libunwind')
++@@ -114,7 +114,7 @@ if cc.has_header('asm/perf_regs.h')
++ endif
+  
+- if get_option('libunwind')
 --  libunwind_dep = dependency('libunwind-generic')
 -+  libunwind_dep = dependency('libunwind')
-+   # Force libunwind usage if it's specified to avoid back compiles
-+   # and backtrace() showing up in builds
++ if need_libsysprof
 +-  libunwind_dep = dependency('libunwind-generic', required: true)
 ++  libunwind_dep = dependency('libunwind', required: true)
     config_h.set('ENABLE_LIBUNWIND', libunwind_dep.found())
-    config_h.set('HAVE_UNW_SET_CACHE_SIZE', libunwind_dep.found() and cc.has_header_symbol('libunwind.h', 'unw_set_cache_size', dependencies: [libunwind_dep]))
-  endif
+-   config_h.set('HAVE_UNW_SET_CACHE_SIZE', libunwind_dep.found() and cc.has_header_symbol('libunwind.h', 'unw_set_cache_size', dependencies: [libunwind_dep]))
+- endif
+--- 
+-2.35.2
+-
++   config_h.set('HAVE_UNW_SET_CACHE_SIZE',
++                cc.has_header_symbol('libunwind.h',
+diff --git a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0001-sysprof-upgrade-48.0-48.1.patch b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0001-sysprof-upgrade-48.0-48.1.patch
+new file mode 100644
+index 0000000..2658412
+--- /dev/null
++++ b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0001-sysprof-upgrade-48.0-48.1.patch
+@@ -0,0 +1,156 @@
++From 13f7ee8fb667c1a49d052d38613e2158b831ae6b Mon Sep 17 00:00:00 2001
++From: Pablo Saavedra <psaavedra@igalia.com>
++Date: Wed, 3 Sep 2025 11:30:48 +0200
++Subject: [oe][meta-gnome][PATCH v2] sysprof: upgrade 48.0 -> 48.1
++
++Changes:
++
++* libsysprof-capture: Clean ring buffer memory for counters
++
++Also:
++
++* Make elf loader search for debug links in .debug dirs
++
++Signed-off-by: Pablo Saavedra <psaavedra@igalia.com>
++---
++ ...libunwind-instead-of-libunwind-gener.patch |  8 ++--
++ ...oke-the-commands-to-update-the-icon-.patch |  6 +--
++ ...-for-unw_set_caching_policy-before-u.patch |  2 +-
++ ...search-for-debug-links-in-.debug-dir.patch | 47 +++++++++++++++++++
++ .../{sysprof_48.0.bb => sysprof_48.1.bb}      |  3 +-
++ 5 files changed, 57 insertions(+), 9 deletions(-)
++ create mode 100644 meta-gnome/recipes-gnome/sysprof/sysprof/0005-Make-elf-loader-search-for-debug-links-in-.debug-dir.patch
++ rename meta-gnome/recipes-gnome/sysprof/{sysprof_48.0.bb => sysprof_48.1.bb} (91%)
++
++diff --git a/meta-gnome/recipes-gnome/sysprof/sysprof/0001-meson-Check-for-libunwind-instead-of-libunwind-gener.patch b/meta-gnome/recipes-gnome/sysprof/sysprof/0001-meson-Check-for-libunwind-instead-of-libunwind-gener.patch
++index 5bdc55b3a5..3d78e188b5 100644
++--- a/meta-gnome/recipes-gnome/sysprof/sysprof/0001-meson-Check-for-libunwind-instead-of-libunwind-gener.patch
+++++ b/meta-gnome/recipes-gnome/sysprof/sysprof/0001-meson-Check-for-libunwind-instead-of-libunwind-gener.patch
++@@ -1,4 +1,4 @@
++-From 36fbd12df9258972f8ff1fbb24506f12751178eb Mon Sep 17 00:00:00 2001
+++From 3d547c043f772fe1352c7beb0e3331e35c77e63e Mon Sep 17 00:00:00 2001
++ From: Pablo Saavedra <psaavedra@igalia.com>
++ Date: Mon, 11 Nov 2024 13:05:15 +0100
++ Subject: [PATCH] meson: Check for libunwind instead of libunwind-generic
++@@ -18,11 +18,11 @@ Signed-off-by: Pablo Saavedra <psaavedra@igalia.com>
++  1 file changed, 1 insertion(+), 1 deletion(-)
++ 
++ diff --git a/meson.build b/meson.build
++-index 23fcea8..3d3feca 100644
+++index 3907354..783f558 100644
++ --- a/meson.build
++ +++ b/meson.build
++-@@ -110,7 +110,7 @@ polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version, require
++- config_h.set10('HAVE_POLKIT', polkit_dep.found())
+++@@ -114,7 +114,7 @@ if cc.has_header('asm/perf_regs.h')
+++ endif
++  
++  if need_libsysprof
++ -  libunwind_dep = dependency('libunwind-generic', required: true)
++diff --git a/meta-gnome/recipes-gnome/sysprof/sysprof/0002-meson-Do-not-invoke-the-commands-to-update-the-icon-.patch b/meta-gnome/recipes-gnome/sysprof/sysprof/0002-meson-Do-not-invoke-the-commands-to-update-the-icon-.patch
++index 6ed04eefac..61c75f08b4 100644
++--- a/meta-gnome/recipes-gnome/sysprof/sysprof/0002-meson-Do-not-invoke-the-commands-to-update-the-icon-.patch
+++++ b/meta-gnome/recipes-gnome/sysprof/sysprof/0002-meson-Do-not-invoke-the-commands-to-update-the-icon-.patch
++@@ -1,4 +1,4 @@
++-From ef2cb850bc24d57ddf3641cb1ba202a657422c66 Mon Sep 17 00:00:00 2001
+++From 58619c59e72c796aa2686bc6ffbfa07a23dbc14d Mon Sep 17 00:00:00 2001
++ From: Carlos Alberto Lopez Perez <clopez@igalia.com>
++ Date: Wed, 24 Jul 2024 15:51:05 +0100
++ Subject: [PATCH] meson: Do not invoke the commands to update the icon caches
++@@ -15,10 +15,10 @@ Signed-off-by: Carlos Alberto Lopez Perez <clopez@igalia.com>
++  1 file changed, 1 insertion(+), 1 deletion(-)
++ 
++ diff --git a/meson.build b/meson.build
++-index 3d3feca..8da9b5f 100644
+++index 783f558..8775fe6 100644
++ --- a/meson.build
++ +++ b/meson.build
++-@@ -272,7 +272,7 @@ configure_file(
+++@@ -276,7 +276,7 @@ configure_file(
++    configuration: config_h
++  )
++  
++diff --git a/meta-gnome/recipes-gnome/sysprof/sysprof/0003-libsysprof-Check-for-unw_set_caching_policy-before-u.patch b/meta-gnome/recipes-gnome/sysprof/sysprof/0003-libsysprof-Check-for-unw_set_caching_policy-before-u.patch
++index 60592bde4f..0f3703457d 100644
++--- a/meta-gnome/recipes-gnome/sysprof/sysprof/0003-libsysprof-Check-for-unw_set_caching_policy-before-u.patch
+++++ b/meta-gnome/recipes-gnome/sysprof/sysprof/0003-libsysprof-Check-for-unw_set_caching_policy-before-u.patch
++@@ -1,4 +1,4 @@
++-From 5a2b4cdbc7f0a329245066c849592fe310bdefd7 Mon Sep 17 00:00:00 2001
+++From 219920476d7b23370bfb456ee4ac1cf9b21479c6 Mon Sep 17 00:00:00 2001
++ From: Khem Raj <raj.khem@gmail.com>
++ Date: Thu, 25 Jul 2024 20:18:17 -0700
++ Subject: [PATCH] libsysprof: Check for unw_set_caching_policy before using
++diff --git a/meta-gnome/recipes-gnome/sysprof/sysprof/0005-Make-elf-loader-search-for-debug-links-in-.debug-dir.patch b/meta-gnome/recipes-gnome/sysprof/sysprof/0005-Make-elf-loader-search-for-debug-links-in-.debug-dir.patch
++new file mode 100644
++index 0000000000..bd7305d77d
++--- /dev/null
+++++ b/meta-gnome/recipes-gnome/sysprof/sysprof/0005-Make-elf-loader-search-for-debug-links-in-.debug-dir.patch
++@@ -0,0 +1,47 @@
+++From 9c35912dba0597a241e9af4fe5c87bfc0931c46c Mon Sep 17 00:00:00 2001
+++From: Pawel Lampe <plampe@igalia.com>
+++Date: Fri, 16 May 2025 14:31:29 +0200
+++Subject: [PATCH] Make elf loader search for debug links in .debug dirs
+++
+++When the distribution is built using yocto project, it's possible
+++to specify 'dbg-pkgs' image feature, see:
+++https://docs.yoctoproject.org/dev/ref-manual/features.html
+++This image feature makes files with package debug symbols being
+++placed under .debug directories accompanying the original binary
+++directories and mentioned in the .gnu_debuglink of the original binary.
+++Effectively the symbols of e.g. /x/y/libz.so will be placed in
+++/x/y/.debug/libz.so.
+++
+++This change makes sysprof's elf loader to search for debug links
+++in such a .debug directories.
+++
+++Upstream-Status: Backport [https://gitlab.gnome.org/GNOME/sysprof/-/merge_requests/140]
+++---
+++ src/libsysprof/sysprof-elf-loader.c | 7 +++++++
+++ 1 file changed, 7 insertions(+)
+++
+++diff --git a/src/libsysprof/sysprof-elf-loader.c b/src/libsysprof/sysprof-elf-loader.c
+++index 2e52e26..e0b4089 100644
+++--- a/src/libsysprof/sysprof-elf-loader.c
++++++ b/src/libsysprof/sysprof-elf-loader.c
+++@@ -336,6 +336,7 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
+++           g_autofree char *directory_name = NULL;
+++           g_autofree char *debug_path = NULL;
+++           g_autofree char *short_debug_path = NULL;
++++          g_autofree char *shorter_debug_path = NULL;
+++           const char *short_directory_name;
+++           const char *debug_dir = self->debug_dirs[i];
+++           const char *build_id;
+++@@ -360,6 +361,12 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
+++               sysprof_elf_set_debug_link_elf (elf, get_deepest_debuglink (debug_link_elf));
+++               return;
+++             }
++++          shorter_debug_path = g_build_filename (directory_name, ".debug", debug_link, NULL);
++++          if ((debug_link_elf = sysprof_elf_loader_load (self, mount_namespace, shorter_debug_path, build_id, 0, NULL)))
++++            {
++++              sysprof_elf_set_debug_link_elf (elf, get_deepest_debuglink (debug_link_elf));
++++              return;
++++            }
+++         }
+++     }
+++ 
++diff --git a/meta-gnome/recipes-gnome/sysprof/sysprof_48.0.bb b/meta-gnome/recipes-gnome/sysprof/sysprof_48.1.bb
++similarity index 91%
++rename from meta-gnome/recipes-gnome/sysprof/sysprof_48.0.bb
++rename to meta-gnome/recipes-gnome/sysprof/sysprof_48.1.bb
++index 968b5d8e14..145c0bfe38 100644
++--- a/meta-gnome/recipes-gnome/sysprof/sysprof_48.0.bb
+++++ b/meta-gnome/recipes-gnome/sysprof/sysprof_48.1.bb
++@@ -21,8 +21,9 @@ SRC_URI += "file://0001-meson-Check-for-libunwind-instead-of-libunwind-gener.pat
++            file://0002-meson-Do-not-invoke-the-commands-to-update-the-icon-.patch \
++            file://0003-libsysprof-Check-for-unw_set_caching_policy-before-u.patch \
++            file://0004-sysprof-greeter-fix-environ-with-shadowing.patch \
+++           file://0005-Make-elf-loader-search-for-debug-links-in-.debug-dir.patch \
++            "
++-SRC_URI[archive.sha256sum] = "1b0f0380f2f30708ba87829321a06fee1db36dfa87797bbf07f0a7acf4498d18"
+++SRC_URI[archive.sha256sum] = "54f157fdfef1edf1e2f22e542c462d90e1c21fca8c30eba4127cee739039bbe2"
++ 
++ # reason: gtk4 requires opengl distro feature
++ REQUIRED_DISTRO_FEATURES = "${@bb.utils.contains('PACKAGECONFIG', 'gtk', 'opengl', '', d)}"
++-- 
++2.34.1
++
 diff --git a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0002-meson-Do-not-invoke-the-commands-to-update-the-icon-.patch b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0002-meson-Do-not-invoke-the-commands-to-update-the-icon-.patch
 new file mode 100644
-index 0000000000..998c20c657
+index 0000000..61c75f0
 --- /dev/null
 +++ b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0002-meson-Do-not-invoke-the-commands-to-update-the-icon-.patch
-@@ -0,0 +1,32 @@
-+From 9ad120283f4b61b97da67f18a95bb3b4f1e8a3b9 Mon Sep 17 00:00:00 2001
+@@ -0,0 +1,29 @@
++From 58619c59e72c796aa2686bc6ffbfa07a23dbc14d Mon Sep 17 00:00:00 2001
 +From: Carlos Alberto Lopez Perez <clopez@igalia.com>
 +Date: Wed, 24 Jul 2024 15:51:05 +0100
 +Subject: [PATCH] meson: Do not invoke the commands to update the icon caches
@@ -149,10 +390,10 @@ index 0000000000..998c20c657
 + 1 file changed, 1 insertion(+), 1 deletion(-)
 +
 +diff --git a/meson.build b/meson.build
-+index 3d3d8b5..da622f1 100644
++index 783f558..8775fe6 100644
 +--- a/meson.build
 ++++ b/meson.build
-+@@ -250,7 +250,7 @@ configure_file(
++@@ -276,7 +276,7 @@ configure_file(
 +   configuration: config_h
 + )
 + 
@@ -161,45 +402,385 @@ index 0000000000..998c20c657
 +   gnome.post_install(
 +       gtk_update_icon_cache: true,
 +     update_desktop_database: true
-+-- 
-+2.39.2
+diff --git a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0003-libsysprof-Check-for-unw_set_caching_policy-before-u.patch b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0003-libsysprof-Check-for-unw_set_caching_policy-before-u.patch
+new file mode 100644
+index 0000000..0f37034
+--- /dev/null
++++ b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0003-libsysprof-Check-for-unw_set_caching_policy-before-u.patch
+@@ -0,0 +1,32 @@
++From 219920476d7b23370bfb456ee4ac1cf9b21479c6 Mon Sep 17 00:00:00 2001
++From: Khem Raj <raj.khem@gmail.com>
++Date: Thu, 25 Jul 2024 20:18:17 -0700
++Subject: [PATCH] libsysprof: Check for unw_set_caching_policy before using
 +
-diff --git a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof_3.44.0.bb b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof_3.48.0.bb
-similarity index 71%
-rename from meta-gnome/recipes-gnome/sysprof/sysprof_3.44.0.bb
-rename to meta-gnome/recipes-gnome/sysprof/sysprof_3.48.0.bb
-index 3523bad3e2..bf4ee7a73e 100644
++llvm libunwind does not implement unw_cache_* functions yet
++
++Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/sysprof/-/merge_requests/95]
++
++Original-by: Khem Raj <raj.khem@gmail.com>
++Modified-by: Pablo Saavedra <psaavedra@igalia.com>
++
++Signed-off-by: Khem Raj <raj.khem@gmail.com>
++Signed-off-by: Pablo Saavedra <psaavedra@igalia.com>
++---
++ src/preload/backtrace-helper.h | 2 ++
++ 1 file changed, 2 insertions(+)
++
++diff --git a/src/preload/backtrace-helper.h b/src/preload/backtrace-helper.h
++index ac4f8e9..e60032d 100644
++--- a/src/preload/backtrace-helper.h
+++++ b/src/preload/backtrace-helper.h
++@@ -26,7 +26,9 @@
++ static void
++ backtrace_init (void)
++ {
+++# ifdef UNW_CACHE_PER_THREAD
++   unw_set_caching_policy (unw_local_addr_space, UNW_CACHE_PER_THREAD);
+++#endif
++ #ifdef HAVE_UNW_SET_CACHE_SIZE
++   unw_set_cache_size (unw_local_addr_space, 1024, 0);
++ #endif
+diff --git a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0004-sysprof-greeter-fix-environ-with-shadowing.patch b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0004-sysprof-greeter-fix-environ-with-shadowing.patch
+new file mode 100644
+index 0000000..a2c925c
+--- /dev/null
++++ b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0004-sysprof-greeter-fix-environ-with-shadowing.patch
+@@ -0,0 +1,37 @@
++From f65c492e93db122ac9623c7b0ee590801f90e366 Mon Sep 17 00:00:00 2001
++From: Christian Hergert <chergert@redhat.com>
++Date: Mon, 11 Aug 2025 14:10:08 -0700
++Subject: [PATCH] sysprof/greeter: fix environ with shadowing
++
++Fixes: #150
++
++Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/sysprof/-/issues/150]
++Signed-off-by: Pablo Saavedra <psaavedra@igalia.com>
++---
++ src/sysprof/sysprof-greeter.c | 10 +++++-----
++ 1 file changed, 5 insertions(+), 5 deletions(-)
++
++diff --git a/src/sysprof/sysprof-greeter.c b/src/sysprof/sysprof-greeter.c
++index 5f44cb6..80e07ae 100644
++--- a/src/sysprof/sysprof-greeter.c
+++++ b/src/sysprof/sysprof-greeter.c
++@@ -626,14 +626,14 @@ sysprof_greeter_init (SysprofGreeter *self)
++ 
++   if (self->recording_template)
++     {
++-      g_auto(GStrv) environ = NULL;
+++      g_auto(GStrv) environ_ = NULL;
++       g_object_get (self->recording_template,
++-                    "environ", &environ,
+++                    "environ", &environ_,
++                     NULL);
++-      if (environ)
+++      if (environ_)
++         {
++-          for (guint i = 0; environ[i]; i++)
++-            gtk_string_list_append (self->envvars, environ[i]);            
+++          for (guint i = 0; environ_[i]; i++)
+++            gtk_string_list_append (self->envvars, environ_[i]);            
++         }
++     }
++ 
+diff --git a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0005-Make-elf-loader-search-for-debug-links-in-.debug-dir.patch b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0005-Make-elf-loader-search-for-debug-links-in-.debug-dir.patch
+new file mode 100644
+index 0000000..bd7305d
+--- /dev/null
++++ b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0005-Make-elf-loader-search-for-debug-links-in-.debug-dir.patch
+@@ -0,0 +1,47 @@
++From 9c35912dba0597a241e9af4fe5c87bfc0931c46c Mon Sep 17 00:00:00 2001
++From: Pawel Lampe <plampe@igalia.com>
++Date: Fri, 16 May 2025 14:31:29 +0200
++Subject: [PATCH] Make elf loader search for debug links in .debug dirs
++
++When the distribution is built using yocto project, it's possible
++to specify 'dbg-pkgs' image feature, see:
++https://docs.yoctoproject.org/dev/ref-manual/features.html
++This image feature makes files with package debug symbols being
++placed under .debug directories accompanying the original binary
++directories and mentioned in the .gnu_debuglink of the original binary.
++Effectively the symbols of e.g. /x/y/libz.so will be placed in
++/x/y/.debug/libz.so.
++
++This change makes sysprof's elf loader to search for debug links
++in such a .debug directories.
++
++Upstream-Status: Backport [https://gitlab.gnome.org/GNOME/sysprof/-/merge_requests/140]
++---
++ src/libsysprof/sysprof-elf-loader.c | 7 +++++++
++ 1 file changed, 7 insertions(+)
++
++diff --git a/src/libsysprof/sysprof-elf-loader.c b/src/libsysprof/sysprof-elf-loader.c
++index 2e52e26..e0b4089 100644
++--- a/src/libsysprof/sysprof-elf-loader.c
+++++ b/src/libsysprof/sysprof-elf-loader.c
++@@ -336,6 +336,7 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
++           g_autofree char *directory_name = NULL;
++           g_autofree char *debug_path = NULL;
++           g_autofree char *short_debug_path = NULL;
+++          g_autofree char *shorter_debug_path = NULL;
++           const char *short_directory_name;
++           const char *debug_dir = self->debug_dirs[i];
++           const char *build_id;
++@@ -360,6 +361,12 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
++               sysprof_elf_set_debug_link_elf (elf, get_deepest_debuglink (debug_link_elf));
++               return;
++             }
+++          shorter_debug_path = g_build_filename (directory_name, ".debug", debug_link, NULL);
+++          if ((debug_link_elf = sysprof_elf_loader_load (self, mount_namespace, shorter_debug_path, build_id, 0, NULL)))
+++            {
+++              sysprof_elf_set_debug_link_elf (elf, get_deepest_debuglink (debug_link_elf));
+++              return;
+++            }
++         }
++     }
++ 
+diff --git a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0006-build-Adjust-dependency-versions-in-meson-build-conf.patch b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0006-build-Adjust-dependency-versions-in-meson-build-conf.patch
+new file mode 100644
+index 0000000..9fa2f9e
+--- /dev/null
++++ b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0006-build-Adjust-dependency-versions-in-meson-build-conf.patch
+@@ -0,0 +1,43 @@
++From 6ffe5d73d7d8700706417ebdf4be3927a0619d81 Mon Sep 17 00:00:00 2001
++From: Pablo Saavedra <psaavedra@igalia.com>
++Date: Thu, 21 Aug 2025 14:04:31 +0200
++Subject: [PATCH] build: Adjust dependency versions in meson build
++ configuration
++
++* Update meson.build to lower dex and gtk version requirements
++  - Change gtk_req from 4.15 to 4.14
++* Modify src/sysprof/meson.build to adjust libadwaita version
++  - Change libadwaita-1 version requirement from 1.6.0 to 1.5.0
++
++Upstream-Status: Inappropriate
++---
++ meson.build             | 2 +-
++ src/sysprof/meson.build | 2 +-
++ 2 files changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/meson.build b/meson.build
++index 10f73bc..c2c7ef8 100644
++--- a/meson.build
+++++ b/meson.build
++@@ -47,7 +47,7 @@ need_libsysprof = (need_gtk or
++ 
++ dex_req = '0.9'
++ glib_req = '2.76.0'
++-gtk_req = '4.15'
+++gtk_req = '4.14'
++ polkit_req = '0.105'
++ 
++ dex_req_version = '>= @0@'.format(dex_req)
++diff --git a/src/sysprof/meson.build b/src/sysprof/meson.build
++index 62f3441..2be059e 100644
++--- a/src/sysprof/meson.build
+++++ b/src/sysprof/meson.build
++@@ -87,7 +87,7 @@ sysprof_resources = gnome.compile_resources('sysprof-resources', 'sysprof.gresou
++ sysprof_deps = [
++   cc.find_library('m', required: false),
++   dependency('gtk4', version: gtk_req_version),
++-  dependency('libadwaita-1', version: '>= 1.6.0'),
+++  dependency('libadwaita-1', version: '>= 1.5.0'),
++   dependency('libpanel-1', version: '>= 1.4'),
++ 
++   libsysprof_static_dep,
+diff --git a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0007-libsysprof-capture-Disallow-unloading-the-capture-li.patch b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0007-libsysprof-capture-Disallow-unloading-the-capture-li.patch
+new file mode 100644
+index 0000000000..8c81011a18
+--- /dev/null
++++ b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0007-libsysprof-capture-Disallow-unloading-the-capture-li.patch
+@@ -0,0 +1,58 @@
++From e712ba35dc14e83bebde401720ec5cca894a2e82 Mon Sep 17 00:00:00 2001
++From: "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>
++Date: Thu, 28 Aug 2025 00:18:01 +0200
++Subject: [PATCH] libsysprof-capture: Disallow unloading the capture library
++
++When a shared library with a built-in libsysprof-capture gets unloaded,
++the `sysprof_collector_free` function which was registered as a TSD
++destructor with `pthread_key_create` will also vanish, causing crashes
++when threads terminate.
++
++See: https://gitlab.freedesktop.org/mesa/mesa/-/issues/13571
++---
++ src/libsysprof-capture/meson.build | 8 ++++++++
++ 1 file changed, 8 insertions(+)
++
++diff --git a/src/libsysprof-capture/meson.build b/src/libsysprof-capture/meson.build
++index 828b8ed2..7a06ed25 100644
++--- a/src/libsysprof-capture/meson.build
+++++ b/src/libsysprof-capture/meson.build
++@@ -48,6 +48,11 @@ libsysprof_capture_deps = [
++   dependency('threads'),
++ ]
++ 
+++libsysprof_capture_link_args = []
+++if cc.has_link_argument('-Wl,-z,nodelete')
+++  libsysprof_capture_link_args += ['-Wl,-z,nodelete']
+++endif
+++
++ libsysprof_capture = static_library(
++   'sysprof-capture-@0@'.format(libsysprof_capture_api_version),
++   (libsysprof_capture_sources +
++@@ -55,6 +60,7 @@ libsysprof_capture = static_library(
++ 
++            dependencies: libsysprof_capture_deps,
++                  c_args: [ '-DSYSPROF_CAPTURE_COMPILATION' ],
+++              link_args: libsysprof_capture_link_args,
++                 install: install_static,
++   gnu_symbol_visibility: 'hidden',
++                     pic: true,
++@@ -66,6 +72,7 @@ libsysprof_capture_dep = declare_dependency(
++            link_whole: libsysprof_capture,
++          dependencies: libsysprof_capture_deps,
++   include_directories: libsysprof_capture_include_dirs,
+++            link_args: libsysprof_capture_link_args,
++ )
++ meson.override_dependency('sysprof-capture-@0@'.format(libsysprof_capture_api_version), libsysprof_capture_dep)
++ 
++@@ -75,6 +82,7 @@ if install_static
++         subdirs: [ sysprof_header_subdir ],
++     description: 'The static capture library for tools that generate profiling capture data',
++       variables: [ 'datadir=' + datadir_for_pc_file ],
+++    libraries: libsysprof_capture_link_args,
++     libraries_private: libsysprof_capture_deps,
++   )
++ endif
++-- 
++2.39.5
++
+diff --git a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof_3.44.0.bb b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof_3.44.0.bb
+deleted file mode 100644
+index 3523bad..0000000
 --- a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof_3.44.0.bb
-+++ b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof_3.48.0.bb
-@@ -14,19 +14,24 @@ DEPENDS += " \
-     json-glib \
- "
- 
++++ /dev/null
+@@ -1,43 +0,0 @@
+-SUMMARY = "System-wide Performance Profiler for Linux"
+-HOMEPAGE = "http://www.sysprof.com"
+-LICENSE = "GPL-3.0-or-later"
+-LIC_FILES_CHKSUM = "file://COPYING;md5=d32239bcb673463ab874e80d47fae504 \
+-                    file://src/sysprof/sysprof-application.c;endline=17;md5=a3de8df3b0f8876dd01e1388d2d4b607"
+-
+-inherit gnomebase gnome-help gettext systemd upstream-version-is-even gsettings mime mime-xdg
+-
+-DEPENDS += " \
+-    glib-2.0-native \
+-    yelp-tools-native \
+-    libxml2-native \
+-    glib-2.0 \
+-    json-glib \
+-"
+-
 -SRC_URI += "file://0001-meson-Check-for-libunwind-instead-of-libunwind-gener.patch"
 -SRC_URI[archive.sha256sum] = "ab5d9f5b71973b3088d58a1bfdf1dc23c39a02f5fce4e5e9c73e034b178b005b"
-+SRC_URI += "file://0001-meson-Check-for-libunwind-instead-of-libunwind-gener.patch \
-+            file://0002-meson-Do-not-invoke-the-commands-to-update-the-icon-.patch "
-+SRC_URI[archive.sha256sum] = "07d9081a66cf2fb52753f48ff2b85ada75c60ff1bc1af1bd14d8aeb627972168"
- 
+-
 -PACKAGECONFIG ?= "${@bb.utils.contains('DISTRO_FEATURES', 'polkit', 'sysprofd libsysprof', '', d)} \
-+PACKAGECONFIG ?= "${@bb.utils.contains('DISTRO_FEATURES', 'polkit', 'sysprofd', '', d)} \
-                   ${@bb.utils.contains_any('DISTRO_FEATURES', '${GTK3DISTROFEATURES}', 'gtk', '', d)} \
+-                  ${@bb.utils.contains_any('DISTRO_FEATURES', '${GTK3DISTROFEATURES}', 'gtk', '', d)} \
 -                  libunwind"
-+                  agent \
-+                  libsysprof \
-+                  libunwind \
-+                  "
- # nongnu libunwind needs porting to RV32
- PACKAGECONFIG:remove:riscv32 = "libunwind"
- 
+-# nongnu libunwind needs porting to RV32
+-PACKAGECONFIG:remove:riscv32 = "libunwind"
+-
 -PACKAGECONFIG[gtk] = "-Denable_gtk=true,-Denable_gtk=false,gtk+3 libdazzle"
 -PACKAGECONFIG[sysprofd] = "-Dwith_sysprofd=bundled,-Dwith_sysprofd=none,polkit"
 -PACKAGECONFIG[libsysprof] = "-Dlibsysprof=true,-Dlibsysprof=false,polkit"
-+PACKAGECONFIG[gtk] = "-Dgtk=true,-Dgtk=false,gtk4 libadwaita"
+-PACKAGECONFIG[libunwind] = "-Dlibunwind=true,-Dlibunwind=false,libunwind"
+-
+-EXTRA_OEMESON += "-Dsystemdunitdir=${systemd_unitdir}/system"
+-
+-SOLIBS = ".so"
+-FILES_SOLIBSDEV = ""
+-
+-SYSTEMD_SERVICE:${PN} = "${@bb.utils.contains('PACKAGECONFIG', 'sysprofd', 'sysprof2.service sysprof3.service', '', d)}"
+-
+-FILES:${PN} += " \
+-    ${datadir}/dbus-1/system-services \
+-    ${datadir}/dbus-1/system.d \
+-    ${datadir}/dbus-1/interfaces \
+-    ${datadir}/metainfo \
+-"
+diff --git a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof_48.1.bb b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof_48.1.bb
+new file mode 100644
+index 0000000000..871ec35633
+--- /dev/null
++++ b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof_48.1.bb
+@@ -0,0 +1,55 @@
++SUMMARY = "System-wide Performance Profiler for Linux"
++HOMEPAGE = "http://www.sysprof.com"
++LICENSE = "GPL-3.0-or-later"
++LIC_FILES_CHKSUM = "file://COPYING;md5=d32239bcb673463ab874e80d47fae504 \
++                    file://src/sysprof/sysprof-application.c;endline=17;md5=a3de8df3b0f8876dd01e1388d2d4b607"
++
++inherit gnomebase gnome-help gettext systemd gsettings gtk-icon-cache mime mime-xdg features_check
++
++DEPENDS += " \
++    desktop-file-utils-native \
++    elfutils \
++    glib-2.0 \
++    glib-2.0-native \
++    json-glib \
++    libdex \
++    libunwind \
++    libxml2-native \
++    yelp-tools-native \
++"
++
++SRC_URI += "file://0001-meson-Check-for-libunwind-instead-of-libunwind-gener.patch \
++           file://0002-meson-Do-not-invoke-the-commands-to-update-the-icon-.patch \
++           file://0003-libsysprof-Check-for-unw_set_caching_policy-before-u.patch \
++           file://0004-sysprof-greeter-fix-environ-with-shadowing.patch \
++           file://0005-Make-elf-loader-search-for-debug-links-in-.debug-dir.patch \
++           file://0006-build-Adjust-dependency-versions-in-meson-build-conf.patch \
++           file://0007-libsysprof-capture-Disallow-unloading-the-capture-li.patch \
++           "
++SRC_URI[archive.sha256sum] = "54f157fdfef1edf1e2f22e542c462d90e1c21fca8c30eba4127cee739039bbe2"
++
++# reason: gtk4 requires opengl distro feature
++REQUIRED_DISTRO_FEATURES = "${@bb.utils.contains('PACKAGECONFIG', 'gtk', 'opengl', '', d)}"
++
++PACKAGECONFIG ?= "${@bb.utils.contains('DISTRO_FEATURES', 'polkit', 'sysprofd libsysprof', '', d)} \
++                  ${@bb.utils.contains_any('DISTRO_FEATURES', '${GTK3DISTROFEATURES}', 'gtk', '', d)} \
++                 "
++
++PACKAGECONFIG[gtk] = "-Dgtk=true,-Dgtk=false,gtk4 libpanel"
 +PACKAGECONFIG[sysprofd] = "-Dsysprofd=bundled,-Dsysprofd=none,polkit"
-+PACKAGECONFIG[libsysprof] = "-Dlibsysprof=true,-Dlibsysprof=false,json-glib"
- PACKAGECONFIG[libunwind] = "-Dlibunwind=true,-Dlibunwind=false,libunwind"
-+PACKAGECONFIG[agent] = "-Dagent=true,-Dagent=false,"
- 
- EXTRA_OEMESON += "-Dsystemdunitdir=${systemd_unitdir}/system"
- 
++PACKAGECONFIG[libsysprof] = "-Dlibsysprof=true,-Dlibsysprof=false,polkit"
++
++EXTRA_OEMESON += "-Dsystemdunitdir=${systemd_unitdir}/system"
++
++SOLIBS = ".so"
++FILES_SOLIBSDEV = "${libdir}/libsysprof-6.so"
++
++SYSTEMD_SERVICE:${PN} = "${@bb.utils.contains('PACKAGECONFIG', 'sysprofd', 'sysprof3.service', '', d)}"
++
++FILES:${PN} += " \
++    ${datadir}/dbus-1/system-services \
++    ${datadir}/dbus-1/system.d \
++    ${datadir}/dbus-1/interfaces \
++    ${datadir}/metainfo \
++    ${libdir}/libsysprof-6*.so.* \
++"
+diff --git a/sources/meta-webkit/recipes-browser/images/webkit-dev-ci-tools.bb b/sources/meta-webkit/recipes-browser/images/webkit-dev-ci-tools.bb
+index 4133ad7..2234c9b 100644
+--- a/sources/meta-webkit/recipes-browser/images/webkit-dev-ci-tools.bb
++++ b/sources/meta-webkit/recipes-browser/images/webkit-dev-ci-tools.bb
+@@ -83,7 +83,6 @@ IMAGE_INSTALL:append = " \
+     pv \
+     rsync \
+     screen \
+-    sysprof \
+     smem \
+     systemd-analyze \
+     unifdef \
+diff --git a/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bb b/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bb
+index 2b9b30f..d2c5fa6 100644
+--- a/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bb
++++ b/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bb
+@@ -132,6 +132,8 @@ RDEPENDS:packagegroup-wpewebkit-depends-core = "\
+     icu \
+     jpeg \
+     sqlite3 \
++    sysprof \
++    sysprof-staticdev \
+     zlib \
+     libpng \
+     libsoup \

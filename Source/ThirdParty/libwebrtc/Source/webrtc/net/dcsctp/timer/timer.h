@@ -10,9 +10,9 @@
 #ifndef NET_DCSCTP_TIMER_TIMER_H_
 #define NET_DCSCTP_TIMER_TIMER_H_
 
-#include <stdint.h>
 
 #include <algorithm>
+#include <cstdint>
 #include <functional>
 #include <map>
 #include <memory>
@@ -24,6 +24,7 @@
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
 #include "net/dcsctp/public/timeout.h"
+#include "net/dcsctp/public/types.h"
 #include "rtc_base/strong_alias.h"
 
 namespace dcsctp {

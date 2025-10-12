@@ -1,20 +1,6 @@
 
 PASS idl_test setup
-FAIL idl_test validation Validation error at line 2210 in html, inside `enum BinaryType`:
-enum BinaryType { "blob", "arraybuffer"
-     ^ The name "BinaryType" of type "enum" was already seen
-
-Validation error at line 2212 in html, inside `interface WebSocket`:
-interface WebSocket : EventTarget {
-          ^ The name "WebSocket" of type "interface" was already seen
-
-Validation error at line 2243 in html, inside `interface CloseEvent`:
-interface CloseEvent : Event {
-          ^ The name "CloseEvent" of type "interface" was already seen
-
-Validation error at line 2251 in html, inside `dictionary CloseEventInit`:
-dictionary CloseEventInit : EventInit {
-           ^ The name "CloseEventInit" of type "dictionary" was already seen
+PASS idl_test validation
 PASS WebSocket interface: existence and properties of interface object
 PASS WebSocket interface object length
 PASS WebSocket interface object name

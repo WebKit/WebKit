@@ -89,29 +89,34 @@
 #if ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
-#define JSC_ANNOTATE_JIT_OPERATION_EXTRAS(validateFunction) (void*)validateFunction
+#define JSC_ANNOTATE_JIT_OPERATION_EXTRAS(validateFunction) validateFunction
 #else
 #define JSC_ANNOTATE_JIT_OPERATION_EXTRAS(validateFunction)
 #endif
 
-#define JSC_ANNOTATE_JIT_OPERATION_INTERNAL(function) \
-    constexpr JSC::JITOperationAnnotation _JITTargetID_##function __attribute__((used, section("__DATA_CONST,__jsc_ops"))) = { (void*)function, JSC_ANNOTATE_JIT_OPERATION_EXTRAS(function##Validate) };
+#define JSC_ANNOTATE_JIT_OPERATION_INTERNAL(function, decltypeInfo) \
+    static_assert(sizeof(JSC::JITOperationAnnotationInitializer<decltypeInfo>) == sizeof(JSC::JITOperationAnnotation)); \
+    SUPPRESS_ASAN constexpr JSC::JITOperationAnnotationInitializer<decltypeInfo> _JITTargetID_##function __attribute__((used, section("__DATA_CONST,__jsc_ops"))) = { function, JSC_ANNOTATE_JIT_OPERATION_EXTRAS(function##Validate) };
 
 #define JSC_ANNOTATE_JIT_OPERATION(function) \
+    JSC_ANNOTATE_JIT_OPERATION_WITH_DECLTYPE_INFO(function, decltype(function))
+
+#define JSC_ANNOTATE_JIT_OPERATION_WITH_DECLTYPE_INFO(function, decltypeInfo) \
     JSC_DECLARE_AND_DEFINE_JIT_OPERATION_VALIDATION(function); \
-    JSC_ANNOTATE_JIT_OPERATION_INTERNAL(function)
+    JSC_ANNOTATE_JIT_OPERATION_INTERNAL(function, decltypeInfo)
 
 #define JSC_ANNOTATE_JIT_OPERATION_PROBE(function) \
     JSC_DECLARE_AND_DEFINE_JIT_OPERATION_PROBE_VALIDATION(function); \
-    JSC_ANNOTATE_JIT_OPERATION_INTERNAL(function)
+    JSC_ANNOTATE_JIT_OPERATION_INTERNAL(function, decltype(function))
 
 #define JSC_ANNOTATE_JIT_OPERATION_RETURN(function) \
     JSC_DECLARE_AND_DEFINE_JIT_OPERATION_RETURN_VALIDATION(function); \
-    JSC_ANNOTATE_JIT_OPERATION_INTERNAL(function)
+    JSC_ANNOTATE_JIT_OPERATION_INTERNAL(function, decltype(function))
 
 #else // not (ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY))
 
 #define JSC_ANNOTATE_JIT_OPERATION(function)
+#define JSC_ANNOTATE_JIT_OPERATION_WITH_DECLTYPE_INFO(function, decltypeInfo)
 #define JSC_ANNOTATE_JIT_OPERATION_PROBE(function)
 #define JSC_ANNOTATE_JIT_OPERATION_RETURN(function)
 
@@ -121,7 +126,7 @@
     returnType JIT_OPERATION_ATTRIBUTES functionName parameters
 
 #define JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES_IMPL(functionName, attributes, returnType, parameters) \
-    JSC_ANNOTATE_JIT_OPERATION(functionName); \
+    JSC_ANNOTATE_JIT_OPERATION_WITH_DECLTYPE_INFO(functionName, returnType parameters); \
     attributes returnType JIT_OPERATION_ATTRIBUTES functionName parameters
 
 #define JSC_DEFINE_JIT_OPERATION_IMPL(functionName, returnType, parameters) \

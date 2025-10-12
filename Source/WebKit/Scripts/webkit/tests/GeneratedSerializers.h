@@ -28,6 +28,13 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
+#if USE(CF)
+#ifdef __swift__
+#include <Security/SecTrust.h>
+#else
+typedef struct CF_BRIDGED_TYPE(id) __SecTrust *SecTrustRef;
+#endif
+#endif
 
 namespace EnumNamespace {
 #if ENABLE(BOOL_ENUM)

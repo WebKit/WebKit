@@ -67,12 +67,12 @@ void JSGlobalObjectDebugger::runEventLoopWhilePaused()
     JSC::JSLock::DropAllLocks dropAllLocks(&m_globalObject.vm());
 
     while (!m_doneProcessingDebuggerEvents) {
-        if (RunLoop::cycle(JSGlobalObjectDebugger::runLoopMode()) == RunLoop::CycleResult::Stop)
+        if (RunLoop::cycle(JSGlobalObjectDebugger::runLoopModeSingleton()) == RunLoop::CycleResult::Stop)
             break;
     }
 }
 
-RunLoopMode JSGlobalObjectDebugger::runLoopMode()
+RunLoopMode JSGlobalObjectDebugger::runLoopModeSingleton()
 {
 #if USE(CF) && !PLATFORM(WATCHOS)
     // Run the RunLoop in a custom run loop mode to prevent default observers

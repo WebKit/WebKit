@@ -77,11 +77,11 @@ inline StringTypeAdapter<WKStringRef>::StringTypeAdapter(WKStringRef string)
 {
 }
 
-template<> inline void StringTypeAdapter<WKStringRef>::writeTo<LChar>(std::span<LChar>) const
+template<> inline void StringTypeAdapter<WKStringRef>::writeTo<Latin1Character>(std::span<Latin1Character>) const
 {
 }
 
-template<> inline void StringTypeAdapter<WKStringRef>::writeTo<UChar>(std::span<UChar> destination) const
+template<> inline void StringTypeAdapter<WKStringRef>::writeTo<char16_t>(std::span<char16_t> destination) const
 {
     if (m_string)
         WKStringGetCharacters(m_string, reinterpret_cast<WKChar*>(destination.data()), WKStringGetLength(m_string));
@@ -231,8 +231,8 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, // didFirstLayoutForFrame
         0, // didFirstVisuallyNonEmptyLayoutForFrame
         0, // didRemoveFrameFromHierarchy
-        didDisplayInsecureContentForFrame,
-        didRunInsecureContentForFrame,
+        0, // didDisplayInsecureContentForFrame
+        0, // didRunInsecureContentForFrame
         didClearWindowForFrame,
         didCancelClientRedirectForFrame,
         willPerformClientRedirectForFrame,
@@ -457,16 +457,6 @@ void InjectedBundlePage::didHandleOnloadEventsForFrame(WKBundlePageRef page, WKB
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didHandleOnloadEventsForFrame(frame);
 }
 
-void InjectedBundlePage::didDisplayInsecureContentForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)
-{
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didDisplayInsecureContentForFrame(frame);
-}
-
-void InjectedBundlePage::didRunInsecureContentForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)
-{
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didRunInsecureContentForFrame(frame);
-}
-
 void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, bool pageLoadIsProvisional, const void* clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didInitiateLoadForResource(page, frame, identifier, request, pageLoadIsProvisional);
@@ -645,7 +635,7 @@ void InjectedBundlePage::dumpDOMAsWebArchive(WKBundleFrameRef frame, StringBuild
 #endif
 }
 
-void InjectedBundlePage::dump(bool forceRepaint)
+void InjectedBundlePage::dump()
 {
     auto& injectedBundle = InjectedBundle::singleton();
     RefPtr testRunner = injectedBundle.testRunner();
@@ -654,7 +644,7 @@ void InjectedBundlePage::dump(bool forceRepaint)
         return;
     }
 
-    if (forceRepaint) {
+    if (injectedBundle.shouldForceRepaint()) {
         // Force a paint before dumping. This matches DumpRenderTree on Windows. (DumpRenderTree on Mac
         // does this at a slightly different time.) See <http://webkit.org/b/55469> for details.
         WKBundlePageForceRepaint(m_page);
@@ -676,7 +666,7 @@ void InjectedBundlePage::dump(bool forceRepaint)
 
     switch (testRunner->whatToDump()) {
     case WhatToDump::RenderTree: {
-        if (testRunner->isPrinting())
+        if (injectedBundle.isPrinting())
             stringBuilder.append(adoptWK(WKBundlePageCopyRenderTreeExternalRepresentationForPrinting(m_page)).get());
         else
             stringBuilder.append(adoptWK(WKBundlePageCopyRenderTreeExternalRepresentation(m_page, testRunner->renderTreeDumpOptions())).get());
@@ -709,14 +699,14 @@ void InjectedBundlePage::dump(bool forceRepaint)
         injectedBundle.dumpBackForwardListsForAllPages(stringBuilder);
 
     if (injectedBundle.shouldDumpPixels() && testRunner->shouldDumpPixels()) {
-        bool shouldCreateSnapshot = testRunner->isPrinting();
+        bool shouldCreateSnapshot = injectedBundle.isPrinting();
         if (shouldCreateSnapshot) {
             WKSnapshotOptions options = kWKSnapshotOptionsShareable;
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             WKRect snapshotRect = WKBundleFrameGetVisibleContentBounds(WKBundlePageGetMainFrame(m_page));
             ALLOW_DEPRECATED_DECLARATIONS_END
 
-            if (testRunner->isPrinting())
+            if (injectedBundle.isPrinting())
                 options |= kWKSnapshotOptionsPrinting;
             else {
                 options |= kWKSnapshotOptionsInViewCoordinates;
@@ -728,12 +718,12 @@ void InjectedBundlePage::dump(bool forceRepaint)
         } else
             injectedBundle.setPixelResultIsPending(true);
 
-        if (WKBundlePageIsTrackingRepaints(m_page) && !testRunner->isPrinting())
+        if (WKBundlePageIsTrackingRepaints(m_page) && !injectedBundle.isPrinting())
             injectedBundle.setRepaintRects(adoptWK(WKBundlePageCopyTrackedRepaintRects(m_page)).get());
     }
 
     injectedBundle.outputText(stringBuilder.toString(), InjectedBundle::IsFinalTestOutput::Yes);
-    injectedBundle.done(forceRepaint);
+    injectedBundle.done();
 }
 
 void InjectedBundlePage::didFinishLoadForFrame(WKBundleFrameRef frame)
@@ -864,27 +854,6 @@ void InjectedBundlePage::didHandleOnloadEventsForFrame(WKBundleFrameRef frame)
         dumpLoadEvent(frame, "didHandleOnloadEventsForFrame"_s);
 }
 
-void InjectedBundlePage::didDisplayInsecureContentForFrame(WKBundleFrameRef)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    RefPtr testRunner = injectedBundle.testRunner();
-    if (!testRunner)
-        return;
-    if (testRunner->shouldDumpFrameLoadCallbacks())
-        injectedBundle.outputText("didDisplayInsecureContent\n"_s);
-}
-
-void InjectedBundlePage::didRunInsecureContentForFrame(WKBundleFrameRef)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    RefPtr testRunner = injectedBundle.testRunner();
-    if (!testRunner)
-        return;
-
-    if (testRunner->shouldDumpFrameLoadCallbacks())
-        injectedBundle.outputText("didRunInsecureContent\n"_s);
-}
-
 void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef request, bool)
 {
     if (!InjectedBundle::singleton().isTestRunning())
@@ -963,7 +932,10 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
             replace(blockedURL, JSC::Yarr::RegularExpression("%253Fkey%253D[-0123456789abcdefABCDEF]+"_s), "%253Fkey%253DGENERATED_KEY"_s);
             replace(blockedURL, JSC::Yarr::RegularExpression("%2526key%253D[-0123456789abcdefABCDEF]+"_s), "%2526key%253DGENERATED_KEY"_s);
             replace(blockedURL, JSC::Yarr::RegularExpression("reportID=[-0123456789abcdefABCDEF]+"_s), "reportID=GENERATED_REPORT_ID"_s);
-            injectedBundle.outputText(makeString("Blocked access to external URL "_s, blockedURL, '\n'));
+            auto script = makeString("console.log('Blocked access to external URL "_s, blockedURL, "');"_s);
+            auto scriptRef = adopt(JSStringCreateWithUTF8CString(script.utf8().data()));
+            JSGlobalContextRef jsContext = WKBundleFrameGetJavaScriptContext(frame);
+            JSEvaluateScript(jsContext, scriptRef.get(), 0, 0, 0, 0);
             return nullptr;
         }
     }
@@ -1345,7 +1317,7 @@ static void dumpAfterWaitAttributeIsRemoved(WKBundlePageRef page)
     if (!testRunner)
         return;
     if (auto currentPage = bundle.page(); currentPage && currentPage->page() == page)
-        currentPage->dump(testRunner->shouldForceRepaint());
+        currentPage->dump();
 }
 
 void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
@@ -1377,7 +1349,7 @@ void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
 
     auto page = InjectedBundle::singleton().page();
     if (!page) {
-        injectedBundle.done(testRunner->shouldForceRepaint());
+        injectedBundle.done();
         return;
     }
 
@@ -1397,10 +1369,7 @@ void InjectedBundlePage::notifyDone()
 
 void InjectedBundlePage::forceImmediateCompletion()
 {
-    RefPtr testRunner = InjectedBundle::singleton().testRunner();
-    if (!testRunner)
-        return;
-    dump(testRunner->shouldForceRepaint());
+    dump();
 }
 
 } // namespace WTR

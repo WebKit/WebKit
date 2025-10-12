@@ -12,23 +12,23 @@
 #define RTC_BASE_EVENT_H_
 
 #include "api/units/time_delta.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/synchronization/yield_policy.h"
 
 #if defined(WEBRTC_WIN)
 #include <windows.h>
 #elif defined(WEBRTC_POSIX)
-#include <pthread.h>
+#include <pthread.h>  // IWYU pragma: keep
 #else
 #error "Must define either WEBRTC_WIN or WEBRTC_POSIX."
 #endif
 
-#include "rtc_base/synchronization/yield_policy.h"
-
-namespace rtc {
+namespace webrtc {
 
 // RTC_DISALLOW_WAIT() utility
 //
-// Sets a stack-scoped flag that disallows use of `rtc::Event::Wait` by means
-// of raising a DCHECK when a call to `rtc::Event::Wait()` is made..
+// Sets a stack-scoped flag that disallows use of `Event::Wait` by means
+// of raising a DCHECK when a call to `Event::Wait()` is made..
 // This is useful to guard synchronization-free scopes against regressions.
 //
 // Example of what this would catch (`ScopeToProtect` calls `Foo`):
@@ -56,10 +56,8 @@ namespace rtc {
 class Event {
  public:
   // TODO(bugs.webrtc.org/14366): Consider removing this redundant alias.
-  static constexpr webrtc::TimeDelta kForever =
-      webrtc::TimeDelta::PlusInfinity();
-  static constexpr webrtc::TimeDelta kDefaultWarnDuration =
-      webrtc::TimeDelta::Seconds(3);
+  static constexpr TimeDelta kForever = TimeDelta::PlusInfinity();
+  static constexpr TimeDelta kDefaultWarnDuration = TimeDelta::Seconds(3);
 
   Event();
   Event(bool manual_reset, bool initially_signaled);
@@ -80,10 +78,10 @@ class Event {
   //
   // Returns true if the event was signaled, false if there was a timeout or
   // some other error.
-  bool Wait(webrtc::TimeDelta give_up_after, webrtc::TimeDelta warn_after);
+  bool Wait(TimeDelta give_up_after, TimeDelta warn_after);
 
   // Waits with the given timeout and a reasonable default warning timeout.
-  bool Wait(webrtc::TimeDelta give_up_after) {
+  bool Wait(TimeDelta give_up_after) {
     return Wait(give_up_after, give_up_after.IsPlusInfinity()
                                    ? kDefaultWarnDuration
                                    : kForever);
@@ -101,7 +99,7 @@ class Event {
 };
 
 // These classes are provided for compatibility with Chromium.
-// The rtc::Event implementation is overriden inside of Chromium for the
+// The Event implementation is overriden inside of Chromium for the
 // purposes of detecting when threads are blocked that shouldn't be as well as
 // to use the more accurate event implementation that's there than is provided
 // by default on some platforms (e.g. Windows).
@@ -130,10 +128,11 @@ class ScopedDisallowWait {
    public:
     void YieldExecution() override { RTC_DCHECK_NOTREACHED(); }
   } handler_;
-  rtc::ScopedYieldPolicy policy{&handler_};
+  ScopedYieldPolicy policy{&handler_};
 };
 #endif
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_EVENT_H_

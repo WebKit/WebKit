@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unable to do meta refresh due to sandboxing
 
 PASS Meta refresh of the original iframe is not blocked if moved into a sandboxed iframe
 

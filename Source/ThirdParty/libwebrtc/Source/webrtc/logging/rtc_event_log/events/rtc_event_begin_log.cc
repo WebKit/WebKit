@@ -36,7 +36,7 @@ RtcEventBeginLog::RtcEventBeginLog(const RtcEventBeginLog& other)
 
 RtcEventBeginLog::~RtcEventBeginLog() = default;
 
-std::string RtcEventBeginLog::Encode(rtc::ArrayView<const RtcEvent*> batch) {
+std::string RtcEventBeginLog::Encode(ArrayView<const RtcEvent*> batch) {
   EventEncoder encoder(event_params_, batch);
 
   encoder.EncodeField(
@@ -55,12 +55,12 @@ RtcEventLogParseStatus RtcEventBeginLog::Parse(
   if (!status.ok())
     return status;
 
-  rtc::ArrayView<LoggedStartEvent> output_batch =
+  ArrayView<LoggedStartEvent> output_batch =
       ExtendLoggedBatch(output, parser.NumEventsInBatch());
 
   constexpr FieldParameters timestamp_params{
       "timestamp_ms", FieldParameters::kTimestampField, FieldType::kVarInt, 64};
-  RtcEventLogParseStatusOr<rtc::ArrayView<uint64_t>> result =
+  RtcEventLogParseStatusOr<ArrayView<uint64_t>> result =
       parser.ParseNumericField(timestamp_params);
   if (!result.ok())
     return result.status();

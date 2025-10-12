@@ -24,12 +24,10 @@
 
 #pragma once
 
-namespace WebCore {
+#include <WebCore/StyleValueTypes.h>
+#include <WebCore/TimingFunction.h>
 
-class CSSToLengthConversionData;
-class CSSValue;
-class RenderStyle;
-class TimingFunction;
+namespace WebCore {
 
 namespace CSS {
 struct EasingFunction;
@@ -37,13 +35,34 @@ struct EasingFunction;
 
 namespace Style {
 
-CSS::EasingFunction toCSSEasingFunction(const TimingFunction&, const RenderStyle&);
+// <easing-function> = linear | <cubic-bezier-easing-function> | <step-easing-function>
+// https://www.w3.org/TR/css-easing-1/#typedef-easing-function
+struct EasingFunction {
+    Ref<TimingFunction> value;
 
-Ref<TimingFunction> createTimingFunction(const CSS::EasingFunction&, const CSSToLengthConversionData&);
+    bool operator==(const EasingFunction& other) const
+    {
+        return arePointingToEqualData(value, other.value);
+    }
+};
+
+// MARK: - Deprecated Conversions
+
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::EasingFunction&);
-
-RefPtr<TimingFunction> createTimingFunction(const CSSValue&, const CSSToLengthConversionData&);
 RefPtr<TimingFunction> createTimingFunctionDeprecated(const CSSValue&);
+
+// MARK: - Conversion
+
+template<> struct CSSValueConversion<EasingFunction> { auto operator()(BuilderState&, const CSSValue&) -> EasingFunction; };
+template<> struct CSSValueCreation<EasingFunction> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const EasingFunction&); };
+
+// MARK: - Serialization
+
+template<> struct Serialize<EasingFunction> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const EasingFunction&); };
+
+// MARK: - Logging
+
+TextStream& operator<<(TextStream&, const EasingFunction&);
 
 } // namespace Style
 } // namespace WebCore

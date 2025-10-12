@@ -29,6 +29,7 @@
             {
                 debug("*** stream2 is active again");
                 shouldBe('stream2.active', 'true');
+                stream.getTracks().forEach(track => track.stop());
                 finishJSTest();
             }
 

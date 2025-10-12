@@ -284,7 +284,7 @@ private:
     Vector<uint32_t> m_knownIds WTF_GUARDED_BY_LOCK(m_lock);
 };
 
-std::optional<int> payloadTypeForEncodingName(StringView encodingName);
+std::optional<int> payloadTypeForEncodingName(const String& encodingName);
 
 WARN_UNUSED_RETURN GRefPtr<GstCaps> capsFromRtpCapabilities(const RTCRtpCapabilities&, Function<void(GstStructure*)> supplementCapsCallback);
 
@@ -307,7 +307,7 @@ inline void unmapRtpBuffer(GstBuffer*, GstRTPBuffer* rtpBuffer)
 using GstMappedRtpBuffer = GstBufferMapper<GstRTPBuffer, mapRtpBuffer, unmapRtpBuffer>;
 
 class StatsTimestampConverter {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StatsTimestampConverter);
     WTF_MAKE_NONCOPYABLE(StatsTimestampConverter);
     friend NeverDestroyed<StatsTimestampConverter>;
 
@@ -348,6 +348,8 @@ String sdpAsString(const GstSDPMessage*);
 bool sdpMediaHasRTPHeaderExtension(const GstSDPMedia*, const String&);
 
 WARN_UNUSED_RETURN GRefPtr<GstCaps> extractMidAndRidFromRTPBuffer(const GstMappedRtpBuffer&, const GstSDPMessage*);
+
+bool validateRTPHeaderExtensions(const GstSDPMessage* previousSDP, const GstSDPMessage* newSDP);
 
 } // namespace WebCore
 

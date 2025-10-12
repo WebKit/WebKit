@@ -1662,6 +1662,11 @@ void ScalePlaneVertical(int src_height,
     }
   }
 #endif
+#if defined(HAS_INTERPOLATEROW_SME)
+  if (TestCpuFlag(kCpuHasSME)) {
+    InterpolateRow = InterpolateRow_SME;
+  }
+#endif
 #if defined(HAS_INTERPOLATEROW_MSA)
   if (TestCpuFlag(kCpuHasMSA)) {
     InterpolateRow = InterpolateRow_Any_MSA;
@@ -1755,6 +1760,11 @@ void ScalePlaneVertical_16(int src_height,
     }
   }
 #endif
+#if defined(HAS_INTERPOLATEROW_16_SME)
+  if (TestCpuFlag(kCpuHasSME)) {
+    InterpolateRow = InterpolateRow_16_SME;
+  }
+#endif
   for (j = 0; j < dst_height; ++j) {
     int yi;
     int yf;
@@ -1809,6 +1819,11 @@ void ScalePlaneVertical_16To8(int src_height,
     if (IS_ALIGNED(dst_width, 8)) {
       InterpolateRow_16To8 = InterpolateRow_16To8_NEON;
     }
+  }
+#endif
+#if defined(HAS_INTERPOLATEROW_16TO8_SME)
+  if (TestCpuFlag(kCpuHasSME)) {
+    InterpolateRow_16To8 = InterpolateRow_16To8_SME;
   }
 #endif
 #if defined(HAS_INTERPOLATEROW_16TO8_AVX2)

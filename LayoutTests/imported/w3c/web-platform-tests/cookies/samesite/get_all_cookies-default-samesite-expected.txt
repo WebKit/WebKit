@@ -1,3 +1,3 @@
 
-FAIL Get all cookies w/ default SameSite promise_test: Unhandled rejection with value: object "Error: get_all_cookies() is not implemented by testdriver-vendor.js"
+FAIL Get all cookies w/ default SameSite assert_equals: expected "Lax" but got "None"
 

@@ -54,10 +54,30 @@ class RuleBasedCollator;
  * @stable ICU 2.2
  */
 enum URBNFRuleSetTag {
+    /**
+     * Requests predefined ruleset for spelling out numeric values in words.
+     * @stable ICU 2.2
+     */
     URBNF_SPELLOUT,
+    /**
+     * Requests predefined ruleset for the ordinal form of a number.
+     * @stable ICU 2.2
+     */
     URBNF_ORDINAL,
+#ifndef U_HIDE_DEPRECATED_API
+    /**
+     * Requests predefined ruleset for formatting a value as a duration in hours, minutes, and seconds.
+     * @deprecated ICU 74 Use MeasureFormat instead.
+     */
     URBNF_DURATION,
-    URBNF_NUMBERING_SYSTEM,
+#endif // U_HIDE_DERECATED_API
+    /**
+     * Requests predefined ruleset for various non-place-value numbering systems.
+     * WARNING: The same resource contains rule sets for a variety of different numbering systems.
+     * You need to call setDefaultRuleSet() on the formatter to choose the actual numbering system.
+     * @stable ICU 2.2
+     */
+    URBNF_NUMBERING_SYSTEM = 3,
 #ifndef U_HIDE_DEPRECATED_API
     /**
      * One more than the highest normal URBNFRuleSetTag value.
@@ -591,7 +611,7 @@ public:
      * rule sets.  Each of these is one longer than the initial array,
      * with the first String being the ULocale ID, and the remaining
      * Strings being the localizations of the rule set names, in the
-     * same order as the initial array.  Arrays are NULL-terminated.
+     * same order as the initial array.  Arrays are nullptr-terminated.
      * @param rules A description of the formatter's desired behavior.
      * See the class documentation for a complete explanation of the description
      * syntax.
@@ -635,7 +655,7 @@ public:
      * rule sets.  Each of these is one longer than the initial array,
      * with the first String being the ULocale ID, and the remaining
      * Strings being the localizations of the rule set names, in the
-     * same order as the initial array.  Arrays are NULL-terminated.
+     * same order as the initial array.  Arrays are nullptr-terminated.
      * @param rules A description of the formatter's desired behavior.
      * See the class documentation for a complete explanation of the description
      * syntax.
@@ -662,6 +682,9 @@ public:
    * URBNF_DURATION, which formats a duration in seconds as hours, minutes, and seconds always rounding down,
    * and URBNF_NUMBERING_SYSTEM, which is used to invoke rules for alternate numbering
    * systems such as the Hebrew numbering system, or for Roman Numerals, etc.
+   * NOTE: If you use URBNF_NUMBERING_SYSTEM, you must also call setDefaultRuleSet() to
+   * specify the exact numbering system you want to use.  If you want the default numbering system
+   * for the locale, call NumberFormat::createInstance() instead of creating a RuleBasedNumberFormat directly.
    * @param locale The locale for the formatter.
    * @param status The status indicating whether the constructor succeeded.
    * @stable ICU 2.0
@@ -1040,9 +1063,9 @@ public:
     virtual void setDecimalFormatSymbols(const DecimalFormatSymbols& symbols);
 
 private:
-    RuleBasedNumberFormat(); // default constructor not implemented
+    RuleBasedNumberFormat() = delete; // default constructor not implemented
 
-    // this will ref the localizations if they are not NULL
+    // this will ref the localizations if they are not nullptr
     // caller must deref to get adoption
     RuleBasedNumberFormat(const UnicodeString& description, LocalizationInfo* localizations,
               const Locale& locale, UParseError& perror, UErrorCode& status);

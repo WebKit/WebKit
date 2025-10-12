@@ -24,4 +24,9 @@ PASS Compositing: property <max-height> underlying [100px] from add [100px] to a
 PASS Compositing: property <max-height> underlying [100px] from add [100px] to add [none] at (0.5) should be [none]
 PASS Compositing: property <max-height> underlying [100px] from add [100px] to add [none] at (1) should be [none]
 PASS Compositing: property <max-height> underlying [100px] from add [100px] to add [none] at (1.5) should be [none]
+PASS Compositing: property <max-height> underlying [100px] from add [min-content] to add [100px] at (-0.3) should be [min-content]
+PASS Compositing: property <max-height> underlying [100px] from add [min-content] to add [100px] at (0) should be [min-content]
+PASS Compositing: property <max-height> underlying [100px] from add [min-content] to add [100px] at (0.5) should be [200px]
+PASS Compositing: property <max-height> underlying [100px] from add [min-content] to add [100px] at (1) should be [200px]
+PASS Compositing: property <max-height> underlying [100px] from add [min-content] to add [100px] at (1.5) should be [200px]
 

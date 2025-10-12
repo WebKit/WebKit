@@ -44,6 +44,8 @@ from io import BytesIO
  TEST_RUN_FAILURE,
  TEST_RUN_INCOMPLETE) = list(range(4))
 
+SETUP_SUBTEST_STR = 'beforeAll'
+SHUTDOWN_FAILED_STR = 'afterAll'
 
 class TestTimeout(Exception):
     pass
@@ -236,6 +238,12 @@ class GLibTestRunner(object):
         self._subtest = None
         self._subtest_messages = []
 
+    def _is_failure_return_code(self, code):
+        # 0 on success, 1 on failure (assuming it returns at all),
+        # 0 or 77 if all tests were skipped or marked as incomplete
+        # See https://gitlab.gnome.org/GNOME/glib/-/blob/main/glib/gtestutils.c#L2361
+        return code not in (0, 77)
+
     def run(self, subtests=[], skipped=[], env=None):
         pipe_r, pipe_w = os.pipe()
         command = [self._test_binary, '--quiet', '--keep-going', '--GTestLogFD=%d' % pipe_w]
@@ -243,8 +251,12 @@ class GLibTestRunner(object):
             command.append('--GTestSkipCount=%d' % len(self._results))
         if self._wpe_legacy_api:
             command.append('--wpe-legacy-api')
-        for subtest in subtests:
-            command.extend(['-p', subtest])
+        if not any(s in subtests for s in [SETUP_SUBTEST_STR, SHUTDOWN_FAILED_STR]):
+            # Only allow to run the requested subtests if that list doesn't contain the special *_STR subtests,
+            # which are understood by this python runner, but not by the glib binary runner, so it may cause that
+            # it reports zero tests as failing or running because it ran zero, which can confuse EWS bots.
+            for subtest in subtests:
+                command.extend(['-p', subtest])
         for skip in skipped:
             command.extend(['-s', skip])
 
@@ -272,19 +284,19 @@ class GLibTestRunner(object):
             need_restart = True
 
         # Check for errors before any test is run
-        if not self._results and p.returncode != 0:
+        if not self._results and self._is_failure_return_code(p.returncode):
             errors = self._read_from_stderr(self._stderr_fd)
             sys.stdout.write('Test program setup failed.\n')
             self._subtest_stderr(errors)
-            self._results['beforeAll'] = 'CRASH'
+            self._results[SETUP_SUBTEST_STR] = 'CRASH'
             return self._results
 
         # Try to read errors from afterAll
-        if p.returncode != 0 and not need_restart:
+        if self._is_failure_return_code(p.returncode) and not need_restart:
             errors = self._read_from_stderr(self._stderr_fd)
             sys.stdout.write('Test program shutdown failed.')
             self._subtest_stderr(errors)
-            self._results['afterAll'] = 'CRASH'
+            self._results[SHUTDOWN_FAILED_STR] = 'CRASH'
             return self._results
 
         if len(self._results) == 0:

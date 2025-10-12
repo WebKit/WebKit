@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,11 @@ SimpleRange::SimpleRange(BoundaryPoint&& start, BoundaryPoint&& end)
     : start(WTFMove(start))
     , end(WTFMove(end))
 {
+}
+
+String SimpleRange::debugDescription() const
+{
+    return makeString("{start: "_s, start.debugDescription(), ", end: "_s, end.debugDescription(), '}');
 }
 
 WeakSimpleRange::WeakSimpleRange(const WeakBoundaryPoint& start, const WeakBoundaryPoint& end)
@@ -131,7 +136,7 @@ void IntersectingNodeIterator::advance()
 
 void IntersectingNodeIterator::advanceSkippingChildren()
 {
-    auto node = protectedNode();
+    RefPtr node = m_node;
     ASSERT(node);
     m_node = node->contains(m_pastLastNode.get()) ? nullptr : NodeTraversal::nextSkippingChildren(*node);
     enforceEndInvariant();

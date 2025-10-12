@@ -355,6 +355,21 @@ enum AV1ConfigurationRange {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
+    JSGenerateToNativeObject
+] dictionary WebDriverCookieData {
+    DOMString name;
+    DOMString value;
+    DOMString path;
+    DOMString domain;
+    boolean secure;
+    boolean httpOnly;
+    double? expiry;
+    DOMString sameSite;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
 ] dictionary TextIndicatorInfo {
     DOMRectReadOnly textBoundingRectInRootViewCoordinates;
     DOMRectList textRectsInBoundingRectCoordinates;
@@ -586,6 +601,7 @@ enum ContentsFormat {
     DOMString markerDescriptionForNode(Node node, DOMString markerType, unsigned long index);
     DOMString dumpMarkerRects(DOMString markerType);
     undefined setMarkedTextMatchesAreHighlighted(boolean flag);
+    ImageData snapshotNode(Node node);
 
     undefined invalidateFontCache();
 
@@ -872,8 +888,6 @@ enum ContentsFormat {
     [Conditional=VIDEO] boolean isChangingPresentationMode(HTMLVideoElement element);
     [Conditional=VIDEO_PRESENTATION_MODE] undefined setMockVideoPresentationModeEnabled(boolean enabled);
 
-    undefined setApplicationCacheOriginQuota(unsigned long long quota);
-
     undefined registerURLSchemeAsBypassingContentSecurityPolicy(DOMString scheme);
     undefined removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(DOMString scheme);
 
@@ -971,6 +985,7 @@ enum ContentsFormat {
     [Conditional=VIDEO] undefined setMediaElementBufferingPolicy(HTMLMediaElement element, DOMString policy);
     [Conditional=VIDEO] double privatePlayerVolume(HTMLMediaElement media);
     [Conditional=VIDEO] boolean privatePlayerMuted(HTMLMediaElement media);
+    [Conditional=VIDEO] unrestricted double privatePlayerCurrentTime(HTMLMediaElement media);
     [Conditional=VIDEO] boolean isMediaElementHidden(HTMLMediaElement media);
     [Conditional=VIDEO] undefined setOverridePreferredDynamicRangeMode(HTMLMediaElement media, DOMString mode);
     [Conditional=VIDEO] double elementEffectivePlaybackRate(HTMLMediaElement media);
@@ -978,7 +993,10 @@ enum ContentsFormat {
     [Conditional=VIDEO] undefined enableGStreamerHolePunching(HTMLVideoElement element);
 
     [Conditional=VIDEO] double effectiveDynamicRangeLimitValue(HTMLMediaElement media);
+    double getContextEffectiveDynamicRangeLimitValue(HTMLCanvasElement canvas);
     undefined setPageShouldSuppressHDR(boolean shouldSuppressHDR);
+    
+    [Conditional=VIDEO] undefined enterViewerMode(HTMLVideoElement element);
 
     undefined setIsPlayingToBluetoothOverride(optional boolean? isPlaying = null);
 
@@ -1063,6 +1081,7 @@ enum ContentsFormat {
     [Conditional=VIDEO] boolean isPlayerVisibleInViewport(HTMLMediaElement element);
     [Conditional=VIDEO] boolean isPlayerMuted(HTMLMediaElement element);
     [Conditional=VIDEO] boolean isPlayerPaused(HTMLMediaElement element);
+    [Conditional=VIDEO] undefined forceStereoDecoding(HTMLMediaElement element);
 
     MockPageOverlay installMockPageOverlay(PageOverlayType type);
     DOMString pageOverlayLayerTreeAsText(optional unsigned short flags = 0);
@@ -1091,7 +1110,6 @@ enum ContentsFormat {
 
     DOMString pathStringWithShrinkWrappedRects(sequence<double> rectComponents, double radius);
 
-    [Conditional=VIDEO] DOMString getCurrentMediaControlsStatusForElement(HTMLMediaElement element);
     [Conditional=VIDEO] undefined setMediaControlsMaximumRightContainerButtonCountOverride(HTMLMediaElement element, unsigned long count);
     [Conditional=VIDEO] undefined setMediaControlsHidePlaybackRates(HTMLMediaElement element, boolean hidePlaybackRates);
 
@@ -1198,7 +1216,7 @@ enum ContentsFormat {
     readonly attribute unsigned long long storageAreaMapCount;
 
     unsigned long long elementIdentifier(Element element);
-    boolean isElementAlive(unsigned long long elementIdentifier);
+    boolean isElementAlive(unsigned long long nodeIdentifier);
     unsigned long long pageIdentifier(Document document);
 
     boolean isAnyWorkletGlobalScopeAlive();
@@ -1306,6 +1324,7 @@ enum ContentsFormat {
 
     undefined setCookie(CookieData cookieData);
     sequence<CookieData> getCookies();
+    sequence<WebDriverCookieData> webDriverGetCookies(Document document);
 
     undefined setAlwaysAllowLocalWebarchive(boolean alwaysAllowLocalWebarchive);
 
@@ -1449,4 +1468,6 @@ enum ContentsFormat {
 #endif
 
     [Conditional=MODEL_ELEMENT] undefined disableModelLoadDelaysForTesting();
+    [Conditional=MODEL_ELEMENT] DOMString modelElementState(HTMLModelElement element);
+    [Conditional=MODEL_ELEMENT] boolean isModelElementIntersectingViewport(HTMLModelElement element);
 };

@@ -27,8 +27,8 @@
 
 #if ENABLE(APPLICATION_MANIFEST)
 
-#include "Color.h"
-#include "ScreenOrientationLockType.h"
+#include <WebCore/Color.h>
+#include <WebCore/ScreenOrientationLockType.h>
 #include <optional>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>

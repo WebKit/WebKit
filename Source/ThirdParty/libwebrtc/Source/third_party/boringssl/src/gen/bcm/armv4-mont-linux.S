@@ -4,8 +4,6 @@
 #include <openssl/asm_base.h>
 
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_ARM) && defined(__ELF__)
-#include <openssl/arm_arch.h>
-
 @ Silence ARMv8 deprecated IT instruction warnings. This file is used by both
 @ ARMv7 and ARMv8 processors and does not use ARMv8 instructions.
 .arch	armv7-a
@@ -26,14 +24,9 @@
 bn_mul_mont_nohw:
 	ldr	ip,[sp,#4]		@ load num
 	stmdb	sp!,{r0,r2}		@ sp points at argument block
-	cmp	ip,#2
+	@ No return value. Instead, the caller must ensure num >= 2
 	mov	r0,ip			@ load num
-#ifdef	__thumb2__
-	ittt	lt
-#endif
-	movlt	r0,#0
-	addlt	sp,sp,#2*4
-	blt	.Labrt
+	@ No return value
 
 	stmdb	sp!,{r4,r5,r6,r7,r8,r9,r10,r11,r12,lr}		@ save 10 registers
 
@@ -167,8 +160,7 @@ bn_mul_mont_nohw:
 	add	sp,sp,#4		@ skip over tp[num+1]
 	ldmia	sp!,{r4,r5,r6,r7,r8,r9,r10,r11,r12,lr}		@ restore registers
 	add	sp,sp,#2*4		@ skip over {r0,r2}
-	mov	r0,#1
-.Labrt:
+	@ No return value
 #if __ARM_ARCH>=5
 	bx	lr				@ bx lr
 #else
@@ -931,6 +923,7 @@ bn_mul8x_mont_neon:
 	mov	sp,ip
 	vldmia	sp!,{d8,d9,d10,d11,d12,d13,d14,d15}
 	ldmia	sp!,{r4,r5,r6,r7,r8,r9,r10,r11}
+	@ No return value
 	bx	lr						@ bx lr
 .size	bn_mul8x_mont_neon,.-bn_mul8x_mont_neon
 #endif

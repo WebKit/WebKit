@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    p { 
+      font-size: 30px;
+      width: 100px;
+    }
+    .outlined {
+      outline: 1px solid red;
+      border-radius: calc(100% - 1px);
+    }
+  </style>
+</head>
+<body>
+  This passes if it does not crash.
+  <p>xxx <span class="outlined">xx xxxx</span></p>
+  <script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+  </script>
+</body>
+</html>

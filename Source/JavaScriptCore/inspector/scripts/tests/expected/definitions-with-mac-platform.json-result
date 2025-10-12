@@ -358,7 +358,10 @@ void NetworkBackendDispatcher::loadResource(long protocol_requestId, RefPtr<JSON
 #pragma once
 
 #include "TestProtocolObjects.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/JSONValues.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Nonmovable.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -367,14 +370,17 @@ class FrontendRouter;
 
 #if DOMAIN-MAC
 class NetworkFrontendDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NetworkFrontendDispatcher);
 public:
-    NetworkFrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
+    NetworkFrontendDispatcher(FrontendRouter&);
+    ~NetworkFrontendDispatcher();
+    WTF_MAKE_NONCOPYABLE(NetworkFrontendDispatcher);
+    WTF_MAKE_NONMOVABLE(NetworkFrontendDispatcher);
 #if EVENT-MAC
     void resourceLoaded();
 #endif // EVENT-MAC
 private:
-    FrontendRouter& m_frontendRouter;
+    const CheckedRef<FrontendRouter> m_frontendRouter;
 };
 #endif // DOMAIN-MAC
 
@@ -419,13 +425,17 @@ private:
 namespace Inspector {
 
 #if DOMAIN-MAC
+NetworkFrontendDispatcher::NetworkFrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
+
+NetworkFrontendDispatcher::~NetworkFrontendDispatcher() = default;
+
 #if EVENT-MAC
 void NetworkFrontendDispatcher::resourceLoaded()
 {
     auto protocol_jsonMessage = JSON::Object::create();
     protocol_jsonMessage->setString("method"_s, "Network.resourceLoaded"_s);
 
-    m_frontendRouter.sendEvent(protocol_jsonMessage->toJSONString());
+    m_frontendRouter->sendEvent(protocol_jsonMessage->toJSONString());
 }
 #endif // EVENT-MAC
 #endif // DOMAIN-MAC
@@ -525,14 +535,14 @@ public:
         Builder<STATE | MessageSet>& setMessage(const String& in_message)
         {
             static_assert(!(STATE & MessageSet), "property message already set");
-            m_result->setString("message"_s, in_message);
+            Ref { *m_result }->setString("message"_s, in_message);
             return castState<MessageSet>();
         }
 
         Builder<STATE | CodeSet>& setCode(int in_code)
         {
             static_assert(!(STATE & CodeSet), "property code already set");
-            m_result->setInteger("code"_s, in_code);
+            Ref { *m_result }->setInteger("code"_s, in_code);
             return castState<CodeSet>();
         }
 
@@ -658,7 +668,7 @@ namespace Inspector {
 
 #if DOMAIN-MAC
 class ObjCInspectorNetworkBackendDispatcher final : public AlternateNetworkBackendDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ObjCInspectorNetworkBackendDispatcher);
 public:
     ObjCInspectorNetworkBackendDispatcher(id<TestProtocolNetworkDomainHandler> handler) { m_delegate = handler; }
 #if COMMAND-MAC

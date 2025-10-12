@@ -30,6 +30,7 @@
 
 #import "CocoaHelpers.h"
 #import "_WKWebExtensionDeclarativeNetRequestRule.h"
+#import <WebCore/LocalizedStrings.h>
 
 static const NSUInteger maximumNumberOfDeclarativeNetRequestErrorsToSurface = 50;
 
@@ -37,15 +38,29 @@ using namespace WebKit;
 
 @implementation _WKWebExtensionDeclarativeNetRequestTranslator
 
-+ (NSArray<NSDictionary<NSString *, id> *> *)translateRules:(NSArray<NSArray<NSDictionary *> *> *)jsonObjects errorStrings:(NSArray **)outErrorStrings
++ (NSArray<NSDictionary<NSString *, id> *> *)translateRules:(NSDictionary<NSString *, NSArray<NSDictionary *> *> *)jsonObjects errorStrings:(NSArray **)outErrorStrings
 {
     NSMutableArray<_WKWebExtensionDeclarativeNetRequestRule *> *allValidatedRules = [NSMutableArray array];
+    NSMutableDictionary<NSString *, NSMutableSet<NSNumber *> *> *rulesetIDsToRuleIDs = [NSMutableDictionary dictionary];
     NSMutableArray<NSString *> *errorStrings = [NSMutableArray array];
     NSUInteger totalErrorCount = 0;
-    for (NSArray *json in jsonObjects) {
-        for (NSDictionary *ruleJSON in json) {
+
+    for (NSString *rulesetID in jsonObjects.allKeys) {
+        for (NSDictionary *ruleJSON in jsonObjects[rulesetID]) {
             NSString *errorString;
-            _WKWebExtensionDeclarativeNetRequestRule *rule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:ruleJSON errorString:&errorString];
+            _WKWebExtensionDeclarativeNetRequestRule *rule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:ruleJSON rulesetID:rulesetID errorString:&errorString];
+
+            if (!rulesetIDsToRuleIDs[rulesetID])
+                rulesetIDsToRuleIDs[rulesetID] = [NSMutableSet set];
+
+            if ([rulesetIDsToRuleIDs[rulesetID] containsObject:@(rule.ruleID)]) {
+                totalErrorCount++;
+                ALLOW_NONLITERAL_FORMAT_BEGIN
+                [errorStrings addObject:[NSString stringWithFormat:WEB_UI_STRING("`declarative_net_request` ruleset with id `%@` duplicates the rule id `%@`.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for a duplicated rule id").createNSString().get(), rulesetID, @(rule.ruleID)]];
+                ALLOW_NONLITERAL_FORMAT_END
+            }
+
+            [rulesetIDsToRuleIDs[rulesetID] addObject:@(rule.ruleID)];
 
             if (rule)
                 [allValidatedRules addObject:rule];
@@ -77,17 +92,18 @@ using namespace WebKit;
     return translatedRules;
 }
 
-+ (NSArray<NSArray<NSDictionary *> *> *)jsonObjectsFromData:(NSArray<NSData *> *)jsonDataArray errorStrings:(NSArray **)outErrorStrings
++ (NSDictionary<NSString *, NSArray<NSDictionary *> *> *)jsonObjectsFromData:(NSDictionary<NSString *, NSData *> *)jsonData errorStrings:(NSArray **)outErrorStrings
 {
-    NSMutableArray *allJSONObjects = [NSMutableArray array];
+    NSMutableDictionary *allJSONObjects = [NSMutableDictionary dictionary];
     NSMutableArray<NSString *> *errors = [NSMutableArray array];
-    for (NSData *jsonData in jsonDataArray) {
+
+    for (NSString *rulesetID in jsonData.allKeys) {
         NSError *error;
-        NSArray<NSDictionary *> *json = parseJSON(jsonData, JSONOptions::FragmentsAllowed, &error);
+        NSArray<NSDictionary *> *json = parseJSON(jsonData[rulesetID], JSONOptions::FragmentsAllowed, &error);
 
         // The top level of a declarativeNetRequest ruleset should be an array.
         if (json && [json isKindOfClass:NSArray.class])
-            [allJSONObjects addObject:json];
+            allJSONObjects[rulesetID] = json;
 
         if (error)
             [errors addObject:error.userInfo[NSDebugDescriptionErrorKey]];
@@ -110,7 +126,7 @@ using namespace WebKit;
     return nil;
 }
 
-+ (NSArray<NSArray<NSDictionary *> *> *)jsonObjectsFromData:(NSArray<NSData *> *)jsonDataArray errorStrings:(NSArray **)outErrorStrings
++ (NSArray<NSArray<NSDictionary *> *> *)jsonObjectsFromData:(NSDictionary<NSString *, NSData *> *)jsonData errorStrings:(NSArray **)outErrorStrings
 {
     return nil;
 }

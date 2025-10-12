@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "EditingBoundary.h"
-#include "VisibleSelection.h"
+#include <WebCore/EditingBoundary.h>
+#include <WebCore/VisibleSelection.h>
 
 namespace WebCore {
 
@@ -119,10 +119,10 @@ unsigned startWordBoundary(StringView, unsigned, BoundarySearchContextAvailabili
 unsigned endWordBoundary(StringView, unsigned, BoundarySearchContextAvailability, bool&);
 unsigned startSentenceBoundary(StringView, unsigned, BoundarySearchContextAvailability, bool&);
 unsigned endSentenceBoundary(StringView, unsigned, BoundarySearchContextAvailability, bool&);
-unsigned suffixLengthForRange(const SimpleRange&, Vector<UChar, 1024>&);
-unsigned prefixLengthForRange(const SimpleRange&, Vector<UChar, 1024>&);
-unsigned backwardSearchForBoundaryWithTextIterator(SimplifiedBackwardsTextIterator&, Vector<UChar, 1024>&, unsigned, BoundarySearchFunction);
-unsigned forwardSearchForBoundaryWithTextIterator(TextIterator&, Vector<UChar, 1024>&, unsigned, BoundarySearchFunction);
+unsigned suffixLengthForRange(const SimpleRange&, Vector<char16_t, 1024>&);
+unsigned prefixLengthForRange(const SimpleRange&, Vector<char16_t, 1024>&);
+unsigned backwardSearchForBoundaryWithTextIterator(SimplifiedBackwardsTextIterator&, Vector<char16_t, 1024>&, unsigned, BoundarySearchFunction);
+unsigned forwardSearchForBoundaryWithTextIterator(TextIterator&, Vector<char16_t, 1024>&, unsigned, BoundarySearchFunction);
 RefPtr<Node> findStartOfParagraph(Node*, Node*, Node*, int&, Position::AnchorType&, EditingBoundaryCrossingRule);
 RefPtr<Node> findEndOfParagraph(Node*, Node*, Node*, int&, Position::AnchorType&, EditingBoundaryCrossingRule);
 

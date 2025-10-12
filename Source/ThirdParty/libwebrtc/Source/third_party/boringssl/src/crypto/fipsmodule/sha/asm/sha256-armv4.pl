@@ -1,19 +1,22 @@
 #! /usr/bin/env perl
 # Copyright 2007-2016 The OpenSSL Project Authors. All Rights Reserved.
 #
-# Licensed under the OpenSSL license (the "License").  You may not use
-# this file except in compliance with the License.  You can obtain a copy
-# in the file LICENSE in the source distribution or at
-# https://www.openssl.org/source/license.html
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 
 # ====================================================================
 # Written by Andy Polyakov <appro@openssl.org> for the OpenSSL
-# project. The module is, however, dual licensed under OpenSSL and
-# CRYPTOGAMS licenses depending on where you obtain it. For further
-# details see http://www.openssl.org/~appro/cryptogams/.
-#
-# Permission to use under GPL terms is granted.
+# project.
 # ====================================================================
 
 # SHA256 block procedure for ARMv4. May 2007.
@@ -176,9 +179,7 @@ ___
 }
 
 $code=<<___;
-#ifndef __KERNEL__
-# include <openssl/arm_arch.h>
-#else
+#ifdef __KERNEL__
 # define __ARM_ARCH __LINUX_ARM_ARCH__
 # define __ARM_MAX_ARCH__ 7
 #endif
@@ -485,7 +486,7 @@ sha256_block_data_order_neon:
 	@ TODO(davidben): adrl would avoid a load, but clang-assembler does not
 	@ support it. We might be able to emulate it with a macro, but Android's
 	@ did not work when I tried it.
-	@ https://android.googlesource.com/platform/ndk/+/refs/heads/master/docs/ClangMigration.md#arm
+	@ https://android.googlesource.com/platform/ndk/+/refs/heads/main/docs/ClangMigration.md#arm
 	ldr	$Ktbl,.LK256_shortcut_neon
 .LK256_add_neon:
 	add	$Ktbl,pc,$Ktbl

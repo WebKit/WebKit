@@ -42,6 +42,11 @@
 #import "_WKWebExtensionDeclarativeNetRequestRule.h"
 #import <wtf/cocoa/VectorCocoa.h>
 
+#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
+#import "WebExtensionAPINamespace.h"
+#import <WebCore/ContentRuleListMatchedRule.h>
+#endif
+
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 namespace WebKit {
@@ -65,6 +70,67 @@ static NSString * const getDynamicOrSessionRulesRuleIDsKey = @"ruleIds";
 
 static NSString * const addRulesKey = @"addRules";
 static NSString * const removeRulesKey = @"removeRuleIds";
+
+#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
+static NSString * const requestKey = @"request";
+static NSString * const documentIdKey = @"documentId";
+static NSString * const documentLifecycleKey = @"documentLifecycle";
+static NSString * const frameIdKey = @"frameId";
+static NSString * const frameTypeKey = @"frameType";
+static NSString * const initiatorKey = @"initiator";
+static NSString * const methodKey = @"method";
+static NSString * const parentDocumentIdKey = @"parentDocumentId";
+static NSString * const parentFrameIdKey = @"parentFrameId";
+static NSString * const requestIdKey = @"requestId";
+static NSString * const tabIdKey = @"tabId";
+static NSString * const typeKey = @"type";
+static NSString * const urlKey = @"url";
+
+static NSString * const ruleKey = @"rule";
+static NSString * const extensionIdKey = @"extensionId";
+static NSString * const ruleIdKey = @"ruleId";
+static NSString * const rulesetIdKey = @"rulesetId";
+
+static inline NSDictionary *toWebAPI(const WebCore::ContentRuleListMatchedRule& matchedRuleInfo)
+{
+    NSMutableDictionary *result = [NSMutableDictionary dictionary];
+    NSMutableDictionary *request = [NSMutableDictionary dictionary];
+    NSMutableDictionary *rule = [NSMutableDictionary dictionary];
+
+    request[frameIdKey] = @(matchedRuleInfo.request.frameId);
+    request[parentFrameIdKey] = @(matchedRuleInfo.request.parentFrameId);
+    request[methodKey] = matchedRuleInfo.request.method.createNSString().get();
+    request[requestIdKey] = matchedRuleInfo.request.requestId.createNSString().get();
+    request[typeKey] = matchedRuleInfo.request.type.createNSString().get();
+    request[tabIdKey] = @(matchedRuleInfo.request.tabId);
+    request[urlKey] = matchedRuleInfo.request.url.createNSString().get();
+    request[initiatorKey] = matchedRuleInfo.request.initiator.has_value() ? matchedRuleInfo.request.initiator.value().createNSString().get() : nil;
+    request[documentIdKey] = matchedRuleInfo.request.documentId.has_value() ? matchedRuleInfo.request.documentId.value().createNSString().get() : nil;
+    request[documentLifecycleKey] = matchedRuleInfo.request.documentLifecycle.has_value() ? matchedRuleInfo.request.documentLifecycle.value().createNSString().get() : nil;
+    request[frameTypeKey] = matchedRuleInfo.request.frameType.has_value() ? matchedRuleInfo.request.frameType.value().createNSString().get() : nil;
+    request[parentDocumentIdKey] = matchedRuleInfo.request.parentDocumentId.has_value() ? matchedRuleInfo.request.parentDocumentId.value().createNSString().get() : nil;
+    result[requestKey] = [request copy];
+
+    rule[ruleIdKey] = @(matchedRuleInfo.rule.ruleId);
+    rule[rulesetIdKey] = matchedRuleInfo.rule.rulesetId.createNSString().get();
+    rule[extensionIdKey] = matchedRuleInfo.rule.extensionId.has_value() ? matchedRuleInfo.rule.extensionId.value().createNSString().get() : nil;
+    result[ruleKey] = [rule copy];
+
+    return [result copy];
+}
+
+bool WebExtensionAPIDeclarativeNetRequest::isPropertyAllowed(const ASCIILiteral& name, WebPage*)
+{
+    if (extensionContext().isUnsupportedAPI(propertyPath(), name)) [[unlikely]]
+        return false;
+
+    if (name == "onRuleMatchedDebug"_s)
+        return extensionContext().hasPermission("declarativeNetRequestFeedback"_s);
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+#endif
 
 void WebExtensionAPIDeclarativeNetRequest::updateEnabledRulesets(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
@@ -111,7 +177,7 @@ void WebExtensionAPIDeclarativeNetRequest::updateDynamicRules(NSDictionary *opti
     NSString *ruleErrorString;
     size_t index = 0;
     for (NSDictionary *ruleDictionary in rulesToAdd) {
-        if (![[_WKWebExtensionDeclarativeNetRequestRule  alloc] initWithDictionary:ruleDictionary errorString:&ruleErrorString]) {
+        if (![[_WKWebExtensionDeclarativeNetRequestRule  alloc] initWithDictionary:ruleDictionary rulesetID:dynamicRulesetID errorString:&ruleErrorString]) {
             ASSERT(ruleErrorString);
             *outExceptionString = toErrorString(nullString(), addRulesKey, @"an error with rule at index %lu: %@", index, ruleErrorString).createNSString().autorelease();
             return;
@@ -182,7 +248,7 @@ void WebExtensionAPIDeclarativeNetRequest::updateSessionRules(NSDictionary *opti
     NSString *ruleErrorString;
     size_t index = 0;
     for (NSDictionary *ruleDictionary in rulesToAdd) {
-        if (![[_WKWebExtensionDeclarativeNetRequestRule  alloc] initWithDictionary:ruleDictionary errorString:&ruleErrorString]) {
+        if (![[_WKWebExtensionDeclarativeNetRequestRule  alloc] initWithDictionary:ruleDictionary rulesetID:sessionRulesetID errorString:&ruleErrorString]) {
             ASSERT(ruleErrorString);
             *outExceptionString = toErrorString(nullString(), addRulesKey, @"an error with rule at index %lu: %@", index, ruleErrorString).createNSString().autorelease();
             return;
@@ -362,6 +428,25 @@ void WebExtensionAPIDeclarativeNetRequest::setExtensionActionOptions(NSDictionar
         callback->call();
     }, extensionContext().identifier());
 }
+
+#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
+WebExtensionAPIEvent& WebExtensionAPIDeclarativeNetRequest::onRuleMatchedDebug()
+{
+    if (!m_onRuleMatchedDebug)
+        m_onRuleMatchedDebug = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::DeclarativeNetRequestOnRuleMatchedDebug);
+
+    return *m_onRuleMatchedDebug;
+}
+
+void WebExtensionContextProxy::dispatchOnRuleMatchedDebugEvent(const WebCore::ContentRuleListMatchedRule& matchedRule)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/declarativeNetRequest/onRuleMatchedDebug
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        namespaceObject.declarativeNetRequest().onRuleMatchedDebug().invokeListenersWithArgument(toWebAPI(matchedRule));
+    });
+}
+#endif
 
 } // namespace WebKit
 

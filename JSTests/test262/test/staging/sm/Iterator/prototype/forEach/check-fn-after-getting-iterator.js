@@ -2,9 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, compareArray.js]
-flags:
-  - noStrict
+includes: [compareArray.js]
 features:
   - iterator-helpers
 info: |
@@ -28,7 +26,7 @@ class TestIterator extends Iterator {
 }
 
 const iter = new Proxy(new TestIterator(), handlerProxy);
-assertThrowsInstanceOf(() => iter.forEach(1), TypeError);
+assert.throws(TypeError, () => iter.forEach(1));
 
 assert.compareArray(
   log,

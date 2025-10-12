@@ -81,7 +81,7 @@ bool WebDisplayRefreshMonitor::startNotificationMechanism()
         return true;
 
     LOG_WITH_STREAM(DisplayLink, stream << "[Web] WebDisplayRefreshMonitor::requestRefreshCallback for display " << displayID() << " - starting");
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID(), maxClientPreferredFramesPerSecond().value_or(FullSpeedFramesPerSecond)), 0);
+    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID(), maxClientPreferredFramesPerSecond().value_or(FullSpeedFramesPerSecond)), 0);
 
 #if PLATFORM(MAC)
     if (!m_runLoopObserver) {
@@ -93,7 +93,7 @@ bool WebDisplayRefreshMonitor::startNotificationMechanism()
         });
     }
 
-    m_runLoopObserver->schedule(CFRunLoopGetCurrent());
+    m_runLoopObserver->schedule(retainPtr(CFRunLoopGetCurrent()).get());
 #endif
     m_displayLinkIsActive = true;
 
@@ -106,7 +106,7 @@ void WebDisplayRefreshMonitor::stopNotificationMechanism()
         return;
 
     LOG_WITH_STREAM(DisplayLink, stream << "[Web] WebDisplayRefreshMonitor::requestRefreshCallback - stopping");
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StopDisplayLink(m_observerID, displayID()), 0);
+    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebProcessProxy::StopDisplayLink(m_observerID, displayID()), 0);
 #if PLATFORM(MAC)
     m_runLoopObserver->invalidate();
 #endif
@@ -116,7 +116,7 @@ void WebDisplayRefreshMonitor::stopNotificationMechanism()
 void WebDisplayRefreshMonitor::adjustPreferredFramesPerSecond(FramesPerSecond preferredFramesPerSecond)
 {
     LOG_WITH_STREAM(DisplayLink, stream << "[Web] WebDisplayRefreshMonitor::adjustPreferredFramesPerSecond for display link on display " << displayID() << " to " << preferredFramesPerSecond);
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::SetDisplayLinkPreferredFramesPerSecond(m_observerID, displayID(), preferredFramesPerSecond), 0);
+    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebProcessProxy::SetDisplayLinkPreferredFramesPerSecond(m_observerID, displayID(), preferredFramesPerSecond), 0);
 }
 
 } // namespace WebKit

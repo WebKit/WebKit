@@ -1,0 +1,15 @@
+
+
+Harness Error (FAIL), message = Test named 'defaultbutton: When the listbox is closed, spacebar should open the listbox.' specified 1 'cleanup' function, and 1 failed.
+
+FAIL defaultbutton: When the listbox is closed, spacebar should open the listbox. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+NOTRUN defaultbutton: When the listbox is closed, all arrow keys should open the listbox.
+NOTRUN defaultbutton: When the listbox is closed, the enter key should not trigger form submission.
+NOTRUN defaultbutton: When the listbox is open, the enter key should commit the selected option.
+NOTRUN defaultbutton: When the listbox is open, the tab key should close the listbox.
+NOTRUN custombutton: When the listbox is closed, spacebar should open the listbox.
+NOTRUN custombutton: When the listbox is closed, all arrow keys should open the listbox.
+NOTRUN custombutton: When the listbox is closed, the enter key should not trigger form submission.
+NOTRUN custombutton: When the listbox is open, the enter key should commit the selected option.
+NOTRUN custombutton: When the listbox is open, the tab key should close the listbox.
+

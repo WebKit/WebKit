@@ -27,13 +27,14 @@
 
 #include "AXObjectCache.h"
 #include "Autofill.h"
-#include "Document.h"
-#include "DocumentInlines.h"
+#include "ContainerNodeInlines.h"
+#include "DocumentQuirks.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "FormAssociatedElement.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLButtonElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
@@ -41,8 +42,8 @@
 #include "LocalFrameView.h"
 #include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
-#include "Quirks.h"
 #include "RenderBox.h"
+#include "RenderStyleInlines.h"
 #include "RenderTheme.h"
 #include "SelectionRestorationMode.h"
 #include "Settings.h"
@@ -81,22 +82,12 @@ String HTMLFormControlElement::formEnctype() const
     return FormSubmission::Attributes::parseEncodingType(formEnctypeAttr);
 }
 
-void HTMLFormControlElement::setFormEnctype(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(formenctypeAttr, value);
-}
-
 String HTMLFormControlElement::formMethod() const
 {
     auto& formMethodAttr = attributeWithoutSynchronization(formmethodAttr);
     if (formMethodAttr.isNull())
         return emptyString();
     return FormSubmission::Attributes::methodString(FormSubmission::Attributes::parseMethodType(formMethodAttr));
-}
-
-void HTMLFormControlElement::setFormMethod(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(formmethodAttr, value);
 }
 
 bool HTMLFormControlElement::formNoValidate() const
@@ -110,11 +101,6 @@ String HTMLFormControlElement::formAction() const
     if (value.isEmpty())
         return document().url().string();
     return document().completeURL(value).string();
-}
-
-void HTMLFormControlElement::setFormAction(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(formactionAttr, value);
 }
 
 Node::InsertedIntoAncestorResult HTMLFormControlElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
@@ -238,13 +224,13 @@ void HTMLFormControlElement::didRecalcStyle(OptionSet<Style::Change>)
     }
 }
 
-bool HTMLFormControlElement::isKeyboardFocusable(KeyboardEvent* event) const
+bool HTMLFormControlElement::isKeyboardFocusable(const FocusEventData& focusEventData) const
 {
     if (!!tabIndexSetExplicitly())
-        return Element::isKeyboardFocusable(event);
+        return Element::isKeyboardFocusable(focusEventData);
     return isFocusable()
         && document().frame()
-        && document().frame()->eventHandler().tabsToAllFormControls(event);
+        && document().frame()->eventHandler().tabsToAllFormControls(focusEventData);
 }
 
 bool HTMLFormControlElement::isMouseFocusable() const
@@ -305,11 +291,6 @@ AutocapitalizeType HTMLFormControlElement::autocapitalizeType() const
 String HTMLFormControlElement::autocomplete() const
 {
     return autofillData().idlExposedValue;
-}
-
-void HTMLFormControlElement::setAutocomplete(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(autocompleteAttr, value);
 }
 
 AutofillMantle HTMLFormControlElement::autofillMantle() const
@@ -386,11 +367,6 @@ const AtomString& HTMLFormControlElement::popoverTargetAction() const
         return hideAtom();
 
     return toggleAtom();
-}
-
-void HTMLFormControlElement::setPopoverTargetAction(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(HTMLNames::popovertargetactionAttr, value);
 }
 
 // https://html.spec.whatwg.org/#popover-target-attribute-activation-behavior

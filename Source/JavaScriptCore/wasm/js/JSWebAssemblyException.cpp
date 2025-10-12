@@ -68,7 +68,7 @@ void JSWebAssemblyException::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     Base::visitChildren(cell, visitor);
 
     auto* exception = jsCast<JSWebAssemblyException*>(cell);
-    const auto& tagType = exception->tag().type();
+    SUPPRESS_UNCOUNTED_LOCAL const auto& tagType = exception->tag().type();
     unsigned offset = 0;
     for (unsigned i = 0; i < tagType.argumentCount(); ++i) {
         if (isRefType(tagType.argumentType(i)))
@@ -90,11 +90,11 @@ JSValue JSWebAssemblyException::getArg(JSGlobalObject* globalObject, unsigned i)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const auto& tagType = tag().type();
+    SUPPRESS_UNCOUNTED_LOCAL const auto& tagType = tag().type();
     ASSERT(i < tagType.argumentCount());
 
     auto argTypeKind = tagType.argumentType(i).kind;
-    if (argTypeKind == Wasm::TypeKind::V128 || argTypeKind == Wasm::TypeKind::Exn) {
+    if (argTypeKind == Wasm::TypeKind::V128 || argTypeKind == Wasm::TypeKind::Exnref) {
         throwTypeError(globalObject, scope, "argument type cannot be a V128 or exnref");
         return { };
     }

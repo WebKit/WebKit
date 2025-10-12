@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 
 #include "test_utils/gl_raii.h"
@@ -1347,7 +1351,107 @@ TEST_P(LineLoopIndirectTest, IndirectAndElementDrawsShareIndexBuffer)
     }
 }
 
-ANGLE_INSTANTIATE_TEST_ES2_AND(LineLoopTest, ES2_WEBGPU());
+// Test that two indirect draws using glDrawArraysIndirect with GL_LINE_LOOP mode
+// and different vertex ranges work correctly.
+TEST_P(LineLoopIndirectTest, TwoIndirectDrawsInDifferentIndirectBuffer)
+{
+    // EXT_geometry_shader allows transform feedback to work with draw indirect.
+    // Otherwise, INVALID_OPERATION will be generated.
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    GLVertexArray vertexArray;
+    GLBuffer vertexBuffer, xfbBuffer, indirectBuffer[2];
+    const std::vector<GLfloat> vertices = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0};
+    const std::vector<GLfloat> expected = {
+        2.0, 1.0, 4.0,  4.0,  4.0,  4.0,  6.0,  9.0,  6.0,  9.0,  8.0,  16.0, 8.0,  16.0,
+        2.0, 1.0, 10.0, 25.0, 12.0, 36.0, 12.0, 36.0, 14.0, 49.0, 14.0, 49.0, 10.0, 25.0};
+    constexpr char kVS[] = R"(#version 300 es
+in float in_val;
+out float out_val;
+out float out_val2;
+
+void main()
+{
+    out_val = in_val * 2.0;
+    out_val2 = in_val * in_val;
+    gl_Position = vec4(in_val);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+in float out_val;
+in float out_val2;
+out vec4 fragColor;
+void main()
+{
+    fragColor = vec4(1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    std::vector<const char *> varyings = {"out_val", "out_val2"};
+    glTransformFeedbackVaryings(program, static_cast<GLsizei>(varyings.size()), varyings.data(),
+                                GL_INTERLEAVED_ATTRIBS);
+    glLinkProgram(program);
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    glBindVertexArray(vertexArray);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(),
+                 GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    GLuint pos = glGetAttribLocation(program, "in_val");
+    glEnableVertexAttribArray(pos);
+    glVertexAttribPointer(pos, 1, GL_FLOAT, GL_FALSE, 0, 0);
+    ASSERT_GL_NO_ERROR();
+
+    std::vector<GLfloat> initialData(expected.size(), 0.0);
+    glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffer);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, expected.size() * sizeof(GLfloat),
+                 initialData.data(), GL_STATIC_READ);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, xfbBuffer);
+    ASSERT_GL_NO_ERROR();
+
+    glBeginTransformFeedback(GL_LINES);
+    ASSERT_GL_NO_ERROR();
+
+    DrawCommand indirectDrawArgs1 = {};
+    indirectDrawArgs1.count       = 4;
+    indirectDrawArgs1.firstIndex  = 0;
+    indirectDrawArgs1.primCount   = 1;
+    DrawCommand indirectDrawArgs2 = {};
+    indirectDrawArgs2.count       = 3;
+    indirectDrawArgs2.firstIndex  = 4;
+    indirectDrawArgs2.primCount   = 1;
+
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirectBuffer[0]);
+    glBufferData(GL_DRAW_INDIRECT_BUFFER, sizeof(DrawCommand), &indirectDrawArgs1, GL_STATIC_DRAW);
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirectBuffer[1]);
+    glBufferData(GL_DRAW_INDIRECT_BUFFER, sizeof(DrawCommand), &indirectDrawArgs2, GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirectBuffer[0]);
+    glDrawArraysIndirect(GL_LINE_LOOP, nullptr);
+    ASSERT_GL_NO_ERROR();
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirectBuffer[1]);
+    glDrawArraysIndirect(GL_LINE_LOOP, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    glEndTransformFeedback();
+    glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffer);
+    GLfloat *mapped = (GLfloat *)glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                                  expected.size() * sizeof(float), GL_MAP_READ_BIT);
+    ASSERT_GL_NO_ERROR();
+    for (size_t i = 0; i < expected.size(); i++)
+    {
+        EXPECT_EQ(mapped[i], expected[i]);
+    }
+}
+ANGLE_INSTANTIATE_TEST_ES2_AND(LineLoopTest,
+                               ES2_WEBGPU(),
+                               ES2_OPENGLES().enable(Feature::ForcePassthroughShaders));
 ANGLE_INSTANTIATE_TEST_ES3(LineLoopTestES3);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(LineLoopPrimitiveRestartTest);

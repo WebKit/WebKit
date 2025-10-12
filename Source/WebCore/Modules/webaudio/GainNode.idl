@@ -25,7 +25,6 @@
 [
     Conditional=WEB_AUDIO,
     EnabledBySetting=WebAudioEnabled,
-    JSGenerateToJSObject,
     Exposed=Window
 ] interface GainNode : AudioNode {
     [EnabledBySetting=WebAudioEnabled] constructor (BaseAudioContext context, optional GainOptions options);

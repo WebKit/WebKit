@@ -31,10 +31,12 @@ namespace PAL {
 
 enum class UserInterfaceIdiom : uint8_t {
     Default,
+    Desktop,
     SmallScreen,
     Vision
 };
 
+PAL_EXPORT bool currentUserInterfaceIdiomIsDesktop();
 PAL_EXPORT bool currentUserInterfaceIdiomIsSmallScreen();
 PAL_EXPORT bool currentUserInterfaceIdiomIsVision();
 

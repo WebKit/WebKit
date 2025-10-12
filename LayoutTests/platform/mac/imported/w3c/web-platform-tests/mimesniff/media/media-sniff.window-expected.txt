@@ -1,0 +1,44 @@
+
+PASS mp3-raw.mp3 loads when served with Content-Type
+PASS mp3-raw.mp3 loads when served with Content-Type bogus/mime
+PASS mp3-raw.mp3 loads when served with Content-Type application/octet-stream
+PASS mp3-raw.mp3 loads when served with Content-Type text/html
+PASS mp3-raw.mp3 loads when served with Content-Type audio/ogg; codec=vorbis
+PASS mp3-raw.mp3 loads when served with Content-Type application/pdf
+PASS mp3-with-id3.mp3 loads when served with Content-Type
+PASS mp3-with-id3.mp3 loads when served with Content-Type bogus/mime
+PASS mp3-with-id3.mp3 loads when served with Content-Type application/octet-stream
+PASS mp3-with-id3.mp3 loads when served with Content-Type text/html
+PASS mp3-with-id3.mp3 loads when served with Content-Type audio/ogg; codec=vorbis
+PASS mp3-with-id3.mp3 loads when served with Content-Type application/pdf
+PASS flac.flac loads when served with Content-Type
+PASS flac.flac loads when served with Content-Type bogus/mime
+PASS flac.flac loads when served with Content-Type application/octet-stream
+PASS flac.flac loads when served with Content-Type text/html
+PASS flac.flac loads when served with Content-Type audio/ogg; codec=vorbis
+PASS flac.flac loads when served with Content-Type application/pdf
+PASS ogg.ogg loads when served with Content-Type
+PASS ogg.ogg loads when served with Content-Type bogus/mime
+PASS ogg.ogg loads when served with Content-Type application/octet-stream
+PASS ogg.ogg loads when served with Content-Type text/html
+PASS ogg.ogg loads when served with Content-Type audio/ogg; codec=vorbis
+PASS ogg.ogg loads when served with Content-Type application/pdf
+PASS mp4.mp4 loads when served with Content-Type
+PASS mp4.mp4 loads when served with Content-Type bogus/mime
+PASS mp4.mp4 loads when served with Content-Type application/octet-stream
+PASS mp4.mp4 loads when served with Content-Type text/html
+PASS mp4.mp4 loads when served with Content-Type audio/ogg; codec=vorbis
+PASS mp4.mp4 loads when served with Content-Type application/pdf
+PASS wav.wav loads when served with Content-Type
+PASS wav.wav loads when served with Content-Type bogus/mime
+PASS wav.wav loads when served with Content-Type application/octet-stream
+PASS wav.wav loads when served with Content-Type text/html
+PASS wav.wav loads when served with Content-Type audio/ogg; codec=vorbis
+PASS wav.wav loads when served with Content-Type application/pdf
+PASS webm.webm loads when served with Content-Type
+PASS webm.webm loads when served with Content-Type bogus/mime
+PASS webm.webm loads when served with Content-Type application/octet-stream
+PASS webm.webm loads when served with Content-Type text/html
+PASS webm.webm loads when served with Content-Type audio/ogg; codec=vorbis
+PASS webm.webm loads when served with Content-Type application/pdf
+

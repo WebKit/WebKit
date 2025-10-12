@@ -10,6 +10,8 @@
 
 #include "common_audio/vad/include/vad.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 
 #include "common_audio/vad/include/webrtc_vad.h"

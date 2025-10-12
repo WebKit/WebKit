@@ -41,10 +41,10 @@ class Document;
 class RenderCombineText;
 class RenderStyle;
 class RenderText;
-class ShadowData;
 struct CompositionUnderline;
 struct MarkedText;
 struct StyledMarkedText;
+class TextPainter;
 
 class TextBoxPainter {
 public:
@@ -59,23 +59,24 @@ protected:
     auto& textBox() const { return m_textBox; }
     InlineIterator::TextBoxIterator makeIterator() const;
 
-    void paintBackground();
+    void paintBackgroundFill();
+    enum class BackgroundStyle : bool { Normal, Rounded };
+    void paintBackgroundFillForRange(unsigned startOffset, unsigned endOffset, const Color&, BackgroundStyle);
+
     void paintForegroundAndDecorations();
-    void paintCompositionBackground();
     void paintCompositionUnderlines();
     void paintCompositionForeground(const StyledMarkedText&);
     void paintPlatformDocumentMarkers();
 
-    enum class BackgroundStyle { Normal, Rounded };
-    void paintBackground(unsigned startOffset, unsigned endOffset, const Color&, BackgroundStyle = BackgroundStyle::Normal);
-    void paintBackground(const StyledMarkedText&);
     void paintForeground(const StyledMarkedText&);
+    bool paintForegroundForShapeRange(TextPainter&);
     TextDecorationPainter createDecorationPainter(const StyledMarkedText&, const FloatRect&);
     void paintBackgroundDecorations(TextDecorationPainter&, const StyledMarkedText&, const FloatRect&);
     void paintForegroundDecorations(TextDecorationPainter&, const StyledMarkedText&, const FloatRect&);
     void paintCompositionUnderline(const CompositionUnderline&, const FloatRoundedRect::Radii&, bool hasLiveConversion);
     void fillCompositionUnderline(float start, float width, const CompositionUnderline&, const FloatRoundedRect::Radii&, bool hasLiveConversion) const;
     void paintPlatformDocumentMarker(const MarkedText&);
+    LayoutRect selectionRectForRange(unsigned startOffset, unsigned endOffset) const;
 
     float textPosition();
     FloatRect computePaintRect(const LayoutPoint& paintOffset);
@@ -85,6 +86,7 @@ protected:
     const FontCascade& fontCascade() const;
     WritingMode writingMode() const { return m_style.writingMode(); }
     FloatPoint textOriginFromPaintRect(const FloatRect&) const;
+    bool isInsideShapedContent() const;
 
     struct DecoratingBox {
         InlineIterator::InlineBoxIterator inlineBox;
@@ -111,16 +113,29 @@ protected:
     const bool m_isPrinting;
     const bool m_haveSelection;
     bool m_containsComposition { false };
-    bool m_useCustomUnderlines { false };
-    std::optional<bool> m_emphasisMarkExistsAndIsAbove { };
+    bool m_compositionWithCustomUnderlines { false };
 };
 
 inline FloatSize TextBoxPainter::rotateShadowOffset(const SpaceSeparatedPoint<Style::Length<>>& offset, WritingMode writingMode)
 {
-    if (writingMode.isHorizontal())
-        return { offset.x().value, offset.y().value };
-    if (writingMode.isLineOverLeft()) // sideways-lr
-        return { -offset.y().value, offset.x().value };
-    return { offset.y().value, -offset.x().value };
+    if (writingMode.isHorizontal()) {
+        return {
+            offset.x().resolveZoom(Style::ZoomNeeded { }),
+            offset.y().resolveZoom(Style::ZoomNeeded { }),
+        };
+    }
+
+    if (writingMode.isLineOverLeft()) { // sideways-lr
+        return {
+            -offset.y().resolveZoom(Style::ZoomNeeded { }),
+             offset.x().resolveZoom(Style::ZoomNeeded { }),
+        };
+    }
+
+    return {
+         offset.y().resolveZoom(Style::ZoomNeeded { }),
+        -offset.x().resolveZoom(Style::ZoomNeeded { }),
+    };
 }
-}
+
+} // namespace WebCore

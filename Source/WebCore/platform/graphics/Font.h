@@ -21,15 +21,16 @@
 
 #pragma once
 
-#include "FloatRect.h"
-#include "FontMetrics.h"
-#include "FontPlatformData.h"
-#include "GlyphBuffer.h"
-#include "GlyphMetricsMap.h"
-#include "GlyphPage.h"
-#include "RenderingResourceIdentifier.h"
+#include <WebCore/FloatRect.h>
+#include <WebCore/FontMetrics.h>
+#include <WebCore/FontPlatformData.h>
+#include <WebCore/GlyphBuffer.h>
+#include <WebCore/GlyphMetricsMap.h>
+#include <WebCore/GlyphPage.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/BitVector.h>
 #include <wtf/Hasher.h>
+#include <wtf/Platform.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/StringHash.h>
 
@@ -40,7 +41,7 @@
 #endif
 
 #if ENABLE(MATHML)
-#include "OpenTypeMathData.h"
+#include <WebCore/OpenTypeMathData.h>
 #endif
 
 #if ENABLE(OPENTYPE_VERTICAL)
@@ -49,6 +50,12 @@
 
 #if PLATFORM(WIN)
 #include <usp10.h>
+#endif
+
+#if USE(SKIA)
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkTextBlob.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
 namespace WTF {
@@ -93,7 +100,7 @@ struct FontInternalAttributes {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Font);
 class Font : public RefCounted<Font>, public CanMakeSingleThreadWeakPtr<Font> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Font);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Font, Font);
 public:
     using Origin = FontOrigin;
     using IsInterstitial = FontIsInterstitial;
@@ -170,7 +177,7 @@ public:
     void setAvgCharWidth(float avgCharWidth) { m_avgCharWidth = avgCharWidth; }
 
     FloatRect boundsForGlyph(Glyph) const;
-#if USE(CORE_TEXT)
+#if USE(CORE_TEXT) || USE(SKIA)
     static constexpr size_t inlineGlyphRunCapacity = 128;
     Vector<FloatRect, inlineGlyphRunCapacity> boundsForGlyphs(std::span<const Glyph>) const;
 #endif
@@ -227,7 +234,8 @@ public:
     bool shouldNotBeUsedForArabic() const { return m_shouldNotBeUsedForArabic; };
 #endif
 #if USE(CORE_TEXT)
-    CTFontRef getCTFont() const { return m_platformData.ctFont(); }
+    CTFontRef ctFont() const { return m_platformData.ctFont(); }
+    RetainPtr<CTFontRef> protectedCTFont() const { return ctFont(); }
     RetainPtr<CFDictionaryRef> getCFStringAttributes(bool enableKerning, FontOrientation, const AtomString& locale) const;
     bool supportsSmallCaps() const;
     bool supportsAllSmallCaps() const;
@@ -237,6 +245,11 @@ public:
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     MultiRepresentationHEICMetrics metricsForMultiRepresentationHEIC() const;
 #endif
+#endif
+
+#if USE(SKIA)
+    sk_sp<SkTextBlob> buildTextBlob(std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, FontSmoothingMode) const;
+    bool enableAntialiasing(FontSmoothingMode) const;
 #endif
 
     bool canRenderCombiningCharacterSequence(StringView) const;
@@ -280,7 +293,7 @@ private:
     DerivedFonts& ensureDerivedFontData() const;
 
     FloatRect platformBoundsForGlyph(Glyph) const;
-#if USE(CORE_TEXT)
+#if USE(CORE_TEXT) || USE(SKIA)
     Vector<FloatRect, inlineGlyphRunCapacity> platformBoundsForGlyphs(const Vector<Glyph, inlineGlyphRunCapacity>&) const;
 #endif
     float platformWidthForGlyph(Glyph) const;
@@ -324,7 +337,7 @@ private:
 
     const FontPlatformData m_platformData;
 
-    mutable UncheckedKeyHashMap<unsigned, RefPtr<GlyphPage>, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_glyphPages;
+    mutable HashMap<unsigned, RefPtr<GlyphPage>, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_glyphPages;
     mutable GlyphMetricsMap<float> m_glyphToWidthMap;
     mutable std::unique_ptr<GlyphMetricsMap<FloatRect>> m_glyphToBoundsMap;
     // FIXME: Find a more efficient way to represent std::optional<Path>.
@@ -341,7 +354,7 @@ private:
     Attributes m_attributes;
 
     struct DerivedFonts {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DerivedFonts);
     public:
 
         RefPtr<Font> smallCapsFont;
@@ -357,11 +370,17 @@ private:
     mutable std::unique_ptr<DerivedFonts> m_derivedFontData;
 
     struct NoEmojiGlyphs { };
+#if USE(SKIA)
     struct AllEmojiGlyphs { };
+#endif
     struct SomeEmojiGlyphs {
         BitVector colorGlyphs;
     };
+#if USE(SKIA)
     using EmojiType = Variant<NoEmojiGlyphs, AllEmojiGlyphs, SomeEmojiGlyphs>;
+#else
+    using EmojiType = Variant<NoEmojiGlyphs, SomeEmojiGlyphs>;
+#endif
     EmojiType m_emojiType { NoEmojiGlyphs { } };
 
 #if PLATFORM(COCOA)
@@ -431,7 +450,7 @@ ALWAYS_INLINE FloatRect Font::boundsForGlyph(Glyph glyph) const
     return bounds;
 }
 
-#if USE(CORE_TEXT)
+#if USE(CORE_TEXT) || USE(SKIA)
 ALWAYS_INLINE Vector<FloatRect, Font::inlineGlyphRunCapacity> Font::boundsForGlyphs(std::span<const Glyph> glyphs) const
 {
     const auto glyphCount = glyphs.size();

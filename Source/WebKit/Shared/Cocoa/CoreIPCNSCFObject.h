@@ -28,6 +28,7 @@
 #if PLATFORM(COCOA)
 
 #include "ArgumentCodersCocoa.h"
+#include "CoreIPCPKDateComponentsRange.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/UniqueRef.h>
 
@@ -45,7 +46,6 @@ class CoreIPCPKSecureElementPass;
 class CoreIPCPKPayment;
 class CoreIPCPKPaymentToken;
 class CoreIPCPKShippingMethod;
-class CoreIPCPKDateComponentsRange;
 class CoreIPCCNContact;
 class CoreIPCCNPhoneNumber;
 class CoreIPCCNPostalAddress;
@@ -61,7 +61,6 @@ class CoreIPCDate;
 class CoreIPCDateComponents;
 class CoreIPCDictionary;
 class CoreIPCError;
-class CoreIPCFont;
 class CoreIPCLocale;
 class CoreIPCNSShadow;
 class CoreIPCNSValue;
@@ -82,7 +81,6 @@ using ObjectValue = Variant<
     CoreIPCDate,
     CoreIPCDictionary,
     CoreIPCError,
-    CoreIPCFont,
     CoreIPCLocale,
     CoreIPCNSShadow,
     CoreIPCNSValue,
@@ -117,7 +115,7 @@ using ObjectValue = Variant<
 >;
 
 class CoreIPCNSCFObject {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CoreIPCNSCFObject);
 public:
     CoreIPCNSCFObject(id);
     CoreIPCNSCFObject(UniqueRef<ObjectValue>&&);

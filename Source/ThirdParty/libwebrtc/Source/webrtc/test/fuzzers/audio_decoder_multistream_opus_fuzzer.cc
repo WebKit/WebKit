@@ -8,8 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <vector>
+
 #include "api/audio_codecs/opus/audio_decoder_multi_channel_opus.h"
 #include "api/audio_codecs/opus/audio_decoder_multi_channel_opus_config.h"
+#include "rtc_base/checks.h"
 #include "test/fuzzers/audio_decoder_fuzzer.h"
 
 namespace webrtc {

@@ -38,10 +38,11 @@ struct WebPopupItem {
 
     WebPopupItem();
     WebPopupItem(Type);
-    WebPopupItem(Type, const String& text, WebCore::TextDirection, bool hasTextDirectionOverride, const String& toolTip, const String& accessibilityText, bool isEnabled, bool isLabel, bool isSelected);
+    WebPopupItem(Type, const String& text, const String& language, WebCore::TextDirection, bool hasTextDirectionOverride, const String& toolTip, const String& accessibilityText, bool isEnabled, bool isLabel, bool isSelected);
 
     Type m_type;
     String m_text;
+    String m_language;
     WebCore::TextDirection m_textDirection;
     bool m_hasTextDirectionOverride;
     String m_toolTip;

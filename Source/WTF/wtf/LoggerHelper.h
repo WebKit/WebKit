@@ -55,6 +55,7 @@ public:
 #define ALWAYS_LOG_WITH_THIS(thisPtr, ...)     Ref { (thisPtr)->logger() }->logAlwaysVerbose((thisPtr)->logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
 #define ERROR_LOG_WITH_THIS(thisPtr, ...)      Ref { (thisPtr)->logger() }->errorVerbose((thisPtr)->logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
 #define INFO_LOG_WITH_THIS(thisPtr, ...)       Ref { (thisPtr)->logger() }->infoVerbose((thisPtr)->logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
+#define DEBUG_LOG_WITH_THIS(thisPtr, ...)      Ref { (thisPtr)->logger() }->debugVerbose((thisPtr)->logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
 #else
 #define ALWAYS_LOG(...)     Ref { logger() }->logAlways(logChannel(), __VA_ARGS__)
 #define ERROR_LOG(...)      Ref { logger() }->error(logChannel(), __VA_ARGS__)
@@ -65,6 +66,7 @@ public:
 #define ALWAYS_LOG_WITH_THIS(thisPtr, ...)     Ref { (thisPtr)->logger() }->logAlways((thisPtr)->logChannel(), __VA_ARGS__)
 #define ERROR_LOG_WITH_THIS(thisPtr, ...)      Ref { (thisPtr)->logger() }->error((thisPtr)->logChannel(), __VA_ARGS__)
 #define INFO_LOG_WITH_THIS(thisPtr, ...)       Ref { (thisPtr)->logger() }->info((thisPtr)->logChannel(), __VA_ARGS__)
+#define DEBUG_LOG_WITH_THIS(thisPtr, ...)      Ref { (thisPtr)->logger() }->debug((thisPtr)->logChannel(), __VA_ARGS__)
 #endif
 
 #define WILL_LOG(_level_)   Ref { logger() }->willLog(logChannel(), _level_)
@@ -85,14 +87,15 @@ public:
 #define ALWAYS_LOG_WITH_THIS_IF_POSSIBLE(thisPtr, ...)  if (RefPtr logger = thisPtr->loggerPtr()) ALWAYS_LOG_WITH_THIS(thisPtr, __VA_ARGS__)
 #define ERROR_LOG_WITH_THIS_IF_POSSIBLE(thisPtr, ...)   if (RefPtr logger = thisPtr->loggerPtr()) ERROR_LOG_WITH_THIS(thisPtr, __VA_ARGS__)
 #define INFO_LOG_WITH_THIS_IF_POSSIBLE(thisPtr, ...)    if (RefPtr logger = thisPtr->loggerPtr()) INFO_LOG_WITH_THIS(thisPtr, __VA_ARGS__)
+#define DEBUG_LOG_WITH_THIS_IF_POSSIBLE(thisPtr, ...)    if (RefPtr logger = thisPtr->loggerPtr()) DEBUG_LOG_WITH_THIS(thisPtr, __VA_ARGS__)
 
 #if defined(__OBJC__)
 #define OBJC_LOGIDENTIFIER WTF::Logger::LogSiteIdentifier(__PRETTY_FUNCTION__, self.logIdentifier)
-#define OBJC_ALWAYS_LOG(...)     if (self.loggerPtr && self.logChannel) self.loggerPtr->logAlways(*self.logChannel, __VA_ARGS__)
-#define OBJC_ERROR_LOG(...)      if (self.loggerPtr && self.logChannel) self.loggerPtr->error(*self.logChannel, __VA_ARGS__)
-#define OBJC_WARNING_LOG(...)    if (self.loggerPtr && self.logChannel) self.loggerPtr->warning(*self.logChannel, __VA_ARGS__)
-#define OBJC_INFO_LOG(...)       if (self.loggerPtr && self.logChannel) self.loggerPtr->info(*self.logChannel, __VA_ARGS__)
-#define OBJC_DEBUG_LOG(...)      if (self.loggerPtr && self.logChannel) self.loggerPtr->debug(*self.logChannel, __VA_ARGS__)
+#define OBJC_ALWAYS_LOG(...)     if (RefPtr<const Logger> logger = self.loggerPtr; logger && self.logChannel) logger->logAlways(*self.logChannel, __VA_ARGS__)
+#define OBJC_ERROR_LOG(...)      if (RefPtr<const Logger> logger = self.loggerPtr; logger && self.logChannel) logger->error(*self.logChannel, __VA_ARGS__)
+#define OBJC_WARNING_LOG(...)    if (RefPtr<const Logger> logger = self.loggerPtr; logger && self.logChannel) logger->warning(*self.logChannel, __VA_ARGS__)
+#define OBJC_INFO_LOG(...)       if (RefPtr<const Logger> logger = self.loggerPtr; logger && self.logChannel) logger->info(*self.logChannel, __VA_ARGS__)
+#define OBJC_DEBUG_LOG(...)      if (RefPtr<const Logger> logger = self.loggerPtr; logger && self.logChannel) logger->debug(*self.logChannel, __VA_ARGS__)
 #endif
 
     static uint64_t childLogIdentifier(uint64_t parentIdentifier, uint64_t childIdentifier)
@@ -123,10 +126,12 @@ public:
 #define ALWAYS_LOG_WITH_THIS(thisPtr, channelName, ...)   do { UNUSED_PARAM(thisPtr); UNUSED_PARAM(channelName); } while (0)
 #define ERROR_LOG_WITH_THIS(thisPtr, channelName, ...)    do { UNUSED_PARAM(thisPtr); UNUSED_PARAM(channelName); } while (0)
 #define INFO_LOG_WITH_THIS(thisPtr, channelName, ...)     do { UNUSED_PARAM(thisPtr); UNUSED_PARAM(channelName); } while (0)
+#define DEBUG_LOG_WITH_THIS(thisPtr, channelName, ...)    do { UNUSED_PARAM(thisPtr); UNUSED_PARAM(channelName); } while (0)
 
 #define ALWAYS_LOG_WITH_THIS_IF_POSSIBLE(thisPtr, channelName, ...)  do { UNUSED_PARAM(thisPtr); UNUSED_PARAM(channelName); } while (0)
 #define ERROR_LOG_WITH_THIS_IF_POSSIBLE(thisPtr, channelName, ...)   do { UNUSED_PARAM(thisPtr); UNUSED_PARAM(channelName); } while (0)
 #define INFO_LOG_WITH_THIS_IF_POSSIBLE(thisPtr, channelName, ...)    do { UNUSED_PARAM(thisPtr); UNUSED_PARAM(channelName); } while (0)
+#define DEBUG_LOG_WITH_THIS_IF_POSSIBLE(thisPtr, channelName, ...)   do { UNUSED_PARAM(thisPtr); UNUSED_PARAM(channelName); } while (0)
 
 #define ALWAYS_LOG_IF(condition, ...)     ((void)0)
 #define ERROR_LOG_IF(condition, ...)      ((void)0)

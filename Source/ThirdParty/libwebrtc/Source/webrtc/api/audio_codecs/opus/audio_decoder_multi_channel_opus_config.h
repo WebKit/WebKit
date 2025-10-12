@@ -11,6 +11,7 @@
 #ifndef API_AUDIO_CODECS_OPUS_AUDIO_DECODER_MULTI_CHANNEL_OPUS_CONFIG_H_
 #define API_AUDIO_CODECS_OPUS_AUDIO_DECODER_MULTI_CHANNEL_OPUS_CONFIG_H_
 
+#include <cstddef>
 #include <vector>
 
 #include "api/audio_codecs/audio_decoder.h"
@@ -54,7 +55,7 @@ struct AudioDecoderMultiChannelOpusConfig {
       }
     }
 
-    if (num_channels > 255 || max_coded_channel >= 255) {
+    if (max_coded_channel >= 255) {
       return false;
     }
     return true;

@@ -22,13 +22,12 @@
 
 #pragma once
 
-#include "CachedResource.h"
-#include "Image.h"
-#include "ImageObserver.h"
-#include "IntRect.h"
-#include "IntSizeHash.h"
-#include "LayoutSize.h"
-#include "SVGImageCache.h"
+#include <WebCore/CachedResource.h>
+#include <WebCore/Image.h>
+#include <WebCore/ImageObserver.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/LayoutSize.h>
+#include <WebCore/SVGImageCache.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakRef.h>
@@ -53,8 +52,6 @@ class RenderElement;
 class RenderObject;
 class SecurityOrigin;
 
-struct Length;
-
 class CachedImage final : public CachedResource {
     friend class MemoryCache;
 
@@ -70,6 +67,7 @@ public:
     WEBCORE_EXPORT Image* imageForRenderer(const RenderObject*); // Returns the nullImage() if the image is not available yet.
     bool hasImage() const { return m_image.get(); }
     bool currentFrameKnownToBeOpaque(const RenderElement*);
+    bool currentFrameIsComplete(const RenderElement*);
 
     std::pair<WeakPtr<Image>, float> brokenImage(float deviceScaleFactor) const; // Returns an image and the image's resolution scale factor.
     bool willPaintBrokenImage() const;
@@ -95,7 +93,7 @@ public:
     // This method takes a zoom multiplier that can be used to increase the natural size of the image by the zoom.
     LayoutSize imageSizeForRenderer(const RenderElement*, float multiplier, SizeType = UsedSize) const; // returns the size of the complete image.
     LayoutSize unclampedImageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType = UsedSize) const;
-    void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
+    void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio);
 
     bool hasHDRContent() const;
 

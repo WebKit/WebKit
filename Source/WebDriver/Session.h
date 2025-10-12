@@ -188,6 +188,7 @@ private:
     Session(Ref<SessionHost>&&, WeakPtr<WebSocketServer>&&);
 #endif
 
+    String uncheckedTopLevelBrowsingContext() const;
     void switchToTopLevelBrowsingContext(const String&);
     void switchToBrowsingContext(const String&, Function<void(CommandResult&&)>&&);
     void switchToBrowsingContext(const String& toplevelBrowsingContext, const String& browsingContext, Function<void(CommandResult&&)>&&);
@@ -241,11 +242,6 @@ private:
     void setInputFileUploadFiles(const String& elementID, const String& text, bool multiple, Function<void(CommandResult&&)>&&);
     void didSetInputFileUploadFiles(bool wasCancelled);
 
-    enum class MouseInteraction { Move,
-        Down,
-        Up,
-        SingleClick,
-        DoubleClick };
     void performMouseInteraction(int x, int y, MouseButton, MouseInteraction, Function<void(CommandResult&&)>&&);
 
     enum class KeyboardInteractionType { KeyPress,
@@ -263,7 +259,7 @@ private:
         Alternate = 1 << 2,
         Meta = 1 << 3,
     };
-    String virtualKeyForKey(UChar, KeyModifier&);
+    String virtualKeyForKey(char16_t, KeyModifier&);
     void performKeyboardInteractions(Vector<KeyboardInteraction>&&, Function<void(CommandResult&&)>&&);
 
     struct InputSourceState {
@@ -274,6 +270,7 @@ private:
         Type type;
         String subtype;
         std::optional<MouseButton> pressedButton;
+        std::optional<MouseInteraction> mouseInteraction;
         std::optional<String> pressedKey;
         HashSet<String> pressedVirtualKeys;
     };
@@ -301,7 +298,7 @@ private:
     String toInternalEventName(const String&);
 
     // Actual event handlers
-    void doLogEntryAdded(RefPtr<JSON::Object>&&);
+    RefPtr<JSON::Object> processLogEntryAdded(RefPtr<JSON::Object>&&);
 #endif
 };
 

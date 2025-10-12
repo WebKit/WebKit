@@ -42,6 +42,7 @@
 #include "IntRect.h"
 #include "IntSize.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "Node.h"
@@ -49,10 +50,10 @@
 #include "PixelBuffer.h"
 #include "RegistrableDomain.h"
 #include "RenderImage.h"
-#include "RenderObject.h"
+#include "RenderObjectInlines.h"
 #include "RenderStyleInlines.h"
 #include "Settings.h"
-#include "Styleable.h"
+#include "StylableInlines.h"
 #include "WebAnimation.h"
 #include <ranges>
 #include <wtf/HashCountedSet.h>
@@ -123,7 +124,7 @@ static std::optional<Lab<float>> sampleColor(Document& document, IntPoint&& loca
     auto colorSpace = DestinationColorSpace::SRGB();
 
     ASSERT(document.view());
-    auto snapshot = snapshotFrameRect(document.view()->protectedFrame(), IntRect(location, IntSize(1, 1)), { { SnapshotFlags::ExcludeSelectionHighlighting, SnapshotFlags::PaintEverythingExcludingSelection }, ImageBufferPixelFormat::BGRA8, colorSpace });
+    auto snapshot = snapshotFrameRect(document.view()->protectedFrame(), IntRect(location, IntSize(1, 1)), { { SnapshotFlags::ExcludeSelectionHighlighting, SnapshotFlags::PaintEverythingExcludingSelection }, PixelFormat::BGRA8, colorSpace });
     if (!snapshot)
         return std::nullopt;
 
@@ -311,7 +312,7 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& pa
     };
 
     auto colorSpace = DestinationColorSpace::SRGB();
-    auto snapshot = snapshotFrameRect(*frame, snappedIntRect(absoluteRect), { snapshotFlags, ImageBufferPixelFormat::BGRA8, colorSpace });
+    auto snapshot = snapshotFrameRect(*frame, snappedIntRect(absoluteRect), { snapshotFlags, PixelFormat::BGRA8, colorSpace });
     if (!snapshot)
         return PredominantColorType::None;
 
@@ -340,7 +341,7 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& pa
         if (!color.isVisible())
             continue;
 
-        colorDistribution.add(color.colorWithAlpha(1));
+        colorDistribution.add(color);
     }
 
     if (colorDistribution.isEmpty())

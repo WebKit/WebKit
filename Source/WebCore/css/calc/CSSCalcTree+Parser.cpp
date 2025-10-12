@@ -44,11 +44,7 @@
 #include "CSSUnits.h"
 #include "CalculationCategory.h"
 #include "CalculationOperator.h"
-#include "ContainerQueryFeatures.h"
-#include "ContainerQueryParser.h"
 #include "Logging.h"
-#include "MediaQueryFeatures.h"
-#include "MediaQueryParser.h"
 #include <numbers>
 #include <wtf/SortedArrayMap.h>
 
@@ -190,8 +186,6 @@ bool isCalcFunction(CSSValueID functionId)
     case CSSValueMod:
     case CSSValueRem:
     case CSSValueProgress:
-    case CSSValueMediaProgress:
-    case CSSValueContainerProgress:
     case CSSValueRandom:
     case CSSValueSiblingCount:
     case CSSValueSiblingIndex:
@@ -747,7 +741,7 @@ static std::optional<TypedChild> consumeRandom(CSSParserTokenRange& tokens, int 
     if (!state.propertyParserState.context.cssRandomFunctionEnabled)
         return { };
 
-    if (state.propertyParserState.currentRule != StyleRuleType::Style)
+    if (state.propertyParserState.currentRule != StyleRuleType::Style && state.propertyParserState.currentRule != StyleRuleType::Keyframe)
         return { };
     if (state.propertyParserState.currentProperty == CSSPropertyInvalid)
         return { };
@@ -973,210 +967,6 @@ static std::optional<TypedChild> consumeProgress(CSSParserTokenRange& tokens, in
             return TypedChild { WTFMove(*replacement), *outputType };
     }
     return TypedChild { makeChild(WTFMove(op), *outputType), *outputType };
-}
-
-static std::optional<AtomString> consumeMediaFeatureName(CSSParserTokenRange& tokens)
-{
-    if (tokens.peek().type() != IdentToken)
-        return std::nullopt;
-    return AtomString { tokens.consumeIncludingWhitespace().value().convertToASCIILowercase() };
-}
-
-static std::optional<TypedChild> consumeMediaProgress(CSSParserTokenRange& tokens, int depth, ParserState& state)
-{
-    // <media-progress()> = media-progress( <mf-name>, <calc-sum>, <calc-sum> )
-
-    if (!state.propertyParserState.context.cssMediaProgressFunctionEnabled)
-        return { };
-
-    using Op = MediaProgress;
-
-    auto featureName = consumeMediaFeatureName(tokens);
-    if (!featureName) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - failed parse of argument #1");
-        return std::nullopt;
-    }
-
-    auto* schema = MQ::MediaQueryParser::mediaProgressProvidingSchemaForFeatureName(*featureName, state.propertyParserState.context);
-    if (!schema) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - failed parse of argument #1 - invalid media feature");
-        return std::nullopt;
-    }
-
-    if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(tokens)) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - missing comma");
-        return std::nullopt;
-    }
-
-    auto schemaCategory = schema->category();
-
-    ParserState nestedState {
-        .propertyParserState = state.propertyParserState,
-        .parserOptions = ParserOptions {
-            .category = schemaCategory,
-            .range = CSS::All,
-            .allowedSymbols = { },
-            .propertyOptions = { }
-        },
-        .simplificationOptions = nullptr
-    };
-    SimplificationOptions nestedSimplificationOptions = {
-        .category = schemaCategory,
-        .range = CSS::All,
-        .conversionData = state.simplificationOptions->conversionData,
-        .symbolTable = state.simplificationOptions->symbolTable,
-        .allowZeroValueLengthRemovalFromSum = state.simplificationOptions->allowZeroValueLengthRemovalFromSum,
-    };
-    if (state.simplificationOptions)
-        nestedState.simplificationOptions = &nestedSimplificationOptions;
-
-    auto start = parseCalcSum(tokens, depth, nestedState);
-    if (!start) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - failed parse of argument #2");
-        return std::nullopt;
-    }
-
-    if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(tokens)) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - missing comma");
-        return std::nullopt;
-    }
-
-    auto end = parseCalcSum(tokens, depth, nestedState);
-    if (!end) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - failed parse of argument #3");
-        return std::nullopt;
-    }
-
-    if (!tokens.atEnd()) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - extraneous tokens found");
-        return std::nullopt;
-    }
-
-    // - Validate arguments
-
-    if (!Type::consistentType(start->type, end->type)) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - inconsistent types");
-        return std::nullopt;
-    }
-
-    if (!start->type.matches(schemaCategory)) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - inconsistent types");
-        return std::nullopt;
-    }
-
-    // `media-progress() always evaluates to a <number>.
-    auto outputType = Type { };
-
-    Op op { schema, WTFMove(start->child), WTFMove(end->child) };
-
-    if (auto* simplificationOptions = nestedState.simplificationOptions) {
-        if (auto replacement = simplify(op, *simplificationOptions))
-            return TypedChild { WTFMove(*replacement), outputType };
-    }
-    return TypedChild { makeChild(WTFMove(op), outputType), outputType };
-}
-
-static std::optional<TypedChild> consumeContainerProgress(CSSParserTokenRange& tokens, int depth, ParserState& state)
-{
-    // <container-progress()> = container-progress( <mf-name> [ of <container-name> ]?, <calc-sum>, <calc-sum> )
-
-    if (!state.propertyParserState.context.cssContainerProgressFunctionEnabled)
-        return { };
-
-    using Op = ContainerProgress;
-
-    auto featureName = consumeMediaFeatureName(tokens);
-    if (!featureName) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - failed parse of argument #1");
-        return std::nullopt;
-    }
-
-    AtomString container;
-    if (CSSPropertyParserHelpers::consumeIdentRaw<CSSValueOf>(tokens)) {
-        if (tokens.peek().type() != IdentToken || !isValidContainerNameIdentifier(tokens.peek().id())) {
-            LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - failed parse of argument #1");
-            return std::nullopt;
-        }
-        container = tokens.consumeIncludingWhitespace().value().toAtomString();
-    }
-
-    auto* schema = CQ::ContainerQueryParser::containerProgressProvidingSchemaForFeatureName(*featureName, state.propertyParserState.context);
-    if (!schema) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - failed parse of argument #1 - invalid media feature");
-        return std::nullopt;
-    }
-
-    if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(tokens)) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - missing comma");
-        return std::nullopt;
-    }
-
-    auto schemaCategory = schema->category();
-
-    ParserState nestedState {
-        .propertyParserState = state.propertyParserState,
-        .parserOptions = ParserOptions {
-            .category = schemaCategory,
-            .range = CSS::All,
-            .allowedSymbols = { },
-            .propertyOptions = { }
-        },
-        .simplificationOptions = nullptr
-    };
-    SimplificationOptions nestedSimplificationOptions = {
-        .category = schemaCategory,
-        .range = CSS::All,
-        .conversionData = state.simplificationOptions->conversionData,
-        .symbolTable = state.simplificationOptions->symbolTable,
-        .allowZeroValueLengthRemovalFromSum = state.simplificationOptions->allowZeroValueLengthRemovalFromSum,
-    };
-    if (state.simplificationOptions)
-        nestedState.simplificationOptions = &nestedSimplificationOptions;
-
-    auto start = parseCalcSum(tokens, depth, nestedState);
-    if (!start) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - failed parse of argument #2");
-        return std::nullopt;
-    }
-
-    if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(tokens)) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - missing comma");
-        return std::nullopt;
-    }
-
-    auto end = parseCalcSum(tokens, depth, nestedState);
-    if (!end) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - failed parse of argument #3");
-        return std::nullopt;
-    }
-
-    if (!tokens.atEnd()) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - extraneous tokens found");
-        return std::nullopt;
-    }
-
-    // - Validate arguments
-
-    if (!Type::consistentType(start->type, end->type)) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - inconsistent types");
-        return std::nullopt;
-    }
-
-    if (!start->type.matches(schemaCategory)) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - inconsistent types");
-        return std::nullopt;
-    }
-
-    // `container-progress() always evaluates to a <number>.
-    auto outputType = Type { };
-
-    Op op { schema, WTFMove(container), WTFMove(start->child), WTFMove(end->child) };
-
-    if (auto* simplificationOptions = nestedState.simplificationOptions) {
-        if (auto replacement = simplify(op, *simplificationOptions))
-            return TypedChild { WTFMove(*replacement), outputType };
-    }
-    return TypedChild { makeChild(WTFMove(op), outputType), outputType };
 }
 
 static std::optional<TypedChild> consumeValueWithoutSimplifyingCalc(CSSParserTokenRange& tokens, int depth, ParserState& state)
@@ -1517,25 +1307,15 @@ std::optional<TypedChild> parseCalcFunction(CSSParserTokenRange& tokens, CSSValu
         //     - OUTPUT: <number> "made consistent"
         return consumeProgress(tokens, depth, state);
 
-    case CSSValueMediaProgress:
-        // <media-progress()> = media-progress( <mf-name>, <calc-sum>, <calc-sum> )
-        //     - INPUT: dependent on type of <mf-name> feature.
-        //     - OUTPUT: <number>
-        return consumeMediaProgress(tokens, depth, state);
-
-    case CSSValueContainerProgress:
-        // <container-progress()> = container-progress( <mf-name> [ of <container-name> ]?, <calc-sum>, <calc-sum> )
-        //     - INPUT: dependent on type of <mf-name> feature.
-        //     - OUTPUT: <number>
-        return consumeContainerProgress(tokens, depth, state);
-
     case CSSValueSiblingCount:
         // <sibling-count()> = sibling-count()
         //     - INPUT: none
         //     - OUTPUT: <integer>
         if (!state.propertyParserState.context.cssTreeCountingFunctionsEnabled)
             return { };
-        if (state.propertyParserState.currentRule != StyleRuleType::Style || state.propertyParserState.currentProperty == CSSPropertyInvalid)
+        if (state.propertyParserState.currentRule != StyleRuleType::Style && state.propertyParserState.currentRule != StyleRuleType::Keyframe)
+            return { };
+        if (state.propertyParserState.currentProperty == CSSPropertyInvalid)
             return { };
         return consumeZeroArguments<SiblingCount>(tokens, depth, state);
 
@@ -1545,7 +1325,9 @@ std::optional<TypedChild> parseCalcFunction(CSSParserTokenRange& tokens, CSSValu
         //     - OUTPUT: <integer>
         if (!state.propertyParserState.context.cssTreeCountingFunctionsEnabled)
             return { };
-        if (state.propertyParserState.currentRule != StyleRuleType::Style || state.propertyParserState.currentProperty == CSSPropertyInvalid)
+        if (state.propertyParserState.currentRule != StyleRuleType::Style && state.propertyParserState.currentRule != StyleRuleType::Keyframe)
+            return { };
+        if (state.propertyParserState.currentProperty == CSSPropertyInvalid)
             return { };
         return consumeZeroArguments<SiblingIndex>(tokens, depth, state);
 

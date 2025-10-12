@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "DOMRectReadOnly.h"
-#include "FloatRect.h"
-#include "IntRect.h"
+#include <WebCore/DOMRectReadOnly.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/IntRect.h>
 
 namespace WebCore {
 

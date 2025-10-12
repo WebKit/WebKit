@@ -11,20 +11,19 @@
 #ifndef MODULES_VIDEO_CODING_PACKET_BUFFER_H_
 #define MODULES_VIDEO_CODING_PACKET_BUFFER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
-#include <queue>
+#include <optional>
 #include <set>
 #include <vector>
 
 #include "absl/base/attributes.h"
-#include "api/rtp_packet_info.h"
-#include "api/units/timestamp.h"
-#include "api/video/encoded_image.h"
+#include "api/video/video_codec_type.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/numerics/sequence_number_util.h"
-#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 namespace video_coding {
@@ -63,7 +62,7 @@ class PacketBuffer {
     uint32_t timestamp = 0;
     int times_nacked = -1;
 
-    rtc::CopyOnWriteBuffer video_payload;
+    CopyOnWriteBuffer video_payload;
     RTPVideoHeader video_header;
   };
   struct InsertResult {

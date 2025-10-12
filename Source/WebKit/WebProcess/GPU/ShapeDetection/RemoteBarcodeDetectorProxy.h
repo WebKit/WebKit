@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "RenderingBackendIdentifier.h"
+#include "RemoteRenderingBackendIdentifier.h"
 #include "ShapeDetectionIdentifier.h"
 #include <WebCore/BarcodeDetectorInterface.h>
 #include <wtf/CompletionHandler.h>
@@ -51,14 +51,14 @@ namespace WebKit::ShapeDetection {
 class RemoteBarcodeDetectorProxy : public WebCore::ShapeDetection::BarcodeDetector {
     WTF_MAKE_TZONE_ALLOCATED(RemoteBarcodeDetectorProxy);
 public:
-    static Ref<RemoteBarcodeDetectorProxy> create(Ref<IPC::StreamClientConnection>&&, RenderingBackendIdentifier, ShapeDetectionIdentifier, const WebCore::ShapeDetection::BarcodeDetectorOptions&);
+    static Ref<RemoteBarcodeDetectorProxy> create(Ref<IPC::StreamClientConnection>&&, RemoteRenderingBackendIdentifier, ShapeDetectionIdentifier, const WebCore::ShapeDetection::BarcodeDetectorOptions&);
 
     virtual ~RemoteBarcodeDetectorProxy();
 
-    static void getSupportedFormats(Ref<IPC::StreamClientConnection>&&, RenderingBackendIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::BarcodeFormat>&&)>&&);
+    static void getSupportedFormats(Ref<IPC::StreamClientConnection>&&, RemoteRenderingBackendIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::BarcodeFormat>&&)>&&);
 
 private:
-    RemoteBarcodeDetectorProxy(Ref<IPC::StreamClientConnection>&&, RenderingBackendIdentifier, ShapeDetectionIdentifier);
+    RemoteBarcodeDetectorProxy(Ref<IPC::StreamClientConnection>&&, RemoteRenderingBackendIdentifier, ShapeDetectionIdentifier);
 
     RemoteBarcodeDetectorProxy(const RemoteBarcodeDetectorProxy&) = delete;
     RemoteBarcodeDetectorProxy(RemoteBarcodeDetectorProxy&&) = delete;
@@ -70,8 +70,8 @@ private:
     void detect(Ref<WebCore::ImageBuffer>&&, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedBarcode>&&)>&&) final;
 
     ShapeDetectionIdentifier m_backing;
-    Ref<IPC::StreamClientConnection> m_streamClientConnection;
-    RenderingBackendIdentifier m_renderingBackendIdentifier;
+    const Ref<IPC::StreamClientConnection> m_streamClientConnection;
+    RemoteRenderingBackendIdentifier m_renderingBackendIdentifier;
 };
 
 } // namespace WebKit::ShapeDetection

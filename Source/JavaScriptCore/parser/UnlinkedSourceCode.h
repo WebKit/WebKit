@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "SourceProvider.h"
+#include <JavaScriptCore/SourceProvider.h>
 #include <wtf/RefPtr.h>
 
 namespace JSC {

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPUColorTargetState.h"
-#include "WebGPUProgrammableStage.h"
+#include <WebCore/WebGPUColorTargetState.h>
+#include <WebCore/WebGPUProgrammableStage.h>
 #include <optional>
 #include <wtf/Vector.h>
 

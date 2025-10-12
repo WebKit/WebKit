@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008-2009 Torch Mobile, Inc.
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  *
@@ -197,15 +197,6 @@ bool ScalableImageDecoder::frameHasAlphaAtIndex(size_t index) const
     if (!frame.isComplete())
         return true;
     return frame.hasAlpha();
-}
-
-unsigned ScalableImageDecoder::frameBytesAtIndex(size_t index, SubsamplingLevel) const
-{
-    Locker locker { m_lock };
-    if (m_frameBufferCache.size() <= index)
-        return 0;
-    // FIXME: Use the dimension of the requested frame.
-    return m_size.area() * sizeof(uint32_t);
 }
 
 Seconds ScalableImageDecoder::frameDurationAtIndex(size_t index) const

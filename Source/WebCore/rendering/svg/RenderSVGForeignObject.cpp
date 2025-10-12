@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google, Inc.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved. 
  * Copyright (C) 2020, 2021, 2022 Igalia S.L.

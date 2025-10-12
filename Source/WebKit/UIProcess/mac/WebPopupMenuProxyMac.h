@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPopupMenuProxyMac_h
-#define WebPopupMenuProxyMac_h
+#pragma once
 
 #if USE(APPKIT)
 
 #include "WebPopupMenuProxy.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/WeakObjCPtr.h>
 
 OBJC_CLASS NSPopUpButtonCell;
@@ -51,18 +51,27 @@ public:
     void hidePopupMenu() override;
     void cancelTracking() override;
 
+    RetainPtr<NSPopUpButtonCell> protectedPopup() const;
+    bool isVisible() const { return m_isVisible; }
+
 private:
     WebPopupMenuProxyMac(NSView *, WebPopupMenuProxy::Client&);
 
     void populate(const Vector<WebPopupItem>&, NSFont *, WebCore::TextDirection);
+    bool isWebPopupMenuProxyMac() const final { return true; }
+    RetainPtr<NSMenu> protectedMenu() const;
 
     RetainPtr<NSPopUpButtonCell> m_popup;
     WeakObjCPtr<NSView> m_webView;
-    bool m_wasCanceled;
+    bool m_wasCanceled { false };
+    bool m_isVisible { false };
 };
 
 } // namespace WebKit
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebPopupMenuProxyMac) \
+    static bool isType(const WebKit::WebPopupMenuProxy& menu) { return menu.isWebPopupMenuProxyMac(); } \
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif // USE(APPKIT)
 
-#endif // WebPopupMenuProxyMac_h

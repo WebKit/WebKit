@@ -205,6 +205,9 @@ static inline void dealloc_compressor_data(AV1_COMP *cpi) {
   aom_free(cpi->active_map.map);
   cpi->active_map.map = NULL;
 
+  aom_free(cpi->roi.roi_map);
+  cpi->roi.roi_map = NULL;
+
   aom_free(cpi->ssim_rdmult_scaling_factors);
   cpi->ssim_rdmult_scaling_factors = NULL;
 
@@ -251,11 +254,10 @@ static inline void dealloc_compressor_data(AV1_COMP *cpi) {
                              cpi->sf.part_sf.partition_search_type);
   cpi->td.pc_root = NULL;
 
-  for (int i = 0; i < 2; i++)
-    for (int j = 0; j < 2; j++) {
-      aom_free(cpi->td.mb.intrabc_hash_info.hash_value_buffer[i][j]);
-      cpi->td.mb.intrabc_hash_info.hash_value_buffer[i][j] = NULL;
-    }
+  for (int i = 0; i < 2; i++) {
+    aom_free(cpi->td.mb.intrabc_hash_info.hash_value_buffer[i]);
+    cpi->td.mb.intrabc_hash_info.hash_value_buffer[i] = NULL;
+  }
 
   av1_hash_table_destroy(&cpi->td.mb.intrabc_hash_info.intrabc_hash_table);
 
@@ -482,10 +484,8 @@ static inline void free_thread_data(AV1_PRIMARY *ppi) {
     aom_free(td->vt64x64);
 
     for (int x = 0; x < 2; x++) {
-      for (int y = 0; y < 2; y++) {
-        aom_free(td->hash_value_buffer[x][y]);
-        td->hash_value_buffer[x][y] = NULL;
-      }
+      aom_free(td->hash_value_buffer[x]);
+      td->hash_value_buffer[x] = NULL;
     }
     aom_free(td->mv_costs_alloc);
     td->mv_costs_alloc = NULL;

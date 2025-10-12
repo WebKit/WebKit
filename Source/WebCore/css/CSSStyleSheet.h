@@ -20,12 +20,12 @@
 
 #pragma once
 
-#include "CSSRuleList.h"
-#include "CommonAtomStrings.h"
-#include "ExceptionOr.h"
-#include "MediaList.h"
-#include "MediaQuery.h"
-#include "StyleSheet.h"
+#include <WebCore/CSSRuleList.h>
+#include <WebCore/CommonAtomStrings.h>
+#include <WebCore/ExceptionOr.h>
+#include <WebCore/MediaList.h>
+#include <WebCore/MediaQuery.h>
+#include <WebCore/StyleSheet.h>
 #include <memory>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Noncopyable.h>
@@ -109,6 +109,7 @@ public:
 
     void removeAdoptingTreeScope(ContainerNode&);
     void addAdoptingTreeScope(ContainerNode&);
+    const WeakHashSet<ContainerNode, WeakPtrImplWithEventTargetData>& adoptingTreeScopes() const { return m_adoptingTreeScopes; }
 
     Document* ownerDocument() const;
     CSSStyleSheet& rootStyleSheet();

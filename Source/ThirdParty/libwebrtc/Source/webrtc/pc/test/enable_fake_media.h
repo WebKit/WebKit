@@ -28,7 +28,7 @@ namespace webrtc {
 // Enables media support backed by the 'fake_media_engine'.
 void EnableFakeMedia(
     PeerConnectionFactoryDependencies& deps,
-    absl::Nonnull<std::unique_ptr<cricket::FakeMediaEngine>> fake_media_engine);
+    absl_nonnull std::unique_ptr<FakeMediaEngine> fake_media_engine);
 
 // Enables media support backed by unspecified lightweight fake implementation.
 void EnableFakeMedia(PeerConnectionFactoryDependencies& deps);

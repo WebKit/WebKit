@@ -48,7 +48,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 RetainPtr<id> CoreIPCPKContact::toID() const
 {
-    RetainPtr<PKContact> contact = adoptNS([[PAL::getPKContactClass() alloc] init]);
+    RetainPtr<PKContact> contact = adoptNS([[PAL::getPKContactClassSingleton() alloc] init]);
 
     if (m_name)
         contact.get().name = (NSPersonNameComponents *)m_name->toID();

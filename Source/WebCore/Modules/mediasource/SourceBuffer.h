@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -113,14 +113,14 @@ public:
     void removedFromMediaSource();
     using ComputeSeekPromise = SourceBufferPrivate::ComputeSeekPromise;
     Ref<ComputeSeekPromise> computeSeekTime(const SeekTarget&);
-    void seekToTime(const MediaTime&);
 
     bool hasVideo() const;
 
     bool active() const { return m_active; }
 
     // EventTarget
-    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final;
+    using ActiveDOMObject::protectedScriptExecutionContext;
 
     enum class AppendMode { Segments, Sequence };
     AppendMode mode() const { return m_mode; }
@@ -214,6 +214,10 @@ private:
     bool hasAudio() const;
 
     void rangeRemoval(const MediaTime&, const MediaTime&);
+    RefPtr<MediaSource> protectedSource() const;
+    RefPtr<VideoTrackList> protectedVideoTracks() const;
+    RefPtr<AudioTrackList> protectedAudioTracks() const;
+    RefPtr<TextTrackList> protectedTextTracks() const;
 
     friend class Internals;
     using SamplesPromise = NativePromise<Vector<String>, PlatformMediaError>;
@@ -226,8 +230,8 @@ private:
 
     void updateBuffered();
 
-    Ref<SourceBufferPrivate> m_private;
-    Ref<SourceBufferClientImpl> m_client;
+    const Ref<SourceBufferPrivate> m_private;
+    const Ref<SourceBufferClientImpl> m_client;
 
     WeakPtr<MediaSource> m_source;
     AppendMode m_mode { AppendMode::Segments };
@@ -272,7 +276,7 @@ private:
     std::optional<uint64_t> m_maximumBufferSize;
 
 #if !RELEASE_LOG_DISABLED
-    Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
 #endif
 };

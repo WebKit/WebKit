@@ -27,6 +27,8 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "HTTPServer.h"
+#import "TestNavigationDelegate.h"
 #import "WebExtensionUtilities.h"
 
 namespace TestWebKitAPI {
@@ -175,6 +177,67 @@ TEST(WKWebExtensionAPINamespace, ObjectEquality)
     ]);
 
     Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+}
+
+
+TEST(WKWebExtensionAPINamespace, BrowserNamespaceIsAvailableInContentScripts)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ ],
+        @"host_permissions": @[ @"*://localhost/*" ],
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO
+        },
+        @"content_scripts": @[ @{
+            @"matches": @[ @"*://localhost/*" ],
+            @"js": @[ @"content.js" ]
+        } ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.sendMessage('Background page loaded')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.test.assertEq(typeof browser, 'object')",
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto manager = Util::parseExtension(manifest, @{
+        @"background.js": backgroundScript,
+        @"content.js": contentScript
+    });
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    // Steps to reproduce:
+    // Step 1: Navigate to a page
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView _test_waitForDidFinishNavigation];
+
+    // Step 2: Enable the extension
+    [manager load];
+    [manager runUntilTestMessage:@"Background page loaded"];
+
+    // Step 3: Grant it access to the page
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    // Step 4: Disable the extension
+    [manager unload];
+
+    // Step 5: Refresh the page
+    [manager.get().defaultTab.webView reload];
+    [manager.get().defaultTab.webView _test_waitForDidFinishNavigation];
+
+    // Step 6: Enable the extension again
+    [manager loadAndRun];
 }
 
 } // namespace TestWebKitAPI

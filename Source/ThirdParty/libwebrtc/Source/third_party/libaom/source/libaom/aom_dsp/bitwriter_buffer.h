@@ -40,6 +40,7 @@ void aom_wb_overwrite_literal(struct aom_write_bit_buffer *wb, int data,
 void aom_wb_write_inv_signed_literal(struct aom_write_bit_buffer *wb, int data,
                                      int bits);
 
+// Writes a variable length unsigned integer. UINT32_MAX is an invalid input.
 void aom_wb_write_uvlc(struct aom_write_bit_buffer *wb, uint32_t v);
 
 void aom_wb_write_signed_primitive_refsubexpfin(struct aom_write_bit_buffer *wb,

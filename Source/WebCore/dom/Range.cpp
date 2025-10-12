@@ -3,7 +3,7 @@
  * (C) 2000 Gunnstein Lye (gunnstein@netcom.no)
  * (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * (C) 2001 Peter Kelly (pmk@post.com)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Motorola Mobility. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -55,7 +55,6 @@
 #include "WebCoreOpaqueRootInlines.h"
 #include "markup.h"
 #include <stdio.h>
-#include <wtf/RefCountedLeakCounter.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
@@ -64,8 +63,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-
-DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, rangeCounter, ("Range"));
 
 enum ContentsProcessDirection { ProcessContentsForward, ProcessContentsBackward };
 
@@ -80,10 +77,6 @@ inline Range::Range(Document& ownerDocument)
     , m_start(ownerDocument)
     , m_end(ownerDocument)
 {
-#ifndef NDEBUG
-    rangeCounter.increment();
-#endif
-
     protectedOwnerDocument()->attachRange(*this);
 }
 
@@ -96,10 +89,6 @@ Range::~Range()
 {
     ASSERT(!m_isAssociatedWithSelection);
     protectedOwnerDocument()->detachRange(*this);
-
-#ifndef NDEBUG
-    rangeCounter.decrement();
-#endif
 }
 
 Ref<Document> Range::protectedOwnerDocument()
@@ -115,7 +104,7 @@ Node* Range::commonAncestorContainer() const
 void Range::updateAssociatedSelection()
 {
     if (m_isAssociatedWithSelection)
-        protectedOwnerDocument()->checkedSelection()->updateFromAssociatedLiveRange();
+        protectedOwnerDocument()->selection().updateFromAssociatedLiveRange();
 }
 
 void Range::updateAssociatedHighlight()
@@ -451,7 +440,7 @@ ExceptionOr<RefPtr<DocumentFragment>> Range::processContents(ActionType action)
                 return result.releaseException();
         }
 
-        UncheckedKeyHashSet<Ref<Element>> elementSet;
+        HashSet<Ref<Element>> elementSet;
         for (Ref element : customElementsReactionHoldingTank.takeElements())
             elementSet.add(element.get());
         if (!elementSet.isEmpty()) {
@@ -859,10 +848,10 @@ ExceptionOr<void> Range::surroundContents(Node& newParent)
     Ref protectedNewParent = newParent;
 
     // Step 1: If a non-Text node is partially contained in the context object, then throw an InvalidStateError.
-    RefPtr startNonTextContainer = &startContainer();
+    RefPtr startNonTextContainer = startContainer();
     if (is<Text>(startNonTextContainer))
         startNonTextContainer = startNonTextContainer->parentNode();
-    RefPtr endNonTextContainer = &endContainer();
+    RefPtr endNonTextContainer = endContainer();
     if (is<Text>(endNonTextContainer))
         endNonTextContainer = endNonTextContainer->parentNode();
     if (startNonTextContainer != endNonTextContainer)
@@ -1138,7 +1127,7 @@ void Range::updateFromSelection(const SimpleRange& value)
 
 LocalDOMWindow* Range::window() const
 {
-    return m_isAssociatedWithSelection ? m_ownerDocument->domWindow() : nullptr;
+    return m_isAssociatedWithSelection ? m_ownerDocument->window() : nullptr;
 }
 
 SimpleRange makeSimpleRange(const Range& range)

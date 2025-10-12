@@ -9,32 +9,15 @@
  */
 #include "net/dcsctp/packet/parameter/parameter.h"
 
-#include <stddef.h>
-
+#include <cstddef>
 #include <cstdint>
-#include <memory>
 #include <optional>
-#include <string>
-#include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "api/array_view.h"
 #include "net/dcsctp/common/math.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
-#include "net/dcsctp/packet/parameter/add_incoming_streams_request_parameter.h"
-#include "net/dcsctp/packet/parameter/add_outgoing_streams_request_parameter.h"
-#include "net/dcsctp/packet/parameter/forward_tsn_supported_parameter.h"
-#include "net/dcsctp/packet/parameter/heartbeat_info_parameter.h"
-#include "net/dcsctp/packet/parameter/incoming_ssn_reset_request_parameter.h"
-#include "net/dcsctp/packet/parameter/outgoing_ssn_reset_request_parameter.h"
-#include "net/dcsctp/packet/parameter/reconfiguration_response_parameter.h"
-#include "net/dcsctp/packet/parameter/ssn_tsn_reset_request_parameter.h"
-#include "net/dcsctp/packet/parameter/state_cookie_parameter.h"
-#include "net/dcsctp/packet/parameter/supported_extensions_parameter.h"
-#include "net/dcsctp/packet/tlv_trait.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/strings/string_builder.h"
 
 namespace dcsctp {
 
@@ -54,7 +37,7 @@ Parameters::Builder& Parameters::Builder::Add(const Parameter& p) {
 }
 
 std::vector<ParameterDescriptor> Parameters::descriptors() const {
-  rtc::ArrayView<const uint8_t> span(data_);
+  webrtc::ArrayView<const uint8_t> span(data_);
   std::vector<ParameterDescriptor> result;
   while (!span.empty()) {
     BoundedByteReader<kParameterHeaderSize> header(span);
@@ -71,9 +54,9 @@ std::vector<ParameterDescriptor> Parameters::descriptors() const {
 }
 
 std::optional<Parameters> Parameters::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   // Validate the parameter descriptors
-  rtc::ArrayView<const uint8_t> span(data);
+  webrtc::ArrayView<const uint8_t> span(data);
   while (!span.empty()) {
     if (span.size() < kParameterHeaderSize) {
       RTC_DLOG(LS_WARNING) << "Insufficient parameter length";

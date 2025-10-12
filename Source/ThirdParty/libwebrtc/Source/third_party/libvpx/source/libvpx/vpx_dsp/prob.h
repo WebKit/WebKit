@@ -30,7 +30,7 @@ typedef uint8_t vpx_prob;
 
 typedef int8_t vpx_tree_index;
 
-#define TREE_SIZE(leaf_count) (2 * (leaf_count)-2)
+#define TREE_SIZE(leaf_count) (2 * (leaf_count) - 2)
 
 #define vpx_complement(x) (255 - (x))
 

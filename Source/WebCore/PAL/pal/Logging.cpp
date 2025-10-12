@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2013, 2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2013, 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #if PLATFORM(COCOA)
 #include <notify.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/darwin/DispatchExtras.h>
 #endif
 
 namespace PAL {
@@ -39,7 +40,7 @@ void registerNotifyCallback(ASCIILiteral notifyID, Function<void()>&& callback)
 {
 #if PLATFORM(COCOA)
     int token;
-    notify_register_dispatch(notifyID.characters(), &token, dispatch_get_main_queue(), makeBlockPtr([callback = WTFMove(callback)](int) {
+    notify_register_dispatch(notifyID.characters(), &token, mainDispatchQueueSingleton(), makeBlockPtr([callback = WTFMove(callback)](int) {
         callback();
     }).get());
 #else
@@ -50,8 +51,7 @@ void registerNotifyCallback(ASCIILiteral notifyID, Function<void()>&& callback)
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
-#define DEFINE_PAL_LOG_CHANNEL(name) DEFINE_LOG_CHANNEL(name, LOG_CHANNEL_WEBKIT_SUBSYSTEM)
-PAL_LOG_CHANNELS(DEFINE_PAL_LOG_CHANNEL)
+PAL_LOG_CHANNELS(DEFINE_LOG_CHANNEL)
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 

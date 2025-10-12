@@ -179,9 +179,9 @@
   <meson id="libdrm" mesonargs="-Dtegra=enabled -Dcairo-tests=disabled -Dman-pages=disabled -Dvalgrind=disabled -Dudev=false -Dtests=false">
     <pkg-config>libdrm.pc</pkg-config>
     <branch module="mesa/drm.git"
-            version="2.4.113"
-            tag="libdrm-2.4.113"
-            checkoutdir="libdrm-2.4.113"
+            version="2.4.114"
+            tag="libdrm-2.4.114"
+            checkoutdir="libdrm-2.4.114"
             repo="git.freedesktop.org" />
   </meson>
 

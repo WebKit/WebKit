@@ -14,5 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/crashtests/empty-values-list-paced-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/crashtests/firefox-bug-1930221.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/crashtests/firefox-bug-1949899.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/crashtests/firefox-bug-1957178.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/crashtests/firefox-bug-1974334.html

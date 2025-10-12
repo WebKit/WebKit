@@ -29,12 +29,12 @@
 
 #if ENABLE(THREADING_LIBDISPATCH)
 
-#include <dispatch/dispatch.h>
+#include <wtf/darwin/DispatchExtras.h>
 
 namespace WTF {
 
 class ParallelEnvironment {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ParallelEnvironment);
 public:
     typedef void (*ThreadFunction)(void*);
 
@@ -54,7 +54,7 @@ public:
 
     void execute(unsigned char* parameters)
     {
-        static dispatch_queue_t globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+        static dispatch_queue_t globalQueue = globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         dispatch_apply(m_numberOfJobs, globalQueue, ^(size_t i) { (*m_threadFunction)(parameters + (m_sizeOfParameter * i)); });

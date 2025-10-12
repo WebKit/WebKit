@@ -45,7 +45,7 @@ static constexpr uint8_t defaultMessageFlags = 0;
 #if OS(DARWIN)
 static inline MallocSpan<uint8_t, Mmap> allocateBuffer(size_t size)
 {
-    auto buffer = MallocSpan<uint8_t, Mmap>::mmap(size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1);
+    auto buffer = MallocSpan<uint8_t, Mmap>::mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1);
     RELEASE_ASSERT(!!buffer);
     return buffer;
 }

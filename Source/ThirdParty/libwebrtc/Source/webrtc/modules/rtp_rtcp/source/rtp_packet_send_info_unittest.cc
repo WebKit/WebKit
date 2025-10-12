@@ -11,11 +11,11 @@
 #include <cstdint>
 #include <optional>
 
+#include "api/transport/network_types.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {

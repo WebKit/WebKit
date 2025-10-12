@@ -1,0 +1,4 @@
+
+
+PASS Element.focus() in focus listener when focus has moved away
+

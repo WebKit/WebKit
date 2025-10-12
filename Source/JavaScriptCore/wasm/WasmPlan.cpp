@@ -116,7 +116,7 @@ bool Plan::tryRemoveContextAndCancelIfLast(VM& vm)
     return false;
 }
 
-void Plan::fail(String&& errorMessage, Error error)
+void Plan::fail(String&& errorMessage, CompilationError error)
 {
     if (failed())
         return;

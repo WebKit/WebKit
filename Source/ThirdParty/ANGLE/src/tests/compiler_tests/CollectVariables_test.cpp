@@ -7,6 +7,10 @@
 //   Some tests for shader inspection
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <memory>
 
 #include "GLSLANG/ShaderLang.h"

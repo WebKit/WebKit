@@ -27,9 +27,9 @@ namespace WebCore {
 
 class Latin1TextIterator {
 public:
-    // The passed in LChar pointer starts at 'currentIndex'. The iterator operates on the range [currentIndex, lastIndex].
-    // 'endCharacter' denotes the maximum length of the UChar array, which might exceed 'lastIndex'.
-    Latin1TextIterator(std::span<const LChar> characters, unsigned currentIndex, unsigned lastIndex)
+    // The passed in Latin1Character pointer starts at 'currentIndex'. The iterator operates on the range [currentIndex, lastIndex].
+    // 'endCharacter' denotes the maximum length of the char16_t array, which might exceed 'lastIndex'.
+    Latin1TextIterator(std::span<const Latin1Character> characters, unsigned currentIndex, unsigned lastIndex)
         : m_characters(characters)
         , m_currentIndex(currentIndex)
         , m_originalIndex(currentIndex)
@@ -60,17 +60,17 @@ public:
         m_currentIndex = index;
     }
 
-    std::span<const LChar> remainingCharacters() const
+    std::span<const Latin1Character> remainingCharacters() const
     {
         auto relativeIndex = m_currentIndex - m_originalIndex;
         return m_characters.subspan(relativeIndex);
     }
 
     unsigned currentIndex() const { return m_currentIndex; }
-    std::span<const LChar> characters() const { return m_characters; }
+    std::span<const Latin1Character> characters() const { return m_characters; }
 
 private:
-    std::span<const LChar> m_characters;
+    std::span<const Latin1Character> m_characters;
     unsigned m_currentIndex;
     const unsigned m_originalIndex;
     const unsigned m_lastIndex;

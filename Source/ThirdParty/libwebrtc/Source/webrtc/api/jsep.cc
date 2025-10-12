@@ -13,18 +13,8 @@
 #include <cstddef>
 #include <optional>
 #include <string>
-#include <vector>
 
 namespace webrtc {
-
-std::string IceCandidateInterface::server_url() const {
-  return "";
-}
-
-size_t SessionDescriptionInterface::RemoveCandidates(
-    const std::vector<cricket::Candidate>& /* candidates */) {
-  return 0;
-}
 
 const char SessionDescriptionInterface::kOffer[] = "offer";
 const char SessionDescriptionInterface::kPrAnswer[] = "pranswer";

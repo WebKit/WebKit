@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "ContentExtensionsBackend.h"
+#include <WebCore/ContentExtensionsBackend.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
@@ -72,9 +72,7 @@ private:
     Eligibility checkEligibility(const ContentExtensions::ResourceLoadInfo&);
     void finishPendingQueries(Function<Eligibility(const ContentExtensions::ResourceLoadInfo&)> checker);
 
-    Ref<WorkQueue> protectedWorkQueue() { return m_workQueue; }
-
-    Ref<WorkQueue> m_workQueue;
+    const Ref<WorkQueue> m_workQueue;
     std::unique_ptr<ContentExtensions::ContentExtensionsBackend> m_ruleList;
     Vector<std::pair<ContentExtensions::ResourceLoadInfo, CompletionHandler<void(Eligibility)>>> m_pendingQueries;
     WeakHashSet<ResourceMonitor> m_resourceMonitors;

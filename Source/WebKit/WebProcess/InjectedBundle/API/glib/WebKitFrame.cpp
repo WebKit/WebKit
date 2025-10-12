@@ -95,12 +95,12 @@ WebFrame* webkitFrameGetWebFrame(WebKitFrame* frame)
 
 GRefPtr<JSCValue> webkitFrameGetJSCValueForElementInWorld(WebKitFrame* frame, Element& element, WebKitScriptWorld* world)
 {
-    Vector<RefPtr<Element>> elements = { RefPtr<Element>(&element) };
+    Vector<Ref<Element>> elements = { Ref<Element>(element) };
     auto values = webkitFrameGetJSCValuesForElementsInWorld(frame, elements, world);
     return values.takeLast();
 }
 
-Vector<GRefPtr<JSCValue>> webkitFrameGetJSCValuesForElementsInWorld(WebKitFrame* frame, const Vector<RefPtr<Element>>& elements, WebKitScriptWorld* world)
+Vector<GRefPtr<JSCValue>> webkitFrameGetJSCValuesForElementsInWorld(WebKitFrame* frame, const Vector<Ref<Element>>& elements, WebKitScriptWorld* world)
 {
     RefPtr wkWorld = webkitScriptWorldGetInjectedBundleScriptWorld(world);
     auto jsContext = jscContextGetOrCreate(frame->priv->webFrame->jsContextForWorld(wkWorld.get()));
@@ -109,7 +109,7 @@ Vector<GRefPtr<JSCValue>> webkitFrameGetJSCValuesForElementsInWorld(WebKitFrame*
         JSValueRef jsValue = nullptr;
         {
             JSC::JSLockHolder lock(globalObject);
-            jsValue = toRef(globalObject, toJS(globalObject, globalObject, element.get()));
+            jsValue = toRef(globalObject, toJS(globalObject, globalObject, element.ptr()));
         }
         return jsValue ? jscContextGetOrCreateValue(jsContext.get(), jsValue) : nullptr;
     });

@@ -27,6 +27,7 @@
 #include "StyleUpdate.h"
 
 #include "ComposedTreeAncestorIterator.h"
+#include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "Element.h"
 #include "NodeRenderStyle.h"

@@ -1,6 +1,6 @@
 
-PASS Units
-PASS Trimming of space
+FAIL Units assert_equals: q expected 192 but got 0
+FAIL Trimming of space assert_equals: q expected 192 but got 0
 PASS Non-negative numbers
 PASS Non-positive numbers
 PASS Legacy namedspaces

@@ -123,7 +123,7 @@ PASS XHTML img usemap="#hash-id"
 PASS XHTML object usemap="#hash-id"
 PASS XHTML img usemap="#non-map-with-this-name"
 PASS XHTML object usemap="#non-map-with-this-name"
-FAIL XHTML img usemap="#non-map-with-this-id" assert_equals: expected Element node <area shape="rect" coords="0,0,99,50" href="#area-non-map... but got Element node <img src="/images/threecolors.png" usemap="#non-map-with-...
+PASS XHTML img usemap="#non-map-with-this-id"
 PASS XHTML object usemap="#non-map-with-this-id"
 PASS XHTML img usemap="#two-maps-with-this-name"
 PASS XHTML object usemap="#two-maps-with-this-name"

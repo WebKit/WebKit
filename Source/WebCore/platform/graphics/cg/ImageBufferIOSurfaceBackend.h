@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,10 @@
 
 #if HAVE(IOSURFACE)
 
-#include "ImageBuffer.h"
-#include "ImageBufferCGBackend.h"
-#include "IOSurface.h"
-#include "IOSurfacePool.h"
+#include <WebCore/IOSurface.h>
+#include <WebCore/IOSurfacePool.h>
+#include <WebCore/ImageBuffer.h>
+#include <WebCore/ImageBufferCGBackend.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -40,7 +40,7 @@ class WEBCORE_EXPORT ImageBufferIOSurfaceBackend : public ImageBufferCGBackend {
     WTF_MAKE_NONCOPYABLE(ImageBufferIOSurfaceBackend);
 public:
     static IntSize calculateSafeBackendSize(const Parameters&);
-    static unsigned calculateBytesPerRow(const IntSize& backendSize);
+    static unsigned calculateBytesPerRow(const IntSize& backendSize, PixelFormat);
     static size_t calculateMemoryCost(const Parameters&);
 
     static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const Parameters&, const ImageBufferCreationContext&);

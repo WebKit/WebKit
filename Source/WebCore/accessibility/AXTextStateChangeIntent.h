@@ -26,7 +26,7 @@
 #pragma once
 
 namespace WebCore {
-    
+
 enum AXTextStateChangeType {
     AXTextStateChangeTypeUnknown,
     AXTextStateChangeTypeEdit,

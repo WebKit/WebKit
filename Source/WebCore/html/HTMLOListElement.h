@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "HTMLElement.h"
+#include <WebCore/HTMLElement.h>
 
 namespace WebCore {
 
@@ -34,7 +34,6 @@ public:
     static Ref<HTMLOListElement> create(const QualifiedName&, Document&);
 
     int startForBindings() const { return m_start.value_or(1); }
-    WEBCORE_EXPORT void setStartForBindings(int);
 
     // FIXME: The reason start() does not trigger layout is because it is called
     // from rendering code. This is unfortunately one of the few cases where the

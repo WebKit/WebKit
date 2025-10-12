@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "VM.h"
-#include "ObjectPrototype.h"
-#include "SlotVisitor.h"
-#include "WriteBarrier.h"
+#include <JavaScriptCore/ObjectPrototype.h>
+#include <JavaScriptCore/SlotVisitor.h>
+#include <JavaScriptCore/VM.h>
+#include <JavaScriptCore/WriteBarrier.h>
 
 namespace JSC {
 

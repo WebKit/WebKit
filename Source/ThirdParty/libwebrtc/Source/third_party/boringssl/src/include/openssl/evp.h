@@ -1,71 +1,26 @@
-/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
- * All rights reserved.
- *
- * This package is an SSL implementation written
- * by Eric Young (eay@cryptsoft.com).
- * The implementation was written so as to conform with Netscapes SSL.
- *
- * This library is free for commercial and non-commercial use as long as
- * the following conditions are aheared to.  The following conditions
- * apply to all code found in this distribution, be it the RC4, RSA,
- * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
- * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- *
- * Copyright remains Eric Young's, and as such any Copyright notices in
- * the code are not to be removed.
- * If this package is used in a product, Eric Young should be given attribution
- * as the author of the parts of the library used.
- * This can be in the form of a textual message at program startup or
- * in documentation (online or textual) provided with the package.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *    "This product includes cryptographic software written by
- *     Eric Young (eay@cryptsoft.com)"
- *    The word 'cryptographic' can be left out if the rouines from the library
- *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from
- *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- *
- * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * The licence and distribution terms for any publically available version or
- * derivative of this code cannot be changed.  i.e. this code cannot simply be
- * copied and put under another distribution licence
- * [including the GNU Public Licence.] */
+// Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #ifndef OPENSSL_HEADER_EVP_H
 #define OPENSSL_HEADER_EVP_H
 
-#include <openssl/base.h>
+#include <openssl/base.h>   // IWYU pragma: export
 
 #include <openssl/evp_errors.h>  // IWYU pragma: export
-#include <openssl/thread.h>
 
 // OpenSSL included digest and cipher functions in this header so we include
 // them for users that still expect that.
-//
-// TODO(fork): clean up callers so that they include what they use.
 #include <openssl/aead.h>
 #include <openssl/base64.h>
 #include <openssl/cipher.h>
@@ -80,7 +35,7 @@ extern "C" {
 // EVP abstracts over public/private key algorithms.
 
 
-// Public key objects.
+// Public/private key objects.
 //
 // An |EVP_PKEY| object represents a public or private key. A given object may
 // be used concurrently on multiple threads by non-mutating functions, provided
@@ -121,6 +76,13 @@ OPENSSL_EXPORT int EVP_PKEY_copy_parameters(EVP_PKEY *to, const EVP_PKEY *from);
 // parameters or zero if not, or if the algorithm doesn't take parameters.
 OPENSSL_EXPORT int EVP_PKEY_missing_parameters(const EVP_PKEY *pkey);
 
+// EVP_PKEY_cmp_parameters compares the parameters of |a| and |b|. It returns
+// one if they match, zero if not, or a negative number on error.
+//
+// WARNING: the return value differs from the usual return value convention.
+OPENSSL_EXPORT int EVP_PKEY_cmp_parameters(const EVP_PKEY *a,
+                                           const EVP_PKEY *b);
+
 // EVP_PKEY_size returns the maximum size, in bytes, of a signature signed by
 // |pkey|. For an RSA key, this returns the number of bytes needed to represent
 // the modulus. For an EC key, this returns the maximum size of a DER-encoded
@@ -132,14 +94,125 @@ OPENSSL_EXPORT int EVP_PKEY_size(const EVP_PKEY *pkey);
 // length of the group order.
 OPENSSL_EXPORT int EVP_PKEY_bits(const EVP_PKEY *pkey);
 
+// The following constants are returned by |EVP_PKEY_id| and specify the type of
+// key.
+#define EVP_PKEY_NONE NID_undef
+#define EVP_PKEY_RSA NID_rsaEncryption
+#define EVP_PKEY_RSA_PSS NID_rsassaPss
+#define EVP_PKEY_DSA NID_dsa
+#define EVP_PKEY_EC NID_X9_62_id_ecPublicKey
+#define EVP_PKEY_ED25519 NID_ED25519
+#define EVP_PKEY_X25519 NID_X25519
+#define EVP_PKEY_HKDF NID_hkdf
+#define EVP_PKEY_DH NID_dhKeyAgreement
+
 // EVP_PKEY_id returns the type of |pkey|, which is one of the |EVP_PKEY_*|
-// values.
+// values above. These type values generally corresond to the algorithm OID, but
+// not the parameters, of a SubjectPublicKeyInfo (RFC 5280) or PrivateKeyInfo
+// (RFC 5208) AlgorithmIdentifier. Algorithm parameters can be inspected with
+// algorithm-specific accessors, e.g. |EVP_PKEY_get_ec_curve_nid|.
 OPENSSL_EXPORT int EVP_PKEY_id(const EVP_PKEY *pkey);
 
 
-// Getting and setting concrete public key types.
+// Algorithms.
 //
-// The following functions get and set the underlying public key in an
+// An |EVP_PKEY| may carry a key from one of several algorithms, represented by
+// |EVP_PKEY_ALG|. |EVP_PKEY_ALG|s are used by functions that construct
+// |EVP_PKEY|s, such as parsing, so that callers can specify the algorithm(s) to
+// use.
+//
+// Each |EVP_PKEY_ALG| generally corresponds to the AlgorithmIdentifier of a
+// SubjectPublicKeyInfo (RFC 5280) or PrivateKeyInfo (RFC 5208), but some may
+// support multiple sets of AlgorithmIdentifier parameters, while others may be
+// specific to one parameter.
+
+// EVP_pkey_rsa implements RSA keys (RFC 8017), encoded as rsaEncryption (RFC
+// 3279, Section 2.3.1). The rsaEncryption encoding is confusingly named: these
+// keys are used for all RSA operations, including signing. The |EVP_PKEY_id|
+// value is |EVP_PKEY_RSA|.
+//
+// WARNING: This |EVP_PKEY_ALG| accepts all RSA key sizes supported by
+// BoringSSL. When parsing RSA keys, callers should check the size is within
+// their desired bounds with |EVP_PKEY_bits|. RSA public key operations scale
+// quadratically and RSA private key operations scale cubicly, so key sizes may
+// be a DoS vector.
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_rsa(void);
+
+// EVP_pkey_ec_* implement EC keys, encoded as id-ecPublicKey (RFC 5480,
+// Section 2.1.1). The id-ecPublicKey encoding is confusingly named: it is also
+// used for private keys (RFC 5915). The |EVP_PKEY_id| value is |EVP_PKEY_EC|.
+//
+// Each function only supports the specified curve, but curves are not reflected
+// in |EVP_PKEY_id|. The curve can be inspected with
+// |EVP_PKEY_get_ec_curve_nid|.
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_ec_p224(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_ec_p256(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_ec_p384(void);
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_ec_p521(void);
+
+// EVP_pkey_x25519 implements X25519 keys (RFC 7748), encoded as in RFC 8410.
+// The |EVP_PKEY_id| value is |EVP_PKEY_X25519|.
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_x25519(void);
+
+// EVP_pkey_ed25519 implements Ed25519 keys (RFC 8032), encoded as in RFC 8410.
+// The |EVP_PKEY_id| value is |EVP_PKEY_ED25519|.
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_ed25519(void);
+
+// EVP_pkey_dsa implements DSA keys, encoded as in RFC 3279, Section 2.3.2. The
+// |EVP_PKEY_id| value is |EVP_PKEY_DSA|. This |EVP_PKEY_ALG| accepts all DSA
+// parameters supported by BoringSSL.
+//
+// Keys of this type are not usable with any operations, though the underlying
+// |DSA| object can be extracted with |EVP_PKEY_get0_DSA|. This key type is
+// deprecated and only implemented for compatibility with legacy applications.
+//
+// TODO(crbug.com/42290364): We didn't wire up |EVP_PKEY_sign| and
+// |EVP_PKEY_verify| just so it was auditable which callers used DSA. Once DSA
+// is removed from the default SPKI and PKCS#8 parser and DSA users explicitly
+// request |EVP_pkey_dsa|, we could change that.
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_dsa(void);
+
+// EVP_pkey_rsa_pss_sha256 implements RSASSA-PSS keys, encoded as id-RSASSA-PSS
+// (RFC 4055, Section 3.1). The |EVP_PKEY_id| value is |EVP_PKEY_RSA_PSS|. This
+// |EVP_PKEY_ALG| only accepts keys whose parameters specify:
+//
+//  - A hashAlgorithm of SHA-256
+//  - A maskGenAlgorithm of MGF1 with SHA-256
+//  - A minimum saltLength of 32
+//  - A trailerField of one (must be omitted in the encoding)
+//
+// Keys of this type will only be usable with RSASSA-PSS with matching signature
+// parameters.
+//
+// This algorithm type is not recommended. The id-RSASSA-PSS key type is not
+// widely implemented. Using it negates any compatibility benefits of using RSA.
+// More modern algorithms like ECDSA are more performant and more compatible
+// than id-RSASSA-PSS keys. This key type also adds significant complexity to a
+// system. It has a wide range of possible parameter sets, so any uses must
+// ensure all components not only support id-RSASSA-PSS, but also the specific
+// parameters chosen.
+//
+// Note the id-RSASSA-PSS key type is distinct from the RSASSA-PSS signature
+// algorithm. The widely implemented id-rsaEncryption key type (|EVP_pkey_rsa|
+// and |EVP_PKEY_RSA|) also supports RSASSA-PSS signatures.
+//
+// WARNING: Any |EVP_PKEY|s produced by this algorithm will return a non-NULL
+// |RSA| object through |EVP_PKEY_get1_RSA| and |EVP_PKEY_get0_RSA|. This is
+// dangerous as existing code may assume a non-NULL return implies the more
+// common id-rsaEncryption key. Additionally, the operations on the underlying
+// |RSA| object will not capture the RSA-PSS constraints, so callers risk
+// misusing the key by calling these functions. Callers using this algorithm
+// must use |EVP_PKEY_id| to distinguish |EVP_PKEY_RSA| and |EVP_PKEY_RSA_PSS|.
+//
+// WARNING: BoringSSL does not currently implement |RSA_get0_pss_params| with
+// these keys. Callers that require this functionality should contact the
+// BoringSSL team.
+OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_rsa_pss_sha256(void);
+
+
+// Getting and setting concrete key types.
+//
+// The following functions get and set the underlying key representation in an
 // |EVP_PKEY| object. The |set1| functions take an additional reference to the
 // underlying key and return one on success or zero if |key| is NULL. The
 // |assign| functions adopt the caller's reference and return one on success or
@@ -151,6 +224,18 @@ OPENSSL_EXPORT int EVP_PKEY_id(const EVP_PKEY *pkey);
 // non-mutating for thread-safety purposes, but mutating functions on the
 // returned lower-level objects are considered to also mutate the |EVP_PKEY| and
 // may not be called concurrently with other operations on the |EVP_PKEY|.
+//
+// WARNING: Matching OpenSSL, the RSA functions behave non-uniformly.
+// |EVP_PKEY_set1_RSA| and |EVP_PKEY_assign_RSA| construct an |EVP_PKEY_RSA|
+// key, while the |EVP_PKEY_get0_RSA| and |EVP_PKEY_get1_RSA| will return
+// non-NULL for both |EVP_PKEY_RSA| and |EVP_PKEY_RSA_PSS|.
+//
+// This means callers risk misusing a key if they assume a non-NULL return from
+// |EVP_PKEY_get0_RSA| or |EVP_PKEY_get1_RSA| implies |EVP_PKEY_RSA|. Prefer
+// |EVP_PKEY_id| to check the type of a key. To reduce this risk, BoringSSL does
+// not make |EVP_PKEY_RSA_PSS| available by default, only when callers opt in
+// via |EVP_pkey_rsa_pss_sha256|. This differs from upstream OpenSSL, where
+// callers are exposed to |EVP_PKEY_RSA_PSS| by default.
 
 OPENSSL_EXPORT int EVP_PKEY_set1_RSA(EVP_PKEY *pkey, RSA *key);
 OPENSSL_EXPORT int EVP_PKEY_assign_RSA(EVP_PKEY *pkey, RSA *key);
@@ -172,39 +257,36 @@ OPENSSL_EXPORT int EVP_PKEY_assign_DH(EVP_PKEY *pkey, DH *key);
 OPENSSL_EXPORT DH *EVP_PKEY_get0_DH(const EVP_PKEY *pkey);
 OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
 
-#define EVP_PKEY_NONE NID_undef
-#define EVP_PKEY_RSA NID_rsaEncryption
-#define EVP_PKEY_RSA_PSS NID_rsassaPss
-#define EVP_PKEY_DSA NID_dsa
-#define EVP_PKEY_EC NID_X9_62_id_ecPublicKey
-#define EVP_PKEY_ED25519 NID_ED25519
-#define EVP_PKEY_X25519 NID_X25519
-#define EVP_PKEY_HKDF NID_hkdf
-#define EVP_PKEY_DH NID_dhKeyAgreement
-
-// EVP_PKEY_set_type sets the type of |pkey| to |type|. It returns one if
-// successful or zero if the |type| argument is not one of the |EVP_PKEY_*|
-// values. If |pkey| is NULL, it simply reports whether the type is known.
-OPENSSL_EXPORT int EVP_PKEY_set_type(EVP_PKEY *pkey, int type);
-
-// EVP_PKEY_cmp_parameters compares the parameters of |a| and |b|. It returns
-// one if they match, zero if not, or a negative number of on error.
-//
-// WARNING: the return value differs from the usual return value convention.
-OPENSSL_EXPORT int EVP_PKEY_cmp_parameters(const EVP_PKEY *a,
-                                           const EVP_PKEY *b);
-
 
 // ASN.1 functions
 
+// EVP_PKEY_from_subject_public_key_info decodes a DER-encoded
+// SubjectPublicKeyInfo structure (RFC 5280) from |in|. It returns a
+// newly-allocated |EVP_PKEY| or NULL on error. Only the |num_algs| algorithms
+// in |algs| will be considered when parsing.
+OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_from_subject_public_key_info(
+    const uint8_t *in, size_t len, const EVP_PKEY_ALG *const *algs,
+    size_t num_algs);
+
 // EVP_parse_public_key decodes a DER-encoded SubjectPublicKeyInfo structure
 // (RFC 5280) from |cbs| and advances |cbs|. It returns a newly-allocated
-// |EVP_PKEY| or NULL on error. If the key is an EC key, the curve is guaranteed
-// to be set.
+// |EVP_PKEY| or NULL on error.
 //
-// The caller must check the type of the parsed public key to ensure it is
-// suitable and validate other desired key properties such as RSA modulus size
-// or EC curve.
+// Prefer |EVP_PKEY_from_subject_public_key_info| instead. This function has
+// several pitfalls:
+//
+// Callers are expected to handle trailing data retuned from |cbs|, making more
+// common cases error-prone.
+//
+// There is also no way to pass in supported algorithms. This function instead
+// supports some default set of algorithms. Future versions of BoringSSL may add
+// to this list, based on the needs of the other callers. Conversely, some
+// algorithms may be intentionally omitted, if they cause too much risk to
+// existing callers.
+//
+// This means callers must check the type of the parsed public key to ensure it
+// is suitable and validate other desired key properties such as RSA modulus
+// size or EC curve.
 OPENSSL_EXPORT EVP_PKEY *EVP_parse_public_key(CBS *cbs);
 
 // EVP_marshal_public_key marshals |key| as a DER-encoded SubjectPublicKeyInfo
@@ -212,19 +294,41 @@ OPENSSL_EXPORT EVP_PKEY *EVP_parse_public_key(CBS *cbs);
 // success and zero on error.
 OPENSSL_EXPORT int EVP_marshal_public_key(CBB *cbb, const EVP_PKEY *key);
 
+// EVP_PKEY_from_private_key_info decodes a DER-encoded PrivateKeyInfo structure
+// (RFC 5208) from |in|. It returns a newly-allocated |EVP_PKEY| or NULL on
+// error. Only the |num_algs| algorithms in |algs| will be considered when
+// parsing.
+//
+// A PrivateKeyInfo ends with an optional set of attributes. These are silently
+// ignored.
+OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_from_private_key_info(
+    const uint8_t *in, size_t len, const EVP_PKEY_ALG *const *algs,
+    size_t num_algs);
+
 // EVP_parse_private_key decodes a DER-encoded PrivateKeyInfo structure (RFC
 // 5208) from |cbs| and advances |cbs|. It returns a newly-allocated |EVP_PKEY|
 // or NULL on error.
 //
-// The caller must check the type of the parsed private key to ensure it is
-// suitable and validate other desired key properties such as RSA modulus size
-// or EC curve. In particular, RSA private key operations scale cubicly, so
+// Prefer |EVP_PKEY_from_private_key_info| instead. This function has
+// several pitfalls:
+//
+// Callers are expected to handle trailing data retuned from |cbs|, making more
+// common cases error-prone.
+//
+// There is also no way to pass in supported algorithms. This function instead
+// supports some default set of algorithms. Future versions of BoringSSL may add
+// to this list, based on the needs of the other callers. Conversely, some
+// algorithms may be intentionally omitted, if they cause too much risk to
+// existing callers.
+//
+// This means the caller must check the type of the parsed private key to ensure
+// it is suitable and validate other desired key properties such as RSA modulus
+// size or EC curve. In particular, RSA private key operations scale cubicly, so
 // applications accepting RSA private keys from external sources may need to
 // bound key sizes (use |EVP_PKEY_bits| or |RSA_bits|) to avoid a DoS vector.
 //
-// A PrivateKeyInfo ends with an optional set of attributes. These are not
-// processed and so this function will silently ignore any trailing data in the
-// structure.
+// A PrivateKeyInfo ends with an optional set of attributes. These are silently
+// ignored.
 OPENSSL_EXPORT EVP_PKEY *EVP_parse_private_key(CBS *cbs);
 
 // EVP_marshal_private_key marshals |key| as a DER-encoded PrivateKeyInfo
@@ -240,19 +344,17 @@ OPENSSL_EXPORT int EVP_marshal_private_key(CBB *cbb, const EVP_PKEY *key);
 // RFC 7748 and RFC 8032, respectively. Note the RFC 8032 private key format is
 // the 32-byte prefix of |ED25519_sign|'s 64-byte private key.
 
-// EVP_PKEY_new_raw_private_key returns a newly allocated |EVP_PKEY| wrapping a
-// private key of the specified type. It returns one on success and zero on
-// error.
-OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_new_raw_private_key(int type, ENGINE *unused,
+// EVP_PKEY_from_raw_private_key interprets |in| as a raw private key of type
+// |alg| and returns a newly-allocated |EVP_PKEY|, or nullptr on error.
+OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_from_raw_private_key(const EVP_PKEY_ALG *alg,
+                                                       const uint8_t *in,
+                                                       size_t len);
+
+// EVP_PKEY_from_raw_public_key interprets |in| as a raw public key of type
+// |alg| and returns a newly-allocated |EVP_PKEY|, or nullptr on error.
+OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_from_raw_public_key(const EVP_PKEY_ALG *alg,
                                                       const uint8_t *in,
                                                       size_t len);
-
-// EVP_PKEY_new_raw_public_key returns a newly allocated |EVP_PKEY| wrapping a
-// public key of the specified type. It returns one on success and zero on
-// error.
-OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_new_raw_public_key(int type, ENGINE *unused,
-                                                     const uint8_t *in,
-                                                     size_t len);
 
 // EVP_PKEY_get_raw_private_key outputs the private key for |pkey| in raw form.
 // If |out| is NULL, it sets |*out_len| to the size of the raw private key.
@@ -355,8 +457,8 @@ OPENSSL_EXPORT int EVP_DigestVerifyInit(EVP_MD_CTX *ctx, EVP_PKEY_CTX **pctx,
 // will be verified by |EVP_DigestVerifyFinal|. It returns one.
 //
 // This function performs streaming signature verification and will fail for
-// signature algorithms which do not support this. Use |EVP_PKEY_verify_message|
-// for a single-shot verification.
+// signature algorithms which do not support this. Use |EVP_DigestVerify| for a
+// single-shot verification.
 OPENSSL_EXPORT int EVP_DigestVerifyUpdate(EVP_MD_CTX *ctx, const void *data,
                                           size_t len);
 
@@ -365,8 +467,8 @@ OPENSSL_EXPORT int EVP_DigestVerifyUpdate(EVP_MD_CTX *ctx, const void *data,
 // |EVP_DigestVerifyUpdate|. It returns one on success and zero otherwise.
 //
 // This function performs streaming signature verification and will fail for
-// signature algorithms which do not support this. Use |EVP_PKEY_verify_message|
-// for a single-shot verification.
+// signature algorithms which do not support this. Use |EVP_DigestVerify| for a
+// single-shot verification.
 OPENSSL_EXPORT int EVP_DigestVerifyFinal(EVP_MD_CTX *ctx, const uint8_t *sig,
                                          size_t sig_len);
 
@@ -511,10 +613,33 @@ OPENSSL_EXPORT int EVP_PBE_scrypt(const char *password, size_t password_len,
                                   size_t key_len);
 
 
-// Public key contexts.
+// Operations.
 //
-// |EVP_PKEY_CTX| objects hold the context of an operation (e.g. signing or
-// encrypting) that uses a public key.
+// |EVP_PKEY_CTX| objects hold the context for an operation (e.g. signing or
+// encrypting) that uses an |EVP_PKEY|. They are used to configure
+// algorithm-specific parameters for the operation before performing the
+// operation. The general pattern for performing an operation in EVP is:
+//
+// 1. Construct an |EVP_PKEY_CTX|, either with |EVP_PKEY_CTX_new| (operations
+//    using a key, like signing) or |EVP_PKEY_CTX_new_id| (operations not using
+//    an existing key, like key generation).
+//
+// 2. Initialize it for an operation. For example, |EVP_PKEY_sign_init|
+//    initializes an |EVP_PKEY_CTX| for signing.
+//
+// 3. Configure algorithm-specific parameters for the operation by calling
+//    control functions on the |EVP_PKEY_CTX|. Some functions are generic, such
+//    as |EVP_PKEY_CTX_set_signature_md|, and some are specific to an algorithm,
+//    such as |EVP_PKEY_CTX_set_rsa_padding|.
+//
+// 4. Perform the operation. For example, |EVP_PKEY_sign| signs with the
+//    corresponding parameters.
+//
+// 5. Release the |EVP_PKEY_CTX| with |EVP_PKEY_CTX_free|.
+//
+// Each |EVP_PKEY| algorithm interprets operations and parameters differently.
+// Not all algorithms support all operations. Functions will fail if the
+// algorithm does not support the parameter or operation.
 
 // EVP_PKEY_CTX_new allocates a fresh |EVP_PKEY_CTX| for use with |pkey|. It
 // returns the context or NULL on error.
@@ -729,16 +854,16 @@ OPENSSL_EXPORT int EVP_PKEY_CTX_get_rsa_padding(EVP_PKEY_CTX *ctx,
                                                 int *out_padding);
 
 // EVP_PKEY_CTX_set_rsa_pss_saltlen sets the length of the salt in a PSS-padded
-// signature. A value of -1 cause the salt to be the same length as the digest
-// in the signature. A value of -2 causes the salt to be the maximum length
-// that will fit when signing and recovered from the signature when verifying.
-// Otherwise the value gives the size of the salt in bytes.
+// signature. A value of |RSA_PSS_SALTLEN_DIGEST| causes the salt to be the same
+// length as the digest in the signature. A value of |RSA_PSS_SALTLEN_AUTO|
+// causes the salt to be the maximum length that will fit when signing and
+// recovered from the signature when verifying. Otherwise the value gives the
+// size of the salt in bytes.
 //
-// If unsure, use -1.
+// If unsure, use |RSA_PSS_SALTLEN_DIGEST|, which is the default. Note this
+// differs from OpenSSL, which defaults to |RSA_PSS_SALTLEN_AUTO|.
 //
 // Returns one on success or zero on error.
-//
-// TODO(davidben): The default is currently -2. Switch it to -1.
 OPENSSL_EXPORT int EVP_PKEY_CTX_set_rsa_pss_saltlen(EVP_PKEY_CTX *ctx,
                                                     int salt_len);
 
@@ -758,7 +883,9 @@ OPENSSL_EXPORT int EVP_PKEY_CTX_set_rsa_keygen_bits(EVP_PKEY_CTX *ctx,
                                                     int bits);
 
 // EVP_PKEY_CTX_set_rsa_keygen_pubexp sets |e| as the public exponent for key
-// generation. Returns one on success or zero on error.
+// generation. Returns one on success or zero on error. On success, |ctx| takes
+// ownership of |e|. The library will then call |BN_free| on |e| when |ctx| is
+// destroyed.
 OPENSSL_EXPORT int EVP_PKEY_CTX_set_rsa_keygen_pubexp(EVP_PKEY_CTX *ctx,
                                                       BIGNUM *e);
 
@@ -808,6 +935,14 @@ OPENSSL_EXPORT int EVP_PKEY_CTX_get0_rsa_oaep_label(EVP_PKEY_CTX *ctx,
 
 
 // EC specific control functions.
+
+// EVP_PKEY_get_ec_curve_nid returns |pkey|'s curve as a NID constant, such as
+// |NID_X9_62_prime256v1|, or |NID_undef| if |pkey| is not an EC key.
+OPENSSL_EXPORT int EVP_PKEY_get_ec_curve_nid(const EVP_PKEY *pkey);
+
+// EVP_PKEY_get_ec_point_conv_form returns |pkey|'s point conversion form as a
+// |POINT_CONVERSION_*| constant, or zero if |pkey| is not an EC key.
+OPENSSL_EXPORT int EVP_PKEY_get_ec_point_conv_form(const EVP_PKEY *pkey);
 
 // EVP_PKEY_CTX_set_ec_paramgen_curve_nid sets the curve used for
 // |EVP_PKEY_keygen| or |EVP_PKEY_paramgen| operations to |nid|. It returns one
@@ -936,6 +1071,25 @@ OPENSSL_EXPORT EVP_PKEY *d2i_PublicKey(int type, EVP_PKEY **out,
 OPENSSL_EXPORT int EVP_PKEY_CTX_set_ec_param_enc(EVP_PKEY_CTX *ctx,
                                                  int encoding);
 
+// EVP_PKEY_set_type sets the type of |pkey| to |type|. It returns one if
+// successful or zero if the |type| argument is not one of the |EVP_PKEY_*|
+// values supported for use with this function. If |pkey| is NULL, it simply
+// reports whether the type is known.
+//
+// There are very few cases where this function is useful. Changing |pkey|'s
+// type clears any previously stored keys, so there is no benefit to loading a
+// key and then changing its type. Although |pkey| is left with a type
+// configured, it has no key, and functions which set a key, such as
+// |EVP_PKEY_set1_RSA|, will configure a type anyway. If writing unit tests that
+// are only sensitive to the type of a key, it is preferable to construct a real
+// key, so that tests are more representative of production code.
+//
+// The only API pattern which requires this function is
+// |EVP_PKEY_set1_tls_encodedpoint| with X25519, which requires a half-empty
+// |EVP_PKEY| that was first configured with |EVP_PKEY_X25519|. Currently, all
+// other values of |type| will result in an error.
+OPENSSL_EXPORT int EVP_PKEY_set_type(EVP_PKEY *pkey, int type);
+
 // EVP_PKEY_set1_tls_encodedpoint replaces |pkey| with a public key encoded by
 // |in|. It returns one on success and zero on error.
 //
@@ -1046,6 +1200,26 @@ OPENSSL_EXPORT int EVP_PKEY_assign(EVP_PKEY *pkey, int type, void *key);
 
 // EVP_PKEY_type returns |nid|.
 OPENSSL_EXPORT int EVP_PKEY_type(int nid);
+
+// EVP_PKEY_new_raw_private_key interprets |in| as a raw private key of type
+// |type|, which must be an |EVP_PKEY_*| constant, such as |EVP_PKEY_X25519|,
+// and returns a newly-allocated |EVP_PKEY|, or nullptr on error.
+//
+// Prefer |EVP_PKEY_from_raw_private_key|, which allows dead code elimination to
+// discard algorithms that aren't reachable from the caller.
+OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_new_raw_private_key(int type, ENGINE *unused,
+                                                      const uint8_t *in,
+                                                      size_t len);
+
+// EVP_PKEY_new_raw_public_key interprets |in| as a raw public key of type
+// |type|, which must be an |EVP_PKEY_*| constant, such as |EVP_PKEY_X25519|,
+// and returns a newly-allocated |EVP_PKEY|, or nullptr on error.
+//
+// Prefer |EVP_PKEY_from_raw_private_key|, which allows dead code elimination to
+// discard algorithms that aren't reachable from the caller.
+OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_new_raw_public_key(int type, ENGINE *unused,
+                                                     const uint8_t *in,
+                                                     size_t len);
 
 
 // Preprocessor compatibility section (hidden).

@@ -1,0 +1,102 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/stack-floats-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/stack-floats-001-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/stack-floats-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/stack-floats-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/stack-floats-002.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/stack-floats-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/stack-floats-003.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/stack-floats-004-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/stack-floats-004.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/stack-floats-README
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/stack-overflow-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-002.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-003.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-004-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-004.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-005-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-005.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-006-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-006.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-007-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-007.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-008-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-008.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-009-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-009.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-010-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-010.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-011-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-011.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-012-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-012.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-013-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-013.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-014-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-014.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-015-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-015.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-016-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-016.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-017-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-017.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-018-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-018.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-019-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-019.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-020-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-020.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-abspos-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-abspos-001-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-abspos-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-abspos-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-abspos-002.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-abspos-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-abspos-003.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-abspos-004-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-abspos-004.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-abspos-005-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-abspos-005.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-abspos-006.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-abspos-007-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-abspos-007.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-abspos-008.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-abspos-009.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-applies-to-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-applies-to-002.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-applies-to-003.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-applies-to-004.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-applies-to-005.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-applies-to-006.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-applies-to-007.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-applies-to-008.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-applies-to-009.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-applies-to-010.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-applies-to-012.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-applies-to-013.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-applies-to-014.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-applies-to-015.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-dynamic-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-dynamic-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-stack-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-stack-002.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/zindex/z-index-stack-003.xht

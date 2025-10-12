@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "JSCast.h"
-#include "ScopeOffset.h"
-#include "VM.h"
+#include <JavaScriptCore/JSCast.h>
+#include <JavaScriptCore/ScopeOffset.h>
+#include <JavaScriptCore/VM.h>
 #include <wtf/Assertions.h>
 #include <wtf/CagedUniquePtr.h>
 

@@ -76,7 +76,7 @@ public:
 
     bool isSameElement(const TargetedElementInfo&) const;
 
-    WebCore::ElementIdentifier elementIdentifier() const { return m_info.elementIdentifier; }
+    WebCore::NodeIdentifier nodeIdentifier() const { return m_info.nodeIdentifier; }
     WebCore::ScriptExecutionContextIdentifier documentIdentifier() const { return m_info.documentIdentifier; }
 
     void takeSnapshot(CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);

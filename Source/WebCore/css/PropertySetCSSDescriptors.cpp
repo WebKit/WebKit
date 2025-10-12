@@ -34,6 +34,7 @@
 #include "DeprecatedCSSOMValueList.h"
 #include "Document.h"
 #include "MutableStyleProperties.h"
+#include "NodeInlines.h"
 #include "Settings.h"
 #include "StyleAttributeMutationScope.h"
 #include "StyleSheetContents.h"
@@ -59,7 +60,7 @@ Ref<MutableStyleProperties> PropertySetCSSDescriptors::protectedPropertySet() co
 
 unsigned PropertySetCSSDescriptors::length() const
 {
-    auto propertySet = protectedPropertySet();
+    Ref propertySet = m_propertySet;
 
     unsigned exposed = 0;
     for (auto property : propertySet.get()) {
@@ -71,7 +72,7 @@ unsigned PropertySetCSSDescriptors::length() const
 
 String PropertySetCSSDescriptors::item(unsigned i) const
 {
-    auto propertySet = protectedPropertySet();
+    Ref propertySet = m_propertySet;
 
     for (unsigned j = 0; j <= i && j < propertySet->propertyCount(); j++) {
         if (!isExposed(propertySet->propertyAt(j).id()))
@@ -112,6 +113,9 @@ RefPtr<DeprecatedCSSOMValue> PropertySetCSSDescriptors::getPropertyCSSValue(cons
 
 String PropertySetCSSDescriptors::getPropertyValue(const String& propertyName)
 {
+    if (styleDeclarationType() == StyleDeclarationType::Function && isCustomPropertyName(propertyName))
+        return protectedPropertySet()->getCustomPropertyValue(propertyName);
+
     auto propertyID = cssPropertyID(propertyName);
     if (!isExposed(propertyID))
         return String();
@@ -246,6 +250,11 @@ RefPtr<DeprecatedCSSOMValue> PropertySetCSSDescriptors::wrapForDeprecatedCSSOM(C
 
 bool PropertySetCSSDescriptors::willMutate()
 {
+    if (styleDeclarationType() == StyleDeclarationType::Function) {
+        // FIXME: Use <declaration-rule-list> parsing.
+        return false;
+    }
+
     RefPtr strongParentRule = m_parentRule.get();
     ASSERT(strongParentRule);
     if (!strongParentRule)

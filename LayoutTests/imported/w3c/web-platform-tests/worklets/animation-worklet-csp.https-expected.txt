@@ -1,37 +1,8 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
 
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
 
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
 
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
 
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
 
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
 
 FAIL A remote-origin worklet should be blocked by the script-src 'self' directive. assert_equals: expected (string) "REJECTED" but got (object) object "[object Object]"
 FAIL A same-origin worklet importing a remote-origin script should be blocked by the script-src 'self' directive. assert_equals: expected (string) "REJECTED" but got (object) object "[object Object]"

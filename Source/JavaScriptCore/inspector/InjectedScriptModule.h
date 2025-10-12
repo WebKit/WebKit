@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "InjectedScriptBase.h"
+#include <JavaScriptCore/InjectedScriptBase.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {

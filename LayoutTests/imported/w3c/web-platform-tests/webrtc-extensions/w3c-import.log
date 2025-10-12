@@ -16,15 +16,12 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc-extensions/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/webrtc-extensions/RTCOAuthCredential.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpCorruptionDetection-headerExtensionControl.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpEncodingParameters-scaleResolutionDownTo.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpParameters-adaptivePtime.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpParameters-codec.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpReceiver-jitterBufferTarget-stats.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpReceiver-jitterBufferTarget.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-senderCaptureTimeOffset.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpTransceiver-headerExtensionControl.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.js
-/LayoutTests/imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel-worker.js
-/LayoutTests/imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel.html

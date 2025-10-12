@@ -25,7 +25,6 @@
 [Nested] enum class WebKit::InteractionInformationAtPosition::Selectability : uint8_t {
     Selectable,
     UnselectableDueToFocusableElement,
-    UnselectableDueToLargeElementBounds,
     UnselectableDueToUserSelectNoneOrQuirk,
     UnselectableDueToMediaControls,
 };
@@ -85,7 +84,7 @@ struct WebKit::InteractionInformationAtPosition {
     RefPtr<WebCore::TextIndicator> textIndicator;
 #if ENABLE(DATA_DETECTION)
     String dataDetectorIdentifier;
-    [SecureCodingAllowed=[NSArray.class, PAL::getDDScannerResultClass()]] RetainPtr<NSArray> dataDetectorResults;
+    [SecureCodingAllowed=[NSArray.class, PAL::getDDScannerResultClassSingleton()]] RetainPtr<NSArray> dataDetectorResults;
     WebCore::IntRect dataDetectorBounds;
 #endif
 

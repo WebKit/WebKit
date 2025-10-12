@@ -29,17 +29,20 @@
 #include "config.h"
 #include "Editor.h"
 
+#include "ContainerNodeInlines.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSValueList.h"
 #include "Chrome.h"
 #include "CreateLinkCommand.h"
 #include "DocumentFragment.h"
+#include "DocumentPage.h"
 #include "Editing.h"
 #include "EditorClient.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "FormatBlockCommand.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTMLFontElement.h"
 #include "HTMLHRElement.h"
@@ -48,10 +51,9 @@
 #include "IndentOutdentCommand.h"
 #include "InsertListCommand.h"
 #include "InsertNestedListCommand.h"
-#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
 #include "MutableStyleProperties.h"
-#include "Page.h"
 #include "PagePasteboardContext.h"
 #include "Pasteboard.h"
 #include "Range.h"
@@ -83,7 +85,7 @@ public:
     bool (*allowExecutionWhenDisabled)(LocalFrame&, EditorCommandSource);
 };
 
-typedef UncheckedKeyHashMap<String, const EditorInternalCommand*, ASCIICaseInsensitiveHash> CommandMap;
+typedef HashMap<String, const EditorInternalCommand*, ASCIICaseInsensitiveHash> CommandMap;
 
 static const bool notTextInsertion = false;
 static const bool isTextInsertion = true;
@@ -382,7 +384,7 @@ static bool executeDeleteWordForward(LocalFrame& frame, Event*, EditorCommandSou
 
 static bool executeFindString(LocalFrame& frame, Event*, EditorCommandSource, const String& value)
 {
-    return frame.editor().findString(value, { FindOption::CaseInsensitive, FindOption::WrapAround, FindOption::DoNotTraverseFlatTree });
+    return frame.editor().findString(value, { FindOption::CaseInsensitive, FindOption::WrapAround, FindOption::DoNotTraverseFlatTree }).has_value();
 }
 
 static bool executeFontName(LocalFrame& frame, Event*, EditorCommandSource source, const String& value)
@@ -479,9 +481,9 @@ static bool executeInsertHTML(LocalFrame& frame, Event*, EditorCommandSource, co
 static bool executeInsertImage(LocalFrame& frame, Event*, EditorCommandSource, const String& value)
 {
     // FIXME: If userInterface is true, we should display a dialog box and let the user choose a local image.
-    Ref<HTMLImageElement> image = HTMLImageElement::create(*frame.document());
+    Ref image = HTMLImageElement::create(*frame.document());
     if (!value.isEmpty())
-        image->setSrc(AtomString { value });
+        image->setAttributeWithoutSynchronization(srcAttr, AtomString { value });
     return executeInsertNode(frame, WTFMove(image));
 }
 

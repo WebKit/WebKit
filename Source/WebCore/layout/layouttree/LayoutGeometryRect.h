@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "LayoutRect.h"
-#include "LayoutUnits.h"
+#include <WebCore/LayoutRect.h>
+#include <WebCore/LayoutUnits.h>
 
 namespace WebCore {
 namespace Layout {

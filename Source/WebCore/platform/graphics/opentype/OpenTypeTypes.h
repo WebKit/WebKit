@@ -26,10 +26,10 @@
 #define OpenTypeTypes_h
 
 #if ENABLE(OPENTYPE_MATH)
-#include "Glyph.h"
+#include <WebCore/Glyph.h>
 #endif
 
-#include "SharedBuffer.h"
+#include <WebCore/SharedBuffer.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

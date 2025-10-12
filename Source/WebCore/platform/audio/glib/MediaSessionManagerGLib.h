@@ -36,7 +36,7 @@ class MediaSessionManagerGLib
     , private NowPlayingManagerClient {
     WTF_MAKE_TZONE_ALLOCATED(MediaSessionManagerGLib);
 public:
-    MediaSessionManagerGLib(GRefPtr<GDBusNodeInfo>&&);
+    MediaSessionManagerGLib(GRefPtr<GDBusNodeInfo>&&, PageIdentifier);
     ~MediaSessionManagerGLib();
 
     void beginInterruption(PlatformMediaSession::InterruptionType) final;
@@ -104,7 +104,7 @@ private:
     Markable<MediaUniqueIdentifier> m_lastUpdatedNowPlayingInfoUniqueIdentifier;
 
     const std::unique_ptr<NowPlayingManager> m_nowPlayingManager;
-    UncheckedKeyHashMap<MediaSessionIdentifier, std::unique_ptr<MediaSessionGLib>> m_sessions;
+    HashMap<MediaSessionIdentifier, std::unique_ptr<MediaSessionGLib>> m_sessions;
 
     bool m_dbusNotificationsEnabled { true };
 };

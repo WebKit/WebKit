@@ -1,2 +1,0 @@
-PASS: Display lists match.
-

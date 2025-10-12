@@ -32,14 +32,14 @@ PASS #30 Test that WebAssembly instantiation succeeds
 PASS #31 Test that WebAssembly instantiation succeeds
 PASS #32 Test that WebAssembly instantiation succeeds
 PASS #33 Test that WebAssembly instantiation succeeds
-FAIL #34 Test that WebAssembly compilation fails assert_true: module@http://localhost:8800/wasm/core/js/harness/async_index.js:146:24
-assert_invalid@http://localhost:8800/wasm/core/js/harness/async_index.js:174:9
-data_wast_js@http://localhost:8800/wasm/core/js/data.wast.js:31:15
-global code@http://localhost:8800/wasm/core/js/data.wast.js:186:3 expected true got false
-FAIL #35 Test that WebAssembly compilation fails assert_true: module@http://localhost:8800/wasm/core/js/harness/async_index.js:146:24
-assert_invalid@http://localhost:8800/wasm/core/js/harness/async_index.js:174:9
-data_wast_js@http://localhost:8800/wasm/core/js/data.wast.js:34:15
-global code@http://localhost:8800/wasm/core/js/data.wast.js:186:3 expected true got false
+FAIL #34 Test that WebAssembly compilation fails assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:146:24
+assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:174:9
+data_wast_js@http://web-platform.test:8800/wasm/core/js/data.wast.js:31:15
+global code@http://web-platform.test:8800/wasm/core/js/data.wast.js:186:3 expected true got false
+FAIL #35 Test that WebAssembly compilation fails assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:146:24
+assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:174:9
+data_wast_js@http://web-platform.test:8800/wasm/core/js/data.wast.js:34:15
+global code@http://web-platform.test:8800/wasm/core/js/data.wast.js:186:3 expected true got false
 PASS #36 Test that WebAssembly instantiation succeeds
 PASS #37 Test that WebAssembly instantiation succeeds
 PASS #38 Test that WebAssembly instantiation succeeds

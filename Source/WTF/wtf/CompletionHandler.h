@@ -44,7 +44,7 @@ public:
 // Wraps a Function to make sure it is always called once and only once.
 template <typename Out, typename... In>
 class CompletionHandler<Out(In...)> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CompletionHandler);
 public:
     using OutType = Out;
     using InTypes = std::tuple<In...>;
@@ -90,7 +90,7 @@ private:
 template<typename> class CompletionHandlerWithFinalizer;
 template <typename Out, typename... In>
 class CompletionHandlerWithFinalizer<Out(In...)> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CompletionHandlerWithFinalizer);
 public:
     using OutType = Out;
     using InTypes = std::tuple<In...>;
@@ -133,7 +133,7 @@ namespace Detail {
 
 template<typename Out, typename... In>
 class CallableWrapper<CompletionHandler<Out(In...)>, Out, In...> : public CallableWrapperBase<Out, In...> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CallableWrapper);
 public:
     explicit CallableWrapper(CompletionHandler<Out(In...)>&& completionHandler)
         : m_completionHandler(WTFMove(completionHandler))
@@ -148,7 +148,7 @@ private:
 } // namespace Detail
 
 class CompletionHandlerCallingScope final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CompletionHandlerCallingScope);
 public:
     CompletionHandlerCallingScope() = default;
 

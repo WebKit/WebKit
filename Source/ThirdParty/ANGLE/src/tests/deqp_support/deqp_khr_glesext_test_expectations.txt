@@ -1,0 +1,13 @@
+// Copyright 2025 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// See README.md for format.
+
+420310117 WIN NVIDIA VULKAN : KHR-GLESEXT.fragment_shading_rate.api.errors = SKIP
+420310117 WIN NVIDIA VULKAN : KHR-GLESEXT.fragment_shading_rate.render_target.multiview_api_256x256 = SKIP
+420310117 WIN NVIDIA VULKAN : KHR-GLESEXT.fragment_shading_rate.render_target.multiview_api_37x37 = SKIP
+420310117 WIN NVIDIA VULKAN : KHR-GLESEXT.fragment_shading_rate.render_target.multiview_api_6x6 = SKIP
+
+42264522 PIXEL4ORXL VULKAN : KHR-GLESEXT.draw_elements_base_vertex_tests.valid_active_tf = SKIP
+

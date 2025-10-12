@@ -863,8 +863,6 @@ TEST(WebKit2, CrashGPUProcessWhileCapturing)
     for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"CaptureAudioInGPUProcessEnabled"])
             [preferences _setEnabled:YES forFeature:feature];
-        if ([feature.key isEqualToString:@"CaptureAudioInUIProcessEnabled"])
-            [preferences _setEnabled:NO forFeature:feature];
         if ([feature.key isEqualToString:@"CaptureVideoInGPUProcessEnabled"])
             [preferences _setEnabled:YES forFeature:feature];
     }
@@ -937,8 +935,6 @@ TEST(WebKit2, CrashGPUProcessAfterApplyingConstraints)
     for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"CaptureAudioInGPUProcessEnabled"])
             [preferences _setEnabled:YES forFeature:feature];
-        if ([feature.key isEqualToString:@"CaptureAudioInUIProcessEnabled"])
-            [preferences _setEnabled:NO forFeature:feature];
         if ([feature.key isEqualToString:@"CaptureVideoInGPUProcessEnabled"])
             [preferences _setEnabled:YES forFeature:feature];
     }
@@ -1014,8 +1010,6 @@ TEST(WebKit2, CrashGPUProcessWhileCapturingAndCalling)
     for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"CaptureAudioInGPUProcessEnabled"])
             [preferences _setEnabled:YES forFeature:feature];
-        if ([feature.key isEqualToString:@"CaptureAudioInUIProcessEnabled"])
-            [preferences _setEnabled:NO forFeature:feature];
         if ([feature.key isEqualToString:@"CaptureVideoInGPUProcessEnabled"])
             [preferences _setEnabled:YES forFeature:feature];
         if ([feature.key isEqualToString:@"WebRTCPlatformCodecsInGPUProcessEnabled"])
@@ -2059,6 +2053,62 @@ TEST(WebKit2, getUserMediaWithDeviceChangeWebPage)
     TestWebKitAPI::Util::run(&done);
     done = false;
 }
+
+TEST(WebKit2, GetUserMediaAfterMuting)
+{
+    [TestProtocol registerWithScheme:@"https"];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._mediaCaptureEnabled = YES;
+    auto preferences = [configuration preferences];
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    preferences._mockCaptureDevicesEnabled = YES;
+    preferences._getUserMediaRequiresFocus = NO;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+
+    auto observer = adoptNS([[MediaCaptureObserver alloc] init]);
+    [webView addObserver:observer.get() forKeyPath:@"microphoneCaptureState" options:NSKeyValueObservingOptionNew context:nil];
+    [webView addObserver:observer.get() forKeyPath:@"cameraCaptureState" options:NSKeyValueObservingOptionNew context:nil];
+
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView _setMediaCaptureReportingDelayForTesting:0];
+
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-file/media-session-capture.html"]]];
+
+    microphoneCaptureStateChange = false;
+    [webView stringByEvaluatingJavaScript:@"startAudioCapture()"];
+    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateActive));
+    EXPECT_EQ(1, [delegate numberOfPrompts]);
+
+    cameraCaptureStateChange = false;
+    [webView stringByEvaluatingJavaScript:@"startVideoCapture()"];
+    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
+    EXPECT_EQ(2, [delegate numberOfPrompts]);
+
+    cameraCaptureStateChange = false;
+    [webView setCameraCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
+    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateMuted));
+
+    microphoneCaptureStateChange = false;
+    [webView setMicrophoneCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
+    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateMuted));
+
+    microphoneCaptureStateChange = false;
+    [webView stringByEvaluatingJavaScript:@"startAudioCapture()"];
+    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateActive));
+    EXPECT_EQ(3, [delegate numberOfPrompts]);
+
+    cameraCaptureStateChange = false;
+    [webView stringByEvaluatingJavaScript:@"startVideoCapture()"];
+    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
+    EXPECT_EQ(4, [delegate numberOfPrompts]);
+
+    [webView removeObserver:observer.get() forKeyPath:@"microphoneCaptureState"];
+    [webView removeObserver:observer.get() forKeyPath:@"cameraCaptureState"];
+}
+
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 TEST(WebKit, GetUserMediaWithWebThread)

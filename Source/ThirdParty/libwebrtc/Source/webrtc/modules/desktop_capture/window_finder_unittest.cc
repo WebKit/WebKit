@@ -10,11 +10,11 @@
 
 #include "modules/desktop_capture/window_finder.h"
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <memory>
 
 #include "api/scoped_refptr.h"
+#include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/screen_drawer.h"
 #include "rtc_base/logging.h"

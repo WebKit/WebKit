@@ -28,6 +28,11 @@
 // In summary, every bit defines a memory barrier for some access after a shader write.
 // Additionally, SHADER_IMAGE_ACCESS_BARRIER_BIT and SHADER_STORAGE_BARRIER_BIT bits are used to
 // define a memory barrier for shader writes after other accesses.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"

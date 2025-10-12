@@ -27,6 +27,7 @@
 
 #include "APIData.h"
 #include "WebExtensionSQLiteDatabase.h"
+#include <WebCore/SQLiteExtras.h>
 #include <sqlite3.h>
 #include <tuple>
 
@@ -89,7 +90,7 @@ public:
         if (sqlite3_column_type(statement, index) == SQLITE_NULL)
             return emptyString();
 
-        return String::fromUTF8(reinterpret_cast<const char*>(sqlite3_column_text(statement, index)));
+        return WebCore::sqliteColumnText(statement, index);
     }
 
     static inline int bind(sqlite3_stmt* statement, int index, const String& value)
@@ -97,7 +98,7 @@ public:
         if (!value)
             return sqlite3_bind_null(statement, index);
 
-        return sqlite3_bind_text(statement, index, value.utf8().data(), -1, SQLITE_TRANSIENT);
+        return WebCore::sqliteBindText(statement, index, value.utf8());
     }
 };
 
@@ -109,15 +110,11 @@ public:
         if (sqlite3_column_type(statement, index) == SQLITE_NULL)
             return nullptr;
 
-        auto* blob = static_cast<const uint8_t*>(sqlite3_column_blob(statement, index));
-        if (!blob)
+        auto blob = WebCore::sqliteColumnBlob(statement, index);
+        if (!blob.data())
             return nullptr;
 
-        int blobSize = sqlite3_column_bytes(statement, index);
-        if (blobSize <= 0)
-            return nullptr;
-
-        return API::Data::create(unsafeMakeSpan(blob, blobSize));
+        return API::Data::create(blob);
     }
 
     static inline int bind(sqlite3_stmt* statement, int index, RefPtr<API::Data> value)
@@ -125,7 +122,7 @@ public:
         if (!value)
             return sqlite3_bind_null(statement, index);
 
-        return sqlite3_bind_blob64(statement, index, value->span().data(), value->span().size(), SQLITE_TRANSIENT);
+        return WebCore::sqliteBindBlob(statement, index, value->span());
     }
 };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
     readonly attribute DOMString tagName;
 
     [CEReactions=Needed, Reflect] attribute DOMString id;
-    [CEReactions=Needed, Reflect=class] attribute DOMString className;
+    [CEReactions=Needed, Reflect="class"] attribute DOMString className;
     [SameObject, PutForwards=value] readonly attribute DOMTokenList classList;
     [CEReactions=Needed, Reflect, Unscopable] attribute DOMString slot;
     [SameObject, PutForwards=value] readonly attribute DOMTokenList part;
@@ -60,6 +60,7 @@
 
     ShadowRoot attachShadow(ShadowRootInit init);
     [ImplementedAs=shadowRootForBindings, CallWith=CurrentGlobalObject] readonly attribute ShadowRoot? shadowRoot;
+    [EnabledForWorld=closedShadowRootIsExposedForExtensions] readonly attribute ShadowRoot? openOrClosedShadowRoot;
 
     Element? closest(DOMString selectors);
     boolean matches(DOMString selectors);

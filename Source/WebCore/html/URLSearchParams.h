@@ -63,7 +63,7 @@ public:
         std::optional<KeyValuePair<String, String>> next();
 
     private:
-        Ref<URLSearchParams> m_target;
+        const Ref<URLSearchParams> m_target;
         size_t m_index { 0 };
     };
     Iterator createIterator(ScriptExecutionContext*) { return Iterator { *this }; }

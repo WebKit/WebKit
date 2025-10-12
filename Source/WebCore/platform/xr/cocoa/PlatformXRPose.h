@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(WEBXR) && PLATFORM(COCOA)
 
 #include <WebCore/PlatformXR.h>

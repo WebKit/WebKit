@@ -77,7 +77,7 @@ void PlatformCALayerContentsDelayedReleaser::mainThreadCommitDidEnd()
 
     if (bothCommitsDone) {
         if (hadOverlappingCommit && m_retainedContents.size()) {
-            RunLoop::protectedMain()->dispatch([] {
+            RunLoop::mainSingleton().dispatch([] {
                 PlatformCALayerContentsDelayedReleaser::singleton().clearRetainedContents();
             });
             return;
@@ -106,7 +106,7 @@ void PlatformCALayerContentsDelayedReleaser::scrollingThreadCommitDidEnd()
         if (m_hadOverlappingCommit) {
             // m_retainedContents might be empty (it's not protected by the lock so we can't check it here),
             // so this might be a pointless dispatch, but m_hadOverlappingCommit is rare.
-            RunLoop::protectedMain()->dispatch([] {
+            RunLoop::mainSingleton().dispatch([] {
                 PlatformCALayerContentsDelayedReleaser::singleton().clearRetainedContents();
             });
         }

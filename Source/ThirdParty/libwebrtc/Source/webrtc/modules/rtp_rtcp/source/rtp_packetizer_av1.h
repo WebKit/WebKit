@@ -24,11 +24,10 @@ namespace webrtc {
 
 class RtpPacketizerAv1 : public RtpPacketizer {
  public:
-  RtpPacketizerAv1(rtc::ArrayView<const uint8_t> payload,
+  RtpPacketizerAv1(ArrayView<const uint8_t> payload,
                    PayloadSizeLimits limits,
                    VideoFrameType frame_type,
-                   bool is_last_frame_in_picture,
-                   bool even_distribution);
+                   bool is_last_frame_in_picture);
   ~RtpPacketizerAv1() override = default;
 
   size_t NumPackets() const override { return packets_.size() - packet_index_; }
@@ -38,7 +37,7 @@ class RtpPacketizerAv1 : public RtpPacketizer {
   struct Obu {
     uint8_t header;
     uint8_t extension_header;  // undefined if (header & kXbit) == 0
-    rtc::ArrayView<const uint8_t> payload;
+    ArrayView<const uint8_t> payload;
     int size;  // size of the header and payload combined.
   };
   struct Packet {
@@ -54,15 +53,14 @@ class RtpPacketizerAv1 : public RtpPacketizer {
   };
 
   // Parses the payload into serie of OBUs.
-  static std::vector<Obu> ParseObus(rtc::ArrayView<const uint8_t> payload);
+  static std::vector<Obu> ParseObus(ArrayView<const uint8_t> payload);
   // Returns the number of additional bytes needed to store the previous OBU
   // element if an additonal OBU element is added to the packet.
   static int AdditionalBytesForPreviousObuElement(const Packet& packet);
+  static std::vector<Packet> PacketizeInternal(ArrayView<const Obu> obus,
+                                               PayloadSizeLimits limits);
   // Packetize and try to distribute the payload evenly across packets.
-  static std::vector<Packet> PacketizeAboutEqually(
-      rtc::ArrayView<const Obu> obus,
-      PayloadSizeLimits limits);
-  static std::vector<Packet> Packetize(rtc::ArrayView<const Obu> obus,
+  static std::vector<Packet> Packetize(ArrayView<const Obu> obus,
                                        PayloadSizeLimits limits);
 
   uint8_t AggregationHeader() const;

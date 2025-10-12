@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "WebGPUCompareFunction.h"
-#include "WebGPUIntegralTypes.h"
-#include "WebGPUStencilFaceState.h"
-#include "WebGPUTextureFormat.h"
+#include <WebCore/WebGPUCompareFunction.h>
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUStencilFaceState.h>
+#include <WebCore/WebGPUTextureFormat.h>
 #include <optional>
 
 namespace WebCore::WebGPU {

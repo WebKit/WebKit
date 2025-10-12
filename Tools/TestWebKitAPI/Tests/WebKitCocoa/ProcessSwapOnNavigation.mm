@@ -29,6 +29,7 @@
 #import "FrameTreeChecks.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
+#import "SiteIsolationUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
@@ -46,6 +47,7 @@
 #import <WebKit/WKURLSchemeHandler.h>
 #import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferences.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
@@ -65,6 +67,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
@@ -351,7 +354,7 @@ static RetainPtr<WKWebView> createdWebView;
     auto doAsynchronouslyIfNecessary = [self, strongSelf = retainPtr(self), task = retainPtr(task)](Function<void(id <WKURLSchemeTask>)>&& f, double delay) {
         if (!_shouldRespondAsynchronously)
             return f(task.get());
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC), dispatch_get_main_queue(), makeBlockPtr([self, strongSelf, task, f = WTFMove(f)] {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC), mainDispatchQueueSingleton(), makeBlockPtr([self, strongSelf, task, f = WTFMove(f)] {
             if (_runningTasks.contains(task.get()))
                 f(task.get());
         }).get());
@@ -907,6 +910,11 @@ TEST(ProcessSwap, Back)
     [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    // FIXME: Page cache is currently disabled under site isolation; see rdar://161762363.
+    // In site isolation, persisted: false. PageShow events are not being restored from the back-forward cache.
+    if (isSiteIsolationEnabled(webView.get()))
+        return;
+
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
@@ -5720,7 +5728,7 @@ TEST(ProcessSwap, CommittedProcessCrashDuringCrossSiteNavigation)
         decisionHandler(WKNavigationActionPolicyAllow); // Will ask the load to proceed in a new provisional WebProcess since the navigation is cross-site.
 
         // Simulate a crash of the committed WebProcess while the provisional navigation starts in the new provisional WebProcess.
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), mainDispatchQueueSingleton(), ^{
             kill(pid1, 9);
             didKill = true;
         });
@@ -7271,12 +7279,7 @@ static bool hasOverlay(CALayer *layer)
 }
 #endif
 
-// FIXME when rdar://106098852 is resolved
-#if PLATFORM(MAC) && (__MAC_OS_X_VERSION_MIN_REQUIRED > 130000) || PLATFORM(IOS) || PLATFORM(VISION)
-TEST(ProcessSwap, DISABLED_PageOverlayLayerPersistence)
-#else
 TEST(ProcessSwap, PageOverlayLayerPersistence)
-#endif
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     [processPoolConfiguration setInjectedBundleURL:[[NSBundle mainBundle] URLForResource:@"TestWebKitAPI" withExtension:@"wkbundle"]];
@@ -7492,6 +7495,8 @@ window.onload = function() {
 
 static const char* openedPage = "Hello World";
 
+// Disabled for macOS Debug builds due to regression in 300964@main - duplicate frame ID assertion failure. webkit.org/b/300391
+#if defined(NDEBUG)
 TEST(ProcessSwap, SameSiteWindowWithOpenerNavigateToFile)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
@@ -7571,6 +7576,7 @@ TEST(ProcessSwap, SameSiteWindowWithOpenerNavigateToFile)
     auto pid5 = [createdWebView _webProcessIdentifier];
     EXPECT_NE(pid4, pid5);
 }
+#endif // defined(NDEBUG)
 
 #endif // PLATFORM(MAC)
 
@@ -7971,6 +7977,85 @@ TEST(ProcessSwap, NavigateBackAfterNavigatingAwayFromCrossOriginOpenerPolicyUsin
     }];
     Util::run(&done);
     done = false;
+}
+
+TEST(ProcessSwap, MultitabCOOPSwapSameOriginProcessPool)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer coopSiteServer({
+        { "/coopSite.html"_s, { { { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "<html><body>coopSite</body></html>"_s } },
+    }, HTTPServer::Protocol::Https);
+
+    HTTPServer nonCoopSiteServer({
+        { "/nonCoopSite.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<html><body>nonCoopSite</body></html>"_s } },
+    }, HTTPServer::Protocol::Https);
+
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"CrossOriginOpenerPolicyEnabled"])
+            [[webViewConfiguration preferences] _setEnabled:YES forFeature:feature];
+        else if ([feature.key isEqualToString:@"CrossOriginEmbedderPolicyEnabled"])
+            [[webViewConfiguration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    // ORIGINAL TAB
+    auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView1 setNavigationDelegate:navigationDelegate.get()];
+
+    // 1: load coopSite
+    done = false;
+    [webView1 loadRequest:coopSiteServer.request("/coopSite.html"_s)];
+    Util::run(&done);
+    auto pid1 = [webView1 _webProcessIdentifier];
+
+    // 2: navigate to nonCoopSite (no COOP) => must swap
+    done = false;
+    [webView1 loadRequest:nonCoopSiteServer.request("/nonCoopSite.html"_s)];
+    Util::run(&done);
+    auto pid2 = [webView1 _webProcessIdentifier];
+    EXPECT_NE(pid1, pid2);
+
+    // 3: goBack() to coopSite => COOP destination + cross-origin => must swap again
+    done = false;
+    [webView1 goBack];
+    Util::run(&done);
+    auto pid3 = [webView1 _webProcessIdentifier];
+    EXPECT_NE(pid2, pid3);
+
+    // NEW TAB
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate2 = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView2 setNavigationDelegate:navigationDelegate2.get()];
+
+    // 4: load coopSite again in new tab => COOP always spawns a fresh process
+    done = false;
+    [webView2 loadRequest:coopSiteServer.request("/coopSite.html"_s)];
+    Util::run(&done);
+    auto pid4 = [webView2 _webProcessIdentifier];
+    EXPECT_NE(pid2, pid4);
+    EXPECT_NE(pid3, pid4);
+
+    // 5: navigate away
+    done = false;
+    [webView2 loadRequest:nonCoopSiteServer.request("/nonCoopSite.html"_s)];
+    Util::run(&done);
+    auto pid5 = [webView2 _webProcessIdentifier];
+    EXPECT_NE(pid4, pid5);
+
+    // 6: goBack() to coopSite in new tab must swap again
+    done = false;
+    [webView2 goBack];
+    Util::run(&done);
+    auto pid6 = [webView2 _webProcessIdentifier];
+    EXPECT_NE(pid5, pid6);
+
+    EXPECT_NE(pid3, pid6);
 }
 
 TEST(ProcessSwap, NavigateBackAfterNavigatingAwayFromCrossOriginOpenerPolicyUsingBackForwardCache2)
@@ -9392,7 +9477,7 @@ TEST(ProcessSwap, ChangeViewSizeDuringNavigationActionPolicyDecision)
         decisionHandler(WKNavigationActionPolicyAllow);
 
         constexpr auto estimatedDelayForWebProcessLaunch = 5_ms;
-        RunLoop::protectedMain()->dispatchAfter(estimatedDelayForWebProcessLaunch, [webView] {
+        RunLoop::mainSingleton().dispatchAfter(estimatedDelayForWebProcessLaunch, [webView] {
             [webView setFrame:CGRectMake(0, 0, 320, 568)];
         });
     };

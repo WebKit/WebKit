@@ -9,13 +9,11 @@
  */
 #include "net/dcsctp/packet/parameter/zero_checksum_acceptable_chunk_parameter.h"
 
-#include <stdint.h>
-
-#include <type_traits>
+#include <cstdint>
 #include <vector>
 
+#include "net/dcsctp/public/types.h"
 #include "net/dcsctp/testing/testing_macros.h"
-#include "rtc_base/gunit.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 

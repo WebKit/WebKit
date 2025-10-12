@@ -51,9 +51,11 @@ class HeadlessDriverTest(unittest.TestCase):
 
     def make_environment(self):
         environment_user = {'DISPLAY': ':0.0',
-                           'XAUTHORITY': '/home/igalia/.Xauthority',
-                           'WAYLAND_DISPLAY': 'wayland-0',
-                           'WAYLAND_SOCKET': 'wayland-0'}
+                            'WAYLAND_DISPLAY': 'wayland-0',
+                            'WAYLAND_SOCKET': 'wayland-0',
+                            'WPE_DISPLAY':  'wpe-display-drm',
+                            'WPE_DRM_DEVICE': 'drm1',
+                            'XAUTHORITY': '/home/igalia/.Xauthority'}
         return environment_user
 
     def test_environment_needed_variables(self):
@@ -61,8 +63,10 @@ class HeadlessDriverTest(unittest.TestCase):
         environment_user = self.make_environment()
         with patch('os.environ', environment_user):
             driver_environment = driver._setup_environ_for_test()
-            self.assertIn('WPE_USE_HEADLESS_VIEW_BACKEND', driver_environment)
-            self.assertEqual(driver_environment['WPE_USE_HEADLESS_VIEW_BACKEND'], '1')
+            self.assertIn('WPE_DISPLAY', driver_environment)
+            self.assertEqual(driver_environment['WPE_DISPLAY'], 'wpe-display-headless')
+            self.assertIn('EGL_PLATFORM', driver_environment)
+            self.assertEqual(driver_environment['EGL_PLATFORM'], 'wayland')
 
     def test_environment_forbidden_variables(self):
         driver = self.make_driver()
@@ -73,3 +77,4 @@ class HeadlessDriverTest(unittest.TestCase):
             self.assertNotIn('XAUTHORITY', driver_environment)
             self.assertNotIn('WAYLAND_DISPLAY', driver_environment)
             self.assertNotIn('WAYLAND_SOCKET', driver_environment)
+            self.assertNotIn('WPE_DRM_DEVICE', driver_environment)

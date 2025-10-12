@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/quirks/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/quirks/blocks-ignore-line-height.html
+/LayoutTests/imported/w3c/web-platform-tests/quirks/body-fill-html-quirk-intrinsic-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/quirks/body-fills-html-quirk-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/quirks/body-fills-html-quirk-float-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/quirks/body-fills-html-quirk-float.html
@@ -28,6 +29,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/quirks/body-fills-html-quirk-vertical-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/quirks/body-fills-html-quirk-vertical.html
 /LayoutTests/imported/w3c/web-platform-tests/quirks/body-fills-html-quirk.html
+/LayoutTests/imported/w3c/web-platform-tests/quirks/class-names-across-iframes-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/quirks/class-names-across-iframes-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/quirks/class-names-across-iframes.html
 /LayoutTests/imported/w3c/web-platform-tests/quirks/classname-query-after-sibling-adoption.html
 /LayoutTests/imported/w3c/web-platform-tests/quirks/dd-dl-firefox-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/quirks/dd-dl-firefox-001-ref.html
@@ -38,10 +42,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/quirks/html-fills-viewport-quirk-vertical.html
 /LayoutTests/imported/w3c/web-platform-tests/quirks/html-fills-viewport-quirk.html
 /LayoutTests/imported/w3c/web-platform-tests/quirks/line-height-calculation.html
-/LayoutTests/imported/w3c/web-platform-tests/quirks/line-height-in-list-item.tentative-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/quirks/line-height-in-list-item.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/quirks/line-height-in-list-item-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/quirks/line-height-in-list-item.html
 /LayoutTests/imported/w3c/web-platform-tests/quirks/line-height-limited-quirks-mode-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/quirks/line-height-limited-quirks-mode.html
+/LayoutTests/imported/w3c/web-platform-tests/quirks/line-height-preserved-segment-break-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/quirks/line-height-preserved-segment-break.html
 /LayoutTests/imported/w3c/web-platform-tests/quirks/line-height-quirks-mode-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/quirks/line-height-quirks-mode.html
 /LayoutTests/imported/w3c/web-platform-tests/quirks/line-height-ref.html

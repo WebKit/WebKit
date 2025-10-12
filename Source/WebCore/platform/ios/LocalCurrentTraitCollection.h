@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Noncopyable.h>
+#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)

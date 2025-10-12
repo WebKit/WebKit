@@ -72,7 +72,7 @@ def maskTop8BitsAndAvoidZero(value):
 
 def superFastHash(str):
     # Implements Paul Hsieh's SuperFastHash - http://www.azillionmonkeys.com/qed/hash.html
-    # LChar data is interpreted as Latin-1-encoded (zero extended to 16 bits).
+    # Latin1Character data is interpreted as Latin-1-encoded (zero extended to 16 bits).
     stringHashingStartValue = 0x9E3779B9
 
     hash = stringHashingStartValue

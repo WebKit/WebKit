@@ -24,8 +24,8 @@
  */
 #pragma once
 
-#include "DeferredWorkTimer.h"
-#include "JSPromise.h"
+#include <JavaScriptCore/DeferredWorkTimer.h>
+#include <JavaScriptCore/JSPromise.h>
 #include <wtf/Condition.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>

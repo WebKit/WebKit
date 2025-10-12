@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(MAC)
 
 #include <IOKit/hid/IOHIDDevice.h>
@@ -57,7 +58,7 @@ private:
     uint32_t m_usage;
     uint32_t m_usagePage;
     IOHIDElementCookie m_cookie;
-    RetainPtr<IOHIDElementRef> m_rawElement;
+    const RetainPtr<IOHIDElementRef> m_rawElement;
 };
 
 

@@ -64,7 +64,7 @@ public:
                 return current;
         }
 
-        return 0;
+        return nullptr;
     }
 
     GRefPtr<AtspiAccessible> findDocumentWeb(AtspiAccessible* accessible)

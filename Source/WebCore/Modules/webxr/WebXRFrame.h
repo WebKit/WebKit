@@ -86,7 +86,7 @@ private:
     bool m_active { false };
     bool m_isAnimationFrame { false };
     DOMHighResTimeStamp m_time { 0 };
-    Ref<WebXRSession> m_session;
+    const Ref<WebXRSession> m_session;
 };
 
 } // namespace WebCore

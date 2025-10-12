@@ -179,8 +179,6 @@ ALWAYS_INLINE bool ParserBase::consumeUTF8String(Name& result, size_t stringLeng
         return true;
     if (m_source.size() < stringLength || m_offset > m_source.size() - stringLength)
         return false;
-    if (stringLength > maxStringSize)
-        return false;
     if (!result.tryReserveCapacity(stringLength))
         return false;
 

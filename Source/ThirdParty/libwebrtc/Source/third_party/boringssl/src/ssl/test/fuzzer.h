@@ -1,16 +1,16 @@
-/* Copyright (c) 2017, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2017 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #ifndef HEADER_SSL_TEST_FUZZER
 #define HEADER_SSL_TEST_FUZZER
@@ -20,10 +20,12 @@
 #include <string.h>
 
 #include <algorithm>
+#include <iterator>
 #include <vector>
 
 #include <openssl/bio.h>
 #include <openssl/bytestring.h>
+#include <openssl/crypto.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/hpke.h>
@@ -34,6 +36,13 @@
 
 #include "../../crypto/internal.h"
 #include "./fuzzer_tags.h"
+
+#if defined(OPENSSL_WINDOWS)
+// Windows defines struct timeval in winsock2.h.
+#include <winsock2.h>
+#else
+#include <sys/time.h>
+#endif
 
 namespace {
 
@@ -275,10 +284,20 @@ class TLSFuzzer {
     kServer,
   };
 
-  TLSFuzzer(Protocol protocol, Role role)
+  enum FuzzerMode {
+    kFuzzerModeOn,
+    kFuzzerModeOff,
+  };
+
+  TLSFuzzer(Protocol protocol, Role role, FuzzerMode fuzzer_mode)
       : debug_(getenv("BORINGSSL_FUZZER_DEBUG") != nullptr),
         protocol_(protocol),
         role_(role) {
+#if defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
+    if (fuzzer_mode == kFuzzerModeOn) {
+      CRYPTO_set_fuzzer_mode(1);
+    }
+#endif
     if (!Init()) {
       abort();
     }
@@ -298,7 +317,9 @@ class TLSFuzzer {
   }
 
   int TestOneInput(const uint8_t *buf, size_t len) {
+#if defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
     RAND_reset_for_fuzzing();
+#endif
 
     CBS cbs;
     CBS_init(&cbs, buf, len);
@@ -405,6 +426,12 @@ class TLSFuzzer {
       return false;
     }
 
+    // Use a constant clock.
+    SSL_CTX_set_current_time_cb(ctx_.get(),
+                                [](const SSL *ssl, timeval *out_clock) {
+                                  *out_clock = {1234, 1234};
+                                });
+
     // When accepting peer certificates, allow any certificate.
     SSL_CTX_set_cert_verify_callback(
         ctx_.get(),
@@ -414,16 +441,21 @@ class TLSFuzzer {
     SSL_CTX_enable_ocsp_stapling(ctx_.get());
 
     // Enable versions and ciphers that are off by default.
-    if (!SSL_CTX_set_strict_cipher_list(ctx_.get(), "ALL:3DES")) {
+    uint16_t min_version = protocol_ == kDTLS ? DTLS1_VERSION : TLS1_VERSION;
+    uint16_t max_version =
+        protocol_ == kDTLS ? DTLS1_3_VERSION : TLS1_3_VERSION;
+    if (!SSL_CTX_set_min_proto_version(ctx_.get(), min_version) ||
+        !SSL_CTX_set_max_proto_version(ctx_.get(), max_version) ||
+        !SSL_CTX_set_strict_cipher_list(ctx_.get(), "ALL:3DES")) {
       return false;
     }
 
     static const uint16_t kGroups[] = {
         SSL_GROUP_X25519_MLKEM768, SSL_GROUP_X25519_KYBER768_DRAFT00,
-        SSL_GROUP_X25519,          SSL_GROUP_SECP256R1,
-        SSL_GROUP_SECP384R1,       SSL_GROUP_SECP521R1};
-    if (!SSL_CTX_set1_group_ids(ctx_.get(), kGroups,
-                                OPENSSL_ARRAY_SIZE(kGroups))) {
+        SSL_GROUP_MLKEM1024,       SSL_GROUP_X25519,
+        SSL_GROUP_SECP256R1,       SSL_GROUP_SECP384R1,
+        SSL_GROUP_SECP521R1};
+    if (!SSL_CTX_set1_group_ids(ctx_.get(), kGroups, std::size(kGroups))) {
       return false;
     }
 
@@ -571,15 +603,14 @@ class TLSFuzzer {
     b->protocol = protocol_;
     CBS_init(&b->cbs, in, len);
 
-    bssl::UniquePtr<BIO> bio(BIO_new(&kBIOMethod));
-    bio->init = 1;
-    bio->ptr = b;
+    bssl::UniquePtr<BIO> bio(BIO_new(BIOMethod()));
+    BIO_set_init(bio.get(), 1);
+    BIO_set_data(bio.get(), b);
     return bio;
   }
 
   static int BIORead(BIO *bio, char *out, int len) {
-    assert(bio->method == &kBIOMethod);
-    BIOData *b = reinterpret_cast<BIOData *>(bio->ptr);
+    BIOData *b = reinterpret_cast<BIOData *>(BIO_get_data(bio));
     if (b->protocol == kTLS) {
       len = std::min(static_cast<size_t>(len), CBS_len(&b->cbs));
       memcpy(out, CBS_data(&b->cbs), len);
@@ -598,32 +629,27 @@ class TLSFuzzer {
   }
 
   static int BIODestroy(BIO *bio) {
-    assert(bio->method == &kBIOMethod);
-    BIOData *b = reinterpret_cast<BIOData *>(bio->ptr);
+    BIOData *b = reinterpret_cast<BIOData *>(BIO_get_data(bio));
     delete b;
     return 1;
   }
 
-  static const BIO_METHOD kBIOMethod;
+  static const BIO_METHOD *BIOMethod() {
+    static const BIO_METHOD *method = [] {
+      BIO_METHOD *ret = BIO_meth_new(0, nullptr);
+      BSSL_CHECK(ret);
+      BSSL_CHECK(BIO_meth_set_read(ret, BIORead));
+      BSSL_CHECK(BIO_meth_set_destroy(ret, BIODestroy));
+      return ret;
+    }();
+    return method;
+  }
 
   bool debug_;
   Protocol protocol_;
   Role role_;
   bssl::UniquePtr<SSL_CTX> ctx_;
   std::vector<uint8_t> handoff_, handback_;
-};
-
-const BIO_METHOD TLSFuzzer::kBIOMethod = {
-    0,        // type
-    nullptr,  // name
-    nullptr,  // bwrite
-    TLSFuzzer::BIORead,
-    nullptr,  // bputs
-    nullptr,  // bgets
-    nullptr,  // ctrl
-    nullptr,  // create
-    TLSFuzzer::BIODestroy,
-    nullptr,  // callback_ctrl
 };
 
 }  // namespace

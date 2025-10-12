@@ -11,6 +11,8 @@
 #include "modules/video_coding/utility/frame_dropper.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 
 namespace webrtc {
 

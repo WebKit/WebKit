@@ -42,6 +42,7 @@
 #import <WebCore/RunLoopObserver.h>
 #import <WebCore/ValidationBubble.h>
 #import <WebCore/WebCoreJITOperations.h>
+#import <WebCore/WebCoreMainThread.h>
 #import <pal/spi/mac/NSWindowSPI.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
@@ -103,11 +104,7 @@ int pluginDatabaseClientCount = 0;
 
 + (void)initialize
 {
-#if !PLATFORM(IOS_FAMILY)
-    JSC::initialize();
-    WTF::initializeMainThread();
-    WebCore::populateJITOperations();
-#endif
+    WebCore::initializeMainThreadIfNeeded();
 }
 
 - (id)init 

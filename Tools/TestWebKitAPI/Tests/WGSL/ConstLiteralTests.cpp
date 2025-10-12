@@ -33,7 +33,7 @@
 static Expected<std::pair<WGSL::ShaderModule, WGSL::AST::Expression::Ref>, WGSL::Error> parseLCharPrimaryExpression(const String& input)
 {
     WGSL::ShaderModule shaderModule(input, { });
-    WGSL::Lexer<LChar> lexer(input);
+    WGSL::Lexer lexer(input.span<Latin1Character>());
     WGSL::Parser parser(shaderModule, lexer);
 
     auto expression = parser.parsePrimaryExpression();

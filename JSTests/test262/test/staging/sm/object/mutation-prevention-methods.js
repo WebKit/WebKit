@@ -4,23 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-object-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Object.is{Sealed,Frozen}, Object.{seal,freeze}
+info: bugzilla.mozilla.org/show_bug.cgi?id=492849
 esid: pending
 ---*/
-var gTestfile = 'mutation-prevention-methods.js';
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 492849;
-var summary = 'Object.is{Sealed,Frozen}, Object.{seal,freeze}';
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 // Empty object
 
@@ -121,8 +109,3 @@ Object.freeze(o3);
 assert.sameValue(Object.isExtensible(o3), false);
 assert.sameValue(Object.isSealed(o3), true);
 assert.sameValue(Object.isFrozen(o3), true);
-
-
-/******************************************************************************/
-
-print("All tests passed!");

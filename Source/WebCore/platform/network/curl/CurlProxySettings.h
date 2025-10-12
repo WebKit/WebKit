@@ -74,7 +74,7 @@ public:
 
 private:
     friend struct IPC::ArgumentCoder<CurlProxySettings, void>;
-    using IPCData = std::variant<DefaultData, NoProxyData, CustomData>;
+    using IPCData = Variant<DefaultData, NoProxyData, CustomData>;
     WEBCORE_EXPORT IPCData toIPCData() const;
     WEBCORE_EXPORT static CurlProxySettings fromIPCData(IPCData&&);
 

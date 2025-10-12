@@ -45,6 +45,8 @@ class Location final : public ScriptWrappable, public RefCounted<Location> {
 public:
     static Ref<Location> create(DOMWindow& window) { return adoptRef(*new Location(window)); }
 
+    ~Location();
+
     ExceptionOr<void> setHref(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
     String href() const;
 

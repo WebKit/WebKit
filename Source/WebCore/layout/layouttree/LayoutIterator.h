@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "LayoutInitialContainingBlock.h"
+#include <WebCore/LayoutInitialContainingBlock.h>
 
 namespace WebCore {
 namespace Layout {
@@ -228,5 +228,5 @@ inline bool LayoutIterator<T>::operator==(const LayoutIterator& other) const
 
 }
 }
-#include "LayoutChildIterator.h"
+#include <WebCore/LayoutChildIterator.h>
 

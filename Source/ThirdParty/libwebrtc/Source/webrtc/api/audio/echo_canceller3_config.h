@@ -23,6 +23,9 @@ struct RTC_EXPORT EchoCanceller3Config {
   // ranges. Returns true if and only of the config did not need to be changed.
   static bool Validate(EchoCanceller3Config* config);
 
+  // Produces a default configuration for multichannel.
+  static EchoCanceller3Config CreateDefaultMultichannelConfig();
+
   EchoCanceller3Config();
   EchoCanceller3Config(const EchoCanceller3Config& e);
   EchoCanceller3Config& operator=(const EchoCanceller3Config& other);

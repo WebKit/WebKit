@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FloatRect.h"
-#include "IntRect.h"
+#include <WebCore/FloatRect.h>
+#include <WebCore/IntRect.h>
 #include <wtf/Forward.h>
 
 #include <wtf/Vector.h>

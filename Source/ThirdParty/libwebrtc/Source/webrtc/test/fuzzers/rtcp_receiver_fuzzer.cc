@@ -14,12 +14,12 @@
 
 #include "api/array_view.h"
 #include "api/environment/environment_factory.h"
+#include "api/field_trials.h"
 #include "modules/rtp_rtcp/include/report_block_data.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmb_item.h"
 #include "modules/rtp_rtcp/source/rtcp_receiver.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "system_wrappers/include/clock.h"
-#include "test/explicit_key_value_config.h"
 
 namespace webrtc {
 namespace {
@@ -36,7 +36,7 @@ class NullModuleRtpRtcp : public RTCPReceiver::ModuleRtpRtcp {
   void OnRequestSendReport() override {}
   void OnReceivedNack(const std::vector<uint16_t>&) override {}
   void OnReceivedRtcpReportBlocks(
-      rtc::ArrayView<const ReportBlockData> report_blocks) override {}
+      webrtc::ArrayView<const ReportBlockData> report_blocks) override {}
 };
 
 }  // namespace
@@ -45,8 +45,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   if (size > kMaxInputLenBytes) {
     return;
   }
-  test::ExplicitKeyValueConfig field_trials(
-      "WebRTC-RFC8888CongestionControlFeedback/Enabled/");
+  FieldTrials field_trials("WebRTC-RFC8888CongestionControlFeedback/Enabled/");
   NullModuleRtpRtcp rtp_rtcp_module;
   SimulatedClock clock(1234);
 
@@ -57,6 +56,6 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   RTCPReceiver receiver(CreateEnvironment(&clock, &field_trials), config,
                         &rtp_rtcp_module);
 
-  receiver.IncomingPacket(rtc::MakeArrayView(data, size));
+  receiver.IncomingPacket(webrtc::MakeArrayView(data, size));
 }
 }  // namespace webrtc

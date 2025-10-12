@@ -101,8 +101,8 @@ BNO_INLINE void* IsoTLS::allocateSlow(api::IsoHeapBase<Type>& handle, bool abort
     if (fallbackResult.didFallBack)
         return fallbackResult.ptr;
     
-    // If debug heap is enabled, IsoMallocFallback::mallocFallbackState becomes MallocFallbackState::FallBackToMalloc.
-    BASSERT(!Environment::get()->isDebugHeapEnabled());
+    // If system heap is enabled, IsoMallocFallback::mallocFallbackState becomes MallocFallbackState::FallBackToMalloc.
+    BASSERT(!Environment::get()->isSystemHeapEnabled());
     
     IsoTLS* tls = ensureHeapAndEntries(handle);
     
@@ -114,7 +114,7 @@ void IsoTLS::deallocateImpl(api::IsoHeapBase<Type>& handle, void* p)
 {
     unsigned offset = handle.deallocatorOffset();
     IsoTLS* tls = get();
-    // Note that this bounds check would be here even if we didn't have to support DebugHeap,
+    // Note that this bounds check would be here even if we didn't have to support SystemHeap,
     // since we don't want unpredictable behavior if offset or m_extent ever got corrupted.
     if (!tls || offset >= tls->m_extent)
         deallocateSlow<Config>(handle, p);
@@ -140,8 +140,8 @@ BNO_INLINE void IsoTLS::deallocateSlow(api::IsoHeapBase<Type>& handle, void* p)
     if (result)
         return;
     
-    // If debug heap is enabled, IsoMallocFallback::mallocFallbackState becomes MallocFallbackState::FallBackToMalloc.
-    BASSERT(!Environment::get()->isDebugHeapEnabled());
+    // If system heap is enabled, IsoMallocFallback::mallocFallbackState becomes MallocFallbackState::FallBackToMalloc.
+    BASSERT(!Environment::get()->isSystemHeapEnabled());
     
     RELEASE_BASSERT(handle.isInitialized());
     

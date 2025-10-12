@@ -33,13 +33,19 @@
 template<typename T>
 static inline std::ostream& ostreamRectCommon(std::ostream& os, const T& rect)
 {
-    return os << "(origin = " << rect.origin << ", size = (width = " << rect.size.width << ", height = " << rect.size.height << "))";
+    return os << "(origin = " << rect.origin << ", size = " << rect.size << ")";
 }
 
 template<typename T>
 static inline std::ostream& ostreamPointCommon(std::ostream& os, const T& point)
 {
     return os << "(x = " << point.x << ", y = " << point.y << ")";
+}
+
+template<typename T>
+static inline std::ostream& ostreamSizeCommon(std::ostream& os, const T& size)
+{
+    return os << "(width = " << size.width << ", height = " << size.height << ")";
 }
 
 #if USE(CG)
@@ -54,6 +60,16 @@ bool operator==(const CGPoint& a, const CGPoint& b)
     return CGPointEqualToPoint(a, b);
 }
 
+std::ostream& operator<<(std::ostream& os, const CGSize& size)
+{
+    return ostreamSizeCommon(os, size);
+}
+
+bool operator==(const CGSize& a, const CGSize& b)
+{
+    return CGSizeEqualToSize(a, b);
+}
+
 std::ostream& operator<<(std::ostream& os, const CGRect& rect)
 {
     return ostreamRectCommon(os, rect);
@@ -62,30 +78,6 @@ std::ostream& operator<<(std::ostream& os, const CGRect& rect)
 bool operator==(const CGRect& a, const CGRect& b)
 {
     return CGRectEqualToRect(a, b);
-}
-
-#endif
-
-#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
-
-std::ostream& operator<<(std::ostream& os, const NSPoint& point)
-{
-    return ostreamPointCommon(os, point);
-}
-
-bool operator==(const NSPoint& a, const NSPoint& b)
-{
-    return NSEqualPoints(a, b);
-}
-
-std::ostream& operator<<(std::ostream& os, const NSRect& rect)
-{
-    return ostreamRectCommon(os, rect);
-}
-
-bool operator==(const NSRect& a, const NSRect& b)
-{
-    return NSEqualRects(a, b);
 }
 
 #endif

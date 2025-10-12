@@ -961,7 +961,7 @@ static void testCustomURLScheme(Test*, gconstpointer)
     g_assert_null(toPattern("bar", "*", "/", &error.outPtr()));
     g_assert_cmpstr(error.get()->message, ==, "Scheme \"bar\" is invalid.");
 
-    webkit_web_extension_match_pattern_register_custom_URL_scheme("foo");
+    webkit_web_extension_match_pattern_register_custom_url_scheme("foo");
 
     g_assert_nonnull(toPattern("foo", "*", "/", &error.outPtr()));
     g_assert_no_error(error.get());
@@ -969,7 +969,7 @@ static void testCustomURLScheme(Test*, gconstpointer)
     g_assert_null(toPattern("bar", "*", "/", &error.outPtr()));
     g_assert_cmpstr(error.get()->message, ==, "Scheme \"bar\" is invalid.");
 
-    webkit_web_extension_match_pattern_register_custom_URL_scheme("bar");
+    webkit_web_extension_match_pattern_register_custom_url_scheme("bar");
 
     g_assert_nonnull(toPattern("foo", "*", "/", &error.outPtr()));
     g_assert_no_error(error.get());

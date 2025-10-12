@@ -171,7 +171,7 @@ function test_writing_modes(property) {
         container.style[container_property] = style[container_property];
         container_styles.push(`${container_property}: ${style[container_property]}`);
       }
-      
+
       for (let mapping of writing_mode.mappings) {
         for (let key in mapping) {
           inner_test(property, key, mapping[key], container_styles);

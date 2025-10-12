@@ -1,4 +1,6 @@
 //@ if $memoryLimited then skip else requireOptions("--verifyGC=0") end
+//@ $skipModes << "wasm-no-jit".to_sym if $buildType == "debug"
+
 import * as assert from '../assert.js';
 import Builder from '../Builder.js';
 
@@ -212,8 +214,8 @@ import Builder from '../Builder.js';
     fullGC()
 
     assert.eq($1.exports.call_tbl1(0), 42)
-    assert.throws(() => $1.exports.call_tbl0(0), Error, "call_indirect to a null table entry (evaluating 'func(...args)')")
-    assert.throws(() => $1.exports.call_tbl1(1), Error, "call_indirect to a null table entry (evaluating 'func(...args)')")
+    assert.throws(() => $1.exports.call_tbl0(0), Error, "call_indirect to a signature that does not match (evaluating 'func(...args)')")
+    assert.throws(() => $1.exports.call_tbl1(1), Error, "call_indirect to a signature that does not match (evaluating 'func(...args)')")
 }
 
 {
@@ -265,8 +267,8 @@ import Builder from '../Builder.js';
     assert.eq($1.exports.call_tbl1(0), 42)
     assert.eq($1.exports.call_tbl0(0), 1337)
     assert.eq($1.exports.call_tbl1(1), 256)
-    assert.throws(() => $1.exports.call_tbl0(1), Error, "call_indirect to a null table entry (evaluating 'func(...args)')")
-    assert.throws(() => $1.exports.call_tbl0(2), Error, "call_indirect to a null table entry (evaluating 'func(...args)')")
+    assert.throws(() => $1.exports.call_tbl0(1), Error, "call_indirect to a signature that does not match (evaluating 'func(...args)')")
+    assert.throws(() => $1.exports.call_tbl0(2), Error, "call_indirect to a signature that does not match (evaluating 'func(...args)')")
     assert.throws(() => $1.exports.call_tbl1(2), Error, "Out of bounds call_indirect (evaluating 'func(...args)')")
 }
  assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder())

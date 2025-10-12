@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ArgList.h"
+#include <JavaScriptCore/ArgList.h>
 #include <numeric>
 #include <wtf/Int128.h>
 #include <wtf/StdLibExtras.h>

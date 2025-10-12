@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    div {
+        width: fit-content;
+    }
+    :root {
+        view-transition-name: none;
+    }
+    .before::before {
+        content: "";
+        display: inline-block;
+        background-color: green;
+        width: 1em;
+        height: 1em;
+        cursor: w-resize;
+    }
+    .after::after {
+        content: "";
+        display: inline-block;
+        background-color: blue;
+        width: 1em;
+        height: 1em;
+        cursor: e-resize;
+    }
+    li {
+        list-style-position: inside;
+    }
+    dialog {
+        border: none;
+    }
+    ::marker {
+        cursor: wait;
+    }
+    ::backdrop {
+        cursor: help;
+    }
+    .view-transition {
+        view-transition-name: test;
+    }
+    ::view-transition {
+        height: 100%;
+        width: 100%;
+        background-color: green;
+        cursor: grab;
+    }
+    ::view-transition-group(test) {
+        height: 100% !important;
+        width: 80vw !important;
+        transform: none !important;
+        background-color: greenyellow;
+        cursor: grabbing;
+        animation-play-state: paused;
+        margin-left: 20vw;
+    }
+    ::view-transition-image-pair(test) {
+        background-color: bisque;
+        cursor: crosshair;
+        margin-left: 20vw;
+    }
+    ::view-transition-old(test),
+    ::view-transition-new(test) {
+        position: static;
+        width: 20vw;
+        height: 100%;
+    }
+    ::view-transition-old(test) {
+        background-color: orange;
+        cursor: not-allowed;
+        margin-left: 20vw;
+    }
+    ::view-transition-new(test) {
+        background-color: red;
+        cursor: zoom-in;
+    }
+</style>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="testcases">
+    <div class="before">::before</div>
+    <div class="after">::after</div>
+    <div class="before after">::before & ::after</div>
+    <!-- Uncomment when ::marker is fixed. -->
+    <!-- <li class="before after">::marker && ::before & ::after</li> -->
+    <dialog>::backdrop</dialog>
+    <div class="view-transition">View transition pseudo-elements</div>
+</div>
+<div id="console"></div>
+<script>
+async function runTests() {
+    for (const node of [...testcases.children]) {
+        debug("TEST CASE: " + node.textContent);
+
+        if (node.tagName == "DIALOG") {
+            node.showModal();
+            await eventSender.asyncMouseMoveTo(
+                0,
+                0,
+            );
+            debug("Cursor info for ::backdrop: " + internals.getCurrentCursorInfo());
+            node.close();
+        }
+
+        const contentBoxLeft = node.offsetLeft + parseInt(getComputedStyle(node).paddingLeft);
+        const contentBoxRight = node.offsetLeft + node.offsetWidth - parseInt(getComputedStyle(node).paddingRight);
+        const contentBoxTop = node.offsetTop + parseInt(getComputedStyle(node).paddingTop);
+        if (node.tagName == "LI") {
+            await eventSender.asyncMouseMoveTo(
+                contentBoxLeft + 3,
+                contentBoxTop + 3,
+            );
+            debug("Cursor info for ::marker: " + internals.getCurrentCursorInfo());
+        }
+
+        if (node.classList.contains("before")) {
+            await eventSender.asyncMouseMoveTo(
+                node.tagName == "LI" ? contentBoxLeft + 20 : contentBoxLeft + 3,
+                contentBoxTop + 3,
+            );
+            debug("Cursor info for ::before: " + internals.getCurrentCursorInfo());
+        }
+
+        if (node.classList.contains("after")) {
+            await eventSender.asyncMouseMoveTo(
+                contentBoxRight - 3,
+                contentBoxTop + 3,
+            );
+            debug("Cursor info for ::after: " + internals.getCurrentCursorInfo());
+        }
+
+        if (node.classList.contains("view-transition")) {
+            const viewTransition = document.startViewTransition();
+            await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+            // The view transition pseudos share the screen horizontally in 5 equal parts.
+            const fraction = document.documentElement.offsetWidth / 5;
+            await eventSender.asyncMouseMoveTo(
+                0,
+                0,
+            );
+            debug("Cursor info for ::view-transition: " + internals.getCurrentCursorInfo());
+            await eventSender.asyncMouseMoveTo(
+                fraction + 3,
+                0,
+            );
+            debug("Cursor info for ::view-transition-group(test): " + internals.getCurrentCursorInfo());
+            await eventSender.asyncMouseMoveTo(
+                fraction * 2 + 3,
+                0,
+            );
+            debug("Cursor info for ::view-transition-image-pair(test): " + internals.getCurrentCursorInfo());
+            await eventSender.asyncMouseMoveTo(
+                fraction * 3 + 3,
+                0,
+            );
+            debug("Cursor info for ::view-transition-old(test): " + internals.getCurrentCursorInfo());
+            await eventSender.asyncMouseMoveTo(
+                fraction * 4 + 3,
+                0,
+            );
+            debug("Cursor info for ::view-transition-new(test): " + internals.getCurrentCursorInfo());
+            await viewTransition.skipTransition();
+            await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        }
+
+        debug("");
+    }
+    // This text is redundant with the test output - hide it
+    testcases.hidden = true;
+
+    finishJSTest();
+}
+
+description("Test that mouse cursors are applied correctly on pseudo-elements (bug 237892).");
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    window.jsTestIsAsync = true;
+    runTests();
+} else
+    testFailed("This test requires DumpRenderTree");
+</script>
+</body>
+</html>

@@ -27,6 +27,7 @@
 #include "CachedResourceRequestInitiatorTypes.h"
 #include "CommonAtomStrings.h"
 #include "ContentSecurityPolicy.h"
+#include "ContextDestructionObserverInlines.h"
 #include "CrossOriginAccessControl.h"
 #include "DOMFormData.h"
 #include "Event.h"
@@ -56,6 +57,7 @@
 #include "URLSearchParams.h"
 #include "XMLDocument.h"
 #include "XMLHttpRequestProgressEvent.h"
+#include "XMLHttpRequestProgressEventThrottle.h"
 #include "XMLHttpRequestUpload.h"
 #include "markup.h"
 #include <JavaScriptCore/ArrayBuffer.h>
@@ -63,7 +65,6 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <pal/text/TextCodecUTF8.h>
-#include <wtf/RefCountedLeakCounter.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -73,8 +74,6 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(XMLHttpRequest);
-
-DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, xmlHttpRequestCounter, ("XMLHttpRequest"));
 
 // Histogram enum to see when we can deprecate xhr.send(ArrayBuffer).
 enum XMLHttpRequestSendArrayBufferOrView {
@@ -121,19 +120,18 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext& context)
     , m_responseCacheIsValid(false)
     , m_readyState(static_cast<unsigned>(UNSENT))
     , m_responseType(static_cast<unsigned>(ResponseType::EmptyString))
-    , m_progressEventThrottle(*this)
+    , m_progressEventThrottle(makeUniqueRef<XMLHttpRequestProgressEventThrottle>(*this))
     , m_timeoutTimer(*this, &XMLHttpRequest::timeoutTimerFired)
 {
-#ifndef NDEBUG
-    xmlHttpRequestCounter.increment();
-#endif
 }
 
 XMLHttpRequest::~XMLHttpRequest()
 {
-#ifndef NDEBUG
-    xmlHttpRequestCounter.decrement();
-#endif
+}
+
+ScriptExecutionContext* XMLHttpRequest::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 Document* XMLHttpRequest::document() const
@@ -315,13 +313,13 @@ void XMLHttpRequest::callReadyStateChangeListener()
     bool shouldSendLoadEvent = (readyState() == DONE && !m_error);
 
     if (m_async || (readyState() <= OPENED || readyState() == DONE)) {
-        m_progressEventThrottle.dispatchReadyStateChangeEvent(Event::create(eventNames().readystatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No),
+        m_progressEventThrottle->dispatchReadyStateChangeEvent(Event::create(eventNames().readystatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No),
             readyState() == DONE ? FlushProgressEvent : DoNotFlushProgressEvent);
     }
 
     if (shouldSendLoadEvent) {
-        m_progressEventThrottle.dispatchProgressEvent(eventNames().loadEvent);
-        m_progressEventThrottle.dispatchProgressEvent(eventNames().loadendEvent);
+        m_progressEventThrottle->dispatchProgressEvent(eventNames().loadEvent);
+        m_progressEventThrottle->dispatchProgressEvent(eventNames().loadendEvent);
     }
 }
 
@@ -540,7 +538,7 @@ ExceptionOr<void> XMLHttpRequest::send(Blob& body)
         }
 
         m_requestEntityBody = FormData::create();
-        m_requestEntityBody->appendBlob(body.url());
+        Ref { *m_requestEntityBody }->appendBlob(body.url());
     }
 
     return createRequest();
@@ -648,7 +646,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
     m_sendFlag = true;
 
     if (m_async) {
-        m_progressEventThrottle.dispatchProgressEvent(eventNames().loadstartEvent);
+        m_progressEventThrottle->dispatchProgressEvent(eventNames().loadstartEvent);
         if (!m_uploadComplete && m_uploadListenerFlag)
             m_upload->dispatchProgressEvent(eventNames().loadstartEvent, 0, request.httpBody()->lengthInBytes());
 
@@ -802,7 +800,7 @@ ExceptionOr<void> XMLHttpRequest::setRequestHeader(const String& name, const Str
     if (readyState() != OPENED || m_sendFlag)
         return Exception { ExceptionCode::InvalidStateError };
 
-    String normalizedValue = value.trim(isASCIIWhitespaceWithoutFF<UChar>);
+    String normalizedValue = value.trim(isASCIIWhitespaceWithoutFF<char16_t>);
     if (!isValidHTTPToken(name) || !isValidHTTPHeaderValue(normalizedValue))
         return Exception { ExceptionCode::SyntaxError };
 
@@ -903,7 +901,7 @@ void XMLHttpRequest::didFail(std::optional<ScriptExecutionContextIdentifier>, co
 
     bool wasAbortedByClient = false;
     if (auto* document = this->document()) {
-        if (auto* window = document->domWindow())
+        if (auto* window = document->window())
             wasAbortedByClient = window->isStopping();
     }
 
@@ -941,9 +939,11 @@ void XMLHttpRequest::didFinishLoading(ScriptExecutionContextIdentifier, std::opt
 
     // Make sure that didSendData() was called at least one before marking the load as complete
     // so that a progress events get fired on m_upload.
-    if (m_uploadListenerFlag && m_requestEntityBody && !m_wasDidSendDataCalledForTotalBytes) {
-        auto bodyLength = m_requestEntityBody->lengthInBytes();
-        didSendData(bodyLength, bodyLength);
+    if (m_uploadListenerFlag) {
+        if (RefPtr requestEntityBody = m_requestEntityBody; requestEntityBody && !m_wasDidSendDataCalledForTotalBytes) {
+            auto bodyLength = requestEntityBody->lengthInBytes();
+            didSendData(bodyLength, bodyLength);
+        }
     }
 
     if (readyState() < HEADERS_RECEIVED)
@@ -1076,7 +1076,7 @@ void XMLHttpRequest::didReceiveData(const SharedBuffer& buffer)
         return;
 
     if (useDecoder)
-        m_responseBuilder.append(m_decoder->decode(buffer.span()));
+        m_responseBuilder.append(Ref { *m_decoder }->decode(buffer.span()));
     else {
         // Buffer binary data.
         m_binaryResponseBuilder.append(buffer);
@@ -1095,7 +1095,7 @@ void XMLHttpRequest::didReceiveData(const SharedBuffer& buffer)
         long long expectedLength = m_response.expectedContentLength();
         bool lengthComputable = expectedLength > 0 && m_receivedLength <= expectedLength;
         unsigned long long total = lengthComputable ? expectedLength : 0;
-        m_progressEventThrottle.updateProgress(m_async, lengthComputable, m_receivedLength, total);
+        m_progressEventThrottle->updateProgress(m_async, lengthComputable, m_receivedLength, total);
     }
 }
 
@@ -1124,8 +1124,8 @@ void XMLHttpRequest::dispatchErrorEvents(const AtomString& type)
             m_upload->dispatchProgressEvent(eventNames().loadendEvent, 0, 0);
         }
     }
-    m_progressEventThrottle.dispatchErrorProgressEvent(type);
-    m_progressEventThrottle.dispatchErrorProgressEvent(eventNames().loadendEvent);
+    m_progressEventThrottle->dispatchErrorProgressEvent(type);
+    m_progressEventThrottle->dispatchErrorProgressEvent(eventNames().loadendEvent);
 }
 
 void XMLHttpRequest::timeoutTimerFired()
@@ -1168,12 +1168,12 @@ void XMLHttpRequest::didReachTimeout()
 
 void XMLHttpRequest::suspend(ReasonForSuspension)
 {
-    m_progressEventThrottle.suspend();
+    m_progressEventThrottle->suspend();
 }
 
 void XMLHttpRequest::resume()
 {
-    m_progressEventThrottle.resume();
+    m_progressEventThrottle->resume();
 }
 
 void XMLHttpRequest::stop()
@@ -1222,6 +1222,11 @@ bool XMLHttpRequest::virtualHasPendingActivity() const
         break;
     }
     return false;
+}
+
+void XMLHttpRequest::dispatchThrottledProgressEventIfNeeded()
+{
+    m_progressEventThrottle->dispatchThrottledProgressEventIfNeeded();
 }
 
 } // namespace WebCore

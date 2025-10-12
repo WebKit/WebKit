@@ -17,6 +17,7 @@
 #include <stdint.h>
 
 #include "angle_gl.h"
+#include "common/frame_capture_binary_data.h"
 #include "trace_interface.h"
 #include "traces_export.h"
 
@@ -110,6 +111,30 @@ extern EGLSync *gEGLSyncMap;
 extern EGLDisplay gEGLDisplay;
 extern angle::ReplayResourceMode gReplayResourceMode;
 
+void InitializeReplay5(const char *binaryDataFileName,
+                       size_t maxClientArraySize,
+                       size_t readBufferSize,
+                       size_t resourceIDBufferSize,
+                       GLuint contextId,
+                       uint32_t maxBuffer,
+                       uint32_t maxContext,
+                       uint32_t maxFenceNV,
+                       uint32_t maxFramebuffer,
+                       uint32_t maxImage,
+                       uint32_t maxMemoryObject,
+                       uint32_t maxProgramPipeline,
+                       uint32_t maxQuery,
+                       uint32_t maxRenderbuffer,
+                       uint32_t maxSampler,
+                       uint32_t maxSemaphore,
+                       uint32_t maxShaderProgram,
+                       uint32_t maxSurface,
+                       uint32_t maxSync,
+                       uint32_t maxTexture,
+                       uint32_t maxTransformFeedback,
+                       uint32_t maxVertexArray,
+                       uint32_t maxEGLSyncID);
+
 void InitializeReplay4(const char *binaryDataFileName,
                        size_t maxClientArraySize,
                        size_t readBufferSize,
@@ -194,6 +219,9 @@ void InitializeReplay(const char *binaryDataFileName,
                       uint32_t maxTexture,
                       uint32_t maxTransformFeedback,
                       uint32_t maxVertexArray);
+
+const uint8_t *GetBinaryData(const size_t offset);
+void InitializeBinaryDataLoader();
 
 void UpdateClientArrayPointer(int arrayIndex, const void *data, uint64_t size);
 void UpdateClientBufferData(GLuint bufferID, const void *source, GLsizei size);

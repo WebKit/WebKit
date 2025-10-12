@@ -39,7 +39,7 @@ std::unique_ptr<PlatformDisplayGBM> PlatformDisplayGBM::create(struct gbm_device
     if (!GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_gbm"))
         return nullptr;
 
-    std::unique_ptr<GLDisplay> glDisplay;
+    RefPtr<GLDisplay> glDisplay;
     if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
         glDisplay = GLDisplay::create(eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, device, nullptr));
     else if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
@@ -50,10 +50,10 @@ std::unique_ptr<PlatformDisplayGBM> PlatformDisplayGBM::create(struct gbm_device
         CRASH();
     }
 
-    return std::unique_ptr<PlatformDisplayGBM>(new PlatformDisplayGBM(WTFMove(glDisplay), device));
+    return std::unique_ptr<PlatformDisplayGBM>(new PlatformDisplayGBM(glDisplay.releaseNonNull(), device));
 }
 
-PlatformDisplayGBM::PlatformDisplayGBM(std::unique_ptr<GLDisplay>&& glDisplay, struct gbm_device* device)
+PlatformDisplayGBM::PlatformDisplayGBM(Ref<GLDisplay>&& glDisplay, struct gbm_device* device)
     : PlatformDisplay(WTFMove(glDisplay))
 {
 #if ENABLE(WEBGL)

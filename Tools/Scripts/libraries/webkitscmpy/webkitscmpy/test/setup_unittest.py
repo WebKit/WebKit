@@ -23,10 +23,11 @@
 import logging
 import os
 import sys
+import time
 
 from webkitcorepy import Editor, OutputCapture, testing, mocks as wkmocks
 from webkitcorepy.mocks import Terminal as MockTerminal
-from webkitscmpy import local, program, mocks
+from webkitscmpy import local, program, mocks, Commit
 
 
 class TestSetup(testing.PathTestCase):
@@ -125,6 +126,44 @@ Fetching 1 remote...
 Fetched 1 remote!
 '''.format(repository=self.path),
         )
+
+    def test_non_default_branch(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
+            MockTerminal.input('n', 'n'), mocks.local.Git(self.path, remote='https://{}.git'.format(remote.remote)) as repo, \
+            wkmocks.Environment(EMAIL_ADDRESS='', SVN_LOG_EDITOR=''):
+
+            self.assertEqual('https://github.example.com/WebKit/WebKit.git', local.Git(self.path).url())
+            repo.commits['eng/1234'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/1234',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/1234",
+                    timestamp=int(time.time()),
+                    message='[Testing] Existing commit\n'
+                )
+            ]
+            repo.head = repo.commits['eng/1234'][-1]
+
+            self.assertEqual(1, program.main(
+                args=('setup', '-v'),
+                path=self.path,
+            ))
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '''For detailed information about the options configured by this script, please see:
+https://github.com/WebKit/WebKit/wiki/Git-Config#Configuration-Options
+Would you like to open this URL in your browser? ([Yes]/No): 
+
+
+Setup is currently being run on eng/1234. This may result in undefined behavior.
+Please ensure your branch is up-to-date with main or switch to main and rerun `git-webkit setup`.
+Would you like to continue setup? ([No]/Yes): 
+Setup cancelled
+''')
+        self.assertEqual(captured.stderr.getvalue(), '')
 
     def test_github_checkout(self):
         self.maxDiff = None

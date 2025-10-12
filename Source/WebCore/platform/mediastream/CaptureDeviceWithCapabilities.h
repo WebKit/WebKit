@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CaptureDevice.h"
-#include "RealtimeMediaSourceCapabilities.h"
+#include <WebCore/CaptureDevice.h>
+#include <WebCore/RealtimeMediaSourceCapabilities.h>
 
 namespace WebCore {
 

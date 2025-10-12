@@ -11,9 +11,11 @@
 #include "modules/audio_processing/agc2/rnn_vad/spectral_features.h"
 
 #include <algorithm>
+#include <array>
 
+#include "api/array_view.h"
+#include "modules/audio_processing/agc2/rnn_vad/common.h"
 #include "modules/audio_processing/agc2/rnn_vad/test_utils.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_compare.h"
 // TODO(bugs.webrtc.org/8948): Add when the issue is fixed.
 // #include "test/fpe_observer.h"
@@ -26,33 +28,33 @@ namespace {
 constexpr int kTestFeatureVectorSize = kNumBands + 3 * kNumLowerBands + 1;
 
 // Writes non-zero sample values.
-void WriteTestData(rtc::ArrayView<float> samples) {
-  for (int i = 0; rtc::SafeLt(i, samples.size()); ++i) {
+void WriteTestData(ArrayView<float> samples) {
+  for (int i = 0; SafeLt(i, samples.size()); ++i) {
     samples[i] = i % 100;
   }
 }
 
-rtc::ArrayView<float, kNumBands - kNumLowerBands> GetHigherBandsSpectrum(
+ArrayView<float, kNumBands - kNumLowerBands> GetHigherBandsSpectrum(
     std::array<float, kTestFeatureVectorSize>* feature_vector) {
   return {feature_vector->data() + kNumLowerBands, kNumBands - kNumLowerBands};
 }
 
-rtc::ArrayView<float, kNumLowerBands> GetAverage(
+ArrayView<float, kNumLowerBands> GetAverage(
     std::array<float, kTestFeatureVectorSize>* feature_vector) {
   return {feature_vector->data(), kNumLowerBands};
 }
 
-rtc::ArrayView<float, kNumLowerBands> GetFirstDerivative(
+ArrayView<float, kNumLowerBands> GetFirstDerivative(
     std::array<float, kTestFeatureVectorSize>* feature_vector) {
   return {feature_vector->data() + kNumBands, kNumLowerBands};
 }
 
-rtc::ArrayView<float, kNumLowerBands> GetSecondDerivative(
+ArrayView<float, kNumLowerBands> GetSecondDerivative(
     std::array<float, kTestFeatureVectorSize>* feature_vector) {
   return {feature_vector->data() + kNumBands + kNumLowerBands, kNumLowerBands};
 }
 
-rtc::ArrayView<float, kNumLowerBands> GetCepstralCrossCorrelation(
+ArrayView<float, kNumLowerBands> GetCepstralCrossCorrelation(
     std::array<float, kTestFeatureVectorSize>* feature_vector) {
   return {feature_vector->data() + kNumBands + 2 * kNumLowerBands,
           kNumLowerBands};
@@ -71,7 +73,7 @@ TEST(RnnVadTest, SpectralFeaturesWithAndWithoutSilence) {
   // Initialize.
   SpectralFeaturesExtractor sfe;
   std::array<float, kFrameSize20ms24kHz> samples;
-  rtc::ArrayView<float, kFrameSize20ms24kHz> samples_view(samples);
+  ArrayView<float, kFrameSize20ms24kHz> samples_view(samples);
   bool is_silence;
   std::array<float, kTestFeatureVectorSize> feature_vector;
 
@@ -116,7 +118,7 @@ TEST(RnnVadTest, CepstralFeaturesConstantAverageZeroDerivative) {
   // Initialize.
   SpectralFeaturesExtractor sfe;
   std::array<float, kFrameSize20ms24kHz> samples;
-  rtc::ArrayView<float, kFrameSize20ms24kHz> samples_view(samples);
+  ArrayView<float, kFrameSize20ms24kHz> samples_view(samples);
   WriteTestData(samples);
 
   // Fill the spectral features with test data.

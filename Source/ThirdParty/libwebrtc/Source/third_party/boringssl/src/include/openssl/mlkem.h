@@ -1,21 +1,21 @@
-/* Copyright (c) 2024, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2024 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #ifndef OPENSSL_HEADER_MLKEM_H
 #define OPENSSL_HEADER_MLKEM_H
 
-#include <openssl/base.h>
+#include <openssl/base.h>   // IWYU pragma: export
 
 #if defined(__cplusplus)
 extern "C" {
@@ -121,18 +121,6 @@ OPENSSL_EXPORT int MLKEM768_marshal_public_key(
 OPENSSL_EXPORT int MLKEM768_parse_public_key(
     struct MLKEM768_public_key *out_public_key, CBS *in);
 
-// MLKEM768_PRIVATE_KEY_BYTES is the length of the data produced by
-// |MLKEM768_marshal_private_key|.
-#define MLKEM768_PRIVATE_KEY_BYTES 2400
-
-// MLKEM768_parse_private_key parses a private key, in NIST's format for
-// private keys, from |in| and writes the result to |out_private_key|. It
-// returns one on success or zero on parse error or if there are trailing bytes
-// in |in|. This format is verbose and should be avoided. Private keys should be
-// stored as seeds and parsed using |MLKEM768_private_key_from_seed|.
-OPENSSL_EXPORT int MLKEM768_parse_private_key(
-    struct MLKEM768_private_key *out_private_key, CBS *in);
-
 
 // ML-KEM-1024
 //
@@ -225,18 +213,6 @@ OPENSSL_EXPORT int MLKEM1024_marshal_public_key(
 // there are trailing bytes in |in|.
 OPENSSL_EXPORT int MLKEM1024_parse_public_key(
     struct MLKEM1024_public_key *out_public_key, CBS *in);
-
-// MLKEM1024_PRIVATE_KEY_BYTES is the length of the data produced by
-// |MLKEM1024_marshal_private_key|.
-#define MLKEM1024_PRIVATE_KEY_BYTES 3168
-
-// MLKEM1024_parse_private_key parses a private key, in NIST's format for
-// private keys, from |in| and writes the result to |out_private_key|. It
-// returns one on success or zero on parse error or if there are trailing bytes
-// in |in|. This format is verbose and should be avoided. Private keys should be
-// stored as seeds and parsed using |MLKEM1024_private_key_from_seed|.
-OPENSSL_EXPORT int MLKEM1024_parse_private_key(
-    struct MLKEM1024_private_key *out_private_key, CBS *in);
 
 
 #if defined(__cplusplus)

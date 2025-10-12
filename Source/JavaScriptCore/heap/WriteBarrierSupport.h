@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "SamplingCounter.h"
+#include <JavaScriptCore/SamplingCounter.h>
 #include <wtf/Assertions.h>
 
 namespace JSC {

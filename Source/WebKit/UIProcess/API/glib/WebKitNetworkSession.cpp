@@ -17,9 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#if ENABLE(2022_GLIB_API)
-
 #include "config.h"
+
+#if ENABLE(2022_GLIB_API)
 #include "WebKitNetworkSession.h"
 
 #include "APIDownloadClient.h"

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUIntegralTypes.h"
+#include <WebCore/WebGPUIntegralTypes.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -36,8 +36,8 @@ class QuerySet;
 
 struct ComputePassTimestampWrites {
     WeakPtr<QuerySet> querySet;
-    Size32 beginningOfPassWriteIndex { 0 };
-    Size32 endOfPassWriteIndex { 1 };
+    Size32 beginningOfPassWriteIndex { kQuerySetIndexUndefined };
+    Size32 endOfPassWriteIndex { kQuerySetIndexUndefined };
 
     RefPtr<QuerySet> protectedQuerySet() const { return querySet.get(); }
 };

@@ -50,11 +50,16 @@ WebGLRenderingContextBase* WebGLObject::context() const
     return m_context.get();
 }
 
+RefPtr<WebGLRenderingContextBase> WebGLObject::protectedContext() const
+{
+    return context();
+}
+
 Lock& WebGLObject::objectGraphLockForContext()
 {
     // Should not call this if the object or context has been deleted.
     ASSERT(m_context);
-    return m_context->objectGraphLock();
+    return protectedContext()->objectGraphLock();
 }
 
 GraphicsContextGL* WebGLObject::graphicsContextGL() const

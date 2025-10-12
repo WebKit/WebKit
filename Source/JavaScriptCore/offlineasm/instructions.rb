@@ -153,6 +153,7 @@ MACRO_INSTRUCTIONS =
      "sxb2i",
      "sxh2i",
      "sxb2q",
+     "sxb2p",
      "sxh2q",
      "nop",
      "bieq",
@@ -454,11 +455,16 @@ ARM64_INSTRUCTIONS =
      "atomicloadi",
      "atomicloadq",
      "loadpairq",
+     "loadpairp",
      "loadpairi",
      "storepairq",
+     "storepairp",
      "storepairi",
      "loadpaird",
      "storepaird",
+     "loadpairv",
+     "storepairv",
+     "addlshiftp"
     ]
 
 ARM64_SIMD_INSTRUCTIONS =

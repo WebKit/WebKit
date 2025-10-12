@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -32,6 +29,6 @@ const tests = [
 
 for (const test of tests) {
     DumpFunction(...test);
-    assertThrowsInstanceOf(() => new Function(...test), SyntaxError);
+    assert.throws(SyntaxError, () => new Function(...test));
 }
 

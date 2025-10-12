@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "AppHighlight.h"
-#include "AppHighlightRangeData.h"
-#include "EventTarget.h"
+#include <WebCore/AppHighlight.h>
+#include <WebCore/AppHighlightRangeData.h>
+#include <WebCore/EventTarget.h>
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/OptionSet.h>
@@ -56,7 +56,7 @@ public:
     ~AppHighlightStorage();
 
     WEBCORE_EXPORT void storeAppHighlight(Ref<StaticRange>&&, CompletionHandler<void(AppHighlight&&)>&&);
-    WEBCORE_EXPORT void restoreAndScrollToAppHighlight(Ref<FragmentedSharedBuffer>&&, ScrollToHighlight);
+    WEBCORE_EXPORT void restoreAndScrollToAppHighlight(Ref<SharedBuffer>&&, ScrollToHighlight);
     void restoreUnrestoredAppHighlights();
 
     bool shouldRestoreHighlights(MonotonicTime timestamp);

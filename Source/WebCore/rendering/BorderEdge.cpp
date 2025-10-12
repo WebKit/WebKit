@@ -30,6 +30,7 @@
 #include "LayoutUnit.h"
 #include "RenderObject.h"
 #include "RenderStyleInlines.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
 
@@ -48,31 +49,31 @@ BorderEdge::BorderEdge(float edgeWidth, Color edgeColor, BorderStyle edgeStyle, 
 
 BorderEdges borderEdges(const RenderStyle& style, float deviceScaleFactor, RectEdges<bool> closedEdges, LayoutSize inflation, bool setColorsToBlack)
 {
-    auto constructBorderEdge = [&](float width, float inflation, CSSPropertyID borderColorProperty, BorderStyle borderStyle, bool isTransparent, bool isPresent) {
+    auto constructBorderEdge = [&](const RenderStyle& style, Style::LineWidth width, float inflation, CSSPropertyID borderColorProperty, BorderStyle borderStyle, bool isTransparent, bool isPresent) {
         auto color = setColorsToBlack ? Color::black : style.visitedDependentColorWithColorFilter(borderColorProperty);
-        auto inflatedWidth = width ? width + inflation : width;
+        auto evaluatedWidth = Style::evaluate<float>(width, Style::ZoomNeeded { });
+        auto inflatedWidth = evaluatedWidth ? evaluatedWidth + inflation : evaluatedWidth;
         return BorderEdge(inflatedWidth, color, borderStyle, !setColorsToBlack && isTransparent, isPresent, deviceScaleFactor);
     };
 
     return {
-        constructBorderEdge(style.borderTopWidth(), inflation.height().toFloat(), CSSPropertyBorderTopColor, style.borderTopStyle(), style.borderTopIsTransparent(), closedEdges.top()),
-        constructBorderEdge(style.borderRightWidth(), inflation.width().toFloat(), CSSPropertyBorderRightColor, style.borderRightStyle(), style.borderRightIsTransparent(), closedEdges.right()),
-        constructBorderEdge(style.borderBottomWidth(), inflation.height().toFloat(), CSSPropertyBorderBottomColor, style.borderBottomStyle(), style.borderBottomIsTransparent(), closedEdges.bottom()),
-        constructBorderEdge(style.borderLeftWidth(), inflation.width().toFloat(), CSSPropertyBorderLeftColor, style.borderLeftStyle(), style.borderLeftIsTransparent(), closedEdges.left())
+        constructBorderEdge(style, style.borderTopWidth(), inflation.height().toFloat(), CSSPropertyBorderTopColor, style.borderTopStyle(), style.borderTopIsTransparent(), closedEdges.top()),
+        constructBorderEdge(style, style.borderRightWidth(), inflation.width().toFloat(), CSSPropertyBorderRightColor, style.borderRightStyle(), style.borderRightIsTransparent(), closedEdges.right()),
+        constructBorderEdge(style, style.borderBottomWidth(), inflation.height().toFloat(), CSSPropertyBorderBottomColor, style.borderBottomStyle(), style.borderBottomIsTransparent(), closedEdges.bottom()),
+        constructBorderEdge(style, style.borderLeftWidth(), inflation.width().toFloat(), CSSPropertyBorderLeftColor, style.borderLeftStyle(), style.borderLeftIsTransparent(), closedEdges.left())
     };
 }
 
-BorderEdges borderEdgesForOutline(const RenderStyle& style, float deviceScaleFactor)
+BorderEdges borderEdgesForOutline(const RenderStyle& style, BorderStyle borderStyle, float deviceScaleFactor)
 {
     auto color = style.visitedDependentColorWithColorFilter(CSSPropertyOutlineColor);
     auto isTransparent = color.isValid() && !color.isVisible();
-    auto size = style.outlineWidth();
-    auto outlineStyle = style.outlineStyle();
+    auto size = Style::evaluate<float>(style.outlineWidth(), Style::ZoomNeeded { });
     return {
-        BorderEdge { size, color, outlineStyle, isTransparent, true, deviceScaleFactor },
-        BorderEdge { size, color, outlineStyle, isTransparent, true, deviceScaleFactor },
-        BorderEdge { size, color, outlineStyle, isTransparent, true, deviceScaleFactor },
-        BorderEdge { size, color, outlineStyle, isTransparent, true, deviceScaleFactor } 
+        BorderEdge { size, color, borderStyle, isTransparent, true, deviceScaleFactor },
+        BorderEdge { size, color, borderStyle, isTransparent, true, deviceScaleFactor },
+        BorderEdge { size, color, borderStyle, isTransparent, true, deviceScaleFactor },
+        BorderEdge { size, color, borderStyle, isTransparent, true, deviceScaleFactor },
     };
 }
 

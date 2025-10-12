@@ -1,0 +1,10 @@
+This test verifies that the native text selection renders correctly in containers with a CSS backdrop filter.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS viewWithSelection is not viewWithoutSelection
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Select this text.

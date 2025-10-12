@@ -11,18 +11,20 @@
 #ifndef MODULES_AUDIO_DEVICE_TEST_AUDIO_DEVICE_IMPL_H_
 #define MODULES_AUDIO_DEVICE_TEST_AUDIO_DEVICE_IMPL_H_
 
+#include <cstdint>
 #include <memory>
 #include <vector>
 
 #include "api/audio/audio_device.h"
 #include "api/audio/audio_device_defines.h"
+#include "api/environment/environment.h"
 #include "api/task_queue/task_queue_base.h"
-#include "api/task_queue/task_queue_factory.h"
 #include "modules/audio_device/audio_device_buffer.h"
 #include "modules/audio_device/audio_device_generic.h"
 #include "modules/audio_device/include/test_audio_device.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
@@ -34,7 +36,7 @@ class TestAudioDevice : public AudioDeviceGeneric {
   // device is never used for recording.
   // `renderer` is an object that receives audio data that would have been
   // played out. Can be nullptr if this device is never used for playing.
-  TestAudioDevice(TaskQueueFactory* task_queue_factory,
+  TestAudioDevice(const Environment& env,
                   std::unique_ptr<TestAudioDeviceModule::Capturer> capturer,
                   std::unique_ptr<TestAudioDeviceModule::Renderer> renderer,
                   float speed = 1);
@@ -186,7 +188,7 @@ class TestAudioDevice : public AudioDeviceGeneric {
  private:
   void ProcessAudio();
 
-  TaskQueueFactory* const task_queue_factory_;
+  const Environment env_;
   const std::unique_ptr<TestAudioDeviceModule::Capturer> capturer_
       RTC_GUARDED_BY(lock_);
   const std::unique_ptr<TestAudioDeviceModule::Renderer> renderer_
@@ -201,7 +203,7 @@ class TestAudioDevice : public AudioDeviceGeneric {
   bool capturing_initialized_ RTC_GUARDED_BY(lock_) = false;
 
   std::vector<int16_t> playout_buffer_ RTC_GUARDED_BY(lock_);
-  rtc::BufferT<int16_t> recording_buffer_ RTC_GUARDED_BY(lock_);
+  BufferT<int16_t> recording_buffer_ RTC_GUARDED_BY(lock_);
   std::unique_ptr<TaskQueueBase, TaskQueueDeleter> task_queue_;
 };
 

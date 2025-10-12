@@ -8,14 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stdint.h>
 #include <stdio.h>
 
+#include <cstdint>
+#include <cstdio>
 #include <memory>
 #include <string>
+#include <tuple>
+#include <vector>
 
 #include "api/scoped_refptr.h"
-#include "api/video/i420_buffer.h"
+#include "api/video/resolution.h"
 #include "api/video/video_frame_buffer.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
@@ -38,8 +41,8 @@ class YuvFrameReaderTest : public ::testing::Test {
   ~YuvFrameReaderTest() override = default;
 
   void SetUp() override {
-    filepath_ = webrtc::test::TempFilename(webrtc::test::OutputPath(),
-                                           "yuv_frame_reader_unittest");
+    filepath_ =
+        test::TempFilename(test::OutputPath(), "yuv_frame_reader_unittest");
     CreateYuvFileAndReader(/*num_frames=*/3, RepeatMode::kSingle);
   }
 
@@ -69,14 +72,14 @@ TEST_F(YuvFrameReaderTest, num_frames) {
 }
 
 TEST_F(YuvFrameReaderTest, PullFrame_frameContent) {
-  rtc::scoped_refptr<I420BufferInterface> buffer = reader_->PullFrame();
+  scoped_refptr<I420BufferInterface> buffer = reader_->PullFrame();
   EXPECT_EQ(0u, *buffer->DataY());
   EXPECT_EQ(1u, *buffer->DataU());
   EXPECT_EQ(2u, *buffer->DataV());
 }
 
 TEST_F(YuvFrameReaderTest, ReadFrame_randomOrder) {
-  rtc::scoped_refptr<I420BufferInterface> buffer = reader_->ReadFrame(2);
+  scoped_refptr<I420BufferInterface> buffer = reader_->ReadFrame(2);
   EXPECT_EQ(2u, *buffer->DataY());
   buffer = reader_->ReadFrame(0);
   EXPECT_EQ(0u, *buffer->DataY());
@@ -85,7 +88,7 @@ TEST_F(YuvFrameReaderTest, ReadFrame_randomOrder) {
 }
 
 TEST_F(YuvFrameReaderTest, PullFrame_scale) {
-  rtc::scoped_refptr<I420BufferInterface> buffer = reader_->PullFrame(
+  scoped_refptr<I420BufferInterface> buffer = reader_->PullFrame(
       /*pulled_frame_num=*/nullptr, Resolution({.width = 2, .height = 2}),
       FrameReader::kNoScale);
   EXPECT_EQ(2, buffer->width());
@@ -101,7 +104,7 @@ TEST_P(YuvFrameReaderRepeatModeTest, PullFrame) {
   auto [num_frames, repeat_mode, expected_frames] = GetParam();
   CreateYuvFileAndReader(num_frames, repeat_mode);
   for (auto expected_frame : expected_frames) {
-    rtc::scoped_refptr<I420BufferInterface> buffer = reader_->PullFrame();
+    scoped_refptr<I420BufferInterface> buffer = reader_->PullFrame();
     EXPECT_EQ(expected_frame, *buffer->DataY());
   }
 }
@@ -130,7 +133,7 @@ TEST_P(YuvFrameReaderFramerateScaleTest, PullFrame) {
   auto [framerate_scale, expected_frames] = GetParam();
   for (auto expected_frame : expected_frames) {
     int pulled_frame;
-    rtc::scoped_refptr<I420BufferInterface> buffer =
+    scoped_refptr<I420BufferInterface> buffer =
         reader_->PullFrame(&pulled_frame, kResolution, framerate_scale);
     EXPECT_EQ(pulled_frame, expected_frame);
   }

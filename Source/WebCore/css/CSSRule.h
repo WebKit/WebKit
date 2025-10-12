@@ -22,8 +22,8 @@
 
 #pragma once
 
-#include "CSSParserEnum.h"
-#include "StyleRuleType.h"
+#include <WebCore/CSSParserEnum.h>
+#include <WebCore/StyleRuleType.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TypeCasts.h>
 

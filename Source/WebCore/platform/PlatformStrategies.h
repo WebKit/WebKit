@@ -26,6 +26,7 @@
 #pragma once
 
 #include <mutex>
+#include <wtf/CheckedPtr.h>
 
 namespace WebCore {
 
@@ -39,66 +40,34 @@ class PushStrategy;
 
 class PlatformStrategies {
 public:
-    LoaderStrategy* loaderStrategy()
-    {
-        if (!m_loaderStrategy)
-            m_loaderStrategy = createLoaderStrategy();
-        return m_loaderStrategy;
-    }
-
-    PasteboardStrategy* pasteboardStrategy()
-    {
-        if (!m_pasteboardStrategy)
-            m_pasteboardStrategy = createPasteboardStrategy();
-        return m_pasteboardStrategy;
-    }
-
-    MediaStrategy& mediaStrategy()
-    {
-        std::call_once(m_onceKeyForMediaStrategies, [&] {
-            m_mediaStrategy = createMediaStrategy();
-        });
-        return *m_mediaStrategy;
-    }
-
-    BlobRegistry* blobRegistry()
-    {
-        if (!m_blobRegistry)
-            m_blobRegistry = createBlobRegistry();
-        return m_blobRegistry;
-    }
-
+    WEBCORE_EXPORT CheckedPtr<LoaderStrategy> loaderStrategy();
+    WEBCORE_EXPORT CheckedPtr<PasteboardStrategy> pasteboardStrategy();
+    WEBCORE_EXPORT CheckedRef<MediaStrategy> mediaStrategy();
+    WEBCORE_EXPORT CheckedPtr<BlobRegistry> blobRegistry();
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    PushStrategy* pushStrategy()
-    {
-        if (!m_pushStrategy)
-            m_pushStrategy = createPushStrategy();
-        return m_pushStrategy;
-    }
+    WEBCORE_EXPORT CheckedPtr<PushStrategy> pushStrategy();
 #endif
 
 protected:
-    PlatformStrategies() = default;
-
-    virtual ~PlatformStrategies()
-    {
-    }
+    WEBCORE_EXPORT PlatformStrategies();
+    WEBCORE_EXPORT virtual ~PlatformStrategies();
 
 private:
     virtual LoaderStrategy* createLoaderStrategy() = 0;
     virtual PasteboardStrategy* createPasteboardStrategy() = 0;
     virtual MediaStrategy* createMediaStrategy() = 0;
     virtual BlobRegistry* createBlobRegistry() = 0;
-
-    LoaderStrategy* m_loaderStrategy { };
-    PasteboardStrategy* m_pasteboardStrategy { };
-    std::once_flag m_onceKeyForMediaStrategies;
-    MediaStrategy* m_mediaStrategy { };
-    BlobRegistry* m_blobRegistry { };
-
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     virtual PushStrategy* createPushStrategy() = 0;
-    PushStrategy* m_pushStrategy { };
+#endif
+
+    CheckedPtr<LoaderStrategy> m_loaderStrategy;
+    CheckedPtr<PasteboardStrategy> m_pasteboardStrategy;
+    std::once_flag m_onceKeyForMediaStrategies;
+    CheckedPtr<MediaStrategy> m_mediaStrategy;
+    CheckedPtr<BlobRegistry> m_blobRegistry;
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    CheckedPtr<PushStrategy> m_pushStrategy;
 #endif
 };
 

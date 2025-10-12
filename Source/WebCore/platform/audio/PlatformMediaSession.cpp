@@ -156,10 +156,12 @@ void PlatformMediaSession::setActive(bool active)
         return;
     m_active = active;
 
-    if (m_active)
-        PlatformMediaSessionManager::singleton().addSession(*this);
-    else
-        PlatformMediaSessionManager::singleton().removeSession(*this);
+    if (RefPtr manager = sessionManager()) {
+        if (m_active)
+            manager->addSession(*this);
+        else
+            manager->removeSession(*this);
+    }
 }
 
 void PlatformMediaSession::setState(State state)
@@ -171,7 +173,9 @@ void PlatformMediaSession::setState(State state)
     m_state = state;
     if (m_state == State::Playing && canProduceAudio())
         setHasPlayedAudiblySinceLastInterruption(true);
-    PlatformMediaSessionManager::singleton().sessionStateChanged(*this);
+
+    if (RefPtr manager = sessionManager())
+        manager->sessionStateChanged(*this);
 }
 
 size_t PlatformMediaSession::activeInterruptionCount() const
@@ -266,7 +270,7 @@ bool PlatformMediaSession::clientWillBeginPlayback()
 
     SetForScope preparingToPlay(m_preparingToPlay, true);
 
-    if (!PlatformMediaSessionManager::singleton().sessionWillBeginPlayback(*this)) {
+    if (RefPtr manager = sessionManager(); manager && !manager->sessionWillBeginPlayback(*this)) {
         if (state() == State::Interrupted)
             m_stateToRestore = State::Playing;
         return false;
@@ -290,7 +294,8 @@ bool PlatformMediaSession::processClientWillPausePlayback(DelayCallingUpdateNowP
     }
 
     setState(State::Paused);
-    PlatformMediaSessionManager::singleton().sessionWillEndPlayback(*this, shouldDelayCallingUpdateNowPlaying);
+    if (RefPtr manager = sessionManager())
+        manager->sessionWillEndPlayback(*this, shouldDelayCallingUpdateNowPlaying);
     return true;
 }
 
@@ -320,7 +325,8 @@ void PlatformMediaSession::stopSession()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     client().suspendPlayback();
-    PlatformMediaSessionManager::singleton().removeSession(*this);
+    if (RefPtr manager = sessionManager())
+        manager->removeSession(*this);
 }
 
 void PlatformMediaSession::didReceiveRemoteControlCommand(RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)
@@ -337,7 +343,8 @@ void PlatformMediaSession::isPlayingToWirelessPlaybackTargetChanged(bool isWirel
 
     m_isPlayingToWirelessPlaybackTarget = isWireless;
 
-    PlatformMediaSessionManager::singleton().sessionIsPlayingToWirelessPlaybackTargetChanged(*this);
+    if (RefPtr manager = sessionManager())
+        manager->sessionIsPlayingToWirelessPlaybackTargetChanged(*this);
 }
 
 bool PlatformMediaSession::blockedBySystemInterruption() const
@@ -356,12 +363,14 @@ bool PlatformMediaSession::activeAudioSessionRequired() const
 
 void PlatformMediaSession::canProduceAudioChanged()
 {
-    PlatformMediaSessionManager::singleton().sessionCanProduceAudioChanged();
+    if (RefPtr manager = sessionManager())
+        manager->sessionCanProduceAudioChanged();
 }
 
 void PlatformMediaSession::clientCharacteristicsChanged(bool positionChanged)
 {
-    PlatformMediaSessionManager::singleton().clientCharacteristicsChanged(*this, positionChanged);
+    if (RefPtr manager = sessionManager())
+        manager->clientCharacteristicsChanged(*this, positionChanged);
 }
 
 static inline bool isPlayingAudio(PlatformMediaSession::MediaType mediaType)
@@ -400,7 +409,6 @@ void PlatformMediaSession::setActiveNowPlayingSession(bool isActiveNowPlayingSes
         return;
 
     m_isActiveNowPlayingSession = isActiveNowPlayingSession;
-    client().isActiveNowPlayingSessionChanged();
 }
 
 #if !RELEASE_LOG_DISABLED

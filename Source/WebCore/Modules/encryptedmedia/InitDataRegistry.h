@@ -42,7 +42,7 @@ class SharedBuffer;
 
 class InitDataRegistry {
 public:
-    WEBCORE_EXPORT static InitDataRegistry& shared();
+    WEBCORE_EXPORT static InitDataRegistry& singleton();
     friend class NeverDestroyed<InitDataRegistry>;
 
     RefPtr<SharedBuffer> sanitizeInitData(const AtomString& initDataType, const SharedBuffer&);

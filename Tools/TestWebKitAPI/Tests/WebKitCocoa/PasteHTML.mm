@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
@@ -50,13 +51,13 @@
 
 void writeHTMLToPasteboard(NSString *html)
 {
-    [[NSPasteboard generalPasteboard] declareTypes:@[WebCore::legacyHTMLPasteboardType()] owner:nil];
-    [[NSPasteboard generalPasteboard] setString:html forType:WebCore::legacyHTMLPasteboardType()];
+    [[NSPasteboard generalPasteboard] declareTypes:@[WebCore::legacyHTMLPasteboardTypeSingleton()] owner:nil];
+    [[NSPasteboard generalPasteboard] setString:html forType:WebCore::legacyHTMLPasteboardTypeSingleton()];
 }
 #else
 void writeHTMLToPasteboard(NSString *html)
 {
-    [[UIPasteboard generalPasteboard] setItems:@[@{ (__bridge NSString *)kUTTypeHTML : html}]];
+    [[UIPasteboard generalPasteboard] setItems:@[@{ UTTypeHTML.identifier : html }]];
 }
 #endif
 
@@ -72,7 +73,12 @@ static RetainPtr<TestWKWebView> createWebViewWithCustomPasteboardDataSetting(boo
     return webView;
 }
 
+// rdar://159421461
+#if PLATFORM(IOS)
+TEST(PasteHTML, DISABLED_ExposesHTMLTypeInDataTransfer)
+#else
 TEST(PasteHTML, ExposesHTMLTypeInDataTransfer)
+#endif
 {
     auto webView = createWebViewWithCustomPasteboardDataSetting(true);
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
@@ -89,7 +95,8 @@ TEST(PasteHTML, ExposesHTMLTypeInDataTransfer)
 }
 
 // rdar://138144869
-#if PLATFORM(IOS) && !defined(NDEBUG)
+// rdar://159421461 (Release)
+#if PLATFORM(IOS)
 TEST(PasteHTML, DISABLED_SanitizesHTML)
 #else
 TEST(PasteHTML, SanitizesHTML)
@@ -110,7 +117,7 @@ TEST(PasteHTML, SanitizesHTML)
 }
 
 // rdar://138144869
-#if PLATFORM(IOS) && !defined(NDEBUG)
+#if PLATFORM(IOS)
 TEST(PasteHTML, DISABLED_DoesNotSanitizeHTMLWhenCustomPasteboardDataIsDisabled)
 #else
 TEST(PasteHTML, DoesNotSanitizeHTMLWhenCustomPasteboardDataIsDisabled)
@@ -131,7 +138,8 @@ TEST(PasteHTML, DoesNotSanitizeHTMLWhenCustomPasteboardDataIsDisabled)
 }
 
 // rdar://138144869
-#if PLATFORM(IOS) && !defined(NDEBUG)
+// rdar://159421461 (Release)
+#if PLATFORM(IOS)
 TEST(PasteHTML, DISABLED_StripsFileAndJavaScriptURLs)
 #else
 TEST(PasteHTML, StripsFileAndJavaScriptURLs)
@@ -156,7 +164,7 @@ TEST(PasteHTML, StripsFileAndJavaScriptURLs)
 }
 
 // rdar://138144869
-#if PLATFORM(IOS) && !defined(NDEBUG)
+#if PLATFORM(IOS)
 TEST(PasteHTML, DISABLED_DoesNotStripFileURLsWhenCustomPasteboardDataIsDisabled)
 #else
 TEST(PasteHTML, DoesNotStripFileURLsWhenCustomPasteboardDataIsDisabled)
@@ -175,7 +183,8 @@ TEST(PasteHTML, DoesNotStripFileURLsWhenCustomPasteboardDataIsDisabled)
 }
 
 // rdar://138144869
-#if PLATFORM(IOS) && !defined(NDEBUG)
+// rdar://159421461 (Release)
+#if PLATFORM(IOS)
 TEST(PasteHTML, DISABLED_KeepsHTTPURLs)
 #else
 TEST(PasteHTML, KeepsHTTPURLs)
@@ -194,7 +203,8 @@ TEST(PasteHTML, KeepsHTTPURLs)
 }
 
 // rdar://138144869
-#if PLATFORM(IOS) && !defined(NDEBUG)
+// rdar://159421461 (Release)
+#if PLATFORM(IOS)
 TEST(PasteHTML, DISABLED_PreservesMSOList)
 #else
 TEST(PasteHTML, PreservesMSOList)
@@ -250,7 +260,12 @@ TEST(PasteHTML, PreservesMSOList)
     EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:@"document.queryCommandValue('foreColor')"]);
 }
 
+// rdar://159421461
+#if PLATFORM(IOS)
+TEST(PasteHTML, DISABLED_PreservesMSOListInCompatibilityMode)
+#else
 TEST(PasteHTML, PreservesMSOListInCompatibilityMode)
+#endif
 {
     writeHTMLToPasteboard([NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"mso-list-compat-mode" ofType:@"html"]
         encoding:NSUTF8StringEncoding error:NULL]);
@@ -287,7 +302,8 @@ TEST(PasteHTML, PreservesMSOListInCompatibilityMode)
 }
 
 // rdar://138144869
-#if PLATFORM(IOS) && !defined(NDEBUG)
+// rdar://159421461 (Release)
+#if PLATFORM(IOS)
 TEST(PasteHTML, DISABLED_PreservesMSOListOnH4)
 #else
 TEST(PasteHTML, PreservesMSOListOnH4)
@@ -328,7 +344,8 @@ TEST(PasteHTML, PreservesMSOListOnH4)
 }
 
 // rdar://138144869
-#if PLATFORM(IOS) && !defined(NDEBUG)
+// rdar://159421461 (Release)
+#if PLATFORM(IOS)
 TEST(PasteHTML, DISABLED_StripsMSOListWhenMissingMSOHTMLElement)
 #else
 TEST(PasteHTML, StripsMSOListWhenMissingMSOHTMLElement)
@@ -380,7 +397,8 @@ TEST(PasteHTML, StripsMSOListWhenMissingMSOHTMLElement)
 }
 
 // rdar://138144869
-#if PLATFORM(IOS) && !defined(NDEBUG)
+// rdar://159421461 (Release)
+#if PLATFORM(IOS)
 TEST(PasteHTML, DISABLED_StripsSystemFontNames)
 #else
 TEST(PasteHTML, StripsSystemFontNames)
@@ -415,7 +433,7 @@ TEST(PasteHTML, StripsSystemFontNames)
 }
 
 // rdar://138144869
-#if PLATFORM(IOS) && !defined(NDEBUG)
+#if PLATFORM(IOS)
 TEST(PasteHTML, DISABLED_DoesNotAddStandardFontFamily)
 #else
 TEST(PasteHTML, DoesNotAddStandardFontFamily)
@@ -461,6 +479,26 @@ TEST(PasteHTML, ReadSelectionFromPasteboard)
 
     NSString *inputValue = [webView stringByEvaluatingJavaScript:@"document.querySelector('input').value"];
     EXPECT_WK_STREQ(inputValue, "Hello world");
+}
+
+TEST(PasteHTML, ReadSelectionFromPasteboardDispatchesPaste)
+{
+    RetainPtr pasteboard = [NSPasteboard pasteboardWithUniqueName];
+    RetainPtr string = adoptNS([[NSAttributedString alloc] initWithString:@"Bold text" attributes:@{
+        NSFontAttributeName: [NSFont boldSystemFontOfSize:12]
+    }]);
+    [pasteboard writeObjects:@[ string.get() ]];
+
+    RetainPtr webView = createWebViewWithCustomPasteboardDataSetting(true);
+    [webView synchronouslyLoadTestPageNamed:@"DataTransfer"];
+    [webView readSelectionFromPasteboard:pasteboard.get()];
+
+    RetainPtr textData = [webView stringByEvaluatingJavaScript:@"document.getElementById('textData').textContent"];
+    RetainPtr types = [webView stringByEvaluatingJavaScript:@"document.getElementById('types').textContent"];
+
+    EXPECT_WK_STREQ(textData.get(), [string string]);
+    EXPECT_TRUE([types containsString:@"text/html"]);
+    EXPECT_TRUE([types containsString:@"text/plain"]);
 }
 
 #endif // PLATFORM(MAC)

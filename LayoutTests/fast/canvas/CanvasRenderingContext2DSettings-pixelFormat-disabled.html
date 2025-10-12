@@ -1,22 +1,22 @@
-<!-- webkit-test-runner [ CanvasPixelFormatEnabled=false ] -->
+<!-- webkit-test-runner [ CanvasColorTypeEnabled=false ] -->
 <html>
     <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
 <script>
-    description("Test that the pixelFormat member of CanvasRenderingContext2DSettings is unsupported when CanvasPixelFormatEnabled=false.");
+    description("Test that the colorType member of CanvasRenderingContext2DSettings is unsupported when CanvasColorTypeEnabled=false.");
 
-    function testPixelFormatUnsupported(settings) {
+    function testColorTypeUnsupported(settings) {
         let canvas = document.createElement("canvas");
         let context = canvas.getContext("2d", settings);
         window.testSettings = context.getContextAttributes();
-        shouldBeUndefined("testSettings.pixelFormat");
+        shouldBeUndefined("testSettings.colorType");
     }
 
-    testPixelFormatUnsupported(undefined);
-    testPixelFormatUnsupported({ pixelFormat: "uint8" });
-    testPixelFormatUnsupported({ pixelFormat: "float16" });
-    testPixelFormatUnsupported({ pixelFormat: "foo" });
+    testColorTypeUnsupported(undefined);
+    testColorTypeUnsupported({ colorType: "unorm8" });
+    testColorTypeUnsupported({ colorType: "float16" });
+    testColorTypeUnsupported({ colorType: "foo" });
 </script>
 
 <script src="../../resources/js-test-post.js"></script>

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-array.prototype.flatMap
+esid: sec-array.prototype.flatmap
 description: Array.prototype.flatMap applied to boolean primitive
 includes: [compareArray.js]
 ---*/

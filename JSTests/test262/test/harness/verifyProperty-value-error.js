@@ -29,7 +29,7 @@ try {
     );
   }
 
-  if (err.message !== 'descriptor value should be 2; object value should be 2') {
+  if (err.message !== "obj['prop'] descriptor value should be 2; obj['prop'] value should be 2") {
     throw new Error('The error thrown did not define the specified message');
   }
 }

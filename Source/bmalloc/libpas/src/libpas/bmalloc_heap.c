@@ -88,6 +88,11 @@ void* bmalloc_try_allocate_zeroed(size_t size, pas_allocation_mode allocation_mo
     return bmalloc_try_allocate_zeroed_inline(size, allocation_mode);
 }
 
+void* bmalloc_try_allocate_zeroed_with_alignment(size_t size, size_t alignment, pas_allocation_mode allocation_mode)
+{
+    return bmalloc_try_allocate_zeroed_with_alignment_inline(size, alignment, allocation_mode);
+}
+
 void* bmalloc_allocate(size_t size, pas_allocation_mode allocation_mode)
 {
     return bmalloc_allocate_inline(size, allocation_mode);
@@ -101,6 +106,11 @@ void* bmalloc_allocate_with_alignment(size_t size, size_t alignment, pas_allocat
 void* bmalloc_allocate_zeroed(size_t size, pas_allocation_mode allocation_mode)
 {
     return bmalloc_allocate_zeroed_inline(size, allocation_mode);
+}
+
+void* bmalloc_allocate_zeroed_with_alignment(size_t size, size_t alignment, pas_allocation_mode allocation_mode)
+{
+    return bmalloc_allocate_zeroed_with_alignment_inline(size, alignment, allocation_mode);
 }
 
 void* bmalloc_try_reallocate(void* old_ptr, size_t new_size,
@@ -343,6 +353,22 @@ void* bmalloc_allocate_auxiliary_with_alignment(pas_primitive_heap_ref* heap_ref
                                                 pas_allocation_mode allocation_mode)
 {
     return bmalloc_allocate_auxiliary_with_alignment_inline(heap_ref, size, alignment, allocation_mode);
+}
+
+void* bmalloc_try_allocate_auxiliary_zeroed_with_alignment(pas_primitive_heap_ref* heap_ref,
+                                                           size_t size,
+                                                           size_t alignment,
+                                                           pas_allocation_mode allocation_mode)
+{
+    return bmalloc_try_allocate_auxiliary_zeroed_with_alignment_inline(heap_ref, size, alignment, allocation_mode);
+}
+
+void* bmalloc_allocate_auxiliary_zeroed_with_alignment(pas_primitive_heap_ref* heap_ref,
+                                                       size_t size,
+                                                       size_t alignment,
+                                                       pas_allocation_mode allocation_mode)
+{
+    return bmalloc_allocate_auxiliary_zeroed_with_alignment_inline(heap_ref, size, alignment, allocation_mode);
 }
 
 void* bmalloc_try_reallocate_auxiliary(void* old_ptr,

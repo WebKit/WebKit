@@ -44,11 +44,11 @@ static ExceptionOr<Vector<uint8_t>> deriveHKDFBits(const Vector<uint8_t>& key, c
 
     if (!OSSL_PARAM_BLD_push_utf8_string(paramsBuilder.get(), OSSL_KDF_PARAM_DIGEST, SN_sha256, strlen(SN_sha256)))
         return Exception { ExceptionCode::OperationError };
-    if (!OSSL_PARAM_BLD_push_octet_string(paramsBuilder.get(), OSSL_KDF_PARAM_KEY, key.data(), key.size()))
+    if (!OSSL_PARAM_BLD_push_octet_string(paramsBuilder.get(), OSSL_KDF_PARAM_KEY, key.span().data(), key.size()))
         return Exception { ExceptionCode::OperationError };
-    if (!OSSL_PARAM_BLD_push_octet_string(paramsBuilder.get(), OSSL_KDF_PARAM_INFO, info.data(), info.size()))
+    if (!OSSL_PARAM_BLD_push_octet_string(paramsBuilder.get(), OSSL_KDF_PARAM_INFO, info.span().data(), info.size()))
         return Exception { ExceptionCode::OperationError };
-    if (!OSSL_PARAM_BLD_push_octet_string(paramsBuilder.get(), OSSL_KDF_PARAM_SALT, salt.data(), salt.size()))
+    if (!OSSL_PARAM_BLD_push_octet_string(paramsBuilder.get(), OSSL_KDF_PARAM_SALT, salt.span().data(), salt.size()))
         return Exception { ExceptionCode::OperationError };
 
     auto params = OsslParamPtr(OSSL_PARAM_BLD_to_param(paramsBuilder.get()));
@@ -56,7 +56,7 @@ static ExceptionOr<Vector<uint8_t>> deriveHKDFBits(const Vector<uint8_t>& key, c
         return Exception { ExceptionCode::OperationError };
 
     Vector<uint8_t> output(lengthInBytes / 8);
-    if (!EVP_KDF_derive(kdfCtx.get(), output.data(), output.sizeInBytes(), params.get()))
+    if (!EVP_KDF_derive(kdfCtx.get(), output.mutableSpan().data(), output.sizeInBytes(), params.get()))
         return Exception { ExceptionCode::OperationError };
 
     return output;
@@ -125,7 +125,7 @@ static std::optional<Vector<uint8_t>> crypt(int operation, const Vector<uint8_t>
     // First part
     {
         // Initialize the encryption(decryption) operation
-        if (1 != EVP_CipherInit_ex(ctx.get(), algorithm, nullptr, key.data(), counter.data(), operation))
+        if (1 != EVP_CipherInit_ex(ctx.get(), algorithm, nullptr, key.span().data(), counter.span().data(), operation))
             return std::nullopt;
 
         // Disable padding
@@ -133,7 +133,7 @@ static std::optional<Vector<uint8_t>> crypt(int operation, const Vector<uint8_t>
             return std::nullopt;
 
         // Provide the message to be encrypted(decrypted), and obtain the encrypted(decrypted) output
-        if (1 != EVP_CipherUpdate(ctx.get(), outputText.data(), &len, inputText.data(), headSize))
+        if (1 != EVP_CipherUpdate(ctx.get(), outputText.mutableSpan().data(), &len, inputText.data(), headSize))
             return std::nullopt;
 
         // Finalize the encryption(decryption)
@@ -148,7 +148,7 @@ static std::optional<Vector<uint8_t>> crypt(int operation, const Vector<uint8_t>
         Vector<uint8_t> remainingCounter = counterBlockHelper.counterVectorAfterOverflow();
 
         // Initialize the encryption(decryption) operation
-        if (1 != EVP_CipherInit_ex(ctx.get(), algorithm, nullptr, key.data(), remainingCounter.data(), operation))
+        if (1 != EVP_CipherInit_ex(ctx.get(), algorithm, nullptr, key.span().data(), remainingCounter.span().data(), operation))
             return std::nullopt;
 
         // Disable padding
@@ -197,7 +197,7 @@ Vector<uint8_t> RTCRtpSFrameTransformer::computeEncryptedDataSignature(const Vec
     payload.append(header);
     payload.append(data);
 
-    HMAC(EVP_sha256(), key.data(), key.size(), payload.data(), payload.size(), signature.data(), nullptr);
+    HMAC(EVP_sha256(), key.span().data(), key.size(), payload.span().data(), payload.size(), signature.mutableSpan().data(), nullptr);
     return signature;
 }
 

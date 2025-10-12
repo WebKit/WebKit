@@ -64,9 +64,9 @@
         while (!caretRect || !caretRect.width || !caretRect.height)
             caretRect = await UIHelper.getUICaretViewRect();
 
-        shouldBe("caretRect.top", "5");
-        shouldBe("caretRect.left", "35");
-        shouldBe("caretRect.width", "2");
+        shouldBe("caretRect.top", "6");
+        shouldBe("caretRect.left", "38");
+        shouldBe("caretRect.width", "3");
         shouldBe("caretRect.height", "25");
         finishJSTest();
     });

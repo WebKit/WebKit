@@ -26,10 +26,10 @@
 
 #pragma once
 
-#include "Event.h"
-#include "LocalDOMWindow.h"
-#include "Supplementable.h"
-#include "Timer.h"
+#include <WebCore/Event.h>
+#include <WebCore/LocalDOMWindow.h>
+#include <WebCore/Supplementable.h>
+#include <WebCore/Timer.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/TZoneMalloc.h>

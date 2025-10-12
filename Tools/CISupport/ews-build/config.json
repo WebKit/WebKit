@@ -45,14 +45,14 @@
     { "name": "playstation-ews-002", "platform": "playstation" },
     { "name": "playstation-ews-003", "platform": "playstation" },
     { "name": "playstation-ews-004", "platform": "playstation" },
-    { "name": "win-tests-ews-001", "platform": "win" },
-    { "name": "win-tests-ews-002", "platform": "win" },
-    { "name": "win-tests-ews-003", "platform": "win" },
-    { "name": "win-tests-ews-004", "platform": "win" },
-    { "name": "win-tests-ews-005", "platform": "win" },
-    { "name": "win-tests-ews-006", "platform": "win" },
-    { "name": "win-tests-ews-007", "platform": "win" },
-    { "name": "win-tests-ews-008", "platform": "win" },
+    { "name": "playstation-ews-005", "platform": "playstation" },
+    { "name": "playstation-ews-006", "platform": "playstation" },
+    { "name": "win-bot-001", "platform": "win" },
+    { "name": "win-bot-002", "platform": "win" },
+    { "name": "win-bot-003", "platform": "win" },
+    { "name": "win-bot-004", "platform": "win" },
+    { "name": "win-bot-005", "platform": "win" },
+    { "name": "win-bot-006", "platform": "win" },
     { "name": "wincairo-ews-001", "platform": "win" },
     { "name": "wincairo-ews-002", "platform": "win" },
     { "name": "wincairo-ews-003", "platform": "win" },
@@ -67,11 +67,11 @@
     { "name": "ews107", "platform": "mac-sonoma" },
     { "name": "ews108", "platform": "*" },
     { "name": "ews109", "platform": "ios-18" },
-    { "name": "ews110", "platform": "ios-simulator-18" },
-    { "name": "ews111", "platform": "ios-simulator-18" },
+    { "name": "ews110", "platform": "mac-sequoia" },
+    { "name": "ews111", "platform": "mac-sequoia" },
     { "name": "ews112", "platform": "mac-sonoma" },
     { "name": "ews113", "platform": "mac-sonoma" },
-    { "name": "ews114", "platform": "*" },
+    { "name": "ews114", "platform": "mac-sequoia" },
     { "name": "ews115", "platform": "mac-sonoma" },
     { "name": "ews116", "platform": "mac-sonoma" },
     { "name": "ews117", "platform": "mac-sonoma" },
@@ -157,6 +157,8 @@
     { "name": "ews197", "platform": "ios-simulator-18" },
     { "name": "ews198", "platform": "ios-simulator-18" },
     { "name": "ews200", "platform": "mac-sonoma" },
+    { "name": "ews205", "platform": "mac-sonoma" },
+    { "name": "ews206", "platform": "mac-sonoma" },
     { "name": "ews201", "platform": "mac-sonoma" },
     { "name": "ews202", "platform": "mac-sonoma" },
     { "name": "ews203", "platform": "mac-sonoma" },
@@ -197,13 +199,14 @@
     { "name": "ews257", "platform": "ios-simulator-18" },
     { "name": "ews258", "platform": "ios-simulator-18" },
     { "name": "ews259", "platform": "ios-simulator-18" },
-    { "name": "ews260", "platform": "mac-sequoia"},
-    { "name": "ews261", "platform": "mac-sequoia"},
-    { "name": "ews262", "platform": "mac-sequoia"},
-    { "name": "ews263", "platform": "mac-sequoia"},
-    { "name": "ews264", "platform": "mac-sequoia"},
+    { "name": "ews260", "platform": "mac-sequoia" },
+    { "name": "ews261", "platform": "mac-sequoia" },
+    { "name": "ews262", "platform": "mac-sequoia" },
+    { "name": "ews263", "platform": "mac-sequoia" },
+    { "name": "ews264", "platform": "mac-sequoia" },
     { "name": "ews265", "platform": "mac-sonoma" },
     { "name": "ews266", "platform": "mac-sonoma" },
+    { "name": "ews2000", "platform": "mac-sequoia" },
     { "name": "webkit-cq-01", "platform": "mac-sonoma" },
     { "name": "webkit-cq-02", "platform": "mac-sonoma" },
     { "name": "webkit-cq-03", "platform": "mac-sonoma" },
@@ -214,12 +217,7 @@
     {
       "name": "Style-EWS", "shortname": "style", "icon": "testOnly",
       "factory": "StyleFactory", "platform": "*",
-      "workernames": ["ews151", "ews253", "webkit-misc"]
-    },
-    {
-      "name": "Apply-WatchList-EWS", "shortname": "watchlist",
-      "factory": "WatchListFactory", "platform": "*",
-      "workernames": ["webkit-misc"]
+      "workernames": ["ews2000", "ews151", "ews253", "webkit-misc"]
     },
     {
       "name": "GTK-Build-EWS", "shortname": "gtk", "icon": "buildOnly",
@@ -276,7 +274,7 @@
       "factory": "macOSWK2Factory", "platform": "mac-sequoia",
       "configuration": "debug",
       "triggered_by": ["macos-sequoia-debug-build-ews"],
-      "workernames": ["ews138", "ews139", "ews140", "ews175", "ews176", "ews177", "ews178", "ews179", "ews180"]
+      "workernames": ["ews110", "ews111", "ews114", "ews138", "ews139", "ews140", "ews175", "ews176", "ews177", "ews178", "ews179", "ews180"]
     },
     {
       "name": "macOS-Sonoma-Release-Build-EWS", "shortname": "mac", "icon": "buildOnly",
@@ -290,14 +288,14 @@
       "factory": "macOSWK1Factory", "platform": "mac-sonoma",
       "configuration": "release",
       "triggered_by": ["macos-sonoma-release-build-ews"],
-      "workernames": ["ews116", "ews112", "ews117", "ews144", "ews145", "ews146", "ews147", "ews148"]
+      "workernames": ["ews116", "ews112", "ews117", "ews145", "ews147", "ews148"]
     },
     {
       "name": "macOS-Sonoma-Release-WK2-Tests-EWS", "shortname": "mac-wk2", "icon": "testOnly",
       "factory": "macOSWK2Factory", "platform": "mac-sonoma",
       "configuration": "release",
       "triggered_by": ["macos-sonoma-release-build-ews"],
-      "workernames": ["ews104", "ews106", "ews107", "ews113", "ews115", "ews149", "ews169", "ews186", "ews187", "ews188", "ews189"]
+      "workernames": ["ews104", "ews106", "ews107", "ews113", "ews115", "ews144", "ews146", "ews149", "ews169", "ews186", "ews187", "ews188", "ews189"]
     },
     {
       "name": "macOS-Sonoma-Release-WK2-Intel-Tests-EWS", "shortname": "mac-intel-wk2", "icon": "testOnly",
@@ -368,21 +366,21 @@
       "name": "PlayStation-Build-EWS", "shortname": "playstation", "icon": "buildOnly",
       "factory": "PlayStationBuildFactory", "configuration": "release",
       "architectures": ["x86_64"], "platform": "playstation",
-      "workernames": ["playstation-ews-001", "playstation-ews-002", "playstation-ews-003", "playstation-ews-004"]
+      "workernames": ["playstation-ews-001", "playstation-ews-002", "playstation-ews-003", "playstation-ews-004", "playstation-ews-005", "playstation-ews-006"]
     },
     {
       "name": "Win-Build-EWS", "shortname": "win", "icon": "buildOnly",
       "factory": "WinBuildFactory", "configuration": "release",
       "architectures": ["x86_64"], "platform": "win",
       "triggers": ["win-tests-ews"],
-      "workernames": ["wincairo-ews-001", "wincairo-ews-002", "wincairo-ews-003", "wincairo-ews-004"]
+      "workernames": ["wincairo-ews-001", "wincairo-ews-002", "wincairo-ews-003", "wincairo-ews-004", "win-bot-001", "win-bot-002"]
     },
     {
       "name": "Win-Tests-EWS", "shortname": "win-tests", "icon": "testOnly",
       "factory": "WinTestsFactory", "configuration": "release",
       "architectures": ["x86_64"], "platform": "win",
       "triggered_by": ["win-build-ews"],
-      "workernames": ["win-tests-ews-001", "win-tests-ews-002", "win-tests-ews-003", "win-tests-ews-004", "win-tests-ews-005", "win-tests-ews-006", "win-tests-ews-007", "win-tests-ews-008"]
+      "workernames": ["win-bot-003", "win-bot-004", "win-bot-005", "win-bot-006"]
     },
     {
       "name": "WPE-Build-EWS", "shortname": "wpe", "icon": "buildOnly",
@@ -402,14 +400,14 @@
       "name": "WPE-Cairo-Build-EWS", "shortname": "wpe-cairo", "icon": "buildOnly",
       "factory": "WPECairoBuildFactory", "platform": "wpe",
       "configuration": "release", "architectures": ["x86_64"],
-      "additionalArguments": ["--cmakeargs=-DUSE_SKIA=OFF"],
+      "additionalArguments": ["--cmakeargs=-DUSE_SKIA=OFF", "--cmakeargs=-DUSE_GSTREAMER_WEBRTC=FALSE"],
       "workernames": ["igalia16-wpe-ews", "igalia17-wpe-ews", "igalia18-wpe-ews", "igalia19-wpe-ews"]
     },
     {
       "name": "JSC-Tests-EWS", "shortname": "jsc", "icon": "buildAndTest",
       "factory": "JSCBuildAndTestsFactory", "platform": "mac-sonoma",
       "configuration": "release", "runTests": "true",
-      "workernames": ["ews127", "ews128", "ews251", "ews252"]
+      "workernames": ["ews127", "ews128", "ews205", "ews206", "ews251", "ews252"]
     },
     {
       "name": "JSC-Tests-arm64-EWS", "shortname": "jsc-arm64", "icon": "buildAndTest",
@@ -433,23 +431,24 @@
     {
       "name": "Bindings-Tests-EWS", "shortname": "bindings", "icon": "testOnly",
       "factory": "BindingsFactory", "platform": "*",
-      "workernames": ["ews151", "ews253", "webkit-misc"]
+      "workernames": ["ews2000", "ews151", "ews253", "webkit-misc"]
     },
     {
       "name": "WebKitPy-Tests-EWS", "shortname": "webkitpy", "icon": "testOnly",
       "factory": "WebKitPyFactory", "platform": "*",
-      "workernames": ["ews151", "ews253", "webkit-misc"]
+      "workernames": ["ews2000", "ews151", "ews253", "webkit-misc"]
     },
     {
       "name": "WebKitPerl-Tests-EWS", "shortname": "webkitperl", "icon": "testOnly",
       "factory": "WebKitPerlFactory", "platform": "*",
-      "workernames": ["ews151", "ews253", "webkit-misc"]
+      "workernames": ["ews2000", "ews151", "ews253", "webkit-misc"]
     },
     {
       "name": "API-Tests-iOS-Simulator-EWS", "shortname": "api-ios", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "*",
       "triggered_by": ["ios-18-sim-build-ews"],
-      "workernames": ["ews110", "ews111", "ews114", "ews156", "ews157", "ews158", "ews159", "ews160", "ews183", "ews254", "ews255", "ews256", "ews257", "ews258", "ews259"]
+      "additionalArguments": ["--child-processes=3"],
+      "workernames": ["ews156", "ews157", "ews158", "ews159", "ews160", "ews183", "ews254", "ews255", "ews256", "ews257", "ews258", "ews259"]
     },
     {
       "name": "API-Tests-macOS-EWS", "shortname": "api-mac", "icon": "testOnly",
@@ -474,7 +473,7 @@
     {
       "name": "Services-EWS", "shortname": "services", "icon": "testOnly",
       "factory": "ServicesFactory", "platform": "*",
-      "workernames": ["ews151", "ews253", "webkit-misc"]
+      "workernames": ["ews2000", "ews151", "ews253", "webkit-misc"]
     },
     {
       "name": "Commit-Queue", "shortname": "commit", "icon": "buildAndTest",
@@ -504,7 +503,7 @@
     {
       "type": "Try_Userpass", "name": "try", "port": 5555,
       "builderNames": [
-            "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-18-Build-EWS", "iOS-18-Simulator-Build-EWS",
+            "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-18-Build-EWS", "iOS-18-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-Sequoia-Debug-Build-EWS", "macOS-Sonoma-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS",
             "Services-EWS", "Style-EWS", "tvOS-18-Build-EWS", "tvOS-18-Simulator-Build-EWS", "visionOS-2-Build-EWS", "visionOS-2-Simulator-Build-EWS",

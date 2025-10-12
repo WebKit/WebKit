@@ -33,11 +33,14 @@ namespace WebCore {
 class CSSParserTokenRange;
 class CSSToLengthConversionData;
 class CSSValue;
-class TransformOperations;
 struct CSSParserContext;
 
 namespace CSS {
 struct PropertyParserState;
+}
+
+namespace Style {
+struct Transform;
 }
 
 namespace CSSPropertyParserHelpers {
@@ -57,7 +60,7 @@ RefPtr<CSSValue> consumeScale(CSSParserTokenRange&, CSS::PropertyParserState&);
 RefPtr<CSSValue> consumeRotate(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 // MARK: <'transform'> parsing (raw)
-std::optional<TransformOperations> parseTransformRaw(const String&, const CSSParserContext&, const CSSToLengthConversionData&);
+std::optional<Style::Transform> parseTransformRaw(const String&, const CSSParserContext&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

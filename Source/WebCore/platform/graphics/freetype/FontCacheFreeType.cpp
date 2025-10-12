@@ -83,7 +83,7 @@ static int fontWeightToFontconfigWeight(FontSelectionValue weight)
 
 bool FontCache::configurePatternForFontDescription(FcPattern* pattern, const FontDescription& fontDescription)
 {
-    if (!FcPatternAddInteger(pattern, FC_SLANT, fontDescription.italic() ? FC_SLANT_ITALIC : FC_SLANT_ROMAN))
+    if (!FcPatternAddInteger(pattern, FC_SLANT, fontDescription.fontStyleSlope() ? FC_SLANT_ITALIC : FC_SLANT_ROMAN))
         return false;
     if (!FcPatternAddInteger(pattern, FC_WEIGHT, fontWeightToFontconfigWeight(fontDescription.weight())))
         return false;
@@ -119,7 +119,7 @@ static void getFontPropertiesFromPattern(FcPattern* pattern, const FontDescripti
     int actualFontSlant;
     bool allowSyntheticOblique = fontDescription.hasAutoFontSynthesisStyle()
         && !options.contains(FontLookupOptions::DisallowObliqueSynthesis);
-    if (allowSyntheticOblique && fontDescription.italic()
+    if (allowSyntheticOblique && fontDescription.fontStyleSlope()
         && FcPatternGetInteger(pattern, FC_SLANT, 0, &actualFontSlant) == FcResultMatch) {
         syntheticOblique = actualFontSlant == FC_SLANT_ROMAN;
     }
@@ -211,6 +211,8 @@ static String getFamilyNameStringFromFamily(const String& family)
         return "cursive"_s;
     if (family == familyNamesData->at(FamilyNamesIndex::FantasyFamily))
         return "fantasy"_s;
+    if (family == familyNamesData->at(FamilyNamesIndex::MathFamily))
+        return "math"_s;
 
 #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
     if (family == familyNamesData->at(FamilyNamesIndex::SystemUiFamily) || family == "-webkit-system-font"_s)
@@ -494,7 +496,7 @@ static String fontNameMapName(FT_Face face, unsigned id)
         switch (name.platform_id) {
         case TT_PLATFORM_MACINTOSH:
             if (name.encoding_id == TT_MAC_ID_ROMAN)
-                return String({ name.string, name.string_len });
+                return String({ byteCast<Latin1Character>(name.string), name.string_len });
             // FIXME: implement other macintosh encodings.
             break;
         case TT_PLATFORM_APPLE_UNICODE:

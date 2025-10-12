@@ -33,6 +33,7 @@
 #import "UIKitSPIForTesting.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/Vector.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 @interface ScrollViewDelegate : NSObject<UIScrollViewDelegate> {
     @public Vector<CGPoint> _contentOffsetHistory;
@@ -67,7 +68,7 @@
 {
     int64_t deferredWaitTime = 100 * NSEC_PER_MSEC;
     dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
-    dispatch_after(when, dispatch_get_main_queue(), ^{
+    dispatch_after(when, mainDispatchQueueSingleton(), ^{
         decisionHandler(WKNavigationActionPolicyAllow);
     });
 }
@@ -76,7 +77,7 @@
 {
     int64_t deferredWaitTime = 100 * NSEC_PER_MSEC;
     dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
-    dispatch_after(when, dispatch_get_main_queue(), ^{
+    dispatch_after(when, mainDispatchQueueSingleton(), ^{
         decisionHandler(WKNavigationResponsePolicyAllow);
     });
 }
@@ -273,7 +274,7 @@ TEST(ScrollViewInsetTests, ChangeInsetWithoutAutomaticAdjustmentWhileWebProcessI
     [webView removeFromSuperview];
 
     __block bool done = false;
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         [window addSubview:webView.get()];
         [webView _setObscuredInsets:UIEdgeInsetsMake(updatedTopInset, 0, 0, 0)];
         [[webView scrollView] _setAutomaticContentOffsetAdjustmentEnabled:NO];

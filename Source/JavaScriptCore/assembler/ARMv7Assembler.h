@@ -30,9 +30,9 @@
 
 #if ENABLE(ASSEMBLER) && CPU(ARM_THUMB2)
 
-#include "AssemblerBuffer.h"
-#include "AssemblerCommon.h"
-#include "RegisterInfo.h"
+#include <JavaScriptCore/AssemblerBuffer.h>
+#include <JavaScriptCore/AssemblerCommon.h>
+#include <JavaScriptCore/RegisterInfo.h>
 #include <limits.h>
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
@@ -619,6 +619,8 @@ private:
         OP_VLDR         = 0xED10,
         OP_VMOV_CtoS    = 0xEE00,
         OP_VMOV_StoC    = 0xEE10,
+        OP_VMLA_T2      = 0xEE00,
+        OP_VMLS_T2      = 0xEE10,
         OP_VMUL_T2      = 0xEE20,
         OP_VADD_T2      = 0xEE30,
         OP_VSUB_T2      = 0xEE30,
@@ -713,6 +715,8 @@ private:
         OP_VLDRb         = 0x0A00,
         OP_VMOV_IMM_T2b  = 0x0A00,
         OP_VMOV_T2b      = 0x0A40,
+        OP_VMLA_T2b      = 0x0A00,
+        OP_VMLS_T2b      = 0x0A00,
         OP_VMUL_T2b      = 0x0A00,
         OP_FSTSb         = 0x0A00,
         OP_VSTRb         = 0x0A00,
@@ -1509,7 +1513,7 @@ public:
             twoWordOp5i6Imm4Reg4EncodedImmSecond(right, hi16),
             static_cast<uint16_t>(static_cast<uint16_t>(OP_CMP_reg_T2) | static_cast<uint16_t>(left))
         };
-        performJITMemcpy(address, instruction, sizeof(uint16_t) * 5);
+        performJITMemcpy<jitMemcpyRepatch>(address, instruction, sizeof(uint16_t) * 5);
         cacheFlush(address, sizeof(uint16_t) * 5);
     }
 #else
@@ -1524,7 +1528,7 @@ public:
             twoWordOp5i6Imm4Reg4EncodedImmFirst(OP_MOV_imm_T3, imm),
             twoWordOp5i6Imm4Reg4EncodedImmSecond(rd, imm)
         };
-        performJITMemcpy(address, instruction, sizeof(uint16_t) * 2);
+        performJITMemcpy<jitMemcpyRepatch>(address, instruction, sizeof(uint16_t) * 2);
         cacheFlush(address, sizeof(uint16_t) * 2);
     }
 #endif
@@ -2232,6 +2236,11 @@ public:
         m_formatter.vfpOp(OP_VCMP, OP_VCMPb, true, VFPOperand(4), rd, rm);
     }
 
+    void vcmpz(FPSingleRegisterID rd)
+    {
+        m_formatter.vfpOp(OP_VCMP, OP_VCMPb, false, VFPOperand(5), rd, VFPOperand(0));
+    }
+
     void vcmpz(FPDoubleRegisterID rd)
     {
         m_formatter.vfpOp(OP_VCMP, OP_VCMPb, true, VFPOperand(5), rd, VFPOperand(0));
@@ -2346,6 +2355,11 @@ public:
         m_formatter.vfpOp(OP_VMUL_T2, OP_VMUL_T2b, true, rn, rd, rm);
     }
 
+    void vmla(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.vfpOp(OP_VMLA_T2, OP_VMLA_T2b, true, rn, rd, rm);
+    }
+
     void vstr(FPDoubleRegisterID rd, RegisterID rn, int32_t imm)
     {
         m_formatter.vfpMemOp(OP_VSTR, OP_VSTRb, true, rn, rd, imm);
@@ -2426,16 +2440,17 @@ public:
         return OP_NOP_T2a | (OP_NOP_T2b << 16);
     }
 
-    template<MachineCodeCopyMode copy>
+    template<RepatchingInfo repatch>
     ALWAYS_INLINE static void fillNops(void* base, size_t size)
     {
         RELEASE_ASSERT(!(size % sizeof(int16_t)));
+        static_assert(!(*repatch).contains(RepatchingFlag::Flush));
 
         char* ptr = static_cast<char*>(base);
         const size_t num32s = size / sizeof(int32_t);
         for (size_t i = 0; i < num32s; i++) {
             const int32_t insn = nopPseudo32();
-            machineCodeCopy<copy>(ptr, &insn, sizeof(int32_t));
+            machineCodeCopy<repatch>(ptr, &insn, sizeof(int32_t));
             ptr += sizeof(int32_t);
         }
 
@@ -2444,15 +2459,16 @@ public:
         ASSERT(num16s * sizeof(int16_t) + num32s * sizeof(int32_t) == size);
         if (num16s) {
             const int16_t insn = nopPseudo16();
-            machineCodeCopy<copy>(ptr, &insn, sizeof(int16_t));
+            machineCodeCopy<repatch>(ptr, &insn, sizeof(int16_t));
         }
     }
 
-    template<MachineCodeCopyMode copy>
+    template<RepatchingInfo repatch>
     ALWAYS_INLINE static void fillNearTailCall(void* from, void* to)
     {
+        static_assert((*repatch).contains(RepatchingFlag::Flush));
         uint16_t* ptr = reinterpret_cast<uint16_t*>(from) + 2;
-        linkJumpT4<copy>(ptr, ptr, to, BranchWithLink::No);
+        linkJumpT4<noFlush(repatch)>(ptr, ptr, to, BranchWithLink::No);
         cacheFlush(from, sizeof(uint16_t) * 2);
     }
 
@@ -2604,31 +2620,31 @@ public:
         return m_jumpsToLink;
     }
 
-    template<MachineCodeCopyMode copy>
+    template<RepatchingInfo repatch>
     static void ALWAYS_INLINE link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction8, uint8_t* to)
     {
         const uint16_t* fromInstruction = reinterpret_cast_ptr<const uint16_t*>(fromInstruction8);
         switch (record.linkType()) {
         case LinkJumpT1:
-            linkJumpT1<copy>(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
+            linkJumpT1<repatch>(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
             break;
         case LinkJumpT2:
-            linkJumpT2<copy>(reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
+            linkJumpT2<repatch>(reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
             break;
         case LinkJumpT3:
-            linkJumpT3<copy>(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
+            linkJumpT3<repatch>(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
             break;
         case LinkJumpT4:
-            linkJumpT4<copy>(reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to, BranchWithLink::No);
+            linkJumpT4<repatch>(reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to, BranchWithLink::No);
             break;
         case LinkConditionalJumpT4:
-            linkConditionalJumpT4<copy>(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
+            linkConditionalJumpT4<repatch>(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
             break;
         case LinkConditionalBX:
-            linkConditionalBX<copy>(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
+            linkConditionalBX<repatch>(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
             break;
         case LinkBX:
-            linkBX<copy>(reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
+            linkBX<repatch>(reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -2685,7 +2701,7 @@ public:
 
     static void linkPointer(void* code, AssemblerLabel where, void* value)
     {
-        setPointer(reinterpret_cast<char*>(code) + where.offset(), value, false);
+        setPointer<jitMemcpyRepatch>(reinterpret_cast<char*>(code) + where.offset(), value);
     }
 
     // The static relink and replace methods can use can use |from| for both
@@ -2713,7 +2729,7 @@ public:
             return;
         }
 
-        setPointer(location - 1, to, true);
+        setPointer<jitMemcpyRepatchFlush>(location - 1, to);
     }
 
     static void relinkTailCall(void* from, void* to)
@@ -2757,7 +2773,7 @@ public:
     {
         ASSERT(!(reinterpret_cast<intptr_t>(where) & 1));
         
-        setPointer(where, value, true);
+        setPointer<jitMemcpyRepatchFlush>(where, value);
     }
 
     static void* readPointer(void* where)
@@ -2789,7 +2805,7 @@ public:
 
     static void replaceWithNops(void* instructionStart, size_t memoryToFillWithNopsInBytes)
     {
-        fillNops<MachineCodeCopyMode::JITMemcpy>(instructionStart, memoryToFillWithNopsInBytes);
+        fillNops<jitMemcpyRepatch>(instructionStart, memoryToFillWithNopsInBytes);
         cacheFlush(instructionStart, memoryToFillWithNopsInBytes);
     }
 
@@ -2928,7 +2944,8 @@ private:
         return VFPOperand(op);
     }
 
-    static void setInt32(void* code, uint32_t value, bool flush)
+    template<RepatchingInfo repatch>
+    static void setInt32(void* code, uint32_t value)
     {
         uint16_t* location = reinterpret_cast<uint16_t*>(code);
         ASSERT(isMOV_imm_T3(location - 4) && isMOVT(location - 2));
@@ -2941,8 +2958,8 @@ private:
         instructions[2] = twoWordOp5i6Imm4Reg4EncodedImmFirst(OP_MOVT, hi16);
         instructions[3] = twoWordOp5i6Imm4Reg4EncodedImmSecond((location[-1] >> 8) & 0xf, hi16);
 
-        performJITMemcpy(location - 4, instructions, 4 * sizeof(uint16_t));
-        if (flush)
+        performJITMemcpy<noFlush(repatch)>(location - 4, instructions, 4 * sizeof(uint16_t));
+        if constexpr ((*repatch).contains(RepatchingFlag::Flush))
             cacheFlush(location - 4, 4 * sizeof(uint16_t));
     }
     
@@ -2972,13 +2989,14 @@ private:
         uint16_t instruction;
         instruction = location[0] & ~((static_cast<uint16_t>(0x7f) >> 2) << 6);
         instruction |= (imm.getUInt7() >> 2) << 6;
-        performJITMemcpy(location, &instruction, sizeof(uint16_t));
+        performJITMemcpy<jitMemcpyRepatch>(location, &instruction, sizeof(uint16_t));
         cacheFlush(location, sizeof(uint16_t));
     }
 
-    static void setPointer(void* code, void* value, bool flush)
+    template <RepatchingInfo repatch>
+    static void setPointer(void* code, void* value)
     {
-        setInt32(code, reinterpret_cast<uint32_t>(value), flush);
+        setInt32<repatch>(code, reinterpret_cast<uint32_t>(value));
     }
 
     static bool isB(const void* address)
@@ -3067,7 +3085,7 @@ private:
         return ((relative << 7) >> 7) == relative;
     }
 
-    template<MachineCodeCopyMode copy = MachineCodeCopyMode::JITMemcpy>
+    template <RepatchingInfo repatch = jitMemcpyRepatch>
     static void linkJumpT1(Condition cond, uint16_t* writeTarget, const uint16_t* instruction, void* target)
     {
         // FIMXE: this should be up in the MacroAssembler layer. :-(        
@@ -3084,10 +3102,10 @@ private:
         // All branch offsets should be an even distance.
         ASSERT(!(relative & 1));
         uint16_t newInstruction = OP_B_T1 | ((cond & 0xf) << 8) | ((relative & 0x1fe) >> 1);
-        machineCodeCopy<copy>(writeTarget - 1, &newInstruction, sizeof(uint16_t));
+        machineCodeCopy<repatch>(writeTarget - 1, &newInstruction, sizeof(uint16_t));
     }
 
-    template<MachineCodeCopyMode copy = MachineCodeCopyMode::JITMemcpy>
+    template <RepatchingInfo repatch = jitMemcpyRepatch>
     static void linkJumpT2(uint16_t* writeTarget, const uint16_t* instruction, void* target)
     {
         // FIMXE: this should be up in the MacroAssembler layer. :-(        
@@ -3104,10 +3122,10 @@ private:
         // All branch offsets should be an even distance.
         ASSERT(!(relative & 1));
         uint16_t newInstruction = OP_B_T2 | ((relative & 0xffe) >> 1);
-        machineCodeCopy<copy>(writeTarget - 1, &newInstruction, sizeof(uint16_t));
+        machineCodeCopy<repatch>(writeTarget - 1, &newInstruction, sizeof(uint16_t));
     }
     
-    template<MachineCodeCopyMode copy = MachineCodeCopyMode::JITMemcpy>
+    template <RepatchingInfo repatch = jitMemcpyRepatch>
     static void linkJumpT3(Condition cond, uint16_t* writeTarget, const uint16_t* instruction, void* target)
     {
         // FIMXE: this should be up in the MacroAssembler layer. :-(
@@ -3122,10 +3140,10 @@ private:
         uint16_t instructions[2];
         instructions[0] = OP_B_T3a | ((relative & 0x100000) >> 10) | ((cond & 0xf) << 6) | ((relative & 0x3f000) >> 12);
         instructions[1] = OP_B_T3b | ((relative & 0x80000) >> 8) | ((relative & 0x40000) >> 5) | ((relative & 0xffe) >> 1);
-        machineCodeCopy<copy>(writeTarget - 2, instructions, 2 * sizeof(uint16_t));
+        machineCodeCopy<repatch>(writeTarget - 2, instructions, 2 * sizeof(uint16_t));
     }
     
-    template<MachineCodeCopyMode copy = MachineCodeCopyMode::JITMemcpy>
+    template <RepatchingInfo repatch = jitMemcpyRepatch>
     static void linkJumpT4(uint16_t* writeTarget, const uint16_t* instruction, void* target, BranchWithLink link)
     {
         // FIMXE: this should be up in the MacroAssembler layer. :-(        
@@ -3143,10 +3161,10 @@ private:
         uint16_t instructions[2];
         instructions[0] = OP_B_T4a | ((relative & 0x1000000) >> 14) | ((relative & 0x3ff000) >> 12);
         instructions[1] = OP_B_T4b | (static_cast<uint16_t>(link) << 14) | ((relative & 0x800000) >> 10) | ((relative & 0x400000) >> 11) | ((relative & 0xffe) >> 1);
-        machineCodeCopy<copy>(writeTarget - 2, instructions, 2 * sizeof(uint16_t));
+        machineCodeCopy<repatch>(writeTarget - 2, instructions, 2 * sizeof(uint16_t));
     }
 
-    template<MachineCodeCopyMode copy = MachineCodeCopyMode::JITMemcpy>
+    template <RepatchingInfo repatch = jitMemcpyRepatch>
     static void linkConditionalJumpT4(Condition cond, uint16_t* writeTarget, const uint16_t* instruction, void* target)
     {
         // FIMXE: this should be up in the MacroAssembler layer. :-(        
@@ -3154,11 +3172,11 @@ private:
         ASSERT(!(reinterpret_cast<intptr_t>(target) & 1));
         
         uint16_t newInstruction = ifThenElse(cond) | OP_IT;
-        machineCodeCopy<copy>(writeTarget - 3, &newInstruction, sizeof(uint16_t));
-        linkJumpT4<copy>(writeTarget, instruction, target, BranchWithLink::No);
+        machineCodeCopy<repatch>(writeTarget - 3, &newInstruction, sizeof(uint16_t));
+        linkJumpT4<repatch>(writeTarget, instruction, target, BranchWithLink::No);
     }
 
-    template<MachineCodeCopyMode copy = MachineCodeCopyMode::JITMemcpy>
+    template <RepatchingInfo repatch = jitMemcpyRepatch>
     static void linkBX(uint16_t* writeTarget, const uint16_t* instruction, void* target)
     {
         // FIMXE: this should be up in the MacroAssembler layer. :-(
@@ -3176,21 +3194,21 @@ private:
         instructions[3] = twoWordOp5i6Imm4Reg4EncodedImmSecond(JUMP_TEMPORARY_REGISTER, hi16);
         instructions[4] = OP_BX | (JUMP_TEMPORARY_REGISTER << 3);
 
-        machineCodeCopy<copy>(writeTarget - 5, instructions, 5 * sizeof(uint16_t));
+        machineCodeCopy<repatch>(writeTarget - 5, instructions, 5 * sizeof(uint16_t));
     }
 
-    template<MachineCodeCopyMode copy = MachineCodeCopyMode::JITMemcpy>
+    template <RepatchingInfo repatch = jitMemcpyRepatch>
     static void linkConditionalBX(Condition cond, uint16_t* writeTarget, const uint16_t* instruction, void* target)
     {
         // FIMXE: this should be up in the MacroAssembler layer. :-(        
         ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
         ASSERT(!(reinterpret_cast<intptr_t>(target) & 1));
         
-        linkBX(writeTarget, instruction, target);
+        linkBX<repatch>(writeTarget, instruction, target);
         uint16_t newInstruction = ifThenElse(cond, true, true) | OP_IT;
-        machineCodeCopy<copy>(writeTarget - 6, &newInstruction, sizeof(uint16_t));
+        machineCodeCopy<repatch>(writeTarget - 6, &newInstruction, sizeof(uint16_t));
     }
-    
+
     static void linkJumpAbsolute(uint16_t* writeTarget, const uint16_t* instruction, void* target)
     {
         // FIMXE: this should be up in the MacroAssembler layer. :-(
@@ -3210,7 +3228,7 @@ private:
             instructions[0] = OP_NOP_T1;
             instructions[1] = OP_NOP_T2a;
             instructions[2] = OP_NOP_T2b;
-            performJITMemcpy(writeTarget - 5, instructions, 3 * sizeof(uint16_t));
+            performJITMemcpy<jitMemcpyRepatch>(writeTarget - 5, instructions, 3 * sizeof(uint16_t));
             linkJumpT4(writeTarget, instruction, target, BranchWithLink::No);
         } else {
             const uint16_t JUMP_TEMPORARY_REGISTER = ARMRegisters::ip;
@@ -3223,7 +3241,7 @@ private:
             instructions[2] = twoWordOp5i6Imm4Reg4EncodedImmFirst(OP_MOVT, hi16);
             instructions[3] = twoWordOp5i6Imm4Reg4EncodedImmSecond(JUMP_TEMPORARY_REGISTER, hi16);
             instructions[4] = OP_BX | (JUMP_TEMPORARY_REGISTER << 3);
-            performJITMemcpy(writeTarget - 5, instructions, 5 * sizeof(uint16_t));
+            performJITMemcpy<jitMemcpyRepatch>(writeTarget - 5, instructions, 5 * sizeof(uint16_t));
         }
     }
 

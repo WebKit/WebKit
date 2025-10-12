@@ -27,7 +27,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "ScrollingTreeScrollingNode.h"
+#include <WebCore/ScrollingTreeScrollingNode.h>
 
 #include <wtf/TZoneMalloc.h>
 
@@ -40,8 +40,8 @@ public:
     WEBCORE_EXPORT virtual ~ScrollingTreeScrollingNodeDelegate();
 
     RefPtr<ScrollingTreeScrollingNode> protectedScrollingNode() const { return m_scrollingNode.get(); }
-    ScrollingTreeScrollingNode& scrollingNode() { return  *protectedScrollingNode().get(); }
-    const ScrollingTreeScrollingNode& scrollingNode() const { return  *protectedScrollingNode().get(); }
+    ScrollingTreeScrollingNode& scrollingNode() { return  *protectedScrollingNode().unsafeGet(); }
+    const ScrollingTreeScrollingNode& scrollingNode() const { return  *protectedScrollingNode().unsafeGet(); }
     
     virtual bool startAnimatedScrollToPosition(FloatPoint) = 0;
     virtual void stopAnimatedScroll() = 0;

@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CachedImage.h"
-#include "CachedResourceHandle.h"
-#include "StyleImage.h"
+#include <WebCore/CachedImage.h>
+#include <WebCore/CachedResourceHandle.h>
+#include <WebCore/StyleImage.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -54,6 +54,7 @@ public:
     void resetAnimation();
 
     virtual RefPtr<Image> image(const IntSize& size = { }) const;
+    virtual bool currentFrameIsComplete() const;
     virtual bool errorOccurred() const { return m_cachedImage && m_cachedImage->errorOccurred(); }
 
     virtual void setContainerContext(const IntSize&, const URL&);

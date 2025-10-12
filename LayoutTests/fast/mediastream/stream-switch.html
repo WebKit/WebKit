@@ -6,8 +6,9 @@
 <script src="../../media/utilities.js"></script>
 <script src="../../webrtc/routines.js"></script>
 <script>
-promise_test(async() => {
-    let stream = await navigator.mediaDevices.getUserMedia({audio : true});
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({audio : true});
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     let cptr = 0;
     let videoFile = "../../media/" + findMediaFile('video', 'content/test');
     while (++cptr < 20) {
@@ -20,10 +21,12 @@ promise_test(async() => {
         await localVideo.play();
         await waitForVideoFrame(localVideo);
     }
+    stream.getTracks().forEach(t => t.stop());
 }, "Check switching between playing with and without stream");
 
-promise_test(async() => {
-    let stream = await navigator.mediaDevices.getUserMedia({audio : true, video: true});
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({audio : true, video: true});
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
     localVideo.srcObject = stream;
     await localVideo.play();
@@ -39,6 +42,7 @@ promise_test(async() => {
         stream.addTrack(audioTrack);
         once(stream, 'onaddtrack');
     }
+    stream.getTracks().forEach(t => t.stop());
 }, "Check adding and removing a track to a stream");
 </script>
 </body>

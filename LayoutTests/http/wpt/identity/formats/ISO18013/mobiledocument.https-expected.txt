@@ -1,4 +1,5 @@
 
+PASS Check that the user agent knows about the ISO-18013 Mobile Document protocol.
 PASS Conversion to ISO-18013 Mobile Document Request.
 PASS Validation of ISO-18013 Mobile Document Request.
 

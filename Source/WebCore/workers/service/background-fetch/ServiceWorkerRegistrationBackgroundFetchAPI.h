@@ -28,11 +28,13 @@
 #include "Supplementable.h"
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
 class BackgroundFetchManager;
 class ServiceWorkerRegistration;
+class WeakPtrImplWithEventTargetData;
 
 class ServiceWorkerRegistrationBackgroundFetchAPI : public Supplement<ServiceWorkerRegistration> {
     WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerRegistrationBackgroundFetchAPI);
@@ -49,8 +51,14 @@ private:
     static ServiceWorkerRegistrationBackgroundFetchAPI& from(ServiceWorkerRegistration&);
     static ASCIILiteral supplementName();
 
-    ServiceWorkerRegistration& m_serviceWorkerRegistration;
-    RefPtr<BackgroundFetchManager> m_backgroundFetchManager;
+    bool isServiceWorkerRegistrationBackgroundFetchAPI() const final { return true; }
+
+    WeakRef<ServiceWorkerRegistration, WeakPtrImplWithEventTargetData> m_serviceWorkerRegistration;
+    const RefPtr<BackgroundFetchManager> m_backgroundFetchManager;
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ServiceWorkerRegistrationBackgroundFetchAPI)
+    static bool isType(const WebCore::SupplementBase& supplement) { return supplement.isServiceWorkerRegistrationBackgroundFetchAPI(); }
+SPECIALIZE_TYPE_TRAITS_END()

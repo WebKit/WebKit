@@ -1,0 +1,4 @@
+Hidden
+
+PASS hidden=until-found and details revealing algorithm should reveal elements in a certain order.
+

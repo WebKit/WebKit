@@ -88,6 +88,8 @@ static _WKWebAuthenticationPanelUpdate wkWebAuthenticationPanelUpdate(WebAuthent
         return _WKWebAuthenticationPanelUpdatePINTooShort;
     if (status == WebAuthenticationStatus::PINTooLong)
         return _WKWebAuthenticationPanelUpdatePINTooLong;
+    if (status == WebAuthenticationStatus::PINSuccessful)
+        return _WKWebAuthenticationPanelUpdatePINSuccessful;
     ASSERT_NOT_REACHED();
     return _WKWebAuthenticationPanelUpdateMultipleNFCTagsPresent;
 }

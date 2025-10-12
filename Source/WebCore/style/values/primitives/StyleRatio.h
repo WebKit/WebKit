@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "CSSRatio.h"
-#include "StylePrimitiveNumericTypes.h"
+#include <WebCore/CSSRatio.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
 
 namespace WebCore {
 namespace Style {
@@ -48,6 +48,11 @@ template<size_t I> const auto& get(const Ratio& value)
 }
 
 DEFINE_TYPE_MAPPING(CSS::Ratio, Ratio)
+
+// MARK: Conversion
+
+// `Ratio` is special-cased to return a `CSSRatioValue`.
+template<> struct CSSValueCreation<Ratio> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const Ratio&); };
 
 } // namespace Style
 } // namespace WebCore

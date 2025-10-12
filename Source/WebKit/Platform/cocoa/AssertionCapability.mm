@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,10 +32,6 @@
 #import "ProcessLauncher.h"
 #import <BrowserEngineKit/BrowserEngineKit.h>
 
-#if USE(LEGACY_EXTENSIONKIT_SPI)
-#import "ExtensionKitSoftLink.h"
-#endif
-
 namespace WebKit {
 
 AssertionCapability::AssertionCapability(String environmentIdentifier, String domain, String name, Function<void()>&& willInvalidateFunction, Function<void()>&& didInvalidateFunction)
@@ -46,13 +42,6 @@ AssertionCapability::AssertionCapability(String environmentIdentifier, String do
     , m_didInvalidateBlock { didInvalidateFunction ? makeBlockPtr(WTFMove(didInvalidateFunction)) : nullptr }
 {
     RELEASE_LOG(Process, "AssertionCapability::AssertionCapability: taking assertion %{public}s", m_name.utf8().data());
-#if USE(LEGACY_EXTENSIONKIT_SPI)
-    if (!ProcessLauncher::hasExtensionsInAppBundle()) {
-        _SECapability* capability = [get_SECapabilityClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:m_environmentIdentifier willInvalidate:m_willInvalidateBlock.get() didInvalidate:m_didInvalidateBlock.get()];
-        setPlatformCapability(capability);
-        return;
-    }
-#endif
     if (m_name == "Suspended"_s)
         setPlatformCapability([BEProcessCapability suspended]);
     else if (m_name == "Background"_s)

@@ -9,16 +9,30 @@
  */
 #include "test/peer_scenario/peer_scenario.h"
 
+#include <atomic>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "absl/flags/flag.h"
-#include "absl/memory/memory.h"
-#include "rtc_base/null_socket_server.h"
-#include "rtc_base/string_encode.h"
-#include "rtc_base/strings/string_builder.h"
+#include "absl/strings/str_cat.h"
+#include "api/jsep.h"
+#include "api/media_stream_interface.h"
+#include "api/test/network_emulation_manager.h"
+#include "api/units/time_delta.h"
+#include "api/video/video_source_interface.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "test/gtest.h"
 #include "test/logging/file_log_writer.h"
+#include "test/logging/log_writer.h"
+#include "test/network/network_emulation.h"
 #include "test/network/network_emulation_manager.h"
+#include "test/peer_scenario/peer_scenario_client.h"
+#include "test/peer_scenario/signaling_route.h"
+#include "test/scenario/stats_collection.h"
 #include "test/testsupport/file_utils.h"
-#include "test/time_controller/real_time_controller.h"
-#include "test/time_controller/simulated_time_controller.h"
 
 ABSL_FLAG(bool, peer_logs, false, "Save logs from peer scenario framework.");
 ABSL_FLAG(std::string,
@@ -62,7 +76,7 @@ PeerScenario::PeerScenario(
 PeerScenarioClient* PeerScenario::CreateClient(
     PeerScenarioClient::Config config) {
   return CreateClient(
-      std::string("client_") + rtc::ToString(peer_clients_.size() + 1), config);
+      std::string("client_") + absl::StrCat(peer_clients_.size() + 1), config);
 }
 
 PeerScenarioClient* PeerScenario::CreateClient(
@@ -102,7 +116,7 @@ void PeerScenario::AttachVideoQualityAnalyzer(VideoQualityAnalyzer* analyzer,
                                               PeerScenarioClient* receiver) {
   video_quality_pairs_.emplace_back(clock(), analyzer);
   auto pair = &video_quality_pairs_.back();
-  send_track->AddOrUpdateSink(&pair->capture_tap_, rtc::VideoSinkWants());
+  send_track->AddOrUpdateSink(&pair->capture_tap_, VideoSinkWants());
   receiver->AddVideoReceiveSink(send_track->id(), &pair->decode_tap_);
 }
 

@@ -1,0 +1,25 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+    if (window.IPC) {
+        import('./coreipc.js').then(({
+            CoreIPC
+        }) => {
+            o10=CoreIPC.newStreamConnection();
+            CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0,{renderingBackendIdentifier:393219,connectionHandle:o10});
+            o12=o10.newInterface("RemoteRenderingBackend", 393219);
+            o12.CreateImageBuffer({logicalSize:{width:32,height:18},renderingMode:3,renderingPurpose:1,resolutionScale:489626271805,colorSpace:{serializableColorSpace:{alias:{m_cgColorSpace:{alias:{variantType:'WebCore::ColorSpace',variant:5}}}}},pixelFormat:1,identifier:393225,contextIdentifier:393226});
+            o31=o10.newInterface("RemoteGraphicsContext", 393226);
+            o31.Restore({});
+            o31.Restore({});
+        });
+    }
+
+    function callDone() {
+        window.testRunner?.notifyDone();
+    }
+</script>
+<body onload="setTimeout(callDone, 200)">
+    <p>This test passes if Webkit does not crash</p>
+</body>

@@ -24,19 +24,19 @@ namespace webrtc {
 
 namespace {
 
-int GetY(rtc::scoped_refptr<I210BufferInterface> buf, int col, int row) {
+int GetY(scoped_refptr<I210BufferInterface> buf, int col, int row) {
   return buf->DataY()[row * buf->StrideY() + col];
 }
 
-int GetU(rtc::scoped_refptr<I210BufferInterface> buf, int col, int row) {
+int GetU(scoped_refptr<I210BufferInterface> buf, int col, int row) {
   return buf->DataU()[row * buf->StrideU() + col];
 }
 
-int GetV(rtc::scoped_refptr<I210BufferInterface> buf, int col, int row) {
+int GetV(scoped_refptr<I210BufferInterface> buf, int col, int row) {
   return buf->DataV()[row * buf->StrideV() + col];
 }
 
-void FillI210Buffer(rtc::scoped_refptr<I210Buffer> buf) {
+void FillI210Buffer(scoped_refptr<I210Buffer> buf) {
   const uint16_t Y = 4;
   const uint16_t U = 8;
   const uint16_t V = 16;
@@ -62,7 +62,7 @@ TEST(I210BufferTest, InitialData) {
   constexpr int halfwidth = (width + 1) >> 1;
   constexpr int height = 3;
 
-  rtc::scoped_refptr<I210Buffer> i210_buffer(I210Buffer::Create(width, height));
+  scoped_refptr<I210Buffer> i210_buffer(I210Buffer::Create(width, height));
   EXPECT_EQ(width, i210_buffer->width());
   EXPECT_EQ(height, i210_buffer->height());
   EXPECT_EQ(stride, i210_buffer->StrideY());
@@ -77,7 +77,7 @@ TEST(I210BufferTest, ReadPixels) {
   constexpr int halfwidth = (width + 1) >> 1;
   constexpr int height = 3;
 
-  rtc::scoped_refptr<I210Buffer> i210_buffer(I210Buffer::Create(width, height));
+  scoped_refptr<I210Buffer> i210_buffer(I210Buffer::Create(width, height));
   // Y = 4, U = 8, V = 16.
   FillI210Buffer(i210_buffer);
   for (int row = 0; row < height; row++) {
@@ -99,12 +99,12 @@ TEST(I210BufferTest, ToI420) {
   constexpr int height = 3;
   constexpr int size = width * height;
   constexpr int quartersize = (width + 1) / 2 * (height + 1) / 2;
-  rtc::scoped_refptr<I420Buffer> reference(I420Buffer::Create(width, height));
+  scoped_refptr<I420Buffer> reference(I420Buffer::Create(width, height));
   memset(reference->MutableDataY(), 1, size);
   memset(reference->MutableDataU(), 2, quartersize);
   memset(reference->MutableDataV(), 4, quartersize);
 
-  rtc::scoped_refptr<I210Buffer> i210_buffer(I210Buffer::Create(width, height));
+  scoped_refptr<I210Buffer> i210_buffer(I210Buffer::Create(width, height));
   // Y = 4, U = 8, V = 16.
   FillI210Buffer(i210_buffer);
 
@@ -121,7 +121,7 @@ TEST(I210BufferTest, ToI420) {
     }
   }
 
-  rtc::scoped_refptr<I420BufferInterface> i420_buffer(i210_buffer->ToI420());
+  scoped_refptr<I420BufferInterface> i420_buffer(i210_buffer->ToI420());
   EXPECT_TRUE(test::FrameBufsEqual(reference, i420_buffer));
   EXPECT_EQ(height, i420_buffer->height());
   EXPECT_EQ(width, i420_buffer->width());

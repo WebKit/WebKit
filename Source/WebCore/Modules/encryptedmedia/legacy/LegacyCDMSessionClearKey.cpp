@@ -64,7 +64,7 @@ RefPtr<Uint8Array> CDMSessionClearKey::generateKeyRequest(const String& mimeType
     m_initData = initData;
 
     bool sawError = false;
-    String keyID = PAL::UTF8Encoding().decode(m_initData->span(), true, sawError);
+    String keyID = PAL::UTF8Encoding().decode(initData->span(), true, sawError);
     if (sawError) {
         errorCode = WebKitMediaKeyError::MEDIA_KEYERR_CLIENT;
         return nullptr;
@@ -175,7 +175,7 @@ RefPtr<JSC::ArrayBuffer> CDMSessionClearKey::cachedKeyForKeyID(const String& key
         return nullptr;
 
     auto keyData = m_cachedKeys.get(keyId);
-    auto keyDataArray = JSC::Uint8Array::create(keyData.data(), keyData.size());
+    auto keyDataArray = JSC::Uint8Array::create(keyData.span());
     return keyDataArray->unsharedBuffer();
 }
 

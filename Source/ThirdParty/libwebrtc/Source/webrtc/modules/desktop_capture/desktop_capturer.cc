@@ -10,16 +10,22 @@
 
 #include "modules/desktop_capture/desktop_capturer.h"
 
-#include <stdlib.h>
-#include <string.h>
-
+#include <cstdlib>
 #include <cstring>
+#include <memory>
 #include <utility>
 
-#include "modules/desktop_capture/cropping_window_capturer.h"
+#include "modules/desktop_capture/delegated_source_list_controller.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
+#include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_capturer_differ_wrapper.h"
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/shared_memory.h"
 #include "system_wrappers/include/metrics.h"
+
+#if defined(WEBRTC_WIN)
+#include "modules/desktop_capture/cropping_window_capturer.h"
+#endif  // defined(WEBRTC_WIN)
 
 #if defined(RTC_ENABLE_WIN_WGC)
 #include "modules/desktop_capture/win/wgc_capturer_win.h"
@@ -28,7 +34,11 @@
 
 #if defined(WEBRTC_USE_PIPEWIRE)
 #include "modules/desktop_capture/linux/wayland/base_capturer_pipewire.h"
-#endif
+#endif  // defined(WEBRTC_USE_PIPEWIRE)
+
+#if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
+#include "modules/desktop_capture/mac/screen_capturer_sck.h"
+#endif  // defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
 
 namespace webrtc {
 
@@ -117,11 +127,13 @@ std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateGenericCapturer(
     capturer = std::make_unique<BaseCapturerPipeWire>(
         options, CaptureType::kAnyScreenContent);
   }
+#elif defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
+  capturer = CreateGenericCapturerSck(options);
+#endif
 
   if (capturer && options.detect_updated_region()) {
     capturer.reset(new DesktopCapturerDifferWrapper(std::move(capturer)));
   }
-#endif  // defined(WEBRTC_USE_PIPEWIRE)
 
   return capturer;
 }

@@ -14,9 +14,10 @@
 #include <pipewire/pipewire.h>
 #include <spa/param/video/format-utils.h>
 
+#include <cstdint>
+
 #include "modules/desktop_capture/linux/wayland/screencast_stream_utils.h"
 #include "modules/desktop_capture/rgba_color.h"
-#include "rtc_base/random.h"
 
 namespace webrtc {
 

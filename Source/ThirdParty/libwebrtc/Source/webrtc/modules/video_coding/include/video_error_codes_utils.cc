@@ -10,6 +10,8 @@
 
 #include "modules/video_coding/include/video_error_codes_utils.h"
 
+#include <cstdint>
+
 #include "modules/video_coding/include/video_error_codes.h"
 
 namespace webrtc {

@@ -40,8 +40,6 @@ bool isIPAddress(const String&);
 
 bool domainMatch(const String& cookieDomain, const String& host);
 
-WEBCORE_EXPORT String defaultPathForURL(const URL&);
-
 } // namespace CookieUtil
 
 } // namespace WebCore

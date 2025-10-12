@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #pragma once
 
 #if USE(CG)
-#include "ImageBufferCGBitmapBackend.h"
+#include <WebCore/ImageBufferCGBitmapBackend.h>
 #elif USE(CAIRO)
 #include "ImageBufferCairoImageSurfaceBackend.h"
 #elif USE(SKIA)

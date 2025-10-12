@@ -13,6 +13,8 @@
 #include <libloaderapi.h>
 #include <winstring.h>
 
+#include <cstdint>
+
 namespace {
 
 FARPROC LoadComBaseFunction(const char* function_name) {

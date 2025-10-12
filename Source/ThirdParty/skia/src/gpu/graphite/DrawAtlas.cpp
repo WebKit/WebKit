@@ -4,26 +4,34 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
-
 #include "src/gpu/graphite/DrawAtlas.h"
 
-#include <memory>
-
+#include "include/core/SkAlphaType.h"
 #include "include/core/SkColorSpace.h"
-#include "include/core/SkStream.h"
+#include "include/core/SkImageInfo.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkTypes.h"
+#include "include/gpu/GpuTypes.h"
 #include "include/gpu/graphite/Recorder.h"
+#include "include/gpu/graphite/TextureInfo.h"
+#include "include/private/base/SkMath.h"
+#include "include/private/base/SkTArray.h"
 #include "include/private/base/SkTPin.h"
-#include "src/core/SkColorData.h"
-
 #include "src/base/SkMathPriv.h"
 #include "src/core/SkTraceEvent.h"
 #include "src/gpu/AtlasTypes.h"
 #include "src/gpu/graphite/Caps.h"
-#include "src/gpu/graphite/CommandTypes.h"
-#include "src/gpu/graphite/ContextPriv.h"
 #include "src/gpu/graphite/DrawContext.h"
 #include "src/gpu/graphite/RecorderPriv.h"
 #include "src/gpu/graphite/TextureProxy.h"
+#include "src/gpu/graphite/task/UploadTask.h"
+
+#include <algorithm>
+#include <atomic>
+#include <memory>
+#include <tuple>
+
+enum SkColorType : int;
 
 using namespace skia_private;
 
@@ -91,7 +99,7 @@ DrawAtlas::DrawAtlas(SkColorType colorType, size_t bpp, int width, int height,
         , fAtlasID(next_id())
         , fGenerationCounter(generationCounter)
         , fAtlasGeneration(fGenerationCounter->next())
-        , fPrevFlushToken(AtlasToken::InvalidToken())
+        , fPrevFlushToken(Token::InvalidToken())
         , fFlushesSinceLastUse(0)
         , fMaxPages(allowMultitexturing == AllowMultitexturing::kYes ?
                             PlotLocator::kMaxMultitexturePages : 1)
@@ -172,8 +180,18 @@ bool DrawAtlas::recordUploads(DrawContext* dc, Recorder* recorder) {
 
                 // Src and dst colorInfo are the same
                 SkColorInfo colorInfo(fColorType, kUnknown_SkAlphaType, nullptr);
-                if (!dc->recordUpload(recorder, sk_ref_sp(proxy), colorInfo, colorInfo, levels,
-                                      dstRect, /*ConditionalUploadContext=*/nullptr)) {
+                const UploadSource uploadSource = UploadSource::Make(
+                        recorder->priv().caps(), *proxy, colorInfo, colorInfo, levels, dstRect);
+                if (!uploadSource.isValid()) {
+                    return false;
+                }
+                if (!dc->recordUpload(recorder,
+                                      sk_ref_sp(proxy),
+                                      colorInfo,
+                                      colorInfo,
+                                      uploadSource,
+                                      dstRect,
+                                      /*ConditionalUploadContext=*/nullptr)) {
                     return false;
                 }
             }
@@ -285,7 +303,7 @@ SkIPoint DrawAtlas::prepForRender(const AtlasLocator& locator, SkAutoPixmapStora
     return plot->prepForRender(locator, pixmap);
 }
 
-void DrawAtlas::compact(AtlasToken startTokenForNextFlush) {
+void DrawAtlas::compact(Token startTokenForNextFlush) {
     if (fNumActivePages < 1) {
         fPrevFlushToken = startTokenForNextFlush;
         return;
@@ -377,7 +395,7 @@ void DrawAtlas::compact(AtlasToken startTokenForNextFlush) {
             // If this plot was used recently
             if (plot->flushesSinceLastUsed() <= kPlotRecentlyUsedCount) {
                 usedPlots++;
-            } else if (plot->lastUseToken() != AtlasToken::InvalidToken()) {
+            } else if (plot->lastUseToken() != Token::InvalidToken()) {
                 // otherwise if aged out just evict it.
                 this->processEvictionAndResetRects(plot, /*freeData=*/false);
             }
@@ -530,7 +548,7 @@ void DrawAtlas::markUsedPlotsAsFull() {
     }
 }
 
-void DrawAtlas::freeGpuResources(AtlasToken token) {
+void DrawAtlas::freeGpuResources(Token token) {
     PlotList::Iter plotIter;
     for (int pageIndex = (int)(fNumActivePages)-1; pageIndex >= 0; --pageIndex) {
         const Page& currPage = fPages[pageIndex];
@@ -560,19 +578,15 @@ void DrawAtlas::evictAllPlots() {
 
 #if defined(GPU_TEST_UTILS)
 int DrawAtlas::numAllocatedPlots() const {
-    int numAllocatedPlots = 0;
-    PlotList::Iter plotIter;
-    for (uint32_t pageIndex = 0; pageIndex < this->maxPages(); ++pageIndex) {
-        plotIter.init(fPages[pageIndex].fPlotList, PlotList::Iter::kHead_IterStart);
-        while (Plot* plot = plotIter.get()) {
-            if (plot->hasAllocation()) {
-                ++numAllocatedPlots;
-            }
-            plotIter.next();
-        }
-    }
+    return this->iteratePlots([](const Plot* plot) {
+        return plot->hasAllocation();
+    });
+}
 
-    return numAllocatedPlots;
+int DrawAtlas::numNonEmptyPlots() const {
+    return this->iteratePlots([](const Plot* plot) {
+        return !plot->isEmpty();
+    });
 }
 #endif
 

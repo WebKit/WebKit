@@ -55,6 +55,9 @@ void WriteParamCaptureReplay(std::ostream &os, const CallCapture &call, const Pa
         case ParamType::TClipOrigin:
             WriteParamValueReplay<ParamType::TClipOrigin>(os, call, param.value.ClipOriginVal);
             break;
+        case ParamType::TCombinerOp:
+            WriteParamValueReplay<ParamType::TCombinerOp>(os, call, param.value.CombinerOpVal);
+            break;
         case ParamType::TCompositorTiming:
             WriteParamValueReplay<ParamType::TCompositorTiming>(os, call,
                                                                 param.value.CompositorTimingVal);
@@ -222,12 +225,13 @@ void WriteParamCaptureReplay(std::ostream &os, const CallCapture &call, const Pa
             WriteParamValueReplay<ParamType::TGLGETBLOBPROCANGLE>(
                 os, call, param.value.GLGETBLOBPROCANGLEVal);
             break;
-        case ParamType::TGLSETBLOBPROCANGLE:
-            WriteParamValueReplay<ParamType::TGLSETBLOBPROCANGLE>(
-                os, call, param.value.GLSETBLOBPROCANGLEVal);
         case ParamType::TGLMTLRasterizationRateMapANGLE:
             WriteParamValueReplay<ParamType::TGLMTLRasterizationRateMapANGLE>(
                 os, call, param.value.GLMTLRasterizationRateMapANGLEVal);
+            break;
+        case ParamType::TGLSETBLOBPROCANGLE:
+            WriteParamValueReplay<ParamType::TGLSETBLOBPROCANGLE>(
+                os, call, param.value.GLSETBLOBPROCANGLEVal);
             break;
         case ParamType::TGLbitfield:
             WriteParamValueReplay<ParamType::TGLbitfield>(os, call, param.value.GLbitfieldVal);
@@ -500,6 +504,9 @@ void WriteParamCaptureReplay(std::ostream &os, const CallCapture &call, const Pa
             break;
         case ParamType::TShadingModel:
             WriteParamValueReplay<ParamType::TShadingModel>(os, call, param.value.ShadingModelVal);
+            break;
+        case ParamType::TShadingRate:
+            WriteParamValueReplay<ParamType::TShadingRate>(os, call, param.value.ShadingRateVal);
             break;
         case ParamType::TSurfaceID:
             WriteParamValueReplay<ParamType::TSurfaceID>(os, call, param.value.SurfaceIDVal);
@@ -904,6 +911,8 @@ const char *ParamTypeToString(ParamType paramType)
             return "GLenum";
         case ParamType::TClipOrigin:
             return "GLenum";
+        case ParamType::TCombinerOp:
+            return "GLenum";
         case ParamType::TCompositorTiming:
             return "GLenum";
         case ParamType::TContextID:
@@ -998,10 +1007,10 @@ const char *ParamTypeToString(ParamType paramType)
             return "GLDEBUGPROCKHR";
         case ParamType::TGLGETBLOBPROCANGLE:
             return "GLGETBLOBPROCANGLE";
-        case ParamType::TGLSETBLOBPROCANGLE:
-            return "GLSETBLOBPROCANGLE";
         case ParamType::TGLMTLRasterizationRateMapANGLE:
             return "GLMTLRasterizationRateMapANGLE";
+        case ParamType::TGLSETBLOBPROCANGLE:
+            return "GLSETBLOBPROCANGLE";
         case ParamType::TGLbitfield:
             return "GLbitfield";
         case ParamType::TGLboolean:
@@ -1151,6 +1160,8 @@ const char *ParamTypeToString(ParamType paramType)
         case ParamType::TShaderType:
             return "GLenum";
         case ParamType::TShadingModel:
+            return "GLenum";
+        case ParamType::TShadingRate:
             return "GLenum";
         case ParamType::TSurfaceID:
             return "GLuint";

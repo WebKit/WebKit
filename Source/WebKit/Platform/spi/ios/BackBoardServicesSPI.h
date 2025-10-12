@@ -33,28 +33,10 @@ DECLARE_SYSTEM_HEADER
 #import <BackBoardServices/BKSAnimationFence_Private.h>
 #import <BackBoardServices/BKSHIDEventAttributes.h>
 #import <BackBoardServices/BKSHIDEventKeyCommand.h>
-#import <BackBoardServices/BKSMousePointerService.h>
 
 #else
 
 #import "BaseBoardSPI.h"
-
-@interface BKSAnimationFenceHandle : NSObject
-- (mach_port_t)CAPort;
-@end
-
-@class BKSMousePointerDevice;
-
-@protocol BKSMousePointerDeviceObserver <NSObject>
-@optional
-- (void)mousePointerDevicesDidConnect:(NSSet<BKSMousePointerDevice *> *)mousePointerDevices;
-- (void)mousePointerDevicesDidDisconnect:(NSSet<BKSMousePointerDevice *> *)mousePointerDevices;
-@end
-
-@interface BKSMousePointerService : NSObject
-+ (BKSMousePointerService *)sharedInstance;
-- (id<BSInvalidatable>)addPointerDeviceObserver:(id<BKSMousePointerDeviceObserver>)observer;
-@end
 
 typedef NS_OPTIONS(NSInteger, BKSKeyModifierFlags) {
     BKSKeyModifierShift = 1 << 17,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,12 +49,12 @@ CSS::DropShadow toCSSDropShadow(Ref<DropShadowFilterOperationWithStyleColor> ope
     };
 }
 
-Ref<FilterOperation> createFilterOperation(const CSS::DropShadow& filter, const Document& document, RenderStyle& style, const CSSToLengthConversionData& conversionData)
+Ref<FilterOperation> createFilterOperation(const CSS::DropShadow& filter, const BuilderState& state)
 {
-    int x = roundForImpreciseConversion<int>(toStyle(filter.location.x(), conversionData).value);
-    int y = roundForImpreciseConversion<int>(toStyle(filter.location.y(), conversionData).value);
-    int stdDeviation = filter.stdDeviation ? roundForImpreciseConversion<int>(toStyle(*filter.stdDeviation, conversionData).value) : 0;
-    auto color = filter.color ? toStyleColor(*filter.color, document, style, conversionData, ForVisitedLink::No) : Style::Color { CurrentColor { } };
+    int x = roundForImpreciseConversion<int>(toStyle(filter.location.x(), state).resolveZoom(Style::ZoomNeeded { }));
+    int y = roundForImpreciseConversion<int>(toStyle(filter.location.y(), state).resolveZoom(Style::ZoomNeeded { }));
+    int stdDeviation = filter.stdDeviation ? roundForImpreciseConversion<int>(toStyle(*filter.stdDeviation, state).resolveZoom(Style::ZoomNeeded { })) : 0;
+    auto color = filter.color ? toStyleColor(*filter.color, state, ForVisitedLink::No) : Style::Color { CurrentColor { } };
 
     return DropShadowFilterOperationWithStyleColor::create(
         IntPoint { x, y },

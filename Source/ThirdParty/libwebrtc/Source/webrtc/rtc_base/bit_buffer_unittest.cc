@@ -10,19 +10,18 @@
 
 #include "rtc_base/bit_buffer.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <limits>
 
 #include "api/array_view.h"
-#include "rtc_base/arraysize.h"
 #include "rtc_base/bitstream_reader.h"
-#include "rtc_base/byte_buffer.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 using ::testing::ElementsAre;
-using ::webrtc::BitstreamReader;
 
 TEST(BitBufferWriterTest, ConsumeBits) {
   uint8_t bytes[64] = {0};
@@ -165,7 +164,7 @@ TEST(BitBufferWriterTest, SymmetricReadWrite) {
   // That should be all that fits in the buffer.
   EXPECT_FALSE(buffer.WriteBits(1, 1));
 
-  BitstreamReader reader(rtc::MakeArrayView(bytes, 4));
+  BitstreamReader reader(MakeArrayView(bytes, 4));
   EXPECT_EQ(reader.ReadBits(3), 0x2u);
   EXPECT_EQ(reader.ReadBits(2), 0x1u);
   EXPECT_EQ(reader.ReadBits(7), 0x53u);
@@ -198,12 +197,12 @@ TEST(BitBufferWriterTest, SymmetricGolomb) {
   char test_string[] = "my precious";
   uint8_t bytes[64] = {0};
   BitBufferWriter buffer(bytes, 64);
-  for (size_t i = 0; i < arraysize(test_string); ++i) {
-    EXPECT_TRUE(buffer.WriteExponentialGolomb(test_string[i]));
+  for (char value : test_string) {
+    EXPECT_TRUE(buffer.WriteExponentialGolomb(value));
   }
   BitstreamReader reader(bytes);
-  for (size_t i = 0; i < arraysize(test_string); ++i) {
-    EXPECT_EQ(int64_t{reader.ReadExponentialGolomb()}, int64_t{test_string[i]});
+  for (char value : test_string) {
+    EXPECT_EQ(int64_t{reader.ReadExponentialGolomb()}, int64_t{value});
   }
   EXPECT_TRUE(reader.Ok());
 }
@@ -253,4 +252,4 @@ TEST(BitBufferWriterTest, WriteStringTooSmallBuffer) {
   EXPECT_FALSE(writer.WriteString("abc"));
 }
 
-}  // namespace rtc
+}  // namespace webrtc

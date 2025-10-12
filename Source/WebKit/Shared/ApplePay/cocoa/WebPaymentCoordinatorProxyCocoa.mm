@@ -89,7 +89,7 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
 
-        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), canMakePayments] {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), canMakePayments] {
             completionHandler(canMakePayments);
         });
     }).get());
@@ -104,7 +104,7 @@ void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchant
 
     auto passLibrary = adoptNS([PAL::allocPKPassLibraryInstance() init]);
     [passLibrary openPaymentSetupForMerchantIdentifier:merchantIdentifier.createNSString().get() domain:domainName.createNSString().get() completion:makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL result) mutable {
-        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), result] {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), result] {
             completionHandler(result);
         });
     }).get()];
@@ -125,7 +125,7 @@ static RetainPtr<NSSet> toPKContactFields(const WebCore::ApplePaySessionPaymentR
     if (contactFields.phoneticName)
         result.append(PKContactFieldPhoneticName);
 
-    return adoptNS([[NSSet alloc] initWithObjects:result.data() count:result.size()]);
+    return adoptNS([[NSSet alloc] initWithObjects:result.span().data() count:result.size()]);
 }
 
 PKMerchantCapability toPKMerchantCapabilities(const WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities& merchantCapabilities)
@@ -190,7 +190,7 @@ static RetainPtr<PKDateComponentsRange> toPKDateComponentsRange(const WebCore::A
 
 RetainPtr<PKShippingMethod> toPKShippingMethod(const WebCore::ApplePayShippingMethod& shippingMethod)
 {
-    RetainPtr<PKShippingMethod> result = [PAL::getPKShippingMethodClass() summaryItemWithLabel:shippingMethod.label.createNSString().get() amount:WebCore::toDecimalNumber(shippingMethod.amount)];
+    RetainPtr<PKShippingMethod> result = [PAL::getPKShippingMethodClassSingleton() summaryItemWithLabel:shippingMethod.label.createNSString().get() amount:WebCore::toProtectedDecimalNumber(shippingMethod.amount).get()];
     [result setIdentifier:shippingMethod.identifier.createNSString().get()];
     [result setDetail:shippingMethod.detail.createNSString().get()];
 #if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
@@ -326,7 +326,7 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
     }).get()];
 #endif
 
-    [result setPaymentSummaryItems:WebCore::platformSummaryItems(paymentRequest.total(), paymentRequest.lineItems())];
+    [result setPaymentSummaryItems:WebCore::platformSummaryItems(paymentRequest.total(), paymentRequest.lineItems()).get()];
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [result setExpectsMerchantSession:YES];
@@ -460,20 +460,20 @@ void WebPaymentCoordinatorProxy::platformCompleteCouponCodeChange(std::optional<
 void WebPaymentCoordinatorProxy::getSetupFeatures(const PaymentSetupConfiguration& configuration, CompletionHandler<void(PaymentSetupFeatures&&)>&& reply)
 {
 #if PLATFORM(MAC)
-    if (!PAL::getPKPaymentSetupControllerClass()) {
+    if (!PAL::getPKPaymentSetupControllerClassSingleton()) {
         reply({ });
         return;
     }
 #endif
 
     auto completion = makeBlockPtr([reply = WTFMove(reply)](NSArray<PKPaymentSetupFeature *> *features) mutable {
-        RunLoop::protectedMain()->dispatch([reply = WTFMove(reply), features = retainPtr(features)]() mutable {
+        RunLoop::mainSingleton().dispatch([reply = WTFMove(reply), features = retainPtr(features)]() mutable {
             reply(PaymentSetupFeatures { WTFMove(features) });
         });
     });
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-    [PAL::getPKPaymentSetupControllerClass() paymentSetupFeaturesForConfiguration:configuration.platformConfiguration().get() completion:completion.get()];
+    [PAL::getPKPaymentSetupControllerClassSingleton() paymentSetupFeaturesForConfiguration:configuration.platformConfiguration().get() completion:completion.get()];
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 }
 
@@ -493,17 +493,17 @@ void WebPaymentCoordinatorProxy::endApplePaySetup()
 
 void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupConfiguration& configuration, const PaymentSetupFeatures& features, CompletionHandler<void(bool)>&& reply)
 {
-    if (!PAL::getPKPaymentSetupRequestClass()) {
+    if (!PAL::getPKPaymentSetupRequestClassSingleton()) {
         reply(false);
         return;
     }
 
     auto request = adoptNS([PAL::allocPKPaymentSetupRequestInstance() init]);
     [request setConfiguration:configuration.platformConfiguration().get()];
-    [request setPaymentSetupFeatures:features.platformFeatures()];
+    [request setPaymentSetupFeatures:features.protectedPlatformFeatures().get()];
 
     auto completion = makeBlockPtr([reply = WTFMove(reply)](BOOL success) mutable {
-        RunLoop::protectedMain()->dispatch([reply = WTFMove(reply), success]() mutable {
+        RunLoop::mainSingleton().dispatch([reply = WTFMove(reply), success]() mutable {
             reply(success);
         });
     });
@@ -540,7 +540,7 @@ void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupCo
     }
 
     auto completion = makeBlockPtr([reply = WTFMove(reply)]() mutable {
-        RunLoop::protectedMain()->dispatch([reply = WTFMove(reply)]() mutable {
+        RunLoop::mainSingleton().dispatch([reply = WTFMove(reply)]() mutable {
             reply(true);
         });
     });

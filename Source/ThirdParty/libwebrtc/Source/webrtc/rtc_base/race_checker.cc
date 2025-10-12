@@ -10,7 +10,9 @@
 
 #include "rtc_base/race_checker.h"
 
-namespace rtc {
+#include "rtc_base/platform_thread_types.h"
+
+namespace webrtc {
 
 RaceChecker::RaceChecker() {}
 
@@ -53,4 +55,4 @@ RaceCheckerScope::~RaceCheckerScope() {
 }
 
 }  // namespace internal
-}  // namespace rtc
+}  // namespace webrtc

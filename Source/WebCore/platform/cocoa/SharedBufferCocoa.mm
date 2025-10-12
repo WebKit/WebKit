@@ -71,7 +71,7 @@
 
     RELEASE_ASSERT(position <= dataSegment.size());
     RELEASE_ASSERT(size <= dataSegment.size() - position);
-    _dataSegment = &dataSegment;
+    _dataSegment = dataSegment;
     _position = position;
     _size = size;
     return self;
@@ -91,14 +91,15 @@
 
 namespace WebCore {
 
-Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::create(NSData *data)
+Ref<SharedBuffer> SharedBuffer::create(NSData *data)
 {
-    return adoptRef(*new FragmentedSharedBuffer(bridge_cast(data)));
+    if (!data)
+        return SharedBuffer::create();
+    return adoptRef(*new SharedBuffer(bridge_cast(data)));
 }
 
-void FragmentedSharedBuffer::append(NSData *data)
+void SharedBufferBuilder::append(NSData *data)
 {
-    ASSERT(!m_contiguous);
     return append(bridge_cast(data));
 }
 
@@ -127,7 +128,7 @@ RetainPtr<CMBlockBufferRef> FragmentedSharedBuffer::createCMBlockBuffer() const
         return adoptCF(partialBuffer);
     };
 
-    if (hasOneSegment() && !isEmpty())
+    if (isContiguous() && !isEmpty())
         return segmentToCMBlockBuffer(m_segments[0].segment);
 
     CMBlockBufferRef rawBlockBuffer = nullptr;
@@ -158,14 +159,14 @@ RetainPtr<NSData> SharedBuffer::createNSData() const
 
 RetainPtr<CFDataRef> SharedBuffer::createCFData() const
 {
-    if (!m_segments.size())
+    if (!size())
         return adoptCF(CFDataCreate(nullptr, nullptr, 0));
-    return bridge_cast(m_segments[0].segment->createNSData());
+    return bridge_cast(segments()[0].segment->createNSData());
 }
 
 RetainPtr<NSArray> FragmentedSharedBuffer::createNSDataArray() const
 {
-    return createNSArray(m_segments, [] (auto& segment) {
+    return createNSArray(segments(), [] (auto& segment) {
         return segment.segment->createNSData();
     });
 }

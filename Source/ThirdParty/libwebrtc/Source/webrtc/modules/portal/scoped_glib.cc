@@ -10,6 +10,11 @@
 
 #include "modules/portal/scoped_glib.h"
 
+#include <gio/gio.h>
+
+#include "rtc_base/system/rtc_export.h"
+#include "rtc_base/system/rtc_export_template.h"
+
 namespace webrtc {
 
 template class RTC_EXPORT_TEMPLATE_DEFINE(RTC_EXPORT) Scoped<GError>;

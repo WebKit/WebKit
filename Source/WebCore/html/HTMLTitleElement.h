@@ -22,8 +22,8 @@
 
 #pragma once
 
-#include "HTMLElement.h"
-#include "StringWithDirection.h"
+#include <WebCore/HTMLElement.h>
+#include <WebCore/StringWithDirection.h>
 
 namespace WebCore {
 

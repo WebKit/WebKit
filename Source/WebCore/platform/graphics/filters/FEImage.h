@@ -3,7 +3,7 @@
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2010 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2021-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,11 +23,11 @@
 
 #pragma once
 
-#include "FilterEffect.h"
-#include "Image.h"
-#include "ImageBuffer.h"
-#include "SVGPreserveAspectRatioValue.h"
-#include "SourceImage.h"
+#include <WebCore/FilterEffect.h>
+#include <WebCore/Image.h>
+#include <WebCore/ImageBuffer.h>
+#include <WebCore/SVGPreserveAspectRatioValue.h>
+#include <WebCore/SourceImage.h>
 
 namespace WebCore {
 
@@ -35,7 +35,7 @@ class Image;
 class ImageBuffer;
 
 class FEImage final : public FilterEffect {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEImage);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEImage);
 public:
     WEBCORE_EXPORT static Ref<FEImage> create(SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);

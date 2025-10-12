@@ -287,7 +287,7 @@ TEST(WTF_HashSet, CopyCapacityIsNotOnBoundary)
 }
 
 struct DerefObserver {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DerefObserver);
     NEVER_INLINE void ref()
     {
         ++count;
@@ -619,43 +619,43 @@ TEST(WTF_HashSet, FormUnion)
 
     {
         auto result = emptySet;
-        result.formUnion(set1);
+        result.addAll(set1);
         EXPECT_EQ(result, set1);
     }
 
     {
         auto result = set1;
-        result.formUnion(emptySet);
+        result.addAll(emptySet);
         EXPECT_EQ(result, set1);
     }
 
     {
         auto result = emptySet;
-        result.formUnion(emptySet);
+        result.addAll(emptySet);
         EXPECT_EQ(result, emptySet);
     }
 
     {
         auto result = set1;
-        result.formUnion(set1);
+        result.addAll(set1);
         EXPECT_EQ(result, set1);
     }
 
     {
         auto result = set1;
-        result.formUnion(set2);
+        result.addAll(set2);
         EXPECT_EQ(result, set3);
     }
 
     {
         auto result = set2;
-        result.formUnion(set1);
+        result.addAll(set1);
         EXPECT_EQ(result, set3);
     }
 
     {
         auto result = set1;
-        result.formUnion(sequence);
+        result.addAll(sequence);
         EXPECT_EQ(result, set3);
     }
 }

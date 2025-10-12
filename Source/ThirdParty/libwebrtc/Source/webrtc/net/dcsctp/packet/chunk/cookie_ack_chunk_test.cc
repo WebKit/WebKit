@@ -9,14 +9,11 @@
  */
 #include "net/dcsctp/packet/chunk/cookie_ack_chunk.h"
 
-#include <stdint.h>
-
-#include <type_traits>
+#include <cstdint>
 #include <vector>
 
 #include "net/dcsctp/testing/testing_macros.h"
-#include "rtc_base/gunit.h"
-#include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace {

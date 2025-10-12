@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "CSSCalcTree.h"
+#include <WebCore/CSSCalcTree.h>
 #include <optional>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>

@@ -5,7 +5,7 @@ authors = "The WebKit GTK and WPE teams"
 version = "@PROJECT_VERSION@"
 repository_url = "https://github.com/WebKit/WebKit"
 website_url = "https://webkit.org"
-dependencies = ["GObject-2.0", "Gio-2.0", "Soup-@SOUP_API_VERSION@"]
+dependencies = ["GObject-2.0", "Gio-2.0", "Soup-3.0"]
 devhelp = true
 search_index = true
 
@@ -19,10 +19,10 @@ name = "Gio"
 description = "GObject Interfaces and Objects, Networking, IPC, and I/O"
 docs_url = "https://docs.gtk.org/gio/"
 
-[dependencies."Soup-@SOUP_API_VERSION@"]
+[dependencies."Soup-3.0"]
 name = "Soup"
 description = "HTTP client/server library"
-docs_url = "https://gnome.pages.gitlab.gnome.org/libsoup/libsoup-@SOUP_API_VERSION@"
+docs_url = "https://gnome.pages.gitlab.gnome.org/libsoup/libsoup-3.0"
 
 [theme]
 name = "basic"

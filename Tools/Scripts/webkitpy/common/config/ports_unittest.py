@@ -67,4 +67,4 @@ class DeprecatedPortTest(unittest.TestCase):
         self.assertEqual(JscOnlyPort().build_jsc_command(), DeprecatedPort().script_shell_command("build-jsc") + ["--jsc-only"])
         self.assertEqual(JscOnlyPort().build_jsc_command(build_style="release"), DeprecatedPort().script_shell_command("build-jsc") + ["--jsc-only", "--release"])
         self.assertEqual(JscOnlyPort().build_jsc_command(build_style="debug"), DeprecatedPort().script_shell_command("build-jsc") + ["--jsc-only", "--debug"])
-        self.assertEqual(JscOnlyPort().run_javascriptcore_tests_command(build_style="debug"), DeprecatedPort().script_shell_command("run-javascriptcore-tests") + ['--no-fail-fast', '--no-testmasm', '--no-testair', '--no-testb3', '--no-testdfg', '--no-testapi', '--debug'])
+        self.assertEqual(JscOnlyPort().run_javascriptcore_tests_command(build_style="debug"), DeprecatedPort().script_shell_command("run-javascriptcore-tests") + ['--no-fail-fast', '--no-testmasm', '--no-testair', '--no-testb3', '--no-testdfg', '--no-testapi', '--no-testwasmdebugger', '--debug'])

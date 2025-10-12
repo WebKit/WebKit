@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,36 @@
 
 #pragma once
 
+#include <bit>
 #include <initializer_list>
 #include <iterator>
 #include <optional>
 #include <type_traits>
 #include <wtf/Assertions.h>
+#include <wtf/Atomics.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/Forward.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
 
-template<typename E> class OptionSet;
+template<typename E, ConcurrencyTag> class OptionSet;
+template<typename E> struct ConstexprOptionSet;
 
 // OptionSet is a class that represents a set of enumerators in a space-efficient manner. The enumerators
 // must be powers of two greater than 0. This class is useful as a replacement for passing a bitmask of
 // enumerators around.
-template<typename E> class OptionSet {
-    WTF_MAKE_FAST_ALLOCATED;
+template<typename E, ConcurrencyTag concurrency> class OptionSet {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(OptionSet);
     static_assert(std::is_enum<E>::value, "T is not an enum type");
 
 public:
     using StorageType = std::make_unsigned_t<std::underlying_type_t<E>>;
 
     template<typename StorageType> class Iterator {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Iterator);
     public:
         // Isolate the rightmost set bit.
         E operator*() const { return static_cast<E>(m_value & -m_value); }
@@ -132,11 +136,21 @@ public:
 
     constexpr void add(OptionSet optionSet)
     {
+        if constexpr (concurrency == ConcurrencyTag::Atomic) {
+            auto* ptr = std::bit_cast<Atomic<std::underlying_type_t<E>>*>(&m_storage);
+            ptr->exchangeOr(optionSet.m_storage);
+            return;
+        }
         m_storage |= optionSet.m_storage;
     }
 
     constexpr void remove(OptionSet optionSet)
     {
+        if constexpr (concurrency == ConcurrencyTag::Atomic) {
+            auto* ptr = std::bit_cast<Atomic<std::underlying_type_t<E>>*>(&m_storage);
+            ptr->exchangeAnd(~optionSet.m_storage);
+            return;
+        }
         m_storage &= ~optionSet.m_storage;
     }
 
@@ -150,11 +164,16 @@ public:
 
     constexpr bool hasExactlyOneBitSet() const
     {
-        return m_storage && !(m_storage & (m_storage - 1));
+        auto storage = m_storage; // Make a local copy for the evaluation so that it is consistent even with concurrency.
+        return storage && !(storage & (storage - 1));
     }
 
     constexpr std::optional<E> toSingleValue() const
     {
+        if constexpr (concurrency == ConcurrencyTag::Atomic) {
+            auto set = *this; // Make a local copy for the evaluation so that it is consistent even with concurrency.
+            return set.hasExactlyOneBitSet() ? std::optional<E>(static_cast<E>(set.m_storage)) : std::nullopt;
+        }
         return hasExactlyOneBitSet() ? std::optional<E>(static_cast<E>(m_storage)) : std::nullopt;
     }
 
@@ -195,6 +214,8 @@ private:
     {
     }
     StorageType m_storage { 0 };
+
+    friend struct ConstexprOptionSet<E>;
 };
 
 namespace IsValidOptionSetHelper {
@@ -209,13 +230,32 @@ struct OptionSetValueChecker<T, EnumValues<E>> {
 };
 }
 
-template<typename E>
-WARN_UNUSED_RETURN constexpr bool isValidOptionSet(OptionSet<E> optionSet)
+template<typename E, ConcurrencyTag concurrency>
+WARN_UNUSED_RETURN constexpr bool isValidOptionSet(OptionSet<E, concurrency> optionSet)
 {
     // FIXME: Remove this when all OptionSet enums are migrated to generated serialization.
     auto allValidBitsValue = IsValidOptionSetHelper::OptionSetValueChecker<std::make_unsigned_t<std::underlying_type_t<E>>, typename EnumTraits<E>::values>::allValidBits();
     return (optionSet.toRaw() | allValidBitsValue) == allValidBitsValue;
 }
+
+// A structural type requires all base classes and non-static data members are public and non-mutable.
+// This helper lets you use OptionSet in template parameters.
+template<typename E>
+struct ConstexprOptionSet {
+    ALWAYS_INLINE constexpr ConstexprOptionSet(OptionSet<E> o)
+        : storage(o.m_storage)
+    {
+    }
+
+    ALWAYS_INLINE constexpr ConstexprOptionSet(std::initializer_list<E> initializerList)
+        : ConstexprOptionSet<E>(OptionSet<E>(WTFMove(initializerList)))
+    {
+    }
+
+    ALWAYS_INLINE constexpr OptionSet<E> operator*() const { return OptionSet<E>::fromRaw(storage); }
+
+    const OptionSet<E>::StorageType storage;
+};
 
 } // namespace WTF
 

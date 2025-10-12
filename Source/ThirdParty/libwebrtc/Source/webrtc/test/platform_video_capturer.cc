@@ -9,7 +9,11 @@
  */
 #include "test/platform_video_capturer.h"
 
+#include <cstddef>
+#include <memory>
+
 #include "absl/memory/memory.h"
+#include "test/test_video_capturer.h"
 #if defined(WEBRTC_MAC)
 #include "test/mac_capturer.h"
 #else

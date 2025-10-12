@@ -1,7 +1,0 @@
-TABLE
-TBODY
-TR
-TD
-
-PASS Table borders track writing mode changes
-

@@ -9,16 +9,11 @@ if (!window.testRunner) {
     }, 0);
 }
 
-function runOnKeyPress(fn)
+function runWithUserGesture(fn)
 {
-    function keypressHandler() {
-        document.removeEventListener('keypress', keypressHandler, false);
-        fn();
+    if (window.testRunner) {
+        internals.withUserGesture(() => setTimeout(fn, 0) );
     }
-    document.addEventListener('keypress', keypressHandler, false);
-
-    if (window.testRunner)
-        eventSender.keyDown(" ", []);
 }
 
 function doNextStep(args)
@@ -34,7 +29,7 @@ function doNextStep(args)
         var thisStep = currentStep++;
         if (thisStep < todo.length)
             if (args.withUserGesture)
-                runOnKeyPress(todo[thisStep]);
+                runWithUserGesture(todo[thisStep]);
             else
                 todo[thisStep]();
         else if (thisStep == todo.length)

@@ -109,6 +109,13 @@ const angle::PerfMonitorCounterGroups &ContextImpl::getPerfMonitorCounters()
     return *sCounters;
 }
 
+const angle::ShadingRateMap &ContextImpl::getSupportedFragmentShadingRateEXTSampleCounts() const
+{
+    UNREACHABLE();
+    static angle::ShadingRateMap empty;
+    return empty;
+}
+
 angle::Result ContextImpl::bindMetalRasterizationRateMap(gl::Context *,
                                                          RenderbufferImpl *renderbuffer,
                                                          GLMTLRasterizationRateMapANGLE map)

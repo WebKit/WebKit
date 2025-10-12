@@ -27,6 +27,7 @@
 #define WKBundleHitTestResult_h
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 #include <WebKit/WKGeometry.h>
 
 #ifdef __cplusplus
@@ -45,8 +46,8 @@ WK_EXPORT WKTypeID WKBundleHitTestResultGetTypeID();
 WK_EXPORT WKBundleNodeHandleRef WKBundleHitTestResultCopyNodeHandle(WKBundleHitTestResultRef hitTestResult);
 WK_EXPORT WKBundleNodeHandleRef WKBundleHitTestResultCopyURLElementHandle(WKBundleHitTestResultRef hitTestResult);
 
-WK_EXPORT WKBundleFrameRef WKBundleHitTestResultGetFrame(WKBundleHitTestResultRef hitTestResult);
-WK_EXPORT WKBundleFrameRef WKBundleHitTestResultGetTargetFrame(WKBundleHitTestResultRef hitTestResult);
+WK_EXPORT WKBundleFrameRef WKBundleHitTestResultGetFrame(WKBundleHitTestResultRef hitTestResult) WK_C_API_DEPRECATED;
+WK_EXPORT WKBundleFrameRef WKBundleHitTestResultGetTargetFrame(WKBundleHitTestResultRef hitTestResult) WK_C_API_DEPRECATED;
 
 WK_EXPORT WKURLRef WKBundleHitTestResultCopyAbsoluteImageURL(WKBundleHitTestResultRef hitTestResult);
 WK_EXPORT WKURLRef WKBundleHitTestResultCopyAbsolutePDFURL(WKBundleHitTestResultRef hitTestResult);
@@ -58,7 +59,7 @@ WK_EXPORT bool WKBundleHitTestResultIsDownloadableMedia(WKBundleHitTestResultRef
 WK_EXPORT WKBundleHitTestResultMediaType WKBundleHitTestResultGetMediaType(WKBundleHitTestResultRef hitTestResult);
 
 WK_EXPORT WKRect WKBundleHitTestResultGetImageRect(WKBundleHitTestResultRef hitTestResult);
-WK_EXPORT WKImageRef WKBundleHitTestResultCopyImage(WKBundleHitTestResultRef hitTestResult);
+WK_EXPORT WKImageRef WKBundleHitTestResultCopyImage(WKBundleHitTestResultRef hitTestResult) WK_C_API_DEPRECATED;
 WK_EXPORT bool WKBundleHitTestResultGetIsSelected(WKBundleHitTestResultRef hitTestResult);
 
 WK_EXPORT WKStringRef WKBundleHitTestResultCopyLinkLabel(WKBundleHitTestResultRef hitTestResult);

@@ -26,8 +26,10 @@
 #pragma once
 
 #include "UnencodableHandling.h"
+#include <pal/ExportMacros.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringView.h>
+#include <wtf/text/WTFString.h>
 
 namespace PAL {
 
@@ -54,7 +56,7 @@ public:
     PAL_EXPORT Vector<uint8_t> encode(StringView, PAL::UnencodableHandling, NFCNormalize = NFCNormalize::Yes) const;
     Vector<uint8_t> encodeForURLParsing(StringView string) const final { return encode(string, PAL::UnencodableHandling::URLEncodedEntities, NFCNormalize::No); }
 
-    UChar backslashAsCurrencySymbol() const;
+    char16_t backslashAsCurrencySymbol() const;
     bool isByteBasedEncoding() const { return !isNonByteBasedEncoding(); }
 
 private:
@@ -62,7 +64,7 @@ private:
     bool isUTF7Encoding() const;
 
     ASCIILiteral m_name;
-    UChar m_backslashAsCurrencySymbol;
+    char16_t m_backslashAsCurrencySymbol;
 };
 
 inline bool operator==(const TextEncoding& a, const TextEncoding& b) { return a.name() == b.name(); }

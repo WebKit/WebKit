@@ -24,7 +24,7 @@ CRYPTO_rdrand:
 
 _CET_ENDBR
 	xor	rax,rax
-DB	73,15,199,240
+	rdrand	r8
 
 	adc	rax,rax
 	mov	QWORD[rcx],r8
@@ -46,7 +46,7 @@ _CET_ENDBR
 	jz	NEAR $L$out
 	mov	r8,8
 $L$loop:
-DB	73,15,199,241
+	rdrand	r9
 	jnc	NEAR $L$err
 	mov	QWORD[rcx],r9
 	add	rcx,r8

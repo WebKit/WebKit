@@ -44,12 +44,11 @@ const char* VideoDecoder::ImplementationName() const {
 
 std::string VideoDecoder::DecoderInfo::ToString() const {
   char string_buf[2048];
-  rtc::SimpleStringBuilder oss(string_buf);
+  SimpleStringBuilder oss(string_buf);
 
   oss << "DecoderInfo { "
-      << "prefers_late_decoding = "
-      << "implementation_name = '" << implementation_name << "', "
-      << "is_hardware_accelerated = "
+      << "prefers_late_decoding = " << "implementation_name = '"
+      << implementation_name << "', " << "is_hardware_accelerated = "
       << (is_hardware_accelerated ? "true" : "false") << " }";
   return oss.str();
 }

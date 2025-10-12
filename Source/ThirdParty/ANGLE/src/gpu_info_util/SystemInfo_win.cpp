@@ -71,10 +71,27 @@ bool GetDevicesFromDXGI(std::vector<GPUDeviceInfo> *devices)
         device.vendorId      = desc.VendorId;
         device.deviceId      = desc.DeviceId;
         device.driverVersion = o.str();
-        device.systemDeviceId =
-            GetSystemDeviceIdFromParts(desc.AdapterLuid.HighPart, desc.AdapterLuid.LowPart);
 
-        devices->push_back(device);
+        // Skip duplicate devices that have the same vendorId, deviceId, and driverVersion
+        // but different systemDeviceId (can happen with remote desktop connections)
+        bool isDuplicate = false;
+        for (const auto &existingDevice : *devices)
+        {
+            if (existingDevice.vendorId == device.vendorId &&
+                existingDevice.deviceId == device.deviceId &&
+                existingDevice.driverVersion == device.driverVersion)
+            {
+                isDuplicate = true;
+                break;
+            }
+        }
+
+        if (!isDuplicate)
+        {
+            device.systemDeviceId =
+                GetSystemDeviceIdFromParts(desc.AdapterLuid.HighPart, desc.AdapterLuid.LowPart);
+            devices->push_back(device);
+        }
 
         adapter->Release();
     }

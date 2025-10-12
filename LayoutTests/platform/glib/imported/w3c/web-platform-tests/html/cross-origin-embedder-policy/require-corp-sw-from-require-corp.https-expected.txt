@@ -1,13 +1,3 @@
-CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Load failed
-CONSOLE MESSAGE: Fetch API cannot load https://www1.web-platform.test:9443/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt.
-CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Load failed
-CONSOLE MESSAGE: Fetch API cannot load https://www1.web-platform.test:9443/common/blank.html.
-CONSOLE MESSAGE: Cancelled load to https://www1.web-platform.test:9443/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt?passthrough because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Fetch API cannot load https://www1.web-platform.test:9443/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt?passthrough due to access control checks.
-CONSOLE MESSAGE: Cancelled load to https://www1.web-platform.test:9443/common/blank.html?passthrough because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Fetch API cannot load https://www1.web-platform.test:9443/common/blank.html?passthrough due to access control checks.
-CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Load failed
-CONSOLE MESSAGE: Fetch API cannot load https://www1.web-platform.test:9443/common/blank.html.
 
 PASS setting up
 PASS making a same-origin request for CORP: same-origin

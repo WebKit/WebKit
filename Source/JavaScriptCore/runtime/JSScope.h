@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "GetPutInfo.h"
-#include "JSObject.h"
-#include "VariableEnvironment.h"
+#include <JavaScriptCore/GetPutInfo.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/VariableEnvironment.h>
 
 namespace JSC {
 

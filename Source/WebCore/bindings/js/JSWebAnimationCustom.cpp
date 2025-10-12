@@ -38,20 +38,6 @@ namespace WebCore {
 
 using namespace JSC;
 
-JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<WebAnimation>&& value)
-{
-    if (value->isCSSAnimation())
-        return createWrapper<CSSAnimation>(globalObject, WTFMove(value));
-    if (value->isCSSTransition())
-        return createWrapper<CSSTransition>(globalObject, WTFMove(value));
-    return createWrapper<WebAnimation>(globalObject, WTFMove(value));
-}
-
-JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, WebAnimation& value)
-{
-    return wrap(lexicalGlobalObject, globalObject, value);
-}
-
 EncodedJSValue constructJSWebAnimation(JSGlobalObject* lexicalGlobalObject, CallFrame& callFrame)
 {
     VM& vm = lexicalGlobalObject->vm();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,8 +55,8 @@ private:
     // Using int instead of DateComponentsType for the key because the enum
     // does not have a default hash and hash traits. Usage of the maps
     // casts the DateComponents::Type into an int as the key.
-    typedef UncheckedKeyHashMap<int, RetainPtr<NSDateFormatter>> DateTypeFormatterMap;
-    typedef UncheckedKeyHashMap<int, float> DateTypeMaxWidthMap;
+    using DateTypeFormatterMap = HashMap<int, RetainPtr<NSDateFormatter>>;
+    using DateTypeMaxWidthMap = HashMap<int, float>;
     DateTypeFormatterMap m_formatterMap;
     DateTypeMaxWidthMap m_maxWidthMap;
     FontCascade m_font;

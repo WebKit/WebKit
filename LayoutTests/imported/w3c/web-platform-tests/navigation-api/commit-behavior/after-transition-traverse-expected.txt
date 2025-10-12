@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'navigation.currentEntry.index')
-
-Harness Error (FAIL), message = TypeError: null is not an object (evaluating 'navigation.currentEntry.index')
-
-

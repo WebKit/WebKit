@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "Handle.h"
-#include "HandleBlock.h"
-#include "HeapCell.h"
+#include <JavaScriptCore/Handle.h>
+#include <JavaScriptCore/HandleBlock.h>
+#include <JavaScriptCore/HeapCell.h>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/SentinelLinkedList.h>

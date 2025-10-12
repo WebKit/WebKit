@@ -28,13 +28,14 @@
 
 #import "CGSubimageCacheWithTimer.h"
 #import "FontCache.h"
-#import "GCController.h"
+#import "GarbageCollectionController.h"
 #import "HTMLNameCache.h"
 #import "IOSurfacePool.h"
 #import "LayerPool.h"
 #import "LocaleCocoa.h"
 #import <notify.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "LegacyTileCache.h"
@@ -94,7 +95,7 @@ void jettisonExpensiveObjectsOnTopLevelNavigation()
 #if PLATFORM(IOS_FAMILY)
     // Throw away linked JS code. Linked code is tied to a global object and is not reusable.
     // The immediate memory savings outweigh the cost of recompilation in case we go back again.
-    GCController::singleton().deleteAllLinkedCode(JSC::DeleteAllCodeIfNotCollecting);
+    GarbageCollectionController::singleton().deleteAllLinkedCode(JSC::DeleteAllCodeIfNotCollecting);
 #endif
 
     HTMLNameCache::clear();
@@ -105,12 +106,12 @@ void registerMemoryReleaseNotifyCallbacks()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         int dummy;
-        notify_register_dispatch("com.apple.WebKit.fullGC", &dummy, dispatch_get_main_queue(), ^(int) {
-            GCController::singleton().garbageCollectNow();
+        notify_register_dispatch("com.apple.WebKit.fullGC", &dummy, mainDispatchQueueSingleton(), ^(int) {
+            GarbageCollectionController::singleton().garbageCollectNow();
         });
-        notify_register_dispatch("com.apple.WebKit.deleteAllCode", &dummy, dispatch_get_main_queue(), ^(int) {
-            GCController::singleton().deleteAllCode(JSC::PreventCollectionAndDeleteAllCode);
-            GCController::singleton().garbageCollectNow();
+        notify_register_dispatch("com.apple.WebKit.deleteAllCode", &dummy, mainDispatchQueueSingleton(), ^(int) {
+            GarbageCollectionController::singleton().deleteAllCode(JSC::PreventCollectionAndDeleteAllCode);
+            GarbageCollectionController::singleton().garbageCollectNow();
         });
     });
 }

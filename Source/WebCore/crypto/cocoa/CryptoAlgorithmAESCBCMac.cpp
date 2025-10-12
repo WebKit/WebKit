@@ -37,14 +37,14 @@ static ExceptionOr<Vector<uint8_t>> transformAESCBC(CCOperation operation, const
 {
     CCOptions options = padding == CryptoAlgorithmAESCBC::Padding::Yes ? kCCOptionPKCS7Padding : 0;
     CCCryptorRef cryptor;
-    CCCryptorStatus status = CCCryptorCreate(operation, kCCAlgorithmAES, options, key.data(), key.size(), iv.data(), &cryptor);
+    CCCryptorStatus status = CCCryptorCreate(operation, kCCAlgorithmAES, options, key.span().data(), key.size(), iv.span().data(), &cryptor);
     if (status)
         return Exception { ExceptionCode::OperationError };
 
     Vector<uint8_t> result(CCCryptorGetOutputLength(cryptor, data.size(), true));
 
     size_t bytesWritten;
-    status = CCCryptorUpdate(cryptor, data.data(), data.size(), result.data(), result.size(), &bytesWritten);
+    status = CCCryptorUpdate(cryptor, data.span().data(), data.size(), result.mutableSpan().data(), result.size(), &bytesWritten);
     if (status)
         return Exception { ExceptionCode::OperationError };
 

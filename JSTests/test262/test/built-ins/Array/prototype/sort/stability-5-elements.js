@@ -8,6 +8,7 @@ description: >
 info: |
   The sort is required to be stable (that is, elements that compare equal
   remain in their original order).
+features: [stable-array-sort]
 ---*/
 
 const array = [

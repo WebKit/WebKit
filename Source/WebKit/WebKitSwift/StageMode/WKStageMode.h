@@ -28,33 +28,35 @@
 
 #if ENABLE(MODEL_PROCESS)
 
-#import "RealityKitBridging.h"
+#import "WKRKEntity.h"
 #import <simd/simd.h>
 
-NS_ASSUME_NONNULL_BEGIN
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 typedef NS_ENUM(NSInteger, WKStageModeOperation) {
     WKStageModeOperationNone = 0,
     WKStageModeOperationOrbit,
 };
 
+NS_SWIFT_UI_ACTOR
 @protocol WKStageModeInteractionAware <NSObject>
 - (void)stageModeInteractionDidUpdateModel;
 @end
 
+NS_SWIFT_UI_ACTOR
 @interface WKStageModeInteractionDriver : NSObject
 @property (nonatomic, readonly) REEntityRef interactionContainerRef;
 @property (nonatomic, readonly) bool stageModeInteractionInProgress;
 
-- (instancetype)initWithModel:(WKSRKEntity *)model container:(REEntityRef)container delegate:(id<WKStageModeInteractionAware> _Nullable)delegate NS_SWIFT_NAME(init(with:container:delegate:));
-- (void)setContainerTransformInPortal NS_SWIFT_NAME(setContainerTransformInPortal());
-- (void)interactionDidBegin:(simd_float4x4)transform NS_SWIFT_NAME(interactionDidBegin(_:));
-- (void)interactionDidUpdate:(simd_float4x4)transform NS_SWIFT_NAME(interactionDidUpdate(_:));
-- (void)interactionDidEnd NS_SWIFT_NAME(interactionDidEnd());
-- (void)operationDidUpdate:(WKStageModeOperation)operation NS_SWIFT_NAME(operationDidUpdate(_:));
+- (instancetype)initWithModel:(WKRKEntity *)model container:(REEntityRef)container delegate:(id<WKStageModeInteractionAware> _Nullable)delegate;
+- (void)setContainerTransformInPortal;
+- (void)interactionDidBegin:(simd_float4x4)transform;
+- (void)interactionDidUpdate:(simd_float4x4)transform;
+- (void)interactionDidEnd;
+- (void)operationDidUpdate:(WKStageModeOperation)operation;
 - (void)removeInteractionContainerFromSceneOrParent;
 @end
 
-NS_ASSUME_NONNULL_END
+NS_HEADER_AUDIT_END(nullability, sendability)
 
-#endif
+#endif // ENABLE(MODEL_PROCESS)

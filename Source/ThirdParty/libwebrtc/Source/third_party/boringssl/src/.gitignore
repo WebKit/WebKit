@@ -6,11 +6,10 @@
 *.pyc
 *.swp
 *.swo
+/out/
 /doc/*.html
 /doc/doc.css
-/rust/Cargo.lock
-/rust/bssl-crypto/Cargo.lock
-/rust/target
+/rust/**/target
 /user.bazelrc
 
 /util/bazel-example/bazel-*
@@ -24,16 +23,15 @@
 /util/bot/libcxx
 /util/bot/libcxxabi
 /util/bot/llvm-build
+/util/bot/llvm-libc
 /util/bot/nasm-win32.exe
 /util/bot/ninja
 /util/bot/perl-win32
 /util/bot/qemu-static
+/util/bot/rust-toolchain
 /util/bot/sde-linux64
 /util/bot/sde-linux64.tar.xz
 /util/bot/sde-win32
 /util/bot/sde-win32.tar.xz
-/util/bot/win_toolchain
-/util/bot/win_toolchain.json
-
-# Ignore target under any directory.
-target/
+/util/bot/tools
+/util/bot/windows_sdk

@@ -11,6 +11,9 @@
 #ifndef VIDEO_ALIGNMENT_ADJUSTER_H_
 #define VIDEO_ALIGNMENT_ADJUSTER_H_
 
+#include <cstddef>
+#include <optional>
+
 #include "api/video_codecs/video_encoder.h"
 #include "video/config/video_encoder_config.h"
 

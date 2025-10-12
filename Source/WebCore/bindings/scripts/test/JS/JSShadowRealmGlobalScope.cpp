@@ -113,7 +113,7 @@ JSValue JSShadowRealmGlobalScope::getConstructor(VM& vm, const JSGlobalObject* g
 
 void JSShadowRealmGlobalScope::destroy(JSC::JSCell* cell)
 {
-    JSShadowRealmGlobalScope* thisObject = static_cast<JSShadowRealmGlobalScope*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSShadowRealmGlobalScope* thisObject = static_cast<JSShadowRealmGlobalScope*>(cell);
     thisObject->JSShadowRealmGlobalScope::~JSShadowRealmGlobalScope();
 }
 
@@ -151,7 +151,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsShadowRealmGlobalScope_ShadowRealmGlobalScopeConstruc
 
 JSC::GCClient::IsoSubspace* JSShadowRealmGlobalScope::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSShadowRealmGlobalScope, UseCustomHeapCellType::Yes>(vm,
+    return WebCore::subspaceForImpl<JSShadowRealmGlobalScope, UseCustomHeapCellType::Yes>(vm, "JSShadowRealmGlobalScope"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForShadowRealmGlobalScope.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForShadowRealmGlobalScope = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForShadowRealmGlobalScope.get(); },
@@ -179,7 +179,7 @@ bool JSShadowRealmGlobalScopeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::
 
 void JSShadowRealmGlobalScopeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsShadowRealmGlobalScope = static_cast<JSShadowRealmGlobalScope*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsShadowRealmGlobalScope = static_cast<JSShadowRealmGlobalScope*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsShadowRealmGlobalScope->protectedWrapped().ptr(), jsShadowRealmGlobalScope);
 }

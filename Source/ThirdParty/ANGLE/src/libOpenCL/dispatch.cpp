@@ -89,6 +89,16 @@ IcdDispatch CreateDispatch()
         static_cast<cl_icd_dispatch &>(dispatch) = *clIcdDispatch;
         dispatch.clIcdGetPlatformIDsKHR          = reinterpret_cast<clIcdGetPlatformIDsKHR_fn>(
             clIcdDispatch->clGetExtensionFunctionAddress("clIcdGetPlatformIDsKHR"));
+        // TODO: below extensions will be refactored to not to expose them publicly later
+        // http://anglebug.com/378017028
+        dispatch.clEnqueueAcquireExternalMemObjectsKHR =
+            reinterpret_cast<clEnqueueAcquireExternalMemObjectsKHR_fn>(
+                clIcdDispatch->clGetExtensionFunctionAddress(
+                    "clEnqueueAcquireExternalMemObjectsKHR"));
+        dispatch.clEnqueueReleaseExternalMemObjectsKHR =
+            reinterpret_cast<clEnqueueReleaseExternalMemObjectsKHR_fn>(
+                clIcdDispatch->clGetExtensionFunctionAddress(
+                    "clEnqueueReleaseExternalMemObjectsKHR"));
     }
     else if (error != nullptr)
     {

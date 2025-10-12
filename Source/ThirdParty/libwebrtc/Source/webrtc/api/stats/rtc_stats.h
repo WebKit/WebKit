@@ -14,18 +14,15 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <map>
 #include <memory>
 #include <optional>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "api/stats/attribute.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/system/rtc_export.h"
-#include "rtc_base/system/rtc_export_template.h"
 
 namespace webrtc {
 
@@ -66,6 +63,7 @@ class RTC_EXPORT RTCStats {
   const std::string& id() const { return id_; }
   // Time relative to the UNIX epoch (Jan 1, 1970, UTC), in microseconds.
   Timestamp timestamp() const { return timestamp_; }
+  void set_timestamp(Timestamp timestamp) { timestamp_ = timestamp; }
 
   // Returns the static member variable `kType` of the implementing class.
   virtual const char* type() const = 0;
@@ -78,7 +76,7 @@ class RTC_EXPORT RTCStats {
       if (!attribute.holds_alternative<T>()) {
         continue;
       }
-      if (absl::get<const std::optional<T>*>(attribute.as_variant()) == &stat) {
+      if (std::get<const std::optional<T>*>(attribute.as_variant()) == &stat) {
         return attribute;
       }
     }
@@ -106,7 +104,7 @@ class RTC_EXPORT RTCStats {
   virtual std::vector<Attribute> AttributesImpl(
       size_t additional_capacity) const;
 
-  std::string const id_;
+  std::string id_;
   Timestamp timestamp_;
 };
 
@@ -150,13 +148,18 @@ class RTC_EXPORT RTCStats {
 //         bar("bar") {
 //   }
 //
-#define WEBRTC_RTCSTATS_DECL()                                              \
+#define WEBRTC_RTCSTATS_DECL(SelfT)                                         \
  protected:                                                                 \
   std::vector<webrtc::Attribute> AttributesImpl(size_t additional_capacity) \
       const override;                                                       \
                                                                             \
  public:                                                                    \
   static const char kType[];                                                \
+                                                                            \
+  template <typename Sink>                                                  \
+  friend void AbslStringify(Sink& sink, const SelfT& stats) {               \
+    sink.Append(stats.ToJson());                                            \
+  }                                                                         \
                                                                             \
   std::unique_ptr<webrtc::RTCStats> copy() const override;                  \
   const char* type() const override
@@ -180,7 +183,7 @@ class RTC_EXPORT RTCStats {
     std::vector<webrtc::Attribute> attributes = parent_class::AttributesImpl( \
         attribute_inits_size + additional_capacity);                          \
     for (size_t i = 0; i < attribute_inits_size; ++i) {                       \
-      attributes.push_back(absl::visit(                                       \
+      attributes.push_back(std::visit(                                        \
           [&](const auto* field) {                                            \
             return Attribute(attribute_inits[i].name, field);                 \
           },                                                                  \

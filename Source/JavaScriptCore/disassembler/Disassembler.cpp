@@ -32,6 +32,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/SystemFree.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 
@@ -63,118 +64,6 @@ void disassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, void* c
         return;
     
     out.printf("%sdisassembly not available for range %p...%p\n", prefix, codePtr.untaggedPtr(), codePtr.untaggedPtr<char*>() + size);
-}
-
-namespace {
-
-// This is really a struct, except that it should be a class because that's what the WTF_* macros
-// expect.
-class DisassemblyTask {
-    WTF_MAKE_NONCOPYABLE(DisassemblyTask);
-    WTF_MAKE_TZONE_ALLOCATED(DisassemblyTask);
-public:
-    DisassemblyTask()
-    {
-    }
-    
-    ~DisassemblyTask()
-    {
-        if (header)
-            free(header); // free() because it would have been copied by strdup.
-    }
-    
-    char* header { nullptr };
-    MacroAssemblerCodeRef<DisassemblyPtrTag> codeRef;
-    size_t size { 0 };
-    void* codeStart { nullptr };
-    void* codeEnd { nullptr };
-    const char* prefix { nullptr };
-};
-
-class AsynchronousDisassembler {
-public:
-    AsynchronousDisassembler()
-    {
-        Thread::create("Asynchronous Disassembler"_s, [&] () { run(); });
-    }
-    
-    void enqueue(std::unique_ptr<DisassemblyTask> task)
-    {
-        Locker locker { m_lock };
-        m_queue.append(WTFMove(task));
-        m_condition.notifyAll();
-    }
-    
-    void waitUntilEmpty()
-    {
-        Locker locker { m_lock };
-        while (!m_queue.isEmpty() || m_working)
-            m_condition.wait(m_lock);
-    }
-    
-private:
-    [[noreturn]] void run()
-    {
-        for (;;) {
-            std::unique_ptr<DisassemblyTask> task;
-            {
-                Locker locker { m_lock };
-                m_working = false;
-                m_condition.notifyAll();
-                while (m_queue.isEmpty())
-                    m_condition.wait(m_lock);
-                task = m_queue.takeFirst();
-                m_working = true;
-            }
-
-            dataLog(task->header);
-            disassemble(task->codeRef.code(), task->size, task->codeStart, task->codeEnd, task->prefix, WTF::dataFile());
-        }
-    }
-    
-    Lock m_lock;
-    Condition m_condition;
-    Deque<std::unique_ptr<DisassemblyTask>> m_queue WTF_GUARDED_BY_LOCK(m_lock);
-    bool m_working { false };
-};
-
-bool hadAnyAsynchronousDisassembly = false;
-
-WTF_MAKE_TZONE_ALLOCATED_IMPL(DisassemblyTask);
-
-AsynchronousDisassembler& asynchronousDisassembler()
-{
-    static LazyNeverDestroyed<AsynchronousDisassembler> disassembler;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        disassembler.construct();
-        hadAnyAsynchronousDisassembly = true;
-    });
-    return disassembler.get();
-}
-
-} // anonymous namespace
-
-void disassembleAsynchronously(
-    const CString& header, const MacroAssemblerCodeRef<DisassemblyPtrTag>& codeRef, size_t size, void* codeStart, void* codeEnd, const char* prefix)
-{
-    std::unique_ptr<DisassemblyTask> task = makeUnique<DisassemblyTask>();
-    task->header = strdup(header.data()); // Yuck! We need this because CString does racy refcounting.
-    task->codeRef = codeRef;
-    task->size = size;
-    task->codeStart = codeStart;
-    task->codeEnd = codeEnd;
-    task->prefix = prefix;
-    
-    asynchronousDisassembler().enqueue(WTFMove(task));
-}
-
-void waitForAsynchronousDisassembly()
-{
-    if (!hadAnyAsynchronousDisassembly)
-        return;
-    
-    asynchronousDisassembler().waitUntilEmpty();
 }
 
 void registerLabel(void* thunkAddress, CString&& label)

@@ -27,9 +27,9 @@
 
 #if ENABLE(GAMEPAD) && HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
 
-#include "GamepadProvider.h"
-#include "GamepadProviderClient.h"
-#include "PlatformGamepad.h"
+#include <WebCore/GamepadProvider.h>
+#include <WebCore/GamepadProviderClient.h>
+#include <WebCore/PlatformGamepad.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 

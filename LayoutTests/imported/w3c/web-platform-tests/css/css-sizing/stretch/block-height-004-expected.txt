@@ -1,0 +1,47 @@
+These tests assert the behavior described at https://github.com/w3c/csswg-drafts/issues/11044#issuecomment-2599101601
+
+Basic case: treat margins as 0.
+
+When resolving stretch treat both block margins as 0 because the parent is not a BFC and has no top or bottom content edge (i.e. border + padding = 0).
+But cyan's margins will not actually collapse through its IFC-siblings so there is overflow:
+
+Parent has non-zero bottom border, so only top margin is treated as 0:
+
+Parent has non-zero top padding so only bottom margin is treated as 0:
+
+Account for the margins when parent establishes a BFC.
+
+
+FAIL .inner 1 assert_equals:
+<div class="inner" style="border: solid magenta;" data-expected-height="100" data-offset-y="0">
+  </div>
+height expected 100 but got 6
+FAIL .inner 2 assert_equals:
+<div class="inner" style="border: solid cyan;" data-expected-height="100" data-offset-y="10">
+  </div>
+height expected 100 but got 6
+FAIL .inner 3 assert_equals:
+<div class="inner" style="border: solid blue;" data-expected-height="100" data-offset-y="0">
+  </div>
+height expected 100 but got 6
+FAIL .inner 4 assert_equals:
+<div class="inner" style="border: solid purple;" data-expected-height="100" data-offset-y="0">
+  </div>
+height expected 100 but got 6
+FAIL .inner 5 assert_equals:
+<div class="inner" style="border: solid lime;" data-expected-height="100" data-offset-y="0">
+  </div>
+height expected 100 but got 6
+FAIL .inner 6 assert_equals:
+<div class="inner" style="border: solid brown;" data-expected-height="90" data-offset-y="0">
+  </div>
+height expected 90 but got 6
+FAIL .inner 7 assert_equals:
+<div class="inner" style="border: solid darkgreen;" data-expected-height="90" data-offset-y="15"> <!-- 15 = 10px top margin + parent's padding-->
+  </div>
+height expected 90 but got 6
+FAIL .inner 8 assert_equals:
+<div class="inner" style="border: solid orange;" data-expected-height="80" data-offset-y="10">
+  </div>
+height expected 80 but got 6
+

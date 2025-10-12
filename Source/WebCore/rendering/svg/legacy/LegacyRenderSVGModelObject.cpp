@@ -41,6 +41,7 @@
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "SVGElementInlines.h"
+#include "SVGLocatable.h"
 #include "SVGNames.h"
 #include "SVGResourcesCache.h"
 #include "ShadowRoot.h"
@@ -91,8 +92,8 @@ const RenderElement* LegacyRenderSVGModelObject::pushMappingToContainer(const Re
 static void adjustRectForOutlineAndShadow(const LegacyRenderSVGModelObject& renderer, LayoutRect& rect)
 {
     auto shadowRect = rect;
-    if (auto* boxShadow = renderer.style().boxShadow())
-        boxShadow->adjustRectForShadow(shadowRect);
+    if (auto& boxShadow = renderer.style().boxShadow(); !boxShadow.isNone())
+        Style::adjustRectForShadow(shadowRect, boxShadow);
 
     auto outlineRect = rect;
     auto outlineSize = LayoutUnit { renderer.outlineStyleForRepaint().outlineSize() };

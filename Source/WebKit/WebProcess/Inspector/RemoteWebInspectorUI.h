@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -115,6 +115,10 @@ public:
     void inspectedURLChanged(const String&) override;
     void showCertificate(const WebCore::CertificateInfo&) override;
     void setInspectorPageDeveloperExtrasEnabled(bool) override;
+
+    void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor) override;
+    double pageZoomFactor() const override;
+
     void sendMessageToBackend(const String&) override;
     WebCore::InspectorFrontendAPIDispatcher& frontendAPIDispatcher() override { return m_frontendAPIDispatcher; }
     WebCore::Page* frontendPage() final;
@@ -144,9 +148,10 @@ public:
 
 private:
     explicit RemoteWebInspectorUI(WebPage&);
+    const Ref<WebPage> protectedWebPage();
 
     WeakRef<WebPage> m_page;
-    Ref<WebCore::InspectorFrontendAPIDispatcher> m_frontendAPIDispatcher;
+    const Ref<WebCore::InspectorFrontendAPIDispatcher> m_frontendAPIDispatcher;
     RefPtr<WebCore::InspectorFrontendHost> m_frontendHost;
 #if ENABLE(INSPECTOR_EXTENSIONS)
     RefPtr<WebInspectorUIExtensionController> m_extensionController;
@@ -158,6 +163,8 @@ private:
 #if ENABLE(INSPECTOR_TELEMETRY)
     bool m_diagnosticLoggingAvailable { false };
 #endif
+
+    double m_pageZoomFactor { 1.0 };
 };
 
 } // namespace WebKit

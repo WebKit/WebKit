@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -59,6 +59,7 @@ class TestScm(testing.PathTestCase):
         self.assertTrue(local.Scm.DEV_BRANCHES.match('bug/1234'))
         self.assertTrue(local.Scm.DEV_BRANCHES.match('jbedard/bug/1234'))
         self.assertTrue(local.Scm.DEV_BRANCHES.match('integration/ci/stuff/safari-606-branch'))
+        self.assertTrue(local.Scm.DEV_BRANCHES.match('clone/1234'))
 
         self.assertFalse(local.Scm.DEV_BRANCHES.match('main'))
         self.assertFalse(local.Scm.DEV_BRANCHES.match('random/1234'))
@@ -72,3 +73,4 @@ class TestScm(testing.PathTestCase):
         self.assertFalse(local.Scm.PROD_BRANCHES.match('main'))
         self.assertFalse(local.Scm.PROD_BRANCHES.match('eng/1234'))
         self.assertFalse(local.Scm.PROD_BRANCHES.match('integration/ci/stuff/safari-606-branch'))
+        self.assertFalse(local.Scm.PROD_BRANCHES.match('clone/1234'))

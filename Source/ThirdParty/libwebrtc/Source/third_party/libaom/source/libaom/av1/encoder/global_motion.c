@@ -30,8 +30,9 @@
 // Border over which to compute the global motion
 #define ERRORADV_BORDER 0
 
-int av1_is_enough_erroradvantage(double best_erroradvantage, int params_cost) {
-  return best_erroradvantage < erroradv_tr &&
+int av1_is_enough_erroradvantage(double best_erroradvantage, int params_cost,
+                                 double gm_erroradv_tr) {
+  return best_erroradvantage < gm_erroradv_tr &&
          best_erroradvantage * params_cost < erroradv_prod_tr;
 }
 
@@ -364,7 +365,8 @@ int64_t av1_refine_integerized_param(
     WarpedMotionParams *wm, TransformationType wmtype, int use_hbd, int bd,
     uint8_t *ref, int r_width, int r_height, int r_stride, uint8_t *dst,
     int d_width, int d_height, int d_stride, int n_refinements,
-    int64_t ref_frame_error, uint8_t *segment_map, int segment_map_stride) {
+    int64_t ref_frame_error, uint8_t *segment_map, int segment_map_stride,
+    double gm_erroradv_tr) {
   static const int max_trans_model_params[TRANS_TYPES] = { 0, 2, 4, 6 };
   const int border = ERRORADV_BORDER;
   int i = 0, p;
@@ -383,7 +385,8 @@ int64_t av1_refine_integerized_param(
     // Compute the maximum error value that will be accepted, so that
     // get_warp_error can terminate early if it proves the model will not
     // be accepted.
-    int64_t selection_threshold = (int64_t)lrint(ref_frame_error * erroradv_tr);
+    int64_t selection_threshold =
+        (int64_t)lrint(ref_frame_error * gm_erroradv_tr);
     return get_warp_error(wm, use_hbd, bd, ref, r_width, r_height, r_stride,
                           dst + border * d_stride + border, d_stride, border,
                           border, d_width - 2 * border, d_height - 2 * border,

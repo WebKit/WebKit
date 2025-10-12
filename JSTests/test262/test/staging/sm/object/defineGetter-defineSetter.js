@@ -4,9 +4,6 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-object-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -34,12 +31,12 @@ let verifyProxy = new Proxy({}, {
 for (let define of [Object.prototype.__defineGetter__, Object.prototype.__defineSetter__]) {
     // null/undefined |this| value
     for (let thisv of [undefined, null])
-        assertThrowsInstanceOf(() => define.call(thisv, "x", define), TypeError);
+        assert.throws(TypeError, () => define.call(thisv, "x", define));
 
     // non-callable getter/setter
     let nonCallable = [{}, [], new Proxy({}, {})];
     for (let value of nonCallable)
-        assertThrowsInstanceOf(() => define.call(verifyProxy, "x", value), TypeError);
+        assert.throws(TypeError, () => define.call(verifyProxy, "x", value));
 
     // ToPropertyKey
     let key = {
@@ -51,7 +48,7 @@ for (let define of [Object.prototype.__defineGetter__, Object.prototype.__define
         valueOf() { throw "wrongly invoked"; },
         toString() { throw "wrongly invoked"; }
     };
-    assertThrowsInstanceOf(() => define.call(verifyProxy, key, define), TypeError);
+    assert.throws(TypeError, () => define.call(verifyProxy, key, define));
 
     key = {
         [Symbol.toPrimitive](hint) {

@@ -11,13 +11,24 @@
 #include "modules/video_coding/video_coding_impl.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
 
-#include "api/field_trials_view.h"
+#include "api/environment/environment.h"
+#include "api/rtp_headers.h"
 #include "api/sequence_checker.h"
 #include "api/video/encoded_image.h"
-#include "modules/video_coding/include/video_codec_interface.h"
+#include "api/video/render_resolution.h"
+#include "api/video_codecs/video_decoder.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
+#include "modules/video_coding/encoded_frame.h"
+#include "modules/video_coding/generic_decoder.h"
+#include "modules/video_coding/include/video_coding.h"
+#include "modules/video_coding/include/video_coding_defines.h"
 #include "modules/video_coding/timing/timing.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/clock.h"
 

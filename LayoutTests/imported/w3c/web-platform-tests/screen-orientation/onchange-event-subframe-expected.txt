@@ -1,5 +1,7 @@
 
 
+Harness Error (TIMEOUT), message = null
+
 FAIL Test subframes receive orientation change events promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
-FAIL Check directly that events are fired in right order (from top to bottom) promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
+TIMEOUT Check directly that events are fired in right order (from top to bottom) Test timed out
 

@@ -27,6 +27,7 @@
 
 #include "CSSPropertyNames.h"
 #include "StyleOriginatedAnimation.h"
+#include "StyleTransition.h"
 #include "Styleable.h"
 #include "WebAnimationTypes.h"
 #include <wtf/Markable.h>
@@ -36,13 +37,12 @@
 
 namespace WebCore {
 
-class Animation;
 class RenderStyle;
 
 class CSSTransition final : public StyleOriginatedAnimation {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSTransition);
 public:
-    static Ref<CSSTransition> create(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double);
+    static Ref<CSSTransition> create(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Style::Transition&, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double);
 
     virtual ~CSSTransition();
 
@@ -54,13 +54,18 @@ public:
     const RenderStyle& reversingAdjustedStartStyle() const { return *m_reversingAdjustedStartStyle; }
     double reversingShorteningFactor() const { return m_reversingShorteningFactor; }
 
+    const Style::Transition& backingStyleTransition() const { return m_backingStyleTransition; }
+
 private:
-    CSSTransition(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
+    CSSTransition(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Style::Transition&, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
     void setTimingProperties(Seconds delay, Seconds duration);
     Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&) final;
-    OptionSet<AnimationImpact> resolve(RenderStyle& targetStyle, const Style::ResolutionContext&) final;
+    OptionSet<AnimationImpact> resolve(RenderStyle& targetStyle, const Style::ResolutionContext&, EndpointInclusiveActiveInterval = EndpointInclusiveActiveInterval::No) final;
     void animationDidFinish() final;
     bool isCSSTransition() const final { return true; }
+
+    AnimationPlayState backingAnimationPlayState() const final;
+    TimingFunction* backingAnimationTimingFunction() const final;
 
     AnimatableCSSProperty m_property;
     MonotonicTime m_generationTime;
@@ -68,6 +73,8 @@ private:
     std::unique_ptr<RenderStyle> m_currentStyle;
     std::unique_ptr<RenderStyle> m_reversingAdjustedStartStyle;
     double m_reversingShorteningFactor;
+
+    Style::Transition m_backingStyleTransition;
 
 };
 

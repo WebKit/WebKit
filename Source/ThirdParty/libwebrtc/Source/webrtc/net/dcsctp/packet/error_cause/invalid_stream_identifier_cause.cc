@@ -9,17 +9,15 @@
  */
 #include "net/dcsctp/packet/error_cause/invalid_stream_identifier_cause.h"
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <optional>
 #include <string>
-#include <type_traits>
 #include <vector>
 
 #include "api/array_view.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
-#include "net/dcsctp/packet/tlv_trait.h"
+#include "net/dcsctp/public/types.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace dcsctp {
@@ -34,7 +32,7 @@ namespace dcsctp {
 constexpr int InvalidStreamIdentifierCause::kType;
 
 std::optional<InvalidStreamIdentifierCause> InvalidStreamIdentifierCause::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -52,7 +50,7 @@ void InvalidStreamIdentifierCause::SerializeTo(
 }
 
 std::string InvalidStreamIdentifierCause::ToString() const {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
   sb << "Invalid Stream Identifier, stream_id=" << *stream_id_;
   return sb.Release();
 }

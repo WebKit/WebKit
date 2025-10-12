@@ -25,7 +25,6 @@ rtc_library("goog_cc") {
     "../../../api:field_trials_view",
     "../../../api:network_state_predictor_api",
     "../../../api/environment",
-    "../../../api/rtc_event_log",
     "../../../api/transport:bandwidth_usage",
     "../../../api/transport:network_control",
     "../../../api/units:data_rate",
@@ -33,15 +32,11 @@ rtc_library("goog_cc") {
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",
     "../../../logging:rtc_event_bwe",
-    "../../../logging:rtc_event_pacing",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
-    "../../../rtc_base/experiments:alr_experiment",
     "../../../rtc_base/experiments:field_trial_parser",
     "../../../rtc_base/experiments:rate_control_settings",
-    "../../../system_wrappers",
     "../../remote_bitrate_estimator",
-    "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/strings:string_view",
   ]
 }
@@ -78,11 +73,14 @@ rtc_library("alr_detector") {
   ]
   deps = [
     "../../../api:field_trials_view",
+    "../../../api/environment",
     "../../../api/rtc_event_log",
-    "../../../api/transport:field_trial_based_config",
+    "../../../api/units:data_rate",
+    "../../../api/units:data_size",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
     "../../../logging:rtc_event_pacing",
     "../../../rtc_base:checks",
-    "../../../rtc_base:safe_conversions",
     "../../../rtc_base:timeutils",
     "../../../rtc_base/experiments:alr_experiment",
     "../../../rtc_base/experiments:field_trial_parser",
@@ -119,13 +117,8 @@ rtc_library("estimators") {
     "../../../logging:rtc_event_bwe",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
-    "../../../rtc_base:macromagic",
-    "../../../rtc_base:rtc_numerics",
-    "../../../rtc_base:safe_conversions",
     "../../../rtc_base:safe_minmax",
     "../../../rtc_base/experiments:field_trial_parser",
-    "../../remote_bitrate_estimator",
-    "//third_party/abseil-cpp/absl/strings",
   ]
 }
 
@@ -149,31 +142,12 @@ rtc_library("loss_based_bwe_v2") {
   ]
 }
 
-rtc_library("loss_based_bwe_v1") {
-  sources = [
-    "loss_based_bandwidth_estimation.cc",
-    "loss_based_bandwidth_estimation.h",
-  ]
-  deps = [
-    "../../../api:field_trials_view",
-    "../../../api/transport:network_control",
-    "../../../api/units:data_rate",
-    "../../../api/units:time_delta",
-    "../../../api/units:timestamp",
-    "../../../rtc_base:checks",
-    "../../../rtc_base/experiments:field_trial_parser",
-    "//third_party/abseil-cpp/absl/strings",
-    "//third_party/abseil-cpp/absl/strings:string_view",
-  ]
-}
-
 rtc_library("send_side_bwe") {
   sources = [
     "send_side_bandwidth_estimation.cc",
     "send_side_bandwidth_estimation.h",
   ]
   deps = [
-    ":loss_based_bwe_v1",
     ":loss_based_bwe_v2",
     "../../../api:field_trials_view",
     "../../../api/rtc_event_log",
@@ -304,6 +278,7 @@ if (rtc_include_tests) {
         ":probe_controller",
         ":pushback_controller",
         ":send_side_bwe",
+        "../../../api:field_trials",
         "../../../api:field_trials_view",
         "../../../api:network_state_predictor_api",
         "../../../api/environment",
@@ -329,13 +304,14 @@ if (rtc_include_tests) {
         "../../../rtc_base:stringutils",
         "../../../rtc_base/experiments:alr_experiment",
         "../../../system_wrappers",
-        "../../../test:explicit_key_value_config",
-        "../../../test:field_trial",
+        "../../../test:create_test_field_trials",
         "../../../test:test_support",
+        "../../../test/network:emulated_network",
         "../../../test/scenario",
         "../../../test/scenario:column_printer",
         "../../pacing",
         "//testing/gmock",
+        "//third_party/abseil-cpp/absl/base:nullability",
         "//third_party/abseil-cpp/absl/strings:string_view",
       ]
     }

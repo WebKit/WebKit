@@ -6,6 +6,10 @@
 // TestSuite_unittest.cpp: Unit tests for ANGLE's test harness.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include <gtest/gtest.h>
 
 #include "../angle_test_instantiate.h"

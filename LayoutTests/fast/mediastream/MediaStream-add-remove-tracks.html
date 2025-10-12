@@ -55,6 +55,8 @@
                 setTimeout(() => {
                     shouldBe('stream2.active', 'false');
                     finishJSTest();
+                    stream1.getTracks().forEach(track => track.stop());
+                    stream2.getTracks().forEach(track => track.stop());
                 }, 1000);
 
                 audioTrack = stream1.getAudioTracks()[0];

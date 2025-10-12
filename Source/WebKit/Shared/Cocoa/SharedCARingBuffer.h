@@ -49,7 +49,7 @@ protected:
 
 struct ConsumerSharedCARingBufferHandle {
     WebCore::SharedMemory::Handle memory;
-    size_t frameCount { 0 };
+    uint64_t frameCount { 0 };
 
     void takeOwnershipOfMemory(WebCore::MemoryLedger ledger) { memory.takeOwnershipOfMemory(ledger); }
 };

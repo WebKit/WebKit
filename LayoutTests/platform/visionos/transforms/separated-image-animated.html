@@ -1,0 +1,61 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ CSSTransformStyleSeparatedEnabled=true useFlexibleViewport=false ] -->
+<html>
+<style>
+    body { margin: 0; }
+
+    img {
+        display: block;
+    }
+
+    .transformed {
+      width: 200px;
+      height: 200px;
+      background: purple;
+      translate: 0 0 20px;
+      will-change: transform;
+    }
+    .separated {
+      border-radius: 12px;
+      transform-style: separated;
+    }
+    .tiled {
+        width: 3000px;
+        height: 3000px;
+    }
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<body>
+<section id="test">
+  <img class="transformed" src="../../../http/tests/misc/resources/large-animated.gif" alt="animated" />
+</section>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    await Promise.all(Array.from(document.querySelectorAll("img")).map(img => {
+        return img.decode();
+    }));
+    await UIHelper.ensureStablePresentationUpdate();
+
+    Array.from(document.querySelectorAll("img")).forEach(img => {
+        img.classList.add("separated");
+    });
+    await UIHelper.ensureStablePresentationUpdate();
+
+    results.textContent = await UIHelper.getUIViewTree();
+    document.getElementById('test').remove();
+
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>
+

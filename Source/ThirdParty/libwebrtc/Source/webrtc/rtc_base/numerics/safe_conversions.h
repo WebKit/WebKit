@@ -18,7 +18,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions_impl.h"
 
-namespace rtc {
+namespace webrtc {
 
 // Convenience function that returns true if the supplied value is in range
 // for the destination type.
@@ -69,6 +69,7 @@ inline constexpr Dst saturated_cast(Src value) {
   RTC_CHECK_NOTREACHED();
 }
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_NUMERICS_SAFE_CONVERSIONS_H_

@@ -49,7 +49,7 @@
 
 namespace WTR {
 
-Class webAccessibilityObjectWrapperClass();
+Class webAccessibilityObjectWrapperClassSingleton();
 JSValueRef makeValueRefForValue(JSContextRef, id value);
 extern NSDictionary *searchPredicateForSearchCriteria(JSContextRef, AccessibilityUIElement* startElement, AccessibilityTextMarkerRange* startRange, bool forward, unsigned resultsLimit, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
 

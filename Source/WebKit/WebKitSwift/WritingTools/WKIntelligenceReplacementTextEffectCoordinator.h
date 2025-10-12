@@ -39,6 +39,20 @@ NS_SWIFT_UI_ACTOR
 
 + (NSInteger)characterDeltaForReceivedSuggestions:(NSArray<WTTextSuggestion *> *)suggestions;
 
+// FIXME: (rdar://142275772) Remove these duplicate protocol method declarations when Swift is able to properly synthesize their Swift names.
+
+- (void)startAnimationForRange:(NSRange)range completion:(NS_SWIFT_UI_ACTOR void (^)(void))completion;
+
+- (void)requestReplacementWithProcessedRange:(NSRange)range finished:(BOOL)finished characterDelta:(NSInteger)characterDelta operation:(NS_SWIFT_UI_ACTOR void (^)(NS_SWIFT_UI_ACTOR void (^)(void)))operation completion:(NS_SWIFT_UI_ACTOR void (^)(void))completion;
+
+- (void)flushReplacementsWithCompletionHandler:(NS_SWIFT_UI_ACTOR void (^)(void))completionHandler;
+
+- (void)restoreSelectionAcceptedReplacements:(BOOL)acceptedReplacements completionHandler:(NS_SWIFT_UI_ACTOR void (^)(void))completionHandler;
+
+- (void)hideEffectsWithCompletionHandler:(NS_SWIFT_UI_ACTOR void (^)(void))completionHandler;
+
+- (void)showEffectsWithCompletionHandler:(NS_SWIFT_UI_ACTOR void (^)(void))completionHandler;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -237,16 +237,17 @@ static void adjust_frame_rate(AV1_COMP *cpi, int64_t ts_start, int64_t ts_end) {
 
   // Clear down mmx registers
 
-  if (cpi->ppi->use_svc && cpi->ppi->rtc_ref.set_ref_frame_config &&
-      cpi->svc.number_spatial_layers > 1) {
+  if (is_one_pass_rt_params(cpi) ||
+      (cpi->ppi->use_svc && cpi->ppi->rtc_ref.set_ref_frame_config &&
+       cpi->svc.number_spatial_layers > 1)) {
     // ts_start is the timestamp for the current frame and ts_end is the
     // expected next timestamp given the duration passed into codec_encode().
     // See the setting in encoder_encode() in av1_cx_iface.c:
     // ts_start = timebase_units_to_ticks(cpi_data.timestamp_ratio, ptsvol),
     // ts_end = timebase_units_to_ticks(cpi_data.timestamp_ratio, ptsvol +
     // duration). So the difference ts_end - ts_start is the duration passed
-    // in by the user. For spatial layers SVC set the framerate based directly
-    // on the duration, and bypass the adjustments below.
+    // in by the user. For RTC or spatial layers SVC set the framerate based
+    // directly on the duration, and bypass the adjustments below.
     this_duration = ts_end - ts_start;
     if (this_duration > 0) {
       cpi->new_framerate = 10000000.0 / this_duration;

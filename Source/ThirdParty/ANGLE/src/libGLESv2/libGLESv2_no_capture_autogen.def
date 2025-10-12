@@ -689,6 +689,8 @@ EXPORTS
 
     ; GL_ARM_shader_framebuffer_fetch_depth_stencil
 
+    ; GL_ARM_texture_unnormalized_coordinates
+
     ; GL_CHROMIUM_bind_uniform_location
     glBindUniformLocationCHROMIUM
 
@@ -803,6 +805,12 @@ EXPORTS
     glBufferStorageExternalEXT
 
     ; GL_EXT_float_blend
+
+    ; GL_EXT_fragment_shading_rate
+    glFramebufferShadingRateEXT
+    glGetFragmentShadingRatesEXT
+    glShadingRateCombinerOpsEXT
+    glShadingRateEXT
 
     ; GL_EXT_geometry_shader
     glFramebufferTextureEXT
@@ -1070,6 +1078,8 @@ EXPORTS
 
     ; GL_NV_framebuffer_blit
     glBlitFramebufferNV
+
+    ; GL_NV_pack_subimage
 
     ; GL_NV_pixel_buffer_object
 

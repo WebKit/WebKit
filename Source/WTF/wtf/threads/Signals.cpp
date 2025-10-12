@@ -220,7 +220,7 @@ static Signal fromMachException(exception_type_t type)
 }
 
 #if CPU(ARM64E) && OS(DARWIN)
-inline ptrauth_generic_signature_t hashThreadState(const thread_state_t source)
+inline ptrauth_generic_signature_t hashThreadState(std::span<const natural_t> source)
 {
     constexpr size_t threadStatePCPointerIndex = (offsetof(arm_unified_thread_state, ts_64) + offsetof(arm_thread_state64_t, __opaque_pc)) / sizeof(uintptr_t);
     constexpr size_t threadStateSizeInPointers = sizeof(arm_unified_thread_state) / sizeof(uintptr_t);
@@ -229,15 +229,15 @@ inline ptrauth_generic_signature_t hashThreadState(const thread_state_t source)
 
     hash = ptrauth_sign_generic_data(hash, mach_thread_self());
 
-    auto srcPtr = unsafeMakeSpan(reinterpret_cast<const uintptr_t*>(source), threadStateSizeInPointers);
+    auto srcSpan = spanReinterpretCast<const uintptr_t>(source).first(threadStateSizeInPointers);
 
     // Exclude the __opaque_flags field which is reserved for OS use.
     // __opaque_flags is at the end of the payload.
     for (size_t i = 0; i < threadStateSizeInPointers - 1; ++i) {
         if (i != threadStatePCPointerIndex)
-            hash = ptrauth_sign_generic_data(srcPtr[i], hash);
+            hash = ptrauth_sign_generic_data(srcSpan[i], hash);
     }
-    const uint32_t* cpsrPtr = reinterpret_cast<const uint32_t*>(&srcPtr[threadStateSizeInPointers - 1]);
+    const uint32_t* cpsrPtr = reinterpret_cast<const uint32_t*>(&srcSpan[threadStateSizeInPointers - 1]);
     hash = ptrauth_sign_generic_data(static_cast<uint64_t>(*cpsrPtr), hash);
     
     return hash;
@@ -262,9 +262,10 @@ kern_return_t catch_mach_exception_raise_state_identity(mach_port_t, mach_port_t
     return KERN_FAILURE;
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static kern_return_t runSignalHandlers(Signal signal, PlatformRegisters& registers, mach_msg_type_number_t dataCount, mach_exception_data_t exceptionData)
+static kern_return_t runSignalHandlers(Signal signal, PlatformRegisters& registers, mach_msg_type_number_t dataCount, mach_exception_data_t rawExceptionData)
 {
+    auto exceptionData = unsafeMakeSpan(rawExceptionData, dataCount);
+
     SigInfo info;
     SignalHandlers& handlers = g_wtfConfig.signalHandlers;
     if (signal == Signal::AccessFault) {
@@ -287,7 +288,6 @@ static kern_return_t runSignalHandlers(Signal signal, PlatformRegisters& registe
     });
     return didHandle ? KERN_SUCCESS : KERN_FAILURE;
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if defined(EXCEPTION_STATE_IDENTITY_PROTECTED)
 
@@ -318,11 +318,13 @@ kern_return_t catch_mach_exception_raise_state(
     const mach_exception_data_t exceptionData,
     mach_msg_type_number_t dataCount,
     int* stateFlavor,
-    const thread_state_t inState,
+    const thread_state_t rawInState,
     mach_msg_type_number_t inStateCount,
-    thread_state_t outState,
+    thread_state_t rawOutState,
     mach_msg_type_number_t* outStateCount)
 {
+    auto inState = unsafeMakeSpan(rawInState, inStateCount);
+    auto outState = unsafeMakeSpan(rawOutState, inStateCount);
     ASSERT(g_wtfConfig.isPermanentlyFrozen || g_wtfConfig.disabledFreezingForTesting);
     SignalHandlers& handlers = g_wtfConfig.signalHandlers;
     RELEASE_ASSERT(port == handlers.exceptionPort);
@@ -342,22 +344,20 @@ kern_return_t catch_mach_exception_raise_state(
     ptrauth_generic_signature_t inStateHash = hashThreadState(inState);
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    memcpy(outState, inState, inStateCount * sizeof(inState[0]));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    memcpySpan(outState, inState);
 
 #if CPU(X86_64)
     RELEASE_ASSERT(*stateFlavor == x86_THREAD_STATE);
-    PlatformRegisters& registers = reinterpret_cast<x86_thread_state_t*>(outState)->uts.ts64;
+    PlatformRegisters& registers = reinterpretCastSpanStartTo<x86_thread_state_t>(outState).uts.ts64;
 #elif CPU(X86)
     RELEASE_ASSERT(*stateFlavor == x86_THREAD_STATE);
-    PlatformRegisters& registers = reinterpret_cast<x86_thread_state_t*>(outState)->uts.ts32;
+    PlatformRegisters& registers = reinterpretCastSpanStartTo<x86_thread_state_t>(outState).uts.ts32;
 #elif CPU(ARM64)
     RELEASE_ASSERT(*stateFlavor == ARM_THREAD_STATE);
-    PlatformRegisters& registers = reinterpret_cast<arm_unified_thread_state*>(outState)->ts_64;
+    PlatformRegisters& registers = reinterpretCastSpanStartTo<arm_unified_thread_state>(outState).ts_64;
 #elif CPU(ARM)
     RELEASE_ASSERT(*stateFlavor == ARM_THREAD_STATE);
-    PlatformRegisters& registers = reinterpret_cast<arm_unified_thread_state*>(outState)->ts_32;
+    PlatformRegisters& registers = reinterpretCastSpanStartTo<arm_unified_thread_state*>(outState).ts_32;
 #endif
 
     kern_return_t kr = runSignalHandlers(signal, registers, dataCount, exceptionData);
@@ -541,7 +541,7 @@ static void jscSignalHandler(int sig, siginfo_t* info, void* ucontext)
     }
 
     unsigned oldActionIndex = static_cast<size_t>(signal) + (sig == SIGBUS);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     struct sigaction& oldAction = handlers.oldActions[static_cast<size_t>(oldActionIndex)];
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     if (signal == Signal::Usr) {
@@ -606,7 +606,7 @@ void SignalHandlers::finalize()
             RELEASE_ASSERT(!result);
             action.sa_flags = SA_SIGINFO;
             auto systemSignals = toSystemSignal(signal);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
             result = sigaction(std::get<0>(systemSignals), &action, &handlers.oldActions[offsetForSystemSignal(std::get<0>(systemSignals))]);
             if (std::get<1>(systemSignals))
                 result |= sigaction(*std::get<1>(systemSignals), &action, &handlers.oldActions[offsetForSystemSignal(*std::get<1>(systemSignals))]);

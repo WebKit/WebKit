@@ -302,14 +302,14 @@ bool TIntermRebuild::traverseAggregateBaseChildren(TIntermAggregateBase &node)
 
 struct TIntermRebuild::NodeStackGuard
 {
-    ConsList<TIntermNode *> oldNodeStack;
+    std::unique_ptr<ConsList<TIntermNode *>> oldNodeStack;
     ConsList<TIntermNode *> &nodeStack;
     NodeStackGuard(ConsList<TIntermNode *> &nodeStack, TIntermNode *node)
-        : oldNodeStack(nodeStack), nodeStack(nodeStack)
+        : oldNodeStack(std::make_unique<ConsList<TIntermNode *>>(nodeStack)), nodeStack(nodeStack)
     {
-        nodeStack = {node, &oldNodeStack};
+        nodeStack = {node, oldNodeStack.get()};
     }
-    ~NodeStackGuard() { nodeStack = oldNodeStack; }
+    ~NodeStackGuard() { nodeStack = *oldNodeStack; }
 };
 
 PostResult TIntermRebuild::traverseAny(TIntermNode &originalNode)

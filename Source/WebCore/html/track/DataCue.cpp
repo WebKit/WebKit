@@ -128,7 +128,7 @@ bool DataCue::cueContentsMatch(const TextTrackCue& cue) const
     if (m_data && m_data->data() && !equalSpans(m_data->span(), otherData->span()))
         return false;
 
-    auto otherPlatformValue = dataCue->platformValue();
+    RefPtr otherPlatformValue = dataCue->platformValue();
     if ((otherPlatformValue && !m_platformValue) || (!otherPlatformValue && m_platformValue))
         return false;
     if (m_platformValue && !m_platformValue->isEqual(*otherPlatformValue))

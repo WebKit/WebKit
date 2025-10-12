@@ -1,4 +1,4 @@
-Blocked access to external URL https://get.webgl.org/conformance-resources/opengl_logo.jpg
+CONSOLE MESSAGE: Blocked access to external URL https://get.webgl.org/conformance-resources/opengl_logo.jpg
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/textures/origin-clean-conformance.html

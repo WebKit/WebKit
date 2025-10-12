@@ -4,24 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Object.preventExtensions([]).length = 0 should do nothing, not throw
+info: bugzilla.mozilla.org/show_bug.cgi?id=600392
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 600392;
-var summary =
-  'Object.preventExtensions([]).length = 0 should do nothing, not throw';
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
-
 
 function testEmpty()
 {
@@ -68,7 +55,3 @@ function testNonEmptyStrict()
   assert.sameValue(a.length, 0);
 }
 testNonEmptyStrict();
-
-/******************************************************************************/
-
-print("All tests passed!");

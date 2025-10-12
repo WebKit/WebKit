@@ -11,6 +11,10 @@
 #ifndef LIBANGLE_PIXEL_LOCAL_STORAGE_H_
 #define LIBANGLE_PIXEL_LOCAL_STORAGE_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "GLSLANG/ShaderLang.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/ImageIndex.h"

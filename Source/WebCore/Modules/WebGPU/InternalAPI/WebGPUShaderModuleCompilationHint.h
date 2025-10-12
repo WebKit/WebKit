@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUPipelineLayout.h"
+#include <WebCore/WebGPUPipelineLayout.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakRef.h>
 

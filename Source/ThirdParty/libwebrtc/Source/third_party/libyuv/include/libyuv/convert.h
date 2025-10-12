@@ -598,6 +598,23 @@ int I400ToI420(const uint8_t* src_y,
                int width,
                int height);
 
+// Convert J420 to I420.
+LIBYUV_API
+int J420ToI420(const uint8_t* src_y,
+               int src_stride_y,
+               const uint8_t* src_u,
+               int src_stride_u,
+               const uint8_t* src_v,
+               int src_stride_v,
+               uint8_t* dst_y,
+               int dst_stride_y,
+               uint8_t* dst_u,
+               int dst_stride_u,
+               uint8_t* dst_v,
+               int dst_stride_v,
+               int width,
+               int height);
+
 // Convert I400 (grey) to NV21.
 LIBYUV_API
 int I400ToNV21(const uint8_t* src_y,
@@ -907,9 +924,35 @@ int RAWToI420(const uint8_t* src_raw,
               int width,
               int height);
 
+// RGB big endian (rgb in memory) to I444.
+LIBYUV_API
+int RAWToI444(const uint8_t* src_raw,
+              int src_stride_raw,
+              uint8_t* dst_y,
+              int dst_stride_y,
+              uint8_t* dst_u,
+              int dst_stride_u,
+              uint8_t* dst_v,
+              int dst_stride_v,
+              int width,
+              int height);
+
 // RGB big endian (rgb in memory) to J420.
 LIBYUV_API
 int RAWToJ420(const uint8_t* src_raw,
+              int src_stride_raw,
+              uint8_t* dst_y,
+              int dst_stride_y,
+              uint8_t* dst_u,
+              int dst_stride_u,
+              uint8_t* dst_v,
+              int dst_stride_v,
+              int width,
+              int height);
+
+// RGB big endian (rgb in memory) to J444.
+LIBYUV_API
+int RAWToJ444(const uint8_t* src_raw,
               int src_stride_raw,
               uint8_t* dst_y,
               int dst_stride_y,

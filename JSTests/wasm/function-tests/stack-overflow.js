@@ -47,7 +47,7 @@ import * as assert from '../assert.js'
         assert.truthy(stack.length > 50);
         for (let i = 0; i < 50; ++i) {
             let item = stack[stack.length - i - 1];
-            assert.eq(item, '<?>.wasm-function[0]@[wasm code]');
+            assert.eq(item, '0@wasm-function[0]');
         } 
     }
     assertOverflows(i1);
@@ -126,8 +126,8 @@ import * as assert from '../assert.js'
 
         stack = stack.split("\n");
         assert.truthy(stack.length > 50);
-        const one = '<?>.wasm-function[1]@[wasm code]';
-        const zero = '<?>.wasm-function[0]@[wasm code]';
+        const one = '1@wasm-function[1]';
+        const zero = '0@wasm-function[0]';
         let currentIndex = (one === stack[stack.length - 1]) ? 1 : 0;
         for (let i = 0; i < 50; ++i) {
             let item = stack[stack.length - 1 - i];

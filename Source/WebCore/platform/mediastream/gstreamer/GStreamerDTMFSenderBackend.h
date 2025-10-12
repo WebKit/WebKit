@@ -1,6 +1,6 @@
 /*
- *  Copyright (C) 2019-2022 Igalia S.L. All rights reserved.
- *  Copyright (C) 2022 Metrological Group B.V.
+ *  Copyright (C) 2019-2025 Igalia S.L.
+ *  Copyright (C) 2025 Comcast Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,18 +21,41 @@
 
 #if ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)
 
+#include "GRefPtrGStreamer.h"
 #include "RTCDTMFSenderBackend.h"
+#include "RealtimeOutgoingAudioSourceGStreamer.h"
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-// Use eager initialization for the WeakPtrFactory since we call makeWeakPtr() from another thread.
-class GStreamerDTMFSenderBackend final : public RTCDTMFSenderBackend, public CanMakeWeakPtr<GStreamerDTMFSenderBackend, WeakPtrFactoryInitialization::Eager> {
-    WTF_MAKE_TZONE_ALLOCATED(GStreamerDTMFSenderBackend);
+class GStreamerDTMFSenderPrivate : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerDTMFSenderPrivate, WTF::DestructionThread::Main> {
 public:
-    explicit GStreamerDTMFSenderBackend();
-    ~GStreamerDTMFSenderBackend();
+    static RefPtr<GStreamerDTMFSenderPrivate> create();
+    ~GStreamerDTMFSenderPrivate();
+
+    using OnTonePlayedCallback = Function<void()>;
+    void setOnTonePlayedCallback(OnTonePlayedCallback&& callback) { m_onTonePlayed = WTFMove(callback); }
+    void playTone(const RefPtr<RealtimeOutgoingAudioSourceGStreamer>&, const char tone, size_t duration);
+
+private:
+    explicit GStreamerDTMFSenderPrivate(GRefPtr<GstElement>&&);
+
+    void sendEvent(const GRefPtr<GstPad>&, int number, int volume, bool start);
+    void stopTone(const GRefPtr<GstPad>&, int);
+
+    OnTonePlayedCallback m_onTonePlayed;
+    GRefPtr<GstElement> m_pipeline;
+    GRefPtr<GstElement> m_dtmfSrc;
+};
+
+class GStreamerDTMFSenderBackend final : public RTCDTMFSenderBackend {
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerDTMFSenderBackend);
+    WTF_MAKE_NONCOPYABLE(GStreamerDTMFSenderBackend);
+public:
+    explicit GStreamerDTMFSenderBackend(ThreadSafeWeakPtr<RealtimeOutgoingAudioSourceGStreamer>&&);
+    ~GStreamerDTMFSenderBackend() = default;
 
 private:
     // RTCDTMFSenderBackend
@@ -40,10 +63,16 @@ private:
     void playTone(const char tone, size_t duration, size_t interToneGap) final;
     void onTonePlayed(Function<void()>&&) final;
     String tones() const final;
-    size_t duration() const final;
-    size_t interToneGap() const final;
+    size_t duration() const final { return m_duration; }
+    size_t interToneGap() const final { return m_interToneGap; }
 
-    Function<void()> m_onTonePlayed;
+    ThreadSafeWeakPtr<RealtimeOutgoingAudioSourceGStreamer> m_source;
+    RefPtr<GStreamerDTMFSenderPrivate> m_senderPrivate;
+    bool m_isFirstTone { true };
+    bool m_canInsertDTMF { false };
+    StringBuilder m_tones;
+    size_t m_duration;
+    size_t m_interToneGap;
 };
 
 } // namespace WebCore

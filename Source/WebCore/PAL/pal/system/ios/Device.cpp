@@ -36,6 +36,12 @@
 
 namespace PAL {
 
+bool deviceClassIsDesktop()
+{
+    static auto deviceClass = MGGetSInt32Answer(kMGQDeviceClassNumber, MGDeviceClassInvalid);
+    return deviceClass == MGDeviceClassiPad || deviceClass == MGDeviceClassMac;
+}
+
 bool deviceClassIsSmallScreen()
 {
 #if ENABLE(FORCE_DEVICE_CLASS_SMALL_SCREEN)

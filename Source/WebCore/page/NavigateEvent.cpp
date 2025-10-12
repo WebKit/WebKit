@@ -28,10 +28,13 @@
 
 #include "AbortController.h"
 #include "CommonVM.h"
+#include "DocumentView.h"
 #include "Element.h"
+#include "FrameDestructionObserverInlines.h"
 #include "ExceptionCode.h"
 #include "HTMLBodyElement.h"
 #include "HistoryController.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
 #include "Navigation.h"
 #include "NavigationNavigationType.h"
@@ -48,6 +51,7 @@ NavigateEvent::NavigateEvent(const AtomString& type, const NavigateEvent::Init& 
     , m_signal(init.signal)
     , m_formData(init.formData)
     , m_downloadRequest(init.downloadRequest)
+    , m_sourceElement(init.sourceElement)
     , m_canIntercept(init.canIntercept)
     , m_userInitiated(init.userInitiated)
     , m_hashChange(init.hashChange)
@@ -122,9 +126,13 @@ void NavigateEvent::processScrollBehavior(Document& document)
     ASSERT(m_interceptionState == InterceptionState::Committed);
     m_interceptionState = InterceptionState::Scrolled;
 
-    if (m_navigationType == NavigationNavigationType::Traverse || m_navigationType == NavigationNavigationType::Reload)
-        document.frame()->loader().protectedHistory()->restoreScrollPositionAndViewState();
-    else if (!document.frame()->view()->scrollToFragment(document.url())) {
+    if (m_navigationType == NavigationNavigationType::Traverse || m_navigationType == NavigationNavigationType::Reload) {
+        if (m_navigationType == NavigationNavigationType::Reload && document.url().hasFragmentIdentifier()) {
+            if (document.frame()->view()->scrollToFragment(document.url()))
+                return;
+        }
+        document.frame()->loader().history().restoreScrollPositionAndViewState();
+    } else if (!document.frame()->view()->scrollToFragment(document.url())) {
         if (!document.url().hasFragmentIdentifier())
             document.frame()->view()->scrollTo({ 0, 0 });
     }

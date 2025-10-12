@@ -2,7 +2,7 @@
     Copyright (C) 2000 Harri Porten (porten@kde.org)
     Copyright (C) 2000 Daniel Molkentin (molkentin@kde.org)
     Copyright (C) 2000 Stefan Schimanski (schimmi@kde.org)
-    Copyright (C) 2003, 2004, 2005, 2006, 2007, 2015 Apple Inc. All Rights Reserved.
+    Copyright (C) 2003, 2004, 2005, 2006, 2007, 2015 Apple Inc. All rights reserved.
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
 
     This library is free software; you can redistribute it and/or
@@ -26,6 +26,7 @@
 
 #include "Document.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalizedStrings.h"
 #include "Page.h"
 #include "PluginInfoProvider.h"

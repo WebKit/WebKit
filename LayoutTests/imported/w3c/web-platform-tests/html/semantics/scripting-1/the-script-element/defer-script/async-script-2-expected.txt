@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error: assert_array_equals: Execution order expected property 2 to be "Async1" but got "Sync2" (expected array ["Inline1", "Sync1", "Async1", "Sync2", "EndOfBody", "DOMContentLoaded"] got ["Inline1", "Sync1", "Sync2", "EndOfBody", "DOMContentLoaded", "Async1"])
 Detected
 
 FAIL Async Script Execution Order Error: assert_array_equals: Execution order expected property 2 to be "Async1" but got "Sync2" (expected array ["Inline1", "Sync1", "Async1", "Sync2", "EndOfBody", "DOMContentLoaded"] got ["Inline1", "Sync1", "Sync2", "EndOfBody", "DOMContentLoaded", "Async1"])

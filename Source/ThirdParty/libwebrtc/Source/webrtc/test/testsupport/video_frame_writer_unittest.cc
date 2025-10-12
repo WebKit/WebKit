@@ -10,16 +10,20 @@
 
 #include "test/testsupport/video_frame_writer.h"
 
-#include <stdint.h>
 #include <stdio.h>
-#include <string.h>
 
+#include <cstdio>
+#include <cstring>
 #include <memory>
 #include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/scoped_refptr.h"
 #include "api/test/video/video_frame_writer.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/resolution.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_buffer.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 #include "test/testsupport/frame_reader.h"
@@ -28,18 +32,18 @@ namespace webrtc {
 namespace test {
 namespace {
 
-const size_t kFrameWidth = 50;
-const size_t kFrameHeight = 20;
-const size_t kFrameLength = 3 * kFrameWidth * kFrameHeight / 2;  // I420.
-const size_t kFrameRate = 30;
+constexpr size_t kFrameWidth = 50;
+constexpr size_t kFrameHeight = 20;
+constexpr size_t kFrameLength = 3 * kFrameWidth * kFrameHeight / 2;  // I420.
+constexpr size_t kFrameRate = 30;
 
 // Size of header: "YUV4MPEG2 W50 H20 F30:1 C420\n"
-const size_t kFileHeaderSize = 29;
+constexpr size_t kFileHeaderSize = 29;
 // Size of header: "FRAME\n"
-const size_t kFrameHeaderSize = 6;
+constexpr size_t kFrameHeaderSize = 6;
 
-rtc::scoped_refptr<I420Buffer> CreateI420Buffer(int width, int height) {
-  rtc::scoped_refptr<I420Buffer> buffer(I420Buffer::Create(width, height));
+scoped_refptr<I420Buffer> CreateI420Buffer(int width, int height) {
+  scoped_refptr<I420Buffer> buffer(I420Buffer::Create(width, height));
   for (int x = 0; x < width; x++) {
     for (int y = 0; y < height; y++) {
       buffer->MutableDataY()[x + y * width] = 128;
@@ -56,9 +60,8 @@ rtc::scoped_refptr<I420Buffer> CreateI420Buffer(int width, int height) {
   return buffer;
 }
 
-void AssertI420BuffersEq(
-    rtc::scoped_refptr<webrtc::I420BufferInterface> actual,
-    rtc::scoped_refptr<webrtc::I420BufferInterface> expected) {
+void AssertI420BuffersEq(scoped_refptr<I420BufferInterface> actual,
+                         scoped_refptr<I420BufferInterface> expected) {
   ASSERT_TRUE(actual);
 
   ASSERT_EQ(actual->width(), expected->width());
@@ -94,8 +97,8 @@ class VideoFrameWriterTest : public ::testing::Test {
   ~VideoFrameWriterTest() override = default;
 
   void SetUp() override {
-    temp_filename_ = webrtc::test::TempFilename(webrtc::test::OutputPath(),
-                                                "video_frame_writer_unittest");
+    temp_filename_ =
+        test::TempFilename(test::OutputPath(), "video_frame_writer_unittest");
     frame_writer_ = CreateFrameWriter();
   }
 
@@ -126,7 +129,7 @@ class YuvVideoFrameWriterTest : public VideoFrameWriterTest {
 TEST_F(Y4mVideoFrameWriterTest, InitSuccess) {}
 
 TEST_F(Y4mVideoFrameWriterTest, WriteFrame) {
-  rtc::scoped_refptr<I420Buffer> expected_buffer =
+  scoped_refptr<I420Buffer> expected_buffer =
       CreateI420Buffer(kFrameWidth, kFrameHeight);
 
   VideoFrame frame =
@@ -149,7 +152,7 @@ TEST_F(Y4mVideoFrameWriterTest, WriteFrame) {
 TEST_F(YuvVideoFrameWriterTest, InitSuccess) {}
 
 TEST_F(YuvVideoFrameWriterTest, WriteFrame) {
-  rtc::scoped_refptr<I420Buffer> expected_buffer =
+  scoped_refptr<I420Buffer> expected_buffer =
       CreateI420Buffer(kFrameWidth, kFrameHeight);
 
   VideoFrame frame =

@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CachedHTMLCollectionInlines.h"
-#include "ElementAncestorIteratorInlines.h"
-#include "HTMLOptionsCollection.h"
+#include <WebCore/CachedHTMLCollectionInlines.h>
+#include <WebCore/ElementAncestorIteratorInlines.h>
+#include <WebCore/HTMLOptionsCollection.h>
 
 namespace WebCore {
 

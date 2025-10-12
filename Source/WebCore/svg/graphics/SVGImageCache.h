@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "FloatSize.h"
-#include "Image.h"
+#include <WebCore/FloatSize.h>
+#include <WebCore/Image.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -52,7 +52,7 @@ private:
     Image* findImageForRenderer(const RenderObject*) const;
     RefPtr<SVGImage> protectedSVGImage() const;
 
-    typedef UncheckedKeyHashMap<const CachedImageClient*, RefPtr<SVGImageForContainer>> ImageForContainerMap;
+    typedef HashMap<const CachedImageClient*, RefPtr<SVGImageForContainer>> ImageForContainerMap;
 
     WeakPtr<SVGImage> m_svgImage;
     ImageForContainerMap m_imageForContainerMap;

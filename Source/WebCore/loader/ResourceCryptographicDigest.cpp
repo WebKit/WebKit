@@ -80,12 +80,12 @@ template<typename CharacterType> static std::optional<ResourceCryptographicDiges
     return std::nullopt;
 }
 
-std::optional<ResourceCryptographicDigest> parseCryptographicDigest(StringParsingBuffer<UChar>& buffer)
+std::optional<ResourceCryptographicDigest> parseCryptographicDigest(StringParsingBuffer<char16_t>& buffer)
 {
     return parseCryptographicDigestImpl(buffer);
 }
 
-std::optional<ResourceCryptographicDigest> parseCryptographicDigest(StringParsingBuffer<LChar>& buffer)
+std::optional<ResourceCryptographicDigest> parseCryptographicDigest(StringParsingBuffer<Latin1Character>& buffer)
 {
     return parseCryptographicDigestImpl(buffer);
 }
@@ -113,12 +113,12 @@ template<typename CharacterType> static std::optional<EncodedResourceCryptograph
     return EncodedResourceCryptographicDigest { *algorithm, beginHashValue.first(buffer.position() - beginHashValue.data()) };
 }
 
-std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<UChar>& buffer)
+std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<char16_t>& buffer)
 {
     return parseEncodedCryptographicDigestImpl(buffer);
 }
 
-std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<LChar>& buffer)
+std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<Latin1Character>& buffer)
 {
     return parseEncodedCryptographicDigestImpl(buffer);
 }

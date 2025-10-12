@@ -60,5 +60,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/support/test-outer.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/support/test-tl.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/support/test-tr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/support/transition-in-iframe-001-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/support/two.gif
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/support/vendorPrefix.js

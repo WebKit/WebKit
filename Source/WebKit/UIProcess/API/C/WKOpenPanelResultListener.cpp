@@ -59,16 +59,16 @@ static Vector<String> filePathsFromFileURLs(const API::Array& fileURLs)
 #if PLATFORM(IOS_FAMILY)
 void WKOpenPanelResultListenerChooseMediaFiles(WKOpenPanelResultListenerRef listenerRef, WKArrayRef fileURLsRef, WKStringRef displayString, WKDataRef iconImageDataRef)
 {
-    toImpl(listenerRef)->chooseFiles(filePathsFromFileURLs(*toImpl(fileURLsRef)), toImpl(displayString)->string(), toImpl(iconImageDataRef));
+    toProtectedImpl(listenerRef)->chooseFiles(filePathsFromFileURLs(*toProtectedImpl(fileURLsRef)), toProtectedImpl(displayString)->string(), toProtectedImpl(iconImageDataRef).get());
 }
 #endif
 
 void WKOpenPanelResultListenerChooseFiles(WKOpenPanelResultListenerRef listenerRef, WKArrayRef fileURLsRef, WKArrayRef allowedMimeTypesRef)
 {
-    toImpl(listenerRef)->chooseFiles(filePathsFromFileURLs(*toImpl(fileURLsRef)), toImpl(allowedMimeTypesRef)->toStringVector());
+    toProtectedImpl(listenerRef)->chooseFiles(filePathsFromFileURLs(*toProtectedImpl(fileURLsRef)), toProtectedImpl(allowedMimeTypesRef)->toStringVector());
 }
 
 void WKOpenPanelResultListenerCancel(WKOpenPanelResultListenerRef listenerRef)
 {
-    toImpl(listenerRef)->cancel();
+    toProtectedImpl(listenerRef)->cancel();
 }

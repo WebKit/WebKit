@@ -2,35 +2,35 @@
 PASS Computed value of 'unicode-bidi' for outside symbol
 PASS Computed value of 'font-variant-numeric' for outside symbol
 PASS Computed value of 'text-transform' for outside symbol
-FAIL Computed value of 'text-indent' for outside symbol assert_equals: expected "0px" but got "1px"
+PASS Computed value of 'text-indent' for outside symbol
 PASS Computed value of 'unicode-bidi' for outside decimal
 PASS Computed value of 'font-variant-numeric' for outside decimal
 PASS Computed value of 'text-transform' for outside decimal
-FAIL Computed value of 'text-indent' for outside decimal assert_equals: expected "0px" but got "1px"
+PASS Computed value of 'text-indent' for outside decimal
 PASS Computed value of 'unicode-bidi' for outside string
 PASS Computed value of 'font-variant-numeric' for outside string
 PASS Computed value of 'text-transform' for outside string
-FAIL Computed value of 'text-indent' for outside string assert_equals: expected "0px" but got "1px"
+PASS Computed value of 'text-indent' for outside string
 PASS Computed value of 'unicode-bidi' for outside marker
 PASS Computed value of 'font-variant-numeric' for outside marker
 PASS Computed value of 'text-transform' for outside marker
-FAIL Computed value of 'text-indent' for outside marker assert_equals: expected "0px" but got "1px"
+PASS Computed value of 'text-indent' for outside marker
 PASS Computed value of 'unicode-bidi' for inside symbol
 PASS Computed value of 'font-variant-numeric' for inside symbol
 PASS Computed value of 'text-transform' for inside symbol
-FAIL Computed value of 'text-indent' for inside symbol assert_equals: expected "0px" but got "1px"
+PASS Computed value of 'text-indent' for inside symbol
 PASS Computed value of 'unicode-bidi' for inside decimal
 PASS Computed value of 'font-variant-numeric' for inside decimal
 PASS Computed value of 'text-transform' for inside decimal
-FAIL Computed value of 'text-indent' for inside decimal assert_equals: expected "0px" but got "1px"
+PASS Computed value of 'text-indent' for inside decimal
 PASS Computed value of 'unicode-bidi' for inside string
 PASS Computed value of 'font-variant-numeric' for inside string
 PASS Computed value of 'text-transform' for inside string
-FAIL Computed value of 'text-indent' for inside string assert_equals: expected "0px" but got "1px"
+PASS Computed value of 'text-indent' for inside string
 PASS Computed value of 'unicode-bidi' for inside marker
 PASS Computed value of 'font-variant-numeric' for inside marker
 PASS Computed value of 'text-transform' for inside marker
-FAIL Computed value of 'text-indent' for inside marker assert_equals: expected "0px" but got "1px"
+PASS Computed value of 'text-indent' for inside marker
 outside symbol
 outside decimal
 outside string

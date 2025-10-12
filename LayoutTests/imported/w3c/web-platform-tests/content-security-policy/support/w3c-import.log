@@ -34,6 +34,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/nonce-should-be-blocked.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/pass.png
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/pass2.png
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/pass3.png
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/pass3.png.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/ping.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/post-message.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/postmessage-fail.html
@@ -42,6 +44,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/prefetch-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/prefetch-subresource.css
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/prefetch-subresource.css.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/prefetch-with-csp.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/resource.py
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/service-worker-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/shared-worker-helper.js

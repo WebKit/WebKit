@@ -20,7 +20,7 @@
 #include "rtc_base/virtual_socket_server.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 static const SocketAddress kAddr("22.22.22.22", 0);
 
@@ -35,7 +35,7 @@ TEST(AsyncUDPSocketTest, SetSocketOptionIfEctChange) {
   ASSERT_EQ(ect, 0);
 
   uint8_t buffer[] = "hello";
-  rtc::PacketOptions packet_options;
+  AsyncSocketPacketOptions packet_options;
   packet_options.ecn_1 = false;
   udp__socket->SendTo(buffer, 5, kAddr, packet_options);
   socket->GetOption(Socket::OPT_SEND_ECN, &ect);
@@ -52,4 +52,4 @@ TEST(AsyncUDPSocketTest, SetSocketOptionIfEctChange) {
   EXPECT_EQ(ect, 0);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

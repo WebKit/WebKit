@@ -10,11 +10,12 @@
 
 #include "modules/audio_processing/ns/prior_signal_model_estimator.h"
 
-#include <math.h>
-
 #include <algorithm>
+#include <cmath>
 
-#include "modules/audio_processing/ns/fast_math.h"
+#include "api/array_view.h"
+#include "modules/audio_processing/ns/histograms.h"
+#include "modules/audio_processing/ns/ns_common.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -24,7 +25,7 @@ namespace {
 // Identifies the first of the two largest peaks in the histogram.
 void FindFirstOfTwoLargestPeaks(
     float bin_size,
-    rtc::ArrayView<const int, kHistogramSize> spectral_flatness,
+    ArrayView<const int, kHistogramSize> spectral_flatness,
     float* peak_position,
     int* peak_weight) {
   RTC_DCHECK(peak_position);
@@ -65,7 +66,7 @@ void FindFirstOfTwoLargestPeaks(
   }
 }
 
-void UpdateLrt(rtc::ArrayView<const int, kHistogramSize> lrt_histogram,
+void UpdateLrt(ArrayView<const int, kHistogramSize> lrt_histogram,
                float* prior_model_lrt,
                bool* low_lrt_fluctuations) {
   RTC_DCHECK(prior_model_lrt);

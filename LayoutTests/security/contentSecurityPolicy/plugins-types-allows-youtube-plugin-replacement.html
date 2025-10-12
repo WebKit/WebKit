@@ -8,11 +8,8 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
 }
 
-// Waiting at least 100ms seems to ensure that YouTube plugin replacement has loaded.
-window.setTimeout(function () {
-    if (window.testRunner)
-        testRunner.notifyDone();
-}, 100);
+window.internals?.setConsoleMessageListener((message) => { testRunner.notifyDone(); });
+
 </script>
 </head>
 <body>

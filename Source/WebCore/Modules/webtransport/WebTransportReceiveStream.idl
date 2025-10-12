@@ -28,8 +28,7 @@
     Exposed=(Window,Worker),
     SecureContext,
     Transferable,
-    JSGenerateToJSObject,
     JSGenerateToNativeObject
 ] interface WebTransportReceiveStream : ReadableStream {
-    Promise<WebTransportReceiveStreamStats> getStats();
+    [CallWith=CurrentScriptExecutionContext] Promise<WebTransportReceiveStreamStats> getStats();
 };

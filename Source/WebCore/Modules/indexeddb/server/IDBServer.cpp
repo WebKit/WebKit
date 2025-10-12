@@ -142,7 +142,7 @@ void IDBServer::openDatabase(const IDBOpenRequestData& requestData)
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto& uniqueIDBDatabase = getOrCreateUniqueIDBDatabase(requestData.databaseIdentifier());
+    CheckedRef uniqueIDBDatabase = getOrCreateUniqueIDBDatabase(requestData.databaseIdentifier());
 
     auto connectionIdentifier = requestData.requestIdentifier().connectionIdentifier();
     if (!connectionIdentifier)
@@ -155,7 +155,7 @@ void IDBServer::openDatabase(const IDBOpenRequestData& requestData)
         return;
     }
 
-    uniqueIDBDatabase.openDatabaseConnection(*connection, requestData);
+    uniqueIDBDatabase->openDatabaseConnection(*connection, requestData);
 }
 
 void IDBServer::deleteDatabase(const IDBOpenRequestData& requestData)
@@ -175,13 +175,18 @@ void IDBServer::deleteDatabase(const IDBOpenRequestData& requestData)
         return;
     }
 
-    auto* database = m_uniqueIDBDatabaseMap.get(requestData.databaseIdentifier());
-    if (!database)
-        database = &getOrCreateUniqueIDBDatabase(requestData.databaseIdentifier());
+    IDBDatabaseIdentifier databaseIdentifier;
+    {
+        CheckedPtr database = m_uniqueIDBDatabaseMap.get(requestData.databaseIdentifier());
+        if (!database)
+            database = &getOrCreateUniqueIDBDatabase(requestData.databaseIdentifier());
 
-    database->handleDelete(*connection, requestData);
-    if (database->tryClose())
-        m_uniqueIDBDatabaseMap.remove(database->identifier());
+        database->handleDelete(*connection, requestData);
+        if (!database->tryClose())
+            return;
+        databaseIdentifier = database->identifier();
+    }
+    m_uniqueIDBDatabaseMap.remove(databaseIdentifier);
 }
 
 void IDBServer::abortTransaction(const IDBResourceIdentifier& transactionIdentifier)
@@ -399,14 +404,19 @@ void IDBServer::establishTransaction(IDBDatabaseConnectionIdentifier databaseCon
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto* databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
+    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
     if (!databaseConnection)
         return;
 
-    auto* database = databaseConnection->database();
-    databaseConnection->establishTransaction(info);
-    if (database->tryClose())
-        m_uniqueIDBDatabaseMap.remove(database->identifier());
+    IDBDatabaseIdentifier databaseIdentifier;
+    {
+        CheckedPtr database = databaseConnection->database();
+        databaseConnection->establishTransaction(info);
+        if (!database->tryClose())
+            return;
+        databaseIdentifier = database->identifier();
+    }
+    m_uniqueIDBDatabaseMap.remove(databaseIdentifier);
 }
 
 void IDBServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier, uint64_t handledRequestResultsCount)
@@ -431,11 +441,8 @@ void IDBServer::didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionI
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto* connection = m_databaseConnections.get(databaseConnectionIdentifier);
-    if (!connection)
-        return;
-
-    connection->didFinishHandlingVersionChange(transactionIdentifier);
+    if (RefPtr connection = m_databaseConnections.get(databaseConnectionIdentifier))
+        connection->didFinishHandlingVersionChange(transactionIdentifier);
 }
 
 void IDBServer::databaseConnectionPendingClose(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
@@ -444,7 +451,7 @@ void IDBServer::databaseConnectionPendingClose(IDBDatabaseConnectionIdentifier d
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
+    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
     if (!databaseConnection)
         return;
 
@@ -457,14 +464,19 @@ void IDBServer::databaseConnectionClosed(IDBDatabaseConnectionIdentifier databas
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto* databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
+    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
     if (!databaseConnection)
         return;
 
-    auto* database = databaseConnection->database();
-    databaseConnection->connectionClosedFromClient();
-    if (database->tryClose())
-        m_uniqueIDBDatabaseMap.remove(database->identifier());
+    IDBDatabaseIdentifier databaseIdentifier;
+    {
+        CheckedPtr database = databaseConnection->database();
+        databaseConnection->connectionClosedFromClient();
+        if (!database->tryClose())
+            return;
+        databaseIdentifier = database->identifier();
+    }
+    m_uniqueIDBDatabaseMap.remove(databaseIdentifier);
 }
 
 void IDBServer::abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier)
@@ -478,7 +490,7 @@ void IDBServer::abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifier databa
             transaction->abortWithoutCallback();
     }
 
-    auto databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
+    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
     if (!databaseConnection)
         return;
 
@@ -491,7 +503,7 @@ void IDBServer::didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier databa
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    if (auto databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier))
+    if (RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier))
         databaseConnection->didFireVersionChangeEvent(requestIdentifier, connectionClosed);
 }
 
@@ -507,13 +519,19 @@ void IDBServer::openDBRequestCancelled(const IDBOpenRequestData& requestData)
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto* uniqueIDBDatabase = m_uniqueIDBDatabaseMap.get(requestData.databaseIdentifier());
-    if (!uniqueIDBDatabase)
-        return;
+    IDBDatabaseIdentifier databaseIdentifier;
+    {
+        CheckedPtr uniqueIDBDatabase = m_uniqueIDBDatabaseMap.get(requestData.databaseIdentifier());
+        if (!uniqueIDBDatabase)
+            return;
 
-    uniqueIDBDatabase->openDBRequestCancelled(requestData.requestIdentifier());
-    if (uniqueIDBDatabase->tryClose())
-        m_uniqueIDBDatabaseMap.remove(uniqueIDBDatabase->identifier());
+        uniqueIDBDatabase->openDBRequestCancelled(requestData.requestIdentifier());
+        if (!uniqueIDBDatabase->tryClose())
+            return;
+
+        databaseIdentifier = uniqueIDBDatabase->identifier();
+    }
+    m_uniqueIDBDatabaseMap.remove(databaseIdentifier);
 }
 
 static void getDatabaseNameAndVersionFromOriginDirectory(const String& directory, HashSet<String>& excludedDatabasePaths, Vector<IDBDatabaseNameAndVersion>& result)

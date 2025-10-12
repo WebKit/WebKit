@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CPU.h"
-#include "JITOperationValidation.h"
-#include "OperationResult.h"
+#include <JavaScriptCore/CPU.h>
+#include <JavaScriptCore/JITOperationValidation.h>
+#include <JavaScriptCore/OperationResult.h>
 #include <climits>
 #include <cmath>
 #include <optional>

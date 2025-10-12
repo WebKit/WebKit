@@ -27,12 +27,12 @@
 
 #pragma once
 
-#include "CSSSelector.h"
-#include "Element.h"
 #include "SelectorMatchingState.h"
 #include "StyleRelations.h"
-#include "StyleScopeOrdinal.h"
 #include "StyleScrollbarState.h"
+#include <WebCore/CSSSelector.h>
+#include <WebCore/Element.h>
+#include <WebCore/StyleScopeOrdinal.h>
 
 namespace WebCore {
 
@@ -40,6 +40,7 @@ class CSSSelector;
 class Element;
 class RenderScrollbar;
 class RenderStyle;
+class StyleRuleScope;
 
 class SelectorChecker {
     WTF_MAKE_NONCOPYABLE(SelectorChecker);
@@ -71,7 +72,11 @@ class SelectorChecker {
 
 public:
     enum class Mode : unsigned char {
-        ResolvingStyle = 0, CollectingRules, CollectingRulesIgnoringVirtualPseudoElements, QueryingRules
+        ResolvingStyle = 0,
+        CollectingRules,
+        StyleInvalidation,
+        // This is used for querySelector() API
+        QueryingRules
     };
 
     SelectorChecker(Document&);
@@ -90,6 +95,7 @@ public:
         RefPtr<const ContainerNode> scope;
         const Element* hasScope { nullptr };
         bool matchesAllHasScopes { false };
+        bool isEvaluatingScopingRoot { false };
         Style::ScopeOrdinal styleScopeOrdinal { Style::ScopeOrdinal::Element };
         Style::SelectorMatchingState* selectorMatchingState { nullptr };
 
@@ -98,6 +104,7 @@ public:
         PseudoIdSet pseudoIDSet;
         bool matchedInsideScope { false };
         bool disallowHasPseudoClass { false };
+        bool scopingRootMatchesVisited { false };
     };
 
     bool match(const CSSSelector&, const Element&, CheckingContext&) const;
@@ -108,7 +115,7 @@ public:
     static bool attributeSelectorMatches(const Element&, const QualifiedName&, const AtomString& attributeValue, const CSSSelector&);
 
     enum LinkMatchMask { MatchDefault = 0, MatchLink = 1, MatchVisited = 2, MatchAll = MatchLink | MatchVisited };
-    static unsigned determineLinkMatchType(const CSSSelector*);
+    static unsigned determineLinkMatchType(const CSSSelector*, const StyleRuleScope* = nullptr);
 
     struct LocalContext;
     

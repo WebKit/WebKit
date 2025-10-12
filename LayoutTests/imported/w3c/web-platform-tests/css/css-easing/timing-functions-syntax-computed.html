@@ -35,6 +35,8 @@ test_computed_value("animation-timing-function", "steps(calc(5 / 2), start)", "s
 test_computed_value("animation-timing-function", "steps(calc(1), jump-none)", "steps(2, jump-none)");
 
 test_computed_value("animation-timing-function", "linear, ease, linear");
+
+test_computed_value("animation-timing-function", "steps(calc(2 + sign(100em - 1px)), end)", "steps(3)");
 </script>
 </body>
 </html>

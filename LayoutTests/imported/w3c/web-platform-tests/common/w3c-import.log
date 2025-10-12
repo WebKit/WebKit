@@ -21,15 +21,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/PrefixedPostMessage.js
 /LayoutTests/imported/w3c/web-platform-tests/common/PrefixedPostMessage.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/common/README.md
+/LayoutTests/imported/w3c/web-platform-tests/common/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/common/arrays.js
 /LayoutTests/imported/w3c/web-platform-tests/common/blank-with-cors.html
 /LayoutTests/imported/w3c/web-platform-tests/common/blank-with-cors.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/common/blank.html
 /LayoutTests/imported/w3c/web-platform-tests/common/custom-cors-response.js
 /LayoutTests/imported/w3c/web-platform-tests/common/domain-setter.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/common/dummy.json
 /LayoutTests/imported/w3c/web-platform-tests/common/dummy.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/common/dummy.xml
 /LayoutTests/imported/w3c/web-platform-tests/common/echo.py
+/LayoutTests/imported/w3c/web-platform-tests/common/gc.js
 /LayoutTests/imported/w3c/web-platform-tests/common/get-host-info.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/common/get-host-info.sub.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/common/media.js
@@ -38,8 +41,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/object-association.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/common/performance-timeline-utils.js
 /LayoutTests/imported/w3c/web-platform-tests/common/performance-timeline-utils.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/common/proxy-all.sub.pac
 /LayoutTests/imported/w3c/web-platform-tests/common/redirect-opt-in.py
 /LayoutTests/imported/w3c/web-platform-tests/common/redirect.py
+/LayoutTests/imported/w3c/web-platform-tests/common/refresh.py
 /LayoutTests/imported/w3c/web-platform-tests/common/reftest-wait.js
 /LayoutTests/imported/w3c/web-platform-tests/common/reftest-wait.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/common/rendering-utils.js
@@ -54,6 +59,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/test-setting-immutable-prototype.js
 /LayoutTests/imported/w3c/web-platform-tests/common/test-setting-immutable-prototype.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/common/text-plain.txt
+/LayoutTests/imported/w3c/web-platform-tests/common/top-layer.js
 /LayoutTests/imported/w3c/web-platform-tests/common/utils.js
 /LayoutTests/imported/w3c/web-platform-tests/common/utils.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/common/window-name-setter.html

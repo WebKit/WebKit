@@ -218,6 +218,7 @@ class JscOnlyPort(DeprecatedPort):
         command.append("--no-testb3")
         command.append("--no-testdfg")
         command.append("--no-testapi")
+        command.append("--no-testwasmdebugger")
         if 'JSCTESTS_OPTIONS' in os.environ:
             command += os.environ['JSCTESTS_OPTIONS'].split()
         return self._append_build_style_flag(command, build_style)

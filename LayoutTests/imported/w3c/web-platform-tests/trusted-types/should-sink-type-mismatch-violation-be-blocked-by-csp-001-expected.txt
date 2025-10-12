@@ -1,0 +1,17 @@
+
+PASS Multiple enforce require-trusted-types-for directives.
+PASS Multiple report-only require-trusted-types-for directives.
+PASS One violated report-only require-trusted-types-for directive followed by multiple enforce directives
+PASS One violated enforce require-trusted-types-for directive followed by multiple report-only directives
+PASS Mixing enforce and report-only require-trusted-types-for directives.
+PASS directive "require-trusted-types-for 'invalid'%09'script'" (required-ascii-whitespace)
+PASS directive "require-trusted-types-for 'invalid'%0A%20'script'" (required-ascii-whitespace)
+PASS directive "require-trusted-types-for 'invalid'%0C'script'" (required-ascii-whitespace)
+PASS directive "require-trusted-types-for 'invalid'%0D%20'script'" (required-ascii-whitespace)
+PASS directive "require-trusted-types-for 'invalid'%20'script'" (required-ascii-whitespace)
+PASS invalid directive "require-trusted-types-for 'script''script'" (no ascii-whitespace)
+PASS directive "require-trusted-types-for 'script' 'invalid'" (unknown sink group)
+PASS directive "require-trusted-types-for 'invalid' 'script'" (unknown sink group)
+PASS directive "require-trusted-types-for 'invalid' 'script' 'also-invalid" (unknown sink group)
+PASS directive "require-trusted-types-for unquoted-invalid 'script' also-unquoted-invalid (unknown sink group)
+

@@ -25,6 +25,7 @@
 #include "ArrayConstructor.h"
 
 #include "ArrayPrototype.h"
+#include "ArrayPrototypeInlines.h"
 #include "BuiltinNames.h"
 #include "ExecutableBaseInlines.h"
 #include "JSCInlines.h"
@@ -45,13 +46,13 @@ const ClassInfo ArrayConstructor::s_info = { "Function"_s, &InternalFunction::s_
 
 /* Source for ArrayConstructor.lut.h
 @begin arrayConstructorTable
-  of        JSBuiltin                   DontEnum|Function 0
   from      JSBuiltin                   DontEnum|Function 1
 @end
 */
 
 static JSC_DECLARE_HOST_FUNCTION(callArrayConstructor);
 static JSC_DECLARE_HOST_FUNCTION(constructWithArrayConstructor);
+static JSC_DECLARE_HOST_FUNCTION(arrayConstructorOf);
 
 ArrayConstructor::ArrayConstructor(VM& vm, Structure* structure)
     : InternalFunction(vm, structure, callArrayConstructor, constructWithArrayConstructor)
@@ -63,6 +64,7 @@ void ArrayConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Arra
     Base::finishCreation(vm, 1, vm.propertyNames->Array.string(), PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, arrayPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->speciesSymbol, globalObject->arraySpeciesGetterSetter(), PropertyAttribute::Accessor | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->of, arrayConstructorOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->isArray, arrayConstructorIsArrayCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().fromPrivateName(), arrayConstructorFromCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -153,6 +155,93 @@ JSC_DEFINE_HOST_FUNCTION(arrayConstructorPrivateFuncIsArraySlow, (JSGlobalObject
 {
     ASSERT_UNUSED(globalObject, jsDynamicCast<ProxyObject*>(callFrame->argument(0)));
     return JSValue::encode(jsBoolean(isArraySlowInline(globalObject, jsCast<ProxyObject*>(callFrame->uncheckedArgument(0)))));
+}
+
+ALWAYS_INLINE JSArray* fastArrayOf(JSGlobalObject* globalObject, CallFrame* callFrame, size_t length)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!length)
+        RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
+
+    IndexingType indexingType = IsArray;
+    for (unsigned i = 0; i < length; ++i)
+        indexingType = leastUpperBoundOfIndexingTypeAndValue(indexingType, callFrame->uncheckedArgument(i));
+
+    Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
+    IndexingType resultIndexingType = resultStructure->indexingType();
+
+    if (hasAnyArrayStorage(resultIndexingType)) [[unlikely]]
+        return nullptr;
+
+    ASSERT(!globalObject->isHavingABadTime());
+
+    auto vectorLength = Butterfly::optimalContiguousVectorLength(resultStructure, length);
+    void* memory = vm.auxiliarySpace().allocate(
+        vm,
+        Butterfly::totalSize(0, 0, true, vectorLength * sizeof(EncodedJSValue)),
+        nullptr, AllocationFailureMode::ReturnNull);
+    if (!memory) [[unlikely]]
+        return nullptr;
+    auto* resultButterfly = Butterfly::fromBase(memory, 0, 0);
+    resultButterfly->setVectorLength(vectorLength);
+    resultButterfly->setPublicLength(length);
+
+    if (hasDouble(resultIndexingType)) {
+        for (uint64_t i = 0; i < length; ++i) {
+            JSValue value = callFrame->uncheckedArgument(i);
+            ASSERT(value.isNumber());
+            resultButterfly->contiguousDouble().atUnsafe(i) = value.asNumber();
+        }
+    } else if (hasInt32(resultIndexingType) || hasContiguous(resultIndexingType)) {
+        for (size_t i = 0; i < length; ++i) {
+            JSValue value = callFrame->uncheckedArgument(i);
+            resultButterfly->contiguous().atUnsafe(i).setWithoutWriteBarrier(value);
+        }
+    } else
+        RELEASE_ASSERT_NOT_REACHED();
+
+    Butterfly::clearRange(resultIndexingType, resultButterfly, length, vectorLength);
+    return JSArray::createWithButterfly(vm, nullptr, resultStructure, resultButterfly);
+}
+JSC_DEFINE_HOST_FUNCTION(arrayConstructorOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
+    size_t length = callFrame->argumentCount();
+    if (thisValue == globalObject->arrayConstructor() || !thisValue.isConstructor()) [[likely]] {
+        JSArray* result = fastArrayOf(globalObject, callFrame, length);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (result) [[likely]]
+            return JSValue::encode(result);
+    }
+
+    JSObject* result = nullptr;
+    if (thisValue.isConstructor()) {
+        MarkedArgumentBuffer args;
+        args.append(jsNumber(length));
+        result = construct(globalObject, thisValue, args, "Array.of did not get a valid constructor");
+        RETURN_IF_EXCEPTION(scope, { });
+    } else {
+        result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), length);
+        if (!result) [[unlikely]] {
+            throwOutOfMemoryError(globalObject, scope);
+            return { };
+        }
+    }
+
+    for (unsigned i = 0; i < length; ++i) {
+        JSValue value = callFrame->uncheckedArgument(i);
+        result->putDirectIndex(globalObject, i, value, 0, PutDirectIndexShouldThrow);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    scope.release();
+    setLength(globalObject, vm, result, length);
+    return JSValue::encode(result);
 }
 
 } // namespace JSC

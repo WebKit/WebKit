@@ -40,6 +40,13 @@ String WebExtensionPermission::alarms()
     return "alarms"_s;
 }
 
+#if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
+String WebExtensionPermission::bookmarks()
+{
+    return "bookmarks"_s;
+}
+#endif
+
 String WebExtensionPermission::clipboardWrite()
 {
     return "clipboardWrite"_s;

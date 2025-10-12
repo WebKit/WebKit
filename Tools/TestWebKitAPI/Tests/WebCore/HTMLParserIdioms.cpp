@@ -38,6 +38,7 @@
 #include <WebCore/NodeInlines.h>
 #include <WebCore/ParserContentPolicy.h>
 #include <WebCore/ProcessWarming.h>
+#include <WebCore/ScriptWrappableInlines.h>
 #include <WebCore/Settings.h>
 #include <WebCore/Text.h>
 #include <wtf/text/WTFString.h>
@@ -172,6 +173,137 @@ TEST(WebCoreHTMLParserIdioms, parseHTMLNonNegativeInteger)
     EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-a123"_s));
     EXPECT_TRUE(parseHTMLNonNegativeIntegerFails(".1"_s));
     EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("infinity"_s));
+}
+
+TEST(WebCoreHTMLParserIdioms, parseHTMLDimensionsList)
+{
+    auto empty = parseHTMLDimensionsList(""_s);
+    EXPECT_TRUE(empty.isEmpty());
+
+    auto whitespaceOnly = parseHTMLDimensionsList("   "_s);
+    EXPECT_EQ(1u, whitespaceOnly.size());
+    EXPECT_FLOAT_EQ(0, whitespaceOnly[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Relative, whitespaceOnly[0].unit);
+
+    auto singleIntegralAbsolute = parseHTMLDimensionsList("15"_s);
+    EXPECT_EQ(1u, singleIntegralAbsolute.size());
+    EXPECT_FLOAT_EQ(15.0, singleIntegralAbsolute[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Absolute, singleIntegralAbsolute[0].unit);
+
+    auto singleFloatingAbsolute = parseHTMLDimensionsList("15.05"_s);
+    EXPECT_EQ(1u, singleFloatingAbsolute.size());
+    EXPECT_FLOAT_EQ(15.05, singleFloatingAbsolute[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Absolute, singleFloatingAbsolute[0].unit);
+
+    auto singleIntegralRelative = parseHTMLDimensionsList("15*"_s);
+    EXPECT_EQ(1u, singleIntegralRelative.size());
+    EXPECT_FLOAT_EQ(15.0, singleIntegralRelative[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Relative, singleIntegralRelative[0].unit);
+
+    auto singleFloatingRelative = parseHTMLDimensionsList("15.05*"_s);
+    EXPECT_EQ(1u, singleFloatingRelative.size());
+    EXPECT_FLOAT_EQ(15.05, singleFloatingRelative[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Relative, singleFloatingRelative[0].unit);
+
+    auto singleIntegralPercentage = parseHTMLDimensionsList("15%"_s);
+    EXPECT_EQ(1u, singleIntegralPercentage.size());
+    EXPECT_FLOAT_EQ(15.0, singleIntegralPercentage[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Percentage, singleIntegralPercentage[0].unit);
+
+    auto singleFloatingPercentage = parseHTMLDimensionsList("15.05%"_s);
+    EXPECT_EQ(1u, singleFloatingPercentage.size());
+    EXPECT_FLOAT_EQ(15.05, singleFloatingPercentage[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Percentage, singleFloatingPercentage[0].unit);
+
+    auto whitespaceBeforeIntegralRelative = parseHTMLDimensionsList("15.05  *"_s);
+    EXPECT_EQ(1u, whitespaceBeforeIntegralRelative.size());
+    EXPECT_FLOAT_EQ(15.05, whitespaceBeforeIntegralRelative[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Relative, whitespaceBeforeIntegralRelative[0].unit);
+
+    auto whitespaceBeforeFloatingRelative = parseHTMLDimensionsList("15.05  *"_s);
+    EXPECT_EQ(1u, whitespaceBeforeFloatingRelative.size());
+    EXPECT_FLOAT_EQ(15.05, whitespaceBeforeFloatingRelative[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Relative, whitespaceBeforeFloatingRelative[0].unit);
+
+    auto whitespaceBeforeIntegralPercentage = parseHTMLDimensionsList("15  %"_s);
+    EXPECT_EQ(1u, whitespaceBeforeIntegralPercentage.size());
+    EXPECT_FLOAT_EQ(15.0, whitespaceBeforeIntegralPercentage[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Percentage, whitespaceBeforeIntegralPercentage[0].unit);
+
+    auto whitespaceBeforeFloatingPercentage = parseHTMLDimensionsList("15.05  %"_s);
+    EXPECT_EQ(1u, whitespaceBeforeFloatingPercentage.size());
+    EXPECT_FLOAT_EQ(15.05, whitespaceBeforeFloatingPercentage[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Percentage, whitespaceBeforeFloatingPercentage[0].unit);
+
+    auto whitespaceInFractionalAbsolute = parseHTMLDimensionsList("15. 0   5  "_s);
+    EXPECT_EQ(1u, whitespaceInFractionalAbsolute.size());
+    EXPECT_FLOAT_EQ(15.05, whitespaceInFractionalAbsolute[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Absolute, whitespaceInFractionalAbsolute[0].unit);
+
+    auto whitespaceInFractionalRelative = parseHTMLDimensionsList("15. 0   5  *"_s);
+    EXPECT_EQ(1u, whitespaceInFractionalRelative.size());
+    EXPECT_FLOAT_EQ(15.05, whitespaceInFractionalRelative[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Relative, whitespaceInFractionalRelative[0].unit);
+
+    auto whitespaceInFractionalPercentage = parseHTMLDimensionsList("15. 0   5  %"_s);
+    EXPECT_EQ(1u, whitespaceInFractionalPercentage.size());
+    EXPECT_FLOAT_EQ(15.05, whitespaceInFractionalPercentage[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Percentage, whitespaceInFractionalPercentage[0].unit);
+
+    auto leadingWhitespace = parseHTMLDimensionsList("  15.05 %"_s);
+    EXPECT_EQ(1u, leadingWhitespace.size());
+    EXPECT_FLOAT_EQ(15.05, leadingWhitespace[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Percentage, leadingWhitespace[0].unit);
+
+    auto trailingWhitespace = parseHTMLDimensionsList("15.05 %  "_s);
+    EXPECT_EQ(1u, trailingWhitespace.size());
+    EXPECT_FLOAT_EQ(15.05, trailingWhitespace[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Percentage, trailingWhitespace[0].unit);
+
+    auto largeIntegralPart = parseHTMLDimensionsList("8589934592.05%"_s);
+    EXPECT_EQ(1u, largeIntegralPart.size());
+    EXPECT_FLOAT_EQ(1.0, largeIntegralPart[0].number); // Falls back to "1*"
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Relative, largeIntegralPart[0].unit);
+
+    auto largeFractionalPart = parseHTMLDimensionsList("1.8589934592%"_s);
+    EXPECT_EQ(1u, largeFractionalPart.size());
+    EXPECT_FLOAT_EQ(1.0, largeFractionalPart[0].number); // Falls back to "1*"
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Relative, largeFractionalPart[0].unit);
+
+    auto twoValuesNoWhitespace = parseHTMLDimensionsList("15.05%,10*"_s);
+    EXPECT_EQ(2u, twoValuesNoWhitespace.size());
+    EXPECT_FLOAT_EQ(15.05, twoValuesNoWhitespace[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Percentage, twoValuesNoWhitespace[0].unit);
+    EXPECT_FLOAT_EQ(10.0, twoValuesNoWhitespace[1].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Relative, twoValuesNoWhitespace[1].unit);
+
+    auto twoValuesWhitespace = parseHTMLDimensionsList("   15.05%  ,  10*  "_s);
+    EXPECT_EQ(2u, twoValuesWhitespace.size());
+    EXPECT_FLOAT_EQ(15.05, twoValuesWhitespace[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Percentage, twoValuesWhitespace[0].unit);
+    EXPECT_FLOAT_EQ(10.0, twoValuesWhitespace[1].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Relative, twoValuesWhitespace[1].unit);
+
+    auto lastCharacterComma = parseHTMLDimensionsList("15.05%, 10* ,"_s);
+    EXPECT_EQ(2u, lastCharacterComma.size());
+    EXPECT_FLOAT_EQ(15.05, lastCharacterComma[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Percentage, lastCharacterComma[0].unit);
+    EXPECT_FLOAT_EQ(10.0, lastCharacterComma[1].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Relative, lastCharacterComma[1].unit);
+
+    auto trailingGarbage = parseHTMLDimensionsList("15.05 % adfa, 10* +]"_s);
+    EXPECT_EQ(2u, trailingGarbage.size());
+    EXPECT_FLOAT_EQ(15.05, trailingGarbage[0].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Percentage, trailingGarbage[0].unit);
+    EXPECT_FLOAT_EQ(10.0, trailingGarbage[1].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Relative, trailingGarbage[1].unit);
+
+    auto whitespaceBeforeDot = parseHTMLDimensionsList("15 .05 %, 10*"_s);
+    EXPECT_EQ(2u, whitespaceBeforeDot.size());
+    EXPECT_FLOAT_EQ(15.0, whitespaceBeforeDot[0].number); // Everything from after 15 to the comma is skipped.
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Absolute, whitespaceBeforeDot[0].unit);
+    EXPECT_FLOAT_EQ(10.0, whitespaceBeforeDot[1].number);
+    EXPECT_EQ(HTMLDimensionsListValue::Unit::Relative, whitespaceBeforeDot[1].unit);
 }
 
 TEST(WebCoreHTMLParser, HTMLInputElementCheckedState)

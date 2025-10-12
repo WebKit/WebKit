@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
-#include "JSCPtrTag.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSCPtrTag.h>
 #include <wtf/FunctionPtr.h>
 #include <wtf/Hasher.h>
 

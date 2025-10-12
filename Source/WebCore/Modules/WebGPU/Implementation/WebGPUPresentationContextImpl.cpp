@@ -93,7 +93,6 @@ bool PresentationContextImpl::configure(const CanvasConfiguration& canvasConfigu
     Ref convertToBackingContext = m_convertToBackingContext;
 
     WGPUSwapChainDescriptor backingDescriptor {
-        .nextInChain = nullptr,
         .label = nullptr,
         .usage = convertToBackingContext->convertTextureUsageFlagsToBacking(canvasConfiguration.usage),
         .format = convertToBackingContext->convertToBacking(canvasConfiguration.format),

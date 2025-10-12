@@ -14,8 +14,8 @@
 #include <memory>
 
 #include "api/audio/audio_frame_processor.h"
+#include "api/ref_count.h"
 #include "api/task_queue/task_queue_base.h"
-#include "rtc_base/ref_count.h"
 
 namespace webrtc {
 

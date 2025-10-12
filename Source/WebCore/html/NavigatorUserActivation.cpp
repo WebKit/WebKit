@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,14 +42,9 @@ NavigatorUserActivation::NavigatorUserActivation(Navigator& navigator)
 
 NavigatorUserActivation::~NavigatorUserActivation() = default;
 
-Ref<UserActivation> NavigatorUserActivation::userActivation(Navigator& navigator)
+UserActivation& NavigatorUserActivation::userActivation(Navigator& navigator)
 {
     return NavigatorUserActivation::from(navigator)->userActivation();
-}
-
-Ref<UserActivation> NavigatorUserActivation::userActivation()
-{
-    return m_userActivation;
 }
 
 NavigatorUserActivation* NavigatorUserActivation::from(Navigator& navigator)

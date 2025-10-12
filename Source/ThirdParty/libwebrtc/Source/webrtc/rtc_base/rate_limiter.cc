@@ -10,9 +10,13 @@
 
 #include "rtc_base/rate_limiter.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <optional>
 
+#include "rtc_base/rate_statistics.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {

@@ -98,7 +98,7 @@ if (is_mac || is_ios) {
   }
 }
 
-rtc_source_set("warn_current_thread_is_deadlocked") {
+rtc_library("warn_current_thread_is_deadlocked") {
   sources = [ "warn_current_thread_is_deadlocked.h" ]
   deps = []
   if (is_android && !build_with_chromium) {

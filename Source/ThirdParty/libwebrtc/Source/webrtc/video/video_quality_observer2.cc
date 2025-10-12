@@ -13,8 +13,12 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <iterator>
+#include <optional>
 #include <string>
 
+#include "api/video/video_codec_type.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/string_builder.h"
 #include "system_wrappers/include/metrics.h"
@@ -63,7 +67,7 @@ void VideoQualityObserver::UpdateHistograms(bool screenshare) {
   }
 
   char log_stream_buf[2 * 1024];
-  rtc::SimpleStringBuilder log_stream(log_stream_buf);
+  SimpleStringBuilder log_stream(log_stream_buf);
 
   if (last_frame_rendered_ms_ > last_unfreeze_time_ms_) {
     smooth_playback_durations_.Add(last_frame_rendered_ms_ -

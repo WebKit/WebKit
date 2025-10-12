@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-RegExp-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -59,7 +56,7 @@ for (let {regExp, lastIndex, input} of testCases) {
     let re = new RegExp(regExp);
     Object.defineProperty(re, "lastIndex", { value: lastIndex, writable: false });
     if (re.global || re.sticky) {
-        assertThrowsInstanceOf(() => re.exec(input), TypeError);
+        assert.throws(TypeError, () => re.exec(input));
     } else {
         re.exec(input);
     }
@@ -79,7 +76,7 @@ for (let {regExp, lastIndex, input} of testCases) {
         }
     };
     if (re.global || re.sticky) {
-        assertThrowsInstanceOf(() => re.exec(input), TypeError);
+        assert.throws(TypeError, () => re.exec(input));
     } else {
         re.exec(input);
     }

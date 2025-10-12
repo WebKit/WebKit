@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "GlobalFrameIdentifier.h"
-#include "PolicyContainer.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include "SecurityContext.h"
-#include "SecurityOrigin.h"
+#include <WebCore/GlobalFrameIdentifier.h>
+#include <WebCore/PolicyContainer.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/SecurityContext.h>
+#include <WebCore/SecurityOrigin.h>
 
 namespace WebCore {
 

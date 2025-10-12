@@ -49,10 +49,14 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
     auto canAffectElementsWithStyle = [&](MatchElement matchElement) {
         switch (matchElement) {
         case MatchElement::HasSibling:
+        case MatchElement::HasAnySibling:
         case MatchElement::HasChild:
+        case MatchElement::HasChildAncestor:
+        case MatchElement::HasChildParent:
             return isChild;
         case MatchElement::HasDescendant:
         case MatchElement::HasSiblingDescendant:
+        case MatchElement::HasDescendantParent:
         case MatchElement::HasNonSubject:
         case MatchElement::HasScopeBreaking:
             return true;
@@ -66,7 +70,7 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
 
     auto hasMatchingInvalidationSelector = [&](auto& invalidationRuleSet) {
         SelectorChecker selectorChecker(changedElement.document());
-        SelectorChecker::CheckingContext checkingContext(SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements);
+        SelectorChecker::CheckingContext checkingContext(SelectorChecker::Mode::StyleInvalidation);
         checkingContext.matchesAllHasScopes = true;
 
         for (auto& selector : invalidationRuleSet.invalidationSelectors) {

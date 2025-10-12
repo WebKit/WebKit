@@ -28,7 +28,7 @@
     EnabledBy=FullScreenEnabled || VideoFullscreenRequiresElementFullscreen
 ]
 messages -> WebFullScreenManagerProxy {
-    EnterFullScreen(WebCore::FrameIdentifier frameID, bool blocksReturnToFullscreenFromPictureInPicture, struct WebKit::FullScreenMediaDetails mediaDetails) -> (bool success)
+    EnterFullScreen(WebCore::FrameIdentifier frameID, bool blocksReturnToFullscreenFromPictureInPicture, struct WebKit::FullScreenMediaDetails mediaDetails, WebCore::FrameIdentifier rootFrameID, WebCore::IntRect initialFrameInRootFrameCoordinates) -> (std::optional<WebCore::IntRect> transformedInitialFrame)
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     UpdateImageSource(struct WebKit::FullScreenMediaDetails mediaDetails)
 #endif

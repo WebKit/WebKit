@@ -33,10 +33,10 @@
 #include "HeapAnalyzer.h"
 #include "IndexingHeaderInlines.h"
 #include "JSCInlines.h"
+#include "JSCellButterfly.h"
 #include "JSCustomGetterFunction.h"
 #include "JSCustomSetterFunction.h"
 #include "JSFunction.h"
-#include "JSImmutableButterfly.h"
 #include "Lookup.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
@@ -84,7 +84,7 @@ ALWAYS_INLINE void JSObject::markAuxiliaryAndVisitOutOfLineProperties(Visitor& v
         return;
 
     if (isCopyOnWrite(structure->indexingMode())) {
-        visitor.append(std::bit_cast<WriteBarrier<JSCell>>(JSImmutableButterfly::fromButterfly(butterfly)));
+        visitor.append(std::bit_cast<WriteBarrier<JSCell>>(JSCellButterfly::fromButterfly(butterfly)));
         return;
     }
 
@@ -125,7 +125,7 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(Visitor& visitor)
 
     auto visitElements = [&] (IndexingType indexingMode) {
         switch (indexingMode) {
-        // We don't need to visit the elements for CopyOnWrite butterflies since they we marked the JSImmutableButterfly acting as our butterfly.
+        // We don't need to visit the elements for CopyOnWrite butterflies since they we marked the JSCellButterfly acting as our butterfly.
         case ALL_WRITABLE_CONTIGUOUS_INDEXING_TYPES:
             visitor.appendValuesHidden(butterfly->contiguous().data(), butterfly->publicLength());
             break;
@@ -693,7 +693,7 @@ bool ordinarySetWithOwnDescriptor(JSGlobalObject* globalObject, JSObject* object
 
         if (!ownDescriptorFound) {
             // 9.1.9.1-3-a Let parent be ? O.[[GetPrototypeOf]]().
-            JSValue prototype = current->getPrototype(vm, globalObject);
+            JSValue prototype = current->getPrototype(globalObject);
             RETURN_IF_EXCEPTION(scope, false);
 
             // 9.1.9.1-3-b If parent is not null, then
@@ -892,7 +892,7 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
             break;
         }
 
-        JSValue prototype = obj->getPrototype(vm, globalObject);
+        JSValue prototype = obj->getPrototype(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
         if (prototype.isNull())
             break;
@@ -1210,6 +1210,11 @@ void JSObject::notifyPresenceOfIndexedAccessors(VM& vm)
         return;
     
     globalObject()->haveABadTime(vm);
+}
+
+static inline size_t nextLength(size_t length)
+{
+    return length + length / 2;
 }
 
 Butterfly* JSObject::createInitialIndexedStorage(VM& vm, unsigned length)
@@ -1791,7 +1796,7 @@ void JSObject::convertFromCopyOnWrite(VM& vm)
     const bool hasIndexingHeader = true;
     Butterfly* oldButterfly = butterfly();
     size_t propertyCapacity = 0;
-    unsigned newVectorLength = Butterfly::optimalContiguousVectorLength(propertyCapacity, std::min(oldButterfly->vectorLength() * 2, MAX_STORAGE_VECTOR_LENGTH));
+    unsigned newVectorLength = Butterfly::optimalContiguousVectorLength(propertyCapacity, std::min<size_t>(nextLength(oldButterfly->vectorLength()), MAX_STORAGE_VECTOR_LENGTH));
     Butterfly* newButterfly = Butterfly::createUninitialized(vm, this, 0, propertyCapacity, hasIndexingHeader, newVectorLength * sizeof(JSValue));
 
     // memcpy is fine since newButterfly is not tied to any object yet.
@@ -2119,7 +2124,7 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, JSGlobalObject* globalObject, 
 
     if (this->structure()->isImmutablePrototypeExoticObject()) {
         // This implements https://tc39.github.io/ecma262/#sec-set-immutable-prototype.
-        if (this->getPrototype(vm, globalObject) == prototype)
+        if (this->getPrototype(globalObject) == prototype)
             return true;
 
         return typeError(globalObject, scope, shouldThrowIfCantSet, "Cannot set prototype of immutable prototype object"_s);
@@ -2562,8 +2567,6 @@ JSValue JSObject::ordinaryToPrimitive(JSGlobalObject* globalObject, PreferredPri
             return value;
     }
 
-    scope.assertNoExceptionExceptTermination();
-
     return throwTypeError(globalObject, scope, "No default value"_s);
 }
 
@@ -2571,6 +2574,12 @@ JSValue JSObject::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveTy
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (isJSArray(this)) {
+        auto* array = jsCast<JSArray*>(const_cast<JSObject*>(this));
+        if (array->isToPrimitiveFastAndNonObservable()) [[likely]]
+            RELEASE_AND_RETURN(scope, array->fastToString(globalObject));
+    }
 
     JSValue value = callToPrimitiveFunction<CachedSpecialPropertyKey::ToPrimitive>(globalObject, this, vm.propertyNames->toPrimitiveSymbol, preferredType);
     RETURN_IF_EXCEPTION(scope, { });
@@ -2659,7 +2668,7 @@ bool JSObject::defaultHasInstance(JSGlobalObject* globalObject, JSValue value, J
 
     JSObject* object = asObject(value);
     while (true) {
-        JSValue objectValue = object->getPrototype(vm, globalObject);
+        JSValue objectValue = object->getPrototype(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
         if (!objectValue.isObject())
             return false;
@@ -2690,7 +2699,7 @@ void JSObject::getPropertyNames(JSGlobalObject* globalObject, PropertyNameArray&
         object->methodTable()->getOwnPropertyNames(object, globalObject, propertyNames, mode);
         RETURN_IF_EXCEPTION(scope, void());
 
-        JSValue prototype = object->getPrototype(vm, globalObject);
+        JSValue prototype = object->getPrototype(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
         if (prototype.isNull())
             break;
@@ -2790,9 +2799,9 @@ void JSObject::getOwnNonIndexPropertyNames(JSGlobalObject* globalObject, Propert
     methodTable()->getOwnSpecialPropertyNames(this, globalObject, propertyNames, mode);
     RETURN_IF_EXCEPTION(scope, void());
 
+    scope.release();
     getNonReifiedStaticPropertyNames(vm, propertyNames, mode);
     structure()->getPropertyNamesFromStructure(vm, propertyNames, mode);
-    scope.assertNoExceptionExceptTermination();
 }
 
 double JSObject::toNumber(JSGlobalObject* globalObject) const
@@ -2808,6 +2817,12 @@ JSString* JSObject::toString(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (isJSArray(this)) {
+        auto* array = jsCast<JSArray*>(const_cast<JSObject*>(this));
+        if (array->isToPrimitiveFastAndNonObservable()) [[likely]]
+            RELEASE_AND_RETURN(scope, array->fastToString(globalObject));
+    }
 
     JSValue primitive = callToPrimitiveFunction<CachedSpecialPropertyKey::ToPrimitive>(globalObject, this, vm.propertyNames->toPrimitiveSymbol, PreferString);
     RETURN_IF_EXCEPTION(scope, jsEmptyString(vm));
@@ -3148,7 +3163,7 @@ bool JSObject::attemptToInterceptPutByIndexOnHoleForPrototype(JSGlobalObject* gl
             return true;
         }
         
-        JSValue prototypeValue = current->getPrototype(vm, globalObject);
+        JSValue prototypeValue = current->getPrototype(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
         if (prototypeValue.isNull())
             return false;
@@ -3162,7 +3177,7 @@ bool JSObject::attemptToInterceptPutByIndexOnHole(JSGlobalObject* globalObject, 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue prototypeValue = getPrototype(vm, globalObject);
+    JSValue prototypeValue = getPrototype(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
     if (prototypeValue.isNull())
         return false;
@@ -3796,7 +3811,7 @@ bool JSObject::ensureLengthSlow(VM& vm, unsigned length)
         newVectorLength = availableOldLength;
     } else {
         newVectorLength = Butterfly::optimalContiguousVectorLength(
-            propertyCapacity, std::min(length * 2, MAX_STORAGE_VECTOR_LENGTH));
+            propertyCapacity, std::min<size_t>(nextLength(length), MAX_STORAGE_VECTOR_LENGTH));
         butterfly = butterfly->reallocArrayRightIfPossible(
             vm, deferralContext, this, structure, propertyCapacity, true,
             oldVectorLength * sizeof(EncodedJSValue),

@@ -10,19 +10,19 @@
 
 #include "modules/audio_processing/aec3/aec3_common.h"
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "rtc_base/checks.h"
+#include "rtc_base/cpu_info.h"
 #include "rtc_base/system/arch.h"
-#include "system_wrappers/include/cpu_features_wrapper.h"
 
 namespace webrtc {
 
 Aec3Optimization DetectOptimization() {
 #if defined(WEBRTC_ARCH_X86_FAMILY)
-  if (GetCPUInfo(kAVX2) != 0) {
+  if (cpu_info::Supports(cpu_info::ISA::kAVX2)) {
     return Aec3Optimization::kAvx2;
-  } else if (GetCPUInfo(kSSE2) != 0) {
+  } else if (cpu_info::Supports(cpu_info::ISA::kSSE2)) {
     return Aec3Optimization::kSse2;
   }
 #endif

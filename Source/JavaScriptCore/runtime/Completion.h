@@ -22,10 +22,10 @@
 
 #pragma once
 
-#include "CallData.h"
-#include "Identifier.h"
-#include "JSCJSValue.h"
-#include "ScriptFetchParameters.h"
+#include <JavaScriptCore/CallData.h>
+#include <JavaScriptCore/Identifier.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/ScriptFetchParameters.h>
 #include <wtf/FileSystem.h>
 #include <wtf/NakedPtr.h>
 

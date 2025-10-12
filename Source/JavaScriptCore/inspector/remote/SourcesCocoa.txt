@@ -26,6 +26,6 @@ inspector/remote/RemoteControllableTarget.cpp
 inspector/remote/RemoteInspectionTarget.cpp
 inspector/remote/RemoteInspector.cpp
 
-inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm
-inspector/remote/cocoa/RemoteInspectorCocoa.mm
-inspector/remote/cocoa/RemoteInspectorXPCConnection.mm
+inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm @nonARC
+inspector/remote/cocoa/RemoteInspectorCocoa.mm @nonARC
+inspector/remote/cocoa/RemoteInspectorXPCConnection.mm @nonARC

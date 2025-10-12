@@ -44,7 +44,7 @@ CoreIPCCNPhoneNumber::CoreIPCCNPhoneNumber(CNPhoneNumber *cnPhoneNumber)
 
 RetainPtr<id> CoreIPCCNPhoneNumber::toID() const
 {
-    return [PAL::getCNPhoneNumberClass() phoneNumberWithDigits:m_digits.createNSString().get() countryCode:m_countryCode.createNSString().get()];
+    return [PAL::getCNPhoneNumberClassSingleton() phoneNumberWithDigits:m_digits.createNSString().get() countryCode:m_countryCode.createNSString().get()];
 }
 
 CoreIPCCNPostalAddress::CoreIPCCNPostalAddress(CNPostalAddress *cnPostalAddress)
@@ -62,7 +62,7 @@ CoreIPCCNPostalAddress::CoreIPCCNPostalAddress(CNPostalAddress *cnPostalAddress)
 
 RetainPtr<id> CoreIPCCNPostalAddress::toID() const
 {
-    RetainPtr<CNMutablePostalAddress> address = adoptNS([[PAL::getCNMutablePostalAddressClass() alloc] init]);
+    RetainPtr<CNMutablePostalAddress> address = adoptNS([[PAL::getCNMutablePostalAddressClassSingleton() alloc] init]);
 
     address.get().street = nsStringNilIfNull(m_street);
     address.get().subLocality = nsStringNilIfNull(m_subLocality);
@@ -78,76 +78,70 @@ RetainPtr<id> CoreIPCCNPostalAddress::toID() const
 }
 
 CoreIPCCNContact::CoreIPCCNContact(CNContact *contact)
+    : m_identifier { contact.identifier }
+    , m_personContactType { contact.contactType == CNContactTypePerson }
 {
-    m_identifier = contact.identifier;
-    m_contactType = contact.contactType;
-
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactNamePrefixKey()] && contact.namePrefix)
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactNamePrefixKeySingleton()] && contact.namePrefix)
         m_namePrefix = contact.namePrefix;
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactGivenNameKey()] && contact.givenName)
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactGivenNameKeySingleton()] && contact.givenName)
         m_givenName = contact.givenName;
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactMiddleNameKey()] && contact.middleName)
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactMiddleNameKeySingleton()] && contact.middleName)
         m_middleName = contact.middleName;
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactFamilyNameKey()] && contact.familyName)
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactFamilyNameKeySingleton()] && contact.familyName)
         m_familyName = contact.familyName;
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPreviousFamilyNameKey()] && contact.previousFamilyName)
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPreviousFamilyNameKeySingleton()] && contact.previousFamilyName)
         m_previousFamilyName = contact.previousFamilyName;
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactNameSuffixKey()] && contact.nameSuffix)
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactNameSuffixKeySingleton()] && contact.nameSuffix)
         m_nameSuffix = contact.nameSuffix;
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactNicknameKey()] && contact.nickname)
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactNicknameKeySingleton()] && contact.nickname)
         m_nickname = contact.nickname;
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactOrganizationNameKey()] && contact.organizationName)
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactOrganizationNameKeySingleton()] && contact.organizationName)
         m_organizationName = contact.organizationName;
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactDepartmentNameKey()] && contact.departmentName)
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactDepartmentNameKeySingleton()] && contact.departmentName)
         m_departmentName = contact.departmentName;
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactJobTitleKey()] && contact.jobTitle)
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactJobTitleKeySingleton()] && contact.jobTitle)
         m_jobTitle = contact.jobTitle;
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPhoneticGivenNameKey()] && contact.phoneticGivenName)
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPhoneticGivenNameKeySingleton()] && contact.phoneticGivenName)
         m_phoneticGivenName = contact.phoneticGivenName;
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPhoneticMiddleNameKey()] && contact.phoneticMiddleName)
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPhoneticMiddleNameKeySingleton()] && contact.phoneticMiddleName)
         m_phoneticMiddleName = contact.phoneticMiddleName;
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPhoneticFamilyNameKey()] && contact.phoneticFamilyName)
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPhoneticFamilyNameKeySingleton()] && contact.phoneticFamilyName)
         m_phoneticFamilyName = contact.phoneticFamilyName;
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPhoneticOrganizationNameKey()] && contact.phoneticOrganizationName)
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPhoneticOrganizationNameKeySingleton()] && contact.phoneticOrganizationName)
         m_phoneticOrganizationName = contact.phoneticOrganizationName;
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactNoteKey()] && contact.note)
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactNoteKeySingleton()] && contact.note)
         m_note = contact.note;
 
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactBirthdayKey()] && contact.birthday)
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactBirthdayKeySingleton()] && contact.birthday)
         m_birthday = contact.birthday;
 
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactNonGregorianBirthdayKey()] && contact.nonGregorianBirthday)
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactNonGregorianBirthdayKeySingleton()] && contact.nonGregorianBirthday)
         m_nonGregorianBirthday = contact.nonGregorianBirthday;
 
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactDatesKey()] && contact.dates) {
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactDatesKeySingleton()] && contact.dates) {
         for (CNLabeledValue *labeledValue in contact.dates)
             m_dates.append({ labeledValue.identifier, labeledValue.label, CoreIPCDateComponents(labeledValue.value) });
     }
 
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPhoneNumbersKey()] && contact.phoneNumbers) {
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPhoneNumbersKeySingleton()] && contact.phoneNumbers) {
         for (CNLabeledValue *labeledValue in contact.phoneNumbers)
             m_phoneNumbers.append({ labeledValue.identifier, labeledValue.label, CoreIPCCNPhoneNumber(labeledValue.value) });
     }
 
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactEmailAddressesKey()] && contact.emailAddresses) {
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactEmailAddressesKeySingleton()] && contact.emailAddresses) {
         for (CNLabeledValue *labeledValue in contact.emailAddresses)
             m_emailAddresses.append({ labeledValue.identifier, labeledValue.label, (NSString *)labeledValue.value });
     }
 
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPostalAddressesKey()] && contact.postalAddresses) {
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPostalAddressesKeySingleton()] && contact.postalAddresses) {
         for (CNLabeledValue *labeledValue in contact.postalAddresses)
             m_postalAddresses.append({ labeledValue.identifier, labeledValue.label, CoreIPCCNPostalAddress(labeledValue.value) });
     }
 
-    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactUrlAddressesKey()] && contact.urlAddresses) {
+    if ([contact isKeyAvailable:PAL::get_Contacts_CNContactUrlAddressesKeySingleton()] && contact.urlAddresses) {
         for (CNLabeledValue *labeledValue in contact.urlAddresses)
             m_urlAddresses.append({ labeledValue.identifier, labeledValue.label, (NSString *)labeledValue.value });
     }
-}
-
-bool CoreIPCCNContact::isValidCNContactType(NSInteger proposedType)
-{
-    return proposedType == CNContactTypePerson || proposedType == CNContactTypeOrganization;
 }
 
 static RetainPtr<NSArray> nsArrayFromVectorOfLabeledValues(const Vector<CoreIPCContactLabeledValue>& labeledValues)
@@ -157,14 +151,14 @@ static RetainPtr<NSArray> nsArrayFromVectorOfLabeledValues(const Vector<CoreIPCC
             return actualValue.toID();
         }, labeledValue.value);
 
-        return adoptNS([[PAL::getCNLabeledValueClass() alloc] initWithIdentifier:labeledValue.identifier.createNSString().get() label:labeledValue.label.createNSString().get() value:theValue.get()]);
+        return adoptNS([[PAL::getCNLabeledValueClassSingleton() alloc] initWithIdentifier:labeledValue.identifier.createNSString().get() label:labeledValue.label.createNSString().get() value:theValue.get()]);
     });
 }
 
 RetainPtr<id> CoreIPCCNContact::toID() const
 {
-    RetainPtr<CNMutableContact> result = adoptNS([[PAL::getCNMutableContactClass() alloc] initWithIdentifier:m_identifier.createNSString().get()]);
-    result.get().contactType = (CNContactType)m_contactType;
+    RetainPtr<CNMutableContact> result = adoptNS([[PAL::getCNMutableContactClassSingleton() alloc] initWithIdentifier:m_identifier.createNSString().get()]);
+    result.get().contactType = m_personContactType ? CNContactTypePerson : CNContactTypeOrganization;
 
     if (!m_namePrefix.isNull())
         result.get().namePrefix = m_namePrefix.createNSString().get();

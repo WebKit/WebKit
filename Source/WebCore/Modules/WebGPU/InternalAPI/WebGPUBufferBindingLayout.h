@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPUBufferBindingType.h"
-#include "WebGPUIntegralTypes.h"
+#include <WebCore/WebGPUBufferBindingType.h>
+#include <WebCore/WebGPUIntegralTypes.h>
 
 namespace WebCore::WebGPU {
 

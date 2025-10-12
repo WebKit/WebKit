@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "IterationKind.h"
+#include <JavaScriptCore/IterationKind.h>
 #include <optional>
 #include <wtf/text/ASCIILiteral.h>
 
@@ -101,6 +101,7 @@ namespace JSC {
     macro(RegExpExecIntrinsic) \
     macro(RegExpTestIntrinsic) \
     macro(RegExpMatchFastIntrinsic) \
+    macro(RegExpSearchIntrinsic) \
     macro(ObjectAssignIntrinsic) \
     macro(ObjectCreateIntrinsic) \
     macro(ObjectGetOwnPropertyNamesIntrinsic) \
@@ -128,6 +129,7 @@ namespace JSC {
     macro(NumberPrototypeToStringIntrinsic) \
     macro(NumberIsFiniteIntrinsic) \
     macro(NumberIsNaNIntrinsic) \
+    macro(NumberIsSafeIntegerIntrinsic) \
     macro(NumberIsIntegerIntrinsic) \
     macro(NumberConstructorIntrinsic) \
     macro(IMulIntrinsic) \
@@ -194,6 +196,14 @@ namespace JSC {
     macro(FunctionToStringIntrinsic) \
     macro(FunctionBindIntrinsic) \
     macro(IteratorHelperCreateIntrinsic) \
+    macro(WrapForValidIteratorCreateIntrinsic) \
+    macro(AsyncFromSyncIteratorCreateIntrinsic) \
+    macro(PromiseAllContextCreateIntrinsic) \
+    macro(PromiseAllGlobalContextCreateIntrinsic) \
+    macro(RegExpStringIteratorCreateIntrinsic) \
+    macro(ResolvePromiseWithFirstResolvingFunctionCallCheckIntrinsic) \
+    macro(RejectPromiseWithFirstResolvingFunctionCallCheckIntrinsic) \
+    macro(FulfillPromiseWithFirstResolvingFunctionCallCheckIntrinsic) \
     \
     /* Getter intrinsics. */ \
     macro(TypedArrayLengthIntrinsic) \
@@ -246,7 +256,7 @@ enum Intrinsic : uint8_t {
 #undef JSC_DEFINE_INTRINSIC
 };
 
-std::optional<IterationKind> interationKindForIntrinsic(Intrinsic);
+std::optional<IterationKind> iterationKindForIntrinsic(Intrinsic);
 
 ASCIILiteral intrinsicName(Intrinsic);
 

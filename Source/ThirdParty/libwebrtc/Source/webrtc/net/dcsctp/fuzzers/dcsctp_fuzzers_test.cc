@@ -9,14 +9,12 @@
  */
 #include "net/dcsctp/fuzzers/dcsctp_fuzzers.h"
 
+#include <cstdint>
+
 #include "api/array_view.h"
-#include "net/dcsctp/packet/sctp_packet.h"
-#include "net/dcsctp/public/dcsctp_socket.h"
+#include "net/dcsctp/public/dcsctp_options.h"
 #include "net/dcsctp/socket/dcsctp_socket.h"
-#include "net/dcsctp/testing/testing_macros.h"
-#include "rtc_base/gunit.h"
-#include "rtc_base/logging.h"
-#include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace dcsctp_fuzzers {

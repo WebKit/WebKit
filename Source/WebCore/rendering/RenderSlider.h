@@ -37,6 +37,9 @@ public:
     virtual ~RenderSlider();
 
     HTMLInputElement& element() const;
+    Ref<HTMLInputElement> protectedElement() const;
+
+    bool canHaveGeneratedChildren() const override { return false; }
 
     bool inDragMode() const;
 
@@ -45,7 +48,6 @@ public:
 private:
     ASCIILiteral renderName() const override { return "RenderSlider"_s; }
 
-    LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     void computePreferredLogicalWidths() override;
 

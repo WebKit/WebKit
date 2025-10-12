@@ -35,6 +35,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/spi/cocoa/objcSPI.h>
 
 namespace API {
@@ -65,6 +66,16 @@ template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::Wrapp
     return object ? wrapper(*object) : nil;
 }
 
+template<typename ObjectClass> inline RetainPtr<typename WrapperTraits<ObjectClass>::WrapperClass> protectedWrapper(ObjectClass& object)
+{
+    return wrapper(object);
+}
+
+template<typename ObjectClass> inline RetainPtr<typename WrapperTraits<ObjectClass>::WrapperClass> protectedWrapper(ObjectClass* object)
+{
+    return wrapper(object);
+}
+
 template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *wrapper(const Ref<ObjectClass>& object)
 {
     return wrapper(object.get());
@@ -73,6 +84,16 @@ template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::Wrapp
 template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *wrapper(const RefPtr<ObjectClass>& object)
 {
     return wrapper(object.get());
+}
+
+template<typename ObjectClass> inline RetainPtr<typename WrapperTraits<ObjectClass>::WrapperClass> protectedWrapper(const Ref<ObjectClass>& object)
+{
+    return wrapper(object);
+}
+
+template<typename ObjectClass> inline RetainPtr<typename WrapperTraits<ObjectClass>::WrapperClass> protectedWrapper(const RefPtr<ObjectClass>& object)
+{
+    return wrapper(object);
 }
 
 template<typename ObjectClass> inline RetainPtr<typename WrapperTraits<ObjectClass>::WrapperClass> wrapper(Ref<ObjectClass>&& object)
@@ -122,7 +143,7 @@ using WebKit::wrapper;
     if (isMainRunLoop()) \
         _objc_deallocOnMainThreadHelper((__bridge void *)self); \
     else \
-        dispatch_async_f(dispatch_get_main_queue(), (__bridge void *)self, _objc_deallocOnMainThreadHelper); \
+        dispatch_async_f(mainDispatchQueueSingleton(), (__bridge void *)self, _objc_deallocOnMainThreadHelper); \
 } \
 \
 using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int

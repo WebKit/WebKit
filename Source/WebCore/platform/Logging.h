@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2025 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,47 +25,42 @@
 
 #pragma once
 
+#include <WebCore/WebCoreLogDefinitions.h>
 #include <wtf/Assertions.h>
 #include <wtf/Forward.h>
-
-#if __has_include("WebCoreLogDefinitions.h")
-#include "WebCoreLogDefinitions.h"
-#endif
+#include <wtf/StdLibExtras.h>
 
 #define COMMA() ,
-#define OPTIONAL_ARGS(...) __VA_OPT__(COMMA()) __VA_ARGS__
+#define OPTIONAL_ARGS(...) __VA_OPT__(COMMA() SAFE_PRINTF_TYPE(__VA_ARGS__))
+#define OPTIONAL_ARGS_UNSAFE(...) __VA_OPT__(COMMA() __VA_ARGS__)
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-#include "LogClient.h"
+#include <WebCore/LogClient.h>
 
-#define RELEASE_LOG_FORWARDABLE(category, logMessage, ...) do { \
+#define RELEASE_LOG_FORWARDABLE_WITH_FALLBACK(fallback, category, logMessage, ...) do { \
     if (auto& client = logClient()) \
         client->logMessage(__VA_ARGS__); \
     else \
-        RELEASE_LOG(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__)); \
+        fallback(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__)); \
 } while (0)
 
-#define RELEASE_LOG_INFO_FORWARDABLE(category, logMessage, ...) do { \
+#define RELEASE_LOG_FORWARDABLE_WITH_FALLBACK_UNSAFE_ARGS(fallback, category, logMessage, ...) do { \
     if (auto& client = logClient()) \
         client->logMessage(__VA_ARGS__); \
     else \
-        RELEASE_LOG_INFO(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__)); \
+        fallback(category, MESSAGE_##logMessage OPTIONAL_ARGS_UNSAFE(__VA_ARGS__)); \
 } while (0)
 
-#define RELEASE_LOG_ERROR_FORWARDABLE(category, logMessage, ...) do { \
-    if (auto& client = logClient()) \
-        client->logMessage(__VA_ARGS__); \
-    else \
-        RELEASE_LOG_ERROR(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__)); \
-} while (0)
+#define RELEASE_LOG_FORWARDABLE_UNSAFE_ARGS(category, logMessage, ...) RELEASE_LOG_FORWARDABLE_WITH_FALLBACK_UNSAFE_ARGS(RELEASE_LOG, category, logMessage, __VA_ARGS__)
+#define RELEASE_LOG_ERROR_FORWARDABLE_UNSAFE_ARGS(category, logMessage, ...) RELEASE_LOG_FORWARDABLE_WITH_FALLBACK_UNSAFE_ARGS(RELEASE_LOG_ERROR, category, logMessage, __VA_ARGS__)
 
-#define RELEASE_LOG_FAULT_FORWARDABLE(category, logMessage, ...) do { \
-    if (auto& client = logClient()) \
-        client->logMessage(__VA_ARGS__); \
-    else \
-        RELEASE_LOG_FAULT(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__)); \
-} while (0)
+#define RELEASE_LOG_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_FORWARDABLE_WITH_FALLBACK(RELEASE_LOG, category, logMessage, __VA_ARGS__)
+#define RELEASE_LOG_INFO_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_FORWARDABLE_WITH_FALLBACK(RELEASE_LOG_INFO, category, logMessage, __VA_ARGS__)
+#define RELEASE_LOG_ERROR_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_FORWARDABLE_WITH_FALLBACK(RELEASE_LOG_ERROR, category, logMessage, __VA_ARGS__)
+#define RELEASE_LOG_FAULT_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_FORWARDABLE_WITH_FALLBACK(RELEASE_LOG_FAULT, category, logMessage, __VA_ARGS__)
 #else
+#define RELEASE_LOG_FORWARDABLE_UNSAFE_ARGS(category, logMessage, ...) RELEASE_LOG(category, MESSAGE_##logMessage OPTIONAL_ARGS_UNSAFE(__VA_ARGS__))
+#define RELEASE_LOG_ERROR_FORWARDABLE_UNSAFE_ARGS(category, logMessage, ...) RELEASE_LOG_ERROR(category, MESSAGE_##logMessage OPTIONAL_ARGS_UNSAFE(__VA_ARGS__))
 #define RELEASE_LOG_FORWARDABLE(category, logMessage, ...) RELEASE_LOG(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__))
 #define RELEASE_LOG_INFO_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_INFO(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__))
 #define RELEASE_LOG_ERROR_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_ERROR(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__))
@@ -115,6 +110,7 @@ namespace WebCore {
     M(FTP) \
     M(Fullscreen) \
     M(Gamepad) \
+    M(HDR) \
     M(HID) \
     M(History) \
     M(IOSurface) \
@@ -124,6 +120,7 @@ namespace WebCore {
     M(IndexedDBOperations) \
     M(Inspector) \
     M(IntersectionObserver) \
+    M(LargestContentfulPaint) \
     M(Layers) \
     M(Layout) \
     M(LazyLoading) \
@@ -140,10 +137,12 @@ namespace WebCore {
     M(MessagePorts) \
     M(ModelElement) \
     M(NativePromise) \
+    M(Navigation) \
     M(Network) \
     M(NotYetImplemented) \
     M(OverlayScrollbars) \
     M(PerformanceLogging) \
+    M(PerformanceTimeline) \
     M(PlatformLeaks) \
     M(Plugins) \
     M(PopupBlocking) \

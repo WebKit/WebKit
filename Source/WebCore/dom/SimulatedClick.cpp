@@ -32,6 +32,8 @@
 #include "Element.h"
 #include "EventNames.h"
 #include "MouseEvent.h"
+#include "NodeDocument.h"
+#include "NodeInlines.h"
 #include "PointerEvent.h"
 #include "PointerID.h"
 #include <wtf/NeverDestroyed.h>
@@ -57,15 +59,15 @@ private:
         setUnderlyingEvent(underlyingEvent.get());
 
         if (auto* mouseEvent = dynamicDowncast<MouseEvent>(this->underlyingEvent())) {
-            m_screenLocation = mouseEvent->screenLocation();
+            setScreenLocation(mouseEvent->screenLocation());
             initCoordinates(mouseEvent->clientLocation());
         } else if (source == SimulatedClickSource::UserAgent) {
             // If there is no underlying event, we only populate the coordinates for events coming
             // from the user agent (e.g. accessibility). For those coming from JavaScript (e.g.
             // (element.click()), the coordinates will be 0, similarly to Firefox and Chrome.
             // Note that the call to screenRect() causes a synchronous IPC with the UI process.
-            m_screenLocation = target.screenRect().center();
-            initCoordinates(LayoutPoint(target.boundingClientRect().center()));
+            setScreenLocation(target.screenRect().center());
+            initCoordinates(target.boundingClientRect().center());
         }
     }
 
@@ -102,15 +104,15 @@ private:
         setUnderlyingEvent(underlyingEvent.get());
 
         if (RefPtr pointerEvent = dynamicDowncast<PointerEvent>(this->underlyingEvent())) {
-            m_screenLocation = pointerEvent->screenLocation();
+            setScreenLocation(pointerEvent->screenLocation());
             initCoordinates(pointerEvent->clientLocation());
         } else if (source == SimulatedClickSource::UserAgent) {
             // If there is no underlying event, we only populate the coordinates for events coming
             // from the user agent (e.g. accessibility). For those coming from JavaScript (e.g.
             // (element.click()), the coordinates will be 0, similarly to Firefox and Chrome.
             // Note that the call to screenRect() causes a synchronous IPC with the UI process.
-            m_screenLocation = target.screenRect().center();
-            initCoordinates(LayoutPoint(target.boundingClientRect().center()));
+            setScreenLocation(target.screenRect().center());
+            initCoordinates(target.boundingClientRect().center());
         }
     }
 };
@@ -135,7 +137,7 @@ bool simulateClick(Element& element, Event* underlyingEvent, SimulatedClickMouse
     if (element.isDisabledFormControl())
         return false;
 
-    static MainThreadNeverDestroyed<UncheckedKeyHashSet<Ref<Element>>> elementsDispatchingSimulatedClicks;
+    static MainThreadNeverDestroyed<HashSet<Ref<Element>>> elementsDispatchingSimulatedClicks;
     if (!elementsDispatchingSimulatedClicks.get().add(element).isNewEntry)
         return false;
 

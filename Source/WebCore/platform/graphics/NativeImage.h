@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2008 Torch Mobile, Inc.
  * Copyright (C) 2012 Company 100 Inc.
  *
@@ -27,8 +27,9 @@
 
 #pragma once
 
-#include "PlatformImage.h"
-#include "RenderingResource.h"
+#include <WebCore/PlatformExportMacros.h>
+#include <WebCore/PlatformImage.h>
+#include <WebCore/RenderingResource.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
@@ -43,70 +44,47 @@ class NativeImageBackend;
 struct Headroom;
 struct ImagePaintingOptions;
 
-class NativeImage final : public RenderingResource {
+class NativeImage : public ThreadSafeRefCounted<NativeImage> {
     WTF_MAKE_TZONE_ALLOCATED(NativeImage);
 public:
-    static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
+    static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&);
     // Creates a NativeImage that is intended to be drawn once or only few times. Signals the platform to avoid generating any caches for the image.
-    static WEBCORE_EXPORT RefPtr<NativeImage> createTransient(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
+    static WEBCORE_EXPORT RefPtr<NativeImage> createTransient(PlatformImagePtr&&);
 
-    ~NativeImage();
+    WEBCORE_EXPORT virtual ~NativeImage();
 
-    WEBCORE_EXPORT const PlatformImagePtr& platformImage() const;
-
-    WEBCORE_EXPORT IntSize size() const;
-    bool hasAlpha() const;
+    WEBCORE_EXPORT virtual const PlatformImagePtr& platformImage() const;
+    WEBCORE_EXPORT virtual IntSize size() const;
+    WEBCORE_EXPORT virtual bool hasAlpha() const;
     std::optional<Color> singlePixelSolidColor() const;
-    WEBCORE_EXPORT DestinationColorSpace colorSpace() const;
+    WEBCORE_EXPORT virtual DestinationColorSpace colorSpace() const;
     WEBCORE_EXPORT bool hasHDRContent() const;
     WEBCORE_EXPORT Headroom headroom() const;
 
-    void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions);
-    void drawWithToneMapping(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions);
     void clearSubimages();
 
-    WEBCORE_EXPORT void replaceBackend(UniqueRef<NativeImageBackend>);
-    NativeImageBackend& backend() { return m_backend.get(); }
-    const NativeImageBackend& backend() const { return m_backend.get(); }
+    WEBCORE_EXPORT void replacePlatformImage(PlatformImagePtr&&);
 
 #if USE(COORDINATED_GRAPHICS)
     uint64_t uniqueID() const;
 #endif
+
+    void addObserver(WeakRef<RenderingResourceObserver>&& observer)
+    {
+        m_observers.add(WTFMove(observer));
+    }
+
+    RenderingResourceIdentifier renderingResourceIdentifier() const
+    {
+        return m_renderingResourceIdentifier;
+    }
+
 protected:
-    NativeImage(UniqueRef<NativeImageBackend>, RenderingResourceIdentifier);
+    WEBCORE_EXPORT NativeImage(PlatformImagePtr&&);
 
-    bool isNativeImage() const final { return true; }
-
-    UniqueRef<NativeImageBackend> m_backend;
-};
-
-class NativeImageBackend {
-public:
-    WEBCORE_EXPORT NativeImageBackend();
-    WEBCORE_EXPORT virtual ~NativeImageBackend();
-    virtual const PlatformImagePtr& platformImage() const = 0;
-    virtual IntSize size() const = 0;
-    virtual bool hasAlpha() const = 0;
-    virtual DestinationColorSpace colorSpace() const = 0;
-    virtual Headroom headroom() const = 0;
-    WEBCORE_EXPORT virtual bool isRemoteNativeImageBackendProxy() const;
-};
-
-class PlatformImageNativeImageBackend final : public NativeImageBackend {
-public:
-    WEBCORE_EXPORT PlatformImageNativeImageBackend(PlatformImagePtr);
-    WEBCORE_EXPORT ~PlatformImageNativeImageBackend() final;
-    WEBCORE_EXPORT const PlatformImagePtr& platformImage() const final;
-    WEBCORE_EXPORT IntSize size() const final;
-    WEBCORE_EXPORT bool hasAlpha() const final;
-    WEBCORE_EXPORT DestinationColorSpace colorSpace() const final;
-    WEBCORE_EXPORT Headroom headroom() const final;
-private:
-    PlatformImagePtr m_platformImage;
+    mutable PlatformImagePtr m_platformImage;
+    mutable WeakHashSet<RenderingResourceObserver> m_observers;
+    RenderingResourceIdentifier m_renderingResourceIdentifier { RenderingResourceIdentifier::generate() };
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::NativeImage)
-    static bool isType(const WebCore::RenderingResource& renderingResource) { return renderingResource.isNativeImage(); }
-SPECIALIZE_TYPE_TRAITS_END()

@@ -10,7 +10,7 @@ TODO:
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { assert, unreachable } from '../../../../common/util/util.js';
 import {
-  IsDualSourceBlendingFactor,
+  IsDualSourceBlendingFactor as isDualSourceBlendingFactor,
   kBlendFactors,
   kBlendOperations } from
 '../../../capability_info.js';
@@ -19,7 +19,8 @@ import {
 
   kPossibleColorRenderableTextureFormats } from
 '../../../format_info.js';
-import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
+import * as ttu from '../../../texture_test_utils.js';
 import { clamp } from '../../../util/math.js';
 import { TexelView } from '../../../util/texture/texel_view.js';
 
@@ -76,7 +77,7 @@ class BlendingTest extends AllFeaturesMaxLimitsGPUTest {
   }
 }
 
-export const g = makeTestGroup(TextureTestMixin(BlendingTest));
+export const g = makeTestGroup(BlendingTest);
 
 function mapColor(
 col,
@@ -207,8 +208,8 @@ expand('blendConstant', (p) => {
 ).
 fn((t) => {
   if (
-  IsDualSourceBlendingFactor(t.params.srcFactor) ||
-  IsDualSourceBlendingFactor(t.params.dstFactor))
+  isDualSourceBlendingFactor(t.params.srcFactor) ||
+  isDualSourceBlendingFactor(t.params.dstFactor))
   {
     t.skipIfDeviceDoesNotHaveFeature('dual-source-blending');
   }
@@ -253,8 +254,8 @@ fn((t) => {
   }
 
   const useBlendSrc1 =
-  IsDualSourceBlendingFactor(t.params.srcFactor) ||
-  IsDualSourceBlendingFactor(t.params.dstFactor);
+  isDualSourceBlendingFactor(t.params.srcFactor) ||
+  isDualSourceBlendingFactor(t.params.dstFactor);
 
   const pipeline = t.device.createRenderPipeline({
     layout: 'auto',
@@ -367,7 +368,8 @@ struct FragOutput {
 
   t.device.queue.submit([commandEncoder.finish()]);
 
-  t.expectSinglePixelComparisonsAreOkInTexture(
+  ttu.expectSinglePixelComparisonsAreOkInTexture(
+    t,
     { texture: renderTarget },
     [
     {
@@ -457,7 +459,12 @@ fn((t) => {
     format,
     (_coords) => expColor
   );
-  t.expectTexelViewComparisonIsOkInTexture({ texture: renderTarget }, expTexelView, [1, 1, 1]);
+  ttu.expectTexelViewComparisonIsOkInTexture(
+    t,
+    { texture: renderTarget },
+    expTexelView,
+    [1, 1, 1]
+  );
 });
 
 g.test('blend_constant,initial').
@@ -505,7 +512,7 @@ fn((t) => {
   // a white color buffer data.
   const expColor = { R: 0, G: 0, B: 0, A: 0 };
   const expTexelView = TexelView.fromTexelsAsColors(format, (_coords) => expColor);
-  t.expectTexelViewComparisonIsOkInTexture({ texture: renderTarget }, expTexelView, [
+  ttu.expectTexelViewComparisonIsOkInTexture(t, { texture: renderTarget }, expTexelView, [
   kSize,
   kSize]
   );
@@ -564,7 +571,7 @@ fn((t) => {
   const expColor = { R: r, G: g, B: b, A: a };
   const expTexelView = TexelView.fromTexelsAsColors(format, (_coords) => expColor);
 
-  t.expectTexelViewComparisonIsOkInTexture({ texture: renderTarget }, expTexelView, [
+  ttu.expectTexelViewComparisonIsOkInTexture(t, { texture: renderTarget }, expTexelView, [
   kSize,
   kSize]
   );
@@ -637,7 +644,7 @@ fn((t) => {
   const expColor = { R: 0, G: 0, B: 0, A: 0 };
   const expTexelView = TexelView.fromTexelsAsColors(format, (_coords) => expColor);
 
-  t.expectTexelViewComparisonIsOkInTexture({ texture: renderTarget }, expTexelView, [
+  ttu.expectTexelViewComparisonIsOkInTexture(t, { texture: renderTarget }, expTexelView, [
   kSize,
   kSize]
   );
@@ -718,7 +725,7 @@ fn((t) => {
   const expColor = { R: r, G: g, B: b, A: a };
   const expTexelView = TexelView.fromTexelsAsColors(format, (_coords) => expColor);
 
-  t.expectTexelViewComparisonIsOkInTexture({ texture: renderTarget }, expTexelView, [
+  ttu.expectTexelViewComparisonIsOkInTexture(t, { texture: renderTarget }, expTexelView, [
   kSize,
   kSize]
   );
@@ -776,7 +783,7 @@ fn((t) => {
   const expColor = { R: 1, G: 0, B: 0, A: 0 };
   const expTexelView = TexelView.fromTexelsAsColors(format, (_coords) => expColor);
 
-  t.expectTexelViewComparisonIsOkInTexture({ texture: renderTarget }, expTexelView, [
+  ttu.expectTexelViewComparisonIsOkInTexture(t, { texture: renderTarget }, expTexelView, [
   kSize,
   kSize]
   );
@@ -873,5 +880,10 @@ fn((t) => {
   const expColor = { R: expValue, G: expValue, B: expValue, A: expValue };
   const expTexelView = TexelView.fromTexelsAsColors(format, (_coords) => expColor);
 
-  t.expectTexelViewComparisonIsOkInTexture({ texture: renderTarget }, expTexelView, [1, 1, 1]);
+  ttu.expectTexelViewComparisonIsOkInTexture(
+    t,
+    { texture: renderTarget },
+    expTexelView,
+    [1, 1, 1]
+  );
 });

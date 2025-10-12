@@ -27,7 +27,7 @@
 
 #if ENABLE(VIDEO)
 
-#include "PlatformTrackConfiguration.h"
+#include <WebCore/PlatformTrackConfiguration.h>
 
 namespace WebCore {
 

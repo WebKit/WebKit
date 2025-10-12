@@ -37,7 +37,7 @@ namespace WTF {
 template<typename Graph>
 class BackwardsGraph {
     WTF_MAKE_NONCOPYABLE(BackwardsGraph);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(BackwardsGraph);
 public:
     using Node = SingleRootGraphNode<Graph>;
     using Set = SingleRootGraphSet<Graph>;

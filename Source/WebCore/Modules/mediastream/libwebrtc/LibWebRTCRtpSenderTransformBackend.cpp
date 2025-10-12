@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,11 +36,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCRtpSenderTransformBackend);
 
 static inline LibWebRTCRtpSenderTransformBackend::MediaType mediaTypeFromSender(const webrtc::RtpSenderInterface& sender)
 {
-    return sender.media_type() == cricket::MEDIA_TYPE_AUDIO ? RTCRtpTransformBackend::MediaType::Audio : RTCRtpTransformBackend::MediaType::Video;
+    return sender.media_type() == webrtc::MediaType::AUDIO ? RTCRtpTransformBackend::MediaType::Audio : RTCRtpTransformBackend::MediaType::Video;
 }
 
-LibWebRTCRtpSenderTransformBackend::LibWebRTCRtpSenderTransformBackend(rtc::scoped_refptr<webrtc::RtpSenderInterface> rtcSender)
-    : LibWebRTCRtpTransformBackend(mediaTypeFromSender(*rtcSender), Side::Sender)
+LibWebRTCRtpSenderTransformBackend::LibWebRTCRtpSenderTransformBackend(Ref<webrtc::RtpSenderInterface>&& rtcSender)
+    : LibWebRTCRtpTransformBackend(mediaTypeFromSender(rtcSender), Side::Sender)
     , m_rtcSender(WTFMove(rtcSender))
 {
 }
@@ -56,7 +56,7 @@ void LibWebRTCRtpSenderTransformBackend::setTransformableFrameCallback(Callback&
         return;
 
     m_isRegistered = true;
-    m_rtcSender->SetEncoderToPacketizerFrameTransformer(rtc::scoped_refptr<webrtc::FrameTransformerInterface>(this));
+    m_rtcSender->SetEncoderToPacketizerFrameTransformer(webrtc::scoped_refptr<webrtc::FrameTransformerInterface>(this));
 }
 
 bool LibWebRTCRtpSenderTransformBackend::requestKeyFrame(const String& rid)

@@ -53,8 +53,8 @@ public:
     void rendererWillBeDestroyed(RenderBoxModelObject& renderer) { removeObject(&renderer); }
 
 private:
-    using LayerSizeMap = UncheckedKeyHashMap<const void*, LayoutSize>;
-    using ObjectLayerSizeMap = UncheckedKeyHashMap<SingleThreadWeakRef<RenderBoxModelObject>, LayerSizeMap>;
+    using LayerSizeMap = HashMap<const void*, LayoutSize>;
+    using ObjectLayerSizeMap = HashMap<SingleThreadWeakRef<RenderBoxModelObject>, LayerSizeMap>;
 
     void removeLayer(RenderBoxModelObject*, LayerSizeMap* innerMap, const void* layer);
     void set(RenderBoxModelObject*, LayerSizeMap* innerMap, const void* layer, const LayoutSize&);
@@ -62,7 +62,7 @@ private:
     void restartTimer();
     void removeObject(RenderBoxModelObject*);
 
-    const RenderView& m_renderView;
+    const CheckedRef<const RenderView> m_renderView;
     ObjectLayerSizeMap m_objectLayerSizeMap;
     DeferrableOneShotTimer m_timer;
     bool m_animatedResizeIsActive { false };

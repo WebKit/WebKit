@@ -1,0 +1,9 @@
+
+
+FAIL canvas 1 assert_equals:
+<canvas width="50" height="25" style="width: auto" data-expected-width="50" data-expected-height="50"></canvas>
+height expected 50 but got 25
+PASS canvas 2
+PASS canvas 3
+PASS canvas 4
+

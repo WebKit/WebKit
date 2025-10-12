@@ -24,11 +24,14 @@
 #include "config.h"
 #include "SVGMarkerElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "LegacyRenderSVGResourceMarker.h"
+#include "NodeDocument.h"
 #include "NodeName.h"
 #include "RenderSVGResourceMarker.h"
 #include "SVGNames.h"
 #include "SVGParsingError.h"
+#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -162,6 +165,12 @@ void SVGMarkerElement::setOrientToAuto()
 void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
 {
     Ref { m_orientAngle }->baseVal()->newValueSpecifiedUnits(angle.unitType(), angle.valueInSpecifiedUnits());
+    invalidateMarkerResource();
+}
+
+void SVGMarkerElement::setOrientToAutoStartReverse()
+{
+    Ref { m_orientType }->setBaseVal(SVGMarkerOrientAutoStartReverse);
     invalidateMarkerResource();
 }
 

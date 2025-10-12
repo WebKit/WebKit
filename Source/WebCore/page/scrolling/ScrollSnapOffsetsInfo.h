@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "ElementIdentifier.h"
-#include "FloatRect.h"
-#include "LayoutRect.h"
-#include "LayoutUnit.h"
-#include "ScrollTypes.h"
-#include "StyleScrollSnapPoints.h"
+#include <WebCore/FloatRect.h>
+#include <WebCore/LayoutRect.h>
+#include <WebCore/LayoutUnit.h>
+#include <WebCore/NodeIdentifier.h>
+#include <WebCore/RenderStyleConstants.h>
+#include <WebCore/ScrollTypes.h>
 #include <utility>
 #include <wtf/Vector.h>
 
@@ -46,19 +46,19 @@ struct SnapOffset {
     T offset;
     ScrollSnapStop stop;
     bool hasSnapAreaLargerThanViewport;
-    Markable<ElementIdentifier> snapTargetID;
+    Markable<NodeIdentifier> snapTargetID;
     bool isFocused;
-    Vector<size_t> snapAreaIndices;
+    Vector<uint64_t> snapAreaIndices;
 };
 
 template <typename UnitType, typename RectType>
 struct ScrollSnapOffsetsInfo {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    ScrollSnapStrictness strictness { ScrollSnapStrictness::None };
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ScrollSnapOffsetsInfo);
+    std::optional<ScrollSnapStrictness> strictness { };
     Vector<SnapOffset<UnitType>> horizontalSnapOffsets;
     Vector<SnapOffset<UnitType>> verticalSnapOffsets;
     Vector<RectType> snapAreas;
-    Vector<ElementIdentifier> snapAreasIDs;
+    Vector<NodeIdentifier> snapAreasIDs;
 
     bool isEqual(const ScrollSnapOffsetsInfo<UnitType, RectType>& other) const
     {

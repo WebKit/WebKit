@@ -17,8 +17,9 @@ import sys
 
 _SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 _SRC_DIR = os.path.dirname(os.path.dirname(_SCRIPT_DIR))
+_TESTING_BBOT_DIR = os.path.join(_SRC_DIR, 'testing', 'buildbot')
 sys.path.insert(0, _SRC_DIR)
-sys.path.insert(0, os.path.join(_SRC_DIR, 'testing', 'buildbot'))
+sys.path.insert(0, _TESTING_BBOT_DIR)
 
 from testing.buildbot import generate_buildbot_json
 
@@ -43,53 +44,54 @@ MIXINS_PYL_TEMPLATE = """\
 
 
 def generate_mixins_file_from_used_mixins(generator):
-  chromium_args = generate_buildbot_json.BBJSONGenerator.parse_args(argv=None)
-  chromium_generator = generate_buildbot_json.BBJSONGenerator(chromium_args)
-  chromium_generator.load_configuration_files()
+    chromium_mixins = generator.load_pyl_file(
+        os.path.join(_TESTING_BBOT_DIR, 'mixins.pyl'))
+    seen_mixins = set()
+    for waterfall in generator.waterfalls:
+        seen_mixins = seen_mixins.union(waterfall.get('mixins', set()))
+        for bot_name, tester in waterfall['machines'].items():
+            del bot_name
+            seen_mixins = seen_mixins.union(tester.get('mixins', set()))
+    for suite in generator.test_suites.values():
+        for test in suite.values():
+            if isinstance(test, list):
+                # This is for mixins defined in variants.pyl.
+                for variant in test:
+                    seen_mixins = seen_mixins.union(
+                        variant.get('mixins', set()))
+            else:
+                seen_mixins = seen_mixins.union(test.get('mixins', set()))
 
-  seen_mixins = set()
-  for waterfall in generator.waterfalls:
-    seen_mixins = seen_mixins.union(waterfall.get('mixins', set()))
-    for bot_name, tester in waterfall['machines'].items():
-      del bot_name
-      seen_mixins = seen_mixins.union(tester.get('mixins', set()))
-  for suite in generator.test_suites.values():
-    for test in suite.values():
-      if isinstance(test, list):
-        # This is for mixins defined in variants.pyl.
-        for variant in test:
-          seen_mixins = seen_mixins.union(variant.get('mixins', set()))
-      else:
-        seen_mixins = seen_mixins.union(test.get('mixins', set()))
+    found_mixins = ast.literal_eval(open(WEBRTC_MIXIN_FILE_NAME).read())
+    for mixin in seen_mixins:
+        if mixin not in found_mixins:
+            found_mixins[mixin] = chromium_mixins[mixin]
+        elif mixin in chromium_mixins:
+            assert False, (
+                '"%s" is already defined in Chromium\'s mixins.pyl' % mixin)
 
-  found_mixins = ast.literal_eval(open(WEBRTC_MIXIN_FILE_NAME).read())
-  for mixin in seen_mixins:
-    if mixin not in found_mixins:
-      found_mixins[mixin] = chromium_generator.mixins[mixin]
-    elif mixin in chromium_generator.mixins:
-      assert False, '"%s" is already defined in Chromium\'s mixins.pyl' % mixin
+    format_data = {
+        'script_name': os.path.basename(__file__),
+        'data_source': 'mixins_webrtc.pyl and Chromium\'s mixins.pyl',
+        'mixin_data': dict(sorted(found_mixins.items())),
+    }
+    with open(MIXIN_FILE_NAME, 'w') as f:
+        f.write(MIXINS_PYL_TEMPLATE.format(**format_data))
 
-  format_data = {
-      'script_name': os.path.basename(__file__),
-      'data_source': 'mixins_webrtc.pyl and Chromium\'s mixins.pyl',
-      'mixin_data': dict(sorted(found_mixins.items())),
-  }
-  with open(MIXIN_FILE_NAME, 'w') as f:
-    f.write(MIXINS_PYL_TEMPLATE.format(**format_data))
-
-  return subprocess.call(['yapf', '-i', MIXIN_FILE_NAME])
+    return subprocess.call(['yapf', '-i', MIXIN_FILE_NAME])
 
 
 def main():
-  override_args = ['--pyl-files-dir', _SCRIPT_DIR]
-  webrtc_args = generate_buildbot_json.BBJSONGenerator.parse_args(override_args)
-  webrtc_generator = generate_buildbot_json.BBJSONGenerator(webrtc_args)
-  webrtc_generator.load_configuration_files()
-  webrtc_generator.resolve_configuration_files()
+    override_args = ['--pyl-files-dir', _SCRIPT_DIR]
+    webrtc_args = generate_buildbot_json.BBJSONGenerator.parse_args(
+        override_args)
+    webrtc_generator = generate_buildbot_json.BBJSONGenerator(webrtc_args)
+    webrtc_generator.load_configuration_files()
+    webrtc_generator.resolve_configuration_files()
 
-  generate_mixins_file_from_used_mixins(webrtc_generator)
-  return webrtc_generator.main()
+    generate_mixins_file_from_used_mixins(webrtc_generator)
+    return webrtc_generator.main()
 
 
 if __name__ == '__main__':  # pragma: no cover
-  sys.exit(main())
+    sys.exit(main())

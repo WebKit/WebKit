@@ -26,23 +26,26 @@
 
 #if HAVE(DIGITAL_CREDENTIALS_UI)
 
+#import "WKIdentityDocumentPresentmentDelegate.h"
+
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
 #endif
+#import <WebCore/DigitalCredential.h>
+#import <wtf/Forward.h>
+
+OBJC_CLASS WKWebView;
 
 namespace WebKit {
 class WebPageProxy;
 }
+
 @class WKDigitalCredentialsPicker;
-@class WKWebView;
 
 namespace WebCore {
-class SecurityOriginData;
-
 struct DigitalCredentialsRequestData;
 struct DigitalCredentialsResponseData;
 struct ExceptionData;
-struct MobileDocumentRequest;
 struct OpenID4VPRequest;
 }
 
@@ -52,16 +55,14 @@ struct OpenID4VPRequest;
 - (void)digitalCredentialsPickerDidDismiss:(WKDigitalCredentialsPicker *)picker;
 @end
 
-@interface WKDigitalCredentialsPicker : NSObject <WKDigitalCredentialsPickerDelegate>
+@interface WKDigitalCredentialsPicker : NSObject <WKDigitalCredentialsPickerDelegate, WKIdentityDocumentPresentmentDelegate>
 
 @property (nonatomic, weak) id<WKDigitalCredentialsPickerDelegate> delegate;
-
 
 - (instancetype)initWithView:(WKWebView *)view page:(WebKit::WebPageProxy*)page;
 
 - (void)presentWithRequestData:(const WebCore::DigitalCredentialsRequestData&)requestData completionHandler:(CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&)completionHandler;
 - (void)dismissWithCompletionHandler:(CompletionHandler<void(bool)>&&)completionHandler;
-
 @end
 
 #endif // HAVE(DIGITAL_CREDENTIALS_UI)

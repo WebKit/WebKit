@@ -35,7 +35,7 @@ namespace WebCore {
 
 class EffectiveRateChangedListener final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<EffectiveRateChangedListener> {
 public:
-    static Ref<EffectiveRateChangedListener> create(Function<void()>&& callback, CMTimebaseRef timebase)
+    static Ref<EffectiveRateChangedListener> create(Function<void(double)>&& callback, CMTimebaseRef timebase)
     {
         return adoptRef(*new EffectiveRateChangedListener(WTFMove(callback), timebase));
     }
@@ -45,9 +45,9 @@ public:
     void stop();
 
 private:
-    EffectiveRateChangedListener(Function<void()>&&, CMTimebaseRef);
+    EffectiveRateChangedListener(Function<void(double)>&&, CMTimebaseRef);
 
-    const Function<void()> m_callback;
+    const Function<void(double)> m_callback;
     const RetainPtr<WebEffectiveRateChangedListenerObjCAdapter> m_objcAdapter;
     const RetainPtr<CMTimebaseRef> m_timebase;
     std::atomic<bool> m_stopped { false };

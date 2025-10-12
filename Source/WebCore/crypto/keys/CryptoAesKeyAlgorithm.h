@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CryptoKeyAlgorithm.h"
+#include <WebCore/CryptoKeyAlgorithm.h>
 
 namespace WebCore {
 

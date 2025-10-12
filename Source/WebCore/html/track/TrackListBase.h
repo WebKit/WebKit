@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,7 +70,7 @@ public:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const override = 0;
-    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final;
 
     void didMoveToNewDocument(Document&);
 

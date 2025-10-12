@@ -2,13 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-JSON-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
 ---*/
+
 function assertStringify(v, expect)
 {
   assert.sameValue(JSON.stringify(v), expect);
@@ -89,7 +87,3 @@ assertStringify(x, '[1]');
 var X = function() { this.a = "b" };
 X.prototype = { c: "d" };
 assertStringify(new X(), '{"a":"b"}');
-
-/******************************************************************************/
-
-print("Tests complete");

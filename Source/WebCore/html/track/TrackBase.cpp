@@ -86,7 +86,7 @@ TrackBase::~TrackBase() = default;
 
 void TrackBase::didMoveToNewDocument(Document& newDocument)
 {
-    observeContext(&newDocument.contextDocument());
+    observeContext(newDocument.protectedContextDocument().ptr());
 }
 
 void TrackBase::setTrackList(TrackListBase& trackList)
@@ -106,7 +106,8 @@ TrackListBase* TrackBase::trackList() const
 
 WebCoreOpaqueRoot TrackBase::opaqueRoot()
 {
-    if (auto trackList = this->trackList())
+    // Runs on GC thread.
+    if (SUPPRESS_UNCOUNTED_LOCAL auto* trackList = this->trackList())
         return trackList->opaqueRoot();
     return WebCoreOpaqueRoot { this };
 }
@@ -121,12 +122,12 @@ static bool isValidBCP47LanguageTag(const String& languageTag)
     if (length < 2 || length > 100)
         return false;
 
-    UChar firstChar = languageTag[0];
+    char16_t firstChar = languageTag[0];
 
     if (!isASCIIAlpha(firstChar))
         return false;
 
-    UChar secondChar = languageTag[1];
+    char16_t secondChar = languageTag[1];
 
     if (length == 2)
         return isASCIIAlpha(secondChar);
@@ -154,7 +155,7 @@ static bool isValidBCP47LanguageTag(const String& languageTag)
         nextCharIndexToCheck = 2;
 
     for (; nextCharIndexToCheck < length; ++nextCharIndexToCheck) {
-        UChar c = languageTag[nextCharIndexToCheck];
+        char16_t c = languageTag[nextCharIndexToCheck];
         if (isASCIIAlphanumeric(c) || c == '-')
             continue;
         return false;
@@ -172,12 +173,12 @@ void TrackBase::setLanguage(const AtomString& language)
 
     m_validBCP47Language = emptyAtom();
 
-    auto context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
     String message;
-    if (language.contains((UChar)'\0'))
+    if (language.contains((char16_t)'\0'))
         message = "The language contains a null character and is not a valid BCP 47 language tag."_s;
     else
         message = makeString("The language '"_s, language, "' is not a valid BCP 47 language tag."_s);
@@ -188,7 +189,7 @@ void TrackBase::setLanguage(const AtomString& language)
 #if !RELEASE_LOG_DISABLED
 void TrackBase::setLogger(const Logger& logger, uint64_t logIdentifier)
 {
-    m_logger = &logger;
+    m_logger = logger;
     m_logIdentifier = childLogIdentifier(logIdentifier, m_uniqueId);
 }
 
@@ -200,7 +201,7 @@ WTFLogChannel& TrackBase::logChannel() const
 
 void TrackBase::addClientToTrackPrivateBase(TrackPrivateBaseClient& client, TrackPrivateBase& track)
 {
-    if (auto context = scriptExecutionContext()) {
+    if (RefPtr context = scriptExecutionContext()) {
         m_clientRegistrationId = track.addClient([contextIdentifier = context->identifier()](auto&& task) {
             ScriptExecutionContext::ensureOnContextThread(contextIdentifier, WTFMove(task));
         }, client);

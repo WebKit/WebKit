@@ -1,5 +1,5 @@
 //@ requireOptions("--useWasmSIMD=1")
-//@ skip if !$isSIMDPlatform
+//@ skip if !$isSIMDPlatform or $buildType == "debug"
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
 

@@ -1,7 +1,7 @@
-<!DOCTYPE HTML>
+<!DOCTYPE HTML> <!-- webkit-test-runner [ PointerLockEnabled=true ] -->
 <html>
 <head>
-<script src="../http/tests/resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../http/tests/resources/pointer-lock/pointer-lock-test-harness.js"></script>
 </head>
 <body>
@@ -12,6 +12,7 @@
 <script>
     description("Test removing a locked element from a document causes lock to be released.")
     window.jsTestIsAsync = true;
+    window.testRunner?.setHasMouseDeviceForTesting(true);
 
     targetIframe1 = document.getElementById("iframe1");
     targetDiv2 = document.getElementById("target2");
@@ -50,6 +51,5 @@
     ];
     doNextStep();
 </script>
-<script src="../http/tests/resources/js-test-post.js"></script>
 </body>
 </html>

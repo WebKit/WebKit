@@ -10,15 +10,23 @@
 
 #include "test/video_codec_tester.h"
 
+#include <stdio.h>
+
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <iterator>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <tuple>
-#include <utility>
 #include <vector>
 
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
+#include "api/scoped_refptr.h"
 #include "api/test/mock_video_decoder.h"
 #include "api/test/mock_video_decoder_factory.h"
 #include "api/test/mock_video_encoder.h"
@@ -27,14 +35,20 @@
 #include "api/units/data_size.h"
 #include "api/units/frequency.h"
 #include "api/units/time_delta.h"
+#include "api/video/encoded_image.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
+#include "api/video/video_frame_type.h"
 #include "api/video_codecs/builtin_video_decoder_factory.h"
 #include "api/video_codecs/builtin_video_encoder_factory.h"
 #include "api/video_codecs/scalability_mode.h"
+#include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_decoder.h"
+#include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder.h"
+#include "api/video_codecs/video_encoder_factory.h"
 #include "modules/video_coding/include/video_codec_interface.h"
+#include "modules/video_coding/include/video_error_codes.h"
 #include "modules/video_coding/svc/scalability_mode_util.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -71,14 +85,14 @@ using Stream = VideoCodecTester::VideoCodecStats::Stream;
 
 constexpr int kWidth = 2;
 constexpr int kHeight = 2;
-const DataRate kBitrate = DataRate::BytesPerSec(100);
-const Frequency kFramerate = Frequency::Hertz(30);
+constexpr DataRate kBitrate = DataRate::BytesPerSec(100);
+constexpr Frequency kFramerate = Frequency::Hertz(30);
 constexpr Frequency k90kHz = Frequency::Hertz(90000);
 
-rtc::scoped_refptr<I420Buffer> CreateYuvBuffer(uint8_t y = 0,
-                                               uint8_t u = 0,
-                                               uint8_t v = 0) {
-  rtc::scoped_refptr<I420Buffer> buffer(I420Buffer::Create(2, 2));
+scoped_refptr<I420Buffer> CreateYuvBuffer(uint8_t y = 0,
+                                          uint8_t u = 0,
+                                          uint8_t v = 0) {
+  scoped_refptr<I420Buffer> buffer(I420Buffer::Create(2, 2));
 
   libyuv::I420Rect(buffer->MutableDataY(), buffer->StrideY(),
                    buffer->MutableDataU(), buffer->StrideU(),
@@ -89,8 +103,8 @@ rtc::scoped_refptr<I420Buffer> CreateYuvBuffer(uint8_t y = 0,
 
 // TODO(ssilkin): Wrap this into a class that removes file in dtor.
 std::string CreateYuvFile(int width, int height, int num_frames) {
-  std::string path = webrtc::test::TempFilename(webrtc::test::OutputPath(),
-                                                "video_codec_tester_unittest");
+  std::string path =
+      test::TempFilename(test::OutputPath(), "video_codec_tester_unittest");
   FILE* file = fopen(path.c_str(), "wb");
   for (int frame_num = 0; frame_num < num_frames; ++frame_num) {
     // For purposes of testing quality estimation, we need Y, U, V values in
@@ -100,7 +114,7 @@ std::string CreateYuvFile(int width, int height, int num_frames) {
     uint8_t y = (frame_num * 3 + 0) & 255;
     uint8_t u = (frame_num * 3 + 1) & 255;
     uint8_t v = (frame_num * 3 + 2) & 255;
-    rtc::scoped_refptr<I420Buffer> buffer = CreateYuvBuffer(y, u, v);
+    scoped_refptr<I420Buffer> buffer = CreateYuvBuffer(y, u, v);
     fwrite(buffer->DataY(), 1, width * height, file);
     int chroma_size_bytes = (width + 1) / 2 * (height + 1) / 2;
     fwrite(buffer->DataU(), 1, chroma_size_bytes, file);
@@ -155,11 +169,11 @@ class TestVideoEncoder : public MockVideoEncoder {
 
 class TestVideoDecoder : public MockVideoDecoder {
  public:
-  int32_t Decode(const EncodedImage& encoded_frame, int64_t) {
+  int32_t Decode(const EncodedImage& encoded_frame, int64_t) override {
     uint8_t y = (encoded_frame.size() + 0) & 255;
     uint8_t u = (encoded_frame.size() + 2) & 255;
     uint8_t v = (encoded_frame.size() + 4) & 255;
-    rtc::scoped_refptr<I420Buffer> frame_buffer = CreateYuvBuffer(y, u, v);
+    scoped_refptr<I420Buffer> frame_buffer = CreateYuvBuffer(y, u, v);
     VideoFrame decoded_frame =
         VideoFrame::Builder()
             .set_video_frame_buffer(frame_buffer)
@@ -170,7 +184,8 @@ class TestVideoDecoder : public MockVideoDecoder {
     return WEBRTC_VIDEO_CODEC_OK;
   }
 
-  int32_t RegisterDecodeCompleteCallback(DecodedImageCallback* callback) {
+  int32_t RegisterDecodeCompleteCallback(
+      DecodedImageCallback* callback) override {
     callback_ = callback;
     return WEBRTC_VIDEO_CODEC_OK;
   }
@@ -214,10 +229,11 @@ class VideoCodecTesterTest : public ::testing::Test {
         explicit DecoderWrapper(TestVideoDecoder* decoder)
             : decoder_(decoder) {}
         int32_t Decode(const EncodedImage& encoded_frame,
-                       int64_t render_time_ms) {
+                       int64_t render_time_ms) override {
           return decoder_->Decode(encoded_frame, render_time_ms);
         }
-        int32_t RegisterDecodeCompleteCallback(DecodedImageCallback* callback) {
+        int32_t RegisterDecodeCompleteCallback(
+            DecodedImageCallback* callback) override {
           return decoder_->RegisterDecodeCompleteCallback(callback);
         }
         TestVideoDecoder* decoder_;

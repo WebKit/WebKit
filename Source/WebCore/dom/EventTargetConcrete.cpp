@@ -43,4 +43,9 @@ EventTargetConcrete::EventTargetConcrete(ScriptExecutionContext& context)
 {
 }
 
+ScriptExecutionContext* EventTargetConcrete::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
+}
+
 } // namespace WebCore

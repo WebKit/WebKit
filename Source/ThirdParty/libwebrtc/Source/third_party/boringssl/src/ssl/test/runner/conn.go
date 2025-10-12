@@ -62,7 +62,8 @@ type Conn struct {
 	// opposed to the ones presented by the server.
 	verifiedChains [][]*x509.Certificate
 	// serverName contains the server name indicated by the client, if any.
-	serverName string
+	serverName    string
+	serverNameAck bool
 	// firstFinished contains the first Finished hash sent during the
 	// handshake. This is the "tls-unique" channel binding value.
 	firstFinished [12]byte
@@ -121,9 +122,11 @@ type Conn struct {
 	pendingPacket    []byte // pending outgoing packet.
 	maxPacketLen     int
 
-	previousFlight []DTLSMessage
-	receivedFlight []DTLSMessage
-	nextFlight     []DTLSMessage
+	previousFlight        []DTLSMessage
+	receivedFlight        []DTLSMessage
+	receivedFlightRecords []DTLSRecordNumberInfo
+	nextFlight            []DTLSMessage
+	expectedACK           []DTLSRecordNumber
 
 	keyUpdateSeen      bool
 	keyUpdateRequested bool
@@ -372,6 +375,29 @@ func (hc *halfConn) incSeq(epoch *epochState) {
 	if increment != 0 {
 		panic("TLS: sequence number wraparound")
 	}
+}
+
+// lastRecordNumber returns the most recent record number decrypted or encrypted
+// on a halfConn.
+//
+// TODO(crbug.com/376641666): This function is a bit hacky. It needs to rewind
+// the state back to what the last call actually used. Fix the TLS/DTLS
+// abstractions so we can return this value out directly.
+func (hc *halfConn) lastRecordNumber(epoch *epochState, isOut bool) DTLSRecordNumber {
+	seq := binary.BigEndian.Uint64(epoch.seq[:])
+	// We maintain the next record number, so undo the increment.
+	if seq&(1<<48-1) == 0 {
+		panic("tls: epoch has never been used")
+	}
+	seq--
+	if hc.isDTLS {
+		if isOut && hc.config.Bugs.SequenceNumberMapping != nil {
+			seq = hc.config.Bugs.SequenceNumberMapping(seq)
+		}
+		// Remove the embedded epoch number.
+		seq &= 1<<48 - 1
+	}
+	return DTLSRecordNumber{Epoch: uint64(epoch.epoch), Sequence: seq}
 }
 
 func (hc *halfConn) sequenceNumberForOutput(epoch *epochState) []byte {
@@ -829,6 +855,11 @@ func (c *Conn) useInTrafficSecret(epoch uint16, version uint16, suite *cipherSui
 }
 
 func (c *Conn) useOutTrafficSecret(epoch uint16, version uint16, suite *cipherSuite, secret []byte) {
+	if !c.isDTLS {
+		// The TLS logic relies on flushHandshake to write out packed handshake
+		// data on key changes. The DTLS logic handles key changes directly.
+		c.flushHandshake()
+	}
 	side := serverWrite
 	if c.isClient {
 		side = clientWrite
@@ -1048,7 +1079,7 @@ func (c *Conn) readRecord(want recordType) error {
 			c.sendAlert(alertInternalError)
 			return c.in.setErrorLocked(errors.New("tls: ChangeCipherSpec requested after handshake complete"))
 		}
-	case recordTypeApplicationData, recordTypeAlert, recordTypeHandshake:
+	case recordTypeApplicationData, recordTypeAlert, recordTypeHandshake, recordTypeACK:
 		break
 	}
 
@@ -1144,6 +1175,24 @@ Again:
 		if pack := c.config.Bugs.ExpectPackedEncryptedHandshake; pack > 0 && len(data) < pack && c.out.epoch.cipher != nil {
 			c.seenHandshakePackEnd = true
 		}
+		if c.isDTLS {
+			record, err := c.makeDTLSRecordNumberInfo(&c.in.epoch, c.hand.Bytes())
+			if err != nil {
+				return err
+			}
+			c.receivedFlightRecords = append(c.receivedFlightRecords, record)
+		}
+
+	case recordTypeACK:
+		if typ != want || !c.isDTLS {
+			c.in.setErrorLocked(c.sendAlert(alertUnexpectedMessage))
+			break
+		}
+
+		if err := c.checkACK(data); err != nil {
+			c.in.setErrorLocked(err)
+			break
+		}
 	}
 
 	return c.in.err
@@ -1200,7 +1249,9 @@ func (c *Conn) writeV2Record(data []byte) (n int, err error) {
 // c.out.Mutex <= L.
 func (c *Conn) writeRecord(typ recordType, data []byte) (n int, err error) {
 	c.seenHandshakePackEnd = false
-	c.lastRecordInFlight = nil
+	if c.hand.Len() == 0 {
+		c.lastRecordInFlight = nil
+	}
 	if typ == recordTypeHandshake {
 		msgType := data[0]
 		if c.config.Bugs.SendWrongMessageType != 0 && msgType == c.config.Bugs.SendWrongMessageType {
@@ -1268,7 +1319,6 @@ func (c *Conn) writeRecord(typ recordType, data []byte) (n int, err error) {
 
 func (c *Conn) doWriteRecord(typ recordType, data []byte) (n int, err error) {
 	first := true
-	isClientHello := typ == recordTypeHandshake && len(data) > 0 && data[0] == typeClientHello
 	for len(data) > 0 || first {
 		m := len(data)
 		if m > maxPlaintext && !c.config.Bugs.SendLargeRecords {
@@ -1276,12 +1326,6 @@ func (c *Conn) doWriteRecord(typ recordType, data []byte) (n int, err error) {
 		}
 		if typ == recordTypeHandshake && c.config.Bugs.MaxHandshakeRecordLength > 0 && m > c.config.Bugs.MaxHandshakeRecordLength {
 			m = c.config.Bugs.MaxHandshakeRecordLength
-			// By default, do not fragment the client_version or
-			// server_version, which are located in the first 6
-			// bytes.
-			if first && isClientHello && !c.config.Bugs.FragmentClientVersion && m < 6 {
-				m = 6
-			}
 		}
 		first = false
 
@@ -1404,8 +1448,9 @@ func (c *Conn) readHandshake() (any, error) {
 		return nil, err
 	}
 
+	typ := data[0]
 	var m handshakeMessage
-	switch data[0] {
+	switch typ {
 	case typeHelloRequest:
 		m = new(helloRequestMsg)
 	case typeClientHello:
@@ -1474,53 +1519,29 @@ func (c *Conn) readHandshake() (any, error) {
 
 	if data[0] == typeServerHello && len(data) >= 38 {
 		vers := uint16(data[4])<<8 | uint16(data[5])
-		if vers == VersionTLS12 && bytes.Equal(data[6:38], tls13HelloRetryRequest) {
-			m = new(helloRetryRequestMsg)
+		if (vers == VersionDTLS12 || vers == VersionTLS12) && bytes.Equal(data[6:38], tls13HelloRetryRequest) {
+			m = &helloRetryRequestMsg{isDTLS: c.isDTLS}
 		}
 	}
 
 	if !m.unmarshal(data) {
-		return nil, c.in.setErrorLocked(c.sendAlert(alertDecodeError))
+		c.sendAlert(alertDecodeError)
+		return nil, c.in.setErrorLocked(fmt.Errorf("tls: error decoding %s message", messageTypeToString(typ)))
 	}
 	return m, nil
 }
 
-// skipPacket processes all the DTLS records in packet. It updates
-// sequence number expectations but otherwise ignores them.
-func (c *Conn) skipPacket(packet []byte) error {
-	for len(packet) > 0 {
-		if len(packet) < 13 {
-			return errors.New("tls: bad packet")
-		}
-		// Dropped packets are completely ignored save to update
-		// expected sequence numbers for this and the next epoch. (We
-		// don't assert on the contents of the packets both for
-		// simplicity and because a previous test with one shorter
-		// timeout schedule would have done so.)
-		epoch := packet[3:5]
-		seq := packet[5:11]
-		length := uint16(packet[11])<<8 | uint16(packet[12])
-		if curEpoch := &c.in.epoch; bytes.Equal(curEpoch.seq[:2], epoch) {
-			if bytes.Compare(seq, curEpoch.seq[2:]) < 0 {
-				return fmt.Errorf("tls: sequence mismatch (got %x, must be at least %x)", seq, curEpoch.seq[2:])
-			}
-			copy(curEpoch.seq[2:], seq)
-			c.in.incSeq(curEpoch)
-		} else if nextEpoch := &c.in.nextEpoch; nextEpoch.cipher != nil && bytes.Equal(nextEpoch.seq[:2], epoch) {
-			if bytes.Compare(seq, nextEpoch.seq[2:]) < 0 {
-				return fmt.Errorf("tls: sequence mismatch (got %x, must be at least %x)", seq, nextEpoch.seq[2:])
-			}
-			copy(nextEpoch.seq[2:], seq)
-			c.in.incSeq(nextEpoch)
-		}
-		// The epoch may be unknown, if we haven't gotten far enough to
-		// prepare the epoch yet.
-		if len(packet) < 13+int(length) {
-			return errors.New("tls: bad packet")
-		}
-		packet = packet[13+length:]
+func readHandshakeType[T any](c *Conn) (*T, error) {
+	m, err := c.readHandshake()
+	if err != nil {
+		return nil, err
 	}
-	return nil
+	mType, ok := m.(*T)
+	if !ok {
+		c.sendAlert(alertUnexpectedMessage)
+		return nil, unexpectedMessageError(mType, m)
+	}
+	return mType, nil
 }
 
 func (c *Conn) SendHalfHelloRequest() error {
@@ -1595,22 +1616,6 @@ func (c *Conn) Write(b []byte) (int, error) {
 }
 
 func (c *Conn) processTLS13NewSessionTicket(newSessionTicket *newSessionTicketMsg, cipherSuite *cipherSuite) error {
-	if c.config.Bugs.ExpectGREASE && !newSessionTicket.hasGREASEExtension {
-		return errors.New("tls: no GREASE ticket extension found")
-	}
-
-	if c.config.Bugs.ExpectTicketEarlyData && newSessionTicket.maxEarlyDataSize == 0 {
-		return errors.New("tls: no early_data ticket extension found")
-	}
-
-	if c.config.Bugs.ExpectNoNewSessionTicket {
-		return errors.New("tls: received unexpected NewSessionTicket")
-	}
-
-	if c.config.ClientSessionCache == nil || newSessionTicket.ticketLifetime == 0 {
-		return nil
-	}
-
 	session := &ClientSessionState{
 		sessionTicket:               newSessionTicket.ticket,
 		vers:                        c.vers,
@@ -1631,6 +1636,27 @@ func (c *Conn) processTLS13NewSessionTicket(newSessionTicket *newSessionTicketMs
 		hasApplicationSettingsOld:   c.hasApplicationSettingsOld,
 		localApplicationSettingsOld: c.localApplicationSettingsOld,
 		peerApplicationSettingsOld:  c.peerApplicationSettingsOld,
+		resumptionAcrossNames:       newSessionTicket.flags.hasFlag(flagResumptionAcrossNames),
+	}
+
+	if c.config.Bugs.ExpectGREASE && !newSessionTicket.hasGREASEExtension {
+		return errors.New("tls: no GREASE ticket extension found")
+	}
+
+	if c.config.Bugs.ExpectTicketEarlyData && newSessionTicket.maxEarlyDataSize == 0 {
+		return errors.New("tls: no early_data ticket extension found")
+	}
+
+	if c.config.Bugs.ExpectNoNewSessionTicket || c.config.Bugs.ExpectNoNonEmptyNewSessionTicket {
+		return errors.New("tls: received unexpected NewSessionTicket")
+	}
+
+	if expect := c.config.Bugs.ExpectResumptionAcrossNames; expect != nil && session.resumptionAcrossNames != *expect {
+		return errors.New("tls: resumption_across_names status of ticket did not match expectation")
+	}
+
+	if c.config.ClientSessionCache == nil || newSessionTicket.ticketLifetime == 0 {
+		return nil
 	}
 
 	cacheKey := clientSessionCacheKey(c.conn.RemoteAddr(), c.config)
@@ -1639,6 +1665,20 @@ func (c *Conn) processTLS13NewSessionTicket(newSessionTicket *newSessionTicketMs
 		c.config.ClientSessionCache.Put(cacheKey, session)
 	}
 
+	return c.ackHandshake()
+}
+
+func (c *Conn) processKeyUpdate(keyUpdate *keyUpdateMsg) error {
+	epoch := c.in.epoch.epoch + 1
+	if epoch == 0 && !c.config.Bugs.AllowEpochOverflow {
+		return errors.New("tls: too many KeyUpdates")
+	}
+	if err := c.useInTrafficSecret(epoch, c.in.wireVersion, c.cipherSuite, updateTrafficSecret(c.cipherSuite.hash(), c.wireVersion, c.in.trafficSecret, c.isDTLS)); err != nil {
+		return err
+	}
+	if keyUpdate.keyUpdateRequest == keyUpdateRequested {
+		c.keyUpdateRequested = true
+	}
 	return c.ackHandshake()
 }
 
@@ -1672,54 +1712,32 @@ func (c *Conn) handlePostHandshakeMessage() error {
 
 	if keyUpdate, ok := msg.(*keyUpdateMsg); ok {
 		c.keyUpdateSeen = true
-
 		if c.config.Bugs.RejectUnsolicitedKeyUpdate {
 			return errors.New("tls: unexpected KeyUpdate message")
 		}
-		epoch := c.in.epoch.epoch + 1
-		if epoch == 0 {
-			return errors.New("tls: too many KeyUpdates")
-		}
-		if err := c.useInTrafficSecret(epoch, c.in.wireVersion, c.cipherSuite, updateTrafficSecret(c.cipherSuite.hash(), c.wireVersion, c.in.trafficSecret, c.isDTLS)); err != nil {
-			return err
-		}
-		if keyUpdate.keyUpdateRequest == keyUpdateRequested {
-			c.keyUpdateRequested = true
-		}
-		return c.ackHandshake()
+		return c.processKeyUpdate(keyUpdate)
 	}
 
 	c.sendAlert(alertUnexpectedMessage)
 	return errors.New("tls: unexpected post-handshake message")
 }
 
-// Reads a KeyUpdate acknowledgment from the peer. There may not be any
-// application data records before the message.
-func (c *Conn) ReadKeyUpdateACK() error {
+// Reads a KeyUpdate from the peer, with type key_update_not_requested. There
+// may not be any application data records before the message.
+func (c *Conn) ReadKeyUpdate() error {
 	c.in.Lock()
 	defer c.in.Unlock()
 
-	msg, err := c.readHandshake()
+	keyUpdate, err := readHandshakeType[keyUpdateMsg](c)
 	if err != nil {
 		return err
-	}
-
-	keyUpdate, ok := msg.(*keyUpdateMsg)
-	if !ok {
-		c.sendAlert(alertUnexpectedMessage)
-		return fmt.Errorf("tls: unexpected message (%T) when reading KeyUpdate", msg)
 	}
 
 	if keyUpdate.keyUpdateRequest != keyUpdateNotRequested {
 		return errors.New("tls: received invalid KeyUpdate message")
 	}
 
-	epoch := c.in.epoch.epoch + 1
-	if epoch == 0 {
-		return errors.New("tls: too many KeyUpdates")
-	}
-
-	return c.useInTrafficSecret(epoch, c.in.wireVersion, c.cipherSuite, updateTrafficSecret(c.cipherSuite.hash(), c.wireVersion, c.in.trafficSecret, c.isDTLS))
+	return c.processKeyUpdate(keyUpdate)
 }
 
 func (c *Conn) Renegotiate() error {
@@ -1891,6 +1909,7 @@ func (c *Conn) ConnectionState() ConnectionState {
 		state.VerifiedChains = c.verifiedChains
 		state.OCSPResponse = c.ocspResponse
 		state.ServerName = c.serverName
+		state.ServerNameAck = c.serverNameAck
 		state.ChannelID = c.channelID
 		state.SRTPProtectionProfile = c.srtpProtectionProfile
 		state.TLSUnique = c.firstFinished[:]
@@ -2018,6 +2037,10 @@ func (c *Conn) SendNewSessionTicket(nonce []byte) error {
 		ticketAgeAdd:                ticketAgeAdd,
 		ticketNonce:                 nonce,
 		maxEarlyDataSize:            c.config.MaxEarlyDataSize,
+		flags: flagSet{
+			mustInclude: c.config.Bugs.AlwaysSendTicketFlags,
+			padding:     c.config.Bugs.TicketFlagPadding,
+		},
 	}
 	if c.config.Bugs.MockQUICTransport != nil && m.maxEarlyDataSize > 0 {
 		m.maxEarlyDataSize = 0xffffffff
@@ -2025,6 +2048,12 @@ func (c *Conn) SendNewSessionTicket(nonce []byte) error {
 
 	if c.config.Bugs.SendTicketLifetime != 0 {
 		m.ticketLifetime = uint32(c.config.Bugs.SendTicketLifetime / time.Second)
+	}
+	if c.config.ResumptionAcrossNames {
+		m.flags.setFlag(flagResumptionAcrossNames)
+	}
+	for _, flag := range c.config.Bugs.SendTicketFlags {
+		m.flags.setFlag(flag)
 	}
 
 	state := sessionState{
@@ -2068,7 +2097,7 @@ func (c *Conn) sendKeyUpdateLocked(keyUpdateRequest byte) error {
 		return errors.New("tls: attempted to send KeyUpdate before TLS 1.3")
 	}
 	epoch := c.out.epoch.epoch + 1
-	if epoch == 0 {
+	if epoch == 0 && !c.config.Bugs.AllowEpochOverflow {
 		return errors.New("tls: too many KeyUpdates")
 	}
 
@@ -2078,16 +2107,12 @@ func (c *Conn) sendKeyUpdateLocked(keyUpdateRequest byte) error {
 	if _, err := c.writeRecord(recordTypeHandshake, m.marshal()); err != nil {
 		return err
 	}
-	if err := c.flushHandshake(); err != nil {
-		return err
-	}
-	if !c.isDTLS {
-		// TODO(crbug.com/42290594): Properly implement KeyUpdate. Right
-		// now we only support sending KeyUpdate to test that we drop
-		// post-HS messages on the floor (instead of erroring).
-		c.useOutTrafficSecret(epoch, c.out.wireVersion, c.cipherSuite, updateTrafficSecret(c.cipherSuite.hash(), c.wireVersion, c.out.trafficSecret, c.isDTLS))
-	}
-	return nil
+	// In DTLS 1.3, a real implementation would not install the new epoch until
+	// receiving an ACK. Our test transport is ordered and reliable, so this is
+	// not necessary. ACK effects will be simulated in tests by the WriteFlight
+	// callback.
+	c.useOutTrafficSecret(epoch, c.out.wireVersion, c.cipherSuite, updateTrafficSecret(c.cipherSuite.hash(), c.wireVersion, c.out.trafficSecret, c.isDTLS))
+	return c.flushHandshake()
 }
 
 func (c *Conn) sendFakeEarlyData(len int) error {

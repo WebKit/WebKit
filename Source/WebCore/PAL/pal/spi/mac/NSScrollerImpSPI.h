@@ -83,6 +83,10 @@ typedef NSUInteger NSOverlayScrollerState;
 @property (readonly) CGFloat trackOverlapEndInset;
 @property NSUserInterfaceLayoutDirection userInterfaceLayoutDirection;
 @property (readonly) NSControlSize controlSize;
+#if HAVE(APPKIT_SCROLLBAR_COLOR_SPI)
+@property (nullable, copy) NSColor *trackColor;
+@property (nullable, copy) NSColor *knobColor;
+#endif
 - (NSRect)rectForPart:(NSScrollerPart)partCode;
 - (void)drawKnobSlotInRect:(NSRect)slotRect highlight:(BOOL)flag alpha:(CGFloat)alpha;
 - (void)drawKnobSlotInRect:(NSRect)slotRect highlight:(BOOL)flag;
@@ -119,6 +123,10 @@ typedef NSUInteger NSOverlayScrollerState;
 @property (retain) NSScrollerImp *verticalScrollerImp;
 @property (retain) NSScrollerImp *horizontalScrollerImp;
 @property NSScrollerStyle scrollerStyle;
+#if HAVE(APPKIT_SCROLLBAR_COLOR_SPI)
+@property (nullable, copy) NSColor *scrollerKnobColor;
+@property (nullable, copy) NSColor *scrollerTrackColor;
+#endif
 + (NSUserInterfaceLayoutDirection)scrollerLayoutDirection;
 - (void)flashScrollers;
 - (void)hideOverlayScrollers;

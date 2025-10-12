@@ -23,8 +23,11 @@
 #include "SVGDefsElement.h"
 
 #include "LegacyRenderSVGHiddenContainer.h"
+#include "NodeDocument.h"
 #include "RenderSVGHiddenContainer.h"
 #include "SVGNames.h"
+#include "SVGPropertyOwnerRegistry.h"
+#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

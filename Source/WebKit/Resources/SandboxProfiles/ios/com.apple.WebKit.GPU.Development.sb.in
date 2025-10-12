@@ -1,0 +1,217 @@
+; Copyright (C) 2025 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+; notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+; notice, this list of conditions and the following disclaimer in the
+; documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "Shared/Sandbox/iOS/common.sb"
+#include "Shared/Sandbox/iOS/gpu-defines.sb"
+
+(allow-for-development-rules)
+
+(allow system-fcntl
+    (system-fcntl-allowed))
+
+(with-filter (mac-policy-name "Sandbox")
+    (allow system-mac-syscall (mac-syscall-number 5 65)))
+
+(allow iokit-open-service
+    (iokit-open-service-allowed))
+(allow iokit-open-service
+    (iokit-registry-entry-class-prefix "AGXAcceleratorG"))
+
+(allow darwin-notification-post
+    (darwin-notification-post-allowed))
+
+(allow process-info-codesignature (target others))
+
+(allow file-map-executable (executable-bundle))
+
+(allow file-read-metadata
+    (vnode-type DIRECTORY))
+
+(rules-with-elevated-precedence)
+
+(allow file-read*
+    required-etc-files)
+
+(allow file-read*
+    (literal "/"))
+
+(device-access)
+
+(allow file-issue-extension (with telemetry)
+    (require-all
+        (extension-class "com.apple.app-sandbox.read-write" "com.apple.app-sandbox.read")
+        (extension "com.apple.fileprovider.read-write")))
+
+(allow mach-lookup
+    (mach-lookup-allowed))
+
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name "com.apple.mobilegestalt.xpc")))
+
+#if PLATFORM(VISION) && ENABLE(MODEL_PROCESS)
+(allow mach-lookup
+    (global-name "com.apple.surfboard.applicationservice"))
+#endif
+
+;; <rdar://problem/12413942>
+(allow file-read*
+    (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"))
+
+(allow ipc-posix-sem-open (with telemetry)
+    (ipc-posix-name "containermanagerd.fb_check"))
+
+(with-filter (ipc-posix-name "purplebuddy.sentinel")
+    (allow ipc-posix-sem-open (with telemetry)))
+
+(allow system-sched (with telemetry)
+    (require-entitlement "com.apple.private.kernel.override-cpumon"))
+
+(allow ipc-posix-shm-read*
+    (ipc-posix-name "apple.shm.notification_center"))
+
+(managed-configuration-read-public)
+
+(allow-well-known-system-group-container-subpath-read
+    "/systemgroup.com.apple.icloud.findmydevice.managed/Library")
+
+(allow mach-task-name (with telemetry) (target self))
+
+(allow process-info-pidinfo)
+(allow process-info-pidfdinfo (target self))
+(allow process-info-pidfileportinfo (target self))
+(allow process-info-setcontrol (target self))
+(allow process-info-dirtycontrol (target self))
+(allow process-info-rusage (target self))
+(allow process-info-codesignature (target self))
+
+(play-audio)
+(play-media)
+
+;; Access to media controls
+(media-remote)
+
+;; Permit reading assets via MobileAsset framework.
+(asset-access 'with-media-playback)
+
+(allow file-read*
+    (subpath "/private/var/MobileAsset/AssetsV2/com_apple_MobileAsset_Font7")
+    (subpath "/private/var/MobileAsset/AssetsV2/com_apple_MobileAsset_Font8"))
+
+;; allow 3rd party applications to access nsurlstoraged's top level domain data cache
+(allow-well-known-system-group-container-literal-read
+    "/systemgroup.com.apple.nsurlstoragedresources/Library/dafsaData.bin")
+
+(allow file-read*
+    (home-subpath "/Library/Fonts"))
+
+(allow-preferences-common)
+
+;; Home Button
+(with-filter (iokit-registry-entry-class "IOPlatformDevice")
+    (allow iokit-get-properties
+        (iokit-property "home-button-type")))
+
+(uikit-requirements)
+
+; <rdar://problem/7595408> , <rdar://problem/7643881>
+(opengl)
+
+(allow sysctl-read
+    (sysctl-read-allowed)
+    (sysctl-name-prefix "hw.perflevel")) ;; <rdar://problem/76782530>
+
+(allow iokit-get-properties
+    (iokit-get-property-allowed))
+
+; IOPlatformExpertDevice
+(with-filter (iokit-registry-entry-class "IOPlatformExpertDevice")
+    (allow iokit-get-properties
+        (iokit-property
+            "model"
+            "model-number"
+            "platform-name" ;; <rdar://problem/79334360>
+            "region-info" ;; <rdar://problem/52903475>
+            "regulatory-model-number"))) ;; <rdar://problem/52903475>
+
+;; Read-only preferences and data
+(mobile-preferences-read
+    "com.apple.avfoundation.videoperformancehud") ;; <rdar://problem/31594568>
+
+;; Sandbox extensions
+(read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
+(read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
+
+;; Access to client's cache folder & re-vending to CFNetwork.
+(allow file-issue-extension (with telemetry) (require-all
+    (extension "com.apple.app-sandbox.read-write")
+    (extension-class "com.apple.nsurlstorage.extension-cache")))
+
+(accessibility-support)
+
+(media-accessibility-support)
+
+(log-streaming)
+
+(media-capture-support)
+
+;; The mkdtemp function requires this syscall.
+(with-filter (require-not (process-attribute is-apple-signed-executable))
+    (allow syscall-unix
+        (syscall-number SYS_mkdirat)))
+
+(allow syscall-unix (syscall-unix-allowed))
+
+(allow syscall-mach (syscall-mach-allowed))
+
+(allow syscall-mig (syscall-mig-allowed))
+
+#if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
+#include <WebKitAdditions/SystemContentSandbox-ios.defs>
+
+(allow file-read* file-test-existence
+    (apply subpath file-read-existence-secondary-paths))
+
+(allow file-map-executable
+    (apply subpath secondary-framework-and-dylib-paths))
+
+(allow-read-and-issue-generic-extensions
+    (apply subpath issue-extension-secondary-paths))
+
+(allow file-issue-extension
+    (require-all
+        (extension-class "com.apple.mediaserverd.read")
+        (apply subpath issue-extension-secondary-paths)))
+#endif
+
+#if __has_include(<WebKitAdditions/com.apple.WebKit.GPU.sb.in>)
+#include <WebKitAdditions/com.apple.WebKit.GPU.sb.in>
+#endif
+
+(with-filter (require-not (state-flag "local:FeatureCoreMLDisabled"))
+    (allow file-clone)
+    (allow syscall-unix
+        (syscall-number
+            SYS_mkdirat
+            SYS_rmdir)))

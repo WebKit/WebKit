@@ -28,6 +28,7 @@
 #include "CanvasGradient.h"
 
 #include "CanvasStyle.h"
+#include "ExceptionOr.h"
 #include "Gradient.h"
 
 namespace WebCore {

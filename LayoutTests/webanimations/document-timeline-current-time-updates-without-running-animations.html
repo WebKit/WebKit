@@ -1,0 +1,57 @@
+<html>
+<head>
+    <title>The document timeline's current time should increase when the page rendering does not update.</title>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+</head>
+
+<body>
+
+<script>
+
+const pageRenderingUpdate = () => new Promise(requestAnimationFrame);
+
+const timeout = interval => new Promise(resolve => setTimeout(resolve, interval));
+
+const timelineTimeBetweenPageRenderingUpdates = () => {
+    return new Promise(async (resolve, reject) => {
+        // Wait for an initial page rendering update to make sure we have a full
+        // page rendering update interval before we wait for a run loop that falls
+        // within a page rendering update interval.
+        await pageRenderingUpdate();
+
+        const maxAttempts = 10;
+        for (let numAttempts = 0; numAttempts < maxAttempts; numAttempts++) {
+            const pageRenderingUpdateTime = await pageRenderingUpdate();
+            const timelineTime = document.timeline.currentTime;
+
+            // Wait for the next run loop.
+            await timeout(0);
+
+            // If that run loop was run less than 10ms after the page rendering update,
+            // we are in between two page rendering updates.
+            if (performance.now() - pageRenderingUpdateTime < 10) {
+                resolve(timelineTime);
+                break;
+            }
+        }
+
+        reject(-1);
+    });
+}
+
+promise_test(async test => {
+    const initialTimelineTime = await timelineTimeBetweenPageRenderingUpdates();
+    assert_equals(document.timeline.currentTime, initialTimelineTime,
+        "The timeline time should be the same during a page rendering update and in a run loop before the next page rendering update");
+
+    // Wait for 20ms which is more than the typical interval between two page rendering updates.
+    await timeout(20);
+    assert_greater_than(document.timeline.currentTime, initialTimelineTime,
+        "The timeline time should increase after waiting for over the typical duration between two page rendering updates");
+}, "The document timeline's current time should increase when the page rendering does not update.");
+
+</script>
+
+</body>
+</html>

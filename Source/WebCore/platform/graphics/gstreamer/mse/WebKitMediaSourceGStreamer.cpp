@@ -69,7 +69,10 @@ struct WebKitMediaSrcPrivate {
     {
         ASSERT(isMainThread());
         Stream* stream = streams.get(id);
-        ASSERT(stream);
+        if (!stream) {
+            GST_INFO_OBJECT(player.get() ? player.get()->webKitMediaSrc() : nullptr, "Track %" PRIu64
+                " not present in this WebKitMediaSrc", id);
+        }
         return stream;
     }
 
@@ -116,25 +119,8 @@ struct WebKitMediaSrcPadClass {
 
 namespace WTF {
 
-template<> GRefPtr<WebKitMediaSrcPad> adoptGRef(WebKitMediaSrcPad* ptr)
-{
-    ASSERT(!ptr || !g_object_is_floating(ptr));
-    return GRefPtr<WebKitMediaSrcPad>(ptr, GRefPtrAdopt);
-}
-
-template<> WebKitMediaSrcPad* refGPtr<WebKitMediaSrcPad>(WebKitMediaSrcPad* ptr)
-{
-    if (ptr)
-        gst_object_ref_sink(GST_OBJECT(ptr));
-
-    return ptr;
-}
-
-template<> void derefGPtr<WebKitMediaSrcPad>(WebKitMediaSrcPad* ptr)
-{
-    if (ptr)
-        gst_object_unref(ptr);
-}
+WTF_DEFINE_GREF_TRAITS(WebKitMediaSrc, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(WebKitMediaSrcPad, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
 
 } // namespace WTF
 
@@ -387,6 +373,11 @@ static void webKitMediaSrcTearDownStream(WebKitMediaSrc* source, TrackID id)
     Stream* stream = source->priv->streamById(id);
     GST_DEBUG_OBJECT(source, "Tearing down stream '%" PRIu64 "'", id);
 
+    if (!stream) {
+        GST_INFO_OBJECT(source, "Ignoring teardown on track not present in this WebKitMediaSrc");
+        return;
+    }
+
     // Flush the source element **and** downstream. We want to stop the streaming thread and for that we need all elements downstream to be idle.
     webKitMediaSrcStreamFlush(stream, false);
     // Stop the thread now.
@@ -610,7 +601,10 @@ static void webKitMediaSrcLoop(void* userData)
         ASSERT(GST_BUFFER_PTS_IS_VALID(buffer.get()));
         GST_TRACE_OBJECT(pad, "Pushing buffer downstream: %" GST_PTR_FORMAT, buffer.get());
         GstFlowReturn result = gst_pad_push(pad, buffer.leakRef());
-        if (result != GST_FLOW_OK && result != GST_FLOW_FLUSHING) {
+        if (result == GST_FLOW_NOT_LINKED && stream->track->type() == TrackPrivateBaseGStreamer::TrackType::Video) {
+            // We allow multiple video tracks and all of them except one may be unlinked. Just drop the buffer.
+            GST_TRACE_OBJECT(pad, "Buffer not pushed because pad is not-linked, ignoring");
+        } else if (result != GST_FLOW_OK && result != GST_FLOW_FLUSHING) {
             gst_pad_pause_task(pad);
             GST_ELEMENT_ERROR(stream->source, CORE, PAD, ("Failed to push buffer"), ("gst_pad_push() returned %s", gst_flow_get_name(result)));
         } else if (pushingFirstBuffer) {
@@ -758,6 +752,11 @@ void webKitMediaSrcFlush(WebKitMediaSrc* source, TrackID streamId)
     GST_DEBUG_OBJECT(source, "Received non-seek flush request for stream '%" PRIu64 "'.", streamId);
     Stream* stream = source->priv->streamById(streamId);
 
+    if (!stream) {
+        GST_INFO_OBJECT(source, "Ignoring flush on track not present in this WebKitMediaSrc");
+        return;
+    }
+
     webKitMediaSrcStreamFlush(stream, false);
 }
 
@@ -845,12 +844,12 @@ static gboolean webKitMediaSrcSendEvent(GstElement* element, GstEvent* eventTran
         if (forwardToAllPads) {
             wasEventHandledByAllStreams = !source->priv->streams.isEmpty();
             for (const RefPtr<Stream>& stream : source->priv->streams.values()) {
-                bool wasHandled = gst_pad_push_event(stream->pad.get(), gst_event_ref(event.get()));
+                bool wasHandled = gst_pad_push_event(stream->pad.get(), event.ref());
                 wasEventHandledByAllStreams &= wasHandled;
                 wasEventHandledByAnyStream |= wasHandled;
             }
         } else
-            wasEventHandledByAnyStream = GST_ELEMENT_CLASS(webkit_media_src_parent_class)->send_event(element, event.leakRef());
+            wasEventHandledByAnyStream = GST_ELEMENT_CLASS(webkit_media_src_parent_class)->send_event(element, event.ref());
         auto rate = GStreamerQuirksManager::singleton().processWebKitMediaSrcCustomEvent(event, wasEventHandledByAnyStream, wasEventHandledByAllStreams);
         if (rate.has_value())
             source->priv->rate = rate.value();
@@ -905,27 +904,5 @@ static void webKitMediaSrcUriHandlerInit(void* gIface, void*)
     iface->get_uri = webKitMediaSrcGetUri;
     iface->set_uri = webKitMediaSrcSetUri;
 }
-
-namespace WTF {
-template <> GRefPtr<WebKitMediaSrc> adoptGRef(WebKitMediaSrc* ptr)
-{
-    ASSERT(!ptr || !g_object_is_floating(G_OBJECT(ptr)));
-    return GRefPtr<WebKitMediaSrc>(ptr, GRefPtrAdopt);
-}
-
-template <> WebKitMediaSrc* refGPtr<WebKitMediaSrc>(WebKitMediaSrc* ptr)
-{
-    if (ptr)
-        gst_object_ref_sink(GST_OBJECT(ptr));
-
-    return ptr;
-}
-
-template <> void derefGPtr<WebKitMediaSrc>(WebKitMediaSrc* ptr)
-{
-    if (ptr)
-        gst_object_unref(ptr);
-}
-} // namespace WTF
 
 #endif // USE(GSTREAMER)

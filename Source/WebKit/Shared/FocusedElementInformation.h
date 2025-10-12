@@ -135,6 +135,7 @@ struct FocusedElementInformation {
     bool shouldAvoidResizingWhenInputViewBoundsChange { false };
     bool shouldAvoidScrollingWhenFocusedContentIsVisible { false };
     bool shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation { false };
+    bool shouldHideSoftTopScrollEdgeEffect { false };
     bool isFocusingWithValidationMessage { false };
     bool preventScroll { false };
 

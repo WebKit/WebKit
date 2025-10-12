@@ -37,6 +37,6 @@ WKErrorRef WKErrorCreateWithCFError(CFErrorRef cfError)
 CFErrorRef WKErrorCopyCFError(CFAllocatorRef alloc, WKErrorRef error)
 {
     WTF::RetainPtr<CFErrorRef> cfError = WebKit::toImpl(error)->platformError().cfError();
-    return cfError.leakRef();
+    // FIXME(rdar://162218496): SaferCPP should notice that our API is a copy.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return cfError.leakRef();
 }
-

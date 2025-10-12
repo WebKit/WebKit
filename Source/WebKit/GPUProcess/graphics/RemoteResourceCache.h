@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,13 +27,15 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteDisplayListIdentifier.h"
+#include "RemoteGradientIdentifier.h"
+#include <WebCore/DisplayList.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class DecomposedGlyphs;
 class Filter;
 class Font;
 class Gradient;
@@ -50,17 +52,13 @@ public:
     RemoteResourceCache();
     ~RemoteResourceCache();
 
-    void cacheNativeImage(Ref<WebCore::NativeImage>&&);
+    bool cacheNativeImage(WebCore::RenderingResourceIdentifier, Ref<WebCore::NativeImage>&&);
     bool releaseNativeImage(WebCore::RenderingResourceIdentifier);
     RefPtr<WebCore::NativeImage> cachedNativeImage(WebCore::RenderingResourceIdentifier) const;
 
-    bool cacheGradient(WebCore::RenderingResourceIdentifier, Ref<WebCore::Gradient>&&);
-    bool releaseGradient(WebCore::RenderingResourceIdentifier);
-    RefPtr<WebCore::Gradient> cachedGradient(WebCore::RenderingResourceIdentifier) const;
-
-    void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
-    bool releaseDecomposedGlyphs(WebCore::RenderingResourceIdentifier);
-    RefPtr<WebCore::DecomposedGlyphs> cachedDecomposedGlyphs(WebCore::RenderingResourceIdentifier) const;
+    bool cacheGradient(RemoteGradientIdentifier, Ref<WebCore::Gradient>&&);
+    bool releaseGradient(RemoteGradientIdentifier);
+    RefPtr<WebCore::Gradient> cachedGradient(RemoteGradientIdentifier) const;
 
     void cacheFilter(Ref<WebCore::Filter>&&);
     bool releaseFilter(WebCore::RenderingResourceIdentifier);
@@ -74,18 +72,22 @@ public:
     bool releaseFontCustomPlatformData(WebCore::RenderingResourceIdentifier);
     RefPtr<WebCore::FontCustomPlatformData> cachedFontCustomPlatformData(WebCore::RenderingResourceIdentifier) const;
 
+    bool cacheDisplayList(RemoteDisplayListIdentifier, Ref<const WebCore::DisplayList::DisplayList>);
+    RefPtr<const WebCore::DisplayList::DisplayList> cachedDisplayList(RemoteDisplayListIdentifier) const;
+    bool releaseDisplayList(RemoteDisplayListIdentifier);
+
     void releaseAllResources();
     void releaseMemory();
     void releaseNativeImages();
 
 private:
-    UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::ImageBuffer>> m_imageBuffers;
-    UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::NativeImage>> m_nativeImages;
-    UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Gradient>> m_gradients;
-    UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::DecomposedGlyphs>> m_decomposedGlyphs;
-    UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Filter>> m_filters;
-    UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Font>> m_fonts;
-    UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::FontCustomPlatformData>> m_fontCustomPlatformDatas;
+    HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::ImageBuffer>> m_imageBuffers;
+    HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::NativeImage>> m_nativeImages;
+    HashMap<RemoteGradientIdentifier, Ref<WebCore::Gradient>> m_gradients;
+    HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Filter>> m_filters;
+    HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Font>> m_fonts;
+    HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::FontCustomPlatformData>> m_fontCustomPlatformDatas;
+    HashMap<RemoteDisplayListIdentifier, Ref<const WebCore::DisplayList::DisplayList>> m_displayLists;
 };
 
 } // namespace WebKit

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "EventInit.h"
-#include "WindowProxy.h"
+#include <WebCore/EventInit.h>
+#include <WebCore/WindowProxy.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

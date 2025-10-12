@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "PluginReplacement.h"
+#include <WebCore/PluginReplacement.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>

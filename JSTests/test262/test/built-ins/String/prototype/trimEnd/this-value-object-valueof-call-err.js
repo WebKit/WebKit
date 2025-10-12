@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-string.prototype.trimEnd
+esid: sec-string.prototype.trimend
 description: >
   Abrupt completion when getting valueOf method
 info: |

@@ -40,7 +40,7 @@ concept TaggingTraits = requires (const T* ptr, typename Trait::StorageType stor
 
 template<typename T, TaggingTraits<T> Traits>
 class TaggedPtr {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TaggedPtr);
 public:
     using StorageType = typename Traits::StorageType;
     using TagType = typename Traits::TagType;

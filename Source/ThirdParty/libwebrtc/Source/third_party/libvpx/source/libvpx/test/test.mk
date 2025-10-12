@@ -70,7 +70,6 @@ LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += vp9_datarate_test.cc
 ifneq ($(CONFIG_REALTIME_ONLY),yes)
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += vp9_ext_ratectrl_test.cc
 endif
-LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += ../vp9/simple_encode.h
 
 LIBVPX_TEST_SRCS-yes                   += decode_test_driver.cc
 LIBVPX_TEST_SRCS-yes                   += decode_test_driver.h
@@ -210,10 +209,6 @@ ifeq ($(CONFIG_VP9_ENCODER)$(CONFIG_VP9_TEMPORAL_DENOISING),yesyes)
 LIBVPX_TEST_SRCS-yes += vp9_denoiser_test.cc
 endif
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += vp9_arf_freq_test.cc
-
-ifeq ($(CONFIG_VP9_ENCODER),yes)
-SIMPLE_ENCODE_TEST_SRCS-$(CONFIG_RATE_CTRL) := simple_encode_test.cc
-endif
 
 endif # VP9
 

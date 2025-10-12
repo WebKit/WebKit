@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2014-2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,10 @@
 
 #pragma once
 
-#include "ScrollTypes.h"
-#include "Timer.h"
-#include "Widget.h"
+#include <WebCore/ScrollTypes.h>
+#include <WebCore/Timer.h>
+#include <WebCore/Widget.h>
+#include <wtf/Platform.h>
 
 namespace WebCore {
 
@@ -58,7 +59,8 @@ public:
     static int pageStep(int viewWidthOrHeight) { return pageStep(viewWidthOrHeight, viewWidthOrHeight); }
     static float pageStepDelta(int widthOrHeight) { return std::max(std::max(static_cast<float>(widthOrHeight) * Scrollbar::minFractionToStepWhenPaging(), static_cast<float>(widthOrHeight) - Scrollbar::maxOverlapBetweenPages()), 1.0f); }
 
-    ScrollableArea& scrollableArea() const { return m_scrollableArea; }
+    inline ScrollableArea& scrollableArea() const; // Defined in ScrollbarInlines.h.
+    inline CheckedRef<ScrollableArea> checkedScrollableArea() const; // Defined in ScrollbarInlines.h.
 
     bool isCustomScrollbar() const { return m_isCustomScrollbar; }
     WEBCORE_EXPORT bool isMockScrollbar() const;
@@ -126,8 +128,8 @@ public:
     IntRect convertToContainingView(const IntRect&) const override;
     IntRect convertFromContainingView(const IntRect&) const override;
 
-    IntPoint convertToContainingView(const IntPoint&) const override;
-    IntPoint convertFromContainingView(const IntPoint&) const override;
+    IntPoint convertToContainingView(IntPoint) const override;
+    IntPoint convertFromContainingView(IntPoint) const override;
 
     void moveThumb(int pos, bool draggingDocument = false);
 
@@ -161,7 +163,7 @@ protected:
     ScrollDirection pressedPartScrollDirection();
     ScrollGranularity pressedPartScrollGranularity();
 
-    ScrollableArea& m_scrollableArea;
+    WeakRef<ScrollableArea> m_scrollableArea;
     ScrollbarOrientation m_orientation;
     ScrollbarWidth m_widthStyle;
     ScrollbarTheme& m_theme;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,6 @@
 namespace WebCore {
 
 class BasicComponentTransferFilterOperation;
-class CSSToLengthConversionData;
-class Document;
 class FilterOperation;
 class RenderStyle;
 
@@ -38,8 +36,10 @@ struct Opacity;
 
 namespace Style {
 
+class BuilderState;
+
 CSS::Opacity toCSSOpacity(Ref<BasicComponentTransferFilterOperation>, const RenderStyle&);
-Ref<FilterOperation> createFilterOperation(const CSS::Opacity&, const Document&, RenderStyle&, const CSSToLengthConversionData&);
+Ref<FilterOperation> createFilterOperation(const CSS::Opacity&, const BuilderState&);
 
 } // namespace Style
 } // namespace WebCore

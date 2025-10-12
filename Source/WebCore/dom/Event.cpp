@@ -23,13 +23,17 @@
 #include "config.h"
 #include "Event.h"
 
+#include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "EventPath.h"
 #include "EventTarget.h"
+#include "EventTargetInlines.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMGlobalObject.h"
 #include "LocalDOMWindow.h"
 #include "Performance.h"
+#include "ScriptWrappableInlines.h"
 #include "UserGestureIndicator.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/HexNumber.h>
@@ -56,6 +60,7 @@ ALWAYS_INLINE Event::Event(MonotonicTime createTime, enum EventInterfaceType eve
     , m_isExecutingPassiveEventListener { false }
     , m_currentTargetIsInShadowTree { false }
     , m_isAutofillEvent { false }
+    , m_isShadowRootAttachedEvent { false }
     , m_eventPhase { NONE }
     , m_eventInterface(enumToUnderlyingType(eventInterface))
     , m_type { type }
@@ -158,13 +163,15 @@ void Event::setCurrentTarget(RefPtr<EventTarget>&& currentTarget, std::optional<
 
 void Event::setEventPath(const EventPath& path)
 {
-    m_eventPath = &path;
+    m_eventPath = path;
 }
 
-Vector<Ref<EventTarget>> Event::composedPath() const
+Vector<Ref<EventTarget>> Event::composedPath(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
     if (!m_eventPath)
         return Vector<Ref<EventTarget>>();
+    if (JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->world().shadowRootIsAlwaysOpen())
+        return m_eventPath->computePathTreatingAllShadowRootsAsOpen();
     return m_eventPath->computePathUnclosedToTarget(*protectedCurrentTarget());
 }
 
@@ -182,9 +189,9 @@ DOMHighResTimeStamp Event::timeStampForBindings(ScriptExecutionContext& context)
 {
     RefPtr<Performance> performance;
     if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(context))
-        performance = &globalScope->performance();
-    else if (RefPtr window = downcast<Document>(context).domWindow())
-        performance = &window->performance();
+        performance = globalScope->performance();
+    else if (RefPtr window = downcast<Document>(context).window())
+        performance = window->performance();
 
     if (!performance)
         return 0;

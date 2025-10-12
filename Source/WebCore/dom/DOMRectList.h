@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "FloatQuad.h"
+#include <WebCore/FloatQuad.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 

@@ -11,17 +11,21 @@
 #ifndef RTC_BASE_SSL_ADAPTER_H_
 #define RTC_BASE_SSL_ADAPTER_H_
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
 #include "rtc_base/async_socket.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/socket.h"
+#include "rtc_base/socket_address.h"
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/ssl_stream_adapter.h"
 #include "rtc_base/system/rtc_export.h"
 
-namespace rtc {
+namespace webrtc {
 
 class SSLAdapter;
 
@@ -119,6 +123,7 @@ RTC_EXPORT bool InitializeSSL();
 // Call to cleanup additional threads, and also the main thread.
 RTC_EXPORT bool CleanupSSL();
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_SSL_ADAPTER_H_

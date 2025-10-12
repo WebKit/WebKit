@@ -38,28 +38,6 @@ function isCloseEnough(actual, desired, tolerance)
     return diff <= tolerance;
 }
 
-function isShadow(property)
-{
-  return (property == '-webkit-box-shadow' || property == 'box-shadow' || property == 'text-shadow');
-}
-
-function getShadowXY(cssValue)
-{
-    var text = cssValue.cssText;
-    // Shadow cssText looks like "rgb(0, 0, 255) 0px -3px 10px 0px"
-    var shadowPositionRegExp = /\)\s*(-?\d+\.?\d*)px\s*(-?\d+\.?\d*)px/;
-    var result = shadowPositionRegExp.exec(text);
-    console.log(text, result);
-    return [parseFloat(result[1]), parseFloat(result[2])];
-}
-
-function compareRGB(rgb, expected, tolerance)
-{
-    return (isCloseEnough(parseInt(rgb[0]), expected[0], tolerance) &&
-            isCloseEnough(parseInt(rgb[1]), expected[1], tolerance) &&
-            isCloseEnough(parseInt(rgb[2]), expected[2], tolerance));
-}
-
 function parseCrossFade(s)
 {
     var matches = s.match("(?:-webkit-)?cross-fade\\((.*)\\s*,\\s*(.*)\\s*,\\s*(.*)\\)");
@@ -110,7 +88,7 @@ function parseClipPath(s)
         }
     }
 
-    window.console.log('failed to match ' + s);
+    console.log('failed to match ' + s);
     return null;
 }
 
@@ -127,236 +105,69 @@ function parseLengthPair(s)
     return null;
 }
 
-function hasFloatValue(value)
+function isExpectedValue(value, expected, tolerance)
 {
-    switch (value.primitiveType) {
-    case CSSPrimitiveValue.CSS_FR:
-    case CSSPrimitiveValue.CSS_NUMBER:
-    case CSSPrimitiveValue.CSS_PARSER_INTEGER:
-    case CSSPrimitiveValue.CSS_PERCENTAGE:
-    case CSSPrimitiveValue.CSS_EMS:
-    case CSSPrimitiveValue.CSS_EXS:
-    case CSSPrimitiveValue.CSS_CHS:
-    case CSSPrimitiveValue.CSS_REMS:
-    case CSSPrimitiveValue.CSS_PX:
-    case CSSPrimitiveValue.CSS_CM:
-    case CSSPrimitiveValue.CSS_MM:
-    case CSSPrimitiveValue.CSS_IN:
-    case CSSPrimitiveValue.CSS_PT:
-    case CSSPrimitiveValue.CSS_PC:
-    case CSSPrimitiveValue.CSS_DEG:
-    case CSSPrimitiveValue.CSS_RAD:
-    case CSSPrimitiveValue.CSS_GRAD:
-    case CSSPrimitiveValue.CSS_TURN:
-    case CSSPrimitiveValue.CSS_MS:
-    case CSSPrimitiveValue.CSS_S:
-    case CSSPrimitiveValue.CSS_HZ:
-    case CSSPrimitiveValue.CSS_KHZ:
-    case CSSPrimitiveValue.CSS_DIMENSION:
-    case CSSPrimitiveValue.CSS_VW:
-    case CSSPrimitiveValue.CSS_VH:
-    case CSSPrimitiveValue.CSS_VMIN:
-    case CSSPrimitiveValue.CSS_VMAX:
-    case CSSPrimitiveValue.CSS_DPPX:
-    case CSSPrimitiveValue.CSS_DPI:
-    case CSSPrimitiveValue.CSS_DPCM:
-        return true;
+    if (!value)
+        return false;
+    if (typeof expected == "string")
+        return value == expected;
+    if (typeof expected == "number")
+        return isCloseEnough(parseFloat(value), expected, tolerance);
+    let values;
+    if (/^\w+\(.+\)$/.test(value)) {
+        // Split examples like "rgb(1, 2, 3)" into array [1, 2, 3].
+        values = value.split("(")[1].split(")")[0].split(/, /);
+    } else {
+        // Split elements separated by spaces that are not inside parentheses.
+        values = value.split(/(?!\(.*) (?![^(]*?\))/);
     }
-    return false;
-}
-
-function getNumericValue(cssValue)
-{
-    if (hasFloatValue(cssValue.primitiveType))
-        return cssValue.getFloatValue(cssValue.primitiveType);
-
-    return -1;
-}
-
-function isCalcPrimitiveValue(value)
-{
-    switch (value.primitiveType) {
-    case 113: // CSSPrimitiveValue.CSS_CALC:
-    case 114: // CSSPrimitiveValue.CSS_CALC_PERCENTAGE_WITH_NUMBER:
-    case 115: // CSSPrimitiveValue.CSS_CALC_PERCENTAGE_WITH_LENGTH:
+    if (values.length != expected.length)
+        return false;
+    for (var i = 0; i < values.length; ++i) {
+        if (!isExpectedValue(values[i], expected[i], tolerance))
+            return false;
+    }
     return true;
-    }
-    return false;
-}
-
-function extractNumbersFromCalcExpression(value, values)
-{
-    var calcRegexp = /^calc\((.+)\)$/;
-    var result = calcRegexp.exec(value.cssText);
-    var numberMatch = /([^\.\-0-9]*)(-?[\.0-9]+)/;
-    var remainder = result[1];
-    var match;
-    while ((match = numberMatch.exec(remainder)) !== null) {
-        var skipLength = match[1].length + match[2].length;
-        values.push(parseFloat(match[2]))
-        remainder = remainder.substr(skipLength + 1);
-    }
 }
 
 function checkExpectedValue(expected, index)
 {
-    var time = expected[index][0];
-    var elementId = expected[index][1];
-    var property = expected[index][2];
-    var expectedValue = expected[index][3];
-    var tolerance = expected[index][4];
-    var postCompletionCallback = expected[index][5];
+    const time = expected[index][0];
+    const elementId = expected[index][1];
+    let property = expected[index][2];
+    const expectedValue = expected[index][3];
+    const tolerance = expected[index][4];
+    const postCompletionCallback = expected[index][5];
 
-    var computedValue;
-    var pass = false;
-    var transformRegExp = /^-webkit-transform(\.\d+)?$/;
-    if (transformRegExp.test(property)) {
-        computedValue = window.getComputedStyle(document.getElementById(elementId)).webkitTransform;
-        if (typeof expectedValue == "string")
-            pass = (computedValue == expectedValue);
-        else if (typeof expectedValue == "number") {
-            var m = computedValue.split("(");
-            var m = m[1].split(",");
-            pass = isCloseEnough(parseFloat(m[parseInt(property.substring(18))]), expectedValue, tolerance);
-        } else {
-            var m = computedValue.split("(");
-            var m = m[1].split(",");
-            for (i = 0; i < expectedValue.length; ++i) {
-                pass = isCloseEnough(parseFloat(m[i]), expectedValue[i], tolerance);
-                if (!pass)
-                    break;
-            }
-        }
-    } else if (property == "background-position-x" || property == "background-position-y") {
-        computedValue = window.getComputedStyle(document.getElementById(elementId))[property];
-        pass = computedValue == expectedValue;
-    } else if (property == "fill" || property == "stroke") {
-        computedValue = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property).rgbColor;
-        if (compareRGB([computedValue.red.cssText, computedValue.green.cssText, computedValue.blue.cssText], expectedValue, tolerance))
-            pass = true;
-        else {
-            // We failed. Make sure computed value is something we can read in the error message
-            computedValue = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property).cssText;
-        }
-    } else if (property == "stop-color" || property == "flood-color" || property == "lighting-color") {
-        computedValue = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property);
-        // The computedValue cssText is rgb(num, num, num)
-        var components = computedValue.cssText.split("(")[1].split(")")[0].split(",");
-        if (compareRGB(components, expectedValue, tolerance))
-            pass = true;
-        else {
-            // We failed. Make sure computed value is something we can read in the error message
-            computedValue = computedValue.cssText;
-        }
-    } else if (property == "lineHeight") {
-        computedValue = parseInt(window.getComputedStyle(document.getElementById(elementId)).lineHeight);
-        pass = isCloseEnough(computedValue, expectedValue, tolerance);
-    } else if (property == "background-image"
+    if (property == "border-image" || property == "-webkit-mask-image" || property == "-webkit-mask-box-image")
+        property += "-source";
+
+    let computedValue = getComputedStyle(document.getElementById(elementId))[property.split(".")[0]];
+    let matchResult = property.match(/\.(\d+)$/);
+    if (matchResult)
+        computedValue = computedValue.split("(")[1].split(")")[0].split(",")[matchResult[1]];
+
+    let pass;
+    if (property == "background-image"
                || property == "border-image-source"
                || property == "border-image"
                || property == "list-style-image"
                || property == "-webkit-mask-image"
                || property == "-webkit-mask-box-image") {
-        if (property == "border-image" || property == "-webkit-mask-image" || property == "-webkit-mask-box-image")
-            property += "-source";
-        
-        computedValue = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property).cssText;
-        computedCrossFade = parseCrossFade(computedValue);
-
-        if (!computedCrossFade) {
-            pass = false;
-        } else {
-            pass = isCloseEnough(computedCrossFade.percent, expectedValue, tolerance);
-        }
+        const computedCrossFade = parseCrossFade(computedValue);
+        pass = computedCrossFade && isExpectedValue(computedCrossFade.percent, expectedValue, tolerance);
     } else if (property == "-webkit-clip-path" || property == "-webkit-shape-outside") {
-        computedValue = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property).cssText;
-
-        var expectedValues = parseClipPath(expectedValue);
-        var values = parseClipPath(computedValue);
-        
-        pass = false;
-        if (values && values.length == expectedValues.length) {
-            pass = true
+        const expectedValues = parseClipPath(expectedValue);
+        const values = parseClipPath(computedValue);
+        pass = values && values.length == expectedValues.length;
+        if (pass) {
             for (var i = 0; i < values.length; ++i)
                 pass &= isCloseEnough(values[i], expectedValues[i], tolerance);
         }
-    } else if (/(?:-webkit-)?border-(?:top|bottom)-(?:left|right)-radius$/.test(property)) {
-        computedValue = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property).cssText;
-
-        var expectedValues = [expectedValue, expectedValue];
-        var values = parseLengthPair(computedValue);
-
-        pass = false;
-        if (values && values.length == expectedValues.length) {
-            pass = true
-            for (var i = 0; i < values.length; ++i)
-                pass &= isCloseEnough(values[i], expectedValues[i], tolerance);
-        }
-    } else {
-        var computedStyle = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property);
-        if (computedStyle.cssValueType == CSSValue.CSS_VALUE_LIST) {
-            var values = [];
-            for (var i = 0; i < computedStyle.length; ++i) {
-                var styleValue = computedStyle[i];
-                switch (styleValue.cssValueType) {
-                  case CSSValue.CSS_PRIMITIVE_VALUE:
-                    if (hasFloatValue(styleValue))
-                        values.push(styleValue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER));
-                    else if (isCalcPrimitiveValue(styleValue))
-                        extractNumbersFromCalcExpression(styleValue, values);
-                    break;
-                  case CSSValue.CSS_CUSTOM:
-                    // arbitrarily pick shadow-x and shadow-y
-                    if (isShadow) {
-                      var shadowXY = getShadowXY(styleValue);
-                      console.log('shadowXY', shadowXY);
-                      values.push(shadowXY[0]);
-                      values.push(shadowXY[1]);
-                    } else
-                      values.push(styleValue.cssText);
-                    break;
-                }
-            }
-            computedValue = values.join(',');
-            pass = values.length > 0;
-            for (var i = 0; i < values.length; ++i)
-                pass &= isCloseEnough(values[i], expectedValue[i], tolerance);
-        } else if (computedStyle.cssValueType == CSSValue.CSS_PRIMITIVE_VALUE) {
-            switch (computedStyle.primitiveType) {
-                case CSSPrimitiveValue.CSS_STRING:
-                case CSSPrimitiveValue.CSS_IDENT:
-                    computedValue = computedStyle.getStringValue();
-                    pass = computedValue == expectedValue;
-                    break;
-                case CSSPrimitiveValue.CSS_RGBCOLOR:
-                    var rgbColor = computedStyle.getRGBColorValue();
-                    computedValue = [rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER),
-                                     rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER),
-                                     rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)]; // alpha is not exposed to JS
-                    pass = true;
-                    for (var i = 0; i < 3; ++i)
-                        pass &= isCloseEnough(computedValue[i], expectedValue[i], tolerance);
-                    break;
-                case CSSPrimitiveValue.CSS_RECT:
-                    computedValue = computedStyle.getRectValue();
-                    computedValue = [computedValue.top.getFloatValue(CSSPrimitiveValue.CSS_NUMBER),
-                                     computedValue.right.getFloatValue(CSSPrimitiveValue.CSS_NUMBER),
-                                     computedValue.bottom.getFloatValue(CSSPrimitiveValue.CSS_NUMBER),
-                                     computedValue.left.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)];
-                     pass = true;
-                     for (var i = 0; i < 4; ++i)
-                         pass &= isCloseEnough(computedValue[i], expectedValue[i], tolerance);
-                    break;
-                case CSSPrimitiveValue.CSS_PERCENTAGE:
-                    computedValue = parseFloat(computedStyle.cssText);
-                    pass = isCloseEnough(computedValue, expectedValue, tolerance);
-                    break;
-                default:
-                    computedValue = computedStyle.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-                    pass = isCloseEnough(computedValue, expectedValue, tolerance);
-            }
-        }
-    }
+    } else if (/^(?:-webkit-)?border-(?:top|bottom)-(?:left|right)-radius$/.test(property))
+        pass = isExpectedValue(parseLengthPair(computedValue), [expectedValue, expectedValue], tolerance);
+    else
+        pass = isExpectedValue(computedValue, expectedValue, tolerance);
 
     if (pass)
         result += "PASS - \"" + property + "\" property for \"" + elementId + "\" element at " + time + "s saw something close to: " + expectedValue + "<br>";
@@ -364,7 +175,7 @@ function checkExpectedValue(expected, index)
         result += "FAIL - \"" + property + "\" property for \"" + elementId + "\" element at " + time + "s expected: " + expectedValue + " but saw: " + computedValue + "<br>";
 
     if (postCompletionCallback)
-      result += postCompletionCallback();
+        result += postCompletionCallback();
 }
 
 function endTest()
@@ -418,7 +229,7 @@ function runTest(expected, usePauseAPI)
             if (tryToPauseTransition) {
               var element = document.getElementById(elementId);
               if (!pauseTransitionAtTimeOnElement(property, time, element))
-                window.console.log("Failed to pause '" + property + "' transition on element '" + elementId + "'");
+                console.log("Failed to pause '" + property + "' transition on element '" + elementId + "'");
             }
             try {
                 checkExpectedValue(expected, i);

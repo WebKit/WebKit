@@ -33,10 +33,11 @@
 #import "Pipeline.h"
 #import "PipelineLayout.h"
 #import "ShaderModule.h"
+#import "WGSL.h"
 
 namespace WebGPU {
 
-static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> device, id<MTLFunction> function, const PipelineLayout& pipelineLayout, const MTLSize& size, NSString *label, GPUShaderValidation validationState)
+static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> device, id<MTLFunction> function, const PipelineLayout& pipelineLayout, const MTLSize& size, NSString *label, GPUShaderValidation validationState, String&& shaderSource)
 {
     auto computePipelineDescriptor = [MTLComputePipelineDescriptor new];
 #if ENABLE(WEBGPU_BY_DEFAULT)
@@ -51,11 +52,19 @@ static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> devi
         computePipelineDescriptor.buffers[i].mutability = MTLMutabilityImmutable; // Argument buffers are always immutable in WebGPU.
     computePipelineDescriptor.label = label;
     NSError *error = nil;
+#if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
+    dumpMetalReproCaseComputePSO(WTFMove(shaderSource), function.name);
+#else
+    UNUSED_PARAM(shaderSource);
+#endif
     // FIXME: Run the asynchronous version of this
     id<MTLComputePipelineState> computePipelineState = [device newComputePipelineStateWithDescriptor:computePipelineDescriptor options:MTLPipelineOptionNone reflection:nil error:&error];
-
+#if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
+    clearMetalPSORepro();
+#endif
     if (error)
         WTFLogAlways("Pipeline state creation error: %@", error);
+
     return computePipelineState;
 }
 
@@ -79,9 +88,6 @@ static std::pair<Ref<ComputePipeline>, NSString*> returnInvalidComputePipeline(W
 
 std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const WGPUComputePipelineDescriptor& descriptor, bool isAsync)
 {
-    if (descriptor.nextInChain || descriptor.compute.nextInChain)
-        return returnInvalidComputePipeline(*this, isAsync);
-
     auto shaderModule = WebGPU::protectedFromAPI(descriptor.compute.module);
     if (!shaderModule->isValid() || &shaderModule->device() != this || !descriptor.layout)
         return returnInvalidComputePipeline(*this, isAsync);
@@ -95,7 +101,8 @@ std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const W
     auto entryPointName = descriptor.compute.entryPoint ? fromAPI(descriptor.compute.entryPoint) : shaderModule->defaultComputeEntryPoint();
     NSError *error;
     BufferBindingSizesForPipeline minimumBufferSizes;
-    auto libraryCreationResult = createLibrary(m_device, shaderModule.get(), &pipelineLayout.get(), entryPointName.createNSString().get(), label.get(), descriptor.compute.constantsSpan(), minimumBufferSizes, &error);
+    String shaderSource;
+    auto libraryCreationResult = createLibrary(m_device, shaderModule.get(), &pipelineLayout.get(), entryPointName.createNSString().get(), label.get(), descriptor.compute.constantsSpan(), minimumBufferSizes, &error, shaderSource);
     if (!libraryCreationResult || &pipelineLayout->device() != this)
         return returnInvalidComputePipeline(*this, isAsync, error.localizedDescription ?: @"Compute library failed creation");
 
@@ -133,11 +140,11 @@ std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const W
         auto generatedPipelineLayout = generatePipelineLayout(bindGroupEntries);
         if (!generatedPipelineLayout->isValid())
             return returnInvalidComputePipeline(*this, isAsync);
-        auto computePipelineState = createComputePipelineState(m_device, function, generatedPipelineLayout, size, label.get(), shaderValidationState());
+        auto computePipelineState = createComputePipelineState(m_device, function, generatedPipelineLayout, size, label.get(), shaderValidationState(), WTFMove(shaderSource));
         return std::make_pair(ComputePipeline::create(computePipelineState, WTFMove(generatedPipelineLayout), size, WTFMove(minimumBufferSizes), ++m_computePipelineId, *this), nil);
     }
 
-    auto computePipelineState = createComputePipelineState(m_device, function, pipelineLayout, size, label.get(), shaderValidationState());
+    auto computePipelineState = createComputePipelineState(m_device, function, pipelineLayout, size, label.get(), shaderValidationState(), WTFMove(shaderSource));
     return std::make_pair(ComputePipeline::create(computePipelineState, WTFMove(pipelineLayout), size, WTFMove(minimumBufferSizes), ++m_computePipelineId, *this), nil);
 }
 

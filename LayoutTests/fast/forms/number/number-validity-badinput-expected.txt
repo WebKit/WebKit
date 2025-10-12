@@ -15,14 +15,14 @@ Type '1' additionally. The element becomes valid.
 PASS colorOf(number) is not invalidStyleColor
 PASS number.validity.badInput is false
 PASS number.value is "-1"
-Type 'a' additionally. The element becomes badInput again.
+Type 'e' additionally. The element becomes badInput again.
 PASS colorOf(number) is invalidStyleColor
 PASS number.validity.badInput is true
 PASS number.value is ""
 The element losts focus. The element state should not be changed.
 PASS colorOf(number) is invalidStyleColor
 PASS number.validity.badInput is true
-PASS visibleValue(number) is "-1a"
+PASS visibleValue(number) is "-1e"
 PASS number.value is ""
 The element losts a renderer. The element state should not be changed.
 PASS number.style.display = "none"; number.validity.badInput is true

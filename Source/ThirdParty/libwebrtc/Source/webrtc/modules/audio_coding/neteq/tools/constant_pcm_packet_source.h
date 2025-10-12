@@ -13,9 +13,11 @@
 
 #include <stdio.h>
 
-#include <string>
+#include <cstdint>
+#include <memory>
 
 #include "modules/audio_coding/neteq/tools/packet_source.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 
 namespace webrtc {
 namespace test {
@@ -33,11 +35,9 @@ class ConstantPcmPacketSource : public PacketSource {
   ConstantPcmPacketSource(const ConstantPcmPacketSource&) = delete;
   ConstantPcmPacketSource& operator=(const ConstantPcmPacketSource&) = delete;
 
-  std::unique_ptr<Packet> NextPacket() override;
+  std::unique_ptr<RtpPacketReceived> NextPacket() override;
 
  private:
-  void WriteHeader(uint8_t* packet_memory);
-
   const size_t kHeaderLenBytes = 12;
   const size_t payload_len_samples_;
   const size_t packet_len_bytes_;

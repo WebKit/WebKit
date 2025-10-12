@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "WebGPUIntegralTypes.h"
-#include "WebGPUObjectDescriptorBase.h"
-#include "WebGPUQueryType.h"
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUObjectDescriptorBase.h>
+#include <WebCore/WebGPUQueryType.h>
 #include <wtf/Vector.h>
 
 namespace WebCore::WebGPU {

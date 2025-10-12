@@ -25,7 +25,7 @@
 [
     DispatchedFrom=Model,
     DispatchedTo=WebContent,
-    ExceptionForEnabledBy
+    EnabledBy=ModelElementEnabled && ModelProcessEnabled
 ]
 messages -> ModelProcessConnection WantsDispatchMessage {
     DidInitialize(struct std::optional<WebKit::ModelProcessConnectionInfo> info) CanDispatchOutOfOrder

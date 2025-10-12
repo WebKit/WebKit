@@ -39,6 +39,7 @@
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
@@ -443,7 +444,7 @@ void callAfterRandomDelay(Function<void()>&& completionHandler)
 {
     // Random delay between 100 and 500 milliseconds.
     auto delay = Seconds::fromMilliseconds(100) + Seconds::fromMilliseconds((static_cast<double>(arc4random()) / static_cast<double>(UINT32_MAX)) * 400);
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delay.nanosecondsAs<int64_t>()), dispatch_get_main_queue(), makeBlockPtr(WTFMove(completionHandler)).get());
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delay.nanosecondsAs<int64_t>()), mainDispatchQueueSingleton(), makeBlockPtr(WTFMove(completionHandler)).get());
 }
 
 NSDate *toAPI(const WallTime& time)

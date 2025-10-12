@@ -39,16 +39,4 @@ void JSStyleSheet::visitAdditionalChildren(Visitor& visitor)
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSStyleSheet);
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<StyleSheet>&& styleSheet)
-{
-    if (styleSheet->isCSSStyleSheet())
-        return createWrapper<CSSStyleSheet>(globalObject, WTFMove(styleSheet));
-    return createWrapper<StyleSheet>(globalObject, WTFMove(styleSheet));
-}
-
-JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, StyleSheet& stylesheet)
-{
-    return wrap(lexicalGlobalObject, globalObject, stylesheet);
-}
-
 } // namespace WebCore

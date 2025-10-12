@@ -4,9 +4,7 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, deepEqual.js]
-flags:
-  - noStrict
+includes: [compareArray.js]
 description: |
   pending
 esid: pending
@@ -27,8 +25,8 @@ Object.prototype[Symbol.for("comet")] = 6;
 var keys = [];
 for (var k in obj)
     keys.push(k);
-assert.deepEqual(keys, ["x", "y", "z"]);
-assert.deepEqual(Object.keys(obj), ["x", "y", "z"]);
+assert.compareArray(keys, ["x", "y", "z"]);
+assert.compareArray(Object.keys(obj), ["x", "y", "z"]);
 
 // Test with more properties.
 for (var i = 0; i < 1000; i++)
@@ -37,5 +35,4 @@ obj.w = 1000;
 keys = []
 for (var k in obj)
     keys.push(k);
-assert.deepEqual(keys, ["x", "y", "z", "w"]);
-
+assert.compareArray(keys, ["x", "y", "z", "w"]);

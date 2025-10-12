@@ -30,7 +30,6 @@
 
 #include "Editing.h"
 #include "FloatRoundedRect.h"
-#include "FrameInlines.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "GraphicsStyle.h"

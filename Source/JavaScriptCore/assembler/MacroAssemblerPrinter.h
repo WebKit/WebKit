@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "JSCPtrTag.h"
-#include "MacroAssembler.h"
-#include "Printer.h"
-#include "ProbeContext.h"
+#include <JavaScriptCore/JSCPtrTag.h>
+#include <JavaScriptCore/MacroAssembler.h>
+#include <JavaScriptCore/Printer.h>
+#include <JavaScriptCore/ProbeContext.h>
 
 namespace JSC {
 

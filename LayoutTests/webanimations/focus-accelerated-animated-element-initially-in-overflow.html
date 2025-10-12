@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+    <title>Calling 'focus()' on an element initially in overflow with a `transform` animation bringing it into view should not cause its container to scroll.</title>
+    <style>
+
+div {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+#container {
+    width: 200px;
+    height: 200px;
+
+    background-color: blue;
+
+    overflow-x: hidden;
+}
+
+#target {
+    width: 100%;
+    height: 100%;
+
+    background-color: green;
+
+    transform: translateX(100%);
+    transition: transform 0.25s;
+}
+
+#target.showing {
+    transform: none;
+}
+
+button {
+    margin: 20px;
+}
+
+    </style>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+</head>
+
+<body>
+
+<div id="container">
+    <div id="target">
+        <button>Hello World!</button>
+    </div>
+</div>
+
+<script>
+
+const timeout = interval => new Promise(resolve => setTimeout(resolve, interval));
+
+const container = document.getElementById("container");
+const target = document.getElementById("target");
+const button = document.querySelector("button");
+
+promise_test(async test => {
+    // Wait for a few rendering updates for a most stable environment until
+    // we kick the test off to ensure stable results.
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    // Initiate the transition.
+    target.classList.add("showing");
+    
+    // 50ms later, focus the button which should no longer be in
+    // the overflow area.
+    await timeout(50);
+    button.focus();
+
+    // Wait a beat and check that the container was not scrolled
+    // as a result of calling focus().
+    await timeout(0);
+    assert_equals(container.scrollLeft, 0);
+
+    container.remove();
+}, "Calling 'focus()' on an element initially in overflow with a `transform` animation bringing it into view should not cause its container to scroll.");
+
+</script>
+
+</body>
+</html>

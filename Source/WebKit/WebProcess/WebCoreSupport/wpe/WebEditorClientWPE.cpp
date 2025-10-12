@@ -33,7 +33,10 @@
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameInlines.h>
 #include <WebCore/Node.h>
+#include <WebCore/NodeDocument.h>
+#include <WebCore/NodeInlines.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/WindowsKeyboardCodes.h>
 #include <wtf/NeverDestroyed.h>
@@ -103,7 +106,6 @@ static const KeyDownEntry keyDownEntries[] = {
     { 'B',         CtrlKey,          "ToggleBold"                              },
     { 'I',         CtrlKey,          "ToggleItalic"                            },
     { 'U',         CtrlKey,          "ToggleUnderline"                         },
-    { VK_ESCAPE, 0,                  "Cancel"                                  },
     { VK_OEM_PERIOD, CtrlKey,        "Cancel"                                  },
     { VK_TAB,    0,                  "InsertTab"                               },
     { VK_TAB,    ShiftKey,           "InsertBacktab"                           },

@@ -27,8 +27,8 @@
 
 #if HAVE(IOSURFACE)
 
-#include "IOSurface.h"
-#include "NativeImage.h"
+#include <WebCore/IOSurface.h>
+#include <WebCore/NativeImage.h>
 
 namespace WebCore {
 

@@ -10,27 +10,24 @@
 
 #include "rtc_base/boringssl_certificate.h"
 
-#include "absl/strings/string_view.h"
-
-#if defined(WEBRTC_WIN)
-// Must be included first before openssl headers.
-#include "rtc_base/win32.h"  // NOLINT
-#endif                       // WEBRTC_WIN
-
 #include <openssl/asn1.h>
+#include <openssl/base.h>
 #include <openssl/bytestring.h>
 #include <openssl/digest.h>
 #include <openssl/evp.h>
 #include <openssl/mem.h>
 #include <openssl/pool.h>
 #include <openssl/rand.h>
-#include <time.h>
 
+#include <cstdint>
 #include <cstring>
+#include <ctime>
 #include <memory>
+#include <string>
 #include <utility>
-#include <vector>
 
+#include "absl/strings/string_view.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/crypto_random.h"
 #include "rtc_base/logging.h"
@@ -38,47 +35,47 @@
 #include "rtc_base/openssl_digest.h"
 #include "rtc_base/openssl_key_pair.h"
 #include "rtc_base/openssl_utility.h"
+#include "rtc_base/ssl_certificate.h"
+#include "rtc_base/ssl_identity.h"
 
-namespace rtc {
+namespace webrtc {
 namespace {
 
 // List of OIDs of signature algorithms accepted by WebRTC.
 // Taken from openssl/nid.h.
-static const uint8_t kMD5WithRSA[] = {0x2b, 0x0e, 0x03, 0x02, 0x03};
-static const uint8_t kMD5WithRSAEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
-                                                0x0d, 0x01, 0x01, 0x04};
-static const uint8_t kECDSAWithSHA1[] = {0x2a, 0x86, 0x48, 0xce,
-                                         0x3d, 0x04, 0x01};
-static const uint8_t kDSAWithSHA1[] = {0x2a, 0x86, 0x48, 0xce,
-                                       0x38, 0x04, 0x03};
-static const uint8_t kDSAWithSHA1_2[] = {0x2b, 0x0e, 0x03, 0x02, 0x1b};
-static const uint8_t kSHA1WithRSA[] = {0x2b, 0x0e, 0x03, 0x02, 0x1d};
-static const uint8_t kSHA1WithRSAEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
-                                                 0x0d, 0x01, 0x01, 0x05};
-static const uint8_t kECDSAWithSHA224[] = {0x2a, 0x86, 0x48, 0xce,
-                                           0x3d, 0x04, 0x03, 0x01};
-static const uint8_t kSHA224WithRSAEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
-                                                   0x0d, 0x01, 0x01, 0x0e};
-static const uint8_t kDSAWithSHA224[] = {0x60, 0x86, 0x48, 0x01, 0x65,
-                                         0x03, 0x04, 0x03, 0x01};
-static const uint8_t kECDSAWithSHA256[] = {0x2a, 0x86, 0x48, 0xce,
-                                           0x3d, 0x04, 0x03, 0x02};
-static const uint8_t kSHA256WithRSAEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
-                                                   0x0d, 0x01, 0x01, 0x0b};
-static const uint8_t kDSAWithSHA256[] = {0x60, 0x86, 0x48, 0x01, 0x65,
-                                         0x03, 0x04, 0x03, 0x02};
-static const uint8_t kECDSAWithSHA384[] = {0x2a, 0x86, 0x48, 0xce,
-                                           0x3d, 0x04, 0x03, 0x03};
-static const uint8_t kSHA384WithRSAEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
-                                                   0x0d, 0x01, 0x01, 0x0c};
-static const uint8_t kECDSAWithSHA512[] = {0x2a, 0x86, 0x48, 0xce,
-                                           0x3d, 0x04, 0x03, 0x04};
-static const uint8_t kSHA512WithRSAEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
-                                                   0x0d, 0x01, 0x01, 0x0d};
+const uint8_t kMD5WithRSA[] = {0x2b, 0x0e, 0x03, 0x02, 0x03};
+const uint8_t kMD5WithRSAEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
+                                         0x0d, 0x01, 0x01, 0x04};
+const uint8_t kECDSAWithSHA1[] = {0x2a, 0x86, 0x48, 0xce, 0x3d, 0x04, 0x01};
+const uint8_t kDSAWithSHA1[] = {0x2a, 0x86, 0x48, 0xce, 0x38, 0x04, 0x03};
+const uint8_t kDSAWithSHA1_2[] = {0x2b, 0x0e, 0x03, 0x02, 0x1b};
+const uint8_t kSHA1WithRSA[] = {0x2b, 0x0e, 0x03, 0x02, 0x1d};
+const uint8_t kSHA1WithRSAEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
+                                          0x0d, 0x01, 0x01, 0x05};
+const uint8_t kECDSAWithSHA224[] = {0x2a, 0x86, 0x48, 0xce,
+                                    0x3d, 0x04, 0x03, 0x01};
+const uint8_t kSHA224WithRSAEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
+                                            0x0d, 0x01, 0x01, 0x0e};
+const uint8_t kDSAWithSHA224[] = {0x60, 0x86, 0x48, 0x01, 0x65,
+                                  0x03, 0x04, 0x03, 0x01};
+const uint8_t kECDSAWithSHA256[] = {0x2a, 0x86, 0x48, 0xce,
+                                    0x3d, 0x04, 0x03, 0x02};
+const uint8_t kSHA256WithRSAEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
+                                            0x0d, 0x01, 0x01, 0x0b};
+const uint8_t kDSAWithSHA256[] = {0x60, 0x86, 0x48, 0x01, 0x65,
+                                  0x03, 0x04, 0x03, 0x02};
+const uint8_t kECDSAWithSHA384[] = {0x2a, 0x86, 0x48, 0xce,
+                                    0x3d, 0x04, 0x03, 0x03};
+const uint8_t kSHA384WithRSAEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
+                                            0x0d, 0x01, 0x01, 0x0c};
+const uint8_t kECDSAWithSHA512[] = {0x2a, 0x86, 0x48, 0xce,
+                                    0x3d, 0x04, 0x03, 0x04};
+const uint8_t kSHA512WithRSAEncryption[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
+                                            0x0d, 0x01, 0x01, 0x0d};
 
 #if !defined(NDEBUG)
 // Print a certificate to the log, for debugging.
-static void PrintCert(BoringSSLCertificate* cert) {
+void PrintCert(BoringSSLCertificate* cert) {
   // Since we're using CRYPTO_BUFFER, we can't use X509_print_ex, so we'll just
   // print the PEM string.
   RTC_DLOG(LS_VERBOSE) << "PEM representation of certificate:\n"
@@ -183,7 +180,7 @@ bool AddTime(CBB* cbb, time_t time) {
 
 // Generate a self-signed certificate, with the public key from the
 // given key pair. Caller is responsible for freeing the returned object.
-static bssl::UniquePtr<CRYPTO_BUFFER> MakeCertificate(
+bssl::UniquePtr<CRYPTO_BUFFER> MakeCertificate(
     EVP_PKEY* pkey,
     const SSLIdentityParams& params) {
   RTC_LOG(LS_INFO) << "Making certificate for " << params.common_name;
@@ -343,30 +340,23 @@ bool BoringSSLCertificate::GetSignatureDigestAlgorithm(
 }
 
 bool BoringSSLCertificate::ComputeDigest(absl::string_view algorithm,
-                                         unsigned char* digest,
-                                         size_t size,
-                                         size_t* length) const {
-  return ComputeDigest(cert_buffer_.get(), algorithm, digest, size, length);
-}
+                                         Buffer& digest) const {
+  RTC_DCHECK_GT(digest.capacity(), 0);
 
-bool BoringSSLCertificate::ComputeDigest(const CRYPTO_BUFFER* cert_buffer,
-                                         absl::string_view algorithm,
-                                         unsigned char* digest,
-                                         size_t size,
-                                         size_t* length) {
   const EVP_MD* md = nullptr;
   unsigned int n = 0;
   if (!OpenSSLDigest::GetDigestEVP(algorithm, &md)) {
     return false;
   }
-  if (size < static_cast<size_t>(EVP_MD_size(md))) {
+  if (digest.capacity() < static_cast<size_t>(EVP_MD_size(md))) {
     return false;
   }
-  if (!EVP_Digest(CRYPTO_BUFFER_data(cert_buffer),
-                  CRYPTO_BUFFER_len(cert_buffer), digest, &n, md, nullptr)) {
+  if (!EVP_Digest(CRYPTO_BUFFER_data(cert_buffer_.get()),
+                  CRYPTO_BUFFER_len(cert_buffer_.get()), digest.data(), &n, md,
+                  nullptr)) {
     return false;
   }
-  *length = n;
+  digest.SetSize(n);
   return true;
 }
 
@@ -409,4 +399,4 @@ int64_t BoringSSLCertificate::CertificateExpirationTime() const {
   return ret;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

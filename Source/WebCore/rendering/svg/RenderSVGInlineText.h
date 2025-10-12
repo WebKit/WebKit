@@ -21,11 +21,11 @@
 
 #pragma once
 
-#include "FontCascade.h"
-#include "RenderObjectInlines.h"
-#include "RenderText.h"
-#include "SVGTextLayoutAttributes.h"
-#include "Text.h"
+#include <WebCore/FontCascade.h>
+#include <WebCore/RenderObjectNode.h>
+#include <WebCore/RenderText.h>
+#include <WebCore/SVGTextLayoutAttributes.h>
+#include <WebCore/Text.h>
 
 namespace WebCore {
 
@@ -73,7 +73,7 @@ private:
 
     FloatRect objectBoundingBox() const override { return floatLinesBoundingBox(); }
 
-    VisiblePosition positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
+    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
     IntRect linesBoundingBox() const override;
 
     void setTextInternal(const String&, bool force) final;

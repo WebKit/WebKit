@@ -36,7 +36,7 @@ namespace WebCore {
 
 DOMHighResTimeStamp IdleDeadline::timeRemaining(Document& document) const
 {
-    RefPtr window { document.domWindow() };
+    RefPtr window { document.window() };
     if (!window || m_didTimeout == DidTimeout::Yes)
         return 0;
     Ref performance = window->performance();

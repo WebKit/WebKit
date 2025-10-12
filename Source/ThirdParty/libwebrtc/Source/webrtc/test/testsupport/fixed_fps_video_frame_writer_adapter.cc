@@ -10,14 +10,16 @@
 
 #include "test/testsupport/fixed_fps_video_frame_writer_adapter.h"
 
-#include <cmath>
+#include <memory>
 #include <optional>
 #include <utility>
 
+#include "api/test/video/video_frame_writer.h"
 #include "api/units/time_delta.h"
-#include "api/video/video_sink_interface.h"
+#include "api/units/timestamp.h"
+#include "api/video/video_frame.h"
 #include "rtc_base/checks.h"
-#include "test/testsupport/video_frame_writer.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace test {

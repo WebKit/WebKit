@@ -32,6 +32,8 @@
 
 #include "CSSTokenizer.h"
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSTokenizerInputStream);
 

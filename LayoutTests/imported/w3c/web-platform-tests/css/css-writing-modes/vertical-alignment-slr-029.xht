@@ -16,7 +16,6 @@
       writing-mode: sideways-lr;
       font: 60px/3 Ahem; /* computes to 60px/180px */
       color: blue;
-      margin-top: 46px; /* 30px (height of orange square) + 16px (p's margin-bottom) */
     }
 
     span#orange
@@ -24,7 +23,6 @@
       font-size: 0.5em;
       color: orange;
       vertical-align: top;
-      margin-bottom: -2em;
     }
 
     ]]></style>
@@ -33,7 +31,7 @@
 
   <body>
 
-  <p>Test passes if the left edge of an blue square is aligned with the right edge of a orange square.</p>
+  <p>Test passes if the left edge of an blue square is vertically aligned with the right edge of a orange square.</p>
 
   <div id="slr">A<span id="orange">O</span></div>
 

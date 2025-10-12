@@ -65,6 +65,12 @@ struct pas_page_base_config {
     /* Are we using this page config? */
     bool is_enabled;
 
+    /* whether profiling macros should ignore pages of this kind */
+    bool allow_profiling;
+
+    /* Whether this page can be allocated with backing MTE tag memory. */
+    bool allow_mte_tagging;
+
     /* This points to the owning heap config. Currently there is always an owning heap config. */
     const pas_heap_config* heap_config_ptr;
     

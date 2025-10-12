@@ -51,7 +51,9 @@ private:
 
     void goToItem(WebCore::HistoryItem&) override;
 
+    Vector<Ref<WebCore::HistoryItem>> allItems(WebCore::FrameIdentifier) final;
     RefPtr<WebCore::HistoryItem> itemAtIndex(int, WebCore::FrameIdentifier) override;
+
     unsigned backListCount() const override;
     unsigned forwardListCount() const override;
     bool containsItem(const WebCore::HistoryItem&) const final;

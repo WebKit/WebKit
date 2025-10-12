@@ -14,7 +14,6 @@
 #include <array>
 
 #include "api/array_view.h"
-#include "modules/audio_processing/ns/ns_common.h"
 #include "modules/audio_processing/ns/signal_model.h"
 
 namespace webrtc {
@@ -36,11 +35,11 @@ class Histograms {
   void Update(const SignalModel& features_);
 
   // Methods for accessing the histograms.
-  rtc::ArrayView<const int, kHistogramSize> get_lrt() const { return lrt_; }
-  rtc::ArrayView<const int, kHistogramSize> get_spectral_flatness() const {
+  ArrayView<const int, kHistogramSize> get_lrt() const { return lrt_; }
+  ArrayView<const int, kHistogramSize> get_spectral_flatness() const {
     return spectral_flatness_;
   }
-  rtc::ArrayView<const int, kHistogramSize> get_spectral_diff() const {
+  ArrayView<const int, kHistogramSize> get_spectral_diff() const {
     return spectral_diff_;
   }
 

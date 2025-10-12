@@ -35,7 +35,7 @@ namespace WebKit {
 
 class WebCompiledContentRuleListData {
 public:
-    WebCompiledContentRuleListData(String&& identifier, Ref<WebCore::SharedMemory>&& data, size_t actionsOffset, size_t actionsSize, size_t urlFiltersBytecodeOffset, size_t urlFiltersBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize)
+    WebCompiledContentRuleListData(String&& identifier, Ref<WebCore::SharedMemory>&& data, uint64_t actionsOffset, uint64_t actionsSize, uint64_t urlFiltersBytecodeOffset, uint64_t urlFiltersBytecodeSize, uint64_t topURLFiltersBytecodeOffset, uint64_t topURLFiltersBytecodeSize, uint64_t frameURLFiltersBytecodeOffset, uint64_t frameURLFiltersBytecodeSize)
         : identifier(WTFMove(identifier))
         , data(WTFMove(data))
         , actionsOffset(actionsOffset)
@@ -49,20 +49,20 @@ public:
     {
     }
 
-    WebCompiledContentRuleListData(String&& identifier, std::optional<WebCore::SharedMemoryHandle>&& data, size_t actionsOffset, size_t actionsSize, size_t urlFiltersBytecodeOffset, size_t urlFiltersBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize);
+    WebCompiledContentRuleListData(String&& identifier, std::optional<WebCore::SharedMemoryHandle>&& data, uint64_t actionsOffset, uint64_t actionsSize, uint64_t urlFiltersBytecodeOffset, uint64_t urlFiltersBytecodeSize, uint64_t topURLFiltersBytecodeOffset, uint64_t topURLFiltersBytecodeSize, uint64_t frameURLFiltersBytecodeOffset, uint64_t frameURLFiltersBytecodeSize);
 
     std::optional<WebCore::SharedMemoryHandle> createDataHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadOnly) const;
 
     String identifier;
     RefPtr<WebCore::SharedMemory> data;
-    size_t actionsOffset { 0 };
-    size_t actionsSize { 0 };
-    size_t urlFiltersBytecodeOffset { 0 };
-    size_t urlFiltersBytecodeSize { 0 };
-    size_t topURLFiltersBytecodeOffset { 0 };
-    size_t topURLFiltersBytecodeSize { 0 };
-    size_t frameURLFiltersBytecodeOffset { 0 };
-    size_t frameURLFiltersBytecodeSize { 0 };
+    uint64_t actionsOffset { 0 };
+    uint64_t actionsSize { 0 };
+    uint64_t urlFiltersBytecodeOffset { 0 };
+    uint64_t urlFiltersBytecodeSize { 0 };
+    uint64_t topURLFiltersBytecodeOffset { 0 };
+    uint64_t topURLFiltersBytecodeSize { 0 };
+    uint64_t frameURLFiltersBytecodeOffset { 0 };
+    uint64_t frameURLFiltersBytecodeSize { 0 };
 };
 
 }

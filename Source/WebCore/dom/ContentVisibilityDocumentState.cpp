@@ -28,16 +28,17 @@
 
 #include "ContainerNodeInlines.h"
 #include "ContentVisibilityAutoStateChangeEvent.h"
-#include "DocumentInlines.h"
 #include "DocumentTimeline.h"
 #include "EventNames.h"
 #include "FrameSelection.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
 #include "Logging.h"
+#include "NodeDocument.h"
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
 #include "RenderStyleInlines.h"
+#include "Settings.h"
 #include "SimpleRange.h"
 #include "StyleOriginatedAnimation.h"
 #include "VisibleSelection.h"
@@ -222,7 +223,7 @@ void ContentVisibilityDocumentState::updateContentRelevancyForScrollIfNeeded(con
     auto findSkippedContentRoot = [](const Element& element) -> RefPtr<const Element> {
         RefPtr<const Element> found;
         if (element.renderer() && element.renderer()->isSkippedContent()) {
-            for (RefPtr candidate = &element; candidate; candidate = candidate->parentElementInComposedTree()) {
+            for (RefPtr candidate = element; candidate; candidate = candidate->parentElementInComposedTree()) {
                 if (candidate->renderer() && candidate->renderStyle()->contentVisibility() == ContentVisibility::Auto)
                     found = candidate;
             }

@@ -14,6 +14,7 @@
 
 #include "av1/common/pred_common.h"
 
+#include "aom_ports/bitops.h"
 #include "av1/encoder/block.h"
 #include "av1/encoder/cost.h"
 #include "av1/encoder/encoder.h"
@@ -76,13 +77,13 @@ static int delta_encode_cost(const int *colors, int num, int bit_depth,
     assert(delta >= min_val);
     if (delta > max_delta) max_delta = delta;
   }
-  int bits_per_delta = AOMMAX(av1_ceil_log2(max_delta + 1 - min_val), min_bits);
+  int bits_per_delta = AOMMAX(aom_ceil_log2(max_delta + 1 - min_val), min_bits);
   assert(bits_per_delta <= bit_depth);
   int range = (1 << bit_depth) - colors[0] - min_val;
   for (int i = 0; i < num - 1; ++i) {
     bits_cost += bits_per_delta;
     range -= deltas[i];
-    bits_per_delta = AOMMIN(bits_per_delta, av1_ceil_log2(range));
+    bits_per_delta = AOMMIN(bits_per_delta, aom_ceil_log2(range));
   }
   return bits_cost;
 }
@@ -131,7 +132,7 @@ int av1_get_palette_delta_bits_v(const PALETTE_MODE_INFO *const pmi,
     if (d > max_d) max_d = d;
     if (d == 0) ++(*zero_count);
   }
-  return AOMMAX(av1_ceil_log2(max_d + 1), *min_bits);
+  return AOMMAX(aom_ceil_log2(max_d + 1), *min_bits);
 }
 
 int av1_palette_color_cost_y(const PALETTE_MODE_INFO *const pmi,
@@ -560,7 +561,7 @@ void av1_rd_pick_palette_intra_sby(
   const SequenceHeader *const seq_params = cpi->common.seq_params;
   const int is_hbd = seq_params->use_highbitdepth;
   const int bit_depth = seq_params->bit_depth;
-  const int discount_color_cost = cpi->sf.rt_sf.use_nonrd_pick_mode;
+  const int discount_color_cost = cpi->sf.rt_sf.discount_color_cost;
   int unused;
 
   int count_buf[1 << 12];  // Maximum (1 << 12) color levels.

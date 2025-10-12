@@ -36,6 +36,7 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.port import Port
 from webkitpy.port.server_process_mock import MockServerProcess
 from webkitpy.port.westondriver import WestonDriver
+from webkitpy.thirdparty.mock import patch
 from webkitpy.tool.mocktool import MockOptions
 
 from webkitcorepy import OutputCapture
@@ -67,7 +68,7 @@ class WestonDriverTest(unittest.TestCase):
         driver._environment = port.setup_environ_for_server(port.driver_name())
         return driver
 
-    def test_start(self):
+    def test_driver_start(self):
         driver = self.make_driver()
         with OutputCapture(level=logging.INFO) as captured:
             driver.start(pixel_tests=True, per_test_args=[])
@@ -84,11 +85,10 @@ class WestonDriverTest(unittest.TestCase):
         self.assertTrue("'DISPLAY': ':{}'".format(driver._expected_xvfbdisplay) in captured.root.log.getvalue())
         self.assertEqual(driver._server_process.env['GDK_BACKEND'], 'wayland')
         self.assertTrue(driver._server_process.started)
-
-        # This prevents improper cleanup of the subprocess.Popen mock object in implicitly-invoked WestonDriver.stop.
+        # Prevent improper cleanup of the subprocess.Popen mock object in implicitly-invoked WestonDriver.stop.
         driver._weston_process = None
 
-    def test_stop(self):
+    def test_driver_stop(self):
         class FakeWestonProcess(object):
             def terminate(self):
                 _log.info("MOCK FakeWestonProcess.terminate")
@@ -101,3 +101,21 @@ class WestonDriverTest(unittest.TestCase):
         self.assertEqual(captured.root.log.getvalue(), 'MOCK FakeWestonProcess.terminate\n')
 
         self.assertIsNone(driver._weston_process)
+
+    def test_environment_needed_variables(self):
+        driver = self.make_driver()
+        environment_user = {'DISPLAY': ':0.0', 'WAYLAND_DISPLAY': 'wayland-0', 'WAYLAND_SOCKET': 'wayland-0', 'EGL_PLATFORM': 'x11'}
+        with patch('os.environ', environment_user):
+            driver_environment = driver._setup_environ_for_test()
+            self.assertNotIn('WAYLAND_SOCKET', driver_environment)
+            self.assertNotIn('DISPLAY', driver_environment)
+            self.assertIn('WAYLAND_DISPLAY', driver_environment)
+            self.assertIn('GDK_BACKEND', driver_environment)
+            self.assertIn('EGL_PLATFORM', driver_environment)
+            self.assertIn('WPE_DISPLAY', driver_environment)
+            self.assertNotEqual(driver_environment['WAYLAND_DISPLAY'], environment_user['WAYLAND_DISPLAY'])
+            self.assertEqual(driver_environment['GDK_BACKEND'], 'wayland')
+            self.assertEqual(driver_environment['EGL_PLATFORM'], 'wayland')
+            self.assertEqual(driver_environment['WPE_DISPLAY'], 'wpe-display-wayland')
+        # Prevent improper cleanup of the subprocess.Popen mock object in implicitly-invoked WestonDriver.stop.
+        driver._weston_process = None

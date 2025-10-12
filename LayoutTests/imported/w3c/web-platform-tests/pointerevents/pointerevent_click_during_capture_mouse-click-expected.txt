@@ -1,8 +1,8 @@
 
 PASS pointerdown/up at child1, no capture
 PASS pointerdown/up at child1, capture at child1
-FAIL pointerdown/up at child1, capture at child2 assert_equals: expected "pointerdown@child1,gotpointercapture@child2,pointerup@child2,lostpointercapture@child2,click@child2" but got "pointerdown@child1,gotpointercapture@child2,pointerup@child2,lostpointercapture@child2,click@child1"
+PASS pointerdown/up at child1, capture at child2
 PASS pointerdown at child1, pointerup at child2, no capture
-FAIL pointerdown at child1, pointerup at child2, capture at child1 assert_equals: expected "pointerdown@child1,gotpointercapture@child1,pointerup@child1,lostpointercapture@child1,click@child1" but got "pointerdown@child1,gotpointercapture@child1,pointerup@child1,lostpointercapture@child1,click@parent"
-FAIL pointerdown at child1, pointerup at child2, capture at child2 assert_equals: expected "pointerdown@child1,gotpointercapture@child2,pointerup@child2,lostpointercapture@child2,click@child2" but got "pointerdown@child1,gotpointercapture@child2,pointerup@child2,lostpointercapture@child2,click@parent"
+PASS pointerdown at child1, pointerup at child2, capture at child1
+PASS pointerdown at child1, pointerup at child2, capture at child2
 

@@ -107,8 +107,10 @@ bool objectPrototypeHasOwnProperty(JSGlobalObject* globalObject, JSObject* thisO
     Structure* structure = thisObject->structure();
     HasOwnPropertyCache& hasOwnPropertyCache = vm.ensureHasOwnPropertyCache();
     if (std::optional<bool> result = hasOwnPropertyCache.get(structure, propertyName)) {
+#if ASSERT_ENABLED
         ASSERT(*result == thisObject->hasOwnProperty(globalObject, propertyName) || vm.hasPendingTerminationException());
-        scope.assertNoExceptionExceptTermination();
+        RETURN_IF_EXCEPTION(scope, false);
+#endif
         return *result;
     }
 
@@ -159,7 +161,7 @@ JSC_DEFINE_HOST_FUNCTION(objectProtoFuncIsPrototypeOf, (JSGlobalObject* globalOb
     if (!thisObj) [[unlikely]]
         return encodedJSValue();
 
-    JSValue v = asObject(callFrame->argument(0))->getPrototype(vm, globalObject);
+    JSValue v = asObject(callFrame->argument(0))->getPrototype(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     while (true) {
@@ -167,7 +169,7 @@ JSC_DEFINE_HOST_FUNCTION(objectProtoFuncIsPrototypeOf, (JSGlobalObject* globalOb
             return JSValue::encode(jsBoolean(false));
         if (v == thisObj)
             return JSValue::encode(jsBoolean(true));
-        v = asObject(v)->getPrototype(vm, globalObject);
+        v = asObject(v)->getPrototype(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 }

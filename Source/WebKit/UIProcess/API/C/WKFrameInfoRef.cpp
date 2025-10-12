@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "APIFrameInfo.h"
 #include "APISecurityOrigin.h"
 #include "WKAPICast.h"
+#include "WebPageProxy.h"
 
 WKTypeID WKFrameInfoGetTypeID()
 {
@@ -38,7 +39,7 @@ WKTypeID WKFrameInfoGetTypeID()
 
 WKFrameHandleRef WKFrameInfoCreateFrameHandleRef(WKFrameInfoRef frameInfo)
 {
-    return WebKit::toAPILeakingRef(WebKit::toImpl(frameInfo)->handle());
+    return WebKit::toAPILeakingRef(WebKit::toProtectedImpl(frameInfo)->handle());
 }
 
 WKSecurityOriginRef WKFrameInfoCopySecurityOrigin(WKFrameInfoRef frameInfo)
@@ -50,4 +51,9 @@ WKSecurityOriginRef WKFrameInfoCopySecurityOrigin(WKFrameInfoRef frameInfo)
 bool WKFrameInfoGetIsMainFrame(WKFrameInfoRef frameInfo)
 {
     return WebKit::toImpl(frameInfo)->isMainFrame();
+}
+
+WKPageRef WKFrameInfoGetPage(WKFrameInfoRef frameInfo)
+{
+    return WebKit::toAPI(RefPtr { WebKit::toProtectedImpl(frameInfo)->page() }.get());
 }

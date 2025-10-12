@@ -30,6 +30,7 @@
 #import "IOSurface.h"
 #import "Logging.h"
 #import "RealtimeVideoUtilities.h"
+#import <wtf/CheckedArithmetic.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cf/TypeCastsCF.h>
 
@@ -135,7 +136,7 @@ static CFDictionaryRef pixelBufferCreationOptions(IOSurfaceRef surface)
 Expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixelBuffer(IOSurfaceRef surface)
 {
     CVPixelBufferRef pixelBuffer = nullptr;
-    auto status = CVPixelBufferCreateWithIOSurface(kCFAllocatorDefault, surface, pixelBufferCreationOptions(surface), &pixelBuffer);
+    auto status = CVPixelBufferCreateWithIOSurface(kCFAllocatorDefault, surface, RetainPtr { pixelBufferCreationOptions(surface) }.get(), &pixelBuffer);
     if (status != kCVReturnSuccess || !pixelBuffer) {
         RELEASE_LOG_ERROR(WebRTC, "createCVPixelBuffer failed with IOSurface status=%d, pixelBuffer=%p", (int)status, pixelBuffer);
         return makeUnexpected(status);
@@ -145,7 +146,7 @@ Expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixelBuffer(IOSurfaceRef
 
 RetainPtr<CGColorSpaceRef> createCGColorSpaceForCVPixelBuffer(CVPixelBufferRef buffer)
 {
-    if (CGColorSpaceRef colorSpace = dynamic_cf_cast<CGColorSpaceRef>(CVBufferGetAttachment(buffer, kCVImageBufferCGColorSpaceKey, nullptr)))
+    if (RetainPtr colorSpace = dynamic_cf_cast<CGColorSpaceRef>(CVBufferGetAttachment(buffer, kCVImageBufferCGColorSpaceKey, nullptr)))
         return colorSpace;
 
     RetainPtr<CFDictionaryRef> attachments;
@@ -163,14 +164,14 @@ RetainPtr<CGColorSpaceRef> createCGColorSpaceForCVPixelBuffer(CVPixelBufferRef b
     // that requires an embedded ICC profile is unlikely to be presented
     // correctly with any particular fallback color space we choose, so we
     // choose sRGB for ease.
-    return sRGBColorSpaceRef();
+    return sRGBColorSpaceSingleton();
 }
 
 void setOwnershipIdentityForCVPixelBuffer(CVPixelBufferRef pixelBuffer, const ProcessIdentity& owner)
 {
-    auto surface = CVPixelBufferGetIOSurface(pixelBuffer);
+    RetainPtr surface = CVPixelBufferGetIOSurface(pixelBuffer);
     ASSERT(surface);
-    IOSurface::setOwnershipIdentity(surface, owner);
+    IOSurface::setOwnershipIdentity(surface.get(), owner);
 }
 
 RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height, bool shouldUseIOSurface)
@@ -179,6 +180,12 @@ RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height, 
     ASSERT(format == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange || format == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange);
 
     NSDictionary *pixelAttributes = @{ (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ } };
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=300264 - Creating very large CVPixelBuffers should terminate the IPC connection
+    size_t widthTimesHeight;
+    constexpr size_t maxIOSurfaceWidth = 1 << 15;
+    if (!WTF::safeMultiply(width, height, widthTimesHeight) || widthTimesHeight > maxIOSurfaceWidth * maxIOSurfaceWidth)
+        return nullptr;
 
     CVPixelBufferRef pixelBuffer = nullptr;
     auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, format, shouldUseIOSurface ? (__bridge CFDictionaryRef)pixelAttributes : nullptr, &pixelBuffer);

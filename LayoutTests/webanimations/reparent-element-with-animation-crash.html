@@ -1,0 +1,16 @@
+<style>
+ div { animation: a0 forwards}
+ @keyframes a0 {}
+</style>
+<div id="div">This test passes if it does not crash.</div>
+<script>
+ div.attributeStyleMap.set('animation-timeline', 'none');
+ (async () => {
+     await new Promise (resolve=>setTimeout(resolve, 50));
+     document.documentElement.append(div);
+     window.testRunner?.notifyDone();
+ })();
+
+ window.testRunner?.dumpAsText();
+ window.testRunner?.waitUntilDone();
+</script>

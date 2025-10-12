@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,8 @@
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
 
-#include "PixelBuffer.h"
 #include <JavaScriptCore/Float16Array.h>
+#include <WebCore/PixelBuffer.h>
 
 namespace WebCore {
 

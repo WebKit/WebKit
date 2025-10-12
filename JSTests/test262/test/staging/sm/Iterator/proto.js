@@ -6,9 +6,6 @@ info: |
   The prototype of the Iterator constructor is the intrinsic object %FunctionPrototype%.
 
   Iterator is not enabled unconditionally
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 features:
   - iterator-helpers
 description: |

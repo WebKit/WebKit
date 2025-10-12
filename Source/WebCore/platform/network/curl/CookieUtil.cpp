@@ -81,7 +81,7 @@ bool domainMatch(const String& cookieDomain, const String& host)
     return false;
 }
 
-static std::optional<double> parseExpiresMS(std::span<const LChar> expires)
+static std::optional<double> parseExpiresMS(std::span<const Latin1Character> expires)
 {
     double tmp = parseDate(expires);
     if (isnan(tmp))
@@ -131,7 +131,7 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
         }
     } else if (equalLettersIgnoringASCIICase(attributeName, "expires"_s) && !hasMaxAge) {
         // FIXME: This code passes a UTF-8 buffer to a function that expects to parse Latin1.
-        if (auto expiryTime = parseExpiresMS(byteCast<LChar>(attributeValue.utf8().span()))) {
+        if (auto expiryTime = parseExpiresMS(byteCast<Latin1Character>(attributeValue.utf8().span()))) {
             result.expires = expiryTime.value();
             result.session = false;
         } else if (!hasMaxAge) {
@@ -181,21 +181,6 @@ std::optional<Cookie> parseCookieHeader(const String& cookieLine)
         parseCookieAttributes(attribute, hasMaxAge, cookie);
 
     return cookie;
-}
-
-String defaultPathForURL(const URL& url)
-{
-    // Algorithm to generate the default path is outlined in https://tools.ietf.org/html/rfc6265#section-5.1.4
-
-    String path = url.path().toString();
-    if (path.isEmpty() || !path.startsWith('/'))
-        return "/"_s;
-
-    auto lastSlashPosition = path.reverseFind('/');
-    if (!lastSlashPosition)
-        return "/"_s;
-
-    return path.left(lastSlashPosition);
 }
 
 } // namespace CookieUtil

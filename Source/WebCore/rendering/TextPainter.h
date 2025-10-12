@@ -2,6 +2,7 @@
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,7 +18,6 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
 #pragma once
@@ -35,11 +35,17 @@ namespace WebCore {
 class FilterOperations;
 class FontCascade;
 class RenderCombineText;
-class ShadowData;
 class TextRun;
 class Text;
 
 struct TextPaintStyle;
+
+namespace Style {
+struct AppleColorFilter;
+struct TextShadow;
+template<typename> struct Shadows;
+using TextShadows = Shadows<TextShadow>;
+}
 
 static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirection direction)
 {
@@ -50,12 +56,7 @@ static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirecti
 
 class TextPainter {
 public:
-    TextPainter(GraphicsContext&, const FontCascade&, const RenderStyle&);
-
-    void setStyle(const TextPaintStyle& textPaintStyle) { m_style = textPaintStyle; }
-    void setShadow(const ShadowData* shadow) { m_shadow = shadow; }
-    void setShadowColorFilter(const FilterOperations* colorFilter) { m_shadowColorFilter = colorFilter; }
-    void setEmphasisMark(const AtomString& mark, float offset, const RenderCombineText*);
+    TextPainter(GraphicsContext&, const FontCascade&, const RenderStyle&, const TextPaintStyle&, const Style::TextShadows&, const Style::AppleColorFilter&, const AtomString& emphasisMark, float emphasisMarkOffset, const RenderCombineText*);
 
     void paintRange(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end);
 
@@ -82,34 +83,27 @@ private:
 
     void paintTextOrEmphasisMarks(const FontCascade&, const TextRun&, const AtomString& emphasisMark, float emphasisMarkOffset,
         const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset);
-    void paintTextWithShadows(const ShadowData*, const FilterOperations*, const FontCascade&, const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin,
+    void paintTextWithShadows(const Style::TextShadows*, const Style::AppleColorFilter&, const FontCascade&, const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin,
         unsigned startOffset, unsigned endOffset, const AtomString& emphasisMark, float emphasisMarkOffset, bool stroked);
     void paintTextAndEmphasisMarksIfNeeded(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset,
-        const TextPaintStyle&, const ShadowData*, const FilterOperations*);
+        const TextPaintStyle&, const Style::TextShadows&, const Style::AppleColorFilter&);
 
     GraphicsContext& m_context;
-    const FontCascade& m_font;
-    const RenderStyle& m_renderStyle;
+    const CheckedRef<const FontCascade> m_font;
+    const CheckedRef<const RenderStyle> m_renderStyle;
     TextPaintStyle m_style;
     AtomString m_emphasisMark;
-    const ShadowData* m_shadow { nullptr };
-    const FilterOperations* m_shadowColorFilter { nullptr };
-    const RenderCombineText* m_combinedText { nullptr };
+    const Style::TextShadows& m_shadow;
+    const Style::AppleColorFilter& m_shadowColorFilter;
+    const CheckedPtr<const RenderCombineText> m_combinedText;
     RefPtr<const DisplayList::DisplayList> m_glyphDisplayList { nullptr };
     float m_emphasisMarkOffset { 0 };
     WritingMode m_writingMode;
 };
 
-inline void TextPainter::setEmphasisMark(const AtomString& mark, float offset, const RenderCombineText* combinedText)
-{
-    m_emphasisMark = mark;
-    m_emphasisMarkOffset = offset;
-    m_combinedText = combinedText;
-}
-
 class ShadowApplier {
 public:
-    ShadowApplier(const RenderStyle&, GraphicsContext&, const ShadowData*, const FilterOperations* colorFilter, const FloatRect& textRect, bool lastShadowIterationShouldDrawText = true, bool opaque = false, bool ignoreWritingMode = false);
+    ShadowApplier(const RenderStyle&, GraphicsContext&, const Style::TextShadow*, const Style::AppleColorFilter&, const FloatRect& textRect, bool isLastShadowIteration, bool lastShadowIterationShouldDrawText = true, bool opaque = false, bool ignoreWritingMode = false);
     FloatSize extraOffset() const { return m_extraOffset; }
     bool nothingToDraw() const { return m_nothingToDraw; }
     bool didSaveContext() const { return m_didSaveContext; }
@@ -121,7 +115,7 @@ private:
 
     FloatSize m_extraOffset;
     GraphicsContext& m_context;
-    const ShadowData* m_shadow;
+    const Style::TextShadow* m_shadow;
     bool m_onlyDrawsShadow : 1;
     bool m_avoidDrawingShadow : 1;
     bool m_nothingToDraw : 1;

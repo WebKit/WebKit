@@ -50,17 +50,6 @@ Ref<UIScriptController> UIScriptController::create(UIScriptContext& context)
     return adoptRef(*new UIScriptControllerMac(context));
 }
 
-void UIScriptControllerMac::doAsyncTask(JSValueRef callback)
-{
-    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-
-    WorkQueue::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
-    });
-}
-
 void UIScriptControllerMac::replaceTextAtRange(JSStringRef text, int location, int length)
 {
     auto textToInsert = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, text));
@@ -110,7 +99,7 @@ void UIScriptControllerMac::activateDataListSuggestion(unsigned index, JSValueRe
     UNUSED_PARAM(index);
 
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    WorkQueue::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
+    WorkQueue::mainSingleton().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -133,7 +122,7 @@ void UIScriptControllerMac::removeViewFromWindow(JSValueRef callback)
     WebView *webView = [mainFrame webView];
     [webView removeFromSuperview];
 
-    WorkQueue::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
+    WorkQueue::mainSingleton().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -147,7 +136,7 @@ void UIScriptControllerMac::addViewToWindow(JSValueRef callback)
     WebView *webView = [mainFrame webView];
     [[mainWindow contentView] addSubview:webView];
 
-    WorkQueue::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
+    WorkQueue::mainSingleton().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -307,7 +296,7 @@ void UIScriptControllerMac::sendEventStream(JSStringRef eventsJSON, JSValueRef c
         currentTime += nanosecondsEventInterval;
     }
 
-    WorkQueue::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
+    WorkQueue::mainSingleton().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);

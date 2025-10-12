@@ -40,12 +40,12 @@ struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
         return adoptRef(*new OpaqueJSString);
     }
 
-    static Ref<OpaqueJSString> create(std::span<const LChar> characters)
+    static Ref<OpaqueJSString> create(std::span<const Latin1Character> characters)
     {
         return adoptRef(*new OpaqueJSString(characters));
     }
 
-    static Ref<OpaqueJSString> create(std::span<const UChar> characters)
+    static Ref<OpaqueJSString> create(std::span<const char16_t> characters)
     {
         return adoptRef(*new OpaqueJSString(characters));
     }
@@ -56,11 +56,11 @@ struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
     JS_EXPORT_PRIVATE ~OpaqueJSString();
 
     bool is8Bit() { return m_string.is8Bit(); }
-    std::span<const LChar> span8() LIFETIME_BOUND { return m_string.span8(); }
-    std::span<const UChar> span16() LIFETIME_BOUND { return m_string.span16(); }
+    std::span<const Latin1Character> span8() LIFETIME_BOUND { return m_string.span8(); }
+    std::span<const char16_t> span16() LIFETIME_BOUND { return m_string.span16(); }
     unsigned length() { return m_string.length(); }
 
-    const UChar* characters() LIFETIME_BOUND;
+    const char16_t* characters() LIFETIME_BOUND;
 
     JS_EXPORT_PRIVATE String string() const;
     JSC::Identifier identifier(JSC::VM*) const;
@@ -77,30 +77,30 @@ private:
 
     OpaqueJSString(const String& string)
         : m_string(string.isolatedCopy())
-        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.span16().data()))
+        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<char16_t*>(m_string.span16().data()))
     {
     }
 
     explicit OpaqueJSString(String&& string)
         : m_string(WTFMove(string))
-        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.span16().data()))
+        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<char16_t*>(m_string.span16().data()))
     {
     }
 
-    OpaqueJSString(std::span<const LChar> characters)
+    OpaqueJSString(std::span<const Latin1Character> characters)
         : m_string(characters)
         , m_characters(nullptr)
     {
     }
 
-    OpaqueJSString(std::span<const UChar> characters)
+    OpaqueJSString(std::span<const char16_t> characters)
         : m_string(characters)
-        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.span16().data()))
+        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<char16_t*>(m_string.span16().data()))
     {
     }
 
     String m_string;
 
     // This will be initialized on demand when characters() is called if the string needs up-conversion.
-    std::atomic<UChar*> m_characters;
+    std::atomic<char16_t*> m_characters;
 };

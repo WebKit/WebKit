@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import <AppKit/AppKit.h>
+#import <wtf/CheckedPtr.h>
 #import <wtf/MainThread.h>
 #import <wtf/TZoneMallocInlines.h>
 
@@ -53,15 +54,15 @@ SystemSleepListenerMac::SystemSleepListenerMac(Client& client)
 
     m_sleepObserver = [center addObserverForName:NSWorkspaceWillSleepNotification object:nil queue:queue usingBlock:^(NSNotification *) {
         callOnMainThread([weakThis] {
-            if (weakThis)
-                weakThis->m_client.systemWillSleep();
+            if (CheckedPtr checkedThis = weakThis.get())
+                checkedThis->m_client.systemWillSleep();
         });
     }];
 
     m_wakeObserver = [center addObserverForName:NSWorkspaceDidWakeNotification object:nil queue:queue usingBlock:^(NSNotification *) {
         callOnMainThread([weakThis] {
-            if (weakThis)
-                weakThis->m_client.systemDidWake();
+            if (CheckedPtr checkedThis = weakThis.get())
+                checkedThis->m_client.systemDidWake();
         });
     }];
 }

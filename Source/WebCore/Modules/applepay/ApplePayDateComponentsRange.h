@@ -27,7 +27,7 @@
 
 #if ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
 
-#include "ApplePayDateComponents.h"
+#include <WebCore/ApplePayDateComponents.h>
 
 namespace WebCore {
 

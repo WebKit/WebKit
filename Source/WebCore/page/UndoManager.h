@@ -56,7 +56,7 @@ private:
     UndoManager(Document&);
 
     Document& m_document;
-    UncheckedKeyHashSet<RefPtr<UndoItem>> m_items;
+    HashSet<RefPtr<UndoItem>> m_items;
 };
 
 } // namespace WebCore

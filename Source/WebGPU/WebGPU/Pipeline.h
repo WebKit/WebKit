@@ -40,10 +40,16 @@ struct LibraryCreationResult {
     HashMap<String, WGSL::ConstantValue> wgslConstantValues;
 };
 
-std::optional<LibraryCreationResult> createLibrary(id<MTLDevice>, const ShaderModule&, PipelineLayout*, const String& entryPointName, NSString *label, std::span<const WGPUConstantEntry> constants, BufferBindingSizesForPipeline&, NSError **);
+std::optional<LibraryCreationResult> createLibrary(id<MTLDevice>, const ShaderModule&, PipelineLayout*, const String& entryPointName, NSString *label, std::span<const WGPUConstantEntry> constants, BufferBindingSizesForPipeline&, NSError **, String& metalShaderSource);
 
 id<MTLFunction> createFunction(id<MTLLibrary>, const WGSL::Reflection::EntryPointInformation&, NSString *label);
 
 NSString* errorValidatingBindGroup(const BindGroup&, const BufferBindingSizesForBindGroup*, const Vector<uint32_t>*);
+
+#if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
+void dumpMetalReproCaseComputePSO(String&& shaderSource, String&& functionName);
+bool dumpMetalReproCaseRenderPSO(String&& vertexShaderSource, String&& vertexFunctionName, String&& fragmentShaderSource, String&& fragmentFunctionName, MTLRenderPipelineDescriptor*, ShaderModule::VertexStageIn& shaderLocations, const Device&);
+void clearMetalPSORepro();
+#endif
 
 } // namespace WebGPU

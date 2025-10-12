@@ -11,9 +11,13 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_MATCHED_FILTER_LAG_AGGREGATOR_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_MATCHED_FILTER_LAG_AGGREGATOR_H_
 
+#include <array>
+#include <cstddef>
+#include <memory>
 #include <optional>
 #include <vector>
 
+#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/delay_estimate.h"
 #include "modules/audio_processing/aec3/matched_filter.h"
@@ -77,7 +81,7 @@ class MatchedFilterLagAggregator {
     void Reset();
     void Aggregate(int lag);
     int candidate() const { return candidate_; }
-    rtc::ArrayView<const int> histogram() const { return histogram_; }
+    ArrayView<const int> histogram() const { return histogram_; }
 
    private:
     std::vector<int> histogram_;

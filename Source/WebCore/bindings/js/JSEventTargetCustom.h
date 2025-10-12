@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "EventTargetInlines.h"
-#include "JSDOMBinding.h"
-#include "JSDOMBindingSecurity.h"
-#include "JSDOMOperation.h"
-#include "LocalDOMWindow.h"
+#include <WebCore/EventTargetInlines.h>
+#include <WebCore/JSDOMBinding.h>
+#include <WebCore/JSDOMBindingSecurity.h>
+#include <WebCore/JSDOMOperation.h>
+#include <WebCore/LocalDOMWindow.h>
 
 namespace WebCore {
 

@@ -26,18 +26,18 @@
 #pragma once
 
 #if ENABLE(WEB_AUTHN)
-#include "AttestationConveyancePreference.h"
-#include "AuthenticationExtensionsClientInputs.h"
-#include "AuthenticatorSelectionCriteria.h"
-#include "BufferSource.h"
-#include "IDLTypes.h"
-#include "PublicKeyCredentialDescriptor.h"
-#include "PublicKeyCredentialParameters.h"
-#include "PublicKeyCredentialRpEntity.h"
-#include "PublicKeyCredentialType.h"
-#include "PublicKeyCredentialUserEntity.h"
-#include "ResidentKeyRequirement.h"
-#include "UserVerificationRequirement.h"
+#include <WebCore/AttestationConveyancePreference.h>
+#include <WebCore/AuthenticationExtensionsClientInputs.h>
+#include <WebCore/AuthenticatorSelectionCriteria.h>
+#include <WebCore/BufferSource.h>
+#include <WebCore/IDLTypes.h>
+#include <WebCore/PublicKeyCredentialDescriptor.h>
+#include <WebCore/PublicKeyCredentialParameters.h>
+#include <WebCore/PublicKeyCredentialRpEntity.h>
+#include <WebCore/PublicKeyCredentialType.h>
+#include <WebCore/PublicKeyCredentialUserEntity.h>
+#include <WebCore/ResidentKeyRequirement.h>
+#include <WebCore/UserVerificationRequirement.h>
 #include <wtf/Forward.h>
 #endif // ENABLE(WEB_AUTHN)
 

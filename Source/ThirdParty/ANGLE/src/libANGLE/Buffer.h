@@ -158,7 +158,7 @@ class Buffer final : public ThreadSafeRefCountObject<BufferID>,
     angle::Result unmap(const Context *context, GLboolean *result);
 
     // These are called when another operation changes Buffer data.
-    void onDataChanged();
+    void onDataChanged(const Context *context);
 
     angle::Result getIndexRange(const gl::Context *context,
                                 DrawElementsType type,
@@ -222,6 +222,10 @@ class Buffer final : public ThreadSafeRefCountObject<BufferID>,
     {
         mVertexArrayBufferBindingMaskAndContext.remove(context, bindingIndex);
     }
+    VertexArrayBufferBindingMask getVertexArrayBinding(const gl::Context *context) const
+    {
+        return mVertexArrayBufferBindingMaskAndContext.getBufferBindingMask(context);
+    }
 
     void addContentsObserver(VertexArray *vertexArray, uint32_t bufferIndex);
     void removeContentsObserver(VertexArray *vertexArray, uint32_t bufferIndex);
@@ -246,7 +250,7 @@ class Buffer final : public ThreadSafeRefCountObject<BufferID>,
                                          GLbitfield flags);
 
     void onStateChange(const Context *context, angle::SubjectMessage message);
-    void onContentsChange();
+    void onContentsChange(const Context *context);
     size_t getContentsObserverIndex(void *observer, uint32_t bufferIndex) const;
     void removeContentsObserverImpl(void *observer, uint32_t bufferIndex);
 

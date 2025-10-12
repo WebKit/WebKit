@@ -10,7 +10,7 @@
 
 #include "modules/audio_processing/vad/gmm.h"
 
-#include <math.h>
+#include <cmath>
 
 #include "modules/audio_processing/vad/noise_gmm_tables.h"
 #include "modules/audio_processing/vad/voice_gmm_tables.h"

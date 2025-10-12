@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2025 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
@@ -28,11 +28,15 @@
 #include "WorkerNavigator.h"
 
 #include "Chrome.h"
+#include "ContextDestructionObserverInlines.h"
 #include "GPU.h"
 #include "JSDOMPromiseDeferred.h"
+#include "NavigatorUAData.h"
 #include "Page.h"
 #include "PushEvent.h"
 #include "ServiceWorkerGlobalScope.h"
+#include "UserAgentStringData.h"
+#include "UserAgentStringParser.h"
 #include "WorkerBadgeProxy.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
@@ -99,7 +103,7 @@ void WorkerNavigator::setAppBadge(std::optional<unsigned long long> badge, Ref<D
         return;
     }
 
-    if (auto* workerBadgeProxy = scope->thread().workerBadgeProxy())
+    if (auto* workerBadgeProxy = scope->thread()->workerBadgeProxy())
         workerBadgeProxy->setAppBadge(badge);
     promise->resolve();
 }
@@ -108,5 +112,18 @@ void WorkerNavigator::clearAppBadge(Ref<DeferredPromise>&& promise)
 {
     setAppBadge(0, WTFMove(promise));
 }
+
+NavigatorUAData& WorkerNavigator::userAgentData() const
+{
+    Ref parser = UserAgentStringParser::create(m_userAgent);
+    std::optional userAgentStringData = parser->parse();
+    if (userAgentStringData) {
+        m_navigatorUAData = NavigatorUAData::create(WTFMove(*userAgentStringData));
+        return *m_navigatorUAData;
+    }
+
+    m_navigatorUAData = NavigatorUAData::create();
+    return *m_navigatorUAData;
+};
 
 } // namespace WebCore

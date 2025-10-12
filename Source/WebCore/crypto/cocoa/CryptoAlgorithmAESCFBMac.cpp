@@ -35,14 +35,14 @@ namespace WebCore {
 static ExceptionOr<Vector<uint8_t>> transformAESCFB(CCOperation operation, const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
     CCCryptorRef cryptor;
-    CCCryptorStatus status = CCCryptorCreateWithMode(operation, kCCModeCFB8, kCCAlgorithmAES, ccNoPadding, iv.data(), key.data(), key.size(), 0, 0, 0, 0, &cryptor);
+    CCCryptorStatus status = CCCryptorCreateWithMode(operation, kCCModeCFB8, kCCAlgorithmAES, ccNoPadding, iv.span().data(), key.span().data(), key.size(), 0, 0, 0, 0, &cryptor);
     if (status)
         return Exception { ExceptionCode::OperationError };
 
     Vector<uint8_t> result(CCCryptorGetOutputLength(cryptor, data.size(), true));
 
     size_t bytesWritten;
-    status = CCCryptorUpdate(cryptor, data.data(), data.size(), result.data(), result.size(), &bytesWritten);
+    status = CCCryptorUpdate(cryptor, data.span().data(), data.size(), result.mutableSpan().data(), result.size(), &bytesWritten);
     if (status)
         return Exception { ExceptionCode::OperationError };
 

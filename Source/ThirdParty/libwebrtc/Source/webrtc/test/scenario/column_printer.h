@@ -9,13 +9,14 @@
  */
 #ifndef TEST_SCENARIO_COLUMN_PRINTER_H_
 #define TEST_SCENARIO_COLUMN_PRINTER_H_
+#include <cstddef>
 #include <functional>
 #include <memory>
 #include <string>
 #include <vector>
 
+#include "api/rtc_event_log_output.h"
 #include "rtc_base/strings/string_builder.h"
-#include "test/logging/log_writer.h"
 
 namespace webrtc {
 namespace test {
@@ -26,18 +27,18 @@ class ColumnPrinter {
   static ColumnPrinter Fixed(const char* headers, std::string fields);
   static ColumnPrinter Lambda(
       const char* headers,
-      std::function<void(rtc::SimpleStringBuilder&)> printer,
+      std::function<void(webrtc::SimpleStringBuilder&)> printer,
       size_t max_length = 256);
 
  protected:
   friend class StatesPrinter;
   const char* headers_;
-  std::function<void(rtc::SimpleStringBuilder&)> printer_;
+  std::function<void(webrtc::SimpleStringBuilder&)> printer_;
   size_t max_length_;
 
  private:
   ColumnPrinter(const char* headers,
-                std::function<void(rtc::SimpleStringBuilder&)> printer,
+                std::function<void(webrtc::SimpleStringBuilder&)> printer,
                 size_t max_length);
 };
 

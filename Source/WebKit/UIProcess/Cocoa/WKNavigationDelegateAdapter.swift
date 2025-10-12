@@ -41,13 +41,21 @@ final class WKNavigationDelegateAdapter: NSObject, WKNavigationDelegate {
 
     // MARK: Navigation progress reporting
 
-    private func yieldNavigationProgress(kind: WebPage.NavigationEvent.Kind, cocoaNavigation: WKNavigation!) {
-        let navigation = WebPage.NavigationEvent(kind: kind, navigationID: .init(cocoaNavigation))
+    private func yieldNavigationProgress(kind: WebPage.NavigationEvent, cocoaNavigation: WKNavigation!) {
+        let addEvent = { [weak owner] () -> Void in
+            owner?.addNavigationEvent(.success(kind), for: cocoaNavigation)
+        }
 
-        owner?.backingWebView
-            ._do(afterNextPresentationUpdate: { [weak owner] in
-                owner?.currentNavigationEvent = navigation
-            })
+        if kind == .finished {
+            // A presentation update is only guaranteed when a navigation has finished.
+            owner?.backingWebView._do(afterNextPresentationUpdate: addEvent)
+        } else {
+            addEvent()
+        }
+    }
+
+    private func failNavigationProgress(kind: some Error, cocoaNavigation: WKNavigation?) {
+        owner?.addNavigationEvent(.failure(kind), for: cocoaNavigation)
     }
 
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
@@ -67,15 +75,20 @@ final class WKNavigationDelegateAdapter: NSObject, WKNavigationDelegate {
     }
 
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: any Error) {
-        yieldNavigationProgress(kind: .failedProvisionalNavigation(underlyingError: error), cocoaNavigation: navigation)
+        failNavigationProgress(kind: WebPage.NavigationError.failedProvisionalNavigation(error), cocoaNavigation: navigation)
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: any Error) {
-        yieldNavigationProgress(kind: .failed(underlyingError: error), cocoaNavigation: navigation)
+        failNavigationProgress(kind: error, cocoaNavigation: navigation)
+    }
+
+    func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+        failNavigationProgress(kind: WebPage.NavigationError.webContentProcessTerminated, cocoaNavigation: nil)
     }
 
     // MARK: Back-forward list support
 
+    // swift-format-ignore: NoLeadingUnderscores
     @objc(_webView:backForwardListItemAdded:removed:)
     func _webView(
         _ webView: WKWebView!,

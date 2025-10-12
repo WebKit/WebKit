@@ -52,8 +52,8 @@ OVERFLOW
 Show Text
 
 
-PASS .test 1
-FAIL .test 2 assert_equals:
+PASS .test 1: start
+FAIL .test 2: center assert_equals:
 <div class="test" style="align-content: center" title="center">
     <div class="float" data-offset-y="15">FLT</div>
     <div class="in-flow" data-offset-y="25"></div>
@@ -66,7 +66,7 @@ FAIL .test 2 assert_equals:
     </div>
   </div>
 offsetTop expected 15 but got 25
-FAIL .test 3 assert_equals:
+FAIL .test 3: end assert_equals:
 <div class="test" style="align-content: end" title="end">
     <div class="float" data-offset-y="25">FLT</div>
     <div class="in-flow" data-offset-y="35"></div>
@@ -79,8 +79,8 @@ FAIL .test 3 assert_equals:
     </div>
   </div>
 offsetTop expected 25 but got 45
-PASS .test 4
-FAIL .test 5 assert_equals:
+PASS .test 4: baseline
+FAIL .test 5: last baseline assert_equals:
 <div class="test" style="align-content: last baseline" title="last baseline">
     <div class="float" data-offset-y="25">FLT</div>
     <div class="in-flow" data-offset-y="35"></div>
@@ -93,8 +93,8 @@ FAIL .test 5 assert_equals:
     </div>
   </div>
 offsetTop expected 25 but got 45
-PASS .test 6
-FAIL .test 7 assert_equals:
+PASS .test 6: flex-start
+FAIL .test 7: flex-end assert_equals:
 <div class="test" style="align-content: flex-end" title="flex-end">
     <div class="float" data-offset-y="25">FLT</div>
     <div class="in-flow" data-offset-y="35"></div>
@@ -107,8 +107,8 @@ FAIL .test 7 assert_equals:
     </div>
   </div>
 offsetTop expected 25 but got 45
-PASS .test 8
-FAIL .test 9 assert_equals:
+PASS .test 8: unsafe start
+FAIL .test 9: unsafe center assert_equals:
 <div class="test" style="align-content: unsafe center" title="unsafe center">
     <div class="float" data-offset-y="15">FLT</div>
     <div class="in-flow" data-offset-y="25"></div>
@@ -121,7 +121,7 @@ FAIL .test 9 assert_equals:
     </div>
   </div>
 offsetTop expected 15 but got 25
-FAIL .test 10 assert_equals:
+FAIL .test 10: unsafe end assert_equals:
 <div class="test" style="align-content: unsafe end" title="unsafe end">
     <div class="float" data-offset-y="25">FLT</div>
     <div class="in-flow" data-offset-y="35"></div>
@@ -134,8 +134,8 @@ FAIL .test 10 assert_equals:
     </div>
   </div>
 offsetTop expected 25 but got 45
-PASS .test 11
-FAIL .test 12 assert_equals:
+PASS .test 11: safe start
+FAIL .test 12: safe center assert_equals:
 <div class="test" style="align-content: safe center" title="safe center">
     <div class="float" data-offset-y="15">FLT</div>
     <div class="in-flow" data-offset-y="25"></div>
@@ -148,7 +148,7 @@ FAIL .test 12 assert_equals:
     </div>
   </div>
 offsetTop expected 15 but got 25
-FAIL .test 13 assert_equals:
+FAIL .test 13: safe end assert_equals:
 <div class="test" style="align-content: safe end" title="safe end">
     <div class="float" data-offset-y="25">FLT</div>
     <div class="in-flow" data-offset-y="35"></div>
@@ -161,7 +161,7 @@ FAIL .test 13 assert_equals:
     </div>
   </div>
 offsetTop expected 25 but got 45
-FAIL .test 14 assert_equals:
+FAIL .test 14: space-evenly assert_equals:
 <div class="test" style="align-content: space-evenly" title="space-evenly">
     <div class="float" data-offset-y="15">FLT</div>
     <div class="in-flow" data-offset-y="25"></div>
@@ -174,8 +174,8 @@ FAIL .test 14 assert_equals:
     </div>
   </div>
 offsetTop expected 15 but got 25
-PASS .test 15
-FAIL .test 16 assert_equals:
+PASS .test 15: space-between
+FAIL .test 16: space-around assert_equals:
 <div class="test" style="align-content: space-around" title="space-around">
     <div class="float" data-offset-y="15">FLT</div>
     <div class="in-flow" data-offset-y="25"></div>
@@ -188,5 +188,5 @@ FAIL .test 16 assert_equals:
     </div>
   </div>
 offsetTop expected 15 but got 25
-PASS .test 17
+PASS .test 17: normal
 

@@ -32,7 +32,6 @@
 #include "ContactsRequestData.h"
 #include "ContactsSelectOptions.h"
 #include "Document.h"
-#include "FrameInlines.h"
 #include "JSContactInfo.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalFrameInlines.h"

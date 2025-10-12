@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Debugger.h"
+#include <JavaScriptCore/Debugger.h>
 
 namespace JSC {
 

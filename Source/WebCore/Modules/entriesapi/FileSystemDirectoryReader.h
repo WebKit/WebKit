@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,7 +54,7 @@ private:
 
     Document* document() const;
 
-    Ref<FileSystemDirectoryEntry> m_directory;
+    const Ref<FileSystemDirectoryEntry> m_directory;
     std::optional<Exception> m_error;
     bool m_isReading { false };
     bool m_isDone { false };

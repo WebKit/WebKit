@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <AppKit/NSDragging.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/WebView.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Compiler.h>
@@ -248,7 +249,7 @@ static WebView *webViewAfterPerformingDragOperation(NSPasteboard *pasteboard)
 TEST(LegacyDragAndDropTests, DropUTF8PlainText)
 {
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
-    [pasteboard setData:[@"I am a WebKit." dataUsingEncoding:NSUTF8StringEncoding] forType:(__bridge NSString *)kUTTypeUTF8PlainText];
+    [pasteboard setData:[@"I am a WebKit." dataUsingEncoding:NSUTF8StringEncoding] forType:UTTypeUTF8PlainText.identifier];
 
     RetainPtr<WebView> resultingWebView = webViewAfterPerformingDragOperation(pasteboard);
     EXPECT_TRUE([[resultingWebView stringByEvaluatingJavaScriptFromString:@"document.body.textContent"] containsString:@"I am a WebKit."]);
@@ -259,7 +260,7 @@ TEST(LegacyDragAndDropTests, DropJPEG)
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
     NSImage *icon = getTestImage();
     NSBitmapImageRep *imageRep = [NSBitmapImageRep imageRepWithData:icon.TIFFRepresentation];
-    [pasteboard setData:[imageRep representationUsingType:NSJPEGFileType properties:@{ NSImageCompressionFactor: @(0.9) }] forType:(__bridge NSString *)kUTTypeJPEG];
+    [pasteboard setData:[imageRep representationUsingType:NSJPEGFileType properties:@{ NSImageCompressionFactor: @(0.9) }] forType:UTTypeJPEG.identifier];
 
     RetainPtr<WebView> resultingWebView = webViewAfterPerformingDragOperation(pasteboard);
     EXPECT_TRUE([[resultingWebView stringByEvaluatingJavaScriptFromString:@"document.querySelector('img').tagName === 'IMG'"] isEqualToString:@"true"]);

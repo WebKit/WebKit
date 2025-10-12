@@ -10,7 +10,12 @@
 
 #include "modules/desktop_capture/win/wgc_desktop_frame.h"
 
+#include <cstdint>
 #include <utility>
+#include <vector>
+
+#include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_geometry.h"
 
 namespace webrtc {
 

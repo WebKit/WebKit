@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,6 +24,7 @@
  */
 
 const maxNonLiveDuration = 604800; // 604800 seconds == 1 week
+const MaximumNarrowViewerControlsBarWidth = 468;
 
 class MediaController
 {
@@ -159,7 +160,13 @@ class MediaController
 
     get layoutTraits()
     {
-        let mode = this.isFullscreen ? LayoutTraits.Mode.Fullscreen : LayoutTraits.Mode.Inline;
+        let mode = LayoutTraits.Mode.Inline;
+        if (this.isFullscreen) {
+            if (this.host && this.host.inWindowFullscreen && this.media.offsetWidth < MaximumNarrowViewerControlsBarWidth)
+                mode = LayoutTraits.Mode.NarrowViewer;
+            else
+                mode = LayoutTraits.Mode.Fullscreen;
+        }
     
         if (this.host) {
             let LayoutTraitsClass = window.layoutTraitsClasses[this.host.layoutTraitsClassName];
@@ -393,7 +400,7 @@ class MediaController
         if (previousControls)
             previousControls.disable();
 
-        this.controls = new ControlsClass;
+        this.controls = new ControlsClass({ mode: layoutTraits.mode });
         this.controls.delegate = this;
 
         if (this.controls.autoHideController && this.shadowRoot.host && this.shadowRoot.host.dataset.autoHideDelay)

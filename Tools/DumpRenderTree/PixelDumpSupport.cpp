@@ -120,7 +120,7 @@ void printPNG(const unsigned char* data, const size_t dataLength, const char* ch
     size_t insertOffset = offsetAfterIHDRChunk(data, dataLength);
 
     fwrite(data, 1, insertOffset, testResult);
-    fwrite(bytesToAdd.data(), 1, bytesToAdd.size(), testResult);
+    fwrite(bytesToAdd.span().data(), 1, bytesToAdd.size(), testResult);
 
     const size_t bytesToWriteInOneChunk = 1 << 15;
     data += insertOffset;

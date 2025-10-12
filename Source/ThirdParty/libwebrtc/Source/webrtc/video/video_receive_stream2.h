@@ -11,31 +11,47 @@
 #ifndef VIDEO_VIDEO_RECEIVE_STREAM2_H_
 #define VIDEO_VIDEO_RECEIVE_STREAM2_H_
 
+#include <cstddef>
+#include <cstdint>
+#include <functional>
 #include <map>
 #include <memory>
 #include <optional>
 #include <string>
 #include <vector>
 
+#include "api/array_view.h"
+#include "api/crypto/frame_decryptor_interface.h"
 #include "api/environment/environment.h"
+#include "api/frame_transformer_interface.h"
+#include "api/rtp_headers.h"
+#include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
+#include "api/transport/rtp/rtp_source.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "api/video/encoded_frame.h"
 #include "api/video/recordable_encoded_frame.h"
+#include "api/video/video_content_type.h"
 #include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
 #include "call/call.h"
 #include "call/rtp_packet_sink_interface.h"
 #include "call/syncable.h"
 #include "call/video_receive_stream.h"
 #include "common_video/frame_instrumentation_data.h"
 #include "common_video/include/corruption_score_calculator.h"
+#include "modules/include/module_common_types.h"
 #include "modules/rtp_rtcp/source/source_tracker.h"
 #include "modules/video_coding/nack_requester.h"
 #include "modules/video_coding/video_receiver2.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/thread_annotations.h"
+#include "video/corruption_detection/frame_instrumentation_evaluation.h"
+#include "video/decode_synchronizer.h"
 #include "video/receive_statistics_proxy.h"
 #include "video/rtp_streams_synchronizer2.h"
 #include "video/rtp_video_stream_receiver2.h"
@@ -65,18 +81,14 @@ class CallStats;
 struct VideoFrameMetaData {
   VideoFrameMetaData(const webrtc::VideoFrame& frame, Timestamp now)
       : rtp_timestamp(frame.rtp_timestamp()),
-        timestamp_us(frame.timestamp_us()),
+        render_time(Timestamp::Micros(frame.timestamp_us())),
         ntp_time_ms(frame.ntp_time_ms()),
         width(frame.width()),
         height(frame.height()),
         decode_timestamp(now) {}
 
-  int64_t render_time_ms() const {
-    return timestamp_us / rtc::kNumMicrosecsPerMillisec;
-  }
-
   const uint32_t rtp_timestamp;
-  const int64_t timestamp_us;
+  const Timestamp render_time;
   const int64_t ntp_time_ms;
   const int width;
   const int height;
@@ -86,7 +98,7 @@ struct VideoFrameMetaData {
 
 class VideoReceiveStream2
     : public webrtc::VideoReceiveStreamInterface,
-      public rtc::VideoSinkInterface<VideoFrame>,
+      public VideoSinkInterface<VideoFrame>,
       public RtpVideoStreamReceiver2::OnCompleteFrameCallback,
       public Syncable,
       public CallStatsObserver,
@@ -136,7 +148,7 @@ class VideoReceiveStream2
   }
 
   void SignalNetworkState(NetworkState state);
-  bool DeliverRtcp(const uint8_t* packet, size_t length);
+  bool DeliverRtcp(ArrayView<const uint8_t> packet);
 
   void SetSync(Syncable* audio_syncable);
 
@@ -167,11 +179,11 @@ class VideoReceiveStream2
   int GetBaseMinimumPlayoutDelayMs() const override;
 
   void SetFrameDecryptor(
-      rtc::scoped_refptr<FrameDecryptorInterface> frame_decryptor) override;
+      scoped_refptr<FrameDecryptorInterface> frame_decryptor) override;
   void SetDepacketizerToDecoderFrameTransformer(
-      rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) override;
+      scoped_refptr<FrameTransformerInterface> frame_transformer) override;
 
-  // Implements rtc::VideoSinkInterface<VideoFrame>.
+  // Implements webrtc::VideoSinkInterface<VideoFrame>.
   void OnFrame(const VideoFrame& video_frame) override;
 
   // Implements RtpVideoStreamReceiver2::OnCompleteFrameCallback.
@@ -243,9 +255,10 @@ class VideoReceiveStream2
       RTC_RUN_ON(decode_sequence_checker_);
 
   void UpdateHistograms();
-  std::optional<double> CalculateCorruptionScore(
+  void CalculateCorruptionScore(
       const VideoFrame& frame,
-      const FrameInstrumentationData& frame_instrumentation_data) override;
+      const FrameInstrumentationData& frame_instrumentation_data,
+      VideoContentType content_type) override;
 
   const Environment env_;
 
@@ -279,7 +292,7 @@ class VideoReceiveStream2
 
   std::unique_ptr<VCMTiming> timing_;  // Jitter buffer experiment.
   VideoReceiver2 video_receiver_;
-  std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>> incoming_video_stream_;
+  std::unique_ptr<VideoSinkInterface<VideoFrame>> incoming_video_stream_;
   RtpVideoStreamReceiver2 rtp_video_stream_receiver_;
   std::unique_ptr<VideoStreamDecoder> video_stream_decoder_;
   RtpStreamsSynchronizer rtp_stream_sync_;
@@ -347,6 +360,9 @@ class VideoReceiveStream2
       RTC_GUARDED_BY(pending_resolution_mutex_);
   // Buffered encoded frames held while waiting for decoded resolution.
   std::vector<std::unique_ptr<EncodedFrame>> buffered_encoded_frames_
+      RTC_GUARDED_BY(decode_sequence_checker_);
+
+  FrameInstrumentationEvaluation frame_evaluator_
       RTC_GUARDED_BY(decode_sequence_checker_);
 
   // Used to signal destruction to potentially pending tasks.

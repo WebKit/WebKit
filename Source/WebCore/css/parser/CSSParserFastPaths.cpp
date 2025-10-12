@@ -50,6 +50,7 @@
 #include "HashTools.h"
 #include "StylePropertyShorthand.h"
 #include <wtf/text/ParsingUtilities.h>
+#include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
 
@@ -161,12 +162,12 @@ static inline bool parseSimpleAngle(std::span<const CharacterType> characters, R
 }
 
 template <typename CharacterType>
-static inline bool parseSimpleNumberOrPercentage(std::span<const CharacterType> characters, ValueRange valueRange, CSSUnitType& unit, double& number)
+static inline bool parseSimpleNumberOrPercentageDividedBy100(std::span<const CharacterType> characters, double& number)
 {
-    unit = CSSUnitType::CSS_NUMBER;
+    bool isPercentage = false;
     if (!characters.empty() && characters.back() == '%') {
         dropLast(characters);
-        unit = CSSUnitType::CSS_PERCENTAGE;
+        isPercentage = true;
     }
 
     auto parsedNumber = parseCSSNumber(characters);
@@ -174,11 +175,11 @@ static inline bool parseSimpleNumberOrPercentage(std::span<const CharacterType> 
         return false;
 
     number = *parsedNumber;
-    if (number < 0 && valueRange == ValueRange::NonNegative)
-        return false;
-
     if (std::isinf(number))
         return false;
+
+    if (isPercentage)
+        number /= 100.0;
 
     return true;
 }
@@ -744,10 +745,6 @@ static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID property, StringView str
 {
     ASSERT(!string.isEmpty());
 
-    // Fast path keyword parsing is currently only supported for style properties.
-    if (state.currentRule != StyleRuleType::Style)
-        return nullptr;
-
     if (!CSSPropertyParsing::isKeywordFastPathEligibleStyleProperty(property)) {
         // All properties, including non-keyword properties, accept the CSS-wide keywords.
         if (!isUniversalKeyword(string))
@@ -770,105 +767,104 @@ static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID property, StringView str
     return nullptr;
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 template <typename CharType>
-static bool parseTransformTranslateArguments(CharType*& pos, CharType* end, unsigned expectedCount, CSSValueID transformType, CSSValueListBuilder& arguments)
+static bool parseTransformTranslateArguments(StringParsingBuffer<CharType>& buffer, unsigned expectedCount, CSSValueID transformType, CSSValueListBuilder& arguments)
 {
     while (expectedCount) {
-        size_t delimiter = find({ pos, end }, expectedCount == 1 ? ')' : ',');
+        size_t delimiter = find(buffer.span(), expectedCount == 1 ? ')' : ',');
         if (delimiter == notFound)
             return false;
         unsigned argumentLength = static_cast<unsigned>(delimiter);
         CSSUnitType unit = CSSUnitType::CSS_NUMBER;
         double number;
-        if (!parseSimpleLength(std::span<const CharType> { pos, argumentLength }, unit, number))
+        if (!parseSimpleLength(buffer.span().first(argumentLength), unit, number))
             return false;
         if (!number && unit == CSSUnitType::CSS_NUMBER)
             unit = CSSUnitType::CSS_PX;
         if (unit == CSSUnitType::CSS_NUMBER || (unit == CSSUnitType::CSS_PERCENTAGE && (transformType == CSSValueTranslateZ || (transformType == CSSValueTranslate3d && expectedCount == 1))))
             return false;
         arguments.append(CSSPrimitiveValue::create(number, unit));
-        pos += argumentLength + 1;
+        buffer.advanceBy(argumentLength + 1);
         --expectedCount;
     }
     return true;
 }
 
 template <typename CharType>
-static RefPtr<CSSValue> parseTransformAngleArgument(CharType*& pos, CharType* end)
+static RefPtr<CSSValue> parseTransformAngleArgument(StringParsingBuffer<CharType>& buffer)
 {
-    size_t delimiter = find({ pos, end }, ')');
+    size_t delimiter = find(buffer.span(), ')');
     if (delimiter == notFound)
         return nullptr;
 
     unsigned argumentLength = static_cast<unsigned>(delimiter);
     auto angleUnit = CSS::AngleUnit::Deg;
     double number;
-    if (!parseSimpleAngle(std::span<const CharType> { pos, argumentLength }, RequireUnits::Yes, angleUnit, number))
+    if (!parseSimpleAngle(buffer.span().first(argumentLength), RequireUnits::Yes, angleUnit, number))
         return nullptr;
 
-    pos += argumentLength + 1;
+    buffer.advanceBy(argumentLength + 1);
 
     return CSSPrimitiveValue::create(number, CSS::toCSSUnitType(angleUnit));
 }
 
 template <typename CharType>
-static bool parseTransformNumberArguments(CharType*& pos, CharType* end, unsigned expectedCount, CSSValueListBuilder& arguments)
+static bool parseTransformNumberArguments(StringParsingBuffer<CharType>& buffer, unsigned expectedCount, CSSValueListBuilder& arguments)
 {
     while (expectedCount) {
-        size_t delimiter = find({ pos, end }, expectedCount == 1 ? ')' : ',');
+        size_t delimiter = find(buffer.span(), expectedCount == 1 ? ')' : ',');
         if (delimiter == notFound)
             return false;
         unsigned argumentLength = static_cast<unsigned>(delimiter);
-        auto number = parseCSSNumber(std::span<const CharType> { pos, argumentLength });
+        auto number = parseCSSNumber(buffer.span().first(argumentLength));
         if (!number)
             return false;
         arguments.append(CSSPrimitiveValue::create(*number, CSSUnitType::CSS_NUMBER));
-        pos += argumentLength + 1;
+        buffer.advanceBy(argumentLength + 1);
         --expectedCount;
     }
     return true;
 }
 
 template <typename CharType>
-static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharType* end)
+static RefPtr<CSSFunctionValue> parseSimpleTransformValue(StringParsingBuffer<CharType>& buffer)
 {
-    // Also guarantees indexes up to pos[8] are safe to access below.
+    // Also guarantees indexes up to buffer[8] are safe to access below.
     constexpr auto shortestValidTransformStringLength = 9; // "rotate(0)"
-    if (end - pos < shortestValidTransformStringLength)
+    if (buffer.lengthRemaining() < shortestValidTransformStringLength)
         return nullptr;
 
-    bool isTranslate = toASCIILower(pos[0]) == 't'
-        && toASCIILower(pos[1]) == 'r'
-        && toASCIILower(pos[2]) == 'a'
-        && toASCIILower(pos[3]) == 'n'
-        && toASCIILower(pos[4]) == 's'
-        && toASCIILower(pos[5]) == 'l'
-        && toASCIILower(pos[6]) == 'a'
-        && toASCIILower(pos[7]) == 't'
-        && toASCIILower(pos[8]) == 'e';
+    bool isTranslate = toASCIILower(buffer[0]) == 't'
+        && toASCIILower(buffer[1]) == 'r'
+        && toASCIILower(buffer[2]) == 'a'
+        && toASCIILower(buffer[3]) == 'n'
+        && toASCIILower(buffer[4]) == 's'
+        && toASCIILower(buffer[5]) == 'l'
+        && toASCIILower(buffer[6]) == 'a'
+        && toASCIILower(buffer[7]) == 't'
+        && toASCIILower(buffer[8]) == 'e';
 
     if (isTranslate) {
-        // Also guarantees indexes up to pos[11] are safe to access below.
+        // Also guarantees indexes up to buffer[11] are safe to access below.
         constexpr auto shortestValidTranslateStringLength = 12; // "translate(0)"
-        if (end - pos < shortestValidTranslateStringLength)
+        if (buffer.lengthRemaining() < shortestValidTranslateStringLength)
             return nullptr;
 
         CSSValueID transformType;
         unsigned expectedArgumentCount = 1;
         unsigned argumentStart = 11;
-        CharType c9 = toASCIILower(pos[9]);
-        if (c9 == 'x' && pos[10] == '(') {
+        CharType c9 = toASCIILower(buffer[9]);
+        if (c9 == 'x' && buffer[10] == '(') {
             transformType = CSSValueTranslateX;
-        } else if (c9 == 'y' && pos[10] == '(') {
+        } else if (c9 == 'y' && buffer[10] == '(') {
             transformType = CSSValueTranslateY;
-        } else if (c9 == 'z' && pos[10] == '(') {
+        } else if (c9 == 'z' && buffer[10] == '(') {
             transformType = CSSValueTranslateZ;
         } else if (c9 == '(') {
             transformType = CSSValueTranslate;
             expectedArgumentCount = 2;
             argumentStart = 10;
-        } else if (c9 == '3' && toASCIILower(pos[10]) == 'd' && pos[11] == '(') {
+        } else if (c9 == '3' && toASCIILower(buffer[10]) == 'd' && buffer[11] == '(') {
             transformType = CSSValueTranslate3d;
             expectedArgumentCount = 3;
             argumentStart = 12;
@@ -876,68 +872,68 @@ static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharTy
             return nullptr;
 
         CSSValueListBuilder arguments;
-        pos += argumentStart;
-        if (!parseTransformTranslateArguments(pos, end, expectedArgumentCount, transformType, arguments))
+        buffer.advanceBy(argumentStart);
+        if (!parseTransformTranslateArguments(buffer, expectedArgumentCount, transformType, arguments))
             return nullptr;
         return CSSFunctionValue::create(transformType, WTFMove(arguments));
     }
 
-    bool isMatrix3d = toASCIILower(pos[0]) == 'm'
-        && toASCIILower(pos[1]) == 'a'
-        && toASCIILower(pos[2]) == 't'
-        && toASCIILower(pos[3]) == 'r'
-        && toASCIILower(pos[4]) == 'i'
-        && toASCIILower(pos[5]) == 'x'
-        && pos[6] == '3'
-        && toASCIILower(pos[7]) == 'd'
-        && pos[8] == '(';
+    bool isMatrix3d = toASCIILower(buffer[0]) == 'm'
+        && toASCIILower(buffer[1]) == 'a'
+        && toASCIILower(buffer[2]) == 't'
+        && toASCIILower(buffer[3]) == 'r'
+        && toASCIILower(buffer[4]) == 'i'
+        && toASCIILower(buffer[5]) == 'x'
+        && buffer[6] == '3'
+        && toASCIILower(buffer[7]) == 'd'
+        && buffer[8] == '(';
 
     if (isMatrix3d) {
-        pos += 9;
+        buffer.advanceBy(9);
         CSSValueListBuilder arguments;
-        if (!parseTransformNumberArguments(pos, end, 16, arguments))
+        if (!parseTransformNumberArguments(buffer, 16, arguments))
             return nullptr;
         return CSSFunctionValue::create(CSSValueMatrix3d, WTFMove(arguments));
     }
 
-    bool isScale3d = toASCIILower(pos[0]) == 's'
-        && toASCIILower(pos[1]) == 'c'
-        && toASCIILower(pos[2]) == 'a'
-        && toASCIILower(pos[3]) == 'l'
-        && toASCIILower(pos[4]) == 'e'
-        && pos[5] == '3'
-        && toASCIILower(pos[6]) == 'd'
-        && pos[7] == '(';
+    bool isScale3d = toASCIILower(buffer[0]) == 's'
+        && toASCIILower(buffer[1]) == 'c'
+        && toASCIILower(buffer[2]) == 'a'
+        && toASCIILower(buffer[3]) == 'l'
+        && toASCIILower(buffer[4]) == 'e'
+        && buffer[5] == '3'
+        && toASCIILower(buffer[6]) == 'd'
+        && buffer[7] == '(';
 
     if (isScale3d) {
-        pos += 8;
+        buffer.advanceBy(8);
         CSSValueListBuilder arguments;
-        if (!parseTransformNumberArguments(pos, end, 3, arguments))
+        if (!parseTransformNumberArguments(buffer, 3, arguments))
             return nullptr;
         return CSSFunctionValue::create(CSSValueScale3d, WTFMove(arguments));
     }
 
-    bool isRotate = toASCIILower(pos[0]) == 'r'
-        && toASCIILower(pos[1]) == 'o'
-        && toASCIILower(pos[2]) == 't'
-        && toASCIILower(pos[3]) == 'a'
-        && toASCIILower(pos[4]) == 't'
-        && toASCIILower(pos[5]) == 'e';
+    bool isRotate = toASCIILower(buffer[0]) == 'r'
+        && toASCIILower(buffer[1]) == 'o'
+        && toASCIILower(buffer[2]) == 't'
+        && toASCIILower(buffer[3]) == 'a'
+        && toASCIILower(buffer[4]) == 't'
+        && toASCIILower(buffer[5]) == 'e';
 
     if (isRotate) {
         CSSValueID transformType;
         unsigned argumentStart = 7;
-        CharType c6 = toASCIILower(pos[6]);
+        CharType c6 = toASCIILower(buffer[6]);
         if (c6 == '(') {
             transformType = CSSValueRotate;
-        } else if (c6 == 'z' && pos[7] == '(') {
+        } else if (c6 == 'z' && buffer[7] == '(') {
             transformType = CSSValueRotateZ;
             argumentStart = 8;
         } else
             return nullptr;
 
-        pos += argumentStart;
-        RefPtr angle = parseTransformAngleArgument(pos, end);
+        buffer.advanceBy(argumentStart);
+        RefPtr angle = parseTransformAngleArgument(buffer);
         if (!angle)
             return nullptr;
         return CSSFunctionValue::create(transformType, angle.releaseNonNull());
@@ -949,15 +945,14 @@ static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharTy
 template<typename CharacterType>
 static RefPtr<CSSValue> parseSimpleTransformList(std::span<const CharacterType> characters)
 {
-    auto* pos = characters.data();
-    auto* end = characters.data() + characters.size();
+    StringParsingBuffer<CharacterType> buffer(characters);
     CSSValueListBuilder builder;
-    while (pos < end) {
-        while (pos < end && isCSSSpace(*pos))
-            ++pos;
-        if (pos >= end)
+    while (buffer.hasCharactersRemaining()) {
+        while (buffer.hasCharactersRemaining() && isCSSSpace(*buffer))
+            buffer.consume();
+        if (buffer.atEnd())
             break;
-        auto transformValue = parseSimpleTransformValue(pos, end);
+        auto transformValue = parseSimpleTransformValue(buffer);
         if (!transformValue)
             return nullptr;
         builder.append(transformValue.releaseNonNull());
@@ -966,7 +961,6 @@ static RefPtr<CSSValue> parseSimpleTransformList(std::span<const CharacterType> 
         return nullptr;
     return CSSTransformListValue::create(WTFMove(builder));
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static RefPtr<CSSValue> parseSimpleTransform(StringView string)
 {
@@ -1021,17 +1015,16 @@ static RefPtr<CSSValue> parseDisplay(StringView string)
 static RefPtr<CSSValue> parseOpacity(StringView string)
 {
     double number;
-    auto unit = CSSUnitType::CSS_NUMBER;
 
     if (string.is8Bit()) {
-        if (!parseSimpleNumberOrPercentage(string.span8(), ValueRange::NonNegative, unit, number))
+        if (!parseSimpleNumberOrPercentageDividedBy100(string.span8(), number))
             return nullptr;
     } else {
-        if (!parseSimpleNumberOrPercentage(string.span16(), ValueRange::NonNegative, unit, number))
+        if (!parseSimpleNumberOrPercentageDividedBy100(string.span16(), number))
             return nullptr;
     }
 
-    return CSSPrimitiveValue::create(number, unit);
+    return CSSPrimitiveValue::create(number, CSSUnitType::CSS_NUMBER);
 }
 
 static RefPtr<CSSValue> parseColorWithAuto(StringView string, const CSSParserContext& context)
@@ -1044,6 +1037,12 @@ static RefPtr<CSSValue> parseColorWithAuto(StringView string, const CSSParserCon
 
 RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID property, StringView string, CSS::PropertyParserState& state)
 {
+    // Some at-rules like @keyframes, @position-try restrict which properties
+    // are allowed inside the rule. Fallback to slow path for at-rules since
+    // the restriction logic is in the slow-path parser (CSSPropertyParser).
+    if (state.currentRule != StyleRuleType::Style)
+        return nullptr;
+
     switch (property) {
     case CSSPropertyDisplay:
         return parseDisplay(string);
@@ -1060,8 +1059,12 @@ RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID property, Str
         break;
     }
 
-    if (CSSProperty::isColorProperty(property))
-        return parseColor(string, state.context);
+    if (CSSProperty::isColorProperty(property)) {
+        auto context = state.context;
+        if (!CSSProperty::acceptsQuirkyColor(property))
+            context.mode = HTMLStandardMode;
+        return parseColor(string, context);
+    }
 
     if (auto valueRange = lengthValueRangeForPropertiesSupportingSimpleLengths(property)) {
         if (auto result = parseSimpleLengthValue(string, state.context.mode, *valueRange))

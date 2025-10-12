@@ -12,17 +12,14 @@
 
 #include <memory>
 
-#include "api/fec_controller.h"
 #include "api/test/video_quality_test_fixture.h"
 
 namespace webrtc {
 
-std::unique_ptr<VideoQualityTestFixtureInterface>
-CreateVideoQualityTestFixture();
-
 std::unique_ptr<VideoQualityTestFixtureInterface> CreateVideoQualityTestFixture(
-    std::unique_ptr<FecControllerFactoryInterface> fec_controller_factory);
+    VideoQualityTestFixtureInterface::InjectionComponents components = {});
 
+[[deprecated]]
 std::unique_ptr<VideoQualityTestFixtureInterface> CreateVideoQualityTestFixture(
     std::unique_ptr<VideoQualityTestFixtureInterface::InjectionComponents>
         components);

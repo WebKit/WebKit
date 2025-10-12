@@ -350,7 +350,7 @@ TEST(Uint128, Multiply) {
   c = a * b;
   EXPECT_EQ(absl::MakeUint128(0x530EDA741C71D4C3, 0xBF25975319080000), c);
   EXPECT_EQ(0, c - b * a);
-  EXPECT_EQ(a*a - b*b, (a+b) * (a-b));
+  EXPECT_EQ(a * a - b * b, (a + b) * (a - b));
 
   // Verified with dc.
   a = absl::MakeUint128(0x0123456789abcdef, 0xfedcba9876543210);
@@ -358,7 +358,7 @@ TEST(Uint128, Multiply) {
   c = a * b;
   EXPECT_EQ(absl::MakeUint128(0x97a87f4f261ba3f2, 0x342d0bbf48948200), c);
   EXPECT_EQ(0, c - b * a);
-  EXPECT_EQ(a*a - b*b, (a+b) * (a-b));
+  EXPECT_EQ(a * a - b * b, (a + b) * (a - b));
 }
 
 TEST(Uint128, AliasTests) {
@@ -462,6 +462,17 @@ TEST(Uint128, ConstexprTest) {
   EXPECT_EQ(zero, absl::uint128(0));
   EXPECT_EQ(one, absl::uint128(1));
   EXPECT_EQ(minus_two, absl::MakeUint128(-1, -2));
+
+#ifdef ABSL_HAVE_INTRINSIC_INT128
+  constexpr absl::uint128 division = absl::uint128(10) / absl::uint128(2);
+  EXPECT_EQ(division, absl::uint128(5));
+
+  constexpr absl::uint128 modulus = absl::int128(10) % absl::int128(3);
+  EXPECT_EQ(modulus, absl::uint128(1));
+
+  constexpr absl::uint128 multiplication = absl::uint128(10) * absl::uint128(3);
+  EXPECT_EQ(multiplication, absl::uint128(30));
+#endif  // ABSL_HAVE_INTRINSIC_INT128
 }
 
 TEST(Uint128, NumericLimitsTest) {
@@ -522,7 +533,6 @@ TEST(Uint128, Hash) {
   EXPECT_TRUE(absl::VerifyTypeImplementsAbslHashCorrectly(values));
 }
 
-
 TEST(Int128Uint128, ConversionTest) {
   absl::int128 nonnegative_signed_values[] = {
       0,
@@ -540,8 +550,7 @@ TEST(Int128Uint128, ConversionTest) {
   }
 
   absl::int128 negative_values[] = {
-      -1, -0x1234567890abcdef,
-      absl::MakeInt128(-0x5544332211ffeedd, 0),
+      -1, -0x1234567890abcdef, absl::MakeInt128(-0x5544332211ffeedd, 0),
       -absl::MakeInt128(0x76543210fedcba98, 0xabcdef0123456789)};
   for (absl::int128 value : negative_values) {
     EXPECT_EQ(absl::uint128(-value), -absl::uint128(value));
@@ -769,6 +778,17 @@ TEST(Int128, ConstexprTest) {
   EXPECT_EQ(minus_two, absl::MakeInt128(-1, -2));
   EXPECT_GT(max, one);
   EXPECT_LT(min, minus_two);
+
+#ifdef ABSL_HAVE_INTRINSIC_INT128
+  constexpr absl::int128 division = absl::int128(10) / absl::int128(2);
+  EXPECT_EQ(division, absl::int128(5));
+
+  constexpr absl::int128 modulus = absl::int128(10) % absl::int128(3);
+  EXPECT_EQ(modulus, absl::int128(1));
+
+  constexpr absl::int128 multiplication = absl::int128(10) * absl::int128(3);
+  EXPECT_EQ(multiplication, absl::int128(30));
+#endif  // ABSL_HAVE_INTRINSIC_INT128
 }
 
 TEST(Int128, ComparisonTest) {
@@ -1273,18 +1293,23 @@ TEST(Int128, BitwiseShiftTest) {
     }
   }
 
+  // Signed integer overflow is undefined behavior, so in these cases enough
+  // high bits must be zero to avoid over-shifting.
+  EXPECT_EQ(MAKE_INT128(0x0, 0x123456789abcdef0) << 63,
+            MAKE_INT128(0x91a2b3c4d5e6f78, 0x0));
+  EXPECT_EQ(MAKE_INT128(0x0, 0x123456789abcdef0) << 64,
+            MAKE_INT128(0x123456789abcdef0, 0x0));
+  EXPECT_EQ(MAKE_INT128(0x1, 0xfedcba0987654321) << 63,
+            MAKE_INT128(0xff6e5d04c3b2a190, 0x8000000000000000));
+  EXPECT_EQ(MAKE_INT128(0x0, 0xfedcba0987654321) << 64,
+            MAKE_INT128(0xfedcba0987654321, 0x0));
+  EXPECT_EQ(MAKE_INT128(0x0, 0x0) << 126, MAKE_INT128(0x0, 0x0));
+  EXPECT_EQ(MAKE_INT128(0x0, 0x1) << 126, MAKE_INT128(0x4000000000000000, 0x0));
+
   // Manually calculated cases with shift count for positive (val1) and negative
   // (val2) values
   absl::int128 val1 = MAKE_INT128(0x123456789abcdef0, 0x123456789abcdef0);
   absl::int128 val2 = MAKE_INT128(0xfedcba0987654321, 0xfedcba0987654321);
-
-  EXPECT_EQ(val1 << 63, MAKE_INT128(0x91a2b3c4d5e6f78, 0x0));
-  EXPECT_EQ(val1 << 64, MAKE_INT128(0x123456789abcdef0, 0x0));
-  EXPECT_EQ(val2 << 63, MAKE_INT128(0xff6e5d04c3b2a190, 0x8000000000000000));
-  EXPECT_EQ(val2 << 64, MAKE_INT128(0xfedcba0987654321, 0x0));
-
-  EXPECT_EQ(val1 << 126, MAKE_INT128(0x0, 0x0));
-  EXPECT_EQ(val2 << 126, MAKE_INT128(0x4000000000000000, 0x0));
 
   EXPECT_EQ(val1 >> 63, MAKE_INT128(0x0, 0x2468acf13579bde0));
   EXPECT_EQ(val1 >> 64, MAKE_INT128(0x0, 0x123456789abcdef0));

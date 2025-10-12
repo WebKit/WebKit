@@ -27,7 +27,9 @@
 #include "WPEDisplayDRM.h"
 
 #include "DRMUniquePtr.h"
+#include "GRefPtrWPE.h"
 #include "RefPtrUdev.h"
+#include "WPEDRMDevice.h"
 #include "WPEDRMSession.h"
 #include "WPEDisplayDRMPrivate.h"
 #include "WPEExtensions.h"
@@ -39,6 +41,7 @@
 #include <gio/gio.h>
 #include <libudev.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/Scope.h>
 #include <wtf/dtoa.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -51,8 +54,8 @@
  */
 struct _WPEDisplayDRMPrivate {
     std::unique_ptr<WPE::DRM::Session> session;
-    CString drmDevice;
-    CString drmRenderNode;
+    GRefPtr<WPEDRMDevice> displayDevice;
+    GRefPtr<WPEDRMDevice> renderDevice;
     UnixFileDescriptor fd;
     struct gbm_device* device;
     bool atomicSupported;
@@ -81,6 +84,12 @@ static void wpeDisplayDRMDispose(GObject* object)
 {
     auto* priv = WPE_DISPLAY_DRM(object)->priv;
 
+    if (priv->screen) {
+        wpe_screen_invalidate(priv->screen.get());
+        priv->screen = nullptr;
+    }
+
+    priv->cursor = nullptr;
     g_clear_pointer(&priv->device, gbm_device_destroy);
 
     if (priv->fd) {
@@ -92,17 +101,23 @@ static void wpeDisplayDRMDispose(GObject* object)
 }
 
 struct DisplayDevice {
-    CString filename;
-    UnixFileDescriptor fd;
-
     bool isNull() const
     {
-        return !fd && filename.isNull();
+        return !fd && !drmDevice;
     }
+
+    UnixFileDescriptor fd;
+    GRefPtr<WPEDRMDevice> drmDevice;
 };
 
+static GRefPtr<WPEDRMDevice> createDisplayDevice(const UnixFileDescriptor& fd, const char* filename)
+{
+    std::unique_ptr<char, decltype(free)*> renderNodePath(drmGetRenderDeviceNameFromFd(fd.value()), free);
+    return adoptGRef(wpe_drm_device_new(filename, renderNodePath.get()));
+}
+
 // This is based on weston function find_primary_gpu(). It tries to find the boot VGA device that is KMS capable, or the first KMS device.
-static struct DisplayDevice findDevice(struct udev* udev, const char* seatID)
+static struct DisplayDevice findTargetDevice(struct udev* udev, const char* seatID)
 {
     RefPtr<struct udev_enumerate> udevEnumerate = adoptRef(udev_enumerate_new(udev));
     udev_enumerate_add_match_subsystem(udevEnumerate.get(), "drm");
@@ -140,12 +155,42 @@ static struct DisplayDevice findDevice(struct udev* udev, const char* seatID)
         if (!resources || !resources->count_crtcs || !resources->count_connectors || !resources->count_encoders)
             continue;
 
-        displayDevice = { CString(filename), WTFMove(fd) };
+        auto drmDevice = createDisplayDevice(fd, filename);
+        displayDevice = { WTFMove(fd), WTFMove(drmDevice) };
         if (isBootVGA)
             return displayDevice;
     }
 
     return displayDevice;
+}
+
+static GRefPtr<WPEDRMDevice> findFirstDeviceWithRenderNode()
+{
+    std::array<drmDevicePtr, 64> devices = { };
+
+    int numDevices = drmGetDevices2(0, devices.data(), std::size(devices));
+    if (numDevices <= 0)
+        return { };
+
+    GRefPtr<WPEDRMDevice> drmDevice;
+    for (int i = 0; i < numDevices; ++i) {
+        const auto* device = devices[i];
+        const auto nodes = unsafeMakeSpan(device->nodes, DRM_NODE_MAX);
+
+        bool hasPrimaryNode = device->available_nodes & (1 << DRM_NODE_PRIMARY);
+        if (!hasPrimaryNode)
+            continue;
+
+        bool hasRenderNode = device->available_nodes & (1 << DRM_NODE_RENDER);
+        if (!hasRenderNode)
+            continue;
+
+        drmDevice = adoptGRef(wpe_drm_device_new(nodes[DRM_NODE_PRIMARY], nodes[DRM_NODE_RENDER]));
+        break;
+    }
+
+    drmFreeDevices(devices.data(), numDevices);
+    return drmDevice;
 }
 
 static bool wpeDisplayDRMInitializeCapabilities(WPEDisplayDRM* display, int fd, GError** error)
@@ -254,7 +299,7 @@ static gboolean wpeDisplayDRMSetup(WPEDisplayDRM* displayDRM, const char* device
     auto session = WPE::DRM::Session::create();
     DisplayDevice displayDevice;
     if (!deviceName) {
-        displayDevice = findDevice(udev.get(), session->seatID());
+        displayDevice = findTargetDevice(udev.get(), session->seatID());
         if (displayDevice.isNull()) {
             g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "No suitable DRM device found");
             return FALSE;
@@ -266,7 +311,8 @@ static gboolean wpeDisplayDRMSetup(WPEDisplayDRM* displayDRM, const char* device
             return FALSE;
         }
         WTF::UnixFileDescriptor unixFd(fd, WTF::UnixFileDescriptor::Adopt);
-        displayDevice = { deviceName, WTFMove(unixFd) };
+        auto drmDevice = createDisplayDevice(unixFd, deviceName);
+        displayDevice = { WTFMove(unixFd), WTFMove(drmDevice) };
     }
     auto fd = WTFMove(displayDevice.fd);
     if (drmSetMaster(fd.value()) == -1) {
@@ -309,12 +355,11 @@ static gboolean wpeDisplayDRMSetup(WPEDisplayDRM* displayDRM, const char* device
         return FALSE;
     }
 
-    std::unique_ptr<char, decltype(free)*> renderNodePath(drmGetRenderDeviceNameFromFd(fd.value()), free);
-
     displayDRM->priv->session = WTFMove(session);
     displayDRM->priv->fd = WTFMove(fd);
-    displayDRM->priv->drmDevice = WTFMove(displayDevice.filename);
-    displayDRM->priv->drmRenderNode = renderNodePath.get();
+    displayDRM->priv->displayDevice = WTFMove(displayDevice.drmDevice);
+    if (!wpe_drm_device_get_render_node(displayDRM->priv->displayDevice.get()))
+        displayDRM->priv->renderDevice = findFirstDeviceWithRenderNode();
     displayDRM->priv->device = device;
     displayDRM->priv->connector = WTFMove(connector);
 
@@ -325,7 +370,7 @@ static gboolean wpeDisplayDRMSetup(WPEDisplayDRM* displayDRM, const char* device
     std::optional<double> scaleFromEnvironment;
     if (const auto scaleString = StringView::fromLatin1(getenv("WPE_DRM_SCALE"))) {
         RELEASE_ASSERT(scaleString.is8Bit());
-        auto trimmedScaleString = scaleString.trim(isASCIIWhitespace<LChar>);
+        auto trimmedScaleString = scaleString.trim(isASCIIWhitespace<Latin1Character>);
         size_t parsedLength = 0;
         auto scale = parseDouble(trimmedScaleString, parsedLength);
         if (parsedLength == trimmedScaleString.length() && scaleIsInBounds(scale))
@@ -339,6 +384,13 @@ static gboolean wpeDisplayDRMSetup(WPEDisplayDRM* displayDRM, const char* device
     int width = crtc->width();
     int height = crtc->height();
     displayDRM->priv->screen = wpeScreenDRMCreate(WTFMove(crtc), *displayDRM->priv->connector);
+    if (!width || !height) {
+        auto* mode = wpeScreenDRMGetMode(WPE_SCREEN_DRM(displayDRM->priv->screen.get()));
+        width = mode->hdisplay;
+        height = mode->vdisplay;
+    }
+
+    wpeScreenDRMCreateDumbBufferIfNeeded(WPE_SCREEN_DRM(displayDRM->priv->screen.get()), displayDRM->priv->fd.value(), displayDRM->priv->connector->id());
 
     double scale = scaleFromEnvironment.value_or(wpeScreenDRMGuessScale(WPE_SCREEN_DRM(displayDRM->priv->screen.get())));
     RELEASE_ASSERT(wpe_settings_set_double(wpe_display_get_settings(WPE_DISPLAY(displayDRM)), WPE_SETTING_DRM_SCALE, scale, WPE_SETTINGS_SOURCE_PLATFORM, nullptr));
@@ -358,6 +410,13 @@ static gboolean wpeDisplayDRMSetup(WPEDisplayDRM* displayDRM, const char* device
 
     displayDRM->priv->primaryPlane = WTFMove(primaryPlane);
     displayDRM->priv->seat = WTFMove(seat);
+    wpe_display_set_available_input_devices(WPE_DISPLAY(displayDRM), displayDRM->priv->seat->availableInputDevices());
+    displayDRM->priv->seat->setAvailableInputDevicesChangedCallback([weakDisplay = GWeakPtr { displayDRM }](WPEAvailableInputDevices devices) {
+        if (!weakDisplay)
+            return;
+
+        wpe_display_set_available_input_devices(WPE_DISPLAY(weakDisplay.get()), devices);
+    });
     if (cursorPlane)
         displayDRM->priv->cursor = makeUnique<WPE::DRM::Cursor>(WTFMove(cursorPlane), device, displayDRM->priv->cursorWidth, displayDRM->priv->cursorHeight);
 
@@ -372,7 +431,7 @@ static gboolean wpeDisplayDRMConnect(WPEDisplay* display, GError** error)
 static WPEView* wpeDisplayDRMCreateView(WPEDisplay* display)
 {
     auto* displayDRM = WPE_DISPLAY_DRM(display);
-    auto* view = wpe_view_drm_new(displayDRM);
+    auto* view = WPE_VIEW(g_object_new(WPE_TYPE_VIEW_DRM, "display", display, nullptr));
 
     if (wpe_settings_get_boolean(wpe_display_get_settings(display), WPE_SETTING_CREATE_VIEWS_WITH_A_TOPLEVEL, nullptr)) {
         GRefPtr<WPEToplevel> toplevel = adoptGRef(wpe_toplevel_drm_new(displayDRM));
@@ -386,7 +445,7 @@ static WPEView* wpeDisplayDRMCreateView(WPEDisplay* display)
 static WPEBufferDMABufFormats* wpeDisplayDRMGetPreferredDMABufFormats(WPEDisplay* display)
 {
     auto* displayDRM = WPE_DISPLAY_DRM(display);
-    auto* builder = wpe_buffer_dma_buf_formats_builder_new(displayDRM->priv->drmDevice.data());
+    auto* builder = wpe_buffer_dma_buf_formats_builder_new(displayDRM->priv->displayDevice.get());
     wpe_buffer_dma_buf_formats_builder_append_group(builder, nullptr, WPE_BUFFER_DMA_BUF_FORMAT_USAGE_SCANOUT);
     for (const auto& format : displayDRM->priv->primaryPlane->formats()) {
         for (auto modifier : format.modifiers)
@@ -408,17 +467,10 @@ static WPEScreen* wpeDisplayDRMGetScreen(WPEDisplay* display, guint index)
     return WPE_DISPLAY_DRM(display)->priv->screen.get();
 }
 
-static const char* wpeDisplayDRMGetDRMDevice(WPEDisplay* display)
-{
-    return WPE_DISPLAY_DRM(display)->priv->drmDevice.data();
-}
-
-static const char* wpeDisplayDRMGetDRMRenderNode(WPEDisplay* display)
+static WPEDRMDevice* wpeDisplayDRMGetDRMDevice(WPEDisplay* display)
 {
     auto* priv = WPE_DISPLAY_DRM(display)->priv;
-    if (!priv->drmRenderNode.isNull())
-        return priv->drmRenderNode.data();
-    return priv->drmDevice.data();
+    return priv->renderDevice ? priv->renderDevice.get() : priv->displayDevice.get();
 }
 
 static gboolean wpeDisplayDRMUseExplicitSync(WPEDisplay* display)
@@ -439,13 +491,17 @@ static void wpe_display_drm_class_init(WPEDisplayDRMClass* displayDRMClass)
     displayClass->get_n_screens = wpeDisplayDRMGetNScreens;
     displayClass->get_screen = wpeDisplayDRMGetScreen;
     displayClass->get_drm_device = wpeDisplayDRMGetDRMDevice;
-    displayClass->get_drm_render_node = wpeDisplayDRMGetDRMRenderNode;
     displayClass->use_explicit_sync = wpeDisplayDRMUseExplicitSync;
 }
 
 const WPE::DRM::Connector& wpeDisplayDRMGetConnector(WPEDisplayDRM* display)
 {
     return *display->priv->connector;
+}
+
+WPEDRMDevice* wpeDisplayDRMGetDisplayDevice(WPEDisplayDRM* display)
+{
+    return display->priv->displayDevice.get();
 }
 
 WPEScreen* wpeDisplayDRMGetScreen(WPEDisplayDRM* display)

@@ -89,6 +89,7 @@ list(APPEND AOM_UNIT_TEST_ENCODER_SOURCES
             "${AOM_ROOT}/test/monochrome_test.cc"
             "${AOM_ROOT}/test/postproc_filters_test.cc"
             "${AOM_ROOT}/test/resize_test.cc"
+            "${AOM_ROOT}/test/roi_map_test.cc"
             "${AOM_ROOT}/test/scalability_test.cc"
             "${AOM_ROOT}/test/sharpness_test.cc"
             "${AOM_ROOT}/test/y4m_test.cc"
@@ -140,6 +141,7 @@ if(NOT BUILD_SHARED_LIBS)
               "${AOM_ROOT}/test/aom_mem_test.cc"
               "${AOM_ROOT}/test/av1_common_int_test.cc"
               "${AOM_ROOT}/test/av1_scale_test.cc"
+              "${AOM_ROOT}/test/bitwriter_buffer_test.cc"
               "${AOM_ROOT}/test/cdef_test.cc"
               "${AOM_ROOT}/test/cfl_test.cc"
               "${AOM_ROOT}/test/convolve_test.cc"
@@ -203,7 +205,6 @@ if(NOT BUILD_SHARED_LIBS)
               "${AOM_ROOT}/test/avg_test.cc"
               "${AOM_ROOT}/test/blend_a64_mask_1d_test.cc"
               "${AOM_ROOT}/test/blend_a64_mask_test.cc"
-              "${AOM_ROOT}/test/comp_avg_pred_test.cc"
               "${AOM_ROOT}/test/comp_mask_pred_test.cc"
               "${AOM_ROOT}/test/disflow_test.cc"
               "${AOM_ROOT}/test/encodemb_test.cc"
@@ -229,6 +230,7 @@ if(NOT BUILD_SHARED_LIBS)
               "${AOM_ROOT}/test/pickrst_test.cc"
               "${AOM_ROOT}/test/reconinter_test.cc"
               "${AOM_ROOT}/test/sad_test.cc"
+              "${AOM_ROOT}/test/screen_content_detection_mode_2_test.cc"
               "${AOM_ROOT}/test/subtract_test.cc"
               "${AOM_ROOT}/test/sum_squares_test.cc"
               "${AOM_ROOT}/test/sse_sum_test.cc"
@@ -388,6 +390,11 @@ if(NOT BUILD_SHARED_LIBS)
   endif()
 endif()
 
+if(ENABLE_EXAMPLES)
+  list(APPEND AOM_UNIT_TEST_ENCODER_SOURCES
+              "${AOM_ROOT}/test/multilayer_metadata_test.cc")
+endif()
+
 if(CONFIG_AV1_ENCODER AND ENABLE_TESTS)
   list(APPEND AOM_RC_TEST_SOURCES "${AOM_ROOT}/test/codec_factory.h"
               "${AOM_ROOT}/test/decode_test_driver.cc"
@@ -497,7 +504,13 @@ function(setup_aom_test_targets)
     endif()
   endif()
 
-  target_link_libraries(test_libaom ${AOM_LIB_LINK_TYPE} aom aom_gtest)
+  if(CONFIG_LIBYUV)
+    # link test_libaom with yuv
+    target_link_libraries(test_libaom ${AOM_LIB_LINK_TYPE} aom aom_gtest yuv)
+  else()
+    # do not link test_libaom with yuv
+    target_link_libraries(test_libaom ${AOM_LIB_LINK_TYPE} aom aom_gtest)
+  endif()
 
   if(CONFIG_WEBM_IO)
     target_sources(test_libaom PRIVATE $<TARGET_OBJECTS:webm>)
@@ -603,7 +616,8 @@ function(setup_aom_test_targets)
           "Duplicate AOM_TEST_SOURCE_VARS entry: ${aom_test_source_var}")
     endif()
     foreach(file ${${aom_test_source_var}})
-      if(NOT "${file}" MATCHES "${AOM_CONFIG_DIR}")
+      string(FIND "${file}" "${AOM_CONFIG_DIR}" aom_find_substring_index)
+      if(aom_find_substring_index EQUAL -1)
         string(REPLACE "${AOM_ROOT}/" "" file "${file}")
         file(APPEND "${libaom_test_srcs_txt_file}" "${file}\n")
       endif()
@@ -622,7 +636,8 @@ function(setup_aom_test_targets)
          "\n${aom_test_source_var_lowercase} = [\n")
 
     foreach(file ${${aom_test_source_var}})
-      if(NOT "${file}" MATCHES "${AOM_CONFIG_DIR}")
+      string(FIND "${file}" "${AOM_CONFIG_DIR}" aom_find_substring_index)
+      if(aom_find_substring_index EQUAL -1)
         string(REPLACE "${AOM_ROOT}/" "//third_party/libaom/source/libaom/" file
                        "${file}")
         file(APPEND "${libaom_test_srcs_gni_file}" "  \"${file}\",\n")

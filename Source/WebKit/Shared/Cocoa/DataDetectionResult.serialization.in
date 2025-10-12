@@ -25,7 +25,7 @@ headers: <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #if ENABLE(DATA_DETECTION)
 
 struct WebKit::DataDetectionResult {
-    [SecureCodingAllowed=[NSArray.class, PAL::getDDScannerResultClass()]] RetainPtr<NSArray> results;
+    [SecureCodingAllowed=[NSArray.class, PAL::getDDScannerResultClassSingleton()]] RetainPtr<NSArray> results;
 };
 
 #endif

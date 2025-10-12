@@ -10,6 +10,7 @@
 
 #include "test/call_config_utils.h"
 
+#include "api/rtp_headers.h"
 #include "call/video_receive_stream.h"
 #include "test/gtest.h"
 

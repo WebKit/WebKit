@@ -11,7 +11,7 @@
 #ifndef RTC_BASE_NUMERICS_EXP_FILTER_H_
 #define RTC_BASE_NUMERICS_EXP_FILTER_H_
 
-namespace rtc {
+namespace webrtc {
 
 // This class can be used, for example, for smoothing the result of bandwidth
 // estimation and packet loss estimation.
@@ -43,6 +43,7 @@ class ExpFilter {
   float filtered_;  // Current filter output.
   const float max_;
 };
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_NUMERICS_EXP_FILTER_H_

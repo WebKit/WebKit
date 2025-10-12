@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "GlobalExecutable.h"
-#include "UnlinkedEvalCodeBlock.h"
+#include <JavaScriptCore/GlobalExecutable.h>
+#include <JavaScriptCore/UnlinkedEvalCodeBlock.h>
 
 namespace JSC {
 
@@ -63,6 +63,8 @@ public:
 
     DECLARE_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
     unsigned numVariables() { return unlinkedCodeBlock()->numVariables(); }
     std::span<const Identifier> variables() const { return unlinkedCodeBlock()->variables(); }
 
@@ -82,8 +84,6 @@ protected:
 
     using Base::finishCreation;
     EvalExecutable(JSGlobalObject*, const SourceCode&, LexicallyScopedFeatures, DerivedContextType, bool isArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType, NeedsClassFieldInitializer, PrivateBrandRequirement);
-
-    DECLARE_VISIT_CHILDREN;
 
     unsigned m_needsClassFieldInitializer : 1;
     unsigned m_privateBrandRequirement : 1;

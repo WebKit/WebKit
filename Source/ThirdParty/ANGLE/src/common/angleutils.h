@@ -9,6 +9,10 @@
 #ifndef COMMON_ANGLEUTILS_H_
 #define COMMON_ANGLEUTILS_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "common/platform.h"
 
 #if defined(ANGLE_WITH_LSAN)
@@ -37,11 +41,7 @@ using Microsoft::WRL::ComPtr;
 #endif  // defined(ANGLE_ENABLE_D3D9) || defined(ANGLE_ENABLE_D3D11)
 
 // Forward declaration. Implementation in system_utils.h
-#if defined(ANGLE_PLATFORM_LINUX) || defined(ANGLE_PLATFORM_WINDOWS)
-using ThreadId = uint64_t;
-#else
 using ThreadId = std::thread::id;
-#endif
 
 // A helper class to disallow copy and assignment operators
 class NonCopyable
@@ -150,12 +150,15 @@ struct PerfMonitorTriplet
     FN(textureDescriptorSetCacheHits)              \
     FN(textureDescriptorSetCacheMisses)            \
     FN(textureDescriptorSetCacheTotalSize)         \
+    FN(uniformBuffersDescriptorSetCacheHits)       \
+    FN(uniformBuffersDescriptorSetCacheMisses)     \
+    FN(uniformBuffersDescriptorSetCacheTotalSize)  \
     FN(shaderResourcesDescriptorSetCacheHits)      \
+    FN(shaderResourcesDescriptorSetCacheMisses)    \
+    FN(shaderResourcesDescriptorSetCacheTotalSize) \
     FN(deviceMemoryImageAllocationFallbacks)       \
     FN(mutableTexturesUploaded)                    \
     FN(fullImageClears)                            \
-    FN(shaderResourcesDescriptorSetCacheMisses)    \
-    FN(shaderResourcesDescriptorSetCacheTotalSize) \
     FN(buffersGhosted)                             \
     FN(vertexArraySyncStateCalls)                  \
     FN(allocateNewBufferBlockCalls)                \
@@ -281,18 +284,7 @@ inline bool IsMaskFlagSet(T mask, T flag)
     return (mask & flag) == flag;
 }
 
-inline const char *MakeStaticString(const std::string &str)
-{
-    // On the heap so that no destructor runs on application exit.
-    static std::set<std::string> *strings = new std::set<std::string>;
-    std::set<std::string>::iterator it    = strings->find(str);
-    if (it != strings->end())
-    {
-        return it->c_str();
-    }
-
-    return strings->insert(str).first->c_str();
-}
+const char *MakeStaticString(const std::string &str);
 
 std::string ArrayString(unsigned int i);
 

@@ -26,8 +26,9 @@
  
 #pragma once
 
-#include "HTMLDivElement.h"
+#include <WebCore/HTMLDivElement.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 
 namespace WebCore {
 

@@ -17,7 +17,7 @@
 namespace dcsctp {
 
 // Generates the CRC32C checksum of `data`.
-uint32_t GenerateCrc32C(rtc::ArrayView<const uint8_t> data);
+uint32_t GenerateCrc32C(webrtc::ArrayView<const uint8_t> data);
 
 }  // namespace dcsctp
 

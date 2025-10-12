@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,9 +26,9 @@
 
 #pragma once
 
-#include "Page.h"
-#include "WorkerOrWorkletGlobalScope.h"
 #include <JavaScriptCore/InspectorAgentBase.h>
+#include <WebCore/Page.h>
+#include <WebCore/WorkerOrWorkletGlobalScope.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

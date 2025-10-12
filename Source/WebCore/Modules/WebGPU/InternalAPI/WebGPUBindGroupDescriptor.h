@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPUBindGroupEntry.h"
-#include "WebGPUObjectDescriptorBase.h"
+#include <WebCore/WebGPUBindGroupEntry.h>
+#include <WebCore/WebGPUObjectDescriptorBase.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 

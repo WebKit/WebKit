@@ -57,12 +57,6 @@ if (ENABLE_COG)
     # conflicting branches without having to delete the repo
 
     # Convert a few options to their Meson equivalents
-    if (USE_SOUP2)
-        set(COG_MESON_SOUP2 enabled)
-    else ()
-        set(COG_MESON_SOUP2 disabled)
-    endif ()
-
     string(TOLOWER "${CMAKE_BUILD_TYPE}" COG_MESON_BUILDTYPE)
     if (COG_MESON_BUILDTYPE STREQUAL "relwithdebinfo")
         set(COG_MESON_BUILDTYPE debugoptimized)

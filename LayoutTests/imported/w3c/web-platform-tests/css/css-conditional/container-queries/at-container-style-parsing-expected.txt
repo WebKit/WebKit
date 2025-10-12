@@ -1,12 +1,42 @@
 
-PASS style(--my-prop: foo)
-PASS style(--my-prop: foo - bar ())
-PASS style(not ((--foo: calc(10px + 2em)) and ((--foo: url(x)))))
-PASS style((--foo: bar) or (--bar: 10px))
-PASS style(--my-prop:)
-PASS style(--my-prop: )
-PASS style(--foo: bar !important)
-PASS style(--foo)
-PASS style(--foo: bar;)
-PASS style(style(--foo: bar))
+PASS Query condition should be valid: style(--my-prop: foo)
+PASS Query condition should be valid: style(--my-prop: foo - bar ())
+PASS Query condition should be valid: style(not ((--foo: calc(10px + 2em)) and ((--foo: url(x)))))
+PASS Query condition should be valid: style((--foo: bar) or (--bar: 10px))
+PASS Query condition should be valid: style(--my-prop:)
+PASS Query condition should be valid: style(--my-prop: )
+PASS Query condition should be valid: style(--foo: bar !important)
+PASS Query condition should be valid: style(--foo)
+PASS Query condition should be valid: style(--my-prop: attr(data-foo))
+FAIL Query condition should be valid: style(--foo >= --bar) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(--foo = --bar) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(--foo <= --bar) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(10px > 10em) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(--foo >= 10em) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(10px > --bar) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(10px = --bar) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(--foo < --bar) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(10px <= 10em) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(10px = 10em) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(10px <= calc(10em + 20em)) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(calc(10em + 20em) < 10px) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(--foo < 10em) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(10px <= --bar) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(--foo < --bar <= --baz) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(--foo >= --bar > --baz) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(--foo > 10px > 10em) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(10px < --foo < 10em) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(10px < --foo <= 10em) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(10px <= --foo < 10em) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(10px > 10em > --foo) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(10px < 10em < 10) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(var(--p) < calc(100 + 200)) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(attr(data-foo type(<number>)) < var(--p) < var(--q)) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: style(--foo < initial) assert_equals: expected "true" but got ""
+PASS Query condition should be valid but unknown: style(--foo: bar;)
+PASS Query condition should be valid but unknown: style(style(--foo: bar))
+PASS Query condition should be valid but unknown: style(10px < 10em > 10)
+PASS Query condition should be valid but unknown: style( < 10em)
+PASS Query condition should be valid but unknown: style(10px < 10em !)
+PASS Query condition should be valid but unknown: style(10px ! < 10em)
 

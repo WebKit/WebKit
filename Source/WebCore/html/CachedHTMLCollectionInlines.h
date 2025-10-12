@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "CachedHTMLCollection.h"
-#include "CollectionIndexCacheInlines.h"
-#include "CollectionTraversalInlines.h"
-#include "HTMLCollectionInlines.h"
-#include "TreeScopeInlines.h"
+#include <WebCore/CachedHTMLCollection.h>
+#include <WebCore/CollectionIndexCacheInlines.h>
+#include <WebCore/CollectionTraversalInlines.h>
+#include <WebCore/HTMLCollectionInlines.h>
+#include <WebCore/TreeScopeInlines.h>
 
 namespace WebCore {
 
@@ -130,7 +130,7 @@ Element* CachedHTMLCollection<HTMLCollectionClass, traversalType>::namedItem(con
 
         if (candidate && collection().elementMatches(*candidate)) {
             if (traversalType == CollectionTraversalType::ChildrenOnly ? candidate->parentNode() == &root : candidate->isDescendantOf(root))
-                return candidate.get();
+                return candidate.unsafeGet();
         }
     }
 

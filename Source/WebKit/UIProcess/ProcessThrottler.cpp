@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,7 +104,7 @@ private:
         CachedAssertion(ProcessAssertionCache& cache, Ref<ProcessAssertion>&& assertion)
             : m_cache(cache)
             , m_assertion(WTFMove(assertion))
-            , m_expirationTimer(RunLoop::main(), this, &CachedAssertion::entryExpired)
+            , m_expirationTimer(RunLoop::mainSingleton(), "CachedAssertion::ExpirationTimer"_s, this, &CachedAssertion::entryExpired)
         {
             m_expirationTimer.startOneShot(processAssertionCacheLifetime);
         }
@@ -115,7 +115,7 @@ private:
             m_cache->remove(m_assertion->type());
         }
 
-        CheckedRef<ProcessAssertionCache> m_cache;
+        const CheckedRef<ProcessAssertionCache> m_cache;
         RefPtr<ProcessAssertion> m_assertion;
         RunLoop::Timer m_expirationTimer;
     };
@@ -140,9 +140,9 @@ static uint64_t generatePrepareToSuspendRequestID()
 ProcessThrottler::ProcessThrottler(AuxiliaryProcessProxy& process, bool shouldTakeUIBackgroundAssertion)
     : m_assertionCache(makeUniqueRef<ProcessAssertionCache>())
     , m_process(process)
-    , m_prepareToSuspendTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToSuspendTimeoutTimerFired)
-    , m_dropNearSuspendedAssertionTimer(RunLoop::main(), this, &ProcessThrottler::dropNearSuspendedAssertionTimerFired)
-    , m_prepareToDropLastAssertionTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToDropLastAssertionTimeoutTimerFired)
+    , m_prepareToSuspendTimeoutTimer(RunLoop::mainSingleton(), "ProcessThrottler::PrepareToSuspendTimeoutTimer"_s, this, &ProcessThrottler::prepareToSuspendTimeoutTimerFired)
+    , m_dropNearSuspendedAssertionTimer(RunLoop::mainSingleton(), "ProcessThrottler::DropNearSuspendedAssertionTimer"_s, this, &ProcessThrottler::dropNearSuspendedAssertionTimerFired)
+    , m_prepareToDropLastAssertionTimeoutTimer(RunLoop::mainSingleton(), "ProcessThrottler::PrepareToDropLastAssertionTimeoutTimer"_s, this, &ProcessThrottler::prepareToDropLastAssertionTimeoutTimerFired)
     , m_shouldTakeUIBackgroundAssertion(shouldTakeUIBackgroundAssertion)
 {
 }
@@ -546,7 +546,7 @@ Ref<ProcessThrottlerTimedActivity> ProcessThrottlerTimedActivity::create(Seconds
 }
 
 ProcessThrottlerTimedActivity::ProcessThrottlerTimedActivity(Seconds timeout, RefPtr<ProcessThrottlerTimedActivity::Activity>&& activity)
-    : m_timer(RunLoop::main(), this, &ProcessThrottlerTimedActivity::activityTimedOut)
+    : m_timer(RunLoop::mainSingleton(), "ProcessThrottlerTimedActivity::Timer"_s, this, &ProcessThrottlerTimedActivity::activityTimedOut)
     , m_timeout(timeout)
     , m_activity(WTFMove(activity))
 {

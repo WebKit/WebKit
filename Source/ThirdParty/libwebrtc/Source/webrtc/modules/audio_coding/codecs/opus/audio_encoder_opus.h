@@ -11,20 +11,27 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_OPUS_AUDIO_ENCODER_OPUS_H_
 #define MODULES_AUDIO_CODING_CODECS_OPUS_AUDIO_ENCODER_OPUS_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/opus/audio_encoder_opus_config.h"
+#include "api/call/bitrate_allocation.h"
 #include "api/environment/environment.h"
+#include "api/units/time_delta.h"
 #include "common_audio/smoothing_filter.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
 #include "modules/audio_coding/codecs/opus/opus_interface.h"
+#include "rtc_base/buffer.h"
 
 namespace webrtc {
 
@@ -100,7 +107,7 @@ class AudioEncoderOpusImpl final : public AudioEncoder {
   ANAStats GetANAStats() const override;
   std::optional<std::pair<TimeDelta, TimeDelta> > GetFrameLengthRange()
       const override;
-  rtc::ArrayView<const int> supported_frame_lengths_ms() const {
+  ArrayView<const int> supported_frame_lengths_ms() const {
     return config_.supported_frame_lengths_ms;
   }
 
@@ -115,8 +122,8 @@ class AudioEncoderOpusImpl final : public AudioEncoder {
 
  protected:
   EncodedInfo EncodeImpl(uint32_t rtp_timestamp,
-                         rtc::ArrayView<const int16_t> audio,
-                         rtc::Buffer* encoded) override;
+                         ArrayView<const int16_t> audio,
+                         Buffer* encoded) override;
 
  private:
   class PacketLossFractionSmoother;
@@ -140,11 +147,8 @@ class AudioEncoderOpusImpl final : public AudioEncoder {
   void SetFrameLength(int frame_length_ms);
   void SetNumChannelsToEncode(size_t num_channels_to_encode);
   void SetProjectedPacketLossRate(float fraction);
-
-  void OnReceivedUplinkBandwidth(
-      int target_audio_bitrate_bps,
-      std::optional<int64_t> bwe_period_ms,
-      std::optional<int64_t> link_capacity_allocation);
+  void OnReceivedUplinkBandwidthImpl(int target_audio_bitrate_bps,
+                                     std::optional<int64_t> bwe_period_ms);
 
   // TODO(minyue): remove "override" when we can deprecate
   // `AudioEncoder::SetTargetBitrate`.
@@ -159,7 +163,6 @@ class AudioEncoderOpusImpl final : public AudioEncoder {
 
   AudioEncoderOpusConfig config_;
   const int payload_type_;
-  const bool use_stable_target_for_adaptation_;
   const bool adjust_bandwidth_;
   bool bitrate_changed_;
   // A multiplier for bitrates at 5 kbps and higher. The target bitrate

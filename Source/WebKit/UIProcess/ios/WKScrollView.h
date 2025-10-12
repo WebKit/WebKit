@@ -28,6 +28,7 @@
 #import "UIKitSPI.h"
 #import "WKBaseScrollView.h"
 
+@class WKUIScrollEdgeEffect;
 @class WKWebView;
 
 @interface WKScrollView : WKBaseScrollView
@@ -43,10 +44,6 @@
 - (BOOL)_setContentScrollInsetInternal:(UIEdgeInsets)insets;
 - (void)_setDecelerationRateInternal:(UIScrollViewDecelerationRate)rate;
 
-#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
-@property (nonatomic, setter=_setHiddenContentInsetFillEdges:) UIRectEdge _hiddenContentInsetFillEdges;
-#endif
-
 - (void)_resetContentInset;
 @property (nonatomic, readonly) BOOL _contentInsetWasExternallyOverridden;
 
@@ -56,6 +53,16 @@
 - (void)_setContentInsetAdjustmentBehaviorInternal:(UIScrollViewContentInsetAdjustmentBehavior)insetAdjustmentBehavior;
 - (void)_resetContentInsetAdjustmentBehavior;
 #endif
+
+#if HAVE(LIQUID_GLASS)
+@property (nonatomic, readonly) BOOL _usesHardTopScrollEdgeEffect;
+- (void)_didChangeTopScrollEdgeEffectStyle;
+- (void)_setInternalTopPocketColor:(UIColor *)color;
+- (WKUIScrollEdgeEffect *)_wk_topEdgeEffect;
+- (WKUIScrollEdgeEffect *)_wk_leftEdgeEffect;
+- (WKUIScrollEdgeEffect *)_wk_rightEdgeEffect;
+- (WKUIScrollEdgeEffect *)_wk_bottomEdgeEffect;
+#endif // HAVE(LIQUID_GLASS)
 
 @end
 

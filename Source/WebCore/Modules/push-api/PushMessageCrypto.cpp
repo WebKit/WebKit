@@ -152,7 +152,7 @@ std::optional<Vector<uint8_t>> decryptAES128GCMPayload(const ClientKeys& clientK
      * CEK = HMAC-SHA-256(PRK, cek_info || 0x01)[0..15]
      */
     static const auto cekInfo = "Content-Encoding: aes128gcm\x00\x01"_span8;
-    auto cek = hmacSHA256(prk, cekInfo);
+    auto cek = hmacSHA256(prk, byteCast<uint8_t>(cekInfo));
     cek.shrink(16);
 
     /*
@@ -161,7 +161,7 @@ std::optional<Vector<uint8_t>> decryptAES128GCMPayload(const ClientKeys& clientK
      * NONCE = HMAC-SHA-256(PRK, nonce_info || 0x01)[0..11]
      */
     static const auto nonceInfo = "Content-Encoding: nonce\x00\x01"_span8;
-    auto nonce = hmacSHA256(prk, nonceInfo);
+    auto nonce = hmacSHA256(prk, byteCast<uint8_t>(nonceInfo));
     nonce.shrink(12);
 
     // Finally, decrypt with AES128GCM and return the unpadded plaintext.
@@ -238,7 +238,7 @@ std::optional<Vector<uint8_t>> decryptAESGCMPayload(const ClientKeys& clientKeys
      */
     static const auto authInfo = "Content-Encoding: auth\x00\x01"_span8;
     auto prkCombine = hmacSHA256(clientKeys.sharedAuthSecret, *ecdhSecretResult);
-    auto ikm = hmacSHA256(prkCombine, authInfo);
+    auto ikm = hmacSHA256(prkCombine, byteCast<uint8_t>(authInfo));
     auto prk = hmacSHA256(salt, ikm);
 
     /*

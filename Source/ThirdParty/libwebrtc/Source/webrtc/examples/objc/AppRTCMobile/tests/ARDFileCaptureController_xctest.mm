@@ -31,7 +31,8 @@ NS_CLASS_AVAILABLE_IOS(10)
 
 - (void)setUp {
   [super setUp];
-  self.fileCapturerMock = OCMClassMock([RTC_OBJC_TYPE(RTCFileVideoCapturer) class]);
+  self.fileCapturerMock =
+      OCMClassMock([RTC_OBJC_TYPE(RTCFileVideoCapturer) class]);
   self.fileCaptureController =
       [[ARDFileCaptureController alloc] initWithCapturer:self.fileCapturerMock];
 }
@@ -44,7 +45,8 @@ NS_CLASS_AVAILABLE_IOS(10)
 }
 
 - (void)testCaptureIsStarted {
-  [[self.fileCapturerMock expect] startCapturingFromFileNamed:[OCMArg any] onError:[OCMArg any]];
+  [[self.fileCapturerMock expect] startCapturingFromFileNamed:[OCMArg any]
+                                                      onError:[OCMArg any]];
 
   [self.fileCaptureController startCapture];
 

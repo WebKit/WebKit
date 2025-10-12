@@ -39,6 +39,7 @@ typedef struct {
   int speed;                // speed setting for codec
   int threads;
   int aqmode;  // turns on aq-mode=3 (cyclic_refresh): 0=off, 1=on.
+  int use_psnr;
   // private storage for vpx_svc_encode
   void *internal;
 } SvcContext;
@@ -58,6 +59,7 @@ typedef struct SvcInternal {
   double psnr_sum[VPX_SS_MAX_LAYERS][COMPONENTS];  // total/Y/U/V
   uint64_t sse_sum[VPX_SS_MAX_LAYERS][COMPONENTS];
   uint32_t bytes_sum[VPX_SS_MAX_LAYERS];
+  int number_of_frames[VPX_SS_MAX_LAYERS];
 
   // codec encoding values
   int width;    // width of highest layer
@@ -65,7 +67,6 @@ typedef struct SvcInternal {
   int kf_dist;  // distance between keyframes
 
   // state variables
-  int psnr_pkt_received;
   int layer;
   int use_multiple_frame_contexts;
 

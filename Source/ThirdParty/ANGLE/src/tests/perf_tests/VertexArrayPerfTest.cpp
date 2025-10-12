@@ -7,6 +7,10 @@
 //   Performance test for glBindVertexArray.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "ANGLEPerfTest.h"
 #include "DrawCallPerfParams.h"
 #include "test_utils/gl_raii.h"

@@ -45,7 +45,7 @@ void runLockTest(unsigned numThreadGroups, unsigned numThreadsPerGroup, unsigned
 {
     std::unique_ptr<LockType[]> locks = makeUniqueWithoutFastMallocCheck<LockType[]>(numThreadGroups);
     auto words = makeUniqueArray<double>(numThreadGroups);
-    std::unique_ptr<RefPtr<Thread>[]> threads = makeUniqueWithoutFastMallocCheck<RefPtr<Thread>[]>(numThreadGroups * numThreadsPerGroup);
+    auto threads = Vector<RefPtr<Thread>>(numThreadGroups * numThreadsPerGroup);
 
     for (unsigned threadGroupIndex = numThreadGroups; threadGroupIndex--;) {
         words[threadGroupIndex] = 0;

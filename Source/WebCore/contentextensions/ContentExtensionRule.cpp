@@ -87,6 +87,7 @@ DeserializedAction DeserializedAction::deserialize(std::span<const uint8_t> seri
 {
     auto serializedActionSize = serializedActions.size();
     RELEASE_ASSERT(location < serializedActionSize, location, serializedActionSize);
+
     return { location, VariantDeserializer<ActionData>::deserialize(serializedActions.subspan(location + 1), serializedActions[location]) };
 }
 

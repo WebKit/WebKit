@@ -53,6 +53,7 @@
 
 #include "SandboxExtension.h"
 #include <WebCore/Timer.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/FileHandle.h>
 #include <wtf/FileSystem.h>
 #include <wtf/Noncopyable.h>
@@ -69,8 +70,10 @@ struct WebMemoryStatistics {
     Vector<size_t> values;
 };
     
-class WebMemorySampler {
+class WebMemorySampler final : public CanMakeCheckedPtr<WebMemorySampler> {
     WTF_MAKE_NONCOPYABLE(WebMemorySampler);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebMemorySampler);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebMemorySampler);
 public:
     static WebMemorySampler* singleton();
     void start(const double interval = 0);

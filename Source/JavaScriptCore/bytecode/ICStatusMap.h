@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CodeOrigin.h"
-#include "ExitingInlineKind.h"
+#include <JavaScriptCore/CodeOrigin.h>
+#include <JavaScriptCore/ExitingInlineKind.h>
 #include <wtf/HashMap.h>
 
 namespace JSC {

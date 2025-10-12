@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CompleteSubspace.h"
-#include "VM.h"
+#include <JavaScriptCore/CompleteSubspace.h>
+#include <JavaScriptCore/VM.h>
 
 namespace JSC {
 

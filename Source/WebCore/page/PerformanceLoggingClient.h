@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ScrollingCoordinatorTypes.h"
+#include <WebCore/ScrollingCoordinatorTypes.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/OptionSet.h>
 #include <wtf/TZoneMalloc.h>

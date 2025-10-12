@@ -15,6 +15,9 @@
 #ifndef COMMON_AUDIO_VAD_VAD_FILTERBANK_H_
 #define COMMON_AUDIO_VAD_VAD_FILTERBANK_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "common_audio/vad/vad_core.h"
 
 // Takes `data_length` samples of `data_in` and calculates the logarithm of the

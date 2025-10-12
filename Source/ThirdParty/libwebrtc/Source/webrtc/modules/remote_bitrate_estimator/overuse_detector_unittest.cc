@@ -10,13 +10,13 @@
 
 #include "modules/remote_bitrate_estimator/overuse_detector.h"
 
-#include <stdio.h>
-#include <string.h>
-
 #include <algorithm>
+#include <cstdint>
+#include <cstdio>
 #include <cstdlib>
-#include <memory>
+#include <cstring>
 
+#include "api/transport/bandwidth_usage.h"
 #include "modules/remote_bitrate_estimator/inter_arrival.h"
 #include "modules/remote_bitrate_estimator/overuse_estimator.h"
 #include "rtc_base/random.h"
@@ -25,7 +25,7 @@
 namespace webrtc {
 namespace testing {
 
-const double kRtpTimestampToMs = 1.0 / 90.0;
+constexpr double kRtpTimestampToMs = 1.0 / 90.0;
 
 class OveruseDetectorTest : public ::testing::Test {
  public:

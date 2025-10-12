@@ -28,6 +28,7 @@
 
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 @implementation NSItemProvider (NSItemProviderAdditions)
 
@@ -41,7 +42,7 @@
     auto retainedData = retainPtr(data);
     [self registerDataRepresentationForTypeIdentifier:typeIdentifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler: [retainedData, delay] (DataLoadCompletionBlock block) -> NSProgress * {
         if (delay > 0) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), [block = makeBlockPtr(block), retainedData] {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), mainDispatchQueueSingleton(), [block = makeBlockPtr(block), retainedData] {
                 block(retainedData.get(), nil);
             });
         } else

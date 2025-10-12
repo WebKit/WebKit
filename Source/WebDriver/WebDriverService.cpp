@@ -30,6 +30,7 @@
 #include "CommandResult.h"
 #include "Logging.h"
 #include "SessionHost.h"
+#include <cmath>
 #include <ranges>
 #include <wtf/Compiler.h>
 #include <wtf/LoggerHelper.h>
@@ -359,13 +360,13 @@ void WebDriverService::handleRequest(HTTPRequestHandler::Request&& request, Func
     if (method.value() == HTTPMethod::Post) {
         auto messageValue = JSON::Value::parseJSON(String::fromUTF8({ request.data, request.dataLength }));
         if (!messageValue) {
-            sendResponse(WTFMove(replyHandler), CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+            sendResponse(WTFMove(replyHandler), CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Invalid JSON in request body"_s));
             return;
         }
 
         parametersObject = messageValue->asObject();
         if (!parametersObject) {
-            sendResponse(WTFMove(replyHandler), CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+            sendResponse(WTFMove(replyHandler), CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Expected JSON object in request body"_s));
             return;
         }
     } else
@@ -764,7 +765,7 @@ bool WebDriverService::findSessionOrCompleteWithError(JSON::Object& parameters, 
 {
     auto sessionID = parameters.getString("sessionId"_s);
     if (!sessionID) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Missing session ID parameter"_s));
         return false;
     }
 
@@ -921,7 +922,7 @@ Vector<Capabilities> WebDriverService::processCapabilities(const JSON::Object& p
     // 1. Let capabilities request be the result of getting the property "capabilities" from parameters.
     auto capabilitiesObject = parameters.getObject("capabilities"_s);
     if (!capabilitiesObject) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "capabilities parameter is missing in request"_s));
         return { };
     }
 
@@ -1090,7 +1091,7 @@ void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, Re
 #endif
         session->createTopLevelBrowsingContext([this, session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
             if (result.isError()) {
-                completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, result.errorMessage()));
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, result.errorMessage().value_or("Unknown error creating top level browsing context."_s)));
                 return;
             }
 
@@ -1176,7 +1177,7 @@ void WebDriverService::deleteSession(RefPtr<JSON::Object>&& parameters, Function
     // https://www.w3.org/TR/webdriver/#delete-session
     auto sessionID = parameters->getString("sessionId"_s);
     if (!sessionID) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Missing session ID parameter"_s));
         return;
     }
 
@@ -1228,7 +1229,7 @@ void WebDriverService::setTimeouts(RefPtr<JSON::Object>&& parameters, Function<v
 
     auto timeouts = deserializeTimeouts(*parameters, IgnoreUnknownTimeout::Yes);
     if (!timeouts) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Invalid timeouts"_s));
         return;
     }
 
@@ -1244,7 +1245,7 @@ void WebDriverService::go(RefPtr<JSON::Object>&& parameters, Function<void (Comm
 
     auto url = parameters->getString("url"_s);
     if (!url) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Missing URL parameter"_s));
         return;
     }
 
@@ -1362,7 +1363,7 @@ void WebDriverService::setWindowRect(RefPtr<JSON::Object>&& parameters, Function
         if (auto number = valueAsNumberInRange(*value))
             width = number;
         else if (!value->isNull()) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Invalid width value"_s));
             return;
         }
     }
@@ -1371,7 +1372,7 @@ void WebDriverService::setWindowRect(RefPtr<JSON::Object>&& parameters, Function
         if (auto number = valueAsNumberInRange(*value))
             height = number;
         else if (!value->isNull()) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Invalid height value"_s));
             return;
         }
     }
@@ -1380,7 +1381,7 @@ void WebDriverService::setWindowRect(RefPtr<JSON::Object>&& parameters, Function
         if (auto number = valueAsNumberInRange(*value, INT_MIN))
             x = number;
         else if (!value->isNull()) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Invalid x value"_s));
             return;
         }
     }
@@ -1389,7 +1390,7 @@ void WebDriverService::setWindowRect(RefPtr<JSON::Object>&& parameters, Function
         if (auto number = valueAsNumberInRange(*value, INT_MIN))
             y = number;
         else if (!value->isNull()) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Invalid y value"_s));
             return;
         }
     }
@@ -1455,7 +1456,7 @@ void WebDriverService::switchToWindow(RefPtr<JSON::Object>&& parameters, Functio
 
     auto handle = parameters->getString("handle"_s);
     if (!handle) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Missing handle parameter"_s));
         return;
     }
 
@@ -1484,7 +1485,7 @@ void WebDriverService::newWindow(RefPtr<JSON::Object>&& parameters, Function<voi
             if (valueString == "window"_s || valueString == "tab"_s)
                 typeHint = valueString;
         } else if (!value->isNull()) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Invalid type value"_s));
             return;
         }
     }
@@ -1501,7 +1502,7 @@ void WebDriverService::switchToFrame(RefPtr<JSON::Object>&& parameters, Function
 
     auto frameID = parameters->getValue("id"_s);
     if (!frameID) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Missing frame ID parameter"_s));
         return;
     }
 
@@ -1511,14 +1512,14 @@ void WebDriverService::switchToFrame(RefPtr<JSON::Object>&& parameters, Function
     case JSON::Value::Type::Double:
     case JSON::Value::Type::Integer:
         if (!valueAsNumberInRange(*frameID, 0, std::numeric_limits<unsigned short>::max())) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Invalid frame ID value"_s));
             return;
         }
         break;
     case JSON::Value::Type::Object: {
         auto frameIDObject = frameID->asObject();
         if (frameIDObject->find(Session::webElementIdentifier()) == frameIDObject->end()) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Invalid frame ID object"_s));
             return;
         }
         break;
@@ -1526,7 +1527,7 @@ void WebDriverService::switchToFrame(RefPtr<JSON::Object>&& parameters, Function
     case JSON::Value::Type::Boolean:
     case JSON::Value::Type::String:
     case JSON::Value::Type::Array:
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Invalid frame ID type"_s));
         return;
     }
 
@@ -1559,7 +1560,7 @@ static std::optional<String> findElementOrCompleteWithError(JSON::Object& parame
 {
     auto elementID = parameters.getString(isShadowRoot == Session::ElementIsShadowRoot::Yes ? "shadowId"_s : "elementId"_s);
     if (elementID.isEmpty()) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Missing element ID or shadow ID parameter"_s));
         return std::nullopt;
     }
     return elementID;
@@ -1580,12 +1581,12 @@ static bool findStrategyAndSelectorOrCompleteWithError(JSON::Object& parameters,
 {
     strategy = parameters.getString("using"_s);
     if (!isValidStrategy(strategy)) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, makeString("Invalid strategy: "_s, strategy)));
         return false;
     }
     selector = parameters.getString("value"_s);
     if (!selector) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Missing selector value"_s));
         return false;
     }
 
@@ -1594,7 +1595,7 @@ static bool findStrategyAndSelectorOrCompleteWithError(JSON::Object& parameters,
         // because the current implementation doesn't support them. We have them disabled for now.
         // https://github.com/w3c/webdriver/issues/1610
         if (strategy == "tag name"_s || strategy == "xpath"_s) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidSelector));
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidSelector, makeString("Unsupported strategy for shadow root: "_s, strategy)));
             return false;
         }
     }
@@ -1764,7 +1765,7 @@ void WebDriverService::getElementAttribute(RefPtr<JSON::Object>&& parameters, Fu
 
     auto attribute = parameters->getString("name"_s);
     if (!attribute) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Missing attribute name parameter"_s));
         return;
     }
 
@@ -1784,7 +1785,7 @@ void WebDriverService::getElementProperty(RefPtr<JSON::Object>&& parameters, Fun
 
     auto attribute = parameters->getString("name"_s);
     if (!attribute) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Missing property name parameter"_s));
         return;
     }
 
@@ -1804,7 +1805,7 @@ void WebDriverService::getElementCSSValue(RefPtr<JSON::Object>&& parameters, Fun
 
     auto cssProperty = parameters->getString("name"_s);
     if (!cssProperty) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Missing CSS property name parameter"_s));
         return;
     }
 
@@ -1950,7 +1951,7 @@ void WebDriverService::elementSendKeys(RefPtr<JSON::Object>&& parameters, Functi
 
     auto text = parameters->getString("text"_s);
     if (text.isEmpty()) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Missing text parameter"_s));
         return;
     }
 
@@ -1971,12 +1972,12 @@ static bool findScriptAndArgumentsOrCompleteWithError(JSON::Object& parameters, 
 {
     script = parameters.getString("script"_s);
     if (!script) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Missing script parameter"_s));
         return false;
     }
     arguments = parameters.getArray("args"_s);
     if (!arguments) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Missing args parameter"_s));
         return false;
     }
     return true;
@@ -2049,7 +2050,7 @@ void WebDriverService::getNamedCookie(RefPtr<JSON::Object>&& parameters, Functio
 
     auto name = parameters->getString("name"_s);
     if (!name) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Missing cookie name parameter"_s));
         return;
     }
 
@@ -2123,13 +2124,13 @@ void WebDriverService::addCookie(RefPtr<JSON::Object>&& parameters, Function<voi
 
     auto cookieObject = parameters->getObject("cookie"_s);
     if (!cookieObject) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Missing cookie parameter"_s));
         return;
     }
 
     auto cookie = deserializeCookie(*cookieObject);
     if (!cookie) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Invalid cookie parameter"_s));
         return;
     }
 
@@ -2151,7 +2152,7 @@ void WebDriverService::deleteCookie(RefPtr<JSON::Object>&& parameters, Function<
 
     auto name = parameters->getString("name"_s);
     if (!name) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Missing cookie name parameter"_s));
         return;
     }
 
@@ -2188,7 +2189,7 @@ static bool processPauseAction(JSON::Object& actionItem, Action& action, std::op
 
     auto duration = unsignedValue(*durationValue);
     if (!duration) {
-        errorMessage = String("The parameter 'duration' is invalid in pause action"_s);
+        errorMessage = String("The 'duration' parameter for the pause action is invalid"_s);
         return false;
     }
 
@@ -2200,7 +2201,7 @@ static std::optional<Action> processNullAction(const String& id, JSON::Object& a
 {
     auto subtype = actionItem.getString("type"_s);
     if (subtype != "pause"_s) {
-        errorMessage = String("The parameter 'type' in null action is invalid or missing"_s);
+        errorMessage = String("The 'type' parameter for the null action is invalid or missing"_s);
         return std::nullopt;
     }
 
@@ -2222,7 +2223,7 @@ static std::optional<Action> processKeyAction(const String& id, JSON::Object& ac
     else if (subtype == "keyDown"_s)
         actionSubtype = Action::Subtype::KeyDown;
     else {
-        errorMessage = String("The parameter 'type' of key action is invalid"_s);
+        errorMessage = String("The 'type' parameter for the key action is invalid"_s);
         return std::nullopt;
     }
 
@@ -2237,12 +2238,12 @@ static std::optional<Action> processKeyAction(const String& id, JSON::Object& ac
     case Action::Subtype::KeyDown: {
         auto keyValue = actionItem.getValue("value"_s);
         if (!keyValue) {
-            errorMessage = String("The paramater 'value' is missing for key up/down action"_s);
+            errorMessage = String("The 'value' parameter for the key up/down action is missing "_s);
             return std::nullopt;
         }
         auto key = keyValue->asString();
         if (key.isEmpty()) {
-            errorMessage = String("The paramater 'value' is invalid for key up/down action"_s);
+            errorMessage = String("The 'value' parameter for the key up/down action is invalid"_s);
             return std::nullopt;
         }
         // FIXME: check single unicode code point.
@@ -2276,12 +2277,14 @@ static MouseButton actionMouseButton(unsigned button)
     return MouseButton::None;
 }
 
-static bool processPointerMoveAction(JSON::Object& actionItem, Action& action, std::optional<String>& errorMessage)
+enum class CoordinateType { Fractional, Integral };
+
+static bool processPointerMoveAction(JSON::Object& actionItem, Action& action, std::optional<String>& errorMessage, CoordinateType coordinateType = CoordinateType::Fractional)
 {
     if (auto durationValue = actionItem.getValue("duration"_s)) {
         auto duration = unsignedValue(*durationValue);
         if (!duration) {
-            errorMessage = String("The parameter 'duration' is invalid in action"_s);
+            errorMessage = String("The 'duration' parameter for the action is invalid"_s);
             return false;
         }
         action.duration = duration.value();
@@ -2291,7 +2294,7 @@ static bool processPointerMoveAction(JSON::Object& actionItem, Action& action, s
         if (auto originObject = originValue->asObject()) {
             auto elementID = originObject->getString(Session::webElementIdentifier());
             if (!elementID) {
-                errorMessage = String("The parameter 'origin' is not a valid web element object in action"_s);
+                errorMessage = String("The 'origin' parameter for the action is not a valid web element object"_s);
                 return false;
             }
             action.origin = PointerOrigin { PointerOrigin::Type::Element, elementID };
@@ -2302,7 +2305,7 @@ static bool processPointerMoveAction(JSON::Object& actionItem, Action& action, s
             else if (origin == "pointer"_s)
                 action.origin = PointerOrigin { PointerOrigin::Type::Pointer, std::nullopt };
             else {
-                errorMessage = String("The parameter 'origin' is invalid in action"_s);
+                errorMessage = String("The 'origin' parameter for the action is invalid"_s);
                 return false;
             }
         }
@@ -2311,20 +2314,26 @@ static bool processPointerMoveAction(JSON::Object& actionItem, Action& action, s
 
     if (auto xValue = actionItem.getValue("x"_s)) {
         auto x = valueAsNumberInRange(*xValue, INT_MIN);
-        if (!x) {
-            errorMessage = String("The paramater 'x' is invalid for action"_s);
+        if (!x || (coordinateType == CoordinateType::Integral && x.value() != std::floor(x.value()))) {
+            errorMessage = String("The 'x' parameter for the action is invalid"_s);
             return false;
         }
         action.x = x.value();
+    } else {
+        errorMessage = String("The 'x' parameter for the action is missing"_s);
+        return false;
     }
 
     if (auto yValue = actionItem.getValue("y"_s)) {
         auto y = valueAsNumberInRange(*yValue, INT_MIN);
-        if (!y) {
-            errorMessage = String("The paramater 'y' is invalid for action"_s);
+        if (!y || (coordinateType == CoordinateType::Integral && y.value() != std::floor(y.value()))) {
+            errorMessage = String("The 'y' parameter for the action is invalid"_s);
             return false;
         }
         action.y = y.value();
+    } else {
+        errorMessage = String("The 'y' parameter for the action is missing"_s);
+        return false;
     }
 
     return true;
@@ -2345,7 +2354,7 @@ static std::optional<Action> processPointerAction(const String& id, PointerParam
     else if (subtype == "pointerCancel"_s)
         actionSubtype = Action::Subtype::PointerCancel;
     else {
-        errorMessage = String("The parameter 'type' of pointer action is invalid"_s);
+        errorMessage = String("The 'type' parameter for the pointer action is invalid"_s);
         return std::nullopt;
     }
 
@@ -2361,12 +2370,12 @@ static std::optional<Action> processPointerAction(const String& id, PointerParam
     case Action::Subtype::PointerDown: {
         auto buttonValue = actionItem.getValue("button"_s);
         if (!buttonValue) {
-            errorMessage = String("The paramater 'button' is missing for pointer up/down action"_s);
+            errorMessage = String("The 'button' parameter for the pointer up/down action is missing"_s);
             return std::nullopt;
         }
         auto button = unsignedValue(*buttonValue);
         if (!button) {
-            errorMessage = String("The paramater 'button' is invalid for pointer up/down action"_s);
+            errorMessage = String("The 'button' parameter for the pointer up/down action is invalid"_s);
             return std::nullopt;
         }
         action.button = actionMouseButton(button.value());
@@ -2396,7 +2405,7 @@ static std::optional<Action> processWheelAction(const String& id, JSON::Object& 
     else if (subtype == "scroll"_s)
         actionSubtype = Action::Subtype::Scroll;
     else {
-        errorMessage = String("The parameter 'type' of wheel action is invalid"_s);
+        errorMessage = String("The 'type' parameter for the wheel action is invalid"_s);
         return std::nullopt;
     }
 
@@ -2408,25 +2417,31 @@ static std::optional<Action> processWheelAction(const String& id, JSON::Object& 
             return std::nullopt;
         break;
     case Action::Subtype::Scroll:
-        if (!processPointerMoveAction(actionItem, action, errorMessage))
+        if (!processPointerMoveAction(actionItem, action, errorMessage, CoordinateType::Integral))
             return std::nullopt;
 
         if (auto deltaXValue = actionItem.getValue("deltaX"_s)) {
             auto deltaX = valueAsNumberInRange(*deltaXValue, INT_MIN);
-            if (!deltaX) {
-                errorMessage = String("The paramater 'deltaX' is invalid for action"_s);
+            if (!deltaX || deltaX.value() != std::floor(deltaX.value())) {
+                errorMessage = String("The 'deltaX' parameter for the action is invalid"_s);
                 return std::nullopt;
             }
             action.deltaX = deltaX.value();
+        } else {
+            errorMessage = String("The 'deltaX' parameter for the action is missing"_s);
+            return std::nullopt;
         }
 
         if (auto deltaYValue = actionItem.getValue("deltaY"_s)) {
             auto deltaY = valueAsNumberInRange(*deltaYValue, INT_MIN);
-            if (!deltaY) {
-                errorMessage = String("The paramater 'deltaY' is invalid for action"_s);
+            if (!deltaY || deltaY.value() != std::floor(deltaY.value())) {
+                errorMessage = String("The 'deltaY' parameter for the action is invalid"_s);
                 return std::nullopt;
             }
             action.deltaY = deltaY.value();
+        } else {
+            errorMessage = String("The 'deltaY' parameter for the action is missing"_s);
+            return std::nullopt;
         }
         break;
     case Action::Subtype::KeyUp:
@@ -2466,7 +2481,7 @@ static std::optional<PointerParameters> processPointerParameters(JSON::Object& a
     else if (pointerType == "touch"_s)
         parameters.pointerType = PointerType::Touch;
     else {
-        errorMessage = String("The parameter 'pointerType' in action sequence pointer parameters is invalid"_s);
+        errorMessage = String("The 'pointerType' parameter in the pointer parameters of the action sequence is invalid"_s);
         return std::nullopt;
     }
 
@@ -2492,13 +2507,13 @@ static std::optional<Vector<Action>> processInputActionSequence(Session& session
     else if (type == "none"_s)
         inputSourceType = InputSource::Type::None;
     else {
-        errorMessage = String("The parameter 'type' is invalid or missing in action sequence"_s);
+        errorMessage = String("The 'type' parameter in the action sequence is invalid or missing"_s);
         return std::nullopt;
     }
 
     auto id = actionSequence->getString("id"_s);
     if (!id) {
-        errorMessage = String("The parameter 'id' is invalid or missing in action sequence"_s);
+        errorMessage = String("The 'id' parameter in the action sequence is invalid or missing"_s);
         return std::nullopt;
     }
 
@@ -2525,7 +2540,7 @@ static std::optional<Vector<Action>> processInputActionSequence(Session& session
 
     auto actionItems = actionSequence->getArray("actions"_s);
     if (!actionItems) {
-        errorMessage = String("The parameter 'actions' is invalid or not present in action sequence"_s);
+        errorMessage = String("The 'actions' parameter in the action sequence is invalid or not present"_s);
         return std::nullopt;
     }
 
@@ -2534,7 +2549,7 @@ static std::optional<Vector<Action>> processInputActionSequence(Session& session
     for (unsigned i = 0; i < actionItemsLength; ++i) {
         auto actionItem = actionItems->get(i)->asObject();
         if (!actionItem) {
-            errorMessage = String("An action in action sequence is not an object"_s);
+            errorMessage = String("An action in the action sequence is not an object"_s);
             return std::nullopt;
         }
 
@@ -2565,7 +2580,7 @@ void WebDriverService::performActions(RefPtr<JSON::Object>&& parameters, Functio
 
     auto actionsArray = parameters->getArray("actions"_s);
     if (!actionsArray) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("The paramater 'actions' is invalid or not present"_s)));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("The 'actions' parameter is invalid or not present"_s)));
         return;
     }
 
@@ -2576,7 +2591,7 @@ void WebDriverService::performActions(RefPtr<JSON::Object>&& parameters, Functio
         auto actionSequence = actionsArray->get(i);
         auto inputSourceActions = processInputActionSequence(*m_session, actionSequence, errorMessage);
         if (!inputSourceActions) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, errorMessage.value()));
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, errorMessage.value_or("Could not process input action sequence"_s)));
             return;
         }
         for (unsigned i = 0; i < inputSourceActions->size(); ++i) {
@@ -2656,7 +2671,7 @@ void WebDriverService::sendAlertText(RefPtr<JSON::Object>&& parameters, Function
 
     auto text = parameters->getString("text"_s);
     if (!text) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, "Missing text parameter"_s));
         return;
     }
 

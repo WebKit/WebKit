@@ -12,7 +12,6 @@
 
 #include <memory>
 #include <optional>
-#include <vector>
 
 #include "api/video_codecs/scalability_mode.h"
 #include "modules/video_coding/svc/scalable_video_controller.h"

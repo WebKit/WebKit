@@ -284,7 +284,7 @@ JSValue JSTestOverloadedConstructors::getConstructor(VM& vm, const JSGlobalObjec
 
 void JSTestOverloadedConstructors::destroy(JSC::JSCell* cell)
 {
-    JSTestOverloadedConstructors* thisObject = static_cast<JSTestOverloadedConstructors*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestOverloadedConstructors* thisObject = static_cast<JSTestOverloadedConstructors*>(cell);
     thisObject->JSTestOverloadedConstructors::~JSTestOverloadedConstructors();
 }
 
@@ -300,7 +300,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestOverloadedConstructorsConstructor, (JSGlobalObjec
 
 JSC::GCClient::IsoSubspace* JSTestOverloadedConstructors::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestOverloadedConstructors, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestOverloadedConstructors, UseCustomHeapCellType::No>(vm, "JSTestOverloadedConstructors"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestOverloadedConstructors.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestOverloadedConstructors = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestOverloadedConstructors.get(); },
@@ -327,7 +327,7 @@ bool JSTestOverloadedConstructorsOwner::isReachableFromOpaqueRoots(JSC::Handle<J
 
 void JSTestOverloadedConstructorsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestOverloadedConstructors = static_cast<JSTestOverloadedConstructors*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestOverloadedConstructors = static_cast<JSTestOverloadedConstructors*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestOverloadedConstructors->protectedWrapped().ptr(), jsTestOverloadedConstructors);
 }
@@ -340,7 +340,9 @@ extern "C" { extern void (*const __identifier("??_7TestOverloadedConstructors@We
 #else
 extern "C" { extern void* _ZTVN7WebCore26TestOverloadedConstructorsE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestOverloadedConstructors>, void>> static inline void verifyVTable(TestOverloadedConstructors* ptr) {
+template<std::same_as<TestOverloadedConstructors> T>
+static inline void verifyVTable(TestOverloadedConstructors* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -359,8 +361,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestOverloade
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestOverloadedConstructors>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestOverloadedConstructors>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestOverloadedConstructors>(impl.ptr());
 #endif

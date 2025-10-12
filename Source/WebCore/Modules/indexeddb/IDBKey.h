@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "IndexedDB.h"
-#include "ThreadSafeDataBuffer.h"
+#include <WebCore/IndexedDB.h>
+#include <WebCore/ThreadSafeDataBuffer.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>

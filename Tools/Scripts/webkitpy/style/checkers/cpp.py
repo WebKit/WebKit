@@ -134,6 +134,9 @@ _AUTO_GENERATED_FILES = [
     # VisualStudio resource files
     'Tools/MiniBrowser/win/MiniBrowserLibResource.h',
 
+    # Swift bridging header
+    'Source/WTF/wtf/SwiftBridging.h',
+
     # Generated Test Results
     'Source/WebCore/css/scripts/test/TestCSSPropertiesResults/CSSPropertyNames.gperf',
     'Source/WebCore/css/scripts/test/TestCSSPropertiesResults/CSSPropertyNames.h',
@@ -1523,13 +1526,14 @@ def check_for_non_standard_constructs(clean_lines, line_number,
     # For the rest, work with both comments and strings removed.
     line = clean_lines.elided[line_number]
 
-    if search(r'\b(const|volatile|void|char|short|int|long'
+    if search(r'\b(const|constexpr|constinit|consteval|volatile|'
+              r'void|char|short|int|long'
               r'|float|double|signed|unsigned'
               r'|schar|u?int8|u?int16|u?int32|u?int64)'
-              r'\s+(auto|register|static|extern|typedef)\b',
+              r'\s+(static|extern|typedef|register)\b',
               line):
         error(line_number, 'build/storage_class', 5,
-              'Storage class (static, extern, typedef, etc) should be first.')
+              'Storage class (static, extern, typedef, register) should be first.')
 
     if match(r'\s*#\s*endif\s*[^/\s]+', line):
         error(line_number, 'build/endif_comment', 5,
@@ -1740,6 +1744,10 @@ def detect_functions(clean_lines, line_number, function_state, error):
     # ignore it, unless it's TEST or TEST_F.
     function_name = match_result.group(1).split()[-1]
     if function_name != 'TEST' and function_name != 'TEST_F' and match(r'[A-Z_]+$', function_name):
+        return
+
+    # The regex above matches various control flow statements, let's ignore those
+    if function_name == 'if' or function_name == 'for' or function_name == 'while':
         return
 
     joined_line = ''
@@ -2300,7 +2308,7 @@ def check_spacing(file_extension, clean_lines, line_number, file_state, error):
                   'Should have spaces around = in property synthesis.')
 
     # Don't try to do spacing checks for operator methods
-    line = sub(r'operator(==|!=|<|<<|<=|>=|>>|>|\+=|-=|\*=|/=|%=|&=|\|=|^=|<<=|>>=|/)\(', r'operator\(', line)
+    line = sub(r'operator(==|!=|<|<<|<=|>=|>>|>|\+=|-=|\*=|/=|%=|&=|\|=|^=|<<=|>>=|/|\|)\(', r'operator\(', line)
     # Don't try to do spacing checks for #include, #import, #if, or #elif statements at
     # minimum because it messes up checks for spacing around /
     if match(r'\s*#\s*(?:include|import|if|elif)', line):
@@ -2419,7 +2427,7 @@ def check_spacing(file_extension, clean_lines, line_number, file_state, error):
     # 'delete []' or 'new char * []'. Objective-C can't follow this rule
     # because of method calls.
     if file_extension != 'mm' and file_extension != 'm':
-        if search(r'\w\s+\[', line) and not search(r'(delete|return|auto)\s+\[', line):
+        if search(r'\w\s+\[', line) and not search(r'(delete|return|auto)\s+\[', line) and not search(r'\s+\[\[(likely|unlikely)\]\]', line):
             error(line_number, 'whitespace/brackets', 5,
                   'Extra space before [.')
 
@@ -2596,7 +2604,7 @@ def check_namespace_indentation(clean_lines, line_number, file_extension, file_s
 _ALLOW_ALL_UPPERCASE_ENUM = ['JSTokenType']
 
 # Enum value allowlist
-_ALLOW_ABBREVIATION_ENUM_VALUES = ['AM', 'CF', 'GPU', 'PM', 'URL', 'XHR']
+_ALLOW_ABBREVIATION_ENUM_VALUES = ['AM', 'CF', 'GPU', 'LTR', 'PM', 'RTL', 'URL', 'XHR']
 
 
 def check_enum_members(clean_lines, line_number, enum_state, error):
@@ -2807,6 +2815,28 @@ def check_wtf_move(clean_lines, line_number, file_state, error):
         return
 
     error(line_number, 'runtime/wtf_move', 4, "Use 'WTFMove()' instead of 'std::move()'.")
+
+
+def check_unsafe_get(clean_lines, line_number, file_state, error):
+    """Looks for use of 'unsafeGet()' which should be avoided.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    # This check doesn't apply to C implementation files.
+    if file_state.is_c():
+        return
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    using_unsafe_get = search(r'\bunsafeGet\s*\(\s*\)', line)
+    if using_unsafe_get:
+        error(line_number, 'runtime/unsafe_get', 5, "Avoid using 'unsafeGet()' by extending the lifetime of the RefPtr.")
 
 
 def check_callonmainthread(filename, clean_lines, line_number, file_state, error):
@@ -3147,7 +3177,8 @@ def check_braces(clean_lines, line_number, file_state, error):
     # Likewise, an else should never have the else clause on the same line
     if (search(r'\belse [^\s{]', line)
         and not search(r'\belse if\b', line)
-        and not search(r'\belse\s*\\$', line)):
+        and not search(r'\belse\s*\\$', line)
+            and not search(r'\belse\s*\[\[(likely|unlikely)\]\]', line)):
         error(line_number, 'whitespace/newline', 4,
               'Else clause should never be on same line as else (use 2 lines)')
 
@@ -3603,6 +3634,14 @@ def check_safer_cpp(clean_lines, line_number, error):
     if uses_strncmp:
         error(line_number, 'safercpp/strncmp', 4, "strncmp() is unsafe.")
 
+    uses_dispatch_get_global_queue = search(r'dispatch_get_global_queue\(', line)
+    if uses_dispatch_get_global_queue:
+        error(line_number, 'safercpp/dispatch_get_global_queue', 4, "use globalDispatchQueueSingleton() instead of dispatch_get_global_queue().")
+
+    uses_dispatch_get_main_queue = search(r'dispatch_get_main_queue\(', line)
+    if uses_dispatch_get_main_queue:
+        error(line_number, 'safercpp/dispatch_get_main_queue', 4, "use mainDispatchQueueSingleton() instead of dispatch_get_main_queue().")
+
     uses_printf = search(r'\bprintf\b', line)
     if uses_printf:
         error(line_number, 'safercpp/printf', 4, "printf is unsafe. Use SAFE_PRINTF instead.")
@@ -3627,6 +3666,29 @@ def check_safer_cpp(clean_lines, line_number, error):
     if uses_xpc_string_get_string_ptr:
         error(line_number, 'safercpp/xpc_string_get_string_ptr', 4, "Use xpcStringGetString() instead of xpc_string_get_string_ptr().")
 
+    if search(r'sqlite3_bind_blob\(', line) or search(r'sqlite3_bind_blob64\(', line):
+        error(line_number, 'safercpp/sqlite3_bind_blob', 4, "Use sqliteBindBlob() instead of sqlite3_bind_blob() or sqlite3_bind_blob64().")
+
+    if search(r'sqlite3_bind_text\(', line):
+        error(line_number, 'safercpp/sqlite3_bind_text', 4, "Use sqliteBindText() instead of sqlite3_bind_text().")
+
+    if search(r'sqlite3_column_name\(', line):
+        error(line_number, 'safercpp/sqlite3_column_name', 4, "Use sqliteColumnName() instead of sqlite3_column_name().")
+
+    if search(r'sqlite3_value_text\(', line):
+        error(line_number, 'safercpp/sqlite3_value_text', 4, "Use sqliteValueText() instead of sqlite3_value_text().")
+
+    if search(r'sqlite3_column_text\(', line):
+        error(line_number, 'safercpp/sqlite3_column_text', 4, "Use sqliteColumnText() instead of sqlite3_column_text().")
+
+    if search(r'sqlite3_column_blob\(', line):
+        error(line_number, 'safercpp/sqlite3_column_blob', 4, "Use sqliteColumnBlob() instead of sqlite3_column_blob().")
+
+    if search(r'= [a-zA-Z0-9_.(),\s\->]*protected[a-zA-Z0-9]+\(\)[;\)]', line):
+        error(line_number, 'safercpp/protected_getter_for_init', 4, "Use m_foo or foo() instead of protectedFoo() for variable initialization.")
+
+    if search(r'= [a-zA-Z0-9_.(),\s\->]*checked[a-zA-Z0-9]+\(\)[;\)]', line):
+        error(line_number, 'safercpp/checked_getter_for_init', 4, "Use m_foo or foo() instead of checkedFoo() for variable initialization.")
 
 def check_style(clean_lines, line_number, file_extension, class_state, file_state, enum_state, error):
     """Checks rules from the 'C++ style rules' section of cppguide.html.
@@ -3673,9 +3735,9 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
                  and class_state.classinfo_stack
                  and line.count('{') == line.count('}'))
         and not cleansed_line.startswith('#define ')
-        # It's ok to use use WTF_MAKE_NONCOPYABLE and WTF_MAKE_FAST_ALLOCATED macros in 1 line
+        # It's ok to use use WTF_MAKE_NONCOPYABLE and WTF_DEPRECATED_MAKE_FAST_ALLOCATED macros in 1 line
         and not (cleansed_line.find("WTF_MAKE_NONCOPYABLE") != -1
-                 and cleansed_line.find("WTF_MAKE_FAST_ALLOCATED") != -1)):
+                 and cleansed_line.find("WTF_DEPRECATED_MAKE_FAST_ALLOCATED") != -1)):
         error(line_number, 'whitespace/newline', 4,
               'More than one command on the same line')
 
@@ -3692,6 +3754,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_max_min_macros(clean_lines, line_number, file_state, error)
     check_wtf_checked_size(clean_lines, line_number, file_state, error)
     check_wtf_move(clean_lines, line_number, file_state, error)
+    check_unsafe_get(clean_lines, line_number, file_state, error)
     check_wtf_make_unique(clean_lines, line_number, file_state, error)
     check_wtf_never_destroyed(clean_lines, line_number, file_state, error)
     check_lock_guard(clean_lines, line_number, file_state, error)
@@ -3974,6 +4037,14 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
             error(line_number, 'build/include_order', 4,
                   '%s Should be: config.h, primary header, blank line, and then alphabetically sorted.' %
                   error_message)
+
+    # Check to make sure there's no self inclusions
+    filename_regex = rf'(?:.*?/)?{re.escape(os.path.basename(filename))}'
+    if re.search(
+        rf'^#include\s*(<{filename_regex}>|\"{filename_regex}\")',
+        line,
+    ):
+        error(line_number, 'build/self_include', 4, 'Self include problem.')
 
 
 def check_language(filename, clean_lines, line_number, file_extension, include_state,
@@ -4904,6 +4975,7 @@ class CppChecker(object):
         'build/webcore_export',
         'build/wk_api_available',
         'build/version_check',
+        'build/self_include',
         'build-speed/inlines',
         'legal/copyright',
         'policy/language',
@@ -4958,6 +5030,7 @@ class CppChecker(object):
         'runtime/soft-linked-alloc',
         'runtime/string',
         'runtime/threadsafe_fn',
+        'runtime/unsafe_get',
         'runtime/unsigned',
         'runtime/virtual',
         'runtime/wtf_checked_size',
@@ -4965,6 +5038,9 @@ class CppChecker(object):
         'runtime/wtf_move',
         'runtime/wtf_never_destroyed',
         'safercpp/atoi',
+        'safercpp/checked_getter_for_init',
+        'safercpp/dispatch_get_global_queue',
+        'safercpp/dispatch_get_main_queue',
         'safercpp/memchr',
         'safercpp/memcmp',
         'safercpp/memcpy',
@@ -4976,6 +5052,7 @@ class CppChecker(object):
         'safercpp/strcmp',
         'safercpp/strncmp',
         'safercpp/printf',
+        'safercpp/protected_getter_for_init',
         'safercpp/strchr',
         'safercpp/strstr',
         'safercpp/timer_exception',

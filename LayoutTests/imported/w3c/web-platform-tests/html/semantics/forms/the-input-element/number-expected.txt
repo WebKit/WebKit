@@ -32,4 +32,5 @@ PASS value with a leading form feed
 PASS value with a leading carriage return
 PASS value with a leading space
 PASS value = 1trailing junk
+PASS full-width digits
 

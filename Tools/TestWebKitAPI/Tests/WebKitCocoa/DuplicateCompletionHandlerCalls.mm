@@ -109,7 +109,7 @@ static void expectException(void (^completionHandler)())
     });
 }
 
-- (void)_webView:(WKWebView *)webView willSubmitFormValues:(NSDictionary *)values userObject:(NSObject<NSSecureCoding> *)userObject submissionHandler:(void (^)())submissionHandler
+- (void)_webView:(WKWebView *)webView willSubmitFormValues:(NSDictionary *)values frameInfo:(WKFrameInfo *)frameInfo sourceFrameInfo:(WKFrameInfo *)sourceFrameInfo userObject:(NSObject<NSSecureCoding> *)userObject submissionHandler:(void (^)())submissionHandler
 {
     submissionHandler();
 

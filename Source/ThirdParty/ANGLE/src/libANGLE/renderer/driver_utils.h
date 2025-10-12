@@ -45,7 +45,6 @@ enum VendorID : uint32_t
 
 enum AndroidDeviceID : uint32_t
 {
-    ANDROID_DEVICE_ID_UNKNOWN     = 0x0,
     ANDROID_DEVICE_ID_NEXUS5X     = 0x4010800,
     ANDROID_DEVICE_ID_PIXEL2      = 0x5040001,
     ANDROID_DEVICE_ID_PIXEL1XL    = 0x5030004,
@@ -53,6 +52,7 @@ enum AndroidDeviceID : uint32_t
     ANDROID_DEVICE_ID_GALAXYA23   = 0x6010901,
     ANDROID_DEVICE_ID_GALAXYS23   = 0x43050A01,
     ANDROID_DEVICE_ID_SWIFTSHADER = 0xC0DE,
+    ANDROID_DEVICE_ID_LAVAPIPE    = 0x0,
 };
 
 inline bool IsAMD(uint32_t vendorId)
@@ -132,6 +132,11 @@ inline bool IsVirtIO(uint32_t vendorId)
     return vendorId == VENDOR_ID_VIRTIO;
 }
 
+inline bool IsMesa(uint32_t vendorId)
+{
+    return vendorId == VENDOR_ID_MESA;
+}
+
 inline bool IsNexus5X(uint32_t vendorId, uint32_t deviceId)
 {
     return IsQualcomm(vendorId) && deviceId == ANDROID_DEVICE_ID_NEXUS5X;
@@ -165,6 +170,11 @@ inline bool IsGalaxyS23(uint32_t vendorId, uint32_t deviceId)
 inline bool IsSwiftshader(uint32_t vendorId, uint32_t deviceId)
 {
     return IsGoogle(vendorId) && deviceId == ANDROID_DEVICE_ID_SWIFTSHADER;
+}
+
+inline bool IsLavapipe(uint32_t vendorId, uint32_t deviceId)
+{
+    return IsMesa(vendorId) && deviceId == ANDROID_DEVICE_ID_LAVAPIPE;
 }
 
 std::string GetVendorString(uint32_t vendorId);

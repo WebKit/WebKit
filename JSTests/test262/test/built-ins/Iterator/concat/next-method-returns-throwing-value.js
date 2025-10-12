@@ -13,15 +13,8 @@ info: |
     a. For each Record iterable of iterables, do
       ...
       v. Repeat, while innerAlive is true,
-        1. Let iteratorResult be ? IteratorStep(iteratorRecord).
-        2. If iteratorResult is done, then
-          a. Perform ? IteratorValue(iteratorResult).
-          b. Set innerAlive to false.
-        3. Else,
-          a. Let completion be Completion(GeneratorYield(iteratorResult)).
-          b. If completion is an abrupt completion, then
-            i. Return ? IteratorClose(iteratorRecord, completion).
-    ...
+        1. Let innerValue be ? IteratorStepValue(iteratorRecord).
+        ...
 features: [iterator-sequencing]
 ---*/
 
@@ -46,8 +39,7 @@ let iterable = {
 };
 
 let iterator = Iterator.concat(iterable);
-let iteratorResult = iterator.next();
 
 assert.throws(Test262Error, function() {
-  iteratorResult.value;
+  iterator.next();
 });

@@ -76,14 +76,14 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
     id objIdAttribute = [obj accessibilityIdentifier];
     if ([objIdAttribute isKindOfClass:[NSString class]] && [objIdAttribute isEqualToString:idAttribute])
         return obj;
-    
+
     NSUInteger childrenCount = [obj accessibilityElementCount];
     for (NSUInteger i = 0; i < childrenCount; ++i) {
         id result = findAccessibleObjectById([obj accessibilityElementAtIndex:i], idAttribute);
         if (result)
             return result;
     }
-    
+
     return 0;
 }
 
@@ -92,13 +92,13 @@ AccessibilityUIElement AccessibilityController::accessibleElementById(JSStringRe
     id webDocumentView = [[mainFrame frameView] documentView];
     if (![webDocumentView isKindOfClass:[WebHTMLView class]])
         return 0;
-    
+
     id root = [(WebHTMLView *)webDocumentView accessibilityRootElement];
     NSString *idAttribute = [NSString stringWithJSStringRef:idAttributeRef];
     id result = findAccessibleObjectById(root, idAttribute);
     if (result)
         return AccessibilityUIElement(result);
-    
+
     return 0;
 }
 
@@ -122,7 +122,7 @@ bool AccessibilityController::addNotificationListener(JSObjectRef functionCallba
 {
     if (!functionCallback)
         return false;
-    
+
     // Mac programmers should not be adding more than one global notification listener.
     // Other platforms may be different.
     if (m_globalNotificationHandler)
@@ -130,7 +130,7 @@ bool AccessibilityController::addNotificationListener(JSObjectRef functionCallba
     m_globalNotificationHandler = adoptNS([[AccessibilityNotificationHandler alloc] init]);
     [m_globalNotificationHandler setCallback:functionCallback];
     [m_globalNotificationHandler startObserving];
-    
+
     return true;
 }
 

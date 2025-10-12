@@ -430,7 +430,9 @@ static GRefPtr<GtkPrinter> findFilePrinter(GtkPrintSettings* settings)
     gtk_enumerate_printers([](GtkPrinter* printer, gpointer userData) -> gboolean {
         auto& data = *static_cast<FindPrinterData*>(userData);
         auto* backend = gtk_printer_get_backend(printer);
-        if (!g_strcmp0(G_OBJECT_TYPE_NAME(backend), "GtkPrintBackendFile")) {
+        const char* fileBackendName = gtk_check_version(4, 19, 3) ? "GtkPrintBackendFile" : "GtkPrintBackendFileBuiltin";
+
+        if (!g_strcmp0(G_OBJECT_TYPE_NAME(backend), fileBackendName)) {
             data.printer = printer;
             return TRUE;
         }
@@ -459,6 +461,10 @@ static void webkitPrintOperationSendPagesToPrintPortal(WebKitPrintOperation* pri
     // Translators: this is the print job name, for example "WebKit job #15".
     GUniquePtr<char> jobName(g_strdup_printf(_("%s job #%u"), applicationName ? applicationName : "WebKit", ++jobNumber));
     GRefPtr<GtkPrinter> filePrinter = findFilePrinter(printSettings);
+    if (!filePrinter) {
+        webkitPrintOperationFailed(printOperation, GUniquePtr<GError> { g_error_new(WEBKIT_PRINT_ERROR, WEBKIT_PRINT_ERROR_GENERAL, _("Required print backend is not available")) });
+        return;
+    }
 
     // Print the page into a temporary file.
     GUniqueOutPtr<char> filename;

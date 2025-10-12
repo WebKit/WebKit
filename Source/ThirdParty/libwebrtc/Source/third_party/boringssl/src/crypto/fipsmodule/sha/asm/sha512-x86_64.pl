@@ -1,16 +1,23 @@
 #! /usr/bin/env perl
 # Copyright 2005-2016 The OpenSSL Project Authors. All Rights Reserved.
 #
-# Licensed under the OpenSSL license (the "License").  You may not use
-# this file except in compliance with the License.  You can obtain a copy
-# in the file LICENSE in the source distribution or at
-# https://www.openssl.org/source/license.html
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 #
 # ====================================================================
 # Written by Andy Polyakov <appro@openssl.org> for the OpenSSL
 # project. Rights for redistribution and usage in source and binary
-# forms are granted according to the OpenSSL license.
+# forms are granted according to the License.
 # ====================================================================
 #
 # sha256/512_block procedure for x86_64.
@@ -2035,27 +2042,8 @@ $code.=<<___ if ($avx>1);
 ___
 }
 
-sub sha256op38 {
-    my $instr = shift;
-    my %opcodelet = (
-		"sha256rnds2" => 0xcb,
-  		"sha256msg1"  => 0xcc,
-		"sha256msg2"  => 0xcd	);
-
-    if (defined($opcodelet{$instr}) && @_[0] =~ /%xmm([0-7]),\s*%xmm([0-7])/) {
-      my @opcode=(0x0f,0x38);
-	push @opcode,$opcodelet{$instr};
-	push @opcode,0xc0|($1&7)|(($2&7)<<3);		# ModR/M
-	return ".byte\t".join(',',@opcode);
-    } else {
-	return $instr."\t".@_[0];
-    }
-}
-
 foreach (split("\n",$code)) {
 	s/\`([^\`]*)\`/eval $1/geo;
-
-	s/\b(sha256[^\s]*)\s+(.*)/sha256op38($1,$2)/geo;
 
 	print $_,"\n";
 }

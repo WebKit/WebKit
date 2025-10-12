@@ -10,13 +10,13 @@
 
 #include "test/rtp_file_writer.h"
 
-#include <stdint.h>
-#include <stdio.h>
-
+#include <cstdint>
+#include <cstdio>
 #include <optional>
 #include <string>
 
 #include "rtc_base/checks.h"
+#include "test/rtp_file_reader.h"
 
 namespace webrtc {
 namespace test {
@@ -29,13 +29,13 @@ static const char kFirstLine[] = "#!rtpplay1.0 0.0.0.0/0\n";
 class RtpDumpWriter : public RtpFileWriter {
  public:
   explicit RtpDumpWriter(FILE* file) : file_(file) {
-    RTC_CHECK(file_ != NULL);
+    RTC_CHECK(file_ != nullptr);
     Init();
   }
   ~RtpDumpWriter() override {
-    if (file_ != NULL) {
+    if (file_ != nullptr) {
       fclose(file_);
-      file_ = NULL;
+      file_ = nullptr;
     }
   }
 
@@ -98,16 +98,16 @@ class RtpDumpWriter : public RtpFileWriter {
 RtpFileWriter* RtpFileWriter::Create(FileFormat format,
                                      const std::string& filename) {
   FILE* file = fopen(filename.c_str(), "wb");
-  if (file == NULL) {
+  if (file == nullptr) {
     printf("ERROR: Can't open file: %s\n", filename.c_str());
-    return NULL;
+    return nullptr;
   }
   switch (format) {
     case kRtpDump:
       return new RtpDumpWriter(file);
   }
   fclose(file);
-  return NULL;
+  return nullptr;
 }
 
 }  // namespace test

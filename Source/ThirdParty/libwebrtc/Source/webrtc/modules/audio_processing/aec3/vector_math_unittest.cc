@@ -10,10 +10,14 @@
 
 #include "modules/audio_processing/aec3/vector_math.h"
 
-#include <math.h>
+#include <algorithm>
+#include <array>
+#include <cmath>
+#include <cstddef>
 
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "rtc_base/cpu_info.h"
 #include "rtc_base/system/arch.h"
-#include "system_wrappers/include/cpu_features_wrapper.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -80,7 +84,7 @@ TEST(VectorMath, Accumulate) {
 #if defined(WEBRTC_ARCH_X86_FAMILY)
 
 TEST(VectorMath, Sse2Sqrt) {
-  if (GetCPUInfo(kSSE2) != 0) {
+  if (cpu_info::Supports(cpu_info::ISA::kSSE2)) {
     std::array<float, kFftLengthBy2Plus1> x;
     std::array<float, kFftLengthBy2Plus1> z;
     std::array<float, kFftLengthBy2Plus1> z_sse2;
@@ -102,7 +106,7 @@ TEST(VectorMath, Sse2Sqrt) {
 }
 
 TEST(VectorMath, Avx2Sqrt) {
-  if (GetCPUInfo(kAVX2) != 0) {
+  if (cpu_info::Supports(cpu_info::ISA::kAVX2)) {
     std::array<float, kFftLengthBy2Plus1> x;
     std::array<float, kFftLengthBy2Plus1> z;
     std::array<float, kFftLengthBy2Plus1> z_avx2;
@@ -124,7 +128,7 @@ TEST(VectorMath, Avx2Sqrt) {
 }
 
 TEST(VectorMath, Sse2Multiply) {
-  if (GetCPUInfo(kSSE2) != 0) {
+  if (cpu_info::Supports(cpu_info::ISA::kSSE2)) {
     std::array<float, kFftLengthBy2Plus1> x;
     std::array<float, kFftLengthBy2Plus1> y;
     std::array<float, kFftLengthBy2Plus1> z;
@@ -145,7 +149,7 @@ TEST(VectorMath, Sse2Multiply) {
 }
 
 TEST(VectorMath, Avx2Multiply) {
-  if (GetCPUInfo(kAVX2) != 0) {
+  if (cpu_info::Supports(cpu_info::ISA::kAVX2)) {
     std::array<float, kFftLengthBy2Plus1> x;
     std::array<float, kFftLengthBy2Plus1> y;
     std::array<float, kFftLengthBy2Plus1> z;
@@ -166,7 +170,7 @@ TEST(VectorMath, Avx2Multiply) {
 }
 
 TEST(VectorMath, Sse2Accumulate) {
-  if (GetCPUInfo(kSSE2) != 0) {
+  if (cpu_info::Supports(cpu_info::ISA::kSSE2)) {
     std::array<float, kFftLengthBy2Plus1> x;
     std::array<float, kFftLengthBy2Plus1> z;
     std::array<float, kFftLengthBy2Plus1> z_sse2;
@@ -186,7 +190,7 @@ TEST(VectorMath, Sse2Accumulate) {
 }
 
 TEST(VectorMath, Avx2Accumulate) {
-  if (GetCPUInfo(kAVX2) != 0) {
+  if (cpu_info::Supports(cpu_info::ISA::kAVX2)) {
     std::array<float, kFftLengthBy2Plus1> x;
     std::array<float, kFftLengthBy2Plus1> z;
     std::array<float, kFftLengthBy2Plus1> z_avx2;

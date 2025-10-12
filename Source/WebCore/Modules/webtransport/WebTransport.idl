@@ -31,7 +31,7 @@
 ] interface WebTransport {
     [CallWith=CurrentScriptExecutionContext] constructor(USVString url, optional WebTransportOptions options = {});
 
-    Promise<WebTransportStats> getStats();
+    [CallWith=CurrentScriptExecutionContext] Promise<WebTransportConnectionStats> getStats();
     readonly attribute Promise<undefined> ready;
     readonly attribute WebTransportReliabilityMode reliability;
     readonly attribute WebTransportCongestionControl congestionControl;

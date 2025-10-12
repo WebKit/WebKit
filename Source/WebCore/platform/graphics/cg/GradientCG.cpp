@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 #include "GraphicsContextCG.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
+
 namespace WebCore {
 
 void Gradient::stopsChanged()
@@ -166,16 +167,12 @@ void Gradient::paint(CGContextRef platformContext, std::optional<DestinationColo
                 CGContextRestoreGState(platformContext);
         },
         [&] (const ConicData& data) {
-#if HAVE(CORE_GRAPHICS_CONIC_GRADIENTS)
             CGContextSaveGState(platformContext);
             CGContextTranslateCTM(platformContext, data.point0.x(), data.point0.y());
             CGContextRotateCTM(platformContext, (CGFloat)-piOverTwoDouble);
             CGContextTranslateCTM(platformContext, -data.point0.x(), -data.point0.y());
             m_platformRenderer->drawConicGradient(platformContext, data.point0, data.angleRadians);
             CGContextRestoreGState(platformContext);
-#else
-            UNUSED_PARAM(data);
-#endif
         }
     );
 }

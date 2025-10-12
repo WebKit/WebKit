@@ -60,7 +60,7 @@ FontPlatformData::FontPlatformData(RetainPtr<CTFontRef>&& font, float size, bool
     m_font = WTFMove(font);
     m_isColorBitmapFont = CTFontGetSymbolicTraits(m_font.get()) & kCTFontColorGlyphsTrait;
     m_isSystemFont = WebCore::isSystemFont(m_font.get());
-    auto variations = adoptCF(static_cast<CFDictionaryRef>(CTFontCopyAttribute(m_font.get(), kCTFontVariationAttribute)));
+    auto variations = adoptCF(checked_cf_cast<CFDictionaryRef>(CTFontCopyAttribute(m_font.get(), kCTFontVariationAttribute)));
     m_hasVariations = variations && CFDictionaryGetCount(variations.get());
 
 #if PLATFORM(IOS_FAMILY)
@@ -90,11 +90,11 @@ static RetainPtr<CTFontDescriptorRef> findFontDescriptor(CFURLRef url, CFStringR
     if (!fontDescriptors || !CFArrayGetCount(fontDescriptors.get()))
         return nullptr;
     if (CFArrayGetCount(fontDescriptors.get()) == 1)
-        return static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(fontDescriptors.get(), 0));
+        return checked_cf_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(fontDescriptors.get(), 0));
 
     for (CFIndex i = 0; i < CFArrayGetCount(fontDescriptors.get()); ++i) {
-        auto fontDescriptor = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(fontDescriptors.get(), i));
-        auto currentPostScriptName = adoptCF(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontNameAttribute));
+        RetainPtr fontDescriptor = checked_cf_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(fontDescriptors.get(), i));
+        RetainPtr currentPostScriptName = adoptCF(CTFontDescriptorCopyAttribute(fontDescriptor.get(), kCTFontNameAttribute));
         if (CFEqual(currentPostScriptName.get(), postScriptName))
             return fontDescriptor;
     }
@@ -107,9 +107,9 @@ RetainPtr<CTFontRef> createCTFont(CFDictionaryRef attributes, float size, CTFont
 
     auto fontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributesAndOptions(attributes, options));
     if (fontDescriptor) {
-        auto font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
-        auto actualPostScriptName = adoptCF(CTFontCopyPostScriptName(font.get()));
-        auto actualReferenceURL = adoptCF(CTFontCopyAttribute(font.get(), kCTFontReferenceURLAttribute));
+        RetainPtr font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
+        RetainPtr actualPostScriptName = adoptCF(CTFontCopyPostScriptName(font.get()));
+        RetainPtr actualReferenceURL = adoptCF(CTFontCopyAttribute(font.get(), kCTFontReferenceURLAttribute));
         if (safeCFEqual(actualPostScriptName.get(), desiredPostScriptName) && safeCFEqual(desiredReferenceURL.get(), actualReferenceURL.get()))
             return font;
     }
@@ -129,9 +129,9 @@ FontPlatformData FontPlatformData::create(const Attributes& data, const FontCust
 {
     RetainPtr<CTFontRef> ctFont;
     if (custom) {
-        auto baseFontDescriptor = custom->fontDescriptor.get();
+        RetainPtr baseFontDescriptor = custom->fontDescriptor.get();
         RELEASE_ASSERT(baseFontDescriptor);
-        auto fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(baseFontDescriptor, data.m_attributes.get()));
+        RetainPtr fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(baseFontDescriptor.get(), data.m_attributes.get()));
         ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), data.m_size, nullptr));
     } else
         ctFont = createCTFont(data.m_attributes.get(), data.m_size, data.m_options, data.m_url.get(), data.m_psName.get());
@@ -144,11 +144,11 @@ bool isSystemFont(CTFontRef font)
     return CTFontIsSystemUIFont(font);
 }
 
-CTFontRef FontPlatformData::registeredFont() const
+RetainPtr<CTFontRef> FontPlatformData::registeredFont() const
 {
-    CTFontRef platformFont = ctFont();
+    RetainPtr platformFont = ctFont();
     ASSERT(platformFont);
-    if (platformFont && adoptCF(CTFontCopyAttribute(platformFont, kCTFontURLAttribute)))
+    if (platformFont && adoptCF(CTFontCopyAttribute(platformFont.get(), kCTFontURLAttribute)))
         return platformFont;
     return nullptr;
 }
@@ -165,12 +165,12 @@ RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck(CTFontRef ctFont)
 
 RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck() const
 {
-    return objectForEqualityCheck(ctFont());
+    return objectForEqualityCheck(protectedCTFont().get());
 }
 
 RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 {
-    if (RetainPtr<CFDataRef> data = adoptCF(CTFontCopyTable(ctFont(), table, kCTFontTableOptionNoOptions)))
+    if (RetainPtr<CFDataRef> data = adoptCF(CTFontCopyTable(protectedCTFont().get(), table, kCTFontTableOptionNoOptions)))
         return SharedBuffer::create(data.get());
 
     return platformOpenTypeTable(table);
@@ -191,8 +191,8 @@ String FontPlatformData::description() const
 
 String FontPlatformData::familyName() const
 {
-    if (auto platformFont = ctFont())
-        return adoptCF(CTFontCopyFamilyName(platformFont)).get();
+    if (RetainPtr platformFont = ctFont())
+        return adoptCF(CTFontCopyFamilyName(platformFont.get())).get();
     return { };
 }
 
@@ -219,7 +219,7 @@ FontPlatformData::Attributes FontPlatformData::attributes() const
 
     if (!m_customPlatformData) {
         result.m_options = CTFontDescriptorGetOptions(fontDescriptor.get());
-        auto referenceURL = adoptCF(static_cast<CFURLRef>(CTFontCopyAttribute(m_font.get(), kCTFontReferenceURLAttribute)));
+        auto referenceURL = adoptCF(checked_cf_cast<CFURLRef>(CTFontCopyAttribute(m_font.get(), kCTFontReferenceURLAttribute)));
         result.m_url = CFURLGetString(referenceURL.get());
         result.m_psName = adoptCF(CTFontCopyPostScriptName(m_font.get()));
     }
@@ -241,15 +241,15 @@ std::optional<FontPlatformData> FontPlatformData::fromIPCData(float size, WebCor
             return false;
         },
         [&] (FontPlatformSerializedCreationData& d) {
-            auto fontFaceData = SharedBuffer::create(WTFMove(d.fontFaceData));
+            Ref fontFaceData = SharedBuffer::create(WTFMove(d.fontFaceData));
             RefPtr fontCustomPlatformData = FontCustomPlatformData::create(fontFaceData, d.itemInCollection);
             if (!fontCustomPlatformData)
                 return true;
-            auto baseFontDescriptor = fontCustomPlatformData->fontDescriptor.get();
+            RetainPtr baseFontDescriptor = fontCustomPlatformData->fontDescriptor.get();
             if (!baseFontDescriptor)
                 return true;
             RetainPtr<CFDictionaryRef> attributesDictionary = d.attributes ? d.attributes->toCFDictionary() : nullptr;
-            auto fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(baseFontDescriptor, attributesDictionary.get()));
+            RetainPtr fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(baseFontDescriptor.get(), attributesDictionary.get()));
 
             font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
             customPlatformData = fontCustomPlatformData;
@@ -274,7 +274,7 @@ FontPlatformData::FontPlatformData(float size, WebCore::FontOrientation&& orient
 {
     m_isColorBitmapFont = CTFontGetSymbolicTraits(m_font.get()) & kCTFontColorGlyphsTrait;
     m_isSystemFont = WebCore::isSystemFont(m_font.get());
-    auto variations = adoptCF(static_cast<CFDictionaryRef>(CTFontCopyAttribute(m_font.get(), kCTFontVariationAttribute)));
+    auto variations = adoptCF(checked_cf_cast<CFDictionaryRef>(CTFontCopyAttribute(m_font.get(), kCTFontVariationAttribute)));
     m_hasVariations = variations && CFDictionaryGetCount(variations.get());
 #if PLATFORM(IOS_FAMILY)
     m_isEmoji = CTFontIsAppleColorEmoji(m_font.get());
@@ -283,25 +283,25 @@ FontPlatformData::FontPlatformData(float size, WebCore::FontOrientation&& orient
 
 FontPlatformData::IPCData FontPlatformData::toIPCData() const
 {
-    auto font = ctFont();
-    auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(font));
-    auto attributes = adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get()));
+    RetainPtr font = ctFont();
+    RetainPtr fontDescriptor = adoptCF(CTFontCopyFontDescriptor(font.get()));
+    RetainPtr attributes = adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get()));
 
     const auto& data = creationData();
     if (data)
         return FontPlatformSerializedCreationData { { data->fontFaceData->span() }, FontPlatformSerializedAttributes::fromCF(attributes.get()), data->itemInCollection };
 
     auto options = CTFontDescriptorGetOptions(fontDescriptor.get());
-    auto referenceURL = adoptCF(static_cast<CFURLRef>(CTFontCopyAttribute(font, kCTFontReferenceURLAttribute)));
-    auto urlString = retainPtr(CFURLGetString(referenceURL.get()));
-    auto postScriptName = adoptCF(CTFontCopyPostScriptName(font)).get();
+    RetainPtr referenceURL = adoptCF(checked_cf_cast<CFURLRef>(CTFontCopyAttribute(font.get(), kCTFontReferenceURLAttribute)));
+    RetainPtr urlString = retainPtr(CFURLGetString(referenceURL.get()));
+    RetainPtr postScriptName = adoptCF(CTFontCopyPostScriptName(font.get())).get();
     return FontPlatformSerializedData { options, WTFMove(urlString), WTFMove(postScriptName), FontPlatformSerializedAttributes::fromCF(attributes.get()) };
 }
 
 #define EXTRACT_TYPED_VALUE(key, cfType, target) { \
-    auto extractedValue = static_cast<cfType##Ref>(CFDictionaryGetValue(dictionary, key));\
-    if (extractedValue && CFGetTypeID(extractedValue) == cfType##GetTypeID())\
-        target = extractedValue;\
+    RetainPtr extractedValue = checked_cf_cast<cfType##Ref>(CFDictionaryGetValue(dictionary, key));\
+    if (extractedValue && CFGetTypeID(extractedValue.get()) == cfType##GetTypeID())\
+        target = extractedValue.get();\
     }
 
 std::optional<FontPlatformSerializedAttributes> FontPlatformSerializedAttributes::fromCF(CFDictionaryRef dictionary)
@@ -345,11 +345,11 @@ std::optional<FontPlatformSerializedAttributes> FontPlatformSerializedAttributes
         CFIndex count = CFDictionaryGetCount(dictionary);
         Vector<void*> keys(count);
         Vector<void*> values(count);
-        CFDictionaryGetKeysAndValues(dictionary, const_cast<const void**>(keys.data()), const_cast<const void**>(values.data()));
+        CFDictionaryGetKeysAndValues(dictionary, const_cast<const void**>(keys.span().data()), const_cast<const void**>(values.span().data()));
 
         for (CFIndex i = 0; i < count; ++i) {
-            auto key = static_cast<CFNumberRef>(keys[i]);
-            if (CFGetTypeID(key) != CFNumberGetTypeID())
+            RetainPtr key = checked_cf_cast<CFNumberRef>(keys[i]);
+            if (CFGetTypeID(key.get()) != CFNumberGetTypeID())
                 continue;
             auto value = static_cast<ValueType>(values[i]);
             if (CFGetTypeID(value) != valueCFType)
@@ -361,15 +361,15 @@ std::optional<FontPlatformSerializedAttributes> FontPlatformSerializedAttributes
         return WTFMove(vector);
     };
 
-    auto paletteColors = static_cast<CFDictionaryRef>(CFDictionaryGetValue(dictionary, kCTFontPaletteColorsAttribute));
-    result.paletteColors = pairExtractor.template operator()<CGColorRef>(paletteColors, CGColorGetTypeID());
+    RetainPtr paletteColors = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(dictionary, kCTFontPaletteColorsAttribute));
+    result.paletteColors = pairExtractor.template operator()<CGColorRef>(paletteColors.get(), CGColorGetTypeID());
 
-    auto variations = static_cast<CFDictionaryRef>(CFDictionaryGetValue(dictionary, kCTFontVariationAttribute));
-    result.variations = pairExtractor.template operator()<CFNumberRef>(variations, CFNumberGetTypeID());
+    RetainPtr variations = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(dictionary, kCTFontVariationAttribute));
+    result.variations = pairExtractor.template operator()<CFNumberRef>(variations.get(), CFNumberGetTypeID());
 
-    auto traits = static_cast<CFDictionaryRef>(CFDictionaryGetValue(dictionary, kCTFontTraitsAttribute));
-    if (traits && CFGetTypeID(traits) == CFDictionaryGetTypeID())
-        result.traits = FontPlatformSerializedTraits::fromCF(traits);
+    RetainPtr traits = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(dictionary, kCTFontTraitsAttribute));
+    if (traits && CFGetTypeID(traits.get()) == CFDictionaryGetTypeID())
+        result.traits = FontPlatformSerializedTraits::fromCF(traits.get());
 
     EXTRACT_TYPED_VALUE(kCTFontFeatureSettingsAttribute, CFArray, result.featureSettings);
 
@@ -470,9 +470,9 @@ std::optional<FontPlatformOpticalSize> FontPlatformOpticalSize::fromCF(CFTypeRef
         return std::nullopt;
 
     if (CFGetTypeID(type) == CFNumberGetTypeID())
-        return FontPlatformOpticalSize { RetainPtr { static_cast<CFNumberRef>(type) } };
+        return FontPlatformOpticalSize { RetainPtr { checked_cf_cast<CFNumberRef>(type) } };
     if (CFGetTypeID(type) == CFStringGetTypeID())
-        return FontPlatformOpticalSize { String { static_cast<CFStringRef>(type) } };
+        return FontPlatformOpticalSize { String { checked_cf_cast<CFStringRef>(type) } };
 
     return std::nullopt;
 }

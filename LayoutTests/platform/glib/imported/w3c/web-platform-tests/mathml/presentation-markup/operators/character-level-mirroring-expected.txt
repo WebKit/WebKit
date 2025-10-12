@@ -1,0 +1,22 @@
+
+FAIL Base glyph (0.5em) assert_approx_equals: operator { ltr expected 16 +/- 1 but got 8
+FAIL Size variant (1em) assert_approx_equals: operator { ltr expected 16 +/- 1 but got 8
+FAIL Glyph assembly (4em) assert_approx_equals: operator { ltr expected 16 +/- 1 but got 12
+{
+)
+
+{
+)
+
+{
+)
+
+{
+)
+
+{
+)
+
+{
+)
+

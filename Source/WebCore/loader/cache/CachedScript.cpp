@@ -38,9 +38,9 @@
 
 namespace WebCore {
 
-CachedScript::CachedScript(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar, ScriptRequiresTelemetry requiresTelemetry)
-    : CachedResource(WTFMove(request), Type::Script, sessionID, cookieJar)
-    , m_requiresTelemetry(requiresTelemetry == ScriptRequiresTelemetry::Yes)
+CachedScript::CachedScript(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar, ScriptTrackingPrivacyProtectionsEnabled requiresPrivacyProtections)
+    : CachedResource(WTFMove(request), request.options().destination == FetchOptionsDestination::Json ? Type::JSON : Type::Script, sessionID, cookieJar)
+    , m_requiresPrivacyProtections(requiresPrivacyProtections == ScriptTrackingPrivacyProtectionsEnabled::Yes)
     , m_decoder(TextResourceDecoder::create("text/javascript"_s, request.charset()))
 {
 }
@@ -76,7 +76,10 @@ StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
         && contiguousData->size()
         && charactersAreAllASCII(contiguousData->span())) {
 
-        m_decodingState = DataAndDecodedStringHaveSameBytes;
+        {
+            Locker locker { m_lock };
+            m_decodingState = DataAndDecodedStringHaveSameBytes;
+        }
 
         // If the encoded and decoded data are the same, there is no decoded data cost!
         setDecodedSize(0);
@@ -86,27 +89,81 @@ StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
     }
 
     if (m_decodingState == DataAndDecodedStringHaveSameBytes)
-        return { contiguousData->span() };
+        return { byteCast<Latin1Character>(contiguousData->span()) };
 
     bool shouldForceRedecoding = m_wasForceDecodedAsUTF8 != (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes);
     if (!m_script || shouldForceRedecoding) {
         ASSERT(contiguousData->span().size() == encodedSize());
+        String result;
         if (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes) {
             Ref forceUTF8Decoder = TextResourceDecoder::create("text/javascript"_s, PAL::UTF8Encoding());
             forceUTF8Decoder->setAlwaysUseUTF8();
-            m_script = forceUTF8Decoder->decodeAndFlush(contiguousData->span());
+            result = forceUTF8Decoder->decodeAndFlush(contiguousData->span());
         } else
-            m_script = protectedDecoder()->decodeAndFlush(contiguousData->span());
+            result = protectedDecoder()->decodeAndFlush(contiguousData->span());
+
+
         if (m_decodingState == NeverDecoded || shouldForceRedecoding)
-            m_scriptHash = m_script.hash();
-        ASSERT(!m_scriptHash || m_scriptHash == m_script.hash());
-        m_decodingState = DataAndDecodedStringHaveDifferentBytes;
-        m_wasForceDecodedAsUTF8 = shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes;
+            m_scriptHash = result.hash();
+        ASSERT(!m_scriptHash || m_scriptHash == result.hash());
+
+        {
+            Locker locker { m_lock };
+            m_script = WTFMove(result);
+            m_decodingState = DataAndDecodedStringHaveDifferentBytes;
+            m_wasForceDecodedAsUTF8 = shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes;
+        }
         setDecodedSize(m_script.sizeInBytes());
     }
 
     restartDecodedDataDeletionTimer();
     return m_script;
+}
+
+JSC::CodeBlockHash CachedScript::codeBlockHashConcurrently(int startOffset, int endOffset, JSC::CodeSpecializationKind kind, ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
+{
+    Locker locker { m_lock };
+    auto data = m_data;
+    if (!data)
+        return JSC::CodeBlockHash { emptyString(), emptyString(), kind };
+
+    switch (m_decodingState) {
+    case NeverDecoded: {
+        // This is rare, but unfortunately, when running CodeBlockHash concurrently, CachedScript was not decoding the source code.
+        // Thus, we need to decode them and need to compute. This is costly, but fine as CodeBlockHash is only used for debugging.
+        if (!data->isContiguous())
+            data = data->makeContiguous();
+        Ref contiguousData = downcast<SharedBuffer>(*data);
+
+        if (PAL::TextEncoding(encoding()).isByteBasedEncoding() && contiguousData->size() && charactersAreAllASCII(contiguousData->span())) {
+            StringView entireSource { byteCast<Latin1Character>(contiguousData->span()) };
+            return JSC::CodeBlockHash { entireSource.substring(startOffset, endOffset - startOffset), entireSource, kind };
+        }
+
+        String result;
+        if (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes) {
+            Ref forceUTF8Decoder = TextResourceDecoder::create("text/javascript"_s, PAL::UTF8Encoding());
+            forceUTF8Decoder->setAlwaysUseUTF8();
+            result = forceUTF8Decoder->decodeAndFlush(contiguousData->span());
+        } else {
+            auto decoder = TextResourceDecoder::create(protectedDecoder()->contentType(), protectedDecoder()->encoding(), protectedDecoder()->usesEncodingDetector());
+            result = decoder->decodeAndFlush(contiguousData->span());
+        }
+
+        StringView entireSource { result };
+        return JSC::CodeBlockHash { entireSource.substring(startOffset, endOffset - startOffset), entireSource, kind };
+    }
+    case DataAndDecodedStringHaveSameBytes: {
+        StringView entireSource { byteCast<Latin1Character>(downcast<SharedBuffer>(*data).span()) };
+        return JSC::CodeBlockHash { entireSource.substring(startOffset, endOffset - startOffset), entireSource, kind };
+    }
+
+    case DataAndDecodedStringHaveDifferentBytes: {
+        StringView entireSource { m_script };
+        return JSC::CodeBlockHash { entireSource.substring(startOffset, endOffset - startOffset), entireSource, kind };
+    }
+    }
+    return { };
 }
 
 unsigned CachedScript::scriptHash(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
@@ -130,7 +187,10 @@ void CachedScript::finishLoading(const FragmentedSharedBuffer* data, const Netwo
 
 void CachedScript::destroyDecodedData()
 {
-    m_script = String();
+    {
+        Locker locker { m_lock };
+        m_script = String();
+    }
     setDecodedSize(0);
 }
 
@@ -141,11 +201,14 @@ void CachedScript::setBodyDataFrom(const CachedResource& resource)
 
     CachedResource::setBodyDataFrom(resource);
 
-    m_script = script.m_script;
-    m_scriptHash = script.m_scriptHash;
-    m_wasForceDecodedAsUTF8 = script.m_wasForceDecodedAsUTF8;
-    m_decodingState = script.m_decodingState;
-    m_decoder = script.m_decoder;
+    {
+        Locker locker { m_lock };
+        m_script = script.m_script;
+        m_scriptHash = script.m_scriptHash;
+        m_wasForceDecodedAsUTF8 = script.m_wasForceDecodedAsUTF8;
+        m_decodingState = script.m_decodingState;
+        m_decoder = script.m_decoder;
+    }
 }
 
 } // namespace WebCore

@@ -27,6 +27,7 @@
 #include "AbortSignal.h"
 
 #include "AbortAlgorithm.h"
+#include "ContextDestructionObserverInlines.h"
 #include "DOMException.h"
 #include "DOMTimer.h"
 #include "Event.h"
@@ -245,6 +246,11 @@ void AbortSignal::throwIfAborted(JSC::JSGlobalObject& lexicalGlobalObject)
     Ref vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     throwException(&lexicalGlobalObject, scope, m_reason.getValue());
+}
+
+ScriptExecutionContext* AbortSignal::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
 }
 
 WebCoreOpaqueRoot root(AbortSignal* signal)

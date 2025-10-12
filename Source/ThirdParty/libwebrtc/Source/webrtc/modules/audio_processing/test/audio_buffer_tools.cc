@@ -10,7 +10,13 @@
 
 #include "modules/audio_processing/test/audio_buffer_tools.h"
 
-#include <string.h>
+#include <cstring>
+#include <vector>
+
+#include "api/array_view.h"
+#include "api/audio/audio_processing.h"
+#include "modules/audio_processing/audio_buffer.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {
@@ -27,7 +33,7 @@ void SetupFrame(const StreamConfig& stream_config,
 }
 
 void CopyVectorToAudioBuffer(const StreamConfig& stream_config,
-                             rtc::ArrayView<const float> source,
+                             ArrayView<const float> source,
                              AudioBuffer* destination) {
   std::vector<float*> input;
   std::vector<float> input_samples;

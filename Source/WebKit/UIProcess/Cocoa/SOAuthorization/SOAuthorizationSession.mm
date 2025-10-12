@@ -346,6 +346,14 @@ void SOAuthorizationSession::complete(NSHTTPURLResponse *httpResponse, NSData *d
         return;
     }
 
+    // https://bugs.webkit.org/show_bug.cgi?id=299083
+    if (!cookies.isEmpty()) {
+        size_t totalHeaderSize = 0;
+        for (const auto& cookie : cookies)
+            totalHeaderSize += cookie.name.length() + cookie.value.length() + 1;
+        AUTHORIZATIONSESSION_RELEASE_LOG("complete: Setting %zu cookies with total header size ~%zu bytes in data store %p", cookies.size(), totalHeaderSize, page->protectedWebsiteDataStore().ptr());
+    }
+
     page->protectedWebsiteDataStore()->protectedCookieStore()->setCookies(WTFMove(cookies), [weakThis = ThreadSafeWeakPtr { *this }, response = WTFMove(response), data = adoptNS([[NSData alloc] initWithData:data])] () mutable {
         auto protectedThis = weakThis.get();
         if (!protectedThis)
@@ -382,7 +390,7 @@ void SOAuthorizationSession::presentViewController(SOAuthorizationViewController
 
     m_sheetWindow = [NSWindow windowWithContentViewController:m_viewController.get()];
 
-    m_sheetWindowWillCloseObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:m_sheetWindow.get() queue:nil usingBlock:[weakThis = ThreadSafeWeakPtr { *this }] (NSNotification *) {
+    m_sheetWindowWillCloseObserver = [[NSNotificationCenter defaultCenter] addObserverForName:RetainPtr { NSWindowWillCloseNotification }.get() object:m_sheetWindow.get() queue:nil usingBlock:[weakThis = ThreadSafeWeakPtr { *this }] (NSNotification *) {
         auto protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -466,7 +474,7 @@ void SOAuthorizationSession::dismissViewController()
                     AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: [Miniaturized] Already has a deminiaturized observer (%p). Hidden observer is %p", m_presentingWindowDidDeminiaturizeObserver.get(), m_applicationDidUnhideObserver.get());
                     return;
                 }
-                m_presentingWindowDidDeminiaturizeObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowDidDeminiaturizeNotification object:presentingWindow.get() queue:nil usingBlock:[protectedThis = Ref { *this }, this] (NSNotification *) {
+                m_presentingWindowDidDeminiaturizeObserver = [[NSNotificationCenter defaultCenter] addObserverForName:RetainPtr { NSWindowDidDeminiaturizeNotification }.get() object:presentingWindow.get() queue:nil usingBlock:[protectedThis = Ref { *this }, this] (NSNotification *) {
                     AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: Window has deminiaturized. Completing the dismissal.");
                     dismissViewController();
                     [[NSNotificationCenter defaultCenter] removeObserver:m_presentingWindowDidDeminiaturizeObserver.get()];
@@ -477,13 +485,15 @@ void SOAuthorizationSession::dismissViewController()
         }
     }
 
-    if (!m_isInDestructor && NSApp.hidden) {
+    // FIXME: This is a safer cpp false positive (rdar://problem/161068288).
+    SUPPRESS_UNRETAINED_ARG if (!m_isInDestructor && NSApp.hidden) {
         AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: Application is hidden. Waiting to dismiss until active.");
         if (m_applicationDidUnhideObserver) {
             AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: [Hidden] Already has an Unhide observer (%p). Deminiaturized observer is %p", m_presentingWindowDidDeminiaturizeObserver.get(), m_applicationDidUnhideObserver.get());
             return;
         }
-        m_applicationDidUnhideObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSApplicationDidUnhideNotification object:NSApp queue:nil usingBlock:[protectedThis = Ref { *this }, this] (NSNotification *) {
+        // FIXME: We should not need to protect NSApp here (rdar://problem/161068288).
+        m_applicationDidUnhideObserver = [[NSNotificationCenter defaultCenter] addObserverForName:RetainPtr { NSApplicationDidUnhideNotification }.get() object:RetainPtr { NSApp }.get() queue:nil usingBlock:[protectedThis = Ref { *this }, this] (NSNotification *) {
             AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: Application is no longer hidden. Completing the dismissal.");
             dismissViewController();
             [[NSNotificationCenter defaultCenter] removeObserver:m_applicationDidUnhideObserver.get()];

@@ -38,7 +38,6 @@ class RenderElement;
 class RenderObject;
 class RenderStyle;
 class LegacyRenderSVGRoot;
-class SVGRenderStyle;
 
 // Holds a set of resources associated with a RenderObject
 class SVGResources {

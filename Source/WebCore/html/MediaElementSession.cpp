@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,9 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DocumentFullscreen.h"
-#include "DocumentInlines.h"
 #include "DocumentLoader.h"
+#include "DocumentQuirks.h"
+#include "DocumentView.h"
 #include "ElementInlines.h"
 #include "HTMLAudioElement.h"
 #include "HTMLMediaElement.h"
@@ -51,7 +52,6 @@
 #include "NowPlayingInfo.h"
 #include "Page.h"
 #include "PlatformMediaSessionManager.h"
-#include "Quirks.h"
 #include "RenderMedia.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
@@ -170,7 +170,7 @@ public:
     }
 private:
     WeakPtr<MediaElementSession> m_session;
-    Ref<MediaSession> m_mediaSession;
+    const Ref<MediaSession> m_mediaSession;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaElementSessionObserver);
@@ -191,7 +191,7 @@ MediaElementSession::MediaElementSession(HTMLMediaElement& element)
 MediaElementSession::~MediaElementSession()
 {
 #if ENABLE(MEDIA_USAGE)
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return;
 
@@ -209,7 +209,7 @@ RefPtr<HTMLMediaElement> MediaElementSession::protectedElement() const
 void MediaElementSession::addMediaUsageManagerSessionIfNecessary()
 {
 #if ENABLE(MEDIA_USAGE)
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return;
 
@@ -237,6 +237,9 @@ void MediaElementSession::registerWithDocument(Document& document)
 
 void MediaElementSession::unregisterWithDocument(Document& document)
 {
+    if (RefPtr manager = sessionManager())
+        manager->removeSession(*this);
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     document.removePlaybackTargetPickerClient(*this);
 #else
@@ -289,7 +292,7 @@ void MediaElementSession::visibilityChanged()
 {
     scheduleClientDataBufferingCheck();
 
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return;
 
@@ -327,18 +330,19 @@ void MediaElementSession::isVisibleInViewportChanged()
 {
     scheduleClientDataBufferingCheck();
 
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element || element->isFullscreen() || element->isVisibleInViewport())
         m_elementIsHiddenUntilVisibleInViewport = false;
 
 #if PLATFORM(COCOA) && !HAVE(CGS_FIX_FOR_RADAR_97530095)
-    PlatformMediaSessionManager::singleton().scheduleSessionStatusUpdate();
+    if (RefPtr manager = sessionManager())
+        manager->scheduleSessionStatusUpdate();
 #endif
 }
 
 void MediaElementSession::inActiveDocumentChanged()
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     m_elementIsHiddenBecauseItWasRemovedFromDOM = !element || !element->inActiveDocument();
     scheduleClientDataBufferingCheck();
 }
@@ -351,7 +355,7 @@ void MediaElementSession::scheduleClientDataBufferingCheck()
 
 void MediaElementSession::clientDataBufferingTimerFired()
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return;
 
@@ -362,7 +366,11 @@ void MediaElementSession::clientDataBufferingTimerFired()
     if (state() != PlatformMediaSession::State::Playing || !element->elementIsHidden())
         return;
 
-    auto restrictions = PlatformMediaSessionManager::singleton().restrictions(mediaType());
+    RefPtr manager = sessionManager();
+    if (!manager)
+        return;
+
+    auto restrictions = manager->restrictions(mediaType());
     if ((restrictions & MediaSessionRestriction::BackgroundTabPlaybackRestricted) == MediaSessionRestriction::BackgroundTabPlaybackRestricted)
         pauseSession();
 }
@@ -372,11 +380,12 @@ void MediaElementSession::updateClientDataBuffering()
     if (m_clientDataBufferingTimer.isActive())
         m_clientDataBufferingTimer.stop();
 
-    if (RefPtr element = protectedElement())
+    if (RefPtr element = m_element.get())
         element->setBufferingPolicy(preferredBufferingPolicy());
 
 #if PLATFORM(IOS_FAMILY)
-    PlatformMediaSessionManager::singleton().configureWirelessTargetMonitoring();
+    if (RefPtr manager = sessionManager())
+        manager->configureWirelessTargetMonitoring();
 #endif
 }
 
@@ -393,7 +402,7 @@ void MediaElementSession::addBehaviorRestriction(BehaviorRestrictions restrictio
 
 void MediaElementSession::removeBehaviorRestriction(BehaviorRestrictions restriction)
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return;
 
@@ -412,7 +421,7 @@ void MediaElementSession::removeBehaviorRestriction(BehaviorRestrictions restric
 
 Expected<void, MediaPlaybackDenialReason> MediaElementSession::playbackStateChangePermitted(MediaPlaybackState state) const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
 
     INFO_LOG(LOGIDENTIFIER, "state = ", state);
     if (!element || element->isSuspended()) {
@@ -500,7 +509,7 @@ Expected<void, MediaPlaybackDenialReason> MediaElementSession::playbackStateChan
 
 bool MediaElementSession::autoplayPermitted() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return false;
 
@@ -539,7 +548,7 @@ bool MediaElementSession::autoplayPermitted() const
 
 bool MediaElementSession::dataLoadingPermitted() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return false;
 
@@ -556,7 +565,7 @@ bool MediaElementSession::dataLoadingPermitted() const
 
 MediaPlayer::BufferingPolicy MediaElementSession::preferredBufferingPolicy() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return MediaPlayer::BufferingPolicy::Default;
 
@@ -585,7 +594,7 @@ MediaPlayer::BufferingPolicy MediaElementSession::preferredBufferingPolicy() con
 
 bool MediaElementSession::fullscreenPermitted() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return false;
 
@@ -599,7 +608,7 @@ bool MediaElementSession::fullscreenPermitted() const
 
 bool MediaElementSession::pageAllowsDataLoading() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return false;
 
@@ -614,7 +623,7 @@ bool MediaElementSession::pageAllowsDataLoading() const
 
 bool MediaElementSession::pageAllowsPlaybackAfterResuming() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return false;
 
@@ -629,7 +638,7 @@ bool MediaElementSession::pageAllowsPlaybackAfterResuming() const
 
 bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose) const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return false;
 
@@ -663,10 +672,12 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
         return true;
     }
 
+    RefPtr manager = sessionManager();
+    bool registeredAsNowPlayingApplication = manager && manager->registeredAsNowPlayingApplication();
     if (client().presentationType() == MediaType::Audio && purpose == PlaybackControlsPurpose::NowPlaying) {
         if (!element->hasSource()
             || element->error()
-            || (!isLongEnoughForMainContent() && !PlatformMediaSessionManager::singleton().registeredAsNowPlayingApplication())) {
+            || (!isLongEnoughForMainContent() && !registeredAsNowPlayingApplication)) {
             INFO_LOG(LOGIDENTIFIER, "returning FALSE: audio too short for NowPlaying");
             return false;
         }
@@ -757,7 +768,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
 
 bool MediaElementSession::isLargeEnoughForMainContent(MediaSessionMainContentPurpose purpose) const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return false;
 
@@ -766,7 +777,7 @@ bool MediaElementSession::isLargeEnoughForMainContent(MediaSessionMainContentPur
 
 bool MediaElementSession::isLongEnoughForMainContent() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return false;
 
@@ -775,7 +786,7 @@ bool MediaElementSession::isLongEnoughForMainContent() const
 
 bool MediaElementSession::isMainContentForPurposesOfAutoplayEvents() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return false;
 
@@ -794,7 +805,7 @@ bool MediaElementSession::wantsToObserveViewportVisibilityForMediaControls() con
 
 bool MediaElementSession::wantsToObserveViewportVisibilityForAutoplay() const
 {
-    if (RefPtr element = protectedElement())
+    if (RefPtr element = m_element.get())
         return element->isVideo();
     return false;
 }
@@ -804,7 +815,7 @@ void MediaElementSession::showPlaybackTargetPicker()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return;
 
@@ -826,7 +837,7 @@ void MediaElementSession::showPlaybackTargetPicker()
     }
 #endif
 
-    auto& audioSession = AudioSession::sharedSession();
+    auto& audioSession = AudioSession::singleton();
     document->showPlaybackTargetPicker(*this, is<HTMLVideoElement>(m_element), audioSession.routeSharingPolicy(), audioSession.routingContextUID());
 }
 
@@ -839,7 +850,7 @@ bool MediaElementSession::hasWirelessPlaybackTargets() const
 
 bool MediaElementSession::wirelessVideoPlaybackDisabled() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return true;
 
@@ -887,7 +898,7 @@ void MediaElementSession::setWirelessVideoPlaybackDisabled(bool disabled)
     else
         removeBehaviorRestriction(WirelessVideoPlaybackDisabled);
 
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return;
 
@@ -905,10 +916,11 @@ void MediaElementSession::setHasPlaybackTargetAvailabilityListeners(bool hasList
 
 #if PLATFORM(IOS_FAMILY)
     m_hasPlaybackTargetAvailabilityListeners = hasListeners;
-    PlatformMediaSessionManager::singleton().configureWirelessTargetMonitoring();
+    if (RefPtr manager = sessionManager())
+        manager->configureWirelessTargetMonitoring();
 #else
     UNUSED_PARAM(hasListeners);
-    if (RefPtr element = protectedElement())
+    if (RefPtr element = m_element.get())
         element->document().playbackTargetPickerClientStateDidChange(*this, element->mediaState());
 #endif
 }
@@ -961,13 +973,13 @@ void MediaElementSession::playbackTargetPickerWasDismissed()
 
 void MediaElementSession::audioSessionCategoryChanged(AudioSessionCategory category, AudioSessionMode mode, RouteSharingPolicy policy)
 {
-    if (RefPtr element = protectedElement())
+    if (RefPtr element = m_element.get())
         element->audioSessionCategoryChanged(category, mode, policy);
 }
 
 void MediaElementSession::mediaStateDidChange(MediaProducerMediaStateFlags state)
 {
-    if (RefPtr element = protectedElement())
+    if (RefPtr element = m_element.get())
         element->document().playbackTargetPickerClientStateDidChange(*this, state);
 }
 #endif
@@ -975,7 +987,7 @@ void MediaElementSession::mediaStateDidChange(MediaProducerMediaStateFlags state
 MediaPlayer::Preload MediaElementSession::effectivePreloadForElement() const
 {
     MediaPlayer::Preload preload = [&] {
-        RefPtr element = protectedElement();
+        RefPtr element = m_element.get();
         if (!element)
             return MediaPlayer::Preload::None;
 
@@ -999,7 +1011,7 @@ MediaPlayer::Preload MediaElementSession::effectivePreloadForElement() const
 
 bool MediaElementSession::requiresFullscreenForVideoPlayback() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return false;
 
@@ -1033,7 +1045,7 @@ bool MediaElementSession::requiresFullscreenForVideoPlayback() const
         return false;
 
 #if PLATFORM(IOS_FAMILY)
-    if (WTF::CocoaApplication::isIBooks())
+    if (WTF::CocoaApplication::isAppleBooks())
         return !element->hasAttributeWithoutSynchronization(HTMLNames::webkit_playsinlineAttr) && !element->hasAttributeWithoutSynchronization(HTMLNames::playsinlineAttr);
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::UnprefixedPlaysInlineAttribute))
         return !element->hasAttributeWithoutSynchronization(HTMLNames::webkit_playsinlineAttr);
@@ -1047,7 +1059,7 @@ bool MediaElementSession::requiresFullscreenForVideoPlayback() const
 
 bool MediaElementSession::allowsAutomaticMediaDataLoading() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return false;
 
@@ -1083,17 +1095,19 @@ void MediaElementSession::resetPlaybackSessionState()
 
 void MediaElementSession::suspendBuffering()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     updateClientDataBuffering();
 }
 
 void MediaElementSession::resumeBuffering()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     updateClientDataBuffering();
 }
 
 bool MediaElementSession::bufferingSuspended() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return true;
 
@@ -1104,7 +1118,7 @@ bool MediaElementSession::bufferingSuspended() const
 
 bool MediaElementSession::allowsPictureInPicture() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (element)
         return element->document().settings().allowsPictureInPictureMediaPlayback();
     return false;
@@ -1113,7 +1127,7 @@ bool MediaElementSession::allowsPictureInPicture() const
 #if PLATFORM(IOS_FAMILY)
 bool MediaElementSession::requiresPlaybackTargetRouteMonitoring() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (element)
         return m_hasPlaybackTargetAvailabilityListeners && !element->elementIsHidden();
     return false;
@@ -1265,7 +1279,7 @@ void MediaElementSession::mainContentCheckTimerFired()
 
 bool MediaElementSession::updateIsMainContent() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return false;
 
@@ -1283,7 +1297,7 @@ bool MediaElementSession::updateIsMainContent() const
 
 bool MediaElementSession::allowsPlaybackControlsForAutoplayingAudio() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return false;
 
@@ -1337,7 +1351,7 @@ static bool processRemoteControlCommandIfPlayingMediaStreams(Document& document,
 
 void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandType commandType, const RemoteCommandArgument& argument)
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return;
 
@@ -1411,7 +1425,7 @@ void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandTyp
 
 bool MediaElementSession::hasNowPlayingInfo() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return false;
 
@@ -1434,7 +1448,7 @@ std::optional<NowPlayingInfo> MediaElementSession::computeNowPlayingInfo() const
     if (!hasNowPlayingInfo())
         return { };
 
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return { };
 
@@ -1493,7 +1507,7 @@ std::optional<NowPlayingInfo> MediaElementSession::computeNowPlayingInfo() const
 
 void MediaElementSession::updateMediaUsageIfChanged()
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return;
 
@@ -1588,11 +1602,11 @@ String convertEnumerationToString(const MediaPlaybackDenialReason enumerationVal
 MediaSession* MediaElementSession::mediaSession() const
 {
 #if ENABLE(MEDIA_SESSION)
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return nullptr;
 
-    auto* window = element->document().domWindow();
+    auto* window = element->document().window();
     if (!window)
         return nullptr;
     return &NavigatorMediaSession::mediaSession(window->protectedNavigator());
@@ -1633,7 +1647,7 @@ void MediaElementSession::actionHandlersChanged()
 void MediaElementSession::clientCharacteristicsChanged(bool positionChanged)
 {
 #if ENABLE(MEDIA_SESSION)
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     auto* session = mediaSession();
     if (element && positionChanged && session) {
         auto positionState = session->positionState();
@@ -1667,7 +1681,7 @@ String MediaElementSession::descriptionForTrack(const VideoTrack& track)
 
 String MediaElementSession::description() const
 {
-    RefPtr element = protectedElement();
+    RefPtr element = m_element.get();
     if (!element)
         return "null"_s;
 

@@ -6,6 +6,10 @@
 
 // WaylandWindow.cpp: Implementation of OSWindow for Wayland
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "util/linux/wayland/WaylandWindow.h"
 #include <cerrno>
 #include <cstring>

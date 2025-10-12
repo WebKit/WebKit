@@ -31,7 +31,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 @class WKWebExtension;
 
 /*! @abstract Indicates a ``WKWebExtensionMatchPattern`` error. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
 WK_EXTERN NSErrorDomain const WKWebExtensionMatchPatternErrorDomain NS_SWIFT_NAME(WKWebExtensionMatchPattern.errorDomain) NS_SWIFT_NONISOLATED;
 
 /*!
@@ -46,7 +46,7 @@ typedef NS_ERROR_ENUM(WKWebExtensionMatchPatternErrorDomain, WKWebExtensionMatch
     WKWebExtensionMatchPatternErrorInvalidScheme,
     WKWebExtensionMatchPatternErrorInvalidHost,
     WKWebExtensionMatchPatternErrorInvalidPath,
-} NS_SWIFT_NAME(WKWebExtensionMatchPattern.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+} NS_SWIFT_NAME(WKWebExtensionMatchPattern.Error) WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 
 /*!
  @abstract Constants used by ``WKWebExtensionMatchPattern`` to indicate matching options.
@@ -60,14 +60,14 @@ typedef NS_OPTIONS(NSUInteger, WKWebExtensionMatchPatternOptions) {
     WKWebExtensionMatchPatternOptionsIgnoreSchemes        = 1 << 0,
     WKWebExtensionMatchPatternOptionsIgnorePaths          = 1 << 1,
     WKWebExtensionMatchPatternOptionsMatchBidirectionally = 1 << 2,
-} NS_SWIFT_NAME(WKWebExtensionMatchPattern.Options) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+} NS_SWIFT_NAME(WKWebExtensionMatchPattern.Options) WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 
 /*!
  @abstract A ``WKWebExtensionMatchPattern`` object represents a way to specify groups of URLs.
  @discussion All match patterns are specified as strings. Apart from the special `<all_urls>` pattern, match patterns
  consist of three parts: scheme, host, and path.
  */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_CLASS_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
 WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.MatchPattern)
 @interface WKWebExtensionMatchPattern : NSObject <NSSecureCoding, NSCopying>
 

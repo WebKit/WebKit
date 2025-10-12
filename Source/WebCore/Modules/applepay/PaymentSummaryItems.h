@@ -44,15 +44,15 @@ namespace WebCore {
 struct ApplePayLineItem;
 
 #if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
-WEBCORE_EXPORT PKRecurringPaymentSummaryItem *platformRecurringSummaryItem(const ApplePayLineItem&);
+WEBCORE_EXPORT RetainPtr<PKRecurringPaymentSummaryItem> platformRecurringSummaryItem(const ApplePayLineItem&);
 #endif
 
 #if HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
-WEBCORE_EXPORT PKDeferredPaymentSummaryItem *platformDeferredSummaryItem(const ApplePayLineItem&);
+WEBCORE_EXPORT RetainPtr<PKDeferredPaymentSummaryItem> platformDeferredSummaryItem(const ApplePayLineItem&);
 #endif
 
 #if HAVE(PASSKIT_AUTOMATIC_RELOAD_SUMMARY_ITEM)
-WEBCORE_EXPORT PKAutomaticReloadPaymentSummaryItem *platformAutomaticReloadSummaryItem(const ApplePayLineItem&);
+WEBCORE_EXPORT RetainPtr<PKAutomaticReloadPaymentSummaryItem> platformAutomaticReloadSummaryItem(const ApplePayLineItem&);
 #endif
 
 #if HAVE(PASSKIT_DISBURSEMENTS)
@@ -60,11 +60,12 @@ WEBCORE_EXPORT PKDisbursementSummaryItem *platformDisbursementSummaryItem(const 
 WEBCORE_EXPORT PKInstantFundsOutFeeSummaryItem *platformInstantFundsOutFeeSummaryItem(const ApplePayLineItem&);
 #endif // HAVE(PASSKIT_DISBURSEMENTS)
 
-WEBCORE_EXPORT PKPaymentSummaryItem *platformSummaryItem(const ApplePayLineItem&);
-WEBCORE_EXPORT NSArray *platformDisbursementSummaryItems(const Vector<ApplePayLineItem>&);
-WEBCORE_EXPORT NSArray *platformSummaryItems(const ApplePayLineItem& total, const Vector<ApplePayLineItem>&);
+WEBCORE_EXPORT RetainPtr<PKPaymentSummaryItem> platformSummaryItem(const ApplePayLineItem&);
+WEBCORE_EXPORT RetainPtr<NSArray> platformDisbursementSummaryItems(const Vector<ApplePayLineItem>&);
+WEBCORE_EXPORT RetainPtr<NSArray> platformSummaryItems(const ApplePayLineItem& total, const Vector<ApplePayLineItem>&);
 
 WEBCORE_EXPORT NSDecimalNumber *toDecimalNumber(const String& amount);
+WEBCORE_EXPORT RetainPtr<NSDecimalNumber> toProtectedDecimalNumber(const String& amount);
 
 } // namespace WebCore
 

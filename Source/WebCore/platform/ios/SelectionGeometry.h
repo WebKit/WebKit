@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "FloatQuad.h"
-#include "IntRect.h"
-#include "WritingMode.h"
+#include <WebCore/FloatQuad.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/WritingMode.h>
 #include <optional>
 #include <wtf/TZoneMalloc.h>
 

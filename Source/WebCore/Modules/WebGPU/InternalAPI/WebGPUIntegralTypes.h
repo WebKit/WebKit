@@ -42,4 +42,6 @@ using SignedOffset32 = int32_t;
 
 using FlagsConstant = uint32_t;
 
+constexpr uint32_t kQuerySetIndexUndefined = 0xffffffffUL;
+
 } // namespace WebCore::WebGPU

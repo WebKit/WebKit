@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "JSCast.h"
-#include "Operations.h"
-#include "PropertyNameArray.h"
-#include "ResourceExhaustion.h"
-#include "StructureChain.h"
+#include <JavaScriptCore/JSCast.h>
+#include <JavaScriptCore/Operations.h>
+#include <JavaScriptCore/PropertyNameArray.h>
+#include <JavaScriptCore/ResourceExhaustion.h>
+#include <JavaScriptCore/StructureChain.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

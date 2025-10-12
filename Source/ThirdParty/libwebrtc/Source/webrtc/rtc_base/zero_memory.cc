@@ -11,13 +11,13 @@
 #if defined(WEBRTC_WIN)
 #include <windows.h>
 #else
-#include <string.h>
+#include <cstring>
 #endif
 
 #include "rtc_base/checks.h"
 #include "rtc_base/zero_memory.h"
 
-namespace rtc {
+namespace webrtc {
 
 // Code and comment taken from "OPENSSL_cleanse" of BoringSSL.
 void ExplicitZeroMemory(void* ptr, size_t len) {
@@ -35,4 +35,4 @@ void ExplicitZeroMemory(void* ptr, size_t len) {
 #endif  // !WEBRTC_WIN
 }
 
-}  // namespace rtc
+}  // namespace webrtc

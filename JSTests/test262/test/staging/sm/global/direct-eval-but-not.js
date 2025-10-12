@@ -4,24 +4,13 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
 flags:
   - noStrict
 description: |
-  pending
+  Don't crash doing a direct eval when eval doesn't resolve to an object (let alone the original eval function)
+info: bugzilla.mozilla.org/show_bug.cgi?id=609256
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 609256;
-var summary =
-  "Don't crash doing a direct eval when eval doesn't resolve to an object " +
-  "(let alone the original eval function)";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 var eval = "";
 try
@@ -33,7 +22,3 @@ catch (e)
 {
   assert.sameValue(e instanceof TypeError, true);
 }
-
-/******************************************************************************/
-
-print("All tests passed!");

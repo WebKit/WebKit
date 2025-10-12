@@ -26,7 +26,7 @@
 #ifndef JSWeakObjectMapRefInternal_h
 #define JSWeakObjectMapRefInternal_h
 
-#include "WeakGCMap.h"
+#include <JavaScriptCore/WeakGCMap.h>
 #include <wtf/RefCounted.h>
 
 namespace JSC {

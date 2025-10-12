@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "FloatRect.h"
-#include "Path.h"
-#include "StyleValueTypes.h"
+#include <WebCore/FloatRect.h>
+#include <WebCore/Path.h>
+#include <WebCore/StyleValueTypes.h>
 
 namespace WebCore {
 namespace Style {
@@ -39,16 +39,19 @@ namespace Style {
 
 template<typename StyleType> struct PathComputation;
 
-template<typename StyleType> WebCore::Path path(const StyleType& value, const FloatRect& referenceBox)
-{
-    return PathComputation<StyleType>{}(value, referenceBox);
-}
+struct PathComputationInvoker {
+    template<typename StyleType, typename Reference> WebCore::Path operator()(const StyleType& value, const Reference& reference) const
+    {
+        return PathComputation<StyleType>{}(value, reference);
+    }
+};
+inline constexpr PathComputationInvoker path{};
 
 // Specialization for `FunctionNotation`.
 template<CSSValueID Name, typename StyleType> struct PathComputation<FunctionNotation<Name, StyleType>> {
-    WebCore::Path operator()(const FunctionNotation<Name, StyleType>& value, const FloatRect& referenceBox)
+    template<typename Reference> WebCore::Path operator()(const FunctionNotation<Name, StyleType>& value, const Reference& reference)
     {
-        return WebCore::Style::path(value.parameters, referenceBox);
+        return WebCore::Style::path(value.parameters, reference);
     }
 };
 

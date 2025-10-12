@@ -28,23 +28,23 @@
 messages -> WebSWServerToContextConnection {
     # When possible, these messages can be implemented directly by WebCore::SWServerToContextConnection
 
-    ScriptContextFailedToStart(struct std::optional<WebCore::ServiceWorkerJobDataIdentifier> jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, String message)
-    ScriptContextStarted(struct std::optional<WebCore::ServiceWorkerJobDataIdentifier> jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, bool doesHandleFetch)
-    DidFinishInstall(struct std::optional<WebCore::ServiceWorkerJobDataIdentifier> jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful)
-    DidFinishActivation(WebCore::ServiceWorkerIdentifier identifier)
-    SetServiceWorkerHasPendingEvents(WebCore::ServiceWorkerIdentifier identifier, bool hasPendingEvents)
-    SkipWaiting(WebCore::ServiceWorkerIdentifier identifier) -> ()
-    WorkerTerminated(WebCore::ServiceWorkerIdentifier identifier)
-    FindClientByVisibleIdentifier(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, String clientIdentifier) -> (struct std::optional<WebCore::ServiceWorkerClientData> data)
-    MatchAll(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, struct WebCore::ServiceWorkerClientQueryOptions options) -> (Vector<WebCore::ServiceWorkerClientData> clientsData);
-    Claim(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier) -> (struct std::optional<WebCore::ExceptionData> result)
-    Focus(WebCore::ScriptExecutionContextIdentifier serviceWorkerClientIdentifier) -> (struct std::optional<WebCore::ServiceWorkerClientData> result)
-    Navigate(WebCore::ScriptExecutionContextIdentifier clientIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, URL url) -> (Expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData> result)
-    SetScriptResource(WebCore::ServiceWorkerIdentifier identifier, URL scriptURL, struct WebCore::ServiceWorkerImportedScript script)
-    PostMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerIdentifier source, String sourceOrigin)
-    DidFailHeartBeatCheck(WebCore::ServiceWorkerIdentifier identifier)
-    SetAsInspected(WebCore::ServiceWorkerIdentifier identifier, bool isInspected)
+    [EnabledBy=ServiceWorkersEnabled] ScriptContextFailedToStart(struct std::optional<WebCore::ServiceWorkerJobDataIdentifier> jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, String message)
+    [EnabledBy=ServiceWorkersEnabled] ScriptContextStarted(struct std::optional<WebCore::ServiceWorkerJobDataIdentifier> jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, bool doesHandleFetch)
+    [EnabledBy=ServiceWorkersEnabled] DidFinishInstall(struct std::optional<WebCore::ServiceWorkerJobDataIdentifier> jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful)
+    [EnabledBy=ServiceWorkersEnabled] DidFinishActivation(WebCore::ServiceWorkerIdentifier identifier)
+    [EnabledBy=ServiceWorkersEnabled] SetServiceWorkerHasPendingEvents(WebCore::ServiceWorkerIdentifier identifier, bool hasPendingEvents)
+    [EnabledBy=ServiceWorkersEnabled] SkipWaiting(WebCore::ServiceWorkerIdentifier identifier) -> ()
+    [EnabledBy=ServiceWorkersEnabled] WorkerTerminated(WebCore::ServiceWorkerIdentifier identifier)
+    [EnabledBy=ServiceWorkersEnabled] FindClientByVisibleIdentifier(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, String clientIdentifier) -> (struct std::optional<WebCore::ServiceWorkerClientData> data)
+    [EnabledBy=ServiceWorkersEnabled] MatchAll(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, struct WebCore::ServiceWorkerClientQueryOptions options) -> (Vector<WebCore::ServiceWorkerClientData> clientsData);
+    [EnabledBy=ServiceWorkersEnabled] Claim(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier) -> (struct std::optional<WebCore::ExceptionData> result)
+    [EnabledBy=ServiceWorkersEnabled] Focus(WebCore::ScriptExecutionContextIdentifier serviceWorkerClientIdentifier) -> (struct std::optional<WebCore::ServiceWorkerClientData> result)
+    [EnabledBy=ServiceWorkersEnabled] Navigate(WebCore::ScriptExecutionContextIdentifier clientIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, URL url) -> (Expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData> result)
+    [EnabledBy=ServiceWorkersEnabled] SetScriptResource(WebCore::ServiceWorkerIdentifier identifier, URL scriptURL, struct WebCore::ServiceWorkerImportedScript script)
+    [EnabledBy=ServiceWorkersEnabled] PostMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerIdentifier source, String sourceOrigin)
+    [EnabledBy=ServiceWorkersEnabled] DidFailHeartBeatCheck(WebCore::ServiceWorkerIdentifier identifier)
+    [EnabledBy=ServiceWorkersEnabled] SetAsInspected(WebCore::ServiceWorkerIdentifier identifier, bool isInspected)
 
-    OpenWindow(WebCore::ServiceWorkerIdentifier identifier, URL url) -> (Expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData> newClientData)
-    ReportConsoleMessage(WebCore::ServiceWorkerIdentifier identifier, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message, unsigned long requestIdentifier);
+    [EnabledBy=ServiceWorkersEnabled] OpenWindow(WebCore::ServiceWorkerIdentifier identifier, URL url) -> (Expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData> newClientData)
+    [EnabledBy=ServiceWorkersEnabled] ReportConsoleMessage(WebCore::ServiceWorkerIdentifier identifier, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message, uint64_t requestIdentifier);
 }

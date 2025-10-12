@@ -11,21 +11,20 @@
 #ifndef TEST_PC_E2E_ANALYZER_VIDEO_VIDEO_DUMPING_H_
 #define TEST_PC_E2E_ANALYZER_VIDEO_VIDEO_DUMPING_H_
 
+#include <cstdint>
 #include <memory>
-#include <string>
 
 #include "absl/strings/string_view.h"
 #include "api/test/video/video_frame_writer.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_sink_interface.h"
-#include "test/testsupport/video_frame_writer.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
 
 // `VideoSinkInterface` to dump incoming video frames into specified video
 // writer.
-class VideoWriter final : public rtc::VideoSinkInterface<VideoFrame> {
+class VideoWriter final : public VideoSinkInterface<VideoFrame> {
  public:
   // Creates video writer. Caller keeps ownership of `video_writer` and is
   // responsible for closing it after VideoWriter will be destroyed.

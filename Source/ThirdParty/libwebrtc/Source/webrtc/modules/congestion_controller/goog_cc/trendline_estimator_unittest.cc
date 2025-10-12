@@ -16,8 +16,8 @@
 #include <vector>
 
 #include "api/transport/bandwidth_usage.h"
-#include "api/transport/field_trial_based_config.h"
 #include "rtc_base/checks.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -45,8 +45,7 @@ class TrendlineEstimatorTest : public testing::Test {
       : send_times(kPacketCount),
         recv_times(kPacketCount),
         packet_sizes(kPacketCount),
-        config(),
-        estimator(&config, nullptr),
+        estimator(CreateTestFieldTrials(), nullptr),
         count(1) {
     std::fill(packet_sizes.begin(), packet_sizes.end(), kPacketSizeBytes);
   }
@@ -76,7 +75,6 @@ class TrendlineEstimatorTest : public testing::Test {
   std::vector<int64_t> send_times;
   std::vector<int64_t> recv_times;
   std::vector<size_t> packet_sizes;
-  const FieldTrialBasedConfig config;
   TrendlineEstimator estimator;
   size_t count;
 };

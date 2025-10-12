@@ -43,7 +43,7 @@
 #import <wtf/ObjCRuntimeExtras.h>
 
 extern "C" const char *_protocol_getMethodTypeEncoding(Protocol *p, SEL sel, BOOL isRequiredMethod, BOOL isInstanceMethod);
-extern "C" id __NSMakeSpecialForwardingCaptureBlock(const char *signature, void (^handler)(NSInvocation *inv));
+extern "C" id __NSMakeSpecialForwardingCaptureBlock(const char *signature, void (^handler)(NSInvocation *inv)) NS_RETURNS_RETAINED; // FIXME(rdar://162217343): Despite the name, __NSMakeSpecialForwardingCaptureBlock returns +1
 
 static const void* replyBlockKey = &replyBlockKey;
 
@@ -258,7 +258,6 @@ static NSString *replyBlockSignature(Protocol *protocol, SEL selector, NSUIntege
 
         if (!WebKit::methodSignaturesAreCompatible(wireBlockSignature.get(), expectedBlockSignature.get())) {
             NSLog(@"_invokeMethod: Failed to validate reply block signature: %@ != %@", wireBlockSignature.get(), expectedBlockSignature.get());
-            ASSERT_NOT_REACHED();
             return;
         }
 

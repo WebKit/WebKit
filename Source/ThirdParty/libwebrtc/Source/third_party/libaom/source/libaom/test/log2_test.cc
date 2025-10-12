@@ -13,7 +13,6 @@
 #include <math.h>
 
 #include "aom_ports/bitops.h"
-#include "av1/common/entropymode.h"
 #include "gtest/gtest.h"
 
 TEST(Log2Test, GetMsb) {
@@ -31,21 +30,21 @@ TEST(Log2Test, GetMsb) {
   }
 }
 
-TEST(Log2Test, Av1CeilLog2) {
+TEST(Log2Test, AomCeilLog2) {
   // Test small numbers exhaustively.
-  EXPECT_EQ(av1_ceil_log2(0), 0);
+  EXPECT_EQ(aom_ceil_log2(0), 0);
   for (int n = 1; n < 10000; n++) {
-    EXPECT_EQ(av1_ceil_log2(n), static_cast<int>(ceil(log2(n))));
+    EXPECT_EQ(aom_ceil_log2(n), static_cast<int>(ceil(log2(n))));
   }
 
   // Test every power of 2 and the two adjacent numbers.
   for (int exponent = 2; exponent < 31; exponent++) {
     const int power_of_2 = 1 << exponent;
-    EXPECT_EQ(av1_ceil_log2(power_of_2 - 1), exponent);
-    EXPECT_EQ(av1_ceil_log2(power_of_2), exponent);
-    EXPECT_EQ(av1_ceil_log2(power_of_2 + 1), exponent + 1);
+    EXPECT_EQ(aom_ceil_log2(power_of_2 - 1), exponent);
+    EXPECT_EQ(aom_ceil_log2(power_of_2), exponent);
+    EXPECT_EQ(aom_ceil_log2(power_of_2 + 1), exponent + 1);
   }
 
   // INT_MAX = 2^31 - 1
-  EXPECT_EQ(av1_ceil_log2(INT_MAX), 31);
+  EXPECT_EQ(aom_ceil_log2(INT_MAX), 31);
 }

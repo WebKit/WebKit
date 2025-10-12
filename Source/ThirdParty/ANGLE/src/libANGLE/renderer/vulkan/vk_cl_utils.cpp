@@ -15,6 +15,29 @@ namespace rx
 namespace cl_vk
 {
 
+// Give two cl::BufferRect regions, calculate a series of the buffer copy regions that can be used
+// in vulkan copy buffer command.
+std::vector<VkBufferCopy> CalculateRectCopyRegions(const cl::BufferRect &srcRect,
+                                                   const cl::BufferRect &dstRect)
+{
+    // For copying the buffer rect region should be the same
+    ASSERT(srcRect.getExtents() == dstRect.getExtents());
+    std::vector<VkBufferCopy> copyRegions;
+
+    for (size_t slice = 0; slice < srcRect.mSize.depth; slice++)
+    {
+        for (size_t row = 0; row < srcRect.mSize.height; row++)
+        {
+            VkBufferCopy copyRegion = {};
+            copyRegion.size         = srcRect.mSize.width * srcRect.mElementSize;
+            copyRegion.srcOffset    = srcRect.getRowOffset(slice, row);
+            copyRegion.dstOffset    = dstRect.getRowOffset(slice, row);
+            copyRegions.push_back(copyRegion);
+        }
+    }
+    return copyRegions;
+}
+
 VkExtent3D GetExtent(const cl::Extents &extent)
 {
     VkExtent3D vkExtent{};

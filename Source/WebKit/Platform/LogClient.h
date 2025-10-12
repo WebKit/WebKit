@@ -26,30 +26,31 @@
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 
 #include "Connection.h"
-#include "LogStream.h"
 #include "LogStreamIdentifier.h"
 #include "LogStreamMessages.h"
 #include "StreamClientConnection.h"
-#include <WebCore/LogClient.h>
-#include <wtf/Lock.h>
-
-#if __has_include("WebCoreLogDefinitions.h")
-#include "WebCoreLogDefinitions.h"
-#endif
-#if __has_include("WebKitLogDefinitions.h")
 #include "WebKitLogDefinitions.h"
-#endif
+#include <WebCore/LogClient.h>
+#include <WebCore/WebCoreLogDefinitions.h>
+#include <wtf/Identified.h>
+#include <wtf/Lock.h>
+#include <wtf/Locker.h>
 
 namespace WebKit {
 
-class LogClient final : public WebCore::LogClient {
-    WTF_MAKE_FAST_ALLOCATED;
+// Type which is captures WebKit and platform log calls and forwards log messages to another process.
+// The messages are found from generated LogStream.messages.in in build directory,
+// DerivedSources/WebKit/LogStream.messages.in.
+class LogClient final : public WebCore::LogClient, public Identified<LogStreamIdentifier> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LogClient);
 public:
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-    LogClient(IPC::StreamClientConnection&, const LogStreamIdentifier&);
+    using ConnectionType = IPC::StreamClientConnection;
 #else
-    LogClient(IPC::Connection&, const LogStreamIdentifier&);
+    using ConnectionType = IPC::Connection;
 #endif
+
+    LogClient(Ref<ConnectionType>&&);
 
     void log(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, os_log_type_t) final;
 
@@ -63,20 +64,29 @@ public:
 
 private:
     bool isWebKitLogClient() const final { return true; }
+    template<typename T>
+    void send(T&& message);
 
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-    const Ref<IPC::StreamClientConnection> m_logStreamConnection WTF_GUARDED_BY_LOCK(m_logStreamLock);
+    const Ref<IPC::StreamClientConnection> m_connection WTF_GUARDED_BY_LOCK(m_lock);
 #if ENABLE(UNFAIR_LOCK)
-    UnfairLock m_logStreamLock;
+    UnfairLock m_lock;
 #else
-    Lock m_logStreamLock;
+    Lock m_lock;
 #endif // ENABLE(UNFAIR_LOCK)
 #else
-    ThreadSafeWeakPtr<IPC::Connection> m_logConnection;
+    const Ref<IPC::Connection> m_connection;
 #endif
-
-    LogStreamIdentifier m_logStreamIdentifier;
 };
+
+template<typename T>
+void LogClient::send(T&& message)
+{
+#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+    Locker locker { m_lock };
+#endif
+    m_connection->send(WTFMove(message), identifier());
+}
 
 }
 

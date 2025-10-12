@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Assertions.h>
+#include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RawPtrTraits.h>
@@ -68,6 +69,7 @@ template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTrai
 
 template<typename T, typename _PtrTraits, typename RefDerefTraits>
 class Ref {
+    WTF_FORBID_HEAP_ALLOCATION_ALLOWING_PLACEMENT_NEW;
 public:
     using PtrTraits = _PtrTraits;
     static constexpr bool isRef = true;
@@ -327,8 +329,15 @@ inline RefPtr<match_constness_t<Source, Target>> dynamicDowncast(Ref<Source, Ptr
     return static_reference_cast<match_constness_t<Source, Target>>(WTFMove(source));
 }
 
+template<typename T, typename PtrTraits, typename RefDerefTraits>
+inline bool arePointingToEqualData(const Ref<T, PtrTraits, RefDerefTraits>& a, const Ref<T, PtrTraits, RefDerefTraits>& b)
+{
+    return a.ptr() == b.ptr() || a.get() == b.get();
+}
+
 } // namespace WTF
 
 using WTF::Ref;
 using WTF::adoptRef;
+using WTF::arePointingToEqualData;
 using WTF::static_reference_cast;

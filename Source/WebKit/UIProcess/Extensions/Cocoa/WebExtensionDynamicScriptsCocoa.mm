@@ -89,14 +89,14 @@ static NSArray *getFrames(_WKFrameTreeNode *currentNode, const WebExtensionScrip
 
 std::optional<SourcePair> sourcePairForResource(const String& path, WebExtensionContext& extensionContext)
 {
-    RefPtr<API::Error> error;
     Ref extension = extensionContext.extension();
-    auto scriptString = extension->resourceStringForPath(path, error, WebExtension::CacheResult::Yes);
-    if (!scriptString || error) {
-        extensionContext.recordError(wrapper(error));
+    auto scriptStringResult = extension->resourceStringForPath(path, WebExtension::CacheResult::Yes);
+    if (!scriptStringResult) {
+        extensionContext.recordErrorIfNeeded(scriptStringResult.error());
         return std::nullopt;
     }
 
+    auto scriptString = scriptStringResult.value();
     scriptString = extensionContext.localizedResourceString(scriptString, extension->resourceMIMETypeForPath(path));
 
     return SourcePair { scriptString, { extensionContext.baseURL(), path } };

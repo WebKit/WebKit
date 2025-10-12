@@ -2,8 +2,9 @@ This test ensures that adding a child to a slider that has lost its renderer dyn
 
 Initial #slider role: AXRole: AXSlider
 Initial #slider children count: 1
+PASS: slider.isIgnored === true
 
-Final #slider role: AXRole:
+Final #slider role: AXRole: AXSlider
 Final #slider children count: 0
 
 PASS successfullyParsed is true

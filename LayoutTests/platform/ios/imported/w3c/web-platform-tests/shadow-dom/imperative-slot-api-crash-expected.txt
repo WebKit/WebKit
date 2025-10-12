@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: slot1.assign is not a function. (In 'slot1.assign([child1])', 'slot1.assign' is undefined)
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x36

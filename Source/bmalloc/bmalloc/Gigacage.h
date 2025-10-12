@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,7 +62,11 @@ BINLINE const char* name(Kind kind)
     return nullptr;
 }
 
+#if BPLATFORM(IOS_FAMILY)
+constexpr bool hasCapacityToUseLargeGigacage = false;
+#else
 constexpr bool hasCapacityToUseLargeGigacage = BOS_EFFECTIVE_ADDRESS_WIDTH > 36;
+#endif
 
 #if GIGACAGE_ENABLED
 

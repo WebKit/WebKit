@@ -10,10 +10,3 @@ list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/remote/glib/RemoteInspectorServer.h
     inspector/remote/glib/RemoteInspectorUtils.h
 )
-
-list(APPEND JavaScriptCore_LIBRARIES
-    ${GLIB_LIBRARIES}
-)
-list(APPEND JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
-    ${GLIB_INCLUDE_DIRS}
-)

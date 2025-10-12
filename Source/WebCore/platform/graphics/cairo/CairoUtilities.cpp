@@ -73,8 +73,8 @@ void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr)
     Vector<double> dashes(dashCount);
 
     double offset;
-    cairo_get_dash(srcCr, dashes.data(), &offset);
-    cairo_set_dash(dstCr, dashes.data(), dashCount, offset);
+    cairo_get_dash(srcCr, dashes.mutableSpan().data(), &offset);
+    cairo_set_dash(dstCr, dashes.mutableSpan().data(), dashCount, offset);
     cairo_set_line_cap(dstCr, cairo_get_line_cap(srcCr));
     cairo_set_line_join(dstCr, cairo_get_line_join(srcCr));
     cairo_set_line_width(dstCr, cairo_get_line_width(srcCr));

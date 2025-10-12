@@ -71,7 +71,7 @@ struct FieldParameters {
 // The EventEncoder is used to encode a batch of events.
 class EventEncoder {
  public:
-  EventEncoder(EventParameters params, rtc::ArrayView<const RtcEvent*> batch);
+  EventEncoder(EventParameters params, ArrayView<const RtcEvent*> batch);
 
   void EncodeField(const FieldParameters& params,
                    const std::vector<uint64_t>& values,
@@ -94,7 +94,7 @@ class EventEncoder {
 std::string EncodeSingleValue(uint64_t value, FieldType field_type);
 std::string EncodeDeltasV3(FixedLengthEncodingParametersV3 params,
                            uint64_t base,
-                           rtc::ArrayView<const uint64_t> values);
+                           ArrayView<const uint64_t> values);
 
 // Given a batch of RtcEvents and a member pointer, extract that
 // member from each event in the batch. Signed integer members are
@@ -107,9 +107,8 @@ std::string EncodeDeltasV3(FixedLengthEncodingParametersV3 params,
 template <typename T,
           typename E,
           std::enable_if_t<std::is_integral<T>::value, bool> = true>
-std::vector<uint64_t> ExtractRtcEventMember(
-    rtc::ArrayView<const RtcEvent*> batch,
-    const T E::*member) {
+std::vector<uint64_t> ExtractRtcEventMember(ArrayView<const RtcEvent*> batch,
+                                            const T E::* member) {
   std::vector<uint64_t> values;
   values.reserve(batch.size());
   for (const RtcEvent* event : batch) {
@@ -129,8 +128,8 @@ std::vector<uint64_t> ExtractRtcEventMember(
 template <typename T,
           typename E,
           std::enable_if_t<std::is_integral<T>::value, bool> = true>
-ValuesWithPositions ExtractRtcEventMember(rtc::ArrayView<const RtcEvent*> batch,
-                                          const std::optional<T> E::*member) {
+ValuesWithPositions ExtractRtcEventMember(ArrayView<const RtcEvent*> batch,
+                                          const std::optional<T> E::* member) {
   ValuesWithPositions result;
   result.position_mask.reserve(batch.size());
   result.values.reserve(batch.size());
@@ -150,9 +149,8 @@ ValuesWithPositions ExtractRtcEventMember(rtc::ArrayView<const RtcEvent*> batch,
 template <typename T,
           typename E,
           std::enable_if_t<std::is_enum<T>::value, bool> = true>
-std::vector<uint64_t> ExtractRtcEventMember(
-    rtc::ArrayView<const RtcEvent*> batch,
-    const T E::*member) {
+std::vector<uint64_t> ExtractRtcEventMember(ArrayView<const RtcEvent*> batch,
+                                            const T E::* member) {
   std::vector<uint64_t> values;
   values.reserve(batch.size());
   for (const RtcEvent* event : batch) {
@@ -166,8 +164,8 @@ std::vector<uint64_t> ExtractRtcEventMember(
 // Extract a string field from a batch of RtcEvents.
 template <typename E>
 std::vector<absl::string_view> ExtractRtcEventMember(
-    rtc::ArrayView<const RtcEvent*> batch,
-    const std::string E::*member) {
+    ArrayView<const RtcEvent*> batch,
+    const std::string E::* member) {
   std::vector<absl::string_view> values;
   values.reserve(batch.size());
   for (const RtcEvent* event : batch) {

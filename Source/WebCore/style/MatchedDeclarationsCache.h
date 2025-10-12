@@ -28,6 +28,7 @@
 #include "MatchResult.h"
 #include "RenderStyle.h"
 #include "Timer.h"
+#include <wtf/CanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
@@ -37,14 +38,14 @@ namespace Style {
 
 class Resolver;
 
-class MatchedDeclarationsCache {
+class MatchedDeclarationsCache : public CanMakeWeakPtr<MatchedDeclarationsCache> {
     WTF_MAKE_TZONE_ALLOCATED(MatchedDeclarationsCache);
 public:
     explicit MatchedDeclarationsCache(const Resolver&);
     ~MatchedDeclarationsCache();
 
     static bool isCacheable(const Element&, const RenderStyle&, const RenderStyle& parentStyle);
-    static unsigned computeHash(const MatchResult&, const StyleCustomPropertyData& inheritedCustomProperties);
+    static unsigned computeHash(const MatchResult&, const Style::CustomPropertyData& inheritedCustomProperties);
 
     struct Entry {
         RefPtr<const MatchResult> matchResult;
@@ -59,7 +60,7 @@ public:
         bool inheritedEqual;
     };
 
-    std::optional<Result> find(unsigned hash, const MatchResult&, const StyleCustomPropertyData& inheritedCustomProperties, const RenderStyle&);
+    std::optional<Result> find(unsigned hash, const MatchResult&, const Style::CustomPropertyData& inheritedCustomProperties, const RenderStyle&);
     void add(const RenderStyle&, const RenderStyle& parentStyle,  unsigned hash, const MatchResult&);
     void remove(unsigned hash);
 
@@ -78,7 +79,7 @@ private:
     void sweep();
 
     SingleThreadWeakRef<const Resolver> m_owner;
-    UncheckedKeyHashMap<unsigned, Vector<Entry>, AlreadyHashed> m_entries;
+    HashMap<unsigned, Vector<Entry>, AlreadyHashed> m_entries;
     Timer m_sweepTimer;
     unsigned m_additionsSinceLastSweep { 0 };
 };

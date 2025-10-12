@@ -143,16 +143,16 @@ bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier identifier,
     switch (identifier) {
     case CryptoAlgorithmIdentifier::Ed25519: {
         auto* di = ccsha512_di();
-        if (cced25519_make_pub(di, ccPublicKey, privateKey.data()))
+        if (cced25519_make_pub(di, ccPublicKey, privateKey.span().data()))
             return false;
         break;
     }
     case CryptoAlgorithmIdentifier::X25519: {
 #if HAVE(CORE_CRYPTO_SIGNATURES_INT_RETURN_VALUE)
-        if (cccurve25519_make_pub(ccPublicKey, privateKey.data()))
+        if (cccurve25519_make_pub(ccPublicKey, privateKey.span().data()))
             return false;
 #else
-        cccurve25519_make_pub(ccPublicKey, privateKey.data());
+        cccurve25519_make_pub(ccPublicKey, privateKey.span().data());
 #endif
         break;
     }
@@ -434,14 +434,14 @@ String CryptoKeyOKP::generateJwkX() const
     switch (namedCurve()) {
     case NamedCurve::Ed25519: {
         auto* di = ccsha512_di();
-        RELEASE_ASSERT_WITH_MESSAGE(!cced25519_make_pub(di, publicKey, m_data.data()), "cced25519_make_pub failed");
+        RELEASE_ASSERT_WITH_MESSAGE(!cced25519_make_pub(di, publicKey, m_data.span().data()), "cced25519_make_pub failed");
         break;
     }
     case NamedCurve::X25519: {
 #if HAVE(CORE_CRYPTO_SIGNATURES_INT_RETURN_VALUE)
-        RELEASE_ASSERT_WITH_MESSAGE(!cccurve25519_make_pub(publicKey, m_data.data()), "cccurve25519_make_pub failed.");
+        RELEASE_ASSERT_WITH_MESSAGE(!cccurve25519_make_pub(publicKey, m_data.span().data()), "cccurve25519_make_pub failed.");
 #else
-        cccurve25519_make_pub(publicKey, m_data.data());
+        cccurve25519_make_pub(publicKey, m_data.span().data());
 #endif
         break;
     }

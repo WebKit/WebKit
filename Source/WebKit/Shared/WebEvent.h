@@ -29,15 +29,14 @@
 // FIXME: We should probably move to making the WebCore/PlatformFooEvents trivial classes so that
 // we can use them as the event type.
 
-#include "WebEvent.h"
 #include "WebEventModifier.h"
 #include "WebEventType.h"
 #include <wtf/CheckedPtr.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
-#include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
@@ -47,12 +46,12 @@ class Encoder;
 
 namespace WebKit {
 
-class WebEvent : public CanMakeCheckedPtr<WebEvent> {
+class WebEvent : public CanMakeThreadSafeCheckedPtr<WebEvent> {
     WTF_MAKE_TZONE_ALLOCATED(WebEvent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebEvent);
 public:
-    WebEvent(WebEventType, OptionSet<WebEventModifier>, WallTime timestamp, WTF::UUID authorizationToken);
-    WebEvent(WebEventType, OptionSet<WebEventModifier>, WallTime timestamp);
+    WebEvent(WebEventType, OptionSet<WebEventModifier>, MonotonicTime timestamp, WTF::UUID authorizationToken);
+    WebEvent(WebEventType, OptionSet<WebEventModifier>, MonotonicTime timestamp);
 
     virtual ~WebEvent() = default;
 
@@ -66,7 +65,7 @@ public:
 
     OptionSet<WebEventModifier> modifiers() const { return m_modifiers; }
 
-    WallTime timestamp() const { return m_timestamp; }
+    MonotonicTime timestamp() const { return m_timestamp; }
 
     bool isActivationTriggeringEvent() const;
     WTF::UUID authorizationToken() const { return m_authorizationToken; }
@@ -74,7 +73,7 @@ public:
 private:
     WebEventType m_type;
     OptionSet<WebEventModifier> m_modifiers;
-    WallTime m_timestamp;
+    MonotonicTime m_timestamp;
     WTF::UUID m_authorizationToken;
 };
 

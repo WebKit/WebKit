@@ -1,0 +1,8 @@
+This test ensures setting text selection round-trips correctly for text that has soft linebreaks and collapsed whitespace.
+
+PASS: window.getSelection().toString() === 'Jupiter'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+The planets, ordered from \tclosest to farther from the Sun, is Mercury, \nVenus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune.

@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include "SVGPreserveAspectRatioValue.h"
+#include <WebCore/ExceptionOr.h>
+#include <WebCore/SVGPreserveAspectRatioValue.h>
 #include "SVGValueProperty.h"
 
 namespace WebCore {

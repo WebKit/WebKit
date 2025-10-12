@@ -29,21 +29,16 @@
 
 #pragma once
 
-#include "LayoutRect.h"
-#include "Path.h"
-#include "StyleBasicShape.h"
-#include "WritingMode.h"
+#include <WebCore/LayoutRect.h>
+#include <WebCore/Path.h>
+#include <WebCore/StyleBasicShape.h>
+#include <WebCore/WritingMode.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 struct LineSegment {
-    LineSegment()
-        : logicalLeft(0)
-        , logicalRight(0)
-        , isValid(false)
-    {
-    }
+    LineSegment() = default;
 
     LineSegment(float logicalLeft, float logicalRight)
         : logicalLeft(logicalLeft)
@@ -52,13 +47,13 @@ struct LineSegment {
     {
     }
 
-    float logicalLeft;
-    float logicalRight;
-    bool isValid;
+    float logicalLeft { 0.f };
+    float logicalRight { 0.f };
+    bool isValid { false };
 };
 
 class Image;
-class RoundedRect;
+class LayoutRoundedRect;
 
 // A representation of a BasicShape that enables layout code to determine how to break a line up into segments
 // that will fit within or around a shape. The line is defined by a pair of logical Y coordinates and the
@@ -72,9 +67,9 @@ public:
         Path marginShape;
     };
 
-    static Ref<const LayoutShape> createShape(const Style::BasicShape&, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, WritingMode, float margin);
-    static Ref<const LayoutShape> createRasterShape(Image*, float threshold, const LayoutRect& imageRect, const LayoutRect& marginRect, WritingMode, float margin);
-    static Ref<const LayoutShape> createBoxShape(const RoundedRect&, WritingMode, float margin);
+    static Ref<const LayoutShape> createShape(const Style::BasicShape&, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, WritingMode, float logicalMargin);
+    static Ref<const LayoutShape> createRasterShape(Image*, float threshold, const LayoutRect& logicalImageRect, const LayoutRect& logicalMarginRect, WritingMode, float logicalMargin);
+    static Ref<const LayoutShape> createBoxShape(const LayoutRoundedRect&, WritingMode, float logicalMargin);
 
     virtual ~LayoutShape() = default;
 
@@ -89,6 +84,7 @@ public:
 protected:
     float shapeMargin() const { return m_margin; }
     WritingMode writingMode() const { return m_writingMode; }
+    static bool shouldFlipStartAndEndPoints(WritingMode);
 
 private:
     bool lineOverlapsBoundingBox(LayoutUnit lineTop, LayoutUnit lineHeight, const LayoutRect& rect) const

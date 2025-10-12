@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #import "WebPluginPackage.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/WebCoreJITOperations.h>
+#import <WebCore/WebCoreMainThread.h>
 #import <algorithm>
 #import <mach-o/arch.h>
 #import <mach-o/fat.h>
@@ -58,11 +59,7 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
 
 + (void)initialize
 {
-#if !PLATFORM(IOS_FAMILY)
-    JSC::initialize();
-    WTF::initializeMainThread();
-    WebCore::populateJITOperations();
-#endif
+    WebCore::initializeMainThreadIfNeeded();
 }
 
 + (WebBasePluginPackage *)pluginWithPath:(NSString *)pluginPath
@@ -254,10 +251,10 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
     return bundleIdentifier == JavaCocoaPluginIdentifier || bundleIdentifier == JavaCarbonPluginIdentifier;
 }
 
-static inline void swapIntsInHeader(uint32_t* rawData, size_t length)
+static inline void swapIntsInHeader(std::span<uint32_t> rawData)
 {
-    for (size_t i = 0; i < length; ++i) 
-        rawData[i] = OSSwapInt32(rawData[i]);
+    for (auto& data : rawData)
+        data = OSSwapInt32(data);
 }
 
 - (BOOL)isNativeLibraryData:(NSData *)data
@@ -271,31 +268,31 @@ static inline void swapIntsInHeader(uint32_t* rawData, size_t length)
     struct fat_arch* archs = 0;
        
     if (sizeInBytes >= sizeof(struct mach_header_64)) {
-        uint32_t magic = *rawData.data();
+        uint32_t magic = rawData[0];
         
         if (magic == MH_MAGIC || magic == MH_CIGAM) {
             // We have a 32-bit thin binary
-            struct mach_header* header = (struct mach_header*)rawData.data();
+            auto& header = reinterpretCastSpanStartTo<struct mach_header>(rawData.span());
 
             // Check if we need to swap the bytes
             if (magic == MH_CIGAM)
-                swapIntsInHeader(rawData.data(), rawData.size());
+                swapIntsInHeader(rawData);
     
-            singleArch.cputype = header->cputype;
-            singleArch.cpusubtype = header->cpusubtype;
+            singleArch.cputype = header.cputype;
+            singleArch.cpusubtype = header.cpusubtype;
 
             archs = &singleArch;
             numArchs = 1;
         } else if (magic == MH_MAGIC_64 || magic == MH_CIGAM_64) {
             // We have a 64-bit thin binary
-            struct mach_header_64* header = (struct mach_header_64*)rawData.data();
+            auto& header = reinterpretCastSpanStartTo<struct mach_header_64>(rawData.span());
 
             // Check if we need to swap the bytes
             if (magic == MH_CIGAM_64)
-                swapIntsInHeader(rawData.data(), rawData.size());
+                swapIntsInHeader(rawData);
             
-            singleArch.cputype = header->cputype;
-            singleArch.cpusubtype = header->cpusubtype;
+            singleArch.cputype = header.cputype;
+            singleArch.cpusubtype = header.cpusubtype;
             
             archs = &singleArch;
             numArchs = 1;
@@ -304,11 +301,11 @@ static inline void swapIntsInHeader(uint32_t* rawData, size_t length)
 
             // Check if we need to swap the bytes
             if (magic == FAT_CIGAM)
-                swapIntsInHeader(rawData.data(), rawData.size());
+                swapIntsInHeader(rawData);
             
             static_assert(sizeof(struct fat_header) % sizeof(uint32_t) == 0, "struct fat header must be integral size of uint32_t");
-            archs = reinterpret_cast<struct fat_arch*>(rawData.data() + sizeof(struct fat_header) / sizeof(uint32_t));
-            numArchs = reinterpret_cast<struct fat_header*>(rawData.data())->nfat_arch;
+            numArchs = reinterpretCastSpanStartTo<struct fat_header>(rawData.span()).nfat_arch;
+            archs = reinterpret_cast<struct fat_arch*>(rawData.mutableSpan().subspan(sizeof(struct fat_header) / sizeof(uint32_t)).data());
             
             unsigned maxArchs = (sizeInBytes - sizeof(struct fat_header)) / sizeof(struct fat_arch);
             if (numArchs > maxArchs)

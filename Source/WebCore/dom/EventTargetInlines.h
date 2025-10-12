@@ -31,8 +31,8 @@
 
 #pragma once
 
-#include "EventTarget.h"
-#include "Node.h"
+#include <WebCore/EventTarget.h>
+#include <WebCore/Node.h>
 
 namespace WebCore {
 

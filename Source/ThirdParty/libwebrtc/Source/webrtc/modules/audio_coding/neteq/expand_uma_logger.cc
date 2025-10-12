@@ -9,7 +9,12 @@
 
 #include "modules/audio_coding/neteq/expand_uma_logger.h"
 
+#include <cstdint>
+#include <memory>
+#include <optional>
+
 #include "absl/strings/string_view.h"
+#include "api/neteq/tick_timer.h"
 #include "rtc_base/checks.h"
 #include "system_wrappers/include/metrics.h"
 

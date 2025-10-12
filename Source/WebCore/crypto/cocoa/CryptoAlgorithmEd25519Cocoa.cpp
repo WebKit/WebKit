@@ -42,15 +42,15 @@ static ExceptionOr<Vector<uint8_t>> signEd25519(const Vector<uint8_t>& sk, const
         return Exception { ExceptionCode::OperationError };
     ccec25519pubkey pk;
     const struct ccdigest_info* di = ccsha512_di();
-    if (cced25519_make_pub(di, pk, sk.data()))
+    if (cced25519_make_pub(di, pk, sk.span().data()))
         return Exception { ExceptionCode::OperationError };
     ccec25519signature newSignature;
 
 #if HAVE(CORE_CRYPTO_SIGNATURES_INT_RETURN_VALUE)
-    if (cced25519_sign(di, newSignature, data.size(), data.data(), pk, sk.data()))
+    if (cced25519_sign(di, newSignature, data.size(), data.span().data(), pk, sk.span().data()))
         return Exception { ExceptionCode::OperationError };
 #else
-    cced25519_sign(di, newSignature, data.size(), data.data(), pk, sk.data());
+    cced25519_sign(di, newSignature, data.size(), data.span().data(), pk, sk.span().data());
 #endif
     return Vector<uint8_t> { std::span { newSignature } };
 }
@@ -60,7 +60,7 @@ static ExceptionOr<bool> verifyEd25519(const Vector<uint8_t>& key, const Vector<
     if (key.size() != ed25519KeySize || signature.size() != ed25519SignatureSize)
         return false;
     const struct ccdigest_info* di = ccsha512_di();
-    return !cced25519_verify(di, data.size(), data.data(), signature.data(), key.data());
+    return !cced25519_verify(di, data.size(), data.span().data(), signature.span().data(), key.span().data());
 }
 #else
 static ExceptionOr<Vector<uint8_t>> signEd25519CryptoKit(const Vector<uint8_t>&sk, const Vector<uint8_t>& data)

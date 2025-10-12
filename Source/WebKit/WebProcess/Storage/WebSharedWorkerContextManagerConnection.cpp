@@ -48,6 +48,7 @@
 #include <WebCore/EmptyClients.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageConfiguration.h>
+#include <WebCore/ReferrerPolicy.h>
 #include <WebCore/RemoteFrameClient.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SharedWorkerContextManager.h>
@@ -78,12 +79,8 @@ WebSharedWorkerContextManagerConnection::WebSharedWorkerContextManagerConnection
 #else
     , m_userAgent(WebCore::standardUserAgent())
 #endif
-    , m_userContentController(WebUserContentController::getOrCreate(initializationData.userContentControllerIdentifier))
+    , m_userContentController(WebUserContentController::getOrCreate(WTFMove(initializationData.userContentControllerParameters)))
 {
-#if ENABLE(CONTENT_EXTENSIONS)
-    m_userContentController->addContentRuleLists(WTFMove(initializationData.contentRuleLists));
-#endif
-
     updatePreferencesStore(preferencesStore);
     WebProcess::singleton().disableTermination();
 }
@@ -122,7 +119,7 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
 
     pageConfiguration.mainFrameCreationParameters = WebCore::PageConfiguration::LocalMainFrameCreationParameters { CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&, WebCore::FrameLoader&)> { [webPageProxyID = m_webPageProxyID, pageID = m_pageID, userAgent = m_userAgent] (auto&, auto& frameLoader) mutable {
         return makeUniqueRefWithoutRefCountedCheck<RemoteWorkerFrameLoaderClient>(frameLoader, webPageProxyID, pageID, userAgent);
-    } }, WebCore::SandboxFlags { } };
+    } }, WebCore::SandboxFlags { }, WebCore::ReferrerPolicy::EmptyString };
 
     Ref page = WebCore::Page::create(WTFMove(pageConfiguration));
     if (m_preferencesStore) {

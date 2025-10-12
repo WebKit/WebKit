@@ -1,4 +1,4 @@
 Right click me to bring up OS level contextmenu popup.
 
-FAIL Event Timing: verify pointerdown & pointerup reporting for mouse aux click triggered contextmenu. assert_implements: Event Timing is not supported. undefined
+PASS Event Timing: verify pointerdown & pointerup reporting for mouse aux click triggered contextmenu.
 

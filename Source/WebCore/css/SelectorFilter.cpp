@@ -185,12 +185,12 @@ void SelectorFilter::collectSelectorHashes(CollectedSelectorHashes& collectedHas
 {
     auto [selector, relation, skipOverSubselectors] = [&] {
         if (includeRightmost == IncludeRightmost::No)
-            return std::tuple { rightmostSelector.tagHistory(), rightmostSelector.relation(), true };
+            return std::tuple { rightmostSelector.precedingInComplexSelector(), rightmostSelector.relation(), true };
 
         return std::tuple { &rightmostSelector, CSSSelector::Relation::Subselector, false };
     }();
 
-    for (; selector; selector = selector->tagHistory()) {
+    for (; selector; selector = selector->precedingInComplexSelector()) {
         // Only collect identifiers that match ancestors.
         switch (relation) {
         case CSSSelector::Relation::Subselector:

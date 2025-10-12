@@ -21,13 +21,13 @@ if (CSS.supports("dynamic-range-limit", "standard") && CSS.supports("dynamic-ran
     shouldBe('document.getElementById("div").style["dynamic-range-limit"]', '""', quiet);
     shouldBe('getComputedStyle(document.getElementById("div"))["dynamic-range-limit"]', 'defaultLimit', quiet);
     shouldBe('document.getElementById("video").style["dynamic-range-limit"]', '""', quiet);
-    shouldBe('getComputedStyle(document.getElementById("video"))["dynamic-range-limit"]', '"no-limit"', quiet);
+    shouldBe('getComputedStyle(document.getElementById("video"))["dynamic-range-limit"]', 'defaultLimit', quiet);
     shouldBe('document.getElementById("div-standard").style["dynamic-range-limit"]', '"standard"', quiet);
     shouldBe('getComputedStyle(document.getElementById("div-standard"))["dynamic-range-limit"]', '"standard"', quiet);
     shouldBe('document.getElementById("div-under-standard").style["dynamic-range-limit"]', '""', quiet);
     shouldBe('getComputedStyle(document.getElementById("div-under-standard"))["dynamic-range-limit"]', '"standard"', quiet);
     shouldBe('document.getElementById("video-under-standard").style["dynamic-range-limit"]', '""', quiet);
-    shouldBe('getComputedStyle(document.getElementById("video-under-standard"))["dynamic-range-limit"]', '"no-limit"', quiet);
+    shouldBe('getComputedStyle(document.getElementById("video-under-standard"))["dynamic-range-limit"]', '"standard"', quiet);
 
     if (CSS.supports("dynamic-range-limit", "constrained")) {
         shouldBe('document.getElementById("video-constrained").style["dynamic-range-limit"]', '"constrained"', quiet);

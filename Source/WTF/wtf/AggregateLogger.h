@@ -116,7 +116,7 @@ private:
         }
     }
 
-    UncheckedKeyHashSet<RefPtr<const Logger>> m_loggers;
+    HashSet<RefPtr<const Logger>> m_loggers;
 };
 
 } // namespace WTF

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSGenericTypedArrayViewPrototype.h"
-#include "JSTypedArrays.h"
+#include <JavaScriptCore/JSGenericTypedArrayViewPrototype.h>
+#include <JavaScriptCore/JSTypedArrays.h>
 
 namespace JSC {
 

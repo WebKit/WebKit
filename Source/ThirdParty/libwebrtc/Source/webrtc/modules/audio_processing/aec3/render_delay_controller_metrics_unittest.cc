@@ -13,6 +13,7 @@
 #include <optional>
 
 #include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/clockdrift_detector.h"
 #include "system_wrappers/include/metrics.h"
 #include "test/gtest.h"
 

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPURenderPassLayout.h"
+#include <WebCore/WebGPURenderPassLayout.h>
 
 namespace WebCore::WebGPU {
 

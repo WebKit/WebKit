@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "PCToCodeOriginMap.h"
+#include <JavaScriptCore/PCToCodeOriginMap.h>
 #include <wtf/Box.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>

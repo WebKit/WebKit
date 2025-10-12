@@ -102,13 +102,6 @@ int main(void)
 
     printf("----------------------------------------------\n");
     v128_set_to_zero(&x);
-    v128_set_bit(&x, 0);
-    for (i = 0; i < 128; i++) {
-        printf("%s\n", v128_bit_string(&x));
-        v128_right_shift(&x, 1);
-    }
-    printf("----------------------------------------------\n");
-    v128_set_to_zero(&x);
     v128_set_bit(&x, 127);
     for (i = 0; i < 128; i++) {
         printf("%s\n", v128_bit_string(&x));
@@ -146,39 +139,12 @@ int main(void)
 
 void byte_order(void)
 {
-    int i;
+    size_t i;
     v128_t e;
-#if 0
-  v16_t b;
-  v32_t c;
-  v64_t d;
-
-  for (i=0; i < sizeof(b); i++)
-    b.octet[i] = i;
-  for (i=0; i < sizeof(c); i++)
-    c.octet[i] = i;
-  for (i=0; i < sizeof(d); i++)
-    d.octet[i] = i;
-  
-  printf("v128_t:\t%s\n", v128_hex_string(&e));
-  printf("v64_t:\t%s\n", v64_hex_string(&d));
-  printf("v32_t:\t%s\n", v32_hex_string(c));
-  printf("v16_t:\t%s\n", v16_hex_string(b));
-
-  c.value = 0x01020304;
-  printf("v32_t:\t%s\n", v32_hex_string(c));
-  b.value = 0x0102;
-  printf("v16_t:\t%s\n", v16_hex_string(b));
-
-  printf("uint16_t ordering:\n");
-
-  c.value = 0x00010002;
-  printf("v32_t:\t%x%x\n", c.v16[0], c.v16[1]);
-#endif
 
     printf("byte ordering of crypto/math datatypes:\n");
     for (i = 0; i < sizeof(e); i++)
-        e.v8[i] = i;
+        e.v8[i] = (uint8_t)i;
     printf("v128_t: %s\n", v128_hex_string(&e));
 }
 
@@ -189,12 +155,12 @@ void test_hex_string_funcs(void)
     char raw[10];
     int len;
 
-    len = hex_string_to_octet_string(raw, hex1, strlen(hex1));
+    len = hex_string_to_octet_string(raw, hex1, (int)strlen(hex1));
     printf("computed length: %d\tstring: %s\n", len,
            octet_string_hex_string(raw, len / 2));
     printf("expected length: %u\tstring: %s\n", (unsigned)strlen(hex1), hex1);
 
-    len = hex_string_to_octet_string(raw, hex2, strlen(hex2));
+    len = hex_string_to_octet_string(raw, hex2, (int)strlen(hex2));
     printf("computed length: %d\tstring: %s\n", len,
            octet_string_hex_string(raw, len / 2));
     printf("expected length: %d\tstring: %s\n", 16, "0123456789abcdef");

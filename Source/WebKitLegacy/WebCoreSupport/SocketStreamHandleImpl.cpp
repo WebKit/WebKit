@@ -117,7 +117,7 @@ void SocketStreamHandleImpl::platformSendHandshake(std::span<const uint8_t> data
             return completionHandler(false, secureCookiesAccessed);
         }
         m_buffer.append(data);
-        m_buffer.append(cookieData.data(), cookieData.size());
+        m_buffer.append(cookieData.span());
         m_client.didUpdateBufferedAmount(*this, bufferedAmount());
         return completionHandler(true, secureCookiesAccessed);
     }
@@ -144,7 +144,7 @@ void SocketStreamHandleImpl::platformSendHandshake(std::span<const uint8_t> data
             m_buffer.append(data.subspan(bytesWritten));
         else
             cookieBytesWritten = bytesWritten - data.size();
-        m_buffer.append(cookieData.data() + cookieBytesWritten, cookieData.size() - cookieBytesWritten);
+        m_buffer.append(cookieData.subspan(cookieBytesWritten));
         m_client.didUpdateBufferedAmount(static_cast<SocketStreamHandle&>(*this), bufferedAmount());
     }
     return completionHandler(true, secureCookiesAccessed);

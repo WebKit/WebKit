@@ -25,17 +25,16 @@
 
 #pragma once
 
-#include "AnimationEffect.h"
-#include "AnimationEffectTiming.h"
-#include "BasicEffectTiming.h"
-#include "ComputedEffectTiming.h"
-#include "FillMode.h"
-#include "KeyframeEffectOptions.h"
-#include "OptionalEffectTiming.h"
-#include "PlaybackDirection.h"
-#include "TimingFunction.h"
-#include "WebAnimation.h"
-#include "WebAnimationUtilities.h"
+#include <WebCore/AnimationEffectTiming.h>
+#include <WebCore/BasicEffectTiming.h>
+#include <WebCore/ComputedEffectTiming.h>
+#include <WebCore/FillMode.h>
+#include <WebCore/KeyframeEffectOptions.h>
+#include <WebCore/OptionalEffectTiming.h>
+#include <WebCore/PlaybackDirection.h>
+#include <WebCore/TimingFunction.h>
+#include <WebCore/WebAnimation.h>
+#include <WebCore/WebAnimationUtilities.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -44,6 +43,10 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
+namespace Style {
+struct SingleAnimationRange;
+}
 
 class AnimationEffect : public RefCountedAndCanMakeWeakPtr<AnimationEffect> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AnimationEffect);
@@ -56,7 +59,7 @@ public:
     EffectTiming getBindingsTiming() const;
     BasicEffectTiming getBasicTiming();
     ComputedEffectTiming getBindingsComputedTiming();
-    ComputedEffectTiming getComputedTiming();
+    ComputedEffectTiming getComputedTiming(UseCachedCurrentTime = UseCachedCurrentTime::Yes, EndpointInclusiveActiveInterval = EndpointInclusiveActiveInterval::No);
     ExceptionOr<void> bindingsUpdateTiming(Document&, std::optional<OptionalEffectTiming>);
     ExceptionOr<void> updateTiming(Document&, std::optional<OptionalEffectTiming>);
 
@@ -67,7 +70,7 @@ public:
     virtual void animationTimelineDidChange(const AnimationTimeline*);
     virtual void animationDidFinish() { };
     virtual void animationPlaybackRateDidChange();
-    virtual void animationProgressBasedTimelineSourceDidChangeMetrics(const TimelineRange&);
+    virtual void animationProgressBasedTimelineSourceDidChangeMetrics(const Style::SingleAnimationRange&);
     void animationRangeDidChange();
 
     AnimationEffectTiming timing() const { return m_timing; }
@@ -116,7 +119,7 @@ protected:
     virtual std::optional<double> progressUntilNextStep(double) const;
 
 private:
-    AnimationEffectTiming::ResolutionData resolutionData() const;
+    AnimationEffectTiming::ResolutionData resolutionData(UseCachedCurrentTime = UseCachedCurrentTime::Yes, EndpointInclusiveActiveInterval = EndpointInclusiveActiveInterval::No) const;
     void updateComputedTimingPropertiesIfNeeded();
 
     AnimationEffectTiming m_timing;

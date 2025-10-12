@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,35 +38,35 @@ WKTypeID WKProtectionSpaceGetTypeID()
 
 WKStringRef WKProtectionSpaceCopyHost(WKProtectionSpaceRef protectionSpaceRef)
 {
-    return toCopiedAPI(toImpl(protectionSpaceRef)->host());
+    return toCopiedAPI(toProtectedImpl(protectionSpaceRef)->host());
 }
 
 int WKProtectionSpaceGetPort(WKProtectionSpaceRef protectionSpaceRef)
 {
-    return toImpl(protectionSpaceRef)->port();
+    return toProtectedImpl(protectionSpaceRef)->port();
 }
 
 WKStringRef WKProtectionSpaceCopyRealm(WKProtectionSpaceRef protectionSpaceRef)
 {
-    return toCopiedAPI(toImpl(protectionSpaceRef)->realm());
+    return toCopiedAPI(toProtectedImpl(protectionSpaceRef)->realm());
 }
 
 bool WKProtectionSpaceGetIsProxy(WKProtectionSpaceRef protectionSpaceRef)
 {
-    return toImpl(protectionSpaceRef)->isProxy();
+    return toProtectedImpl(protectionSpaceRef)->isProxy();
 }
 
 WKProtectionSpaceServerType WKProtectionSpaceGetServerType(WKProtectionSpaceRef protectionSpaceRef)
 {
-    return toAPI(toImpl(protectionSpaceRef)->serverType());
+    return toAPI(toProtectedImpl(protectionSpaceRef)->serverType());
 }
 
 bool WKProtectionSpaceGetReceivesCredentialSecurely(WKProtectionSpaceRef protectionSpaceRef)
 {
-    return toImpl(protectionSpaceRef)->receivesCredentialSecurely();
+    return toProtectedImpl(protectionSpaceRef)->receivesCredentialSecurely();
 }
 
 WKProtectionSpaceAuthenticationScheme WKProtectionSpaceGetAuthenticationScheme(WKProtectionSpaceRef protectionSpaceRef)
 {
-    return toAPI(toImpl(protectionSpaceRef)->authenticationScheme());
+    return toAPI(toProtectedImpl(protectionSpaceRef)->authenticationScheme());
 }

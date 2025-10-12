@@ -28,8 +28,9 @@
 
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cf/NotificationCenterCF.h>
 
-#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
+#if ENABLE(LOCKDOWN_MODE_API)
 #import <pal/cocoa/LockdownModeCocoa.h>
 #endif
 
@@ -55,7 +56,7 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
 {
     CFPreferencesSetValue(WKLockdownModeEnabledKeyCFString, enabled ? kCFBooleanTrue : kCFBooleanFalse, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
     CFPreferencesSynchronize(kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification, nullptr, nullptr, true);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenterSingleton(), (__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification, nullptr, nullptr, true);
 }
 
 + (BOOL)isCaptivePortalModeIgnored:(NSString *)containerPath
@@ -89,7 +90,7 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
     else
         [[NSFileManager defaultManager] removeItemAtPath:cpmconfigIgnoreFilePath error:NULL];
 
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification, nullptr, nullptr, true);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenterSingleton(), (__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification, nullptr, nullptr, true);
 #endif
 }
 

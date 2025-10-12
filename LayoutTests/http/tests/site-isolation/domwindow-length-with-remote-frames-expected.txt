@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Frame loaded with query: ?frame=same1
+CONSOLE MESSAGE: Parent length visible to this frame: 1
+CONSOLE MESSAGE: Frame loaded with query: ?frame=cross1
+CONSOLE MESSAGE: Parent length visible to this frame: 2
+CONSOLE MESSAGE: Frame loaded with query: ?frame=same2
+CONSOLE MESSAGE: Parent length visible to this frame: 3
+CONSOLE MESSAGE: Frame loaded with query: ?frame=cross2
+CONSOLE MESSAGE: Parent length visible to this frame: 4
+

@@ -1,10 +1,3 @@
-CONSOLE MESSAGE: Beacon API cannot load https://web-platform.test:9443/beacon/resources/beacon.py?cmd=store&id=e3ad4d83-0323-486c-ad8c-0514ab5a058e. Reached maximum amount of queued data of 64Kb for keepalive requests
-CONSOLE MESSAGE: Beacon API cannot load https://web-platform.test:9443/beacon/resources/beacon.py?cmd=store&id=da224882-28db-40b9-9992-cdb76f30a66d. Reached maximum amount of queued data of 64Kb for keepalive requests
-CONSOLE MESSAGE: Beacon API cannot load https://web-platform.test:9443/beacon/resources/beacon.py?cmd=store&id=1146e222-73b5-46b2-abb0-c41f8f7c35c1. Reached maximum amount of queued data of 64Kb for keepalive requests
-CONSOLE MESSAGE: Beacon API cannot load https://web-platform.test:9443/beacon/resources/beacon.py?cmd=store&id=c099ca6e-6378-448b-a1f3-1c750b38391f. Reached maximum amount of queued data of 64Kb for keepalive requests
-CONSOLE MESSAGE: Beacon API cannot load https://web-platform.test:9443/beacon/resources/beacon.py?cmd=store&id=76026ef6-35c9-4d03-93ea-851232433f85. Reached maximum amount of queued data of 64Kb for keepalive requests
-CONSOLE MESSAGE: Beacon API cannot load https://web-platform.test:9443/beacon/resources/beacon.py?cmd=store&id=77b8a2c4-6c0c-431a-8f92-c7fb0a0530aa. Reached maximum amount of queued data of 64Kb for keepalive requests
-CONSOLE MESSAGE: Beacon API cannot load https://web-platform.test:9443/beacon/resources/beacon.py?cmd=store&id=b0735b69-67f1-4746-88c0-555eec654098. Reached maximum amount of queued data of 64Kb for keepalive requests
 
 PASS simple case: with no payload
 PASS simple case: with null payload

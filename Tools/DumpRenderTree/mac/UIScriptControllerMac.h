@@ -38,7 +38,6 @@ public:
     {
     }
 
-    void doAsyncTask(JSValueRef) override;
     void replaceTextAtRange(JSStringRef, int, int) override;
     void zoomToScale(double, JSValueRef) override;
     double zoomScale() const override;

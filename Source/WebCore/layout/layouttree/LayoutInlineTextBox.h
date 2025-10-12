@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "LayoutBox.h"
+#include <WebCore/LayoutBox.h>
 #include <wtf/OptionSet.h>
 #include <wtf/TZoneMalloc.h>
 

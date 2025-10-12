@@ -1,0 +1,6 @@
+
+
+FAIL Option elements should work if they are a descendant of a selects wrapper div. assert_equals: select.length expected 6 but got 1
+FAIL Options in wrapper div should still work when the multiple attribute is added. assert_equals: select.length expected 6 but got 1
+FAIL Options in wrapper div in multiple should work after re-parsing and re-attaching. assert_equals: select.length expected 6 but got 1
+

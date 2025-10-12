@@ -10,6 +10,8 @@
 
 #include "modules/audio_coding/neteq/dsp_helper.h"
 
+#include <cstdint>
+
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "test/gtest.h"
 

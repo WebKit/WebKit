@@ -4,7 +4,6 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
 flags:
   - noStrict
 description: |
@@ -89,7 +88,7 @@ for (var sym of symbols) {
     assert.sameValue(sym[noSuchPropName], undefined);
 
     // non-existent method
-    assertThrowsInstanceOf(() => sym.noSuchProp(), TypeError);
-    assertThrowsInstanceOf(() => sym[noSuchPropName](), TypeError);
+    assert.throws(TypeError, () => sym.noSuchProp());
+    assert.throws(TypeError, () => sym[noSuchPropName]());
 }
 

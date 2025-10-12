@@ -4,4 +4,5 @@ PASS TransformStream flush is called after all queued writes finish, once the wr
 PASS TransformStream flush gets a chance to enqueue more into the readable
 PASS TransformStream flush gets a chance to enqueue more into the readable, and can then async close
 PASS error() during flush should cause writer.close() to reject
+PASS closing the writable side should call transformer.flush() and a parallel readable.cancel() should not reject
 

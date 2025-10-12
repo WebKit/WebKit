@@ -91,11 +91,11 @@ static StepsTimingFunction::StepPosition toStepPosition(CSS::Keyword::JumpNone)
     return StepsTimingFunction::StepPosition::JumpNone;
 }
 
-Ref<TimingFunction> createTimingFunction(const CSS::StepsEasingFunction& function, const CSSToLengthConversionData& conversionData)
+Ref<TimingFunction> createTimingFunction(const BuilderState& state, const CSS::StepsEasingFunction& function)
 {
     return WTF::switchOn(function->value,
         [&](const auto& value) -> Ref<TimingFunction> {
-            return StepsTimingFunction::create(toStyle(value.steps, conversionData).value, toStepPosition(value.keyword));
+            return StepsTimingFunction::create(toStyle(value.steps, state).value, toStepPosition(value.keyword));
         }
     );
 }

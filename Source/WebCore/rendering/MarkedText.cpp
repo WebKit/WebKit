@@ -27,13 +27,13 @@
 #include "MarkedText.h"
 
 #include "Document.h"
-#include "DocumentInlines.h"
 #include "DocumentMarkerController.h"
 #include "Editor.h"
 #include "ElementRuleCollector.h"
 #include "HighlightRegistry.h"
 #include "RenderBoxModelObject.h"
 #include "RenderHighlight.h"
+#include "RenderObjectInlines.h"
 #include "RenderStyleInlines.h"
 #include "RenderText.h"
 #include "RenderedDocumentMarker.h"
@@ -76,7 +76,7 @@ Vector<MarkedText> MarkedText::subdivide(const Vector<MarkedText>& markedTexts, 
     // 3. Compute intersection.
     Vector<MarkedText> result;
     result.reserveInitialCapacity(numberOfMarkedTexts);
-    UncheckedKeyHashSet<CheckedPtr<const MarkedText>> processedMarkedTexts;
+    HashSet<CheckedPtr<const MarkedText>> processedMarkedTexts;
     unsigned offsetSoFar = offsets[0].value;
     for (unsigned i = 1; i < numberOfOffsets; ++i) {
         if (offsets[i].value > offsets[i - 1].value) {
@@ -117,7 +117,7 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
             auto renderStyle = parentRenderer.getUncachedPseudoStyle({ PseudoId::Highlight, highlightName }, &parentStyle);
             if (!renderStyle)
                 continue;
-            if (renderStyle->textDecorationLineInEffect().isEmpty() && phase == PaintPhase::Decoration)
+            if (renderStyle->textDecorationLineInEffect().isNone() && phase == PaintPhase::Decoration)
                 continue;
             for (auto& highlightRange : highlightRegistry->map().get(highlightName)->highlightRanges()) {
                 if (!renderHighlight.setRenderRange(highlightRange))

@@ -11,10 +11,10 @@
 #ifndef MODULES_AUDIO_PROCESSING_HIGH_PASS_FILTER_H_
 #define MODULES_AUDIO_PROCESSING_HIGH_PASS_FILTER_H_
 
+#include <cstddef>
 #include <memory>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/utility/cascaded_biquad_filter.h"
 
 namespace webrtc {

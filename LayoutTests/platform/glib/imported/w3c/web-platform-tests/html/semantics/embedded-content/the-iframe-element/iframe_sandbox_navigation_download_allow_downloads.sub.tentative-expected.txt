@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-downloads' is an invalid sandbox flag.
-CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-downloads' is an invalid sandbox flag.
-CONSOLE MESSAGE: Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 
 
 Harness Error (TIMEOUT), message = null

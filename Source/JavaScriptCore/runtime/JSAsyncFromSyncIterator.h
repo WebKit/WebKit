@@ -36,6 +36,7 @@ public:
     using Base = JSInternalFieldObjectImpl<JSAsyncFromSyncIteratorNumberOfInternalFields>;
 
     DECLARE_EXPORT_INFO;
+    DECLARE_VISIT_CHILDREN;
 
     enum class Field : uint8_t {
         SyncIterator = 0,
@@ -75,8 +76,6 @@ private:
     }
 
     void finishCreation(VM&, JSValue syncIterator, JSValue nextMethod);
-    DECLARE_VISIT_CHILDREN;
-
 };
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSAsyncFromSyncIterator);

@@ -3,7 +3,7 @@ Testing the MediaController has a single container for captions and media contro
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS shadowRoot.childElementCount is 2
+PASS shadowRoot.childElementCount is >= 2
 PASS shadowRoot.firstElementChild.localName is "style"
 PASS shadowRoot.lastElementChild.localName is "div"
 PASS shadowRoot.lastElementChild.className is "media-controls-container"

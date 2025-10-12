@@ -30,7 +30,7 @@
 
 @interface WKContentWorld (WKPrivate)
 
-+ (WKContentWorld *)_worldWithConfiguration:(_WKContentWorldConfiguration *)configuration NS_SWIFT_NAME(worldWithConfiguration(configuration:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
++ (WKContentWorld *)_worldWithConfiguration:(_WKContentWorldConfiguration *)configuration NS_SWIFT_NAME(worldWithConfiguration(configuration:)) WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

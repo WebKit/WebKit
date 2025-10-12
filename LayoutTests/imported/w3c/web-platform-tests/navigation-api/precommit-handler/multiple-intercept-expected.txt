@@ -1,0 +1,10 @@
+
+FAIL precommitHandler + precommitHandler assert_equals: expected false but got true
+FAIL precommitHandler + (not provided) assert_equals: expected false but got true
+FAIL precommitHandler + handler assert_equals: expected false but got true
+FAIL handler + precommitHandler assert_equals: expected false but got true
+PASS handler + (not provided)
+PASS handler + handler
+FAIL (not provided) + precommitHandler assert_equals: expected false but got true
+PASS (not provided) + handler
+

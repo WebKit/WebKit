@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,16 +108,16 @@ void ApplePayButtonCocoa::draw(GraphicsContext& context, const FloatRoundedRect&
     context.scale(FloatSize(1, -1));
 
     auto logicalRect = borderRect.rect();
-    const auto& applePayButtonPart = owningApplePayButtonPart();
+    Ref applePayButtonPart = owningApplePayButtonPart();
     
     PKDrawApplePayButtonWithCornerRadius(
-        context.platformContext(),
+        RetainPtr { context.platformContext() }.get(),
         CGRectMake(logicalRect.x(), -logicalRect.maxY(), logicalRect.width(), logicalRect.height()),
         1.0,
         largestCornerRadius,
-        toPKPaymentButtonType(applePayButtonPart.buttonType()),
-        toPKPaymentButtonStyle(applePayButtonPart.buttonStyle()),
-        applePayButtonPart.locale().createNSString().get()
+        toPKPaymentButtonType(applePayButtonPart->buttonType()),
+        toPKPaymentButtonStyle(applePayButtonPart->buttonStyle()),
+        applePayButtonPart->locale().createNSString().get()
     );
 }
 

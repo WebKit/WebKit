@@ -48,6 +48,9 @@
 /Tools/Scripts/libraries @JonWBedard @briannafan @gsnedders
 /Tools/Scripts/libraries/webkitscmpy @facetothefate @JonWBedard @briannafan @gsnedders
 
+/Tools/Scripts/libraries/webkitapipy @emw-apple
+AllowedSPI*.toml @emw-apple
+
 /Tools/TestWebKitAPI
 /Tools/TestWebKitAPI/Tests/WebKitGLib/ @WebKit/glib-reviewers
 /Tools/TestWebKitAPI/Tests/WebKitGtk/ @WebKit/glib-reviewers
@@ -60,6 +63,8 @@
 /Tools/flatpak/ @philn
 /Tools/gstreamer/ @WebKit/glib-reviewers @philn
 /Tools/jhbuild/ @WebKit/glib-reviewers
+
+/Tools/WebKitTestRunner/InjectedBundle/Accessibility* @twilco @hoffmanjoshua @minorninth @fleizach @AndresGonzalezApple
 
 # ================================================================================
 # bmalloc
@@ -89,7 +94,10 @@
 # ================================================================================
 # WebCore
 
+/Source/WebCore/accessibility @twilco @hoffmanjoshua @minorninth @fleizach @AndresGonzalezApple
 /Source/WebCore/dom @rniwa @cdumez
+/LayoutTests/accessibility @twilco @hoffmanjoshua @minorninth @fleizach @AndresGonzalezApple
+/LayoutTests/accessibility-isolated-tree @twilco @hoffmanjoshua @minorninth @fleizach @AndresGonzalezApple
 /LayoutTests/fast/dom @rniwa
 /LayoutTests/fast/events @rniwa
 
@@ -141,6 +149,7 @@
 *ContentExtension* @b-weinstein @xeenon
 *InspectorExtension* @b-weinstein @xeenon
 *WebExtension* @b-weinstein @xeenon
+/Source/WebKit/_WebKit_SwiftUI @rr-codes
 /Source/WebKit/GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in @brentfulgham @pvollan
 /Source/WebKit/NetworkProcess @cdumez
 /Source/WebKit/NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in @brentfulgham @pvollan
@@ -152,6 +161,7 @@
 /Source/WebKit/UIProcess @cdumez
 /Source/WebKit/UIProcess/Extensions @b-weinstein @xeenon
 /Source/WebKit/UIProcess/Inspector @dcrousso @patrickangle
+/Source/WebKit/WebKitSwift @rr-codes
 /Source/WebKit/WebProcess @cdumez
 /Source/WebKit/WebProcess/ApplePay @aprotyas
 /Source/WebKit/WebProcess/Extensions @b-weinstein @xeenon
@@ -173,6 +183,11 @@
 # Xcode
 
 *.xcconfig @emw-apple
+
+# ================================================================================
+# Swift
+
+*.swift @rr-codes
 
 # ================================================================================
 # Linux graphics

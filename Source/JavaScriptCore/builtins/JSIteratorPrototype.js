@@ -224,7 +224,12 @@ function flatMap(mapper)
     var iteratedWrapper = {
         @@iterator: function() { return this; },
         next: function() { return iteratedNextMethod.@call(iterated); },
-        return: function() { return iterated.return(@undefined); },
+        return: function() {
+            var iteratedReturnMethod = iterated.return;
+            if (iteratedReturnMethod !== @undefined)
+                return iteratedReturnMethod.@call(iterated, @undefined);
+            return { done: true };
+        },
     };
 
     var generator = (function*() {
@@ -376,11 +381,11 @@ function chunks(chunkSize)
 
     var numChunkSize = @toNumber(chunkSize);
     if (numChunkSize !== numChunkSize)
-        @throwRangeError("Iterator.prototype.chunks requires that argument not be NaN.");
+        @throwRangeError("Iterator.prototype.chunks requires that first argument not be NaN.");
 
     var intChunkSize = @toIntegerOrInfinity(numChunkSize);
     if (intChunkSize < 1 || intChunkSize > @MAX_ARRAY_INDEX)
-        @throwRangeError("Iterator.prototype.chunks requires that argument be between 1 and 2**32 - 1.");
+        @throwRangeError("Iterator.prototype.chunks requires that first argument be between 1 and 2**32 - 1.");
 
     var iterated = this;
     var iteratedNextMethod = this.next;
@@ -412,7 +417,7 @@ function chunks(chunkSize)
 }
 
 // https://tc39.es/proposal-iterator-chunking/#sec-iterator.prototype.windows
-function windows(windowSize)
+function windows(windowSize /*, undersized */)
 {
     "use strict";
 
@@ -421,11 +426,15 @@ function windows(windowSize)
 
     var numWindowSize = @toNumber(windowSize);
     if (numWindowSize !== numWindowSize)
-        @throwRangeError("Iterator.prototype.windows requires that argument not be NaN.");
+        @throwRangeError("Iterator.prototype.windows requires that first argument not be NaN.");
 
     var intWindowSize = @toIntegerOrInfinity(numWindowSize);
     if (intWindowSize < 1 || intWindowSize > @MAX_ARRAY_INDEX)
-        @throwRangeError("Iterator.prototype.windows requires that argument be between 1 and 2**32 - 1.");
+        @throwRangeError("Iterator.prototype.windows requires that first argument be between 1 and 2**32 - 1.");
+
+    var undersized = @argument(1) ?? "only-full";
+    if (undersized !== "only-full" && undersized !== "allow-partial")
+        @throwTypeError("Iterator.prototype.windows requires that second argument be \"only-full\" or \"allow-partial\".");
 
     var iterated = this;
     var iteratedNextMethod = this.next;
@@ -435,8 +444,11 @@ function windows(windowSize)
 
         for (;;) {
             var result = @iteratorGenericNext(iteratedNextMethod, iterated);
-            if (result.done)
+            if (result.done) {
+                if (undersized === "allow-partial" && buffer.length && buffer.length < intWindowSize)
+                    yield buffer;
                 return;
+            }
 
             if (buffer.length === intWindowSize) {
                 for (var i = 0; i < buffer.length - 1; ++i)

@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT event and promise ordering for same-document navigation.back() Test timed out
+PASS event and promise ordering for same-document navigation.back()
 

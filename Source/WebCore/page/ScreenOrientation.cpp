@@ -26,9 +26,10 @@
 #include "config.h"
 #include "ScreenOrientation.h"
 
-#include "Document.h"
+#include "ContextDestructionObserverInlines.h"
 #include "DocumentFullscreen.h"
-#include "DocumentInlines.h"
+#include "DocumentSecurityOrigin.h"
+#include "DocumentView.h"
 #include "Element.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -37,6 +38,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "LocalDOMWindow.h"
 #include "Page.h"
+#include "Settings.h"
 #include "VisibilityState.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -273,6 +275,11 @@ void ScreenOrientation::stop()
 bool ScreenOrientation::virtualHasPendingActivity() const
 {
     return m_hasChangeEventListener;
+}
+
+ScriptExecutionContext* ScreenOrientation::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 void ScreenOrientation::eventListenersDidChange()

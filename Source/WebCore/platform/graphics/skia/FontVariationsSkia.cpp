@@ -31,12 +31,12 @@ namespace WebCore {
 FontVariationDefaultsMap defaultFontVariationValues(const SkTypeface& typeface)
 {
     FontVariationDefaultsMap map;
-    int axisCount = typeface.getVariationDesignParameters(nullptr, 0);
-    if (!axisCount)
+    int axisCount = typeface.getVariationDesignParameters({ });
+    if (axisCount <= 0)
         return map;
 
     Vector<SkFontParameters::Variation::Axis> axisValues(axisCount);
-    if (typeface.getVariationDesignParameters(axisValues.data(), axisValues.size()) == -1)
+    if (typeface.getVariationDesignParameters(axisValues.mutableSpan()) <= 0)
         return map;
 
     for (const auto& axisValue : axisValues) {

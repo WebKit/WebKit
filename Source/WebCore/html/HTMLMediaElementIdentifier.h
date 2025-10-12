@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "MediaPlayerClientIdentifier.h"
+#include <WebCore/MediaPlayerClientIdentifier.h>
 
 namespace WebCore {
 

@@ -38,7 +38,7 @@ public:
 private:
     PlatformCALayerRemoteTiledBacking(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
 
-    WebCore::TiledBacking* tiledBacking() override { return m_tileController.get(); }
+    WebCore::TiledBacking* tiledBacking() final { return m_tileController.ptr(); }
 
     void setNeedsDisplayInRect(const WebCore::FloatRect& dirtyRect) override;
     void setNeedsDisplay() override;
@@ -53,6 +53,11 @@ private:
     bool acceleratesDrawing() const override;
     void setAcceleratesDrawing(bool) override;
 
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    bool setNeedsDisplayIfEDRHeadroomExceeds(float) override;
+    void setTonemappingEnabled(bool) override;
+#endif
+
     WebCore::ContentsFormat contentsFormat() const override;
     void setContentsFormat(WebCore::ContentsFormat) override;
 
@@ -62,7 +67,7 @@ private:
     void setBorderWidth(float) override;
     void setBorderColor(const WebCore::Color&) override;
 
-    std::unique_ptr<WebCore::TileController> m_tileController;
+    const UniqueRef<WebCore::TileController> m_tileController;
     mutable WebCore::PlatformCALayerList m_customSublayers;
 };
 

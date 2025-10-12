@@ -6,6 +6,10 @@
 // SixteenBppTextureTest:
 //   Basic tests using 16bpp texture formats (e.g. GL_RGB565).
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 

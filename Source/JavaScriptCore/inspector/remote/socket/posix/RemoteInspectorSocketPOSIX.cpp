@@ -245,7 +245,7 @@ PollingDescriptor preparePolling(PlatformSocketType socket)
 
 bool poll(Vector<PollingDescriptor>& pollDescriptors, int timeout)
 {
-    int ret = ::poll(pollDescriptors.data(), pollDescriptors.size(), timeout);
+    int ret = ::poll(pollDescriptors.mutableSpan().data(), pollDescriptors.size(), timeout);
     return ret > 0;
 }
 

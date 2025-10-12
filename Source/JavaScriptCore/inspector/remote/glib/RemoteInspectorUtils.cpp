@@ -33,6 +33,10 @@
 #include <wtf/SHA1.h>
 #include <wtf/glib/GSpanExtras.h>
 
+#if PLATFORM(WPE)
+#include <wtf/glib/GResources.h>
+#endif
+
 #define INSPECTOR_BACKEND_COMMANDS_PATH "/org/webkit/inspector/UserInterface/Protocol/InspectorBackendCommands.js"
 
 namespace Inspector {
@@ -40,22 +44,7 @@ namespace Inspector {
 GRefPtr<GBytes> backendCommands()
 {
 #if PLATFORM(WPE)
-    static std::once_flag flag;
-    std::call_once(flag, [] {
-        const char* dataDir = PKGDATADIR;
-        GUniqueOutPtr<GError> error;
-
-        const char* path = g_getenv("WEBKIT_INSPECTOR_RESOURCES_PATH");
-        if (path && g_file_test(path, G_FILE_TEST_IS_DIR))
-            dataDir = path;
-
-        GUniquePtr<char> gResourceFilename(g_build_filename(dataDir, "inspector.gresource", nullptr));
-        GRefPtr<GResource> gresource = adoptGRef(g_resource_load(gResourceFilename.get(), &error.outPtr()));
-        if (!gresource) {
-            g_error("Error loading inspector.gresource: %s", error->message);
-        }
-        g_resources_register(gresource.get());
-    });
+    WTF::registerInspectorResourceIfNeeded();
 #endif
     GRefPtr<GBytes> bytes = adoptGRef(g_resources_lookup_data(INSPECTOR_BACKEND_COMMANDS_PATH, G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
     ASSERT(bytes);

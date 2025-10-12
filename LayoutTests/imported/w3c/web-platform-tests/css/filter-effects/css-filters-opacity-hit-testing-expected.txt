@@ -1,0 +1,3 @@
+
+PASS Elements with 'opacity: 0' should respond to hit testing.
+

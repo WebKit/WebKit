@@ -1,0 +1,26 @@
+<script>
+    function load() {
+        canvas.toBlob(callback);
+        p1.style.setProperty("text-combine-upright", "initial");
+        span.parentNode.removeChild(span);
+    }
+
+    function callback() {
+        div.parentNode.removeChild(div);
+        document.caretRangeFromPoint();
+    }
+
+    if (window.testRunner)
+      testRunner.dumpAsText();
+</script>
+
+<body onload=load()>
+    <div id="div" style="display: contents;">
+        <br/>
+        <span id="span">
+            <p id="p1"></p>
+        </span>
+    </div>
+    <canvas id="canvas"></canvas>
+    <p>PASS if no crash</p>
+</body>

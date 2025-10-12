@@ -2,7 +2,7 @@ This test ensures that we don't crash when processing attribute changes after a 
 
 #grid element's initial role: AXRole: AXTable
 Changing #grid's role attribute to 'presentation', and its class to 'foo'.
-#grid element's new role after DOM changes: AXRole: AXInvalid
+#grid element's new role after DOM changes: AXRole: AXUnknown
 
 No crash, so test passed.
 

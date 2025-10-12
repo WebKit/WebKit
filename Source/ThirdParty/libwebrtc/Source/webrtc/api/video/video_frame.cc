@@ -178,14 +178,14 @@ VideoFrame VideoFrame::Builder::build() {
 }
 
 VideoFrame::Builder& VideoFrame::Builder::set_video_frame_buffer(
-    const rtc::scoped_refptr<VideoFrameBuffer>& buffer) {
+    const scoped_refptr<VideoFrameBuffer>& buffer) {
   video_frame_buffer_ = buffer;
   return *this;
 }
 
 VideoFrame::Builder& VideoFrame::Builder::set_timestamp_ms(
     int64_t timestamp_ms) {
-  timestamp_us_ = timestamp_ms * rtc::kNumMicrosecsPerMillisec;
+  timestamp_us_ = timestamp_ms * kNumMicrosecsPerMillisec;
   return *this;
 }
 
@@ -264,8 +264,8 @@ VideoFrame::Builder& VideoFrame::Builder::set_packet_infos(
   return *this;
 }
 
-VideoFrame::VideoFrame(const rtc::scoped_refptr<VideoFrameBuffer>& buffer,
-                       webrtc::VideoRotation rotation,
+VideoFrame::VideoFrame(const scoped_refptr<VideoFrameBuffer>& buffer,
+                       VideoRotation rotation,
                        int64_t timestamp_us)
     : video_frame_buffer_(buffer),
       timestamp_rtp_(0),
@@ -273,20 +273,20 @@ VideoFrame::VideoFrame(const rtc::scoped_refptr<VideoFrameBuffer>& buffer,
       timestamp_us_(timestamp_us),
       rotation_(rotation) {}
 
-VideoFrame::VideoFrame(const rtc::scoped_refptr<VideoFrameBuffer>& buffer,
+VideoFrame::VideoFrame(const scoped_refptr<VideoFrameBuffer>& buffer,
                        uint32_t timestamp_rtp,
                        int64_t render_time_ms,
                        VideoRotation rotation)
     : video_frame_buffer_(buffer),
       timestamp_rtp_(timestamp_rtp),
       ntp_time_ms_(0),
-      timestamp_us_(render_time_ms * rtc::kNumMicrosecsPerMillisec),
+      timestamp_us_(render_time_ms * kNumMicrosecsPerMillisec),
       rotation_(rotation) {
   RTC_DCHECK(buffer);
 }
 
 VideoFrame::VideoFrame(uint16_t id,
-                       const rtc::scoped_refptr<VideoFrameBuffer>& buffer,
+                       const scoped_refptr<VideoFrameBuffer>& buffer,
                        int64_t timestamp_us,
                        const std::optional<Timestamp>& presentation_timestamp,
                        const std::optional<Timestamp>& reference_time,
@@ -336,18 +336,18 @@ uint32_t VideoFrame::size() const {
   return width() * height();
 }
 
-rtc::scoped_refptr<VideoFrameBuffer> VideoFrame::video_frame_buffer() const {
+scoped_refptr<VideoFrameBuffer> VideoFrame::video_frame_buffer() const {
   return video_frame_buffer_;
 }
 
 void VideoFrame::set_video_frame_buffer(
-    const rtc::scoped_refptr<VideoFrameBuffer>& buffer) {
+    const scoped_refptr<VideoFrameBuffer>& buffer) {
   RTC_CHECK(buffer);
   video_frame_buffer_ = buffer;
 }
 
 int64_t VideoFrame::render_time_ms() const {
-  return timestamp_us() / rtc::kNumMicrosecsPerMillisec;
+  return timestamp_us() / kNumMicrosecsPerMillisec;
 }
 
 }  // namespace webrtc

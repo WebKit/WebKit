@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "WebGPUAddressMode.h"
-#include "WebGPUCompareFunction.h"
-#include "WebGPUFilterMode.h"
-#include "WebGPUObjectDescriptorBase.h"
+#include <WebCore/WebGPUAddressMode.h>
+#include <WebCore/WebGPUCompareFunction.h>
+#include <WebCore/WebGPUFilterMode.h>
+#include <WebCore/WebGPUObjectDescriptorBase.h>
 #include <cstdint>
 #include <optional>
 

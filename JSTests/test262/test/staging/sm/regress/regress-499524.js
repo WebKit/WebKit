@@ -4,22 +4,21 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
 flags:
   - noStrict
 description: |
   pending
 esid: pending
 ---*/
-function isSyntaxError(code) {
-  try {
+
+function throwsNoSyntaxError(code) {
+  eval(code);
+};
+
+function throwsSyntaxError(code) {
+  assert.throws(SyntaxError, function() {
     eval(code);
-    return false;
-  } catch (exception) {
-    if (SyntaxError.prototype.isPrototypeOf(exception))
-      return true;
-    throw exception;
-  };
+  });
 };
 
 /* 
@@ -28,28 +27,27 @@ function isSyntaxError(code) {
  * user has opted in to a modicum of sanity, and we forbid duplicate
  * parameter names.
  */
-assert.sameValue(isSyntaxError("function f(x,x){}"),                false);
+throwsNoSyntaxError("function f(x,x){}");
 
-assert.sameValue(isSyntaxError("function f(x,[x]){})"),             true);
-assert.sameValue(isSyntaxError("function f(x,{y:x}){})"),           true);
-assert.sameValue(isSyntaxError("function f(x,{x}){})"),             true);
+throwsSyntaxError("function f(x,[x]){})");
+throwsSyntaxError("function f(x,{y:x}){})");
+throwsSyntaxError("function f(x,{x}){})");
 
-assert.sameValue(isSyntaxError("function f([x],x){})"),             true);
-assert.sameValue(isSyntaxError("function f({y:x},x){})"),           true);
-assert.sameValue(isSyntaxError("function f({x},x){})"),             true);
+throwsSyntaxError("function f([x],x){})");
+throwsSyntaxError("function f({y:x},x){})");
+throwsSyntaxError("function f({x},x){})");
 
-assert.sameValue(isSyntaxError("function f([x,x]){}"),              true);
-assert.sameValue(isSyntaxError("function f({x,x}){}"),              true);
-assert.sameValue(isSyntaxError("function f({y:x,z:x}){}"),          true);
+throwsSyntaxError("function f([x,x]){}");
+throwsSyntaxError("function f({x,x}){}");
+throwsSyntaxError("function f({y:x,z:x}){}");
 
-assert.sameValue(isSyntaxError("function f(x,x,[y]){}"),            true);
-assert.sameValue(isSyntaxError("function f(x,x,{y}){}"),            true);
-assert.sameValue(isSyntaxError("function f([y],x,x){}"),            true);
-assert.sameValue(isSyntaxError("function f({y},x,x){}"),            true);
+throwsSyntaxError("function f(x,x,[y]){}");
+throwsSyntaxError("function f(x,x,{y}){}");
+throwsSyntaxError("function f([y],x,x){}");
+throwsSyntaxError("function f({y},x,x){}");
 
-assert.sameValue(isSyntaxError("function f(a,b,c,d,e,f,g,h,b,[y]){}"),  true);
-assert.sameValue(isSyntaxError("function f([y],a,b,c,d,e,f,g,h,a){}"),  true);
-assert.sameValue(isSyntaxError("function f([a],b,c,d,e,f,g,h,i,a){}"),  true);
-assert.sameValue(isSyntaxError("function f(a,b,c,d,e,f,g,h,i,[a]){}"),  true);
-assert.sameValue(isSyntaxError("function f(a,b,c,d,e,f,g,h,i,[a]){}"),  true);
-
+throwsSyntaxError("function f(a,b,c,d,e,f,g,h,b,[y]){}");
+throwsSyntaxError("function f([y],a,b,c,d,e,f,g,h,a){}");
+throwsSyntaxError("function f([a],b,c,d,e,f,g,h,i,a){}");
+throwsSyntaxError("function f(a,b,c,d,e,f,g,h,i,[a]){}");
+throwsSyntaxError("function f(a,b,c,d,e,f,g,h,i,[a]){}");

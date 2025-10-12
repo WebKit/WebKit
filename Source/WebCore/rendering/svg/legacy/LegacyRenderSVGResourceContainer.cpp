@@ -20,6 +20,8 @@
 #include "config.h"
 #include "LegacyRenderSVGResourceContainer.h"
 
+#include "ContainerNodeInlines.h"
+#include "DocumentView.h"
 #include "LegacyRenderSVGRoot.h"
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
@@ -168,7 +170,7 @@ void LegacyRenderSVGResourceContainer::markAllClientLayersForInvalidation()
 
 void LegacyRenderSVGResourceContainer::markClientForInvalidation(RenderObject& client, InvalidationMode mode)
 {
-    ASSERT(!m_clients.isEmptyIgnoringNullReferences());
+    ASSERT(!m_clients.isEmptyIgnoringNullReferences() || client.style().hasClipPath());
 
     switch (mode) {
     case LayoutAndBoundariesInvalidation:

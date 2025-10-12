@@ -11,8 +11,8 @@
 #ifndef TEST_PC_E2E_ANALYZER_VIDEO_MULTI_READER_QUEUE_H_
 #define TEST_PC_E2E_ANALYZER_VIDEO_MULTI_READER_QUEUE_H_
 
+#include <cstddef>
 #include <deque>
-#include <memory>
 #include <optional>
 #include <set>
 #include <unordered_map>

@@ -26,7 +26,10 @@
 #include "config.h"
 #include "NavigationHistoryEntry.h"
 
-#include "DocumentInlines.h"
+#include "ContextDestructionObserverInlines.h"
+#include "DocumentEventLoop.h"
+#include "DocumentView.h"
+#include "DocumentWindow.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
 #include "EventTargetInterfaces.h"
@@ -156,7 +159,7 @@ JSC::JSValue NavigationHistoryEntry::getState(JSDOMGlobalObject& globalObject) c
 void NavigationHistoryEntry::setState(RefPtr<SerializedScriptValue>&& state)
 {
     m_state = state;
-    protectedAssociatedHistoryItem()->setNavigationAPIStateObject(WTFMove(state));
+    m_associatedHistoryItem->setNavigationAPIStateObject(WTFMove(state));
 }
 
 auto NavigationHistoryEntry::DocumentState::fromContext(ScriptExecutionContext* context) -> DocumentState

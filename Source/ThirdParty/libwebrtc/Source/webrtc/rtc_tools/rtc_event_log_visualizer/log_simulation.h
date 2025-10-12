@@ -17,7 +17,7 @@
 #include <map>
 #include <memory>
 
-#include "api/rtc_event_log/rtc_event_log.h"
+#include "api/environment/environment.h"
 #include "api/transport/network_control.h"
 #include "api/transport/network_types.h"
 #include "api/units/timestamp.h"
@@ -33,6 +33,7 @@ namespace webrtc {
 class LogBasedNetworkControllerSimulation {
  public:
   explicit LogBasedNetworkControllerSimulation(
+      const Environment& env,
       std::unique_ptr<NetworkControllerFactoryInterface> factory,
       std::function<void(const NetworkControlUpdate&, Timestamp)>
           update_handler);
@@ -53,8 +54,8 @@ class LogBasedNetworkControllerSimulation {
   void OnFeedback(const LoggedRtcpPacketTransportFeedback& feedback);
   void OnReceiverReport(const LoggedRtcpPacketReceiverReport& report);
   void OnIceConfig(const LoggedIceCandidatePairConfig& candidate);
-  RtcEventLogNull null_event_log_;
 
+  const Environment env_;
   const std::function<void(const NetworkControlUpdate&, Timestamp)>
       update_handler_;
   std::unique_ptr<NetworkControllerFactoryInterface> factory_;

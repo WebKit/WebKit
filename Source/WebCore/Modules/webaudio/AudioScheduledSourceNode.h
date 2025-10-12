@@ -67,6 +67,8 @@ public:
 protected:
     AudioScheduledSourceNode(BaseAudioContext&, NodeType);
 
+    bool isAudioScheduledSourceNode() const final { return true; }
+
     // Get frame information for the current time quantum.
     // We handle the transition into PLAYING_STATE and FINISHED_STATE here,
     // zeroing out portions of the outputBus which are outside the range of startFrame and endFrame.
@@ -102,3 +104,7 @@ protected:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AudioScheduledSourceNode)
+static bool isType(const WebCore::AudioNode& node) { return node.isAudioScheduledSourceNode(); }
+SPECIALIZE_TYPE_TRAITS_END()

@@ -13,7 +13,7 @@
 
 #include "absl/strings/string_view.h"
 
-namespace cricket {
+namespace webrtc {
 
 // Names or name prefixes of protocols as defined by SDP specifications,
 // and generated in SDP produced by WebRTC.
@@ -42,6 +42,7 @@ bool IsPlainRtp(absl::string_view protocol);
 // Returns true if the given media protocol is encrypted RTP
 bool IsDtlsRtp(absl::string_view protocol);
 
-}  // namespace cricket
+}  //  namespace webrtc
+
 
 #endif  // PC_MEDIA_PROTOCOL_NAMES_H_

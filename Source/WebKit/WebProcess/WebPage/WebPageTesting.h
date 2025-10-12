@@ -53,7 +53,7 @@ private:
     explicit WebPageTesting(WebPage&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
     void isLayerTreeFrozen(CompletionHandler<void(bool)>&&);
     void setPermissionLevel(const String& origin, bool allowed);

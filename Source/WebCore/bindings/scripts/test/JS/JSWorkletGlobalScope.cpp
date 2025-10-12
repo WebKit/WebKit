@@ -168,7 +168,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsWorkletGlobalScope_WorkletGlobalScopeConstructor, (JS
 
 JSC::GCClient::IsoSubspace* JSWorkletGlobalScope::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSWorkletGlobalScope, UseCustomHeapCellType::Yes>(vm,
+    return WebCore::subspaceForImpl<JSWorkletGlobalScope, UseCustomHeapCellType::Yes>(vm, "JSWorkletGlobalScope"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForWorkletGlobalScope.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForWorkletGlobalScope = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForWorkletGlobalScope.get(); },

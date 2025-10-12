@@ -10,7 +10,7 @@
 
 #include "common_video/framerate_controller.h"
 
-#include <limits>
+#include <cstdint>
 
 #include "rtc_base/time_utils.h"
 #include "test/gtest.h"
@@ -24,12 +24,12 @@ constexpr int kNumFrames = 60;
 class FramerateControllerTest : public ::testing::Test {
  protected:
   int64_t GetNextTimestampNs() {
-    int64_t interval_us = rtc::kNumMicrosecsPerSec / kInputFps;
+    int64_t interval_us = kNumMicrosecsPerSec / kInputFps;
     next_timestamp_us_ += interval_us;
-    return next_timestamp_us_ * rtc::kNumNanosecsPerMicrosec;
+    return next_timestamp_us_ * kNumNanosecsPerMicrosec;
   }
 
-  int64_t next_timestamp_us_ = rtc::TimeMicros();
+  int64_t next_timestamp_us_ = TimeMicros();
   FramerateController controller_;
 };
 
@@ -97,7 +97,7 @@ TEST_F(FramerateControllerTest, NoFrameDroppedForLargeTimestampOffset) {
   const int64_t kLargeOffsetNs = -987654321LL * 1000;
   EXPECT_FALSE(controller_.ShouldDropFrame(kLargeOffsetNs));
 
-  int64_t input_interval_ns = rtc::kNumNanosecsPerSec / kInputFps;
+  int64_t input_interval_ns = kNumNanosecsPerSec / kInputFps;
   EXPECT_FALSE(controller_.ShouldDropFrame(kLargeOffsetNs + input_interval_ns));
 }
 
@@ -105,7 +105,7 @@ TEST_F(FramerateControllerTest, NoFrameDroppedIfInputWithJitterRequested) {
   controller_.SetMaxFramerate(kInputFps);
 
   // Input fps with jitter.
-  int64_t input_interval_ns = rtc::kNumNanosecsPerSec / kInputFps;
+  int64_t input_interval_ns = kNumNanosecsPerSec / kInputFps;
   EXPECT_FALSE(controller_.ShouldDropFrame(input_interval_ns * 0 / 10));
   EXPECT_FALSE(controller_.ShouldDropFrame(input_interval_ns * 10 / 10 - 1));
   EXPECT_FALSE(controller_.ShouldDropFrame(input_interval_ns * 25 / 10));

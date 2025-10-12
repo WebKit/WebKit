@@ -1,10 +1,9 @@
-<html><!-- webkit-test-runner [ UpgradeMixedContentEnabled=false ] -->
+<html>
 <body>
 <script>
 if (window.testRunner && window.internals) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
-    internals.settings.setAllowRunningOfInsecureContent(false);
 }
 window.addEventListener("message", function (e) {
   if (window.testRunner)

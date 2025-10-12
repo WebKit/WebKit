@@ -51,17 +51,17 @@ void Serialize<URL>::operator()(StringBuilder& builder, const SerializationConte
     } else
         serializeString(value.specified, builder);
 
-    if (value.modifiers.crossorigin) {
+    if (value.modifiers.crossOrigin) {
         builder.append(' ');
-        serializationForCSS(builder, context, *value.modifiers.crossorigin);
+        serializationForCSS(builder, context, *value.modifiers.crossOrigin);
     }
     if (value.modifiers.integrity) {
         builder.append(' ');
         serializationForCSS(builder, context, *value.modifiers.integrity);
     }
-    if (value.modifiers.referrerpolicy) {
+    if (value.modifiers.referrerPolicy) {
         builder.append(' ');
-        serializationForCSS(builder, context, *value.modifiers.referrerpolicy);
+        serializationForCSS(builder, context, *value.modifiers.referrerPolicy);
     }
 
     builder.append(')');
@@ -73,7 +73,7 @@ static URL completeURL(const String& string, const WTF::URL& baseURL)
 {
     if (string.isEmpty() || string.startsWith('#'))
         return URL { .specified = string, .resolved = WTF::URL { string }, .modifiers = { } };
-    if (baseURL.isNull())
+    if (baseURL.isNull() || baseURL.isAboutBlank())
         return URL { .specified = string, .resolved = WTF::URL { }, .modifiers = { } };
     return URL { .specified = string, .resolved = WTF::URL { baseURL, string }, .modifiers = { } };
 }

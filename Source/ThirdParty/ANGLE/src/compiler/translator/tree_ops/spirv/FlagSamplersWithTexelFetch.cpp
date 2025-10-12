@@ -48,8 +48,17 @@ class FlagSamplersWithTexelFetchTraverser : public TIntermTraverser
         const TIntermSequence *sequence = node->getSequence();
 
         ASSERT(sequence->size() > 0);
+        TIntermNode *samplerNode = node->getSequence()->at(0);
+        TIntermBinary *asBinary  = samplerNode->getAsBinaryNode();
 
-        TIntermSymbol *samplerSymbol = sequence->at(0)->getAsSymbolNode();
+        // Handle cases where the argument comes from an array of samplers.
+        if (asBinary != nullptr)
+        {
+            ASSERT(asBinary->getOp() == TOperator::EOpIndexDirect);
+            samplerNode = asBinary->getLeft();
+        }
+
+        TIntermSymbol *samplerSymbol = samplerNode->getAsSymbolNode();
         ASSERT(samplerSymbol != nullptr);
 
         const TVariable &samplerVariable = samplerSymbol->variable();

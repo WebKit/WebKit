@@ -28,9 +28,9 @@
 
 #pragma once
 
-#include "FloatPoint.h"
-#include "FloatQuad.h"
-#include "FloatRect.h"
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatQuad.h>
+#include <WebCore/FloatRect.h>
 #include <optional>
 
 namespace WebCore {

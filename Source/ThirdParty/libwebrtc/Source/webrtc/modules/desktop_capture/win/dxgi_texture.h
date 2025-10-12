@@ -12,8 +12,10 @@
 #define MODULES_DESKTOP_CAPTURE_WIN_DXGI_TEXTURE_H_
 
 #include <d3d11.h>
+#include <dxgi.h>
 #include <dxgi1_2.h>
 
+#include <cstdint>
 #include <memory>
 
 #include "modules/desktop_capture/desktop_frame.h"

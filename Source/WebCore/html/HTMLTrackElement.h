@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,10 +52,6 @@ public:
     USING_CAN_MAKE_WEAKPTR(HTMLElement);
 
     const AtomString& kind();
-    void setKind(const AtomString&);
-
-    const AtomString& srclang() const;
-    const AtomString& label() const;
     bool isDefault() const;
 
     enum ReadyState { NONE = 0, LOADING = 1, LOADED = 2, TRACK_ERROR = 3 };
@@ -97,7 +93,7 @@ private:
 
     bool canLoadURL(const URL&);
 
-    Ref<LoadableTextTrack> m_track;
+    const Ref<LoadableTextTrack> m_track;
     bool m_loadPending { false };
     bool m_hasRelevantLoadEventsListener { false };
 };

@@ -761,7 +761,7 @@ function testStructGet() {
       )
     `).exports.f(),
     WebAssembly.RuntimeError,
-    "struct.get to a null reference"
+    "access to a null reference"
   );
 
   // Bottom is type valid but throws due to null.
@@ -774,7 +774,7 @@ function testStructGet() {
       )
     `).exports.f(),
     WebAssembly.RuntimeError,
-    "struct.get to a null reference"
+    "access to a null reference"
   );
 }
 
@@ -1186,7 +1186,7 @@ function testStructSet() {
       )
     `).exports.f(),
     WebAssembly.RuntimeError,
-    "struct.set to a null reference"
+    "access to a null reference"
   );
 
   // Bottom is type valid but throws on null.
@@ -1199,7 +1199,7 @@ function testStructSet() {
       )
     `).exports.f(),
     WebAssembly.RuntimeError,
-    "struct.set to a null reference"
+    "access to a null reference"
   );
 }
 
@@ -1218,7 +1218,7 @@ function testStructTable() {
     `);
     m.exports.set(2);
     assert.eq(m.exports.get(2), 42);
-    assert.throws(() => m.exports.get(4), WebAssembly.RuntimeError, "struct.get to a null");
+    assert.throws(() => m.exports.get(4), WebAssembly.RuntimeError, "access to a null");
   }
 
   // Invalid struct.get, needs a downcast.

@@ -23,10 +23,10 @@
 
 import CoreTransferable
 import Foundation
-import os
 import Observation
 import UniformTypeIdentifiers
-@_spi(Private) import WebKit
+@_spi(Private) @_spi(CrossImportOverlay) import WebKit
+import os
 
 struct PDF {
     let data: Data
@@ -135,9 +135,9 @@ final class BrowserViewModel {
     }
 
     func didReceiveNavigationEvent(_ event: WebPage.NavigationEvent) {
-        Self.logger.info("Did receive navigation event \(String(describing: event.kind)) for navigation \(String(describing: event.navigationID))")
+        Self.logger.info("Did receive navigation event \(String(describing: event))")
 
-        if case .committed = event.kind {
+        if event == .committed {
             displayedURL = page.url?.absoluteString ?? ""
         }
     }
@@ -153,7 +153,7 @@ final class BrowserViewModel {
 
     func exportAsPDF() {
         Task {
-            let data = try await page.pdf()
+            let data = try await page.exported(as: .pdf)
             exportedPDF = PDF(data: data, title: !page.title.isEmpty ? page.title : nil)
         }
     }
@@ -191,6 +191,17 @@ final class BrowserViewModel {
     func setMicrophoneCaptureState(_ state: WKMediaCaptureState) {
         Task { @MainActor in
             await page.setMicrophoneCaptureState(state)
+        }
+    }
+
+    func updateWebPreferences() {
+        let preferences = page.backingWebView.configuration.preferences
+        for feature in WKPreferences._features() {
+            guard let value = UserDefaults.standard.object(forKey: feature.key) as? Bool else {
+                continue
+            }
+
+            preferences._setEnabled(value, for: feature)
         }
     }
 }

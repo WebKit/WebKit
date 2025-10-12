@@ -14,6 +14,7 @@
   readonly attribute DOMFormData? formData;
   readonly attribute DOMString? downloadRequest;
   readonly attribute any info;
+  readonly attribute Element? sourceElement;
   [EnabledBySetting=UAVisualTransitionDetectionEnabled] readonly attribute boolean hasUAVisualTransition;
 
   [CallWith=RelevantDocument] undefined intercept(optional NavigationInterceptOptions options = {});
@@ -30,6 +31,7 @@ dictionary NavigateEventInit : EventInit {
   DOMFormData? formData = null;
   DOMString? downloadRequest = null;
   any info;
+  Element? sourceElement = null;
   [EnabledBySetting=UAVisualTransitionDetectionEnabled] boolean hasUAVisualTransition = false;
 };
 

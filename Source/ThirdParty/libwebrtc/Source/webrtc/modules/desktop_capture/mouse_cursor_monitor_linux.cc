@@ -11,6 +11,7 @@
 #include <memory>
 
 #include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/mouse_cursor_monitor.h"
 
 #if defined(WEBRTC_USE_X11)

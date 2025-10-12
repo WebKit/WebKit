@@ -59,7 +59,7 @@ public:
     };
 
 protected:
-    SchemaVersion migrateToCurrentSchemaVersionIfNeeded();
+    SchemaVersion migrateToCurrentSchemaVersionIfNeeded() override;
 
     DatabaseResult createFreshDatabaseSchema() override;
     DatabaseResult resetDatabaseSchema() override;

@@ -23,7 +23,7 @@
 #include "IDLTypes.h"
 #include "JSCallbackData.h"
 #include "TestCallbackFunctionGenerateIsReachable.h"
-#include "WebCoreOpaqueRootInlines.h"
+#include "WebCoreOpaqueRoot.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -35,7 +35,7 @@ public:
         return adoptRef(*new JSTestCallbackFunctionGenerateIsReachable(callback, globalObject));
     }
 
-    ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const;
 
     ~JSTestCallbackFunctionGenerateIsReachable() final;
     JSCallbackData* callbackData() { return m_data; }

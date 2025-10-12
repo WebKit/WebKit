@@ -32,6 +32,7 @@
 #include <wtf/Expected.h>
 #include <wtf/Lock.h>
 #include <wtf/OptionSet.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 #include <wtf/UniqueRef.h>
@@ -82,10 +83,8 @@ public:
     
     bool transactionInProgress() const { return m_transactionInProgress; }
 
-    WEBCORE_EXPORT Expected<SQLiteStatement, int> prepareStatementSlow(StringView query);
-    WEBCORE_EXPORT Expected<SQLiteStatement, int> prepareStatement(ASCIILiteral query);
-    WEBCORE_EXPORT Expected<UniqueRef<SQLiteStatement>, int> prepareHeapStatementSlow(StringView query);
-    WEBCORE_EXPORT Expected<UniqueRef<SQLiteStatement>, int> prepareHeapStatement(ASCIILiteral query);
+    WEBCORE_EXPORT std::unique_ptr<SQLiteStatement> prepareStatementSlow(StringView query);
+    WEBCORE_EXPORT std::unique_ptr<SQLiteStatement> prepareStatement(ASCIILiteral query);
 
     // Aborts the current database operation. This is thread safe.
     WEBCORE_EXPORT void interrupt();

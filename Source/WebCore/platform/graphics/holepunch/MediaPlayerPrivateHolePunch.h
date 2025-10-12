@@ -22,6 +22,7 @@
 
 #if USE(EXTERNAL_HOLEPUNCH)
 
+#include "DestinationColorSpace.h"
 #include "MediaPlayerPrivate.h"
 #include "PlatformLayer.h"
 #include <wtf/RefCounted.h>

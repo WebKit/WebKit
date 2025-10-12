@@ -1,0 +1,3 @@
+
+FAIL reparenting a dialog should not cause it to move in the open dialogs list promise_test: Unhandled rejection with value: object "TypeError: new_parent.moveBefore is not a function. (In 'new_parent.moveBefore(dialog, null)', 'new_parent.moveBefore' is undefined)"
+

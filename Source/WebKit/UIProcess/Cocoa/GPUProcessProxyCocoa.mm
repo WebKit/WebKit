@@ -35,6 +35,7 @@
 #include "WebProcessProxy.h"
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/cocoa/SpanCocoa.h>
+#include <wtf/darwin/DispatchExtras.h>
 
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
 #include <pal/spi/mac/PowerLogSPI.h>
@@ -111,7 +112,7 @@ Vector<SandboxExtension::Handle> GPUProcessProxy::createGPUToolsSandboxExtension
 void GPUProcessProxy::sendBookmarkDataForCacheDirectory()
 {
     Ref protectedConnection = connection();
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([protectedConnection = WTFMove(protectedConnection)] () mutable {
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([protectedConnection = WTFMove(protectedConnection)] () mutable {
         NSError *error = nil;
         RetainPtr directoryURL = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:&error];
         RetainPtr url = adoptNS([[NSURL alloc] initFileURLWithPath:@"Caches/com.apple.WebKit.GPU/" relativeToURL:directoryURL.get()]);
@@ -121,6 +122,16 @@ void GPUProcessProxy::sendBookmarkDataForCacheDirectory()
     }).get());
 }
 #endif
+
+void GPUProcessProxy::postWillTakeSnapshotNotification(CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::GPUProcess::PostWillTakeSnapshotNotification { }, WTFMove(completionHandler));
+}
+
+void GPUProcessProxy::sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier identifier, const WebCore::FloatSize& size, WebCore::FrameIdentifier rootFrameIdentifier, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::GPUProcess::SinkCompletedSnapshotToPDF { identifier, size, rootFrameIdentifier }, WTFMove(completionHandler));
+}
 
 }
 

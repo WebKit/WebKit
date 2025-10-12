@@ -91,6 +91,19 @@ void Exception::finishCreation(VM& vm, StackCaptureAction action)
 
 #if ENABLE(WEBASSEMBLY)
 
+void Exception::tryUnwrapValueForJSTag(VM& vm)
+{
+    if (!m_value)
+        return;
+
+    if (auto* exception = jsDynamicCast<JSWebAssemblyException*>(m_value.get())) {
+        if (&exception->tag() == &Wasm::Tag::jsExceptionTag()) {
+            m_value.set(vm, this, JSValue::decode(exception->payload().at(0)));
+            return;
+        }
+    }
+}
+
 void Exception::wrapValueForJSTag(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();

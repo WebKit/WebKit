@@ -120,7 +120,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
     if (!title || [title length] == 0)
         title = [targetURL absoluteString];
 
-    [[getSSReadingListClass() defaultReadingList] addReadingListItemWithURL:targetURL title:title previewText:nil error:nil];
+    [[getSSReadingListClassSingleton() defaultReadingList] addReadingListItemWithURL:targetURL title:title previewText:nil error:nil];
 }
 #endif
 

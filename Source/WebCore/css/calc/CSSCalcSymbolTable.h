@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CSSValueKeywords.h"
+#include <WebCore/CSSValueKeywords.h>
 #include <optional>
 #include <wtf/HashMap.h>
 
@@ -47,7 +47,7 @@ public:
     bool contains(CSSValueID) const;
 
 private:
-    UncheckedKeyHashMap<CSSValueID, std::pair<CSSUnitType, double>> m_table;
+    HashMap<CSSValueID, std::pair<CSSUnitType, double>> m_table;
 };
 
 }

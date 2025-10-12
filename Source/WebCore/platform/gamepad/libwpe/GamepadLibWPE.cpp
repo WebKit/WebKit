@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 RDK Management  All rights reserved.
+ * Copyright (C) 2020 RDK Management All rights reserved.
  * Copyright (C) 2022 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,7 +59,16 @@ GamepadLibWPE::GamepadLibWPE(struct wpe_gamepad_provider* provider, uintptr_t ga
             auto& self = *static_cast<GamepadLibWPE*>(data);
             self.absoluteAxisChanged(static_cast<unsigned>(axis), value);
         },
+#if WPE_CHECK_VERSION(1, 16, 2)
+        // analog_button_event
+        [](void* data, enum wpe_gamepad_button button, double value) {
+            auto& self = *static_cast<GamepadLibWPE*>(data);
+            self.analogButtonChanged(static_cast<unsigned>(button), value);
+        },
+        nullptr, nullptr,
+#else
         nullptr, nullptr, nullptr,
+#endif
     };
     wpe_gamepad_set_client(m_gamepad.get(), &s_client, this);
 }
@@ -84,6 +93,16 @@ void GamepadLibWPE::absoluteAxisChanged(unsigned axis, double value)
 
     GamepadProviderLibWPE::singleton().scheduleInputNotification(*this, GamepadProviderLibWPE::ShouldMakeGamepadsVisible::Yes);
 }
+
+#if WPE_CHECK_VERSION(1, 16, 2)
+void GamepadLibWPE::analogButtonChanged(unsigned button, double value)
+{
+    m_lastUpdateTime = MonotonicTime::now();
+    m_buttonValues[button].setValue(clampTo(value, 0.0, 1.0));
+
+    GamepadProviderLibWPE::singleton().scheduleInputNotification(*this, GamepadProviderLibWPE::ShouldMakeGamepadsVisible::Yes);
+}
+#endif
 
 } // namespace WebCore
 

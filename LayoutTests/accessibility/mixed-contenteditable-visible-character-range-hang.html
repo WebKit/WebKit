@@ -96,11 +96,11 @@ if (window.accessibilityController) {
     let visibleCharacterRangeOutput;
     setTimeout(async function() {
         const body = accessibilityController.accessibleElementById("body");
-        await waitFor(() => {
-            visibleCharacterRangeOutput = body.stringDescriptionOfAttributeValue("AXVisibleCharacterRange");
-            return visibleCharacterRangeOutput && visibleCharacterRangeOutput.includes("558, 558");
-        });
-        output += `#body AXVisibleCharacterRange: ${visibleCharacterRangeOutput}\n`;
+        for (let i = 0; i < 6; i++) {
+            body.stringDescriptionOfAttributeValue("AXVisibleCharacterRange");
+            await sleep(10);
+        }
+        output += "PASS: Didn't hang.\n";
 
         debug(output);
         document.getElementById("content-wrapper").style.display = "none";

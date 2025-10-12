@@ -25,7 +25,6 @@
 
 [
     EnabledBySetting=IndexedDBAPIEnabled,
-    CustomToJSObject,
     JSCustomMarkFunction,
     SkipVTableValidation,
     Exposed=(Window,Worker)

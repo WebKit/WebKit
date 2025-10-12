@@ -15,3 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/support/resources.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/support/svg-marker-context-paint.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/support/svg-marker-ref.svg

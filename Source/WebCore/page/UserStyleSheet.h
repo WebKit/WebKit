@@ -25,9 +25,9 @@
  
 #pragma once
 
-#include "PageIdentifier.h"
-#include "UserContentTypes.h"
-#include "UserStyleSheetTypes.h"
+#include <WebCore/PageIdentifier.h>
+#include <WebCore/UserContentTypes.h>
+#include <WebCore/UserStyleSheetTypes.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>

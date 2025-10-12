@@ -35,7 +35,7 @@ for (let name in allowedVideoConstraints) {
     promise_test(async (t) => {
         const constraints = { };
         constraints[name] = { exact : allowedVideoConstraints[name] };
-        return navigator.mediaDevices.getUserMedia({ video: constraints  });
+        return navigator.mediaDevices.getUserMedia({ video: constraints  }).then( stream => t.add_cleanup(() => stream.getTracks().forEach(track => track.stop())));
     }, "Mandatory video allowed constraint " + name);
 }
 

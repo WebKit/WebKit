@@ -57,24 +57,4 @@ WI.PageObserver = class PageObserver extends InspectorBackend.Dispatcher
     {
         WI.cssManager.defaultUserPreferencesDidChange(userPreferences);
     }
-
-    frameStartedLoading(frameId)
-    {
-        // Not handled yet.
-    }
-
-    frameStoppedLoading(frameId)
-    {
-        // Not handled yet.
-    }
-
-    frameScheduledNavigation(frameId, delay)
-    {
-        // Not handled yet.
-    }
-
-    frameClearedScheduledNavigation(frameId)
-    {
-        // Not handled yet.
-    }
 };

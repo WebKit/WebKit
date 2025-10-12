@@ -1,5 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Immersive session ends when device is disconnected Test timed out
-

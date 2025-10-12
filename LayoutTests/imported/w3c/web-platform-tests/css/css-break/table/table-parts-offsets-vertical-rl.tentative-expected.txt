@@ -1,19 +1,19 @@
 
-PASS table
-FAIL colgroup assert_equals: offsetTop expected 418 but got 411
-FAIL col assert_equals: offsetTop expected 418 but got 411
-FAIL col2 assert_equals: offsetTop expected 475 but got 411
-FAIL colgroup2 assert_equals: offsetTop expected 532 but got 411
-FAIL col3 assert_equals: offsetTop expected 532 but got 411
-FAIL rowgroup assert_equals: offsetTop expected 418 but got 411
-FAIL row assert_equals: offsetTop expected 218 but got 211
-FAIL cell assert_equals: offsetLeft expected 38 but got 44
-FAIL content assert_equals: offsetLeft expected 38 but got 44
-FAIL cell2 assert_equals: offsetLeft expected 38 but got 44
-FAIL content2 assert_equals: offsetLeft expected 38 but got 44
-FAIL cell3 assert_equals: offsetLeft expected 38 but got 44
-FAIL content3 assert_equals: offsetLeft expected 38 but got 44
-FAIL row2 assert_equals: offsetTop expected 418 but got 411
-FAIL cell4 assert_equals: offsetLeft expected 51 but got 57
-FAIL content4 assert_equals: offsetLeft expected 51 but got 57
+FAIL table assert_equals: offsetTop expected 8 but got 408
+FAIL colgroup assert_equals: offsetTop expected 18 but got 411
+FAIL col assert_equals: offsetTop expected 18 but got 411
+FAIL col2 assert_equals: offsetTop expected 75 but got 411
+FAIL colgroup2 assert_equals: offsetTop expected 132 but got 411
+FAIL col3 assert_equals: offsetTop expected 132 but got 411
+FAIL rowgroup assert_equals: offsetTop expected 18 but got 411
+FAIL row assert_equals: offsetTop expected 18 but got 211
+FAIL cell assert_equals: offsetTop expected 18 but got 218
+FAIL content assert_equals: offsetTop expected 18 but got 218
+FAIL cell2 assert_equals: offsetTop expected 75 but got 275
+FAIL content2 assert_equals: offsetTop expected 75 but got 275
+FAIL cell3 assert_equals: offsetTop expected 132 but got 332
+FAIL content3 assert_equals: offsetTop expected 132 but got 332
+FAIL row2 assert_equals: offsetTop expected 218 but got 411
+FAIL cell4 assert_equals: offsetTop expected 218 but got 418
+FAIL content4 assert_equals: offsetTop expected 218 but got 418
 

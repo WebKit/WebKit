@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="fuzzy" content="maxDifference=0-16; totalPixels=0-323091" />
+    <link rel="stylesheet" href="resources/filter-helpers.css">
+    <style>
+        img {
+            transform: translate(200%, 200%) scale(4, 4);
+        }
+    </style>
+</head>
+<script>
+    if (window.internals)
+        internals.settings.setGraphicsContextBlurFilterEnabled?.(true);
+</script>
+<body>
+    <img src="resources/reference.png" style="filter: blur(5px)"> 
+</body>
+</html>

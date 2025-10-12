@@ -25,9 +25,11 @@
 
 #pragma once
 
-#include "HTMLDivElement.h"
+#include <WebCore/HTMLDivElement.h>
 
 namespace WebCore {
+
+class LayoutSize;
 
 class TextPlaceholderElement final : public HTMLDivElement {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextPlaceholderElement);

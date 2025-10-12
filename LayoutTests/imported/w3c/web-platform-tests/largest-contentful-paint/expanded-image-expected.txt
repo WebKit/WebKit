@@ -1,0 +1,4 @@
+
+
+PASS Largest Contentful Paint: |size| attribute is bounded by intrinsic size.
+

@@ -24,6 +24,7 @@
 #if ENABLE(GPU_PROCESS) && PLATFORM(IOS_FAMILY)
 
 [
+    DispatchedFrom=GPU,
     DispatchedTo=WebContent
 ]
 messages -> RemoteMediaSessionHelper {

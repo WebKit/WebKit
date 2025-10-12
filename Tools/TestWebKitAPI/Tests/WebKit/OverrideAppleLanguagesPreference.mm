@@ -30,6 +30,7 @@
 #import <WebKit/PreferenceObserver.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/StringBuilder.h>
 
 #if WK_HAVE_C_SPI
@@ -184,7 +185,7 @@ TEST_F(AppleLanguagesTest, DISABLED_UpdateAppleLanguages)
     system([NSString stringWithFormat:@"defaults write NSGlobalDomain AppleLanguages '(\"en-US\")'"].UTF8String);
 
     // Implement our own timeout because we would fail to reset the language if we let the test actually time out.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 10 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 10 * NSEC_PER_SEC), mainDispatchQueueSingleton(), ^{
         done = true;
     });
 

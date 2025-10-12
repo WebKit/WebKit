@@ -65,16 +65,16 @@ void ScrollAnimatorMac::handleWheelEventPhase(PlatformWheelEventPhase phase)
 
     // FIXME: Need to ensure we get PlatformWheelEventPhase::Ended.
     if (phase == PlatformWheelEventPhase::Began)
-        m_scrollableArea.scrollbarsController().didBeginScrollGesture();
+        checkedScrollableArea()->scrollbarsController().didBeginScrollGesture();
     else if (phase == PlatformWheelEventPhase::Ended || phase == PlatformWheelEventPhase::Cancelled)
-        m_scrollableArea.scrollbarsController().didEndScrollGesture();
+        checkedScrollableArea()->scrollbarsController().didEndScrollGesture();
     else if (phase == PlatformWheelEventPhase::MayBegin)
-        m_scrollableArea.scrollbarsController().mayBeginScrollGesture();
+        checkedScrollableArea()->scrollbarsController().mayBeginScrollGesture();
 }
 
 bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    m_scrollableArea.scrollbarsController().setScrollbarAnimationsUnsuspendedByUserInteraction(true);
+    checkedScrollableArea()->scrollbarsController().setScrollbarAnimationsUnsuspendedByUserInteraction(true);
     m_scrollController.updateGestureInProgressState(wheelEvent);
 
     // Events in the PlatformWheelEventPhase::MayBegin phase have no deltas, and therefore never passes through the scroll handling logic below.
@@ -108,18 +108,19 @@ static bool gestureShouldBeginSnap(const PlatformWheelEvent& wheelEvent, ScrollE
 
 bool ScrollAnimatorMac::allowsVerticalStretching(const PlatformWheelEvent& wheelEvent) const
 {
-    if (m_scrollableArea.verticalOverscrollBehavior() == OverscrollBehavior::None)
+    CheckedRef scrollableArea = m_scrollableArea.get();
+    if (scrollableArea->verticalOverscrollBehavior() == OverscrollBehavior::None)
         return false;
     
-    switch (m_scrollableArea.verticalScrollElasticity()) {
+    switch (scrollableArea->verticalScrollElasticity()) {
     case ScrollElasticity::Automatic: {
-        Scrollbar* hScroller = m_scrollableArea.horizontalScrollbar();
-        Scrollbar* vScroller = m_scrollableArea.verticalScrollbar();
+        RefPtr hScroller = scrollableArea->horizontalScrollbar();
+        RefPtr vScroller = scrollableArea->verticalScrollbar();
         bool scrollbarsAllowStretching = ((vScroller && vScroller->enabled()) || (!hScroller || !hScroller->enabled()));
         auto relevantSide = ScrollableArea::targetSideForScrollDelta(-wheelEvent.delta(), ScrollEventAxis::Vertical);
-        bool eventPreventsStretching = m_scrollableArea.hasScrollableOrRubberbandableAncestor() && wheelEvent.isGestureStart() && relevantSide && m_scrollableArea.isPinnedOnSide(*relevantSide);
+        bool eventPreventsStretching = scrollableArea->hasScrollableOrRubberbandableAncestor() && wheelEvent.isGestureStart() && relevantSide && scrollableArea->isPinnedOnSide(*relevantSide);
         if (!eventPreventsStretching)
-            eventPreventsStretching = gestureShouldBeginSnap(wheelEvent, ScrollEventAxis::Vertical, m_scrollableArea.snapOffsetsInfo());
+            eventPreventsStretching = gestureShouldBeginSnap(wheelEvent, ScrollEventAxis::Vertical, scrollableArea->snapOffsetsInfo());
         return scrollbarsAllowStretching && !eventPreventsStretching;
     }
     case ScrollElasticity::None:
@@ -134,18 +135,19 @@ bool ScrollAnimatorMac::allowsVerticalStretching(const PlatformWheelEvent& wheel
 
 bool ScrollAnimatorMac::allowsHorizontalStretching(const PlatformWheelEvent& wheelEvent) const
 {
-    if (m_scrollableArea.horizontalOverscrollBehavior() == OverscrollBehavior::None)
+    CheckedRef scrollableArea = m_scrollableArea.get();
+    if (scrollableArea->horizontalOverscrollBehavior() == OverscrollBehavior::None)
         return false;
     
-    switch (m_scrollableArea.horizontalScrollElasticity()) {
+    switch (scrollableArea->horizontalScrollElasticity()) {
     case ScrollElasticity::Automatic: {
-        Scrollbar* hScroller = m_scrollableArea.horizontalScrollbar();
-        Scrollbar* vScroller = m_scrollableArea.verticalScrollbar();
+        RefPtr hScroller = scrollableArea->horizontalScrollbar();
+        RefPtr vScroller = scrollableArea->verticalScrollbar();
         bool scrollbarsAllowStretching = ((hScroller && hScroller->enabled()) || (!vScroller || !vScroller->enabled()));
         auto relevantSide = ScrollableArea::targetSideForScrollDelta(-wheelEvent.delta(), ScrollEventAxis::Horizontal);
-        bool eventPreventsStretching = m_scrollableArea.hasScrollableOrRubberbandableAncestor() && wheelEvent.isGestureStart() && relevantSide && m_scrollableArea.isPinnedOnSide(*relevantSide);
+        bool eventPreventsStretching = scrollableArea->hasScrollableOrRubberbandableAncestor() && wheelEvent.isGestureStart() && relevantSide && scrollableArea->isPinnedOnSide(*relevantSide);
         if (!eventPreventsStretching)
-            eventPreventsStretching = gestureShouldBeginSnap(wheelEvent, ScrollEventAxis::Horizontal, m_scrollableArea.snapOffsetsInfo());
+            eventPreventsStretching = gestureShouldBeginSnap(wheelEvent, ScrollEventAxis::Horizontal, scrollableArea->snapOffsetsInfo());
         return scrollbarsAllowStretching && !eventPreventsStretching;
     }
     case ScrollElasticity::None:

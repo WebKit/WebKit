@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "TextRun.h"
+#include <WebCore/TextRun.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Hasher.h>

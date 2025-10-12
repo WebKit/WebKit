@@ -11,10 +11,11 @@ import {
 
 
 '../../../../common/util/util.js';
-import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
+import * as ttu from '../../../texture_test_utils.js';
 
 
-class DrawTest extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {
+class DrawTest extends AllFeaturesMaxLimitsGPUTest {
   checkTriangleDraw(opts)
 
 
@@ -314,7 +315,11 @@ struct Output {
         });
       }
     }
-    this.expectSinglePixelComparisonsAreOkInTexture({ texture: renderTarget }, pixelComparisons);
+    ttu.expectSinglePixelComparisonsAreOkInTexture(
+      this,
+      { texture: renderTarget },
+      pixelComparisons
+    );
   }
 }
 

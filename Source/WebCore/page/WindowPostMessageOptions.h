@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "StructuredSerializeOptions.h"
+#include <WebCore/StructuredSerializeOptions.h>
 
 namespace WebCore {
 

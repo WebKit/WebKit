@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .box { 
+      display: block;
+      margin: 10px;
+      width: 200px;
+      height: 200px; 
+    } 
+    .test { 
+      filter: url(#erode); 
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+    <svg width="0" height="0">
+        <filter id="erode" filterUnits="userSpaceOnUse">
+            <feMorphology operator="erode" radius="2" />
+        </filter>
+    </svg>
+    <img class="test box" src="resources/reference.png">
+</body>
+</html>

@@ -27,8 +27,8 @@
 
 #if ENABLE(JIT)
 
-#include "GPRInfo.h"
-#include "MacroAssembler.h"
+#include <JavaScriptCore/GPRInfo.h>
+#include <JavaScriptCore/MacroAssembler.h>
 #include <wtf/WeakRandom.h>
 
 namespace JSC {

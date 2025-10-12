@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,7 +113,7 @@ void Pasteboard::writeMarkup(const String&)
 
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>(WTFMove(context), PAL::get_UIKit_UIPasteboardNameGeneral());
+    return makeUnique<Pasteboard>(WTFMove(context), PAL::get_UIKit_UIPasteboardNameGeneralSingleton());
 }
 
 void Pasteboard::write(const PasteboardWebContent& content)
@@ -182,7 +182,7 @@ void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy allow
 
     // We ask for the "public.text" representation only as a legacy fallback, in case apps still directly write
     // plain text for this abstract UTI. In almost all cases, the more correct choice would be to write to
-    // one of the concrete "public.plain-text" representations (e.g. kUTTypeUTF8PlainText). In the future, we
+    // one of the concrete "public.plain-text" representations (e.g. UTTypeUTF8PlainText). In the future, we
     // should consider removing support for reading plain text from "public.text".
     text.text = strategy.readStringFromPasteboard(itemIndexToQuery, UTTypePlainText.identifier, m_pasteboardName, context());
     if (text.text.isEmpty())
@@ -253,7 +253,6 @@ Pasteboard::ReaderResult Pasteboard::readPasteboardWebContentDataForType(Pastebo
         return buffer && reader.readImage(buffer.releaseNonNull(), type, itemInfo.preferredPresentationSize) ? ReaderResult::ReadType : ReaderResult::DidNotReadType;
     }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if ([type isEqualToString:UTTypeURL.identifier]) {
         String title;
         URL url = strategy.readURLFromPasteboard(itemIndex, m_pasteboardName, title, context());
@@ -262,30 +261,30 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return !url.isNull() && reader.readURL(url, title) ? ReaderResult::ReadType : ReaderResult::DidNotReadType;
     }
 
-    if (UTTypeConformsTo((__bridge CFStringRef)type, kUTTypePlainText)) {
-        String string = strategy.readStringFromPasteboard(itemIndex, kUTTypePlainText, m_pasteboardName, context());
+    RetainPtr utType = [UTType typeWithIdentifier:type];
+    if ([utType conformsToType:UTTypePlainText]) {
+        String string = strategy.readStringFromPasteboard(itemIndex, UTTypePlainText.identifier, m_pasteboardName, context());
         if (m_changeCount != changeCount())
             return ReaderResult::PasteboardWasChangedExternally;
         return !string.isNull() && reader.readPlainText(string) ? ReaderResult::ReadType : ReaderResult::DidNotReadType;
     }
 
-    if (UTTypeConformsTo((__bridge CFStringRef)type, kUTTypeText)) {
-        String string = strategy.readStringFromPasteboard(itemIndex, kUTTypeText, m_pasteboardName, context());
+    if ([utType conformsToType:UTTypeText]) {
+        String string = strategy.readStringFromPasteboard(itemIndex, UTTypeText.identifier, m_pasteboardName, context());
         if (m_changeCount != changeCount())
             return ReaderResult::PasteboardWasChangedExternally;
         return !string.isNull() && reader.readPlainText(string) ? ReaderResult::ReadType : ReaderResult::DidNotReadType;
     }
-ALLOW_DEPRECATED_DECLARATIONS_END
 
     return ReaderResult::DidNotReadType;
 }
 
 static void readURLAlongsideAttachmentIfNecessary(PasteboardWebContentReader& reader, PasteboardStrategy& strategy, const String& typeIdentifier, const String& pasteboardName, int itemIndex, const PasteboardContext* context)
 {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (!UTTypeConformsTo(typeIdentifier.createCFString().get(), kUTTypeVCard))
-        return;
-ALLOW_DEPRECATED_DECLARATIONS_END
+    if (RetainPtr type = [UTType typeWithIdentifier:typeIdentifier.createNSString().get()]) {
+        if (![type conformsToType:UTTypeVCard])
+            return;
+    }
 
     String title;
     auto url = strategy.readURLFromPasteboard(itemIndex, pasteboardName, title, context);
@@ -295,10 +294,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 static bool shouldTreatAsAttachmentByDefault(const String& typeIdentifier)
 {
-    RetainPtr type = [UTType typeWithIdentifier:typeIdentifier.createNSString().get()];
-    for (UTType *attachmentType : std::array { UTTypeVCard, UTTypePDF, UTTypeCalendarEvent }) {
-        if ([type conformsToType:attachmentType])
-            return true;
+    if (RetainPtr type = [UTType typeWithIdentifier:typeIdentifier.createNSString().get()]) {
+        for (UTType *attachmentType : std::array { UTTypeVCard, UTTypePDF, UTTypeCalendarEvent }) {
+            if ([type conformsToType:attachmentType])
+                return true;
+        }
     }
     return false;
 }
@@ -484,12 +484,12 @@ bool Pasteboard::hasData()
 
 static String utiTypeFromCocoaType(NSString *type)
 {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    RetainPtr<CFStringRef> utiType = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (CFStringRef)type, NULL));
+    RetainPtr utiType = [UTType typeWithIdentifier:type];
+    if (!utiType)
+        utiType = [UTType typeWithMIMEType:type];
     if (!utiType)
         return String();
-    return String(adoptCF(UTTypeCopyPreferredTagWithClass(utiType.get(), kUTTagClassMIMEType)).get());
-ALLOW_DEPRECATED_DECLARATIONS_END
+    return utiType.get().identifier;
 }
 
 static RetainPtr<NSString> cocoaTypeFromHTMLClipboardType(const String& type)

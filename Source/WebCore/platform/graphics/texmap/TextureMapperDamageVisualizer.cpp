@@ -52,7 +52,7 @@ void TextureMapperDamageVisualizer::paintDamage(TextureMapper& textureMapper, co
         return;
 
     const auto color = Color::red.colorWithAlphaByte(200);
-    for (const auto& rect : damage->rects())
+    for (const auto& rect : *damage)
         textureMapper.drawSolidColor(rect + m_margin, { }, color, true);
 }
 

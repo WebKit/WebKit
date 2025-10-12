@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 598x17
+          text run at (0,0) width 598: "The following button elements should all be rendered on the left, with their text center justified."
+      RenderBlock (anonymous) at (0,34) size 784x108
+        RenderButton {BUTTON} at (0,0) size 300x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 284x18
+            RenderText {#text} at (38,0) size 208x17
+              text run at (38,0) width 208: "This is should be center justified."
+        RenderBR {BR} at (300,4) size 0x17
+        RenderButton {BUTTON} at (0,27) size 300x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 284x18
+            RenderText {#text} at (38,0) size 208x17
+              text run at (38,0) width 208: "This is should be center justified."
+        RenderBR {BR} at (300,31) size 0x17
+        RenderButton {BUTTON} at (0,54) size 300x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 284x18
+            RenderText {#text} at (38,0) size 208x17
+              text run at (38,0) width 208: "This is should be center justified."
+        RenderBR {BR} at (300,58) size 0x17
+        RenderButton {BUTTON} at (0,81) size 300x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 284x18
+            RenderText {#text} at (38,0) size 208x17
+              text run at (38,0) width 208: "This is should be center justified."
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,142) size 784x27
+        RenderButton {BUTTON} at (0,0) size 300x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 284x18
+            RenderText {#text} at (38,0) size 208x17
+              text run at (38,0) width 208: "This is should be center justified."

@@ -90,7 +90,7 @@ public:
 
     RefPtr<WebCore::FragmentedSharedBuffer> associatedElementData() const;
 #if PLATFORM(COCOA)
-    NSData *associatedElementNSData() const;
+    RetainPtr<NSData> associatedElementNSData() const;
 #endif
     std::optional<uint64_t> fileSizeForDisplay() const;
 

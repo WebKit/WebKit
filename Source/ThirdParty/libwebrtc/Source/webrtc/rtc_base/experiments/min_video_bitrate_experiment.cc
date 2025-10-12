@@ -10,9 +10,13 @@
 
 #include "rtc_base/experiments/min_video_bitrate_experiment.h"
 
+#include <cstdio>
+#include <optional>
 #include <string>
 
 #include "api/field_trials_view.h"
+#include "api/units/data_rate.h"
+#include "api/video/video_codec_type.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
@@ -68,22 +72,21 @@ std::optional<DataRate> GetExperimentalMinVideoBitrate(
   }
 
   if (field_trials.IsEnabled(kMinVideoBitrateExperiment)) {
-    webrtc::FieldTrialFlag enabled("Enabled");
+    FieldTrialFlag enabled("Enabled");
 
     // Backwards-compatibility with an old experiment - a generic minimum which,
     // if set, applies to all codecs.
-    webrtc::FieldTrialOptional<webrtc::DataRate> min_video_bitrate("br");
+    FieldTrialOptional<DataRate> min_video_bitrate("br");
 
     // New experiment - per-codec minimum bitrate.
-    webrtc::FieldTrialOptional<webrtc::DataRate> min_bitrate_vp8("vp8_br");
-    webrtc::FieldTrialOptional<webrtc::DataRate> min_bitrate_vp9("vp9_br");
-    webrtc::FieldTrialOptional<webrtc::DataRate> min_bitrate_av1("av1_br");
-    webrtc::FieldTrialOptional<webrtc::DataRate> min_bitrate_h264("h264_br");
+    FieldTrialOptional<DataRate> min_bitrate_vp8("vp8_br");
+    FieldTrialOptional<DataRate> min_bitrate_vp9("vp9_br");
+    FieldTrialOptional<DataRate> min_bitrate_av1("av1_br");
+    FieldTrialOptional<DataRate> min_bitrate_h264("h264_br");
 
-    webrtc::ParseFieldTrial(
-        {&enabled, &min_video_bitrate, &min_bitrate_vp8, &min_bitrate_vp9,
-         &min_bitrate_av1, &min_bitrate_h264},
-        field_trials.Lookup(kMinVideoBitrateExperiment));
+    ParseFieldTrial({&enabled, &min_video_bitrate, &min_bitrate_vp8,
+                     &min_bitrate_vp9, &min_bitrate_av1, &min_bitrate_h264},
+                    field_trials.Lookup(kMinVideoBitrateExperiment));
 
     if (min_video_bitrate) {
       if (min_bitrate_vp8 || min_bitrate_vp9 || min_bitrate_av1 ||

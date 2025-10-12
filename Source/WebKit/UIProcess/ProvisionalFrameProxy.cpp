@@ -51,6 +51,7 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProc
         std::nullopt,
         frame.layerHostingContextIdentifier(),
         frame.effectiveSandboxFlags(),
+        frame.effectiveReferrerPolicy(),
         frame.scrollingMode(),
         frame.remoteFrameSize()
     }), frame.frameID());
@@ -70,6 +71,11 @@ RefPtr<FrameProcess> ProvisionalFrameProxy::takeFrameProcess()
 {
     ASSERT(m_frameProcess);
     return std::exchange(m_frameProcess, nullptr).releaseNonNull();
+}
+
+Ref<WebFrameProxy> ProvisionalFrameProxy::protectedFrame() const
+{
+    return m_frame.get();
 }
 
 WebProcessProxy& ProvisionalFrameProxy::process() const

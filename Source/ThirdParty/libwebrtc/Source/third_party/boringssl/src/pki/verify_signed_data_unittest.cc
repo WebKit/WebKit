@@ -1,14 +1,27 @@
 // Copyright 2015 The Chromium Authors
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include "verify_signed_data.h"
 
 #include <memory>
+#include <optional>
 #include <set>
 
 #include <gtest/gtest.h>
-#include <optional>
+
+#include <openssl/span.h>
+
 #include "cert_errors.h"
 #include "input.h"
 #include "mock_signature_verify_cache.h"
@@ -54,10 +67,10 @@ void RunTestCase(VerifyResult expected_result, const char *file_name,
   ASSERT_TRUE(ReadTestDataFromPemFile(path, mappings));
 
   std::optional<SignatureAlgorithm> signature_algorithm =
-      ParseSignatureAlgorithm(der::Input(algorithm));
+      ParseSignatureAlgorithm(StringAsBytes(algorithm));
   ASSERT_TRUE(signature_algorithm);
 
-  der::Parser signature_value_parser((der::Input(signature_value)));
+  der::Parser signature_value_parser(StringAsBytes(signature_value));
   std::optional<der::BitString> signature_value_bit_string =
       signature_value_parser.ReadBitString();
   ASSERT_TRUE(signature_value_bit_string.has_value())
@@ -65,9 +78,9 @@ void RunTestCase(VerifyResult expected_result, const char *file_name,
 
   bool expected_result_bool = expected_result == SUCCESS;
 
-  bool result = VerifySignedData(*signature_algorithm, der::Input(signed_data),
-                                 signature_value_bit_string.value(),
-                                 der::Input(public_key), cache);
+  bool result = VerifySignedData(
+      *signature_algorithm, StringAsBytes(signed_data),
+      signature_value_bit_string.value(), StringAsBytes(public_key), cache);
 
   EXPECT_EQ(expected_result_bool, result);
 }

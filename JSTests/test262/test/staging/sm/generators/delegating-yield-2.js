@@ -2,9 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-generators-shell.js]
-flags:
-  - noStrict
+includes: [sm/assertThrowsValue.js, sm/non262-generators-shell.js]
 description: |
   pending
 esid: pending
@@ -53,7 +51,7 @@ assertIteratorNext(outer, 1);
 delete GeneratorObjectPrototype.throw;
 var outer_throw_42 = GeneratorObjectPrototype_throw.bind(outer, 42);
 // yield* protocol violation: no 'throw' method
-assertThrowsInstanceOf(outer_throw_42, TypeError);
+assert.throws(TypeError, outer_throw_42);
 // Now done, so just throws.
 assertThrowsValue(outer_throw_42, 42);
 

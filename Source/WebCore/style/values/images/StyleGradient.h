@@ -27,10 +27,10 @@
 
 #pragma once
 
-#include "CSSGradient.h"
-#include "StyleColor.h"
-#include "StylePosition.h"
-#include "StylePrimitiveNumericTypes.h"
+#include <WebCore/CSSGradient.h>
+#include <WebCore/StyleColor.h>
+#include <WebCore/StylePosition.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
 
 namespace WebCore {
 

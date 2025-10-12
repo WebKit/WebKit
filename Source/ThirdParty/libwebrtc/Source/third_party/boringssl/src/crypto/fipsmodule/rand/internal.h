@@ -1,25 +1,25 @@
-/* Copyright (c) 2015, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2015 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-#ifndef OPENSSL_HEADER_CRYPTO_RAND_INTERNAL_H
-#define OPENSSL_HEADER_CRYPTO_RAND_INTERNAL_H
+#ifndef OPENSSL_HEADER_CRYPTO_FIPSMODULE_RAND_INTERNAL_H
+#define OPENSSL_HEADER_CRYPTO_FIPSMODULE_RAND_INTERNAL_H
 
 #include <openssl/aes.h>
 #include <openssl/ctrdrbg.h>
 
 #include "../../bcm_support.h"
-#include "../modes/internal.h"
+#include "../aes/internal.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -37,27 +37,30 @@ struct ctr_drbg_state_st {
   ctr128_f ctr;
   uint8_t counter[16];
   uint64_t reseed_counter;
+  int df;
 };
 
-// CTR_DRBG_init initialises |*drbg| given |CTR_DRBG_ENTROPY_LEN| bytes of
-// entropy in |entropy| and, optionally, a personalization string up to
-// |CTR_DRBG_ENTROPY_LEN| bytes in length. It returns one on success and zero
-// on error.
-OPENSSL_EXPORT int CTR_DRBG_init(CTR_DRBG_STATE *drbg,
-                                 const uint8_t entropy[CTR_DRBG_ENTROPY_LEN],
+// CTR_DRBG_init initialises |*drbg| given |entropy_len| bytes of entropy in
+// |entropy| and, optionally, a personalization string up to
+// |CTR_DRBG_SEED_LEN| bytes in length. It returns one on success and zero on
+// error.
+//
+// If `df` is false then `entropy_len` must be |CTR_DRBG_ENTROPY_LEN| and
+// |nonce| must be nullptr.
+OPENSSL_EXPORT int CTR_DRBG_init(CTR_DRBG_STATE *drbg, int df,
+                                 const uint8_t *entropy, size_t entropy_len,
+                                 const uint8_t nonce[CTR_DRBG_NONCE_LEN],
                                  const uint8_t *personalization,
                                  size_t personalization_len);
 
 #if defined(OPENSSL_X86_64) && !defined(OPENSSL_NO_ASM)
 
-OPENSSL_INLINE int have_rdrand(void) {
-  return CRYPTO_is_RDRAND_capable();
-}
+inline int have_rdrand(void) { return CRYPTO_is_RDRAND_capable(); }
 
 // have_fast_rdrand returns true if RDRAND is supported and it's reasonably
 // fast. Concretely the latter is defined by whether the chip is Intel (fast) or
 // not (assumed slow).
-OPENSSL_INLINE int have_fast_rdrand(void) {
+inline int have_fast_rdrand(void) {
   return CRYPTO_is_RDRAND_capable() && CRYPTO_is_intel_cpu();
 }
 
@@ -72,13 +75,9 @@ int CRYPTO_rdrand_multiple8_buf(uint8_t *buf, size_t len);
 
 #else  // OPENSSL_X86_64 && !OPENSSL_NO_ASM
 
-OPENSSL_INLINE int have_rdrand(void) {
-  return 0;
-}
+inline int have_rdrand(void) { return 0; }
 
-OPENSSL_INLINE int have_fast_rdrand(void) {
-  return 0;
-}
+inline int have_fast_rdrand(void) { return 0; }
 
 #endif  // OPENSSL_X86_64 && !OPENSSL_NO_ASM
 
@@ -87,4 +86,4 @@ OPENSSL_INLINE int have_fast_rdrand(void) {
 }  // extern C
 #endif
 
-#endif  // OPENSSL_HEADER_CRYPTO_RAND_INTERNAL_H
+#endif  // OPENSSL_HEADER_CRYPTO_FIPSMODULE_RAND_INTERNAL_H

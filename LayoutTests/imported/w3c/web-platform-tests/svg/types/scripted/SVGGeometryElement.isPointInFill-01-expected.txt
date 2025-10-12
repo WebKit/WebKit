@@ -1,5 +1,6 @@
 
 PASS SVGGeometryElement.prototype.isPointInFill, no arguments.
+PASS SVGGeometryElement.prototype.isPointInFill, null/undefined.
 PASS SVGGeometryElement.prototype.isPointInFill, non-finite argument.
 PASS SVGGeometryElement.prototype.isPointInFill, functional test.
 PASS SVGGeometryElement.prototype.isPointInFill, points on the shape boundary are inside.

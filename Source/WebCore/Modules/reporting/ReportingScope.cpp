@@ -27,6 +27,7 @@
 #include "ReportingScope.h"
 
 #include "ContextDestructionObserver.h"
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "FormData.h"
 #include "HeaderFieldTokenizer.h"
@@ -100,7 +101,7 @@ void ReportingScope::notifyReportObservers(Ref<Report>&& report)
     for (auto& observer : possibleReportObservers)
         observer->appendQueuedReportIfCorrectType(report);
 
-    auto currentReportType = report->body()->reportBodyType();
+    auto currentReportType = report->protectedBody()->reportBodyType();
 
     // Step 4.2.2
     m_queuedReportTypeCounts.add(currentReportType);

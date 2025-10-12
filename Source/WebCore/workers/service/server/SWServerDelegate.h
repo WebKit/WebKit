@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "BackgroundFetchRecordLoader.h"
-#include "ProcessIdentifier.h"
-#include "ScriptExecutionContextIdentifier.h"
+#include <WebCore/BackgroundFetchRecordLoader.h>
+#include <WebCore/ProcessIdentifier.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>

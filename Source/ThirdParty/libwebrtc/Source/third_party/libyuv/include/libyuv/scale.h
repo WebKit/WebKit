@@ -287,6 +287,21 @@ int NV12Scale(const uint8_t* src_y,
               int dst_height,
               enum FilterMode filtering);
 
+LIBYUV_API
+int NV24Scale(const uint8_t* src_y,
+              int src_stride_y,
+              const uint8_t* src_uv,
+              int src_stride_uv,
+              int src_width,
+              int src_height,
+              uint8_t* dst_y,
+              int dst_stride_y,
+              uint8_t* dst_uv,
+              int dst_stride_uv,
+              int dst_width,
+              int dst_height,
+              enum FilterMode filtering);
+
 #ifdef __cplusplus
 // Legacy API.  Deprecated.
 LIBYUV_API

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -61,7 +61,7 @@ IndentOutdentCommand::IndentOutdentCommand(Ref<Document>&& document, EIndentType
 bool IndentOutdentCommand::tryIndentingAsListItem(const Position& start, const Position& end)
 {
     // If our selection is not inside a list, bail out.
-    auto lastNodeInSelectedParagraph = start.protectedDeprecatedNode();
+    RefPtr lastNodeInSelectedParagraph = start.deprecatedNode();
     RefPtr<Element> listNode = enclosingList(lastNodeInSelectedParagraph.get());
     if (!listNode)
         return false;
@@ -78,9 +78,9 @@ bool IndentOutdentCommand::tryIndentingAsListItem(const Position& start, const P
 
     RefPtr<Element> newList;
     if (is<HTMLUListElement>(*listNode))
-        newList = HTMLUListElement::create(protectedDocument());
+        newList = HTMLUListElement::create(document());
     else
-        newList = HTMLOListElement::create(protectedDocument());
+        newList = HTMLOListElement::create(document());
     insertNodeBefore(*newList, *selectedListItem);
 
     moveParagraphWithClones(start, end, newList.get(), selectedListItem.get());
@@ -143,13 +143,12 @@ void IndentOutdentCommand::outdentParagraph()
         return;
 
     // Use InsertListCommand to remove the selection from the list
-    auto document = protectedDocument();
     if (enclosingNode->hasTagName(olTag)) {
-        applyCommandToComposite(InsertListCommand::create(WTFMove(document), InsertListCommand::Type::OrderedList));
+        applyCommandToComposite(InsertListCommand::create(document(), InsertListCommand::Type::OrderedList));
         return;        
     }
     if (enclosingNode->hasTagName(ulTag)) {
-        applyCommandToComposite(InsertListCommand::create(WTFMove(document), InsertListCommand::Type::UnorderedList));
+        applyCommandToComposite(InsertListCommand::create(document(), InsertListCommand::Type::UnorderedList));
         return;
     }
     
@@ -177,18 +176,18 @@ void IndentOutdentCommand::outdentParagraph()
             }
         }
 
-        document->updateLayoutIgnorePendingStylesheets();
+        document().updateLayoutIgnorePendingStylesheets();
         visibleStartOfParagraph = VisiblePosition(visibleStartOfParagraph.deepEquivalent());
         visibleEndOfParagraph = VisiblePosition(visibleEndOfParagraph.deepEquivalent());
         if (visibleStartOfParagraph.isNotNull() && !isStartOfParagraph(visibleStartOfParagraph))
-            insertNodeAt(HTMLBRElement::create(document), visibleStartOfParagraph.deepEquivalent());
+            insertNodeAt(HTMLBRElement::create(document()), visibleStartOfParagraph.deepEquivalent());
         if (visibleEndOfParagraph.isNotNull() && !isEndOfParagraph(visibleEndOfParagraph))
-            insertNodeAt(HTMLBRElement::create(document), visibleEndOfParagraph.deepEquivalent());
+            insertNodeAt(HTMLBRElement::create(document()), visibleEndOfParagraph.deepEquivalent());
 
         return;
     }
 
-    auto startOfParagraphNode = visibleStartOfParagraph.deepEquivalent().protectedDeprecatedNode();
+    RefPtr startOfParagraphNode = visibleStartOfParagraph.deepEquivalent().deprecatedNode();
     RefPtr enclosingBlockFlow = enclosingBlock(startOfParagraphNode.get());
     RefPtr<Node> splitBlockquoteNode = enclosingNode;
     if (enclosingBlockFlow != enclosingNode)
@@ -199,8 +198,8 @@ void IndentOutdentCommand::outdentParagraph()
         splitElement(*enclosingNode, highestInlineNode ? *highestInlineNode : *visibleStartOfParagraph.deepEquivalent().deprecatedNode());
     }
 
-    Ref placeholder = HTMLBRElement::create(document);
-    Ref placeholderWrapper = createDefaultParagraphElement(document);
+    Ref placeholder = HTMLBRElement::create(document());
+    Ref placeholderWrapper = createDefaultParagraphElement(document());
     placeholderWrapper->appendChild(placeholder.get());
     insertNodeBefore(placeholderWrapper, *splitBlockquoteNode);
 

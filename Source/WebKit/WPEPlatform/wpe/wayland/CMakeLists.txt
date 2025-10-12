@@ -19,10 +19,16 @@ set(WPEPlatformWayland_SOURCES
     ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/linux-explicit-synchronization-unstable-v1-protocol.c
     ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v1-protocol.c
     ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v3-protocol.c
-    ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/xdg-shell-protocol.c
     ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/pointer-constraints-unstable-v1-protocol.c
     ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/relative-pointer-unstable-v1-protocol.c
+    ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/xdg-shell-protocol.c
 )
+
+if (USE_SYSPROF_CAPTURE)
+    list(APPEND WPEPlatformWayland_SOURCES
+        ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/presentation-time-protocol.c
+    )
+endif ()
 
 set(WPEPlatformWayland_INSTALLED_HEADERS
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/wpe-wayland.h
@@ -40,13 +46,12 @@ set(WPEPlatformWayland_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 set(WPEPlatformWayland_SYSTEM_INCLUDE_DIRECTORIES
-    ${GIO_UNIX_INCLUDE_DIRS}
     ${WAYLAND_INCLUDE_DIRS}
     ${WPEPlatform_SYSTEM_INCLUDE_DIRECTORIES}
 )
 
 set(WPEPlatformWayland_LIBRARIES
-    ${GIO_UNIX_LIBRARIES}
+    GLib::GioUnix
     ${WAYLAND_LIBRARIES}
     ${WPEPlatform_LIBRARIES}
 )
@@ -129,6 +134,21 @@ add_custom_command(
     COMMAND ${WAYLAND_SCANNER} client-header ${WAYLAND_PROTOCOLS_DATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/pointer-constraints-unstable-v1-client-protocol.h
     VERBATIM)
 
+if (USE_SYSPROF_CAPTURE)
+    add_custom_command(
+        OUTPUT ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/presentation-time-protocol.c
+        MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/stable/presentation-time/presentation-time.xml
+        DEPENDS ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/presentation-time-client-protocol.h
+        COMMAND ${WAYLAND_SCANNER} private-code ${WAYLAND_PROTOCOLS_DATADIR}/stable/presentation-time/presentation-time.xml ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/presentation-time-protocol.c
+        VERBATIM)
+
+    add_custom_command(
+        OUTPUT ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/presentation-time-client-protocol.h
+        MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/stable/presentation-time/presentation-time.xml
+        COMMAND ${WAYLAND_SCANNER} client-header ${WAYLAND_PROTOCOLS_DATADIR}/stable/presentation-time/presentation-time.xml ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/presentation-time-client-protocol.h
+        VERBATIM)
+endif ()
+
 add_custom_command(
     OUTPUT ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/relative-pointer-unstable-v1-protocol.c
     MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/relative-pointer/relative-pointer-unstable-v1.xml
@@ -155,8 +175,32 @@ add_custom_command(
     COMMAND ${WAYLAND_SCANNER} client-header ${WAYLAND_PROTOCOLS_DATADIR}/unstable/linux-explicit-synchronization/linux-explicit-synchronization-unstable-v1.xml ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/linux-explicit-synchronization-unstable-v1-client-protocol.h
     VERBATIM)
 
+set(WPEPlatformWayland_DEFINITIONS "")
+if (EXISTS "${WAYLAND_PROTOCOLS_DATADIR}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml")
+    add_custom_command(
+        OUTPUT ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/xdg-decoration-unstable-v1-protocol.c
+        MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml
+        DEPENDS ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/xdg-decoration-unstable-v1-client-protocol.h
+        COMMAND ${WAYLAND_SCANNER} private-code
+            ${WAYLAND_PROTOCOLS_DATADIR}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml
+            ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/xdg-decoration-unstable-v1-protocol.c
+        VERBATIM)
+
+    add_custom_command(
+        OUTPUT ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/xdg-decoration-unstable-v1-client-protocol.h
+        MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml
+        COMMAND ${WAYLAND_SCANNER} client-header
+            ${WAYLAND_PROTOCOLS_DATADIR}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml
+            ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/xdg-decoration-unstable-v1-client-protocol.h
+        VERBATIM)
+
+    list(APPEND WPEPlatformWayland_SOURCES ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/xdg-decoration-unstable-v1-protocol.c)
+    list(APPEND WPEPlatformWayland_DEFINITIONS USE_XDG_DECORATION_UNSTABLE_V1=1)
+endif ()
+
 add_library(WPEPlatformWayland OBJECT ${WPEPlatformWayland_SOURCES})
 add_dependencies(WPEPlatformWayland WPEPlatformGeneratedEnumTypesHeader)
+target_compile_definitions(WPEPlatformWayland PRIVATE ${WPEPlatformWayland_DEFINITIONS})
 target_include_directories(WPEPlatformWayland PRIVATE ${WPEPlatformWayland_PRIVATE_INCLUDE_DIRECTORIES})
 target_include_directories(WPEPlatformWayland SYSTEM PRIVATE ${WPEPlatformWayland_SYSTEM_INCLUDE_DIRECTORIES})
 target_link_libraries(WPEPlatformWayland ${WPEPlatformWayland_LIBRARIES})

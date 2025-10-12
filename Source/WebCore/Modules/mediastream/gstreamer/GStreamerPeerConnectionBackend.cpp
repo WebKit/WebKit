@@ -22,6 +22,7 @@
 
 #if USE(GSTREAMER_WEBRTC)
 
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "ExceptionOr.h"
 #include "GStreamerCommon.h"
@@ -73,7 +74,7 @@ WebRTCLogObserver& webrtcLogObserverSingleton()
 }
 #endif // GST_DISABLE_GST_DEBUG
 
-static const std::unique_ptr<PeerConnectionBackend> createGStreamerPeerConnectionBackend(RTCPeerConnection& peerConnection)
+static const std::unique_ptr<PeerConnectionBackend> createGStreamerPeerConnectionBackend(RTCPeerConnection& peerConnection, MediaEndpointConfiguration&& configuration)
 {
     ensureGStreamerInitialized();
     static std::once_flag debugRegisteredFlag;
@@ -84,7 +85,10 @@ static const std::unique_ptr<PeerConnectionBackend> createGStreamerPeerConnectio
         WTFLogAlways("GstWebRTC plugin not found. Make sure to install gst-plugins-bad >= 1.20 with the webrtc plugin enabled.");
         return nullptr;
     }
-    return WTF::makeUniqueWithoutRefCountedCheck<GStreamerPeerConnectionBackend, PeerConnectionBackend>(peerConnection);
+    auto backend = WTF::makeUniqueWithoutRefCountedCheck<GStreamerPeerConnectionBackend, PeerConnectionBackend>(peerConnection);
+    bool status = backend->setConfiguration(WTFMove(configuration));
+    ASSERT_UNUSED(status, status);
+    return backend;
 }
 
 CreatePeerConnectionBackend PeerConnectionBackend::create = createGStreamerPeerConnectionBackend;
@@ -101,7 +105,7 @@ GStreamerPeerConnectionBackend::GStreamerPeerConnectionBackend(RTCPeerConnection
     auto& logObserver = webrtcLogObserverSingleton();
     logObserver.addWatch(logger());
 
-    auto identifier = makeString(hex(LOGIDENTIFIER.objectIdentifier));
+    auto identifier = makeString(LOGIDENTIFIER.objectIdentifier);
     GST_INFO_OBJECT(m_endpoint->pipeline(), "WebCore logs identifier for this pipeline is: %s", identifier.convertToASCIIUppercase().ascii().data());
 #endif
 }
@@ -207,6 +211,11 @@ void GStreamerPeerConnectionBackend::doCreateAnswer(RTCAnswerOptions&&)
         return;
     }
     m_endpoint->doCreateAnswer();
+}
+
+void GStreamerPeerConnectionBackend::prepareForClose()
+{
+    m_endpoint->prepareForClose();
 }
 
 void GStreamerPeerConnectionBackend::close()
@@ -465,22 +474,25 @@ RTCPeerConnection& GStreamerPeerConnectionBackend::connection()
 void GStreamerPeerConnectionBackend::tearDown()
 {
     for (auto& transceiver : connection().currentTransceivers()) {
-        auto& track = transceiver->receiver().track();
-        auto& source = track.privateTrack().source();
-        if (source.isIncomingAudioSource()) {
-            auto& audioSource = static_cast<RealtimeIncomingAudioSourceGStreamer&>(source);
-            audioSource.tearDown();
-        } else if (source.isIncomingVideoSource()) {
-            auto& videoSource = static_cast<RealtimeIncomingVideoSourceGStreamer&>(source);
-            videoSource.tearDown();
-        }
+        auto& sender = transceiver->sender();
+        sender.setTransport(nullptr);
 
-        if (auto senderBackend = transceiver->sender().backend())
+        if (auto senderBackend = sender.backend())
             static_cast<GStreamerRtpSenderBackend*>(senderBackend)->tearDown();
+
+        auto& receiver = transceiver->receiver();
+        receiver.setTransport(nullptr);
+
+        auto& incomingSource = static_cast<RealtimeIncomingSourceGStreamer&>(receiver.track().privateTrack().source());
+        incomingSource.tearDown();
+
+        if (auto receiverBackend = receiver.backend())
+            static_cast<GStreamerRtpReceiverBackend*>(receiverBackend)->tearDown();
 
         auto& backend = backendFromRTPTransceiver(*transceiver);
         backend.tearDown();
     }
+    connection().clearTransports();
 }
 
 void GStreamerPeerConnectionBackend::startGatheringStatLogs(Function<void(String&&)>&& callback)

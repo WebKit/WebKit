@@ -11,9 +11,10 @@ PASS Partial interface Navigator: member names are unique
 PASS Partial interface HTMLMediaElement: original interface defined
 PASS Partial interface HTMLMediaElement: valid exposure set
 PASS Partial interface HTMLMediaElement: member names are unique
+PASS Partial interface Navigator[2]: member names are unique
+PASS Partial interface Element: member names are unique
 PASS Partial interface mixin NavigatorID: member names are unique
 PASS HTMLElement includes GlobalEventHandlers: member names are unique
-PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
 PASS HTMLElement includes ElementContentEditable: member names are unique
 PASS HTMLElement includes HTMLOrSVGElement: member names are unique
 PASS Navigator includes NavigatorID: member names are unique
@@ -43,6 +44,7 @@ PASS MediaKeys interface: existence and properties of interface prototype object
 PASS MediaKeys interface: existence and properties of interface prototype object's "constructor" property
 PASS MediaKeys interface: existence and properties of interface prototype object's @@unscopables property
 PASS MediaKeys interface: operation createSession(optional MediaKeySessionType)
+FAIL MediaKeys interface: operation getStatusForPolicy(optional MediaKeysPolicy) assert_own_property: interface prototype object missing non-static operation expected property "getStatusForPolicy" missing
 PASS MediaKeys interface: operation setServerCertificate(BufferSource)
 PASS MediaKeySession interface: existence and properties of interface object
 PASS MediaKeySession interface object length

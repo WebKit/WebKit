@@ -19,8 +19,13 @@ Examples:
 `;import { makeTestGroup } from '../../common/framework/test_group.js';
 import { keysOf } from '../../common/util/data_tables.js';
 import { getGPU } from '../../common/util/navigator_gpu.js';
-import { assert, objectEquals, unreachable } from '../../common/util/util.js';
-import { getDefaultLimitsForAdapter, kLimits } from '../capability_info.js';
+import {
+  assert,
+  objectEquals,
+  raceWithRejectOnTimeout,
+  unreachable } from
+'../../common/util/util.js';
+import { getDefaultLimitsForDevice, kLimits } from '../capability_info.js';
 import { AllFeaturesMaxLimitsGPUTest } from '../gpu_test.js';
 
 // MAINTENANCE_TODO: Remove this filter when these limits are added to the spec.
@@ -28,6 +33,10 @@ const isUnspecifiedLimit = (limit) =>
 /maxStorage(Buffer|Texture)sIn(Vertex|Fragment)Stage/.test(limit);
 
 const kSpecifiedLimits = kLimits.filter((s) => !isUnspecifiedLimit(s));
+
+
+
+
 
 
 
@@ -44,7 +53,8 @@ const kResourceInfo = {
     requiredKeys: ['wgslLanguageFeatures', 'requestAdapter'],
     getters: ['wgslLanguageFeatures'],
     settable: [],
-    sameObject: ['wgslLanguageFeatures']
+    sameObject: ['wgslLanguageFeatures'],
+    skipInCompatibility: true
   },
   buffer: {
     create(t) {
@@ -222,6 +232,9 @@ desc('tests returns nothing for Object.keys()').
 params((u) => u.combine('type', kResources)).
 fn((t) => {
   const { type } = t.params;
+  const { skipInCompatibility } = kResourceInfo[type];
+  t.skipIf(t.isCompatibility && !!skipInCompatibility, 'skipped in compatibility mode');
+
   const obj = createResource(t, type);
   t.expect(objectEquals([...Object.keys(obj)], []), `[...Object.keys(${type})] === []`);
 });
@@ -231,6 +244,9 @@ desc('does not spread').
 params((u) => u.combine('type', kResources)).
 fn((t) => {
   const { type } = t.params;
+  const { skipInCompatibility } = kResourceInfo[type];
+  t.skipIf(t.isCompatibility && !!skipInCompatibility, 'skipped in compatibility mode');
+
   const obj = createResource(t, type);
   t.expect(objectEquals({ ...obj }, {}), `{ ...${type} ] === {}`);
 });
@@ -260,6 +276,9 @@ desc('Object.getOwnPropertyDescriptors returns {}').
 params((u) => u.combine('type', kResources)).
 fn((t) => {
   const { type } = t.params;
+  const { skipInCompatibility } = kResourceInfo[type];
+  t.skipIf(t.isCompatibility && !!skipInCompatibility, 'skipped in compatibility mode');
+
   const obj = createResource(t, type);
   t.expect(
     objectEquals(Object.getOwnPropertyDescriptors(obj), {}),
@@ -336,7 +355,7 @@ fn(async (t) => {
   const device = await t.requestDeviceTracked(adapter, {
     requiredLimits: obj.limits
   });
-  const defaultLimits = getDefaultLimitsForAdapter(adapter);
+  const defaultLimits = getDefaultLimitsForDevice(device);
   for (const [key, { default: defaultLimit }] of Object.entries(defaultLimits)) {
     if (isUnspecifiedLimit(key)) {
       continue;
@@ -453,7 +472,9 @@ desc(
 params((u) => u.combine('type', kResources)).
 fn((t) => {
   const { type } = t.params;
-  const { requiredKeys, getters } = kResourceInfo[type];
+  const { requiredKeys, getters, skipInCompatibility } = kResourceInfo[type];
+  t.skipIf(t.isCompatibility && !!skipInCompatibility, 'skipped in compatibility mode');
+
   const gettersSet = new Set(getters);
   const methods = requiredKeys.filter((k) => !gettersSet.has(k));
 
@@ -521,4 +542,187 @@ fn((t) => {
     assert(origValue1.foo === undefined);
     assert(origValue2.foo === undefined);
   }
+});
+
+const kClassInheritanceTests = {
+  GPUDevice: () => GPUDevice.prototype instanceof EventTarget,
+  GPUPipelineError: () => GPUPipelineError.prototype instanceof DOMException,
+  GPUValidationError: () => GPUValidationError.prototype instanceof GPUError,
+  GPUOutOfMemoryError: () => GPUOutOfMemoryError.prototype instanceof GPUError,
+  GPUInternalError: () => GPUInternalError.prototype instanceof GPUError,
+  GPUUncapturedErrorEvent: () => GPUUncapturedErrorEvent.prototype instanceof Event
+};
+
+g.test('inheritance').
+desc(
+  `
+Test that objects inherit from the correct base class
+
+This is important because apps might patch the base class
+and expect instances of these classes to respond correctly.
+`
+).
+params((u) => u.combine('type', keysOf(kClassInheritanceTests))).
+fn((t) => {
+  const fn = kClassInheritanceTests[t.params.type];
+  t.expect(fn(), fn.toString());
+});
+
+const kDispatchTests = {
+  async canPassEventThroughDevice(t) {
+    const result = await raceWithRejectOnTimeout(
+      new Promise((resolve) => {
+        t.device.addEventListener('foo', resolve, { once: true });
+        t.device.dispatchEvent(new Event('foo'));
+      }),
+      500,
+      'timeout'
+    );
+    const event = result;
+    t.expect(() => event instanceof Event, 'event');
+    t.expect(() => event.type === 'foo');
+  },
+  async canPassCustomEventThroughDevice(t) {
+    const result = await raceWithRejectOnTimeout(
+      new Promise((resolve) => {
+        t.device.addEventListener('bar', resolve, { once: true });
+        t.device.dispatchEvent(new CustomEvent('bar'));
+      }),
+      500,
+      'timeout'
+    );
+    const event = result;
+    t.expect(() => event instanceof CustomEvent);
+    t.expect(() => event instanceof Event);
+    t.expect(() => event.type === 'bar');
+  },
+  async patchingEventTargetAffectsDevice(t) {
+    let addEventListenerWasCalled = false;
+    let dispatchEventWasCalled = false;
+    let removeEventListenerWasCalled = false;
+
+
+    const origFnAddEventListener = EventTarget.prototype.addEventListener;
+    EventTarget.prototype.addEventListener = function (
+    ...args)
+    {
+      addEventListenerWasCalled = true;
+      return origFnAddEventListener.call(this, ...args);
+    };
+
+
+    const origFnDispatchEvent = EventTarget.prototype.dispatchEvent;
+    EventTarget.prototype.dispatchEvent = function (event) {
+      dispatchEventWasCalled = true;
+      return origFnDispatchEvent.call(this, event);
+    };
+
+
+    const origFnRemoveEventListener = EventTarget.prototype.removeEventListener;
+    EventTarget.prototype.removeEventListener = function (
+    ...args)
+    {
+      removeEventListenerWasCalled = true;
+      return origFnRemoveEventListener.call(this, ...args);
+    };
+
+    try {
+      await raceWithRejectOnTimeout(
+        new Promise((resolve) => {
+          t.device.addEventListener('foo', resolve);
+          t.device.dispatchEvent(new Event('foo'));
+          t.device.removeEventListener('foo', resolve);
+        }),
+        500,
+        'timeout'
+      );
+    } finally {
+      EventTarget.prototype.addEventListener = origFnAddEventListener;
+      EventTarget.prototype.dispatchEvent = origFnDispatchEvent;
+      EventTarget.prototype.removeEventListener = origFnRemoveEventListener;
+    }
+    t.expect(addEventListenerWasCalled, 'overriding EventTarget addEventListener worked');
+    t.expect(dispatchEventWasCalled, 'overriding EventTarget dispatchEvent worked');
+    t.expect(removeEventListenerWasCalled, 'overriding EventTarget removeEventListener worked');
+  },
+  async passingGPUUncapturedErrorEventWorksThoughEventTarget(t) {
+    const target = new EventTarget();
+    const result = await raceWithRejectOnTimeout(
+      new Promise((resolve) => {
+        target.addEventListener('uncapturederror', resolve, { once: true });
+        target.dispatchEvent(
+          new GPUUncapturedErrorEvent('uncapturederror', {
+            error: new GPUValidationError('test error')
+          })
+        );
+      }),
+      500,
+      'timeout'
+    );
+    const event = result;
+    t.expect(() => event instanceof GPUUncapturedErrorEvent);
+    t.expect(() => event.error instanceof GPUValidationError);
+    t.expect(() => event.error.message === 'test error');
+  }
+};
+
+g.test('device,EventTarget').
+desc(
+  `
+Test some repercussions of the fact that GPUDevice extends EventTarget
+`
+).
+params((u) => u.combine('test', keysOf(kDispatchTests))).
+fn(async (t) => {
+  await kDispatchTests[t.params.test](t);
+});
+
+const kAddEventListenerTests = {
+  EventHandler: async (t) => {
+    const result = await raceWithRejectOnTimeout(
+      new Promise((resolve) => {
+        t.device.addEventListener('foo', resolve, { once: true });
+        t.device.dispatchEvent(new Event('foo'));
+      }),
+      500,
+      'timeout'
+    );
+    const event = result;
+    t.expect(() => event instanceof Event, 'event');
+    t.expect(() => event.type === 'foo');
+  },
+  EventListener: async (t) => {
+    const result = await raceWithRejectOnTimeout(
+      new Promise((resolve) => {
+        t.device.addEventListener(
+          'foo',
+          {
+            handleEvent: resolve
+          },
+          { once: true }
+        );
+        t.device.dispatchEvent(new Event('foo'));
+      }),
+      500,
+      'timeout'
+    );
+    const event = result;
+    t.expect(() => event instanceof Event, 'event');
+    t.expect(() => event.type === 'foo');
+  }
+};
+
+g.test('device,addEventListener').
+desc(
+  `
+Test that addEventListener works with both an EventListener and an EventHandler
+
+* https://dom.spec.whatwg.org/#interface-eventtarget
+* https://html.spec.whatwg.org/multipage/webappapis.html#eventhandler
+
+`
+).
+params((u) => u.combine('test', keysOf(kAddEventListenerTests))).
+fn(async (t) => {
+  await kAddEventListenerTests[t.params.test](t);
 });

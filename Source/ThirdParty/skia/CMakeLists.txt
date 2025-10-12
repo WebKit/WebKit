@@ -49,6 +49,7 @@ add_library(Skia STATIC
     src/codec/SkEncodedInfo.cpp
     src/codec/SkExif.cpp
     src/codec/SkGainmapInfo.cpp
+    src/codec/SkHdrMetadata.cpp
     src/codec/SkImageGenerator_FromEncoded.cpp
     src/codec/SkJpegCodec.cpp
     src/codec/SkJpegDecoderMgr.cpp
@@ -80,6 +81,7 @@ add_library(Skia STATIC
     src/core/SkBitmapProcState_matrixProcs.cpp
     src/core/SkBitmapProcState_opts.cpp
     src/core/SkBitmapProcState_opts_ssse3.cpp
+    src/core/SkBitmapProcState_opts_lasx.cpp
     src/core/SkBlendMode.cpp
     src/core/SkBlendModeBlender.cpp
     src/core/SkBlitMask_opts.cpp
@@ -87,6 +89,7 @@ add_library(Skia STATIC
     src/core/SkBlitRow_D32.cpp
     src/core/SkBlitRow_opts.cpp
     src/core/SkBlitRow_opts_hsw.cpp
+    src/core/SkBlitRow_opts_lasx.cpp
     src/core/SkBlitter.cpp
     src/core/SkBlitter_A8.cpp
     src/core/SkBlitter_ARGB32.cpp
@@ -122,7 +125,6 @@ add_library(Skia STATIC
     src/core/SkDistanceFieldGen.cpp
     src/core/SkDocument.cpp
     src/core/SkDraw.cpp
-    src/core/SkDrawBase.cpp
     src/core/SkDrawShadowInfo.cpp
     src/core/SkDraw_atlas.cpp
     src/core/SkDraw_text.cpp
@@ -184,7 +186,11 @@ add_library(Skia STATIC
     src/core/SkPath.cpp
     src/core/SkPathBuilder.cpp
     src/core/SkPathEffect.cpp
+    src/core/SkPathIter.cpp
     src/core/SkPathMeasure.cpp
+    src/core/SkPathPriv.cpp
+    src/core/SkPathRaw.cpp
+    src/core/SkPathRawShapes.cpp
     src/core/SkPathRef.cpp
     src/core/SkPathUtils.cpp
     src/core/SkPath_serial.cpp
@@ -246,6 +252,7 @@ add_library(Skia STATIC
     src/core/SkSwizzler_opts_hsw.cpp
     src/core/SkSynchronizedResourceCache.cpp
     src/core/SkSwizzler_opts_ssse3.cpp
+    src/core/SkSwizzler_opts_lasx.cpp
     src/core/SkTaskGroup.cpp
     src/core/SkTextBlob.cpp
     src/core/SkTypeface.cpp
@@ -779,6 +786,7 @@ add_library(Skia STATIC
 
     src/opts/SkOpts_hsw.cpp
     src/opts/SkOpts_skx.cpp
+    src/opts/SkOpts_lasx.cpp
 
     src/ports/SkGlobalInitialization_default.cpp
     src/ports/SkImageGenerator_skia.cpp
@@ -829,7 +837,6 @@ else ()
             src/ports/SkFontConfigInterface_direct.cpp
             src/ports/SkFontConfigInterface_direct_factory.cpp
             src/ports/SkFontMgr_fontconfig.cpp
-            src/ports/SkFontMgr_fontconfig_freetype.cpp
         )
         target_link_libraries(Skia PRIVATE Fontconfig::Fontconfig)
     endif ()
@@ -1106,6 +1113,27 @@ if (Skia_SkCMS_SKX_OPTS)
     WEBKIT_ADD_COMPILER_FLAGS(CXX SOURCE modules/skcms/src/skcms_TransformSkx.cc ${Skia_SkCMS_SKX_FLAGS})
 else ()
     target_compile_definitions(Skia PRIVATE SKCMS_DISABLE_SKX)
+endif ()
+
+if (WTF_CPU_LOONGARCH64)
+    # Work arounds for building with GCC (instead of Clang).
+
+    # To work around https://github.com/llvm/llvm-project/issues/110834
+    # the GN system does not pass -fno-lax-vector-conversions to Clang on
+    # LoongArch, unintentionally allowing the LASX optimized code to rely
+    # on the relaxed vector conversion rule.  See
+    # https://skia-review.googlesource.com/c/skia/+/908137 for a proper fix
+    # but work around it here for now.
+    WEBKIT_ADD_TARGET_CXX_FLAGS(Skia "-flax-vector-conversions")
+
+    # #pragma GCC target is only supported by GCC >= 15, thus the Skia code
+    # base cannot use it for LoongArch if building with GCC.  Pass a
+    # command line option to work around.  The GN building system does the
+    # same.
+    WEBKIT_ADD_COMPILER_FLAGS(CXX SOURCE src/core/SkBitmapProcState_opts_lasx.cpp -mlasx)
+    WEBKIT_ADD_COMPILER_FLAGS(CXX SOURCE src/core/SkSwizzler_opts_lasx.cpp -mlasx)
+    WEBKIT_ADD_COMPILER_FLAGS(CXX SOURCE src/core/SkBlitRow_opts_lasx.cpp -mlasx)
+    WEBKIT_ADD_COMPILER_FLAGS(CXX SOURCE src/opts/SkOpts_lasx.cpp -mlasx)
 endif ()
 
 add_library(Skia::Skia ALIAS Skia)

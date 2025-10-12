@@ -27,8 +27,8 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MeteringMode.h"
-#include "RealtimeMediaSourceSettings.h"
+#include <WebCore/MeteringMode.h>
+#include <WebCore/RealtimeMediaSourceSettings.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>

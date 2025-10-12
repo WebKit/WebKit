@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "WebGPUStorageTextureAccess.h"
-#include "WebGPUTextureFormat.h"
-#include "WebGPUTextureViewDimension.h"
+#include <WebCore/WebGPUStorageTextureAccess.h>
+#include <WebCore/WebGPUTextureFormat.h>
+#include <WebCore/WebGPUTextureViewDimension.h>
 
 namespace WebCore::WebGPU {
 

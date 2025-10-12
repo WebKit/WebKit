@@ -42,7 +42,7 @@ public:
     PartialResult parse();
 
 private:
-    Ref<ModuleInformation> m_info;
+    const Ref<ModuleInformation> m_info;
 };
 
 }

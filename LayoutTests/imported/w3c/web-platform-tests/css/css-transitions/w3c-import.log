@@ -87,6 +87,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/starting-of-transitions-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/starting-style-adjustment.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/starting-style-cascade.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/starting-style-first-letter-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/starting-style-name-defining-rules.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/starting-style-rule-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/starting-style-rule-none.html
@@ -105,13 +106,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-duration-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-events-with-document-change.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-important.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-in-iframe-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-property-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-property-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-remove-and-change-immediate.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-reparented.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-test-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-test.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-zero-duration-with-delay.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transitioncancel-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transitioncancel-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transitioncancel-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transitionevent-interface.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transitions-retarget.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/zero-duration-multiple-transition.html

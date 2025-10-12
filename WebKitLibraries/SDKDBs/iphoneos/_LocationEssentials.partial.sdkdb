@@ -1,0 +1,105 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "globals": [
+    {"access": "public", "introduced": "4", "kind": "function", "linkage": "exported", "name": "_CLLocationCoordinate2DIsValid"},
+    {"access": "public", "introduced": "4", "kind": "function", "linkage": "exported", "name": "_CLLocationCoordinate2DMake"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_CLLocationDistanceMax"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_CLTimeIntervalMax"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kCLDistanceFilterNone"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kCLLocationAccuracyBest"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCLLocationAccuracyBestForNavigation"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kCLLocationAccuracyHundredMeters"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kCLLocationAccuracyKilometer"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kCLLocationAccuracyNearestTenMeters"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_kCLLocationAccuracyReduced"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kCLLocationAccuracyThreeKilometers"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCLLocationCoordinate2DInvalid"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CLFloor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "level", "name": "level"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLatitude:longitude:"},
+      {"access": "public", "name": "initWithCoordinate:altitude:horizontalAccuracy:verticalAccuracy:timestamp:"},
+      {"access": "public", "introduced": "4.2", "name": "initWithCoordinate:altitude:horizontalAccuracy:verticalAccuracy:course:speed:timestamp:"},
+      {"access": "public", "introduced": "13.4", "name": "initWithCoordinate:altitude:horizontalAccuracy:verticalAccuracy:course:courseAccuracy:speed:speedAccuracy:timestamp:"},
+      {"access": "public", "introduced": "15", "name": "initWithCoordinate:altitude:horizontalAccuracy:verticalAccuracy:course:courseAccuracy:speed:speedAccuracy:timestamp:sourceInfo:"},
+      {"access": "public", "introduced": "2", "name": "getDistanceFrom:"},
+      {"access": "public", "introduced": "3.2", "name": "distanceFromLocation:"}
+     ],
+     "introduced": "2",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "CLLocation",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "coordinate", "name": "coordinate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "altitude", "name": "altitude"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ellipsoidalAltitude", "introduced": "15", "name": "ellipsoidalAltitude"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "horizontalAccuracy", "name": "horizontalAccuracy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "verticalAccuracy", "name": "verticalAccuracy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "course", "introduced": "2.2", "name": "course"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "courseAccuracy", "introduced": "13.4", "name": "courseAccuracy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "speed", "introduced": "2.2", "name": "speed"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "speedAccuracy", "introduced": "10", "name": "speedAccuracy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "name": "timestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "floor", "introduced": "8", "name": "floor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourceInformation", "introduced": "15", "name": "sourceInformation"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSoftwareSimulationState:andExternalAccessoryState:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "CLLocationSourceInformation",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSimulatedBySoftware", "name": "isSimulatedBySoftware"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isProducedByAccessory", "name": "isProducedByAccessory"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e-apple-ios26",
+   "typedefs": [
+    {"access": "public", "name": "CLLocationAccuracy"},
+    {"access": "public", "name": "CLLocationCoordinate2D"},
+    {"access": "public", "name": "CLLocationDegrees"},
+    {"access": "public", "name": "CLLocationDirection"},
+    {"access": "public", "name": "CLLocationDirectionAccuracy"},
+    {"access": "public", "name": "CLLocationDistance"},
+    {"access": "public", "name": "CLLocationSpeed"},
+    {"access": "public", "name": "CLLocationSpeedAccuracy"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

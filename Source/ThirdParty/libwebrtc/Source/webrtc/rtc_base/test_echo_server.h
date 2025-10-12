@@ -27,7 +27,7 @@
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
 
-namespace rtc {
+namespace webrtc {
 
 // A test echo server, echoes back any packets sent to it.
 // Useful for unit tests.
@@ -47,15 +47,16 @@ class TestEchoServer : public sigslot::has_slots<> {
     if (raw_socket) {
       AsyncTCPSocket* packet_socket = new AsyncTCPSocket(raw_socket);
       packet_socket->RegisterReceivedPacketCallback(
-          [&](rtc::AsyncPacketSocket* socket,
-              const rtc::ReceivedPacket& packet) { OnPacket(socket, packet); });
+          [&](AsyncPacketSocket* socket, const ReceivedIpPacket& packet) {
+            OnPacket(socket, packet);
+          });
       packet_socket->SubscribeCloseEvent(
           this, [this](AsyncPacketSocket* s, int err) { OnClose(s, err); });
       client_sockets_.push_back(packet_socket);
     }
   }
-  void OnPacket(AsyncPacketSocket* socket, const rtc::ReceivedPacket& packet) {
-    rtc::PacketOptions options;
+  void OnPacket(AsyncPacketSocket* socket, const ReceivedIpPacket& packet) {
+    AsyncSocketPacketOptions options;
     socket->Send(packet.payload().data(), packet.payload().size(), options);
   }
   void OnClose(AsyncPacketSocket* socket, int err) {
@@ -71,6 +72,7 @@ class TestEchoServer : public sigslot::has_slots<> {
   ClientList client_sockets_;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_TEST_ECHO_SERVER_H_

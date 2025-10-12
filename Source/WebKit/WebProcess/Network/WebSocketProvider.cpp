@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2012 Google Inc.  All rights reserved.
+ * Copyright (C) 2009, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -38,6 +38,7 @@
 #include <WebCore/DocumentInlines.h>
 #include <WebCore/WebTransportSessionClient.h>
 #include <WebCore/WorkerGlobalScope.h>
+#include <WebCore/WorkerWebTransportSession.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -47,34 +48,41 @@ RefPtr<ThreadableWebSocketChannel> WebSocketProvider::createWebSocketChannel(Doc
     return WebKit::WebSocketChannel::create(m_webPageProxyID, document, client);
 }
 
-Ref<WebCore::WebTransportSessionPromise> WebSocketProvider::initializeWebTransportSession(ScriptExecutionContext& context, WebTransportSessionClient& client, const URL& url)
+WebSocketProvider::~WebSocketProvider() = default;
+
+WebSocketProvider::WebSocketProvider(WebPageProxyIdentifier webPageProxyID)
+    : m_webPageProxyID(webPageProxyID)
+    , m_networkProcessConnection(WebProcess::singleton().ensureNetworkProcessConnection().connection()) { }
+
+std::pair<RefPtr<WebCore::WebTransportSession>, Ref<WebTransportSessionPromise>> WebSocketProvider::initializeWebTransportSession(ScriptExecutionContext& context, WebTransportSessionClient& client, const URL& url, const WebCore::WebTransportOptions& options)
 {
     if (RefPtr scope = dynamicDowncast<WorkerGlobalScope>(context)) {
         ASSERT(!RunLoop::isMain());
-        WebCore::WebTransportSessionPromise::Producer producer;
-        Ref<WebCore::WebTransportSessionPromise> promise = producer.promise();
+        Ref workerSession = WorkerWebTransportSession::create(context.identifier(), client);
 
-        RunLoop::protectedMain()->dispatch([
-            contextID = context.identifier(),
-            producer = WTFMove(producer),
-            webPageProxyID = m_webPageProxyID,
-            origin = crossThreadCopy(scope->clientOrigin()),
-            client = ThreadSafeWeakPtr { client },
-            url = crossThreadCopy(url)
-        ] mutable {
-            WebKit::WebTransportSession::initialize(WebProcess::singleton().ensureNetworkProcessConnection().connection(), WTFMove(client), url, webPageProxyID, origin)->whenSettled(RunLoop::protectedMain(), [producer = WTFMove(producer)] (auto&& result) mutable {
-                if (!result)
-                    producer.reject();
-                else
-                    producer.resolve(WTFMove(*result));
+        auto getConnection = [protectedThis = Ref { *this }] {
+            Locker locker { protectedThis->m_networkProcessConnectionLock };
+            return protectedThis->m_networkProcessConnection.copyRef();
+        };
+        Ref connection = getConnection();
+        if (!connection->isValid()) {
+            WorkQueue::mainSingleton().dispatchSync([protectedThis = Ref { *this }] {
+                ASSERT(RunLoop::isMain());
+                Locker locker { protectedThis->m_networkProcessConnectionLock };
+                protectedThis->m_networkProcessConnection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
             });
-        });
-        return promise;
+            connection = getConnection();
+        }
+
+        auto [session, promise] = WebKit::WebTransportSession::initialize(WTFMove(connection), workerSession, url, options, m_webPageProxyID, scope->clientOrigin());
+        workerSession->attachSession(session);
+        return { WTFMove(workerSession), WTFMove(promise) };
     }
 
     Ref document = downcast<Document>(context);
     ASSERT(RunLoop::isMain());
-    return WebKit::WebTransportSession::initialize(WebProcess::singleton().ensureNetworkProcessConnection().connection(), client, url, m_webPageProxyID, document->clientOrigin());
+    auto [session, promise] = WebKit::WebTransportSession::initialize(WebProcess::singleton().ensureNetworkProcessConnection().connection(), client, url, options, m_webPageProxyID, document->clientOrigin());
+    return { WTFMove(session), WTFMove(promise) };
 }
 
 } // namespace WebKit

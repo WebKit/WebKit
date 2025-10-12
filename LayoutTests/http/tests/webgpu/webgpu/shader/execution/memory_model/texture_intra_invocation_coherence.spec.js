@@ -151,7 +151,7 @@ beforeAllSubcases((t) => {
 fn((t) => {
   t.skipIfLanguageFeatureNotSupported('readonly_and_readwrite_storage_textures');
   t.skipIfTextureFormatNotSupported(t.params.format);
-  t.skipIfTextureFormatNotUsableAsReadWriteStorageTexture(t.params.format);
+  t.skipIfTextureFormatNotUsableWithStorageAccessMode('read-write', t.params.format);
 
   const wgx = 16;
   const wgy = t.device.limits.maxComputeInvocationsPerWorkgroup / wgx;

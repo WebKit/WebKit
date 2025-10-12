@@ -27,7 +27,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "ScrollTypes.h"
+#include <WebCore/ScrollTypes.h>
 #include <wtf/Lock.h>
 #include <wtf/Markable.h>
 #include <wtf/MonotonicTime.h>

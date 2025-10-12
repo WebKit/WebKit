@@ -46,6 +46,8 @@
                 shouldBe('videoTrack.readyState', 'videoTrack3.readyState');
 
                 finishJSTest();
+                videoTrack2.stop();
+                videoTrack3.stop();
             }
 
             function start() {

@@ -80,6 +80,7 @@ PAS_DEFINE_COMPACT_ATOMIC_PTR(pas_segregated_heap_medium_directory_tuple,
 
 struct pas_segregated_heap {
     pas_heap_runtime_config* runtime_config;
+    pas_heap* parent_heap;
     
     pas_allocator_index* index_to_small_allocator_index;
     pas_compact_atomic_segregated_size_directory_ptr* index_to_small_size_directory;

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ScriptElementCachedScriptFetcher.h"
+#include <WebCore/ScriptElementCachedScriptFetcher.h>
 
 namespace WebCore {
 

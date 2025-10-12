@@ -1,5 +1,4 @@
 
-
 PASS img-src with wildcard should match all
 PASS img-src with wildcard should not match blob
 

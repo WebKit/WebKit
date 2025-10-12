@@ -13,11 +13,14 @@
 #include <openssl/evp.h>
 #include <openssl/sha.h>
 
+#include <cstddef>
+#include <string>
+
 #include "absl/strings/string_view.h"
 #include "rtc_base/string_encode.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 // Test vectors from RFC 1321.
 TEST(MessageDigestTest, TestMd5Digest) {
@@ -198,4 +201,4 @@ TEST(MessageDigestTest, TestBadHmac) {
   EXPECT_EQ("", ComputeHmac("sha-9000", "key", "abc"));
 }
 
-}  // namespace rtc
+}  // namespace webrtc

@@ -27,7 +27,7 @@
 
 #if HAVE(AVKIT_CONTENT_SOURCE)
 
-#include "VideoPresentationInterfaceIOS.h"
+#include <WebCore/VideoPresentationInterfaceIOS.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -70,7 +70,7 @@ private:
     CALayer *captionsLayer() final { return nullptr; }
     void setupCaptionsLayer(CALayer *, const FloatSize&) final { }
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    LMPlayableViewController *playableViewController() final { return nullptr; }
+    WKSPlayableViewControllerHost *playableViewController() final { return nullptr; }
 #endif
     void setSpatialImmersive(bool) final { }
 };

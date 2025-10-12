@@ -50,6 +50,7 @@ static void setDefaultsToConsistentValuesForTesting()
 #else
         @"WebKit2UseRemoteLayerTreeDrawingArea": @NO,
 #endif
+        @"ForceDefaultAccessibilitySettings": @YES,
     };
 
     [[NSUserDefaults standardUserDefaults] setValuesForKeysWithDictionary:dict];

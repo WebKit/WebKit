@@ -14,7 +14,6 @@
 
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "rtc_base/checks.h"
 
 namespace webrtc {
 

@@ -62,7 +62,7 @@ public:
     ~ScrollingTreeScrollingNodeDelegateIOS() final;
 
     void scrollWillStart() const;
-    void scrollDidEnd() const;
+    void scrollDidEnd();
     void scrollViewWillStartPanGesture() const;
     void scrollViewDidScroll(const WebCore::FloatPoint& scrollOffset, bool inUserInteraction);
 

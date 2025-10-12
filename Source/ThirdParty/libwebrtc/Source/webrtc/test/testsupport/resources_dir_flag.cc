@@ -10,6 +10,8 @@
 
 #include "test/testsupport/resources_dir_flag.h"
 
+#include <string>
+
 #include "absl/flags/flag.h"
 
 ABSL_FLAG(std::string,

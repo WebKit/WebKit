@@ -3,9 +3,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// Multiview draw tests:
-// Test issuing multiview Draw* commands.
+// MultiviewDrawTest.cpp:
+//   Test issuing multiview Draw* commands.
 //
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "platform/autogen/FeaturesD3D_autogen.h"
 #include "test_utils/MultiviewTest.h"
@@ -64,7 +68,7 @@ std::ostream &operator<<(std::ostream &os, const MultiviewRenderTestParams &para
 }
 
 class MultiviewFramebufferTestBase : public MultiviewTestBase,
-                                     public ::testing::TestWithParam<MultiviewRenderTestParams>
+                                     public ::testing::WithParamInterface<MultiviewRenderTestParams>
 {
   protected:
     MultiviewFramebufferTestBase(const PlatformParameters &params, int samples)
@@ -298,6 +302,12 @@ class MultiviewRenderTest : public MultiviewFramebufferTestBase
     void SetUp() override
     {
         MultiviewFramebufferTestBase::FramebufferTestSetUp();
+        // SetUp() may have determined the test should be skipped and returned before completing.
+        if (Test::IsSkipped())
+        {
+            return;
+        }
+
         testSetUp();
     }
     void TearDown() override

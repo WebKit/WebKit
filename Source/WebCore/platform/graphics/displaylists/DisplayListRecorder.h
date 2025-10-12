@@ -25,16 +25,16 @@
 
 #pragma once
 
-#include "DisplayList.h"
-#include "DisplayListItems.h"
-#include "GraphicsContext.h"
-#include "Image.h" // For Image::TileRule.
-#include "TextFlags.h"
+#include <WebCore/DisplayList.h>
+#include <WebCore/DisplayListItems.h>
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/Image.h> // For Image::TileRule.
+#include <WebCore/TextFlags.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 
 #if USE(CORE_TEXT)
-#include "DrawGlyphsRecorder.h"
+#include <WebCore/DrawGlyphsRecorder.h>
 #endif
 
 namespace WebCore {
@@ -61,9 +61,9 @@ public:
         // Deconstruct different text layers into separate DrawGlyphs commands. Allows for doing the deconstruct work once during recording instead of
         // multiple times during multiple playbacks.
         Deconstruct,
-        // Deconstruct different text layers into separate DrawDeconstructed commands. Allows for caching based on DeconstructedGlyphs
-        // identities during multiple playbacks.
-        DeconstructAndRetain,
+#if USE(SKIA)
+        TextBlob
+#endif
     };
 
     Recorder(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& transform, const DestinationColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode = DrawGlyphsMode::Normal)
@@ -71,6 +71,8 @@ public:
     {
     }
     WEBCORE_EXPORT virtual ~Recorder();
+
+    WEBCORE_EXPORT void appendDisplayList(const DisplayList&);
 
 protected:
     WEBCORE_EXPORT Recorder(IsDeferred, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const DestinationColorSpace&, DrawGlyphsMode);
@@ -112,7 +114,7 @@ protected:
     WEBCORE_EXPORT void updateStateForSetCTM(const AffineTransform&);
     WEBCORE_EXPORT void updateStateForBeginTransparencyLayer(float opacity);
     WEBCORE_EXPORT void updateStateForBeginTransparencyLayer(CompositeOperator, BlendMode);
-    WEBCORE_EXPORT void updateStateForEndTransparencyLayer();
+    [[nodiscard]] WEBCORE_EXPORT bool updateStateForEndTransparencyLayer();
     WEBCORE_EXPORT void updateStateForResetClip();
     WEBCORE_EXPORT void updateStateForClip(const FloatRect&);
     WEBCORE_EXPORT void updateStateForClipRoundedRect(const FloatRoundedRect&);
@@ -124,6 +126,7 @@ protected:
     WEBCORE_EXPORT void updateStateForApplyDeviceScaleFactor(float);
     WEBCORE_EXPORT bool decomposeDrawGlyphsIfNeeded(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& anchorPoint, FontSmoothingMode);
     FloatRect initialClip() const { return m_initialClip; }
+    DrawGlyphsMode drawGlyphsMode() const { return m_drawGlyphsMode; }
 
     const DestinationColorSpace& colorSpace() const final { return m_colorSpace; }
 
@@ -141,7 +144,6 @@ private:
 
     WEBCORE_EXPORT void didUpdateState(GraphicsContextState&) final;
     WEBCORE_EXPORT void didUpdateSingleState(GraphicsContextState&, GraphicsContextState::ChangeIndex) final;
-    // Returns true if decomposition handled the glyphs by calling drawDecomposedGlyphs and other functions.
     WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions) final;
     WEBCORE_EXPORT AffineTransform getCTM(GraphicsContext::IncludeDeviceScale = PossiblyIncludeDeviceScale) const final;
     WEBCORE_EXPORT IntRect clipBounds() const final;
@@ -153,10 +155,10 @@ private:
     Vector<ContextState, 4> m_stateStack;
     DestinationColorSpace m_colorSpace;
     const FloatRect m_initialClip;
+    const DrawGlyphsMode m_drawGlyphsMode { DrawGlyphsMode::Normal };
 #if USE(CORE_TEXT)
     std::unique_ptr<DrawGlyphsRecorder> m_drawGlyphsRecorder;
     float m_initialScale { 1 };
-    const DrawGlyphsMode m_drawGlyphsMode { DrawGlyphsMode::Normal };
 #endif
 };
 

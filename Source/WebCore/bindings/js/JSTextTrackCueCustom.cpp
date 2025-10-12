@@ -60,27 +60,6 @@ bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
     return containsWebCoreOpaqueRoot(visitor, textTrackCue.track());
 }
 
-JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TextTrackCue>&& cue)
-{
-    switch (cue->cueType()) {
-    case TextTrackCue::Data:
-        return createWrapper<DataCue>(globalObject, WTFMove(cue));
-    case TextTrackCue::WebVTT:
-    case TextTrackCue::ConvertedToWebVTT:
-        return createWrapper<VTTCue>(globalObject, WTFMove(cue));
-    case TextTrackCue::Generic:
-        return createWrapper<TextTrackCue>(globalObject, WTFMove(cue));
-    }
-
-    ASSERT_NOT_REACHED();
-    return jsNull();
-}
-
-JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TextTrackCue& cue)
-{
-    return wrap(lexicalGlobalObject, globalObject, cue);
-}
-
 template<typename Visitor>
 void JSTextTrackCue::visitAdditionalChildren(Visitor& visitor)
 {

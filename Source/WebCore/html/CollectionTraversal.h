@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CollectionType.h"
-#include "ElementChildIterator.h"
-#include "TypedElementDescendantIterator.h"
+#include <WebCore/CollectionType.h>
+#include <WebCore/ElementChildIterator.h>
+#include <WebCore/TypedElementDescendantIterator.h>
 
 namespace WebCore {
 

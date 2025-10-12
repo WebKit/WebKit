@@ -35,15 +35,8 @@ VertexBinding &VertexBinding::operator=(VertexBinding &&binding)
         mDivisor             = binding.mDivisor;
         mOffset              = binding.mOffset;
         mBoundAttributesMask = binding.mBoundAttributesMask;
-        std::swap(binding.mBuffer, mBuffer);
     }
     return *this;
-}
-
-void VertexBinding::onContainerBindingChanged(const Context *context, int incr) const
-{
-    if (mBuffer.get())
-        mBuffer->onNonTFBindingChanged(incr);
 }
 
 VertexAttribute::VertexAttribute(GLuint bindingIndex)
@@ -81,17 +74,16 @@ VertexAttribute &VertexAttribute::operator=(VertexAttribute &&attrib)
     return *this;
 }
 
-void VertexAttribute::updateCachedElementLimit(const VertexBinding &binding)
+void VertexAttribute::updateCachedElementLimit(const VertexBinding &binding, GLint64 bufferSize)
 {
-    Buffer *buffer = binding.getBuffer().get();
-    if (!buffer)
+    if (bufferSize == 0)
     {
         mCachedElementLimit = 0;
         return;
     }
 
     angle::CheckedNumeric<GLint64> bufferOffset(binding.getOffset());
-    angle::CheckedNumeric<GLint64> bufferSize(buffer->getSize());
+    angle::CheckedNumeric<GLint64> checkedBufferSize(bufferSize);
     angle::CheckedNumeric<GLint64> attribOffset(relativeOffset);
     angle::CheckedNumeric<GLint64> attribSize(ComputeVertexAttributeTypeSize(*this));
 
@@ -107,7 +99,7 @@ void VertexAttribute::updateCachedElementLimit(const VertexBinding &binding)
     // N attributes can be accessed, the following calculates N.
     //
     // (buffer.size - buffer.offset - attrib.relativeOffset - attrib.size) / binding.stride + 1
-    angle::CheckedNumeric<GLint64> elementLimit = (bufferSize - offset - attribSize);
+    angle::CheckedNumeric<GLint64> elementLimit = (checkedBufferSize - offset - attribSize);
 
     // Use the special integer overflow value if there was a math error.
     if (!elementLimit.IsValid())

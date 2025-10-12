@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 
 #if ENABLE(SHAREABLE_RESOURCE)
 
-#include "SharedMemory.h"
+#include <WebCore/SharedMemory.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -80,7 +80,7 @@ private:
     ShareableResource(Ref<SharedMemory>&&, unsigned offset, unsigned size);
     RefPtr<SharedBuffer> wrapInSharedBuffer();
 
-    Ref<SharedMemory> m_sharedMemory;
+    const Ref<SharedMemory> m_sharedMemory;
 
     const unsigned m_offset;
     const unsigned m_size;

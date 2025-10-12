@@ -13,6 +13,7 @@ const options = [
   "language",
   "script",
   "region",
+  "variants",
   "calendar",
   "collation",
   "hourCycle",

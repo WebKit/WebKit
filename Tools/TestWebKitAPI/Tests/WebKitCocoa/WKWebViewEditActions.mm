@@ -370,7 +370,7 @@ TEST(WebKit, CanInvokeTranslateWithTextSelection)
 
     auto makeTranslationAvailabilityScope = [](BOOL available) -> ClassMethodSwizzler {
         return {
-            PAL::getLTUITranslationViewControllerClass(),
+            PAL::getLTUITranslationViewControllerClassSingleton(),
             @selector(isAvailable),
             imp_implementationWithBlock(^BOOL {
                 return available;

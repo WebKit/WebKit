@@ -10,11 +10,15 @@
 
 #include "modules/desktop_capture/linux/wayland/restore_token_manager.h"
 
+#include <string>
+
+#include "modules/desktop_capture/desktop_capturer.h"
+
 namespace webrtc {
 
 // static
 RestoreTokenManager& RestoreTokenManager::GetInstance() {
-  static webrtc::RestoreTokenManager* manager = new RestoreTokenManager();
+  static RestoreTokenManager* manager = new RestoreTokenManager();
   return *manager;
 }
 

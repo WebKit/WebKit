@@ -27,9 +27,9 @@
 
 #if ENABLE(VIDEO)
 
-#include "VideoEncoderActiveConfiguration.h"
-#include "VideoEncoderScalabilityMode.h"
-#include "VideoFrame.h"
+#include <WebCore/VideoEncoderActiveConfiguration.h>
+#include <WebCore/VideoEncoderScalabilityMode.h>
+#include <WebCore/VideoFrame.h>
 #include <span>
 #include <wtf/CompletionHandler.h>
 #include <wtf/NativePromise.h>

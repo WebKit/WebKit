@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -106,8 +106,8 @@ private:
     FixedVector<std::span<const float>> m_sourceChannels;
     FixedVector<std::span<float>> m_destinationChannels;
 
-    Ref<AudioParam> m_detune;
-    Ref<AudioParam> m_playbackRate;
+    const Ref<AudioParam> m_detune;
+    const Ref<AudioParam> m_playbackRate;
 
     // If m_isLooping is false, then this node will be done playing and become inactive after it reaches the end of the sample data in the buffer.
     // If true, it will wrap around to the start of the buffer each time it reaches the end.
@@ -137,3 +137,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AudioBufferSourceNode)
+    static bool isType(const WebCore::AudioNode& node) { return node.nodeType() == WebCore::AudioNode::NodeTypeAudioBufferSource; }
+SPECIALIZE_TYPE_TRAITS_END()

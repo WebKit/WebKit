@@ -11,6 +11,8 @@
 #ifndef MODULES_DESKTOP_CAPTURE_LINUX_X11_WINDOW_FINDER_X11_H_
 #define MODULES_DESKTOP_CAPTURE_LINUX_X11_WINDOW_FINDER_X11_H_
 
+#include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/window_finder.h"
 
 namespace webrtc {

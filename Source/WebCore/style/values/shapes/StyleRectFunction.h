@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "CSSRectFunction.h"
-#include "StyleInsetFunction.h"
+#include <WebCore/CSSRectFunction.h>
+#include <WebCore/StyleInsetFunction.h>
 
 namespace WebCore {
 namespace Style {

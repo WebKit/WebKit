@@ -36,7 +36,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  @abstract A ``WKWebExtensionControllerConfiguration`` object with which to initialize a web extension controller.
  @discussion Contains properties used to configure a ``WKWebExtensionController``.
 */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_CLASS_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
 WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtensionController.Configuration)
 @interface WKWebExtensionControllerConfiguration : NSObject <NSSecureCoding, NSCopying>
 

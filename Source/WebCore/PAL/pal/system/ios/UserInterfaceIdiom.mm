@@ -50,6 +50,14 @@ static bool shouldForceUserInterfaceIdiomSmallScreen(std::optional<UIUserInterfa
 }
 #endif
 
+bool currentUserInterfaceIdiomIsDesktop()
+{
+    if (!s_currentUserInterfaceIdiom.load())
+        updateCurrentUserInterfaceIdiom();
+    auto idiom = *s_currentUserInterfaceIdiom.load();
+    return idiom == UserInterfaceIdiom::Desktop;
+}
+
 bool currentUserInterfaceIdiomIsSmallScreen()
 {
     if (!s_currentUserInterfaceIdiom.load())
@@ -85,13 +93,17 @@ bool updateCurrentUserInterfaceIdiom()
     // Since daemons don't ever run in an iPhone-app-on-iPad jail, this will be accurate in the daemon case,
     // but is not sufficient in the application case.
     UserInterfaceIdiom newIdiom = [&] {
-        if (![PAL::getUIApplicationClass() sharedApplication]) {
+        if (![PAL::getUIApplicationClassSingleton() sharedApplication]) {
+            if (PAL::deviceClassIsDesktop())
+                return UserInterfaceIdiom::Desktop;
             if (PAL::deviceClassIsSmallScreen() || shouldForceUserInterfaceIdiomSmallScreen())
                 return UserInterfaceIdiom::SmallScreen;
             if (PAL::deviceClassIsVision())
                 return UserInterfaceIdiom::Vision;
         } else {
-            auto idiom = [[PAL::getUIDeviceClass() currentDevice] userInterfaceIdiom];
+            auto idiom = [[PAL::getUIDeviceClassSingleton() currentDevice] userInterfaceIdiom];
+            if (idiom == UIUserInterfaceIdiomPad || idiom == UIUserInterfaceIdiomMac)
+                return UserInterfaceIdiom::Desktop;
             if (idiom == UIUserInterfaceIdiomPhone || idiom == UIUserInterfaceIdiomWatch || shouldForceUserInterfaceIdiomSmallScreen(idiom))
                 return UserInterfaceIdiom::SmallScreen;
 #if HAVE(UI_USER_INTERFACE_IDIOM_VISION)

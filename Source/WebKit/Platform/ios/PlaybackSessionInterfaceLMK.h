@@ -56,6 +56,7 @@ public:
     void audioMediaSelectionIndexChanged(uint64_t) final;
     void legibleMediaSelectionIndexChanged(uint64_t) final;
     void externalPlaybackChanged(bool, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, const String&) final { }
+    void setPlayerIdentifier(std::optional<WebCore::MediaPlayerIdentifier>) final;
     void wirelessVideoPlaybackDisabledChanged(bool) final { }
     void mutedChanged(bool) final;
     void volumeChanged(double) final;
@@ -70,9 +71,6 @@ public:
 
     void nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata&);
 
-    void setSpatialVideoEnabled(bool enabled) { m_spatialVideoEnabled = enabled; }
-    bool spatialVideoEnabled() const { return m_spatialVideoEnabled; }
-
     void swapFullscreenModesWith(PlaybackSessionInterfaceIOS&);
 
 private:
@@ -81,7 +79,6 @@ private:
     RetainPtr<WKSLinearMediaPlayer> m_player;
     RetainPtr<WKLinearMediaPlayerDelegate> m_playerDelegate;
     WebCore::NowPlayingMetadataObserver m_nowPlayingMetadataObserver;
-    bool m_spatialVideoEnabled { false };
     WebCore::VideoReceiverEndpoint m_videoReceiverEndpoint;
 };
 

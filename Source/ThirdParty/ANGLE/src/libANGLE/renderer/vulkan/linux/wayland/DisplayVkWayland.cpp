@@ -7,6 +7,10 @@
 //    Implements the class methods for DisplayVkWayland.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/vulkan/linux/wayland/DisplayVkWayland.h"
 
 #include <wayland-client.h>

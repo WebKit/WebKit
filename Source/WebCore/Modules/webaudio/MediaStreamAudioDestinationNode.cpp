@@ -29,6 +29,7 @@
 
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "MediaStream.h"
 #include "MediaStreamAudioSource.h"

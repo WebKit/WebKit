@@ -39,6 +39,7 @@
 #include "HTMLNames.h"
 #include "NodeInlines.h"
 #include "NodeTraversal.h"
+#include "SerializedNode.h"
 #include "ShadowRoot.h"
 #include "ShadowRootInit.h"
 #include "SlotAssignmentMode.h"
@@ -88,6 +89,12 @@ DocumentFragment& HTMLTemplateElement::content() const
     return *m_content;
 }
 
+void HTMLTemplateElement::adoptDeserializedContent(Ref<TemplateContentDocumentFragment>&& content)
+{
+    ASSERT(!m_content);
+    m_content = WTFMove(content);
+}
+
 const AtomString& HTMLTemplateElement::shadowRootMode() const
 {
     static MainThreadNeverDestroyed<const AtomString> open("open"_s);
@@ -101,17 +108,12 @@ const AtomString& HTMLTemplateElement::shadowRootMode() const
     return emptyAtom();
 }
 
-void HTMLTemplateElement::setShadowRootMode(const AtomString& value)
-{
-    setAttribute(HTMLNames::shadowrootmodeAttr, value);
-}
-
 void HTMLTemplateElement::setDeclarativeShadowRoot(ShadowRoot& shadowRoot)
 {
     m_declarativeShadowRoot = shadowRoot;
 }
 
-Ref<Node> HTMLTemplateElement::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* registry)
+Ref<Node> HTMLTemplateElement::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* registry) const
 {
     RefPtr<Node> clone;
     switch (type) {
@@ -130,6 +132,33 @@ Ref<Node> HTMLTemplateElement::cloneNodeInternal(Document& document, CloningOper
         content().cloneChildNodes(fragment->document(), nullptr, fragment);
     }
     return clone.releaseNonNull();
+}
+
+SerializedNode HTMLTemplateElement::serializeNode(CloningOperation type) const
+{
+    Vector<SerializedNode> children;
+    switch (type) {
+    case CloningOperation::SelfOnly:
+    case CloningOperation::SelfWithTemplateContent:
+        break;
+    case CloningOperation::Everything:
+        children = serializeChildNodes();
+        break;
+    }
+
+    RefPtr content = m_content;
+    auto contentChildren = content && type != CloningOperation::SelfOnly
+        ? std::optional(SerializedNode::DocumentFragment { content->serializeChildNodes() })
+        : std::nullopt;
+
+    return { SerializedNode::HTMLTemplateElement {
+        SerializedNode::Element {
+            { WTFMove(children) },
+            { tagQName() },
+            serializeAttributes<SerializedNode::Element::Attribute>(),
+            serializeShadowRoot<SerializedNode::ShadowRoot>()
+        }, WTFMove(contentChildren)
+    } };
 }
 
 void HTMLTemplateElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)

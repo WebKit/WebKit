@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "IDBIndexIdentifier.h"
-#include "IDBKeyData.h"
+#include <WebCore/IDBIndexIdentifier.h>
+#include <WebCore/IDBKeyData.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 

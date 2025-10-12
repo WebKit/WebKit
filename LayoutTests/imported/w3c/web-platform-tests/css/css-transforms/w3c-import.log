@@ -22,6 +22,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/2d-rotate-ref-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/2d-rotate-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/2d-transform-inline-js.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/3d-point-mapping-2-transforminterop.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/3d-point-mapping-3.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/3d-point-mapping-coplanar.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/3d-point-mapping-overlapping.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/3d-point-mapping.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/3d-rendering-context-and-abspos-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/3d-rendering-context-and-abspos.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/3d-rendering-context-and-fixpos-expected.html
@@ -108,6 +113,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/css-rotate-2d-3d-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/css-scale-nested-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/css-scale-nested-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/css-scale-of-clip-path-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/css-scale-of-clip-path-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/css-scale-of-clip-path.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/css-skew-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/css-skew-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/css-skew-001.html
@@ -265,6 +273,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-flattening-z-order-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-flattening-z-order-008-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-flattening-z-order-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/preserve3d-backface-hit-test-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/preserve3d-backface-hit-test-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/preserve3d-button-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/preserve3d-button-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/preserve3d-button.html
@@ -295,8 +305,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate_y_45deg.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotated-clip-under-opacity-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotated-clip-under-opacity.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/scale-animation-with-var-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/scale-animation-with-var-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/scale-optional-second-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/scale-optional-second-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/scale-transform-filtered-text-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/scale-transform-filtered-text-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/scale-transform-filtered-text.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/scale-transform-overlap-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/scale-transform-overlap-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/scale-transform-overlap.html
@@ -565,6 +580,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-matrix-008-notref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-matrix-008-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-matrix-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-matrix-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-matrix-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-origin-001-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-origin-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-origin-002-expected-mismatch.html

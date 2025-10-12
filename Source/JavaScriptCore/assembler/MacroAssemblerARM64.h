@@ -29,9 +29,9 @@
 
 #if ENABLE(ASSEMBLER) && CPU(ARM64)
 
-#include "ARM64Assembler.h"
-#include "AbstractMacroAssembler.h"
-#include "JITOperationValidation.h"
+#include <JavaScriptCore/ARM64Assembler.h>
+#include <JavaScriptCore/AbstractMacroAssembler.h>
+#include <JavaScriptCore/JITOperationValidation.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
@@ -55,6 +55,7 @@ public:
     static constexpr RegisterID memoryTempRegister = ARM64Registers::ip1;
 
     static constexpr RegisterID InvalidGPRReg = ARM64Registers::InvalidGPRReg;
+    static constexpr FPRegisterID InvalidFPRReg = ARM64Registers::InvalidFPRReg;
 
     static constexpr ARM64Registers::FPRegisterID fpTempRegister = ARM64Registers::q31;
 
@@ -96,8 +97,8 @@ public:
     static JumpLinkType computeJumpType(LinkRecord& record, const uint8_t* from, const uint8_t* to) { return Assembler::computeJumpType(record, from, to); }
     static int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return Assembler::jumpSizeDelta(jumpType, jumpLinkType); }
 
-    template<MachineCodeCopyMode copy>
-    ALWAYS_INLINE static void link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction, uint8_t* to) { return Assembler::link<copy>(record, from, fromInstruction, to); }
+    template<RepatchingInfo repatch>
+    ALWAYS_INLINE static void link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction, uint8_t* to) { return Assembler::link<repatch>(record, from, fromInstruction, to); }
 
     static bool isCompactPtrAlignedAddressOffset(ptrdiff_t value)
     {
@@ -3136,12 +3137,14 @@ public:
 
     void moveDouble(FPRegisterID src, FPRegisterID dest)
     {
-        m_assembler.fmov<64>(dest, src);
+        if (src != dest)
+            m_assembler.fmov<64>(dest, src);
     }
 
     void moveVector(FPRegisterID src, FPRegisterID dest)
     {
-        m_assembler.vorr<128>(dest, src, src);
+        if (src != dest)
+            m_assembler.vorr<128>(dest, src, src);
     }
 
     void materializeVector(v128_t value, FPRegisterID dest)
@@ -3370,7 +3373,7 @@ public:
                 m_assembler.fcsel<datasize>(thenCase, elseCase, thenCase, Assembler::ConditionVS);
                 m_assembler.fcsel<datasize>(dest, thenCase, elseCase, Assembler::ConditionNE);
             } else {
-                m_assembler.fmov<64>(dest, elseCase);
+                moveDouble(elseCase, dest);
                 Jump unordered = makeBranch(Assembler::ConditionVS);
                 m_assembler.fcsel<datasize>(dest, thenCase, elseCase, Assembler::ConditionNE);
                 unordered.link(this);
@@ -3386,7 +3389,7 @@ public:
                 m_assembler.fcsel<datasize>(elseCase, thenCase, elseCase, Assembler::ConditionVS);
                 m_assembler.fcsel<datasize>(dest, thenCase, elseCase, Assembler::ConditionEQ);
             } else {
-                m_assembler.fmov<64>(dest, thenCase);
+                moveDouble(thenCase, dest);
                 Jump unordered = makeBranch(Assembler::ConditionVS);
                 m_assembler.fcsel<datasize>(dest, thenCase, elseCase, Assembler::ConditionEQ);
                 unordered.link(this);
@@ -4092,6 +4095,10 @@ public:
     Jump branch32(RelationalCondition cond, RegisterID left, TrustedImm32 right)
     {
         auto immediate = right.m_value;
+
+        if (auto result = attemptToFoldToBitTest32(cond, left, immediate))
+            return result.value();
+
         if (!immediate) {
             if (auto resultCondition = commuteCompareToZeroIntoTest(cond))
                 return branchTest32(*resultCondition, left, left);
@@ -4165,6 +4172,10 @@ public:
     Jump branch64(RelationalCondition cond, RegisterID left, TrustedImm32 right)
     {
         auto immediate = right.m_value;
+
+        if (auto result = attemptToFoldToBitTest64(cond, left, immediate))
+            return result.value();
+
         if (!immediate) {
             if (auto resultCondition = commuteCompareToZeroIntoTest(cond))
                 return branchTest64(*resultCondition, left, left);
@@ -4186,6 +4197,10 @@ public:
     Jump branch64(RelationalCondition cond, RegisterID left, TrustedImm64 right)
     {
         auto immediate = right.m_value;
+
+        if (auto result = attemptToFoldToBitTest64(cond, left, immediate))
+            return result.value();
+
         if (!immediate) {
             if (auto resultCondition = commuteCompareToZeroIntoTest(cond))
                 return branchTest64(*resultCondition, left, left);
@@ -5210,7 +5225,7 @@ public:
 
     static void reemitInitialMoveWithPatch(void* address, void* value)
     {
-        Assembler::setPointer(static_cast<int*>(address), value, dataTempRegister, true);
+        Assembler::setPointer<jitMemcpyRepatchFlush>(static_cast<int*>(address), value, dataTempRegister);
     }
 
     // Miscellaneous operations:
@@ -5925,6 +5940,26 @@ public:
         m_assembler.vectorFmulByElement(dest, left, right, SIMDLane::f64x2, lane.m_value);
     }
 
+    void vectorMulHigh(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest, FPRegisterID = InvalidFPRReg)
+    {
+        ASSERT(!scalarTypeIsFloatingPoint(simdInfo.lane));
+        ASSERT(simdInfo.signMode != SIMDSignMode::None);
+        if (simdInfo.signMode == SIMDSignMode::Signed)
+            m_assembler.smull2v(dest, left, right, narrowedLane(simdInfo.lane));
+        else
+            m_assembler.umull2v(dest, left, right, narrowedLane(simdInfo.lane));
+    }
+
+    void vectorMulLow(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest, FPRegisterID = InvalidFPRReg)
+    {
+        ASSERT(!scalarTypeIsFloatingPoint(simdInfo.lane));
+        ASSERT(simdInfo.signMode != SIMDSignMode::None);
+        if (simdInfo.signMode == SIMDSignMode::Signed)
+            m_assembler.smullv(dest, left, right, narrowedLane(simdInfo.lane));
+        else
+            m_assembler.umullv(dest, left, right, narrowedLane(simdInfo.lane));
+    }
+
     void vectorFusedMulAdd(SIMDInfo simdInfo, FPRegisterID mul1, FPRegisterID mul2, FPRegisterID addend, FPRegisterID dest, FPRegisterID scratch)
     {
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
@@ -6411,6 +6446,107 @@ public:
         default:
             return std::nullopt;
         }
+    }
+
+    std::optional<Jump> attemptToFoldToBitTest32(RelationalCondition cond, RegisterID left, int32_t immediate)
+    {
+        int32_t signbit = static_cast<int32_t>(1U << (32 - 1));
+        switch (cond) {
+        case LessThan:
+            // left < 0
+            if (!immediate)
+                return branchTest32(NonZero, left, TrustedImm32(signbit));
+            break;
+        case LessThanOrEqual:
+            // left <= -1
+            if (immediate == -1)
+                return branchTest32(NonZero, left, TrustedImm32(signbit));
+            break;
+        case GreaterThan:
+            // left > -1
+            if (immediate == -1)
+                return branchTest32(Zero, left, TrustedImm32(signbit));
+            break;
+        case GreaterThanOrEqual:
+            // left >= 0
+            if (!immediate)
+                return branchTest32(Zero, left, TrustedImm32(signbit));
+            break;
+
+        case Below:
+            // left < signbit
+            if (immediate == signbit)
+                return branchTest32(Zero, left, TrustedImm32(signbit));
+            break;
+        case BelowOrEqual:
+            // left <= (signbit - 1)
+            if (immediate == (signbit - 1))
+                return branchTest32(Zero, left, TrustedImm32(signbit));
+            break;
+        case Above:
+            // left > (signbit - 1)
+            if (immediate == (signbit - 1))
+                return branchTest32(NonZero, left, TrustedImm32(signbit));
+            break;
+        case AboveOrEqual:
+            // left >= signbit
+            if (immediate == signbit)
+                return branchTest32(NonZero, left, TrustedImm32(signbit));
+            break;
+        default:
+            break;
+        }
+        return std::nullopt;
+    }
+
+    std::optional<Jump> attemptToFoldToBitTest64(RelationalCondition cond, RegisterID left, int64_t immediate)
+    {
+        int64_t signbit = static_cast<int64_t>(1ULL << (64 - 1));
+        switch (cond) {
+        case LessThan:
+            // left < 0
+            if (!immediate)
+                return branchTest64(NonZero, left, TrustedImm64(signbit));
+            break;
+        case LessThanOrEqual:
+            // left <= -1
+            if (immediate == -1)
+                return branchTest64(NonZero, left, TrustedImm64(signbit));
+            break;
+        case GreaterThan:
+            // left > -1
+            if (immediate == -1)
+                return branchTest64(Zero, left, TrustedImm64(signbit));
+            break;
+        case GreaterThanOrEqual:
+            // left >= 0
+            if (!immediate)
+                return branchTest64(Zero, left, TrustedImm64(signbit));
+            break;
+        case Below:
+            // left < signbit
+            if (immediate == signbit)
+                return branchTest64(Zero, left, TrustedImm64(signbit));
+            break;
+        case BelowOrEqual:
+            // left <= (signbit - 1)
+            if (immediate == (signbit - 1))
+                return branchTest64(Zero, left, TrustedImm64(signbit));
+            break;
+        case Above:
+            // left > (signbit - 1)
+            if (immediate == (signbit - 1))
+                return branchTest64(NonZero, left, TrustedImm64(signbit));
+            break;
+        case AboveOrEqual:
+            // left >= signbit
+            if (immediate == signbit)
+                return branchTest64(NonZero, left, TrustedImm64(signbit));
+            break;
+        default:
+            break;
+        }
+        return std::nullopt;
     }
 
     template<PtrTag resultTag, PtrTag locationTag>

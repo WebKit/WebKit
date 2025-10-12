@@ -36,9 +36,14 @@ inline SVGMarkerElement& LegacyRenderSVGResourceMarker::markerElement() const
     return downcast<SVGMarkerElement>(LegacyRenderSVGResourceContainer::element());
 }
 
+inline Ref<SVGMarkerElement> LegacyRenderSVGResourceMarker::protectedMarkerElement() const
+{
+    return markerElement();
+}
+
 inline SVGMarkerUnitsType LegacyRenderSVGResourceMarker::markerUnits() const
 {
-    return markerElement().markerUnits();
+    return protectedMarkerElement()->markerUnits();
 }
 
 } // namespace WebCore

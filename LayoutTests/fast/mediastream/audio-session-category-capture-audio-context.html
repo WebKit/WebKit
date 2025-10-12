@@ -5,7 +5,7 @@
 <script src="../../webrtc/routines.js"></script>
 <script>
 
-promise_test(async() => {
+promise_test(async test => {
     if (!window.internals)
        return Promise.reject("Test requires internals API");
 
@@ -23,7 +23,8 @@ promise_test(async() => {
     // Make sure that a not audible AudioContext is still setting the category to AmbientSound.
     assert_equals(internals.audioSessionCategory(), "AmbientSound", "AmbientSound");
 
-    let stream = await navigator.mediaDevices.getUserMedia({audio : true});
+    const stream = await navigator.mediaDevices.getUserMedia({audio : true});
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
     assert_equals(internals.audioSessionCategory(), "PlayAndRecord", "PlayAndRecord1");
 
@@ -51,7 +52,7 @@ promise_test(async() => {
     assert_equals(internals.audioSessionCategory(), defaultCategory);
 }, "Check audio session state in case of stopped audio track and stopped audio context");
 
-promise_test(async() => {
+promise_test(async test => {
     if (!window.internals)
        return Promise.reject("Test requires internals API");
 
@@ -63,6 +64,7 @@ promise_test(async() => {
     const defaultCategory = internals.audioSessionCategory();
 
     const stream = await navigator.mediaDevices.getUserMedia({audio : true});
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
     assert_equals(internals.audioSessionCategory(), "PlayAndRecord");
 

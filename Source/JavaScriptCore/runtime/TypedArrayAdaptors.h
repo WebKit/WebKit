@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "JSBigInt.h"
-#include "JSCJSValue.h"
-#include "MathCommon.h"
-#include "TypedArrayAdaptersForwardDeclarations.h"
-#include "TypedArrayType.h"
+#include <JavaScriptCore/JSBigInt.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/MathCommon.h>
+#include <JavaScriptCore/TypedArrayAdaptersForwardDeclarations.h>
+#include <JavaScriptCore/TypedArrayType.h>
 #include <wtf/MathExtras.h>
 
 namespace JSC {

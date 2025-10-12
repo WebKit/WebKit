@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "IDLTypes.h"
 #include <JavaScriptCore/Strong.h>
+#include <WebCore/IDLTypes.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 

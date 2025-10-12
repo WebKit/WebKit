@@ -4,23 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-extensions-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  { __proto__: target } should work as a destructuring assignment pattern
+info: bugzilla.mozilla.org/show_bug.cgi?id=963641
 esid: pending
 ---*/
-var gTestfile = 'destructuring-__proto__-target--assignment.js';
-var BUGNUMBER = 963641;
-var summary =
-  "{ __proto__: target } should work as a destructuring assignment pattern";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 function objectWithProtoProperty(v)
 {
@@ -49,7 +37,3 @@ function nested()
   assert.sameValue(target, -0);
 }
 nested();
-
-/******************************************************************************/
-
-print("Tests complete");

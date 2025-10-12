@@ -28,7 +28,7 @@
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import <WebCore/Element.h>
-#import <WebCore/NodeInlines.h>
+#import <WebCore/NodeDocument.h>
 #import <wtf/TZoneMallocInlines.h>
 
 using namespace WebCore;

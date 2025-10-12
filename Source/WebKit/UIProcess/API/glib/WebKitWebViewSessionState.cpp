@@ -325,10 +325,12 @@ static inline void decodeFrameState(GVariant* frameStateVariant, FrameState& fra
     frameState.originalURLString = String::fromUTF8(originalURLString);
     // frameState.referrer must not be an empty string since we never want to
     // send an empty Referer header. Bug #159606.
+    IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
     if (strlen(referrer))
         frameState.referrer = String::fromUTF8(referrer);
     if (strlen(target))
         frameState.target = AtomString::fromUTF8(target);
+    IGNORE_CLANG_WARNINGS_END
     if (gsize documentStateLength = g_variant_iter_n_children(documentStateIter.get())) {
         Vector<AtomString> documentState;
         documentState.reserveInitialCapacity(documentStateLength);

@@ -28,6 +28,7 @@
 
 #include "DOMPoint.h"
 #include "DOMRect.h"
+#include "ScriptWrappableInlines.h"
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -65,5 +66,7 @@ Ref<DOMRect> DOMQuad::getBounds() const
 
     return DOMRect::create(left, top, right - left, bottom - top);
 }
+
+DOMQuad::~DOMQuad() = default;
 
 }

@@ -29,6 +29,7 @@ WI.TargetType = {
     Page: "page",
     ServiceWorker: "service-worker",
     WebPage: "web-page",
+    Frame: "frame",
     Worker: "worker",
 };
 

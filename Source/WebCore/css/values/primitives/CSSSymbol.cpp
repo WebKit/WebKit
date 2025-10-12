@@ -25,6 +25,8 @@
 #include "config.h"
 #include "CSSSymbol.h"
 
+#include <wtf/text/TextStream.h>
+
 namespace WebCore {
 namespace CSS {
 
@@ -38,6 +40,13 @@ void Serialize<SymbolRaw>::operator()(StringBuilder& builder, const Serializatio
 void Serialize<Symbol>::operator()(StringBuilder& builder, const SerializationContext&, const Symbol& value)
 {
     builder.append(nameLiteralForSerialization(value.value));
+}
+
+// MARK: - Logging
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, const Symbol& value)
+{
+    return ts << nameLiteralForSerialization(value.value);
 }
 
 } // namespace CSS

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "StorageConnection.h"
+#include <WebCore/StorageConnection.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

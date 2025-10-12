@@ -67,39 +67,6 @@ class StandardQueryGL : public QueryGL
     std::deque<GLuint> mPendingQueries;
     GLuint64 mResultSum;
 };
-
-class SyncProviderGL;
-class SyncQueryGL : public QueryGL
-{
-  public:
-    SyncQueryGL(gl::QueryType type, const FunctionsGL *functions);
-    ~SyncQueryGL() override;
-
-    static bool IsSupported(const FunctionsGL *functions);
-
-    angle::Result begin(const gl::Context *context) override;
-    angle::Result end(const gl::Context *context) override;
-    angle::Result queryCounter(const gl::Context *context) override;
-    angle::Result getResult(const gl::Context *context, GLint *params) override;
-    angle::Result getResult(const gl::Context *context, GLuint *params) override;
-    angle::Result getResult(const gl::Context *context, GLint64 *params) override;
-    angle::Result getResult(const gl::Context *context, GLuint64 *params) override;
-    angle::Result isResultAvailable(const gl::Context *context, bool *available) override;
-
-    angle::Result pause(const gl::Context *context) override;
-    angle::Result resume(const gl::Context *context) override;
-
-  private:
-    angle::Result flush(const gl::Context *context, bool force);
-
-    template <typename T>
-    angle::Result getResultBase(const gl::Context *context, T *params);
-
-    const FunctionsGL *mFunctions;
-
-    std::unique_ptr<SyncProviderGL> mSyncProvider;
-    bool mFinished;
-};
 }  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_GL_QUERYGL_H_

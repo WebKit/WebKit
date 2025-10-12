@@ -23,6 +23,8 @@
 #include "config.h"
 #include "LiveNodeList.h"
 
+#include <WebCore/ContainerNode.h>
+
 namespace WebCore {
 
 LiveNodeList::LiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType invalidationType)

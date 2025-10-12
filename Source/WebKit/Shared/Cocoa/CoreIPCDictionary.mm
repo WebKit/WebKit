@@ -66,8 +66,13 @@ CoreIPCDictionary::CoreIPCDictionary(ValueType&& keyValuePairs)
 RetainPtr<id> CoreIPCDictionary::toID() const
 {
     auto result = adoptNS([[NSMutableDictionary alloc] initWithCapacity:m_keyValuePairs.size()]);
-    for (auto& keyValuePair : m_keyValuePairs)
-        [result setObject:keyValuePair.value.toID().get() forKey:keyValuePair.key.toID().get()];
+    for (auto& keyValuePair : m_keyValuePairs) {
+        RetainPtr keyID = keyValuePair.key.toID();
+        RetainPtr valueID = keyValuePair.value.toID();
+        if (!keyID || !valueID)
+            continue;
+        [result setObject:valueID.get() forKey:keyID.get()];
+    }
     return result;
 }
 

@@ -28,7 +28,7 @@ class CQTest : public ::libvpx_test::EncoderTest,
                public ::libvpx_test::CodecTestWithParam<int> {
  public:
   // maps the cqlevel to the bitrate produced.
-  typedef std::map<int, uint32_t> BitrateMap;
+  using BitrateMap = std::map<int, uint32_t>;
 
   static void SetUpTestSuite() { bitrates_.clear(); }
 

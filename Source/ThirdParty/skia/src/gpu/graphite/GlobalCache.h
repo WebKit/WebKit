@@ -14,16 +14,22 @@
 #include "src/core/SkLRUCache.h"
 #include "src/gpu/ResourceKey.h"
 #include "src/gpu/graphite/GraphicsPipeline.h"
-
+#include "src/gpu/graphite/Log.h"
+#include "src/gpu/graphite/ResourceTypes.h"
 
 #include <functional>
 
 namespace skgpu::graphite {
 
+class Caps;
 class ComputePipeline;
 class GraphicsPipeline;
 class Resource;
+class ResourceProvider;
+class Sampler;
 class ShaderCodeDictionary;
+
+struct SamplerDesc;
 
 /**
  * GlobalCache holds GPU resources that should be shared by every Recorder. The common requirement
@@ -54,11 +60,6 @@ public:
     // Otherwise, the passed-in pipeline is held by the GlobalCache and also returned back.
     sk_sp<GraphicsPipeline> addGraphicsPipeline(const UniqueKey&,
                                                 sk_sp<GraphicsPipeline>) SK_EXCLUDES(fSpinLock);
-    // Remove the GraphicsPipeline from the cache, if possible. This does nothing if the pipeline
-    // is not held in the cache. This removes based on actual pipeline object, not by key. When
-    // pipeline compilation has transient failures, it is possible for multiple GraphicsPipelines to
-    // be created that have the same key.
-    void removeGraphicsPipeline(const GraphicsPipeline*) SK_EXCLUDES(fSpinLock);
 
     void purgePipelinesNotUsedSince(
             StdSteadyClock::time_point purgeTime) SK_EXCLUDES(fSpinLock);
@@ -115,19 +116,42 @@ public:
                                 const GraphicsPipelineDesc&,
                                 const RenderPassDesc&);
 
+    // Returns a cached Sampler matching the sampler description, assuming that `desc` is a dynamic
+    // sampler and does not have any immutable sampler information. The number of dynamic samplers
+    // is small enough that they are created once during context initialization and then shared.
+    //
+    // The returned Sampler is kept alive by the GlobalCache's static resource collection for the
+    // lifetime of the GlobalCache.
+    const Sampler* getDynamicSampler(SamplerDesc desc) const SK_EXCLUDES(fSpinLock) {
+        SkAutoSpinlock lock{fSpinLock};
+        SkASSERT(!desc.isImmutable() && desc.asSpan().size() == 1 && fDynamicSamplers[desc.desc()]);
+        return fDynamicSamplers[desc.desc()];
+    }
+
+    bool initializeDynamicSamplers(ResourceProvider*, const Caps*) SK_EXCLUDES(fSpinLock);
+
 #if defined(GPU_TEST_UTILS)
     struct StaticVertexCopyRanges {
         uint32_t fOffset;
-        size_t fUnalignedSize;
-        size_t fSize;
-        size_t fRequiredAlignment;
+        uint32_t fUnalignedSize;
+        uint32_t fSize;
+        uint32_t fRequiredAlignment;
     };
     void testingOnly_SetStaticVertexInfo(skia_private::TArray<StaticVertexCopyRanges>,
                                          const Buffer*) SK_EXCLUDES(fSpinLock);
     SkSpan<const StaticVertexCopyRanges> getStaticVertexCopyRanges() const SK_EXCLUDES(fSpinLock);
     sk_sp<Buffer> getStaticVertexBuffer() SK_EXCLUDES(fSpinLock);
 #endif
+
 private:
+    static constexpr int kNumDynamicSamplers = 1 << SamplerDesc::kImmutableSamplerInfoShift;
+
+    // Remove the GraphicsPipeline from the cache, if possible. This does nothing if the pipeline
+    // is not held in the cache. This removes based on actual pipeline object, not by key. When
+    // pipeline compilation has transient failures, it is possible for multiple GraphicsPipelines to
+    // be created that have the same key.
+    void removeGraphicsPipeline(const GraphicsPipeline*) SK_REQUIRES(fSpinLock);
+
     struct KeyHash {
         uint32_t operator()(const UniqueKey& key) const { return key.hash(); }
     };
@@ -162,6 +186,11 @@ private:
     // Every Pipeline will be marked with the epoch in which it was created and then updated
     // for each epoch in which it was used.
     uint16_t fEpochCounter SK_GUARDED_BY(fSpinLock) = 1;
+
+    // Lookup table for dynamically created samplers. Each sampler represents a specific combination
+    // of tile modes and sampling options. The array is indexed by a bitmask generated from these
+    // properties. The actual Sampler objects are owned by `fStaticResource`.
+    std::array<const Sampler*, kNumDynamicSamplers> fDynamicSamplers SK_GUARDED_BY(fSpinLock);
 
 #if defined(GPU_TEST_UTILS)
     skia_private::TArray<StaticVertexCopyRanges> fStaticVertexInfo SK_GUARDED_BY(fSpinLock);

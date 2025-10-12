@@ -38,10 +38,11 @@
 
 typedef NS_ENUM(NSInteger, WKHostedMaterialEffectType) {
     WKHostedMaterialEffectTypeNone,
-    WKHostedMaterialEffectTypeBlur,
-    WKHostedMaterialEffectTypeThinBlur,
-    WKHostedMaterialEffectTypeMediaControls,
-    WKHostedMaterialEffectTypeThinMediaControls,
+    WKHostedMaterialEffectTypeGlass,
+    WKHostedMaterialEffectTypeClearGlass,
+    WKHostedMaterialEffectTypeSubduedGlass,
+    WKHostedMaterialEffectTypeMediaControlsGlass,
+    WKHostedMaterialEffectTypeSubduedMediaControlsGlass,
 };
 
 typedef NS_ENUM(NSInteger, WKHostedMaterialColorScheme) {

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Blocked https://localhost:9443/secure-contexts/basic-popup-and-iframe-tests.https.js from asking for credentials because it is a cross-origin request.
 
 FAIL Test Window.isSecureContext for HTTP creator assert_false: http: creator should not be a Secure Context expected false got true
 FAIL Test Window.isSecureContext in an iframe loading an http: URI assert_false: an http: URI in an iframe should not create a Secure Context expected false got true

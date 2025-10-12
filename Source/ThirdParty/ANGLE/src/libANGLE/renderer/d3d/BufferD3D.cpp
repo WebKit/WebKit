@@ -6,6 +6,10 @@
 
 // BufferD3D.cpp Defines common functionality between the Buffer9 and Buffer11 classes.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/BufferD3D.h"
 
 #include "common/mathutil.h"

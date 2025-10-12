@@ -12,9 +12,11 @@
 
 #include <cstring>
 #include <map>
+#include <optional>
 #include <string>
 #include <utility>
 
+#include "api/rtp_parameters.h"
 #include "api/video_codecs/h264_profile_level_id.h"
 #ifdef RTC_ENABLE_H265
 #include "api/video_codecs/h265_profile_tier_level.h"
@@ -64,8 +66,7 @@ std::optional<int> ParsePositiveNumberFromParams(
   if (max_frame_rate_it == params.end())
     return std::nullopt;
 
-  const std::optional<int> i =
-      rtc::StringToNumber<int>(max_frame_rate_it->second);
+  const std::optional<int> i = StringToNumber<int>(max_frame_rate_it->second);
   if (!i.has_value() || i.value() <= 0)
     return std::nullopt;
   return i;
@@ -181,8 +182,7 @@ std::optional<int> ParseSdpForVPxMaxFrameSize(const CodecParameterMap& params) {
 bool SupportsPerLayerPictureLossIndication(const CodecParameterMap& params) {
   return absl::c_find_if(
              params, [](const std::pair<std::string, std::string>& kv) {
-               return kv.first ==
-                          cricket::kCodecParamPerLayerPictureLossIndication &&
+               return kv.first == kCodecParamPerLayerPictureLossIndication &&
                       kv.second == "1";
              }) != params.end();
 }

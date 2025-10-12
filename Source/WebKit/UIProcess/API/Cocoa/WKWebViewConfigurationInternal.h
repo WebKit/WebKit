@@ -26,6 +26,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 
 #ifdef __cplusplus
+#if !__has_feature(modules)
 
 #import "APIPageConfiguration.h"
 #import "WKObject.h"
@@ -55,6 +56,7 @@ _WKDragLiftDelay toWKDragLiftDelay(WebKit::DragLiftDelay);
 WebKit::DragLiftDelay fromWKDragLiftDelay(_WKDragLiftDelay);
 #endif
 
+#endif // !__has_feature(modules)
 #endif // __cplusplus
 
 NS_ASSUME_NONNULL_BEGIN

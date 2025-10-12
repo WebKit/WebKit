@@ -25,7 +25,6 @@
 
 [
     Conditional=WEB_AUTHN,
-    CustomToJSObject,
     EnabledBySetting=WebAuthenticationEnabled,
     Exposed=Window,
     SecureContext,

@@ -24,12 +24,12 @@
 
 #pragma once
 
-#include "CSSShapeFunction.h"
-#include "StyleFillRule.h"
-#include "StylePathComputation.h"
-#include "StylePosition.h"
-#include "StylePrimitiveNumericTypes.h"
-#include "StyleWindRuleComputation.h"
+#include <WebCore/CSSShapeFunction.h>
+#include <WebCore/StyleFillRule.h>
+#include <WebCore/StylePathComputation.h>
+#include <WebCore/StylePosition.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
+#include <WebCore/StyleWindRuleComputation.h>
 
 namespace WebCore {
 namespace Style {
@@ -327,7 +327,7 @@ struct ArcCommand {
     using By = ByCoordinatePair;
     Variant<To, By> toBy;
 
-    using SizeOfEllipse = SpaceSeparatedSize<LengthPercentage<>>;
+    using SizeOfEllipse = MinimallySerializingSpaceSeparatedSize<LengthPercentage<>>;
     SizeOfEllipse size;
 
     ArcSweep arcSweep;

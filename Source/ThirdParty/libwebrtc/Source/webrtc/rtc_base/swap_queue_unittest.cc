@@ -10,9 +10,11 @@
 
 #include "rtc_base/swap_queue.h"
 
+#include <cstddef>
 #include <cstdint>
 #include <vector>
 
+#include "rtc_base/checks.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -20,7 +22,7 @@ namespace webrtc {
 namespace {
 
 // Test parameter for the basic sample based SwapQueue Tests.
-const size_t kChunkSize = 3;
+constexpr size_t kChunkSize = 3;
 
 // Queue item verification function for the vector test.
 bool LengthVerifierFunction(const std::vector<int>& v) {

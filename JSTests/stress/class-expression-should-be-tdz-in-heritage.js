@@ -17,4 +17,4 @@ function shouldThrow(func, errorMessage) {
 shouldThrow(function () {
     class A extends A {
     }
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'A' before initialization.`);

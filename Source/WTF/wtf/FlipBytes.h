@@ -25,13 +25,14 @@
 
 #pragma once
 
+#include <algorithm>
+#include <array>
+#include <bit>
 #include <wtf/Compiler.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
-inline bool needToFlipBytesIfLittleEndian(bool littleEndian)
+constexpr bool needToFlipBytesIfLittleEndian(bool littleEndian)
 {
 #if CPU(BIG_ENDIAN)
     return littleEndian;
@@ -40,76 +41,17 @@ inline bool needToFlipBytesIfLittleEndian(bool littleEndian)
 #endif
 }
 
-inline uint16_t flipBytes(uint16_t value)
-{
-    return ((value & 0x00ff) << 8)
-        | ((value & 0xff00) >> 8);
-}
-
-inline uint32_t flipBytes(uint32_t value)
-{
-    return ((value & 0x000000ff) << 24)
-        | ((value & 0x0000ff00) << 8)
-        | ((value & 0x00ff0000) >> 8)
-        | ((value & 0xff000000) >> 24);
-}
-
-inline uint64_t flipBytes(uint64_t value)
-{
-    return ((value & 0x00000000000000ffull) << 56)
-        | ((value & 0x000000000000ff00ull) << 40)
-        | ((value & 0x0000000000ff0000ull) << 24)
-        | ((value & 0x00000000ff000000ull) << 8)
-        | ((value & 0x000000ff00000000ull) >> 8)
-        | ((value & 0x0000ff0000000000ull) >> 24)
-        | ((value & 0x00ff000000000000ull) >> 40)
-        | ((value & 0xff00000000000000ull) >> 56);
-}
-
 template<typename T>
 inline T flipBytes(T value)
 {
-    if (sizeof(value) == 1)
-        return value;
-    if (sizeof(value) == 2) {
-        union {
-            T original;
-            uint16_t word;
-        } u;
-        u.original = value;
-        u.word = flipBytes(u.word);
-        return u.original;
-    }
-    if (sizeof(value) == 4) {
-        union {
-            T original;
-            uint32_t word;
-        } u;
-        u.original = value;
-        u.word = flipBytes(u.word);
-        return u.original;
-    }
-    if (sizeof(value) == 8) {
-        union {
-            T original;
-            uint64_t word;
-        } u;
-        u.original = value;
-        u.word = flipBytes(u.word);
-        return u.original;
-    }
-    if (sizeof(value) == 16) {
-        union {
-            T original;
-            uint64_t words[2];
-        } u, v;
-        v.original = value;
-        u.words[0] = flipBytes(v.words[1]);
-        u.words[1] = flipBytes(v.words[0]);
-        return u.original;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return T();
+#if defined(__cpp_lib_byteswap) && __cpp_lib_byteswap >= 202110L
+    if constexpr (std::is_integral_v<T>)
+        return std::byteswap(value);
+#endif
+
+    auto byteRepresentation = std::bit_cast<std::array<std::byte, sizeof(T)>>(value);
+    std::ranges::reverse(byteRepresentation);
+    return std::bit_cast<T>(byteRepresentation);
 }
 
 template<typename T>
@@ -122,8 +64,6 @@ inline T flipBytesIfLittleEndian(T value, bool littleEndian)
 
 } // namespace WTF
 
-using WTF::needToFlipBytesIfLittleEndian;
 using WTF::flipBytes;
 using WTF::flipBytesIfLittleEndian;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+using WTF::needToFlipBytesIfLittleEndian;

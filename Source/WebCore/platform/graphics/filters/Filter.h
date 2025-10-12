@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2021-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,13 +21,13 @@
 
 #pragma once
 
-#include "FilterEffectVector.h"
-#include "FilterFunction.h"
-#include "FloatPoint3D.h"
-#include "FloatRect.h"
-#include "GraphicsTypes.h"
-#include "ImageBuffer.h"
-#include "RenderingMode.h"
+#include <WebCore/FilterEffectVector.h>
+#include <WebCore/FilterFunction.h>
+#include <WebCore/FloatPoint3D.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/GraphicsTypes.h>
+#include <WebCore/ImageBuffer.h>
+#include <WebCore/RenderingMode.h>
 
 namespace WebCore {
 

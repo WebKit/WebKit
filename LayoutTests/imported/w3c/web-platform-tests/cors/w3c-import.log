@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cors/304.htm
 /LayoutTests/imported/w3c/web-platform-tests/cors/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/cors/README.md
+/LayoutTests/imported/w3c/web-platform-tests/cors/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/cors/access-control-expose-headers-parsing.window.js
 /LayoutTests/imported/w3c/web-platform-tests/cors/basic.htm
 /LayoutTests/imported/w3c/web-platform-tests/cors/client-hint-request-headers-2.tentative.htm
@@ -26,6 +27,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cors/image-tainting-in-cross-origin-iframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/cors/late-upload-events.htm
 /LayoutTests/imported/w3c/web-platform-tests/cors/origin.htm
+/LayoutTests/imported/w3c/web-platform-tests/cors/preflight-cache-partitioning.sub.window.js
 /LayoutTests/imported/w3c/web-platform-tests/cors/preflight-cache.htm
 /LayoutTests/imported/w3c/web-platform-tests/cors/preflight-failure.htm
 /LayoutTests/imported/w3c/web-platform-tests/cors/redirect-origin.htm

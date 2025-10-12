@@ -45,7 +45,7 @@ namespace WTF {
 
 template<typename T>
 class TinyPtrSet {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TinyPtrSet);
     static_assert(sizeof(T) == sizeof(void*), "It's in the title of the class.");
 public:
     TinyPtrSet()
@@ -451,7 +451,7 @@ private:
             fastFree(list);
         }
         
-        T* list() { return std::bit_cast<T*>(this + 1); }
+        T* list() { return m_list; }
         
         OutOfLineList(unsigned length, unsigned capacity)
             : m_length(length)
@@ -461,6 +461,7 @@ private:
 
         unsigned m_length;
         unsigned m_capacity;
+        T m_list[0];
     };
     
     ALWAYS_INLINE void deleteListIfNecessary()

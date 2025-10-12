@@ -11,15 +11,20 @@ mac/DOM/DOMNamedNodeMap.mm
 mac/DOM/DOMUtility.mm
 mac/DOM/WebDOMOperations.mm
 mac/Misc/WebElementDictionary.mm
-mac/Misc/WebNSPasteboardExtras.mm
-mac/WebCoreSupport/WebContextMenuClient.mm
+[ Mac ] mac/Misc/WebNSPasteboardExtras.mm
+[ Mac ] mac/WebCoreSupport/WebContextMenuClient.mm
 mac/WebCoreSupport/WebFrameLoaderClient.mm
 mac/WebCoreSupport/WebFrameNetworkingContext.mm
-mac/WebView/WebClipView.mm
-mac/WebView/WebDynamicScrollBarsView.mm
+[ Mac ] mac/WebView/WebClipView.mm
+[ Mac ] mac/WebView/WebDynamicScrollBarsView.mm
 mac/WebView/WebFrame.mm
 mac/WebView/WebFrameView.mm
 mac/WebView/WebHTMLRepresentation.mm
 mac/WebView/WebHTMLView.mm
-mac/WebView/WebImmediateActionController.mm
+[ Mac ] mac/WebView/WebImmediateActionController.mm
 mac/WebView/WebView.mm
+[ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
+[ iOS ] ios/WebCoreSupport/WebVisiblePosition.mm
+[ iOS ] mac/DOM/DOMUIKitExtensions.mm
+[ iOS ] mac/Plugins/WebPluginController.mm
+[ iOS ] mac/WebCoreSupport/WebEditorClient.mm

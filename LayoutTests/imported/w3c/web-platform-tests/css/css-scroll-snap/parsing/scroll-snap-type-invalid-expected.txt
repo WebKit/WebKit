@@ -2,6 +2,8 @@
 PASS e.style['scroll-snap-type'] = "auto" should not set the property value
 PASS e.style['scroll-snap-type'] = "x y" should not set the property value
 PASS e.style['scroll-snap-type'] = "block mandatory inline" should not set the property value
+PASS e.style['scroll-snap-type'] = "none both" should not set the property value
+PASS e.style['scroll-snap-type'] = "none mandatory" should not set the property value
 PASS e.style['scroll-snap-type'] = "both none" should not set the property value
 PASS e.style['scroll-snap-type'] = "mandatory" should not set the property value
 PASS e.style['scroll-snap-type'] = "proximity" should not set the property value

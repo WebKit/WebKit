@@ -53,8 +53,8 @@ private:
     
     void notifyNeedDebuggerBreak();
     
-    CheckedRef<WebProcess> m_process;
-    Ref<WTF::WorkQueue> m_queue;
+    const CheckedRef<WebProcess> m_process;
+    const Ref<WTF::WorkQueue> m_queue;
 };
 
 } // namespace WebKit

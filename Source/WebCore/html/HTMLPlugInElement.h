@@ -22,10 +22,11 @@
 
 #pragma once
 
-#include "HTMLFrameOwnerElement.h"
-#include "Image.h"
-#include "JSValueInWrappedObject.h"
-#include "RenderEmbeddedObject.h"
+#include <WebCore/HTMLFrameOwnerElement.h>
+#include <WebCore/Image.h>
+#include <WebCore/JSValueInWrappedObject.h>
+#include <WebCore/RenderEmbeddedObject.h>
+#include <wtf/Platform.h>
 
 namespace JSC {
 namespace Bindings {
@@ -35,10 +36,13 @@ class Instance;
 
 namespace WebCore {
 
+class HTMLImageLoader;
 class PluginReplacement;
 class PluginViewBase;
 class RenderWidget;
 class VoidCallback;
+
+enum class CreatePlugins : bool { No, Yes };
 
 class HTMLPlugInElement : public HTMLFrameOwnerElement {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLPlugInElement);
@@ -53,7 +57,7 @@ public:
     enum class PluginLoadingPolicy { DoNotLoad, Load };
     WEBCORE_EXPORT PluginViewBase* pluginWidget(PluginLoadingPolicy = PluginLoadingPolicy::Load) const;
 
-    enum DisplayState {
+    enum class DisplayState : uint8_t {
         Playing,
         PreparingPluginReplacement,
         DisplayingPluginReplacement,
@@ -69,10 +73,20 @@ public:
 #endif
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
-    virtual bool isPlugInImageElement() const = 0;
-
     WEBCORE_EXPORT void pluginDestroyedWithPendingPDFTestCallback(RefPtr<VoidCallback>&&);
     WEBCORE_EXPORT RefPtr<VoidCallback> takePendingPDFTestCallback();
+
+    RenderEmbeddedObject* renderEmbeddedObject() const;
+
+    virtual void updateWidget(CreatePlugins) = 0;
+
+    const String& serviceType() const { return m_serviceType; }
+    const String& url() const { return m_url; }
+
+    bool needsWidgetUpdate() const { return m_needsWidgetUpdate; }
+    void setNeedsWidgetUpdate(bool needsWidgetUpdate) { m_needsWidgetUpdate = needsWidgetUpdate; }
+
+    bool shouldBypassCSPForPDFPlugin(const String& contentType) const;
 
 protected:
     HTMLPlugInElement(const QualifiedName& tagName, Document&, OptionSet<TypeFlag> = { });
@@ -89,13 +103,27 @@ protected:
 
     void defaultEventHandler(Event&) final;
 
-    virtual bool requestObject(const String& url, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
+
+    bool requestObject(const String& url, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    bool isReplaced(const RenderStyle&) const final;
+    bool isReplaced(const RenderStyle* = nullptr) const final;
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
     // This will load the plugin if necessary.
     virtual RenderWidget* renderWidgetLoadingPlugin() const;
+
+    bool isImageType();
+    HTMLImageLoader* imageLoader() { return m_imageLoader.get(); }
+    void updateImageLoaderWithNewURLSoon();
+
+    bool canLoadURL(const String& relativeURL) const;
+    bool wouldLoadAsPlugIn(const String& relativeURL, const String& serviceType);
+
+    void scheduleUpdateForAfterStyleResolution();
+
+    String m_serviceType;
+    String m_url;
 
 private:
     void swapRendererTimerFired();
@@ -103,17 +131,39 @@ private:
 
     bool supportsFocus() const final;
 
-    bool isKeyboardFocusable(KeyboardEvent*) const final;
+    bool isKeyboardFocusable(const FocusEventData&) const final;
     bool isPluginElement() const final;
     bool canLoadScriptURL(const URL&) const final;
+
+    bool canLoadPlugInContent(const String& relativeURL, const String& mimeType) const;
+    bool canLoadURL(const URL&) const;
+
+    RenderPtr<RenderElement> createPluginRenderer(RenderStyle&&, const RenderTreePosition&);
+    bool childShouldCreateRenderer(const Node&) const override;
+    void willRecalcStyle(OptionSet<Style::Change>) final;
+    void didRecalcStyle(OptionSet<Style::Change>) final;
+    void didAttachRenderers() final;
+
+    void prepareForDocumentSuspension() final;
+    void resumeFromDocumentSuspension() final;
+
+    void updateAfterStyleResolution();
+
+    constexpr static OptionSet<TypeFlag> pluginElementTypeFlags();
 
     RefPtr<JSC::Bindings::Instance> m_instance;
     Timer m_swapRendererTimer;
     RefPtr<PluginReplacement> m_pluginReplacement;
     bool m_isCapturingMouseEvents { false };
-    DisplayState m_displayState { Playing };
+    DisplayState m_displayState { DisplayState::Playing };
 
     RefPtr<VoidCallback> m_pendingPDFTestCallback;
+
+    bool m_needsWidgetUpdate { false };
+    bool m_needsDocumentActivationCallbacks { false };
+    const std::unique_ptr<HTMLImageLoader> m_imageLoader;
+    bool m_needsImageReload { false };
+    bool m_hasUpdateScheduledForAfterStyleResolution { false };
 };
 
 } // namespace WebCore

@@ -24,7 +24,6 @@ struct GoogCcFactoryConfig {
   std::unique_ptr<NetworkStateEstimatorFactory> network_state_estimator_factory;
   NetworkStatePredictorFactoryInterface* network_state_predictor_factory =
       nullptr;
-  bool feedback_only = false;
 };
 
 class RTC_EXPORT GoogCcNetworkControllerFactory

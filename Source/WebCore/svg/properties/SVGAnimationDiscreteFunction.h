@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,7 +49,7 @@ public:
 
     void animate(SVGElement&, float progress, unsigned, ValueType& animated)
     {
-        if ((m_animationMode == AnimationMode::FromTo && progress > 0.5) || m_animationMode == AnimationMode::To || progress == 1)
+        if (((m_animationMode == AnimationMode::FromTo || m_animationMode == AnimationMode::To) && progress > 0.5) || progress == 1)
             animated = m_to;
         else
             animated = m_from;

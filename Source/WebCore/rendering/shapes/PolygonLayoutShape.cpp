@@ -142,7 +142,7 @@ LineSegment PolygonLayoutShape::getExcludedInterval(LayoutUnit logicalTop, Layou
     if (excludedInterval.isEmpty())
         return { };
 
-    if (writingMode().isBidiRTL())
+    if (shouldFlipStartAndEndPoints(writingMode()))
         return { std::max(0.f, m_boxLogicalWidth - excludedInterval.x2()), std::max(0.f, m_boxLogicalWidth - excludedInterval.x1()) };
 
     return { excludedInterval.x1(), excludedInterval.x2() };

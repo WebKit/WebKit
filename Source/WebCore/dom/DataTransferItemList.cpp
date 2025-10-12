@@ -27,11 +27,14 @@
 #include "DataTransferItemList.h"
 
 #include "ContextDestructionObserver.h"
+#include "ContextDestructionObserverInlines.h"
 #include "DataTransferItem.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
+#include "ExceptionOr.h"
 #include "FileList.h"
 #include "Pasteboard.h"
+#include "ScriptWrappableInlines.h"
 #include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 

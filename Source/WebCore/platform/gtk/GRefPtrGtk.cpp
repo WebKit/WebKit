@@ -20,7 +20,6 @@
 #include "config.h"
 #include "GRefPtrGtk.h"
 
-#include <glib.h>
 #include <gtk/gtk.h>
 
 #if USE(LIBSECRET)
@@ -31,77 +30,16 @@
 
 namespace WTF {
 
-#if !USE(GTK4)
-template <> GtkTargetList* refGPtr(GtkTargetList* ptr)
-{
-    if (ptr)
-        gtk_target_list_ref(ptr);
-    return ptr;
-}
-
-template <> void derefGPtr(GtkTargetList* ptr)
-{
-    if (ptr)
-        gtk_target_list_unref(ptr);
-}
+#if USE(GTK4)
+WTF_DEFINE_GREF_TRAITS(GskRenderNode, gsk_render_node_ref, gsk_render_node_unref)
+WTF_DEFINE_GREF_TRAITS(GdkEvent, gdk_event_ref, gdk_event_unref)
+#else
+WTF_DEFINE_GREF_TRAITS(GtkTargetList, gtk_target_list_ref, gtk_target_list_unref)
+WTF_DEFINE_GREF_TRAITS(GtkWidgetPath, gtk_widget_path_ref, gtk_widget_path_unref)
 #endif
 
 #if USE(LIBSECRET)
-template <> SecretValue* refGPtr(SecretValue* ptr)
-{
-    if (ptr)
-        secret_value_ref(ptr);
-    return ptr;
-}
-
-template <> void derefGPtr(SecretValue* ptr)
-{
-    if (ptr)
-        secret_value_unref(ptr);
-}
+WTF_DEFINE_GREF_TRAITS(SecretValue, secret_value_ref, secret_value_unref)
 #endif
 
-#if !USE(GTK4)
-template <> GtkWidgetPath* refGPtr(GtkWidgetPath* ptr)
-{
-    if (ptr)
-        gtk_widget_path_ref(ptr);
-    return ptr;
-}
-
-template <> void derefGPtr(GtkWidgetPath* ptr)
-{
-    if (ptr)
-        gtk_widget_path_unref(ptr);
-}
-#endif
-
-#if USE(GTK4)
-template <> GskRenderNode* refGPtr(GskRenderNode* ptr)
-{
-    if (ptr)
-        gsk_render_node_ref(ptr);
-    return ptr;
-}
-
-template <> void derefGPtr(GskRenderNode* ptr)
-{
-    if (ptr)
-        gsk_render_node_unref(ptr);
-}
-
-template <> GdkEvent* refGPtr(GdkEvent* ptr)
-{
-    if (ptr)
-        gdk_event_ref(ptr);
-    return ptr;
-}
-
-template <> void derefGPtr(GdkEvent* ptr)
-{
-    if (ptr)
-        gdk_event_unref(ptr);
-}
-#endif
-
-}
+} // namespace WTF

@@ -41,7 +41,7 @@ class DtmfSenderObserverInterface {
 // The interface of native implementation of the RTCDTMFSender defined by the
 // WebRTC W3C Editor's Draft.
 // See: https://www.w3.org/TR/webrtc/#peer-to-peer-dtmf
-class DtmfSenderInterface : public webrtc::RefCountInterface {
+class DtmfSenderInterface : public RefCountInterface {
  public:
   // Provides the spec compliant default 2 second delay for the ',' character.
   static const int kDtmfDefaultCommaDelayMs = 2000;

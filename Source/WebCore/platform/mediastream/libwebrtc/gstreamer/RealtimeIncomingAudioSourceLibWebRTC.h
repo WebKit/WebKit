@@ -37,10 +37,10 @@ namespace WebCore {
 
 class RealtimeIncomingAudioSourceLibWebRTC final : public RealtimeIncomingAudioSource {
 public:
-    static Ref<RealtimeIncomingAudioSourceLibWebRTC> create(rtc::scoped_refptr<webrtc::AudioTrackInterface>&&, String&&);
+    static Ref<RealtimeIncomingAudioSourceLibWebRTC> create(Ref<webrtc::AudioTrackInterface>&&, String&&);
 
 private:
-    RealtimeIncomingAudioSourceLibWebRTC(rtc::scoped_refptr<webrtc::AudioTrackInterface>&&, String&&);
+    RealtimeIncomingAudioSourceLibWebRTC(Ref<webrtc::AudioTrackInterface>&&, String&&);
 
     // webrtc::AudioTrackSinkInterface API
     void OnData(const void* audioData, int bitsPerSample, int sampleRate, size_t numberOfChannels, size_t numberOfFrames) final;

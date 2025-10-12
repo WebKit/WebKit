@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Igalia S.L.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,5 +39,5 @@ WKTypeID WKMediaKeySystemPermissionCallbackGetTypeID()
 
 void WKMediaKeySystemPermissionCallbackComplete(WKMediaKeySystemPermissionCallbackRef permissionCallback, bool granted)
 {
-    return toImpl(permissionCallback)->complete(granted);
+    return toProtectedImpl(permissionCallback)->complete(granted);
 }

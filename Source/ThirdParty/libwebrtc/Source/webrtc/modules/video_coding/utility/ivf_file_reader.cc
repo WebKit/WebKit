@@ -10,13 +10,25 @@
 
 #include "modules/video_coding/utility/ivf_file_reader.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+#include <memory>
+#include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
+#include "api/scoped_refptr.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame_type.h"
 #include "api/video_codecs/video_codec.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/video_coding/utility/ivf_defines.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/system/file_wrapper.h"
 
 namespace webrtc {
 namespace {
@@ -116,7 +128,7 @@ std::optional<EncodedImage> IvfFileReader::NextFrame() {
     return std::nullopt;
   }
 
-  rtc::scoped_refptr<EncodedImageBuffer> payload = EncodedImageBuffer::Create();
+  scoped_refptr<EncodedImageBuffer> payload = EncodedImageBuffer::Create();
   std::vector<size_t> layer_sizes;
   // next_frame_header_ have to be presented by the way how it was loaded. If it
   // is missing it means there is a bug in error handling.

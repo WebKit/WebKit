@@ -1,3 +1,88 @@
 
-FAIL idl_test setup promise_test: Unhandled rejection with value: object "Error fetching /interfaces/css-anchor-position.idl."
+PASS idl_test setup
+PASS idl_test validation
+PASS CSSPositionTryRule interface: existence and properties of interface object
+PASS CSSPositionTryRule interface object length
+PASS CSSPositionTryRule interface object name
+PASS CSSPositionTryRule interface: existence and properties of interface prototype object
+PASS CSSPositionTryRule interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSPositionTryRule interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSPositionTryRule interface: attribute name
+PASS CSSPositionTryRule interface: attribute style
+PASS CSSPositionTryDescriptors interface: existence and properties of interface object
+PASS CSSPositionTryDescriptors interface object length
+PASS CSSPositionTryDescriptors interface object name
+PASS CSSPositionTryDescriptors interface: existence and properties of interface prototype object
+PASS CSSPositionTryDescriptors interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSPositionTryDescriptors interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSPositionTryDescriptors interface: attribute margin
+PASS CSSPositionTryDescriptors interface: attribute marginTop
+PASS CSSPositionTryDescriptors interface: attribute marginRight
+PASS CSSPositionTryDescriptors interface: attribute marginBottom
+PASS CSSPositionTryDescriptors interface: attribute marginLeft
+PASS CSSPositionTryDescriptors interface: attribute marginBlock
+PASS CSSPositionTryDescriptors interface: attribute marginBlockStart
+PASS CSSPositionTryDescriptors interface: attribute marginBlockEnd
+PASS CSSPositionTryDescriptors interface: attribute marginInline
+PASS CSSPositionTryDescriptors interface: attribute marginInlineStart
+PASS CSSPositionTryDescriptors interface: attribute marginInlineEnd
+PASS CSSPositionTryDescriptors interface: attribute margin-top
+PASS CSSPositionTryDescriptors interface: attribute margin-right
+PASS CSSPositionTryDescriptors interface: attribute margin-bottom
+PASS CSSPositionTryDescriptors interface: attribute margin-left
+PASS CSSPositionTryDescriptors interface: attribute margin-block
+PASS CSSPositionTryDescriptors interface: attribute margin-block-start
+PASS CSSPositionTryDescriptors interface: attribute margin-block-end
+PASS CSSPositionTryDescriptors interface: attribute margin-inline
+PASS CSSPositionTryDescriptors interface: attribute margin-inline-start
+PASS CSSPositionTryDescriptors interface: attribute margin-inline-end
+PASS CSSPositionTryDescriptors interface: attribute inset
+PASS CSSPositionTryDescriptors interface: attribute insetBlock
+PASS CSSPositionTryDescriptors interface: attribute insetBlockStart
+PASS CSSPositionTryDescriptors interface: attribute insetBlockEnd
+PASS CSSPositionTryDescriptors interface: attribute insetInline
+PASS CSSPositionTryDescriptors interface: attribute insetInlineStart
+PASS CSSPositionTryDescriptors interface: attribute insetInlineEnd
+PASS CSSPositionTryDescriptors interface: attribute top
+PASS CSSPositionTryDescriptors interface: attribute left
+PASS CSSPositionTryDescriptors interface: attribute right
+PASS CSSPositionTryDescriptors interface: attribute bottom
+PASS CSSPositionTryDescriptors interface: attribute inset-block
+PASS CSSPositionTryDescriptors interface: attribute inset-block-start
+PASS CSSPositionTryDescriptors interface: attribute inset-block-end
+PASS CSSPositionTryDescriptors interface: attribute inset-inline
+PASS CSSPositionTryDescriptors interface: attribute inset-inline-start
+PASS CSSPositionTryDescriptors interface: attribute inset-inline-end
+PASS CSSPositionTryDescriptors interface: attribute width
+PASS CSSPositionTryDescriptors interface: attribute minWidth
+PASS CSSPositionTryDescriptors interface: attribute maxWidth
+PASS CSSPositionTryDescriptors interface: attribute height
+PASS CSSPositionTryDescriptors interface: attribute minHeight
+PASS CSSPositionTryDescriptors interface: attribute maxHeight
+PASS CSSPositionTryDescriptors interface: attribute blockSize
+PASS CSSPositionTryDescriptors interface: attribute minBlockSize
+PASS CSSPositionTryDescriptors interface: attribute maxBlockSize
+PASS CSSPositionTryDescriptors interface: attribute inlineSize
+PASS CSSPositionTryDescriptors interface: attribute minInlineSize
+PASS CSSPositionTryDescriptors interface: attribute maxInlineSize
+PASS CSSPositionTryDescriptors interface: attribute min-width
+PASS CSSPositionTryDescriptors interface: attribute max-width
+PASS CSSPositionTryDescriptors interface: attribute min-height
+PASS CSSPositionTryDescriptors interface: attribute max-height
+PASS CSSPositionTryDescriptors interface: attribute block-size
+PASS CSSPositionTryDescriptors interface: attribute min-block-size
+PASS CSSPositionTryDescriptors interface: attribute max-block-size
+PASS CSSPositionTryDescriptors interface: attribute inline-size
+PASS CSSPositionTryDescriptors interface: attribute min-inline-size
+PASS CSSPositionTryDescriptors interface: attribute max-inline-size
+PASS CSSPositionTryDescriptors interface: attribute placeSelf
+PASS CSSPositionTryDescriptors interface: attribute alignSelf
+PASS CSSPositionTryDescriptors interface: attribute justifySelf
+PASS CSSPositionTryDescriptors interface: attribute place-self
+PASS CSSPositionTryDescriptors interface: attribute align-self
+PASS CSSPositionTryDescriptors interface: attribute justify-self
+PASS CSSPositionTryDescriptors interface: attribute positionAnchor
+PASS CSSPositionTryDescriptors interface: attribute position-anchor
+PASS CSSPositionTryDescriptors interface: attribute positionArea
+PASS CSSPositionTryDescriptors interface: attribute position-area
 

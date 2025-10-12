@@ -2,17 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-RegExp-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  RegExp.prototype.test should update lastIndex to correct position even if pattern starts with .*
+info: bugzilla.mozilla.org/show_bug.cgi?id=1322035
 esid: pending
 ---*/
-var BUGNUMBER = 1322035;
-var summary = 'RegExp.prototype.test should update lastIndex to correct position even if pattern starts with .*';
-
-print(BUGNUMBER + ": " + summary);
 
 var regExp = /.*x?/g;
 regExp.test('12345');
@@ -29,4 +23,3 @@ assert.sameValue(regExp.lastIndex, 5);
 regExp = /.*(x|)/g;
 regExp.test('12345');
 assert.sameValue(regExp.lastIndex, 5);
-

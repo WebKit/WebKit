@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "SpeechRecognitionConnectionClientIdentifier.h"
+#include <WebCore/SpeechRecognitionConnectionClientIdentifier.h>
 #include <wtf/Identified.h>
 #include <wtf/WeakPtr.h>
 

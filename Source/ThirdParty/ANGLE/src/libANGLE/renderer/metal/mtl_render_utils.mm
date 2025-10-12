@@ -7,6 +7,10 @@
 //    Implements the class methods for RenderUtils.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/metal/mtl_render_utils.h"
 
 #include <utility>
@@ -2322,7 +2326,7 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
     MipmapNativeLevel batchSrcLevel = kZeroNativeMipLevel;
     options.srcLevel                = batchSrcLevel.get();
     options.sRGB                    = sRGBMipmap;
-    
+
     cmdEncoder->setTexture(srcTexture, 0);
     cmdEncoder->markResourceBeingWrittenByGPU(srcTexture);
     while (remainMips)

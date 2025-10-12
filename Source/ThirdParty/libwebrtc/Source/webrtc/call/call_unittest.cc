@@ -29,7 +29,6 @@
 #include "api/units/timestamp.h"
 #include "api/video/builtin_video_bitrate_allocator_factory.h"
 #include "api/video_codecs/sdp_video_format.h"
-#include "audio/audio_receive_stream.h"
 #include "audio/audio_send_stream.h"
 #include "call/adaptation/test/fake_resource.h"
 #include "call/adaptation/test/mock_resource_listener.h"
@@ -54,28 +53,27 @@
 namespace webrtc {
 namespace {
 
+using test::FakeEncoder;
+using test::FunctionVideoEncoderFactory;
+using test::MockAudioDeviceModule;
+using test::MockAudioMixer;
+using test::MockAudioProcessing;
+using test::RunLoop;
 using ::testing::_;
-using ::testing::Contains;
 using ::testing::MockFunction;
 using ::testing::NiceMock;
 using ::testing::StrictMock;
-using ::webrtc::test::FakeEncoder;
-using ::webrtc::test::FunctionVideoEncoderFactory;
-using ::webrtc::test::MockAudioDeviceModule;
-using ::webrtc::test::MockAudioMixer;
-using ::webrtc::test::MockAudioProcessing;
-using ::webrtc::test::RunLoop;
 
 struct CallHelper {
   explicit CallHelper(bool use_null_audio_processing) {
     AudioState::Config audio_state_config;
-    audio_state_config.audio_mixer = rtc::make_ref_counted<MockAudioMixer>();
+    audio_state_config.audio_mixer = make_ref_counted<MockAudioMixer>();
     audio_state_config.audio_processing =
         use_null_audio_processing
             ? nullptr
-            : rtc::make_ref_counted<NiceMock<MockAudioProcessing>>();
+            : make_ref_counted<NiceMock<MockAudioProcessing>>();
     audio_state_config.audio_device_module =
-        rtc::make_ref_counted<MockAudioDeviceModule>();
+        make_ref_counted<MockAudioDeviceModule>();
     CallConfig config(CreateEnvironment());
     config.audio_state = AudioState::Create(audio_state_config);
     call_ = Call::Create(std::move(config));
@@ -88,8 +86,8 @@ struct CallHelper {
   std::unique_ptr<Call> call_;
 };
 
-rtc::scoped_refptr<Resource> FindResourceWhoseNameContains(
-    const std::vector<rtc::scoped_refptr<Resource>>& resources,
+scoped_refptr<Resource> FindResourceWhoseNameContains(
+    const std::vector<scoped_refptr<Resource>>& resources,
     absl::string_view name_contains) {
   for (const auto& resource : resources) {
     if (resource->Name().find(std::string(name_contains)) != std::string::npos)
@@ -125,8 +123,7 @@ TEST(CallTest, CreateDestroy_AudioReceiveStream) {
     MockTransport rtcp_send_transport;
     config.rtp.remote_ssrc = 42;
     config.rtcp_send_transport = &rtcp_send_transport;
-    config.decoder_factory =
-        rtc::make_ref_counted<webrtc::MockAudioDecoderFactory>();
+    config.decoder_factory = make_ref_counted<MockAudioDecoderFactory>();
     AudioReceiveStreamInterface* stream =
         call->CreateAudioReceiveStream(config);
     EXPECT_NE(stream, nullptr);
@@ -165,8 +162,7 @@ TEST(CallTest, CreateDestroy_AudioReceiveStreams) {
     AudioReceiveStreamInterface::Config config;
     MockTransport rtcp_send_transport;
     config.rtcp_send_transport = &rtcp_send_transport;
-    config.decoder_factory =
-        rtc::make_ref_counted<webrtc::MockAudioDecoderFactory>();
+    config.decoder_factory = make_ref_counted<MockAudioDecoderFactory>();
     std::list<AudioReceiveStreamInterface*> streams;
     for (int i = 0; i < 2; ++i) {
       for (uint32_t ssrc = 0; ssrc < 1234567; ssrc += 34567) {
@@ -185,70 +181,6 @@ TEST(CallTest, CreateDestroy_AudioReceiveStreams) {
       }
       streams.clear();
     }
-  }
-}
-
-TEST(CallTest, CreateDestroy_AssociateAudioSendReceiveStreams_RecvFirst) {
-  for (bool use_null_audio_processing : {false, true}) {
-    CallHelper call(use_null_audio_processing);
-    AudioReceiveStreamInterface::Config recv_config;
-    MockTransport rtcp_send_transport;
-    recv_config.rtp.remote_ssrc = 42;
-    recv_config.rtp.local_ssrc = 777;
-    recv_config.rtcp_send_transport = &rtcp_send_transport;
-    recv_config.decoder_factory =
-        rtc::make_ref_counted<webrtc::MockAudioDecoderFactory>();
-    AudioReceiveStreamInterface* recv_stream =
-        call->CreateAudioReceiveStream(recv_config);
-    EXPECT_NE(recv_stream, nullptr);
-
-    MockTransport send_transport;
-    AudioSendStream::Config send_config(&send_transport);
-    send_config.rtp.ssrc = 777;
-    AudioSendStream* send_stream = call->CreateAudioSendStream(send_config);
-    EXPECT_NE(send_stream, nullptr);
-
-    AudioReceiveStreamImpl* internal_recv_stream =
-        static_cast<AudioReceiveStreamImpl*>(recv_stream);
-    EXPECT_EQ(send_stream,
-              internal_recv_stream->GetAssociatedSendStreamForTesting());
-
-    call->DestroyAudioSendStream(send_stream);
-    EXPECT_EQ(nullptr,
-              internal_recv_stream->GetAssociatedSendStreamForTesting());
-
-    call->DestroyAudioReceiveStream(recv_stream);
-  }
-}
-
-TEST(CallTest, CreateDestroy_AssociateAudioSendReceiveStreams_SendFirst) {
-  for (bool use_null_audio_processing : {false, true}) {
-    CallHelper call(use_null_audio_processing);
-    MockTransport send_transport;
-    AudioSendStream::Config send_config(&send_transport);
-    send_config.rtp.ssrc = 777;
-    AudioSendStream* send_stream = call->CreateAudioSendStream(send_config);
-    EXPECT_NE(send_stream, nullptr);
-
-    AudioReceiveStreamInterface::Config recv_config;
-    MockTransport rtcp_send_transport;
-    recv_config.rtp.remote_ssrc = 42;
-    recv_config.rtp.local_ssrc = 777;
-    recv_config.rtcp_send_transport = &rtcp_send_transport;
-    recv_config.decoder_factory =
-        rtc::make_ref_counted<webrtc::MockAudioDecoderFactory>();
-    AudioReceiveStreamInterface* recv_stream =
-        call->CreateAudioReceiveStream(recv_config);
-    EXPECT_NE(recv_stream, nullptr);
-
-    AudioReceiveStreamImpl* internal_recv_stream =
-        static_cast<AudioReceiveStreamImpl*>(recv_stream);
-    EXPECT_EQ(send_stream,
-              internal_recv_stream->GetAssociatedSendStreamForTesting());
-
-    call->DestroyAudioReceiveStream(recv_stream);
-
-    call->DestroyAudioSendStream(send_stream);
   }
 }
 
@@ -438,7 +370,7 @@ TEST(CallTest, AddAdaptationResourceAfterCreatingVideoSendStream) {
   StrictMock<MockResourceListener> resource_listener1;
   EXPECT_CALL(resource_listener1, OnResourceUsageStateMeasured(_, _))
       .Times(1)
-      .WillOnce([injected_resource1](rtc::scoped_refptr<Resource> resource,
+      .WillOnce([injected_resource1](scoped_refptr<Resource> resource,
                                      ResourceUsageState usage_state) {
         EXPECT_EQ(injected_resource1, resource);
         EXPECT_EQ(ResourceUsageState::kOveruse, usage_state);
@@ -448,7 +380,7 @@ TEST(CallTest, AddAdaptationResourceAfterCreatingVideoSendStream) {
   StrictMock<MockResourceListener> resource_listener2;
   EXPECT_CALL(resource_listener2, OnResourceUsageStateMeasured(_, _))
       .Times(1)
-      .WillOnce([injected_resource2](rtc::scoped_refptr<Resource> resource,
+      .WillOnce([injected_resource2](scoped_refptr<Resource> resource,
                                      ResourceUsageState usage_state) {
         EXPECT_EQ(injected_resource2, resource);
         EXPECT_EQ(ResourceUsageState::kOveruse, usage_state);
@@ -501,7 +433,7 @@ TEST(CallTest, AddAdaptationResourceBeforeCreatingVideoSendStream) {
   StrictMock<MockResourceListener> resource_listener1;
   EXPECT_CALL(resource_listener1, OnResourceUsageStateMeasured(_, _))
       .Times(1)
-      .WillOnce([injected_resource1](rtc::scoped_refptr<Resource> resource,
+      .WillOnce([injected_resource1](scoped_refptr<Resource> resource,
                                      ResourceUsageState usage_state) {
         EXPECT_EQ(injected_resource1, resource);
         EXPECT_EQ(ResourceUsageState::kUnderuse, usage_state);
@@ -511,7 +443,7 @@ TEST(CallTest, AddAdaptationResourceBeforeCreatingVideoSendStream) {
   StrictMock<MockResourceListener> resource_listener2;
   EXPECT_CALL(resource_listener2, OnResourceUsageStateMeasured(_, _))
       .Times(1)
-      .WillOnce([injected_resource2](rtc::scoped_refptr<Resource> resource,
+      .WillOnce([injected_resource2](scoped_refptr<Resource> resource,
                                      ResourceUsageState usage_state) {
         EXPECT_EQ(injected_resource2, resource);
         EXPECT_EQ(ResourceUsageState::kUnderuse, usage_state);

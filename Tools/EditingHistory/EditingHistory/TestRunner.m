@@ -29,6 +29,7 @@
 #import "TestUtil.h"
 #import "WKWebViewAdditions.h"
 #import <Carbon/Carbon.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 static WKUserScript *injectedMessageEventHandlerScript(NSString *listener, NSString *event)
 {
@@ -124,7 +125,7 @@ static WKUserScript *injectedMessageEventHandlerScript(NSString *listener, NSStr
 - (void)expectEvents:(NSDictionary<NSString *, NSNumber *> *)expectedEventCounts afterPerforming:(dispatch_block_t)action
 {
     _pendingEventCounts = [expectedEventCounts mutableCopy];
-    dispatch_async(dispatch_get_main_queue(), action);
+    dispatch_async(mainDispatchQueueSingleton(), action);
     waitUntil(CONDITION_BLOCK(self.isDoneWaitingForPendingEvents));
     _pendingEventCounts = nil;
 }

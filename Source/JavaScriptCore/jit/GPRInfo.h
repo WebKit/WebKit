@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "MacroAssembler.h"
+#include <JavaScriptCore/MacroAssembler.h>
 #include <array>
 #include <wtf/FunctionTraits.h>
 #include <wtf/MathExtras.h>
@@ -364,12 +364,11 @@ public:
     static constexpr GPRReg regT6 = X86Registers::edi;
     static constexpr GPRReg regT7 = X86Registers::r9;
 
-    static constexpr GPRReg regCS0 = X86Registers::ebx;
-
-    static constexpr GPRReg regCS1 = X86Registers::r12; // metadataTable in LLInt/Baseline
-    static constexpr GPRReg regCS2 = X86Registers::r13; // jitDataRegister
-    static constexpr GPRReg regCS3 = X86Registers::r14; // numberTagRegister
-    static constexpr GPRReg regCS4 = X86Registers::r15; // notCellMaskRegister
+    static constexpr GPRReg regCS0 = X86Registers::ebx; // WasmInstance
+    static constexpr GPRReg regCS1 = X86Registers::r12; // metadataTable in LLInt/Baseline / IPIntMC
+    static constexpr GPRReg regCS2 = X86Registers::r13; // jitData / IPIntPC
+    static constexpr GPRReg regCS3 = X86Registers::r14; // numberTag / WasmBaseMemory
+    static constexpr GPRReg regCS4 = X86Registers::r15; // notCellMask / WasmBoundsCheckingSize
 
     static constexpr GPRReg regWS0 = X86Registers::eax;
     static constexpr GPRReg regWS1 = X86Registers::r10;
@@ -484,8 +483,8 @@ public:
     static constexpr GPRReg regT5 = ARMRegisters::r5;
     static constexpr GPRReg regT6 = ARMRegisters::r8;
     static constexpr GPRReg regT7 = ARMRegisters::r9;
-    static constexpr GPRReg regCS0 = ARMRegisters::r10; // metadataTable in LLInt/Baseline
-    static constexpr GPRReg regCS1 = ARMRegisters::r11; // jitDataRegister
+    static constexpr GPRReg regCS0 = ARMRegisters::r10; // metadataTable in LLInt/Baseline / WasmInstance
+    static constexpr GPRReg regCS1 = ARMRegisters::r11; // jitData / IPIntPC
 
     // These registers match the baseline JIT.
     static constexpr GPRReg callFrameRegister = ARMRegisters::fp;
@@ -601,14 +600,14 @@ public:
     static constexpr GPRReg regT13 = ARM64Registers::x13;
     static constexpr GPRReg regT14 = ARM64Registers::x14;
     static constexpr GPRReg regT15 = ARM64Registers::x15;
-    static constexpr GPRReg regCS0 = ARM64Registers::x19; // Used by FTL only
-    static constexpr GPRReg regCS1 = ARM64Registers::x20; // Used by FTL only
-    static constexpr GPRReg regCS2 = ARM64Registers::x21; // Used by FTL only
-    static constexpr GPRReg regCS3 = ARM64Registers::x22; // Used by FTL only
-    static constexpr GPRReg regCS4 = ARM64Registers::x23; // Used by FTL only
-    static constexpr GPRReg regCS5 = ARM64Registers::x24; // Used by FTL only
-    static constexpr GPRReg regCS6 = ARM64Registers::x25; // metadataTable in LLInt/Baseline
-    static constexpr GPRReg regCS7 = ARM64Registers::x26; // constants
+    static constexpr GPRReg regCS0 = ARM64Registers::x19; // WasmInstance
+    static constexpr GPRReg regCS1 = ARM64Registers::x20; //
+    static constexpr GPRReg regCS2 = ARM64Registers::x21; //
+    static constexpr GPRReg regCS3 = ARM64Registers::x22; // WasmBaseMemory
+    static constexpr GPRReg regCS4 = ARM64Registers::x23; // WasmBoundsCheckingSize
+    static constexpr GPRReg regCS5 = ARM64Registers::x24; //
+    static constexpr GPRReg regCS6 = ARM64Registers::x25; // metadataTable in LLInt/Baseline / IPIntMC
+    static constexpr GPRReg regCS7 = ARM64Registers::x26; // jitData / IPIntPC
     static constexpr GPRReg regCS8 = ARM64Registers::x27; // numberTag
     static constexpr GPRReg regCS9 = ARM64Registers::x28; // notCellMask
     // These constants provide the names for the general purpose argument & return value registers.
@@ -744,14 +743,14 @@ public:
     static constexpr GPRReg regT11 = RISCV64Registers::x28;
     static constexpr GPRReg regT12 = RISCV64Registers::x29;
 
-    static constexpr GPRReg regCS0 = RISCV64Registers::x9;
+    static constexpr GPRReg regCS0 = RISCV64Registers::x9;  // WasmInstance
     static constexpr GPRReg regCS1 = RISCV64Registers::x18;
     static constexpr GPRReg regCS2 = RISCV64Registers::x19;
-    static constexpr GPRReg regCS3 = RISCV64Registers::x20;
-    static constexpr GPRReg regCS4 = RISCV64Registers::x21;
+    static constexpr GPRReg regCS3 = RISCV64Registers::x20; // WasmBaseMemory
+    static constexpr GPRReg regCS4 = RISCV64Registers::x21; // WasmBoundsCheckingSize
     static constexpr GPRReg regCS5 = RISCV64Registers::x22;
-    static constexpr GPRReg regCS6 = RISCV64Registers::x23; // metadataTable in LLInt/Baseline
-    static constexpr GPRReg regCS7 = RISCV64Registers::x24; // constants
+    static constexpr GPRReg regCS6 = RISCV64Registers::x23; // metadataTable in LLInt/Baseline / IPIntMC
+    static constexpr GPRReg regCS7 = RISCV64Registers::x24; // jitData / IPIntPC
     static constexpr GPRReg regCS8 = RISCV64Registers::x25; // numberTag
     static constexpr GPRReg regCS9 = RISCV64Registers::x26; // notCellMask
     static constexpr GPRReg regCS10 = RISCV64Registers::x27;

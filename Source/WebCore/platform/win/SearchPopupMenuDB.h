@@ -49,7 +49,7 @@ private:
     bool checkDatabaseValidity();
     void deleteAllDatabaseFiles();
     void verifySchemaVersion();
-    int executeSQLStatement(Expected<SQLiteStatement, int>&&);
+    int executeSQLStatement(std::unique_ptr<SQLiteStatement>&&);
     void checkSQLiteReturnCode(int actual);
     std::unique_ptr<SQLiteStatement> createPreparedStatement(ASCIILiteral sql);
 

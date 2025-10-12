@@ -19,4 +19,10 @@ PASS calc(tan(3.14159 / 4 + 1 - 1) ) should be used-value-equivalent to 1
 PASS calc(sin(0.25turn) ) should be used-value-equivalent to 1
 PASS calc(cos(sin(cos(pi) + 1))) should be used-value-equivalent to 1
 PASS calc(sin(tan(pi/4)*pi/2) ) should be used-value-equivalent to 1
+PASS calc(sin(pi * sibling-index()) should be used-value-equivalent to 0
+PASS calc(cos(pi * sibling-index()) should be used-value-equivalent to -1
+PASS calc(tan(pi * sibling-index()) should be used-value-equivalent to 0
+FAIL calc(sin(180deg * sibling-index()) should be used-value-equivalent to 0 assert_approx_equals: calc(sin(180deg * sibling-index()) and 0 0.1 serialize to the same thing in used values. expected 0 +/- 0.1 but got -0.801153
+FAIL calc(cos(180deg * sibling-index()) should be used-value-equivalent to -1 assert_approx_equals: calc(cos(180deg * sibling-index()) and -1 0.1 serialize to the same thing in used values. expected -1 +/- 0.1 but got -0.59846
+FAIL calc(tan(180deg * sibling-index()) should be used-value-equivalent to 0 assert_approx_equals: calc(tan(180deg * sibling-index()) and 0 0.1 serialize to the same thing in used values. expected 0 +/- 0.1 but got 1.33869
 

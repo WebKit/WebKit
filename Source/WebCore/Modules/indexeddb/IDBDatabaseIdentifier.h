@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ClientOrigin.h"
-#include "SecurityOriginData.h"
+#include <WebCore/ClientOrigin.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/ArgumentCoder.h>
 
 namespace WebCore {

@@ -50,13 +50,13 @@ CSS::CubicBezierEasingFunction toCSSCubicBezierEasingFunction(const CubicBezierT
     };
 }
 
-Ref<TimingFunction> createTimingFunction(const CSS::CubicBezierEasingFunction& function, const CSSToLengthConversionData& conversionData)
+Ref<TimingFunction> createTimingFunction(const BuilderState& state, const CSS::CubicBezierEasingFunction& function)
 {
     return CubicBezierTimingFunction::create(
-        toStyle(get<0>(get<0>(function->value)), conversionData).value,
-        toStyle(get<1>(get<0>(function->value)), conversionData).value,
-        toStyle(get<0>(get<1>(function->value)), conversionData).value,
-        toStyle(get<1>(get<1>(function->value)), conversionData).value
+        toStyle(get<0>(get<0>(function->value)), state).value,
+        toStyle(get<1>(get<0>(function->value)), state).value,
+        toStyle(get<0>(get<1>(function->value)), state).value,
+        toStyle(get<1>(get<1>(function->value)), state).value
     );
 }
 

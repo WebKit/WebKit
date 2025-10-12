@@ -978,12 +978,8 @@ PASS :shift_right_concrete:case={"lhs":"1u","rhs":"-1","pass":false};vectorize=4
 PASS :shift_left_abstract:
 PASS :shift_right_abstract:
 FAIL :partial_eval_errors:op="%3C%3C";type="i32" assert_unreached:
-  - INFO: subcase: stage="pipeline";value=31
-    OK
-  - INFO: subcase: stage="shader";value=31
-    OK
-  - VALIDATION FAILED: subcase: stage="shader";value=32
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: stage="shader";value=31) INFO: subcase ran
+  - (in subcase: stage="shader";value=32) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -995,8 +991,10 @@ FAIL :partial_eval_errors:op="%3C%3C";type="i32" assert_unreached:
     }
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/bitwise_shift.spec.js:317:26
-  - VALIDATION FAILED: subcase: stage="shader";value=33
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: stage="shader";value=32) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: stage="shader";value=32) INFO: subcase ran
+  - (in subcase: stage="shader";value=33) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -1008,8 +1006,10 @@ FAIL :partial_eval_errors:op="%3C%3C";type="i32" assert_unreached:
     }
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/bitwise_shift.spec.js:317:26
-  - VALIDATION FAILED: subcase: stage="shader";value=64
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: stage="shader";value=33) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: stage="shader";value=33) INFO: subcase ran
+  - (in subcase: stage="shader";value=64) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -1020,44 +1020,23 @@ FAIL :partial_eval_errors:op="%3C%3C";type="i32" assert_unreached:
       return v << 64u;
     }
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: stage="shader";value=32
-    Expected validation error
+  - (in subcase: stage="shader";value=64) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="shader";value=33
-    Expected validation error
+  - (in subcase: stage="shader";value=64) INFO: subcase ran
+  - (in subcase: stage="pipeline";value=31) INFO: subcase ran
+  - (in subcase: stage="pipeline";value=32) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="shader";value=64
-    Expected validation error
+  - (in subcase: stage="pipeline";value=32) INFO: subcase ran
+  - (in subcase: stage="pipeline";value=33) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="pipeline";value=32
-    Expected validation error
+  - (in subcase: stage="pipeline";value=33) INFO: subcase ran
+  - (in subcase: stage="pipeline";value=64) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="pipeline";value=33
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="pipeline";value=64
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: stage="pipeline";value=32
-    OK
-  - INFO: subcase: stage="pipeline";value=33
-    OK
-  - INFO: subcase: stage="pipeline";value=64
-    OK
-  - INFO: subcase: stage="shader";value=32
-    OK
-  - INFO: subcase: stage="shader";value=33
-    OK
-  - INFO: subcase: stage="shader";value=64
-    OK
+  - (in subcase: stage="pipeline";value=64) INFO: subcase ran
  Reached unreachable code
 FAIL :partial_eval_errors:op="%3C%3C";type="u32" assert_unreached:
-  - INFO: subcase: stage="pipeline";value=31
-    OK
-  - INFO: subcase: stage="shader";value=31
-    OK
-  - VALIDATION FAILED: subcase: stage="shader";value=32
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: stage="shader";value=31) INFO: subcase ran
+  - (in subcase: stage="shader";value=32) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -1069,8 +1048,10 @@ FAIL :partial_eval_errors:op="%3C%3C";type="u32" assert_unreached:
     }
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/bitwise_shift.spec.js:317:26
-  - VALIDATION FAILED: subcase: stage="shader";value=33
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: stage="shader";value=32) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: stage="shader";value=32) INFO: subcase ran
+  - (in subcase: stage="shader";value=33) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -1082,8 +1063,10 @@ FAIL :partial_eval_errors:op="%3C%3C";type="u32" assert_unreached:
     }
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/bitwise_shift.spec.js:317:26
-  - VALIDATION FAILED: subcase: stage="shader";value=64
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: stage="shader";value=33) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: stage="shader";value=33) INFO: subcase ran
+  - (in subcase: stage="shader";value=64) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -1094,44 +1077,23 @@ FAIL :partial_eval_errors:op="%3C%3C";type="u32" assert_unreached:
       return v << 64u;
     }
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: stage="shader";value=32
-    Expected validation error
+  - (in subcase: stage="shader";value=64) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="shader";value=33
-    Expected validation error
+  - (in subcase: stage="shader";value=64) INFO: subcase ran
+  - (in subcase: stage="pipeline";value=31) INFO: subcase ran
+  - (in subcase: stage="pipeline";value=32) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - INFO: subcase: stage="shader";value=32
-    OK
-  - INFO: subcase: stage="shader";value=33
-    OK
-  - EXPECTATION FAILED: subcase: stage="shader";value=64
-    Expected validation error
+  - (in subcase: stage="pipeline";value=32) INFO: subcase ran
+  - (in subcase: stage="pipeline";value=33) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="pipeline";value=32
-    Expected validation error
+  - (in subcase: stage="pipeline";value=33) INFO: subcase ran
+  - (in subcase: stage="pipeline";value=64) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="pipeline";value=33
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="pipeline";value=64
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: stage="pipeline";value=32
-    OK
-  - INFO: subcase: stage="pipeline";value=33
-    OK
-  - INFO: subcase: stage="pipeline";value=64
-    OK
-  - INFO: subcase: stage="shader";value=64
-    OK
+  - (in subcase: stage="pipeline";value=64) INFO: subcase ran
  Reached unreachable code
 FAIL :partial_eval_errors:op="%3E%3E";type="i32" assert_unreached:
-  - INFO: subcase: stage="pipeline";value=31
-    OK
-  - INFO: subcase: stage="shader";value=31
-    OK
-  - VALIDATION FAILED: subcase: stage="shader";value=32
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: stage="shader";value=31) INFO: subcase ran
+  - (in subcase: stage="shader";value=32) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -1143,8 +1105,10 @@ FAIL :partial_eval_errors:op="%3E%3E";type="i32" assert_unreached:
     }
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/bitwise_shift.spec.js:317:26
-  - VALIDATION FAILED: subcase: stage="shader";value=33
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: stage="shader";value=32) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: stage="shader";value=32) INFO: subcase ran
+  - (in subcase: stage="shader";value=33) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -1156,8 +1120,10 @@ FAIL :partial_eval_errors:op="%3E%3E";type="i32" assert_unreached:
     }
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/bitwise_shift.spec.js:317:26
-  - VALIDATION FAILED: subcase: stage="shader";value=64
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: stage="shader";value=33) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: stage="shader";value=33) INFO: subcase ran
+  - (in subcase: stage="shader";value=64) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -1168,44 +1134,23 @@ FAIL :partial_eval_errors:op="%3E%3E";type="i32" assert_unreached:
       return v >> 64u;
     }
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: stage="shader";value=32
-    Expected validation error
+  - (in subcase: stage="shader";value=64) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="shader";value=33
-    Expected validation error
+  - (in subcase: stage="shader";value=64) INFO: subcase ran
+  - (in subcase: stage="pipeline";value=31) INFO: subcase ran
+  - (in subcase: stage="pipeline";value=32) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="shader";value=64
-    Expected validation error
+  - (in subcase: stage="pipeline";value=32) INFO: subcase ran
+  - (in subcase: stage="pipeline";value=33) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="pipeline";value=32
-    Expected validation error
+  - (in subcase: stage="pipeline";value=33) INFO: subcase ran
+  - (in subcase: stage="pipeline";value=64) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="pipeline";value=33
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: stage="pipeline";value=32
-    OK
-  - INFO: subcase: stage="pipeline";value=33
-    OK
-  - INFO: subcase: stage="shader";value=32
-    OK
-  - INFO: subcase: stage="shader";value=33
-    OK
-  - INFO: subcase: stage="shader";value=64
-    OK
-  - EXPECTATION FAILED: subcase: stage="pipeline";value=64
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: stage="pipeline";value=64
-    OK
+  - (in subcase: stage="pipeline";value=64) INFO: subcase ran
  Reached unreachable code
 FAIL :partial_eval_errors:op="%3E%3E";type="u32" assert_unreached:
-  - INFO: subcase: stage="pipeline";value=31
-    OK
-  - INFO: subcase: stage="shader";value=31
-    OK
-  - VALIDATION FAILED: subcase: stage="shader";value=32
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: stage="shader";value=31) INFO: subcase ran
+  - (in subcase: stage="shader";value=32) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -1217,8 +1162,10 @@ FAIL :partial_eval_errors:op="%3E%3E";type="u32" assert_unreached:
     }
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/bitwise_shift.spec.js:317:26
-  - VALIDATION FAILED: subcase: stage="shader";value=33
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: stage="shader";value=32) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: stage="shader";value=32) INFO: subcase ran
+  - (in subcase: stage="shader";value=33) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -1230,8 +1177,10 @@ FAIL :partial_eval_errors:op="%3E%3E";type="u32" assert_unreached:
     }
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/bitwise_shift.spec.js:317:26
-  - VALIDATION FAILED: subcase: stage="shader";value=64
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: stage="shader";value=33) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: stage="shader";value=33) INFO: subcase ran
+  - (in subcase: stage="shader";value=64) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -1242,35 +1191,18 @@ FAIL :partial_eval_errors:op="%3E%3E";type="u32" assert_unreached:
       return v >> 64u;
     }
       at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: stage="shader";value=32
-    Expected validation error
+  - (in subcase: stage="shader";value=64) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="shader";value=33
-    Expected validation error
+  - (in subcase: stage="shader";value=64) INFO: subcase ran
+  - (in subcase: stage="pipeline";value=31) INFO: subcase ran
+  - (in subcase: stage="pipeline";value=32) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="shader";value=64
-    Expected validation error
+  - (in subcase: stage="pipeline";value=32) INFO: subcase ran
+  - (in subcase: stage="pipeline";value=33) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="pipeline";value=32
-    Expected validation error
+  - (in subcase: stage="pipeline";value=33) INFO: subcase ran
+  - (in subcase: stage="pipeline";value=64) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="pipeline";value=33
-    Expected validation error
-      at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: stage="pipeline";value=64
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: stage="pipeline";value=32
-    OK
-  - INFO: subcase: stage="pipeline";value=33
-    OK
-  - INFO: subcase: stage="pipeline";value=64
-    OK
-  - INFO: subcase: stage="shader";value=32
-    OK
-  - INFO: subcase: stage="shader";value=33
-    OK
-  - INFO: subcase: stage="shader";value=64
-    OK
+  - (in subcase: stage="pipeline";value=64) INFO: subcase ran
  Reached unreachable code
 

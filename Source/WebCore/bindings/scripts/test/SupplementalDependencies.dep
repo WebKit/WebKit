@@ -26,6 +26,7 @@ JSTestCallbackFunctionWithVariadic.h:
 JSTestCallbackInterface.h: 
 JSTestCallbackOrDict.h: 
 JSTestClassWithJSBuiltinConstructor.h: 
+JSTestConditional.h: 
 JSTestConditionalIncludes.h: TestMixinInterface.idl
 TestMixinInterface.idl:
 JSTestConditionallyReadWrite.h: 

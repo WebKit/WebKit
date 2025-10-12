@@ -189,7 +189,7 @@
     uint8_t *sd_pdst_m1 = (uint8_t *)(pdst);                    \
     uint32_t sd_val0_m, sd_val1_m;                              \
                                                                 \
-    sd_val0_m = (uint32_t)((val)&0x00000000FFFFFFFF);           \
+    sd_val0_m = (uint32_t)((val) & 0x00000000FFFFFFFF);         \
     sd_val1_m = (uint32_t)(((val) >> 32) & 0x00000000FFFFFFFF); \
                                                                 \
     SW(sd_val0_m, sd_pdst_m1);                                  \

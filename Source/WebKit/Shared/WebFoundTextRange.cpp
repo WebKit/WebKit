@@ -27,8 +27,14 @@
 #include "WebFoundTextRange.h"
 
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebKit {
+
+unsigned WebFoundTextRange::PDFData::hash() const
+{
+    return pairIntHash(pairIntHash(pairIntHash(startPage, endPage), startOffset), endOffset);
+}
 
 unsigned WebFoundTextRange::hash() const
 {
@@ -37,7 +43,7 @@ unsigned WebFoundTextRange::hash() const
             return pairIntHash(domData.location, domData.length);
         },
         [] (const WebFoundTextRange::PDFData& pdfData) {
-            return pairIntHash(pairIntHash(pairIntHash(pdfData.startPage, pdfData.endPage), pdfData.startOffset), pdfData.endOffset);
+            return pdfData.hash();
         }
     );
 }
@@ -52,6 +58,12 @@ bool WebFoundTextRange::operator==(const WebFoundTextRange& other) const
     return data == other.data
         && frameIdentifier == other.frameIdentifier
         && order == other.order;
+}
+
+TextStream& operator<<(TextStream& ts, const WebFoundTextRange::PDFData& data)
+{
+    ts << "[start page: " << data.startPage << ", start offset: " << data.startOffset << ", end page: " << data.endPage << ", end offset: " << data.endOffset << "]";
+    return ts;
 }
 
 } // namespace WebKit

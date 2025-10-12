@@ -23,10 +23,10 @@
 
 #pragma once
 
-#include "FormState.h"
-#include "FormSubmission.h"
-#include "HTMLElement.h"
-#include "RadioButtonGroups.h"
+#include <WebCore/FormState.h>
+#include <WebCore/FormSubmission.h>
+#include <WebCore/HTMLElement.h>
+#include <WebCore/RadioButtonGroups.h>
 #include <memory>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
@@ -61,11 +61,9 @@ public:
     Vector<AtomString> supportedPropertyNames() const;
 
     String enctype() const { return m_attributes.encodingType(); }
-    WEBCORE_EXPORT void setEnctype(const AtomString&);
 
     bool shouldAutocomplete() const;
 
-    WEBCORE_EXPORT void setAutocomplete(const AtomString&);
     WEBCORE_EXPORT const AtomString& autocomplete() const;
 
     void registerFormListedElement(FormListedElement&);
@@ -93,10 +91,8 @@ public:
     void setAcceptCharset(const String&);
 
     WEBCORE_EXPORT String action() const;
-    WEBCORE_EXPORT void setAction(const AtomString&);
-
     WEBCORE_EXPORT String method() const;
-    WEBCORE_EXPORT void setMethod(const AtomString&);
+    bool isMethodPost() const { return method() == "post"_s; }
 
     DOMTokenList& relList();
 
@@ -169,7 +165,7 @@ private:
     RefPtr<HTMLFormControlElement> findSubmitButton(HTMLFormControlElement* submitter, bool needButtonActivation);
 
     FormSubmission::Attributes m_attributes;
-    UncheckedKeyHashMap<AtomString, WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>> m_pastNamesMap;
+    HashMap<AtomString, WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>> m_pastNamesMap;
 
     RadioButtonGroups m_radioButtonGroups;
     mutable WeakPtr<HTMLFormControlElement, WeakPtrImplWithEventTargetData> m_defaultButton;

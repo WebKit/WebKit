@@ -186,6 +186,15 @@ void HTTPCookieStore::unregisterObserver(HTTPCookieStoreObserver& observer)
         networkProcess->send(Messages::WebCookieManager::StopObservingCookieChanges(m_sessionID), 0);
 }
 
+bool HTTPCookieStore::isOptInCookiePartitioningEnabled() const
+{
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
+    if (RefPtr dataStore = m_owningDataStore.get())
+        return dataStore->isOptInCookiePartitioningEnabled();
+#endif
+    return false;
+}
+
 void HTTPCookieStore::cookiesDidChange()
 {
     for (Ref observer : m_observers)

@@ -27,14 +27,9 @@
 #include "libyuv/rotate.h"
 #include "libyuv/video_common.h"
 
-#ifdef ENABLE_ROW_TESTS
-#include "libyuv/row.h" /* For ARGBToAR30Row_AVX2 */
-#endif
-
 #if defined(__riscv) && !defined(__clang__)
 #define DISABLE_SLOW_TESTS
 #undef ENABLE_FULL_TESTS
-#undef ENABLE_ROW_TESTS
 #define LEAN_TESTS
 #endif
 
@@ -188,6 +183,7 @@ TESTPLANARTOP(H010, uint16_t, 2, 2, 2, H010, uint16_t, 2, 2, 2, 10)
 TESTPLANARTOP(H010, uint16_t, 2, 2, 2, H420, uint8_t, 1, 2, 2, 10)
 TESTPLANARTOP(H420, uint8_t, 1, 2, 2, H010, uint16_t, 2, 2, 2, 8)
 TESTPLANARTOP(H420, uint8_t, 1, 2, 2, H012, uint16_t, 2, 2, 2, 8)
+TESTPLANARTOP(J420, uint8_t, 1, 2, 2, I420, uint8_t, 1, 2, 2, 8)
 TESTPLANARTOP(I010, uint16_t, 2, 2, 2, I410, uint16_t, 2, 1, 1, 10)
 TESTPLANARTOP(I210, uint16_t, 2, 2, 1, I410, uint16_t, 2, 1, 1, 10)
 TESTPLANARTOP(I012, uint16_t, 2, 2, 2, I412, uint16_t, 2, 1, 1, 12)
@@ -665,6 +661,7 @@ TESTATOPLANAR(ARGB, 4, 1, I422, 2, 1)
 TESTATOPLANAR(ARGB, 4, 1, I444, 1, 1)
 TESTATOPLANAR(ARGB, 4, 1, J420, 2, 2)
 TESTATOPLANAR(ARGB, 4, 1, J422, 2, 1)
+TESTATOPLANAR(ARGB, 4, 1, J444, 1, 1)
 TESTATOPLANAR(ABGR, 4, 1, J420, 2, 2)
 TESTATOPLANAR(ABGR, 4, 1, J422, 2, 1)
 #ifdef LITTLE_ENDIAN_ONLY_TEST
@@ -676,7 +673,9 @@ TESTATOPLANAR(BGRA, 4, 1, I420, 2, 2)
 TESTATOPLANAR(I400, 1, 1, I420, 2, 2)
 TESTATOPLANAR(J400, 1, 1, J420, 2, 2)
 TESTATOPLANAR(RAW, 3, 1, I420, 2, 2)
+TESTATOPLANAR(RAW, 3, 1, I444, 1, 1)
 TESTATOPLANAR(RAW, 3, 1, J420, 2, 2)
+TESTATOPLANAR(RAW, 3, 1, J444, 1, 1)
 TESTATOPLANAR(RGB24, 3, 1, I420, 2, 2)
 TESTATOPLANAR(RGB24, 3, 1, J420, 2, 2)
 TESTATOPLANAR(RGBA, 4, 1, I420, 2, 2)
@@ -2072,7 +2071,7 @@ TEST_F(LibYUVConvertTest, TestRGB24ToJ420) {
   }
 
   uint32_t checksum = HashDjb2(dest_j420, kSize * 3 / 2 * 2, 5381);
-  EXPECT_EQ(2755440272u, checksum);
+  EXPECT_EQ(223551344u, checksum);
 
   free_aligned_buffer_page_end(orig_rgb24);
   free_aligned_buffer_page_end(dest_j420);
@@ -2100,12 +2099,34 @@ TEST_F(LibYUVConvertTest, TestRGB24ToI420) {
   }
 
   uint32_t checksum = HashDjb2(dest_i420, kSize * 3 / 2 * 2, 5381);
-  EXPECT_EQ(1526656597u, checksum);
+  EXPECT_EQ(4197774805u, checksum);
 
   free_aligned_buffer_page_end(orig_rgb24);
   free_aligned_buffer_page_end(dest_i420);
 }
 #endif
+
+TEST_F(LibYUVConvertTest, TestJ420ToI420) {
+  const uint8_t src_y[12] = {0, 0, 128, 128, 255, 255,
+                             0, 0, 128, 128, 255, 255};
+  const uint8_t src_u[3] = {0, 128, 255};
+  const uint8_t src_v[3] = {0, 128, 255};
+  uint8_t dst_y[12];
+  uint8_t dst_u[3];
+  uint8_t dst_v[3];
+  ASSERT_EQ(J420ToI420(src_y, 6, src_u, 3, src_v, 3, dst_y, 6, dst_u, 3, dst_v,
+                       3, 6, 2),
+            0);
+  EXPECT_EQ(dst_y[0], 16);
+  EXPECT_EQ(dst_y[2], 126);
+  EXPECT_EQ(dst_y[4], 235);
+  EXPECT_EQ(dst_u[0], 16);
+  EXPECT_EQ(dst_u[1], 128);
+  EXPECT_EQ(dst_u[2], 240);
+  EXPECT_EQ(dst_v[0], 16);
+  EXPECT_EQ(dst_v[1], 128);
+  EXPECT_EQ(dst_v[2], 240);
+}
 
 #endif  // !defined(LEAN_TESTS)
 

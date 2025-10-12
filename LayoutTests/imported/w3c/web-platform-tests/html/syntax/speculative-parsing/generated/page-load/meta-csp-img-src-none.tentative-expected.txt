@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: image/webp,image/png,image/svg+xml,image/*;q=0.8,video/*;q=0.8,*/*;q=0.5\r\nRefer...
 
 
 FAIL Speculative parsing, page load: meta-csp-img-src-none Unhandled rejection: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: image/webp,image/png,image/svg+xml,image/*;q=0.8,video/*;q=0.8,*/*;q=0.5\r\nReferer: http://localhost:8800/html/syntax/speculative-parsing/generated/page-load/resources/meta-csp-img-src-none-framed.sub.html?uuid=f5ff9fd9-027f-4e08-a79e-65608bd6ca74"

@@ -65,18 +65,26 @@ typedef enum {
     WPE_BUFFER_ERROR_IMPORT_FAILED
 } WPEBufferError;
 
-WPE_API GQuark      wpe_buffer_error_quark         (void);
-WPE_API WPEDisplay *wpe_buffer_get_display         (WPEBuffer     *buffer);
-WPE_API int         wpe_buffer_get_width           (WPEBuffer     *buffer);
-WPE_API int         wpe_buffer_get_height          (WPEBuffer     *buffer);
-WPE_API void        wpe_buffer_set_user_data       (WPEBuffer     *buffer,
-                                                    gpointer       user_data,
-                                                    GDestroyNotify destroy_func);
-WPE_API gpointer    wpe_buffer_get_user_data       (WPEBuffer     *buffer);
-WPE_API gpointer    wpe_buffer_import_to_egl_image (WPEBuffer     *buffer,
-                                                    GError       **error);
-WPE_API GBytes     *wpe_buffer_import_to_pixels    (WPEBuffer     *buffer,
-                                                    GError       **error);
+WPE_API GQuark      wpe_buffer_error_quark          (void);
+WPE_API WPEDisplay *wpe_buffer_get_display          (WPEBuffer     *buffer);
+WPE_API int         wpe_buffer_get_width            (WPEBuffer     *buffer);
+WPE_API int         wpe_buffer_get_height           (WPEBuffer     *buffer);
+WPE_API void        wpe_buffer_set_user_data        (WPEBuffer     *buffer,
+                                                     gpointer       user_data,
+                                                     GDestroyNotify destroy_func);
+WPE_API gpointer    wpe_buffer_get_user_data        (WPEBuffer     *buffer);
+WPE_API gpointer    wpe_buffer_import_to_egl_image  (WPEBuffer     *buffer,
+                                                     GError       **error);
+WPE_API GBytes     *wpe_buffer_import_to_pixels     (WPEBuffer     *buffer,
+                                                     GError       **error);
+WPE_API void        wpe_buffer_set_rendering_fence  (WPEBuffer     *buffer,
+                                                     int            fd);
+WPE_API int         wpe_buffer_get_rendering_fence  (WPEBuffer     *buffer);
+WPE_API int         wpe_buffer_take_rendering_fence (WPEBuffer     *buffer);
+WPE_API void        wpe_buffer_set_release_fence    (WPEBuffer     *buffer,
+                                                     int            fd);
+WPE_API int         wpe_buffer_get_release_fence    (WPEBuffer     *buffer);
+WPE_API int         wpe_buffer_take_release_fence   (WPEBuffer     *buffer);
 
 G_END_DECLS
 

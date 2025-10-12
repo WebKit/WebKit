@@ -9,8 +9,10 @@
  */
 #include "test/direct_transport.h"
 
-#include <string.h>
+#include <cstdint>
+#include <cstring>
 
+#include "api/media_types.h"
 #include "test/gtest.h"
 
 namespace webrtc {

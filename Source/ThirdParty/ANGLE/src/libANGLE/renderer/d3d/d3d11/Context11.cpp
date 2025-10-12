@@ -7,7 +7,13 @@
 //   D3D11-specific functionality associated with a GL Context.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d11/Context11.h"
+
+#include <utility>
 
 #include "common/entry_points_enum_autogen.h"
 #include "common/string_utils.h"
@@ -15,6 +21,7 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/Context.inl.h"
 #include "libANGLE/MemoryProgramCache.h"
+#include "libANGLE/histogram_macros.h"
 #include "libANGLE/renderer/OverlayImpl.h"
 #include "libANGLE/renderer/d3d/CompilerD3D.h"
 #include "libANGLE/renderer/d3d/ProgramExecutableD3D.h"
@@ -205,9 +212,10 @@ BufferImpl *Context11::createBuffer(const gl::BufferState &state)
     return buffer;
 }
 
-VertexArrayImpl *Context11::createVertexArray(const gl::VertexArrayState &data)
+VertexArrayImpl *Context11::createVertexArray(const gl::VertexArrayState &data,
+                                              const gl::VertexArrayBuffers &vertexArrayBuffers)
 {
-    return new VertexArray11(data);
+    return new VertexArray11(data, vertexArrayBuffers);
 }
 
 QueryImpl *Context11::createQuery(gl::QueryType type)
@@ -786,12 +794,11 @@ angle::Result Context11::pushGroupMarker(GLsizei length, const char *marker)
 
 angle::Result Context11::popGroupMarker()
 {
-    const char *marker = nullptr;
     if (!mMarkerStack.empty())
     {
-        marker = mMarkerStack.top().c_str();
+        std::string marker = std::move(mMarkerStack.top());
         mMarkerStack.pop();
-        mRenderer->getDebugAnnotatorContext()->endEvent(marker,
+        mRenderer->getDebugAnnotatorContext()->endEvent(marker.c_str(),
                                                         angle::EntryPoint::GLPopGroupMarkerEXT);
     }
     return angle::Result::Continue;
@@ -1131,6 +1138,8 @@ void Context11::handleResult(HRESULT hr,
     {
         HRESULT removalReason = mRenderer->getDevice()->GetDeviceRemovedReason();
         errorStream << " (removal reason: " << gl::FmtHR(removalReason) << ")";
+        ANGLE_HISTOGRAM_SPARSE_SLOWLY("GPU.ANGLE.D3DDeviceRemovedReason",
+                                      static_cast<int>(removalReason));
         mRenderer->notifyDeviceLost();
     }
 

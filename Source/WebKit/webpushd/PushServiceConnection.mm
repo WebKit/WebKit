@@ -70,7 +70,7 @@ void PushServiceConnection::startListeningForPushMessages(IncomingPushMessageHan
     if (!m_pendingPushes.size())
         return;
 
-    WorkQueue::protectedMain()->dispatch([this, protectdThis = Ref { *this }]() mutable {
+    WorkQueue::mainSingleton().dispatch([this, protectdThis = Ref { *this }]() mutable {
         while (m_pendingPushes.size()) {
             @autoreleasepool {
                 auto message = m_pendingPushes.takeFirst();

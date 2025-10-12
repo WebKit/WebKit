@@ -34,6 +34,9 @@
 
 @protocol WKMouseInteractionDelegate<NSObject>
 - (void)mouseInteraction:(WKMouseInteraction *)interaction changedWithEvent:(const WebKit::NativeWebMouseEvent&)event;
+#if ENABLE(POINTER_LOCK)
+- (void)mouseInteractionDidLoseMouseDeviceDuringPointerLock:(WKMouseInteraction *)interaction;
+#endif
 @end
 
 @interface WKMouseInteraction : NSObject<UIInteraction>
@@ -42,6 +45,11 @@
 
 - (CGPoint)locationInView:(UIView *)view;
 - (BOOL)hasGesture:(UIGestureRecognizer *)gesture;
+
+#if ENABLE(POINTER_LOCK)
+- (void)beginPointerLockMouseTracking;
+- (void)endPointerLockMouseTracking;
+#endif
 
 @property (nonatomic, getter=isEnabled) BOOL enabled;
 @property (nonatomic, readonly, weak) id <WKMouseInteractionDelegate> delegate;

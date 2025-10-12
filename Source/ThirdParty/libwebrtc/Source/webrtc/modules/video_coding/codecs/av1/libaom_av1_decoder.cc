@@ -133,7 +133,7 @@ int32_t LibaomAv1Decoder::Decode(const EncodedImage& encoded_image,
     }
 
     // Allocate memory for decoded frame.
-    rtc::scoped_refptr<I420Buffer> buffer =
+    webrtc::scoped_refptr<I420Buffer> buffer =
         buffer_pool_.CreateI420Buffer(decoded_image->d_w, decoded_image->d_h);
     if (!buffer.get()) {
       // Pool has too many pending frames.

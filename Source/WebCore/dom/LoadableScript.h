@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple, Inc. All Rights Reserved.
+ * Copyright (C) 2016 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ScriptElementCachedScriptFetcher.h"
+#include <WebCore/ScriptElementCachedScriptFetcher.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/WeakHashCountedSet.h>
 #include <wtf/text/WTFString.h>
@@ -52,6 +52,7 @@ public:
     virtual bool hasError() const = 0;
     virtual std::optional<Error> takeError() = 0;
     virtual bool wasCanceled() const = 0;
+    virtual bool isInlineModule() const = 0;
 
     virtual void execute(ScriptElement&) = 0;
 

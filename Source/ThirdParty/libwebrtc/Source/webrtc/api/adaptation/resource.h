@@ -35,9 +35,8 @@ class RTC_EXPORT ResourceListener {
  public:
   virtual ~ResourceListener();
 
-  virtual void OnResourceUsageStateMeasured(
-      rtc::scoped_refptr<Resource> resource,
-      ResourceUsageState usage_state) = 0;
+  virtual void OnResourceUsageStateMeasured(scoped_refptr<Resource> resource,
+                                            ResourceUsageState usage_state) = 0;
 };
 
 // A Resource monitors an implementation-specific resource. It may report

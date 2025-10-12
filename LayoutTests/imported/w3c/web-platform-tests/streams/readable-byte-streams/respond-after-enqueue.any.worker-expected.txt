@@ -1,5 +1,5 @@
 
-FAIL byobRequest.respond() after enqueue() should not crash promise_test: Unhandled rejection with value: object "ReferenceError: Can't find private variable: PrivateSymbol.Uint8Array"
-FAIL byobRequest.respond() with cached byobRequest after enqueue() should not crash promise_test: Unhandled rejection with value: object "ReferenceError: Can't find private variable: PrivateSymbol.Uint8Array"
-FAIL byobRequest.respond() after enqueue() with double read should not crash promise_test: Unhandled rejection with value: object "ReferenceError: Can't find private variable: PrivateSymbol.Uint8Array"
+PASS byobRequest.respond() after enqueue() should not crash
+PASS byobRequest.respond() with cached byobRequest after enqueue() should not crash
+PASS byobRequest.respond() after enqueue() with double read should not crash
 

@@ -27,6 +27,9 @@ results
 # Ignore auto-generated files by JetBrains IDEs (PyCharm).
 *.idea/
 
+# Ignore auto-generated files by Nova.
+/.nova/
+
 # Ignore common tool auto-generated files.
 .gdbinit
 .gdb_history

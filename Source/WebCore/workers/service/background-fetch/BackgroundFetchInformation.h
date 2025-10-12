@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "BackgroundFetchFailureReason.h"
-#include "BackgroundFetchResult.h"
-#include "ServiceWorkerTypes.h"
+#include <WebCore/BackgroundFetchFailureReason.h>
+#include <WebCore/BackgroundFetchResult.h>
+#include <WebCore/ServiceWorkerTypes.h>
 
 namespace WebCore {
 

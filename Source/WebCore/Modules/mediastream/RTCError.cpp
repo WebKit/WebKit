@@ -31,7 +31,7 @@
 namespace WebCore {
 
 RTCError::RTCError(const Init& initializer, String&& message)
-    : DOMException(0, "OperationError"_s, WTFMove(message))
+    : DOMException(0, "OperationError"_s, WTFMove(message), Type::RTCError)
     , m_values(initializer)
 {
 }

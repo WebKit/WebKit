@@ -8,22 +8,22 @@ String with range: ello
 worl
 Attributed string with range: ello
 {
-    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] headroom = 1.000000 ( 0 0 0 0 )";
     AXFont =     {
         AXFontFamily = Times;
         AXFontName = "Times-Roman";
         AXFontSize = 16;
     };
-    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] headroom = 1.000000 ( 0 0 0 1 )";
 }worl{
-    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] headroom = 1.000000 ( 0 0 0 0 )";
     AXFont =     {
         AXFontBold = 1;
         AXFontFamily = Times;
         AXFontName = "Times-Bold";
         AXFontSize = 16;
     };
-    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] headroom = 1.000000 ( 0 0 0 1 )";
     AXMarkedMisspelled = 1;
     AXMisspelled = 1;
 }

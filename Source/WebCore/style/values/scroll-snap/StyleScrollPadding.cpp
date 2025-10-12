@@ -26,94 +26,56 @@
 #include "StyleScrollPadding.h"
 
 #include "LayoutRect.h"
-#include "StyleBuilderConverter.h"
-#include "StyleBuilderState.h"
-#include "StyleExtractorConverter.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
 namespace Style {
 
-LayoutUnit ScrollPaddingEdge::evaluate(LayoutUnit referenceLength) const
+// MARK: - Evaluation
+
+auto Evaluation<ScrollPaddingEdge, LayoutUnit>::operator()(const ScrollPaddingEdge& edge, LayoutUnit referenceLength, ZoomNeeded token) -> LayoutUnit
 {
-    switch (m_value.type()) {
-    case LengthType::Fixed:
-        return LayoutUnit(m_value.value());
-
-    case LengthType::Percent:
-        return LayoutUnit(static_cast<float>(referenceLength * m_value.percent() / 100.0f));
-
-    case LengthType::Calculated:
-        return LayoutUnit(m_value.nonNanCalculatedValue(referenceLength));
-
-    case LengthType::Auto:
+    return WTF::switchOn(edge,
+        [&](const ScrollPaddingEdge::Fixed& fixed) {
+            return evaluate<LayoutUnit>(fixed, token);
+        },
+        [&](const ScrollPaddingEdge::Percentage& percentage) {
+            return evaluate<LayoutUnit>(percentage, referenceLength);
+        },
+        [&](const ScrollPaddingEdge::Calc& calculated) {
+            return evaluate<LayoutUnit>(calculated, referenceLength);
+        },
+        [&](const CSS::Keyword::Auto&) {
             return 0_lu;
-
-    case LengthType::FillAvailable:
-    case LengthType::Normal:
-    case LengthType::Content:
-    case LengthType::Relative:
-    case LengthType::Intrinsic:
-    case LengthType::MinIntrinsic:
-    case LengthType::MinContent:
-    case LengthType::MaxContent:
-    case LengthType::FitContent:
-    case LengthType::Undefined:
-        break;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return 0_lu;
+        }
+    );
 }
 
-float ScrollPaddingEdge::evaluate(float referenceLength) const
+auto Evaluation<ScrollPaddingEdge, float>::operator()(const ScrollPaddingEdge& edge, float referenceLength, ZoomNeeded token) -> float
 {
-    switch (m_value.type()) {
-    case LengthType::Fixed:
-        return m_value.value();
-
-    case LengthType::Percent:
-        return referenceLength * m_value.percent() / 100.0f;
-
-    case LengthType::Calculated:
-        return m_value.nonNanCalculatedValue(referenceLength);
-
-    case LengthType::Auto:
-            return 0;
-
-    case LengthType::FillAvailable:
-    case LengthType::Normal:
-    case LengthType::Content:
-    case LengthType::Relative:
-    case LengthType::Intrinsic:
-    case LengthType::MinIntrinsic:
-    case LengthType::MinContent:
-    case LengthType::MaxContent:
-    case LengthType::FitContent:
-    case LengthType::Undefined:
-        break;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return 0;
+    return WTF::switchOn(edge,
+        [&](const ScrollPaddingEdge::Fixed& fixed) {
+            return evaluate<float>(fixed, token);
+        },
+        [&](const ScrollPaddingEdge::Percentage& percentage) {
+            return evaluate<float>(percentage, referenceLength);
+        },
+        [&](const ScrollPaddingEdge::Calc& calculated) {
+            return evaluate<float>(calculated, referenceLength);
+        },
+        [&](const CSS::Keyword::Auto&) {
+            return 0.0f;
+        }
+    );
 }
 
-Ref<CSSValue> ScrollPaddingEdge::toCSS(ExtractorState& state) const
-{
-    return ExtractorConverter::convertLength(state, m_value);
-}
-
-ScrollPaddingEdge scrollPaddingEdgeFromCSSValue(const CSSValue& value, BuilderState& state)
-{
-    if (value.valueID() == CSSValueAuto)
-        return ScrollPaddingEdge { CSS::Keyword::Auto { } };
-    return ScrollPaddingEdge { BuilderConverter::convertLength(state, value) };
-}
-
-LayoutBoxExtent extentForRect(const ScrollPadding& padding, const LayoutRect& rect)
+LayoutBoxExtent extentForRect(const ScrollPaddingBox& padding, const LayoutRect& rect, ZoomNeeded token)
 {
     return LayoutBoxExtent {
-        Style::evaluate(padding.top(), rect.height()),
-        Style::evaluate(padding.right(), rect.width()),
-        Style::evaluate(padding.bottom(), rect.height()),
-        Style::evaluate(padding.left(), rect.width()),
+        evaluate<LayoutUnit>(padding.top(), rect.height(), token),
+        evaluate<LayoutUnit>(padding.right(), rect.width(), token),
+        evaluate<LayoutUnit>(padding.bottom(), rect.height(), token),
+        evaluate<LayoutUnit>(padding.left(), rect.width(), token),
     };
 }
 

@@ -198,13 +198,11 @@ bool IsPlatformAvailable(const CompilerParameters &param)
         {
             angle::PoolAllocator allocator;
             InitializePoolIndex();
-            allocator.push();
             SetGlobalPoolAllocator(&allocator);
             ShHandle translator =
                 sh::ConstructCompiler(GL_FRAGMENT_SHADER, SH_WEBGL2_SPEC, param.output);
             bool success = translator != nullptr;
             SetGlobalPoolAllocator(nullptr);
-            allocator.pop();
             FreePoolIndex();
             if (!success)
             {
@@ -271,7 +269,6 @@ void CompilerPerfTest::SetUp()
     ANGLEPerfTest::SetUp();
 
     InitializePoolIndex();
-    mAllocator.push();
     SetGlobalPoolAllocator(&mAllocator);
 
     const auto &params = GetParam();
@@ -292,7 +289,7 @@ void CompilerPerfTest::TearDown()
     SafeDelete(mTranslator);
 
     SetGlobalPoolAllocator(nullptr);
-    mAllocator.pop();
+    mAllocator.reset();
 
     FreePoolIndex();
 

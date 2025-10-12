@@ -31,9 +31,10 @@
 #include "config.h"
 #include "InspectorDOMAgent.h"
 
-#include "AXObjectCache.h"
+#include "AXObjectCacheInlines.h"
 #include "AccessibilityNodeObject.h"
-#include "AddEventListenerOptions.h"
+#include "AccessibilityObjectInlines.h"
+#include "AddEventListenerOptionsInlines.h"
 #include "Attr.h"
 #include "AudioTrack.h"
 #include "AudioTrackConfiguration.h"
@@ -60,11 +61,13 @@
 #include "DocumentFullscreen.h"
 #include "DocumentInlines.h"
 #include "DocumentType.h"
+#include "DocumentView.h"
 #include "Editing.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "FrameInlines.h"
 #include "FrameTree.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -76,8 +79,8 @@
 #include "HTMLTemplateElement.h"
 #include "HTMLVideoElement.h"
 #include "HitTestResult.h"
+#include "InspectorBackendClient.h"
 #include "InspectorCSSAgent.h"
-#include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorHistory.h"
 #include "InspectorNodeFinder.h"
@@ -97,6 +100,7 @@
 #include "LocalFrameView.h"
 #include "MutationEvent.h"
 #include "Node.h"
+#include "NodeInlines.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "Pasteboard.h"
@@ -147,7 +151,7 @@ using namespace Inspector;
 using namespace HTMLNames;
 
 static const size_t maxTextSize = 10000;
-static const UChar horizontalEllipsisUChar[] = { horizontalEllipsis, 0 };
+static const char16_t horizontalEllipsisUTF16[] = { horizontalEllipsis, 0 };
 
 static std::optional<Color> parseColor(RefPtr<JSON::Object>&& colorObject)
 {
@@ -304,7 +308,7 @@ String InspectorDOMAgent::toErrorString(Exception&& exception)
 InspectorDOMAgent::InspectorDOMAgent(PageAgentContext& context, InspectorOverlay& overlay)
     : InspectorAgentBase("DOM"_s, context)
     , m_injectedScriptManager(context.injectedScriptManager)
-    , m_frontendDispatcher(makeUnique<Inspector::DOMFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUniqueRef<Inspector::DOMFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::DOMBackendDispatcher::create(context.backendDispatcher, this))
     , m_inspectedPage(context.inspectedPage)
     , m_overlay(overlay)
@@ -322,7 +326,7 @@ Ref<InspectorOverlay> InspectorDOMAgent::protectedOverlay() const
     return m_overlay.get();
 }
 
-void InspectorDOMAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
+void InspectorDOMAgent::didCreateFrontendAndBackend()
 {
     m_history = makeUnique<InspectorHistory>();
     m_domEditor = makeUnique<DOMEditor>(*m_history);
@@ -472,7 +476,7 @@ Node* InspectorDOMAgent::assertNode(Inspector::Protocol::ErrorString& errorStrin
         errorString = "Missing node for given nodeId"_s;
         return nullptr;
     }
-    return node.get();
+    return node.unsafeGet();
 }
 
 Document* InspectorDOMAgent::assertDocument(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
@@ -483,7 +487,7 @@ Document* InspectorDOMAgent::assertDocument(Inspector::Protocol::ErrorString& er
     RefPtr document = dynamicDowncast<Document>(*node);
     if (!document)
         errorString = "Node for given nodeId is not a document"_s;
-    return document.get();
+    return document.unsafeGet();
 }
 
 Element* InspectorDOMAgent::assertElement(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
@@ -494,7 +498,7 @@ Element* InspectorDOMAgent::assertElement(Inspector::Protocol::ErrorString& erro
     RefPtr element = dynamicDowncast<Element>(*node);
     if (!element)
         errorString = "Node for given nodeId is not an element"_s;
-    return element.get();
+    return element.unsafeGet();
 }
 
 Node* InspectorDOMAgent::assertEditableNode(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
@@ -510,7 +514,7 @@ Node* InspectorDOMAgent::assertEditableNode(Inspector::Protocol::ErrorString& er
         errorString = "Node for given nodeId is a pseudo-element"_s;
         return nullptr;
     }
-    return node.get();
+    return node.unsafeGet();
 }
 
 Element* InspectorDOMAgent::assertEditableElement(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
@@ -521,7 +525,7 @@ Element* InspectorDOMAgent::assertEditableElement(Inspector::Protocol::ErrorStri
     RefPtr element = dynamicDowncast<Element>(node);
     if (!element)
         errorString = "Node for given nodeId is not an element"_s;
-    return element.get();
+    return element.unsafeGet();
 }
 
 Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Node>> InspectorDOMAgent::getDocument()
@@ -1061,7 +1065,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::E
     if (includeAncestors.value_or(true)) {
         for (RefPtr ancestor = node->parentOrShadowHostNode(); ancestor; ancestor = ancestor->parentOrShadowHostNode())
             ancestors.append(ancestor.get());
-        if (auto* window = node->document().domWindow())
+        if (auto* window = node->document().window())
             ancestors.append(window);
     }
 
@@ -1363,7 +1367,7 @@ void InspectorDOMAgent::setSearchingForNode(Inspector::Protocol::ErrorString& er
 
     protectedOverlay()->didSetSearchingForNode(m_searchingForNode);
 
-    if (InspectorClient* client = m_inspectedPage->inspectorController().inspectorClient())
+    if (InspectorBackendClient* client = m_inspectedPage->inspectorController().inspectorBackendClient())
         client->elementSelectionChanged(m_searchingForNode);
 }
 
@@ -1537,14 +1541,14 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(co
         auto isInUserAgentShadowTree = descendantElement->isInUserAgentShadowTree();
         auto pseudoId = descendantElement->pseudoId();
 
-        for (const auto* selector = selectorList->first(); selector; selector = CSSSelectorList::next(selector)) {
-            if (isInUserAgentShadowTree && (selector->match() != CSSSelector::Match::PseudoElement || selector->value() != descendantElement->userAgentPart()))
+        for (auto& selector : *selectorList) {
+            if (isInUserAgentShadowTree && (selector.match() != CSSSelector::Match::PseudoElement || selector.value() != descendantElement->userAgentPart()))
                 continue;
 
             SelectorChecker::CheckingContext context(SelectorChecker::Mode::ResolvingStyle);
             context.pseudoId = pseudoId;
 
-            if (selectorChecker.match(*selector, *descendantElement, context)) {
+            if (selectorChecker.match(selector, *descendantElement, context)) {
                 if (seenNodes.add(*descendantElement))
                     nodeList.append(*descendantElement);
             }
@@ -1980,7 +1984,7 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
     case Node::CDATA_SECTION_NODE:
         nodeValue = node->nodeValue();
         if (nodeValue.length() > maxTextSize)
-            nodeValue = makeString(StringView(nodeValue).left(maxTextSize), horizontalEllipsisUChar);
+            nodeValue = makeString(StringView(nodeValue).left(maxTextSize), horizontalEllipsisUTF16);
         break;
     case Node::ATTRIBUTE_NODE:
         localName = node->localName();
@@ -2136,7 +2140,7 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
         if (auto* scriptExecutionContext = eventTarget.scriptExecutionContext())
             document = dynamicDowncast<Document>(*scriptExecutionContext);
         else if (RefPtr node = dynamicDowncast<Node>(eventTarget))
-            document = &node->document();
+            document = node->document();
 
         JSC::JSObject* handlerObject = nullptr;
         JSC::JSGlobalObject* globalObject = nullptr;
@@ -3168,6 +3172,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setAllowEditingUserA
     return { };
 }
 
+#if ENABLE(VIDEO)
 static Inspector::Protocol::DOM::VideoProjectionMetadataKind videoProjectionMetadataKind(VideoProjectionMetadataKind kind)
 {
     switch (kind) {
@@ -3189,6 +3194,7 @@ static Inspector::Protocol::DOM::VideoProjectionMetadataKind videoProjectionMeta
     ASSERT_NOT_REACHED();
     return Inspector::Protocol::DOM::VideoProjectionMetadataKind::Unknown;
 }
+#endif
 
 Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> InspectorDOMAgent::getMediaStats(Inspector::Protocol::DOM::NodeId nodeId)
 {
@@ -3228,7 +3234,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> In
         .release();
     stats->setViewport(WTFMove(viewportJSON));
 
-    if (RefPtr window = mediaElement->document().domWindow())
+    if (RefPtr window = mediaElement->document().window())
         stats->setDevicePixelRatio(window->devicePixelRatio());
 
     if (videoTrack) {

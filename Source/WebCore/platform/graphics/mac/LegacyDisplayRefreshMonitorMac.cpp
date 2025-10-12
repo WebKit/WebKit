@@ -54,9 +54,6 @@ void LegacyDisplayRefreshMonitorMac::stop()
 {
     DisplayRefreshMonitor::stop();
     LOG_WITH_STREAM(DisplayLink, stream << "LegacyDisplayRefreshMonitorMac::stop for dipslay " << displayID() << " destroying display link");
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    CVDisplayLinkRelease(m_displayLink);
-ALLOW_DEPRECATED_DECLARATIONS_END
     m_displayLink = nullptr;
 }
 
@@ -75,7 +72,7 @@ void LegacyDisplayRefreshMonitorMac::displayLinkCallbackFired()
 
 void LegacyDisplayRefreshMonitorMac::dispatchDisplayDidRefresh(const DisplayUpdate& displayUpdate)
 {
-    RunLoop::protectedMain()->dispatch([this, displayUpdate, protectedThis = Ref { *this }] {
+    RunLoop::mainSingleton().dispatch([this, displayUpdate, protectedThis = Ref { *this }] {
         if (m_displayLink)
             displayDidRefresh(displayUpdate);
     });
@@ -95,13 +92,15 @@ bool LegacyDisplayRefreshMonitorMac::ensureDisplayLink()
         return true;
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    auto error = CVDisplayLinkCreateWithCGDisplay(displayID(), &m_displayLink);
+    CVDisplayLinkRef displayLink = nullptr;
+    auto error = CVDisplayLinkCreateWithCGDisplay(displayID(), &displayLink);
 ALLOW_DEPRECATED_DECLARATIONS_END
     if (error)
         return false;
+    m_displayLink = adoptRef(displayLink);
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    error = CVDisplayLinkSetOutputCallback(m_displayLink, displayLinkCallback, this);
+    error = CVDisplayLinkSetOutputCallback(m_displayLink.get(), displayLinkCallback, this);
 ALLOW_DEPRECATED_DECLARATIONS_END
     if (error)
         return false;
@@ -120,13 +119,13 @@ bool LegacyDisplayRefreshMonitorMac::startNotificationMechanism()
         LOG_WITH_STREAM(DisplayLink, stream << "LegacyDisplayRefreshMonitorMac::startNotificationMechanism for display " << displayID() << " starting display link");
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        auto error = CVDisplayLinkStart(m_displayLink);
+        auto error = CVDisplayLinkStart(m_displayLink.get());
 ALLOW_DEPRECATED_DECLARATIONS_END
         if (error)
             return false;
         
         m_displayLinkIsActive = true;
-        m_currentUpdate = { 0, nominalFramesPerSecondFromDisplayLink(m_displayLink) };
+        m_currentUpdate = { 0, nominalFramesPerSecondFromDisplayLink(m_displayLink.get()) };
     }
 
     return true;
@@ -140,7 +139,7 @@ void LegacyDisplayRefreshMonitorMac::stopNotificationMechanism()
     if (m_displayLink) {
         LOG_WITH_STREAM(DisplayLink, stream << "LegacyDisplayRefreshMonitorMac::stopNotificationMechanism for display " << displayID() << " stopping display link");
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        CVDisplayLinkStop(m_displayLink);
+        CVDisplayLinkStop(m_displayLink.get());
 ALLOW_DEPRECATED_DECLARATIONS_END
     }
         
@@ -152,7 +151,7 @@ std::optional<FramesPerSecond> LegacyDisplayRefreshMonitorMac::displayNominalFra
     if (!ensureDisplayLink())
         return std::nullopt;
         
-    return nominalFramesPerSecondFromDisplayLink(m_displayLink);
+    return nominalFramesPerSecondFromDisplayLink(m_displayLink.get());
 }
 
 } // namespace WebCore

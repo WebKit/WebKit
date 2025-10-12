@@ -35,12 +35,17 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-void layoutWithFormattingContextForBox(const Layout::ElementBox& box, std::optional<LayoutUnit> widthConstraint, Layout::LayoutState& layoutState)
+void layoutWithFormattingContextForBox(const Layout::ElementBox& box, std::optional<LayoutUnit> widthConstraint, std::optional<LayoutUnit> heightConstraint, Layout::LayoutState& layoutState)
 {
     auto& renderer = downcast<RenderBox>(*box.rendererForIntegration());
 
     if (widthConstraint) {
         renderer.setOverridingBorderBoxLogicalWidth(*widthConstraint);
+        renderer.setNeedsLayout(MarkOnlyThis);
+    }
+
+    if (heightConstraint) {
+        renderer.setOverridingBorderBoxLogicalHeight(*heightConstraint);
         renderer.setNeedsLayout(MarkOnlyThis);
     }
 

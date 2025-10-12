@@ -7,6 +7,10 @@
 //   This test prints out the extension strings, configs and their attributes
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <gtest/gtest.h>
 
 #include "common/string_utils.h"
@@ -531,8 +535,7 @@ ANGLE_INSTANTIATE_TEST(EGLPrintEGLinfoTest,
                        ES2_VULKAN(),
                        ES3_VULKAN(),
                        ES32_VULKAN(),
-                       ES31_VULKAN_SWIFTSHADER(),
-                       ES32_EGL());
+                       ES31_VULKAN_SWIFTSHADER());
 
 // This test suite is not instantiated on some OSes.
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLPrintEGLinfoTest);

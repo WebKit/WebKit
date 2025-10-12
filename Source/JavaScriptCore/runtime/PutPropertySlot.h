@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
-#include "PropertySlot.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/PropertySlot.h>
 #include <wtf/Assertions.h>
 
 namespace JSC {

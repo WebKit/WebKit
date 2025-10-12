@@ -28,8 +28,8 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
-#include "HitTestResult.h"
-#include "Image.h"
+#include <WebCore/HitTestResult.h>
+#include <WebCore/Image.h>
 
 namespace WebCore {
 

@@ -452,8 +452,8 @@ TEST(WKWebsiteDataStore, SessionSetCount)
 {
     auto countSessionSets = [] {
         __block bool done = false;
-        __block size_t result = 0;
-        [[WKWebsiteDataStore defaultDataStore] _countNonDefaultSessionSets:^(size_t count) {
+        __block uint64_t result = 0;
+        [[WKWebsiteDataStore defaultDataStore] _countNonDefaultSessionSets:^(uint64_t count) {
             result = count;
             done = true;
         }];
@@ -508,7 +508,7 @@ TEST(WKWebsiteDataStore, ClearCustomDataStoreNoWebViews)
                     "Hello"_s);
                 break;
             case 2:
-                EXPECT_FALSE(strnstr(request.data(), "Cookie: a=b\r\n", request.size()));
+                EXPECT_FALSE(contains(request.span(), "Cookie: a=b\r\n"_span));
                 connection.send(
                     "HTTP/1.1 200 OK\r\n"
                     "Content-Length: 5\r\n"
@@ -1068,7 +1068,12 @@ static NSString *htmlStringForTotalQuotaRatioTest(uint64_t size, bool shouldPers
     </script>", size, shouldPersist ? "navigator.storage.persist()" : "new String('success')"];
 }
 
+// FIXME when rdar://154214201 is resolved.
+#if PLATFORM(IOS)
+TEST(WKWebsiteDataStoreConfiguration, DISABLED_TotalQuotaRatioWithPersistedDomain)
+#else
 TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatioWithPersistedDomain)
+#endif
 {
     done = false;
     receivedScriptMessage = false;

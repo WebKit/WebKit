@@ -67,7 +67,7 @@ struct MatchResultCache::Entry : CanMakeCheckedPtr<MatchResultCache::Entry> {
     }
 
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(Entry);
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(MatchResultCache);
 };
 
 MatchResultCache::MatchResultCache() = default;
@@ -146,7 +146,7 @@ const std::optional<CachedMatchResult> MatchResultCache::resultWithCurrentInline
     if (it == m_entries.end())
         return { };
 
-    auto& entry = *it->value;
+    auto& entry = it->value;
 
     auto* styledElement = dynamicDowncast<StyledElement>(element);
     RefPtr inlineStyle = styledElement ? styledElement->inlineStyle() : nullptr;
@@ -159,9 +159,9 @@ const std::optional<CachedMatchResult> MatchResultCache::resultWithCurrentInline
     auto changedProperties = computeAndUpdateChangedProperties(entry);
 
     return CachedMatchResult {
-        .unadjustedStyle = copy(entry.unadjustedStyle),
+        .unadjustedStyle = copy(entry->unadjustedStyle),
         .changedProperties = WTFMove(changedProperties),
-        .styleToUpdate = *entry.unadjustedStyle.style
+        .styleToUpdate = *entry->unadjustedStyle.style
     };
 }
 

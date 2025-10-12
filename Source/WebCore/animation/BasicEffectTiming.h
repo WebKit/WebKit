@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "AnimationEffectPhase.h"
-#include "WebAnimationTime.h"
+#include <WebCore/AnimationEffectPhase.h>
+#include <WebCore/WebAnimationTime.h>
 #include <wtf/Markable.h>
 #include <wtf/Seconds.h>
 

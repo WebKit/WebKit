@@ -4,84 +4,23 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-extensions-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  js weak maps
+info: bugzilla.mozilla.org/show_bug.cgi?id=547941
 esid: pending
+features: [host-gc-required]
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 547941;
-var summary = 'js weak maps';
-var actual = '';
-var expect = '';
 
-//-----------------------------------------------------------------------------
 test();
-//-----------------------------------------------------------------------------
 
 function test()
 {
-    printBugNumber(BUGNUMBER);
-    printStatus(summary);
-
-    var TestPassCount = 0;
-    var TestFailCount = 0;
-    var TestTodoCount = 0;
-
-    var TODO = 1;
-
-    function check(fun, todo) {
-        var thrown = null;
-        var success = false;
-        try {
-            success = fun();
-        } catch (x) {
-            thrown = x;
-        }
-
-        if (thrown)
-            success = false;
-
-        if (todo) {
-            TestTodoCount++;
-
-            if (success) {
-                var ex = new Error;
-                print ("=== TODO but PASSED? ===");
-                print (ex.stack);
-                print ("========================");
-            }
-
-            return;
-        }
-
-        if (success) {
-            TestPassCount++;
-        } else {
-            TestFailCount++;
-
-            var ex = new Error;
-            print ("=== FAILED ===");
-            print (ex.stack);
-            if (thrown) {
-                print ("    threw exception:");
-                print (thrown);
-            }
-            print ("==============");
-        }
+    function check(fun) {
+        assert.sameValue(fun(), true);
     }
 
-    function checkThrows(fun, todo) {
-        let thrown = false;
-        try {
-            fun();
-        } catch (x) {
-            thrown = true;
-        }
-
-        check(() => thrown, todo);
+    function checkThrows(fun) {
+        assert.throws(TypeError, fun);
     }
 
     var key = {};
@@ -120,8 +59,4 @@ function test()
     check(() => map.get(key) == undefined);
 
     checkThrows(() => map.set("non-object key", value));
-
-    print ("done");
-
-    assert.sameValue(0, TestFailCount, "weak map tests");
 }

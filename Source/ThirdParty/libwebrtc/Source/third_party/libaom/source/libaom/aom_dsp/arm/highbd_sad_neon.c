@@ -277,33 +277,6 @@ HBD_SAD_SKIP_WXH_LARGE_NEON(16, 64)
 HBD_SAD_SKIP_WXH_LARGE_NEON(64, 16)
 #endif  // !CONFIG_REALTIME_ONLY
 
-static inline uint32_t highbd_sad4xh_avg_neon(const uint8_t *src_ptr,
-                                              int src_stride,
-                                              const uint8_t *ref_ptr,
-                                              int ref_stride, int h,
-                                              const uint8_t *second_pred) {
-  const uint16_t *src16_ptr = CONVERT_TO_SHORTPTR(src_ptr);
-  const uint16_t *ref16_ptr = CONVERT_TO_SHORTPTR(ref_ptr);
-  const uint16_t *pred16_ptr = CONVERT_TO_SHORTPTR(second_pred);
-  uint32x4_t sum = vdupq_n_u32(0);
-
-  int i = h;
-  do {
-    uint16x4_t s = vld1_u16(src16_ptr);
-    uint16x4_t r = vld1_u16(ref16_ptr);
-    uint16x4_t p = vld1_u16(pred16_ptr);
-
-    uint16x4_t avg = vrhadd_u16(r, p);
-    sum = vabal_u16(sum, s, avg);
-
-    src16_ptr += src_stride;
-    ref16_ptr += ref_stride;
-    pred16_ptr += 4;
-  } while (--i != 0);
-
-  return horizontal_add_u32x4(sum);
-}
-
 static inline uint32_t highbd_sad8xh_avg_neon(const uint8_t *src_ptr,
                                               int src_stride,
                                               const uint8_t *ref_ptr,
@@ -464,10 +437,6 @@ static inline unsigned int highbd_sad32xh_avg_neon(const uint8_t *src_ptr,
                                       second_pred);                           \
   }
 
-HBD_SAD_WXH_AVG_NEON(4, 4)
-HBD_SAD_WXH_AVG_NEON(4, 8)
-
-HBD_SAD_WXH_AVG_NEON(8, 4)
 HBD_SAD_WXH_AVG_NEON(8, 8)
 HBD_SAD_WXH_AVG_NEON(8, 16)
 
@@ -487,11 +456,8 @@ HBD_SAD_WXH_AVG_NEON(128, 64)
 HBD_SAD_WXH_AVG_NEON(128, 128)
 
 #if !CONFIG_REALTIME_ONLY
-HBD_SAD_WXH_AVG_NEON(4, 16)
-
 HBD_SAD_WXH_AVG_NEON(8, 32)
 
-HBD_SAD_WXH_AVG_NEON(16, 4)
 HBD_SAD_WXH_AVG_NEON(16, 64)
 
 HBD_SAD_WXH_AVG_NEON(32, 8)

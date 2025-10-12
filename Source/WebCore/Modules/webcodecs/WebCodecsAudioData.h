@@ -28,10 +28,10 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include "AudioSampleFormat.h"
-#include "BufferSource.h"
-#include "ContextDestructionObserver.h"
-#include "WebCodecsAudioInternalData.h"
+#include <WebCore/AudioSampleFormat.h>
+#include <WebCore/BufferSource.h>
+#include <WebCore/ContextDestructionObserver.h>
+#include <WebCore/WebCodecsAudioInternalData.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

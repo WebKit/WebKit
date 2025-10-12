@@ -9,6 +9,7 @@
 <script>
 promise_test(async (t) => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+    t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
     let recorder = new MediaRecorder(stream, { bitsPerSecond : 1000000 });
     assert_equals(recorder.audioBitsPerSecond, 100000, "test 1");
@@ -22,6 +23,7 @@ promise_test(async (t) => {
 
 promise_test(async (t) => {
     const stream = await navigator.mediaDevices.getUserMedia({ video : true });
+    t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
     let recorder = new MediaRecorder(stream, { bitsPerSecond : 1000000 });
     assert_equals(recorder.videoBitsPerSecond, 900000, "test 1");
@@ -35,6 +37,7 @@ promise_test(async (t) => {
 
 promise_test(async (t) => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio : true, video : true });
+    t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
     let recorder = new MediaRecorder(stream, { bitsPerSecond : 1000000 });
     assert_equals(recorder.audioBitsPerSecond, 100000, "test 1");

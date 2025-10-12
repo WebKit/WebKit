@@ -457,7 +457,13 @@ void get_layer_resolution(const int width_org, const int height_org,
                           int *height_out) {
   int w, h;
 
-  if (width_out == NULL || height_out == NULL || den == 0) return;
+  if (width_out == NULL || height_out == NULL) return;
+
+  if (den == 0 || num == 0) {
+    *width_out = width_org;
+    *height_out = height_org;
+    return;
+  }
 
   w = width_org * num / den;
   h = height_org * num / den;

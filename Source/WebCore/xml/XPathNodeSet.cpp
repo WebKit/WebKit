@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
+ * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,13 +40,13 @@ namespace XPath {
 // assume that we aren't dealing with documents that we cannot even traverse in reasonable time).
 const unsigned traversalSortCutoff = 10000;
 
-static inline Node* parentWithDepth(unsigned depth, const Vector<Node*>& parents)
+static inline Node* parentWithDepth(unsigned depth, const Vector<RefPtr<Node>>& parents)
 {
     ASSERT(parents.size() >= depth + 1);
-    return parents[parents.size() - 1 - depth];
+    return parents[parents.size() - 1 - depth].get();
 }
 
-static void sortBlock(unsigned from, unsigned to, Vector<Vector<Node*>>& parentMatrix, bool mayContainAttributeNodes)
+static void sortBlock(unsigned from, unsigned to, Vector<Vector<RefPtr<Node>>>& parentMatrix, bool mayContainAttributeNodes)
 {
     ASSERT(from + 1 < to); // Should not call this function with less that two nodes to sort.
     unsigned minDepth = UINT_MAX;
@@ -57,7 +58,7 @@ static void sortBlock(unsigned from, unsigned to, Vector<Vector<Node*>>& parentM
     
     // Find the common ancestor.
     unsigned commonAncestorDepth = minDepth;
-    Node* commonAncestor;
+    RefPtr<Node> commonAncestor;
     while (true) {
         commonAncestor = parentWithDepth(commonAncestorDepth, parentMatrix[from]);
         if (commonAncestorDepth == 0)
@@ -96,8 +97,7 @@ static void sortBlock(unsigned from, unsigned to, Vector<Vector<Node*>>& parentM
         unsigned sortedEnd = from;
         // FIXME: namespace nodes are not implemented.
         for (unsigned i = sortedEnd; i < to; ++i) {
-            auto* node = parentMatrix[i][0];
-            if (auto* attr = dynamicDowncast<Attr>(*node); attr && attr->ownerElement() == commonAncestor)
+            if (RefPtr attr = dynamicDowncast<Attr>(*parentMatrix[i][0]); attr && attr->ownerElement() == commonAncestor)
                 parentMatrix[i].swap(parentMatrix[sortedEnd++]);
         }
         if (sortedEnd != from) {
@@ -115,11 +115,11 @@ static void sortBlock(unsigned from, unsigned to, Vector<Vector<Node*>>& parentM
 
     unsigned previousGroupEnd = from;
     unsigned groupEnd = from;
-    for (Node* n = commonAncestor->firstChild(); n; n = n->nextSibling()) {
+    for (RefPtr node = commonAncestor->firstChild(); node; node = node->nextSibling()) {
         // If parentNodes contains the node, perform a linear search to move its children in the node-set to the beginning.
-        if (parentNodes.contains(n)) {
+        if (parentNodes.contains(node)) {
             for (unsigned i = groupEnd; i < to; ++i)
-                if (parentWithDepth(commonAncestorDepth + 1, parentMatrix[i]) == n)
+                if (parentWithDepth(commonAncestorDepth + 1, parentMatrix[i]) == node)
                     parentMatrix[i].swap(parentMatrix[groupEnd++]);
 
             if (groupEnd - previousGroupEnd > 1)
@@ -128,7 +128,7 @@ static void sortBlock(unsigned from, unsigned to, Vector<Vector<Node*>>& parentM
             ASSERT(previousGroupEnd != groupEnd);
             previousGroupEnd = groupEnd;
 #if ASSERT_ENABLED
-            parentNodes.remove(n);
+            parentNodes.remove(node);
 #endif
         }
     }
@@ -154,12 +154,12 @@ void NodeSet::sort() const
 
     bool containsAttributeNodes = false;
     
-    Vector<Vector<Node*>> parentMatrix(nodeCount);
+    Vector<Vector<RefPtr<Node>>> parentMatrix(nodeCount);
     for (unsigned i = 0; i < nodeCount; ++i) {
-        Vector<Node*>& parentsVector = parentMatrix[i];
-        auto* node = m_nodes[i].get();
+        Vector<RefPtr<Node>>& parentsVector = parentMatrix[i];
+        RefPtr node = m_nodes[i].get();
         parentsVector.append(node);
-        if (auto* attr = dynamicDowncast<Attr>(*node)) {
+        if (RefPtr attr = dynamicDowncast<Attr>(*node)) {
             node = attr->ownerElement();
             parentsVector.append(node);
             containsAttributeNodes = true;
@@ -181,13 +181,13 @@ void NodeSet::sort() const
 
 static Node* findRootNode(Node* node)
 {
-    if (auto* attr = dynamicDowncast<Attr>(*node))
+    if (RefPtr attr = dynamicDowncast<Attr>(*node))
         node = attr->ownerElement();
     if (node->isConnected())
         node = &node->document();
     else {
-        while (Node* parent = node->parentNode())
-            node = parent;
+        while (RefPtr parent = node->parentNode())
+            node = parent.get();
     }
     return node;
 }
@@ -201,16 +201,16 @@ void NodeSet::traversalSort() const
     ASSERT(nodeCount > 1);
     for (auto& node : m_nodes) {
         nodes.add(node.get());
-        if (node->isAttributeNode())
+        if (is<Attr>(node))
             containsAttributeNodes = true;
     }
 
     Vector<RefPtr<Node>> sortedNodes;
     sortedNodes.reserveInitialCapacity(nodeCount);
 
-    for (Node* node = findRootNode(m_nodes.first().get()); node; node = NodeTraversal::next(*node)) {
+    for (RefPtr node = findRootNode(m_nodes.first().get()); node; node = NodeTraversal::next(*node)) {
         if (nodes.contains(node))
-            sortedNodes.append(node);
+            sortedNodes.append(node.get());
 
         if (!containsAttributeNodes)
             continue;

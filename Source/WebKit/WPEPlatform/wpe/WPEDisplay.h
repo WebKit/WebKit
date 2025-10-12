@@ -33,6 +33,7 @@
 #include <glib-object.h>
 #include <wpe/WPEBufferDMABufFormats.h>
 #include <wpe/WPEClipboard.h>
+#include <wpe/WPEDRMDevice.h>
 #include <wpe/WPEDefines.h>
 #include <wpe/WPEGamepadManager.h>
 #include <wpe/WPEInputMethodContext.h>
@@ -70,8 +71,7 @@ struct _WPEDisplayClass
     guint                   (* get_n_screens)                 (WPEDisplay *display);
     WPEScreen              *(* get_screen)                    (WPEDisplay *display,
                                                                guint       index);
-    const char             *(* get_drm_device)                (WPEDisplay *display);
-    const char             *(* get_drm_render_node)           (WPEDisplay *display);
+    WPEDRMDevice           *(* get_drm_device)                (WPEDisplay *display);
     gboolean                (* use_explicit_sync)             (WPEDisplay *display);
     WPEInputMethodContext  *(* create_input_method_context)   (WPEDisplay *display,
                                                                WPEView    *view);
@@ -112,8 +112,7 @@ WPE_API void                     wpe_display_screen_added                  (WPED
                                                                             WPEScreen *screen);
 WPE_API void                     wpe_display_screen_removed                (WPEDisplay *display,
                                                                             WPEScreen *screen);
-WPE_API const char              *wpe_display_get_drm_device                (WPEDisplay *display);
-WPE_API const char              *wpe_display_get_drm_render_node           (WPEDisplay *display);
+WPE_API WPEDRMDevice            *wpe_display_get_drm_device                (WPEDisplay *display);
 WPE_API gboolean                 wpe_display_use_explicit_sync             (WPEDisplay *display);
 
 WPE_API WPESettings             *wpe_display_get_settings                  (WPEDisplay *display);

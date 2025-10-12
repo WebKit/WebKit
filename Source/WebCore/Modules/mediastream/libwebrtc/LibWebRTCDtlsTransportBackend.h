@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,37 +27,28 @@
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "LibWebRTCMacros.h"
+#include "LibWebRTCRefWrappers.h"
 #include "RTCDtlsTransportBackend.h"
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
-
-ALLOW_UNUSED_PARAMETERS_BEGIN
-
-#include <webrtc/api/scoped_refptr.h>
-
-ALLOW_UNUSED_PARAMETERS_END
-
-namespace webrtc {
-class DtlsTransportInterface;
-}
 
 namespace WebCore {
 class LibWebRTCDtlsTransportBackendObserver;
 class LibWebRTCDtlsTransportBackend final : public RTCDtlsTransportBackend, public CanMakeWeakPtr<LibWebRTCDtlsTransportBackend> {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCDtlsTransportBackend);
 public:
-    explicit LibWebRTCDtlsTransportBackend(rtc::scoped_refptr<webrtc::DtlsTransportInterface>&&);
+    explicit LibWebRTCDtlsTransportBackend(Ref<webrtc::DtlsTransportInterface>&&);
     ~LibWebRTCDtlsTransportBackend();
 
 private:
     // RTCDtlsTransportBackend
-    const void* backend() const final { return m_backend.get(); }
+    const void* backend() const final { return m_backend.ptr(); }
     UniqueRef<RTCIceTransportBackend> iceTransportBackend() final;
     void registerClient(RTCDtlsTransportBackendClient&) final;
     void unregisterClient() final;
 
-    rtc::scoped_refptr<webrtc::DtlsTransportInterface> m_backend;
-    RefPtr<LibWebRTCDtlsTransportBackendObserver> m_observer;
+    const Ref<webrtc::DtlsTransportInterface> m_backend;
+    const RefPtr<LibWebRTCDtlsTransportBackendObserver> m_observer;
 };
 
 } // namespace WebCore

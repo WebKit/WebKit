@@ -10,6 +10,10 @@
 #ifndef ANGLE_TRACE_INTERPRETER_H_
 #define ANGLE_TRACE_INTERPRETER_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "common/frame_capture_utils.h"
 #include "frame_capture_test_utils.h"
 #include "traces_export.h"

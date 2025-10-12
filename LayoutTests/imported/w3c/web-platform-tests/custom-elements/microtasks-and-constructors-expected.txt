@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: NotSupportedError: A newly constructed custom element must not have attributes
 
 PASS Microtasks evaluate immediately when the stack is empty inside the parser
 PASS Microtasks evaluate immediately when the stack is empty inside the parser, causing the checks on no attributes to fail

@@ -30,10 +30,10 @@
 
 #pragma once
 
-#include "FloatRect.h"
-#include "IntRect.h"
-#include "LayoutPoint.h"
-#include "LengthBox.h"
+#include <WebCore/BoxExtents.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/LayoutPoint.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
 

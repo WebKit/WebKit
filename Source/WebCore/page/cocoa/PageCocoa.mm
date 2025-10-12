@@ -58,6 +58,7 @@ void Page::platformInitialize()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
 #if ENABLE(TREE_DEBUGGING)
+        PAL::registerNotifyCallback("com.apple.WebKit.dumpAccessibilityTreeToStderr"_s, printAccessibilityTreeForLiveDocuments);
         PAL::registerNotifyCallback("com.apple.WebKit.showRenderTree"_s, printRenderTreeForLiveDocuments);
         PAL::registerNotifyCallback("com.apple.WebKit.showLayerTree"_s, printLayerTreeForLiveDocuments);
         PAL::registerNotifyCallback("com.apple.WebKit.showGraphicsLayerTree"_s, printGraphicsLayerTreeForLiveDocuments);
@@ -95,7 +96,7 @@ void Page::addSchedulePair(Ref<SchedulePair>&& pair)
         m_scheduledRunLoopPairs = makeUnique<SchedulePairHashSet>();
     m_scheduledRunLoopPairs->add(pair.ptr());
 
-    for (RefPtr frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+    for (RefPtr frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -116,7 +117,7 @@ void Page::removeSchedulePair(Ref<SchedulePair>&& pair)
 
     m_scheduledRunLoopPairs->remove(pair.ptr());
 
-    for (RefPtr frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+    for (RefPtr frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -135,7 +136,8 @@ const String& Page::presentingApplicationBundleIdentifier() const
 void Page::setPresentingApplicationBundleIdentifier(String&& bundleIdentifier)
 {
     m_presentingApplicationBundleIdentifier = WTFMove(bundleIdentifier);
-    PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary();
+    if (RefPtr manager = mediaSessionManager())
+        manager->updateNowPlayingInfoIfNecessary();
 }
 
 } // namespace WebCore

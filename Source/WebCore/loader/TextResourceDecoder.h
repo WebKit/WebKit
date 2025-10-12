@@ -45,13 +45,17 @@ public:
         EncodingFromParentFrame
     };
 
+    enum ContentType { PlainText, HTML, XML, CSS }; // PlainText only checks for BOM.
+
     WEBCORE_EXPORT static Ref<TextResourceDecoder> create(const String& mimeType, const PAL::TextEncoding& defaultEncoding = { }, bool usesEncodingDetector = false);
+    WEBCORE_EXPORT static Ref<TextResourceDecoder> create(ContentType, const PAL::TextEncoding&, bool usesEncodingDetector);
     WEBCORE_EXPORT ~TextResourceDecoder();
 
     static String textFromUTF8(std::span<const uint8_t>);
 
     void setEncoding(const PAL::TextEncoding&, EncodingSource);
     const PAL::TextEncoding& encoding() const { return m_encoding; }
+    ContentType contentType() const { return m_contentType; }
     const PAL::TextEncoding* encodingForURLParsing();
 
     bool hasEqualEncodingForCharset(const String& charset) const;
@@ -67,10 +71,11 @@ public:
 
     void setAlwaysUseUTF8() { ASSERT(m_encoding.name() == "UTF-8"_s); m_alwaysUseUTF8 = true; }
 
-private:
-    TextResourceDecoder(const String& mimeType, const PAL::TextEncoding& defaultEncoding, bool usesEncodingDetector);
+    bool usesEncodingDetector() const { return m_usesEncodingDetector; }
 
-    enum ContentType { PlainText, HTML, XML, CSS }; // PlainText only checks for BOM.
+private:
+    TextResourceDecoder(ContentType, const PAL::TextEncoding&, bool usesEncodingDetector);
+
     static ContentType determineContentType(const String& mimeType);
     static const PAL::TextEncoding& defaultEncoding(ContentType, const PAL::TextEncoding& defaultEncoding);
 

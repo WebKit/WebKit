@@ -56,7 +56,7 @@ class NotifierInterface {
 
 // Base class for sources. A MediaStreamTrack has an underlying source that
 // provides media. A source can be shared by multiple tracks.
-class RTC_EXPORT MediaSourceInterface : public webrtc::RefCountInterface,
+class RTC_EXPORT MediaSourceInterface : public RefCountInterface,
                                         public NotifierInterface {
  public:
   enum SourceState { kInitializing, kLive, kEnded, kMuted };
@@ -71,7 +71,7 @@ class RTC_EXPORT MediaSourceInterface : public webrtc::RefCountInterface,
 
 // C++ version of MediaStreamTrack.
 // See: https://www.w3.org/TR/mediacapture-streams/#mediastreamtrack
-class RTC_EXPORT MediaStreamTrackInterface : public webrtc::RefCountInterface,
+class RTC_EXPORT MediaStreamTrackInterface : public RefCountInterface,
                                              public NotifierInterface {
  public:
   enum TrackState {
@@ -106,12 +106,12 @@ class RTC_EXPORT MediaStreamTrackInterface : public webrtc::RefCountInterface,
 // VideoTrackSourceInterface is a reference counted source used for
 // VideoTracks. The same source can be used by multiple VideoTracks.
 // VideoTrackSourceInterface is designed to be invoked on the signaling thread
-// except for rtc::VideoSourceInterface<VideoFrame> methods that will be invoked
-// on the worker thread via a VideoTrack. A custom implementation of a source
-// can inherit AdaptedVideoTrackSource instead of directly implementing this
-// interface.
+// except for VideoSourceInterface<VideoFrame> methods that will be
+// invoked on the worker thread via a VideoTrack. A custom implementation of a
+// source can inherit AdaptedVideoTrackSource instead of directly implementing
+// this interface.
 class VideoTrackSourceInterface : public MediaSourceInterface,
-                                  public rtc::VideoSourceInterface<VideoFrame> {
+                                  public VideoSourceInterface<VideoFrame> {
  public:
   struct Stats {
     // Original size of captured frame, before video adaptation.
@@ -150,32 +150,31 @@ class VideoTrackSourceInterface : public MediaSourceInterface,
   // a key frame to be generated from the source. The sink will be
   // invoked from a decoder queue.
   virtual void AddEncodedSink(
-      rtc::VideoSinkInterface<RecordableEncodedFrame>* sink) = 0;
+      VideoSinkInterface<RecordableEncodedFrame>* sink) = 0;
 
   // Removes an encoded video sink from the source.
   virtual void RemoveEncodedSink(
-      rtc::VideoSinkInterface<RecordableEncodedFrame>* sink) = 0;
+      VideoSinkInterface<RecordableEncodedFrame>* sink) = 0;
 
   // Notify about constraints set on the source. The information eventually gets
   // routed to attached sinks via VideoSinkInterface<>::OnConstraintsChanged.
   // The call is expected to happen on the network thread.
   // TODO(crbug/1255737): make pure virtual once downstream project adapts.
   virtual void ProcessConstraints(
-      const webrtc::VideoTrackSourceConstraints& /* constraints */) {}
+      const VideoTrackSourceConstraints& /* constraints */) {}
 
  protected:
   ~VideoTrackSourceInterface() override = default;
 };
 
 // VideoTrackInterface is designed to be invoked on the signaling thread except
-// for rtc::VideoSourceInterface<VideoFrame> methods that must be invoked
+// for VideoSourceInterface<VideoFrame> methods that must be invoked
 // on the worker thread.
 // PeerConnectionFactory::CreateVideoTrack can be used for creating a VideoTrack
 // that ensures thread safety and that all methods are called on the right
 // thread.
-class RTC_EXPORT VideoTrackInterface
-    : public MediaStreamTrackInterface,
-      public rtc::VideoSourceInterface<VideoFrame> {
+class RTC_EXPORT VideoTrackInterface : public MediaStreamTrackInterface,
+                                       public VideoSourceInterface<VideoFrame> {
  public:
   // Video track content hint, used to override the source is_screencast
   // property.
@@ -184,9 +183,9 @@ class RTC_EXPORT VideoTrackInterface
 
   // Register a video sink for this track. Used to connect the track to the
   // underlying video engine.
-  void AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* /* sink */,
-                       const rtc::VideoSinkWants& /* wants */) override {}
-  void RemoveSink(rtc::VideoSinkInterface<VideoFrame>* /* sink */) override {}
+  void AddOrUpdateSink(VideoSinkInterface<VideoFrame>* /* sink */,
+                       const VideoSinkWants& /* wants */) override {}
+  void RemoveSink(VideoSinkInterface<VideoFrame>* /* sink */) override {}
 
   virtual VideoTrackSourceInterface* GetSource() const = 0;
 
@@ -211,7 +210,7 @@ class AudioTrackSinkInterface {
   // In this method, `absolute_capture_timestamp_ms`, when available, is
   // supposed to deliver the timestamp when this audio frame was originally
   // captured. This timestamp MUST be based on the same clock as
-  // rtc::TimeMillis().
+  // TimeMillis().
   virtual void OnData(
       const void* audio_data,
       int bits_per_sample,
@@ -265,12 +264,12 @@ class RTC_EXPORT AudioSourceInterface : public MediaSourceInterface {
   // Returns options for the AudioSource.
   // (for some of the settings this approach is broken, e.g. setting
   // audio network adaptation on the source is the wrong layer of abstraction).
-  virtual const cricket::AudioOptions options() const;
+  virtual const AudioOptions options() const;
 };
 
 // Interface of the audio processor used by the audio track to collect
 // statistics.
-class AudioProcessorInterface : public webrtc::RefCountInterface {
+class AudioProcessorInterface : public RefCountInterface {
  public:
   struct AudioProcessorStatistics {
     bool typing_noise_detected = false;
@@ -307,14 +306,14 @@ class RTC_EXPORT AudioTrackInterface : public MediaStreamTrackInterface {
   // Get the audio processor used by the audio track. Return null if the track
   // does not have any processor.
   // TODO(deadbeef): Make the interface pure virtual.
-  virtual rtc::scoped_refptr<AudioProcessorInterface> GetAudioProcessor();
+  virtual scoped_refptr<AudioProcessorInterface> GetAudioProcessor();
 
  protected:
   ~AudioTrackInterface() override = default;
 };
 
-typedef std::vector<rtc::scoped_refptr<AudioTrackInterface> > AudioTrackVector;
-typedef std::vector<rtc::scoped_refptr<VideoTrackInterface> > VideoTrackVector;
+typedef std::vector<scoped_refptr<AudioTrackInterface> > AudioTrackVector;
+typedef std::vector<scoped_refptr<VideoTrackInterface> > VideoTrackVector;
 
 // C++ version of https://www.w3.org/TR/mediacapture-streams/#mediastream.
 //
@@ -324,43 +323,41 @@ typedef std::vector<rtc::scoped_refptr<VideoTrackInterface> > VideoTrackVector;
 // must be pushed down.
 //
 // Thus, this interface acts as simply a container for tracks.
-class MediaStreamInterface : public webrtc::RefCountInterface,
+class MediaStreamInterface : public RefCountInterface,
                              public NotifierInterface {
  public:
   virtual std::string id() const = 0;
 
   virtual AudioTrackVector GetAudioTracks() = 0;
   virtual VideoTrackVector GetVideoTracks() = 0;
-  virtual rtc::scoped_refptr<AudioTrackInterface> FindAudioTrack(
+  virtual scoped_refptr<AudioTrackInterface> FindAudioTrack(
       const std::string& track_id) = 0;
-  virtual rtc::scoped_refptr<VideoTrackInterface> FindVideoTrack(
+  virtual scoped_refptr<VideoTrackInterface> FindVideoTrack(
       const std::string& track_id) = 0;
 
   // Takes ownership of added tracks.
   // Note: Default implementations are for avoiding link time errors in
   // implementations that mock this API.
   // TODO(bugs.webrtc.org/13980): Remove default implementations.
-  virtual bool AddTrack(rtc::scoped_refptr<AudioTrackInterface> /* track */) {
+  virtual bool AddTrack(webrtc::scoped_refptr<AudioTrackInterface> /* track */) {
 #if !defined(WEBRTC_WEBKIT_BUILD)
     RTC_CHECK_NOTREACHED();
 #endif
     return false;
   }
-  virtual bool AddTrack(rtc::scoped_refptr<VideoTrackInterface> /* track */) {
+  virtual bool AddTrack(scoped_refptr<VideoTrackInterface> /* track */) {
 #if !defined(WEBRTC_WEBKIT_BUILD)
     RTC_CHECK_NOTREACHED();
 #endif
     return false;
   }
-  virtual bool RemoveTrack(
-      rtc::scoped_refptr<AudioTrackInterface> /* track */) {
+  virtual bool RemoveTrack(scoped_refptr<AudioTrackInterface> /* track */) {
 #if !defined(WEBRTC_WEBKIT_BUILD)
     RTC_CHECK_NOTREACHED();
 #endif
     return false;
   }
-  virtual bool RemoveTrack(
-      rtc::scoped_refptr<VideoTrackInterface> /* track */) {
+  virtual bool RemoveTrack(scoped_refptr<VideoTrackInterface> /* track */) {
 #if !defined(WEBRTC_WEBKIT_BUILD)
     RTC_CHECK_NOTREACHED();
 #endif

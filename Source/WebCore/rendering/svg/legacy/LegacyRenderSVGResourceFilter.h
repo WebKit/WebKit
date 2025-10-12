@@ -26,7 +26,7 @@
 #include "FilterResults.h"
 #include "GraphicsContextSwitcher.h"
 #include "LegacyRenderSVGResourceContainer.h"
-#include "SVGFilter.h"
+#include "SVGFilterRenderer.h"
 #include "SVGUnitTypes.h"
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -44,7 +44,7 @@ public:
 
     FilterData() = default;
 
-    RefPtr<SVGFilter> filter;
+    RefPtr<SVGFilterRenderer> filter;
 
     std::unique_ptr<GraphicsContextSwitcher> targetSwitcher;
     FloatRect sourceImageRect;
@@ -87,7 +87,7 @@ private:
 
     ASCIILiteral renderName() const override { return "RenderSVGResourceFilter"_s; }
 
-    UncheckedKeyHashMap<SingleThreadWeakRef<RenderObject>, std::unique_ptr<FilterData>> m_rendererFilterDataMap;
+    HashMap<SingleThreadWeakRef<RenderObject>, std::unique_ptr<FilterData>> m_rendererFilterDataMap;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, FilterData::FilterDataState);

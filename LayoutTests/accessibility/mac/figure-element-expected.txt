@@ -24,23 +24,23 @@ PASS: !titleUIElement === true
 Test figure with figcaption element.
 figure4 AXRole: AXGroup
 figure4 AXRoleDescription: figure
-figure4 AXDescription: Figcaption element
+figure4 AXDescription:
 figure4 customContent:
-PASS: titleUIElement.isEqual(figureCaption) === true
+PASS: !titleUIElement === true
 
 Test figure with figcaption element and title attribute.
 figure5 AXRole: AXGroup
 figure5 AXRoleDescription: figure
-figure5 AXDescription: Figcaption element
+figure5 AXDescription: title attribute
 figure5 customContent:
-PASS: titleUIElement.isEqual(figureCaption) === true
+PASS: !titleUIElement === true
 
 Test display:contents figure with figcaption element.
 figure6 AXRole: AXGroup
 figure6 AXRoleDescription: figure
-figure6 AXDescription: Figcaption element (display:contents)
+figure6 AXDescription:
 figure6 customContent:
-PASS: titleUIElement.isEqual(figureCaption) === true
+PASS: !titleUIElement === true
 
 
 PASS successfullyParsed is true

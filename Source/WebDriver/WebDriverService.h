@@ -175,7 +175,7 @@ private:
 
     HTTPServer m_server;
 #if ENABLE(WEBDRIVER_BIDI)
-    Ref<WebSocketServer> m_bidiServer;
+    const Ref<WebSocketServer> m_bidiServer;
     SessionHost::BrowserTerminatedObserver m_browserTerminatedObserver;
 #endif
     RefPtr<Session> m_session;

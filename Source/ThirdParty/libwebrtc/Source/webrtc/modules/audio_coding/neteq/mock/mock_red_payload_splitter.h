@@ -11,6 +11,7 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_RED_PAYLOAD_SPLITTER_H_
 #define MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_RED_PAYLOAD_SPLITTER_H_
 
+#include "modules/audio_coding/neteq/packet.h"
 #include "modules/audio_coding/neteq/red_payload_splitter.h"
 #include "test/gmock.h"
 

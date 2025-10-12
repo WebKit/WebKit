@@ -47,6 +47,8 @@ class DOMMatrixReadOnly : public ScriptWrappable, public RefCounted<DOMMatrixRea
 public:
     static ExceptionOr<Ref<DOMMatrixReadOnly>> create(ScriptExecutionContext&, std::optional<Variant<String, Vector<double>>>&&);
 
+    ~DOMMatrixReadOnly();
+
     enum class Is2D : bool { No, Yes };
     static Ref<DOMMatrixReadOnly> create(const TransformationMatrix& matrix, Is2D is2D)
     {

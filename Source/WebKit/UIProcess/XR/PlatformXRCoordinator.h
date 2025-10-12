@@ -29,12 +29,17 @@
 
 #include "XRDeviceIdentifier.h"
 #include "XRDeviceInfo.h"
+#if USE(OPENXR)
+#include "XRDeviceLayer.h"
+#endif
 #include <WebCore/PlatformXR.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Function.h>
 
 namespace WebCore {
 class SecurityOriginData;
+
+struct XRCanvasConfiguration;
 }
 
 namespace WebKit {
@@ -62,13 +67,21 @@ public:
     using FeatureListCallback = CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>;
     virtual void requestPermissionOnSessionFeatures(WebPageProxy&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, const PlatformXR::Device::FeatureList& /* requiredFeaturesRequested */, const PlatformXR::Device::FeatureList& /* optionalFeaturesRequested */, FeatureListCallback&& completionHandler) { completionHandler(granted); }
 
+#if USE(OPENXR)
+    virtual void createLayerProjection(uint32_t width, uint32_t height, bool alpha) = 0;
+#endif
+
     // Session creation/termination.
-    virtual void startSession(WebPageProxy&, WeakPtr<PlatformXRCoordinatorSessionEventClient>&&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&) = 0;
+    virtual void startSession(WebPageProxy&, WeakPtr<PlatformXRCoordinatorSessionEventClient>&&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&, std::optional<WebCore::XRCanvasConfiguration>&&) = 0;
     virtual void endSessionIfExists(WebPageProxy&) = 0;
 
     // Session display loop.
     virtual void scheduleAnimationFrame(WebPageProxy&, std::optional<PlatformXR::RequestData>&&, PlatformXR::Device::RequestFrameCallback&&) = 0;
+#if USE(OPENXR)
+    virtual void submitFrame(WebPageProxy&, Vector<XRDeviceLayer>&&) = 0;
+#else
     virtual void submitFrame(WebPageProxy&) { }
+#endif
 };
 
 } // namespace WebKit

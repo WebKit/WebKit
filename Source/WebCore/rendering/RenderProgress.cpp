@@ -23,6 +23,7 @@
 
 #include "HTMLProgressElement.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderStyleInlines.h"
 #include "RenderTheme.h"
 #include <wtf/RefPtr.h>

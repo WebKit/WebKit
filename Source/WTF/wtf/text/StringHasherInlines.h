@@ -25,8 +25,6 @@
 #include <wtf/text/SuperFastHash.h>
 #include <wtf/text/WYHash.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 template<typename T, typename Converter>
@@ -47,14 +45,14 @@ constexpr unsigned StringHasher::computeLiteralHashAndMaskTop8Bits(const T (&cha
     constexpr unsigned characterCountWithoutNull = characterCount - 1;
 #if ENABLE(WYHASH_STRING_HASHER)
     if constexpr (characterCountWithoutNull <= smallStringThreshold)
-        return SuperFastHash::computeHashAndMaskTop8Bits<T>(std::span { characters, characterCountWithoutNull });
-    return WYHash::computeHashAndMaskTop8Bits<T>(std::span { characters, characterCountWithoutNull });
+        return SuperFastHash::computeHashAndMaskTop8Bits<T>(unsafeMakeSpan(characters, characterCountWithoutNull));
+    return WYHash::computeHashAndMaskTop8Bits<T>(unsafeMakeSpan(characters, characterCountWithoutNull));
 #else
-    return SuperFastHash::computeHashAndMaskTop8Bits<T>(std::span { characters, characterCountWithoutNull });
+    return SuperFastHash::computeHashAndMaskTop8Bits<T>(unsafeMakeSpan(characters, characterCountWithoutNull));
 #endif
 }
 
-inline void StringHasher::addCharacter(UChar character)
+inline void StringHasher::addCharacter(char16_t character)
 {
 #if ENABLE(WYHASH_STRING_HASHER)
     if (m_bufferSize == smallStringThreshold) {
@@ -65,12 +63,14 @@ inline void StringHasher::addCharacter(UChar character)
             m_see2 = m_seed;
             m_pendingHashValue = true;
         }
-        UChar* p = m_buffer.data();
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        char16_t* p = m_buffer.data();
         while (m_bufferSize >= 24) {
-            WYHash::consume24Characters(p, WYHash::Reader16Bit<UChar>::wyr8, m_seed, m_see1, m_see2);
+            WYHash::consume24Characters(p, WYHash::Reader16Bit<char16_t>::wyr8, m_seed, m_see1, m_see2);
             p += 24;
             m_bufferSize -= 24;
         }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         ASSERT(!m_bufferSize);
         m_numberOfProcessedCharacters += smallStringThreshold;
     }
@@ -88,14 +88,15 @@ inline unsigned StringHasher::hashWithTop8BitsMasked()
     unsigned hashValue;
     if (!m_pendingHashValue) {
         ASSERT(m_bufferSize <= smallStringThreshold);
-        hashValue = SuperFastHash::computeHashAndMaskTop8Bits<UChar>(std::span { m_buffer }.first(m_bufferSize));
+        hashValue = SuperFastHash::computeHashAndMaskTop8Bits<char16_t>(std::span { m_buffer }.first(m_bufferSize));
     } else {
         // This algorithm must stay in sync with WYHash::hash function.
-        auto wyr8 = WYHash::Reader16Bit<UChar>::wyr8;
+        auto wyr8 = WYHash::Reader16Bit<char16_t>::wyr8;
         unsigned i = m_bufferSize;
         if (i <= 24)
             m_seed ^= m_see1 ^ m_see2;
-        UChar* p = m_buffer.data();
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        char16_t* p = m_buffer.data();
         WYHash::handleGreaterThan8CharactersCase(p, i, wyr8, m_seed, m_see1, m_see2);
 
         uint64_t a = 0;
@@ -104,17 +105,18 @@ inline unsigned StringHasher::hashWithTop8BitsMasked()
             a = wyr8(p + i - 8);
             b = wyr8(p + i - 4);
         } else {
-            UChar tmp[8];
+            char16_t tmp[8];
             unsigned bufferIndex = smallStringThreshold - (8 - i);
             for (unsigned tmpIndex = 0; tmpIndex < 8; tmpIndex++) {
                 tmp[tmpIndex] = m_buffer[bufferIndex];
                 bufferIndex = (bufferIndex + 1) % smallStringThreshold;
             }
 
-            UChar* tmpPtr = tmp;
+            char16_t* tmpPtr = tmp;
             a = wyr8(tmpPtr);
             b = wyr8(tmpPtr + 4);
         }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         const uint64_t totalByteCount = (static_cast<uint64_t>(m_numberOfProcessedCharacters) + static_cast<uint64_t>(m_bufferSize)) << 1;
         hashValue = StringHasher::avoidZero(WYHash::handleEndCase(a, b, m_seed, totalByteCount) & StringHasher::maskHash);
@@ -136,5 +138,3 @@ inline unsigned StringHasher::hashWithTop8BitsMasked()
 } // namespace WTF
 
 using WTF::StringHasher;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

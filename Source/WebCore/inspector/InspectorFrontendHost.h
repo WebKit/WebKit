@@ -28,10 +28,10 @@
 
 #pragma once
 
-#include "ContextMenu.h"
-#include "ContextMenuProvider.h"
-#include "InspectorFrontendClient.h"
 #include <JavaScriptCore/JSCJSValue.h>
+#include <WebCore/ContextMenu.h>
+#include <WebCore/ContextMenuProvider.h>
+#include <WebCore/InspectorFrontendClient.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

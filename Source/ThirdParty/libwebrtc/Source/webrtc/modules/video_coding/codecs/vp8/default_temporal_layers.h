@@ -15,17 +15,20 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <array>
 #include <bitset>
 #include <deque>
-#include <limits>
 #include <memory>
 #include <optional>
 #include <set>
-#include <utility>
 #include <vector>
 
+#include "absl/container/inlined_vector.h"
+#include "absl/strings/string_view.h"
+#include "api/transport/rtp/dependency_descriptor.h"
+#include "api/video_codecs/video_encoder.h"
+#include "api/video_codecs/vp8_frame_buffer_controller.h"
 #include "api/video_codecs/vp8_frame_config.h"
-#include "api/video_codecs/vp8_temporal_layers.h"
 #include "modules/video_coding/codecs/vp8/include/temporal_layers_checker.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 

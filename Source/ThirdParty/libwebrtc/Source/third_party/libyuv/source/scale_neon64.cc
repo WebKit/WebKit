@@ -26,8 +26,8 @@ void ScaleRowDown2_NEON(const uint8_t* src_ptr,
                         uint8_t* dst,
                         int dst_width) {
   (void)src_stride;
-  asm volatile (
-      "1:                                        \n"
+  asm volatile(
+      "1:          \n"
       // load even pixels into v0, odd into v1
       "ld2         {v0.16b,v1.16b}, [%0], #32    \n"
       "subs        %w2, %w2, #16                 \n"  // 16 processed per loop
@@ -48,8 +48,8 @@ void ScaleRowDown2Linear_NEON(const uint8_t* src_ptr,
                               uint8_t* dst,
                               int dst_width) {
   (void)src_stride;
-  asm volatile (
-      "1:                                        \n"
+  asm volatile(
+      "1:          \n"
       // load even pixels into v0, odd into v1
       "ld2         {v0.16b,v1.16b}, [%0], #32    \n"
       "subs        %w2, %w2, #16                 \n"  // 16 processed per loop
@@ -70,10 +70,10 @@ void ScaleRowDown2Box_NEON(const uint8_t* src_ptr,
                            ptrdiff_t src_stride,
                            uint8_t* dst,
                            int dst_width) {
-  asm volatile (
+  asm volatile(
       // change the stride to row 2 pointer
       "add         %1, %1, %0                    \n"
-      "1:                                        \n"
+      "1:          \n"
       "ld1         {v0.16b, v1.16b}, [%0], #32   \n"  // load row 1 and post inc
       "ld1         {v2.16b, v3.16b}, [%1], #32   \n"  // load row 2 and post inc
       "subs        %w3, %w3, #16                 \n"  // 16 processed per loop
@@ -102,7 +102,7 @@ void ScaleRowDown4_NEON(const uint8_t* src_ptr,
                         int dst_width) {
   (void)src_stride;
   asm volatile(
-      "1:                                        \n"
+      "1:          \n"
       "ld4         {v0.16b,v1.16b,v2.16b,v3.16b}, [%0], #64 \n"  // src line 0
       "subs        %w2, %w2, #16                 \n"  // 16 processed per loop
       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
@@ -123,7 +123,7 @@ void ScaleRowDown4Box_NEON(const uint8_t* src_ptr,
   const uint8_t* src_ptr2 = src_ptr + src_stride * 2;
   const uint8_t* src_ptr3 = src_ptr + src_stride * 3;
   asm volatile(
-      "1:                                        \n"
+      "1:          \n"
       "ldp         q0, q4, [%0], #32             \n"  // load up 16x8
       "ldp         q1, q5, [%2], #32             \n"
       "ldp         q2, q6, [%3], #32             \n"
@@ -172,18 +172,18 @@ void ScaleRowDown34_NEON(const uint8_t* src_ptr,
                          int dst_width) {
   (void)src_stride;
   asm volatile(
-      "ld1         {v29.16b}, [%[kShuf34_0]]                        \n"
-      "ld1         {v30.16b}, [%[kShuf34_1]]                        \n"
-      "ld1         {v31.16b}, [%[kShuf34_2]]                        \n"
-      "1:                                                           \n"
+      "ld1         {v29.16b}, [%[kShuf34_0]]     \n"
+      "ld1         {v30.16b}, [%[kShuf34_1]]     \n"
+      "ld1         {v31.16b}, [%[kShuf34_2]]     \n"
+      "1:          \n"
       "ld1         {v0.16b,v1.16b,v2.16b,v3.16b}, [%[src_ptr]], #64 \n"
-      "subs        %w[width], %w[width], #48                        \n"
-      "tbl         v0.16b, {v0.16b, v1.16b}, v29.16b                \n"
-      "prfm        pldl1keep, [%[src_ptr], 448]                     \n"
-      "tbl         v1.16b, {v1.16b, v2.16b}, v30.16b                \n"
-      "tbl         v2.16b, {v2.16b, v3.16b}, v31.16b                \n"
-      "st1         {v0.16b,v1.16b,v2.16b}, [%[dst_ptr]], #48        \n"
-      "b.gt        1b                                               \n"
+      "subs        %w[width], %w[width], #48     \n"
+      "tbl         v0.16b, {v0.16b, v1.16b}, v29.16b \n"
+      "prfm        pldl1keep, [%[src_ptr], 448]  \n"
+      "tbl         v1.16b, {v1.16b, v2.16b}, v30.16b \n"
+      "tbl         v2.16b, {v2.16b, v3.16b}, v31.16b \n"
+      "st1         {v0.16b,v1.16b,v2.16b}, [%[dst_ptr]], #48 \n"
+      "b.gt        1b                            \n"
       : [src_ptr] "+r"(src_ptr),      // %[src_ptr]
         [dst_ptr] "+r"(dst_ptr),      // %[dst_ptr]
         [width] "+r"(dst_width)       // %[width]
@@ -201,7 +201,7 @@ void ScaleRowDown34_0_Box_NEON(const uint8_t* src_ptr,
       "movi        v24.16b, #3                   \n"
       "add         %3, %3, %0                    \n"
 
-      "1:                                        \n"
+      "1:          \n"
       "ld4         {v0.16b,v1.16b,v2.16b,v3.16b}, [%0], #64 \n"  // src line 0
       "ld4         {v4.16b,v5.16b,v6.16b,v7.16b}, [%3], #64 \n"  // src line 1
       "subs        %w2, %w2, #48                 \n"
@@ -279,7 +279,7 @@ void ScaleRowDown34_1_Box_NEON(const uint8_t* src_ptr,
       "movi        v20.16b, #3                   \n"
       "add         %3, %3, %0                    \n"
 
-      "1:                                        \n"
+      "1:          \n"
       "ld4         {v0.16b,v1.16b,v2.16b,v3.16b}, [%0], #64 \n"  // src line 0
       "ld4         {v4.16b,v5.16b,v6.16b,v7.16b}, [%3], #64 \n"  // src line 1
       "subs        %w2, %w2, #48                 \n"
@@ -322,14 +322,11 @@ void ScaleRowDown34_1_Box_NEON(const uint8_t* src_ptr,
 
 static const uvec8 kShuf38 = {0,  3,  6,  8,  11, 14, 16, 19,
                               22, 24, 27, 30, 0,  0,  0,  0};
-static const uvec8 kShuf38_2 = {0,  16, 32, 2,  18, 33, 4, 20,
-                                34, 6,  22, 35, 0,  0,  0, 0};
-static const vec16 kMult38_Div6 = {65536 / 12, 65536 / 12, 65536 / 12,
-                                   65536 / 12, 65536 / 12, 65536 / 12,
-                                   65536 / 12, 65536 / 12};
-static const vec16 kMult38_Div9 = {65536 / 18, 65536 / 18, 65536 / 18,
-                                   65536 / 18, 65536 / 18, 65536 / 18,
-                                   65536 / 18, 65536 / 18};
+static const vec16 kMult38_Div664 = {
+    65536 / 12, 65536 / 12, 65536 / 8, 65536 / 12, 65536 / 12, 65536 / 8, 0, 0};
+static const vec16 kMult38_Div996 = {65536 / 18, 65536 / 18, 65536 / 12,
+                                     65536 / 18, 65536 / 18, 65536 / 12,
+                                     0,          0};
 
 // 32 -> 12
 void ScaleRowDown38_NEON(const uint8_t* src_ptr,
@@ -337,247 +334,163 @@ void ScaleRowDown38_NEON(const uint8_t* src_ptr,
                          uint8_t* dst_ptr,
                          int dst_width) {
   (void)src_stride;
-  asm volatile (
-      "ld1         {v3.16b}, [%3]                \n"
-      "1:                                        \n"
-      "ld1         {v0.16b,v1.16b}, [%0], #32    \n"
-      "subs        %w2, %w2, #12                 \n"
-      "tbl         v2.16b, {v0.16b,v1.16b}, v3.16b \n"
-      "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
-      "st1         {v2.8b}, [%1], #8             \n"
-      "st1         {v2.s}[2], [%1], #4           \n"
+  asm volatile(
+      "ld1         {v3.16b}, [%[kShuf38]]        \n"
+      "subs        %w[width], %w[width], #12     \n"
+      "b.eq        2f                            \n"
+
+      "1:          \n"
+      "ldp         q0, q1, [%[src_ptr]], #32     \n"
+      "subs        %w[width], %w[width], #12     \n"
+      "tbl         v2.16b, {v0.16b, v1.16b}, v3.16b \n"
+      "prfm        pldl1keep, [%[src_ptr], 448]  \n"  // prefetch 7 lines ahead
+      "str         q2, [%[dst_ptr]]              \n"
+      "add         %[dst_ptr], %[dst_ptr], #12   \n"
       "b.gt        1b                            \n"
-      : "+r"(src_ptr),   // %0
-        "+r"(dst_ptr),   // %1
-        "+r"(dst_width)  // %2
-      : "r"(&kShuf38)    // %3
+
+      // Store exactly 12 bytes on the final iteration to avoid writing past
+      // the end of the array.
+      "2:          \n"
+      "ldp         q0, q1, [%[src_ptr]]          \n"
+      "tbl         v2.16b, {v0.16b, v1.16b}, v3.16b \n"
+      "st1         {v2.8b}, [%[dst_ptr]], #8     \n"
+      "st1         {v2.s}[2], [%[dst_ptr]]       \n"
+      : [src_ptr] "+r"(src_ptr),  // %[src_ptr]
+        [dst_ptr] "+r"(dst_ptr),  // %[dst_ptr]
+        [width] "+r"(dst_width)   // %[width]
+      : [kShuf38] "r"(&kShuf38)   // %[kShuf38]
       : "memory", "cc", "v0", "v1", "v2", "v3");
 }
 
-// 32x3 -> 12x1
-void OMITFP ScaleRowDown38_3_Box_NEON(const uint8_t* src_ptr,
-                                      ptrdiff_t src_stride,
-                                      uint8_t* dst_ptr,
-                                      int dst_width) {
-  const uint8_t* src_ptr1 = src_ptr + src_stride * 2;
-  ptrdiff_t tmp_src_stride = src_stride;
+static const uvec8 kScaleRowDown38_3_BoxIndices1[] = {
+    0, 1, 6, 7, 12, 13, 16, 17, 22, 23, 28, 29, 255, 255, 255, 255};
+static const uvec8 kScaleRowDown38_3_BoxIndices2[] = {
+    2, 3, 8, 9, 14, 15, 18, 19, 24, 25, 30, 31, 255, 255, 255, 255};
+static const uvec8 kScaleRowDown38_3_BoxIndices3[] = {
+    4, 5, 10, 11, 255, 255, 20, 21, 26, 27, 255, 255, 255, 255, 255, 255};
+static const uvec8 kScaleRowDown38_NarrowIndices[] = {
+    0, 2, 4, 6, 8, 10, 16, 18, 20, 22, 24, 26, 255, 255, 255, 255};
 
-  asm volatile (
-      "ld1         {v29.8h}, [%5]                \n"
-      "ld1         {v30.16b}, [%6]               \n"
-      "ld1         {v31.8h}, [%7]                \n"
-      "add         %2, %2, %0                    \n"
-      "1:                                        \n"
+void ScaleRowDown38_3_Box_NEON(const uint8_t* src_ptr,
+                               ptrdiff_t src_stride,
+                               uint8_t* dst_ptr,
+                               int dst_width) {
+  const uint8_t* src_ptr1 = src_ptr + src_stride;
+  const uint8_t* src_ptr2 = src_ptr + src_stride * 2;
+  asm volatile(
+      "ld1         {v27.16b}, [%[tblArray1]]     \n"
+      "ld1         {v28.16b}, [%[tblArray2]]     \n"
+      "ld1         {v29.16b}, [%[tblArray3]]     \n"
+      "ld1         {v31.16b}, [%[tblArray4]]     \n"
+      "ld1         {v30.16b}, [%[div996]]        \n"
 
-      // 00 40 01 41 02 42 03 43
-      // 10 50 11 51 12 52 13 53
-      // 20 60 21 61 22 62 23 63
-      // 30 70 31 71 32 72 33 73
-      "ld4         {v0.8b,v1.8b,v2.8b,v3.8b}, [%0], #32 \n"
-      "ld4         {v4.8b,v5.8b,v6.8b,v7.8b}, [%2], #32 \n"
-      "ld4         {v16.8b,v17.8b,v18.8b,v19.8b}, [%3], #32 \n"
-      "subs        %w4, %w4, #12                 \n"
+      "1:          \n"
+      "ldp         q20, q0, [%[src_ptr]], #32    \n"
+      "ldp         q21, q1, [%[src_ptr1]], #32   \n"
+      "ldp         q22, q2, [%[src_ptr2]], #32   \n"
 
-      // Shuffle the input data around to get align the data
-      //  so adjacent data can be added. 0,1 - 2,3 - 4,5 - 6,7
-      // 00 10 01 11 02 12 03 13
-      // 40 50 41 51 42 52 43 53
-      "trn1        v20.8b, v0.8b, v1.8b          \n"
-      "trn2        v21.8b, v0.8b, v1.8b          \n"
-      "trn1        v22.8b, v4.8b, v5.8b          \n"
-      "trn2        v23.8b, v4.8b, v5.8b          \n"
-      "trn1        v24.8b, v16.8b, v17.8b        \n"
-      "trn2        v25.8b, v16.8b, v17.8b        \n"
+      "subs        %w[width], %w[width], #12     \n"
 
-      // 20 30 21 31 22 32 23 33
-      // 60 70 61 71 62 72 63 73
-      "trn1        v0.8b, v2.8b, v3.8b           \n"
-      "trn2        v1.8b, v2.8b, v3.8b           \n"
-      "trn1        v4.8b, v6.8b, v7.8b           \n"
-      "trn2        v5.8b, v6.8b, v7.8b           \n"
-      "trn1        v16.8b, v18.8b, v19.8b        \n"
-      "trn2        v17.8b, v18.8b, v19.8b        \n"
+      // Add across strided rows first.
+      "uaddl       v23.8h, v20.8b, v21.8b        \n"
+      "uaddl       v3.8h, v0.8b, v1.8b           \n"
+      "uaddl2      v24.8h, v20.16b, v21.16b      \n"
+      "uaddl2      v4.8h, v0.16b, v1.16b         \n"
 
-      // 00+10 01+11 02+12 03+13
-      // 40+50 41+51 42+52 43+53
-      "uaddlp      v20.4h, v20.8b                \n"
-      "uaddlp      v21.4h, v21.8b                \n"
-      "uaddlp      v22.4h, v22.8b                \n"
-      "uaddlp      v23.4h, v23.8b                \n"
-      "uaddlp      v24.4h, v24.8b                \n"
-      "uaddlp      v25.4h, v25.8b                \n"
+      "uaddw       v23.8h, v23.8h, v22.8b        \n"
+      "uaddw       v3.8h, v3.8h, v2.8b           \n"
+      "uaddw2      v24.8h, v24.8h, v22.16b       \n"  // abcdefgh ...
+      "uaddw2      v4.8h, v4.8h, v2.16b          \n"
 
-      // 60+70 61+71 62+72 63+73
-      "uaddlp      v1.4h, v1.8b                  \n"
-      "uaddlp      v5.4h, v5.8b                  \n"
-      "uaddlp      v17.4h, v17.8b                \n"
+      // Permute groups of {three,three,two} into separate vectors to sum.
+      "tbl         v20.16b, {v23.16b, v24.16b}, v27.16b \n"  // a d g ...
+      "tbl         v0.16b, {v3.16b, v4.16b}, v27.16b \n"
+      "tbl         v21.16b, {v23.16b, v24.16b}, v28.16b \n"  // b e h ...
+      "tbl         v1.16b, {v3.16b, v4.16b}, v28.16b \n"
+      "tbl         v22.16b, {v23.16b, v24.16b}, v29.16b \n"  // c f 0...
+      "tbl         v2.16b, {v3.16b, v4.16b}, v29.16b \n"
 
-      // combine source lines
-      "add         v20.4h, v20.4h, v22.4h        \n"
-      "add         v21.4h, v21.4h, v23.4h        \n"
-      "add         v20.4h, v20.4h, v24.4h        \n"
-      "add         v21.4h, v21.4h, v25.4h        \n"
-      "add         v2.4h, v1.4h, v5.4h           \n"
-      "add         v2.4h, v2.4h, v17.4h          \n"
+      "add         v23.8h, v20.8h, v21.8h        \n"
+      "add         v3.8h, v0.8h, v1.8h           \n"
+      "add         v24.8h, v23.8h, v22.8h        \n"  // a+b+c d+e+f g+h
+      "add         v4.8h, v3.8h, v2.8h           \n"
 
-      // dst_ptr[3] = (s[6 + st * 0] + s[7 + st * 0]
-      //             + s[6 + st * 1] + s[7 + st * 1]
-      //             + s[6 + st * 2] + s[7 + st * 2]) / 6
-      "sqrdmulh    v2.8h, v2.8h, v29.8h          \n"
-      "xtn         v2.8b,  v2.8h                 \n"
-
-      // Shuffle 2,3 reg around so that 2 can be added to the
-      //  0,1 reg and 3 can be added to the 4,5 reg. This
-      //  requires expanding from u8 to u16 as the 0,1 and 4,5
-      //  registers are already expanded. Then do transposes
-      //  to get aligned.
-      // xx 20 xx 30 xx 21 xx 31 xx 22 xx 32 xx 23 xx 33
-      "ushll       v16.8h, v16.8b, #0            \n"
-      "uaddl       v0.8h, v0.8b, v4.8b           \n"
-
-      // combine source lines
-      "add         v0.8h, v0.8h, v16.8h          \n"
-
-      // xx 20 xx 21 xx 22 xx 23
-      // xx 30 xx 31 xx 32 xx 33
-      "trn1        v1.8h, v0.8h, v0.8h           \n"
-      "trn2        v4.8h, v0.8h, v0.8h           \n"
-      "xtn         v0.4h, v1.4s                  \n"
-      "xtn         v4.4h, v4.4s                  \n"
-      "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
-
-      // 0+1+2, 3+4+5
-      "add         v20.8h, v20.8h, v0.8h         \n"
-      "add         v21.8h, v21.8h, v4.8h         \n"
-      "prfm        pldl1keep, [%2, 448]          \n"
-
-      // Need to divide, but can't downshift as the the value
-      //  isn't a power of 2. So multiply by 65536 / n
-      //  and take the upper 16 bits.
-      "sqrdmulh    v0.8h, v20.8h, v31.8h         \n"
-      "sqrdmulh    v1.8h, v21.8h, v31.8h         \n"
-      "prfm        pldl1keep, [%3, 448]          \n"
-
-      // Align for table lookup, vtbl requires registers to be adjacent
-      "tbl         v3.16b, {v0.16b, v1.16b, v2.16b}, v30.16b \n"
-
-      "st1         {v3.8b}, [%1], #8             \n"
-      "st1         {v3.s}[2], [%1], #4           \n"
+      "sqrdmulh    v24.8h, v24.8h, v30.8h        \n"  // v /= {9,9,6}
+      "sqrdmulh    v25.8h, v4.8h, v30.8h         \n"
+      "tbl         v21.16b, {v24.16b, v25.16b}, v31.16b \n"  // Narrow.
+      "st1         {v21.d}[0], [%[dst_ptr]], #8  \n"
+      "st1         {v21.s}[2], [%[dst_ptr]], #4  \n"
       "b.gt        1b                            \n"
-      : "+r"(src_ptr),         // %0
-        "+r"(dst_ptr),         // %1
-        "+r"(tmp_src_stride),  // %2
-        "+r"(src_ptr1),        // %3
-        "+r"(dst_width)        // %4
-      : "r"(&kMult38_Div6),    // %5
-        "r"(&kShuf38_2),       // %6
-        "r"(&kMult38_Div9)     // %7
-      : "memory", "cc", "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v16",
-        "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24", "v25", "v29",
-        "v30", "v31");
+      : [src_ptr] "+r"(src_ptr),                         // %[src_ptr]
+        [dst_ptr] "+r"(dst_ptr),                         // %[dst_ptr]
+        [src_ptr1] "+r"(src_ptr1),                       // %[src_ptr1]
+        [src_ptr2] "+r"(src_ptr2),                       // %[src_ptr2]
+        [width] "+r"(dst_width)                          // %[width]
+      : [div996] "r"(&kMult38_Div996),                   // %[div996]
+        [tblArray1] "r"(kScaleRowDown38_3_BoxIndices1),  // %[tblArray1]
+        [tblArray2] "r"(kScaleRowDown38_3_BoxIndices2),  // %[tblArray2]
+        [tblArray3] "r"(kScaleRowDown38_3_BoxIndices3),  // %[tblArray3]
+        [tblArray4] "r"(kScaleRowDown38_NarrowIndices)   // %[tblArray4]
+      : "memory", "cc", "v0", "v1", "v2", "v3", "v4", "v20", "v21", "22", "23",
+        "24", "v27", "v28", "v29", "v30", "v31");
 }
 
-// 32x2 -> 12x1
+static const uvec8 kScaleRowDown38_2_BoxIndices1[] = {
+    0, 1, 3, 4, 6, 7, 8, 9, 11, 12, 14, 15, 255, 255, 255, 255};
+static const uvec8 kScaleRowDown38_2_BoxIndices2[] = {
+    2, 18, 5, 21, 255, 255, 10, 26, 13, 29, 255, 255, 255, 255, 255, 255};
+
 void ScaleRowDown38_2_Box_NEON(const uint8_t* src_ptr,
                                ptrdiff_t src_stride,
                                uint8_t* dst_ptr,
                                int dst_width) {
-  // TODO(fbarchard): use src_stride directly for clang 3.5+.
-  ptrdiff_t tmp_src_stride = src_stride;
-  asm volatile (
-      "ld1         {v30.8h}, [%4]                \n"
-      "ld1         {v31.16b}, [%5]               \n"
-      "add         %2, %2, %0                    \n"
-      "1:                                        \n"
+  const uint8_t* src_ptr1 = src_ptr + src_stride;
+  asm volatile(
+      "ld1         {v28.16b}, [%[tblArray1]]     \n"
+      "ld1         {v29.16b}, [%[tblArray2]]     \n"
+      "ld1         {v31.16b}, [%[tblArray3]]     \n"
+      "ld1         {v30.8h}, [%[div664]]         \n"
 
-      // 00 40 01 41 02 42 03 43
-      // 10 50 11 51 12 52 13 53
-      // 20 60 21 61 22 62 23 63
-      // 30 70 31 71 32 72 33 73
-      "ld4         {v0.8b,v1.8b,v2.8b,v3.8b}, [%0], #32 \n"
-      "ld4         {v4.8b,v5.8b,v6.8b,v7.8b}, [%2], #32 \n"
-      "subs        %w3, %w3, #12                 \n"
+      "1:          \n"
+      "ldp         q20, q0, [%[src_ptr]], #32    \n"  // abcdefgh ...
+      "ldp         q21, q1, [%[src_ptr1]], #32   \n"  // ijklmnop ...
+      "subs        %w[width], %w[width], #12     \n"
 
-      // Shuffle the input data around to get align the data
-      //  so adjacent data can be added. 0,1 - 2,3 - 4,5 - 6,7
-      // 00 10 01 11 02 12 03 13
-      // 40 50 41 51 42 52 43 53
-      "trn1        v16.8b, v0.8b, v1.8b          \n"
-      "trn2        v17.8b, v0.8b, v1.8b          \n"
-      "trn1        v18.8b, v4.8b, v5.8b          \n"
-      "trn2        v19.8b, v4.8b, v5.8b          \n"
+      // Permute into groups of six values (three pairs) to be summed.
+      "tbl         v22.16b, {v20.16b}, v28.16b   \n"  // abdegh ...
+      "tbl         v2.16b, {v0.16b}, v28.16b     \n"
+      "tbl         v23.16b, {v21.16b}, v28.16b   \n"  // ijlmop ...
+      "tbl         v3.16b, {v1.16b}, v28.16b     \n"
+      "tbl         v24.16b, {v20.16b, v21.16b}, v29.16b \n"  // ckfn00 ...
+      "tbl         v4.16b, {v0.16b, v1.16b}, v29.16b \n"
 
-      // 20 30 21 31 22 32 23 33
-      // 60 70 61 71 62 72 63 73
-      "trn1        v0.8b, v2.8b, v3.8b           \n"
-      "trn2        v1.8b, v2.8b, v3.8b           \n"
-      "trn1        v4.8b, v6.8b, v7.8b           \n"
-      "trn2        v5.8b, v6.8b, v7.8b           \n"
+      "uaddlp      v22.8h, v22.16b               \n"  // a+b d+e g+h ...
+      "uaddlp      v2.8h, v2.16b                 \n"
+      "uaddlp      v23.8h, v23.16b               \n"  // i+j l+m o+p ...
+      "uaddlp      v3.8h, v3.16b                 \n"
+      "uaddlp      v24.8h, v24.16b               \n"  // c+k f+n   0 ...
+      "uaddlp      v4.8h, v4.16b                 \n"
+      "add         v20.8h, v22.8h, v23.8h        \n"
+      "add         v0.8h, v2.8h, v3.8h           \n"
+      "add         v21.8h, v20.8h, v24.8h        \n"  // a+b+i+j+c+k ...
+      "add         v1.8h, v0.8h, v4.8h           \n"
 
-      // 00+10 01+11 02+12 03+13
-      // 40+50 41+51 42+52 43+53
-      "uaddlp      v16.4h, v16.8b                \n"
-      "uaddlp      v17.4h, v17.8b                \n"
-      "uaddlp      v18.4h, v18.8b                \n"
-      "uaddlp      v19.4h, v19.8b                \n"
-
-      // 60+70 61+71 62+72 63+73
-      "uaddlp      v1.4h, v1.8b                  \n"
-      "uaddlp      v5.4h, v5.8b                  \n"
-
-      // combine source lines
-      "add         v16.4h, v16.4h, v18.4h        \n"
-      "add         v17.4h, v17.4h, v19.4h        \n"
-      "add         v2.4h, v1.4h, v5.4h           \n"
-
-      // dst_ptr[3] = (s[6] + s[7] + s[6+st] + s[7+st]) / 4
-      "uqrshrn     v2.8b, v2.8h, #2              \n"
-
-      // Shuffle 2,3 reg around so that 2 can be added to the
-      //  0,1 reg and 3 can be added to the 4,5 reg. This
-      //  requires expanding from u8 to u16 as the 0,1 and 4,5
-      //  registers are already expanded. Then do transposes
-      //  to get aligned.
-      // xx 20 xx 30 xx 21 xx 31 xx 22 xx 32 xx 23 xx 33
-
-      // combine source lines
-      "uaddl       v0.8h, v0.8b, v4.8b           \n"
-
-      // xx 20 xx 21 xx 22 xx 23
-      // xx 30 xx 31 xx 32 xx 33
-      "trn1        v1.8h, v0.8h, v0.8h           \n"
-      "trn2        v4.8h, v0.8h, v0.8h           \n"
-      "xtn         v0.4h, v1.4s                  \n"
-      "xtn         v4.4h, v4.4s                  \n"
-      "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
-
-      // 0+1+2, 3+4+5
-      "add         v16.8h, v16.8h, v0.8h         \n"
-      "add         v17.8h, v17.8h, v4.8h         \n"
-      "prfm        pldl1keep, [%2, 448]          \n"
-
-      // Need to divide, but can't downshift as the the value
-      //  isn't a power of 2. So multiply by 65536 / n
-      //  and take the upper 16 bits.
-      "sqrdmulh    v0.8h, v16.8h, v30.8h         \n"
-      "sqrdmulh    v1.8h, v17.8h, v30.8h         \n"
-
-      // Align for table lookup, vtbl requires registers to
-      //  be adjacent
-
-      "tbl         v3.16b, {v0.16b, v1.16b, v2.16b}, v31.16b \n"
-
-      "st1         {v3.8b}, [%1], #8             \n"
-      "st1         {v3.s}[2], [%1], #4           \n"
+      "sqrdmulh    v21.8h, v21.8h, v30.8h        \n"  // v /= {6,6,4}
+      "sqrdmulh    v22.8h, v1.8h, v30.8h         \n"
+      "tbl         v21.16b, {v21.16b, v22.16b}, v31.16b \n"  // Narrow.
+      "st1         {v21.d}[0], [%[dst_ptr]], #8  \n"
+      "st1         {v21.s}[2], [%[dst_ptr]], #4  \n"
       "b.gt        1b                            \n"
-      : "+r"(src_ptr),         // %0
-        "+r"(dst_ptr),         // %1
-        "+r"(tmp_src_stride),  // %2
-        "+r"(dst_width)        // %3
-      : "r"(&kMult38_Div6),    // %4
-        "r"(&kShuf38_2)        // %5
-      : "memory", "cc", "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v16",
-        "v17", "v18", "v19", "v30", "v31");
+      : [src_ptr] "+r"(src_ptr),                         // %[src_ptr]
+        [dst_ptr] "+r"(dst_ptr),                         // %[dst_ptr]
+        [src_ptr1] "+r"(src_ptr1),                       // %[src_ptr1]
+        [width] "+r"(dst_width)                          // %[width]
+      : [div664] "r"(&kMult38_Div664),                   // %[div664]
+        [tblArray1] "r"(kScaleRowDown38_2_BoxIndices1),  // %[tblArray1]
+        [tblArray2] "r"(kScaleRowDown38_2_BoxIndices2),  // %[tblArray2]
+        [tblArray3] "r"(kScaleRowDown38_NarrowIndices)   // %[tblArray3]
+      : "memory", "cc", "v0", "v1", "v2", "v3", "v4", "v20", "v21", "v22",
+        "v23", "v24", "v28", "v29", "v30", "v31");
 }
 
 void ScaleRowUp2_Linear_NEON(const uint8_t* src_ptr,
@@ -587,7 +500,7 @@ void ScaleRowUp2_Linear_NEON(const uint8_t* src_ptr,
   asm volatile(
       "movi        v31.16b, #3                   \n"
 
-      "1:                                        \n"
+      "1:          \n"
       "ldr         q0, [%0], #16                 \n"  // 0123456789abcdef
       "ldr         q1, [%1], #16                 \n"  // 123456789abcdefg
       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
@@ -630,11 +543,11 @@ void ScaleRowUp2_Bilinear_NEON(const uint8_t* src_ptr,
   const uint8_t* src_temp = src_ptr + 1;
   const uint8_t* src_temp1 = src_ptr1 + 1;
 
-  asm volatile (
+  asm volatile(
       "movi        v31.8b, #3                    \n"
       "movi        v30.8h, #3                    \n"
 
-      "1:                                        \n"
+      "1:          \n"
       "ldr         d0, [%0], #8                  \n"  // 01234567
       "ldr         d1, [%2], #8                  \n"  // 12345678
       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
@@ -686,10 +599,10 @@ void ScaleRowUp2_Linear_12_NEON(const uint16_t* src_ptr,
                                 uint16_t* dst_ptr,
                                 int dst_width) {
   const uint16_t* src_temp = src_ptr + 1;
-  asm volatile (
+  asm volatile(
       "movi        v31.8h, #3                    \n"
 
-      "1:                                        \n"
+      "1:          \n"
       "ld1         {v0.8h}, [%0], #16            \n"  // 01234567 (16b)
       "ld1         {v1.8h}, [%1], #16            \n"  // 12345678 (16b)
       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
@@ -723,10 +636,10 @@ void ScaleRowUp2_Bilinear_12_NEON(const uint16_t* src_ptr,
   const uint16_t* src_temp = src_ptr + 1;
   const uint16_t* src_temp1 = src_ptr1 + 1;
 
-  asm volatile (
+  asm volatile(
       "movi        v31.8h, #3                    \n"
 
-      "1:                                        \n"
+      "1:          \n"
       "ld1         {v2.8h}, [%0], #16            \n"  // 01234567 (16b)
       "ld1         {v3.8h}, [%2], #16            \n"  // 12345678 (16b)
       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
@@ -777,10 +690,10 @@ void ScaleRowUp2_Linear_16_NEON(const uint16_t* src_ptr,
                                 uint16_t* dst_ptr,
                                 int dst_width) {
   const uint16_t* src_temp = src_ptr + 1;
-  asm volatile (
+  asm volatile(
       "movi        v31.8h, #3                    \n"
 
-      "1:                                        \n"
+      "1:          \n"
       "ld1         {v0.8h}, [%0], #16            \n"  // 01234567 (16b)
       "ld1         {v1.8h}, [%1], #16            \n"  // 12345678 (16b)
       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
@@ -822,11 +735,11 @@ void ScaleRowUp2_Bilinear_16_NEON(const uint16_t* src_ptr,
   const uint16_t* src_temp = src_ptr + 1;
   const uint16_t* src_temp1 = src_ptr1 + 1;
 
-  asm volatile (
+  asm volatile(
       "movi        v31.4h, #3                    \n"
       "movi        v30.4s, #3                    \n"
 
-      "1:                                        \n"
+      "1:          \n"
       "ldr         d0, [%0], #8                  \n"  // 0123 (16b)
       "ldr         d1, [%2], #8                  \n"  // 1234 (16b)
       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
@@ -877,10 +790,10 @@ void ScaleUVRowUp2_Linear_NEON(const uint8_t* src_ptr,
                                uint8_t* dst_ptr,
                                int dst_width) {
   const uint8_t* src_temp = src_ptr + 2;
-  asm volatile (
+  asm volatile(
       "movi        v31.8b, #3                    \n"
 
-      "1:                                        \n"
+      "1:          \n"
       "ldr         d0, [%0], #8                  \n"  // 00112233 (1u1v)
       "ldr         d1, [%1], #8                  \n"  // 11223344 (1u1v)
       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
@@ -916,11 +829,11 @@ void ScaleUVRowUp2_Bilinear_NEON(const uint8_t* src_ptr,
   const uint8_t* src_temp = src_ptr + 2;
   const uint8_t* src_temp1 = src_ptr1 + 2;
 
-  asm volatile (
+  asm volatile(
       "movi        v31.8b, #3                    \n"
       "movi        v30.8h, #3                    \n"
 
-      "1:                                        \n"
+      "1:          \n"
       "ldr         d0, [%0], #8                  \n"
       "ldr         d1, [%2], #8                  \n"
       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
@@ -972,10 +885,10 @@ void ScaleUVRowUp2_Linear_16_NEON(const uint16_t* src_ptr,
                                   uint16_t* dst_ptr,
                                   int dst_width) {
   const uint16_t* src_temp = src_ptr + 2;
-  asm volatile (
+  asm volatile(
       "movi        v31.8h, #3                    \n"
 
-      "1:                                        \n"
+      "1:          \n"
       "ld1         {v0.8h}, [%0], #16            \n"  // 01234567 (16b)
       "ld1         {v1.8h}, [%1], #16            \n"  // 12345678 (16b)
       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
@@ -1019,11 +932,11 @@ void ScaleUVRowUp2_Bilinear_16_NEON(const uint16_t* src_ptr,
   const uint16_t* src_temp = src_ptr + 2;
   const uint16_t* src_temp1 = src_ptr1 + 2;
 
-  asm volatile (
+  asm volatile(
       "movi        v31.4h, #3                    \n"
       "movi        v30.4s, #3                    \n"
 
-      "1:                                        \n"
+      "1:          \n"
       "ldr         d0, [%0], #8                  \n"
       "ldr         d1, [%2], #8                  \n"
       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
@@ -1074,8 +987,8 @@ void ScaleUVRowUp2_Bilinear_16_NEON(const uint16_t* src_ptr,
 void ScaleAddRow_NEON(const uint8_t* src_ptr,
                       uint16_t* dst_ptr,
                       int src_width) {
-  asm volatile (
-      "1:                                        \n"
+  asm volatile(
+      "1:          \n"
       "ld1         {v1.8h, v2.8h}, [%1]          \n"  // load accumulator
       "ld1         {v0.16b}, [%0], #16           \n"  // load 16 bytes
       "uaddw2      v2.8h, v2.8h, v0.16b          \n"  // add
@@ -1092,15 +1005,12 @@ void ScaleAddRow_NEON(const uint8_t* src_ptr,
   );
 }
 
-// TODO(Yang Zhang): Investigate less load instructions for
-// the x/dx stepping
-#define LOAD2_DATA8_LANE(n)                      \
-  "lsr        %5, %3, #16                    \n" \
-  "add        %6, %1, %5                     \n" \
-  "add        %3, %3, %4                     \n" \
-  "ld2        {v4.b, v5.b}[" #n "], [%6]     \n"
+#define SCALE_FILTER_COLS_STEP_ADDR                         \
+  "lsr        %[tmp_offset], %x[x], #16                 \n" \
+  "add        %[tmp_ptr], %[src_ptr], %[tmp_offset]     \n" \
+  "add        %x[x], %x[x], %x[dx]                      \n"
 
-// The NEON version mimics this formula (from row_common.cc):
+// The Neon version mimics this formula (from scale_common.cc):
 // #define BLENDER(a, b, f) (uint8_t)((int)(a) +
 //    ((((int)((f)) * ((int)(b) - (int)(a))) + 0x8000) >> 16))
 
@@ -1110,65 +1020,69 @@ void ScaleFilterCols_NEON(uint8_t* dst_ptr,
                           int x,
                           int dx) {
   int dx_offset[4] = {0, 1, 2, 3};
-  int* tmp = dx_offset;
-  const uint8_t* src_tmp = src_ptr;
-  int64_t x64 = (int64_t)x;    // NOLINT
-  int64_t dx64 = (int64_t)dx;  // NOLINT
-  asm volatile (
-      "dup         v0.4s, %w3                    \n"  // x
-      "dup         v1.4s, %w4                    \n"  // dx
-      "ld1         {v2.4s}, [%5]                 \n"  // 0 1 2 3
+  int64_t tmp_offset;
+  uint8_t* tmp_ptr;
+  asm volatile(
+      "dup         v0.4s, %w[x]                  \n"
+      "dup         v1.4s, %w[dx]                 \n"
+      "ld1         {v2.4s}, [%[dx_offset]]       \n"  // 0 1 2 3
       "shl         v3.4s, v1.4s, #2              \n"  // 4 * dx
+      "shl         v22.4s, v1.4s, #3             \n"  // 8 * dx
+
       "mul         v1.4s, v1.4s, v2.4s           \n"
-    // x         , x + 1 * dx, x + 2 * dx, x + 3 * dx
+      // x         , x + 1 * dx, x + 2 * dx, x + 3 * dx
       "add         v1.4s, v1.4s, v0.4s           \n"
-    // x + 4 * dx, x + 5 * dx, x + 6 * dx, x + 7 * dx
+      // x + 4 * dx, x + 5 * dx, x + 6 * dx, x + 7 * dx
       "add         v2.4s, v1.4s, v3.4s           \n"
-      "shl         v0.4s, v3.4s, #1              \n"  // 8 * dx
-      "1:                                        \n"
-    LOAD2_DATA8_LANE(0)
-    LOAD2_DATA8_LANE(1)
-    LOAD2_DATA8_LANE(2)
-    LOAD2_DATA8_LANE(3)
-    LOAD2_DATA8_LANE(4)
-    LOAD2_DATA8_LANE(5)
-    LOAD2_DATA8_LANE(6)
-    LOAD2_DATA8_LANE(7)
-      "mov         v6.16b, v1.16b                \n"
-      "mov         v7.16b, v2.16b                \n"
-      "uzp1        v6.8h, v6.8h, v7.8h           \n"
-      "ushll       v4.8h, v4.8b, #0              \n"
-      "ushll       v5.8h, v5.8b, #0              \n"
+
+      "movi        v0.8h, #0                     \n"
+
+      // truncate to uint16_t
+      "trn1        v22.8h, v22.8h, v0.8h         \n"
+      "trn1        v20.8h, v1.8h, v0.8h          \n"
+      "trn1        v21.8h, v2.8h, v0.8h          \n"
+
+      "1:          \n" SCALE_FILTER_COLS_STEP_ADDR
+      "ldr         h6, [%[tmp_ptr]]              \n" SCALE_FILTER_COLS_STEP_ADDR
+      "ld1         {v6.h}[1], [%[tmp_ptr]]       \n" SCALE_FILTER_COLS_STEP_ADDR
+      "ld1         {v6.h}[2], [%[tmp_ptr]]       \n" SCALE_FILTER_COLS_STEP_ADDR
+      "ld1         {v6.h}[3], [%[tmp_ptr]]       \n" SCALE_FILTER_COLS_STEP_ADDR
+      "ld1         {v6.h}[4], [%[tmp_ptr]]       \n" SCALE_FILTER_COLS_STEP_ADDR
+      "ld1         {v6.h}[5], [%[tmp_ptr]]       \n" SCALE_FILTER_COLS_STEP_ADDR
+      "ld1         {v6.h}[6], [%[tmp_ptr]]       \n" SCALE_FILTER_COLS_STEP_ADDR
+      "ld1         {v6.h}[7], [%[tmp_ptr]]       \n"
+
+      "subs        %w[width], %w[width], #8      \n"  // 8 processed per loop
+      "trn1        v4.16b, v6.16b, v0.16b        \n"
+      "trn2        v5.16b, v6.16b, v0.16b        \n"
+
       "ssubl       v16.4s, v5.4h, v4.4h          \n"
       "ssubl2      v17.4s, v5.8h, v4.8h          \n"
-      "ushll       v7.4s, v6.4h, #0              \n"
-      "ushll2      v6.4s, v6.8h, #0              \n"
-      "mul         v16.4s, v16.4s, v7.4s         \n"
-      "mul         v17.4s, v17.4s, v6.4s         \n"
+      "mul         v16.4s, v16.4s, v20.4s        \n"
+      "mul         v17.4s, v17.4s, v21.4s        \n"
       "rshrn       v6.4h, v16.4s, #16            \n"
       "rshrn2      v6.8h, v17.4s, #16            \n"
       "add         v4.8h, v4.8h, v6.8h           \n"
       "xtn         v4.8b, v4.8h                  \n"
 
-      "st1         {v4.8b}, [%0], #8             \n"  // store pixels
-      "add         v1.4s, v1.4s, v0.4s           \n"
-      "add         v2.4s, v2.4s, v0.4s           \n"
-      "subs        %w2, %w2, #8                  \n"  // 8 processed per loop
+      "add         v20.8h, v20.8h, v22.8h        \n"
+      "add         v21.8h, v21.8h, v22.8h        \n"
+
+      "st1         {v4.8b}, [%[dst_ptr]], #8     \n"  // store pixels
       "b.gt        1b                            \n"
-  : "+r"(dst_ptr),          // %0
-    "+r"(src_ptr),          // %1
-    "+r"(dst_width),        // %2
-    "+r"(x64),              // %3
-    "+r"(dx64),             // %4
-    "+r"(tmp),              // %5
-    "+r"(src_tmp)           // %6
-  :
-  : "memory", "cc", "v0", "v1", "v2", "v3",
-    "v4", "v5", "v6", "v7", "v16", "v17"
-  );
+      : [src_ptr] "+r"(src_ptr),         // %[src_ptr]
+        [dst_ptr] "+r"(dst_ptr),         // %[dst_ptr]
+        [width] "+r"(dst_width),         // %[width]
+        [x] "+r"(x),                     // %[x]
+        [dx] "+r"(dx),                   // %[dx]
+        [tmp_offset] "=&r"(tmp_offset),  // %[tmp_offset]
+        [tmp_ptr] "=&r"(tmp_ptr)         // %[tmp_ptr]
+      : [dx_offset] "r"(dx_offset)       // %[dx_offset]
+      : "memory", "cc", "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v16", "v17",
+        "v20", "v21", "v22");
 }
 
-#undef LOAD2_DATA8_LANE
+#undef SCALE_FILTER_COLS_STEP_ADDR
 
 void ScaleARGBRowDown2_NEON(const uint8_t* src_ptr,
                             ptrdiff_t src_stride,
@@ -1176,14 +1090,14 @@ void ScaleARGBRowDown2_NEON(const uint8_t* src_ptr,
                             int dst_width) {
   (void)src_stride;
   asm volatile(
-      "1:                                                      \n"
+      "1:          \n"
       "ld1         {v0.4s, v1.4s, v2.4s, v3.4s}, [%[src]], #64 \n"
-      "subs        %w[width], %w[width], #8                    \n"
-      "prfm        pldl1keep, [%[src], 448]                    \n"
-      "uzp2        v0.4s, v0.4s, v1.4s                         \n"
-      "uzp2        v1.4s, v2.4s, v3.4s                         \n"
-      "st1         {v0.4s, v1.4s}, [%[dst]], #32               \n"
-      "b.gt        1b                                          \n"
+      "subs        %w[width], %w[width], #8      \n"
+      "prfm        pldl1keep, [%[src], 448]      \n"
+      "uzp2        v0.4s, v0.4s, v1.4s           \n"
+      "uzp2        v1.4s, v2.4s, v3.4s           \n"
+      "st1         {v0.4s, v1.4s}, [%[dst]], #32 \n"
+      "b.gt        1b                            \n"
       : [src] "+r"(src_ptr),     // %[src]
         [dst] "+r"(dst),         // %[dst]
         [width] "+r"(dst_width)  // %[width]
@@ -1198,16 +1112,16 @@ void ScaleARGBRowDown2Linear_NEON(const uint8_t* src_argb,
   (void)src_stride;
   const uint8_t* src_argb1 = src_argb + 32;
   asm volatile(
-      "1:                                        \n"
-      "ld2     {v0.4s, v1.4s}, [%[src]]          \n"
-      "add     %[src], %[src], #64               \n"
-      "ld2     {v2.4s, v3.4s}, [%[src1]]         \n"
-      "add     %[src1], %[src1], #64             \n"
-      "urhadd  v0.16b, v0.16b, v1.16b            \n"
-      "urhadd  v1.16b, v2.16b, v3.16b            \n"
-      "subs    %w[width], %w[width], #8          \n"
-      "st1     {v0.16b, v1.16b}, [%[dst]], #32   \n"
-      "b.gt    1b                                \n"
+      "1:          \n"
+      "ld2         {v0.4s, v1.4s}, [%[src]]      \n"
+      "add         %[src], %[src], #64           \n"
+      "ld2         {v2.4s, v3.4s}, [%[src1]]     \n"
+      "add         %[src1], %[src1], #64         \n"
+      "urhadd      v0.16b, v0.16b, v1.16b        \n"
+      "urhadd      v1.16b, v2.16b, v3.16b        \n"
+      "subs        %w[width], %w[width], #8      \n"
+      "st1         {v0.16b, v1.16b}, [%[dst]], #32 \n"
+      "b.gt        1b                            \n"
       : [src] "+r"(src_argb),    // %[src]
         [src1] "+r"(src_argb1),  // %[src1]
         [dst] "+r"(dst_argb),    // %[dst]
@@ -1221,21 +1135,21 @@ void ScaleARGBRowDown2Box_NEON(const uint8_t* src_ptr,
                                uint8_t* dst,
                                int dst_width) {
   const uint8_t* src_ptr1 = src_ptr + src_stride;
-  asm volatile (
-      "1:                                       \n"
-      "ld2     {v0.4s, v1.4s}, [%[src]], #32    \n"
-      "ld2     {v20.4s, v21.4s}, [%[src1]], #32 \n"
-      "uaddl   v2.8h, v0.8b, v1.8b              \n"
-      "uaddl2  v3.8h, v0.16b, v1.16b            \n"
-      "uaddl   v22.8h, v20.8b, v21.8b           \n"
-      "uaddl2  v23.8h, v20.16b, v21.16b         \n"
-      "add     v0.8h, v2.8h, v22.8h             \n"
-      "add     v1.8h, v3.8h, v23.8h             \n"
-      "rshrn   v0.8b, v0.8h, #2                 \n"
-      "rshrn   v1.8b, v1.8h, #2                 \n"
-      "subs    %w[width], %w[width], #4         \n"
-      "stp     d0, d1, [%[dst]], #16            \n"
-      "b.gt    1b                               \n"
+  asm volatile(
+      "1:          \n"
+      "ld2         {v0.4s, v1.4s}, [%[src]], #32 \n"
+      "ld2         {v20.4s, v21.4s}, [%[src1]], #32 \n"
+      "uaddl       v2.8h, v0.8b, v1.8b           \n"
+      "uaddl2      v3.8h, v0.16b, v1.16b         \n"
+      "uaddl       v22.8h, v20.8b, v21.8b        \n"
+      "uaddl2      v23.8h, v20.16b, v21.16b      \n"
+      "add         v0.8h, v2.8h, v22.8h          \n"
+      "add         v1.8h, v3.8h, v23.8h          \n"
+      "rshrn       v0.8b, v0.8h, #2              \n"
+      "rshrn       v1.8b, v1.8h, #2              \n"
+      "subs        %w[width], %w[width], #4      \n"
+      "stp         d0, d1, [%[dst]], #16         \n"
+      "b.gt        1b                            \n"
       : [src] "+r"(src_ptr), [src1] "+r"(src_ptr1), [dst] "+r"(dst),
         [width] "+r"(dst_width)
       :
@@ -1252,26 +1166,22 @@ void ScaleARGBRowDownEven_NEON(const uint8_t* src_argb,
   const uint8_t* src_argb3 = src_argb + src_stepx * 12;
   int64_t i = 0;
   (void)src_stride;
-  asm volatile (
-      "1:                                     \n"
-      "ldr      w10, [%[src], %[i]]           \n"
-      "ldr      w11, [%[src1], %[i]]          \n"
-      "ldr      w12, [%[src2], %[i]]          \n"
-      "ldr      w13, [%[src3], %[i]]          \n"
-      "add      %[i], %[i], %[step]           \n"
-      "subs     %w[width], %w[width], #4      \n"
-      "prfm     pldl1keep, [%[src], 448]      \n"
-      "stp      w10, w11, [%[dst]], #8        \n"
-      "stp      w12, w13, [%[dst]], #8        \n"
-      "b.gt     1b                            \n"
-      : [src]"+r"(src_argb),
-        [src1]"+r"(src_argb1),
-        [src2]"+r"(src_argb2),
-        [src3]"+r"(src_argb3),
-        [dst]"+r"(dst_argb),
-        [width]"+r"(dst_width),
-        [i]"+r"(i)
-      : [step]"r"((int64_t)(src_stepx * 16))
+  asm volatile(
+      "1:          \n"
+      "ldr         w10, [%[src], %[i]]           \n"
+      "ldr         w11, [%[src1], %[i]]          \n"
+      "ldr         w12, [%[src2], %[i]]          \n"
+      "ldr         w13, [%[src3], %[i]]          \n"
+      "add         %[i], %[i], %[step]           \n"
+      "subs        %w[width], %w[width], #4      \n"
+      "prfm        pldl1keep, [%[src], 448]      \n"
+      "stp         w10, w11, [%[dst]], #8        \n"
+      "stp         w12, w13, [%[dst]], #8        \n"
+      "b.gt        1b                            \n"
+      : [src] "+r"(src_argb), [src1] "+r"(src_argb1), [src2] "+r"(src_argb2),
+        [src3] "+r"(src_argb3), [dst] "+r"(dst_argb), [width] "+r"(dst_width),
+        [i] "+r"(i)
+      : [step] "r"((int64_t)(src_stepx * 16))
       : "memory", "cc", "w10", "w11", "w12", "w13");
 }
 
@@ -1286,7 +1196,7 @@ void ScaleARGBRowDownEvenBox_NEON(const uint8_t* src_argb,
                                   int dst_width) {
   asm volatile(
       "add         %1, %1, %0                    \n"
-      "1:                                        \n"
+      "1:          \n"
       "ld1         {v0.8b}, [%0], %4             \n"  // Read 4 2x2 -> 2x1
       "ld1         {v1.8b}, [%1], %4             \n"
       "ld1         {v2.8b}, [%0], %4             \n"
@@ -1338,7 +1248,7 @@ void ScaleARGBCols_NEON(uint8_t* dst_argb,
   int64_t dx64 = (int64_t)dx;  // NOLINT
   int64_t tmp64;
   asm volatile (
-      "1:                                        \n"
+      "1:          \n"
       // clang-format off
       LOAD1_DATA32_LANE(v0, 0)
       LOAD1_DATA32_LANE(v0, 1)
@@ -1396,35 +1306,35 @@ void ScaleARGBFilterCols_NEON(uint8_t* dst_argb,
       "add         v5.4s, v1.4s, v0.4s           \n"
       "ldr         q18, [%[kIndices]]            \n"
 
-      "1:                                        \n"  //
+      "1:          \n"  //
       SCALE_ARGB_FILTER_COLS_STEP_ADDR
-      "ldr        d1, [%6]                       \n"  //
+      "ldr         d1, [%6]                      \n"  //
       SCALE_ARGB_FILTER_COLS_STEP_ADDR
-      "ldr        d2, [%6]                       \n"
-      "shrn       v4.4h, v5.4s, #9               \n"  //
+      "ldr         d2, [%6]                      \n"
+      "shrn        v4.4h, v5.4s, #9              \n"  //
       SCALE_ARGB_FILTER_COLS_STEP_ADDR
-      "ld1        {v1.d}[1], [%6]                \n"  //
+      "ld1         {v1.d}[1], [%6]               \n"  //
       SCALE_ARGB_FILTER_COLS_STEP_ADDR
-      "ld1        {v2.d}[1], [%6]                \n"
+      "ld1         {v2.d}[1], [%6]               \n"
 
-      "subs       %w2, %w2, #4                   \n"  // 4 processed per loop
-      "and        v4.8b, v4.8b, v3.8b            \n"
-      "trn1       v0.4s, v1.4s, v2.4s            \n"
-      "tbl        v4.16b, {v4.16b}, v18.16b      \n"  // f
-      "trn2       v1.4s, v1.4s, v2.4s            \n"
-      "eor        v7.16b, v4.16b, v3.16b         \n"  // 0x7f ^ f
+      "subs        %w2, %w2, #4                  \n"  // 4 processed per loop
+      "and         v4.8b, v4.8b, v3.8b           \n"
+      "trn1        v0.4s, v1.4s, v2.4s           \n"
+      "tbl         v4.16b, {v4.16b}, v18.16b     \n"  // f
+      "trn2        v1.4s, v1.4s, v2.4s           \n"
+      "eor         v7.16b, v4.16b, v3.16b        \n"  // 0x7f ^ f
 
-      "umull      v16.8h, v1.8b, v4.8b           \n"
-      "umull2     v17.8h, v1.16b, v4.16b         \n"
-      "umlal      v16.8h, v0.8b, v7.8b           \n"
-      "umlal2     v17.8h, v0.16b, v7.16b         \n"
+      "umull       v16.8h, v1.8b, v4.8b          \n"
+      "umull2      v17.8h, v1.16b, v4.16b        \n"
+      "umlal       v16.8h, v0.8b, v7.8b          \n"
+      "umlal2      v17.8h, v0.16b, v7.16b        \n"
 
-      "prfm       pldl1keep, [%1, 448]           \n"  // prefetch 7 lines ahead
-      "shrn       v0.8b, v16.8h, #7              \n"
-      "shrn       v1.8b, v17.8h, #7              \n"
-      "add        v5.4s, v5.4s, v6.4s            \n"
-      "stp        d0, d1, [%0], #16              \n"  // store pixels
-      "b.gt       1b                             \n"
+      "prfm        pldl1keep, [%1, 448]          \n"  // prefetch 7 lines ahead
+      "shrn        v0.8b, v16.8h, #7             \n"
+      "shrn        v1.8b, v17.8h, #7             \n"
+      "add         v5.4s, v5.4s, v6.4s           \n"
+      "stp         d0, d1, [%0], #16             \n"  // store pixels
+      "b.gt        1b                            \n"
       : "+r"(dst_argb),                                       // %0
         "+r"(src_argb),                                       // %1
         "+r"(dst_width),                                      // %2
@@ -1440,15 +1350,81 @@ void ScaleARGBFilterCols_NEON(uint8_t* dst_argb,
 
 #undef SCALE_ARGB_FILTER_COLS_STEP_ADDR
 
+void ScaleRowDown2_16_NEON(const uint16_t* src_ptr,
+                           ptrdiff_t src_stride,
+                           uint16_t* dst,
+                           int dst_width) {
+  (void)src_stride;
+  asm volatile(
+      "subs        %w[dst_width], %w[dst_width], #32 \n"
+      "b.lt        2f                            \n"
+
+      "1:          \n"
+      "ldp         q0, q1, [%[src_ptr]]          \n"
+      "ldp         q2, q3, [%[src_ptr], #32]     \n"
+      "ldp         q4, q5, [%[src_ptr], #64]     \n"
+      "ldp         q6, q7, [%[src_ptr], #96]     \n"
+      "add         %[src_ptr], %[src_ptr], #128  \n"
+      "uzp2        v0.8h, v0.8h, v1.8h           \n"
+      "uzp2        v1.8h, v2.8h, v3.8h           \n"
+      "uzp2        v2.8h, v4.8h, v5.8h           \n"
+      "uzp2        v3.8h, v6.8h, v7.8h           \n"
+      "subs        %w[dst_width], %w[dst_width], #32 \n"  // 32 elems per
+                                                          // iteration.
+      "stp         q0, q1, [%[dst_ptr]]          \n"
+      "stp         q2, q3, [%[dst_ptr], #32]     \n"
+      "add         %[dst_ptr], %[dst_ptr], #64   \n"
+      "b.ge        1b                            \n"
+
+      "2:          \n"
+      "adds        %w[dst_width], %w[dst_width], #32 \n"
+      "b.eq        99f                           \n"
+
+      "ldp         q0, q1, [%[src_ptr]]          \n"
+      "ldp         q2, q3, [%[src_ptr], #32]     \n"
+      "uzp2        v0.8h, v0.8h, v1.8h           \n"
+      "uzp2        v1.8h, v2.8h, v3.8h           \n"
+      "stp         q0, q1, [%[dst_ptr]]          \n"
+
+      "99:         \n"
+      : [src_ptr] "+r"(src_ptr),     // %[src_ptr]
+        [dst_ptr] "+r"(dst),         // %[dst_ptr]
+        [dst_width] "+r"(dst_width)  // %[dst_width]
+      :
+      : "cc", "memory", "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7");
+}
+
+void ScaleRowDown2Linear_16_NEON(const uint16_t* src_ptr,
+                                 ptrdiff_t src_stride,
+                                 uint16_t* dst,
+                                 int dst_width) {
+  (void)src_stride;
+  asm volatile(
+      "1:          \n"
+      "ld2         {v0.8h, v1.8h}, [%[src_ptr]], #32 \n"
+      "ld2         {v2.8h, v3.8h}, [%[src_ptr]], #32 \n"
+      "subs        %w[dst_width], %w[dst_width], #16 \n"
+      "urhadd      v0.8h, v0.8h, v1.8h           \n"
+      "urhadd      v1.8h, v2.8h, v3.8h           \n"
+      "prfm        pldl1keep, [%[src_ptr], 448]  \n"
+      "stp         q0, q1, [%[dst_ptr]], #32     \n"
+      "b.gt        1b                            \n"
+      : [src_ptr] "+r"(src_ptr),     // %[src_ptr]
+        [dst_ptr] "+r"(dst),         // %[dst_ptr]
+        [dst_width] "+r"(dst_width)  // %[dst_width]
+      :
+      : "memory", "cc", "v0", "v1", "v2", "v3");
+}
+
 // Read 16x2 average down and write 8x1.
 void ScaleRowDown2Box_16_NEON(const uint16_t* src_ptr,
                               ptrdiff_t src_stride,
                               uint16_t* dst,
                               int dst_width) {
-  asm volatile (
+  asm volatile(
       // change the stride to row 2 pointer
       "add         %1, %0, %1, lsl #1            \n"  // ptr + stide * 2
-      "1:                                        \n"
+      "1:          \n"
       "ld1         {v0.8h, v1.8h}, [%0], #32     \n"  // load row 1 and post inc
       "ld1         {v2.8h, v3.8h}, [%1], #32     \n"  // load row 2 and post inc
       "subs        %w3, %w3, #8                  \n"  // 8 processed per loop
@@ -1476,8 +1452,8 @@ void ScaleUVRowDown2_NEON(const uint8_t* src_ptr,
                           uint8_t* dst,
                           int dst_width) {
   (void)src_stride;
-  asm volatile (
-      "1:                                        \n"
+  asm volatile(
+      "1:          \n"
       "ld2         {v0.8h,v1.8h}, [%0], #32      \n"  // load 16 UV
       "subs        %w2, %w2, #8                  \n"  // 8 processed per loop.
       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
@@ -1495,8 +1471,8 @@ void ScaleUVRowDown2Linear_NEON(const uint8_t* src_ptr,
                                 uint8_t* dst,
                                 int dst_width) {
   (void)src_stride;
-  asm volatile (
-      "1:                                        \n"
+  asm volatile(
+      "1:          \n"
       "ld2         {v0.8h,v1.8h}, [%0], #32      \n"  // load 16 UV
       "subs        %w2, %w2, #8                  \n"  // 8 processed per loop.
       "urhadd      v0.16b, v0.16b, v1.16b        \n"  // rounding half add
@@ -1514,10 +1490,10 @@ void ScaleUVRowDown2Box_NEON(const uint8_t* src_ptr,
                              ptrdiff_t src_stride,
                              uint8_t* dst,
                              int dst_width) {
-  asm volatile (
+  asm volatile(
       // change the stride to row 2 pointer
       "add         %1, %1, %0                    \n"
-      "1:                                        \n"
+      "1:          \n"
       "ld2         {v0.16b,v1.16b}, [%0], #32    \n"  // load 16 UV
       "subs        %w3, %w3, #8                  \n"  // 8 processed per loop.
       "uaddlp      v0.8h, v0.16b                 \n"  // U 16 bytes -> 8 shorts.
@@ -1549,8 +1525,8 @@ void ScaleUVRowDownEven_NEON(const uint8_t* src_ptr,
   const uint8_t* src2_ptr = src_ptr + src_stepx * 4;
   const uint8_t* src3_ptr = src_ptr + src_stepx * 6;
   (void)src_stride;
-  asm volatile (
-      "1:                                        \n"
+  asm volatile(
+      "1:          \n"
       "ld1         {v0.h}[0], [%0], %6           \n"
       "ld1         {v1.h}[0], [%1], %6           \n"
       "ld1         {v2.h}[0], [%2], %6           \n"

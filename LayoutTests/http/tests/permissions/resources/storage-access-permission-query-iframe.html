@@ -1,0 +1,51 @@
+<script>
+function postTestResult(message, expected, actual) {
+    parent.postMessage({
+        type: 'test-result',
+        message: message,
+        expected: expected,
+        actual: actual
+    }, '*');
+}
+
+function postTestComplete() {
+    parent.postMessage({
+        type: 'test-complete'
+    }, '*');
+}
+
+async function runTest()
+{
+    await testRunner.setStorageAccessPermission(false, location.href);
+    navigator.permissions.query({ name: "storage-access" }).then(async (status) => {
+        window.state = status.state;
+        postTestResult("state", "prompt", state);
+        await grantTest();
+    });
+}
+
+async function grantTest() 
+{
+    await testRunner.setStorageAccessPermission(true, location.href);
+    navigator.permissions.query({ name: "storage-access" }).then(async (status) => {
+        window.state = status.state;
+        postTestResult("state", "granted", state);
+        await denyTest();
+    });
+}
+
+async function denyTest() 
+{
+    await testRunner.setStorageAccessPermission(false, location.href);
+    navigator.permissions.query({ name: "storage-access" }).then((status) => {
+        window.state = status.state;
+        postTestResult("state", "prompt", state);
+        postTestComplete();
+    });
+}
+
+window.onload = async () => {
+    await testRunner.setStorageAccessPermission(false, location.href);
+    await runTest();
+}
+</script>

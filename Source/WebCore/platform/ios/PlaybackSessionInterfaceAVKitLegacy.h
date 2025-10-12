@@ -25,9 +25,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(COCOA) && HAVE(AVKIT)
 
-#include "PlaybackSessionInterfaceIOS.h"
+#include <WebCore/PlaybackSessionInterfaceIOS.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

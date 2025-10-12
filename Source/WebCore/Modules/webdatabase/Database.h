@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,7 +77,7 @@ public:
     void didCommitWriteTransaction();
     bool didExceedQuota();
 
-    SQLTransactionCoordinator* transactionCoordinator();
+    SQLTransactionCoordinator& transactionCoordinator();
 
     // Direct support for the DOM API
     String version() const;
@@ -148,8 +148,8 @@ private:
 #endif
 
     Ref<Document> m_document;
-    Ref<SecurityOrigin> m_contextThreadSecurityOrigin;
-    Ref<SecurityOrigin> m_databaseThreadSecurityOrigin;
+    const Ref<SecurityOrigin> m_contextThreadSecurityOrigin;
+    const Ref<SecurityOrigin> m_databaseThreadSecurityOrigin;
     Ref<DatabaseContext> m_databaseContext;
 
     bool m_deleted { false };
@@ -167,7 +167,7 @@ private:
 
     SQLiteDatabase m_sqliteDatabase;
 
-    Ref<DatabaseAuthorizer> m_databaseAuthorizer;
+    const Ref<DatabaseAuthorizer> m_databaseAuthorizer;
 
     Deque<Ref<SQLTransaction>> m_transactionQueue WTF_GUARDED_BY_LOCK(m_transactionInProgressLock);
     Lock m_transactionInProgressLock;

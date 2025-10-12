@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Dirk Schulze <vbs85@gmx.de>
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +26,7 @@
 
 #pragma once
 
-#include <wtf/Vector.h>
+#include <wtf/FixedVector.h>
 
 #if USE(CG)
 #include <CoreGraphics/CoreGraphics.h>
@@ -43,6 +44,6 @@ using DashArrayElement = float;
 
 // DashArray is array of lengths along a path, with elements alternating on, off, on, off state.
 // The array is applied circularly mod path length.
-using DashArray = Vector<DashArrayElement>;
+using DashArray = FixedVector<DashArrayElement>;
 
 } // namespace WebCore

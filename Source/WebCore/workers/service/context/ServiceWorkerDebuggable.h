@@ -27,8 +27,8 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include "ServiceWorkerContextData.h"
 #include <JavaScriptCore/RemoteInspectionTarget.h>
+#include <WebCore/ServiceWorkerContextData.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 

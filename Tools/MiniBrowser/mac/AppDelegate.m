@@ -45,6 +45,14 @@
 #import <objc/runtime.h>
 
 static const NSString * const kURLArgumentString = @"--url";
+static const NSString * const kSiteIsolationArgumentString = @"--force-site-isolation";
+static const NSString * const kWebInspectorArgumentString = @"--web-inspector";
+
+// Force MiniBrowser to run with or without site isolation.
+static BOOL sForceSiteIsolationSetting = NO;
+static BOOL sShouldEnableSiteIsolation = NO;
+
+static BOOL sOpenWebInspector = NO;
 
 enum {
     WebKit1NewWindowTag = 1,
@@ -227,8 +235,11 @@ static NSNumber *_currentBadge;
 {
     _settingsController = [[SettingsController alloc] initWithMenu:_settingsMenu];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if ([_settingsController usesGameControllerFramework])
         [WKProcessPool _forceGameControllerFramework];
+#pragma clang diagnostic pop
 
     if ([NSApp respondsToSelector:@selector(setAutomaticCustomizeTouchBarMenuItemEnabled:)])
         [NSApp setAutomaticCustomizeTouchBarMenuItemEnabled:YES];
@@ -243,6 +254,23 @@ static NSNumber *_currentBadge;
                                                         andEventID:'OURL'];
 }
 
+- (void)_parseArguments
+{
+    NSArray *args = [[NSProcessInfo processInfo] arguments];
+    const NSUInteger siteIsolationIndex = [args indexOfObject:kSiteIsolationArgumentString];
+    sForceSiteIsolationSetting = (siteIsolationIndex != NSNotFound && siteIsolationIndex + 1 < [args count]);
+    if (sForceSiteIsolationSetting) {
+        sShouldEnableSiteIsolation = [[args objectAtIndex:siteIsolationIndex + 1] isEqualToString: @"YES"];
+        if (sShouldEnableSiteIsolation)
+            NSLog(@"Force enabling Site Isolation.");
+        else
+            NSLog(@"Force disabling Site Isolation.");
+    }
+
+    const NSUInteger webInspectorIndex = [args indexOfObject:kWebInspectorArgumentString];
+    sOpenWebInspector = (webInspectorIndex != NSNotFound);
+}
+
 - (WKWebViewConfiguration *)defaultConfiguration
 {
     static WKWebViewConfiguration *configuration;
@@ -251,11 +279,14 @@ static NSNumber *_currentBadge;
         configuration = [[WKWebViewConfiguration alloc] init];
         configuration.websiteDataStore = [self persistentDataStore];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         _WKProcessPoolConfiguration *processConfiguration = [[_WKProcessPoolConfiguration alloc] init];
         if (_settingsController.perWindowWebProcessesDisabled)
             processConfiguration.usesSingleWebProcess = YES;
-        
+
         configuration.processPool = [[WKProcessPool alloc] _initWithConfiguration:processConfiguration];
+#pragma clang diagnostic pop
 
         NSArray<_WKFeature *> *features = [WKPreferences _features];
         for (_WKFeature *feature in features) {
@@ -274,6 +305,11 @@ static NSNumber *_currentBadge;
         configuration.preferences._notificationsEnabled = YES;
         configuration.preferences._notificationEventEnabled = YES;
         configuration.preferences._appBadgeEnabled = YES;
+
+        [self _parseArguments];
+
+        if (sForceSiteIsolationSetting)
+            configuration.preferences._siteIsolationEnabled = sShouldEnableSiteIsolation;
     }
 
     configuration.suppressesIncrementalRendering = _settingsController.incrementalRenderingSuppressed;
@@ -352,6 +388,9 @@ static NSNumber *_currentBadge;
 
     [[controller window] makeKeyAndOrderFront:sender];
     [controller loadURLString:[self targetURLOrDefaultURL]];
+
+    if (sOpenWebInspector)
+        [controller showHideWebInspector:sender];
 }
 
 - (IBAction)newPrivateWindow:(id)sender
@@ -365,6 +404,9 @@ static NSNumber *_currentBadge;
     [_browserWindowControllers addObject:controller];
 
     [controller loadURLString:_settingsController.defaultURL];
+
+    if (sOpenWebInspector)
+        [controller showHideWebInspector:sender];
 }
 
 - (IBAction)newEditorWindow:(id)sender
@@ -431,6 +473,10 @@ static NSNumber *_currentBadge;
 
     [controller.window makeKeyAndOrderFront:self];
     [controller loadURLString:url.absoluteString];
+
+    if (sOpenWebInspector)
+        [controller showHideWebInspector:nil];
+
     _openNewWindowAtStartup = false;
     return YES;
 }
@@ -447,6 +493,9 @@ static NSNumber *_currentBadge;
 
             NSURL *url = [openPanel.URLs objectAtIndex:0];
             [browserWindowController loadURLString:[url absoluteString]];
+
+            if (sOpenWebInspector)
+                [browserWindowController showHideWebInspector:sender];
         }];
         return;
     }
@@ -461,6 +510,9 @@ static NSNumber *_currentBadge;
 
         NSURL *url = [openPanel.URLs objectAtIndex:0];
         [controller loadURLString:[url absoluteString]];
+
+        if (sOpenWebInspector)
+            [controller showHideWebInspector:sender];
     }];
 }
 

@@ -34,13 +34,15 @@ class DatarateTestLarge
     ResetModel();
   }
 
-  virtual void ResetModel() {
+  void ResetModel() {
     last_pts_ = 0;
     bits_in_buffer_model_ = cfg_.rc_target_bitrate * cfg_.rc_buf_initial_sz;
     frame_number_ = 0;
     first_drop_ = 0;
     bits_total_ = 0;
     duration_ = 0.0;
+    // Denoiser is off by default.
+    denoiser_on_ = 0;
     denoiser_offon_test_ = 0;
     denoiser_offon_period_ = -1;
     gf_boost_ = 0;
@@ -147,9 +149,9 @@ class DatarateTestLarge
       // For the temporal denoiser (#if CONFIG_TEMPORAL_DENOISING) the level j
       // refers to the 4 denoiser modes: denoiserYonly, denoiserOnYUV,
       // denoiserOnAggressive, and denoiserOnAdaptive.
-      denoiser_on_ = j;
       cfg_.rc_target_bitrate = 300;
       ResetModel();
+      denoiser_on_ = j;
       ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
       ASSERT_GE(cfg_.rc_target_bitrate, effective_datarate_ * 0.95)
           << " The datarate for the file exceeds the target!";
@@ -168,8 +170,6 @@ class DatarateTestLarge
                                          288, 30, 1, 0, 299);
     cfg_.rc_target_bitrate = 300;
     ResetModel();
-    // The denoiser is off by default.
-    denoiser_on_ = 0;
     // Set the offon test flag.
     denoiser_offon_test_ = 1;
     denoiser_offon_period_ = 100;
@@ -181,7 +181,6 @@ class DatarateTestLarge
   }
 
   virtual void BasicBufferModelTest() {
-    denoiser_on_ = 0;
     cfg_.rc_buf_initial_sz = 500;
     cfg_.rc_dropframe_thresh = 1;
     cfg_.rc_max_quantizer = 56;
@@ -212,7 +211,6 @@ class DatarateTestLarge
   }
 
   virtual void ChangingDropFrameThreshTest() {
-    denoiser_on_ = 0;
     cfg_.rc_buf_initial_sz = 500;
     cfg_.rc_max_quantizer = 36;
     cfg_.rc_end_usage = VPX_CBR;
@@ -241,7 +239,6 @@ class DatarateTestLarge
   }
 
   virtual void DropFramesMultiThreadsTest() {
-    denoiser_on_ = 0;
     cfg_.rc_buf_initial_sz = 500;
     cfg_.rc_dropframe_thresh = 30;
     cfg_.rc_max_quantizer = 56;
@@ -261,7 +258,6 @@ class DatarateTestLarge
   }
 
   virtual void MultiThreadsPSNRTest() {
-    denoiser_on_ = 0;
     cfg_.rc_buf_initial_sz = 500;
     cfg_.rc_dropframe_thresh = 0;
     cfg_.rc_max_quantizer = 56;
@@ -348,7 +344,6 @@ TEST_P(DatarateTestRealTime, DropFramesMultiThreads) {
 TEST_P(DatarateTestRealTime, MultiThreadsPSNR) { MultiThreadsPSNRTest(); }
 
 TEST_P(DatarateTestRealTime, RegionOfInterest) {
-  denoiser_on_ = 0;
   cfg_.rc_buf_initial_sz = 500;
   cfg_.rc_dropframe_thresh = 0;
   cfg_.rc_max_quantizer = 56;
@@ -409,7 +404,6 @@ TEST_P(DatarateTestRealTime, RegionOfInterest) {
 }
 
 TEST_P(DatarateTestRealTime, GFBoost) {
-  denoiser_on_ = 0;
   cfg_.rc_buf_initial_sz = 500;
   cfg_.rc_dropframe_thresh = 0;
   cfg_.rc_max_quantizer = 56;
@@ -432,7 +426,6 @@ TEST_P(DatarateTestRealTime, GFBoost) {
 }
 
 TEST_P(DatarateTestRealTime, NV12) {
-  denoiser_on_ = 0;
   cfg_.rc_buf_initial_sz = 500;
   cfg_.rc_dropframe_thresh = 0;
   cfg_.rc_max_quantizer = 56;
@@ -453,9 +446,63 @@ TEST_P(DatarateTestRealTime, NV12) {
       << " The datarate for the file missed the target!";
 }
 
+class DatarateTestPsnr : public DatarateTestLarge {
+ public:
+  DatarateTestPsnr() : DatarateTestLarge() {}
+  ~DatarateTestPsnr() override = default;
+
+ protected:
+  void SetUp() override {
+    InitializeConfig();
+    SetMode(libvpx_test::kRealTime);
+    set_cpu_used_ = 10;
+    ResetModel();
+    frame_flags_ = VPX_EFLAG_CALCULATE_PSNR;
+  }
+  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                          ::libvpx_test::Encoder *encoder) override {
+    DatarateTestLarge::PreEncodeFrameHook(video, encoder);
+    frame_flags_ ^= VPX_EFLAG_CALCULATE_PSNR;
+#if CONFIG_INTERNAL_STATS
+    // CONFIG_INTERNAL_STATS unconditionally generates PSNR.
+    expect_psnr_ = true;
+#else
+    expect_psnr_ = (frame_flags_ & VPX_EFLAG_CALCULATE_PSNR) != 0;
+#endif  // CONFIG_INTERNAL_STATS
+    if (video->img() == nullptr) {
+      expect_psnr_ = false;
+    }
+  }
+  void PostEncodeFrameHook(::libvpx_test::Encoder *encoder) override {
+    libvpx_test::CxDataIterator iter = encoder->GetCxData();
+
+    bool had_psnr = false;
+    while (const vpx_codec_cx_pkt_t *pkt = iter.Next()) {
+      if (pkt->kind == VPX_CODEC_PSNR_PKT) had_psnr = true;
+    }
+
+    EXPECT_EQ(had_psnr, expect_psnr_);
+  }
+
+ private:
+  bool expect_psnr_;
+};
+
+TEST_P(DatarateTestPsnr, PerFramePsnr) {
+  ::libvpx_test::I420VideoSource video("hantro_collage_w352h288.yuv", 352, 288,
+                                       30, 1, 0, 100);
+
+  ResetModel();
+  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+}
+
 VP8_INSTANTIATE_TEST_SUITE(DatarateTestLarge, ALL_TEST_MODES,
                            ::testing::Values(0));
 VP8_INSTANTIATE_TEST_SUITE(DatarateTestRealTime,
                            ::testing::Values(::libvpx_test::kRealTime),
                            ::testing::Values(-6, -12));
+VP8_INSTANTIATE_TEST_SUITE(DatarateTestPsnr,
+                           ::testing::Values(::libvpx_test::kRealTime),
+                           ::testing::Values(0));
+
 }  // namespace

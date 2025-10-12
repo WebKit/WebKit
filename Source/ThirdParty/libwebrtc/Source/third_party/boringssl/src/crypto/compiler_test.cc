@@ -1,26 +1,28 @@
-/* Copyright (c) 2017, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2017 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <limits.h>
 #include <stdint.h>
 
+#include <iterator>
 #include <type_traits>
 
 #include <gtest/gtest.h>
 
 #include "test/test_util.h"
 
+namespace {
 
 // C and C++ have two forms of unspecified behavior: undefined behavior and
 // implementation-defined behavior.
@@ -203,7 +205,7 @@ TEST(CompilerTest, PointerRepresentation) {
   }
 
   int ints[256];
-  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(ints); i++) {
+  for (size_t i = 0; i < std::size(ints); i++) {
     EXPECT_EQ(reinterpret_cast<uintptr_t>(ints) + i * sizeof(int),
               reinterpret_cast<uintptr_t>(ints + i));
   }
@@ -215,3 +217,31 @@ TEST(CompilerTest, PointerRepresentation) {
   EXPECT_EQ(Bytes(bytes),
             Bytes(reinterpret_cast<uint8_t *>(&null), sizeof(null)));
 }
+
+static uintptr_t aba(uintptr_t *a, void **b) {
+  *a = (uintptr_t)1;
+  *b = NULL;
+  return *a;  // 0 if a == b, 1 if a and b are disjoint
+}
+
+TEST(CompilerTest, NoStrictAliasing) {
+  // Sequential memory access must be sequentially consistent across types.
+  // Compilers such as clang and gcc need to be passed -fno-strict-aliasing
+  // for this to remain true at at higher optimization levels. Use with the
+  // opposite configuration, -fstrict-aliasing, is not supported.
+  // Even though some subset of type punning through memory is considered
+  // undefined behavior, the subtlety of exactly which subset that is and the
+  // limited sanitizer-tooling support make it impractical to avoid reliably.
+  uint8_t aliased[sizeof(void *)] = {};
+  uint8_t zeros[sizeof(void *)] = {};
+
+  OPENSSL_memset(aliased, -1, sizeof(aliased));
+  EXPECT_EQ(aba((uintptr_t *)aliased, (void **)aliased), (uintptr_t)0);
+  EXPECT_EQ(Bytes(aliased), Bytes(zeros));
+
+  volatile auto volatile_aba = &aba;
+  OPENSSL_memset(aliased, -1, sizeof(aliased));
+  EXPECT_EQ(volatile_aba((uintptr_t *)aliased, (void **)aliased), (uintptr_t)0);
+  EXPECT_EQ(Bytes(aliased), Bytes(zeros));
+}
+}  // namespace

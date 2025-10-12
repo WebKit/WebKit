@@ -33,7 +33,6 @@ typedef (File or USVString) FormDataEntryValue;
 [
     Exposed=(Window,Worker),
     JSGenerateToNativeObject,
-    JSGenerateToJSObject,
     InterfaceName=FormData,
 ] interface DOMFormData {
     [CallWith=CurrentScriptExecutionContext] constructor(optional HTMLFormElement form, optional HTMLElement? submitter = null);

@@ -27,20 +27,32 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "DFGCommon.h"
+#include <JavaScriptCore/DFGCommon.h>
 
-namespace JSC { namespace B3 {
+namespace JSC::B3 {
+class AbsoluteAbstractHeap;
+class AbstractHeap;
+class AbstractHeapRepository;
 class BasicBlock;
-class Value;
+class IndexedAbstractHeap;
+class NumberedAbstractHeap;
 class Type;
-} }
+class TypedPointer;
+class Value;
+}
 
-namespace JSC { namespace FTL {
+namespace JSC::FTL {
 
-typedef B3::BasicBlock* LBasicBlock;
-typedef B3::Type LType;
-typedef B3::Value* LValue;
+using B3::AbstractHeap;
+using B3::AbsoluteAbstractHeap;
+using B3::NumberedAbstractHeap;
+using B3::IndexedAbstractHeap;
+using B3::AbstractHeapRepository;
+using B3::TypedPointer;
+using LBasicBlock = B3::BasicBlock*;
+using LType = B3::Type;
+using LValue = B3::Value*;
 
-} } // namespace JSC::FTL
+} // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)

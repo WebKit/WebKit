@@ -7,6 +7,10 @@
 //    Implements the class methods for BufferNULL.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/null/BufferNULL.h"
 
 #include "common/debug.h"

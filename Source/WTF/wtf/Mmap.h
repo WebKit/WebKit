@@ -33,9 +33,9 @@
 namespace WTF {
 
 struct Mmap {
-    static void* mmap(size_t size, int pageProtection, int options, int fileDescriptor)
+    static void* mmap(void* addr, size_t size, int pageProtection, int options, int fileDescriptor)
     {
-        auto* data = ::mmap(0, size, pageProtection, options, fileDescriptor, 0);
+        auto* data = ::mmap(addr, size, pageProtection, options, fileDescriptor, 0);
         return data == MAP_FAILED ? nullptr : data;
     }
 

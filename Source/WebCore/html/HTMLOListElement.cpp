@@ -109,11 +109,6 @@ void HTMLOListElement::attributeChanged(const QualifiedName& name, const AtomStr
     }
 }
 
-void HTMLOListElement::setStartForBindings(int start)
-{
-    setIntegralAttribute(startAttr, start);
-}
-
 unsigned HTMLOListElement::itemCount() const
 {
     if (!m_itemCount)

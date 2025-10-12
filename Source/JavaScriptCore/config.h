@@ -27,11 +27,8 @@
 #define JSC_CLASS_AVAILABLE(...) JS_EXPORT
 #define JSC_API_DEPRECATED(...)
 #define JSC_API_DEPRECATED_WITH_REPLACEMENT(...)
-// Use zero since it will be less than any possible version number.
-#define JSC_MAC_VERSION_TBA 0
-#define JSC_IOS_VERSION_TBA 0
 
-#include "JSExportMacros.h"
+#include <JavaScriptCore/JSExportMacros.h>
 
 #ifdef __cplusplus
 #undef new

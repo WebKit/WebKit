@@ -30,6 +30,7 @@
 
 #include "ANGLEInstancedArrays.h"
 #include "CachedImage.h"
+#include "ContextDestructionObserverInlines.h"
 #include "EXTBlendMinMax.h"
 #include "EXTClipControl.h"
 #include "EXTColorBufferFloat.h"
@@ -68,6 +69,7 @@
 #include "OESTextureHalfFloatLinear.h"
 #include "OESVertexArrayObject.h"
 #include "RenderBox.h"
+#include "Settings.h"
 #include "WebCodecsVideoFrame.h"
 #include "WebCoreOpaqueRootInlines.h"
 #include "WebGLBlendFuncExtended.h"
@@ -330,7 +332,7 @@ GCGLint WebGLRenderingContext::maxDrawBuffers()
 {
     if (!supportsDrawBuffers())
         return 0;
-    RefPtr graphicsContext = protectedGraphicsContextGL();
+    RefPtr graphicsContext = graphicsContextGL();
     if (!m_maxDrawBuffers)
         m_maxDrawBuffers = graphicsContext->getInteger(GraphicsContextGL::MAX_DRAW_BUFFERS_EXT);
     if (!m_maxColorAttachments)

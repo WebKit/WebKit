@@ -28,6 +28,8 @@
 
 #if ENABLE(VIDEO)
 
+#include "Document.h"
+#include "ExceptionOr.h"
 #include "InbandTextTrackPrivate.h"
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
@@ -211,7 +213,7 @@ RefPtr<TextTrackCue> InbandGenericTextTrack::cueToExtend(TextTrackCue& newCue)
 
     return [this, &newCue]() -> RefPtr<TextTrackCue> {
         for (size_t i = 0; i < m_cues->length(); ++i) {
-            auto existingCue = m_cues->item(i);
+            RefPtr existingCue = m_cues->item(i);
             ASSERT(existingCue->track() == this);
 
             if (abs(newCue.startMediaTime() - existingCue->startMediaTime()) > startTimeVariance())

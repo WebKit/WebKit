@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "CharacterRange.h"
-#include "FindOptions.h"
-#include "InlineIteratorLogicalOrderTraversal.h"
-#include "InlineIteratorTextBox.h"
-#include "SimpleRange.h"
-#include "TextIteratorBehavior.h"
+#include <WebCore/CharacterRange.h>
+#include <WebCore/FindOptions.h>
+#include <WebCore/InlineIteratorLogicalOrderTraversal.h>
+#include <WebCore/InlineIteratorTextBox.h>
+#include <WebCore/SimpleRange.h>
+#include <WebCore/TextIteratorBehavior.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringCommon.h>
@@ -56,6 +56,7 @@ WEBCORE_EXPORT String plainTextReplacingNoBreakSpace(const SimpleRange&, TextIte
 // Find within the document, based on the text from the text iterator.
 WEBCORE_EXPORT SimpleRange findPlainText(const SimpleRange&, const String&, FindOptions);
 WEBCORE_EXPORT SimpleRange findClosestPlainText(const SimpleRange&, const String&, FindOptions, uint64_t targetCharacterOffset);
+WEBCORE_EXPORT Vector<SimpleRange> findAllPlainText(const SimpleRange&, const String&, FindOptions, unsigned limit);
 WEBCORE_EXPORT bool containsPlainText(const String& document, const String&, FindOptions); // Lets us use the search algorithm on a string.
 WEBCORE_EXPORT String foldQuoteMarks(const String&);
 
@@ -83,10 +84,10 @@ public:
     void reset();
     void set(String&&);
     void set(String&&, unsigned offset, unsigned length);
-    void set(UChar);
+    void set(char16_t);
 
 private:
-    UChar m_singleCharacter { 0 };
+    char16_t m_singleCharacter { 0 };
     String m_string;
     unsigned m_offset { 0 };
     unsigned m_length { 0 };
@@ -131,7 +132,7 @@ private:
     bool handleNonTextNode();
     void handleTextRun();
     void handleTextNodeFirstLetter(RenderTextFragment&);
-    void emitCharacter(UChar, RefPtr<Node>&& characterNode, RefPtr<Node>&& offsetBaseNode, int textStartOffset, int textEndOffset);
+    void emitCharacter(char16_t, RefPtr<Node>&& characterNode, RefPtr<Node>&& offsetBaseNode, int textStartOffset, int textEndOffset);
     void emitText(Text& textNode, RenderText&, int textStartOffset, int textEndOffset);
     void revertToRemainingTextRun();
 
@@ -178,7 +179,7 @@ private:
     // Used to do the whitespace collapsing logic.
     RefPtr<Text> m_lastTextNode;
     bool m_lastTextNodeEndedWithCollapsedSpace { false };
-    UChar m_lastCharacter { 0 };
+    char16_t m_lastCharacter { 0 };
 
     // Used when deciding whether to emit a "positioning" (e.g. newline) before any other content
     bool m_hasEmitted { false };
@@ -208,7 +209,7 @@ private:
     RenderText* handleFirstLetter(int& startOffset, int& offsetInNode);
     bool handleReplacedElement();
     bool handleNonTextNode();
-    void emitCharacter(UChar, RefPtr<Node>&&, int startOffset, int endOffset);
+    void emitCharacter(char16_t, RefPtr<Node>&&, int startOffset, int endOffset);
     bool advanceRespectingRange(Node*);
 
     const TextIteratorBehaviors m_behaviors;
@@ -235,7 +236,7 @@ private:
 
     // Used to do the whitespace logic.
     RefPtr<Text> m_lastTextNode;
-    UChar m_lastCharacter { 0 };
+    char16_t m_lastCharacter { 0 };
 
     // Whether m_node has advanced beyond the iteration range (i.e. m_startContainer).
     bool m_havePassedStartContainer { false };
@@ -303,7 +304,7 @@ private:
     TextIteratorCopyableText m_previousText;
 
     // Many chunks from text iterator concatenated.
-    Vector<UChar> m_buffer;
+    Vector<char16_t> m_buffer;
 
     // Did we have to look ahead in the text iterator to confirm the current chunk?
     bool m_didLookAhead { true };

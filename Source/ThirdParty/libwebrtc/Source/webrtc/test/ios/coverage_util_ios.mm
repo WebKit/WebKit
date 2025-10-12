@@ -14,7 +14,7 @@
 extern "C" void __llvm_profile_set_filename(const char* name);
 #endif
 
-namespace rtc {
+namespace webrtc {
 namespace test {
 
 void ConfigureCoverageReportPath() {
@@ -23,14 +23,16 @@ void ConfigureCoverageReportPath() {
   dispatch_once(&once_token, ^{
     // Writes the profraw file to the Documents directory, where the app has
     // write rights.
-    NSArray* paths =
-        NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSArray* paths = NSSearchPathForDirectoriesInDomains(
+        NSDocumentDirectory, NSUserDomainMask, YES);
     NSString* documents_directory = [paths firstObject];
-    NSString* file_name = [documents_directory stringByAppendingPathComponent:@"coverage.profraw"];
+    NSString* file_name = [documents_directory
+        stringByAppendingPathComponent:@"coverage.profraw"];
 
     // For documentation, see:
     // http://clang.llvm.org/docs/SourceBasedCodeCoverage.html
-    __llvm_profile_set_filename([file_name cStringUsingEncoding:NSUTF8StringEncoding]);
+    __llvm_profile_set_filename(
+        [file_name cStringUsingEncoding:NSUTF8StringEncoding]);
 
     // Print the path for easier retrieval.
     NSLog(@"Coverage data at %@.", file_name);
@@ -39,4 +41,4 @@ void ConfigureCoverageReportPath() {
 }
 
 }  // namespace test
-}  // namespace rtc
+}  // namespace webrtc

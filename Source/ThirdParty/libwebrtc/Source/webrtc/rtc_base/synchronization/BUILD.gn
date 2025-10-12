@@ -91,6 +91,7 @@ if (rtc_include_tests && rtc_enable_google_benchmarks) {
       "..:platform_thread",
       "..:rtc_event",
       "..:threading",
+      "../../api/units:time_delta",
       "../../test:test_support",
       "//third_party/google_benchmark",
     ]

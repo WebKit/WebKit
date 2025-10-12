@@ -40,7 +40,6 @@ G_BEGIN_DECLS
 #define WPE_TYPE_VIEW_WAYLAND (wpe_view_wayland_get_type())
 WPE_API G_DECLARE_FINAL_TYPE (WPEViewWayland, wpe_view_wayland, WPE, VIEW_WAYLAND, WPEView)
 
-WPE_API WPEView           *wpe_view_wayland_new            (WPEDisplayWayland *display);
 WPE_API struct wl_surface *wpe_view_wayland_get_wl_surface (WPEViewWayland    *view);
 
 G_END_DECLS

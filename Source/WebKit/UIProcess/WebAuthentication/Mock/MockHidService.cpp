@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "Logging.h"
 #include "MockHidConnection.h"
 #include <wtf/RunLoop.h>
 
@@ -55,9 +56,19 @@ void MockHidService::platformStartDiscovery()
 
 Ref<HidConnection> MockHidService::createHidConnection(IOHIDDeviceRef device) const
 {
-    return MockHidConnection::create(device, m_configuration);
+    Ref connection = MockHidConnection::create(device, m_configuration);
+    m_activeConnection = connection.get();
+    return connection;
+}
+
+void MockHidService::validateExpectedCommandsCompleted()
+{
+    if (RefPtr connection = m_activeConnection.get()) {
+        RELEASE_LOG(WebAuthn, "MockHidService: Found active connection, calling validation");
+        connection->validateExpectedCommandsCompleted();
+    } else
+        RELEASE_LOG(WebAuthn, "MockHidService: No active connection found");
 }
 
 } // namespace WebKit
-
 #endif // ENABLE(WEB_AUTHN)

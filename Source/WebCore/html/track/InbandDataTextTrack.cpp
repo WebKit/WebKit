@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Cable Television Labs Inc.  All rights reserved.
+ * Copyright (C) 2014 Cable Television Labs Inc. All rights reserved.
  * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@
 #if ENABLE(VIDEO)
 
 #include "DataCue.h"
+#include "Document.h"
 #include "ExceptionOr.h"
 #include "InbandTextTrackPrivate.h"
 #include "TextTrackList.h"
@@ -78,7 +79,7 @@ void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& en
         return;
     }
 
-    auto* textTrackList = downcast<TextTrackList>(trackList());
+    RefPtr textTrackList = downcast<TextTrackList>(trackList());
     if (end.isPositiveInfinite()) {
         if (textTrackList && textTrackList->duration().isValid())
             cue->setEndTime(textTrackList->duration());
@@ -111,7 +112,7 @@ void InbandDataTextTrack::updateDataCue(const MediaTime& start, const MediaTime&
     cue->willChange();
 
     MediaTime end = inEnd;
-    auto* textTrackList = downcast<TextTrackList>(trackList());
+    RefPtr textTrackList = downcast<TextTrackList>(trackList());
     if (end.isPositiveInfinite() && textTrackList && textTrackList->duration().isValid())
         end = textTrackList->duration();
     else
@@ -138,7 +139,7 @@ ExceptionOr<void> InbandDataTextTrack::removeCue(TextTrackCue& cue)
 {
     ASSERT(cue.cueType() == TextTrackCue::Data);
 
-    if (auto platformValue = const_cast<SerializedPlatformDataCue*>(downcast<DataCue>(cue).platformValue()))
+    if (RefPtr platformValue = const_cast<SerializedPlatformDataCue*>(downcast<DataCue>(cue).platformValue()))
         removeDataCue({ }, { }, *platformValue);
 
     return InbandTextTrack::removeCue(cue);

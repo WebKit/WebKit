@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "ScriptExecutionContextIdentifier.h"
-#include "SecurityOriginData.h"
-#include "ServiceWorkerJobDataIdentifier.h"
-#include "ServiceWorkerJobType.h"
-#include "ServiceWorkerRegistrationKey.h"
-#include "ServiceWorkerRegistrationOptions.h"
-#include "ServiceWorkerTypes.h"
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/SecurityOriginData.h>
+#include <WebCore/ServiceWorkerJobDataIdentifier.h>
+#include <WebCore/ServiceWorkerJobType.h>
+#include <WebCore/ServiceWorkerRegistrationKey.h>
+#include <WebCore/ServiceWorkerRegistrationOptions.h>
+#include <WebCore/ServiceWorkerTypes.h>
 #include <wtf/URL.h>
 
 namespace WebCore {

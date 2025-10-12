@@ -32,6 +32,7 @@
 #include "FileSystemDirectoryEntry.h"
 #include "FileSystemFileEntry.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptWrappableInlines.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FileSystem.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -94,7 +95,7 @@ static ExceptionOr<Vector<Ref<FileSystemEntry>>> toFileSystemEntries(ScriptExecu
 }
 
 // https://wicg.github.io/entries-api/#name
-static bool isValidPathNameCharacter(UChar c)
+static bool isValidPathNameCharacter(char16_t c)
 {
     return c != '\0' && c != '/' && c != '\\';
 }

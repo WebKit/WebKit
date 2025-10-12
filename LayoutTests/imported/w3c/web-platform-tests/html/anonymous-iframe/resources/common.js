@@ -1,12 +1,12 @@
-// Create an anonymous iframe. The new document will execute any scripts sent
-// toward the token it returns.
-const newAnonymousIframe = (child_origin, opt_headers) => {
+// Create a credentialless iframe. The new document will execute any scripts
+// sent toward the token it returns.
+const newIframeCredentialless = (child_origin, opt_headers) => {
   opt_headers ||= "";
   const sub_document_token = token();
   let iframe = document.createElement('iframe');
   iframe.src = child_origin + executor_path + opt_headers +
     `&uuid=${sub_document_token}`;
-  iframe.anonymous = true;
+  iframe.credentialless = true;
   document.body.appendChild(iframe);
   return sub_document_token;
 };
@@ -17,7 +17,7 @@ const newIframe = (child_origin) => {
   const sub_document_token = token();
   let iframe = document.createElement('iframe');
   iframe.src = child_origin + executor_path + `&uuid=${sub_document_token}`;
-  iframe.anonymous = false
+  iframe.credentialless = false
   document.body.appendChild(iframe);
   return sub_document_token;
 };
@@ -33,15 +33,15 @@ const newPopup = (test, origin) => {
 
 // Create a fenced frame. The new document will execute any scripts sent
 // toward the token it returns.
-const newFencedFrame = (child_origin) => {
+const newFencedFrame = async (child_origin) => {
   const support_loading_mode_fenced_frame =
     "|header(Supports-Loading-Mode,fenced-frame)";
   const sub_document_token = token();
-  const fencedframe = document.createElement('fencedframe');
-  fencedframe.src = child_origin + executor_path +
+  const url = child_origin + executor_path +
     support_loading_mode_fenced_frame +
     `&uuid=${sub_document_token}`;
-  document.body.appendChild(fencedframe);
+  const urn = await generateURNFromFledge(url, []);
+  attachFencedFrame(urn);
   return sub_document_token;
 };
 

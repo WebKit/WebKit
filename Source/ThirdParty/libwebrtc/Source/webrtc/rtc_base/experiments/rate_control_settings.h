@@ -11,13 +11,14 @@
 #ifndef RTC_BASE_EXPERIMENTS_RATE_CONTROL_SETTINGS_H_
 #define RTC_BASE_EXPERIMENTS_RATE_CONTROL_SETTINGS_H_
 
+#include <cstdint>
+#include <memory>
 #include <optional>
 
+#include "absl/strings/string_view.h"
 #include "api/field_trials_view.h"
 #include "api/units/data_size.h"
-#include "api/video_codecs/video_codec.h"
 #include "rtc_base/experiments/struct_parameters_parser.h"
-#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 

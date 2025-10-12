@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2023 Apple Inc.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,7 +30,7 @@
 #include "GraphicsContext.h"
 #include "LayoutRect.h"
 #include "Logging.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RuntimeApplicationChecks.h>
@@ -275,14 +275,14 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const Font& font, CG
 
         Vector<CGSize, 256> translations(glyphs.size());
         RetainPtr ctFont = platformData.ctFont();
-        CTFontGetVerticalTranslationsForGlyphs(ctFont.get(), glyphs.data(), translations.data(), glyphs.size());
+        CTFontGetVerticalTranslationsForGlyphs(ctFont.get(), glyphs.data(), translations.mutableSpan().data(), glyphs.size());
 
-        auto ascentDelta = font.fontMetrics().ascent(IdeographicBaseline) - font.fontMetrics().ascent();
+        auto ascentDelta = font.fontMetrics().ascent(FontBaseline::Ideographic) - font.fontMetrics().ascent();
         fillVectorWithVerticalGlyphPositions(positions, translations, advances, point, ascentDelta, CGContextGetTextMatrix(context));
-        CTFontDrawGlyphs(ctFont.get(), glyphs.data(), positions.data(), glyphs.size(), context);
+        CTFontDrawGlyphs(ctFont.get(), glyphs.data(), positions.span().data(), glyphs.size(), context);
     } else {
         fillVectorWithHorizontalGlyphPositions(positions, context, advances, point);
-        CTFontDrawGlyphs(RetainPtr { platformData.ctFont() }.get(), glyphs.data(), positions.data(), glyphs.size(), context);
+        CTFontDrawGlyphs(RetainPtr { platformData.ctFont() }.get(), glyphs.data(), positions.span().data(), glyphs.size(), context);
     }
 }
 
@@ -401,7 +401,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, std::sp
 bool FontCascade::primaryFontIsSystemFont() const
 {
     Ref fontData = primaryFont();
-    return isSystemFont(RetainPtr { fontData->getCTFont() }.get());
+    return isSystemFont(RetainPtr { fontData->ctFont() }.get());
 }
 
 RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
@@ -438,7 +438,7 @@ RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView str
         if (font->platformData().orientation() == FontOrientation::Vertical) {
             if (isCJKIdeographOrSymbol(baseCharacter)) {
                 if (!font->hasVerticalGlyphs())
-                    font = &font->brokenIdeographFont();
+                    font = font->brokenIdeographFont();
             } else if (m_fontDescription.nonCJKGlyphOrientation() == NonCJKGlyphOrientation::Mixed) {
                 Ref verticalRightFont = font->verticalRightOrientationFont();
                 Glyph verticalRightGlyph = verticalRightFont->glyphForCharacter(baseCharacter);
@@ -524,7 +524,7 @@ ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariant
 bool FontCascade::canUseGlyphDisplayList(const RenderStyle& style)
 {
     // CoreText won't call the drawImage delegate for glyphs that are invisible, even if they have an associated shadow applied to its graphic context. This would result in a glyph display list without the invisible glyph which is drawn as image and we would not draw its associated shadow. Therefore, we won't use a display list for runs that are invisible and have an associated shadow.
-    return !(style.textShadow() && !style.color().isVisible());
+    return !(style.hasTextShadow() && !style.color().isVisible());
 }
 
 } // namespace WebCore

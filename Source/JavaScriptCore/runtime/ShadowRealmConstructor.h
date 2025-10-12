@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "InternalFunction.h"
-#include "ShadowRealmPrototype.h"
+#include <JavaScriptCore/InternalFunction.h>
+#include <JavaScriptCore/ShadowRealmPrototype.h>
 
 namespace JSC {
 

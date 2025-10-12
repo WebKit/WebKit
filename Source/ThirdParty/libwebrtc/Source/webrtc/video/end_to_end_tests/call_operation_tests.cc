@@ -9,18 +9,21 @@
  */
 
 #include <memory>
+#include <optional>
 
+#include "api/rtp_parameters.h"
 #include "api/test/create_frame_generator.h"
 #include "api/test/frame_generator_interface.h"
 #include "api/test/simulated_network.h"
-#include "call/fake_network_pipe.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
+#include "rtc_base/event.h"
 #include "rtc_base/task_queue_for_test.h"
-#include "system_wrappers/include/sleep.h"
+#include "rtc_base/thread.h"
 #include "test/call_test.h"
-#include "test/field_trial.h"
+#include "test/direct_transport.h"
 #include "test/frame_forwarder.h"
 #include "test/gtest.h"
-#include "test/network/simulated_network.h"
 #include "test/null_transport.h"
 #include "test/video_test_constants.h"
 
@@ -82,10 +85,10 @@ TEST_F(CallOperationEndToEndTest, RendersSingleDelayedFrame) {
   // frames in the queue.
   static const int kRenderDelayMs = 1000;
 
-  class Renderer : public rtc::VideoSinkInterface<VideoFrame> {
+  class Renderer : public VideoSinkInterface<VideoFrame> {
    public:
     void OnFrame(const VideoFrame& video_frame) override {
-      SleepMs(kRenderDelayMs);
+      Thread::SleepMs(kRenderDelayMs);
       event_.Set();
     }
 
@@ -93,7 +96,7 @@ TEST_F(CallOperationEndToEndTest, RendersSingleDelayedFrame) {
       return event_.Wait(test::VideoTestConstants::kDefaultTimeout);
     }
 
-    rtc::Event event_;
+    Event event_;
   } renderer;
 
   test::FrameForwarder frame_forwarder;
@@ -141,7 +144,7 @@ TEST_F(CallOperationEndToEndTest, RendersSingleDelayedFrame) {
 }
 
 TEST_F(CallOperationEndToEndTest, TransmitsFirstFrame) {
-  class Renderer : public rtc::VideoSinkInterface<VideoFrame> {
+  class Renderer : public VideoSinkInterface<VideoFrame> {
    public:
     void OnFrame(const VideoFrame& video_frame) override { event_.Set(); }
 
@@ -149,7 +152,7 @@ TEST_F(CallOperationEndToEndTest, TransmitsFirstFrame) {
       return event_.Wait(test::VideoTestConstants::kDefaultTimeout);
     }
 
-    rtc::Event event_;
+    Event event_;
   } renderer;
 
   std::unique_ptr<test::FrameGeneratorInterface> frame_generator;

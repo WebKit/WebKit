@@ -30,8 +30,9 @@
 
 #pragma once
 
-#include "DocumentInlines.h"
+#include "Document.h"
 #include "MutationObserver.h"
+#include "NodeDocument.h"
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
@@ -43,7 +44,7 @@ class QualifiedName;
 class MutationObserverInterestGroup {
     WTF_MAKE_TZONE_ALLOCATED(MutationObserverInterestGroup);
 public:
-    MutationObserverInterestGroup(UncheckedKeyHashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions>&&, MutationRecordDeliveryOptions);
+    MutationObserverInterestGroup(HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions>&&, MutationRecordDeliveryOptions);
 
     static std::unique_ptr<MutationObserverInterestGroup> createForChildListMutation(Node& target)
     {
@@ -78,7 +79,7 @@ private:
 
     bool hasOldValue(MutationRecordDeliveryOptions options) const { return options.containsAny(m_oldValueFlag); }
 
-    UncheckedKeyHashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> m_observers;
+    HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> m_observers;
     MutationRecordDeliveryOptions m_oldValueFlag;
 };
 

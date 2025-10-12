@@ -264,7 +264,7 @@ void disconnectWindowWrapper(WebScriptObject *windowWrapper)
 
 - (BOOL)_isSafeScript
 {
-    RootObject *root = [self _rootObject];
+    RefPtr root = [self _rootObject];
     if (!root)
         return false;
 
@@ -570,11 +570,11 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
 
         if (object->inherits<JSHTMLElement>()) {
             // Plugin elements cache the instance internally.
-            if (ObjcInstance* instance = static_cast<ObjcInstance*>(pluginInstance(jsCast<JSHTMLElement*>(object)->wrapped())))
+            if (RefPtr instance = static_cast<ObjcInstance*>(pluginInstance(jsCast<JSHTMLElement*>(object)->wrapped())))
                 return instance->getObject();
         } else if (object->inherits<ObjCRuntimeObject>()) {
             ObjCRuntimeObject* runtimeObject = static_cast<ObjCRuntimeObject*>(object);
-            ObjcInstance* instance = runtimeObject->getInternalObjCInstance();
+            RefPtr instance = runtimeObject->getInternalObjCInstance();
             if (instance)
                 return instance->getObject();
             return nil;

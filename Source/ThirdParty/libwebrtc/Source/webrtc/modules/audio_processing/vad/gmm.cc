@@ -10,7 +10,7 @@
 
 #include "modules/audio_processing/vad/gmm.h"
 
-#include <math.h>
+#include <cmath>
 
 namespace webrtc {
 

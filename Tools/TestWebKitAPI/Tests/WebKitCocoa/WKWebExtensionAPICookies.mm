@@ -29,6 +29,7 @@
 
 #import "WebExtensionUtilities.h"
 #import <WebKit/WKWebExtensionCommand.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 namespace TestWebKitAPI {
 
@@ -224,7 +225,7 @@ TEST(WKWebExtensionAPICookies, GetAll)
     }];
 
     __block bool done = false;
-    dispatch_group_notify(cookieGroup, dispatch_get_main_queue(), ^{
+    dispatch_group_notify(cookieGroup, mainDispatchQueueSingleton(), ^{
         done = true;
     });
 
@@ -289,7 +290,7 @@ TEST(WKWebExtensionAPICookies, GetAllIncognito)
     }];
 
     __block bool done = false;
-    dispatch_group_notify(cookieGroup, dispatch_get_main_queue(), ^{
+    dispatch_group_notify(cookieGroup, mainDispatchQueueSingleton(), ^{
         done = true;
     });
 
@@ -364,7 +365,7 @@ TEST(WKWebExtensionAPICookies, GetAllIncognitoWithPrivateAccess)
     }];
 
     __block bool done = false;
-    dispatch_group_notify(cookieGroup, dispatch_get_main_queue(), ^{
+    dispatch_group_notify(cookieGroup, mainDispatchQueueSingleton(), ^{
         done = true;
     });
 
@@ -480,7 +481,7 @@ TEST(WKWebExtensionAPICookies, GetAllWithFilters)
     }];
 
     __block bool done = false;
-    dispatch_group_notify(cookieGroup, dispatch_get_main_queue(), ^{
+    dispatch_group_notify(cookieGroup, mainDispatchQueueSingleton(), ^{
         done = true;
     });
 

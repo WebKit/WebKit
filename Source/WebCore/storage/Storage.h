@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "LocalDOMWindowProperty.h"
-#include "ScriptWrappable.h"
+#include <WebCore/LocalDOMWindowProperty.h>
+#include <WebCore/ScriptWrappable.h>
 
 namespace WebCore {
 
@@ -57,7 +57,7 @@ public:
 private:
     Storage(LocalDOMWindow&, Ref<StorageArea>&&);
 
-    bool requiresScriptExecutionTelemetry() const;
+    bool requiresScriptTrackingPrivacyProtection() const;
 
     const Ref<StorageArea> m_storageArea;
 };

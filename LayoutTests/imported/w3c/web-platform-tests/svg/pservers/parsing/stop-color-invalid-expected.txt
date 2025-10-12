@@ -1,6 +1,6 @@
 
 PASS e.style['stop-color'] = "auto" should not set the property value
-FAIL e.style['stop-color'] = "123" should not set the property value assert_equals: expected "" but got "rgb(17, 34, 51)"
+PASS e.style['stop-color'] = "123" should not set the property value
 PASS e.style['stop-color'] = "#12" should not set the property value
 PASS e.style['stop-color'] = "#123456789" should not set the property value
 PASS e.style['stop-color'] = "rgb" should not set the property value

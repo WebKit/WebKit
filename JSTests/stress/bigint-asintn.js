@@ -48,6 +48,14 @@ shouldThrow(() => {
     shouldBe(toBigInt, true);
 }
 
+shouldThrow(() => {
+    BigInt.asIntN(-Infinity, 2n ** 64n - 1n)
+}, `RangeError: number of bits cannot be negative`);
+shouldBe(BigInt.asIntN(-Number.EPSILON, 2n ** 64n - 1n), 0n);
+shouldBe(BigInt.asIntN(-0.1, 2n ** 64n - 1n), 0n);
+shouldBe(BigInt.asIntN(-0.9, 2n ** 64n - 1n), 0n);
+shouldBe(BigInt.asIntN(-1 + Number.EPSILON, 2n ** 64n - 1n), 0n);
+
 shouldBe(BigInt.asIntN(-0, 0n), 0n);
 
 shouldBe(BigInt.asIntN(0, 0n), 0n);
@@ -107,3 +115,15 @@ shouldBe(BigInt.asIntN(63, -0x800000000000001n), -576460752303423489n);
 shouldBe(BigInt.asIntN(64, -0x800000000000001n), -576460752303423489n);
 shouldBe(BigInt.asIntN(65, -0x800000000000001n), -576460752303423489n);
 shouldBe(BigInt.asIntN(66, -0x800000000000001n), -576460752303423489n);
+
+shouldBe(BigInt.asIntN(2 ** 32 - 1, 2n ** 64n - 1n), 18446744073709551615n);
+shouldBe(BigInt.asIntN(2 ** 32, 2n ** 64n - 1n), 18446744073709551615n);
+shouldBe(BigInt.asIntN(2 ** 32 + 1, 2n ** 64n - 1n), 18446744073709551615n);
+
+shouldBe(BigInt.asIntN(2 ** 53 - 1, 2n ** 64n - 1n), 18446744073709551615n);
+shouldThrow(() => {
+    BigInt.asIntN(2 ** 53, 2n ** 64n - 1n)
+}, `RangeError: number of bits larger than (2 ** 53) - 1`);
+shouldThrow(() => {
+    BigInt.asIntN(Infinity, 2n ** 64n - 1n)
+}, `RangeError: number of bits larger than (2 ** 53) - 1`);

@@ -26,7 +26,10 @@
 #include "config.h"
 #include "AutofillElements.h"
 
+#include "DocumentPage.h"
 #include "FocusController.h"
+#include "FocusControllerTypes.h"
+#include "Logging.h"
 #include "Page.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -47,7 +50,10 @@ static inline RefPtr<HTMLInputElement> nextAutofillableElement(Node* startNode, 
         return nullptr;
 
     do {
-        nextElement = focusController.nextFocusableElement(*nextElement.get());
+        auto result = focusController.nextFocusableElement(*nextElement.get());
+        if (!result.element && result.continuedSearchInRemoteFrame == ContinuedSearchInRemoteFrame::Yes)
+            LOG(SiteIsolation, "Crossing site isolation process barrier searching for `nextAutofillableElement` is not yet supported");
+        nextElement = result.element;
     } while (nextElement && !isAutofillableElement(*nextElement.get()));
 
     if (!nextElement)
@@ -63,7 +69,10 @@ static inline RefPtr<HTMLInputElement> previousAutofillableElement(Node* startNo
         return nullptr;
 
     do {
-        previousElement = focusController.previousFocusableElement(*previousElement.get());
+        auto result = focusController.previousFocusableElement(*previousElement.get());
+        if (!result.element && result.continuedSearchInRemoteFrame == ContinuedSearchInRemoteFrame::Yes)
+            LOG(SiteIsolation, "Crossing site isolation process barrier searching for `previousAutofillableElement` is not yet supported");
+        previousElement = result.element;
     } while (previousElement && !isAutofillableElement(*previousElement.get()));
 
     if (!previousElement)

@@ -132,7 +132,6 @@ class AudioFileReaderWebMData {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(AudioFileReaderWebMData);
 
 public:
-    const Ref<SharedBuffer> m_buffer;
 #if ENABLE(MEDIA_SOURCE)
     const Ref<AudioTrackPrivateWebM> m_track;
 #endif
@@ -186,7 +185,7 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(std::spa
     auto parser = SourceBufferParserWebM::create();
     if (!parser)
         return nullptr;
-    auto buffer = SharedBuffer::create(data);
+    Ref buffer = SharedBuffer::create(data);
 
     std::optional<uint64_t> audioTrackId;
     MediaTime duration;
@@ -216,12 +215,11 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(std::spa
             return;
         track->setDiscardPadding(discardPadding);
     });
-    SourceBufferParser::Segment segment(Ref { buffer.get() });
-    auto result = parser->appendData(WTFMove(segment));
+    auto result = parser->appendData(WTFMove(buffer));
     if (!track || !result)
         return nullptr;
     parser->flushPendingAudioSamples();
-    return makeUnique<AudioFileReaderWebMData>(AudioFileReaderWebMData { WTFMove(buffer), track.releaseNonNull(), WTFMove(duration), WTFMove(samples) });
+    return makeUnique<AudioFileReaderWebMData>(AudioFileReaderWebMData { track.releaseNonNull(), WTFMove(duration), WTFMove(samples) });
 }
 
 struct PassthroughUserData {

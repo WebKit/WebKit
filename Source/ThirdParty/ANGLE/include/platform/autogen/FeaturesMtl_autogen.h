@@ -146,18 +146,6 @@ struct FeaturesMtl : FeatureSetBase
         &members,
     };
 
-    FeatureInfo intelExplicitBoolCastWorkaround = {
-        "intelExplicitBoolCastWorkaround",
-        FeatureCategory::MetalWorkarounds,
-        &members,
-    };
-
-    FeatureInfo intelDisableFastMath = {
-        "intelDisableFastMath",
-        FeatureCategory::MetalWorkarounds,
-        &members,
-    };
-
     FeatureInfo allowRenderpassWithoutAttachment = {
         "allowRenderpassWithoutAttachment",
         FeatureCategory::MetalFeatures,
@@ -346,6 +334,12 @@ struct FeaturesMtl : FeatureSetBase
 
     FeatureInfo injectAsmStatementIntoLoopBodies = {
         "injectAsmStatementIntoLoopBodies",
+        FeatureCategory::MetalFeatures,
+        &members,
+    };
+
+    FeatureInfo ensureLoopForwardProgress = {
+        "ensureLoopForwardProgress",
         FeatureCategory::MetalFeatures,
         &members,
     };

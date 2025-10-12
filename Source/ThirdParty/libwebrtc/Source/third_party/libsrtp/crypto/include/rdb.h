@@ -64,8 +64,6 @@ typedef struct {
     v128_t bitmask;
 } srtp_rdb_t;
 
-#define rdb_bits_in_bitmask (8 * sizeof(v128_t))
-
 /*
  * srtp_rdb_init
  *

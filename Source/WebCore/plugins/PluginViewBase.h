@@ -24,13 +24,10 @@
 
 #pragma once
 
-#include "PlatformLayer.h"
-#include "ScrollTypes.h"
-#include "Widget.h"
-
-#if PLATFORM(COCOA)
-typedef struct objc_object* id;
-#endif
+#include <WebCore/PlatformLayer.h>
+#include <WebCore/ScrollTypes.h>
+#include <WebCore/Widget.h>
+#include <wtf/Platform.h>
 
 namespace WebCore {
 

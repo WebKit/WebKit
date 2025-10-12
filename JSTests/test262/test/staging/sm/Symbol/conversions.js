@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
 flags:
   - noStrict
 description: |
@@ -26,20 +25,20 @@ function testSymbolConversions(sym) {
     assert.sameValue(sym && 13, 13);
 
     // 7.1.3 ToNumber
-    assertThrowsInstanceOf(() => +sym, TypeError);
-    assertThrowsInstanceOf(() => sym | 0, TypeError);
+    assert.throws(TypeError, () => +sym);
+    assert.throws(TypeError, () => sym | 0);
 
     // 7.1.12 ToString
-    assertThrowsInstanceOf(() => "" + sym, TypeError);
-    assertThrowsInstanceOf(() => sym + "", TypeError);
-    assertThrowsInstanceOf(() => "" + [1, 2, sym], TypeError);
-    assertThrowsInstanceOf(() => ["simple", "thimble", sym].join(), TypeError);
+    assert.throws(TypeError, () => "" + sym);
+    assert.throws(TypeError, () => sym + "");
+    assert.throws(TypeError, () => "" + [1, 2, sym]);
+    assert.throws(TypeError, () => ["simple", "thimble", sym].join());
 
     // 21.1.1.1 String()
     assert.sameValue(String(sym), sym.toString());
 
     // 21.1.1.2 new String()
-    assertThrowsInstanceOf(() => new String(sym), TypeError);
+    assert.throws(TypeError, () => new String(sym));
 
     // 7.1.13 ToObject
     var obj = Object(sym);
@@ -58,19 +57,19 @@ for (var sym of symbols) {
 
     // 7.1.1 ToPrimitive
     var symobj = Object(sym);
-    assertThrowsInstanceOf(() => Number(symobj), TypeError);
-    assertThrowsInstanceOf(() => String(symobj), TypeError);
-    assertThrowsInstanceOf(() => symobj < 0, TypeError);
-    assertThrowsInstanceOf(() => 0 < symobj, TypeError);
-    assertThrowsInstanceOf(() => symobj + 1, TypeError);
-    assertThrowsInstanceOf(() => "" + symobj, TypeError);
+    assert.throws(TypeError, () => Number(symobj));
+    assert.throws(TypeError, () => String(symobj));
+    assert.throws(TypeError, () => symobj < 0);
+    assert.throws(TypeError, () => 0 < symobj);
+    assert.throws(TypeError, () => symobj + 1);
+    assert.throws(TypeError, () => "" + symobj);
     assert.sameValue(sym == symobj, true);
     assert.sameValue(sym === symobj, false);
     assert.sameValue(symobj == 0, false);
     assert.sameValue(0 != symobj, true);
 
     // 7.1.12 ToString
-    assertThrowsInstanceOf(() => String(Object(sym)), TypeError);
+    assert.throws(TypeError, () => String(Object(sym)));
 }
 
 // Deleting Symbol.prototype[@@toPrimitive] does not change the behavior of

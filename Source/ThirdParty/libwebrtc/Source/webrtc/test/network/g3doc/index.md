@@ -102,11 +102,11 @@ The framework has also the following private abstractions:
 For integrating with `webrtc::PeerConnection` there are helper abstractions:
 
 *   `webrtc::EmulatedNetworkManagerInterface` which is implemented by
-    `webrtc::test::EmulatedNetworkManager` and provides `rtc::Thread` and
-    `rtc::NetworkManager` for WebRTC to use as network thread for
-    `PeerConnection` and for `cricket::BasicPortAllocator`.
+    `webrtc::test::EmulatedNetworkManager` and provides `webrtc::Thread` and
+    `webrtc::NetworkManager` for WebRTC to use as network thread for
+    `PeerConnection` and for `webrtc::BasicPortAllocator`.
 
-    Implementation represent framework endpoints as `rtc::Network` to WebRTC.
+    Implementation represent framework endpoints as `webrtc::Network` to WebRTC.
 
 ## Architecture
 
@@ -124,7 +124,7 @@ Here is a visual overview of the emulated network architecture:
 ![Architecture](network_emulation_framework.png "Architecture")
 
 When network is hooked into `PeerConnection` it is done through network thread
-and `NetworkManager`. In the network thread the custom `rtc::SocketServer` is
+and `NetworkManager`. In the network thread the custom `webrtc::SocketServer` is
 provided: `webrtc::test::FakeNetworkSocketServer`. This custom socket server
 will construct custom sockets (`webrtc::test::FakeNetworkSocket`), which
 internally bind themselves to the required endpoint. All packets processing

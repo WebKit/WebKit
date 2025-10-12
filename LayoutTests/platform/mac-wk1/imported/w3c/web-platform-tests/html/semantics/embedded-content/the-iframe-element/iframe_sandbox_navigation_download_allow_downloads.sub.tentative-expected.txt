@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-downloads' is an invalid sandbox flag.
-CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-downloads' is an invalid sandbox flag.
-CONSOLE MESSAGE: Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 
 
 FAIL Navigation resulted download in sandbox is allowed by allow-downloads. Sandbox access violation: Blocked a frame at "http://localhost:8800" from accessing a cross-origin frame.  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.

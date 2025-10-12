@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGAngleValue.h"
 
+#include "ExceptionOr.h"
 #include "SVGParserUtilities.h"
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>

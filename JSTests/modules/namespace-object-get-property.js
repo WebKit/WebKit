@@ -3,7 +3,7 @@ import * as ns from "./namespace-object-get-property.js"
 
 shouldThrow(() => {
     Reflect.get(ns, 'empty');
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'empty' before initialization.`);
 shouldBe(Reflect.get(ns, 'undefined'), undefined);
 
 export let empty;

@@ -40,6 +40,7 @@ if (rtc_include_tests) {
       "../../../api:array_view",
       "../../../rtc_base:checks",
       "../../../rtc_base:gunit_helpers",
+      "../../../rtc_base:strong_alias",
       "../../../test:test_support",
     ]
     sources = [

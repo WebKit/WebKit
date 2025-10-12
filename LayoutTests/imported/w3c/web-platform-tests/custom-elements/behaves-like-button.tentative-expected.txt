@@ -1,0 +1,3 @@
+
+FAIL Autonomous custom element with ElementInternals.type=button supports the popovertarget attribute. assert_equals: The popover should be shown once when the custom element has type=button. expected 1 but got 0
+

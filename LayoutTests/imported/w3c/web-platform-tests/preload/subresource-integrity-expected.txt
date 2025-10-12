@@ -1,15 +1,3 @@
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: Cannot load stylesheet http://localhost:8800/subresource-integrity/style.css?fc19159b-2e7a-4cf1-890f-065bacee442e. Failed integrity metadata check. Content length: 37, Expected content length: -1, Expected metadata: sha256-deadbeefQ15RYHFvsYdWumweeFAw0hJDTFt9seErghA=
-CONSOLE MESSAGE: Cannot load stylesheet http://localhost:8800/subresource-integrity/style.css?abacbcfa-642c-49d1-818f-bd827ee2d66a. Failed integrity metadata check. Content length: 37, Expected content length: -1, Expected metadata: sha256-deadbeefQ15RYHFvsYdWumweeFAw0hJDTFt9seErghA=
-CONSOLE MESSAGE: Cannot load stylesheet http://localhost:8800/subresource-integrity/style.css?a3b7d9c2-deca-40a7-b4fd-a80b0419bd49. Failed integrity metadata check. Content length: 37, Expected content length: -1, Expected metadata: sha256-sha256-deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdead
-CONSOLE MESSAGE: Cannot load image http://127.0.0.1:8800/subresource-integrity/image.png?f8db01e4-563d-4ba6-8e0c-25ee6081669d due to access control checks.
-CONSOLE MESSAGE: Cannot load image http://127.0.0.1:8800/subresource-integrity/image.png?f8db01e4-563d-4ba6-8e0c-25ee6081669d due to access control checks.
-CONSOLE MESSAGE: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
-CONSOLE MESSAGE: Cannot load script http://localhost:8800/subresource-integrity/script.js?0901b943-bf02-4237-a87a-f0714391bcce. Failed integrity metadata check. Content length: 22, Expected content length: -1, Expected metadata: sha256-deadbeefQ15RYHFvsYdWumweeFAw0hJDTFt9seErghA=
-CONSOLE MESSAGE: Cannot load script http://localhost:8800/subresource-integrity/script.js?3d34bad2-370f-455f-89d8-4a13f20ca7b0. Failed integrity metadata check. Content length: 22, Expected content length: -1, Expected metadata: sha256-deadbeefQ15RYHFvsYdWumweeFAw0hJDTFt9seErghA=
-CONSOLE MESSAGE: Cannot load script http://localhost:8800/subresource-integrity/script.js?59782209-8edd-4371-9c8c-519e71e93a94. Failed integrity metadata check. Content length: 22, Expected content length: -1, Expected metadata: sha256-sha256-deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdead
 
 PASS Same-origin script with correct sha256 hash.
 PASS Same-origin script with correct sha384 hash.

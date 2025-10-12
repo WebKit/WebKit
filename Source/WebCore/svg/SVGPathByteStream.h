@@ -20,9 +20,9 @@
 
 #pragma once
 
-#include "Path.h"
-#include "SVGPathUtilities.h"
-#include "SVGPropertyTraits.h"
+#include <WebCore/Path.h>
+#include <WebCore/SVGPathUtilities.h>
+#include <WebCore/SVGPropertyTraits.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 

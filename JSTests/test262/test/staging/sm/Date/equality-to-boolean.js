@@ -4,19 +4,10 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-Date-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Test for correct implementation of |Date == boolean| and vice versa
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-print("Test for correct implementation of |Date == boolean| and vice versa");
-
-/**************
- * BEGIN TEST *
- **************/
 
 Date.prototype.toString = function() { return 1; };
 Date.prototype.valueOf = function() { return 0; };
@@ -40,7 +31,3 @@ assert.sameValue(new Date == false, false);
 /* == is symmetric. */
 assert.sameValue(true == new Date, true);
 assert.sameValue(false == new Date, false);
-
-/******************************************************************************/
-
-print("Tests complete");

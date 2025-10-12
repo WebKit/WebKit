@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "PixelBufferFormat.h"
-#include "RenderingMode.h"
+#include <WebCore/PixelBufferFormat.h>
+#include <WebCore/RenderingMode.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -41,7 +41,7 @@ class ImageBufferAllocator {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageBufferAllocator, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT ImageBufferAllocator();
-    WEBCORE_EXPORT virtual ~ImageBufferAllocator() = default;
+    WEBCORE_EXPORT virtual ~ImageBufferAllocator();
 
     virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, const DestinationColorSpace&, RenderingMode) const;
     WEBCORE_EXPORT virtual RefPtr<PixelBuffer> createPixelBuffer(const PixelBufferFormat&, const IntSize&) const;

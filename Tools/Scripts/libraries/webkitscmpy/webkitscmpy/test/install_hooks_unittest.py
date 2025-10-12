@@ -78,20 +78,20 @@ class TestInstallHooks(testing.PathTestCase):
         )
 
     def test_security_levels(self):
-        with OutputCapture(level=logging.INFO), mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():
+        with OutputCapture(level=logging.INFO), mocks.local.Git(self.path, remote='git@example.org:WebKit/project.git'), mocks.local.Svn():
             self.write_config(
                 origin={
-                    'url': 'git@example.org:project/project',
+                    'url': 'git@example.org:webkit/project',
                     'security-level': 0,
                 }, security={
-                    'url': 'git@example.org:project/project-security',
+                    'url': 'git@example.org:webkit/project-security',
                     'security-level': 1,
                 },
             )
 
             self.assertDictEqual({
-                'example.org:project/project': 0,
-                'example.org:project/project-security': 1,
+                'example.org:webkit/project': 0,
+                'example.org:webkit/project-security': 1,
             }, program.InstallHooks._security_levels(local.Git(self.path)))
 
     def test_version_re(self):
@@ -102,7 +102,7 @@ class TestInstallHooks(testing.PathTestCase):
         self.assertEqual(program.InstallHooks.VERSION_RE.match('import os'), None)
 
     def test_install_hook(self):
-        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path, remote='git@example.org:WebKit/project.git'), mocks.local.Svn():
             self.write_hook(os.path.join(self.path, 'hooks', 'pre-commit'))
             self.assertEqual(0, program.main(
                 args=('install-hooks', '-v'),
@@ -129,7 +129,7 @@ class TestInstallHooks(testing.PathTestCase):
             )
 
     def test_install_hook_alternate_hook_path_change(self):
-        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('Change'), mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('Change'), mocks.local.Git(self.path, remote='git@example.org:WebKit/project.git'), mocks.local.Svn():
             run(
                 [local.Git.executable(), 'config', 'core.hookspath', os.path.join(self.path, 'alternate-hooks-path')],
                 capture_output=True, cwd=self.path,
@@ -168,7 +168,7 @@ class TestInstallHooks(testing.PathTestCase):
             )
 
     def test_install_hook_alternate_hook_path_use(self):
-        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('Use'), mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('Use'), mocks.local.Git(self.path, remote='git@example.org:WebKit/project.git'), mocks.local.Svn():
             run(
                 [local.Git.executable(), 'config', 'core.hookspath', os.path.join(self.path, 'alternate-hooks-path')],
                 capture_output=True, cwd=self.path,
@@ -207,7 +207,7 @@ class TestInstallHooks(testing.PathTestCase):
             )
 
     def test_install_hook_alternate_hook_path_exit(self):
-        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('Exit'), mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('Exit'), mocks.local.Git(self.path, remote='git@example.org:WebKit/project.git'), mocks.local.Svn():
             run(
                 [local.Git.executable(), 'config', 'core.hookspath', os.path.join(self.path, 'alternate-hooks-path')],
                 capture_output=True, cwd=self.path,
@@ -227,14 +227,14 @@ class TestInstallHooks(testing.PathTestCase):
         self.assertEqual(captured.root.log.getvalue(), '')
 
     def test_security_level_in_hook(self):
-        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path, remote='git@example.org:WebKit/project.git'), mocks.local.Svn():
             self.write_hook(os.path.join(self.path, 'hooks', 'pre-push'), security_levels=True)
             self.write_config(
                 origin={
-                    'url': 'git@example.org:project/project',
+                    'url': 'git@example.org:webkit/project',
                     'security-level': 0,
                 }, security={
-                    'url': 'git@example.org:project/project-security',
+                    'url': 'git@example.org:webkit/project-security',
                     'security-level': 1,
                 },
             )
@@ -259,21 +259,21 @@ class TestInstallHooks(testing.PathTestCase):
         with open(resolved_hook, 'r') as f:
             self.assertEqual(
                 f.read(), '''#!/usr/bin/env {}
-SECURITY_LEVELS = {{'example.org:project/project': 0,
- 'example.org:project/project-security': 1}}
+SECURITY_LEVELS = {{'example.org:webkit/project': 0,
+ 'example.org:webkit/project-security': 1}}
 print('Hello, world!\\n')
 '''.format(os.path.basename(sys.executable)),
             )
 
     def test_security_level_addition(self):
-        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path, remote='git@example.org:WebKit/project.git'), mocks.local.Svn():
             self.write_hook(os.path.join(self.path, 'hooks', 'pre-push'), security_levels=True)
             self.write_config(
                 origin={
-                    'url': 'git@example.org:project/project',
+                    'url': 'git@example.org:webkit/project',
                     'security-level': 0,
                 }, security={
-                    'url': 'git@example.org:project/project-security',
+                    'url': 'git@example.org:webkit/project-security',
                     'security-level': 1,
                 },
             )
@@ -298,37 +298,55 @@ print('Hello, world!\\n')
         with open(resolved_hook, 'r') as f:
             self.assertEqual(
                 f.read(), '''#!/usr/bin/env {}
-SECURITY_LEVELS = {{'example.org:project/project': 0,
- 'example.org:project/project-security': 1,
+SECURITY_LEVELS = {{'example.org:webkit/project': 0,
+ 'example.org:webkit/project-security': 1,
  'example.org:organization/project': 2}}
 print('Hello, world!\\n')
 '''.format(os.path.basename(sys.executable)),
             )
 
     def test_security_level_override(self):
-        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path, remote='git@example.org:WebKit/project.git'), mocks.local.Svn():
             self.write_hook(os.path.join(self.path, 'hooks', 'pre-push'), security_levels=True)
             self.write_config(
                 origin={
-                    'url': 'git@example.org:project/project',
+                    'url': 'git@example.org:webkit/project',
                     'security-level': 0,
                 }, security={
-                    'url': 'git@example.org:project/project-security',
+                    'url': 'git@example.org:webkit/project-security',
                     'security-level': 1,
                 },
             )
             self.assertEqual(1, program.main(
-                args=('install-hooks', '-v', '--level', 'example.org:project/project=2'),
+                args=('install-hooks', '-v', '--level', 'example.org:WebKit/project=2'),
                 path=self.path,
                 hooks=os.path.join(self.path, 'hooks'),
             ))
 
         self.assertEqual(captured.stdout.getvalue(), '')
-        self.assertEqual(captured.stderr.getvalue(), "'example.org:project/project' already has a security level of '0'\n")
+        self.assertEqual(captured.stderr.getvalue(), "'example.org:WebKit/project' already has a security level of '0'\n")
         self.assertEqual(captured.root.log.getvalue(), '')
 
         resolved_hook = os.path.join(self.path, '.git', 'hooks', 'pre-push')
         self.assertFalse(os.path.isfile(resolved_hook))
+
+    def test_not_webkit(self):
+        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('No'), mocks.local.Git(self.path, remote='git@example.org:project/project.git'), mocks.local.Svn():
+            self.write_hook(os.path.join(self.path, 'hooks', 'pre-commit'))
+            self.assertEqual(0, program.main(
+                args=('install-hooks', '-v'),
+                path=self.path,
+                hooks=os.path.join(self.path, 'hooks'),
+            ))
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'This is not a repository under the WebKit Project. Installing WebKit hooks may override existing hooks and introduce undefined behavior.\n'
+            'Would you like to continue installation? ([No]/Yes): \n'
+            'Skipping hook installation for this repository\n'
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(captured.root.log.getvalue(), '')
 
     def test_svn(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(), mocks.local.Svn(self.path):

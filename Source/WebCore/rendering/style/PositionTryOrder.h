@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "BoxSides.h"
+#include <WebCore/BoxSides.h>
 
 namespace WebCore {
 namespace Style {

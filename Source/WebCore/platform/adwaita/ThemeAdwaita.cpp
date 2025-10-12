@@ -32,7 +32,6 @@
 #include "Adwaita.h"
 #include "Color.h"
 #include "FontCascade.h"
-#include "LengthSize.h"
 #include <wtf/NeverDestroyed.h>
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -78,64 +77,6 @@ void ThemeAdwaita::refreshSettings()
 }
 
 #endif // PLATFORM(GTK) || PLATFORM(WPE)
-
-LengthSize ThemeAdwaita::controlSize(StyleAppearance appearance, const FontCascade& fontCascade, const LengthSize& zoomedSize, float zoomFactor) const
-{
-    if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
-        return Theme::controlSize(appearance, fontCascade, zoomedSize, zoomFactor);
-
-    switch (appearance) {
-    case StyleAppearance::Checkbox:
-    case StyleAppearance::Radio: {
-        LengthSize buttonSize = zoomedSize;
-        if (buttonSize.width.isIntrinsicOrAuto())
-            buttonSize.width = Length(12 * zoomFactor, LengthType::Fixed);
-        if (buttonSize.height.isIntrinsicOrAuto())
-            buttonSize.height = Length(12 * zoomFactor, LengthType::Fixed);
-        return buttonSize;
-    }
-    case StyleAppearance::InnerSpinButton: {
-        LengthSize spinButtonSize = zoomedSize;
-        if (spinButtonSize.width.isIntrinsicOrAuto())
-            spinButtonSize.width = Length(static_cast<int>(arrowSize * zoomFactor), LengthType::Fixed);
-        if (spinButtonSize.height.isIntrinsicOrAuto() || fontCascade.size() > arrowSize)
-            spinButtonSize.height = Length(fontCascade.size(), LengthType::Fixed);
-        return spinButtonSize;
-    }
-    default:
-        break;
-    }
-
-    return Theme::controlSize(appearance, fontCascade, zoomedSize, zoomFactor);
-}
-
-LengthSize ThemeAdwaita::minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize& zoomedSize, float) const
-{
-    if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
-        return zoomedSize;
-
-    LengthSize minSize = zoomedSize;
-    if (minSize.width.isIntrinsicOrAuto())
-        minSize.width = Length(0, LengthType::Fixed);
-    if (minSize.height.isIntrinsicOrAuto())
-        minSize.height = Length(0, LengthType::Fixed);
-    return minSize;
-}
-
-LengthBox ThemeAdwaita::controlBorder(StyleAppearance appearance, const FontCascade& font, const LengthBox& zoomedBox, float zoomFactor) const
-{
-    switch (appearance) {
-    case StyleAppearance::PushButton:
-    case StyleAppearance::DefaultButton:
-    case StyleAppearance::Button:
-    case StyleAppearance::SquareButton:
-        return zoomedBox;
-    default:
-        break;
-    }
-
-    return Theme::controlBorder(appearance, font, zoomedBox, zoomFactor);
-}
 
 void ThemeAdwaita::setAccentColor(const Color& color)
 {

@@ -1,147 +1,25 @@
-/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
- * All rights reserved.
- *
- * This package is an SSL implementation written
- * by Eric Young (eay@cryptsoft.com).
- * The implementation was written so as to conform with Netscapes SSL.
- *
- * This library is free for commercial and non-commercial use as long as
- * the following conditions are aheared to.  The following conditions
- * apply to all code found in this distribution, be it the RC4, RSA,
- * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
- * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- *
- * Copyright remains Eric Young's, and as such any Copyright notices in
- * the code are not to be removed.
- * If this package is used in a product, Eric Young should be given attribution
- * as the author of the parts of the library used.
- * This can be in the form of a textual message at program startup or
- * in documentation (online or textual) provided with the package.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *    "This product includes cryptographic software written by
- *     Eric Young (eay@cryptsoft.com)"
- *    The word 'cryptographic' can be left out if the rouines from the library
- *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from
- *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- *
- * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * The licence and distribution terms for any publically available version or
- * derivative of this code cannot be changed.  i.e. this code cannot simply be
- * copied and put under another distribution licence
- * [including the GNU Public Licence.]
- */
-/* ====================================================================
- * Copyright (c) 1998-2007 The OpenSSL Project.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
- *
- * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission. For written permission, please contact
- *    openssl-core@openssl.org.
- *
- * 5. Products derived from this software may not be called "OpenSSL"
- *    nor may "OpenSSL" appear in their names without prior written
- *    permission of the OpenSSL Project.
- *
- * 6. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit (http://www.openssl.org/)"
- *
- * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
- *
- * This product includes cryptographic software written by Eric Young
- * (eay@cryptsoft.com).  This product includes software written by Tim
- * Hudson (tjh@cryptsoft.com).
- *
- */
-/* ====================================================================
- * Copyright 2002 Sun Microsystems, Inc. ALL RIGHTS RESERVED.
- * ECC cipher suite support in OpenSSL originally developed by
- * SUN MICROSYSTEMS, INC., and contributed to the OpenSSL project.
- */
-/* ====================================================================
- * Copyright 2005 Nokia. All rights reserved.
- *
- * The portions of the attached software ("Contribution") is developed by
- * Nokia Corporation and is licensed pursuant to the OpenSSL open source
- * license.
- *
- * The Contribution, originally written by Mika Kousa and Pasi Eronen of
- * Nokia Corporation, consists of the "PSK" (Pre-Shared Key) ciphersuites
- * support (see RFC 4279) to OpenSSL.
- *
- * No patent licenses or other rights except those expressly stated in
- * the OpenSSL open source license shall be deemed granted or received
- * expressly, by implication, estoppel, or otherwise.
- *
- * No assurances are provided by Nokia that the Contribution does not
- * infringe the patent or other intellectual property rights of any third
- * party or that the license provides you with all the necessary rights
- * to make use of the Contribution.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND. IN
- * ADDITION TO THE DISCLAIMERS INCLUDED IN THE LICENSE, NOKIA
- * SPECIFICALLY DISCLAIMS ANY LIABILITY FOR CLAIMS BROUGHT BY YOU OR ANY
- * OTHER ENTITY BASED ON INFRINGEMENT OF INTELLECTUAL PROPERTY RIGHTS OR
- * OTHERWISE. */
+// Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved.
+// Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved.
+// Copyright 2005 Nokia. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <openssl/ssl.h>
 
 #include <assert.h>
 #include <string.h>
+
+#include <iterator>
 
 #include <openssl/err.h>
 #include <openssl/md5.h>
@@ -149,8 +27,8 @@
 #include <openssl/sha.h>
 #include <openssl/stack.h>
 
-#include "internal.h"
 #include "../crypto/internal.h"
+#include "internal.h"
 
 
 BSSL_NAMESPACE_BEGIN
@@ -160,14 +38,14 @@ static constexpr SSL_CIPHER kCiphers[] = {
 
     // Cipher 0A
     {
-     SSL3_TXT_RSA_DES_192_CBC3_SHA,
-     "TLS_RSA_WITH_3DES_EDE_CBC_SHA",
-     SSL3_CK_RSA_DES_192_CBC3_SHA,
-     SSL_kRSA,
-     SSL_aRSA_DECRYPT,
-     SSL_3DES,
-     SSL_SHA1,
-     SSL_HANDSHAKE_MAC_DEFAULT,
+        SSL3_TXT_RSA_DES_192_CBC3_SHA,
+        "TLS_RSA_WITH_3DES_EDE_CBC_SHA",
+        SSL3_CK_RSA_DES_192_CBC3_SHA,
+        SSL_kRSA,
+        SSL_aRSA_DECRYPT,
+        SSL_3DES,
+        SSL_SHA1,
+        SSL_HANDSHAKE_MAC_DEFAULT,
     },
 
 
@@ -175,297 +53,295 @@ static constexpr SSL_CIPHER kCiphers[] = {
 
     // Cipher 2F
     {
-     TLS1_TXT_RSA_WITH_AES_128_SHA,
-     "TLS_RSA_WITH_AES_128_CBC_SHA",
-     TLS1_CK_RSA_WITH_AES_128_SHA,
-     SSL_kRSA,
-     SSL_aRSA_DECRYPT,
-     SSL_AES128,
-     SSL_SHA1,
-     SSL_HANDSHAKE_MAC_DEFAULT,
+        TLS1_TXT_RSA_WITH_AES_128_SHA,
+        "TLS_RSA_WITH_AES_128_CBC_SHA",
+        TLS1_CK_RSA_WITH_AES_128_SHA,
+        SSL_kRSA,
+        SSL_aRSA_DECRYPT,
+        SSL_AES128,
+        SSL_SHA1,
+        SSL_HANDSHAKE_MAC_DEFAULT,
     },
 
     // Cipher 35
     {
-     TLS1_TXT_RSA_WITH_AES_256_SHA,
-     "TLS_RSA_WITH_AES_256_CBC_SHA",
-     TLS1_CK_RSA_WITH_AES_256_SHA,
-     SSL_kRSA,
-     SSL_aRSA_DECRYPT,
-     SSL_AES256,
-     SSL_SHA1,
-     SSL_HANDSHAKE_MAC_DEFAULT,
+        TLS1_TXT_RSA_WITH_AES_256_SHA,
+        "TLS_RSA_WITH_AES_256_CBC_SHA",
+        TLS1_CK_RSA_WITH_AES_256_SHA,
+        SSL_kRSA,
+        SSL_aRSA_DECRYPT,
+        SSL_AES256,
+        SSL_SHA1,
+        SSL_HANDSHAKE_MAC_DEFAULT,
     },
 
     // PSK cipher suites.
 
     // Cipher 8C
     {
-     TLS1_TXT_PSK_WITH_AES_128_CBC_SHA,
-     "TLS_PSK_WITH_AES_128_CBC_SHA",
-     TLS1_CK_PSK_WITH_AES_128_CBC_SHA,
-     SSL_kPSK,
-     SSL_aPSK,
-     SSL_AES128,
-     SSL_SHA1,
-     SSL_HANDSHAKE_MAC_DEFAULT,
+        TLS1_TXT_PSK_WITH_AES_128_CBC_SHA,
+        "TLS_PSK_WITH_AES_128_CBC_SHA",
+        TLS1_CK_PSK_WITH_AES_128_CBC_SHA,
+        SSL_kPSK,
+        SSL_aPSK,
+        SSL_AES128,
+        SSL_SHA1,
+        SSL_HANDSHAKE_MAC_DEFAULT,
     },
 
     // Cipher 8D
     {
-     TLS1_TXT_PSK_WITH_AES_256_CBC_SHA,
-     "TLS_PSK_WITH_AES_256_CBC_SHA",
-     TLS1_CK_PSK_WITH_AES_256_CBC_SHA,
-     SSL_kPSK,
-     SSL_aPSK,
-     SSL_AES256,
-     SSL_SHA1,
-     SSL_HANDSHAKE_MAC_DEFAULT,
+        TLS1_TXT_PSK_WITH_AES_256_CBC_SHA,
+        "TLS_PSK_WITH_AES_256_CBC_SHA",
+        TLS1_CK_PSK_WITH_AES_256_CBC_SHA,
+        SSL_kPSK,
+        SSL_aPSK,
+        SSL_AES256,
+        SSL_SHA1,
+        SSL_HANDSHAKE_MAC_DEFAULT,
     },
 
     // GCM ciphersuites from RFC 5288
 
     // Cipher 9C
     {
-     TLS1_TXT_RSA_WITH_AES_128_GCM_SHA256,
-     "TLS_RSA_WITH_AES_128_GCM_SHA256",
-     TLS1_CK_RSA_WITH_AES_128_GCM_SHA256,
-     SSL_kRSA,
-     SSL_aRSA_DECRYPT,
-     SSL_AES128GCM,
-     SSL_AEAD,
-     SSL_HANDSHAKE_MAC_SHA256,
+        TLS1_TXT_RSA_WITH_AES_128_GCM_SHA256,
+        "TLS_RSA_WITH_AES_128_GCM_SHA256",
+        TLS1_CK_RSA_WITH_AES_128_GCM_SHA256,
+        SSL_kRSA,
+        SSL_aRSA_DECRYPT,
+        SSL_AES128GCM,
+        SSL_AEAD,
+        SSL_HANDSHAKE_MAC_SHA256,
     },
 
     // Cipher 9D
     {
-     TLS1_TXT_RSA_WITH_AES_256_GCM_SHA384,
-     "TLS_RSA_WITH_AES_256_GCM_SHA384",
-     TLS1_CK_RSA_WITH_AES_256_GCM_SHA384,
-     SSL_kRSA,
-     SSL_aRSA_DECRYPT,
-     SSL_AES256GCM,
-     SSL_AEAD,
-     SSL_HANDSHAKE_MAC_SHA384,
+        TLS1_TXT_RSA_WITH_AES_256_GCM_SHA384,
+        "TLS_RSA_WITH_AES_256_GCM_SHA384",
+        TLS1_CK_RSA_WITH_AES_256_GCM_SHA384,
+        SSL_kRSA,
+        SSL_aRSA_DECRYPT,
+        SSL_AES256GCM,
+        SSL_AEAD,
+        SSL_HANDSHAKE_MAC_SHA384,
     },
 
     // TLS 1.3 suites.
 
     // Cipher 1301
     {
-      TLS1_3_RFC_AES_128_GCM_SHA256,
-      "TLS_AES_128_GCM_SHA256",
-      TLS1_3_CK_AES_128_GCM_SHA256,
-      SSL_kGENERIC,
-      SSL_aGENERIC,
-      SSL_AES128GCM,
-      SSL_AEAD,
-      SSL_HANDSHAKE_MAC_SHA256,
+        TLS1_3_RFC_AES_128_GCM_SHA256,
+        "TLS_AES_128_GCM_SHA256",
+        TLS1_3_CK_AES_128_GCM_SHA256,
+        SSL_kGENERIC,
+        SSL_aGENERIC,
+        SSL_AES128GCM,
+        SSL_AEAD,
+        SSL_HANDSHAKE_MAC_SHA256,
     },
 
     // Cipher 1302
     {
-      TLS1_3_RFC_AES_256_GCM_SHA384,
-      "TLS_AES_256_GCM_SHA384",
-      TLS1_3_CK_AES_256_GCM_SHA384,
-      SSL_kGENERIC,
-      SSL_aGENERIC,
-      SSL_AES256GCM,
-      SSL_AEAD,
-      SSL_HANDSHAKE_MAC_SHA384,
+        TLS1_3_RFC_AES_256_GCM_SHA384,
+        "TLS_AES_256_GCM_SHA384",
+        TLS1_3_CK_AES_256_GCM_SHA384,
+        SSL_kGENERIC,
+        SSL_aGENERIC,
+        SSL_AES256GCM,
+        SSL_AEAD,
+        SSL_HANDSHAKE_MAC_SHA384,
     },
 
     // Cipher 1303
     {
-      TLS1_3_RFC_CHACHA20_POLY1305_SHA256,
-      "TLS_CHACHA20_POLY1305_SHA256",
-      TLS1_3_CK_CHACHA20_POLY1305_SHA256,
-      SSL_kGENERIC,
-      SSL_aGENERIC,
-      SSL_CHACHA20POLY1305,
-      SSL_AEAD,
-      SSL_HANDSHAKE_MAC_SHA256,
+        TLS1_3_RFC_CHACHA20_POLY1305_SHA256,
+        "TLS_CHACHA20_POLY1305_SHA256",
+        TLS1_3_CK_CHACHA20_POLY1305_SHA256,
+        SSL_kGENERIC,
+        SSL_aGENERIC,
+        SSL_CHACHA20POLY1305,
+        SSL_AEAD,
+        SSL_HANDSHAKE_MAC_SHA256,
     },
 
     // Cipher C009
     {
-     TLS1_TXT_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
-     "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
-     TLS1_CK_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
-     SSL_kECDHE,
-     SSL_aECDSA,
-     SSL_AES128,
-     SSL_SHA1,
-     SSL_HANDSHAKE_MAC_DEFAULT,
+        TLS1_TXT_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+        "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
+        TLS1_CK_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+        SSL_kECDHE,
+        SSL_aECDSA,
+        SSL_AES128,
+        SSL_SHA1,
+        SSL_HANDSHAKE_MAC_DEFAULT,
     },
 
     // Cipher C00A
     {
-     TLS1_TXT_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
-     "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA",
-     TLS1_CK_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
-     SSL_kECDHE,
-     SSL_aECDSA,
-     SSL_AES256,
-     SSL_SHA1,
-     SSL_HANDSHAKE_MAC_DEFAULT,
+        TLS1_TXT_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+        "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA",
+        TLS1_CK_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+        SSL_kECDHE,
+        SSL_aECDSA,
+        SSL_AES256,
+        SSL_SHA1,
+        SSL_HANDSHAKE_MAC_DEFAULT,
     },
 
     // Cipher C013
     {
-     TLS1_TXT_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-     "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
-     TLS1_CK_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-     SSL_kECDHE,
-     SSL_aRSA_SIGN,
-     SSL_AES128,
-     SSL_SHA1,
-     SSL_HANDSHAKE_MAC_DEFAULT,
+        TLS1_TXT_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+        "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+        TLS1_CK_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+        SSL_kECDHE,
+        SSL_aRSA_SIGN,
+        SSL_AES128,
+        SSL_SHA1,
+        SSL_HANDSHAKE_MAC_DEFAULT,
     },
 
     // Cipher C014
     {
-     TLS1_TXT_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-     "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
-     TLS1_CK_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-     SSL_kECDHE,
-     SSL_aRSA_SIGN,
-     SSL_AES256,
-     SSL_SHA1,
-     SSL_HANDSHAKE_MAC_DEFAULT,
+        TLS1_TXT_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+        "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+        TLS1_CK_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+        SSL_kECDHE,
+        SSL_aRSA_SIGN,
+        SSL_AES256,
+        SSL_SHA1,
+        SSL_HANDSHAKE_MAC_DEFAULT,
     },
 
     // Cipher C027
     {
-     TLS1_TXT_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
-     "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
-     TLS1_CK_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
-     SSL_kECDHE,
-     SSL_aRSA_SIGN,
-     SSL_AES128,
-     SSL_SHA256,
-     SSL_HANDSHAKE_MAC_SHA256,
+        TLS1_TXT_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+        "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
+        TLS1_CK_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+        SSL_kECDHE,
+        SSL_aRSA_SIGN,
+        SSL_AES128,
+        SSL_SHA256,
+        SSL_HANDSHAKE_MAC_SHA256,
     },
 
     // GCM based TLS v1.2 ciphersuites from RFC 5289
 
     // Cipher C02B
     {
-     TLS1_TXT_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-     "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
-     TLS1_CK_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-     SSL_kECDHE,
-     SSL_aECDSA,
-     SSL_AES128GCM,
-     SSL_AEAD,
-     SSL_HANDSHAKE_MAC_SHA256,
+        TLS1_TXT_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+        "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+        TLS1_CK_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+        SSL_kECDHE,
+        SSL_aECDSA,
+        SSL_AES128GCM,
+        SSL_AEAD,
+        SSL_HANDSHAKE_MAC_SHA256,
     },
 
     // Cipher C02C
     {
-     TLS1_TXT_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
-     "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
-     TLS1_CK_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
-     SSL_kECDHE,
-     SSL_aECDSA,
-     SSL_AES256GCM,
-     SSL_AEAD,
-     SSL_HANDSHAKE_MAC_SHA384,
+        TLS1_TXT_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+        "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+        TLS1_CK_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+        SSL_kECDHE,
+        SSL_aECDSA,
+        SSL_AES256GCM,
+        SSL_AEAD,
+        SSL_HANDSHAKE_MAC_SHA384,
     },
 
     // Cipher C02F
     {
-     TLS1_TXT_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-     "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
-     TLS1_CK_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-     SSL_kECDHE,
-     SSL_aRSA_SIGN,
-     SSL_AES128GCM,
-     SSL_AEAD,
-     SSL_HANDSHAKE_MAC_SHA256,
+        TLS1_TXT_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+        "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+        TLS1_CK_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+        SSL_kECDHE,
+        SSL_aRSA_SIGN,
+        SSL_AES128GCM,
+        SSL_AEAD,
+        SSL_HANDSHAKE_MAC_SHA256,
     },
 
     // Cipher C030
     {
-     TLS1_TXT_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
-     "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
-     TLS1_CK_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
-     SSL_kECDHE,
-     SSL_aRSA_SIGN,
-     SSL_AES256GCM,
-     SSL_AEAD,
-     SSL_HANDSHAKE_MAC_SHA384,
+        TLS1_TXT_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+        "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+        TLS1_CK_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+        SSL_kECDHE,
+        SSL_aRSA_SIGN,
+        SSL_AES256GCM,
+        SSL_AEAD,
+        SSL_HANDSHAKE_MAC_SHA384,
     },
 
     // ECDHE-PSK cipher suites.
 
     // Cipher C035
     {
-     TLS1_TXT_ECDHE_PSK_WITH_AES_128_CBC_SHA,
-     "TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA",
-     TLS1_CK_ECDHE_PSK_WITH_AES_128_CBC_SHA,
-     SSL_kECDHE,
-     SSL_aPSK,
-     SSL_AES128,
-     SSL_SHA1,
-     SSL_HANDSHAKE_MAC_DEFAULT,
+        TLS1_TXT_ECDHE_PSK_WITH_AES_128_CBC_SHA,
+        "TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA",
+        TLS1_CK_ECDHE_PSK_WITH_AES_128_CBC_SHA,
+        SSL_kECDHE,
+        SSL_aPSK,
+        SSL_AES128,
+        SSL_SHA1,
+        SSL_HANDSHAKE_MAC_DEFAULT,
     },
 
     // Cipher C036
     {
-     TLS1_TXT_ECDHE_PSK_WITH_AES_256_CBC_SHA,
-     "TLS_ECDHE_PSK_WITH_AES_256_CBC_SHA",
-     TLS1_CK_ECDHE_PSK_WITH_AES_256_CBC_SHA,
-     SSL_kECDHE,
-     SSL_aPSK,
-     SSL_AES256,
-     SSL_SHA1,
-     SSL_HANDSHAKE_MAC_DEFAULT,
+        TLS1_TXT_ECDHE_PSK_WITH_AES_256_CBC_SHA,
+        "TLS_ECDHE_PSK_WITH_AES_256_CBC_SHA",
+        TLS1_CK_ECDHE_PSK_WITH_AES_256_CBC_SHA,
+        SSL_kECDHE,
+        SSL_aPSK,
+        SSL_AES256,
+        SSL_SHA1,
+        SSL_HANDSHAKE_MAC_DEFAULT,
     },
 
     // ChaCha20-Poly1305 cipher suites.
 
     // Cipher CCA8
     {
-     TLS1_TXT_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
-     "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256",
-     TLS1_CK_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
-     SSL_kECDHE,
-     SSL_aRSA_SIGN,
-     SSL_CHACHA20POLY1305,
-     SSL_AEAD,
-     SSL_HANDSHAKE_MAC_SHA256,
+        TLS1_TXT_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
+        "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256",
+        TLS1_CK_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
+        SSL_kECDHE,
+        SSL_aRSA_SIGN,
+        SSL_CHACHA20POLY1305,
+        SSL_AEAD,
+        SSL_HANDSHAKE_MAC_SHA256,
     },
 
     // Cipher CCA9
     {
-     TLS1_TXT_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
-     "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256",
-     TLS1_CK_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
-     SSL_kECDHE,
-     SSL_aECDSA,
-     SSL_CHACHA20POLY1305,
-     SSL_AEAD,
-     SSL_HANDSHAKE_MAC_SHA256,
+        TLS1_TXT_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
+        "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256",
+        TLS1_CK_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
+        SSL_kECDHE,
+        SSL_aECDSA,
+        SSL_CHACHA20POLY1305,
+        SSL_AEAD,
+        SSL_HANDSHAKE_MAC_SHA256,
     },
 
     // Cipher CCAB
     {
-     TLS1_TXT_ECDHE_PSK_WITH_CHACHA20_POLY1305_SHA256,
-     "TLS_ECDHE_PSK_WITH_CHACHA20_POLY1305_SHA256",
-     TLS1_CK_ECDHE_PSK_WITH_CHACHA20_POLY1305_SHA256,
-     SSL_kECDHE,
-     SSL_aPSK,
-     SSL_CHACHA20POLY1305,
-     SSL_AEAD,
-     SSL_HANDSHAKE_MAC_SHA256,
+        TLS1_TXT_ECDHE_PSK_WITH_CHACHA20_POLY1305_SHA256,
+        "TLS_ECDHE_PSK_WITH_CHACHA20_POLY1305_SHA256",
+        TLS1_CK_ECDHE_PSK_WITH_CHACHA20_POLY1305_SHA256,
+        SSL_kECDHE,
+        SSL_aPSK,
+        SSL_CHACHA20POLY1305,
+        SSL_AEAD,
+        SSL_HANDSHAKE_MAC_SHA256,
     },
 
 };
 
-Span<const SSL_CIPHER> AllCiphers() {
-  return MakeConstSpan(kCiphers, OPENSSL_ARRAY_SIZE(kCiphers));
-}
+Span<const SSL_CIPHER> AllCiphers() { return kCiphers; }
 
 static constexpr size_t NumTLS13Ciphers() {
   size_t num = 0;
@@ -571,7 +447,7 @@ static const CIPHER_ALIAS kCipherAliases[] = {
     {"SHA384", 0, 0, 0, 0, 0},
 };
 
-static const size_t kCipherAliasesLen = OPENSSL_ARRAY_SIZE(kCipherAliases);
+static const size_t kCipherAliasesLen = std::size(kCipherAliases);
 
 bool ssl_cipher_get_evp_aead(const EVP_AEAD **out_aead,
                              size_t *out_mac_secret_len,
@@ -740,11 +616,11 @@ bool SSLCipherPreferenceList::Init(UniquePtr<STACK_OF(SSL_CIPHER)> ciphers_arg,
   return true;
 }
 
-bool SSLCipherPreferenceList::Init(const SSLCipherPreferenceList& other) {
+bool SSLCipherPreferenceList::Init(const SSLCipherPreferenceList &other) {
   size_t size = sk_SSL_CIPHER_num(other.ciphers.get());
   Span<const bool> other_flags(other.in_group_flags, size);
-  UniquePtr<STACK_OF(SSL_CIPHER)> other_ciphers(sk_SSL_CIPHER_dup(
-      other.ciphers.get()));
+  UniquePtr<STACK_OF(SSL_CIPHER)> other_ciphers(
+      sk_SSL_CIPHER_dup(other.ciphers.get()));
   if (!other_ciphers) {
     return false;
   }
@@ -757,10 +633,10 @@ void SSLCipherPreferenceList::Remove(const SSL_CIPHER *cipher) {
     return;
   }
   if (!in_group_flags[index] /* last element of group */ && index > 0) {
-    in_group_flags[index-1] = false;
+    in_group_flags[index - 1] = false;
   }
   for (size_t i = index; i < sk_SSL_CIPHER_num(ciphers.get()) - 1; ++i) {
-    in_group_flags[i] = in_group_flags[i+1];
+    in_group_flags[i] = in_group_flags[i + 1];
   }
   sk_SSL_CIPHER_delete(ciphers.get(), index);
 }
@@ -1042,11 +918,10 @@ static bool ssl_cipher_process_rulestr(const char *rule_str,
       // Look for a matching exact cipher. These aren't allowed in multipart
       // rules.
       if (!multi && ch != '+') {
-        for (j = 0; j < OPENSSL_ARRAY_SIZE(kCiphers); j++) {
-          const SSL_CIPHER *cipher = &kCiphers[j];
-          if (rule_equals(cipher->name, buf, buf_len) ||
-              rule_equals(cipher->standard_name, buf, buf_len)) {
-            cipher_id = cipher->id;
+        for (const SSL_CIPHER &cipher : kCiphers) {
+          if (rule_equals(cipher.name, buf, buf_len) ||
+              rule_equals(cipher.standard_name, buf, buf_len)) {
+            cipher_id = cipher.id;
             break;
           }
         }
@@ -1163,18 +1038,16 @@ bool ssl_create_cipher_list(UniquePtr<SSLCipherPreferenceList> *out_cipher_list,
   };
 
   // Set up a linked list of ciphers.
-  CIPHER_ORDER co_list[OPENSSL_ARRAY_SIZE(kAESCiphers) +
-                       OPENSSL_ARRAY_SIZE(kChaChaCiphers) +
-                       OPENSSL_ARRAY_SIZE(kLegacyCiphers)];
-  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(co_list); i++) {
-    co_list[i].next =
-        i + 1 < OPENSSL_ARRAY_SIZE(co_list) ? &co_list[i + 1] : nullptr;
+  CIPHER_ORDER co_list[std::size(kAESCiphers) + std::size(kChaChaCiphers) +
+                       std::size(kLegacyCiphers)];
+  for (size_t i = 0; i < std::size(co_list); i++) {
+    co_list[i].next = i + 1 < std::size(co_list) ? &co_list[i + 1] : nullptr;
     co_list[i].prev = i == 0 ? nullptr : &co_list[i - 1];
     co_list[i].active = false;
     co_list[i].in_group = false;
   }
   CIPHER_ORDER *head = &co_list[0];
-  CIPHER_ORDER *tail = &co_list[OPENSSL_ARRAY_SIZE(co_list) - 1];
+  CIPHER_ORDER *tail = &co_list[std::size(co_list) - 1];
 
   // Order AES ciphers vs ChaCha ciphers based on whether we have AES hardware.
   //
@@ -1201,9 +1074,8 @@ bool ssl_create_cipher_list(UniquePtr<SSLCipherPreferenceList> *out_cipher_list,
     co_list[num++].cipher = SSL_get_cipher_by_value(id);
     assert(co_list[num - 1].cipher != nullptr);
   }
-  assert(num == OPENSSL_ARRAY_SIZE(co_list));
-  static_assert(OPENSSL_ARRAY_SIZE(co_list) + NumTLS13Ciphers() ==
-                    OPENSSL_ARRAY_SIZE(kCiphers),
+  assert(num == std::size(co_list));
+  static_assert(std::size(co_list) + NumTLS13Ciphers() == std::size(kCiphers),
                 "Not all ciphers are included in the cipher order");
 
   // If the rule_string begins with DEFAULT, apply the default rule before
@@ -1230,7 +1102,7 @@ bool ssl_create_cipher_list(UniquePtr<SSLCipherPreferenceList> *out_cipher_list,
   UniquePtr<STACK_OF(SSL_CIPHER)> cipherstack(sk_SSL_CIPHER_new_null());
   Array<bool> in_group_flags;
   if (cipherstack == nullptr ||
-      !in_group_flags.InitForOverwrite(OPENSSL_ARRAY_SIZE(kCiphers))) {
+      !in_group_flags.InitForOverwrite(std::size(kCiphers))) {
     return false;
   }
 
@@ -1346,9 +1218,9 @@ const SSL_CIPHER *SSL_get_cipher_by_value(uint16_t value) {
   SSL_CIPHER c;
 
   c.id = 0x03000000L | value;
-  return reinterpret_cast<const SSL_CIPHER *>(bsearch(
-      &c, kCiphers, OPENSSL_ARRAY_SIZE(kCiphers), sizeof(SSL_CIPHER),
-      ssl_cipher_id_cmp_void));
+  return reinterpret_cast<const SSL_CIPHER *>(
+      bsearch(&c, kCiphers, std::size(kCiphers), sizeof(SSL_CIPHER),
+              ssl_cipher_id_cmp_void));
 }
 
 uint32_t SSL_CIPHER_get_id(const SSL_CIPHER *cipher) { return cipher->id; }
@@ -1474,7 +1346,7 @@ uint16_t SSL_CIPHER_get_max_version(const SSL_CIPHER *cipher) {
   return TLS1_2_VERSION;
 }
 
-static const char* kUnknownCipher = "(NONE)";
+static const char *kUnknownCipher = "(NONE)";
 
 // return the actual cipher being used
 const char *SSL_CIPHER_get_name(const SSL_CIPHER *cipher) {
@@ -1696,11 +1568,11 @@ int SSL_COMP_get_id(const SSL_COMP *comp) { return comp->id; }
 void SSL_COMP_free_compression_methods(void) {}
 
 size_t SSL_get_all_cipher_names(const char **out, size_t max_out) {
-  return GetAllNames(out, max_out, MakeConstSpan(&kUnknownCipher, 1),
-                     &SSL_CIPHER::name, MakeConstSpan(kCiphers));
+  return GetAllNames(out, max_out, Span(&kUnknownCipher, 1), &SSL_CIPHER::name,
+                     Span(kCiphers));
 }
 
 size_t SSL_get_all_standard_cipher_names(const char **out, size_t max_out) {
   return GetAllNames(out, max_out, Span<const char *>(),
-                     &SSL_CIPHER::standard_name, MakeConstSpan(kCiphers));
+                     &SSL_CIPHER::standard_name, Span(kCiphers));
 }

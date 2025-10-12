@@ -1,0 +1,10 @@
+
+PASS e.style['align-self'] = "dialog" should set the property value
+PASS e.style['align-items'] = "dialog" should set the property value
+PASS e.style['justify-self'] = "dialog" should set the property value
+PASS e.style['justify-items'] = "dialog" should set the property value
+PASS Property align-self value 'dialog'
+PASS Property align-items value 'dialog'
+PASS Property justify-self value 'dialog'
+PASS Property justify-items value 'dialog'
+

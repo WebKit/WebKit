@@ -11,14 +11,13 @@
 #include "modules/rtp_rtcp/source/rtp_sequence_number_map.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <iterator>
 #include <limits>
-#include <memory>
-#include <optional>
 #include <tuple>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/sequence_number_util.h"
 #include "rtc_base/random.h"

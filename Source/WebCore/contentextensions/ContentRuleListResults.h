@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,13 +27,13 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "ContentExtensionActions.h"
+#include <WebCore/ContentExtensionActions.h>
 #include <wtf/KeyValuePair.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-    
+
 struct ContentRuleListResults {
     struct Result {
         bool blockedLoad { false };
@@ -53,23 +53,28 @@ struct ContentRuleListResults {
                 || !notifications.isEmpty();
         }
     };
+
     struct Summary {
         bool blockedLoad { false };
         bool madeHTTPS { false };
         bool blockedCookies { false };
         bool hasNotifications { false };
+        bool redirected { false };
         // Remaining fields currently aren't serialized as they aren't required by _WKContentRuleListAction
         Vector<ContentExtensions::ModifyHeadersAction> modifyHeadersActions { };
         Vector<std::pair<ContentExtensions::RedirectAction, URL>> redirectActions { };
     };
+
     using ContentRuleListIdentifier = String;
 
     Summary summary;
     Vector<std::pair<ContentRuleListIdentifier, Result>> results;
-    
+
+    bool shouldBlock() const { return summary.blockedLoad; }
+
     bool shouldNotifyApplication() const
     {
-        return summary.blockedLoad
+        return shouldBlock()
             || summary.madeHTTPS
             || summary.blockedCookies
             || !summary.modifyHeadersActions.isEmpty()

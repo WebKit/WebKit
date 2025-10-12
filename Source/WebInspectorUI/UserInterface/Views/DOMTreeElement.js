@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2013, 2015, 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008, 2013, 2015, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2009 Joseph Pecoraro
  *
@@ -30,15 +30,12 @@
 
 WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 {
-    constructor(node, elementCloseTag, {showBadges} = {})
+    constructor(node, {showBadges, isElementCloseTag} = {})
     {
         super("", node);
 
-        this._elementCloseTag = elementCloseTag;
-        this.hasChildren = !elementCloseTag && this._hasVisibleChildren();
-
-        if (this.representedObject.nodeType() === Node.ELEMENT_NODE && !elementCloseTag)
-            this._canAddAttributes = true;
+        this._isElementCloseTag = !!isElementCloseTag;
+        this.hasChildren = !this._isElementCloseTag && this._hasVisibleChildren();
         this._searchQuery = null;
         this._expandedChildrenLimit = WI.DOMTreeElement.InitialChildrenLimit;
         this._breakpointStatus = WI.DOMTreeElement.BreakpointStatus.None;
@@ -78,6 +75,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
     // Public
 
     get statusImageElement() { return this._statusImageElement; }
+    get isElementCloseTag() { return this._isElementCloseTag; }
 
     get hasBreakpoint()
     {
@@ -134,11 +132,6 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         this._shouldHighlightAfterReveal = true;
         this.reveal();
-    }
-
-    isCloseTag()
-    {
-        return this._elementCloseTag;
     }
 
     highlightSearchResults(searchQuery)
@@ -278,7 +271,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
     get expandedChildCount()
     {
         var count = this.children.length;
-        if (count && this.children[count - 1]._elementCloseTag)
+        if (count && this.children[count - 1].isElementCloseTag)
             count--;
         if (count && this.children[count - 1].expandAllButton)
             count--;
@@ -315,8 +308,8 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     showChildNode(node)
     {
-        console.assert(!this._elementCloseTag);
-        if (this._elementCloseTag)
+        console.assert(!this._isElementCloseTag);
+        if (this._isElementCloseTag)
             return null;
 
         var index = this._visibleChildren().indexOf(node);
@@ -461,7 +454,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     onpopulate()
     {
-        if (this.children.length || !this._hasVisibleChildren() || this._elementCloseTag)
+        if (this.children.length || !this._hasVisibleChildren() || this._isElementCloseTag)
             return;
 
         this.updateChildren();
@@ -474,15 +467,15 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     updateChildren(fullRefresh)
     {
-        if (this._elementCloseTag)
+        if (this._isElementCloseTag)
             return;
 
         this.representedObject.getChildNodes(this._updateChildren.bind(this, fullRefresh));
     }
 
-    insertChildElement(child, index, closingTag)
+    insertChildElement(child, index, {isElementCloseTag} = {})
     {
-        var newElement = new WI.DOMTreeElement(child, closingTag, {showBadges: this._showBadges});
+        var newElement = new WI.DOMTreeElement(child, {showBadges: this._showBadges, isElementCloseTag});
         newElement.selectable = this.treeOutline.selectable;
         this.insertChild(newElement, index);
         return newElement;
@@ -583,8 +576,8 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         // Insert closing tag tree element.
         var lastChild = this.children.lastValue;
-        if (node.nodeType() === Node.ELEMENT_NODE && (!lastChild || !lastChild._elementCloseTag))
-            this._closeTagTreeElement = this.insertChildElement(this.representedObject, this.children.length, true);
+        if (node.nodeType() === Node.ELEMENT_NODE && (!lastChild || !lastChild.isElementCloseTag))
+            this._closeTagTreeElement = this.insertChildElement(this.representedObject, this.children.length, {isElementCloseTag: true});
 
         // We want to restore the original selection and tree scroll position after a full refresh, if possible.
         if (fullRefresh && elementToSelect) {
@@ -665,7 +658,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     onexpand()
     {
-        if (this._elementCloseTag)
+        if (this._isElementCloseTag)
             return;
 
         if (!this.listItemElement)
@@ -681,7 +674,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     oncollapse()
     {
-        if (this._elementCloseTag)
+        if (this._isElementCloseTag)
             return;
 
         this.updateTitle();
@@ -746,7 +739,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         if (!this.editable)
             return false;
 
-        if (this._editing || this._elementCloseTag)
+        if (this._editing || this._isElementCloseTag)
             return;
 
         if (this._startEditingTarget(event.target))
@@ -820,26 +813,27 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         let isEditableNode = this.representedObject.nodeType() === Node.ELEMENT_NODE && this.editable;
         let isNonShadowEditable = isEditableNode && (!this.representedObject.isInUserAgentShadowTree() || WI.DOMManager.supportsEditingUserAgentShadowTrees());
         let alreadyEditingHTML = this._htmlEditElement && WI.isBeingEdited(this._htmlEditElement);
+        let openTagTreeElement = this.isElementCloseTag ? this.treeOutline.findTreeElement(this.representedObject) : this;
 
         if (isEditableNode) {
             if (!DOMTreeElement.ForbiddenClosingTagElements.has(this.representedObject.nodeNameInCorrectCase())) {
                 subMenus.add.appendItem(WI.UIString("Child", "A submenu item of 'Add' to append DOM nodes to the selected DOM node"), () => {
-                    this._addHTML();
+                    openTagTreeElement._addHTML();
                 }, alreadyEditingHTML);
             }
 
             subMenus.add.appendItem(WI.UIString("Previous Sibling", "A submenu item of 'Add' to add DOM nodes before the selected DOM node"), () => {
-                this._addPreviousSibling();
+                openTagTreeElement._addPreviousSibling();
             }, alreadyEditingHTML);
 
             subMenus.add.appendItem(WI.UIString("Next Sibling", "A submenu item of 'Add' to add DOM nodes after the selected DOM node"), () => {
-                this._addNextSibling();
+                openTagTreeElement._addNextSibling();
             }, alreadyEditingHTML);
         }
 
         if (isNonShadowEditable) {
             subMenus.add.appendItem(WI.UIString("Attribute"), () => {
-                this._addNewAttribute();
+                openTagTreeElement._addNewAttribute();
             });
         }
 
@@ -936,7 +930,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         var listItem = this.listItemElement;
 
-        if (this._canAddAttributes) {
+        if (this.representedObject.nodeType() === Node.ELEMENT_NODE && !this._isElementCloseTag) {
             var attribute = listItem.getElementsByClassName("html-attribute")[0];
             if (attribute)
                 return this._startEditingAttribute(attribute, attribute.getElementsByClassName("html-attribute-value")[0]);
@@ -1548,7 +1542,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
                 }
 
                 var tagName = node.nodeNameInCorrectCase();
-                if (this._elementCloseTag) {
+                if (this._isElementCloseTag) {
                     this._buildTagDOM({
                         parentElement: info.titleDOM,
                         tagName,
@@ -1956,7 +1950,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     _updatePseudoClassIndicator()
     {
-        if (!this.listItemElement || this._elementCloseTag)
+        if (!this.listItemElement || this._isElementCloseTag)
             return;
 
         if (this.representedObject.enabledPseudoClasses.length) {
@@ -2122,7 +2116,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     _createBadges()
     {
-        if (!this._showBadges || !this.listItemElement || this._elementCloseTag)
+        if (!this._showBadges || !this.listItemElement || this._isElementCloseTag)
             return;
 
         let hadBadge = this._elementForBadgeType.size;

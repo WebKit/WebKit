@@ -23,25 +23,24 @@ namespace webrtc {
 class SchedulableNetworkNodeBuilder {
  public:
   SchedulableNetworkNodeBuilder(
-      webrtc::NetworkEmulationManager& net,
+      NetworkEmulationManager& net,
       network_behaviour::NetworkConfigSchedule schedule);
   // set_start_condition allows a test to control when the schedule start.
   // `start_condition` is invoked every time a packet is enqueued on the network
   // until the first time `start_condition` returns true. Until then, the first
   // NetworkConfigScheduleItem is used. There is no guarantee on which
   // thread/task queue that will be used.
-  void set_start_condition(
-      absl::AnyInvocable<bool(webrtc::Timestamp)> start_condition);
+  void set_start_condition(absl::AnyInvocable<bool(Timestamp)> start_condition);
 
   // If no random seed is provided, one will be created.
   // The random seed is required for loss rate and to delay standard deviation.
-  webrtc::EmulatedNetworkNode* Build(
+  EmulatedNetworkNode* Build(
       std::optional<uint64_t> random_seed = std::nullopt);
 
  private:
-  webrtc::NetworkEmulationManager& net_;
+  NetworkEmulationManager& net_;
   network_behaviour::NetworkConfigSchedule schedule_;
-  absl::AnyInvocable<bool(webrtc::Timestamp)> start_condition_;
+  absl::AnyInvocable<bool(Timestamp)> start_condition_;
 };
 
 }  // namespace webrtc

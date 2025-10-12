@@ -1,0 +1,10 @@
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: Server
+
+FAIL loopback to loopback: no permission required. Can't find variable: iframeTest
+FAIL loopback to local: no permission required. Can't find variable: iframeTest
+FAIL loopback to public: no permission required. Can't find variable: iframeTest
+FAIL local to loopback: no permission required. Can't find variable: iframeTest
+FAIL local to local: no permission required. Can't find variable: iframeTest
+FAIL local to public: no permission required. Can't find variable: iframeTest
+

@@ -22,13 +22,12 @@
 #include "config.h"
 #include "SVGDocumentExtensions.h"
 
-#include "Document.h"
+#include "DocumentPage.h"
 #include "EventListener.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
-#include "Page.h"
 #include "SMILTimeContainer.h"
 #include "SVGElement.h"
 #include "SVGFontFaceElement.h"
@@ -54,7 +53,7 @@ static bool animationsPausedForDocument(Document& document)
 
 SVGDocumentExtensions::SVGDocumentExtensions(Document& document)
     : m_document(document)
-    , m_resourcesCache(makeUnique<SVGResourcesCache>())
+    , m_resourcesCache(makeUniqueRef<SVGResourcesCache>())
     , m_areAnimationsPaused(animationsPausedForDocument(document))
 {
 }

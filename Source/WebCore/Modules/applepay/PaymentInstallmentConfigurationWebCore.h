@@ -27,7 +27,7 @@
 
 #if HAVE(PASSKIT_INSTALLMENTS)
 
-#include "ApplePayInstallmentConfigurationWebCore.h"
+#include <WebCore/ApplePayInstallmentConfigurationWebCore.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSDictionary;

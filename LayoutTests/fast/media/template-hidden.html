@@ -18,11 +18,14 @@ async function getStream()
        return navigator.mediaDevices.getUserMedia({video:true}).then(stream => stream, () => { });
 }
 
-promise_test(async () => {
+promise_test(async test => {
     const clone = aVideoTemplate.content.cloneNode(true);
     myTemplatedVideo.appendChild(clone);
 
-    myVideo.srcObject = await getStream();
+    const stream = await getStream();
+    if (stream)
+        test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+    myVideo.srcObject = stream;
     // Fallback to regular video streaming if getUserMedia is not available.
     if (!myVideo.srcObject)
         myVideo.src = "../../media/content/test.mp4";

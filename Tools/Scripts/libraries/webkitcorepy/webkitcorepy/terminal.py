@@ -315,8 +315,9 @@ class Terminal(object):
             except (io.UnsupportedOperation, AttributeError):
                 try:
                     yield
-                finally:
-                    return
+                except Exception:
+                    pass
+                return
 
             self.top[target.fileno()] = self
             self.set(target)

@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "SVGPathConsumer.h"
+#include <WebCore/SVGPathConsumer.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

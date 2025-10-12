@@ -11,17 +11,18 @@
 #ifndef AUDIO_DEVICE_FILE_AUDIO_DEVICE_H_
 #define AUDIO_DEVICE_FILE_AUDIO_DEVICE_H_
 
-#include <stdio.h>
-
-#include <memory>
+#include <cstddef>
+#include <cstdint>
 #include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/audio/audio_device.h"
+#include "api/audio/audio_device_defines.h"
+#include "modules/audio_device/audio_device_buffer.h"
 #include "modules/audio_device/audio_device_generic.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/file_wrapper.h"
-#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 
@@ -144,8 +145,8 @@ class FileAudioDevice : public AudioDeviceGeneric {
   size_t _recordingFramesIn10MS;
   size_t _playoutFramesIn10MS;
 
-  rtc::PlatformThread _ptrThreadRec;
-  rtc::PlatformThread _ptrThreadPlay;
+  PlatformThread _ptrThreadRec;
+  PlatformThread _ptrThreadPlay;
 
   bool _playing;
   bool _recording;

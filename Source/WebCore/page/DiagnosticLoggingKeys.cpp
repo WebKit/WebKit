@@ -340,11 +340,6 @@ String DiagnosticLoggingKeys::createSharedBufferFailedKey()
     return "createSharedBufferFailed"_s;
 }
 
-String DiagnosticLoggingKeys::applicationCacheKey()
-{
-    return "applicationCache"_s;
-}
-
 #if ENABLE(APPLICATION_MANIFEST)
 String DiagnosticLoggingKeys::applicationManifestKey()
 {

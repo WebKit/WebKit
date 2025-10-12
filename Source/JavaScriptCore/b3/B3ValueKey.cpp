@@ -58,9 +58,6 @@ void ValueKey::dump(PrintStream& out) const
 
 Value* ValueKey::materialize(Procedure& proc, Origin origin) const
 {
-    // NOTE: We sometimes cannot return a Value* for some key, like for Check and friends. That's because
-    // though those nodes have side exit effects. It would be weird to materialize anything that has a side
-    // exit. We can't possibly know enough about a side exit to know where it would be safe to emit one.
     switch (opcode()) {
     case FramePointer:
         return proc.add<Value>(kind(), type(), origin);
@@ -86,6 +83,8 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case IToF:
     case FloatToDouble:
     case DoubleToFloat:
+    case BitwiseCast:
+    case TruncHigh:
         return proc.add<Value>(kind(), type(), origin, child(proc, 0));
     case Add:
     case Sub:
@@ -110,11 +109,14 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case NotEqual:
     case LessThan:
     case GreaterThan:
+    case LessEqual:
+    case GreaterEqual:
     case Above:
     case Below:
     case AboveEqual:
     case BelowEqual:
     case EqualOrUnordered:
+    case Stitch:
         return proc.add<Value>(kind(), type(), origin, child(proc, 0), child(proc, 1));
     case Select:
         return proc.add<Value>(kind(), type(), origin, child(proc, 0), child(proc, 1), child(proc, 2));
@@ -134,6 +136,8 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
         return proc.add<ArgumentRegValue>(origin, Reg::fromIndex(static_cast<unsigned>(value())));
     case SlotBase:
         return proc.add<SlotBaseValue>(origin, proc.stackSlots()[value()]);
+    case Extract:
+        return proc.add<ExtractValue>(origin, type(), child(proc, 0), static_cast<int32_t>(u.indices[1]));
     case VectorNot:
     case VectorSplat:
     case VectorAbs:
@@ -175,6 +179,8 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case VectorAddSat:
     case VectorSubSat:
     case VectorMul:
+    case VectorMulHigh:
+    case VectorMulLow:
     case VectorDotProduct:
     case VectorDiv:
     case VectorMin:
@@ -199,14 +205,57 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case VectorRelaxedMAdd:
     case VectorRelaxedNMAdd:
     case VectorBitwiseSelect:
+    case VectorRelaxedLaneSelect:
         return proc.add<SIMDValue>(origin, kind(), type(), simdInfo(), child(proc, 0), child(proc, 1), child(proc, 2));
     case VectorSwizzle:
         if (u.indices[2] == UINT32_MAX)
             return proc.add<SIMDValue>(origin, kind(), type(), simdInfo(), child(proc, 0), child(proc, 1));
         return proc.add<SIMDValue>(origin, kind(), type(), simdInfo(), child(proc, 0), child(proc, 1), child(proc, 2));
-    default:
+    case Nop:
+    case Set:
+    case Get:
+    case Load:
+    case Load8Z:
+    case Load16Z:
+    case Load8S:
+    case Load16S:
+    case Store:
+    case Store8:
+    case Store16:
+    case AtomicWeakCAS:
+    case AtomicStrongCAS:
+    case AtomicXchgAdd:
+    case AtomicXchgAnd:
+    case AtomicXchgOr:
+    case AtomicXchgSub:
+    case AtomicXchgXor:
+    case AtomicXchg:
+    case WasmAddress:
+    case WasmBoundsCheck:
+    case MemoryCopy:
+    case MemoryFill:
+    case Fence:
+    case CCall:
+    case Patchpoint:
+    case Upsilon:
+    case Phi:
+    case Jump:
+    case Branch:
+    case Switch:
+    case EntrySwitch:
+    case Return:
+    case Oops:
+    // NOTE: We sometimes cannot return a Value* for some key, like for Check and friends. That's because
+    // though those nodes have side exit effects. It would be weird to materialize anything that has a side
+    // exit. We can't possibly know enough about a side exit to know where it would be safe to emit one.
+    case Check:
+    case CheckAdd:
+    case CheckSub:
+    case CheckMul:
         return nullptr;
     }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 } } // namespace JSC::B3

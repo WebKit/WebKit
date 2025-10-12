@@ -38,8 +38,8 @@ public:
     static constexpr auto capacity = 256;
 
     struct Slot {
-        UChar m_buffer[maxStringLengthForCache] { };
-        UChar m_length { 0 };
+        char16_t m_buffer[maxStringLengthForCache] { };
+        char16_t m_length { 0 };
         RefPtr<AtomStringImpl> m_impl;
     };
     static_assert(sizeof(Slot) <= 64);
@@ -60,7 +60,7 @@ public:
     VM& vm() const;
 
 private:
-    ALWAYS_INLINE Slot& cacheSlot(UChar firstCharacter, UChar lastCharacter, UChar length)
+    ALWAYS_INLINE Slot& cacheSlot(char16_t firstCharacter, char16_t lastCharacter, char16_t length)
     {
         unsigned hash = (firstCharacter << 6) ^ ((lastCharacter << 14) ^ firstCharacter);
         hash += (hash >> 14) + (length << 14);

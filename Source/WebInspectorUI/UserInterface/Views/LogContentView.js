@@ -898,8 +898,13 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _garbageCollect()
     {
-        for (let target of WI.targets)
+        for (let target of WI.targets) {
+            // FIXME: <https://webkit.org/b/298984> Add Heap support for FrameTarget.
+            if (target instanceof WI.FrameTarget)
+                continue;
+
             target.HeapAgent.gc();
+        }
     }
 
     _messageShouldBeVisible(message)

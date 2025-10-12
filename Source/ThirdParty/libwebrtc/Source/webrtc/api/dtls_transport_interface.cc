@@ -30,13 +30,15 @@ DtlsTransportInformation::DtlsTransportInformation(
     std::optional<int> tls_version,
     std::optional<int> ssl_cipher_suite,
     std::optional<int> srtp_cipher_suite,
-    std::unique_ptr<rtc::SSLCertChain> remote_ssl_certificates)
+    std::unique_ptr<SSLCertChain> remote_ssl_certificates,
+    std::optional<int> ssl_group_id)
     : state_(state),
       role_(role),
       tls_version_(tls_version),
       ssl_cipher_suite_(ssl_cipher_suite),
       srtp_cipher_suite_(srtp_cipher_suite),
-      remote_ssl_certificates_(std::move(remote_ssl_certificates)) {}
+      remote_ssl_certificates_(std::move(remote_ssl_certificates)),
+      ssl_group_id_(ssl_group_id) {}
 
 // Deprecated version
 DtlsTransportInformation::DtlsTransportInformation(
@@ -44,7 +46,7 @@ DtlsTransportInformation::DtlsTransportInformation(
     std::optional<int> tls_version,
     std::optional<int> ssl_cipher_suite,
     std::optional<int> srtp_cipher_suite,
-    std::unique_ptr<rtc::SSLCertChain> remote_ssl_certificates)
+    std::unique_ptr<SSLCertChain> remote_ssl_certificates)
     : state_(state),
       role_(std::nullopt),
       tls_version_(tls_version),
@@ -61,7 +63,8 @@ DtlsTransportInformation::DtlsTransportInformation(
       srtp_cipher_suite_(c.srtp_cipher_suite_),
       remote_ssl_certificates_(c.remote_ssl_certificates()
                                    ? c.remote_ssl_certificates()->Clone()
-                                   : nullptr) {}
+                                   : nullptr),
+      ssl_group_id_(c.ssl_group_id_) {}
 
 DtlsTransportInformation& DtlsTransportInformation::operator=(
     const DtlsTransportInformation& c) {
@@ -73,6 +76,7 @@ DtlsTransportInformation& DtlsTransportInformation::operator=(
   remote_ssl_certificates_ = c.remote_ssl_certificates()
                                  ? c.remote_ssl_certificates()->Clone()
                                  : nullptr;
+  ssl_group_id_ = c.ssl_group_id_;
   return *this;
 }
 

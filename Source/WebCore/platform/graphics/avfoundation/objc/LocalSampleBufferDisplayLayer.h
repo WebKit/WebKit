@@ -27,9 +27,9 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
-#include "FrameRateMonitor.h"
-#include "SampleBufferDisplayLayer.h"
-#include "VideoFrame.h"
+#include <WebCore/FrameRateMonitor.h>
+#include <WebCore/SampleBufferDisplayLayer.h>
+#include <WebCore/VideoFrame.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
@@ -67,14 +67,15 @@ public:
 
     // SampleBufferDisplayLayer.
     PlatformLayer* rootLayer() final;
+    RetainPtr<PlatformLayer> protectedRootLayer();
     void initialize(bool hideRootLayer, IntSize, bool shouldMaintainAspectRatio, CompletionHandler<void(bool didSucceed)>&&) final;
 #if !RELEASE_LOG_DISABLED
-    void setLogIdentifier(String&& logIdentifier) final { m_logIdentifier = WTFMove(logIdentifier); }
+    void setLogIdentifier(uint64_t) final;
 #endif
     bool didFail() const final;
 
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer) final;
-    void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRight>&&) final;
+    void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRightAnnotated>&&) final;
 
     void flush() final;
     void flushAndRemoveImage() final;
@@ -117,7 +118,7 @@ private:
     bool m_paused { false };
     bool m_didFail { false };
 #if !RELEASE_LOG_DISABLED
-    String m_logIdentifier;
+    uint64_t m_logIdentifier;
     FrameRateMonitor m_frameRateMonitor WTF_GUARDED_BY_CAPABILITY(workQueue());
 #endif
 };

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "BackForwardItemIdentifier.h"
-#include "HistoryItem.h"
+#include <WebCore/BackForwardItemIdentifier.h>
+#include <WebCore/HistoryItem.h>
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>

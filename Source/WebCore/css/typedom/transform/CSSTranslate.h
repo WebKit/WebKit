@@ -57,7 +57,7 @@ public:
 private:
     CSSTranslate(CSSTransformComponent::Is2D, Ref<CSSNumericValue>, Ref<CSSNumericValue>, Ref<CSSNumericValue>);
 
-    CSSTransformType getType() const final { return CSSTransformType::Translate; }
+    CSSTransformType transformType() const final { return CSSTransformType::Translate; }
 
     Ref<CSSNumericValue> m_x;
     Ref<CSSNumericValue> m_y;
@@ -67,5 +67,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSTranslate)
-    static bool isType(const WebCore::CSSTransformComponent& transform) { return transform.getType() == WebCore::CSSTransformType::Translate; }
+    static bool isType(const WebCore::CSSTransformComponent& transform) { return transform.transformType() == WebCore::CSSTransformType::Translate; }
 SPECIALIZE_TYPE_TRAITS_END()

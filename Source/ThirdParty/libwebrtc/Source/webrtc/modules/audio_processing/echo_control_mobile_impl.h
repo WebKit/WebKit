@@ -11,9 +11,9 @@
 #ifndef MODULES_AUDIO_PROCESSING_ECHO_CONTROL_MOBILE_IMPL_H_
 #define MODULES_AUDIO_PROCESSING_ECHO_CONTROL_MOBILE_IMPL_H_
 
-#include <stddef.h>
-#include <stdint.h>
-
+#include <array>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <vector>
 
@@ -52,7 +52,7 @@ class EchoControlMobileImpl {
   int enable_comfort_noise(bool enable);
   bool is_comfort_noise_enabled() const;
 
-  void ProcessRenderAudio(rtc::ArrayView<const int16_t> packed_render_audio);
+  void ProcessRenderAudio(ArrayView<const int16_t> packed_render_audio);
   int ProcessCaptureAudio(AudioBuffer* audio, int stream_delay_ms);
 
   void Initialize(int sample_rate_hz,

@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,14 +26,14 @@
 
 #pragma once
 
-#include "AffineTransform.h"
-#include "Color.h"
-#include "Gradient.h"
-#include "GraphicsContext.h"
-#include "Pattern.h"
-#include "TextFlags.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <CoreText/CoreText.h>
+#include <WebCore/AffineTransform.h>
+#include <WebCore/Color.h>
+#include <WebCore/Gradient.h>
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/Pattern.h>
+#include <WebCore/TextFlags.h>
 #include <pal/spi/cf/CoreTextSPI.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/TZoneMalloc.h>
@@ -51,8 +51,7 @@ class DrawGlyphsRecorder {
     WTF_MAKE_NONCOPYABLE(DrawGlyphsRecorder);
 public:
     enum class DeriveFontFromContext : bool { No, Yes };
-    enum class DrawDecomposedGlyphs : bool { No, Yes };
-    explicit DrawGlyphsRecorder(GraphicsContext&, float scaleFactor, DeriveFontFromContext, DrawDecomposedGlyphs);
+    explicit DrawGlyphsRecorder(GraphicsContext&, float scaleFactor, DeriveFontFromContext);
 
     void drawGlyphs(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& localAnchor, FontSmoothingMode);
 
@@ -85,7 +84,7 @@ private:
     void updateShadow(CGStyleRef);
 
     GraphicsContext& m_owner;
-    const Font* m_originalFont { nullptr };
+    SingleThreadWeakPtr<const Font> m_originalFont;
     AffineTransform m_originalTextMatrix;
     struct State {
         SourceBrush fillBrush;
@@ -95,10 +94,9 @@ private:
         bool ignoreTransforms { false };
     };
     State m_originalState;
-    UniqueRef<GraphicsContext> m_internalContext;
+    const UniqueRef<GraphicsContext> m_internalContext;
     RetainPtr<CGColorRef> m_initialFillColor;
     RetainPtr<CGColorRef> m_initialStrokeColor;
-    const DrawDecomposedGlyphs m_drawDecomposedGlyphs;
     const DeriveFontFromContext m_deriveFontFromContext;
     FontSmoothingMode m_smoothingMode { FontSmoothingMode::AutoSmoothing };
 };

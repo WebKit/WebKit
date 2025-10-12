@@ -36,7 +36,7 @@ namespace WTF {
 
 template<typename Key, typename Value>
 class IndexMap {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(IndexMap);
 public:
     IndexMap() = default;
     IndexMap(IndexMap&&) = default;

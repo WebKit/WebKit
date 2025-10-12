@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WPEEvent.h"
 
-#include <variant>
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
@@ -75,7 +74,7 @@ struct WPEEventTouch {
  *
  */
 struct _WPEEvent {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(_WPEEvent);
 
     ~_WPEEvent()
     {
@@ -93,7 +92,7 @@ struct _WPEEvent {
         GDestroyNotify destroyFunction { nullptr };
     } userData;
 
-    std::variant<WPEEventPointerButton, WPEEventPointerMove, WPEEventScroll, WPEEventKeyboard, WPEEventTouch> variant;
+    Variant<WPEEventPointerButton, WPEEventPointerMove, WPEEventScroll, WPEEventKeyboard, WPEEventTouch> variant;
 
     int referenceCount { 1 };
 };

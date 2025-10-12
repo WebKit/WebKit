@@ -19,7 +19,7 @@ namespace webrtc {
 // OnSetLocalDescriptionComplete() invokes as soon as
 // PeerConnectionInterface::SetLocalDescription() operation completes, allowing
 // the observer to examine the effects of the operation without delay.
-class SetLocalDescriptionObserverInterface : public webrtc::RefCountInterface {
+class SetLocalDescriptionObserverInterface : public RefCountInterface {
  public:
   // On success, `error.ok()` is true.
   virtual void OnSetLocalDescriptionComplete(RTCError error) = 0;

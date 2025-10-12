@@ -24,10 +24,11 @@
 
 #pragma once
 
-#include "LoaderMalloc.h"
-#include "SecurityOriginHash.h"
-#include "Timer.h"
+#include <WebCore/LoaderMalloc.h>
+#include <WebCore/SecurityOriginHash.h>
+#include <WebCore/Timer.h>
 #include <pal/SessionID.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
@@ -61,8 +62,11 @@ struct ClientOrigin;
 // -------|-----+++++++++++++++|
 // -------|-----+++++++++++++++|+++++
 
-class MemoryCache {
-    WTF_MAKE_NONCOPYABLE(MemoryCache); WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+class MemoryCache final : public CanMakeCheckedPtr<MemoryCache> {
+    WTF_MAKE_NONCOPYABLE(MemoryCache);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MemoryCache, Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MemoryCache);
+
     friend NeverDestroyed<MemoryCache>;
     friend class Internals;
 public:

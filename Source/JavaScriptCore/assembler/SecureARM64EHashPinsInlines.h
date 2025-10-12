@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "SecureARM64EHashPins.h"
+#include <JavaScriptCore/SecureARM64EHashPins.h>
 
 #if CPU(ARM64E) && ENABLE(JIT)
 

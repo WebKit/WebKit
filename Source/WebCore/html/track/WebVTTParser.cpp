@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
+ * Copyright (C) 2011, 2013 Google Inc. All rights reserved.
  * Copyright (C) 2013 Cable Television Labs, Inc.
- * Copyright (C) 2011-2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -236,7 +236,7 @@ void WebVTTParser::parse()
 void WebVTTParser::fileFinished()
 {
     ASSERT(m_state != Finished);
-    parseBytes("\n\n"_span8);
+    parseBytes(byteCast<uint8_t>("\n\n"_span));
     m_state = Finished;
 }
 
@@ -332,7 +332,7 @@ bool WebVTTParser::checkAndCreateRegion(StringView line)
     // zero or more U+0020 SPACE characters or U+0009 CHARACTER TABULATION
     // (tab) characters expected other than these characters it is invalid.
     if (line.startsWith("REGION"_s) && line.substring(regionIdentifierLength).containsOnly<isASCIIWhitespace>()) {
-        m_currentRegion = VTTRegion::create(m_document.get());
+        m_currentRegion = VTTRegion::create(protectedDocument().get());
         return true;
     }
     return false;
@@ -421,6 +421,11 @@ bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
     return true;
 }
 
+Ref<Document> WebVTTParser::protectedDocument() const
+{
+    return m_document.get();
+}
+
 WebVTTParser::ParseState WebVTTParser::collectCueId(const String& line)
 {
     if (line.contains("-->"_s))
@@ -438,25 +443,25 @@ WebVTTParser::ParseState WebVTTParser::collectTimingsAndSettings(const String& l
 
     // Collect WebVTT cue timings and settings. (5.3 WebVTT cue timings and settings parsing.)
     // Steps 1 - 3 - Let input be the string being parsed and position be a pointer into input
-    input.skipWhile<isASCIIWhitespace<UChar>>();
+    input.skipWhile<isASCIIWhitespace<char16_t>>();
 
     // Steps 4 - 5 - Collect a WebVTT timestamp. If that fails, then abort and return failure. Otherwise, let cue's text track cue start time be the collected time.
     if (!collectTimeStamp(input, m_currentStartTime))
         return BadCue;
     
-    input.skipWhile<isASCIIWhitespace<UChar>>();
+    input.skipWhile<isASCIIWhitespace<char16_t>>();
 
     // Steps 6 - 9 - If the next three characters are not "-->", abort and return failure.
     if (!input.scan("-->"_span8))
         return BadCue;
     
-    input.skipWhile<isASCIIWhitespace<UChar>>();
+    input.skipWhile<isASCIIWhitespace<char16_t>>();
 
     // Steps 10 - 11 - Collect a WebVTT timestamp. If that fails, then abort and return failure. Otherwise, let cue's text track cue end time be the collected time.
     if (!collectTimeStamp(input, m_currentEndTime))
         return BadCue;
 
-    input.skipWhile<isASCIIWhitespace<UChar>>();
+    input.skipWhile<isASCIIWhitespace<char16_t>>();
 
     // Step 12 - Parse the WebVTT settings for the cue (conducted in TextTrackCue).
     m_currentSettings = input.restOfInputAsString();

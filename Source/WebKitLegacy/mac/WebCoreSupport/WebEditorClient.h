@@ -106,6 +106,8 @@ private:
     void toggleAutomaticTextReplacement() final;
     bool isAutomaticSpellingCorrectionEnabled() final;
     void toggleAutomaticSpellingCorrection() final;
+    bool isSmartListsEnabled() final;
+    void toggleSmartLists() final;
 #endif
 
     TextCheckerClient* textChecker() final { return this; }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -210,7 +210,7 @@ void WebSWServerToContextConnection::fireNotificationEvent(ServiceWorkerIdentifi
             protectedThis->sendToParentProcess(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { protectedThis->webProcessIdentifier() });
 
         CheckedPtr session = protectedThis->protectedConnection()->networkSession();
-        if (auto* resourceLoadStatistics = session ? session->resourceLoadStatistics() : nullptr; resourceLoadStatistics && wasProcessed && eventType == NotificationEventType::Click) {
+        if (RefPtr resourceLoadStatistics = session ? session->resourceLoadStatistics() : nullptr; resourceLoadStatistics && wasProcessed && eventType == NotificationEventType::Click) {
             return resourceLoadStatistics->setMostRecentWebPushInteractionTime(RegistrableDomain(protectedThis->registrableDomain()), [callback = WTFMove(callback), wasProcessed] () mutable {
                 callback(wasProcessed);
             });
@@ -257,7 +257,7 @@ void WebSWServerToContextConnection::fireBackgroundFetchClickEvent(ServiceWorker
 void WebSWServerToContextConnection::terminateWorker(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     if (!m_processingFunctionalEventCount++)
-        protectedConnection()->protectedNetworkProcess()->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::StartServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
+        protectedConnection()->networkProcess().protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::StartServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
 
     send(Messages::WebSWContextManagerConnection::TerminateWorker(serviceWorkerIdentifier));
 }
@@ -273,12 +273,12 @@ void WebSWServerToContextConnection::setAsInspected(ServiceWorkerIdentifier serv
 
         if (session && worker) {
             auto scopeURL = worker->registrationKey().scope();
-            session->protectedNotificationManager()->setServiceWorkerIsBeingInspected(scopeURL, true);
+            session->notificationManager().setServiceWorkerIsBeingInspected(scopeURL, true);
 
             worker->whenTerminated([connection = WeakPtr { m_connection }, scopeURL]() {
                 if (RefPtr protectedConnection = connection.get()) {
                     if (CheckedPtr session = protectedConnection->networkSession())
-                        session->protectedNotificationManager()->setServiceWorkerIsBeingInspected(scopeURL, false);
+                        session->notificationManager().setServiceWorkerIsBeingInspected(scopeURL, false);
                 }
             });
         }
@@ -291,7 +291,7 @@ void WebSWServerToContextConnection::workerTerminated(ServiceWorkerIdentifier se
     SWServerToContextConnection::workerTerminated(serviceWorkerIdentifier);
 
     if (--m_processingFunctionalEventCount)
-        protectedConnection()->protectedNetworkProcess()->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
+        protectedConnection()->networkProcess().protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
 }
 
 void WebSWServerToContextConnection::didFinishActivation(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier)
@@ -378,7 +378,7 @@ void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier
     sendWithAsyncReplyToParentProcess(Messages::NetworkProcessProxy::OpenWindowFromServiceWorker { m_connection->sessionID(), url.string(), worker->origin().clientOrigin }, WTFMove(innerCallback));
 }
 
-void WebSWServerToContextConnection::reportConsoleMessage(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
+void WebSWServerToContextConnection::reportConsoleMessage(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, MessageSource source, MessageLevel level, const String& message, uint64_t requestIdentifier)
 {
     RefPtr server = this->server();
     RefPtr worker = server ? server->workerByID(serviceWorkerIdentifier) : nullptr;
@@ -500,7 +500,7 @@ void WebSWServerToContextConnection::setInspectable(ServiceWorkerIsInspectable i
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void WebSWServerToContextConnection::reportNetworkUsageToWorkerClient(const WebCore::ScriptExecutionContextIdentifier identifier, size_t bytesTransferredOverNetworkDelta)
+void WebSWServerToContextConnection::reportNetworkUsageToWorkerClient(const WebCore::ScriptExecutionContextIdentifier identifier, uint64_t bytesTransferredOverNetworkDelta)
 {
     if (RefPtr server = this->server()) {
         if (RefPtr connection = dynamicDowncast<WebSWServerConnection>(server->connection(identifier.processIdentifier())))
@@ -508,6 +508,15 @@ void WebSWServerToContextConnection::reportNetworkUsageToWorkerClient(const WebC
     }
 }
 #endif
+
+std::optional<SharedPreferencesForWebProcess> WebSWServerToContextConnection::sharedPreferencesForWebProcess() const
+{
+    if (RefPtr connection = m_connection.get())
+        return connection->sharedPreferencesForWebProcess();
+
+    return std::nullopt;
+}
+
 
 #undef MESSAGE_CHECK
 } // namespace WebKit

@@ -3,8 +3,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-//    EGLDeviceCGLTest.cpp: tests for the EGL_ANGLE_device_cgl extension.
+// EGLDeviceCGLTest.cpp: tests for the EGL_ANGLE_device_cgl extension.
 //
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "test_utils/ANGLETest.h"
 #include "util/EGLWindow.h"

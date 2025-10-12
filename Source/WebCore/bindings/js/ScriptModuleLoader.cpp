@@ -31,6 +31,7 @@
 #include "CachedScriptFetcher.h"
 #include "DocumentInlines.h"
 #include "EventLoop.h"
+#include "FrameDestructionObserverInlines.h"
 #include "JSDOMBinding.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LoadableModuleScript.h"
@@ -52,6 +53,7 @@
 #include "WorkerScriptLoader.h"
 #include "WorkletGlobalScope.h"
 #include <JavaScriptCore/AbstractModuleRecord.h>
+#include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/ImportMap.h>
 #include <JavaScriptCore/JSInternalPromise.h>
@@ -134,7 +136,7 @@ JSC::Identifier ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGlobalObject,
     if (!result) {
         auto* error = JSC::createTypeError(jsGlobalObject, result.error());
         ASSERT(error);
-        error->putDirect(vm, builtinNames(vm).failureKindPrivateName(), JSC::jsNumber(enumToUnderlyingType(ModuleFetchFailureKind::WasResolveError)));
+        error->putDirect(vm, vm.propertyNames->builtinNames().moduleFetchFailureKindPrivateName(), JSC::jsNumber(enumToUnderlyingType(ModuleFetchFailureKind::WasResolveError)));
         JSC::throwException(jsGlobalObject, scope, error);
         return { };
     }
@@ -152,7 +154,7 @@ static void rejectToPropagateNetworkError(ScriptExecutionContext& context, Ref<D
             // https://bugs.webkit.org/show_bug.cgi?id=167553
             auto* error = JSC::createTypeError(&jsGlobalObject, message);
             ASSERT(error);
-            error->putDirect(vm, builtinNames(vm).failureKindPrivateName(), JSC::jsNumber(enumToUnderlyingType(failureKind)));
+            error->putDirect(vm, vm.propertyNames->builtinNames().moduleFetchFailureKindPrivateName(), JSC::jsNumber(enumToUnderlyingType(failureKind)));
             return error;
         });
     });
@@ -166,7 +168,7 @@ static void rejectWithFetchError(ScriptExecutionContext& context, Ref<DeferredPr
             JSC::VM& vm = jsGlobalObject.vm();
             JSC::JSObject* error = JSC::jsCast<JSC::JSObject*>(createDOMException(&jsGlobalObject, ec, message));
             ASSERT(error);
-            error->putDirect(vm, builtinNames(vm).failureKindPrivateName(), JSC::jsNumber(enumToUnderlyingType(ModuleFetchFailureKind::WasFetchError)));
+            error->putDirect(vm, vm.propertyNames->builtinNames().moduleFetchFailureKindPrivateName(), JSC::jsNumber(enumToUnderlyingType(ModuleFetchFailureKind::WasFetchError)));
             return error;
         });
     });
@@ -204,7 +206,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
 
     RefPtr<JSC::ScriptFetchParameters> parameters;
     if (auto* scriptFetchParameters = JSC::jsDynamicCast<JSC::JSScriptFetchParameters*>(parametersValue))
-        parameters = &scriptFetchParameters->parameters();
+        parameters = scriptFetchParameters->parameters();
 
     if (m_ownerType == OwnerType::Document) {
         auto loader = CachedModuleScriptLoader::create(*this, deferred.get(), *static_cast<CachedScriptFetcher*>(JSC::jsCast<JSC::JSScriptFetcher*>(scriptFetcher)->fetcher()), WTFMove(parameters));
@@ -360,7 +362,8 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
         } else {
             // https://html.spec.whatwg.org/multipage/webappapis.html#default-classic-script-fetch-options
             baseURL = m_context->url();
-            scriptFetcher = WorkerScriptFetcher::create(*parameters, FetchOptions::Credentials::SameOrigin, FetchOptions::Destination::Script, ReferrerPolicy::EmptyString);
+            auto destination = type == JSC::ScriptFetchParameters::JSON ? FetchOptions::Destination::Json : FetchOptions::Destination::Script;
+            scriptFetcher = WorkerScriptFetcher::create(*parameters, FetchOptions::Credentials::SameOrigin, destination, ReferrerPolicy::EmptyString);
         }
     } else {
         baseURL = URL { sourceOrigin.string() };
@@ -374,6 +377,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
 
         URL moduleURL = globalObject.importMap().resolve(specifier, baseURL);
         parameters = ModuleFetchParameters::create(type, globalObject.importMap().integrityForURL(moduleURL), /* isTopLevelModule */ true);
+        auto destination = type == JSC::ScriptFetchParameters::JSON ? FetchOptions::Destination::Json : FetchOptions::Destination::Script;
 
         if (sourceOrigin.fetcher()) {
             scriptFetcher = sourceOrigin.fetcher();
@@ -381,7 +385,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
             // Destination should be "script" for dynamic-import.
             if (m_ownerType == OwnerType::WorkerOrWorklet) {
                 auto& fetcher = static_cast<WorkerScriptFetcher&>(*scriptFetcher);
-                scriptFetcher = WorkerScriptFetcher::create(*parameters, fetcher.credentials(), FetchOptions::Destination::Script, fetcher.referrerPolicy());
+                scriptFetcher = WorkerScriptFetcher::create(*parameters, fetcher.credentials(), destination, fetcher.referrerPolicy());
             }
         }
 
@@ -389,7 +393,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
             if (m_ownerType == OwnerType::Document)
                 scriptFetcher = CachedScriptFetcher::create(downcast<Document>(*m_context).charset());
             else
-                scriptFetcher = WorkerScriptFetcher::create(*parameters, FetchOptions::Credentials::SameOrigin, FetchOptions::Destination::Script, ReferrerPolicy::EmptyString);
+                scriptFetcher = WorkerScriptFetcher::create(*parameters, FetchOptions::Credentials::SameOrigin, destination, ReferrerPolicy::EmptyString);
         }
     }
     ASSERT(baseURL.isValid());

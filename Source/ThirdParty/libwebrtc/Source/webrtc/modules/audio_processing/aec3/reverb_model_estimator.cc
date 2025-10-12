@@ -10,6 +10,19 @@
 
 #include "modules/audio_processing/aec3/reverb_model_estimator.h"
 
+#include <array>
+#include <cstddef>
+#include <memory>
+#include <optional>
+#include <vector>
+
+#include "api/array_view.h"
+#include "api/audio/echo_canceller3_config.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/reverb_decay_estimator.h"
+#include "modules/audio_processing/aec3/reverb_frequency_response.h"
+#include "rtc_base/checks.h"
+
 namespace webrtc {
 
 ReverbModelEstimator::ReverbModelEstimator(const EchoCanceller3Config& config,
@@ -28,11 +41,11 @@ ReverbModelEstimator::ReverbModelEstimator(const EchoCanceller3Config& config,
 ReverbModelEstimator::~ReverbModelEstimator() = default;
 
 void ReverbModelEstimator::Update(
-    rtc::ArrayView<const std::vector<float>> impulse_responses,
-    rtc::ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
+    ArrayView<const std::vector<float>> impulse_responses,
+    ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
         frequency_responses,
-    rtc::ArrayView<const std::optional<float>> linear_filter_qualities,
-    rtc::ArrayView<const int> filter_delays_blocks,
+    ArrayView<const std::optional<float>> linear_filter_qualities,
+    ArrayView<const int> filter_delays_blocks,
     const std::vector<bool>& usable_linear_estimates,
     bool stationary_block) {
   const size_t num_capture_channels = reverb_decay_estimators_.size();

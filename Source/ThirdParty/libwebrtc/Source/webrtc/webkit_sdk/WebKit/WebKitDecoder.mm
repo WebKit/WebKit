@@ -242,8 +242,8 @@ int32_t RemoteVideoDecoder::Decode(const EncodedImage& input_image, bool missing
     uint16_t encodedWidth = 0;
     uint16_t encodedHeight = 0;
     if (input_image._frameType == VideoFrameType::kVideoFrameKey) {
-        encodedWidth = rtc::dchecked_cast<uint16_t>(input_image._encodedWidth);
-        encodedHeight = rtc::dchecked_cast<uint16_t>(input_image._encodedHeight);
+        encodedWidth = webrtc::dchecked_cast<uint16_t>(input_image._encodedWidth);
+        encodedHeight = webrtc::dchecked_cast<uint16_t>(input_image._encodedHeight);
     }
 
     // VP9 VTB does not support SVC

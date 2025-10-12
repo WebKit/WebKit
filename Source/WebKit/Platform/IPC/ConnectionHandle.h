@@ -26,11 +26,15 @@
 #pragma once
 
 #include <wtf/ArgumentCoder.h>
+#include <wtf/Compiler.h>
+#include <wtf/Forward.h>
 
 #if USE(UNIX_DOMAIN_SOCKETS)
 #include <wtf/unix/UnixFileDescriptor.h>
 #elif OS(DARWIN)
+#include <mach/mach.h>
 #include <wtf/MachSendRight.h>
+#include <wtf/StdLibExtras.h>
 #elif OS(WINDOWS)
 #include <wtf/win/Win32Handle.h>
 #endif

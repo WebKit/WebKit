@@ -603,14 +603,16 @@ void vp9_cyclic_refresh_setup(VP9_COMP *const cpi) {
       (cpi->use_svc && cpi->svc.high_source_sad_superframe);
   if (cm->current_video_frame == 0) cr->low_content_avg = 0.0;
   // Reset if resoluton change has occurred.
-  if (cpi->resize_pending != 0) vp9_cyclic_refresh_reset_resize(cpi);
+  if (cpi->resize_pending != 0 && cpi->svc.temporal_layer_id == 0)
+    vp9_cyclic_refresh_reset_resize(cpi);
   if (!cr->apply_cyclic_refresh || (cpi->force_update_segmentation) ||
       scene_change_detected) {
     // Set segmentation map to 0 and disable.
     unsigned char *const seg_map = cpi->segmentation_map;
     memset(seg_map, 0, cm->mi_rows * cm->mi_cols);
     vp9_disable_segmentation(&cm->seg);
-    if (cm->frame_type == KEY_FRAME || scene_change_detected) {
+    if ((cm->frame_type == KEY_FRAME || scene_change_detected) &&
+        cpi->svc.temporal_layer_id == 0) {
       memset(cr->last_coded_q_map, MAXQ,
              cm->mi_rows * cm->mi_cols * sizeof(*cr->last_coded_q_map));
       cr->sb_index = 0;

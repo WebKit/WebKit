@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Error: assert_equals: selection should be collapsed in the second <span> element which was clicked by middle button before pointerup event expected Text node "second span." but got Text node "first span."
-CONSOLE MESSAGE: Error: assert_equals: Selection should be collapsed in the second <span> element which was clicked by middle button before mouseup event expected Text node "second span." but got Text node "first span."
 first span.
 second span.
 link.

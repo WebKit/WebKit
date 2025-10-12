@@ -71,7 +71,7 @@ static void updateLabelFrame(WebValidationBubbleViewController *controller)
 
 static void callSuper(WebValidationBubbleViewController *instance, SEL selector)
 {
-    objc_super superStructure { instance, PAL::getUIViewControllerClass() };
+    objc_super superStructure { instance, PAL::getUIViewControllerClassSingleton() };
     auto msgSendSuper = reinterpret_cast<void(*)(objc_super*, SEL)>(objc_msgSendSuper);
     msgSendSuper(&superStructure, selector);
 }
@@ -81,7 +81,7 @@ static void WebValidationBubbleViewController_viewDidLoad(WebValidationBubbleVie
     callSuper(instance, @selector(viewDidLoad));
 
     auto label = adoptNS([PAL::allocUILabelInstance() init]);
-    [label setFont:[PAL::getUIFontClass() preferredFontForTextStyle:PAL::get_UIKit_UIFontTextStyleCallout()]];
+    [label setFont:[PAL::getUIFontClassSingleton() preferredFontForTextStyle:PAL::get_UIKit_UIFontTextStyleCalloutSingleton()]];
     [label setLineBreakMode:NSLineBreakByTruncatingTail];
     [label setNumberOfLines:validationBubbleMaxNumberOfLines];
     [instance.view addSubview:label.get()];
@@ -105,7 +105,7 @@ static WebValidationBubbleViewController *allocWebValidationBubbleViewController
     static Class theClass = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        theClass = objc_allocateClassPair(PAL::getUIViewControllerClass(), "WebValidationBubbleViewController", 0);
+        theClass = objc_allocateClassPair(PAL::getUIViewControllerClassSingleton(), "WebValidationBubbleViewController", 0);
         class_addMethod(theClass, @selector(viewDidLoad), (IMP)WebValidationBubbleViewController_viewDidLoad, "v@:");
         class_addMethod(theClass, @selector(viewWillLayoutSubviews), (IMP)WebValidationBubbleViewController_viewWillLayoutSubviews, "v@:");
         class_addMethod(theClass, @selector(viewSafeAreaInsetsDidChange), (IMP)WebValidationBubbleViewController_viewSafeAreaInsetsDidChange, "v@:");
@@ -201,7 +201,7 @@ void ValidationBubble::show()
         protectedThis->m_startingToPresentViewController = false;
     }];
 
-    PAL::softLinkUIKitUIAccessibilityPostNotification(PAL::get_UIKit_UIAccessibilityAnnouncementNotification(), m_message.createNSString().get());
+    PAL::softLinkUIKitUIAccessibilityPostNotification(PAL::get_UIKit_UIAccessibilityAnnouncementNotificationSingleton(), m_message.createNSString().get());
 }
 
 static UIViewController *fallbackViewController(UIView *view)

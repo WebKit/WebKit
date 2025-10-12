@@ -1,10 +1,7 @@
-Blocked access to external URL https://www2.localhost:9443/secure-contexts/support/https-subframe-shared.html
 
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN Shared worker in subframe
-NOTRUN Nested worker in shared worker in subframe
-NOTRUN Shared worker in popup
-NOTRUN Nested worker from shared worker in popup
+PASS Shared worker in subframe
+FAIL Nested worker in shared worker in subframe assert_true: SharedWorker is a secure context expected true got "Nested workers not supported."
+FAIL Shared worker in popup assert_true: SharedWorker connection should error out. expected true got false
+FAIL Nested worker from shared worker in popup assert_true: SharedWorker connection should error out. expected true got false
 

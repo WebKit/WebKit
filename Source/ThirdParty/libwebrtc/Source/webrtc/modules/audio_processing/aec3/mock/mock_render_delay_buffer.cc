@@ -10,6 +10,11 @@
 
 #include "modules/audio_processing/aec3/mock/mock_render_delay_buffer.h"
 
+#include <cstddef>
+
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "test/gmock.h"
+
 namespace webrtc {
 namespace test {
 

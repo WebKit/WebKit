@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #ifndef ANGLE_ENABLE_D3D9
 #    define ANGLE_ENABLE_D3D9
 #endif

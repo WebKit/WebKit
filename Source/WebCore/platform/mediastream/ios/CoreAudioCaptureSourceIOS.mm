@@ -55,7 +55,7 @@ using namespace WebCore;
     _callback = callback;
 
     NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
-    AVAudioSession* session = [PAL::getAVAudioSessionClass() sharedInstance];
+    AVAudioSession* session = [PAL::getAVAudioSessionClassSingleton() sharedInstance];
 
     [center addObserver:self selector:@selector(sessionMediaServicesWereReset:) name:AVAudioSessionMediaServicesWereResetNotification object:session];
 

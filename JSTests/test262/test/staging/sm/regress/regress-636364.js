@@ -4,32 +4,18 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
 ---*/
-if (typeof createNewGlobal == 'function') {
-    var gsame = createNewGlobal('same-compartment');
 
-    gsame.eval("function f() { return this; }");
-    f = gsame.f;
-    assert.sameValue(f(), gsame);
+var gnew = $262.createRealm().global;
 
-    gsame.eval("function g() { 'use strict'; return this; }");
-    g = gsame.g;
-    assert.sameValue(g(), undefined);
+gnew.eval("function f() { return this; }");
+var f = gnew.f;
+assert.sameValue(f(), gnew);
 
-    var gnew = createNewGlobal();
-
-    gnew.eval("function f() { return this; }");
-    f = gnew.f;
-    assert.sameValue(f(), gnew);
-
-    gnew.eval("function g() { 'use strict'; return this; }");
-    g = gnew.g;
-    assert.sameValue(g(), undefined);
-}
+gnew.eval("function g() { 'use strict'; return this; }");
+var g = gnew.g;
+assert.sameValue(g(), undefined);
 

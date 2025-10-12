@@ -33,7 +33,7 @@ template <class slot_policy = sigslot::single_threaded,
 class SigslotReceiver : public sigslot::has_slots<slot_policy> {
  public:
   SigslotReceiver() : signal_(nullptr), signal_count_(0) {}
-  ~SigslotReceiver() {}
+  ~SigslotReceiver() override {}
 
   // Provide copy constructor so that tests can exercise the has_slots copy
   // constructor.
@@ -70,8 +70,8 @@ class SigslotSlotTest : public ::testing::Test {
     TemplateIsMT(&mt_policy);
   }
 
-  virtual void SetUp() { Connect(); }
-  virtual void TearDown() { Disconnect(); }
+  void SetUp() override { Connect(); }
+  void TearDown() override { Disconnect(); }
 
   void Disconnect() {
     st_receiver_.Disconnect();

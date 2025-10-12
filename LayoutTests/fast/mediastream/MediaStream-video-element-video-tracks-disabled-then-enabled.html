@@ -64,6 +64,7 @@
             if (timeout)
                 clearTimeout(timeout);
             finishJSTest();
+            mediaStream.getTracks().forEach(track => track.stop());
         }
     }
 

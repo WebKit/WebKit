@@ -43,7 +43,7 @@
 #include "JSAsyncGenerator.h"
 #include "JSBigInt.h"
 #include "JSCInlines.h"
-#include "JSImmutableButterfly.h"
+#include "JSCellButterfly.h"
 #include "JSTemplateObjectDescriptor.h"
 #include "Options.h"
 #include "PrivateFieldPutKind.h"
@@ -533,14 +533,32 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         break;
     case ConstructorKind::Naked:
         if (!isConstructor()) {
-            emitThrowTypeError("Cannot call a constructor without |new|"_s);
+            String constructorName = functionNode->ident().string();
+            if (!constructorName || constructorName.isEmpty())
+                emitThrowTypeError("Cannot call a constructor without |new|"_s);
+            else {
+                auto errorMessageStr = tryMakeString("Cannot call a constructor "_s, constructorName, " without |new|"_s);
+                if (!errorMessageStr)
+                    emitThrowTypeError("Cannot call a constructor without |new|"_s);
+                else
+                    emitThrowTypeError(Identifier::fromString(m_vm, errorMessageStr));
+            }
             return;
         }
         break;
     case ConstructorKind::Base:
     case ConstructorKind::Extends:
         if (!isConstructor()) {
-            emitThrowTypeError("Cannot call a class constructor without |new|"_s);
+            String constructorName = functionNode->ident().string();
+            if (!constructorName || constructorName.isEmpty())
+                emitThrowTypeError("Cannot call a class constructor without |new|"_s);
+            else {
+                auto errorMessageStr = tryMakeString("Cannot call a class constructor "_s, constructorName, " without |new|"_s);
+                if (!errorMessageStr)
+                    emitThrowTypeError("Cannot call a class constructor without |new|"_s);
+                else
+                    emitThrowTypeError(Identifier::fromString(m_vm, errorMessageStr));
+            }
             return;
         }
         break;
@@ -1140,7 +1158,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
             //        a();
             //    }
             //
-            // Module EntryPoint (executed last):
+            // Module Entrypoint (executed last):
             //    import "B";
             //    import "A";
             //
@@ -1674,6 +1692,34 @@ RegisterID* BytecodeGenerator::emitMove(RegisterID* dst, RegisterID* src)
     return dst;
 }
 
+// We treat `typeof x > "u"` as `typeof x === "undefined`
+template<BytecodeGenerator::IsNotTypeofUndefined isNotTypeofUndefined>
+bool BytecodeGenerator::tryEmitTypeofIsUndefinedForStringComparison(RegisterID* dst, RegisterID* src1, RegisterID* src2)
+{
+    if (!canDoPeepholeOptimization() || !m_lastInstruction->is<OpTypeof>())
+        return false;
+
+    auto op = m_lastInstruction->as<OpTypeof>();
+    if (src1->virtualRegister() != op.m_dst
+        || !src1->isTemporary()
+        || !src2->virtualRegister().isConstant()
+        || !m_codeBlock->constantRegister(src2->virtualRegister()).get().isString())
+        return false;
+
+    String value = asString(m_codeBlock->constantRegister(src2->virtualRegister()).get())->tryGetValue();
+    if (value != "u"_s)
+        return false;
+
+    rewind();
+    if constexpr (isNotTypeofUndefined == IsNotTypeofUndefined::Yes) {
+        RefPtr<RegisterID> temp = newTemporary();
+        OpTypeofIsUndefined::emit(this, temp.get(), op.m_value);
+        emitUnaryOp<OpNot>(dst, temp.get());
+    } else
+        OpTypeofIsUndefined::emit(this, dst, op.m_value);
+    return true;
+}
+
 RegisterID* BytecodeGenerator::emitUnaryOp(OpcodeID opcodeID, RegisterID* dst, RegisterID* src, ResultType type)
 {
     switch (opcodeID) {
@@ -1709,12 +1755,18 @@ RegisterID* BytecodeGenerator::emitBinaryOp(OpcodeID opcodeID, RegisterID* dst, 
         return emitBinaryOp<OpStricteq>(dst, src1, src2, types);
     case op_nstricteq:
         return emitBinaryOp<OpNstricteq>(dst, src1, src2, types);
-    case op_less:
+    case op_less: {
+        if (tryEmitTypeofIsUndefinedForStringComparison<BytecodeGenerator::IsNotTypeofUndefined::Yes>(dst, src1, src2))
+            return dst;
         return emitBinaryOp<OpLess>(dst, src1, src2, types);
+    }
     case op_lesseq:
         return emitBinaryOp<OpLesseq>(dst, src1, src2, types);
-    case op_greater:
+    case op_greater: {
+        if (tryEmitTypeofIsUndefinedForStringComparison<BytecodeGenerator::IsNotTypeofUndefined::No>(dst, src1, src2))
+            return dst;
         return emitBinaryOp<OpGreater>(dst, src1, src2, types);
+    }
     case op_greatereq:
         return emitBinaryOp<OpGreatereq>(dst, src1, src2, types);
     case op_below:
@@ -2319,7 +2371,7 @@ RegisterID* BytecodeGenerator::emitResolveScopeForHoistingFuncDeclInEval(Registe
     else
         OpGetScope::emit(this, scope.get());
     OpResolveScopeForHoistingFuncDeclInEval::emit(this, kill(result.get()), scope.get(), addConstant(property));
-    return result.get();
+    return result.unsafeGet();
 }
 
 void BytecodeGenerator::popLexicalScope(VariableEnvironmentNode* node)
@@ -3365,7 +3417,7 @@ RegisterID* BytecodeGenerator::addTemplateObjectConstant(Ref<TemplateObjectDescr
     return &m_constantPoolRegisters[index];
 }
 
-RegisterID* BytecodeGenerator::emitNewArrayBuffer(RegisterID* dst, JSImmutableButterfly* array, IndexingType recommendedIndexingType)
+RegisterID* BytecodeGenerator::emitNewArrayBuffer(RegisterID* dst, JSCellButterfly* array, IndexingType recommendedIndexingType)
 {
     OpNewArrayBuffer::emit(this, dst, addConstantValue(array), recommendedIndexingType);
     return dst;
@@ -3871,7 +3923,19 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
             if (isDerived) {
                 Ref<Label> isUndefinedLabel = newLabel();
                 emitJumpIfTrue(emitIsUndefined(newTemporary(), src), isUndefinedLabel.get());
-                emitThrowTypeError("Cannot return a non-object type in the constructor of a derived class."_s);
+
+                ASSERT(m_scopeNode->isFunctionNode());
+                String className = static_cast<FunctionNode*>(m_scopeNode)->ident().string();
+                if (!className || className.isEmpty())
+                    emitThrowTypeError("Cannot return a non-object type in the constructor of a derived class."_s);
+                else {
+                    auto errorMessageStr = tryMakeString("Cannot return a non-object type in the constructor of a derived class "_s, className, "."_s);
+                    if (!errorMessageStr) [[unlikely]]
+                        emitThrowTypeError("Cannot return a non-object type in the constructor of a derived class."_s);
+                    else
+                        emitThrowTypeError(Identifier::fromString(m_vm, errorMessageStr));
+                }
+
                 emitLabel(isUndefinedLabel.get());
             }
 
@@ -4331,25 +4395,27 @@ void BytecodeGenerator::emitPopCatchScope(VariableEnvironment& environment)
 void BytecodeGenerator::beginSwitch(RegisterID* scrutineeRegister, SwitchInfo::SwitchType type)
 {
     switch (type) {
-    case SwitchInfo::SwitchImmediate: {
+    case SwitchInfo::SwitchType::Immediate:
+    case SwitchInfo::SwitchType::ImmediateList: {
         size_t tableIndex = m_codeBlock->numberOfUnlinkedSwitchJumpTables();
         m_codeBlock->addUnlinkedSwitchJumpTable();
         OpSwitchImm::emit(this, tableIndex, scrutineeRegister);
         break;
     }
-    case SwitchInfo::SwitchCharacter: {
+    case SwitchInfo::SwitchType::Character:
+    case SwitchInfo::SwitchType::CharacterList: {
         size_t tableIndex = m_codeBlock->numberOfUnlinkedSwitchJumpTables();
         m_codeBlock->addUnlinkedSwitchJumpTable();
         OpSwitchChar::emit(this, tableIndex, scrutineeRegister);
         break;
     }
-    case SwitchInfo::SwitchString: {
+    case SwitchInfo::SwitchType::String: {
         size_t tableIndex = m_codeBlock->numberOfUnlinkedStringSwitchJumpTables();
         m_codeBlock->addUnlinkedStringSwitchJumpTable();
         OpSwitchString::emit(this, tableIndex, scrutineeRegister);
         break;
     }
-    default:
+    case SwitchInfo::SwitchType::None:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
@@ -4357,107 +4423,133 @@ void BytecodeGenerator::beginSwitch(RegisterID* scrutineeRegister, SwitchInfo::S
     m_switchContextStack.append(info);
 }
 
-static int32_t keyForImmediateSwitch(ExpressionNode* node, int32_t min, int32_t max)
-{
-    UNUSED_PARAM(max);
-    ASSERT(node->isNumber());
-    double value = static_cast<NumberNode*>(node)->value();
-    int32_t key = static_cast<int32_t>(value);
-    ASSERT(key == value);
-    ASSERT(key >= min);
-    ASSERT(key <= max);
-    return key - min;
-}
-
-static int32_t keyForCharacterSwitch(ExpressionNode* node, int32_t min, int32_t max)
-{
-    UNUSED_PARAM(max);
-    ASSERT(node->isString());
-    StringImpl* clause = static_cast<StringNode*>(node)->value().impl();
-    ASSERT(clause->length() == 1);
-    
-    int32_t key = (*clause)[0];
-    ASSERT(key >= min);
-    ASSERT(key <= max);
-    return key - min;
-}
-
-static void prepareJumpTableForSwitch(
-    UnlinkedSimpleJumpTable& jumpTable, int32_t switchAddress, uint32_t clauseCount,
-    const Vector<Ref<Label>, 8>& labels, Label& defaultLabel, ExpressionNode** nodes, int32_t min, int32_t max,
-    int32_t (*keyGetter)(ExpressionNode*, int32_t min, int32_t max))
-{
-    jumpTable.m_min = min;
-    jumpTable.m_branchOffsets = FixedVector<int32_t>(max - min + 1);
-    std::fill(jumpTable.m_branchOffsets.begin(), jumpTable.m_branchOffsets.end(), 0);
-    for (uint32_t i = 0; i < clauseCount; ++i) {
-        // We're emitting this after the clause labels should have been fixed, so 
-        // the labels should not be "forward" references
-        ASSERT(!labels[i]->isForward());
-        jumpTable.add(keyGetter(nodes[i], min, max), labels[i]->bind(switchAddress)); 
-    }
-    ASSERT(!defaultLabel.isForward());
-    jumpTable.m_defaultOffset = defaultLabel.bind(switchAddress);
-}
-
-static void prepareJumpTableForStringSwitch(UnlinkedStringJumpTable& jumpTable, int32_t switchAddress, uint32_t clauseCount, const Vector<Ref<Label>, 8>& labels, Label& defaultLabel, ExpressionNode** nodes)
-{
-    for (uint32_t i = 0; i < clauseCount; ++i) {
-        // We're emitting this after the clause labels should have been fixed, so 
-        // the labels should not be "forward" references
-        ASSERT(!labels[i]->isForward());
-        
-        ASSERT(nodes[i]->isString());
-        UniquedStringImpl* clause = static_cast<StringNode*>(nodes[i])->value().impl();
-        ASSERT(clause->isAtom());
-        auto result = jumpTable.m_offsetTable.add(clause, UnlinkedStringJumpTable::OffsetLocation { labels[i]->bind(switchAddress), 0 });
-        if (result.isNewEntry) {
-            result.iterator->value.m_indexInTable = jumpTable.m_offsetTable.size() - 1;
-            jumpTable.m_minLength = std::min(jumpTable.m_minLength, clause->length());
-            jumpTable.m_maxLength = std::max(jumpTable.m_maxLength, clause->length());
-        }
-    }
-    ASSERT(!defaultLabel.isForward());
-    jumpTable.m_defaultOffset = defaultLabel.bind(switchAddress);
-
-    if (jumpTable.m_offsetTable.isEmpty()) {
-        jumpTable.m_minLength = 0;
-        jumpTable.m_maxLength = 0;
-    }
-}
-
-void BytecodeGenerator::endSwitch(uint32_t clauseCount, const Vector<Ref<Label>, 8>& labels, ExpressionNode** nodes, Label& defaultLabel, int32_t min, int32_t max)
+void BytecodeGenerator::endSwitch(const Vector<Ref<Label>, 8>& labels, ExpressionNode** nodes, Label& defaultLabel, int32_t min, int32_t max)
 {
     SwitchInfo switchInfo = m_switchContextStack.last();
     m_switchContextStack.removeLast();
 
     auto handleSwitch = [&](auto bytecode) {
         UnlinkedSimpleJumpTable& jumpTable = m_codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex);
-        prepareJumpTableForSwitch(
-            jumpTable, switchInfo.bytecodeOffset, clauseCount, labels, defaultLabel, nodes, min, max,
-            switchInfo.switchType == SwitchInfo::SwitchImmediate
-                ? keyForImmediateSwitch
-                : keyForCharacterSwitch); 
+        jumpTable.m_min = min;
+        jumpTable.m_branchOffsets = FixedVector<int32_t>(max - min + 1);
+        std::fill(jumpTable.m_branchOffsets.begin(), jumpTable.m_branchOffsets.end(), 0);
+        for (uint32_t i = 0; i < labels.size(); ++i) {
+            // We're emitting this after the clause labels should have been fixed, so
+            // the labels should not be "forward" references
+            ASSERT(!labels[i]->isForward());
+            int32_t key = 0;
+            if (switchInfo.switchType == SwitchInfo::SwitchType::Immediate) {
+                ASSERT(nodes[i]->isNumber());
+                double value = static_cast<NumberNode*>(nodes[i])->value();
+                int32_t extracted = static_cast<int32_t>(value);
+                ASSERT(extracted == value);
+                ASSERT(extracted >= min);
+                ASSERT(extracted <= max);
+                key = extracted - min;
+            } else {
+                ASSERT(nodes[i]->isString());
+                StringImpl* clause = static_cast<StringNode*>(nodes[i])->value().impl();
+                ASSERT(clause->length() == 1);
+                int32_t extracted = (*clause)[0];
+                ASSERT(extracted >= min);
+                ASSERT(extracted <= max);
+                key = extracted - min;
+            }
+            jumpTable.add(key, labels[i]->bind(switchInfo.bytecodeOffset));
+        }
+        ASSERT(!defaultLabel.isForward());
+        jumpTable.m_defaultOffset = defaultLabel.bind(switchInfo.bytecodeOffset);
     };
-    
+
+    auto handleSwitchList = [&](auto bytecode) {
+        UnlinkedSimpleJumpTable& jumpTable = m_codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex);
+        jumpTable.m_min = INT32_MAX;
+
+        Vector<int32_t> branchOffsets;
+        branchOffsets.reserveInitialCapacity(labels.size() * 2);
+        UncheckedKeyHashSet<GenericHashKey<int32_t>> alreadyHandled;
+
+        for (uint32_t i = 0; i < labels.size(); ++i) {
+            // We're emitting this after the clause labels should have been fixed, so
+            // the labels should not be "forward" references
+            ASSERT(!labels[i]->isForward());
+            int32_t key = 0;
+            if (switchInfo.switchType == SwitchInfo::SwitchType::ImmediateList) {
+                double value = static_cast<NumberNode*>(nodes[i])->value();
+                key = static_cast<int32_t>(value);
+            } else {
+                StringImpl* clause = static_cast<StringNode*>(nodes[i])->value().impl();
+                ASSERT(clause->length() == 1);
+                key = (*clause)[0];
+            }
+
+            // There is a chance that we may list up duplicate keys. In this case, the first one wins.
+            if (!alreadyHandled.add(key).isNewEntry)
+                continue;
+
+            branchOffsets.append(key);
+            branchOffsets.append(labels[i]->bind(switchInfo.bytecodeOffset));
+        }
+
+        ASSERT(!defaultLabel.isForward());
+        jumpTable.m_branchOffsets = WTFMove(branchOffsets);
+        jumpTable.m_defaultOffset = defaultLabel.bind(switchInfo.bytecodeOffset);
+    };
+
+    auto handleStringSwitch = [&](auto bytecode) {
+        UnlinkedStringJumpTable& jumpTable = m_codeBlock->unlinkedStringSwitchJumpTable(bytecode.m_tableIndex);
+        for (uint32_t i = 0; i < labels.size(); ++i) {
+            // We're emitting this after the clause labels should have been fixed, so
+            // the labels should not be "forward" references
+            ASSERT(!labels[i]->isForward());
+
+            ASSERT(nodes[i]->isString());
+            UniquedStringImpl* clause = static_cast<StringNode*>(nodes[i])->value().impl();
+            ASSERT(clause->isAtom());
+            auto result = jumpTable.m_offsetTable.add(clause, UnlinkedStringJumpTable::OffsetLocation { labels[i]->bind(switchInfo.bytecodeOffset), 0 });
+            if (result.isNewEntry) {
+                result.iterator->value.m_indexInTable = jumpTable.m_offsetTable.size() - 1;
+                jumpTable.m_minLength = std::min(jumpTable.m_minLength, clause->length());
+                jumpTable.m_maxLength = std::max(jumpTable.m_maxLength, clause->length());
+            }
+        }
+        ASSERT(!defaultLabel.isForward());
+        jumpTable.m_defaultOffset = defaultLabel.bind(switchInfo.bytecodeOffset);
+
+        if (jumpTable.m_offsetTable.isEmpty()) {
+            jumpTable.m_minLength = 0;
+            jumpTable.m_maxLength = 0;
+        }
+    };
+
     auto ref = m_writer.ref(switchInfo.bytecodeOffset);
     switch (switchInfo.switchType) {
-    case SwitchInfo::SwitchImmediate: {
+    case SwitchInfo::SwitchType::Immediate: {
         handleSwitch(ref->as<OpSwitchImm>());
         break;
     }
-    case SwitchInfo::SwitchCharacter: {
+
+    case SwitchInfo::SwitchType::ImmediateList: {
+        handleSwitchList(ref->as<OpSwitchImm>());
+        break;
+    }
+
+    case SwitchInfo::SwitchType::Character: {
         handleSwitch(ref->as<OpSwitchChar>());
         break;
     }
-        
-    case SwitchInfo::SwitchString: {
-        UnlinkedStringJumpTable& jumpTable = m_codeBlock->unlinkedStringSwitchJumpTable(ref->as<OpSwitchString>().m_tableIndex);
-        prepareJumpTableForStringSwitch(jumpTable, switchInfo.bytecodeOffset, clauseCount, labels, defaultLabel, nodes);
+
+    case SwitchInfo::SwitchType::CharacterList: {
+        handleSwitchList(ref->as<OpSwitchChar>());
         break;
     }
-        
-    default:
+
+    case SwitchInfo::SwitchType::String: {
+        handleStringSwitch(ref->as<OpSwitchString>());
+        break;
+    }
+
+    case SwitchInfo::SwitchType::None:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
@@ -4695,7 +4787,7 @@ RegisterID* BytecodeGenerator::emitGetTemplateObject(RegisterID* dst, TaggedTemp
     }
     RefPtr<RegisterID> constant = addTemplateObjectConstant(TemplateObjectDescriptor::create(WTFMove(rawStrings), WTFMove(cookedStrings)), taggedTemplate->endOffset());
     if (!dst)
-        return constant.get();
+        return constant.unsafeGet();
     return move(dst, constant.get());
 }
 
@@ -4909,6 +5001,23 @@ void BytecodeGenerator::emitRequireObjectCoercible(RegisterID* value, ASCIILiter
     emitLabel(target.get());
 }
 
+void BytecodeGenerator::emitRequireObjectCoercibleForDestructuring(RegisterID* value, const Identifier* propertyName)
+{
+    Ref<Label> target = newLabel();
+    OpJnundefinedOrNull::emit(this, value, target->bind(this));
+
+    if (propertyName && !propertyName->isNull()) {
+        auto errorMessageStr = tryMakeString("Cannot destructure property '"_s, propertyName->string(), "' from null or undefined value"_s);
+        if (!errorMessageStr) [[unlikely]]
+            emitThrowTypeError("Cannot destructure null or undefined value"_s);
+        else
+            emitThrowTypeError(Identifier::fromString(m_vm, errorMessageStr));
+    } else
+        emitThrowTypeError("Cannot destructure null or undefined value"_s);
+
+    emitLabel(target.get());
+}
+
 void BytecodeGenerator::emitYieldPoint(RegisterID* argument, JSAsyncGenerator::AsyncGeneratorSuspendReason result)
 {
     Ref<Label> mergePoint = newLabel();
@@ -5036,7 +5145,7 @@ RegisterID* BytecodeGenerator::emitGetGenericIterator(RegisterID* argument, Thro
     RefPtr<RegisterID> iterator = emitGetById(newTemporary(), argument, propertyNames().iteratorSymbol);
     emitCallIterator(iterator.get(), argument, node);
 
-    return iterator.get();
+    return iterator.unsafeGet();
 }
 
 RegisterID* BytecodeGenerator::emitIteratorGenericNext(RegisterID* dst, RegisterID* nextMethod, RegisterID* iterator, const ThrowableExpressionData* node, EmitAwait doEmitAwait)
@@ -5124,7 +5233,7 @@ RegisterID* BytecodeGenerator::emitGetAsyncIterator(RegisterID* argument, Throwa
     emitCallIterator(iterator.get(), argument, node);
     emitLabel(iteratorReceived.get());
 
-    return iterator.get();
+    return iterator.unsafeGet();
 }
 
 RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, ThrowableExpressionData* node)
@@ -5245,7 +5354,7 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
     }
 
     emitGetById(value.get(), value.get(), propertyNames().value);
-    return value.get();
+    return value.unsafeGet();
 }
 
 

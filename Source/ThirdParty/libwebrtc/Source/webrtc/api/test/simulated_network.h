@@ -19,24 +19,53 @@
 #include <vector>
 
 #include "absl/functional/any_invocable.h"
+#include "api/transport/ecn_marking.h"
 #include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/timestamp.h"
 
 namespace webrtc {
 
 struct PacketInFlightInfo {
+  PacketInFlightInfo(size_t size,
+                     int64_t send_time_us,
+                     uint64_t packet_id,
+                     EcnMarking ecn)
+      : size(size),
+        send_time_us(send_time_us),
+        packet_id(packet_id),
+        ecn(ecn) {}
+  PacketInFlightInfo(DataSize size,
+                     Timestamp send_time,
+                     uint64_t packet_id,
+                     EcnMarking ecn)
+      : PacketInFlightInfo(size.bytes(), send_time.us(), packet_id, ecn) {}
+  PacketInFlightInfo(DataSize size, Timestamp send_time, uint64_t packet_id)
+      : PacketInFlightInfo(size.bytes(),
+                           send_time.us(),
+                           packet_id,
+                           EcnMarking::kNotEct) {}
+
   PacketInFlightInfo(size_t size, int64_t send_time_us, uint64_t packet_id)
-      : size(size), send_time_us(send_time_us), packet_id(packet_id) {}
+      : PacketInFlightInfo(size, send_time_us, packet_id, EcnMarking::kNotEct) {
+  }
+
+  DataSize packet_size() const { return DataSize::Bytes(size); }
+  Timestamp send_time() const { return Timestamp::Micros(send_time_us); }
 
   size_t size;
   int64_t send_time_us;
   // Unique identifier for the packet in relation to other packets in flight.
   uint64_t packet_id;
+  EcnMarking ecn;
 };
 
 struct PacketDeliveryInfo {
   static constexpr int kNotReceived = -1;
   PacketDeliveryInfo(PacketInFlightInfo source, int64_t receive_time_us)
-      : receive_time_us(receive_time_us), packet_id(source.packet_id) {}
+      : receive_time_us(receive_time_us),
+        packet_id(source.packet_id),
+        ecn(source.ecn) {}
 
   bool operator==(const PacketDeliveryInfo& other) const {
     return receive_time_us == other.receive_time_us &&
@@ -45,6 +74,7 @@ struct PacketDeliveryInfo {
 
   int64_t receive_time_us;
   uint64_t packet_id;
+  EcnMarking ecn;
 };
 
 // BuiltInNetworkBehaviorConfig is a built-in network behavior configuration
@@ -57,10 +87,7 @@ struct BuiltInNetworkBehaviorConfig {
   int queue_delay_ms = 0;
   // Standard deviation of the extra delay.
   int delay_standard_deviation_ms = 0;
-  // Link capacity in kbps. 0 is treated as infinite capacity.
-  // Deprecated, please use link_capacity instead.
-  // TODO(bugs.webrtc.org/14525): Remove once all usage has migrated.
-  int link_capacity_kbps = 0;
+  // Link capacity.
   DataRate link_capacity = DataRate::Infinity();
   // Random packet loss, range 0 to 100.
   double loss_percent = 0.;

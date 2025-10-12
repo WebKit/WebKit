@@ -37,6 +37,8 @@ enum class TextureFormat : uint8_t {
     R8sint,
 
     // 16-bit formats
+    R16unorm,
+    R16snorm,
     R16uint,
     R16sint,
     R16float,
@@ -49,6 +51,8 @@ enum class TextureFormat : uint8_t {
     R32uint,
     R32sint,
     R32float,
+    Rg16unorm,
+    Rg16snorm,
     Rg16uint,
     Rg16sint,
     Rg16float,
@@ -69,6 +73,8 @@ enum class TextureFormat : uint8_t {
     Rg32uint,
     Rg32sint,
     Rg32float,
+    Rgba16unorm,
+    Rgba16snorm,
     Rgba16uint,
     Rgba16sint,
     Rgba16float,

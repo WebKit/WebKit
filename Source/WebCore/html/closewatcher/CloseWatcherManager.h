@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CloseWatcher.h"
+#include <WebCore/CloseWatcher.h>
 
 namespace WebCore {
 

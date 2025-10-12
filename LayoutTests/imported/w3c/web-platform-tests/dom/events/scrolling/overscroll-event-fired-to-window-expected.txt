@@ -1,3 +1,0 @@
-
-FAIL Tests that the window gets overscroll event when no element scrollsafter touch scrolling. promise_test: Unhandled rejection with value: "Window did not receive overscroll event after scroll up on target."
-

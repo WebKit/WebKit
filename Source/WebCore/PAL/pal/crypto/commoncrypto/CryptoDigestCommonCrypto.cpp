@@ -184,20 +184,20 @@ Vector<uint8_t> CryptoDigest::computeHash()
     case CryptoDigest::Algorithm::SHA_1:
         result.grow(CC_SHA1_DIGEST_LENGTH);
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        CC_SHA1_Final(result.data(), toSHA1Context(m_context.get()));
+        CC_SHA1_Final(result.mutableSpan().data(), toSHA1Context(m_context.get()));
         ALLOW_DEPRECATED_DECLARATIONS_END
         break;
     case CryptoDigest::Algorithm::SHA_256:
         result.grow(CC_SHA256_DIGEST_LENGTH);
-        CC_SHA256_Final(result.data(), toSHA256Context(m_context.get()));
+        CC_SHA256_Final(result.mutableSpan().data(), toSHA256Context(m_context.get()));
         break;
     case CryptoDigest::Algorithm::SHA_384:
         result.grow(CC_SHA384_DIGEST_LENGTH);
-        CC_SHA384_Final(result.data(), toSHA384Context(m_context.get()));
+        CC_SHA384_Final(result.mutableSpan().data(), toSHA384Context(m_context.get()));
         break;
     case CryptoDigest::Algorithm::SHA_512:
         result.grow(CC_SHA512_DIGEST_LENGTH);
-        CC_SHA512_Final(result.data(), toSHA512Context(m_context.get()));
+        CC_SHA512_Final(result.mutableSpan().data(), toSHA512Context(m_context.get()));
         break;
 #else
     case CryptoDigest::Algorithm::SHA_1:

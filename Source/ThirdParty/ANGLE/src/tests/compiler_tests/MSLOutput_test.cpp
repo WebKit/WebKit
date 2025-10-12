@@ -11,6 +11,7 @@
 #include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "gtest/gtest.h"
+#include "gmock/gmock.h"
 #include "tests/test_utils/compiler_test.h"
 
 using namespace sh;
@@ -1047,9 +1048,167 @@ TEST_F(MSLOutputTest, UnnamedOutParameterNoCrash)
 TEST_F(MSLOutputTest, ExplicitBoolCastsNoCrash)
 {
     ShCompileOptions options     = defaultOptions();
-    options.addExplicitBoolCasts = 1;
     const char kShader[]         = R"(
 precision mediump float;
 void main(){vec2 c;bvec2 U=bvec2(c.xx);if (U.x) gl_FragColor = vec4(1);})";
     compile(kShader, options);
+}
+
+// The following tests check that the SeparateCompoundExpressions step during MSL shader translation
+// handles comma expressions correctly when at least one of the operands is a function call.
+TEST_F(MSLOutputTest, CommaOpTwoFunctionCallsWithGlobalsNoCrash)
+{
+    ShCompileOptions options = defaultOptions();
+    const char kShader[]     = R"(
+int g;
+void F(int v) { g = v; }
+void main() { F(g), F(g); })";
+    compile(kShader, options);
+}
+
+TEST_F(MSLOutputTest, CommaOpLeftFunctionCallWithGlobalsNoCrash)
+{
+    ShCompileOptions options = defaultOptions();
+    const char kShader[]     = R"(
+int g;
+void F(int v) { g = v; }
+void main() { F(g), F(1); })";
+    compile(kShader, options);
+}
+
+TEST_F(MSLOutputTest, CommaOpRightFunctionCallWithGlobalsNoCrash)
+{
+    ShCompileOptions options = defaultOptions();
+    const char kShader[]     = R"(
+int g;
+void F(int v) { g = v; }
+void main() { F(1), F(g); })";
+    compile(kShader, options);
+}
+
+TEST_F(MSLOutputTest, EnsureLoopForwardProgressInfinite)
+{
+    ShCompileOptions options          = defaultOptions();
+    options.ensureLoopForwardProgress = 1;
+    const std::string &shaderString =
+        R"(
+        precision mediump float;
+        void main() {
+            for (int i = 0; i < i + 1; ++i) { }
+            gl_FragColor = vec4(1);
+        })";
+    compile(shaderString, options);
+    ASSERT_TRUE(foundInCode(SH_MSL_METAL_OUTPUT, "loopForwardProgress();"));
+    ASSERT_TRUE(foundInCode(SH_MSL_METAL_OUTPUT, "volatile bool p = true;"));
+}
+
+TEST_F(MSLOutputTest, EnsureLoopForwardProgressFinite)
+{
+    ShCompileOptions options          = defaultOptions();
+    options.ensureLoopForwardProgress = 1;
+    const std::string &shaderString =
+        R"(
+        precision mediump float;
+        void main() {
+            for (int i = 0; i < 1; ++i) { }
+            gl_FragColor = vec4(1);
+        })";
+    compile(shaderString, options);
+    ASSERT_FALSE(foundInCode(SH_MSL_METAL_OUTPUT, "loopForwardProgress();"));
+}
+
+// Tests that uint assignment operators use the expected functions.
+TEST_F(MSLOutputTest, UintAssignmentOperators)
+{
+    const std::string &shaderString =R"(#version 300 es
+precision highp float;
+in vec4 i;
+out vec4 o;
+void main() {
+    ivec4 ii = ivec4(i);
+    ii += 2;
+    ii -= 3;
+    ii *= 4;
+    ii /= 5;
+    ii %= 6;
+    ii &= 7;
+    ii |= 8;
+    ii ^= 9;
+    ii <<= 10;
+    ii >>= 11;
+    ii++;
+    ++ii;
+    ii--;
+    --ii;
+    o = vec4(ii);
+})";
+    const char expected[] = R"(void ANGLE__0_main(thread ANGLE_FragmentOut & ANGLE_fragmentOut, thread ANGLE_FragmentIn & ANGLE_fragmentIn)
+{
+  metal::int4 _uii = ANGLE_ftoi<metal::int4>(ANGLE_fragmentIn._ui);
+  _uii = ANGLE_addAssignInt(_uii, 2);
+  _uii = ANGLE_subAssignInt(_uii, 3);
+  _uii = ANGLE_imul(_uii, 4);
+  _uii = ANGLE_div(_uii, 5);
+  _uii = ANGLE_imod(_uii, 6);
+  _uii &= 7;
+  _uii |= 8;
+  _uii ^= 9;
+  _uii = ANGLE_ilshift(_uii, 10);
+  _uii = ANGLE_rshift(_uii, 11);
+  ANGLE_postIncrementInt(_uii);
+  ANGLE_preIncrementInt(_uii);
+  ANGLE_postDecrementInt(_uii);
+  ANGLE_preDecrementInt(_uii);
+  ANGLE_fragmentOut._uo = metal::float4(_uii);
+})";
+    compile(shaderString);
+    EXPECT_THAT(outputCode(SH_MSL_METAL_OUTPUT), testing::HasSubstr(expected));
+}
+
+// Tests that some uint assignment operators use the swizzle ref helper if the swizzle is in lvalue position in the generated code.
+TEST_F(MSLOutputTest, UintSwizzleAssignmentOperators)
+{
+    const std::string &shaderString =R"(#version 300 es
+precision highp float;
+in vec4 i;
+out vec4 o;
+void main() {
+    ivec4 ii = ivec4(i);
+    ii.x += 2;
+    ii.y -= 3;
+    ii.z *= 4;
+    ii.w /= 5;
+    ii.x %= 6;
+    ii.y &= 7;
+    ii.y |= 8;
+    ii.z ^= 9;
+    ii.y <<= 10;
+    ii.z >>= 11;
+    ii.x++;
+    ++ii.y;
+    ii.x--;
+    --ii.y;
+    o = vec4(ii);
+})";
+    const char expected[] = R"(void ANGLE__0_main(thread ANGLE_FragmentOut & ANGLE_fragmentOut, thread ANGLE_FragmentIn & ANGLE_fragmentIn)
+{
+  metal::int4 _uii = ANGLE_ftoi<metal::int4>(ANGLE_fragmentIn._ui);
+  _uii.x = ANGLE_addInt(_uii.x, 2);
+  _uii.y = ANGLE_subInt(_uii.y, 3);
+  _uii.z = ANGLE_imul(_uii.z, 4);
+  _uii.w = ANGLE_div(_uii.w, 5);
+  _uii.x = ANGLE_imod(_uii.x, 6);
+  _uii.y = (_uii.y & 7);
+  _uii.y = (_uii.y | 8);
+  _uii.z = (_uii.z ^ 9);
+  _uii.y = ANGLE_ilshift(_uii.y, 10);
+  _uii.z = ANGLE_rshift(_uii.z, 11);
+  ANGLE_postIncrementInt(ANGLE_swizzle_ref(_uii, 0u));
+  ANGLE_preIncrementInt(ANGLE_swizzle_ref(_uii, 1u));
+  ANGLE_postDecrementInt(ANGLE_swizzle_ref(_uii, 0u));
+  ANGLE_preDecrementInt(ANGLE_swizzle_ref(_uii, 1u));
+  ANGLE_fragmentOut._uo = metal::float4(_uii);
+})";
+    compile(shaderString);
+    EXPECT_THAT(outputCode(SH_MSL_METAL_OUTPUT), testing::HasSubstr(expected));
 }

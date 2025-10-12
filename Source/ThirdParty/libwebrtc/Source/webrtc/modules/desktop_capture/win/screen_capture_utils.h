@@ -11,6 +11,14 @@
 #ifndef MODULES_DESKTOP_CAPTURE_WIN_SCREEN_CAPTURE_UTILS_H_
 #define MODULES_DESKTOP_CAPTURE_WIN_SCREEN_CAPTURE_UTILS_H_
 
+#include <optional>
+#include <string>
+#include <vector>
+
+#include "modules/desktop_capture/desktop_capturer.h"
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "rtc_base/system/rtc_export.h"
+
 #if defined(WEBRTC_WIN)
 // Forward declare HMONITOR in a windows.h compatible way so that we can avoid
 // including windows.h.
@@ -20,12 +28,6 @@
 WEBRTC_DECLARE_HANDLE(HMONITOR);
 #undef WEBRTC_DECLARE_HANDLE
 #endif
-
-#include <string>
-#include <vector>
-
-#include "modules/desktop_capture/desktop_capturer.h"
-#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -61,7 +63,9 @@ DesktopVector GetDpiForMonitor(HMONITOR monitor);
 // Returns true if `screen` is a valid screen. The screen device key is
 // returned through `device_key` if the screen is valid. The device key can be
 // used in GetScreenRect to verify the screen matches the previously obtained
-// id.
+// id. It calls the EnumDisplayDevices API to check if the screen is valid but
+// EnumDisplayDevices is quite slow so the caller of this function should
+// be aware of the performance impact.
 bool IsScreenValid(DesktopCapturer::SourceId screen, std::wstring* device_key);
 
 // Get the rect of the entire system in system coordinate system. I.e. the
@@ -69,10 +73,12 @@ bool IsScreenValid(DesktopCapturer::SourceId screen, std::wstring* device_key);
 DesktopRect GetFullscreenRect();
 
 // Get the rect of the screen identified by `screen`, relative to the primary
-// display's top-left. If the screen device key does not match `device_key`, or
-// the screen does not exist, or any error happens, an empty rect is returned.
-RTC_EXPORT DesktopRect GetScreenRect(DesktopCapturer::SourceId screen,
-                                     const std::wstring& device_key);
+// display's top-left. If the optional screen device key exists, and does not
+// match `device_key`, or the screen does not exist, or any error happens,
+// an empty rect is returned.
+RTC_EXPORT DesktopRect
+GetScreenRect(DesktopCapturer::SourceId screen,
+              const std::optional<std::wstring>& device_key);
 
 }  // namespace webrtc
 

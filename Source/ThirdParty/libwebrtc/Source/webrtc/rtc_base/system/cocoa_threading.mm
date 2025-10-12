@@ -17,7 +17,9 @@ void InitCocoaMultiThreading() {
   static BOOL is_cocoa_multithreaded = [NSThread isMultiThreaded];
   if (!is_cocoa_multithreaded) {
     // +[NSObject class] is idempotent.
-    [NSThread detachNewThreadSelector:@selector(class) toTarget:[NSObject class] withObject:nil];
+    [NSThread detachNewThreadSelector:@selector(class)
+                             toTarget:[NSObject class]
+                           withObject:nil];
     is_cocoa_multithreaded = YES;
     RTC_DCHECK([NSThread isMultiThreaded]);
   }

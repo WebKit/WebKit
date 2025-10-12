@@ -352,14 +352,15 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/fetch/FetchRequestMode.idl \
     $(WebCore)/Modules/fetch/FetchRequestRedirect.idl \
     $(WebCore)/Modules/fetch/FetchResponse.idl \
+    $(WebCore)/Modules/fetch/IPAddressSpace.idl \
     $(WebCore)/Modules/fetch/RequestPriority.idl \
     $(WebCore)/Modules/fetch/WindowOrWorkerGlobalScope+Fetch.idl \
-    $(WebCore)/Modules/filesystemaccess/FileSystemDirectoryHandle.idl \
-    $(WebCore)/Modules/filesystemaccess/FileSystemFileHandle.idl \
-    $(WebCore)/Modules/filesystemaccess/FileSystemHandle.idl \
-    $(WebCore)/Modules/filesystemaccess/FileSystemSyncAccessHandle.idl \
-	$(WebCore)/Modules/filesystemaccess/FileSystemWritableFileStream.idl \
-    $(WebCore)/Modules/filesystemaccess/StorageManager+FileSystemAccess.idl \
+    $(WebCore)/Modules/filesystem/FileSystemDirectoryHandle.idl \
+    $(WebCore)/Modules/filesystem/FileSystemFileHandle.idl \
+    $(WebCore)/Modules/filesystem/FileSystemHandle.idl \
+    $(WebCore)/Modules/filesystem/FileSystemSyncAccessHandle.idl \
+	$(WebCore)/Modules/filesystem/FileSystemWritableFileStream.idl \
+    $(WebCore)/Modules/filesystem/StorageManager+FileSystem.idl \
     $(WebCore)/Modules/gamepad/Gamepad.idl \
     $(WebCore)/Modules/gamepad/GamepadButton.idl \
     $(WebCore)/Modules/gamepad/GamepadEffectParameters.idl \
@@ -415,7 +416,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediacapabilities/TransferFunction.idl \
     $(WebCore)/Modules/mediacapabilities/VideoConfiguration.idl \
     $(WebCore)/Modules/mediacapabilities/WorkerNavigator+MediaCapabilities.idl \
+    $(WebCore)/Modules/mediacontrols/DOMWindow+MediaControls.idl \
     $(WebCore)/Modules/mediacontrols/MediaControlsHost.idl \
+    $(WebCore)/Modules/mediacontrols/MediaControlsUtils.idl \
     $(WebCore)/Modules/mediarecorder/BlobEvent.idl \
     $(WebCore)/Modules/mediarecorder/MediaRecorder.idl \
     $(WebCore)/Modules/mediarecorder/MediaRecorderErrorEvent.idl \
@@ -481,8 +484,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCDegradationPreference.idl \
     $(WebCore)/Modules/mediastream/RTCDtlsTransport.idl \
     $(WebCore)/Modules/mediastream/RTCDtlsTransportState.idl \
-    $(WebCore)/Modules/mediastream/RTCDtxStatus.idl \
     $(WebCore)/Modules/mediastream/RTCEncodedAudioFrame.idl \
+    $(WebCore)/Modules/mediastream/RTCEncodedStreams.idl \
     $(WebCore)/Modules/mediastream/RTCEncodedVideoFrame.idl \
     $(WebCore)/Modules/mediastream/RTCError.idl \
     $(WebCore)/Modules/mediastream/RTCErrorDetailType.idl \
@@ -515,12 +518,10 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCRtpCodingParameters.idl \
     $(WebCore)/Modules/mediastream/RTCRtpContributingSource.idl \
     $(WebCore)/Modules/mediastream/RTCRtpEncodingParameters.idl \
-    $(WebCore)/Modules/mediastream/RTCRtpFecParameters.idl \
     $(WebCore)/Modules/mediastream/RTCRtpHeaderExtensionParameters.idl \
     $(WebCore)/Modules/mediastream/RTCRtpParameters.idl \
     $(WebCore)/Modules/mediastream/RTCRtpReceiver.idl \
     $(WebCore)/Modules/mediastream/RTCRtpReceiver+Transform.idl \
-    $(WebCore)/Modules/mediastream/RTCRtpRtxParameters.idl \
     $(WebCore)/Modules/mediastream/RTCRtpSendParameters.idl \
     $(WebCore)/Modules/mediastream/RTCRtpSender.idl \
     $(WebCore)/Modules/mediastream/RTCRtpSender+Transform.idl \
@@ -603,6 +604,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/remoteplayback/RemotePlayback.idl \
     $(WebCore)/Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl \
     $(WebCore)/Modules/reporting/DeprecationReportBody.idl \
+    $(WebCore)/Modules/reporting/IntegrityPolicyViolationReportBody.idl \
     $(WebCore)/Modules/reporting/Report.idl \
     $(WebCore)/Modules/reporting/ReportBody.idl \
     $(WebCore)/Modules/reporting/ReportingObserver.idl \
@@ -631,16 +633,26 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/streams/ByteLengthQueuingStrategy.idl \
     $(WebCore)/Modules/streams/CountQueuingStrategy.idl \
     $(WebCore)/Modules/streams/GenericTransformStream.idl \
+    $(WebCore)/Modules/streams/QueuingStrategy.idl \
+    $(WebCore)/Modules/streams/QueuingStrategySize.idl \
     $(WebCore)/Modules/streams/ReadableByteStreamController.idl \
-    $(WebCore)/Modules/streams/ReadableStream.idl \
     $(WebCore)/Modules/streams/ReadableStreamBYOBReader.idl \
     $(WebCore)/Modules/streams/ReadableStreamBYOBRequest.idl \
+    $(WebCore)/Modules/streams/ReadableStream.idl \
     $(WebCore)/Modules/streams/ReadableStreamDefaultController.idl \
     $(WebCore)/Modules/streams/ReadableStreamDefaultReader.idl \
+    $(WebCore)/Modules/streams/ReadableStreamReadResult.idl \
     $(WebCore)/Modules/streams/ReadableStreamSink.idl \
     $(WebCore)/Modules/streams/ReadableStreamSource.idl \
+    $(WebCore)/Modules/streams/ReadableStreamType.idl \
+    $(WebCore)/Modules/streams/StreamPipeOptions.idl \
     $(WebCore)/Modules/streams/TransformStream.idl \
     $(WebCore)/Modules/streams/TransformStreamDefaultController.idl \
+    $(WebCore)/Modules/streams/UnderlyingSource.idl \
+    $(WebCore)/Modules/streams/UnderlyingSourceStartCallback.idl \
+    $(WebCore)/Modules/streams/UnderlyingSourceCancelCallback.idl \
+    $(WebCore)/Modules/streams/UnderlyingSourcePullCallback.idl \
+    $(WebCore)/Modules/streams/UnderlyingSourceStartCallback.idl \
     $(WebCore)/Modules/streams/WritableStream.idl \
     $(WebCore)/Modules/streams/WritableStreamDefaultController.idl \
     $(WebCore)/Modules/streams/WritableStreamDefaultWriter.idl \
@@ -754,7 +766,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialParameters.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialUserEntity.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialUserEntityJSON.idl \
-    $(WebCore)/Modules/webauthn/AuthenticatorSelectionCriteria.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialDescriptor.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialDescriptorJSON.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialRequestOptions.idl \
@@ -827,6 +838,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webtransport/WebTransportBidirectionalStream.idl \
     $(WebCore)/Modules/webtransport/WebTransportCloseInfo.idl \
     $(WebCore)/Modules/webtransport/WebTransportCongestionControl.idl \
+    $(WebCore)/Modules/webtransport/WebTransportConnectionStats.idl \
     $(WebCore)/Modules/webtransport/WebTransportDatagramDuplexStream.idl \
     $(WebCore)/Modules/webtransport/WebTransportDatagramStats.idl \
     $(WebCore)/Modules/webtransport/WebTransportError.idl \
@@ -840,7 +852,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webtransport/WebTransportSendStream.idl \
     $(WebCore)/Modules/webtransport/WebTransportSendStreamOptions.idl \
     $(WebCore)/Modules/webtransport/WebTransportSendStreamStats.idl \
-    $(WebCore)/Modules/webtransport/WebTransportStats.idl \
     $(WebCore)/Modules/webxr/Navigator+WebXR.idl \
     $(WebCore)/Modules/webxr/WebXRBoundedReferenceSpace.idl \
     $(WebCore)/Modules/webxr/WebXRFrame+HandInput.idl \
@@ -983,6 +994,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/css/CSSFontFaceRule.idl \
     $(WebCore)/css/CSSFontFeatureValuesRule.idl \
     $(WebCore)/css/CSSFontPaletteValuesRule.idl \
+    $(WebCore)/css/CSSFunctionDeclarations.idl \
+    $(WebCore)/css/CSSFunctionDescriptors.idl \
+    $(WebCore)/css/CSSFunctionRule.idl \
     $(WebCore)/css/CSSGroupingRule.idl \
     $(WebCore)/css/CSSImportRule.idl \
     $(WebCore)/css/CSSLayerBlockRule.idl \
@@ -1095,7 +1109,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/ClipboardEvent.idl \
     $(WebCore)/dom/CommandEvent.idl \
     $(WebCore)/dom/Comment.idl \
-    $(WebCore)/dom/CommandEvent.idl \
     $(WebCore)/dom/CompositionEvent.idl \
     $(WebCore)/dom/ContentVisibilityAutoStateChangeEvent.idl \
     $(WebCore)/dom/CreateHTMLCallback.idl \
@@ -1194,7 +1207,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/NodeList.idl \
     $(WebCore)/dom/NonDocumentTypeChildNode.idl \
     $(WebCore)/dom/NonElementParentNode.idl \
-    $(WebCore)/dom/OverflowEvent.idl \
     $(WebCore)/dom/Observable.idl \
     $(WebCore)/dom/ObservableInspector.idl \
     $(WebCore)/dom/ObservableInspectorAbortCallback.idl \
@@ -1356,7 +1368,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/ImageBitmapOptions.idl \
     $(WebCore)/html/ImageData.idl \
     $(WebCore)/html/ImageDataSettings.idl \
-    $(WebCore)/html/ImageDataStorageFormat.idl \
+    $(WebCore)/html/ImageDataPixelFormat.idl \
     $(WebCore)/html/MediaController.idl \
     $(WebCore)/html/MediaEncryptedEvent.idl \
     $(WebCore)/html/MediaError.idl \
@@ -1522,6 +1534,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/DOMWindow+RequestIdleCallback.idl \
     $(WebCore)/page/DOMWindow+Selection.idl \
     $(WebCore)/page/DOMWindow+VisualViewport.idl \
+    $(WebCore)/page/EventCounts.idl \
     $(WebCore)/page/EventSource.idl \
     $(WebCore)/page/FragmentDirective.idl \
     $(WebCore)/page/GetComposedRangesOptions.idl \
@@ -1530,6 +1543,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/IntersectionObserver.idl \
     $(WebCore)/page/IntersectionObserverCallback.idl \
     $(WebCore)/page/IntersectionObserverEntry.idl \
+    $(WebCore)/page/LargestContentfulPaint.idl \
     $(WebCore)/page/Location.idl \
     $(WebCore)/page/NavigateEvent.idl \
     $(WebCore)/page/Navigation.idl \
@@ -1541,6 +1555,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/NavigationNavigationType.idl \
     $(WebCore)/page/NavigationTransition.idl \
     $(WebCore)/page/Navigator.idl \
+    $(WebCore)/page/NavigatorUA.idl \
+    $(WebCore)/page/NavigatorUABrandVersion.idl \
+    $(WebCore)/page/NavigatorUAData.idl \
     $(WebCore)/page/Navigator+LoginStatus.idl \
     $(WebCore)/page/Navigator+UserActivation.idl \
     $(WebCore)/page/NavigatorCookies.idl \
@@ -1551,12 +1568,15 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/NavigatorServiceWorker.idl \
     $(WebCore)/page/NavigatorShare.idl \
     $(WebCore)/page/NavigatorStorage.idl \
+    $(WebCore)/page/PaintTimingMixin.idl \
+    $(WebCore)/page/Performance+EventCounts.idl \
     $(WebCore)/page/Performance+NavigationTiming.idl \
     $(WebCore)/page/Performance+PerformanceTimeline.idl \
     $(WebCore)/page/Performance+ResourceTiming.idl \
     $(WebCore)/page/Performance+UserTiming.idl \
     $(WebCore)/page/Performance.idl \
     $(WebCore)/page/PerformanceEntry.idl \
+    $(WebCore)/page/PerformanceEventTiming.idl \
     $(WebCore)/page/PerformanceMark.idl \
     $(WebCore)/page/PerformanceMarkOptions.idl \
     $(WebCore)/page/PerformanceMeasure.idl \
@@ -1586,13 +1606,17 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/ShadowRealmGlobalScope.idl \
     $(WebCore)/page/ShareData.idl \
     $(WebCore)/page/StructuredSerializeOptions.idl \
+    $(WebCore)/page/UADataValues.idl \
+    $(WebCore)/page/UALowEntropyJSON.idl \
     $(WebCore)/page/UndoItem.idl \
     $(WebCore)/page/UndoManager.idl \
     $(WebCore)/page/UserMessageHandler.idl \
     $(WebCore)/page/UserMessageHandlersNamespace.idl \
     $(WebCore)/page/VisualViewport.idl \
+    $(WebCore)/page/WebKitJSHandle.idl \
     $(WebCore)/page/WebKitNamespace.idl \
     $(WebCore)/page/WebKitPoint.idl \
+    $(WebCore)/page/WebKitSerializedNode.idl \
     $(WebCore)/page/WindowEventHandlers.idl \
     $(WebCore)/page/WindowLocalStorage.idl \
     $(WebCore)/page/WindowOrWorkerGlobalScope+Crypto.idl \
@@ -1898,11 +1922,13 @@ all : \
     CSSValueKeywords.cpp \
     CSSValueKeywords.h \
     ColorData.cpp \
+    DocumentSyncClient.cpp \
     DOMJITAbstractHeapRepository.h \
     EventInterfaces.h \
     EventNames.cpp \
     EventNames.h \
     EventTargetInterfaces.h \
+    FrameTreeSyncClient.cpp \
     HTMLElementFactory.cpp \
     HTMLElementFactory.h \
     HTMLElementTypeHelpers.h \
@@ -1920,7 +1946,6 @@ all : \
     Namespace.h \
     NodeName.cpp \
     NodeName.h \
-    ProcessSyncClient.cpp \
     SVGElementFactory.cpp \
     SVGElementFactory.h \
     SVGElementTypeHelpers.h \
@@ -2032,7 +2057,7 @@ DOMJITAbstractHeapRepository.h : $(WebCore)/domjit/generate-abstract-heap.rb $(W
 
 all : XMLViewerCSS.h
 
-XMLViewerCSS.h : $(WebCore)/xml/XMLViewer.css
+XMLViewerCSS.h : $(WebCore)/xml/XMLViewer.css $(JavaScriptCore_SCRIPTS_DIR)/cssmin.py $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/cssmin.py < "$(WebCore)/xml/XMLViewer.css" > XMLViewer.min.css
 	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl XMLViewer_css XMLViewer.min.css XMLViewerCSS.h
 	$(DELETE) XMLViewer.min.css
@@ -2043,7 +2068,7 @@ XMLViewerCSS.h : $(WebCore)/xml/XMLViewer.css
 
 all : XMLViewerJS.h
 
-XMLViewerJS.h : $(WebCore)/xml/XMLViewer.js
+XMLViewerJS.h : $(WebCore)/xml/XMLViewer.js $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py < "$(WebCore)/xml/XMLViewer.js" > XMLViewer.min.js
 	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl XMLViewer_js XMLViewer.min.js XMLViewerJS.h
 	$(DELETE) XMLViewer.min.js
@@ -2112,6 +2137,7 @@ MODERN_MEDIA_CONTROLS_STYLE_SHEETS = \
     $(WebCore)/Modules/modern-media-controls/controls/slider.css \
     $(WebCore)/Modules/modern-media-controls/controls/status-label.css \
     $(WebCore)/Modules/modern-media-controls/controls/text-tracks.css \
+    $(WebCore)/Modules/modern-media-controls/controls/time-control.css \
     $(WebCore)/Modules/modern-media-controls/controls/time-label.css \
     $(WebCore)/Modules/modern-media-controls/controls/tvos-media-controls.css \
     $(WebCore)/Modules/modern-media-controls/controls/vision-media-controls.css \
@@ -2143,6 +2169,7 @@ USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/css/html.css \
     $(WebCore)/css/htmlSwitchControl.css \
     $(WebCore)/css/mathml.css \
+    $(WebCore)/css/mathmlCoreExtras.css \
     $(WebCore)/css/popover.css \
     $(WebCore)/css/quirks.css \
     $(WebCore)/css/svg.css \
@@ -2636,12 +2663,8 @@ WebCore_BUILTINS_SOURCES = \
     $(WebCore)/Modules/compression/DecompressionStream.js \
     $(WebCore)/Modules/streams/ByteLengthQueuingStrategy.js \
     $(WebCore)/Modules/streams/CountQueuingStrategy.js \
-    $(WebCore)/Modules/streams/ReadableByteStreamController.js \
-    $(WebCore)/Modules/streams/ReadableByteStreamInternals.js \
-    $(WebCore)/Modules/streams/ReadableStreamBYOBRequest.js \
     $(WebCore)/Modules/streams/ReadableStreamDefaultController.js \
     $(WebCore)/Modules/streams/ReadableStreamInternals.js \
-    $(WebCore)/Modules/streams/ReadableStreamBYOBReader.js \
     $(WebCore)/Modules/streams/ReadableStreamDefaultReader.js \
     $(WebCore)/Modules/streams/StreamInternals.js \
     $(WebCore)/Modules/streams/TransformStreamDefaultController.js \
@@ -2703,25 +2726,42 @@ all : $(notdir $(WebCore_BUILTINS_SOURCES:%.js=%Builtins.h)) $(WebCore_BUILTINS_
 
 #
 
-PROCESS_SYNC_DATA_INPUT_FILES = \
-    $(WebCore)/page/ProcessSyncData.in \
+DOCUMENT_SYNC_DATA_INPUT_FILES = \
+    $(WebCore)/page/DocumentSyncData.in \
 
-GENERATED_PROCESS_SYNC_CLIENT_OUTPUT_FILES = \
+GENERATED_DOCUMENT_SYNC_CLIENT_OUTPUT_FILES = \
 	DocumentSyncData.cpp \
 	DocumentSyncData.h \
+	DocumentSyncClient.cpp \
+	DocumentSyncClient.h \
+	DocumentSyncData.serialization.in \
+
+GENERATED_DOCUMENT_SYNC_CLIENT_OUTPUT_PATTERNS = $(subst .cpp,%cpp, $(subst .h,%h, $(subst .in,%in, $(GENERATED_DOCUMENT_SYNC_CLIENT_OUTPUT_FILES))))
+
+all : $(GENERATED_DOCUMENT_SYNC_CLIENT_OUTPUT_FILES)
+
+$(GENERATED_DOCUMENT_SYNC_CLIENT_OUTPUT_PATTERNS) : $(WebCore)/Scripts/generate-process-sync-data.py $(DOCUMENT_SYNC_DATA_INPUT_FILES)
+	@echo Generating Document sync data $@
+	$(PYTHON) $(WebCore)/Scripts/generate-process-sync-data.py "Document" $(DOCUMENT_SYNC_DATA_INPUT_FILES)
+
+FRAMETREE_SYNC_DATA_INPUT_FILES = \
+    $(WebCore)/page/FrameTreeSyncData.in \
+
+GENERATED_FRAMETREE_SYNC_CLIENT_OUTPUT_FILES = \
 	FrameTreeSyncData.cpp \
 	FrameTreeSyncData.h \
-	ProcessSyncClient.cpp \
-	ProcessSyncClient.h \
-	ProcessSyncData.h \
-	ProcessSyncData.serialization.in \
+	FrameTreeSyncClient.cpp \
+	FrameTreeSyncClient.h \
+	FrameTreeSyncData.serialization.in \
 
-GENERATED_PROCESS_SYNC_CLIENT_OUTPUT_PATTERNS = $(subst .cpp,%cpp, $(subst .h,%h, $(subst .in,%in, $(GENERATED_PROCESS_SYNC_CLIENT_OUTPUT_FILES))))
+GENERATED_FRAMETREE_SYNC_CLIENT_OUTPUT_PATTERNS = $(subst .cpp,%cpp, $(subst .h,%h, $(subst .in,%in, $(GENERATED_FRAMETREE_SYNC_CLIENT_OUTPUT_FILES))))
 
-all : $(GENERATED_PROCESS_SYNC_CLIENT_OUTPUT_FILES)
+all : $(GENERATED_FRAMETREE_SYNC_CLIENT_OUTPUT_FILES)
 
-$(GENERATED_PROCESS_SYNC_CLIENT_OUTPUT_PATTERNS) : $(WebCore)/Scripts/generate-process-sync-data.py $(PROCESS_SYNC_DATA_INPUT_FILES)
-	$(PYTHON) $(WebCore)/Scripts/generate-process-sync-data.py $(PROCESS_SYNC_DATA_INPUT_FILES)
+$(GENERATED_FRAMETREE_SYNC_CLIENT_OUTPUT_PATTERNS) : $(WebCore)/Scripts/generate-process-sync-data.py $(FRAMETREE_SYNC_DATA_INPUT_FILES)
+	@echo Generating Document sync data $@
+	$(PYTHON) $(WebCore)/Scripts/generate-process-sync-data.py "FrameTree" $(FRAMETREE_SYNC_DATA_INPUT_FILES)
+
 
 # ------------------------
 

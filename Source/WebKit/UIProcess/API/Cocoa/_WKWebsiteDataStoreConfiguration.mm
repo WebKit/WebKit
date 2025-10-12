@@ -314,35 +314,20 @@ static void checkURLArgument(NSURL *url)
 
 - (NSURL *)applicationCacheDirectory
 {
-    return [NSURL fileURLWithPath:_configuration->applicationCacheDirectory().createNSString().get() isDirectory:YES];
+    return nil;
 }
 
 - (void)setApplicationCacheDirectory:(NSURL *)url
 {
-    if (!_configuration->isPersistent())
-        [NSException raise:NSInvalidArgumentException format:@"Cannot set applicationCacheDirectory on a non-persistent _WKWebsiteDataStoreConfiguration."];
-
-    if (_configuration->identifier())
-        [NSException raise:NSGenericException format:@"Cannot set applicationCacheDirectory on a _WKWebsiteDataStoreConfiguration created with identifier"];
-
-    checkURLArgument(url);
-    _configuration->setApplicationCacheDirectory(url.path);
 }
 
 - (NSString *)applicationCacheFlatFileSubdirectoryName
 {
-    return _configuration->applicationCacheFlatFileSubdirectoryName().createNSString().autorelease();
+    return nil;
 }
 
 - (void)setApplicationCacheFlatFileSubdirectoryName:(NSString *)name
 {
-    if (!_configuration->isPersistent())
-        [NSException raise:NSInvalidArgumentException format:@"Cannot set applicationCacheFlatFileSubdirectoryName on a non-persistent _WKWebsiteDataStoreConfiguration."];
-
-    if (_configuration->identifier())
-        [NSException raise:NSGenericException format:@"Cannot set applicationCacheFlatFileSubdirectoryName on a _WKWebsiteDataStoreConfiguration created with identifier"];
-
-    _configuration->setApplicationCacheFlatFileSubdirectoryName(name);
 }
 
 - (NSURL *)mediaCacheDirectory

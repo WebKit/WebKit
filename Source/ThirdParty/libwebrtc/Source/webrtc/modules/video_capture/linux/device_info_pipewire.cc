@@ -10,20 +10,14 @@
 
 #include "modules/video_capture/linux/device_info_pipewire.h"
 
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
 
-#include <vector>
-
+#include "modules/video_capture/device_info_impl.h"
 #include "modules/video_capture/linux/pipewire_session.h"
-#include "modules/video_capture/video_capture.h"
-#include "modules/video_capture/video_capture_defines.h"
 #include "modules/video_capture/video_capture_impl.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {

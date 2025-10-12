@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/access-from-shadow-dom-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/access-from-shadow-dom-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/access-from-shadow-dom.html
@@ -24,6 +25,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/dependent-builtin-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/dependent-builtin-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/dependent-builtin.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/descriptor-calc-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/descriptor-calc-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/descriptor-calc.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/descriptor-fallback-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/descriptor-fallback-invalid-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/descriptor-fallback-invalid-ref.html

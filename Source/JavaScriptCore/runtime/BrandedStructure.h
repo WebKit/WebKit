@@ -26,10 +26,10 @@
 
 #pragma once
 
-#include "Structure.h"
-#include "Symbol.h"
-#include "Watchpoint.h"
-#include "WriteBarrierInlines.h"
+#include <JavaScriptCore/Structure.h>
+#include <JavaScriptCore/Symbol.h>
+#include <JavaScriptCore/Watchpoint.h>
+#include <JavaScriptCore/WriteBarrierInlines.h>
 
 namespace WTF {
 

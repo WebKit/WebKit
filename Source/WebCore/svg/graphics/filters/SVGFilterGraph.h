@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2022-2025 Apple Inc.  All rights reserved.
- * Copyright (C) 2014 Google Inc.  All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -118,8 +118,8 @@ protected:
         return true;
     }
 
-    UncheckedKeyHashMap<AtomString, Ref<NodeType>> m_namedNodes;
-    UncheckedKeyHashMap<Ref<NodeType>, NodeVector> m_nodeInputs;
+    HashMap<AtomString, Ref<NodeType>> m_namedNodes;
+    HashMap<Ref<NodeType>, NodeVector> m_nodeInputs;
     RefPtr<NodeType> m_lastNode;
 };
 

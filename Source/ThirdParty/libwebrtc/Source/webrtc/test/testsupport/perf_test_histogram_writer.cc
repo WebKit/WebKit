@@ -10,16 +10,21 @@
 
 #include "test/testsupport/perf_test_histogram_writer.h"
 
-#include <stdlib.h>
-
+#include <cstdlib>
 #include <map>
 #include <memory>
+#include <string>
+#include <utility>
 
 #include "absl/strings/string_view.h"
-#include "api/numerics/samples_stats_counter.h"
+#include "api/array_view.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
+#include "test/testsupport/perf_test.h"
+#include "test/testsupport/perf_test_result_writer.h"
 #include "third_party/catapult/tracing/tracing/value/diagnostics/reserved_infos.h"
 #include "third_party/catapult/tracing/tracing/value/histogram.h"
 
@@ -66,7 +71,7 @@ class PerfTestHistogramWriter : public PerfTestResultWriter {
   }
   void LogResultList(absl::string_view graph_name,
                      absl::string_view trace_name,
-                     const rtc::ArrayView<const double> values,
+                     const ArrayView<const double> values,
                      absl::string_view units,
                      const bool important,
                      ImproveDirection improve_direction) override {
@@ -110,7 +115,7 @@ class PerfTestHistogramWriter : public PerfTestResultWriter {
     // Lookup on graph name + trace name (or measurement + story in catapult
     // parlance). There should be several histograms with the same measurement
     // if they're for different stories.
-    rtc::StringBuilder measurement_and_story;
+    StringBuilder measurement_and_story;
     measurement_and_story << graph_name << trace_name;
     MutexLock lock(&mutex_);
     if (histograms_.count(measurement_and_story.str()) == 0) {

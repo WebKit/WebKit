@@ -40,6 +40,24 @@
 #import <pal/cf/VideoToolboxSoftLink.h>
 
 namespace WebCore {
+
+TrackInfoTrackType typeFromFormatDescription(CMFormatDescriptionRef formatDescription)
+{
+    auto mediaType = PAL::CMFormatDescriptionGetMediaType(formatDescription);
+    switch (mediaType) {
+    case kCMMediaType_Video:
+        return TrackInfoTrackType::Video;
+    case kCMMediaType_Audio:
+        return TrackInfoTrackType::Audio;
+    case kCMMediaType_Text:
+    case kCMMediaType_ClosedCaption:
+    case kCMMediaType_Subtitle:
+        return TrackInfoTrackType::Text;
+    default:
+        return TrackInfoTrackType::Unknown;
+    }
+}
+
 FloatSize presentationSizeFromFormatDescription(CMFormatDescriptionRef formatDescription)
 {
     if (!formatDescription)
@@ -54,9 +72,9 @@ std::optional<PlatformVideoColorSpace> colorSpaceFromFormatDescription(CMFormatD
         return std::nullopt;
 
     PlatformVideoColorSpace colorSpace;
-    auto primaries = dynamic_cf_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_ColorPrimaries()));
-    auto transfer = dynamic_cf_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_TransferFunction()));
-    auto matrix = dynamic_cf_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_YCbCrMatrix()));
+    auto primaries = dynamic_cf_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_ColorPrimariesSingleton()));
+    auto transfer = dynamic_cf_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_TransferFunctionSingleton()));
+    auto matrix = dynamic_cf_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_YCbCrMatrixSingleton()));
 
     if (!primaries || !transfer || !matrix) {
         auto size = presentationSizeFromFormatDescription(formatDescription);
@@ -76,31 +94,31 @@ std::optional<PlatformVideoColorSpace> colorSpaceFromFormatDescription(CMFormatD
     }
 
     if (primaries) {
-        if (safeCFEqual(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_ITU_R_709_2()))
+        if (safeCFEqual(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_ITU_R_709_2Singleton()))
             colorSpace.primaries = PlatformVideoColorPrimaries::Bt709;
-        else if (safeCFEqual(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_EBU_3213()))
+        else if (safeCFEqual(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_EBU_3213Singleton()))
             colorSpace.primaries = PlatformVideoColorPrimaries::Bt470bg;
-        else if (safeCFEqual(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_SMPTE_C()))
+        else if (safeCFEqual(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_SMPTE_CSingleton()))
             colorSpace.primaries = PlatformVideoColorPrimaries::Smpte170m;
     }
 
     if (transfer) {
-        if (safeCFEqual(transfer, PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_ITU_R_709_2()))
+        if (safeCFEqual(transfer, PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_ITU_R_709_2Singleton()))
             colorSpace.transfer = PlatformVideoTransferCharacteristics::Bt709;
-        else if (safeCFEqual(transfer, PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB()))
+        else if (safeCFEqual(transfer, PAL::kCMFormatDescriptionTransferFunction_sRGB))
             colorSpace.transfer = PlatformVideoTransferCharacteristics::Iec6196621;
     }
 
     if (matrix) {
-        if (safeCFEqual(matrix, PAL::get_CoreMedia_kCVImageBufferYCbCrMatrix_ITU_R_709_2()))
+        if (safeCFEqual(matrix, PAL::get_CoreMedia_kCVImageBufferYCbCrMatrix_ITU_R_709_2Singleton()))
             colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt709;
-        else if (safeCFEqual(matrix, PAL::get_CoreMedia_kCVImageBufferYCbCrMatrix_ITU_R_601_4()))
+        else if (safeCFEqual(matrix, PAL::get_CoreMedia_kCVImageBufferYCbCrMatrix_ITU_R_601_4Singleton()))
             colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt470bg;
-        else if (safeCFEqual(matrix, PAL::get_CoreMedia_kCMFormatDescriptionYCbCrMatrix_SMPTE_240M_1995()))
+        else if (safeCFEqual(matrix, PAL::get_CoreMedia_kCMFormatDescriptionYCbCrMatrix_SMPTE_240M_1995Singleton()))
             colorSpace.matrix = PlatformVideoMatrixCoefficients::Smpte170m;
     }
 
-    if (auto fullRange = static_cast<CFBooleanRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_FullRangeVideo())))
+    if (auto fullRange = static_cast<CFBooleanRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_FullRangeVideo)))
         colorSpace.fullRange = CFBooleanGetValue(fullRange);
 
     return colorSpace;
@@ -116,7 +134,7 @@ String codecFromFormatDescription(CMFormatDescriptionRef formatDescription)
     case kCMVideoCodecType_H264:
     case 'cavc':
         {
-            auto sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms()));
+            auto sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
             if (!sampleExtensionsDict)
                 return "avc1"_s;
             auto sampleExtensions = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict, CFSTR("avcC")));
@@ -132,7 +150,7 @@ String codecFromFormatDescription(CMFormatDescriptionRef formatDescription)
     case kCMVideoCodecType_HEVCWithAlpha:
     case 'chvc':
         {
-            auto sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms()));
+            auto sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
             if (!sampleExtensionsDict)
                 return "hvc1"_s;
             auto sampleExtensions = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict, CFSTR("hvcC")));
@@ -147,7 +165,7 @@ String codecFromFormatDescription(CMFormatDescriptionRef formatDescription)
     case kCMVideoCodecType_DolbyVisionHEVC:
     case 'cdh1':
         {
-            auto sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms()));
+            auto sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
             if (!sampleExtensionsDict)
                 return "dvh1"_s;
             auto sampleExtensions = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict, CFSTR("dvcC")));
@@ -189,7 +207,7 @@ String codecFromFormatDescription(CMFormatDescriptionRef formatDescription)
 #if ENABLE(AV1)
     case kCMVideoCodecType_AV1:
         {
-            auto sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms()));
+            auto sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
             if (!sampleExtensionsDict)
                 return "av01"_s;
             auto sampleExtensions = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict, CFSTR("av1C")));
@@ -214,9 +232,6 @@ std::optional<SpatialVideoMetadata> spatialVideoMetadataFromFormatDescription(CM
 
     // Note: this assumes that the spatial metadata is in the first section of the format description.
     if (PAL::CMFormatDescriptionGetMediaType(formatDescription) != kCMMediaType_Video)
-        return { };
-
-    if (!PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_StereoCameraBaseline() || !PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_HorizontalDisparityAdjustment())
         return { };
 
     auto horizontalFieldOfView = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_HorizontalFieldOfView));

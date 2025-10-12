@@ -39,7 +39,7 @@ public:
     RenderMathMLSpace(MathMLSpaceElement&, RenderStyle&&);
     virtual ~RenderMathMLSpace();
 
-    MathMLSpaceElement& element() const { return static_cast<MathMLSpaceElement&>(nodeForNonAnonymous()); }
+    MathMLSpaceElement& element() const;
 
 private:
     ASCIILiteral renderName() const final { return "RenderMathMLSpace"_s; }

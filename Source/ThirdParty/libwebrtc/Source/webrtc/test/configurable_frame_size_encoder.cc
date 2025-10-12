@@ -10,23 +10,28 @@
 
 #include "test/configurable_frame_size_encoder.h"
 
-#include <string.h>
-
 #include <cstdint>
-#include <type_traits>
+#include <cstring>
+#include <functional>
 #include <utility>
+#include <vector>
 
+#include "api/fec_controller_override.h"
 #include "api/video/encoded_image.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_type.h"
+#include "api/video_codecs/video_codec.h"
+#include "api/video_codecs/video_encoder.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_error_codes.h"
-#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {
 
 ConfigurableFrameSizeEncoder::ConfigurableFrameSizeEncoder(
     size_t max_frame_size)
-    : callback_(NULL),
+    : callback_(nullptr),
       current_frame_size_(max_frame_size),
       codec_type_(kVideoCodecGeneric) {}
 

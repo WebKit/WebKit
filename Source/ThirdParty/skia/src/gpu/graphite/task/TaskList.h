@@ -12,15 +12,18 @@
 #include "include/private/base/SkTArray.h"
 #include "src/gpu/graphite/task/Task.h"
 
+#include <functional>
 #include <utility>
 
 namespace skgpu::graphite {
 
 class CommandBuffer;
 class Context;
+class GraphicsPipeline;
 class ResourceProvider;
 class RuntimeEffectDictionary;
 class ScratchResourceManager;
+class TextureProxy;
 
 class TaskList {
 public:
@@ -39,9 +42,15 @@ public:
     // Automatically removes tasks from its list if they return kDiscard.
     Task::Status prepareResources(ResourceProvider*,
                                   ScratchResourceManager*,
-                                  const RuntimeEffectDictionary*);
+                                  sk_sp<const RuntimeEffectDictionary>);
     Task::Status addCommands(Context*, CommandBuffer*, Task::ReplayTargetData);
 
+    bool visitPipelines(const std::function<bool(const GraphicsPipeline*)>& visitor);
+
+    bool visitProxies(const std::function<bool(const TextureProxy*)>& visitor);
+
+    SK_DUMP_TASKS_CODE(
+            void visit(const std::function<void(const Task* task, bool isLast)>& visitor) const;)
 private:
     template <typename Fn> // (Task*)->Status
     Task::Status visitTasks(Fn);

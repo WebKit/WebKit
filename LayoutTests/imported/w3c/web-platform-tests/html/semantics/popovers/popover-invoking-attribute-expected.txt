@@ -1400,4 +1400,6 @@ PASS Test <input type="number">, action=undefined, popovertarget attr, popoverta
 PASS Test <input type="number">, action=undefined, popovertarget attr, popoverTargetAction IDL, with popover=manual
 PASS Test <input type="number">, action=undefined, popoverTarget IDL, popovertargetaction attr, with popover=manual
 PASS Test <input type="number">, action=undefined, popoverTarget IDL, popoverTargetAction IDL, with popover=manual
+PASS Clicking a popovertarget button opens a closed popover (also check event counts)
+PASS Clicking a popovertarget button closes an open popover (also check event counts)
 

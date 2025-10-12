@@ -82,7 +82,7 @@ namespace WebCore {
 #if HAVE(AVAUDIOAPPLICATION)
 static AVAudioApplication *getSharedAVAudioApplication()
 {
-    return PAL::isAVFAudioFrameworkAvailable() ? (AVAudioApplication *)[PAL::getAVAudioApplicationClass() sharedInstance] : nil;
+    return PAL::isAVFAudioFrameworkAvailable() ? (AVAudioApplication *)[PAL::getAVAudioApplicationClassSingleton() sharedInstance] : nil;
 }
 
 #if PLATFORM(MAC)

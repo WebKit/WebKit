@@ -5,7 +5,11 @@
 //
 
 // EGLRobustnessTest.cpp: tests for EGL_EXT_create_context_robustness
-//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 // Tests causing GPU resets are disabled, use the following args to run them:
 // --gtest_also_run_disabled_tests --gtest_filter=EGLRobustnessTest\*
 
@@ -51,7 +55,7 @@ class EGLRobustnessTest : public ANGLETest<>
 
         displayAttributes.push_back(EGL_NONE);
 
-        mDisplay = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+        mDisplay = eglGetPlatformDisplay(GetEglPlatform(),
                                          reinterpret_cast<void *>(mOSWindow->getNativeDisplay()),
                                          &displayAttributes[0]);
         ASSERT_NE(EGL_NO_DISPLAY, mDisplay);

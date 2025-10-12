@@ -113,15 +113,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
-/*
- * crypto_kernel_cipher_test() is a test of the cipher interface
- * of the crypto_kernel
- */
-
-srtp_err_status_t crypto_kernel_cipher_test(void)
-{
-    /* not implemented yet! */
-
-    return srtp_err_status_ok;
-}

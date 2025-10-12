@@ -10,7 +10,13 @@
 #include "modules/audio_processing/aec3/alignment_mixer.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstring>
 
+#include "api/array_view.h"
+#include "api/audio/echo_canceller3_config.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/block.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -64,7 +70,7 @@ AlignmentMixer::AlignmentMixer(size_t num_channels,
 }
 
 void AlignmentMixer::ProduceOutput(const Block& x,
-                                   rtc::ArrayView<float, kBlockSize> y) {
+                                   ArrayView<float, kBlockSize> y) {
   RTC_DCHECK_EQ(x.NumChannels(), num_channels_);
 
   if (selection_variant_ == MixingVariant::kDownmix) {
@@ -79,7 +85,7 @@ void AlignmentMixer::ProduceOutput(const Block& x,
 }
 
 void AlignmentMixer::Downmix(const Block& x,
-                             rtc::ArrayView<float, kBlockSize> y) const {
+                             ArrayView<float, kBlockSize> y) const {
   RTC_DCHECK_EQ(x.NumChannels(), num_channels_);
   RTC_DCHECK_GE(num_channels_, 2);
   std::memcpy(&y[0], x.View(/*band=*/0, /*channel=*/0).data(),
@@ -116,7 +122,7 @@ int AlignmentMixer::SelectChannel(const Block& x) {
 
   for (int ch = 0; ch < num_ch_to_analyze; ++ch) {
     float x2_sum = 0.f;
-    rtc::ArrayView<const float, kBlockSize> x_ch = x.View(/*band=*/0, ch);
+    ArrayView<const float, kBlockSize> x_ch = x.View(/*band=*/0, ch);
     for (size_t i = 0; i < kBlockSize; ++i) {
       x2_sum += x_ch[i] * x_ch[i];
     }

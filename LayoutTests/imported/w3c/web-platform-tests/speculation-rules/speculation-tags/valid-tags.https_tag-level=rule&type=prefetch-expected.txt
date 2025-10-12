@@ -1,0 +1,10 @@
+
+PASS Sec-Speculation-Tags [rule-based]: string tag
+PASS Sec-Speculation-Tags [rule-based]: 'null' string tag
+PASS Sec-Speculation-Tags [rule-based]: empty string tag
+PASS Sec-Speculation-Tags [rule-based]: single space tag
+PASS Sec-Speculation-Tags [rule-based]: double quote tag
+PASS Sec-Speculation-Tags [rule-based]: double quotes tag
+PASS Sec-Speculation-Tags [rule-based]: backslash tag
+PASS Sec-Speculation-Tags [rule-based]: backslashes tag
+

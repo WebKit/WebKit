@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2019 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +31,14 @@
 
 namespace WTF {
 
-template<typename T> struct DefaultHash<OptionSet<T>> {
-    static unsigned hash(OptionSet<T> key)
+template<typename T, ConcurrencyTag concurrency>
+struct DefaultHash<OptionSet<T, concurrency>> {
+    static unsigned hash(OptionSet<T, concurrency> key)
     {
-        return IntHash<typename OptionSet<T>::StorageType>::hash(key.toRaw());
+        return IntHash<typename OptionSet<T, concurrency>::StorageType>::hash(key.toRaw());
     }
 
-    static bool equal(OptionSet<T> a, OptionSet<T> b)
+    static bool equal(OptionSet<T, concurrency> a, OptionSet<T, concurrency> b)
     {
         return a == b;
     }
@@ -44,22 +46,23 @@ template<typename T> struct DefaultHash<OptionSet<T>> {
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
-template<typename T> struct HashTraits<OptionSet<T>> : GenericHashTraits<OptionSet<T>> {
-    using StorageTraits = UnsignedWithZeroKeyHashTraits<typename OptionSet<T>::StorageType>;
+template<typename T, ConcurrencyTag concurrency>
+struct HashTraits<OptionSet<T, concurrency>> : GenericHashTraits<OptionSet<T, concurrency>> {
+    using StorageTraits = UnsignedWithZeroKeyHashTraits<typename OptionSet<T, concurrency>::StorageType>;
 
-    static OptionSet<T> emptyValue()
+    static OptionSet<T, concurrency> emptyValue()
     {
-        return OptionSet<T>::fromRaw(StorageTraits::emptyValue());
+        return OptionSet<T, concurrency>::fromRaw(StorageTraits::emptyValue());
     }
 
-    static void constructDeletedValue(OptionSet<T>& slot)
+    static void constructDeletedValue(OptionSet<T, concurrency>& slot)
     {
-        typename OptionSet<T>::StorageType storage;
+        typename OptionSet<T, concurrency>::StorageType storage;
         StorageTraits::constructDeletedValue(storage);
-        slot = OptionSet<T>::fromRaw(storage);
+        slot = OptionSet<T, concurrency>::fromRaw(storage);
     }
 
-    static bool isDeletedValue(OptionSet<T> value)
+    static bool isDeletedValue(OptionSet<T, concurrency> value)
     {
         return StorageTraits::isDeletedValue(value.toRaw());
     }

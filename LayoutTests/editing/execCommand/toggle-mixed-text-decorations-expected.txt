@@ -68,7 +68,7 @@ select(1, 3); toggle("underline") is '<span style="text-decoration: line-through
 PASS content('<span style="text-decoration: underline;">a<span style="text-decoration: line-through;">b</span></span>c');
 select(1, 3); toggle("underline") is '<span style="text-decoration: underline;">a</span><span style="text-decoration: line-through;">b</span>c'
 PASS content('a<span style="text-decoration: underline;"><span style="text-decoration: line-through;">b</span>c</span>');
-select(0, 2); toggle("underline") is '<span style="text-decoration: underline;">a<span style="text-decoration: line-through underline;">b</span>c</span>'
+select(0, 2); toggle("underline") is '<span style="text-decoration: underline;">a<span style="text-decoration: underline line-through;">b</span>c</span>'
 PASS content('a<span style="text-decoration: line-through;"><span style="text-decoration: underline;">bc</span></span>');
 select(0, 2); toggle("underline") is '<span style="text-decoration: underline;">a</span><span style="text-decoration: line-through;"><span style="text-decoration: underline;">bc</span></span>'
 PASS content('a<span style="text-decoration: underline;"><b><span style="text-decoration: line-through;">bc</span></b></span>');

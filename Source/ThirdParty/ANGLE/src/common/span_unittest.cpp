@@ -6,6 +6,10 @@
 // span_unittests.cpp: Unit tests for the angle::Span class.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "common/span.h"
 
 #include <gtest/gtest.h>

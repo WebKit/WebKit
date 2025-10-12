@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "PackedCellPtr.h"
-#include "Watchpoint.h"
+#include <JavaScriptCore/PackedCellPtr.h>
+#include <JavaScriptCore/Watchpoint.h>
 
 namespace JSC {
 

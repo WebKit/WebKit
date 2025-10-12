@@ -11,7 +11,10 @@
 #ifndef API_TRANSPORT_TEST_MOCK_NETWORK_CONTROL_H_
 #define API_TRANSPORT_TEST_MOCK_NETWORK_CONTROL_H_
 
+#include <optional>
+
 #include "api/transport/network_control.h"
+#include "api/transport/network_types.h"
 #include "test/gmock.h"
 
 namespace webrtc {

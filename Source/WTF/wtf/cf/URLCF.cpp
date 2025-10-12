@@ -43,6 +43,17 @@ URL::URL(CFURLRef url)
         *this = URLParser(bytesAsString(url)).result();
 }
 
+RetainPtr<CFURLRef> URL::createCFURL(const String& string)
+{
+    if (string.is8Bit() && string.containsOnlyASCII()) [[likely]] {
+        auto characters = string.span8();
+        return adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, byteCast<UInt8>(characters.data()), characters.size(), kCFStringEncodingUTF8, nullptr, true));
+    }
+    CString utf8 = string.utf8();
+    auto utf8Span = utf8.span();
+    return adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, byteCast<UInt8>(utf8Span.data()), utf8Span.size(), kCFStringEncodingUTF8, nullptr, true));
+}
+
 RetainPtr<CFURLRef> URL::createCFURL() const
 {
     if (isNull())
@@ -54,15 +65,7 @@ RetainPtr<CFURLRef> URL::createCFURL() const
     if (!isValid() && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ConvertsInvalidURLsToNull))
         return nullptr;
 
-    RetainPtr<CFURLRef> result;
-    if (m_string.is8Bit() && m_string.containsOnlyASCII()) [[likely]] {
-        auto characters = m_string.span8();
-        result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, characters.data(), characters.size(), kCFStringEncodingUTF8, nullptr, true));
-    } else {
-        CString utf8 = m_string.utf8();
-        auto utf8Span = utf8.span();
-        result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, byteCast<UInt8>(utf8Span.data()), utf8Span.size(), kCFStringEncodingUTF8, nullptr, true));
-    }
+    RetainPtr result = createCFURL(m_string);
 
     // This additional check is only needed for invalid URLs, for which we've already returned null with new SDKs.
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ConvertsInvalidURLsToNull)

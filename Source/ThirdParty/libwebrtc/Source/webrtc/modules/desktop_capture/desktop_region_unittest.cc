@@ -10,11 +10,10 @@
 
 #include "modules/desktop_capture/desktop_region.h"
 
-#include <stdlib.h>
-
 #include <algorithm>
-#include <cstdint>
+#include <cstdlib>
 
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -47,7 +46,7 @@ void CompareRegion(const DesktopRegion& region,
 // Verify that regions are empty when created.
 TEST(DesktopRegionTest, Empty) {
   DesktopRegion r;
-  CompareRegion(r, NULL, 0);
+  CompareRegion(r, nullptr, 0);
 }
 
 // Verify that empty rectangles are ignored.
@@ -55,7 +54,7 @@ TEST(DesktopRegionTest, AddEmpty) {
   DesktopRegion r;
   DesktopRect rect = DesktopRect::MakeXYWH(1, 2, 0, 0);
   r.AddRect(rect);
-  CompareRegion(r, NULL, 0);
+  CompareRegion(r, nullptr, 0);
 }
 
 // Verify that regions with a single rectangles are handled properly.

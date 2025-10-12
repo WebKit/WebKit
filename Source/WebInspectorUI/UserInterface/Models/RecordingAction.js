@@ -487,8 +487,6 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         case "fillStyle":
         case "putImageData":
         case "strokeStyle":
-        // 2D (non-standard)
-        case "drawImageFromRect":
         // BitmapRenderer
         case "transferFromImageBitmap":
             return this._parameters.slice(0, 1);
@@ -697,7 +695,6 @@ WI.RecordingAction._visualNames = {
         "clearRect",
         "drawFocusIfNeeded",
         "drawImage",
-        "drawImageFromRect",
         "fill",
         "fillRect",
         "fillText",

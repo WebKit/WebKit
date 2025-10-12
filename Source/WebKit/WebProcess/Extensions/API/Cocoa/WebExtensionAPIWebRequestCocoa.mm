@@ -43,18 +43,13 @@ static NSString * const rawKey = @"raw";
 static NSString * const bytesKey = @"bytes";
 static NSString * const errorKey = @"error";
 
-static NSString * const tabIdKey = @"tabId";
-static NSString * const frameIdKey = @"frameId";
 static NSString * const parentFrameIdKey = @"parentFrameId";
 static NSString * const requestIdKey = @"requestId";
 static NSString * const timeStampKey = @"timeStamp";
-static NSString * const urlKey = @"url";
 static NSString * const typeKey = @"type";
 static NSString * const methodKey = @"method";
 static NSString * const redirectURLKey = @"redirectUrl";
-static NSString * const documentIdKey = @"documentId";
 
-static NSString * const nameKey = @"name";
 static NSString * const valueKey = @"value";
 
 static NSString * const statusLineKey = @"statusLine";
@@ -266,18 +261,18 @@ static NSString *toWebAPI(ResourceLoadInfo::Type type)
 static NSMutableDictionary *webRequestDetailsForResourceLoad(const ResourceLoadInfo& resourceLoad, WebExtensionTabIdentifier tabIdentifier)
 {
     NSMutableDictionary *result = [@{
-        frameIdKey: resourceLoad.parentFrameID ? @(toWebAPI(toWebExtensionFrameIdentifier(resourceLoad.frameID))) : @(toWebAPI(WebExtensionFrameConstants::MainFrameIdentifier)),
+        @"frameId": resourceLoad.parentFrameID ? @(toWebAPI(toWebExtensionFrameIdentifier(resourceLoad.frameID))) : @(toWebAPI(WebExtensionFrameConstants::MainFrameIdentifier)),
         parentFrameIdKey: resourceLoad.parentFrameID ? @(toWebAPI(toWebExtensionFrameIdentifier(resourceLoad.parentFrameID))) : @(toWebAPI(WebExtensionFrameConstants::NoneIdentifier)),
         requestIdKey: adoptNS([[NSString alloc] initWithFormat:@"%llu", resourceLoad.resourceLoadID.toUInt64()]).get(),
         timeStampKey: @(floor(resourceLoad.eventTimestamp.approximateWallTime().secondsSinceEpoch().milliseconds())),
-        urlKey: resourceLoad.originalURL.string().createNSString().get(),
-        tabIdKey: @(toWebAPI(tabIdentifier)),
+        @"url": resourceLoad.originalURL.string().createNSString().get(),
+        @"tabId": @(toWebAPI(tabIdentifier)),
         typeKey: toWebAPI(resourceLoad.type),
         methodKey: resourceLoad.originalHTTPMethod.createNSString().get(),
     } mutableCopy];
 
     if (resourceLoad.documentID)
-        result[documentIdKey] = resourceLoad.documentID.value().toString().createNSString().get();
+        result[@"documentId"] = resourceLoad.documentID.value().toString().createNSString().get();
 
     return result;
 }
@@ -287,7 +282,7 @@ static NSArray *convertHeaderFieldsToWebExtensionFormat(const WebCore::HTTPHeade
     auto *convertedHeaderFields = [NSMutableArray arrayWithCapacity:headerMap.size()];
     for (auto& header : headerMap) {
         [convertedHeaderFields addObject:@{
-            nameKey: header.key.createNSString().get(),
+            @"name": header.key.createNSString().get(),
             valueKey: header.value.createNSString().get()
         }];
     }
@@ -444,7 +439,7 @@ void WebExtensionContextProxy::resourceLoadDidCompleteWithError(WebExtensionTabI
 
     if (!error.isNull()) {
         [details addEntriesFromDictionary:@{
-            tabIdKey: @(toWebAPI(tabID)),
+            @"tabId": @(toWebAPI(tabID)),
             errorKey: @"net::ERR_ABORTED"
         }];
 

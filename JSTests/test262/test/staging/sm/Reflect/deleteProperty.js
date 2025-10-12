@@ -4,9 +4,7 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-Reflect-shell.js, deepEqual.js]
-flags:
-  - noStrict
+includes: [sm/assertThrowsValue.js, deepEqual.js]
 description: |
   pending
 esid: pending
@@ -62,7 +60,7 @@ assertThrowsValue(() => Reflect.deleteProperty(proxy, "prop"), "vase");
 proxy = new Proxy(Object.freeze({prop: 1}), {
     deleteProperty(t, k) { return true; }
 });
-assertThrowsInstanceOf(() => Reflect.deleteProperty(proxy, "prop"), TypeError);
+assert.throws(TypeError, () => Reflect.deleteProperty(proxy, "prop"));
 
 
 // === Deleting elements from `arguments`

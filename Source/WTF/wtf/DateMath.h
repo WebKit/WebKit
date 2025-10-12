@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is
  * Netscape Communications Corporation.
  * Portions created by the Initial Developer are Copyright (C) 1998
- * the Initial Developer. All Rights Reserved.
+ * the Initial Developer. All rights reserved.
  *
  * Contributor(s):
  *
@@ -52,13 +52,13 @@
 
 namespace WTF {
 
-enum TimeType {
+enum class TimeType : uint8_t {
     UTCTime = 0,
     LocalTime
 };
 
 struct LocalTimeOffset {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LocalTimeOffset);
 
     LocalTimeOffset() = default;
     constexpr LocalTimeOffset(bool isDST, int offset)
@@ -77,9 +77,9 @@ void initializeDates();
 int equivalentYearForDST(int year);
 
 // Not really math related, but this is currently the only shared place to put these.
-WTF_EXPORT_PRIVATE double parseES5Date(std::span<const LChar> dateString, bool& isLocalTime);
-WTF_EXPORT_PRIVATE double parseDate(std::span<const LChar> dateString);
-WTF_EXPORT_PRIVATE double parseDate(std::span<const LChar> dateString, bool& isLocalTime);
+WTF_EXPORT_PRIVATE double parseES5Date(std::span<const Latin1Character> dateString, bool& isLocalTime);
+WTF_EXPORT_PRIVATE double parseDate(std::span<const Latin1Character> dateString);
+WTF_EXPORT_PRIVATE double parseDate(std::span<const Latin1Character> dateString, bool& isLocalTime);
 // dayOfWeek: [0, 6] 0 being Monday, day: [1, 31], month: [0, 11], year: ex: 2011, hours: [0, 23], minutes: [0, 59], seconds: [0, 59], utcOffset: [-720,720]. 
 WTF_EXPORT_PRIVATE String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, unsigned year, unsigned hours, unsigned minutes, unsigned seconds, int utcOffset);
 
@@ -496,10 +496,10 @@ inline int64_t equivalentTime(int64_t ms)
 
 WTF_EXPORT_PRIVATE bool isTimeZoneValid(StringView);
 WTF_EXPORT_PRIVATE bool setTimeZoneOverride(StringView);
-WTF_EXPORT_PRIVATE void getTimeZoneOverride(Vector<UChar, 32>& timeZoneID);
+WTF_EXPORT_PRIVATE void getTimeZoneOverride(Vector<char16_t, 32>& timeZoneID);
 
 // Returns combined offset in millisecond (UTC + DST).
-WTF_EXPORT_PRIVATE LocalTimeOffset calculateLocalTimeOffset(double utcInMilliseconds, TimeType = UTCTime);
+WTF_EXPORT_PRIVATE LocalTimeOffset calculateLocalTimeOffset(double utcInMilliseconds, TimeType = TimeType::UTCTime);
 
 } // namespace WTF
 
@@ -531,3 +531,4 @@ using WTF::secondsPerMinute;
 using WTF::setTimeZoneOverride;
 using WTF::timeClip;
 using WTF::timeToMS;
+using WTF::TimeType;

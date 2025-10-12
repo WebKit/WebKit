@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "LegacyInlineFlowBox.h"
-#include "LineWidth.h"
-#include "RenderLineBoxList.h"
-#include "RenderStyleConstants.h"
-#include "TrailingObjects.h"
+#include <WebCore/LegacyInlineFlowBox.h>
+#include <WebCore/LineWidth.h>
+#include <WebCore/RenderLineBoxList.h>
+#include <WebCore/RenderStyleConstants.h>
+#include <WebCore/TrailingObjects.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

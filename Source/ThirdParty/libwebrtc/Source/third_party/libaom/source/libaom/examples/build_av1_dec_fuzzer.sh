@@ -60,7 +60,7 @@ cmake "${AOM_DIR}" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONFIG_PIC=1 \
 make -j$(nproc)
 
 # Build the av1 fuzzer
-$CXX -std=c++11 -I${AOM_DIR} -I${BUILD_DIR} \
+$CXX -std=c++17 -I${AOM_DIR} -I${BUILD_DIR} \
     -g -fsanitize=fuzzer,address \
     ${AOM_DIR}/examples/av1_dec_fuzzer.cc -o ${BUILD_DIR}/av1_dec_fuzzer \
     ${BUILD_DIR}/libaom.a

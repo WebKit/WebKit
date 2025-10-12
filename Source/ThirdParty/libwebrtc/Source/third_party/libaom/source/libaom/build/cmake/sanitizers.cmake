@@ -31,6 +31,9 @@ if("${SANITIZE}" MATCHES "cfi" AND CMAKE_C_COMPILER_ID MATCHES "Clang")
 else()
   require_linker_flag("-fsanitize=${SANITIZE}")
   require_compiler_flag("-fsanitize=${SANITIZE}" YES)
+  if("${SANITIZE}" MATCHES "integer|undefined")
+    require_compiler_flag("-fsanitize=float-cast-overflow" YES)
+  endif()
 endif()
 
 # Make callstacks accurate.

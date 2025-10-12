@@ -112,8 +112,7 @@ class TestFactory(Factory):
         if platform.startswith(('win', 'mac', 'ios-simulator')) and self.LayoutTestClass != RunWorldLeaksTests:
             self.addStep(RunAPITests())
 
-        # FIXME: Re-enable these tests for Monterey once webkit.org/b/239463 is resolved.
-        if platform.startswith('mac') and (platform != 'mac-monterey'):
+        if platform.startswith('mac'):
             self.addStep(RunLLDBWebKitTests())
 
         self.addStep(RunWebKitPyTests())
@@ -151,13 +150,6 @@ class BuildAndTestLLINTCLoopFactory(Factory):
         self.addStep(RunLLINTCLoopTests())
 
 
-class BuildAndTest32bitJSCFactory(Factory):
-    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None, **kwargs):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
-        self.addStep(Compile32bitJSC())
-        self.addStep(Run32bitJSCTests())
-
-
 class BuildAndNonLayoutTestFactory(BuildAndTestFactory):
     LayoutTestClass = None
 
@@ -166,6 +158,13 @@ class BuildAndJSCTestsFactory(Factory):
     def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
         self.addStep(CompileJSCOnly(timeout=60 * 60))
+        self.addStep(RunJavaScriptCoreTests(timeout=60 * 60))
+
+
+class BuildAndJSCTests32Factory(Factory):
+    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
+        self.addStep(CompileJSCOnly32(timeout=60 * 60))
         self.addStep(RunJavaScriptCoreTests(timeout=60 * 60))
 
 
@@ -261,6 +260,27 @@ class TestMVTFactory(Factory):
         self.addStep(ExtractBuiltProduct())
         self.addStep(RunMVTTests())
 
+
+class TestLayoutAndAPIOnlyFactory(Factory):
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
+        self.addStep(DownloadBuiltProduct())
+        self.addStep(ExtractBuiltProduct())
+        self.addStep(RunWebKitTests())
+        if not platform.startswith('win'):
+            self.addStep(RunDashboardTests())
+        self.addStep(ArchiveTestResults())
+        self.addStep(UploadTestResults())
+        self.addStep(ExtractTestResults())
+        self.addStep(SetPermissions())
+        if platform.startswith("gtk"):
+            self.addStep(RunGtkAPITests())
+        elif platform == "wpe":
+            self.addStep(RunWPEAPITests())
+        else:
+            self.addStep(RunAPITests())
+
+
 class TestWebKit1Factory(TestFactory):
     LayoutTestClass = RunWebKit1Tests
 
@@ -301,6 +321,7 @@ class SaferCPPStaticAnalyzerFactory(Factory):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
         self.addStep(InstallCMake())
         self.addStep(InstallNinja())
+        self.addStep(GetLLVMVersion())
         self.addStep(PrintClangVersion())
         self.addStep(CheckOutLLVMProject())
         self.addStep(UpdateClang())

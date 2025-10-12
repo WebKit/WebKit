@@ -54,7 +54,7 @@ void Connection::connectionReceivedEvent(xpc_object_t request)
     if (!debugMessage)
         return;
     auto messageLevel = static_cast<JSC::MessageLevel>(xpc_dictionary_get_uint64(request, protocolDebugMessageLevelKey));
-    auto* networkSession = m_networkSession.get();
+    CheckedPtr networkSession = m_networkSession.get();
     if (!networkSession)
         return;
     m_networkSession->networkProcess().broadcastConsoleMessage(m_networkSession->sessionID(), MessageSource::PrivateClickMeasurement, messageLevel, debugMessage);

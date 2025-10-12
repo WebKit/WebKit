@@ -2,7 +2,7 @@
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006, 2013 Apple Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,16 +23,16 @@
 
 #pragma once
 
-#include "LayoutPoint.h"
-#include "UIEventWithKeyState.h"
+#include <WebCore/LayoutPoint.h>
+#include <WebCore/UIEventWithKeyState.h>
 
 namespace WebCore {
 
 class LocalFrameView;
 
 struct MouseRelatedEventInit : public EventModifierInit {
-    int screenX { 0 };
-    int screenY { 0 };
+    double screenX { 0 };
+    double screenY { 0 };
     double movementX { 0 };
     double movementY { 0 };
 };
@@ -45,68 +45,79 @@ public:
 
     // Note that these values are adjusted to counter the effects of zoom, so that values
     // exposed via DOM APIs are invariant under zooming.
-    int screenX() const { return m_screenLocation.x(); }
-    int screenY() const { return m_screenLocation.y(); }
-    const IntPoint& screenLocation() const { return m_screenLocation; }
-    int clientX() const { return m_clientLocation.x(); }
-    int clientY() const { return m_clientLocation.y(); }
+    double screenX() const override;
+    double screenY() const override;
+    double clientX() const override;
+    double clientY() const override;
+    const DoublePoint& screenLocation() const { return m_screenLocation; }
+
     double movementX() const { return m_movementX; }
     double movementY() const { return m_movementY; }
 
-    const IntPoint& windowLocation() const { return m_windowLocation; }
+    const DoublePoint& windowLocation() const { return m_windowLocation; }
 
-    const LayoutPoint& clientLocation() const { return m_clientLocation; }
+    const DoublePoint& clientLocation() const { return m_clientLocation; }
     int layerX() override;
     int layerY() override;
-    WEBCORE_EXPORT int offsetX();
-    WEBCORE_EXPORT int offsetY();
+
     bool isSimulated() const { return m_isSimulated; }
     void setIsSimulated(bool value) { m_isSimulated = value; }
-    int pageX() const final;
-    int pageY() const final;
-    WEBCORE_EXPORT FloatPoint locationInRootViewCoordinates() const;
+    double pageX() const override;
+    double pageY() const override;
+    WEBCORE_EXPORT DoublePoint locationInRootViewCoordinates() const;
 
     // Page point in "absolute" coordinates (i.e. post-zoomed, page-relative coords,
     // usable with RenderObject::absoluteToLocal).
-    const LayoutPoint& absoluteLocation() const { return m_absoluteLocation; }
-    
+    const DoublePoint& absoluteLocation() const { return m_absoluteLocation; }
+
     static LocalFrameView* frameViewFromWindowProxy(WindowProxy*);
 
-    static LayoutPoint pagePointToClientPoint(LayoutPoint pagePoint, LocalFrameView*);
-    static LayoutPoint pagePointToAbsolutePoint(LayoutPoint pagePoint, LocalFrameView*);
+    static DoublePoint pagePointToClientPoint(DoublePoint pagePoint, LocalFrameView*);
+    static DoublePoint pagePointToAbsolutePoint(DoublePoint pagePoint, LocalFrameView*);
+
+    WEBCORE_EXPORT virtual double offsetX();
+    WEBCORE_EXPORT virtual double offsetY();
+
+    void computeRelativePosition();
 
 protected:
     MouseRelatedEvent(enum EventInterfaceType);
     MouseRelatedEvent();
     MouseRelatedEvent(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime, RefPtr<WindowProxy>&&, int detail,
-        const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers,
+        const DoublePoint& screenLocation, const DoublePoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers,
         IsSimulated = IsSimulated::No, IsTrusted = IsTrusted::Yes);
-    MouseRelatedEvent(enum EventInterfaceType, const AtomString& type, IsCancelable, MonotonicTime, RefPtr<WindowProxy>&&, const IntPoint& globalLocation, OptionSet<Modifier>);
+    MouseRelatedEvent(enum EventInterfaceType, const AtomString& type, IsCancelable, MonotonicTime, RefPtr<WindowProxy>&&, const DoublePoint& globalLocation, OptionSet<Modifier>);
     MouseRelatedEvent(enum EventInterfaceType, const AtomString& type, const MouseRelatedEventInit&, IsTrusted = IsTrusted::No);
 
     void initCoordinates();
-    void initCoordinates(const LayoutPoint& clientLocation);
+    void initCoordinates(const DoublePoint& clientLocation);
     void receivedTarget() override;
 
     void computePageLocation();
-    void computeRelativePosition();
 
     float documentToAbsoluteScaleFactor() const;
 
-    // Expose these so MouseEvent::initMouseEvent can set them.
-    IntPoint m_screenLocation;
-    LayoutPoint m_clientLocation;
+    bool hasCachedRelativePosition() const { return m_hasCachedRelativePosition; }
+
+    DoublePoint offsetLocation() const { return m_offsetLocation; }
+    DoublePoint pageLocation() const { return m_pageLocation; }
+
+    void setScreenLocation(const DoublePoint& point) { m_screenLocation = point; }
 
 private:
-    void init(bool isSimulated, const IntPoint&);
+    void init(bool isSimulated, const DoublePoint&);
 
     double m_movementX { 0 };
     double m_movementY { 0 };
-    LayoutPoint m_pageLocation;
+    DoublePoint m_pageLocation;
     LayoutPoint m_layerLocation;
-    LayoutPoint m_offsetLocation;
-    LayoutPoint m_absoluteLocation;
-    IntPoint m_windowLocation;
+    DoublePoint m_offsetLocation;
+    DoublePoint m_absoluteLocation;
+    DoublePoint m_windowLocation;
+
+    DoublePoint m_screenLocation;
+    DoublePoint m_clientLocation;
+
     bool m_isSimulated { false };
     bool m_hasCachedRelativePosition { false };
 };

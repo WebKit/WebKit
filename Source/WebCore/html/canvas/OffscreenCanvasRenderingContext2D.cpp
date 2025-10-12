@@ -91,7 +91,7 @@ OffscreenCanvasRenderingContext2D::~OffscreenCanvasRenderingContext2D() = defaul
 
 void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
 {
-    auto& context = *canvasBase().scriptExecutionContext();
+    Ref context = *canvasBase().scriptExecutionContext();
 
     if (newFont.isEmpty())
         return;
@@ -118,8 +118,8 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
     fontDescription.setComputedSize(DefaultFontSize);
 
     if (auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTFMove(fontDescription), context)) {
-        ASSERT(context.cssFontSelector());
-        modifiableState().font.initialize(*context.cssFontSelector(), *fontCascade);
+        ASSERT(context->cssFontSelector());
+        modifiableState().font.initialize(*context->cssFontSelector(), *fontCascade);
 
         String letterSpacing;
         setLetterSpacing(std::exchange(modifiableState().letterSpacing, letterSpacing));

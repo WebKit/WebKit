@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "SpeechRecognitionCaptureSourceImpl.h"
-#include "SpeechRecognitionConnectionClientIdentifier.h"
+#include <WebCore/SpeechRecognitionCaptureSourceImpl.h>
+#include <WebCore/SpeechRecognitionConnectionClientIdentifier.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WTF {
@@ -43,7 +43,7 @@ class SpeechRecognitionUpdate;
 class SpeechRecognitionCaptureSource {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(SpeechRecognitionCaptureSource, WEBCORE_EXPORT);
 public:
-    SpeechRecognitionCaptureSource() = default;
+    SpeechRecognitionCaptureSource() = delete;
     ~SpeechRecognitionCaptureSource() = default;
     WEBCORE_EXPORT void mute();
 
@@ -57,7 +57,7 @@ public:
 
 private:
 #if ENABLE(MEDIA_STREAM)
-    std::unique_ptr<SpeechRecognitionCaptureSourceImpl> m_impl;
+    const UniqueRef<SpeechRecognitionCaptureSourceImpl> m_impl;
 #endif
 };
 

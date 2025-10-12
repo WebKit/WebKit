@@ -44,13 +44,13 @@ CSS::SpringEasingFunction toCSSSpringEasingFunction(const SpringTimingFunction& 
     };
 }
 
-Ref<TimingFunction> createTimingFunction(const CSS::SpringEasingFunction& function, const CSSToLengthConversionData& conversionData)
+Ref<TimingFunction> createTimingFunction(const BuilderState& state, const CSS::SpringEasingFunction& function)
 {
     return SpringTimingFunction::create(
-        toStyle(function->mass, conversionData).value,
-        toStyle(function->stiffness, conversionData).value,
-        toStyle(function->damping, conversionData).value,
-        toStyle(function->initialVelocity, conversionData).value
+        toStyle(function->mass, state).value,
+        toStyle(function->stiffness, state).value,
+        toStyle(function->damping, state).value,
+        toStyle(function->initialVelocity, state).value
     );
 }
 

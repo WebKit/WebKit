@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,6 +62,9 @@ public:
 
     void addServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationIdentifier) final;
     void removeServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationIdentifier) final;
+
+    void registerServiceWorkerInServer(WebCore::ServiceWorkerIdentifier) final;
+    void unregisterServiceWorkerInServer(WebCore::ServiceWorkerIdentifier) final;
 
     void disconnectedFromWebProcess();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -142,7 +145,7 @@ private:
 
     WebCore::SWServerConnectionIdentifier m_identifier;
 
-    UniqueRef<WebSWOriginTable> m_swOriginTable;
+    const UniqueRef<WebSWOriginTable> m_swOriginTable;
 
     Deque<Function<void()>> m_tasksPendingOriginImport;
     bool m_isThrottleable { true };

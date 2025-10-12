@@ -59,6 +59,15 @@ inline ValueKey::ValueKey(Kind kind, Type type, Value* a, Value* b, Value* c)
     u.indices[2] = c->index();
 }
 
+inline ValueKey::ValueKey(Kind kind, Type type, Value* a, int32_t value)
+    : m_kind(kind)
+    , m_type(type)
+{
+    u.indices[0] = a->index();
+    u.indices[1] = value;
+    u.indices[2] = UINT32_MAX;
+}
+
 inline ValueKey::ValueKey(Kind kind, Type type, SIMDInfo simdInfo, Value* a)
     : m_simdInfo(simdInfo)
     , m_kind(kind)
@@ -107,7 +116,7 @@ inline ValueKey::ValueKey(Kind kind, Type type, SIMDInfo simdInfo, Value* a, Val
 
 inline Value* ValueKey::child(Procedure& proc, unsigned index) const
 {
-    return proc.values()[index];
+    return proc.values()[u.indices[index]];
 }
 
 } } // namespace JSC::B3

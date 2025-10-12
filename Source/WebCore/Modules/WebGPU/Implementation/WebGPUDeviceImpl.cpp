@@ -112,11 +112,10 @@ RefPtr<Buffer> DeviceImpl::createBuffer(const BufferDescriptor& descriptor)
     Ref convertToBackingContext = m_convertToBackingContext;
 
     WGPUBufferDescriptor backingDescriptor {
-        nullptr,
-        label.data(),
-        convertToBackingContext->convertBufferUsageFlagsToBacking(descriptor.usage),
-        descriptor.size,
-        descriptor.mappedAtCreation,
+        .label = label.data(),
+        .usage = convertToBackingContext->convertBufferUsageFlagsToBacking(descriptor.usage),
+        .size = descriptor.size,
+        .mappedAtCreation = descriptor.mappedAtCreation,
     };
 
     return BufferImpl::create(adoptWebGPU(wgpuDeviceCreateBuffer(m_backing.get(), &backingDescriptor)), convertToBackingContext);
@@ -133,16 +132,15 @@ RefPtr<Texture> DeviceImpl::createTexture(const TextureDescriptor& descriptor)
     });
 
     WGPUTextureDescriptor backingDescriptor {
-        nullptr,
-        label.data(),
-        convertToBackingContext->convertTextureUsageFlagsToBacking(descriptor.usage),
-        convertToBackingContext->convertToBacking(descriptor.dimension),
-        convertToBackingContext->convertToBacking(descriptor.size),
-        convertToBackingContext->convertToBacking(descriptor.format),
-        descriptor.mipLevelCount,
-        descriptor.sampleCount,
-        backingTextureFormats.size(),
-        backingTextureFormats.size() ? backingTextureFormats.data() : nullptr,
+        .label = label.data(),
+        .usage = convertToBackingContext->convertTextureUsageFlagsToBacking(descriptor.usage),
+        .dimension = convertToBackingContext->convertToBacking(descriptor.dimension),
+        .size = convertToBackingContext->convertToBacking(descriptor.size),
+        .format = convertToBackingContext->convertToBacking(descriptor.format),
+        .mipLevelCount = descriptor.mipLevelCount,
+        .sampleCount = descriptor.sampleCount,
+        .viewFormatCount = backingTextureFormats.size(),
+        .viewFormats = backingTextureFormats.size() ? backingTextureFormats.span().data() : nullptr,
     };
 
     return TextureImpl::create(adoptWebGPU(wgpuDeviceCreateTexture(m_backing.get(), &backingDescriptor)), descriptor.format, descriptor.dimension, convertToBackingContext);
@@ -153,7 +151,6 @@ RefPtr<Sampler> DeviceImpl::createSampler(const SamplerDescriptor& descriptor)
     Ref convertToBackingContext = m_convertToBackingContext;
 
     WGPUSamplerDescriptor backingDescriptor {
-        .nextInChain = nullptr,
         .label = descriptor.label,
         .addressModeU = convertToBackingContext->convertToBacking(descriptor.addressModeU),
         .addressModeV = convertToBackingContext->convertToBacking(descriptor.addressModeV),
@@ -191,7 +188,6 @@ RefPtr<ExternalTexture> DeviceImpl::importExternalTexture(const ExternalTextureD
 
     auto pixelBuffer = std::get_if<RetainPtr<CVPixelBufferRef>>(&descriptor.videoBacking);
     WGPUExternalTextureDescriptor backingDescriptor {
-        .nextInChain = nullptr,
         .label = label.data(),
         .pixelBuffer = pixelBuffer ? pixelBuffer->get() : nullptr,
         .colorSpace = convertToWGPUColorSpace(descriptor.colorSpace),
@@ -205,41 +201,35 @@ RefPtr<BindGroupLayout> DeviceImpl::createBindGroupLayout(const BindGroupLayoutD
 
     auto backingEntries = WTF::map(descriptor.entries, [&](auto& entry) {
         return WGPUBindGroupLayoutEntry {
-            .nextInChain = nullptr,
             .binding = entry.binding,
             .metalBinding = { entry.binding, entry.binding, entry.binding },
             .visibility = m_convertToBackingContext->convertShaderStageFlagsToBacking(entry.visibility),
             .buffer = {
-                nullptr,
-                entry.buffer ? m_convertToBackingContext->convertToBacking(entry.buffer->type) : WGPUBufferBindingType_Undefined,
-                entry.buffer ? entry.buffer->hasDynamicOffset : false,
-                entry.buffer ? entry.buffer->minBindingSize : 0,
-                0,
+                .type = entry.buffer ? m_convertToBackingContext->convertToBacking(entry.buffer->type) : WGPUBufferBindingType_Undefined,
+                .hasDynamicOffset = entry.buffer ? entry.buffer->hasDynamicOffset : false,
+                .minBindingSize = entry.buffer ? entry.buffer->minBindingSize : 0,
+                .bufferSizeForBinding = 0,
             },
             .sampler = {
-                nullptr,
-                entry.sampler ? m_convertToBackingContext->convertToBacking(entry.sampler->type) : WGPUSamplerBindingType_Undefined,
+                .type = entry.sampler ? m_convertToBackingContext->convertToBacking(entry.sampler->type) : WGPUSamplerBindingType_Undefined,
             },
             .texture = {
-                nullptr,
-                entry.externalTexture ? static_cast<WGPUTextureSampleType>(WGPUTextureSampleType_ExternalTexture) : (entry.texture ? m_convertToBackingContext->convertToBacking(entry.texture->sampleType) : WGPUTextureSampleType_Undefined),
-                (!entry.externalTexture && entry.texture) ? m_convertToBackingContext->convertToBacking(entry.texture->viewDimension) : WGPUTextureViewDimension_Undefined,
-                (!entry.externalTexture && entry.texture) ? entry.texture->multisampled : false,
+                .sampleType = entry.externalTexture ? static_cast<WGPUTextureSampleType>(WGPUTextureSampleType_ExternalTexture) : (entry.texture ? m_convertToBackingContext->convertToBacking(entry.texture->sampleType) : WGPUTextureSampleType_Undefined),
+                .viewDimension = (!entry.externalTexture && entry.texture) ? m_convertToBackingContext->convertToBacking(entry.texture->viewDimension) : WGPUTextureViewDimension_Undefined,
+                .multisampled = (!entry.externalTexture && entry.texture) ? entry.texture->multisampled : false,
             },
             .storageTexture = {
-                nullptr,
-                entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->access) : WGPUStorageTextureAccess_Undefined,
-                entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->format) : WGPUTextureFormat_Undefined,
-                entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->viewDimension) : WGPUTextureViewDimension_Undefined,
+                .access = entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->access) : WGPUStorageTextureAccess_Undefined,
+                .format = entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->format) : WGPUTextureFormat_Undefined,
+                .viewDimension = entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->viewDimension) : WGPUTextureViewDimension_Undefined,
             },
         };
     });
 
     WGPUBindGroupLayoutDescriptor backingDescriptor {
-        nullptr,
-        label.data(),
-        backingEntries.size(),
-        backingEntries.size() ? backingEntries.data() : nullptr,
+        .label = label.data(),
+        .entryCount = backingEntries.size(),
+        .entries = backingEntries.size() ? backingEntries.span().data() : nullptr,
     };
 
     return BindGroupLayoutImpl::create(adoptWebGPU(wgpuDeviceCreateBindGroupLayout(m_backing.get(), &backingDescriptor)), m_convertToBackingContext);
@@ -257,10 +247,9 @@ RefPtr<PipelineLayout> DeviceImpl::createPipelineLayout(const PipelineLayoutDesc
     }
 
     WGPUPipelineLayoutDescriptor backingDescriptor {
-        nullptr,
-        label.data(),
-        descriptor.bindGroupLayouts ? backingBindGroupLayouts.size() : 0,
-        descriptor.bindGroupLayouts ? backingBindGroupLayouts.data() : nullptr,
+        .label = label.data(),
+        .bindGroupLayoutCount = descriptor.bindGroupLayouts ? backingBindGroupLayouts.size() : 0,
+        .bindGroupLayouts = descriptor.bindGroupLayouts ? backingBindGroupLayouts.span().data() : nullptr,
     };
 
     return PipelineLayoutImpl::create(adoptWebGPU(wgpuDeviceCreatePipelineLayout(m_backing.get(), &backingDescriptor)), m_convertToBackingContext);
@@ -271,33 +260,25 @@ RefPtr<BindGroup> DeviceImpl::createBindGroup(const BindGroupDescriptor& descrip
     auto label = descriptor.label.utf8();
 
     Ref convertToBackingContext = m_convertToBackingContext;
-    SegmentedVector<WGPUBindGroupExternalTextureEntry, 1> chainedEntries;
+    SegmentedVector<WGPUExternalTexture, 1> chainedEntries;
     auto backingEntries = descriptor.entries.map([&](const auto& bindGroupEntry) {
-        auto externalTexture = std::holds_alternative<std::reference_wrapper<ExternalTexture>>(bindGroupEntry.resource) ? convertToBackingContext->convertToBacking(std::get<std::reference_wrapper<ExternalTexture>>(bindGroupEntry.resource).get()) : nullptr;
-        chainedEntries.append(WGPUBindGroupExternalTextureEntry {
-            .chain = {
-                .next = nullptr,
-                .sType = static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupEntryExternalTexture)
-            },
-            .externalTexture = externalTexture,
-        });
         return WGPUBindGroupEntry {
-            .nextInChain = externalTexture ? reinterpret_cast<WGPUChainedStruct*>(&chainedEntries.last()) : nullptr,
             .binding = bindGroupEntry.binding,
             .buffer = std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? convertToBackingContext->convertToBacking(std::get<BufferBinding>(bindGroupEntry.resource).buffer) : nullptr,
             .offset = std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? std::get<BufferBinding>(bindGroupEntry.resource).offset : 0,
             .size = std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? std::get<BufferBinding>(bindGroupEntry.resource).size.value_or(WGPU_WHOLE_SIZE) : 0,
             .sampler = std::holds_alternative<std::reference_wrapper<Sampler>>(bindGroupEntry.resource) ? convertToBackingContext->convertToBacking(std::get<std::reference_wrapper<Sampler>>(bindGroupEntry.resource).get()) : nullptr,
+            .texture = std::holds_alternative<std::reference_wrapper<Texture>>(bindGroupEntry.resource) ? convertToBackingContext->convertToBacking(std::get<std::reference_wrapper<Texture>>(bindGroupEntry.resource).get()) : nullptr,
             .textureView = std::holds_alternative<std::reference_wrapper<TextureView>>(bindGroupEntry.resource) ? convertToBackingContext->convertToBacking(std::get<std::reference_wrapper<TextureView>>(bindGroupEntry.resource).get()) : nullptr,
+            .externalTexture = std::holds_alternative<std::reference_wrapper<ExternalTexture>>(bindGroupEntry.resource) ? convertToBackingContext->convertToBacking(std::get<std::reference_wrapper<ExternalTexture>>(bindGroupEntry.resource).get()) : nullptr,
         };
     });
 
     WGPUBindGroupDescriptor backingDescriptor {
-        nullptr,
-        label.data(),
-        convertToBackingContext->convertToBacking(descriptor.protectedLayout().get()),
-        backingEntries.size(),
-        backingEntries.size() ? backingEntries.data() : nullptr,
+        .label = label.data(),
+        .layout = convertToBackingContext->convertToBacking(descriptor.protectedLayout().get()),
+        .entryCount = backingEntries.size(),
+        .entries = backingEntries.size() ? backingEntries.span().data() : nullptr,
     };
 
     return BindGroupImpl::create(adoptWebGPU(wgpuDeviceCreateBindGroup(m_backing.get(), &backingDescriptor)), convertToBackingContext);
@@ -320,25 +301,16 @@ RefPtr<ShaderModule> DeviceImpl::createShaderModule(const ShaderModuleDescriptor
     for (size_t i = 0; i < descriptor.hints.size(); ++i) {
         const auto& hint = descriptor.hints[i].value;
         hintsEntries.append(WGPUShaderModuleCompilationHint {
-            nullptr,
-            entryPoints[i].data(),
-            convertToBackingContext->convertToBacking(hint.protectedPipelineLayout().get())
+            .entryPoint = entryPoints[i].data(),
+            .layout = convertToBackingContext->convertToBacking(hint.protectedPipelineLayout().get())
         });
     }
 
-    WGPUShaderModuleWGSLDescriptor backingWGSLDescriptor {
-        {
-            nullptr,
-            WGPUSType_ShaderModuleWGSLDescriptor,
-        },
-        source.data(),
-    };
-
     WGPUShaderModuleDescriptor backingDescriptor {
-        &backingWGSLDescriptor.chain,
-        label.data(),
-        hintsEntries.size(),
-        hintsEntries.size() ? &hintsEntries[0] : nullptr,
+        .wgslDescriptor = source.data(),
+        .label = label.data(),
+        .hintCount = hintsEntries.size(),
+        .hints = hintsEntries.size() ? &hintsEntries[0] : nullptr,
     };
 
     return ShaderModuleImpl::create(adoptWebGPU(wgpuDeviceCreateShaderModule(m_backing.get(), &backingDescriptor)), convertToBackingContext);
@@ -364,21 +336,19 @@ static auto convertToBacking(const ComputePipelineDescriptor& descriptor, Conver
     Vector<WGPUConstantEntry> backingConstantEntries(descriptor.compute.constants.size(), [&](size_t i) {
         const auto& constant = descriptor.compute.constants[i];
         return WGPUConstantEntry {
-            nullptr,
-            constantNames[i].data(),
-            constant.value
+            .key = constantNames[i].data(),
+            .value = constant.value
         };
     });
 
     WGPUComputePipelineDescriptor backingDescriptor {
-        nullptr,
-        label.data(),
-        descriptor.layout ? convertToBackingContext.convertToBacking(*descriptor.protectedLayout().get()) : nullptr, {
-            nullptr,
-            convertToBackingContext.convertToBacking(descriptor.compute.protectedModule().get()),
-            entryPoint ? entryPoint->data() : nullptr,
-            backingConstantEntries.size(),
-            backingConstantEntries.size() ? backingConstantEntries.data() : nullptr,
+        .label = label.data(),
+        .layout = descriptor.layout ? convertToBackingContext.convertToBacking(*descriptor.protectedLayout().get()) : nullptr,
+        .compute = WGPUProgrammableStageDescriptor {
+            .module = convertToBackingContext.convertToBacking(descriptor.compute.protectedModule().get()),
+            .entryPoint = entryPoint ? entryPoint->data() : nullptr,
+            .constantCount = backingConstantEntries.size(),
+            .constants = backingConstantEntries.size() ? backingConstantEntries.span().data() : nullptr,
         }
     };
 
@@ -412,9 +382,8 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
     Vector<WGPUConstantEntry> vertexConstantEntries(descriptor.vertex.constants.size(), [&](size_t i) {
         const auto& constant = descriptor.vertex.constants[i];
         return WGPUConstantEntry {
-            nullptr,
-            vertexConstantNames[i].data(),
-            constant.value
+            .key = vertexConstantNames[i].data(),
+            .value = constant.value
         };
     });
 
@@ -437,12 +406,11 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
             buffer ? buffer->arrayStride : WGPU_COPY_STRIDE_UNDEFINED,
             buffer ? convertToBackingContext.convertToBacking(buffer->stepMode) : WGPUVertexStepMode_Vertex,
             backingAttributes[i].size(),
-            backingAttributes[i].size() ? backingAttributes[i].data() : nullptr,
+            backingAttributes[i].size() ? backingAttributes[i].span().data() : nullptr,
         };
     });
 
     WGPUDepthStencilState depthStencilState {
-        .nextInChain = nullptr,
         .format = descriptor.depthStencil ? convertToBackingContext.convertToBacking(descriptor.depthStencil->format) : WGPUTextureFormat_Undefined,
         .depthWriteEnabled = descriptor.depthStencil ? descriptor.depthStencil->depthWriteEnabled : false,
         .depthCompare = (descriptor.depthStencil && descriptor.depthStencil->depthCompare) ? convertToBackingContext.convertToBacking(*descriptor.depthStencil->depthCompare) : WGPUCompareFunction_Undefined,
@@ -485,9 +453,8 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
         fragmentConstantEntries = Vector<WGPUConstantEntry>(descriptor.fragment->constants.size(), [&](size_t i) {
             const auto& constant = descriptor.fragment->constants[i];
             return WGPUConstantEntry {
-                nullptr,
-                fragmentConstantNames[i].data(),
-                constant.value,
+                .key = fragmentConstantNames[i].data(),
+                .value = constant.value,
             };
         });
     }
@@ -517,65 +484,51 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
         colorTargets = Vector<WGPUColorTargetState>(descriptor.fragment->targets.size(), [&](size_t i) {
             if (auto& target = descriptor.fragment->targets[i]) {
                 return WGPUColorTargetState {
-                    nullptr,
-                    convertToBackingContext.convertToBacking(target->format),
-                    blendStates[i] ? &*blendStates[i] : nullptr,
-                    convertToBackingContext.convertColorWriteFlagsToBacking(target->writeMask),
+                    .format = convertToBackingContext.convertToBacking(target->format),
+                    .blend = blendStates[i] ? &*blendStates[i] : nullptr,
+                    .writeMask = convertToBackingContext.convertColorWriteFlagsToBacking(target->writeMask),
                 };
             }
             return WGPUColorTargetState {
-                nullptr,
-                    WGPUTextureFormat_Undefined,
-                    nullptr,
-                    WGPUMapMode_None,
+                .format = WGPUTextureFormat_Undefined,
+                .blend = nullptr,
+                .writeMask = WGPUMapMode_None,
             };
         });
     }
 
     WGPUFragmentState fragmentState {
-        nullptr,
-        descriptor.fragment ? convertToBackingContext.convertToBacking(descriptor.fragment->protectedModule().get()) : nullptr,
-        fragmentEntryPoint ? fragmentEntryPoint->data() : nullptr,
-        fragmentConstantEntries.size(),
-        fragmentConstantEntries.size() ? fragmentConstantEntries.data() : nullptr,
-        colorTargets.size(),
-        colorTargets.size() ? colorTargets.data() : nullptr,
-    };
-
-    WGPUPrimitiveDepthClipControl depthClipControl = {
-        .chain = {
-            nullptr,
-            WGPUSType_PrimitiveDepthClipControl,
-        },
-        .unclippedDepth = descriptor.primitive && descriptor.primitive->unclippedDepth,
+        .module = descriptor.fragment ? convertToBackingContext.convertToBacking(descriptor.fragment->protectedModule().get()) : nullptr,
+        .entryPoint = fragmentEntryPoint ? fragmentEntryPoint->data() : nullptr,
+        .constantCount = fragmentConstantEntries.size(),
+        .constants = fragmentConstantEntries.size() ? fragmentConstantEntries.span().data() : nullptr,
+        .targetCount = colorTargets.size(),
+        .targets = colorTargets.size() ? colorTargets.span().data() : nullptr,
     };
 
     WGPURenderPipelineDescriptor backingDescriptor {
-        .nextInChain = nullptr,
         .label = label.data(),
         .layout = descriptor.layout ? convertToBackingContext.convertToBacking(*descriptor.protectedLayout()) : nullptr,
         .vertex = {
-            nullptr,
-            convertToBackingContext.convertToBacking(descriptor.vertex.protectedModule().get()),
-            vertexEntryPoint ? vertexEntryPoint->data() : nullptr,
-            vertexConstantEntries.size(),
-            vertexConstantEntries.size() ? vertexConstantEntries.data() : nullptr,
-            backingBuffers.size(),
-            backingBuffers.size() ? backingBuffers.data() : nullptr,
+            .module = convertToBackingContext.convertToBacking(descriptor.vertex.protectedModule().get()),
+            .entryPoint = vertexEntryPoint ? vertexEntryPoint->data() : nullptr,
+            .constantCount = vertexConstantEntries.size(),
+            .constants = vertexConstantEntries.size() ? vertexConstantEntries.span().data() : nullptr,
+            .bufferCount = backingBuffers.size(),
+            .buffers = backingBuffers.size() ? backingBuffers.span().data() : nullptr,
         },
         .primitive = {
-            descriptor.primitive && descriptor.primitive->unclippedDepth ? &depthClipControl.chain : nullptr,
-            descriptor.primitive ? convertToBackingContext.convertToBacking(descriptor.primitive->topology) : WGPUPrimitiveTopology_TriangleList,
-            descriptor.primitive && descriptor.primitive->stripIndexFormat ? convertToBackingContext.convertToBacking(*descriptor.primitive->stripIndexFormat) : WGPUIndexFormat_Undefined,
-            descriptor.primitive ? convertToBackingContext.convertToBacking(descriptor.primitive->frontFace) : WGPUFrontFace_CCW,
-            descriptor.primitive ? convertToBackingContext.convertToBacking(descriptor.primitive->cullMode) : WGPUCullMode_None,
+            .topology = descriptor.primitive ? convertToBackingContext.convertToBacking(descriptor.primitive->topology) : WGPUPrimitiveTopology_TriangleList,
+            .stripIndexFormat = descriptor.primitive && descriptor.primitive->stripIndexFormat ? convertToBackingContext.convertToBacking(*descriptor.primitive->stripIndexFormat) : WGPUIndexFormat_Undefined,
+            .frontFace = descriptor.primitive ? convertToBackingContext.convertToBacking(descriptor.primitive->frontFace) : WGPUFrontFace_CCW,
+            .cullMode = descriptor.primitive ? convertToBackingContext.convertToBacking(descriptor.primitive->cullMode) : WGPUCullMode_None,
+            .unclippedDepth = descriptor.primitive && descriptor.primitive->unclippedDepth,
         },
         .depthStencil = descriptor.depthStencil ? &depthStencilState : nullptr,
         .multisample = {
-            nullptr,
-            descriptor.multisample ? descriptor.multisample->count : 1,
-            descriptor.multisample ? descriptor.multisample->mask : 0xFFFFFFFFU,
-            descriptor.multisample ? descriptor.multisample->alphaToCoverageEnabled : false,
+            .count = descriptor.multisample ? descriptor.multisample->count : 1,
+            .mask = descriptor.multisample ? descriptor.multisample->mask : 0xFFFFFFFFU,
+            .alphaToCoverageEnabled = descriptor.multisample ? descriptor.multisample->alphaToCoverageEnabled : false,
         },
         .fragment = descriptor.fragment ? &fragmentState : nullptr,
     };
@@ -635,8 +588,7 @@ RefPtr<CommandEncoder> DeviceImpl::createCommandEncoder(const std::optional<Comm
     CString label = descriptor ? descriptor->label.utf8() : CString(""_s);
 
     WGPUCommandEncoderDescriptor backingDescriptor {
-        nullptr,
-        label.data(),
+        .label = label.data(),
     };
 
     return CommandEncoderImpl::create(adoptWebGPU(wgpuDeviceCreateCommandEncoder(m_backing.get(), &backingDescriptor)), m_convertToBackingContext);
@@ -652,14 +604,13 @@ RefPtr<RenderBundleEncoder> DeviceImpl::createRenderBundleEncoder(const RenderBu
     });
 
     WGPURenderBundleEncoderDescriptor backingDescriptor {
-        nullptr,
-        label.data(),
-        backingColorFormats.size(),
-        backingColorFormats.size() ? backingColorFormats.data() : nullptr,
-        descriptor.depthStencilFormat ? convertToBackingContext->convertToBacking(*descriptor.depthStencilFormat) : WGPUTextureFormat_Undefined,
-        descriptor.sampleCount,
-        descriptor.depthReadOnly,
-        descriptor.stencilReadOnly,
+        .label = label.data(),
+        .colorFormatCount = backingColorFormats.size(),
+        .colorFormats = backingColorFormats.size() ? backingColorFormats.span().data() : nullptr,
+        .depthStencilFormat = descriptor.depthStencilFormat ? convertToBackingContext->convertToBacking(*descriptor.depthStencilFormat) : WGPUTextureFormat_Undefined,
+        .sampleCount = descriptor.sampleCount,
+        .depthReadOnly = descriptor.depthReadOnly,
+        .stencilReadOnly = descriptor.stencilReadOnly,
     };
 
     return RenderBundleEncoderImpl::create(adoptWebGPU(wgpuDeviceCreateRenderBundleEncoder(m_backing.get(), &backingDescriptor)), convertToBackingContext);
@@ -671,10 +622,9 @@ RefPtr<QuerySet> DeviceImpl::createQuerySet(const QuerySetDescriptor& descriptor
     Ref convertToBackingContext = m_convertToBackingContext;
 
     WGPUQuerySetDescriptor backingDescriptor {
-        nullptr,
-        label.data(),
-        convertToBackingContext->convertToBacking(descriptor.type),
-        descriptor.count,
+        .label = label.data(),
+        .type = convertToBackingContext->convertToBacking(descriptor.type),
+        .count = descriptor.count,
     };
 
     return QuerySetImpl::create(adoptWebGPU(wgpuDeviceCreateQuerySet(m_backing.get(), &backingDescriptor)), convertToBackingContext);

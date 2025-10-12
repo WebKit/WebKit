@@ -40,6 +40,7 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
+#include "RenderObjectInlines.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -118,6 +119,14 @@ void RenderHTMLCanvas::canvasSizeChanged()
     if (!parent())
         return;
     setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
+}
+
+void RenderHTMLCanvas::styleDidChange(StyleDifference difference, const RenderStyle* oldStyle)
+{
+    RenderReplaced::styleDidChange(difference, oldStyle);
+
+    if (!oldStyle || style().dynamicRangeLimit() != oldStyle->dynamicRangeLimit())
+        canvasElement().dynamicRangeLimitDidChange(style().dynamicRangeLimit().toPlatformDynamicRangeLimit());
 }
 
 } // namespace WebCore

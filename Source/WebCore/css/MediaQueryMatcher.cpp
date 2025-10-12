@@ -20,9 +20,10 @@
 #include "config.h"
 #include "MediaQueryMatcher.h"
 
-#include "Document.h"
+#include "DocumentView.h"
 #include "EventNames.h"
-#include "LocalFrame.h"
+#include "FrameDestructionObserverInlines.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "MediaQueryEvaluator.h"

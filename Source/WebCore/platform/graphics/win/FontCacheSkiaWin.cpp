@@ -40,9 +40,9 @@ static String fontsPath()
     DWORD size = GetEnvironmentVariable(fontsEnvironmentVariable, nullptr, 0);
     if (!size)
         return { };
-    Vector<UChar> buffer(size);
+    Vector<char16_t> buffer(size);
     // The return size doesn't include the terminating null character.
-    if (GetEnvironmentVariable(fontsEnvironmentVariable, wcharFrom(buffer.data()), size) != size - 1)
+    if (GetEnvironmentVariable(fontsEnvironmentVariable, wcharFrom(buffer.mutableSpan().data()), size) != size - 1)
         return { };
     return buffer.span().first(size - 1);
 }
@@ -91,7 +91,7 @@ FontCache::CreateDWriteFactoryResult FontCache::createDWriteFactory()
     for (auto filename : fontFilenames) {
         String path = FileSystem::pathByAppendingComponent(baseFontPath, filename);
         COMPtr<IDWriteFontFile> file;
-        hr = factory5->CreateFontFileReference(path.wideCharacters().data(), nullptr, &file);
+        hr = factory5->CreateFontFileReference(path.wideCharacters().span().data(), nullptr, &file);
         if (FAILED(hr))
             return result;
         builder->AddFontFile(file.get());

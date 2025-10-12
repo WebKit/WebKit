@@ -11,10 +11,12 @@
 #ifndef PC_SDP_STATE_PROVIDER_H_
 #define PC_SDP_STATE_PROVIDER_H_
 
+#include <optional>
 #include <string>
 
 #include "api/jsep.h"
 #include "api/peer_connection_interface.h"
+#include "rtc_base/ssl_stream_adapter.h"
 
 namespace webrtc {
 
@@ -45,8 +47,7 @@ class SdpStateProvider {
   // Whether an ICE restart was indicated in the remote offer.
   // Used in CreateAnswer.
   virtual bool IceRestartPending(const std::string& content_name) const = 0;
-  virtual std::optional<rtc::SSLRole> GetDtlsRole(
-      const std::string& mid) const = 0;
+  virtual std::optional<SSLRole> GetDtlsRole(const std::string& mid) const = 0;
 };
 
 }  // namespace webrtc

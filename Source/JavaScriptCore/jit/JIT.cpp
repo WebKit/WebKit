@@ -889,11 +889,13 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
             const UnlinkedSimpleJumpTable& unlinkedTable = m_unlinkedCodeBlock->unlinkedSwitchJumpTable(tableIndex);
             SimpleJumpTable& linkedTable = m_switchJumpTables[tableIndex];
             linkedTable.m_ctiDefault = patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
-            for (unsigned j = 0; j < unlinkedTable.m_branchOffsets.size(); ++j) {
-                int32_t offset = unlinkedTable.m_branchOffsets[j];
-                linkedTable.m_ctiOffsets[j] = offset
-                    ? patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + offset])
-                    : linkedTable.m_ctiDefault;
+            if (!linkedTable.isEmpty()) {
+                for (unsigned j = 0; j < unlinkedTable.m_branchOffsets.size(); ++j) {
+                    int32_t offset = unlinkedTable.m_branchOffsets[j];
+                    linkedTable.m_ctiOffsets[j] = offset
+                        ? patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + offset])
+                        : linkedTable.m_ctiDefault;
+                }
             }
             break;
         }
@@ -1010,7 +1012,7 @@ CompilationResult JIT::finalizeOnMainThread(CodeBlock* codeBlock, BaselineJITPla
     RELEASE_ASSERT(!isCompilationThread());
 
     if (!jitCode)
-        return CompilationFailed;
+        return CompilationResult::CompilationFailed;
 
     plan.runMainThreadFinalizationTasks();
 
@@ -1020,7 +1022,7 @@ CompilationResult JIT::finalizeOnMainThread(CodeBlock* codeBlock, BaselineJITPla
 
     codeBlock->setupWithUnlinkedBaselineCode(jitCode.releaseNonNull());
 
-    return CompilationSuccessful;
+    return CompilationResult::CompilationSuccessful;
 }
 
 CompilationResult JIT::compileSync(VM&, CodeBlock* codeBlock, JITCompilationEffort effort)

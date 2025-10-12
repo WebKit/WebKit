@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class CSSToLengthConversionData;
+class BuilderState;
 class CubicBezierTimingFunction;
 class RenderStyle;
 class TimingFunction;
@@ -37,7 +37,7 @@ namespace Style {
 
 CSS::CubicBezierEasingFunction toCSSCubicBezierEasingFunction(const CubicBezierTimingFunction&, const RenderStyle&);
 
-Ref<TimingFunction> createTimingFunction(const CSS::CubicBezierEasingFunction&, const CSSToLengthConversionData&);
+Ref<TimingFunction> createTimingFunction(const BuilderState&, const CSS::CubicBezierEasingFunction&);
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::CubicBezierEasingFunction&);
 
 } // namespace Style

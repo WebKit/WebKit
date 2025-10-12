@@ -50,9 +50,9 @@ $L$SEH_endprologue_gcm_init_clmul_4:
 	movdqa	xmm1,xmm0
 	pshufd	xmm3,xmm0,78
 	pxor	xmm3,xmm0
-DB	102,15,58,68,194,0
-DB	102,15,58,68,202,17
-DB	102,15,58,68,222,0
+	pclmulqdq	xmm0,xmm2,0x00
+	pclmulqdq	xmm1,xmm2,0x11
+	pclmulqdq	xmm3,xmm6,0x00
 	pxor	xmm3,xmm0
 	pxor	xmm3,xmm1
 
@@ -90,14 +90,14 @@ DB	102,15,58,68,222,0
 	movdqu	XMMWORD[rcx],xmm2
 	pxor	xmm4,xmm0
 	movdqu	XMMWORD[16+rcx],xmm0
-DB	102,15,58,15,227,8
+	palignr	xmm4,xmm3,8
 	movdqu	XMMWORD[32+rcx],xmm4
 	movdqa	xmm1,xmm0
 	pshufd	xmm3,xmm0,78
 	pxor	xmm3,xmm0
-DB	102,15,58,68,194,0
-DB	102,15,58,68,202,17
-DB	102,15,58,68,222,0
+	pclmulqdq	xmm0,xmm2,0x00
+	pclmulqdq	xmm1,xmm2,0x11
+	pclmulqdq	xmm3,xmm6,0x00
 	pxor	xmm3,xmm0
 	pxor	xmm3,xmm1
 
@@ -133,9 +133,9 @@ DB	102,15,58,68,222,0
 	movdqa	xmm1,xmm0
 	pshufd	xmm3,xmm0,78
 	pxor	xmm3,xmm0
-DB	102,15,58,68,194,0
-DB	102,15,58,68,202,17
-DB	102,15,58,68,222,0
+	pclmulqdq	xmm0,xmm2,0x00
+	pclmulqdq	xmm1,xmm2,0x11
+	pclmulqdq	xmm3,xmm6,0x00
 	pxor	xmm3,xmm0
 	pxor	xmm3,xmm1
 
@@ -173,7 +173,7 @@ DB	102,15,58,68,222,0
 	movdqu	XMMWORD[48+rcx],xmm5
 	pxor	xmm4,xmm0
 	movdqu	XMMWORD[64+rcx],xmm0
-DB	102,15,58,15,227,8
+	palignr	xmm4,xmm3,8
 	movdqu	XMMWORD[80+rcx],xmm4
 	movaps	xmm6,XMMWORD[rsp]
 	lea	rsp,[24+rsp]
@@ -192,13 +192,13 @@ $L$_gmult_clmul:
 	movdqa	xmm5,XMMWORD[$L$bswap_mask]
 	movdqu	xmm2,XMMWORD[rdx]
 	movdqu	xmm4,XMMWORD[32+rdx]
-DB	102,15,56,0,197
+	pshufb	xmm0,xmm5
 	movdqa	xmm1,xmm0
 	pshufd	xmm3,xmm0,78
 	pxor	xmm3,xmm0
-DB	102,15,58,68,194,0
-DB	102,15,58,68,202,17
-DB	102,15,58,68,220,0
+	pclmulqdq	xmm0,xmm2,0x00
+	pclmulqdq	xmm1,xmm2,0x11
+	pclmulqdq	xmm3,xmm4,0x00
 	pxor	xmm3,xmm0
 	pxor	xmm3,xmm1
 
@@ -230,7 +230,7 @@ DB	102,15,58,68,220,0
 	pxor	xmm0,xmm4
 	psrlq	xmm0,1
 	pxor	xmm0,xmm1
-DB	102,15,56,0,197
+	pshufb	xmm0,xmm5
 	movdqu	XMMWORD[rcx],xmm0
 	ret
 
@@ -272,7 +272,7 @@ $L$SEH_endprologue_gcm_ghash_clmul_13:
 	movdqu	xmm0,XMMWORD[rcx]
 	movdqu	xmm2,XMMWORD[rdx]
 	movdqu	xmm7,XMMWORD[32+rdx]
-DB	102,65,15,56,0,194
+	pshufb	xmm0,xmm10
 
 	sub	r9,0x10
 	jz	NEAR $L$odd_tail
@@ -291,21 +291,21 @@ DB	102,65,15,56,0,194
 
 	movdqu	xmm3,XMMWORD[48+r8]
 	movdqu	xmm11,XMMWORD[32+r8]
-DB	102,65,15,56,0,218
-DB	102,69,15,56,0,218
+	pshufb	xmm3,xmm10
+	pshufb	xmm11,xmm10
 	movdqa	xmm5,xmm3
 	pshufd	xmm4,xmm3,78
 	pxor	xmm4,xmm3
-DB	102,15,58,68,218,0
-DB	102,15,58,68,234,17
-DB	102,15,58,68,231,0
+	pclmulqdq	xmm3,xmm2,0x00
+	pclmulqdq	xmm5,xmm2,0x11
+	pclmulqdq	xmm4,xmm7,0x00
 
 	movdqa	xmm13,xmm11
 	pshufd	xmm12,xmm11,78
 	pxor	xmm12,xmm11
-DB	102,68,15,58,68,222,0
-DB	102,68,15,58,68,238,17
-DB	102,68,15,58,68,231,16
+	pclmulqdq	xmm11,xmm6,0x00
+	pclmulqdq	xmm13,xmm6,0x11
+	pclmulqdq	xmm12,xmm7,0x10
 	xorps	xmm3,xmm11
 	xorps	xmm5,xmm13
 	movups	xmm7,XMMWORD[80+rdx]
@@ -313,18 +313,18 @@ DB	102,68,15,58,68,231,16
 
 	movdqu	xmm11,XMMWORD[16+r8]
 	movdqu	xmm8,XMMWORD[r8]
-DB	102,69,15,56,0,218
-DB	102,69,15,56,0,194
+	pshufb	xmm11,xmm10
+	pshufb	xmm8,xmm10
 	movdqa	xmm13,xmm11
 	pshufd	xmm12,xmm11,78
 	pxor	xmm0,xmm8
 	pxor	xmm12,xmm11
-DB	102,69,15,58,68,222,0
+	pclmulqdq	xmm11,xmm14,0x00
 	movdqa	xmm1,xmm0
 	pshufd	xmm8,xmm0,78
 	pxor	xmm8,xmm0
-DB	102,69,15,58,68,238,17
-DB	102,68,15,58,68,231,0
+	pclmulqdq	xmm13,xmm14,0x11
+	pclmulqdq	xmm12,xmm7,0x00
 	xorps	xmm3,xmm11
 	xorps	xmm5,xmm13
 
@@ -335,22 +335,22 @@ DB	102,68,15,58,68,231,0
 	jmp	NEAR $L$mod4_loop
 ALIGN	32
 $L$mod4_loop:
-DB	102,65,15,58,68,199,0
+	pclmulqdq	xmm0,xmm15,0x00
 	xorps	xmm4,xmm12
 	movdqu	xmm11,XMMWORD[48+r8]
-DB	102,69,15,56,0,218
-DB	102,65,15,58,68,207,17
+	pshufb	xmm11,xmm10
+	pclmulqdq	xmm1,xmm15,0x11
 	xorps	xmm0,xmm3
 	movdqu	xmm3,XMMWORD[32+r8]
 	movdqa	xmm13,xmm11
-DB	102,68,15,58,68,199,16
+	pclmulqdq	xmm8,xmm7,0x10
 	pshufd	xmm12,xmm11,78
 	xorps	xmm1,xmm5
 	pxor	xmm12,xmm11
-DB	102,65,15,56,0,218
+	pshufb	xmm3,xmm10
 	movups	xmm7,XMMWORD[32+rdx]
 	xorps	xmm8,xmm4
-DB	102,68,15,58,68,218,0
+	pclmulqdq	xmm11,xmm2,0x00
 	pshufd	xmm4,xmm3,78
 
 	pxor	xmm8,xmm0
@@ -358,22 +358,22 @@ DB	102,68,15,58,68,218,0
 	pxor	xmm8,xmm1
 	pxor	xmm4,xmm3
 	movdqa	xmm9,xmm8
-DB	102,68,15,58,68,234,17
+	pclmulqdq	xmm13,xmm2,0x11
 	pslldq	xmm8,8
 	psrldq	xmm9,8
 	pxor	xmm0,xmm8
 	movdqa	xmm8,XMMWORD[$L$7_mask]
 	pxor	xmm1,xmm9
-DB	102,76,15,110,200
+	movq	xmm9,rax
 
 	pand	xmm8,xmm0
-DB	102,69,15,56,0,200
+	pshufb	xmm9,xmm8
 	pxor	xmm9,xmm0
-DB	102,68,15,58,68,231,0
+	pclmulqdq	xmm12,xmm7,0x00
 	psllq	xmm9,57
 	movdqa	xmm8,xmm9
 	pslldq	xmm9,8
-DB	102,15,58,68,222,0
+	pclmulqdq	xmm3,xmm6,0x00
 	psrldq	xmm8,8
 	pxor	xmm0,xmm9
 	pxor	xmm1,xmm8
@@ -381,14 +381,14 @@ DB	102,15,58,68,222,0
 
 	movdqa	xmm9,xmm0
 	psrlq	xmm0,1
-DB	102,15,58,68,238,17
+	pclmulqdq	xmm5,xmm6,0x11
 	xorps	xmm3,xmm11
 	movdqu	xmm11,XMMWORD[16+r8]
-DB	102,69,15,56,0,218
-DB	102,15,58,68,231,16
+	pshufb	xmm11,xmm10
+	pclmulqdq	xmm4,xmm7,0x10
 	xorps	xmm5,xmm13
 	movups	xmm7,XMMWORD[80+rdx]
-DB	102,69,15,56,0,194
+	pshufb	xmm8,xmm10
 	pxor	xmm1,xmm9
 	pxor	xmm9,xmm0
 	psrlq	xmm0,5
@@ -399,16 +399,16 @@ DB	102,69,15,56,0,194
 	pxor	xmm0,xmm9
 	pxor	xmm1,xmm8
 	pxor	xmm12,xmm11
-DB	102,69,15,58,68,222,0
+	pclmulqdq	xmm11,xmm14,0x00
 	psrlq	xmm0,1
 	pxor	xmm0,xmm1
 	movdqa	xmm1,xmm0
-DB	102,69,15,58,68,238,17
+	pclmulqdq	xmm13,xmm14,0x11
 	xorps	xmm3,xmm11
 	pshufd	xmm8,xmm0,78
 	pxor	xmm8,xmm0
 
-DB	102,68,15,58,68,231,0
+	pclmulqdq	xmm12,xmm7,0x00
 	xorps	xmm5,xmm13
 
 	lea	r8,[64+r8]
@@ -416,9 +416,9 @@ DB	102,68,15,58,68,231,0
 	jnc	NEAR $L$mod4_loop
 
 $L$tail4x:
-DB	102,65,15,58,68,199,0
-DB	102,65,15,58,68,207,17
-DB	102,68,15,58,68,199,16
+	pclmulqdq	xmm0,xmm15,0x00
+	pclmulqdq	xmm1,xmm15,0x11
+	pclmulqdq	xmm8,xmm7,0x10
 	xorps	xmm4,xmm12
 	xorps	xmm0,xmm3
 	xorps	xmm1,xmm5
@@ -469,16 +469,16 @@ $L$skip4x:
 
 	movdqu	xmm8,XMMWORD[r8]
 	movdqu	xmm3,XMMWORD[16+r8]
-DB	102,69,15,56,0,194
-DB	102,65,15,56,0,218
+	pshufb	xmm8,xmm10
+	pshufb	xmm3,xmm10
 	pxor	xmm0,xmm8
 
 	movdqa	xmm5,xmm3
 	pshufd	xmm4,xmm3,78
 	pxor	xmm4,xmm3
-DB	102,15,58,68,218,0
-DB	102,15,58,68,234,17
-DB	102,15,58,68,231,0
+	pclmulqdq	xmm3,xmm2,0x00
+	pclmulqdq	xmm5,xmm2,0x11
+	pclmulqdq	xmm4,xmm7,0x00
 
 	lea	r8,[32+r8]
 	nop
@@ -494,21 +494,21 @@ $L$mod_loop:
 	pshufd	xmm4,xmm0,78
 	pxor	xmm4,xmm0
 
-DB	102,15,58,68,198,0
-DB	102,15,58,68,206,17
-DB	102,15,58,68,231,16
+	pclmulqdq	xmm0,xmm6,0x00
+	pclmulqdq	xmm1,xmm6,0x11
+	pclmulqdq	xmm4,xmm7,0x10
 
 	pxor	xmm0,xmm3
 	pxor	xmm1,xmm5
 	movdqu	xmm9,XMMWORD[r8]
 	pxor	xmm8,xmm0
-DB	102,69,15,56,0,202
+	pshufb	xmm9,xmm10
 	movdqu	xmm3,XMMWORD[16+r8]
 
 	pxor	xmm8,xmm1
 	pxor	xmm1,xmm9
 	pxor	xmm4,xmm8
-DB	102,65,15,56,0,218
+	pshufb	xmm3,xmm10
 	movdqa	xmm8,xmm4
 	psrldq	xmm8,8
 	pslldq	xmm4,8
@@ -521,7 +521,7 @@ DB	102,65,15,56,0,218
 	movdqa	xmm8,xmm0
 	psllq	xmm0,5
 	pxor	xmm8,xmm0
-DB	102,15,58,68,218,0
+	pclmulqdq	xmm3,xmm2,0x00
 	psllq	xmm0,1
 	pxor	xmm0,xmm8
 	psllq	xmm0,57
@@ -535,14 +535,14 @@ DB	102,15,58,68,218,0
 
 	movdqa	xmm9,xmm0
 	psrlq	xmm0,1
-DB	102,15,58,68,234,17
+	pclmulqdq	xmm5,xmm2,0x11
 	pxor	xmm1,xmm9
 	pxor	xmm9,xmm0
 	psrlq	xmm0,5
 	pxor	xmm0,xmm9
 	lea	r8,[32+r8]
 	psrlq	xmm0,1
-DB	102,15,58,68,231,0
+	pclmulqdq	xmm4,xmm7,0x00
 	pxor	xmm0,xmm1
 
 	sub	r9,0x20
@@ -554,9 +554,9 @@ $L$even_tail:
 	pshufd	xmm4,xmm0,78
 	pxor	xmm4,xmm0
 
-DB	102,15,58,68,198,0
-DB	102,15,58,68,206,17
-DB	102,15,58,68,231,16
+	pclmulqdq	xmm0,xmm6,0x00
+	pclmulqdq	xmm1,xmm6,0x11
+	pclmulqdq	xmm4,xmm7,0x10
 
 	pxor	xmm0,xmm3
 	pxor	xmm1,xmm5
@@ -596,14 +596,14 @@ DB	102,15,58,68,231,16
 
 $L$odd_tail:
 	movdqu	xmm8,XMMWORD[r8]
-DB	102,69,15,56,0,194
+	pshufb	xmm8,xmm10
 	pxor	xmm0,xmm8
 	movdqa	xmm1,xmm0
 	pshufd	xmm3,xmm0,78
 	pxor	xmm3,xmm0
-DB	102,15,58,68,194,0
-DB	102,15,58,68,202,17
-DB	102,15,58,68,223,0
+	pclmulqdq	xmm0,xmm2,0x00
+	pclmulqdq	xmm1,xmm2,0x11
+	pclmulqdq	xmm3,xmm7,0x00
 	pxor	xmm3,xmm0
 	pxor	xmm3,xmm1
 
@@ -636,7 +636,7 @@ DB	102,15,58,68,223,0
 	psrlq	xmm0,1
 	pxor	xmm0,xmm1
 $L$done:
-DB	102,65,15,56,0,194
+	pshufb	xmm0,xmm10
 	movdqu	XMMWORD[rcx],xmm0
 	movaps	xmm6,XMMWORD[rsp]
 	movaps	xmm7,XMMWORD[16+rsp]

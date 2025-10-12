@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error: assert_equals: Check result expected "token: 2b60bd02-abfd-4e1b-85af-d686a175d782, character: &#950;, previous character: ж, byte: ж" but got "token: 2b60bd02-abfd-4e1b-85af-d686a175d782, character: &#950;, previous character: NOT LOADED PREVIOUSLY, byte: ж"
 
 
 FAIL Speculative script Error: assert_equals: Check result expected "token: 2b60bd02-abfd-4e1b-85af-d686a175d782, character: &#950;, previous character: ж, byte: ж" but got "token: 2b60bd02-abfd-4e1b-85af-d686a175d782, character: &#950;, previous character: NOT LOADED PREVIOUSLY, byte: ж"

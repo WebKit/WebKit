@@ -38,6 +38,8 @@ public:
 
     DECLARE_EXPORT_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
     enum class Field : uint8_t {
         IteratedIterator = 0,
         IteratedNextMethod,
@@ -79,7 +81,6 @@ private:
     }
 
     void finishCreation(VM&, JSValue iterator, JSValue nextMethod);
-    DECLARE_VISIT_CHILDREN;
 };
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSWrapForValidIterator);

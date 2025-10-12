@@ -13,6 +13,13 @@ function shouldBe(actual, expected) {
         throw new Error('bad value: ' + actual + ' expected value: ' + expected);
 }
 
+function shouldBeOneOf(actual, expectedArray) {
+    actual = normalize(actual);
+    if (!expectedArray.some((value) => value === actual))
+        throw new Error('bad value: ' + actual + ' expected values: ' + expectedArray);
+}
+
+
 function compareParts(actual, expected) {
     if (actual.length !== expected.length)
         return false;
@@ -138,48 +145,94 @@ function test() {
         timeZone: 'America/Los_Angeles',
         calendar: 'chinese'
     });
-    shouldBe(fmt2.format(date1), `11/22/2006, 2:00 AM`);
-    shouldBeParts(fmt2.formatRangeToParts(date1, date2), [
-        {"type":"month","value":"11","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"22","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"relatedYear","value":"2006","source":"shared"},
-        {"type":"literal","value":", ","source":"shared"},
-        {"type":"hour","value":"2","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":" – ","source":"shared"},
-        {"type":"hour","value":"3","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"AM","source":"shared"},
+    shouldBeOneOf(fmt2.format(date1), [`11/22/2006, 2:00 AM`, `2006-11-22, 2:00 AM`]);
+    shouldBeOneOfParts(fmt2.formatRangeToParts(date1, date2), [
+        [
+            {"type":"month","value":"11","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"22","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"relatedYear","value":"2006","source":"shared"},
+            {"type":"literal","value":", ","source":"shared"},
+            {"type":"hour","value":"2","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":" – ","source":"shared"},
+            {"type":"hour","value":"3","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"AM","source":"shared"},
+        ],
+        [
+            {"type":"relatedYear","value":"2006","source":"shared"},
+            {"type":"literal","value":"-","source":"shared"},
+            {"type":"month","value":"11","source":"shared"},
+            {"type":"literal","value":"-","source":"shared"},
+            {"type":"day","value":"22","source":"shared"},
+            {"type":"literal","value":", ","source":"shared"},
+            {"type":"hour","value":"2","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":" – ","source":"shared"},
+            {"type":"hour","value":"3","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"AM","source":"shared"},
+        ]
     ]);
-    shouldBeParts(fmt2.formatRangeToParts(date1, date3), [
-        {"type":"month","value":"11","source":"startRange"},
-        {"type":"literal","value":"/","source":"startRange"},
-        {"type":"day","value":"22","source":"startRange"},
-        {"type":"literal","value":"/","source":"startRange"},
-        {"type":"relatedYear","value":"2006","source":"startRange"},
-        {"type":"literal","value":", ","source":"startRange"},
-        {"type":"hour","value":"2","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":" ","source":"startRange"},
-        {"type":"dayPeriod","value":"AM","source":"startRange"},
-        {"type":"literal","value":" – ","source":"shared"},
-        {"type":"month","value":"12","source":"endRange"},
-        {"type":"literal","value":"/","source":"endRange"},
-        {"type":"day","value":"2","source":"endRange"},
-        {"type":"literal","value":"/","source":"endRange"},
-        {"type":"relatedYear","value":"2006","source":"endRange"},
-        {"type":"literal","value":", ","source":"endRange"},
-        {"type":"hour","value":"2","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
-        {"type":"literal","value":" ","source":"endRange"},
-        {"type":"dayPeriod","value":"AM","source":"endRange"},
+    shouldBeOneOfParts(fmt2.formatRangeToParts(date1, date3), [
+        [
+            {"type":"month","value":"11","source":"startRange"},
+            {"type":"literal","value":"/","source":"startRange"},
+            {"type":"day","value":"22","source":"startRange"},
+            {"type":"literal","value":"/","source":"startRange"},
+            {"type":"relatedYear","value":"2006","source":"startRange"},
+            {"type":"literal","value":", ","source":"startRange"},
+            {"type":"hour","value":"2","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":" ","source":"startRange"},
+            {"type":"dayPeriod","value":"AM","source":"startRange"},
+            {"type":"literal","value":" – ","source":"shared"},
+            {"type":"month","value":"12","source":"endRange"},
+            {"type":"literal","value":"/","source":"endRange"},
+            {"type":"day","value":"2","source":"endRange"},
+            {"type":"literal","value":"/","source":"endRange"},
+            {"type":"relatedYear","value":"2006","source":"endRange"},
+            {"type":"literal","value":", ","source":"endRange"},
+            {"type":"hour","value":"2","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":" ","source":"endRange"},
+            {"type":"dayPeriod","value":"AM","source":"endRange"},
+        ],
+        [
+            {"type":"month","value":"11","source":"startRange"},
+            {"type":"literal","value":"/","source":"startRange"},
+            {"type":"day","value":"22","source":"startRange"},
+            {"type":"literal","value":"/","source":"startRange"},
+            {"type":"relatedYear","value":"2006","source":"startRange"},
+            {"type":"literal","value":", ","source":"startRange"},
+            {"type":"hour","value":"2","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":" ","source":"startRange"},
+            {"type":"dayPeriod","value":"AM","source":"startRange"},
+            {"type":"literal","value":" – ","source":"shared"},
+            {"type":"month","value":"12","source":"endRange"},
+            {"type":"literal","value":"/","source":"endRange"},
+            {"type":"day","value":"02","source":"endRange"},
+            {"type":"literal","value":"/","source":"endRange"},
+            {"type":"relatedYear","value":"2006","source":"endRange"},
+            {"type":"literal","value":", ","source":"endRange"},
+            {"type":"hour","value":"2","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":" ","source":"endRange"},
+            {"type":"dayPeriod","value":"AM","source":"endRange"},
+        ],
     ]);
 
     let fmt3 = new Intl.DateTimeFormat("en", {

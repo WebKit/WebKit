@@ -16,6 +16,7 @@
 #include <memory>
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "api/function_view.h"
 #include "api/neteq/neteq.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
@@ -48,8 +49,9 @@ using NetEqStatsGetterMap =
     std::map<uint32_t, std::unique_ptr<test::NetEqStatsGetter>>;
 NetEqStatsGetterMap SimulateNetEq(const ParsedRtcEventLog& parsed_log,
                                   const AnalyzerConfig& config,
-                                  const std::string& replacement_file_name,
-                                  int file_sample_rate_hz);
+                                  absl::string_view replacement_file_name,
+                                  int file_sample_rate_hz,
+                                  absl::string_view field_trials);
 
 void CreateAudioJitterBufferGraph(const ParsedRtcEventLog& parsed_log,
                                   const AnalyzerConfig& config,
@@ -60,14 +62,14 @@ void CreateNetEqNetworkStatsGraph(
     const ParsedRtcEventLog& parsed_log,
     const AnalyzerConfig& config,
     const NetEqStatsGetterMap& neteq_stats_getters,
-    rtc::FunctionView<float(const NetEqNetworkStatistics&)> stats_extractor,
+    FunctionView<float(const NetEqNetworkStatistics&)> stats_extractor,
     const std::string& plot_name,
     Plot* plot);
 void CreateNetEqLifetimeStatsGraph(
     const ParsedRtcEventLog& parsed_log,
     const AnalyzerConfig& config,
     const NetEqStatsGetterMap& neteq_stats_getters,
-    rtc::FunctionView<float(const NetEqLifetimeStatistics&)> stats_extractor,
+    FunctionView<float(const NetEqLifetimeStatistics&)> stats_extractor,
     const std::string& plot_name,
     Plot* plot);
 

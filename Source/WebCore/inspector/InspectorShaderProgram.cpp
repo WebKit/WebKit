@@ -101,7 +101,7 @@ bool InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderTyp
         context->linkProgramWithoutInvalidatingAttribLocations(m_program);
     else {
         auto errors = context->getShaderInfoLog(*shader);
-        auto* scriptContext = m_canvas.scriptExecutionContext();
+        RefPtr scriptContext = m_canvas.scriptExecutionContext();
         for (auto error : StringView(errors).split('\n')) {
             auto message = makeString("WebGL: "_s, error);
             scriptContext->addConsoleMessage(makeUnique<ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Error, message));

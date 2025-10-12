@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "IDBConnectionToClientDelegate.h"
+#include <WebCore/IDBConnectionToClientDelegate.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>

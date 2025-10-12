@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -204,7 +204,7 @@ RemoteLayerTreeDrawingAreaProxyIOS::~RemoteLayerTreeDrawingAreaProxyIOS()
 
 std::unique_ptr<RemoteScrollingCoordinatorProxy> RemoteLayerTreeDrawingAreaProxyIOS::createScrollingCoordinatorProxy() const
 {
-    return makeUnique<RemoteScrollingCoordinatorProxyIOS>(*m_webPageProxy);
+    return makeUnique<RemoteScrollingCoordinatorProxyIOS>(*page());
 }
 
 DelegatedScrollingMode RemoteLayerTreeDrawingAreaProxyIOS::delegatedScrollingMode() const
@@ -221,7 +221,7 @@ WKDisplayLinkHandler *RemoteLayerTreeDrawingAreaProxyIOS::displayLinkHandler()
 
 void RemoteLayerTreeDrawingAreaProxyIOS::setPreferredFramesPerSecond(IPC::Connection& connection, FramesPerSecond preferredFramesPerSecond)
 {
-    if (!m_webProcessProxy->hasConnection(connection))
+    if (!webProcessProxy().hasConnection(connection))
         return;
 
     [displayLinkHandler() setPreferredFramesPerSecond:preferredFramesPerSecond];
@@ -229,11 +229,14 @@ void RemoteLayerTreeDrawingAreaProxyIOS::setPreferredFramesPerSecond(IPC::Connec
 
 void RemoteLayerTreeDrawingAreaProxyIOS::didRefreshDisplay()
 {
+    if (RefPtr page = this->page())
+        page->didRefreshDisplay();
+
     if (m_needsDisplayRefreshCallbacksForDrawing)
         RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay();
 
     if (m_needsDisplayRefreshCallbacksForAnimation) {
-        RefPtr page = m_webPageProxy.get();
+        RefPtr page = this->page();
         if (!page)
             return;
         if (auto displayID = page->displayID())

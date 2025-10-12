@@ -12,11 +12,14 @@
 #define MODULES_AUDIO_PROCESSING_AGC_AGC_MANAGER_DIRECT_H_
 
 #include <atomic>
+#include <cstdint>
 #include <memory>
 #include <optional>
+#include <vector>
 
 #include "api/array_view.h"
 #include "api/audio/audio_processing.h"
+#include "api/environment/environment.h"
 #include "modules/audio_processing/agc/agc.h"
 #include "modules/audio_processing/agc2/clipping_predictor.h"
 #include "modules/audio_processing/audio_buffer.h"
@@ -42,6 +45,7 @@ class AgcManagerDirect final {
   // passed to `AnalyzePreProcess()` and `Process()`. Clamps
   // `analog_config.startup_min_level` in the [12, 255] range.
   AgcManagerDirect(
+      const Environment& env,
       int num_capture_channels,
       const AudioProcessing::Config::GainController1::AnalogGainController&
           analog_config);
@@ -142,6 +146,7 @@ class AgcManagerDirect final {
   // Ctor that creates a single channel AGC and by injecting `agc`.
   // `agc` will be owned by this class; hence, do not delete it.
   AgcManagerDirect(
+      const Environment& env,
       const AudioProcessing::Config::GainController1::AnalogGainController&
           analog_config,
       Agc* agc);
@@ -212,7 +217,7 @@ class MonoAgc {
   // the (digital) compression gain to be applied by `agc_`. Must be called
   // after `HandleClipping()`. If `rms_error_override` has a value, RMS error
   // from AGC is overridden by it.
-  void Process(rtc::ArrayView<const int16_t> audio,
+  void Process(ArrayView<const int16_t> audio,
                std::optional<int> rms_error_override);
 
   // Returns the recommended input volume. Must be called after `Process()`.

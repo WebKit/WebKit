@@ -7,6 +7,10 @@
 //   GL_RGB8 image allocation and loading using GL_UNSIGNED_BYTE.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "ANGLEPerfTest.h"
 
 #include <iostream>

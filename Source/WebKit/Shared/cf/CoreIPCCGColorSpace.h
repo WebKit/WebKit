@@ -60,7 +60,7 @@ public:
     {
         auto colorSpace = WTF::switchOn(m_cgColorSpace,
             [](WebCore::ColorSpace colorSpace) -> RetainPtr<CGColorSpaceRef> {
-                return RetainPtr { cachedNullableCGColorSpace(colorSpace) };
+                return RetainPtr { cachedNullableCGColorSpaceSingleton(colorSpace) };
             },
             [](RetainPtr<CFStringRef> name) -> RetainPtr<CGColorSpaceRef> {
                 return adoptCF(CGColorSpaceCreateWithName(name.get()));

@@ -147,13 +147,29 @@ class CheckoutRouteUnittest(testing.PathTestCase):
             self.assertEqual(response.headers.get('location'), 'https://trac.webkit.org')
 
     @mock_app
-    def test_json(self, app=None, client=None):
+    def test_json_details_origin(self, app=None, client=None):
         with mocks.local.Git(self.path) as repo:
             app.register_blueprint(CheckoutRoute(
                 Checkout(path=self.path, url=repo.remote, sentinal=False),
                 redirectors=[Redirector('https://trac.webkit.org')],
             ))
             reference = Commit.Encoder().default(repo.commits['main'][3])
+            reference['message'] = reference['message'].rstrip()
+
+            response = client.get('4@main/json')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.json(), reference)
+
+    @mock_app
+    def test_json_strip_details_non_origin_commits(self, app=None, client=None):
+        with mocks.local.Git(self.path) as repo:
+            repo.remotes['fork/main'] = repo.remotes.pop('origin/main')
+            app.register_blueprint(CheckoutRoute(
+                Checkout(path=self.path, url=repo.remote, sentinal=False),
+                redirectors=[Redirector('https://trac.webkit.org')],
+            ))
+            reference = Commit.Encoder().default(repo.commits['main'][3])
+            # Test 252433@main: strip commit details from non-origin commits
             del reference['author']
             del reference['message']
 

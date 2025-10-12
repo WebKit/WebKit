@@ -27,7 +27,6 @@
 #import "PlatformCAFilters.h"
 
 #import "FloatConversion.h"
-#import "LengthFunctions.h"
 #import "PlatformCALayerCocoa.h"
 #import <QuartzCore/QuartzCore.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -111,7 +110,7 @@ static const FilterOperation& passthroughFilter(const FilterOperation::Type type
         static NeverDestroyed<Ref<BasicColorMatrixFilterOperation>> passthroughContrastFilter = BasicColorMatrixFilterOperation::create(0, typeToMatch);
         return passthroughContrastFilter.get();
     case FilterOperation::Type::Blur:
-        static NeverDestroyed<Ref<BlurFilterOperation>> passthroughBlurFilter = BlurFilterOperation::create({ 0, LengthType::Fixed });
+        static NeverDestroyed<Ref<BlurFilterOperation>> passthroughBlurFilter = BlurFilterOperation::create(0);
         return passthroughBlurFilter.get();
     default:
         ASSERT_NOT_REACHED();
@@ -332,7 +331,7 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
         case FilterOperation::Type::Blur: {
             const auto& blurOperation = downcast<BlurFilterOperation>(filterOperation);
             CAFilter *filter = [CAFilter filterWithType:kCAFilterGaussianBlur];
-            [filter setValue:[NSNumber numberWithFloat:floatValueForLength(blurOperation.stdDeviation(), 0)] forKey:@"inputRadius"];
+            [filter setValue:@(blurOperation.stdDeviation()) forKey:@"inputRadius"];
             if (is_objc<CABackdropLayer>(layer)) {
 #if PLATFORM(VISION)
                 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=275965
@@ -442,7 +441,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
         // CAFilter: inputRadius
         double amount = 0;
         if (operation)
-            amount = floatValueForLength(downcast<BlurFilterOperation>(*operation).stdDeviation(), 0);
+            amount = downcast<BlurFilterOperation>(*operation).stdDeviation();
 
         value = @(amount);
         break;

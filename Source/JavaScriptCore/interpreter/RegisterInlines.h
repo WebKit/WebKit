@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CodeBlock.h"
-#include "JSScope.h"
-#include "Register.h"
+#include <JavaScriptCore/CodeBlock.h>
+#include <JavaScriptCore/JSScope.h>
+#include <JavaScriptCore/Register.h>
 
 namespace JSC {
 

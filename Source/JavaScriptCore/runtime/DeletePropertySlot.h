@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "PropertyOffset.h"
-#include "PropertySlot.h"
+#include <JavaScriptCore/PropertyOffset.h>
+#include <JavaScriptCore/PropertySlot.h>
 
 namespace JSC {
     

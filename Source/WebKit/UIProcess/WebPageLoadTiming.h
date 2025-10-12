@@ -33,7 +33,7 @@ namespace WebKit {
 
 class WebPageLoadTiming {
     WTF_MAKE_NONCOPYABLE(WebPageLoadTiming);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebPageLoadTiming);
 public:
     explicit WebPageLoadTiming(WallTime navigationStart)
         : m_navigationStart(navigationStart)
@@ -47,8 +47,13 @@ public:
     WallTime firstMeaningfulPaint() const { return m_firstMeaningfulPaint; }
     void setFirstMeaningfulPaint(WallTime timestamp) { m_firstMeaningfulPaint = timestamp; }
 
+    // Should correspond to DOMContentLoaded
     WallTime documentFinishedLoading() const { return m_documentFinishedLoading; }
     void setDocumentFinishedLoading(WallTime timestamp) { m_documentFinishedLoading = timestamp; }
+
+    // Should correspond to the load event in the main frame.
+    WallTime finishedLoading() const { return m_finishedLoading; }
+    void setFinishedLoading(WallTime timestamp) { m_finishedLoading = timestamp; }
 
     WallTime allSubresourcesFinishedLoading() const { return m_allSubresourcesFinishedLoading; }
     void updateEndOfNetworkRequests(WallTime timestamp)
@@ -63,6 +68,7 @@ private:
     WallTime m_firstMeaningfulPaint;
     WallTime m_documentFinishedLoading;
     WallTime m_allSubresourcesFinishedLoading;
+    WallTime m_finishedLoading;
 };
 
 }

@@ -140,7 +140,12 @@ ExceptionOr<NotificationPayload> NotificationJSONParser::parseNotificationPayloa
     std::optional<NotificationOptionsPayload> notificationOptions = optionsOrException.releaseReturnValue();
 
     bool isMutable = false;
-    if (auto value = protectedObject->getValue(mutableKey)) {
+    if (auto value = outerObject.getValue(mutableKey)) {
+        if (value->type() != JSON::Value::Type::Boolean)
+            return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, mutableKey, "' member is specified but is not a boolean"_s) };
+        isMutable = *(value->asBoolean());
+    // FIXME: Eventually we should remove this branch as supporting mutable inside the notification object is non-standard (webkit.org/b/297389).
+    } else if (auto value = protectedObject->getValue(mutableKey)) {
         if (value->type() != JSON::Value::Type::Boolean)
             return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, mutableKey, "' member is specified but is not a boolean"_s) };
         isMutable = *(value->asBoolean());

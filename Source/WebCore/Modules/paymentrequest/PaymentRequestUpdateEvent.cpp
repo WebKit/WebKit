@@ -73,7 +73,7 @@ ExceptionOr<void> PaymentRequestUpdateEvent::updateWith(Ref<DOMPromise>&& detail
         return Exception { ExceptionCode::TypeError };
     }
 
-    auto exception = downcast<PaymentRequest>(target())->updateWith(reason, WTFMove(detailsPromise));
+    auto exception = downcast<PaymentRequest>(protectedTarget())->updateWith(reason, WTFMove(detailsPromise));
     if (exception.hasException())
         return exception.releaseException();
 

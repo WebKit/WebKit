@@ -64,7 +64,7 @@ Clipboard::Type Clipboard::type() const
 }
 
 struct FormatsAsyncData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(FormatsAsyncData);
 
     explicit FormatsAsyncData(CompletionHandler<void(Vector<String>&&)>&& handler)
         : completionHandler(WTFMove(handler))
@@ -89,7 +89,7 @@ void Clipboard::formats(CompletionHandler<void(Vector<String>&&)>&& completionHa
 }
 
 struct ReadTextAsyncData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ReadTextAsyncData);
 
     explicit ReadTextAsyncData(CompletionHandler<void(String&&)>&& handler)
         : completionHandler(WTFMove(handler))
@@ -108,7 +108,7 @@ void Clipboard::readText(CompletionHandler<void(String&&)>&& completionHandler, 
 }
 
 struct ReadFilePathsAsyncData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ReadFilePathsAsyncData);
 
     explicit ReadFilePathsAsyncData(CompletionHandler<void(Vector<String>&&)>&& handler)
         : completionHandler(WTFMove(handler))
@@ -133,7 +133,7 @@ void Clipboard::readFilePaths(CompletionHandler<void(Vector<String>&&)>&& comple
 }
 
 struct ReadBufferAsyncData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ReadBufferAsyncData);
 
     explicit ReadBufferAsyncData(CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& handler)
         : completionHandler(WTFMove(handler))
@@ -144,7 +144,7 @@ struct ReadBufferAsyncData {
 };
 
 struct ReadURLAsyncData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ReadURLAsyncData);
 
     explicit ReadURLAsyncData(CompletionHandler<void(String&& url, String&& title)>&& handler)
         : completionHandler(WTFMove(handler))
@@ -173,7 +173,7 @@ void Clipboard::readBuffer(const char* format, CompletionHandler<void(Ref<WebCor
 }
 
 struct WriteAsyncData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WriteAsyncData);
 
     WriteAsyncData(WebCore::SelectionData&& selection, Clipboard& clipboard)
         : selectionData(WTFMove(selection))

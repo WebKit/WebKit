@@ -14,10 +14,11 @@ FAIL CSS Values and Units Test: attr 11 assert_equals: Setting property '--x' to
 FAIL CSS Values and Units Test: attr 12 assert_equals: Setting property '--y' to the value 'attr(data-foo type(*), attr(data-bar))', where 'data-foo=attr(data-foo type(*))' should not change it's value. expected "" but got "attr(data-foo type(*), attr(data-bar))"
 PASS CSS Values and Units Test: attr 13
 FAIL CSS Values and Units Test: attr 14 assert_equals: Setting property '--y' to the value 'attr(data-foo type(*))', where 'data-foo=attr(data-bar type(*), 11) var(--x, 3)' should not change it's value. expected "" but got "attr(data-foo type(*))"
-PASS CSS Values and Units Test: attr 15
-FAIL CSS Values and Units Test: attr 16 assert_equals: Setting property '--y' to the value 'attr(data-foo type(*), attr(data-foo))', where 'data-foo=3' should not change it's value. expected "" but got "attr(data-foo type(*), attr(data-foo))"
-PASS CSS Values and Units Test: attr 17
-FAIL CSS Values and Units Test: attr 18 assert_equals: Setting property '--y' to the value 'attr(data-foo type(*), attr(data-bar type(*)))', where 'data-foo=3' should not change it's value. expected "" but got "attr(data-foo type(*), attr(data-bar type(*)))"
-FAIL CSS Values and Units Test: attr 19 assert_equals: Value 'attr(data-foo type(<string>))', where 'data-foo=attr(data-bar type(<string>))' should be valid for the property '--y'. expected "" but got "attr(data-foo type(<string>))"
-FAIL CSS Values and Units Test: attr 20 assert_equals: Value 'attr(data-foo type(*))', where 'data-foo=attr(data-bar, 11) var(--x, 3)' should be valid for the property '--y'. expected "\"var(--x)\" \"attr(data-bar, 11) var(--x, 3)\"" but got "attr(data-foo type(*))"
+FAIL CSS Values and Units Test: attr 15 assert_equals: Value 'attr(data-foo type(*), var(--y))', where 'data-foo=3' should be valid for the property '--y'. expected "3" but got ""
+FAIL CSS Values and Units Test: attr 16 assert_equals: Value 'attr(data-foo type(*), attr(data-foo))', where 'data-foo=3' should be valid for the property '--y'. expected "3" but got "attr(data-foo type(*), attr(data-foo))"
+FAIL CSS Values and Units Test: attr 17 assert_equals: Value 'attr(data-foo type(*), var(--x))', where 'data-foo=3' should be valid for the property '--y'. expected "3" but got ""
+FAIL CSS Values and Units Test: attr 18 assert_equals: Value 'attr(data-foo type(*), attr(data-bar type(*)))', where 'data-foo=3' should be valid for the property '--y'. expected "3" but got "attr(data-foo type(*), attr(data-bar type(*)))"
+PASS CSS Values and Units Test: attr 19
+FAIL CSS Values and Units Test: attr 20 assert_equals: Value 'attr(data-foo type(<string>))', where 'data-foo=attr(data-bar type(<string>))' should be valid for the property '--y'. expected "" but got "attr(data-foo type(<string>))"
+FAIL CSS Values and Units Test: attr 21 assert_equals: Value 'attr(data-foo type(*))', where 'data-foo=attr(data-bar, 11) var(--x, 3)' should be valid for the property '--y'. expected "\"var(--x)\" \"attr(data-bar, 11) var(--x, 3)\"" but got "attr(data-foo type(*))"
 

@@ -32,6 +32,7 @@
 #include "AacEncoderConfig.h"
 #include "ContextDestructionObserverInlines.h"
 #include "DOMException.h"
+#include "ExceptionOr.h"
 #include "FlacEncoderConfig.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebCodecsAudioEncoderSupport.h"
@@ -97,7 +98,7 @@ static bool isSupportedEncoderCodec(const WebCodecsAudioEncoderConfig& config)
 
 static bool isValidEncoderConfig(const WebCodecsAudioEncoderConfig& config)
 {
-    if (StringView(config.codec).trim(isASCIIWhitespace<UChar>).isEmpty())
+    if (StringView(config.codec).trim(isASCIIWhitespace<char16_t>).isEmpty())
         return false;
 
     if (!config.sampleRate || !config.numberOfChannels)
@@ -314,7 +315,7 @@ ExceptionOr<void> WebCodecsAudioEncoder::encode(Ref<WebCodecsAudioData>&& frame)
                 return;
 
             if (!result) {
-                if (auto context = protectedThis->protectedScriptExecutionContext())
+                if (RefPtr context = protectedThis->scriptExecutionContext())
                     context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("AudioEncoder encode failed: "_s, result.error()));
                 protectedThis->closeEncoder(Exception { ExceptionCode::EncodingError, WTFMove(result.error()) });
                 return;

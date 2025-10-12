@@ -10,15 +10,6 @@ To update to newer revisions, follow these instructions:
 
 DEPS: Update the variables as described in the comments.
 
-update_clang.py: Set CLANG_REVISION and CLANG_SUB_REVISION to the values used in
-    Chromium, found at
-    https://chromium.googlesource.com/chromium/src/+/main/tools/clang/scripts/update.py
-
-vs_toolchain.py: Update _GetDesiredVsToolchainHashes from Chromium, found at
-    https://chromium.googlesource.com/chromium/src/+/main/build/vs_toolchain.py
-    This may require taking other updates to that file. (Don't remove MSVC
-    versions if BoringSSL still needs to support them.)
-
 The .sha1 files correspond to files downloaded from Google Cloud Storage. To
 update, place the updated files in their intended location and run:
 

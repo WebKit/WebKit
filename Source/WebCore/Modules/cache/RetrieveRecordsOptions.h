@@ -26,9 +26,9 @@
 
 #pragma once
 
-#include "CrossOriginEmbedderPolicy.h"
-#include "ResourceRequest.h"
-#include "SecurityOrigin.h"
+#include <WebCore/CrossOriginEmbedderPolicy.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/SecurityOrigin.h>
 
 namespace WebCore {
 
@@ -38,7 +38,7 @@ struct RetrieveRecordsOptions {
 
     ResourceRequest request;
     CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
-    Ref<SecurityOrigin> sourceOrigin;
+    const Ref<SecurityOrigin> sourceOrigin;
     bool ignoreSearch { false };
     bool ignoreMethod { false };
     bool ignoreVary { false };

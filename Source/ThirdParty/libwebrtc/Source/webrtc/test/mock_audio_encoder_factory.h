@@ -12,9 +12,12 @@
 #define TEST_MOCK_AUDIO_ENCODER_FACTORY_H_
 
 #include <memory>
+#include <optional>
 #include <vector>
 
+#include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_encoder_factory.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/environment/environment.h"
 #include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"

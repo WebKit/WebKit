@@ -32,12 +32,7 @@ DECLARE_SYSTEM_HEADER
 
 #if ENABLE(WRITING_TOOLS) && PLATFORM(MAC)
 
-#if USE(APPLE_INTERNAL_SDK)
-
-#import <WritingToolsUI/WritingToolsUI.h>
-#import <WritingToolsUI/WritingToolsUI_Private.h>
-
-#else
+// FIXME: (rdar://149216417) Import WritingToolsUI when using the internal SDK instead of using forward declarations.
 
 #import <AppKit/AppKit.h>
 #import <CoreGraphics/CoreGraphics.h>
@@ -211,7 +206,5 @@ NS_ASSUME_NONNULL_END
 - (BOOL)hasActiveEffect:(NSUUID *)effectID;
 
 @end
-
-#endif // USE(APPLE_INTERNAL_SDK)
 
 #endif // ENABLE(WRITING_TOOLS) && PLATFORM(MAC)

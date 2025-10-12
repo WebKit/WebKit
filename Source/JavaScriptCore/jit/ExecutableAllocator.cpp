@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -172,6 +172,10 @@ void ExecutableAllocator::disableJIT()
     bool shouldDisableJITMemory = processHasEntitlement("com.apple.security.cs.allow-jit"_s) && !isKernOpenSource();
 #endif
     if (shouldDisableJITMemory) {
+#if PLATFORM(MAC)
+        RELEASE_ASSERT(processHasEntitlement("com.apple.private.verified-jit"));
+        RELEASE_ASSERT(processHasEntitlement("com.apple.security.cs.single-jit"));
+#endif
         // Because of an OS quirk, even after the JIT region has been unmapped,
         // the OS thinks that region is reserved, and as such, can cause Gigacage
         // allocation to fail. We work around this by initializing the Gigacage
@@ -267,11 +271,9 @@ static ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> jitWriteThunkGenerato
 
     auto stubBaseCodePtr = CodePtr<LinkBufferPtrTag>(tagCodePtr<LinkBufferPtrTag>(stubBase));
     LinkBuffer linkBuffer(jit, stubBaseCodePtr, stubSize, LinkBuffer::Profile::Thunk);
-    // We don't use FINALIZE_CODE() for two reasons.
-    // The first is that we don't want the writeable address, as disassembled instructions,
-    // to appear in the console or anywhere in memory, via the PrintStream buffer.
-    // The second is we can't guarantee that the code is readable when using the
-    // asyncDisassembly option as our caller will set our pages execute only.
+    // We don't use FINALIZE_CODE() because we don't want the writeable address, as
+    // disassembled instructions, to appear in the console or anywhere in memory, via
+    // the PrintStream buffer.
     return linkBuffer.finalizeCodeWithoutDisassembly<JITThunkPtrTag>(nullptr);
 }
 #else // not USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
@@ -389,20 +391,23 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         jit_heap_runtime_config.max_segregated_object_size = 0;
 #endif
 
-    auto tryCreatePageReservation = [] (size_t reservationSize) {
+    auto tryCreatePageReservation = [] (size_t reservationSize, void* hintAddress) {
 #if OS(LINUX)
         // On Linux, if we use uncommitted reservation, mmap operation is recorded with small page size in perf command's output.
         // This makes the following JIT code logging broken and some of JIT code is not recorded correctly.
         // To avoid this problem, we use committed reservation if we need perf JITDump logging.
         if (Options::useJITDump())
-            return PageReservation::tryReserveAndCommitWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, false);
+            return PageReservation::tryReserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, hintAddress, EXECUTABLE_POOL_WRITABLE, true, true, false);
 #endif
         if (Options::useJITCage() && JSC_ALLOW_JIT_CAGE_SPECIFIC_RESERVATION)
-            return PageReservation::tryReserve(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, Options::useJITCage());
-        return PageReservation::tryReserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, false);
+            return PageReservation::tryReserve(reservationSize, OSAllocator::JSJITCodePages, hintAddress, EXECUTABLE_POOL_WRITABLE, true, false, Options::useJITCage());
+        return PageReservation::tryReserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, hintAddress, EXECUTABLE_POOL_WRITABLE, true, false, false);
     };
 
-    reservation.pageReservation = tryCreatePageReservation(reservation.size);
+    void* addressHint = reinterpret_cast<void*>(Options::jitMemoryReservationAddress());
+    reservation.pageReservation = tryCreatePageReservation(reservation.size, addressHint);
+    if (addressHint)
+        RELEASE_ASSERT(reservation.pageReservation.base() == addressHint && "Failed to accomodate JSC_jitMemoryReservationAddress");
 
     if (Options::verboseExecutablePoolAllocation())
         dataLog(getpid(), ": Got executable pool reservation at ", RawPointer(reservation.pageReservation.base()), "...", RawPointer(reservation.pageReservation.end()), ", while I'm at ", RawPointer(reinterpret_cast<void*>(initializeJITPageReservation)), "\n");
@@ -554,7 +559,7 @@ public:
                 allocationRoom = 1;
             int count = cryptographicallyRandomNumber<uint32_t>() % allocationRoom;
 
-            randomAllocations.resize(count);
+            randomAllocations.grow(count);
 
             for (int i = 0; i < count; ++i) {
                 void* result = jit_heap_try_allocate(sizeInBytes);
@@ -562,7 +567,7 @@ public:
                     // We are running out of memory, so make sure this allocation will succeed.
                     for (int j = 0; j < i; ++j)
                         jit_heap_deallocate(randomAllocations[j]);
-                    randomAllocations.resize(0);
+                    randomAllocations.shrink(0);
                     break;
                 }
                 randomAllocations[i] = result;
@@ -852,9 +857,9 @@ private:
             auto emitJumpTo = [&] (void* target) {
                 RELEASE_ASSERT(Assembler::canEmitJump(std::bit_cast<void*>(jumpLocation), target));
                 if (useMemcpy)
-                    Assembler::fillNearTailCall<MachineCodeCopyMode::Memcpy>(currentIsland, target);
+                    Assembler::fillNearTailCall<memcpyRepatchFlush>(currentIsland, target);
                 else
-                    Assembler::fillNearTailCall<MachineCodeCopyMode::JITMemcpy>(currentIsland, target);
+                    Assembler::fillNearTailCall<jitMemcpyRepatchFlush>(currentIsland, target);
             };
 
             if (Assembler::canEmitJump(std::bit_cast<void*>(jumpLocation), std::bit_cast<void*>(target))) {
@@ -1427,7 +1432,7 @@ ExecutableMemoryHandle::~ExecutableMemoryHandle()
         // We don't have a performJITMemset so just use a zeroed buffer.
         auto zeros = MallocSpan<uint8_t>::zeroedMalloc(sizeInBytes());
         auto span = zeros.span();
-        performJITMemcpy(start().untaggedPtr(), span.data(), span.size());
+        performJITMemcpy<jitMemcpyRepatch>(start().untaggedPtr(), span.data(), span.size());
     }
     jit_heap_deallocate(key());
 }

@@ -477,6 +477,61 @@ TEST(EncodeAPI, VP8GlobalHeaders) {
   EXPECT_EQ(vpx_codec_get_global_headers(&enc.ctx), nullptr);
 }
 
+// Encode a few frames for 2 temporal layers realtime mode.
+// Set duration to be very large on first frame, much smaller
+// on second frames, with the timestamp (pts) parameter very
+// inconsistent with the duration (i.e, pts != prev_pts + duration).
+// This reproduces the issue found in the bug: 431520320.
+TEST(EncodeAPI, Vp8ChromiumIssue431520320) {
+  // Initialize libvpx encoder.
+  vpx_codec_iface_t *const iface = vpx_codec_vp8_cx();
+  vpx_codec_ctx_t enc;
+  vpx_codec_enc_cfg_t cfg;
+
+  ASSERT_EQ(vpx_codec_enc_config_default(iface, &cfg, 0), VPX_CODEC_OK);
+
+  cfg.g_w = 320;
+  cfg.g_h = 240;
+  cfg.g_lag_in_frames = 0;
+  cfg.rc_target_bitrate = 500;
+
+  // 2-layers, 2-frame period.
+  int ids[2] = { 0, 1 };
+  cfg.ts_periodicity = 2;
+  cfg.ts_number_layers = 2;
+  cfg.ts_rate_decimator[0] = 2;
+  cfg.ts_rate_decimator[1] = 1;
+  cfg.ts_target_bitrate[0] = 300;
+  cfg.ts_target_bitrate[1] = 500;
+  memcpy(cfg.ts_layer_id, ids, sizeof(ids));
+
+  ASSERT_EQ(vpx_codec_enc_init(&enc, iface, &cfg, 0), VPX_CODEC_OK);
+
+  // Create input image.
+  vpx_image_t *const image =
+      CreateImage(VPX_BITS_8, VPX_IMG_FMT_I420, cfg.g_w, cfg.g_h);
+  ASSERT_NE(image, nullptr);
+
+  // Encode first frame.
+  ASSERT_EQ(
+      vpx_codec_encode(&enc, image, 0, /*duration=*/800000, 0, VPX_DL_REALTIME),
+      VPX_CODEC_OK);
+
+  // Encode second frame.
+  ASSERT_EQ(vpx_codec_encode(&enc, image, 40000, /*duration=*/40000, 0,
+                             VPX_DL_REALTIME),
+            VPX_CODEC_OK);
+
+  // Encode third frame.
+  ASSERT_EQ(vpx_codec_encode(&enc, image, 80000, /*duration=*/40000, 0,
+                             VPX_DL_REALTIME),
+            VPX_CODEC_OK);
+
+  // Free resources.
+  vpx_img_free(image);
+  ASSERT_EQ(vpx_codec_destroy(&enc), VPX_CODEC_OK);
+}
+
 TEST(EncodeAPI, AomediaIssue3509VbrMinSection2PercentVP8) {
   // Initialize libvpx encoder.
   vpx_codec_iface_t *const iface = vpx_codec_vp8_cx();
@@ -700,7 +755,7 @@ TEST(EncodeAPI, MultiResEncode) {
     cfg[0].g_timebase.num = 1;                 /* Set fps */
     cfg[0].g_timebase.den = framerate;
 
-    memcpy(&cfg[1], &cfg[0], sizeof(cfg[0]));
+    cfg[1] = cfg[0];
     cfg[1].rc_target_bitrate = 500;
     cfg[1].g_w = width_down;
     cfg[1].g_h = height_down;
@@ -1029,6 +1084,62 @@ TEST(EncodeAPI, PtsOrDurationTooBig) {
     ASSERT_EQ(vpx_codec_encode(&enc, image, INT64_MAX / 1000000, 1, 0,
                                VPX_DL_BEST_QUALITY),
               VPX_CODEC_INVALID_PARAM);
+
+    // Free resources.
+    vpx_img_free(image);
+    ASSERT_EQ(vpx_codec_destroy(&enc), VPX_CODEC_OK);
+  }
+}
+
+TEST(EncodeAPI, PerFramePsnr) {
+  for (const auto *iface : kCodecIfaces) {
+    SCOPED_TRACE(vpx_codec_iface_name(iface));
+    vpx_codec_enc_cfg_t cfg;
+    ASSERT_EQ(vpx_codec_enc_config_default(iface, &cfg, 0), VPX_CODEC_OK);
+    cfg.g_lag_in_frames = 0;
+
+    vpx_codec_ctx_t enc;
+    ASSERT_EQ(vpx_codec_enc_init(&enc, iface, &cfg, 0), VPX_CODEC_OK);
+
+    vpx_image_t *const image =
+        CreateImage(VPX_BITS_8, VPX_IMG_FMT_I420, cfg.g_w, cfg.g_h);
+    ASSERT_NE(image, nullptr);
+
+    vpx_enc_frame_flags_t psnr_flags = VPX_EFLAG_CALCULATE_PSNR;
+    ASSERT_EQ(vpx_codec_encode(&enc, image, /*pts=*/0, /*duration=*/1,
+                               psnr_flags, VPX_DL_REALTIME),
+              VPX_CODEC_OK);
+
+    const vpx_codec_cx_pkt_t *pkt;
+    vpx_codec_iter_t iter = nullptr;
+    bool had_psnr = false;
+    while ((pkt = vpx_codec_get_cx_data(&enc, &iter)) != nullptr) {
+      if (pkt->kind != VPX_CODEC_CX_FRAME_PKT) {
+        ASSERT_EQ(pkt->kind, VPX_CODEC_PSNR_PKT);
+        had_psnr = true;
+      }
+    }
+    EXPECT_TRUE(had_psnr);
+
+    vpx_enc_frame_flags_t no_psnr_flags = 0;
+    ASSERT_EQ(vpx_codec_encode(&enc, image, /*pts=*/1, /*duration=*/1,
+                               no_psnr_flags, VPX_DL_REALTIME),
+              VPX_CODEC_OK);
+
+    iter = nullptr;
+    had_psnr = false;
+    while ((pkt = vpx_codec_get_cx_data(&enc, &iter)) != nullptr) {
+      if (pkt->kind != VPX_CODEC_CX_FRAME_PKT) {
+        ASSERT_EQ(pkt->kind, VPX_CODEC_PSNR_PKT);
+        had_psnr = true;
+      }
+    }
+#if CONFIG_INTERNAL_STATS
+    // CONFIG_INTERNAL_STATS unconditionally generates PSNR.
+    EXPECT_TRUE(had_psnr);
+#else
+    EXPECT_FALSE(had_psnr);
+#endif  // CONFIG_INTERNAL_STATS
 
     // Free resources.
     vpx_img_free(image);
@@ -1495,6 +1606,42 @@ TEST(EncodeAPI, Buganizer311294795) {
   encoder.Encode(false);
 }
 
+// Test case to capture assert issue triggered in
+// vp9_bitstream.c for good_quality, speed 1, lossless;
+// See comment#22 in issue:433941753.
+TEST(EncodeAPI, AssertIssueGoodQualitySpeed1Lossless) {
+  vpx_codec_iface_t *const iface = vpx_codec_vp9_cx();
+  vpx_codec_ctx_t enc;
+  vpx_codec_enc_cfg_t cfg;
+  ASSERT_EQ(vpx_codec_enc_config_default(iface, &cfg, 0), VPX_CODEC_OK);
+  cfg.g_w = 1540;
+  cfg.g_h = 838;
+  cfg.g_profile = 0;
+  cfg.g_bit_depth = VPX_BITS_8;
+  cfg.g_timebase.num = 1;
+  cfg.g_timebase.den = 10000;
+  cfg.g_pass = VPX_RC_ONE_PASS;
+  cfg.g_lag_in_frames = 0;
+  cfg.rc_end_usage = VPX_VBR;
+  cfg.g_threads = 1;
+  cfg.rc_target_bitrate = 10000;
+  ASSERT_EQ(vpx_codec_enc_init(&enc, iface, &cfg, 0), VPX_CODEC_OK);
+  ASSERT_EQ(vpx_codec_control(&enc, VP9E_SET_LOSSLESS, 1), VPX_CODEC_OK);
+  ASSERT_EQ(vpx_codec_control(&enc, VP8E_SET_CPUUSED, 1), VPX_CODEC_OK);
+  libvpx_test::RandomVideoSource video;
+  video.SetSize(cfg.g_w, cfg.g_h);
+  video.SetImageFormat(VPX_IMG_FMT_I420);
+  video.set_limit(20);
+  video.Begin();
+  do {
+    ASSERT_EQ(vpx_codec_encode(&enc, video.img(), video.pts(), video.duration(),
+                               0, VPX_DL_GOOD_QUALITY),
+              VPX_CODEC_OK);
+    video.Next();
+  } while (video.img() != nullptr);
+  ASSERT_EQ(vpx_codec_destroy(&enc), VPX_CODEC_OK);
+}
+
 TEST(EncodeAPI, Buganizer317105128) {
   VP9Encoder encoder(-9);
   encoder.Configure(0, 1, 1, VPX_CBR, VPX_DL_GOOD_QUALITY);
@@ -1922,6 +2069,28 @@ TEST(EncodeAPI, Chromium352414650) {
   ASSERT_EQ(vpx_codec_destroy(&enc), VPX_CODEC_OK);
 }
 
+TEST(EncodeAPI, PerFramePsnrNotSupportedWithLagInFrames) {
+  vpx_codec_iface_t *const iface = vpx_codec_vp9_cx();
+  vpx_codec_enc_cfg_t cfg;
+  ASSERT_EQ(vpx_codec_enc_config_default(iface, &cfg, 0), VPX_CODEC_OK);
+  ASSERT_NE(cfg.g_lag_in_frames, 0u);
+
+  vpx_codec_ctx_t enc;
+  ASSERT_EQ(vpx_codec_enc_init(&enc, iface, &cfg, 0), VPX_CODEC_OK);
+
+  vpx_image_t *const image =
+      CreateImage(VPX_BITS_8, VPX_IMG_FMT_I420, cfg.g_w, cfg.g_h);
+  ASSERT_NE(image, nullptr);
+
+  vpx_enc_frame_flags_t psnr_flags = VPX_EFLAG_CALCULATE_PSNR;
+  ASSERT_EQ(vpx_codec_encode(&enc, image, /*pts=*/0, /*duration=*/1, psnr_flags,
+                             VPX_DL_REALTIME),
+            VPX_CODEC_INCAPABLE);
+
+  // Free resources.
+  vpx_img_free(image);
+  ASSERT_EQ(vpx_codec_destroy(&enc), VPX_CODEC_OK);
+}
 #endif  // CONFIG_VP9_ENCODER
 
 }  // namespace

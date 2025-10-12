@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-object-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -13,6 +10,8 @@ esid: pending
  * ES6 allows duplicate property names in object literals, even in strict mode.
  * These tests modify the tests in test262 to reflect this change.
  */
+
+var a;
 
 // test262/ch11/11.1/11.1.5/11.1.5-4-4-a-1-s.js
 a = function() { "use strict"; return { foo: 0, foo : 1 }};

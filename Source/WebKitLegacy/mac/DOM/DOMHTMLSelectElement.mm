@@ -187,9 +187,9 @@
     auto& coreElement = *core(element);
     Variant<RefPtr<WebCore::HTMLOptionElement>, RefPtr<WebCore::HTMLOptGroupElement>> variantElement;
     if (is<WebCore::HTMLOptionElement>(coreElement))
-        variantElement = &downcast<WebCore::HTMLOptionElement>(coreElement);
+        variantElement = downcast<WebCore::HTMLOptionElement>(coreElement);
     else if (is<WebCore::HTMLOptGroupElement>(coreElement))
-        variantElement = &downcast<WebCore::HTMLOptGroupElement>(coreElement);
+        variantElement = downcast<WebCore::HTMLOptGroupElement>(coreElement);
     else
         raiseTypeErrorException();
     raiseOnDOMError(IMPL->add(WTFMove(variantElement), WebCore::HTMLSelectElement::HTMLElementOrInt(core(before))));

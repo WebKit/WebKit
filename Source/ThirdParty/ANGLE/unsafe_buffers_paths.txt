@@ -1,0 +1,43 @@
+# Copyright 2025 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# See https://source.chromium.org/chromium/chromium/src/+/main:docs/unsafe_buffers.md
+
+# Checks to enforce
+.buffers,libc
+
+# These directories are excluded
+-build/
+-samples/
+-src/third_party/
+-src/common/third_party/
+-src/tests/capture_tests/
+-src/tests/capture_replay_tests/
+-src/tests/restricted_traces/
+-testing/
+-third_party/
+-tools/
+
+# These generated files are excluded until templates are updated.
+-src/common/Float16ToFloat32.cpp
+-src/common/gl_enum_utils_autogen.cpp
+-src/common/spirv/spirv_instruction_builder_autogen.cpp
+-src/common/spirv/spirv_instruction_parser_autogen.cpp
+-src/compiler/preprocessor/preprocessor_lex_autogen.cpp
+-src/compiler/preprocessor/preprocessor_tab_autogen.cpp
+-src/compiler/translator/ImmutableString_autogen.cpp
+-src/compiler/translator/SymbolTable_autogen.cpp
+-src/compiler/translator/glslang_lex_autogen.cpp
+-src/compiler/translator/glslang_tab_autogen.cpp
+-src/compiler/translator/hlsl/emulated_builtin_functions_hlsl_autogen.cpp
+-src/libANGLE/renderer/vulkan/vk_internal_shaders_autogen.cpp
+-src/libGLESv2/egl_stubs_getprocaddress_autogen.cpp
+-util/autogen/angle_features_autogen.cpp
+-util/capture/frame_capture_replay_autogen.cpp
+-util/capture/trace_egl_loader_autogen.cpp
+-util/capture/trace_gles_loader_autogen.cpp
+-util/capture/trace_interpreter_autogen.cpp
+-util/egl_loader_autogen.cpp
+-util/gles_loader_autogen.cpp
+-util/windows/wgl_loader_autogen.cpp

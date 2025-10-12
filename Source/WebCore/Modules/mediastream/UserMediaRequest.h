@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,15 +34,15 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "ActiveDOMObject.h"
-#include "CaptureDevice.h"
-#include "IDLTypes.h"
-#include "MediaAccessDenialReason.h"
-#include "MediaConstraints.h"
-#include "MediaStreamPrivate.h"
-#include "MediaStreamTrack.h"
-#include "MediaStreamRequest.h"
-#include "UserMediaRequestIdentifier.h"
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/CaptureDevice.h>
+#include <WebCore/IDLTypes.h>
+#include <WebCore/MediaAccessDenialReason.h>
+#include <WebCore/MediaConstraints.h>
+#include <WebCore/MediaStreamPrivate.h>
+#include <WebCore/MediaStreamRequest.h>
+#include <WebCore/MediaStreamTrack.h>
+#include <WebCore/UserMediaRequestIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Identified.h>
 #include <wtf/ObjectIdentifier.h>
@@ -92,7 +92,7 @@ private:
     Vector<String> m_videoDeviceUIDs;
     Vector<String> m_audioDeviceUIDs;
 
-    UniqueRef<DOMPromiseDeferred<IDLInterface<MediaStream>>> m_promise;
+    const UniqueRef<DOMPromiseDeferred<IDLInterface<MediaStream>>> m_promise;
     CompletionHandler<void()> m_allowCompletionHandler;
     MediaStreamRequest m_request;
     TrackConstraints m_audioConstraints;

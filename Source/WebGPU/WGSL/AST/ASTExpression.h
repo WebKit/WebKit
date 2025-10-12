@@ -82,7 +82,6 @@ static bool isType(const WGSL::AST::Node& node)
     switch (node.kind()) {
         // Expressions
     case WGSL::AST::NodeKind::BinaryExpression:
-    case WGSL::AST::NodeKind::BitcastExpression:
     case WGSL::AST::NodeKind::IndexAccessExpression:
     case WGSL::AST::NodeKind::CallExpression:
     case WGSL::AST::NodeKind::IdentifierExpression:

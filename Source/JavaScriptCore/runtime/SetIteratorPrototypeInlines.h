@@ -25,9 +25,29 @@
 
 #pragma once
 
-#include "SetIteratorPrototype.h"
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/JSSetIterator.h>
+#include <JavaScriptCore/SetIteratorPrototype.h>
 
 namespace JSC {
+
+ALWAYS_INLINE bool setIteratorProtocolIsFastAndNonObservable(VM& vm, JSSetIterator* setIterator)
+{
+    JSGlobalObject* globalObject = setIterator->globalObject();
+
+    if (!globalObject->isSetPrototypeIteratorProtocolFastAndNonObservable())
+        return false;
+
+    if (setIterator->getPrototypeDirect() != globalObject->setIteratorPrototype())
+        return false;
+
+    if (setIterator->hasCustomProperties()) {
+        if (setIterator->getDirectOffset(vm, vm.propertyNames->next) != invalidOffset)
+            return false;
+    }
+
+    return true;
+}
 
 inline Structure* SetIteratorPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {

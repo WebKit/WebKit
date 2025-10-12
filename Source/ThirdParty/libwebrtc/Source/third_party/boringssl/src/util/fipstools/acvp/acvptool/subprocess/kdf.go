@@ -1,16 +1,16 @@
-// Copyright (c) 2020, Google Inc.
+// Copyright 2020 The BoringSSL Authors
 //
-// Permission to use, copy, modify, and/or distribute this software for any
-// purpose with or without fee is hereby granted, provided that the above
-// copyright notice and this permission notice appear in all copies.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-// WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-// SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-// OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-// CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package subprocess
 
@@ -75,10 +75,13 @@ func (k *kdfPrimitive) Process(vectorSet []byte, m Transactable) (any, error) {
 			return nil, fmt.Errorf("%d bit key in test group %d: fractional bytes not supported", group.OutputBits, group.ID)
 		}
 
-		if group.KDFMode != "counter" {
-			// feedback mode would need the IV to be handled.
+		if group.KDFMode != "counter" && group.KDFMode != "feedback" {
 			// double-pipeline mode is not useful.
 			return nil, fmt.Errorf("KDF mode %q not supported", group.KDFMode)
+		}
+
+		if group.KDFMode == "feedback" && !group.ZeroIV {
+			return nil, fmt.Errorf("feedback mode with non-zero IV not supported")
 		}
 
 		switch group.CounterLocation {
@@ -108,7 +111,11 @@ func (k *kdfPrimitive) Process(vectorSet []byte, m Transactable) (any, error) {
 			}
 
 			// Make the call to the crypto module.
-			m.TransactAsync("KDF-counter", 3, [][]byte{outputBytes, []byte(group.MACMode), []byte(group.CounterLocation), key, counterBits}, func(result [][]byte) error {
+			cmd := "KDF-counter"
+			if group.KDFMode == "feedback" {
+				cmd = "KDF-feedback"
+			}
+			m.TransactAsync(cmd, 3, [][]byte{outputBytes, []byte(group.MACMode), []byte(group.CounterLocation), key, counterBits}, func(result [][]byte) error {
 				testResp.ID = test.ID
 				if test.Deferred {
 					testResp.KeyIn = hex.EncodeToString(result[0])

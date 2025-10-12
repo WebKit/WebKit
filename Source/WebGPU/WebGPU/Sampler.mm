@@ -205,7 +205,7 @@ static MTLSamplerDescriptor *createMetalDescriptorFromDescriptor(const WGPUSampl
 
 Ref<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
 {
-    if (descriptor.nextInChain || !isValid())
+    if (!isValid())
         return Sampler::createInvalid(*this);
 
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createsampler

@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "FormattingConstraints.h"
-#include "InlineDisplayContent.h"
-#include "InlineItem.h"
-#include "LineLayoutResult.h"
+#include <WebCore/FormattingConstraints.h>
+#include <WebCore/InlineDisplayContent.h>
+#include <WebCore/InlineItem.h>
+#include <WebCore/LineLayoutResult.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {

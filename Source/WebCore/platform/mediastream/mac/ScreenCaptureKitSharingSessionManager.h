@@ -26,7 +26,7 @@
 
 #if HAVE(SCREEN_CAPTURE_KIT)
 
-#include "DisplayCapturePromptType.h"
+#include <WebCore/DisplayCapturePromptType.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>

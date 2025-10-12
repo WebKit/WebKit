@@ -1,0 +1,68 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true SelectionHonorsOverflowScrolling=true useHardwareKeyboardMode=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 16px;
+    font-family: system-ui;
+    margin: 0;
+}
+
+.container {
+    width: 200px;
+    height: 200px;
+    will-change: transform;
+    z-index: 1;
+    line-height: 200px;
+    font-size: 80px;
+    position: absolute;
+    background-color: white;
+    border: 1px solid tomato;
+    box-sizing: border-box;
+    top: 100px;
+    left: 100px;
+    outline: none;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the caret rect is correct after resizing the layer containing the selection. The caret should still be visible after the box expands");
+
+    container = document.querySelector(".container");
+    container.focus();
+    container.addEventListener("keydown", () => {
+        container.style = "top: 50px; left: 50px; padding: 50px; width: 300px; height: 300px;";
+    });
+
+    await UIHelper.activateElementAndWaitForInputSession(container);
+
+    caretRectBeforeResize = await UIHelper.getUICaretViewRect();
+
+    await UIHelper.keyDown("escape");
+    await UIHelper.ensurePresentationUpdate();
+
+    caretRectAfterResize = await UIHelper.getUICaretViewRect();
+
+    shouldBe("caretRectBeforeResize.top", "caretRectAfterResize.top");
+    shouldBe("caretRectBeforeResize.left", "caretRectAfterResize.left");
+    shouldBe("caretRectBeforeResize.width", "caretRectAfterResize.width");
+    shouldBe("caretRectBeforeResize.height", "caretRectAfterResize.height");
+
+    container.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div id="description"></div>
+    <div id="console"></div>
+    <div class="container" contenteditable></div>
+</body>
+</html>

@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CrossOriginEmbedderPolicy.h"
-#include "ReportBody.h"
-#include "ViolationReportType.h"
+#include <WebCore/CrossOriginEmbedderPolicy.h>
+#include <WebCore/ReportBody.h>
+#include <WebCore/ViolationReportType.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/URL.h>
 

@@ -1,8 +1,8 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
- * Copyright (C) 2008 Collabora, Ltd.  All rights reserved.
+ * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1320,7 +1320,7 @@ String PlatformKeyboardEvent::singleCharacterString(unsigned val)
 
         String retVal;
         if (uchar16)
-            retVal = String(unsafeMakeSpan((UChar*)uchar16, static_cast<size_t>(nwc)));
+            retVal = String(unsafeMakeSpan((char16_t*)uchar16, static_cast<size_t>(nwc)));
         else
             retVal = String();
 
@@ -1334,6 +1334,7 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
 {
     // Can only change type from KeyDown to RawKeyDown or Char, as we lack information for other conversions.
     ASSERT(m_type == PlatformEvent::Type::KeyDown);
+    ASSERT(type == Type::RawKeyDown || type == Type::Char);
     m_type = type;
 
     if (backwardCompatibilityMode || m_handledByInputMethod)
@@ -1344,7 +1345,6 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
         m_unmodifiedText = String();
     } else {
         m_keyIdentifier = String();
-        m_windowsVirtualKeyCode = 0;
     }
 }
 

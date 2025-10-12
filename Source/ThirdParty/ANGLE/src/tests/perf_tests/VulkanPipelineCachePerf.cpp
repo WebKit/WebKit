@@ -5,6 +5,11 @@
 //
 // VulkanPipelineCachePerf:
 //   Performance benchmark for the Vulkan Pipeline cache.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "ANGLEPerfTest.h"
 

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CollectionScope.h"
+#include <JavaScriptCore/CollectionScope.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>

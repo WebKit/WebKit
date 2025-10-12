@@ -24,10 +24,10 @@
 
 #pragma once
 
-#include "CSSInsetFunction.h"
-#include "StyleBorderRadius.h"
-#include "StylePathComputation.h"
-#include "StylePrimitiveNumericTypes.h"
+#include <WebCore/CSSInsetFunction.h>
+#include <WebCore/StyleBorderRadius.h>
+#include <WebCore/StylePathComputation.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
 
 namespace WebCore {
 

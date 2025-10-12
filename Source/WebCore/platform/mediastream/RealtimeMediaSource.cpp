@@ -62,7 +62,7 @@
 namespace WebCore {
 
 struct VideoFrameAdaptor {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(VideoFrameAdaptor);
 
     VideoFrameAdaptor(IntSize size, double frameRate)
         : size(size)
@@ -256,7 +256,7 @@ void RealtimeMediaSource::notifySettingsDidChangeObservers(OptionSet<RealtimeMed
 
     ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, flags);
 
-    scheduleDeferredTask([this] {
+    scheduleDeferredTask([this, protectedThis = Ref { *this }] {
         m_pendingSettingsDidChangeNotification = false;
         forEachObserver([](auto& observer) {
             observer.sourceSettingsChanged();
@@ -1351,7 +1351,7 @@ void RealtimeMediaSource::setIntrinsicSize(const IntSize& intrinsicSize, bool no
 
     m_intrinsicSize = intrinsicSize;
     if (notifyObservers) {
-        scheduleDeferredTask([this] {
+        scheduleDeferredTask([this, protectedThis = Ref { *this }] {
             notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
         });
     }
@@ -1501,7 +1501,7 @@ void RealtimeMediaSource::setType(Type type)
 
     m_type = type;
 
-    scheduleDeferredTask([this] {
+    scheduleDeferredTask([this, protectedThis = Ref { *this }] {
         forEachObserver([](auto& observer) {
             observer.sourceSettingsChanged();
         });
@@ -1552,7 +1552,7 @@ bool RealtimeMediaSource::setShouldApplyRotation()
 #if !RELEASE_LOG_DISABLED
 void RealtimeMediaSource::setLogger(const Logger& newLogger, uint64_t newLogIdentifier)
 {
-    m_logger = &newLogger;
+    m_logger = newLogger;
     m_logIdentifier = newLogIdentifier;
     ALWAYS_LOG(LOGIDENTIFIER, m_type, ", ", name(), ", ", m_hashedID, ", ", m_ephemeralHashedID);
 }

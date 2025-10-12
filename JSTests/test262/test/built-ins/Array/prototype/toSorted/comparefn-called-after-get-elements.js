@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-array.prototype.toSorted
+esid: sec-array.prototype.tosorted
 description: >
   Array.prototype.toSorted reads all the array elements before calling compareFn
 info: |

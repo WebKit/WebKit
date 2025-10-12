@@ -52,7 +52,7 @@ class Object
 {
     WTF_MAKE_NONCOPYABLE(Object);
 public:
-    enum class Type {
+    enum class Type : uint8_t {
         // Base types
         Null = 0,
         Array,
@@ -98,7 +98,6 @@ public:
         Rect,
         
         // UIProcess types
-        ApplicationCacheManager,
 #if ENABLE(APPLICATION_MANIFEST)
         ApplicationManifest,
 #endif
@@ -134,6 +133,7 @@ public:
         GeolocationPermissionRequest,
         HTTPCookieStore,
         HitTestResult,
+        JSHandle,
         GeolocationPosition,
         GrammarDetail,
         IconDatabase,
@@ -170,6 +170,8 @@ public:
         RunJavaScriptAlertResultListener,
         RunJavaScriptConfirmResultListener,
         RunJavaScriptPromptResultListener,
+        ScriptMessage,
+        SerializedNode,
         SpeechRecognitionPermissionCallback,
         TextChecker,
         TextRun,

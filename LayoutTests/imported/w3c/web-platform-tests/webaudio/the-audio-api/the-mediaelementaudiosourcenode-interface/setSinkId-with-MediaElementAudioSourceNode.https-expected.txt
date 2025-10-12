@@ -1,0 +1,7 @@
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN setSinkId on default audio output should always work
+NOTRUN setSinkId fails with NotFoundError on made up deviceid
+NOTRUN setSinkId() with output device ID exposed by selectAudioOutput() should resolve
+

@@ -1,0 +1,675 @@
+; Copyright (C) 2025 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+;    notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+;    notice, this list of conditions and the following disclaimer in the
+;    documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+
+(define-once (asset-access . options)
+    (let ((asset-access-filter
+            (require-all
+              (require-any
+                (home-subpath "/Library/Assets")
+                (subpath "/private/var/MobileAsset"))
+              (extension "com.apple.assets.read"))))
+        ;; <rdar://problem/10710883>
+        ;; <rdar://problem/11569106>
+        (if (memq 'with-media-playback options)
+            (play-media asset-access-filter))))
+
+(define-once (play-audio)
+    (allow mach-lookup
+           (global-name "com.apple.audio.AURemoteIOServer")))
+
+(define-once (play-media . filters)
+    (if (not (null? filters))
+        ;; <rdar://problem/9875794>
+        (allow file-issue-extension
+            (require-all
+                (apply require-any filters)
+                (extension-class "com.apple.mediaserverd.read"))))
+    ;; CoreMedia framework.
+    (allow mach-lookup
+           (global-name "com.apple.coremedia.capturesession")      ; Actually for video capture
+           (global-name "com.apple.coremedia.capturesource")       ; Also for video capture (<rdar://problem/15794291>).
+           (global-name "com.apple.coremedia.mediaplaybackd.videotarget.xpc") ; Needed for FigVideoTarget
+           (global-name "com.apple.coremedia.remotequeue"))
+    (allow mach-lookup
+#if HAVE(REFACTORED_MEDIASERVERD)
+           (global-name "com.apple.airplay.endpoint.xpc")
+           (global-name "com.apple.mediaexperience.endpoint.xpc")
+#endif
+           (global-name "com.apple.coremedia.admin")
+           (global-name "com.apple.coremedia.mediaparserd.fairplaypsshatomparser.xpc")
+           (global-name "com.apple.coremedia.mediaparserd.formatreader.xpc")
+           (global-name "com.apple.coremedia.mediaparserd.manifold.xpc")
+           (global-name "com.apple.coremedia.routediscoverer.xpc")
+           (global-name "com.apple.coremedia.routingcontext.xpc")
+           (global-name "com.apple.coremedia.systemcontroller.xpc")
+           (global-name "com.apple.coremedia.volumecontroller.xpc"))
+
+    (allow mach-lookup
+        (global-name
+            "com.apple.coremedia.mediaplaybackd.asset.xpc"
+            "com.apple.coremedia.mediaplaybackd.assetimagegenerator.xpc"
+            "com.apple.coremedia.mediaplaybackd.audiodeviceclock.xpc"
+            "com.apple.coremedia.mediaplaybackd.audioprocessingtap.xpc"
+            "com.apple.coremedia.mediaplaybackd.cpe.xpc"
+            "com.apple.coremedia.mediaplaybackd.cpeprotector.xpc"
+            "com.apple.coremedia.mediaplaybackd.customurlloader.xpc"
+            "com.apple.coremedia.mediaplaybackd.figcontentkeysession.xpc"
+            "com.apple.coremedia.mediaplaybackd.figcontentkeyboss.xpc"
+            "com.apple.coremedia.mediaplaybackd.figcpecryptor.xpc"
+#if HAVE(AVMETRICS)
+            "com.apple.coremedia.mediaplaybackd.figmetriceventtimeline.xpc"
+#endif
+            "com.apple.coremedia.mediaplaybackd.formatreader.xpc"
+            "com.apple.coremedia.mediaplaybackd.player.xpc"
+            "com.apple.coremedia.mediaplaybackd.remaker.xpc"
+            "com.apple.coremedia.mediaplaybackd.samplebufferaudiorenderer.xpc"
+            "com.apple.coremedia.mediaplaybackd.samplebufferrendersynchronizer.xpc"
+            "com.apple.coremedia.mediaplaybackd.sandboxserver.xpc"
+            "com.apple.coremedia.mediaplaybackd.visualcontext.xpc"
+            "com.apple.coremedia.mediaplaybackd.videoqueue"
+            "com.apple.coremedia.videocodecd.compressionsession"
+            "com.apple.coremedia.videocodecd.compressionsession.xpc"
+            "com.apple.coremedia.videocodecd.decompressionsession"
+            "com.apple.coremedia.videocodecd.decompressionsession.xpc"))
+
+    (allow mach-lookup (with report) (with telemetry)
+#if !HAVE(REFACTORED_MEDIASERVERD)
+        (global-name "com.apple.coremedia.endpoint.xpc")
+#endif
+        (global-name "com.apple.coremedia.routingsessionmanager.xpc")
+        (global-name "com.apple.coremedia.sts"))
+
+    (mobile-preferences-read
+        "com.apple.avfoundation"
+        "com.apple.coreaudio"
+        "com.apple.coremedia"
+        "com.apple.corevideo"
+        "com.apple.itunesstored") ; Needed by MediaPlayer framework
+
+    ;; AVF needs to see these network preferences:
+    (allow file-read*
+        (literal "/private/var/preferences/com.apple.networkd.plist"))
+
+    ;; Required by the MediaPlayer framework.
+    (allow mach-lookup
+        (global-name "com.apple.audio.AudioSession"))
+
+    (allow mach-lookup (with telemetry)
+        (global-name "com.apple.airplay.apsynccontroller.xpc"))
+
+    ;; Allow mediaserverd to issue file extensions for the purposes of reading media
+    (allow file-issue-extension (require-all
+        (extension "com.apple.app-sandbox.read")
+        (extension-class "com.apple.mediaserverd.read"))))
+
+(define-once (media-remote)
+    (mobile-preferences-read
+        "com.apple.mediaremote")
+    (allow mach-lookup
+        (global-name "com.apple.mediaremoted.xpc")))
+
+(define-once (media-capture-support)
+    ;; Media capture, microphone access
+    (with-filter (extension "com.apple.webkit.microphone")
+        (allow device-microphone)
+
+        (with-filter (system-attribute apple-internal)
+            (allow user-preference-read (preference-domain "com.apple.coreaudio"))
+            (allow file-read* file-write*
+                (subpath "/private/tmp/AudioCapture")
+                (subpath "/tmp/AudioCapture")))
+
+        (allow mach-lookup
+            (global-name "com.apple.audio.PhaseXPCServer")
+            (global-name "com.apple.springboard.statusbarservices")))
+
+    ;; Media capture, camera access
+    (with-filter (extension "com.apple.webkit.camera")
+        (allow user-preference-read
+            (preference-domain "com.apple.coremedia"))
+        (allow file-read* (with telemetry) (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
+        (allow device-camera)))
+
+(define-once (accessibility-support)
+    (mobile-preferences-read "com.apple.Accessibility"))
+    
+(define-once (media-accessibility-support)
+    ;; <rdar://problem/12801477>
+    (allow mach-lookup (with telemetry)
+        (global-name "com.apple.accessibility.mediaaccessibilityd"))
+
+    ;; <rdar://problem/12250145>
+    (mobile-preferences-read "com.apple.mediaaccessibility"))
+
+;;;
+;;; Declare that the application uses the OpenGL, Metal, and CoreML hardware & frameworks.
+;;;
+(define-once (opengl)
+    (allow iokit-open*
+        (iokit-connection "IOGPU"))
+    (allow iokit-open-user-client
+        (iokit-user-client-class "AGXDeviceUserClient"))
+
+    (allow iokit-get-properties
+        (iokit-property "IOGLBundleName")
+        (iokit-property "IOGLESBundleName")
+        (iokit-property "IOGLESDefaultUseMetal")
+        (iokit-property "IOGLESMetalBundleName")
+        (iokit-property "MetalPluginClassName")
+        (iokit-property "MetalPluginName"))
+
+    (allow sysctl-read
+        (sysctl-name
+            "kern.bootsessionuuid"
+            "kern.boottime"))
+
+    (allow mach-lookup
+       ;; <rdar://problem/47268166>
+       (xpc-service-name "com.apple.MTLCompilerService"))
+    
+    (mobile-preferences-read
+        "com.apple.Metal")) ;; <rdar://problem/25535471>
+
+(define-once (device-access)
+    (allow file-read* file-write-data file-ioctl
+           (literal "/dev/dtracehelper"))
+
+    (allow file-read* (with telemetry)
+           (literal "/dev/random")
+           (literal "/dev/urandom")))
+
+(define required-etc-files
+  (literal "/private/etc/passwd"))
+
+;; Things required by UIKit
+(define-once (uikit-requirements)
+    (mobile-preferences-read
+        "com.apple.coreanimation")
+
+    (allow mach-lookup
+        (global-name "com.apple.CARenderServer"))
+
+    (with-filter (require-not (sandbox-version-2))
+        (allow iokit-open-user-client (iokit-user-client-class "IOSurfaceAcceleratorClient")))
+    (with-filter (sandbox-version-2)
+        (allow iokit-open-user-client (iokit-user-client-class "IOSurfaceAcceleratorClient")
+            (apply-message-filter
+                (GPU_PROCESS_IOKIT_DEFAULT_FILTER_OPERATION (with telemetry) (with message "IOSurfaceAcceleratorClient")
+                    iokit-async-external-method
+                    iokit-external-trap
+                    iokit-external-method)
+                (allow iokit-external-method
+                    (iokit-method-number 1 10)))))
+
+    (allow iokit-open-user-client
+        (iokit-user-client-class "IOSurfaceRootUserClient")
+        (apply-message-filter
+            (allow (with telemetry) (with report) (with message "IOSurfaceRootUserClient")
+                iokit-async-external-method
+                iokit-external-trap
+                iokit-external-method)
+            (allow iokit-async-external-method
+                (iokit-method-number 40))
+            (allow iokit-external-trap
+                (iokit-trap-number 0 1 2 3 4 5 8 9))
+            (allow iokit-external-method
+                (iokit-method-number 0 4 5 9 10 11 12 13 20 27 32 34 35 36 38 39 41 44 54 58 59)))))
+
+(define (syscall-unix-allowed)
+     (syscall-number
+        SYS___disable_threadsignal
+        SYS___mac_syscall
+        SYS___pthread_sigmask
+        SYS___pthread_kill
+        SYS___semwait_signal
+        SYS_abort_with_payload
+        SYS_access
+        SYS_bsdthread_create
+        SYS_bsdthread_ctl
+        SYS_bsdthread_register
+        SYS_bsdthread_terminate
+        SYS_change_fdguard_np
+        SYS_chdir
+        SYS_close
+        SYS_close_nocancel
+        SYS_connect
+        SYS_csops
+        SYS_csops_audittoken
+        SYS_dup
+        SYS_dup2
+        SYS_exit
+        SYS_faccessat
+        SYS_fcntl
+        SYS_fcntl_nocancel
+        SYS_fileport_makefd
+#if PLATFORM(VISION) && ENABLE(MODEL_PROCESS)
+        SYS_fileport_makeport
+#endif
+        SYS_flock
+        SYS_fsetattrlist
+        SYS_fsetxattr
+        SYS_fsgetpath
+        SYS_fstat64
+        SYS_fstatat64
+        SYS_fstatfs64
+        SYS_ftruncate
+        SYS_getattrlist
+        SYS_getdirentries64
+        SYS_getegid
+        SYS_getentropy
+        SYS_geteuid
+        SYS_getfsstat64
+        SYS_getgid
+        SYS_getpid
+        SYS_getrlimit
+        SYS_getrusage
+        SYS_gettid
+        SYS_gettimeofday
+        SYS_getuid
+        SYS_getxattr
+        SYS_ioctl
+        SYS_issetugid
+        SYS_kdebug_trace64
+        SYS_kdebug_trace_string
+        SYS_kdebug_typefilter
+        SYS_kevent_id
+        SYS_kevent_qos
+        SYS_kqueue
+        SYS_kqueue_workloop_ctl
+        SYS_lseek
+        SYS_lstat64
+        SYS_mach_eventlink_signal_wait_until
+        SYS_mach_eventlink_wait_until
+        SYS_madvise
+        (when (defined? 'SYS_map_with_linking_np) SYS_map_with_linking_np)
+        SYS_memorystatus_control
+        SYS_mkdir
+        SYS_mmap
+        SYS_mprotect
+        SYS_msync
+        SYS_munmap
+        SYS_objc_bp_assist_cfg_np
+        SYS_open
+        SYS_open_nocancel
+        SYS_openat
+        SYS_os_fault_with_payload
+        SYS_pathconf
+        SYS_pread
+        SYS_proc_info
+        SYS_proc_info_extended_id
+        SYS_psynch_cvbroad
+        SYS_psynch_cvclrprepost
+        SYS_psynch_cvsignal
+        SYS_psynch_cvwait
+        SYS_psynch_mutexdrop
+        SYS_psynch_mutexwait
+        SYS_psynch_rw_rdlock
+        SYS_psynch_rw_unlock
+        SYS_psynch_rw_wrlock
+        SYS_read
+        SYS_read_nocancel
+        SYS_readlink
+        SYS_rename
+        SYS_sem_close
+        SYS_sem_open
+        SYS_sendto
+#if ASAN_ENABLED
+        SYS_setrlimit
+#endif
+        SYS_shared_region_check_np
+        SYS_shared_region_map_and_slide_2_np
+        SYS_shm_open
+        SYS_sigaction
+#if ASAN_ENABLED
+        SYS_sigaltstack
+#endif
+        SYS_sigprocmask
+        SYS_socket
+        SYS_stat64
+        SYS_statfs64
+        SYS_sysctl
+        SYS_sysctlbyname
+        SYS_thread_selfid
+        SYS_ulock_wait
+        SYS_ulock_wait2
+        SYS_ulock_wake
+        SYS_work_interval_ctl
+        SYS_workq_kernreturn
+        SYS_workq_open
+        SYS_write_nocancel
+        SYS_writev))
+
+(define (syscall-mach-allowed)
+    (machtrap-number
+        MSC__kernelrpc_mach_port_allocate_trap
+        MSC__kernelrpc_mach_port_construct_trap
+        MSC__kernelrpc_mach_port_deallocate_trap
+        MSC__kernelrpc_mach_port_destruct_trap
+        MSC__kernelrpc_mach_port_extract_member_trap
+        MSC__kernelrpc_mach_port_get_attributes_trap
+        MSC__kernelrpc_mach_port_guard_trap
+        MSC__kernelrpc_mach_port_insert_member_trap
+        MSC__kernelrpc_mach_port_insert_right_trap
+        MSC__kernelrpc_mach_port_mod_refs_trap
+        MSC__kernelrpc_mach_port_request_notification_trap
+        MSC__kernelrpc_mach_port_type_trap
+        MSC__kernelrpc_mach_port_unguard_trap
+        MSC__kernelrpc_mach_vm_allocate_trap
+        MSC__kernelrpc_mach_vm_deallocate_trap
+        MSC__kernelrpc_mach_vm_map_trap
+        MSC__kernelrpc_mach_vm_protect_trap
+        MSC__kernelrpc_mach_vm_purgable_control_trap
+        MSC_host_create_mach_voucher_trap
+        MSC_host_self_trap
+        MSC_mach_generate_activity_id
+        MSC_mach_msg_trap
+        (when (defined? 'MSC_mach_msg2_trap) MSC_mach_msg2_trap)
+        MSC_mach_reply_port
+        MSC_mach_timebase_info_trap
+        MSC_mach_voucher_extract_attr_recipe_trap
+        MSC_mk_timer_arm
+        MSC_mk_timer_cancel
+        MSC_mk_timer_create
+        MSC_mk_timer_destroy
+        MSC_pid_for_task
+        MSC_semaphore_signal_trap
+        MSC_semaphore_timedwait_trap
+        MSC_semaphore_wait_trap
+        MSC_semaphore_wait_signal_trap
+        MSC_syscall_thread_switch
+        MSC_task_name_for_pid
+        MSC_task_self_trap
+        MSC_thread_get_special_reply_port))
+
+ (define (kernel-mig-routine-in-use-watchos)
+    (kernel-mig-routine
+        io_connect_set_notification_port
+        mach_make_memory_entry
+        mach_make_memory_entry_64
+        vm_copy
+        vm_remap_external))
+
+(define (syscall-mig-allowed)
+#if ASAN_ENABLED
+    (kernel-mig-routine
+        mach_vm_region_recurse
+        task_set_exc_guard_behavior)
+#endif
+     (kernel-mig-routine
+        _mach_make_memory_entry
+        clock_get_time
+        host_get_clock_service
+        host_get_io_master
+        host_get_special_port
+        host_info
+        io_connect_async_method
+        io_connect_method
+        io_connect_set_notification_port_64
+        io_iterator_next
+        io_registry_entry_from_path
+        io_registry_entry_get_property_bin_buf
+        io_registry_entry_get_property_bytes
+        io_registry_entry_get_registry_entry_id
+        io_server_version
+        io_service_close
+        io_service_get_matching_service_bin
+        io_service_get_matching_services_bin
+        io_service_open_extended
+        mach_eventlink_associate
+        mach_eventlink_create
+        mach_exception_raise
+        mach_memory_entry_ownership
+        mach_port_extract_right
+        mach_port_get_context_from_user
+        mach_port_get_refs
+        mach_port_is_connection_for_service
+        mach_port_request_notification
+        mach_port_set_attributes
+        mach_vm_copy
+        mach_vm_map_external
+        (when (defined? 'mach_vm_range_create) mach_vm_range_create) ;; <rdar://105161083>
+        mach_vm_region
+        mach_vm_remap_external
+        semaphore_create
+        semaphore_destroy
+        task_create_identity_token
+        task_get_special_port_from_user
+        task_info_from_user
+        task_restartable_ranges_register
+        task_restartable_ranges_synchronize
+        task_set_special_port
+        thread_policy
+        thread_policy_set
+        thread_resume
+        thread_suspend))
+
+(define (iokit-get-property-allowed)
+    (iokit-property
+        "AAPL,DisplayPipe"
+        "AAPL,OpenCLdisabled"
+        "AAPL,IOGraphics_LER"
+        "AAPL,IOGraphics_LER_RegTag_0"
+        "AAPL,IOGraphics_LER_RegTag_1"
+        "AAPL,IOGraphics_LER_Busy_2"
+        "AAPL,alias-policy"
+        "AAPL,boot-display"
+        "AAPL,display-alias"
+        "AAPL,mux-switch-state"
+        "AAPL,ndrv-dev"
+        "AAPL,primary-display"
+        "AAPL,slot-name"
+        "APTDevice"
+        "AVCSupported"
+        "AppleJPEGNumCores"
+        "AppleJPEGSupportsAppleInterchangeFormats"
+        "AppleJPEGSupportsMissingEOI"
+        "AppleJPEGSupportsRSTLogging"
+        "BaseAddressAlignmentRequirement"
+        "DisplayPipePlaneBaseAlignment"
+        "DisplayPipeStrideRequirements"
+        "HEVCSupported"
+        "IOGVABGRAEnc"
+        "IOGVACodec"
+        "IOGVAEncoderRestricted"
+        "IOGVAScaler"
+        "IOClassNameOverride"
+        "IOPlatformUUID"
+        "IORegistryEntryPropertyKeys"
+        "IOSurfaceAcceleratorCapabilitiesDict"
+        "Protocol Characteristics"
+        "als-colorCfg" ;; <rdar://problem/52903475>
+        "artwork-device-idiom" ;; <rdar://problem/49497720>
+        "artwork-device-subtype"
+        "artwork-display-gamut" ;; <rdar://problem/49497788>
+        "artwork-dynamic-displaymode" ;; <rdar://problem/49497720>
+        "artwork-scale-factor" ;; <rdar://problem/49497788>
+        "canvas-height"
+        "canvas-width"
+        "chip-id" ;; <rdar://problem/52903477>
+        "class-code"
+        "color-accuracy-index"
+        "compatible" ;; <rdar://problem/47523516>
+        "compatible-device-fallback" ;; <rdar://problem/49497720>
+        "device-colors" ;; <rdar://problem/51322072>
+        "device-id"
+        "device-perf-memory-class"
+        "dfr"
+        "display-corner-radius" ;; <rdar://problem/50602737>
+        "emu"
+        "graphics-featureset-class" ;; <rdar://problem/49497720>
+        "graphics-featureset-fallbacks" ;; <rdar://problem/51322072>
+        "hdcp-hoover-protocol"
+        "iommu-present"
+        "oled-display" ;; <rdar://problem/51322072>
+        "product-description" ;; <rdar://problem/49497788>
+        "product-id"
+        "soc-generation" ;; <rdar://problem/52903476>
+        "software-behavior"
+        "vendor-id"
+        "udid-version" ;; <rdar://problem/52903475>
+        "ui-pip")) ;; <rdar://problem/48867037>
+
+(define (sysctl-read-allowed)
+    (sysctl-name
+        "hw.activecpu"
+        "hw.cachelinesize"
+        "hw.cpufamily"
+        "hw.cpusubfamily"
+        "hw.l2cachesize"
+        "hw.logicalcpu_max"
+        "hw.machine"
+        "hw.memsize"
+        "hw.model"
+        "hw.ncpu"
+        "hw.pagesize_compat"
+        "hw.physicalcpu_max"
+        "hw.product" ;; <rdar://problem/81334849>
+        "kern.bootargs"
+        "kern.hv_vmm_present"
+        "kern.maxfilesperproc"
+#if ASAN_ENABLED
+        "kern.osrelease"
+#endif
+        "kern.osproductversion"
+        "kern.osvariant_status"
+        "kern.secure_kernel"
+        "kern.osversion"
+        "kern.willshutdown" ;; <rdar://122511261>
+        "machdep.ptrauth_enabled"
+        "vm.footprint_suspend"
+        "vm.malloc_ranges")) ;; <rdar://problem/105161083>
+
+(define (system-fcntl-allowed)
+    (fcntl-command
+        F_ADDFILESIGS_RETURN
+        F_CHECK_LV
+        F_GETFL
+        F_GETPATH
+        F_GETPROTECTIONCLASS
+        F_SETFD
+        F_SETFL
+        F_SETNOSIGPIPE))
+
+(define (darwin-notification-post-allowed)
+    (notification-name
+        "AppleDatePreferencesChangedNotification"
+        "AppleLanguagePreferencesChangedNotification"
+        "AppleMeasurementSystemPreferencesChangedNotification"
+        "AppleNumberPreferencesChangedNotification"
+        "AppleTemperatureUnitPreferencesChangedNotification"
+        "AppleTextBehaviorPreferencesChangedNotification"
+        "AppleTimePreferencesChangedNotification"
+        "com.apple.CFPreferences._domainsChangedExternally"
+        "com.apple.Metal.AGXEnableOSSignposts"
+        "com.apple.WebKit.LibraryPathDiagnostics"
+        "com.apple.gpumemd.check_in_request"
+        "com.apple.mobile.keybagd.user_changed"
+        "com.apple.system.logging.prefschanged"
+        "org.WebKit.lowMemory"
+        "org.WebKit.lowMemory.begin"
+        "org.WebKit.lowMemory.end"))
+
+(define (rules-with-elevated-precedence)
+    (with-elevated-precedence
+        (allow file-read*
+               (subpath "/usr/lib"
+                        "/usr/share"
+                        "/private/var/db/timezone"))
+        (allow-read-and-issue-generic-extensions
+            (subpath "/Library/RegionFeatures"
+                     "/System/Library"))
+        (allow file-issue-extension (with telemetry)
+            (require-all
+                (extension-class "com.apple.mediaserverd.read")
+                (subpath "/System/Library")))
+        
+        (allow file-map-executable
+               (subpath "/System/Library")
+               (subpath "/usr/lib"))
+        (allow file-read-metadata
+               (vnode-type SYMLINK))
+
+        ;;; <rdar://problem/24144418>
+        (allow file-read*
+               (subpath "/private/var/preferences/Logging"))
+
+        (allow user-preference-read (preference-domain "kCFPreferencesAnyApplication"))
+        (allow file-read*
+               (front-user-home-literal "/Library/Preferences/.GlobalPreferences.plist")
+               (front-user-home-literal "/Library/Preferences/.GlobalPreferences_m.plist"))
+
+        (allow file-read*
+               (literal "/private/var/Managed Preferences/mobile/.GlobalPreferences.plist"))
+        (allow managed-preference-read (preference-domain "kCFPreferencesAnyApplication"))
+
+        (allow-read-and-issue-generic-extensions (executable-bundle))
+
+        (unless (defined? 'restrictive-extension)
+            (with-filter
+                (extension
+                    "com.apple.app-sandbox.read"
+                    "com.apple.app-sandbox.read-write"
+                    "com.apple.sharing.airdrop.readonly")
+                (allow file-read* file-read-metadata)
+                (allow file-issue-extension
+                       (extension-class "com.apple.app-sandbox.read"
+                                        "com.apple.mediaserverd.read"
+                                        "com.apple.sharing.airdrop.readonly")))
+            (with-filter
+                (extension
+                    "com.apple.app-sandbox.read-write")
+                (allow file-write*)
+                (allow file-issue-extension
+                       (extension-class "com.apple.app-sandbox.read-write"
+                                        "com.apple.mediaserverd.read-write"))))
+
+        ;; <rdar://problem/16079361>
+        (allow managed-preference-read
+               (extension "com.apple.security.exception.managed-preference.read-only"))
+        (allow user-preference-read
+               (extension "com.apple.security.exception.shared-preference.read-only"))
+
+        (allow file-issue-extension (with telemetry)
+              (require-all
+                  (extension-class "com.apple.nsurlstorage.extension-cache")
+                  (extension "com.apple.security.exception.files.home-relative-path.read-write")
+                  (require-any
+                      (prefix "/private/var/root/Library/Caches/")
+                      (front-user-home-prefix "/Library/Caches/"))))))
+
+(define (mach-lookup-allowed)
+    (global-name
+        "com.apple.audio.AudioQueueServer"
+        "com.apple.logd"
+        "com.apple.logd.events"
+        "com.apple.runningboard"
+        "com.apple.system.notification_center"
+        "com.apple.systemstatus.activityattribution"
+        "com.apple.tccd"))
+
+(define (iokit-open-service-allowed)
+    (iokit-registry-entry-class
+        "AppleM2ScalerCSCDriver"
+        "AppleParavirtGPU"
+        "AppleVideoToolboxParavirtualizationDriver"
+        "IOSurfaceRoot"))

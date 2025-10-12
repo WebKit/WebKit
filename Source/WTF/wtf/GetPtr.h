@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006-2019 Apple Inc.
+ *  Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -15,7 +15,6 @@
  *  along with this library; see the file COPYING.LIB.  If not, write to
  *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA 02110-1301, USA.
- *
  */
 
 #pragma once
@@ -33,6 +32,18 @@ template <typename T> struct IsSmartPtr {
     static constexpr bool value = false;
     static constexpr bool isNullable = true;
 };
+
+template<typename T>
+inline constexpr bool IsSmartPtrV = IsSmartPtr<T>::value;
+
+template<typename T>
+inline constexpr bool IsSmartPtrNullableV = IsSmartPtr<T>::isNullable;
+
+template<typename T>
+concept SmartPtr = IsSmartPtrV<T>;
+
+template<typename T>
+concept NonNullableSmartPtr = SmartPtr<T> && !IsSmartPtrNullableV<T>;
 
 template <typename T, bool isSmartPtr>
 struct GetPtrHelperBase;

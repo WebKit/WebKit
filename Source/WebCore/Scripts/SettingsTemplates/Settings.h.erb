@@ -27,7 +27,7 @@
 
 #pragma once
 
-#include "SettingsBase.h"
+#include <WebCore/SettingsBase.h>
 #include <wtf/RefCounted.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -74,7 +74,7 @@ struct SettingsValues {
 };
 
 class Settings : public SettingsBase, public RefCounted<Settings> {
-    WTF_MAKE_NONCOPYABLE(Settings); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(Settings); WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Settings);
 public:
     WEBCORE_EXPORT static Ref<Settings> create(Page*);
     WEBCORE_EXPORT virtual ~Settings();

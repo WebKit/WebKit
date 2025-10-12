@@ -9,8 +9,7 @@
  */
 #include "test/pc/e2e/analyzer/video/video_dumping.h"
 
-#include <stdio.h>
-
+#include <cstdio>
 #include <memory>
 #include <string>
 #include <utility>
@@ -19,9 +18,8 @@
 #include "absl/strings/string_view.h"
 #include "api/test/video/video_frame_writer.h"
 #include "api/video/video_frame.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "system_wrappers/include/clock.h"
-#include "test/testsupport/video_frame_writer.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
@@ -70,7 +68,7 @@ class BroadcastingFrameWriter final : public test::VideoFrameWriter {
       : delegates_(std::move(delegates)) {}
   ~BroadcastingFrameWriter() override { Close(); }
 
-  bool WriteFrame(const webrtc::VideoFrame& frame) override {
+  bool WriteFrame(const VideoFrame& frame) override {
     for (auto& delegate : delegates_) {
       if (!delegate->WriteFrame(frame)) {
         return false;

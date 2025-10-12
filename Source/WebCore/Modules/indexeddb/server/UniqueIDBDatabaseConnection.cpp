@@ -47,19 +47,24 @@ UniqueIDBDatabaseConnection::UniqueIDBDatabaseConnection(UniqueIDBDatabase& data
     , m_connectionToClient(request.connection())
     , m_openRequestIdentifier(request.requestData().requestIdentifier())
 {
-    if (auto* manager = database.manager()) {
+    if (CheckedPtr manager = database.manager()) {
         m_manager = *manager;
-        m_manager->registerConnection(*this);
+        manager->registerConnection(*this);
     }
     m_connectionToClient->registerDatabaseConnection(*this);
+}
+
+CheckedPtr<UniqueIDBDatabase> UniqueIDBDatabaseConnection::checkedDatabase()
+{
+    return database();
 }
 
 UniqueIDBDatabaseConnection::~UniqueIDBDatabaseConnection()
 {
     ASSERT(m_transactionMap.isEmpty());
 
-    if (m_manager)
-        m_manager->unregisterConnection(*this);
+    if (CheckedPtr manager = m_manager.get())
+        manager->unregisterConnection(*this);
     m_connectionToClient->unregisterDatabaseConnection(*this);
 }
 
@@ -84,11 +89,12 @@ void UniqueIDBDatabaseConnection::abortTransactionWithoutCallback(UniqueIDBDatab
     ASSERT(m_database);
 
     const auto& transactionIdentifier = transaction.info().identifier();
-    m_database->abortTransaction(transaction, [this, weakThis = WeakPtr { *this }, transactionIdentifier](const IDBError&) {
-        if (!weakThis)
+    checkedDatabase()->abortTransaction(transaction, [weakThis = WeakPtr { *this }, transactionIdentifier](const IDBError&) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
-        ASSERT(m_transactionMap.contains(transactionIdentifier));
-        m_transactionMap.remove(transactionIdentifier);
+        ASSERT(protectedThis->m_transactionMap.contains(transactionIdentifier));
+        protectedThis->m_transactionMap.remove(transactionIdentifier);
     });
 }
 
@@ -104,7 +110,7 @@ void UniqueIDBDatabaseConnection::connectionClosedFromClient()
     LOG(IndexedDB, "UniqueIDBDatabaseConnection::connectionClosedFromClient - %s - %" PRIu64, m_openRequestIdentifier.loggingString().utf8().data(), identifier().toUInt64());
 
     ASSERT(m_database);
-    m_database->connectionClosedFromClient(*this);
+    checkedDatabase()->connectionClosedFromClient(*this);
 }
 
 void UniqueIDBDatabaseConnection::didFireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
@@ -112,7 +118,7 @@ void UniqueIDBDatabaseConnection::didFireVersionChangeEvent(const IDBResourceIde
     LOG(IndexedDB, "UniqueIDBDatabaseConnection::didFireVersionChangeEvent - %s - %" PRIu64, m_openRequestIdentifier.loggingString().utf8().data(), identifier().toUInt64());
 
     ASSERT(m_database);
-    m_database->didFireVersionChangeEvent(*this, requestIdentifier, connectionClosed);
+    checkedDatabase()->didFireVersionChangeEvent(*this, requestIdentifier, connectionClosed);
 }
 
 void UniqueIDBDatabaseConnection::didFinishHandlingVersionChange(const IDBResourceIdentifier& transactionIdentifier)
@@ -120,7 +126,7 @@ void UniqueIDBDatabaseConnection::didFinishHandlingVersionChange(const IDBResour
     LOG(IndexedDB, "UniqueIDBDatabaseConnection::didFinishHandlingVersionChange - %s - %" PRIu64, transactionIdentifier.loggingString().utf8().data(), identifier().toUInt64());
 
     ASSERT(m_database);
-    m_database->didFinishHandlingVersionChange(*this, transactionIdentifier);
+    checkedDatabase()->didFinishHandlingVersionChange(*this, transactionIdentifier);
 }
 
 void UniqueIDBDatabaseConnection::fireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
@@ -134,7 +140,7 @@ UniqueIDBDatabaseTransaction& UniqueIDBDatabaseConnection::createVersionChangeTr
     LOG(IndexedDB, "UniqueIDBDatabaseConnection::createVersionChangeTransaction - %s - %" PRIu64, m_openRequestIdentifier.loggingString().utf8().data(), identifier().toUInt64());
     ASSERT(!m_closePending);
 
-    IDBTransactionInfo info = IDBTransactionInfo::versionChange(m_connectionToClient, m_database->info(), newVersion);
+    IDBTransactionInfo info = IDBTransactionInfo::versionChange(m_connectionToClient, checkedDatabase()->info(), newVersion);
 
     Ref<UniqueIDBDatabaseTransaction> transaction = UniqueIDBDatabaseTransaction::create(*this, info);
     m_transactionMap.set(transaction->info().identifier(), &transaction.get());
@@ -156,7 +162,7 @@ void UniqueIDBDatabaseConnection::establishTransaction(const IDBTransactionInfo&
     m_transactionMap.set(transaction->info().identifier(), &transaction.get());
 
     ASSERT(m_database);
-    m_database->enqueueTransaction(WTFMove(transaction));
+    checkedDatabase()->enqueueTransaction(WTFMove(transaction));
 }
 
 void UniqueIDBDatabaseConnection::didAbortTransaction(UniqueIDBDatabaseTransaction& transaction, const IDBError& error)

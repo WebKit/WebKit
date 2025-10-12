@@ -5,11 +5,12 @@ Execution tests for the 'textureNumSamples' builtin function
 
 Returns the number samples per texel in a multisampled texture.
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../../../gpu_test.js';
 import { kShaderStages } from '../../../../validation/decl/util.js';
 
-import { kSampleTypeInfo, WGSLTextureQueryTest } from './texture_utils.js';
+import { executeTextureQueryAndExpectResult, kSampleTypeInfo } from './texture_utils.js';
 
-export const g = makeTestGroup(WGSLTextureQueryTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 g.test('sampled').
 specURL('https://www.w3.org/TR/WGSL/#texturenumsamples').
@@ -52,7 +53,7 @@ fn getValue() -> u32 {
     `;
 
   const expected = [sampleCount];
-  t.executeAndExpectResult(stage, code, texture, {}, expected);
+  executeTextureQueryAndExpectResult(t, stage, code, texture, {}, expected);
 });
 
 g.test('depth').
@@ -85,5 +86,5 @@ fn getValue() -> u32 {
     `;
 
   const expected = [sampleCount];
-  t.executeAndExpectResult(stage, code, texture, {}, expected);
+  executeTextureQueryAndExpectResult(t, stage, code, texture, {}, expected);
 });

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "StylePathFunction.h"
 
 #include "AffineTransform.h"
+#include "CSSPathValue.h"
 #include "FloatRect.h"
 #include "GeometryUtilities.h"
 #include "Path.h"
@@ -94,9 +95,9 @@ static SVGPathByteStream copySVGPathByteStream(const SVGPathByteStream& source, 
     return source;
 }
 
-auto ToCSS<Path::Data>::operator()(const Path::Data& value, const RenderStyle&) -> CSS::Path::Data
+auto ToCSS<Path::Data>::operator()(const Path::Data& value, const RenderStyle&, PathConversion conversion) -> CSS::Path::Data
 {
-    return { copySVGPathByteStream(value.byteStream, PathConversion::None) };
+    return { copySVGPathByteStream(value.byteStream, conversion) };
 }
 
 auto ToStyle<CSS::Path::Data>::operator()(const CSS::Path::Data& value, const BuilderState&) -> Path::Data
@@ -104,42 +105,33 @@ auto ToStyle<CSS::Path::Data>::operator()(const CSS::Path::Data& value, const Bu
     return { copySVGPathByteStream(value.byteStream, PathConversion::None) };
 }
 
-auto ToCSS<Path>::operator()(const Path& value, const RenderStyle& style) -> CSS::Path
+auto ToCSS<Path>::operator()(const Path& value, const RenderStyle& style, PathConversion conversion) -> CSS::Path
 {
     return {
         .fillRule = toCSS(value.fillRule, style),
-        .data = toCSS(value.data, style)
+        .data = toCSS(value.data, style, conversion)
     };
 }
 
-auto ToStyle<CSS::Path>::operator()(const CSS::Path& value, const BuilderState& state) -> Path
+auto ToStyle<CSS::Path>::operator()(const CSS::Path& value, const BuilderState& state, std::optional<float> zoom) -> Path
 {
     return {
         .fillRule = toStyle(value.fillRule, state),
         .data = toStyle(value.data, state),
-        .zoom = 1
+        .zoom = zoom.value_or(state.style().usedZoom())
     };
 }
 
-auto overrideToCSS(const Style::PathFunction& path, const RenderStyle& style, PathConversion conversion) -> CSS::PathFunction
+Ref<CSSValue> CSSValueCreation<PathFunction>::operator()(CSSValuePool&, const RenderStyle& style, const PathFunction& value, PathConversion conversion)
 {
-    return {
-        .parameters = CSS::Path {
-            .fillRule = Style::toCSS(path->fillRule, style),
-            .data = { copySVGPathByteStream(path->data.byteStream, conversion) }
-        }
-    };
+    return CSSPathValue::create(toCSS(value, style, conversion));
 }
 
-auto overrideToStyle(const CSS::PathFunction& path, const BuilderState& state, std::optional<float> zoom) -> PathFunction
+// MARK: - Serialization
+
+void Serialize<Path>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const Path& value, PathConversion conversion)
 {
-    return {
-        .parameters = Path {
-            .fillRule = toStyle(path->fillRule, state),
-            .data = toStyle(path->data, state),
-            .zoom = zoom.value_or(state.style().usedZoom())
-        }
-    };
+    CSS::serializationForCSS(builder, context, toCSS(value, style, conversion));
 }
 
 // MARK: - Path
@@ -174,6 +166,15 @@ auto Blending<Path>::blend(const Path& a, const Path& b, const BlendingContext& 
         .data = { WTFMove(resultingPathBytes) },
         .zoom = a.zoom
     };
+}
+
+// MARK: - Logging
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, const Path::Data& value)
+{
+    String pathString;
+    buildStringFromByteStream(value.byteStream, pathString, UnalteredParsing);
+    return ts << pathString;
 }
 
 } // namespace Style

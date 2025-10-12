@@ -17,7 +17,6 @@
 #include <string>
 #include <vector>
 
-#include "rtc_base/protobuf_utils.h"
 #include "rtc_base/system/file_wrapper.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"

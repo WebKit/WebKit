@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include "InternalFunction.h"
-#include "ProxyObject.h"
+#include <JavaScriptCore/InternalFunction.h>
+#include <JavaScriptCore/ProxyObject.h>
 
 namespace JSC {
 

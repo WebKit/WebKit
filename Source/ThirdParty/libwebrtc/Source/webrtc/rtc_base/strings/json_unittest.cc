@@ -10,11 +10,12 @@
 
 #include "rtc_base/strings/json.h"
 
+#include <string>
 #include <vector>
 
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 static Json::Value in_s("foo");
 static Json::Value in_sn("99");
@@ -280,4 +281,4 @@ TEST(JsonTest, DoubleVectorToFromArray) {
   }
 }
 
-}  // namespace rtc
+}  // namespace webrtc

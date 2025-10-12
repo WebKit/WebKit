@@ -10,20 +10,22 @@
 #ifndef TEST_FRAME_GENERATOR_H_
 #define TEST_FRAME_GENERATOR_H_
 
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
 #include <memory>
-#include <string>
+#include <optional>
 #include <vector>
 
 #include "api/scoped_refptr.h"
 #include "api/test/frame_generator_interface.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/nv12_buffer.h"
-#include "api/video/video_frame.h"
 #include "api/video/video_frame_buffer.h"
-#include "api/video/video_source_interface.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/random.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -43,13 +45,13 @@ class SquareGenerator : public FrameGeneratorInterface {
   std::optional<int> fps() const override { return std::nullopt; }
 
  private:
-  rtc::scoped_refptr<I420Buffer> CreateI420Buffer(int width, int height);
+  scoped_refptr<I420Buffer> CreateI420Buffer(int width, int height);
 
   class Square {
    public:
     Square(int width, int height, int seed);
 
-    void Draw(const rtc::scoped_refptr<VideoFrameBuffer>& frame_buffer);
+    void Draw(const scoped_refptr<VideoFrameBuffer>& frame_buffer);
 
    private:
     Random random_generator_;
@@ -100,7 +102,7 @@ class YuvFileGenerator : public FrameGeneratorInterface {
   const std::unique_ptr<uint8_t[]> frame_buffer_;
   const int frame_display_count_;
   int current_display_count_;
-  rtc::scoped_refptr<I420Buffer> last_read_buffer_;
+  scoped_refptr<I420Buffer> last_read_buffer_;
 };
 
 class NV12FileGenerator : public FrameGeneratorInterface {
@@ -135,7 +137,7 @@ class NV12FileGenerator : public FrameGeneratorInterface {
   const std::unique_ptr<uint8_t[]> frame_buffer_;
   const int frame_display_count_;
   int current_display_count_;
-  rtc::scoped_refptr<NV12Buffer> last_read_buffer_;
+  scoped_refptr<NV12Buffer> last_read_buffer_;
 };
 
 // SlideGenerator works similarly to YuvFileGenerator but it fills the frames
@@ -163,7 +165,7 @@ class SlideGenerator : public FrameGeneratorInterface {
   const int frame_display_count_;
   int current_display_count_;
   Random random_generator_;
-  rtc::scoped_refptr<I420Buffer> buffer_;
+  scoped_refptr<I420Buffer> buffer_;
 };
 
 class ScrollingImageFrameGenerator : public FrameGeneratorInterface {

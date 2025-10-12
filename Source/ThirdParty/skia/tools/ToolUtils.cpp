@@ -220,7 +220,7 @@ void add_to_text_blob_w_len(SkTextBlobBuilder* builder,
         return;
     }
     auto run   = builder->allocRun(font, count, x, y);
-    font.textToGlyphs(text, len, encoding, run.glyphs, count);
+    font.textToGlyphs(text, len, encoding, {run.glyphs, count});
 }
 
 void add_to_text_blob(SkTextBlobBuilder* builder,
@@ -231,37 +231,36 @@ void add_to_text_blob(SkTextBlobBuilder* builder,
     add_to_text_blob_w_len(builder, text, strlen(text), SkTextEncoding::kUTF8, font, x, y);
 }
 
-void get_text_path(const SkFont&  font,
+SkPath get_text_path(const SkFont&  font,
                    const void*    text,
                    size_t         length,
                    SkTextEncoding encoding,
-                   SkPath*        dst,
                    const SkPoint  pos[]) {
     SkAutoToGlyphs        atg(font, text, length, encoding);
     const int             count = atg.count();
     AutoTArray<SkPoint> computedPos;
     if (pos == nullptr) {
         computedPos.reset(count);
-        font.getPos(atg.glyphs(), count, &computedPos[0]);
+        font.getPos(atg, computedPos);
         pos = computedPos.get();
     }
 
     struct Rec {
-        SkPath*        fDst;
+        SkPathBuilder  fBuilder;
         const SkPoint* fPos;
-    } rec = {dst, pos};
-    font.getPaths(atg.glyphs(),
-                  atg.count(),
+    } rec = {{}, pos};
+    font.getPaths(atg,
                   [](const SkPath* src, const SkMatrix& mx, void* ctx) {
                       Rec* rec = (Rec*)ctx;
                       if (src) {
                           SkMatrix tmp(mx);
                           tmp.postTranslate(rec->fPos->fX, rec->fPos->fY);
-                          rec->fDst->addPath(*src, tmp);
+                          rec->fBuilder.addPath(*src, tmp);
                       }
                       rec->fPos += 1;
                   },
                   &rec);
+    return rec.fBuilder.detach();
 }
 
 SkPath make_star(const SkRect& bounds, int numPts, int step) {
@@ -277,8 +276,7 @@ SkPath make_star(const SkRect& bounds, int numPts, int step) {
         builder.lineTo(x, y);
     }
     SkPath path = builder.detach();
-    path.transform(SkMatrix::RectToRect(path.getBounds(), bounds));
-    return path;
+    return path.makeTransform(SkMatrix::RectToRectOrIdentity(path.getBounds(), bounds));
 }
 
 static inline void norm_to_rgb(SkBitmap* bm, int x, int y, const SkVector3& norm) {
@@ -453,14 +451,10 @@ void copy_to_g8(SkBitmap* dst, const SkBitmap& src) {
 
 bool equal_pixels(const SkPixmap& a, const SkPixmap& b) {
     if (a.width() != b.width() || a.height() != b.height()) {
-        SkDebugf("[ToolUtils::equal_pixels] Dimensions do not match (%d x %d) != (%d x %d)\n",
-                 a.width(), a.height(), b.width(), b.height());
         return false;
     }
 
     if (a.colorType() != b.colorType()) {
-        SkDebugf("[ToolUtils::equal_pixels] colorType does not match %d != %d\n",
-                 (int) a.colorType(), (int) b.colorType());
         return false;
     }
 
@@ -468,7 +462,6 @@ bool equal_pixels(const SkPixmap& a, const SkPixmap& b) {
         const char* aptr = (const char*)a.addr(0, y);
         const char* bptr = (const char*)b.addr(0, y);
         if (0 != memcmp(aptr, bptr, a.width() * a.info().bytesPerPixel())) {
-            SkDebugf("[ToolUtils::equal_pixels] row %d does not match byte for byte\n", y);
             return false;
         }
     }
@@ -478,11 +471,9 @@ bool equal_pixels(const SkPixmap& a, const SkPixmap& b) {
 bool equal_pixels(const SkBitmap& bm0, const SkBitmap& bm1) {
     SkPixmap pm0, pm1;
     if (!bm0.peekPixels(&pm0)) {
-        SkDebugf("Could not read pixels from A\n");
         return false;
     }
     if (!bm1.peekPixels(&pm1)) {
-        SkDebugf("Could not read pixels from B\n");
         return false;
     }
     return equal_pixels(pm0, pm1);
@@ -492,16 +483,14 @@ bool equal_pixels(const SkImage* a, const SkImage* b) {
     SkASSERT_RELEASE(a);
     SkASSERT_RELEASE(b);
     // ensure that peekPixels will succeed
-    auto imga = a->makeRasterImage();
-    auto imgb = b->makeRasterImage();
+    auto imga = a->makeRasterImage(nullptr);
+    auto imgb = b->makeRasterImage(nullptr);
 
     SkPixmap pm0, pm1;
     if (!imga->peekPixels(&pm0)) {
-        SkDebugf("Could not read pixels from A\n");
         return false;
     }
     if (!imgb->peekPixels(&pm1)) {
-        SkDebugf("Could not read pixels from B\n");
         return false;
     }
     return equal_pixels(pm0, pm1);
@@ -523,7 +512,7 @@ VariationSliders::VariationSliders(SkTypeface* typeface,
         return;
     }
 
-    int numAxes = typeface->getVariationDesignParameters(nullptr, 0);
+    int numAxes = typeface->getVariationDesignParameters({});
     if (numAxes < 0) {
         return;
     }
@@ -531,7 +520,7 @@ VariationSliders::VariationSliders(SkTypeface* typeface,
     std::unique_ptr<SkFontParameters::Variation::Axis[]> copiedAxes =
             std::make_unique<SkFontParameters::Variation::Axis[]>(numAxes);
 
-    numAxes = typeface->getVariationDesignParameters(copiedAxes.get(), numAxes);
+    numAxes = typeface->getVariationDesignParameters({copiedAxes.get(), numAxes});
     if (numAxes < 0) {
         return;
     }
@@ -778,6 +767,51 @@ void ExtractPathsFromSKP(const char filepath[], std::function<PathSniffCallback>
     }
     PathSniffer pathSniffer(callback);
     skp->playback(&pathSniffer);
+}
+
+bool A8ComparePaths(const SkPath& a, const SkPath& b, A8CompareProc cmp) {
+    const auto ra = a.computeTightBounds(),
+               rb = b.computeTightBounds();
+    if (ra.isEmpty() && rb.isEmpty()) {
+        return true;
+    }
+
+    const auto r = ra.makeOutset(1, 1);
+    if (!r.contains(rb)) {
+        return false;
+    }
+
+    const auto ir = r.roundOut();
+    const auto info = SkImageInfo::MakeA8(ir.width(), ir.height());
+
+    auto make_img = [&](const SkPath& path) {
+        SkPaint paint;
+        paint.setAntiAlias(true);
+        auto surf = SkSurfaces::Raster(info);
+        auto canvas = surf->getCanvas();
+        canvas->translate(1 - ir.fLeft, 1 - ir.fTop);   // keep ~1 pixel margin
+        canvas->drawPath(a, paint);
+        return surf->makeImageSnapshot();
+    };
+    auto imga = make_img(a),
+         imgb = make_img(b);
+
+    SkPixmap pma, pmb;
+    SkAssertResult(imga->peekPixels(&pma));
+    SkAssertResult(imgb->peekPixels(&pmb));
+
+    for (int y = 0; y < pma.height(); ++y) {
+        for (int x = 0; x < pma.width(); ++x) {
+            uint8_t pa = *pma.addr8(x, y),
+                    pb = *pmb.addr8(x, y);
+            if (pa != pb) {
+                if (!cmp(x, y, pa, pb)) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
 }
 
 }  // namespace ToolUtils

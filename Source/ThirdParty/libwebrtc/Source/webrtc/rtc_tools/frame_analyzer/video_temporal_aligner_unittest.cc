@@ -11,7 +11,9 @@
 #include "rtc_tools/frame_analyzer/video_temporal_aligner.h"
 
 #include <cstddef>
+#include <vector>
 
+#include "api/scoped_refptr.h"
 #include "rtc_tools/frame_analyzer/video_quality_analysis.h"
 #include "rtc_tools/video_file_reader.h"
 #include "test/gtest.h"
@@ -22,17 +24,17 @@ namespace test {
 
 class VideoTemporalAlignerTest : public ::testing::Test {
  protected:
-  void SetUp() {
+  void SetUp() override {
     reference_video =
         OpenYuvFile(ResourcePath("foreman_128x96", "yuv"), 128, 96);
     ASSERT_TRUE(reference_video);
   }
 
-  rtc::scoped_refptr<Video> reference_video;
+  scoped_refptr<Video> reference_video;
 };
 
 TEST_F(VideoTemporalAlignerTest, FindMatchingFrameIndicesEmpty) {
-  rtc::scoped_refptr<Video> empty_test_video =
+  scoped_refptr<Video> empty_test_video =
       ReorderVideo(reference_video, std::vector<size_t>());
 
   const std::vector<size_t> matched_indices =
@@ -54,7 +56,7 @@ TEST_F(VideoTemporalAlignerTest, FindMatchingFrameIndicesDuplicateFrames) {
   const std::vector<size_t> indices = {2, 2, 2, 2};
 
   // Generate a test video based on this sequence.
-  rtc::scoped_refptr<Video> test_video = ReorderVideo(reference_video, indices);
+  scoped_refptr<Video> test_video = ReorderVideo(reference_video, indices);
 
   const std::vector<size_t> matched_indices =
       FindMatchingFrameIndices(reference_video, test_video);
@@ -68,7 +70,7 @@ TEST_F(VideoTemporalAlignerTest, FindMatchingFrameIndicesLoopAround) {
     indices.push_back(i % reference_video->number_of_frames());
 
   // Generate a test video based on this sequence.
-  rtc::scoped_refptr<Video> test_video = ReorderVideo(reference_video, indices);
+  scoped_refptr<Video> test_video = ReorderVideo(reference_video, indices);
 
   const std::vector<size_t> matched_indices =
       FindMatchingFrameIndices(reference_video, test_video);
@@ -93,7 +95,7 @@ TEST_F(VideoTemporalAlignerTest, FindMatchingFrameIndicesStressTest) {
   indices.push_back((start_index + 32) % reference_video->number_of_frames());
 
   // Generate a test video based on this sequence.
-  rtc::scoped_refptr<Video> test_video = ReorderVideo(reference_video, indices);
+  scoped_refptr<Video> test_video = ReorderVideo(reference_video, indices);
 
   const std::vector<size_t> matched_indices =
       FindMatchingFrameIndices(reference_video, test_video);
@@ -113,9 +115,9 @@ TEST_F(VideoTemporalAlignerTest, GenerateAlignedReferenceVideo) {
   }
 
   // Generate a test video based on this sequence.
-  rtc::scoped_refptr<Video> test_video = ReorderVideo(reference_video, indices);
+  scoped_refptr<Video> test_video = ReorderVideo(reference_video, indices);
 
-  rtc::scoped_refptr<Video> aligned_reference_video =
+  scoped_refptr<Video> aligned_reference_video =
       GenerateAlignedReferenceVideo(reference_video, test_video);
 
   // Assume perfect match, i.e. ssim == 1, for all frames.

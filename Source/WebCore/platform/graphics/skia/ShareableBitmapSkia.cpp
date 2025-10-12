@@ -42,6 +42,11 @@ std::optional<DestinationColorSpace> ShareableBitmapConfiguration::validateColor
     return colorSpace;
 }
 
+CheckedUint32 ShareableBitmapConfiguration::calculateBitsPerComponent(const DestinationColorSpace& colorSpace)
+{
+    return (calculateBytesPerPixel(colorSpace) / 4) * 8;
+}
+
 CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerPixel(const DestinationColorSpace& colorSpace)
 {
     return SkImageInfo::MakeN32Premul(1, 1, colorSpace.platformColorSpace()).bytesPerPixel();

@@ -67,7 +67,8 @@ public:
 
 private:
     friend class NeverDestroyed<CDMFactoryThunder>;
-    CDMFactoryThunder() = default;
+    CDMFactoryThunder();
+    Vector<String> m_supportedKeySystems;
 };
 
 class CDMPrivateThunder final : public CDMPrivate {

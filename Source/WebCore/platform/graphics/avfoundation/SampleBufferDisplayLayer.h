@@ -25,10 +25,12 @@
 
 #pragma once
 
-#include "PlatformLayer.h"
+#include <WebCore/HostingContext.h>
+#include <WebCore/PlatformLayer.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/MachSendRight.h>
+#include <wtf/MachSendRightAnnotated.h>
+#include <wtf/Platform.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -63,13 +65,13 @@ public:
 
     virtual void initialize(bool hideRootLayer, IntSize, bool shouldMaintainAspectRatio, CompletionHandler<void(bool didSucceed)>&&) = 0;
 #if !RELEASE_LOG_DISABLED
-    virtual void setLogIdentifier(String&&) = 0;
+    virtual void setLogIdentifier(uint64_t) = 0;
 #endif
     virtual bool didFail() const = 0;
 
     virtual void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer) = 0;
 
-    virtual void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRight>&& = std::nullopt) = 0;
+    virtual void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRightAnnotated>&& = std::nullopt) = 0;
 
     virtual void flush() = 0;
     virtual void flushAndRemoveImage() = 0;
@@ -87,7 +89,7 @@ public:
     enum class RenderPolicy { TimingInfo, Immediately };
     virtual void setRenderPolicy(RenderPolicy) { };
 
-    virtual LayerHostingContextID hostingContextID() const { return 0; }
+    virtual HostingContext hostingContext() const { return { }; }
 
 protected:
     explicit SampleBufferDisplayLayer(SampleBufferDisplayLayerClient&);

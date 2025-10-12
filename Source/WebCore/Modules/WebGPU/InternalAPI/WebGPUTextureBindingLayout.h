@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPUTextureSampleType.h"
-#include "WebGPUTextureViewDimension.h"
+#include <WebCore/WebGPUTextureSampleType.h>
+#include <WebCore/WebGPUTextureViewDimension.h>
 
 namespace WebCore::WebGPU {
 

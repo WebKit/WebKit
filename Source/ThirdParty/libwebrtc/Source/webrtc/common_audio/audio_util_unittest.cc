@@ -10,7 +10,11 @@
 
 #include "common_audio/include/audio_util.h"
 
-#include "rtc_base/arraysize.h"
+#include <cstddef>
+#include <cstdint>
+#include <iterator>
+
+#include "api/audio/audio_view.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -35,8 +39,8 @@ TEST(AudioUtilTest, S16ToFloat) {
   static constexpr int16_t kInput[] = {0, 1, -1, 16384, -16384, 32767, -32768};
   static constexpr float kReference[] = {
       0.f, 1.f / 32767.f, -1.f / 32768.f, 16384.f / 32767.f, -0.5f, 1.f, -1.f};
-  static constexpr size_t kSize = arraysize(kInput);
-  static_assert(arraysize(kReference) == kSize, "");
+  static constexpr size_t kSize = std::size(kInput);
+  static_assert(std::size(kReference) == kSize);
   float output[kSize];
   S16ToFloat(kInput, kSize, output);
   ExpectArraysEq(kReference, output, kSize);
@@ -46,8 +50,8 @@ TEST(AudioUtilTest, FloatS16ToS16) {
   static constexpr float kInput[] = {0.f,   0.4f,    0.5f,    -0.4f,
                                      -0.5f, 32768.f, -32769.f};
   static constexpr int16_t kReference[] = {0, 0, 1, 0, -1, 32767, -32768};
-  static constexpr size_t kSize = arraysize(kInput);
-  static_assert(arraysize(kReference) == kSize, "");
+  static constexpr size_t kSize = std::size(kInput);
+  static_assert(std::size(kReference) == kSize);
   int16_t output[kSize];
   FloatS16ToS16(kInput, kSize, output);
   ExpectArraysEq(kReference, output, kSize);
@@ -65,8 +69,8 @@ TEST(AudioUtilTest, FloatToFloatS16) {
                                      -1.f};
   static constexpr float kReference[] = {
       0.f, 0.4f, 0.6f, -0.4f, -0.6f, 32768.f, -32768.f, 32768.f, -32768.f};
-  static constexpr size_t kSize = arraysize(kInput);
-  static_assert(arraysize(kReference) == kSize, "");
+  static constexpr size_t kSize = std::size(kInput);
+  static_assert(std::size(kReference) == kSize);
   float output[kSize];
   FloatToFloatS16(kInput, kSize, output);
   ExpectArraysEq(kReference, output, kSize);
@@ -84,8 +88,8 @@ TEST(AudioUtilTest, FloatS16ToFloat) {
                                          -1.f,
                                          1.f,
                                          -1.f};
-  static constexpr size_t kSize = arraysize(kInput);
-  static_assert(arraysize(kReference) == kSize, "");
+  static constexpr size_t kSize = std::size(kInput);
+  static_assert(std::size(kReference) == kSize);
   float output[kSize];
   FloatS16ToFloat(kInput, kSize, output);
   ExpectArraysEq(kReference, output, kSize);
@@ -97,8 +101,8 @@ TEST(AudioUtilTest, DbfsToFloatS16) {
   static constexpr float kReference[] = {
       1.036215186f, 10.36215115f, 1036.215088f, 3276.800049f, 10362.15137f,
       18426.80078f, 29204.51172f, 32768.f,      36766.30078f};
-  static constexpr size_t kSize = arraysize(kInput);
-  static_assert(arraysize(kReference) == kSize, "");
+  static constexpr size_t kSize = std::size(kInput);
+  static_assert(std::size(kReference) == kSize);
   float output[kSize];
   for (size_t i = 0; i < kSize; ++i) {
     output[i] = DbfsToFloatS16(kInput[i]);
@@ -113,8 +117,8 @@ TEST(AudioUtilTest, FloatS16ToDbfs) {
 
   static constexpr float kReference[] = {
       -90.f, -70.f, -30.f, -20.f, -10.f, -5.f, -1.f, 0.f, 0.9999923706f};
-  static constexpr size_t kSize = arraysize(kInput);
-  static_assert(arraysize(kReference) == kSize, "");
+  static constexpr size_t kSize = std::size(kInput);
+  static_assert(std::size(kReference) == kSize);
 
   float output[kSize];
   for (size_t i = 0; i < kSize; ++i) {

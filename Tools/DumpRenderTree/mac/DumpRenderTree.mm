@@ -66,9 +66,11 @@
 #import <JavaScriptCore/TestRunnerUtils.h>
 #import <WebCore/LogInitialization.h>
 #import <WebCore/NetworkStorageSession.h>
+#import <WebCore/WebCoreMainThread.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>
+#import <WebKit/WKURLRequest.h>
 #import <WebKit/WebArchive.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebCache.h>
@@ -101,6 +103,7 @@
 #import <wtf/OSObjectPtr.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Seconds.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/Threading.h>
 #import <wtf/UniqueArray.h>
@@ -305,23 +308,6 @@ RetainPtr<DumpRenderTreeWindow> gDrtWindow;
 void setPersistentUserStyleSheetLocation(CFStringRef url)
 {
     persistentUserStyleSheetLocation() = url;
-}
-
-static bool shouldIgnoreWebCoreNodeLeaks(const std::string& urlString)
-{
-    static char* const ignoreSet[] = {
-        // Keeping this infrastructure around in case we ever need it again.
-    };
-    static const int ignoreSetCount = sizeof(ignoreSet) / sizeof(char*);
-
-    for (int i = 0; i < ignoreSetCount; i++) {
-        // FIXME: ignore case
-        std::string curIgnore(ignoreSet[i]);
-        // Match at the end of the urlString.
-        if (!urlString.compare(urlString.length() - curIgnore.length(), curIgnore.length(), curIgnore))
-            return true;
-    }
-    return false;
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -879,6 +865,7 @@ static void setWebPreferencesForTestOptions(WebPreferences *preferences, const W
                     && ![feature.key isEqualToString:@"NeedsSiteSpecificQuirks"]
                     && ![feature.key isEqualToString:@"BeaconAPIEnabled"]
                     && ![feature.key isEqualToString:@"LocalFileContentSniffingEnabled"]
+                    && ![feature.key isEqualToString:@"HTTPSByDefaultEnabled"]
                     && ![feature.key isEqualToString:@"DeclarativeWebPush"]) {
                     [preferences _setEnabled:YES forFeature:feature];
                 }
@@ -1190,9 +1177,7 @@ void dumpRenderTree(int argc, const char *argv[])
     addTestPluginsToPluginSearchPath(argv[0]);
 
     JSC::Options::machExceptionHandlerSandboxPolicy = JSC::Options::SandboxPolicy::Allow;
-    JSC::initialize();
-    WTF::initializeMainThread();
-    WebCoreTestSupport::populateJITOperations();
+    WebCore::initializeMainThreadIfNeeded();
 
     if (forceComplexText)
         [WebView _setAlwaysUsesComplexTextCodePath:YES];
@@ -1276,7 +1261,7 @@ static const char **_argv;
 - (void)_webThreadInvoked
 {
     ASSERT(WebThreadIsCurrent());
-    WorkQueue::protectedMain()->dispatch([self, retainedSelf = retainPtr(self)] {
+    WorkQueue::mainSingleton().dispatch([self, retainedSelf = retainPtr(self)] {
         [self _webThreadEventLoopHasRun];
     });
 }
@@ -1848,6 +1833,8 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
 
     WebCoreTestSupport::clearAllLogChannelsToAccumulate();
     WebCoreTestSupport::initializeLogChannelsIfNecessary();
+
+    gTestRunner->clearBackForwardList();
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -1960,6 +1947,10 @@ static void runTest(const std::string& inputLine)
     gTestRunner->setCustomTimeout(command.timeout.milliseconds());
     gTestRunner->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr || options.dumpJSConsoleLogInStdErr());
 
+#if ENABLE(DNS_SERVER_FOR_TESTING)
+    gTestRunner->initializeDNS();
+#endif
+
     gTestRunner->setPortsForUpgradingInsecureScheme(options.insecureUpgradePort(), options.secureUpgradePort());
     [[mainFrame webView] _setPortsForUpgradingInsecureSchemeForTesting:options.insecureUpgradePort() withSecurePort:options.secureUpgradePort()];
 
@@ -1985,6 +1976,8 @@ static void runTest(const std::string& inputLine)
 
     gTestRunner->clearAllDatabases();
     gTestRunner->clearNotificationPermissionState();
+
+    WKURLRequestSetDefaultTimeoutInterval((60_s).value());
 
     std::span pathOrURLSpan { pathOrURL };
     if (disallowedURLs)
@@ -2021,10 +2014,6 @@ static void runTest(const std::string& inputLine)
     auto& workQueue = DRT::WorkQueue::singleton();
     workQueue.clear();
     workQueue.setFrozen(false);
-
-    bool ignoreWebCoreNodeLeaks = shouldIgnoreWebCoreNodeLeaks(testURL);
-    if (ignoreWebCoreNodeLeaks)
-        [WebCoreStatistics startIgnoringWebCoreNodeLeaks];
 
     @autoreleasepool {
         [mainFrame loadRequest:[NSURLRequest requestWithURL:url]];
@@ -2091,9 +2080,6 @@ static void runTest(const std::string& inputLine)
 #if PLATFORM(MAC)
     [DumpRenderTreeDraggingInfo clearAllFilePromiseReceivers];
 #endif
-
-    if (ignoreWebCoreNodeLeaks)
-        [WebCoreStatistics stopIgnoringWebCoreNodeLeaks];
 
     if (gcBetweenTests)
         [WebCoreStatistics garbageCollectJavaScriptObjects];

@@ -53,8 +53,9 @@ fast/events/autoscroll-main-document.html [ Pass ]
 
 fast/forms/enterkeyhint-attribute-values.html [ Pass ]
 
-fast/forms/fixed-size-checkbox-vertically-centered.html [ Pass ]
-fast/forms/fixed-size-radio-vertically-centered.html [ Pass ]
+# With form control refresh enabled (introduced in Tahoe), these tests no longer pass since checkboxes and radio buttons can scale infinitely.
+[ Sequoia Sonoma ] fast/forms/fixed-size-checkbox-vertically-centered.html [ Pass ]
+[ Sequoia Sonoma ] fast/forms/fixed-size-radio-vertically-centered.html [ Pass ]
 
 accessibility/smart-invert.html [ Pass ]
 webkit.org/b/189818 accessibility/smart-invert-reference.html [ Pass ImageOnlyFailure ]
@@ -79,13 +80,28 @@ http/tests/paymentrequest/ApplePayModifier-disbursementRequest.https.html [ Skip
 http/tests/paymentrequest [ Pass ]
 http/tests/inspector/paymentrequest [ Pass ]
 imported/w3c/web-platform-tests/payment-request [ Pass ]
-imported/w3c/web-platform-tests/payment-request/payment-request-hasenrolledinstrument-method.tentative.https.html [ DumpJSConsoleLogInStdErr ]
 
 imported/w3c/web-platform-tests/css/css-pseudo/selection-over-highlight-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-pseudo/highlight-custom-properties-dynamic-001.html [ Pass ]
 
 # Tests that require wheel events
 compositing/repaint/sticky-repaint-on-scroll.html [ Pass ]
+
+# Cocoa-only tests
+http/tests/iframe-monitor/ [ Pass ]
+
+# Some of these have failing results: webkit.org/b/293983
+imported/w3c/web-platform-tests/dom/events/scrolling/iframe-chains.html [ Pass ]
+imported/w3c/web-platform-tests/dom/events/scrolling/scroll-cross-origin-iframes.html [ Pass ]
+imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-transactions-basic.html?include=scroll-over-scrollable-child [ Pass ]
+imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-transactions-basic.html?include=target-basic [ Pass ]
+imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-transactions-multiple-action-chains.html [ Pass ]
+imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-transactions-target-display-change.html?include=contents [ Pass ]
+imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-transactions-target-display-change.html?include=none [ Pass ]
+imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-transactions-target-elements.html [ Pass ]
+imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-transactions-target-move.html [ Pass ]
+imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-transactions-target-removal.html [ Pass ]
+imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-transactions-target-resize.html?include=passive-false [ Pass ]
+imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-transactions-target-resize.html?include=passive-true [ Pass ]
 
 # These tests are checking that WebContent is terminated when performing an invalid IPC operation for WK2.
 # They crash in debug (as expected) so we skip them there. <rdar://problem/117742950>
@@ -538,9 +554,6 @@ webkit.org/b/162999 [ Debug ] accessibility/mac/native-text-control-set-selected
 # testRunner.setUseDeferredFrameLoading is not implemented.
 webkit.org/b/172544 [ Debug ] tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-with-handler.html [ Pass Failure ]
 
-webkit.org/b/139820 fast/frames/lots-of-objects.html [ Pass Timeout ]
-webkit.org/b/139820 fast/frames/lots-of-iframes.html [ Pass Timeout ]
-
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
 # A lot of the disk-cache tests are flaky on mac-wk2
@@ -763,7 +776,6 @@ webkit.org/b/160042 accessibility/mac/value-change/value-change-user-info-conten
 webkit.org/b/160309 fast/dom/Window/child-window-focus.html [ Pass Failure ]
 
 webkit.org/b/161148 gamepad/gamepad-timestamp.html [ Pass Failure ]
-webkit.org/b/167517 gamepad/gamepad-visibility-1.html [ Pass Failure ]
 
 webkit.org/b/161633 [ Debug ] storage/indexeddb/objectstore-cursor.html [ Pass Timeout ]
 
@@ -818,10 +830,19 @@ http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-r
 http/tests/storageAccess/ [ Pass ]
 imported/w3c/web-platform-tests/storage-access-api/ [ Pass ]
 imported/w3c/web-platform-tests/storage-access-api/hasStorageAccess.sub.https.window.html [ Skip ]
+imported/w3c/web-platform-tests/storage-access-api/requestStorageAccess-cross-origin-fetch.sub.https.window.html [ Skip ]
+imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.BlobURLDedicatedWorker.sub.https.tentative.window.html [ Skip ]
+imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.BlobURLSharedWorker.sub.https.tentative.window.html [ Skip ]
+imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.thirdPartyBlobStorage.sub.https.window.html [ Skip ]
 #http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html [ Pass Timeout ]
 http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html [ Skip ]
+http/tests/storageAccess/deny-with-prompt-under-general-third-party-cookie-blocking-with-partitioned-cookies.https.html [ Skip ]
 
-# Enable on appropriate platforms: rdar://140222322
+imported/w3c/web-platform-tests/storage-access-api/requestStorageAccess-insecure.sub.window.html [ Pass Failure ]
+[ Debug ] imported/w3c/web-platform-tests/storage-access-api/storage-access-permission.sub.https.window.html [ Pass Failure ]
+[ x86_64 ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/repeated-imports.any.sharedworker.html [ Pass Failure ]
+
+# rdar://140222322 (Supposed to pass on 2025 OSes (Sequoia-aligned) xx.4+, but failing on debug)
 http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking-with-partitioned-cookies.https.html [ Skip ]
 http/tests/resourceLoadStatistics/only-partitioned-third-party-cookies.https.html [ Skip ]
 http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect.https.html [ Skip ]
@@ -833,7 +854,6 @@ http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephe
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ]
 
 webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html [ Pass Timeout ]
-webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Pass Timeout ]
 
 webkit.org/b/172148 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html [ Pass Failure ]
 
@@ -891,7 +911,7 @@ http/wpt/cache-storage/cache-quota-add.any.html [ Slow ]
 http/wpt/cache-storage/quota-third-party.https.html [ Slow ]
 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Slow ]
 
-webkit.org/b/181750 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ DumpJSConsoleLogInStdErr Pass Failure Crash ]
+webkit.org/b/181750 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass Failure Crash ]
 
 webkit.org/b/181839 [ Debug ] inspector/debugger/breakpoint-action-log.html [ Pass Timeout ]
 
@@ -1059,8 +1079,6 @@ webkit.org/b/214478 [ Debug ] tiled-drawing/scrolling/fast-scroll-iframe-latched
 webkit.org/b/214661 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html [ Pass Crash Failure ]
 
 webkit.org/b/230485 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html [ Pass Failure ]
-
-webkit.org/b/214682 imported/w3c/web-platform-tests/css/cssom/stylesheet-same-origin.sub.html [ Pass Failure ]
 
 webkit.org/b/214683 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Pass Failure ]
 
@@ -1269,7 +1287,7 @@ webkit.org/b/228087 media/video-seek-with-negative-playback.html [ Pass Failure 
 
 webkit.org/b/228248 fast/selectors/selection-window-inactive.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/228256 [ Debug ] inspector/canvas/create-context-webgl.html [ Pass Failure ]
+webkit.org/b/228256 inspector/canvas/create-context-webgl.html [ Pass Failure ]
 
 webkit.org/b/229043 inspector/canvas/recording-webgl-snapshots.html [ Pass Failure ]
 webkit.org/b/229043 inspector/canvas/recording-offscreen-webgl-snapshots.html [ Pass Failure ]
@@ -1299,7 +1317,7 @@ webkit.org/b/228127 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 
 webkit.org/b/229585 imported/w3c/web-platform-tests/navigation-timing/test_performance_attributes.sub.html [ Pass Failure ]
 
-webkit.org/b/229595 [ Debug ] imported/w3c/web-platform-tests/fetch/http-cache/invalidate.any.worker.html [ Pass Failure ]
+webkit.org/b/229595 imported/w3c/web-platform-tests/fetch/http-cache/invalidate.any.worker.html [ Pass Failure ]
 
 webkit.org/b/209878 [ Debug ] webrtc/datachannel/multiple-connections.html [ Pass Failure Slow ]
 
@@ -1383,7 +1401,6 @@ webkit.org/b/245010 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 #webkit.org/b/248537 Batch mark expectations for Ventura test failures
 webrtc/canvas-to-peer-connection-2d.html [ Pass Failure ]
 webrtc/canvas-to-peer-connection.html [ Pass Failure ]
-webaudio/decode-audio-data-webm-vorbis.html [ Failure ]
 [ x86_64 ] scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub.html [ Pass Failure ]
 [ x86_64 ] imported/mozilla/svg/blend-color.svg [ ImageOnlyFailure ]
@@ -1462,13 +1479,8 @@ webkit.org/b/260113 [ arm64 ] http/wpt/webauthn/ctap-hid-failure.https.html [ Pa
 # This test was added in https://bugs.webkit.org/show_bug.cgi?id=250475 — re-enable it here for Sonoma.
 
 # Only applicable on platforms with HDR support
-[ Sequoia+ ] compositing/hdr/hdr-basic-canvas.html [ Pass ]
-[ Sequoia+ ] compositing/hdr/hdr-basic-image.html [ Pass ]
-[ Sequoia+ ] compositing/hdr/hdr-basic-image-dynamic-range-limit.html [ Pass ]
-[ Sequoia+ ] compositing/hdr/hdr-background-image.html [ Pass ]
-[ Sequoia+ ] compositing/hdr/hdr-border-image.html [ Pass ]
-[ Sequoia+ ] compositing/hdr/hdr-pseudo-before-image.html [ Pass ]
-[ Sequoia+ ] compositing/hdr/hdr-svg-inline-image.html [ Pass ]
+[ Sequoia+ ] compositing/hdr [ Pass ]
+[ Sequoia+ ] fast/canvas/hdr [ Pass ]
 [ Sequoia+ ] fast/images/hdr-basic-image.html [ Pass ]
 [ Sequoia+ ] fast/images/hdr-basic-image-dynamic-range-limit.html [ Pass ]
 [ Sequoia+ ] fast/images/hdr-background-image.html [ Pass ]
@@ -1476,6 +1488,7 @@ webkit.org/b/260113 [ arm64 ] http/wpt/webauthn/ctap-hid-failure.https.html [ Pa
 [ Sequoia+ ] fast/images/hdr-image-layer-sdr-dynamic-range-limit.html [ Pass ]
 [ Sequoia+ ] fast/images/hdr-pseudo-before-image.html [ Pass ]
 [ Sequoia+ ] fast/images/hdr-svg-inline-image.html [ Pass ]
+[ Sequoia+ ] fast/images/hdr-unaccelerated-basic-image.html [ Pass ]
 
 # The direct image codepath is not used with the remote layer tree.
 [ Sonoma+ ] compositing/images/direct-image-object-fit.html [ Skip ]
@@ -1557,7 +1570,7 @@ webkit.org/b/263396 css3/color/text.html [ Skip ]
 
 # WebGPU
 fast/webgpu/nocrash/fuzz-275294.html [ Pass ]
-[ Release ] http/tests/webgpu/webgpu/api/validation/encoding/cmds/copyTextureToTexture.html
+[ x86_64 ] fast/webgpu/nocrash/fuzz-298315.html [ Skip ]
 
 # skipped due to infinite loop compute shaders normally not terminating on macOS, test must be run locally for now
 fast/webgpu/nocrash/fuzz-286820.html [ Skip ]
@@ -1601,8 +1614,8 @@ fast/webgpu/nocrash/fuzz-286820.html [ Skip ]
 # skipped due to failing when run in stress test mode
 [ Sonoma ] fast/webgpu/nocrash/RenderBundle_WRITE.html [ Skip ]
 
-webkit.org/b/293808 [ Sequoia+ Release arm64 ] http/tests/webgpu/webgpu/api [ Pass ]
-webkit.org/b/293808 [ Sequoia+ Release arm64 ] http/tests/webgpu/webgpu/shader [ Pass ]
+webkit.org/b/293808 [ Sequoia+ arm64 ] http/tests/webgpu/webgpu/api [ Slow ]
+webkit.org/b/293808 [ Sequoia+ arm64 ] http/tests/webgpu/webgpu/shader [ Slow ]
 [ Release arm64 Sequoia+ ] http/tests/webgpu/webgpu/web_platform [ Pass Failure Timeout ]
 
 [ arm64 ] http/tests/webgpu/webgpu/api/validation/capability_checks/features/texture_formats.html [ Pass ]
@@ -1611,17 +1624,20 @@ webkit.org/b/293808 [ Sequoia+ Release arm64 ] http/tests/webgpu/webgpu/shader [
 [ Debug ] http/tests/webgpu/webgpu/api/operation/render_pipeline/sample_mask.html [ Skip ]
 [ Debug ] http/tests/webgpu/webgpu/api/validation/image_copy/texture_related.html [ Skip ]
 [ Debug ] http/tests/webgpu/webgpu/api/validation/state/device_lost/destroy.html [ Skip ]
+[ Debug ] http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_matrix_vector_multiplication.html [ Skip ]
 http/tests/webgpu/webgpu/api/operation/command_buffer/copyTextureToTexture.html [ Skip ]
 http/tests/webgpu/webgpu/api/operation/command_buffer/image_copy.html [ Skip ]
 http/tests/webgpu/webgpu/api/operation/resource_init/texture_zero.html [ Skip ]
-http/tests/webgpu/webgpu/api/operation/vertex_state/correctness.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesPerShaderStage.html [ Skip ]
-http/tests/webgpu/webgpu/api/validation/createView.html [ Skip ]
-http/tests/webgpu/webgpu/api/validation/render_pipeline/vertex_state.html [ Skip ]
+http/tests/webgpu/webgpu/api/validation/render_pipeline/vertex_state.html [ Pass Timeout ]
 http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/draw.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/createTexture.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/error_scope.html [ Skip ]
 http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/distance.html [ Skip ]
+
+# Slow tests or too slow for Intel
+[ arm64 ] http/tests/webgpu/webgpu/api/operation/vertex_state/correctness.html [ Slow ]
+[ x86_64 ] http/tests/webgpu/webgpu/api/operation/vertex_state/correctness.html [ Skip ]
 
 # these tests are flaky failures, potentially a test issue
 http/tests/webgpu/webgpu/api/operation/adapter/info.html [ Skip ]
@@ -1708,7 +1724,6 @@ http/tests/webgpu/webgpu/shader/validation/shader_io/group_and_binding.html [ Sk
 http/tests/webgpu/webgpu/shader/validation/uniformity/uniformity.html [ Skip ]
 http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html  [ Skip ]
 http/tests/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.html  [ Skip ]
-http/tests/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.html  [ Skip ]
 http/tests/webgpu/webgpu/api/validation/getBindGroupLayout.html  [ Skip ]
 http/tests/webgpu/webgpu/shader/execution/expression/precedence.html  [ Skip ]
 http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.html  [ Skip ]
@@ -1734,7 +1749,6 @@ http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/fwidthFine.htm
 
 # skipped due to debug crashes - https://bugs.webkit.org/show_bug.cgi?id=274972
 http/tests/webgpu/webgpu/api/validation/render_pass/render_pass_descriptor.html [ Skip ]
-http/tests/webgpu/webgpu/api/validation/texture/destroy.html [ Skip ]
 http/tests/webgpu/webgpu/web_platform/canvas/getCurrentTexture.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/createBindGroupLayout.html [ Skip ]
 
@@ -1763,9 +1777,6 @@ http/tests/webgpu/webgpu/api/validation/queue/submit.html [ Pass ]
 http/tests/webgpu/webgpu/api/validation/queue/destroyed [ Pass ]
 [ arm64 ] http/tests/webgpu/webgpu/api/operation/command_buffer/queries [ Pass ]
 
-# this test is very slow so expect a timeout or pass
-http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.html [ Pass Timeout ]
-
 http/tests/webgpu/webgpu/shader/execution/flow_control/switch.html [ Pass ]
 # arm64 release only because the tests are incredibly slow due to their extensiveness
 [ Release arm64 ] http/tests/webgpu/webgpu/shader/execution/shader_io [ Pass ]
@@ -1773,6 +1784,7 @@ http/tests/webgpu/webgpu/shader/execution/flow_control/switch.html [ Pass ]
 webkit.org/b/264306 fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html [ Pass ImageOnlyFailure Timeout ]
 
 webkit.org/b/265599 [ Sonoma+ Debug x86_64 ] imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-noreferrer.html [ Pass Crash ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open_initial_size.html [ Skip ]
 
 # WindowProxy property access delegate callbacks are only implemented on Mac and iOS WK2.
 http/wpt/opener/child-access-parent-via-windowproxy.html [ Pass ]
@@ -1892,9 +1904,6 @@ imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html
 # webkit.org/b/278738 [ Sonoma wk2 x86_64]: fast/canvas/image-buffer-backend-variants.html is a flaky crash.
 [ Sonoma x86_64 ] fast/canvas/image-buffer-backend-variants.html [ Pass Crash ]
 
-# webkit.org/b/278801 REGRESSION (280449@main): [ macOS wk2 ] imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-intercept-interrupted.html is a flaky crash
-imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-intercept-interrupted.html [ Pass Crash ]
-
 # webkit.org/b/278881 [ Sonoma F wk2 ] fast/scrolling/rubber-band-shows-background.html is a flaky image only failure.
 [ Sonoma+ ] fast/scrolling/rubber-band-shows-background.html [ Pass ImageOnlyFailure ]
 
@@ -1935,16 +1944,11 @@ editing/input/scroll-viewport-page-up-down.html [ Pass Failure ]
 
 # webkit.org/b/282046 REGRESSION(285592@main): [ macOS iOS wk2 ] http/tests/site-isolation/load-event.html are near constant failures.
 http/tests/site-isolation/load-event.html [ Pass Failure ]
-http/tests/site-isolation/fullscreen.html [ Pass Failure ]
-
-# webkit.org/b/282051 REGRESSION(285577@main): [ macOS iOS wk2 ] imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-204-205-download.html is a constant timeout
-# webkit.org/b/286584 REGRESSION (286180@main): [ macOS wk2 debug ] imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-204-205-download.html is a flaky failure
-imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-204-205-download.html [ Pass Failure Timeout ]
+webkit.org/b/289347 http/tests/site-isolation/fullscreen.html [ Pass Failure ]
+webkit.org/b/289347 http/tests/site-isolation/fullscreen-escape-key.html [ Pass Failure ]
 
 # webkit.org/b/282063 REGRESSION (285464@main?) : [ macOS iOS wk2 ] media/remote-control-comman d-is-user-gesture.html is a constant timeout.
 media/remote-control-command-is-user-gesture.html [ Timeout ]
-
-webkit.org/b/282565 [ Sequoia+ ] imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-sideways-001.html [ ImageOnlyFailure ]
 
 webkit.org/b/282726 http/tests/media/fairplay/legacy-fairplay-hls.html [ Failure ]
 
@@ -1966,16 +1970,9 @@ webkit.org/b/284492 [ Sequoia+ ] imported/w3c/web-platform-tests/fetch/api/cors/
 
 webkit.org/b/232282 fast/scrolling/mac/scrollbars/overlay-scrollbar-hovered.html [ Pass Failure ]
 
-# webkit.org/b/288409 [ MacOS iOS ] 3x imported/w3c/web-platform-tests/navigation-api/navigation are consistent failures
-imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-traverse-not-in-entries.html [ Failure ]
-imported/w3c/web-platform-tests/navigation-api/navigation-methods/disambigaute-forward.html [ Failure ]
-imported/w3c/web-platform-tests/navigation-api/navigation-methods/disambigaute-traverseTo-forward-multiple.html [ Failure ]
-
 # webkit.org/b/280415 [ Sequoia wk2 release arm64 ] 2x fast/selectors/* are flaky image only failures.
 [ arm64 ] fast/selectors/selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
 [ arm64 ] fast/selectors/text-field-selection-stroke-color.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/286318 http/tests/iframe-monitor [ Pass ]
 
 webkit.org/b/286693 [ Sequoia Debug arm64 ] media/video-canvas-createPattern.html [ Pass Failure ]
 
@@ -1997,8 +1994,6 @@ webkit.org/b/287865 pdf/two-pages-continuous-to-discrete.html [ Pass ImageOnlyFa
 # webkit.org/b/287875 [ macOS Release wk2 x86_64 ] 2x fast/borders/border-painting-*.html are consistently failing.
 [ Sonoma x86_64 Release ] fast/borders/border-painting-inset.html [ Pass ImageOnlyFailure  ]
 [ Sonoma x86_64 Release ] fast/borders/border-painting-outset.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/287877 pdf/pdf-plugin-printing.html [ Pass Timeout ]
 
 webkit.org/b/287967 media/modern-media-controls/overflow-support/playback-speed.html [ Pass Timeout ]
 
@@ -2039,8 +2034,7 @@ webkit.org/b/288404 [ Sonoma+ Release ] fast/text/canvas-color-fonts/stroke-grad
 
 webkit.org/b/288411 [ Sequoia x86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Failure ]
 
-webkit.org/b/288545 [ Sequoia x86_64 ] imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF-dynamic.html [ Failure ]
-webkit.org/b/288545 [ Sonoma Release ] imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF-dynamic.html [ Pass Failure ]
+webkit.org/b/288545 imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF-dynamic.html [ Failure Pass ]
 
 webkit.org/b/288603 imported/w3c/web-platform-tests/screen-orientation/hidden_document.html [ Pass Failure ]
 
@@ -2132,9 +2126,9 @@ webkit.org/b/291119 [ Debug ] imported/w3c/web-platform-tests/html/semantics/emb
 
 webkit.org/b/291394 [ Debug ] imported/w3c/web-platform-tests/wasm/webapi/esm-integration/script-src-blocks-wasm.tentative.sub.html [ Pass Failure ]
 
-webkit.org/b/291710 [ Debug ] swipe/basic-cached-back-swipe.html [ Pass Timeout ]
+webkit.org/b/291710 swipe/basic-cached-back-swipe.html [ Pass Timeout ]
 
-webkit.org/b/291878 [ Sequoia ] http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.html [ Failure ]
+webkit.org/b/291878 [ Sequoia ] http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.html [ Pass Failure Timeout ]
 
 webkit.org/b/291966 [ Sequoia+ ] http/tests/webgpu/webgpu/api/validation/render_pipeline/fragment_state.html [ Pass Timeout ]
 
@@ -2150,14 +2144,9 @@ webkit.org/b/291966 [ Sequoia+ ] http/tests/webgpu/webgpu/api/validation/render_
 [ Sonoma+ Debug ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?vp8 [ Skip ]
 [ Sonoma+ Debug ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?vp9_p0 [ Skip ]
 
+webkit.org/b/296195 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-element-with-overscroll-behavior.html [ Skip ]
+
 webkit.org/b/292203 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/transition-in-hidden-page.html [ Pass Crash ]
-
-# webkit.org/b/292582 REGRESSION (294079@main): [ MacOS iOS WK2 ] 3X imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form are consistent failures 
-imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form-userInitiated.html [ Failure ]
-imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form-with-target.html [ Failure ]
-imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form.html [ Failure ]
-
-webkit.org/b/292650 http/tests/iframe-monitor/throttler.html [ Timeout ]
 
 webkit.org/b/292794 [ Debug ] http/tests/media/media-play-stream-chunked-icy.html [ Pass Crash ]
 
@@ -2165,13 +2154,264 @@ webkit.org/b/292883 http/wpt/service-workers/basic-fetch-with-contentfilter.http
 
 webkit.org/b/283410 media/media-vp8-webm-with-poster.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/293145 [ Debug arm64 ] imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-for-user-scroll.html [ Pass Failure ]
-
-webkit.org/b/293761 http/wpt/service-workers/navigate-iframes-window-client.https.html [ Failure ]
 webkit.org/b/293761 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failure ]
 
-webkit.org/b/293804 [ Debug ] pdf/annotations/checkbox-set-active.html [ Pass Timeout ]
+# webkit.org/b/294272 REGRESSION(295925@main?) [macOS Debug]: 2x tests in fast/scrolling/Mac/scrollbars are flaky crash
+[ Debug ] fast/scrolling/mac/scrollbars/overflow-overlay-scrollbar-reveal.html [ Pass Crash ]
+[ Debug ] fast/scrolling/mac/scrollbars/overlay-scrollbar-reveal.html [ Pass Crash ]
 
-# webkit.org/b/293827 [macOS] 2x tests in webgl are constant failures (flaky in EWS)
-[ Sequoia ] webgl/1.0.x/conformance/textures/misc/gl-teximage.html [ Failure ]
-[ Sequoia ] webgl/2.0.y/conformance/textures/misc/gl-teximage.html [ Failure ]
+# It fails only on debug build with '0.01%' difference
+[ Debug ] imported/w3c/web-platform-tests/css/css-fill-stroke/paint-order-001.html [ ImageOnlyFailure ]
+
+webkit.org/b/295076 imported/w3c/web-platform-tests/css/css-pseudo/highlight-custom-properties-dynamic-001.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/295226 http/wpt/mediarecorder/MediaRecorder-audio-samplingrate-change.html [ Pass Failure ]
+
+webkit.org/b/295304 [ Sonoma Debug x86_64 ] webgl/1.0.x/conformance/rendering/many-draw-calls.html [ Slow ]
+
+webkit.org/b/295366 [ Sonoma Debug x86_64 ] webgl/2.0.y/conformance/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Slow ]
+
+webkit.org/b/295412 [ Debug ] media/media-vp8-webm-error.html [ Pass Failure ]
+
+webkit.org/b/295419 loader/navigation-policy/should-open-external-urls/subframe-navigated-programatically-by-main-frame.html [ Pass Failure ]
+
+webkit.org/b/295439 media/video-unmuted-after-play-holds-sleep-assertion.html [ Pass Failure ]
+
+webkit.org/b/295441 [ Release ] fast/scrolling/mac/scrollbars/scrollbar-width-dynamic-none-to-auto.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/295738 [ arm64 ] http/tests/images/gif-progressive-load.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/295743 [ Debug ] media/video-display-aspect-ratio.html [ Pass Failure ]
+
+# webkit.org/b/293827 (REGRESSION (iOS 18.4 / macOS 15.4): 2x webgl tests are constantly failing.)
+[ Sequoia+ ] webgl/1.0.x/conformance/textures/misc/gl-teximage.html [ Failure ]
+[ Sequoia+ ] webgl/2.0.y/conformance/textures/misc/gl-teximage.html [ Failure ]
+
+# Digital Credentials tests timeout.
+[ Sequoia ] imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-get.https.html [ Skip ]
+[ Sequoia ] imported/w3c/web-platform-tests/digital-credentials/get.tentative.https.html [ Skip ]
+[ Sequoia ] imported/w3c/web-platform-tests/digital-credentials/user-activation.https.html [ Skip ]
+
+# FIXME: Needs bug.
+http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-unfiltered-link-decoration-before-short-deletion.html [ Failure ]
+
+webkit.org/b/295756 [ arm64 ] webgl/2.0.y/conformance2/rendering/texture-switch-performance.html  [ Pass Failure ]
+
+webkit.org/b/295814 [ arm64 ] scrollingcoordinator/mac/latching/horizontal-overflow-back-swipe.html [ Pass Timeout ]
+
+webkit.org/b/295820 [ arm64 Debug ] webrtc/audio-peer-connection-webaudio.html [ Pass Failure ]
+
+webkit.org/b/295913 [ Sequoia Release arm64 ] media/video-seek-pause.html [ Pass Failure ]
+
+webkit.org/b/295923 [ Release ] tiled-drawing/scrolling/scroll-with-top-left-content-inset.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/295938 scrollingcoordinator/mac/latching/horizontal-overflow-back-swipe-overscroll-behavior.html [ Pass Timeout ]
+
+# webkit.org/b/296008 [macOS Debug] http/tests/media/hls and platform/mac/media/encrypted-media tests are timing out on some EWS bots
+[ Sequoia Debug arm64 ] http/tests/media/hls/hls-audio-tracks-language.html [ Timeout ]
+[ Sequoia Debug arm64 ] http/tests/media/hls/hls-webvtt-default.html [ Timeout ]
+[ Sequoia Debug arm64 ] http/tests/media/hls/hls-webvtt-style.html [ Timeout ]
+[ Sequoia Debug arm64 ] http/tests/media/hls/range-request-cross-origin.html [ Timeout ]
+[ Sequoia Debug arm64 ] http/tests/media/hls/track-in-band-multiple-cues.html [ Timeout ]
+[ Sequoia Debug arm64 ] http/tests/media/hls/track-webvtt-multitracks.html [ Timeout ]
+[ Sequoia Debug arm64 ] platform/mac/media/encrypted-media/fps-generateRequest.html [ Timeout ]
+
+webkit.org/b/296017 [ Release ] imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-021.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/296066 [ Sequoia Debug arm64 ] accessibility/mac/scrolling-in-pdf-crash.html [ Pass Timeout ]
+
+webkit.org/b/295929 [ Release ] imported/w3c/web-platform-tests/css/css-conditional/container-queries/canvas-as-container-002.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/296130 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-scroller-nested-4.html [ Pass Failure ]
+
+webkit.org/b/296101 [ Release ] imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-012.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/296209 http/tests/workers/service/basic-timeout.https.html [ Pass Failure ]
+
+# webkit.org/b/296282 REGRESSION (297339@main): [ macOS Sequoia wk2 Release arm64 ] 25x http/tests/webgpu/webgpu (layout-tests) are constant text failures
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxDynamicStorageBuffersPerPipelineLayout.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxDynamicUniformBuffersPerPipelineLayout.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxInterStageShaderVariables.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageBuffersInFragmentStage.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageBuffersInVertexStage.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInFragmentStage.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesInVertexStage.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/api/validation/createPipelineLayout.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/shader/execution/expression/binary/bitwise_shift.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/shader/execution/flow_control/eval_order.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/shader/validation/decl/var.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/shader/validation/expression/binary/short_circuiting_and_or.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/value_constructor.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/shader/validation/functions/restrictions.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/shader/validation/parse/blankspace.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/shader/validation/parse/identifiers.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/shader/validation/shader_io/interpolate.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/shader/validation/statement/continuing.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/shader/validation/statement/for.html [ Failure ]
+[ Sequoia Release arm64 ] http/tests/webgpu/webgpu/shader/validation/statement/phony.html [ Failure ]
+
+webkit.org/b/296289 media/media-session/play-after-seek.html [ Pass Failure ]
+
+webkit.org/b/296300 [ Sequoia Debug arm64 ] webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Pass Timeout ]
+
+webkit.org/b/296297 fast/images/image-map-outline-with-paint-root-offset.html [ Pass Failure ]
+
+webkit.org/b/296344 imported/w3c/web-platform-tests/webrtc/RTCRtpSender-replaceTrack.https.html [ Pass Failure ]
+
+webkit.org/b/296348 [ Sequoia ] http/tests/cache/disk-cache/shattered-deduplication.html [ Pass Failure ] 
+
+webkit.org/b/296571 [ Sequoia Debug arm64 ] http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_matrix_vector_multiplication.html [ Timeout ]
+
+webkit.org/b/295746 webanimations/no-scheduling-while-filling-accelerated.html [ Pass Failure ]
+
+webkit.org/b/296584 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-after-snap.html [ Pass Failure ]
+
+# webkit.org/b/296631 4x imported/w3c/web-platform-tests/webcodecs/ tests (layout-tests) is a constant text failure and flakey text failure 
+imported/w3c/web-platform-tests/webcodecs/video-encoder-h26x-annexb.https.any.worker.html?h265_annexb_software [ Pass Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-h26x-annexb.https.any.worker.html?h265_annexb_hardware [ Pass Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-h26x-annexb.https.any.html?h265_annexb_software [ Pass Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-h26x-annexb.https.any.html?h265_annexb_hardware [ Pass Failure ]
+
+# rdar://156956464 29x tests (layout-tests) are timeouts
+accessibility/text-marker/character-offset-visible-position-conversion-hang.html [ Slow ]
+accessibility/mac/text-operation/text-operation-lowercase.html [ Slow ]
+accessibility/mac/text-operation/text-operation-capitalize.html [ Slow ]
+accessibility/datetime/input-date-field-labels-and-value-changes.html [ Slow ]
+accessibility/list/list-active-element-selected-children.html [ Slow ]
+accessibility/display-contents/aria-hidden.html [ Slow ]
+accessibility/display-contents/aria-grid.html [ Slow ]
+animations/CSSKeyframesRule-name-null.html [ Slow ]
+animations/CSSKeyframesRule-parameters.html [ Slow ]
+apple-visual-effects/apple-visual-effect-automatic-vibrancy.html [ Slow ]
+applicationmanifest/developer-warnings.html [ Slow ]
+compositing/animation/animated-composited-inside-hidden.html [ Slow ]
+compositing/backface-visibility/backface-visibility-3d.html [ Slow ]
+fast/events/popup-allowed-from-gesture-initiated-event.html [ Pass Timeout ]
+fast/events/popup-blocked-from-fake-user-gesture.html [ Pass Timeout ]
+fast/events/popup-blocking-timers1.html [ Pass Timeout ]
+fast/history/history_reload.html [ Pass Timeout ]
+fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Pass Timeout Failure ]
+http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window.html [ Timeout ]
+http/tests/security/isolatedWorld/userGestureEvents.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/digital-credentials/create.disabled-by-permissions-policy.https.sub.html [ Slow ]
+loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag.html [ Timeout ]
+loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag.html [ Timeout ]
+loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag.html [ Timeout ]
+loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag.html [ Timeout ]
+media/crash-closing-page-with-media-as-plugin-fallback.html [ Pass Timeout ]
+webgl/2.0.y/conformance2/sync/sync-webgl-specific.html [ Slow ]
+
+webkit.org/b/296647 [ arm64 ] http/wpt/background-fetch/background-fetch-pause-resume.window.html [ Pass Failure ]
+
+webkit.org/b/296655 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-after-long-deletion.html [ Failure ]
+webkit.org/b/296655 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-after-short-deletion.html [ Failure Slow ]
+webkit.org/b/296655 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-before-short-deletion.html [ Failure ]
+webkit.org/b/296655 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-js-cookie-checking.html [ Failure ]
+webkit.org/b/296655 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-unfiltered-link-decoration-after-short-deletion.html [ Failure ]
+webkit.org/b/296655 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-without-link-decoration.html [ Failure ]
+
+webkit.org/b/294152 http/tests/misc/timer-vs-loading.html [ Pass Timeout ]
+
+webkit.org/b/296755 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/worker-src/service-worker-src-child-fallback.https.sub.html [ Pass Failure ]
+
+webkit.org/b/296754 [ Debug arm64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-connectionState.https.html [ Pass Failure ]
+
+webkit.org/b/296816 [ Release ] imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-012.html [ Pass Failure ]
+
+webkit.org/b/296814 [ arm64 ] imported/w3c/web-platform-tests/css/css-view-transitions/rotated-cat-off-top-edge.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/293808 [ Sequoia Debug arm64 ] http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/atan2.html [ Timeout ]
+webkit.org/b/293808 [ Sequoia Debug arm64 ] http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/bitcast.html [ Timeout ]
+
+# webkit.org/b/296890 [ macOS wk2 ] 3x fast/webgpu/nocrash/fuzz tests (layout-tests) are flaky text failures 
+fast/webgpu/nocrash/fuzz-282097.html [ Pass Failure ]
+[ x86_64 ] fast/webgpu/nocrash/fuzz-282086.html [ Pass Failure ]
+fast/webgpu/nocrash/fuzz-283008.html [ Pass Failure ]
+
+webkit.org/b/296893 imported/w3c/web-platform-tests/css/css-view-transitions/column-span-during-transition-doesnt-skip.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/296898 [ Debug arm64 ] fast/block/transparent-outline-with-and-without-border-radius.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/296901 [ Sonoma x86_64 ] imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-002.html [ ImageOnlyFailure ]
+
+# webkit.org/b/296941 REGRESSION(298070@main): [macOS]: Multiple tests in imported/w3c/web-platform-tests/content-security-policy are failing
+imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-import.http.html [ Failure ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-import.http.html [ Failure ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-import.http.html [ Failure ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/sharedworker-import.http.html [ Failure ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-import.http.html [ Failure ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/sharedworker-import.http.html [ Failure ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-import.http.html [ Failure ]
+imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-import.http.html [ Failure ]
+
+webkit.org/b/296954 imported/w3c/web-platform-tests/event-timing/event-click-counts.html [ Pass Failure ]
+
+webkit.org/b/296964 imported/w3c/web-platform-tests/webrtc/RTCDataChannel-GC.html [ Pass Failure ]
+
+webkit.org/b/297007 media/webaudio-background-playback.html [ Pass Failure ]
+
+webkit.org/b/292402 http/tests/site-isolation/draw-after-cross-origin-navigation-between-two-remote-frames.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/297063 [ arm64 ] http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html [ Pass Failure ]
+
+webkit.org/b/297078 [ Debug arm64 ] fast/parser/entity-comment-in-style.html [ Pass Timeout ]
+
+webkit.org/b/297121 fast/page-color-sampling/color-sampling-fixed-ancestor-with-relative-container.html [ Failure ]
+
+webkit.org/b/297251 fast/mediastream/getUserMedia-echoCancellation.html [ Pass Failure ]
+
+webkit.org/b/297343 [ Debug ] ipc/storage-area-cache-use-after-free.html [ Slow ]
+
+webkit.org/b/297551 imported/w3c/web-platform-tests/event-timing/buffered-and-duration-threshold.html [ Pass Failure ]
+
+webkit.org/b/296202 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-installed.https.html [ Pass Failure ]
+
+webkit.org/b/297613 [ Debug ] fast/scrolling/mac/stateless-user-scroll-scrollend.html [ Pass Failure ]
+
+webkit.org/b/297623 [ Release arm64 ] http/wpt/webcodecs/webcodecs-message-gc.html [ Pass Failure ]
+
+webkit.org/b/297674 [ Sonoma Release ] http/wpt/mediarecorder/MediaRecorder-matroska-AV-audio-video-dataavailable.html [ Pass Failure ]
+
+# webkit.org/b/297737 [macOS Debug] ipc/send-gradient.html is crashing in EWS
+[ Debug ] ipc/send-gradient.html [ Skip ]
+[ Debug ] ipc/send-filter.html [ Skip ]
+[ Debug ] ipc/send-ignored-network-message.html [ Skip ]
+
+webkit.org/b/297860 http/tests/site-isolation/edge-sampling-viewport-constrained-object.html [ Skip ]
+
+webkit.org/b/297006 [ Debug ] http/tests/media/media-element-frame-destroyed-crash.html [ Skip ]
+
+webkit.org/b/267778 [ Release ] fast/forms/listbox-padding-clip-selected.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/298256 [ Debug ] fast/dom/document-all.html [ Pass Timeout ]
+
+webkit.org/b/298269 imported/w3c/web-platform-tests/html/anonymous-iframe/session-storage.tentative.https.window.html [ Pass Failure ]
+
+webkit.org/b/298278 imported/w3c/web-platform-tests/html/anonymous-iframe/local-storage.tentative.https.window.html [ Pass Failure ]
+
+webkit.org/b/298292 [ Sequoia ] http/tests/webgpu/webgpu/api/operation/sampling/sampler_texture.html [ Pass ]
+
+# run as pass for now to catch subtest regressions. but some of these tests are still failing.
+http/tests/webgpu/webgpu/web_platform/copyToTexture [ Pass Timeout ]
+
+# this test is very slow and times out on debug so skip
+[ Release ] http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageData.html [ Slow ]
+[ Debug ] http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageData.html [ Skip ]
+
+http/tests/webgpu/webgpu/web_platform/copyToTexture/image_file.html [ Pass ]
+
+# this test is very slow so expect a timeout or pass
+http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.html [ Pass Timeout ]
+
+# skip on intel for now due to small precision error differences
+[ x86_64 ] http/tests/webgpu/webgpu/web_platform/copyToTexture/video.html [ Skip ]
+
+webkit.org/b/298903 webrtc/video-rotation-black.html [ Pass Failure ]
+
+webkit.org/b/298416 [ Debug ] http/tests/websocket/construct-in-detached-frame.html [ Skip ]
+
+webkit.org/b/299561 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-chained-003.html [ Pass ]
+
+webkit.org/b/299830 imported/w3c/web-platform-tests/storage-access-api/hasStorageAccess-insecure.sub.window.html [ Pass Failure ]
+
+webkit.org/b/299826 [ Release x86_64 ] media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause.html [ Crash ]

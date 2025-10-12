@@ -1,0 +1,5 @@
+
+PASS Can query named container in shadow
+FAIL ::part() can not see inner named containers assert_equals: expected "10px" but got "--b()"
+FAIL ::slotted() can see inner named containers assert_equals: expected "10px 5px" but got "--b() --c()"
+

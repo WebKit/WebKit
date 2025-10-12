@@ -89,6 +89,11 @@
                 (home-literal (string-append "/Library/Preferences/" domain ".plist")))))
         domains))
 
+(define-once (xcode-build-products-access)
+    (with-elevated-precedence
+        (allow file-read* file-map-executable file-issue-extension
+            (front-user-home-subpath "/XcodeBuiltProducts"))))
+
 (define-once (internal-debugging-support)
         (allow file-read* file-map-executable
                (subpath "/Developer"))
@@ -108,9 +113,8 @@
                (subpath "/AppleInternal")
                (subpath "/usr/local/lib")
                (subpath "/usr/appleinternal/lib"))
-        (with-elevated-precedence
-            (allow file-read* file-map-executable file-issue-extension
-               (front-user-home-subpath "/XcodeBuiltProducts")))
+
+        (xcode-build-products-access)
 
         ;; <rdar://problem/8107758>
         (allow file-read* file-map-executable
@@ -122,3 +126,26 @@
 
 (define (sandbox-version-2)
     (state-flag "local:tested_version_2.0"))
+
+(define (allow-for-development op)
+    (with-filter (system-attribute developer-mode)
+        (allow op (with report)))
+    (with-filter (require-not (system-attribute developer-mode))
+        (deny op)))
+
+(define (allow-for-development-rules)
+    (xcode-build-products-access)
+    (allow-for-development user-preference-read)
+    (allow-for-development system-fcntl)
+    (allow-for-development system-mac-syscall)
+    (allow-for-development iokit-open-user-client)
+    (allow-for-development iokit-open-service)
+    (allow-for-development darwin-notification-post)
+    (allow-for-development file-map-executable)
+    (allow-for-development mach-lookup)
+    (allow-for-development process-info*)
+    (allow-for-development sysctl-read)
+    (allow-for-development iokit-get-properties)
+    (allow-for-development syscall-unix)
+    (allow-for-development syscall-mach)
+    (allow-for-development syscall-mig))

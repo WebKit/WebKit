@@ -29,9 +29,7 @@
 
 #include "pas_utils.h"
 
-#include "pas_lock.h"
 #include "pas_log.h"
-#include "pas_string_stream.h"
 #include <inttypes.h>
 #include <stdarg.h>
 #include <stdio.h>

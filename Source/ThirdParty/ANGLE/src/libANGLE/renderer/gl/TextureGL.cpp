@@ -6,6 +6,10 @@
 
 // TextureGL.cpp: Implements the class methods for TextureGL.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/gl/TextureGL.h"
 
 #include "common/bitset_utils.h"

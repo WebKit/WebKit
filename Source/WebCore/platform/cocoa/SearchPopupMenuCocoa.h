@@ -25,7 +25,7 @@
 
 #pragma once
 
-#import "SearchPopupMenu.h"
+#import <WebCore/SearchPopupMenu.h>
 
 namespace WebCore {
 

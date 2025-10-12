@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,14 @@
 
 #pragma once
 
-#include "Node.h"
+#include <WebCore/Node.h>
 
 namespace WebCore {
 
 class WebCoreOpaqueRoot {
 public:
-    template<typename T, typename = typename std::enable_if_t<!std::is_same_v<T, void>>>
+    template<typename T>
+        requires (!std::same_as<T, void>)
     explicit WebCoreOpaqueRoot(T* pointer)
         : m_pointer(static_cast<void*>(pointer))
     {

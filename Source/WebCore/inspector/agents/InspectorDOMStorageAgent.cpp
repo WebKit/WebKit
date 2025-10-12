@@ -38,6 +38,7 @@
 #include "InstrumentingAgents.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "Page.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginData.h"
@@ -59,7 +60,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorDOMStorageAgent);
 
 InspectorDOMStorageAgent::InspectorDOMStorageAgent(PageAgentContext& context)
     : InspectorAgentBase("DOMStorage"_s, context)
-    , m_frontendDispatcher(makeUnique<Inspector::DOMStorageFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUniqueRef<Inspector::DOMStorageFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::DOMStorageBackendDispatcher::create(context.backendDispatcher, this))
     , m_inspectedPage(context.inspectedPage)
 {
@@ -67,7 +68,7 @@ InspectorDOMStorageAgent::InspectorDOMStorageAgent(PageAgentContext& context)
 
 InspectorDOMStorageAgent::~InspectorDOMStorageAgent() = default;
 
-void InspectorDOMStorageAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
+void InspectorDOMStorageAgent::didCreateFrontendAndBackend()
 {
 }
 
@@ -167,7 +168,7 @@ String InspectorDOMStorageAgent::storageId(Storage& storage)
 {
     auto* document = storage.frame()->document();
     ASSERT(document);
-    auto* window = document->domWindow();
+    auto* window = document->window();
     ASSERT(window);
     Ref<SecurityOrigin> securityOrigin = document->securityOrigin();
     bool isLocalStorage = window->optionalLocalStorage() == &storage;

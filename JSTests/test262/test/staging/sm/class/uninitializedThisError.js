@@ -2,33 +2,27 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
 ---*/
-function checkErr(f) {
-    assertThrowsInstanceOfWithMessage(f, ReferenceError,
-        "must call super constructor before using 'this' in derived class constructor");
-}
+
 class TestNormal extends class {} {
     constructor() { this; }
 }
-checkErr(() => new TestNormal());
+assert.throws(ReferenceError, () => new TestNormal());
 
 class TestEval extends class {} {
     constructor() { eval("this") }
 }
-checkErr(() => new TestEval());
+assert.throws(ReferenceError, () => new TestEval());
 
 class TestNestedEval extends class {} {
     constructor() { eval("eval('this')") }
 }
-checkErr(() => new TestNestedEval());
+assert.throws(ReferenceError, () => new TestNestedEval());
 
-checkErr(() => {
+assert.throws(ReferenceError, () => {
     new class extends class {} {
         constructor() { eval("this") }
     }
@@ -37,20 +31,19 @@ checkErr(() => {
 class TestArrow extends class {} {
     constructor() { (() => this)(); }
 }
-checkErr(() => new TestArrow());
+assert.throws(ReferenceError, () => new TestArrow());
 
 class TestArrowEval extends class {} {
     constructor() { (() => eval("this"))(); }
 }
-checkErr(() => new TestArrowEval());
+assert.throws(ReferenceError, () => new TestArrowEval());
 
 class TestEvalArrow extends class {} {
     constructor() { eval("(() => this)()"); }
 }
-checkErr(() => new TestEvalArrow());
+assert.throws(ReferenceError, () => new TestEvalArrow());
 
 class TestTypeOf extends class {} {
     constructor() { eval("typeof this"); }
 }
-checkErr(() => new TestTypeOf());
-
+assert.throws(ReferenceError, () => new TestTypeOf());

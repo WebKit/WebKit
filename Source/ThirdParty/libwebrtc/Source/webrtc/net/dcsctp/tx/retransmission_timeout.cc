@@ -10,7 +10,6 @@
 #include "net/dcsctp/tx/retransmission_timeout.h"
 
 #include <algorithm>
-#include <cstdint>
 
 #include "api/units/time_delta.h"
 #include "net/dcsctp/public/dcsctp_options.h"

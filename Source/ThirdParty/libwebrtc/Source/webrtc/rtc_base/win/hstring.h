@@ -12,8 +12,9 @@
 #define RTC_BASE_WIN_HSTRING_H_
 
 #include <hstring.h>
-#include <stdint.h>
 #include <winerror.h>
+
+#include <cstdint>
 
 namespace webrtc {
 

@@ -106,6 +106,24 @@
         _runOpenPanelWithParameters(webView, parameters, frame, completionHandler);
 }
 
+- (void)_webView:(WKWebView *)webView takeFocus:(_WKFocusDirection)direction
+{
+    if (_takeFocus)
+        _takeFocus(webView, direction);
+}
+
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+
+- (NSColor *)_webView:(WKWebView *)webView adjustedColorForTopContentInsetColor:(NSColor *)proposedColor
+{
+    if (_adjustedColorForTopContentInsetColor)
+        return _adjustedColorForTopContentInsetColor(webView, proposedColor);
+
+    return proposedColor;
+}
+
+#endif // ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+
 #endif // PLATFORM(MAC)
 
 - (void)webViewDidClose:(WKWebView *)webView
@@ -214,6 +232,12 @@
 - (void)_webView:(WKWebView *)webView didAttachLocalInspector:(_WKInspector *)inspector
 {
     _showedInspector = YES;
+}
+
+- (void)_webView:(WKWebView *)webView didReceiveConsoleLogForTesting:(NSString *)log
+{
+    if (_didReceiveConsoleLogForTesting)
+        _didReceiveConsoleLogForTesting(log);
 }
 
 - (void)waitForInspectorToShow

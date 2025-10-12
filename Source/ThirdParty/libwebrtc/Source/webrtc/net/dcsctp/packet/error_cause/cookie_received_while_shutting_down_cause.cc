@@ -9,9 +9,9 @@
  */
 #include "net/dcsctp/packet/error_cause/cookie_received_while_shutting_down_cause.h"
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <optional>
+#include <string>
 #include <vector>
 
 #include "api/array_view.h"
@@ -27,7 +27,7 @@ constexpr int CookieReceivedWhileShuttingDownCause::kType;
 
 std::optional<CookieReceivedWhileShuttingDownCause>
 CookieReceivedWhileShuttingDownCause::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   if (!ParseTLV(data).has_value()) {
     return std::nullopt;
   }

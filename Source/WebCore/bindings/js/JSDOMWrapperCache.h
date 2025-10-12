@@ -23,15 +23,15 @@
 
 #pragma once
 
-#include "DOMWrapperWorld.h"
-#include "JSDOMGlobalObject.h"
-#include "JSDOMWrapper.h"
-#include "ScriptWrappableInlines.h"
-#include "WebCoreTypedArrayController.h"
 #include <JavaScriptCore/InternalFunction.h>
 #include <JavaScriptCore/JSArrayBuffer.h>
 #include <JavaScriptCore/Weak.h>
 #include <JavaScriptCore/WeakInlines.h>
+#include <WebCore/DOMWrapperWorld.h>
+#include <WebCore/JSDOMGlobalObject.h>
+#include <WebCore/JSDOMWrapper.h>
+#include <WebCore/ScriptWrappableInlines.h>
+#include <WebCore/WebCoreTypedArrayController.h>
 
 namespace WebCore {
 

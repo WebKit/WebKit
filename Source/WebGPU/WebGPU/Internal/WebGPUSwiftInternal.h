@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "CommandEncoder.h"
 #include "CommandsMixin.h"
 #include "ComputePassEncoder.h"
+#include "DDModelTypes.h"
 #include "Device.h"
 #include "IsValidToUseWith.h"
 #include "Logging.h"
@@ -38,14 +39,19 @@
 #include "Queue.h"
 #include "RenderPassEncoder.h"
 #include "Texture.h"
+#include "TextureOrTextureView.h"
 #include "TextureView.h"
 #include "WebGPU.h"
+#include <algorithm>
 #include <cstdint>
+#include <os/log.h>
 #include <span>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashSet.h>
+#include <wtf/MathExtras.h>
 #include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/CString.h>
 
 using SpanConstUInt8 = std::span<const uint8_t>;
 using SpanUInt8 = std::span<uint8_t>;
@@ -67,10 +73,10 @@ class Range;
 
 namespace WebGPU_Internal {
 
-inline void logString(const char * input)
+inline void logString(const String& input)
 {
-    if (input)
-        RELEASE_LOG(WebGPUSwift, "%s", input);
+    if (!input.isEmpty())
+        RELEASE_LOG(WebGPUSwift, "%s", input.utf8().data());
 }
 
 using RefComputePassEncoder = Ref<WebGPU::ComputePassEncoder>;
@@ -102,6 +108,11 @@ inline bool isValidToUseWithBufferCommandEncoder(const WebGPU::Buffer& buffer, c
 }
 
 inline bool isValidToUseWithTextureCommandEncoder(const WebGPU::Texture& texture, const WebGPU::CommandEncoder& commandEncoder)
+{
+    return WebGPU::isValidToUseWith(texture, commandEncoder);
+}
+
+inline bool isValidToUseWith(const WebGPU::TextureOrTextureView& texture, const WebGPU::CommandEncoder& commandEncoder)
 {
     return WebGPU::isValidToUseWith(texture, commandEncoder);
 }

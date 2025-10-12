@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #include "RemoveNodePreservingChildrenCommand.h"
 
 #include "Editing.h"
+#include "NodeDocument.h"
 #include "NodeInlines.h"
 #include <wtf/Assertions.h>
 
@@ -42,21 +43,20 @@ RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(Ref<Nod
 void RemoveNodePreservingChildrenCommand::doApply()
 {
     Vector<Ref<Node>> children;
-    auto node = protectedNode();
-    RefPtr parent { node->parentNode() };
+    RefPtr parent { m_node->parentNode() };
     if (!parent || (m_shouldAssumeContentIsAlwaysEditable == DoNotAssumeContentIsAlwaysEditable && !isEditableNode(*parent)))
         return;
 
-    for (Node* child = node->firstChild(); child; child = child->nextSibling())
+    for (Node* child = m_node->firstChild(); child; child = child->nextSibling())
         children.append(*child);
 
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i) {
         auto child = WTFMove(children[i]);
         removeNode(child, m_shouldAssumeContentIsAlwaysEditable);
-        insertNodeBefore(WTFMove(child), node, m_shouldAssumeContentIsAlwaysEditable);
+        insertNodeBefore(WTFMove(child), m_node, m_shouldAssumeContentIsAlwaysEditable);
     }
-    removeNode(node, m_shouldAssumeContentIsAlwaysEditable);
+    removeNode(m_node, m_shouldAssumeContentIsAlwaysEditable);
 }
 
 }

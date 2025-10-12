@@ -31,31 +31,28 @@
 
 #pragma once
 
+#include "CSSGridTemplateAreas.h"
 #include "CSSValue.h"
-#include "GridArea.h"
 
 namespace WebCore {
 
 class CSSGridTemplateAreasValue final : public CSSValue {
 public:
-    static Ref<CSSGridTemplateAreasValue> create(NamedGridAreaMap, size_t rowCount, size_t columnCount);
+    static Ref<CSSGridTemplateAreasValue> create(CSS::GridTemplateAreas&&);
+    static Ref<CSSGridTemplateAreasValue> create(const CSS::GridTemplateAreas&);
+
+    const CSS::GridTemplateAreas& areas() const { return m_areas; }
 
     String customCSSText(const CSS::SerializationContext&) const;
-
-    const NamedGridAreaMap& gridAreaMap() const { return m_map; }
-    size_t rowCount() const { return m_rowCount; }
-    size_t columnCount() const { return m_columnCount; }
-
     bool equals(const CSSGridTemplateAreasValue&) const;
 
     String stringForRow(size_t row) const;
 
 private:
-    CSSGridTemplateAreasValue(NamedGridAreaMap, size_t rowCount, size_t columnCount);
+    explicit CSSGridTemplateAreasValue(CSS::GridTemplateAreas&&);
+    explicit CSSGridTemplateAreasValue(const CSS::GridTemplateAreas&);
 
-    NamedGridAreaMap m_map;
-    size_t m_rowCount;
-    size_t m_columnCount;
+    CSS::GridTemplateAreas m_areas;
 };
 
 } // namespace WebCore

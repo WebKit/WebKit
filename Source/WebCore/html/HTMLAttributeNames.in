@@ -24,6 +24,7 @@ aria-busy
 aria-checked
 aria-colcount
 aria-colindex
+aria-colindextext
 aria-colspan
 aria-controls
 aria-current
@@ -60,6 +61,7 @@ aria-required
 aria-roledescription
 aria-rowcount
 aria-rowindex
+aria-rowindextext
 aria-rowspan
 aria-selected
 aria-setsize
@@ -219,6 +221,7 @@ onbeforecopy
 onbeforecut
 onbeforeinput
 onbeforeload
+onbeforematch
 onbeforepaste
 onbeforeprint
 onbeforetoggle
@@ -310,6 +313,7 @@ onrejectionhandled
 onreset
 onresize
 onscroll
+onscrollend
 onsecuritypolicyviolation
 onseeked
 onseeking

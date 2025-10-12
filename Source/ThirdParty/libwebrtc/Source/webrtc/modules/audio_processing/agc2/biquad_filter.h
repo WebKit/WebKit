@@ -41,7 +41,7 @@ class BiQuadFilter {
 
   // Filters `x` and writes the output in `y`, which must have the same length
   // of `x`. In-place processing is supported.
-  void Process(rtc::ArrayView<const float> x, rtc::ArrayView<float> y);
+  void Process(ArrayView<const float> x, ArrayView<float> y);
 
  private:
   Config config_;

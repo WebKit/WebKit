@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Cannot load script http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/integrity-mismatches.js. Failed integrity metadata check. Content length: 93, Expected content length: 0, Expected metadata: sha384-doesnotmatch
-CONSOLE MESSAGE: TypeError: Cannot load script due to integrity mismatch
 
 PASS The integrity attribute must have no affect on inline module scripts
 PASS The integrity attribute must be verified on the top-level of a module and allow it to execute when it matches

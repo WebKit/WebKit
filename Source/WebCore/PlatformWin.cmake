@@ -94,7 +94,6 @@ list(APPEND WebCore_SOURCES
     platform/win/ClipboardUtilitiesWin.cpp
     platform/win/CursorWin.cpp
     platform/win/DragDataWin.cpp
-    platform/win/DragImageWin.cpp
     platform/win/GDIUtilities.cpp
     platform/win/KeyEventWin.cpp
     platform/win/LoggingWin.cpp
@@ -222,6 +221,8 @@ if (USE_CAIRO)
 elseif (USE_SKIA)
     list(APPEND WebCore_SOURCES
         platform/graphics/win/FontCacheSkiaWin.cpp
+
+        platform/skia/DragImageSkia.cpp
     )
 endif ()
 

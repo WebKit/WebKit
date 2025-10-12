@@ -27,18 +27,18 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePayAutomaticReloadPaymentRequest.h"
-#include "ApplePayDeferredPaymentRequest.h"
-#include "ApplePayDisbursementRequest.h"
-#include "ApplePayError.h"
-#include "ApplePayLaterAvailability.h"
-#include "ApplePayLineItem.h"
-#include "ApplePayPaymentTokenContext.h"
-#include "ApplePayRecurringPaymentRequest.h"
-#include "ApplePayShippingContactEditingMode.h"
-#include "ApplePayShippingMethod.h"
-#include "PaymentContact.h"
-#include "PaymentInstallmentConfigurationWebCore.h"
+#include <WebCore/ApplePayAutomaticReloadPaymentRequest.h>
+#include <WebCore/ApplePayDeferredPaymentRequest.h>
+#include <WebCore/ApplePayDisbursementRequest.h>
+#include <WebCore/ApplePayError.h>
+#include <WebCore/ApplePayLaterAvailability.h>
+#include <WebCore/ApplePayLineItem.h>
+#include <WebCore/ApplePayPaymentTokenContext.h>
+#include <WebCore/ApplePayRecurringPaymentRequest.h>
+#include <WebCore/ApplePayShippingContactEditingMode.h>
+#include <WebCore/ApplePayShippingMethod.h>
+#include <WebCore/PaymentContact.h>
+#include <WebCore/PaymentInstallmentConfigurationWebCore.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

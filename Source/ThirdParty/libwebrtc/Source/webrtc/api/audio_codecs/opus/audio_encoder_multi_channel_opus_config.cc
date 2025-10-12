@@ -10,6 +10,11 @@
 
 #include "api/audio_codecs/opus/audio_encoder_multi_channel_opus_config.h"
 
+#include <cstddef>
+#include <vector>
+
+#include "api/audio_codecs/audio_encoder.h"
+
 namespace webrtc {
 
 namespace {
@@ -39,7 +44,7 @@ AudioEncoderMultiChannelOpusConfig::operator=(
 bool AudioEncoderMultiChannelOpusConfig::IsOk() const {
   if (frame_size_ms <= 0 || frame_size_ms % 10 != 0)
     return false;
-  if (num_channels >= 255) {
+  if (num_channels > AudioEncoder::kMaxNumberOfChannels) {
     return false;
   }
   if (bitrate_bps < kMinBitrateBps || bitrate_bps > kMaxBitrateBps)

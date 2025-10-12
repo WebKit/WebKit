@@ -83,36 +83,6 @@ svc_encoder_s1_t2() {
 svc_encoder_s2_t1() {
   local encoder="${LIBAOM_BIN_PATH}/svc_encoder_rtc${AOM_TEST_EXE_SUFFIX}"
   local output_file="${AOM_TEST_OUTPUT_DIR}/svc_encoder_rtc"
-  local metadata_file="${AOM_TEST_OUTPUT_DIR}/multilayer_metadata.yaml"
-  cat > "${metadata_file}" <<EOF
-
-  # test comment
-
-use_case: 1 # alpha
-layers:
-# first layer...
-use_case: 1 # alpha
-layers:
-  - layer_type: 5 # alpha
-    luma_plane_only_flag: 1
-    layer_metadata_scope: 2 # global
-    alpha:
-      alpha_use_idc: 2 # segmentation
-      alpha_bit_depth: 8
-      alpha_transparent_value: 0
-      alpha_opaque_value: 4
-      label_type_id:
-          - 5
-          - 3
-          - 9
-          - 128
-          - 42
-
-# second layer...
-  - layer_type: 1 # texture
-    luma_plane_only_flag: 0
-
-EOF
 
   if [ ! -x "${encoder}" ]; then
     elog "${encoder} does not exist or is not executable."
@@ -129,7 +99,6 @@ EOF
       "--spatial-layers=2" \
       "--temporal-layers=1" \
       "--timebase=1/30" \
-      "--multilayer_metadata_file=${metadata_file}" \
       "${YUV_RAW_INPUT}" \
       "${YUV_RAW_INPUT}" \
       "-o ${output_file}" \

@@ -28,10 +28,10 @@
  
 #pragma once
 
-#include "CallFrame.h"
-#include "DebuggerPrimitives.h"
-#include "ShadowChicken.h"
-#include "Strong.h"
+#include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/DebuggerPrimitives.h>
+#include <JavaScriptCore/ShadowChicken.h>
+#include <JavaScriptCore/Strong.h>
 #include <wtf/NakedPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/TextPosition.h>

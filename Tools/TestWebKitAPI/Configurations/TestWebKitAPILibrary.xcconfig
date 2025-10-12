@@ -28,3 +28,12 @@
 PRODUCT_NAME = TestWebKitAPI;
 SKIP_INSTALL = YES;
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+SWIFT_VERSION = 6.0;
+SWIFT_VERSION[sdk=macosx14*] = 5.0;
+
+SWIFT_OBJC_BRIDGING_HEADER = Tests/WebKit Swift/TestWebKitAPIBundle-Bridging-Header.h;
+SWIFT_OPTIMIZATION_LEVEL = -O;
+SWIFT_OPTIMIZATION_LEVEL[config=Debug] = -Onone;
+
+OTHER_SWIFT_FLAGS = $(inherited) -no-warnings-as-errors -Xfrontend -experimental-spi-only-imports $(OTHER_SWIFT_FLAGS$(WK_XCODE_16)) @$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/platform-enabled-swift-args.$(arch).resp;
+OTHER_SWIFT_FLAGS_XCODE_BEFORE_16 = -Xfrontend -enable-experimental-concurrency -Xfrontend -enable-upcoming-feature -Xfrontend IsolatedDefaultValues;

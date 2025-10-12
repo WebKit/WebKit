@@ -29,6 +29,7 @@
 
 #include "Attachment.h"
 #include "Encoder.h"
+#include <WebCore/SharedMemory.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
@@ -41,19 +42,31 @@ public:
     {
         // The entire MessageInfo is passed to write(), so we have to zero our
         // padding bytes to avoid writing uninitialized memory.
-        memset(static_cast<void*>(this), 0, sizeof(*this));
+        zeroBytes(*this);
     }
 
-    MessageInfo(size_t bodySize, size_t initialAttachmentCount)
+#if OS(ANDROID)
+    MessageInfo(size_t bodySize, size_t initialAttachmentCount, size_t hardwareBufferCount)
+        : MessageInfo()
     {
-        memset(static_cast<void*>(this), 0, sizeof(*this));
+        m_bodySize = bodySize;
+        m_attachmentCount = initialAttachmentCount;
+        m_hardwareBufferCount = hardwareBufferCount;
+    }
+
+    size_t hardwareBufferCount() const { return m_hardwareBufferCount; }
+#else
+    MessageInfo(size_t bodySize, size_t initialAttachmentCount)
+        : MessageInfo()
+    {
         m_bodySize = bodySize;
         m_attachmentCount = initialAttachmentCount;
     }
+#endif
 
     MessageInfo(const MessageInfo& info)
+        : MessageInfo()
     {
-        memset(static_cast<void*>(this), 0, sizeof(*this));
         *this = info;
     }
 
@@ -75,6 +88,9 @@ private:
     // The MessageInfo will be copied using memcpy, so all members must be trivially copyable.
     size_t m_bodySize;
     size_t m_attachmentCount;
+#if OS(ANDROID)
+    size_t m_hardwareBufferCount;
+#endif
     bool m_isBodyOutOfLine;
 };
 
@@ -83,8 +99,14 @@ class UnixMessage {
 public:
     UnixMessage(Encoder& encoder)
         : m_attachments(encoder.releaseAttachments())
+#if OS(ANDROID)
+        , m_messageInfo(encoder.span().size(), m_attachments.size(), std::count_if(m_attachments.begin(), m_attachments.end(), [](const Attachment& attachment) {
+            return holdsAlternative<RefPtr<AHardwareBuffer>>(attachment) && get<RefPtr<AHardwareBuffer>>(attachment);
+        }))
+#else
         , m_messageInfo(encoder.span().size(), m_attachments.size())
-        , m_body(const_cast<uint8_t*>(encoder.span().data()), encoder.span().size())
+#endif
+        , m_body(spanConstCast<uint8_t>(encoder.span()))
     {
     }
 
@@ -121,6 +143,22 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     void appendAttachment(Attachment&& attachment)
     {
         m_attachments.append(WTFMove(attachment));
+    }
+
+    bool setBodyOutOfLine()
+    {
+        RefPtr oolMessageBody = WebCore::SharedMemory::allocate(bodySize());
+        if (!oolMessageBody)
+            return false;
+
+        auto handle = oolMessageBody->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
+        if (!handle)
+            return false;
+
+        m_messageInfo.setBodyOutOfLine();
+        memcpySpan(oolMessageBody->mutableSpan(), m_body);
+        m_attachments.append(handle->releaseHandle());
+        return true;
     }
 
 private:

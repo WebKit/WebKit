@@ -234,6 +234,8 @@ WGPUFeatureName ConvertToBackingContext::convertToBacking(FeatureName featureNam
         return WGPUFeatureName_DualSourceBlending;
     case FeatureName::CoreFeaturesAndLimits:
         return WGPUFeatureName_CoreFeaturesAndLimits;
+    case FeatureName::TextureFormatsTier1:
+        return WGPUFeatureName_TextureFormatsTier1;
     }
 }
 
@@ -416,6 +418,18 @@ WGPUTextureFormat ConvertToBackingContext::convertToBacking(TextureFormat textur
         return WGPUTextureFormat_R8Sint;
     case TextureFormat::R16uint:
         return WGPUTextureFormat_R16Uint;
+    case TextureFormat::R16unorm:
+        return WGPUTextureFormat_R16Unorm;
+    case TextureFormat::R16snorm:
+        return WGPUTextureFormat_R16Snorm;
+    case TextureFormat::Rg16unorm:
+        return WGPUTextureFormat_RG16Unorm;
+    case TextureFormat::Rg16snorm:
+        return WGPUTextureFormat_RG16Snorm;
+    case TextureFormat::Rgba16unorm:
+        return WGPUTextureFormat_RGBA16Unorm;
+    case TextureFormat::Rgba16snorm:
+        return WGPUTextureFormat_RGBA16Snorm;
     case TextureFormat::R16sint:
         return WGPUTextureFormat_R16Sint;
     case TextureFormat::R16float:
@@ -636,38 +650,56 @@ WGPUTextureViewDimension ConvertToBackingContext::convertToBacking(TextureViewDi
 WGPUVertexFormat ConvertToBackingContext::convertToBacking(VertexFormat vertexFormat)
 {
     switch (vertexFormat) {
+    case VertexFormat::Uint8:
+        return WGPUVertexFormat_Uint8;
     case VertexFormat::Uint8x2:
         return WGPUVertexFormat_Uint8x2;
     case VertexFormat::Uint8x4:
         return WGPUVertexFormat_Uint8x4;
+    case VertexFormat::Sint8:
+        return WGPUVertexFormat_Sint8;
     case VertexFormat::Sint8x2:
         return WGPUVertexFormat_Sint8x2;
     case VertexFormat::Sint8x4:
         return WGPUVertexFormat_Sint8x4;
+    case VertexFormat::Unorm8:
+        return WGPUVertexFormat_Unorm8;
     case VertexFormat::Unorm8x2:
         return WGPUVertexFormat_Unorm8x2;
     case VertexFormat::Unorm8x4:
         return WGPUVertexFormat_Unorm8x4;
+    case VertexFormat::Snorm8:
+        return WGPUVertexFormat_Snorm8;
     case VertexFormat::Snorm8x2:
         return WGPUVertexFormat_Snorm8x2;
     case VertexFormat::Snorm8x4:
         return WGPUVertexFormat_Snorm8x4;
+    case VertexFormat::Uint16:
+        return WGPUVertexFormat_Uint16;
     case VertexFormat::Uint16x2:
         return WGPUVertexFormat_Uint16x2;
     case VertexFormat::Uint16x4:
         return WGPUVertexFormat_Uint16x4;
+    case VertexFormat::Sint16:
+        return WGPUVertexFormat_Sint16;
     case VertexFormat::Sint16x2:
         return WGPUVertexFormat_Sint16x2;
     case VertexFormat::Sint16x4:
         return WGPUVertexFormat_Sint16x4;
+    case VertexFormat::Unorm16:
+        return WGPUVertexFormat_Unorm16;
     case VertexFormat::Unorm16x2:
         return WGPUVertexFormat_Unorm16x2;
     case VertexFormat::Unorm16x4:
         return WGPUVertexFormat_Unorm16x4;
+    case VertexFormat::Snorm16:
+        return WGPUVertexFormat_Snorm16;
     case VertexFormat::Snorm16x2:
         return WGPUVertexFormat_Snorm16x2;
     case VertexFormat::Snorm16x4:
         return WGPUVertexFormat_Snorm16x4;
+    case VertexFormat::Float16:
+        return WGPUVertexFormat_Float16;
     case VertexFormat::Float16x2:
         return WGPUVertexFormat_Float16x2;
     case VertexFormat::Float16x4:
@@ -696,8 +728,10 @@ WGPUVertexFormat ConvertToBackingContext::convertToBacking(VertexFormat vertexFo
         return WGPUVertexFormat_Sint32x3;
     case VertexFormat::Sint32x4:
         return WGPUVertexFormat_Sint32x4;
-    case VertexFormat::Unorm10_10_10_2:
-        return WGPUVertexFormat_Unorm10_10_10_2;
+    case VertexFormat::Unorm1010102:
+        return WGPUVertexFormat_Unorm1010102;
+    case VertexFormat::Unorm8x4Bgra:
+        return WGPUVertexFormat_Unorm8x4Bgra;
     }
 }
 

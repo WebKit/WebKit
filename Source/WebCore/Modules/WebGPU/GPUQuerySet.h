@@ -56,7 +56,7 @@ public:
 private:
     GPUQuerySet(Ref<WebGPU::QuerySet>&& backing, const GPUQuerySetDescriptor&);
 
-    Ref<WebGPU::QuerySet> m_backing;
+    const Ref<WebGPU::QuerySet> m_backing;
     const GPUQuerySetDescriptor m_descriptor;
 };
 

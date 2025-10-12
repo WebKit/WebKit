@@ -25,11 +25,16 @@
 
 #pragma once
 
+#include <WebCore/HostingContext.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
+
+#if ENABLE(MACH_PORT_LAYER_HOSTING)
+#include <wtf/MachSendRightAnnotated.h>
+#endif
 
 OBJC_CLASS CALayer;
 OBJC_CLASS CAContext;
@@ -96,12 +101,21 @@ public:
     LayerHostingContextID cachedContextID();
 
 #if USE(EXTENSIONKIT)
-    OSObjectPtr<xpc_object_t> xpcRepresentation() const;
     RetainPtr<BELayerHierarchy> hostable() const { return m_hostable; }
 
+#if ENABLE(MACH_PORT_LAYER_HOSTING)
+    WTF::MachSendRightAnnotated sendRightAnnotated() const;
+    static RetainPtr<BELayerHierarchyHandle> createHostingHandle(WTF::MachSendRightAnnotated&&);
+    static RetainPtr<BELayerHierarchyHostingTransactionCoordinator> createHostingUpdateCoordinator(WTF::MachSendRightAnnotated&&);
+    static WTF::MachSendRightAnnotated fence(BELayerHierarchyHostingTransactionCoordinator *);
+#else
+    OSObjectPtr<xpc_object_t> xpcRepresentation() const;
     static RetainPtr<BELayerHierarchyHandle> createHostingHandle(uint64_t pid, uint64_t contextID);
     static RetainPtr<BELayerHierarchyHostingTransactionCoordinator> createHostingUpdateCoordinator(mach_port_t sendRight);
-#endif
+#endif // ENABLE(MACH_PORT_LAYER_HOSTING)
+#endif // USE(EXTENSIONKIT)
+
+    WebCore::HostingContext hostingContext() const;
 
 private:
     // Denotes the contextID obtained from GPU process, should be returned

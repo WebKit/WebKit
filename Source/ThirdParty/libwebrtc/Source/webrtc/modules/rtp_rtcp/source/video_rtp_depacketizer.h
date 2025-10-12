@@ -27,14 +27,14 @@ class VideoRtpDepacketizer {
  public:
   struct ParsedRtpPayload {
     RTPVideoHeader video_header;
-    rtc::CopyOnWriteBuffer video_payload;
+    CopyOnWriteBuffer video_payload;
   };
 
   virtual ~VideoRtpDepacketizer() = default;
   virtual std::optional<ParsedRtpPayload> Parse(
-      rtc::CopyOnWriteBuffer rtp_payload) = 0;
-  virtual rtc::scoped_refptr<EncodedImageBuffer> AssembleFrame(
-      rtc::ArrayView<const rtc::ArrayView<const uint8_t>> rtp_payloads);
+      CopyOnWriteBuffer rtp_payload) = 0;
+  virtual scoped_refptr<EncodedImageBuffer> AssembleFrame(
+      ArrayView<const ArrayView<const uint8_t>> rtp_payloads);
 };
 
 }  // namespace webrtc

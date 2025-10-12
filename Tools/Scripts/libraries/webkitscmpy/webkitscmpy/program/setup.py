@@ -627,6 +627,17 @@ Automation may create pull requests and forks in unexpected locations
                         sys.stderr.write("Failed to open '{}' in the browser, continuing\n".format(info_url))
                 print('\n')
 
+            if repository.branch not in repository.DEFAULT_BRANCHES:
+                print(f'Setup is currently being run on {repository.branch}. This may result in undefined behavior.\nPlease ensure your branch is up-to-date with main or switch to main and rerun `git-webkit setup`.')
+                response = Terminal.choose(
+                    'Would you like to continue setup?',
+                    options=('No', 'Yes'),
+                    default='No',
+                )
+                if response == 'No':
+                    print('Setup cancelled')
+                    return 1
+
             result = cls.git(args, repository, **kwargs)
 
             if result:

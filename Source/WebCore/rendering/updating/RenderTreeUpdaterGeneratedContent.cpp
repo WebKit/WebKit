@@ -27,7 +27,6 @@
 #include "RenderTreeUpdaterGeneratedContent.h"
 
 #include "ContainerNodeInlines.h"
-#include "ContentData.h"
 #include "Editor.h"
 #include "ElementInlines.h"
 #include "InspectorInstrumentation.h"
@@ -37,8 +36,10 @@
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderImage.h"
+#include "RenderImageResourceStyleImage.h"
 #include "RenderQuote.h"
 #include "RenderStyleInlines.h"
+#include "RenderTextFragment.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
 #include "StyleTreeResolver.h"
@@ -108,12 +109,47 @@ static bool needsPseudoElementForAnimation(const Element& element, PseudoId pseu
     return stack->requiresPseudoElement() || stack->containsProperty(CSSPropertyDisplay);
 }
 
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Text& value, const String& altText, Document& document, const RenderStyle&)
+{
+    if (value.text.isEmpty() && altText.isEmpty())
+        return { };
+
+    auto contentRenderer = createRenderer<RenderTextFragment>(document, value.text);
+    contentRenderer->setAltText(altText);
+    return contentRenderer;
+}
+
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Image& value, const String& altText, Document& document, const RenderStyle& pseudoStyle)
+{
+    auto contentRenderer = createRenderer<RenderImage>(RenderObject::Type::Image, document, RenderStyle::createStyleInheritingFromPseudoStyle(pseudoStyle), value.image.value.ptr());
+    contentRenderer->initializeStyle();
+    contentRenderer->setAltText(altText);
+    return contentRenderer;
+}
+
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Counter& value, const String&, Document& document, const RenderStyle&)
+{
+    return createRenderer<RenderCounter>(document, value);
+}
+
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Quote& value, const String&, Document& document, const RenderStyle& pseudoStyle)
+{
+    auto contentRenderer = createRenderer<RenderQuote>(document, RenderStyle::createStyleInheritingFromPseudoStyle(pseudoStyle), value.quote);
+    contentRenderer->initializeStyle();
+    return contentRenderer;
+}
+
 static void createContentRenderers(RenderTreeBuilder& builder, RenderElement& pseudoRenderer, const RenderStyle& style, PseudoId pseudoId)
 {
-    if (auto* contentData = style.contentData()) {
-        for (const ContentData* content = contentData; content; content = content->next()) {
-            if (auto child = content->createContentRenderer(pseudoRenderer.document(), style); child && pseudoRenderer.isChildAllowed(*child, style))
-                builder.attach(pseudoRenderer, WTFMove(child));
+    if (auto* contentData = style.content().tryData()) {
+        auto altText = contentData->altText.value_or(String { });
+        for (auto& contentItem : contentData->list) {
+            WTF::switchOn(contentItem,
+                [&](const auto& item) {
+                    if (auto child = createContentRenderer(item, altText, pseudoRenderer.document(), style); child && pseudoRenderer.isChildAllowed(*child, style))
+                        builder.attach(pseudoRenderer, WTFMove(child));
+                }
+            );
         }
     }
 #if ASSERT_ENABLED

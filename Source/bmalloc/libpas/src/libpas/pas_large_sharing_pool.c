@@ -36,11 +36,13 @@
 #include "pas_heap_lock.h"
 #include "pas_large_free_heap_deferred_commit_log.h"
 #include "pas_log.h"
+#include "pas_mte.h"
 #include "pas_page_malloc.h"
 #include "pas_page_sharing_pool.h"
 #include "pas_physical_memory_transaction.h"
 #include "pas_stream.h"
 #include "pas_utility_heap.h"
+#include "pas_zero_memory.h"
 
 bool pas_large_sharing_pool_enabled = true;
 pas_red_black_tree pas_large_sharing_tree = PAS_RED_BLACK_TREE_INITIALIZER;
@@ -1030,6 +1032,7 @@ void pas_large_sharing_pool_boot_free(
     uint64_t epoch;
 
     PAS_PROFILE(LARGE_SHARING_POOL_BOOT_FREE, range.begin, range.end);
+    PAS_MTE_HANDLE(LARGE_SHARING_POOL_BOOT_FREE, range.begin, range.end);
 
     if (!pas_large_sharing_pool_enabled)
         return;
@@ -1045,6 +1048,7 @@ void pas_large_sharing_pool_free(pas_range range,
     uint64_t epoch;
 
     PAS_PROFILE(LARGE_SHARING_POOL_FREE, range.begin, range.end);
+    PAS_MTE_HANDLE(LARGE_SHARING_POOL_FREE, range.begin, range.end);
 
     if (!pas_large_sharing_pool_enabled)
         return;
@@ -1063,6 +1067,7 @@ bool pas_large_sharing_pool_allocate_and_commit(
     static const bool verbose = false;
 
     PAS_PROFILE(LARGE_SHARING_POOL_ALLOCATE_AND_COMMIT, range.begin, range.end);
+    PAS_MTE_HANDLE(LARGE_SHARING_POOL_ALLOCATE_AND_COMMIT, range.begin, range.end);
     
     pas_large_free_heap_deferred_commit_log commit_log;
     uint64_t epoch;
@@ -1211,6 +1216,7 @@ pas_large_sharing_pool_compute_summary(
     pas_heap_summary result;
 
     PAS_PROFILE(LARGE_SHARING_POOL_COMPUTE_SUMMARY, range.begin, range.end);
+    PAS_MTE_HANDLE(LARGE_SHARING_POOL_COMPUTE_SUMMARY, range.begin, range.end);
 
     pas_zero_memory(&result, sizeof(result));
     

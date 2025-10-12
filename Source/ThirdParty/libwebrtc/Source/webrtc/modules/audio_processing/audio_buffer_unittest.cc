@@ -11,8 +11,10 @@
 #include "modules/audio_processing/audio_buffer.h"
 
 #include <cmath>
+#include <cstddef>
 
 #include "api/audio/audio_view.h"
+#include "rtc_base/checks.h"
 #include "test/gtest.h"
 #include "test/testsupport/rtc_expect_death.h"
 
@@ -20,9 +22,9 @@ namespace webrtc {
 
 namespace {
 
-const size_t kSampleRateHz = 48000u;
-const size_t kStereo = 2u;
-const size_t kMono = 1u;
+constexpr size_t kSampleRateHz = 48000u;
+constexpr size_t kStereo = 2u;
+constexpr size_t kMono = 1u;
 
 void ExpectNumChannels(const AudioBuffer& ab, size_t num_channels) {
   EXPECT_EQ(ab.num_channels(), num_channels);

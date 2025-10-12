@@ -28,8 +28,8 @@
     Exposed=Window
 ] interface SVGStyleElement : SVGElement {
      attribute boolean disabled;
-     attribute [AtomString] DOMString type;
-     attribute [AtomString] DOMString media;
+     [Reflect] attribute DOMString type;
+     [Reflect] attribute DOMString media;
      [Reflect] attribute DOMString title;
 };
 

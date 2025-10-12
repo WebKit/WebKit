@@ -10,9 +10,9 @@
 #ifndef TEST_RTP_FILE_READER_H_
 #define TEST_RTP_FILE_READER_H_
 
+#include <cstddef>
 #include <cstdint>
 #include <set>
-#include <string>
 
 #include "absl/strings/string_view.h"
 

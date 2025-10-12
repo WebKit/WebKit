@@ -63,7 +63,7 @@ class SessionHost final
     , public Inspector::RemoteInspectorConnectionClient
 #endif
 {
-    WTF_MAKE_FAST_ALLOCATED(SessionHost);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SessionHost);
 public:
 
     static Ref<SessionHost> create(Capabilities&& capabilities)

@@ -22,8 +22,8 @@
 #ifndef WidthIterator_h
 #define WidthIterator_h
 
-#include "GlyphBuffer.h"
-#include "WritingMode.h"
+#include <WebCore/GlyphBuffer.h>
+#include <WebCore/WritingMode.h>
 #include <unicode/umachine.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>

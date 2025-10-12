@@ -71,6 +71,7 @@ rtc_library("frames_storage") {
     "../../../../../../api/units:time_delta",
     "../../../../../../api/units:timestamp",
     "../../../../../../api/video:video_frame",
+    "../../../../../../rtc_base:checks",
     "../../../../../../system_wrappers",
   ]
 }

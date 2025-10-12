@@ -25,21 +25,24 @@
 
 #pragma once
 
-#include "MediaSessionGroupIdentifier.h"
-#include "MediaSessionIdentifier.h"
-#include "NowPlayingInfo.h"
-#include "Timer.h"
+#include <WebCore/MediaSessionGroupIdentifier.h>
+#include <WebCore/MediaSessionIdentifier.h>
+#include <WebCore/MediaSessionManagerInterface.h>
+#include <WebCore/NowPlayingInfo.h>
+#include <WebCore/PlatformMediaSessionTypes.h>
+#include <WebCore/Timer.h>
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Platform.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#include "MediaPlaybackTargetClient.h"
+#include <WebCore/MediaPlaybackTargetClient.h>
 #endif
 
 namespace WebCore {
@@ -48,93 +51,17 @@ class AudioCaptureSource;
 class Document;
 class MediaPlaybackTarget;
 class PlatformMediaSession;
-class PlatformMediaSessionClient;
 class PlatformMediaSessionInterface;
 class PlatformMediaSessionManager;
-enum class AudioSessionCategory : uint8_t;
-enum class AudioSessionMode : uint8_t;
-enum class RouteSharingPolicy : uint8_t;
-
-enum class PlatformMediaSessionRemoteControlCommandType : uint8_t {
-    NoCommand,
-    PlayCommand,
-    PauseCommand,
-    StopCommand,
-    TogglePlayPauseCommand,
-    BeginSeekingBackwardCommand,
-    EndSeekingBackwardCommand,
-    BeginSeekingForwardCommand,
-    EndSeekingForwardCommand,
-    SeekToPlaybackPositionCommand,
-    SkipForwardCommand,
-    SkipBackwardCommand,
-    NextTrackCommand,
-    PreviousTrackCommand,
-    BeginScrubbingCommand,
-    EndScrubbingCommand,
-};
-
-enum class PlatformMediaSessionMediaType : uint8_t {
-    None,
-    Video,
-    VideoAudio,
-    Audio,
-    WebAudio,
-};
-
-enum class PlatformMediaSessionState : uint8_t {
-    Idle,
-    Autoplaying,
-    Playing,
-    Paused,
-    Interrupted,
-};
-
-enum class PlatformMediaSessionInterruptionType : uint8_t {
-    NoInterruption,
-    SystemSleep,
-    EnteringBackground,
-    SystemInterruption,
-    SuspendedUnderLock,
-    InvisibleAutoplay,
-    ProcessInactive,
-    PlaybackSuspended,
-    PageNotVisible,
-};
-
-enum class PlatformMediaSessionPlaybackControlsPurpose : uint8_t {
-    ControlsManager,
-    NowPlaying,
-    MediaSession
-};
-
-enum class PlatformMediaSessionDisplayType : uint8_t {
-    Normal,
-    Fullscreen,
-    Optimized,
-};
-
-enum class PlatformMediaSessionEndInterruptionFlags : uint8_t {
-    NoFlags = 0,
-    MayResumePlaying = 1 << 0,
-};
-
-enum class DelayCallingUpdateNowPlaying : bool {
-    No,
-    Yes
-};
-
-struct PlatformMediaSessionRemoteCommandArgument {
-    std::optional<double> time;
-    std::optional<bool> fastSeek;
-};
 
 class PlatformMediaSessionClient : public CanMakeCheckedPtr<PlatformMediaSessionClient> {
     WTF_MAKE_NONCOPYABLE(PlatformMediaSessionClient);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PlatformMediaSessionClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlatformMediaSessionClient);
 public:
     PlatformMediaSessionClient() = default;
+
+    virtual RefPtr<MediaSessionManagerInterface> sessionManager() const = 0;
 
     virtual PlatformMediaSessionMediaType mediaType() const = 0;
     virtual PlatformMediaSessionMediaType presentationType() const = 0;
@@ -180,8 +107,6 @@ public:
 
     virtual void isActiveNowPlayingSessionChanged() = 0;
 
-    virtual std::optional<ProcessID> mediaSessionPresentingApplicationPID() const = 0;
-
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& logger() const = 0;
     Ref<const Logger> protectedLogger() const { return logger(); }
@@ -189,17 +114,10 @@ public:
 #endif
 
 protected:
-    virtual ~PlatformMediaSessionClient() = default;
+    virtual ~PlatformMediaSessionClient();
 };
 
 PlatformMediaSessionClient& emptyPlatformMediaSessionClient();
-
-class AudioCaptureSource : public CanMakeWeakPtr<AudioCaptureSource> {
-public:
-    virtual ~AudioCaptureSource() = default;
-    virtual bool isCapturingAudio() const = 0;
-    virtual bool wantsToCaptureAudio() const = 0;
-};
 
 class PlatformMediaSessionInterface
     : public RefCountedAndCanMakeWeakPtr<PlatformMediaSessionInterface>
@@ -209,6 +127,13 @@ class PlatformMediaSessionInterface
 {
 public:
     virtual ~PlatformMediaSessionInterface() = default;
+
+    USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<PlatformMediaSessionInterface>);
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    void ref() const final { RefCountedAndCanMakeWeakPtr::ref(); }
+    void deref() const final { RefCountedAndCanMakeWeakPtr::deref(); }
+#endif
 
     virtual void setActive(bool) = 0;
 
@@ -305,8 +230,6 @@ public:
     virtual bool isActiveNowPlayingSession() const = 0;
     virtual void setActiveNowPlayingSession(bool) = 0;
 
-    virtual std::optional<ProcessID> presentingApplicationPID() const { return client().mediaSessionPresentingApplicationPID(); }
-
     virtual void audioSessionCategoryChanged(AudioSessionCategory, AudioSessionMode, RouteSharingPolicy) { }
 
 #if !RELEASE_LOG_DISABLED
@@ -330,6 +253,8 @@ protected:
         , m_mediaSessionIdentifier(MediaSessionIdentifier::generate())
     {
     }
+
+    RefPtr<MediaSessionManagerInterface> sessionManager() const { return m_client->sessionManager(); }
 
 private:
     CheckedRef<PlatformMediaSessionClient> m_client;

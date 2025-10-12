@@ -20,18 +20,28 @@
 
 #pragma once
 
-#include "FloatRect.h"
-#include "SVGLengthValue.h"
-#include "SVGUnitTypes.h"
+#include <WebCore/FloatRect.h>
+#include <WebCore/SVGLengthValue.h>
+#include <WebCore/SVGUnitTypes.h>
 
 namespace WebCore {
 
+class CSSToLengthConversionData;
 class SVGElement;
 class WeakPtrImplWithEventTargetData;
 
-struct Length;
-
 template<typename> class ExceptionOr;
+
+namespace Style {
+struct PreferredSize;
+struct SVGCenterCoordinateComponent;
+struct SVGCoordinateComponent;
+struct SVGRadius;
+struct SVGRadiusComponent;
+struct SVGStrokeDasharrayValue;
+struct SVGStrokeDashoffset;
+struct StrokeWidth;
+}
 
 class SVGLengthContext {
 public:
@@ -48,9 +58,17 @@ public:
     static FloatPoint resolvePoint(const SVGElement*, SVGUnitTypes::SVGUnitType, const SVGLengthValue& x, const SVGLengthValue& y);
     static float resolveLength(const SVGElement*, SVGUnitTypes::SVGUnitType, const SVGLengthValue&);
 
-    float valueForLength(const Length&, SVGLengthMode = SVGLengthMode::Other);
-    ExceptionOr<float> convertValueToUserUnits(float, SVGLengthType, SVGLengthMode) const;
-    ExceptionOr<float> convertValueFromUserUnits(float, SVGLengthType, SVGLengthMode) const;
+    float valueForLength(const Style::PreferredSize&, SVGLengthMode = SVGLengthMode::Other);
+    float valueForLength(const Style::SVGCenterCoordinateComponent&, SVGLengthMode = SVGLengthMode::Other);
+    float valueForLength(const Style::SVGCoordinateComponent&, SVGLengthMode = SVGLengthMode::Other);
+    float valueForLength(const Style::SVGRadius&, SVGLengthMode = SVGLengthMode::Other);
+    float valueForLength(const Style::SVGRadiusComponent&, SVGLengthMode = SVGLengthMode::Other);
+    float valueForLength(const Style::SVGStrokeDasharrayValue&, SVGLengthMode = SVGLengthMode::Other);
+    float valueForLength(const Style::SVGStrokeDashoffset&, SVGLengthMode = SVGLengthMode::Other);
+    float valueForLength(const Style::StrokeWidth&, SVGLengthMode = SVGLengthMode::Other);
+
+    ExceptionOr<float> resolveValueToUserUnits(float, const CSS::LengthPercentageUnit&, SVGLengthMode) const;
+    ExceptionOr<CSS::LengthPercentage<>> resolveValueFromUserUnits(float, const CSS::LengthPercentageUnit&, SVGLengthMode) const;
 
     std::optional<FloatSize> viewportSize() const;
 
@@ -59,21 +77,17 @@ private:
     ExceptionOr<float> convertValueFromPercentageToUserUnits(float value, SVGLengthMode) const;
     static float convertValueFromPercentageToUserUnits(float value, SVGLengthMode, FloatSize);
 
-    ExceptionOr<float> convertValueFromUserUnitsToEMS(float) const;
-    ExceptionOr<float> convertValueFromEMSToUserUnits(float) const;
-
     ExceptionOr<float> convertValueFromUserUnitsToEXS(float) const;
     ExceptionOr<float> convertValueFromEXSToUserUnits(float) const;
 
-    ExceptionOr<float> convertValueFromUserUnitsToLh(float) const;
-    ExceptionOr<float> convertValueFromLhToUserUnits(float) const;
-
-    ExceptionOr<float> convertValueFromUserUnitsToCh(float) const;
-    ExceptionOr<float> convertValueFromChToUserUnits(float) const;
-
     std::optional<FloatSize> computeViewportSize() const;
+    float computeNonCalcLength(float, CSS::LengthUnit) const;
+    float removeZoomFromFontOrRootFontRelativeLength(float value, CSS::LengthUnit) const;
 
+    std::optional<CSSToLengthConversionData> cssConversionData() const;
     RefPtr<const SVGElement> protectedContext() const;
+
+    template<typename SizeType> float valueForSizeType(const SizeType&, SVGLengthMode = SVGLengthMode::Other);
 
     WeakPtr<const SVGElement, WeakPtrImplWithEventTargetData> m_context;
     mutable std::optional<FloatSize> m_viewportSize;

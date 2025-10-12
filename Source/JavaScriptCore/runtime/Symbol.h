@@ -26,9 +26,9 @@
 
 #pragma once
 
-#include "ErrorType.h"
-#include "JSString.h"
-#include "PrivateName.h"
+#include <JavaScriptCore/ErrorType.h>
+#include <JavaScriptCore/JSString.h>
+#include <JavaScriptCore/PrivateName.h>
 #include <wtf/Expected.h>
 
 namespace JSC {
@@ -56,7 +56,6 @@ public:
 
     SymbolImpl& uid() const { return m_privateName.uid(); }
     PrivateName privateName() const { return m_privateName; }
-    String descriptiveString() const;
     String description() const;
     Expected<String, ErrorTypeWithExtension> tryGetDescriptiveString() const;
 

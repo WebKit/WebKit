@@ -6,6 +6,10 @@
 
 // CopyTexture3DTest.cpp: Tests of the GL_ANGLE_copy_texture_3d extension
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 
 #include "test_utils/gl_raii.h"

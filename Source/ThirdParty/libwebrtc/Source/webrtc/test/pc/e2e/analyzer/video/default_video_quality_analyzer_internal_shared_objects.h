@@ -11,14 +11,15 @@
 #ifndef TEST_PC_E2E_ANALYZER_VIDEO_DEFAULT_VIDEO_QUALITY_ANALYZER_INTERNAL_SHARED_OBJECTS_H_
 #define TEST_PC_E2E_ANALYZER_VIDEO_DEFAULT_VIDEO_QUALITY_ANALYZER_INTERNAL_SHARED_OBJECTS_H_
 
-#include <memory>
+#include <cstddef>
+#include <cstdint>
+#include <map>
 #include <optional>
 #include <string>
-#include <utility>
-#include <vector>
 
 #include "api/numerics/samples_stats_counter.h"
 #include "api/units/data_size.h"
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_frame_type.h"

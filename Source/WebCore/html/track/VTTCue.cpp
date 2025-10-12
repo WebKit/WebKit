@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
+ * Copyright (C) 2011, 2013 Google Inc. All rights reserved.
  * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,7 @@
 #include "CSSValuePool.h"
 #include "CommonAtomStrings.h"
 #include "DocumentFragment.h"
+#include "DocumentPage.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "HTMLDivElement.h"
@@ -149,12 +150,8 @@ VTTCueBox::VTTCueBox(Document& document, VTTCue& cue)
 
 void VTTCueBox::applyCSSPropertiesWithRegion()
 {
-    auto textTrackCue = getCue();
-    ASSERT(!textTrackCue || is<VTTCue>(textTrackCue));
-    if (!textTrackCue)
-        return;
-
-    RefPtr cue = dynamicDowncast<VTTCue>(*textTrackCue);
+    ASSERT(!getCue() || is<VTTCue>(getCue()));
+    RefPtr cue = dynamicDowncast<VTTCue>(getCue());
     if (!cue)
         return;
 
@@ -174,9 +171,8 @@ void VTTCueBox::applyCSSPropertiesWithRegion()
 
 void VTTCueBox::applyCSSProperties()
 {
-    auto textTrackCue = getCue();
-    ASSERT(!textTrackCue || is<VTTCue>(textTrackCue));
-    RefPtr cue = dynamicDowncast<VTTCue>(textTrackCue);
+    ASSERT(!getCue() || is<VTTCue>(getCue()));
+    RefPtr cue = dynamicDowncast<VTTCue>(getCue());
     if (!cue)
         return;
 
@@ -567,9 +563,9 @@ void VTTCue::setTrack(TextTrack* track)
     TextTrackCue::setTrack(track);
     if (!m_parsedRegionId.isEmpty()) {
         if (track != nullptr) {
-            if (auto* regions = track->regions()) {
-                if (auto region = regions->getRegionById(m_parsedRegionId))
-                    m_region = RefPtr<VTTRegion>(region);
+            if (RefPtr regions = track->regions()) {
+                if (RefPtr region = regions->getRegionById(m_parsedRegionId))
+                    m_region = WTFMove(region);
             }
         }
     }
@@ -649,7 +645,7 @@ int VTTCue::calculateComputedLinePosition() const
     return n;
 }
 
-static bool isCueParagraphSeparator(UChar character)
+static bool isCueParagraphSeparator(char16_t character)
 {
     // Within a cue, paragraph boundaries are only denoted by Type B characters,
     // such as U+000A LINE FEED (LF), U+0085 NEXT LINE (NEL), and U+2029 PARAGRAPH SEPARATOR.
@@ -681,11 +677,11 @@ void VTTCue::determineTextDirection()
         return;
 
     for (size_t i = 0; i < paragraph.length(); ++i) {
-        UChar current = paragraph[i];
+        char16_t current = paragraph[i];
         if (!current || isCueParagraphSeparator(current))
             return;
 
-        if (UChar current = paragraph[i]) {
+        if (char16_t current = paragraph[i]) {
             UCharDirection charDirection = u_charDirection(current);
             if (charDirection == U_LEFT_TO_RIGHT) {
                 m_displayDirection = CSSValueLtr;
@@ -956,6 +952,13 @@ void VTTCue::obtainCSSBoxes()
 
     // Note: This is contained by default in m_cueHighlightBox.
     displayTree->setUserAgentPart(UserAgentParts::cue());
+
+    if (!id().isEmpty())
+        displayTree->setAttributeWithoutSynchronization(HTMLNames::idAttr, id());
+
+    if (!track()->language().isEmpty())
+        displayTree->setAttributeWithoutSynchronization(HTMLNames::langAttr, track()->language());
+
     m_cueHighlightBox->setUserAgentPart(UserAgentParts::internalCueBackground());
 
     m_cueBackdropBox->setUserAgentPart(UserAgentParts::webkitMediaTextTrackDisplayBackdrop());
@@ -1443,7 +1446,7 @@ void VTTCue::prepareToSpeak(SpeechSynthesis& speechSynthesis, double rate, doubl
     }
 
     Ref track = *this->track();
-    m_speechSynthesis = &speechSynthesis;
+    m_speechSynthesis = speechSynthesis;
     m_speechUtterance = SpeechSynthesisUtterance::create(Ref { *track->scriptExecutionContext() }, m_content, [protectedThis = Ref { *this }, completion = WTFMove(completion)](const SpeechSynthesisUtterance&) {
         protectedThis->m_speechUtterance = nullptr;
         protectedThis->m_speechSynthesis = nullptr;

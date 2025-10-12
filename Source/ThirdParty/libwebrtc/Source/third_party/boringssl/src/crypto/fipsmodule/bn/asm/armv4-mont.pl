@@ -1,17 +1,22 @@
 #! /usr/bin/env perl
 # Copyright 2007-2016 The OpenSSL Project Authors. All Rights Reserved.
 #
-# Licensed under the OpenSSL license (the "License").  You may not use
-# this file except in compliance with the License.  You can obtain a copy
-# in the file LICENSE in the source distribution or at
-# https://www.openssl.org/source/license.html
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 
 # ====================================================================
 # Written by Andy Polyakov <appro@openssl.org> for the OpenSSL
-# project. The module is, however, dual licensed under OpenSSL and
-# CRYPTOGAMS licenses depending on where you obtain it. For further
-# details see http://www.openssl.org/~appro/cryptogams/.
+# project.
 # ====================================================================
 
 # January 2007.
@@ -97,8 +102,6 @@ $_n0="$num,#14*4";
 $_num="$num,#15*4";	$_bpend=$_num;
 
 $code=<<___;
-#include <openssl/arm_arch.h>
-
 @ Silence ARMv8 deprecated IT instruction warnings. This file is used by both
 @ ARMv7 and ARMv8 processors and does not use ARMv8 instructions.
 .arch  armv7-a
@@ -118,14 +121,9 @@ $code=<<___;
 bn_mul_mont_nohw:
 	ldr	ip,[sp,#4]		@ load num
 	stmdb	sp!,{r0,r2}		@ sp points at argument block
-	cmp	ip,#2
+	@ No return value. Instead, the caller must ensure num >= 2
 	mov	$num,ip			@ load num
-#ifdef	__thumb2__
-	ittt	lt
-#endif
-	movlt	r0,#0
-	addlt	sp,sp,#2*4
-	blt	.Labrt
+	@ No return value
 
 	stmdb	sp!,{r4-r12,lr}		@ save 10 registers
 
@@ -259,8 +257,7 @@ bn_mul_mont_nohw:
 	add	sp,sp,#4		@ skip over tp[num+1]
 	ldmia	sp!,{r4-r12,lr}		@ restore registers
 	add	sp,sp,#2*4		@ skip over {r0,r2}
-	mov	r0,#1
-.Labrt:
+	@ No return value
 #if __ARM_ARCH>=5
 	ret				@ bx lr
 #else
@@ -714,6 +711,7 @@ $code.=<<___;
 	mov	sp,ip
         vldmia  sp!,{d8-d15}
         ldmia   sp!,{r4-r11}
+	@ No return value
 	ret						@ bx lr
 .size	bn_mul8x_mont_neon,.-bn_mul8x_mont_neon
 #endif

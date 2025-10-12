@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style type="text/css">
+canvas {
+    width: 100px;
+    height: 100px;
+}
+</style>
+<canvas id="source"></canvas>
+<canvas id="target"></canvas>
+<script src="../resources/runner.js"></script>
+<script>
+source.width = 2000;
+source.height = 2000;
+var gl = source.getContext("webgl2");
+
+target.width = source.width;
+target.height = source.height;
+var ctx = target.getContext("2d");
+ctx.globalCompositeOperation = "copy";
+
+var isDone = false;
+PerfTestRunner.prepareToMeasureValuesAsync({ done: done, unit: 'ms' });
+function done() {
+    isDone = true;
+}
+async function runTest() {
+    let startTime = PerfTestRunner.now();
+    for (let i = 0.0; i < 100.0; i += 1.0) {
+        gl.clearColor(0, i / 100.0, 0, 0.5);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        let imageBitmap = await createImageBitmap(source);
+        ctx.drawImage(imageBitmap, 0, 0);
+    }
+    PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime);
+    if (!isDone)
+        setTimeout(runTest, 0);
+}
+runTest();
+</script>
+</body>
+</html>

@@ -37,6 +37,7 @@
 #include "SVGNames.h"
 #include "SVGParsingError.h"
 #include "SVGPoint.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include "SVGRect.h"
 #include "SVGTextQuery.h"
 #include "XMLNames.h"

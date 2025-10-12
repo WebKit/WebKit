@@ -8,6 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+
 #include "modules/audio_coding/codecs/g722/audio_decoder_g722.h"
 #include "test/fuzzers/audio_decoder_fuzzer.h"
 

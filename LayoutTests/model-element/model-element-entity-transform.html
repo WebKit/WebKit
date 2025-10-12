@@ -9,6 +9,7 @@
 <body>
 <script>
 'use strict';
+internals.disableModelLoadDelaysForTesting();
 
 promise_test(async t => {
     const [model, source] = createModelAndSource(t);

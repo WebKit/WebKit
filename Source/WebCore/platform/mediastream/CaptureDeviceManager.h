@@ -27,8 +27,8 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "CaptureDevice.h"
-#include "RealtimeMediaSource.h"
+#include <WebCore/CaptureDevice.h>
+#include <WebCore/RealtimeMediaSource.h>
 
 namespace WebCore {
 

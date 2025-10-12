@@ -49,5 +49,5 @@ Test test test test test test...
 Test test test test test test...
 
 
-FAIL Event Timing: test that the events received in PerformanceObserver during an active text selection autoscroll does not have interaction id. assert_implements: Event Timing is not supported. undefined
+PASS Event Timing: test that the events received in PerformanceObserver during an active text selection autoscroll does not have interaction id.
 

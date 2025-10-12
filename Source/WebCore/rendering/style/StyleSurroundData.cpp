@@ -23,9 +23,13 @@
 #include "StyleSurroundData.h"
 
 #include "RenderStyleDifference.h"
+#include "StylePrimitiveKeyword+Logging.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+using namespace CSS::Literals;
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleSurroundData);
 
@@ -38,8 +42,9 @@ StyleSurroundData::StyleSurroundData()
     , hasExplicitlySetPaddingLeft(false)
     , hasExplicitlySetPaddingRight(false)
     , hasExplicitlySetPaddingTop(false)
-    , margin(LengthType::Fixed)
-    , padding(LengthType::Fixed)
+    , inset(CSS::Keyword::Auto { })
+    , margin(0_css_px)
+    , padding(0_css_px)
 {
 }
 
@@ -53,7 +58,7 @@ inline StyleSurroundData::StyleSurroundData(const StyleSurroundData& o)
     , hasExplicitlySetPaddingLeft(o.hasExplicitlySetPaddingLeft)
     , hasExplicitlySetPaddingRight(o.hasExplicitlySetPaddingRight)
     , hasExplicitlySetPaddingTop(o.hasExplicitlySetPaddingTop)
-    , offset(o.offset)
+    , inset(o.inset)
     , margin(o.margin)
     , padding(o.padding)
     , border(o.border)
@@ -67,7 +72,10 @@ Ref<StyleSurroundData> StyleSurroundData::copy() const
 
 bool StyleSurroundData::operator==(const StyleSurroundData& o) const
 {
-    return offset == o.offset && margin == o.margin && padding == o.padding && border == o.border
+    return inset == o.inset
+        && margin == o.margin
+        && padding == o.padding
+        && border == o.border
         && hasExplicitlySetBorderBottomLeftRadius == o.hasExplicitlySetBorderBottomLeftRadius
         && hasExplicitlySetBorderBottomRightRadius == o.hasExplicitlySetBorderBottomRightRadius
         && hasExplicitlySetBorderTopLeftRadius == o.hasExplicitlySetBorderTopLeftRadius
@@ -91,7 +99,7 @@ void StyleSurroundData::dumpDifferences(TextStream& ts, const StyleSurroundData&
     LOG_IF_DIFFERENT(hasExplicitlySetPaddingRight);
     LOG_IF_DIFFERENT(hasExplicitlySetPaddingTop);
 
-    LOG_IF_DIFFERENT(offset);
+    LOG_IF_DIFFERENT(inset);
     LOG_IF_DIFFERENT(margin);
     LOG_IF_DIFFERENT(padding);
     LOG_IF_DIFFERENT(border);

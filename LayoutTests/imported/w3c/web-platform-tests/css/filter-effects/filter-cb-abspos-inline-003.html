@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html class="reftest-wait">
 <meta charset=UTF-8>
 <title>CSS Filter: Establishing containing block for absolutely-positioned elements, on an inline element</title>
 <link rel="author" title="L. David Baron" href="https://dbaron.org/">
@@ -30,6 +30,7 @@
 window.addEventListener("load", function window_load(event) {
     document.body.offsetTop; // flush layout
     document.getElementById("cb").style.filter = "";
+    document.documentElement.classList.remove("reftest-wait");
 });
 
 </script>

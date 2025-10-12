@@ -29,15 +29,17 @@ class RenderMeter;
 
 class HTMLProgressElement;
 class RenderProgress;
-    
+
 class AccessibilityProgressIndicator final : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilityProgressIndicator> create(AXID, RenderObject&);
+    static Ref<AccessibilityProgressIndicator> create(AXID, RenderObject&, AXObjectCache&);
+    static Ref<AccessibilityProgressIndicator> create(AXID, Element&, AXObjectCache&);
 
     bool isIndeterminate() const final;
 
 private:
-    explicit AccessibilityProgressIndicator(AXID, RenderObject&);
+    explicit AccessibilityProgressIndicator(AXID, RenderObject&, AXObjectCache&);
+    explicit AccessibilityProgressIndicator(AXID, Element&, AXObjectCache&);
 
     AccessibilityRole determineAccessibilityRole() final;
 
@@ -49,7 +51,7 @@ private:
 
     HTMLProgressElement* progressElement() const;
     HTMLMeterElement* meterElement() const;
-    
+
     bool computeIsIgnored() const final;
 };
 

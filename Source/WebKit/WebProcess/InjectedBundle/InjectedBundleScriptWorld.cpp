@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InjectedBundleScriptWorld.h"
 
+#include "ContentWorldShared.h"
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/ScriptController.h>
 #include <wtf/CheckedPtr.h>
@@ -51,17 +52,24 @@ static String uniqueWorldName()
     return makeString("UniqueWorld_"_s, uniqueWorldNameNumber++);
 }
 
-Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create(Type type)
+Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create(ContentWorldIdentifier identifier, Type type)
 {
-    return InjectedBundleScriptWorld::create(uniqueWorldName(), type);
+    return InjectedBundleScriptWorld::create(identifier, uniqueWorldName(), type);
 }
 
-Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create(const String& name, Type type)
+Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create(ContentWorldIdentifier identifier, const String& name, Type type)
 {
-    return adoptRef(*new InjectedBundleScriptWorld(ScriptController::createWorld(name, type == Type::User ? ScriptController::WorldType::User : ScriptController::WorldType::Internal), name));
+    return adoptRef(*new InjectedBundleScriptWorld(identifier, ScriptController::createWorld(name, type == Type::User ? ScriptController::WorldType::User : ScriptController::WorldType::Internal), name));
 }
 
 Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::getOrCreate(DOMWrapperWorld& world)
+{
+    if (RefPtr existingWorld = get(world))
+        return existingWorld.releaseNonNull();
+    return adoptRef(*new InjectedBundleScriptWorld(ContentWorldIdentifier::generate(), world, uniqueWorldName()));
+}
+
+RefPtr<InjectedBundleScriptWorld> InjectedBundleScriptWorld::get(WebCore::DOMWrapperWorld& world)
 {
     if (&world == &mainThreadNormalWorldSingleton())
         return normalWorldSingleton();
@@ -69,7 +77,7 @@ Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::getOrCreate(DOMWrapper
     if (auto existingWorld = allWorlds().get(world))
         return *existingWorld;
 
-    return adoptRef(*new InjectedBundleScriptWorld(world, uniqueWorldName()));
+    return nullptr;
 }
 
 InjectedBundleScriptWorld* InjectedBundleScriptWorld::find(const String& name)
@@ -83,12 +91,13 @@ InjectedBundleScriptWorld* InjectedBundleScriptWorld::find(const String& name)
 
 InjectedBundleScriptWorld& InjectedBundleScriptWorld::normalWorldSingleton()
 {
-    static InjectedBundleScriptWorld& world = adoptRef(*new InjectedBundleScriptWorld(mainThreadNormalWorldSingleton(), String())).leakRef();
-    return world;
+    static NeverDestroyed<Ref<InjectedBundleScriptWorld>> world = adoptRef(*new InjectedBundleScriptWorld(pageContentWorldIdentifier(), mainThreadNormalWorldSingleton(), String())).leakRef();
+    return world.get();
 }
 
-InjectedBundleScriptWorld::InjectedBundleScriptWorld(DOMWrapperWorld& world, const String& name)
-    : m_world(world)
+InjectedBundleScriptWorld::InjectedBundleScriptWorld(ContentWorldIdentifier identifier, DOMWrapperWorld& world, const String& name)
+    : m_identifier(identifier)
+    , m_world(world)
     , m_name(name)
 {
     ASSERT(!allWorlds().contains(world));
@@ -121,6 +130,21 @@ void InjectedBundleScriptWorld::setAllowAutofill()
     m_world->setAllowAutofill();
 }
 
+void InjectedBundleScriptWorld::setAllowJSHandleCreation()
+{
+    m_world->setAllowsJSHandleCreation();
+}
+
+void InjectedBundleScriptWorld::setAllowNodeSerialization()
+{
+    m_world->setAllowNodeSerialization();
+}
+
+void InjectedBundleScriptWorld::setAllowPostingLegacySynchronousMessages()
+{
+    m_world->setAllowPostLegacySynchronousMessage();
+}
+
 void InjectedBundleScriptWorld::setAllowElementUserInfo()
 {
     m_world->setAllowElementUserInfo();
@@ -129,6 +153,11 @@ void InjectedBundleScriptWorld::setAllowElementUserInfo()
 void InjectedBundleScriptWorld::makeAllShadowRootsOpen()
 {
     m_world->setShadowRootIsAlwaysOpen();
+}
+
+void InjectedBundleScriptWorld::exposeClosedShadowRootsForExtensions()
+{
+    m_world->setClosedShadowRootIsExposedForExtensions();
 }
 
 void InjectedBundleScriptWorld::disableOverrideBuiltinsBehavior()

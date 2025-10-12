@@ -31,4 +31,5 @@
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, QuartzCore, PAL_EXPORT)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, QuartzCore, CAIOSurfaceCreate, CAIOSurfaceRef, (IOSurfaceRef surface), (surface), PAL_EXPORT)
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, QuartzCore, CAIOSurfaceReloadColorAttributes, void, (CAIOSurfaceRef surface), (surface), PAL_EXPORT)
 

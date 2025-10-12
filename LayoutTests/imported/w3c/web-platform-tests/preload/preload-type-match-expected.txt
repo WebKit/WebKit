@@ -1,8 +1,3 @@
-CONSOLE MESSAGE: The resource http://localhost:8800/common/square.png was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
-CONSOLE MESSAGE: The resource http://localhost:8800/images/pattern.svg was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
-CONSOLE MESSAGE: The resource http://localhost:8800/fonts/Ahem.ttf was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
-CONSOLE MESSAGE: The resource http://localhost:8800/preload/resources/dummy.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
-CONSOLE MESSAGE: The resource http://localhost:8800/preload/resources/dummy.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
 
 PASS Preload with {as=image; type=} should load when retrieved resource is a png
 PASS Preload with {as=image; type=image/png} should load when retrieved resource is a svg

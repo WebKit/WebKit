@@ -27,7 +27,6 @@
 #import "WKUserContentControllerInternal.h"
 
 #import "APIContentWorld.h"
-#import "APISerializedScriptValue.h"
 #import "InjectUserScriptImmediately.h"
 #import "JavaScriptEvaluationResult.h"
 #import "WKContentRuleListInternal.h"
@@ -134,7 +133,7 @@ public:
     ScriptMessageHandlerDelegate(WKUserContentController *controller, id <WKScriptMessageHandler> handler, NSString *name)
         : m_controller(controller)
         , m_handler(handler)
-        , m_name(adoptNS([name copy]))
+        , m_name(name)
         , m_supportsAsyncReply(false)
     {
     }
@@ -142,65 +141,45 @@ public:
     ScriptMessageHandlerDelegate(WKUserContentController *controller, id <WKScriptMessageHandlerWithReply> handler, NSString *name)
         : m_controller(controller)
         , m_handler(handler)
-        , m_name(adoptNS([name copy]))
+        , m_name(name)
         , m_supportsAsyncReply(true)
     {
     }
 
-    void didPostMessage(WebKit::WebPageProxy& page, WebKit::FrameInfoData&& frameInfoData, API::ContentWorld& world, WebKit::JavaScriptEvaluationResult&& jsMessage) final
+    void didPostMessage(WebKit::WebPageProxy& page, WebKit::FrameInfoData&& frameInfoData, API::ContentWorld& world, WebKit::JavaScriptEvaluationResult&& jsMessage, CompletionHandler<void(Expected<WebKit::JavaScriptEvaluationResult, String>&&)>&& replyHandler) final
     {
         @autoreleasepool {
-            RetainPtr webView = page.cocoaView();
-            if (!webView)
+            RetainPtr message = wrapper(API::ScriptMessage::create(jsMessage.toID(), page, API::FrameInfo::create(WTFMove(frameInfoData)), RetainPtr { m_name }, world));
+
+            if (m_supportsAsyncReply) {
+                __block auto handler = CompletionHandlerWithFinalizer<void(Expected<WebKit::JavaScriptEvaluationResult, String>&&)>(WTFMove(replyHandler), [](auto& function) {
+                    function(makeUnexpected("WKWebView API client did not respond to this postMessage"_s));
+                });
+                [(id<WKScriptMessageHandlerWithReply>)m_handler.get() userContentController:m_controller.get() didReceiveScriptMessage:message.get() replyHandler:^(id result, NSString *errorMessage) {
+                    if (!handler)
+                        [NSException raise:NSInternalInconsistencyException format:@"replyHandler passed to userContentController:didReceiveScriptMessage:replyHandler: should not be called twice"];
+
+                    if (errorMessage)
+                        return handler(makeUnexpected(errorMessage));
+
+                    auto extracted = WebKit::JavaScriptEvaluationResult::extract(result);
+                    if (!extracted)
+                        return handler(makeUnexpected("The result value passed back from the WKWebView API client was unable to be serialized"_s));
+                    handler(WTFMove(*extracted));
+                }];
                 return;
-            RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(WTFMove(frameInfoData), &page));
-            RetainPtr message = adoptNS([[WKScriptMessage alloc] _initWithBody:jsMessage.toID().get() webView:webView.get() frameInfo:frameInfo.get() name:m_name.get() world:wrapper(world)]);
+            }
+
             [(id<WKScriptMessageHandler>)m_handler.get() userContentController:m_controller.get() didReceiveScriptMessage:message.get()];
-        }
-    }
-
-    bool supportsAsyncReply() final
-    {
-        return m_supportsAsyncReply;
-    }
-
-    void didPostMessageWithAsyncReply(WebKit::WebPageProxy& page, WebKit::FrameInfoData&& frameInfoData, API::ContentWorld& world, WebKit::JavaScriptEvaluationResult&& jsMessage, Function<void(Expected<WebKit::JavaScriptEvaluationResult, String>&&)>&& replyHandler) final
-    {
-        ASSERT(m_supportsAsyncReply);
-
-        auto webView = page.cocoaView();
-        if (!webView)
-            return replyHandler(makeUnexpected("The WKWebView was deallocated before the message was delivered"_s));
-
-        auto finalizer = [](auto& function) {
-            function(makeUnexpected("WKWebView API client did not respond to this postMessage"_s));
-        };
-        __block auto handler = CompletionHandlerWithFinalizer<void(Expected<WebKit::JavaScriptEvaluationResult, String>&&)>(WTFMove(replyHandler), WTFMove(finalizer));
-
-        @autoreleasepool {
-            RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(WTFMove(frameInfoData), &page));
-            RetainPtr message = adoptNS([[WKScriptMessage alloc] _initWithBody:jsMessage.toID().get() webView:webView.get() frameInfo:frameInfo.get() name:m_name.get() world:wrapper(world)]);
-
-            [(id<WKScriptMessageHandlerWithReply>)m_handler.get() userContentController:m_controller.get() didReceiveScriptMessage:message.get() replyHandler:^(id result, NSString *errorMessage) {
-                if (!handler)
-                    [NSException raise:NSInternalInconsistencyException format:@"replyHandler passed to userContentController:didReceiveScriptMessage:replyHandler: should not be called twice"];
-
-                if (errorMessage)
-                    return handler(makeUnexpected(errorMessage));
-
-                auto extracted = WebKit::JavaScriptEvaluationResult::extract(result);
-                if (!extracted)
-                    return handler(makeUnexpected("The result value passed back from the WKWebView API client was unable to be serialized"_s));
-                handler(WTFMove(*extracted));
-            }];
+            replyHandler(makeUnexpected(String()));
         }
     }
 
 private:
-    RetainPtr<WKUserContentController> m_controller;
-    RetainPtr<id> m_handler;
-    RetainPtr<NSString> m_name;
-    bool m_supportsAsyncReply;
+    const RetainPtr<WKUserContentController> m_controller;
+    const RetainPtr<id> m_handler;
+    const RetainPtr<NSString> m_name;
+    const bool m_supportsAsyncReply { false };
 };
 
 - (void)_addScriptMessageHandler:(WebKit::WebScriptMessageHandler&)scriptMessageHandler

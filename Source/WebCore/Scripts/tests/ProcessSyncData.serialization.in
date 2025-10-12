@@ -51,7 +51,7 @@ enum class WebCore::ProcessSyncDataType : uint8_t {
 using WebCore::DOMAudioSessionType = bool;
 #endif
 
-using WebCore::ProcessSyncDataVariant = std::variant<WebCore::DOMAudioSessionType, URL, bool, bool, StringifyThis>;
+using WebCore::ProcessSyncDataVariant = Variant<WebCore::DOMAudioSessionType, URL, bool, bool, StringifyThis>;
 
 struct WebCore::ProcessSyncData {
     WebCore::ProcessSyncDataType type;

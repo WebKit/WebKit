@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // CLCommandQueue.cpp: Implements the cl::CommandQueue class.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/CLCommandQueue.h"
 
@@ -699,6 +704,52 @@ angle::Result CommandQueue::finish()
     return mImpl->finish();
 }
 
+angle::Result CommandQueue::enqueueAcquireExternalMemObjectsKHR(cl_uint numMemObjects,
+                                                                const cl_mem *memObjects,
+                                                                cl_uint numEventsInWaitList,
+                                                                const cl_event *eventWaitList,
+                                                                cl_event *event)
+{
+    MemoryPtrs memories;
+    memories.reserve(numMemObjects);
+    for (cl_uint index = 0; index < numMemObjects; ++index)
+    {
+        memories.emplace_back(&memObjects[index]->cast<Memory>());
+    }
+    const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
+    rx::CLEventImpl::CreateFunc eventCreateFunc;
+    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
+        event != nullptr ? &eventCreateFunc : nullptr;
+
+    ANGLE_TRY(mImpl->enqueueAcquireExternalMemObjectsKHR(memories, waitEvents, eventCreateFuncPtr));
+
+    return CheckCreateEvent(*this, CL_COMMAND_ACQUIRE_EXTERNAL_MEM_OBJECTS_KHR, eventCreateFunc,
+                            event);
+}
+
+angle::Result CommandQueue::enqueueReleaseExternalMemObjectsKHR(cl_uint numMemObjects,
+                                                                const cl_mem *memObjects,
+                                                                cl_uint numEventsInWaitList,
+                                                                const cl_event *eventWaitList,
+                                                                cl_event *event)
+{
+    MemoryPtrs memories;
+    memories.reserve(numMemObjects);
+    for (cl_uint index = 0; index < numMemObjects; ++index)
+    {
+        memories.emplace_back(&memObjects[index]->cast<Memory>());
+    }
+    const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
+    rx::CLEventImpl::CreateFunc eventCreateFunc;
+    rx::CLEventImpl::CreateFunc *const eventCreateFuncPtr =
+        event != nullptr ? &eventCreateFunc : nullptr;
+
+    ANGLE_TRY(mImpl->enqueueReleaseExternalMemObjectsKHR(memories, waitEvents, eventCreateFuncPtr));
+
+    return CheckCreateEvent(*this, CL_COMMAND_RELEASE_EXTERNAL_MEM_OBJECTS_KHR, eventCreateFunc,
+                            event);
+}
+
 CommandQueue::~CommandQueue()
 {
     auto queue = mDevice->mDefaultCommandQueue.synchronize();
@@ -717,6 +768,7 @@ size_t CommandQueue::getDeviceIndex() const
 CommandQueue::CommandQueue(Context &context,
                            Device &device,
                            PropArray &&propArray,
+                           Priority priority,
                            CommandQueueProperties properties,
                            cl_uint size)
     : mContext(&context),
@@ -724,6 +776,7 @@ CommandQueue::CommandQueue(Context &context,
       mPropArray(std::move(propArray)),
       mProperties(properties),
       mSize(size),
+      mPriority(priority),
       mImpl(nullptr)
 {
     ANGLE_CL_IMPL_TRY(context.getImpl().createCommandQueue(*this, &mImpl));
@@ -734,7 +787,11 @@ CommandQueue::CommandQueue(Context &context,
 }
 
 CommandQueue::CommandQueue(Context &context, Device &device, CommandQueueProperties properties)
-    : mContext(&context), mDevice(&device), mProperties(properties), mImpl(nullptr)
+    : mContext(&context),
+      mDevice(&device),
+      mProperties(properties),
+      mPriority(CL_QUEUE_PRIORITY_MED_KHR),
+      mImpl(nullptr)
 {
     ANGLE_CL_IMPL_TRY(context.getImpl().createCommandQueue(*this, &mImpl));
 }

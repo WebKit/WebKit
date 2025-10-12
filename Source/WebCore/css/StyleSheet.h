@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "CSSParserMode.h"
+#include <WebCore/CSSParserMode.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 

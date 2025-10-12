@@ -142,7 +142,7 @@ void getEnumerablePropertyNames(JSGlobalObject* globalObject, JSObject* base, Pr
     unsigned prototypeCount = 0;
 
     while (true) {
-        JSValue prototype = object->getPrototype(vm, globalObject);
+        JSValue prototype = object->getPrototype(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
         if (prototype.isNull())
             break;

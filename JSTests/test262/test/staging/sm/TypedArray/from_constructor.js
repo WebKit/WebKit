@@ -2,9 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-TypedArray-shell.js]
-flags:
-  - noStrict
+includes: [sm/non262-TypedArray-shell.js]
 description: |
   pending
 esid: pending
@@ -25,9 +23,9 @@ for (var constructor of anyTypedArrayConstructors) {
         () => ({})  // arrow functions are not constructors
     ];
     for (var v of nonconstructors) {
-        assertThrowsInstanceOf(() => {
+        assert.throws(TypeError, () => {
             constructor.from.call(v, arr);
-        }, TypeError);
+        });
     }
 
     // %TypedArray%.from does not get confused if global constructors for typed arrays

@@ -41,6 +41,7 @@
 #include "AirTmpMap.h"
 #include "AirTmpWidthInlines.h"
 #include "AirUseCounts.h"
+#include <wtf/IntervalSet.h>
 #include <wtf/IterationStatus.h>
 #include <wtf/ListDump.h>
 #include <wtf/PriorityQueue.h>
@@ -378,11 +379,23 @@ private:
 
 class RegisterRange {
 public:
+    // Diminishing returns on perf after 2 cache lines, but 3 is more space efficient than 2.
+    // InnerNodes store arrays of Range<Point> & uintptr_t (16 bytes per order)
+    // LeafNodes store arrays of Range<Point> & Tmp (12 bytes per order)
+    // Both are multiples of 192, which is 3 cache lines.
+    static constexpr unsigned cacheLinesPerNode = 3;
+    using AllocatedIntervalSet = IntervalSet<Point, Tmp, cacheLinesPerNode>;
+
     RegisterRange() = default;
 
     struct AllocatedInterval {
-        Tmp tmp;
         Interval interval;
+        Tmp tmp;
+
+        AllocatedInterval(const std::pair<Interval, Tmp>& pair)
+            : interval(pair.first)
+            , tmp(pair.second)
+        { }
 
         bool operator<(const AllocatedInterval& other) const
         {
@@ -395,39 +408,40 @@ public:
         }
     };
 
-    using AllocatedIntervalSet = StdSet<AllocatedInterval>;
-
     void add(Tmp tmp, LiveRange& range)
     {
         ASSERT(!hasConflict(range, Width64)); // Can't add overlapping LiveRanges
         for (auto& interval : range.intervals()) {
             ASSERT(interval != Interval()); // Strict ordering requires no empty intervals.
-            m_allocations.insert({ tmp, interval });
+            m_allocations.insert(interval, tmp);
         }
     }
 
     void addClobberHigh64(Reg reg, Point point)
     {
         ASSERT(reg.isFPR());
-        m_allocationsHigh64.insert({ Tmp(reg), Interval(point) });
+        m_allocationsHigh64.insert(Interval(point), Tmp(reg));
     }
 
-    void evict(Tmp tmp, LiveRange& range)
+    void evict(LiveRange& range)
     {
-        for (auto& interval : range.intervals()) {
-            auto r = m_allocations.erase({ tmp, interval });
-            ASSERT_UNUSED(r, r == 1);
-        }
+        for (auto& interval : range.intervals())
+            m_allocations.erase(interval);
     }
 
     bool hasConflict(LiveRange& range, Width width)
     {
-        bool hasConflict = false;
-        forEachConflict(range, width, [&](auto&) -> IterationStatus {
-            hasConflict = true;
-            return IterationStatus::Done;
-        });
-        return hasConflict;
+        for (auto interval : range.intervals()) {
+            if (m_allocations.hasOverlap(interval))
+                return true;
+        }
+        if (width <= Width64)
+            return false;
+        for (auto interval : range.intervals()) {
+            if (m_allocationsHigh64.hasOverlap(interval))
+                return true;
+        }
+        return false;
     }
 
     // func is called with each (Tmp, Interval) pair (i.e. AllocatedInterval) of this
@@ -447,7 +461,7 @@ public:
 
     bool isEmpty() const
     {
-        return m_allocations.empty() && m_allocationsHigh64.empty();
+        return m_allocations.isEmpty() && m_allocationsHigh64.isEmpty();
     }
 
     void dump(PrintStream& out) const
@@ -455,15 +469,15 @@ public:
         auto dumpSet = [&out](const AllocatedIntervalSet& allocationSet) {
             CommaPrinter comma;
             out.print("[");
-            for (auto& alloc : allocationSet) {
+            for (auto alloc : allocationSet) {
                 out.print(comma);
-                out.print(alloc);
+                out.print(AllocatedInterval(alloc));
             }
             out.print("]");
         };
 
         dumpSet(m_allocations);
-        if (!m_allocationsHigh64.empty()) {
+        if (!m_allocationsHigh64.isEmpty()) {
             out.print(", ↑");
             dumpSet(m_allocationsHigh64);
         }
@@ -473,47 +487,21 @@ private:
     template<typename Func>
     static IterationStatus forEachConflictImpl(AllocatedIntervalSet& allocatedSet, const LiveRange& range, const Func& func)
     {
-        auto rangeIter = range.intervals().begin();
-        auto rangeEnd = range.intervals().end();
-
-        if (rangeIter == rangeEnd)
-            return IterationStatus::Continue;
-        Point nextSearch = rangeIter->begin();
-
-        while (true) {
-            AllocatedInterval conflict;
-            {
-                auto conflictIter = findFirstIntervalEndingAfter(allocatedSet, nextSearch);
-                if (conflictIter == allocatedSet.end())
-                    return IterationStatus::Continue; // End of 'm_allocations', so no more potential conflicts
-                if (rangeIter->end() <= conflictIter->interval.begin()) {
-                    // No more conflicts with this 'range' interval. Move on to the next interval in 'range'.
-                    if (++rangeIter == rangeEnd)
-                        return IterationStatus::Continue; // End of 'range', so no more potential conflicts
-                    // Start searching for conflicts of the next 'range' interval.
-                    nextSearch = rangeIter->begin();
-                    continue;
-                }
-                // Found a conflict. There may be additional conflicts of this 'range' interval, so advance
-                // the search position beyond this conflict but don't advance the 'range' interval.
-                conflict = *conflictIter;
-                nextSearch = conflictIter->interval.end();
+        for (auto interval : range.intervals()) {
+            while (true) {
+                auto intervalAndTmp = allocatedSet.find(interval);
+                if (!intervalAndTmp)
+                    break;
+                AllocatedInterval conflict = { *intervalAndTmp };
+                if (func(conflict) == IterationStatus::Done)
+                    return IterationStatus::Done;
+                if (interval.end() <= conflict.interval.end())
+                    break; // There can't exist other conflicts with interval
+                // Search for remaining conflicts with 'interval'
+                interval = { conflict.interval.end(), interval.end() };
             }
-            // 'func' can invalidate iterators of 'm_allocations'.
-            if (func(conflict) == IterationStatus::Done)
-                return IterationStatus::Done;
         }
-    }
-
-    static AllocatedIntervalSet::iterator findFirstIntervalEndingAfter(AllocatedIntervalSet& allocatedSet, Point point)
-    {
-        Interval query(point);
-        // pos can be 0, yet we can't express a non-empty interval with end==0, so instead of looking
-        // for the first interval ending after pos we find the first interval ending at or after pos+1.
-        ASSERT(query.end() == point + 1);
-        auto iter = allocatedSet.lower_bound({ Tmp(), query });
-        ASSERT(iter == allocatedSet.end() || iter->interval.end() > point);
-        return iter;
+        return IterationStatus::Continue;
     }
 
     AllocatedIntervalSet m_allocations;
@@ -1131,16 +1119,25 @@ private:
 #endif
     }
 
-    template<typename Func>
-    IterationStatus forEachTmpInGroup(Tmp grp, const Func& func)
+    template<typename Func, size_t inlineCapacity>
+    IterationStatus forEachTmpInGroup(Tmp grp, Vector<Tmp, inlineCapacity>& worklist, const Func& func)
     {
-        TmpData& data = m_map[grp];
-        if (!data.isGroup())
-            return func(grp);
-        ASSERT(data.subGroup0 && data.subGroup1);
-        if (forEachTmpInGroup(data.subGroup0, func) == IterationStatus::Done)
-            return IterationStatus::Done;
-        return forEachTmpInGroup(data.subGroup1, func);
+        ASSERT(worklist.isEmpty());
+        worklist.append(grp);
+
+        while (!worklist.isEmpty()) {
+            Tmp tmp = worklist.takeLast();
+            TmpData& data = m_map[tmp];
+
+            if (data.isGroup()) {
+                worklist.append(data.subGroup1);
+                worklist.append(data.subGroup0);
+            } else if (func(tmp) == IterationStatus::Done) {
+                worklist.shrink(0);
+                return IterationStatus::Done;
+            }
+        }
+        return IterationStatus::Continue;
     }
 
     template <Bank bank>
@@ -1158,6 +1155,7 @@ private:
             }
         };
         Vector<Move> moves;
+        Vector<Tmp, 8> worklist0, worklist1;
 
         m_code.forEachTmp<bank>([&](Tmp tmp) {
             ASSERT(!tmp.isReg());
@@ -1189,13 +1187,13 @@ private:
                 return a.tmp1.tmpIndex(bank) < b.tmp1.tmpIndex(bank);
             });
 
-        auto hasConflict = [this](Tmp group0, Tmp group1) {
+        auto hasConflict = [this, &worklist0, &worklist1](Tmp group0, Tmp group1) {
             bool conflicts = false;
-            forEachTmpInGroup(group0, [&](Tmp tmp0) {
+            forEachTmpInGroup(group0, worklist0, [&](Tmp tmp0) {
                 ASSERT(!conflicts);
                 TmpData& data0 = m_map[tmp0];
                 ASSERT(!data0.subGroup0 && !data0.subGroup1);
-                forEachTmpInGroup(group1, [&](Tmp tmp1) {
+                forEachTmpInGroup(group1, worklist1, [&](Tmp tmp1) {
                     ASSERT(!conflicts);
                     ASSERT(tmp0 != tmp1);
                     TmpData& data1 = m_map[tmp1];
@@ -1254,7 +1252,7 @@ private:
                 if (!data.parentGroup && data.isGroup()) {
                     dataLog("Group: ", tmp, " = { ");
                     CommaPrinter comma;
-                    forEachTmpInGroup(tmp, [&comma](Tmp member) {
+                    forEachTmpInGroup(tmp, worklist0, [&comma](Tmp member) {
                         dataLog(comma, member);
                         return IterationStatus::Continue;
                     });
@@ -1466,9 +1464,10 @@ private:
 
         ScalarRegisterSet alreadyAttempted;
         if (eagerGroupsExhaustiveSearch) {
+            Vector<Tmp, 8> worklist;
             // FIXME: this will check coalescables within the group, which is wasteful and common.
             // But without doing this, we won't try to coalescables between partially split groups.
-            IterationStatus status = forEachTmpInGroup(tmp, [&](Tmp member) {
+            IterationStatus status = forEachTmpInGroup(tmp, worklist, [&](Tmp member) {
                 for (auto& with : m_map[member].coalescables) {
                     Reg r = assignedReg(with.tmp);
                     if (r) {
@@ -1605,7 +1604,7 @@ private:
         ASSERT(tmpData.stage == Stage::Assigned);
         ASSERT(tmpData.spillCost() != unspillableCost);
         ASSERT(tmpData.assigned == reg);
-        m_regRanges[reg].evict(tmp, tmpData.liveRange);
+        m_regRanges[reg].evict(tmpData.liveRange);
         tmpData.stage = Stage::New;
         tmpData.assigned = Reg();
         dataLogLnIf(verbose(), "Evicted ", tmp, " from ", reg);
@@ -2137,7 +2136,7 @@ private:
 
 void allocateRegistersByGreedy(Code& code)
 {
-    PhaseScope phaseScope(code, "allocateRegistersAndStackByGreedy"_s);
+    PhaseScope phaseScope(code, "allocateRegistersByGreedy"_s);
     dataLogIf(Greedy::verbose(), "Air before greedy register allocation:\n", code);
     Greedy::GreedyAllocator allocator(code);
     allocator.run();

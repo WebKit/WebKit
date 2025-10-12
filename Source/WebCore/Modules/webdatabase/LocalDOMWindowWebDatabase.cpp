@@ -30,6 +30,7 @@
 #include "Database.h"
 #include "DatabaseManager.h"
 #include "Document.h"
+#include "ExceptionOr.h"
 #include "LocalDOMWindow.h"
 #include "SecurityOrigin.h"
 #include <JavaScriptCore/ConsoleTypes.h>

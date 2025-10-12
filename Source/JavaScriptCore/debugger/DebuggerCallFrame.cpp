@@ -39,6 +39,7 @@
 #include "ShadowChickenInlines.h"
 #include "StackVisitor.h"
 #include "StrongInlines.h"
+#include "VMEntryScopeInlines.h"
 
 namespace JSC {
 
@@ -262,7 +263,15 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& scri
         eval->setTaintedByWithScope();
     }
 
-    JSValue result = vm.interpreter.executeEval(eval, debuggerCallFrame->thisValue(vm), debuggerCallFrame->scope(vm)->jsScope());
+    JSValue result;
+    {
+        auto* jsScope = debuggerCallFrame->scope(vm)->jsScope();
+        VMEntryScope entryScope(vm, jsScope->globalObject());
+        if (vm.disallowVMEntryCount) [[unlikely]]
+            result = Interpreter::checkVMEntryPermission();
+        else
+            result = vm.interpreter.executeEval(eval, debuggerCallFrame->thisValue(vm), jsScope);
+    }
     if (catchScope.exception()) [[unlikely]] {
         exception = catchScope.exception();
         catchScope.clearException();

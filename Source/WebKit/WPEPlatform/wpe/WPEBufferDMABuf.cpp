@@ -53,8 +53,6 @@ struct _WPEBufferDMABufPrivate {
     Vector<uint32_t> strides;
     uint64_t modifier;
     EGLImage eglImage;
-    UnixFileDescriptor renderingFence;
-    UnixFileDescriptor releaseFence;
 #if USE(GBM)
     UnixFileDescriptor deviceFD;
     std::optional<struct gbm_device*> device;
@@ -169,7 +167,7 @@ static gpointer wpeBufferDMABufImportToEGLImage(WPEBuffer* buffer, GError** erro
 #undef ADD_PLANE_ATTRIBUTES
 
     attributes.append(EGL_NONE);
-    priv->eglImage = s_eglCreateImageKHR(eglDisplay, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes.data());
+    priv->eglImage = s_eglCreateImageKHR(eglDisplay, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes.span().data());
     if (!priv->eglImage)
         g_set_error(error, WPE_BUFFER_ERROR, WPE_BUFFER_ERROR_IMPORT_FAILED, "Failed to import buffer to EGL image: eglCreateImageKHR failed with error %#04x", eglGetError());
     return priv->eglImage;
@@ -187,7 +185,13 @@ static bool wpeBufferDMABufTryEnsureGBMDevice(WPEBufferDMABuf* buffer)
     if (!display)
         return false;
 
-    const char* filename = wpe_display_get_drm_render_node(display);
+    auto* drmDevice = wpe_display_get_drm_device(display);
+    if (!drmDevice)
+        return false;
+
+    const char* filename = wpe_drm_device_get_render_node(drmDevice);
+    if (!filename)
+        filename = wpe_drm_device_get_primary_node(drmDevice);
     if (!filename)
         return false;
 
@@ -217,13 +221,36 @@ static GBytes* wpeBufferDMABufImportToPixels(WPEBuffer* buffer, GError** error)
             return nullptr;
         }
 
-        if (priv->format != DRM_FORMAT_ARGB8888 && priv->format != DRM_FORMAT_XRGB8888 && priv->modifier != DRM_FORMAT_MOD_LINEAR && priv->modifier != DRM_FORMAT_MOD_INVALID) {
+        if (priv->format != DRM_FORMAT_ARGB8888 && priv->format != DRM_FORMAT_XRGB8888) {
             g_set_error_literal(error, WPE_BUFFER_ERROR, WPE_BUFFER_ERROR_IMPORT_FAILED, "Failed to import buffer to pixels_buffer: unsupported buffer format");
             return nullptr;
         }
 
-        struct gbm_import_fd_data fdData = { priv->fds[0].value(), width, height, priv->strides[0], priv->format };
-        priv->bufferObject = gbm_bo_import(priv->device.value(), GBM_BO_IMPORT_FD, &fdData, GBM_BO_USE_RENDERING | GBM_BO_USE_LINEAR);
+        uint32_t planeCount = static_cast<uint32_t>(priv->fds.size());
+        struct gbm_import_fd_modifier_data fdModifierData = {
+            width,
+            height,
+            priv->format,
+            planeCount, {
+                priv->fds[0].value(),
+                planeCount > 1 ? priv->fds[1].value() : -1,
+                planeCount > 2 ? priv->fds[2].value() : -1,
+                planeCount > 3 ? priv->fds[3].value() : -1
+            }, {
+                static_cast<int>(priv->strides[0]),
+                planeCount > 1 ? static_cast<int>(priv->strides[1]) : 0,
+                planeCount > 2 ? static_cast<int>(priv->strides[2]) : 0,
+                planeCount > 3 ? static_cast<int>(priv->strides[3]) : 0
+            }, {
+                static_cast<int>(priv->offsets[0]),
+                planeCount > 1 ? static_cast<int>(priv->offsets[1]) : 0,
+                planeCount > 2 ? static_cast<int>(priv->offsets[2]) : 0,
+                planeCount > 3 ? static_cast<int>(priv->offsets[3]) : 0
+            },
+            priv->modifier
+        };
+
+        priv->bufferObject = gbm_bo_import(priv->device.value(), GBM_BO_IMPORT_FD_MODIFIER, &fdModifierData, 0);
         if (!priv->bufferObject) {
             g_set_error_literal(error, WPE_BUFFER_ERROR, WPE_BUFFER_ERROR_IMPORT_FAILED, "Failed to import buffer to pixels_buffer: gbm_bo_import failed");
             return nullptr;
@@ -239,7 +266,7 @@ static GBytes* wpeBufferDMABufImportToPixels(WPEBuffer* buffer, GError** error)
     }
 
     struct BufferData {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(BufferData);
         struct gbm_bo* buffer;
         void* data;
     };
@@ -301,9 +328,9 @@ WPEBufferDMABuf* wpe_buffer_dma_buf_new(WPEDisplay* display, int width, int heig
     for (guint32 i = 0; i < planeCount; ++i)
         buffer->priv->fds.append(UnixFileDescriptor { fds[i], UnixFileDescriptor::Adopt });
     buffer->priv->offsets.grow(planeCount);
-    memcpy(buffer->priv->offsets.data(), offsets, planeCount * sizeof(guint32));
+    memcpy(buffer->priv->offsets.mutableSpan().data(), offsets, planeCount * sizeof(guint32));
     buffer->priv->strides.grow(planeCount);
-    memcpy(buffer->priv->strides.data(), strides, planeCount * sizeof(guint32));
+    memcpy(buffer->priv->strides.mutableSpan().data(), strides, planeCount * sizeof(guint32));
     buffer->priv->modifier = modifier;
 
     return buffer;
@@ -403,102 +430,4 @@ guint64 wpe_buffer_dma_buf_get_modifier(WPEBufferDMABuf* buffer)
     g_return_val_if_fail(WPE_IS_BUFFER_DMA_BUF(buffer), 0);
 
     return buffer->priv->modifier;
-}
-
-/**
- * wpe_buffer_dma_buf_set_rendering_fence:
- * @buffer: a #WPEBufferDMABuf
- * @fd: a file descriptor, or -1
- *
- * Set the rendering fence file descriptor to use for the @buffer. The fence
- * will be used to wait before rendering the buffer.
- * The buffer takes the ownership of the file descriptor.
- */
-void wpe_buffer_dma_buf_set_rendering_fence(WPEBufferDMABuf* buffer, int fd)
-{
-    g_return_if_fail(WPE_IS_BUFFER_DMA_BUF(buffer));
-
-    if (buffer->priv->renderingFence.value() == fd)
-        return;
-
-    buffer->priv->renderingFence = UnixFileDescriptor { fd, UnixFileDescriptor::Adopt };
-}
-
-/**
- * wpe_buffer_dma_buf_get_rendering_fence:
- * @buffer: a #WPEBufferDMABuf
- *
- * Get the rendering fence file descriptor of @buffer.
- *
- * Returns: a file descriptor, or -1
- */
-int wpe_buffer_dma_buf_get_rendering_fence(WPEBufferDMABuf* buffer)
-{
-    g_return_val_if_fail(WPE_IS_BUFFER_DMA_BUF(buffer), -1);
-
-    return buffer->priv->renderingFence.value();
-}
-
-/**
- * wpe_buffer_dma_buf_take_rendering_fence:
- * @buffer: a #WPEBufferDMABuf
- *
- * Get the rendering fence file descriptor of @buffer and set it to -1.
- *
- * Returns: a file descriptor, or -1
- */
-int wpe_buffer_dma_buf_take_rendering_fence(WPEBufferDMABuf* buffer)
-{
-    g_return_val_if_fail(WPE_IS_BUFFER_DMA_BUF(buffer), -1);
-
-    return buffer->priv->renderingFence.release();
-}
-
- /**
- * wpe_buffer_dma_buf_set_release_fence:
- * @buffer: a #WPEBufferDMABuf
- * @fd: a file descriptor, or -1
- *
- * Set the release fence file descriptor to use for the @buffer. The fence
- * will be used to wait before releasing the buffer to be destroyed or reused.
- * The buffer takes the ownership of the file descriptor.
- */
-void wpe_buffer_dma_buf_set_release_fence(WPEBufferDMABuf* buffer, int fd)
-{
-    g_return_if_fail(WPE_IS_BUFFER_DMA_BUF(buffer));
-
-    if (buffer->priv->releaseFence.value() == fd)
-        return;
-
-    buffer->priv->releaseFence = UnixFileDescriptor { fd, UnixFileDescriptor::Adopt };
-}
-
-/**
- * wpe_buffer_dma_buf_get_release_fence:
- * @buffer: a #WPEBufferDMABuf
- *
- * Get the release fence file descriptor of @buffer.
- *
- * Returns: a file descriptor, or -1
- */
-int wpe_buffer_dma_buf_get_release_fence(WPEBufferDMABuf* buffer)
-{
-    g_return_val_if_fail(WPE_IS_BUFFER_DMA_BUF(buffer), -1);
-
-    return buffer->priv->releaseFence.value();
-}
-
-/**
- * wpe_buffer_dma_buf_take_release_fence:
- * @buffer: a #WPEBufferDMABuf
- *
- * Get the release fence file descriptor of @buffer and set it to -1.
- *
- * Returns: a file descriptor, or -1
- */
-int wpe_buffer_dma_buf_take_release_fence(WPEBufferDMABuf* buffer)
-{
-    g_return_val_if_fail(WPE_IS_BUFFER_DMA_BUF(buffer), -1);
-
-    return buffer->priv->releaseFence.release();
 }

@@ -6,4 +6,6 @@ PASS MediaRecorder will not fire an exception when stopped after having just bee
 PASS MediaRecorder will not fire an exception when stopped after having just been spontaneously stopped
 PASS MediaRecorder will fire start event even if stopped synchronously
 PASS MediaRecorder will fire start event even if a track is removed synchronously
+PASS MediaRecorder will not fire an error event if a recorder is stopped synchronously after a track is removed
+PASS MediaRecorder will not fire an error event if a recorder is stopped synchronously after all tracks are ended
 

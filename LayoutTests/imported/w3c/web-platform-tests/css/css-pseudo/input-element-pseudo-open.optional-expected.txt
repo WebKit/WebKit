@@ -1,0 +1,12 @@
+reset
+
+
+
+FAIL CSS :open for <input type=date> promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL CSS :open for <input type=datetime-local> promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL CSS :open for <input type=week> promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL CSS :open for <input type=month> promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL CSS :open for <input type=time> promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL CSS :open for <input type=color> promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL CSS :open for <input type=text list=datalist> promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+

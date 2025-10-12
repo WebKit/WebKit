@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,8 +87,7 @@ private:
     RefPtr<DeferredPromise> takePromise(uint64_t promiseIdentifier);
 
     class MainThreadBridge;
-    Ref<MainThreadBridge> m_mainThreadBridge;
-    Ref<MainThreadBridge> protectedMainThreadBridge() const;
+    const Ref<MainThreadBridge> m_mainThreadBridge;
 
     bool m_hasChangeEventListener { false };
     WeakPtr<CookieJar> m_cookieJar;

@@ -47,8 +47,8 @@ SOFT_LINK_CONSTANT(libAccessibility, kAXSReduceMotionPreference, CFStringRef);
 SOFT_LINK_CONSTANT(libAccessibility, kAXSReduceMotionChangedNotification, CFStringRef);
 
 #define NOTIFICATION_CENTER CFNotificationCenterGetDarwinNotifyCenter()
-#define REDUCED_MOTION_PREFERENCE getkAXSReduceMotionPreference()
-#define REDUCED_MOTION_CHANGED_NOTIFICATION getkAXSReduceMotionChangedNotification()
+#define REDUCED_MOTION_PREFERENCE getkAXSReduceMotionPreferenceSingleton()
+#define REDUCED_MOTION_CHANGED_NOTIFICATION getkAXSReduceMotionChangedNotificationSingleton()
 #define ACCESSIBILITY_DOMAIN CFSTR("com.apple.Accessibility")
 #else
 #define NOTIFICATION_CENTER CFNotificationCenterGetDistributedCenter()

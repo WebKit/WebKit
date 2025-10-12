@@ -1,4 +1,5 @@
 
+PASS :return_type:returnType="bool";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="bool";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="bool";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="bool";textureType="texture_3d%3Cf32%3E"
@@ -8,6 +9,7 @@ PASS :return_type:returnType="bool";textureType="texture_depth_2d"
 PASS :return_type:returnType="bool";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="bool";textureType="texture_depth_cube"
 PASS :return_type:returnType="bool";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec2%3Cbool%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cbool%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cbool%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cbool%3E";textureType="texture_3d%3Cf32%3E"
@@ -17,6 +19,7 @@ PASS :return_type:returnType="vec2%3Cbool%3E";textureType="texture_depth_2d"
 PASS :return_type:returnType="vec2%3Cbool%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec2%3Cbool%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec2%3Cbool%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec3%3Cbool%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cbool%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cbool%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cbool%3E";textureType="texture_3d%3Cf32%3E"
@@ -26,6 +29,7 @@ PASS :return_type:returnType="vec3%3Cbool%3E";textureType="texture_depth_2d"
 PASS :return_type:returnType="vec3%3Cbool%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec3%3Cbool%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec3%3Cbool%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec4%3Cbool%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cbool%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cbool%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cbool%3E";textureType="texture_3d%3Cf32%3E"
@@ -35,6 +39,7 @@ PASS :return_type:returnType="vec4%3Cbool%3E";textureType="texture_depth_2d"
 PASS :return_type:returnType="vec4%3Cbool%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec4%3Cbool%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec4%3Cbool%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="abstract-int";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="abstract-int";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="abstract-int";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="abstract-int";textureType="texture_3d%3Cf32%3E"
@@ -44,6 +49,7 @@ PASS :return_type:returnType="abstract-int";textureType="texture_depth_2d"
 PASS :return_type:returnType="abstract-int";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="abstract-int";textureType="texture_depth_cube"
 PASS :return_type:returnType="abstract-int";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="abstract-float";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="abstract-float";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="abstract-float";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="abstract-float";textureType="texture_3d%3Cf32%3E"
@@ -53,6 +59,7 @@ PASS :return_type:returnType="abstract-float";textureType="texture_depth_2d"
 PASS :return_type:returnType="abstract-float";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="abstract-float";textureType="texture_depth_cube"
 PASS :return_type:returnType="abstract-float";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="f32";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="f32";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="f32";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="f32";textureType="texture_3d%3Cf32%3E"
@@ -62,6 +69,7 @@ PASS :return_type:returnType="f32";textureType="texture_depth_2d"
 PASS :return_type:returnType="f32";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="f32";textureType="texture_depth_cube"
 PASS :return_type:returnType="f32";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="f16";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="f16";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="f16";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="f16";textureType="texture_3d%3Cf32%3E"
@@ -71,6 +79,7 @@ PASS :return_type:returnType="f16";textureType="texture_depth_2d"
 PASS :return_type:returnType="f16";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="f16";textureType="texture_depth_cube"
 PASS :return_type:returnType="f16";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec2%3Cabstract-int%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cabstract-int%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cabstract-int%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cabstract-int%3E";textureType="texture_3d%3Cf32%3E"
@@ -80,6 +89,7 @@ PASS :return_type:returnType="vec2%3Cabstract-int%3E";textureType="texture_depth
 PASS :return_type:returnType="vec2%3Cabstract-int%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec2%3Cabstract-int%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec2%3Cabstract-int%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec3%3Cabstract-int%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cabstract-int%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cabstract-int%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cabstract-int%3E";textureType="texture_3d%3Cf32%3E"
@@ -89,6 +99,7 @@ PASS :return_type:returnType="vec3%3Cabstract-int%3E";textureType="texture_depth
 PASS :return_type:returnType="vec3%3Cabstract-int%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec3%3Cabstract-int%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec3%3Cabstract-int%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec4%3Cabstract-int%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cabstract-int%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cabstract-int%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cabstract-int%3E";textureType="texture_3d%3Cf32%3E"
@@ -98,6 +109,7 @@ PASS :return_type:returnType="vec4%3Cabstract-int%3E";textureType="texture_depth
 PASS :return_type:returnType="vec4%3Cabstract-int%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec4%3Cabstract-int%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec4%3Cabstract-int%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec2%3Cabstract-float%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cabstract-float%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cabstract-float%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cabstract-float%3E";textureType="texture_3d%3Cf32%3E"
@@ -107,6 +119,7 @@ PASS :return_type:returnType="vec2%3Cabstract-float%3E";textureType="texture_dep
 PASS :return_type:returnType="vec2%3Cabstract-float%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec2%3Cabstract-float%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec2%3Cabstract-float%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec2%3Cf32%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cf32%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cf32%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cf32%3E";textureType="texture_3d%3Cf32%3E"
@@ -116,6 +129,7 @@ PASS :return_type:returnType="vec2%3Cf32%3E";textureType="texture_depth_2d"
 PASS :return_type:returnType="vec2%3Cf32%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec2%3Cf32%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec2%3Cf32%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec2%3Cf16%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cf16%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cf16%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cf16%3E";textureType="texture_3d%3Cf32%3E"
@@ -125,6 +139,7 @@ PASS :return_type:returnType="vec2%3Cf16%3E";textureType="texture_depth_2d"
 PASS :return_type:returnType="vec2%3Cf16%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec2%3Cf16%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec2%3Cf16%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec3%3Cabstract-float%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cabstract-float%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cabstract-float%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cabstract-float%3E";textureType="texture_3d%3Cf32%3E"
@@ -134,6 +149,7 @@ PASS :return_type:returnType="vec3%3Cabstract-float%3E";textureType="texture_dep
 PASS :return_type:returnType="vec3%3Cabstract-float%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec3%3Cabstract-float%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec3%3Cabstract-float%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec3%3Cf32%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cf32%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cf32%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cf32%3E";textureType="texture_3d%3Cf32%3E"
@@ -143,6 +159,7 @@ PASS :return_type:returnType="vec3%3Cf32%3E";textureType="texture_depth_2d"
 PASS :return_type:returnType="vec3%3Cf32%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec3%3Cf32%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec3%3Cf32%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec3%3Cf16%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cf16%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cf16%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cf16%3E";textureType="texture_3d%3Cf32%3E"
@@ -152,6 +169,7 @@ PASS :return_type:returnType="vec3%3Cf16%3E";textureType="texture_depth_2d"
 PASS :return_type:returnType="vec3%3Cf16%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec3%3Cf16%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec3%3Cf16%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec4%3Cabstract-float%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cabstract-float%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cabstract-float%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cabstract-float%3E";textureType="texture_3d%3Cf32%3E"
@@ -161,6 +179,25 @@ PASS :return_type:returnType="vec4%3Cabstract-float%3E";textureType="texture_dep
 PASS :return_type:returnType="vec4%3Cabstract-float%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec4%3Cabstract-float%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec4%3Cabstract-float%3E";textureType="texture_depth_cube_array"
+FAIL :return_type:returnType="vec4%3Cf32%3E";textureType="texture_1d%3Cf32%3E" assert_unreached:
+  - (in subcase: offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:22: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractInt>)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v: vec4<f32> = textureSampleLevel(t, s, 0.0f, 0);
+      return vec4f(0);
+    }
+
+      at (elided: below max severity)
+  - (in subcase: offset=false) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    5:21: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractInt>)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :return_type:returnType="vec4%3Cf32%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cf32%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cf32%3E";textureType="texture_3d%3Cf32%3E"
@@ -170,6 +207,7 @@ PASS :return_type:returnType="vec4%3Cf32%3E";textureType="texture_depth_2d"
 PASS :return_type:returnType="vec4%3Cf32%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec4%3Cf32%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec4%3Cf32%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec4%3Cf16%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cf16%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cf16%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cf16%3E";textureType="texture_3d%3Cf32%3E"
@@ -179,6 +217,7 @@ PASS :return_type:returnType="vec4%3Cf16%3E";textureType="texture_depth_2d"
 PASS :return_type:returnType="vec4%3Cf16%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec4%3Cf16%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec4%3Cf16%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="i32";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="i32";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="i32";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="i32";textureType="texture_3d%3Cf32%3E"
@@ -188,6 +227,7 @@ PASS :return_type:returnType="i32";textureType="texture_depth_2d"
 PASS :return_type:returnType="i32";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="i32";textureType="texture_depth_cube"
 PASS :return_type:returnType="i32";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec2%3Ci32%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Ci32%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Ci32%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Ci32%3E";textureType="texture_3d%3Cf32%3E"
@@ -197,6 +237,7 @@ PASS :return_type:returnType="vec2%3Ci32%3E";textureType="texture_depth_2d"
 PASS :return_type:returnType="vec2%3Ci32%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec2%3Ci32%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec2%3Ci32%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec3%3Ci32%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Ci32%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Ci32%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Ci32%3E";textureType="texture_3d%3Cf32%3E"
@@ -206,6 +247,7 @@ PASS :return_type:returnType="vec3%3Ci32%3E";textureType="texture_depth_2d"
 PASS :return_type:returnType="vec3%3Ci32%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec3%3Ci32%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec3%3Ci32%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec4%3Ci32%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Ci32%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Ci32%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Ci32%3E";textureType="texture_3d%3Cf32%3E"
@@ -215,6 +257,7 @@ PASS :return_type:returnType="vec4%3Ci32%3E";textureType="texture_depth_2d"
 PASS :return_type:returnType="vec4%3Ci32%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec4%3Ci32%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec4%3Ci32%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="u32";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="u32";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="u32";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="u32";textureType="texture_3d%3Cf32%3E"
@@ -224,6 +267,7 @@ PASS :return_type:returnType="u32";textureType="texture_depth_2d"
 PASS :return_type:returnType="u32";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="u32";textureType="texture_depth_cube"
 PASS :return_type:returnType="u32";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec2%3Cu32%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cu32%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cu32%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec2%3Cu32%3E";textureType="texture_3d%3Cf32%3E"
@@ -233,6 +277,7 @@ PASS :return_type:returnType="vec2%3Cu32%3E";textureType="texture_depth_2d"
 PASS :return_type:returnType="vec2%3Cu32%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec2%3Cu32%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec2%3Cu32%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec3%3Cu32%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cu32%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cu32%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec3%3Cu32%3E";textureType="texture_3d%3Cf32%3E"
@@ -242,6 +287,7 @@ PASS :return_type:returnType="vec3%3Cu32%3E";textureType="texture_depth_2d"
 PASS :return_type:returnType="vec3%3Cu32%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec3%3Cu32%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec3%3Cu32%3E";textureType="texture_depth_cube_array"
+PASS :return_type:returnType="vec4%3Cu32%3E";textureType="texture_1d%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cu32%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cu32%3E";textureType="texture_2d_array%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cu32%3E";textureType="texture_3d%3Cf32%3E"
@@ -251,6 +297,172 @@ PASS :return_type:returnType="vec4%3Cu32%3E";textureType="texture_depth_2d"
 PASS :return_type:returnType="vec4%3Cu32%3E";textureType="texture_depth_2d_array"
 PASS :return_type:returnType="vec4%3Cu32%3E";textureType="texture_depth_cube"
 PASS :return_type:returnType="vec4%3Cu32%3E";textureType="texture_depth_cube_array"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="bool"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec2%3Cbool%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec3%3Cbool%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec4%3Cbool%3E"
+FAIL :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="abstract-int" assert_unreached:
+  - (in subcase: value=-1;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, <AbstractInt>, <AbstractInt>)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, -1, 0);
+      return vec4f(0);
+    }
+
+      at (elided: below max severity)
+  - (in subcase: value=-1;offset=false) INFO: subcase ran
+  - (in subcase: value=0;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, <AbstractInt>, <AbstractInt>)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, 0, 0);
+      return vec4f(0);
+    }
+
+      at (elided: below max severity)
+  - (in subcase: value=0;offset=false) INFO: subcase ran
+  - (in subcase: value=1;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, <AbstractInt>, <AbstractInt>)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, 1, 0);
+      return vec4f(0);
+    }
+
+      at (elided: only 2 shown)
+  - (in subcase: value=1;offset=false) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    5:10: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, <AbstractInt>, <AbstractInt>)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
+FAIL :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="abstract-float" assert_unreached:
+  - (in subcase: value=-1;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, <AbstractFloat>, <AbstractInt>)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, -1.0, 0);
+      return vec4f(0);
+    }
+
+      at (elided: below max severity)
+  - (in subcase: value=-1;offset=false) INFO: subcase ran
+  - (in subcase: value=0;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, <AbstractFloat>, <AbstractInt>)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, 0.0, 0);
+      return vec4f(0);
+    }
+
+      at (elided: below max severity)
+  - (in subcase: value=0;offset=false) INFO: subcase ran
+  - (in subcase: value=1;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, <AbstractFloat>, <AbstractInt>)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, 1.0, 0);
+      return vec4f(0);
+    }
+
+      at (elided: only 2 shown)
+  - (in subcase: value=1;offset=false) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    5:10: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, <AbstractFloat>, <AbstractInt>)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
+FAIL :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="f32" assert_unreached:
+  - (in subcase: value=-1;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractInt>)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, -1.0f, 0);
+      return vec4f(0);
+    }
+
+      at (elided: below max severity)
+  - (in subcase: value=-1;offset=false) INFO: subcase ran
+  - (in subcase: value=0;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractInt>)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, 0.0f, 0);
+      return vec4f(0);
+    }
+
+      at (elided: below max severity)
+  - (in subcase: value=0;offset=false) INFO: subcase ran
+  - (in subcase: value=1;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractInt>)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, 1.0f, 0);
+      return vec4f(0);
+    }
+
+      at (elided: only 2 shown)
+  - (in subcase: value=1;offset=false) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    5:10: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractInt>)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="f16"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec2%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec3%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec4%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec2%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec2%3Cf32%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec2%3Cf16%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec3%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec3%3Cf32%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec3%3Cf16%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec4%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec4%3Cf32%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec4%3Cf16%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="i32"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec2%3Ci32%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec3%3Ci32%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec4%3Ci32%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="u32"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec2%3Cu32%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec3%3Cu32%3E"
+PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec4%3Cu32%3E"
 PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="bool"
 PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec2%3Cbool%3E"
 PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec3%3Cbool%3E"
@@ -615,6 +827,172 @@ PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType
 PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec2%3Cu32%3E"
 PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec3%3Cu32%3E"
 PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec4%3Cu32%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="bool"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec2%3Cbool%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec3%3Cbool%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec4%3Cbool%3E"
+FAIL :level_argument:textureType="texture_1d%3Cf32%3E";levelType="abstract-int" assert_unreached:
+  - (in subcase: value=-1;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractInt>)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, 0.0f, -1);
+      return vec4f(0);
+    }
+
+      at (elided: below max severity)
+  - (in subcase: value=-1;offset=false) INFO: subcase ran
+  - (in subcase: value=0;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractInt>)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, 0.0f, 0);
+      return vec4f(0);
+    }
+
+      at (elided: below max severity)
+  - (in subcase: value=0;offset=false) INFO: subcase ran
+  - (in subcase: value=1;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractInt>)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, 0.0f, 1);
+      return vec4f(0);
+    }
+
+      at (elided: only 2 shown)
+  - (in subcase: value=1;offset=false) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    5:10: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractInt>)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
+FAIL :level_argument:textureType="texture_1d%3Cf32%3E";levelType="abstract-float" assert_unreached:
+  - (in subcase: value=-1;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractFloat>)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, 0.0f, -1.0);
+      return vec4f(0);
+    }
+
+      at (elided: below max severity)
+  - (in subcase: value=-1;offset=false) INFO: subcase ran
+  - (in subcase: value=0;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractFloat>)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, 0.0f, 0.0);
+      return vec4f(0);
+    }
+
+      at (elided: below max severity)
+  - (in subcase: value=0;offset=false) INFO: subcase ran
+  - (in subcase: value=1;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractFloat>)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, 0.0f, 1.0);
+      return vec4f(0);
+    }
+
+      at (elided: only 2 shown)
+  - (in subcase: value=1;offset=false) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    5:10: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractFloat>)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
+FAIL :level_argument:textureType="texture_1d%3Cf32%3E";levelType="f32" assert_unreached:
+  - (in subcase: value=-1;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, f32)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, 0.0f, -1.0f);
+      return vec4f(0);
+    }
+
+      at (elided: below max severity)
+  - (in subcase: value=-1;offset=false) INFO: subcase ran
+  - (in subcase: value=0;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, f32)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, 0.0f, 0.0f);
+      return vec4f(0);
+    }
+
+      at (elided: below max severity)
+  - (in subcase: value=0;offset=false) INFO: subcase ran
+  - (in subcase: value=1;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, f32)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, 0.0f, 1.0f);
+      return vec4f(0);
+    }
+
+      at (elided: only 2 shown)
+  - (in subcase: value=1;offset=false) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    5:10: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, f32)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="f16"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec2%3Cabstract-int%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec3%3Cabstract-int%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec4%3Cabstract-int%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec2%3Cabstract-float%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec2%3Cf32%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec2%3Cf16%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec3%3Cabstract-float%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec3%3Cf32%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec3%3Cf16%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec4%3Cabstract-float%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec4%3Cf32%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec4%3Cf16%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="i32"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec2%3Ci32%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec3%3Ci32%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec4%3Ci32%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="u32"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec2%3Cu32%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec3%3Cu32%3E"
+PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec4%3Cu32%3E"
 PASS :level_argument:textureType="texture_2d%3Cf32%3E";levelType="bool"
 PASS :level_argument:textureType="texture_2d%3Cf32%3E";levelType="vec2%3Cbool%3E"
 PASS :level_argument:textureType="texture_2d%3Cf32%3E";levelType="vec3%3Cbool%3E"
@@ -933,8 +1311,7 @@ PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="f32"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="f16"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Cabstract-int%3E"
 FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cabstract-int%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: value=-9) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -947,15 +1324,14 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cabstr
     }
 
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:289:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:290:24
+  - (in subcase: value=-9) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: value=-9) INFO: subcase ran
+  - (in subcase: value=-8) INFO: subcase ran
+  - (in subcase: value=0) INFO: subcase ran
+  - (in subcase: value=7) INFO: subcase ran
+  - (in subcase: value=8) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -968,17 +1344,10 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cabstr
     }
 
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:289:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:290:24
+  - (in subcase: value=8) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
+  - (in subcase: value=8) INFO: subcase ran
  Reached unreachable code
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Cabstract-float%3E"
@@ -993,8 +1362,7 @@ PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Cf16%3
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="i32"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Ci32%3E"
 FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Ci32%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: value=-9) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -1007,15 +1375,14 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Ci32%3
     }
 
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:289:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:290:24
+  - (in subcase: value=-9) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: value=-9) INFO: subcase ran
+  - (in subcase: value=-8) INFO: subcase ran
+  - (in subcase: value=0) INFO: subcase ran
+  - (in subcase: value=7) INFO: subcase ran
+  - (in subcase: value=8) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -1028,17 +1395,10 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Ci32%3
     }
 
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:289:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:290:24
+  - (in subcase: value=8) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
+  - (in subcase: value=8) INFO: subcase ran
  Reached unreachable code
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Ci32%3E"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="u32"
@@ -1125,7 +1485,7 @@ FAIL :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="u" as
     }
 
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:327:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:328:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -1146,7 +1506,7 @@ FAIL :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="l" as
     }
 
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:327:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:328:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -1156,7 +1516,39 @@ PASS :offset_argument,non_const:textureType="texture_depth_2d";varType="l"
 PASS :offset_argument,non_const:textureType="texture_depth_2d_array";varType="c"
 PASS :offset_argument,non_const:textureType="texture_depth_2d_array";varType="u"
 PASS :offset_argument,non_const:textureType="texture_depth_2d_array";varType="l"
-PASS :texture_type:testTextureType="texture_1d%3Cf32%3E"
+FAIL :texture_type:testTextureType="texture_1d%3Cf32%3E" assert_unreached:
+  - (in subcase: textureType="texture_1d<f32>";offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:11: error: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractInt>)
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_1d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleLevel(t, s, 0.0f, 0);
+      return vec4f(0);
+    }
+
+      at (elided: below max severity)
+  - (in subcase: textureType="texture_1d<f32>";offset=false) INFO: subcase ran
+  - (in subcase: textureType="texture_2d<f32>";offset=false) INFO: subcase ran
+  - (in subcase: textureType="texture_2d<f32>";offset=true) INFO: subcase ran
+  - (in subcase: textureType="texture_2d_array<f32>";offset=false) INFO: subcase ran
+  - (in subcase: textureType="texture_2d_array<f32>";offset=true) INFO: subcase ran
+  - (in subcase: textureType="texture_3d<f32>";offset=false) INFO: subcase ran
+  - (in subcase: textureType="texture_3d<f32>";offset=true) INFO: subcase ran
+  - (in subcase: textureType="texture_cube<f32>";offset=false) INFO: subcase ran
+  - (in subcase: textureType="texture_cube_array<f32>";offset=false) INFO: subcase ran
+  - (in subcase: textureType="texture_depth_2d";offset=false) INFO: subcase ran
+  - (in subcase: textureType="texture_depth_2d";offset=true) INFO: subcase ran
+  - (in subcase: textureType="texture_depth_2d_array";offset=false) INFO: subcase ran
+  - (in subcase: textureType="texture_depth_2d_array";offset=true) INFO: subcase ran
+  - (in subcase: textureType="texture_depth_cube";offset=false) INFO: subcase ran
+  - (in subcase: textureType="texture_depth_cube_array";offset=false) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    5:10: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractInt>)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :texture_type:testTextureType="texture_1d%3Cu32%3E"
 PASS :texture_type:testTextureType="texture_2d%3Cf32%3E"
 PASS :texture_type:testTextureType="texture_2d%3Cu32%3E"

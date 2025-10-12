@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<script>
+function main() {
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  document.designMode = "on";
+  dl.innerText = "PASS if no crash.";
+  document.execCommand("selectAll");
+  document.execCommand("InsertOrderedList");
+}
+</script>
+<body onload="main()">
+<li> </li>
+<dl id="dl"></dl>
+<table> </table>

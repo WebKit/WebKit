@@ -1,4 +1,0 @@
-
-
-PASS A sandboxed iframe can use its sibling's navigation object to call navigate(), as long as allow-same-origin is present
-

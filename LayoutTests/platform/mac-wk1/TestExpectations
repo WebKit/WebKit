@@ -42,9 +42,14 @@ imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-x
 
 webkit.org/b/235072 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-repeating.html [ Skip ]
 
+# DumpRenderTree's window does not autodisplay, breaking LCP tests (webkit.org/b/244756)
+imported/w3c/web-platform-tests/largest-contentful-paint/ [ Skip ]
+
 http/tests/webcodecs [ Skip ]
 http/wpt/webcodecs [ Skip ]
 imported/w3c/web-platform-tests/webcodecs [ Skip ]
+
+imported/w3c/web-platform-tests/speculation-rules [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
@@ -53,6 +58,9 @@ imported/w3c/web-platform-tests/webcodecs [ Skip ]
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Features not supported in WebKit1
 #//////////////////////////////////////////////////////////////////////////////////////////
+
+# Below test not suppored because it uses navigator.locks.query()
+fast/css/vertical-align-rem-on-root.html [ Skip ]
 
 fast/css-custom-paint [ Skip ]
 imported/w3c/web-platform-tests/css/css-properties-values-api/ [ Skip ]
@@ -689,6 +697,10 @@ imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtas
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/requires-success.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/notifications/idlharness.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/secure-contexts/basic-shared-worker.html [ Skip ]
+imported/w3c/web-platform-tests/secure-contexts/basic-shared-worker.https.html [ Skip ]
+imported/w3c/web-platform-tests/secure-contexts/shared-worker-insecure-first.https.html [ Skip ]
+imported/w3c/web-platform-tests/secure-contexts/shared-worker-secure-first.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/claim-shared-worker-fetch.https.html [ Skip ]
 imported/w3c/web-platform-tests/streams/idlharness.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/piping/abort.any.sharedworker.html [ Skip ]
@@ -698,6 +710,8 @@ imported/w3c/web-platform-tests/streams/piping/error-propagation-backward.any.sh
 imported/w3c/web-platform-tests/streams/piping/error-propagation-forward.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/piping/flow-control.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/piping/general.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/piping/general-addition.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/piping/general-addition.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/piping/multiple-propagation.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/piping/pipe-through.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/piping/then-interception.any.sharedworker.html [ Skip ]
@@ -706,8 +720,14 @@ imported/w3c/web-platform-tests/streams/piping/transform-streams.any.sharedworke
 imported/w3c/web-platform-tests/streams/queuing-strategies.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-byte-streams/bad-buffers-and-views.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-byte-streams/construct-byob-request.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-byte-streams/enqueue-with-detached-buffer.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-byte-streams/enqueue-with-detached-buffer.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-byte-streams/non-transferable-buffers.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-byte-streams/read-min.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-byte-streams/read-min.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-byte-streams/patched-global.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-byte-streams/patched-global.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-byte-streams/tee.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-streams/async-iterator.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.any.sharedworker.html [ Skip ]
@@ -717,13 +737,25 @@ imported/w3c/web-platform-tests/streams/readable-streams/constructor.any.sharedw
 imported/w3c/web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-streams/default-reader.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-streams/floating-point-total-queue-size.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-streams/from.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-streams/from.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-streams/general.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-streams/owning-type.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-streams/owning-type.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-streams/owning-type-message-port.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-streams/owning-type-message-port.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-streams/patched-global.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-streams/owning-type-video-frame.any.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-streams/owning-type-video-frame.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-streams/owning-type-video-frame.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-streams/owning-type-video-frame.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-streams/reentrant-strategies.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-streams/tee.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-streams/templated.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/transform-streams/backpressure.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/transform-streams/cancel.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/transform-streams/cancel.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/transform-streams/errors.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/transform-streams/flush.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/transform-streams/general.any.sharedworker.html [ Skip ]
@@ -733,6 +765,36 @@ imported/w3c/web-platform-tests/streams/transform-streams/properties.any.sharedw
 imported/w3c/web-platform-tests/streams/transform-streams/reentrant-strategies.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/transform-streams/strategies.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/transform-streams/terminate.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/aborting.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/aborting.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/bad-strategies.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/bad-strategies.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/bad-underlying-sinks.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/bad-underlying-sinks.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/byte-length-queuing-strategy.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/byte-length-queuing-strategy.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/close.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/close.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/constructor.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/constructor.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/count-queuing-strategy.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/count-queuing-strategy.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/error.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/error.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/floating-point-total-queue-size.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/floating-point-total-queue-size.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/garbage-collection.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/garbage-collection.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/general.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/general.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/properties.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/properties.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/reentrant-strategy.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/reentrant-strategy.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/start.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/start.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/write.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/writable-streams/write.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/urlpattern/urlpattern-compare.tentative.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/urlpattern/urlpattern-compare.tentative.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/urlpattern/urlpattern-compare.tentative.https.any.serviceworker.html [ Skip ]
@@ -743,20 +805,22 @@ imported/w3c/web-platform-tests/urlpattern/urlpattern.any.serviceworker.html [ S
 imported/w3c/web-platform-tests/urlpattern/urlpattern.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/urlpattern/urlpattern.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/urlpattern/urlpattern.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/acquire.tentative.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/held.tentative.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/idlharness.tentative.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/ifAvailable.tentative.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/lock-attributes.tentative.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/mode-exclusive.tentative.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/mode-mixed.tentative.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/mode-shared.tentative.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/non-secure-context.tentative.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/query-empty.tentative.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/resource-names.tentative.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/secure-context.tentative.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/signal.tentative.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/steal.tentative.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/acquire.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/held.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/idlharness.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/ifAvailable.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/lock-attributes.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/mode-exclusive.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/mode-mixed.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/mode-shared.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/non-secure-context.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/query-empty.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/resource-names.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/secure-context.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/signal.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/steal.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/storage-buckets.tentative.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/storage-buckets.tentative.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/websockets/bufferedAmount-unchanged-by-sync-xhr.any.sharedworker.html?default [ Skip ]
 imported/w3c/web-platform-tests/websockets/mixed-content.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/websockets/mixed-content.https.any.sharedworker.html [ Skip ]
@@ -860,6 +924,10 @@ imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.sharedworke
 imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/ [ Skip ]
 
+# Event timing: times out, missing automation
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/contextmenu.html [ Skip ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-orphan-pointerup.html [ Skip ]
+
 # WebKitLegacy doesn't support https-based WPT
 webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.https.sub.html [ Failure ]
 webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/cross-origin-report-no-credentials.https.sub.html [ Failure ]
@@ -867,10 +935,11 @@ webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/cross-origin-repor
 
 # Reports are not being sent, potentially due to issues with WebKitLegacy and https-based WPT
 webkit.org/b/285098 imported/w3c/web-platform-tests/content-security-policy/report-hash/ [ Failure ]
+webkit.org/b/285098 imported/w3c/web-platform-tests/subresource-integrity/integrity-policy/script.https.html [ Failure ]
 
 # WebKitLegacy is flaky on reporting API
 webkit.org/b/246350 imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-sends-reports-on-violation.https.sub.html [ Pass Failure ]
-webkit.org/b/246350 imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Pass Failure DumpJSConsoleLogInStdErr ]
+webkit.org/b/246350 imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Pass Failure ]
 
 webkit.org/b/251618 imported/w3c/web-platform-tests/editing/other/exec-command-with-text-editor.tentative.html [ Failure ]
 webkit.org/b/251618 imported/w3c/web-platform-tests/editing/other/exec-command-without-editable-element.tentative.html [ Failure ]
@@ -905,8 +974,12 @@ accessibility/mac/clipped-radio-input-frame.html [ WontFix ]
 
 accessibility/range-input-increment-decrement-fires-input-event.html [ WontFix ]
 
+accessibility/mac/stale-input-value-from-subfield-change.html [ WontFix ]
+
 # Default ARIA for custom elements are not yet enabled
 accessibility/custom-elements/ [ Skip ]
+
+accessibility/text-input-hit-test.html [ Skip ]
 
 accessibility/mac/dynamic-drag.html [ Skip ]
 
@@ -954,10 +1027,14 @@ accessibility/display-contents/aria-owns.html [ Skip ]
 accessibility/mac/text-field-number-of-characters.html [ Skip ]
 accessibility/mac/content-editable-attributed-string.html [ Skip ]
 accessibility/mac/lazy-spellchecking.html [ Skip ]
+accessibility/mac/editable-page-lazy-spellchecking.html [ Skip ]
+accessibility/mac/designmode-lazy-spellchecking.html [ Skip ]
 accessibility/mac/spellcheck-with-voiceover.html [ Skip ]
 accessibility/text-marker/text-marker-range-with-unordered-markers.html
 accessibility/mac/line-boundary-at-br.html [ Skip ]
 accessibility/mac/text-marker-ordering.html [ Skip ]
+
+accessibility/mac/bounds-for-range-multibyte-glyphs.html [ Skip ]
 
 accessibility/aria-controlled-table-row-visibility.html [ Skip ]
 
@@ -972,6 +1049,11 @@ accessibility/dynamic-table-row-column-indices.html [ Skip ]
 
 # Skipping because AccessibilityUIElement::boundsForRangeWithPagePosition() is not supported on WK1.
 accessibility/mac/bounds-for-range-centered.html [ Skip ]
+
+# Skipping because different hierarchy on WK1
+accessibility/youtube-embed-accessibility-hierarchy.html [ Skip ]
+
+accessibility/mac/iframe-hit-testing.html [ Skip ]
 
 # DOM paste access requests are not implemented in WebKit1.
 editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]
@@ -1040,6 +1122,7 @@ webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/text-level-se
 webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click.html [ Skip ]
 webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_allow_downloads.tentative.html [ Skip ]
 webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.tentative.html [ Skip ]
+webkit.org/b/156069 http/tests/download/iframe-usdz-download.html [ Skip ]
 
 # no support for waitUntilDownloadFinished on WK1.
 http/tests/download/anchor-download-redirect-same-origin-top-level.html [ Skip ]
@@ -1058,6 +1141,7 @@ http/tests/local/blob/navigate-blob.html [ Skip ]
 media/no-fullscreen-when-hidden.html [ Skip ]
 fullscreen/full-screen-enter-while-exiting-fully-mid-completion-handler.html [ Skip ]
 fullscreen/full-screen-enter-while-exiting-mid-completion-handler.html [ Skip ]
+fullscreen/fullscreen-zero-height-element-with-non-zero-children.html [ Skip ]
 
 # Multi-process test
 fullscreen/iframe-fullscreen-system-exit.html [ Skip ]
@@ -1080,29 +1164,29 @@ imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/beacon.https.ht
 http/tests/security/contentSecurityPolicy/connect-src-beacon-allowed.html [ Skip ]
 http/tests/security/contentSecurityPolicy/connect-src-beacon-blocked.html [ Skip ]
 http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked.py [ Skip ]
-http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-beacon-in-iframe.html [ Skip ]
 
 # testRunner.setStatisticsShouldDowngradeReferrer() is not supported on WK1
 http/tests/referrer-policy-script/ [ Skip ]
 http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.py [ Skip ]
 http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.py [ Skip ]
-http/tests/security/referrer-policy-header.html [ Skip ]
-http/tests/security/referrer-policy-header-multipart.html [ Skip ]
+http/tests/security/referrer-policy-header-empty.html [ Skip ]
+http/tests/security/referrer-policy-header-invalid.html [ Skip ]
+http/tests/security/referrer-policy-header-no-referrer-when-downgrade.html [ Skip ]
+http/tests/security/referrer-policy-header-no-referrer.html [ Skip ]
+http/tests/security/referrer-policy-header-origin-when-cross-origin.html [ Skip ]
+http/tests/security/referrer-policy-header-origin.html [ Skip ]
+http/tests/security/referrer-policy-header-same-origin.html [ Skip ]
+http/tests/security/referrer-policy-header-strict-origin-when-cross-origin.html [ Skip ]
+http/tests/security/referrer-policy-header-strict-origin.html [ Skip ]
+http/tests/security/referrer-policy-header-unsafe-url.html [ Skip ]
 http/tests/navigation/ping-attribute/area-cross-origin.html [ Skip ]
 http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Skip ]
-http/tests/navigation/ping-attribute/secure-anchor-cross-origin.html [ Skip ]
 http/tests/referrer-policy/no-referrer-when-downgrade/ [ Skip ]
 http/tests/referrer-policy/unsafe-url/cross-origin-http-http.html [ Skip ]
-http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html [ Skip ]
-http/tests/referrer-policy/unsafe-url/cross-origin-http-UpgradeMixedContent.https.html [ Skip ]
 http/tests/referrer-policy-img/no-referrer-when-downgrade/ [ Skip ]
 http/tests/referrer-policy-img/unsafe-url/cross-origin-http-http.html [ Skip ]
-http/tests/referrer-policy-img/unsafe-url/cross-origin-http.https.html [ Skip ]
 http/tests/referrer-policy-img/unsafe-url/cross-origin-http-UpgradeMixedContent.https.html [ Skip ]
 http/tests/ipc/ipc-fetch-task-message-crash.html [ Skip ]
-
-# Cross origin HTTPS loads require certificate validation, which are not supported for WK1 ping loads.
-http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-ping-in-iframe.https.html [ Failure ]
 
 # Cross-Origin requests receive a didReceiveAuthenticationChallenge callback on the first iteration
 http/tests/referrer-policy-img/no-referrer/cross-origin-http-UpgradeMixedContent.https.html [ Pass Failure ]
@@ -1148,6 +1232,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-scroller-nested-3.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-scroller-nested-4.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-scroller-nested-5.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/animated-image-update.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-base-url-2.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-base-url.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-load-event.html [ Skip ]
@@ -1156,6 +1241,9 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-to-eager.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy.html [ Skip ]
 
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-user-gesture.html [ Skip ]
+
 # testRunner.queueLoad() does not support loading data URLs in Mac WK1
 http/tests/security/contentSecurityPolicy/navigate-self-to-data-url.html [ Skip ]
 
@@ -1163,7 +1251,6 @@ http/tests/security/contentSecurityPolicy/navigate-self-to-data-url.html [ Skip 
 accessibility/color-well.html [ Skip ]
 accessibility/color-well-legacy.html [ Skip ]
 accessibility/color-input-value-changes.html [ Skip ]
-accessibility/mac/media-query-values-change.html [ Skip ]
 editing/pasteboard/drag-and-drop-color-input-events.html [ Skip ]
 editing/pasteboard/drag-and-drop-color-input.html [ Skip ]
 fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]
@@ -1189,9 +1276,12 @@ media/media-vp8-webm-error.html [ Failure ]
 media/media-vp8-webm-error-offscreen.html [ Failure ]
 media/media-vp8-webm.html [ Skip ]
 media/media-vp8-webm-seek-to-start.html [ Skip ]
+media/media-vp8-webm-with-blob.html [ Skip ]
 media/media-vp8-webm-with-poster.html [ Skip ]
 media/media-vp8-webm-with-preload.html [ Skip ]
+media/media-vp8-webm-initialcurrentTime.html [ Skip ]
 media/media-vp9-dar-webm.html [ Skip ]
+media/media-vp9-reschange-webm.html [ Skip ]
 media/media-vp9-sar-webm.html [ Skip ]
 media/media-vp9-yuv422p10.html [ Skip ]
 media/video-src-webm-blob.html [ Failure ]
@@ -1208,6 +1298,7 @@ media/media-rvfc-paused-offscreen-webm.html [ Skip ]
 media/media-rvfc-paused-webm.html [ Skip ]
 media/media-rvfc-playing-webm.html [ Skip ]
 media/video-webm-seek-singlekeyframe.html [ Skip ]
+media/video-webm-canvas-drawing.html [ Skip ]
 media/media-source/media-source-webm-seek-singlekeyframe.html [ Skip ]
 
 # Managed MediaSource isn't enabled on WK1
@@ -1230,9 +1321,8 @@ media/video-currenttime-monotonic.html [ Failure ]
 webkit.org/b/251113 inspector/timeline/timeline-event-screenshots.html [ Skip ]
 
 # The Cookie Store API is not supported on WK1.
-imported/w3c/web-platform-tests/cookie-store [ Skip ]
+imported/w3c/web-platform-tests/cookiestore [ Skip ]
 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Skip ]
-http/tests/cookies/cookie-store-get-secure.https.html [ Skip ]
 http/tests/cookies/cookie-store-set-secure.https.html [ Skip ]
 cookies/cookie-store-register-eventlistener-from-file-protocol.html [ Skip ]
 cookies/cookie-store-start-listening-for-change-with-null-url-crash.html [ Skip ]
@@ -1284,8 +1374,6 @@ webkit.org/b/132421 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
 
-webkit.org/b/82981 http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
-
 webkit.org/b/138697 fast/events/overflow-scroll-fake-mouse-move.html [ Pass Failure ]
 
 webkit.org/b/82747 fast/events/scroll-div-with-prevent-default-in-subframe.html [ Failure ]
@@ -1299,8 +1387,6 @@ webkit.org/b/139862 editing/spelling/grammar-edit-word.html [ Skip ]
 webkit.org/b/144127 compositing/scrolling/touch-scroll-to-clip.html [ Pass Failure ]
 
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
-
-webkit.org/b/150564 svg/repaint/add-background-property-on-root.html [ Pass Timeout ]
 
 webkit.org/b/152485 webaudio/audiocontext-state-interrupted.html [ Pass Crash ]
 
@@ -1376,7 +1462,10 @@ imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html
 
 webkit.org/b/187230 editing/mac/pasteboard/can-copy-url-without-title.html [ Skip ]
 
+# The Navigation API is not supported on WK1
+http/tests/navigation-api/ [ Skip ]
 webkit.org/b/270055 imported/w3c/web-platform-tests/navigation-api/ [ Skip ]
+webkit.org/b/270055 http/wpt/navigation-api/ [ Skip ]
 
 ### END OF (1) Failures with bug reports
 ########################################
@@ -1454,20 +1543,20 @@ imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtas
 imported/w3c/web-platform-tests/infrastructure/server/context.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/infrastructure/server/secure-context.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/requires-failure.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/acquire.tentative.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/clientids.tentative.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/held.tentative.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/idlharness.tentative.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/ifAvailable.tentative.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/lock-attributes.tentative.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/mode-exclusive.tentative.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/mode-mixed.tentative.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/mode-shared.tentative.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/query-empty.tentative.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/resource-names.tentative.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/secure-context.tentative.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/signal.tentative.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/web-locks/steal.tentative.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/acquire.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/clientids.https.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/held.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/idlharness.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/ifAvailable.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/lock-attributes.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/mode-exclusive.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/mode-mixed.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/mode-shared.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/query-empty.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/resource-names.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/secure-context.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/signal.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/web-locks/steal.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/webmessaging/broadcastchannel/service-worker.https.html [ Skip ]
 imported/w3c/web-platform-tests/workers/Worker-base64.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/workers/Worker-constructor-proto.any.serviceworker.html [ Skip ]
@@ -1497,6 +1586,15 @@ imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-
 imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-spv-asynch.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-unsafe-eval-allows-wasm.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-wasm-unsafe-eval-allows-wasm.any.serviceworker.html [ Skip ]
+
+imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-syncxmlhttprequest-redirect-to-blocked.sub.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-websocket-allowed.sub.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/generic/image-document-ignores-csp.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/generic/policy-inherited-correctly-by-plznavigate.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/generic/src-trailing-dot.sub.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/generic/src-trailing-dot.sub.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Skip ]
+
 imported/w3c/web-platform-tests/notifications/idlharness.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/idlharness.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/piping/abort.any.serviceworker.html [ Skip ]
@@ -1517,7 +1615,10 @@ imported/w3c/web-platform-tests/streams/readable-byte-streams/construct-byob-req
 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-byte-streams/non-transferable-buffers.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-byte-streams/respond-after-enqueue.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-byte-streams/respond-after-enqueue.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-byte-streams/tee.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-byte-streams/templated.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-byte-streams/templated.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-streams/async-iterator.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-streams/bad-underlying-sources.any.serviceworker.html [ Skip ]
@@ -1532,6 +1633,8 @@ imported/w3c/web-platform-tests/streams/readable-streams/patched-global.any.serv
 imported/w3c/web-platform-tests/streams/readable-streams/reentrant-strategies.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-streams/tee.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-streams/templated.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/transferable/service-worker.https.html [ Skip ]
+imported/w3c/web-platform-tests/streams/transferable/shared-worker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/transform-streams/backpressure.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/transform-streams/errors.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/streams/transform-streams/flush.any.serviceworker.html [ Skip ]
@@ -1706,6 +1809,8 @@ webkit.org/b/244308 imported/w3c/web-platform-tests/cookies/attributes/attribute
 # Only flakey in WK1
 webarchive/loading/test-loading-archive-subresource-null-mimetype.html [ Failure Pass ]
 
+webarchive/loading/test-loading-archive-with-link.html [ Skip ]
+
 # WebKit1 frames use native scrollbars causing these tests to fail.
 
 # Lack of ways to control the cross-frame scroll chaining in WK1.
@@ -1714,6 +1819,8 @@ fast/scrolling/sync-scroll-overscroll-behavior-unscrollable-iframe.html [ Skip ]
 
 # Fetch tests that only timeout in WK1.
 imported/w3c/web-platform-tests/fetch/metadata/unload.https.sub.html [ Skip ]
+
+css3/filters/drop-shadow-current-color.html [ ImageOnlyFailure ]
 
 ### END OF (2) Failures without bug reports
 ########################################
@@ -1753,6 +1860,10 @@ inspector/heap/getRemoteObject.html [ Skip ]
 inspector/unit-tests/heap-snapshot.html [ Skip ]
 inspector/unit-tests/heap-snapshot-collection-event.html [ Skip ]
 
+# Frame Targets are not supported in WK1.
+# FIXME: <https://webkit.org/b/299207> Add or rewrite tests to account for lack of frame targets in WK1.
+inspector/unit-tests/target-manager.html [ Skip ]
+
 # WK1 Inspector cannot leverage InspectorAdditions runtime enabled features
 inspector/canvas/recording-html-2d.html
 
@@ -1768,17 +1879,14 @@ fast/events/wheel/wheel-event-in-passive-region-non-cancelable.html [ Skip ]
 # WK1 main frame scrollbars are native widgets whose size is unaffected by webkit-scrollbar.
 fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html [ Skip ]
 
+imported/w3c/web-platform-tests/visual-viewport/viewport-apply-initial-scale-after-navigation.html [ ImageOnlyFailure ]
+
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_no_argument.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_to_uri.html [ Pass Failure ]
 
 # Newly imported WPT tests that are flaky only on WK1.
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_after_load.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_before_load.html [ Pass Failure ]
-
-# Console logs are flaky.
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity.html [ DumpJSConsoleLogInStdErr ]
-
-imported/w3c/web-platform-tests/secure-contexts/basic-dedicated-worker.html [ DumpJSConsoleLogInStdErr ]
 
 # testRunner.setShouldDownloadUndisplayableMIMETypes() is not supported on WK1.
 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
@@ -1787,6 +1895,11 @@ http/tests/download/convert-cached-load-to-download.html [ Skip ]
 
 # Can't load application/octet-stream in WK1
 http/tests/mime/html-with-nosniff-html.html [ Skip ]
+
+# testRunner.findString function is WK2-only, not implemented for WK1.
+editing/text-iterator/find-in-page-in-hidden-until-found.html [ Skip ]
+editing/text-iterator/find-in-page-in-closed-details.html [ Skip ]
+editing/text-iterator/find-in-page-in-summary-of-closed-details.html [ Skip ]
 
 # dumpPolicyDelegateCallbacks is not supported in DumpRenderTree
 fast/loader/iframe-src-invalid-url.html [ Skip ]
@@ -1815,6 +1928,7 @@ accessibility/mac/position-fixed-top-bottom-properties-relative-frame.html [ Ski
 accessibility/mac/shadow-dom-relative-frame.html [ Skip ]
 accessibility/mac/svg-relative-frame.html [ Skip ]
 accessibility/mac/table-relative-frame.html [ Skip ]
+accessibility/mac/visible-character-range-width-changes.html [ Skip ]
 
 # Skip due to lack of DumpRenderTree `AccessibilityUIElement::stringDescriptionOfAttributeValue` implementation.
 accessibility/mixed-contenteditable-visible-character-range-hang.html [ Skip ]
@@ -1823,7 +1937,6 @@ accessibility/visible-character-range-basic.html [ Skip ]
 accessibility/visible-character-range-height-changes.html [ Skip ]
 accessibility/visible-character-range-scrolling.html [ Skip ]
 accessibility/visible-character-range-vertical-rl.html [ Skip ]
-accessibility/visible-character-range-width-changes.html [ Skip ]
 accessibility/aria-description.html [ Skip ]
 
 # Missing AccessibilityUIElement::focusableAncestor implementation.
@@ -1938,6 +2051,8 @@ fast/html/details-remove-summary-6-and-click.html [ Pass Failure ]
 webkit.org/b/165541 compositing/layer-creation/fixed-overlap-extent-rtl.html [ Failure ]
 webkit.org/b/165541 compositing/rtl/rtl-fixed-overflow.html [ Failure ]
 
+compositing/layer-creation/sticky-overlap-extent.html
+
 webkit.org/b/154612 compositing/repaint/fixed-background-scroll.html [ Pass Failure ]
 
 webkit.org/b/165589 pointer-lock/lock-lost-on-esc-in-fullscreen.html [ Skip ]
@@ -2030,11 +2145,6 @@ webkit.org/b/231918 imported/w3c/web-platform-tests/html/semantics/selectors/pse
 webkit.org/b/184569 [ Debug ] animations/missing-from-to.html [ Skip ]
 
 webkit.org/b/184458 media/remote-control-command-is-user-gesture.html [ Pass Timeout ]
-
-webkit.org/b/185404 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html [ Pass Failure ]
-http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe.html [ Failure Pass ]
-http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-xslt-document-in-iframe-with-inherited-policy.html [ Failure Pass ]
-http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-enforced-and-report-policies.html [ Pass Failure ]
 
 webkit.org/b/186581 [ Debug ] fast/parser/xml-error-adopted.xml [ Timeout Pass ]
 
@@ -2310,7 +2420,6 @@ webkit.org/b/214469 [ Debug ] imported/w3c/web-platform-tests/css/css-scoping/sl
 
 webkit.org/b/214703 imported/w3c/web-platform-tests/css/css-overflow/overflow-recalc-001.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/214682 imported/w3c/web-platform-tests/css/cssom/stylesheet-same-origin.sub.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-smooth.html [ Skip ]
 
 webkit.org/b/215033 imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html [ Pass Failure ]
@@ -2477,6 +2586,9 @@ webanimations/frame-rate/document-timeline-maximum-frame-rate.html [ Skip ]
 webkit.org/b/231918 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus-multiple-times.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/show-modal-focusing-steps.html [ Skip ]
 
+# Uses requestIdleCallback.
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-closedby-start-open.html [ Skip ]
+
 # webkit.org/b/234105 Skip 2 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis in mac wk1.
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html [ Skip ]
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentative.html [ Skip ]
@@ -2492,7 +2604,6 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_capture_mouse.html [ 
 imported/w3c/web-platform-tests/pointerevents/pointerevent_click_during_capture.html [ Pass Failure ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_element_haspointercapture.html [ Pass Failure ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_capture_change_hover.html [ Pass Failure ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_pointercapture_in_frame.html [ Pass Failure ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercapture-in-custom-element.html [ Pass Failure ]
 
 webkit.org/b/236128 fullscreen/full-screen-iframe-with-max-width-height.html [ Skip ]
@@ -2613,12 +2724,7 @@ webkit.org/b/246653 [ Debug ] media/modern-media-controls/media-documents/click-
 http/tests/security/basic-auth-subresource.html [ Failure Pass ]
 http/tests/security/contentSecurityPolicy/image-with-https-url-allowed-by-csp-img-src-star.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Failure Pass ]
-http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html [ Pass Failure ]
 http/tests/security/contentSecurityPolicy/script-src-parsing-implicit-and-explicit-port-number.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/webmessaging/broadcastchannel/cross-partition.https.tentative.html [ DumpJSConsoleLogInStdErr ]
-http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image.html [ DumpJSConsoleLogInStdErr ]
-http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https.html [ DumpJSConsoleLogInStdErr ]
-http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html [ DumpJSConsoleLogInStdErr ]
 
 # These tests have been flaky on WK1 since their import.
@@ -2713,12 +2819,9 @@ imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-014.html  [ S
 imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-on-object.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-pointer-preventdefault.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-pointer-preventdefault-passive.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed.html?mouse [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed.html?pen [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_contextmenu_is_a_pointerevent.html?mouse [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinates.html?mouse [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinates.html?pen [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_no_pointer_movement.html [ Skip ]
 
 # Lack of support for WPT custom domains.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-top-navigation-escalate-privileges.tentative.sub.window.html [ Failure ]
@@ -2855,7 +2958,6 @@ imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passi
 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/scrolling/iframe-chains.html [ Skip ]
-imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-for-user-scroll.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-scroll-within.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-mouse.html [ Skip ]
 
@@ -2888,10 +2990,6 @@ webkit.org/b/270310 [ Sonoma+ ] imported/w3c/web-platform-tests/html/semantics/i
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle.html [ ImageOnlyFailure ]
 
 webkit.org/b/270385 [ Sonoma+ ] fast/images/jpegxl-with-color-profile.html [ ImageOnlyFailure ]
-
-# webkit.org/b/270199 [ MacOS WK1 Debug ] fast/frames/lots-of-iframes.html and fast/frames/lots-of-objects.html are consistent/flaky timeouts
-[ Debug ] fast/frames/lots-of-iframes.html [ Pass Timeout ]
-[ Debug ] fast/frames/lots-of-objects.html [ Pass Timeout ]
 
 webkit.org/b/271423 [ Sonoma+ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-exif-orientation.html [ Failure ]
 webkit.org/b/271423 [ Sonoma+ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-exif-orientation_none.html [ Failure ]
@@ -2936,8 +3034,6 @@ imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/mixed-conte
 imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-referrer.html [ Pass Failure ]
 
 webkit.org/b/272939 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-strict-policies.sub.html [ Pass Failure ]
-
-webkit.org/b/273279 fonts/font-fallback-prefers-pictographs.html [ Skip ]
 
 # rdar://127055453 ([ EWS MacOS WK1 ] http/tests/media/hls/hls-webvtt-style.html is a flaky timeout (273251))
 http/tests/media/hls/hls-webvtt-style.html [ Pass Timeout ]
@@ -3017,10 +3113,11 @@ webkit.org/b/281594 imported/w3c/web-platform-tests/html/semantics/document-meta
 [ Sequoia+ ] http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
 [ Sequoia+ ] http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
 
-webkit.org/b/283013 [ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/predefined-011.html [ ImageOnlyFailure ]
-webkit.org/b/283013 [ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/predefined-012.html [ ImageOnlyFailure ]
-webkit.org/b/283013 [ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/rec2020-001.html [ ImageOnlyFailure ]
-webkit.org/b/283013 [ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-rec2020-01.html [ ImageOnlyFailure ]
+# webkit.org/b/283013 (REGRESSION (Sequoia): [ Sequoia wk1 ] 4 WPT tests in css/css-color/*. html are a consistent image failure)
+[ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/predefined-011.html [ Skip ]
+[ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/predefined-012.html [ Skip ]
+[ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/rec2020-001.html [ Skip ]
+[ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-rec2020-01.html [ Skip ]
 
 # Skipping as this test was added for a fix only intended for WK2.
 webkit.org/b/284068 [ Sequoia+ ] http/tests/download/anchor-download-redirect-cross-origin.html [ Skip ]
@@ -3033,8 +3130,7 @@ webkit.org/b/284486 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid
 webkit.org/b/284486 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-006.html [ Pass Failure ]
 webkit.org/b/284486 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-007.html [ Pass Failure ]
 
-webkit.org/b/284898 fonts/font-weight-invalid-crash.html [ Pass Failure ]
-webkit.org/b/284898 fonts/ligature.html [ Pass Failure ImageOnlyFailure ]
+webkit.org/b/284898 fonts/font-cache-memory-pressure-crash.html [ Skip ]
 
 webkit.org/b/284954 imported/w3c/web-platform-tests/css/css-box/margin-trim/computed-margin-values/block-container-block-start-child-with-border.html [ Pass Failure ]
 
@@ -3069,6 +3165,43 @@ webkit.org/b/287976 imported/w3c/web-platform-tests/css/css-box/margin-trim/comp
 webkit.org/b/288627 editing/spelling/spellcheck-async-mutation.html [ Timeout ]
 
 webkit.org/b/288725 http/tests/security/file-system-access-via-dataTransfer.html [ Pass Failure ]
+
+# `scrollend` events are not supported on WK1
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-after-sequence-of-scrolls.tentative.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-after-snap.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-mandatory-snap-point-after-load.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-document.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-element-with-overscroll-behavior.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-window.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fires-on-visual-viewport.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fires-to-iframe-window.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-handler-content-attributes.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-not-fired-after-removing-scroller.tentative.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-not-fired-on-no-scroll.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-fires-to-text-input.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-with-snap-on-fractional-offset.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html?include=root-scrollBy-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html?include=root-scrollBy-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html?include=root-scrollTo-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html?include=root-scrollTo-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html?include=subframe-scrollBy-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html?include=subframe-scrollBy-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html?include=subframe-scrollTo-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html?include=subframe-scrollTo-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scroll-attr-change.html?include=root-scrollLeft-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scroll-attr-change.html?include=root-scrollLeft-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scroll-attr-change.html?include=root-scrollTop-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scroll-attr-change.html?include=root-scrollTop-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scroll-attr-change.html?include=subframe-scrollLeft-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scroll-attr-change.html?include=subframe-scrollLeft-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scroll-attr-change.html?include=subframe-scrollTop-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scroll-attr-change.html?include=subframe-scrollTop-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scrollIntoView.html?include=nested-scrollIntoView [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scrollIntoView.html?include=root-inline-end-block-end-behavior-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scrollIntoView.html?include=root-inline-start-block-start-behavior-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scrollIntoView.html?include=subframe-inline-end-block-end-behavior-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scrollIntoView.html?include=subframe-inline-start-block-start-behavior-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-for-user-scroll.html [ Skip ]
 
 webkit.org/b/288769 fast/ruby/after-block-doesnt-crash.html [ Failure Pass ]
 webkit.org/b/288769 fast/ruby/after-table-doesnt-crash.html [ Failure Pass ]
@@ -3121,11 +3254,56 @@ imported/w3c/web-platform-tests/svg/painting/marker-006.svg [ ImageOnlyFailure ]
 
 webkit.org/b/292218 [ Sonoma Release ] media/media-source/media-source-video-renders.html [ Pass ImageOnlyFailure Timeout ]
 
-webkit.org/b/292395 [ Debug ] fast/picture/viewport-resize.html [ Pass Crash ]
-
 http/tests/iframe-memory-monitor/media-video-autoplay-in-frames.html [ Skip ]
 
 # webkit.org/b/293249 third-party cookie blocking is not supported in WK1
 http/tests/navigation/ping-attribute/cross-site-url-anchor-cookie-preexisting-cookie.html [ Skip ]
 http/tests/navigation/ping-attribute/cross-site-url-anchor-cookie.html [ Skip ]
 http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party-with-third-party-cookie-blocking.https.html [ Skip ]
+
+webkit.org/b/294301 http/tests/media/hls/hls-audio-tracks-language.html [ Pass Failure ]
+
+imported/w3c/web-platform-tests/css/css-transforms/individual-transform/individual-transform-3.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-images/gradient/conic-gradient-001.html [ ImageOnlyFailure ]
+
+webkit.org/b/295119  imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-text-orientation.html [ Pass ImageOnlyFailure ]
+
+# # FIXME: Needs bug.
+# fast/forms/indeterminate-progress-inline-height.html [ Failure ]
+# fast/forms/range/slider-mouse-events.html [ Failure ]
+# fast/forms/search/search-zoom-computed-style-height.html [ Failure ]
+# fast/forms/text-control-intrinsic-widths.html [ Failure ]
+# fast/repaint/checkbox-overflow-vertical-rl.html [ Failure ]
+# imported/w3c/web-platform-tests/css/css-color/system-color-consistency.html [ Failure ]
+# imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-input-number.html [ Failure ]
+# platform/mac/fast/text/line-break-locale.html [ Failure ]
+# fast/forms/appearance-default-button.html [ ImageOnlyFailure ]
+
+# setSinkId is not enabled on WK1
+media/video-setSinkId-default.html [ Skip ]
+
+# Lockdown Mode does not apply
+dom/xsl/lockdown-mode [ Skip ]
+http/tests/lockdown-mode [ Skip ]
+js/dom/lockdown-mode [ Skip ]
+
+# The decimal portion of the coordinates changes slightly between runs
+webkit.org/b/297993 imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_coordinates_when_locked.html [ Skip ]
+
+# Accessibility setting injection is unavailable in WK1.
+webkit.org/b/298211 accessibility/mac/media-query-values-change.html [ Skip ]
+webkit.org/b/298211 accessibility/mac/increase-contrast-system-color-changes.html [ Skip ]
+
+webkit.org/b/289382 fast/canvas/offscreen-no-script-context-crash.html [ Skip ]
+
+webkit.org/b/298748 css3/text-decoration/text-decoration-line-grammar-error-1.html [ Skip ]
+webkit.org/b/298748 css3/text-decoration/text-decoration-line-grammar-error-2.html [ Skip ]
+webkit.org/b/298748 css3/text-decoration/text-decoration-line-grammar-error-3.html [ Skip ]
+
+webkit.org/b/299137 imported/w3c/web-platform-tests/css/css-font-loading [ Skip ]
+
+webkit.org/b/299495 fast/scrolling/anchor-overscroll-fixed.html [ Skip ]
+
+webkit.org/b/299636 imported/w3c/web-platform-tests/event-timing/only-observe-firstInput.html [ Pass Failure ]
+
+webkit.org/b/300050 imported/w3c/web-platform-tests/infrastructure/server/wpt-server-http.sub.html [ Skip ]

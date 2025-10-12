@@ -5,6 +5,11 @@
 //
 // capture_cl_params.cpp:
 //   Pointer parameter capture functions for the OpenCL entry points.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/CLImage.h"
 #include "libANGLE/capture/capture_cl_autogen.h"

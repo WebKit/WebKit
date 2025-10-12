@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-orientation-lock' is an invalid sandbox flag.
 
 
 FAIL Test without 'allow-orientation-lock' sandboxing directive assert_equals: screen.lockOrientation() throws a SecurityError expected "SecurityError" but got "portrait-primary"

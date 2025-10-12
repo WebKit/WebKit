@@ -34,7 +34,7 @@ namespace WTF {
 
 template<typename Predicate, typename Iterator>
 class FilterIterator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FilterIterator);
 public:
     FilterIterator(Predicate pred, Iterator begin, Iterator end)
         : m_pred(WTFMove(pred))
@@ -78,7 +78,7 @@ inline FilterIterator<Predicate, Iterator> makeFilterIterator(Predicate&& pred, 
 
 template<typename Transform, typename Iterator>
 class TransformIterator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TransformIterator);
 public:
     TransformIterator(Transform&& transform, Iterator&& iter)
         : m_transform(WTFMove(transform))

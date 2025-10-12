@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CacheableIdentifier.h"
-#include "Identifier.h"
-#include "JSGlobalObjectFunctions.h"
-#include "PrivateName.h"
+#include <JavaScriptCore/CacheableIdentifier.h>
+#include <JavaScriptCore/Identifier.h>
+#include <JavaScriptCore/JSGlobalObjectFunctions.h>
+#include <JavaScriptCore/PrivateName.h>
 #include <wtf/dtoa.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -173,7 +173,7 @@ ALWAYS_INLINE bool isCanonicalNumericIndexString(UniquedStringImpl* propertyName
     double index = jsToNumber(propertyName);
     NumberToStringBuffer buffer;
     auto span = WTF::numberToStringAndSize(index, buffer);
-    return equal(propertyName, byteCast<LChar>(span));
+    return equal(propertyName, byteCast<Latin1Character>(span));
 }
 
 } // namespace JSC

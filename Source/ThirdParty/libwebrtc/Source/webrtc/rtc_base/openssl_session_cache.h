@@ -24,7 +24,7 @@
 typedef struct ssl_session_st SSL_SESSION;
 #endif
 
-namespace rtc {
+namespace webrtc {
 
 // The OpenSSLSessionCache maps hostnames to SSL_SESSIONS. This cache is
 // owned by the OpenSSLAdapterFactory and is passed down to each OpenSSLAdapter
@@ -63,10 +63,11 @@ class OpenSSLSessionCache final {
   // Map of hostnames to SSL_SESSIONs; holds references to the SSL_SESSIONs,
   // which are cleaned up when the factory is destroyed.
   // TODO(juberti): Add LRU eviction to keep the cache from growing forever.
-  std::map<std::string, SSL_SESSION*, rtc::AbslStringViewCmp> sessions_;
+  std::map<std::string, SSL_SESSION*, AbslStringViewCmp> sessions_;
   // The cache should never be copied or assigned directly.
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_OPENSSL_SESSION_CACHE_H_

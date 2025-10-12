@@ -20,7 +20,7 @@
 #ifndef IntPointHash_h
 #define IntPointHash_h
 
-#include "IntPoint.h"
+#include <WebCore/IntPoint.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 

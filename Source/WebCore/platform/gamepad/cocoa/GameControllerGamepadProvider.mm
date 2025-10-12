@@ -91,7 +91,7 @@ GameControllerGamepadProvider& GameControllerGamepadProvider::singleton()
 }
 
 GameControllerGamepadProvider::GameControllerGamepadProvider()
-    : m_inputNotificationTimer(RunLoop::currentSingleton(), this, &GameControllerGamepadProvider::inputNotificationTimerFired)
+    : m_inputNotificationTimer(RunLoop::currentSingleton(), "GameControllerGamepadProvider::InputNotificationTimer"_s, this, &GameControllerGamepadProvider::inputNotificationTimerFired)
 {
 }
 
@@ -159,6 +159,13 @@ void GameControllerGamepadProvider::controllerDidDisconnect(GCController *contro
     auto removedGamepad = m_gamepadMap.take((__bridge CFTypeRef)controller);
     ASSERT(removedGamepad);
 
+    // FIXME (rdar://155968049) - We may get disconnect notifications for a no-longer-connected controller.
+    // Return early to avoid weird side effects downstream.
+    if (!removedGamepad) {
+        RELEASE_LOG_ERROR(Gamepad, "Disconnected a GCController that we didn't know about");
+        return;
+    }
+
     auto i = m_gamepadVector.find(removedGamepad.get());
     if (i != notFound)
         m_gamepadVector[i] = nullptr;
@@ -176,7 +183,7 @@ void GameControllerGamepadProvider::prewarmGameControllerDevicesIfNecessary()
         return;
 
     LOG(Gamepad, "GameControllerGamepadProvider explicitly starting GameController framework monitoring");
-    [getGCControllerClass() __openXPC_and_CBApplicationDidBecomeActive__];
+    [getGCControllerClassSingleton() __openXPC_and_CBApplicationDidBecomeActive__];
 
     init_GameController_GCInputButtonA();
     init_GameController_GCInputButtonB();
@@ -209,20 +216,20 @@ void GameControllerGamepadProvider::startMonitoringGamepads(GamepadProviderClien
     prewarmGameControllerDevicesIfNecessary();
 
     if (canLoad_GameController_GCControllerDidConnectNotification()) {
-        m_connectObserver = [[NSNotificationCenter defaultCenter] addObserverForName:get_GameController_GCControllerDidConnectNotification() object:nil queue:nil usingBlock:^(NSNotification *notification) {
+        m_connectObserver = [[NSNotificationCenter defaultCenter] addObserverForName:get_GameController_GCControllerDidConnectNotificationSingleton() object:nil queue:nil usingBlock:^(NSNotification *notification) {
             LOG(Gamepad, "GameControllerGamepadProvider notified of new GCController %p", notification.object);
             GameControllerGamepadProvider::singleton().controllerDidConnect(notification.object, ConnectionVisibility::Visible);
         }];
     }
 
     if (canLoad_GameController_GCControllerDidDisconnectNotification()) {
-        m_disconnectObserver = [[NSNotificationCenter defaultCenter] addObserverForName:get_GameController_GCControllerDidDisconnectNotification() object:nil queue:nil usingBlock:^(NSNotification *notification) {
+        m_disconnectObserver = [[NSNotificationCenter defaultCenter] addObserverForName:get_GameController_GCControllerDidDisconnectNotificationSingleton() object:nil queue:nil usingBlock:^(NSNotification *notification) {
             LOG(Gamepad, "GameControllerGamepadProvider notified of disconnected GCController %p", notification.object);
             GameControllerGamepadProvider::singleton().controllerDidDisconnect(notification.object);
         }];
     }
 
-    auto *controllers = [getGCControllerClass() controllers];
+    auto *controllers = [getGCControllerClassSingleton() controllers];
     if (!controllers || !controllers.count)
         LOG(Gamepad, "GameControllerGamepadProvider has no initial GCControllers attached");
 

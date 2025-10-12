@@ -81,7 +81,7 @@ PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(WebCore::PlatformCALaye
 }
 
 PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(HTMLVideoElement& videoElement, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
-    : PlatformCALayerRemoteCustom(PlatformCALayer::LayerType::LayerTypeAVPlayerLayer, videoElement.layerHostingContextID(), owner, context)
+    : PlatformCALayerRemoteCustom(PlatformCALayer::LayerType::LayerTypeAVPlayerLayer, videoElement.layerHostingContext().contextID, owner, context)
 {
     m_hasVideo = true;
 }
@@ -139,6 +139,9 @@ void PlatformCALayerRemoteCustom::populateCreationProperties(RemoteLayerTreeTran
 
     properties.additionalData = RemoteLayerTreeTransaction::LayerCreationProperties::CustomData {
         .hostingContextID = hostingContextID(),
+#if ENABLE(MACH_PORT_LAYER_HOSTING)
+        .sendRightAnnotated = sendRightAnnotated(),
+#endif
         .hostingDeviceScaleFactor = context.deviceScaleFactor(),
         .preservesFlip = true
     };
@@ -151,12 +154,12 @@ Ref<WebCore::PlatformCALayer> PlatformCALayerRemoteCustom::clone(PlatformCALayer
 
     if (layerType() == PlatformCALayer::LayerType::LayerTypeAVPlayerLayer) {
         
-        if (PAL::isAVFoundationFrameworkAvailable() && [platformLayer() isKindOfClass:PAL::getAVPlayerLayerClass()]) {
+        if (PAL::isAVFoundationFrameworkAvailable() && [platformLayer() isKindOfClass:PAL::getAVPlayerLayerClassSingleton()]) {
             clonedLayer = adoptNS([PAL::allocAVPlayerLayerInstance() init]);
 
             RetainPtr destinationPlayerLayer = static_cast<AVPlayerLayer *>(clonedLayer.get());
             RetainPtr sourcePlayerLayer = static_cast<AVPlayerLayer *>(platformLayer());
-            RunLoop::protectedMain()->dispatch([destinationPlayerLayer = WTFMove(destinationPlayerLayer), sourcePlayerLayer = WTFMove(sourcePlayerLayer)] {
+            RunLoop::mainSingleton().dispatch([destinationPlayerLayer = WTFMove(destinationPlayerLayer), sourcePlayerLayer = WTFMove(sourcePlayerLayer)] {
                 [destinationPlayerLayer setPlayer:[sourcePlayerLayer player]];
             });
         } else {

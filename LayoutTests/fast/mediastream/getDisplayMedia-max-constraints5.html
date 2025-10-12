@@ -27,7 +27,9 @@ async function validateSize(test, stream, width, height, name)
 
 promise_test(async (test) => {
     const stream = await callGetDisplayMedia({ video: { height: { max: 2000 }, width : { max : 3000 } } });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     const streamClone = stream.clone();
+    test.add_cleanup(() => streamClone.getTracks().forEach(track => track.stop()));
 
     await validateSize(test, stream, 1920, 1080, "video original")
     await validateSize(test, streamClone, 1920, 1080, "video clone")

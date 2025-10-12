@@ -1,6 +1,25 @@
 
-PASS :iff_uncaptured:errorType="out-of-memory"
-PASS :iff_uncaptured:errorType="validation"
+PASS :iff_uncaptured:useOnuncapturederror=false;errorType="out-of-memory"
+PASS :iff_uncaptured:useOnuncapturederror=false;errorType="validation"
+FAIL :iff_uncaptured:useOnuncapturederror=true;errorType="out-of-memory" assert_unreached:
+  - EXCEPTION: Error: there were outstanding immediateAsyncExpectations (e.g. expectUncapturedError) at the end of the test
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:119:11
+    finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:118:20
+    runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+ Reached unreachable code
+FAIL :iff_uncaptured:useOnuncapturederror=true;errorType="validation" assert_unreached:
+  - EXCEPTION: Error: there were outstanding immediateAsyncExpectations (e.g. expectUncapturedError) at the end of the test
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:119:11
+    finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:118:20
+    runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+ Reached unreachable code
 PASS :only_original_device_is_event_target:
 PASS :uncapturederror_from_non_originating_thread:
+FAIL :onuncapturederror_order_wrt_addEventListener: assert_unreached:
+  - EXCEPTION: Error: timeout1
+    @http://127.0.0.1:8000/webgpu/common/util/util.js:141:37
+    @http://127.0.0.1:8000/resources/testharness.js:983:20
+ Reached unreachable code
 

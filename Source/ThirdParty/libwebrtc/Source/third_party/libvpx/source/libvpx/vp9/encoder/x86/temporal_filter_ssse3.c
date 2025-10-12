@@ -106,21 +106,11 @@ static INLINE __m128i convolve12_16_ssse3(const __m128i *const s,
   return res;
 }
 
-void vpx_convolve_copy_12_ssse3(const uint8_t *src, ptrdiff_t src_stride,
+void vpx_convolve12_horiz_ssse3(const uint8_t *src, ptrdiff_t src_stride,
                                 uint8_t *dst, ptrdiff_t dst_stride,
                                 const InterpKernel12 *filter, int x0_q4,
                                 int x_step_q4, int y0_q4, int y_step_q4, int w,
                                 int h) {
-  (void)filter;
-  vpx_convolve_copy_sse2(src, src_stride, dst, dst_stride, NULL, x0_q4,
-                         x_step_q4, y0_q4, y_step_q4, w, h);
-}
-
-void vpx_convolve_horiz_12_ssse3(const uint8_t *src, ptrdiff_t src_stride,
-                                 uint8_t *dst, ptrdiff_t dst_stride,
-                                 const InterpKernel12 *filter, int x0_q4,
-                                 int x_step_q4, int y0_q4, int y_step_q4, int w,
-                                 int h) {
   assert(x_step_q4 == 16);
   assert(w == 32 || w == 16 || w == 8);
   (void)y0_q4;
@@ -189,11 +179,11 @@ void vpx_convolve_horiz_12_ssse3(const uint8_t *src, ptrdiff_t src_stride,
   }
 }
 
-void vpx_convolve_vert_12_ssse3(const uint8_t *src, ptrdiff_t src_stride,
-                                uint8_t *dst, ptrdiff_t dst_stride,
-                                const InterpKernel12 *filter, int x0_q4,
-                                int x_step_q4, int y0_q4, int y_step_q4, int w,
-                                int h) {
+void vpx_convolve12_vert_ssse3(const uint8_t *src, ptrdiff_t src_stride,
+                               uint8_t *dst, ptrdiff_t dst_stride,
+                               const InterpKernel12 *filter, int x0_q4,
+                               int x_step_q4, int y0_q4, int y_step_q4, int w,
+                               int h) {
   assert(y_step_q4 == 16);
   assert(h == 32 || h == 16 || h == 8);
   assert(w == 32 || w == 16 || w == 8);
@@ -267,11 +257,11 @@ void vpx_convolve_vert_12_ssse3(const uint8_t *src, ptrdiff_t src_stride,
   }
 }
 
-void vpx_convolve8_12_ssse3(const uint8_t *src, ptrdiff_t src_stride,
-                            uint8_t *dst, ptrdiff_t dst_stride,
-                            const InterpKernel12 *filter, int x0_q4,
-                            int x_step_q4, int y0_q4, int y_step_q4, int w,
-                            int h) {
+void vpx_convolve12_ssse3(const uint8_t *src, ptrdiff_t src_stride,
+                          uint8_t *dst, ptrdiff_t dst_stride,
+                          const InterpKernel12 *filter, int x0_q4,
+                          int x_step_q4, int y0_q4, int y_step_q4, int w,
+                          int h) {
   assert(x_step_q4 == 16 && y_step_q4 == 16);
   assert(h == 32 || h == 16 || h == 8);
   assert(w == 32 || w == 16 || w == 8);
@@ -279,11 +269,11 @@ void vpx_convolve8_12_ssse3(const uint8_t *src, ptrdiff_t src_stride,
   const int temp_stride = BW;
   const int intermediate_height =
       (((h - 1) * y_step_q4 + y0_q4) >> SUBPEL_BITS) + MAX_FILTER_TAP;
-  vpx_convolve_horiz_12_ssse3(src - src_stride * (MAX_FILTER_TAP / 2 - 1),
-                              src_stride, temp, temp_stride, filter, x0_q4,
-                              x_step_q4, y0_q4, y_step_q4, w,
-                              intermediate_height);
-  vpx_convolve_vert_12_ssse3(temp + temp_stride * (MAX_FILTER_TAP / 2 - 1),
-                             temp_stride, dst, dst_stride, filter, x0_q4,
-                             x_step_q4, y0_q4, y_step_q4, w, h);
+  vpx_convolve12_horiz_ssse3(src - src_stride * (MAX_FILTER_TAP / 2 - 1),
+                             src_stride, temp, temp_stride, filter, x0_q4,
+                             x_step_q4, y0_q4, y_step_q4, w,
+                             intermediate_height);
+  vpx_convolve12_vert_ssse3(temp + temp_stride * (MAX_FILTER_TAP / 2 - 1),
+                            temp_stride, dst, dst_stride, filter, x0_q4,
+                            x_step_q4, y0_q4, y_step_q4, w, h);
 }

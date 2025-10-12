@@ -1,5 +1,5 @@
 
-FAIL localhost -> localhost:9443 portal assert_implements: Portals are not supported. undefined
-FAIL localhost -> www.localhost:9443 portal assert_implements: Portals are not supported. undefined
-FAIL localhost -> www.127.0.0.1:9443 portal assert_implements: Portals are not supported. undefined
+FAIL web-platform.test -> web-platform.test:9443 portal assert_implements: Portals are not supported. undefined
+FAIL web-platform.test -> www.web-platform.test:9443 portal assert_implements: Portals are not supported. undefined
+FAIL web-platform.test -> www.not-web-platform.test:9443 portal assert_implements: Portals are not supported. undefined
 

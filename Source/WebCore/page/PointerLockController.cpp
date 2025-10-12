@@ -29,7 +29,6 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DocumentInlines.h"
 #include "Element.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -40,7 +39,9 @@
 #include "PointerCaptureController.h"
 #include "UserGestureIndicator.h"
 #include "VoidCallback.h"
+#include <wtf/Ref.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <JavaScriptCore/ConsoleTypes.h>
 
 namespace WebCore {
 
@@ -61,6 +62,17 @@ PointerLockController::PointerLockController(Page& page)
 }
 
 PointerLockController::~PointerLockController() = default;
+
+void PointerLockController::ref() const
+{
+    m_page.ref();
+}
+
+void PointerLockController::deref() const
+{
+    m_page.deref();
+}
+
 
 void PointerLockController::requestPointerLock(Element* target, std::optional<PointerLockOptions>&& options, RefPtr<DeferredPromise> promise)
 {
@@ -127,12 +139,22 @@ void PointerLockController::requestPointerLock(Element* target, std::optional<Po
         m_options = WTFMove(options);
         if (promise)
             m_promises.append(promise.releaseNonNull());
-        // ChromeClient::requestPointerLock() can call back into didAcquirePointerLock(), so all state including element, options, and promise needs to be stored before it is called.
-        if (!m_page.chrome().client().requestPointerLock()) {
-            enqueueEvent(eventNames().pointerlockerrorEvent, target);
-            rejectPromises(ExceptionCode::NotSupportedError, "Pointer lock is unavailable."_s);
-            clearElement();
-        }
+
+        m_page.chrome().client().requestPointerLock([this, protectedThis = Ref { *this }, target = RefPtr { target }](PointerLockRequestResult result) {
+            switch (result) {
+            case PointerLockRequestResult::Success:
+                didAcquirePointerLock();
+                break;
+            case PointerLockRequestResult::Failure:
+                didNotAcquirePointerLock();
+                break;
+            case PointerLockRequestResult::Unsupported:
+                enqueueEvent(eventNames().pointerlockerrorEvent, target.get());
+                rejectPromises(ExceptionCode::NotSupportedError, "Pointer lock is unavailable."_s);
+                clearElement();
+                break;
+            }
+        });
     }
 }
 
@@ -142,7 +164,12 @@ void PointerLockController::requestPointerUnlock()
         return;
 
     m_unlockPending = true;
-    m_page.chrome().client().requestPointerUnlock();
+    m_page.chrome().client().requestPointerUnlock([this, protectedThis = Ref { *this }](bool result) {
+        if (result)
+            didLosePointerLock();
+        else
+            didNotAcquirePointerLock();
+    });
 }
 
 void PointerLockController::requestPointerUnlockAndForceCursorVisible()
@@ -153,7 +180,12 @@ void PointerLockController::requestPointerUnlockAndForceCursorVisible()
         return;
 
     m_unlockPending = true;
-    m_page.chrome().client().requestPointerUnlock();
+    m_page.chrome().client().requestPointerUnlock([this, protectedThis = Ref { *this }](bool result) {
+        if (result)
+            didLosePointerLock();
+        else
+            didNotAcquirePointerLock();
+    });
     m_forceCursorVisibleUponUnlock = true;
 }
 
@@ -298,10 +330,10 @@ void PointerLockController::rejectPromises(ExceptionCode code, const String& rea
         promise->reject(code, reason);
 }
 
-bool PointerLockController::supportsUnadjustedMovement()
+bool PointerLockController::supportsUnadjustedMovement() const
 {
-#if HAVE(MOUSE_UNACCELERATED_MOVEMENT)
-    return true;
+#if HAVE(MOUSE_UNACCELERATED_MOVEMENT) || PLATFORM(IOS_FAMILY)
+    return m_page.chrome().client().hasAccessoryMousePointingDevice();
 #else
     return false;
 #endif

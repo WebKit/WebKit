@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,7 +55,7 @@ public:
 
     MediaTime outputLatency() const
     {
-        return protectedDestination()->outputLatency();
+        return m_destination->outputLatency();
     }
 
 #if PLATFORM(IOS_FAMILY)
@@ -80,9 +80,6 @@ private:
 
     void configureRenderThread(CompletionHandler<void(bool)>&&);
 
-    Ref<AudioDestination> protectedDestination() const { return m_destination; }
-    Ref<AudioBus> protectedWorkBus() { return m_workBus; }
-
     unsigned m_numberOfOutputChannels;
     float m_sampleRate;
 
@@ -90,8 +87,8 @@ private:
     String m_sceneIdentifier { emptyString() };
 #endif
 
-    Ref<AudioDestination> m_destination;
-    Ref<AudioBus> m_workBus;
+    const Ref<AudioDestination> m_destination;
+    const Ref<AudioBus> m_workBus;
     AudioDestinationCreationFunction m_ensureFunction;
 
     bool m_started { false };
@@ -154,7 +151,7 @@ SharedAudioDestinationAdapter::~SharedAudioDestinationAdapter()
 #endif
         );
     sharedMap().remove(key);
-    protectedDestination()->clearCallback();
+    m_destination->clearCallback();
 }
 
 void SharedAudioDestinationAdapter::addRenderer(SharedAudioDestination& renderer, CompletionHandler<void(bool)>&& completionHandler)
@@ -198,13 +195,13 @@ void SharedAudioDestinationAdapter::configureRenderThread(CompletionHandler<void
 
     if (shouldStart) {
         m_started = true;
-        protectedDestination()->start(nullptr, WTFMove(completionHandler));
+        m_destination->start(nullptr, WTFMove(completionHandler));
         return;
     }
 
     if (shouldStop) {
         m_started = false;
-        protectedDestination()->stop(WTFMove(completionHandler));
+        m_destination->stop(WTFMove(completionHandler));
         return;
     }
 
@@ -245,9 +242,8 @@ void SharedAudioDestinationAdapter::render(AudioBus& destinationBus, size_t numb
         }
         // Subsequent renderers should render to the m_workBus, which will
         // then be summed to the destinationBus.
-        Ref protectedWorkBus = this->protectedWorkBus();
-        renderer->sharedRender(protectedWorkBus, numberOfFrames, outputPosition);
-        destinationBus.sumFrom(protectedWorkBus);
+        renderer->sharedRender(m_workBus, numberOfFrames, outputPosition);
+        destinationBus.sumFrom(m_workBus);
     }
 }
 Ref<SharedAudioDestination> SharedAudioDestination::create(const CreationOptions& options, AudioDestinationCreationFunction&& ensureFunction)
@@ -357,6 +353,10 @@ void SharedAudioDestination::setSceneIdentifier(const String& identifier)
     // changes, as the adapter may be shared with other destinations
     // whose sceneIdentifier is _not_ changing.
     auto ensureFunction = protectedOutputAdapter()->takeEnsureFunction();
+    ASSERT(ensureFunction);
+    if (!ensureFunction)
+        return;
+
     bool wasPlaying = isPlaying();
 
     if (wasPlaying)

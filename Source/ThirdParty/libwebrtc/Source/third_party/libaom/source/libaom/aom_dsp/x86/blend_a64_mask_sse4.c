@@ -388,7 +388,7 @@ void aom_blend_a64_mask_sse4_1(uint8_t *dst, uint32_t dst_stride,
                                const uint8_t *mask, uint32_t mask_stride, int w,
                                int h, int subw, int subh) {
   typedef void (*blend_fn)(
-      uint8_t * dst, uint32_t dst_stride, const uint8_t *src0,
+      uint8_t *dst, uint32_t dst_stride, const uint8_t *src0,
       uint32_t src0_stride, const uint8_t *src1, uint32_t src1_stride,
       const uint8_t *mask, uint32_t mask_stride, int w, int h);
 
@@ -821,7 +821,7 @@ void aom_highbd_blend_a64_mask_sse4_1(uint8_t *dst_8, uint32_t dst_stride,
                                       uint32_t mask_stride, int w, int h,
                                       int subw, int subh, int bd) {
   typedef void (*blend_fn)(
-      uint16_t * dst, uint32_t dst_stride, const uint16_t *src0,
+      uint16_t *dst, uint32_t dst_stride, const uint16_t *src0,
       uint32_t src0_stride, const uint16_t *src1, uint32_t src1_stride,
       const uint8_t *mask, uint32_t mask_stride, int w, int h);
 

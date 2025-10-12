@@ -25,12 +25,14 @@
 
 #pragma once
 
-#include "LayoutUnit.h"
-#include "RenderLayerModelObject.h"
-#include "Timer.h"
+#include <WebCore/AnchorPositionEvaluator.h>
+#include <WebCore/LayoutUnit.h>
+#include <WebCore/RenderLayerModelObject.h>
+#include <WebCore/Timer.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -51,8 +53,10 @@ class LayoutState;
 class LayoutTree;
 }
 
+enum class LayoutOptions : uint8_t;
+
 struct UpdateScrollInfoAfterLayoutTransaction {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(UpdateScrollInfoAfterLayoutTransaction);
 
     UpdateScrollInfoAfterLayoutTransaction();
     ~UpdateScrollInfoAfterLayoutTransaction();
@@ -161,8 +165,15 @@ public:
     bool addToDetachedRendererList(RenderPtr<RenderObject>&& renderer) const { return m_detachedRendererList.append(WTFMove(renderer)); }
     void deleteDetachedRenderersNow() const { m_detachedRendererList.clear(); }
 
+    Vector<AnchorScrollAdjuster>& anchorScrollAdjusters() { return m_anchorScrollAdjusters; }
+    const AnchorScrollAdjuster* anchorScrollAdjusterFor(const RenderBox& anchored) const;
+    AnchorScrollAdjuster::Diff registerAnchorScrollAdjuster(AnchorScrollAdjuster&&);
+    void unregisterAnchorScrollAdjusterFor(const RenderBox& anchored);
+    void invalidateAnchorDependenciesForScroller(const RenderBox& scroller);
+    void removeScrollerFromAnchorScrollAdjusters(const RenderBox& scroller);
+
 private:
-    friend class LayoutScope;
+    friend class LayoutFrameScope;
     friend class LayoutStateMaintainer;
     friend class LayoutStateDisabler;
     friend class SubtreeLayoutStateMaintainer;
@@ -209,6 +220,9 @@ private:
     bool isVisiblityAutoIgnored() const { return m_visiblityAutoIsIgnored; }
     void setIsVisiblityAutoIgnored(bool ignored) { m_visiblityAutoIsIgnored = ignored; }
 
+    bool isRevealedWhenFoundIgnored() const { return m_revealedWhenFoundIgnored; }
+    void setIsRevealedWhenFoundIgnored(bool ignored) { m_revealedWhenFoundIgnored = ignored; }
+
     void disablePercentHeightResolveFor(const RenderBox& flexItem);
     void enablePercentHeightResolveFor(const RenderBox& flexItem);
 
@@ -232,6 +246,7 @@ private:
     bool m_setNeedsLayoutWasDeferred { false };
     bool m_visiblityHiddenIsIgnored { false };
     bool m_visiblityAutoIsIgnored { false };
+    bool m_revealedWhenFoundIgnored { false };
     bool m_updateCompositingLayersIsPending { false };
     LayoutPhase m_layoutPhase { LayoutPhase::OutsideLayout };
     enum class LayoutNestedState : uint8_t  { NotInLayout, NotNested, Nested };
@@ -244,6 +259,7 @@ private:
     std::unique_ptr<UpdateScrollInfoAfterLayoutTransaction> m_updateScrollInfoAfterLayoutTransaction;
     SingleThreadWeakHashMap<RenderBlock, Vector<SingleThreadWeakPtr<RenderBox>>> m_containersWithDescendantsNeedingTransformUpdate;
     SingleThreadWeakHashSet<RenderBox> m_percentHeightIgnoreList;
+    Vector<AnchorScrollAdjuster> m_anchorScrollAdjusters;
     std::optional<TextBoxTrim> m_textBoxTrim;
 
     struct UpdateLayerPositions {

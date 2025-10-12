@@ -122,17 +122,34 @@ std::optional<FloatRect> ScrollingTreeStickyNode::findConstrainingRect() const
     return std::nullopt;
 }
 
-FloatPoint ScrollingTreeStickyNode::computeAnchorLayerPosition() const
+std::pair<std::optional<FloatRect>, FloatPoint> ScrollingTreeStickyNode::computeConstrainingRectAndAnchorLayerPosition() const
 {
     if (auto constrainingRect = findConstrainingRect())
-        return m_constraints.anchorLayerPositionForConstrainingRect(*constrainingRect);
+        return { constrainingRect, m_constraints.anchorLayerPositionForConstrainingRect(*constrainingRect) };
 
-    return m_constraints.layerPositionAtLastLayout();
+    return { std::nullopt, m_constraints.layerPositionAtLastLayout() };
 }
 
 FloatSize ScrollingTreeStickyNode::scrollDeltaSinceLastCommit() const
 {
-    return computeAnchorLayerPosition() - m_constraints.anchorLayerPositionAtLastLayout();
+    auto anchorLayerPosition = computeConstrainingRectAndAnchorLayerPosition().second;
+    return anchorLayerPosition - m_constraints.anchorLayerPositionAtLastLayout();
+}
+
+bool ScrollingTreeStickyNode::isCurrentlySticking() const
+{
+    auto constrainingRect = findConstrainingRect();
+    return constrainingRect && isCurrentlySticking(*constrainingRect);
+}
+
+bool ScrollingTreeStickyNode::isCurrentlySticking(const FloatRect& constrainingRect) const
+{
+    auto stickyOffset = m_constraints.computeStickyOffset(constrainingRect);
+    auto stickyRect = m_constraints.stickyBoxRect();
+    auto containingRect = m_constraints.containingBlockRect();
+
+    // FIXME: This should also account for horizontal scrolling.
+    return stickyOffset.height() > 0 && stickyOffset.height() < containingRect.height() - stickyRect.height();
 }
 
 } // namespace WebCore

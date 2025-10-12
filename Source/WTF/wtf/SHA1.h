@@ -54,7 +54,7 @@ typedef const struct __CFString * CFStringRef;
 namespace WTF {
 
 class SHA1 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SHA1);
 public:
     WTF_EXPORT_PRIVATE SHA1();
 

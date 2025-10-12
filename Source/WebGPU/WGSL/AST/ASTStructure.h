@@ -44,6 +44,7 @@ enum class StructureRole : uint8_t {
     FragmentInput,
     ComputeInput,
     VertexOutput,
+    VertexOutputWrapper,
     BindGroup,
     UserDefinedResource,
     PackedResource,

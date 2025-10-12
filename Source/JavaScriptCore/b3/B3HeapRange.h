@@ -36,8 +36,10 @@ namespace JSC { namespace B3 {
 // Alias analysis in B3 is done by checking if two integer ranges overlap. This is powerful enough
 // to be used for TBAA-style alias analysis used by the DFG, FTL, and LLVM: you just turn each node
 // in the tree of abstract heaps into a pre/post range.
+// We intentionally use uint64_t to handle uint32_t range in wasm memory access with constant address
+// inside the abstract heap tree.
 
-typedef Range<unsigned> HeapRange;
+using HeapRange = Range<uint64_t>;
 
 } } // namespace JSC::B3
 

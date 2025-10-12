@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/create.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/dc-types.ts
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/default-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/digital-credential-user-agent-allows-protocol.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/digital-credentials-static-methods.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/enabled-on-self-origin-by-permissions-policy.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/enabled-on-self-origin-by-permissions-policy.https.sub.html.headers

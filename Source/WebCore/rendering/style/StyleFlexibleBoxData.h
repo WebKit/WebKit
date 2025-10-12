@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Google Inc. All Rights Reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,19 +26,18 @@
 
 #pragma once
 
-#include "Length.h"
+#include <WebCore/RenderStyleConstants.h>
+#include <WebCore/StyleFlexBasis.h>
+#include <WebCore/StyleFlexGrow.h>
+#include <WebCore/StyleFlexShrink.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-
-namespace WTF {
-class TextStream;
-}
 
 namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleFlexibleBoxData);
 class StyleFlexibleBoxData : public RefCounted<StyleFlexibleBoxData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleFlexibleBoxData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleFlexibleBoxData, StyleFlexibleBoxData);
 public:
     static Ref<StyleFlexibleBoxData> create() { return adoptRef(*new StyleFlexibleBoxData); }
     Ref<StyleFlexibleBoxData> copy() const;
@@ -48,12 +48,12 @@ public:
     void dumpDifferences(TextStream&, const StyleFlexibleBoxData&) const;
 #endif
 
-    float flexGrow;
-    float flexShrink;
-    Length flexBasis;
+    Style::FlexGrow flexGrow;
+    Style::FlexShrink flexShrink;
+    Style::FlexBasis flexBasis;
 
-    unsigned flexDirection : 2; // FlexDirection
-    unsigned flexWrap : 2; // FlexWrap
+    PREFERRED_TYPE(FlexDirection) unsigned flexDirection : 2;
+    PREFERRED_TYPE(FlexWrap) unsigned flexWrap : 2;
 
 private:
     StyleFlexibleBoxData();

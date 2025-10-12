@@ -33,7 +33,7 @@ namespace WTF {
 
 template<typename Key, typename HashArg = DefaultHash<Key>>
 class GenericHashKey final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(GenericHashKey);
 
     struct EmptyKey { };
     struct DeletedKey { };

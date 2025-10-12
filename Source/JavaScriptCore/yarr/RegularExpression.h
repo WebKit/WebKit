@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "YarrFlags.h"
+#include <JavaScriptCore/YarrFlags.h>
 #include <wtf/OptionSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>

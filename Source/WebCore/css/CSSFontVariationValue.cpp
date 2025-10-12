@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2016 Apple Inc. All rights reserved.
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +27,11 @@
 #include "config.h"
 #include "CSSFontVariationValue.h"
 
-#include "CSSPrimitiveValue.h"
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-CSSFontVariationValue::CSSFontVariationValue(FontTag tag, Ref<CSSPrimitiveValue>&& value)
+CSSFontVariationValue::CSSFontVariationValue(FontTag tag, Ref<CSSValue>&& value)
     : CSSValue(ClassType::FontVariation)
     , m_tag(tag)
     , m_value(WTFMove(value))
@@ -41,7 +40,7 @@ CSSFontVariationValue::CSSFontVariationValue(FontTag tag, Ref<CSSPrimitiveValue>
 
 String CSSFontVariationValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    return makeString('"', m_tag[0], m_tag[1], m_tag[2], m_tag[3], "\" "_s, m_value->customCSSText(context));
+    return makeString('"', m_tag[0], m_tag[1], m_tag[2], m_tag[3], "\" "_s, m_value->cssText(context));
 }
 
 bool CSSFontVariationValue::equals(const CSSFontVariationValue& other) const

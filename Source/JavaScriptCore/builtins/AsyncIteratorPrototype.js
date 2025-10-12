@@ -23,41 +23,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@linkTimeConstant
+function promiseReturnUndefinedOnFulfilled(argument)
+{
+    "use strict";
+
+    return @undefined;
+}
+
 // https://tc39.es/proposal-explicit-resource-management/#sec-%asynciteratorprototype%-@@asyncdispose
 @overriddenName="[Symbol.asyncDispose]"
 function asyncDispose()
 {
     'use strict';
 
-    var promiseCapability = @newPromiseCapability(@Promise);
+    var promise = @newPromise();
     var returnMethod;
     try {
         returnMethod = this.return;
     } catch (e) {
-        @rejectPromiseWithFirstResolvingFunctionCallCheck(promiseCapability.promise, e);
-        return promiseCapability.promise;
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
+        return promise;
     }
 
     if (returnMethod === @undefined)
-        promiseCapability.resolve.@call();
+        @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, @undefined);
     else {
         var result;
         try {
             result = returnMethod.@call(this);
         } catch (e) {
-            @rejectPromiseWithFirstResolvingFunctionCallCheck(promiseCapability.promise, e);
-            return promiseCapability.promise;
+            @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
+            return promise;
         }
         var resultWrapper;
         try {
-            resultWrapper = @promiseResolve(@Promise, result);
+            if (@isPromise(result) && result.constructor == @Promise)
+                resultWrapper = result;
+            else {
+                resultWrapper = @newPromise();
+                @resolvePromiseWithFirstResolvingFunctionCallCheck(resultWrapper, result);
+            }
         } catch (e) {
-            @rejectPromiseWithFirstResolvingFunctionCallCheck(promiseCapability.promise, e);
-            return promiseCapability.promise;
+            @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
+            return promise;
         }
-        var onFulfilled = () => { return @undefined; };
-        @performPromiseThen(resultWrapper, onFulfilled, @undefined, promiseCapability, @undefined);
+        @performPromiseThen(resultWrapper, @promiseReturnUndefinedOnFulfilled, @undefined, promise, @undefined);
     }
 
-    return promiseCapability.promise;
+    return promise;
 }

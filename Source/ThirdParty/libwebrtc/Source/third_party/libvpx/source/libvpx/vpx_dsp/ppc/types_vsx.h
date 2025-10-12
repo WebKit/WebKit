@@ -64,7 +64,7 @@ static const uint8x16_t xxpermdi3_perm = { 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
 #define unpack_to_s16_l(v) \
   (int16x8_t) vec_mergel((uint8x16_t)v, vec_splat_u8(0))
 #ifndef xxpermdi
-#define xxpermdi(a, b, c) vec_xxpermdi(b, a, (((c) >> 1) | ((c)&1) << 1) ^ 3)
+#define xxpermdi(a, b, c) vec_xxpermdi(b, a, (((c) >> 1) | ((c) & 1) << 1) ^ 3)
 #endif
 #endif
 

@@ -311,9 +311,9 @@ class TextureMtl : public TextureImpl
                                       size_t pixelsDepthPitch,
                                       gl::Buffer *unpackBuffer,
                                       const uint8_t *pixels,
-                                      const mtl::TextureRef &image);
+                                      const ImageDefinitionMtl &imageDef);
 
-    // Convert pixels to suported format before uploading to texture
+    // Convert pixels to supported format before uploading to texture.
     angle::Result convertAndSetPerSliceSubImage(const gl::Context *context,
                                                 int slice,
                                                 const MTLRegion &mtlArea,
@@ -324,7 +324,7 @@ class TextureMtl : public TextureImpl
                                                 size_t pixelsDepthPitch,
                                                 gl::Buffer *unpackBuffer,
                                                 const uint8_t *pixels,
-                                                const mtl::TextureRef &image);
+                                                const ImageDefinitionMtl &imageDef);
 
     angle::Result generateMipmapCPU(const gl::Context *context);
 

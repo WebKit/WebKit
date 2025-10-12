@@ -38,7 +38,9 @@ namespace WebKit {
 
 class BidiBrowserAgent;
 class BidiBrowsingContextAgent;
+class BidiPermissionsAgent;
 class BidiScriptAgent;
+class BidiStorageAgent;
 class WebAutomationSession;
 class WebPageProxy;
 
@@ -51,7 +53,7 @@ public:
     void processBidiMessage(const String&);
     void sendBidiMessage(const String&);
 
-    BidiBrowserAgent& browserAgent() const { return *m_browserAgent; }
+    BidiBrowserAgent& browserAgent() const { return m_browserAgent; }
 
     // Inspector::FrontendChannel methods. Domain events sent via WebDriverBidi domain notifiers are packaged up
     // by FrontendRouter and are then sent back out-of-process via WebAutomationSession::sendBidiMessage().
@@ -59,23 +61,22 @@ public:
     void sendMessageToFrontend(const String&) override;
 
     // Event entry points called from the owning WebAutomationSession.
-    Inspector::BidiBrowsingContextFrontendDispatcher& browsingContextDomainNotifier() const { return *m_browsingContextDomainNotifier; }
-    Inspector::BidiLogFrontendDispatcher& logDomainNotifier() const { return *m_logDomainNotifier; }
+    Inspector::BidiBrowsingContextFrontendDispatcher& browsingContextDomainNotifier() const { return m_browsingContextDomainNotifier; }
+    Inspector::BidiLogFrontendDispatcher& logDomainNotifier() const { return m_logDomainNotifier; }
 
 private:
-    Ref<Inspector::FrontendRouter> protectedFrontendRouter() const;
-    Ref<Inspector::BackendDispatcher> protectedBackendDispatcher() const;
-
     WeakPtr<WebAutomationSession> m_session;
 
-    Ref<Inspector::FrontendRouter> m_frontendRouter;
-    Ref<Inspector::BackendDispatcher> m_backendDispatcher;
+    const Ref<Inspector::FrontendRouter> m_frontendRouter;
+    const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
 
-    std::unique_ptr<BidiBrowserAgent> m_browserAgent;
-    std::unique_ptr<BidiBrowsingContextAgent> m_browsingContextAgent;
-    std::unique_ptr<BidiScriptAgent> m_scriptAgent;
-    std::unique_ptr<Inspector::BidiBrowsingContextFrontendDispatcher> m_browsingContextDomainNotifier;
-    std::unique_ptr<Inspector::BidiLogFrontendDispatcher> m_logDomainNotifier;
+    const UniqueRef<BidiBrowserAgent> m_browserAgent;
+    const UniqueRef<BidiBrowsingContextAgent> m_browsingContextAgent;
+    const UniqueRef<BidiPermissionsAgent> m_permissionsAgent;
+    const UniqueRef<BidiScriptAgent> m_scriptAgent;
+    const UniqueRef<BidiStorageAgent> m_storageAgent;
+    const UniqueRef<Inspector::BidiBrowsingContextFrontendDispatcher> m_browsingContextDomainNotifier;
+    const UniqueRef<Inspector::BidiLogFrontendDispatcher> m_logDomainNotifier;
 };
 
 } // namespace WebKit

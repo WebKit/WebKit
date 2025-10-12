@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,8 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/WTFProcess.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/darwin/DispatchExtras.h>
+#import <wtf/darwin/XPCExtras.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
@@ -69,7 +71,7 @@ bool XPCServiceInitializerDelegate::checkEntitlements()
 
 bool XPCServiceInitializerDelegate::getConnectionIdentifier(IPC::Connection::Identifier& identifier)
 {
-    mach_port_t port = xpc_dictionary_copy_mach_send(m_initializerMessage, "server-port");
+    mach_port_t port = xpc_dictionary_copy_mach_send(m_initializerMessage.get(), "server-port");
     if (!MACH_PORT_VALID(port))
         return false;
 
@@ -79,19 +81,19 @@ bool XPCServiceInitializerDelegate::getConnectionIdentifier(IPC::Connection::Ide
 
 bool XPCServiceInitializerDelegate::getClientIdentifier(String& clientIdentifier)
 {
-    clientIdentifier = xpcDictionaryGetString(m_initializerMessage, "client-identifier"_s);
+    clientIdentifier = xpcDictionaryGetString(m_initializerMessage.get(), "client-identifier"_s);
     return !clientIdentifier.isEmpty();
 }
 
 bool XPCServiceInitializerDelegate::getClientBundleIdentifier(String& clientBundleIdentifier)
 {
-    clientBundleIdentifier = xpcDictionaryGetString(m_initializerMessage, "client-bundle-identifier"_s);
+    clientBundleIdentifier = xpcDictionaryGetString(m_initializerMessage.get(), "client-bundle-identifier"_s);
     return !clientBundleIdentifier.isEmpty();
 }
 
 bool XPCServiceInitializerDelegate::getClientSDKAlignedBehaviors(SDKAlignedBehaviors& behaviors)
 {
-    auto behaviorData = xpcDictionaryGetData(m_initializerMessage, "client-sdk-aligned-behaviors"_s);
+    auto behaviorData = xpcDictionaryGetData(m_initializerMessage.get(), "client-sdk-aligned-behaviors"_s);
     if (behaviorData.empty())
         return false;
     auto storageBytes = behaviors.storageBytes();
@@ -105,7 +107,7 @@ bool XPCServiceInitializerDelegate::getClientSDKAlignedBehaviors(SDKAlignedBehav
 
 bool XPCServiceInitializerDelegate::getProcessIdentifier(std::optional<WebCore::ProcessIdentifier>& identifier)
 {
-    auto parsedIdentifier = parseInteger<uint64_t>(xpcDictionaryGetString(m_initializerMessage, "process-identifier"_s));
+    auto parsedIdentifier = parseInteger<uint64_t>(xpcDictionaryGetString(m_initializerMessage.get(), "process-identifier"_s));
     if (!parsedIdentifier)
         return false;
     if (!ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(*parsedIdentifier))
@@ -117,13 +119,13 @@ bool XPCServiceInitializerDelegate::getProcessIdentifier(std::optional<WebCore::
 
 bool XPCServiceInitializerDelegate::getClientProcessName(String& clientProcessName)
 {
-    clientProcessName = xpcDictionaryGetString(m_initializerMessage, "ui-process-name"_s);
+    clientProcessName = xpcDictionaryGetString(m_initializerMessage.get(), "ui-process-name"_s);
     return !clientProcessName.isEmpty();
 }
 
 bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, String>& extraInitializationData)
 {
-    RetainPtr extraDataInitializationDataObject = xpc_dictionary_get_value(m_initializerMessage, "extra-initialization-data");
+    RetainPtr extraDataInitializationDataObject = xpc_dictionary_get_value(m_initializerMessage.get(), "extra-initialization-data");
 
     auto inspectorProcess = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "inspector-process"_s);
     if (!inspectorProcess.isEmpty())
@@ -143,6 +145,11 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
     auto isLockdownModeEnabled = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "enable-lockdown-mode"_s);
     if (!isLockdownModeEnabled.isEmpty())
         extraInitializationData.add("enable-lockdown-mode"_s, isLockdownModeEnabled);
+    else {
+        auto enableEnhancedSecurity = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "enable-enhanced-security"_s);
+        if (!enableEnhancedSecurity.isEmpty())
+            extraInitializationData.add("enable-enhanced-security"_s, enableEnhancedSecurity);
+    }
 
     if (!isClientSandboxed()) {
         auto userDirectorySuffix = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "user-directory-suffix"_s);
@@ -181,7 +188,7 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
     // control our lifetime via process assertions instead of leaking this OS transaction.
     static dispatch_once_t flag;
     dispatch_once(&flag, ^{
-        globalSource.get() = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGTERM, 0, dispatch_get_main_queue()));
+        globalSource.get() = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGTERM, 0, mainDispatchQueueSingleton()));
         dispatch_source_set_event_handler(globalSource.get().get(), ^{
             exitProcess(0);
         });
@@ -192,47 +199,61 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
 }
 #endif
 
-void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode enableLockdownMode, bool isWebContentProcess)
+void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode enableLockdownMode, EnableEnhancedSecurity enableEnhancedSecurity, bool isWebContentProcess)
 {
     RELEASE_ASSERT(!g_jscConfig.initializeHasBeenCalled);
 
-    bool optionsChanged = false;
     if (xpc_dictionary_get_bool(initializerMessage, "configure-jsc-for-testing"))
         JSC::Config::configureForTesting();
     if (enableLockdownMode == EnableLockdownMode::Yes) {
+        RELEASE_ASSERT(enableEnhancedSecurity == EnableEnhancedSecurity::No);
         JSC::Options::machExceptionHandlerSandboxPolicy = JSC::Options::SandboxPolicy::Block;
-        JSC::Options::initialize();
-        JSC::Options::AllowUnfinalizedAccessScope scope;
-        JSC::ExecutableAllocator::disableJIT();
-        JSC::Options::useGenerationalGC() = false;
-        JSC::Options::useConcurrentGC() = false;
-        JSC::Options::useLLIntICs() = false;
-        JSC::Options::useWasm() = false;
-        JSC::Options::useZombieMode() = true;
-        JSC::Options::allowDoubleShape() = false;
-        JSC::Options::alwaysHaveABadTime() = true;
-        optionsChanged = true;
-    } else if (xpc_dictionary_get_bool(initializerMessage, "disable-jit")) {
-        JSC::Options::initialize();
-        JSC::Options::AllowUnfinalizedAccessScope scope;
-        JSC::ExecutableAllocator::disableJIT();
-        optionsChanged = true;
+        JSC::Options::initialize([] {
+            JSC::ExecutableAllocator::disableJIT();
+            JSC::Options::useGenerationalGC() = false;
+            JSC::Options::useConcurrentGC() = false;
+            JSC::Options::useLLIntICs() = false;
+            JSC::Options::useWasm() = false;
+            JSC::Options::useZombieMode() = true;
+            JSC::Options::allowDoubleShape() = false;
+            JSC::Options::alwaysHaveABadTime() = true;
+        });
+    } else if (xpc_dictionary_get_bool(initializerMessage, "disable-jit") || enableEnhancedSecurity == EnableEnhancedSecurity::Yes) {
+        JSC::Options::initialize([] {
+            JSC::ExecutableAllocator::disableJIT();
+        });
     }
     if (xpc_dictionary_get_bool(initializerMessage, "enable-shared-array-buffer")) {
-        JSC::Options::initialize();
-        JSC::Options::AllowUnfinalizedAccessScope scope;
-        JSC::Options::useSharedArrayBuffer() = true;
-        optionsChanged = true;
+        JSC::Options::initialize([] {
+            JSC::Options::useSharedArrayBuffer() = true;
+        });
     }
     // FIXME (276012): Remove this XPC bootstrap message when it's no longer necessary. See rdar://130669638 for more context.
     if (xpc_dictionary_get_bool(initializerMessage, "disable-jit-cage")) {
-        JSC::Options::initialize();
-        JSC::Options::AllowUnfinalizedAccessScope scope;
-        JSC::Options::useJITCage() = false;
-        optionsChanged = true;
+        JSC::Options::initialize([] {
+            JSC::Options::useJITCage() = false;
+        });
     }
-    if (optionsChanged)
-        JSC::Options::notifyOptionsChanged();
+}
+
+void disableJSC(NOESCAPE WTF::CompletionHandler<void(void)>&& beforeFinalizeHandler)
+{
+    g_jscConfig.vmCreationDisallowed = true;
+    g_jscConfig.vmEntryDisallowed = true;
+    g_wtfConfig.useSpecialAbortForExtraSecurityImplications = true;
+
+    WTF::initializeMainThread();
+    {
+        JSC::Options::initialize([] {
+            JSC::ExecutableAllocator::disableJIT();
+            JSC::Options::useWasm() = false;
+        });
+    }
+    WTF::compilerFence();
+
+    beforeFinalizeHandler();
+
+    JSC::Config::finalize();
 }
 
 void XPCServiceExit()

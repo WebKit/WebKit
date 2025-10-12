@@ -10,6 +10,7 @@
 
 #include "include/core/SkCanvas.h"
 #include "include/core/SkImage.h"
+#include "include/core/SkRecorder.h"
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSamplingOptions.h"
 #include "include/core/SkScalar.h"
@@ -26,7 +27,6 @@ class SkCapabilities;
 class SkColorSpace;
 class SkPaint;
 class SkPixmap;
-class SkRecorder;
 class GrSurfaceCharacterization;
 class SkSurfaceProps;
 enum GrSurfaceOrigin : int;
@@ -170,6 +170,12 @@ public:
     // from SkSurface_Base).
     virtual sk_sp<const SkCapabilities> onCapabilities();
 
+    /**
+     * If capturing, signals to the capture manager and capture canvas to break off the recording
+     * SkPicture into a new SkPicture.
+     */
+    void createCaptureBreakpoint();
+
     inline SkCanvas* getCachedCanvas();
     inline sk_sp<SkImage> refCachedImage();
 
@@ -179,7 +185,12 @@ public:
     uint32_t newGenerationID();
 
 private:
-    std::unique_ptr<SkCanvas> fCachedCanvas = nullptr;
+    // fCachedCanvas is the raw pointer to the canvas that is returned to the client.
+    // It can point to either the base canvas or a capture canvas wrapper.
+    SkCanvas* fCachedCanvas = nullptr;
+    // SkSurface_Base must always own the base canvas. During capture, SkCaptureManager owns any
+    // wrapping capture canvas that fCachedCanvas may point to.
+    std::unique_ptr<SkCanvas> fOwnedBaseCanvas = nullptr;
     sk_sp<SkImage>            fCachedImage  = nullptr;
 
     // Returns false if drawing should not take place (allocation failure).
@@ -195,18 +206,26 @@ private:
 
 SkCanvas* SkSurface_Base::getCachedCanvas() {
     if (nullptr == fCachedCanvas) {
-        fCachedCanvas = std::unique_ptr<SkCanvas>(this->onNewCanvas());
+        fOwnedBaseCanvas = std::unique_ptr<SkCanvas>(this->onNewCanvas());
+
+        if (this->baseRecorder()) {
+            fCachedCanvas = this->baseRecorder()->makeCaptureCanvas(fOwnedBaseCanvas.get());
+        }
+        if (!fCachedCanvas) {
+            fCachedCanvas = fOwnedBaseCanvas.get();
+        }
         if (fCachedCanvas) {
             fCachedCanvas->setSurfaceBase(this);
         }
     }
-    return fCachedCanvas.get();
+    return fCachedCanvas;
 }
 
 sk_sp<SkImage> SkSurface_Base::refCachedImage() {
     if (fCachedImage) {
         return fCachedImage;
     }
+    this->createCaptureBreakpoint();
 
     fCachedImage = this->onNewImageSnapshot();
 

@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "File.h"
+#include <WebCore/File.h>
 #include <pal/text/TextEncoding.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -72,7 +72,7 @@ public:
         std::optional<KeyValuePair<String, FormDataEntryValue>> next();
 
     private:
-        Ref<DOMFormData> m_target;
+        const Ref<DOMFormData> m_target;
         size_t m_index { 0 };
     };
     Iterator createIterator(ScriptExecutionContext*) { return Iterator { *this }; }

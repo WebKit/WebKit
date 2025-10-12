@@ -38,7 +38,7 @@ std::optional<CoreIPCCFURL> CoreIPCCFURL::createWithBaseURLAndBytes(std::optiona
     }
 
     RetainPtr baseCFURL = baseURL ? baseURL->m_cfURL.get() : nullptr;
-    if (RetainPtr newCFURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes.data(), bytes.size(), kCFStringEncodingUTF8, baseCFURL.get(), true)))
+    if (RetainPtr newCFURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes.span().data(), bytes.size(), kCFStringEncodingUTF8, baseCFURL.get(), true)))
         return CoreIPCCFURL { WTFMove(newCFURL) };
 
     return std::nullopt;
@@ -56,7 +56,7 @@ Vector<uint8_t> CoreIPCCFURL::toVector() const
     auto bytesLength = CFURLGetBytes(m_cfURL.get(), nullptr, 0);
     RELEASE_ASSERT(bytesLength != -1);
     Vector<uint8_t> result(bytesLength);
-    CFURLGetBytes(m_cfURL.get(), result.data(), bytesLength);
+    CFURLGetBytes(m_cfURL.get(), result.mutableSpan().data(), bytesLength);
 
     return result;
 }

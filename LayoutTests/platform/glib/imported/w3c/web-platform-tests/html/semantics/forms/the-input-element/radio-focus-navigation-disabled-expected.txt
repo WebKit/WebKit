@@ -1,0 +1,6 @@
+Outside form
+disabled checked  enabled 1  enabled 2
+Outside form
+
+FAIL Should be able to tab focus in radio group even when the checked radio button is disabled. assert_equals: expected Element node <input type="radio" name="radio" id="b"></input> but got Element node <input type="radio" name="end" id="end"></input>
+

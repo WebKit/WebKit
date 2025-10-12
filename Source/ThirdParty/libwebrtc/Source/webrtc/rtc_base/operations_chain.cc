@@ -10,10 +10,15 @@
 
 #include "rtc_base/operations_chain.h"
 
+#include <functional>
+#include <utility>
+
 #include "api/make_ref_counted.h"
+#include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
 #include "rtc_base/checks.h"
 
-namespace rtc {
+namespace webrtc {
 
 OperationsChain::CallbackHandle::CallbackHandle(
     scoped_refptr<OperationsChain> operations_chain)
@@ -39,7 +44,7 @@ void OperationsChain::CallbackHandle::OnOperationComplete() {
 // static
 scoped_refptr<OperationsChain> OperationsChain::Create() {
   // Explicit new, to access private constructor.
-  return rtc::scoped_refptr<OperationsChain>(new OperationsChain());
+  return scoped_refptr<OperationsChain>(new OperationsChain());
 }
 
 OperationsChain::OperationsChain() {
@@ -65,8 +70,8 @@ bool OperationsChain::IsEmpty() const {
 }
 
 std::function<void()> OperationsChain::CreateOperationsChainCallback() {
-  return [handle = rtc::make_ref_counted<CallbackHandle>(
-              rtc::scoped_refptr<OperationsChain>(this))]() {
+  return [handle = make_ref_counted<CallbackHandle>(
+              scoped_refptr<OperationsChain>(this))]() {
     handle->OnOperationComplete();
   };
 }
@@ -85,4 +90,4 @@ void OperationsChain::OnOperationComplete() {
   }
 }
 
-}  // namespace rtc
+}  // namespace webrtc

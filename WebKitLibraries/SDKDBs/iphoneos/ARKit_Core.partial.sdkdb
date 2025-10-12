@@ -1,0 +1,1453 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARAltitudeSourceUnknown"},
+      {"access": "public", "name": "ARAltitudeSourceCoarse"},
+      {"access": "public", "name": "ARAltitudeSourcePrecise"},
+      {"access": "public", "name": "ARAltitudeSourceUserDefined"}
+     ],
+     "name": "ARAltitudeSource"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARAppClipCodeURLDecodingStateDecoding"},
+      {"access": "public", "name": "ARAppClipCodeURLDecodingStateFailed"},
+      {"access": "public", "name": "ARAppClipCodeURLDecodingStateDecoded"}
+     ],
+     "name": "ARAppClipCodeURLDecodingState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARCollaborationDataPriorityCritical"},
+      {"access": "public", "name": "ARCollaborationDataPriorityOptional"}
+     ],
+     "name": "ARCollaborationDataPriority"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AREnvironmentTexturingNone"},
+      {"access": "public", "name": "AREnvironmentTexturingManual"},
+      {"access": "public", "name": "AREnvironmentTexturingAutomatic"}
+     ],
+     "name": "AREnvironmentTexturing"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARErrorCodeUnsupportedConfiguration"},
+      {"access": "public", "name": "ARErrorCodeSensorUnavailable"},
+      {"access": "public", "name": "ARErrorCodeSensorFailed"},
+      {"access": "public", "name": "ARErrorCodeCameraUnauthorized"},
+      {"access": "public", "name": "ARErrorCodeMicrophoneUnauthorized"},
+      {"access": "public", "introduced": "14", "name": "ARErrorCodeLocationUnauthorized"},
+      {"access": "public", "introduced": "16", "name": "ARErrorCodeHighResolutionFrameCaptureInProgress"},
+      {"access": "public", "introduced": "16", "name": "ARErrorCodeHighResolutionFrameCaptureFailed"},
+      {"access": "public", "name": "ARErrorCodeWorldTrackingFailed"},
+      {"access": "public", "introduced": "14", "name": "ARErrorCodeGeoTrackingNotAvailableAtLocation"},
+      {"access": "public", "introduced": "14", "name": "ARErrorCodeGeoTrackingFailed"},
+      {"access": "public", "introduced": "11.3", "name": "ARErrorCodeInvalidReferenceImage"},
+      {"access": "public", "introduced": "12", "name": "ARErrorCodeInvalidReferenceObject"},
+      {"access": "public", "introduced": "12", "name": "ARErrorCodeInvalidWorldMap"},
+      {"access": "public", "introduced": "12", "name": "ARErrorCodeInvalidConfiguration"},
+      {"access": "public", "introduced": "13.2", "name": "ARErrorCodeInvalidCollaborationData"},
+      {"access": "public", "introduced": "12", "name": "ARErrorCodeInsufficientFeatures"},
+      {"access": "public", "introduced": "12", "name": "ARErrorCodeObjectMergeFailed"},
+      {"access": "public", "introduced": "12", "name": "ARErrorCodeFileIOFailed"},
+      {"access": "public", "introduced": "14", "name": "ARErrorCodeRequestFailed"}
+     ],
+     "name": "ARErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARFrameSemanticNone"},
+      {"access": "public", "name": "ARFrameSemanticPersonSegmentation"},
+      {"access": "public", "name": "ARFrameSemanticPersonSegmentationWithDepth"},
+      {"access": "public", "name": "ARFrameSemanticBodyDetection"},
+      {"access": "public", "introduced": "14", "name": "ARFrameSemanticSceneDepth"},
+      {"access": "public", "introduced": "14", "name": "ARFrameSemanticSmoothedSceneDepth"}
+     ],
+     "name": "ARFrameSemantics"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARGeoTrackingAccuracyUndetermined"},
+      {"access": "public", "name": "ARGeoTrackingAccuracyLow"},
+      {"access": "public", "name": "ARGeoTrackingAccuracyMedium"},
+      {"access": "public", "name": "ARGeoTrackingAccuracyHigh"}
+     ],
+     "name": "ARGeoTrackingAccuracy"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARGeoTrackingStateNotAvailable"},
+      {"access": "public", "name": "ARGeoTrackingStateInitializing"},
+      {"access": "public", "name": "ARGeoTrackingStateLocalizing"},
+      {"access": "public", "name": "ARGeoTrackingStateLocalized"}
+     ],
+     "name": "ARGeoTrackingState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARGeoTrackingStateReasonNone"},
+      {"access": "public", "name": "ARGeoTrackingStateReasonNotAvailableAtLocation"},
+      {"access": "public", "name": "ARGeoTrackingStateReasonNeedLocationPermissions"},
+      {"access": "public", "name": "ARGeoTrackingStateReasonWorldTrackingUnstable"},
+      {"access": "public", "name": "ARGeoTrackingStateReasonWaitingForLocation"},
+      {"access": "public", "name": "ARGeoTrackingStateReasonWaitingForAvailabilityCheck"},
+      {"access": "public", "name": "ARGeoTrackingStateReasonGeoDataNotLoaded"},
+      {"access": "public", "name": "ARGeoTrackingStateReasonDevicePointedTooLow"},
+      {"access": "public", "name": "ARGeoTrackingStateReasonVisualLocalizationFailed"}
+     ],
+     "name": "ARGeoTrackingStateReason"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARGeometryPrimitiveTypeLine"},
+      {"access": "public", "name": "ARGeometryPrimitiveTypeTriangle"}
+     ],
+     "name": "ARGeometryPrimitiveType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARHitTestResultTypeFeaturePoint"},
+      {"access": "public", "name": "ARHitTestResultTypeEstimatedHorizontalPlane"},
+      {"access": "public", "introduced": "11.3", "name": "ARHitTestResultTypeEstimatedVerticalPlane"},
+      {"access": "public", "name": "ARHitTestResultTypeExistingPlane"},
+      {"access": "public", "name": "ARHitTestResultTypeExistingPlaneUsingExtent"},
+      {"access": "public", "introduced": "11.3", "name": "ARHitTestResultTypeExistingPlaneUsingGeometry"}
+     ],
+     "name": "ARHitTestResultType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARMatteResolutionFull"},
+      {"access": "public", "name": "ARMatteResolutionHalf"}
+     ],
+     "name": "ARMatteResolution"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARMeshClassificationNone"},
+      {"access": "public", "name": "ARMeshClassificationWall"},
+      {"access": "public", "name": "ARMeshClassificationFloor"},
+      {"access": "public", "name": "ARMeshClassificationCeiling"},
+      {"access": "public", "name": "ARMeshClassificationTable"},
+      {"access": "public", "name": "ARMeshClassificationSeat"},
+      {"access": "public", "name": "ARMeshClassificationWindow"},
+      {"access": "public", "name": "ARMeshClassificationDoor"}
+     ],
+     "name": "ARMeshClassification"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARPlaneAnchorAlignmentHorizontal"},
+      {"access": "public", "introduced": "11.3", "name": "ARPlaneAnchorAlignmentVertical"}
+     ],
+     "name": "ARPlaneAnchorAlignment"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARPlaneClassificationNone"},
+      {"access": "public", "name": "ARPlaneClassificationWall"},
+      {"access": "public", "name": "ARPlaneClassificationFloor"},
+      {"access": "public", "name": "ARPlaneClassificationCeiling"},
+      {"access": "public", "name": "ARPlaneClassificationTable"},
+      {"access": "public", "name": "ARPlaneClassificationSeat"},
+      {"access": "public", "name": "ARPlaneClassificationWindow"},
+      {"access": "public", "name": "ARPlaneClassificationDoor"}
+     ],
+     "name": "ARPlaneClassification"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARPlaneClassificationStatusNotAvailable"},
+      {"access": "public", "name": "ARPlaneClassificationStatusUndetermined"},
+      {"access": "public", "name": "ARPlaneClassificationStatusUnknown"},
+      {"access": "public", "name": "ARPlaneClassificationStatusKnown"}
+     ],
+     "name": "ARPlaneClassificationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARPlaneDetectionNone"},
+      {"access": "public", "name": "ARPlaneDetectionHorizontal"},
+      {"access": "public", "introduced": "11.3", "name": "ARPlaneDetectionVertical"}
+     ],
+     "name": "ARPlaneDetection"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARRaycastTargetExistingPlaneGeometry"},
+      {"access": "public", "name": "ARRaycastTargetExistingPlaneInfinite"},
+      {"access": "public", "name": "ARRaycastTargetEstimatedPlane"}
+     ],
+     "name": "ARRaycastTarget"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARRaycastTargetAlignmentHorizontal"},
+      {"access": "public", "name": "ARRaycastTargetAlignmentVertical"},
+      {"access": "public", "name": "ARRaycastTargetAlignmentAny"}
+     ],
+     "name": "ARRaycastTargetAlignment"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARSceneReconstructionNone"},
+      {"access": "public", "name": "ARSceneReconstructionMesh"},
+      {"access": "public", "name": "ARSceneReconstructionMeshWithClassification"}
+     ],
+     "name": "ARSceneReconstruction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARSegmentationClassNone"},
+      {"access": "public", "name": "ARSegmentationClassPerson"}
+     ],
+     "name": "ARSegmentationClass"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARSessionRunOptionResetTracking"},
+      {"access": "public", "name": "ARSessionRunOptionRemoveExistingAnchors"},
+      {"access": "public", "name": "ARSessionRunOptionStopTrackedRaycasts"},
+      {"access": "public", "name": "ARSessionRunOptionResetSceneReconstruction"}
+     ],
+     "name": "ARSessionRunOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARTrackingStateNotAvailable"},
+      {"access": "public", "name": "ARTrackingStateLimited"},
+      {"access": "public", "name": "ARTrackingStateNormal"}
+     ],
+     "name": "ARTrackingState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARTrackingStateReasonNone"},
+      {"access": "public", "name": "ARTrackingStateReasonInitializing"},
+      {"access": "public", "name": "ARTrackingStateReasonExcessiveMotion"},
+      {"access": "public", "name": "ARTrackingStateReasonInsufficientFeatures"},
+      {"access": "public", "introduced": "11.3", "name": "ARTrackingStateReasonRelocalizing"}
+     ],
+     "name": "ARTrackingStateReason"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARWorldAlignmentGravity"},
+      {"access": "public", "name": "ARWorldAlignmentGravityAndHeading"},
+      {"access": "public", "name": "ARWorldAlignmentCamera"}
+     ],
+     "name": "ARWorldAlignment"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARWorldMappingStatusNotAvailable"},
+      {"access": "public", "name": "ARWorldMappingStatusLimited"},
+      {"access": "public", "name": "ARWorldMappingStatusExtending"},
+      {"access": "public", "name": "ARWorldMappingStatusMapped"}
+     ],
+     "name": "ARWorldMappingStatus"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationBrowDownLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationBrowDownRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationBrowInnerUp"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationBrowOuterUpLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationBrowOuterUpRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationCheekPuff"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationCheekSquintLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationCheekSquintRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationEyeBlinkLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationEyeBlinkRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationEyeLookDownLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationEyeLookDownRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationEyeLookInLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationEyeLookInRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationEyeLookOutLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationEyeLookOutRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationEyeLookUpLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationEyeLookUpRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationEyeSquintLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationEyeSquintRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationEyeWideLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationEyeWideRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationJawForward"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationJawLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationJawOpen"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationJawRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthClose"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthDimpleLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthDimpleRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthFrownLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthFrownRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthFunnel"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthLowerDownLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthLowerDownRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthPressLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthPressRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthPucker"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthRollLower"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthRollUpper"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthShrugLower"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthShrugUpper"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthSmileLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthSmileRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthStretchLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthStretchRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthUpperUpLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationMouthUpperUpRight"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationNoseSneerLeft"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationNoseSneerRight"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_ARBlendShapeLocationTongueOut"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_ARErrorDomain"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_ARReferenceObjectArchiveExtension"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_ARSkeletonJointNameForRecognizedPointKey"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_ARSkeletonJointNameHead"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_ARSkeletonJointNameLeftFoot"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_ARSkeletonJointNameLeftHand"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_ARSkeletonJointNameLeftShoulder"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_ARSkeletonJointNameRightFoot"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_ARSkeletonJointNameRightHand"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_ARSkeletonJointNameRightShoulder"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_ARSkeletonJointNameRoot"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTransform:"},
+      {"access": "public", "introduced": "12", "name": "initWithName:transform:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "ARAnchor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "introduced": "12", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sessionIdentifier", "introduced": "13", "name": "sessionIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "transform", "name": "transform"}
+     ],
+     "protocols": [
+      "ARAnchorCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTransform:", "unavailable": true},
+      {"access": "public", "name": "initWithName:transform:", "unavailable": true}
+     ],
+     "introduced": "14.3",
+     "linkage": "exported",
+     "name": "ARAppClipCodeAnchor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "url", "name": "url"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "urlDecodingState", "name": "urlDecodingState"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "radius", "name": "radius"}
+     ],
+     "protocols": [
+      "ARTrackable"
+     ],
+     "super": "ARAnchor"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "ARBody2D",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "skeleton", "name": "skeleton"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTransform:", "unavailable": true},
+      {"access": "public", "name": "initWithName:transform:", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "ARBodyAnchor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "skeleton", "name": "skeleton"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "estimatedScaleFactor", "name": "estimatedScaleFactor"}
+     ],
+     "protocols": [
+      "ARTrackable"
+     ],
+     "super": "ARAnchor"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "ARBodyTrackingConfiguration",
+     "properties": [
+      {"access": "public", "getter": "isAutoFocusEnabled", "name": "autoFocusEnabled", "setter": "setAutoFocusEnabled:"},
+      {"access": "public", "getter": "initialWorldMap", "name": "initialWorldMap", "setter": "setInitialWorldMap:"},
+      {"access": "public", "getter": "environmentTexturing", "name": "environmentTexturing", "setter": "setEnvironmentTexturing:"},
+      {"access": "public", "getter": "wantsHDREnvironmentTextures", "name": "wantsHDREnvironmentTextures", "setter": "setWantsHDREnvironmentTextures:"},
+      {"access": "public", "getter": "planeDetection", "name": "planeDetection", "setter": "setPlaneDetection:"},
+      {"access": "public", "getter": "detectionImages", "name": "detectionImages", "setter": "setDetectionImages:"},
+      {"access": "public", "getter": "automaticImageScaleEstimationEnabled", "name": "automaticImageScaleEstimationEnabled", "setter": "setAutomaticImageScaleEstimationEnabled:"},
+      {"access": "public", "getter": "automaticSkeletonScaleEstimationEnabled", "name": "automaticSkeletonScaleEstimationEnabled", "setter": "setAutomaticSkeletonScaleEstimationEnabled:"},
+      {"access": "public", "getter": "maximumNumberOfTrackedImages", "name": "maximumNumberOfTrackedImages", "setter": "setMaximumNumberOfTrackedImages:"},
+      {"access": "public", "getter": "appClipCodeTrackingEnabled", "introduced": "14.3", "name": "appClipCodeTrackingEnabled", "setter": "setAppClipCodeTrackingEnabled:"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportsAppClipCodeTracking", "introduced": "14.3", "name": "supportsAppClipCodeTracking"}
+     ],
+     "super": "ARConfiguration"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "projectionMatrixForOrientation:viewportSize:zNear:zFar:"},
+      {"access": "public", "name": "projectPoint:orientation:viewportSize:"},
+      {"access": "public", "introduced": "12", "name": "unprojectPoint:ontoPlaneWithTransform:orientation:viewportSize:"},
+      {"access": "public", "name": "viewMatrixForOrientation:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "ARCamera",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "transform", "name": "transform"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "eulerAngles", "name": "eulerAngles"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "trackingState", "name": "trackingState"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "trackingStateReason", "name": "trackingStateReason"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "intrinsics", "name": "intrinsics"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "imageResolution", "name": "imageResolution"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "exposureDuration", "introduced": "13", "name": "exposureDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "exposureOffset", "introduced": "13", "name": "exposureOffset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "projectionMatrix", "name": "projectionMatrix"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "ARCollaborationData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "priority", "name": "priority"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "13", "name": "supportsFrameSemantics:"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "ARConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupported", "name": "isSupported"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportedVideoFormats", "introduced": "11.3", "name": "supportedVideoFormats"},
+      {"access": "public", "getter": "videoFormat", "introduced": "11.3", "name": "videoFormat", "setter": "setVideoFormat:"},
+      {"access": "public", "getter": "worldAlignment", "name": "worldAlignment", "setter": "setWorldAlignment:"},
+      {"access": "public", "getter": "isLightEstimationEnabled", "name": "lightEstimationEnabled", "setter": "setLightEstimationEnabled:"},
+      {"access": "public", "getter": "providesAudioData", "name": "providesAudioData", "setter": "setProvidesAudioData:"},
+      {"access": "public", "getter": "frameSemantics", "introduced": "13", "name": "frameSemantics", "setter": "setFrameSemantics:"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "configurableCaptureDeviceForPrimaryCamera", "introduced": "16", "name": "configurableCaptureDeviceForPrimaryCamera"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "recommendedVideoFormatFor4KResolution", "introduced": "16", "name": "recommendedVideoFormatFor4KResolution"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "recommendedVideoFormatForHighResolutionFrameCapturing", "introduced": "16", "name": "recommendedVideoFormatForHighResolutionFrameCapturing"},
+      {"access": "public", "getter": "videoHDRAllowed", "introduced": "16", "name": "videoHDRAllowed", "setter": "setVideoHDRAllowed:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "ARDirectionalLightEstimate",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "sphericalHarmonicsCoefficients", "name": "sphericalHarmonicsCoefficients"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "primaryLightDirection", "name": "primaryLightDirection"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "primaryLightIntensity", "name": "primaryLightIntensity"}
+     ],
+     "super": "ARLightEstimate"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTransform:extent:"},
+      {"access": "public", "name": "initWithName:transform:extent:"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "AREnvironmentProbeAnchor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "environmentTexture", "name": "environmentTexture"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extent", "name": "extent"}
+     ],
+     "super": "ARAnchor"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTransform:", "unavailable": true},
+      {"access": "public", "name": "initWithName:transform:", "unavailable": true}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "ARFaceAnchor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "geometry", "name": "geometry"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "leftEyeTransform", "introduced": "12", "name": "leftEyeTransform"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rightEyeTransform", "introduced": "12", "name": "rightEyeTransform"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lookAtPoint", "introduced": "12", "name": "lookAtPoint"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "blendShapes", "name": "blendShapes"}
+     ],
+     "protocols": [
+      "ARTrackable"
+     ],
+     "super": "ARAnchor"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithBlendShapes:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "ARFaceGeometry",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "vertexCount", "name": "vertexCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "vertices", "name": "vertices"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textureCoordinateCount", "name": "textureCoordinateCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textureCoordinates", "name": "textureCoordinates"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "triangleCount", "name": "triangleCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "triangleIndices", "name": "triangleIndices"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "ARFaceTrackingConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportedNumberOfTrackedFaces", "introduced": "13", "name": "supportedNumberOfTrackedFaces"},
+      {"access": "public", "getter": "maximumNumberOfTrackedFaces", "introduced": "13", "name": "maximumNumberOfTrackedFaces", "setter": "setMaximumNumberOfTrackedFaces:"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportsWorldTracking", "introduced": "13", "name": "supportsWorldTracking"},
+      {"access": "public", "getter": "isWorldTrackingEnabled", "introduced": "13", "name": "worldTrackingEnabled", "setter": "setWorldTrackingEnabled:"}
+     ],
+     "super": "ARConfiguration"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "11", "name": "hitTest:types:"},
+      {"access": "public", "introduced": "13", "name": "raycastQueryFromPoint:allowingTarget:alignment:"},
+      {"access": "public", "name": "displayTransformForOrientation:viewportSize:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "ARFrame",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "name": "timestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "capturedImage", "name": "capturedImage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "exifData", "introduced": "16", "name": "exifData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "cameraGrainTexture", "introduced": "13", "name": "cameraGrainTexture"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "cameraGrainIntensity", "introduced": "13", "name": "cameraGrainIntensity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "capturedDepthData", "name": "capturedDepthData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "capturedDepthDataTimestamp", "name": "capturedDepthDataTimestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "camera", "name": "camera"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "anchors", "name": "anchors"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lightEstimate", "name": "lightEstimate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rawFeaturePoints", "name": "rawFeaturePoints"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "worldMappingStatus", "introduced": "12", "name": "worldMappingStatus"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "segmentationBuffer", "introduced": "13", "name": "segmentationBuffer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "estimatedDepthData", "introduced": "13", "name": "estimatedDepthData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "detectedBody", "introduced": "13", "name": "detectedBody"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "geoTrackingStatus", "introduced": "14", "name": "geoTrackingStatus"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sceneDepth", "introduced": "14", "name": "sceneDepth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "smoothedSceneDepth", "introduced": "14", "name": "smoothedSceneDepth"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithCoordinate:"},
+      {"access": "public", "name": "initWithCoordinate:altitude:"},
+      {"access": "public", "name": "initWithName:coordinate:"},
+      {"access": "public", "name": "initWithName:coordinate:altitude:"},
+      {"access": "public", "name": "initWithTransform:", "unavailable": true},
+      {"access": "public", "name": "initWithName:transform:", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "ARGeoAnchor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "coordinate", "name": "coordinate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "altitude", "name": "altitude"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "altitudeSource", "name": "altitudeSource"}
+     ],
+     "protocols": [
+      "ARTrackable"
+     ],
+     "super": "ARAnchor"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "checkAvailabilityWithCompletionHandler:"},
+      {"access": "public", "name": "checkAvailabilityAtCoordinate:completionHandler:"},
+      {"access": "public", "name": "new"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "ARGeoTrackingConfiguration",
+     "properties": [
+      {"access": "public", "getter": "worldAlignment", "name": "worldAlignment", "setter": "setWorldAlignment:", "unavailable": true},
+      {"access": "public", "getter": "environmentTexturing", "name": "environmentTexturing", "setter": "setEnvironmentTexturing:"},
+      {"access": "public", "getter": "wantsHDREnvironmentTextures", "name": "wantsHDREnvironmentTextures", "setter": "setWantsHDREnvironmentTextures:"},
+      {"access": "public", "getter": "planeDetection", "name": "planeDetection", "setter": "setPlaneDetection:"},
+      {"access": "public", "getter": "detectionImages", "name": "detectionImages", "setter": "setDetectionImages:"},
+      {"access": "public", "getter": "automaticImageScaleEstimationEnabled", "name": "automaticImageScaleEstimationEnabled", "setter": "setAutomaticImageScaleEstimationEnabled:"},
+      {"access": "public", "getter": "maximumNumberOfTrackedImages", "name": "maximumNumberOfTrackedImages", "setter": "setMaximumNumberOfTrackedImages:"},
+      {"access": "public", "getter": "detectionObjects", "name": "detectionObjects", "setter": "setDetectionObjects:"},
+      {"access": "public", "getter": "appClipCodeTrackingEnabled", "introduced": "14.3", "name": "appClipCodeTrackingEnabled", "setter": "setAppClipCodeTrackingEnabled:"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportsAppClipCodeTracking", "introduced": "14.3", "name": "supportsAppClipCodeTracking"}
+     ],
+     "super": "ARConfiguration"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "ARGeoTrackingStatus",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "accuracy", "name": "accuracy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stateReason", "name": "stateReason"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "13.4",
+     "linkage": "exported",
+     "name": "ARGeometryElement",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "buffer", "name": "buffer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "name": "count"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "bytesPerIndex", "name": "bytesPerIndex"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "indexCountPerPrimitive", "name": "indexCountPerPrimitive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "primitiveType", "name": "primitiveType"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "13.4",
+     "linkage": "exported",
+     "name": "ARGeometrySource",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "buffer", "name": "buffer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "name": "count"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "format", "name": "format"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "componentsPerVector", "name": "componentsPerVector"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "offset", "name": "offset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stride", "name": "stride"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "ARHitTestResult",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "distance", "name": "distance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localTransform", "name": "localTransform"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "worldTransform", "name": "worldTransform"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "anchor", "name": "anchor"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTransform:", "unavailable": true},
+      {"access": "public", "name": "initWithName:transform:", "unavailable": true}
+     ],
+     "introduced": "11.3",
+     "linkage": "exported",
+     "name": "ARImageAnchor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "referenceImage", "name": "referenceImage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "estimatedScaleFactor", "introduced": "13", "name": "estimatedScaleFactor"}
+     ],
+     "protocols": [
+      "ARTrackable"
+     ],
+     "super": "ARAnchor"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "ARImageTrackingConfiguration",
+     "properties": [
+      {"access": "public", "getter": "isAutoFocusEnabled", "name": "autoFocusEnabled", "setter": "setAutoFocusEnabled:"},
+      {"access": "public", "getter": "trackingImages", "name": "trackingImages", "setter": "setTrackingImages:"},
+      {"access": "public", "getter": "maximumNumberOfTrackedImages", "name": "maximumNumberOfTrackedImages", "setter": "setMaximumNumberOfTrackedImages:"}
+     ],
+     "super": "ARConfiguration"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "ARLightEstimate",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "ambientIntensity", "name": "ambientIntensity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ambientColorTemperature", "name": "ambientColorTemperature"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDevice:matteResolution:"},
+      {"access": "public", "name": "generateMatteFromFrame:commandBuffer:"},
+      {"access": "public", "name": "generateDilatedDepthFromFrame:commandBuffer:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "ARMatteGenerator",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTransform:", "unavailable": true},
+      {"access": "public", "name": "initWithName:transform:", "unavailable": true}
+     ],
+     "introduced": "13.4",
+     "linkage": "exported",
+     "name": "ARMeshAnchor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "geometry", "name": "geometry"}
+     ],
+     "super": "ARAnchor"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "13.4",
+     "linkage": "exported",
+     "name": "ARMeshGeometry",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "vertices", "name": "vertices"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "normals", "name": "normals"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "faces", "name": "faces"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "classification", "name": "classification"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTransform:", "unavailable": true},
+      {"access": "public", "name": "initWithName:transform:", "unavailable": true}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "ARObjectAnchor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "referenceObject", "name": "referenceObject"}
+     ],
+     "super": "ARAnchor"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "ARObjectScanningConfiguration",
+     "properties": [
+      {"access": "public", "getter": "isAutoFocusEnabled", "name": "autoFocusEnabled", "setter": "setAutoFocusEnabled:"},
+      {"access": "public", "getter": "planeDetection", "name": "planeDetection", "setter": "setPlaneDetection:"}
+     ],
+     "super": "ARConfiguration"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "AROrientationTrackingConfiguration",
+     "properties": [
+      {"access": "public", "getter": "isAutoFocusEnabled", "introduced": "11.3", "name": "autoFocusEnabled", "setter": "setAutoFocusEnabled:"}
+     ],
+     "super": "ARConfiguration"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTransform:", "unavailable": true},
+      {"access": "public", "name": "initWithName:transform:", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "ARParticipantAnchor",
+     "super": "ARAnchor"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTransform:", "unavailable": true},
+      {"access": "public", "name": "initWithName:transform:", "unavailable": true}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "ARPlaneAnchor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isClassificationSupported", "introduced": "12", "name": "classificationSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alignment", "name": "alignment"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "center", "name": "center"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extent", "introduced": "11", "name": "extent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "planeExtent", "introduced": "16", "name": "planeExtent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "geometry", "introduced": "11.3", "name": "geometry"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "classificationStatus", "introduced": "12", "name": "classificationStatus"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "classification", "introduced": "12", "name": "classification"}
+     ],
+     "super": "ARAnchor"
+    },
+    {
+     "access": "public",
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "ARPlaneExtent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "rotationOnYAxis", "name": "rotationOnYAxis"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "width", "name": "width"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "height", "name": "height"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "11.3",
+     "linkage": "exported",
+     "name": "ARPlaneGeometry",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "vertexCount", "name": "vertexCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "vertices", "name": "vertices"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textureCoordinateCount", "name": "textureCoordinateCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textureCoordinates", "name": "textureCoordinates"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "triangleCount", "name": "triangleCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "triangleIndices", "name": "triangleIndices"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "boundaryVertexCount", "name": "boundaryVertexCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "boundaryVertices", "name": "boundaryVertices"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "ARPointCloud",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "name": "count"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "points", "name": "points"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifiers", "name": "identifiers"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "ARPositionalTrackingConfiguration",
+     "properties": [
+      {"access": "public", "getter": "planeDetection", "name": "planeDetection", "setter": "setPlaneDetection:"},
+      {"access": "public", "getter": "initialWorldMap", "name": "initialWorldMap", "setter": "setInitialWorldMap:"}
+     ],
+     "super": "ARConfiguration"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithOrigin:direction:allowingTarget:alignment:"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "ARRaycastQuery",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "origin", "name": "origin"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "direction", "name": "direction"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "target", "name": "target"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "targetAlignment", "name": "targetAlignment"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "ARRaycastResult",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "worldTransform", "name": "worldTransform"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "target", "name": "target"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "targetAlignment", "name": "targetAlignment"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "anchor", "name": "anchor"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "referenceImagesInGroupNamed:bundle:"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "13", "name": "validateWithCompletionHandler:"},
+      {"access": "public", "name": "initWithCGImage:orientation:physicalWidth:"},
+      {"access": "public", "name": "initWithPixelBuffer:orientation:physicalWidth:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "11.3",
+     "linkage": "exported",
+     "name": "ARReferenceImage",
+     "properties": [
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "physicalSize", "name": "physicalSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "resourceGroupName", "introduced": "13", "name": "resourceGroupName"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "referenceObjectsInGroupNamed:bundle:"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithArchiveURL:error:"},
+      {"access": "public", "name": "exportObjectToURL:previewImage:error:"},
+      {"access": "public", "name": "referenceObjectByApplyingTransform:"},
+      {"access": "public", "name": "referenceObjectByMergingObject:error:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "ARReferenceObject",
+     "properties": [
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "center", "name": "center"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extent", "name": "extent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scale", "name": "scale"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "resourceGroupName", "introduced": "13", "name": "resourceGroupName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rawFeaturePoints", "name": "rawFeaturePoints"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "runWithConfiguration:"},
+      {"access": "public", "name": "runWithConfiguration:options:"},
+      {"access": "public", "name": "pause"},
+      {"access": "public", "name": "addAnchor:"},
+      {"access": "public", "name": "removeAnchor:"},
+      {"access": "public", "introduced": "11.3", "name": "setWorldOrigin:"},
+      {"access": "public", "introduced": "12", "name": "getCurrentWorldMapWithCompletionHandler:"},
+      {"access": "public", "introduced": "12", "name": "createReferenceObjectWithTransform:center:extent:completionHandler:"},
+      {"access": "public", "introduced": "13", "name": "raycast:"},
+      {"access": "public", "introduced": "13", "name": "trackedRaycast:updateHandler:"},
+      {"access": "public", "introduced": "13", "name": "updateWithCollaborationData:"},
+      {"access": "public", "introduced": "14", "name": "getGeoLocationForPoint:completionHandler:"},
+      {"access": "public", "introduced": "16", "name": "captureHighResolutionFrameWithCompletion:"},
+      {"access": "public", "introduced": "26", "name": "captureHighResolutionFrameUsingPhotoSettings:completion:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "ARSession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "introduced": "13", "name": "identifier"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "delegateQueue", "name": "delegateQueue", "setter": "setDelegateQueue:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentFrame", "name": "currentFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "configuration", "name": "configuration"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "isJointTracked:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "ARSkeleton",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "definition", "name": "definition"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "jointCount", "name": "jointCount"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "landmarkForJointNamed:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "ARSkeleton2D",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "jointLandmarks", "name": "jointLandmarks"}
+     ],
+     "super": "ARSkeleton"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "modelTransformForJointName:"},
+      {"access": "public", "name": "localTransformForJointName:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "ARSkeleton3D",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "jointModelTransforms", "name": "jointModelTransforms"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "jointLocalTransforms", "name": "jointLocalTransforms"}
+     ],
+     "super": "ARSkeleton"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "indexForJointName:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "ARSkeletonDefinition",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "defaultBody3DSkeletonDefinition", "name": "defaultBody3DSkeletonDefinition"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "defaultBody2DSkeletonDefinition", "name": "defaultBody2DSkeletonDefinition"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "jointCount", "name": "jointCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "jointNames", "name": "jointNames"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "parentIndices", "name": "parentIndices"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "neutralBodySkeleton3D", "name": "neutralBodySkeleton3D"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "stopTracking"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "ARTrackedRaycast",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "11.3",
+     "linkage": "exported",
+     "name": "ARVideoFormat",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "captureDevicePosition", "introduced": "13", "name": "captureDevicePosition"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "captureDeviceType", "introduced": "14.5", "name": "captureDeviceType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "imageResolution", "name": "imageResolution"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "framesPerSecond", "name": "framesPerSecond"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isRecommendedForHighResolutionFrameCapturing", "introduced": "16", "name": "isRecommendedForHighResolutionFrameCapturing"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVideoHDRSupported", "introduced": "16", "name": "videoHDRSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "defaultColorSpace", "introduced": "26", "name": "defaultColorSpace"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "defaultPhotoSettings", "introduced": "26", "name": "defaultPhotoSettings"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "ARWorldMap",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "center", "name": "center"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extent", "name": "extent"},
+      {"access": "public", "getter": "anchors", "name": "anchors", "setter": "setAnchors:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rawFeaturePoints", "name": "rawFeaturePoints"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "13.4", "name": "supportsSceneReconstruction:"},
+      {"access": "public", "name": "new"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "ARWorldTrackingConfiguration",
+     "properties": [
+      {"access": "public", "getter": "isAutoFocusEnabled", "introduced": "11.3", "name": "autoFocusEnabled", "setter": "setAutoFocusEnabled:"},
+      {"access": "public", "getter": "environmentTexturing", "introduced": "12", "name": "environmentTexturing", "setter": "setEnvironmentTexturing:"},
+      {"access": "public", "getter": "wantsHDREnvironmentTextures", "introduced": "13", "name": "wantsHDREnvironmentTextures", "setter": "setWantsHDREnvironmentTextures:"},
+      {"access": "public", "getter": "planeDetection", "name": "planeDetection", "setter": "setPlaneDetection:"},
+      {"access": "public", "getter": "initialWorldMap", "introduced": "12", "name": "initialWorldMap", "setter": "setInitialWorldMap:"},
+      {"access": "public", "getter": "detectionImages", "introduced": "11.3", "name": "detectionImages", "setter": "setDetectionImages:"},
+      {"access": "public", "getter": "automaticImageScaleEstimationEnabled", "introduced": "13", "name": "automaticImageScaleEstimationEnabled", "setter": "setAutomaticImageScaleEstimationEnabled:"},
+      {"access": "public", "getter": "maximumNumberOfTrackedImages", "introduced": "12", "name": "maximumNumberOfTrackedImages", "setter": "setMaximumNumberOfTrackedImages:"},
+      {"access": "public", "getter": "detectionObjects", "introduced": "12", "name": "detectionObjects", "setter": "setDetectionObjects:"},
+      {"access": "public", "getter": "isCollaborationEnabled", "introduced": "13", "name": "collaborationEnabled", "setter": "setCollaborationEnabled:"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportsUserFaceTracking", "introduced": "13", "name": "supportsUserFaceTracking"},
+      {"access": "public", "getter": "userFaceTrackingEnabled", "introduced": "13", "name": "userFaceTrackingEnabled", "setter": "setUserFaceTrackingEnabled:"},
+      {"access": "public", "getter": "appClipCodeTrackingEnabled", "introduced": "14.3", "name": "appClipCodeTrackingEnabled", "setter": "setAppClipCodeTrackingEnabled:"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportsAppClipCodeTracking", "introduced": "14.3", "name": "supportsAppClipCodeTracking"},
+      {"access": "public", "getter": "sceneReconstruction", "introduced": "13.4", "name": "sceneReconstruction", "setter": "setSceneReconstruction:"}
+     ],
+     "super": "ARConfiguration"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithAnchor:"}
+     ],
+     "introduced": "12",
+     "name": "ARAnchorCopying",
+     "protocols": [
+      "NSCopying"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "session:didUpdateFrame:", "optional": true},
+      {"access": "public", "name": "session:didAddAnchors:", "optional": true},
+      {"access": "public", "name": "session:didUpdateAnchors:", "optional": true},
+      {"access": "public", "name": "session:didRemoveAnchors:", "optional": true}
+     ],
+     "introduced": "11",
+     "name": "ARSessionDelegate",
+     "protocols": [
+      "ARSessionObserver"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "session:didFailWithError:", "optional": true},
+      {"access": "public", "name": "session:cameraDidChangeTrackingState:", "optional": true},
+      {"access": "public", "name": "sessionWasInterrupted:", "optional": true},
+      {"access": "public", "name": "sessionInterruptionEnded:", "optional": true},
+      {"access": "public", "introduced": "11.3", "name": "sessionShouldAttemptRelocalization:", "optional": true},
+      {"access": "public", "name": "session:didOutputAudioSampleBuffer:", "optional": true},
+      {"access": "public", "introduced": "13", "name": "session:didOutputCollaborationData:", "optional": true},
+      {"access": "public", "introduced": "14", "name": "session:didChangeGeoTrackingStatus:", "optional": true}
+     ],
+     "introduced": "11",
+     "name": "ARSessionObserver",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "ARSessionProviding",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "session", "name": "session"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "name": "ARTrackable",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isTracked", "name": "isTracked"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios",
+   "typedefs": [
+    {"access": "public", "introduced": "14", "name": "ARAltitudeSource"},
+    {"access": "public", "introduced": "14.3", "name": "ARAppClipCodeURLDecodingState"},
+    {"access": "public", "introduced": "11", "name": "ARBlendShapeLocation"},
+    {"access": "public", "introduced": "13", "name": "ARCollaborationDataPriority"},
+    {"access": "public", "introduced": "12", "name": "AREnvironmentTexturing"},
+    {"access": "public", "introduced": "11", "name": "ARErrorCode"},
+    {"access": "public", "introduced": "13", "name": "ARFrameSemantics"},
+    {"access": "public", "introduced": "14", "name": "ARGeoTrackingAccuracy"},
+    {"access": "public", "introduced": "14", "name": "ARGeoTrackingState"},
+    {"access": "public", "introduced": "14", "name": "ARGeoTrackingStateReason"},
+    {"access": "public", "introduced": "13.4", "name": "ARGeometryPrimitiveType"},
+    {"access": "public", "introduced": "11", "name": "ARHitTestResultType"},
+    {"access": "public", "introduced": "13", "name": "ARMatteResolution"},
+    {"access": "public", "introduced": "13.4", "name": "ARMeshClassification"},
+    {"access": "public", "introduced": "11", "name": "ARPlaneAnchorAlignment"},
+    {"access": "public", "introduced": "12", "name": "ARPlaneClassification"},
+    {"access": "public", "introduced": "12", "name": "ARPlaneClassificationStatus"},
+    {"access": "public", "introduced": "11", "name": "ARPlaneDetection"},
+    {"access": "public", "introduced": "13", "name": "ARRaycastTarget"},
+    {"access": "public", "introduced": "13", "name": "ARRaycastTargetAlignment"},
+    {"access": "public", "introduced": "13.4", "name": "ARSceneReconstruction"},
+    {"access": "public", "introduced": "13", "name": "ARSegmentationClass"},
+    {"access": "public", "introduced": "11", "name": "ARSessionRunOptions"},
+    {"access": "public", "introduced": "13", "name": "ARSkeletonJointName"},
+    {"access": "public", "introduced": "11", "name": "ARTrackingState"},
+    {"access": "public", "introduced": "11", "name": "ARTrackingStateReason"},
+    {"access": "public", "introduced": "11", "name": "ARWorldAlignment"},
+    {"access": "public", "introduced": "12", "name": "ARWorldMappingStatus"},
+    {"access": "public", "name": "UIInterfaceOrientation"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

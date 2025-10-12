@@ -35,6 +35,10 @@
 #import <WebKit/WKWebExtensionMatchPatternPrivate.h>
 #import <WebKit/WKWebExtensionPrivate.h>
 
+#if USE(APPKIT)
+#import "AppKitSPI.h"
+#endif
+
 namespace TestWebKitAPI {
 
 static NSError *matchingError(NSArray<NSError *> *errors, WKWebExtensionError code)
@@ -238,7 +242,10 @@ TEST(WKWebExtension, MultipleIconSizes)
 
     auto screenScale = 1.0;
 #if PLATFORM(IOS_FAMILY)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: <rdar://155548417> ([ Build-Failure ] [ iOS26+ ] error: 'mainScreen' is deprecated: first deprecated in iOS 26.0)
     screenScale = UIScreen.mainScreen.scale;
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     screenScale = NSScreen.mainScreen.backingScaleFactor;
 #endif
@@ -338,6 +345,48 @@ TEST(WKWebExtension, IconErrorsOnce)
 
     // A total of 4 errors are expected: one per missing resource, and one per icon type (normal and action).
     EXPECT_EQ(testExtension.errors.count, 4u);
+}
+
+TEST(WKWebExtension, SymbolImageIcon)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"version": @"1.0",
+        @"description": @"Test",
+
+        @"icons": @{
+            @"16": @"symbol:star"
+        },
+
+        @"action": @{
+            @"default_icon": @"symbol:heart.fill"
+        }
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:@{ }];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    auto *icon = [testExtension iconForSize:CGSizeMake(16, 16)];
+    EXPECT_NOT_NULL(icon);
+#if PLATFORM(MAC)
+    EXPECT_TRUE([icon isKindOfClass:NSImage.class]);
+    EXPECT_TRUE(icon._isSymbolImage);
+#else
+    EXPECT_TRUE([icon isKindOfClass:UIImage.class]);
+    EXPECT_TRUE(icon.isSymbolImage);
+#endif
+
+    auto *actionIcon = [testExtension actionIconForSize:CGSizeMake(16, 16)];
+    EXPECT_NOT_NULL(actionIcon);
+#if PLATFORM(MAC)
+    EXPECT_TRUE([actionIcon isKindOfClass:NSImage.class]);
+    EXPECT_TRUE(actionIcon._isSymbolImage);
+#else
+    EXPECT_TRUE([actionIcon isKindOfClass:UIImage.class]);
+    EXPECT_TRUE(actionIcon.isSymbolImage);
+#endif
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
@@ -701,6 +750,50 @@ TEST(WKWebExtension, ActionIconsAndIconVariantsSpecified)
 
     icon = [testExtension iconForSize:CGSizeMake(32, 32)];
     EXPECT_NULL(icon);
+}
+
+TEST(WKWebExtension, SymbolImageIconVariant)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Symbol Variant",
+        @"version": @"1.0",
+        @"description": @"Test SF Symbol icon variant",
+
+        @"icon_variants": @[
+            @{ @"any": @"symbol:star" }
+        ],
+
+        @"action": @{
+            @"icon_variants": @[
+                @{ @"any": @"symbol:heart.fill" }
+            ]
+        }
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:@{ }];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    auto *icon = [testExtension iconForSize:CGSizeMake(64, 64)];
+    EXPECT_NOT_NULL(icon);
+#if PLATFORM(MAC)
+    EXPECT_TRUE([icon isKindOfClass:NSImage.class]);
+    EXPECT_TRUE(icon._isSymbolImage);
+#else
+    EXPECT_TRUE([icon isKindOfClass:UIImage.class]);
+    EXPECT_TRUE(icon.isSymbolImage);
+#endif
+
+    auto *actionIcon = [testExtension actionIconForSize:CGSizeMake(64, 64)];
+    EXPECT_NOT_NULL(actionIcon);
+#if PLATFORM(MAC)
+    EXPECT_TRUE([actionIcon isKindOfClass:NSImage.class]);
+    EXPECT_TRUE(actionIcon._isSymbolImage);
+#else
+    EXPECT_TRUE([actionIcon isKindOfClass:UIImage.class]);
+    EXPECT_TRUE(actionIcon.isSymbolImage);
+#endif
 }
 #endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
 

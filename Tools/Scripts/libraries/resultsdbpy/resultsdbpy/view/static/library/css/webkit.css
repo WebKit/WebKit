@@ -28,7 +28,7 @@ Copyright (C) 2019 Apple Inc. All rights reserved.
   --blueDarker: #0262ca;
   --blueDark: #066ee0;
   --blue: #0070c9;
-  --blueLight: #3b99fc;
+  --blueLight: #36C5F0;
   --blueLighter: #9dccfe;
   --blueLightest: #f5f9fe;
   --blueHighLight: #aed4fd;
@@ -726,6 +726,10 @@ pre {
   background-color: var(--redLight);
 }
 
+.dot.image {
+  background-color: var(--blueLight);
+}
+
 .dot.error {
   background-color: var(--orangeLight);
 }
@@ -824,6 +828,10 @@ pre {
 
 .dot.selector input:checked + .dot.failed {
   box-shadow: 0px 0px 5px 1px var(--redLight);
+}
+
+.dot.selector input:checked + .dot.image {
+  box-shadow: 0px 0px 5px 1px var(--blueLight);
 }
 
 .dot.selector input:checked + .dot.error {

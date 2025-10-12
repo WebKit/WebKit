@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,8 +42,12 @@
 #include "JSCSSPaintCallback.h"
 #include "JSDOMExceptionHandling.h"
 #include "MainThreadStylePropertyMapReadOnly.h"
+#include "NodeInlines.h"
 #include "PaintRenderingContext2D.h"
 #include "RenderElement.h"
+#include "RenderElementInlines.h"
+#include "RenderObjectStyle.h"
+#include "RenderStyleInlines.h"
 #include "StyleExtractor.h"
 #include <JavaScriptCore/ConstructData.h>
 
@@ -96,9 +100,9 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
     Ref canvas = CustomPaintCanvas::create(*scriptExecutionContext, destSize.width(), destSize.height());
     RefPtr context = canvas->getContext();
 
-    UncheckedKeyHashMap<AtomString, RefPtr<CSSValue>> propertyValues;
+    HashMap<AtomString, RefPtr<CSSValue>> propertyValues;
 
-    if (auto* element = renderElement->element()) {
+    if (RefPtr element = renderElement->element()) {
         for (auto& name : m_inputProperties)
             propertyValues.add(name, extractComputedProperty(name, *element));
     }

@@ -27,7 +27,7 @@
 
 DECLARE_SYSTEM_HEADER
 
-#import <wtf/Platform.h>
+#include <wtf/Platform.h>
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -72,6 +72,7 @@ typedef enum {
     MGScreenClassPad2          = 4,
     MGScreenClassPad3          = 6,
     MGScreenClassPad4          = 7,
+    MGScreenClassPad11         = 28,
 } MGScreenClass;
 
 #endif

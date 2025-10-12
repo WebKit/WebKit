@@ -827,8 +827,9 @@ class DispatchTableGL : angle::NonCopyable
     PFNGLTEXBUFFEROESPROC texBufferOES = nullptr;
     PFNGLTEXBUFFERRANGEOESPROC texBufferRangeOES = nullptr;
 
-    // GL_OVR_multiview2
+    // GL_OVR_multiview
     PFNGLFRAMEBUFFERTEXTUREMULTIVIEWOVRPROC framebufferTextureMultiviewOVR = nullptr;
+    PFNGLNAMEDFRAMEBUFFERTEXTUREMULTIVIEWOVRPROC namedFramebufferTextureMultiviewOVR = nullptr;
 
     // GL_QCOM_tiled_rendering
     PFNGLENDTILINGQCOMPROC endTilingQCOM = nullptr;

@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ CaptureAudioInGPUProcessEnabled=false ] -->
+<!DOCTYPE html>
 <html>
 <body>
 <script src="../../../resources/js-test.js"></script>
@@ -17,7 +17,6 @@ recognition.onstart = (event) => {
 recognition.onaudiostart = (event) => {
     debug("Received audiostart event");
 
-    shouldBeEqualToString("internals.audioSessionCategory()", "PlayAndRecord");
     finishJSTest();
 }
 

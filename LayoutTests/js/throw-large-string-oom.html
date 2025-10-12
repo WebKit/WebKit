@@ -10,7 +10,7 @@ description(
 );
 var thrown = false;
 try {
-    throw 'a'.repeat(2 ** 31 - 100);
+    throw 'a'.repeat(2 ** 31);
 } catch(e) {
     console.log(e);
 }

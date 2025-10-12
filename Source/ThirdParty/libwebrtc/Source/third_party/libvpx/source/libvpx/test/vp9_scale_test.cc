@@ -26,9 +26,9 @@
 
 namespace libvpx_test {
 
-typedef void (*ScaleFrameFunc)(const YV12_BUFFER_CONFIG *src,
-                               YV12_BUFFER_CONFIG *dst,
-                               INTERP_FILTER filter_type, int phase_scaler);
+using ScaleFrameFunc = void (*)(const YV12_BUFFER_CONFIG *src,
+                                YV12_BUFFER_CONFIG *dst,
+                                INTERP_FILTER filter_type, int phase_scaler);
 
 class ScaleTest : public VpxScaleBase,
                   public ::testing::TestWithParam<ScaleFrameFunc> {

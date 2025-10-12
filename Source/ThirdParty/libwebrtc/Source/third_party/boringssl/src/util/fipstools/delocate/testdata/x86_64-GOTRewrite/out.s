@@ -7,48 +7,6 @@ BORINGSSL_bcm_text_start:
 foo:
 .Lbar_local_target:
 bar:
-	# leaq of OPENSSL_ia32cap_P is supported.
-# WAS leaq OPENSSL_ia32cap_P(%rip), %r11
-	leaq -128(%rsp), %rsp
-	pushfq
-	leaq	OPENSSL_ia32cap_addr_delta(%rip), %r11
-	addq	(%r11), %r11
-	popfq
-	leaq 128(%rsp), %rsp
-
-	# As is the equivalent GOTPCREL movq.
-# WAS movq OPENSSL_ia32cap_P@GOTPCREL(%rip), %r12
-	leaq -128(%rsp), %rsp
-	pushfq
-	leaq	OPENSSL_ia32cap_addr_delta(%rip), %r12
-	addq	(%r12), %r12
-	popfq
-	leaq 128(%rsp), %rsp
-
-	# And a non-movq instruction via the GOT.
-# WAS orq OPENSSL_ia32cap_P@GOTPCREL(%rip), %r12
-	leaq -128(%rsp), %rsp
-	pushq %rax
-	pushfq
-	leaq	OPENSSL_ia32cap_addr_delta(%rip), %rax
-	addq	(%rax), %rax
-	popfq
-	orq %rax, %r12
-	popq %rax
-	leaq 128(%rsp), %rsp
-
-	# ... which targets the default temp register
-# WAS orq OPENSSL_ia32cap_P@GOTPCREL(%rip), %rax
-	leaq -128(%rsp), %rsp
-	pushq %rbx
-	pushfq
-	leaq	OPENSSL_ia32cap_addr_delta(%rip), %rbx
-	addq	(%rbx), %rbx
-	popfq
-	orq %rbx, %rax
-	popq %rbx
-	leaq 128(%rsp), %rsp
-
 	# Test that GOTPCREL accesses get translated. They are handled
 	# differently for local and external symbols.
 
@@ -149,8 +107,6 @@ bar:
 	leaq	BORINGSSL_bcm_text_start(%rip), %r11
 # WAS movq foobar_bss_get@GOTPCREL(%rip), %r11
 	leaq	foobar_bss_get(%rip), %r11
-# WAS movq OPENSSL_ia32cap_get@GOTPCREL(%rip), %r11
-	leaq	.LOPENSSL_ia32cap_get_local_target(%rip), %r11
 
 	# Transforming moves run the transform in-place after the load.
 # WAS vpbroadcastq stderr@GOTPCREL(%rip), %xmm0
@@ -296,17 +252,6 @@ gcm_gmult_clmul_GOTPCREL_external:
 stderr_GOTPCREL_external:
 	.long stderr@GOTPCREL
 	.long 0
-.type OPENSSL_ia32cap_get, @function
-.globl OPENSSL_ia32cap_get
-.LOPENSSL_ia32cap_get_local_target:
-OPENSSL_ia32cap_get:
-	leaq OPENSSL_ia32cap_P(%rip), %rax
-	ret
-.extern OPENSSL_ia32cap_P
-.type OPENSSL_ia32cap_addr_delta, @object
-.size OPENSSL_ia32cap_addr_delta, 8
-OPENSSL_ia32cap_addr_delta:
-.quad OPENSSL_ia32cap_P-OPENSSL_ia32cap_addr_delta
 .Lboringssl_got_delta:
 	.quad _GLOBAL_OFFSET_TABLE_-.Lboringssl_got_delta
 .type BORINGSSL_bcm_text_hash, @object

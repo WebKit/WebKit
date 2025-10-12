@@ -25,12 +25,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/oncancel.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/onfinish.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/onremove.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/overallProgress.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/pause.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/pending.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/persist.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/play.html
-/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/progress.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/ready.html
-/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/scroll-timeline-progress.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/scroll-timeline-overallProgress.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/startTime.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/style-change-events.html

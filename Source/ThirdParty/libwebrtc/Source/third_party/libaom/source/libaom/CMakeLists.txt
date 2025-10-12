@@ -8,11 +8,7 @@
 # License 1.0 was not distributed with this source code in the PATENTS file, you
 # can obtain it at www.aomedia.org/license/patent.
 #
-if(CONFIG_TFLITE)
-  cmake_minimum_required(VERSION 3.11)
-else()
-  cmake_minimum_required(VERSION 3.9)
-endif()
+cmake_minimum_required(VERSION 3.16)
 
 set(AOM_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
 set(AOM_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}")
@@ -25,7 +21,9 @@ if("${AOM_ROOT}" STREQUAL "${AOM_CONFIG_DIR}")
                 "And re-run CMake from the aom_build directory.")
 endif()
 
-project(AOM C CXX)
+# VERSION is the release version of the library. It should be updated at the
+# same time as the LT_* variables.
+project(AOM LANGUAGES C CXX VERSION 3.12.0)
 
 # GENERATED source property global visibility.
 if(POLICY CMP0118)
@@ -58,9 +56,11 @@ endif()
 # passed to libtool.
 #
 # We set SO_FILE_VERSION = [c-a].a.r
-set(LT_CURRENT 13)
-set(LT_REVISION 0)
-set(LT_AGE 10)
+#
+# The VERSION number in project() should be updated when these variables are.
+set(LT_CURRENT 15)
+set(LT_REVISION 1)
+set(LT_AGE 12)
 math(EXPR SO_VERSION "${LT_CURRENT} - ${LT_AGE}")
 set(SO_FILE_VERSION "${SO_VERSION}.${LT_AGE}.${LT_REVISION}")
 unset(LT_CURRENT)
@@ -270,6 +270,44 @@ add_rtcd_build_step("${AOM_ROOT}/av1/common/av1_rtcd_defs.pl"
 add_library(aom_rtcd OBJECT ${AOM_RTCD_SOURCES})
 add_dependencies(aom_rtcd aom_version)
 
+if(CONFIG_HIGHWAY)
+  list(APPEND AOM_HIGHWAY_SOURCES
+              "${AOM_ROOT}/third_party/highway/hwy/abort.h"
+              "${AOM_ROOT}/third_party/highway/hwy/aligned_allocator.h"
+              "${AOM_ROOT}/third_party/highway/hwy/base.h"
+              "${AOM_ROOT}/third_party/highway/hwy/cache_control.h"
+              "${AOM_ROOT}/third_party/highway/hwy/per_target.h"
+              "${AOM_ROOT}/third_party/highway/hwy/print.h"
+              "${AOM_ROOT}/third_party/highway/hwy/foreach_target.h"
+              "${AOM_ROOT}/third_party/highway/hwy/highway_export.h"
+              "${AOM_ROOT}/third_party/highway/hwy/highway.h"
+              "${AOM_ROOT}/third_party/highway/hwy/print-inl.h"
+              "${AOM_ROOT}/third_party/highway/hwy/timer-inl.h"
+              "${AOM_ROOT}/third_party/highway/hwy/detect_compiler_arch.h"
+              "${AOM_ROOT}/third_party/highway/hwy/detect_targets.h"
+              "${AOM_ROOT}/third_party/highway/hwy/targets.h"
+              "${AOM_ROOT}/third_party/highway/hwy/ops/arm_neon-inl.h"
+              "${AOM_ROOT}/third_party/highway/hwy/ops/arm_sve-inl.h"
+              "${AOM_ROOT}/third_party/highway/hwy/ops/emu128-inl.h"
+              "${AOM_ROOT}/third_party/highway/hwy/ops/generic_ops-inl.h"
+              "${AOM_ROOT}/third_party/highway/hwy/ops/scalar-inl.h"
+              "${AOM_ROOT}/third_party/highway/hwy/ops/set_macros-inl.h"
+              "${AOM_ROOT}/third_party/highway/hwy/ops/shared-inl.h"
+              "${AOM_ROOT}/third_party/highway/hwy/ops/x86_128-inl.h"
+              "${AOM_ROOT}/third_party/highway/hwy/ops/x86_256-inl.h"
+              "${AOM_ROOT}/third_party/highway/hwy/ops/x86_512-inl.h"
+              "${AOM_ROOT}/third_party/highway/hwy/ops/x86_avx3-inl.h"
+              "${AOM_ROOT}/third_party/highway/hwy/contrib/algo/copy-inl.h"
+              "${AOM_ROOT}/third_party/highway/hwy/contrib/algo/find-inl.h"
+              "${AOM_ROOT}/third_party/highway/hwy/contrib/algo/transform-inl.h"
+              "${AOM_ROOT}/third_party/highway/hwy/contrib/dot/dot-inl.h"
+              "${AOM_ROOT}/third_party/highway/hwy/contrib/image/image.h"
+              "${AOM_ROOT}/third_party/highway/hwy/contrib/math/math-inl.h")
+  add_definitions(-DHWY_HEADER_ONLY)
+  add_library(aom_hwy OBJECT ${AOM_HIGHWAY_SOURCES})
+  set(AOM_LIB_TARGETS ${AOM_LIB_TARGETS} aom_hwy)
+endif()
+
 if(ENABLE_EXAMPLES)
   add_library(aom_encoder_stats OBJECT ${AOM_ENCODER_STATS_SOURCES})
   set(AOM_LIB_TARGETS ${AOM_LIB_TARGETS} aom_encoder_stats)
@@ -285,9 +323,11 @@ else()
   set(target_objs_aom $<TARGET_OBJECTS:aom_obj>)
 endif()
 add_library(aom ${target_objs_aom} $<TARGET_OBJECTS:aom_rtcd>)
+target_include_directories(aom PUBLIC $<INSTALL_INTERFACE:include>)
 
 if(BUILD_SHARED_LIBS)
   add_library(aom_static STATIC ${target_objs_aom} $<TARGET_OBJECTS:aom_rtcd>)
+  target_include_directories(aom_static PUBLIC $<INSTALL_INTERFACE:include>)
   set_target_properties(aom_static PROPERTIES OUTPUT_NAME aom)
   if(MSVC OR (WIN32 AND NOT MINGW))
     # Fix race condition between the import library and the static library.
@@ -333,6 +373,12 @@ if(CONFIG_AV1_ENCODER)
   # libaom static library.
   if(BUILD_SHARED_LIBS)
     target_link_libraries(aom_av1_rc ${AOM_LIB_LINK_TYPE} aom_static)
+    # TODO: https://aomedia.issues.chromium.org/391715078 - This condition can
+    # be removed after aom_av1_rc restricts its symbol visibility.
+    if(CYGWIN OR MINGW)
+      target_link_options(aom_av1_rc ${AOM_LIB_LINK_TYPE}
+                          LINKER:--allow-multiple-definition)
+    endif()
   else()
     target_link_libraries(aom_av1_rc ${AOM_LIB_LINK_TYPE} aom)
   endif()
@@ -858,8 +904,8 @@ if(BUILD_SHARED_LIBS)
   # errors (don't use it with AddressSanitizer)." See
   # https://clang.llvm.org/docs/AddressSanitizer.html#usage. Similarly, see
   # https://clang.llvm.org/docs/MemorySanitizer.html#usage.
-  if(NOT WIN32
-     AND NOT APPLE
+  if(NOT
+     (APPLE OR CYGWIN OR WIN32)
      AND NOT (CMAKE_C_COMPILER_ID MATCHES "Clang" AND SANITIZE))
     # The -z defs linker option reports unresolved symbol references from object
     # files when building a shared library.
@@ -988,7 +1034,8 @@ file(WRITE "${libaom_srcs_txt_file}" "# This file is generated. DO NOT EDIT.\n")
 # Static source file list first.
 foreach(aom_source_var ${aom_source_vars})
   foreach(file ${${aom_source_var}})
-    if(NOT "${file}" MATCHES "${AOM_CONFIG_DIR}")
+    string(FIND "${file}" "${AOM_CONFIG_DIR}" aom_find_substring_index)
+    if(aom_find_substring_index EQUAL -1)
       string(REPLACE "${AOM_ROOT}/" "" file "${file}")
       if(NOT CONFIG_AV1_DECODER AND "${file}" MATCHES "aom_decoder")
         continue()
@@ -1002,7 +1049,8 @@ file(APPEND "${libaom_srcs_txt_file}"
      "# Files below this line are generated by the libaom build system.\n")
 foreach(aom_source_var ${aom_source_vars})
   foreach(file ${${aom_source_var}})
-    if("${file}" MATCHES "${AOM_CONFIG_DIR}")
+    string(FIND "${file}" "${AOM_CONFIG_DIR}" aom_find_substring_index)
+    if(NOT aom_find_substring_index EQUAL -1)
       string(REPLACE "${AOM_CONFIG_DIR}/" "" file "${file}")
       file(APPEND "${libaom_srcs_txt_file}" "${file}\n")
     endif()
@@ -1014,13 +1062,15 @@ set(libaom_srcs_gni_file "${AOM_CONFIG_DIR}/libaom_srcs.gni")
 file(WRITE "${libaom_srcs_gni_file}" "# This file is generated. DO NOT EDIT.\n")
 
 foreach(aom_source_var ${aom_source_vars})
-  if("${${aom_source_var}}" MATCHES "${AOM_ROOT}")
+  string(FIND "${${aom_source_var}}" "${AOM_ROOT}" aom_find_substring_index)
+  if(NOT aom_find_substring_index EQUAL -1)
     string(TOLOWER ${aom_source_var} aom_source_var_lowercase)
     file(APPEND "${libaom_srcs_gni_file}" "\n${aom_source_var_lowercase} = [\n")
   endif()
 
   foreach(file ${${aom_source_var}})
-    if(NOT "${file}" MATCHES "${AOM_CONFIG_DIR}")
+    string(FIND "${file}" "${AOM_CONFIG_DIR}" aom_find_substring_index)
+    if(aom_find_substring_index EQUAL -1)
       string(REPLACE "${AOM_ROOT}" "//third_party/libaom/source/libaom" file
                      "${file}")
       if(NOT CONFIG_AV1_DECODER AND "${file}" MATCHES "aom_decoder")
@@ -1030,7 +1080,8 @@ foreach(aom_source_var ${aom_source_vars})
     endif()
   endforeach()
 
-  if("${${aom_source_var}}" MATCHES "${AOM_ROOT}")
+  string(FIND "${${aom_source_var}}" "${AOM_ROOT}" aom_find_substring_index)
+  if(NOT aom_find_substring_index EQUAL -1)
     file(APPEND "${libaom_srcs_gni_file}" "]\n")
   endif()
 endforeach()
@@ -1039,20 +1090,25 @@ file(APPEND "${libaom_srcs_gni_file}"
      "\n# Files below this line are generated by the libaom build system.\n")
 
 foreach(aom_source_var ${aom_source_vars})
-  if("${${aom_source_var}}" MATCHES "${AOM_CONFIG_DIR}")
+  string(FIND "${${aom_source_var}}" "${AOM_CONFIG_DIR}"
+              aom_find_substring_index)
+  if(NOT aom_find_substring_index EQUAL -1)
     string(TOLOWER ${aom_source_var} aom_source_var_lowercase)
     file(APPEND "${libaom_srcs_gni_file}"
          "\n${aom_source_var_lowercase}_gen = [\n")
   endif()
   foreach(file ${${aom_source_var}})
-    if(NOT "${file}" MATCHES "${AOM_ROOT}")
+    string(FIND "${file}" "${AOM_ROOT}" aom_find_substring_index)
+    if(aom_find_substring_index EQUAL -1)
       string(REPLACE "${AOM_CONFIG_DIR}" "//third_party/libaom/source/libaom"
                      file "${file}")
       file(APPEND "${libaom_srcs_gni_file}" "  \"${file}\",\n")
     endif()
   endforeach()
 
-  if("${${aom_source_var}}" MATCHES "${AOM_CONFIG_DIR}")
+  string(FIND "${${aom_source_var}}" "${AOM_CONFIG_DIR}"
+              aom_find_substring_index)
+  if(NOT aom_find_substring_index EQUAL -1)
     file(APPEND "${libaom_srcs_gni_file}" "]\n")
   endif()
 endforeach()

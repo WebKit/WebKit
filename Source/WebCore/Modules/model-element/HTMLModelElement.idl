@@ -34,7 +34,7 @@
 ] interface HTMLModelElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute unsigned long width;
     [CEReactions=NotNeeded, Reflect] attribute unsigned long height;
-    [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
+    [CEReactions=NotNeeded, ReflectURL] attribute USVString src;
     [URL] readonly attribute USVString currentSrc;
 
     readonly attribute boolean complete;
@@ -58,7 +58,7 @@
     
     [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, Reflect] attribute DOMString stageMode;
 
-    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, CEReactions=NotNeeded, Reflect, URL] attribute USVString environmentMap;
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, CEReactions=NotNeeded, ReflectURL] attribute USVString environmentMap;
     [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] readonly attribute Promise<undefined> environmentMapReady;
 
     [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled&ModelNoPortalAttributeEnabled, Reflect] attribute boolean noportal;

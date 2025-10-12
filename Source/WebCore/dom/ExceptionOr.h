@@ -26,10 +26,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include "Exception.h"
+#include <WebCore/Exception.h>
+#include <utility>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/Expected.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/Unexpected.h>
 
 namespace WebCore {
 
@@ -39,7 +41,10 @@ public:
 
     ExceptionOr(Exception&&);
     ExceptionOr(ReturnType&&);
-    template<typename OtherType> ExceptionOr(const OtherType&, typename std::enable_if<std::is_scalar<OtherType>::value && std::is_convertible<OtherType, ReturnType>::value>::type* = nullptr);
+    template<typename OtherType>
+        requires std::is_scalar_v<OtherType> && std::convertible_to<OtherType, ReturnType>
+    ExceptionOr(const OtherType&);
+
 
     bool hasException() const;
     const Exception& exception() const;
@@ -100,7 +105,10 @@ template<typename ReturnType> inline ExceptionOr<ReturnType>::ExceptionOr(Return
 {
 }
 
-template<typename ReturnType> template<typename OtherType> inline ExceptionOr<ReturnType>::ExceptionOr(const OtherType& returnValue, typename std::enable_if<std::is_scalar<OtherType>::value && std::is_convertible<OtherType, ReturnType>::value>::type*)
+template<typename ReturnType>
+template<typename OtherType>
+    requires std::is_scalar_v<OtherType> && std::convertible_to<OtherType, ReturnType>
+inline ExceptionOr<ReturnType>::ExceptionOr(const OtherType& returnValue)
     : m_value(static_cast<ReturnType>(returnValue))
 {
 }

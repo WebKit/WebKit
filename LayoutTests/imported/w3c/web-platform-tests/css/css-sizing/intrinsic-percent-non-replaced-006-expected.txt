@@ -1,0 +1,7 @@
+
+PASS Axis consistency of intrinsic contributions
+PASS Intrinsic contribution for width
+PASS Intrinsic contribution for height
+PASS Final size for width
+PASS Final size for height
+

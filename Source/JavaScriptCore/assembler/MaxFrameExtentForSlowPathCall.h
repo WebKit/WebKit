@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Register.h"
-#include "StackAlignment.h"
+#include <JavaScriptCore/Register.h>
+#include <JavaScriptCore/StackAlignment.h>
 #include <wtf/Assertions.h>
 
 namespace JSC {

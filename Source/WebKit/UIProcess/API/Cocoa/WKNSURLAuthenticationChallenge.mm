@@ -46,7 +46,7 @@
         sender.get() = adoptNS([[WKNSURLAuthenticationChallengeSender alloc] init]);
     });
 
-    return [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:mac(challenge->core()) sender:sender.get().get()];
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:mac(challenge->core()) sender:sender.get().get()];
 }
 
 - (WebKit::AuthenticationChallengeProxy&)_web_authenticationChallengeProxy

@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "CallData.h"
+#include <JavaScriptCore/CallData.h>
 
 namespace JSC {
 

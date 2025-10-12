@@ -25,4 +25,4 @@
 
 #pragma once
 
-#include "ShareableBitmap.h"
+#include <WebCore/ShareableBitmap.h>

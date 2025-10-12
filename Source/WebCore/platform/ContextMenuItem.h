@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,7 @@
 #pragma once
 
 #include <wtf/EnumTraits.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
@@ -168,7 +169,12 @@ enum ContextMenuAction {
     ContextMenuItemTagProofread,
     ContextMenuItemTagRewrite,
     ContextMenuItemTagSummarize,
+#if PLATFORM(COCOA)
+    ContextMenuItemTagSmartLists,
+    ContextMenuItemLastNonCustomTag = ContextMenuItemTagSmartLists,
+#else
     ContextMenuItemLastNonCustomTag = ContextMenuItemTagSummarize,
+#endif
     ContextMenuItemBaseCustomTag = 5000,
     ContextMenuItemLastCustomTag = 5999,
     ContextMenuItemBaseApplicationTag = 10000

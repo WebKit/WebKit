@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,9 +29,10 @@
 #include "BackForwardCache.h"
 #include "CachedFramePlatformData.h"
 #include "CachedPage.h"
-#include "Document.h"
-#include "DocumentInlines.h"
 #include "DocumentLoader.h"
+#include "DocumentPage.h"
+#include "DocumentView.h"
+#include "DocumentWindow.h"
 #include "FrameLoader.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
@@ -39,7 +40,6 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "NavigationDisabler.h"
-#include "Page.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameView.h"
 #include "RenderWidgetInlines.h"
@@ -48,7 +48,6 @@
 #include "SerializedScriptValue.h"
 #include "StyleTreeResolver.h"
 #include "WindowEventLoop.h"
-#include <wtf/RefCountedLeakCounter.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 
@@ -60,8 +59,6 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedFrame);
-
-DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, cachedFrameCounter, ("CachedFrame"));
 
 CachedFrameBase::CachedFrameBase(Frame& frame)
     : m_view(frame.virtualView())
@@ -80,9 +77,6 @@ void CachedFrameBase::initializeWithLocalFrame(LocalFrame& frame)
 
 CachedFrameBase::~CachedFrameBase()
 {
-#ifndef NDEBUG
-    cachedFrameCounter.decrement();
-#endif
     // CachedFrames should always have had destroy() called by their parent CachedPage
     ASSERT(!m_document);
 }
@@ -151,7 +145,7 @@ void CachedFrameBase::restore()
     if (m_isMainFrame && localFrame) {
         localFrame->loader().client().didRestoreFrameHierarchyForCachedFrame();
 
-        if (RefPtr domWindow = m_document->domWindow(); domWindow && domWindow->scrollEventListenerCount()) {
+        if (RefPtr window = m_document->window(); window && window->scrollEventListenerCount()) {
             // FIXME: Use Document::hasListenerType(). See <rdar://problem/9615482>.
             if (RefPtr page = frame->page())
                 page->chrome().client().setNeedsScrollNotifications(*localFrame, true);
@@ -166,9 +160,6 @@ void CachedFrameBase::restore()
 CachedFrame::CachedFrame(Frame& frame)
     : CachedFrameBase(frame)
 {
-#ifndef NDEBUG
-    cachedFrameCounter.increment();
-#endif
     RefPtr document = m_document;
     ASSERT(document || is<RemoteFrame>(frame));
     ASSERT(m_documentLoader || is<RemoteFrame>(frame));
@@ -180,8 +171,8 @@ CachedFrame::CachedFrame(Frame& frame)
         m_childFrames.append(makeUniqueRef<CachedFrame>(*child));
 
     if (document) {
-        RELEASE_ASSERT(document->domWindow());
-        RELEASE_ASSERT(document->domWindow()->frame());
+        RELEASE_ASSERT(document->window());
+        RELEASE_ASSERT(document->window()->frame());
 
         // Active DOM objects must be suspended before we cache the frame script data.
         document->suspend(ReasonForSuspension::BackForwardCache);
@@ -229,7 +220,7 @@ CachedFrame::CachedFrame(Frame& frame)
 
 #if PLATFORM(IOS_FAMILY)
     if (m_isMainFrame && localFrame) {
-        if (RefPtr domWindow = document->domWindow(); domWindow && domWindow->scrollEventListenerCount()) {
+        if (RefPtr window = document->window(); window && window->scrollEventListenerCount()) {
             if (RefPtr page = frame.page())
                 page->chrome().client().setNeedsScrollNotifications(*localFrame, false);
         }
@@ -248,7 +239,7 @@ void CachedFrame::open()
     ASSERT(m_document || is<RemoteFrameView>(m_view.get()));
 
     if (RefPtr localFrameView = dynamicDowncast<LocalFrameView>(m_view.get()))
-        localFrameView->protectedFrame()->protectedLoader()->open(*this);
+        localFrameView->protectedFrame()->loader().open(*this);
 }
 
 void CachedFrame::clear()
@@ -291,7 +282,7 @@ void CachedFrame::destroy()
     Ref frame = m_view->frame();
     if (!m_isMainFrame && m_view->frame().page()) {
         if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get()))
-            localFrame->protectedLoader()->detachViewsAndDocumentLoader();
+            localFrame->loader().detachViewsAndDocumentLoader();
         frame->detachFromPage();
     }
     
@@ -347,10 +338,11 @@ UsedLegacyTLS CachedFrame::usedLegacyTLS() const
     return UsedLegacyTLS::No;
 }
 
+// FIXME: Remove all uses of HasInsecureContent across the codebase since we no longer allow insecure content.
 HasInsecureContent CachedFrame::hasInsecureContent() const
 {
     if (auto* document = this->document()) {
-        if (!document->isSecureContext() || !document->foundMixedContent().isEmpty())
+        if (!document->isSecureContext())
             return HasInsecureContent::Yes;
     }
 

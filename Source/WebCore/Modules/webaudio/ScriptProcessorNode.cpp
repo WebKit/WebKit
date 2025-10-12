@@ -38,6 +38,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
+#include "ExceptionOr.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>

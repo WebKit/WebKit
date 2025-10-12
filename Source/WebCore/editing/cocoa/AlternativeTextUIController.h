@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "AlternativeTextContextController.h"
+#import <WebCore/AlternativeTextContextController.h>
 #import <wtf/TZoneMalloc.h>
 
 @class NSView;

@@ -25,8 +25,7 @@
 
 [
     EnabledBySetting=ScrollDrivenAnimationsEnabled,
-    Exposed=Window,
-    JSGenerateToJSObject
+    Exposed=Window
 ] interface ViewTimeline : ScrollTimeline {
     [CallWith=CurrentDocument] constructor(optional ViewTimelineOptions options = {});
     readonly attribute Element subject;

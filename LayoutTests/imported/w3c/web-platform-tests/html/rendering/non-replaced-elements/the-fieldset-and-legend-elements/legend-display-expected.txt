@@ -14,7 +14,6 @@ FAIL rendered legend with display: table-caption assert_equals: display: table-c
 PASS rendered legend with display: list-item
 PASS rendered legend with display: flow
 PASS rendered legend with display: flow-root
-FAIL rendered legend with display: run-in assert_equals: display: run-in is not supported expected "run-in" but got "block"
 FAIL rendered legend with display: inline assert_equals: display: inline is not supported expected "inline" but got "block"
 FAIL rendered legend with display: inline-block assert_equals: display: inline-block is not supported expected "inline-block" but got "block"
 FAIL rendered legend with display: inline-table assert_equals: display: inline-table is not supported expected "inline-table" but got "table"
@@ -41,7 +40,6 @@ FAIL rendered legend with display: table-caption; overflow:hidden assert_equals:
 PASS rendered legend with display: list-item; overflow:hidden
 PASS rendered legend with display: flow; overflow:hidden
 PASS rendered legend with display: flow-root; overflow:hidden
-FAIL rendered legend with display: run-in; overflow:hidden assert_equals: display: run-in is not supported expected "run-in" but got "block"
 FAIL rendered legend with display: inline; overflow:hidden assert_equals: display: inline is not supported expected "inline" but got "block"
 FAIL rendered legend with display: inline-block; overflow:hidden assert_equals: display: inline-block is not supported expected "inline-block" but got "block"
 FAIL rendered legend with display: inline-table; overflow:hidden assert_equals: display: inline-table is not supported expected "inline-table" but got "table"
@@ -68,7 +66,6 @@ FAIL rendered legend with display: table-caption; columns:1 assert_equals: displ
 PASS rendered legend with display: list-item; columns:1
 PASS rendered legend with display: flow; columns:1
 PASS rendered legend with display: flow-root; columns:1
-FAIL rendered legend with display: run-in; columns:1 assert_equals: display: run-in is not supported expected "run-in" but got "block"
 FAIL rendered legend with display: inline; columns:1 assert_equals: display: inline is not supported expected "inline" but got "block"
 FAIL rendered legend with display: inline-block; columns:1 assert_equals: display: inline-block is not supported expected "inline-block" but got "block"
 FAIL rendered legend with display: inline-table; columns:1 assert_equals: display: inline-table is not supported expected "inline-table" but got "table"
@@ -95,7 +92,6 @@ FAIL rendered legend with display: table-caption; overflow:hidden;columns:1 asse
 PASS rendered legend with display: list-item; overflow:hidden;columns:1
 PASS rendered legend with display: flow; overflow:hidden;columns:1
 PASS rendered legend with display: flow-root; overflow:hidden;columns:1
-FAIL rendered legend with display: run-in; overflow:hidden;columns:1 assert_equals: display: run-in is not supported expected "run-in" but got "block"
 FAIL rendered legend with display: inline; overflow:hidden;columns:1 assert_equals: display: inline is not supported expected "inline" but got "block"
 FAIL rendered legend with display: inline-block; overflow:hidden;columns:1 assert_equals: display: inline-block is not supported expected "inline-block" but got "block"
 FAIL rendered legend with display: inline-table; overflow:hidden;columns:1 assert_equals: display: inline-table is not supported expected "inline-table" but got "table"

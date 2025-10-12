@@ -3,7 +3,7 @@
  * Copyright (C) 2007, 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Collabora Ltd.
  * Copyright (C) 2011, 2017 Igalia S.L.
- * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
+ * Portions Copyright (c) 2011 Motorola Mobility, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -907,6 +907,24 @@ webkit_web_view_get_web_extension_mode               (WebKitWebView             
 
 WEBKIT_API const gchar*
 webkit_web_view_get_default_content_security_policy  (WebKitWebView             *web_view);
+
+#if PLATFORM(WPE)
+WEBKIT_API gboolean
+webkit_web_view_get_theme_color                      (WebKitWebView             *web_view,
+                                                      WebKitColor               *color);
+#endif
+
+#if PLATFORM(GTK)
+WEBKIT_API gboolean
+webkit_web_view_get_theme_color                      (WebKitWebView             *web_view,
+                                                      GdkRGBA                   *rgba);
+#endif
+
+WEBKIT_API gboolean
+webkit_web_view_is_immersive_mode_enabled            (WebKitWebView             *web_view);
+
+WEBKIT_API void
+webkit_web_view_leave_immersive_mode                 (WebKitWebView             *web_view);
 
 #if USE(GI_FINISH_FUNC_ANNOTATION)
 /**

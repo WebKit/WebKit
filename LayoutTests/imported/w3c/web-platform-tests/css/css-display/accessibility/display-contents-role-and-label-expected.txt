@@ -55,8 +55,10 @@ x
 PASS tr with display: contents, within table with display: flex, has row role
 PASS td as child of tr with display: contents, within table with display: flex, has cell role
 PASS tr with display: contents, within table with role=table with display: flex, has row role
+PASS th as child of tr with display: contents, within table with role=table with display: flex, has columnheader role
 PASS td as child of tr with display: contents, within table with role=table with display: flex, has cell role
 PASS tr with display: contents, within table with role=grid with display: flex, has row role
+PASS th as child of tr with display: contents, within table with role=grid with display: flex, has columnheader role
 PASS td (no explicit role) as child of tr with display: contents, within table with role=grid with display: flex, has gridcell role
 PASS ul with display: contents, as child of div with display: grid, has list role
 PASS listitem within ul with display: contents, as child of div with display: grid, has listitem role
@@ -78,15 +80,23 @@ PASS ol with role list and display: contents has list role
 PASS li, as child of ol with role list and display: contents, has listitem role
 PASS li with display: contents, as child of ol with role list, has listitem role
 PASS div with list role and display: contents has list role
+PASS div with listitem role, as child of div with display: contents, has listitem role
 PASS div with list role and display: contents has list role (child div with listitem role has display: contents)
+PASS div with listitem role (as child of div with list role), both with display: contents, has listitem role
+PASS div with listitem role with display: contents, as child of div with list role, has listitem role
 PASS table with role table and display: contents has table role
 PASS tr in table with role table and display: contents has row role
+PASS td within tr both with display: contents, in table with role table and display: contents, has columnheader role
 PASS td within tr in table with role table, all with display: contents, has cell role
 PASS div with role table with display: contents has table role
 PASS div with role rowgroup in div with role table, both with display: contents, has rowgroup role
+PASS div with role columnheader with display: contents, in div with role rowgroup within div with table role both with display: contents, has columnheader role
+PASS th within table with role grid, both with display: contents, has columnheader role
 PASS td within table with role grid, both with display: contents, has gridcell role
 PASS div with role grid with display: contents has grid role
 PASS div with role rowgroup in div with role grid, both with display: contents, has rowgroup role
+PASS div with role columnheader with display: contents, in div with role rowgroup within div with grid role both with display: contents, has rowgroup role
+PASS div with gridcell role and display: contents, within div with role row contained in a div with role grid both with display: contents, has gridcell role
 PASS table with role treegrid and display: contents has treegrid role
 PASS div with role treegrid and display: contents has treegrid role
 PASS ul with role tree and display: contents has tree role
@@ -106,9 +116,6 @@ PASS Label: button with display: contents has button role
 PASS Label: button with explicit button role and display: contents has button role
 PASS Label: div with button role and display: contents has button role
 PASS Label: div with button role, tabindex=0 and display: contents has button role
-FAIL Label: th as child of tr with display: contents, within table with display: flex, has columnheader role assert_equals: <th data-expectedrole="columnheader" data-expectedlabel="x" data-testname="th as child of tr with display: contents, within table with display: flex, has columnheader role" class="ex-role-and-label ex-label-only ex-role-only">x</th> expected "x" but got ""
-FAIL Label: th as child of tr with display: contents, within table with role=table with display: flex, has columnheader role assert_equals: <th data-expectedrole="columnheader" data-expectedlabel="x" data-testname="th as child of tr with display: contents, within table with role=table with display: flex, has columnheader role" class="ex-role-and-label ex-label-only ex-role-only">x</th> expected "x" but got ""
-FAIL Label: th as child of tr with display: contents, within table with role=grid with display: flex, has columnheader role assert_equals: <th data-expectedrole="columnheader" data-expectedlabel="x" data-testname="th as child of tr with display: contents, within table with role=grid with display: flex, has columnheader role" class="ex-role-and-label ex-label-only ex-role-only">x</th> expected "x" but got ""
 PASS Label: h3 with display: contents has heading role
 PASS Label: div with heading role, aria-level=3 and display: contents has heading role
 PASS Label: span with heading role, aria-level=1 and display: contents has heading role
@@ -125,14 +132,6 @@ PASS Label: link with display: contents has link role
 PASS Label: link with explicit link role and display: contents has link role
 PASS Label: div with link role and display: contents has link role
 PASS Label: div with link role, tabindex=0 and display: contents has link role
-FAIL Label: div with listitem role, as child of div with display: contents, has listitem role assert_equals: <div role="listitem" data-expectedrole="listitem" data-expectedlabel="x" data-testname="div with listitem role, as child of div with display: contents, has listitem role" class="ex-role-and-label ex-label-only ex-role-only">x</div> expected "x" but got ""
-FAIL Label: div with listitem role (as child of div with list role), both with display: contents, has listitem role assert_equals: <div role="listitem" style="display: contents;" data-expectedrole="listitem" data-expectedlabel="y" data-testname="div with listitem role (as child of div with list role), both with display: contents, has listitem role" class="ex-role-and-label ex-label-only ex-role-only">y</div> expected "y" but got ""
-FAIL Label: div with listitem role with display: contents, as child of div with list role, has listitem role assert_equals: <div role="listitem" style="display: contents;" data-expectedrole="listitem" data-expectedlabel="y" data-testname="div with listitem role with display: contents, as child of div with list role, has listitem role" class="ex-role-and-label ex-label-only ex-role-only">y</div> expected "y" but got ""
-FAIL Label: td within tr both with display: contents, in table with role table and display: contents, has columnheader role assert_equals: <th style="display: contents;" data-expectedrole="columnheader" data-expectedlabel="x" data-testname="td within tr both with display: contents, in table with role table and display: contents, has columnheader role" class="ex-role-and-label ex-label-only ex-role-only">x</th> expected "x" but got ""
-FAIL Label: div with role columnheader with display: contents, in div with role rowgroup within div with table role both with display: contents, has columnheader role assert_equals: <div role="columnheader" style="display: contents;" data-expectedrole="columnheader" data-expectedlabel="x" data-testname="div with role columnheader with display: contents, in div with role rowgroup within div with table role both with display: contents, has columnheader role" class="ex-role-and-label ex-label-only ex-role-only">x</div> expected "x" but got ""
-FAIL Label: th within table with role grid, both with display: contents, has columnheader role assert_equals: <th style="display: contents;" data-expectedrole="columnheader" data-expectedlabel="x" data-testname="th within table with role grid, both with display: contents, has columnheader role" class="ex-role-and-label ex-label-only ex-role-only">x</th> expected "x" but got ""
-FAIL Label: div with role columnheader with display: contents, in div with role rowgroup within div with grid role both with display: contents, has rowgroup role assert_equals: <div role="columnheader" style="display: contents;" data-expectedrole="columnheader" data-expectedlabel="x" data-testname="div with role columnheader with display: contents, in div with role rowgroup within div with grid role both with display: contents, has rowgroup role" class="ex-role-and-label ex-label-only ex-role-only">x</div> expected "x" but got ""
-FAIL Label: div with gridcell role and display: contents, within div with role row contained in a div with role grid both with display: contents, has gridcell role assert_equals: <div role="gridcell" style="display: contents;" data-expectedrole="gridcell" data-expectedlabel="x" data-testname="div with gridcell role and display: contents, within div with role row contained in a div with role grid both with display: contents, has gridcell role" class="ex-role-and-label ex-label-only ex-role-only">x</div> expected "x" but got ""
 PASS Role: button with display: contents is labelled via referenced hidden span
 PASS Role: link with display: contents is labelled via aria-labelledby
 PASS Role: nav with display: contents is labelled via aria-labelledby
@@ -147,9 +146,6 @@ PASS Role: button with display: contents has button role
 PASS Role: button with explicit button role and display: contents has button role
 PASS Role: div with button role and display: contents has button role
 PASS Role: div with button role, tabindex=0 and display: contents has button role
-PASS Role: th as child of tr with display: contents, within table with display: flex, has columnheader role
-PASS Role: th as child of tr with display: contents, within table with role=table with display: flex, has columnheader role
-PASS Role: th as child of tr with display: contents, within table with role=grid with display: flex, has columnheader role
 PASS Role: h3 with display: contents has heading role
 PASS Role: div with heading role, aria-level=3 and display: contents has heading role
 PASS Role: span with heading role, aria-level=1 and display: contents has heading role
@@ -166,14 +162,6 @@ PASS Role: link with display: contents has link role
 PASS Role: link with explicit link role and display: contents has link role
 PASS Role: div with link role and display: contents has link role
 PASS Role: div with link role, tabindex=0 and display: contents has link role
-PASS Role: div with listitem role, as child of div with display: contents, has listitem role
-PASS Role: div with listitem role (as child of div with list role), both with display: contents, has listitem role
-PASS Role: div with listitem role with display: contents, as child of div with list role, has listitem role
-PASS Role: td within tr both with display: contents, in table with role table and display: contents, has columnheader role
-PASS Role: div with role columnheader with display: contents, in div with role rowgroup within div with table role both with display: contents, has columnheader role
-PASS Role: th within table with role grid, both with display: contents, has columnheader role
-PASS Role: div with role columnheader with display: contents, in div with role rowgroup within div with grid role both with display: contents, has rowgroup role
-PASS Role: div with gridcell role and display: contents, within div with role row contained in a div with role grid both with display: contents, has gridcell role
 PASS div with display: contents has generic role
 PASS span with display: contents has generic role
 

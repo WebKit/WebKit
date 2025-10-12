@@ -198,9 +198,7 @@ static void twopass_update_bpm_factor(AV1_COMP *cpi, int rate_err_tol) {
 
     if ((twopass->bpm_factor <= 1 && factor < twopass->bpm_factor) ||
         (twopass->bpm_factor >= 1 && factor > twopass->bpm_factor)) {
-      twopass->bpm_factor = factor;
-      twopass->bpm_factor =
-          AOMMAX(min_fac, AOMMIN(max_fac, twopass->bpm_factor));
+      twopass->bpm_factor = fclamp(factor, min_fac, max_fac);
     }
   }
 #endif  // CONFIG_THREE_PASS
@@ -248,7 +246,7 @@ static void twopass_update_bpm_factor(AV1_COMP *cpi, int rate_err_tol) {
       rate_err_factor = 1.0 - error_fraction;
     }
 
-    rate_err_factor = AOMMAX(min_fac, AOMMIN(max_fac, rate_err_factor));
+    rate_err_factor = fclamp(rate_err_factor, min_fac, max_fac);
   }
 
   // Is the rate control trending in the right direction. Only make
@@ -256,7 +254,7 @@ static void twopass_update_bpm_factor(AV1_COMP *cpi, int rate_err_tol) {
   if ((rate_err_factor < 1.0 && err_estimate >= 0) ||
       (rate_err_factor > 1.0 && err_estimate <= 0)) {
     twopass->bpm_factor *= rate_err_factor;
-    twopass->bpm_factor = AOMMAX(min_fac, AOMMIN(max_fac, twopass->bpm_factor));
+    twopass->bpm_factor = fclamp(twopass->bpm_factor, min_fac, max_fac);
   }
 }
 
@@ -1113,7 +1111,7 @@ static void smooth_filter_stats(const FIRSTPASS_STATS *stats, int start_idx,
   for (i = start_idx; i <= last_idx; i++) {
     double total_wt = 0;
     for (j = -HALF_FILT_LEN; j <= HALF_FILT_LEN; j++) {
-      int idx = AOMMIN(AOMMAX(i + j, start_idx), last_idx);
+      int idx = clamp(i + j, start_idx, last_idx);
       if (stats[idx].is_flash) continue;
 
       filt_intra_err[i] +=
@@ -1129,7 +1127,7 @@ static void smooth_filter_stats(const FIRSTPASS_STATS *stats, int start_idx,
   for (i = start_idx; i <= last_idx; i++) {
     double total_wt = 0;
     for (j = -HALF_FILT_LEN; j <= HALF_FILT_LEN; j++) {
-      int idx = AOMMIN(AOMMAX(i + j, start_idx), last_idx);
+      int idx = clamp(i + j, start_idx, last_idx);
       // Coded error involves idx and idx - 1.
       if (stats[idx].is_flash || (idx > 0 && stats[idx - 1].is_flash)) continue;
 
@@ -1356,7 +1354,7 @@ static int find_stable_regions(const FIRSTPASS_STATS *stats,
     double mean_coded = 0.001, var_coded = 0.001;
     int count = 0;
     for (j = -HALF_WIN; j <= HALF_WIN; j++) {
-      int idx = AOMMIN(AOMMAX(i + j, this_start), this_last);
+      int idx = clamp(i + j, this_start, this_last);
       if (stats[idx].is_flash || (idx > 0 && stats[idx - 1].is_flash)) continue;
       mean_intra += stats[idx].intra_error;
       var_intra += stats[idx].intra_error * stats[idx].intra_error;
@@ -1508,7 +1506,7 @@ static void adjust_unstable_region_bounds(const FIRSTPASS_STATS *stats,
         }
       }
     }  // if k < *num_regions - 1
-  }    // end of loop over all regions
+  }  // end of loop over all regions
 
   cleanup_regions(regions, num_regions);
   remove_short_regions(regions, num_regions, HIGH_VAR_REGION, HALF_WIN);
@@ -1719,7 +1717,7 @@ static void find_blending_regions(const FIRSTPASS_STATS *stats,
 // region, just merge it with one of them.
 static void cleanup_blendings(REGIONS *regions, int *num_regions) {
   int k = 0;
-  while (k<*num_regions && * num_regions> 1) {
+  while (k < (*num_regions) && (*num_regions) > 1) {
     int is_short_blending = regions[k].type == BLENDING_REGION &&
                             regions[k].last - regions[k].start + 1 < 5;
     int is_short_hv = regions[k].type == HIGH_VAR_REGION &&
@@ -2149,7 +2147,7 @@ static void calculate_gf_length(AV1_COMP *cpi, int max_gop_length,
 
 static void correct_frames_to_key(AV1_COMP *cpi) {
   int lookahead_size =
-      (int)av1_lookahead_depth(cpi->ppi->lookahead, cpi->compressor_stage);
+      av1_lookahead_depth(cpi->ppi->lookahead, cpi->compressor_stage);
   if (lookahead_size <
       av1_lookahead_pop_sz(cpi->ppi->lookahead, cpi->compressor_stage)) {
     assert(
@@ -2354,9 +2352,9 @@ static void update_gop_length(RATE_CONTROL *rc, PRIMARY_RATE_CONTROL *p_rc,
  * \remark No return but updates the rate control and group data structures
  *         to reflect the allocation of bits.
  */
-static void av1_gop_bit_allocation(const AV1_COMP *cpi, RATE_CONTROL *const rc,
-                                   GF_GROUP *gf_group, int is_key_frame,
-                                   int use_arf, int64_t gf_group_bits) {
+void av1_gop_bit_allocation(const AV1_COMP *cpi, RATE_CONTROL *const rc,
+                            GF_GROUP *gf_group, int is_key_frame, int use_arf,
+                            int64_t gf_group_bits) {
   PRIMARY_RATE_CONTROL *const p_rc = &cpi->ppi->p_rc;
   // Calculate the extra bits to be used for boosted frame(s)
 #ifdef FIXED_ARF_BITS
@@ -3148,7 +3146,7 @@ static double get_kf_boost_score(AV1_COMP *cpi, double kf_raw_err,
   double boost_score = 0.0;
   const double kf_max_boost =
       cpi->oxcf.rc_cfg.mode == AOM_Q
-          ? AOMMIN(AOMMAX(rc->frames_to_key * 2.0, KF_MIN_FRAME_BOOST),
+          ? fclamp(rc->frames_to_key * 2.0, KF_MIN_FRAME_BOOST,
                    KF_MAX_FRAME_BOOST)
           : KF_MAX_FRAME_BOOST;
 
@@ -3408,9 +3406,6 @@ static void find_next_key_frame(AV1_COMP *cpi, FIRSTPASS_STATS *this_frame) {
   kf_bits = calculate_boost_bits(
       AOMMIN(rc->frames_to_key, frames_to_key_clipped) - 1, p_rc->kf_boost,
       AOMMIN(twopass->kf_group_bits, kf_group_bits_clipped));
-  // printf("kf boost = %d kf_bits = %d kf_zeromotion_pct = %d\n",
-  // p_rc->kf_boost,
-  //        kf_bits, twopass->kf_zeromotion_pct);
   kf_bits = adjust_boost_bits_for_target_level(cpi, rc, kf_bits,
                                                twopass->kf_group_bits, 0);
 
@@ -3531,7 +3526,7 @@ static void process_first_pass_stats(AV1_COMP *cpi,
   set_twopass_params_based_on_fp_stats(cpi, this_frame);
 }
 
-static void setup_target_rate(AV1_COMP *cpi) {
+void av1_setup_target_rate(AV1_COMP *cpi) {
   RATE_CONTROL *const rc = &cpi->rc;
   GF_GROUP *const gf_group = &cpi->ppi->gf_group;
 
@@ -3577,7 +3572,7 @@ static int smooth_filter_noise(FIRSTPASS_STATS *first_stats,
     double total_noise = 0;
     double total_wt = 0;
     for (int j = -HALF_FILT_LEN; j <= HALF_FILT_LEN; j++) {
-      int idx = AOMMIN(AOMMAX(i + j, 0), len - 1);
+      int idx = clamp(i + j, 0, len - 1);
       if (first_stats[idx].is_flash) continue;
 
       total_noise += first_stats[idx].noise_var;
@@ -3713,7 +3708,7 @@ static void estimate_coeff(FIRSTPASS_STATS *first_stats,
                     0.001) /
              AOMMAX(this_stats->intra_error - this_stats->noise_var, 0.001));
     // clip correlation coefficient.
-    this_stats->cor_coeff = AOMMIN(AOMMAX(this_stats->cor_coeff, 0), 1);
+    this_stats->cor_coeff = fclamp(this_stats->cor_coeff, 0.0, 1.0);
   }
   first_stats->cor_coeff = 1.0;
 }
@@ -3762,7 +3757,7 @@ void av1_get_second_pass_params(AV1_COMP *cpi,
   if (cpi->gf_frame_index < gf_group->size && !(frame_flags & FRAMEFLAGS_KEY)) {
     assert(cpi->gf_frame_index < gf_group->size);
 
-    setup_target_rate(cpi);
+    av1_setup_target_rate(cpi);
 
     // If this is an arf frame then we dont want to read the stats file or
     // advance the input pointer as we already have what we need.
@@ -4021,7 +4016,7 @@ void av1_get_second_pass_params(AV1_COMP *cpi,
   }
 
   frame_params->frame_type = gf_group->frame_type[cpi->gf_frame_index];
-  setup_target_rate(cpi);
+  av1_setup_target_rate(cpi);
 }
 
 void av1_init_second_pass(AV1_COMP *cpi) {

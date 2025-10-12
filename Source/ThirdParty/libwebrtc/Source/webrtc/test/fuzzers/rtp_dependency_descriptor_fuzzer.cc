@@ -15,7 +15,7 @@
 #include <utility>
 
 #include "api/array_view.h"
-#include "common_video/generic_frame_descriptor/generic_frame_info.h"
+#include "api/transport/rtp/dependency_descriptor.h"
 #include "modules/rtp_rtcp/source/rtp_dependency_descriptor_extension.h"
 #include "rtc_base/checks.h"
 #include "test/fuzzers/fuzz_data_helper.h"
@@ -28,7 +28,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   const FrameDependencyStructure* structure1_ptr = nullptr;
   std::unique_ptr<const FrameDependencyStructure> structure2;
 
-  test::FuzzDataHelper fuzz_data(rtc::MakeArrayView(data, size));
+  test::FuzzDataHelper fuzz_data(webrtc::MakeArrayView(data, size));
   while (fuzz_data.CanReadBytes(1)) {
     // Treat next byte as size of the next extension. That aligns how
     // two-byte rtp header extension sizes are written.
@@ -58,7 +58,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
     uint8_t some_memory[256];
     // That should be true because value_size <= next_size < 256
     RTC_CHECK_LT(value_size, 256);
-    rtc::ArrayView<uint8_t> write_buffer(some_memory, value_size);
+    webrtc::ArrayView<uint8_t> write_buffer(some_memory, value_size);
     RTC_CHECK(RtpDependencyDescriptorExtension::Write(write_buffer, structure1,
                                                       descriptor1));
 

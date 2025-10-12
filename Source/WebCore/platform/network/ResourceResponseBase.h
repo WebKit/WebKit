@@ -26,11 +26,12 @@
 
 #pragma once
 
-#include "CacheValidation.h"
-#include "CertificateInfo.h"
-#include "HTTPHeaderMap.h"
-#include "NetworkLoadMetrics.h"
-#include "ParsedContentRange.h"
+#include <WebCore/CacheValidation.h>
+#include <WebCore/CertificateInfo.h>
+#include <WebCore/HTTPHeaderMap.h>
+#include <WebCore/IPAddressSpace.h>
+#include <WebCore/NetworkLoadMetrics.h>
+#include <WebCore/ParsedContentRange.h>
 #include <span>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Box.h>
@@ -60,9 +61,12 @@ enum class WasPrivateRelayed : bool { No, Yes };
 static constexpr unsigned bitWidthOfWasPrivateRelayed = 1;
 static_assert(static_cast<unsigned>(WasPrivateRelayed::Yes) <= ((1U << bitWidthOfWasPrivateRelayed) - 1));
 
+static constexpr unsigned bitWidthOfIPAddressSpace = 1;
+static_assert(static_cast<unsigned>(IPAddressSpace::Local) <= ((1U << bitWidthOfIPAddressSpace) - 1));
+
 enum class ResourceResponseBaseType : uint8_t { Basic, Cors, Default, Error, Opaque, Opaqueredirect };
 enum class ResourceResponseBaseTainting : uint8_t { Basic, Cors, Opaque, Opaqueredirect };
-enum class ResourceResponseSource : uint8_t { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation, ServiceWorker, ApplicationCache, DOMCache, InspectorOverride };
+enum class ResourceResponseSource : uint8_t { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation, ServiceWorker, LegacyApplicationCachePlaceholder, DOMCache, InspectorOverride };
 
 // Do not use this class directly, use the class ResourceResponse instead
 class ResourceResponseBase {
@@ -148,6 +152,9 @@ public:
     void setWasPrivateRelayed(WasPrivateRelayed privateRelayed) { m_wasPrivateRelayed = privateRelayed; }
     void setProxyName(String&& proxyName) { m_proxyName = WTFMove(proxyName); }
     const String& proxyName() const { return m_proxyName; }
+
+    IPAddressSpace ipAddressSpace() { return m_ipAddressSpace; }
+    void setIPAddressSpace(IPAddressSpace ipAddressSpace) { m_ipAddressSpace = ipAddressSpace; }
 
     // These functions return parsed values of the corresponding response headers.
     WEBCORE_EXPORT bool cacheControlContainsNoCache() const;
@@ -270,7 +277,7 @@ protected:
 
 private:
     friend struct WTF::Persistence::Coder<ResourceResponse>;
-    mutable Markable<Seconds, Seconds::MarkableTraits> m_age;
+    mutable Markable<Seconds> m_age;
     mutable Markable<WallTime> m_date;
     mutable Markable<WallTime> m_expires;
     mutable Markable<WallTime> m_lastModified;
@@ -289,6 +296,8 @@ private:
     Tainting m_tainting : bitWidthOfTainting { Tainting::Basic };
     Source m_source : bitWidthOfSource { Source::Unknown };
     Type m_type : bitWidthOfType { Type::Default };
+    IPAddressSpace m_ipAddressSpace : bitWidthOfIPAddressSpace { IPAddressSpace::Public };
+
 };
 
 struct ResourceResponseData {
@@ -297,7 +306,7 @@ struct ResourceResponseData {
     ResourceResponseData() = default;
     ResourceResponseData(ResourceResponseData&&) = default;
     ResourceResponseData& operator=(ResourceResponseData&&) = default;
-    ResourceResponseData(URL&& url, String&& mimeType, long long expectedContentLength, String&& textEncodingName, int httpStatusCode, String&& httpStatusText, String&& httpVersion, HTTPHeaderMap&& httpHeaderFields, std::optional<NetworkLoadMetrics>&& networkLoadMetrics, ResourceResponseSource source, ResourceResponseBaseType type, ResourceResponseBaseTainting tainting, bool isRedirected, UsedLegacyTLS usedLegacyTLS, WasPrivateRelayed wasPrivateRelayed, String&& proxyName, bool isRangeRequested, std::optional<CertificateInfo> certificateInfo)
+    ResourceResponseData(URL&& url, String&& mimeType, long long expectedContentLength, String&& textEncodingName, int httpStatusCode, String&& httpStatusText, String&& httpVersion, HTTPHeaderMap&& httpHeaderFields, std::optional<NetworkLoadMetrics>&& networkLoadMetrics, ResourceResponseSource source, ResourceResponseBaseType type, ResourceResponseBaseTainting tainting, bool isRedirected, UsedLegacyTLS usedLegacyTLS, WasPrivateRelayed wasPrivateRelayed, String&& proxyName, bool isRangeRequested, std::optional<CertificateInfo> certificateInfo, IPAddressSpace ipAddressSpace)
         : url(WTFMove(url))
         , mimeType(WTFMove(mimeType))
         , expectedContentLength(expectedContentLength)
@@ -316,6 +325,7 @@ struct ResourceResponseData {
         , proxyName(WTFMove(proxyName))
         , isRangeRequested(isRangeRequested)
         , certificateInfo(certificateInfo)
+        , ipAddressSpace(ipAddressSpace)
     {
     }
 
@@ -339,6 +349,7 @@ struct ResourceResponseData {
     String proxyName;
     bool isRangeRequested;
     std::optional<CertificateInfo> certificateInfo;
+    IPAddressSpace ipAddressSpace;
 };
 
 } // namespace WebCore
@@ -377,7 +388,7 @@ template<> struct EnumTraitsForPersistence<WebCore::ResourceResponseBase::Source
         WebCore::ResourceResponseBase::Source::MemoryCache,
         WebCore::ResourceResponseBase::Source::MemoryCacheAfterValidation,
         WebCore::ResourceResponseBase::Source::ServiceWorker,
-        WebCore::ResourceResponseBase::Source::ApplicationCache,
+        WebCore::ResourceResponseBase::Source::LegacyApplicationCachePlaceholder,
         WebCore::ResourceResponseBase::Source::DOMCache,
         WebCore::ResourceResponseBase::Source::InspectorOverride
     >;

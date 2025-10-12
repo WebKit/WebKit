@@ -2,13 +2,14 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-object-shell.js, deepEqual.js]
+includes: [compareArray.js]
 flags:
   - noStrict
 description: |
   pending
 esid: pending
 ---*/
+
 // ES6 7.1.1 ToPrimitive(input [, PreferredType]) specifies a new extension
 // point in the language. Objects can override the behavior of ToPrimitive
 // somewhat by supporting the method obj[@@toPrimitive](hint).
@@ -57,7 +58,7 @@ for (var constructor of [Boolean, Number, String, Symbol]) {
 assert.sameValue(Number(true), 1);
 assert.sameValue(Number(77.7), 77.7);
 assert.sameValue(Number("123"), 123);
-assertThrowsInstanceOf(() => Number(Symbol.iterator), TypeError);
+assert.throws(TypeError, () => Number(Symbol.iterator));
 assert.sameValue(String(true), "true");
 assert.sameValue(String(77.7), "77.7");
 assert.sameValue(String("123"), "123");
@@ -68,9 +69,9 @@ assert.sameValue(ok, true);
 // delete the @@toPrimitive method from Symbol.prototype.
 delete Symbol.prototype[Symbol.toPrimitive];
 var sym = Symbol("ok");
-assertThrowsInstanceOf(() => `${sym}`, TypeError);
-assertThrowsInstanceOf(() => Number(sym), TypeError);
-assertThrowsInstanceOf(() => "" + sym, TypeError);
+assert.throws(TypeError, () => `${sym}`);
+assert.throws(TypeError, () => Number(sym));
+assert.throws(TypeError, () => "" + sym);
 
 // However, having deleted that method, converting a Symbol wrapper object does
 // work: it calls Symbol.prototype.toString().
@@ -106,6 +107,5 @@ var handler = new Proxy({}, {
     }
 });
 proxy = new Proxy(Object.create(null), handler);
-assertThrowsInstanceOf(() => proxy == 0, TypeError);
-assert.deepEqual(log, [Symbol.toPrimitive, "valueOf", "toString"]);
-
+assert.throws(TypeError, () => proxy == 0);
+assert.compareArray(log, [Symbol.toPrimitive, "valueOf", "toString"]);

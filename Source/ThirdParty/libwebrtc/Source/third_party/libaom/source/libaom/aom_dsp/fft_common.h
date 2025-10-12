@@ -53,7 +53,7 @@ void aom_fft1d_8_float(const float *input, float *output, int stride);
 void aom_fft1d_16_float(const float *input, float *output, int stride);
 void aom_fft1d_32_float(const float *input, float *output, int stride);
 
-/**\!brief Function pointer for transposing a matrix of floats.
+/*!\brief Function pointer for transposing a matrix of floats.
  *
  * \param[in]  input  Input buffer (size n x n)
  * \param[out] output Output buffer (size n x n)
@@ -62,7 +62,7 @@ void aom_fft1d_32_float(const float *input, float *output, int stride);
 typedef void (*aom_fft_transpose_func_t)(const float *input, float *output,
                                          int n);
 
-/**\!brief Function pointer for re-arranging intermediate 2d transform results.
+/*!\brief Function pointer for re-arranging intermediate 2d transform results.
  *
  * After re-arrangement, the real and imaginary components will be packed
  * tightly next to each other.

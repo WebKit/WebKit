@@ -20,7 +20,7 @@ bool CopyPrimaryChromaticity(const mkvparser::PrimaryChromaticity& parser_pc,
                              PrimaryChromaticityPtr* muxer_pc) {
   muxer_pc->reset(new (std::nothrow)
                       mkvmuxer::PrimaryChromaticity(parser_pc.x, parser_pc.y));
-  if (!muxer_pc->get())
+  if (!muxer_pc)
     return false;
   return true;
 }
@@ -202,7 +202,8 @@ bool ParseVpxCodecPrivate(const uint8_t* private_data, int32_t length,
       features->bit_depth = priv_profile;
     } else if (id_byte == kVp9ChromaSubsamplingId) {
       const int priv_profile = static_cast<int>(private_data[offset++]);
-      if (priv_profile != 0 && priv_profile != 2 && priv_profile != 3)
+      if (priv_profile != 0 && priv_profile != 1 && priv_profile != 2 &&
+          priv_profile != 3)
         return false;
       if (features->chroma_subsampling != Vp9CodecFeatures::kValueNotPresent &&
           features->chroma_subsampling != priv_profile) {

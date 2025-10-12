@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ UpgradeMixedContentEnabled=true ] -->
+<!DOCTYPE html>
 <html>
 <head>
 <script src="/js-test-resources/js-test.js"></script>
@@ -9,7 +9,6 @@ description("Tests the behavior of no-referrer referrer policy when cross origin
 jsTestIsAsync = true;
 
 if (window.internals) {
-    internals.settings.setAllowDisplayOfInsecureContent(true);
     internals.setTrackingPreventionEnabled(false);
 }
 

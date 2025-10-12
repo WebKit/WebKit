@@ -11,11 +11,13 @@
 #include "rtc_base/rate_tracker.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 
 #include "rtc_base/checks.h"
 #include "rtc_base/time_utils.h"
 
-namespace rtc {
+namespace webrtc {
 
 static const int64_t kTimeUnset = -1;
 
@@ -137,7 +139,7 @@ void RateTracker::AddSamplesAtTime(int64_t current_time_ms,
 }
 
 int64_t RateTracker::Time() const {
-  return rtc::TimeMillis();
+  return TimeMillis();
 }
 
 void RateTracker::EnsureInitialized() {
@@ -155,4 +157,4 @@ size_t RateTracker::NextBucketIndex(size_t bucket_index) const {
   return (bucket_index + 1u) % (bucket_count_ + 1u);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

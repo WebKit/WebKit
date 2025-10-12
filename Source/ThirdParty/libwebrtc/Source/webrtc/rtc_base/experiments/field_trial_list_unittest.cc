@@ -10,9 +10,12 @@
 
 #include "rtc_base/experiments/field_trial_list.h"
 
+#include <string>
+
 #include "absl/strings/string_view.h"
-#include "rtc_base/gunit.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 
 using testing::ElementsAre;
 using testing::IsEmpty;

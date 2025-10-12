@@ -15,12 +15,15 @@ rtc_library("rtp_replayer") {
     "rtp_replayer.h",
   ]
   deps = [
+    "../../../api:transport_api",
     "../../../api/environment:environment_factory",
     "../../../api/test/video:function_video_factory",
     "../../../api/units:timestamp",
+    "../../../api/video:video_frame",
     "../../../api/video_codecs:video_codecs_api",
     "../../../call",
     "../../../call:call_interfaces",
+    "../../../call:video_receive_stream_api",
     "../../../common_video",
     "../../../media:rtc_internal_video_codecs",
     "../../../modules/rtp_rtcp:rtp_rtcp_format",

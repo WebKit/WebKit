@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
@@ -30,6 +30,7 @@
 #include "SVGGraphicsElement.h"
 #include "SVGRenderSupport.h"
 #include "SVGResourcesCache.h"
+#include "Settings.h"
 #include "StyleInheritedData.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -130,12 +131,12 @@ void RenderSVGBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool recompu
     if (document().settings().layerBasedSVGEngineEnabled())
         return;
 
-    const auto* textShadow = style().textShadow();
-    if (!textShadow)
+    const auto& textShadow = style().textShadow();
+    if (textShadow.isNone())
         return;
 
-    LayoutRect borderRect = borderBoxRect();
-    textShadow->adjustRectForShadow(borderRect);
+    auto borderRect = borderBoxRect();
+    Style::adjustRectForShadow(borderRect, textShadow);
     addVisualOverflow(snappedIntRect(borderRect));
 }
 
@@ -194,7 +195,7 @@ const RenderElement* RenderSVGBlock::pushMappingToContainer(const RenderLayerMod
     return SVGRenderSupport::pushMappingToContainer(*this, ancestorToStopAt, geometryMap);
 }
 
-LayoutSize RenderSVGBlock::offsetFromContainer(RenderElement& container, const LayoutPoint&, bool*) const
+LayoutSize RenderSVGBlock::offsetFromContainer(const RenderElement& container, const LayoutPoint&, bool*) const
 {
     ASSERT_UNUSED(container, &container == this->container());
     ASSERT(!isInFlowPositioned());

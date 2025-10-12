@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class CanvasBase;
+class Document;
 class GPU;
 class GPUTexture;
 class ImageBitmap;
@@ -53,7 +54,7 @@ public:
     using CanvasType = Variant<RefPtr<HTMLCanvasElement>>;
 #endif
 
-    static std::unique_ptr<GPUCanvasContext> create(CanvasBase&, GPU&);
+    static std::unique_ptr<GPUCanvasContext> create(CanvasBase&, GPU&, Document*);
 
     virtual CanvasType canvas() = 0;
     virtual ExceptionOr<void> configure(GPUCanvasConfiguration&&) = 0;

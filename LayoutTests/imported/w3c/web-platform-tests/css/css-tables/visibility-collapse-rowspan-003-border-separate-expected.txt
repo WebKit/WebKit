@@ -15,7 +15,7 @@ dddd
 eeee
 
 PASS spanning row visibility:collapse doesn't change table width
-FAIL collapsed row has zero height assert_equals: collapsed row has zero height expected 0 but got 30
+PASS collapsed row has zero height
 PASS first row height doesn't change
 PASS second row height doesn't change
 PASS fourth row height doesn't change

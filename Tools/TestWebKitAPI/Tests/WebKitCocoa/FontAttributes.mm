@@ -40,9 +40,14 @@
 #import <pal/spi/cf/CoreTextSPI.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPIForTesting.h"
+#endif
+
+#if PLATFORM(MAC)
+#import "InstanceMethodSwizzler.h"
 #endif
 
 @interface FontTextStyleUIDelegate : NSObject <WKUIDelegatePrivate> {
@@ -58,17 +63,20 @@
 {
     NSString *fontTextStyle = [[[fontAttributes objectForKey:@"NSFont"] fontDescriptor] objectForKey:(__bridge NSString *)kCTFontDescriptorTextStyleAttribute];
 
-    if (_willSetFont) {
-        EXPECT_WK_STREQ("UICTFontTextStyleTitle1", fontTextStyle);
+    if (_willSetFont && [fontTextStyle isEqualToString:@"UICTFontTextStyleTitle1"]) {
         _done = YES;
     }
 }
 
 @end
 
-@interface FontAttributesListener : NSObject <WKUIDelegatePrivate>
+@interface FontAttributesListener : NSObject <WKUIDelegatePrivate> {
+@public
+    bool _attributeUpdated;
+}
 @property (nonatomic, readonly) NSDictionary *lastFontAttributes;
 @end
+
 
 @implementation FontAttributesListener {
     RetainPtr<NSDictionary> _lastFontAttributes;
@@ -77,6 +85,7 @@
 - (void)_webView:(WKWebView *)webView didChangeFontAttributes:(NSDictionary<NSString *, id> *)fontAttributes
 {
     _lastFontAttributes = fontAttributes;
+    _attributeUpdated = YES;
 }
 
 - (NSDictionary *)lastFontAttributes
@@ -85,6 +94,12 @@
 }
 
 @end
+
+#if PLATFORM(MAC)
+@interface NSMenu ()
+- (id)_menuImpl;
+@end
+#endif
 
 @interface TestWKWebView (FontAttributesTesting)
 - (void)selectElementWithIdentifier:(NSString *)identifier;
@@ -105,7 +120,12 @@
 
 - (NSDictionary *)fontAttributesAfterNextPresentationUpdate
 {
+    RetainPtr fontAttributesListener = dynamic_objc_cast<FontAttributesListener>(self.UIDelegate);
+    fontAttributesListener->_attributeUpdated = NO;
+    TestWebKitAPI::Util::run(&fontAttributesListener->_attributeUpdated);
+
     [self waitForNextPresentationUpdate];
+
     return [(FontAttributesListener *)self.UIDelegate lastFontAttributes];
 }
 
@@ -385,7 +405,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
     }
 #if PLATFORM(MAC)
     [webView selectAll:nil];
-    [webView waitForNextPresentationUpdate];
+    [webView fontAttributesAfterNextPresentationUpdate];
     EXPECT_TRUE(NSFontManager.sharedFontManager.multiple);
 #endif
 }
@@ -467,6 +487,36 @@ TEST(FontAttributes, FontTextStyle)
 
     TestWebKitAPI::Util::run(&uiDelegate->_done);
 }
+
+#if PLATFORM(MAC)
+TEST(FontAttributes, SelectTextStyle)
+{
+    __block bool done = false;
+    auto menu = adoptNS([NSMenu new]);
+    InstanceMethodSwizzler swizzler { [[menu _menuImpl] class],
+        NSSelectorFromString(@"popUpMenu:atLocation:width:forView:withSelectedItem:withFont:withFlags:withOptions:"),
+        imp_implementationWithBlock(^(id, NSMenu *menu, NSPoint, CGFloat, NSView *, NSInteger, NSFont* font, NSUInteger, NSDictionary *) {
+            EXPECT_WK_STREQ("Helvetica", font.fontName);
+            EXPECT_EQ(32.0, font.pointSize);
+            done = true;
+    }) };
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    auto uiDelegate = adoptNS([[FontTextStyleUIDelegate alloc] init]);
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<body>"
+        "<select style='font-family: Helvetica; font-size: 32px; background-color: white;'>"
+            "<option value='item'>styled item</option>"
+        "</select>"
+        "</body>"];
+
+    done = false;
+    [webView sendClickAtPoint:NSMakePoint(8, 375)];
+    [webView waitForNextPresentationUpdate];
+
+    TestWebKitAPI::Util::run(&done);
+}
+#endif
 
 } // namespace TestWebKitAPI
 

@@ -49,6 +49,7 @@
 #import <WebKit/_WKInspector.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/MakeString.h>
 
@@ -143,13 +144,13 @@ void runBasicPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebV
         switch (++connectionCount) {
         case 1:
             connection.receiveHTTPRequest([connection] (Vector<char>&& request1) {
-                EXPECT_TRUE(strnstr(request1.data(), "GET /conversionRequestBeforeRedirect HTTP/1.1\r\n", request1.size()));
+                EXPECT_TRUE(contains(request1.span(), "GET /conversionRequestBeforeRedirect HTTP/1.1\r\n"_span));
                 constexpr auto redirect = "HTTP/1.1 302 Found\r\n"
                     "Location: /.well-known/private-click-measurement/trigger-attribution/12\r\n"
                     "Content-Length: 0\r\n\r\n"_s;
                 connection.send(redirect, [connection] {
                     connection.receiveHTTPRequest([connection] (Vector<char>&& request2) {
-                        EXPECT_TRUE(strnstr(request2.data(), "GET /.well-known/private-click-measurement/trigger-attribution/12 HTTP/1.1\r\n", request2.size()));
+                        EXPECT_TRUE(contains(request2.span(), "GET /.well-known/private-click-measurement/trigger-attribution/12 HTTP/1.1\r\n"_span));
                         constexpr auto response = "HTTP/1.1 200 OK\r\n"
                             "Content-Length: 0\r\n\r\n"_s;
                         connection.send(response);
@@ -159,10 +160,9 @@ void runBasicPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebV
             break;
         case 2:
             connection.receiveHTTPRequest([&done] (Vector<char>&& request3) {
-                request3.append('\0');
-                EXPECT_TRUE(strnstr(request3.data(), "POST / HTTP/1.1\r\n", request3.size()));
-                const char* bodyBegin = strnstr(request3.data(), "\r\n\r\n", request3.size()) + strlen("\r\n\r\n");
-                EXPECT_STREQ(bodyBegin, "{\"source_engagement_type\":\"click\",\"source_site\":\"127.0.0.1\",\"source_id\":42,\"attributed_on_site\":\"example.com\",\"trigger_data\":12,\"version\":3}");
+                EXPECT_TRUE(contains(request3.span(), "POST / HTTP/1.1\r\n"_span));
+                size_t bodyBegin = find(request3.span(), "\r\n\r\n"_span) + strlen("\r\n\r\n");
+                EXPECT_TRUE(equalSpans(request3.subspan(bodyBegin), "{\"source_engagement_type\":\"click\",\"source_site\":\"127.0.0.1\",\"source_id\":42,\"attributed_on_site\":\"example.com\",\"trigger_data\":12,\"version\":3}"_span));
                 done = true;
             });
             break;
@@ -204,12 +204,12 @@ static void triggerAttributionWithSubresourceRedirect(Connection& connection, co
     auto optionalQueryString = attributionDestinationNonce.isEmpty() ? attributionDestinationNonce : makeString("?attributionDestinationNonce="_s, attributionDestinationNonce);
     auto location = makeString("/.well-known/private-click-measurement/trigger-attribution/12"_s, optionalQueryString);
     connection.receiveHTTPRequest([connection, location] (Vector<char>&& request1) {
-        EXPECT_TRUE(strnstr(request1.data(), "GET /conversionRequestBeforeRedirect HTTP/1.1\r\n", request1.size()));
+        EXPECT_TRUE(contains(request1.span(), "GET /conversionRequestBeforeRedirect HTTP/1.1\r\n"_span));
         auto redirect = makeString("HTTP/1.1 302 Found\r\nLocation: "_s, location, "\r\nContent-Length: 0\r\n\r\n"_s);
         connection.send(WTFMove(redirect), [connection, location] {
             connection.receiveHTTPRequest([connection, location] (Vector<char>&& request2) {
                 auto expectedHttpGetString = makeString("GET "_s, location, " HTTP/1.1\r\n"_s).utf8();
-                EXPECT_TRUE(strnstr(request2.data(), expectedHttpGetString.data(), request2.size()));
+                EXPECT_TRUE(contains(request2.span(), expectedHttpGetString.span()));
                 constexpr auto response = "HTTP/1.1 200 OK\r\n"
                     "Content-Length: 0\r\n\r\n"_s;
                 connection.send(response);
@@ -272,7 +272,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
             break;
         case 2:
             connection.receiveHTTPRequest([signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] (Vector<char>&& request1) {
-                EXPECT_TRUE(strnstr(request1.data(), "GET / HTTP/1.1\r\n", request1.size()));
+                EXPECT_TRUE(contains(request1.span(), "GET / HTTP/1.1\r\n"_span));
 
                 // Example response: { "token_public_key": "ABCD" }. "ABCD" should be Base64URL encoded.
                 auto response = makeString("HTTP/1.1 200 OK\r\n"
@@ -281,7 +281,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                     "{\"token_public_key\": \""_s, keyData, "\"}"_s);
                 connection.send(WTFMove(response), [signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] {
                     connection.receiveHTTPRequest([signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] (Vector<char>&& request2) {
-                        EXPECT_TRUE(strnstr(request2.data(), "POST / HTTP/1.1\r\n", request2.size()));
+                        EXPECT_TRUE(contains(request2.span(), "POST / HTTP/1.1\r\n"_span));
 
                         auto request2String = String(request2.span());
                         auto key = signingParty == TokenSigningParty::Source ? "source_unlinkable_token"_s : "destination_unlinkable_token"_s;
@@ -294,7 +294,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
 
                         const struct ccrsabssa_ciphersuite *ciphersuite = &ccrsabssa_ciphersuite_rsa4096_sha384;
                         auto blindedSignature = adoptNS([[NSMutableData alloc] initWithLength:modulusNBytes]);
-                        ccrsabssa_sign_blinded_message(ciphersuite, rsaPrivateKey, blindedMessage->data(), blindedMessage->size(), static_cast<uint8_t *>([blindedSignature mutableBytes]), [blindedSignature length], rng);
+                        ccrsabssa_sign_blinded_message(ciphersuite, rsaPrivateKey, blindedMessage->span().data(), blindedMessage->size(), static_cast<uint8_t *>([blindedSignature mutableBytes]), [blindedSignature length], rng);
                         auto unlinkableToken = base64URLEncodeToString(span(blindedSignature.get()));
 
                         // Example response: { "unlinkable_token": "ABCD" }. "ABCD" should be Base64URL encoded.
@@ -304,7 +304,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                             "{\"unlinkable_token\": \""_s, unlinkableToken, "\"}"_s);
                         connection.send(WTFMove(response), [signingParty, connection, &keyData, &done, unlinkableToken, token, &secKey] {
                             connection.receiveHTTPRequest([signingParty, connection, &keyData, &done, unlinkableToken, token, &secKey] (Vector<char>&& request3) {
-                                EXPECT_TRUE(strnstr(request3.data(), "GET / HTTP/1.1\r\n", request3.size()));
+                                EXPECT_TRUE(contains(request3.span(), "GET / HTTP/1.1\r\n"_span));
 
                                 // Example response: { "token_public_key": "ABCD" }. "ABCD" should be Base64URL encoded.
                                 auto response = makeString("HTTP/1.1 200 OK\r\n"
@@ -313,12 +313,11 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                                     "{\"token_public_key\": \""_s, keyData, "\"}"_s);
                                 connection.send(WTFMove(response), [signingParty, connection, &done, unlinkableToken, token, &secKey] {
                                     connection.receiveHTTPRequest([signingParty, connection, &done, unlinkableToken, token, &secKey] (Vector<char>&& request4) {
-                                        EXPECT_TRUE(strnstr(request4.data(), "POST / HTTP/1.1\r\n", request4.size()));
-                                        EXPECT_TRUE(strnstr(request4.data(), "{\"source_engagement_type\":\"click\",\"source_site\":\"127.0.0.1\",\"source_id\":42,\"attributed_on_site\":\"example.com\",\"trigger_data\":12,\"version\":3,",
-                                            request4.size()));
+                                        EXPECT_TRUE(contains(request4.span(), "POST / HTTP/1.1\r\n"_span));
+                                        EXPECT_TRUE(contains(request4.span(), "{\"source_engagement_type\":\"click\",\"source_site\":\"127.0.0.1\",\"source_id\":42,\"attributed_on_site\":\"example.com\",\"trigger_data\":12,\"version\":3,"_span));
 
-                                        EXPECT_FALSE(strnstr(request4.data(), token.utf8().data(), request4.size()));
-                                        EXPECT_FALSE(strnstr(request4.data(), unlinkableToken.utf8().data(), request4.size()));
+                                        EXPECT_FALSE(contains(request4.span(), token.utf8().span()));
+                                        EXPECT_FALSE(contains(request4.span(), unlinkableToken.utf8().span()));
 
                                         auto request4String = String(request4.span());
 
@@ -328,7 +327,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                                         auto end = request4String.find('"', start);
                                         auto token = request4String.substring(start, end - start);
                                         auto tokenVector = base64URLDecode(token);
-                                        auto tokenData = adoptNS([[NSData alloc] initWithBytes:tokenVector->data() length:tokenVector->size()]);
+                                        RetainPtr tokenData = toNSData(tokenVector->span());
 
                                         key = signingParty == TokenSigningParty::Source ? "source_secret_token_signature"_s : "destination_secret_token_signature"_s;
                                         start = request4String.find(key);
@@ -336,7 +335,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                                         end = request4String.find('"', start);
                                         auto signature = request4String.substring(start, end - start);
                                         auto signatureVector = base64URLDecode(signature);
-                                        auto signatureData = adoptNS([[NSData alloc] initWithBytes:signatureVector->data() length:signatureVector->size()]);
+                                        RetainPtr signatureData = toNSData(signatureVector->span());
 
                                         EXPECT_TRUE(SecKeyVerifySignature(secKey.get(), kSecKeyAlgorithmRSASignatureMessagePSSSHA384, (__bridge CFDataRef)tokenData.get(), (__bridge CFDataRef)signatureData.get(), NULL));
 
@@ -498,7 +497,7 @@ static void attemptConnectionInProcessWithoutEntitlement()
 {
 #if USE(APPLE_INTERNAL_SDK)
     __block bool done = false;
-    auto connection = adoptNS(xpc_connection_create_mach_service("org.webkit.pcmtestdaemon.service", dispatch_get_main_queue(), 0));
+    auto connection = adoptNS(xpc_connection_create_mach_service("org.webkit.pcmtestdaemon.service", mainDispatchQueueSingleton(), 0));
     xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t event) {
         EXPECT_EQ(event, XPC_ERROR_CONNECTION_INTERRUPTED);
         done = true;
@@ -526,36 +525,28 @@ TEST(PrivateClickMeasurement, DaemonBasicFunctionality)
 }
 
 #if PLATFORM(MAC)
-static void setInjectedBundleClient(WKWebView *webView, Vector<String>& consoleMessages)
-{
-    WKPageInjectedBundleClientV0 injectedBundleClient = {
-        { 0, &consoleMessages },
-        [] (WKPageRef, WKStringRef messageName, WKTypeRef message, const void* clientInfo) {
-            auto& consoleMessages = *reinterpret_cast<Vector<String>*>(const_cast<void*>(clientInfo));
-            if (WKStringIsEqualToUTF8CString(messageName, "ConsoleMessage"))
-                consoleMessages.append(Util::toNS((WKStringRef)message));
-        },
-        nullptr,
-    };
-    WKPageSetPageInjectedBundleClient(webView._pageForTesting, &injectedBundleClient.base);
-};
-
-static RetainPtr<TestWKWebView> webViewWithOpenInspector(WKWebViewConfiguration *configuration)
+static RetainPtr<TestWKWebView> webViewWithOpenInspector(WKWebViewConfiguration *configuration, id<WKUIDelegate> uiDelegate)
 {
     configuration.preferences._developerExtrasEnabled = YES;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
     [webView synchronouslyLoadHTMLString:@"start processes"];
     [[webView _inspector] show];
     [webView _test_waitForInspectorToShow];
+    [webView setUIDelegate:uiDelegate];
     return webView;
 }
 
 TEST(PrivateClickMeasurement, DaemonDebugMode)
 {
-    auto [tempDir, configuration] = setUpDaemon([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundlePageConsoleMessage"]);
-    Vector<String> consoleMessages;
-    auto webView = webViewWithOpenInspector(configuration);
-    setInjectedBundleClient(webView.get(), consoleMessages);
+    auto [tempDir, configuration] = setUpDaemon(adoptNS([WKWebViewConfiguration new]).autorelease());
+    configuration._shouldSendConsoleLogsToUIProcessForTesting = YES;
+    __block Vector<String> consoleMessages;
+    auto delegate = adoptNS([TestUIDelegate new]);
+    delegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
+        consoleMessages.append(log);
+    };
+    auto webView = webViewWithOpenInspector(configuration, delegate.get());
+
     [configuration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabled:YES];
     while (consoleMessages.isEmpty())
         Util::spinRunLoop();
@@ -567,7 +558,7 @@ TEST(PrivateClickMeasurement, DaemonDebugMode)
     cleanUpDaemon(tempDir);
 }
 
-static void setupSKAdNetworkTest(Vector<String>& consoleMessages, id<WKNavigationDelegate> navigationDelegate, NSString *html, id<WKUIDelegate> uiDelegate = nil)
+static void setupSKAdNetworkTest(Vector<String>& consoleMessages, id<WKNavigationDelegate> navigationDelegate, NSString *html, id<WKUIDelegate> uiDelegate)
 {
     HTTPServer server({ { "/app/id1234567890"_s, { "hello"_s } } }, HTTPServer::Protocol::HttpsProxy);
 
@@ -577,9 +568,10 @@ static void setupSKAdNetworkTest(Vector<String>& consoleMessages, id<WKNavigatio
         (NSString *)kCFStreamPropertyHTTPSProxyPort: @(server.port())
     }];
 
-    WKWebViewConfiguration *viewConfiguration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundlePageConsoleMessage"];
-    viewConfiguration.websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get();
-    auto webView = webViewWithOpenInspector(viewConfiguration);
+    auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    viewConfiguration.get().websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get();
+    viewConfiguration.get()._shouldSendConsoleLogsToUIProcessForTesting = YES;
+    auto webView = webViewWithOpenInspector(viewConfiguration.get(), uiDelegate);
 
     for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"SKAttributionEnabled"]) {
@@ -588,8 +580,7 @@ static void setupSKAdNetworkTest(Vector<String>& consoleMessages, id<WKNavigatio
         }
     }
 
-    setInjectedBundleClient(webView.get(), consoleMessages);
-    [viewConfiguration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabled:YES];
+    [viewConfiguration.get().websiteDataStore _setPrivateClickMeasurementDebugModeEnabled:YES];
 
     [webView synchronouslyLoadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.com/"]];
 
@@ -599,7 +590,6 @@ static void setupSKAdNetworkTest(Vector<String>& consoleMessages, id<WKNavigatio
     consoleMessages.clear();
 
     webView.get().navigationDelegate = navigationDelegate;
-    webView.get().UIDelegate = uiDelegate;
 
     [webView clickOnElementID:@"anchorid"];
 }
@@ -614,13 +604,17 @@ TEST(PrivateClickMeasurement, DISABLED_SKAdNetwork)
 TEST(PrivateClickMeasurement, SKAdNetwork)
 #endif
 {
-    Vector<String> consoleMessages;
+    __block Vector<String> consoleMessages;
     auto delegate = adoptNS([TestNavigationDelegate new]);
     [delegate allowAnyTLSCertificate];
     delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *navigationAction, void (^decisionHandler)(WKNavigationActionPolicy)) {
         decisionHandler(_WKNavigationActionPolicyAllowWithoutTryingAppLink);
     };
-    setupSKAdNetworkTest(consoleMessages, delegate.get(), linkToAppStoreHTML);
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
+        consoleMessages.append(log);
+    };
+    setupSKAdNetworkTest(consoleMessages, delegate.get(), linkToAppStoreHTML, uiDelegate.get());
     while (consoleMessages.isEmpty())
         Util::spinRunLoop();
     EXPECT_WK_STREQ(consoleMessages[0], expectedSKAdNetworkConsoleMessage);
@@ -633,7 +627,7 @@ TEST(PrivateClickMeasurement, DISABLED_SKAdNetworkAboutBlank)
 TEST(PrivateClickMeasurement, SKAdNetworkAboutBlank)
 #endif
 {
-    Vector<String> consoleMessages;
+    __block Vector<String> consoleMessages;
     auto delegate = adoptNS([TestNavigationDelegate new]);
     auto uiDelegate = adoptNS([TestUIDelegate new]);
     __block RetainPtr<TestWKWebView> openedWebView;
@@ -641,6 +635,9 @@ TEST(PrivateClickMeasurement, SKAdNetworkAboutBlank)
         openedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
         openedWebView.get().navigationDelegate = delegate.get();
         return openedWebView.get();
+    };
+    uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
+        consoleMessages.append(log);
     };
     [delegate allowAnyTLSCertificate];
     delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *navigationAction, void (^decisionHandler)(WKNavigationActionPolicy)) {
@@ -662,7 +659,7 @@ TEST(PrivateClickMeasurement, DISABLED_SKAdNetworkWithoutNavigatingToAppStoreLin
 TEST(PrivateClickMeasurement, SKAdNetworkWithoutNavigatingToAppStoreLink)
 #endif
 {
-    Vector<String> consoleMessages;
+    __block Vector<String> consoleMessages;
     auto delegate = adoptNS([TestNavigationDelegate new]);
     [delegate allowAnyTLSCertificate];
     delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *navigationAction, void (^decisionHandler)(WKNavigationActionPolicy)) {
@@ -671,7 +668,11 @@ TEST(PrivateClickMeasurement, SKAdNetworkWithoutNavigatingToAppStoreLink)
         EXPECT_EQ(0u, consoleMessages.size());
         [navigationAction _storeSKAdNetworkAttribution];
     };
-    setupSKAdNetworkTest(consoleMessages, delegate.get(), linkToAppStoreHTML);
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
+        consoleMessages.append(log);
+    };
+    setupSKAdNetworkTest(consoleMessages, delegate.get(), linkToAppStoreHTML, uiDelegate.get());
 
     while (consoleMessages.isEmpty())
         Util::spinRunLoop();
@@ -680,15 +681,19 @@ TEST(PrivateClickMeasurement, SKAdNetworkWithoutNavigatingToAppStoreLink)
 
 TEST(PrivateClickMeasurement, NetworkProcessDebugMode)
 {
-    auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundlePageConsoleMessage"];
-    Vector<String> consoleMessages;
-    auto webView = webViewWithOpenInspector(configuration);
-    setInjectedBundleClient(webView.get(), consoleMessages);
-    [configuration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabled:YES];
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get()._shouldSendConsoleLogsToUIProcessForTesting = YES;
+    __block Vector<String> consoleMessages;
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
+        consoleMessages.append(log);
+    };
+    auto webView = webViewWithOpenInspector(configuration.get(), uiDelegate.get());
+    [configuration.get().websiteDataStore _setPrivateClickMeasurementDebugModeEnabled:YES];
     while (consoleMessages.isEmpty())
         Util::spinRunLoop();
     EXPECT_WK_STREQ(consoleMessages[0], "[Private Click Measurement] Turned Debug Mode on.");
-    [configuration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabled:NO];
+    [configuration.get().websiteDataStore _setPrivateClickMeasurementDebugModeEnabled:NO];
     while (consoleMessages.size() < 2)
         Util::spinRunLoop();
     EXPECT_WK_STREQ(consoleMessages[1], "[Private Click Measurement] Turned Debug Mode off.");

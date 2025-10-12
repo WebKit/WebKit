@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L.
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -107,8 +107,8 @@ Ref<UserMediaPermissionRequestManagerProxy> UserMediaPermissionRequestManagerPro
 
 UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(WebPageProxy& page)
     : m_page(page)
-    , m_rejectionTimer(RunLoop::protectedMain(), this, &UserMediaPermissionRequestManagerProxy::rejectionTimerFired)
-    , m_watchdogTimer(RunLoop::protectedMain(), this, &UserMediaPermissionRequestManagerProxy::watchdogTimerFired)
+    , m_rejectionTimer(RunLoop::mainSingleton(), "UserMediaPermissionRequestManagerProxy::RejectionTimer"_s, this, &UserMediaPermissionRequestManagerProxy::rejectionTimerFired)
+    , m_watchdogTimer(RunLoop::mainSingleton(), "UserMediaPermissionRequestManagerProxy::WatchdogTimer"_s, this, &UserMediaPermissionRequestManagerProxy::watchdogTimerFired)
 #if !RELEASE_LOG_DISABLED
     , m_logger(page.logger())
     , m_logIdentifier(uniqueLogIdentifier())
@@ -324,7 +324,7 @@ void UserMediaPermissionRequestManagerProxy::grantRequest(UserMediaPermissionReq
 static bool doesPageNeedTCCD(const WebPageProxy& page)
 {
     Ref preferences = page.preferences();
-    return (!preferences->captureAudioInGPUProcessEnabled() && !preferences->captureAudioInUIProcessEnabled()) || !preferences->captureVideoInGPUProcessEnabled();
+    return !preferences->captureAudioInGPUProcessEnabled() || !preferences->captureVideoInGPUProcessEnabled();
 }
 #endif
 
@@ -428,20 +428,28 @@ void UserMediaPermissionRequestManagerProxy::resetAccess(WebFrameProxy* frame)
     m_deniedRequests.clear();
 }
 
-const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::searchForGrantedRequest(std::optional<FrameIdentifier> frameID, const SecurityOrigin& userMediaDocumentOrigin, const SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo) const
+Seconds UserMediaPermissionRequestManagerProxy::inactiveMediaCaptureStreamDuration() const
+{
+    return m_lastCaptureTime ? MonotonicTime::now() - *m_lastCaptureTime : 0_s;
+}
+
+bool UserMediaPermissionRequestManagerProxy::hasGrantedRequest(std::optional<FrameIdentifier> frameID, const SecurityOrigin& userMediaDocumentOrigin, const SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo, bool isUserGesturePriviledged) const
 {
     RefPtr page = m_page.get();
-    if (!page || page->isMediaStreamCaptureMuted())
-        return nullptr;
+    if (!page || page->isMediaStreamCaptureMuted() || m_grantedRequests.isEmpty())
+        return false;
+
+    if (!isUserGesturePriviledged && inactiveMediaCaptureStreamDuration().minutes() > page->protectedPreferences()->inactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes())
+        return false;
 
     bool checkForAudio = needsAudio;
     bool checkForVideo = needsVideo;
     for (Ref grantedRequest : m_grantedRequests) {
         if (grantedRequest->requiresDisplayCapture())
             continue;
-        if (!grantedRequest->protectedUserMediaDocumentSecurityOrigin()->isSameSchemeHostPort(userMediaDocumentOrigin))
+        if (!grantedRequest->userMediaDocumentSecurityOrigin().isSameSchemeHostPort(userMediaDocumentOrigin))
             continue;
-        if (!grantedRequest->protectedTopLevelDocumentSecurityOrigin()->isSameSchemeHostPort(topLevelDocumentOrigin))
+        if (!grantedRequest->topLevelDocumentSecurityOrigin().isSameSchemeHostPort(topLevelDocumentOrigin))
             continue;
         if (frameID && grantedRequest->frameID() != frameID)
             continue;
@@ -455,16 +463,16 @@ const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::s
         if (checkForVideo || checkForAudio)
             continue;
 
-        return grantedRequest.ptr();
+        return true;
     }
-    return nullptr;
+    return false;
 }
 
 static bool isMatchingDeniedRequest(const UserMediaPermissionRequestProxy& request, const UserMediaPermissionRequestManagerProxy::DeniedRequest& deniedRequest)
 {
     return deniedRequest.mainFrameID == request.mainFrameID()
-        && Ref { deniedRequest.userMediaDocumentOrigin }->isSameSchemeHostPort(request.protectedUserMediaDocumentSecurityOrigin())
-        && Ref { deniedRequest.topLevelDocumentOrigin }->isSameSchemeHostPort(request.protectedTopLevelDocumentSecurityOrigin());
+        && Ref { deniedRequest.userMediaDocumentOrigin }->isSameSchemeHostPort(request.userMediaDocumentSecurityOrigin())
+        && Ref { deniedRequest.topLevelDocumentOrigin }->isSameSchemeHostPort(request.topLevelDocumentSecurityOrigin());
 }
 
 bool UserMediaPermissionRequestManagerProxy::wasRequestDenied(const UserMediaPermissionRequestProxy& request, bool needsAudio, bool needsVideo, bool needsScreenCapture)
@@ -544,7 +552,7 @@ UserMediaPermissionRequestManagerProxy::RequestAction UserMediaPermissionRequest
     if (requestingScreenCapture)
         return RequestAction::Prompt;
 
-    return searchForGrantedRequest(request.frameID(), request.protectedUserMediaDocumentSecurityOrigin(), request.protectedTopLevelDocumentSecurityOrigin(), requestingMicrophone, requestingCamera) ? RequestAction::Grant : RequestAction::Prompt;
+    return hasGrantedRequest(request.frameID(), request.userMediaDocumentSecurityOrigin(), request.topLevelDocumentSecurityOrigin(), requestingMicrophone, requestingCamera, request.isUserGesturePriviledged()) ? RequestAction::Grant : RequestAction::Prompt;
 }
 #endif
 
@@ -795,8 +803,8 @@ void UserMediaPermissionRequestManagerProxy::decidePolicyForUserMediaPermissionR
     }
 
     // FIXME: Remove webFrame, userMediaOrigin and topLevelOrigin from this uiClient API call.
-    Ref userMediaOrigin = API::SecurityOrigin::create(currentUserMediaRequest->protectedUserMediaDocumentSecurityOrigin());
-    Ref topLevelOrigin = API::SecurityOrigin::create(currentUserMediaRequest->protectedTopLevelDocumentSecurityOrigin());
+    Ref userMediaOrigin = API::SecurityOrigin::create(currentUserMediaRequest->userMediaDocumentSecurityOrigin());
+    Ref topLevelOrigin = API::SecurityOrigin::create(currentUserMediaRequest->topLevelDocumentSecurityOrigin());
     page->uiClient().decidePolicyForUserMediaPermissionRequest(*page, *webFrame, WTFMove(userMediaOrigin), WTFMove(topLevelOrigin), *currentUserMediaRequest);
 }
 
@@ -860,12 +868,12 @@ bool UserMediaPermissionRequestManagerProxy::shouldChangeDeniedToPromptForMicrop
 
 bool UserMediaPermissionRequestManagerProxy::shouldChangePromptToGrantForCamera(const ClientOrigin& origin) const
 {
-    return searchForGrantedRequest(std::nullopt, origin.clientOrigin.securityOrigin().get(), origin.topOrigin.securityOrigin().get(), false, true);
+    return hasGrantedRequest(std::nullopt, origin.clientOrigin.securityOrigin().get(), origin.topOrigin.securityOrigin().get(), false, true, true);
 }
 
 bool UserMediaPermissionRequestManagerProxy::shouldChangePromptToGrantForMicrophone(const ClientOrigin& origin) const
 {
-    return searchForGrantedRequest(std::nullopt, origin.clientOrigin.securityOrigin().get(), origin.topOrigin.securityOrigin().get(), true, false);
+    return hasGrantedRequest(std::nullopt, origin.clientOrigin.securityOrigin().get(), origin.topOrigin.securityOrigin().get(), true, false, true);
 }
 
 void UserMediaPermissionRequestManagerProxy::clearUserMediaPermissionRequestHistory(WebCore::PermissionName permissionName)
@@ -1164,10 +1172,13 @@ void UserMediaPermissionRequestManagerProxy::captureStateChanged(MediaProducerMe
     m_captureState = newState & activeCaptureMask;
 
     Seconds interval;
-    if (m_captureState & activeCaptureMask)
+    if (m_captureState & activeCaptureMask) {
         interval = Seconds::fromHours(page->protectedPreferences()->longRunningMediaCaptureStreamRepromptIntervalInHours());
-    else
+        m_lastCaptureTime = { };
+    } else {
         interval = Seconds::fromMinutes(page->protectedPreferences()->inactiveMediaCaptureStreamRepromptIntervalInMinutes());
+        m_lastCaptureTime = MonotonicTime::now();
+    }
 
     if (interval == m_currentWatchdogInterval)
         return;

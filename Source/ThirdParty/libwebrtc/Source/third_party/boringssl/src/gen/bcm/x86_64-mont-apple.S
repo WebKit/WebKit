@@ -229,7 +229,7 @@ L$copy:
 
 	movq	8(%rsp,%r9,8),%rsi
 
-	movq	$1,%rax
+
 	movq	-48(%rsi),%r15
 
 	movq	-40(%rsi),%r14
@@ -632,7 +632,7 @@ L$sub4x:
 	sbbq	$0,%rax
 	movq	%rbp,24(%rdi,%r14,8)
 	pxor	%xmm0,%xmm0
-.byte	102,72,15,110,224
+	movq	%rax,%xmm4
 	pcmpeqd	%xmm5,%xmm5
 	pshufd	$0,%xmm4,%xmm4
 	movq	%r9,%r15
@@ -662,7 +662,7 @@ L$copy4x:
 	jnz	L$copy4x
 	movq	8(%rsp,%r9,8),%rsi
 
-	movq	$1,%rax
+
 	movq	-48(%rsi),%r15
 
 	movq	-40(%rsi),%r14
@@ -764,10 +764,10 @@ L$sqr8x_page_walk_done:
 
 L$sqr8x_body:
 
-.byte	102,72,15,110,209
+	movq	%rcx,%xmm2
 	pxor	%xmm0,%xmm0
-.byte	102,72,15,110,207
-.byte	102,73,15,110,218
+	movq	%rdi,%xmm1
+	movq	%r10,%xmm3
 	testq	%rdx,%rdx
 	jz	L$sqr8x_nox
 
@@ -779,7 +779,7 @@ L$sqr8x_body:
 	leaq	(%r8,%rcx,1),%rbx
 	movq	%rcx,%r9
 	movq	%rcx,%rdx
-.byte	102,72,15,126,207
+	movq	%xmm1,%rdi
 	sarq	$3+2,%rcx
 	jmp	L$sqr8x_sub
 
@@ -793,7 +793,7 @@ L$sqr8x_nox:
 	leaq	(%rdi,%r9,1),%rbx
 	movq	%r9,%rcx
 	movq	%r9,%rdx
-.byte	102,72,15,126,207
+	movq	%xmm1,%rdi
 	sarq	$3+2,%rcx
 	jmp	L$sqr8x_sub
 
@@ -821,7 +821,7 @@ L$sqr8x_sub:
 	leaq	(%rbx,%r9,1),%rbx
 	leaq	(%rdi,%r9,1),%rdi
 
-.byte	102,72,15,110,200
+	movq	%rax,%xmm1
 	pxor	%xmm0,%xmm0
 	pshufd	$0,%xmm1,%xmm1
 	movq	40(%rsp),%rsi
@@ -853,7 +853,7 @@ L$sqr8x_cond_copy:
 	addq	$32,%r9
 	jnz	L$sqr8x_cond_copy
 
-	movq	$1,%rax
+
 	movq	-48(%rsi),%r15
 
 	movq	-40(%rsi),%r14
@@ -1179,7 +1179,7 @@ L$mulx4x_sub:
 	leaq	64(%rsp),%rbx
 	subq	%rdx,%rdi
 
-.byte	102,73,15,110,207
+	movq	%r15,%xmm1
 	pxor	%xmm0,%xmm0
 	pshufd	$0,%xmm1,%xmm1
 	movq	40(%rsp),%rsi
@@ -1211,7 +1211,7 @@ L$mulx4x_cond_copy:
 
 	movq	%rdx,(%rbx)
 
-	movq	$1,%rax
+
 	movq	-48(%rsi),%r15
 
 	movq	-40(%rsi),%r14

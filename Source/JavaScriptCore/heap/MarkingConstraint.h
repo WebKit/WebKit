@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "ConstraintConcurrency.h"
-#include "ConstraintParallelism.h"
-#include "ConstraintVolatility.h"
+#include <JavaScriptCore/ConstraintConcurrency.h>
+#include <JavaScriptCore/ConstraintParallelism.h>
+#include <JavaScriptCore/ConstraintVolatility.h>
 #include <limits.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>

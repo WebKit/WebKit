@@ -22,21 +22,21 @@
 
 #pragma once
 
-#include "CallData.h"
-#include "CellState.h"
-#include "ConstructData.h"
-#include "DestructionMode.h"
-#include "EnumerationMode.h"
-#include "Heap.h"
-#include "HeapCell.h"
-#include "IndexingType.h"
-#include "JSLock.h"
-#include "JSTypeInfo.h"
-#include "SlotVisitor.h"
-#include "SlotVisitorMacros.h"
-#include "SubspaceAccess.h"
-#include "TypedArrayType.h"
-#include "WriteBarrier.h"
+#include <JavaScriptCore/CallData.h>
+#include <JavaScriptCore/CellState.h>
+#include <JavaScriptCore/ConstructData.h>
+#include <JavaScriptCore/DestructionMode.h>
+#include <JavaScriptCore/EnumerationMode.h>
+#include <JavaScriptCore/Heap.h>
+#include <JavaScriptCore/HeapCell.h>
+#include <JavaScriptCore/IndexingType.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/JSTypeInfo.h>
+#include <JavaScriptCore/SlotVisitor.h>
+#include <JavaScriptCore/SlotVisitorMacros.h>
+#include <JavaScriptCore/SubspaceAccess.h>
+#include <JavaScriptCore/TypedArrayType.h>
+#include <JavaScriptCore/WriteBarrier.h>
 
 namespace JSC {
 
@@ -92,6 +92,8 @@ template<typename T> void* tryAllocateCell(VM&, GCDeferralContext*, size_t = siz
 
 class JSCell : public HeapCell {
     WTF_ALLOW_COMPACT_POINTERS;
+    WTF_MAKE_NONCOPYABLE(JSCell);
+    WTF_MAKE_NONMOVABLE(JSCell);
     friend class JSValue;
     friend class MarkedBlock;
     template<typename T>
@@ -113,7 +115,7 @@ public:
     enum CreatingEarlyCellTag { CreatingEarlyCell };
     JSCell(CreatingEarlyCellTag);
     enum CreatingWellDefinedBuiltinCellTag { CreatingWellDefinedBuiltinCell };
-    JSCell(CreatingWellDefinedBuiltinCellTag, StructureID, int32_t typeInfoBlob);
+    JSCell(CreatingWellDefinedBuiltinCellTag, StructureID, uint32_t typeInfoBlob);
 
     JS_EXPORT_PRIVATE static void destroy(JSCell*);
 
@@ -286,10 +288,15 @@ private:
     JS_EXPORT_PRIVATE JSObject* toObjectSlow(JSGlobalObject*) const;
 
     StructureID m_structureID;
-    IndexingType m_indexingTypeAndMisc; // DO NOT store to this field. Always CAS.
-    JSType m_type;
-    TypeInfo::InlineTypeFlags m_flags;
-    CellState m_cellState;
+    union {
+        uint32_t m_blob;
+        struct {
+            IndexingType m_indexingTypeAndMisc; // DO NOT store to this field. Always CAS.
+            JSType m_type;
+            TypeInfo::InlineTypeFlags m_flags;
+            CellState m_cellState;
+        };
+    };
 };
 
 class JSCellLock : public JSCell {

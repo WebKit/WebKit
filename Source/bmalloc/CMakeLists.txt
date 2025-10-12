@@ -13,7 +13,7 @@ set(bmalloc_SOURCES
     bmalloc/Cache.cpp
     bmalloc/CryptoRandom.cpp
     bmalloc/Deallocator.cpp
-    bmalloc/DebugHeap.cpp
+    bmalloc/SystemHeap.cpp
     bmalloc/Environment.cpp
     bmalloc/FreeList.cpp
     bmalloc/Gigacage.cpp
@@ -151,6 +151,8 @@ set(bmalloc_C_SOURCES
     libpas/src/libpas/pas_medium_megapage_cache.c
     libpas/src/libpas/pas_megapage_cache.c
     libpas/src/libpas/pas_monotonic_time.c
+    libpas/src/libpas/pas_mte.c
+    libpas/src/libpas/pas_mte_config.c
     libpas/src/libpas/pas_page_base.c
     libpas/src/libpas/pas_page_base_config.c
     libpas/src/libpas/pas_page_header_table.c
@@ -230,7 +232,7 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/Chunk.h
     bmalloc/CryptoRandom.h
     bmalloc/Deallocator.h
-    bmalloc/DebugHeap.h
+    bmalloc/SystemHeap.h
     bmalloc/DeferredDecommit.h
     bmalloc/DeferredDecommitInlines.h
     bmalloc/DeferredTrigger.h
@@ -350,6 +352,7 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_allocator_index.h
     libpas/src/libpas/pas_allocator_scavenge_action.h
     libpas/src/libpas/pas_all_shared_page_directories.h
+    libpas/src/libpas/pas_backtrace_metadata.h
     libpas/src/libpas/pas_baseline_allocator.h
     libpas/src/libpas/pas_baseline_allocator_result.h
     libpas/src/libpas/pas_baseline_allocator_table.h
@@ -440,7 +443,7 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_deallocator.h
     libpas/src/libpas/pas_deallocator_scavenge_action.h
     libpas/src/libpas/pas_decommit_exclusion_range.h
-    libpas/src/libpas/pas_debug_heap.h
+    libpas/src/libpas/pas_system_heap.h
     libpas/src/libpas/pas_debug_spectrum.h
     libpas/src/libpas/pas_deferred_decommit_log.h
     libpas/src/libpas/pas_designated_intrinsic_heap.h
@@ -550,6 +553,8 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_min_heap.h
     libpas/src/libpas/pas_mmap_capability.h
     libpas/src/libpas/pas_monotonic_time.h
+    libpas/src/libpas/pas_mte.h
+    libpas/src/libpas/pas_mte_config.h
     libpas/src/libpas/pas_mutation_count.h
     libpas/src/libpas/pas_object_kind.h
     libpas/src/libpas/pas_page_base_and_kind.h
@@ -682,6 +687,7 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_versioned_field.h
     libpas/src/libpas/pas_virtual_range.h
     libpas/src/libpas/pas_virtual_range_min_heap.h
+    libpas/src/libpas/pas_zero_memory.h
     libpas/src/libpas/pas_zero_mode.h
     libpas/src/libpas/thingy_heap_config.h
     libpas/src/libpas/thingy_heap.h
@@ -690,6 +696,7 @@ set(bmalloc_PUBLIC_HEADERS
 
 if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
     list(APPEND bmalloc_SOURCES
+        bmalloc/TZoneLog.cpp
         bmalloc/Zone.cpp
     )
 endif ()

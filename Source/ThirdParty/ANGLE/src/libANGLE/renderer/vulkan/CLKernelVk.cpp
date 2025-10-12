@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // CLKernelVk.cpp: Implements the class methods for CLKernelVk.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
 
 #include "common/PackedEnums.h"
 
@@ -18,11 +23,57 @@
 #include "libANGLE/CLContext.h"
 #include "libANGLE/CLKernel.h"
 #include "libANGLE/CLProgram.h"
-#include "libANGLE/cl_utils.h"
 #include "spirv/unified1/NonSemanticClspvReflection.h"
 
 namespace rx
 {
+
+cl::Memory *GetCLKernelArgumentMemoryHandle(const CLKernelArgument &kernelArgument)
+{
+    if (!kernelArgument.used)
+    {
+        return nullptr;
+    }
+
+    return cl::Memory::Cast(static_cast<cl_mem>(kernelArgument.handle));
+}
+
+// Function to check if a kernel argument is read only. This will be used to insert appropriate
+// barriers in the command buffer. Ideally, we could use the kernel argument access qualifier to
+// determine read only attribute. For now, the query is based on the cl memory flags to keep the
+// existing functionality in tact.
+bool IsCLKernelArgumentReadonly(const CLKernelArgument &kernelArgument)
+{
+    // if not used, can safely assume readonly
+    if (!kernelArgument.used)
+    {
+        return true;
+    }
+
+    switch (kernelArgument.type)
+    {
+        case NonSemanticClspvReflectionArgumentPodUniform:
+        case NonSemanticClspvReflectionArgumentUniform:
+        case NonSemanticClspvReflectionArgumentPointerUniform:
+        case NonSemanticClspvReflectionArgumentUniformTexelBuffer:
+        case NonSemanticClspvReflectionConstantDataStorageBuffer:
+        {
+            return true;
+        }
+        case NonSemanticClspvReflectionArgumentStorageBuffer:
+        case NonSemanticClspvReflectionArgumentStorageTexelBuffer:
+        case NonSemanticClspvReflectionArgumentStorageImage:
+        case NonSemanticClspvReflectionArgumentSampledImage:
+        {
+            const cl::Memory *mem = cl::Memory::Cast(*static_cast<cl_mem *>(kernelArgument.handle));
+            return mem->getFlags().intersects(CL_MEM_READ_ONLY);
+        }
+        default:
+        {
+            return false;
+        }
+    }
+}
 
 CLKernelVk::CLKernelVk(const cl::Kernel &kernel,
                        std::string &name,
@@ -201,12 +252,6 @@ angle::Result CLKernelVk::setArg(cl_uint argIndex, size_t argSize, const void *a
                         argValue, arg.podStorageBufferOffset, argSize));
                 }
                 break;
-            case NonSemanticClspvReflectionArgumentWorkgroup:
-                ASSERT(arg.workgroupSize != 0);
-                mSpecConstants.push_back(
-                    KernelSpecConstant{.ID   = arg.workgroupSpecId,
-                                       .data = static_cast<uint32_t>(argSize / arg.workgroupSize)});
-                break;
             case NonSemanticClspvReflectionArgumentUniform:
             case NonSemanticClspvReflectionArgumentStorageBuffer:
             case NonSemanticClspvReflectionArgumentStorageImage:
@@ -217,6 +262,7 @@ angle::Result CLKernelVk::setArg(cl_uint argIndex, size_t argSize, const void *a
                 arg.handle     = *static_cast<const cl_mem *>(argValue);
                 arg.handleSize = argSize;
                 break;
+            case NonSemanticClspvReflectionArgumentWorkgroup:
             default:
                 // Just store ptr and size (if we end up here)
                 arg.handle     = const_cast<void *>(argValue);
@@ -339,12 +385,19 @@ angle::Result CLKernelVk::getOrCreateComputePipeline(vk::PipelineCacheAccess *pi
         constantDataOffset += sizeof(uint32_t);
     }
     // Populate kernel specialization constants (if any)
-    for (const auto &specConstant : mSpecConstants)
+    for (const auto &arg : mArgs)
     {
-        specConstantData.push_back(specConstant.data);
-        mapEntries.push_back(VkSpecializationMapEntry{
-            .constantID = specConstant.ID, .offset = constantDataOffset, .size = sizeof(uint32_t)});
-        constantDataOffset += sizeof(uint32_t);
+        if (arg.used && arg.type == NonSemanticClspvReflectionArgumentWorkgroup)
+        {
+            ASSERT(arg.workgroupBufferElemSize != 0);
+
+            specConstantData.push_back(
+                static_cast<uint32_t>(arg.handleSize / arg.workgroupBufferElemSize));
+            mapEntries.push_back(VkSpecializationMapEntry{.constantID = arg.workgroupBufferSpecId,
+                                                          .offset     = constantDataOffset,
+                                                          .size       = sizeof(uint32_t)});
+            constantDataOffset += sizeof(uint32_t);
+        }
     }
     VkSpecializationInfo computeSpecializationInfo{
         .mapEntryCount = static_cast<uint32_t>(mapEntries.size()),

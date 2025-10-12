@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 
 #include "ArithProfile.h"
+#include "BaselineJITCode.h"
 #include "BasicBlockLocation.h"
 #include "BytecodeDumper.h"
 #include "BytecodeLivenessAnalysisInlines.h"
@@ -143,14 +144,20 @@ CodeBlockHash CodeBlock::hash() const
     // If we are reading source from the main thread, we cannot have conflict. But if we are reading the source from the compiler thread,
     // it is possible that the main thread is now replacing it with the cached new content. SourceProviderBufferGuard allows us to keep
     // the old one until this scope gets destroyed.
-    std::optional<SourceProviderBufferGuard> guard;
-    if (isCompilationThread() || Thread::mayBeGCThread())
-        guard.emplace(source.provider());
+    if (isCompilationThread() || Thread::mayBeGCThread()) {
+        if (!source.provider())
+            return { };
+        SourceProviderBufferGuard guard(source.provider());
+        auto startOffset = source.startOffset();
+        auto endOffset = source.endOffset();
+        auto hash = guard.provider()->codeBlockHashConcurrently(startOffset, endOffset, specializationKind());
+        WTF::storeStoreFence();
+        m_hash = hash;
+        return hash;
+    }
 
-    auto hash = CodeBlockHash(source, specializationKind());
-    WTF::storeStoreFence();
-    m_hash = hash;
-    return hash;
+    m_hash = CodeBlockHash(source, specializationKind());
+    return m_hash;
 }
 
 CString CodeBlock::sourceCodeForTools() const
@@ -597,7 +604,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks || op.type == GlobalLexicalVar || op.type == GlobalLexicalVarWithVarInjectionChecks)
                 metadata.m_watchpointSet = op.watchpointSet;
             else if (op.structure)
-                metadata.m_structure.set(vm, this, op.structure);
+                metadata.m_structureID.set(vm, this, op.structure);
             metadata.m_operand = op.operand;
             break;
         }
@@ -636,7 +643,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 if (op.watchpointSet)
                     op.watchpointSet->invalidate(vm, PutToScopeFireDetail(this, ident));
             } else if (op.structure)
-                metadata.m_structure.set(vm, this, op.structure);
+                metadata.m_structureID.set(vm, this, op.structure);
             metadata.m_operand = op.operand;
             break;
         }
@@ -1649,7 +1656,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
             if (getPutInfo.resolveType() == GlobalVar || getPutInfo.resolveType() == GlobalVarWithVarInjectionChecks
                 || getPutInfo.resolveType() == ResolvedClosureVar || getPutInfo.resolveType() == GlobalLexicalVar || getPutInfo.resolveType() == GlobalLexicalVarWithVarInjectionChecks)
                 return;
-            WriteBarrierBase<Structure>& structure = metadata.m_structure;
+            WriteBarrierStructureID& structure = metadata.m_structureID;
             if (!structure || vm.heap.isMarked(structure.get()))
                 return;
             dataLogLnIf(Options::verboseOSR(), "Clearing scope access with structure ", RawPointer(structure.get()));
@@ -1735,7 +1742,7 @@ void CodeBlock::finalizeJITInlineCaches()
 
     forEachStructureStubInfo([&](StructureStubInfo& stubInfo) {
         ConcurrentJSLockerBase locker(NoLockingNecessary);
-        stubInfo.visitWeakReferences(locker, this);
+        stubInfo.visitWeak(locker, this);
         return IterationStatus::Continue;
     });
 }
@@ -1946,6 +1953,8 @@ void CodeBlock::stronglyVisitStrongReferences(const ConcurrentJSLocker& locker, 
         DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
         if (auto* statuses = dfgCommon->recordedStatuses.get())
             statuses->visitAggregate(visitor);
+        for (auto& cache : dfgCommon->m_concatKeyAtomStringCaches)
+            cache->visitAggregate(visitor);
         visitOSRExitTargets(locker, visitor);
 #endif
     }
@@ -2210,13 +2219,12 @@ CodeBlock* CodeBlock::newReplacement()
     return ownerExecutable()->newReplacementCodeBlockFor(specializationKind());
 }
 
-#if ENABLE(JIT)
 CodeBlock* CodeBlock::replacement()
 {
     const ClassInfo* classInfo = this->classInfo();
 
     if (classInfo == FunctionCodeBlock::info())
-        return jsCast<FunctionExecutable*>(ownerExecutable())->codeBlockFor(isConstructor() ? CodeForConstruct : CodeForCall);
+        return jsCast<FunctionExecutable*>(ownerExecutable())->codeBlockFor(isConstructor() ? CodeSpecializationKind::CodeForConstruct : CodeSpecializationKind::CodeForCall);
 
     if (classInfo == EvalCodeBlock::info())
         return jsCast<EvalExecutable*>(ownerExecutable())->codeBlock();
@@ -2231,6 +2239,7 @@ CodeBlock* CodeBlock::replacement()
     return nullptr;
 }
 
+#if ENABLE(JIT)
 DFG::CapabilityLevel CodeBlock::computeCapabilityLevel()
 {
     const ClassInfo* classInfo = this->classInfo();
@@ -2349,10 +2358,9 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
             }
         }
     }
-    
     if (DFG::shouldDumpDisassembly())
         dataLog("    Did invalidate ", *this, "\n");
-    
+
     // Count the reoptimization if that's what the user wanted.
     if (mode == CountReoptimization) {
         // FIXME: Maybe this should call alternative().
@@ -2361,32 +2369,33 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
         if (DFG::shouldDumpDisassembly())
             dataLog("    Did count reoptimization for ", *this, "\n");
     }
-    
-    if (this != replacement()) {
-        // This means that we were never the entrypoint. This can happen for OSR entry code
-        // blocks.
-        return;
+#endif // ENABLE(DFG_JIT)
+
+    // If this is not true, then this means that we were never the entrypoint. This can happen for OSR entry code blocks.
+    if (this == replacement()) {
+#if ENABLE(DFG_JIT)
+        if (alternative())
+            alternative()->optimizeAfterWarmUp();
+
+        if (reason != Profiler::JettisonDueToOldAge && reason != Profiler::JettisonDueToVMTraps)
+            tallyFrequentExitSites();
+#endif // ENABLE(DFG_JIT)
+
+        // Jettison can happen during GC. We don't want to install code to a dead executable
+        // because that would add a dead object to the remembered set.
+        if (!vm.heap.currentThreadIsDoingGCWork() || vm.heap.isMarked(ownerExecutable())) {
+            // This accomplishes (2).
+            ownerExecutable()->installCode(vm, alternative(), codeType(), specializationKind(), reason);
+#if ENABLE(DFG_JIT)
+            if (DFG::shouldDumpDisassembly())
+                dataLog("    Did install baseline version of ", *this, "\n");
+#endif // ENABLE(DFG_JIT)
+        }
     }
 
-    if (alternative())
-        alternative()->optimizeAfterWarmUp();
-
-    if (reason != Profiler::JettisonDueToOldAge && reason != Profiler::JettisonDueToVMTraps)
-        tallyFrequentExitSites();
-#endif // ENABLE(DFG_JIT)
-
-    // Jettison can happen during GC. We don't want to install code to a dead executable
-    // because that would add a dead object to the remembered set.
-    if (vm.heap.currentThreadIsDoingGCWork() && !vm.heap.isMarked(ownerExecutable()))
-        return;
-
-    // This accomplishes (2).
-    ownerExecutable()->installCode(vm, alternative(), codeType(), specializationKind(), reason);
-
-#if ENABLE(DFG_JIT)
-    if (DFG::shouldDumpDisassembly())
-        dataLog("    Did install baseline version of ", *this, "\n");
-#endif // ENABLE(DFG_JIT)
+    // Regardless of whether it is used or replaced or upgraded already or not, since this is already jettisoned,
+    // there is no reason to keep it linked. Unlink incoming calls.
+    unlinkOrUpgradeIncomingCalls(vm, nullptr);
 }
 
 JSGlobalObject* CodeBlock::globalObjectFor(CodeOrigin codeOrigin)
@@ -2741,7 +2750,7 @@ void CodeBlock::setOptimizationThresholdBasedOnCompilationResult(CompilationResu
     
     CodeBlock* replacement = this->replacement();
     bool hasReplacement = (replacement && replacement != this);
-    if ((result == CompilationSuccessful) != hasReplacement) {
+    if ((result == CompilationResult::CompilationSuccessful) != hasReplacement) {
         dataLog(*this, ": we have result = ", result, " but ");
         if (replacement == this)
             dataLog("we are our own replacement.\n");
@@ -2751,14 +2760,14 @@ void CodeBlock::setOptimizationThresholdBasedOnCompilationResult(CompilationResu
     }
     
     switch (result) {
-    case CompilationSuccessful:
+    case CompilationResult::CompilationSuccessful:
         RELEASE_ASSERT(replacement && JSC::JITCode::isOptimizingJIT(replacement->jitType()));
         optimizeNextInvocation();
         return;
-    case CompilationFailed:
+    case CompilationResult::CompilationFailed:
         dontOptimizeAnytimeSoon();
         return;
-    case CompilationDeferred:
+    case CompilationResult::CompilationDeferred:
         // We'd like to do dontOptimizeAnytimeSoon() but we cannot because
         // forceOptimizationSlowPathConcurrently() is inherently racy. It won't
         // necessarily guarantee anything. So, we make sure that even if that
@@ -2766,7 +2775,7 @@ void CodeBlock::setOptimizationThresholdBasedOnCompilationResult(CompilationResu
         // that we have optimized code ready.
         optimizeAfterWarmUp();
         return;
-    case CompilationInvalidated:
+    case CompilationResult::CompilationInvalidated:
         // Retry with exponential backoff.
         countReoptimization();
         optimizeAfterWarmUp();
@@ -3061,6 +3070,29 @@ bool CodeBlock::shouldOptimizeNowFromBaseline()
 
     if (livenessRate >= Options::desiredProfileLivenessRate() && fullnessRate >= Options::desiredProfileFullnessRate() && static_cast<unsigned>(m_optimizationDelayCounter) + 1 >= Options::minimumOptimizationDelay())
         return true;
+
+#if ENABLE(DFG_JIT)
+    if (auto* jitCode = m_jitCode.get(); jitCode && JITCode::isBaselineCode(jitCode->jitType())) {
+        // If this CodeBlock is large enough, then there is a chance that some part of code is just a dead code.
+        // This can happen in a framework code since it is crafted as a generic function.
+        // In this case, we track whether the liveness / fullness rate changes from the previous sampling time,
+        // and if it is not changed, we say that we are reaching to the plateau and we do not expect that we will
+        // get more information with retrying. Thus we will start compiling it in DFG.
+        auto* baselineJITCode = static_cast<BaselineJITCode*>(jitCode);
+        double previousLivenessRate = baselineJITCode->livenessRate();
+        double previousFullnessRate = baselineJITCode->fullnessRate();
+        if (static_cast<unsigned>(m_optimizationDelayCounter) + 1 >= Options::minimumOptimizationDelay()) {
+            if (static_cast<int32_t>(this->bytecodeCost()) >= Options::valueProfileFillingRateMonitoringBytecodeCost()) {
+                if (previousLivenessRate && previousFullnessRate) {
+                    if (previousLivenessRate == livenessRate && previousFullnessRate == fullnessRate)
+                        return true;
+                }
+            }
+        }
+        baselineJITCode->setLivenessRate(livenessRate);
+        baselineJITCode->setFullnessRate(fullnessRate);
+    }
+#endif
 
     auto* codeBlock = this;
     CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("insufficient profiling (", livenessRate,  " / ", fullnessRate, ") for ", numberOfNonArgumentValueProfiles(), " ", totalNumberOfValueProfiles()));

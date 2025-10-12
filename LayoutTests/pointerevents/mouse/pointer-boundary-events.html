@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		.target {
+			z-index: 1;
+			position: absolute;
+			top: 100px;
+			left: 100px;
+			width: 200px;
+			height: 200px;
+			background: gray;
+			display: block;
+			margin: auto;
+		}
+
+		#divB {
+			z-index: 0;
+			background: blue;
+		}
+		#log {
+			margin-top: 400px;
+		}
+	</style>
+</head>
+<p>Test that boundary pointer events fire for a stationary pointer device when the element beneath it changes due to
+	layout updates.</p>
+<p>This test requires WebKitTestRunner.</p>
+<br>
+<div id="divA" class="target"></div>
+<div id="divB" class="target"></div>
+<p id="log"></p>
+<script>
+	let events = [];
+	function registerForEventListener(eventName, element) {
+		element.addEventListener(eventName, function (e) {
+			events.push([element.id, e]);
+		});
+	}
+
+	registerForEventListener("pointermove", divA);
+	registerForEventListener("pointermove", divB);
+	registerForEventListener("pointerenter", divA);
+	registerForEventListener("pointerenter", divB);
+	registerForEventListener("pointerleave", divA);
+	registerForEventListener("pointerleave", divB);
+	registerForEventListener("pointerout", divA);
+	registerForEventListener("pointerout", divB);
+	registerForEventListener("pointerover", divA);
+	registerForEventListener("pointerover", divB);
+
+	divA.addEventListener("pointerenter", function() {
+		divA.style.display = "none";
+
+		divA.addEventListener("pointerenter", function() {
+			for (var i = 0; i < events.length; i++)
+				log.innerText += "" + events[i][1].type + "@" + events[i][0] + "\n";
+			testRunner.notifyDone();
+		});
+	});
+
+	divB.addEventListener("pointerenter", async function() {
+		divA.style.display = "block";
+	});
+
+	if (window.testRunner)
+		testRunner.waitUntilDone();
+
+	function runTest() {
+		if (!window.testRunner)
+			return;
+
+		testRunner.waitUntilDone();
+		testRunner.dumpAsText();
+
+		eventSender.mouseMoveTo(divA.offsetLeft + 1, divA.offsetTop + 1);
+	}
+	runTest();
+</script>
+</html>

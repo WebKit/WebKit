@@ -25,17 +25,27 @@
 
 #pragma once
 
-#include "MediaUniqueIdentifier.h"
-#include "NowPlayingMetadataObserver.h"
-#include "PlatformMediaSession.h"
-#include "RemoteCommandListener.h"
+#include <WebCore/MediaSessionGroupIdentifier.h>
+#include <WebCore/MediaUniqueIdentifier.h>
+#include <WebCore/NowPlayingInfo.h>
+#include <WebCore/NowPlayingMetadataObserver.h>
+#include <WebCore/PageIdentifier.h>
+#include <WebCore/PlatformMediaSessionTypes.h>
+#include <wtf/AggregateLogger.h>
+#include <wtf/CancellableTask.h>
+#include <wtf/LoggerHelper.h>
+#include <wtf/ProcessID.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class Page;
+class PlatformMediaSessionInterface;
 struct MediaConfiguration;
-struct NowPlayingInfo;
 struct NowPlayingMetadata;
 
 enum class MediaSessionRestriction : uint32_t {
@@ -50,106 +60,184 @@ enum class MediaSessionRestriction : uint32_t {
 using MediaSessionRestrictions = OptionSet<MediaSessionRestriction>;
 
 class MediaSessionManagerInterface
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaSessionManagerInterface>
 #if !RELEASE_LOG_DISABLED
-    : private LoggerHelper
+    , private LoggerHelper
 #endif
 {
+    WTF_MAKE_TZONE_ALLOCATED(MediaSessionManagerInterface);
 public:
-    WEBCORE_EXPORT MediaSessionManagerInterface() = default;
-    WEBCORE_EXPORT virtual ~MediaSessionManagerInterface() = default;
 
-    virtual void addSession(PlatformMediaSessionInterface&) = 0;
-    virtual void removeSession(PlatformMediaSessionInterface&) = 0;
+    virtual ~MediaSessionManagerInterface();
 
-    virtual bool activeAudioSessionRequired() const = 0;
-    virtual bool hasActiveAudioSession() const = 0;
-    virtual bool canProduceAudio() const = 0;
+    virtual WeakPtr<PlatformMediaSessionInterface> bestEligibleSessionForRemoteControls(NOESCAPE const Function<bool(const PlatformMediaSessionInterface&)>&, PlatformMediaSessionPlaybackControlsPurpose) = 0;
+    virtual void forEachMatchingSession(NOESCAPE const Function<bool(const PlatformMediaSessionInterface&)>& predicate, NOESCAPE const Function<void(PlatformMediaSessionInterface&)>& matchingCallback) = 0;
 
-    virtual std::optional<NowPlayingInfo> nowPlayingInfo() const = 0;
+    virtual void setCurrentSession(PlatformMediaSessionInterface&) = 0;
+    virtual RefPtr<PlatformMediaSessionInterface> currentSession() const = 0;
+
+    virtual void addSession(PlatformMediaSessionInterface&);
+    virtual void removeSession(PlatformMediaSessionInterface&);
+    virtual bool hasNoSession() const;
+
+    virtual bool activeAudioSessionRequired() const;
+    virtual bool hasActiveAudioSession() const;
+    virtual bool canProduceAudio() const;
+
+    virtual void setShouldDeactivateAudioSession(bool should) { m_shouldDeactivateAudioSession = should; };
+    virtual bool shouldDeactivateAudioSession() { return m_shouldDeactivateAudioSession; };
+
+    virtual void updateNowPlayingInfoIfNecessary();
+    virtual void updateAudioSessionCategoryIfNecessary();
+
+    virtual std::optional<NowPlayingInfo> nowPlayingInfo() const { return { }; }
     virtual bool hasActiveNowPlayingSession() const { return false; }
     virtual String lastUpdatedNowPlayingTitle() const { return emptyString(); }
     virtual double lastUpdatedNowPlayingDuration() const { return NAN; }
     virtual double lastUpdatedNowPlayingElapsedTime() const { return NAN; }
     virtual std::optional<MediaUniqueIdentifier> lastUpdatedNowPlayingInfoUniqueIdentifier() const { return std::nullopt; }
-    virtual void addNowPlayingMetadataObserver(const NowPlayingMetadataObserver&) = 0;
-    virtual void removeNowPlayingMetadataObserver(const NowPlayingMetadataObserver&) = 0;
-    virtual bool hasActiveNowPlayingSessionInGroup(std::optional<MediaSessionGroupIdentifier>) = 0;
+    WEBCORE_EXPORT virtual void addNowPlayingMetadataObserver(const NowPlayingMetadataObserver&);
+    WEBCORE_EXPORT virtual void removeNowPlayingMetadataObserver(const NowPlayingMetadataObserver&);
+    virtual bool hasActiveNowPlayingSessionInGroup(std::optional<MediaSessionGroupIdentifier>);
     virtual bool registeredAsNowPlayingApplication() const { return false; }
     virtual bool haveEverRegisteredAsNowPlayingApplication() const { return false; }
     virtual void resetHaveEverRegisteredAsNowPlayingApplicationForTesting() { };
 
-    virtual void prepareToSendUserMediaPermissionRequestForPage(Page&) { }
+    virtual bool willIgnoreSystemInterruptions() const { return m_willIgnoreSystemInterruptions; }
+    virtual void setWillIgnoreSystemInterruptions(bool ignore) { m_willIgnoreSystemInterruptions = ignore; }
 
-    virtual bool willIgnoreSystemInterruptions() const = 0;
-    virtual void setWillIgnoreSystemInterruptions(bool) = 0;
-    virtual void beginInterruption(PlatformMediaSession::InterruptionType) = 0;
-    virtual void endInterruption(PlatformMediaSession::EndInterruptionFlags) = 0;
+    virtual void beginInterruption(PlatformMediaSessionInterruptionType);
+    virtual void endInterruption(PlatformMediaSessionEndInterruptionFlags);
 
-    virtual void applicationWillEnterForeground(bool) = 0;
-    virtual void applicationDidEnterBackground(bool) = 0;
-    virtual void applicationWillBecomeInactive() = 0;
-    virtual void applicationDidBecomeActive() = 0;
-    virtual void processWillSuspend() = 0;
-    virtual void processDidResume() = 0;
+    virtual void applicationWillEnterForeground(bool);
+    virtual void applicationDidEnterBackground(bool);
+    virtual void applicationWillBecomeInactive();
+    virtual void applicationDidBecomeActive();
+    virtual void processWillSuspend();
+    virtual void processDidResume();
 
-    virtual void stopAllMediaPlaybackForProcess() = 0;
-    virtual bool mediaPlaybackIsPaused(std::optional<MediaSessionGroupIdentifier>) = 0;
-    virtual void pauseAllMediaPlaybackForGroup(std::optional<MediaSessionGroupIdentifier>) = 0;
-    virtual void suspendAllMediaPlaybackForGroup(std::optional<MediaSessionGroupIdentifier>) = 0;
-    virtual void resumeAllMediaPlaybackForGroup(std::optional<MediaSessionGroupIdentifier>) = 0;
-    virtual void suspendAllMediaBufferingForGroup(std::optional<MediaSessionGroupIdentifier>) = 0;
-    virtual void resumeAllMediaBufferingForGroup(std::optional<MediaSessionGroupIdentifier>) = 0;
+    virtual void stopAllMediaPlaybackForProcess();
+    virtual bool mediaPlaybackIsPaused(std::optional<MediaSessionGroupIdentifier>);
+    virtual void pauseAllMediaPlaybackForGroup(std::optional<MediaSessionGroupIdentifier>);
+    virtual void suspendAllMediaPlaybackForGroup(std::optional<MediaSessionGroupIdentifier>);
+    virtual void resumeAllMediaPlaybackForGroup(std::optional<MediaSessionGroupIdentifier>);
+    virtual void suspendAllMediaBufferingForGroup(std::optional<MediaSessionGroupIdentifier>);
+    virtual void resumeAllMediaBufferingForGroup(std::optional<MediaSessionGroupIdentifier>);
 
-    virtual void addRestriction(PlatformMediaSession::MediaType, MediaSessionRestrictions) = 0;
-    virtual void removeRestriction(PlatformMediaSession::MediaType, MediaSessionRestrictions) = 0;
-    virtual MediaSessionRestrictions restrictions(PlatformMediaSession::MediaType) = 0;
-    virtual void resetRestrictions() = 0;
+    WEBCORE_EXPORT virtual void addRestriction(PlatformMediaSessionMediaType, MediaSessionRestrictions);
+    WEBCORE_EXPORT virtual void removeRestriction(PlatformMediaSessionMediaType, MediaSessionRestrictions);
+    WEBCORE_EXPORT virtual MediaSessionRestrictions restrictions(PlatformMediaSessionMediaType);
+    virtual void resetRestrictions();
 
-    virtual bool sessionWillBeginPlayback(PlatformMediaSessionInterface&) = 0;
-    virtual void sessionWillEndPlayback(PlatformMediaSessionInterface&, DelayCallingUpdateNowPlaying) = 0;
-    virtual void sessionStateChanged(PlatformMediaSessionInterface&) = 0;
+    virtual bool sessionWillBeginPlayback(PlatformMediaSessionInterface&);
+    virtual void sessionWillEndPlayback(PlatformMediaSessionInterface&, DelayCallingUpdateNowPlaying);
+    virtual void sessionStateChanged(PlatformMediaSessionInterface&);
     virtual void sessionDidEndRemoteScrubbing(PlatformMediaSessionInterface&) { }
-    virtual void sessionCanProduceAudioChanged() = 0;
+    virtual void sessionCanProduceAudioChanged();
     virtual void clientCharacteristicsChanged(PlatformMediaSessionInterface&, bool) { }
 
     virtual void configureWirelessTargetMonitoring() { }
     virtual bool hasWirelessTargetsAvailable() { return false; }
     virtual bool isMonitoringWirelessTargets() const { return false; }
-    virtual void sessionIsPlayingToWirelessPlaybackTargetChanged(PlatformMediaSessionInterface&) = 0;
+    virtual void sessionIsPlayingToWirelessPlaybackTargetChanged(PlatformMediaSessionInterface&);
 
-    virtual void setCurrentSession(PlatformMediaSessionInterface&) = 0;
-    virtual RefPtr<PlatformMediaSessionInterface> currentSession() const = 0;
+    WEBCORE_EXPORT virtual void setIsPlayingToAutomotiveHeadUnit(bool);
+    virtual bool isPlayingToAutomotiveHeadUnit() const { return m_isPlayingToAutomotiveHeadUnit; };
 
-    virtual void setIsPlayingToAutomotiveHeadUnit(bool) = 0;
-    virtual bool isPlayingToAutomotiveHeadUnit() const = 0;
+    WEBCORE_EXPORT virtual void setSupportsSpatialAudioPlayback(bool);
+    virtual std::optional<bool> supportsSpatialAudioPlaybackForConfiguration(const MediaConfiguration&) { return m_supportsSpatialAudioPlayback; }
 
-    virtual void setSupportsSpatialAudioPlayback(bool) = 0;
-    virtual std::optional<bool> supportsSpatialAudioPlaybackForConfiguration(const MediaConfiguration&) = 0;
+    virtual void addAudioCaptureSource(AudioCaptureSource&);
+    virtual void removeAudioCaptureSource(AudioCaptureSource&);
+    virtual void audioCaptureSourceStateChanged() { updateSessionState(); }
+    virtual size_t audioCaptureSourceCount() const { return m_audioCaptureSources.computeSize(); }
 
-    virtual void addAudioCaptureSource(AudioCaptureSource&) = 0;
-    virtual void removeAudioCaptureSource(AudioCaptureSource&) = 0;
-    virtual void audioCaptureSourceStateChanged() = 0;
-    virtual size_t audioCaptureSourceCount() const = 0;
+    WEBCORE_EXPORT virtual void processDidReceiveRemoteControlCommand(PlatformMediaSessionRemoteControlCommandType, const PlatformMediaSessionRemoteCommandArgument&);
+    virtual bool processIsSuspended() const { return m_processIsSuspended; };
+    WEBCORE_EXPORT virtual void processSystemWillSleep();
+    WEBCORE_EXPORT virtual void processSystemDidWake();
 
-    virtual void processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) = 0;
-    virtual bool processIsSuspended() const = 0;
-    virtual void processSystemWillSleep() = 0;
-    virtual void processSystemDidWake() = 0;
+    virtual bool isApplicationInBackground() const { return m_isApplicationInBackground; }
+    virtual bool isInterrupted() const { return !!m_currentInterruption; }
 
-    virtual bool isApplicationInBackground() const = 0;
-    virtual bool isInterrupted() const = 0;
-    virtual bool hasNoSession() const = 0;
-
-    virtual void addSupportedCommand(PlatformMediaSession::RemoteControlCommandType) { };
-    virtual void removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType) { };
-    virtual RemoteCommandListener::RemoteCommandsSet supportedCommands() const { return { }; };
+    virtual void addSupportedCommand(PlatformMediaSessionRemoteControlCommandType) { };
+    virtual void removeSupportedCommand(PlatformMediaSessionRemoteControlCommandType) { };
+    virtual PlatformMediaSessionRemoteCommandsSet supportedCommands() const { return { }; };
 
     virtual void scheduleSessionStatusUpdate() { }
     virtual void resetSessionState() { };
 
-    virtual WeakPtr<PlatformMediaSessionInterface> bestEligibleSessionForRemoteControls(NOESCAPE const Function<bool(const PlatformMediaSessionInterface&)>&, PlatformMediaSession::PlaybackControlsPurpose) = 0;
+protected:
+    MediaSessionManagerInterface(PageIdentifier);
 
-    virtual void updatePresentingApplicationPIDIfNecessary(ProcessID) { }
+    virtual WeakListHashSet<PlatformMediaSessionInterface>& sessions() const = 0;
+    virtual Vector<WeakPtr<PlatformMediaSessionInterface>> copySessionsToVector() const = 0;
+
+    void forEachSession(NOESCAPE const Function<void(PlatformMediaSessionInterface&)>&);
+    void forEachSessionInGroup(std::optional<MediaSessionGroupIdentifier>, NOESCAPE const Function<void(PlatformMediaSessionInterface&)>&);
+    bool anyOfSessions(NOESCAPE const Function<bool(const PlatformMediaSessionInterface&)>&) const;
+    Vector<WeakPtr<PlatformMediaSessionInterface>> sessionsMatching(NOESCAPE const Function<bool(const PlatformMediaSessionInterface&)>&) const;
+    WeakPtr<PlatformMediaSessionInterface> firstSessionMatching(NOESCAPE const Function<bool(const PlatformMediaSessionInterface&)>&) const;
+
+    void maybeDeactivateAudioSession();
+    bool maybeActivateAudioSession();
+
+    void nowPlayingMetadataChanged(const NowPlayingMetadata&);
+    void enqueueTaskOnMainThread(Function<void()>&&);
+
+    int countActiveAudioCaptureSources();
+
+    std::optional<bool> supportsSpatialAudioPlayback() { return m_supportsSpatialAudioPlayback; }
+
+    bool computeSupportsSeeking() const;
+
+    void scheduleUpdateSessionState();
+    virtual void updateSessionState() { }
+
+    PageIdentifier pageIdentifier() const { return m_pageIdentifier; }
+
+#if !RELEASE_LOG_DISABLED
+    void scheduleStateLog();
+    void dumpSessionStates();
+
+    const Logger& logger() const final { return m_logger; }
+    uint64_t logIdentifier() const final { return 0; }
+    ASCIILiteral logClassName() const override { return "MediaSessionManagerInterface"_s; }
+    WTFLogChannel& logChannel() const final;
+#endif
+
+    bool willLog(WTFLogLevel) const;
+
+private:
+
+    bool has(PlatformMediaSessionMediaType) const;
+
+    std::array<MediaSessionRestrictions, static_cast<unsigned>(PlatformMediaSessionMediaType::WebAudio) + 1> m_restrictions;
+
+    std::optional<bool> m_supportsSpatialAudioPlayback;
+    std::optional<PlatformMediaSessionInterruptionType> m_currentInterruption;
+
+    WeakHashSet<AudioCaptureSource> m_audioCaptureSources;
+
+    WeakHashSet<NowPlayingMetadataObserver> m_nowPlayingMetadataObservers;
+    TaskCancellationGroup m_taskGroup;
+
+    PageIdentifier m_pageIdentifier;
+#if !RELEASE_LOG_DISABLED
+    UniqueRef<Timer> m_stateLogTimer;
+    const Ref<AggregateLogger> m_logger;
+#endif
+
+    bool m_shouldDeactivateAudioSession { false };
+    bool m_willIgnoreSystemInterruptions { false };
+    bool m_isPlayingToAutomotiveHeadUnit { false };
+    bool m_processIsSuspended { false };
+    bool m_alreadyScheduledSessionStatedUpdate { false };
+    bool m_hasScheduledSessionStateUpdate { false };
+    mutable bool m_isApplicationInBackground { false };
+#if USE(AUDIO_SESSION)
+    bool m_becameActive { false };
+#endif
 };
 
 } // namespace WebCore

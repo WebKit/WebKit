@@ -36,6 +36,8 @@
 #include "CSSMediaRule.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSRule.h"
+#include "CSSScopeRule.h"
+#include "CSSStartingStyleRule.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSSupportsRule.h"
@@ -81,6 +83,12 @@ void InspectorCSSOMWrappers::collect(ListType* listType)
         case StyleRuleType::Supports:
             collect(uncheckedDowncast<CSSSupportsRule>(cssRule));
             break;
+        case StyleRuleType::Scope:
+            collect(uncheckedDowncast<CSSScopeRule>(cssRule));
+            break;
+        case StyleRuleType::StartingStyle:
+            collect(uncheckedDowncast<CSSStartingStyleRule>(cssRule));
+            break;
         case StyleRuleType::Style:
             m_styleRuleToCSSOMWrapperMap.add(&uncheckedDowncast<CSSStyleRule>(*cssRule).styleRule(), uncheckedDowncast<CSSStyleRule>(cssRule));
 
@@ -125,6 +133,7 @@ void InspectorCSSOMWrappers::collectDocumentWrappers(ExtensionStyleSheets& exten
         collectFromStyleSheetContents(UserAgentStyle::quirksStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::svgStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::mathMLStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::mathMLCoreExtrasStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::horizontalFormControlsStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::viewTransitionsStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::htmlSwitchControlStyleSheet);

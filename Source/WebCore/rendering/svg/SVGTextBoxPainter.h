@@ -53,8 +53,8 @@ private:
     const RenderBoxModelObject& parentRenderer() const;
     OptionSet<RenderSVGResourceMode> paintingResourceMode() const { return m_paintingResourceMode; }
 
-    void paintDecoration(OptionSet<TextDecorationLine>, const SVGTextFragment&);
-    void paintDecorationWithStyle(OptionSet<TextDecorationLine>, const SVGTextFragment&, const RenderBoxModelObject&);
+    void paintDecoration(Style::TextDecorationLine, const SVGTextFragment&);
+    void paintDecorationWithStyle(Style::TextDecorationLine, const SVGTextFragment&, const RenderBoxModelObject&);
     void paintTextWithShadows(const RenderStyle&, TextRun&, const SVGTextFragment&, unsigned startPosition, unsigned endPosition);
     void paintText(const RenderStyle&, const RenderStyle& selectionStyle, const SVGTextFragment&, bool hasSelection, bool paintSelectedTextOnly);
 
@@ -76,6 +76,9 @@ private:
     OptionSet<RenderSVGResourceMode> m_paintingResourceMode;
     LegacyRenderSVGResource* m_legacyPaintingResource { nullptr };
 };
+
+extern template class SVGTextBoxPainter<InlineIterator::BoxLegacyPath>;
+extern template class SVGTextBoxPainter<InlineIterator::BoxModernPath>;
 
 class LegacySVGTextBoxPainter : public SVGTextBoxPainter<InlineIterator::BoxLegacyPath> {
 public:

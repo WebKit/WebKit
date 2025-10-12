@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && USE(GBM)
 #include "GraphicsContextGLTextureMapperANGLE.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
+#include <wtf/unix/UnixFileDescriptor.h>
 
 typedef void* EGLImageKHR;
 struct gbm_bo;
@@ -40,8 +41,15 @@ public:
     static RefPtr<GraphicsContextGLTextureMapperGBM> create(GraphicsContextGLAttributes&&, RefPtr<GraphicsLayerContentsDisplayDelegate>&& = nullptr);
     virtual ~GraphicsContextGLTextureMapperGBM();
 
+    WTF::UnixFileDescriptor createExportedFence() const;
     void prepareForDisplayWithFinishedSignal(Function<void()>&&);
     DMABufBuffer* displayBuffer() { return m_displayBuffer.dmabuf.get(); }
+
+#if ENABLE(WEBXR)
+    GCGLExternalImage createExternalImage(ExternalImageSource&&, GCGLenum internalFormat, GCGLint layer) final;
+    void bindExternalImage(GCGLenum target, GCGLExternalImage) final;
+    bool enableRequiredWebXRExtensions() final;
+#endif
 
 private:
     GraphicsContextGLTextureMapperGBM(GraphicsContextGLAttributes&&, RefPtr<GraphicsLayerContentsDisplayDelegate>&&);

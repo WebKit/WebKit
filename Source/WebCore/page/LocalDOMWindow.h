@@ -26,17 +26,21 @@
 
 #pragma once
 
-#include "ContextDestructionObserverInlines.h"
-#include "DOMWindow.h"
-#include "EventTargetInterfaces.h"
-#include "PushSubscriptionOwner.h"
-#include "Supplementable.h"
-#include "WindowOrWorkerGlobalScope.h"
 #include <JavaScriptCore/HandleForward.h>
+#include <WebCore/ContextDestructionObserver.h>
+#include <WebCore/DOMHighResTimeStamp.h>
+#include <WebCore/DOMWindow.h>
+#include <WebCore/EventTargetInterfaces.h>
+#include <WebCore/PerformanceEventTimingCandidate.h>
+#include <WebCore/PushSubscriptionOwner.h>
+#include <WebCore/Supplementable.h>
+#include <WebCore/WindowOrWorkerGlobalScope.h>
 #include <wtf/FixedVector.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Platform.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -59,14 +63,14 @@ namespace WebCore {
 
 class CloseWatcherManager;
 class LocalFrame;
+class SecurityOriginData;
 struct ScrollToOptions;
 struct WindowPostMessageOptions;
 
+enum class PlatformEventModifier : uint8_t;
 using ReducedResolutionSeconds = Seconds;
 
 template<typename> class ExceptionOr;
-
-enum class IncludeTargetOrigin : bool { No, Yes };
 
 class LocalDOMWindowObserver : public CanMakeWeakPtr<LocalDOMWindowObserver> {
 public:
@@ -151,6 +155,14 @@ public:
     WEBCORE_EXPORT bool consumeTransientActivation();
     WEBCORE_EXPORT bool hasHistoryActionActivation() const;
     WEBCORE_EXPORT bool consumeHistoryActionUserActivation();
+    WEBCORE_EXPORT static Seconds transientActivationDuration();
+
+    struct ClickEventData {
+        MonotonicTime time;
+        OptionSet<PlatformEventModifier> modifiers;
+    };
+    void updateLastUserClickEvent(OptionSet<PlatformEventModifier>);
+    WEBCORE_EXPORT std::optional<ClickEventData> consumeLastUserClickEvent();
 
     DOMSelection* getSelection();
 
@@ -223,10 +235,6 @@ public:
     RefPtr<WebKitPoint> webkitConvertPointFromPageToNode(Node*, const WebKitPoint*) const;
     RefPtr<WebKitPoint> webkitConvertPointFromNodeToPage(Node*, const WebKitPoint*) const;
 
-    void printErrorMessage(const String&) const;
-
-    String crossDomainAccessErrorMessage(const LocalDOMWindow& activeWindow, IncludeTargetOrigin);
-
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&&);
     WEBCORE_EXPORT void postMessageFromRemoteFrame(JSC::JSGlobalObject&, RefPtr<WindowProxy>&& source, const String& sourceOrigin, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts&);
 
@@ -283,6 +291,15 @@ public:
 
     void finishedLoading();
 
+    // EventTiming API
+    PerformanceEventTimingCandidate initializeEventTimingEntry(Event&, EventType);
+    void finalizeEventTimingEntry(PerformanceEventTimingCandidate&, const Event&, EventType);
+    void dispatchPendingEventTimingEntries();
+    uint64_t interactionCount() { return m_interactionCount; }
+    // Misleading function names that mirror the spec; see https://github.com/w3c/event-timing/issues/158 :
+    bool hasDispatchedInputEvent() const { return m_hasDispatchedInputEvent; }
+    void setDispatchedInputEvent() { m_hasDispatchedInputEvent = true; }
+
     // HTML 5 key/value storage
     ExceptionOr<Storage*> sessionStorage();
     ExceptionOr<Storage*> localStorage();
@@ -336,19 +353,13 @@ public:
 #endif
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    bool shouldHaveWebKitNamespaceForWorld(DOMWrapperWorld&);
+    bool shouldHaveWebKitNamespaceForWorld(DOMWrapperWorld&, JSC::JSGlobalObject*);
     WebKitNamespace* webkitNamespace();
 #endif
 
     // Navigation API
     Navigation& navigation();
     Ref<Navigation> protectedNavigation();
-
-    // FIXME: When this LocalDOMWindow is no longer the active LocalDOMWindow (i.e.,
-    // when its document is no longer the document that is displayed in its
-    // frame), we would like to zero out m_frame to avoid being confused
-    // by the document that is currently active in m_frame.
-    bool isCurrentlyDisplayedInFrame() const;
 
     void willDetachDocumentFromFrame();
     void willDestroyCachedFrame();
@@ -384,7 +395,8 @@ public:
 private:
     explicit LocalDOMWindow(Document&);
 
-    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final;
+    using ContextDestructionObserver::protectedScriptExecutionContext;
 
     void closePage() final;
     void eventListenersDidChange() final;
@@ -393,13 +405,18 @@ private:
     bool allowedToChangeWindowGeometry() const;
 
     static ExceptionOr<RefPtr<Frame>> createWindow(const String& urlString, const AtomString& frameName, const WindowFeatures&, LocalDOMWindow& activeWindow, LocalFrame& firstFrame, LocalFrame& openerFrame, NOESCAPE const Function<void(LocalDOMWindow&)>& prepareDialogFunction = nullptr);
-    bool isInsecureScriptAccess(LocalDOMWindow& activeWindow, const String& urlString);
 
 #if ENABLE(DEVICE_ORIENTATION)
     bool isAllowedToUseDeviceMotionOrOrientation(String& message) const;
     bool hasPermissionToReceiveDeviceMotionOrOrientationEvents(String& message) const;
     void failedToRegisterDeviceMotionEventListener();
 #endif
+
+    EventTimingInteractionID computeInteractionID(Event&, EventType);
+    EventTimingInteractionID currentInteractionID();
+    EventTimingInteractionID& ensureUserInteractionValue();
+    EventTimingInteractionID generateInteractionID();
+    EventTimingInteractionID generateInteractionIDWithoutIncreasingInteractionCount();
 
     bool isSameSecurityOriginAsMainFrame() const;
 
@@ -442,6 +459,26 @@ private:
     mutable RefPtr<Navigation> m_navigation;
     mutable RefPtr<CloseWatcherManager> m_closeWatcherManager;
 
+    // Equivalent to the list of PerformanceEventTiming objects mentioned in https://www.w3.org/TR/event-timing/#sec-modifications-HTML :
+    Vector<PerformanceEventTimingCandidate, 6> m_performanceEventTimingCandidates;
+
+    // FIXME: support multiple pointers by implementing m_pointerMap
+    // as an actual map with PointerID as key:
+    EventTimingInteractionID m_pointerMap;
+    std::optional<PerformanceEventTimingCandidate> m_pendingPointerDown;
+
+    bool m_contextMenuTriggered { false };
+
+    struct PendingKeyDownState {
+        PerformanceEventTimingCandidate keyDown;
+        std::optional<PerformanceEventTimingCandidate> keyPress { std::nullopt };
+    };
+    HashMap<int64_t, PendingKeyDownState, IntHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>> m_pendingKeyDowns;
+
+    EventTimingInteractionID m_userInteractionValue;
+    uint64_t m_interactionCount { 0 };
+    bool m_hasDispatchedInputEvent { false };
+
     String m_status;
 
 #if PLATFORM(IOS_FAMILY)
@@ -471,6 +508,8 @@ private:
     // value is positive infinity.
     MonotonicTime m_lastActivationTimestamp { MonotonicTime::infinity() };
     MonotonicTime m_lastHistoryActionActivationTimestamp { MonotonicTime::infinity() };
+
+    std::optional<ClickEventData> m_lastUserClickEvent;
 
     bool m_wasWrappedWithoutInitializedSecurityOrigin { false };
     bool m_mayReuseForNavigation { true };

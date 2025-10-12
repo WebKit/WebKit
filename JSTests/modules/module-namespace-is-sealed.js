@@ -3,7 +3,7 @@ import {shouldThrow} from "./resources/assert.js"
 
 shouldThrow(() => {
     Object.isSealed(ns);
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'a' before initialization.`);
 
 export let a;
 export function b () { }

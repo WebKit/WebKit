@@ -8,6 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstdint>
+
+#include "api/task_queue/task_queue_factory.h"
+#include "api/units/time_delta.h"
+#include "rtc_base/event.h"
+#include "rtc_base/task_queue_for_test.h"
+#include "rtc_base/time_utils.h"
+#include "test/gtest.h"
+
 #if defined(WEBRTC_WIN)
 // clang-format off
 #include <windows.h>  // Must come first.
@@ -15,21 +24,7 @@
 // clang-format on
 #endif
 
-#include <stdint.h>
-
-#include <memory>
-#include <utility>
-#include <vector>
-
-#include "absl/memory/memory.h"
-#include "api/units/time_delta.h"
-#include "rtc_base/event.h"
-#include "rtc_base/task_queue_for_test.h"
-#include "rtc_base/time_utils.h"
-#include "test/gtest.h"
-
 namespace webrtc {
-
 namespace {
 
 // Noop on all platforms except Windows, where it turns on high precision
@@ -59,10 +54,10 @@ TEST(TaskQueueTest, DISABLED_PostDelayedHighRes) {
   EnableHighResTimers high_res_scope;
 
   static const char kQueueName[] = "PostDelayedHighRes";
-  rtc::Event event;
+  Event event;
   TaskQueueForTest queue(kQueueName, TaskQueueFactory::Priority::HIGH);
 
-  uint32_t start = rtc::TimeMillis();
+  uint32_t start = TimeMillis();
   queue.PostDelayedTask(
       [&event, &queue] {
         EXPECT_TRUE(queue.IsCurrent());
@@ -70,7 +65,7 @@ TEST(TaskQueueTest, DISABLED_PostDelayedHighRes) {
       },
       TimeDelta::Millis(3));
   EXPECT_TRUE(event.Wait(TimeDelta::Seconds(1)));
-  uint32_t end = rtc::TimeMillis();
+  uint32_t end = TimeMillis();
   // These tests are a little relaxed due to how "powerful" our test bots can
   // be.  Most recently we've seen windows bots fire the callback after 94-99ms,
   // which is why we have a little bit of leeway backwards as well.

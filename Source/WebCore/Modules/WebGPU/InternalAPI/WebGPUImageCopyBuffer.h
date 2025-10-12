@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPUBuffer.h"
-#include "WebGPUImageDataLayout.h"
+#include <WebCore/WebGPUBuffer.h>
+#include <WebCore/WebGPUImageDataLayout.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakRef.h>
 

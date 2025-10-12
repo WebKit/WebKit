@@ -44,3 +44,7 @@ private:
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebTransportError)
+    static bool isType(const WebCore::DOMException& exception) { return exception.type() == WebCore::DOMException::Type::WebTransportError; }
+SPECIALIZE_TYPE_TRAITS_END()

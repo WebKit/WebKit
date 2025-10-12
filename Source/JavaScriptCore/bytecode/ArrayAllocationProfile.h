@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "IndexingType.h"
-#include "JSArray.h"
+#include <JavaScriptCore/IndexingType.h>
+#include <JavaScriptCore/JSArray.h>
 
 namespace JSC {
 

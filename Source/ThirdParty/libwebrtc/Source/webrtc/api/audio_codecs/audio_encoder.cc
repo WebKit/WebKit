@@ -24,6 +24,9 @@
 
 namespace webrtc {
 
+// TODO(peah): Rationale
+static_assert(AudioEncoder::kMaxNumberOfChannels <= 255, "");
+
 ANAStats::ANAStats() = default;
 ANAStats::~ANAStats() = default;
 ANAStats::ANAStats(const ANAStats&) = default;
@@ -41,10 +44,9 @@ int AudioEncoder::RtpTimestampRateHz() const {
   return SampleRateHz();
 }
 
-AudioEncoder::EncodedInfo AudioEncoder::Encode(
-    uint32_t rtp_timestamp,
-    rtc::ArrayView<const int16_t> audio,
-    rtc::Buffer* encoded) {
+AudioEncoder::EncodedInfo AudioEncoder::Encode(uint32_t rtp_timestamp,
+                                               ArrayView<const int16_t> audio,
+                                               Buffer* encoded) {
   TRACE_EVENT0("webrtc", "AudioEncoder::Encode");
   RTC_CHECK_EQ(audio.size(),
                static_cast<size_t>(NumChannels() * SampleRateHz() / 100));
@@ -75,7 +77,7 @@ void AudioEncoder::SetMaxPlaybackRate(int /* frequency_hz */) {}
 
 void AudioEncoder::SetTargetBitrate(int /* target_bps */) {}
 
-rtc::ArrayView<std::unique_ptr<AudioEncoder>>
+ArrayView<std::unique_ptr<AudioEncoder>>
 AudioEncoder::ReclaimContainedEncoders() {
   return nullptr;
 }

@@ -14,11 +14,11 @@ FAIL :sampling_while_testing:format="depth24plus-stencil8";depthReadOnly=true;st
        actual == 0x: 00 00 00 00 00 00 00
        failed ->        xx          xx
      expected ==     00 01 00 00 00 01 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
-    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:864:38
-    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1033:43
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:755:38
+    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:924:43
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/texture/readonly_depth_stencil.spec.js:328:22
  Reached unreachable code
 FAIL :sampling_while_testing:format="depth24plus-stencil8";depthReadOnly=false;stencilReadOnly=true assert_unreached:
@@ -27,11 +27,11 @@ FAIL :sampling_while_testing:format="depth24plus-stencil8";depthReadOnly=false;s
        actual == 0x: 00 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ...
        failed ->        xx                                                                                                    ...
      expected ==     00 01 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ...
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
-    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:864:38
-    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1033:43
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:755:38
+    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:924:43
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/texture/readonly_depth_stencil.spec.js:328:22
  Reached unreachable code
 PASS :sampling_while_testing:format="depth24plus-stencil8";depthReadOnly=false;stencilReadOnly=false
@@ -42,11 +42,11 @@ FAIL :sampling_while_testing:format="depth32float-stencil8";depthReadOnly=true;s
        actual == 0x: 00 00 00 00 00 00 00
        failed ->        xx          xx
      expected ==     00 01 00 00 00 01 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
-    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:864:38
-    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1033:43
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:755:38
+    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:924:43
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/texture/readonly_depth_stencil.spec.js:328:22
  Reached unreachable code
 FAIL :sampling_while_testing:format="depth32float-stencil8";depthReadOnly=false;stencilReadOnly=true assert_unreached:
@@ -55,11 +55,11 @@ FAIL :sampling_while_testing:format="depth32float-stencil8";depthReadOnly=false;
        actual == 0x: 00 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ...
        failed ->        xx                                                                                                    ...
      expected ==     00 01 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ...
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
-    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:864:38
-    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1033:43
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:755:38
+    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:924:43
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/texture/readonly_depth_stencil.spec.js:328:22
  Reached unreachable code
 PASS :sampling_while_testing:format="depth32float-stencil8";depthReadOnly=false;stencilReadOnly=false

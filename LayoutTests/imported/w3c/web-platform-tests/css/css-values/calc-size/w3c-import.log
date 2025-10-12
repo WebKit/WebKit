@@ -57,7 +57,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-min-max-sizes-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-min-max-sizes-006-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-min-max-sizes-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-no-body-height-quirk-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-no-body-height-quirk-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-no-body-height-quirk-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-svg-001-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-typed-om.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-width-box-sizing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-width.html

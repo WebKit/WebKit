@@ -35,6 +35,17 @@
 
 namespace WebCore {
 
+WTF::TextStream& operator<<(WTF::TextStream& ts, TextRenderingMode mode)
+{
+    switch (mode) {
+    case TextRenderingMode::AutoTextRendering: ts << "Auto"_s; break;
+    case TextRenderingMode::OptimizeSpeed: ts << "optimize-speed"_s; break;
+    case TextRenderingMode::OptimizeLegibility: ts << "optimize-legibility"_s; break;
+    case TextRenderingMode::GeometricPrecision: ts << "geometric-precision"_s; break;
+    }
+    return ts;
+}
+
 WTF::TextStream& operator<<(TextStream& ts, FontSmoothingMode mode)
 {
     switch (mode) {
@@ -127,6 +138,15 @@ void add(Hasher& hasher, const FontVariantAlternates& key)
         add(hasher, key.values());
 }
 
+WTF::TextStream& operator<<(WTF::TextStream& ts, FontSynthesisLonghandValue value)
+{
+    switch (value) {
+    case FontSynthesisLonghandValue::None: ts << "none"_s; break;
+    case FontSynthesisLonghandValue::Auto: ts << "auto"_s; break;
+    }
+    return ts;
+}
+
 WTF::TextStream& operator<<(TextStream& ts, FontVariantPosition position)
 {
     switch (position) {
@@ -147,6 +167,17 @@ WTF::TextStream& operator<<(TextStream& ts, FontVariantCaps caps)
     case FontVariantCaps::AllPetite: ts << "all-petite"_s; break;
     case FontVariantCaps::Unicase: ts << "unicase"_s; break;
     case FontVariantCaps::Titling: ts << "titling"_s; break;
+    }
+    return ts;
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, FontVariantEmoji emoji)
+{
+    switch (emoji) {
+    case FontVariantEmoji::Normal: ts << "normal"_s; break;
+    case FontVariantEmoji::Text: ts << "text"_s; break;
+    case FontVariantEmoji::Emoji: ts << "emoji"_s; break;
+    case FontVariantEmoji::Unicode: ts << "unicode"_s; break;
     }
     return ts;
 }

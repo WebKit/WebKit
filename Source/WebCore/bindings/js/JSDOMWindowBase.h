@@ -19,9 +19,6 @@
 
 #pragma once
 
-#include "JSDOMGlobalObject.h"
-#include "JSDOMWrapperCache.h"
-#include "LocalDOMWindow.h"
 #include <JavaScriptCore/AuxiliaryBarrierInlines.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSArray.h>
@@ -34,6 +31,9 @@
 #include <JavaScriptCore/Structure.h>
 #include <JavaScriptCore/StructureInlines.h>
 #include <JavaScriptCore/WriteBarrier.h>
+#include <WebCore/JSDOMGlobalObject.h>
+#include <WebCore/JSDOMWrapperCache.h>
+#include <WebCore/LocalDOMWindow.h>
 #include <cstddef>
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>

@@ -150,6 +150,21 @@ class InstallHooks(Command):
             sys.stderr.write('No hooks to install\n')
             return 1
 
+        url = repository.url()
+        match = repository.SSH_REMOTE.match(url) or repository.HTTP_REMOTE.match(url)
+        if match:
+            path = match.group('path')
+            if 'webkit' not in path.lower():
+                print(f'This is not a repository under the WebKit Project. Installing WebKit hooks may override existing hooks and introduce undefined behavior.')
+                response = Terminal.choose(
+                    'Would you like to continue installation?',
+                    options=('No', 'Yes'),
+                    default='No',
+                )
+                if response == 'No':
+                    print(f'Skipping hook installation for this repository')
+                    return 0
+
         candidates = os.listdir(hooks)
         if getattr(args, 'arguments', []):
             hook_names = []

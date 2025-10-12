@@ -10,6 +10,8 @@ executable("clspv-tool-llvm-min-tblgen") {
     "../sources:clspv_llvm_lib_tblgen",
     "../sources:clspv_llvm_tool_min_tblgen_sources",
   ]
+
+  sources = [ "//$clspv_llvm_dir/llvm/utils/TableGen/llvm-min-tblgen.cpp" ]
 }
 
 executable("clspv-tool-llvm-tblgen") {
@@ -29,6 +31,8 @@ executable("clspv-tool-llvm-tblgen") {
     "../sources:clspv_llvm_utils_lib_tablegen_globalisel",
     "../tablegen:GenVT",
   ]
+
+  sources = [ "//$clspv_llvm_dir/llvm/utils/TableGen/llvm-tblgen.cpp" ]
 }
 
 executable("clspv-tool-clang-tblgen") {
@@ -49,6 +53,7 @@ executable("clspv-tool-clang-tblgen") {
     "//$clspv_llvm_dir/clang/utils/TableGen/ClangASTNodesEmitter.cpp",
     "//$clspv_llvm_dir/clang/utils/TableGen/ClangASTPropertiesEmitter.cpp",
     "//$clspv_llvm_dir/clang/utils/TableGen/ClangAttrEmitter.cpp",
+    "//$clspv_llvm_dir/clang/utils/TableGen/ClangBuiltinTemplatesEmitter.cpp",
     "//$clspv_llvm_dir/clang/utils/TableGen/ClangBuiltinsEmitter.cpp",
     "//$clspv_llvm_dir/clang/utils/TableGen/ClangCommentCommandInfoEmitter.cpp",
     "//$clspv_llvm_dir/clang/utils/TableGen/ClangCommentHTMLNamedCharacterReferenceEmitter.cpp",

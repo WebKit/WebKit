@@ -18,7 +18,6 @@
 #include "common_audio/channel_buffer.h"
 #include "common_audio/resampler/push_sinc_resampler.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 

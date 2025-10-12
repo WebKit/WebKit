@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+body { white-space: pre-wrap; -webkit-user-modify: read-write; }
+#container { display: inline-grid; transform: rotate(90deg); }
+#container font, #container span { position: fixed; grid-area: customIdent; }
+</style>
+<script>
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+onload = () => {
+  document.execCommand("selectAll",false,null);
+  document.execCommand("hiliteColor",false,"#32E6E7F1");
+  document.execCommand("foreColor",false,"rgba(14,189,106,209)");
+  document.body.innerHTML = "PASS if no crash.";
+  window.testRunner?.notifyDone();
+}
+</script>
+<body><div id="container">&#xA;A</body>

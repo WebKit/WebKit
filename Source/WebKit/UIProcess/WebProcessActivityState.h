@@ -31,12 +31,13 @@ namespace WebKit {
 
 class ProcessAssertion;
 class ProcessThrottlerActivity;
+class ProcessThrottlerTimedActivity;
 class RemotePageProxy;
 class WebPageProxy;
 class WebProcessProxy;
 
 class WebProcessActivityState {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebProcessActivityState);
 public:
     explicit WebProcessActivityState(WebPageProxy&);
     explicit WebProcessActivityState(RemotePageProxy&);

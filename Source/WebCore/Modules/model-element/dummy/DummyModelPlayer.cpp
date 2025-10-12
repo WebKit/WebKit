@@ -38,7 +38,7 @@ Ref<DummyModelPlayer> DummyModelPlayer::create(ModelPlayerClient& client)
 
 DummyModelPlayer::DummyModelPlayer(ModelPlayerClient& client)
     : m_client { client }
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_PROCESS) || ENABLE(GPUP_MODEL)
     , m_id(ModelPlayerIdentifier::generate())
 #endif
 {
@@ -134,6 +134,18 @@ void DummyModelPlayer::setIsMuted(bool, CompletionHandler<void(bool success)>&&)
 Vector<RetainPtr<id>> DummyModelPlayer::accessibilityChildren()
 {
     return { };
+}
+#endif
+
+#if ENABLE(GPUP_MODEL)
+const MachSendRight* DummyModelPlayer::displayBuffer() const
+{
+    return nullptr;
+}
+
+GraphicsLayerContentsDisplayDelegate* DummyModelPlayer::contentsDisplayDelegate()
+{
+    return nullptr;
 }
 #endif
 

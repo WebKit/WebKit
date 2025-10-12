@@ -33,7 +33,6 @@
 #if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
 
 #import "APIInspectorExtension.h"
-#import "APISerializedScriptValue.h"
 #import "JavaScriptEvaluationResult.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionUtilities.h"

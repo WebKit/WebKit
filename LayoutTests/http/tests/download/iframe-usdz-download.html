@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setShouldLogDownloadCallbacks(true);
+        testRunner.waitUntilDownloadFinished();
+    }
+</script>
+</head>
+<body>
+<p>Tests that when you load a .usdz file as the main resource for a child frame, we download.</p>
+<iframe src="resources/1.usdz"></iframe>
+</body>
+</html>

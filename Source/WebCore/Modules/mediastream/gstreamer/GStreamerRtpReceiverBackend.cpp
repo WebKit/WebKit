@@ -50,6 +50,12 @@ GStreamerRtpReceiverBackend::GStreamerRtpReceiverBackend(GRefPtr<GstWebRTCRTPTra
     g_object_get(m_rtcTransceiver.get(), "receiver", &m_rtcReceiver.outPtr(), nullptr);
 }
 
+void GStreamerRtpReceiverBackend::tearDown()
+{
+    m_rtcReceiver = nullptr;
+    m_rtcTransceiver = nullptr;
+}
+
 RTCRtpParameters GStreamerRtpReceiverBackend::getParameters()
 {
     RTCRtpParameters parameters;
@@ -69,8 +75,8 @@ RTCRtpParameters GStreamerRtpReceiverBackend::getParameters()
 
         auto media = gstStructureGetString(structure, "media"_s);
         auto encodingName = gstStructureGetString(structure, "encoding-name"_s);
-        if (media && encodingName)
-            codec.mimeType = makeString(media, '/', encodingName.convertToASCIILowercase());
+        if (!media.isEmpty() && !encodingName.isEmpty())
+            codec.mimeType = makeString(media.toString(), '/', encodingName.toString().convertToASCIILowercase());
 
         if (auto clockRate = gstStructureGet<uint64_t>(structure, "clock-rate"_s))
             codec.clockRate = *clockRate;

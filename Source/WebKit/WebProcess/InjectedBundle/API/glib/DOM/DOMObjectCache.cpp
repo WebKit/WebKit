@@ -24,6 +24,7 @@
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/LocalDOMWindow.h>
 #include <WebCore/LocalFrameInlines.h>
+#include <WebCore/NodeDocument.h>
 #include <WebCore/NodeInlines.h>
 #include <glib-object.h>
 #include <wtf/HashMap.h>
@@ -36,7 +37,7 @@
 namespace WebKit {
 
 struct DOMObjectCacheData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DOMObjectCacheData);
     DOMObjectCacheData(GObject* wrapper)
         : object(wrapper)
         , cacheReferences(1)
@@ -97,11 +98,11 @@ public:
     {
         ASSERT(!m_objects.contains(&data));
 
-        auto* domWindow = m_frame->document()->domWindow();
-        if (domWindow && (!m_domWindowObserver || m_domWindowObserver->window() != domWindow)) {
+        auto* window = m_frame->document()->window();
+        if (window && (!m_domWindowObserver || m_domWindowObserver->window() != window)) {
             // New LocalDOMWindow, clear the cache and create a new DOMWindowObserver.
             clear();
-            m_domWindowObserver = makeUnique<DOMWindowObserver>(*domWindow, *this);
+            m_domWindowObserver = makeUnique<DOMWindowObserver>(*window, *this);
         }
 
         m_objects.append(&data);
@@ -158,7 +159,7 @@ private:
         for (auto* data : objects)
             g_object_weak_unref(data->object, DOMObjectCacheFrameObserver::objectFinalizedCallback, this);
 
-        RunLoop::protectedMain()->dispatch([objects] {
+        RunLoop::mainSingleton().dispatch([objects] {
             for (auto* data : objects)
                 data->clearObject();
         });

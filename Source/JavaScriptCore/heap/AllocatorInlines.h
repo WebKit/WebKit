@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Allocator.h"
-#include "LocalAllocator.h"
+#include <JavaScriptCore/Allocator.h>
+#include <JavaScriptCore/LocalAllocator.h>
 
 namespace JSC {
 

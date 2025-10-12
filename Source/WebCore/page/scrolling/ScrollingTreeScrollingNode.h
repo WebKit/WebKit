@@ -25,13 +25,14 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "IntRect.h"
-#include "ScrollSnapOffsetsInfo.h"
-#include "ScrollableArea.h"
-#include "ScrollingTree.h"
-#include "ScrollingTreeNode.h"
+#include <WebCore/IntRect.h>
+#include <WebCore/ScrollSnapOffsetsInfo.h>
+#include <WebCore/ScrollableArea.h>
+#include <WebCore/ScrollingTree.h>
+#include <WebCore/ScrollingTreeNode.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -133,6 +134,7 @@ public:
     OverscrollBehavior verticalOverscrollBehavior() const { return m_scrollableAreaParameters.verticalOverscrollBehavior; }
 
     ScrollbarWidth scrollbarWidthStyle() const { return m_scrollableAreaParameters.scrollbarWidthStyle; }
+    std::optional<ScrollbarColor> scrollbarColorStyle() const { return m_scrollableAreaParameters.scrollbarColorStyle; }
 
     virtual String scrollbarStateForOrientation(ScrollbarOrientation) const { return ""_s; }
     
@@ -155,6 +157,7 @@ protected:
     void didStopAnimatedScroll();
     void willStartWheelEventScroll();
     void didStopWheelEventScroll();
+    void didStopProgrammaticScroll();
 
     void setScrollAnimationInProgress(bool);
 

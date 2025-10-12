@@ -21,7 +21,6 @@ Bottom
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeBottom)
       (viewport rect at last layout at (0,0) size 800x600)
-      (layer position at last layout (0,500))
     )
   )
 )

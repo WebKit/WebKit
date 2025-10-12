@@ -109,7 +109,7 @@ static CVReturn OnDisplayLinkFired(CVDisplayLinkRef displayLink,
 
 // These methods may be called on non-main thread.
 - (void)setSize:(CGSize)size {
-  dispatch_async(dispatch_get_main_queue(), ^{
+  dispatch_async(mainDispatchQueueSingleton(), ^{
     [self.delegate videoView:self didChangeVideoSize:size];
   });
 }

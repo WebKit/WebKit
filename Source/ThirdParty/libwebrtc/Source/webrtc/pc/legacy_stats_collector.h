@@ -16,18 +16,15 @@
 
 #include <stdint.h>
 
-#include <algorithm>
 #include <cstdint>
 #include <map>
 #include <memory>
 #include <optional>
 #include <string>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
 #include "api/candidate.h"
-#include "api/field_trials_view.h"
 #include "api/legacy_stats_types.h"
 #include "api/media_stream_interface.h"
 #include "api/peer_connection_interface.h"
@@ -46,12 +43,12 @@ namespace webrtc {
 
 // Conversion function to convert candidate type string to the corresponding one
 // from  enum RTCStatsIceCandidateType.
-const char* IceCandidateTypeToStatsType(const cricket::Candidate& candidate);
+const char* IceCandidateTypeToStatsType(const Candidate& candidate);
 
 // Conversion function to convert adapter type to report string which are more
 // fitting to the general style of http://w3c.github.io/webrtc-stats. This is
 // only used by stats collector.
-const char* AdapterTypeToStatsType(rtc::AdapterType type);
+const char* AdapterTypeToStatsType(AdapterType type);
 
 // A mapping between track ids and their StatsReport.
 typedef std::map<std::string, StatsReport*> TrackIdMap;
@@ -120,15 +117,15 @@ class LegacyStatsCollector : public LegacyStatsCollectorInterface {
   struct TransportStats {
     TransportStats() = default;
     TransportStats(std::string transport_name,
-                   cricket::TransportStats transport_stats)
+                   ::webrtc::TransportStats transport_stats)
         : name(std::move(transport_name)), stats(std::move(transport_stats)) {}
     TransportStats(TransportStats&&) = default;
     TransportStats(const TransportStats&) = delete;
 
     std::string name;
-    cricket::TransportStats stats;
-    std::unique_ptr<rtc::SSLCertificateStats> local_cert_stats;
-    std::unique_ptr<rtc::SSLCertificateStats> remote_cert_stats;
+    ::webrtc::TransportStats stats;
+    std::unique_ptr<SSLCertificateStats> local_cert_stats;
+    std::unique_ptr<SSLCertificateStats> remote_cert_stats;
   };
 
   struct SessionStats {
@@ -139,7 +136,7 @@ class LegacyStatsCollector : public LegacyStatsCollectorInterface {
     SessionStats& operator=(SessionStats&&) = default;
     SessionStats& operator=(SessionStats&) = delete;
 
-    cricket::CandidateStatsList candidate_stats;
+    CandidateStatsList candidate_stats;
     std::vector<TransportStats> transport_stats;
     std::map<std::string, std::string> transport_names_by_mid;
   };
@@ -151,20 +148,19 @@ class LegacyStatsCollector : public LegacyStatsCollectorInterface {
 
   // Helper method for creating IceCandidate report. `is_local` indicates
   // whether this candidate is local or remote.
-  StatsReport* AddCandidateReport(
-      const cricket::CandidateStats& candidate_stats,
-      bool local);
+  StatsReport* AddCandidateReport(const CandidateStats& candidate_stats,
+                                  bool local);
 
   // Adds a report for this certificate and every certificate in its chain, and
   // returns the leaf certificate's report (`cert_stats`'s report).
   StatsReport* AddCertificateReports(
-      std::unique_ptr<rtc::SSLCertificateStats> cert_stats);
+      std::unique_ptr<SSLCertificateStats> cert_stats);
 
   StatsReport* AddConnectionInfoReport(const std::string& content_name,
                                        int component,
                                        int connection_id,
                                        const StatsReport::Id& channel_report_id,
-                                       const cricket::ConnectionInfo& info);
+                                       const ConnectionInfo& info);
 
   void ExtractDataInfo_n(StatsCollection* reports);
 
@@ -192,7 +188,7 @@ class LegacyStatsCollector : public LegacyStatsCollectorInterface {
   void UpdateTrackReports();
 
   SessionStats ExtractSessionInfo_n(
-      const std::vector<rtc::scoped_refptr<
+      const std::vector<scoped_refptr<
           RtpTransceiverProxyWithInternal<RtpTransceiver>>>& transceivers,
       std::optional<std::string> sctp_transport_name,
       std::optional<std::string> sctp_mid);

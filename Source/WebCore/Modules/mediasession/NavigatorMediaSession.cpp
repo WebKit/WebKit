@@ -57,7 +57,7 @@ RefPtr<MediaSession> NavigatorMediaSession::mediaSessionIfExists(Navigator& navi
 MediaSession& NavigatorMediaSession::mediaSession()
 {
     if (!m_mediaSession)
-        m_mediaSession = MediaSession::create(Ref { m_navigator.get() });
+        lazyInitialize(m_mediaSession, MediaSession::create(Ref { m_navigator.get() }));
     return *m_mediaSession;
 }
 

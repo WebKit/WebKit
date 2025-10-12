@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@ CSS::AppleInvertLightness toCSSAppleInvertLightness(Ref<InvertLightnessFilterOpe
     return { };
 }
 
-Ref<FilterOperation> createFilterOperation(const CSS::AppleInvertLightness&, const Document&, RenderStyle&, const CSSToLengthConversionData&)
+Ref<FilterOperation> createFilterOperation(const CSS::AppleInvertLightness&, const BuilderState&)
 {
     return InvertLightnessFilterOperation::create();
 }

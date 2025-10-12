@@ -1,0 +1,10 @@
+When a site programmatically focuses a contenteditable div before editing or text selections are made, and that div is then edited followed by editing ending in a manner which preserves the text selection (i.e clicking a button element), scrollable areas should remain scrollable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The region remained scrollable after editing.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

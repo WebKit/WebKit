@@ -12,6 +12,7 @@
 <script>
     promise_test(async t => {
         const video = await navigator.mediaDevices.getUserMedia({ audio : true, video : true });
+        t.add_cleanup(() => video.getTracks().forEach(track => track.stop()));
         const recorder = new MediaRecorder(video);
 
         assert_equals(recorder.stream, video);

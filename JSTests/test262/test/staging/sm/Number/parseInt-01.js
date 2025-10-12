@@ -4,22 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Number.parseInt(string, radix)
+info: bugzilla.mozilla.org/show_bug.cgi?id=886949
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 886949;
-var summary = "ES6 (draft May 2013) 15.7.3.9 Number.parseInt(string, radix)";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 var str, radix;
 var upvar;
@@ -173,7 +162,3 @@ assert.sameValue(Number.parseInt("00A", 17), 10);
 
 /* Number.parseInt should be the same function object as global parseInt. */
 assert.sameValue(Number.parseInt, parseInt);
-
-/******************************************************************************/
-
-print("All tests passed!");

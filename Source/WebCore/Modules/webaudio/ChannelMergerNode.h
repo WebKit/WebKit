@@ -55,3 +55,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_AUDIONODE(ChannelMergerNode, NodeTypeChannelMerger);

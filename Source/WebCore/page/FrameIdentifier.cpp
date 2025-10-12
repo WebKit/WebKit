@@ -28,6 +28,7 @@
 
 #include "ProcessIdentifier.h"
 #include <wtf/MainThread.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -36,6 +37,12 @@ FrameIdentifier generateFrameIdentifier()
     ASSERT(isMainThread());
     static uint64_t nextIdentifier { 1 };
     return FrameIdentifier((Process::identifier().toUInt64() << 32) | nextIdentifier++);
+}
+
+TextStream& operator<<(TextStream& stream, FrameIdentifier identifier)
+{
+    stream << "FrameIdentifier("_s << (identifier.toRawValue() >> 32) << ", "_s << static_cast<uint32_t>(identifier.toRawValue()) << ')';
+    return stream;
 }
 
 }

@@ -18,8 +18,7 @@ namespace webrtc {
 
 CallConfig::CallConfig(const Environment& env,
                        TaskQueueBase* network_task_queue)
-    : env(env),
-      network_task_queue_(network_task_queue) {}
+    : env(env), network_task_queue_(network_task_queue) {}
 
 RtpTransportConfig CallConfig::ExtractTransportConfig() const {
   RtpTransportConfig transport_config = {.env = env};

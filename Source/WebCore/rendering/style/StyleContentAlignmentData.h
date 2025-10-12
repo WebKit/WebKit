@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "RenderStyleConstants.h"
-#include "WritingMode.h"
+#include <WebCore/RenderStyleConstants.h>
+#include <WebCore/WritingMode.h>
 
 namespace WTF {
 class TextStream;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,7 @@ public:
 
     virtual ~RemotePresentationContextProxy();
 
-    RemoteGPUProxy& parent() { return m_parent; }
+    RemoteGPUProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
     Ref<RemoteGPUProxy> protectedRoot() { return m_parent->root(); }
 
@@ -70,7 +70,6 @@ private:
     RemotePresentationContextProxy& operator=(RemotePresentationContextProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
-    Ref<ConvertToBackingContext> protectedConvertToBackingContext() const;
 
     RefPtr<WebCore::NativeImage> getMetalTextureAsNativeImage(uint32_t, bool& isIOSurfaceSupportedFormat) final;
 
@@ -86,8 +85,8 @@ private:
     RefPtr<WebCore::WebGPU::Texture> getCurrentTexture(uint32_t) final;
 
     WebGPUIdentifier m_backing;
-    Ref<ConvertToBackingContext> m_convertToBackingContext;
-    Ref<RemoteGPUProxy> m_parent;
+    const Ref<ConvertToBackingContext> m_convertToBackingContext;
+    const Ref<RemoteGPUProxy> m_parent;
     static constexpr size_t textureCount = 3;
     std::array<RefPtr<RemoteTextureProxy>, textureCount> m_currentTexture;
 };

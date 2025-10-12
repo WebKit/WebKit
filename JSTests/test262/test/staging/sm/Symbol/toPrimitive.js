@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -26,7 +23,7 @@ assert.sameValue(obj[Symbol.toPrimitive](Math.atan2), sym);
 assert.sameValue(sym[Symbol.toPrimitive](), sym);
 
 // Or a wrapper to a Symbol object in another compartment.
-var obj2 = createNewGlobal().Object(sym);
+var obj2 = $262.createRealm().global.Object(sym);
 assert.sameValue(obj2[Symbol.toPrimitive]("default"), sym);
 
 // Otherwise a TypeError is thrown.
@@ -37,7 +34,7 @@ var nonSymbols = [
     new Proxy(obj, {})
 ];
 for (var value of nonSymbols) {
-    assertThrowsInstanceOf(() => symbolToPrimitive.call(value, "string"), TypeError);
+    assert.throws(TypeError, () => symbolToPrimitive.call(value, "string"));
 }
 
 // Surface features:

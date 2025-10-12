@@ -1,0 +1,19 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/reference/variable-reference-without-whitespace-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/reference/vars-background-shorthand-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/reference/vars-font-shorthand-001-ref.html

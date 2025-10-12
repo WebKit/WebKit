@@ -26,7 +26,9 @@
 #include "config.h"
 #include "CommandEvent.h"
 
+#include "Document.h"
 #include "Element.h"
+#include "TreeScope.h"
 
 #include <wtf/TZoneMallocInlines.h>
 
@@ -71,7 +73,10 @@ RefPtr<Element> CommandEvent::source() const
         Ref node = treeScope->retargetToScope(*m_source.get());
         return &downcast<Element>(node).get();
     }
-    return m_source;
+
+    Ref treeScope = m_source->treeScope().documentScope();
+    Ref node = treeScope->retargetToScope(*m_source.get());
+    return &downcast<Element>(node).get();
 }
 
 } // namespace WebCore

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <link rel="help" href="https://drafts.csswg.org/css-align-3/#baseline-export">
-<link rel="match" href="align-items-baseline-row-vert-ref.html">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
 <style>
 #target {
+  font-family: Ahem;
   writing-mode: vertical-rl;
   display: flex;
   align-items: baseline;
@@ -16,11 +17,13 @@
 #target > :nth-child(1) {
   background: lime;
   font-size: 30px;
+  line-height: 30px;
   writing-mode: vertical-rl;
 }
 #target > :nth-child(2) {
   background: hotpink;
   font-size: 20px;
+  line-height: 20px;
   writing-mode: vertical-rl;
 }
 #target > :nth-child(3) {
@@ -32,18 +35,25 @@
 #target > :nth-child(4) {
   background: lime;
   font-size: 30px;
+  line-height: 30px;
   writing-mode: vertical-lr;
 }
 #target > :nth-child(5) {
   background: hotpink;
   font-size: 20px;
+  line-height: 20px;
   writing-mode: vertical-lr;
 }
 </style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('#target > div')">
 <div id="target">
-  <div>line1<br>line2</div>
-  <div>line1<br>line2</div>
-  <div></div>
-  <div>line1<br>line2</div>
-  <div>line1<br>line2</div>
+  <div data-offset-x="139">line1<br>line2</div>
+  <div data-offset-x="154">line1<br>line2</div>
+  <div data-offset-x="164"></div>
+  <div data-offset-x="22">line1<br>line2</div>
+  <div data-offset-x="27">line1<br>line2</div>
 </div>
+</body>

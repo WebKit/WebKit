@@ -1,17 +1,16 @@
-/* Copyright (c) 2023, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */
+// Copyright 2023 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 //! Definitions of NIST elliptic curves.
 //!
@@ -72,11 +71,20 @@ pub enum Group {
 
 impl Group {
     fn as_ffi_ptr(self) -> *const bssl_sys::EC_GROUP {
-        // Safety: `group` is an address-space constant. These functions
-        // cannot fail and no resources need to be released in the future.
+        // Safety: These functions cannot fail and no resources need to be
+        // released in the future.
         match self {
             Group::P256 => unsafe { bssl_sys::EC_group_p256() },
             Group::P384 => unsafe { bssl_sys::EC_group_p384() },
+        }
+    }
+
+    fn as_evp_pkey_alg(self) -> *const bssl_sys::EVP_PKEY_ALG {
+        // Safety: These functions cannot fail and no resources need to be
+        // released in the future.
+        match self {
+            Group::P256 => unsafe { bssl_sys::EVP_pkey_ec_p256() },
+            Group::P384 => unsafe { bssl_sys::EVP_pkey_ec_p384() },
         }
     }
 }
@@ -194,27 +202,18 @@ impl Point {
     }
 
     pub fn from_der_subject_public_key_info(group: Group, spki: &[u8]) -> Option<Self> {
-        let mut pkey = scoped::EvpPkey::from_ptr(parse_with_cbs(
-            spki,
-            // Safety: if called, `pkey` is the non-null result of `EVP_parse_public_key`.
-            |pkey| unsafe { bssl_sys::EVP_PKEY_free(pkey) },
-            // Safety: `cbs` is a valid pointer in this context.
-            |cbs| unsafe { bssl_sys::EVP_parse_public_key(cbs) },
-        )?);
+        let alg = group.as_evp_pkey_alg();
+        let mut pkey =
+            scoped::EvpPkey::from_der_subject_public_key_info(spki, core::slice::from_ref(&alg))?;
         let ec_key = unsafe { bssl_sys::EVP_PKEY_get0_EC_KEY(pkey.as_ffi_ptr()) };
-        if ec_key.is_null() {
-            // Not an ECC key.
-            return None;
-        }
+        // We only passed in one allowed algorithm, an EC algorithm.
+        assert!(!ec_key.is_null());
         let parsed_group = unsafe { bssl_sys::EC_KEY_get0_group(ec_key) };
-        if parsed_group != group.as_ffi_ptr() {
-            // ECC key for a different curve.
-            return None;
-        }
+        // We only passed in one allowed algorithm, this EC group.
+        assert!(parsed_group == group.as_ffi_ptr());
         let point = unsafe { bssl_sys::EC_KEY_get0_public_key(ec_key) };
-        if point.is_null() {
-            return None;
-        }
+        // A valid EC SPKI cannot be missing the public key.
+        assert!(!point.is_null());
         // Safety: `ec_key` is still owned by `pkey` and doesn't need to be freed.
         Some(unsafe { Self::clone_from_ptr(parsed_group, point) })
     }
@@ -375,37 +374,19 @@ impl Key {
 
     /// Parses a PrivateKeyInfo structure (from RFC 5208).
     pub fn from_der_private_key_info(group: Group, der: &[u8]) -> Option<Self> {
-        let mut pkey = scoped::EvpPkey::from_ptr(parse_with_cbs(
-            der,
-            // Safety: in this context, `pkey` is the non-null result of
-            // `EVP_parse_private_key`.
-            |pkey| unsafe { bssl_sys::EVP_PKEY_free(pkey) },
-            // Safety: `cbs` is valid per `parse_with_cbs`.
-            |cbs| unsafe { bssl_sys::EVP_parse_private_key(cbs) },
-        )?);
+        let alg = group.as_evp_pkey_alg();
+        let mut pkey =
+            scoped::EvpPkey::from_der_private_key_info(der, core::slice::from_ref(&alg))?;
         let ec_key = unsafe { bssl_sys::EVP_PKEY_get1_EC_KEY(pkey.as_ffi_ptr()) };
-        if ec_key.is_null() {
-            return None;
-        }
+        // We only passed in one allowed algorithm, an EC algorithm.
+        assert!(!ec_key.is_null());
         // Safety: `ec_key` is now owned by this function.
         let parsed_group = unsafe { bssl_sys::EC_KEY_get0_group(ec_key) };
-        if parsed_group == group.as_ffi_ptr() {
-            // Safety: parsing an EC_KEY always set the public key. It should
-            // be impossible for the public key to be infinity, but double-check.
-            let is_infinite = unsafe {
-                bssl_sys::EC_POINT_is_at_infinity(
-                    bssl_sys::EC_KEY_get0_group(ec_key),
-                    bssl_sys::EC_KEY_get0_public_key(ec_key),
-                )
-            };
-            if is_infinite == 0 {
-                // Safety: `EVP_PKEY_get1_EC_KEY` returned ownership, which we can move
-                // into the returned object.
-                return Some(Self(ec_key));
-            }
-        }
-        unsafe { bssl_sys::EC_KEY_free(ec_key) };
-        None
+        // We only passed in one allowed algorithm, this EC group.
+        assert!(parsed_group == group.as_ffi_ptr());
+        // Safety: `EVP_PKEY_get1_EC_KEY` returned ownership, which we can move
+        // into the returned object.
+        Some(Self(ec_key))
     }
 
     /// Serializes this private key as a PrivateKeyInfo structure from RFC 5208.

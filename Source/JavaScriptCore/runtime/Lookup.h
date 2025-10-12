@@ -20,21 +20,21 @@
 
 #pragma once
 
-#include "BatchedTransitionOptimizer.h"
-#include "CallFrame.h"
-#include "CustomGetterSetter.h"
-#include "DOMJITGetterSetter.h"
-#include "DOMJITSignature.h"
-#include "Identifier.h"
-#include "IdentifierInlines.h"
-#include "ImplementationVisibility.h"
-#include "Intrinsic.h"
-#include "JSFunction.h"
-#include "JSGlobalObject.h"
-#include "LazyProperty.h"
-#include "PropertySlot.h"
-#include "PutPropertySlot.h"
-#include "TypeError.h"
+#include <JavaScriptCore/BatchedTransitionOptimizer.h>
+#include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/CustomGetterSetter.h>
+#include <JavaScriptCore/DOMJITGetterSetter.h>
+#include <JavaScriptCore/DOMJITSignature.h>
+#include <JavaScriptCore/Identifier.h>
+#include <JavaScriptCore/IdentifierInlines.h>
+#include <JavaScriptCore/ImplementationVisibility.h>
+#include <JavaScriptCore/Intrinsic.h>
+#include <JavaScriptCore/JSFunction.h>
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/LazyProperty.h>
+#include <JavaScriptCore/PropertySlot.h>
+#include <JavaScriptCore/PutPropertySlot.h>
+#include <JavaScriptCore/TypeError.h>
 #include <wtf/Assertions.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

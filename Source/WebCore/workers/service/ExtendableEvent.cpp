@@ -26,9 +26,11 @@
 #include "config.h"
 #include "ExtendableEvent.h"
 
+#include "EventLoop.h"
+#include "ExceptionOr.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMPromise.h"
-#include "ScriptExecutionContext.h"
+#include "ScriptExecutionContextInlines.h"
 #include <JavaScriptCore/Microtask.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -66,19 +68,19 @@ ExceptionOr<void> ExtendableEvent::waitUntil(Ref<DOMPromise>&& promise)
 
 void ExtendableEvent::addExtendLifetimePromise(Ref<DOMPromise>&& promise)
 {
-    promise->whenSettled([this, protectedThis = Ref { *this }, settledPromise = promise.ptr()] () mutable {
+    promise->whenSettled([this, protectedThis = Ref { *this }, settledPromise = promise.copyRef()] () mutable {
         auto& globalObject = *settledPromise->globalObject();
-        auto* context = globalObject.scriptExecutionContext();
+        RefPtr context = globalObject.scriptExecutionContext();
         if (!context)
             return;
-        context->eventLoop().queueMicrotask([this, protectedThis = WTFMove(protectedThis), settledPromise = WTFMove(settledPromise)]() mutable {
+        context->checkedEventLoop()->queueMicrotask([this, protectedThis = WTFMove(protectedThis), settledPromise = WTFMove(settledPromise)]() mutable {
             --m_pendingPromiseCount;
 
             // FIXME: Let registration be the context object's relevant global object's associated service worker's containing service worker registration.
             // FIXME: If registration's uninstalling flag is set, invoke Try Clear Registration with registration.
             // FIXME: If registration is not null, invoke Try Activate with registration.
 
-            auto* context = settledPromise->globalObject()->scriptExecutionContext();
+            RefPtr context = settledPromise->globalObject()->scriptExecutionContext();
             if (!context)
                 return;
             context->postTask([this, protectedThis = WTFMove(protectedThis)] (ScriptExecutionContext&) mutable {

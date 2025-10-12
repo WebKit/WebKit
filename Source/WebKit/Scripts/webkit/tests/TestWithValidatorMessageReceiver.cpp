@@ -48,28 +48,37 @@ void TestWithValidator::didReceiveMessage(IPC::Connection& connection, IPC::Deco
         return;
     }
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithValidator::AlwaysEnabled::name())
-        return IPC::handleMessage<Messages::TestWithValidator::AlwaysEnabled>(connection, decoder, this, &TestWithValidator::alwaysEnabled);
+    if (decoder.messageName() == Messages::TestWithValidator::AlwaysEnabled::name()) {
+        IPC::handleMessage<Messages::TestWithValidator::AlwaysEnabled>(connection, decoder, this, &TestWithValidator::alwaysEnabled);
+        return;
+    }
     if (decoder.messageName() == Messages::TestWithValidator::EnabledIfPassValidation::name()) {
-        if (!ValidateFunction()) {
+        if (!ValidateFunction(decoder)) {
             RELEASE_LOG_ERROR(IPC, "Message %s fails validation", IPC::description(decoder.messageName()).characters());
-            return decoder.markInvalid();
+            decoder.markInvalid();
+            return;
         }
-        return IPC::handleMessage<Messages::TestWithValidator::EnabledIfPassValidation>(connection, decoder, this, &TestWithValidator::enabledIfPassValidation);
+        IPC::handleMessage<Messages::TestWithValidator::EnabledIfPassValidation>(connection, decoder, this, &TestWithValidator::enabledIfPassValidation);
+        return;
     }
     if (decoder.messageName() == Messages::TestWithValidator::EnabledIfSomeFeatureEnabledAndPassValidation::name()) {
         if (!(sharedPreferences && sharedPreferences->someFeature)) {
             RELEASE_LOG_ERROR(IPC, "Message %s received by a disabled message endpoint", IPC::description(decoder.messageName()).characters());
-            return decoder.markInvalid();
+            decoder.markInvalid();
+            return;
         }
-        if (!ValidateFunction()) {
+        if (!ValidateFunction(decoder)) {
             RELEASE_LOG_ERROR(IPC, "Message %s fails validation", IPC::description(decoder.messageName()).characters());
-            return decoder.markInvalid();
+            decoder.markInvalid();
+            return;
         }
-        return IPC::handleMessage<Messages::TestWithValidator::EnabledIfSomeFeatureEnabledAndPassValidation>(connection, decoder, this, &TestWithValidator::enabledIfSomeFeatureEnabledAndPassValidation);
+        IPC::handleMessage<Messages::TestWithValidator::EnabledIfSomeFeatureEnabledAndPassValidation>(connection, decoder, this, &TestWithValidator::enabledIfSomeFeatureEnabledAndPassValidation);
+        return;
     }
-    if (decoder.messageName() == Messages::TestWithValidator::MessageWithReply::name())
-        return IPC::handleMessageAsync<Messages::TestWithValidator::MessageWithReply>(connection, decoder, this, &TestWithValidator::messageWithReply);
+    if (decoder.messageName() == Messages::TestWithValidator::MessageWithReply::name()) {
+        IPC::handleMessageAsync<Messages::TestWithValidator::MessageWithReply>(connection, decoder, this, &TestWithValidator::messageWithReply);
+        return;
+    }
     UNUSED_PARAM(connection);
     RELEASE_LOG_ERROR(IPC, "Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
     decoder.markInvalid();
@@ -123,6 +132,10 @@ template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::Tes
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithValidator_MessageWithReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
     return jsValueForDecodedArguments<Messages::TestWithValidator::MessageWithReply::ReplyArguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithValidator_MessageWithReplyReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithValidator::MessageWithReplyReply::Arguments>(globalObject, decoder);
 }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,8 +30,10 @@
 #include "BoundaryPointInlines.h"
 #include "Document.h"
 #include "DocumentFragment.h"
-#include "DocumentInlines.h"
 #include "DocumentMarkerController.h"
+#include "DocumentMarkers.h"
+#include "DocumentPage.h"
+#include "DocumentView.h"
 #include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
@@ -39,7 +41,8 @@
 #include "EventLoop.h"
 #include "EventTargetInlines.h"
 #include "FloatQuad.h"
-#include "LocalFrame.h"
+#include "FrameDestructionObserverInlines.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
 #include "Page.h"
 #include "Range.h"
@@ -106,13 +109,9 @@ void AlternativeTextController::startAlternativeTextUITimer(AlternativeTextType 
     const Seconds correctionPanelTimerInterval { 300_ms };
 
     if (!isAutomaticSpellingCorrectionEnabled()) {
-#if !ENABLE(ALTERNATIVE_TEXT_REQUIRES_AUTOMATIC_SPELLING_CORRECTION)
         // Exclude correction & reversion bubbles which have accept on dismiss behavior.
         if (type == AlternativeTextType::Correction || type == AlternativeTextType::Reversion)
             return;
-#else
-        return;
-#endif
     }
 
     // If type is PanelTypeReversion, then the new range has been set. So we shouldn't clear it.
@@ -248,7 +247,7 @@ void AlternativeTextController::respondToUnappliedSpellCorrection(const VisibleS
     if (CheckedPtr client = alternativeTextClient())
         client->recordAutocorrectionResponse(AutocorrectionResponse::Reverted, corrected, correction);
 
-    auto document = protectedDocument();
+    Ref document = m_document.get();
     RefPtr protectedFrame { document->frame() };
     document->updateLayout();
 
@@ -266,7 +265,7 @@ void AlternativeTextController::timerFired()
     m_isDismissedByEditing = false;
     switch (m_type) {
     case AlternativeTextType::Correction: {
-        auto document = protectedDocument();
+        Ref document = m_document.get();
         VisibleSelection selection(document->selection().selection());
         VisiblePosition start(selection.start(), selection.affinity());
         VisiblePosition p = startOfWord(start, WordSide::LeftWordIfOnBoundary);
@@ -546,7 +545,7 @@ void AlternativeTextController::markPrecedingWhitespaceForDeletedAutocorrectionA
 
 bool AlternativeTextController::processMarkersOnTextToBeReplacedByResult(const TextCheckingResult& result, const SimpleRange& rangeWithAlternative, const String& stringToBeReplaced)
 {
-    auto document = protectedDocument();
+    Ref document = m_document.get();
     auto& markers = document->markers();
     if (markers.hasMarkers(rangeWithAlternative, DocumentMarkerType::Replacement)) {
         if (result.type == TextCheckingType::Correction)
@@ -715,7 +714,7 @@ void AlternativeTextController::respondToAppliedEditing(CompositeEditCommand* co
 bool AlternativeTextController::insertDictatedText(const String& text, const Vector<DictationAlternative>& dictationAlternatives, Event* triggeringEvent)
 {
     RefPtr<EventTarget> target;
-    auto document = protectedDocument();
+    Ref document = m_document.get();
     if (triggeringEvent)
         target = triggeringEvent->target();
     else

@@ -12,6 +12,8 @@
 #define MODULES_AUDIO_PROCESSING_AGC2_INTERPOLATED_GAIN_CURVE_H_
 
 #include <array>
+#include <cstddef>
+#include <cstdint>
 
 #include "absl/strings/string_view.h"
 #include "modules/audio_processing/agc2/agc2_common.h"

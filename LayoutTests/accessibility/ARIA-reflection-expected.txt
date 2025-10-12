@@ -74,6 +74,13 @@ PASS element.getAttribute(currentAttribute) is dataAttribute
 element.setAttribute("aria-colindex", otherData);
 PASS element[currentProperty] is otherDataProperty
 
+Test ariaColIndexText < - > aria-colindextext
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-colindextext", otherData);
+PASS element[currentProperty] is otherDataProperty
+
 Test ariaColSpan < - > aria-colspan
 PASS element[currentProperty] is null
 PASS element.getAttribute(currentAttribute) is null
@@ -298,6 +305,13 @@ PASS element.getAttribute(currentAttribute) is dataAttribute
 element.setAttribute("aria-rowindex", otherData);
 PASS element[currentProperty] is otherDataProperty
 
+Test ariaRowIndexText < - > aria-rowindextext
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-rowindextext", otherData);
+PASS element[currentProperty] is otherDataProperty
+
 Test ariaRowSpan < - > aria-rowspan
 PASS element[currentProperty] is null
 PASS element.getAttribute(currentAttribute) is null
@@ -355,7 +369,7 @@ element.setAttribute("aria-valuetext", otherData);
 PASS element[currentProperty] is otherDataProperty
 
 
-PASS count is 49
+PASS count is 51
 PASS successfullyParsed is true
 
 TEST COMPLETE

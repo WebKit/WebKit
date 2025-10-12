@@ -54,4 +54,14 @@ PASS abort with no arguments should set the stored error to undefined
 PASS abort with an undefined argument should set the stored error to undefined
 PASS abort with a string argument should set the stored error to that argument
 PASS abort on a locked stream should reject
+PASS WritableStreamDefaultController.signal
+PASS the abort signal is signalled synchronously - write
+PASS the abort signal is signalled synchronously - close
+PASS the abort signal is not signalled on error
+PASS the abort signal is not signalled on write failure
+PASS the abort signal is not signalled on close failure
+PASS recursive abort() call from abort() aborting signal (not started)
+PASS recursive abort() call from abort() aborting signal
+PASS recursive close() call from abort() aborting signal (not started)
+PASS recursive close() call from abort() aborting signal
 

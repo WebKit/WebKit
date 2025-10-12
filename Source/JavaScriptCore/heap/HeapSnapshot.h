@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "HeapSnapshotBuilder.h"
-#include "TinyBloomFilter.h"
+#include <JavaScriptCore/HeapSnapshotBuilder.h>
+#include <JavaScriptCore/TinyBloomFilter.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC {

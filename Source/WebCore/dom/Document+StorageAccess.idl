@@ -25,7 +25,8 @@
 
 // https://privacycg.github.io/storage-access/#the-document-object
 [
-    ImplementedBy=DocumentStorageAccess
+    ImplementedBy=DocumentStorageAccess,
+    EnabledBySetting=StorageAccessAPIEnabled
 ] partial interface Document {
     Promise<boolean> hasStorageAccess();
     Promise<undefined> requestStorageAccess();

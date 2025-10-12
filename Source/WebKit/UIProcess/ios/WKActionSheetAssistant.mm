@@ -309,7 +309,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!targetURL)
         return;
 
-    auto *controller = [PAL::getDDDetectionControllerClass() sharedController];
+    auto *controller = [PAL::getDDDetectionControllerClassSingleton() sharedController];
     if ([controller respondsToSelector:@selector(interactionDidStartForURL:)])
         [controller interactionDidStartForURL:targetURL.get()];
 #endif
@@ -424,7 +424,7 @@ static bool isJavaScriptURL(NSURL *url)
     };
 
     if (_positionInformation->url.isEmpty() && _positionInformation->image && [delegate respondsToSelector:@selector(actionSheetAssistant:getAlternateURLForImage:completion:)]) {
-        RetainPtr<UIImage> uiImage = adoptNS([[UIImage alloc] initWithCGImage:_positionInformation->image->makeCGImageCopy().get()]);
+        RetainPtr<UIImage> uiImage = adoptNS([[UIImage alloc] initWithCGImage:_positionInformation->image->createPlatformImage().get()]);
 
         _hasPendingActionSheet = YES;
         RetainPtr<WKActionSheetAssistant> retainedSelf(self);
@@ -560,12 +560,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _appendOpenActionsForURL:targetURL actions:defaultActions.get() elementInfo:elementInfo];
 
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)
-    if ([getSSReadingListClass() supportsURL:targetURL])
+    if ([getSSReadingListClassSingleton() supportsURL:targetURL])
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeAddToReadingList info:elementInfo assistant:self]];
 #endif
 
     if ([elementInfo imageURL]) {
-        if (TCCAccessPreflight(WebKit::get_TCC_kTCCServicePhotos(), NULL) != kTCCAccessPreflightDenied)
+        if (TCCAccessPreflight(WebKit::get_TCC_kTCCServicePhotosSingleton(), NULL) != kTCCAccessPreflightDenied)
             [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeSaveImage info:elementInfo assistant:self]];
     }
 
@@ -603,10 +603,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeShare info:elementInfo assistant:self]];
 
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)
-    if ([getSSReadingListClass() supportsURL:targetURL])
+    if ([getSSReadingListClassSingleton() supportsURL:targetURL])
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeAddToReadingList info:elementInfo assistant:self]];
 #endif
-    if (TCCAccessPreflight(WebKit::get_TCC_kTCCServicePhotos(), NULL) != kTCCAccessPreflightDenied)
+    if (TCCAccessPreflight(WebKit::get_TCC_kTCCServicePhotosSingleton(), NULL) != kTCCAccessPreflightDenied)
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeSaveImage info:elementInfo assistant:self]];
 
     [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy info:elementInfo assistant:self]];
@@ -755,7 +755,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto retainedSelf = retainPtr(self);
     _WKElementAction *elementAction = [_WKElementAction elementActionWithTitle:action.localizedName actionHandler:^(_WKActivatedElementInfo *actionInfo) {
         retainedSelf->_isPresentingDDUserInterface = action.hasUserInterface;
-        [[PAL::getDDDetectionControllerClass() sharedController] performAction:action fromAlertController:retainedSelf->_interactionSheet.get() interactionDelegate:retainedSelf.get()];
+        [[PAL::getDDDetectionControllerClassSingleton() sharedController] performAction:action fromAlertController:retainedSelf->_interactionSheet.get() interactionDelegate:retainedSelf.get()];
     }];
     elementAction.dismissalHandler = ^BOOL {
         return !action.hasUserInterface;
@@ -780,7 +780,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!targetURL)
         return;
 
-    DDDetectionController *controller = [PAL::getDDDetectionControllerClass() sharedController];
+    DDDetectionController *controller = [PAL::getDDDetectionControllerClassSingleton() sharedController];
     NSDictionary *context = nil;
     NSString *textAtSelection = nil;
 
@@ -913,7 +913,7 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
 {
 #if ENABLE(DATA_DETECTION)
     if (_dataDetectorContextMenuPresenter && interaction == _dataDetectorContextMenuPresenter->interaction()) {
-        DDDetectionController *controller = [PAL::getDDDetectionControllerClass() sharedController];
+        DDDetectionController *controller = [PAL::getDDDetectionControllerClassSingleton() sharedController];
         NSDictionary *context = nil;
         NSString *textAtSelection = nil;
 
@@ -926,12 +926,12 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
         DDResultRef ddResult = [controller resultForURL:_positionInformation->url.createNSURL().get() identifier:_positionInformation->dataDetectorIdentifier.createNSString().get() selectedText:textAtSelection results:_positionInformation->dataDetectorResults.get() context:context extendedContext:&newContext];
 
         CGRect sourceRect;
-        if (_positionInformation->isLink)
+        if (_positionInformation->isLink && _positionInformation->textIndicator)
             sourceRect = _positionInformation->textIndicator->textBoundingRectInRootViewCoordinates();
         else
             sourceRect = _positionInformation->bounds;
 
-        auto ddContextMenuActionClass = PAL::getDDContextMenuActionClass();
+        auto ddContextMenuActionClass = PAL::getDDContextMenuActionClassSingleton();
         auto finalContext = [ddContextMenuActionClass updateContext:newContext withSourceRect:sourceRect];
 
         if (ddResult)

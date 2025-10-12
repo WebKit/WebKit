@@ -1,0 +1,21 @@
+
+FAIL Return untyped url() from function assert_equals: expected "url(\"http://web-platform.test:8800/css/css-mixins/img.png\")" but got "url(\"http://web-platform.test:8800/css/css-mixins/parent\")"
+FAIL Return untyped url() from function, quoted assert_equals: expected "url(\"http://web-platform.test:8800/css/css-mixins/img.png\")" but got "url(\"http://web-platform.test:8800/css/css-mixins/parent\")"
+FAIL Return typed url() from function assert_equals: expected "url(\"http://web-platform.test:8800/css/css-mixins/img.png\")" but got "url(\"http://web-platform.test:8800/css/css-mixins/parent\")"
+FAIL Return typed url() from function, quoted assert_equals: expected "url(\"http://web-platform.test:8800/css/css-mixins/img.png\")" but got "url(\"http://web-platform.test:8800/css/css-mixins/parent\")"
+FAIL Return attr(type(<length>)) from untyped function assert_equals: expected "42px" but got "784px"
+FAIL Return attr(type(<length>)) from typed function assert_equals: expected "42px" but got "784px"
+FAIL Return attr(type(*)) from typed function assert_equals: expected "42px" but got "784px"
+FAIL Return attr(type(*)) from untyped function assert_equals: expected "42px" but got "784px"
+FAIL attr() in default parameter value assert_equals: expected "42px" but got "784px"
+FAIL attr() in local variable assert_equals: expected "42px" but got "784px"
+PASS Returned url() is attr-tainted
+PASS Returned url() is attr-tainted, typed attr()
+PASS Returned url() is attr-tainted, typed return
+PASS Returned url() is attr-tainted, local
+PASS Returned url() is attr-tainted, argument
+PASS Returned url() is attr-tainted, default
+PASS Returned url() is attr-tainted, parent stack frame
+PASS Returned url() is attr-tainted, initial
+PASS Returned url() is attr-tainted, inherit
+

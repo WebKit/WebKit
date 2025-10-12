@@ -10,9 +10,17 @@
 #ifndef NET_DCSCTP_PUBLIC_MOCK_DCSCTP_SOCKET_H_
 #define NET_DCSCTP_PUBLIC_MOCK_DCSCTP_SOCKET_H_
 
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 #include <vector>
 
+#include "api/array_view.h"
+#include "net/dcsctp/public/dcsctp_handover_state.h"
+#include "net/dcsctp/public/dcsctp_message.h"
+#include "net/dcsctp/public/dcsctp_options.h"
 #include "net/dcsctp/public/dcsctp_socket.h"
+#include "net/dcsctp/public/types.h"
 #include "test/gmock.h"
 
 namespace dcsctp {
@@ -21,8 +29,11 @@ class MockDcSctpSocket : public DcSctpSocketInterface {
  public:
   MOCK_METHOD(void,
               ReceivePacket,
-              (rtc::ArrayView<const uint8_t> data),
+              (webrtc::ArrayView<const uint8_t> data),
               (override));
+
+  MOCK_METHOD(size_t, MessagesReady, (), (const, override));
+  MOCK_METHOD(std::optional<DcSctpMessage>, GetNextMessage, (), (override));
 
   MOCK_METHOD(void, HandleTimeout, (TimeoutID timeout_id), (override));
 
@@ -60,13 +71,13 @@ class MockDcSctpSocket : public DcSctpSocketInterface {
 
   MOCK_METHOD(std::vector<SendStatus>,
               SendMany,
-              (rtc::ArrayView<DcSctpMessage> messages,
+              (webrtc::ArrayView<DcSctpMessage> messages,
                const SendOptions& send_options),
               (override));
 
   MOCK_METHOD(ResetStreamsStatus,
               ResetStreams,
-              (rtc::ArrayView<const StreamID> outgoing_streams),
+              (webrtc::ArrayView<const StreamID> outgoing_streams),
               (override));
 
   MOCK_METHOD(size_t, buffered_amount, (StreamID stream_id), (const, override));

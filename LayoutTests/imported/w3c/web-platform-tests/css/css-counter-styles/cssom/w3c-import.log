@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter-invalid-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter-invalid.html

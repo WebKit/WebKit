@@ -59,11 +59,8 @@ static sk_sp<SkTypeface> make_tf() {
     for (SkUnichar index = 0; index <= 127; ++index) {
         SkGlyphID glyph = font.unicharToGlyph(index);
 
-        SkScalar width;
-        font.getWidths(&glyph, 1, &width);
-        SkPath path;
-        font.getPath(glyph, &path);
-        path.transform(scale);
+        SkScalar width = font.getWidth(glyph);
+        SkPath path = font.getPath(glyph).value_or(SkPath()).makeTransform(scale);
 
         // we use the charcode to be our glyph index, since we have no cmap table
         if (index % 2) {

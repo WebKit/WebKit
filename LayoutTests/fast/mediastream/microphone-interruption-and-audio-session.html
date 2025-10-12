@@ -24,9 +24,13 @@
         });
     }
 
+    const streams = [];
     var context = new AudioContext();
     promise_test(async (test) => {
+        test.add_cleanup(() => streams.forEach(stream => stream.getTracks().forEach(track => track.stop())));
+
         const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+        streams.push(stream);
         if (!window.internals)
             return;
         assert_equals(internals.audioSessionCategory(), "PlayAndRecord", "test1");
@@ -38,6 +42,7 @@
         await onMutePromise1;
         // We clone the capture stream to trigger an audio session category recomputation.
         let clone = stream.clone();
+        streams.push(clone);
         assert_equals(internals.audioSessionCategory(), "AmbientSound", "test2");
 
         const onUnmutePromise1 = wait1sForUnmute(stream.getAudioTracks()[0], "onUnmutePromise1");
@@ -45,6 +50,7 @@
             internals.setPageMuted("");
         await onUnmutePromise1;
         clone = stream.clone();
+        streams.push(clone);
         assert_equals(internals.audioSessionCategory(), "PlayAndRecord", "test3");
 
         // PlayAndRecord should stick even with capture interruption.
@@ -53,6 +59,7 @@
             internals.beginAudioSessionInterruption();
         await onMutePromise2;
         clone = stream.clone();
+        streams.push(clone);
         assert_equals(internals.audioSessionCategory(), "PlayAndRecord", "test4");
 
         const onUnmutePromise2 = wait1sForUnmute(stream.getAudioTracks()[0], "onUnmutePromise2");
@@ -60,6 +67,7 @@
             internals.endAudioSessionInterruption();
         await onUnmutePromise2;
         clone = stream.clone();
+        streams.push(clone);
         assert_equals(internals.audioSessionCategory(), "PlayAndRecord", "test5");
     }, "AudioSession category should staty to PlayAndRecord when interrupted, not when muted by user");
     </script>

@@ -89,7 +89,7 @@ void GamepadHapticActuator::playEffect(EffectType effectType, GamepadEffectParam
         return;
     }
 
-    auto document = this->document();
+    RefPtr document = this->document();
     if (!document || !document->isFullyActive() || document->hidden() || !m_gamepad) {
         promise->resolve<IDLEnumeration<Result>>(Result::Preempted);
         return;
@@ -108,11 +108,11 @@ void GamepadHapticActuator::playEffect(EffectType effectType, GamepadEffectParam
     effectParameters.duration = std::min(effectParameters.duration, GamepadEffectParameters::maximumDuration.milliseconds());
 
     currentEffectPromise = WTFMove(promise);
-    GamepadProvider::singleton().playEffect(m_gamepad->index(), m_gamepad->id(), effectType, effectParameters, [this, protectedThis = makePendingActivity(*this), playingEffectPromise = currentEffectPromise, effectType](bool success) mutable {
-        auto& currentEffectPromise = promiseForEffectType(effectType);
+    GamepadProvider::singleton().playEffect(m_gamepad->index(), m_gamepad->id(), effectType, effectParameters, [pendingActivity = makePendingActivity(*this), playingEffectPromise = currentEffectPromise, effectType](bool success) mutable {
+        auto& currentEffectPromise = pendingActivity->object().promiseForEffectType(effectType);
         if (playingEffectPromise != currentEffectPromise)
             return; // Was already pre-empted.
-        queueTaskKeepingObjectAlive(*this, TaskSource::Gamepad, [playingEffectPromise = std::exchange(currentEffectPromise, nullptr), success](auto&) {
+        pendingActivity->object().queueTaskKeepingObjectAlive(pendingActivity->object(), TaskSource::Gamepad, [playingEffectPromise = std::exchange(currentEffectPromise, nullptr), success](auto&) {
             playingEffectPromise->resolve<IDLEnumeration<Result>>(success ? Result::Complete : Result::Preempted);
         });
     });
@@ -120,13 +120,13 @@ void GamepadHapticActuator::playEffect(EffectType effectType, GamepadEffectParam
 
 void GamepadHapticActuator::reset(Ref<DeferredPromise>&& promise)
 {
-    auto document = this->document();
+    RefPtr document = this->document();
     if (!document || !document->isFullyActive() || document->hidden() || !m_gamepad) {
         promise->resolve<IDLEnumeration<Result>>(Result::Preempted);
         return;
     }
-    stopEffects([this, protectedThis = makePendingActivity(*this), promise = WTFMove(promise)]() mutable {
-        queueTaskKeepingObjectAlive(*this, TaskSource::Gamepad, [promise = WTFMove(promise)](auto&) {
+    stopEffects([pendingActivity = makePendingActivity(*this), promise = WTFMove(promise)]() mutable {
+        pendingActivity->object().queueTaskKeepingObjectAlive(pendingActivity->object(), TaskSource::Gamepad, [promise = WTFMove(promise)](auto&) {
             promise->resolve<IDLEnumeration<Result>>(Result::Complete);
         });
     });

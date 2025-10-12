@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "OrderedHashTableHelper.h"
+#include <JavaScriptCore/OrderedHashTableHelper.h>
 
 namespace JSC {
 
@@ -36,7 +36,7 @@ class OrderedHashTable : public JSNonFinalObject {
 public:
     using HashTable = OrderedHashTable<Traits>;
     using Helper = OrderedHashTableHelper<Traits>;
-    using Storage = JSImmutableButterfly;
+    using Storage = JSCellButterfly;
     using TableIndex = typename Helper::TableIndex;
 
     DECLARE_VISIT_CHILDREN;
@@ -46,7 +46,7 @@ public:
     {
     }
 
-    static ptrdiff_t offsetOfButterfly() { return OBJECT_OFFSETOF(OrderedHashTable, m_storage); }
+    static ptrdiff_t offsetOfStorage() { return OBJECT_OFFSETOF(OrderedHashTable, m_storage); }
 
     void finishCreation(VM& vm) { Base::finishCreation(vm); }
     void finishCreation(JSGlobalObject* globalObject, VM& vm, HashTable* base)
@@ -137,10 +137,9 @@ public:
         m_storage.set(vm, this, storage);
     }
 
-    ALWAYS_INLINE JSCell* storage(JSGlobalObject* globalObject)
+    ALWAYS_INLINE JSCell* tryGetStorage(JSGlobalObject* globalObject)
     {
         materializeIfNeeded(globalObject);
-        ASSERT(m_storage);
         return m_storage.get();
     }
 
@@ -228,12 +227,9 @@ public:
             value = getValueFunctor();
             RETURN_IF_EXCEPTION(scope, { });
 
-            if (Helper::isObsolete(storage)) {
-                // Call to getValueFunctor can modify our state, so we need to re-check the index
-                result = Helper::find(globalObject, storageRef(), key);
-                RETURN_IF_EXCEPTION(scope, { });
-            }
-            Helper::addImpl(globalObject, this, storageRef(), key, value, result);
+            // Call to getValueFunctor can modify our state, so we need to re-check the index
+            // There is a chance that callback inserts an entry for this |key|.
+            add(globalObject, key, value);
             RETURN_IF_EXCEPTION(scope, { });
         }
 

@@ -47,7 +47,6 @@
 
 namespace WebKit {
 
-static NSString * const nameKey = @"name";
 static NSString * const descriptionKey = @"description";
 static NSString * const shortcutKey = @"shortcut";
 static NSString * const newShortcutKey = @"newShortcut";
@@ -56,7 +55,7 @@ static NSString * const oldShortcutKey = @"oldShortcut";
 static inline NSDictionary *toAPI(const WebExtensionCommandParameters& command)
 {
     return @{
-        nameKey: command.identifier.createNSString().get(),
+        @"name": command.identifier.createNSString().get(),
         descriptionKey: command.description.createNSString().get(),
         shortcutKey: command.shortcut.createNSString().get()
     };
@@ -109,7 +108,7 @@ void WebExtensionContextProxy::dispatchCommandsCommandEvent(const String& identi
 
     RetainPtr nsIdentifier = identifier.createNSString();
     enumerateFramesAndNamespaceObjects([&](auto& frame, auto& namespaceObject) {
-        RefPtr coreFrame = frame.protectedCoreLocalFrame();
+        RefPtr coreFrame = frame.coreLocalFrame();
         WebCore::UserGestureIndicator gestureIndicator(WebCore::IsProcessingUserGesture::Yes, coreFrame ? coreFrame->document() : nullptr);
         namespaceObject.commands().onCommand().invokeListenersWithArgument(nsIdentifier.get(), tab);
     });
@@ -118,7 +117,7 @@ void WebExtensionContextProxy::dispatchCommandsCommandEvent(const String& identi
 void WebExtensionContextProxy::dispatchCommandsChangedEvent(const String& identifier, const String& oldShortcut, const String& newShortcut)
 {
     auto *changeInfo = @{
-        nameKey: identifier.createNSString().get(),
+        @"name": identifier.createNSString().get(),
         oldShortcutKey: oldShortcut.createNSString().get(),
         newShortcutKey: newShortcut.createNSString().get()
     };

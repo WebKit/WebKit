@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>My Camera Store</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+        <style>
+            .material-symbols-outlined.fill {
+                font-variation-settings: "FILL"1;
+            }
+            body {
+                font-family: "Arial";
+                background-color: #F0F0F0;
+                margin: 0;
+            }
+            nav {
+                border-bottom: solid 1px black;
+                text-align: center;
+                display: flex;
+            }
+            li {
+                display: inline-block;
+                padding: 20px;
+            }
+            a {
+                color: darkblue;
+            }
+            #root {
+            }
+            #icons {
+                flex: 1;
+                text-align: right;
+                margin-right: 20px;
+            }
+            #logo {
+                flex: 1;
+                font-size: 24pt;
+                font-weight: bold;
+                text-align:left;
+                padding: 30px;
+                margin: 0;
+                background-color: red;
+                clip-path: polygon(100% 0, 100% calc(100% - 40px), calc(100% - 40px) 100%, 0 100%, 0 0);
+                color: white;
+            }
+
+            main {
+                max-width: 900px;
+                margin: 0 auto;
+                display: flex;
+                padding-top: 60px;
+            }
+            #left {
+                flex: 2;
+            }
+            #right {
+                position: absolute;
+                left: 60%;
+                flex: 1;
+                backdrop-filter: blur(20px);
+                background: linear-gradient(to right,
+                    rgba(240, 240, 240, 0.8),
+                    rgba(240, 240, 240, 0.5) 4px);
+                padding-left: 40px;
+                margin-top: -130px;
+                padding-top: 60px;
+            }
+
+            #breadcrumb {
+                padding-bottom: 40pt;
+            }
+            .breadcrumb {
+                color: gray;
+            }
+
+            #gallery {
+                display: flex;
+            }
+
+            #gallery-list {
+                display: flex;
+                width: 100px;
+                flex-direction: column;
+                margin-top: -10px;
+                z-index: 10;
+            }
+            #gallery-list img {
+                border: solid 3px gray;
+                margin: 10px 0px;
+                width: 100%;
+            }
+
+            #gallery-body {
+                flex: 2;
+                display: flex;
+            }
+            #gallery-rightpad {
+                flex: 1;
+            }
+
+            #rates {
+                display: flex;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            #star {
+                padding-right: 10px;
+            }
+
+            h3 {
+                margin-top: 0;
+                color: gray;
+            }
+
+            #price {
+                margin-bottom: 40px;
+            }
+            #paybutton {
+                margin: 60px 0;
+            }
+
+            model, #model-viewer {
+                background-color: #F0F0F0;
+            }
+            model {
+                margin: 0px 30px;
+                margin-right: 200px;
+                margin-left: -100px;
+                width: 100%;
+                height: 600px;
+            }
+
+            #model-viewer {
+                width:100%;
+                height:400px;
+                --progress-bar-color: none;
+                --progress-bar-height: 0px;
+            }
+
+            #discover {
+                background-color: red;
+                padding: 10px;
+                padding-right: 20px;
+                color: white;
+                text-decoration: none;
+                clip-path: polygon(100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 0);
+            }
+
+            @supports (-webkit-appearance: -apple-pay-button) { 
+                .apple-pay-button {
+                    display: inline-block;
+                    -webkit-appearance: -apple-pay-button;
+                }
+                .apple-pay-button-black {
+                    -apple-pay-button-style: black;
+                }
+                .apple-pay-button-white {
+                    -apple-pay-button-style: white;
+                }
+                .apple-pay-button-white-with-line {
+                    -apple-pay-button-style: white-outline;
+                }
+            }
+
+
+            @supports not (-webkit-appearance: -apple-pay-button) {
+                .apple-pay-button {
+                    display: inline-block;
+                    background-size: 100% 60%;
+                    background-repeat: no-repeat;
+                    background-position: 50% 50%;
+                    border-radius: 5px;
+                    padding: 0px;
+                    box-sizing: border-box;
+                    min-width: 200px;
+                    min-height: 32px;
+                    max-height: 64px;
+                }
+                .apple-pay-button-black {
+                    background-image: -webkit-named-image(apple-pay-logo-white);
+                    background-color: black;
+                }
+                .apple-pay-button-white {
+                    background-image: -webkit-named-image(apple-pay-logo-black);
+                    background-color: white;
+                }
+                .apple-pay-button-white-with-line {
+                    background-image: -webkit-named-image(apple-pay-logo-black);
+                    background-color: white;
+                    border: .5px solid black;
+                } 
+            }
+        </style>
+
+        <script type="module" 
+        src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js">
+        </script>
+
+    </head>
+    <body>
+        <div id="root">
+            <nav>
+                <ul id="logo">Camera Store</ul>
+                <ul id="tabs">
+                    <li>Cameras</li>
+                    <li>About</li>
+                    <li>Photography</li>
+                    <li>Support</li>
+                </ul>
+                <ul id="icons">
+                    <li><span class="material-symbols-outlined">search</span></li>
+                    <li><span class="material-symbols-outlined">shopping_bag</span></li>
+                    <li><span class="material-symbols-outlined">account_circle</span></li>
+                </ul>
+            </nav>
+            <main>
+                <div id="left">
+                    <div id="breadcrumb">
+                        <span class="breadcrumb">DSLR Cameras &gt; </span>SpeedShot Ultra
+                    </div>
+                    <div id="gallery">
+                        <div id="gallery-list">
+                            <a href="#" ><img src="./images/cam1.jpg"></a>
+                            <a href="#" ><img src="./images/cam3.jpg"></a>
+                            <a href="#" ><img src="./images/cam4.jpg"></a>
+                            <a href="#" ><img src="./images/cam6.jpg"></a>
+                        </div>
+                        <div id="gallery-body" style="position: relative">
+                            <model src="./models/camera-animated.usdz" stagemode="orbit">
+                                <!-- Fallback experience for backward compatibility -->  
+                                <model-viewer id="model-viewer" src="./models/camera-static.glb"  camera-controls touch-action="pan-y" ></model-viewer>
+                            </model>
+                            <div id="right">
+                                <h3>DSLR Cameras</h3>
+                                <h1>SpeedShot Ultra</h1>
+                                <div id="rates">
+                                    <span id="star">
+                                        <span class="material-symbols-outlined fill">star_rate</span>
+                                        <span class="material-symbols-outlined fill">star_rate</span>
+                                        <span class="material-symbols-outlined fill">star_rate</span>
+                                        <span class="material-symbols-outlined fill">star_rate</span>
+                                        <span class="material-symbols-outlined fill">star_half</span>
+                                    </span>
+                                    <span id="reviews"><a href="#">28 reviews</a></span>
+                                </div>
+                                <div id="price">
+                                    $699.99 /ea
+                                </div>
+                                <div id="paybutton">
+                                    <div class="apple-pay-button apple-pay-button-black"></div>
+                                </div>
+                                <h2>SpeedShot Ultra is here.</h2>
+                                <p>
+                                    Full-frame sensor. 58 Focus megapixels. Fully-configurable management to shoot the way you want, whenever you need to. <br> <br>Welcome to SpeedShot Ultra, and welcome back to control.
+                                </p>
+                                <br>
+                                <h4><a href="./camera_slides.html" id="discover">Discover SpeedShot Ultra &raquo;</a></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </body>
+</html>

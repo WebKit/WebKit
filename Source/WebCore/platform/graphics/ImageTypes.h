@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,8 +102,13 @@ enum class AllowImageSubsampling : bool {
     Yes
 };
 
+enum class DrawsHDRContent : uint8_t {
+    No,
+    Yes
+};
+
 struct Headroom {
-    constexpr Headroom(float headroom)
+    constexpr explicit Headroom(float headroom)
     {
         this->headroom = headroom;
     }
@@ -111,6 +116,10 @@ struct Headroom {
     constexpr operator float() const { return headroom; }
 
     friend constexpr bool operator==(const Headroom&, const Headroom&) = default;
+    friend constexpr bool operator<(const Headroom& a, const Headroom& b)
+    {
+        return a.headroom < b.headroom;
+    }
 
     static const Headroom FromImage;
     static const Headroom None;
@@ -118,8 +127,8 @@ struct Headroom {
     float headroom;
 };
 
-constexpr const Headroom Headroom::FromImage = { 0 };
-constexpr const Headroom Headroom::None = { 1 };
+constexpr const Headroom Headroom::FromImage = Headroom { 0 };
+constexpr const Headroom Headroom::None = Headroom { 1 };
 
 #if USE(SKIA)
 enum class StrictImageClamping : bool {
@@ -127,5 +136,15 @@ enum class StrictImageClamping : bool {
     Yes
 };
 #endif
+
+}
+
+namespace IPC {
+
+template<typename AsyncReplyResult> struct AsyncReplyError;
+
+template<> struct AsyncReplyError<WebCore::Headroom> {
+    static WebCore::Headroom create() { return WebCore::Headroom::None; }
+};
 
 }

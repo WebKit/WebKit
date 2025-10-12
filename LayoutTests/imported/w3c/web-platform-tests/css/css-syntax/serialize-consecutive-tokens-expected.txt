@@ -67,4 +67,8 @@ PASS Serialization of consecutive / and * tokens.
 FAIL Comments are handled correctly when computing a/* comment */b using t1:. assert_equals: expected "a/* comment */b" but got "a/**/b"
 PASS Comments are handled correctly when computing a/* comment */var(--t1) using t1:b.
 PASS Comments are handled correctly when computing var(--t1)b using t1:a/* comment */.
+FAIL Comments are handled correctly when computing var(--t1)b using t1:'a/* unfinished '. assert_equals: expected "'a/* unfinished 'b" but got "\"a/* unfinished \"b"
+PASS Comments are handled correctly when computing var(--t1)b using t1:"a/* unfinished ".
+FAIL Comments are handled correctly when computing var(--t1)b using t1:'a " '/* comment */. assert_equals: expected "'a \" 'b" but got "\"a \\\" \"b"
+PASS Empty fallback between tokens must not disturb comment insertion
 

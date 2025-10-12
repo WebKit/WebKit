@@ -31,6 +31,7 @@
 #include <WebCore/WebGPUIntegralTypes.h>
 #include <WebCore/WebGPUTextureAspect.h>
 #include <WebCore/WebGPUTextureFormat.h>
+#include <WebCore/WebGPUTextureUsage.h>
 #include <WebCore/WebGPUTextureViewDimension.h>
 #include <optional>
 
@@ -39,6 +40,7 @@ namespace WebKit::WebGPU {
 struct TextureViewDescriptor : public ObjectDescriptorBase {
     std::optional<WebCore::WebGPU::TextureFormat> format;
     std::optional<WebCore::WebGPU::TextureViewDimension> dimension;
+    WebCore::WebGPU::TextureUsageFlags usage;
     WebCore::WebGPU::TextureAspect aspect { WebCore::WebGPU::TextureAspect::All };
     WebCore::WebGPU::IntegerCoordinate baseMipLevel { 0 };
     std::optional<WebCore::WebGPU::IntegerCoordinate> mipLevelCount;

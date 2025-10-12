@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: An invalid form control with name='' is not focusable.
-CONSOLE MESSAGE: An invalid form control with name='' is not focusable.
-CONSOLE MESSAGE: An invalid form control with name='' is not focusable.
-CONSOLE MESSAGE: An invalid form control with name='' is not focusable.
 
 PASS If there is any invalid submittable element whose form owner is the form, the form.checkValidity must be false
 PASS If there is any invalid submittable element whose form owner is the form, the form.reportValidity must be false

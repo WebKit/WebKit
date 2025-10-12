@@ -36,7 +36,6 @@ SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSColor)
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextAttachment)
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSMutableParagraphStyle)
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextList)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextBlock)
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTableBlock)
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTable)
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTab)
@@ -46,7 +45,7 @@ SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTab)
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSAdaptiveImageGlyph)
 
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, UIFoundation, NSAdaptiveImageGlyphAttributeName, NSString *)
-#define NSAdaptiveImageGlyphAttributeName WebCore::get_UIFoundation_NSAdaptiveImageGlyphAttributeName()
+#define NSAdaptiveImageGlyphAttributeName WebCore::get_UIFoundation_NSAdaptiveImageGlyphAttributeNameSingleton()
 
 #endif
 

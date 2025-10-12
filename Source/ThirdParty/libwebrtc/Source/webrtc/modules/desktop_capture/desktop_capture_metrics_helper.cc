@@ -10,6 +10,8 @@
 
 #include "modules/desktop_capture/desktop_capture_metrics_helper.h"
 
+#include <cstdint>
+
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "system_wrappers/include/metrics.h"
 

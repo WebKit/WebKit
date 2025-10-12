@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -97,7 +97,7 @@ void WorkerThreadableLoader::computeIsDone()
 }
 
 struct LoaderTaskOptions {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LoaderTaskOptions);
 
     LoaderTaskOptions(const ThreadableLoaderOptions&, const String&, Ref<SecurityOrigin>&&);
     ThreadableLoaderOptions options;
@@ -114,7 +114,7 @@ LoaderTaskOptions::LoaderTaskOptions(const ThreadableLoaderOptions& options, con
 
 WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClientWrapper& workerClientWrapper, WorkerLoaderProxy* loaderProxy, ScriptExecutionContextIdentifier contextIdentifier, const String& taskMode,
     ResourceRequest&& request, const ThreadableLoaderOptions& options, const String& outgoingReferrer, WorkerOrWorkletGlobalScope& globalScope)
-    : m_workerClientWrapper(&workerClientWrapper)
+    : m_workerClientWrapper(workerClientWrapper)
     , m_loaderProxy(loaderProxy)
     , m_taskMode(taskMode.isolatedCopy())
     , m_workerRequestIdentifier { ResourceLoaderIdentifier::generate() }
@@ -147,7 +147,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     if (optionsCopy->options.serviceWorkersMode == ServiceWorkersMode::All) {
         if (is<ServiceWorkerGlobalScope>(globalScope))
             optionsCopy->options.serviceWorkersMode = ServiceWorkersMode::None;
-        else if (auto* activeServiceWorker = globalScope.activeServiceWorker()) {
+        else if (RefPtr activeServiceWorker = globalScope.activeServiceWorker()) {
             optionsCopy->options.serviceWorkerRegistrationIdentifier = activeServiceWorker->registrationIdentifier();
             optionsCopy->options.serviceWorkersMode = ServiceWorkersMode::All;
         } else if (is<DedicatedWorkerGlobalScope>(globalScope))
@@ -160,9 +160,9 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
 
     if (RefPtr serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(globalScope)) {
         InspectorInstrumentation::willSendRequest(*serviceWorkerGlobalScope, m_workerRequestIdentifier, request);
-        optionsCopy->options.workerIdentifier = serviceWorkerGlobalScope->thread().identifier();
+        optionsCopy->options.workerIdentifier = serviceWorkerGlobalScope->thread()->identifier();
     } else if (RefPtr sharedWorkerGlobalScope = dynamicDowncast<SharedWorkerGlobalScope>(globalScope))
-        optionsCopy->options.workerIdentifier = sharedWorkerGlobalScope->thread().identifier();
+        optionsCopy->options.workerIdentifier = sharedWorkerGlobalScope->thread()->identifier();
 
     if (!m_loaderProxy)
         return;
@@ -210,14 +210,12 @@ void WorkerThreadableLoader::MainThreadBridge::cancel()
         });
     }
 
-    // Taking a ref of client wrapper as call to didFail may take out the last reference of it.
-    Ref workerClientWrapper { *m_workerClientWrapper };
     // If the client hasn't reached a termination state, then transition it by sending a cancellation error.
     // Note: no more client callbacks will be done after this method -- we clear the client wrapper to ensure that.
     ResourceError error(ResourceError::Type::Cancellation);
     // FIXME: Always get the `ScriptExecutionContextIdentifier` of the `Document`.
-    workerClientWrapper->didFail(std::nullopt, error);
-    workerClientWrapper->clearClient();
+    m_workerClientWrapper->didFail(std::nullopt, error);
+    m_workerClientWrapper->clearClient();
 }
 
 void WorkerThreadableLoader::MainThreadBridge::computeIsDone()
@@ -236,35 +234,30 @@ void WorkerThreadableLoader::MainThreadBridge::computeIsDone()
 
 void WorkerThreadableLoader::MainThreadBridge::notifyIsDone(bool isDone)
 {
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, isDone](auto&) {
-        protectedWorkerClientWrapper->notifyIsDone(isDone);
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [workerClientWrapper = m_workerClientWrapper, isDone](auto&) {
+        workerClientWrapper->notifyIsDone(isDone);
     }, m_taskMode);
 }
 
 void WorkerThreadableLoader::MainThreadBridge::clearClientWrapper()
 {
-    protectedWorkerClientWrapper()->clearClient();
-}
-
-RefPtr<ThreadableLoaderClientWrapper> WorkerThreadableLoader::MainThreadBridge::protectedWorkerClientWrapper() const
-{
-    return m_workerClientWrapper;
+    m_workerClientWrapper->clearClient();
 }
 
 void WorkerThreadableLoader::MainThreadBridge::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, bytesSent, totalBytesToBeSent] (ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [workerClientWrapper = m_workerClientWrapper, bytesSent, totalBytesToBeSent] (ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
-        protectedWorkerClientWrapper->didSendData(bytesSent, totalBytesToBeSent);
+        workerClientWrapper->didSendData(bytesSent, totalBytesToBeSent);
     }, m_taskMode);
 }
 
 void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(ScriptExecutionContextIdentifier mainContextIdentifier, std::optional<ResourceLoaderIdentifier> identifier, const ResourceResponse& response)
 {
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, workerRequestIdentifier = m_workerRequestIdentifier, mainContextIdentifier, identifier, responseData = response.crossThreadData()] (ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [workerClientWrapper = m_workerClientWrapper, workerRequestIdentifier = m_workerRequestIdentifier, mainContextIdentifier, identifier, responseData = response.crossThreadData()] (ScriptExecutionContext& context) mutable {
         ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         auto response = ResourceResponse::fromCrossThreadData(WTFMove(responseData));
-        protectedWorkerClientWrapper->didReceiveResponse(mainContextIdentifier, identifier, response);
+        workerClientWrapper->didReceiveResponse(mainContextIdentifier, identifier, response);
         if (auto* serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(context))
             InspectorInstrumentation::didReceiveResourceResponse(*serviceWorkerGlobalScope, workerRequestIdentifier, response);
     }, m_taskMode);
@@ -272,9 +265,9 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(ScriptExecutio
 
 void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const SharedBuffer& data)
 {
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, workerRequestIdentifier = m_workerRequestIdentifier, buffer = Ref { data }] (ScriptExecutionContext& context) {
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [workerClientWrapper = m_workerClientWrapper, workerRequestIdentifier = m_workerRequestIdentifier, buffer = Ref { data }] (ScriptExecutionContext& context) {
         ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
-        protectedWorkerClientWrapper->didReceiveData(buffer);
+        workerClientWrapper->didReceiveData(buffer);
         if (auto* serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(context))
             InspectorInstrumentation::didReceiveData(*serviceWorkerGlobalScope, workerRequestIdentifier, buffer);
     }, m_taskMode);
@@ -283,9 +276,9 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const SharedBuffer
 void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(ScriptExecutionContextIdentifier mainContext, std::optional<ResourceLoaderIdentifier> identifier, const NetworkLoadMetrics& metrics)
 {
     m_loadingFinished = true;
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, workerRequestIdentifier = m_workerRequestIdentifier, metrics = metrics.isolatedCopy(), mainContext, identifier] (ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [workerClientWrapper = m_workerClientWrapper, workerRequestIdentifier = m_workerRequestIdentifier, metrics = metrics.isolatedCopy(), mainContext, identifier] (ScriptExecutionContext& context) mutable {
         ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
-        protectedWorkerClientWrapper->didFinishLoading(mainContext, identifier, metrics);
+        workerClientWrapper->didFinishLoading(mainContext, identifier, metrics);
         if (auto* serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(context))
             InspectorInstrumentation::didFinishLoading(*serviceWorkerGlobalScope, workerRequestIdentifier, metrics);
     }, m_taskMode);
@@ -294,10 +287,10 @@ void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(ScriptExecutionC
 void WorkerThreadableLoader::MainThreadBridge::didFail(std::optional<ScriptExecutionContextIdentifier> mainContext, const ResourceError& error)
 {
     m_loadingFinished = true;
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, workerRequestIdentifier = m_workerRequestIdentifier, mainContext, error = error.isolatedCopy()] (ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [workerClientWrapper = m_workerClientWrapper, workerRequestIdentifier = m_workerRequestIdentifier, mainContext, error = error.isolatedCopy()] (ScriptExecutionContext& context) mutable {
         ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
-        ThreadableLoader::logError(context, error, protectedWorkerClientWrapper->initiator());
-        protectedWorkerClientWrapper->didFail(mainContext, error);
+        ThreadableLoader::logError(context, error, workerClientWrapper->initiator());
+        workerClientWrapper->didFail(mainContext, error);
         if (auto* serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(context))
             InspectorInstrumentation::didFailLoading(*serviceWorkerGlobalScope, workerRequestIdentifier, error);
     }, m_taskMode);
@@ -306,7 +299,7 @@ void WorkerThreadableLoader::MainThreadBridge::didFail(std::optional<ScriptExecu
 void WorkerThreadableLoader::MainThreadBridge::didFinishTiming(const ResourceTiming& resourceTiming)
 {
     m_networkLoadMetrics = resourceTiming.networkLoadMetrics();
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, resourceTiming = resourceTiming.isolatedCopy()] (ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [protectedWorkerClientWrapper = m_workerClientWrapper, resourceTiming = resourceTiming.isolatedCopy()] (ScriptExecutionContext& context) mutable {
         ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         ASSERT(!resourceTiming.initiatorType().isEmpty());
 

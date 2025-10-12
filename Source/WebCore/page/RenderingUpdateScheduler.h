@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "AnimationFrameRate.h"
-#include "DisplayRefreshMonitorClient.h"
+#include <WebCore/AnimationFrameRate.h>
+#include <WebCore/DisplayRefreshMonitorClient.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
 

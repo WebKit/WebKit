@@ -10,7 +10,9 @@
 
 #include "modules/rtp_rtcp/source/rtp_util.h"
 
-#include "test/gmock.h"
+#include <cstdint>
+
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {

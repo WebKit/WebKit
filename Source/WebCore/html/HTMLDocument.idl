@@ -19,10 +19,10 @@
  */
 
 [
-    CustomToJSObject,
     NewImpurePropertyFiresWatchpoints,
     LegacyOverrideBuiltIns,
-    Exposed=Window
+    Exposed=Window,
+    SkipVTableValidation
 ] interface HTMLDocument : Document {    
     getter (WindowProxy or Element or HTMLCollection) ([RequiresExistingAtomString] DOMString name);
 };

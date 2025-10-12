@@ -28,6 +28,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/crypto/openssl"
     "${WEBCORE_DIR}/platform/audio/glib"
     "${WEBCORE_DIR}/platform/glib"
+    "${WEBCORE_DIR}/platform/graphics/android"
     "${WEBCORE_DIR}/platform/graphics/egl"
     "${WEBCORE_DIR}/platform/graphics/epoxy"
     "${WEBCORE_DIR}/platform/graphics/gbm"
@@ -55,6 +56,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/glib/SelectionData.h
     platform/glib/SystemSettings.h
 
+    platform/graphics/android/GraphicsContextGLTextureMapperAndroid.h
+
     platform/graphics/egl/PlatformDisplaySurfaceless.h
 
     platform/graphics/gbm/GBMVersioning.h
@@ -66,18 +69,13 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/platform/wpe/RenderThemeWPE.cpp)
 
 list(APPEND WebCore_LIBRARIES
+    GLib::Module
     WPE::libwpe
-    ${GLIB_GIO_LIBRARIES}
-    ${GLIB_GMODULE_LIBRARIES}
-    ${GLIB_GOBJECT_LIBRARIES}
-    ${GLIB_LIBRARIES}
     ${LIBTASN1_LIBRARIES}
     ${UPOWERGLIB_LIBRARIES}
 )
 
 list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-    ${GIO_UNIX_INCLUDE_DIRS}
-    ${GLIB_INCLUDE_DIRS}
     ${LIBTASN1_INCLUDE_DIRS}
     ${UPOWERGLIB_INCLUDE_DIRS}
 )
@@ -85,6 +83,12 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
 if (USE_OPENXR)
     list(APPEND WebCore_LIBRARIES ${OPENXR_LIBRARIES})
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES ${OPENXR_INCLUDE_DIRS})
+endif ()
+
+if (USE_SKIA AND ENABLE_DRAG_SUPPORT)
+    list(APPEND WebCore_SOURCES
+        platform/skia/DragImageSkia.cpp
+    )
 endif ()
 
 if (USE_ATSPI)

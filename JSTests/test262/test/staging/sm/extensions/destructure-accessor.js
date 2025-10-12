@@ -4,22 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-extensions-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  { get x(v) { } } and { set x(v, v2) { } } should be syntax errors
+info: bugzilla.mozilla.org/show_bug.cgi?id=536472
 esid: pending
 ---*/
-var gTestfile = 'destructure-accessor.js';
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 536472;
-var summary =
-  'ES5: { get x(v) { } } and { set x(v, v2) { } } should be syntax errors';
-
-print(BUGNUMBER + ": " + summary);
-
-//-----------------------------------------------------------------------------
 
 function expectOk(s)
 {
@@ -37,16 +26,9 @@ function expectOk(s)
 
 function expectSyntaxError(s)
 {
-  try
-  {
+  assert.throws(SyntaxError, function() {
     eval(s);
-    throw new Error("no error thrown");
-  }
-  catch (e)
-  {
-    assert.sameValue(e instanceof SyntaxError, true,
-             "expected syntax error parsing '" + s + "', got: " + e);
-  }
+  }, "expected syntax error parsing '" + s + "'");
 }
 
 expectSyntaxError("({ get x([]) { } })");
@@ -79,6 +61,3 @@ expectOk("({ set x([, b, c]) { } })");
 expectOk("({ set x([, b, c,]) { } })");
 expectOk("({ set x({ a: a }) { } })");
 expectOk("({ set x({ a: a, b: b }) { } })");
-
-//-----------------------------------------------------------------------------
-

@@ -90,6 +90,8 @@ WK_EXPORT void WKAccessibilityEnableEnhancedAccessibility(bool);
 WK_EXPORT bool WKAccessibilityEnhancedAccessibilityEnabled();
 WK_EXPORT void WKAccessibilitySetForceInitialFrameCaching(bool);
 
+WK_EXPORT void WKBundlePageSetEditable(WKBundlePageRef page, bool isEditable);
+
 WK_EXPORT void WKBundlePageClickMenuItem(WKBundlePageRef, WKContextMenuItemRef);
 WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuItems(WKBundlePageRef);
 WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuAtPointInWindow(WKBundlePageRef, WKPoint);

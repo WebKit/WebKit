@@ -10,16 +10,16 @@
 
 #include "media/base/rtp_utils.h"
 
-#include <string.h>
-
 #include <cstdint>
+#include <cstring>
 #include <vector>
 
+#include "api/array_view.h"
 #include "media/base/fake_rtp.h"
 #include "rtc_base/async_packet_socket.h"
 #include "test/gtest.h"
 
-namespace cricket {
+namespace webrtc {
 
 static const uint8_t kInvalidPacket[] = {0x80, 0x00};
 
@@ -72,12 +72,12 @@ static const int kAstIndexInOneByteRtpMsg = 21;
 // and in message `kRtpMsgWithTwoByteAbsSendTimeExtension`.
 static const int kAstIndexInTwoByteRtpMsg = 21;
 
-static const rtc::ArrayView<const uint8_t> kPcmuFrameArrayView =
-    rtc::MakeArrayView(kPcmuFrame, sizeof(kPcmuFrame));
-static const rtc::ArrayView<const uint8_t> kRtcpReportArrayView =
-    rtc::MakeArrayView(kRtcpReport, sizeof(kRtcpReport));
-static const rtc::ArrayView<const uint8_t> kInvalidPacketArrayView =
-    rtc::MakeArrayView(kInvalidPacket, sizeof(kInvalidPacket));
+static const ArrayView<const uint8_t> kPcmuFrameArrayView =
+    MakeArrayView(kPcmuFrame, sizeof(kPcmuFrame));
+static const ArrayView<const uint8_t> kRtcpReportArrayView =
+    MakeArrayView(kRtcpReport, sizeof(kRtcpReport));
+static const ArrayView<const uint8_t> kInvalidPacketArrayView =
+    MakeArrayView(kInvalidPacket, sizeof(kInvalidPacket));
 
 TEST(RtpUtilsTest, GetRtcp) {
   int pt;
@@ -106,8 +106,7 @@ TEST(RtpUtilsTest, InvalidRtpHeader) {
       0xDD, 0xCC, 0xBB, 0xAA,  // Only 1 CSRC, but CC count is 4.
       // clang-format on
   };
-  EXPECT_FALSE(ValidateRtpHeader(kRtpMsgWithInvalidLength,
-                                 sizeof(kRtpMsgWithInvalidLength), nullptr));
+  EXPECT_FALSE(ValidateRtpHeader(kRtpMsgWithInvalidLength, nullptr));
 
   // Rtp message with single byte header extension, invalid extension length.
   const uint8_t kRtpMsgWithInvalidExtnLength[] = {
@@ -115,27 +114,23 @@ TEST(RtpUtilsTest, InvalidRtpHeader) {
       0x00, 0x00, 0x00, 0x00, 0xBE, 0xDE, 0x0A, 0x00,  // Extn length - 0x0A00
   };
   EXPECT_FALSE(ValidateRtpHeader(kRtpMsgWithInvalidExtnLength,
-                                 sizeof(kRtpMsgWithInvalidExtnLength),
                                  nullptr));
 }
 
 // Valid RTP packet with a 2byte header extension.
 TEST(RtpUtilsTest, Valid2ByteExtnHdrRtpMessage) {
-  EXPECT_TRUE(ValidateRtpHeader(kRtpMsgWith2ByteExtnHeader,
-                                sizeof(kRtpMsgWith2ByteExtnHeader), nullptr));
+  EXPECT_TRUE(ValidateRtpHeader(kRtpMsgWith2ByteExtnHeader, nullptr));
 }
 
 // Valid RTP packet which has 1 byte header AbsSendTime extension in it.
 TEST(RtpUtilsTest, ValidRtpPacketWithOneByteAbsSendTimeExtension) {
   EXPECT_TRUE(ValidateRtpHeader(kRtpMsgWithOneByteAbsSendTimeExtension,
-                                sizeof(kRtpMsgWithOneByteAbsSendTimeExtension),
                                 nullptr));
 }
 
 // Valid RTP packet which has 2 byte header AbsSendTime extension in it.
 TEST(RtpUtilsTest, ValidRtpPacketWithTwoByteAbsSendTimeExtension) {
   EXPECT_TRUE(ValidateRtpHeader(kRtpMsgWithTwoByteAbsSendTimeExtension,
-                                sizeof(kRtpMsgWithTwoByteAbsSendTimeExtension),
                                 nullptr));
 }
 
@@ -159,8 +154,7 @@ TEST(RtpUtilsTest, UpdateAbsSendTimeExtensionInTurnSendIndication) {
       0x00, 0x00, 0x00, 0x00,
       // clang-format on
   };
-  EXPECT_TRUE(UpdateRtpAbsSendTimeExtension(
-      message_without_extension, sizeof(message_without_extension), 3, 0));
+  EXPECT_TRUE(UpdateRtpAbsSendTimeExtension(message_without_extension, 3, 0));
 
   // A valid STUN indication message with a valid RTP header and a extension
   // header.
@@ -180,20 +174,19 @@ TEST(RtpUtilsTest, UpdateAbsSendTimeExtensionInTurnSendIndication) {
       0x00, 0x02, 0x22, 0xaa, 0xbb, 0xcc, 0x32, 0xaa, 0xbb, 0xcc,
       // clang-format on
   };
-  EXPECT_TRUE(UpdateRtpAbsSendTimeExtension(message, sizeof(message), 3, 0));
+  EXPECT_TRUE(UpdateRtpAbsSendTimeExtension(message, 3, 0));
 }
 
 // Test without any packet options variables set. This method should return
 // without HMAC value in the packet.
 TEST(RtpUtilsTest, ApplyPacketOptionsWithDefaultValues) {
-  rtc::PacketTimeUpdateParams packet_time_params;
+  PacketTimeUpdateParams packet_time_params;
   std::vector<uint8_t> rtp_packet(
       kRtpMsgWithOneByteAbsSendTimeExtension,
       kRtpMsgWithOneByteAbsSendTimeExtension +
           sizeof(kRtpMsgWithOneByteAbsSendTimeExtension));
   rtp_packet.insert(rtp_packet.end(), kFakeTag, kFakeTag + sizeof(kFakeTag));
-  EXPECT_TRUE(ApplyPacketOptions(&rtp_packet[0], rtp_packet.size(),
-                                 packet_time_params, 0));
+  EXPECT_TRUE(ApplyPacketOptions(rtp_packet, packet_time_params, 0));
 
   // Making sure HMAC wasn't updated..
   EXPECT_EQ(0,
@@ -207,7 +200,7 @@ TEST(RtpUtilsTest, ApplyPacketOptionsWithDefaultValues) {
 
 // Veirfy HMAC is updated when packet option parameters are set.
 TEST(RtpUtilsTest, ApplyPacketOptionsWithAuthParams) {
-  rtc::PacketTimeUpdateParams packet_time_params;
+  PacketTimeUpdateParams packet_time_params;
   packet_time_params.srtp_auth_key.assign(kTestKey,
                                           kTestKey + sizeof(kTestKey));
   packet_time_params.srtp_auth_tag_len = 4;
@@ -217,8 +210,7 @@ TEST(RtpUtilsTest, ApplyPacketOptionsWithAuthParams) {
       kRtpMsgWithOneByteAbsSendTimeExtension +
           sizeof(kRtpMsgWithOneByteAbsSendTimeExtension));
   rtp_packet.insert(rtp_packet.end(), kFakeTag, kFakeTag + sizeof(kFakeTag));
-  EXPECT_TRUE(ApplyPacketOptions(&rtp_packet[0], rtp_packet.size(),
-                                 packet_time_params, 0));
+  EXPECT_TRUE(ApplyPacketOptions(rtp_packet, packet_time_params, 0));
 
   uint8_t kExpectedTag[] = {0xc1, 0x7a, 0x8c, 0xa0};
   EXPECT_EQ(0,
@@ -237,8 +229,7 @@ TEST(RtpUtilsTest, UpdateOneByteAbsSendTimeExtensionInRtpPacket) {
       kRtpMsgWithOneByteAbsSendTimeExtension +
           sizeof(kRtpMsgWithOneByteAbsSendTimeExtension));
 
-  EXPECT_TRUE(UpdateRtpAbsSendTimeExtension(&rtp_packet[0], rtp_packet.size(),
-                                            3, 51183266));
+  EXPECT_TRUE(UpdateRtpAbsSendTimeExtension(rtp_packet, 3, 51183266));
 
   // Verify that the timestamp was updated.
   const uint8_t kExpectedTimestamp[3] = {0xcc, 0xbb, 0xaa};
@@ -253,8 +244,7 @@ TEST(RtpUtilsTest, UpdateTwoByteAbsSendTimeExtensionInRtpPacket) {
       kRtpMsgWithTwoByteAbsSendTimeExtension +
           sizeof(kRtpMsgWithTwoByteAbsSendTimeExtension));
 
-  EXPECT_TRUE(UpdateRtpAbsSendTimeExtension(&rtp_packet[0], rtp_packet.size(),
-                                            3, 51183266));
+  EXPECT_TRUE(UpdateRtpAbsSendTimeExtension(rtp_packet, 3, 51183266));
 
   // Verify that the timestamp was updated.
   const uint8_t kExpectedTimestamp[3] = {0xcc, 0xbb, 0xaa};
@@ -264,7 +254,7 @@ TEST(RtpUtilsTest, UpdateTwoByteAbsSendTimeExtensionInRtpPacket) {
 
 // Verify we update both AbsSendTime extension header and HMAC.
 TEST(RtpUtilsTest, ApplyPacketOptionsWithAuthParamsAndAbsSendTime) {
-  rtc::PacketTimeUpdateParams packet_time_params;
+  PacketTimeUpdateParams packet_time_params;
   packet_time_params.srtp_auth_key.assign(kTestKey,
                                           kTestKey + sizeof(kTestKey));
   packet_time_params.srtp_auth_tag_len = 4;
@@ -276,8 +266,7 @@ TEST(RtpUtilsTest, ApplyPacketOptionsWithAuthParamsAndAbsSendTime) {
       kRtpMsgWithOneByteAbsSendTimeExtension +
           sizeof(kRtpMsgWithOneByteAbsSendTimeExtension));
   rtp_packet.insert(rtp_packet.end(), kFakeTag, kFakeTag + sizeof(kFakeTag));
-  EXPECT_TRUE(ApplyPacketOptions(&rtp_packet[0], rtp_packet.size(),
-                                 packet_time_params, 51183266));
+  EXPECT_TRUE(ApplyPacketOptions(rtp_packet, packet_time_params, 51183266));
 
   const uint8_t kExpectedTag[] = {0x81, 0xd1, 0x2c, 0x0e};
   EXPECT_EQ(0,
@@ -297,4 +286,4 @@ TEST(RtpUtilsTest, InferRtpPacketType) {
             InferRtpPacketType(kInvalidPacketArrayView));
 }
 
-}  // namespace cricket
+}  // namespace webrtc

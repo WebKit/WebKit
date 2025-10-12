@@ -27,16 +27,14 @@ class EGLDisplayLuidTest : public ANGLETest<>
 
     void testInvalidAttribs(const EGLAttrib displayAttribs[])
     {
-        EXPECT_EQ(
-            eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, displayAttribs),
-            EGL_NO_DISPLAY);
+        EXPECT_EQ(eglGetPlatformDisplay(GetEglPlatform(), EGL_DEFAULT_DISPLAY, displayAttribs),
+                  EGL_NO_DISPLAY);
         EXPECT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
     }
 
     void testValidAttribs(const EGLAttrib displayAttribs[])
     {
-        mDisplay =
-            eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, displayAttribs);
+        mDisplay = eglGetPlatformDisplay(GetEglPlatform(), EGL_DEFAULT_DISPLAY, displayAttribs);
 
         EXPECT_EGL_SUCCESS();
         EXPECT_NE(mDisplay, EGL_NO_DISPLAY);

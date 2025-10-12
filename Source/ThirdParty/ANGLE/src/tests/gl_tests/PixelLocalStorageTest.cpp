@@ -4,8 +4,13 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <sstream>
 #include <string>
+#include "common/string_utils.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -1061,7 +1066,7 @@ TEST_P(PixelLocalStorageTest, LoadOps)
            << "));\n";
     }
     fs << "}";
-    mProgram.compile(fs.str().c_str());
+    mProgram.compile(fs.str());
 
     // Create pls textures and clear them to red.
     glClearColor(1, 0, 0, 1);
@@ -1542,7 +1547,7 @@ TEST_P(PixelLocalStorageTest, MaxCombinedDrawBuffersAndPLSPlanes)
             fs << "out" << i << " = uvec4(aux1) + uvec4(" << i << ");\n";
         }
         fs << "}";
-        mProgram.compile(fs.str().c_str());
+        mProgram.compile(fs.str());
 
         glViewport(0, 0, W, H);
 
@@ -8557,7 +8562,6 @@ TEST_P(PixelLocalStorageCompilerTest, BlendEquationAdvanced_illegal_with_PLS)
     layout(binding=0, rgba8i) uniform lowp ipixelLocalANGLE pls;)";
     EXPECT_TRUE(log.compileFragmentShader(kRequireBlendAdvanced));
 
-    bool before = true;
     for (const char *layoutQualifier : {
              "blend_support_multiply",
              "blend_support_screen",
@@ -8577,43 +8581,33 @@ TEST_P(PixelLocalStorageCompilerTest, BlendEquationAdvanced_illegal_with_PLS)
              "blend_support_all_equations",
          })
     {
-        constexpr char kRequireBlendAdvancedBeforePLS[] = R"(#version 300 es
-        #extension GL_ANGLE_shader_pixel_local_storage : require
-        #extension GL_KHR_blend_equation_advanced : require
-        layout(%s) out;
-        void main()
-        {}
-        layout(binding=0, rgba8i) uniform lowp ipixelLocalANGLE pls;)";
+        std::string shaderBefore = R"(#version 300 es
+#extension GL_ANGLE_shader_pixel_local_storage : require
+#extension GL_KHR_blend_equation_advanced : require
+layout(%s) out;
+void main()
+{}
+layout(binding=0, rgba8i) uniform lowp ipixelLocalANGLE pls;)";
+        ReplaceSubstring(&shaderBefore, "%s", layoutQualifier);
 
-        constexpr char kRequireBlendAdvancedAfterPLS[] = R"(#version 300 es
-        #extension GL_ANGLE_shader_pixel_local_storage : require
-        #extension GL_KHR_blend_equation_advanced : require
-        layout(binding=0, rgba8i) uniform lowp ipixelLocalANGLE pls;
-        layout(%s) out;
-        void main()
-        {})";
+        EXPECT_FALSE(log.compileFragmentShader(shaderBefore.c_str()));
+        EXPECT_TRUE(
+            log.has("ERROR: 0:4: 'layout' : illegal advanced blend equation when pixel local "
+                    "storage is declared"));
 
-        const char *formatStr =
-            before ? kRequireBlendAdvancedBeforePLS : kRequireBlendAdvancedAfterPLS;
-        size_t buffSize =
-            snprintf(nullptr, 0, formatStr, layoutQualifier) + 1;  // Extra space for '\0'
-        std::unique_ptr<char[]> shader(new char[buffSize]);
-        std::snprintf(shader.get(), buffSize, formatStr, layoutQualifier);
-        EXPECT_FALSE(log.compileFragmentShader(shader.get()));
-        if (before)
-        {
-            EXPECT_TRUE(
-                log.has("ERROR: 0:4: 'layout' : illegal advanced blend equation when pixel local "
-                        "storage is declared"));
-        }
-        else
-        {
-            EXPECT_TRUE(
-                log.has("ERROR: 0:5: 'layout' : illegal advanced blend equation when pixel local "
-                        "storage is declared"));
-        }
+        std::string shaderAfter = R"(#version 300 es
+#extension GL_ANGLE_shader_pixel_local_storage : require
+#extension GL_KHR_blend_equation_advanced : require
+layout(binding=0, rgba8i) uniform lowp ipixelLocalANGLE pls;
+layout(%s) out;
+void main()
+{})";
+        ReplaceSubstring(&shaderAfter, "%s", layoutQualifier);
 
-        before = !before;
+        EXPECT_FALSE(log.compileFragmentShader(shaderAfter.c_str()));
+        EXPECT_TRUE(
+            log.has("ERROR: 0:5: 'layout' : illegal advanced blend equation when pixel local "
+                    "storage is declared"));
     }
 }
 

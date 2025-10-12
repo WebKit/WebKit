@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSTypedArrayViewConstructor.h"
 
+#include "GetterSetter.h"
 #include "JSCBuiltins.h"
 #include "JSCInlines.h"
 #include "JSTypedArrayViewPrototype.h"

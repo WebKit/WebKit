@@ -36,7 +36,7 @@ class AecDumpBasedSimulator final : public AudioProcessingSimulator {
  public:
   AecDumpBasedSimulator(
       const SimulationSettings& settings,
-      absl::Nonnull<scoped_refptr<AudioProcessing>> audio_processing);
+      absl_nonnull scoped_refptr<AudioProcessing> audio_processing);
 
   AecDumpBasedSimulator() = delete;
   AecDumpBasedSimulator(const AecDumpBasedSimulator&) = delete;

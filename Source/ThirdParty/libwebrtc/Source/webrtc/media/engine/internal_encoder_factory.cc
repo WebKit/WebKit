@@ -17,6 +17,7 @@
 
 #include "api/environment/environment.h"
 #include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_encoder.h"
 #include "api/video_codecs/video_encoder_factory.h"
 #include "api/video_codecs/video_encoder_factory_template.h"
 #if defined(RTC_USE_LIBAOM_AV1_ENCODER)
@@ -31,15 +32,14 @@
 namespace webrtc {
 namespace {
 
-using Factory =
-    VideoEncoderFactoryTemplate<webrtc::LibvpxVp8EncoderTemplateAdapter,
+using Factory = VideoEncoderFactoryTemplate<LibvpxVp8EncoderTemplateAdapter,
 #if defined(WEBRTC_USE_H264)
-                                webrtc::OpenH264EncoderTemplateAdapter,
+                                            OpenH264EncoderTemplateAdapter,
 #endif
 #if defined(RTC_USE_LIBAOM_AV1_ENCODER)
-                                webrtc::LibaomAv1EncoderTemplateAdapter,
+                                            LibaomAv1EncoderTemplateAdapter,
 #endif
-                                webrtc::LibvpxVp9EncoderTemplateAdapter>;
+                                            LibvpxVp9EncoderTemplateAdapter>;
 }  // namespace
 
 std::vector<SdpVideoFormat> InternalEncoderFactory::GetSupportedFormats()

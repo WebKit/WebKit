@@ -3,4 +3,13 @@
 PASS Trusted types are not enforced for setAttributeNode and
               setAttributeNS after moving the target node from a TT-realm to a
               non-TT realm for iframe.srcdoc
+PASS Trusted types are not enforced for setAttributeNode and
+              setAttributeNS after moving the target node from a TT-realm to a
+              non-TT realm for script.src
+PASS Trusted types are not enforced for setAttributeNode and
+              setAttributeNS after moving the target node from a TT-realm to a
+              non-TT realm for script.href
+PASS Trusted types are not enforced for setAttributeNode and
+              setAttributeNS after moving the target node from a TT-realm to a
+              non-TT realm for script.xlink:href
 

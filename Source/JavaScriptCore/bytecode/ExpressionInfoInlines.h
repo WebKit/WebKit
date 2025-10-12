@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ExpressionInfo.h"
+#include <JavaScriptCore/ExpressionInfo.h>
 
 namespace JSC {
 

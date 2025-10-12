@@ -5,6 +5,10 @@
 
 // utilities_unittest.cpp: Unit tests for ANGLE's GL utility functions
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,8 @@
 #include "StyleOriginatedAnimationEvent.h"
 
 #include "Node.h"
+#include "NodeDocument.h"
+#include "NodeInlines.h"
 #include "WebAnimationUtilities.h"
 
 #include <wtf/TZoneMallocInlines.h>
@@ -47,7 +49,7 @@ StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterface
     , m_elapsedTime(elapsedTime)
     , m_pseudoElement(pseudoElement)
 {
-    auto* node = dynamicDowncast<Node>(target());
+    RefPtr node = dynamicDowncast<Node>(target());
     auto [parsed, pseudoElementIdentifier] = pseudoElementIdentifierFromString(m_pseudoElement, node ? &node->document() : nullptr);
     m_pseudoElementIdentifier = parsed ? pseudoElementIdentifier : std::nullopt;
 }

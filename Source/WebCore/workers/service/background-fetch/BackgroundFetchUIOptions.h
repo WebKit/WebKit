@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ImageResource.h"
+#include <WebCore/ImageResource.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

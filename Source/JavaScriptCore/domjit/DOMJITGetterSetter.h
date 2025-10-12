@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "DOMJITCallDOMGetterSnippet.h"
-#include "PropertySlot.h"
-#include "PutPropertySlot.h"
-#include "SpeculatedType.h"
+#include <JavaScriptCore/DOMJITCallDOMGetterSnippet.h>
+#include <JavaScriptCore/PropertySlot.h>
+#include <JavaScriptCore/PutPropertySlot.h>
+#include <JavaScriptCore/SpeculatedType.h>
 
 namespace JSC { namespace DOMJIT {
 

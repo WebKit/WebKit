@@ -91,7 +91,7 @@ static INLINE int16_t accumulate_eob(__m128i eob) {
 
 #if !CONFIG_VP9_HIGHBITDEPTH
 
-void vpx_quantize_b_lsx(const int16_t *coeff_ptr, intptr_t n_coeffs,
+void vpx_quantize_b_lsx(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
                         const struct macroblock_plane *const mb_plane,
                         tran_low_t *qcoeff_ptr, tran_low_t *dqcoeff_ptr,
                         const int16_t *dequant_ptr, uint16_t *eob_ptr,

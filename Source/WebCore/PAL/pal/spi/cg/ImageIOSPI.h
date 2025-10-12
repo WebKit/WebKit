@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,16 +41,9 @@ IMAGEIO_EXTERN const CFStringRef kCGImageSourceUseHardwareAcceleration;
 
 WTF_EXTERN_C_BEGIN
 CFStringRef CGImageSourceGetTypeWithData(CFDataRef, CFStringRef, bool*);
-#if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
 OSStatus CGImageSourceSetAllowableTypes(CFArrayRef allowableTypes);
-#endif
 
-#if HAVE(CGIMAGESOURCE_DISABLE_HARDWARE_DECODING)
 IMAGEIO_EXTERN OSStatus CGImageSourceDisableHardwareDecoding();
-#endif
-
-#if HAVE(CGIMAGESOURCE_ENABLE_RESTRICTED_DECODING)
 IMAGEIO_EXTERN OSStatus CGImageSourceEnableRestrictedDecoding();
-#endif
 
 WTF_EXTERN_C_END

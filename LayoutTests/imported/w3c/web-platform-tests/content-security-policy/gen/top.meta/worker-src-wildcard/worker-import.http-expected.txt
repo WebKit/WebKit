@@ -1,7 +1,3 @@
-Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/worker.py?redirection=keep-origin&action=purge&key=cdf0d198-6288-4a60-a113-33fca1fb4058&path=/mixed-content
-Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/worker.py?redirection=no-redirect&action=purge&key=a7bd0a50-a251-40be-897c-1c453d87c648&path=/mixed-content
-Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/worker.py?redirection=swap-origin&action=purge&key=42911d65-ddb9-4211-8ce4-b992f8a852d8&path=/mixed-content
-Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/worker.py?action=purge&key=00b042a4-9bc5-4ea3-a9e5-0e0d551fe4e9&path=%2Fmixed-content
 
 Harness Error (TIMEOUT), message = null
 

@@ -31,6 +31,7 @@
 #include "DataURLDecoder.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
+#include "IPAddressSpace.h"
 #include "MIMETypeRegistry.h"
 #include "ParsedContentRange.h"
 #include "ResourceResponse.h"
@@ -90,6 +91,7 @@ ResourceResponseBase::ResourceResponseBase(std::optional<ResourceResponseData>&&
     , m_tainting(data ? data->tainting : Tainting::Basic)
     , m_source(data ? data->source : Source::Unknown)
     , m_type(data ? data->type : Type::Default)
+    , m_ipAddressSpace(data ? data->ipAddressSpace : IPAddressSpace::Public)
 {
 }
 
@@ -116,6 +118,7 @@ ResourceResponseData ResourceResponseData::isolatedCopy() const
     result.isRangeRequested = isRangeRequested;
     if (certificateInfo)
         result.certificateInfo = certificateInfo->isolatedCopy();
+    result.ipAddressSpace = ipAddressSpace;
     return result;
 }
 
@@ -143,6 +146,7 @@ ResourceResponseData ResourceResponseBase::crossThreadData() const
     data.isRangeRequested = m_isRangeRequested;
     if (m_certificateInfo)
         data.certificateInfo = m_certificateInfo->isolatedCopy();
+    data.ipAddressSpace = m_ipAddressSpace;
 
     return data;
 }
@@ -174,7 +178,7 @@ ResourceResponse ResourceResponseBase::fromCrossThreadData(CrossThreadData&& dat
     response.m_proxyName = WTFMove(data.proxyName);
     response.m_isRangeRequested = data.isRangeRequested;
     response.m_certificateInfo = WTFMove(data.certificateInfo);
-
+    response.m_ipAddressSpace = data.ipAddressSpace;
     return response;
 }
 
@@ -827,7 +831,7 @@ bool ResourceResponseBase::isAttachment() const
     lazyInit(AllFields);
 
     auto value = m_httpHeaderFields.get(HTTPHeaderName::ContentDisposition);
-    return equalLettersIgnoringASCIICase(StringView(value).left(value.find(';')).trim(isUnicodeCompatibleASCIIWhitespace<UChar>), "attachment"_s);
+    return equalLettersIgnoringASCIICase(StringView(value).left(value.find(';')).trim(isUnicodeCompatibleASCIIWhitespace<char16_t>), "attachment"_s);
 }
 
 bool ResourceResponseBase::isAttachmentWithFilename() const
@@ -839,7 +843,7 @@ bool ResourceResponseBase::isAttachmentWithFilename() const
         return false;
 
     StringView contentDispositionView { contentDisposition };
-    if (!equalLettersIgnoringASCIICase(contentDispositionView.left(contentDispositionView.find(';')).trim(isUnicodeCompatibleASCIIWhitespace<UChar>), "attachment"_s))
+    if (!equalLettersIgnoringASCIICase(contentDispositionView.left(contentDispositionView.find(';')).trim(isUnicodeCompatibleASCIIWhitespace<char16_t>), "attachment"_s))
         return false;
 
     return !filenameFromHTTPContentDisposition(contentDispositionView).isNull();
@@ -883,7 +887,7 @@ bool ResourceResponseBase::equalForWebKitLegacyChallengeComparison(const Resourc
 bool ResourceResponseBase::containsInvalidHTTPHeaders() const
 {
     for (auto& header : httpHeaderFields()) {
-        if (!isValidHTTPHeaderValue(header.value.trim(isASCIIWhitespaceWithoutFF<UChar>)))
+        if (!isValidHTTPHeaderValue(header.value.trim(isASCIIWhitespaceWithoutFF<char16_t>)))
             return true;
     }
     return false;
@@ -913,7 +917,8 @@ std::optional<ResourceResponseData> ResourceResponseBase::getResponseData() cons
         m_wasPrivateRelayed,
         String { m_proxyName },
         m_isRangeRequested,
-        m_certificateInfo
+        m_certificateInfo,
+        m_ipAddressSpace
     } };
 }
 
@@ -1047,7 +1052,8 @@ std::optional<WebCore::ResourceResponseData> Coder<WebCore::ResourceResponseData
         *wasPrivateRelayed,
         WTFMove(*proxyName),
         *isRangeRequested,
-        WTFMove(*certificateInfo)
+        WTFMove(*certificateInfo),
+        WebCore::IPAddressSpace::Public
     };
 }
 

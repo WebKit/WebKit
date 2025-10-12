@@ -27,7 +27,6 @@ typedef (double or CSSNumericValue) CSSNumberish;
 
 [
     ExportMacro=WEBCORE_EXPORT,
-    CustomToJSObject,
     Exposed=Window
 ] interface AnimationTimeline {
     readonly attribute CSSNumberish? currentTime;

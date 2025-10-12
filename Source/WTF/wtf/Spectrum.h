@@ -33,10 +33,10 @@ namespace WTF {
 
 template<typename T, typename CounterType = unsigned>
 class Spectrum {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Spectrum);
 public:
-    typedef typename UncheckedKeyHashMap<T, CounterType>::iterator iterator;
-    typedef typename UncheckedKeyHashMap<T, CounterType>::const_iterator const_iterator;
+    typedef typename HashMap<T, CounterType>::iterator iterator;
+    typedef typename HashMap<T, CounterType>::const_iterator const_iterator;
     
     Spectrum() { }
     
@@ -45,7 +45,7 @@ public:
         Locker locker(m_lock);
         if (!count)
             return;
-        typename UncheckedKeyHashMap<T, CounterType>::AddResult result = m_map.add(key, count);
+        typename HashMap<T, CounterType>::AddResult result = m_map.add(key, count);
         if (!result.isNewEntry)
             result.iterator->value += count;
     }
@@ -72,7 +72,7 @@ public:
     const_iterator end() const LIFETIME_BOUND { return m_map.end(); }
     
     struct KeyAndCount {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(KeyAndCount);
         KeyAndCount() { }
         
         KeyAndCount(const T& key, CounterType count)
@@ -118,14 +118,14 @@ public:
     void removeIf(const Functor& functor)
     {
         Locker locker(m_lock);
-        m_map.removeIf([&functor] (typename UncheckedKeyHashMap<T, CounterType>::KeyValuePairType& pair) {
+        m_map.removeIf([&functor] (typename HashMap<T, CounterType>::KeyValuePairType& pair) {
                 return functor(KeyAndCount(pair.key, pair.value));
             });
     }
     
 private:
     mutable Lock m_lock;
-    UncheckedKeyHashMap<T, CounterType> m_map;
+    HashMap<T, CounterType> m_map;
 };
 
 } // namespace WTF

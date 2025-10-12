@@ -130,7 +130,11 @@ class StringPart
 {
   public:
     StringPart() = default;
-    explicit StringPart(const std::string part) : mPart(part), mWildcard(false) {}
+    explicit StringPart(const std::string &part) : mPart(part), mWildcard(false) {}
+    StringPart(const StringPart &)            = default;
+    StringPart(StringPart &&)                 = default;
+    StringPart &operator=(const StringPart &) = default;
+    StringPart &operator=(StringPart &&)      = default;
     ~StringPart() = default;
 
     static StringPart FromJson(const Json::Value &parent, const char *key)

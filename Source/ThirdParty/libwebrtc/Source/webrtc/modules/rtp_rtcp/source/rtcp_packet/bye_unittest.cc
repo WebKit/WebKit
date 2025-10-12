@@ -10,6 +10,12 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/bye.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <string>
+#include <vector>
+
+#include "rtc_base/buffer.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
@@ -19,16 +25,16 @@ using webrtc::rtcp::Bye;
 
 namespace webrtc {
 namespace {
-const uint32_t kSenderSsrc = 0x12345678;
-const uint32_t kCsrc1 = 0x22232425;
-const uint32_t kCsrc2 = 0x33343536;
+constexpr uint32_t kSenderSsrc = 0x12345678;
+constexpr uint32_t kCsrc1 = 0x22232425;
+constexpr uint32_t kCsrc2 = 0x33343536;
 }  // namespace
 
 TEST(RtcpPacketByeTest, CreateAndParseWithoutReason) {
   Bye bye;
   bye.SetSenderSsrc(kSenderSsrc);
 
-  rtc::Buffer raw = bye.Build();
+  Buffer raw = bye.Build();
   Bye parsed_bye;
   EXPECT_TRUE(test::ParseSinglePacket(raw, &parsed_bye));
 
@@ -43,7 +49,7 @@ TEST(RtcpPacketByeTest, CreateAndParseWithCsrcs) {
   EXPECT_TRUE(bye.SetCsrcs({kCsrc1, kCsrc2}));
   EXPECT_TRUE(bye.reason().empty());
 
-  rtc::Buffer raw = bye.Build();
+  Buffer raw = bye.Build();
   Bye parsed_bye;
   EXPECT_TRUE(test::ParseSinglePacket(raw, &parsed_bye));
 
@@ -60,7 +66,7 @@ TEST(RtcpPacketByeTest, CreateAndParseWithCsrcsAndAReason) {
   EXPECT_TRUE(bye.SetCsrcs({kCsrc1, kCsrc2}));
   bye.SetReason(kReason);
 
-  rtc::Buffer raw = bye.Build();
+  Buffer raw = bye.Build();
   Bye parsed_bye;
   EXPECT_TRUE(test::ParseSinglePacket(raw, &parsed_bye));
 
@@ -84,7 +90,7 @@ TEST(RtcpPacketByeTest, CreateAndParseWithAReason) {
   bye.SetSenderSsrc(kSenderSsrc);
   bye.SetReason(kReason);
 
-  rtc::Buffer raw = bye.Build();
+  Buffer raw = bye.Build();
   Bye parsed_bye;
   EXPECT_TRUE(test::ParseSinglePacket(raw, &parsed_bye));
 
@@ -102,7 +108,7 @@ TEST(RtcpPacketByeTest, CreateAndParseWithReasons) {
     bye.SetSenderSsrc(kSenderSsrc);
     bye.SetReason(kReason);
 
-    rtc::Buffer raw = bye.Build();
+    Buffer raw = bye.Build();
     Bye parsed_bye;
     EXPECT_TRUE(test::ParseSinglePacket(raw, &parsed_bye));
 
@@ -123,7 +129,7 @@ TEST(RtcpPacketByeTest, ParseFailOnInvalidSrcCount) {
   Bye bye;
   bye.SetSenderSsrc(kSenderSsrc);
 
-  rtc::Buffer raw = bye.Build();
+  Buffer raw = bye.Build();
   raw[0]++;  // Damage the packet: increase ssrc count by one.
 
   Bye parsed_bye;
@@ -135,7 +141,7 @@ TEST(RtcpPacketByeTest, ParseFailOnInvalidReasonLength) {
   bye.SetSenderSsrc(kSenderSsrc);
   bye.SetReason("18 characters long");
 
-  rtc::Buffer raw = bye.Build();
+  Buffer raw = bye.Build();
   // Damage the packet: decrease payload size by 4 bytes
   raw[3]--;
   raw.SetSize(raw.size() - 4);

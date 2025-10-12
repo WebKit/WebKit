@@ -24,13 +24,13 @@ function waitForMessage(port, data)
 }
 
 let senderTransform, receiverTransform;
-let stream;
+let localStream, stream;
 promise_test(async (test) => {
     worker = new Worker('context-transform.js');
     const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
     assert_equals(data, "registered");
 
-    const localStream = await navigator.mediaDevices.getUserMedia({video: true});
+    localStream = await navigator.mediaDevices.getUserMedia({video: true});
 
     const senderChannel = new MessageChannel;
     const receiverChannel = new MessageChannel;
@@ -85,6 +85,7 @@ promise_test(async (test) => {
     await waitForMessage(receiverTransform.port, "video frame key");
     receiverTransform.port.postMessage("endKeyFrames");
 
+    test.add_cleanup(() => localStream.getTracks().forEach(t => t.stop()));
 }, "key frame requests from receiver");
         </script>
     </body>

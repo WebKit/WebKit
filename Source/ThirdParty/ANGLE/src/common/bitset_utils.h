@@ -166,7 +166,6 @@ class BitSetT final
     constexpr BitSetT &flip();
     constexpr BitSetT &flip(ParamT pos);
 
-    constexpr unsigned long to_ulong() const { return static_cast<unsigned long>(mBits); }
     constexpr BitsT bits() const { return mBits; }
 
     Iterator begin() const { return Iterator(*this); }
@@ -650,15 +649,6 @@ class BitSetArray final
     constexpr static std::size_t size() { return N; }
     Iterator begin() const { return Iterator(*this, 0); }
     Iterator end() const { return Iterator(*this, kArraySize); }
-    constexpr unsigned long to_ulong() const
-    {
-        // TODO(anglebug.com/42264163): Handle serializing more than kDefaultBitSetSize
-        for (std::size_t index = 1; index < kArraySize; index++)
-        {
-            ASSERT(mBaseBitSetArray[index].none());
-        }
-        return static_cast<unsigned long>(mBaseBitSetArray[0].to_ulong());
-    }
 
     // Assignment operators
     constexpr BitSetArray &operator&=(const BitSetArray &other);
@@ -699,9 +689,15 @@ class BitSetArray final
     constexpr param_type last() const;
 
     constexpr value_type bits(size_t index) const;
+    constexpr static size_t ArraySize() { return kArraySize; }
 
     // Produces a mask of ones up to the "x"th bit.
     constexpr static BitSetArray Mask(std::size_t x);
+
+    template <std::size_t BitSetSize, std::enable_if_t<(BitSetSize < 64), int> = 0>
+    constexpr void initFromValue(uint64_t value);
+    template <std::size_t BitSetSize, std::enable_if_t<(BitSetSize >= 64), int> = 0>
+    constexpr void initFromValue(uint64_t value);
 
   private:
     static constexpr std::size_t kDefaultBitSetSizeMinusOne = priv::kDefaultBitSetSize - 1;
@@ -730,25 +726,7 @@ template <std::size_t N>
 constexpr BitSetArray<N>::BitSetArray(uint64_t value)
 {
     reset();
-
-    if (priv::kDefaultBitSetSize < 64)
-    {
-        size_t i = 0;
-        for (; i < kArraySize - 1; ++i)
-        {
-            value_type elemValue =
-                value & priv::BaseBitSetType::Mask(priv::kDefaultBitSetSize).bits();
-            mBaseBitSetArray[i] = priv::BaseBitSetType(elemValue);
-            value >>= priv::kDefaultBitSetSize;
-        }
-        value_type elemValue = value & kLastElementMask;
-        mBaseBitSetArray[i]  = priv::BaseBitSetType(elemValue);
-    }
-    else
-    {
-        value_type elemValue = value & priv::BaseBitSetType::Mask(priv::kDefaultBitSetSize).bits();
-        mBaseBitSetArray[0]  = priv::BaseBitSetType(elemValue);
-    }
+    initFromValue<priv::kDefaultBitSetSize>(value);
 }
 
 template <std::size_t N>
@@ -1105,6 +1083,32 @@ constexpr BitSetArray<N> BitSetArray<N>::Mask(std::size_t x)
 
     return result;
 }
+
+template <std::size_t N>
+template <std::size_t BitSetSize, std::enable_if_t<(BitSetSize < 64), int>>
+constexpr void BitSetArray<N>::initFromValue(uint64_t value)
+{
+    static_assert(BitSetSize == 32, "Expected 32 bit size");
+    size_t i = 0;
+    for (; i < kArraySize - 1; ++i)
+    {
+        value_type elemValue = value & priv::BaseBitSetType::Mask(BitSetSize).bits();
+        mBaseBitSetArray[i]  = priv::BaseBitSetType(elemValue);
+        value >>= BitSetSize;
+    }
+    value_type elemValue = value & kLastElementMask;
+    mBaseBitSetArray[i]  = priv::BaseBitSetType(elemValue);
+}
+
+template <std::size_t N>
+template <std::size_t BitSetSize, std::enable_if_t<(BitSetSize >= 64), int>>
+constexpr void BitSetArray<N>::initFromValue(uint64_t value)
+{
+    static_assert(BitSetSize == 64, "Expected 64 bit size");
+    value_type elemValue = value & priv::BaseBitSetType::Mask(BitSetSize).bits();
+    mBaseBitSetArray[0]  = priv::BaseBitSetType(elemValue);
+}
+
 }  // namespace angle
 
 template <size_t N, typename BitsT, typename ParamT>

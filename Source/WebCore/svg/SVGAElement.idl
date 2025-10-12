@@ -28,8 +28,10 @@
 ] interface SVGAElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedString target;
 
+    [Reflect] attribute DOMString hreflang;
     [Reflect] attribute DOMString rel;
     [SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
+    [Reflect] attribute DOMString type;
 };
 
 SVGAElement includes SVGURIReference;

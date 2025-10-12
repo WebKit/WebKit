@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2013 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2005-2025 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 
 #include "AXObjectCache.h"
 #include "CompositeEditCommand.h"
-#include "DocumentInlines.h"
+#include "DocumentView.h"
 #include "Editing.h"
 #include "Editor.h"
 #include "Element.h"
@@ -211,8 +211,7 @@ void EditCommand::postTextStateChangeNotification(AXTextEditType type, const Str
         return;
     if (!text.length())
         return;
-    auto document = protectedDocument();
-    CheckedPtr cache = document->existingAXObjectCache();
+    CheckedPtr cache = document().existingAXObjectCache();
     if (!cache)
         return;
     RefPtr node { highestEditableRoot(position.deepEquivalent(), HasEditableAXRole) };

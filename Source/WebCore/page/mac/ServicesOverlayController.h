@@ -28,7 +28,6 @@
 #if (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)) && PLATFORM(MAC)
 
 #include "DataDetectorHighlight.h"
-#include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"
 #include "PageOverlay.h"
 #include "Timer.h"
@@ -38,7 +37,8 @@
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
-    
+
+class GraphicsLayer;
 class LayoutRect;
 class Page;
 
@@ -46,7 +46,7 @@ enum class RenderingUpdateStep : uint32_t;
 
 struct GapRects;
 
-class ServicesOverlayController : private DataDetectorHighlightClient, private PageOverlayClient {
+class ServicesOverlayController : public DataDetectorHighlightClient, private PageOverlayClient {
     WTF_MAKE_TZONE_ALLOCATED(ServicesOverlayController);
 public:
     explicit ServicesOverlayController(Page&);
@@ -74,7 +74,7 @@ private:
     void invalidateHighlightsOfType(DataDetectorHighlight::Type);
     void buildPotentialHighlightsIfNeeded();
 
-    void replaceHighlightsOfTypePreservingEquivalentHighlights(UncheckedKeyHashSet<RefPtr<DataDetectorHighlight>>&, DataDetectorHighlight::Type);
+    void replaceHighlightsOfTypePreservingEquivalentHighlights(HashSet<RefPtr<DataDetectorHighlight>>&&, DataDetectorHighlight::Type);
     void removeAllPotentialHighlightsOfType(DataDetectorHighlight::Type);
     void buildPhoneNumberHighlights();
     void buildSelectionHighlight();
@@ -108,8 +108,8 @@ private:
 
     RefPtr<DataDetectorHighlight> m_activeHighlight;
     RefPtr<DataDetectorHighlight> m_nextActiveHighlight;
-    UncheckedKeyHashSet<RefPtr<DataDetectorHighlight>> m_potentialHighlights;
-    UncheckedKeyHashSet<RefPtr<DataDetectorHighlight>> m_animatingHighlights;
+    HashSet<RefPtr<DataDetectorHighlight>> m_potentialHighlights;
+    HashSet<RefPtr<DataDetectorHighlight>> m_animatingHighlights;
     WeakHashSet<DataDetectorHighlight> m_highlights;
 
     Vector<LayoutRect> m_currentSelectionRects;

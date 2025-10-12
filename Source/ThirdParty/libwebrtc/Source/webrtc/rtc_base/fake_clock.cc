@@ -10,35 +10,41 @@
 
 #include "rtc_base/fake_clock.h"
 
-#include "rtc_base/checks.h"
-#include "rtc_base/thread.h"
+#include <cstdint>
 
-namespace rtc {
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread.h"
+#include "rtc_base/time_utils.h"
+
+namespace webrtc {
 
 int64_t FakeClock::TimeNanos() const {
-  webrtc::MutexLock lock(&lock_);
+  MutexLock lock(&lock_);
   return time_ns_;
 }
 
-void FakeClock::SetTime(webrtc::Timestamp new_time) {
-  webrtc::MutexLock lock(&lock_);
+void FakeClock::SetTime(Timestamp new_time) {
+  MutexLock lock(&lock_);
   RTC_DCHECK(new_time.us() * 1000 >= time_ns_);
   time_ns_ = new_time.us() * 1000;
 }
 
-void FakeClock::AdvanceTime(webrtc::TimeDelta delta) {
-  webrtc::MutexLock lock(&lock_);
+void FakeClock::AdvanceTime(TimeDelta delta) {
+  MutexLock lock(&lock_);
   time_ns_ += delta.ns();
 }
 
-void ThreadProcessingFakeClock::SetTime(webrtc::Timestamp time) {
+void ThreadProcessingFakeClock::SetTime(Timestamp time) {
   clock_.SetTime(time);
   // If message queues are waiting in a socket select() with a timeout provided
   // by the OS, they should wake up and dispatch all messages that are ready.
   ThreadManager::ProcessAllMessageQueuesForTesting();
 }
 
-void ThreadProcessingFakeClock::AdvanceTime(webrtc::TimeDelta delta) {
+void ThreadProcessingFakeClock::AdvanceTime(TimeDelta delta) {
   clock_.AdvanceTime(delta);
   ThreadManager::ProcessAllMessageQueuesForTesting();
 }
@@ -59,4 +65,4 @@ ScopedFakeClock::~ScopedFakeClock() {
   SetClockForTesting(prev_clock_);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSCPtrTag.h"
-#include "OpcodeSize.h"
+#include <JavaScriptCore/JSCPtrTag.h>
+#include <JavaScriptCore/OpcodeSize.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -37,10 +37,8 @@ template<PtrTag> class MacroAssemblerCodeRef;
 
 template<typename> struct BaseInstruction;
 struct JSOpcodeTraits;
-struct WasmOpcodeTraits;
 
 using JSInstruction = BaseInstruction<JSOpcodeTraits>;
-using WasmInstruction = BaseInstruction<WasmOpcodeTraits>;
 
 namespace LLInt {
 
@@ -48,18 +46,11 @@ namespace LLInt {
 // between 1 and 9 slots will give you an "instruction" that threads to the
 // interpreter's exception handler.
 JSInstruction* returnToThrow(VM&);
-WasmInstruction* wasmReturnToThrow(VM&);
 
 // Use this when you're throwing to a call thunk.
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> callToThrow(VM&);
 
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleUncaughtException(VM&);
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleCatch(OpcodeSize);
-
-#if ENABLE(WEBASSEMBLY)
-MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatch(OpcodeSize);
-MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchAll(OpcodeSize);
-MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmTryTable(WasmOpcodeID, OpcodeSize);
-#endif // ENABLE(WEBASSEMBLY)
 
 } } // namespace JSC::LLInt

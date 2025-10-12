@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -80,7 +77,7 @@ function reset() {
 }
 
 let instance = new derived();
-assertThrowsInstanceOf(() => instance.testElem(), TypeError);
+assert.throws(TypeError, () => instance.testElem());
 reset();
 
 instance.testProp();

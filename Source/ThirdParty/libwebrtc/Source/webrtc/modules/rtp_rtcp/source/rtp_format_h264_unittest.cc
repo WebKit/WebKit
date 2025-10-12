@@ -10,15 +10,19 @@
 
 #include "modules/rtp_rtcp/source/rtp_format_h264.h"
 
-#include <memory>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+#include <initializer_list>
 #include <vector>
 
 #include "absl/algorithm/container.h"
 #include "api/array_view.h"
-#include "common_video/h264/h264_common.h"
-#include "modules/rtp_rtcp/mocks/mock_rtp_rtcp.h"
-#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/video_coding/codecs/h264/include/h264_globals.h"
+#include "rtc_base/buffer.h"
+#include "rtc_base/checks.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -51,9 +55,9 @@ constexpr size_t kNalHeaderSize = 1;
 constexpr size_t kFuAHeaderSize = 2;
 
 // Creates Buffer that looks like nal unit of given size.
-rtc::Buffer GenerateNalUnit(size_t size) {
+Buffer GenerateNalUnit(size_t size) {
   RTC_CHECK_GT(size, 0);
-  rtc::Buffer buffer(size);
+  Buffer buffer(size);
   // Set some valid header.
   buffer[0] = kSlice;
   for (size_t i = 1; i < size; ++i) {
@@ -66,10 +70,10 @@ rtc::Buffer GenerateNalUnit(size_t size) {
 }
 
 // Create frame consisting of nalus of given size.
-rtc::Buffer CreateFrame(std::initializer_list<size_t> nalu_sizes) {
+Buffer CreateFrame(std::initializer_list<size_t> nalu_sizes) {
   static constexpr int kStartCodeSize = 3;
-  rtc::Buffer frame(absl::c_accumulate(nalu_sizes, size_t{0}) +
-                    kStartCodeSize * nalu_sizes.size());
+  Buffer frame(absl::c_accumulate(nalu_sizes, size_t{0}) +
+               kStartCodeSize * nalu_sizes.size());
   size_t offset = 0;
   for (size_t nalu_size : nalu_sizes) {
     EXPECT_GE(nalu_size, 1u);
@@ -89,15 +93,15 @@ rtc::Buffer CreateFrame(std::initializer_list<size_t> nalu_sizes) {
 }
 
 // Create frame consisting of given nalus.
-rtc::Buffer CreateFrame(rtc::ArrayView<const rtc::Buffer> nalus) {
+Buffer CreateFrame(ArrayView<const Buffer> nalus) {
   static constexpr int kStartCodeSize = 3;
   int frame_size = 0;
-  for (const rtc::Buffer& nalu : nalus) {
+  for (const Buffer& nalu : nalus) {
     frame_size += (kStartCodeSize + nalu.size());
   }
-  rtc::Buffer frame(frame_size);
+  Buffer frame(frame_size);
   size_t offset = 0;
-  for (const rtc::Buffer& nalu : nalus) {
+  for (const Buffer& nalu : nalus) {
     // Insert nalu start code
     frame[offset] = 0;
     frame[offset + 1] = 0;
@@ -140,9 +144,8 @@ TEST_P(RtpPacketizerH264ModeTest, SingleNalu) {
 TEST_P(RtpPacketizerH264ModeTest, SingleNaluTwoPackets) {
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = kMaxPayloadSize;
-  rtc::Buffer nalus[] = {GenerateNalUnit(kMaxPayloadSize),
-                         GenerateNalUnit(100)};
-  rtc::Buffer frame = CreateFrame(nalus);
+  Buffer nalus[] = {GenerateNalUnit(kMaxPayloadSize), GenerateNalUnit(100)};
+  Buffer frame = CreateFrame(nalus);
 
   RtpPacketizerH264 packetizer(frame, limits, GetParam());
   std::vector<RtpPacketToSend> packets = FetchAllPackets(&packetizer);
@@ -157,10 +160,10 @@ TEST_P(RtpPacketizerH264ModeTest,
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 200;
   limits.first_packet_reduction_len = 5;
-  rtc::Buffer nalus[] = {GenerateNalUnit(/*size=*/195),
-                         GenerateNalUnit(/*size=*/200),
-                         GenerateNalUnit(/*size=*/200)};
-  rtc::Buffer frame = CreateFrame(nalus);
+  Buffer nalus[] = {GenerateNalUnit(/*size=*/195),
+                    GenerateNalUnit(/*size=*/200),
+                    GenerateNalUnit(/*size=*/200)};
+  Buffer frame = CreateFrame(nalus);
 
   RtpPacketizerH264 packetizer(frame, limits, GetParam());
   std::vector<RtpPacketToSend> packets = FetchAllPackets(&packetizer);
@@ -176,10 +179,10 @@ TEST_P(RtpPacketizerH264ModeTest,
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 200;
   limits.last_packet_reduction_len = 5;
-  rtc::Buffer nalus[] = {GenerateNalUnit(/*size=*/200),
-                         GenerateNalUnit(/*size=*/200),
-                         GenerateNalUnit(/*size=*/195)};
-  rtc::Buffer frame = CreateFrame(nalus);
+  Buffer nalus[] = {GenerateNalUnit(/*size=*/200),
+                    GenerateNalUnit(/*size=*/200),
+                    GenerateNalUnit(/*size=*/195)};
+  Buffer frame = CreateFrame(nalus);
 
   RtpPacketizerH264 packetizer(frame, limits, GetParam());
   std::vector<RtpPacketToSend> packets = FetchAllPackets(&packetizer);
@@ -196,7 +199,7 @@ TEST_P(RtpPacketizerH264ModeTest,
   limits.max_payload_len = 200;
   limits.first_packet_reduction_len = 20;
   limits.last_packet_reduction_len = 30;
-  rtc::Buffer frame = CreateFrame({150});
+  Buffer frame = CreateFrame({150});
 
   RtpPacketizerH264 packetizer(frame, limits, GetParam());
   std::vector<RtpPacketToSend> packets = FetchAllPackets(&packetizer);
@@ -212,10 +215,9 @@ INSTANTIATE_TEST_SUITE_P(
 
 // Aggregation tests.
 TEST(RtpPacketizerH264Test, StapA) {
-  rtc::Buffer nalus[] = {GenerateNalUnit(/*size=*/2),
-                         GenerateNalUnit(/*size=*/2),
-                         GenerateNalUnit(/*size=*/0x123)};
-  rtc::Buffer frame = CreateFrame(nalus);
+  Buffer nalus[] = {GenerateNalUnit(/*size=*/2), GenerateNalUnit(/*size=*/2),
+                    GenerateNalUnit(/*size=*/0x123)};
+  Buffer frame = CreateFrame(nalus);
 
   RtpPacketizerH264 packetizer(frame, kNoLimits,
                                H264PacketizationMode::NonInterleaved);
@@ -248,7 +250,7 @@ TEST(RtpPacketizerH264Test, StapA) {
 
 TEST(RtpPacketizerH264Test, SingleNalUnitModeHasNoStapA) {
   // This is the same setup as for the StapA test.
-  rtc::Buffer frame = CreateFrame({2, 2, 0x123});
+  Buffer frame = CreateFrame({2, 2, 0x123});
 
   RtpPacketizerH264 packetizer(frame, kNoLimits,
                                H264PacketizationMode::SingleNalUnit);
@@ -267,10 +269,9 @@ TEST(RtpPacketizerH264Test, StapARespectsFirstPacketReduction) {
   limits.first_packet_reduction_len = 100;
   const size_t kFirstFragmentSize =
       limits.max_payload_len - limits.first_packet_reduction_len;
-  rtc::Buffer nalus[] = {GenerateNalUnit(/*size=*/kFirstFragmentSize),
-                         GenerateNalUnit(/*size=*/2),
-                         GenerateNalUnit(/*size=*/2)};
-  rtc::Buffer frame = CreateFrame(nalus);
+  Buffer nalus[] = {GenerateNalUnit(/*size=*/kFirstFragmentSize),
+                    GenerateNalUnit(/*size=*/2), GenerateNalUnit(/*size=*/2)};
+  Buffer frame = CreateFrame(nalus);
 
   RtpPacketizerH264 packetizer(frame, limits,
                                H264PacketizationMode::NonInterleaved);
@@ -297,10 +298,10 @@ TEST(RtpPacketizerH264Test, StapARespectsSinglePacketReduction) {
   limits.single_packet_reduction_len = 8;
   // 3 fragments of sizes 2 + 2 + 981, plus 7 bytes of headers, is expected to
   // be packetized to single packet of size 992.
-  rtc::Buffer first_nalus[] = {GenerateNalUnit(/*size=*/2),
-                               GenerateNalUnit(/*size=*/2),
-                               GenerateNalUnit(/*size=*/981)};
-  rtc::Buffer first_frame = CreateFrame(first_nalus);
+  Buffer first_nalus[] = {GenerateNalUnit(/*size=*/2),
+                          GenerateNalUnit(/*size=*/2),
+                          GenerateNalUnit(/*size=*/981)};
+  Buffer first_frame = CreateFrame(first_nalus);
 
   RtpPacketizerH264 first_packetizer(first_frame, limits,
                                      H264PacketizationMode::NonInterleaved);
@@ -312,10 +313,10 @@ TEST(RtpPacketizerH264Test, StapARespectsSinglePacketReduction) {
 
   // Increasing the last fragment size by one exceeds
   // single_packet_reduction_len and produces two packets.
-  rtc::Buffer second_nalus[] = {GenerateNalUnit(/*size=*/2),
-                                GenerateNalUnit(/*size=*/2),
-                                GenerateNalUnit(/*size=*/982)};
-  rtc::Buffer second_frame = CreateFrame(second_nalus);
+  Buffer second_nalus[] = {GenerateNalUnit(/*size=*/2),
+                           GenerateNalUnit(/*size=*/2),
+                           GenerateNalUnit(/*size=*/982)};
+  Buffer second_frame = CreateFrame(second_nalus);
   RtpPacketizerH264 second_packetizer(second_frame, limits,
                                       H264PacketizationMode::NonInterleaved);
   packets = FetchAllPackets(&second_packetizer);
@@ -329,9 +330,9 @@ TEST(RtpPacketizerH264Test, StapARespectsLastPacketReduction) {
   const size_t kFirstFragmentSize = 1000;
   const size_t kLastFragmentSize =
       limits.max_payload_len - limits.last_packet_reduction_len + 1;
-  rtc::Buffer nalus[] = {GenerateNalUnit(/*size=*/kFirstFragmentSize),
-                         GenerateNalUnit(/*size=*/kLastFragmentSize)};
-  rtc::Buffer frame = CreateFrame(nalus);
+  Buffer nalus[] = {GenerateNalUnit(/*size=*/kFirstFragmentSize),
+                    GenerateNalUnit(/*size=*/kLastFragmentSize)};
+  Buffer frame = CreateFrame(nalus);
 
   RtpPacketizerH264 packetizer(frame, limits,
                                H264PacketizationMode::NonInterleaved);
@@ -351,10 +352,9 @@ TEST(RtpPacketizerH264Test, TooSmallForStapAHeaders) {
   limits.max_payload_len = 1000;
   const size_t kLastFragmentSize =
       limits.max_payload_len - 3 * kLengthFieldLength - 4;
-  rtc::Buffer nalus[] = {GenerateNalUnit(/*size=*/2),
-                         GenerateNalUnit(/*size=*/2),
-                         GenerateNalUnit(/*size=*/kLastFragmentSize)};
-  rtc::Buffer frame = CreateFrame(nalus);
+  Buffer nalus[] = {GenerateNalUnit(/*size=*/2), GenerateNalUnit(/*size=*/2),
+                    GenerateNalUnit(/*size=*/kLastFragmentSize)};
+  Buffer frame = CreateFrame(nalus);
 
   RtpPacketizerH264 packetizer(frame, limits,
                                H264PacketizationMode::NonInterleaved);
@@ -377,10 +377,10 @@ TEST(RtpPacketizerH264Test, MixedStapAFUA) {
   const size_t kFuaPayloadSize = 70;
   const size_t kFuaNaluSize = kNalHeaderSize + 2 * kFuaPayloadSize;
   const size_t kStapANaluSize = 20;
-  rtc::Buffer nalus[] = {GenerateNalUnit(kFuaNaluSize),
-                         GenerateNalUnit(kStapANaluSize),
-                         GenerateNalUnit(kStapANaluSize)};
-  rtc::Buffer frame = CreateFrame(nalus);
+  Buffer nalus[] = {GenerateNalUnit(kFuaNaluSize),
+                    GenerateNalUnit(kStapANaluSize),
+                    GenerateNalUnit(kStapANaluSize)};
+  Buffer frame = CreateFrame(nalus);
 
   RtpPacketizerH264 packetizer(frame, limits,
                                H264PacketizationMode::NonInterleaved);
@@ -421,7 +421,7 @@ TEST(RtpPacketizerH264Test, LastFragmentFitsInSingleButNotLastPacket) {
   limits.last_packet_reduction_len = 20;
   limits.single_packet_reduction_len = 20;
   // Actual sizes, which triggered this bug.
-  rtc::Buffer frame = CreateFrame({20, 8, 18, 1161});
+  Buffer frame = CreateFrame({20, 8, 18, 1161});
 
   RtpPacketizerH264 packetizer(frame, limits,
                                H264PacketizationMode::NonInterleaved);
@@ -438,8 +438,8 @@ TEST(RtpPacketizerH264Test, LastFragmentFitsInSingleButNotLastPacket) {
 // Returns sizes of the payloads excluding fua headers.
 std::vector<int> TestFua(size_t frame_payload_size,
                          const RtpPacketizer::PayloadSizeLimits& limits) {
-  rtc::Buffer nalu[] = {GenerateNalUnit(kNalHeaderSize + frame_payload_size)};
-  rtc::Buffer frame = CreateFrame(nalu);
+  Buffer nalu[] = {GenerateNalUnit(kNalHeaderSize + frame_payload_size)};
+  Buffer frame = CreateFrame(nalu);
 
   RtpPacketizerH264 packetizer(frame, limits,
                                H264PacketizationMode::NonInterleaved);
@@ -520,7 +520,7 @@ TEST(RtpPacketizerH264Test, FUABig) {
 
 TEST(RtpPacketizerH264Test, RejectsOverlongDataInPacketizationMode0) {
   RtpPacketizer::PayloadSizeLimits limits;
-  rtc::Buffer frame = CreateFrame({kMaxPayloadSize + 1});
+  Buffer frame = CreateFrame({kMaxPayloadSize + 1});
 
   RtpPacketizerH264 packetizer(frame, limits,
                                H264PacketizationMode::SingleNalUnit);

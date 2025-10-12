@@ -57,7 +57,7 @@ using namespace WebCore;
         return self;
 
     _capturer = WTFMove(capturer);
-    [[PAL::getRPScreenRecorderClass() sharedRecorder] addObserver:self forKeyPath:@"recording" options:NSKeyValueObservingOptionNew context:(void *)nil];
+    [[PAL::getRPScreenRecorderClassSingleton() sharedRecorder] addObserver:self forKeyPath:@"recording" options:NSKeyValueObservingOptionNew context:(void *)nil];
 
     return self;
 }
@@ -65,7 +65,7 @@ using namespace WebCore;
 - (void)disconnect
 {
     _capturer = nullptr;
-    [[PAL::getRPScreenRecorderClass() sharedRecorder] removeObserver:self forKeyPath:@"recording"];
+    [[PAL::getRPScreenRecorderClassSingleton() sharedRecorder] removeObserver:self forKeyPath:@"recording"];
 }
 
 - (void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context
@@ -100,7 +100,7 @@ namespace WebCore {
 
 bool ReplayKitCaptureSource::isAvailable()
 {
-    return [PAL::getRPScreenRecorderClass() sharedRecorder].isAvailable;
+    return [PAL::getRPScreenRecorderClassSingleton() sharedRecorder].isAvailable;
 }
 
 ReplayKitCaptureSource::ReplayKitCaptureSource(CapturerObserver& observer)
@@ -123,7 +123,7 @@ bool ReplayKitCaptureSource::start()
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG_IF(loggerPtr(), identifier);
 
-    auto *screenRecorder = [PAL::getRPScreenRecorderClass() sharedRecorder];
+    auto *screenRecorder = [PAL::getRPScreenRecorderClassSingleton() sharedRecorder];
     if (screenRecorder.recording)
         return true;
 
@@ -144,7 +144,7 @@ bool ReplayKitCaptureSource::start()
 
         ++m_frameCount;
 
-        RunLoop::protectedMain()->dispatch([weakThis, sampleBuffer = retainPtr(sampleBuffer)]() mutable {
+        RunLoop::mainSingleton().dispatch([weakThis, sampleBuffer = retainPtr(sampleBuffer)]() mutable {
             if (!weakThis)
                 return;
 
@@ -154,7 +154,7 @@ bool ReplayKitCaptureSource::start()
 
     auto completionHandler = makeBlockPtr([this, weakThis = WeakPtr { *this }, identifier](NSError * _Nullable error) {
         // FIXME: It should be safe to call `videoFrameAvailable` from any thread. Test this and get rid of this main thread hop.
-        RunLoop::protectedMain()->dispatch([this, weakThis, error = retainPtr(error), identifier]() mutable {
+        RunLoop::mainSingleton().dispatch([this, weakThis, error = retainPtr(error), identifier]() mutable {
             if (!weakThis || !error)
                 return;
 
@@ -176,11 +176,11 @@ void ReplayKitCaptureSource::screenRecorderDidOutputVideoSample(RetainPtr<CMSamp
 
 void ReplayKitCaptureSource::captureStateDidChange()
 {
-    RunLoop::protectedMain()->dispatch([this, weakThis = WeakPtr { *this }, identifier = LOGIDENTIFIER]() mutable {
+    RunLoop::mainSingleton().dispatch([this, weakThis = WeakPtr { *this }, identifier = LOGIDENTIFIER]() mutable {
         if (!weakThis)
             return;
 
-        bool isRecording = !![[PAL::getRPScreenRecorderClass() sharedRecorder] isRecording];
+        bool isRecording = !![[PAL::getRPScreenRecorderClassSingleton() sharedRecorder] isRecording];
         if (m_isRunning == (isRecording && !m_interrupted))
             return;
 
@@ -198,7 +198,7 @@ void ReplayKitCaptureSource::stop()
     m_interrupted = false;
     m_isRunning = false;
 
-    auto *screenRecorder = [PAL::getRPScreenRecorderClass() sharedRecorder];
+    auto *screenRecorder = [PAL::getRPScreenRecorderClassSingleton() sharedRecorder];
     if (screenRecorder.recording) {
         [screenRecorder stopCaptureWithHandler:^(NSError * _Nullable error) {
             ERROR_LOG_IF(error && loggerPtr(), identifier, "startCaptureWithHandler failed ", error);

@@ -59,7 +59,7 @@ static NSURL *literalURL(const char* literal)
 {
     EXPECT_WK_STREQ(error.domain, @"WebKitErrorDomain");
     EXPECT_EQ(error.code, 101);
-    EXPECT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
+    EXPECT_NULL(error.userInfo[NSURLErrorFailingURLErrorKey]);
 
     didFailProvisionalLoad = true;
     didFinishTest = true;
@@ -113,7 +113,7 @@ TEST(WebKit, LoadInvalidURLRequestNonASCII)
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_WK_STREQ(error.domain, @"WebKitErrorDomain");
         EXPECT_EQ(error.code, WebKitErrorCannotShowURL);
-        EXPECT_WK_STREQ([error.userInfo[@"NSErrorFailingURLKey"] absoluteString], "");
+        EXPECT_WK_STREQ([error.userInfo[NSURLErrorFailingURLErrorKey] absoluteString], "");
         done = true;
     };
     auto webView = adoptNS([WKWebView new]);
@@ -150,6 +150,39 @@ TEST(WebKit, LoadNSURLRequestWithMutablePropertiesAndKeys)
     auto response = adoptNS([[NSURLResponse alloc] initWithURL:request.URL MIMEType:nil expectedContentLength:0 textEncodingName:nil]);
     [webView loadSimulatedRequest:request response:response.get() responseData:[NSData data]];
     [webView _test_waitForDidFinishNavigation];
+}
+
+TEST(WebKit, NavigateToInvalidURL)
+{
+    auto webView = adoptNS([WKWebView new]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    webView.get().navigationDelegate = delegate.get();
+    __block bool finished { false };
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        if ([action.request.URL.absoluteString isEqualToString:@"https://webkit.org/"])
+            return decisionHandler(WKNavigationActionPolicyAllow);
+        EXPECT_WK_STREQ(action.request.URL.absoluteString, "customscheme://Help%20Central/123456");
+        decisionHandler(WKNavigationActionPolicyCancel);
+        finished = true;
+    };
+    [webView loadHTMLString:@"<a id='link' href='customscheme://Help Central/123456'</a><script>link.click()</script>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    Util::run(&finished);
+}
+
+TEST(WebKit, LoadInvalidURLWithSpaceCharacter)
+{
+    __block bool done = false;
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
+        EXPECT_WK_STREQ(error.domain, @"WebKitErrorDomain");
+        EXPECT_EQ(error.code, WebKitErrorCannotShowURL);
+        EXPECT_WK_STREQ([error.userInfo[NSURLErrorFailingURLErrorKey] absoluteString], "");
+        done = true;
+    };
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://%20.example.com/"]]];
+    Util::run(&done);
 }
 
 } // namespace TestWebKitAPI

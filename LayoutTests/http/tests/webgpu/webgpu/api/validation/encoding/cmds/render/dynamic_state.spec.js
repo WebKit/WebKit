@@ -23,8 +23,8 @@ TODO: ensure existing tests cover these notes. Note many of these may be operati
 >     - {0, max}
 >     - used with a simple pipeline that {does, doesn't} use it
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../../../gpu_test.js';
 import { nextAfterF32 } from '../../../../../util/math.js';
-import { AllFeaturesMaxLimitsValidationTest } from '../../../validation_test.js';
 
 
 
@@ -42,7 +42,7 @@ import { AllFeaturesMaxLimitsValidationTest } from '../../../validation_test.js'
 
 
 
-class F extends AllFeaturesMaxLimitsValidationTest {
+class F extends AllFeaturesMaxLimitsGPUTest {
   testViewportCall(
   success,
   v,

@@ -25,10 +25,11 @@
 
 #pragma once
 
-#include "JSCast.h"
-#include "PropertySlot.h"
-#include "PutPropertySlot.h"
-#include "Structure.h"
+#include <JavaScriptCore/JSCast.h>
+#include <JavaScriptCore/PropertySlot.h>
+#include <JavaScriptCore/PutPropertySlot.h>
+#include <JavaScriptCore/Structure.h>
+#include <JavaScriptCore/VM.h>
 
 namespace JSC {
 

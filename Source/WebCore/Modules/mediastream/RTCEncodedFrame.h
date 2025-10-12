@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,7 @@ public:
 protected:
     explicit RTCEncodedFrame(Ref<RTCRtpTransformableFrame>&&);
 
-    Ref<RTCRtpTransformableFrame> m_frame;
+    const Ref<RTCRtpTransformableFrame> m_frame;
     mutable RefPtr<JSC::ArrayBuffer> m_data;
     bool m_isNeutered { false };
     mutable std::optional<uint64_t> m_timestamp;

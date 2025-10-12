@@ -58,8 +58,8 @@ class VideoRtpTrackSource : public VideoTrackSource {
       const RecordableEncodedFrame& frame) const;
 
   // VideoTrackSource
-  rtc::VideoSourceInterface<VideoFrame>* source() override;
-  rtc::VideoSinkInterface<VideoFrame>* sink();
+  VideoSourceInterface<VideoFrame>* source() override;
+  VideoSinkInterface<VideoFrame>* sink();
 
   // Returns true. This method can be called on any thread.
   bool SupportsEncodedOutput() const override;
@@ -69,11 +69,11 @@ class VideoRtpTrackSource : public VideoTrackSource {
 
   // Adds an encoded sink. Must be called on the worker thread.
   void AddEncodedSink(
-      rtc::VideoSinkInterface<RecordableEncodedFrame>* sink) override;
+      VideoSinkInterface<RecordableEncodedFrame>* sink) override;
 
   // Removes an encoded sink. Must be called on the worker thread.
   void RemoveEncodedSink(
-      rtc::VideoSinkInterface<RecordableEncodedFrame>* sink) override;
+      VideoSinkInterface<RecordableEncodedFrame>* sink) override;
 
  private:
   RTC_NO_UNIQUE_ADDRESS SequenceChecker worker_sequence_checker_{
@@ -81,9 +81,9 @@ class VideoRtpTrackSource : public VideoTrackSource {
   // `broadcaster_` is needed since the decoder can only handle one sink.
   // It might be better if the decoder can handle multiple sinks and consider
   // the VideoSinkWants.
-  rtc::VideoBroadcaster broadcaster_;
+  VideoBroadcaster broadcaster_;
   mutable Mutex mu_;
-  std::vector<rtc::VideoSinkInterface<RecordableEncodedFrame>*> encoded_sinks_
+  std::vector<VideoSinkInterface<RecordableEncodedFrame>*> encoded_sinks_
       RTC_GUARDED_BY(mu_);
   Callback* callback_ RTC_GUARDED_BY(worker_sequence_checker_);
 };

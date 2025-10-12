@@ -15,5 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/crashtests/delete-image-set.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/crashtests/size-container-transition-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/crashtests/transition-during-style-attr-mutation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/crashtests/transition-large-word-spacing-001.html

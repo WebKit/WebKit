@@ -14,15 +14,15 @@ import {
   isTextureFormatColorRenderable,
   kAllTextureFormats,
   kDepthStencilFormats,
-  kRenderableColorTextureFormats } from
+  kPossibleColorRenderableTextureFormats } from
 '../../../format_info.js';
-import { AllFeaturesMaxLimitsValidationTest } from '../validation_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
 
 // MAINTENANCE_TODO: This should be changed to kMaxColorAttachmentsToTest
 // when this is made a MaxLimitTest (see above).
 const kMaxColorAttachments = getDefaultLimits('core').maxColorAttachments.default;
 
-export const g = makeTestGroup(AllFeaturesMaxLimitsValidationTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 g.test('attachment_state,limits,maxColorAttachments').
 desc(`Tests that attachment state must have <= device.limits.maxColorAttachments.`).
@@ -56,7 +56,7 @@ desc(
 ).
 params((u) =>
 u.
-combine('format', kRenderableColorTextureFormats).
+combine('format', kPossibleColorRenderableTextureFormats).
 beginSubcases().
 combine(
   'colorFormatCount',

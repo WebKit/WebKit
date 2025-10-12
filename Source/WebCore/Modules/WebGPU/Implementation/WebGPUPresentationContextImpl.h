@@ -78,7 +78,7 @@ private:
 
     WebGPUPtr<WGPUSurface> m_backing;
     WebGPUPtr<WGPUSwapChain> m_swapChain;
-    Ref<ConvertToBackingContext> m_convertToBackingContext;
+    const Ref<ConvertToBackingContext> m_convertToBackingContext;
     RefPtr<TextureImpl> m_currentTexture;
 };
 

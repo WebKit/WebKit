@@ -107,39 +107,38 @@ RefPtr<RemoteMediaResource> RemoteMediaResourceManager::resourceForId(RemoteMedi
 
 void RemoteMediaResourceManager::responseReceived(RemoteMediaResourceIdentifier identifier, const ResourceResponse& response, bool didPassAccessControlCheck, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
 {
-    assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
-
-    if (auto resource = resourceForId(identifier))
+    if (RefPtr resource = resourceForId(identifier)) {
+        assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
         resource->responseReceived(response, didPassAccessControlCheck, WTFMove(completionHandler));
-    else
+    } else
         completionHandler(ShouldContinuePolicyCheck::No);
 }
 
 void RemoteMediaResourceManager::redirectReceived(RemoteMediaResourceIdentifier identifier, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
-    assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
-
-    if (auto resource = resourceForId(identifier))
+    if (RefPtr resource = resourceForId(identifier)) {
+        assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
         resource->redirectReceived(WTFMove(request), response, WTFMove(completionHandler));
-    else
+    } else
         completionHandler({ });
 }
 
 void RemoteMediaResourceManager::dataSent(RemoteMediaResourceIdentifier identifier, uint64_t bytesSent, uint64_t totalBytesToBeSent)
 {
-    assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
-
-    if (auto resource = resourceForId(identifier))
+    if (RefPtr resource = resourceForId(identifier)) {
+        assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
         resource->dataSent(bytesSent, totalBytesToBeSent);
+    }
 }
 
 void RemoteMediaResourceManager::dataReceived(RemoteMediaResourceIdentifier identifier, IPC::SharedBufferReference&& buffer, CompletionHandler<void(std::optional<SharedMemory::Handle>&&)>&& completionHandler)
 {
-    auto resource = resourceForId(identifier);
+    RefPtr resource = resourceForId(identifier);
     if (!resource)
         return completionHandler(std::nullopt);
 
-    auto sharedMemory = buffer.sharedCopy();
+    assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
+    RefPtr sharedMemory = buffer.sharedCopy();
     if (!sharedMemory)
         return completionHandler(std::nullopt);
 
@@ -153,26 +152,26 @@ void RemoteMediaResourceManager::dataReceived(RemoteMediaResourceIdentifier iden
 
 void RemoteMediaResourceManager::accessControlCheckFailed(RemoteMediaResourceIdentifier identifier, const ResourceError& error)
 {
-    assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
-
-    if (auto resource = resourceForId(identifier))
+    if (RefPtr resource = resourceForId(identifier)) {
+        assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
         resource->accessControlCheckFailed(error);
+    }
 }
 
 void RemoteMediaResourceManager::loadFailed(RemoteMediaResourceIdentifier identifier, const ResourceError& error)
 {
-    assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
-
-    if (auto resource = resourceForId(identifier))
+    if (RefPtr resource = resourceForId(identifier)) {
+        assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
         resource->loadFailed(error);
+    }
 }
 
 void RemoteMediaResourceManager::loadFinished(RemoteMediaResourceIdentifier identifier, const NetworkLoadMetrics& metrics)
 {
-    assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
-
-    if (auto resource = resourceForId(identifier))
+    if (RefPtr resource = resourceForId(identifier)) {
+        assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
         resource->loadFinished(metrics);
+    }
 }
 
 } // namespace WebKit

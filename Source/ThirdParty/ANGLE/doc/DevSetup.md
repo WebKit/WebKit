@@ -58,7 +58,10 @@ On Linux only, you need to install all the necessary dependencies before going f
 
 If building for Android (which requires Linux), switch to the [Android steps](https://chromium.googlesource.com/angle/angle.git/+/HEAD/doc/DevSetupAndroid.md) at this point.
 
-After this completes successfully, you are ready to generate the ninja files:
+### Building the code
+
+After the above completes successfully, you are ready to generate the ninja
+files:
 ```
 gn gen out/Debug
 ```
@@ -80,6 +83,10 @@ is_debug = true/false                (use false for release builds. is_debug = t
 angle_assert_always_on = true/false  (enables release asserts and runtime debug layers)
 is_clang = false (NOT RECOMMENDED)   (to use system default compiler instead of clang)
 ```
+
+When building with clang, we expect the build to run against a copy of clang
+that includes the chrome clang plugin. To build against an ordinary copy of
+clang lacking this plugin, set `clang_use_chrome_plugins = false`.
 
 For a release build run `gn args out/Release` and set `is_debug = false`.
 Optionally set `angle_assert_always_on = true` for Release testing.

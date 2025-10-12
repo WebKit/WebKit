@@ -34,7 +34,6 @@
 #include "APIGeometry.h"
 #include "APINumber.h"
 #include "APIPageHandle.h"
-#include "APISerializedScriptValue.h"
 #include "APIString.h"
 #include "APIURL.h"
 #include "APIURLRequest.h"

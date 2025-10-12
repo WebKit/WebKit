@@ -30,6 +30,7 @@
 #include "AssemblyHelpers.h"
 #include "BytecodeLivenessAnalysisInlines.h"
 #include "CodeBlock.h"
+#include "ConcatKeyAtomStringCache.h"
 #include "DFGArgumentPosition.h"
 #include "DFGBasicBlock.h"
 #include "DFGFrozenValue.h"
@@ -991,6 +992,8 @@ public:
     // computed by tracking which conditions we track with watchCondition().
     bool isSafeToLoad(JSObject* base, PropertyOffset);
 
+    GetByOffsetMethod promoteToConstant(GetByOffsetMethod);
+
     // This uses either constant property inference or property type inference to derive a good abstract
     // value for some property accessed with the given abstract value base.
     AbstractValue inferredValueForProperty(const AbstractValue& base, PropertyOffset, StructureClobberState);
@@ -1143,6 +1146,8 @@ public:
     JSValue tryGetConstantGetter(Node* getterSetter);
     JSValue tryGetConstantSetter(Node* getterSetter);
 
+    ObjectPropertyConditionSet tryEnsureAbsence(JSGlobalObject*, const StructureSet&, CacheableIdentifier);
+
     bool canDoFastSpread(Node*, const AbstractValue&);
     
     void registerFrozenValues();
@@ -1225,6 +1230,7 @@ public:
     bool isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(const AbstractValue&);
 
     const BoyerMooreHorspoolTable<uint8_t>* tryAddStringSearchTable8(const String&);
+    const ConcatKeyAtomStringCache* tryAddConcatKeyAtomStringCache(const String&, const String&, ConcatKeyAtomStringCache::Mode);
 
     bool afterFixup() { return m_planStage >= PlanStage::AfterFixup; }
 
@@ -1252,6 +1258,7 @@ public:
     Vector<const UnlinkedStringJumpTable*> m_unlinkedStringSwitchJumpTables;
     Vector<StringJumpTable> m_stringSwitchJumpTables;
     UncheckedKeyHashMap<String, std::unique_ptr<BoyerMooreHorspoolTable<uint8_t>>> m_stringSearchTable8;
+    Vector<std::unique_ptr<ConcatKeyAtomStringCache>> m_concatKeyAtomStringCaches;
 
     UncheckedKeyHashMap<EncodedJSValue, FrozenValue*, EncodedJSValueHash, EncodedJSValueHashTraits> m_frozenValueMap;
     SegmentedVector<FrozenValue, 16> m_frozenValues;

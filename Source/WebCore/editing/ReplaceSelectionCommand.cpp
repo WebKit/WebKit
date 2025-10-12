@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2009-2022 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,6 +41,7 @@
 #include "DataTransfer.h"
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "Editing.h"
 #include "EditingBehavior.h"
 #include "EditingInlines.h"
 #include "ElementIteratorInlines.h"
@@ -68,6 +69,7 @@
 #include "RenderText.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptElement.h"
+#include "Settings.h"
 #include "SimplifyMarkupCommand.h"
 #include "SmartReplace.h"
 #include "StyleExtractor.h"
@@ -175,7 +177,7 @@ ReplacementFragment::ReplacementFragment(RefPtr<DocumentFragment>&& inputFragmen
     , m_hasInterchangeNewlineAtStart(false)
     , m_hasInterchangeNewlineAtEnd(false)
 {
-    auto fragment = protectedFragment();
+    RefPtr fragment = m_fragment;
     if (!fragment)
         return;
     if (!fragment->firstChild())
@@ -698,7 +700,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
                     node = replaceElementWithSpanPreservingChildrenAndAttributes(*htmlElement);
                     element = downcast<StyledElement>(node.get());
                     insertedNodes.didReplaceNode(htmlElement.get(), node.get());
-                } else if (newInlineStyle->extractConflictingImplicitStyleOfAttributes(*htmlElement, EditingStyle::PreserveWritingDirection, nullptr, attributes, EditingStyle::DoNotExtractMatchingStyle)) {
+                } else if (newInlineStyle->extractConflictingImplicitStyleOfAttributes(*htmlElement, EditingStyle::ShouldPreserveWritingDirection::Yes, nullptr, attributes, EditingStyle::ShouldExtractMatchingStyle::No)) {
                     // e.g. <font size="3" style="font-size: 20px;"> is converted to <font style="font-size: 20px;">
                     for (auto& attribute : attributes)
                         removeNodeAttribute(*element, attribute);
@@ -729,7 +731,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
                 continue;
             }
             removeNodeAttribute(*element, styleAttr);
-        } else if (newInlineStyle->style()->propertyCount() != inlineStyle->propertyCount())
+        } else if (newInlineStyle->style()->propertyCount() != inlineStyle->propertyCount()) // FIXME: It seems wrong to rely only on the difference of properties set, and not on which properties are set.
             setNodeAttribute(*element, styleAttr, newInlineStyle->style()->asTextAtom(CSS::defaultSerializationContext()));
 
         // FIXME: Tolerate differences in id, class, and style attributes.
@@ -897,7 +899,7 @@ void ReplaceSelectionCommand::moveNodeOutOfAncestor(Node& node, Node& ancestor, 
             insertNodeBefore(WTFMove(protectedNode), *nodeToSplitTo);
     }
 
-    protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets();
 
     bool safeToRemoveAncestor = true;
     for (RefPtr child = ancestor.firstChild(); child; child = child->nextSibling()) {
@@ -920,8 +922,7 @@ void ReplaceSelectionCommand::moveNodeOutOfAncestor(Node& node, Node& ancestor, 
 
 void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds(InsertedNodes& insertedNodes)
 {
-    auto document = protectedDocument();
-    document->updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets();
 
     RefPtr lastLeafInserted { insertedNodes.lastLeafInserted() };
     if (RefPtr text = dynamicDowncast<Text>(lastLeafInserted); text && !hasRenderedText(*text)
@@ -931,7 +932,7 @@ void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds(InsertedNodes& ins
         removeNode(*lastLeafInserted);
     }
 
-    document->updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets();
 
     // We don't have to make sure that firstNodeInserted isn't inside a select or script element
     // because it is a top level node in the fragment and the user can't insert into those elements.
@@ -1135,9 +1136,9 @@ inline RefPtr<Node> nodeToSplitToAvoidPastingIntoInlineNodesWithStyle(const Posi
 
 bool ReplaceSelectionCommand::willApplyCommand()
 {
-    auto documentFragment = protectedDocumentFragment();
+    Ref documentFragment = *m_documentFragment;
     m_documentFragmentPlainText = documentFragment->textContent();
-    m_documentFragmentHTMLMarkup = serializeFragment(*documentFragment, SerializedNodes::SubtreeIncludingNode);
+    m_documentFragmentHTMLMarkup = serializeFragment(documentFragment, SerializedNodes::SubtreeIncludingNode);
     ensureReplacementFragment();
     return CompositeEditCommand::willApplyCommand();
 }
@@ -1287,7 +1288,7 @@ void ReplaceSelectionCommand::doApply()
     
     // FIXME: Can this wait until after the operation has been performed?  There doesn't seem to be
     // any work performed after this that queries or uses the typing style.
-    protectedDocument()->selection().clearTypingStyle();
+    document().selection().clearTypingStyle();
 
     // We don't want the destination to end up inside nodes that weren't selected.  To avoid that, we move the
     // position forward without changing the visible position so we're still at the same visible location, but
@@ -1385,7 +1386,10 @@ void ReplaceSelectionCommand::doApply()
 
     if (insertedNodes.isEmpty())
         return;
-    removeUnrenderedTextNodesAtEnds(insertedNodes);
+
+    // removeUnrenderedTextNodesAtEnds can trigger layout, so for performance, only do it when the presence of richly-editable text requires us to.
+    if (isRichlyEditablePosition(insertionPos))
+        removeUnrenderedTextNodesAtEnds(insertedNodes);
 
     if (!handledStyleSpans)
         handleStyleSpans(insertedNodes);
@@ -1407,7 +1411,7 @@ void ReplaceSelectionCommand::doApply()
         RefPtr parent { endBR->parentNode() };
         insertedNodes.willRemoveNode(endBR.get());
         removeNode(*endBR);
-        protectedDocument()->updateLayoutIgnorePendingStylesheets();
+        document().updateLayoutIgnorePendingStylesheets();
         if (RefPtr nodeToRemove = highestNodeToRemoveInPruning(parent.get())) {
             insertedNodes.willRemovePossibleAncestorNode(nodeToRemove.get());
             removeNode(*nodeToRemove);
@@ -1431,7 +1435,7 @@ void ReplaceSelectionCommand::doApply()
         return;
 
     if (m_sanitizeFragment)
-        applyCommandToComposite(SimplifyMarkupCommand::create(protectedDocument(), insertedNodes.firstNodeInserted(), insertedNodes.pastLastLeaf()));
+        applyCommandToComposite(SimplifyMarkupCommand::create(document(), insertedNodes.firstNodeInserted(), insertedNodes.pastLastLeaf()));
 
     // Setup m_startOfInsertedContent and m_endOfInsertedContent. This should be the last two lines of code that access insertedNodes.
     m_startOfInsertedContent = firstPositionInOrBeforeNode(insertedNodes.protectedFirstNodeInserted().get());
@@ -1447,9 +1451,9 @@ void ReplaceSelectionCommand::doApply()
         // We need to handle the case where we need to merge the end
         // but our destination node is inside an inline that is the last in the block.
         // We insert a placeholder before the newly inserted content to avoid being merged into the inline.
-        auto destinationNode = destination.deepEquivalent().protectedDeprecatedNode();
+        RefPtr destinationNode = destination.deepEquivalent().deprecatedNode();
         if (m_shouldMergeEnd && destinationNode != enclosingInline(destinationNode.get()) && enclosingInline(destinationNode.get())->nextSibling())
-            insertNodeBefore(HTMLBRElement::create(protectedDocument()), *refNode);
+            insertNodeBefore(HTMLBRElement::create(document()), *refNode);
         
         // Merging the first paragraph of inserted content with the content that came
         // before the selection that was pasted into would also move content after 
@@ -1460,7 +1464,7 @@ void ReplaceSelectionCommand::doApply()
         // comes after and prevent that from happening.
         VisiblePosition endOfInsertedContent = positionAtEndOfInsertedContent();
         if (startOfParagraph(endOfInsertedContent) == startOfParagraphToMove) {
-            insertNodeAt(HTMLBRElement::create(protectedDocument()), endOfInsertedContent.deepEquivalent());
+            insertNodeAt(HTMLBRElement::create(document()), endOfInsertedContent.deepEquivalent());
             // Mutation events (bug 22634) triggered by inserting the <br> might have removed the content we're about to move
             if (!startOfParagraphToMove.deepEquivalent().anchorNode()->isConnected())
                 return;
@@ -1529,7 +1533,7 @@ void ReplaceSelectionCommand::doApply()
 String ReplaceSelectionCommand::inputEventData() const
 {
     if (isEditingTextAreaOrTextInput())
-        return protectedDocumentFragment()->textContent();
+        return m_documentFragment->textContent();
 
     return CompositeEditCommand::inputEventData();
 }
@@ -1658,7 +1662,7 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
         }
     }
 
-    protectedDocument()->updateLayout();
+    document().updateLayout();
 
     Position startDownstream = startOfInsertedContent.deepEquivalent().downstream();
     RefPtr startNode { startDownstream.computeNodeAfterPosition() };
@@ -1921,32 +1925,64 @@ void ReplaceSelectionCommand::updateDirectionForStartOfInsertedContentIfNeeded(c
     if (editAction != EditAction::Paste && editAction != EditAction::InsertFromDrop)
         return;
 
-    VisiblePosition visibleStartOfInsertedContent { m_startOfInsertedContent };
-    auto firstParagraphRange = makeSimpleRange({ visibleStartOfInsertedContent, endOfParagraph(visibleStartOfInsertedContent) });
-    if (!firstParagraphRange)
-        return;
+    auto startOfInsertedContent = positionAtStartOfInsertedContent();
+    auto endOfInsertedContent = positionAtEndOfInsertedContent();
 
-    auto newDirection = [&] -> std::optional<TextDirection> {
-        if (RefPtr node = insertedNodes.firstNodeInserted(); node && node->usesEffectiveTextDirection())
-            return node->effectiveTextDirection();
+    VisibleSelection originalEndingSelection = endingSelection();
+    bool restoreOriginalEndingSelection = false;
+    bool isFirstParagraph = true;
+    VisiblePosition visibleStartOfParagraph = startOfParagraph(startOfInsertedContent);
+    VisiblePosition visibleEndOfParagraph = endOfParagraph(visibleStartOfParagraph);
+    do {
+        auto paragraphRange = makeSimpleRange({ visibleStartOfParagraph, visibleEndOfParagraph });
+        if (!paragraphRange)
+            break;
 
-        return baseTextDirection(plainText(*firstParagraphRange));
-    }();
+        auto paragraphStart = visibleStartOfParagraph.deepEquivalent();
+        auto paragraphEnd = visibleEndOfParagraph.deepEquivalent();
 
-    if (!newDirection)
-        return;
+        RefPtr startContainer = paragraphStart.containerNode();
+        RefPtr blockContainer = enclosingBlock(startContainer.get());
+        if (!blockContainer)
+            break;
 
-    RefPtr blockContainer = enclosingBlock(m_startOfInsertedContent.protectedContainerNode());
-    if (!blockContainer)
-        return;
+        auto newDirection = [&] -> std::optional<TextDirection> {
+            if (blockContainer->usesEffectiveTextDirection())
+                return blockContainer->effectiveTextDirection();
 
-    if (CheckedPtr renderer = blockContainer->renderer(); !renderer || renderer->writingMode().bidiDirection() == newDirection)
-        return;
+            if (RefPtr firstNode = insertedNodes.firstNodeInserted()) {
+                // This is a workaround to ensure that a single pasted RTL paragraph that doesn't have an explicit direction attribute
+                // but begins with LTR text is still pasted as RTL text. In the future, we should remove this logic and instead use platform
+                // heuristics to determine the writing direction of text — e.g., using `CFAttributedStringGetStatisticalWritingDirections`
+                // on Cocoa platforms.
+                if (isFirstParagraph && firstNode->isComposedTreeDescendantOf(*blockContainer) && firstNode->usesEffectiveTextDirection())
+                    return firstNode->effectiveTextDirection();
+            }
 
-    auto directionValueID = toCSSValueID(*newDirection);
-    Ref style = EditingStyle::create(CSSPropertyDirection, directionValueID);
-    applyStyle(style.ptr(), m_startOfInsertedContent, m_startOfInsertedContent, EditAction::SetBlockWritingDirection, ApplyStylePropertyLevel::ForceBlock);
-    setNodeAttribute(*blockContainer, dirAttr, nameLiteral(directionValueID));
+            return baseTextDirection(plainText(*paragraphRange));
+        }();
+
+        if (!newDirection)
+            break;
+
+        if (CheckedPtr renderer = blockContainer->renderer(); renderer && renderer->writingMode().bidiDirection() != newDirection) {
+            auto directionValueID = toCSSValueID(*newDirection);
+            Ref style = EditingStyle::create(CSSPropertyDirection, directionValueID);
+            applyStyle(style.ptr(), paragraphEnd, paragraphEnd, EditAction::SetBlockWritingDirection, ApplyStylePropertyLevel::ForceBlock);
+            setNodeAttribute(*blockContainer, dirAttr, nameLiteral(directionValueID));
+            restoreOriginalEndingSelection = true;
+        }
+
+        visibleStartOfParagraph = startOfNextParagraph(visibleEndOfParagraph);
+        if (visibleStartOfParagraph == visibleEndOfParagraph)
+            break;
+
+        visibleEndOfParagraph = endOfParagraph(visibleStartOfParagraph);
+        isFirstParagraph = false;
+    } while (visibleStartOfParagraph.isNotNull() && visibleStartOfParagraph < endOfInsertedContent);
+
+    if (restoreOriginalEndingSelection)
+        setEndingSelection(originalEndingSelection);
 }
 
 } // namespace WebCore

@@ -8,6 +8,6 @@
         exception = e;
     }
 
-    if (exception != "ReferenceError: Cannot access uninitialized variable.")
+    if (exception != "ReferenceError: Cannot access 'x' before initialization.")
         throw "FAILED";
 })();

@@ -1,9 +1,3 @@
-CONSOLE MESSAGE: Not allowed to redirect to about:blank due to its scheme
-CONSOLE MESSAGE: Not allowed to redirect to about:blank due to its scheme
-CONSOLE MESSAGE: Not allowed to redirect to about:srcdoc due to its scheme
-CONSOLE MESSAGE: Not allowed to redirect to about:srcdoc due to its scheme
-CONSOLE MESSAGE: Not allowed to redirect to about:nonstandard due to its scheme
-CONSOLE MESSAGE: Not allowed to redirect to about:nonstandard due to its scheme
 
 PASS An iframe with src set to a redirect to about:blank
 PASS An iframe that is navigated to a redirect to about:blank

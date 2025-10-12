@@ -48,6 +48,9 @@
 #import <WebCore/DisabledAdaptations.h>
 #import <WebCore/FileChooser.h>
 #import <WebCore/FloatRect.h>
+#import <WebCore/FocusControllerTypes.h>
+#import <WebCore/FocusOptions.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameDestructionObserverInlines.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/HTMLInputElement.h>
@@ -55,7 +58,7 @@
 #import <WebCore/Icon.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalFrameInlines.h>
-#import <WebCore/NodeInlines.h>
+#import <WebCore/NodeDocument.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/RenderBox.h>
 #import <WebCore/RenderObject.h>
@@ -151,7 +154,7 @@ void WebChromeClientIOS::runOpenPanel(LocalFrame&, FileChooser& chooser)
     };
 
     if (WebThreadIsCurrent()) {
-        RunLoop::protectedMain()->dispatch([this, listener = WTFMove(listener), configuration = retainPtr(configuration)] {
+        RunLoop::mainSingleton().dispatch([this, listener = WTFMove(listener), configuration = retainPtr(configuration)] {
             [[webView() _UIKitDelegateForwarder] webView:webView() runOpenPanelForFileButtonWithResultListener:listener.get() configuration:configuration.get()];
         });
     } else
@@ -363,7 +366,7 @@ void WebChromeClientIOS::webAppOrientationsUpdated()
     [[webView() _UIDelegateForwarder] webViewSupportedOrientationsUpdated:webView()];
 }
 
-void WebChromeClientIOS::focusedElementChanged(Element* element)
+void WebChromeClientIOS::focusedElementChanged(Element* element, LocalFrame*, FocusOptions, BroadcastFocusedElement)
 {
     if (!is<HTMLInputElement>(element))
         return;

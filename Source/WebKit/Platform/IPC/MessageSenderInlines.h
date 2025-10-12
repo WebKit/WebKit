@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include "MessageSender.h"
+#include <wtf/CompletionHandler.h>
 
 namespace IPC {
 
@@ -61,7 +62,7 @@ template<typename MessageType, typename C> inline std::optional<AsyncReplyID> Me
 template<typename MessageType> inline bool MessageSender::sendWithoutUsingIPCConnection(MessageType&& message) const
 {
     static_assert(!MessageType::isSync);
-    auto encoder = makeUniqueRef<IPC::Encoder>(MessageType::name(), messageSenderDestinationID());
+    SUPPRESS_FORWARD_DECL_ARG auto encoder = makeUniqueRef<IPC::Encoder>(MessageType::name(), messageSenderDestinationID());
     message.encode(encoder.get());
 
     return performSendWithoutUsingIPCConnection(WTFMove(encoder));
@@ -101,7 +102,7 @@ template<typename MessageType, typename C> inline bool MessageSender::sendWithAs
             cancelReplyWithoutUsingConnection<MessageType>(WTFMove(completionHandler));
     };
 
-    return performSendWithAsyncReplyWithoutUsingIPCConnection(WTFMove(encoder), WTFMove(asyncHandler));
+    SUPPRESS_FORWARD_DECL_ARG return performSendWithAsyncReplyWithoutUsingIPCConnection(WTFMove(encoder), WTFMove(asyncHandler));
 }
 
 template<typename MessageType> inline bool MessageSender::send(MessageType&& message)

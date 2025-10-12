@@ -6,12 +6,12 @@ PASS Read text response's body as readableStream with mode=undefined
 PASS Read URLSearchParams response's body as readableStream with mode=undefined
 PASS Read array buffer response's body as readableStream with mode=undefined
 PASS Read form data response's body as readableStream with mode=undefined
-FAIL Read blob response's body as readableStream with mode=byob ReadableStreamBYOBReader needs a ReadableByteStreamController
-FAIL Read text response's body as readableStream with mode=byob ReadableStreamBYOBReader needs a ReadableByteStreamController
-FAIL Read URLSearchParams response's body as readableStream with mode=byob ReadableStreamBYOBReader needs a ReadableByteStreamController
-FAIL Read array buffer response's body as readableStream with mode=byob ReadableStreamBYOBReader needs a ReadableByteStreamController
-FAIL Read form data response's body as readableStream with mode=byob ReadableStreamBYOBReader needs a ReadableByteStreamController
+FAIL Read blob response's body as readableStream with mode=byob Invalid mode is specified
+FAIL Read text response's body as readableStream with mode=byob Invalid mode is specified
+FAIL Read URLSearchParams response's body as readableStream with mode=byob Invalid mode is specified
+FAIL Read array buffer response's body as readableStream with mode=byob Invalid mode is specified
+FAIL Read form data response's body as readableStream with mode=byob Invalid mode is specified
 PASS Getting an error Response stream
 PASS Getting a redirect Response stream
-FAIL Reading with offset from Response stream promise_test: Unhandled rejection with value: object "TypeError: ReadableStreamBYOBReader needs a ReadableByteStreamController"
+FAIL Reading with offset from Response stream promise_test: Unhandled rejection with value: object "TypeError: Invalid mode is specified"
 

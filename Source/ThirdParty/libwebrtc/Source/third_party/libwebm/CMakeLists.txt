@@ -1,19 +1,21 @@
-##  Copyright (c) 2015 The WebM project authors. All Rights Reserved.
-##
-##  Use of this source code is governed by a BSD-style license
-##  that can be found in the LICENSE file in the root of the source
-##  tree. An additional intellectual property rights grant can be found
-##  in the file PATENTS.  All contributing project authors may
-##  be found in the AUTHORS file in the root of the source tree.
-cmake_minimum_required(VERSION 3.2)
+#  Copyright (c) 2015 The WebM project authors. All Rights Reserved.
+#
+#  Use of this source code is governed by a BSD-style license
+#  that can be found in the LICENSE file in the root of the source
+#  tree. An additional intellectual property rights grant can be found
+#  in the file PATENTS.  All contributing project authors may
+#  be found in the AUTHORS file in the root of the source tree.
+cmake_minimum_required(VERSION 3.16)
 project(LIBWEBM CXX)
 
 include(GNUInstallDirs)
 include("${CMAKE_CURRENT_SOURCE_DIR}/build/cxx_flags.cmake")
 
-if (NOT BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+else()
   include("${CMAKE_CURRENT_SOURCE_DIR}/build/msvc_runtime.cmake")
-endif ()
+endif()
 
 set(LIBWEBM_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
@@ -24,8 +26,11 @@ option(ENABLE_TESTS "Enables tests." OFF)
 option(ENABLE_IWYU "Enables include-what-you-use support." OFF)
 option(ENABLE_WERROR "Enable warnings as errors." OFF)
 option(ENABLE_WEBM_PARSER "Enables new parser API." OFF)
+option(ENABLE_SAMPLE_PROGRAMS "Enables building sample programs." ON)
 
-if(WIN32 OR CYGWIN OR MSYS)
+if(WIN32
+   OR CYGWIN
+   OR MSYS)
   # Allow use of rand_r() / fdopen() and other POSIX functions.
   require_cxx_flag_nomsvc("-std=gnu++11")
 else()
@@ -39,40 +44,51 @@ add_cxx_preproc_definition("__STDC_LIMIT_MACROS")
 # Set up compiler flags and build properties.
 include_directories("${LIBWEBM_SRC_DIR}")
 
-if (MSVC)
+if(MSVC)
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
   add_cxx_flag_if_supported("/W4")
   # Disable MSVC warnings that suggest making code non-portable.
   add_cxx_flag_if_supported("/wd4996")
-  if (ENABLE_WERROR)
+  if(ENABLE_WERROR)
     add_cxx_flag_if_supported("/WX")
-  endif ()
-else ()
+  endif()
+else()
   add_cxx_flag_if_supported("-Wall")
+  add_cxx_flag_if_supported("-Wc++14-compat")
+  add_cxx_flag_if_supported("-Wc++17-compat")
+  add_cxx_flag_if_supported("-Wc++20-compat")
   add_cxx_flag_if_supported("-Wextra")
   add_cxx_flag_if_supported("-Wnarrowing")
   add_cxx_flag_if_supported("-Wno-deprecated")
   add_cxx_flag_if_supported("-Wshorten-64-to-32")
-  if (ENABLE_WERROR)
+  if(ENABLE_WERROR)
     add_cxx_flag_if_supported("-Werror")
-  endif ()
-endif ()
+  endif()
+endif()
 
 # Source list variables.
 set(dumpvtt_sources "${LIBWEBM_SRC_DIR}/dumpvtt.cc")
 
+set(libwebm_common_public_headers "${LIBWEBM_SRC_DIR}/common/webmids.h")
+
 set(libwebm_common_sources
+    ${libwebm_common_public_headers}
     "${LIBWEBM_SRC_DIR}/common/file_util.cc"
     "${LIBWEBM_SRC_DIR}/common/file_util.h"
     "${LIBWEBM_SRC_DIR}/common/hdr_util.cc"
-    "${LIBWEBM_SRC_DIR}/common/hdr_util.h"
-    "${LIBWEBM_SRC_DIR}/common/webmids.h")
+    "${LIBWEBM_SRC_DIR}/common/hdr_util.h")
 
-set(mkvmuxer_sources
-    "${LIBWEBM_SRC_DIR}/mkvmuxer/mkvmuxer.cc"
+set(mkvmuxer_public_headers
     "${LIBWEBM_SRC_DIR}/mkvmuxer/mkvmuxer.h"
     "${LIBWEBM_SRC_DIR}/mkvmuxer/mkvmuxertypes.h"
-    "${LIBWEBM_SRC_DIR}/mkvmuxer/mkvmuxerutil.cc"
     "${LIBWEBM_SRC_DIR}/mkvmuxer/mkvmuxerutil.h"
+    "${LIBWEBM_SRC_DIR}/mkvmuxer/mkvwriter.h")
+
+set(mkvmuxer_sources
+    ${mkvmuxer_public_headers}
+    "${LIBWEBM_SRC_DIR}/mkvmuxer/mkvmuxer.cc"
+    "${LIBWEBM_SRC_DIR}/mkvmuxer/mkvmuxerutil.cc"
+    "${LIBWEBM_SRC_DIR}/mkvmuxer/mkvwriter.cc"
     "${LIBWEBM_SRC_DIR}/common/webmids.h")
 
 set(mkvmuxer_sample_sources
@@ -81,25 +97,26 @@ set(mkvmuxer_sample_sources
     "${LIBWEBM_SRC_DIR}/sample_muxer_metadata.h")
 
 set(mkvmuxer_tests_sources
-    "${LIBWEBM_SRC_DIR}/testing/mkvmuxer_tests.cc"
+    "${LIBWEBM_SRC_DIR}/testing/mkvmuxer_test.cc"
     "${LIBWEBM_SRC_DIR}/testing/test_util.cc"
     "${LIBWEBM_SRC_DIR}/testing/test_util.h")
 
+set(mkvparser_public_headers "${LIBWEBM_SRC_DIR}/mkvparser/mkvparser.h"
+                             "${LIBWEBM_SRC_DIR}/mkvparser/mkvreader.h")
+
 set(mkvparser_sources
-    "${LIBWEBM_SRC_DIR}/mkvparser/mkvparser.cc"
-    "${LIBWEBM_SRC_DIR}/mkvparser/mkvparser.h"
+    ${mkvparser_public_headers} "${LIBWEBM_SRC_DIR}/mkvparser/mkvparser.cc"
     "${LIBWEBM_SRC_DIR}/mkvparser/mkvreader.cc"
-    "${LIBWEBM_SRC_DIR}/mkvparser/mkvreader.h"
     "${LIBWEBM_SRC_DIR}/common/webmids.h")
 
 set(mkvparser_sample_sources "${LIBWEBM_SRC_DIR}/mkvparser_sample.cc")
 set(mkvparser_tests_sources
-    "${LIBWEBM_SRC_DIR}/testing/mkvparser_tests.cc"
+    "${LIBWEBM_SRC_DIR}/testing/mkvparser_test.cc"
     "${LIBWEBM_SRC_DIR}/testing/test_util.cc"
     "${LIBWEBM_SRC_DIR}/testing/test_util.h")
 
 set(vp9_header_parser_tests_sources
-    "${LIBWEBM_SRC_DIR}/common/vp9_header_parser_tests.cc"
+    "${LIBWEBM_SRC_DIR}/common/vp9_header_parser_test.cc"
     "${LIBWEBM_SRC_DIR}/common/vp9_header_parser.cc"
     "${LIBWEBM_SRC_DIR}/common/vp9_header_parser.h"
     "${LIBWEBM_SRC_DIR}/testing/test_util.cc"
@@ -108,16 +125,11 @@ set(vp9_header_parser_tests_sources
 set(vp9_level_stats_tests_sources
     "${LIBWEBM_SRC_DIR}/common/vp9_header_parser.cc"
     "${LIBWEBM_SRC_DIR}/common/vp9_header_parser.h"
-    "${LIBWEBM_SRC_DIR}/common/vp9_level_stats_tests.cc"
+    "${LIBWEBM_SRC_DIR}/common/vp9_level_stats_test.cc"
     "${LIBWEBM_SRC_DIR}/common/vp9_level_stats.cc"
     "${LIBWEBM_SRC_DIR}/common/vp9_level_stats.h"
     "${LIBWEBM_SRC_DIR}/testing/test_util.cc"
     "${LIBWEBM_SRC_DIR}/testing/test_util.h")
-
-set(vttdemux_sources
-    "${LIBWEBM_SRC_DIR}/vttdemux.cc"
-    "${LIBWEBM_SRC_DIR}/webvtt/webvttparser.cc"
-    "${LIBWEBM_SRC_DIR}/webvtt/webvttparser.h")
 
 set(webm_parser_public_headers
     "${LIBWEBM_SRC_DIR}/webm_parser/include/webm/buffer_reader.h"
@@ -278,8 +290,7 @@ set(webm_parser_tests_sources
     "${LIBWEBM_SRC_DIR}/webm_parser/test_utils/limited_reader.cc"
     "${LIBWEBM_SRC_DIR}/webm_parser/test_utils/limited_reader.h"
     "${LIBWEBM_SRC_DIR}/webm_parser/test_utils/mock_callback.h"
-    "${LIBWEBM_SRC_DIR}/webm_parser/test_utils/parser_test.h"
-    "${LIBWEBM_SRC_DIR}/webm_parser/tests/webm_parser_tests.cc")
+    "${LIBWEBM_SRC_DIR}/webm_parser/test_utils/parser_test.h")
 
 set(webm_info_sources
     "${LIBWEBM_SRC_DIR}/common/indent.cc"
@@ -309,68 +320,57 @@ set(webm2pes_sources "${LIBWEBM_SRC_DIR}/m2ts/webm2pes_main.cc")
 set(webm2pes_tests_sources
     "${LIBWEBM_SRC_DIR}/testing/test_util.cc"
     "${LIBWEBM_SRC_DIR}/testing/test_util.h"
-    "${LIBWEBM_SRC_DIR}/testing/video_frame_tests.cc"
-    "${LIBWEBM_SRC_DIR}/m2ts/tests/webm2pes_tests.cc")
+    "${LIBWEBM_SRC_DIR}/testing/video_frame_test.cc"
+    "${LIBWEBM_SRC_DIR}/m2ts/tests/webm2pes_test.cc")
 set(webm2ts_sources "${LIBWEBM_SRC_DIR}/m2ts/vpxpes2ts_main.cc")
 
+set(webvtt_common_headers "${LIBWEBM_SRC_DIR}/webvtt/vttreader.h"
+                          "${LIBWEBM_SRC_DIR}/webvtt/webvttparser.h")
+
 set(webvtt_common_sources
-    "${LIBWEBM_SRC_DIR}/webvtt/vttreader.cc"
-    "${LIBWEBM_SRC_DIR}/webvtt/vttreader.h"
-    "${LIBWEBM_SRC_DIR}/webvtt/webvttparser.cc"
-    "${LIBWEBM_SRC_DIR}/webvtt/webvttparser.h")
+    ${webvtt_common_headers} "${LIBWEBM_SRC_DIR}/webvtt/vttreader.cc"
+    "${LIBWEBM_SRC_DIR}/webvtt/webvttparser.cc")
+
+set(vttdemux_sources ${webvtt_common_sources} "${LIBWEBM_SRC_DIR}/vttdemux.cc")
 
 # Targets.
 add_library(mkvmuxer OBJECT ${mkvmuxer_sources})
 add_library(mkvparser OBJECT ${mkvparser_sources})
 add_library(webvtt_common OBJECT ${webvtt_common_sources})
 
-add_library(webm ${libwebm_common_sources}
-            $<TARGET_OBJECTS:mkvmuxer>
-            $<TARGET_OBJECTS:mkvparser>)
+add_library(webm ${libwebm_common_sources} $<TARGET_OBJECTS:mkvmuxer>
+                 $<TARGET_OBJECTS:mkvparser>)
 
-if (WIN32)
-  # Use libwebm and libwebm.lib for project and library name on Windows (instead
-  # webm and webm.lib).
-  set_target_properties(webm PROPERTIES PROJECT_LABEL libwebm)
-  set_target_properties(webm PROPERTIES PREFIX lib)
-endif ()
+if(ENABLE_SAMPLE_PROGRAMS)
+  add_executable(mkvparser_sample ${mkvparser_sample_sources})
+  target_link_libraries(mkvparser_sample LINK_PUBLIC webm)
 
-add_executable(mkvparser_sample ${mkvparser_sample_sources})
-target_link_libraries(mkvparser_sample LINK_PUBLIC webm)
+  add_executable(mkvmuxer_sample ${mkvmuxer_sample_sources}
+                                 $<TARGET_OBJECTS:webvtt_common>)
+  target_link_libraries(mkvmuxer_sample LINK_PUBLIC webm)
 
-add_executable(mkvmuxer_sample ${mkvmuxer_sample_sources}
-               $<TARGET_OBJECTS:webvtt_common>)
-target_link_libraries(mkvmuxer_sample LINK_PUBLIC webm)
+  add_executable(dumpvtt ${dumpvtt_sources} $<TARGET_OBJECTS:webvtt_common>)
+  target_link_libraries(dumpvtt LINK_PUBLIC webm)
 
-add_executable(dumpvtt ${dumpvtt_sources} $<TARGET_OBJECTS:webvtt_common>)
-target_link_libraries(dumpvtt LINK_PUBLIC webm)
+  add_executable(vttdemux ${vttdemux_sources})
+  target_link_libraries(vttdemux LINK_PUBLIC webm)
+endif()
 
-add_executable(vttdemux ${vttdemux_sources})
-target_link_libraries(vttdemux LINK_PUBLIC webm)
-
-if (ENABLE_WEBMINFO)
+if(ENABLE_WEBMINFO)
   add_executable(webm_info ${webm_info_sources})
   target_link_libraries(webm_info LINK_PUBLIC webm)
-endif ()
+endif()
 
-if (ENABLE_WEBM_PARSER)
+if(ENABLE_WEBM_PARSER)
   include_directories(webm_parser webm_parser/include)
   add_library(webm_parser OBJECT ${webm_parser_sources})
   target_sources(webm PUBLIC $<TARGET_OBJECTS:webm_parser>)
-  set_target_properties(webm PROPERTIES PUBLIC_HEADER
-                        "${webm_parser_public_headers}")
 
   add_executable(webm_parser_demo ${webm_parser_demo_sources})
   target_link_libraries(webm_parser_demo LINK_PUBLIC webm)
+endif()
 
-  install(TARGETS webm
-          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-          PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/webm)
-endif ()
-
-if (ENABLE_WEBMTS)
+if(ENABLE_WEBMTS)
   add_library(webmts OBJECT ${webmts_sources})
 
   add_executable(webm2pes ${webm2pes_sources} $<TARGET_OBJECTS:webmts>)
@@ -378,49 +378,53 @@ if (ENABLE_WEBMTS)
 
   add_executable(webm2ts ${webm2ts_sources} $<TARGET_OBJECTS:webmts>)
   target_link_libraries(webm2ts LINK_PUBLIC webm)
-endif ()
+endif()
 
-if (ENABLE_TESTS)
-  set(GTEST_SRC_DIR "${LIBWEBM_SRC_DIR}/../googletest" CACHE PATH
-      "Path to Googletest git repository.")
+if(ENABLE_TESTS)
+  set(GTEST_SRC_DIR
+      "${LIBWEBM_SRC_DIR}/../googletest"
+      CACHE PATH "Path to Googletest git repository.")
   # This directory is where libwebm will build googletest dependencies.
   set(GTEST_BUILD_DIR "${CMAKE_BINARY_DIR}/googletest_build")
 
-  if (LIBWEBM_DISABLE_GTEST_CMAKE)
+  if(LIBWEBM_DISABLE_GTEST_CMAKE)
     add_library(gtest STATIC "${GTEST_SRC_DIR}/googletest/src/gtest-all.cc")
+    add_library(gtest_main STATIC
+                "${GTEST_SRC_DIR}/googletest/src/gtest_main.cc")
+    target_link_libraries(gtest_main PUBLIC gtest)
     include_directories("${GTEST_SRC_DIR}/googletest")
-  else ()
+  else()
     add_subdirectory("${GTEST_SRC_DIR}" "${GTEST_BUILD_DIR}")
-  endif ()
+  endif()
   include_directories("${GTEST_SRC_DIR}/googletest/include")
 
   add_executable(mkvmuxer_tests ${mkvmuxer_tests_sources})
-  target_link_libraries(mkvmuxer_tests LINK_PUBLIC gtest webm)
+  target_link_libraries(mkvmuxer_tests LINK_PUBLIC gtest_main webm)
 
   add_executable(mkvparser_tests ${mkvparser_tests_sources})
-  target_link_libraries(mkvparser_tests LINK_PUBLIC gtest webm)
+  target_link_libraries(mkvparser_tests LINK_PUBLIC gtest_main webm)
 
   add_executable(vp9_header_parser_tests ${vp9_header_parser_tests_sources})
-  target_link_libraries(vp9_header_parser_tests LINK_PUBLIC gtest webm)
+  target_link_libraries(vp9_header_parser_tests LINK_PUBLIC gtest_main webm)
 
   add_executable(vp9_level_stats_tests ${vp9_level_stats_tests_sources})
-  target_link_libraries(vp9_level_stats_tests LINK_PUBLIC gtest webm)
+  target_link_libraries(vp9_level_stats_tests LINK_PUBLIC gtest_main webm)
 
-  if (ENABLE_WEBMTS)
+  if(ENABLE_WEBMTS)
     add_executable(webm2pes_tests ${webm2pes_tests_sources}
-                   $<TARGET_OBJECTS:webmts>)
-    target_link_libraries(webm2pes_tests LINK_PUBLIC gtest webm)
-  endif ()
+                                  $<TARGET_OBJECTS:webmts>)
+    target_link_libraries(webm2pes_tests LINK_PUBLIC gtest_main webm)
+  endif()
 
-  if (ENABLE_WEBM_PARSER)
+  if(ENABLE_WEBM_PARSER)
     include_directories("${GTEST_SRC_DIR}/googlemock/include")
     add_executable(webm_parser_tests ${webm_parser_tests_sources})
-    target_link_libraries(webm_parser_tests LINK_PUBLIC gmock gtest webm)
-  endif ()
-endif ()
+    target_link_libraries(webm_parser_tests LINK_PUBLIC gmock gtest_main webm)
+  endif()
+endif()
 
 # Include-what-you-use.
-if (ENABLE_IWYU)
+if(ENABLE_IWYU)
   # Make sure all the tools necessary for IWYU are present.
   find_program(iwyu_path NAMES include-what-you-use)
   find_program(iwyu_tool_path NAMES iwyu_tool.py)
@@ -430,22 +434,43 @@ if (ENABLE_IWYU)
   # PYTHONINTERP_FOUND is empty without explicitly looking for it.
   find_package(PythonInterp)
 
-  if (iwyu_path AND iwyu_tool_path AND PYTHONINTERP_FOUND)
+  if(iwyu_path
+     AND iwyu_tool_path
+     AND PYTHONINTERP_FOUND)
     # Enable compilation command export (needed for iwyu_tool.py)
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
     # Add a custom target to run iwyu across all targets.
-    add_custom_target(iwyu
-                      ALL
-                      COMMAND "${PYTHON_EXECUTABLE}" "${iwyu_tool_path}" -p
-                          "${CMAKE_BINARY_DIR}"
-                      COMMENT "Running include-what-you-use..."
-                      VERBATIM)
-  else ()
+    add_custom_target(
+      iwyu ALL
+      COMMAND "${PYTHON_EXECUTABLE}" "${iwyu_tool_path}" -p
+              "${CMAKE_BINARY_DIR}"
+      COMMENT "Running include-what-you-use..."
+      VERBATIM)
+  else()
     message(STATUS "Ignoring ENABLE_IWYU because reasons:")
     message(STATUS "  iwyu_path=" ${iwyu_path})
     message(STATUS "  iwyu_tool_path=" ${iwyu_tool_path})
     message(STATUS "  PYTHONINTERP_FOUND=" ${PYTHONINTERP_FOUND})
     message(STATUS "  See README.libwebm for more information.")
-  endif ()
-endif ()
+  endif()
+endif()
+
+# webm_parser headers are rooted at webm/.
+set_target_properties(webm PROPERTIES PUBLIC_HEADER
+                                      "${webm_parser_public_headers}")
+install(
+  TARGETS webm
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/webm)
+
+# Install common headers into a subdirectory to avoid breaking nested includes.
+install(FILES ${libwebm_common_public_headers}
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/webm/common)
+# mkvmuxer and mkvparser headers are referenced with their prefix.
+install(FILES ${mkvmuxer_public_headers}
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/webm/mkvmuxer)
+install(FILES ${mkvparser_public_headers}
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/webm/mkvparser)

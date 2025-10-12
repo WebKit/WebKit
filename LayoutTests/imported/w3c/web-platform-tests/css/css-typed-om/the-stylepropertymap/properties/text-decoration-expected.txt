@@ -1,5 +1,5 @@
 
 PASS 'text-decoration' does not support 'underline'
-FAIL 'text-decoration' does not support 'underline dotted #ff3028' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object Undefined]"
-FAIL 'text-decoration' does not support 'green wavy underline' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object Undefined]"
+PASS 'text-decoration' does not support 'underline dotted #ff3028'
+PASS 'text-decoration' does not support 'green wavy underline'
 

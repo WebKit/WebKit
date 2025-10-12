@@ -273,19 +273,26 @@ class BuildbotTestRunner(object):
             print('Setting up buildbot dependencies on the virtualenv ... ')
             # The idea is to install the very same version of buildbot and its
             # dependencies than the ones used for running https://build.webkit.org/about
-            buildbot_version = '2.10.5'
+            is_ews = self._subdir_with_configuration.endswith('ews-build')
+            buildbot_version = '2.10.5' if is_ews else '4.3.0'
+            twisted_version = '21.2.0' if is_ews else '23.10.0'
+            requests_version = '2.21.0' if is_ews else '2.26.0'
+            lz4_version = '1.1.0' if is_ews else '4.3.2'
+            mock_version = '4' if is_ews else '5.2.0'
+            rapidfuzz_version = '2.11.1' if is_ews else '3.4.0'
             pip_cmd = [virtualenv_pip, 'install',
-                       'buildbot=={}'.format(buildbot_version),
-                       'buildbot-console-view=={}'.format(buildbot_version),
-                       'buildbot-grid-view=={}'.format(buildbot_version),
-                       'buildbot-waterfall-view=={}'.format(buildbot_version),
-                       'buildbot-worker=={}'.format(buildbot_version),
-                       'buildbot-www=={}'.format(buildbot_version),
-                       'lz4==1.1.0',
-                       'mock==4',
-                       'rapidfuzz==2.11.1',
-                       'requests==2.21.0',
-                       'twisted==21.2.0']
+                       f'buildbot=={buildbot_version}',
+                       f'buildbot-console-view=={buildbot_version}',
+                       f'buildbot-grid-view=={buildbot_version}',
+                       f'buildbot-waterfall-view=={buildbot_version}',
+                       f'buildbot-worker=={buildbot_version}',
+                       f'buildbot-www=={buildbot_version}',
+                       f'lz4=={lz4_version}',
+                       f'mock=={mock_version}',
+                       f'rapidfuzz=={rapidfuzz_version}',
+                       f'requests=={requests_version}',
+                       f'twisted=={twisted_version}',
+                       'zope.interface==7.0.1']
             pip_process = subprocess.Popen(pip_cmd, cwd=self._base_workdir_temp,
                                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             stdout, stderr = pip_process.communicate()

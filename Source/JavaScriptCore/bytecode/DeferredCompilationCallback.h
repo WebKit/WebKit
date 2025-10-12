@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CompilationResult.h"
-#include "DeferredSourceDump.h"
+#include <JavaScriptCore/CompilationResult.h>
+#include <JavaScriptCore/DeferredSourceDump.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 

@@ -26,6 +26,7 @@
 #if ENABLE(SERVICE_CONTROLS)
 
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakPtr.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {

@@ -25,9 +25,10 @@
 
 #pragma once
 
-#include "ColorComponents.h"
-#include "ColorInterpolationMethod.h"
 #include <CoreGraphics/CoreGraphics.h>
+#include <WebCore/ColorComponents.h>
+#include <WebCore/ColorInterpolationMethod.h>
+#include <WebCore/DestinationColorSpace.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
@@ -62,22 +63,29 @@ private:
 
         class Data : public ThreadSafeRefCounted<Data> {
         public:
-            static Ref<Data> create(ColorInterpolationMethod colorInterpolationMethod, Vector<ColorConvertedToInterpolationColorSpaceStop> stops)
+            static Ref<Data> create(ColorInterpolationMethod colorInterpolationMethod, Vector<ColorConvertedToInterpolationColorSpaceStop> stops, bool firstStopIsSynthetic, bool lastStopIsSynthetic)
             {
-                return adoptRef(*new Data(colorInterpolationMethod, WTFMove(stops)));
+                return adoptRef(*new Data(colorInterpolationMethod, WTFMove(stops), firstStopIsSynthetic, lastStopIsSynthetic));
             }
 
             ColorInterpolationMethod colorInterpolationMethod() const { return m_colorInterpolationMethod; }
             const Vector<ColorConvertedToInterpolationColorSpaceStop>& stops() const { return m_stops; }
 
+            bool firstStopIsSynthetic() const { return m_firstStopIsSynthetic; }
+            bool lastStopIsSynthetic() const { return m_lastStopIsSynthetic; }
+
         private:
-            Data(ColorInterpolationMethod colorInterpolationMethod, Vector<ColorConvertedToInterpolationColorSpaceStop> stops)
+            Data(ColorInterpolationMethod colorInterpolationMethod, Vector<ColorConvertedToInterpolationColorSpaceStop> stops, bool firstStopIsSynthetic, bool lastStopIsSynthetic)
                 : m_colorInterpolationMethod { colorInterpolationMethod }
+                , m_firstStopIsSynthetic(firstStopIsSynthetic)
+                , m_lastStopIsSynthetic(lastStopIsSynthetic)
                 , m_stops { WTFMove(stops) }
             {
             }
 
             ColorInterpolationMethod m_colorInterpolationMethod;
+            bool m_firstStopIsSynthetic { false };
+            bool m_lastStopIsSynthetic { false };
             Vector<ColorConvertedToInterpolationColorSpaceStop> m_stops;
         };
 

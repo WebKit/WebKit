@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/scope/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/scope/document.py
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/scope/util.py
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/scope/worker.py

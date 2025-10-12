@@ -13,8 +13,8 @@
 
 #include <stddef.h>  // for size_t
 
+#include <cstdint>
 #include <memory>
-#include <string>
 
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/neteq/neteq.h"
@@ -43,7 +43,7 @@ class AcmReceiveTestOldApi {
                        AudioSink* audio_sink,
                        int output_freq_hz,
                        NumOutputChannels exptected_output_channels,
-                       rtc::scoped_refptr<AudioDecoderFactory> decoder_factory);
+                       scoped_refptr<AudioDecoderFactory> decoder_factory);
   virtual ~AcmReceiveTestOldApi();
 
   AcmReceiveTestOldApi(const AcmReceiveTestOldApi&) = delete;

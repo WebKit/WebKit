@@ -85,7 +85,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             return;
 
         // COMPATIBILITY (iOS 13): Timeline.enable did not exist yet.
-        // COMPATIBILITY (iOS X.Y, macOS X.Y): `Timeline.enable` did not exist yet for Worker targets.
+        // COMPATIBILITY (iOS 26.0, macOS 26.0): `Timeline.enable` did not exist yet for Worker targets.
         if (target.hasCommand("Timeline.enable"))
             target.TimelineAgent.enable();
 
@@ -270,7 +270,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         for (let target of WI.targets) {
             // COMPATIBILITY (iOS 13): Timeline.disable did not exist yet.
-            // COMPATIBILITY (iOS X.Y, macOS X.Y): `Timeline.disable` did not exist yet for Worker targets.
+            // COMPATIBILITY (iOS 26.0, macOS 26.0): `Timeline.disable` did not exist yet for Worker targets.
             if (target.hasCommand("Timeline.disable"))
                 target.TimelineAgent.disable();
         }
@@ -1426,7 +1426,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         let enabledTimelineTypes = this.enabledTimelineTypes;
 
         for (let target of targets) {
-            // COMPATIBILITY (iOS X.Y, macOS X.Y): `Timeline.setInstruments` did not exist yet for Worker targets.
+            // COMPATIBILITY (iOS 26.0, macOS 26.0): `Timeline.setInstruments` did not exist yet for Worker targets.
             if (!target.hasCommand("Timeline.setInstruments"))
                 continue;
 

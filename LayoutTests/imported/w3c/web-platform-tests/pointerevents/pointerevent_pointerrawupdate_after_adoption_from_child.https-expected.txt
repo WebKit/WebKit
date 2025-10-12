@@ -1,0 +1,4 @@
+
+
+FAIL `pointerrawupdate` events should be fired after the element is moved from the parent doc to a child doc assert_true: expected true got false
+

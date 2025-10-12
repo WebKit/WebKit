@@ -10,6 +10,11 @@
 
 #include "modules/audio_mixer/audio_frame_manipulator.h"
 
+#include <cstddef>
+#include <cstdint>
+
+#include "api/audio/audio_frame.h"
+#include "api/audio/channel_layout.h"
 #include "audio/utility/audio_frame_operations.h"
 #include "audio/utility/channel_mixer.h"
 #include "rtc_base/checks.h"

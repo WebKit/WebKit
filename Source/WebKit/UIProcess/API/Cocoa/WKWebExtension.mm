@@ -36,6 +36,7 @@
 #import "WKWebExtensionMatchPatternInternal.h"
 #import "WebExtension.h"
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 NSErrorDomain const WKWebExtensionErrorDomain = @"WKWebExtensionErrorDomain";
 
@@ -52,7 +53,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     // FIXME: <https://webkit.org/b/276194> Make the WebExtension class load data on a background thread.
     // Use an async dispatch in the meantime to prevent clients from expecting synchronous results.
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         RefPtr<API::Error> error;
         Ref result = WebKit::WebExtension::create(appExtensionBundle, nil, error);
 
@@ -73,7 +74,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     // FIXME: <https://webkit.org/b/276194> Make the WebExtension class load data on a background thread.
     // Use an async dispatch in the meantime to prevent clients from expecting synchronous results.
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         RefPtr<API::Error> error;
         Ref result = WebKit::WebExtension::create(nil, resourceBaseURL, error);
 
@@ -126,7 +127,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     return [self initWithAppExtensionBundle:nil resourceBaseURL:resourceBaseURL error:error];
 }
 
-- (instancetype)initWithAppExtensionBundle:(nullable NSBundle *)appExtensionBundle resourceBaseURL:(nullable NSURL *)resourceBaseURL error:(NSError **)error
+- (instancetype)initWithAppExtensionBundle:(NSBundle *)appExtensionBundle resourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
 {
     NSParameterAssert(appExtensionBundle || resourceBaseURL);
 
@@ -407,7 +408,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     return [self initWithAppExtensionBundle:nil resourceBaseURL:resourceBaseURL error:error];
 }
 
-- (instancetype)initWithAppExtensionBundle:(nullable NSBundle *)bundle resourceBaseURL:(nullable NSURL *)resourceBaseURL error:(NSError **)error
+- (instancetype)initWithAppExtensionBundle:(NSBundle *)bundle resourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
 {
     if (error)
         *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil];

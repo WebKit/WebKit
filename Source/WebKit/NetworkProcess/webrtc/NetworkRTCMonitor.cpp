@@ -31,6 +31,7 @@
 #include "Connection.h"
 #include "Logging.h"
 #include "NetworkRTCProvider.h"
+#include "NetworkRTCSharedMonitor.h"
 #include "WebRTCMonitorMessages.h"
 #include <WebCore/Timer.h>
 #include <ifaddrs.h>
@@ -48,164 +49,21 @@
 #if PLATFORM(COCOA)
 #include <pal/spi/cocoa/NetworkSPI.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/darwin/DispatchExtras.h>
 #endif
 
 namespace WebKit {
 
 #define RTC_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - NetworkRTCMonitor::" fmt, this, ##__VA_ARGS__)
 
-class CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator, WTF::DestructionThread::MainRunLoop> {
-public:
-    using Callback = CompletionHandler<void(RTCNetwork::IPAddress&&, RTCNetwork::IPAddress&&, HashMap<String, RTCNetwork>&&)>;
-    static Ref<CallbackAggregator> create(Callback&& callback) { return adoptRef(*new CallbackAggregator(WTFMove(callback))); }
-
-    ~CallbackAggregator()
-    {
-        m_callback(WTFMove(m_ipv4), WTFMove(m_ipv6), WTFMove(m_networkMap));
-    }
-
-    void setIPv4(RTCNetwork::IPAddress&& ipv4) { m_ipv4 = WTFMove(ipv4); }
-    void setIPv6(RTCNetwork::IPAddress&& ipv6) { m_ipv6 = WTFMove(ipv6); }
-    void setNetworkMap(HashMap<String, RTCNetwork>&& networkMap) { m_networkMap = crossThreadCopy(WTFMove(networkMap)); }
-
-private:
-    explicit CallbackAggregator(Callback&& callback)
-        : m_callback(WTFMove(callback))
-    {
-    }
-
-    Callback m_callback;
-
-    HashMap<String, RTCNetwork> m_networkMap;
-    RTCNetwork::IPAddress m_ipv4;
-    RTCNetwork::IPAddress m_ipv6;
-};
-
-class NetworkManager {
-public:
-    NetworkManager();
-
-    void addListener(NetworkRTCMonitor&);
-    void removeListener(NetworkRTCMonitor&);
-
-    const RTCNetwork::IPAddress& ipv4() const { return m_ipv4; }
-    const RTCNetwork::IPAddress& ipv6()  const { return m_ipv6; }
-
-    rtc::AdapterType adapterTypeFromInterfaceName(const char*) const;
-
-private:
-    void start();
-    void stop();
-
-    void updateNetworks();
-    void updateNetworksOnQueue();
-#if PLATFORM(COCOA)
-    void updateNetworksFromPath(nw_path_t);
-#endif
-
-    void onGatheredNetworks(RTCNetwork::IPAddress&&, RTCNetwork::IPAddress&&, HashMap<String, RTCNetwork>&&);
-
-    WeakHashSet<NetworkRTCMonitor> m_observers;
-
-    Ref<ConcurrentWorkQueue> m_queue;
-
-    bool m_didReceiveResults { false };
-    Vector<RTCNetwork> m_networkList;
-    RTCNetwork::IPAddress m_ipv4;
-    RTCNetwork::IPAddress m_ipv6;
-    int m_networkLastIndex { 0 };
-    HashMap<String, RTCNetwork> m_networkMap;
-#if PLATFORM(COCOA)
-    RetainPtr<nw_path_monitor> m_nwMonitor;
-    HashMap<String, rtc::AdapterType> m_adapterTypes;
-#else
-    WebCore::Timer m_updateNetworksTimer;
-#endif
-};
-
-static NetworkManager& networkManager()
-{
-    static NeverDestroyed<NetworkManager> networkManager;
-    return networkManager.get();
-}
-
-NetworkManager::NetworkManager()
-    : m_queue(ConcurrentWorkQueue::create("RTC Network Manager"_s))
-#if PLATFORM(COCOA)
-    , m_nwMonitor(adoptCF(nw_path_monitor_create()))
-#else
-    , m_updateNetworksTimer([] { networkManager().updateNetworks(); })
-#endif
-{
-#if PLATFORM(COCOA)
-    nw_path_monitor_set_queue(m_nwMonitor.get(), dispatch_get_main_queue());
-    nw_path_monitor_set_update_handler(m_nwMonitor.get(), makeBlockPtr([](nw_path_t path) {
-        networkManager().updateNetworksFromPath(path);
-    }).get());
-#endif
-}
-
-void NetworkManager::addListener(NetworkRTCMonitor& monitor)
-{
-    if (m_didReceiveResults)
-        monitor.onNetworksChanged(m_networkList, m_ipv4, m_ipv6);
-
-    bool shouldStart = m_observers.isEmptyIgnoringNullReferences();
-    m_observers.add(monitor);
-    if (!shouldStart)
-        return;
-
-    RELEASE_LOG(WebRTC, "NetworkManagerWrapper startUpdating");
-
-#if PLATFORM(COCOA)
-    nw_path_monitor_start(m_nwMonitor.get());
-#else
-    updateNetworks();
-    m_updateNetworksTimer.startRepeating(2_s);
-#endif
-}
-
-void NetworkManager::removeListener(NetworkRTCMonitor& monitor)
-{
-    m_observers.remove(monitor);
-    if (!m_observers.isEmptyIgnoringNullReferences())
-        return;
-
-    RELEASE_LOG(WebRTC, "NetworkManagerWrapper stopUpdating");
-#if PLATFORM(COCOA)
-    nw_path_monitor_cancel(m_nwMonitor.get());
-#else
-    m_updateNetworksTimer.stop();
-#endif
-}
-
 static std::optional<std::pair<RTCNetwork::InterfaceAddress, RTCNetwork::IPAddress>> addressFromInterface(const struct ifaddrs& interface)
 {
     RTCNetwork::IPAddress address { *interface.ifa_addr };
     RTCNetwork::IPAddress mask { *interface.ifa_netmask };
-    return std::make_pair(RTCNetwork::InterfaceAddress { address, rtc::IPV6_ADDRESS_FLAG_NONE }, mask);
+    return std::make_pair(RTCNetwork::InterfaceAddress { address, webrtc::IPV6_ADDRESS_FLAG_NONE }, mask);
 }
 
-#if PLATFORM(COCOA)
-static rtc::AdapterType interfaceAdapterType(nw_interface_t interface)
-{
-    switch (nw_interface_get_type(interface)) {
-    case nw_interface_type_other:
-        return rtc::ADAPTER_TYPE_VPN;
-    case nw_interface_type_wifi:
-        return rtc::ADAPTER_TYPE_WIFI;
-    case nw_interface_type_cellular:
-        return rtc::ADAPTER_TYPE_CELLULAR;
-    case nw_interface_type_wired:
-        return rtc::ADAPTER_TYPE_ETHERNET;
-    case nw_interface_type_loopback:
-        return rtc::ADAPTER_TYPE_LOOPBACK;
-    }
-    return rtc::ADAPTER_TYPE_UNKNOWN;
-}
-#endif
-
-static HashMap<String, RTCNetwork> gatherNetworkMap()
+HashMap<String, RTCNetwork> NetworkRTCMonitor::gatherNetworkMap()
 {
     struct ifaddrs* interfaces;
     int error = getifaddrs(&interfaces);
@@ -233,14 +91,14 @@ static HashMap<String, RTCNetwork> gatherNetworkMap()
         if (auto* address = dynamicCastToIPV6SocketAddress(*iterator->ifa_addr))
             scopeID = address->sin6_scope_id;
 
-        auto prefixLength = rtc::CountIPMaskBits(address->second.rtcAddress());
+        auto prefixLength = webrtc::CountIPMaskBits(address->second.rtcAddress());
 
         auto name = unsafeSpan(iterator->ifa_name);
         auto prefixString = address->second.rtcAddress().ToString();
         auto networkKey = makeString(name, "-"_s, prefixLength, "-"_s, std::span { prefixString });
 
         networkMap.ensure(networkKey, [&] {
-            auto interfaceType = networkManager().adapterTypeFromInterfaceName(iterator->ifa_name);
+            auto interfaceType = NetworkRTCSharedMonitor::singleton().adapterTypeFromInterfaceName(iterator->ifa_name);
             return RTCNetwork { name, networkKey.utf8().span(), address->second, prefixLength, interfaceType, 0, 0, true, false, scopeID, { } };
         }).iterator->value.ips.append(address->first);
     }
@@ -309,7 +167,7 @@ static std::optional<RTCNetwork::IPAddress> getSocketLocalAddress(int socket, bo
     return RTCNetwork::IPAddress { localAddress };
 }
 
-static std::optional<RTCNetwork::IPAddress> getDefaultIPAddress(bool useIPv4)
+std::optional<RTCNetwork::IPAddress> NetworkRTCMonitor::getDefaultIPAddress(bool useIPv4)
 {
     // FIXME: Use nw API for Cocoa platforms.
     int socket = ::socket(useIPv4 ? AF_INET : AF_INET6, SOCK_DGRAM, 0);
@@ -328,63 +186,17 @@ static std::optional<RTCNetwork::IPAddress> getDefaultIPAddress(bool useIPv4)
     return getSocketLocalAddress(socket, useIPv4);
 }
 
-rtc::AdapterType NetworkManager::adapterTypeFromInterfaceName(const char* interfaceName) const
-{
-#if PLATFORM(COCOA)
-    auto iterator = m_adapterTypes.find(String::fromUTF8(interfaceName));
-    return iterator != m_adapterTypes.end() ? iterator->value : rtc::ADAPTER_TYPE_UNKNOWN;
-#else
-    return rtc::GetAdapterTypeFromName(interfaceName);
-#endif
-}
-
-void NetworkManager::updateNetworks()
-{
-    auto aggregator = CallbackAggregator::create([] (auto&& ipv4, auto&& ipv6, auto&& networkList) mutable {
-        networkManager().onGatheredNetworks(WTFMove(ipv4), WTFMove(ipv6), WTFMove(networkList));
-    });
-    Ref protectedQueue = m_queue;
-    protectedQueue->dispatch([aggregator] {
-        bool useIPv4 = true;
-        if (auto address = getDefaultIPAddress(useIPv4))
-            aggregator->setIPv4(WTFMove(*address));
-    });
-    protectedQueue->dispatch([aggregator] {
-        bool useIPv4 = false;
-        if (auto address = getDefaultIPAddress(useIPv4))
-            aggregator->setIPv6(WTFMove(*address));
-    });
-    protectedQueue->dispatch([aggregator] {
-        aggregator->setNetworkMap(gatherNetworkMap());
-    });
-}
-
-#if PLATFORM(COCOA)
-void NetworkManager::updateNetworksFromPath(nw_path_t path)
-{
-    auto status = nw_path_get_status(path);
-    if (status != nw_path_status_satisfied && status != nw_path_status_satisfiable)
-        return;
-
-    nw_path_enumerate_interfaces(path, makeBlockPtr([](nw_interface_t interface) -> bool {
-        networkManager().m_adapterTypes.set(String::fromUTF8(nw_interface_get_name(interface)), interfaceAdapterType(interface));
-        return true;
-    }).get());
-    updateNetworks();
-}
-#endif
-
-static bool isEqual(const RTCNetwork::InterfaceAddress& a, const RTCNetwork::InterfaceAddress& b)
+bool NetworkRTCMonitor::isEqual(const RTCNetwork::InterfaceAddress& a, const RTCNetwork::InterfaceAddress& b)
 {
     return a.rtcAddress() == b.rtcAddress();
 }
 
-static bool isEqual(const RTCNetwork::IPAddress& a, const RTCNetwork::IPAddress& b)
+bool NetworkRTCMonitor::isEqual(const RTCNetwork::IPAddress& a, const RTCNetwork::IPAddress& b)
 {
     return a.rtcAddress() == b.rtcAddress();
 }
 
-static bool isEqual(const Vector<RTCNetwork::InterfaceAddress>& a, const Vector<RTCNetwork::InterfaceAddress>& b)
+bool NetworkRTCMonitor::isEqual(const Vector<RTCNetwork::InterfaceAddress>& a, const Vector<RTCNetwork::InterfaceAddress>& b)
 {
     if (a.size() != b.size())
         return false;
@@ -396,72 +208,23 @@ static bool isEqual(const Vector<RTCNetwork::InterfaceAddress>& a, const Vector<
     return true;
 }
 
-static bool hasNetworkChanged(const RTCNetwork& a, const RTCNetwork& b)
+bool NetworkRTCMonitor::hasNetworkChanged(const RTCNetwork& a, const RTCNetwork& b)
 {
     return !isEqual(a.prefix, b.prefix) || a.prefixLength != b.prefixLength || a.type != b.type || a.scopeID != b.scopeID || !isEqual(a.ips, b.ips);
 }
 
-static bool sortNetworks(const RTCNetwork& a, const RTCNetwork& b)
+bool NetworkRTCMonitor::sortNetworks(const RTCNetwork& a, const RTCNetwork& b)
 {
     if (a.type != b.type)
         return a.type < b.type;
 
-    int precedenceA = rtc::IPAddressPrecedence(a.ips[0].rtcAddress());
-    int precedenceB = rtc::IPAddressPrecedence(b.ips[0].rtcAddress());
+    int precedenceA = webrtc::IPAddressPrecedence(a.ips[0].rtcAddress());
+    int precedenceB = webrtc::IPAddressPrecedence(b.ips[0].rtcAddress());
 
     if (precedenceA != precedenceB)
         return precedenceA < precedenceB;
 
     return codePointCompare(StringView { a.description.span() }, StringView { b.description.span() }) < 0;
-}
-
-void NetworkManager::onGatheredNetworks(RTCNetwork::IPAddress&& ipv4, RTCNetwork::IPAddress&& ipv6, HashMap<String, RTCNetwork>&& networkMap)
-{
-    if (!m_didReceiveResults) {
-        m_didReceiveResults = true;
-        m_networkMap = WTFMove(networkMap);
-        m_ipv4 = WTFMove(ipv4);
-        m_ipv6 = WTFMove(ipv6);
-
-        for (auto& network : m_networkMap.values())
-            network.id = ++m_networkLastIndex;
-    } else {
-        bool didChange = networkMap.size() != networkMap.size();
-        for (auto& keyValue : networkMap) {
-            auto iterator = m_networkMap.find(keyValue.key);
-            bool isFound = iterator != m_networkMap.end();
-            keyValue.value.id = isFound ? iterator->value.id : ++m_networkLastIndex;
-            didChange |= !isFound || hasNetworkChanged(keyValue.value, iterator->value);
-        }
-        if (!didChange) {
-            for (auto& keyValue : m_networkMap) {
-                if (!networkMap.contains(keyValue.key)) {
-                    didChange = true;
-                    break;
-                }
-            }
-        }
-        if (!didChange && (ipv4.isUnspecified() || isEqual(ipv4, m_ipv4)) && (ipv6.isUnspecified() || isEqual(ipv6, m_ipv6)))
-            return;
-
-        m_networkMap = WTFMove(networkMap);
-        if (!ipv4.isUnspecified())
-            m_ipv4 = WTFMove(ipv4);
-        if (!ipv6.isUnspecified())
-            m_ipv6 = WTFMove(ipv6);
-    }
-    RELEASE_LOG(WebRTC, "NetworkManagerWrapper::onGatheredNetworks - networks changed");
-
-    auto networkList = copyToVector(m_networkMap.values());
-    std::ranges::sort(networkList, sortNetworks);
-
-    int preference = std::max(127zu, networkList.size());
-    for (auto& network : networkList)
-        network.preference = preference--;
-
-    m_observers.forEach([this](auto& observer) {
-        Ref { observer }->onNetworksChanged(m_networkList, m_ipv4, m_ipv6);
-    });
 }
 
 NetworkRTCMonitor::NetworkRTCMonitor(NetworkRTCProvider& rtcProvider)
@@ -471,6 +234,7 @@ NetworkRTCMonitor::NetworkRTCMonitor(NetworkRTCProvider& rtcProvider)
 
 NetworkRTCMonitor::~NetworkRTCMonitor()
 {
+    NetworkRTCSharedMonitor::singleton().removeListener(*this);
 }
 
 NetworkRTCProvider& NetworkRTCMonitor::rtcProvider()
@@ -480,24 +244,28 @@ NetworkRTCProvider& NetworkRTCMonitor::rtcProvider()
 
 const RTCNetwork::IPAddress& NetworkRTCMonitor::ipv4() const
 {
-    return networkManager().ipv4();
+    return NetworkRTCSharedMonitor::singleton().ipv4();
 }
 
 const RTCNetwork::IPAddress& NetworkRTCMonitor::ipv6()  const
 {
-    return networkManager().ipv6();
+    return NetworkRTCSharedMonitor::singleton().ipv6();
 }
 
 void NetworkRTCMonitor::startUpdatingIfNeeded()
 {
-    RTC_RELEASE_LOG("startUpdatingIfNeeded m_isStarted=%d", m_isStarted);
-    networkManager().addListener(*this);
+#if ASSERT_ENABLED
+    m_isStarted = true;
+#endif
+    NetworkRTCSharedMonitor::singleton().addListener(*this);
 }
 
 void NetworkRTCMonitor::stopUpdating()
 {
-    RTC_RELEASE_LOG("stopUpdating");
-    networkManager().removeListener(*this);
+#if ASSERT_ENABLED
+    m_isStarted = false;
+#endif
+    NetworkRTCSharedMonitor::singleton().removeListener(*this);
 }
 
 void NetworkRTCMonitor::onNetworksChanged(const Vector<RTCNetwork>& networkList, const RTCNetwork::IPAddress& ipv4, const RTCNetwork::IPAddress& ipv6)
@@ -515,6 +283,12 @@ void NetworkRTCMonitor::ref()
 void NetworkRTCMonitor::deref()
 {
     m_rtcProvider->deref();
+}
+
+std::optional<SharedPreferencesForWebProcess> NetworkRTCMonitor::sharedPreferencesForWebProcess(IPC::Connection& connection) const
+{
+    Ref protectedProvider = m_rtcProvider.get();
+    return protectedProvider->sharedPreferencesForWebProcess(connection);
 }
 
 } // namespace WebKit

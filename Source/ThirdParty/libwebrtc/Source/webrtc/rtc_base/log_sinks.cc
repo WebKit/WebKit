@@ -10,15 +10,16 @@
 
 #include "rtc_base/log_sinks.h"
 
-#include <string.h>
-
 #include <cstdio>
+#include <cstring>
 #include <string>
 
 #include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/file_rotating_stream.h"
+#include "rtc_base/logging.h"
 
-namespace rtc {
+namespace webrtc {
 
 FileRotatingLogSink::FileRotatingLogSink(absl::string_view log_dir_path,
                                          absl::string_view log_prefix,
@@ -83,4 +84,4 @@ CallSessionFileRotatingLogSink::CallSessionFileRotatingLogSink(
 
 CallSessionFileRotatingLogSink::~CallSessionFileRotatingLogSink() {}
 
-}  // namespace rtc
+}  // namespace webrtc

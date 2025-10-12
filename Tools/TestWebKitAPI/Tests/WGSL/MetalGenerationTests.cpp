@@ -79,7 +79,16 @@ using __UnpackedType = typename __UnpackedTypeImpl<T>::Type;
 template<typename T>
 using __PackedType = typename __PackedTypeImpl<T>::Type;
 
-[[fragment]] vec<float, 4> function0()
+struct __function0_FragmentOutput {
+    vec<float, 4> __value [[color(0)]];
+
+    template<typename T>
+    __function0_FragmentOutput(T value)
+        : __value(value)
+    { }
+};
+
+[[fragment]] __function0_FragmentOutput function0()
 {
     return vec<float, 4>(1., 0., 0., 1.);
 }

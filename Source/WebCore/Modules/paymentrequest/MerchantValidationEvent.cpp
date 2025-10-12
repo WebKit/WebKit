@@ -84,7 +84,7 @@ ExceptionOr<void> MerchantValidationEvent::complete(Ref<DOMPromise>&& merchantSe
     if (m_isCompleted)
         return Exception { ExceptionCode::InvalidStateError };
 
-    auto exception = downcast<PaymentRequest>(target())->completeMerchantValidation(*this, WTFMove(merchantSessionPromise));
+    auto exception = downcast<PaymentRequest>(protectedTarget())->completeMerchantValidation(*this, WTFMove(merchantSessionPromise));
     if (exception.hasException())
         return exception.releaseException();
 

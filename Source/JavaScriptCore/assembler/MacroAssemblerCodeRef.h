@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ExecutableMemoryHandle.h"
-#include "JSCPtrTag.h"
+#include <JavaScriptCore/ExecutableMemoryHandle.h>
+#include <JavaScriptCore/JSCPtrTag.h>
 #include <wtf/CodePtr.h>
 #include <wtf/DataLog.h>
 #include <wtf/PrintStream.h>

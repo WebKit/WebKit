@@ -1719,6 +1719,18 @@ private:
             break;
         }
 
+        case RegExpSearch: {
+            fixEdge<KnownCellUse>(node->child1());
+            if (m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node))
+                addRegExpSearchPrimordialChecks(node->child2().node());
+            else
+                m_insertionSet.insertNode(m_indexInBlock, SpecNone, ForceOSRExit, node->origin);
+            fixEdge<RegExpObjectUse>(node->child2());
+            if (node->child3()->shouldSpeculateString())
+                fixEdge<StringUse>(node->child3());
+            break;
+        }
+
         case RegExpMatchFast: {
             fixEdge<KnownCellUse>(node->child1());
             fixEdge<RegExpObjectUse>(node->child2());
@@ -1744,16 +1756,15 @@ private:
             }
 
             if (node->child2()->shouldSpeculateString()) {
-                m_insertionSet.insertNode(
-                    m_indexInBlock, SpecNone, Check, node->origin,
-                    Edge(node->child2().node(), StringUse));
                 fixEdge<StringUse>(node->child2());
-            } else if (op == StringReplace || op == StringReplaceAll) {
+                break;
+            }
+
+            if (op == StringReplace || op == StringReplaceAll) {
                 if (node->child2()->shouldSpeculateRegExpObject() && m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node))
                     addStringReplacePrimordialChecks(node->child2().node());
                 else 
-                    m_insertionSet.insertNode(
-                        m_indexInBlock, SpecNone, ForceOSRExit, node->origin);
+                    m_insertionSet.insertNode(m_indexInBlock, SpecNone, ForceOSRExit, node->origin);
             }
 
             if (node->child1()->shouldSpeculateString()
@@ -1963,7 +1974,7 @@ private:
             
             for (unsigned i = m_graph.varArgNumChildren(node); i--;) {
                 node->setIndexingType(
-                    leastUpperBoundOfIndexingTypeAndType(
+                    leastUpperBoundOfIndexingTypeAndTypeForSpeculation(
                         node->indexingType(), m_graph.varArgChild(node, i)->prediction()));
             }
             switch (node->indexingType()) {
@@ -2053,11 +2064,6 @@ private:
             break;
         }
 
-        case NewArrayWithConstantSize: {
-            watchHavingABadTime(node);
-            break;
-        }
-
         case NewArrayWithSpecies: {
             ArrayMode arrayMode = node->arrayMode().refine(m_graph, node, node->child2()->prediction(), ArrayMode::unusedIndexSpeculatedType);
             node->setArrayMode(arrayMode);
@@ -2100,15 +2106,32 @@ private:
             fixEdge<KnownCellUse>(node->child1());
             break;
         }
-            
-        case GetClosureVar:
+
+        case GetClosureVar: {
+            fixEdge<KnownCellUse>(node->child1());
+            attemptToMakeDoubleResultForGet(node);
+            break;
+        }
+
+        case GetGlobalVar:
+        case GetGlobalLexicalVariable: {
+            attemptToMakeDoubleResultForGet(node);
+            break;
+        }
+
         case GetFromArguments:
         case GetInternalField: {
             fixEdge<KnownCellUse>(node->child1());
             break;
         }
 
-        case PutClosureVar:
+        case PutClosureVar: {
+            fixEdge<KnownCellUse>(node->child1());
+            if (!attemptToMakeDoubleRepForPut(node, node->child2()))
+                speculateForBarrier(node->child2());
+            break;
+        }
+
         case PutToArguments:
         case PutInternalField: {
             fixEdge<KnownCellUse>(node->child1());
@@ -2398,12 +2421,19 @@ private:
                 fixEdge<Int32Use>(node->child2());
             break;
         }
-            
-        case GetByOffset:
+
         case GetGetterSetterByOffset: {
             if (!node->child1()->hasStorageResult())
                 fixEdge<KnownCellUse>(node->child1());
             fixEdge<KnownCellUse>(node->child2());
+            break;
+        }
+
+        case GetByOffset: {
+            if (!node->child1()->hasStorageResult())
+                fixEdge<KnownCellUse>(node->child1());
+            fixEdge<KnownCellUse>(node->child2());
+            attemptToMakeDoubleResultForGet(node);
             break;
         }
             
@@ -2416,7 +2446,8 @@ private:
             if (!node->child1()->hasStorageResult())
                 fixEdge<KnownCellUse>(node->child1());
             fixEdge<KnownCellUse>(node->child2());
-            speculateForBarrier(node->child3());
+            if (!attemptToMakeDoubleRepForPut(node, node->child3()))
+                speculateForBarrier(node->child3());
             break;
         }
             
@@ -2628,8 +2659,11 @@ private:
         case Int52Constant:
         case Identity: // This should have been cleaned up.
         case BooleanToNumber:
+        case NewArrayWithButterfly:
+        case NewButterflyWithSize:
         case PhantomNewObject:
-        case PhantomNewArrayWithConstantSize:
+        case PhantomNewButterflyWithSize:
+        case PhantomNewArrayWithButterfly:
         case PhantomNewFunction:
         case PhantomNewGeneratorFunction:
         case PhantomNewAsyncGeneratorFunction:
@@ -2651,7 +2685,7 @@ private:
         case CheckStructureOrEmpty:
         case CheckArrayOrEmpty:
         case MaterializeNewObject:
-        case MaterializeNewArrayWithConstantSize:
+        case MaterializeNewArrayWithButterfly:
         case MaterializeCreateActivation:
         case MaterializeNewInternalFieldObject:
         case PutStack:
@@ -2673,7 +2707,8 @@ private:
 
         case PutGlobalVariable: {
             fixEdge<CellUse>(node->child1());
-            speculateForBarrier(node->child2());
+            if (!attemptToMakeDoubleRepForPut(node, node->child2()))
+                speculateForBarrier(node->child2());
             break;
         }
 
@@ -3305,6 +3340,19 @@ private:
             break;
         }
 
+        case NumberIsSafeInteger: {
+            if (node->child1()->shouldSpeculateInt32()) {
+                insertCheck<Int32Use>(node->child1().node());
+                m_graph.convertToConstant(node, jsBoolean(true));
+                break;
+            }
+            if (node->child1()->shouldSpeculateNumber()) {
+                fixEdge<DoubleRepUse>(node->child1());
+                break;
+            }
+            break;
+        }
+
         case SetCallee:
             fixEdge<CellUse>(node->child1());
             break;
@@ -3418,8 +3466,6 @@ private:
         case GetArgument:
         case Flush:
         case PhantomLocal:
-        case GetGlobalVar:
-        case GetGlobalLexicalVariable:
         case NotifyWrite:
         case DirectCall:
         case CheckTypeInfoFlags:
@@ -3436,6 +3482,7 @@ private:
         case TailCallForwardVarargs:
         case TailCallForwardVarargsInlinedCaller:
         case CallWasm:
+        case TailCallInlinedCallerWasm:
         case ProfileControlFlow:
         case NewObject:
         case NewGenerator:
@@ -3502,6 +3549,9 @@ private:
         case CallCustomAccessorSetter:
         case MultiGetByVal:
         case MultiPutByVal:
+        case ResolvePromiseFirstResolving:
+        case RejectPromiseFirstResolving:
+        case FulfillPromiseFirstResolving:
             break;
 #else // not ASSERT_ENABLED
         default:
@@ -4319,6 +4369,34 @@ private:
         emitPrimordialCheckFor(globalObject->regExpProtoSymbolReplaceFunction(), vm().propertyNames->replaceSymbol.impl());
     }
 
+    void addRegExpSearchPrimordialChecks(Node* searchRegExp)
+    {
+        Node* node = m_currentNode;
+
+        // Check that structure of searchRegExp is RegExp object
+        m_insertionSet.insertNode(
+            m_indexInBlock, SpecNone, Check, node->origin,
+            Edge(searchRegExp, RegExpObjectUse));
+
+        // Check that searchRegExp.lastIndex is a number
+        Node* lastIndexProperty = m_insertionSet.insertNode(
+            m_indexInBlock, SpecNone, GetRegExpObjectLastIndex, node->origin,
+            Edge(searchRegExp, RegExpObjectUse));
+        m_insertionSet.insertNode(
+            m_indexInBlock, SpecNone, Check, node->origin,
+            Edge(lastIndexProperty, NumberUse));
+
+        // Check that searchRegExp.exec is the primordial RegExp.prototype.exec
+        auto emitPrimordialCheckFor = [&] (JSValue primordialProperty, UniquedStringImpl* propertyUID) {
+            m_graph.identifiers().ensure(propertyUID);
+            auto* data = m_graph.m_getByIdData.add(GetByIdData { CacheableIdentifier::createFromImmortalIdentifier(propertyUID), CacheType::GetByIdPrototype });
+            Node* actualProperty = m_insertionSet.insertNode(m_indexInBlock, SpecNone, TryGetById, node->origin, OpInfo(data), OpInfo(SpecFunction), Edge(searchRegExp, CellUse));
+            m_insertionSet.insertNode(m_indexInBlock, SpecNone, CheckIsConstant, node->origin, OpInfo(m_graph.freeze(primordialProperty)), Edge(actualProperty, CellUse));
+        };
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+        emitPrimordialCheckFor(globalObject->regExpProtoExecFunction(), vm().propertyNames->exec.impl());
+    }
+
     Node* checkArray(ArrayMode arrayMode, const NodeOrigin& origin, Node* array, Node* index, bool (*storageCheck)(const ArrayMode&) = canCSEStorage)
     {
         ASSERT(arrayMode.isSpecific());
@@ -4535,7 +4613,7 @@ private:
 
         NodeFlags flags = NodeResultJS;
         if (!node->arrayMode().isOutOfBounds()) {
-            if ((arrayModes & preferDoubleResult) == arrayModes)
+            if (!(arrayModes & ~preferDoubleResult))
                 flags = NodeResultDouble;
         }
 
@@ -5022,6 +5100,45 @@ private:
         fixupCallDOM(node);
         RELEASE_ASSERT(node->child1().node() == thisNode);
         return true;
+    }
+
+    bool attemptToMakeDoubleResultForGet(Node* node)
+    {
+        // Since FTL does more sophisticated analysis based on DoubleRepUse and other phases, we do this only in DFG.
+        // FTL has object allocation sinking, and keeping this node non-double-result makes that phase much simpler.
+        // So FTL will do conversion of this in ValueRepReduction phase instead.
+        UNUSED_PARAM(node);
+#if USE(JSVALUE64)
+        if (!m_graph.m_plan.isFTL()) {
+            if (!m_graph.hasExitSite(node->origin.semantic, BadType)) {
+                if (!node->shouldSpeculateInt32() && node->shouldSpeculateNumber()) {
+                    node->setResult(NodeResultDouble);
+                    return true;
+                }
+            }
+        }
+#endif
+        return false;
+    }
+
+    bool attemptToMakeDoubleRepForPut(Node* node, Edge& edge)
+    {
+        // Since FTL does more sophisticated analysis based on DoubleRepUse and other phases, we do this only in DFG.
+        // FTL has object allocation sinking, and keeping this node non-double-result makes that phase much simpler.
+        // So FTL will do conversion of this in ValueRepReduction phase instead.
+        UNUSED_PARAM(node);
+        UNUSED_PARAM(edge);
+#if USE(JSVALUE64)
+        if (!m_graph.m_plan.isFTL()) {
+            if (!m_graph.hasExitSite(node->origin.semantic, BadType)) {
+                if (!edge->shouldSpeculateInt32() && edge->shouldSpeculateNumber()) {
+                    fixEdge<DoubleRepUse>(edge);
+                    return true;
+                }
+            }
+        }
+#endif
+        return false;
     }
 
     void fixupCheckJSCast(Node* node)

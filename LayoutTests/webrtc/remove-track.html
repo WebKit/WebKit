@@ -18,6 +18,7 @@ promise_test(async (test) => {
         testRunner.setUserMediaPermission(true);
 
     stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     const remoteStream = await new Promise((resolve, reject) => {
         createConnections((connection) => {
             firstConnection = connection;
@@ -75,6 +76,7 @@ promise_test((test) => {
 
 promise_test(async t => {
     const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+    t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     const track = stream.getTracks()[0];
     let pc = new RTCPeerConnection();
     for (let i = 0; i <100; i++) {
@@ -86,6 +88,7 @@ promise_test(async t => {
 
 promise_test(async t => {
     const stream = await navigator.mediaDevices.getUserMedia({video: true});
+    t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     const track = stream.getTracks()[0];
     let pc = new RTCPeerConnection();
     for (let i = 0; i <100; i++) {

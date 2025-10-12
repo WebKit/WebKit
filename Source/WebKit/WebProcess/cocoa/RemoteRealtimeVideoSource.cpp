@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
+#include "RemoteRealtimeMediaSourceInlines.h"
 #include "UserMediaCaptureManager.h"
 #include "UserMediaCaptureManagerProxyMessages.h"
 
@@ -38,7 +39,7 @@ Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::create(const CaptureDevice& 
 {
     auto source = adoptRef(*new RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(hashSalts), manager, shouldCaptureInGPUProcess, pageIdentifier));
     manager.addSource(source.copyRef());
-    manager.remoteCaptureSampleManager().addSource(source.copyRef());
+    manager.protectedRemoteCaptureSampleManager()->addSource(source.copyRef());
     source->createRemoteMediaSource();
     return source;
 }
@@ -59,7 +60,7 @@ RemoteRealtimeVideoSource::~RemoteRealtimeVideoSource() = default;
 
 bool RemoteRealtimeVideoSource::setShouldApplyRotation()
 {
-    connection().send(Messages::UserMediaCaptureManagerProxy::SetShouldApplyRotation { identifier() }, 0);
+    Ref { connection() }->send(Messages::UserMediaCaptureManagerProxy::SetShouldApplyRotation { identifier() }, 0);
     return true;
 }
 
@@ -80,7 +81,7 @@ Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::clone()
         clone->setMuted(muted());
 
         manager().addSource(*clone);
-        manager().remoteCaptureSampleManager().addSource(*clone);
+        manager().protectedRemoteCaptureSampleManager()->addSource(*clone);
         proxy().createRemoteCloneSource(clone->identifier(), *pageIdentifier());
 
         bool isNewClonedSource = true;

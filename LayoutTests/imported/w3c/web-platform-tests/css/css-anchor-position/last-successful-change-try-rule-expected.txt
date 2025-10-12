@@ -1,5 +1,5 @@
 
 PASS Starts rendering with --try
-FAIL No successful position, keep --try assert_equals: expected 250 but got 0
-FAIL No successful position, last successful invalidated by @position-try change assert_equals: expected -50 but got 0
+PASS No successful position, keep --try
+FAIL No successful position, last successful invalidated by @position-try change assert_equals: expected 0 but got 200
 

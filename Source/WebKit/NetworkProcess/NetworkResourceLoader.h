@@ -83,17 +83,15 @@ class NetworkResourceLoader final
     , public WebCore::CrossOriginAccessControlCheckDisabler
 #if ENABLE(CONTENT_FILTERING)
     , public WebCore::ContentFilterClient
-#else
-    , public CanMakeWeakPtr<NetworkResourceLoader>
 #endif
     , public WebCore::ReportingClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NetworkResourceLoader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkResourceLoader);
 public:
-#if ENABLE(CONTENT_FILTERING)
+    USING_CAN_MAKE_WEAKPTR(NetworkLoadClient);
+
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
-#endif
 
     static Ref<NetworkResourceLoader> create(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse, Vector<uint8_t>&&)>&& reply = nullptr)
     {
@@ -201,9 +199,10 @@ private:
 #if ENABLE(CONTENT_FILTERING)
     // ContentFilterClient
     void dataReceivedThroughContentFilter(const WebCore::SharedBuffer&) final;
-    WebCore::ResourceError contentFilterDidBlock(WebCore::ContentFilterUnblockHandler, String&& unblockRequestDeniedScript) final;
+    WebCore::ResourceError contentFilterDidBlock(WebCore::ContentFilterUnblockHandler&&, String&& unblockRequestDeniedScript) final;
     void cancelMainResourceLoadForContentFilter(const WebCore::ResourceError&) final;
     void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, WebCore::SubstituteData&&) final;
+    CheckedPtr<WebCore::ContentFilter> checkedContentFilter();
 #if HAVE(WEBCONTENTRESTRICTIONS)
     bool usesWebContentRestrictions() final;
 #endif

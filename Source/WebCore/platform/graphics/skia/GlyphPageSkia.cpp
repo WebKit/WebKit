@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-bool GlyphPage::fill(std::span<const UChar> buffer)
+bool GlyphPage::fill(std::span<const char16_t> buffer)
 {
     const Font& font = this->font();
     auto* skiaHarfBuzzFont = font.platformData().skiaHarfBuzzFont();

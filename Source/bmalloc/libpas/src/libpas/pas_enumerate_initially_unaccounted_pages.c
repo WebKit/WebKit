@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,33 +55,30 @@ static bool range_list_iterate_exclude_accounted_callback(pas_enumerator* enumer
 bool pas_enumerate_initially_unaccounted_pages(pas_enumerator* enumerator)
 {
     pas_ptr_worklist worklist;
-    pas_red_black_tree* large_sharing_tree;
-    pas_red_black_tree_jettisoned_nodes* large_sharing_tree_jettisoned_nodes;
+    pas_red_black_tree large_sharing_tree;
+    pas_red_black_tree_jettisoned_nodes large_sharing_tree_jettisoned_nodes;
     pas_large_sharing_node* large_sharing_node;
-    uintptr_t* compact_heap_reservation_base;
-    uintptr_t* compact_heap_reservation_bump;
-    uintptr_t* compact_heap_reservation_guard_size;
+    uintptr_t compact_heap_reservation_base;
+    uintptr_t compact_heap_reservation_bump;
+    uintptr_t compact_heap_reservation_guard_size;
 
-    compact_heap_reservation_base = pas_enumerator_read(
-        enumerator, enumerator->root->compact_heap_reservation_base, sizeof(uintptr_t));
-    if (!compact_heap_reservation_base)
+    if (!pas_enumerator_copy_remote(
+            enumerator, &compact_heap_reservation_base, enumerator->root->compact_heap_reservation_base, sizeof(uintptr_t)))
         return false;
 
-    compact_heap_reservation_bump = pas_enumerator_read(
-        enumerator, enumerator->root->compact_heap_reservation_bump, sizeof(size_t));
-    if (!compact_heap_reservation_bump)
+    if (!pas_enumerator_copy_remote(
+            enumerator, &compact_heap_reservation_bump, enumerator->root->compact_heap_reservation_bump, sizeof(size_t)))
         return false;
 
-    compact_heap_reservation_guard_size = pas_enumerator_read(
-        enumerator, enumerator->root->compact_heap_reservation_guard_size, sizeof(size_t));
-    if (!compact_heap_reservation_guard_size)
+    if (!pas_enumerator_copy_remote(
+            enumerator, &compact_heap_reservation_guard_size, enumerator->root->compact_heap_reservation_guard_size, sizeof(size_t)))
         return false;
 
     pas_enumerator_add_unaccounted_pages(
         enumerator,
-        (char*)*compact_heap_reservation_base + *compact_heap_reservation_guard_size,
+        (char*)compact_heap_reservation_base + compact_heap_reservation_guard_size,
         pas_round_up_to_power_of_2(
-            *compact_heap_reservation_bump - *compact_heap_reservation_guard_size,
+            compact_heap_reservation_bump - compact_heap_reservation_guard_size,
             enumerator->root->page_malloc_alignment));
 
     if (!pas_enumerable_range_list_iterate_remote(
@@ -98,37 +95,33 @@ bool pas_enumerate_initially_unaccounted_pages(pas_enumerator* enumerator)
             NULL))
         return false;
 
-    large_sharing_tree = pas_enumerator_read(
-        enumerator, enumerator->root->large_sharing_tree, sizeof(pas_red_black_tree));
-    if (!large_sharing_tree)
+    if (!pas_enumerator_copy_remote(
+            enumerator, &large_sharing_tree, enumerator->root->large_sharing_tree, sizeof(pas_red_black_tree)))
         return false;
 
-    large_sharing_tree_jettisoned_nodes = pas_enumerator_read(
-        enumerator,
-        enumerator->root->large_sharing_tree_jettisoned_nodes,
-        sizeof(pas_red_black_tree_jettisoned_nodes));
-    if (!large_sharing_tree_jettisoned_nodes)
+    if (!pas_enumerator_copy_remote(
+            enumerator, &large_sharing_tree_jettisoned_nodes, enumerator->root->large_sharing_tree_jettisoned_nodes, sizeof(pas_red_black_tree_jettisoned_nodes)))
         return false;
 
     pas_ptr_worklist_construct(&worklist);
     pas_ptr_worklist_push(
         &worklist,
-        pas_red_black_tree_node_ptr_load_remote(enumerator, &large_sharing_tree->root),
+        pas_red_black_tree_node_ptr_load_remote(enumerator, &large_sharing_tree.root),
         &enumerator->allocation_config);
     pas_ptr_worklist_push(
         &worklist,
         pas_enumerator_read_compact(
-            enumerator, large_sharing_tree_jettisoned_nodes->first_rotate_jettisoned),
+            enumerator, large_sharing_tree_jettisoned_nodes.first_rotate_jettisoned),
         &enumerator->allocation_config);
     pas_ptr_worklist_push(
         &worklist,
         pas_enumerator_read_compact(
-            enumerator, large_sharing_tree_jettisoned_nodes->second_rotate_jettisoned),
+            enumerator, large_sharing_tree_jettisoned_nodes.second_rotate_jettisoned),
         &enumerator->allocation_config);
     pas_ptr_worklist_push(
         &worklist,
         pas_enumerator_read_compact(
-            enumerator, large_sharing_tree_jettisoned_nodes->remove_jettisoned),
+            enumerator, large_sharing_tree_jettisoned_nodes.remove_jettisoned),
         &enumerator->allocation_config);
 
     while ((large_sharing_node = pas_ptr_worklist_pop(&worklist))) {

@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 291x19
+          text run at (0,0) width 291: "The popup buttons below should not overlap."
+      RenderTable {TABLE} at (0,20) size 784x24
+        RenderTableSection {TBODY} at (0,0) size 784x24
+          RenderTableRow {TR} at (0,1) size 784x22
+            RenderTableCell {TD} at (1,1) size 14x22 [r=0 c=0 rs=1 cs=1]
+              RenderMenuList {SELECT} at (1,1) size 12x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+                RenderBlock (anonymous) at (6,3) size 12x14
+                  RenderText at (0,0) size 20x14
+                    text run at (0,0) width 20: "one"
+            RenderTableCell {TD} at (16,1) size 14x22 [r=0 c=1 rs=1 cs=1]
+              RenderMenuList {SELECT} at (1,1) size 12x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+                RenderBlock (anonymous) at (6,3) size 12x14
+                  RenderText at (0,0) size 19x14
+                    text run at (0,0) width 19: "two"
+            RenderTableCell {TD} at (31,1) size 14x22 [r=0 c=2 rs=1 cs=1]
+              RenderMenuList {SELECT} at (1,1) size 12x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+                RenderBlock (anonymous) at (6,3) size 12x14
+                  RenderText at (0,0) size 28x14
+                    text run at (0,0) width 28: "three"
+            RenderTableCell {TD} at (46,1) size 737x22 [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 4x19
+                text run at (1,1) width 4: " "

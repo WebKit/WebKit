@@ -40,13 +40,6 @@
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
-// FIXME (117934497): Remove staging code once -[AVSampleBufferDisplayLayer isReadyForDisplay] is available in SDKs used by WebKit builders
-@interface AVSampleBufferDisplayLayer (Staging_113656776)
-@property (nonatomic, readonly, getter=isReadyForDisplay) BOOL readyForDisplay;
-@end
-#endif
-
 static NSString * const errorKeyPath = @"error";
 static NSString * const outputObscuredDueToInsufficientExternalProtectionKeyPath = @"outputObscuredDueToInsufficientExternalProtection";
 
@@ -128,12 +121,7 @@ static bool isSampleBufferVideoRenderer(id object)
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerFailedToDecode:) name:AVSampleBufferVideoRendererDidFailToDecodeNotification object:renderer];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerRequiresFlushToResumeDecodingChanged:) name:AVSampleBufferDisplayLayerRequiresFlushToResumeDecodingDidChangeNotification object:renderer];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerRequiresFlushToResumeDecodingChanged:) name:AVSampleBufferVideoRendererRequiresFlushToResumeDecodingDidChangeNotification object:renderer];
-
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
-    // FIXME (117934497): Remove staging code once -[AVSampleBufferDisplayLayer isReadyForDisplay] is available in SDKs used by WebKit builders
-    if (PAL::canLoad_AVFoundation_AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification())
-        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerReadyForDisplayChanged:) name:AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification object:renderer];
-#endif
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerReadyForDisplayChanged:) name:AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification object:renderer];
 }
 
 - (void)stopObservingVideoRenderer:(WebSampleBufferVideoRendering *)renderer
@@ -149,11 +137,7 @@ static bool isSampleBufferVideoRenderer(id object)
     [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferVideoRendererDidFailToDecodeNotification object:renderer];
     [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferDisplayLayerRequiresFlushToResumeDecodingDidChangeNotification object:renderer];
     [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferVideoRendererRequiresFlushToResumeDecodingDidChangeNotification object:renderer];
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
-    // FIXME (117934497): Remove staging code once -[AVSampleBufferDisplayLayer isReadyForDisplay] is available in SDKs used by WebKit builders
-    if (PAL::canLoad_AVFoundation_AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification())
-        [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification object:renderer];
-#endif
+    [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification object:renderer];
 }
 
 - (void)beginObservingAudioRenderer:(AVSampleBufferAudioRenderer *)renderer
@@ -195,7 +179,7 @@ static bool isSampleBufferVideoRenderer(id object)
             return;
         }
 
-        if ([object isKindOfClass:PAL::getAVSampleBufferAudioRendererClass()]) {
+        if ([object isKindOfClass:PAL::getAVSampleBufferAudioRendererClassSingleton()]) {
             RetainPtr renderer = (AVSampleBufferAudioRenderer *)object;
 
             ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTFMove(renderer), error = WTFMove(error)] {
@@ -251,7 +235,6 @@ static bool isSampleBufferVideoRenderer(id object)
     });
 }
 
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
 - (void)layerReadyForDisplayChanged:(NSNotification *)notification
 {
     RetainPtr layer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(notification.object);
@@ -267,7 +250,6 @@ static bool isSampleBufferVideoRenderer(id object)
             client->videoRendererReadyForDisplayChanged(layer.get(), isReadyForDisplay);
     });
 }
-#endif
 
 - (void)audioRendererWasAutomaticallyFlushed:(NSNotification *)notification
 {

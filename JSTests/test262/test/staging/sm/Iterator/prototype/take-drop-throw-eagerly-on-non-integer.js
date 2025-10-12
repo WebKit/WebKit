@@ -9,9 +9,6 @@ info: |
   Iterator Helpers proposal 2.1.5.4 and 2.1.5.5
 features:
   - iterator-helpers
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 ---*/
 
 //
@@ -29,8 +26,8 @@ const objectWithToPrimitive = {
 };
 
 for (const method of methods) {
-  assertThrowsInstanceOf(() => method(0n), TypeError);
-  assertThrowsInstanceOf(() => method(Symbol('')), TypeError);
-  assertThrowsInstanceOf(() => method(objectWithToPrimitive), TypeError);
+  assert.throws(TypeError, () => method(0n));
+  assert.throws(TypeError, () => method(Symbol('')));
+  assert.throws(TypeError, () => method(objectWithToPrimitive));
 }
 

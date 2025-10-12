@@ -33,10 +33,10 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-WEBCORE_EXPORT sk_sp<SkColorSpace> sRGBColorSpaceRef();
-WEBCORE_EXPORT sk_sp<SkColorSpace> linearSRGBColorSpaceRef();
+WEBCORE_EXPORT sk_sp<SkColorSpace> sRGBColorSpaceSingleton();
+WEBCORE_EXPORT sk_sp<SkColorSpace> linearSRGBColorSpaceSingleton();
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-WEBCORE_EXPORT sk_sp<SkColorSpace> displayP3ColorSpaceRef();
+WEBCORE_EXPORT sk_sp<SkColorSpace> displayP3ColorSpaceSingleton();
 #endif
 
 } // namespace WebCore

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Google Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +30,8 @@
 #include "Decimal.h"
 #include "QualifiedName.h"
 #include <limits>
+#include <wtf/CheckedArithmetic.h>
+#include <wtf/FixedVector.h>
 #include <wtf/MathExtras.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -64,7 +67,7 @@ Decimal parseToDecimalForNumberType(StringView string, const Decimal& fallbackVa
         return fallbackValue;
 
     // String::toDouble() accepts leading + and whitespace characters, which are not valid here.
-    const UChar firstCharacter = string[0];
+    const char16_t firstCharacter = string[0];
     if (firstCharacter != '-' && firstCharacter != '.' && !isASCIIDigit(firstCharacter))
         return fallbackValue;
 
@@ -93,7 +96,7 @@ double parseToDoubleForNumberType(StringView string, double fallbackValue)
         return fallbackValue;
 
     // String::toDouble() accepts leading + and whitespace characters, which are not valid here.
-    UChar firstCharacter = string[0];
+    char16_t firstCharacter = string[0];
     if (firstCharacter != '-' && firstCharacter != '.' && !isASCIIDigit(firstCharacter))
         return fallbackValue;
 
@@ -272,7 +275,7 @@ static inline bool isHTMLSpaceOrDelimiter(CharacterType character)
     return isASCIIWhitespace(character) || character == ',' || character == ';';
 }
 
-static inline bool isNumberStart(UChar character)
+static inline bool isNumberStart(char16_t character)
 {
     return isASCIIDigit(character) || character == '.' || character == '-';
 }
@@ -522,4 +525,157 @@ std::optional<HTMLDimension> parseHTMLMultiLength(StringView multiLengthString)
     return parseHTMLDimensionInternal(multiLengthString, IsMultiLength::Yes);
 }
 
+template<typename CharacterType>
+static unsigned countCommas(StringParsingBuffer<CharacterType> rawInput)
+{
+    unsigned count = 0;
+    while (rawInput.hasCharactersRemaining())
+        count += (*rawInput++ == ',');
+    return count;
 }
+
+template<typename CharacterType>
+static FixedVector<HTMLDimensionsListValue> parseHTMLDimensionsList(StringParsingBuffer<CharacterType>& rawInput)
+{
+    // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#lists-of-dimensions
+
+    // 1. Let `raw input` be the string being parsed.
+    // 2. If the last character in `raw input` is a U+002C COMMA character (,), then remove that character from `raw input`.
+    if (rawInput[rawInput.lengthRemaining() - 1] == ',')
+        rawInput.dropLast();
+
+    // 3. Split the string raw input on commas. Let `raw tokens` be the resulting list of tokens.
+    auto numberOfCommas = countCommas(rawInput);
+    auto numberOfTokens = numberOfCommas + 1;
+
+    // 4. Let `result` be an empty list of number/unit pairs.
+    FixedVector<HTMLDimensionsListValue> result(numberOfTokens);
+
+    // 5. For each token in raw tokens, run the following substeps:
+    for (size_t i = 0; i < numberOfTokens; ++i) {
+        // NOTE: The "Split the string raw input on commas" step above is being done lazily
+        // and includes stripping leading and trailing whitespace from each token.
+        skipWhile<isASCIIWhitespace>(rawInput);
+
+        // NOTE: Step 5.5 is done first as an optimization.
+        // 5.5. If position is past the end of input, set unit to relative and jump to the last substep.
+        if (!rawInput.hasCharactersRemaining()) {
+            result[i] = HTMLDimensionsListValue { .number = 0, .unit = HTMLDimensionsListValue::Unit::Relative };
+            continue;
+        }
+        if (*rawInput == ',') {
+            // Move past the comma.
+            ++rawInput;
+            result[i] = HTMLDimensionsListValue { .number = 0, .unit = HTMLDimensionsListValue::Unit::Relative };
+            continue;
+        }
+
+        // 5.1. Let `input` be the token.
+        // 5.2. Let `position` be a pointer into input, initially pointing at the start of the string.
+        // NOTE: As our implementation finds the tokens lazily, the pointer is just `raw input` itself, not `position`.
+
+        // 5.3. Let `value` be the number 0.
+        double value = 0;
+
+        // 5.4. Let `unit` be absolute.
+        HTMLDimensionsListValue::Unit unit = HTMLDimensionsListValue::Unit::Absolute;
+
+        // 5.6. If the character at position is an ASCII digit, collect a sequence of code points that are ASCII digits from input given position, interpret the resulting sequence as an integer in base ten, and increment value by that integer.
+        Checked<unsigned, RecordOverflow> integer = 0;
+        while (rawInput.hasCharactersRemaining() && isASCIIDigit(*rawInput)) {
+            integer *= 10;
+            integer += (*rawInput - '0');
+            ++rawInput;
+        }
+
+        // The spec does not specify how to deal with arbitrarily large numbers, so we bail on overflow, falling back on "1*", matching the previous implementation.
+        // Filed https://github.com/whatwg/html/issues/11539 to track a standard solution.
+
+        if (integer.hasOverflowed()) [[unlikely]] {
+            result[i] = HTMLDimensionsListValue { .number = 1, .unit = HTMLDimensionsListValue::Unit::Relative };
+
+            skipUntil(rawInput, ',');
+            if (rawInput.hasCharactersRemaining())
+                ++rawInput;
+            continue;
+        }
+
+        value = integer.value();
+
+        // 5.7. If the character at position is U+002E (.), then:
+        if (rawInput.hasCharactersRemaining() && *rawInput == '.') {
+            ++rawInput;
+
+            // 5.7.1. Collect a sequence of code points consisting of ASCII whitespace and ASCII digits from input given position. Let `s` be the resulting sequence.
+            // 5.7.2. Remove all ASCII whitespace in `s`.
+
+            unsigned length = 0;
+            Checked<unsigned, RecordOverflow> fraction = 0;
+            while (rawInput.hasCharactersRemaining() && (isASCIIWhitespace(*rawInput) || isASCIIDigit(*rawInput))) {
+                if (isASCIIDigit(*rawInput)) {
+                    ++length;
+                    fraction *= 10;
+                    fraction += (*rawInput - '0');
+                }
+                ++rawInput;
+            }
+
+            // The spec does not specify how to deal with arbitrarily large numbers, so we bail on overflow, falling back on "1*", matching the previous implementation.
+            // Filed https://github.com/whatwg/html/issues/11539 to track a standard solution.
+
+            if (fraction.hasOverflowed()) [[unlikely]] {
+                result[i] = HTMLDimensionsListValue { .number = 1, .unit = HTMLDimensionsListValue::Unit::Relative };
+
+                skipUntil(rawInput, ',');
+                if (rawInput.hasCharactersRemaining())
+                    ++rawInput;
+                continue;
+            }
+
+            // 5.7.3. If `s` is not the empty string, then:
+            // 5.7.3.1. Let `length` be the number of characters in s (after the spaces were removed).
+            // 5.7.3.2. Let `fraction` be the result of interpreting s as a base-ten integer, and then dividing that number by 10^length.
+            // 5.7.3.3. Increment value by fraction.
+
+            if (length > 0)
+                value += fraction.value() / std::pow(10.0, length);
+        }
+
+        // 5.8. Skip ASCII whitespace within input given position.
+        skipWhile<isASCIIWhitespace>(rawInput);
+
+        // 5.9. If the character at position is a U+0025 PERCENT SIGN character (%), then set unit to percentage.
+        //      Otherwise, if the character at position is a U+002A ASTERISK character (*), then set unit to relative.
+        if (rawInput.hasCharactersRemaining()) {
+            if (*rawInput == '%') {
+                ++rawInput;
+                unit = HTMLDimensionsListValue::Unit::Percentage;
+            } else if (*rawInput == '*') {
+                ++rawInput;
+                unit = HTMLDimensionsListValue::Unit::Relative;
+            }
+        }
+
+        // 5.10. Add an entry to result consisting of the number given by `value` and the unit given by `unit`.
+        result[i] = HTMLDimensionsListValue { .number = value, .unit = unit };
+
+        // NOTE: This means trailing junk is allowed.
+        skipUntil(rawInput, ',');
+        if (rawInput.hasCharactersRemaining())
+            ++rawInput;
+    }
+
+    return result;
+}
+
+FixedVector<HTMLDimensionsListValue> parseHTMLDimensionsList(StringView listOfDimensionsString)
+{
+    if (listOfDimensionsString.isEmpty())
+        return { };
+
+    return readCharactersForParsing(listOfDimensionsString, [](auto buffer) {
+        return parseHTMLDimensionsList(buffer);
+    });
+}
+
+} // namespace WebCore

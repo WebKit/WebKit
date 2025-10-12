@@ -90,4 +90,10 @@ TEST(WebKit, LogForwarding)
         TestWebKitAPI::Util::spinRunLoop(1);
 }
 
+TEST(WebKit, LaunchLogs)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300)]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    EXPECT_TRUE([webView _receivedLogsDuringLaunchForTesting]);
+}
 #endif // WK_HAVE_C_SPI

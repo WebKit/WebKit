@@ -6,6 +6,10 @@
 
 // system_utils_apple.cpp: Implementation of OS-specific functions for Apple platforms
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "system_utils.h"
 
 #include <unistd.h>

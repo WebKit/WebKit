@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,20 +29,18 @@
 #include "AnimationEventBase.h"
 #include "CSSAnimation.h"
 #include "CSSTransition.h"
-#include "Document.h"
+#include "DocumentPage.h"
 #include "DocumentTimeline.h"
 #include "ElementInlines.h"
 #include "EventLoop.h"
 #include "KeyframeEffect.h"
 #include "LocalDOMWindow.h"
 #include "Logging.h"
-#include "Page.h"
 #include "ScrollTimeline.h"
 #include "Settings.h"
 #include "StyleOriginatedTimelinesController.h"
 #include "ViewTimeline.h"
 #include "WebAnimation.h"
-#include "WebAnimationTypes.h"
 #include <ranges>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
@@ -56,9 +54,10 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AnimationTimelinesController);
 
 AnimationTimelinesController::AnimationTimelinesController(Document& document)
-    : m_document(document)
+    : m_cachedCurrentTimeClearanceTimer(*this, &AnimationTimelinesController::clearCachedCurrentTime)
+    , m_document(document)
 {
-    if (auto* page = document.page()) {
+    if (RefPtr page = document.page()) {
         if (page->settings().hiddenPageCSSAnimationSuspensionEnabled() && !page->isVisible())
             suspendAnimations();
     }
@@ -172,7 +171,7 @@ void AnimationTimelinesController::updateAnimationsAndSendEvents(ReducedResoluti
             if (!animation->isRelevant() && !animation->needsTick() && !isPendingTimelineAttachment(animation))
                 animationsToRemove.append(animation);
 
-            if (auto* transition = dynamicDowncast<CSSTransition>(animation.get())) {
+            if (RefPtr transition = dynamicDowncast<CSSTransition>(animation)) {
                 if (!transition->needsTick() && transition->playState() == WebAnimation::PlayState::Finished && transition->owningElement())
                     completedTransitions.append(*transition);
             }
@@ -228,7 +227,7 @@ void AnimationTimelinesController::updateAnimationsAndSendEvents(ReducedResoluti
     for (auto& animation : animationsToRemove) {
         // An animation that was initially marked as irrelevant may have changed while
         // we were sending events, so redo the the check for whether it should be removed.
-        if (auto timeline = animation->timeline()) {
+        if (RefPtr timeline = animation->timeline()) {
             if (!animation->isRelevant() && !animation->needsTick())
                 timeline->removeAnimation(animation);
         }
@@ -238,7 +237,7 @@ void AnimationTimelinesController::updateAnimationsAndSendEvents(ReducedResoluti
     // This needs to happen after dealing with the list of animations to remove as the animation may have been
     // removed from the list of completed transitions otherwise.
     for (auto& completedTransition : completedTransitions) {
-        if (auto documentTimeline = dynamicDowncast<DocumentTimeline>(completedTransition->timeline()))
+        if (RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(completedTransition->timeline()))
             documentTimeline->transitionDidComplete(WTFMove(completedTransition));
     }
 
@@ -271,8 +270,10 @@ void AnimationTimelinesController::suspendAnimations()
     if (!m_cachedCurrentTime)
         m_cachedCurrentTime = liveCurrentTime();
 
-    for (auto& timeline : m_timelines)
-        timeline.suspendAnimations();
+    m_cachedCurrentTimeClearanceTimer.stop();
+
+    for (Ref timeline : m_timelines)
+        timeline->suspendAnimations();
 
     m_isSuspended = true;
 }
@@ -282,23 +283,26 @@ void AnimationTimelinesController::resumeAnimations()
     if (!m_isSuspended)
         return;
 
-    m_cachedCurrentTime = std::nullopt;
-
     m_isSuspended = false;
 
-    for (auto& timeline : m_timelines)
-        timeline.resumeAnimations();
+    clearCachedCurrentTime();
+
+    for (Ref timeline : m_timelines)
+        timeline->resumeAnimations();
 }
 
 ReducedResolutionSeconds AnimationTimelinesController::liveCurrentTime() const
 {
-    return m_document->domWindow()->nowTimestamp();
+    return m_document->window()->nowTimestamp();
 }
 
-std::optional<Seconds> AnimationTimelinesController::currentTime()
+std::optional<Seconds> AnimationTimelinesController::currentTime(UseCachedCurrentTime useCachedCurrentTime)
 {
-    if (!m_document->domWindow())
+    if (!m_document->window())
         return std::nullopt;
+
+    if (useCachedCurrentTime == UseCachedCurrentTime::No && !m_isSuspended)
+        return liveCurrentTime();
 
     if (!m_cachedCurrentTime)
         cacheCurrentTime(liveCurrentTime());
@@ -310,6 +314,8 @@ void AnimationTimelinesController::cacheCurrentTime(ReducedResolutionSeconds new
 {
     if (m_cachedCurrentTime == newCurrentTime)
         return;
+
+    m_cachedCurrentTimeClearanceTimer.stop();
 
     // We can get in a situation where the event loop will not run a task that had been enqueued.
     // If that is the case, we must clear the task group and run the callback prior to adding a
@@ -329,6 +335,20 @@ void AnimationTimelinesController::cacheCurrentTime(ReducedResolutionSeconds new
         CancellableTask task(m_pendingAnimationsProcessingTaskCancellationGroup, std::bind(&AnimationTimelinesController::processPendingAnimations, this));
         m_document->eventLoop().queueTask(TaskSource::InternalAsyncTask, WTFMove(task));
     }
+
+    if (!m_isSuspended) {
+        // In order to not have a stale cached current time, we schedule a timer to reset it
+        // in the time it would take an animation frame to run under normal circumstances.
+        RefPtr page = m_document->page();
+        auto renderingUpdateInterval = page ? page->preferredRenderingUpdateInterval() : FullSpeedAnimationInterval;
+        m_cachedCurrentTimeClearanceTimer.startOneShot(renderingUpdateInterval);
+    }
+}
+
+void AnimationTimelinesController::clearCachedCurrentTime()
+{
+    ASSERT(!m_isSuspended);
+    m_cachedCurrentTime = std::nullopt;
 }
 
 void AnimationTimelinesController::processPendingAnimations()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,8 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DocumentInlines.h"
+#include "DocumentPage.h"
+#include "DocumentSecurityOrigin.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Navigator.h"
 #include "Page.h"
@@ -68,7 +69,7 @@ void NavigatorLoginStatus::isLoggedIn(Navigator& navigator, Ref<DeferredPromise>
 
 bool NavigatorLoginStatus::hasSameOrigin() const
 {
-    RefPtr document = m_navigator.document();
+    RefPtr document = m_navigator->document();
     if (!document)
         return false;
     Ref origin = document->securityOrigin();
@@ -84,7 +85,7 @@ bool NavigatorLoginStatus::hasSameOrigin() const
 
 void NavigatorLoginStatus::setStatus(IsLoggedIn isLoggedIn, Ref<DeferredPromise>&& promise)
 {
-    RefPtr document = m_navigator.document();
+    RefPtr document = m_navigator->document();
     if (!document || !hasSameOrigin()) {
         promise->reject();
         return;
@@ -102,7 +103,7 @@ void NavigatorLoginStatus::setStatus(IsLoggedIn isLoggedIn, Ref<DeferredPromise>
 
 void NavigatorLoginStatus::isLoggedIn(Ref<DeferredPromise>&& promise)
 {
-    RefPtr document = m_navigator.document();
+    RefPtr document = m_navigator->document();
     if (!document) {
         promise->reject();
         return;

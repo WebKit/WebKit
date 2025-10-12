@@ -6,6 +6,10 @@
 
 // egl_utils.cpp: Utility routines specific to the EGL->EGL implementation.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/gl/egl/egl_utils.h"
 
 #include "common/debug.h"

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FileSystemHandleIdentifier.h"
-#include "StorageEstimate.h"
+#include <WebCore/FileSystemHandleIdentifier.h>
+#include <WebCore/StorageEstimate.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/ThreadSafeRefCounted.h>
 

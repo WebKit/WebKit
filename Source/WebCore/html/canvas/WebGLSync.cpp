@@ -97,7 +97,7 @@ bool WebGLSync::isSignaled() const
 
 void WebGLSync::scheduleAllowCacheUpdate(WebGLRenderingContextBase& context)
 {
-    context.canvasBase().queueTaskKeepingObjectAlive(TaskSource::WebGL, [protectedThis = Ref { *this }](auto&) {
+    context.protectedCanvasBase()->queueTaskKeepingObjectAlive(TaskSource::WebGL, [protectedThis = Ref { *this }](auto&) {
         protectedThis->m_allowCacheUpdate = true;
     });
 }

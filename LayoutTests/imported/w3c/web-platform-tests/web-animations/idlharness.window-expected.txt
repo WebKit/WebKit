@@ -41,7 +41,6 @@ PASS Element includes ChildNode: member names are unique
 PASS Element includes Slottable: member names are unique
 PASS Document includes XPathEvaluatorBase: member names are unique
 PASS Document includes GlobalEventHandlers: member names are unique
-PASS Document includes DocumentAndElementEventHandlers: member names are unique
 PASS AnimationTimeline interface: existence and properties of interface object
 PASS AnimationTimeline interface object length
 PASS AnimationTimeline interface object name
@@ -91,6 +90,7 @@ PASS Animation interface: operation persist()
 PASS Animation interface: operation commitStyles()
 PASS Animation interface: attribute startTime
 PASS Animation interface: attribute currentTime
+FAIL Animation interface: attribute trigger assert_true: The prototype object must have a property "trigger" expected true got false
 PASS Animation interface: attribute overallProgress
 PASS Animation must be primary interface of new Animation()
 PASS Stringification of new Animation()
@@ -117,6 +117,7 @@ PASS Animation interface: new Animation() must inherit property "persist()" with
 PASS Animation interface: new Animation() must inherit property "commitStyles()" with the proper type
 PASS Animation interface: new Animation() must inherit property "startTime" with the proper type
 PASS Animation interface: new Animation() must inherit property "currentTime" with the proper type
+FAIL Animation interface: new Animation() must inherit property "trigger" with the proper type assert_inherits: property "trigger" not found in prototype chain
 PASS Animation interface: new Animation() must inherit property "overallProgress" with the proper type
 PASS AnimationEffect interface: existence and properties of interface object
 PASS AnimationEffect interface object length
@@ -208,6 +209,18 @@ PASS AnimationPlaybackEvent must be primary interface of new AnimationPlaybackEv
 PASS Stringification of new AnimationPlaybackEvent("cancel")
 PASS AnimationPlaybackEvent interface: new AnimationPlaybackEvent("cancel") must inherit property "currentTime" with the proper type
 PASS AnimationPlaybackEvent interface: new AnimationPlaybackEvent("cancel") must inherit property "timelineTime" with the proper type
+FAIL AnimationTrigger interface: existence and properties of interface object assert_own_property: self does not have own property "AnimationTrigger" expected property "AnimationTrigger" missing
+FAIL AnimationTrigger interface object length assert_own_property: self does not have own property "AnimationTrigger" expected property "AnimationTrigger" missing
+FAIL AnimationTrigger interface object name assert_own_property: self does not have own property "AnimationTrigger" expected property "AnimationTrigger" missing
+FAIL AnimationTrigger interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AnimationTrigger" expected property "AnimationTrigger" missing
+FAIL AnimationTrigger interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AnimationTrigger" expected property "AnimationTrigger" missing
+FAIL AnimationTrigger interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "AnimationTrigger" expected property "AnimationTrigger" missing
+FAIL AnimationTrigger interface: attribute timeline assert_own_property: self does not have own property "AnimationTrigger" expected property "AnimationTrigger" missing
+FAIL AnimationTrigger interface: attribute behavior assert_own_property: self does not have own property "AnimationTrigger" expected property "AnimationTrigger" missing
+FAIL AnimationTrigger interface: attribute rangeStart assert_own_property: self does not have own property "AnimationTrigger" expected property "AnimationTrigger" missing
+FAIL AnimationTrigger interface: attribute rangeEnd assert_own_property: self does not have own property "AnimationTrigger" expected property "AnimationTrigger" missing
+FAIL AnimationTrigger interface: attribute exitRangeStart assert_own_property: self does not have own property "AnimationTrigger" expected property "AnimationTrigger" missing
+FAIL AnimationTrigger interface: attribute exitRangeEnd assert_own_property: self does not have own property "AnimationTrigger" expected property "AnimationTrigger" missing
 PASS Document interface: attribute timeline
 PASS Document interface: operation getAnimations()
 PASS Document interface: document must inherit property "timeline" with the proper type

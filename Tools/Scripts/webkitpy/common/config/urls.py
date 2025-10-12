@@ -31,7 +31,7 @@ import re
 
 
 def view_source_url(local_path):
-    return "https://trac.webkit.org/browser/trunk/%s" % local_path
+    return "https://github.com/WebKit/WebKit/blob/main/%s" % local_path
 
 
 def view_revision_url(revision_number):

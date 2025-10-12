@@ -40,16 +40,20 @@
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SubframeLoader.h>
+#import <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebPlatformStrategies);
+
 void WebPlatformStrategies::initializeIfNecessary()
 {
-    static WebPlatformStrategies* platformStrategies;
-    if (!platformStrategies) {
-        platformStrategies = new WebPlatformStrategies;
-        setPlatformStrategies(platformStrategies);
-    }
+    static LazyNeverDestroyed<std::unique_ptr<WebPlatformStrategies>> platformStrategies;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        platformStrategies.construct(makeUnique<WebPlatformStrategies>());
+        setPlatformStrategies(platformStrategies.get().get());
+    });
 }
 
 WebPlatformStrategies::WebPlatformStrategies()
@@ -84,6 +88,8 @@ MediaStrategy* WebPlatformStrategies::createMediaStrategy()
 }
 
 class WebBlobRegistry final : public BlobRegistry {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebBlobRegistry);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebBlobRegistry);
 private:
     void registerInternalFileBlobURL(const URL& url, Ref<BlobDataFileReference>&& reference, const String&, const String& contentType) final { m_blobRegistry.registerInternalFileBlobURL(url, WTFMove(reference), contentType); }
     void registerInternalBlobURL(const URL& url, Vector<BlobPart>&& parts, const String& contentType) final { m_blobRegistry.registerInternalBlobURL(url, WTFMove(parts), contentType); }
@@ -101,6 +107,8 @@ private:
 
     BlobRegistryImpl m_blobRegistry;
 };
+
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebBlobRegistry);
 
 BlobRegistry* WebPlatformStrategies::createBlobRegistry()
 {

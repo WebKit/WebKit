@@ -34,6 +34,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <notify.h>
 #import <wtf/MonotonicTime.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 // This test loads file-with-video.html. Then it calls a JavaScript method to create a source buffer and play the video,
 // waits for WKMediaNetworkingActivity notification to be fired.
@@ -64,7 +65,7 @@ TEST(WebKit, MSEHasMediaStreamingActivity)
     __block bool isMediaStreamingChanged = false;
     __block bool isMediaStreaming = false;
 
-    int status = notify_register_dispatch(WebKitMediaStreamingActivity, &token, dispatch_get_main_queue(), ^(int token) {
+    int status = notify_register_dispatch(WebKitMediaStreamingActivity, &token, mainDispatchQueueSingleton(), ^(int token) {
         uint64_t state = 0;
         notify_get_state(token, &state);
         isMediaStreamingChanged = true;
@@ -108,7 +109,7 @@ TEST(WebKit, ManagedMSEHasMediaStreamingActivity)
     __block bool isMediaStreamingChanged = false;
     __block bool isMediaStreaming = false;
 
-    int status = notify_register_dispatch(WebKitMediaStreamingActivity, &token, dispatch_get_main_queue(), ^(int token) {
+    int status = notify_register_dispatch(WebKitMediaStreamingActivity, &token, mainDispatchQueueSingleton(), ^(int token) {
         uint64_t state = 0;
         notify_get_state(token, &state);
         isMediaStreamingChanged = true;
@@ -152,7 +153,7 @@ TEST(WebKit, ManagedMSEHasMediaStreamingActivityWithPolicy)
     __block bool isMediaStreamingChanged = false;
     __block bool isMediaStreaming = false;
 
-    int status = notify_register_dispatch(WebKitMediaStreamingActivity, &token, dispatch_get_main_queue(), ^(int token) {
+    int status = notify_register_dispatch(WebKitMediaStreamingActivity, &token, mainDispatchQueueSingleton(), ^(int token) {
         uint64_t state = 0;
         notify_get_state(token, &state);
         isMediaStreamingChanged = true;

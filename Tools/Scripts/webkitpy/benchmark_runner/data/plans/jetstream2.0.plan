@@ -1,7 +1,8 @@
 {
     "timeout": 1200,
     "count": 5,
-    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/JetStream2/@r286562",
+    "local_git_archive": "PerformanceTests/JetStream2@43136e0015ca5360a88787a0ffa52e9ced7b2481",
+    "github_source": "https://github.com/WebKit/WebKit/tree/43136e0015ca5360a88787a0ffa52e9ced7b2481/PerformanceTests/JetStream2",
     "entry_point": "index.html?report=true",
     "output_file": "jetstream2.result"
 }

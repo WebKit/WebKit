@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "BarcodeFormatInterface.h"
+#include <WebCore/BarcodeFormatInterface.h>
 #include <wtf/Vector.h>
 
 namespace WebCore::ShapeDetection {

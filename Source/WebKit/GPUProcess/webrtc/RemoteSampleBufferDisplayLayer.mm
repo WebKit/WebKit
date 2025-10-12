@@ -72,6 +72,9 @@ void RemoteSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size
     LayerHostingContextOptions contextOptions;
 #if PLATFORM(IOS_FAMILY)
     contextOptions.canShowWhileLocked = canShowWhileLocked;
+#if USE(EXTENSIONKIT)
+    contextOptions.useHostable = true;
+#endif
 #else
     UNUSED_PARAM(canShowWhileLocked);
 #endif
@@ -81,15 +84,15 @@ void RemoteSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size
             return callback({ });
 
         protectedThis->m_layerHostingContext = LayerHostingContext::create(contextOptions);
-        protectedThis->m_layerHostingContext->setRootLayer(protectedThis->protectedSampleBufferDisplayLayer()->rootLayer());
-        callback(protectedThis->m_layerHostingContext->contextID());
+        protectedThis->m_layerHostingContext->setRootLayer(protectedThis->protectedSampleBufferDisplayLayer()->protectedRootLayer().get());
+        callback(protectedThis->m_layerHostingContext->hostingContext());
     });
 }
 
 #if !RELEASE_LOG_DISABLED
-void RemoteSampleBufferDisplayLayer::setLogIdentifier(String&& identifier)
+void RemoteSampleBufferDisplayLayer::setLogIdentifier(uint64_t identifier)
 {
-    m_sampleBufferDisplayLayer->setLogIdentifier(WTFMove(identifier));
+    m_sampleBufferDisplayLayer->setLogIdentifier(identifier);
 }
 #endif
 
@@ -107,12 +110,30 @@ void RemoteSampleBufferDisplayLayer::updateDisplayMode(bool hideDisplayLayer, bo
     protectedSampleBufferDisplayLayer()->updateDisplayMode(hideDisplayLayer, hideRootLayer);
 }
 
-void RemoteSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, std::optional<WTF::MachSendRight>&& fence)
+void RemoteSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, std::optional<WTF::MachSendRightAnnotated>&& fence)
 {
-    if (fence && fence->sendRight())
-        m_layerHostingContext->setFencePort(fence->sendRight());
+#if USE(EXTENSIONKIT)
+    RetainPtr<BELayerHierarchyHostingTransactionCoordinator> hostingUpdateCoordinator;
+    if (fence && fence->sendRight.sendRight()) {
+#if ENABLE(MACH_PORT_LAYER_HOSTING)
+        hostingUpdateCoordinator = LayerHostingContext::createHostingUpdateCoordinator(WTFMove(*fence));
+#else
+        hostingUpdateCoordinator = LayerHostingContext::createHostingUpdateCoordinator(fence->sendRight.sendRight());
+#endif // ENABLE(MACH_PORT_LAYER_HOSTING)
+        if (hostingUpdateCoordinator)
+            [hostingUpdateCoordinator addLayerHierarchy:m_layerHostingContext->hostable().get()];
+        else
+            RELEASE_LOG_ERROR(Media, "Could not create hosting update coordinator");
+    }
+    protectedSampleBufferDisplayLayer()->updateBoundsAndPosition(bounds, { });
+    if (hostingUpdateCoordinator)
+        [hostingUpdateCoordinator commit];
+#else
+    if (fence && fence->sendRight.sendRight())
+        m_layerHostingContext->setFencePort(fence->sendRight.sendRight());
 
     protectedSampleBufferDisplayLayer()->updateBoundsAndPosition(bounds, { });
+#endif // USE(EXTENSIONKIT)
 }
 
 void RemoteSampleBufferDisplayLayer::flush()

@@ -25,11 +25,10 @@
 
 namespace webrtc {
 
-class MockDataChannelInterface
-    : public rtc::RefCountedObject<webrtc::DataChannelInterface> {
+class MockDataChannelInterface : public RefCountedObject<DataChannelInterface> {
  public:
-  static rtc::scoped_refptr<MockDataChannelInterface> Create() {
-    return rtc::scoped_refptr<MockDataChannelInterface>(
+  static scoped_refptr<MockDataChannelInterface> Create() {
+    return scoped_refptr<MockDataChannelInterface>(
         new MockDataChannelInterface());
   }
 
@@ -41,8 +40,6 @@ class MockDataChannelInterface
   MOCK_METHOD(std::string, label, (), (const, override));
   MOCK_METHOD(bool, reliable, (), (const, override));
   MOCK_METHOD(bool, ordered, (), (const, override));
-  MOCK_METHOD(uint16_t, maxRetransmitTime, (), (const, override));
-  MOCK_METHOD(uint16_t, maxRetransmits, (), (const, override));
   MOCK_METHOD(std::optional<int>, maxRetransmitsOpt, (), (const, override));
   MOCK_METHOD(std::optional<int>, maxPacketLifeTime, (), (const, override));
   MOCK_METHOD(std::string, protocol, (), (const, override));

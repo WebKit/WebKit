@@ -10,11 +10,15 @@
 
 #include "rtc_base/copy_on_write_buffer.h"
 
-#include <stddef.h>
+#include <algorithm>
+#include <cstddef>
+#include <cstring>
+#include <utility>
 
 #include "absl/strings/string_view.h"
+#include "rtc_base/checks.h"
 
-namespace rtc {
+namespace webrtc {
 
 CopyOnWriteBuffer::CopyOnWriteBuffer() : offset_(0), size_(0) {
   RTC_DCHECK(IsConsistent());
@@ -124,4 +128,4 @@ void CopyOnWriteBuffer::UnshareAndEnsureCapacity(size_t new_capacity) {
   RTC_DCHECK(IsConsistent());
 }
 
-}  // namespace rtc
+}  // namespace webrtc

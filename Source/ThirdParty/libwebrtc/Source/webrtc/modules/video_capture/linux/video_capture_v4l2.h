@@ -11,15 +11,14 @@
 #ifndef MODULES_VIDEO_CAPTURE_LINUX_VIDEO_CAPTURE_V4L2_H_
 #define MODULES_VIDEO_CAPTURE_LINUX_VIDEO_CAPTURE_V4L2_H_
 
-#include <stddef.h>
-#include <stdint.h>
-
-#include <memory>
+#include <cstddef>
+#include <cstdint>
 
 #include "modules/video_capture/video_capture_defines.h"
 #include "modules/video_capture/video_capture_impl.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 namespace videocapturemodule {
@@ -41,7 +40,7 @@ class VideoCaptureModuleV4L2 : public VideoCaptureImpl {
   bool AllocateVideoBuffers() RTC_EXCLUSIVE_LOCKS_REQUIRED(capture_lock_);
   bool DeAllocateVideoBuffers() RTC_EXCLUSIVE_LOCKS_REQUIRED(capture_lock_);
 
-  rtc::PlatformThread _captureThread RTC_GUARDED_BY(api_checker_);
+  PlatformThread _captureThread RTC_GUARDED_BY(api_checker_);
   Mutex capture_lock_ RTC_ACQUIRED_BEFORE(api_lock_);
   bool quit_ RTC_GUARDED_BY(capture_lock_);
   int32_t _deviceId RTC_GUARDED_BY(api_checker_);

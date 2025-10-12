@@ -23,10 +23,6 @@ PASS requestClose(returnValue) doesn't change returnvalue when cancelled for mod
 PASS requestClose basic behavior for modeless dialog with closedby=none
 PASS requestClose fires both cancel and close for modeless dialog with closedby=none
 PASS closedby has no effect on dialog.requestClose() for modeless dialog with closedby=none
-PASS requestClose can be cancelled for modeless dialog with closedby=none
-PASS requestClose avoids abuse prevention logic for modeless dialog with closedby=none
-PASS requestClose(returnValue) passes along the return value for modeless dialog with closedby=none
-PASS requestClose(returnValue) doesn't change returnvalue when cancelled for modeless dialog with closedby=none
 PASS requestClose basic behavior for modal dialog with closedby=null
 PASS requestClose fires both cancel and close for modal dialog with closedby=null
 PASS closedby has no effect on dialog.requestClose() for modal dialog with closedby=null
@@ -51,8 +47,31 @@ PASS requestClose(returnValue) doesn't change returnvalue when cancelled for mod
 PASS requestClose basic behavior for modal dialog with closedby=none
 PASS requestClose fires both cancel and close for modal dialog with closedby=none
 PASS closedby has no effect on dialog.requestClose() for modal dialog with closedby=none
-PASS requestClose can be cancelled for modal dialog with closedby=none
-PASS requestClose avoids abuse prevention logic for modal dialog with closedby=none
-PASS requestClose(returnValue) passes along the return value for modal dialog with closedby=none
-PASS requestClose(returnValue) doesn't change returnvalue when cancelled for modal dialog with closedby=none
+PASS requestClose basic behavior for open dialog with closedby=null
+PASS requestClose fires both cancel and close for open dialog with closedby=null
+PASS closedby has no effect on dialog.requestClose() for open dialog with closedby=null
+PASS requestClose can be cancelled for open dialog with closedby=null
+PASS requestClose avoids abuse prevention logic for open dialog with closedby=null
+PASS requestClose(returnValue) passes along the return value for open dialog with closedby=null
+PASS requestClose(returnValue) doesn't change returnvalue when cancelled for open dialog with closedby=null
+PASS requestClose basic behavior for open dialog with closedby=any
+PASS requestClose fires both cancel and close for open dialog with closedby=any
+PASS closedby has no effect on dialog.requestClose() for open dialog with closedby=any
+PASS requestClose can be cancelled for open dialog with closedby=any
+PASS requestClose avoids abuse prevention logic for open dialog with closedby=any
+PASS requestClose(returnValue) passes along the return value for open dialog with closedby=any
+PASS requestClose(returnValue) doesn't change returnvalue when cancelled for open dialog with closedby=any
+PASS requestClose basic behavior for open dialog with closedby=closedrequest
+PASS requestClose fires both cancel and close for open dialog with closedby=closedrequest
+PASS closedby has no effect on dialog.requestClose() for open dialog with closedby=closedrequest
+PASS requestClose can be cancelled for open dialog with closedby=closedrequest
+PASS requestClose avoids abuse prevention logic for open dialog with closedby=closedrequest
+PASS requestClose(returnValue) passes along the return value for open dialog with closedby=closedrequest
+PASS requestClose(returnValue) doesn't change returnvalue when cancelled for open dialog with closedby=closedrequest
+PASS requestClose basic behavior for open dialog with closedby=none
+PASS requestClose fires both cancel and close for open dialog with closedby=none
+PASS closedby has no effect on dialog.requestClose() for open dialog with closedby=none
+PASS requestClose basic behavior when dialog is open via attribute
+PASS requestClose fires cancel and close when dialog is open via attribute
+PASS requestClose(returnValue) passes along the return value when dialog is open via attribute
 

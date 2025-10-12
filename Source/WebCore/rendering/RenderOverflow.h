@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "LayoutRect.h"
+#include <WebCore/LayoutRect.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 

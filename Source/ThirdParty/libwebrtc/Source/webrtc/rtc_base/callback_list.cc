@@ -10,7 +10,11 @@
 
 #include "rtc_base/callback_list.h"
 
+#include <cstddef>
+
+#include "api/function_view.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/untyped_function.h"
 
 namespace webrtc {
 namespace callback_list_impl {
@@ -67,8 +71,7 @@ void CallbackListReceivers::RemoveReceivers(const void* removal_tag) {
   }
 }
 
-void CallbackListReceivers::Foreach(
-    rtc::FunctionView<void(UntypedFunction&)> fv) {
+void CallbackListReceivers::Foreach(FunctionView<void(UntypedFunction&)> fv) {
   RTC_CHECK(!send_in_progress_);
   bool removals_detected = false;
   send_in_progress_ = true;

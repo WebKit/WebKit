@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,10 +22,10 @@
 
 #pragma once
 
-#include "CollectionIndexCache.h"
-#include "Element.h"
-#include "HTMLNames.h"
-#include "LiveNodeList.h"
+#include <WebCore/CollectionIndexCache.h>
+#include <WebCore/Element.h>
+#include <WebCore/HTMLNames.h>
+#include <WebCore/LiveNodeList.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -44,7 +44,7 @@ public:
     inline size_t memoryCost() const;
 
 private:
-    typedef UncheckedKeyHashMap<AtomStringImpl*, Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>> StringToElementsMap;
+    typedef HashMap<AtomStringImpl*, Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>> StringToElementsMap;
 
     inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* find(const StringToElementsMap&, const AtomString& key) const;
     inline void append(StringToElementsMap&, const AtomString& key, Element&);
@@ -78,7 +78,6 @@ public:
     inline NodeListInvalidationType invalidationType() const;
     inline CollectionType type() const;
     inline ContainerNode& ownerNode() const;
-    inline Ref<ContainerNode> protectedOwnerNode() const;
     inline ContainerNode& rootNode() const;
     inline void invalidateCacheForAttribute(const QualifiedName& attributeName);
     WEBCORE_EXPORT virtual void invalidateCacheForDocument(Document&);
@@ -96,6 +95,7 @@ protected:
     inline const CollectionNamedElementCache& namedItemCaches() const;
 
     inline Document& document() const;
+    inline Ref<Document> protectedDocument() const;
 
     void invalidateNamedElementCache(Document&) const;
 
@@ -125,9 +125,9 @@ inline ContainerNode& HTMLCollection::ownerNode() const
     return m_ownerNode;
 }
 
-inline Ref<ContainerNode> HTMLCollection::protectedOwnerNode() const
+inline CollectionType HTMLCollection::type() const
 {
-    return m_ownerNode;
+    return static_cast<CollectionType>(m_collectionType);
 }
 
 } // namespace WebCore

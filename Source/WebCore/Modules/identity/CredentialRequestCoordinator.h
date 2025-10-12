@@ -27,10 +27,10 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "ActiveDOMObject.h"
-#include "DigitalCredentialsProtocols.h"
-#include "JSDOMPromiseDeferred.h"
-#include "UnvalidatedDigitalCredentialRequest.h"
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/DigitalCredentialsProtocols.h>
+#include <WebCore/JSDOMPromiseDeferred.h>
+#include <WebCore/UnvalidatedDigitalCredentialRequest.h>
 #include <optional>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/Noncopyable.h>

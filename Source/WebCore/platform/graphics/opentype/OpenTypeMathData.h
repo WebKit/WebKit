@@ -28,7 +28,7 @@
 
 #if ENABLE(MATHML)
 
-#include "Glyph.h"
+#include <WebCore/Glyph.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>

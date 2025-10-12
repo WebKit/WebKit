@@ -10,6 +10,11 @@
 
 #include "modules/audio_processing/aec3/fft_buffer.h"
 
+#include <cstddef>
+#include <vector>
+
+#include "modules/audio_processing/aec3/fft_data.h"
+
 namespace webrtc {
 
 FftBuffer::FftBuffer(size_t size, size_t num_channels)

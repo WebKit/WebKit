@@ -6,6 +6,10 @@
 // EGLChooseConfigTest.cpp:
 //   Tests of proper default-value semantics for eglChooseConfig
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <gtest/gtest.h>
 
 #include "test_utils/ANGLETest.h"

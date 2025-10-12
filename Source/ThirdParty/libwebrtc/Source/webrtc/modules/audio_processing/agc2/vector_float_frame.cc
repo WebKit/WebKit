@@ -10,6 +10,8 @@
 
 #include "modules/audio_processing/agc2/vector_float_frame.h"
 
+#include "modules/audio_processing/include/audio_frame_view.h"
+
 namespace webrtc {
 
 VectorFloatFrame::VectorFloatFrame(int num_channels,

@@ -21,9 +21,11 @@
 #include "config.h"
 #include "PageGroupLoadDeferrer.h"
 
+#include "ActiveDOMObject.h"
 #include "Document.h"
 #include "DocumentParser.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "ScriptRunner.h"
@@ -66,7 +68,7 @@ PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
             continue;
         page->setDefersLoading(false);
 
-        for (RefPtr frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (RefPtr frame = page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;

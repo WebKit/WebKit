@@ -1414,9 +1414,10 @@ public:
             return MacroAssemblerARMv7::BoundsNonDoubleWordOffset::within(offset);
         case MoveDouble:
         case MoveFloat:
-            if (!std::is_signed<Int>::value)
+            if constexpr (!std::is_signed_v<Int>)
                 return !((offset & 3) || (offset > (255 * 4)));
-            return !((offset & 3) || (offset > (255 * 4)) || (static_cast<typename std::make_signed<Int>::type>(offset) < -(255 * 4)));
+            else
+                return !((offset & 3) || (offset > (255 * 4)) || (static_cast<typename std::make_signed<Int>::type>(offset) < -(255 * 4)));
         default:
             return false;
         }

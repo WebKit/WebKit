@@ -32,6 +32,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKFeature.h>
 #import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
@@ -472,3 +473,42 @@ TEST(SampledPageTopColor, MainDocumentChange)
     EXPECT_EQ(WebCore::roundAndClampToSRGBALossy([webView _sampledPageTopColor].CGColor), WebCore::Color::white);
     EXPECT_EQ(notificationCount, 1UL);
 }
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+
+TEST(SampledPageTopColor, TopColorExtensionWhenRubberBanding)
+{
+    RetainPtr webView = createWebViewWithSampledPageTopColorMaxDifference(5);
+
+    auto insets = UIEdgeInsetsMake(75, 0, 0, 0);
+    auto insetSize = UIEdgeInsetsInsetRect([webView bounds], insets).size;
+    [webView _setObscuredInsets:insets];
+    RetainPtr scrollView = [webView scrollView];
+    [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
+    [scrollView setContentInset:insets];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:insetSize minimumUnobscuredSizeOverride:insetSize maximumUnobscuredSizeOverride:insetSize];
+
+    [webView synchronouslyLoadTestPageNamed:@"top-fixed-element"];
+    [webView waitForNextPresentationUpdate];
+
+    {
+        auto components = CGColorGetComponents([webView _sampledPageTopColor].CGColor);
+        EXPECT_IN_RANGE(components[0], 0.99, 1.01);
+        EXPECT_IN_RANGE(components[1], 0.38, 0.39);
+        EXPECT_IN_RANGE(components[2], 0.27, 0.28);
+        EXPECT_EQ(components[3], 1);
+    }
+
+    auto colorExtensionViewHeight = [webView] {
+        return CGRectGetHeight([webView _colorExtensionViewForTesting:UIRectEdgeTop].bounds);
+    };
+
+    EXPECT_EQ(colorExtensionViewHeight(), 75.f);
+
+    [scrollView setContentOffset:CGPointMake(0, -100) animated:NO];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(colorExtensionViewHeight(), 100.f);
+}
+
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(CONTENT_INSET_BACKGROUND_FILL)

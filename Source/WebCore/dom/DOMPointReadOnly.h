@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 
 #include "DOMPointInit.h"
 #include "FloatPoint3D.h"
+#include "PlatformExportMacros.h"
 #include "ScriptWrappable.h"
 #include <wtf/NoVirtualDestructorBase.h>
 #include <wtf/RefCounted.h>
@@ -51,6 +52,8 @@ public:
     static Ref<DOMPointReadOnly> create(const DOMPointInit& init) { return create(init.x, init.y, init.z, init.w); }
     static Ref<DOMPointReadOnly> fromPoint(const DOMPointInit& init) { return create(init.x, init.y, init.z, init.w); }
     static Ref<DOMPointReadOnly> fromFloatPoint(const FloatPoint3D& p) { return create(p.x(), p.y(), p.z(), 1); }
+
+    WEBCORE_EXPORT ~DOMPointReadOnly();
 
     double x() const { return m_x; }
     double y() const { return m_y; }

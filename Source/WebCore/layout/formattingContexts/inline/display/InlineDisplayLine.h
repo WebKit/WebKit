@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "FontBaseline.h"
-#include "InlineRect.h"
-#include "TextRun.h"
-#include "TextUtil.h"
+#include <WebCore/FontBaseline.h>
+#include <WebCore/InlineRect.h>
+#include <WebCore/TextRun.h>
+#include <WebCore/TextUtil.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -131,7 +131,7 @@ private:
     float m_contentLogicalLeft { 0.f };
     float m_contentLogicalLeftIgnoringInlineDirection { 0.f };
     float m_contentLogicalWidth { 0.f };
-    FontBaseline m_baselineType { AlphabeticBaseline };
+    FontBaseline m_baselineType { FontBaseline::Alphabetic };
     bool m_isLeftToRightDirection : 1 { true };
     bool m_isHorizontal : 1 { true };
     bool m_isFirstAfterPageBreak : 1 { false };

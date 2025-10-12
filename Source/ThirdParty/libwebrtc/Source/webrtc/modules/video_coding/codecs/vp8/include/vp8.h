@@ -16,8 +16,8 @@
 
 #include "absl/base/nullability.h"
 #include "api/environment/environment.h"
+#include "api/video_codecs/video_decoder.h"
 #include "api/video_codecs/video_encoder.h"
-#include "modules/video_coding/include/video_codec_interface.h"
 
 namespace webrtc {
 
@@ -26,7 +26,7 @@ struct Vp8EncoderSettings {
   // VideoEncoder::GetEncoderInfo(). No override is done if empty.
   std::vector<VideoEncoder::ResolutionBitrateLimits> resolution_bitrate_limits;
 };
-absl::Nonnull<std::unique_ptr<VideoEncoder>> CreateVp8Encoder(
+absl_nonnull std::unique_ptr<VideoEncoder> CreateVp8Encoder(
     const Environment& env,
     Vp8EncoderSettings settings = {});
 

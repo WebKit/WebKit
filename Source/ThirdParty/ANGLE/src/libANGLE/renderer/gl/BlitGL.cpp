@@ -6,6 +6,10 @@
 
 // BlitGL.cpp: Implements the BlitGL class, a helper for blitting textures
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/gl/BlitGL.h"
 
 #include "common/FixedVector.h"

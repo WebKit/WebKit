@@ -24,10 +24,10 @@
  */
 
 #pragma once
-#include "CredentialRequestCoordinatorClient.h"
+#include <WebCore/CredentialRequestCoordinatorClient.h>
 
 #if ENABLE(WEB_AUTHN)
-#include "UnvalidatedDigitalCredentialRequest.h"
+#include <WebCore/UnvalidatedDigitalCredentialRequest.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMalloc.h>
 namespace WebCore {

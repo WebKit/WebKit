@@ -33,12 +33,14 @@
 #include "FloatRoundedRect.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
-#include "NinePieceImage.h"
+#include "NinePieceImagePainter.h"
 #include "PaintInfo.h"
 #include "PathUtilities.h"
 #include "RenderBox.h"
+#include "RenderObjectDocument.h"
 #include "RenderStyleInlines.h"
 #include "RenderTheme.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <numeric>
 
 namespace WebCore {
@@ -206,24 +208,24 @@ static bool decorationHasAllSolidEdges(const RectEdges<BorderEdge>& edges)
 
 void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style, BleedAvoidance bleedAvoidance, RectEdges<bool> closedEdges) const
 {
-    GraphicsContext& graphicsContext = m_paintInfo.context();
+    auto& graphicsContext = m_paintInfo.context();
 
     if (graphicsContext.paintingDisabled())
         return;
 
-    auto paintsBorderImage = [&](LayoutRect rect, const NinePieceImage& ninePieceImage) {
-        auto* styleImage = ninePieceImage.image();
-        if (!styleImage)
+    auto paintsBorderImage = [&](LayoutRect rect, const Style::BorderImage& borderImage) {
+        auto image = borderImage.source().tryImage();
+        if (!image)
             return false;
 
-        if (!styleImage->isLoaded(m_renderer.ptr()))
+        if (!image->value->isLoaded(m_renderer.ptr()))
             return false;
 
-        if (!styleImage->canRender(m_renderer.ptr(), style.usedZoom()))
+        if (!image->value->canRender(m_renderer.ptr(), style.usedZoom()))
             return false;
 
         auto rectWithOutsets = rect;
-        rectWithOutsets.expand(style.imageOutsets(ninePieceImage));
+        rectWithOutsets.expand(style.imageOutsets(borderImage));
         return !rectWithOutsets.isEmpty();
     };
 
@@ -291,7 +293,7 @@ void BorderPainter::paintOutline(const LayoutRect& paintRect) const
     auto& styleToUse = m_renderer->style();
 
     // Only paint the focus ring by hand if the theme isn't able to draw it.
-    if (styleToUse.hasAutoOutlineStyle() && !m_renderer->theme().supportsFocusRing(m_renderer, styleToUse)) {
+    if (styleToUse.outlineStyle() == OutlineStyle::Auto && !m_renderer->theme().supportsFocusRing(m_renderer, styleToUse)) {
         Vector<LayoutRect> focusRingRects;
         LayoutRect paintRectToUse { paintRect };
         if (CheckedPtr box = dynamicDowncast<RenderBox>(m_renderer.get()))
@@ -300,14 +302,15 @@ void BorderPainter::paintOutline(const LayoutRect& paintRect) const
         m_renderer->paintFocusRing(m_paintInfo, styleToUse, focusRingRects);
     }
 
-    if (m_renderer->hasOutlineAnnotation() && !styleToUse.hasAutoOutlineStyle() && !m_renderer->theme().supportsFocusRing(m_renderer, styleToUse))
+    if (m_renderer->hasOutlineAnnotation() && styleToUse.outlineStyle() != OutlineStyle::Auto && !m_renderer->theme().supportsFocusRing(m_renderer, styleToUse))
         m_renderer->addPDFURLRect(m_paintInfo, paintRect.location());
 
-    if (styleToUse.hasAutoOutlineStyle() || styleToUse.outlineStyle() == BorderStyle::None)
+    auto borderStyle = toBorderStyle(styleToUse.outlineStyle());
+    if (!borderStyle || *borderStyle == BorderStyle::None)
         return;
 
-    auto outlineWidth = LayoutUnit { styleToUse.outlineWidth() };
-    auto outlineOffset = LayoutUnit { styleToUse.outlineOffset() };
+    auto outlineWidth = Style::evaluate<LayoutUnit>(styleToUse.outlineWidth(), Style::ZoomNeeded { });
+    auto outlineOffset = Style::evaluate<LayoutUnit>(styleToUse.outlineOffset(), Style::ZoomNeeded { });
 
     auto outerRect = paintRect;
     outerRect.inflate(outlineOffset + outlineWidth);
@@ -319,11 +322,11 @@ void BorderPainter::paintOutline(const LayoutRect& paintRect) const
     auto closedEdges = RectEdges<bool> { true };
 
     auto outlineEdgeWidths = RectEdges<LayoutUnit> { outlineWidth };
-    auto outlineShape = BorderShape::shapeForOutlineRect(styleToUse, paintRect, outerRect, outlineEdgeWidths, closedEdges);
+    auto outlineShape = BorderShape::shapeForOutsetRect(styleToUse, paintRect, outerRect, outlineEdgeWidths, closedEdges);
 
     auto bleedAvoidance = BleedAvoidance::ShrinkBackground;
     auto appliedClipAlready = false;
-    auto edges = borderEdgesForOutline(styleToUse, document().deviceScaleFactor());
+    auto edges = borderEdgesForOutline(styleToUse, *borderStyle, document().deviceScaleFactor());
     auto haveAllSolidEdges = decorationHasAllSolidEdges(edges);
 
     paintSides(outlineShape, {
@@ -348,8 +351,8 @@ void BorderPainter::paintOutline(const LayoutPoint& paintOffset, const Vector<La
     }
 
     auto& styleToUse = m_renderer->style();
-    auto outlineOffset = styleToUse.outlineOffset();
-    auto outlineWidth = styleToUse.outlineWidth();
+    auto outlineOffset = Style::evaluate<float>(styleToUse.outlineOffset(), Style::ZoomNeeded { });
+    auto outlineWidth = Style::evaluate<float>(styleToUse.outlineWidth(), Style::ZoomNeeded { });
     auto deviceScaleFactor = document().deviceScaleFactor();
 
     Vector<FloatRect> pixelSnappedRects;
@@ -360,7 +363,7 @@ void BorderPainter::paintOutline(const LayoutPoint& paintOffset, const Vector<La
         rect.inflate(outlineOffset + outlineWidth / 2);
         pixelSnappedRects.append(snapRectToDevicePixels(rect, deviceScaleFactor));
     }
-    auto path = PathUtilities::pathWithShrinkWrappedRectsForOutline(pixelSnappedRects, styleToUse.border(), outlineOffset, styleToUse.writingMode(), deviceScaleFactor);
+    auto path = PathUtilities::pathWithShrinkWrappedRectsForOutline(pixelSnappedRects, styleToUse.border().radii(), outlineOffset, styleToUse.writingMode(), deviceScaleFactor);
     if (path.isEmpty()) {
         // Disjoint line spanning inline boxes.
         for (auto rect : lineRects) {
@@ -526,21 +529,29 @@ void BorderPainter::paintSides(const BorderShape& borderShape, const Sides& side
         paintBorderSides(borderShape, sides, edgesToDraw, antialias);
 }
 
-bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const RenderStyle& style, const NinePieceImage& ninePieceImage, CompositeOperator op) const
+template<typename T>
+bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const RenderStyle& style, const T& ninePieceImage, CompositeOperator op) const
 {
-    StyleImage* styleImage = ninePieceImage.image();
-    if (!styleImage)
+    auto image = ninePieceImage.source().tryStyleImage();
+    if (!image)
         return false;
 
-    if (!styleImage->isLoaded(m_renderer.ptr()))
+    if (!image->isLoaded(m_renderer.ptr()))
         return true; // Never paint a nine-piece image incrementally, but don't paint the fallback borders either.
 
-    if (!styleImage->canRender(m_renderer.ptr(), style.usedZoom()))
+    if (!image->canRender(m_renderer.ptr(), style.usedZoom()))
         return false;
 
     CheckedPtr modelObject = dynamicDowncast<RenderBoxModelObject>(m_renderer.get());
     if (!modelObject)
         return false;
+
+    ImagePaintingOptions options = {
+        op,
+        ImageOrientation::Orientation::FromImage,
+        m_paintInfo.paintBehavior.contains(PaintBehavior::DrawsHDRContent) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
+        style.dynamicRangeLimit().toPlatformDynamicRangeLimit()
+    };
 
     // FIXME: border-image is broken with full page zooming when tiling has to happen, since the tiling function
     // doesn't have any understanding of the zoom that is in effect on the tile.
@@ -550,13 +561,23 @@ bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const RenderStyl
     rectWithOutsets.expand(style.imageOutsets(ninePieceImage));
     LayoutRect destination = LayoutRect(snapRectToDevicePixels(rectWithOutsets, deviceScaleFactor));
 
-    auto source = modelObject->calculateImageIntrinsicDimensions(styleImage, destination.size(), RenderBoxModelObject::ScaleByUsedZoom::No);
+    auto source = modelObject->calculateImageIntrinsicDimensions(image.get(), destination.size(), RenderBoxModelObject::ScaleByUsedZoom::No);
 
     // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.
-    styleImage->setContainerContextForRenderer(m_renderer, source, style.usedZoom());
+    image->setContainerContextForRenderer(m_renderer, source, style.usedZoom());
 
-    ninePieceImage.paint(m_paintInfo.context(), m_renderer.ptr(), style, destination, source, deviceScaleFactor, op);
+    NinePieceImagePainter::paint(ninePieceImage, m_paintInfo.context(), m_renderer.ptr(), style, destination, source, deviceScaleFactor, options);
     return true;
+}
+
+bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const RenderStyle& style, const Style::BorderImage& borderImage, CompositeOperator op) const
+{
+    return paintNinePieceImageImpl(rect, style, borderImage, op);
+}
+
+bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const RenderStyle& style, const Style::MaskBorder& maskBorder, CompositeOperator op) const
+{
+    return paintNinePieceImageImpl(rect, style, maskBorder, op);
 }
 
 void BorderPainter::paintTranslucentBorderSides(const BorderShape& borderShape, const Sides& sides, BoxSideSet edgesToDraw, bool antialias) const
@@ -857,8 +878,7 @@ void BorderPainter::drawBoxSideFromPath(const BorderShape& borderShape, const Pa
                 gapLength += (dashLength  / numberOfGaps);
             }
 
-            auto lineDash = DashArray::from(dashLength, gapLength);
-            graphicsContext.setLineDash(WTFMove(lineDash), dashLength);
+            graphicsContext.setLineDash(DashArray { dashLength, gapLength }, dashLength);
         }
 
         // FIXME: stroking the border path causes issues with tight corners:
@@ -971,40 +991,40 @@ void BorderPainter::clipBorderSidePolygon(const BorderShape& borderShape, BoxSid
     case BoxSide::Top:
         quad = { outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMinYCorner(), outerRect.maxXMinYCorner() };
 
-        if (!innerBorder.radii().topLeft().isZero())
+        if (!Style::isZero(innerBorder.radii().topLeft()))
             findIntersection(outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.minXMaxYCorner(), innerRect.maxXMinYCorner(), quad[1]);
 
-        if (!innerBorder.radii().topRight().isZero())
+        if (!Style::isZero(innerBorder.radii().topRight()))
             findIntersection(outerRect.maxXMinYCorner(), innerRect.maxXMinYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMaxYCorner(), quad[2]);
         break;
 
     case BoxSide::Left:
         quad = { outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.minXMaxYCorner(), outerRect.minXMaxYCorner() };
 
-        if (!innerBorder.radii().topLeft().isZero())
+        if (!Style::isZero(innerBorder.radii().topLeft()))
             findIntersection(outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.minXMaxYCorner(), innerRect.maxXMinYCorner(), quad[1]);
 
-        if (!innerBorder.radii().bottomLeft().isZero())
+        if (!Style::isZero(innerBorder.radii().bottomLeft()))
             findIntersection(outerRect.minXMaxYCorner(), innerRect.minXMaxYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMaxYCorner(), quad[2]);
         break;
 
     case BoxSide::Bottom:
         quad = { outerRect.minXMaxYCorner(), innerRect.minXMaxYCorner(), innerRect.maxXMaxYCorner(), outerRect.maxXMaxYCorner() };
 
-        if (!innerBorder.radii().bottomLeft().isZero())
+        if (!Style::isZero(innerBorder.radii().bottomLeft()))
             findIntersection(outerRect.minXMaxYCorner(), innerRect.minXMaxYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMaxYCorner(), quad[1]);
 
-        if (!innerBorder.radii().bottomRight().isZero())
+        if (!Style::isZero(innerBorder.radii().bottomRight()))
             findIntersection(outerRect.maxXMaxYCorner(), innerRect.maxXMaxYCorner(), innerRect.maxXMinYCorner(), innerRect.minXMaxYCorner(), quad[2]);
         break;
 
     case BoxSide::Right:
         quad = { outerRect.maxXMinYCorner(), innerRect.maxXMinYCorner(), innerRect.maxXMaxYCorner(), outerRect.maxXMaxYCorner() };
 
-        if (!innerBorder.radii().topRight().isZero())
+        if (!Style::isZero(innerBorder.radii().topRight()))
             findIntersection(outerRect.maxXMinYCorner(), innerRect.maxXMinYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMaxYCorner(), quad[1]);
 
-        if (!innerBorder.radii().bottomRight().isZero())
+        if (!Style::isZero(innerBorder.radii().bottomRight()))
             findIntersection(outerRect.maxXMaxYCorner(), innerRect.maxXMaxYCorner(), innerRect.maxXMinYCorner(), innerRect.minXMaxYCorner(), quad[2]);
         break;
     }

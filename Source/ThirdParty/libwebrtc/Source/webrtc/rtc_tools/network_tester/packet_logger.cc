@@ -9,6 +9,7 @@
  */
 #include "rtc_tools/network_tester/packet_logger.h"
 
+#include <ios>
 #include <string>
 
 #include "rtc_base/checks.h"

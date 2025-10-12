@@ -1,0 +1,170 @@
+Tests that an upper-bound is enforced on the number of partitioned cookies that can be set.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS Found 154 cookies: Cookies are:
+test_cookie_js_100 = 1234
+test_cookie_js_101 = 1234
+test_cookie_js_102 = 1234
+test_cookie_js_103 = 1234
+test_cookie_js_104 = 1234
+test_cookie_js_105 = 1234
+test_cookie_js_106 = 1234
+test_cookie_js_107 = 1234
+test_cookie_js_108 = 1234
+test_cookie_js_109 = 1234
+test_cookie_js_110 = 1234
+test_cookie_js_111 = 1234
+test_cookie_js_112 = 1234
+test_cookie_js_113 = 1234
+test_cookie_js_114 = 1234
+test_cookie_js_115 = 1234
+test_cookie_js_116 = 1234
+test_cookie_js_117 = 1234
+test_cookie_js_118 = 1234
+test_cookie_js_119 = 1234
+test_cookie_js_120 = 1234
+test_cookie_js_121 = 1234
+test_cookie_js_122 = 1234
+test_cookie_js_123 = 1234
+test_cookie_js_124 = 1234
+test_cookie_js_125 = 1234
+test_cookie_js_126 = 1234
+test_cookie_js_127 = 1234
+test_cookie_js_128 = 1234
+test_cookie_js_129 = 1234
+test_cookie_js_130 = 1234
+test_cookie_js_131 = 1234
+test_cookie_js_132 = 1234
+test_cookie_js_133 = 1234
+test_cookie_js_134 = 1234
+test_cookie_js_135 = 1234
+test_cookie_js_136 = 1234
+test_cookie_js_137 = 1234
+test_cookie_js_138 = 1234
+test_cookie_js_139 = 1234
+test_cookie_js_140 = 1234
+test_cookie_js_141 = 1234
+test_cookie_js_142 = 1234
+test_cookie_js_143 = 1234
+test_cookie_js_144 = 1234
+test_cookie_js_145 = 1234
+test_cookie_js_146 = 1234
+test_cookie_js_147 = 1234
+test_cookie_js_148 = 1234
+test_cookie_js_149 = 1234
+test_cookie_js_150 = 1234
+test_cookie_js_151 = 1234
+test_cookie_js_152 = 1234
+test_cookie_js_153 = 1234
+test_cookie_js_154 = 1234
+test_cookie_js_155 = 1234
+test_cookie_js_156 = 1234
+test_cookie_js_157 = 1234
+test_cookie_js_158 = 1234
+test_cookie_js_159 = 1234
+test_cookie_js_160 = 1234
+test_cookie_js_161 = 1234
+test_cookie_js_162 = 1234
+test_cookie_js_163 = 1234
+test_cookie_js_164 = 1234
+test_cookie_js_165 = 1234
+test_cookie_js_166 = 1234
+test_cookie_js_167 = 1234
+test_cookie_js_168 = 1234
+test_cookie_js_169 = 1234
+test_cookie_js_170 = 1234
+test_cookie_js_171 = 1234
+test_cookie_js_172 = 1234
+test_cookie_js_173 = 1234
+test_cookie_js_174 = 1234
+test_cookie_js_175 = 1234
+test_cookie_js_176 = 1234
+test_cookie_js_177 = 1234
+test_cookie_js_178 = 1234
+test_cookie_js_179 = 1234
+test_cookie_js_180 = 1234
+test_cookie_js_181 = 1234
+test_cookie_js_182 = 1234
+test_cookie_js_183 = 1234
+test_cookie_js_184 = 1234
+test_cookie_js_185 = 1234
+test_cookie_js_186 = 1234
+test_cookie_js_187 = 1234
+test_cookie_js_188 = 1234
+test_cookie_js_189 = 1234
+test_cookie_js_190 = 1234
+test_cookie_js_191 = 1234
+test_cookie_js_192 = 1234
+test_cookie_js_193 = 1234
+test_cookie_js_194 = 1234
+test_cookie_js_195 = 1234
+test_cookie_js_196 = 1234
+test_cookie_js_197 = 1234
+test_cookie_js_198 = 1234
+test_cookie_js_199 = 1234
+test_cookie_js_46 = 1234
+test_cookie_js_47 = 1234
+test_cookie_js_48 = 1234
+test_cookie_js_49 = 1234
+test_cookie_js_50 = 1234
+test_cookie_js_51 = 1234
+test_cookie_js_52 = 1234
+test_cookie_js_53 = 1234
+test_cookie_js_54 = 1234
+test_cookie_js_55 = 1234
+test_cookie_js_56 = 1234
+test_cookie_js_57 = 1234
+test_cookie_js_58 = 1234
+test_cookie_js_59 = 1234
+test_cookie_js_60 = 1234
+test_cookie_js_61 = 1234
+test_cookie_js_62 = 1234
+test_cookie_js_63 = 1234
+test_cookie_js_64 = 1234
+test_cookie_js_65 = 1234
+test_cookie_js_66 = 1234
+test_cookie_js_67 = 1234
+test_cookie_js_68 = 1234
+test_cookie_js_69 = 1234
+test_cookie_js_70 = 1234
+test_cookie_js_71 = 1234
+test_cookie_js_72 = 1234
+test_cookie_js_73 = 1234
+test_cookie_js_74 = 1234
+test_cookie_js_75 = 1234
+test_cookie_js_76 = 1234
+test_cookie_js_77 = 1234
+test_cookie_js_78 = 1234
+test_cookie_js_79 = 1234
+test_cookie_js_80 = 1234
+test_cookie_js_81 = 1234
+test_cookie_js_82 = 1234
+test_cookie_js_83 = 1234
+test_cookie_js_84 = 1234
+test_cookie_js_85 = 1234
+test_cookie_js_86 = 1234
+test_cookie_js_87 = 1234
+test_cookie_js_88 = 1234
+test_cookie_js_89 = 1234
+test_cookie_js_90 = 1234
+test_cookie_js_91 = 1234
+test_cookie_js_92 = 1234
+test_cookie_js_93 = 1234
+test_cookie_js_94 = 1234
+test_cookie_js_95 = 1234
+test_cookie_js_96 = 1234
+test_cookie_js_97 = 1234
+test_cookie_js_98 = 1234
+test_cookie_js_99 = 1234
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+

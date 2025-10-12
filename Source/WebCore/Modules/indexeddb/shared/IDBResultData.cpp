@@ -109,7 +109,7 @@ IDBResultData IDBResultData::openDatabaseSuccess(const IDBResourceIdentifier& re
     IDBResultData result { requestIdentifier };
     result.m_type = IDBResultType::OpenDatabaseSuccess;
     result.m_databaseConnectionIdentifier = connection.identifier();
-    result.m_databaseInfo = makeUnique<IDBDatabaseInfo>(connection.database()->info());
+    result.m_databaseInfo = makeUnique<IDBDatabaseInfo>(connection.checkedDatabase()->info());
     return result;
 }
 
@@ -119,7 +119,7 @@ IDBResultData IDBResultData::openDatabaseUpgradeNeeded(const IDBResourceIdentifi
     IDBResultData result { requestIdentifier };
     result.m_type = IDBResultType::OpenDatabaseUpgradeNeeded;
     result.m_databaseConnectionIdentifier = connection.identifier();
-    result.m_databaseInfo = makeUnique<IDBDatabaseInfo>(connection.database()->info());
+    result.m_databaseInfo = makeUnique<IDBDatabaseInfo>(connection.checkedDatabase()->info());
     result.m_transactionInfo = makeUnique<IDBTransactionInfo>(transaction.info());
     return result;
 }

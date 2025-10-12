@@ -25,8 +25,8 @@ webkit_platform_headers: "RevealItem.h" <pal/cocoa/RevealSoftLink.h>
 #if ENABLE(REVEAL)
 
 [WebKitPlatform, CustomHeader] struct WebKit::RevealItemRange {
-    NSUInteger location;
-    NSUInteger length;
+    uint64_t location;
+    uint64_t length;
 }
 
 class WebKit::RevealItem {

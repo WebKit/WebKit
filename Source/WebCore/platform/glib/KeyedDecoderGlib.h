@@ -60,9 +60,9 @@ private:
     void endArray() override;
 
     template<typename T, typename F> WARN_UNUSED_RETURN bool decodeSimpleValue(const String& key, T& result, F getFunction);
-    UncheckedKeyHashMap<String, GRefPtr<GVariant>> dictionaryFromGVariant(GVariant*);
+    HashMap<String, GRefPtr<GVariant>> dictionaryFromGVariant(GVariant*);
 
-    Vector<UncheckedKeyHashMap<String, GRefPtr<GVariant>>> m_dictionaryStack;
+    Vector<HashMap<String, GRefPtr<GVariant>>> m_dictionaryStack;
     Vector<GVariant*, 16> m_arrayStack;
     Vector<unsigned> m_arrayIndexStack;
 };

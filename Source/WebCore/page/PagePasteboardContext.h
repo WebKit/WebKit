@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "PageIdentifier.h"
-#include "PasteboardContext.h"
+#include <WebCore/PageIdentifier.h>
+#include <WebCore/PasteboardContext.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/TypeCasts.h>
 

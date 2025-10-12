@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "BorderValue.h"
-#include "LayoutUnit.h"
+#include <WebCore/BorderValue.h>
+#include <WebCore/LayoutUnit.h>
 
 namespace WebCore {
 
@@ -39,7 +39,7 @@ public:
     }
 
     CollapsedBorderValue(const BorderValue& border, const Color& color, BorderPrecedence precedence)
-        : m_width(LayoutUnit(border.nonZero() ? border.width() : 0))
+        : m_width(border.nonZero() ? Style::evaluate<LayoutUnit>(border.width(), Style::ZoomNeeded { }) : 0_lu)
         , m_color(color)
         , m_style(static_cast<unsigned>(border.style()))
         , m_precedence(static_cast<unsigned>(precedence))

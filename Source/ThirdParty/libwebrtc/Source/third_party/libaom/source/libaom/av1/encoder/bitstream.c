@@ -670,14 +670,14 @@ static inline void delta_encode_palette_colors(const int *colors, int num,
     if (delta > max_delta) max_delta = delta;
   }
   const int min_bits = bit_depth - 3;
-  int bits = AOMMAX(av1_ceil_log2(max_delta + 1 - min_val), min_bits);
+  int bits = AOMMAX(aom_ceil_log2(max_delta + 1 - min_val), min_bits);
   assert(bits <= bit_depth);
   int range = (1 << bit_depth) - colors[0] - min_val;
   aom_write_literal(w, bits - min_bits, 2);
   for (int i = 0; i < num - 1; ++i) {
     aom_write_literal(w, deltas[i] - min_val, bits);
     range -= deltas[i];
-    bits = AOMMIN(bits, av1_ceil_log2(range));
+    bits = AOMMIN(bits, aom_ceil_log2(range));
   }
 }
 
@@ -1886,7 +1886,7 @@ static inline void write_wiener_filter(int wiener_win,
       WIENER_FILT_TAP2_SUBEXP_K,
       ref_wiener_info->hfilter[2] - WIENER_FILT_TAP2_MINV,
       wiener_info->hfilter[2] - WIENER_FILT_TAP2_MINV);
-  memcpy(ref_wiener_info, wiener_info, sizeof(*wiener_info));
+  *ref_wiener_info = *wiener_info;
 }
 
 static inline void write_sgrproj_filter(const SgrprojInfo *sgrproj_info,
@@ -1917,7 +1917,7 @@ static inline void write_sgrproj_filter(const SgrprojInfo *sgrproj_info,
         sgrproj_info->xqd[1] - SGRPROJ_PRJ_MIN1);
   }
 
-  memcpy(ref_sgrproj_info, sgrproj_info, sizeof(*sgrproj_info));
+  *ref_sgrproj_info = *sgrproj_info;
 }
 
 static inline void loop_restoration_write_sb_coeffs(
@@ -3379,7 +3379,8 @@ static int remux_tiles(const CommonTileParams *const tiles, uint8_t *dst,
 uint32_t av1_write_obu_header(AV1LevelParams *const level_params,
                               int *frame_header_count, OBU_TYPE obu_type,
                               bool has_nonzero_operating_point_idc,
-                              int obu_extension, uint8_t *const dst) {
+                              bool is_layer_specific_obu, int obu_extension,
+                              uint8_t *const dst) {
   assert(IMPLIES(!has_nonzero_operating_point_idc, obu_extension == 0));
 
   if (level_params->keep_level_stats &&
@@ -3388,29 +3389,22 @@ uint32_t av1_write_obu_header(AV1LevelParams *const level_params,
 
   uint32_t size = 0;
 
-  // The AV1 spec Version 1.0.0 with Errata 1 has the following requirements on
-  // the OBU extension header:
+  // The AV1 spec draft version (as of git commit 5e04f)
+  // has the following requirements on the OBU extension header:
   //
   // 6.4.1. General sequence header OBU semantics:
+  //   If operating_point_idc[ op ] is not equal to 0 for any value of op from 0
+  //   to operating_points_cnt_minus_1, it is a requirement of bitstream
+  //   conformance that obu_extension_flag is equal to 1 for all layer-specific
+  //   OBUs in the coded video sequence.
+  //   (...)
   //   It is a requirement of bitstream conformance that if OperatingPointIdc
   //   is equal to 0, then obu_extension_flag is equal to 0 for all OBUs that
   //   follow this sequence header until the next sequence header.
   //
-  // 7.5. Ordering of OBUs:
-  //   If a coded video sequence contains at least one enhancement layer (OBUs
-  //   with spatial_id greater than 0 or temporal_id greater than 0) then all
-  //   frame headers and tile group OBUs associated with base (spatial_id
-  //   equals 0 and temporal_id equals 0) and enhancement layer (spatial_id
-  //   greater than 0 or temporal_id greater than 0) data must include the OBU
-  //   extension header.
-  //
   // Set obu_extension_flag to satisfy these requirements.
-  int obu_extension_flag = 0;
-  if (has_nonzero_operating_point_idc) {
-    obu_extension_flag =
-        (obu_type == OBU_FRAME_HEADER || obu_type == OBU_TILE_GROUP ||
-         obu_type == OBU_FRAME || obu_type == OBU_REDUNDANT_FRAME_HEADER);
-  }
+  const int obu_extension_flag =
+      has_nonzero_operating_point_idc && is_layer_specific_obu;
   const int obu_has_size_field = 1;
 
   dst[0] = ((int)obu_type << 3) | (obu_extension_flag << 2) |
@@ -3622,7 +3616,7 @@ static uint32_t init_large_scale_tile_obu_header(
   lst_obu->tg_hdr_size = av1_write_obu_header(
       level_params, &cpi->frame_header_count, obu_type,
       cpi->common.seq_params->has_nonzero_operating_point_idc,
-      obu_extension_header, *data);
+      /*is_layer_specific_obu=*/true, obu_extension_header, *data);
   *data += lst_obu->tg_hdr_size;
 
   const uint32_t frame_header_size =
@@ -3822,7 +3816,8 @@ void av1_write_obu_tg_tile_headers(AV1_COMP *const cpi, MACROBLOCKD *const xd,
   *curr_tg_hdr_size = av1_write_obu_header(
       &cpi->ppi->level_params, &cpi->frame_header_count, obu_type,
       cm->seq_params->has_nonzero_operating_point_idc,
-      pack_bs_params->obu_extn_header, pack_bs_params->tile_data_curr);
+      /*is_layer_specific_obu=*/true, pack_bs_params->obu_extn_header,
+      pack_bs_params->tile_data_curr);
   pack_bs_params->obu_header_size = *curr_tg_hdr_size;
 
   if (cpi->num_tg == 1)
@@ -3924,7 +3919,8 @@ void av1_write_last_tile_info(
         &cpi->ppi->level_params, &cpi->frame_header_count,
         OBU_REDUNDANT_FRAME_HEADER,
         cpi->common.seq_params->has_nonzero_operating_point_idc,
-        obu_extn_header, &curr_tg_start[fh_info->obu_header_byte_offset]);
+        /*is_layer_specific_obu=*/true, obu_extn_header,
+        &curr_tg_start[fh_info->obu_header_byte_offset]);
 
     *curr_tg_data_size += fh_info->total_length;
     *total_size += (uint32_t)fh_info->total_length;
@@ -4226,19 +4222,24 @@ static size_t av1_write_metadata_array(AV1_COMP *const cpi, uint8_t *dst,
   for (size_t i = 0; i < arr->sz; i++) {
     aom_metadata_t *current_metadata = arr->metadata_array[i];
     if (current_metadata && current_metadata->payload) {
+      const int metadata_insert_location =
+          current_metadata->insert_flag & AOM_MIF_INSERT_LOCATION_MASK;
       if ((cm->current_frame.frame_type == KEY_FRAME &&
-           current_metadata->insert_flag == AOM_MIF_KEY_FRAME) ||
+           metadata_insert_location == AOM_MIF_KEY_FRAME) ||
           (cm->current_frame.frame_type != KEY_FRAME &&
-           current_metadata->insert_flag == AOM_MIF_NON_KEY_FRAME) ||
-          current_metadata->insert_flag == AOM_MIF_ANY_FRAME) {
+           metadata_insert_location == AOM_MIF_NON_KEY_FRAME) ||
+          metadata_insert_location == AOM_MIF_ANY_FRAME) {
         // OBU header is either one or two bytes.
         if (dst_size < 2) {
           aom_internal_error(cm->error, AOM_CODEC_ERROR,
                              "av1_write_metadata_array: output buffer full");
         }
+        const bool is_layer_specific_obu =
+            (current_metadata->insert_flag & AOM_MIF_LAYER_SPECIFIC) != 0;
         obu_header_size = av1_write_obu_header(
             &cpi->ppi->level_params, &cpi->frame_header_count, OBU_METADATA,
-            cm->seq_params->has_nonzero_operating_point_idc, 0, dst);
+            cm->seq_params->has_nonzero_operating_point_idc,
+            is_layer_specific_obu, 0, dst);
         assert(obu_header_size <= 2);
         obu_payload_size =
             av1_write_metadata_obu(current_metadata, dst + obu_header_size,
@@ -4305,7 +4306,8 @@ int av1_pack_bitstream(AV1_COMP *const cpi, uint8_t *dst, size_t dst_size,
     }
     obu_header_size = av1_write_obu_header(
         level_params, &cpi->frame_header_count, OBU_SEQUENCE_HEADER,
-        cm->seq_params->has_nonzero_operating_point_idc, 0, data);
+        cm->seq_params->has_nonzero_operating_point_idc,
+        /*is_layer_specific_obu=*/false, 0, data);
     assert(obu_header_size <= 2);
     obu_payload_size = av1_write_sequence_header_obu(
         cm->seq_params, data + obu_header_size, data_size - obu_header_size);
@@ -4345,8 +4347,8 @@ int av1_pack_bitstream(AV1_COMP *const cpi, uint8_t *dst, size_t dst_size,
     }
     obu_header_size = av1_write_obu_header(
         level_params, &cpi->frame_header_count, OBU_FRAME_HEADER,
-        cm->seq_params->has_nonzero_operating_point_idc, obu_extension_header,
-        data);
+        cm->seq_params->has_nonzero_operating_point_idc,
+        /*is_layer_specific_obu=*/true, obu_extension_header, data);
     // TODO: bug 42302568 - Pass data_size - obu_header_size to
     // write_frame_header_obu().
     obu_payload_size = write_frame_header_obu(cpi, &cpi->td.mb.e_mbd, &saved_wb,

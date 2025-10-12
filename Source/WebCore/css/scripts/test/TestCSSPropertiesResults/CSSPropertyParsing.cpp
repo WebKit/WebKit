@@ -14,16 +14,6 @@ namespace WebCore {
 
 using namespace CSSPropertyParserHelpers;
 
-static bool isKeywordValidForTestAutoFunctions(CSSValueID keyword)
-{
-    switch (keyword) {
-    case CSSValueID::CSSValueAuto:
-        return true;
-    default:
-        return false;
-    }
-}
-
 static bool isKeywordValidForTestKeyword(CSSValueID keyword)
 {
     switch (keyword) {
@@ -144,13 +134,43 @@ static bool isKeywordValidForTestUsingSharedRuleWithOverrideFunction(CSSValueID 
     }
 }
 
-static RefPtr<CSSValue> consumeTestAutoFunctions(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+static RefPtr<CSSValue> consumeBackgroundFillLayerTestPrimary(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
-    // auto
-    if (auto result = consumeIdent(range, isKeywordValidForTestAutoFunctions))
-        return result;
-    // <number>
-    return CSSPrimitiveValueResolver<CSS::Number<>>::consumeAndResolve(range, state);
+    // <number>#
+    auto consumeUnboundedRepetition = [](CSSParserTokenRange& range, CSS::PropertyParserState& state) -> RefPtr<CSSValue> {
+        auto consumeRepeatedTerm = [](CSSParserTokenRange& range, CSS::PropertyParserState& state) -> RefPtr<CSSValue> {
+            // <number>
+            return CSSPrimitiveValueResolver<CSS::Number<>>::consumeAndResolve(range, state);
+        };
+        return consumeListSeparatedBy<',', ListBounds::minimumOf(1), ListOptimization::SingleValue, CSSValueList>(range, consumeRepeatedTerm, state);
+    };
+    return consumeUnboundedRepetition(range, state);
+}
+
+static RefPtr<CSSValue> consumeBackgroundFillLayerTestSecondary(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <number>#
+    auto consumeUnboundedRepetition = [](CSSParserTokenRange& range, CSS::PropertyParserState& state) -> RefPtr<CSSValue> {
+        auto consumeRepeatedTerm = [](CSSParserTokenRange& range, CSS::PropertyParserState& state) -> RefPtr<CSSValue> {
+            // <number>
+            return CSSPrimitiveValueResolver<CSS::Number<>>::consumeAndResolve(range, state);
+        };
+        return consumeListSeparatedBy<',', ListBounds::minimumOf(1), ListOptimization::SingleValue, CSSValueList>(range, consumeRepeatedTerm, state);
+    };
+    return consumeUnboundedRepetition(range, state);
+}
+
+static RefPtr<CSSValue> consumeBackgroundFillLayerTestSecondaryWithConverter(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <number>#
+    auto consumeUnboundedRepetition = [](CSSParserTokenRange& range, CSS::PropertyParserState& state) -> RefPtr<CSSValue> {
+        auto consumeRepeatedTerm = [](CSSParserTokenRange& range, CSS::PropertyParserState& state) -> RefPtr<CSSValue> {
+            // <number>
+            return CSSPrimitiveValueResolver<CSS::Number<>>::consumeAndResolve(range, state);
+        };
+        return consumeListSeparatedBy<',', ListBounds::minimumOf(1), ListOptimization::SingleValue, CSSValueList>(range, consumeRepeatedTerm, state);
+    };
+    return consumeUnboundedRepetition(range, state);
 }
 
 static RefPtr<CSSValue> consumeTestBoundedRepetitionWithCommas(CSSParserTokenRange& range, CSS::PropertyParserState& state)
@@ -3159,6 +3179,7 @@ RefPtr<CSSValue> CSSPropertyParsing::parseStylePropertyLonghand(CSSParserTokenRa
     switch (id) {
     case CSSPropertyID::CSSPropertyTestTopPriority:
     case CSSPropertyID::CSSPropertyTestHighPriority:
+    case CSSPropertyID::CSSPropertyTestMediumPriority:
     case CSSPropertyID::CSSPropertyTestAnimationWrapper:
     case CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationAlways:
     case CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationThreadedOnly:
@@ -3173,8 +3194,12 @@ RefPtr<CSSValue> CSSPropertyParsing::parseStylePropertyLonghand(CSSParserTokenRa
     case CSSPropertyID::CSSPropertyTestLogicalPropertyGroupLogicalBlock:
     case CSSPropertyID::CSSPropertyTestLogicalPropertyGroupLogicalInline:
         return CSSPrimitiveValueResolver<CSS::Number<>>::consumeAndResolve(range, state);
-    case CSSPropertyID::CSSPropertyTestAutoFunctions:
-        return consumeTestAutoFunctions(range, state);
+    case CSSPropertyID::CSSPropertyBackgroundFillLayerTestPrimary:
+        return consumeBackgroundFillLayerTestPrimary(range, state);
+    case CSSPropertyID::CSSPropertyBackgroundFillLayerTestSecondary:
+        return consumeBackgroundFillLayerTestSecondary(range, state);
+    case CSSPropertyID::CSSPropertyBackgroundFillLayerTestSecondaryWithConverter:
+        return consumeBackgroundFillLayerTestSecondaryWithConverter(range, state);
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommas:
         return consumeTestBoundedRepetitionWithCommas(range, state);
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithCommasFixed:
@@ -3373,8 +3398,6 @@ bool CSSPropertyParsing::parseStylePropertyShorthand(CSSParserTokenRange& range,
 bool CSSPropertyParsing::isKeywordValidForStyleProperty(CSSPropertyID id, CSSValueID keyword, CSS::PropertyParserState& state)
 {
     switch (id) {
-    case CSSPropertyID::CSSPropertyTestAutoFunctions:
-        return isKeywordValidForTestAutoFunctions(keyword);
     case CSSPropertyID::CSSPropertyTestKeyword:
         return isKeywordValidForTestKeyword(keyword);
     case CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo:
@@ -3405,7 +3428,6 @@ bool CSSPropertyParsing::isKeywordValidForStyleProperty(CSSPropertyID id, CSSVal
 bool CSSPropertyParsing::isKeywordFastPathEligibleStyleProperty(CSSPropertyID id)
 {
     switch (id) {
-    case CSSPropertyID::CSSPropertyTestAutoFunctions:
     case CSSPropertyID::CSSPropertyTestKeyword:
     case CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo:
     case CSSPropertyID::CSSPropertyTestMatchOneWithGroupWithSettingsFlag:

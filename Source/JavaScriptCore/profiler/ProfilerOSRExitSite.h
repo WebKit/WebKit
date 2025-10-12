@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
-#include "MacroAssemblerCodeRef.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/MacroAssemblerCodeRef.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace Profiler {

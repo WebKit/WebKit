@@ -184,9 +184,9 @@ BasicEffectTiming AnimationEffectTiming::getBasicTiming(const ResolutionData& da
         // An animation effect is in the before phase if the animation effect's local time is not unresolved and
         // either of the following conditions are met:
         //     1. the local time is less than the before-active boundary time, or
-        //     2. the animation direction is "backwards" and the local time is equal to the before-active boundary time
-        //        and not at progress timeline boundary.
-        if (localTime->approximatelyLessThan(beforeActiveBoundaryTime) || (animationIsBackwards && localTime->approximatelyEqualTo(beforeActiveBoundaryTime) && !atProgressTimelineBoundary()))
+        //     2. the animation direction is "backwards", the endpoint-inclusive active interval flag is false,
+        //        and the local time is equal to the before-active boundary time and not at progress timeline boundary.
+        if (localTime->approximatelyLessThan(beforeActiveBoundaryTime) || (animationIsBackwards && data.endpointInclusiveActiveInterval == EndpointInclusiveActiveInterval::No && localTime->approximatelyEqualTo(beforeActiveBoundaryTime) && !atProgressTimelineBoundary()))
             return AnimationEffectPhase::Before;
 
         // https://drafts.csswg.org/web-animations-1/#active-after-boundary-time
@@ -195,9 +195,9 @@ BasicEffectTiming AnimationEffectTiming::getBasicTiming(const ResolutionData& da
         // An animation effect is in the after phase if the animation effect's local time is not unresolved
         // and either of the following conditions are met:
         //     1. the local time is greater than the active-after boundary time, or
-        //     2. the animation direction is "forwards" and the local time is equal to the active-after boundary time
-        //        and not at progress timeline boundary.
-        if (localTime->approximatelyGreaterThan(activeAfterBoundaryTime) || (!animationIsBackwards && localTime->approximatelyEqualTo(activeAfterBoundaryTime) && !atProgressTimelineBoundary()))
+        //     2. the animation direction is "forwards", the endpoint-inclusive active interval flag is false,
+        //        and the local time is equal to the active-after boundary time and not at progress timeline boundary.
+        if (localTime->approximatelyGreaterThan(activeAfterBoundaryTime) || (!animationIsBackwards && data.endpointInclusiveActiveInterval == EndpointInclusiveActiveInterval::No && localTime->approximatelyEqualTo(activeAfterBoundaryTime) && !atProgressTimelineBoundary()))
             return AnimationEffectPhase::After;
 
         // An animation effect is in the active phase if the animation effect’s local time is not unresolved and it is not

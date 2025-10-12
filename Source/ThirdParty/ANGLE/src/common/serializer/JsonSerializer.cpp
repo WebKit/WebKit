@@ -7,6 +7,10 @@
 // Note that for binary blob data only a checksum is stored so that
 // a lossless  deserialization is not supported.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "JsonSerializer.h"
 
 #include "common/debug.h"

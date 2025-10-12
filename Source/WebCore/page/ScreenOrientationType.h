@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if PLATFORM(IOS) || PLATFORM(VISION)
 #import <pal/system/ios/Device.h>
 #endif

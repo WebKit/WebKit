@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "StyleScopeOrdinal.h"
+#include <WebCore/StyleScopeOrdinal.h>
+#include <WebCore/StyleValueTypes.h>
 #include <wtf/text/AtomString.h>
-#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Style {
@@ -36,14 +36,29 @@ struct ScopedName {
     ScopeOrdinal scopeOrdinal { ScopeOrdinal::Element };
     bool isIdentifier { true };
 
+    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    {
+        auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
+        if (isIdentifier)
+            return visitor(CustomIdentifier { name });
+        return visitor(name);
+    }
+
     bool operator==(const ScopedName&) const = default;
 };
 
-inline WTF::TextStream& operator<<(WTF::TextStream& ts, ScopedName scopedName)
-{
-    ts << scopedName.name;
-    return ts;
-}
+// MARK: - Conversion
+
+template<> struct CSSValueConversion<ScopedName> {
+    ScopedName operator()(BuilderState&, const CSSPrimitiveValue&);
+    ScopedName operator()(BuilderState&, const CSSValue&);
+};
+
+// MARK: - Logging
+
+WTF::TextStream& operator<<(WTF::TextStream&, const ScopedName&);
 
 } // namespace Style
 } // namespace WebCore
+
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ScopedName)

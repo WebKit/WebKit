@@ -16,6 +16,8 @@
 
                   { "name": "bot105", "platform": "mac-sonoma" },
                   { "name": "bot111", "platform": "mac-sonoma" },
+                  { "name": "bot113", "platform": "mac-sonoma" },
+                  { "name": "bot114", "platform": "mac-sonoma" },
                   { "name": "bot603", "platform": "mac-sonoma" },
                   { "name": "bot632", "platform": "mac-sonoma" },
 
@@ -35,6 +37,8 @@
                   { "name": "bot258", "platform": "*" },
                   { "name": "bot260", "platform": "*" },
 
+                  { "name": "bot2000", "platform": "mac-sequoia" },
+                  { "name": "bot2001", "platform": "mac-sequoia" },                 
                   { "name": "bot130", "platform": "mac-sequoia" },
                   { "name": "bot131", "platform": "mac-sequoia" },
                   { "name": "bot132", "platform": "mac-sequoia" },
@@ -52,8 +56,16 @@
                   { "name": "bot1021", "platform": "mac-sequoia" },
                   { "name": "bot1025", "platform": "mac-sequoia" },
                   { "name": "bot1026", "platform": "mac-sequoia" },
-                  { "name": "bot1027", "platform": "mac-sequoia" },
-                  { "name": "bot1028", "platform": "mac-sequoia" },
+                  { "name": "bot605", "platform": "mac-sequoia" },
+                  { "name": "bot616", "platform": "mac-sequoia" },
+                  { "name": "bot621", "platform": "*" },
+                  { "name": "bot665", "platform": "mac-sequoia" },
+                  { "name": "bot669", "platform": "mac-sequoia" },
+                  { "name": "bot675", "platform": "mac-sequoia" },
+                  { "name": "bot676", "platform": "mac-sequoia" },
+                  { "name": "bot678", "platform": "*" },
+                  { "name": "bot1027", "platform": "*" },
+                  { "name": "bot1028", "platform": "*" },
 
                   { "name": "bot304", "platform": "ios-18" },
                   { "name": "bot305", "platform": "ios-simulator-18" },
@@ -86,6 +98,9 @@
                   { "name": "wincairo-release-build-01", "platform": "win" },
                   { "name": "wincairo-release-tests-01", "platform": "win" },
                   { "name": "wincairo-release-tests-02", "platform": "win" },
+
+                  { "name": "win-build-bot-001", "platform": "win" },
+                  { "name": "win-build-bot-002", "platform": "win" },
 
                   { "name": "playstation-release-build-01", "platform": "playstation" },
                   { "name": "playstation-debug-build-01", "platform": "playstation" },
@@ -155,6 +170,7 @@
                   { "name": "wpe-linux-bot-34", "platform": "wpe" },
                   { "name": "wpe-linux-bot-35", "platform": "wpe" },
                   { "name": "wpe-linux-bot-36", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-37", "platform": "wpe" },
 
                   { "name": "wpe-linux-queue-1-bot-1", "platform": "wpe" },
                   { "name": "wpe-linux-queue-1-bot-2", "platform": "wpe" },
@@ -172,17 +188,17 @@
                       "sequoia-applesilicon-release-tests-test262", "sequoia-release-tests-wk2-accessibility-isolated-tree", 
                       "sequoia-release-tests-wk2-site-isolation-tree", "sequoia-release-world-leaks-tests"
                   ],
-                  "workernames": ["bot279", "bot198"]
+                  "workernames": ["bot605", "bot279", "bot198"]
                   },
                   { "name": "Apple-Sequoia-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                   "platform": "mac-sequoia", "configuration": "release", "architectures": ["x86_64", "arm64"],
                   "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot1026"]
+                  "workernames": ["bot669", "bot1026"]
                   },
                   { "name": "Apple-Sequoia-Release-World-Leaks-Tests", "factory": "TestWorldLeaksFactory",
                   "platform": "mac-sequoia", "configuration": "release", "architectures": ["x86_64", "arm64"],
                   "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot1027", "bot1028"]
+                  "workernames": ["bot303"]
                   },
                   { "name": "Apple-Sequoia-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-sequoia", "configuration": "release", "architectures": ["x86_64", "arm64"],
@@ -197,7 +213,7 @@
                   { "name": "Apple-Sequoia-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-sequoia", "configuration": "release", "architectures": ["x86_64", "arm64"],
                   "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot1025"]
+                  "workernames": ["bot616", "bot1025"]
                   },
                   { "name": "Apple-Sequoia-AppleSilicon-Release-Test262-Tests", "factory": "Test262Factory",
                   "platform": "mac-sequoia", "configuration": "release", "architectures": ["x86_64", "arm64"],
@@ -214,8 +230,8 @@
                   },
                   { "name": "Apple-Sequoia-Release-WK2-Site-Isolation-Tree-Tests", "factory": "TestLayoutFactory",
                   "platform": "mac-sequoia", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures", "--site-isolation" ],
-                  "workernames": ["bot303"]
+                  "additionalArguments": ["--no-retry-failures", "--site-isolation", "--load-in-cross-origin-iframe", "--child-processes=19"],
+                  "workernames": ["bot2000", "bot2001"]
                   },
                   { "name": "Apple-Sequoia-Debug-Build", "factory": "BuildFactory",
                   "platform": "mac-sequoia", "configuration": "debug", "architectures": ["x86_64", "arm64"],
@@ -223,17 +239,17 @@
                       "sequoia-debug-tests-wk1", "sequoia-debug-tests-wk2", "sequoia-debug-applesilicon-tests-wk1",
                       "sequoia-debug-applesilicon-tests-wk2"
                   ],
-                  "workernames": ["bot131", "bot141"]
+                  "workernames": ["bot665", "bot131", "bot141"]
                   },
                   { "name": "Apple-Sequoia-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                   "platform": "mac-sequoia", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                   "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot1021"]
+                  "workernames": ["bot676", "bot1021"]
                   },
                   { "name": "Apple-Sequoia-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-sequoia", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                   "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot614"]
+                  "workernames": ["bot675", "bot614"]
                   },
                   { "name": "Apple-Sequoia-Debug-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                   "platform": "mac-sequoia", "configuration": "debug", "architectures": ["x86_64", "arm64"],
@@ -254,7 +270,7 @@
                   "triggers": [
                       "sonoma-release-tests-test262", "sonoma-release-tests-wk1", "sonoma-release-tests-wk2",
                       "sonoma-release-applesilicon-tests-wk1", "sonoma-release-applesilicon-tests-wk2",
-                      "sonoma-applesilicon-release-tests-jsc"
+                      "sonoma-applesilicon-release-tests-jsc", "sonoma-intel-release-tests-jsc"
                   ],
                   "workernames": ["bot243", "bot244"]
                   },
@@ -285,6 +301,10 @@
                   { "name": "Apple-Sonoma-AppleSilicon-Release-JSC-Tests", "factory": "TestJSCFactory",
                     "platform": "mac-sonoma", "configuration": "release", "architectures": ["x86_64", "arm64"],
                     "workernames": ["bot111"]
+                  },
+                  { "name": "Apple-Sonoma-Intel-Release-JSC-Tests", "factory": "TestJSCFactory",
+                    "platform": "mac-sonoma", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                    "workernames": ["bot113", "bot114"]
                   },
                   {
                     "name": "Apple-Sequoia-Safer-CPP-Checks", "factory": "SaferCPPStaticAnalyzerFactory",
@@ -501,7 +521,7 @@
                   {
                     "name": "GTK-Linux-64bit-Release-GNOMEWebCanary-Packaging-Nightly", "factory": "BuildAndUploadBuiltProductviaSftpFactory",
                     "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                    "additionalArguments": ["--prefix=/app/webkit/WebKitBuild/Release/install", "--cmakeargs=-DUSE_SYSTEM_UNIFDEF=OFF"],
+                    "additionalArguments": ["--prefix=/app/webkit/WebKitBuild/Release/install", "--cmakeargs=-DUSE_SYSTEM_UNIFDEF=OFF", "--cmakeargs=-DENABLE_WEBXR=OFF"],
                     "workernames": ["gtk-linux-bot-23"]
                   },
                   {
@@ -534,7 +554,7 @@
                     "name": "Windows-64-bit-Release-Build", "factory": "BuildFactory",
                     "platform": "win", "configuration": "release", "architectures": ["x86_64"],
                     "triggers": ["win-release-tests"],
-                    "workernames": ["wincairo-release-build-01"]
+                    "workernames": ["wincairo-release-build-01", "win-build-bot-002"]
                   },
                   {
                     "name": "Windows-64-bit-Release-Tests", "factory": "TestAllButJSCFactory",
@@ -545,7 +565,7 @@
                     "name": "Windows-64-bit-Debug-Build", "factory": "BuildFactory",
                     "platform": "win", "configuration": "debug", "architectures": ["x86_64"],
                     "triggers": ["win-debug-tests"],
-                    "workernames": ["wincairo-debug-build-01"]
+                    "workernames": ["wincairo-debug-build-01", "win-build-bot-001"]
                   },
                   {
                     "name": "Windows-64-bit-Debug-Tests", "factory": "TestAllButJSCFactory",
@@ -575,7 +595,7 @@
                   {
                     "name": "WPE-Linux-64-bit-Release-Build", "factory": "BuildFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
-                    "triggers": ["wpe-linux-64-release-tests", "wpe-linux-64-release-tests-js", "wpe-linux-64-release-tests-webdriver", "wpe-linux-64-release-tests-mvt"],
+                    "triggers": ["wpe-linux-64-release-tests", "wpe-linux-64-release-tests-js", "wpe-linux-64-release-tests-webdriver", "wpe-linux-64-release-tests-mvt", "wpe-linux-64-release-legacy-api-tests"],
                     "workernames": ["wpe-linux-bot-1"]
                   },
                   {
@@ -682,7 +702,7 @@
                   {
                     "name": "WPE-Linux-64-bit-Release-Cairo-Build", "factory": "BuildFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
-                    "additionalArguments": ["--cmakeargs=-DUSE_SKIA=OFF"],
+                    "additionalArguments": ["--cmakeargs=-DUSE_SKIA=OFF", "--cmakeargs=-DUSE_GSTREAMER_WEBRTC=FALSE"],
                     "workernames": ["wpe-linux-bot-35"]
                   },
                   {
@@ -694,6 +714,12 @@
                     "name": "WPE-Linux-64-bit-Release-MVT-Tests", "factory": "TestMVTFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                     "workernames": ["wpe-linux-bot-36"]
+                  },
+                  {
+                    "name": "WPE-Linux-64-bit-Release-Legacy-API-Tests", "factory": "TestLayoutAndAPIOnlyFactory",
+                    "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                    "additionalArguments": ["--wpe-legacy-api"],
+                    "workernames": ["wpe-linux-bot-37"]
                   }
                 ],
 
@@ -804,6 +830,9 @@
                   { "type": "Triggerable", "name": "sonoma-applesilicon-release-tests-jsc",
                     "builderNames": ["Apple-Sonoma-AppleSilicon-Release-JSC-Tests"]
                   },
+                  { "type": "Triggerable", "name": "sonoma-intel-release-tests-jsc",
+                    "builderNames": ["Apple-Sonoma-Intel-Release-JSC-Tests"]
+                  },
                   { "type": "PlatformSpecificScheduler", "platform": "ios-18", "branch": "main", "treeStableTimer": 45.0,
                     "builderNames": ["Apple-iOS-18-Release-Build"]
                   },
@@ -884,6 +913,9 @@
                   },
                   { "type": "Triggerable", "name": "wpe-linux-64-release-tests",
                     "builderNames": ["WPE-Linux-64-bit-Release-Tests"]
+                  },
+                  { "type": "Triggerable", "name": "wpe-linux-64-release-legacy-api-tests",
+                    "builderNames": ["WPE-Linux-64-bit-Release-Legacy-API-Tests"]
                   },
                   { "type": "Triggerable", "name": "wpe-linux-64-release-tests-js",
                     "builderNames": ["WPE-Linux-64-bit-Release-JS-Tests"]

@@ -97,6 +97,10 @@
 #include "ModelPresentationManagerProxy.h"
 #endif
 
+#if ENABLE(IMAGE_ANALYSIS)
+#include <WebCore/ImageAnalysisQueue.h>
+#endif
+
 namespace WebKit {
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
@@ -151,55 +155,6 @@ private:
     ListHashSet<WebCore::RegistrableDomain> m_visitedDomains;
 };
 #endif
-
-class PageLoadTimingFrameLoadStateObserver final : public FrameLoadStateObserver {
-public:
-    explicit PageLoadTimingFrameLoadStateObserver(const WebPageProxy&page)
-        : m_page(page)
-    {
-    }
-
-    void ref() const final;
-    void deref() const final;
-
-    bool hasLoadingFrame() const { return !!m_loadingFrameCount; }
-
-private:
-    void didCommitProvisionalLoad(IsMainFrame isMainFrame)
-    {
-        if (isMainFrame == IsMainFrame::Yes) {
-            // Teardown doesn't reliably inform the UI process of each iframe's provisional load failure.
-            m_loadingFrameCount = 1;
-        }
-    }
-
-    void didStartProvisionalLoad(const URL&) final
-    {
-        m_loadingFrameCount++;
-    }
-
-    void didFailProvisionalLoad(const URL&) final
-    {
-        ASSERT(m_loadingFrameCount);
-        m_loadingFrameCount--;
-    }
-
-    void didFailLoad(const URL&) final
-    {
-        ASSERT(m_loadingFrameCount);
-        m_loadingFrameCount--;
-    }
-
-    void didFinishLoad(IsMainFrame, const URL& url) final
-    {
-        ASSERT(m_loadingFrameCount);
-        m_loadingFrameCount--;
-        // FIXME: Assert that m_loadingFrameCount is zero if this is a main frame.
-    }
-
-    WeakRef<WebPageProxy> m_page;
-    size_t m_loadingFrameCount { 0 };
-};
 
 struct PrivateClickMeasurementAndMetadata {
     WebCore::PrivateClickMeasurement pcm;
@@ -272,7 +227,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     , WebCore::WebMediaSessionManagerClient
 #endif
 {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WebPageProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Internals);
 
 public:
@@ -438,12 +393,14 @@ public:
     std::optional<VisibleContentRectUpdateInfo> lastVisibleContentRectUpdate;
 #endif
 
+    bool needsFixedContainerEdgesUpdateAfterNextCommit { false };
+
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     RunLoop::Timer fullscreenVideoTextRecognitionTimer;
     std::optional<PlaybackSessionContextIdentifier> currentFullscreenVideoSessionIdentifier;
 #endif
 
-#if ENABLE(WEBXR) && !USE(OPENXR)
+#if ENABLE(WEBXR)
     RefPtr<PlatformXRSystem> xrSystem;
 #endif
 
@@ -455,7 +412,6 @@ public:
     RefPtr<WebPageProxyFrameLoadStateObserver> frameLoadStateObserver;
     HashMap<WebCore::RegistrableDomain, OptionSet<WebCore::WindowProxyProperty>> windowOpenerAccessedProperties;
 #endif
-    PageLoadTimingFrameLoadStateObserver pageLoadTimingFrameLoadStateObserver;
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     RunLoop::Timer activityStateChangeTimer;
@@ -470,6 +426,10 @@ public:
 #endif
 
     bool allowsLayoutViewportHeightExpansion { true };
+
+#if ENABLE(IMAGE_ANALYSIS)
+    std::optional<WebCore::ImageTranslationLanguageIdentifiers> imageTranslationLanguageIdentifiers { std::nullopt };
+#endif
 
     explicit Internals(WebPageProxy&);
 
@@ -544,7 +504,6 @@ public:
 
     Ref<PageLoadState> protectedPageLoadState() { return pageLoadState; }
     Ref<WebNotificationManagerMessageHandler> protectedNotificationManagerMessageHandler() { return notificationManagerMessageHandler; }
-    Ref<PageLoadTimingFrameLoadStateObserver> protectedPageLoadTimingFrameLoadStateObserver() { return pageLoadTimingFrameLoadStateObserver; }
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
     RefPtr<WebPageProxyFrameLoadStateObserver> protectedFrameLoadStateObserver() { return frameLoadStateObserver; }
 #endif

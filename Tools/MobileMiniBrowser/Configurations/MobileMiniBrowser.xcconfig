@@ -27,3 +27,4 @@ SUPPORTED_PLATFORMS = iphoneos iphonesimulator xros xrsimulator;
 CODE_SIGN_ENTITLEMENTS[sdk=*simulator] = MobileMiniBrowser/MobileMiniBrowser.entitlements;
 CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*] = MobileMiniBrowser/MobileMiniBrowser.entitlements;
 OTHER_CODE_SIGN_FLAGS[sdk=*simulator] = ;
+APPLY_RULES_IN_COPY_FILES = YES;

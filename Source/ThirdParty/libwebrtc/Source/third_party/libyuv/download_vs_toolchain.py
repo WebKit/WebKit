@@ -26,4 +26,4 @@ import vs_toolchain  # pylint: disable=wrong-import-position
 
 
 if __name__ == '__main__':
-  sys.exit(vs_toolchain.main())
+    sys.exit(vs_toolchain.main())

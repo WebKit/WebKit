@@ -25,9 +25,9 @@
 ] interface HTMLFrameElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
     [CEReactions=NotNeeded, Reflect] attribute DOMString scrolling;
-    [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
+    [CEReactions=NotNeeded, ReflectURL] attribute USVString src;
     [CEReactions=NotNeeded, Reflect] attribute DOMString frameBorder;
-    [CEReactions=NotNeeded, Reflect, URL] attribute USVString longDesc;
+    [CEReactions=NotNeeded, ReflectURL] attribute USVString longDesc;
     [CEReactions=NotNeeded, Reflect] attribute boolean noResize;
     [CheckSecurityForNode] readonly attribute Document contentDocument;
     readonly attribute WindowProxy contentWindow;

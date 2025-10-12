@@ -24,10 +24,10 @@
 
 #pragma once
 
-#include "CSSEllipseFunction.h"
-#include "StylePathComputation.h"
-#include "StylePosition.h"
-#include "StylePrimitiveNumericTypes.h"
+#include <WebCore/CSSEllipseFunction.h>
+#include <WebCore/StylePathComputation.h>
+#include <WebCore/StylePosition.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
 
 namespace WebCore {
 namespace Style {

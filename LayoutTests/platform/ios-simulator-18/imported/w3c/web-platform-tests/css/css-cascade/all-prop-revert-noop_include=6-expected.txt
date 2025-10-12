@@ -1,0 +1,17 @@
+
+PASS audio
+PASS button
+PASS datalist
+PASS dt
+PASS h1
+PASS hr
+PASS label
+PASS menu
+PASS option
+PASS rt
+PASS small
+PASS svg
+PASS thead
+PASS video
+
+

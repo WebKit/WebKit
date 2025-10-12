@@ -1,3 +1,0 @@
-
-PASS Check if video.loop is set to true that expecting the seeking event is fired more than once
-

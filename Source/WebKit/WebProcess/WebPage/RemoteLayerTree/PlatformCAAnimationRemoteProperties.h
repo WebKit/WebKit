@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/PlatformCAAnimation.h>
+#include <WebCore/TimingFunction.h>
 #include <wtf/Forward.h>
 
 namespace WebKit {

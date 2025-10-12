@@ -1,0 +1,3 @@
+
+PASS slot element with default display should be contents
+

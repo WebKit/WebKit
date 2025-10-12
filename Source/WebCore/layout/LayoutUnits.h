@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "LayoutUnit.h"
-#include "LayoutPoint.h"
-#include "LayoutRect.h"
-#include "MarginTypes.h"
+#include <WebCore/LayoutPoint.h>
+#include <WebCore/LayoutRect.h>
+#include <WebCore/LayoutUnit.h>
+#include <WebCore/MarginTypes.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 

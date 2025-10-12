@@ -36,9 +36,9 @@ messages -> RemoteImageDecoderAVFProxy {
     CreateDecoder(IPC::SharedBufferReference data, String mimeType) -> (std::optional<WebCore::ImageDecoderIdentifier> identifier) Synchronous
     DeleteDecoder(WebCore::ImageDecoderIdentifier identifier)
     SetExpectedContentSize(WebCore::ImageDecoderIdentifier identifier, long long expectedContentSize)
-    SetData(WebCore::ImageDecoderIdentifier identifier, IPC::SharedBufferReference data, bool allDataReceived) -> (size_t frameCount, WebCore::IntSize size, bool hasTrack, std::optional<Vector<WebCore::ImageDecoderFrameInfo>> frameInfos) Synchronous
-    CreateFrameImageAtIndex(WebCore::ImageDecoderIdentifier identifier, size_t index) -> (std::optional<WebCore::ShareableBitmapHandle> imageHandle) Synchronous
-    ClearFrameBufferCache(WebCore::ImageDecoderIdentifier identifier, size_t index)
+    SetData(WebCore::ImageDecoderIdentifier identifier, IPC::SharedBufferReference data, bool allDataReceived) -> (uint64_t frameCount, WebCore::IntSize size, bool hasTrack, std::optional<Vector<WebCore::ImageDecoderFrameInfo>> frameInfos) Synchronous
+    CreateFrameImageAtIndex(WebCore::ImageDecoderIdentifier identifier, uint64_t index) -> (std::optional<WebCore::ShareableBitmapHandle> imageHandle) Synchronous
+    ClearFrameBufferCache(WebCore::ImageDecoderIdentifier identifier, uint64_t index)
 }
 
 #endif

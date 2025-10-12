@@ -137,7 +137,7 @@ void BufferMemoryManager::freeGrowableBoundsCheckingMemory(void* basePtr, size_t
 
 bool BufferMemoryManager::isInGrowableOrFastMemory(void* address)
 {
-    // NOTE: This can be called from a signal handler, but only after we proved that we're in JIT code or WasmLLInt code.
+    // NOTE: This can be called from a signal handler, but only after we proved that we're in JIT code or IPInt code.
     Locker locker { m_lock };
     for (void* memory : m_fastMemories) {
         char* start = static_cast<char*>(memory);

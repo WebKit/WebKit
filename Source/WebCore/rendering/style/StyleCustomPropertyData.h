@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,7 +22,7 @@
 
 #pragma once
 
-#include "CSSCustomPropertyValue.h"
+#include <WebCore/StyleCustomProperty.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/IterationStatus.h>
@@ -30,37 +31,38 @@
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
+namespace Style {
 
-class StyleCustomPropertyData : public RefCounted<StyleCustomPropertyData> {
+class CustomPropertyData : public RefCounted<CustomPropertyData> {
 private:
-    using CustomPropertyValueMap = UncheckedKeyHashMap<AtomString, RefPtr<const CSSCustomPropertyValue>>;
+    using CustomPropertyValueMap = HashMap<AtomString, RefPtr<const CustomProperty>>;
 
 public:
-    static Ref<StyleCustomPropertyData> create() { return adoptRef(*new StyleCustomPropertyData); }
-    Ref<StyleCustomPropertyData> copy() const { return adoptRef(*new StyleCustomPropertyData(*this)); }
+    static Ref<CustomPropertyData> create() { return adoptRef(*new CustomPropertyData); }
+    Ref<CustomPropertyData> copy() const { return adoptRef(*new CustomPropertyData(*this)); }
 
-    bool operator==(const StyleCustomPropertyData&) const;
+    bool operator==(const CustomPropertyData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const StyleCustomPropertyData&) const;
+    void dumpDifferences(TextStream&, const CustomPropertyData&) const;
 #endif
 
-    const CSSCustomPropertyValue* get(const AtomString&) const;
-    void set(const AtomString&, Ref<const CSSCustomPropertyValue>&&);
+    const CustomProperty* get(const AtomString&) const;
+    void set(const AtomString&, Ref<const CustomProperty>&&);
 
     unsigned size() const { return m_size; }
     bool mayHaveAnimatableProperties() const { return m_mayHaveAnimatableProperties; }
 
-    void forEach(NOESCAPE const Function<IterationStatus(const KeyValuePair<AtomString, RefPtr<const CSSCustomPropertyValue>>&)>&) const;
+    void forEach(NOESCAPE const Function<IterationStatus(const KeyValuePair<AtomString, RefPtr<const CustomProperty>>&)>&) const;
     AtomString findKeyAtIndex(unsigned) const;
 
 private:
-    StyleCustomPropertyData() = default;
-    StyleCustomPropertyData(const StyleCustomPropertyData&);
+    CustomPropertyData() = default;
+    CustomPropertyData(const CustomPropertyData&);
 
     template<typename Callback> void forEachInternal(Callback&&) const;
 
-    RefPtr<const StyleCustomPropertyData> m_parentValues;
+    RefPtr<const CustomPropertyData> m_parentValues;
     CustomPropertyValueMap m_ownValues;
     unsigned m_size { 0 };
     unsigned m_ancestorCount { 0 };
@@ -70,4 +72,5 @@ private:
 #endif
 };
 
+} // namespace Style
 } // namespace WebCore

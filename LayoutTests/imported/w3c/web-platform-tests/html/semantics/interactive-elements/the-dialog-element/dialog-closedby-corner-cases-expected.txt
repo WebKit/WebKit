@@ -1,0 +1,33 @@
+Outside
+
+FAIL Pressing escape, when focusin removes and reinserts, modeless assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Clicking outside, when focusin removes and reinserts, modeless assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Pressing escape, when focusin closes dialog, modeless assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Clicking outside, when focusin closes dialog, modeless assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Pressing escape, when focusin calls showModal, modeless assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Clicking outside, when focusin calls showModal, modeless assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Pressing escape, when beforetoggle closes dialog, modeless assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Clicking outside, when beforetoggle closes dialog, modeless assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Pressing escape, when beforetoggle calls showModal, modeless assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Clicking outside, when beforetoggle calls showModal, modeless assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Pressing escape, when focusin removes and reinserts, modal assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Clicking outside, when focusin removes and reinserts, modal assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Pressing escape, when focusin closes dialog, modal assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Clicking outside, when focusin closes dialog, modal assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Pressing escape, when focusin calls showModal, modal assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Clicking outside, when focusin calls showModal, modal assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Pressing escape, when beforetoggle closes dialog, modal assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Clicking outside, when beforetoggle closes dialog, modal assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Pressing escape, when beforetoggle calls showModal, modal assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Clicking outside, when beforetoggle calls showModal, modal assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Pressing escape, when focusin removes and reinserts, open assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Clicking outside, when focusin removes and reinserts, open assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Pressing escape, when focusin closes dialog, open assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Clicking outside, when focusin closes dialog, open assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Pressing escape, when focusin calls showModal, open assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Clicking outside, when focusin calls showModal, open assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Pressing escape, when beforetoggle closes dialog, open assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Clicking outside, when beforetoggle closes dialog, open assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Pressing escape, when beforetoggle calls showModal, open assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+FAIL Clicking outside, when beforetoggle calls showModal, open assert_equals: Dialog should be closedby=any expected (string) "any" but got (undefined) undefined
+

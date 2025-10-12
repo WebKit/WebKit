@@ -16,7 +16,7 @@ for (i = 0; i < 1000; i++) {
     try {
         test();
     } catch(e) {
-        if (e != "ReferenceError: Cannot access uninitialized variable.")
-            throw "Expected \"ReferenceError: Cannot access uninitialized variable.\", but got \"" + e +"\"";
+        if (e != "ReferenceError: Cannot access 'o' before initialization.")
+            throw "Expected \"ReferenceError: Cannot access 'o' before initialization.\", but got \"" + e +"\"";
     }
 }

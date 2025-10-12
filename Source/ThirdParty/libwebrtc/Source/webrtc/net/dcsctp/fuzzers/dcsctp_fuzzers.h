@@ -10,14 +10,24 @@
 #ifndef NET_DCSCTP_FUZZERS_DCSCTP_FUZZERS_H_
 #define NET_DCSCTP_FUZZERS_DCSCTP_FUZZERS_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <deque>
+#include <iterator>
 #include <memory>
+#include <optional>
 #include <set>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "api/task_queue/task_queue_base.h"
+#include "api/units/timestamp.h"
+#include "net/dcsctp/public/dcsctp_message.h"
 #include "net/dcsctp/public/dcsctp_socket.h"
+#include "net/dcsctp/public/timeout.h"
+#include "net/dcsctp/public/types.h"
+#include "rtc_base/checks.h"
 
 namespace dcsctp {
 namespace dcsctp_fuzzers {
@@ -28,7 +38,7 @@ class FuzzerTimeout : public Timeout {
   explicit FuzzerTimeout(std::set<TimeoutID>& active_timeouts)
       : active_timeouts_(active_timeouts) {}
 
-  void Start(DurationMs duration_ms, TimeoutID timeout_id) override {
+  void Start(DurationMs /* duration_ms */, TimeoutID timeout_id) override {
     // Start is only allowed to be called on stopped or expired timeouts.
     if (timeout_id_.has_value()) {
       // It has been started before, but maybe it expired. Ensure that it's not
@@ -56,30 +66,33 @@ class FuzzerTimeout : public Timeout {
 class FuzzerCallbacks : public DcSctpSocketCallbacks {
  public:
   static constexpr int kRandomValue = 42;
-  void SendPacket(rtc::ArrayView<const uint8_t> data) override {
+  void SendPacket(webrtc::ArrayView<const uint8_t> data) override {
     sent_packets_.emplace_back(std::vector<uint8_t>(data.begin(), data.end()));
   }
   std::unique_ptr<Timeout> CreateTimeout(
-      webrtc::TaskQueueBase::DelayPrecision precision) override {
+      webrtc::TaskQueueBase::DelayPrecision /* precision */) override {
     // The fuzzer timeouts don't implement |precision|.
     return std::make_unique<FuzzerTimeout>(active_timeouts_);
   }
   webrtc::Timestamp Now() override { return webrtc::Timestamp::Millis(42); }
-  uint32_t GetRandomInt(uint32_t low, uint32_t high) override {
+  uint32_t GetRandomInt(uint32_t /* low */, uint32_t /* high */) override {
     return kRandomValue;
   }
-  void OnMessageReceived(DcSctpMessage message) override {}
-  void OnError(ErrorKind error, absl::string_view message) override {}
-  void OnAborted(ErrorKind error, absl::string_view message) override {}
+  void OnMessageReceived(DcSctpMessage /* message */) override {}
+  void OnError(ErrorKind /* error */,
+               absl::string_view /* message */) override {}
+  void OnAborted(ErrorKind /* error */,
+                 absl::string_view /* message */) override {}
   void OnConnected() override {}
   void OnClosed() override {}
   void OnConnectionRestarted() override {}
-  void OnStreamsResetFailed(rtc::ArrayView<const StreamID> outgoing_streams,
-                            absl::string_view reason) override {}
+  void OnStreamsResetFailed(
+      webrtc::ArrayView<const StreamID> /* outgoing_streams */,
+      absl::string_view /* reason */) override {}
   void OnStreamsResetPerformed(
-      rtc::ArrayView<const StreamID> outgoing_streams) override {}
+      webrtc::ArrayView<const StreamID> outgoing_streams) override {}
   void OnIncomingStreamsReset(
-      rtc::ArrayView<const StreamID> incoming_streams) override {}
+      webrtc::ArrayView<const StreamID> incoming_streams) override {}
 
   std::vector<uint8_t> ConsumeSentPacket() {
     if (sent_packets_.empty()) {
@@ -112,7 +125,7 @@ class FuzzerCallbacks : public DcSctpSocketCallbacks {
 // API methods.
 void FuzzSocket(DcSctpSocketInterface& socket,
                 FuzzerCallbacks& cb,
-                rtc::ArrayView<const uint8_t> data);
+                webrtc::ArrayView<const uint8_t> data);
 
 }  // namespace dcsctp_fuzzers
 }  // namespace dcsctp

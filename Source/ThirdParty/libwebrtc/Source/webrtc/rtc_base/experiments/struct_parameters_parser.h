@@ -10,8 +10,6 @@
 #ifndef RTC_BASE_EXPERIMENTS_STRUCT_PARAMETERS_PARSER_H_
 #define RTC_BASE_EXPERIMENTS_STRUCT_PARAMETERS_PARSER_H_
 
-#include <functional>
-#include <map>
 #include <memory>
 #include <optional>
 #include <string>
@@ -20,9 +18,9 @@
 
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
-#include "rtc_base/experiments/field_trial_parser.h"
-#include "rtc_base/experiments/field_trial_units.h"
-#include "rtc_base/string_encode.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
 
 namespace webrtc {
 namespace struct_parser_impl {

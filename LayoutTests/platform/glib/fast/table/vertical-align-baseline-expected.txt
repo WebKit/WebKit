@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x426
-  RenderBlock {HTML} at (0,0) size 800x426
-    RenderBody {BODY} at (8,8) size 784x410
-      RenderTable {TABLE} at (0,0) size 656x410 [border: (1px outset #000000)]
-        RenderTableSection {TBODY} at (1,1) size 654x408
-          RenderTableRow {TR} at (0,2) size 654x404
+layer at (0,0) size 800x512
+  RenderBlock {HTML} at (0,0) size 800x512
+    RenderBody {BODY} at (8,8) size 784x496
+      RenderTable {TABLE} at (0,0) size 656x496 [border: (1px outset #000000)]
+        RenderTableSection {TBODY} at (1,1) size 654x494
+          RenderTableRow {TR} at (0,2) size 654x490
             RenderTableCell {TD} at (2,88) size 46x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,88) size 42x17
                 text run at (2,2) width 42: "Lorem"

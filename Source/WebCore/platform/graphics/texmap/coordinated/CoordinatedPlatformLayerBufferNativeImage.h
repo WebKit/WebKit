@@ -45,7 +45,7 @@ private:
 
     bool tryEnsureBuffer(TextureMapper&);
 
-    Ref<NativeImage> m_image;
+    const Ref<NativeImage> m_image;
     std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
 };
 

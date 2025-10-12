@@ -29,7 +29,7 @@ DECLARE_SYSTEM_HEADER
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#include <System/sys/fileport.h>
+#include <sys/fileport.h>
 
 #else
 

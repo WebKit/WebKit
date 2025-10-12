@@ -1,17 +1,22 @@
 #! /usr/bin/env perl
 # Copyright 2006-2016 The OpenSSL Project Authors. All Rights Reserved.
 #
-# Licensed under the OpenSSL license (the "License").  You may not use
-# this file except in compliance with the License.  You can obtain a copy
-# in the file LICENSE in the source distribution or at
-# https://www.openssl.org/source/license.html
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 #
 # ====================================================================
 # Written by Andy Polyakov <appro@openssl.org> for the OpenSSL
-# project. The module is, however, dual licensed under OpenSSL and
-# CRYPTOGAMS licenses depending on where you obtain it. For further
-# details see http://www.openssl.org/~appro/cryptogams/.
+# project.
 # ====================================================================
 #
 # sha1_block procedure for x86_64.
@@ -2052,44 +2057,8 @@ ___
 
 ####################################################################
 
-sub sha1rnds4 {
-    if (@_[0] =~ /\$([x0-9a-f]+),\s*%xmm([0-7]),\s*%xmm([0-7])/) {
-      my @opcode=(0x0f,0x3a,0xcc);
-	push @opcode,0xc0|($2&7)|(($3&7)<<3);		# ModR/M
-	my $c=$1;
-	push @opcode,$c=~/^0/?oct($c):$c;
-	return ".byte\t".join(',',@opcode);
-    } else {
-	return "sha1rnds4\t".@_[0];
-    }
-}
-
-sub sha1op38 {
-    my $instr = shift;
-    my %opcodelet = (
-		"sha1nexte" => 0xc8,
-  		"sha1msg1"  => 0xc9,
-		"sha1msg2"  => 0xca	);
-
-    if (defined($opcodelet{$instr}) && @_[0] =~ /%xmm([0-9]+),\s*%xmm([0-9]+)/) {
-      my @opcode=(0x0f,0x38);
-      my $rex=0;
-	$rex|=0x04			if ($2>=8);
-	$rex|=0x01			if ($1>=8);
-	unshift @opcode,0x40|$rex	if ($rex);
-	push @opcode,$opcodelet{$instr};
-	push @opcode,0xc0|($1&7)|(($2&7)<<3);		# ModR/M
-	return ".byte\t".join(',',@opcode);
-    } else {
-	return $instr."\t".@_[0];
-    }
-}
-
 foreach (split("\n",$code)) {
 	s/\`([^\`]*)\`/eval $1/geo;
-
-	s/\b(sha1rnds4)\s+(.*)/sha1rnds4($2)/geo	or
-	s/\b(sha1[^\s]*)\s+(.*)/sha1op38($1,$2)/geo;
 
 	print $_,"\n";
 }

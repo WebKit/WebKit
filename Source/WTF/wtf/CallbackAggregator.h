@@ -103,8 +103,55 @@ private:
     std::tuple<In...> m_defaultArgs;
 };
 
+// Waits for all bool completions and resolves to true only if all succeed.
+template <DestructionThread destructionThread>
+class SuccessCallbackAggregatorOnThread : public ThreadSafeRefCounted<SuccessCallbackAggregatorOnThread<destructionThread>, destructionThread> {
+public:
+    static auto create(CompletionHandler<void(bool)>&& callback) { return adoptRef(*new SuccessCallbackAggregatorOnThread(WTFMove(callback))); }
+
+    ~SuccessCallbackAggregatorOnThread()
+    {
+        ASSERT(m_wasConstructedOnMainThread == isMainThread());
+        m_callback(m_result);
+    }
+
+    void failed()
+    {
+        m_result = false;
+    }
+
+    CompletionHandler<void(bool)> chain()
+    {
+        return [aggregator = Ref { *this }] (bool success) {
+            if (!success)
+                aggregator->failed();
+        };
+    }
+
+private:
+    explicit SuccessCallbackAggregatorOnThread(CompletionHandler<void(bool)>&& callback)
+        : m_callback(WTFMove(callback))
+#if ASSERT_ENABLED
+        , m_wasConstructedOnMainThread(isMainThread())
+#endif
+    {
+    }
+
+    CompletionHandler<void(bool)> m_callback;
+#if ASSERT_ENABLED
+    bool m_wasConstructedOnMainThread;
+#endif
+    bool m_result { true };
+};
+
+
+using SuccessCallbackAggregator = SuccessCallbackAggregatorOnThread<DestructionThread::Any>;
+using MainRunLoopSuccessCallbackAggregator = SuccessCallbackAggregatorOnThread<DestructionThread::MainRunLoop>;
+
 } // namespace WTF
 
 using WTF::CallbackAggregator;
 using WTF::MainRunLoopCallbackAggregator;
 using WTF::EagerCallbackAggregator;
+using WTF::SuccessCallbackAggregator;
+using WTF::MainRunLoopSuccessCallbackAggregator;

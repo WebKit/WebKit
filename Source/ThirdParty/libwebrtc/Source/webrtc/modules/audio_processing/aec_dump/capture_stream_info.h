@@ -11,10 +11,13 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC_DUMP_CAPTURE_STREAM_INFO_H_
 #define MODULES_AUDIO_PROCESSING_AEC_DUMP_CAPTURE_STREAM_INFO_H_
 
+#include <cstdint>
 #include <memory>
 #include <utility>
 
+#include "api/audio/audio_view.h"
 #include "modules/audio_processing/include/aec_dump.h"
+#include "modules/audio_processing/include/audio_frame_view.h"
 
 // Files generated at build-time by the protobuf compiler.
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
@@ -33,7 +36,9 @@ class CaptureStreamInfo {
   ~CaptureStreamInfo() = default;
 
   void AddInput(const AudioFrameView<const float>& src);
+  void AddInputChannel(MonoView<const float> channel);
   void AddOutput(const AudioFrameView<const float>& src);
+  void AddOutputChannel(MonoView<const float> channel);
 
   void AddInput(const int16_t* const data,
                 int num_channels,

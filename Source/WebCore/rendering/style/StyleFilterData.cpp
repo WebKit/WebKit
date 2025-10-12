@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,14 +28,20 @@
 #include "StyleFilterData.h"
 
 #include "RenderStyleDifference.h"
+#include "RenderStyleInlines.h"
+#include "StylePrimitiveKeyword+Logging.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
 
 namespace WebCore {
 
-StyleFilterData::StyleFilterData() = default;
+StyleFilterData::StyleFilterData()
+    : filter(RenderStyle::initialFilter())
+{
+}
 
 StyleFilterData::StyleFilterData(const StyleFilterData& other)
     : RefCounted<StyleFilterData>()
-    , operations(other.operations)
+    , filter(other.filter)
 {
 }
 
@@ -45,13 +52,13 @@ Ref<StyleFilterData> StyleFilterData::copy() const
 
 bool StyleFilterData::operator==(const StyleFilterData& other) const
 {
-    return operations == other.operations;
+    return filter == other.filter;
 }
 
 #if !LOG_DISABLED
 void StyleFilterData::dumpDifferences(TextStream& ts, const StyleFilterData& other) const
 {
-    LOG_IF_DIFFERENT(operations);
+    LOG_IF_DIFFERENT(filter);
 }
 #endif // !LOG_DISABLED
 

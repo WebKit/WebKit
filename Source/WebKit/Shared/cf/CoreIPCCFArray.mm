@@ -45,10 +45,10 @@ CoreIPCCFArray::CoreIPCCFArray(CFArrayRef array)
 {
     CFIndex count = array ? CFArrayGetCount(array) : 0;
     for (CFIndex i = 0; i < count; i++) {
-        CFTypeRef element = CFArrayGetValueAtIndex(array, i);
-        if (IPC::typeFromCFTypeRef(element) == IPC::CFType::Unknown)
+        RetainPtr element = CFArrayGetValueAtIndex(array, i);
+        if (IPC::typeFromCFTypeRef(element.get()) == IPC::CFType::Unknown)
             continue;
-        m_array.append(CoreIPCCFType(element));
+        m_array.append(CoreIPCCFType(element.get()));
     }
 }
 

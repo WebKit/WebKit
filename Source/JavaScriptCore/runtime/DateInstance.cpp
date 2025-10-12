@@ -51,7 +51,7 @@ const GregorianDateTime* DateInstance::calculateGregorianDateTime(DateCache& cac
         m_data = cache.cachedDateInstanceData(milli);
 
     if (m_data->m_gregorianDateTimeCachedForMS != milli) {
-        cache.msToGregorianDateTime(milli, WTF::LocalTime, m_data->m_cachedGregorianDateTime);
+        cache.msToGregorianDateTime(milli, TimeType::LocalTime, m_data->m_cachedGregorianDateTime);
         m_data->m_gregorianDateTimeCachedForMS = milli;
     }
     return &m_data->m_cachedGregorianDateTime;
@@ -67,7 +67,7 @@ const GregorianDateTime* DateInstance::calculateGregorianDateTimeUTC(DateCache& 
         m_data = cache.cachedDateInstanceData(milli);
 
     if (m_data->m_gregorianDateTimeUTCCachedForMS != milli) {
-        cache.msToGregorianDateTime(milli, WTF::UTCTime, m_data->m_cachedGregorianDateTimeUTC);
+        cache.msToGregorianDateTime(milli, TimeType::UTCTime, m_data->m_cachedGregorianDateTimeUTC);
         m_data->m_gregorianDateTimeUTCCachedForMS = milli;
     }
     return &m_data->m_cachedGregorianDateTimeUTC;

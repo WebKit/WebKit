@@ -77,7 +77,7 @@ JSC::JSValue SerializedPlatformDataCueMac::deserialize(JSC::JSGlobalObject* lexi
 
     JSGlobalContextRef jsGlobalContextRef = toGlobalRef(lexicalGlobalObject);
     JSContext *jsContext = [JSContext contextWithJSGlobalContextRef:jsGlobalContextRef];
-    JSValue *serializedValue = jsValueWithValueInContext(dictionary.get(), jsContext);
+    RetainPtr serializedValue = jsValueWithValueInContext(dictionary.get(), jsContext);
 
     return toJS(lexicalGlobalObject, [serializedValue JSValueRef]);
 #else
@@ -88,22 +88,12 @@ JSC::JSValue SerializedPlatformDataCueMac::deserialize(JSC::JSGlobalObject* lexi
 
 bool SerializedPlatformDataCueMac::isEqual(const SerializedPlatformDataCue& other) const
 {
-    return m_value == toSerializedPlatformDataCueMac(&other)->m_value;
+    return m_value == downcast<SerializedPlatformDataCueMac>(other).m_value;
 }
 
-SerializedPlatformDataCueMac* toSerializedPlatformDataCueMac(SerializedPlatformDataCue* rep)
+const HashSet<RetainPtr<Class>>& SerializedPlatformDataCueMac::allowedClassesForNativeValues()
 {
-    return const_cast<SerializedPlatformDataCueMac*>(toSerializedPlatformDataCueMac(const_cast<const SerializedPlatformDataCue*>(rep)));
-}
-
-const SerializedPlatformDataCueMac* toSerializedPlatformDataCueMac(const SerializedPlatformDataCue* rep)
-{
-    return static_cast<const SerializedPlatformDataCueMac*>(rep);
-}
-
-const UncheckedKeyHashSet<RetainPtr<Class>>& SerializedPlatformDataCueMac::allowedClassesForNativeValues()
-{
-    static NeverDestroyed<UncheckedKeyHashSet<RetainPtr<Class>>> allowedClasses(UncheckedKeyHashSet<RetainPtr<Class>> { [NSString class], [NSNumber class], [NSLocale class], [NSDictionary class], [NSArray class], [NSData class] });
+    static NeverDestroyed<HashSet<RetainPtr<Class>>> allowedClasses(HashSet<RetainPtr<Class>> { [NSString class], [NSNumber class], [NSLocale class], [NSDictionary class], [NSArray class], [NSData class] });
     return allowedClasses;
 }
 
@@ -130,7 +120,7 @@ static JSValue *jsValueWithValueInContext(id value, JSContext *context)
     if ([value isKindOfClass:[NSData class]])
         return jsValueWithDataInContext(value, context);
 
-    if ([value isKindOfClass:PAL::getAVMetadataItemClass()])
+    if ([value isKindOfClass:PAL::getAVMetadataItemClassSingleton()])
         return jsValueWithAVMetadataItemInContext(value, context);
 
     return nil;
@@ -156,7 +146,7 @@ static JSValue *jsValueWithArrayInContext(NSArray *array, JSContext *context)
 
     NSUInteger count = [array count];
     for (NSUInteger i = 0; i < count; ++i) {
-        JSValue *value = jsValueWithValueInContext([array objectAtIndex:i], context);
+        RetainPtr value = jsValueWithValueInContext([array objectAtIndex:i], context);
         if (!value)
             continue;
 
@@ -180,7 +170,7 @@ static JSValue *jsValueWithDictionaryInContext(NSDictionary *dictionary, JSConte
         if (![key isKindOfClass:[NSString class]])
             continue;
 
-        JSValue *value = jsValueWithValueInContext([dictionary objectForKey:key], context);
+        RetainPtr value = jsValueWithValueInContext([dictionary objectForKey:key], context);
         if (!value)
             continue;
 

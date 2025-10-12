@@ -1,5 +1,5 @@
 //@ skip if $memoryLimited
-//@ requireOptions("--jitPolicyScale=0")
+//@ runDefault("--jitPolicyScale=0")
 function foo(a0, a1) {
     try {
         foo(a0, a0);

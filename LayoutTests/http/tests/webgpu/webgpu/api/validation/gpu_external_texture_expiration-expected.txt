@@ -10,6 +10,6 @@ PASS :webcodec_video_frame_close_expire_immediately:
 FAIL :import_from_different_video_frame: assert_unreached:
   - EXCEPTION: Error
     assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/gpu_external_texture_expiration.spec.js:297:11
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/gpu_external_texture_expiration.spec.js:296:11
  Reached unreachable code
 

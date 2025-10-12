@@ -69,17 +69,17 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoPresentationInterfaceIOS);
 
 static UIColor *clearUIColor()
 {
-    return (UIColor *)[PAL::getUIColorClass() clearColor];
+    return (UIColor *)[PAL::getUIColorClassSingleton() clearColor];
 }
 
 static UIColor *blackUIColor()
 {
-    return (UIColor *)[PAL::getUIColorClass() blackColor];
+    return (UIColor *)[PAL::getUIColorClassSingleton() blackColor];
 }
 
 static UIColor *greyUIColor()
 {
-    return (UIColor *)[PAL::getUIColorClass() colorWithRed:164.0 / 255.0 green:164.0 / 255.0 blue:164.0 / 255.0 alpha:1];
+    return (UIColor *)[PAL::getUIColorClassSingleton() colorWithRed:164.0 / 255.0 green:164.0 / 255.0 blue:164.0 / 255.0 alpha:1];
 }
 
 #if !LOG_DISABLED
@@ -118,7 +118,7 @@ UIViewController *VideoPresentationInterfaceIOS::presentingViewController()
 }
 
 VideoPresentationInterfaceIOS::VideoPresentationInterfaceIOS(PlaybackSessionInterfaceIOS& playbackSessionInterface)
-    : m_watchdogTimer(RunLoop::main(), this, &VideoPresentationInterfaceIOS::watchdogTimerFired)
+    : m_watchdogTimer(RunLoop::mainSingleton(), "VideoPresentationInterfaceIOS::WatchdogTimer"_s, this, &VideoPresentationInterfaceIOS::watchdogTimerFired)
     , m_playbackSessionInterface(playbackSessionInterface)
 {
     m_playbackSessionInterface->setVideoPresentationInterface(this);
@@ -163,7 +163,7 @@ void VideoPresentationInterfaceIOS::ensurePipPlacardIsShowing()
         [pipPlacard setBackgroundColor:blackUIColor()];
         [pipPlacard setTranslatesAutoresizingMaskIntoConstraints:NO];
 
-        RetainPtr image = [[[PAL::getUIImageClass() systemImageNamed:@"pip"] imageWithTintColor:greyUIColor() renderingMode:UIImageRenderingModeAlwaysOriginal] imageWithConfiguration:[PAL::getUIImageSymbolConfigurationClass() configurationWithWeight:UIImageSymbolWeightThin]];
+        RetainPtr image = [[[PAL::getUIImageClassSingleton() systemImageNamed:@"pip"] imageWithTintColor:greyUIColor() renderingMode:UIImageRenderingModeAlwaysOriginal] imageWithConfiguration:[PAL::getUIImageSymbolConfigurationClassSingleton() configurationWithWeight:UIImageSymbolWeightThin]];
 
         RetainPtr imageView = adoptNS([PAL::allocUIImageViewInstance() initWithImage:image.get()]);
         [imageView setContentMode:UIViewContentModeScaleAspectFit];
@@ -175,7 +175,7 @@ void VideoPresentationInterfaceIOS::ensurePipPlacardIsShowing()
         [pipLabel setText:@"This video is playing in picture in picture."];
         [pipLabel setTextAlignment:NSTextAlignmentCenter];
         [pipLabel setTextColor:greyUIColor()];
-        [pipLabel setFont:[PAL::getUIFontClass() systemFontOfSize:16]];
+        [pipLabel setFont:[PAL::getUIFontClassSingleton() systemFontOfSize:16]];
         [pipLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
 
         [pipPlacard addSubview:pipLabel.get()];
@@ -249,19 +249,22 @@ void VideoPresentationInterfaceIOS::setPlayerIdentifier(std::optional<MediaPlaye
     m_playbackSessionInterface->setPlayerIdentifier(WTFMove(identifier));
 }
 
-void VideoPresentationInterfaceIOS::audioSessionCategoryChanged(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy)
+void VideoPresentationInterfaceIOS::audioSessionCategoryChanged(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy routeSharingPolicy)
 {
-    auto model = videoPresentationModel();
-    if (!model)
+    if (routeSharingPolicy == m_routeSharingPolicy)
         return;
 
-    // Re-request the routeContextUUID in case it also changed when the category did.
-    model->requestRouteSharingPolicyAndContextUID([this, protectedThis = Ref { *this }] (RouteSharingPolicy policy, String contextUID) {
-        m_routeSharingPolicy = policy;
-        m_routingContextUID = contextUID;
+    m_routeSharingPolicy = routeSharingPolicy;
+    updateRouteSharingPolicy();
+}
 
-        updateRouteSharingPolicy();
-    });
+void VideoPresentationInterfaceIOS::routingContextUIDChanged(const String& routingContextUID)
+{
+    if (routingContextUID == m_routingContextUID)
+        return;
+
+    m_routingContextUID = routingContextUID;
+    updateRouteSharingPolicy();
 }
 
 void VideoPresentationInterfaceIOS::requestHideAndExitFullscreen()
@@ -327,8 +330,8 @@ void VideoPresentationInterfaceIOS::doSetup()
         [m_viewController _setIgnoreAppSupportedOrientations:YES];
         [m_window setRootViewController:m_viewController.get()];
         auto textEffectsWindowLevel = [&] {
-            auto *textEffectsWindow = [PAL::getUITextEffectsWindowClass() sharedTextEffectsWindowForWindowScene:[m_window windowScene]];
-            return textEffectsWindow ? textEffectsWindow.windowLevel : PAL::get_UIKit_UITextEffectsBeneathStatusBarWindowLevel();
+            auto *textEffectsWindow = [PAL::getUITextEffectsWindowClassSingleton() sharedTextEffectsWindowForWindowScene:[m_window windowScene]];
+            return textEffectsWindow ? textEffectsWindow.windowLevel : PAL::get_UIKit_UITextEffectsBeneathStatusBarWindowLevelSingleton();
         }();
         [m_window setWindowLevel:textEffectsWindowLevel - 1];
         [m_window makeKeyAndVisible];
@@ -576,7 +579,7 @@ void VideoPresentationInterfaceIOS::doExitFullscreen()
 
     m_standby = false;
 
-    RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, this] {
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, this] {
         if (auto model = videoPresentationModel())
             model->didExitFullscreen();
         m_changingStandbyOnly = false;
@@ -937,7 +940,7 @@ void VideoPresentationInterfaceIOS::preparedToReturnToStandby()
 
 void VideoPresentationInterfaceIOS::finalizeSetup()
 {
-    RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, this] {
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, this] {
         if (auto model = videoPresentationModel()) {
             if (!m_hasVideoContentLayer && m_targetMode.hasVideo()) {
                 m_finalizeSetupNeedsVideoContentLayer = true;

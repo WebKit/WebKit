@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/TrackInfo.h>
 #include <optional>
 #include <wtf/Forward.h>
 
@@ -37,6 +38,7 @@ struct PlatformVideoColorSpace;
 struct SpatialVideoMetadata;
 struct VideoProjectionMetadata;
 
+TrackInfoTrackType typeFromFormatDescription(CMFormatDescriptionRef);
 FloatSize presentationSizeFromFormatDescription(CMFormatDescriptionRef);
 std::optional<PlatformVideoColorSpace> colorSpaceFromFormatDescription(CMFormatDescriptionRef);
 String codecFromFormatDescription(CMFormatDescriptionRef);

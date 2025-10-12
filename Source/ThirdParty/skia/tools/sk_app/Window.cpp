@@ -9,10 +9,17 @@
 
 #include "include/core/SkCanvas.h"
 #include "include/core/SkSurface.h"
-#include "include/gpu/ganesh/GrDirectContext.h"
-#include "include/gpu/ganesh/GrRecordingContext.h"
 #include "tools/window/DisplayParams.h"
 #include "tools/window/WindowContext.h"
+
+#if defined(SK_GANESH)
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
+#endif
+
+#if defined(SK_GRAPHITE)
+#include "include/gpu/graphite/Recorder.h"
+#endif
 
 using skwindow::DisplayParams;
 
@@ -99,9 +106,11 @@ void Window::onPaint() {
     this->visitLayers([](Layer* layer) { layer->onPrePaint(); });
     this->visitLayers([=](Layer* layer) { layer->onPaint(backbuffer.get()); });
 
+#if defined(SK_GANESH)
     if (auto dContext = this->directContext()) {
         dContext->flushAndSubmit(backbuffer.get(), GrSyncCpu::kNo);
     }
+#endif
 
     fWindowContext->swapBuffers();
 }
@@ -158,10 +167,14 @@ int Window::stencilBits() const {
 }
 
 GrDirectContext* Window::directContext() const {
+#if defined(SK_GANESH)
     if (!fWindowContext) {
         return nullptr;
     }
     return fWindowContext->directContext();
+#else
+    return nullptr;
+#endif
 }
 
 skgpu::graphite::Context* Window::graphiteContext() const {
@@ -184,6 +197,20 @@ skgpu::graphite::Recorder* Window::graphiteRecorder() const {
 #else
     return nullptr;
 #endif
+}
+
+SkRecorder* Window::baseRecorder() const {
+#if defined(SK_GRAPHITE)
+    if (auto r = this->graphiteRecorder()) {
+        return r;
+    }
+#endif
+#if defined(SK_GANESH)
+    if (auto direct = this->directContext()) {
+        return direct->asRecorder();
+    }
+#endif
+    return nullptr;
 }
 
 bool Window::supportsGpuTimer() const {

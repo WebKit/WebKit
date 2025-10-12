@@ -91,13 +91,13 @@ rtc_library("biquad_filter") {
   ]
   deps = [
     "../../../api:array_view",
-    "../../../rtc_base:macromagic",
+    "../../../rtc_base:checks",
   ]
 }
 
 rtc_library("clipping_predictor") {
   visibility = [
-    "../agc:agc",
+    "../agc",
     "./*",
   ]
 
@@ -173,6 +173,7 @@ rtc_library("gain_applier") {
     ":common",
     "..:audio_frame_view",
     "../../../api/audio:audio_frame_api",
+    "../../../rtc_base:checks",
     "../../../rtc_base:safe_minmax",
   ]
 }
@@ -180,7 +181,7 @@ rtc_library("gain_applier") {
 rtc_source_set("gain_map") {
   visibility = [
     "..:analog_mic_simulation",
-    "../agc:agc",
+    "../agc",
     "./*",
   ]
 
@@ -196,6 +197,8 @@ rtc_library("input_volume_controller") {
   ]
 
   visibility = [
+    "..:audio_processing",
+    "..:audio_processing_unittests",
     "..:gain_controller2",
     "./*",
   ]
@@ -216,7 +219,6 @@ rtc_library("input_volume_controller") {
     "../../../rtc_base:gtest_prod",
     "../../../rtc_base:logging",
     "../../../rtc_base:safe_minmax",
-    "../../../system_wrappers:field_trial",
     "../../../system_wrappers:metrics",
   ]
 }
@@ -249,6 +251,7 @@ rtc_library("vad_wrapper") {
   ]
 
   visibility = [
+    "..:audio_processing_unittests",
     "..:gain_controller2",
     "./*",
   ]
@@ -277,14 +280,15 @@ rtc_library("cpu_features") {
   ]
 
   visibility = [
+    "..:audio_processing_unittests",
     "..:gain_controller2",
     "./*",
   ]
 
   deps = [
+    "../../../rtc_base:cpu_info",
     "../../../rtc_base:stringutils",
     "../../../rtc_base/system:arch",
-    "../../../system_wrappers",
   ]
 }
 
@@ -298,6 +302,7 @@ rtc_library("speech_level_estimator_unittest") {
     ":speech_level_estimator",
     "..:apm_logging",
     "../../../api/audio:audio_processing",
+    "../../../rtc_base:checks",
     "../../../rtc_base:gunit_helpers",
     "../../../test:test_support",
   ]
@@ -358,7 +363,9 @@ rtc_library("biquad_filter_unittests") {
   sources = [ "biquad_filter_unittest.cc" ]
   deps = [
     ":biquad_filter",
+    "../../../api:array_view",
     "../../../rtc_base:gunit_helpers",
+    "../../../test:test_support",
   ]
 }
 
@@ -389,6 +396,7 @@ rtc_library("fixed_digital_unittests") {
     "../../../rtc_base:checks",
     "../../../rtc_base:gunit_helpers",
     "../../../system_wrappers:metrics",
+    "../../../test:test_support",
   ]
 }
 
@@ -407,14 +415,16 @@ rtc_library("input_volume_controller_unittests") {
     ":clipping_predictor",
     ":gain_map",
     ":input_volume_controller",
+    "..:audio_buffer",
+    "..:audio_frame_view",
     "../../../api:array_view",
+    "../../../api/audio:audio_processing",
     "../../../rtc_base:checks",
     "../../../rtc_base:random",
     "../../../rtc_base:safe_conversions",
     "../../../rtc_base:safe_minmax",
     "../../../rtc_base:stringutils",
     "../../../system_wrappers:metrics",
-    "../../../test:field_trial",
     "../../../test:fileutils",
     "../../../test:test_support",
     "//testing/gtest",
@@ -434,6 +444,7 @@ rtc_library("noise_estimator_unittests") {
     "../../../api/audio:audio_frame_api",
     "../../../rtc_base:checks",
     "../../../rtc_base:gunit_helpers",
+    "../../../test:test_support",
   ]
 }
 
@@ -443,6 +454,7 @@ rtc_library("vad_wrapper_unittests") {
   deps = [
     ":common",
     ":vad_wrapper",
+    "../../../api:array_view",
     "../../../api/audio:audio_frame_api",
     "../../../rtc_base:checks",
     "../../../rtc_base:gunit_helpers",
@@ -477,6 +489,7 @@ rtc_library("input_volume_stats_reporter") {
     "input_volume_stats_reporter.h",
   ]
   deps = [
+    "../../../rtc_base:checks",
     "../../../rtc_base:gtest_prod",
     "../../../rtc_base:logging",
     "../../../rtc_base:safe_minmax",

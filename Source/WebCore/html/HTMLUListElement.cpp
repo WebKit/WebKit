@@ -24,6 +24,7 @@
 #include "HTMLUListElement.h"
 
 #include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
 #include "HTMLNames.h"
 #include <wtf/TZoneMallocInlines.h>
 

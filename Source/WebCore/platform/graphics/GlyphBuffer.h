@@ -29,10 +29,10 @@
 
 #pragma once
 
-#include "FloatPoint.h"
-#include "FloatSize.h"
-#include "Glyph.h"
-#include "GlyphBufferMembers.h"
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/Glyph.h>
+#include <WebCore/GlyphBufferMembers.h>
 #include <climits>
 #include <limits>
 #include <wtf/CheckedRef.h>

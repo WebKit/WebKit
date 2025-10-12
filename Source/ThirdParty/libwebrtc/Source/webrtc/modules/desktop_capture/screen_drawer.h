@@ -11,6 +11,8 @@
 #ifndef MODULES_DESKTOP_CAPTURE_SCREEN_DRAWER_H_
 #define MODULES_DESKTOP_CAPTURE_SCREEN_DRAWER_H_
 
+#include <memory>
+
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/rgba_color.h"

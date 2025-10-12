@@ -11,7 +11,11 @@
 #include "modules/audio_processing/vad/voice_activity_detector.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 
+#include "modules/audio_processing/vad/common.h"
+#include "modules/audio_processing/vad/standalone_vad.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

@@ -28,6 +28,7 @@
 
 #include "CustomElementReactionQueue.h"
 #include "ElementAncestorIteratorInlines.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormElement.h"
 #include "NodeRareData.h"
@@ -68,7 +69,7 @@ ExceptionOr<void> FormAssociatedCustomElement::setValidity(ValidityStateFlags va
     m_validityStateFlags = validityStateFlags;
     setCustomValidity(validityStateFlags.isValid() ? emptyString() : WTFMove(message));
 
-    if (validationAnchor && !validationAnchor->isShadowIncludingDescendantOf(*m_element))
+    if (validationAnchor && !m_element->isShadowIncludingInclusiveAncestorOf(*validationAnchor))
         return Exception { ExceptionCode::NotFoundError };
 
     m_validationAnchor = validationAnchor;

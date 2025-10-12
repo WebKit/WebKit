@@ -61,13 +61,12 @@ static constexpr bool verbose = false;
 static constexpr int32_t errorCodePoint = -1;
 
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
-enum class TryReadUnicodeCharCodeLocation { CompiledInline, CompileAsThunk };
 enum class TryReadUnicodeCharGenFirstNonBMPOptimization { DontUseOptimization, UseOptimization };
 
-static MacroAssemblerCodeRef<JITThunkPtrTag> tryReadUnicodeCharThunkGenerator(VM&);
+static MacroAssemblerCodeRef<JITThunkPtrTag> tryReadUnicodeCharSlowThunkGenerator(VM&);
 
 #if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-static MacroAssemblerCodeRef<JITThunkPtrTag> tryReadUnicodeCharIncForNonBMPThunkGenerator(VM&);
+static MacroAssemblerCodeRef<JITThunkPtrTag> tryReadUnicodeCharIncForNonBMPSlowThunkGenerator(VM&);
 #endif
 #endif
 
@@ -93,15 +92,6 @@ static_assert(areCanonicallyEquivalentCharArgReg == GPRInfo::returnValueGPR);
 #endif
 #endif
 
-#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-// This enhancement allows us to advance the index by 2 when we read a non-BMP surrogate pair, but fail to match.
-// The way it works is that we initialize the firstCharacterAdditionalReadSize register to an initial sentinal value.
-// When reading a possible surrogate pair, we change firstCharacterAdditionalReadSize from the sentinal to 0 if we read
-// a BMP (16-bit) character or 1 if the read value is a non-BMP. Once changed from the sentinel value, we don't change
-// again during the next read. We add firstCharacterAdditionalReadSize to index for the next iteration on a failed
-// match and when setting the the possible new match start location.
-constexpr static int32_t additionalReadSizeSentinel = 0x4;
-#endif
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BoyerMooreBitmap);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BoyerMooreFastCandidates);
@@ -123,7 +113,7 @@ public:
     {
     }
 
-    int32_t frequency(UChar character) const
+    int32_t frequency(char16_t character) const
     {
         if (!m_size)
             return 1;
@@ -155,7 +145,7 @@ public:
     bool is8Bit() const { return m_is8Bit; }
 
 private:
-    inline void add(UChar character)
+    inline void add(char16_t character)
     {
         ++m_size;
         ++m_samples[character & BoyerMooreBitmap::mapMask];
@@ -316,8 +306,80 @@ void BoyerMooreBitmap::dump(PrintStream& out) const
 }
 
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
-template<TryReadUnicodeCharCodeLocation readUnicodeCharCodeLocation, TryReadUnicodeCharGenFirstNonBMPOptimization useNonBMPOptimization>
-void tryReadUnicodeCharImpl(CCallHelpers& jit, MacroAssembler::RegisterID resultReg)
+template<TryReadUnicodeCharGenFirstNonBMPOptimization useNonBMPOptimization>
+void tryReadUnicodeCharImpl(VM& vm, CCallHelpers& jit, MacroAssembler::RegisterID resultReg)
+{
+    MacroAssembler::JumpList slowCases;
+    MacroAssembler::JumpList isBMP;
+    MacroAssembler::JumpList done;
+
+    YarrJITDefaultRegisters regs;
+
+#if HAVE(YARR_SURROGATE_REGISTERS)
+    GPRReg surrogateTagMask = regs.surrogateTagMask;
+    GPRReg surrogatePairTags = regs.surrogatePairTags;
+#else
+    static constexpr MacroAssembler::TrustedImm32 surrogateTagMask = MacroAssembler::TrustedImm32(0xdc00dc00);
+    static constexpr MacroAssembler::TrustedImm32 surrogatePairTags = MacroAssembler::TrustedImm32(0xdc00d800);
+#endif
+
+    if (resultReg != regs.regT0)
+        jit.swap(regs.regT0, resultReg);
+
+    // Check if we can read two UTF-16 characters at once.
+    jit.add64(MacroAssembler::TrustedImm32(4), regs.regUnicodeInputAndTrail, regs.unicodeAndSubpatternIdTemp);
+    slowCases.append(jit.branchPtr(MacroAssembler::Above, regs.unicodeAndSubpatternIdTemp, regs.endOfStringAddress));
+
+    // Load and try to process two UTF-16 characters.
+    // If they are a proper surrogate pair, compute the non-BMP codepoint.
+    jit.load32(MacroAssembler::Address(regs.regUnicodeInputAndTrail), resultReg);
+#if CPU(ARM64)
+    jit.and32AndSetFlags(surrogateTagMask, resultReg, regs.unicodeAndSubpatternIdTemp);
+    isBMP.append(jit.branch(MacroAssembler::Zero));
+#else
+    jit.and32(surrogateTagMask, resultReg, regs.unicodeAndSubpatternIdTemp);
+    isBMP.append(jit.branch32(MacroAssembler::Equal, regs.unicodeAndSubpatternIdTemp, MacroAssembler::TrustedImm32(0)));
+#endif
+    slowCases.append(jit.branch32(MacroAssembler::NotEqual, regs.unicodeAndSubpatternIdTemp, surrogatePairTags));
+
+    // Create the UTF32 character from the surrogate pair.
+#if CPU(ARM64)
+    jit.urshift32(resultReg, MacroAssembler::TrustedImm32(16), regs.unicodeAndSubpatternIdTemp);
+    jit.insertBitField32(resultReg, MacroAssembler::TrustedImm32(10), MacroAssembler::TrustedImm32(10), regs.unicodeAndSubpatternIdTemp);
+    jit.add32(MacroAssembler::TrustedImm32(0x10000), regs.unicodeAndSubpatternIdTemp, resultReg);
+#else
+    jit.and32(MacroAssembler::TrustedImm32(0xffff), resultReg, regs.unicodeAndSubpatternIdTemp);
+    jit.lshift32(MacroAssembler::TrustedImm32(10), regs.unicodeAndSubpatternIdTemp);
+    jit.urshift32(resultReg, MacroAssembler::TrustedImm32(16), resultReg);
+    jit.getEffectiveAddress(MacroAssembler::BaseIndex(regs.unicodeAndSubpatternIdTemp, resultReg, MacroAssembler::TimesOne, -U16_SURROGATE_OFFSET), resultReg);
+#endif
+
+#if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
+    if (useNonBMPOptimization == TryReadUnicodeCharGenFirstNonBMPOptimization::UseOptimization)
+        jit.move(MacroAssembler::TrustedImm32(1), regs.firstCharacterAdditionalReadSize);
+#endif
+    done.append(jit.jump());
+
+    isBMP.link(jit);
+    jit.and32(MacroAssembler::TrustedImm32(0xffff), resultReg);
+
+    done.append(jit.jump());
+
+    slowCases.link(&jit);
+#if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
+    if constexpr (useNonBMPOptimization == TryReadUnicodeCharGenFirstNonBMPOptimization::UseOptimization)
+        jit.nearCallThunk(CodeLocationLabel { vm.getCTIStub(tryReadUnicodeCharIncForNonBMPSlowThunkGenerator).template retaggedCode<NoPtrTag>() });
+    else
+#endif
+        jit.nearCallThunk(CodeLocationLabel { vm.getCTIStub(tryReadUnicodeCharSlowThunkGenerator).template retaggedCode<NoPtrTag>() });
+    done.link(&jit);
+
+    if (resultReg != regs.regT0)
+        jit.swap(regs.regT0, resultReg);
+}
+
+template<TryReadUnicodeCharGenFirstNonBMPOptimization useNonBMPOptimization>
+void tryReadUnicodeCharSlowImpl(CCallHelpers& jit)
 {
     MacroAssembler::JumpList bmpOnly;
     MacroAssembler::JumpList isBMP;
@@ -339,15 +401,14 @@ void tryReadUnicodeCharImpl(CCallHelpers& jit, MacroAssembler::RegisterID result
     // When the YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP optimization is enabled and used,
     // regs.firstCharacterAdditionalReadSize is used to advance 2 characters when we read a non-BMP codepoint.
     // regs.unicodeAndSubpatternIdTemp is used as a temporary.
-    // The result is returned via regs.resultReg.
+    // The result is returned via regs.regT0.
 
 #if HAVE(YARR_SURROGATE_REGISTERS)
     GPRReg surrogateTagMask = regs.surrogateTagMask;
-    GPRReg surrogatePairTags = regs.surrogatePairTags;
 #else
     static constexpr MacroAssembler::TrustedImm32 surrogateTagMask = MacroAssembler::TrustedImm32(0xdc00dc00);
-    static constexpr MacroAssembler::TrustedImm32 surrogatePairTags = MacroAssembler::TrustedImm32(0xdc00d800);
 #endif
+    auto resultReg = regs.regT0;
 
     // Check if we can read two UTF-16 characters at once.
     jit.add64(MacroAssembler::TrustedImm32(4), regs.regUnicodeInputAndTrail, regs.unicodeAndSubpatternIdTemp);
@@ -363,34 +424,9 @@ void tryReadUnicodeCharImpl(CCallHelpers& jit, MacroAssembler::RegisterID result
     jit.and32(surrogateTagMask, resultReg, regs.unicodeAndSubpatternIdTemp);
     isBMP.append(jit.branch32(MacroAssembler::Equal, regs.unicodeAndSubpatternIdTemp, MacroAssembler::TrustedImm32(0)));
 #endif
-    notSurrogatePair.append(jit.branch32(MacroAssembler::NotEqual, regs.unicodeAndSubpatternIdTemp, surrogatePairTags));
 
-    // Create the UTF32 character from the surrogate pair.
-#if CPU(ARM64)
-    jit.urshift32(resultReg, MacroAssembler::TrustedImm32(16), regs.unicodeAndSubpatternIdTemp);
-    jit.insertBitField32(resultReg, MacroAssembler::TrustedImm32(10), MacroAssembler::TrustedImm32(10), regs.unicodeAndSubpatternIdTemp);
-    jit.add32(MacroAssembler::TrustedImm32(0x10000), regs.unicodeAndSubpatternIdTemp, resultReg);
-#else
-    jit.and32(MacroAssembler::TrustedImm32(0xffff), resultReg, regs.unicodeAndSubpatternIdTemp);
-    jit.lshift32(MacroAssembler::TrustedImm32(10), regs.unicodeAndSubpatternIdTemp);
-    jit.urshift32(resultReg, MacroAssembler::TrustedImm32(16), resultReg);
-    jit.getEffectiveAddress(MacroAssembler::BaseIndex(regs.unicodeAndSubpatternIdTemp, resultReg, MacroAssembler::TimesOne, -U16_SURROGATE_OFFSET), resultReg);
-#endif
+    // if it is surrogate pair, we already handled it in the inlined code.
 
-#if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-    if (useNonBMPOptimization == TryReadUnicodeCharGenFirstNonBMPOptimization::UseOptimization) {
-        // If this is the first read of the alternation, set additional read size to 1 because we got a non-BMP code point.
-        jit.moveConditionallyTest32(MacroAssembler::NonZero, regs.firstCharacterAdditionalReadSize, MacroAssembler::TrustedImm32(additionalReadSizeSentinel), ARM64Registers::zr, regs.firstCharacterAdditionalReadSize);
-        jit.addOneConditionally32(MacroAssembler::NonZero, regs.firstCharacterAdditionalReadSize, regs.firstCharacterAdditionalReadSize);
-    }
-#endif
-
-    if (readUnicodeCharCodeLocation == TryReadUnicodeCharCodeLocation::CompileAsThunk)
-        jit.ret();
-    else
-        haveResult.append(jit.jump());
-
-    notSurrogatePair.link(&jit);
     // Check if we can return the dangling surrogate or if it is part of a valid pair where the leading surrogate
     // that is offset one character before the load pointer.
     jit.and32(MacroAssembler::TrustedImm32(0xffff), regs.unicodeAndSubpatternIdTemp);
@@ -401,17 +437,7 @@ void tryReadUnicodeCharImpl(CCallHelpers& jit, MacroAssembler::RegisterID result
     isBMP.link(jit);
     jit.and32(MacroAssembler::TrustedImm32(0xffff), resultReg);
 
-#if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-    if (useNonBMPOptimization == TryReadUnicodeCharGenFirstNonBMPOptimization::UseOptimization) {
-        // If this is the first read of the alternation, set additional read size to 0.
-        jit.moveConditionallyTest32(MacroAssembler::NonZero, regs.firstCharacterAdditionalReadSize, MacroAssembler::TrustedImm32(additionalReadSizeSentinel), ARM64Registers::zr, regs.firstCharacterAdditionalReadSize);
-    }
-#endif
-
-    if (readUnicodeCharCodeLocation == TryReadUnicodeCharCodeLocation::CompileAsThunk)
-        jit.ret();
-    else
-        haveResult.append(jit.jump());
+    jit.ret();
 
     checkForDanglingSurrogates.link(&jit);
     // Remove the second character that we loaded.
@@ -444,15 +470,10 @@ void tryReadUnicodeCharImpl(CCallHelpers& jit, MacroAssembler::RegisterID result
 
     bmpDone.link(&jit);
 
-#if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-    if (useNonBMPOptimization == TryReadUnicodeCharGenFirstNonBMPOptimization::UseOptimization) {
-        // If this is the first read of the alternation, set additional read size to 0.
-        jit.moveConditionallyTest32(MacroAssembler::NonZero, regs.firstCharacterAdditionalReadSize, MacroAssembler::TrustedImm32(additionalReadSizeSentinel), ARM64Registers::zr, regs.firstCharacterAdditionalReadSize);
-    }
-#endif
-
     haveResult.link(&jit);
 }
+
+
 #endif // ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
 
 template<class YarrJITRegs = YarrJITDefaultRegisters>
@@ -1125,7 +1146,7 @@ class YarrGenerator final : public YarrJITInfo {
         if (m_charSize == CharSize::Char8)
             return MacroAssembler::BaseIndex(m_regs.input, indexReg, MacroAssembler::TimesOne, characterOffset * static_cast<int32_t>(sizeof(char)));
 
-        return MacroAssembler::BaseIndex(m_regs.input, indexReg, MacroAssembler::TimesTwo, characterOffset * static_cast<int32_t>(sizeof(UChar)));
+        return MacroAssembler::BaseIndex(m_regs.input, indexReg, MacroAssembler::TimesTwo, characterOffset * static_cast<int32_t>(sizeof(char16_t)));
     }
 
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
@@ -1135,21 +1156,13 @@ class YarrGenerator final : public YarrJITInfo {
 
         m_jit.getEffectiveAddress(address, m_regs.regUnicodeInputAndTrail);
 
-        if (resultReg == m_regs.regT0) {
 #if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-            if (m_useFirstNonBMPCharacterOptimization)
-                m_jit.nearCallThunk(CodeLocationLabel { m_vm->getCTIStub(tryReadUnicodeCharIncForNonBMPThunkGenerator).retaggedCode<NoPtrTag>() });
-            else
-#endif
-                m_jit.nearCallThunk(CodeLocationLabel { m_vm->getCTIStub(tryReadUnicodeCharThunkGenerator).retaggedCode<NoPtrTag>() });
-        } else {
-#if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-            if (m_useFirstNonBMPCharacterOptimization)
-                tryReadUnicodeCharImpl<TryReadUnicodeCharCodeLocation::CompiledInline, TryReadUnicodeCharGenFirstNonBMPOptimization::UseOptimization>(m_jit, resultReg);
-            else
-#endif
-                tryReadUnicodeCharImpl<TryReadUnicodeCharCodeLocation::CompiledInline, TryReadUnicodeCharGenFirstNonBMPOptimization::DontUseOptimization>(m_jit, resultReg);
+        if (m_useFirstNonBMPCharacterOptimization) {
+            tryReadUnicodeCharImpl<TryReadUnicodeCharGenFirstNonBMPOptimization::UseOptimization>(*m_vm, m_jit, resultReg);
+            return;
         }
+#endif
+        tryReadUnicodeCharImpl<TryReadUnicodeCharGenFirstNonBMPOptimization::DontUseOptimization>(*m_vm, m_jit, resultReg);
     }
 
     void tryReadNonBMPUnicodeChar(Checked<unsigned> negativeCharacterOffset, MacroAssembler::RegisterID resultReg, MacroAssembler::RegisterID indexReg)
@@ -1159,11 +1172,7 @@ class YarrGenerator final : public YarrJITInfo {
         MacroAssembler::BaseIndex address = negativeOffsetIndexedAddress(negativeCharacterOffset, resultReg, indexReg);
 
         m_jit.getEffectiveAddress(address, m_regs.regUnicodeInputAndTrail);
-
-        if (resultReg == m_regs.regT0)
-            m_jit.nearCallThunk(CodeLocationLabel { m_vm->getCTIStub(tryReadUnicodeCharThunkGenerator).retaggedCode<NoPtrTag>() });
-        else
-            tryReadUnicodeCharImpl<TryReadUnicodeCharCodeLocation::CompiledInline, TryReadUnicodeCharGenFirstNonBMPOptimization::DontUseOptimization>(m_jit, resultReg);
+        tryReadUnicodeCharImpl<TryReadUnicodeCharGenFirstNonBMPOptimization::DontUseOptimization>(*m_vm, m_jit, resultReg);
     }
 #endif
 
@@ -1787,9 +1796,9 @@ class YarrGenerator final : public YarrJITInfo {
             characterMatchFails.append(m_jit.branch32(MacroAssembler::NotEqual, character, patternCharacter));
         } else if (m_charSize == CharSize::Char8) {
             MacroAssembler::Jump charactersMatch = m_jit.branch32(MacroAssembler::Equal, character, patternCharacter);
-            MacroAssembler::ExtendedAddress characterTableEntry(character, reinterpret_cast<intptr_t>(&canonicalTableLChar));
+            MacroAssembler::ExtendedAddress characterTableEntry(character, reinterpret_cast<intptr_t>(&latin1CanonicalizationTable));
             m_jit.load16(characterTableEntry, character);
-            MacroAssembler::ExtendedAddress patternTableEntry(patternCharacter, reinterpret_cast<intptr_t>(&canonicalTableLChar));
+            MacroAssembler::ExtendedAddress patternTableEntry(patternCharacter, reinterpret_cast<intptr_t>(&latin1CanonicalizationTable));
             m_jit.load16(patternTableEntry, patternCharacter);
             characterMatchFails.append(m_jit.branch32(MacroAssembler::NotEqual, character, patternCharacter));
             charactersMatch.link(&m_jit);
@@ -1809,10 +1818,10 @@ class YarrGenerator final : public YarrJITInfo {
             MacroAssembler::JumpList charactersMatch;
             charactersMatch.append(m_jit.branch32(MacroAssembler::Equal, character, patternCharacter));
             MacroAssembler::Jump notASCII = m_jit.branch32(MacroAssembler::GreaterThan, character, MacroAssembler::TrustedImm32(127));
-            // The ASCII part of canonicalTableLChar works for UCS2 and Unicode patterns.
-            MacroAssembler::ExtendedAddress characterTableEntry(character, reinterpret_cast<intptr_t>(&canonicalTableLChar));
+            // The ASCII part of latin1CanonicalizationTable works for UCS2 and Unicode patterns.
+            MacroAssembler::ExtendedAddress characterTableEntry(character, reinterpret_cast<intptr_t>(&latin1CanonicalizationTable));
             m_jit.load16(characterTableEntry, character);
-            MacroAssembler::ExtendedAddress patternTableEntry(patternCharacter, reinterpret_cast<intptr_t>(&canonicalTableLChar));
+            MacroAssembler::ExtendedAddress patternTableEntry(patternCharacter, reinterpret_cast<intptr_t>(&latin1CanonicalizationTable));
             m_jit.load16(patternTableEntry, patternCharacter);
             characterMatchFails.append(m_jit.branch32(MacroAssembler::NotEqual, character, patternCharacter));
             charactersMatch.append(m_jit.jump());
@@ -2186,7 +2195,7 @@ class YarrGenerator final : public YarrJITInfo {
             if (!currOp) {
                 // If we have characters, break out
                 if (foundFirstCharTerm) {
-                    opList.resize(i);
+                    opList.shrink(i);
                     break;
                 }
                 // Otherwise, we're still in the non-character prefix
@@ -3192,6 +3201,12 @@ class YarrGenerator final : public YarrJITInfo {
 
                 termMatchTargets.append(MatchTargets());
 
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
+                // Initialize before input check to prevent uninitialized data in arithmetic.
+                if (m_useFirstNonBMPCharacterOptimization)
+                    m_jit.move(MacroAssembler::TrustedImm32(0), m_regs.firstCharacterAdditionalReadSize);
+#endif
+
                 // Upon entry at the head of the set of alternatives, check if input is available
                 // to run the first alternative. (This progresses the input position).
                 op.m_jumps.append(jumpIfNoAvailableInput(alternative->m_minimumSize));
@@ -3201,9 +3216,10 @@ class YarrGenerator final : public YarrJITInfo {
                 op.m_reentry = m_jit.label();
 
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-                // Clear first character read size so it can be set on the first read.
+                // Initialize after reentry to ensure fresh register state on backtrack retries,
+                // since character reading operations modify this register during execution.
                 if (m_useFirstNonBMPCharacterOptimization)
-                    m_jit.move(MacroAssembler::TrustedImm32(additionalReadSizeSentinel), m_regs.firstCharacterAdditionalReadSize);
+                    m_jit.move(MacroAssembler::TrustedImm32(0), m_regs.firstCharacterAdditionalReadSize);
 #endif
 
                 // Emit fast skip path with stride if we have BoyerMooreInfo.
@@ -5599,7 +5615,7 @@ public:
 
             case PatternTerm::Type::PatternCharacter:
                 out.printf("PatternCharacter checked-offset:(%u) ", op.m_checkedOffset.value());
-                dumpUChar32(out, term->patternCharacter);
+                dumpChar32(out, term->patternCharacter);
                 if (op.m_term->ignoreCase())
                     out.print("ignore case ");
 
@@ -5827,40 +5843,31 @@ private:
 };
 
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
-static MacroAssemblerCodeRef<JITThunkPtrTag> tryReadUnicodeCharThunkGenerator(VM&)
+static MacroAssemblerCodeRef<JITThunkPtrTag> tryReadUnicodeCharSlowThunkGenerator(VM&)
 {
     CCallHelpers jit(nullptr);
 
     jit.tagReturnAddress();
-
-
-    YarrJITDefaultRegisters jitRegisters;
-
-    tryReadUnicodeCharImpl<TryReadUnicodeCharCodeLocation::CompileAsThunk, TryReadUnicodeCharGenFirstNonBMPOptimization::DontUseOptimization>(jit, jitRegisters.regT0);
-
+    tryReadUnicodeCharSlowImpl<TryReadUnicodeCharGenFirstNonBMPOptimization::DontUseOptimization>(jit);
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
 
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, nullptr, "YARR tryReadUnicodeChar thunk");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Yarr tryReadUnicodeChar"_s, "YARR tryReadUnicodeChar thunk");
 }
 
 #if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
-static MacroAssemblerCodeRef<JITThunkPtrTag> tryReadUnicodeCharIncForNonBMPThunkGenerator(VM&)
+static MacroAssemblerCodeRef<JITThunkPtrTag> tryReadUnicodeCharIncForNonBMPSlowThunkGenerator(VM&)
 {
     CCallHelpers jit(nullptr);
 
     jit.tagReturnAddress();
-
-    YarrJITDefaultRegisters jitRegisters;
-
-    tryReadUnicodeCharImpl<TryReadUnicodeCharCodeLocation::CompileAsThunk, TryReadUnicodeCharGenFirstNonBMPOptimization::UseOptimization>(jit, jitRegisters.regT0);
-
+    tryReadUnicodeCharSlowImpl<TryReadUnicodeCharGenFirstNonBMPOptimization::UseOptimization>(jit);
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
 
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, nullptr, "YARR tryReadUnicodeChar w/Inc for non-BMP thunk");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Yarr tryReadUnicodeChar w/Inc for non-BMP"_s, "YARR tryReadUnicodeChar w/Inc for non-BMP thunk");
 }
 #endif
 #endif
@@ -5945,7 +5952,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> areCanonicallyEquivalentThunkGenera
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
 
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, nullptr, "YARR areCanonicallyEquivalent call");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Yarr areCanonicallyEquivalent", "YARR areCanonicallyEquivalent call");
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationAreCanonicallyEquivalent, bool, (unsigned a, unsigned b, CanonicalMode canonicalMode))

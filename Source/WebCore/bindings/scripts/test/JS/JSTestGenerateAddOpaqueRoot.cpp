@@ -149,7 +149,7 @@ JSValue JSTestGenerateAddOpaqueRoot::getConstructor(VM& vm, const JSGlobalObject
 
 void JSTestGenerateAddOpaqueRoot::destroy(JSC::JSCell* cell)
 {
-    JSTestGenerateAddOpaqueRoot* thisObject = static_cast<JSTestGenerateAddOpaqueRoot*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestGenerateAddOpaqueRoot* thisObject = static_cast<JSTestGenerateAddOpaqueRoot*>(cell);
     thisObject->JSTestGenerateAddOpaqueRoot::~JSTestGenerateAddOpaqueRoot();
 }
 
@@ -178,7 +178,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGenerateAddOpaqueRoot_someAttribute, (JSGlobalObj
 
 JSC::GCClient::IsoSubspace* JSTestGenerateAddOpaqueRoot::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestGenerateAddOpaqueRoot, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestGenerateAddOpaqueRoot, UseCustomHeapCellType::No>(vm, "JSTestGenerateAddOpaqueRoot"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestGenerateAddOpaqueRoot.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestGenerateAddOpaqueRoot = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestGenerateAddOpaqueRoot.get(); },
@@ -216,7 +216,7 @@ bool JSTestGenerateAddOpaqueRootOwner::isReachableFromOpaqueRoots(JSC::Handle<JS
 
 void JSTestGenerateAddOpaqueRootOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestGenerateAddOpaqueRoot = static_cast<JSTestGenerateAddOpaqueRoot*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestGenerateAddOpaqueRoot = static_cast<JSTestGenerateAddOpaqueRoot*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestGenerateAddOpaqueRoot->protectedWrapped().ptr(), jsTestGenerateAddOpaqueRoot);
 }
@@ -229,7 +229,9 @@ extern "C" { extern void (*const __identifier("??_7TestGenerateAddOpaqueRoot@Web
 #else
 extern "C" { extern void* _ZTVN7WebCore25TestGenerateAddOpaqueRootE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestGenerateAddOpaqueRoot>, void>> static inline void verifyVTable(TestGenerateAddOpaqueRoot* ptr) {
+template<std::same_as<TestGenerateAddOpaqueRoot> T>
+static inline void verifyVTable(TestGenerateAddOpaqueRoot* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -248,8 +250,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestGenerateA
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestGenerateAddOpaqueRoot>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestGenerateAddOpaqueRoot>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestGenerateAddOpaqueRoot>(impl.ptr());
 #endif

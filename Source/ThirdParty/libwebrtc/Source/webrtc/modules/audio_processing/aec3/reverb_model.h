@@ -29,9 +29,7 @@ class ReverbModel {
   void Reset();
 
   // Returns the reverb.
-  rtc::ArrayView<const float, kFftLengthBy2Plus1> reverb() const {
-    return reverb_;
-  }
+  ArrayView<const float, kFftLengthBy2Plus1> reverb() const { return reverb_; }
 
   // The methods UpdateReverbNoFreqShaping and UpdateReverb update the
   // estimate of the reverberation contribution to an input/output power
@@ -39,13 +37,13 @@ class ReverbModel {
   // power spectrum is pre-scaled. Use the method UpdateReverb when a different
   // scaling should be applied per frequency and UpdateReverb_no_freq_shape if
   // the same scaling should be used for all the frequencies.
-  void UpdateReverbNoFreqShaping(rtc::ArrayView<const float> power_spectrum,
+  void UpdateReverbNoFreqShaping(ArrayView<const float> power_spectrum,
                                  float power_spectrum_scaling,
                                  float reverb_decay);
 
   // Update the reverb based on new data.
-  void UpdateReverb(rtc::ArrayView<const float> power_spectrum,
-                    rtc::ArrayView<const float> power_spectrum_scaling,
+  void UpdateReverb(ArrayView<const float> power_spectrum,
+                    ArrayView<const float> power_spectrum_scaling,
                     float reverb_decay);
 
  private:

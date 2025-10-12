@@ -72,6 +72,20 @@ extern std::vector<const void *> temporaryVoidPtrList;
 extern std::vector<const unsigned char *> temporaryUnsignedCharPointerList;
 extern void *temporaryVoidPtr;
 
+void InitializeReplayCL2(const char *binaryDataFileName,
+                         size_t maxClientArraySize,
+                         size_t readBufferSize,
+                         uint32_t maxCLPlatform,
+                         uint32_t maxCLDevices,
+                         uint32_t maxCLContexts,
+                         uint32_t maxCLCommandQueues,
+                         uint32_t maxCLMem,
+                         uint32_t maxCLEvents,
+                         uint32_t maxCLPrograms,
+                         uint32_t maxCLKernels,
+                         uint32_t maxCLSamplers,
+                         uint32_t maxCLVoidPointer);
+
 void InitializeReplayCL(const char *binaryDataFileName,
                         size_t maxClientArraySize,
                         size_t readBufferSize,
@@ -85,6 +99,9 @@ void InitializeReplayCL(const char *binaryDataFileName,
                         uint32_t maxCLKernels,
                         uint32_t maxCLSamplers,
                         uint32_t maxCLVoidPointer);
+
+const uint8_t *GetBinaryData(const size_t offset);
+void InitializeBinaryDataLoader();
 
 void UpdateCLContextPropertiesNoPlatform(size_t propSize, const cl_context_properties *propData);
 void UpdateCLContextPropertiesWithPlatform(size_t propSize,

@@ -10,6 +10,7 @@
 #include "test/pc/e2e/analyzer/video/analyzing_video_sinks_helper.h"
 
 #include <memory>
+#include <optional>
 #include <set>
 #include <string>
 #include <utility>

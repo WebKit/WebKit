@@ -11,8 +11,13 @@
 #include "modules/audio_processing/ns/quantile_noise_estimator.h"
 
 #include <algorithm>
+#include <array>
+#include <cmath>
+#include <cstddef>
 
+#include "api/array_view.h"
 #include "modules/audio_processing/ns/fast_math.h"
+#include "modules/audio_processing/ns/ns_common.h"
 
 namespace webrtc {
 
@@ -28,8 +33,8 @@ QuantileNoiseEstimator::QuantileNoiseEstimator() {
 }
 
 void QuantileNoiseEstimator::Estimate(
-    rtc::ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum,
-    rtc::ArrayView<float, kFftSizeBy2Plus1> noise_spectrum) {
+    ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum,
+    ArrayView<float, kFftSizeBy2Plus1> noise_spectrum) {
   std::array<float, kFftSizeBy2Plus1> log_spectrum;
   LogApproximation(signal_spectrum, log_spectrum);
 
@@ -77,8 +82,8 @@ void QuantileNoiseEstimator::Estimate(
 
   if (quantile_index_to_return >= 0) {
     ExpApproximation(
-        rtc::ArrayView<const float>(&log_quantile_[quantile_index_to_return],
-                                    kFftSizeBy2Plus1),
+        ArrayView<const float>(&log_quantile_[quantile_index_to_return],
+                               kFftSizeBy2Plus1),
         quantile_);
   }
 

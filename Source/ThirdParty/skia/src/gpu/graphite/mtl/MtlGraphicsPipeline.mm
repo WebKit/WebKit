@@ -18,11 +18,11 @@
 #include "src/gpu/graphite/ShaderInfo.h"
 #include "src/gpu/graphite/TextureInfoPriv.h"
 #include "src/gpu/graphite/mtl/MtlGraphiteUtils.h"
-#include "src/gpu/graphite/mtl/MtlResourceProvider.h"
 #include "src/gpu/graphite/mtl/MtlSharedContext.h"
 #include "src/gpu/mtl/MtlUtilsPriv.h"
 #include "src/sksl/SkSLCompiler.h"
 #include "src/sksl/SkSLProgramSettings.h"
+#include "src/sksl/codegen/SkSLNativeShader.h"
 #include "src/sksl/ir/SkSLProgram.h"
 
 namespace skgpu::graphite {
@@ -268,14 +268,13 @@ static MTLRenderPipelineColorAttachmentDescriptor* create_color_attachment(
 
 sk_sp<MtlGraphicsPipeline> MtlGraphicsPipeline::Make(
         const MtlSharedContext* sharedContext,
-        MtlResourceProvider* resourceProvider,
         const RuntimeEffectDictionary* runtimeDict,
         const UniqueKey& pipelineKey,
         const GraphicsPipelineDesc& pipelineDesc,
         const RenderPassDesc& renderPassDesc,
         SkEnumBitMask<PipelineCreationFlags> pipelineCreationFlags,
         uint32_t compilationID) {
-    std::string vsMSL, fsMSL;
+    SkSL::NativeShader vsMSL, fsMSL;
     SkSL::Program::Interface vsInterface, fsInterface;
 
     SkSL::ProgramSettings settings;
@@ -297,6 +296,7 @@ sk_sp<MtlGraphicsPipeline> MtlGraphicsPipeline::Make(
                              step,
                              paintID,
                              useStorageBuffers,
+                             renderPassDesc.fColorAttachment.fFormat,
                              renderPassDesc.fWriteSwizzle,
                              renderPassDesc.fDstReadStrategy);
 
@@ -323,19 +323,19 @@ sk_sp<MtlGraphicsPipeline> MtlGraphicsPipeline::Make(
         return nullptr;
     }
 
-    auto vsLibrary =
-            MtlCompileShaderLibrary(sharedContext, shaderInfo->vsLabel(), vsMSL, errorHandler);
-    auto fsLibrary =
-            MtlCompileShaderLibrary(sharedContext, shaderInfo->fsLabel(), fsMSL, errorHandler);
+    auto vsLibrary = MtlCompileShaderLibrary(
+            sharedContext, shaderInfo->vsLabel(), vsMSL.fText, errorHandler);
+    auto fsLibrary = MtlCompileShaderLibrary(
+            sharedContext, shaderInfo->fsLabel(), fsMSL.fText, errorHandler);
 
     sk_cfp<id<MTLDepthStencilState>> dss =
-            resourceProvider->findOrCreateCompatibleDepthStencilState(step->depthStencilSettings());
+            sharedContext->getCompatibleDepthStencilState(step->depthStencilSettings());
 
     PipelineInfo pipelineInfo{ *shaderInfo, pipelineCreationFlags,
                                pipelineKey.hash(), compilationID };
 #if defined(GPU_TEST_UTILS)
-    pipelineInfo.fNativeVertexShader = std::move(vsMSL);
-    pipelineInfo.fNativeFragmentShader = std::move(fsMSL);
+    pipelineInfo.fNativeVertexShader = std::move(vsMSL.fText);
+    pipelineInfo.fNativeFragmentShader = std::move(fsMSL.fText);
 #endif
 
     std::string pipelineLabel =
@@ -357,7 +357,6 @@ sk_sp<MtlGraphicsPipeline> MtlGraphicsPipeline::Make(
 
 sk_sp<MtlGraphicsPipeline> MtlGraphicsPipeline::MakeLoadMSAAPipeline(
         const MtlSharedContext* sharedContext,
-        MtlResourceProvider* resourceProvider,
         const RenderPassDesc& renderPassDesc) {
     static const char* kLoadMSAAShaderText =
             "#include <metal_stdlib>\n"
@@ -387,8 +386,10 @@ sk_sp<MtlGraphicsPipeline> MtlGraphicsPipeline::MakeLoadMSAAPipeline(
                                               kLoadMSAAShaderText,
                                               sharedContext->caps()->shaderErrorHandler());
     BlendInfo noBlend{}; // default is equivalent to kSrc blending
+
+    static constexpr DepthStencilSettings kIgnoreDSS;
     sk_cfp<id<MTLDepthStencilState>> ignoreDS =
-            resourceProvider->findOrCreateCompatibleDepthStencilState({});
+            sharedContext->getCompatibleDepthStencilState(kIgnoreDSS);
 
     std::string pipelineLabel = "LoadMSAAFromResolve + ";
     pipelineLabel += renderPassDesc.toString().c_str();

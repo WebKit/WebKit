@@ -26,9 +26,9 @@
 #include "Document.h"
 #include "LegacyRenderSVGResource.h"
 #include "RenderSVGGradientStop.h"
+#include "RenderStyleInlines.h"
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
-#include "SVGRenderStyle.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -94,10 +94,8 @@ Color SVGStopElement::stopColorIncludingOpacity() const
         return Color::black;
 
     auto& style = renderer()->style();
-    Ref svgStyle = style.svgStyle();
-    auto stopColor = style.colorResolvingCurrentColor(svgStyle->stopColor());
-
-    return stopColor.colorWithAlphaMultipliedBy(svgStyle->stopOpacity());
+    auto stopColor = style.colorResolvingCurrentColor(style.stopColor());
+    return stopColor.colorWithAlphaMultipliedBy(style.stopOpacity().value.value);
 }
 
 }

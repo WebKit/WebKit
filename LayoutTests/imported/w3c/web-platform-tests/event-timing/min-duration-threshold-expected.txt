@@ -1,4 +1,4 @@
 Click me
 
-FAIL PerformanceObserver with durationThreshold of 0 sees events of duration >= 16 assert_implements: Event Timing is not supported. undefined
+PASS PerformanceObserver with durationThreshold of 0 sees events of duration >= 16
 

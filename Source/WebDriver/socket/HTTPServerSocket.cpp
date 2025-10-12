@@ -81,7 +81,7 @@ void HTTPRequestHandler::didReceive(RemoteInspectorSocketEndpoint&, ConnectionID
         HTTPRequestHandler::Request request {
             message.method,
             message.path,
-            reinterpret_cast<const char*>(message.requestBody.data()),
+            reinterpret_cast<const char*>(message.requestBody.span().data()),
             static_cast<size_t>(message.requestBody.size())
         };
 

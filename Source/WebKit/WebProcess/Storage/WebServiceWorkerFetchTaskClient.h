@@ -40,6 +40,7 @@
 namespace WebKit {
 
 class WebServiceWorkerFetchTaskClient final : public WebCore::ServiceWorkerFetch::Client {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebServiceWorkerFetchTaskClient);
 public:
     static Ref<WebServiceWorkerFetchTaskClient> create(Ref<IPC::Connection>&& connection, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier,  WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchTaskIdentifier, bool needsContinueDidReceiveResponseMessage)
     {
@@ -77,21 +78,27 @@ private:
     void didReceiveBlobChunk(const WebCore::SharedBuffer&);
     void didFinishBlobLoading();
 
-    struct BlobLoader final : WebCore::FetchLoaderClient {
+    class BlobLoader final : public RefCounted<BlobLoader>, public WebCore::FetchLoaderClient {
         WTF_MAKE_TZONE_ALLOCATED(BlobLoader);
-        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(BlobLoader);
     public:
-
-        explicit BlobLoader(WebServiceWorkerFetchTaskClient& client) : client(client) { }
+        static Ref<BlobLoader> create(WebServiceWorkerFetchTaskClient&);
+        ~BlobLoader();
 
         // FetchLoaderClient API
         void didReceiveResponse(const WebCore::ResourceResponse&) final { }
-        void didReceiveData(const WebCore::SharedBuffer& data) final { client->didReceiveBlobChunk(data); }
-        void didFail(const WebCore::ResourceError& error) final { client->didFail(error); }
-        void didSucceed(const WebCore::NetworkLoadMetrics&) final { client->didFinishBlobLoading(); }
+        void didReceiveData(const WebCore::SharedBuffer&) final;
+        void didFail(const WebCore::ResourceError&) final;
+        void didSucceed(const WebCore::NetworkLoadMetrics&) final;
+        void ref() const final { RefCounted::ref(); }
+        void deref() const final { RefCounted::deref(); }
 
-        const Ref<WebServiceWorkerFetchTaskClient> client;
-        std::unique_ptr<WebCore::FetchLoader> loader;
+        RefPtr<WebCore::FetchLoader> loader;
+
+    private:
+        explicit BlobLoader(WebServiceWorkerFetchTaskClient& client)
+            : m_client(client)
+        { }
+        ThreadSafeWeakPtr<WebServiceWorkerFetchTaskClient> m_client;
     };
 
     Lock m_connectionLock;
@@ -99,7 +106,7 @@ private:
     WebCore::SWServerConnectionIdentifier m_serverConnectionIdentifier;
     WebCore::ServiceWorkerIdentifier m_serviceWorkerIdentifier;
     WebCore::FetchIdentifier m_fetchIdentifier;
-    std::unique_ptr<BlobLoader> m_blobLoader;
+    RefPtr<BlobLoader> m_blobLoader;
     bool m_needsContinueDidReceiveResponseMessage { false };
     bool m_waitingForContinueDidReceiveResponseMessage { false };
     Variant<std::nullptr_t, WebCore::SharedBufferBuilder, Ref<WebCore::FormData>, UniqueRef<WebCore::ResourceError>> m_responseData;

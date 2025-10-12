@@ -1,17 +1,22 @@
 #! /usr/bin/env perl
 # Copyright 2009-2016 The OpenSSL Project Authors. All Rights Reserved.
 #
-# Licensed under the OpenSSL license (the "License").  You may not use
-# this file except in compliance with the License.  You can obtain a copy
-# in the file LICENSE in the source distribution or at
-# https://www.openssl.org/source/license.html
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 #
 # ====================================================================
 # Written by Andy Polyakov <appro@openssl.org> for the OpenSSL
-# project. The module is, however, dual licensed under OpenSSL and
-# CRYPTOGAMS licenses depending on where you obtain it. For further
-# details see http://www.openssl.org/~appro/cryptogams/.
+# project.
 # ====================================================================
 #
 # This module implements support for Intel AES-NI extension. In
@@ -3978,64 +3983,7 @@ $code.=<<___;
 ___
 }
 
-sub rex {
-  local *opcode=shift;
-  my ($dst,$src)=@_;
-  my $rex=0;
-
-    $rex|=0x04			if($dst>=8);
-    $rex|=0x01			if($src>=8);
-    push @opcode,$rex|0x40	if($rex);
-}
-
-sub aesni {
-  my $line=shift;
-  my @opcode=(0x66);
-
-    if ($line=~/(aeskeygenassist)\s+\$([x0-9a-f]+),\s*%xmm([0-9]+),\s*%xmm([0-9]+)/) {
-	rex(\@opcode,$4,$3);
-	push @opcode,0x0f,0x3a,0xdf;
-	push @opcode,0xc0|($3&7)|(($4&7)<<3);	# ModR/M
-	my $c=$2;
-	push @opcode,$c=~/^0/?oct($c):$c;
-	return ".byte\t".join(',',@opcode);
-    }
-    elsif ($line=~/(aes[a-z]+)\s+%xmm([0-9]+),\s*%xmm([0-9]+)/) {
-	my %opcodelet = (
-		"aesimc" => 0xdb,
-		"aesenc" => 0xdc,	"aesenclast" => 0xdd,
-		"aesdec" => 0xde,	"aesdeclast" => 0xdf
-	);
-	return undef if (!defined($opcodelet{$1}));
-	rex(\@opcode,$3,$2);
-	push @opcode,0x0f,0x38,$opcodelet{$1};
-	push @opcode,0xc0|($2&7)|(($3&7)<<3);	# ModR/M
-	return ".byte\t".join(',',@opcode);
-    }
-    elsif ($line=~/(aes[a-z]+)\s+([0x1-9a-fA-F]*)\(%rsp\),\s*%xmm([0-9]+)/) {
-	my %opcodelet = (
-		"aesenc" => 0xdc,	"aesenclast" => 0xdd,
-		"aesdec" => 0xde,	"aesdeclast" => 0xdf
-	);
-	return undef if (!defined($opcodelet{$1}));
-	my $off = $2;
-	push @opcode,0x44 if ($3>=8);
-	push @opcode,0x0f,0x38,$opcodelet{$1};
-	push @opcode,0x44|(($3&7)<<3),0x24;	# ModR/M
-	push @opcode,($off=~/^0/?oct($off):$off)&0xff;
-	return ".byte\t".join(',',@opcode);
-    }
-    return $line;
-}
-
-sub movbe {
-	".byte	0x0f,0x38,0xf1,0x44,0x24,".shift;
-}
-
 $code =~ s/\`([^\`]*)\`/eval($1)/gem;
-$code =~ s/\b(aes.*%xmm[0-9]+).*$/aesni($1)/gem;
-#$code =~ s/\bmovbe\s+%eax/bswap %eax; mov %eax/gm;	# debugging artefact
-$code =~ s/\bmovbe\s+%eax,\s*([0-9]+)\(%rsp\)/movbe($1)/gem;
 
 print $code;
 

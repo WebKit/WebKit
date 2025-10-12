@@ -4,24 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Array.prototype.splice, when it deletes elements, should make sure any deleted but not visited elements are suppressed from subsequent enumeration
+info: bugzilla.mozilla.org/show_bug.cgi?id=668024
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 668024;
-var summary =
-  'Array.prototype.splice, when it deletes elements, should make sure any ' +
-  'deleted but not visited elements are suppressed from subsequent enumeration';
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 var arr = [0, 1, 2, 3, 4, 5, , 7];
 
@@ -60,7 +47,3 @@ if (sawOneBeforeThree)
   // will delete "3", and therefore we must not see it.
   assert.sameValue(seen.indexOf("3"), -1);
 }
-
-/******************************************************************************/
-
-print("Tests complete");

@@ -39,18 +39,26 @@ class ModelCheckTest(unittest.TestCase):
 
     def test_duplicate_receivers(self):
         contents = """
-messages -> WebPage {
-    LoadURL(String url)
-}"""
+        [
+            ExceptionForDispatchedFrom,
+            ExceptionForDispatchedTo
+        ]
+        messages -> WebPage {
+            LoadURL(String url)
+        }"""
         receiver = parser.parse(StringIO(contents))
         self.assertEqual(receiver.name, 'WebPage')
         self.assertEqual(receiver.messages[0].name, 'LoadURL')
 
         other_contents = """
-    messages -> WebPage {
-        LoadURL(String url)
-        LoadURL2(String url)
-    }"""
+        [
+            ExceptionForDispatchedFrom,
+            ExceptionForDispatchedTo
+        ]
+        messages -> WebPage {
+            LoadURL(String url)
+            LoadURL2(String url)
+        }"""
 
         other_receiver = parser.parse(StringIO(other_contents))
         self.assertEqual(other_receiver.name, 'WebPage')
@@ -62,14 +70,18 @@ messages -> WebPage {
 
     def test_mismatch_message_attribute_sync(self):
         contents = """
-messages -> WebPage {
-#if USE(COCOA)
-    LoadURL(String url) Synchronous
-#endif
-#if USE(GTK)
-    LoadURL(String url)
-#endif
-}"""
+        [
+            ExceptionForDispatchedFrom,
+            ExceptionForDispatchedTo
+        ]
+        messages -> WebPage {
+        #if USE(COCOA)
+            LoadURL(String url) Synchronous
+        #endif
+        #if USE(GTK)
+            LoadURL(String url)
+        #endif
+        }"""
         receiver = parser.parse(StringIO(contents))
         self.assertEqual(receiver.name, 'WebPage')
         self.assertEqual(receiver.messages[0].name, 'LoadURL')

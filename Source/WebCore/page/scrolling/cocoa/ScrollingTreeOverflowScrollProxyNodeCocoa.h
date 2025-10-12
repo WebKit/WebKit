@@ -27,7 +27,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "ScrollingTreeOverflowScrollProxyNode.h"
+#include <WebCore/ScrollingTreeOverflowScrollProxyNode.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

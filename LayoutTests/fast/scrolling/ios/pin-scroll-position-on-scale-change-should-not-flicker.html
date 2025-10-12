@@ -1,0 +1,72 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<style>
+
+body {
+    height: 10000px;
+    font-size: 30px;
+}
+
+.header {
+    position: fixed;
+    background: yellow;
+}
+
+.header.wide {
+    position: static;
+    width: 1000px;
+}
+
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div class="header">Header</div>
+<div>This</div>
+<div>is</div>
+<div>some</div>
+<div>text</div>
+<div>to</div>
+<div>show</div>
+<div>that</div>
+<div>scrolling</div>
+<div>occurred</div>
+
+<script>
+
+jsTestIsAsync = true;
+
+const triggerPoint = 300;
+
+async function runTest() {
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(0, 0)
+        .move(0, -triggerPoint + 10, 0.3)
+        .end()
+        .takeResult());
+    await UIHelper.waitForScrollCompletion();
+    // Wait one second to see if any flickering occurs.
+    await UIHelper.delayFor(1000);
+    finishJSTest();
+}
+
+addEventListener('scroll', () => {
+    const header = document.querySelector('.header');
+    if (window.scrollY > triggerPoint)
+        header.classList.add('wide');
+    else {
+        if (header.classList.contains('wide'))
+            testFailed("Unexpected scrolling.");
+        header.classList.remove('wide');
+    }
+});
+
+addEventListener('load', () => {
+   runTest();
+});
+
+</script>
+</body>
+</html>

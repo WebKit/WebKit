@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "CSSNoConversionDataRequiredToken.h"
-#include "CSSPrimitiveNumericTypes.h"
-#include "CSSUnevaluatedCalc.h"
+#include <WebCore/CSSNoConversionDataRequiredToken.h>
+#include <WebCore/CSSPrimitiveNumericTypes.h>
+#include <WebCore/CSSUnevaluatedCalc.h>
 
 namespace WebCore {
 namespace CSS {

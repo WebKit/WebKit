@@ -11,6 +11,10 @@
 #include "modules/audio_processing/aec3/multi_channel_content_detector.h"
 
 #include <cmath>
+#include <cstddef>
+#include <memory>
+#include <optional>
+#include <vector>
 
 #include "rtc_base/checks.h"
 #include "system_wrappers/include/metrics.h"

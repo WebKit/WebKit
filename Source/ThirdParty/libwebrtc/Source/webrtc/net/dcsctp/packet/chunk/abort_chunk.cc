@@ -9,17 +9,16 @@
  */
 #include "net/dcsctp/packet/chunk/abort_chunk.h"
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <optional>
+#include <string>
 #include <utility>
 #include <vector>
 
 #include "api/array_view.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
-#include "net/dcsctp/packet/error_cause/error_cause.h"
-#include "net/dcsctp/packet/tlv_trait.h"
+#include "net/dcsctp/packet/parameter/parameter.h"
 
 namespace dcsctp {
 
@@ -37,7 +36,7 @@ namespace dcsctp {
 constexpr int AbortChunk::kType;
 
 std::optional<AbortChunk> AbortChunk::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -53,7 +52,7 @@ std::optional<AbortChunk> AbortChunk::Parse(
 }
 
 void AbortChunk::SerializeTo(std::vector<uint8_t>& out) const {
-  rtc::ArrayView<const uint8_t> error_causes = error_causes_.data();
+  webrtc::ArrayView<const uint8_t> error_causes = error_causes_.data();
   BoundedByteWriter<kHeaderSize> writer = AllocateTLV(out, error_causes.size());
   writer.Store8<1>(filled_in_verification_tag_ ? 0 : (1 << kFlagsBitT));
   writer.CopyToVariableData(error_causes);

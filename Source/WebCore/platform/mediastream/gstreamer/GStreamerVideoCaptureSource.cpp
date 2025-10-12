@@ -69,9 +69,7 @@ GStreamerVideoCaptureDeviceManager::GStreamerVideoCaptureDeviceManager()
 void GStreamerVideoCaptureDeviceManager::computeCaptureDevices(CompletionHandler<void()>&& callback)
 {
     m_devices.clear();
-    m_pipewireCaptureDeviceManager->computeCaptureDevices();
-
-    callback();
+    m_pipewireCaptureDeviceManager->computeCaptureDevices(WTFMove(callback));
 }
 
 CaptureSourceOrError GStreamerVideoCaptureDeviceManager::createVideoCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints)
@@ -231,10 +229,13 @@ void GStreamerVideoCaptureSource::startProducingData()
 
     m_capturer->setFrameRate(frameRate());
     m_capturer->reconfigure();
-    m_capturer->setSinkVideoFrameCallback([this](auto&& videoFrame) {
-        if (!isProducingData() || muted())
+    m_capturer->setSinkVideoFrameCallback([weakThis = ThreadSafeWeakPtr(*this)](auto&& videoFrame) {
+        auto self = weakThis.get();
+        if (!self)
             return;
-        dispatchVideoFrameToObservers(WTFMove(videoFrame), { });
+        if (!self->isProducingData() || self->muted())
+            return;
+        self->dispatchVideoFrameToObservers(videoFrame, { });
     });
 
     m_capturer->start();

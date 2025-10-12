@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2010 François Sausset (sausset@gmail.com). All rights reserved.
  * Copyright (C) 2016 Igalia S.L.
  *
@@ -248,7 +248,7 @@ void MathMLElement::defaultEventHandler(Event& event)
             const auto& href = attributeWithoutSynchronization(hrefAttr);
             event.setDefaultHandled();
             if (RefPtr frame = document().frame())
-                frame->protectedLoader()->changeLocation(document().completeURL(href), selfTargetFrameName(), &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
+                frame->loader().changeLocation(document().completeURL(href), selfTargetFrameName(), &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
             return;
         }
     }
@@ -264,17 +264,17 @@ bool MathMLElement::canStartSelection() const
     return hasEditableStyle();
 }
 
-bool MathMLElement::isKeyboardFocusable(KeyboardEvent* event) const
+bool MathMLElement::isKeyboardFocusable(const FocusEventData& focusEventData) const
 {
     if (isFocusable() && StyledElement::supportsFocus())
-        return StyledElement::isKeyboardFocusable(event);
+        return StyledElement::isKeyboardFocusable(focusEventData);
 
     if (isLink()) {
         RefPtr frame = document().frame();
-        return frame && frame->eventHandler().tabsToLinks(event);
+        return frame && frame->eventHandler().tabsToLinks(focusEventData);
     }
 
-    return StyledElement::isKeyboardFocusable(event);
+    return StyledElement::isKeyboardFocusable(focusEventData);
 }
 
 bool MathMLElement::isMouseFocusable() const

@@ -25,7 +25,7 @@
 #include "rtc_base/type_traits.h"
 #include "rtc_base/zero_memory.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace internal {
 
@@ -323,7 +323,7 @@ class BufferT {
     const size_t old_size = size_;
     SetSize(old_size + max_elements);
     U* base_ptr = data<U>() + old_size;
-    size_t written_elements = setter(rtc::ArrayView<U>(base_ptr, max_elements));
+    size_t written_elements = setter(ArrayView<U>(base_ptr, max_elements));
 
     RTC_CHECK_LE(written_elements, max_elements);
     size_ = old_size + written_elements;
@@ -447,6 +447,7 @@ using Buffer = BufferT<uint8_t>;
 template <typename T>
 using ZeroOnFreeBuffer = BufferT<T, true>;
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_BUFFER_H_

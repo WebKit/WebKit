@@ -134,7 +134,7 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, StringView query,
 {
     auto statement = db.prepareStatementSlow(query);
     if (!statement) {
-        LOG_ERROR("Error (%i) preparing statement to read text result from database (%s)", statement.error(), query.utf8().data());
+        LOG_ERROR("Error (%i) preparing statement to read text result from database (%s)", db.lastError(), query.utf8().data());
         return false;
     }
 
@@ -554,7 +554,7 @@ bool Database::hasPendingTransaction()
     return m_transactionInProgress || !m_transactionQueue.isEmpty();
 }
 
-SQLTransactionCoordinator* Database::transactionCoordinator()
+SQLTransactionCoordinator& Database::transactionCoordinator()
 {
     return databaseThread().transactionCoordinator();
 }

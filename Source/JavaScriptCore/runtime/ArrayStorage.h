@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "ArrayConventions.h"
-#include "Butterfly.h"
-#include "IndexingHeader.h"
-#include "MarkedSpace.h"
-#include "SparseArrayValueMap.h"
-#include "Structure.h"
-#include "WriteBarrier.h"
+#include <JavaScriptCore/ArrayConventions.h>
+#include <JavaScriptCore/Butterfly.h>
+#include <JavaScriptCore/IndexingHeader.h>
+#include <JavaScriptCore/MarkedSpace.h>
+#include <JavaScriptCore/SparseArrayValueMap.h>
+#include <JavaScriptCore/Structure.h>
+#include <JavaScriptCore/WriteBarrier.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {

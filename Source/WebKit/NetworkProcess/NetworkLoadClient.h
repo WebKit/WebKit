@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 
@@ -43,8 +44,8 @@ namespace WebKit {
 enum class PrivateRelayed : bool;
 using ResponseCompletionHandler = CompletionHandler<void(WebCore::PolicyAction)>;
 
-class NetworkLoadClient : public CanMakeThreadSafeCheckedPtr<NetworkLoadClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+class NetworkLoadClient : public AbstractRefCountedAndCanMakeWeakPtr<NetworkLoadClient>, public CanMakeThreadSafeCheckedPtr<NetworkLoadClient> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NetworkLoadClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkLoadClient);
 public:
     virtual ~NetworkLoadClient() { }

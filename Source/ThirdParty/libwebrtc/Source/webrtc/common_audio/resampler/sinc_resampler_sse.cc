@@ -11,9 +11,10 @@
 // Modified from the Chromium original:
 // src/media/base/simd/sinc_resampler_sse.cc
 
-#include <stddef.h>
-#include <stdint.h>
 #include <xmmintrin.h>
+
+#include <cstddef>
+#include <cstdint>
 
 #include "common_audio/resampler/sinc_resampler.h"
 

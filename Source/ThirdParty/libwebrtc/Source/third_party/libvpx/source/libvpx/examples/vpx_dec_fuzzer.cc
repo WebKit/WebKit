@@ -41,7 +41,7 @@
    $make -j32
 
  * Build vp9 fuzzer
-   $ $CXX $CXXFLAGS -std=gnu++11 -DDECODER=vp9 \
+   $ $CXX $CXXFLAGS -std=gnu++17 -DDECODER=vp9 \
    -fsanitize=fuzzer -I../libvpx -I. -Wl,--start-group \
    ../libvpx/examples/vpx_dec_fuzzer.cc -o ./vpx_dec_fuzzer_vp9 \
    ./libvpx.a -Wl,--end-group

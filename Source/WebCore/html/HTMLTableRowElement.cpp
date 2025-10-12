@@ -26,13 +26,16 @@
 #include "config.h"
 #include "HTMLTableRowElement.h"
 
+#include "ExceptionOr.h"
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTableSectionElement.h"
+#include "NodeDocument.h"
 #include "NodeList.h"
 #include "NodeRareData.h"
+#include "NodeInlines.h"
 #include "Text.h"
 #include <wtf/TZoneMallocInlines.h>
 

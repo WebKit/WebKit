@@ -41,7 +41,7 @@ static RetainPtr<NSArray<PKPaymentSetupFeature *>> toPlatformFeatures(Vector<Ref
 {
     RetainPtr platformFeatures = adoptNS([[NSMutableArray alloc] initWithCapacity:features.size()]);
     for (auto& feature : features) {
-        [platformFeatures addObject:feature->platformFeature()];
+        [platformFeatures addObject:RetainPtr { feature->platformFeature() }.get()];
     }
     return platformFeatures;
 }

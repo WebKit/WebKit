@@ -25,12 +25,13 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "ScrollSnapOffsetsInfo.h"
-#include "ScrollTypes.h"
-#include "ScrollingCoordinator.h"
-#include "ScrollingStateNode.h"
+#include <WebCore/ScrollSnapOffsetsInfo.h>
+#include <WebCore/ScrollTypes.h>
+#include <WebCore/ScrollingCoordinator.h>
+#include <WebCore/ScrollingStateNode.h>
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSScrollerImp;
@@ -129,6 +130,9 @@ public:
     ScrollbarEnabledState scrollbarEnabledState() const { return m_scrollbarEnabledState; }
     WEBCORE_EXPORT void setScrollbarEnabledState(ScrollbarOrientation, bool);
 
+    const std::optional<ScrollbarColor>& scrollbarColor() const { return m_scrollbarColor; }
+    WEBCORE_EXPORT void setScrollbarColor(std::optional<ScrollbarColor>);
+
     void setScrollerImpsFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar);
 
     WEBCORE_EXPORT void setMouseIsOverContentArea(bool);
@@ -175,6 +179,7 @@ protected:
         MouseLocationState&&,
         ScrollbarHoverState&&,
         ScrollbarEnabledState&&,
+        std::optional<ScrollbarColor>&&,
         UserInterfaceLayoutDirection,
         ScrollbarWidth,
         bool useDarkAppearanceForScrollbars,
@@ -211,6 +216,7 @@ private:
     RetainPtr<NSScrollerImp> m_horizontalScrollerImp;
 #endif
 
+    std::optional<ScrollbarColor> m_scrollbarColor;
     ScrollableAreaParameters m_scrollableAreaParameters;
     RequestedScrollData m_requestedScrollData;
     RequestedKeyboardScrollData m_keyboardScrollData;

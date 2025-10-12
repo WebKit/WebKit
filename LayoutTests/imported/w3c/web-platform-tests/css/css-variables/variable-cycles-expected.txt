@@ -9,5 +9,5 @@ PASS Cycle with extra edge (3)
 PASS Cycle with secondary cycle
 PASS Cycle with overlapping secondary cycle
 PASS Cycle with deeper secondary cycle
-PASS Cycle via fallback
+FAIL Cycle in unused fallback assert_not_equals: --a got disallowed value ""
 

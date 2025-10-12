@@ -36,6 +36,7 @@ class HTTPHeaderMap;
 class NetworkStorageSession;
 class ResourceRequest;
 class ResourceResponse;
+struct ResourceLoaderOptions;
 
 struct RedirectChainCacheStatus {
     enum class Status : uint8_t {
@@ -54,7 +55,7 @@ struct RedirectChainCacheStatus {
 WEBCORE_EXPORT Seconds computeCurrentAge(const ResourceResponse&, WallTime responseTimestamp);
 WEBCORE_EXPORT Seconds computeFreshnessLifetimeForHTTPFamily(const ResourceResponse&, WallTime responseTimestamp);
 WEBCORE_EXPORT void updateResponseHeadersAfterRevalidation(ResourceResponse&, const ResourceResponse& validatingResponse);
-WEBCORE_EXPORT void updateRedirectChainStatus(RedirectChainCacheStatus&, const ResourceResponse&);
+WEBCORE_EXPORT void updateRedirectChainStatus(RedirectChainCacheStatus&, const ResourceResponse&, const ResourceLoaderOptions&);
 
 enum ReuseExpiredRedirectionOrNot { DoNotReuseExpiredRedirection, ReuseExpiredRedirection };
 WEBCORE_EXPORT bool redirectChainAllowsReuse(RedirectChainCacheStatus, ReuseExpiredRedirectionOrNot);
@@ -67,9 +68,9 @@ struct CacheControlDirectives {
         , immutable(false)
         { }
 
-    Markable<Seconds, Seconds::MarkableTraits> maxAge;
-    Markable<Seconds, Seconds::MarkableTraits> maxStale;
-    Markable<Seconds, Seconds::MarkableTraits> staleWhileRevalidate;
+    Markable<Seconds> maxAge;
+    Markable<Seconds> maxStale;
+    Markable<Seconds> staleWhileRevalidate;
     bool noCache : 1;
     bool noStore : 1;
     bool mustRevalidate : 1;

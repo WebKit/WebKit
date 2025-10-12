@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: window.styleMedia is a deprecated draft version of window.matchMedia API, and it will be removed in the future.
 
 PASS For attributes, each copy of the accessor property has distinct built-in function objects for its getters and setters.
 

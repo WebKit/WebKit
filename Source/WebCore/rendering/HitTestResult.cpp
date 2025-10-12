@@ -26,6 +26,9 @@
 #include "CachedImage.h"
 #include "ContainerNodeInlines.h"
 #include "DocumentMarkerController.h"
+#include "DocumentPage.h"
+#include "DocumentSecurityOrigin.h"
+#include "DocumentView.h"
 #include "Editor.h"
 #include "ElementInlines.h"
 #include "File.h"
@@ -42,12 +45,13 @@
 #include "LocalFrame.h"
 #include "NodeInlines.h"
 #include "OriginAccessPatterns.h"
-#include "Page.h"
 #include "PseudoElement.h"
 #include "Range.h"
 #include "RenderBlockFlow.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
+#include "RenderObjectStyle.h"
+#include "RenderStyleInlines.h"
 #include "SVGAElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImageElement.h"
@@ -104,6 +108,7 @@ HitTestResult::HitTestResult(const HitTestResult& other)
     , m_innerURLElement(other.URLElement())
     , m_scrollbar(other.scrollbar())
     , m_isOverWidget(other.isOverWidget())
+    , m_pseudoElementIdentifier(other.pseudoElementIdentifier())
 {
     // Only copy the NodeSet in case of list hit test.
     if (other.m_listBasedTestResult) {
@@ -124,6 +129,7 @@ HitTestResult& HitTestResult::operator=(const HitTestResult& other)
     m_innerURLElement = other.URLElement();
     m_scrollbar = other.scrollbar();
     m_isOverWidget = other.isOverWidget();
+    m_pseudoElementIdentifier = other.pseudoElementIdentifier();
 
     // Only copy the NodeSet in case of list hit test.
     if (other.m_listBasedTestResult) {
@@ -188,6 +194,16 @@ LocalFrame* HitTestResult::innerNodeFrame() const
     return 0;
 }
 
+std::optional<Style::PseudoElementIdentifier> HitTestResult::pseudoElementIdentifier() const
+{
+    return m_pseudoElementIdentifier;
+}
+
+void HitTestResult::setPseudoElementIdentifier(std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier)
+{
+    m_pseudoElementIdentifier = pseudoElementIdentifier;
+}
+
 LocalFrame* HitTestResult::frame() const
 {
     if (m_innerNonSharedNode)
@@ -196,7 +212,7 @@ LocalFrame* HitTestResult::frame() const
     return nullptr;
 }
 
-LocalFrame* HitTestResult::targetFrame() const
+Frame* HitTestResult::targetFrame() const
 {
     if (!m_innerURLElement)
         return nullptr;
@@ -205,7 +221,7 @@ LocalFrame* HitTestResult::targetFrame() const
     if (!frame)
         return nullptr;
 
-    return dynamicDowncast<LocalFrame>(frame->tree().findBySpecifiedName(m_innerURLElement->target(), *frame));
+    return frame->tree().findBySpecifiedName(m_innerURLElement->target(), *frame);
 }
 
 bool HitTestResult::isSelected() const
@@ -373,7 +389,7 @@ String HitTestResult::altDisplayString() const
         return displayString(image->attributeWithoutSynchronization(altAttr), m_innerNonSharedNode.get());
 
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(*m_innerNonSharedNode))
-        return displayString(input->alt(), m_innerNonSharedNode.get());
+        return displayString(input->attributeWithoutSynchronization(altAttr), m_innerNonSharedNode.get());
 
     return String();
 }
@@ -466,7 +482,7 @@ URL HitTestResult::absolutePDFURL() const
     if (!m_innerNonSharedNode)
         return URL();
 
-    RefPtr element = dynamicDowncast<HTMLPlugInImageElement>(*m_innerNonSharedNode);
+    RefPtr element = dynamicDowncast<HTMLPlugInElement>(*m_innerNonSharedNode);
     if (!element)
         return URL();
 

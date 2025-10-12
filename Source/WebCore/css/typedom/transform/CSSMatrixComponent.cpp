@@ -38,6 +38,7 @@
 #include "DOMMatrix.h"
 #include "DOMMatrixInit.h"
 #include "ExceptionOr.h"
+#include "ScriptWrappableInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -166,5 +167,7 @@ RefPtr<CSSValue> CSSMatrixComponent::toCSSValue() const
         arguments.append(CSSPrimitiveValue::create(value));
     return CSSFunctionValue::create(CSSValueMatrix3d, WTFMove(arguments));
 }
+
+CSSMatrixComponent::~CSSMatrixComponent() = default;
 
 } // namespace WebCore

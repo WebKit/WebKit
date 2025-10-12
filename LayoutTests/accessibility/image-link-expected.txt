@@ -31,7 +31,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXLink: 'Delicious cake'>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 0}
 AXElementBusy: 0
 AXURL: http://www.wowhead.com/?item=33924
 AXAccessKey: (null)

@@ -29,6 +29,7 @@
 
 #include "ArgumentCodersCocoa.h"
 #include <WebCore/ColorCocoa.h>
+#include <WebCore/DoubleSize.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSShadow;
@@ -43,7 +44,7 @@ public:
     {
     }
 
-    CoreIPCNSShadow(CGSize shadowOffset, CGFloat shadowBlurRadius, RetainPtr<WebCore::CocoaColor>&& shadowColor)
+    CoreIPCNSShadow(WebCore::DoubleSize shadowOffset, double shadowBlurRadius, RetainPtr<WebCore::CocoaColor>&& shadowColor)
         : m_shadowOffset(shadowOffset)
         , m_shadowBlurRadius(shadowBlurRadius)
         , m_shadowColor(WTFMove(shadowColor))
@@ -55,8 +56,8 @@ public:
 private:
     friend struct IPC::ArgumentCoder<CoreIPCNSShadow, void>;
 
-    CGSize m_shadowOffset;
-    CGFloat m_shadowBlurRadius;
+    WebCore::DoubleSize m_shadowOffset;
+    double m_shadowBlurRadius;
     RetainPtr<WebCore::CocoaColor> m_shadowColor;
 };
 

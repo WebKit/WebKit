@@ -514,8 +514,22 @@ ObjectPropertyConditionSet generateConditionsForPrototypeEquivalenceConcurrently
         });
 }
 
-ObjectPropertyConditionSet generateConditionsForPropertyMissConcurrently(
-    VM& vm, JSGlobalObject* globalObject, Structure* headStructure, UniquedStringImpl* uid)
+ObjectPropertyConditionSet generateConditionsForPrototypePropertyHitConcurrently(VM& vm, JSGlobalObject* globalObject, Structure* headStructure, JSObject* prototype, UniquedStringImpl* uid)
+{
+    return generateConditions(
+        globalObject, headStructure, prototype, uid,
+        [&](auto& conditions, JSObject* object, Structure* structure) -> bool {
+            PropertyCondition::Kind kind = object == prototype ? PropertyCondition::Presence : PropertyCondition::Absence;
+            ObjectPropertyCondition result =
+                generateCondition(vm, nullptr, object, structure, uid, kind, Concurrency::ConcurrentThread);
+            if (!result)
+                return false;
+            conditions.append(result);
+            return true;
+        });
+}
+
+ObjectPropertyConditionSet generateConditionsForPropertyMissConcurrently(VM& vm, JSGlobalObject* globalObject, Structure* headStructure, UniquedStringImpl* uid)
 {
     return generateConditions(
         globalObject, headStructure, nullptr, uid,
@@ -565,8 +579,19 @@ static std::optional<PrototypeChainCachingStatus> prepareChainForCaching(JSGloba
                 return std::nullopt;
 
             ASSERT(structure->isObject());
-            if (structure->hasBeenFlattenedBefore())
+            if (structure->hasBeenFlattenedBefore()) {
+                if (structure->isUncacheableDictionary())
+                    return std::nullopt;
+                if (!structure->propertyAccessesAreCacheable())
+                    return std::nullopt;
+                if (structure->isProxy())
+                    return std::nullopt;
+                if (current == target) {
+                    found = true;
+                    break;
+                }
                 return std::nullopt;
+            }
 
             structure->flattenDictionaryStructure(vm, asObject(current));
             flattenedDictionary = true;

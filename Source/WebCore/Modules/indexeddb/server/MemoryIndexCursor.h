@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,9 +51,7 @@ private:
     void currentData(IDBGetResult&) final;
     void iterate(const IDBKeyData&, const IDBKeyData& primaryKey, uint32_t count, IDBGetResult&) final;
 
-    Ref<MemoryIndex> protectedIndex() const;
-
-    CheckedRef<MemoryIndex> m_index;
+    const CheckedRef<MemoryIndex> m_index;
 
     IndexValueStore::Iterator m_currentIterator;
     IDBKeyData m_currentKey;

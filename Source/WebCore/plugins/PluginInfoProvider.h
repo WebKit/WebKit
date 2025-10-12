@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "PluginData.h"
+#include <WebCore/PluginData.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>

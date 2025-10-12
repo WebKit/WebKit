@@ -32,7 +32,8 @@ class SurfaceWgpu : public SurfaceImpl
         webgpu::ImageHelper texture;
         RenderTargetWgpu renderTarget;
     };
-    angle::Result createDepthStencilAttachment(uint32_t width,
+    angle::Result createDepthStencilAttachment(const egl::Display *display,
+                                               uint32_t width,
                                                uint32_t height,
                                                const webgpu::Format &webgpuFormat,
                                                webgpu::DeviceHandle device,
@@ -42,7 +43,9 @@ class SurfaceWgpu : public SurfaceImpl
 class OffscreenSurfaceWgpu : public SurfaceWgpu
 {
   public:
-    OffscreenSurfaceWgpu(const egl::SurfaceState &surfaceState);
+    OffscreenSurfaceWgpu(const egl::SurfaceState &surfaceState,
+                         EGLenum clientBufferType,
+                         EGLClientBuffer clientBuffer);
     ~OffscreenSurfaceWgpu() override;
 
     egl::Error initialize(const egl::Display *display) override;
@@ -53,9 +56,8 @@ class OffscreenSurfaceWgpu : public SurfaceWgpu
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
     void setSwapInterval(const egl::Display *display, EGLint interval) override;
 
-    // width and height can change with client window resizing
-    EGLint getWidth() const override;
-    EGLint getHeight() const override;
+    // size can change with client window resizing
+    gl::Extents getSize() const override;
 
     EGLint getSwapBehavior() const override;
 
@@ -80,6 +82,9 @@ class OffscreenSurfaceWgpu : public SurfaceWgpu
     EGLint mWidth;
     EGLint mHeight;
 
+    EGLenum mClientBufferType     = EGL_NONE;
+    EGLClientBuffer mClientBuffer = nullptr;
+
     AttachmentImage mColorAttachment;
     AttachmentImage mDepthStencilAttachment;
 };
@@ -99,9 +104,8 @@ class WindowSurfaceWgpu : public SurfaceWgpu
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
     void setSwapInterval(const egl::Display *display, EGLint interval) override;
 
-    // width and height can change with client window resizing
-    EGLint getWidth() const override;
-    EGLint getHeight() const override;
+    // size can change with client window resizing
+    gl::Extents getSize() const override;
 
     EGLint getSwapBehavior() const override;
 

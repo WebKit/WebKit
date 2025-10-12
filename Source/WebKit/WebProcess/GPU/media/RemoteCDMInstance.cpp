@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,7 +78,7 @@ void RemoteCDMInstance::initializeWithConfiguration(const WebCore::CDMKeySystemC
         return;
     }
 
-    factory->gpuProcessConnection().protectedConnection()->sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::InitializeWithConfiguration(configuration, distinctiveIdentifiers, persistentState), WTFMove(callback), m_identifier);
+    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::InitializeWithConfiguration(configuration, distinctiveIdentifiers, persistentState), WTFMove(callback), m_identifier);
 }
 
 void RemoteCDMInstance::setServerCertificate(Ref<WebCore::SharedBuffer>&& certificate, SuccessCallback&& callback)
@@ -89,13 +89,13 @@ void RemoteCDMInstance::setServerCertificate(Ref<WebCore::SharedBuffer>&& certif
         return;
     }
 
-    factory->gpuProcessConnection().protectedConnection()->sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::SetServerCertificate(WTFMove(certificate)), WTFMove(callback), m_identifier);
+    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::SetServerCertificate(WTFMove(certificate)), WTFMove(callback), m_identifier);
 }
 
 void RemoteCDMInstance::setStorageDirectory(const String& directory)
 {
     if (RefPtr factory = m_factory.get())
-        factory->gpuProcessConnection().protectedConnection()->send(Messages::RemoteCDMInstanceProxy::SetStorageDirectory(directory), m_identifier);
+        factory->gpuProcessConnection().connection().send(Messages::RemoteCDMInstanceProxy::SetStorageDirectory(directory), m_identifier);
 }
 
 RefPtr<WebCore::CDMInstanceSession> RemoteCDMInstance::createSession()
@@ -110,7 +110,7 @@ RefPtr<WebCore::CDMInstanceSession> RemoteCDMInstance::createSession()
         logIdentifier = reinterpret_cast<uint64_t>(client->logIdentifier());
 #endif
 
-    auto sendResult = factory->gpuProcessConnection().protectedConnection()->sendSync(Messages::RemoteCDMInstanceProxy::CreateSession(logIdentifier), m_identifier);
+    auto sendResult = factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMInstanceProxy::CreateSession(logIdentifier), m_identifier);
     auto [identifier] = sendResult.takeReplyOr(std::nullopt);
     if (!identifier)
         return nullptr;

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Left side of assignment is not a reference.
 
 
 PASS Sanity check around top-level Window

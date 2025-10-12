@@ -28,7 +28,6 @@
     Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
     SecureContext,
-    CustomToJSObject,
     JSGenerateToNativeObject,
     Exposed=Window,
     InterfaceName=XRBoundedReferenceSpace

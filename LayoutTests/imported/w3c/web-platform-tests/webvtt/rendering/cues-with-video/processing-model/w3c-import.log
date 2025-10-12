@@ -125,9 +125,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/embedded_style_urls-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/embedded_style_urls-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/embedded_style_urls.html
-/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/enable_controls_reposition-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/enable_controls_reposition-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/enable_controls_reposition.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/line_-2_wrapped_cue_grow_upwards-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/line_-2_wrapped_cue_grow_upwards-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/line_-2_wrapped_cue_grow_upwards.html
@@ -152,12 +149,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/line_percent_and_integer_mixed_overlap_move_up-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/line_percent_and_integer_mixed_overlap_move_up-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/line_percent_and_integer_mixed_overlap_move_up.html
-/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/media_height400_with_controls-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/media_height400_with_controls-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/media_height400_with_controls.html
-/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/media_with_controls-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/media_with_controls-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/media_with_controls.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/navigate_cue_position-1.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/navigate_cue_position-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/navigate_cue_position-ref-1.html
@@ -166,6 +157,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/one_line_cue_plus_wrapped_cue-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/one_line_cue_plus_wrapped_cue-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/one_line_cue_plus_wrapped_cue.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/portrait-ref.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/portrait.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/portrait.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/repaint-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/repaint-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/repaint.html

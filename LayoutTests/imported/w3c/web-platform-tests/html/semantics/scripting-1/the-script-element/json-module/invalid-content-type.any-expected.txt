@@ -5,4 +5,100 @@ PASS Try importing JSON module with MIME type text/x-json
 PASS Try importing JSON module with MIME type text/json+blah
 PASS Try importing JSON module with MIME type application/blahjson
 PASS Try importing JSON module with MIME type image/json
+PASS Try importing JSON module with MIME type text+json
+PASS Try importing JSON module with MIME type json+json
+PASS Try importing JSON module with MIME type text/json/json+json
+PASS Try importing JSON module with MIME type text/html;+json
+PASS Try importing JSON module with MIME type text/html+json+xml
+PASS Try importing JSON module with MIME type text/json/json
+PASS Try importing JSON module with MIME type applic\0ation/vnd.api+json
+PASS Try importing JSON module with MIME type applic	ation/vnd.api+json
+PASS Try importing JSON module with MIME type applic
+ation/vnd.api+json
+PASS Try importing JSON module with MIME type applic\ration/vnd.api+json
+PASS Try importing JSON module with MIME type applic ation/vnd.api+json
+PASS Try importing JSON module with MIME type application/vnd.api+json
+PASS Try importing JSON module with MIME type application/vnd.api+json
+PASS Try importing JSON module with MIME type application/vnd.api+json
+PASS Try importing JSON module with MIME type application/vnd\0.api+json
+PASS Try importing JSON module with MIME type application/vnd	.api+json
+PASS Try importing JSON module with MIME type application/vnd
+.api+json
+PASS Try importing JSON module with MIME type application/vnd\r.api+json
+PASS Try importing JSON module with MIME type application/vnd .api+json
+PASS Try importing JSON module with MIME type application/vnd.api+json
+PASS Try importing JSON module with MIME type application/vnd.api+json
+PASS Try importing JSON module with MIME type application/vnd.api+json
+PASS Try importing JSON module with MIME type applic"ation/vnd.api+json
+PASS Try importing JSON module with MIME type applic(ation/vnd.api+json
+PASS Try importing JSON module with MIME type applic)ation/vnd.api+json
+PASS Try importing JSON module with MIME type applic,ation/vnd.api+json
+PASS Try importing JSON module with MIME type applic:ation/vnd.api+json
+PASS Try importing JSON module with MIME type applic;ation/vnd.api+json
+PASS Try importing JSON module with MIME type applic<ation/vnd.api+json
+PASS Try importing JSON module with MIME type applic>ation/vnd.api+json
+PASS Try importing JSON module with MIME type applic=ation/vnd.api+json
+PASS Try importing JSON module with MIME type applic?ation/vnd.api+json
+PASS Try importing JSON module with MIME type applic@ation/vnd.api+json
+PASS Try importing JSON module with MIME type applic[ation/vnd.api+json
+PASS Try importing JSON module with MIME type applic]ation/vnd.api+json
+PASS Try importing JSON module with MIME type applic{ation/vnd.api+json
+PASS Try importing JSON module with MIME type applic}ation/vnd.api+json
+PASS Try importing JSON module with MIME type application/vnd"api"+json
+PASS Try importing JSON module with MIME type application/vnd(api+json
+PASS Try importing JSON module with MIME type application/vnd)api+json
+PASS Try importing JSON module with MIME type application/vnd,api+json
+PASS Try importing JSON module with MIME type application/vnd:api+json
+PASS Try importing JSON module with MIME type application/vnd;api+json
+PASS Try importing JSON module with MIME type application/vnd<api+json
+PASS Try importing JSON module with MIME type application/vnd>api+json
+PASS Try importing JSON module with MIME type application/vnd=api+json
+PASS Try importing JSON module with MIME type application/vnd?api+json
+PASS Try importing JSON module with MIME type application/vnd@api+json
+PASS Try importing JSON module with MIME type application/vnd[api+json
+PASS Try importing JSON module with MIME type application/vnd]api+json
+PASS Try importing JSON module with MIME type application/vnd{api+json
+PASS Try importing JSON module with MIME type application/vnd}api+json
+PASS Try importing JSON module with MIME type aplicación/vnd.api+json
+PASS Try importing JSON module with MIME type 申请/vnd.api+json
+PASS Try importing JSON module with MIME type app™lication/vnd.api+json
+PASS Try importing JSON module with MIME type appli€cation/vnd.api+json
+PASS Try importing JSON module with MIME type 🚀application/vnd.api+json
+PASS Try importing JSON module with MIME type applicatioñ/vnd.api+json
+PASS Try importing JSON module with MIME type application/vñd.api+json
+PASS Try importing JSON module with MIME type application/vnd.apí+json
+PASS Try importing JSON module with MIME type application/vnd.api™+json
+PASS Try importing JSON module with MIME type application/vnd.api€+json
+PASS Try importing JSON module with MIME type application/vnd.中文+json
+PASS Try importing JSON module with MIME type application/vnd.api🚀+json
+PASS Try importing JSON module with MIME type application/café.api+json
+PASS Try importing JSON module with MIME type applic ation/vnd api+json
+PASS Try importing JSON module with MIME type applic"ation/vnd"api+json
+PASS Try importing JSON module with MIME type applic(ation/vnd(api+json
+PASS Try importing JSON module with MIME type applic)ation/vnd)api+json
+PASS Try importing JSON module with MIME type applic,ation/vnd,api+json
+PASS Try importing JSON module with MIME type applic=ation/vnd=api+json
+PASS Try importing JSON module with MIME type 申请/中文.api+json
+PASS Try importing JSON module with MIME type app™/vnd€.api+json
+PASS Try importing JSON module with MIME type applic\0ation/vnd\0api+json
+PASS Try importing JSON module with MIME type applic;ation/vnd;api+json
+PASS Try importing JSON module with MIME type applic{ation/vnd{api+json
+PASS Try importing JSON module with MIME type applic}ation/vnd}api+json
+PASS Try importing JSON module with MIME type applic[ation/vnd[api+json
+PASS Try importing JSON module with MIME type applic]ation/vnd]api+json
+PASS Try importing JSON module with MIME type applic<ation/vnd<api+json
+PASS Try importing JSON module with MIME type applic>ation/vnd>api+json
+PASS Try importing JSON module with MIME type "application/vnd.api+json
+PASS Try importing JSON module with MIME type application"/vnd.api+json
+PASS Try importing JSON module with MIME type application /vnd.api+json
+PASS Try importing JSON module with MIME type /vnd.api+json
+PASS Try importing JSON module with MIME type app\0lication/vnd.api+json
+PASS Try importing JSON module with MIME type application/"vnd.api+json
+PASS Try importing JSON module with MIME type application/vnd.api"+json
+PASS Try importing JSON module with MIME type application/ vnd.api+json
+PASS Try importing JSON module with MIME type application/vnd.api +json
+PASS Try importing JSON module with MIME type application/vnd.api+json"
+PASS Try importing JSON module with MIME type "application"/"vnd.api"+json
+PASS Try importing JSON module with MIME type app(lic)ation/vnd(api)+json
+PASS Try importing JSON module with MIME type application\0/\0vnd.api+json
 

@@ -1,0 +1,39 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 576x18
+          text run at (0,0) width 576: "The following 5 inputs should be all be rendered exactly the same, aligned to the left side."
+      RenderBlock (anonymous) at (0,34) size 784x84
+        RenderTextControl {INPUT} at (0,0) size 156x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+        RenderBR {BR} at (155,1) size 1x18
+        RenderTextControl {INPUT} at (0,21) size 156x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+        RenderBR {BR} at (155,22) size 1x18
+        RenderTextControl {INPUT} at (0,42) size 156x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+        RenderBR {BR} at (155,43) size 1x18
+        RenderTextControl {INPUT} at (0,63) size 156x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+        RenderBR {BR} at (155,64) size 1x18
+      RenderBlock {DIV} at (0,118) size 784x21
+        RenderTextControl {INPUT} at (0,0) size 156x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+layer at (15,46) size 142x13
+  RenderBlock {DIV} at (7,4) size 142x13
+    RenderText {#text} at (0,0) size 97x13
+      text run at (0,0) width 97: "The quick brown..."
+layer at (15,67) size 142x13
+  RenderBlock {DIV} at (7,4) size 142x13
+    RenderText {#text} at (0,0) size 97x13
+      text run at (0,0) width 97: "The quick brown..."
+layer at (15,88) size 142x13
+  RenderBlock {DIV} at (7,4) size 142x13
+    RenderText {#text} at (0,0) size 97x13
+      text run at (0,0) width 97: "The quick brown..."
+layer at (15,109) size 142x13
+  RenderBlock {DIV} at (7,4) size 142x13
+    RenderText {#text} at (0,0) size 97x13
+      text run at (0,0) width 97: "The quick brown..."
+layer at (15,130) size 142x13
+  RenderBlock {DIV} at (7,4) size 142x13
+    RenderText {#text} at (0,0) size 97x13
+      text run at (0,0) width 97: "The quick brown..."

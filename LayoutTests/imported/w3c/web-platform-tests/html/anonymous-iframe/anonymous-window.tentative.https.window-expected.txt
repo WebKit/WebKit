@@ -1,5 +1,5 @@
 
-FAIL Anonymous (false => true) => window not reused. assert_true: expected true got undefined
-FAIL Anonymous (true => false) => window not reused. assert_false: expected false got undefined
-FAIL Anonymous (true => true) => window reused. assert_true: expected true got undefined
+FAIL Credentialless (false => true) => window not reused. assert_true: expected true got undefined
+FAIL Credentialless (true => false) => window not reused. assert_false: expected false got undefined
+FAIL Credentialless (true => true) => window reused. assert_true: expected true got undefined
 

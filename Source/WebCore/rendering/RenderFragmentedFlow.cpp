@@ -78,8 +78,6 @@ void RenderFragmentedFlow::styleDidChange(StyleDifference diff, const RenderStyl
 
 void RenderFragmentedFlow::removeFlowChildInfo(RenderElement& child)
 {
-    if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(child))
-        removeLineFragmentInfo(*blockFlow);
     if (CheckedPtr box = dynamicDowncast<RenderBox>(child))
         removeRenderBoxFragmentInfo(*box);
 }
@@ -97,8 +95,6 @@ void RenderFragmentedFlow::invalidateFragments(MarkingBehavior markingParents)
     }
 
     m_fragmentRangeMap.clear();
-    if (m_lineToFragmentMap)
-        m_lineToFragmentMap->clear();
     setNeedsLayout(markingParents);
 
     m_fragmentsInvalidated = true;
@@ -423,17 +419,6 @@ void RenderFragmentedFlow::removeRenderBoxFragmentInfo(const RenderBox& box)
     m_fragmentRangeMap.remove(box);
 }
 
-void RenderFragmentedFlow::removeLineFragmentInfo(const RenderBlockFlow& blockFlow)
-{
-    if (!m_lineToFragmentMap)
-        return;
-
-    if (auto* rootBox = blockFlow.legacyRootBox())
-        m_lineToFragmentMap->remove(rootBox);
-
-    ASSERT_WITH_SECURITY_IMPLICATION(checkLinesConsistency(blockFlow));
-}
-
 void RenderFragmentedFlow::logicalWidthChangedInFragmentsForBlock(const RenderBlock& block, RelayoutChildren& relayoutChildren)
 {
     if (!hasValidFragmentInfo())
@@ -720,45 +705,6 @@ bool RenderFragmentedFlow::objectInFlowFragment(const RenderObject* object, cons
     return false;
 }
 
-#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-bool RenderFragmentedFlow::checkLinesConsistency(const RenderBlockFlow& removedBlock) const
-{
-    if (!m_lineToFragmentMap)
-        return true;
-
-    for (auto& linePair : *m_lineToFragmentMap.get()) {
-        const LegacyRootInlineBox* line = linePair.key;
-        RenderFragmentContainer& fragment = *linePair.value;
-        if (&line->blockFlow() == &removedBlock)
-            return false;
-        if (line->blockFlow().fragmentedFlowState() == FragmentedFlowState::NotInsideFlow)
-            return false;
-        if (!m_fragmentList.contains(fragment))
-            return false;
-    }
-
-    return true;
-}
-#endif
-
-void RenderFragmentedFlow::clearLinesToFragmentMap()
-{
-    if (m_lineToFragmentMap)
-        m_lineToFragmentMap->clear();
-}
-
-void RenderFragmentedFlow::deleteLines()
-{
-    clearLinesToFragmentMap();
-    RenderBlockFlow::deleteLines();
-}
-
-void RenderFragmentedFlow::willBeDestroyed()
-{
-    clearLinesToFragmentMap();
-    RenderBlockFlow::willBeDestroyed();
-}
-
 void RenderFragmentedFlow::updateFragmentsFragmentedFlowPortionRect()
 {
     LayoutUnit logicalHeight;
@@ -804,7 +750,7 @@ bool RenderFragmentedFlow::addForcedFragmentBreak(const RenderBlock* block, Layo
     return false;
 }
 
-void RenderFragmentedFlow::collectLayerFragments(LayerFragments& layerFragments, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect)
+void RenderFragmentedFlow::collectLayerFragments(LayerFragments& layerFragments, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) const
 {
     ASSERT(!m_fragmentsInvalidated || isSkippedContent());
 
@@ -812,7 +758,7 @@ void RenderFragmentedFlow::collectLayerFragments(LayerFragments& layerFragments,
         fragment.collectLayerFragments(layerFragments, layerBoundingBox, dirtyRect);
 }
 
-LayoutRect RenderFragmentedFlow::fragmentsBoundingBox(const LayoutRect& layerBoundingBox)
+LayoutRect RenderFragmentedFlow::fragmentsBoundingBox(const LayoutRect& layerBoundingBox) const
 {
     ASSERT(!m_fragmentsInvalidated);
     
@@ -1085,14 +1031,5 @@ RenderFragmentContainer* RenderFragmentedFlow::currentFragment() const
 {
     return m_currentFragmentMaintainer ? &m_currentFragmentMaintainer->fragment() : nullptr;
 }
-
-ContainingFragmentMap& RenderFragmentedFlow::containingFragmentMap()
-{
-    if (!m_lineToFragmentMap)
-        m_lineToFragmentMap = makeUnique<ContainingFragmentMap>();
-
-    return *m_lineToFragmentMap.get();
-}
-
 
 } // namespace WebCore

@@ -352,7 +352,7 @@ module DSL
         out = []
 
         @aliases.each do |name, type|
-            out << "introduceType(AST::Identifier::make(\"#{name}\"_s), #{type.concrete_type});"
+            out << "CHECK(introduceType(AST::Identifier::make(\"#{name}\"_s), #{type.concrete_type}));"
         end
 
         out << ""

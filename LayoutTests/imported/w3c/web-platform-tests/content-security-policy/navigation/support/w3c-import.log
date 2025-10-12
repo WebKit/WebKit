@@ -17,3 +17,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/navigation/support/frame-with-csp.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/navigation/support/test_csp_self_window.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/navigation/support/test_csp_self_window.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/navigation/support/utils.js

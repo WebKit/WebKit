@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +29,7 @@ DECLARE_SYSTEM_HEADER
 
 #if PLATFORM(COCOA)
 
-// FIXME: Undo when isSystemVoice is available in all SDKs.
-#if USE(APPLE_INTERNAL_SDK) && 0
+#if USE(APPLE_INTERNAL_SDK)
 
 #include <AXSpeechManager.h>
 
@@ -39,11 +38,10 @@ DECLARE_SYSTEM_HEADER
 #include <AVFoundation/AVFoundation.h>
 
 @interface AVSpeechSynthesisVoice (PrivateAttributes)
-@property (nonatomic, readonly) BOOL isSystemVoice SPI_AVAILABLE(macos(11.3), ios(13.3), tvos(13.3), watchos(6.3));
-+ (nonnull NSArray<AVSpeechSynthesisVoice *> *)speechVoicesIncludingSuperCompact SPI_AVAILABLE(macos(13.4), ios(16.5), tvos(16.5), watchos(9.5));
+@property (nonatomic, readonly) BOOL isSystemVoice;
++ (nonnull NSArray<AVSpeechSynthesisVoice *> *)speechVoicesIncludingSuperCompact;
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #endif // PLATFORM(COCOA)
-

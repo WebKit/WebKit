@@ -69,6 +69,9 @@ promise_test(async (test) => {
                 assert_equals(trackEvent.streams[1].id, localStream2.id, "second stream id");
                 assert_equals(trackEvent.track.id, localStream.getVideoTracks()[0].id);
                 assert_equals(trackEvent.track, trackEvent.streams[0].getVideoTracks()[0]);
+                assert_equals(trackEvent.track.getSettings().aspectRatio, undefined);
+                assert_equals(trackEvent.track.getSettings().width, undefined);
+                assert_equals(trackEvent.track.getSettings().height, undefined);
                 resolve(trackEvent.streams[0]);
             };
         });

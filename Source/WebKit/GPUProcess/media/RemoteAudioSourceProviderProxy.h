@@ -56,10 +56,8 @@ private:
     // AudioSourceProviderClient
     void setFormat(size_t numberOfChannels, float sampleRate) final { }
 
-    Ref<IPC::Connection> protectedConnection() const { return m_connection; }
-
     WebCore::MediaPlayerIdentifier m_identifier;
-    Ref<IPC::Connection> m_connection;
+    const Ref<IPC::Connection> m_connection;
 };
 
 } // namespace WebKit

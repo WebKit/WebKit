@@ -1,15 +1,15 @@
 
-PASS Parent embeds same-origin anonymous iframe
-PASS Parent embeds cross-origin anonymous iframe
-FAIL COEP:require-corp parent embeds same-origin anonymous iframe assert_equals: expected "load" but got "block"
-FAIL COEP:require-corp parent embeds cross-origin anonymous iframe assert_equals: expected "load" but got "block"
-PASS COEP:credentialless parent embeds same-origin anonymous iframe
-PASS COEP:credentialless parent embeds cross-origin anonymous iframe
-FAIL COOP:same-origin + COEP:require-corp embeds same-origin anonymous iframe assert_equals: expected "load" but got "block"
-FAIL COOP:same-origin + COEP:require-corp embeds cross-origin anonymous iframe assert_equals: expected "load" but got "block"
-PASS COOP:same-origin + COEP:credentialless embeds same-origin anonymous iframe
-PASS COOP:same-origin + COEP:credentialless embeds cross-origin anonymous iframe
-PASS Parents embeds a CSP:frame-ancestore anonymous iframe
-PASS Cross-Origin-Isolated parent embeds same-origin COEP anonymous iframe
-FAIL Cross-Origin-Isolated parent embeds cross-origin COEP anonymous iframe assert_equals: expected "load" but got "block"
+PASS Parent embeds same-origin credentialless iframe
+PASS Parent embeds cross-origin credentialless iframe
+FAIL COEP:require-corp parent embeds same-origin credentialless iframe assert_equals: expected "load" but got "block"
+FAIL COEP:require-corp parent embeds cross-origin credentialless iframe assert_equals: expected "load" but got "block"
+PASS COEP:credentialless parent embeds same-origin credentialless iframe
+PASS COEP:credentialless parent embeds cross-origin credentialless iframe
+FAIL COOP:same-origin + COEP:require-corp embeds same-origin credentialless iframe assert_equals: expected "load" but got "block"
+FAIL COOP:same-origin + COEP:require-corp embeds cross-origin credentialless iframe assert_equals: expected "load" but got "block"
+PASS COOP:same-origin + COEP:credentialless embeds same-origin credentialless iframe
+PASS COOP:same-origin + COEP:credentialless embeds cross-origin credentialless iframe
+PASS Parents embeds a CSP:frame-ancestors credentialless iframe
+PASS Cross-Origin-Isolated parent embeds same-origin COEP credentialless iframe
+FAIL Cross-Origin-Isolated parent embeds cross-origin COEP credentialless iframe assert_equals: expected "load" but got "block"
 

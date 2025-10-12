@@ -6,6 +6,10 @@
 
 // Framebuffer11.cpp: Implements the Framebuffer11 class.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d11/Framebuffer11.h"
 
 #include "common/bitset_utils.h"

@@ -28,14 +28,14 @@
 #include <cstdio>
 
 #pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wattributes"
 #pragma GCC diagnostic ignored "-Wcast-align"
 #include <skia/codec/SkPngDecoder.h>
-#pragma GCC diagnostic pop
-
 #include <skia/core/SkImage.h>
 #include <skia/core/SkPixmap.h>
 #include <skia/core/SkStream.h>
 #include <skia/encode/SkPngEncoder.h>
+#pragma GCC diagnostic pop
 
 namespace ImageDiff {
 

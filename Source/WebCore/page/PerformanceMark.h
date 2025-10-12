@@ -26,6 +26,8 @@
 #pragma once
 
 #include "PerformanceEntry.h"
+#include "PerformanceMarkOptions.h"
+#include "dom/ExceptionOr.h"
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -51,7 +53,9 @@ private:
     Type performanceEntryType() const final { return Type::Mark; }
     ASCIILiteral entryType() const final { return "mark"_s; }
 
-    Ref<SerializedScriptValue> m_serializedDetail;
+    const Ref<SerializedScriptValue> m_serializedDetail;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_PERFORMANCE_ENTRY(PerformanceMark, Mark);

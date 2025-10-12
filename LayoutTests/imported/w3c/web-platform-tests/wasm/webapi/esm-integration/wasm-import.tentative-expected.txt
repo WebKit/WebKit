@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: LinkError: import function ./wasm-import-func.js:f must be callable
-CONSOLE MESSAGE: LinkError: Memory import ./wasm-import-memory.js:m is not an instance of WebAssembly.Memory
-CONSOLE MESSAGE: LinkError: Table import ./wasm-import-table.js:t is not an instance of WebAssembly.Table
-CONSOLE MESSAGE: LinkError: imported global ./wasm-import-global.js:g must be a BigInt
 
 PASS Invalid imports for WebAssembly modules should error.
 

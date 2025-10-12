@@ -22,6 +22,7 @@
 
 #if ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)
 
+#include "ContextDestructionObserverInlines.h"
 #include "GStreamerDTMFSenderBackend.h"
 #include "GStreamerDtlsTransportBackend.h"
 #include "GStreamerPeerConnectionBackend.h"
@@ -49,16 +50,16 @@ static void ensureDebugCategoryIsRegistered()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerRtpSenderBackend);
 
-GStreamerRtpSenderBackend::GStreamerRtpSenderBackend(GStreamerPeerConnectionBackend& backend, GRefPtr<GstWebRTCRTPSender>&& rtcSender)
-    : m_peerConnectionBackend(WeakPtr { &backend })
+GStreamerRtpSenderBackend::GStreamerRtpSenderBackend(WeakPtr<GStreamerPeerConnectionBackend>&& backend, GRefPtr<GstWebRTCRTPSender>&& rtcSender)
+    : m_peerConnectionBackend(WTFMove(backend))
     , m_rtcSender(WTFMove(rtcSender))
 {
     ensureDebugCategoryIsRegistered();
     GST_DEBUG_OBJECT(m_rtcSender.get(), "constructed without associated source");
 }
 
-GStreamerRtpSenderBackend::GStreamerRtpSenderBackend(GStreamerPeerConnectionBackend& backend, GRefPtr<GstWebRTCRTPSender>&& rtcSender, Source&& source, GUniquePtr<GstStructure>&& initData)
-    : m_peerConnectionBackend(WeakPtr { &backend })
+GStreamerRtpSenderBackend::GStreamerRtpSenderBackend(WeakPtr<GStreamerPeerConnectionBackend>&& backend, GRefPtr<GstWebRTCRTPSender>&& rtcSender, Source&& source, GUniquePtr<GstStructure>&& initData)
+    : m_peerConnectionBackend(WTFMove(backend))
     , m_rtcSender(WTFMove(rtcSender))
     , m_source(WTFMove(source))
     , m_initData(WTFMove(initData))
@@ -134,19 +135,25 @@ void GStreamerRtpSenderBackend::tearDown()
         source->teardown();
     }, [&](std::nullptr_t&) {
     });
+
+    m_rtcSender = nullptr;
 }
 
 bool GStreamerRtpSenderBackend::replaceTrack(RTCRtpSender& sender, MediaStreamTrack* track)
 {
     GST_DEBUG_OBJECT(m_rtcSender.get(), "Replacing sender track with track %p", track);
 
-    m_peerConnectionBackend->setReconfiguring(true);
+    RefPtr peerConnectionBackend = m_peerConnectionBackend.get();
+    if (!peerConnectionBackend)
+        return false;
+
+    peerConnectionBackend->setReconfiguring(true);
     // FIXME: We might want to set the reconfiguring flag back to false once the webrtcbin sink pad
     // has renegotiated its caps. Perhaps a pad probe can be used for this.
 
     bool replace = true;
     if (track && !sender.track()) {
-        m_source = m_peerConnectionBackend->createSourceForTrack(*track);
+        m_source = peerConnectionBackend->createSourceForTrack(*track);
         replace = false;
     }
 
@@ -272,7 +279,7 @@ void GStreamerRtpSenderBackend::setParameters(const RTCRtpSendParameters& parame
 
 std::unique_ptr<RTCDTMFSenderBackend> GStreamerRtpSenderBackend::createDTMFBackend()
 {
-    return makeUnique<GStreamerDTMFSenderBackend>();
+    return makeUnique<GStreamerDTMFSenderBackend>(audioSourceWeak());
 }
 
 Ref<RTCRtpTransformBackend> GStreamerRtpSenderBackend::rtcRtpTransformBackend()

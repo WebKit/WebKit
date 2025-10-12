@@ -25,10 +25,11 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
 
-#include "CaptureDeviceManager.h"
 #include <CoreAudio/CoreAudio.h>
+#include <WebCore/CaptureDeviceManager.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

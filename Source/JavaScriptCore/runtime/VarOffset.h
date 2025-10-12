@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "DirectArgumentsOffset.h"
-#include "ScopeOffset.h"
-#include "VirtualRegister.h"
+#include <JavaScriptCore/DirectArgumentsOffset.h>
+#include <JavaScriptCore/ScopeOffset.h>
+#include <JavaScriptCore/VirtualRegister.h>
 #include <wtf/HashMap.h>
 
 namespace JSC {

@@ -56,6 +56,11 @@ class PacketRouter : public PacingController::PacketSender {
       absl::AnyInvocable<void(const RtpPacketToSend& packet,
                               const PacedPacketInfo& pacing_info)> callback);
 
+  // Ensures that PacketRouter generates transport sequence numbers for all RTP
+  // packets. If `send_rtp_packets_as_ect1` is true, packets will be requested
+  // to be sent as ect1.
+  void ConfigureForRfc8888Feedback(bool send_rtp_packets_as_ect1);
+
   void AddSendRtpModule(RtpRtcpInterface* rtp_module, bool remb_candidate);
   void RemoveSendRtpModule(RtpRtcpInterface* rtp_module);
 
@@ -72,7 +77,7 @@ class PacketRouter : public PacingController::PacketSender {
       DataSize size) override;
   void OnAbortedRetransmissions(
       uint32_t ssrc,
-      rtc::ArrayView<const uint16_t> sequence_numbers) override;
+      ArrayView<const uint16_t> sequence_numbers) override;
   std::optional<uint32_t> GetRtxSsrcForMedia(uint32_t ssrc) const override;
   void OnBatchComplete() override;
 
@@ -116,6 +121,9 @@ class PacketRouter : public PacingController::PacketSender {
       RTC_GUARDED_BY(thread_checker_);
 
   uint64_t transport_seq_ RTC_GUARDED_BY(thread_checker_);
+  bool use_cc_feedback_according_to_rfc8888_ RTC_GUARDED_BY(thread_checker_) =
+      false;
+  bool send_rtp_packets_as_ect1_ RTC_GUARDED_BY(thread_checker_) = false;
   absl::AnyInvocable<void(RtpPacketToSend& packet,
                           const PacedPacketInfo& pacing_info)>
       notify_bwe_callback_ RTC_GUARDED_BY(thread_checker_) = nullptr;

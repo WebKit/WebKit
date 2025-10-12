@@ -5,9 +5,10 @@
 <script src="../../media/utilities.js"></script>
 <script>
 
-promise_test(async() => {
+promise_test(async test => {
 
-    let stream = await navigator.mediaDevices.getUserMedia({video : true});
+    const stream = await navigator.mediaDevices.getUserMedia({video : true});
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
     video.srcObject = stream;
     assert_equals(video.currentTime, 0);

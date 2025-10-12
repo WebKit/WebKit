@@ -50,6 +50,7 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #define OBJC_STRINGIFYHELPER(x) @#x
 #define OBJC_STRINGIFY(x) OBJC_STRINGIFYHELPER(x)
@@ -73,7 +74,7 @@ struct GPUFrameCapture {
         static std::once_flag onceFlag;
         std::call_once(onceFlag, [] {
             int captureFrameToken;
-            notify_register_dispatch("com.apple.WebKit.WebGPU.CaptureFrame", &captureFrameToken, dispatch_get_main_queue(), ^(int token) {
+            notify_register_dispatch("com.apple.WebKit.WebGPU.CaptureFrame", &captureFrameToken, mainDispatchQueueSingleton(), ^(int token) {
                 uint64_t state;
                 notify_get_state(token, &state);
                 maxSubmitCallsToCapture = std::max<int>(1, state);
@@ -81,7 +82,7 @@ struct GPUFrameCapture {
             });
 
             int captureFirstFrameToken;
-            notify_register_dispatch("com.apple.WebKit.WebGPU.ToggleCaptureFirstFrame", &captureFirstFrameToken, dispatch_get_main_queue(), ^(int) {
+            notify_register_dispatch("com.apple.WebKit.WebGPU.ToggleCaptureFirstFrame", &captureFirstFrameToken, mainDispatchQueueSingleton(), ^(int) {
                 captureFirstFrame = !captureFirstFrame;
             });
         });
@@ -139,7 +140,7 @@ GPUShaderValidation Device::shaderValidationState() const
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         int captureFirstFrameToken;
-        notify_register_dispatch("com.apple.WebKit.WebGPU.ToggleShaderValidationState", &captureFirstFrameToken, dispatch_get_main_queue(), ^(int) {
+        notify_register_dispatch("com.apple.WebKit.WebGPU.ToggleShaderValidationState", &captureFirstFrameToken, mainDispatchQueueSingleton(), ^(int) {
             shaderValidationState = (shaderValidationState == MTLShaderValidationEnabled ? MTLShaderValidationDefault : MTLShaderValidationEnabled);
         });
     });
@@ -156,7 +157,7 @@ bool Device::enableEncoderTimestamps() const
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         int token;
-        notify_register_dispatch("com.apple.WebKit.WebGPU.EnableEncoderTimestamps", &token, dispatch_get_main_queue(), ^(int) {
+        notify_register_dispatch("com.apple.WebKit.WebGPU.EnableEncoderTimestamps", &token, mainDispatchQueueSingleton(), ^(int) {
             enable = !enable;
             WTFLogAlways("Encoder timestamps are %s", enable ? "ENABLED" : "DISABLED");
         });
@@ -307,23 +308,6 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
     , m_appleGPUFamily(computeAppleGPUFamily(device))
     , m_maxVerticesPerDrawCall(computeMaxCountForDevice(device))
 {
-#if ENABLE(WEBGPU_SWIFT)
-    NSError *error = nil;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
-        MTLCompileOptions* options = [MTLCompileOptions new];
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        options.fastMathEnabled = YES;
-        ALLOW_DEPRECATED_DECLARATIONS_END
-        id<MTLLibrary> library = [device newLibraryWithSource:@"[[vertex]] float4 vsNop() { return (float4)0; }" options:options error:&error];
-        if (error)
-            WTFLogAlways("%@", error); // NOLINT
-        m_nopVertexFunction = [library newFunctionWithName:@"vsNop"];
-    });
-    RELEASE_ASSERT(m_nopVertexFunction);
-    RELEASE_ASSERT(!error);
-#endif
-
 #if PLATFORM(MAC)
     auto devices = MTLCopyAllDevicesWithObserver(&m_deviceObserver, [weakThis = ThreadSafeWeakPtr { *this }](id<MTLDevice> device, MTLDeviceNotificationName) {
         RefPtr<Device> protectedThis = weakThis.get();
@@ -410,8 +394,23 @@ Device::~Device()
 
 RefPtr<XRSubImage> Device::getXRViewSubImage(XRProjectionLayer& projectionLayer)
 {
-    RefPtr { m_xrSubImage }->update(projectionLayer.colorTexture(), projectionLayer.depthTexture(), projectionLayer.reusableTextureIndex(), projectionLayer.completionEvent());
+    RefPtr { m_xrSubImage }->update(projectionLayer);
     return m_xrSubImage;
+}
+
+RefPtr<XRSubImage> Device::getXRViewSubImage() const
+{
+    return m_xrSubImage;
+}
+
+id<MTLTexture> Device::getXRViewSubImageDepthTexture() const
+{
+    if (auto subImage = getXRViewSubImage()) {
+        if (RefPtr depthTexture = subImage->depthTexture())
+            return depthTexture->texture();
+    }
+
+    return nil;
 }
 
 void Device::makeInvalid()
@@ -475,9 +474,6 @@ size_t Device::enumerateFeatures(WGPUFeatureName* features)
 
 bool Device::getLimits(WGPUSupportedLimits& limits)
 {
-    if (limits.nextInChain != nullptr)
-        return false;
-
     limits.limits = m_capabilities.limits;
     return true;
 }

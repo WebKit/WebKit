@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-RegExp-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -94,7 +91,7 @@ for (let method of [RegExp.prototype[Symbol.match], RegExp.prototype[Symbol.repl
             let re = new Constructor(regExp);
             Object.defineProperty(re, "lastIndex", { value: lastIndex, writable: false });
             if (re.global || re.sticky) {
-                assertThrowsInstanceOf(() => Reflect.apply(method, re, [input]), TypeError);
+                assert.throws(TypeError, () => Reflect.apply(method, re, [input]));
             } else {
                 Reflect.apply(method, re, [input]);
             }
@@ -114,7 +111,7 @@ for (let method of [RegExp.prototype[Symbol.match], RegExp.prototype[Symbol.repl
                 }
             };
             if (re.sticky) {
-                assertThrowsInstanceOf(() => Reflect.apply(method, re, [input]), TypeError);
+                assert.throws(TypeError, () => Reflect.apply(method, re, [input]));
                 assert.sameValue(called, true);
                 assert.sameValue(re.lastIndex, 9000);
             } else if (re.global) {

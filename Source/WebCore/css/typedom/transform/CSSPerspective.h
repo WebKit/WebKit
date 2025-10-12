@@ -50,7 +50,7 @@ public:
     void serialize(StringBuilder&) const final;
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
     
-    CSSTransformType getType() const final { return CSSTransformType::Perspective; }
+    CSSTransformType transformType() const final { return CSSTransformType::Perspective; }
 
     RefPtr<CSSValue> toCSSValue() const final;
 
@@ -65,5 +65,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSPerspective)
-    static bool isType(const WebCore::CSSTransformComponent& transform) { return transform.getType() == WebCore::CSSTransformType::Perspective; }
+    static bool isType(const WebCore::CSSTransformComponent& transform) { return transform.transformType() == WebCore::CSSTransformType::Perspective; }
 SPECIALIZE_TYPE_TRAITS_END()

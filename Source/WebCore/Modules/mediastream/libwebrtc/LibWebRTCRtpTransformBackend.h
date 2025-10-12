@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,16 +27,11 @@
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "LibWebRTCMacros.h"
+#include "LibWebRTCRefWrappers.h"
 #include "RTCRtpTransformBackend.h"
 #include <webrtc/api/scoped_refptr.h>
 #include <wtf/Lock.h>
 #include <wtf/StdUnorderedMap.h>
-
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
-
-#include <webrtc/api/frame_transformer_interface.h>
-
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
@@ -50,7 +45,7 @@ protected:
 
 private:
     void sendFrameToOutput(std::unique_ptr<webrtc::TransformableFrameInterface>&&);
-    void addOutputCallback(rtc::scoped_refptr<webrtc::TransformedFrameCallback>&&, uint32_t ssrc);
+    void addOutputCallback(Ref<webrtc::TransformedFrameCallback>&&, uint32_t ssrc);
     void removeOutputCallback(uint32_t ssrc);
 
     // RTCRtpTransformBackend
@@ -60,8 +55,8 @@ private:
 
     // webrtc::FrameTransformerInterface
     void Transform(std::unique_ptr<webrtc::TransformableFrameInterface>) final;
-    void RegisterTransformedFrameCallback(rtc::scoped_refptr<webrtc::TransformedFrameCallback>) final;
-    void RegisterTransformedFrameSinkCallback(rtc::scoped_refptr<webrtc::TransformedFrameCallback>, uint32_t ssrc) final;
+    void RegisterTransformedFrameCallback(webrtc::scoped_refptr<webrtc::TransformedFrameCallback>) final;
+    void RegisterTransformedFrameSinkCallback(webrtc::scoped_refptr<webrtc::TransformedFrameCallback>, uint32_t ssrc) final;
     void UnregisterTransformedFrameCallback() final;
     void UnregisterTransformedFrameSinkCallback(uint32_t ssrc) final;
     void AddRef() const final { ref(); }
@@ -74,7 +69,7 @@ private:
     Callback m_inputCallback WTF_GUARDED_BY_LOCK(m_inputCallbackLock);
 
     Lock m_outputCallbacksLock;
-    StdUnorderedMap<uint32_t, rtc::scoped_refptr<webrtc::TransformedFrameCallback>> m_outputCallbacks WTF_GUARDED_BY_LOCK(m_outputCallbacksLock);
+    StdUnorderedMap<uint32_t, Ref<webrtc::TransformedFrameCallback>> m_outputCallbacks WTF_GUARDED_BY_LOCK(m_outputCallbacksLock);
 };
 
 inline LibWebRTCRtpTransformBackend::LibWebRTCRtpTransformBackend(MediaType mediaType, Side side)

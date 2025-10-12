@@ -28,6 +28,8 @@
 
 #include "ElementIterator.h"
 #include "ElementRareData.h"
+#include "NodeDocument.h"
+#include "NodeInlines.h"
 #include "StyleInvalidationFunctions.h"
 
 namespace WebCore {

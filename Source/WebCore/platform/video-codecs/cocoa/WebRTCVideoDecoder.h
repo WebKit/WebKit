@@ -27,7 +27,7 @@
 
 #if USE(LIBWEBRTC)
 
-#include "VideoCodecType.h"
+#include <WebCore/VideoCodecType.h>
 #include <wtf/UniqueRef.h>
 
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;

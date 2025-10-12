@@ -1,3 +1,0 @@
-// RUN: %not %wgslc
-
-/*

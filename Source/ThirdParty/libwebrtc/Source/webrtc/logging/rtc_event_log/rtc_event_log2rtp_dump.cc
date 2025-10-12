@@ -8,9 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stdint.h>
-#include <string.h>
-
+#include <cstdint>
+#include <cstring>
 #include <iostream>
 #include <memory>
 #include <optional>
@@ -77,7 +76,7 @@ using MediaType = webrtc::ParsedRtcEventLog::MediaType;
 // variable.
 std::optional<uint32_t> ParseSsrc(absl::string_view str) {
   // Set `base` to 0 to allow detection of the "0x" prefix in case hex is used.
-  return rtc::StringToNumber<uint32_t>(str, 0);
+  return webrtc::StringToNumber<uint32_t>(str, 0);
 }
 
 bool ShouldSkipStream(MediaType media_type,
@@ -109,7 +108,7 @@ void ConvertRtpPacket(
   reconstructed_packet.SetTimestamp(incoming.rtp.header.timestamp);
   reconstructed_packet.SetSsrc(incoming.rtp.header.ssrc);
   if (incoming.rtp.header.numCSRCs > 0) {
-    reconstructed_packet.SetCsrcs(rtc::ArrayView<const uint32_t>(
+    reconstructed_packet.SetCsrcs(webrtc::ArrayView<const uint32_t>(
         incoming.rtp.header.arrOfCSRCs, incoming.rtp.header.numCSRCs));
   }
 

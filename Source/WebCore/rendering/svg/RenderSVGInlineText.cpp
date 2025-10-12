@@ -186,10 +186,10 @@ static int offsetForPositionInFragment(const InlineIterator::SVGTextBox& textBox
     return fragment.characterOffset - textBox.start() + textBox.renderer().scaledFont().offsetForPosition(textRun, position * scalingFactor, includePartialGlyphs);
 }
 
-VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point, HitTestSource, const RenderFragmentContainer*)
+PositionWithAffinity RenderSVGInlineText::positionForPoint(const LayoutPoint& point, HitTestSource, const RenderFragmentContainer*)
 {
     if (!InlineIterator::lineLeftmostTextBoxFor(*this) || text().isEmpty())
-        return createVisiblePosition(0, Affinity::Downstream);
+        return createPositionWithAffinity(0, Affinity::Downstream);
 
     float baseline = m_scaledFont.metricsOfPrimaryFont().ascent();
 
@@ -230,10 +230,10 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point, 
     }
 
     if (!closestDistanceFragment)
-        return createVisiblePosition(0, Affinity::Downstream);
+        return createPositionWithAffinity(0, Affinity::Downstream);
 
     int offset = offsetForPositionInFragment(*closestDistanceBox, *closestDistanceFragment, absolutePoint.x() - closestDistancePosition);
-    return createVisiblePosition(offset + closestDistanceBox->start(), offset > 0 ? Affinity::Upstream : Affinity::Downstream);
+    return createPositionWithAffinity(offset + closestDistanceBox->start(), offset > 0 ? Affinity::Upstream : Affinity::Downstream);
 }
 
 void RenderSVGInlineText::updateScaledFont()

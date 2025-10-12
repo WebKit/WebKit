@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'http://web-platform.test:8800/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigate_other_frame_popup.sub.html?mode=popup' from frame with URL 'http://web-platform.test:8800/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigate_other_frame_popup.sub.html?mode=iframe'. The frame attempting navigation is sandboxed, and is not allowed to navigate this popup.
-
 
 PASS Sandboxed iframe can not navigate other frame's popup
 

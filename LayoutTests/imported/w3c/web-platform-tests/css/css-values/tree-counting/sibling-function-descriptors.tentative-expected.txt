@@ -3,4 +3,10 @@ PASS sibling-index() should not be allowed in @page properties
 PASS sibling-count() should not be allowed in @page properties
 PASS sibling-index() should not be allowed in @font-face descriptors
 PASS sibling-count() should not be allowed in @font-face descriptors
+FAIL sibling-index() should not be allowed in @font-palette-values descriptors assert_equals: expected "1 green" but got "1 rgb(0, 128, 0)"
+FAIL sibling-count() should not be allowed in @font-palette-values descriptors assert_equals: expected "1 green" but got "1 rgb(0, 128, 0)"
+FAIL sibling-index() should not be allowed in @counter-style descriptors assert_equals: expected "--pass" but got "--pass \"\""
+FAIL sibling-count() should not be allowed in @counter-style descriptors assert_equals: expected "--pass" but got "\"\" \"\""
+FAIL sibling-index() should not be allowed in @font-feature-values descriptors undefined is not an object (evaluating 'swash.get')
+FAIL sibling-count() should not be allowed in @font-feature-values descriptors undefined is not an object (evaluating 'swash.get')
 

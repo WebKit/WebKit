@@ -14,25 +14,25 @@
       shouldBeEqualToString("declaration.getPropertyValue('-webkit-text-decoration-skip')", "auto");
       shouldBeEqualToString("declaration.getPropertyValue('text-decoration-skip')", "auto");
       shouldBeEqualToString("declaration.getPropertyValue('text-decoration-skip-ink')", "auto");
-      computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText", "auto");
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('text-decoration-skip').cssText", "auto");
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('text-decoration-skip-ink').cssText", "auto");
+      computedStyle = getComputedStyle(target);
+      shouldBeEqualToString("computedStyle.getPropertyValue('-webkit-text-decoration-skip')", "auto");
+      shouldBeEqualToString("computedStyle.getPropertyValue('text-decoration-skip')", "auto");
+      shouldBeEqualToString("computedStyle.getPropertyValue('text-decoration-skip-ink')", "auto");
       stylesheet.deleteRule(0);
     }
 
     function testEmpty(stylesheet, target) {
-      cssRule = stylesheet.cssRules.item(0);
+      cssRule = stylesheet.cssRules.item(0)
       shouldBe("cssRule.type", "cssRule.STYLE_RULE");
       declaration = cssRule.style;
       shouldBe("declaration.length", "0");
       shouldBeEqualToString("declaration.getPropertyValue('-webkit-text-decoration-skip')", "");
       shouldBeEqualToString("declaration.getPropertyValue('text-decoration-skip')", "");
       shouldBeEqualToString("declaration.getPropertyValue('text-decoration-skip-ink')", "");
-      computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText", "auto");
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('text-decoration-skip').cssText", "auto");
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('text-decoration-skip-ink').cssText", "auto");
+      computedStyle = getComputedStyle(target);
+      shouldBeEqualToString("computedStyle.getPropertyValue('-webkit-text-decoration-skip')", "auto");
+      shouldBeEqualToString("computedStyle.getPropertyValue('text-decoration-skip')", "auto");
+      shouldBeEqualToString("computedStyle.getPropertyValue('text-decoration-skip-ink')", "auto");
       stylesheet.deleteRule(0);
     }
 
@@ -44,10 +44,10 @@
       shouldBeEqualToString("declaration.getPropertyValue('-webkit-text-decoration-skip')",  "initial");
       shouldBeEqualToString("declaration.getPropertyValue('text-decoration-skip')",  "initial");
       shouldBeEqualToString("declaration.getPropertyValue('text-decoration-skip-ink')",  "initial");
-      computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText", "auto");
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('text-decoration-skip').cssText", "auto");
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('text-decoration-skip-ink').cssText", "auto");
+      computedStyle = getComputedStyle(target);
+      shouldBeEqualToString("computedStyle.getPropertyValue('-webkit-text-decoration-skip')", "auto");
+      shouldBeEqualToString("computedStyle.getPropertyValue('text-decoration-skip')", "auto");
+      shouldBeEqualToString("computedStyle.getPropertyValue('text-decoration-skip-ink')", "auto");
       stylesheet.deleteRule(0);
     }
 
@@ -56,10 +56,10 @@
       shouldBe("cssRule.type", "cssRule.STYLE_RULE");
       declaration = cssRule.style;
       shouldBe("declaration.length", "0");
-      computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText", "auto");
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('text-decoration-skip').cssText", "auto");
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('text-decoration-skip-ink').cssText", "auto");
+      computedStyle = getComputedStyle(target);
+      shouldBeEqualToString("computedStyle.getPropertyValue('-webkit-text-decoration-skip')", "auto");
+      shouldBeEqualToString("computedStyle.getPropertyValue('text-decoration-skip')", "auto");
+      shouldBeEqualToString("computedStyle.getPropertyValue('text-decoration-skip-ink')", "auto");
       stylesheet.deleteRule(0);
     }
 
@@ -71,10 +71,10 @@
       shouldBeEqualToString("declaration.getPropertyValue('-webkit-text-decoration-skip')", "none");
       shouldBeEqualToString("declaration.getPropertyValue('text-decoration-skip')", "none");
       shouldBeEqualToString("declaration.getPropertyValue('text-decoration-skip-ink')", "none");
-      computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText", "none");
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('text-decoration-skip').cssText", "none");
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('text-decoration-skip-ink').cssText", "none");
+      computedStyle = getComputedStyle(target);
+      shouldBeEqualToString("computedStyle.getPropertyValue('-webkit-text-decoration-skip')", "none");
+      shouldBeEqualToString("computedStyle.getPropertyValue('text-decoration-skip')", "none");
+      shouldBeEqualToString("computedStyle.getPropertyValue('text-decoration-skip-ink')", "none");
       stylesheet.deleteRule(0);
     }
 
@@ -88,83 +88,83 @@
     testEmpty(stylesheet, target);
 
     debug("Test 2");
-    stylesheet.insertRule(".p { -webkit-text-decoration-skip: initial; }", 0);
+    stylesheet.insertRule(".p { -webkit-text-decoration-skip: initial }", 0);
     testInitialIsAuto(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip: initial; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip: initial }", 0);
     testInitialIsAuto(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip-ink: initial; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip-ink: initial }", 0);
     testInitialIsAuto(stylesheet, target);
 
     debug("Test 3");
-    stylesheet.insertRule(".p { -webkit-text-decoration-skip: ink; }", 0);
+    stylesheet.insertRule(".p { -webkit-text-decoration-skip: ink }", 0);
     testInkIsValid(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip: ink; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip: ink }", 0);
     testInkIsValid(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip-ink: auto; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip-ink: auto }", 0);
     testInkIsValid(stylesheet, target);
 
     debug("Test 4");
-    stylesheet.insertRule(".p { -webkit-text-decoration-skip: ink ink ink ink ink; }", 0);
+    stylesheet.insertRule(".p { -webkit-text-decoration-skip: ink ink ink ink ink }", 0);
     testInvalidRule(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip: ink ink ink ink ink; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip: ink ink ink ink ink }", 0);
     testInvalidRule(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip-ink: auto auto auto auto auto; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip-ink: auto auto auto auto auto }", 0);
     testInvalidRule(stylesheet, target);
 
     debug("Test 5");
-    stylesheet.insertRule(".p { -webkit-text-decoration-skip: garbage; }", 0);
+    stylesheet.insertRule(".p { -webkit-text-decoration-skip: garbage }", 0);
     testInvalidRule(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip: garbage; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip: garbage }", 0);
     testInvalidRule(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip-ink: garbage; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip-ink: garbage }", 0);
     testInvalidRule(stylesheet, target);
 
     debug("Test 6");
-    stylesheet.insertRule(".p { -webkit-text-decoration-skip: garbage ink; }", 0);
+    stylesheet.insertRule(".p { -webkit-text-decoration-skip: garbage ink }", 0);
     testInvalidRule(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip: garbage ink; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip: garbage ink }", 0);
     testInvalidRule(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip-ink: garbage auto; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip-ink: garbage auto }", 0);
     testInvalidRule(stylesheet, target);
 
     debug("Test 7");
-    stylesheet.insertRule(".p { -webkit-text-decoration-skip: ink garbage; }", 0);
+    stylesheet.insertRule(".p { -webkit-text-decoration-skip: ink garbage }", 0);
     testInvalidRule(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip: ink garbage; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip: ink garbage }", 0);
     testInvalidRule(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip-ink: auto garbage; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip-ink: auto garbage }", 0);
     testInvalidRule(stylesheet, target);
-    
+
     debug("Test 8");
-    stylesheet.insertRule(".p { -webkit-text-decoration-skip: garbage ink garbage; }", 0);
+    stylesheet.insertRule(".p { -webkit-text-decoration-skip: garbage ink garbage }", 0);
     testInvalidRule(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip: garbage ink garbage; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip: garbage ink garbage }", 0);
     testInvalidRule(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip-ink: garbage auto garbage; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip-ink: garbage auto garbage }", 0);
     testInvalidRule(stylesheet, target);
-    
+
     debug("Test 9");
-    stylesheet.insertRule(".p { -webkit-text-decoration-skip: ink garbage ink; }", 0);
+    stylesheet.insertRule(".p { -webkit-text-decoration-skip: ink garbage ink }", 0);
     testInvalidRule(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip: ink garbage ink; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip: ink garbage ink }", 0);
     testInvalidRule(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip-ink: auto garbage auto; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip-ink: auto garbage auto }", 0);
     testInvalidRule(stylesheet, target);
-    
+
     debug("Test 10");
-    stylesheet.insertRule(".p { -webkit-text-decoration-skip: none; }", 0);
+    stylesheet.insertRule(".p { -webkit-text-decoration-skip: none }", 0);
     testNoneIsValid(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip: none; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip: none }", 0);
     testNoneIsValid(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip-ink: none; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip-ink: none }", 0);
     testNoneIsValid(stylesheet, target);
-    
+
     debug("Test 11");
-    stylesheet.insertRule(".p { -webkit-text-decoration-skip: ; }", 0);
+    stylesheet.insertRule(".p { -webkit-text-decoration-skip:  }", 0);
     testInvalidRule(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip: ; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip:  }", 0);
     testInvalidRule(stylesheet, target);
-    stylesheet.insertRule(".p { text-decoration-skip-ink: ; }", 0);
+    stylesheet.insertRule(".p { text-decoration-skip-ink:  }", 0);
     testInvalidRule(stylesheet, target);
   </script>
 </body>

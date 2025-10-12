@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "CSSPrimitiveNumericRange.h"
-#include "CSSValueConcepts.h"
+#include <WebCore/CSSPrimitiveNumericRange.h>
+#include <WebCore/CSSValueConcepts.h>
 #include <concepts>
 #include <optional>
 #include <wtf/Brigand.h>

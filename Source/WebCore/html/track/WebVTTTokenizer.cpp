@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
- * Copyright (C) 2014-2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011, 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -86,7 +86,7 @@ WebVTTTokenizer::WebVTTTokenizer(const String& input)
     m_input.close();
 }
 
-static void ProcessEntity(SegmentedString& source, StringBuilder& result, UChar additionalAllowedCharacter = 0)
+static void ProcessEntity(SegmentedString& source, StringBuilder& result, char16_t additionalAllowedCharacter = 0)
 {
     auto decoded = consumeHTMLEntity(source, additionalAllowedCharacter);
     if (decoded.failed() || decoded.notEnoughCharacters())
@@ -102,7 +102,7 @@ bool WebVTTTokenizer::nextToken(WebVTTToken& token)
     if (m_input.isEmpty() || !m_preprocessor.peek(m_input))
         return false;
 
-    UChar character = m_preprocessor.nextInputCharacter();
+    char16_t character = m_preprocessor.nextInputCharacter();
     if (character == kEndOfFileMarker) {
         m_preprocessor.advance(m_input);
         return false;

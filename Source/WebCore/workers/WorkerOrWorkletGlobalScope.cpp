@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,9 +44,9 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WorkerOrWorkletGlobalScope);
 WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(WorkerThreadType type, PAL::SessionID sessionID, Ref<JSC::VM>&& vm, ReferrerPolicy referrerPolicy, WorkerOrWorkletThread* thread, std::optional<uint64_t> noiseInjectionHashSalt, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, std::optional<ScriptExecutionContextIdentifier> contextIdentifier)
     : ScriptExecutionContext(Type::WorkerOrWorkletGlobalScope, contextIdentifier)
     , m_script(makeUnique<WorkerOrWorkletScriptController>(type, WTFMove(vm), this))
-    , m_moduleLoader(makeUnique<ScriptModuleLoader>(this, ScriptModuleLoader::OwnerType::WorkerOrWorklet))
+    , m_moduleLoader(makeUniqueRef<ScriptModuleLoader>(this, ScriptModuleLoader::OwnerType::WorkerOrWorklet))
     , m_thread(thread)
-    , m_inspectorController(makeUnique<WorkerInspectorController>(*this))
+    , m_inspectorController(makeUniqueRef<WorkerInspectorController>(*this))
     , m_sessionID(sessionID)
     , m_referrerPolicy(referrerPolicy)
     , m_noiseInjectionHashSalt(noiseInjectionHashSalt)
@@ -117,8 +117,8 @@ EventLoopTaskGroup& WorkerOrWorkletGlobalScope::eventLoop()
 {
     ASSERT(isContextThread());
     if (!m_defaultTaskGroup) [[unlikely]] {
-        m_eventLoop = WorkerEventLoop::create(*this);
-        m_defaultTaskGroup = makeUnique<EventLoopTaskGroup>(*m_eventLoop);
+        lazyInitialize(m_eventLoop, WorkerEventLoop::create(*this));
+        lazyInitialize(m_defaultTaskGroup, makeUnique<EventLoopTaskGroup>(*m_eventLoop));
         if (activeDOMObjectsAreStopped())
             m_defaultTaskGroup->stopAndDiscardAllTasks();
     }
@@ -127,7 +127,7 @@ EventLoopTaskGroup& WorkerOrWorkletGlobalScope::eventLoop()
 
 bool WorkerOrWorkletGlobalScope::isContextThread() const
 {
-    auto* thread = workerOrWorkletThread();
+    RefPtr thread = workerOrWorkletThread();
     return thread && thread->thread() ? thread->thread() == &Thread::currentSingleton() : isMainThread();
 }
 
@@ -148,9 +148,14 @@ OptionSet<NoiseInjectionPolicy> WorkerOrWorkletGlobalScope::noiseInjectionPolici
     OptionSet<NoiseInjectionPolicy> policies;
     if (m_advancedPrivacyProtections.contains(AdvancedPrivacyProtections::FingerprintingProtections))
         policies.add(NoiseInjectionPolicy::Minimal);
-    if (m_advancedPrivacyProtections.contains(AdvancedPrivacyProtections::ScriptTelemetry))
+    if (m_advancedPrivacyProtections.contains(AdvancedPrivacyProtections::ScriptTrackingPrivacy))
         policies.add(NoiseInjectionPolicy::Enhanced);
     return policies;
+}
+
+RefPtr<WorkerOrWorkletThread> WorkerOrWorkletGlobalScope::workerOrWorkletThread() const
+{
+    return m_thread.get();
 }
 
 } // namespace WebCore

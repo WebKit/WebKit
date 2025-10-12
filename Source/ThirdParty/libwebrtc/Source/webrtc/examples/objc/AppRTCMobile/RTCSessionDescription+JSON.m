@@ -21,7 +21,8 @@ static NSString const *kRTCSessionDescriptionSdpKey = @"sdp";
   NSString *typeString = dictionary[kRTCSessionDescriptionTypeKey];
   RTCSdpType type = [[self class] typeForString:typeString];
   NSString *sdp = dictionary[kRTCSessionDescriptionSdpKey];
-  return [[RTC_OBJC_TYPE(RTCSessionDescription) alloc] initWithType:type sdp:sdp];
+  return [[RTC_OBJC_TYPE(RTCSessionDescription) alloc] initWithType:type
+                                                                sdp:sdp];
 }
 
 - (NSData *)JSONData {

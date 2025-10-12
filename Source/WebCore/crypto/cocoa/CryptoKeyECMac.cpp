@@ -148,7 +148,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier ide
     return create(identifier, curve, CryptoKeyType::Public, toPlatformKey(rv.getKey().get()), extractable, usages);
 #else
     CCECCryptorRef ccPublicKey = nullptr;
-    if (CCECCryptorImportKey(kCCImportKeyBinary, keyData.data(), keyData.size(), ccECKeyPublic, &ccPublicKey))
+    if (CCECCryptorImportKey(kCCImportKeyBinary, keyData.span().data(), keyData.size(), ccECKeyPublic, &ccPublicKey))
         return nullptr;
     return create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(ccPublicKey), extractable, usages);
 #endif
@@ -167,7 +167,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
 #else
     Vector<uint8_t> result(expectedSize);
     size_t size = result.size();
-    if (CCECCryptorExportKey(kCCImportKeyBinary, result.data(), &size, ccECKeyPublic, platformKey().get()) || size != expectedSize) [[unlikely]]
+    if (CCECCryptorExportKey(kCCImportKeyBinary, result.mutableSpan().data(), &size, ccECKeyPublic, platformKey().get()) || size != expectedSize) [[unlikely]]
         return { };
     return result;
 #endif
@@ -202,7 +202,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentif
     return create(identifier, curve, CryptoKeyType::Private, toPlatformKey(rv.getKey().get()), extractable, usages);
 #else
     CCECCryptorRef ccPrivateKey = nullptr;
-    if (CCECCryptorImportKey(kCCImportKeyBinary, binaryInput.data(), binaryInput.size(), ccECKeyPrivate, &ccPrivateKey))
+    if (CCECCryptorImportKey(kCCImportKeyBinary, binaryInput.span().data(), binaryInput.size(), ccECKeyPrivate, &ccPrivateKey))
         return nullptr;
     return create(identifier, curve, CryptoKeyType::Private, PlatformECKeyContainer(ccPrivateKey), extractable, usages);
 #endif
@@ -246,11 +246,11 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
     size_t size = result.size();
     switch (type()) {
     case CryptoKeyType::Public:
-        if (CCECCryptorExportKey(kCCImportKeyBinary, result.data(), &size, ccECKeyPublic, platformKey().get())) [[unlikely]]
+        if (CCECCryptorExportKey(kCCImportKeyBinary, result.mutableSpan().data(), &size, ccECKeyPublic, platformKey().get())) [[unlikely]]
             return false;
         break;
     case CryptoKeyType::Private:
-        if (CCECCryptorExportKey(kCCImportKeyBinary, result.data(), &size, ccECKeyPrivate, platformKey().get())) [[unlikely]]
+        if (CCECCryptorExportKey(kCCImportKeyBinary, result.mutableSpan().data(), &size, ccECKeyPrivate, platformKey().get())) [[unlikely]]
             return false;
         break;
     default:
@@ -346,7 +346,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
     keyBytes = WTFMove(rv.result);
     keySize = expectedKeySize;
 #else
-    if (CCECCryptorExportKey(kCCImportKeyBinary, keyBytes.data(), &keySize, ccECKeyPublic, platformKey().get()) || keySize != expectedKeySize) [[unlikely]]
+    if (CCECCryptorExportKey(kCCImportKeyBinary, keyBytes.mutableSpan().data(), &keySize, ccECKeyPublic, platformKey().get()) || keySize != expectedKeySize) [[unlikely]]
         return { };
 #endif
     // The following adds SPKI header to a raw EC public key.
@@ -435,7 +435,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
     return create(identifier, curve, CryptoKeyType::Private, toPlatformKey(rv.getKey().get()), extractable, usages);
 #else
     CCECCryptorRef ccPrivateKey = nullptr;
-    if (CCECCryptorImportKey(kCCImportKeyBinary, keyBinary.data(), keyBinary.size(), ccECKeyPrivate, &ccPrivateKey))
+    if (CCECCryptorImportKey(kCCImportKeyBinary, keyBinary.mutableSpan().data(), keyBinary.size(), ccECKeyPrivate, &ccPrivateKey))
         return nullptr;
     return create(identifier, curve, CryptoKeyType::Private, PlatformECKeyContainer(ccPrivateKey), extractable, usages);
 #endif
@@ -455,7 +455,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
     keyBytes = WTFMove(rv.result);
 #else
     size_t keySize = keyBytes.size();
-    if (CCECCryptorExportKey(kCCImportKeyBinary, keyBytes.data(), &keySize, ccECKeyPrivate, platformKey().get()) || keySize != expectedKeySize) [[unlikely]]
+    if (CCECCryptorExportKey(kCCImportKeyBinary, keyBytes.mutableSpan().data(), &keySize, ccECKeyPrivate, platformKey().get()) || keySize != expectedKeySize) [[unlikely]]
         return { };
 #endif
     // The following addes PKCS8 header to a raw EC private key.

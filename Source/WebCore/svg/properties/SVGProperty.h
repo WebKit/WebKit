@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "SVGPropertyOwner.h"
+#include <WebCore/SVGPropertyOwner.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 

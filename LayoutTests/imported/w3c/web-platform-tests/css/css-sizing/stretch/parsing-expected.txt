@@ -1,0 +1,19 @@
+
+FAIL e.style['width'] = "stretch" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['height'] = "stretch" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['max-width'] = "stretch" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['min-width'] = "stretch" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['max-height'] = "stretch" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['min-height'] = "stretch" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['inline-size'] = "stretch" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['block-size'] = "stretch" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['max-inline-size'] = "stretch" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['min-inline-size'] = "stretch" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['max-block-size'] = "stretch" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['min-block-size'] = "stretch" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['flex-basis'] = "stretch" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['flex'] = "1 0 stretch" should set flex-basis assert_equals: flex-basis should be canonical expected "stretch" but got ""
+FAIL e.style['flex'] = "1 0 stretch" should set flex-grow assert_equals: flex-grow should be canonical expected "1" but got ""
+FAIL e.style['flex'] = "1 0 stretch" should set flex-shrink assert_equals: flex-shrink should be canonical expected "0" but got ""
+FAIL e.style['flex'] = "1 0 stretch" should not set unrelated longhands assert_true: expected true got false
+

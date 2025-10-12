@@ -2,14 +2,17 @@
 .flex_box {
   display: flex;
   width: 100px;
-  height: 100px;
+  height: 100%;
 }
 
-#svg_box {
-  width: 100%;
-  height: 50%;
+.svg_box {
+  width: 100px;
+  height: 100%;
+  background-color: green;
 }
 </style>
-<div class=flex_box>
-<svg id=svg_box xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" width="512" height="512">
-<path stroke-width="32" d=" M0,-32 C128,-232 232,-128 232,0 C232,128 128,232 0,232 C-128,232 -232,128 -232,0 C-232,-128 -128,-232 0,-232"></path></svg></div>
+<button>
+  <div class=flex_box>
+    <svg class=svg_box viewBox="0 0 512 512" width="512" height="512"><defs id=defs><rect></rect></defs></svg>
+  </div>
+</button>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "GraphicsStyle.h"
-#include "GraphicsTypes.h"
-#include "SourceBrush.h"
-#include "WindRule.h"
+#include <WebCore/GraphicsStyle.h>
+#include <WebCore/GraphicsTypes.h>
+#include <WebCore/SourceBrush.h>
+#include <WebCore/WindRule.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/OptionSet.h>
 

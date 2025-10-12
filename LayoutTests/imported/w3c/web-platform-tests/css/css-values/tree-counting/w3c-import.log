@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+text-size-adjust
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -17,8 +17,20 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/calc-sibling-function-in-shadow-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/calc-sibling-function-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/calc-sibling-function.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-function-container-query-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-function-container-query.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-function-descriptors.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-function-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-function-media-query.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-keyframe-font-style-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-keyframe-font-variation-settings-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-keyframe-font-weight-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-keyframe-length-value-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-keyframe-palette-mix-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-keyframe-percent-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-keyframe-registered-properties-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-keyframe-rotate-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-keyframe-scale-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-keyframe-transform-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-keyframe-value-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/tree-scoped-sibling-function.html

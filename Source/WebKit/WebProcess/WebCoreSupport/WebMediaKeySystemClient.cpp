@@ -56,12 +56,12 @@ Ref<WebPage> WebMediaKeySystemClient::protectedPage() const
 
 void WebMediaKeySystemClient::requestMediaKeySystem(MediaKeySystemRequest& request)
 {
-    protectedPage()->protectedMediaKeySystemPermissionRequestManager()->startMediaKeySystemRequest(request);
+    protectedPage()->mediaKeySystemPermissionRequestManager().startMediaKeySystemRequest(request);
 }
 
 void WebMediaKeySystemClient::cancelMediaKeySystemRequest(MediaKeySystemRequest& request)
 {
-    protectedPage()->protectedMediaKeySystemPermissionRequestManager()->cancelMediaKeySystemRequest(request);
+    protectedPage()->mediaKeySystemPermissionRequestManager().cancelMediaKeySystemRequest(request);
 }
 
 } // namespace WebKit;

@@ -50,7 +50,7 @@ public:
 private:
     SecKeyProxyStore() = default;
 
-    RetainPtr<SecKeyProxy> m_secKeyProxy;
+    const RetainPtr<SecKeyProxy> m_secKeyProxy;
 };
 
 } // namespace WebKit

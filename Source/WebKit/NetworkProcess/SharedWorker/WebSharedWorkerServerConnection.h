@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,7 +85,6 @@ public:
 
 private:
     WebSharedWorkerServerConnection(NetworkProcess&, WebSharedWorkerServer&, IPC::Connection&, WebCore::ProcessIdentifier);
-    Ref<NetworkProcess> protectedNetworkProcess();
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const final;
@@ -97,8 +96,8 @@ private:
     void suspendForBackForwardCache(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier);
     void resumeForBackForwardCache(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier);
 
-    Ref<IPC::Connection> m_contentConnection;
-    Ref<NetworkProcess> m_networkProcess;
+    const Ref<IPC::Connection> m_contentConnection;
+    const Ref<NetworkProcess> m_networkProcess;
     WeakPtr<WebSharedWorkerServer> m_server;
     WebCore::ProcessIdentifier m_webProcessIdentifier;
 };

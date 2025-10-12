@@ -11,13 +11,11 @@
 #include "modules/congestion_controller/goog_cc/probe_controller.h"
 
 #include <algorithm>
-#include <cstdint>
 #include <initializer_list>
 #include <memory>
 #include <optional>
 #include <vector>
 
-#include "absl/strings/match.h"
 #include "api/field_trials_view.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/transport/network_types.h"
@@ -106,10 +104,12 @@ ProbeControllerConfig::ProbeControllerConfig(
       network_state_probe_scale("network_state_scale", 1.0),
       network_state_probe_duration("network_state_probe_duration",
                                    TimeDelta::Millis(15)),
+      network_state_min_probe_delta("network_state_min_probe_delta",
+                                    TimeDelta::Millis(20)),
       probe_on_max_allocated_bitrate_change("probe_max_allocation", true),
       first_allocation_probe_scale("alloc_p1", 1),
       second_allocation_probe_scale("alloc_p2", 2),
-      allocation_probe_limit_by_current_scale("alloc_current_bwe_limit"),
+      allocation_probe_limit_by_current_scale("alloc_current_bwe_limit", 2),
       min_probe_packets_sent("min_probe_packets_sent", 5),
       min_probe_duration("min_probe_duration", TimeDelta::Millis(15)),
       min_probe_delta("min_probe_delta", TimeDelta::Millis(2)),
@@ -135,6 +135,7 @@ ProbeControllerConfig::ProbeControllerConfig(
                    &min_probe_delta,
                    &initial_min_probe_delta,
                    &network_state_estimate_probing_interval,
+                   &network_state_min_probe_delta,
                    &probe_if_estimate_lower_than_network_state_estimate_ratio,
                    &estimate_lower_than_network_state_estimate_probing_interval,
                    &network_state_probe_scale,
@@ -170,9 +171,8 @@ ProbeController::ProbeController(const FieldTrialsView* key_value_config,
                                  RtcEventLog* event_log)
     : network_available_(false),
       enable_periodic_alr_probing_(false),
-      in_rapid_recovery_experiment_(absl::StartsWith(
-          key_value_config->Lookup(kBweRapidRecoveryExperiment),
-          "Enabled")),
+      in_rapid_recovery_experiment_(
+          key_value_config->IsEnabled(kBweRapidRecoveryExperiment)),
       event_log_(event_log),
       config_(ProbeControllerConfig(key_value_config)) {
   Reset(Timestamp::Zero());
@@ -237,11 +237,9 @@ std::vector<ProbeClusterConfig> ProbeController::OnMaxTotalAllocatedBitrate(
 
     DataRate first_probe_rate = max_total_allocated_bitrate *
                                 config_.first_allocation_probe_scale.Value();
-    DataRate current_bwe_limit =
-        !config_.allocation_probe_limit_by_current_scale
-            ? DataRate::PlusInfinity()
-            : estimated_bitrate_ *
-                  config_.allocation_probe_limit_by_current_scale.Value();
+    const DataRate current_bwe_limit =
+        config_.allocation_probe_limit_by_current_scale.Get() *
+        estimated_bitrate_;
     bool limited_by_current_bwe = current_bwe_limit < first_probe_rate;
     if (limited_by_current_bwe) {
       first_probe_rate = current_bwe_limit;
@@ -377,16 +375,11 @@ void ProbeController::EnableRepeatedInitialProbing(bool enable) {
   repeated_initial_probing_enabled_ = enable;
 }
 
-void ProbeController::SetAlrStartTimeMs(
-    std::optional<int64_t> alr_start_time_ms) {
-  if (alr_start_time_ms) {
-    alr_start_time_ = Timestamp::Millis(*alr_start_time_ms);
-  } else {
-    alr_start_time_ = std::nullopt;
-  }
+void ProbeController::SetAlrStartTime(std::optional<Timestamp> alr_start_time) {
+  alr_start_time_ = alr_start_time;
 }
-void ProbeController::SetAlrEndedTimeMs(int64_t alr_end_time_ms) {
-  alr_end_time_.emplace(Timestamp::Millis(alr_end_time_ms));
+void ProbeController::SetAlrEndedTime(Timestamp alr_end_time) {
+  alr_end_time_ = alr_end_time;
 }
 
 std::vector<ProbeClusterConfig> ProbeController::RequestProbe(
@@ -425,8 +418,7 @@ std::vector<ProbeClusterConfig> ProbeController::RequestProbe(
   return std::vector<ProbeClusterConfig>();
 }
 
-void ProbeController::SetNetworkStateEstimate(
-    webrtc::NetworkStateEstimate estimate) {
+void ProbeController::SetNetworkStateEstimate(NetworkStateEstimate estimate) {
   network_estimate_ = estimate;
 }
 
@@ -529,9 +521,11 @@ ProbeClusterConfig ProbeController::CreateProbeClusterConfig(Timestamp at_time,
   config.at_time = at_time;
   config.target_data_rate = bitrate;
   if (network_estimate_ &&
-      config_.network_state_estimate_probing_interval->IsFinite()) {
+      config_.network_state_estimate_probing_interval->IsFinite() &&
+      network_estimate_->link_capacity_upper.IsFinite() &&
+      network_estimate_->link_capacity_upper >= bitrate) {
     config.target_duration = config_.network_state_probe_duration;
-    config.min_probe_delta = config_.min_probe_delta;
+    config.min_probe_delta = config_.network_state_min_probe_delta;
   } else if (at_time < last_allowed_repeated_initial_probe_) {
     config.target_duration = config_.initial_probe_duration;
     config.min_probe_delta = config_.initial_min_probe_delta;

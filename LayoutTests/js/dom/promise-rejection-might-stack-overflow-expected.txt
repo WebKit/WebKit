@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: RangeError: Maximum call stack size exceeded.
-PASS Got expected error: 'RangeError: Maximum call stack size exceeded.'
 PASS successfullyParsed is true
 
 TEST COMPLETE

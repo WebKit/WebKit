@@ -10,6 +10,10 @@
 #ifndef COMPILER_TRANSLATOR_STATIC_TYPE_H_
 #define COMPILER_TRANSLATOR_STATIC_TYPE_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "compiler/translator/Types.h"
 
 namespace sh

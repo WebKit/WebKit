@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010-2011. All rights reserved.
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -91,7 +91,7 @@ static inline void processRenderSVGInlineText(const RenderSVGInlineText& text, u
 
     // FIXME: This is not a complete whitespace collapsing implementation; it doesn't handle newlines or tabs.
     for (unsigned i = 0; i < length; ++i) {
-        UChar character = string[i];
+        char16_t character = string[i];
         if (character == ' ' && lastCharacterWasSpace)
             continue;
 
@@ -141,25 +141,25 @@ void SVGTextLayoutAttributesBuilder::buildCharacterDataMap(RenderSVGText& textRo
     TextPosition wholeTextPosition(outermostTextElement.get(), 0, m_textLength);
     fillCharacterDataMap(wholeTextPosition);
 
+    // Fill character data map using child text positioning elements in top-down order.
+    unsigned size = m_textPositions.size();
+    for (unsigned i = 0; i < size; ++i)
+        fillCharacterDataMap(m_textPositions[i]);
+
     // Handle x/y default attributes.
-    SVGCharacterDataMap::iterator it = m_characterDataMap.find(1);
-    if (it == m_characterDataMap.end()) {
+    auto addDataResult = m_characterDataMap.ensure((1), [] {
         SVGCharacterData data;
         data.x = 0;
         data.y = 0;
-        m_characterDataMap.set(1, data);
-    } else {
-        SVGCharacterData& data = it->value;
+        return data;
+    });
+    if (!addDataResult.isNewEntry) {
+        SVGCharacterData& data = addDataResult.iterator->value;
         if (SVGTextLayoutAttributes::isEmptyValue(data.x))
             data.x = 0;
         if (SVGTextLayoutAttributes::isEmptyValue(data.y))
             data.y = 0;
     }
-
-    // Fill character data map using child text positioning elements in top-down order. 
-    unsigned size = m_textPositions.size();
-    for (unsigned i = 0; i < size; ++i)
-        fillCharacterDataMap(m_textPositions[i]);
 }
 
 static inline void updateCharacterData(unsigned i, float& lastRotation, SVGCharacterData& data, const SVGLengthContext& lengthContext, const SVGLengthList* xList, const SVGLengthList* yList, const SVGLengthList* dxList, const SVGLengthList* dyList, const SVGNumberList* rotateList)
@@ -206,15 +206,10 @@ void SVGTextLayoutAttributesBuilder::fillCharacterDataMap(const TextPosition& po
         if (!xListPtr && !yListPtr && !dxListPtr && !dyListPtr && !rotateListPtr)
             break;
 
-        SVGCharacterDataMap::iterator it = m_characterDataMap.find(position.start + i + 1);
-        if (it == m_characterDataMap.end()) {
-            SVGCharacterData data;
-            updateCharacterData(i, lastRotation, data, lengthContext, xListPtr, yListPtr, dxListPtr, dyListPtr, rotateListPtr);
-            m_characterDataMap.set(position.start + i + 1, data);
-            continue;
-        }
-
-        updateCharacterData(i, lastRotation, it->value, lengthContext, xListPtr, yListPtr, dxListPtr, dyListPtr, rotateListPtr);
+        auto& data = m_characterDataMap.ensure((position.start + i + 1), [] {
+            return SVGCharacterData();
+        }).iterator->value;
+        updateCharacterData(i, lastRotation, data, lengthContext, xListPtr, yListPtr, dxListPtr, dyListPtr, rotateListPtr);
     }
 
     // The last rotation value always spans the whole scope.
@@ -222,15 +217,10 @@ void SVGTextLayoutAttributesBuilder::fillCharacterDataMap(const TextPosition& po
         return;
 
     for (unsigned i = rotateList.items().size(); i < position.length; ++i) {
-        SVGCharacterDataMap::iterator it = m_characterDataMap.find(position.start + i + 1);
-        if (it == m_characterDataMap.end()) {
-            SVGCharacterData data;
-            data.rotate = lastRotation;
-            m_characterDataMap.set(position.start + i + 1, data);
-            continue;
-        }
-
-        it->value.rotate = lastRotation;
+        auto& data = m_characterDataMap.ensure((position.start + i + 1), [] {
+            return SVGCharacterData();
+        }).iterator->value;
+        data.rotate = lastRotation;
     }
 }
 

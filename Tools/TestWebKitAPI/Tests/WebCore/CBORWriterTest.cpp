@@ -33,6 +33,7 @@
 
 #include <WebCore/CBORWriter.h>
 #include <limits>
+#include <wtf/StdLibExtras.h>
 
 // Leveraging RFC 7049 examples from https://github.com/cbor/test-vectors/blob/master/appendix_a.json.
 namespace TestWebKitAPI {
@@ -41,16 +42,12 @@ using namespace cbor;
 
 bool eq(const Vector<uint8_t>& cbor, const CString& expect)
 {
-    if (cbor.size() != expect.length())
-        return false;
-    return !memcmp(cbor.data(), expect.data(), cbor.size());
+    return equalSpans(cbor.span(), expect.span());
 }
 
-bool eq(const Vector<uint8_t>& cbor, const uint8_t* expect, const size_t expectLength)
+bool eq(const Vector<uint8_t>& cbor, std::span<const uint8_t> expect)
 {
-    if (cbor.size() != expectLength)
-        return false;
-    return !memcmp(cbor.data(), expect, expectLength);
+    return equalSpans(cbor.span(), expect);
 }
 
 TEST(CBORWriterTest, TestWriteUint)
@@ -169,7 +166,7 @@ TEST(CBORWriterTest, TestWriteArray)
         array.append(CBORValue(i));
     auto cbor = CBORWriter::write(CBORValue(array));
     ASSERT_TRUE(cbor.has_value());
-    EXPECT_TRUE(eq(cbor.value(), kArrayTestCaseCbor, sizeof(kArrayTestCaseCbor)));
+    EXPECT_TRUE(eq(cbor.value(), std::span { kArrayTestCaseCbor }));
 }
 
 TEST(CBORWriterTest, TestWriteMapWithMapValue)
@@ -279,7 +276,7 @@ TEST(CBORWriterTest, TestWriteMapWithMapValue)
     map[CBORValue(std::numeric_limits<int64_t>::max())] = CBORValue("j");
     auto cbor = CBORWriter::write(CBORValue(map));
     ASSERT_TRUE(cbor.has_value());
-    EXPECT_TRUE(eq(cbor.value(), kMapTestCaseCbor, sizeof(kMapTestCaseCbor)));
+    EXPECT_TRUE(eq(cbor.value(), std::span { kMapTestCaseCbor }));
 }
 
 TEST(CBORWriterTest, TestWriteMapWithArray)
@@ -302,7 +299,7 @@ TEST(CBORWriterTest, TestWriteMapWithArray)
     map[CBORValue("b")] = CBORValue(array);
     auto cbor = CBORWriter::write(CBORValue(map));
     ASSERT_TRUE(cbor.has_value());
-    EXPECT_TRUE(eq(cbor.value(), kMapArrayTestCaseCbor, sizeof(kMapArrayTestCaseCbor)));
+    EXPECT_TRUE(eq(cbor.value(), std::span { kMapArrayTestCaseCbor }));
 }
 
 TEST(CBORWriterTest, TestWriteNestedMap)
@@ -328,7 +325,7 @@ TEST(CBORWriterTest, TestWriteNestedMap)
     map[CBORValue("b")] = CBORValue(nestedMap);
     auto cbor = CBORWriter::write(CBORValue(map));
     ASSERT_TRUE(cbor.has_value());
-    EXPECT_TRUE(eq(cbor.value(), kNestedMapTestCase, sizeof(kNestedMapTestCase)));
+    EXPECT_TRUE(eq(cbor.value(), std::span { kNestedMapTestCase }));
 }
 
 TEST(CBORWriterTest, TestWriteSimpleValue)

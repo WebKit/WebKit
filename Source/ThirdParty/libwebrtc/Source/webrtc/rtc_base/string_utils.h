@@ -29,14 +29,11 @@
 
 #if defined(WEBRTC_POSIX)
 #include <stdlib.h>
-#include <strings.h>
 #endif  // WEBRTC_POSIX
 
 #include <string>
 
-#include "absl/strings/string_view.h"
-
-namespace rtc {
+namespace webrtc {
 
 const size_t SIZE_UNKNOWN = static_cast<size_t>(-1);
 
@@ -44,7 +41,7 @@ const size_t SIZE_UNKNOWN = static_cast<size_t>(-1);
 // std::map that support heterogenous lookup.
 //
 // Example usage:
-// std::map<std::string, int, rtc::AbslStringViewCmp> my_map;
+// std::map<std::string, int, AbslStringViewCmp> my_map;
 struct AbslStringViewCmp {
   using is_transparent = void;
   bool operator()(absl::string_view a, absl::string_view b) const {
@@ -137,6 +134,7 @@ constexpr auto MakeCompileTimeString(const char (&a)[N]) {
   return rtc_base_string_utils_internal::CompileTimeString<N>(a);
 }
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_STRING_UTILS_H_

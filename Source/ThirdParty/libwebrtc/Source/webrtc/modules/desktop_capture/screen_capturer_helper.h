@@ -11,8 +11,6 @@
 #ifndef MODULES_DESKTOP_CAPTURE_SCREEN_CAPTURER_HELPER_H_
 #define MODULES_DESKTOP_CAPTURE_SCREEN_CAPTURER_HELPER_H_
 
-#include <memory>
-
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/desktop_region.h"
 #include "rtc_base/synchronization/mutex.h"

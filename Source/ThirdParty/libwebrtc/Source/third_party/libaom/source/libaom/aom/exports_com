@@ -10,7 +10,6 @@ text aom_codec_set_option
 text aom_codec_version
 text aom_codec_version_extra_str
 text aom_codec_version_str
-text aom_free
 text aom_img_add_metadata
 text aom_img_alloc
 text aom_img_alloc_with_border
@@ -25,7 +24,6 @@ text aom_img_plane_width
 text aom_img_remove_metadata
 text aom_img_set_rect
 text aom_img_wrap
-text aom_malloc
 text aom_rb_bytes_read
 text aom_rb_read_bit
 text aom_rb_read_literal

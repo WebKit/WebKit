@@ -1,0 +1,334 @@
+width	
+height	
+min-width	
+min-height	
+max-width	
+max-height	
+min-width, min-height	
+
+
+
+
+
+min-width, max-height	
+
+
+
+
+
+max-width, min-height	
+
+
+
+
+
+max-width, max-height	
+
+
+
+
+
+
+PASS canvas 1
+PASS canvas 2
+PASS canvas 3
+PASS canvas 4
+PASS canvas 5
+PASS canvas 6
+PASS canvas 7
+PASS canvas 8
+PASS canvas 9
+PASS canvas 10
+PASS canvas 11
+PASS canvas 12
+FAIL canvas 13 assert_equals:
+<canvas width="15" height="15" style="min-width: 0px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 14 assert_equals:
+<canvas width="15" height="15" style="min-width: 10px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 15 assert_equals:
+<canvas width="15" height="15" style="min-width: 20px" data-expected-width="20" data-expected-height="10"></canvas>
+height expected 10 but got 15
+PASS canvas 16
+PASS canvas 17
+PASS canvas 18
+FAIL canvas 19 assert_equals:
+<canvas width="15" height="15" style="min-height: 0px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 20 assert_equals:
+<canvas width="15" height="15" style="min-height: 5px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 21 assert_equals:
+<canvas width="15" height="15" style="min-height: 10px" data-expected-width="20" data-expected-height="10"></canvas>
+height expected 10 but got 15
+PASS canvas 22
+PASS canvas 23
+PASS canvas 24
+PASS canvas 25
+PASS canvas 26
+FAIL canvas 27 assert_equals:
+<canvas width="15" height="15" style="max-width: 20px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 10
+FAIL canvas 28 assert_equals:
+<canvas width="15" height="15" style="max-width: 30px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 29 assert_equals:
+<canvas width="15" height="15" style="max-width: 40px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 30 assert_equals:
+<canvas width="15" height="15" style="max-width: 50px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+PASS canvas 31
+PASS canvas 32
+FAIL canvas 33 assert_equals:
+<canvas width="15" height="15" style="max-height: 10px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 10
+FAIL canvas 34 assert_equals:
+<canvas width="15" height="15" style="max-height: 15px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 35 assert_equals:
+<canvas width="15" height="15" style="max-height: 20px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 36 assert_equals:
+<canvas width="15" height="15" style="max-height: 25px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 37 assert_equals:
+<canvas width="15" height="15" style="min-width: 0px; min-height: 0px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 38 assert_equals:
+<canvas width="15" height="15" style="min-width: 0px; min-height: 5px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 39 assert_equals:
+<canvas width="15" height="15" style="min-width: 0px; min-height: 10px" data-expected-width="20" data-expected-height="10"></canvas>
+height expected 10 but got 15
+PASS canvas 40
+PASS canvas 41
+PASS canvas 42
+FAIL canvas 43 assert_equals:
+<canvas width="15" height="15" style="min-width: 10px; min-height: 0px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 44 assert_equals:
+<canvas width="15" height="15" style="min-width: 10px; min-height: 5px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 45 assert_equals:
+<canvas width="15" height="15" style="min-width: 10px; min-height: 10px" data-expected-width="20" data-expected-height="10"></canvas>
+height expected 10 but got 15
+PASS canvas 46
+PASS canvas 47
+PASS canvas 48
+FAIL canvas 49 assert_equals:
+<canvas width="15" height="15" style="min-width: 20px; min-height: 0px" data-expected-width="20" data-expected-height="10"></canvas>
+height expected 10 but got 15
+FAIL canvas 50 assert_equals:
+<canvas width="15" height="15" style="min-width: 20px; min-height: 5px" data-expected-width="20" data-expected-height="10"></canvas>
+height expected 10 but got 15
+FAIL canvas 51 assert_equals:
+<canvas width="15" height="15" style="min-width: 20px; min-height: 10px" data-expected-width="20" data-expected-height="10"></canvas>
+height expected 10 but got 15
+PASS canvas 52
+PASS canvas 53
+PASS canvas 54
+PASS canvas 55
+PASS canvas 56
+PASS canvas 57
+PASS canvas 58
+PASS canvas 59
+PASS canvas 60
+PASS canvas 61
+PASS canvas 62
+PASS canvas 63
+PASS canvas 64
+PASS canvas 65
+PASS canvas 66
+PASS canvas 67
+PASS canvas 68
+PASS canvas 69
+PASS canvas 70
+PASS canvas 71
+PASS canvas 72
+PASS canvas 73
+PASS canvas 74
+FAIL canvas 75 assert_equals:
+<canvas width="15" height="15" style="min-width: 0px; max-height: 10px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 10
+FAIL canvas 76 assert_equals:
+<canvas width="15" height="15" style="min-width: 0px; max-height: 15px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 77 assert_equals:
+<canvas width="15" height="15" style="min-width: 0px; max-height: 20px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 78 assert_equals:
+<canvas width="15" height="15" style="min-width: 0px; max-height: 25px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+PASS canvas 79
+PASS canvas 80
+FAIL canvas 81 assert_equals:
+<canvas width="15" height="15" style="min-width: 10px; max-height: 10px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 10
+FAIL canvas 82 assert_equals:
+<canvas width="15" height="15" style="min-width: 10px; max-height: 15px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 83 assert_equals:
+<canvas width="15" height="15" style="min-width: 10px; max-height: 20px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 84 assert_equals:
+<canvas width="15" height="15" style="min-width: 10px; max-height: 25px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+PASS canvas 85
+PASS canvas 86
+PASS canvas 87
+FAIL canvas 88 assert_equals:
+<canvas width="15" height="15" style="min-width: 20px; max-height: 15px" data-expected-width="20" data-expected-height="10"></canvas>
+height expected 10 but got 15
+FAIL canvas 89 assert_equals:
+<canvas width="15" height="15" style="min-width: 20px; max-height: 20px" data-expected-width="20" data-expected-height="10"></canvas>
+height expected 10 but got 15
+FAIL canvas 90 assert_equals:
+<canvas width="15" height="15" style="min-width: 20px; max-height: 25px" data-expected-width="20" data-expected-height="10"></canvas>
+height expected 10 but got 15
+PASS canvas 91
+PASS canvas 92
+PASS canvas 93
+PASS canvas 94
+PASS canvas 95
+PASS canvas 96
+PASS canvas 97
+PASS canvas 98
+PASS canvas 99
+PASS canvas 100
+PASS canvas 101
+PASS canvas 102
+PASS canvas 103
+PASS canvas 104
+PASS canvas 105
+PASS canvas 106
+PASS canvas 107
+PASS canvas 108
+PASS canvas 109
+PASS canvas 110
+PASS canvas 111
+PASS canvas 112
+PASS canvas 113
+PASS canvas 114
+PASS canvas 115
+PASS canvas 116
+PASS canvas 117
+PASS canvas 118
+PASS canvas 119
+PASS canvas 120
+FAIL canvas 121 assert_equals:
+<canvas width="15" height="15" style="max-width: 20px; min-height: 0px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 10
+FAIL canvas 122 assert_equals:
+<canvas width="15" height="15" style="max-width: 20px; min-height: 5px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 10
+PASS canvas 123
+PASS canvas 124
+PASS canvas 125
+PASS canvas 126
+FAIL canvas 127 assert_equals:
+<canvas width="15" height="15" style="max-width: 30px; min-height: 0px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 128 assert_equals:
+<canvas width="15" height="15" style="max-width: 30px; min-height: 5px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 129 assert_equals:
+<canvas width="15" height="15" style="max-width: 30px; min-height: 10px" data-expected-width="20" data-expected-height="10"></canvas>
+height expected 10 but got 15
+PASS canvas 130
+PASS canvas 131
+PASS canvas 132
+FAIL canvas 133 assert_equals:
+<canvas width="15" height="15" style="max-width: 40px; min-height: 0px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 134 assert_equals:
+<canvas width="15" height="15" style="max-width: 40px; min-height: 5px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 135 assert_equals:
+<canvas width="15" height="15" style="max-width: 40px; min-height: 10px" data-expected-width="20" data-expected-height="10"></canvas>
+height expected 10 but got 15
+PASS canvas 136
+PASS canvas 137
+PASS canvas 138
+FAIL canvas 139 assert_equals:
+<canvas width="15" height="15" style="max-width: 50px; min-height: 0px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 140 assert_equals:
+<canvas width="15" height="15" style="max-width: 50px; min-height: 5px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 141 assert_equals:
+<canvas width="15" height="15" style="max-width: 50px; min-height: 10px" data-expected-width="20" data-expected-height="10"></canvas>
+height expected 10 but got 15
+PASS canvas 142
+PASS canvas 143
+PASS canvas 144
+PASS canvas 145
+PASS canvas 146
+PASS canvas 147
+PASS canvas 148
+PASS canvas 149
+PASS canvas 150
+PASS canvas 151
+PASS canvas 152
+PASS canvas 153
+PASS canvas 154
+PASS canvas 155
+PASS canvas 156
+PASS canvas 157
+PASS canvas 158
+FAIL canvas 159 assert_equals:
+<canvas width="15" height="15" style="max-width: 20px; max-height: 10px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 10
+FAIL canvas 160 assert_equals:
+<canvas width="15" height="15" style="max-width: 20px; max-height: 15px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 10
+FAIL canvas 161 assert_equals:
+<canvas width="15" height="15" style="max-width: 20px; max-height: 20px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 10
+FAIL canvas 162 assert_equals:
+<canvas width="15" height="15" style="max-width: 20px; max-height: 25px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 10
+PASS canvas 163
+PASS canvas 164
+FAIL canvas 165 assert_equals:
+<canvas width="15" height="15" style="max-width: 30px; max-height: 10px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 10
+FAIL canvas 166 assert_equals:
+<canvas width="15" height="15" style="max-width: 30px; max-height: 15px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 167 assert_equals:
+<canvas width="15" height="15" style="max-width: 30px; max-height: 20px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 168 assert_equals:
+<canvas width="15" height="15" style="max-width: 30px; max-height: 25px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+PASS canvas 169
+PASS canvas 170
+FAIL canvas 171 assert_equals:
+<canvas width="15" height="15" style="max-width: 40px; max-height: 10px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 10
+FAIL canvas 172 assert_equals:
+<canvas width="15" height="15" style="max-width: 40px; max-height: 15px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 173 assert_equals:
+<canvas width="15" height="15" style="max-width: 40px; max-height: 20px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 174 assert_equals:
+<canvas width="15" height="15" style="max-width: 40px; max-height: 25px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+PASS canvas 175
+PASS canvas 176
+FAIL canvas 177 assert_equals:
+<canvas width="15" height="15" style="max-width: 50px; max-height: 10px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 10
+FAIL canvas 178 assert_equals:
+<canvas width="15" height="15" style="max-width: 50px; max-height: 15px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 179 assert_equals:
+<canvas width="15" height="15" style="max-width: 50px; max-height: 20px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+FAIL canvas 180 assert_equals:
+<canvas width="15" height="15" style="max-width: 50px; max-height: 25px" data-expected-width="15" data-expected-height="8"></canvas>
+height expected 8 but got 15
+

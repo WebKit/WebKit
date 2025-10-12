@@ -30,8 +30,6 @@
 var nodeParentPairs = [];
 var sourceXML;
 
-// Script entry point.
-
 function prepareWebKitXMLViewer(noStyleMessage)
 {
     var html = createHTMLElement('html');

@@ -25,9 +25,9 @@
  */
 
 #pragma once
-#include "BoxSides.h"
-#include "StyleSelfAlignmentData.h"
-#include "WritingMode.h"
+#include <WebCore/BoxSides.h>
+#include <WebCore/StyleSelfAlignmentData.h>
+#include <WebCore/WritingMode.h>
 
 namespace WebCore {
 

@@ -24,7 +24,7 @@
     Exposed=Window,
     JSGenerateToNativeObject
 ] interface HTMLIFrameElement : HTMLElement {
-    [Reflect, URL, CEReactions=NotNeeded] attribute USVString src;
+    [ReflectURL, CEReactions=NotNeeded] attribute USVString src;
     [CEReactions=NotNeeded] attribute (TrustedHTML or DOMString) srcdoc;
     [Reflect, CEReactions=NotNeeded] attribute DOMString name;
     [SameObject, PutForwards=value] readonly attribute DOMTokenList sandbox;
@@ -32,8 +32,8 @@
     [Reflect, CEReactions=NotNeeded] attribute boolean allowFullscreen;
     [Reflect, CEReactions=NotNeeded] attribute DOMString width;
     [Reflect, CEReactions=NotNeeded] attribute DOMString height;
-    [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings] attribute [AtomString] DOMString referrerPolicy;
-    [CEReactions=NotNeeded, EnabledBySetting=LazyIframeLoadingEnabled] attribute [AtomString] DOMString loading;
+    [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings, ReflectSetter] attribute [AtomString] DOMString referrerPolicy;
+    [CEReactions=NotNeeded, EnabledBySetting=LazyIframeLoadingEnabled, Reflect, Enumerated=HTMLIFrameElementLoadingValues] attribute DOMString loading;
     [CheckSecurityForNode] readonly attribute Document? contentDocument;
     readonly attribute WindowProxy? contentWindow;
     [CheckSecurityForNode] Document? getSVGDocument();
@@ -43,9 +43,11 @@
     [Reflect, CEReactions=NotNeeded] attribute DOMString align;
     [Reflect, CEReactions=NotNeeded] attribute DOMString scrolling;
     [Reflect, CEReactions=NotNeeded] attribute DOMString frameBorder;
-    [Reflect, URL, CEReactions=NotNeeded] attribute USVString longDesc;
+    [ReflectURL, CEReactions=NotNeeded] attribute USVString longDesc;
 
     [Reflect, CEReactions=NotNeeded] attribute [LegacyNullToEmptyString] DOMString marginHeight;
     [Reflect, CEReactions=NotNeeded] attribute [LegacyNullToEmptyString] DOMString marginWidth;
 
 };
+
+[MissingValueDefault="eager", InvalidValueDefault="eager"] enum HTMLIFrameElementLoadingValues { "lazy", "eager" };

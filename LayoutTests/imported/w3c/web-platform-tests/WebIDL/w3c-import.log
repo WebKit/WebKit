@@ -14,8 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/webidl/META.yml
-/LayoutTests/imported/w3c/web-platform-tests/webidl/README.md
-/LayoutTests/imported/w3c/web-platform-tests/webidl/current-realm.html
-/LayoutTests/imported/w3c/web-platform-tests/webidl/idlharness-shadowrealm.window.js
-/LayoutTests/imported/w3c/web-platform-tests/webidl/idlharness.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/README.md
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/current-realm.html
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/idlharness.any.js

@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+box-decoration-break
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/contenteditable-will-be-blurred-by-focus-event-listener.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/crash-test.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/delete-after-empty-script-element.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/delete-after-input-setRangeText.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/delete-after-justifyleft-in-closed-editable-dialog.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/delete-and-justifycenter-recursively-with-mutation-event-listeners.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/delete-at-next-to-svg-display-table-cell.html
@@ -37,35 +38,45 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/delete-in-dd-editing-host-after-selectall-without-focus.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/delete-in-designMode-without-explicitly-setting-focus.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/delete-in-empty-editable-list-followed-by-non-editable-listitem.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/delete-selection-with-null-range.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/delete-to-join-inline-blocks.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/design-mode-textarea.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/designMode-caret-change.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/designMode-document-will-be-blurred-by-focus-event-listener.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/designMode-off-during-inserthorizontalrule.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/designMode-on-of-lazy-loading-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/editing-on-newline-should-not-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/empty-editable.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/enableInlineTableEditing-after-updating-selection-range-cross-shadow-dom-boundary.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/execCommand-at-load-with-changing-editing-host.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/execCommand-backcolor-and-hilitecolor-in-empty-iframe-in-designMode.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/execCommand-fontsize-when-size-attr-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/execCommand-without-selection-ranges.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/first-letter-crossing-engine-boundary.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/format-block-selection-containing-non-editable-list.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/formatblock-when-root-is-editing-host.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/forwarddelete-after-editable-slot-element-outside-body.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/forwarddelete-at-empty-text-node-in-body.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/forwarddelete-delete-after-justifyleft-indent.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/forwarddelete-in-editable-h1-starts-with-hidden-select.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/forwarddelete-in-list-editing-host-after-selectall-with-focus.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/forwarddelete-in-list-editing-host-after-selectall-without-focus.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/forwarddelete-in-text-in-span-in-editable-documentElement.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/indent-in-inline-editing-host-outside-body.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/indent-in-textarea-in-designMode-during-outdent.html
-/LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/indent-outdent-after-closing-editable-dialog-element.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/insert-image-with-joining-header-element-and-body.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/insert-nodes-into-meta-element.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/insertAdjacentElement-beforeBegin-first-br-in-video.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/insertAdjacentElement-with-DOMSubtreeModified.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/insertText-at-end-of-text-in-body.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/insertText-nested-by-DOMSubtreeModified.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/inserthorizontalrule-in-fieldset-and-everything-styled-white-space-pre.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/inserthorizontalrule-in-textarea-in-editor-and-undo-on-error-events.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/inserthorizontalrule-to-replace-li.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/inserthorizontalrule-to-replace-selection-containing-comment.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/inserthorizontalrule-with-2-selection-ranges-and-one-is-outside-body.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/inserthorizontalrule-with-range-ending-in-collapsible-spaces-before-comment.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/inserthorizontalrule-with-selecting-from-mphantom-to-end-of-line.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/inserthorizontalrule-with-selecting-text-in-document-element.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/inserthtml-after-temporarily-removing-document-element.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/inserthtml-in-inline-editing-host-at-load-event.html
@@ -84,6 +95,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/insertparagraph-in-map-element-editing-host.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/inserttext-at-start-with-different-style.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/inserttext-with-clearing-subscript.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/inserttext-with-empty-string-to-replace-selection.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/insertunorderedlist-in-empty-inline-editing-host.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/insertunorderedlist-in-empty-table-editing-host.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/justifycenter-around-textarea.html
@@ -108,6 +120,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/queryCommandIndeterm-backcolor-in-empty-iframe-in-designMode-from-load.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/queryCommandState-backcolor-after-removing-html-element-in-designMode-from-load.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/queryCommandValue-backcolor-after-replacing-html-element-with-new-one-in-designMode-from-load.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/remove-all-children-of-documentElement-in-designMode-when-no-body.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/remove-document-element-of-iframe-having-style-content.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/remove-editing-host-during-forwarddelete.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/remove-editing-host-on-DOMNodeInserted-at-indent.html
@@ -125,6 +138,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/replace-parent-of-editing-host-on-DOMSubtreeModified.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/selectall-after-enableobjectresizing.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/selectall-and-inerthtml-in-textarea-editing-host.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/selectall-and-move-editable-br-onselectstart.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/selectall-in-head-editing-host-after-body-removed.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/selectall-selection-modify-move-forward-lineboundary-selectall-around-editable-canvas.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/selection-modify-around-input-in-contenteditable.html
@@ -135,3 +149,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/textarea-will-be-blurred-by-focus-event-listener.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/unloading-editor-in-subdocument-containing-misspelled-word.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/update-dom-during-undoing-in-textarea.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/crashtests/white-space-nowrap-to-pre-line.html

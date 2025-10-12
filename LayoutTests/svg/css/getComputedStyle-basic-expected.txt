@@ -135,7 +135,7 @@ rect: style.getPropertyValue(object-fit) : fill
 rect: style.getPropertyValue(object-position) : 50% 50%
 rect: style.getPropertyValue(opacity) : 1
 rect: style.getPropertyValue(order) : 0
-rect: style.getPropertyValue(orphans) : auto
+rect: style.getPropertyValue(orphans) : 2
 rect: style.getPropertyValue(outline-color) : rgb(0, 0, 0)
 rect: style.getPropertyValue(outline-offset) : 0px
 rect: style.getPropertyValue(outline-style) : none
@@ -199,7 +199,7 @@ rect: style.getPropertyValue(unicode-bidi) : normal
 rect: style.getPropertyValue(vector-effect) : none
 rect: style.getPropertyValue(vertical-align) : baseline
 rect: style.getPropertyValue(visibility) : visible
-rect: style.getPropertyValue(widows) : auto
+rect: style.getPropertyValue(widows) : 2
 rect: style.getPropertyValue(width) : 100px
 rect: style.getPropertyValue(will-change) : auto
 rect: style.getPropertyValue(word-break) : normal
@@ -376,7 +376,7 @@ g: style.getPropertyValue(object-fit) : fill
 g: style.getPropertyValue(object-position) : 50% 50%
 g: style.getPropertyValue(opacity) : 1
 g: style.getPropertyValue(order) : 0
-g: style.getPropertyValue(orphans) : auto
+g: style.getPropertyValue(orphans) : 2
 g: style.getPropertyValue(outline-color) : rgb(0, 0, 0)
 g: style.getPropertyValue(outline-offset) : 0px
 g: style.getPropertyValue(outline-style) : none
@@ -440,7 +440,7 @@ g: style.getPropertyValue(unicode-bidi) : normal
 g: style.getPropertyValue(vector-effect) : none
 g: style.getPropertyValue(vertical-align) : baseline
 g: style.getPropertyValue(visibility) : visible
-g: style.getPropertyValue(widows) : auto
+g: style.getPropertyValue(widows) : 2
 g: style.getPropertyValue(width) : auto
 g: style.getPropertyValue(will-change) : auto
 g: style.getPropertyValue(word-break) : normal

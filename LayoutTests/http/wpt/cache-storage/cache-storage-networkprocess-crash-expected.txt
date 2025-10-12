@@ -1,8 +1,3 @@
-CONSOLE MESSAGE: Cache API operation failed: Internal error
-CONSOLE MESSAGE: Cache API operation failed: Internal error
-CONSOLE MESSAGE: Cache API operation failed: Internal error
-CONSOLE MESSAGE: Cache API operation failed: Internal error
-CONSOLE MESSAGE: Cache API operation failed: Internal error
 
 PASS Pending cache operation on network process crash
 

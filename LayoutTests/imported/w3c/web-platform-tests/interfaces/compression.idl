@@ -1,16 +1,22 @@
 // GENERATED CONTENT - DO NOT EDIT
 // Content was automatically extracted by Reffy into webref
 // (https://github.com/w3c/webref)
-// Source: Compression Streams (https://wicg.github.io/compression/)
+// Source: Compression Standard (https://compression.spec.whatwg.org/)
+
+enum CompressionFormat {
+  "deflate",
+  "deflate-raw",
+  "gzip",
+};
 
 [Exposed=*]
 interface CompressionStream {
-  constructor(DOMString format);
+  constructor(CompressionFormat format);
 };
 CompressionStream includes GenericTransformStream;
 
 [Exposed=*]
 interface DecompressionStream {
-  constructor(DOMString format);
+  constructor(CompressionFormat format);
 };
 DecompressionStream includes GenericTransformStream;

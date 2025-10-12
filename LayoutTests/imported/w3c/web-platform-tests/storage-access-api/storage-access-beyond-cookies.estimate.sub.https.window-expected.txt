@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unsupported permission name "storage-access".
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unsupported permission name "storage-access".
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Verify StorageAccessAPIBeyondCookies for Quota Test timed out
+FAIL Verify StorageAccessAPIBeyondCookies for Quota assert_equals: Storage Access API should be accessible and return first-party data expected "HasAccess for estimate" but got "Unable to load handle in cross-site context for all"
 

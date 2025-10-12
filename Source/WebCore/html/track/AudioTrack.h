@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,8 @@
 
 #if ENABLE(VIDEO)
 
-#include "AudioTrackPrivateClient.h"
-#include "TrackBase.h"
+#include <WebCore/AudioTrackPrivateClient.h>
+#include <WebCore/TrackBase.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
@@ -98,7 +98,7 @@ private:
     Ref<AudioTrackPrivate> m_private;
     bool m_enabled { false };
 
-    Ref<AudioTrackConfiguration> m_configuration;
+    const Ref<AudioTrackConfiguration> m_configuration;
 };
 
 } // namespace WebCore

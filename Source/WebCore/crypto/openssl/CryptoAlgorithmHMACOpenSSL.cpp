@@ -41,7 +41,7 @@ static std::optional<Vector<uint8_t>> calculateSignature(const EVP_MD* algorithm
     if (!(ctx = HMACCtxPtr(HMAC_CTX_new())))
         return std::nullopt;
 
-    if (1 != HMAC_Init_ex(ctx.get(), key.data(), key.size(), algorithm, nullptr))
+    if (1 != HMAC_Init_ex(ctx.get(), key.span().data(), key.size(), algorithm, nullptr))
         return std::nullopt;
 
     // Call update with the message
@@ -51,7 +51,7 @@ static std::optional<Vector<uint8_t>> calculateSignature(const EVP_MD* algorithm
     // Finalize the DigestSign operation
     Vector<uint8_t> cipherText(EVP_MAX_MD_SIZE);
     unsigned len = 0;
-    if (1 != HMAC_Final(ctx.get(), cipherText.data(), &len))
+    if (1 != HMAC_Final(ctx.get(), cipherText.mutableSpan().data(), &len))
         return std::nullopt;
 
     cipherText.shrink(len);
@@ -64,7 +64,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHMAC::platformSign(const CryptoKeyHM
     if (!algorithm)
         return Exception { ExceptionCode::OperationError };
 
-    auto result = calculateSignature(algorithm, key.key(), data.data(), data.size());
+    auto result = calculateSignature(algorithm, key.key(), data.span().data(), data.size());
     if (!result)
         return Exception { ExceptionCode::OperationError };
     return WTFMove(*result);
@@ -76,7 +76,7 @@ ExceptionOr<bool> CryptoAlgorithmHMAC::platformVerify(const CryptoKeyHMAC& key, 
     if (!algorithm)
         return Exception { ExceptionCode::OperationError };
 
-    auto expectedSignature = calculateSignature(algorithm, key.key(), data.data(), data.size());
+    auto expectedSignature = calculateSignature(algorithm, key.key(), data.span().data(), data.size());
     if (!expectedSignature)
         return Exception { ExceptionCode::OperationError };
     // Using a constant time comparison to prevent timing attacks.

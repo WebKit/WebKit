@@ -4,22 +4,14 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, nativeFunctionMatcher.js]
+includes: [nativeFunctionMatcher.js]
 flags:
   - noStrict
 description: |
-  pending
+  Function.prototype.bind
+info: bugzilla.mozilla.org/show_bug.cgi?id=429507
 esid: pending
 ---*/
-var gTestfile = 'function-bind.js';
-var BUGNUMBER = 429507;
-var summary = "ES5: Function.prototype.bind";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 // ad-hoc testing
 
@@ -47,27 +39,22 @@ assert.sameValue(strictReturnThis.bind("foopy")(), "foopy");
 
 // rigorous, step-by-step testing
 
-function expectThrowTypeError(fun)
-{
-  assertThrowsInstanceOf(fun, TypeError);
-}
-
 /*
  * 1. Let Target be the this value.
  * 2. If IsCallable(Target) is false, throw a TypeError exception.
  */
-expectThrowTypeError(function() { bind.call(null); });
-expectThrowTypeError(function() { bind.call(undefined); });
-expectThrowTypeError(function() { bind.call(NaN); });
-expectThrowTypeError(function() { bind.call(0); });
-expectThrowTypeError(function() { bind.call(-0); });
-expectThrowTypeError(function() { bind.call(17); });
-expectThrowTypeError(function() { bind.call(42); });
-expectThrowTypeError(function() { bind.call("foobar"); });
-expectThrowTypeError(function() { bind.call(true); });
-expectThrowTypeError(function() { bind.call(false); });
-expectThrowTypeError(function() { bind.call([]); });
-expectThrowTypeError(function() { bind.call({}); });
+assert.throws(TypeError, function() { bind.call(null); });
+assert.throws(TypeError, function() { bind.call(undefined); });
+assert.throws(TypeError, function() { bind.call(NaN); });
+assert.throws(TypeError, function() { bind.call(0); });
+assert.throws(TypeError, function() { bind.call(-0); });
+assert.throws(TypeError, function() { bind.call(17); });
+assert.throws(TypeError, function() { bind.call(42); });
+assert.throws(TypeError, function() { bind.call("foobar"); });
+assert.throws(TypeError, function() { bind.call(true); });
+assert.throws(TypeError, function() { bind.call(false); });
+assert.throws(TypeError, function() { bind.call([]); });
+assert.throws(TypeError, function() { bind.call({}); });
 
 
 /*
@@ -194,11 +181,9 @@ assert.sameValue(one.bind(null, 1, 2).length, 0);
 
 // retch
 var br = Object.create(null, { length: { value: 0 } });
-try
-{
-  br = bind.call(/a/g, /a/g, "aaaa");
-}
-catch (e) { /* nothing */ }
+assert.throws(TypeError, function() {
+  bind.call(/a/g, /a/g, "aaaa");
+});
 assert.sameValue(br.length, 0);
 
 
@@ -254,20 +239,15 @@ function testBound(fun)
   assert.sameValue(Object.getOwnPropertyDescriptor(boundf, "caller"), undefined,
            "should be no caller property");
 
-  expectThrowTypeError(function() { return boundf.arguments; });
-  expectThrowTypeError(function() { return boundf.caller; });
+  assert.throws(TypeError, function() { return boundf.arguments; });
+  assert.throws(TypeError, function() { return boundf.caller; });
 }
 
 testBound(strict);
 testBound(nonstrict);
 
-assertNativeFunction((function unbound(){"body"}).bind());
+assertNativeFunction(function unbound(){"body"}.bind());
 
 /* 22. Return F. */
 var passim = function p(){}.bind(1);
 assert.sameValue(typeof passim, "function");
-
-
-/******************************************************************************/
-
-print("All tests passed!");

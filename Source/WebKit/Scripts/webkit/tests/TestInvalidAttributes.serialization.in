@@ -1,0 +1,3 @@
+[InvalidAttribute] class a {
+    int a
+}

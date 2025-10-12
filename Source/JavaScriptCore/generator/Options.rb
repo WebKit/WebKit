@@ -48,14 +48,6 @@ $config = {
         long: "--wasm_json FILE",
         desc: "Path to JavaScriptCore's wasm.json file",
     },
-    wasm_llint_generator_filename: {
-        long: "--wasm_llint_generator_h FILE",
-        desc: "Path to generate WasmLLIntGenerator entries from wasm.json file",
-    },
-    wasm_init_filename: {
-        long: "--init_wasm_llint FILE",
-        desc: "generate Wasm bytecodes init FILE",
-    },
     bytecode_dumper_filename: {
         long: "--bytecode_dumper FILE",
         desc: "generate bytecode dumper FILE",

@@ -29,6 +29,7 @@
 namespace WebCore {
 
 namespace Style {
+struct SVGMarkerResource;
 struct URL;
 }
 
@@ -44,6 +45,7 @@ public:
 
     static AtomString fragmentIdentifierFromIRIString(const String&, const Document&);
     static AtomString fragmentIdentifierFromIRIString(const Style::URL&, const Document&);
+    static AtomString fragmentIdentifierFromIRIString(const Style::SVGMarkerResource&, const Document&);
 
     struct TargetElementResult {
         RefPtr<Element> element;

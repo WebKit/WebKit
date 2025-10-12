@@ -1,3 +1,3 @@
 
-FAIL RemoteContextHelper navigation using BFCache promise_test: Unhandled rejection with value: object "Error: undefined is not an object (evaluating 'window.pageshowEvent.persisted')"
+FAIL RemoteContextHelper navigation using BFCache promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'window.pageshowEvent.persisted')"
 

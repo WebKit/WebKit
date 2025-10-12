@@ -39,6 +39,7 @@
 #import <UIKit/UIContextMenuInteraction_ForWebKitOnly.h>
 #import <UIKit/UIDevice_Private.h>
 #import <UIKit/UIEvent_Private.h>
+#import <UIKit/UIFindInteraction.h>
 #import <UIKit/UIKeyboardImpl.h>
 #import <UIKit/UIKeyboardInputModeController.h>
 #import <UIKit/UIKeyboardPreferencesController.h>
@@ -62,6 +63,7 @@
 #import <UIKit/UIWebFormAccessory.h>
 #import <UIKit/UIWindowScene_RequiresApproval.h>
 #import <UIKit/UIWindow_Private.h>
+#import <UIKit/_UIClickInteractionDriving.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
@@ -100,22 +102,6 @@ extern NSNotificationName const _UIWindowSceneEnhancedWindowingModeChanged;
 
 WTF_EXTERN_C_END
 
-#if HAVE(UIFINDINTERACTION)
-
-@interface _UIFindInteraction : NSObject <UIInteraction>
-@end
-
-@interface _UIFindInteraction (Staging_84486967)
-
-- (void)presentFindNavigatorShowingReplace:(BOOL)replaceVisible;
-
-- (void)findNext;
-- (void)findPrevious;
-
-@end
-
-#endif // HAVE(UIFINDINTERACTION)
-
 @interface UIApplication ()
 - (void)_enqueueHIDEvent:(IOHIDEventRef)event;
 - (void)_handleHIDEvent:(IOHIDEventRef)event;
@@ -146,6 +132,7 @@ WTF_EXTERN_C_END
 
 @protocol UITextInputPrivate <UITextInput, UITextInputTraits_Private>
 - (UITextInputTraits *)textInputTraits;
+- (void)insertText:(NSString *)text;
 - (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion;
 - (void)handleKeyWebEvent:(WebEvent *)theEvent withCompletionHandler:(void (^)(WebEvent *, BOOL))completionHandler;
 - (NSDictionary *)_autofillContext;
@@ -337,6 +324,8 @@ typedef NS_ENUM(NSInteger, _UITextSearchMatchMethod) {
 @property (nonatomic, readonly, getter=_isAnimatingZoom) BOOL isAnimatingZoom;
 @property (nonatomic, readonly, getter=_isAnimatingScroll) BOOL isAnimatingScroll;
 @property (nonatomic, getter=_isFirstResponderKeyboardAvoidanceEnabled, setter=_setFirstResponderKeyboardAvoidanceEnabled:) BOOL firstResponderKeyboardAvoidanceEnabled;
+- (UIColor *)_pocketColorForEdge:(UIRectEdge)edge;
+- (BOOL)_prefersSolidColorHardPocketForEdge:(UIRectEdge)edge;
 @end
 
 @interface UIView ()
@@ -491,6 +480,23 @@ typedef enum {
 @end
 #endif
 
+typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
+    _UIClickInteractionEventBegan = 0,
+    _UIClickInteractionEventClickedDown,
+    _UIClickInteractionEventClickedUp,
+    _UIClickInteractionEventEnded,
+};
+
+typedef NS_ENUM(NSUInteger, _UIClickInteractionShouldBeginResult) {
+    _UIClickInteractionShouldBeginResultBegin
+};
+
+@protocol _UIClickInteractionDriving;
+@protocol _UIClickInteractionDriverDelegate <NSObject>
+- (void)clickDriver:(id<_UIClickInteractionDriving>)driver shouldBegin:(void(^)(_UIClickInteractionShouldBeginResult))completion;
+- (void)clickDriver:(id<_UIClickInteractionDriving>)driver didPerformEvent:(_UIClickInteractionEvent)event;
+@end
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 // Start of UIKit IPI
@@ -517,31 +523,6 @@ typedef enum {
 @property (nonatomic, readonly) BOOL hasInlineCompletionAsMarkedText;
 @property (nonatomic, readonly) UIKeyboardInputMode *currentInputModeInPreference;
 @property (nonatomic, readonly) BOOL hardwareKeyboardAttached;
-@end
-
-#if PLATFORM(IOS) || PLATFORM(VISION)
-
-@protocol UIDropInteractionDelegate_Private <UIDropInteractionDelegate>
-- (void)_dropInteraction:(UIDropInteraction *)interaction delayedPreviewProviderForDroppingItem:(UIDragItem *)item previewProvider:(void(^)(UITargetedDragPreview *preview))previewProvider;
-@end
-
-#endif // PLATFORM(IOS) || PLATFORM(VISION)
-
-typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
-    _UIClickInteractionEventBegan = 0,
-    _UIClickInteractionEventClickedDown,
-    _UIClickInteractionEventClickedUp,
-    _UIClickInteractionEventEnded,
-    _UIClickInteractionEventCount
-};
-
-@protocol _UIClickInteractionDriving;
-@protocol _UIClickInteractionDriverDelegate <NSObject>
-- (void)clickDriver:(id<_UIClickInteractionDriving>)driver shouldBegin:(void(^)(BOOL))completion;
-- (void)clickDriver:(id<_UIClickInteractionDriving>)driver didPerformEvent:(_UIClickInteractionEvent)event;
-@optional
-- (void)clickDriver:(id<_UIClickInteractionDriving>)driver didUpdateHighlightProgress:(CGFloat)progress;
-- (BOOL)clickDriver:(id<_UIClickInteractionDriving>)driver shouldDelayGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
 @end
 
 @protocol UITextInputInternal
@@ -604,6 +585,7 @@ typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
 @property (nonatomic, readwrite) UITextSearchMatchMethod wordMatchMethod;
 @property (nonatomic, readwrite) NSStringCompareOptions stringCompareOptions;
 @end
+
 #endif
 
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)

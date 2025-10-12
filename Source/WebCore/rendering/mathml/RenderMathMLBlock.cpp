@@ -95,14 +95,6 @@ LayoutUnit RenderMathMLBlock::mirrorIfNeeded(LayoutUnit horizontalOffset, Layout
     return horizontalOffset;
 }
 
-LayoutUnit RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
-{
-    if (linePositionMode == PositionOfInteriorLineBoxes)
-        return 0;
-
-    return firstLineBaseline().value_or(RenderBlock::baselinePosition(baselineType, firstLine, direction, linePositionMode));
-}
-
 LayoutUnit toUserUnits(const MathMLElement::Length& length, const RenderStyle& style, const LayoutUnit& referenceValue)
 {
     switch (length.type) {
@@ -222,9 +214,6 @@ void RenderMathMLBlock::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
 
     repainter.repaintAfterLayout();
 
-    updateScrollInfoAfterLayout();
-
-    clearNeedsLayout();
 }
 
 void RenderMathMLBlock::computeAndSetBlockDirectionMarginsOfChildren()
@@ -239,7 +228,7 @@ void RenderMathMLBlock::styleDidChange(StyleDifference diff, const RenderStyle* 
 
     // MathML displaystyle changes can affect layout.
     if (oldStyle && style().mathStyle() != oldStyle->mathStyle())
-        setNeedsLayoutAndPrefWidthsRecalc();
+        setNeedsLayoutAndPreferredWidthsUpdate();
 }
 
 void RenderMathMLBlock::insertPositionedChildrenIntoContainingBlock()
@@ -290,13 +279,13 @@ RenderMathMLBlock::SizeAppliedToMathContent RenderMathMLBlock::sizeAppliedToMath
     SizeAppliedToMathContent sizes;
     // FIXME: Resolve percentages.
     // https://github.com/w3c/mathml-core/issues/76
-    if (style().logicalWidth().isFixed())
-        sizes.logicalWidth = style().logicalWidth().value();
+    if (auto fixedLogicalWidth = style().logicalWidth().tryFixed())
+        sizes.logicalWidth = fixedLogicalWidth->resolveZoom(Style::ZoomNeeded { });
 
     // FIXME: Resolve percentages.
     // https://github.com/w3c/mathml-core/issues/77
-    if (phase == LayoutPhase::Layout && style().logicalHeight().isFixed())
-        sizes.logicalHeight = style().logicalHeight().value();
+    if (auto fixedLogicalHeight = style().logicalHeight().tryFixed(); phase == LayoutPhase::Layout && fixedLogicalHeight)
+        sizes.logicalHeight = fixedLogicalHeight->resolveZoom(Style::ZoomNeeded { });
 
     return sizes;
 }

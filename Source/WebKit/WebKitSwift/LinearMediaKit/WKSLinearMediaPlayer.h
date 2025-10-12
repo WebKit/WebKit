@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-
 #if defined(TARGET_OS_VISION) && TARGET_OS_VISION
 
+#import "WKSLinearMediaTypes.h"
+#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
 #if __has_include(<xpc/xpc.h>)
@@ -37,19 +37,9 @@
 OS_OBJECT_DECL(xpc_object);
 #endif
 
-NS_ASSUME_NONNULL_BEGIN
-
-@class LMPlayableViewController;
-@class WKSLinearMediaContentMetadata;
 @class WKSLinearMediaPlayer;
-@class WKSLinearMediaTimeRange;
-@class WKSLinearMediaTrack;
-@class WKSLinearMediaSpatialVideoMetadata;
 
-typedef NS_ENUM(NSInteger, WKSLinearMediaContentMode);
-typedef NS_ENUM(NSInteger, WKSLinearMediaContentType);
-typedef NS_ENUM(NSInteger, WKSLinearMediaPresentationState);
-typedef NS_ENUM(NSInteger, WKSLinearMediaViewingMode);
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 typedef NS_OPTIONS(NSInteger, WKSLinearMediaFullscreenBehaviors) {
     WKSLinearMediaFullscreenBehaviorsSceneResize = 1 << 0,
@@ -59,6 +49,7 @@ typedef NS_OPTIONS(NSInteger, WKSLinearMediaFullscreenBehaviors) {
 };
 
 API_AVAILABLE(visionos(1.0))
+NS_SWIFT_UI_ACTOR
 @protocol WKSLinearMediaPlayerDelegate <NSObject>
 @optional
 - (void)linearMediaPlayerPlay:(WKSLinearMediaPlayer *)player;
@@ -96,9 +87,10 @@ API_AVAILABLE(visionos(1.0))
 - (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player seekThumbnailToTime:(NSTimeInterval)time;
 - (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player setVideoReceiverEndpoint:(xpc_object_t)videoReceiverEndpoint;
 - (void)linearMediaPlayerClearVideoReceiverEndpoint:(WKSLinearMediaPlayer *)player;
+- (uint64_t)linearMediaPlayerLogIdentifier:(WKSLinearMediaPlayer *)player;
 @end
 
-API_AVAILABLE(visionos(1.0))
+NS_SWIFT_UI_ACTOR
 @interface WKSLinearMediaPlayer : NSObject
 @property (nonatomic, weak, nullable) id <WKSLinearMediaPlayerDelegate> delegate;
 @property (nonatomic) double selectedPlaybackRate;
@@ -162,13 +154,14 @@ API_AVAILABLE(visionos(1.0))
 @property (nonatomic) BOOL isImmersiveVideo;
 @property (nonatomic, readonly) BOOL enteredFromInline;
 
-- (LMPlayableViewController *)makeViewController;
-- (void)enterFullscreenWithCompletionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler;
-- (void)exitFullscreenWithCompletionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler;
-- (void)enterExternalPresentationWithCompletionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler;
-- (void)exitExternalPresentationWithCompletionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler;
+- (WKSPlayableViewControllerHost *)makeViewController;
+- (void)enterFullscreenWithCompletionHandler:(NS_SWIFT_UI_ACTOR NS_SWIFT_SENDABLE void (^)(BOOL, NSError * _Nullable))completionHandler;
+- (void)exitFullscreenWithCompletionHandler:(NS_SWIFT_UI_ACTOR NS_SWIFT_SENDABLE void (^)(BOOL, NSError * _Nullable))completionHandler;
+- (void)enterExternalPlaybackWithCompletionHandler:(NS_SWIFT_UI_ACTOR NS_SWIFT_SENDABLE void (^)(BOOL, NSError * _Nullable))completionHandler;
+- (void)completeEnterExternalPlayback;
+- (void)exitExternalPlaybackWithCompletionHandler:(NS_SWIFT_UI_ACTOR NS_SWIFT_SENDABLE void (^)(BOOL, NSError * _Nullable))completionHandler;
 @end
 
-NS_ASSUME_NONNULL_END
+NS_HEADER_AUDIT_END(nullability, sendability)
 
-#endif /* defined(TARGET_OS_VISION) && TARGET_OS_VISION */
+#endif // defined(TARGET_OS_VISION) && TARGET_OS_VISION

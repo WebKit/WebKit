@@ -20,7 +20,7 @@ shouldBeEqualToString('document.execCommand("InsertText", false, "1234"); arabic
 arabicInput.value = '';
 shouldBeEqualToString('document.execCommand("InsertText", false, "1.234"); arabicInput.value', '1.234');
 arabicInput.value = '';
-shouldBeEqualToString('document.execCommand("InsertText", false, "1,234"); arabicInput.value', '');
+shouldBeEqualToString('document.execCommand("InsertText", false, "1,234"); arabicInput.value', '1234');
 
 debug('');
 debug('Putting some digit strings to a French number input.');
@@ -40,7 +40,7 @@ shouldBeEqualToString('document.execCommand("InsertText", false, "1234"); englis
 englishInput.value = '';
 shouldBeEqualToString('document.execCommand("InsertText", false, "1.234"); englishInput.value', '1.234');
 englishInput.value = '';
-shouldBeEqualToString('document.execCommand("InsertText", false, "1,234"); englishInput.value', '');
+shouldBeEqualToString('document.execCommand("InsertText", false, "1,234"); englishInput.value', '1234');
 
 
 </script>

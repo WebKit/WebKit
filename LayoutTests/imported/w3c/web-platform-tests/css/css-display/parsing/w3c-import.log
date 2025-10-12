@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/parsing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/parsing/display-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/parsing/display-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/parsing/display-valid.html

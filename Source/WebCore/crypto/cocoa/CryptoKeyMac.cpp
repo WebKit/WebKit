@@ -33,7 +33,7 @@ namespace WebCore {
 Vector<uint8_t> CryptoKey::randomData(size_t size)
 {
     Vector<uint8_t> result(size);
-    auto rc = CCRandomGenerateBytes(result.data(), result.size());
+    auto rc = CCRandomGenerateBytes(result.mutableSpan().data(), result.size());
     RELEASE_ASSERT(rc == kCCSuccess);
     return result;
 }

@@ -25,7 +25,8 @@
     promise_test(async (test) => {
         window.internals.settings.setExposeSpeakersWithoutMicrophoneEnabled(false);
 
-        await navigator.mediaDevices.getUserMedia({ audio:true, video:true })
+        const stream = await navigator.mediaDevices.getUserMedia({ audio:true, video:true })
+        test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
         let devices = await navigator.mediaDevices.enumerateDevices();
         assert_true(devices.length > 2, "after getting permission, more than 1 camera and 1 microphone are exposed");
         devices.forEach((device) => {

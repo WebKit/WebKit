@@ -8,7 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-
 /*
  * This file contains the resampling by two functions.
  * The description header can be found in signal_processing_library.h
@@ -49,12 +48,12 @@ void WebRtcSpl_DownsampleBy2(const int16_t* in,
 #if defined(MIPS_DSP_R2_LE)
   int32_t k1Res0, k1Res1, k1Res2, k2Res0, k2Res1, k2Res2;
 
-  k1Res0= 3284;
-  k1Res1= 24441;
-  k1Res2= 49528;
-  k2Res0= 12199;
-  k2Res1= 37471;
-  k2Res2= 60255;
+  k1Res0 = 3284;
+  k1Res1 = 24441;
+  k1Res2 = 49528;
+  k2Res0 = 12199;
+  k2Res1 = 37471;
+  k2Res2 = 60255;
   len1 = (len >> 1);
 
   const int32_t* inw = (int32_t*)in;
@@ -62,97 +61,92 @@ void WebRtcSpl_DownsampleBy2(const int16_t* in,
   int32_t in322, in321;
   int32_t diff1, diff2;
   for (i = len1; i > 0; i--) {
-    __asm__ volatile (
-      "lh         %[in321],    0(%[inw])                  \n\t"
-      "lh         %[in322],    2(%[inw])                  \n\t"
+    __asm__ volatile(
+        "lh         %[in321],    0(%[inw])                  \n\t"
+        "lh         %[in322],    2(%[inw])                  \n\t"
 
-      "sll        %[in321],    %[in321],      10          \n\t"
-      "sll        %[in322],    %[in322],      10          \n\t"
+        "sll        %[in321],    %[in321],      10          \n\t"
+        "sll        %[in322],    %[in322],      10          \n\t"
 
-      "addiu      %[inw],      %[inw],        4           \n\t"
+        "addiu      %[inw],      %[inw],        4           \n\t"
 
-      "subu       %[diff1],    %[in321],      %[state1]   \n\t"
-      "subu       %[diff2],    %[in322],      %[state5]   \n\t"
+        "subu       %[diff1],    %[in321],      %[state1]   \n\t"
+        "subu       %[diff2],    %[in322],      %[state5]   \n\t"
 
-      : [in322] "=&r" (in322), [in321] "=&r" (in321),
-        [diff1] "=&r" (diff1), [diff2] "=r" (diff2), [inw] "+r" (inw)
-      : [state1] "r" (state1), [state5] "r" (state5)
-      : "memory"
-    );
+        : [in322] "=&r"(in322), [in321] "=&r"(in321), [diff1] "=&r"(diff1),
+          [diff2] "=r"(diff2), [inw] "+r"(inw)
+        : [state1] "r"(state1), [state5] "r"(state5)
+        : "memory");
 
-    __asm__ volatile (
-      "mult       $ac0,       %[diff1],       %[k2Res0]   \n\t"
-      "mult       $ac1,       %[diff2],       %[k1Res0]   \n\t"
+    __asm__ volatile(
+        "mult       $ac0,       %[diff1],       %[k2Res0]   \n\t"
+        "mult       $ac1,       %[diff2],       %[k1Res0]   \n\t"
 
-      "extr.w     %[tmp11],   $ac0,           16          \n\t"
-      "extr.w     %[tmp12],   $ac1,           16          \n\t"
+        "extr.w     %[tmp11],   $ac0,           16          \n\t"
+        "extr.w     %[tmp12],   $ac1,           16          \n\t"
 
-      "addu       %[tmp11],   %[state0],      %[tmp11]    \n\t"
-      "addu       %[tmp12],   %[state4],      %[tmp12]    \n\t"
+        "addu       %[tmp11],   %[state0],      %[tmp11]    \n\t"
+        "addu       %[tmp12],   %[state4],      %[tmp12]    \n\t"
 
-      "addiu      %[state0],  %[in321],       0           \n\t"
-      "addiu      %[state4],  %[in322],       0           \n\t"
+        "addiu      %[state0],  %[in321],       0           \n\t"
+        "addiu      %[state4],  %[in322],       0           \n\t"
 
-      "subu       %[diff1],   %[tmp11],       %[state2]   \n\t"
-      "subu       %[diff2],   %[tmp12],       %[state6]   \n\t"
+        "subu       %[diff1],   %[tmp11],       %[state2]   \n\t"
+        "subu       %[diff2],   %[tmp12],       %[state6]   \n\t"
 
-      "mult       $ac0,       %[diff1],       %[k2Res1]   \n\t"
-      "mult       $ac1,       %[diff2],       %[k1Res1]   \n\t"
+        "mult       $ac0,       %[diff1],       %[k2Res1]   \n\t"
+        "mult       $ac1,       %[diff2],       %[k1Res1]   \n\t"
 
-      "extr.w     %[tmp21],   $ac0,           16          \n\t"
-      "extr.w     %[tmp22],   $ac1,           16          \n\t"
+        "extr.w     %[tmp21],   $ac0,           16          \n\t"
+        "extr.w     %[tmp22],   $ac1,           16          \n\t"
 
-      "addu       %[tmp21],   %[state1],      %[tmp21]    \n\t"
-      "addu       %[tmp22],   %[state5],      %[tmp22]    \n\t"
+        "addu       %[tmp21],   %[state1],      %[tmp21]    \n\t"
+        "addu       %[tmp22],   %[state5],      %[tmp22]    \n\t"
 
-      "addiu      %[state1],  %[tmp11],       0           \n\t"
-      "addiu      %[state5],  %[tmp12],       0           \n\t"
-      : [tmp22] "=r" (tmp22), [tmp21] "=&r" (tmp21),
-        [tmp11] "=&r" (tmp11), [state0] "+r" (state0),
-        [state1] "+r" (state1),
-        [state2] "+r" (state2),
-        [state4] "+r" (state4), [tmp12] "=&r" (tmp12),
-        [state6] "+r" (state6), [state5] "+r" (state5)
-      : [k1Res1] "r" (k1Res1), [k2Res1] "r" (k2Res1), [k2Res0] "r" (k2Res0),
-        [diff2] "r" (diff2), [diff1] "r" (diff1), [in322] "r" (in322),
-        [in321] "r" (in321), [k1Res0] "r" (k1Res0)
-      : "hi", "lo", "$ac1hi", "$ac1lo"
-    );
+        "addiu      %[state1],  %[tmp11],       0           \n\t"
+        "addiu      %[state5],  %[tmp12],       0           \n\t"
+        : [tmp22] "=r"(tmp22), [tmp21] "=&r"(tmp21), [tmp11] "=&r"(tmp11),
+          [state0] "+r"(state0), [state1] "+r"(state1), [state2] "+r"(state2),
+          [state4] "+r"(state4), [tmp12] "=&r"(tmp12), [state6] "+r"(state6),
+          [state5] "+r"(state5)
+        : [k1Res1] "r"(k1Res1), [k2Res1] "r"(k2Res1), [k2Res0] "r"(k2Res0),
+          [diff2] "r"(diff2), [diff1] "r"(diff1), [in322] "r"(in322),
+          [in321] "r"(in321), [k1Res0] "r"(k1Res0)
+        : "hi", "lo", "$ac1hi", "$ac1lo");
 
     // upper allpass filter
-    __asm__ volatile (
-      "subu       %[diff1],   %[tmp21],       %[state3]   \n\t"
-      "subu       %[diff2],   %[tmp22],       %[state7]   \n\t"
+    __asm__ volatile(
+        "subu       %[diff1],   %[tmp21],       %[state3]   \n\t"
+        "subu       %[diff2],   %[tmp22],       %[state7]   \n\t"
 
-      "mult       $ac0,       %[diff1],       %[k2Res2]   \n\t"
-      "mult       $ac1,       %[diff2],       %[k1Res2]   \n\t"
-      "extr.w     %[state3],  $ac0,           16          \n\t"
-      "extr.w     %[state7],  $ac1,           16          \n\t"
-      "addu       %[state3],  %[state2],      %[state3]   \n\t"
-      "addu       %[state7],  %[state6],      %[state7]   \n\t"
+        "mult       $ac0,       %[diff1],       %[k2Res2]   \n\t"
+        "mult       $ac1,       %[diff2],       %[k1Res2]   \n\t"
+        "extr.w     %[state3],  $ac0,           16          \n\t"
+        "extr.w     %[state7],  $ac1,           16          \n\t"
+        "addu       %[state3],  %[state2],      %[state3]   \n\t"
+        "addu       %[state7],  %[state6],      %[state7]   \n\t"
 
-      "addiu      %[state2],  %[tmp21],       0           \n\t"
-      "addiu      %[state6],  %[tmp22],       0           \n\t"
+        "addiu      %[state2],  %[tmp21],       0           \n\t"
+        "addiu      %[state6],  %[tmp22],       0           \n\t"
 
-      // add two allpass outputs, divide by two and round
-      "addu       %[out32],   %[state3],      %[state7]   \n\t"
-      "addiu      %[out32],   %[out32],       1024        \n\t"
-      "sra        %[out32],   %[out32],       11          \n\t"
-      : [state3] "+r" (state3), [state6] "+r" (state6),
-        [state2] "+r" (state2), [diff2] "=&r" (diff2),
-        [out32] "=r" (out32), [diff1] "=&r" (diff1), [state7] "+r" (state7)
-      : [tmp22] "r" (tmp22), [tmp21] "r" (tmp21),
-        [k1Res2] "r" (k1Res2), [k2Res2] "r" (k2Res2)
-      : "hi", "lo", "$ac1hi", "$ac1lo"
-    );
+        // add two allpass outputs, divide by two and round
+        "addu       %[out32],   %[state3],      %[state7]   \n\t"
+        "addiu      %[out32],   %[out32],       1024        \n\t"
+        "sra        %[out32],   %[out32],       11          \n\t"
+        : [state3] "+r"(state3), [state6] "+r"(state6), [state2] "+r"(state2),
+          [diff2] "=&r"(diff2), [out32] "=r"(out32), [diff1] "=&r"(diff1),
+          [state7] "+r"(state7)
+        : [tmp22] "r"(tmp22), [tmp21] "r"(tmp21), [k1Res2] "r"(k1Res2),
+          [k2Res2] "r"(k2Res2)
+        : "hi", "lo", "$ac1hi", "$ac1lo");
 
     // limit amplitude to prevent wrap-around, and write to output array
     *out++ = WebRtcSpl_SatW32ToW16(out32);
   }
-#else  // #if defined(MIPS_DSP_R2_LE)
+#else   // #if defined(MIPS_DSP_R2_LE)
   int32_t tmp1, tmp2, diff;
   int32_t in32;
-  len1 = (len >> 1)/4;
+  len1 = (len >> 1) / 4;
   for (i = len1; i > 0; i--) {
     // lower allpass filter
     in32 = (int32_t)(*in++) << 10;
@@ -272,21 +266,20 @@ void WebRtcSpl_DownsampleBy2(const int16_t* in,
     *out++ = WebRtcSpl_SatW32ToW16(out32);
   }
 #endif  // #if defined(MIPS_DSP_R2_LE)
-  __asm__ volatile (
-    "sw       %[state0],      0(%[filtState])     \n\t"
-    "sw       %[state1],      4(%[filtState])     \n\t"
-    "sw       %[state2],      8(%[filtState])     \n\t"
-    "sw       %[state3],      12(%[filtState])    \n\t"
-    "sw       %[state4],      16(%[filtState])    \n\t"
-    "sw       %[state5],      20(%[filtState])    \n\t"
-    "sw       %[state6],      24(%[filtState])    \n\t"
-    "sw       %[state7],      28(%[filtState])    \n\t"
-    :
-    : [state0] "r" (state0), [state1] "r" (state1), [state2] "r" (state2),
-      [state3] "r" (state3), [state4] "r" (state4), [state5] "r" (state5),
-      [state6] "r" (state6), [state7] "r" (state7), [filtState] "r" (filtState)
-    : "memory"
-  );
+  __asm__ volatile(
+      "sw       %[state0],      0(%[filtState])     \n\t"
+      "sw       %[state1],      4(%[filtState])     \n\t"
+      "sw       %[state2],      8(%[filtState])     \n\t"
+      "sw       %[state3],      12(%[filtState])    \n\t"
+      "sw       %[state4],      16(%[filtState])    \n\t"
+      "sw       %[state5],      20(%[filtState])    \n\t"
+      "sw       %[state6],      24(%[filtState])    \n\t"
+      "sw       %[state7],      28(%[filtState])    \n\t"
+      :
+      : [state0] "r"(state0), [state1] "r"(state1), [state2] "r"(state2),
+        [state3] "r"(state3), [state4] "r"(state4), [state5] "r"(state5),
+        [state6] "r"(state6), [state7] "r"(state7), [filtState] "r"(filtState)
+      : "memory");
 }
 
 #endif  // #if defined(MIPS32_LE)

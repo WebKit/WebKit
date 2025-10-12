@@ -88,14 +88,14 @@ bool AudioSampleBufferConverter::initialize(CMBufferQueueTriggerCallback callbac
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter CMBufferQueueCreate for m_inputBufferQueue failed with %d", static_cast<int>(error));
         return false;
     }
-    m_inputBufferQueue = adoptCF(inputBufferQueue);
+    lazyInitialize(m_inputBufferQueue, adoptCF(inputBufferQueue));
 
     CMBufferQueueRef outputBufferQueue;
     if (auto error = PAL::CMBufferQueueCreate(kCFAllocatorDefault, 0, PAL::CMBufferQueueGetCallbacksForUnsortedSampleBuffers(), &outputBufferQueue)) {
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter CMBufferQueueCreate for m_outputBufferQueue failed with %d", static_cast<int>(error));
         return false;
     }
-    m_outputBufferQueue = adoptCF(outputBufferQueue);
+    lazyInitialize(m_outputBufferQueue, adoptCF(outputBufferQueue));
     PAL::CMBufferQueueInstallTrigger(m_outputBufferQueue.get(), callback, callbackObject, kCMBufferQueueTrigger_WhenDataBecomesReady, PAL::kCMTimeZero, &m_triggerToken);
 
     return true;
@@ -108,7 +108,7 @@ Ref<GenericPromise> AudioSampleBufferConverter::drain()
         if (!protectedThis)
             return GenericPromise::createAndReject();
 
-        assertIsCurrent(protectedThis->queue().get());
+        assertIsCurrent(protectedThis->queue());
 
         protectedThis->m_isDraining = true;
         protectedThis->processSampleBuffers();
@@ -128,7 +128,7 @@ Ref<GenericPromise> AudioSampleBufferConverter::drain()
 Ref<GenericPromise> AudioSampleBufferConverter::flushInternal(bool isFinished)
 {
     return invokeAsync(queue(), [protectedThis = Ref { *this }, this, isFinished] {
-        assertIsCurrent(queue().get());
+        assertIsCurrent(queue());
 
         m_isDraining = isFinished;
         processSampleBuffers();
@@ -178,7 +178,7 @@ static OSStatus computeSampleRate(auto& destinationFormat)
 
 OSStatus AudioSampleBufferConverter::initAudioConverterForSourceFormatDescription(CMFormatDescriptionRef formatDescription, AudioFormatID outputFormatID)
 {
-    assertIsCurrent(queue().get());
+    assertIsCurrent(queue());
 
     const auto *audioFormatListItem = PAL::CMAudioFormatDescriptionGetRichestDecodableFormat(formatDescription);
     m_sourceFormat = audioFormatListItem->mASBD;
@@ -205,7 +205,7 @@ OSStatus AudioSampleBufferConverter::initAudioConverterForSourceFormatDescriptio
     m_converter = converter;
 
     auto cleanupInCaseOfError = makeScopeExit([this, protectedThis = Ref { *this }] {
-        assertIsCurrent(queue().get());
+        assertIsCurrent(queue());
 
         PAL::AudioConverterDispose(m_converter);
         m_converter = nullptr;
@@ -308,7 +308,7 @@ OSStatus AudioSampleBufferConverter::initAudioConverterForSourceFormatDescriptio
 
 void AudioSampleBufferConverter::attachPrimingTrimsIfNeeded(CMSampleBufferRef buffer)
 {
-    assertIsCurrent(queue().get());
+    assertIsCurrent(queue());
 
     using namespace PAL;
 
@@ -325,7 +325,7 @@ void AudioSampleBufferConverter::attachPrimingTrimsIfNeeded(CMSampleBufferRef bu
 
 RetainPtr<NSNumber> AudioSampleBufferConverter::gradualDecoderRefreshCount()
 {
-    assertIsCurrent(queue().get());
+    assertIsCurrent(queue());
 
     if (isPCM())
         return nil;
@@ -358,7 +358,7 @@ RetainPtr<NSNumber> AudioSampleBufferConverter::gradualDecoderRefreshCount()
 
 Expected<RetainPtr<CMSampleBufferRef>, OSStatus> AudioSampleBufferConverter::sampleBuffer(const WebAudioBufferList& fillBufferList, uint32_t numSamples)
 {
-    assertIsCurrent(queue().get());
+    assertIsCurrent(queue());
 
     Vector<char> cookie;
     if (!m_destinationFormatDescription) {
@@ -367,14 +367,14 @@ Expected<RetainPtr<CMSampleBufferRef>, OSStatus> AudioSampleBufferConverter::sam
         if (!PAL::AudioConverterGetPropertyInfo(m_converter, kAudioConverterCompressionMagicCookie, &cookieSize, nullptr) && !!cookieSize) {
             cookie.grow(cookieSize);
 
-            if (auto error = PAL::AudioConverterGetProperty(m_converter, kAudioConverterCompressionMagicCookie, &cookieSize, cookie.data())) {
+            if (auto error = PAL::AudioConverterGetProperty(m_converter, kAudioConverterCompressionMagicCookie, &cookieSize, cookie.mutableSpan().data())) {
                 RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter getting kAudioConverterCompressionMagicCookie failed with %d", static_cast<int>(error));
                 return makeUnexpected(error);
             }
         }
 
         CMFormatDescriptionRef destinationFormatDescription;
-        if (auto error = PAL::CMAudioFormatDescriptionCreate(kCFAllocatorDefault, &m_destinationFormat, 0, nullptr, cookieSize, cookie.data(), nullptr, &destinationFormatDescription)) {
+        if (auto error = PAL::CMAudioFormatDescriptionCreate(kCFAllocatorDefault, &m_destinationFormat, 0, nullptr, cookieSize, cookie.span().data(), nullptr, &destinationFormatDescription)) {
             RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter CMAudioFormatDescriptionCreate failed with %d", static_cast<int>(error));
             return makeUnexpected(error);
         }
@@ -383,7 +383,7 @@ Expected<RetainPtr<CMSampleBufferRef>, OSStatus> AudioSampleBufferConverter::sam
     }
 
     CMSampleBufferRef rawSampleBuffer;
-    if (auto error = PAL::CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, nullptr, false, nullptr, nullptr, m_destinationFormatDescription.get(), numSamples, m_currentNativePresentationTimeStamp, isPCM() ? nullptr : m_destinationPacketDescriptions.data(), &rawSampleBuffer)) {
+    if (auto error = PAL::CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, nullptr, false, nullptr, nullptr, m_destinationFormatDescription.get(), numSamples, m_currentNativePresentationTimeStamp, isPCM() ? nullptr : m_destinationPacketDescriptions.span().data(), &rawSampleBuffer)) {
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter CMAudioSampleBufferCreateWithPacketDescriptions failed with %d", static_cast<int>(error));
         return makeUnexpected(error);
     }
@@ -407,7 +407,7 @@ OSStatus AudioSampleBufferConverter::audioConverterComplexInputDataProc(AudioCon
 
 OSStatus AudioSampleBufferConverter::provideSourceDataNumOutputPackets(UInt32* numOutputPacketsPtr, AudioBufferList* audioBufferList, AudioStreamPacketDescription** packetDescriptionOut)
 {
-    assertIsCurrent(queue().get());
+    assertIsCurrent(queue());
 
     if (packetDescriptionOut)
         *packetDescriptionOut = NULL;
@@ -441,7 +441,7 @@ OSStatus AudioSampleBufferConverter::provideSourceDataNumOutputPackets(UInt32* n
     m_packetDescriptions = getPacketDescriptions(sampleBuffer.get());
     if (packetDescriptionOut) {
         *numOutputPacketsPtr = m_packetDescriptions.size();
-        *packetDescriptionOut = m_packetDescriptions.data();
+        *packetDescriptionOut = m_packetDescriptions.mutableSpan().data();
     } else if (m_sourceFormat.mFormatID == kAudioFormatLinearPCM) {
         ASSERT(audioBufferList->mNumberBuffers && m_sourceFormat.mBytesPerPacket);
         *numOutputPacketsPtr = (audioBufferListSpan[0].mDataByteSize / m_sourceFormat.mBytesPerPacket);
@@ -453,14 +453,14 @@ OSStatus AudioSampleBufferConverter::provideSourceDataNumOutputPackets(UInt32* n
 
 bool AudioSampleBufferConverter::isPCM() const
 {
-    assertIsCurrent(queue().get());
+    assertIsCurrent(queue());
 
     return m_destinationFormat.mFormatID == kAudioFormatLinearPCM;
 }
 
 void AudioSampleBufferConverter::setTimeFromSample(CMSampleBufferRef sample)
 {
-    assertIsCurrent(queue().get());
+    assertIsCurrent(queue());
 
     m_currentNativePresentationTimeStamp = PAL::CMSampleBufferGetPresentationTimeStamp(sample);
     m_currentOutputPresentationTimeStamp = PAL::CMSampleBufferGetOutputPresentationTimeStamp(sample);
@@ -468,7 +468,7 @@ void AudioSampleBufferConverter::setTimeFromSample(CMSampleBufferRef sample)
 
 void AudioSampleBufferConverter::processSampleBuffers()
 {
-    assertIsCurrent(queue().get());
+    assertIsCurrent(queue());
     using namespace PAL; // For CMTIME_COMPARE_INLINE
 
     if (!m_converter) {
@@ -496,7 +496,7 @@ void AudioSampleBufferConverter::processSampleBuffers()
             ASSERT(fillBufferList.bufferCount() == 1);
             auto* buffer = fillBufferList.buffer(0);
             buffer->mDataByteSize = m_destinationBuffer.capacity();
-            buffer->mData = m_destinationBuffer.data();
+            buffer->mData = m_destinationBuffer.mutableSpan().data();
         }
         size_t sizeRemaining = fillBufferList.buffer(0)->mDataByteSize;
         size_t bytesWritten = 0;
@@ -514,7 +514,7 @@ void AudioSampleBufferConverter::processSampleBuffers()
                     buffer.mData = span.data();
                 }
             }
-            if (auto error = AudioConverterFillComplexBuffer(m_converter, audioConverterComplexInputDataProc, this, &numOutputPackets, fillBufferList.list(), isPCM() ? nullptr : m_destinationPacketDescriptions.data())) {
+            if (auto error = AudioConverterFillComplexBuffer(m_converter, audioConverterComplexInputDataProc, this, &numOutputPackets, fillBufferList.list(), isPCM() ? nullptr : m_destinationPacketDescriptions.mutableSpan().data())) {
                 if (error != kNoMoreDataErr) {
                     RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter AudioConverterFillComplexBuffer failed with %d", static_cast<int>(error));
                     m_lastError = error;
@@ -584,7 +584,7 @@ Ref<GenericPromise> AudioSampleBufferConverter::addSampleBuffer(CMSampleBufferRe
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return GenericPromise::createAndReject();
-        assertIsCurrent(protectedThis->queue().get());
+        assertIsCurrent(protectedThis->queue());
         if (!protectedThis->m_isEncoding)
             return GenericPromise::createAndReject();
         protectedThis->processSampleBuffer(buffer.get());

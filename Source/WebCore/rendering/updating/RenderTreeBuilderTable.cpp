@@ -27,6 +27,8 @@
 #include "RenderTreeBuilderTable.h"
 
 #include "RenderElementInlines.h"
+#include "RenderObjectStyle.h"
+#include "RenderStyleInlines.h"
 #include "RenderTableCaption.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
@@ -57,7 +59,7 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTableR
     }
 
     auto createAnonymousTableCell = [&] (auto& parent) -> RenderTableCell& {
-        auto newCell = RenderTableCell::createAnonymousWithParentRenderer(parent);
+        auto newCell = createAnonymousTableCellWithStyle(parent.protectedDocument(), parent.style());
         auto& cell = *newCell;
         m_builder.attach(parent, WTFMove(newCell), beforeChild);
         beforeChild = nullptr;
@@ -118,7 +120,7 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTableS
     if (auto* tableRow = dynamicDowncast<RenderTableRow>(parentCandidate); tableRow && tableRow->isAnonymous() && !tableRow->isBeforeOrAfterContent())
         return *tableRow;
 
-    auto newRow = RenderTableRow::createAnonymousWithParentRenderer(parent);
+    auto newRow = createAnonymousTableRowWithStyle(parent.protectedDocument(), parent.style());
     auto& row = *newRow;
     m_builder.attach(parent, WTFMove(newRow), beforeChild);
     beforeChild = nullptr;
@@ -183,7 +185,7 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTable&
         && beforeChild->style().display() != DisplayType::TableColumnGroup)
         beforeChild = nullptr;
 
-    auto newSection = RenderTableSection::createAnonymousWithParentRenderer(parent);
+    auto newSection = createAnonymousTableSectionWithStyle(parent.protectedDocument(), parent.style());
     auto& section = *newSection;
     m_builder.attach(parent, WTFMove(newSection), beforeChild);
     beforeChild = nullptr;
@@ -275,12 +277,40 @@ RenderPtr<RenderObject> RenderTreeBuilder::Table::collapseAndDetachAnonymousNext
 void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingCells(const RenderTableCell& willBeDestroyed)
 {
     if (auto nextCellToDestroy = collapseAndDetachAnonymousNextSibling(willBeDestroyed.row(), willBeDestroyed.previousCell(), willBeDestroyed.nextCell()))
-        downcast<RenderTableCell>(*nextCellToDestroy).deleteLines();
+        downcast<RenderTableCell>(*nextCellToDestroy).invalidateLineLayout(RenderBlockFlow::InvalidationReason::InternalMove);
 }
 
 void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows(const RenderTableRow& willBeDestroyed)
 {
     auto toDestroy = collapseAndDetachAnonymousNextSibling(willBeDestroyed.section(), willBeDestroyed.previousRow(), willBeDestroyed.nextRow());
+}
+
+RenderPtr<RenderTable> RenderTreeBuilder::Table::createAnonymousTableWithStyle(Document& document, const RenderStyle& style)
+{
+    auto table = createRenderer<RenderTable>(RenderObject::Type::Table, document, RenderStyle::createAnonymousStyleWithDisplay(style, style.display() == DisplayType::Inline ? DisplayType::InlineTable : DisplayType::Table));
+    table->initializeStyle();
+    return table;
+}
+
+RenderPtr<RenderTableCell> RenderTreeBuilder::Table::createAnonymousTableCellWithStyle(Document& document, const RenderStyle& style)
+{
+    auto cell = createRenderer<RenderTableCell>(document, RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::TableCell));
+    cell->initializeStyle();
+    return cell;
+}
+
+RenderPtr<RenderTableRow> RenderTreeBuilder::Table::createAnonymousTableRowWithStyle(Document& document, const RenderStyle& style)
+{
+    auto row = createRenderer<RenderTableRow>(document, RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::TableRow));
+    row->initializeStyle();
+    return row;
+}
+
+RenderPtr<RenderTableSection> RenderTreeBuilder::Table::createAnonymousTableSectionWithStyle(Document& document, const RenderStyle& style)
+{
+    auto section = createRenderer<RenderTableSection>(document, RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::TableRowGroup));
+    section->initializeStyle();
+    return section;
 }
 
 }

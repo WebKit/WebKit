@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,7 +93,7 @@ private:
     JSC::Weak<JSC::JSObject> m_callback;
 
 #if ASSERT_ENABLED
-    Ref<Thread> m_thread { Thread::currentSingleton() };
+    const Ref<Thread> m_thread { Thread::currentSingleton() };
 #endif
 };
 

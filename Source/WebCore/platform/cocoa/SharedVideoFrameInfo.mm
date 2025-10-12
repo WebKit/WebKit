@@ -198,13 +198,13 @@ RetainPtr<CVPixelBufferRef> SharedVideoFrameInfo::createPixelBufferFromMemory(st
             return nullptr;
     }
 
-    auto pixelBuffer = adoptCF(rawPixelBuffer);
-    auto status = CVPixelBufferLockBaseAddress(rawPixelBuffer, 0);
+    RetainPtr pixelBuffer = adoptCF(rawPixelBuffer);
+    auto status = CVPixelBufferLockBaseAddress(pixelBuffer.get(), 0);
     if (status != noErr)
         return nullptr;
 
-    auto scope = makeScopeExit([&rawPixelBuffer] {
-        CVPixelBufferUnlockBaseAddress(rawPixelBuffer, 0);
+    auto scope = makeScopeExit([pixelBuffer] {
+        CVPixelBufferUnlockBaseAddress(pixelBuffer.get(), 0);
     });
 
     data = copyToCVPixelBufferPlane(rawPixelBuffer, 0, data, m_height, m_bytesPerRow);
@@ -225,8 +225,8 @@ bool SharedVideoFrameInfo::writePixelBuffer(CVPixelBufferRef pixelBuffer, std::s
         return false;
     }
 
-    auto scope = makeScopeExit([&pixelBuffer] {
-        CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
+    auto scope = makeScopeExit([pixelBuffer = RetainPtr { pixelBuffer }] {
+        CVPixelBufferUnlockBaseAddress(pixelBuffer.get(), kCVPixelBufferLock_ReadOnly);
     });
 
     encode(data);

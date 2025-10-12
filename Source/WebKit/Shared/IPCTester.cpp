@@ -242,6 +242,11 @@ void IPCTester::stopIfNeeded()
     }
 }
 
+void IPCTester::emptyMessageWithReply(CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    completionHandler(0x1);
+}
+
 } // namespace WebKit
 
 #endif

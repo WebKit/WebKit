@@ -49,7 +49,7 @@ static void webkit_permission_request_interface_init(WebKitPermissionRequestInte
 
 struct _WebKitPointerLockPermissionRequestPrivate {
     GRefPtr<WebKitWebView> webView;
-    bool madeDecision;
+    CompletionHandler<void(bool)> completionHandler;
 };
 
 WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE(
@@ -64,11 +64,10 @@ static void webkitPointerLockPermissionRequestAllow(WebKitPermissionRequest* req
     WebKitPointerLockPermissionRequestPrivate* priv = WEBKIT_POINTER_LOCK_PERMISSION_REQUEST(request)->priv;
 
     // Only one decision at a time.
-    if (priv->madeDecision)
+    if (!priv->completionHandler)
         return;
 
-    webkitWebViewRequestPointerLock(priv->webView.get());
-    priv->madeDecision = true;
+    webkitWebViewRequestPointerLock(priv->webView.get(), WTFMove(priv->completionHandler));
 }
 
 static void webkitPointerLockPermissionRequestDeny(WebKitPermissionRequest* request)
@@ -78,11 +77,10 @@ static void webkitPointerLockPermissionRequestDeny(WebKitPermissionRequest* requ
     WebKitPointerLockPermissionRequestPrivate* priv = WEBKIT_POINTER_LOCK_PERMISSION_REQUEST(request)->priv;
 
     // Only one decision at a time.
-    if (priv->madeDecision)
+    if (!priv->completionHandler)
         return;
 
-    webkitWebViewDenyPointerLockRequest(priv->webView.get());
-    priv->madeDecision = true;
+    webkitWebViewDenyPointerLockRequest(WTFMove(priv->completionHandler));
 }
 #endif // ENABLE(POINTER_LOCK)
 
@@ -112,15 +110,17 @@ static void webkit_pointer_lock_permission_request_class_init(WebKitPointerLockP
     objectClass->dispose = webkitPointerLockPermissionRequestDispose;
 }
 
-WebKitPointerLockPermissionRequest* webkitPointerLockPermissionRequestCreate(WebKitWebView* webView)
+WebKitPointerLockPermissionRequest* webkitPointerLockPermissionRequestCreate(WebKitWebView* webView, CompletionHandler<void(bool)>&& completionHandler)
 {
     WebKitPointerLockPermissionRequest* request = WEBKIT_POINTER_LOCK_PERMISSION_REQUEST(g_object_new(WEBKIT_TYPE_POINTER_LOCK_PERMISSION_REQUEST, nullptr));
     request->priv->webView = webView;
+    request->priv->completionHandler = WTFMove(completionHandler);
     return request;
 }
 
 void webkitPointerLockPermissionRequestDidLosePointerLock(WebKitPointerLockPermissionRequest* request)
 {
-    request->priv->madeDecision = true;
     request->priv->webView = nullptr;
+    if (request->priv->completionHandler)
+        request->priv->completionHandler(false);
 }

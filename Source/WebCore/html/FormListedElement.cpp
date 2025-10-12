@@ -281,7 +281,7 @@ void FormListedElement::setCustomValidity(const String& error)
 void FormListedElement::resetFormAttributeTargetObserver()
 {
     ASSERT_WITH_SECURITY_IMPLICATION(asHTMLElement().isConnected());
-    m_formAttributeTargetObserver = makeUnique<FormAttributeTargetObserver>(asHTMLElement().attributeWithoutSynchronization(formAttr), *this);
+    m_formAttributeTargetObserver = makeUnique<FormAttributeTargetObserver>(asProtectedHTMLElement()->attributeWithoutSynchronization(formAttr), *this);
 }
 
 void FormListedElement::formAttributeTargetChanged()
@@ -291,7 +291,7 @@ void FormListedElement::formAttributeTargetChanged()
 
 const AtomString& FormListedElement::name() const
 {
-    const AtomString& name = asHTMLElement().getNameAttribute();
+    const AtomString& name = asProtectedHTMLElement()->getNameAttribute();
     return name.isNull() ? emptyAtom() : name;
 }
 

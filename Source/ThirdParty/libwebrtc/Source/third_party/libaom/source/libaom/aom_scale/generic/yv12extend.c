@@ -487,7 +487,7 @@ int aom_yv12_realloc_with_new_border_c(YV12_BUFFER_CONFIG *ybf, int new_border,
 
     // Now free the old buffer and replace with the new
     aom_free_frame_buffer(ybf);
-    memcpy(ybf, &new_buf, sizeof(new_buf));
+    *ybf = new_buf;
     return 0;
   }
   return -2;

@@ -26,9 +26,9 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "RTCDataChannelIdentifier.h"
-#include "RTCDataChannelState.h"
-#include "RTCErrorDetailType.h"
+#include <WebCore/RTCDataChannelIdentifier.h>
+#include <WebCore/RTCDataChannelState.h>
+#include <WebCore/RTCErrorDetailType.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,7 +42,7 @@ public:
     virtual void didReceiveStringData(RTCDataChannelIdentifier, const String&) = 0;
     virtual void didReceiveRawData(RTCDataChannelIdentifier, std::span<const uint8_t>) = 0;
     virtual void didDetectError(RTCDataChannelIdentifier, RTCErrorDetailType, const String&) = 0;
-    virtual void bufferedAmountIsDecreasing(RTCDataChannelIdentifier, size_t) = 0;
+    virtual void bufferedAmountIsDecreasing(RTCDataChannelIdentifier, uint64_t) = 0;
 };
 
 } // namespace WebCore

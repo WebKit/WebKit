@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,11 +29,13 @@
 #if PLATFORM(MAC)
 
 #import "AXIsolatedObject.h"
+#import "AXNotifications.h"
+#import "AXObjectCacheInlines.h"
 #import "AXSearchManager.h"
 #import "AccessibilityObject.h"
-#import "AccessibilityTable.h"
 #import "CocoaAccessibilityConstants.h"
 #import "DeprecatedGlobalSettings.h"
+#import "DocumentView.h"
 #import "LocalFrameView.h"
 #import "RenderObject.h"
 #import "RenderView.h"
@@ -44,13 +46,13 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <ApplicationServices/ApplicationServicesPriv.h>
+#endif
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #import <pal/spi/cocoa/AccessibilitySupportSPI.h>
 #import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <ApplicationServices/ApplicationServicesPriv.h>
 #endif
 
 // Very large strings can negatively impact the performance of notifications, so this length is chosen to try to fit an average paragraph or line of text, but not allow strings to be large enough to hurt performance.
@@ -192,6 +194,13 @@ static AXTextSelectionGranularity platformGranularityForWebCoreGranularity(WebCo
 
 namespace WebCore {
 
+void AXObjectCache::initializeUserDefaultValues()
+{
+    // This is only set in the constructor, so the page must be reloaded if this default is changed.
+    RetainPtr userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:@"com.apple.Accessibility"]);
+    gAccessibilityDOMIdentifiersEnabled = [userDefaults boolForKey:@"AXEnableWebKitDOMIdentifier"];
+}
+
 void AXObjectCache::attachWrapper(AccessibilityObject& object)
 {
     RetainPtr<WebAccessibilityObjectWrapper> wrapper = adoptNS([[WebAccessibilityObjectWrapper alloc] initWithAccessibilityObject:object]);
@@ -228,9 +237,10 @@ static void exerciseIsIgnored(AccessibilityObject& object)
 {
     object.updateBackingStore();
     if (object.isAttachment()) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [[object.wrapper() attachmentView] accessibilityIsIgnored];
-ALLOW_DEPRECATED_DECLARATIONS_END
+        ALLOW_DEPRECATED_DECLARATIONS_END
+
         return;
     }
     object.isIgnored();
@@ -281,7 +291,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
         macNotification = NSAccessibilityInvalidStatusChangedNotification;
         break;
     case AXNotification::SelectedChildrenChanged:
-        if (object.isTable() && object.isExposable())
+        if (object.isExposableTable())
             macNotification = NSAccessibilitySelectedRowsChangedNotification;
         else
             macNotification = NSAccessibilitySelectedChildrenChangedNotification;
@@ -392,12 +402,30 @@ void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
 
 void AXObjectCache::onDocumentRenderTreeCreation(const Document& document)
 {
-    if (m_sortedIDListsInitialized) {
-        // We only need to do this work if the sorted ID list has already been initialized.
-        m_deferredDocumentAddedList.add(document);
-        if (!m_performCacheUpdateTimer.isActive())
-            m_performCacheUpdateTimer.startOneShot(0_s);
-    }
+    RefPtr object = getOrCreate(document.renderView());
+    if (!object || !object->isWebArea())
+        return;
+    queueUnsortedObject(object.releaseNonNull(), PreSortedObjectType::WebArea);
+}
+
+void AXObjectCache::deferSortForNewLiveRegion(Ref<AccessibilityObject>&& object)
+{
+    queueUnsortedObject(WTFMove(object), PreSortedObjectType::LiveRegion);
+}
+
+void AXObjectCache::queueUnsortedObject(Ref<AccessibilityObject>&& object, PreSortedObjectType type)
+{
+    if (!m_sortedIDListsInitialized)
+        return;
+    // We only need to do this work if the sorted ID list has already been initialized.
+
+    auto unsortedObjectListIterator = m_deferredUnsortedObjects.ensure(type, [&] {
+        return Vector<Ref<AccessibilityObject>>();
+    }).iterator;
+    unsortedObjectListIterator->value.appendIfNotContains(WTFMove(object));
+
+    if (!m_performCacheUpdateTimer.isActive() && !m_performingDeferredCacheUpdate)
+        m_performCacheUpdateTimer.startOneShot(0_s);
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -462,18 +490,18 @@ AXTextStateChangeIntent AXObjectCache::inferDirectionFromIntent(AccessibilityObj
 
 void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObject* object, const AXTextStateChangeIntent& originalIntent, const VisibleSelection& selection)
 {
-    if (!object)
-        object = rootWebArea();
+    RefPtr axObject = object;
+    if (!axObject)
+        axObject = rootWebArea();
 
-    if (!object)
+    if (!axObject)
         return;
-    RefPtr protectedObject = object;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
 #endif
 
-    auto intent = inferDirectionFromIntent(*object, originalIntent, selection);
+    auto intent = inferDirectionFromIntent(*axObject, originalIntent, selection);
 
     auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:5]);
     if (m_isSynchronizingSelection)
@@ -510,17 +538,17 @@ void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObj
             [userInfo setObject:(id)textMarkerRange forKey:NSAccessibilitySelectedTextMarkerRangeAttribute];
     }
 
-    if (id wrapper = object->wrapper()) {
+    if (id wrapper = axObject->wrapper()) {
         [userInfo setObject:wrapper forKey:NSAccessibilityTextChangeElement];
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        createIsolatedObjectIfNeeded(*object);
+        createIsolatedObjectIfNeeded(*axObject);
 #endif
     }
 
     if (RefPtr root = rootWebArea()) {
         AXPostNotificationWithUserInfo(root->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo.get());
-        if (root->wrapper() != object->wrapper())
-            AXPostNotificationWithUserInfo(object->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo.get());
+        if (root->wrapper() != axObject->wrapper())
+            AXPostNotificationWithUserInfo(axObject->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo.get());
     }
 }
 
@@ -591,48 +619,48 @@ void AXObjectCache::postUserInfoForChanges(AccessibilityObject& rootWebArea, Acc
 
 void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject* object, AXTextEditType deletionType, const String& deletedText, AXTextEditType insertionType, const String& insertedText, const VisiblePosition& position)
 {
-    if (!object)
-        object = rootWebArea();
+    RefPtr axObject = object;
+    if (!axObject)
+        axObject = rootWebArea();
 
-    if (!object)
+    if (!axObject)
         return;
-    RefPtr protectedObject = object;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
 #endif
 
     auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
-    if (NSDictionary *change = textReplacementChangeDictionary(*this, *object, deletionType, deletedText, position))
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, deletionType, deletedText, position))
         [changes addObject:change];
-    if (NSDictionary *change = textReplacementChangeDictionary(*this, *object, insertionType, insertedText, position))
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, insertionType, insertedText, position))
         [changes addObject:change];
 
     if (RefPtr root = rootWebArea())
-        postUserInfoForChanges(*root, *object, changes.get());
+        postUserInfoForChanges(*root, *axObject, changes.get());
 }
 
 void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* object, const String& deletedText, const String& insertedText)
 {
-    if (!object)
-        object = rootWebArea();
+    RefPtr axObject = object;
+    if (!axObject)
+        axObject = rootWebArea();
 
-    if (!object)
+    if (!axObject)
         return;
-    RefPtr protectedObject = object;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
 #endif
 
     auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
-    if (NSDictionary *change = textReplacementChangeDictionary(*this, *object, AXTextEditTypeDelete, deletedText, { }))
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, AXTextEditTypeDelete, deletedText, { }))
         [changes addObject:change];
-    if (NSDictionary *change = textReplacementChangeDictionary(*this, *object, AXTextEditTypeInsert, insertedText, { }))
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, AXTextEditTypeInsert, insertedText, { }))
         [changes addObject:change];
 
     if (RefPtr root = rootWebArea())
-        postUserInfoForChanges(*root, *object, changes.get());
+        postUserInfoForChanges(*root, *axObject, changes.get());
 }
 
 void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* axFrameObject, AXLoadingEvent loadingEvent)
@@ -655,7 +683,7 @@ void AXObjectCache::platformHandleFocusedUIElementChanged(Element*, Element*)
     if (!axShouldRepostNotificationsForTests) [[unlikely]]
         return;
 
-    auto* rootWebArea = this->rootWebArea();
+    RefPtr rootWebArea = this->rootWebArea();
     if (!rootWebArea)
         return;
 
@@ -668,11 +696,9 @@ void AXObjectCache::handleScrolledToAnchor(const Node&)
 
 void AXObjectCache::platformPerformDeferredCacheUpdate()
 {
-    m_deferredDocumentAddedList.forEach([this] (const auto& document) {
-        if (RefPtr object = getOrCreate(document.renderView()); object && object->isWebArea())
-            addSortedObject(*object, PreSortedObjectType::WebArea);
-    });
-    m_deferredDocumentAddedList.clear();
+    for (auto& unsortedObjectsEntry : m_deferredUnsortedObjects)
+        addSortedObjects(WTFMove(unsortedObjectsEntry.value), unsortedObjectsEntry.key);
+    m_deferredUnsortedObjects.clear();
 }
 
 static bool isTestAXClientType(AXClientType client)
@@ -717,9 +743,11 @@ bool AXObjectCache::isIsolatedTreeEnabled()
     return enabled;
 }
 
+
+static bool axThreadInitialized = false;
+
 void AXObjectCache::initializeAXThreadIfNeeded()
 {
-    static bool axThreadInitialized = false;
     if (axThreadInitialized || !isMainThread()) [[likely]]
         return;
 
@@ -727,11 +755,16 @@ void AXObjectCache::initializeAXThreadIfNeeded()
         // Initialize the role map before the accessibility thread starts so that it's safe for both threads
         // to use (the only thing that needs to be thread-safe about it is initialization since it's not modified
         // after creation and is never destroyed).
-        initializeRoleMap();
+        Accessibility::initializeRoleMap();
 
         _AXUIElementUseSecondaryAXThread(true);
         axThreadInitialized = true;
     }
+}
+
+bool AXObjectCache::isAXThreadInitialized()
+{
+    return axThreadInitialized;
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
@@ -772,7 +805,7 @@ AXCoreObject::AccessibilityChildrenVector AXObjectCache::sortedNonRootWebAreas()
     return objectsForIDs(m_sortedNonRootWebAreaIDs);
 }
 
-void AXObjectCache::addSortedObject(AccessibilityObject& object, PreSortedObjectType type)
+void AXObjectCache::addSortedObjects(Vector<Ref<AccessibilityObject>>&& objectsToSort, PreSortedObjectType type)
 {
     ASSERT(type == PreSortedObjectType::LiveRegion || type == PreSortedObjectType::WebArea);
 
@@ -783,13 +816,9 @@ void AXObjectCache::addSortedObject(AccessibilityObject& object, PreSortedObject
         return;
     }
 
-    auto axID = object.objectID();
     Vector<AXID>& sortedList = type == PreSortedObjectType::LiveRegion ? m_sortedLiveRegionIDs : m_sortedNonRootWebAreaIDs;
-    if (sortedList.contains(axID))
-        return;
-
     auto updateIsolatedTree = [&] () {
-        if (RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID)) {
+        if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID)) {
             if (type == PreSortedObjectType::LiveRegion)
                 tree->sortedLiveRegionsDidChange(m_sortedLiveRegionIDs);
             else
@@ -797,9 +826,9 @@ void AXObjectCache::addSortedObject(AccessibilityObject& object, PreSortedObject
         }
     };
 
-    size_t initialSize = sortedList.size();
-    if (!initialSize) {
-        sortedList.append(axID);
+    if (sortedList.isEmpty() && objectsToSort.size() == 1) {
+        // Fast path for when there's only object of the given type, avoiding the need for a tree scan.
+        sortedList.append(objectsToSort[0]->objectID());
         updateIsolatedTree();
         return;
     }
@@ -813,60 +842,40 @@ void AXObjectCache::addSortedObject(AccessibilityObject& object, PreSortedObject
         updateIsolatedTree();
     });
 
-    auto searchManager = AXSearchManager();
-    auto key = type == PreSortedObjectType::LiveRegion
-        ? AccessibilitySearchKey::LiveRegion
-        : AccessibilitySearchKey::Frame;
-    // We have to find where this object is relative to the others to put it in the right spot.
-    RefPtr<AXCoreObject> start = nullptr;
-    for (size_t i = 0; i < sortedList.size(); i++) {
-        if (RefPtr result = searchManager.findNextStartingFrom(key, start.get(), *webArea)) {
-            if (result->objectID() == sortedList[i]) {
-                if (i == sortedList.size() - 1) {
-                    // We got all the way to the last existing element in the list without inserting
-                    // the new object, so the new object must be at the very end. Append it.
-                    sortedList.append(object.objectID());
-                    return;
-                }
-                start = result.get();
-            } else if (result->objectID() == object.objectID()) {
-                // We found the right place for this object, so we're done.
-                sortedList.insert(i, result->objectID());
-                return;
-            } else {
-                // The object we found doesn't match up with what we expected at sortedList[i].
-                // Otherwise, we can repair sortedList outside the loop. Start by removing the element
-                // at [i] and all remaining ones.
-                sortedList.removeAt(i, sortedList.size() - 1 - i);
-                sortedList.appendIfNotContains(result->objectID());
-                start = result;
-                break;
-            }
-        } else {
-            // There are no remaining objects of the expected type, so anything remaining in sortedList
-            // must be outdated.
-            sortedList.removeAt(i, sortedList.size() - 1 - i);
-            // If we didn't end up with the passed in object in our list, something probably went wrong,
-            // or the tree is in an incorrect state.
-            ASSERT(sortedList.contains(object.objectID()));
-            return;
-        }
+    unsigned totalExpectedObjectCount = objectsToSort.size();
+    for (const auto& existingSortedObjectID : sortedList) {
+        bool containedExistingObject = objectsToSort.containsIf([&] (const auto& objectToSort) {
+            return objectToSort->objectID() == existingSortedObjectID;
+        });
+
+        if (!containedExistingObject)
+            ++totalExpectedObjectCount;
     }
 
-    while (start) {
-        if (RefPtr result = searchManager.findNextStartingFrom(key, start.get(), *webArea)) {
-            if (result == start) {
-                // The search returned the same thing it started with, which probably shouldn't happen.
-                ASSERT_NOT_REACHED();
+    sortedList.clear();
+    sortedList.reserveCapacity(totalExpectedObjectCount);
+
+    RefPtr current = rootWebArea();
+    while ((current = current ? downcast<AccessibilityObject>(current->nextInPreOrder()) : nullptr)) {
+        bool shouldAppend = type == PreSortedObjectType::LiveRegion && current->supportsLiveRegion();
+        shouldAppend = shouldAppend || (type == PreSortedObjectType::WebArea && current->isWebArea());
+
+        if (shouldAppend) {
+            // There's no reason to ever add the same object twice, as that means we walked over it twice
+            // in our pre-order tree traversal.
+            ASSERT(!sortedList.contains(current->objectID()));
+            sortedList.appendIfNotContains(current->objectID());
+
+            if (sortedList.size() >= totalExpectedObjectCount)
                 break;
-            }
-            sortedList.appendIfNotContains(result->objectID());
-            start = result;
-            continue;
         }
-        break;
     }
-    ASSERT(sortedList.contains(object.objectID()));
+    sortedList.shrinkToFit();
+
+#if ASSERT_ENABLED
+    for (const auto& object : objectsToSort)
+        ASSERT(sortedList.contains(object->objectID()));
+#endif
 }
 
 void AXObjectCache::removeLiveRegion(AccessibilityObject& object)
@@ -875,7 +884,7 @@ void AXObjectCache::removeLiveRegion(AccessibilityObject& object)
         return;
 
     if (m_sortedLiveRegionIDs.removeAll(object.objectID())) {
-        if (RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID))
+        if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID))
             tree->sortedLiveRegionsDidChange(m_sortedLiveRegionIDs);
     }
 }
@@ -886,23 +895,24 @@ void AXObjectCache::initializeSortedIDLists()
         return;
     m_sortedIDListsInitialized = true;
 
-    RefPtr root = rootWebArea();
-    if (root) {
-        auto allLiveRegionsAndWebAreas = AXSearchManager().findAllMatchingObjectsIgnoringCache({ AccessibilitySearchKey::LiveRegion, AccessibilitySearchKey::Frame }, *root);
-
-        for (const auto& resultObject : allLiveRegionsAndWebAreas) {
-            if (resultObject->isWebArea())
-                m_sortedNonRootWebAreaIDs.appendIfNotContains(resultObject->objectID());
-            else {
-                ASSERT(resultObject->supportsLiveRegion());
-                m_sortedLiveRegionIDs.appendIfNotContains(resultObject->objectID());
-            }
+    RefPtr current = rootWebArea();
+    while ((current = current ? downcast<AccessibilityObject>(current->nextInPreOrder()) : nullptr)) {
+        if (current->supportsLiveRegion()) {
+            // There's no reason to ever add the same object twice, as that means we walked over it twice
+            // in our pre-order tree traversal.
+            ASSERT(!m_sortedLiveRegionIDs.contains(current->objectID()));
+            m_sortedLiveRegionIDs.appendIfNotContains(current->objectID());
+        } else if (current->isWebArea()) {
+            ASSERT(!m_sortedNonRootWebAreaIDs.contains(current->objectID()));
+            m_sortedNonRootWebAreaIDs.appendIfNotContains(current->objectID());
         }
     }
 
-    if (RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID)) {
-        tree->sortedLiveRegionsDidChange(m_sortedLiveRegionIDs);
-        tree->sortedNonRootWebAreasDidChange(m_sortedNonRootWebAreaIDs);
+    if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID)) {
+        if (m_sortedLiveRegionIDs.size())
+            tree->sortedLiveRegionsDidChange(m_sortedLiveRegionIDs);
+        if (m_sortedNonRootWebAreaIDs.size())
+            tree->sortedNonRootWebAreasDidChange(m_sortedNonRootWebAreaIDs);
     }
 }
 
@@ -1081,6 +1091,6 @@ std::optional<SimpleRange> rangeForTextMarkerRange(AXObjectCache* cache, AXTextM
     return cache->rangeForUnorderedCharacterOffsets(startCharacterOffset, endCharacterOffset);
 }
 
-}
+} // namespace WebCore
 
 #endif // PLATFORM(MAC)

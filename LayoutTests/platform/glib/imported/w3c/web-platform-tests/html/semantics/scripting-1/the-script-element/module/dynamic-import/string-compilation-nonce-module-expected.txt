@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: Refused to load http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/imports-a.js?label=setTimeout because it does not appear in the script-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/imports-a.js?label=reflected%20inline%20event%20handlers because it does not appear in the script-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/imports-a.js?label=inline%20event%20handlers%20triggered%20via%20UA%20code because it does not appear in the script-src directive of the Content Security Policy.
 
 FAIL setTimeout must inherit the nonce from the triggering script, thus execute promise_test: Unhandled rejection with value: object "TypeError: Importing a module script failed."
 PASS direct eval must inherit the nonce from the triggering script, thus execute

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "StringFunctions.h"
+#include <WebKit/WKCast.h>
 
 namespace WTR {
 
@@ -44,7 +45,8 @@ void setValue(const WKRetainPtr<WKMutableDictionaryRef>&, const char* key, const
 
 inline bool booleanValue(WKTypeRef value)
 {
-    return value && WKGetTypeID(value) == WKBooleanGetTypeID() && WKBooleanGetValue(static_cast<WKBooleanRef>(value));
+    WKBooleanRef boolean = dynamic_wk_cast<WKBooleanRef>(value);
+    return boolean && WKBooleanGetValue(boolean);
 }
 
 inline bool booleanValue(const WKRetainPtr<WKTypeRef>& value)
@@ -54,27 +56,29 @@ inline bool booleanValue(const WKRetainPtr<WKTypeRef>& value)
 
 inline WKDictionaryRef dictionaryValue(WKTypeRef value)
 {
-    return value && WKGetTypeID(value) == WKDictionaryGetTypeID() ? static_cast<WKDictionaryRef>(value) : nullptr;
+    return dynamic_wk_cast<WKDictionaryRef>(value);
 }
 
 inline WKArrayRef arrayValue(WKTypeRef value)
 {
-    return value && WKGetTypeID(value) == WKArrayGetTypeID() ? static_cast<WKArrayRef>(value) : nullptr;
+    return dynamic_wk_cast<WKArrayRef>(value);
 }
 
 inline double doubleValue(WKTypeRef value)
 {
-    return value && WKGetTypeID(value) == WKDoubleGetTypeID() ? WKDoubleGetValue(static_cast<WKDoubleRef>(value)) : 0;
+    WKDoubleRef d = dynamic_wk_cast<WKDoubleRef>(value);
+    return d ? WKDoubleGetValue(d) : 0;
 }
 
 inline std::optional<double> optionalDoubleValue(WKTypeRef value)
 {
-    return value && WKGetTypeID(value) == WKDoubleGetTypeID() ? std::make_optional(WKDoubleGetValue(static_cast<WKDoubleRef>(value))) : std::nullopt;
+    WKDoubleRef d = dynamic_wk_cast<WKDoubleRef>(value);
+    return d ? std::make_optional(WKDoubleGetValue(d)) : std::nullopt;
 }
 
 inline WKStringRef stringValue(WKTypeRef value)
 {
-    return value && WKGetTypeID(value) == WKStringGetTypeID() ? static_cast<WKStringRef>(value) : nullptr;
+    return dynamic_wk_cast<WKStringRef>(value);
 }
 
 inline WTF::String toWTFString(WKTypeRef value)
@@ -84,7 +88,8 @@ inline WTF::String toWTFString(WKTypeRef value)
 
 inline uint64_t uint64Value(WKTypeRef value)
 {
-    return value && WKGetTypeID(value) == WKUInt64GetTypeID() ? WKUInt64GetValue(static_cast<WKUInt64Ref>(value)) : 0;
+    WKUInt64Ref i = dynamic_wk_cast<WKUInt64Ref>(value);
+    return i ? WKUInt64GetValue(i) : 0;
 }
 
 inline uint64_t uint64Value(const WKRetainPtr<WKTypeRef>& value)
@@ -110,6 +115,11 @@ inline double doubleValue(WKDictionaryRef dictionary, const char* key)
 inline WKStringRef stringValue(WKDictionaryRef dictionary, const char* key)
 {
     return stringValue(value(dictionary, key));
+}
+
+inline WKArrayRef arrayValue(WKDictionaryRef dictionary, const char* key)
+{
+    return arrayValue(value(dictionary, key));
 }
 
 inline uint64_t uint64Value(WKDictionaryRef dictionary, const char* key)

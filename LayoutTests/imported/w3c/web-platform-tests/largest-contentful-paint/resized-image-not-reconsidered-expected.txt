@@ -1,0 +1,4 @@
+
+
+PASS Resized image should not be reconsidered as LCP
+

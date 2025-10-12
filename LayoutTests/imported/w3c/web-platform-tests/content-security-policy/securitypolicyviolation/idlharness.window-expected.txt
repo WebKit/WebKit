@@ -1,33 +1,14 @@
 
 PASS idl_test setup
 PASS idl_test validation
-PASS CSPViolationReportBody interface: existence and properties of interface object
-PASS CSPViolationReportBody interface object length
-PASS CSPViolationReportBody interface object name
-PASS CSPViolationReportBody interface: existence and properties of interface prototype object
-PASS CSPViolationReportBody interface: existence and properties of interface prototype object's "constructor" property
-PASS CSPViolationReportBody interface: existence and properties of interface prototype object's @@unscopables property
-PASS CSPViolationReportBody interface: attribute documentURL
-PASS CSPViolationReportBody interface: attribute referrer
-PASS CSPViolationReportBody interface: attribute blockedURL
-PASS CSPViolationReportBody interface: attribute effectiveDirective
-PASS CSPViolationReportBody interface: attribute originalPolicy
-PASS CSPViolationReportBody interface: attribute sourceFile
-PASS CSPViolationReportBody interface: attribute sample
-PASS CSPViolationReportBody interface: attribute disposition
-PASS CSPViolationReportBody interface: attribute statusCode
-PASS CSPViolationReportBody interface: attribute lineNumber
-PASS CSPViolationReportBody interface: attribute columnNumber
 PASS SecurityPolicyViolationEvent interface: existence and properties of interface object
 PASS SecurityPolicyViolationEvent interface object length
 PASS SecurityPolicyViolationEvent interface object name
 PASS SecurityPolicyViolationEvent interface: existence and properties of interface prototype object
 PASS SecurityPolicyViolationEvent interface: existence and properties of interface prototype object's "constructor" property
 PASS SecurityPolicyViolationEvent interface: existence and properties of interface prototype object's @@unscopables property
-FAIL SecurityPolicyViolationEvent interface: attribute documentURL assert_true: The prototype object must have a property "documentURL" expected true got false
 PASS SecurityPolicyViolationEvent interface: attribute documentURI
 PASS SecurityPolicyViolationEvent interface: attribute referrer
-FAIL SecurityPolicyViolationEvent interface: attribute blockedURL assert_true: The prototype object must have a property "blockedURL" expected true got false
 PASS SecurityPolicyViolationEvent interface: attribute blockedURI
 PASS SecurityPolicyViolationEvent interface: attribute effectiveDirective
 PASS SecurityPolicyViolationEvent interface: attribute violatedDirective
@@ -36,16 +17,12 @@ PASS SecurityPolicyViolationEvent interface: attribute sourceFile
 PASS SecurityPolicyViolationEvent interface: attribute sample
 PASS SecurityPolicyViolationEvent interface: attribute disposition
 PASS SecurityPolicyViolationEvent interface: attribute statusCode
-PASS SecurityPolicyViolationEvent interface: attribute lineno
 PASS SecurityPolicyViolationEvent interface: attribute lineNumber
-PASS SecurityPolicyViolationEvent interface: attribute colno
 PASS SecurityPolicyViolationEvent interface: attribute columnNumber
 PASS SecurityPolicyViolationEvent must be primary interface of new SecurityPolicyViolationEvent("securitypolicyviolation")
 PASS Stringification of new SecurityPolicyViolationEvent("securitypolicyviolation")
-FAIL SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "documentURL" with the proper type assert_inherits: property "documentURL" not found in prototype chain
 PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "documentURI" with the proper type
 PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "referrer" with the proper type
-FAIL SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "blockedURL" with the proper type assert_inherits: property "blockedURL" not found in prototype chain
 PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "blockedURI" with the proper type
 PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "effectiveDirective" with the proper type
 PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "violatedDirective" with the proper type
@@ -54,8 +31,6 @@ PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("s
 PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "sample" with the proper type
 PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "disposition" with the proper type
 PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "statusCode" with the proper type
-PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "lineno" with the proper type
 PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "lineNumber" with the proper type
-PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "colno" with the proper type
 PASS SecurityPolicyViolationEvent interface: new SecurityPolicyViolationEvent("securitypolicyviolation") must inherit property "columnNumber" with the proper type
 

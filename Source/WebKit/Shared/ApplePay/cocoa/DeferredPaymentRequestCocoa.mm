@@ -41,7 +41,7 @@ RetainPtr<PKDeferredPaymentRequest> platformDeferredPaymentRequest(const ApplePa
 {
     auto pkDeferredPaymentRequest = adoptNS([PAL::allocPKDeferredPaymentRequestInstance()
         initWithPaymentDescription:webDeferredPaymentRequest.paymentDescription.createNSString().get()
-        deferredBilling:platformDeferredSummaryItem(webDeferredPaymentRequest.deferredBilling)
+        deferredBilling:platformDeferredSummaryItem(webDeferredPaymentRequest.deferredBilling).get()
         managementURL:adoptNS([[NSURL alloc] initWithString:webDeferredPaymentRequest.managementURL.createNSString().get()]).get()]);
     if (auto& billingAgreement = webDeferredPaymentRequest.billingAgreement; !billingAgreement.isNull())
         [pkDeferredPaymentRequest setBillingAgreement:billingAgreement.createNSString().get()];

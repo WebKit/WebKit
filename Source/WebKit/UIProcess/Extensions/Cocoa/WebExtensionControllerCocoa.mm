@@ -67,6 +67,10 @@
 #import "FoundationSPI.h"
 #endif
 
+#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
+#import <WebCore/ContentRuleListMatchedRule.h>
+#endif
+
 static constexpr Seconds purgeMatchedRulesInterval = 5_min;
 
 static NSString * const WebExtensionUniqueIdentifierKey = @"uniqueIdentifier";
@@ -279,28 +283,23 @@ void WebExtensionController::removeStorage(RefPtr<WebExtensionStorageSQLiteStore
     });
 }
 
-bool WebExtensionController::load(WebExtensionContext& extensionContext, NSError **outError)
+Expected<bool, RefPtr<API::Error>> WebExtensionController::load(WebExtensionContext& extensionContext)
 {
-    if (outError)
-        *outError = nil;
-
     if (!m_extensionContexts.add(extensionContext)) {
         RELEASE_LOG_ERROR(Extensions, "Extension context already loaded");
-        if (outError)
-            *outError = extensionContext.createError(WebExtensionContext::Error::AlreadyLoaded);
-        return false;
+        return makeUnexpected(extensionContext.createError(WebExtensionContext::Error::AlreadyLoaded));
     }
 
     if (!m_extensionContextBaseURLMap.add(extensionContext.baseURL().protocolHostAndPort(), extensionContext)) {
         RELEASE_LOG_ERROR(Extensions, "Extension context already loaded with same base URL: %{private}@", extensionContext.baseURL().createNSURL().get());
         m_extensionContexts.remove(extensionContext);
-        if (outError)
-            *outError = extensionContext.createError(WebExtensionContext::Error::BaseURLAlreadyInUse);
-        return false;
+        return makeUnexpected(extensionContext.createError(WebExtensionContext::Error::BaseURLAlreadyInUse));
     }
 
-    for (Ref processPool : m_processPools)
+    for (Ref processPool : m_processPools) {
         processPool->addMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), extensionContext.identifier(), extensionContext);
+        processPool->addMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), extensionContext.privilegedIdentifier(), extensionContext);
+    }
 
     auto scheme = extensionContext.baseURL().protocol().toString();
     m_registeredSchemeHandlers.ensure(scheme, [&]() {
@@ -316,33 +315,29 @@ bool WebExtensionController::load(WebExtensionContext& extensionContext, NSError
     if (!!extensionDirectory && !FileSystem::makeAllDirectories(extensionDirectory))
         RELEASE_LOG_ERROR(Extensions, "Failed to create directory: %{private}@", extensionDirectory.createNSString().get());
 
-    if (!extensionContext.load(*this, extensionDirectory, outError)) {
+    auto loadResult = extensionContext.load(*this, extensionDirectory);
+    if (!loadResult) {
         m_extensionContexts.remove(extensionContext);
         m_extensionContextBaseURLMap.remove(extensionContext.baseURL().protocolHostAndPort());
 
-        for (Ref processPool : m_processPools)
+        for (Ref processPool : m_processPools) {
             processPool->removeMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), extensionContext.identifier());
+            processPool->removeMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), extensionContext.privilegedIdentifier());
+        }
 
-        return false;
+        return makeUnexpected(loadResult.error());
     }
-
-    sendToAllProcesses(Messages::WebExtensionControllerProxy::Load(extensionContext.parameters()), identifier());
 
     return true;
 }
 
-bool WebExtensionController::unload(WebExtensionContext& extensionContext, NSError **outError)
+Expected<bool, RefPtr<API::Error>> WebExtensionController::unload(WebExtensionContext& extensionContext)
 {
-    if (outError)
-        *outError = nil;
-
     Ref protectedExtensionContext = extensionContext;
 
     if (!m_extensionContexts.remove(extensionContext)) {
         RELEASE_LOG_ERROR(Extensions, "Extension context not loaded");
-        if (outError)
-            *outError = extensionContext.createError(WebExtensionContext::Error::NotLoaded);
-        return false;
+        return makeUnexpected(extensionContext.createError(WebExtensionContext::Error::NotLoaded));
     }
 
     bool result = m_extensionContextBaseURLMap.remove(extensionContext.baseURL().protocolHostAndPort());
@@ -351,11 +346,14 @@ bool WebExtensionController::unload(WebExtensionContext& extensionContext, NSErr
 
     sendToAllProcesses(Messages::WebExtensionControllerProxy::Unload(extensionContext.identifier()), identifier());
 
-    for (Ref processPool : m_processPools)
+    for (Ref processPool : m_processPools) {
         processPool->removeMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), extensionContext.identifier());
+        processPool->removeMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), extensionContext.privilegedIdentifier());
+    }
 
-    if (!extensionContext.unload(outError))
-        return false;
+    auto unloadResult = extensionContext.unload();
+    if (!unloadResult)
+        return makeUnexpected(unloadResult.error());
 
     return true;
 }
@@ -364,7 +362,12 @@ void WebExtensionController::unloadAll()
 {
     auto contextsCopy = m_extensionContexts;
     for (Ref context : contextsCopy)
-        unload(context, nullptr);
+        unload(context);
+}
+
+void WebExtensionController::dispatchDidLoad(WebExtensionContext& context)
+{
+    sendToAllProcesses(Messages::WebExtensionControllerProxy::Load(context.parameters(WebExtensionContext::IncludePrivilegedIdentifier::No)), identifier());
 }
 
 void WebExtensionController::addPage(WebPageProxy& page)
@@ -416,8 +419,10 @@ void WebExtensionController::addProcessPool(WebProcessPool& processPool)
 
     processPool.addMessageReceiver(Messages::WebExtensionController::messageReceiverName(), identifier(), *this);
 
-    for (Ref context : m_extensionContexts)
+    for (Ref context : m_extensionContexts) {
         processPool.addMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), context->identifier(), context);
+        processPool.addMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), context->privilegedIdentifier(), context);
+    }
 }
 
 void WebExtensionController::removeProcessPool(WebProcessPool& processPool)
@@ -430,8 +435,10 @@ void WebExtensionController::removeProcessPool(WebProcessPool& processPool)
 
     processPool.removeMessageReceiver(Messages::WebExtensionController::messageReceiverName(), identifier());
 
-    for (Ref context : m_extensionContexts)
+    for (Ref context : m_extensionContexts) {
         processPool.removeMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), context->identifier());
+        processPool.removeMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), context->privilegedIdentifier());
+    }
 
     m_processPools.remove(processPool);
 }
@@ -504,7 +511,7 @@ void WebExtensionController::removeWebsiteDataStore(WebsiteDataStore& dataStore)
 
     m_websiteDataStores.remove(dataStore);
 
-    if (RefPtr observer = protectedCookieStoreObserver())
+    if (RefPtr observer = m_cookieStoreObserver)
         dataStore.protectedCookieStore()->unregisterObserver(*observer);
 
     if (m_websiteDataStores.isEmptyIgnoringNullReferences())
@@ -649,9 +656,34 @@ void WebExtensionController::handleContentRuleListNotification(WebPageProxyIdent
     if (!savedMatchedRule || m_purgeOldMatchedRulesTimer)
         return;
 
-    m_purgeOldMatchedRulesTimer = makeUnique<RunLoop::Timer>(RunLoop::protectedMain(), this, &WebExtensionController::purgeOldMatchedRules);
+    m_purgeOldMatchedRulesTimer = makeUnique<RunLoop::Timer>(RunLoop::mainSingleton(), "WebExtensionController::PurgeOldMatchedRulesTimer"_s, this, &WebExtensionController::purgeOldMatchedRules);
     m_purgeOldMatchedRulesTimer->startRepeating(purgeMatchedRulesInterval);
 }
+
+#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
+void WebExtensionController::handleContentRuleListMatchedRule(WebPageProxyIdentifier pageID, WebCore::ContentRuleListMatchedRule& matchedRule)
+{
+    auto contentRuleListIdentifier = matchedRule.rule.extensionId;
+    if (!contentRuleListIdentifier.has_value())
+        return;
+
+    for (Ref context : m_extensionContexts) {
+        if (context->uniqueIdentifier() != contentRuleListIdentifier.value())
+            continue;
+
+        RefPtr tab = context->getTab(pageID);
+        if (!tab)
+            break;
+
+        // FIXME: <rdar://99141106> Implement declarativeNetRequest.testMatchOutcome; until then, extensionId should be null
+        matchedRule.rule.extensionId = std::nullopt;
+        matchedRule.request.tabId = toWebAPI(tab->identifier());
+        context->handleContentRuleListMatchedRule(*tab, matchedRule);
+
+        break;
+    }
+}
+#endif
 
 void WebExtensionController::purgeOldMatchedRules()
 {

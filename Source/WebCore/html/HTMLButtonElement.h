@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include "HTMLFormControlElement.h"
+#include <WebCore/HTMLFormControlElement.h>
 
 namespace WebCore {
 
@@ -35,13 +35,9 @@ class HTMLButtonElement final : public HTMLFormControlElement {
 public:
     static Ref<HTMLButtonElement> create(const QualifiedName&, Document&, HTMLFormElement*);
     static Ref<HTMLButtonElement> create(Document&);
-
-    WEBCORE_EXPORT void setType(const AtomString&);
     
     const AtomString& value() const;
-
     const AtomString& command() const;
-    void setCommand(const AtomString&);
 
     RefPtr<Element> commandForElement() const;
     CommandType commandType() const;
@@ -57,7 +53,7 @@ public:
 private:
     HTMLButtonElement(const QualifiedName& tagName, Document&, HTMLFormElement*);
 
-    enum Type { SUBMIT, RESET, BUTTON };
+    enum class Type : uint8_t { Submit, Reset, Button };
 
     const AtomString& formControlType() const final;
 

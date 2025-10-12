@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CSSRule.h"
-#include "CSSStyleSheet.h"
-#include "WebCoreOpaqueRootInlines.h"
+#include <WebCore/CSSRule.h>
+#include <WebCore/CSSStyleSheet.h>
+#include <WebCore/WebCoreOpaqueRootInlines.h>
 
 namespace WebCore {
 

@@ -38,9 +38,11 @@
 #include "Logging.h"
 #include "RTCDTMFSender.h"
 #include "RTCDTMFSenderBackend.h"
+#include "RTCEncodedStreamProducer.h"
 #include "RTCPeerConnection.h"
 #include "RTCRtpCapabilities.h"
 #include "RTCRtpTransceiver.h"
+#include "ScriptWrappableInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -202,7 +204,7 @@ std::optional<RTCRtpCapabilities> RTCRtpSender::getCapabilities(ScriptExecutionC
 RTCDTMFSender* RTCRtpSender::dtmf()
 {
     if (!m_dtmfSender && m_connection && m_connection->scriptExecutionContext() && m_backend && m_trackKind == "audio"_s)
-        m_dtmfSender = RTCDTMFSender::create(*m_connection->scriptExecutionContext(), *this, m_backend->createDTMFBackend());
+        m_dtmfSender = RTCDTMFSender::create(*m_connection->protectedScriptExecutionContext(), *this, m_backend->createDTMFBackend());
 
     return m_dtmfSender.get();
 }
@@ -254,6 +256,22 @@ std::optional<RTCRtpTransform::Internal> RTCRtpSender::transform()
     if (!m_transform)
         return { };
     return m_transform->internalTransform();
+}
+
+ExceptionOr<RTCEncodedStreams> RTCRtpSender::createEncodedStreams(ScriptExecutionContext& context)
+{
+    if (!m_backend)
+        return Exception { ExceptionCode::InvalidStateError };
+
+    if (!m_encodedStreamProducer) {
+        auto producerOrException = RTCEncodedStreamProducer::create(context, m_backend->rtcRtpTransformBackend(), m_trackKind == "video"_s);
+        if (producerOrException.hasException())
+            return producerOrException.releaseException();
+
+        lazyInitialize(m_encodedStreamProducer, producerOrException.releaseReturnValue());
+    }
+
+    return m_encodedStreamProducer->streams();
 }
 
 #if !RELEASE_LOG_DISABLED

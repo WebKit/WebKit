@@ -10,14 +10,22 @@
 
 #include "modules/audio_coding/test/TestRedFec.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <map>
 #include <memory>
+#include <optional>
+#include <string>
 #include <utility>
 
 #include "absl/strings/match.h"
+#include "api/audio/audio_frame.h"
 #include "api/audio_codecs/L16/audio_decoder_L16.h"
 #include "api/audio_codecs/L16/audio_encoder_L16.h"
 #include "api/audio_codecs/audio_decoder_factory_template.h"
+#include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_encoder_factory_template.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/g711/audio_decoder_g711.h"
 #include "api/audio_codecs/g711/audio_encoder_g711.h"
 #include "api/audio_codecs/g722/audio_decoder_g722.h"
@@ -26,17 +34,21 @@
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
 #include "api/environment/environment_factory.h"
 #include "api/neteq/default_neteq_factory.h"
+#include "api/neteq/neteq.h"
+#include "common_audio/vad/include/vad.h"
 #include "modules/audio_coding/codecs/cng/audio_encoder_cng.h"
 #include "modules/audio_coding/codecs/red/audio_encoder_copy_red.h"
-#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
+#include "modules/audio_coding/include/audio_coding_module.h"
+#include "modules/audio_coding/test/Channel.h"
 #include "rtc_base/strings/string_builder.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 
 TestRedFec::TestRedFec()
-    : env_(CreateEnvironment(&field_trials_)),
+    : env_(CreateEnvironment(CreateTestFieldTrialsPtr())),
       encoder_factory_(CreateAudioEncoderFactory<AudioEncoderG711,
                                                  AudioEncoderG722,
                                                  AudioEncoderL16,
@@ -49,19 +61,19 @@ TestRedFec::TestRedFec()
       _neteq(DefaultNetEqFactory().Create(env_,
                                           NetEq::Config(),
                                           decoder_factory_)),
-      _channelA2B(NULL),
+      _channelA2B(nullptr),
       _testCntr(0) {}
 
 TestRedFec::~TestRedFec() {
-  if (_channelA2B != NULL) {
+  if (_channelA2B != nullptr) {
     delete _channelA2B;
-    _channelA2B = NULL;
+    _channelA2B = nullptr;
   }
 }
 
 void TestRedFec::Perform() {
   const std::string file_name =
-      webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm");
+      test::ResourcePath("audio_coding/testfile32kHz", "pcm");
   _inFileA.Open(file_name, 32000, "rb");
 
   // Create and connect the channel
@@ -160,7 +172,7 @@ void TestRedFec::RegisterSendCodec(
       config.payload_type = red_payload_type;
       config.speech_encoder = std::move(encoder);
       encoder = std::make_unique<AudioEncoderCopyRed>(std::move(config),
-                                                      field_trials_);
+                                                      env_.field_trials());
       receive_codecs.emplace(
           std::make_pair(red_payload_type,
                          SdpAudioFormat("red", codec_format.clockrate_hz, 1)));
@@ -192,8 +204,8 @@ void TestRedFec::Run() {
 
 void TestRedFec::OpenOutFile(int16_t test_number) {
   std::string file_name;
-  rtc::StringBuilder file_stream;
-  file_stream << webrtc::test::OutputPath();
+  StringBuilder file_stream;
+  file_stream << test::OutputPath();
   file_stream << "TestRedFec_outFile_";
   file_stream << test_number << ".pcm";
   file_name = file_stream.str();

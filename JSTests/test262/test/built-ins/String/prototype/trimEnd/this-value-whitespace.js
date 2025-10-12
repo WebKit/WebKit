@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-string.prototype.trimEnd
+esid: sec-string.prototype.trimend
 description: TrimEnd removes all whitespace from the end of a string.
 info: |
   Runtime Symantics: TrimString ( string, where )

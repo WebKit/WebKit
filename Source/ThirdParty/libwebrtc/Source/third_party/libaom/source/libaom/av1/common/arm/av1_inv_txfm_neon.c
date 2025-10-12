@@ -477,8 +477,8 @@ static inline void load_buffer_32bit_to_16bit_neon(const int32_t *input,
   }
 }
 
-static int16_t sqrt_2_list[TX_SIZES] = { 5793, 2 * 4096, 2 * 5793, 4 * 4096,
-                                         4 * 5793 };
+static const int16_t sqrt_2_list[TX_SIZES] = { 5793, 2 * 4096, 2 * 5793,
+                                               4 * 4096, 4 * 5793 };
 
 static inline void identity_txfm_round_neon(int16x8_t *input, int16x8_t *output,
                                             int txw_idx, int8_t size, int bit) {

@@ -20,6 +20,7 @@
 #pragma once
 
 #include <unicode/uchar.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -34,11 +35,11 @@ class SVGTextLayoutEngineSpacing {
 public:
     SVGTextLayoutEngineSpacing(const FontCascade&);
 
-    float calculateCSSSpacing(const UChar* currentCharacter);
+    float calculateCSSSpacing(char16_t);
 
 private:
-    const FontCascade& m_font;
-    const UChar* m_lastCharacter;
+    const CheckedRef<const FontCascade> m_font;
+    char16_t m_lastCharacter { '\0' };
 };
 
 } // namespace WebCore

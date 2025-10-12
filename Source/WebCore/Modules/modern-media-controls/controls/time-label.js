@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,8 +45,9 @@ class TimeLabel extends LayoutNode
         super(`<div role="text" class="time-label"></div>`);
 
         this._type = type;
-        this.setValueWithNumberOfDigits(0, 4);
-        
+        this.value = 0;
+        this.numberOfDigits = 4;
+
         switch (this._type) {
         case TimeLabel.Type.Elapsed:
             this.element.setAttribute("id", "time-label-elapsed");
@@ -68,13 +69,47 @@ class TimeLabel extends LayoutNode
     {
         return this._value;
     }
+    set value(value)
+    {
+        this._value = value;
+        this.markDirtyProperty("value");
+    }
+
+    get numberOfDigits()
+    {
+        return this._numberOfDigits;
+    }
+    set numberOfDigits(numberOfDigits)
+    {
+        if (this._numberOfDigits === numberOfDigits)
+            return;
+
+        if (numberOfDigits < 4 || numberOfDigits > 6)
+            throw new RangeError("TimeLabel numerOfDigits must be between 4 and 6.");
+
+        this._numberOfDigits = numberOfDigits;
+
+        let formatterOptions = {
+            style: "digital",
+            fractionalDigits: 0,
+            hoursDisplay: "auto",
+            minutesDisplay: "always",
+            secondsDisplay: "always",
+        };
+        if (numberOfDigits >= 5)
+            formatterOptions.hoursDisplay = "always";
+        if (numberOfDigits == 6)
+            formatterOptions.hours = "2-digit";
+
+        this._formatter = new Intl.DurationFormat(undefined, formatterOptions);
+
+        this.markDirtyProperty("value");
+    }
 
     setValueWithNumberOfDigits(value, numberOfDigits)
     {
-        this._value = value;
-        this._numberOfDigits = numberOfDigits;
-        this.width = WidthsForDigits[this._numberOfDigits] + (this._type === TimeLabel.Type.Remaining && !isNaN(this._value) ? MinusSignWidthsForDigits[this._numberOfDigits] : 0);
-        this.markDirtyProperty("value");
+        this.value = value;
+        this.numberOfDigits = numberOfDigits;
     }
 
     // Protected
@@ -84,7 +119,7 @@ class TimeLabel extends LayoutNode
         if (propertyName === "value") {
             this.element.textContent = this._formattedTime();
 
-            const timeAsString = formattedStringForDuration(this.value);
+            const timeAsString = utils.formattedStringForDuration(this.value);
             switch (this._type) {
             case TimeLabel.Type.Elapsed:
                 this.element.setAttribute("aria-label", UIString("Elapsed: %s", timeAsString));
@@ -113,19 +148,7 @@ class TimeLabel extends LayoutNode
         if (isNaN(this._value))
             return "--:--";
         
-        const time = formatTimeByUnit(this._value);
-
-        let timeComponents;
-        if (this._numberOfDigits == 3)
-            timeComponents = [time.minutes, doubleDigits(time.seconds)];
-        else if (this._numberOfDigits == 4)
-            timeComponents = [doubleDigits(time.minutes), doubleDigits(time.seconds)];
-        else if (this._numberOfDigits == 5)
-            timeComponents = [time.hours, doubleDigits(time.minutes), doubleDigits(time.seconds)];
-        else if (this._numberOfDigits == 6)
-            timeComponents = [doubleDigits(time.hours), doubleDigits(time.minutes), doubleDigits(time.seconds)];
-
-        return (this._type === TimeLabel.Type.Remaining ? "-" : "") + timeComponents.join(":");
+        return this._formatter.format(formatTimeByUnit(this._value));
     }
 
 }

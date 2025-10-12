@@ -27,14 +27,14 @@
 
 #if ENABLE(JIT)
 
-#include "AssemblyHelpers.h"
-#include "CCallHelpers.h"
-#include "CacheableIdentifier.h"
-#include "CodeOrigin.h"
-#include "JITOperationValidation.h"
-#include "JITOperations.h"
-#include "JSCJSValue.h"
-#include "RegisterSet.h"
+#include <JavaScriptCore/AssemblyHelpers.h>
+#include <JavaScriptCore/CCallHelpers.h>
+#include <JavaScriptCore/CacheableIdentifier.h>
+#include <JavaScriptCore/CodeOrigin.h>
+#include <JavaScriptCore/JITOperationValidation.h>
+#include <JavaScriptCore/JITOperations.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/RegisterSet.h>
 
 namespace JSC {
 namespace DFG {

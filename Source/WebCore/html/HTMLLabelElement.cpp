@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2014 Google Inc. All rights reserved.
  *
@@ -108,7 +108,7 @@ HTMLFormElement* HTMLLabelElement::form() const
 HTMLFormElement* HTMLLabelElement::formForBindings() const
 {
     // FIXME: The downcast should be unnecessary, but the WPT was written before https://github.com/WICG/webcomponents/issues/1072 was resolved. Update once the WPT has been updated.
-    return dynamicDowncast<HTMLFormElement>(retargetReferenceTargetForBindings(form())).get();
+    return dynamicDowncast<HTMLFormElement>(retargetReferenceTargetForBindings(form())).unsafeGet();
 }
 
 void HTMLLabelElement::setActive(bool down, Style::InvalidationScope invalidationScope)
@@ -198,8 +198,8 @@ bool HTMLLabelElement::willRespondToMouseClickEventsWithEditability(Editability 
 
 void HTMLLabelElement::focus(const FocusOptions& options)
 {
-    Ref<HTMLLabelElement> protectedThis(*this);
-    auto document = protectedDocument();
+    Ref protectedThis(*this);
+    Ref document = this->document();
     if (document->haveStylesheetsLoaded()) {
         document->updateLayout();
         if (isFocusable()) {

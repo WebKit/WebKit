@@ -21,8 +21,5 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 struct WebKit::RemoteWorkerInitializationData {
-    WebKit::UserContentControllerIdentifier userContentControllerIdentifier;
-#if ENABLE(CONTENT_EXTENSIONS)
-    Vector<std::pair<WebKit::WebCompiledContentRuleListData, URL>> contentRuleLists;
-#endif
+    WebKit::UserContentControllerParameters userContentControllerParameters;
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -153,7 +153,7 @@ protected:
         return m_animVal;
     }
 
-    Ref<SVGSharedPrimitiveProperty<PropertyType>> m_baseVal;
+    const Ref<SVGSharedPrimitiveProperty<PropertyType>> m_baseVal;
     mutable RefPtr<SVGSharedPrimitiveProperty<PropertyType>> m_animVal;
 };
 

@@ -33,6 +33,7 @@
 #include "NodeName.h"
 #include "Path.h"
 #include "RenderImage.h"
+#include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -190,7 +191,7 @@ RefPtr<HTMLImageElement> HTMLAreaElement::imageElement() const
     return nullptr;
 }
 
-bool HTMLAreaElement::isKeyboardFocusable(KeyboardEvent*) const
+bool HTMLAreaElement::isKeyboardFocusable(const FocusEventData&) const
 {
     return isFocusable();
 }

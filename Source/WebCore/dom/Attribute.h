@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "CommonAtomStrings.h"
-#include "QualifiedName.h"
+#include <WebCore/CommonAtomStrings.h>
+#include <WebCore/QualifiedName.h>
 #include <wtf/Hasher.h>
 
 namespace WebCore {

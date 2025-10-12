@@ -67,7 +67,7 @@ ContentSecurityPolicyTrustedTypesDirective::ContentSecurityPolicyTrustedTypesDir
 
 bool ContentSecurityPolicyTrustedTypesDirective::allows(const String& value, bool isDuplicate, AllowTrustedTypePolicy& details) const
 {
-    auto invalidPolicy = value.find([](UChar ch) {
+    auto invalidPolicy = value.find([](char16_t ch) {
         return !isPolicyNameCharacter(ch);
     });
 

@@ -118,7 +118,7 @@ shouldBeTrue ('class x {}; new (class extends null { constructor () { return new
 shouldThrow('new (class extends null { constructor () { this; } })');
 shouldThrow('new (class extends null { constructor () { super(); } })', '"TypeError: function is not a constructor (evaluating \'super()\')"');
 shouldBe('x = {}; new (class extends null { constructor () { return x } })', 'x');
-shouldThrow('y = 12; class C extends null { constructor () { return y; } }; new C;', '"TypeError: Cannot return a non-object type in the constructor of a derived class."');
+shouldThrow('y = 12; class C extends null { constructor () { return y; } }; new C;', '"TypeError: Cannot return a non-object type in the constructor of a derived class C."');
 shouldBeTrue ('class x {}; new (class extends null { constructor () { return new x; } }) instanceof x');
 shouldBe('x = null; Object.getPrototypeOf((class extends x { }).prototype)', 'null');
 shouldBeTrue('Object.prototype.isPrototypeOf(class { })');

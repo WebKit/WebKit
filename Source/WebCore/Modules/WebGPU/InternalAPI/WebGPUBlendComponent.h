@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPUBlendFactor.h"
-#include "WebGPUBlendOperation.h"
+#include <WebCore/WebGPUBlendFactor.h>
+#include <WebCore/WebGPUBlendOperation.h>
 
 namespace WebCore::WebGPU {
 

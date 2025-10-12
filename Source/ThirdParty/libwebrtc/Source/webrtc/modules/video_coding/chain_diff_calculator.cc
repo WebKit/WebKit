@@ -9,10 +9,9 @@
  */
 #include "modules/video_coding/chain_diff_calculator.h"
 
-#include <stddef.h>
-#include <stdint.h>
-
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <optional>
 #include <vector>
 

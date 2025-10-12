@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: EventSource cannot load ws://www.example.com/socketserve%EF%BF%BD/ due to access control checks.
 
 PASS location.hash : unpaired surrogate codepoint should be replaced with U+FFFD
 FAIL location.href : unpaired surrogate codepoint should be replaced with U+FFFD Blocked a frame with origin "http://localhost:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match.

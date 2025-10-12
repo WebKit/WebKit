@@ -6,6 +6,10 @@
 // EGLProgramCacheControlTest:
 //   Unit tests for the EGL_ANGLE_program_cache_control extension.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "common/angleutils.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"

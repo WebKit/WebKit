@@ -288,7 +288,8 @@ Expected<PageCount, GrowFailReason> Memory::growShared(VM& vm, PageCount delta)
         RELEASE_ASSERT(m_shared);
         RELEASE_ASSERT(desiredSize <= MAX_ARRAY_BUFFER_SIZE);
         RELEASE_ASSERT(desiredSize > size());
-        result = m_shared->grow(locker.value(), vm, desiredSize);
+        constexpr bool sizeMustBePageMultiple = true;
+        result = m_shared->grow(locker.value(), vm, desiredSize, sizeMustBePageMultiple);
     }
     if (!result)
         return makeUnexpected(result.error());

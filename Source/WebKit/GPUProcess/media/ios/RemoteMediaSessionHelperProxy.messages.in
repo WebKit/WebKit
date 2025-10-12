@@ -31,7 +31,6 @@
 messages -> RemoteMediaSessionHelperProxy {
     StartMonitoringWirelessRoutes()
     StopMonitoringWirelessRoutes()
-    ProvidePresentingApplicationPID(int pid, WebCore::MediaSessionHelper::ShouldOverride shouldOverride)
 }
 
 #endif

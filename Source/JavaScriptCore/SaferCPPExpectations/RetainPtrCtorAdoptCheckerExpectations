@@ -4,6 +4,3 @@ API/JSVirtualMachine.mm
 API/ObjCCallbackFunction.mm
 API/tests/Regress141275.mm
 API/tests/testapi.c
-inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm
-inspector/remote/cocoa/RemoteInspectorCocoa.mm
-inspector/remote/cocoa/RemoteInspectorXPCConnection.mm

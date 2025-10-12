@@ -27,7 +27,6 @@
     EnabledBySetting=WebTransportEnabled,
     Exposed=(Window,Worker),
     SecureContext,
-    JSGenerateToJSObject,
     JSGenerateToNativeObject
 ] interface WebTransportBidirectionalStream {
     readonly attribute WebTransportReceiveStream readable;

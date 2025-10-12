@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,13 +25,14 @@
 
 #pragma once
 
-#include "ThreadTimers.h"
+#include <WebCore/ThreadTimers.h>
 #include <functional>
 #include <wtf/CheckedRef.h>
 #include <wtf/CompactRefPtrTuple.h>
 #include <wtf/Function.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Platform.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
@@ -41,7 +42,7 @@
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include "WebCoreThread.h"
+#include <WebCore/WebCoreThread.h>
 #endif
 
 namespace WebCore {
@@ -136,7 +137,7 @@ private:
     Seconds m_repeatInterval; // 0 if not repeating
 
     CompactRefPtrTuple<ThreadTimerHeapItem, uint8_t> m_heapItemWithBitfields;
-    Ref<Thread> m_thread { Thread::currentSingleton() };
+    const Ref<Thread> m_thread { Thread::currentSingleton() };
 
     friend class ThreadTimers;
     friend class TimerHeapLessThanFunction;
@@ -157,22 +158,30 @@ public:
     }
 
     template<typename TimerFiredClass, typename TimerFiredBaseClass>
-    requires (WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value)
+    requires (WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value && WTF::HasThreadSafeWeakPtrFunctions<TimerFiredClass>::value)
     Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
-        : m_function([objectPtr = &object, function] SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE {
-            Ref protectedObject { *objectPtr };
-            (objectPtr->*function)();
+        : m_function([weakObject = ThreadSafeWeakPtr { object }, function] {
+            if (RefPtr protectedObject = weakObject.get())
+                (protectedObject.get()->*function)();
         })
     {
     }
 
+    template<typename TimerFiredClass, typename TimerFiredBaseClass>
+    requires (WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value && !WTF::HasThreadSafeWeakPtrFunctions<TimerFiredClass>::value && WTF::HasWeakPtrFunctions<TimerFiredClass>::value)
+    Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
+        : m_function([weakObject = WeakPtr { object }, function] {
+            if (RefPtr protectedObject = weakObject.get())
+                (protectedObject.get()->*function)();
+        })
+    {
+    }
 
     template<typename TimerFiredClass, typename TimerFiredBaseClass>
-    requires (WTF::HasCheckedPtrMemberFunctions<TimerFiredClass>::value && !WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value)
+    requires (WTF::HasCheckedPtrMemberFunctions<TimerFiredClass>::value && (!WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value || (!WTF::HasWeakPtrFunctions<TimerFiredClass>::value && !WTF::HasThreadSafeWeakPtrFunctions<TimerFiredClass>::value)))
     Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
-        : m_function([objectPtr = &object, function] {
-            CheckedRef checkedObject { *objectPtr };
-            (objectPtr->*function)();
+        : m_function([checkedObject = CheckedRef { object }, function] {
+            (checkedObject.ptr()->*function)();
         })
     {
     }

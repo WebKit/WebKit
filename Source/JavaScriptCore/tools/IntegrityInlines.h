@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@
 #include "JSCJSValue.h"
 #include "StructureID.h"
 #include "VM.h"
-#include "VMInspector.h"
+#include "VMManager.h"
 #include <wtf/Atomics.h>
 #include <wtf/Gigacage.h>
 
@@ -117,7 +117,7 @@ JS_EXPORT_PRIVATE VM* doAuditSlow(VM*);
 
 ALWAYS_INLINE VM* doAudit(VM* vm)
 {
-    if (!VMInspector::isValidVM(vm)) [[unlikely]]
+    if (!VMManager::isValidVM(vm)) [[unlikely]]
         return doAuditSlow(vm);
     return vm;
 }

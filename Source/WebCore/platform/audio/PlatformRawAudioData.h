@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "MediaPlayer.h"
+#include <WebCore/MediaPlayer.h>
 #include <span>
 #include <wtf/ThreadSafeRefCounted.h>
 

@@ -29,11 +29,11 @@
 #pragma once
 
 #include "FetchBodyOwner.h"
-#include "FetchHeaders.h"
-#include "HTTPStatusCodes.h"
-#include "ReadableStreamSink.h"
-#include "ResourceResponse.h"
 #include <JavaScriptCore/TypedArrays.h>
+#include <WebCore/FetchHeaders.h>
+#include <WebCore/HTTPStatusCodes.h>
+#include <WebCore/ReadableStreamSink.h>
+#include <WebCore/ResourceResponse.h>
 #include <span>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -88,7 +88,7 @@ public:
 
     const FetchHeaders& headers() const { return m_headers; }
     FetchHeaders& headers() { return m_headers; }
-    ExceptionOr<Ref<FetchResponse>> clone();
+    ExceptionOr<Ref<FetchResponse>> clone(JSDOMGlobalObject&);
 
     void consumeBodyAsStream() final;
     void feedStream() final;
@@ -150,12 +150,15 @@ private:
     void addAbortSteps(Ref<AbortSignal>&&);
     void processReceivedError();
 
-    class Loader final : public FetchLoaderClient {
+    class Loader final : public RefCounted<Loader>, public FetchLoaderClient {
         WTF_MAKE_TZONE_ALLOCATED(Loader);
-        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Loader);
     public:
-        Loader(FetchResponse&, NotificationCallback&&);
+        static Ref<Loader> create(FetchResponse&, NotificationCallback&&);
         ~Loader();
+
+        // FetchLoaderClient.
+        void ref() const final { RefCounted::ref(); }
+        void deref() const final { RefCounted::deref(); }
 
         bool start(ScriptExecutionContext&, const FetchRequest&, const String& initiator);
         void stop();
@@ -169,24 +172,28 @@ private:
         ConsumeDataByChunkCallback takeConsumeDataCallback() { return WTFMove(m_consumeDataCallback); }
 
     private:
+        Loader(FetchResponse&, NotificationCallback&&);
+
         // FetchLoaderClient API
         void didSucceed(const NetworkLoadMetrics&) final;
         void didFail(const ResourceError&) final;
         void didReceiveResponse(const ResourceResponse&) final;
         void didReceiveData(const SharedBuffer&) final;
 
-        WeakRef<FetchResponse> m_response;
+        WeakPtr<FetchResponse> m_response;
         NotificationCallback m_responseCallback;
         ConsumeDataByChunkCallback m_consumeDataCallback;
-        std::unique_ptr<FetchLoader> m_loader;
-        Ref<PendingActivity<FetchResponse>> m_pendingActivity;
+        RefPtr<FetchLoader> m_loader;
+        const Ref<PendingActivity<FetchResponse>> m_pendingActivity;
         FetchOptions::Credentials m_credentials;
         bool m_shouldStartStreaming { false };
     };
 
+    RefPtr<Loader> protectedLoader() { return m_loader.get(); }
+
     mutable std::optional<ResourceResponse> m_filteredResponse;
     ResourceResponse m_internalResponse;
-    std::unique_ptr<Loader> m_loader;
+    RefPtr<Loader> m_loader;
     std::unique_ptr<FetchResponseBodyLoader> m_bodyLoader;
     mutable String m_responseURL;
     // Opaque responses will padd their body size when used with Cache API.

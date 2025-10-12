@@ -83,4 +83,4 @@ template<typename... F> decltype(auto) DynamicRangeLimit::switchOn(F&&... f) con
 } // namespace CSS
 } // namespace WebCore
 
-template<> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::DynamicRangeLimit> = true;
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::DynamicRangeLimit)

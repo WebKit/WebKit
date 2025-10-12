@@ -51,7 +51,7 @@ RemoteRemoteCommandListenerProxy::~RemoteRemoteCommandListenerProxy() = default;
 void RemoteRemoteCommandListenerProxy::updateSupportedCommands(Vector<WebCore::PlatformMediaSession::RemoteControlCommandType>&& registeredCommands, bool supportsSeeking)
 {
     m_supportedCommands.clear();
-    m_supportedCommands.add(registeredCommands.begin(), registeredCommands.end());
+    m_supportedCommands.addAll(WTFMove(registeredCommands));
     m_supportsSeeking = supportsSeeking;
 
     if (auto connection = m_gpuConnection.get())

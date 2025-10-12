@@ -20,11 +20,11 @@
 [
     Exposed=Window
 ] interface HTMLMeterElement : HTMLElement {
-    [CEReactions=NotNeeded] attribute double value;
-    [CEReactions=NotNeeded] attribute double min;
-    [CEReactions=NotNeeded] attribute double max;
-    [CEReactions=NotNeeded] attribute double low;
-    [CEReactions=NotNeeded] attribute double high;
-    [CEReactions=NotNeeded] attribute double optimum;
+    [CEReactions=NotNeeded, ReflectSetter] attribute double value;
+    [CEReactions=NotNeeded, ReflectSetter] attribute double min;
+    [CEReactions=NotNeeded, ReflectSetter] attribute double max;
+    [CEReactions=NotNeeded, ReflectSetter] attribute double low;
+    [CEReactions=NotNeeded, ReflectSetter] attribute double high;
+    [CEReactions=NotNeeded, ReflectSetter] attribute double optimum;
     readonly attribute NodeList labels;
 };

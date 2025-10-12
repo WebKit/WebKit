@@ -87,6 +87,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
 #if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
     copy->m_suspendsWebProcessesAggressivelyOnMemoryPressure = this->m_suspendsWebProcessesAggressivelyOnMemoryPressure;
 #endif
+    copy->m_prewarmedProcessCountLimitForTesting = this->m_prewarmedProcessCountLimitForTesting;
     return copy;
 }
 

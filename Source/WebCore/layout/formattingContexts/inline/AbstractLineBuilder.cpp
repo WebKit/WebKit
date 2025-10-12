@@ -48,9 +48,10 @@ void AbstractLineBuilder::reset()
     m_wrapOpportunityList.shrink(0);
     m_partialLeadingTextItem = { };
     m_previousLine = { };
+    m_isFirstFormattedLineCandidate = false;
 }
 
-std::optional<InlineLayoutUnit> AbstractLineBuilder::eligibleOverflowWidthAsLeading(const InlineContentBreaker::ContinuousContent::RunList& candidateRuns, const InlineContentBreaker::Result& lineBreakingResult, bool isFirstFormattedLine) const
+std::optional<InlineLayoutUnit> AbstractLineBuilder::eligibleOverflowWidthAsLeading(const InlineContentBreaker::ContinuousContent::RunList& candidateRuns, const InlineContentBreaker::Result& lineBreakingResult, bool isFirstFormattedLineCandidate) const
 {
     auto eligibleTrailingRunIndex = [&]() -> std::optional<size_t> {
         ASSERT(lineBreakingResult.action == InlineContentBreaker::Result::Action::Wrap || lineBreakingResult.action == InlineContentBreaker::Result::Action::Break);
@@ -75,7 +76,7 @@ std::optional<InlineLayoutUnit> AbstractLineBuilder::eligibleOverflowWidthAsLead
     auto& inlineTextItem = downcast<InlineTextItem>(overflowingRun.inlineItem);
     if (inlineTextItem.isWhitespace())
         return { };
-    if (isFirstFormattedLine) {
+    if (isFirstFormattedLineCandidate) {
         auto& usedStyle = overflowingRun.style;
         auto& style = overflowingRun.inlineItem.style();
         if (&usedStyle != &style && !usedStyle.fontCascadeEqual(style)) {
@@ -99,7 +100,7 @@ void AbstractLineBuilder::setIntrinsicWidthMode(IntrinsicWidthMode intrinsicWidt
 
 const RenderStyle& AbstractLineBuilder::rootStyle() const
 {
-    return isFirstFormattedLine() ? root().firstLineStyle() : root().style();
+    return isFirstFormattedLineCandidate() ? root().firstLineStyle() : root().style();
 }
 
 const InlineLayoutState& AbstractLineBuilder::layoutState() const

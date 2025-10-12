@@ -44,7 +44,7 @@ struct BufferAndBackendInfo {
 };
 
 struct BufferSetBackendHandle {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(BufferSetBackendHandle);
 
     std::optional<ImageBufferBackendHandle> bufferHandle;
 

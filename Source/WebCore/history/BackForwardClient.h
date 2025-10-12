@@ -27,9 +27,9 @@
 
 #pragma once
 
-#include "BackForwardFrameItemIdentifier.h"
-#include "BackForwardItemIdentifier.h"
-#include "FrameIdentifier.h"
+#include <WebCore/BackForwardFrameItemIdentifier.h>
+#include <WebCore/BackForwardItemIdentifier.h>
+#include <WebCore/FrameIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
@@ -48,7 +48,9 @@ public:
 
     virtual void goToItem(HistoryItem&) = 0;
 
+    virtual Vector<Ref<HistoryItem>> allItems(FrameIdentifier) = 0;
     virtual RefPtr<HistoryItem> itemAtIndex(int, FrameIdentifier) = 0;
+
     virtual unsigned backListCount() const = 0;
     virtual unsigned forwardListCount() const = 0;
     virtual bool containsItem(const HistoryItem&) const = 0;

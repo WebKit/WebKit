@@ -26,8 +26,10 @@
 #pragma once
 
 #include "InspectorTargetProxy.h"
+#include "ProvisionalPageProxy.h"
 #include <JavaScriptCore/InspectorAgentRegistry.h>
 #include <JavaScriptCore/InspectorTargetAgent.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
@@ -44,6 +46,7 @@ class FrontendRouter;
 namespace WebKit {
 
 class InspectorBrowserAgent;
+class ProvisionalPageProxy;
 struct WebPageAgentContext;
 
 class WebPageInspectorController {
@@ -68,7 +71,8 @@ public:
     void setIndicating(bool);
 #endif
 
-    void createInspectorTarget(const String& targetId, Inspector::InspectorTargetType);
+    void createWebPageInspectorTarget(const String& targetId, Inspector::InspectorTargetType);
+    void createWebFrameInspectorTarget(WebFrameProxy&, const String& targetId);
     void destroyInspectorTarget(const String& targetId);
     void sendMessageToInspectorFrontend(const String& targetId, const String& message);
 
@@ -87,6 +91,7 @@ public:
 
 private:
     Ref<WebPageProxy> protectedInspectedPage();
+    CheckedPtr<Inspector::InspectorTargetAgent> checkedTargetAgent() { return m_targetAgent; }
     WebPageAgentContext webPageAgentContext();
     void createLazyAgents();
 

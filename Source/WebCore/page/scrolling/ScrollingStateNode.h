@@ -27,9 +27,9 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "GraphicsLayer.h"
-#include "ScrollingCoordinator.h"
-#include "ScrollingPlatformLayer.h"
+#include <WebCore/GraphicsLayer.h>
+#include <WebCore/ScrollingCoordinator.h>
+#include <WebCore/ScrollingPlatformLayer.h>
 #include <stdint.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -225,7 +225,8 @@ enum class ScrollingStateNodeProperty : uint64_t {
     MouseActivityState                          = ContentAreaHoverState << 1,
     ScrollbarHoverState                         = MouseActivityState << 1,
     ScrollbarEnabledState                       = ScrollbarHoverState << 1,
-    ScrollbarLayoutDirection                    = ScrollbarEnabledState << 1,
+    ScrollbarColor                              = ScrollbarEnabledState << 1,
+    ScrollbarLayoutDirection                    = ScrollbarColor << 1,
     ScrollbarWidth                              = ScrollbarLayoutDirection << 1,
     UseDarkAppearanceForScrollbars              = ScrollbarWidth << 1,
     // ScrollingStateFrameScrollingNode

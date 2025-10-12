@@ -5,6 +5,10 @@
 //
 // AstcDecompressorTestUtils.h: Utility functions for ASTC decompression tests
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <vector>
 #include "common/debug.h"
 

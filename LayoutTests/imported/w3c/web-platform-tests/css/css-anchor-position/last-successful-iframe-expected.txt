@@ -1,6 +1,6 @@
 
 
 PASS Starts rendering with flip-block
-FAIL No successful position, keep flip-block assert_equals: expected 250 but got 0
+PASS No successful position, keep flip-block
 PASS Base position without fallback now successful
 

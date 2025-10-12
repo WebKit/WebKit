@@ -60,6 +60,7 @@
                 shouldBeNonNull("mediaStream.getVideoTracks()[0]");
                 mediaStreamTrack = mediaStream.getVideoTracks()[0];
                 testMediaStreamTrackEvent();
+                mediaStreamTrack.stop();
             }
 
             function primeTimeout(msg)

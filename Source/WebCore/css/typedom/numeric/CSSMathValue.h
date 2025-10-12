@@ -53,7 +53,7 @@ template<typename T> bool CSSMathValue::equalsImpl(const CSSNumericValue& other)
     if (!otherT)
         return false;
 
-    ASSERT(getType() == other.getType());
+    ASSERT(styleValueType() == other.styleValueType());
     auto& thisValues = static_cast<const T*>(this)->values();
     auto& otherValues = otherT->values();
     auto length = thisValues.length();
@@ -71,5 +71,5 @@ template<typename T> bool CSSMathValue::equalsImpl(const CSSNumericValue& other)
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSMathValue)
-static bool isType(const WebCore::CSSStyleValue& styleValue) { return WebCore::isCSSMathValue(styleValue.getType()); }
+static bool isType(const WebCore::CSSStyleValue& styleValue) { return WebCore::isCSSMathValue(styleValue.styleValueType()); }
 SPECIALIZE_TYPE_TRAITS_END()

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,10 +21,13 @@
 
 #pragma once
 
+#import <wtf/Platform.h>
+
 #if PLATFORM(MAC)
 
-#import "RenderThemeCocoa.h"
+#import <WebCore/RenderThemeCocoa.h>
 
+OBJC_CLASS NSPopUpButtonCell;
 OBJC_CLASS WebCoreRenderThemeNotificationObserver;
 
 namespace WebCore {
@@ -37,13 +41,12 @@ public:
     friend NeverDestroyed<RenderThemeMac>;
 
     // A method asking if the control changes its tint when the window has focus or not.
-    bool controlSupportsTints(const RenderObject&) const final;
+    bool controlSupportsTints(const RenderElement&) const final;
 
     // A general method asking if any control tinting is supported at all.
     bool supportsControlTints() const final { return true; }
 
-    void inflateRectForControlRenderer(const RenderObject&, FloatRect&) final;
-    void adjustRepaintRect(const RenderBox&, FloatRect&) final;
+    void inflateRectForControlRenderer(const RenderElement&, FloatRect&) final;
 
     bool isControlStyled(const RenderStyle&) const final;
 
@@ -73,8 +76,15 @@ public:
     IntSize sliderTickSize() const final;
     int sliderTickOffsetFromTrackCenter() const final;
 
-    LengthBox popupInternalPaddingBox(const RenderStyle&) const final;
+    Style::PaddingBox popupInternalPaddingBox(const RenderStyle&) const final;
     PopupMenuStyle::Size popupMenuSize(const RenderStyle&, IntRect&) const final;
+
+    std::optional<FontCascadeDescription> controlFont(StyleAppearance, const FontCascade&, float zoomFactor) const final;
+    Style::PaddingBox controlPadding(StyleAppearance, const Style::PaddingBox&, float zoomFactor) const final;
+    Style::PreferredSizePair controlSize(StyleAppearance, const FontCascade&, const Style::PreferredSizePair&, float zoomFactor) const final;
+    Style::MinimumSizePair minimumControlSize(StyleAppearance, const FontCascade&, const Style::MinimumSizePair&, float zoomFactor) const final;
+    Style::LineWidthBox controlBorder(StyleAppearance, const FontCascade&, const Style::LineWidthBox&, float zoomFactor, const Element*) const final;
+    bool controlRequiresPreWhiteSpace(StyleAppearance) const final;
 
     bool popsMenuByArrowKeys() const final { return true; }
 
@@ -89,15 +99,15 @@ public:
     // Controls color values returned from platformFocusRingColor(). systemColor() will be used when false.
     bool usesTestModeFocusRingColor() const;
 
-    WEBCORE_EXPORT static RetainPtr<NSImage> iconForAttachment(const String& fileName, const String& attachmentType, const String& title);
+    WEBCORE_EXPORT static IconAndSize iconForAttachment(const String& fileName, const String& attachmentType, const String& title);
 
 private:
     RenderThemeMac();
 
     bool canPaint(const PaintInfo&, const Settings&, StyleAppearance) const final;
-    bool canCreateControlPartForRenderer(const RenderObject&) const final;
-    bool canCreateControlPartForBorderOnly(const RenderObject&) const final;
-    bool canCreateControlPartForDecorations(const RenderObject&) const final;
+    bool canCreateControlPartForRenderer(const RenderElement&) const final;
+    bool canCreateControlPartForBorderOnly(const RenderElement&) const final;
+    bool canCreateControlPartForDecorations(const RenderElement&) const final;
 
     int baselinePosition(const RenderBox&) const final;
 
@@ -125,14 +135,14 @@ private:
     bool hasSwitchHapticFeedback(SwitchTrigger trigger) const final { return trigger == SwitchTrigger::PointerTracking; }
 
     void adjustListButtonStyle(RenderStyle&, const Element*) const final;
-    
+
 #if ENABLE(SERVICE_CONTROLS)
     void adjustImageControlsButtonStyle(RenderStyle&, const Element*) const final;
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     LayoutSize attachmentIntrinsicSize(const RenderAttachment&) const final;
-    bool paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&) final;
+    bool paintAttachment(const RenderElement&, const PaintInfo&, const IntRect&) final;
 #endif
 
 private:

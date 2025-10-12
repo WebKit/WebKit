@@ -25,11 +25,12 @@
 
 #pragma once
 
-#include "IDBDatabaseConnectionIdentifier.h"
-#include "IDBIndexIdentifier.h"
-#include "IDBObjectStoreIdentifier.h"
-#include "IDBResourceIdentifier.h"
-#include "IndexKey.h"
+#include <WebCore/IDBDatabaseConnectionIdentifier.h>
+#include <WebCore/IDBIndexIdentifier.h>
+#include <WebCore/IDBObjectStoreIdentifier.h>
+#include <WebCore/IDBResourceIdentifier.h>
+#include <WebCore/IndexKey.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -37,11 +38,6 @@ namespace WebCore {
 namespace IDBClient {
 class IDBConnectionToServerDelegate;
 }
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::IDBClient::IDBConnectionToServerDelegate> : std::true_type { };
 }
 
 namespace WebCore {
@@ -70,7 +66,7 @@ struct IDBKeyRangeData;
 
 namespace IDBClient {
 
-class IDBConnectionToServerDelegate : public CanMakeWeakPtr<IDBConnectionToServerDelegate> {
+class IDBConnectionToServerDelegate : public AbstractRefCountedAndCanMakeWeakPtr<IDBConnectionToServerDelegate> {
 public:
     virtual ~IDBConnectionToServerDelegate() = default;
 

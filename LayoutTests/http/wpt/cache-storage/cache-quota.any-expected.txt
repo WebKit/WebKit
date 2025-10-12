@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Cache API operation failed: Quota exceeded
-CONSOLE MESSAGE: Cache API operation failed: Quota exceeded
 
 PASS Testing synthetic response body size padding
 PASS Testing non opaque response body size padding

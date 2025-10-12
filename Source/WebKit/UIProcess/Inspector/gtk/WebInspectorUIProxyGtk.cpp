@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc. All rights reserved.
  * Copyright (C) 2012 Igalia S.L.
  * Copyright (C) 2013 Gustavo Noronha Silva <gns@gnome.org>.
  *
@@ -191,7 +191,7 @@ RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
     });
     if (m_underTest)
         preferences->setHiddenPageDOMTimerThrottlingEnabled(false);
-    Ref inspectedPagePreferences = protectedInspectedPage()->protectedPreferences();
+    Ref inspectedPagePreferences = protectedInspectedPage()->preferences();
     preferences->setAcceleratedCompositingEnabled(inspectedPagePreferences->acceleratedCompositingEnabled());
     preferences->setForceCompositingMode(inspectedPagePreferences->forceCompositingMode());
     preferences->setThreadedScrollingEnabled(inspectedPagePreferences->threadedScrollingEnabled());
@@ -573,7 +573,7 @@ void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::
     } else
         dataString = saveDatas[0].content.utf8();
 
-    const char* data = !dataString.isNull() ? dataString.data() : reinterpret_cast<char*>(dataVector.data());
+    const char* data = !dataString.isNull() ? dataString.data() : reinterpret_cast<const char*>(dataVector.span().data());
     size_t dataLength = !dataString.isNull() ? dataString.length() : dataVector.size();
     GRefPtr<GFile> file = adoptGRef(gtk_file_chooser_get_file(chooser));
     GUniquePtr<char> path(g_file_get_path(file.get()));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,11 +30,10 @@
 
 #include "TextTrackLoader.h"
 
-#include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CachedTextTrack.h"
 #include "CrossOriginAccessControl.h"
-#include "DocumentInlines.h"
+#include "DocumentResourceLoader.h"
 #include "HTMLMediaElement.h"
 #include "HTMLTrackElement.h"
 #include "InspectorInstrumentation.h"

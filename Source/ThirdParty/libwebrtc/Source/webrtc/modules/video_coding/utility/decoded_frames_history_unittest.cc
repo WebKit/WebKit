@@ -10,6 +10,8 @@
 
 #include "modules/video_coding/utility/decoded_frames_history.h"
 
+#include <optional>
+
 #include "test/gtest.h"
 
 namespace webrtc {

@@ -232,7 +232,7 @@ JSValue JSTestConditionallyReadWrite::getConstructor(VM& vm, const JSGlobalObjec
 
 void JSTestConditionallyReadWrite::destroy(JSC::JSCell* cell)
 {
-    JSTestConditionallyReadWrite* thisObject = static_cast<JSTestConditionallyReadWrite*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestConditionallyReadWrite* thisObject = static_cast<JSTestConditionallyReadWrite*>(cell);
     thisObject->JSTestConditionallyReadWrite::~JSTestConditionallyReadWrite();
 }
 
@@ -458,7 +458,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_enabledConditionallyRea
 
 JSC::GCClient::IsoSubspace* JSTestConditionallyReadWrite::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestConditionallyReadWrite, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestConditionallyReadWrite, UseCustomHeapCellType::No>(vm, "JSTestConditionallyReadWrite"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestConditionallyReadWrite.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestConditionallyReadWrite = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestConditionallyReadWrite.get(); },
@@ -485,7 +485,7 @@ bool JSTestConditionallyReadWriteOwner::isReachableFromOpaqueRoots(JSC::Handle<J
 
 void JSTestConditionallyReadWriteOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestConditionallyReadWrite = static_cast<JSTestConditionallyReadWrite*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestConditionallyReadWrite = static_cast<JSTestConditionallyReadWrite*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestConditionallyReadWrite->protectedWrapped().ptr(), jsTestConditionallyReadWrite);
 }
@@ -498,7 +498,9 @@ extern "C" { extern void (*const __identifier("??_7TestConditionallyReadWrite@We
 #else
 extern "C" { extern void* _ZTVN7WebCore26TestConditionallyReadWriteE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestConditionallyReadWrite>, void>> static inline void verifyVTable(TestConditionallyReadWrite* ptr) {
+template<std::same_as<TestConditionallyReadWrite> T>
+static inline void verifyVTable(TestConditionallyReadWrite* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -517,8 +519,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestCondition
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestConditionallyReadWrite>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestConditionallyReadWrite>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestConditionallyReadWrite>(impl.ptr());
 #endif

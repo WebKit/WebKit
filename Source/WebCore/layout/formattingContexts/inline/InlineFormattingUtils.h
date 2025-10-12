@@ -25,8 +25,9 @@
 
 #pragma once
 
+#include "InlineLine.h"
 #include "InlineLineBuilder.h"
-#include "InlineLineTypes.h"
+#include <WebCore/InlineLineTypes.h>
 
 namespace WebCore {
 namespace Layout {
@@ -45,7 +46,8 @@ public:
     ContentWidthAndMargin inlineBlockContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&) const;
 
     enum class IsIntrinsicWidthMode : bool { No, Yes };
-    InlineLayoutUnit computedTextIndent(IsIntrinsicWidthMode, PreviousLineState, InlineLayoutUnit availableWidth) const;
+    enum class LineEndsWithLineBreak : bool { No, Yes };
+    InlineLayoutUnit computedTextIndent(IsIntrinsicWidthMode, IsFirstFormattedLine, std::optional<LineEndsWithLineBreak> previousLineEndsWithLineBreak, InlineLayoutUnit availableWidth) const;
 
     bool inlineLevelBoxAffectsLineBox(const InlineLevelBox&) const;
 
@@ -68,6 +70,8 @@ public:
     static std::pair<InlineLayoutUnit, InlineLayoutUnit> textEmphasisForInlineBox(const Box&, const ElementBox& rootBox);
 
     static LineEndingTruncationPolicy lineEndingTruncationPolicy(const RenderStyle& rootStyle, size_t numberOfContentfulLines, std::optional<size_t> numberOfVisibleLinesAllowed, bool currentLineIsContentful);
+
+    static std::optional<LineLayoutResult::InlineContentEnding> inlineContentEnding(const Line::Result&);
 
     bool shouldDiscardRemainingContentInBlockDirection(size_t numberOfLinesWithInlineContent) const;
 

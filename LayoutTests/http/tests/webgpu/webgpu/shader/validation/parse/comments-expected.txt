@@ -5,95 +5,77 @@ PASS :line_comment_terminators:blankspace=["%20","space"]
 PASS :line_comment_terminators:blankspace=["%5Ct","tab"]
 PASS :line_comment_terminators:blankspace=["%5Cn","line_feed"]
 FAIL :line_comment_terminators:blankspace=["%5Cu000b","vertical_tab"] assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     // Line commentconst invalid_outside_comment = should_fail
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/comments.spec.js:61:24
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :line_comment_terminators:blankspace=["%5Cf","form_feed"] assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     // Line commentconst invalid_outside_comment = should_fail
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/comments.spec.js:61:24
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :line_comment_terminators:blankspace=["%5Cr","carriage_return"] assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     // Line comment\rconst invalid_outside_comment = should_fail
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/comments.spec.js:61:24
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :line_comment_terminators:blankspace=["%5Cr%5Cn","carriage_return_line_feed"]
 FAIL :line_comment_terminators:blankspace=["%C2%85","next_line"] assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     // Line commentconst invalid_outside_comment = should_fail
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/comments.spec.js:61:24
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :line_comment_terminators:blankspace=["%E2%80%A8","line_separator"] assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     // Line comment const invalid_outside_comment = should_fail
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/comments.spec.js:61:24
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 FAIL :line_comment_terminators:blankspace=["%E2%80%A9","paragraph_separator"] assert_unreached:
-  - VALIDATION FAILED: subcase:
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: ) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     // Line comment const invalid_outside_comment = should_fail
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/comments.spec.js:61:24
-  - EXPECTATION FAILED: subcase:
-    Expected validation error
+  - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - INFO: subcase:
-    OK
+  - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :unterminated_block_comment:terminated=true
 PASS :unterminated_block_comment:terminated=false

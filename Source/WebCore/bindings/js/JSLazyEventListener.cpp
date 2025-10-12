@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@
 #include "ContentSecurityPolicy.h"
 #include "DocumentInlines.h"
 #include "Element.h"
+#include "FrameDestructionObserverInlines.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowBase.h"
 #include "JSHTMLElement.h"
@@ -31,20 +32,18 @@
 #include "QualifiedName.h"
 #include "SVGElement.h"
 #include "ScriptController.h"
+#include "Settings.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/FunctionConstructor.h>
 #include <JavaScriptCore/IdentifierInlines.h>
 #include <JavaScriptCore/SourceProvider.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 using namespace JSC;
-
-DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, eventListenerCounter, ("JSLazyEventListener"));
 
 struct JSLazyEventListener::CreationArguments {
     const QualifiedName& attributeName;
@@ -81,9 +80,6 @@ JSLazyEventListener::JSLazyEventListener(CreationArguments&& arguments, const UR
     , m_originalNode(WTFMove(arguments.node))
     , m_sourceTaintedOrigin(JSC::computeNewSourceTaintedOriginFromStack(arguments.document.vm(), arguments.document.vm().topCallFrame))
 {
-#ifndef NDEBUG
-    eventListenerCounter.increment();
-#endif
 }
 
 #if ASSERT_ENABLED
@@ -110,9 +106,6 @@ void JSLazyEventListener::checkValidityForEventTarget(EventTarget& eventTarget)
 
 JSLazyEventListener::~JSLazyEventListener()
 {
-#ifndef NDEBUG
-    eventListenerCounter.decrement();
-#endif
 }
 
 JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& executionContext) const

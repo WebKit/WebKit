@@ -8,6 +8,7 @@ import {
   getBaseFormatForRegularTextureFormat,
   kValidTextureFormatsForCopyE2T } from
 '../../format_info.js';
+import * as ttu from '../../texture_test_utils.js';
 import { TextureUploadingUtils, kCopySubrectInfo } from '../../util/copy_to_texture.js';
 
 import { kTestColorsOpaque, makeTestColorsTexelView } from './util.js';
@@ -214,7 +215,7 @@ fn(async (t) => {
   new Uint8Array([0, 0, 0, 0]) :
   new Uint8Array([255, 102, 153, 0]);
 
-  t.expectSinglePixelComparisonsAreOkInTexture({ texture: dst }, [
+  ttu.expectSinglePixelComparisonsAreOkInTexture(t, { texture: dst }, [
   { coord: { x: kImageWidth * 0.3, y: kImageHeight * 0.3 }, exp: expectedPixels }]
   );
 });

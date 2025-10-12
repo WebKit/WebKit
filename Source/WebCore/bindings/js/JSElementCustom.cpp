@@ -30,7 +30,7 @@
 #include "config.h"
 #include "JSElement.h"
 
-#include "Document.h"
+#include "DocumentQuirks.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
 #include "JSAttr.h"
@@ -45,6 +45,7 @@
 #include "MathMLElement.h"
 #include "NodeList.h"
 #include "SVGElement.h"
+#include "Settings.h"
 #include "WebCoreJSClientData.h"
 
 
@@ -146,6 +147,24 @@ JSValue JSElement::ariaLabelledByElements(JSGlobalObject& lexicalGlobalObject) c
 JSValue JSElement::ariaOwnsElements(JSGlobalObject& lexicalGlobalObject) const
 {
     return getElementsArrayAttribute(lexicalGlobalObject, *this, WebCore::HTMLNames::aria_ownsAttr);
+}
+
+bool JSElement::shouldEnableWebkitRequestFullScreen(ScriptExecutionContext* context)
+{
+#if ENABLE(FULLSCREEN_API)
+    RefPtr document = dynamicDowncast<Document>(context);
+    if (!document)
+        return false;
+
+    if (document->quirks().shouldDisableElementFullscreenQuirk())
+        return false;
+
+    return document->settings().fullScreenEnabled()
+        || document->quirks().shouldEnterNativeFullscreenWhenCallingElementRequestFullscreenQuirk();
+#else
+    UNUSED_PARAM(context);
+    return false;
+#endif
 }
 
 } // namespace WebCore

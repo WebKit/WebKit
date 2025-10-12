@@ -1,0 +1,48 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that dispatchedFrom and dispatchedTo are correctly exposed to the IPCTestingAPI</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ipc.js"></script>
+<body>
+<p>Test pass if assertions don't cause error</p>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.IPC) {
+    // Check Standard Messages
+    assert_equals(IPC.messages.IPCTester_AsyncOptionalExceptionData.dispatchedFrom, "Unknown");
+    assert_equals(IPC.messages.IPCTester_AsyncOptionalExceptionData.dispatchedTo, "Unknown");
+    assert_equals(IPC.messages.WebPageTesting_IsLayerTreeFrozen.dispatchedFrom, "UI");
+    assert_equals(IPC.messages.WebPageTesting_IsLayerTreeFrozen.dispatchedTo, "WebContent");
+    assert_equals(IPC.messages.WebPageProxy_CreateNewPage.dispatchedFrom, "WebContent");
+    assert_equals(IPC.messages.WebPageProxy_CreateNewPage.dispatchedTo, "UI");
+    assert_equals(IPC.messages.NetworkProcessProxy_DidReceiveAuthenticationChallenge.dispatchedFrom, "Networking");
+    assert_equals(IPC.messages.NetworkProcessProxy_DidReceiveAuthenticationChallenge.dispatchedTo, "UI");
+    assert_equals(IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.dispatchedFrom, "WebContent");
+    assert_equals(IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.dispatchedTo, "GPU");
+    assert_equals(IPC.messages.NetworkProcessProxy_TestProcessIncomingSyncMessagesWhenWaitingForSyncReply.dispatchedFrom, "Networking");
+    assert_equals(IPC.messages.NetworkProcessProxy_TestProcessIncomingSyncMessagesWhenWaitingForSyncReply.dispatchedTo, "UI");
+    assert_equals(IPC.messages.RemoteMediaResourceManager_ResponseReceived.dispatchedFrom, "WebContent");
+    assert_equals(IPC.messages.RemoteMediaResourceManager_ResponseReceived.dispatchedTo, "GPU");
+
+    // Check Reply Messages
+    assert_equals(IPC.messages.IPCTester_AsyncOptionalExceptionDataReply.dispatchedFrom, "Unknown");
+    assert_equals(IPC.messages.IPCTester_AsyncOptionalExceptionDataReply.dispatchedTo, "Unknown");
+    assert_equals(IPC.messages.WebPageTesting_IsLayerTreeFrozenReply.dispatchedFrom, "WebContent");
+    assert_equals(IPC.messages.WebPageTesting_IsLayerTreeFrozenReply.dispatchedTo, "UI");
+    assert_equals(IPC.messages.WebPageProxy_DecidePolicyForNavigationActionAsyncReply.dispatchedFrom, "UI");
+    assert_equals(IPC.messages.WebPageProxy_DecidePolicyForNavigationActionAsyncReply.dispatchedTo, "WebContent");
+    assert_equals(IPC.messages.NetworkProcessProxy_TestProcessIncomingSyncMessagesWhenWaitingForSyncReply.dispatchedFrom, "Networking");
+    assert_equals(IPC.messages.NetworkProcessProxy_TestProcessIncomingSyncMessagesWhenWaitingForSyncReply.dispatchedTo, "UI");
+    assert_equals(IPC.messages.RemoteMediaResourceManager_ResponseReceivedReply.dispatchedFrom, "GPU");
+    assert_equals(IPC.messages.RemoteMediaResourceManager_ResponseReceivedReply.dispatchedTo, "WebContent");
+}
+
+document.write("PASS");
+testRunner.notifyDone();
+</script>
+</body>

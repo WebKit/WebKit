@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<div id ="content">
+    <input id="radio1" type="radio" name="group1">
+    <input id="radio2" type="radio" name="group1">
+    <input id="radio2a" type="radio" name="group2">
+</div>
+
+<script>
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    var output = "This test verifies AX radio group member count is updated for existing members when a new radio button is added to a group.\n";
+
+    document.getElementById("radio2").addEventListener("change", () => {
+        document.getElementById("radio2a").insertAdjacentHTML(
+            "afterend",
+            '<input id="radio2b" type="radio" name="group2">'
+        );
+    });
+
+    function focusRadio2() {
+        document.getElementById("radio2").checked = false;
+        document.getElementById("radio2").click();
+    }
+    
+    var radio2a = accessibilityController.accessibleElementById("radio2a");
+    
+    output += "\nVerify radio 2a's first linked element is itself: \n";
+    output += expect("radio2a.linkedUIElementAtIndex(0).isEqual(radio2a)", "true");
+    output += "\nVerify radio 2a has no second linked element: \n";
+    output += expect("!radio2a.linkedUIElementAtIndex(1)", "true");
+
+    setTimeout(async function() {
+        await focusRadio2();
+
+        output += "\nVerify radio2b dynamically added to DOM successfully: \n";
+        output += await expectAsync("!!accessibilityController.accessibleElementById('radio2b')", "true");
+
+        output += "\nVerify radio 2a's first linked element is itself: \n";
+        output += await expectAsync("radio2a.linkedUIElementAtIndex(0).isEqual(accessibilityController.accessibleElementById('radio2a'))", "true");
+        output += "\nVerify radio 2a's second linked element is now radio 2b: \n";
+        output += await expectAsync("radio2a.linkedUIElementAtIndex(1).isEqual(accessibilityController.accessibleElementById('radio2b'))", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+
+</script>
+
+</body>
+</html>

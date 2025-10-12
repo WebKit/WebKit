@@ -1,0 +1,55 @@
+// swift-interface-format-version: 1.0
+// swift-module-flags: -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -library-level api -enable-experimental-feature Macros -enable-experimental-feature ExtensionMacros -module-abi-name SwiftUI -enable-experimental-feature IsolatedAny2 -enable-upcoming-feature InferSendableFromCaptures -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -user-module-version 7.0.84.1.401 -module-name SwiftUI_SPI -module-abi-name SwiftUI -package-name SwiftUI
+// swift-module-flags-ignorable: -public-module-name SwiftUI -formal-cxx-interoperability-mode=off -project-name SwiftUI -interface-compiler-version 6.2
+import _Concurrency
+import CoreFoundation
+import QuartzCore
+import Swift
+@_exported import SwiftUI
+
+@available(iOS 26.0, macOS 26.0, watchOS 26.0, tvOS 26.0, visionOS 26.0, *)
+public struct _ShapeSet : Swift.Sendable {
+  public init(shapes: [SwiftUI.AnyShape], smoothness: CoreFoundation.CGFloat = 0)
+}
+
+@available(iOS 26.0, macOS 26.0, watchOS 26.0, tvOS 26.0, visionOS 26.0, *)
+extension SwiftUI.View {
+  nonisolated public func materialEffect(_ material: SwiftUI_SPI.Material, in shape: SwiftUI_SPI._ShapeSet) -> some SwiftUI.View
+  
+  @_alwaysEmitIntoClient nonisolated public func materialEffect<S>(_ material: SwiftUI_SPI.Material, in shape: S) -> some SwiftUI.View where S : SwiftUI.Shape {
+        return materialEffect(material,
+            in: _ShapeSet(shapes: [AnyShape(shape)]))
+    }
+  
+}
+
+@_hasMissingDesignatedInitializers @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
+public class CAHostingLayer<Content> : QuartzCore.CALayer where Content : SwiftUI.View {
+  public init(rootView: Content, environment: SwiftUI.EnvironmentValues = .init())
+  @objc override dynamic public func layoutSublayers()
+  public var rootView: Content {
+    get
+    set
+  }
+}
+
+public struct Material : Swift.Sendable {
+}
+
+extension SwiftUI_SPI.Material {
+  @available(iOS 26.0, macOS 26.0, watchOS 26.0, tvOS 26.0, visionOS 26.0, *)
+  public struct _GlassVariant : Swift.Hashable, Swift.Sendable {
+    public static let regular: SwiftUI_SPI.Material._GlassVariant
+    public static let clear: SwiftUI_SPI.Material._GlassVariant
+    public static let avplayer: SwiftUI_SPI.Material._GlassVariant
+    public func forceSubdued() -> SwiftUI_SPI.Material._GlassVariant
+    public func adaptive(_ enabled: Swift.Bool) -> SwiftUI_SPI.Material._GlassVariant
+    public static func == (a: SwiftUI_SPI.Material._GlassVariant, b: SwiftUI_SPI.Material._GlassVariant) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  @available(iOS 26.0, macOS 26.0, watchOS 26.0, tvOS 26.0, visionOS 26.0, *)
+  public static func _glass(_ variant: SwiftUI_SPI.Material._GlassVariant = .regular) -> SwiftUI_SPI.Material
+}

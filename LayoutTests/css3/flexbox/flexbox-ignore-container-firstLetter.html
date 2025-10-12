@@ -12,14 +12,14 @@
 <script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.container')">
 <div id=log></div>
-<p>This test flex item should ignore container's firstLetter pseudo element.</p>
+<p>Flexboxes do not generate a first formatted line. As a result, the container does not have a first formatted line.</p>
 
 <div class="container">
     <div class="flexbox flexboxFirstLetter">
         <p data-expected-height=20>The first item.</p>
         <p data-expected-height=20>The second item.</p>
     </div>
-    <p data-expected-height=100>Out of flex.</p>
+    <p data-expected-height=20>Out of flex.</p>
 </div>
 
 <div class="container">
@@ -27,7 +27,7 @@
         <p data-expected-height=20>The first item.</p>
         <p data-expected-height=20>The second item.</p>
     </div>
-    <p data-expected-height=100>Out of flex.</p>
+    <p data-expected-height=20>Out of flex.</p>
 </div>
 </body>
 </html>

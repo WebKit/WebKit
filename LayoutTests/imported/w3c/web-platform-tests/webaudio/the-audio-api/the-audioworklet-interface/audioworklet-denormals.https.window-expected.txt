@@ -1,3 +1,3 @@
 
-FAIL Test denormal behavior in AudioWorkletGlobalScope assert_true: The denormals should be non-zeros in AudioWorkletGlobalScope. expected true got false
+PASS Test denormal behavior in AudioWorkletGlobalScope
 

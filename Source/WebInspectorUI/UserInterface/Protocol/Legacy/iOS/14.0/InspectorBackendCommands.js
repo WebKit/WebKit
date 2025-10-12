@@ -436,10 +436,6 @@ InspectorBackend.registerEvent("Page.domContentEventFired", ["page"], ["timestam
 InspectorBackend.registerEvent("Page.loadEventFired", ["page"], ["timestamp"]);
 InspectorBackend.registerEvent("Page.frameNavigated", null, ["frame"]);
 InspectorBackend.registerEvent("Page.frameDetached", ["page"], ["frameId"]);
-InspectorBackend.registerEvent("Page.frameStartedLoading", null, ["frameId"]);
-InspectorBackend.registerEvent("Page.frameStoppedLoading", null, ["frameId"]);
-InspectorBackend.registerEvent("Page.frameScheduledNavigation", ["page"], ["frameId", "delay"]);
-InspectorBackend.registerEvent("Page.frameClearedScheduledNavigation", ["page"], ["frameId"]);
 InspectorBackend.registerEvent("Page.defaultAppearanceDidChange", ["page"], ["appearance"]);
 InspectorBackend.registerPageDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "Page");
 InspectorBackend.activateDomain("Page", ["itml", "page", "web-page"]);

@@ -52,7 +52,7 @@ class Build(models.Model):
         return str(self.uid)
 
     @classmethod
-    def save_build(cls, change_id, hostname, build_id, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at=None, pr_id=-1, pr_project=''):
+    def save_build(cls, change_id, hostname, build_id, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at=None, pr_number=-1, pr_project=''):
         if not Build.is_valid_result(build_id, builder_id, number, result, state_string, started_at, complete_at):
             _log.warn('Invalid build data for change: {}. Skipped saving build.'.format(change_id))
             return ERR_UNEXPECTED
@@ -67,7 +67,7 @@ class Build(models.Model):
             return Build.update_build(build, change_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at)
 
         if not Change.is_existing_change_id(change_id):
-            Change.save_change(change_id=change_id, pr_id=pr_id, pr_project=pr_project)
+            Change.save_change(change_id=change_id, pr_number=pr_number, pr_project=pr_project)
             _log.info('Received result for unknown change. Saved change {} to database'.format(change_id))
 
         # Save the new build data, e.g.: build start event.

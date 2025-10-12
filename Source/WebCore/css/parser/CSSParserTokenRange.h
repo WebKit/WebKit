@@ -29,8 +29,8 @@
 
 #pragma once
 
-#include "CSSParserToken.h"
-#include "CSSTokenizer.h"
+#include <WebCore/CSSParserToken.h>
+#include <WebCore/CSSTokenizer.h>
 #include <wtf/Forward.h>
 #include <wtf/text/ParsingUtilities.h>
 

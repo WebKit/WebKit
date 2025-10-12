@@ -17,6 +17,21 @@
         assert_equals(document.visibilityState, "visible", "should be visible");
     });
 
+    promise_test(async ()=>{
+        assert_true(
+            DigitalCredential.userAgentAllowsProtocol("org-iso-mdoc"),
+            "Check that the user agent allows the ISO-18013 Mobile Document protocol."
+        );
+        assert_false(
+            DigitalCredential.userAgentAllowsProtocol(""),
+            "Check that the user agent does not allow an empty protocol."
+        );
+        assert_false(
+            DigitalCredential.userAgentAllowsProtocol("org-iso-mdoc-unknown"),
+            "Check that the user agent does not allow an unknown protocol."
+        );
+    }, "Check that the user agent knows about the ISO-18013 Mobile Document protocol.");
+
     promise_test(async (t) => {
         const invalidData = [
             "",

@@ -26,9 +26,9 @@
 
 #pragma once
 
-#include "JSDOMConvert.h"
 #include <JavaScriptCore/JSIteratorPrototype.h>
 #include <JavaScriptCore/PropertySlot.h>
+#include <WebCore/JSDOMConvert.h>
 #include <type_traits>
 
 namespace WebCore {
@@ -43,8 +43,8 @@ enum class JSDOMIteratorType { Set, Map };
 //     using ValueType = [IDLType];
 // };
 
-template<typename T, typename U = void> using EnableIfMap = typename std::enable_if<T::type == JSDOMIteratorType::Map, U>::type;
-template<typename T, typename U = void> using EnableIfSet = typename std::enable_if<T::type == JSDOMIteratorType::Set, U>::type;
+template<typename T, typename U = void> using EnableIfMap = typename std::enable_if_t<T::type == JSDOMIteratorType::Map, U>;
+template<typename T, typename U = void> using EnableIfSet = typename std::enable_if_t<T::type == JSDOMIteratorType::Set, U>;
 
 template<typename JSWrapper, typename IteratorTraits> class JSDOMIteratorPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -109,7 +109,7 @@ public:
 protected:
     JSDOMIteratorBase(JSC::Structure* structure, JSWrapper& iteratedObject, IterationKind kind)
         : Base(structure, *iteratedObject.globalObject())
-        , m_iterator(iteratedObject.wrapped().createIterator(iteratedObject.globalObject()->scriptExecutionContext()))
+        , m_iterator(iteratedObject.wrapped().createIterator(iteratedObject.globalObject()->protectedScriptExecutionContext().get()))
         , m_kind(kind)
     {
     }
@@ -212,7 +212,7 @@ template<typename JSIterator> JSC::JSValue iteratorForEach(JSC::JSGlobalObject& 
     if (callData.type == JSC::CallData::Type::None)
         return throwTypeError(&lexicalGlobalObject, scope, "Cannot call callback"_s);
 
-    auto iterator = thisObject.wrapped().createIterator(JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext());
+    auto iterator = thisObject.wrapped().createIterator(JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->protectedScriptExecutionContext().get());
     while (auto value = iterator.next()) {
         JSC::MarkedArgumentBuffer arguments;
         appendForEachArguments<JSIterator>(lexicalGlobalObject, *thisObject.globalObject(), arguments, value);

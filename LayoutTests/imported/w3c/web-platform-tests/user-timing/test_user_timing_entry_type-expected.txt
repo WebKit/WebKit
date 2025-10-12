@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: test_equals
 Description
 
 This test validates the user timing entry type, PerformanceMark and PerformanceMeasure.

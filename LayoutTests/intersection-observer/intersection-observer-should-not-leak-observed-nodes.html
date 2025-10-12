@@ -24,12 +24,14 @@ function runTest()
     for (let i = 0; i < 100; ++i)
         intersectionObservers.push(createIntersectionObserver());
 
+    const smallTimeoutToAllowDeliveryOfQueuedNotifications = 10;
+
     requestAnimationFrame(() => {
         setTimeout(() => {
             gc();
             log.textContent += internals.referencingNodeCount(document) < initialNodeCount + intersectionObservers.length * 0.8 ? 'PASS' : 'FAIL - Less than 20% of nodes were collected.'
             testRunner.notifyDone();
-        }, 0);
+        }, smallTimeoutToAllowDeliveryOfQueuedNotifications);
     });
 }
 

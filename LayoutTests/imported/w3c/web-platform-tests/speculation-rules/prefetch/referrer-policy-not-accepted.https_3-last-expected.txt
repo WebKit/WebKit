@@ -1,0 +1,3 @@
+
+FAIL with "unsafe-url" referrer policy on cross-site referring page with document rule assert_equals: must not be prefetched expected (undefined) undefined but got (string) "prefetch"
+

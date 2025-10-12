@@ -79,13 +79,21 @@ void DOMMapAdapter::set(typename IDLKeyType::ParameterType key, typename IDLValu
     setToBackingMap(m_lexicalGlobalObject, m_backingMap, jsKey, jsValue);
 }
 
+template<typename T>
+concept shouldAlwaysInitializeMapLike = requires {
+    typename T::shouldAlwaysInitializeMapLikeMarker;
+};
+
 template<typename WrapperClass> JSC::JSObject& getAndInitializeBackingMap(JSC::JSGlobalObject& lexicalGlobalObject, WrapperClass& mapLike)
 {
     auto pair = getBackingMap(lexicalGlobalObject, mapLike);
-    if (pair.first) {
-        DOMMapAdapter adapter { lexicalGlobalObject, pair.second.get() };
-        mapLike.wrapped().initializeMapLike(adapter);
+    if constexpr (!shouldAlwaysInitializeMapLike<typename WrapperClass::DOMWrapped>) {
+        if (!pair.first)
+            return pair.second.get();
     }
+
+    DOMMapAdapter adapter { lexicalGlobalObject, pair.second.get() };
+    mapLike.wrapped().initializeMapLike(adapter);
     return pair.second.get();
 }
 

@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "ClientOrigin.h"
-#include "SharedWorkerIdentifier.h"
-#include "WorkerBadgeProxy.h"
-#include "WorkerDebuggerProxy.h"
-#include "WorkerLoaderProxy.h"
-#include "WorkerObjectProxy.h"
-#include "WorkerOptions.h"
+#include <WebCore/ClientOrigin.h>
+#include <WebCore/SharedWorkerIdentifier.h>
+#include <WebCore/WorkerBadgeProxy.h>
+#include <WebCore/WorkerDebuggerProxy.h>
+#include <WebCore/WorkerLoaderProxy.h>
+#include <WebCore/WorkerObjectProxy.h>
+#include <WebCore/WorkerOptions.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
@@ -46,7 +46,7 @@ struct WorkerFetchResult;
 struct WorkerInitializationData;
 
 class SharedWorkerThreadProxy final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SharedWorkerThreadProxy, WTF::DestructionThread::Main>, public WorkerObjectProxy, public WorkerLoaderProxy, public WorkerDebuggerProxy, public WorkerBadgeProxy, public CanMakeThreadSafeCheckedPtr<SharedWorkerThreadProxy> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SharedWorkerThreadProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SharedWorkerThreadProxy);
 public:
     template<typename... Args> static Ref<SharedWorkerThreadProxy> create(Args&&... args) { return adoptRef(*new SharedWorkerThreadProxy(std::forward<Args>(args)...)); }

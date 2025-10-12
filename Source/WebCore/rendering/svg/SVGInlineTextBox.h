@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "LegacyInlineTextBox.h"
+#include <WebCore/LegacyInlineTextBox.h>
 
 namespace WebCore {
 

@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-String-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -13,32 +10,32 @@ function neverCalled() {
   assert.sameValue(true, false, "unexpected call");
 }
 
-const g = createNewGlobal();
+const g = $262.createRealm().global;
 
 assert.sameValue(typeof String.prototype.replaceAll, "function");
 assert.sameValue(String.prototype.replaceAll.length, 2);
 assert.sameValue(String.prototype.replaceAll.name, "replaceAll");
 
 // Throws if called with undefined or null.
-assertThrowsInstanceOf(() => String.prototype.replaceAll.call(undefined), TypeError);
-assertThrowsInstanceOf(() => String.prototype.replaceAll.call(null), TypeError);
+assert.throws(TypeError, () => String.prototype.replaceAll.call(undefined));
+assert.throws(TypeError, () => String.prototype.replaceAll.call(null));
 
 // Throws if called with a non-global RegExp.
-assertThrowsInstanceOf(() => "".replaceAll(/a/, ""), TypeError);
-assertThrowsInstanceOf(() => "".replaceAll(g.RegExp(""), ""), TypeError);
+assert.throws(TypeError, () => "".replaceAll(/a/, ""));
+assert.throws(TypeError, () => "".replaceAll(g.RegExp(""), ""));
 
 // Also throws with RegExp-like objects.
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
   "".replaceAll({[Symbol.match]: neverCalled, flags: ""}, "");
-}, TypeError);
+});
 
 // |flags| property mustn't be undefined or null.
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
   "".replaceAll({[Symbol.match]: neverCalled, flags: undefined}, "");
-}, TypeError);
-assertThrowsInstanceOf(() => {
+});
+assert.throws(TypeError, () => {
   "".replaceAll({[Symbol.match]: neverCalled, flags: null}, "");
-}, TypeError);
+});
 
 // Global RegExp (or RegExp-like) simply redirect to @@replace.
 assert.sameValue("aba".replace(/a/g, "c"), "cbc");

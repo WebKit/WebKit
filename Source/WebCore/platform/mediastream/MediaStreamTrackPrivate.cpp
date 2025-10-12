@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -216,7 +216,7 @@ private:
     bool preventSourceFromEnding() { return m_shouldPreventSourceFromEnding; }
 
     WeakPtr<MediaStreamTrackPrivate> m_privateTrack;
-    Ref<RealtimeMediaSource> m_source;
+    const Ref<RealtimeMediaSource> m_source;
     std::function<void(Function<void()>&&)> m_postTask;
     bool m_shouldPreventSourceFromEnding { true };
     bool m_isStarted { false };
@@ -302,7 +302,7 @@ private:
             m_postTask = [] (Function<void()>&& function) { function(); };
     }
 
-    Ref<RealtimeMediaSource> m_source;
+    const Ref<RealtimeMediaSource> m_source;
     std::unique_ptr<MediaStreamTrackPrivateSourceObserverSourceProxy> m_sourceProxy;
     std::function<void(Function<void()>&&)> m_postTask;
     HashMap<uint64_t, ApplyConstraintsHandler> m_applyConstraintsCallbacks;

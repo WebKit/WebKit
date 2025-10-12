@@ -20,6 +20,7 @@
 #include "config.h"
 #include "LegacyRenderSVGHiddenContainer.h"
 
+#include "VisibleRectContext.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -43,6 +44,11 @@ void LegacyRenderSVGHiddenContainer::layout()
 void LegacyRenderSVGHiddenContainer::paint(PaintInfo&, const LayoutPoint&)
 {
     // This subtree does not paint.
+}
+
+LayoutRect LegacyRenderSVGHiddenContainer::clippedOverflowRect(const RenderLayerModelObject*, VisibleRectContext) const
+{
+    return { };
 }
 
 void LegacyRenderSVGHiddenContainer::absoluteQuads(Vector<FloatQuad>&, bool*) const

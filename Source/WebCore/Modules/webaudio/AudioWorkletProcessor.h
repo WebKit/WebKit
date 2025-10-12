@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,9 +74,9 @@ private:
     explicit AudioWorkletProcessor(AudioWorkletGlobalScope&, const AudioWorkletProcessorConstructionData&);
     void buildJSArguments(JSC::VM&, JSC::JSGlobalObject&, JSC::MarkedArgumentBuffer&, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap);
 
-    Ref<AudioWorkletGlobalScope> m_globalScope;
+    const Ref<AudioWorkletGlobalScope> m_globalScope;
     String m_name;
-    Ref<MessagePort> m_port;
+    const Ref<MessagePort> m_port;
     JSValueInWrappedObject m_jsInputs;
     JSValueInWrappedObject m_jsOutputs;
     JSValueInWrappedObject m_jsParamValues;

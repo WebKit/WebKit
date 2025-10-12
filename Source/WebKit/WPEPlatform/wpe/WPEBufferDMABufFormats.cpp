@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WPEBufferDMABufFormats.h"
 
+#include "GRefPtrWPE.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
@@ -53,24 +54,24 @@ struct DMABufFormat {
 };
 
 struct DMABufFormatsGroup {
-    DMABufFormatsGroup(const char* device, WPEBufferDMABufFormatUsage usage)
+    DMABufFormatsGroup(WPEDRMDevice* device, WPEBufferDMABufFormatUsage usage)
         : device(device)
         , usage(usage)
     {
     }
 
-    ~DMABufFormatsGroup() = default;
     DMABufFormatsGroup(const DMABufFormatsGroup&) = delete;
     DMABufFormatsGroup& operator=(const DMABufFormatsGroup&) = delete;
     DMABufFormatsGroup(DMABufFormatsGroup&& other)
-        : device(WTFMove(other.device))
+        : device(other.device)
         , usage(other.usage)
         , formats(WTFMove(other.formats))
     {
+        other.device = nullptr;
         other.usage = WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING;
     }
 
-    CString device;
+    GRefPtr<WPEDRMDevice> device;
     WPEBufferDMABufFormatUsage usage { WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING };
     Vector<DMABufFormat> formats;
 };
@@ -81,12 +82,12 @@ struct DMABufFormatsGroup {
  * List of supported DMA-BUF buffer formats
  */
 struct _WPEBufferDMABufFormatsPrivate {
-    CString device;
+    GRefPtr<WPEDRMDevice> device;
     Vector<DMABufFormatsGroup> groups;
 };
 WEBKIT_DEFINE_FINAL_TYPE(WPEBufferDMABufFormats, wpe_buffer_dma_buf_formats, G_TYPE_OBJECT, GObject)
 
-static void wpe_buffer_dma_buf_formats_class_init(WPEBufferDMABufFormatsClass*/* bufferDMABufFormatsClass*/)
+static void wpe_buffer_dma_buf_formats_class_init(WPEBufferDMABufFormatsClass*)
 {
 }
 
@@ -96,13 +97,13 @@ static void wpe_buffer_dma_buf_formats_class_init(WPEBufferDMABufFormatsClass*/*
  *
  * Get the main DRM device to be used to allocate buffer for @formats
  *
- * Returns: (transfer none) (nullable): the main DRM device for @formats
+ * Returns: (transfer none) (nullable): a #WPEDRMDevice or %NULL
  */
-const char* wpe_buffer_dma_buf_formats_get_device(WPEBufferDMABufFormats* formats)
+WPEDRMDevice* wpe_buffer_dma_buf_formats_get_device(WPEBufferDMABufFormats* formats)
 {
     g_return_val_if_fail(WPE_IS_BUFFER_DMA_BUF_FORMATS(formats), nullptr);
 
-    return formats->priv->device.data();
+    return formats->priv->device.get();
 }
 
 /**
@@ -147,9 +148,9 @@ WPEBufferDMABufFormatUsage wpe_buffer_dma_buf_formats_get_group_usage(WPEBufferD
  *
  * Get the target DRM device of @group in @formats
  *
- * Returns: (transfer none) (nullable): the target DRM device
+ * Returns: (transfer none) (nullable): a #WPEDRMDevice or %NULL
  */
-const char* wpe_buffer_dma_buf_formats_get_group_device(WPEBufferDMABufFormats* formats, guint group)
+WPEDRMDevice* wpe_buffer_dma_buf_formats_get_group_device(WPEBufferDMABufFormats* formats, guint group)
 {
     g_return_val_if_fail(WPE_IS_BUFFER_DMA_BUF_FORMATS(formats), nullptr);
     g_return_val_if_fail(group < formats->priv->groups.size(), nullptr);
@@ -157,7 +158,7 @@ const char* wpe_buffer_dma_buf_formats_get_group_device(WPEBufferDMABufFormats* 
     if (group >= formats->priv->groups.size())
         return nullptr;
 
-    return formats->priv->groups[group].device.data();
+    return formats->priv->groups[group].device.get();
 }
 
 /**
@@ -230,14 +231,14 @@ GArray* wpe_buffer_dma_buf_formats_get_format_modifiers(WPEBufferDMABufFormats* 
  * Helper type to build a #WPEBufferDMABufFormats
  */
 struct _WPEBufferDMABufFormatsBuilder {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(_WPEBufferDMABufFormatsBuilder);
 
-    explicit _WPEBufferDMABufFormatsBuilder(const char* mainDevice)
+    _WPEBufferDMABufFormatsBuilder(WPEDRMDevice* mainDevice)
         : device(mainDevice)
     {
     }
 
-    CString device;
+    GRefPtr<WPEDRMDevice> device;
     Vector<DMABufFormatsGroup> groups;
     int referenceCount { 1 };
 };
@@ -251,7 +252,7 @@ G_DEFINE_BOXED_TYPE(WPEBufferDMABufFormatsBuilder, wpe_buffer_dma_buf_formats_bu
  *
  * Returns: (transfer full): a new #WPEBufferDMABufFormatsBuilder
  */
-WPEBufferDMABufFormatsBuilder* wpe_buffer_dma_buf_formats_builder_new(const char* device)
+WPEBufferDMABufFormatsBuilder* wpe_buffer_dma_buf_formats_builder_new(WPEDRMDevice* device)
 {
     auto* builder = static_cast<WPEBufferDMABufFormatsBuilder*>(fastMalloc(sizeof(WPEBufferDMABufFormatsBuilder)));
     new (builder) WPEBufferDMABufFormatsBuilder(device);
@@ -299,14 +300,14 @@ void wpe_buffer_dma_buf_formats_builder_unref(WPEBufferDMABufFormatsBuilder* bui
 /**
  * wpe_buffer_dma_buf_formats_builder_append_group:
  * @builder: a #WPEBufferDMABufFormatsBuilder
- * @device: (nullable): a device
+ * @device: (nullable): a #WPEDRMDevice
  * @usage: a #WPEBufferDMABufFormatUsage
  *
  * Append a new group for @device and @usage to @builder.
  * If @device is %NULL, the main device passed to wpe_buffer_dma_buf_formats_builder_new()
  * should be used.
  */
-void wpe_buffer_dma_buf_formats_builder_append_group(WPEBufferDMABufFormatsBuilder* builder, const char* device, WPEBufferDMABufFormatUsage usage)
+void wpe_buffer_dma_buf_formats_builder_append_group(WPEBufferDMABufFormatsBuilder* builder, WPEDRMDevice* device, WPEBufferDMABufFormatUsage usage)
 {
     g_return_if_fail(builder);
 

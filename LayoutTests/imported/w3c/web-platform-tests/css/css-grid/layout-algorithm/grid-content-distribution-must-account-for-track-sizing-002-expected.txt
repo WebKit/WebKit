@@ -1,8 +1,4 @@
 XXX XX X XX X XXX
 
-FAIL .grid 1 assert_equals:
-<div class="grid justifyContentStart alignContentSpaceBetween" data-expected-width="40" data-expected-height="200">
-        <div class="item" data-expected-width="40" data-expected-height="200">XXX XX X XX X XXX</div>
-    </div>
-width expected 40 but got 80
+PASS .grid 1
 

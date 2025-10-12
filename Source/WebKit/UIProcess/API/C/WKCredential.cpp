@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ WKTypeID WKCredentialGetTypeID()
 
 WKCredentialRef WKCredentialCreate(WKStringRef username, WKStringRef password, WKCredentialPersistence persistence)
 {
-    return toAPILeakingRef(WebCredential::create(WebCore::Credential(toImpl(username)->string(), toImpl(password)->string(), toCredentialPersistence(persistence))));
+    return toAPILeakingRef(WebCredential::create(WebCore::Credential(toProtectedImpl(username)->string(), toProtectedImpl(password)->string(), toCredentialPersistence(persistence))));
 }
 
 WKCredentialRef WKCredentialCreateWithCertificateInfo(WKCertificateInfoRef certificateInfo)
@@ -49,6 +49,5 @@ WKCredentialRef WKCredentialCreateWithCertificateInfo(WKCertificateInfoRef certi
 
 WKStringRef WKCredentialCopyUser(WKCredentialRef credentialRef)
 {
-    return toCopiedAPI(toImpl(credentialRef)->credential().user());
+    return toCopiedAPI(toProtectedImpl(credentialRef)->credential().user());
 }
-

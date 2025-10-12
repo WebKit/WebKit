@@ -8,11 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+#include <cstdint>
+#include <string>
+
+#include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
+#include "api/audio_codecs/opus/audio_encoder_opus_config.h"
+#include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
 #include "api/test/metrics/metric.h"
 #include "modules/audio_coding/neteq/tools/audio_loop.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/time_utils.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
@@ -20,9 +28,9 @@
 namespace webrtc {
 namespace {
 
-using ::webrtc::test::GetGlobalMetricsLogger;
-using ::webrtc::test::ImprovementDirection;
-using ::webrtc::test::Unit;
+using test::GetGlobalMetricsLogger;
+using test::ImprovementDirection;
+using test::Unit;
 
 int64_t RunComplexityTest(const Environment& env,
                           const AudioEncoderOpusConfig& config) {
@@ -31,7 +39,7 @@ int64_t RunComplexityTest(const Environment& env,
       AudioEncoderOpus::MakeAudioEncoder(env, config, {.payload_type = 17});
   // Open speech file.
   const std::string kInputFileName =
-      webrtc::test::ResourcePath("audio_coding/speech_mono_32_48kHz", "pcm");
+      test::ResourcePath("audio_coding/speech_mono_32_48kHz", "pcm");
   test::AudioLoop audio_loop;
   constexpr int kSampleRateHz = 48000;
   EXPECT_EQ(kSampleRateHz, encoder->SampleRateHz());
@@ -42,16 +50,16 @@ int64_t RunComplexityTest(const Environment& env,
   EXPECT_TRUE(audio_loop.Init(kInputFileName, kMaxLoopLengthSamples,
                               kInputBlockSizeSamples));
   // Encode.
-  const int64_t start_time_ms = rtc::TimeMillis();
+  const int64_t start_time_ms = TimeMillis();
   AudioEncoder::EncodedInfo info;
-  rtc::Buffer encoded(500);
+  Buffer encoded(500);
   uint32_t rtp_timestamp = 0u;
   for (size_t i = 0; i < 10000; ++i) {
     encoded.Clear();
     info = encoder->Encode(rtp_timestamp, audio_loop.GetNextBlock(), &encoded);
     rtp_timestamp += kInputBlockSizeSamples;
   }
-  return rtc::TimeMillis() - start_time_ms;
+  return TimeMillis() - start_time_ms;
 }
 
 // This test encodes an audio file using Opus twice with different bitrates

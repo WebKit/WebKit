@@ -11,10 +11,14 @@
 #include "modules/audio_processing/splitting_filter.h"
 
 #include <array>
+#include <cstddef>
+#include <cstdint>
 
 #include "api/array_view.h"
 #include "common_audio/channel_buffer.h"
+#include "common_audio/include/audio_util.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "modules/audio_processing/three_band_filter_bank.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -110,11 +114,10 @@ void SplittingFilter::ThreeBandsAnalysis(const ChannelBuffer<float>* data,
 
   for (size_t i = 0; i < three_band_filter_banks_.size(); ++i) {
     three_band_filter_banks_[i].Analysis(
-        rtc::ArrayView<const float, ThreeBandFilterBank::kFullBandSize>(
+        ArrayView<const float, ThreeBandFilterBank::kFullBandSize>(
             data->channels_view()[i].data(),
             ThreeBandFilterBank::kFullBandSize),
-        rtc::ArrayView<const rtc::ArrayView<float>,
-                       ThreeBandFilterBank::kNumBands>(
+        ArrayView<const ArrayView<float>, ThreeBandFilterBank::kNumBands>(
             bands->bands_view(i).data(), ThreeBandFilterBank::kNumBands));
   }
 }
@@ -132,10 +135,9 @@ void SplittingFilter::ThreeBandsSynthesis(const ChannelBuffer<float>* bands,
 
   for (size_t i = 0; i < data->num_channels(); ++i) {
     three_band_filter_banks_[i].Synthesis(
-        rtc::ArrayView<const rtc::ArrayView<float>,
-                       ThreeBandFilterBank::kNumBands>(
+        ArrayView<const ArrayView<float>, ThreeBandFilterBank::kNumBands>(
             bands->bands_view(i).data(), ThreeBandFilterBank::kNumBands),
-        rtc::ArrayView<float, ThreeBandFilterBank::kFullBandSize>(
+        ArrayView<float, ThreeBandFilterBank::kFullBandSize>(
             data->channels_view()[i].data(),
             ThreeBandFilterBank::kFullBandSize));
   }

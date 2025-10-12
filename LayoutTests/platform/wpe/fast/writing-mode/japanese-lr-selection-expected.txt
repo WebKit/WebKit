@@ -19,4 +19,5 @@ layer at (0,0) size 396x600
           text run at (276,0) width 399: "\x{898B}\x{3064}\x{3051}\x{305F}\x{3059}\x{3070}\x{3089}\x{3057}\x{3044}\x{8A18}\x{4E8B}\x{304C}\x{3069}\x{3053}\x{306B}\x{3042}\x{3063}\x{305F}\x{304B}"
           text run at (301,0) width 383: "\x{5FD8}\x{308C}\x{3066}\x{3057}\x{307E}\x{3063}\x{305F}\x{7D4C}\x{9A13}\x{306F}\x{3042}\x{308A}\x{307E}\x{3059}\x{304B} \x{306A}\x{3089}\x{30BF}"
           text run at (326,0) width 336: "\x{30A4}\x{30C8}\x{30EB}\x{3068}\x{30A2}\x{30C9}\x{30EC}\x{30B9}\x{3060}\x{3051}\x{3067}\x{306A}\x{304F}\x{3001}\x{8A2A}\x{554F}"
-caret: position 5 of child 0 {#text} of child 1 {DIV} of body
+selection start: position 5 of child 0 {#text} of child 1 {DIV} of body
+selection end:   position 263 of child 0 {#text} of child 1 {DIV} of body

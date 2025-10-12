@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
   <div id="p"></div>
@@ -13,8 +13,8 @@
       declaration = cssRule.style;
       shouldBe("declaration.length", "0");
       shouldBeEqualToString("declaration.getPropertyValue('font-synthesis')", "");
-      computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "weight style small-caps");
+      computedStyle = getComputedStyle(target);
+      shouldBeEqualToString("computedStyle.getPropertyValue('font-synthesis')", "weight style small-caps");
       stylesheet.deleteRule(0);
     }
 
@@ -24,8 +24,8 @@
       declaration = cssRule.style;
       shouldBe("declaration.length", "3");
       shouldBeEqualToString("declaration.getPropertyValue('font-synthesis')", "initial");
-      computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "weight style small-caps");
+      computedStyle = getComputedStyle(target);
+      shouldBeEqualToString("computedStyle.getPropertyValue('font-synthesis')", "weight style small-caps");
       stylesheet.deleteRule(0);
     }
 
@@ -35,8 +35,8 @@
       declaration = cssRule.style;
       shouldBe("declaration.length", "3");
       shouldBeEqualToString("declaration.getPropertyValue('font-synthesis')", "weight");
-      computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "weight");
+      computedStyle = getComputedStyle(target);
+      shouldBeEqualToString("computedStyle.getPropertyValue('font-synthesis')", "weight");
       stylesheet.deleteRule(0);
     }
 
@@ -46,19 +46,19 @@
       declaration = cssRule.style;
       shouldBe("declaration.length", "3");
       shouldBeEqualToString("declaration.getPropertyValue('font-synthesis')", "style");
-      computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "style");
+      computedStyle = getComputedStyle(target);
+      shouldBeEqualToString("computedStyle.getPropertyValue('font-synthesis')", "style");
       stylesheet.deleteRule(0);
     }
 
     function testWeightAndStyle(stylesheet, target) {
-      cssRule = stylesheet.cssRules.item(0);
+      cssRule = stylesheet.cssRules.item(0)
       shouldBe("cssRule.type", "cssRule.STYLE_RULE");
       declaration = cssRule.style;
       shouldBe("declaration.length", "3");
       shouldBeEqualToString("declaration.getPropertyValue('font-synthesis')", "weight style");
-      computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "weight style");
+      computedStyle = getComputedStyle(target);
+      shouldBeEqualToString("computedStyle.getPropertyValue('font-synthesis')", "weight style");
       stylesheet.deleteRule(0);
     }
 
@@ -68,8 +68,8 @@
       declaration = cssRule.style;
       shouldBe("declaration.length", "3");
       shouldBeEqualToString("declaration.getPropertyValue('font-synthesis')", "weight style");
-      computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "weight style");
+      computedStyle = getComputedStyle(target);
+      shouldBeEqualToString("computedStyle.getPropertyValue('font-synthesis')", "weight style");
       stylesheet.deleteRule(0);
     }
 
@@ -81,7 +81,7 @@
     stylesheet.insertRule("#p { }", 0);
     testEmptyIsBoth(stylesheet, target);
 
-    stylesheet.insertRule("#p { font-synthesis: initial; }", 0);
+    stylesheet.insertRule("#p { font-synthesis: initial }", 0);
     testInitialIsBoth(stylesheet, target);
 
     stylesheet.insertRule("#p { font-synthesis: weight }", 0);
@@ -112,6 +112,5 @@
     testEmptyIsBoth(stylesheet, target);
 
   </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

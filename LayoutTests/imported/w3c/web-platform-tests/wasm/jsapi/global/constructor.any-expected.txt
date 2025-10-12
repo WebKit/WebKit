@@ -48,7 +48,7 @@ PASS Explicit value undefined for type i64
 PASS Explicit value true for type i64
 PASS Explicit value false for type i64
 PASS Explicit value "3" for type i64
-PASS Explicit value bigint "123" for type i64
+PASS Explicit value 123n for type i64
 PASS Explicit value object with toString returning string for type i64
 PASS Explicit value object with valueOf returning string for type i64
 PASS Explicit value object with toString returning bigint for type i64

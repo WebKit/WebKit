@@ -76,7 +76,7 @@ sk_sp<GrTexture> GrResourceProvider::createTexture(SkISize dimensions,
 
     int numMipLevels = 1;
     if (mipmapped == skgpu::Mipmapped::kYes) {
-        numMipLevels = SkMipmap::ComputeLevelCount(dimensions.fWidth, dimensions.fHeight) + 1;
+        numMipLevels = SkMipmap::ComputeLevelCount(dimensions) + 1;
     }
 
     if (!fCaps->validateSurfaceParams(dimensions,
@@ -485,7 +485,7 @@ sk_sp<const GrGpuBuffer> GrResourceProvider::findOrMakeStaticBuffer(
     AutoTMalloc<char> stagingBuffer;
     if (!vertexWriter) {
         SkASSERT(!buffer->isMapped());
-        vertexWriter = {stagingBuffer.reset(size), size};
+        vertexWriter = skgpu::VertexWriter{stagingBuffer.reset(size), size};
     }
 
     initializeBufferFn(std::move(vertexWriter), size);

@@ -35,19 +35,10 @@
 
 @property (nonatomic) unsigned currentPageNumber;
 @property (nonatomic) unsigned pageCount;
-@property (nonatomic, readonly) UIView *backdropView;
 
 - (void)updatePosition:(CGRect)frame;
 - (void)show;
 - (instancetype)initWithFrame:(CGRect)frame view:(WKWebView *)view pageCount:(size_t)pageCount;
-@end
-
-@interface WKPDFPageNumberIndicator (Swift)
-
-@property (readonly) BOOL canUseVisualEffectViewForBackdrop;
-
-- (void)configureBackgroundForBackdropViewIfNeeded;
-
 @end
 
 #endif

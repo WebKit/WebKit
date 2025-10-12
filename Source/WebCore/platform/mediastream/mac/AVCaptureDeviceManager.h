@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,9 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
-#include "CaptureDeviceManager.h"
-#include "RealtimeMediaSource.h"
-#include "RealtimeMediaSourceSupportedConstraints.h"
+#include <WebCore/CaptureDeviceManager.h>
+#include <WebCore/RealtimeMediaSource.h>
+#include <WebCore/RealtimeMediaSourceSupportedConstraints.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WorkQueue.h>
@@ -74,7 +74,7 @@ private:
     RetainPtr<NSArray> m_avCaptureDeviceTypes;
     bool m_isInitialized { false };
 
-    Ref<WorkQueue> m_dispatchQueue;
+    const Ref<WorkQueue> m_dispatchQueue;
 };
 
 } // namespace WebCore

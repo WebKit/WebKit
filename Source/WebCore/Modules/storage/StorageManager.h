@@ -46,7 +46,7 @@ public:
     void persist(DOMPromiseDeferred<IDLBoolean>&&);
     using Estimate = StorageEstimate;
     void estimate(DOMPromiseDeferred<IDLDictionary<Estimate>>&&);
-    void fileSystemAccessGetDirectory(DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&&);
+    void fileSystemGetDirectory(DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&&);
 
 private:
     explicit StorageManager(NavigatorBase&);

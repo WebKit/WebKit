@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include "SVGPathConsumer.h"
 #include "SVGPathSource.h"
 #include "SVGPropertyAnimatorFactory.h"
+#include "SVGStringList.h"
 #include "SVGValuePropertyAnimatorImpl.h"
 
 #include <wtf/TZoneMallocInlines.h>

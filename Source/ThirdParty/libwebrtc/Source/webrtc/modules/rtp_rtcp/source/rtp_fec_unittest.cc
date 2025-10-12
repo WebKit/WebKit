@@ -8,15 +8,24 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 #include <list>
 #include <memory>
+#include <utility>
+#include <vector>
 
 #include "absl/algorithm/container.h"
+#include "modules/include/module_fec_types.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/fec_test_helper.h"
 #include "modules/rtp_rtcp/source/flexfec_03_header_reader_writer.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
+#include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
 #include "modules/rtp_rtcp/source/ulpfec_header_reader_writer.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/random.h"
 #include "test/gtest.h"
 
@@ -184,7 +193,7 @@ class FlexfecForwardErrorCorrection : public ForwardErrorCorrection {
 
   // For FlexFEC we let the FEC packet sequence numbers be independent of
   // the media packet sequence numbers.
-  static uint16_t GetFirstFecSeqNum(uint16_t next_media_seq_num) {
+  static uint16_t GetFirstFecSeqNum(uint16_t /* next_media_seq_num */) {
     Random random(0xbe110);
     return random.Rand<uint16_t>();
   }

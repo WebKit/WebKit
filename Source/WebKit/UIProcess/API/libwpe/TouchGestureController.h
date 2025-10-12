@@ -28,7 +28,6 @@
 #if USE(LIBWPE) && ENABLE(TOUCH_EVENTS)
 
 #include "WebWheelEvent.h"
-#include <variant>
 #include <wpe/wpe.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -65,7 +64,7 @@ public:
         WebWheelEvent::Phase phase;
     };
 
-    using EventVariant = std::variant<NoEvent, ClickEvent, ContextMenuEvent, AxisEvent>;
+    using EventVariant = Variant<NoEvent, ClickEvent, ContextMenuEvent, AxisEvent>;
 
     GesturedEvent gesturedEvent() const { return m_gesturedEvent; }
     EventVariant handleEvent(const struct wpe_input_touch_event_raw*);

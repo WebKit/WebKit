@@ -125,6 +125,7 @@ final class WKUIDelegateAdapter: NSObject, WKUIDelegatePrivate {
     // MARK: Context menu support
 
     #if os(macOS)
+    // swift-format-ignore: NoLeadingUnderscores
     @objc(_webView:getContextMenuFromProposedMenu:forElement:userInfo:completionHandler:)
     func _webView(
         _ webView: WKWebView!,
@@ -141,6 +142,7 @@ final class WKUIDelegateAdapter: NSObject, WKUIDelegatePrivate {
     }
     #endif
 
+    // swift-format-ignore: NoLeadingUnderscores
     @objc(_webView:geometryDidChange:)
     func _webView(_ webView: WKWebView!, geometryDidChange geometry: WKScrollGeometry) {
         owner?.backingWebView.geometryDidChange(WKScrollGeometryAdapter(geometry))

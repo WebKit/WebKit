@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WPEClipboard.h"
 
+#include "GRefPtrWPE.h"
 #include "WPEDisplay.h"
 #include <optional>
 #include <wtf/FastMalloc.h>
@@ -44,7 +45,7 @@ struct _WPEClipboardPrivate {
     GWeakPtr<WPEDisplay> display;
     int64_t changeCount;
     bool isLocal;
-    WPEClipboardContent* content;
+    GRefPtr<WPEClipboardContent> content;
     GRefPtr<GPtrArray> formats;
 };
 WEBKIT_DEFINE_TYPE(WPEClipboard, wpe_clipboard, G_TYPE_OBJECT)
@@ -66,15 +67,6 @@ enum {
 };
 
 static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
-
-static void wpeClipboardDispose(GObject* object)
-{
-    auto* clipboard = WPE_CLIPBOARD(object);
-
-    g_clear_pointer(&clipboard->priv->content, wpe_clipboard_content_unref);
-
-    G_OBJECT_CLASS(wpe_clipboard_parent_class)->dispose(object);
-}
 
 static void wpeClipboardSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
 {
@@ -110,8 +102,7 @@ static void wpeClipboardChanged(WPEClipboard* clipboard, GPtrArray* formats, gbo
     auto* priv = clipboard->priv;
     priv->isLocal = isLocal;
     priv->formats = formats;
-    g_clear_pointer(&priv->content, wpe_clipboard_content_unref);
-    priv->content = content ? wpe_clipboard_content_ref(content) : nullptr;
+    priv->content = content;
 
     priv->changeCount++;
     g_object_notify_by_pspec(G_OBJECT(clipboard), sObjProperties[PROP_CHANGE_COUNT]);
@@ -120,7 +111,6 @@ static void wpeClipboardChanged(WPEClipboard* clipboard, GPtrArray* formats, gbo
 static void wpe_clipboard_class_init(WPEClipboardClass* clipboardClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(clipboardClass);
-    objectClass->dispose = wpeClipboardDispose;
     objectClass->set_property = wpeClipboardSetProperty;
     objectClass->get_property = wpeClipboardGetProperty;
 
@@ -261,7 +251,7 @@ WPEClipboardContent* wpe_clipboard_get_content(WPEClipboard* clipboard)
 {
     g_return_val_if_fail(WPE_IS_CLIPBOARD(clipboard), nullptr);
 
-    return clipboard->priv->content;
+    return clipboard->priv->content.get();
 }
 
 /**
@@ -288,7 +278,7 @@ GBytes* wpe_clipboard_read_bytes(WPEClipboard* clipboard, const char* format)
             return nullptr;
 
         GRefPtr<GOutputStream> stream = adoptGRef(g_memory_output_stream_new_resizable());
-        if (!wpe_clipboard_content_serialize(priv->content, format, stream.get()))
+        if (!wpe_clipboard_content_serialize(priv->content.get(), format, stream.get()))
             return nullptr;
 
         g_output_stream_close(stream.get(), nullptr, nullptr);

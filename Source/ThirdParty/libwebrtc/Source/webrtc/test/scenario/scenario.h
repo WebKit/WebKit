@@ -9,19 +9,26 @@
  */
 #ifndef TEST_SCENARIO_SCENARIO_H_
 #define TEST_SCENARIO_SCENARIO_H_
+#include <cstddef>
+#include <functional>
 #include <memory>
-#include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
+#include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/audio_codecs/audio_encoder_factory.h"
+#include "api/rtc_event_log_output.h"
+#include "api/scoped_refptr.h"
 #include "api/task_queue/task_queue_base.h"
-#include "api/test/time_controller.h"
-#include "rtc_base/fake_clock.h"
-#include "rtc_base/task_utils/repeating_task.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
 #include "test/logging/log_writer.h"
+#include "test/network/network_emulation.h"
 #include "test/network/network_emulation_manager.h"
 #include "test/scenario/audio_stream.h"
 #include "test/scenario/call_client.h"
@@ -176,8 +183,8 @@ class Scenario {
   std::vector<std::unique_ptr<SimulationNode>> simulation_nodes_;
   std::vector<std::unique_ptr<StatesPrinter>> printers_;
 
-  rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory_;
-  rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory_;
+  scoped_refptr<AudioDecoderFactory> audio_decoder_factory_;
+  scoped_refptr<AudioEncoderFactory> audio_encoder_factory_;
 
   Timestamp start_time_ = Timestamp::PlusInfinity();
   // Defined last so it's destroyed first.

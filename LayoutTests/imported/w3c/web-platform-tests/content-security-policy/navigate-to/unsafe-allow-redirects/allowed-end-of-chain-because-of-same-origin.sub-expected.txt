@@ -1,9 +1,0 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'navigate-to'.
-
-Blocked access to external URL http://www2.localhost:8800/common/redirect.py?location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcontent-security-policy%2Fnavigate-to%2Fsupport%2Fpost_message_to_frame_owner.html
-
-
-Harness Error (TIMEOUT), message = null
-
-NOTRUN Test that the child iframe navigation is allowed
-

@@ -36,6 +36,7 @@
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKUserScriptPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
@@ -70,4 +71,31 @@ TEST(RenderingProgress, FirstMeaningfulPaint)
     [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
 
     TestWebKitAPI::Util::run(&didObserveFirstMeaningfulPaint);
+}
+
+TEST(WKWebView, RenderTree)
+{
+    __block bool done { false };
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
+    [webView loadHTMLString:@"<div>hi</div>" baseURL:nil];
+    [webView _getRenderTreeAsStringWithCompletionHandler:^(NSString *result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_WK_STREQ(result,
+#if PLATFORM(MAC)
+            "layer at (0,0) size 100x100\n"
+            "  RenderView at (0,0) size 100x100\n"
+            "layer at (0,0) size 100x100\n"
+            "  RenderBlock {HTML} at (0,0) size 100x100\n"
+            "    RenderBody {BODY} at (8,8) size 84x84\n"
+#else
+            "layer at (0,0) size 980x980\n"
+            "  RenderView at (0,0) size 980x980\n"
+            "layer at (0,0) size 980x980\n"
+            "  RenderBlock {HTML} at (0,0) size 980x980\n"
+            "    RenderBody {BODY} at (8,8) size 964x964\n"
+#endif
+        );
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
 }

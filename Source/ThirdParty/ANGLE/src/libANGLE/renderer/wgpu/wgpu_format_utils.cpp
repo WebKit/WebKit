@@ -67,5 +67,22 @@ void FormatTable::initialize()
         }
     }
 }
+
+const Format *FormatTable::findClosestTextureFormat(WGPUTextureFormat wgpuFormat) const
+{
+    for (const Format &format : mFormatData)
+    {
+        // Accept formats with WGPUTextureFormats that match the request and are 1:1 with their
+        // intended format (not a fallback for something else)
+        if (format.getActualWgpuTextureFormat() == wgpuFormat &&
+            format.getIntendedFormatID() == format.getActualImageFormatID())
+        {
+            return &format;
+        }
+    }
+
+    return nullptr;
+}
+
 }  // namespace webgpu
 }  // namespace rx

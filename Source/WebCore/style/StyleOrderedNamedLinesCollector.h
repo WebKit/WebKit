@@ -43,9 +43,9 @@ namespace Style {
 class OrderedNamedLinesCollector {
     WTF_MAKE_NONCOPYABLE(OrderedNamedLinesCollector);
 public:
-    OrderedNamedLinesCollector(ExtractorState& state, bool isRowAxis)
-        : m_orderedNamedGridLines(isRowAxis ? state.style.orderedNamedGridColumnLines() : state.style.orderedNamedGridRowLines())
-        , m_orderedNamedAutoRepeatGridLines(isRowAxis ? state.style.autoRepeatOrderedNamedGridColumnLines() : state.style.autoRepeatOrderedNamedGridRowLines())
+    OrderedNamedLinesCollector(ExtractorState&, const Style::GridTemplateList& tracks)
+        : m_orderedNamedGridLines(tracks.orderedNamedLines)
+        , m_orderedNamedAutoRepeatGridLines(tracks.autoRepeatOrderedNamedLines)
     {
     }
     virtual ~OrderedNamedLinesCollector() = default;
@@ -59,15 +59,15 @@ protected:
     enum class NamedLinesType : bool { NamedLines, AutoRepeatNamedLines };
     void appendLines(Vector<String>&, unsigned index, NamedLinesType) const;
 
-    const OrderedNamedGridLinesMap& m_orderedNamedGridLines;
-    const OrderedNamedGridLinesMap& m_orderedNamedAutoRepeatGridLines;
+    const GridOrderedNamedLinesMap& m_orderedNamedGridLines;
+    const GridOrderedNamedLinesMap& m_orderedNamedAutoRepeatGridLines;
 };
 
 class OrderedNamedLinesCollectorInGridLayout : public OrderedNamedLinesCollector {
 public:
-    OrderedNamedLinesCollectorInGridLayout(ExtractorState& state, bool isRowAxis, unsigned autoRepeatTracksCount, unsigned autoRepeatTrackListLength)
-        : OrderedNamedLinesCollector(state, isRowAxis)
-        , m_insertionPoint(isRowAxis ? state.style.gridAutoRepeatColumnsInsertionPoint() : state.style.gridAutoRepeatRowsInsertionPoint())
+    OrderedNamedLinesCollectorInGridLayout(ExtractorState& state, const Style::GridTemplateList& tracks, unsigned autoRepeatTracksCount, unsigned autoRepeatTrackListLength)
+        : OrderedNamedLinesCollector(state, tracks)
+        , m_insertionPoint(tracks.autoRepeatInsertionPoint)
         , m_autoRepeatTotalTracks(autoRepeatTracksCount)
         , m_autoRepeatTrackListLength(autoRepeatTrackListLength)
     {
@@ -83,17 +83,17 @@ private:
 
 class OrderedNamedLinesCollectorInSubgridLayout : public OrderedNamedLinesCollector {
 public:
-    OrderedNamedLinesCollectorInSubgridLayout(ExtractorState& state, bool isRowAxis, unsigned totalTracksCount)
-        : OrderedNamedLinesCollector(state, isRowAxis)
-        , m_insertionPoint(isRowAxis ? state.style.gridAutoRepeatColumnsInsertionPoint() : state.style.gridAutoRepeatRowsInsertionPoint())
-        , m_autoRepeatLineSetListLength((isRowAxis ? state.style.autoRepeatOrderedNamedGridColumnLines() : state.style.autoRepeatOrderedNamedGridRowLines()).map.size())
+    OrderedNamedLinesCollectorInSubgridLayout(ExtractorState& state, const Style::GridTemplateList& tracks, unsigned totalTracksCount)
+        : OrderedNamedLinesCollector(state, tracks)
+        , m_insertionPoint(tracks.autoRepeatInsertionPoint)
+        , m_autoRepeatLineSetListLength(tracks.autoRepeatOrderedNamedLines.map.size())
         , m_totalLines(totalTracksCount + 1)
     {
         if (!m_autoRepeatLineSetListLength) {
             m_autoRepeatTotalLineSets = 0;
             return;
         }
-        unsigned named = (isRowAxis ? state.style.orderedNamedGridColumnLines() : state.style.orderedNamedGridRowLines()).map.size();
+        unsigned named = tracks.orderedNamedLines.map.size();
         if (named >= m_totalLines) {
             m_autoRepeatTotalLineSets = 0;
             return;

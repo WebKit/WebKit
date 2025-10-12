@@ -26,7 +26,7 @@ shouldBe(`window.moduleExecutedCount`, `1`);
 var element = document.createElement("script");
 element.type = "module";
 element.innerText = `import "./resources/module-load-same-module-from-different-entry-point.js"`;
-element.onload = onLoad;
+window.onload = onLoad;
 document.body.appendChild(element);
 </script>
 </body>

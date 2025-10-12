@@ -4,22 +4,23 @@
 Destroying a texture more than once is allowed.
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { kTextureAspects } from '../../../capability_info.js';
-import { kTextureFormatInfo } from '../../../format_info.js';
-import { ValidationTest } from '../validation_test.js';
+import { isDepthTextureFormat, isStencilTextureFormat } from '../../../format_info.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
+import * as vtu from '../validation_test_utils.js';
 
-export const g = makeTestGroup(ValidationTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 g.test('base').
 desc(`Test that it is valid to destroy a texture.`).
 fn((t) => {
-  const texture = t.getSampledTexture();
+  const texture = vtu.getSampledTexture(t);
   texture.destroy();
 });
 
 g.test('twice').
 desc(`Test that it is valid to destroy a destroyed texture.`).
 fn((t) => {
-  const texture = t.getSampledTexture();
+  const texture = vtu.getSampledTexture(t);
   texture.destroy();
   texture.destroy();
 });
@@ -104,12 +105,12 @@ fn((t) => {
   const depthStencilAttachment = {
     view: depthStencilTexture.createView({ aspect: depthStencilTextureAspect })
   };
-  if (kTextureFormatInfo[depthStencilTextureFormat].depth) {
+  if (isDepthTextureFormat(depthStencilTextureFormat)) {
     depthStencilAttachment.depthClearValue = 0;
     depthStencilAttachment.depthLoadOp = 'clear';
     depthStencilAttachment.depthStoreOp = 'discard';
   }
-  if (kTextureFormatInfo[depthStencilTextureFormat].stencil) {
+  if (isStencilTextureFormat(depthStencilTextureFormat)) {
     depthStencilAttachment.stencilClearValue = 0;
     depthStencilAttachment.stencilLoadOp = 'clear';
     depthStencilAttachment.stencilStoreOp = 'discard';

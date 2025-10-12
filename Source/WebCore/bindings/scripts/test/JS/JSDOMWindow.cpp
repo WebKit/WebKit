@@ -35,6 +35,7 @@
 #include "JSDOMWrapperCache.h"
 #include "JSExposedStar.h"
 #include "JSExposedToWorkerAndWindow.h"
+#include "JSTestConditional.h"
 #include "JSTestConditionalIncludes.h"
 #include "JSTestConditionallyReadWrite.h"
 #include "JSTestDefaultToJSON.h"
@@ -69,6 +70,7 @@ static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindowConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_DOMWindowConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_ExposedStarConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_ExposedToWorkerAndWindowConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_TestConditionalConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_TestConditionalIncludesConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_TestConditionallyReadWriteConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_TestDefaultToJSONConstructor);
@@ -88,7 +90,7 @@ using JSDOMWindowDOMConstructor = JSDOMConstructorNotConstructable<JSDOMWindow>;
 
 static const struct CompactHashIndex JSDOMWindowTableIndex[37] = {
     { -1, -1 },
-    { 6, 35 },
+    { 7, 35 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -101,9 +103,9 @@ static const struct CompactHashIndex JSDOMWindowTableIndex[37] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 5, 33 },
+    { 6, 33 },
     { -1, -1 },
-    { 3, -1 },
+    { 4, -1 },
     { 2, 32 },
     { 0, -1 },
     { -1, -1 },
@@ -112,25 +114,26 @@ static const struct CompactHashIndex JSDOMWindowTableIndex[37] = {
     { -1, -1 },
     { 1, -1 },
     { -1, -1 },
-    { 10, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 4, 34 },
-    { 7, 36 },
-    { 8, -1 },
-    { 9, -1 },
     { 11, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 3, -1 },
+    { 5, 34 },
+    { 8, 36 },
+    { 9, -1 },
+    { 10, -1 },
+    { 12, -1 },
 };
 
 
-static const std::array<HashTableValue, 12> JSDOMWindowTableValues {
+static const std::array<HashTableValue, 13> JSDOMWindowTableValues {
     HashTableValue { "DOMWindow"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_DOMWindowConstructor, 0 } },
     HashTableValue { "ExposedStar"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_ExposedStarConstructor, 0 } },
     HashTableValue { "ExposedToWorkerAndWindow"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_ExposedToWorkerAndWindowConstructor, 0 } },
+    HashTableValue { "TestConditional"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_TestConditionalConstructor, 0 } },
     HashTableValue { "TestConditionalIncludes"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_TestConditionalIncludesConstructor, 0 } },
     HashTableValue { "TestConditionallyReadWrite"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_TestConditionallyReadWriteConstructor, 0 } },
     HashTableValue { "TestDefaultToJSON"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_TestDefaultToJSONConstructor, 0 } },
@@ -146,7 +149,7 @@ static const std::array<HashTableValue, 12> JSDOMWindowTableValues {
     HashTableValue { "TestPromiseRejectionEvent"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_TestPromiseRejectionEventConstructor, 0 } },
 };
 
-static const HashTable JSDOMWindowTable = { 12, 31, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSDOMWindow::info(), JSDOMWindowTableValues.data(), JSDOMWindowTableIndex };
+static const HashTable JSDOMWindowTable = { 13, 31, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSDOMWindow::info(), JSDOMWindowTableValues.data(), JSDOMWindowTableIndex };
 template<> const ClassInfo JSDOMWindowDOMConstructor::s_info = { "DOMWindow"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowDOMConstructor) };
 
 template<> JSValue JSDOMWindowDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -255,6 +258,17 @@ static inline JSValue jsDOMWindow_ExposedToWorkerAndWindowConstructorGetter(JSGl
 JSC_DEFINE_CUSTOM_GETTER(jsDOMWindow_ExposedToWorkerAndWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
     return IDLAttribute<JSDOMWindow>::get<jsDOMWindow_ExposedToWorkerAndWindowConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
+}
+
+static inline JSValue jsDOMWindow_TestConditionalConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSDOMWindow& thisObject)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSTestConditional::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsDOMWindow_TestConditionalConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
+{
+    return IDLAttribute<JSDOMWindow>::get<jsDOMWindow_TestConditionalConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 static inline JSValue jsDOMWindow_TestConditionalIncludesConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSDOMWindow& thisObject)
@@ -372,7 +386,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsDOMWindow_TestPromiseRejectionEventConstructor, (JSGl
 
 JSC::GCClient::IsoSubspace* JSDOMWindow::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSDOMWindow, UseCustomHeapCellType::Yes>(vm,
+    return WebCore::subspaceForImpl<JSDOMWindow, UseCustomHeapCellType::Yes>(vm, "JSDOMWindow"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForDOMWindow.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForDOMWindow = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForDOMWindow.get(); },

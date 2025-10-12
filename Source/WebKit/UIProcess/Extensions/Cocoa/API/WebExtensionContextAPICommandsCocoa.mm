@@ -41,9 +41,9 @@
 
 namespace WebKit {
 
-bool WebExtensionContext::isCommandsMessageAllowed()
+bool WebExtensionContext::isCommandsMessageAllowed(IPC::Decoder& message)
 {
-    return isLoaded() && protectedExtension()->hasCommands();
+    return isLoadedAndPrivilegedMessage(message) && protectedExtension()->hasCommands();
 }
 
 void WebExtensionContext::commandsGetAll(CompletionHandler<void(Vector<WebExtensionCommandParameters>)>&& completionHandler)

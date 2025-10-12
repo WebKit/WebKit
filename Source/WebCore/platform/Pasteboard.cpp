@@ -64,7 +64,7 @@ Vector<String> Pasteboard::readAllStrings(const String& type)
 std::optional<Vector<PasteboardItemInfo>> Pasteboard::allPasteboardItemInfo() const
 {
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
-    if (auto* strategy = platformStrategies()->pasteboardStrategy())
+    if (CheckedPtr strategy = platformStrategies()->pasteboardStrategy())
         return strategy->allPasteboardItemInfo(name(), m_changeCount, context());
 #endif
     return std::nullopt;
@@ -73,7 +73,7 @@ std::optional<Vector<PasteboardItemInfo>> Pasteboard::allPasteboardItemInfo() co
 std::optional<PasteboardItemInfo> Pasteboard::pasteboardItemInfo(size_t index) const
 {
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
-    if (auto* strategy = platformStrategies()->pasteboardStrategy())
+    if (CheckedPtr strategy = platformStrategies()->pasteboardStrategy())
         return strategy->informationForItemAtIndex(index, name(), m_changeCount, context());
 #else
     UNUSED_PARAM(index);
@@ -83,21 +83,21 @@ std::optional<PasteboardItemInfo> Pasteboard::pasteboardItemInfo(size_t index) c
 
 String Pasteboard::readString(size_t index, const String& type)
 {
-    if (auto* strategy = platformStrategies()->pasteboardStrategy())
+    if (CheckedPtr strategy = platformStrategies()->pasteboardStrategy())
         return strategy->readStringFromPasteboard(index, type, name(), context());
     return { };
 }
 
 RefPtr<WebCore::SharedBuffer> Pasteboard::readBuffer(std::optional<size_t> index, const String& type)
 {
-    if (auto* strategy = platformStrategies()->pasteboardStrategy())
+    if (CheckedPtr strategy = platformStrategies()->pasteboardStrategy())
         return strategy->readBufferFromPasteboard(index, type, name(), context());
     return nullptr;
 }
 
 URL Pasteboard::readURL(size_t index, String& title)
 {
-    if (auto* strategy = platformStrategies()->pasteboardStrategy())
+    if (CheckedPtr strategy = platformStrategies()->pasteboardStrategy())
         return strategy->readURLFromPasteboard(index, name(), title, context());
     return { };
 }

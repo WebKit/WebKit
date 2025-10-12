@@ -25,15 +25,15 @@
 
 #pragma once
 
-#include "IDBBackingStore.h"
-#include "IDBDatabaseIdentifier.h"
-#include "IDBDatabaseInfo.h"
-#include "IDBDatabaseNameAndVersion.h"
-#include "IDBGetResult.h"
-#include "IDBIndexIdentifier.h"
-#include "IDBObjectStoreIdentifier.h"
-#include "ServerOpenDBRequest.h"
-#include "UniqueIDBDatabaseTransaction.h"
+#include <WebCore/IDBBackingStore.h>
+#include <WebCore/IDBDatabaseIdentifier.h>
+#include <WebCore/IDBDatabaseInfo.h>
+#include <WebCore/IDBDatabaseNameAndVersion.h>
+#include <WebCore/IDBGetResult.h>
+#include <WebCore/IDBIndexIdentifier.h>
+#include <WebCore/IDBObjectStoreIdentifier.h>
+#include <WebCore/ServerOpenDBRequest.h>
+#include <WebCore/UniqueIDBDatabaseTransaction.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/HashCountedSet.h>
@@ -45,11 +45,6 @@ namespace WebCore {
 namespace IDBServer {
 class UniqueIDBDatabase;
 }
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::IDBServer::UniqueIDBDatabase> : std::true_type { };
 }
 
 namespace WebCore {
@@ -79,8 +74,9 @@ using GetResultCallback = Function<void(const IDBError&, const IDBGetResult&)>;
 using GetAllResultsCallback = Function<void(const IDBError&, const IDBGetAllResult&)>;
 using CountCallback = Function<void(const IDBError&, uint64_t)>;
 
-class UniqueIDBDatabase : public CanMakeWeakPtr<UniqueIDBDatabase> {
+class UniqueIDBDatabase final : public CanMakeWeakPtr<UniqueIDBDatabase>, public CanMakeThreadSafeCheckedPtr<UniqueIDBDatabase> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(UniqueIDBDatabase, WEBCORE_EXPORT);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(UniqueIDBDatabase);
 public:
     WEBCORE_EXPORT UniqueIDBDatabase(UniqueIDBDatabaseManager&, const IDBDatabaseIdentifier&);
     UniqueIDBDatabase(UniqueIDBDatabase&) = delete;
@@ -166,6 +162,8 @@ private:
     void createIndexAsyncAfterQuotaCheck(UniqueIDBDatabaseTransaction&, const IDBIndexInfo&, SpaceCheckResult);
     enum class DidCreateIndexInBackingStore : bool { No, Yes };
     void didCreateIndexAsyncForTransaction(UniqueIDBDatabaseTransaction&, const IDBIndexInfo&, const IDBError&, DidCreateIndexInBackingStore = DidCreateIndexInBackingStore::Yes);
+
+    CheckedPtr<IDBBackingStore> checkedBackingStore() const;
 
     WeakPtr<UniqueIDBDatabaseManager> m_manager;
     IDBDatabaseIdentifier m_identifier;

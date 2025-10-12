@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "pas_config.h"
@@ -34,11 +34,10 @@
 #include <mach/task.h>
 #include <mach/task_info.h>
 #endif
-#include "pas_log.h"
 
 #if PAS_OS(DARWIN)
 /* This is copied from dyld_process_info_internal.h
- 
+
    FIXME: Stop doing it this way. Dyld should give us the is_libsystem_initialized API
    somehow. */
 typedef struct {
@@ -58,7 +57,7 @@ bool pas_dyld_is_libsystem_initialized(void)
     dyld_all_image_infos_64* infos;
 
     infos = all_image_infos;
-    
+
     if (!infos) {
         task_dyld_info_data_t task_dyld_info;
         mach_msg_type_number_t count;
@@ -77,7 +76,7 @@ bool pas_dyld_is_libsystem_initialized(void)
         infos = (dyld_all_image_infos_64*)task_dyld_info.all_image_info_addr;
 
         pas_fence();
-        
+
         all_image_infos = infos;
     }
 

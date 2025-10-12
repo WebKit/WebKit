@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,18 @@ class MacOSInlineMediaControls extends InlineMediaControls
 
     constructor(options = {})
     {
-        options.layoutTraits = new MacOSLayoutTraits(LayoutTraits.Mode.Inline);
+        if (options.mode === undefined)
+            options.layoutTraits = new MacOSLayoutTraits(LayoutTraits.Mode.Inline);
+        else
+            options.layoutTraits = new MacOSLayoutTraits(options.mode);
 
         super(options);
 
         this.element.classList.add("mac");
+
+        if (this.MediaControlsMacInlineSizeSpecsEnabled) {
+            this.element.classList.add("MacInlineSizeSpecs");
+        }
 
         this.timeControl.scrubber.knobStyle = Slider.KnobStyle.Bar;
 
@@ -50,6 +57,12 @@ class MacOSInlineMediaControls extends InlineMediaControls
         this.muteButton.element.addEventListener("mouseenter", this);
         this.muteButton.element.addEventListener("mouseleave", this);
         this._volumeSliderContainer.element.addEventListener("mouseleave", this);
+        
+        if (this.layoutTraits.mode == LayoutTraits.Mode.NarrowViewer) {
+            this.element.classList.add("narrowviewer");
+            this.fullscreenButton.isFullscreen = true;
+        }
+        
     }
 
     // Protected

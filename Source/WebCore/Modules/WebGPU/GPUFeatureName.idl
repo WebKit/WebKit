@@ -47,4 +47,5 @@
     "float16-renderable",
     "float32-renderable",
     "core-features-and-limits",
+    "texture-formats-tier1",
 };

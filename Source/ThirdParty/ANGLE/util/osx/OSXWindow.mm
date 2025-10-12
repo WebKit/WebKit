@@ -181,219 +181,219 @@ static float YCoordToFromCG(float y)
 }
 @end
 
-static Key NSCodeToKey(int keyCode)
+static angle::KeyType NSCodeToKey(int keyCode)
 {
     // Missing KEY_PAUSE
     switch (keyCode)
     {
         case kVK_Shift:
-            return KEY_LSHIFT;
+            return angle::KeyType::LSHIFT;
         case kVK_RightShift:
-            return KEY_RSHIFT;
+            return angle::KeyType::RSHIFT;
         case kVK_Option:
-            return KEY_LALT;
+            return angle::KeyType::LALT;
         case kVK_RightOption:
-            return KEY_RALT;
+            return angle::KeyType::RALT;
         case kVK_Control:
-            return KEY_LCONTROL;
+            return angle::KeyType::LCONTROL;
         case kVK_RightControl:
-            return KEY_RCONTROL;
+            return angle::KeyType::RCONTROL;
         case kVK_Command:
-            return KEY_LSYSTEM;
+            return angle::KeyType::LSYSTEM;
         // Right System doesn't have a name, but shows up as 0x36.
         case 0x36:
-            return KEY_RSYSTEM;
+            return angle::KeyType::RSYSTEM;
         case kVK_Function:
-            return KEY_MENU;
+            return angle::KeyType::MENU;
 
         case kVK_ANSI_Semicolon:
-            return KEY_SEMICOLON;
+            return angle::KeyType::SEMICOLON;
         case kVK_ANSI_Slash:
-            return KEY_SLASH;
+            return angle::KeyType::SLASH;
         case kVK_ANSI_Equal:
-            return KEY_EQUAL;
+            return angle::KeyType::EQUAL;
         case kVK_ANSI_Minus:
-            return KEY_DASH;
+            return angle::KeyType::DASH;
         case kVK_ANSI_LeftBracket:
-            return KEY_LBRACKET;
+            return angle::KeyType::LBRACKET;
         case kVK_ANSI_RightBracket:
-            return KEY_RBRACKET;
+            return angle::KeyType::RBRACKET;
         case kVK_ANSI_Comma:
-            return KEY_COMMA;
+            return angle::KeyType::COMMA;
         case kVK_ANSI_Period:
-            return KEY_PERIOD;
+            return angle::KeyType::PERIOD;
         case kVK_ANSI_Backslash:
-            return KEY_BACKSLASH;
+            return angle::KeyType::BACKSLASH;
         case kVK_ANSI_Grave:
-            return KEY_TILDE;
+            return angle::KeyType::TILDE;
         case kVK_Escape:
-            return KEY_ESCAPE;
+            return angle::KeyType::ESCAPE;
         case kVK_Space:
-            return KEY_SPACE;
+            return angle::KeyType::SPACE;
         case kVK_Return:
-            return KEY_RETURN;
+            return angle::KeyType::RETURN;
         case kVK_Delete:
-            return KEY_BACK;
+            return angle::KeyType::BACK;
         case kVK_Tab:
-            return KEY_TAB;
+            return angle::KeyType::TAB;
         case kVK_PageUp:
-            return KEY_PAGEUP;
+            return angle::KeyType::PAGEUP;
         case kVK_PageDown:
-            return KEY_PAGEDOWN;
+            return angle::KeyType::PAGEDOWN;
         case kVK_End:
-            return KEY_END;
+            return angle::KeyType::END;
         case kVK_Home:
-            return KEY_HOME;
+            return angle::KeyType::HOME;
         case kVK_Help:
-            return KEY_INSERT;
+            return angle::KeyType::INSERT;
         case kVK_ForwardDelete:
-            return KEY_DELETE;
+            return angle::KeyType::DEL;
         case kVK_ANSI_KeypadPlus:
-            return KEY_ADD;
+            return angle::KeyType::ADD;
         case kVK_ANSI_KeypadMinus:
-            return KEY_SUBTRACT;
+            return angle::KeyType::SUBTRACT;
         case kVK_ANSI_KeypadMultiply:
-            return KEY_MULTIPLY;
+            return angle::KeyType::MULTIPLY;
         case kVK_ANSI_KeypadDivide:
-            return KEY_DIVIDE;
+            return angle::KeyType::DIVIDE;
 
         case kVK_F1:
-            return KEY_F1;
+            return angle::KeyType::F1;
         case kVK_F2:
-            return KEY_F2;
+            return angle::KeyType::F2;
         case kVK_F3:
-            return KEY_F3;
+            return angle::KeyType::F3;
         case kVK_F4:
-            return KEY_F4;
+            return angle::KeyType::F4;
         case kVK_F5:
-            return KEY_F5;
+            return angle::KeyType::F5;
         case kVK_F6:
-            return KEY_F6;
+            return angle::KeyType::F6;
         case kVK_F7:
-            return KEY_F7;
+            return angle::KeyType::F7;
         case kVK_F8:
-            return KEY_F8;
+            return angle::KeyType::F8;
         case kVK_F9:
-            return KEY_F9;
+            return angle::KeyType::F9;
         case kVK_F10:
-            return KEY_F10;
+            return angle::KeyType::F10;
         case kVK_F11:
-            return KEY_F11;
+            return angle::KeyType::F11;
         case kVK_F12:
-            return KEY_F12;
+            return angle::KeyType::F12;
         case kVK_F13:
-            return KEY_F13;
+            return angle::KeyType::F13;
         case kVK_F14:
-            return KEY_F14;
+            return angle::KeyType::F14;
         case kVK_F15:
-            return KEY_F15;
+            return angle::KeyType::F15;
 
         case kVK_LeftArrow:
-            return KEY_LEFT;
+            return angle::KeyType::LEFT;
         case kVK_RightArrow:
-            return KEY_RIGHT;
+            return angle::KeyType::RIGHT;
         case kVK_DownArrow:
-            return KEY_DOWN;
+            return angle::KeyType::DOWN;
         case kVK_UpArrow:
-            return KEY_UP;
+            return angle::KeyType::UP;
 
         case kVK_ANSI_Keypad0:
-            return KEY_NUMPAD0;
+            return angle::KeyType::NUMPAD0;
         case kVK_ANSI_Keypad1:
-            return KEY_NUMPAD1;
+            return angle::KeyType::NUMPAD1;
         case kVK_ANSI_Keypad2:
-            return KEY_NUMPAD2;
+            return angle::KeyType::NUMPAD2;
         case kVK_ANSI_Keypad3:
-            return KEY_NUMPAD3;
+            return angle::KeyType::NUMPAD3;
         case kVK_ANSI_Keypad4:
-            return KEY_NUMPAD4;
+            return angle::KeyType::NUMPAD4;
         case kVK_ANSI_Keypad5:
-            return KEY_NUMPAD5;
+            return angle::KeyType::NUMPAD5;
         case kVK_ANSI_Keypad6:
-            return KEY_NUMPAD6;
+            return angle::KeyType::NUMPAD6;
         case kVK_ANSI_Keypad7:
-            return KEY_NUMPAD7;
+            return angle::KeyType::NUMPAD7;
         case kVK_ANSI_Keypad8:
-            return KEY_NUMPAD8;
+            return angle::KeyType::NUMPAD8;
         case kVK_ANSI_Keypad9:
-            return KEY_NUMPAD9;
+            return angle::KeyType::NUMPAD9;
 
         case kVK_ANSI_A:
-            return KEY_A;
+            return angle::KeyType::A;
         case kVK_ANSI_B:
-            return KEY_B;
+            return angle::KeyType::B;
         case kVK_ANSI_C:
-            return KEY_C;
+            return angle::KeyType::C;
         case kVK_ANSI_D:
-            return KEY_D;
+            return angle::KeyType::D;
         case kVK_ANSI_E:
-            return KEY_E;
+            return angle::KeyType::E;
         case kVK_ANSI_F:
-            return KEY_F;
+            return angle::KeyType::F;
         case kVK_ANSI_G:
-            return KEY_G;
+            return angle::KeyType::G;
         case kVK_ANSI_H:
-            return KEY_H;
+            return angle::KeyType::H;
         case kVK_ANSI_I:
-            return KEY_I;
+            return angle::KeyType::I;
         case kVK_ANSI_J:
-            return KEY_J;
+            return angle::KeyType::J;
         case kVK_ANSI_K:
-            return KEY_K;
+            return angle::KeyType::K;
         case kVK_ANSI_L:
-            return KEY_L;
+            return angle::KeyType::L;
         case kVK_ANSI_M:
-            return KEY_M;
+            return angle::KeyType::M;
         case kVK_ANSI_N:
-            return KEY_N;
+            return angle::KeyType::N;
         case kVK_ANSI_O:
-            return KEY_O;
+            return angle::KeyType::O;
         case kVK_ANSI_P:
-            return KEY_P;
+            return angle::KeyType::P;
         case kVK_ANSI_Q:
-            return KEY_Q;
+            return angle::KeyType::Q;
         case kVK_ANSI_R:
-            return KEY_R;
+            return angle::KeyType::R;
         case kVK_ANSI_S:
-            return KEY_S;
+            return angle::KeyType::S;
         case kVK_ANSI_T:
-            return KEY_T;
+            return angle::KeyType::T;
         case kVK_ANSI_U:
-            return KEY_U;
+            return angle::KeyType::U;
         case kVK_ANSI_V:
-            return KEY_V;
+            return angle::KeyType::V;
         case kVK_ANSI_W:
-            return KEY_W;
+            return angle::KeyType::W;
         case kVK_ANSI_X:
-            return KEY_X;
+            return angle::KeyType::X;
         case kVK_ANSI_Y:
-            return KEY_Y;
+            return angle::KeyType::Y;
         case kVK_ANSI_Z:
-            return KEY_Z;
+            return angle::KeyType::Z;
 
         case kVK_ANSI_1:
-            return KEY_NUM1;
+            return angle::KeyType::NUM1;
         case kVK_ANSI_2:
-            return KEY_NUM2;
+            return angle::KeyType::NUM2;
         case kVK_ANSI_3:
-            return KEY_NUM3;
+            return angle::KeyType::NUM3;
         case kVK_ANSI_4:
-            return KEY_NUM4;
+            return angle::KeyType::NUM4;
         case kVK_ANSI_5:
-            return KEY_NUM5;
+            return angle::KeyType::NUM5;
         case kVK_ANSI_6:
-            return KEY_NUM6;
+            return angle::KeyType::NUM6;
         case kVK_ANSI_7:
-            return KEY_NUM7;
+            return angle::KeyType::NUM7;
         case kVK_ANSI_8:
-            return KEY_NUM8;
+            return angle::KeyType::NUM8;
         case kVK_ANSI_9:
-            return KEY_NUM9;
+            return angle::KeyType::NUM9;
         case kVK_ANSI_0:
-            return KEY_NUM0;
+            return angle::KeyType::NUM0;
     }
 
-    return Key(0);
+    return angle::KeyType(0);
 }
 
 static void AddNSKeyStateToEvent(Event *event, NSEventModifierFlags state)
@@ -404,18 +404,18 @@ static void AddNSKeyStateToEvent(Event *event, NSEventModifierFlags state)
     event->Key.System  = state & NSCommandKeyMask;
 }
 
-static MouseButton TranslateMouseButton(NSInteger button)
+static angle::MouseButtonType TranslateMouseButton(NSInteger button)
 {
     switch (button)
     {
         case 2:
-            return MOUSEBUTTON_MIDDLE;
+            return angle::MouseButtonType::MIDDLE;
         case 3:
-            return MOUSEBUTTON_BUTTON4;
+            return angle::MouseButtonType::BUTTON4;
         case 4:
-            return MOUSEBUTTON_BUTTON5;
+            return angle::MouseButtonType::BUTTON5;
         default:
-            return MOUSEBUTTON_UNKNOWN;
+            return angle::MouseButtonType::UNKNOWN;
     }
 }
 
@@ -486,7 +486,7 @@ static MouseButton TranslateMouseButton(NSInteger button)
 
 - (void)addButtonEvent:(NSEvent *)nsEvent
                   type:(Event::EventType)eventType
-                button:(MouseButton)button
+                button:(angle::MouseButtonType)button
 {
     Event event;
     event.Type               = eventType;
@@ -498,7 +498,9 @@ static MouseButton TranslateMouseButton(NSInteger button)
 
 - (void)mouseDown:(NSEvent *)event
 {
-    [self addButtonEvent:event type:Event::EVENT_MOUSE_BUTTON_PRESSED button:MOUSEBUTTON_LEFT];
+    [self addButtonEvent:event
+                    type:Event::EVENT_MOUSE_BUTTON_PRESSED
+                  button:angle::MouseButtonType::LEFT];
 }
 
 - (void)mouseDragged:(NSEvent *)event
@@ -508,7 +510,9 @@ static MouseButton TranslateMouseButton(NSInteger button)
 
 - (void)mouseUp:(NSEvent *)event
 {
-    [self addButtonEvent:event type:Event::EVENT_MOUSE_BUTTON_RELEASED button:MOUSEBUTTON_LEFT];
+    [self addButtonEvent:event
+                    type:Event::EVENT_MOUSE_BUTTON_RELEASED
+                  button:angle::MouseButtonType::LEFT];
 }
 
 - (void)mouseMoved:(NSEvent *)nsEvent
@@ -536,7 +540,9 @@ static MouseButton TranslateMouseButton(NSInteger button)
 
 - (void)rightMouseDown:(NSEvent *)event
 {
-    [self addButtonEvent:event type:Event::EVENT_MOUSE_BUTTON_PRESSED button:MOUSEBUTTON_RIGHT];
+    [self addButtonEvent:event
+                    type:Event::EVENT_MOUSE_BUTTON_PRESSED
+                  button:angle::MouseButtonType::RIGHT];
 }
 
 - (void)rightMouseDragged:(NSEvent *)event
@@ -546,7 +552,9 @@ static MouseButton TranslateMouseButton(NSInteger button)
 
 - (void)rightMouseUp:(NSEvent *)event
 {
-    [self addButtonEvent:event type:Event::EVENT_MOUSE_BUTTON_RELEASED button:MOUSEBUTTON_RIGHT];
+    [self addButtonEvent:event
+                    type:Event::EVENT_MOUSE_BUTTON_RELEASED
+                  button:angle::MouseButtonType::RIGHT];
 }
 
 - (void)otherMouseDown:(NSEvent *)event

@@ -183,6 +183,30 @@ struct FrontendFeatures : FeatureSetBase
         &members,
     };
 
+    FeatureInfo forcePassthroughShaders = {
+        "forcePassthroughShaders",
+        FeatureCategory::FrontendFeatures,
+        &members,
+    };
+
+    FeatureInfo clipCullDistanceBrokenWithPassthroughShaders = {
+        "clipCullDistanceBrokenWithPassthroughShaders",
+        FeatureCategory::FrontendFeatures,
+        &members,
+    };
+
+    FeatureInfo noperspectiveInterpolationBrokenWithPassthroughShaders = {
+        "noperspectiveInterpolationBrokenWithPassthroughShaders",
+        FeatureCategory::FrontendFeatures,
+        &members,
+    };
+
+    FeatureInfo forceDebugContexts = {
+        "forceDebugContexts",
+        FeatureCategory::FrontendFeatures,
+        &members,
+    };
+
 };
 
 inline FrontendFeatures::FrontendFeatures()  = default;

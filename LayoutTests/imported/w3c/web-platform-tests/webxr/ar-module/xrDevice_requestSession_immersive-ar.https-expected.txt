@@ -1,5 +1,5 @@
 
 PASS Tests requestSession accepts immersive-ar mode - webgl
-FAIL Tests requestSession accepts immersive-ar mode - webgl2 assert_implements: webgl2 not supported. undefined
+PASS Tests requestSession accepts immersive-ar mode - webgl2
 PASS Tests requestSession rejects immersive-ar mode when unsupported
 

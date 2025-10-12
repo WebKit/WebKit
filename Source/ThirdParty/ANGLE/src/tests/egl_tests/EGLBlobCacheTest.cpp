@@ -6,6 +6,10 @@
 // EGLBlobCacheTest:
 //   Unit tests for the EGL_ANDROID_blob_cache extension.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 // Must be included first to prevent errors with "None".
 #include "test_utils/ANGLETest.h"
 
@@ -507,7 +511,7 @@ TEST_P(EGLBlobCacheTest, ThreadSafety)
         // Insert a new entry into the cache unique to this thread.
         std::stringstream ss;
         ss << essl1_shaders::vs::Simple() << "//" << threadID;
-        std::string newEntryVSSource = ss.str().c_str();
+        std::string newEntryVSSource = ss.str();
         ANGLE_GL_PROGRAM(unusedProgramTemp2, newEntryVSSource.c_str(), essl1_shaders::fs::Red());
 
         // Clean up

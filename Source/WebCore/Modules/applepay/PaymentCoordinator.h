@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,8 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePaySessionPaymentRequest.h"
+#include <WebCore/ApplePaySessionPaymentRequest.h>
+#include <WebCore/ExceptionOr.h>
 #include <wtf/Expected.h>
 #include <wtf/Function.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -105,7 +106,7 @@ protected:
     WEBCORE_EXPORT explicit PaymentCoordinator(Ref<PaymentCoordinatorClient>&&);
 
 private:
-    Ref<PaymentCoordinatorClient> m_client;
+    const Ref<PaymentCoordinatorClient> m_client;
     RefPtr<PaymentSession> m_activeSession;
 };
 

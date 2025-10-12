@@ -34,20 +34,20 @@ for (var i = 0; i < testLoopCount; ++i)
 shouldBe(bar, 4);
 shouldThrow(() => {
     $.evalScript('get(); const bar = 3;');
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'bar' before initialization.`);
 shouldThrow(() => {
     shouldBe(bar, 3);
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'bar' before initialization.`);
 shouldThrow(() => {
     shouldBe(get(), 3);
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'bar' before initialization.`);
 shouldThrow(() => {
     $.evalScript('bar;');
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'bar' before initialization.`);
 
 for (var i = 0; i < 1e3; ++i) {
     shouldThrow(() => {
         shouldBe(get(), 3);
-    }, `ReferenceError: Cannot access uninitialized variable.`);
+    }, `ReferenceError: Cannot access 'bar' before initialization.`);
 }
 

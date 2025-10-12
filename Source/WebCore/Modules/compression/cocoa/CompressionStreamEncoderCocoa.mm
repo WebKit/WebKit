@@ -66,7 +66,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> CompressionStreamEncoder::compressAppleCompre
 
         output.grow(allocateSize);
 
-        m_compressionStream.getPlatformStream().dst_ptr = output.data();
+        m_compressionStream.getPlatformStream().dst_ptr = output.mutableSpan().data();
         m_compressionStream.getPlatformStream().dst_size = output.size();
 
         result = compression_stream_process(&m_compressionStream.getPlatformStream(), m_didFinish ? COMPRESSION_STREAM_FINALIZE : 0);

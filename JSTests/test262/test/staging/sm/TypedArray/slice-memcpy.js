@@ -2,14 +2,12 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-TypedArray-shell.js, compareArray.js]
-flags:
-  - noStrict
+includes: [sm/non262-TypedArray-shell.js, compareArray.js]
 description: |
   pending
 esid: pending
 ---*/
-const otherGlobal = createNewGlobal();
+const otherGlobal = $262.createRealm().global;
 
 // Create with new ArrayBuffer and offset.
 for (var constructor of typedArrayConstructors) {

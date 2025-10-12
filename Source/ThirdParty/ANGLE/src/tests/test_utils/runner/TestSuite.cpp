@@ -5,6 +5,11 @@
 //
 // TestSuite:
 //   Basic implementation of a test harness in ANGLE.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "TestSuite.h"
 
@@ -15,6 +20,7 @@
 #include "common/system_utils.h"
 #include "util/Timer.h"
 
+#include <signal.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -72,6 +78,47 @@ constexpr int kDefaultBatchSize      = 256;
 constexpr double kIdleMessageTimeout = 15.0;
 constexpr int kDefaultMaxProcesses   = 16;
 constexpr int kDefaultMaxFailures    = 100;
+
+#if defined(ANGLE_PLATFORM_ANDROID)
+struct sigaction g_originalSigaction[NSIG];
+TestSuite *g_ThisTestSuite = nullptr;
+
+// This function runs in a compromised context. It should not allocate memory.
+void SignalHandler(int sig, siginfo_t *info, void *reserved)
+{
+    const char crashedMarker[] = "[ CRASHED      ]\n";
+
+    // Output the crash marker.
+    std::cerr << crashedMarker << std::endl;
+    if (g_ThisTestSuite != nullptr)
+    {
+        g_ThisTestSuite->onCrashOrTimeout(TestResultType::Crash);
+    }
+    else
+    {
+        std::cerr << "SignalHandler: TestSuite not initialized!" << std::endl;
+    }
+
+    g_originalSigaction[sig].sa_sigaction(sig, info, reserved);
+}
+
+void InstallExceptionHandlers()
+{
+    struct sigaction sa;
+    memset(&sa, 0, sizeof(sa));
+
+    sa.sa_sigaction = SignalHandler;
+    sa.sa_flags     = SA_SIGINFO;
+
+    // The list of signals which are considered to be crashes.
+    const int exceptionSignals[] = {SIGSEGV, SIGABRT, SIGFPE, SIGILL, SIGBUS, -1};
+
+    for (unsigned int i = 0; exceptionSignals[i] != -1; ++i)
+    {
+        sigaction(exceptionSignals[i], &sa, &g_originalSigaction[exceptionSignals[i]]);
+    }
+}
+#endif  // ANGLE_PLATFORM_ANDROID
 
 const char *ResultTypeToString(TestResultType type)
 {
@@ -1437,6 +1484,11 @@ bool TestSuite::launchChildTestProcess(uint32_t batchId,
 
     // Launch child process and wait for completion.
     processInfo.process = LaunchProcess(args, ProcessOutputCapture::StdoutAndStderrInterleaved);
+    if (!processInfo.process)
+    {
+        std::cerr << "Error creating child process.\n";
+        return false;
+    }
 
     if (!processInfo.process->started())
     {
@@ -1663,6 +1715,11 @@ int TestSuite::run()
 
         return EXIT_SUCCESS;
     }
+
+#if defined(ANGLE_PLATFORM_ANDROID)
+    g_ThisTestSuite = this;
+    InstallExceptionHandlers();
+#endif  // ANGLE_PLATFORM_ANDROID
 
     if (mGTestListTests)
     {

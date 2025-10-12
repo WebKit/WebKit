@@ -56,11 +56,11 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(cons
         return Exception { ExceptionCode::OperationError };
 
     size_t signatureLen;
-    if (EVP_PKEY_sign(ctx.get(), nullptr, &signatureLen, digest->data(), digest->size()) <= 0)
+    if (EVP_PKEY_sign(ctx.get(), nullptr, &signatureLen, digest->span().data(), digest->size()) <= 0)
         return Exception { ExceptionCode::OperationError };
 
     Vector<uint8_t> signature(signatureLen);
-    if (EVP_PKEY_sign(ctx.get(), signature.data(), &signatureLen, digest->data(), digest->size()) <= 0)
+    if (EVP_PKEY_sign(ctx.get(), signature.mutableSpan().data(), &signatureLen, digest->span().data(), digest->size()) <= 0)
         return Exception { ExceptionCode::OperationError };
     signature.shrink(signatureLen);
 
@@ -90,7 +90,7 @@ ExceptionOr<bool> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify(const CryptoK
     if (EVP_PKEY_CTX_set_signature_md(ctx.get(), md) <= 0)
         return Exception { ExceptionCode::OperationError };
 
-    int ret = EVP_PKEY_verify(ctx.get(), signature.data(), signature.size(), digest->data(), digest->size());
+    int ret = EVP_PKEY_verify(ctx.get(), signature.span().data(), signature.size(), digest->span().data(), digest->size());
 
     return ret == 1;
 }

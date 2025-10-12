@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,13 +57,12 @@ public:
     RefPtr<WebImage> renderedImage(SnapshotOptions);
     String text() const;
 
-    WebCore::Range& coreRange() const;
-    Ref<WebCore::Range> protectedCoreRange() const;
+    WebCore::Range& coreRange() const { return m_range; }
 
 private:
     InjectedBundleRangeHandle(WebCore::Range&);
 
-    Ref<WebCore::Range> m_range;
+    const Ref<WebCore::Range> m_range;
 };
 
 RefPtr<InjectedBundleRangeHandle> createHandle(const std::optional<WebCore::SimpleRange>&);

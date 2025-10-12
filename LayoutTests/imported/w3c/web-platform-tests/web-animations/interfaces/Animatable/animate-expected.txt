@@ -62,6 +62,7 @@ PASS Element.animate() accepts a two property four keyframe sequence
 PASS Element.animate() accepts a single keyframe sequence with omitted offset
 PASS Element.animate() accepts a single keyframe sequence with null offset
 PASS Element.animate() accepts a single keyframe sequence with string offset
+FAIL Element.animate() accepts a single keyframe sequence with a single calc() offset Type error
 PASS Element.animate() accepts a one property keyframe sequence with some omitted offsets
 PASS Element.animate() accepts a one property keyframe sequence with some null offsets
 PASS Element.animate() accepts a two property keyframe sequence with some omitted offsets

@@ -17,7 +17,7 @@
 #include "p2p/base/ice_agent_interface.h"
 #include "p2p/base/ice_controller_factory_interface.h"
 
-namespace cricket {
+namespace webrtc {
 
 // An active ICE controller may be constructed with the same arguments as a
 // legacy ICE controller. Additionally, an ICE agent must be provided for the
@@ -34,6 +34,7 @@ class ActiveIceControllerFactoryInterface {
       const ActiveIceControllerFactoryArgs&) = 0;
 };
 
-}  // namespace cricket
+}  //  namespace webrtc
+
 
 #endif  // P2P_BASE_ACTIVE_ICE_CONTROLLER_FACTORY_INTERFACE_H_

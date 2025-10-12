@@ -157,4 +157,11 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     return _frameInfo->frameInfoData().certificateInfo.trust().get();
 }
 
+- (BOOL)_isSameFrame:(WKFrameInfo *)frame
+{
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    return self._handle.frameID == frame._handle.frameID;
+ALLOW_DEPRECATED_DECLARATIONS_END
+}
+
 @end

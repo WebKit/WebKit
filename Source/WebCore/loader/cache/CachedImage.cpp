@@ -30,6 +30,7 @@
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
 #include "Font.h"
+#include "FontCascade.h"
 #include "FrameLoader.h"
 #include "FrameLoaderTypes.h"
 #include "ImageAdapter.h"
@@ -40,6 +41,7 @@
 #include "MemoryCache.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
+#include "RenderStyleInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "SecurityOrigin.h"
@@ -121,7 +123,7 @@ void CachedImage::load(CachedResourceLoader& loader)
 void CachedImage::setBodyDataFrom(const CachedResource& resource)
 {
     ASSERT(resource.type() == type());
-    const CachedImage& image = static_cast<const CachedImage&>(resource);
+    const auto& image = downcast<const CachedImage>(resource);
 
     CachedResource::setBodyDataFrom(resource);
 
@@ -286,11 +288,11 @@ Image* CachedImage::imageForRenderer(const RenderObject* renderer)
         return &Image::nullImage();
 
     if (m_image->drawsSVGImage()) {
-        Image* image = m_svgImageCache->imageForRenderer(renderer);
+        RefPtr image = m_svgImageCache->imageForRenderer(renderer);
         if (image != &Image::nullImage())
-            return image;
+            return image.unsafeGet();
     }
-    return m_image.get();
+    return m_image.unsafeGet();
 }
 
 void CachedImage::setContainerContextForClient(const CachedImageClient& client, const LayoutSize& containerSize, float containerZoom, const URL& imageURL)
@@ -358,7 +360,7 @@ LayoutSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, floa
     return imageSize;
 }
 
-void CachedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
+void CachedImage::computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
 {
     if (RefPtr image = m_image)
         image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
@@ -764,6 +766,12 @@ bool CachedImage::currentFrameKnownToBeOpaque(const RenderElement* renderer)
 {
     RefPtr image = imageForRenderer(renderer);
     return image->currentFrameKnownToBeOpaque();
+}
+
+bool CachedImage::currentFrameIsComplete(const RenderElement* renderer)
+{
+    RefPtr image = imageForRenderer(renderer);
+    return image->currentFrameIsComplete();
 }
 
 bool CachedImage::isOriginClean(SecurityOrigin* origin)

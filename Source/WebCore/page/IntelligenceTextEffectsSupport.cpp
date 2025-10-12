@@ -27,8 +27,9 @@
 #include "IntelligenceTextEffectsSupport.h"
 
 #include "CharacterRange.h"
-#include "DocumentInlines.h"
 #include "DocumentMarkerController.h"
+#include "DocumentMarkers.h"
+#include "DocumentView.h"
 #include "FloatRect.h"
 #include "RenderedDocumentMarker.h"
 #include "SimpleRange.h"

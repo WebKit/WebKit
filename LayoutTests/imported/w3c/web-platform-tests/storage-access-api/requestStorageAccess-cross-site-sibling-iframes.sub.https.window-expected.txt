@@ -1,7 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unsupported permission name "storage-access".
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Grants have per-frame scope Test timed out
-NOTRUN Cross-site sibling iframes should not be able to take advantage of the existing permission grant requested by others.
+PASS Grants have per-frame scope
+PASS Cross-site sibling iframes should not be able to take advantage of the existing permission grant requested by others.
 

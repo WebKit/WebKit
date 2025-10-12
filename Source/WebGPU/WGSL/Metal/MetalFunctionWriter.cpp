@@ -66,6 +66,22 @@ namespace Metal {
 #define DEFINE_BOUND_HELPER(__name, __capitalizedName, __lowerBound, __upperBound, ...) \
     DEFINE_BOUND_HELPER_RENAMED(__name, __capitalizedName, __name, __lowerBound, __upperBound, __VA_ARGS__)
 
+#define DEFINE_VOLATILE_BOUND_HELPER_RENAMED(__name, __capitalizedName, __metalFunction, __lowerBound, __upperBound, ...) \
+    DEFINE_HELPER(__capitalizedName,  \
+    template <typename T> \
+    T __wgsl##__capitalizedName(T value) \
+    { \
+    if constexpr(__wgslMetalAppleGPUFamily < 9) { \n\
+        volatile auto result = __metalFunction(select(value, T(0), value < T(__lowerBound) || value > T(__upperBound))); \
+        return result; \
+    } else { \n\
+        return __metalFunction(select(value, T(0), value < T(__lowerBound) || value > T(__upperBound))); \
+    }\n \
+    })
+
+#define DEFINE_VOLATILE_BOUND_HELPER(__name, __capitalizedName, __lowerBound, __upperBound, ...) \
+    DEFINE_VOLATILE_BOUND_HELPER_RENAMED(__name, __capitalizedName, __name, __lowerBound, __upperBound, __VA_ARGS__)
+
 #define DEFINE_VOLATILE_HELPER_RENAMED(__name, __capitalizedName) \
     DEFINE_HELPER(__capitalizedName, \
     template <typename T>\n \
@@ -96,7 +112,7 @@ DEFINE_BOUND_HELPER(asin, Asin, -1, 1)
 DEFINE_BOUND_HELPER(acosh, Acosh, 1, numeric_limits<T>::max())
 DEFINE_BOUND_HELPER(atanh, Atanh, -1, 1)
 DEFINE_BOUND_HELPER_RENAMED(inverseSqrt, InverseSqrt, rsqrt, 0, numeric_limits<T>::infinity())
-DEFINE_BOUND_HELPER(log, Log, 0, numeric_limits<T>::infinity())
+DEFINE_VOLATILE_BOUND_HELPER(log, Log, 0, numeric_limits<T>::infinity())
 DEFINE_BOUND_HELPER(log2, Log2, 0, numeric_limits<T>::infinity())
 DEFINE_BOUND_HELPER(sqrt, Sqrt, 0, numeric_limits<T>::infinity())
 DEFINE_VOLATILE_HELPER(pack_float_to_snorm2x16, PackFloatToSnorm2x16)
@@ -140,6 +156,7 @@ public:
     void visit(AST::SizeAttribute&) override;
     void visit(AST::AlignAttribute&) override;
     void visit(AST::InterpolateAttribute&) override;
+    void visit(AST::InvariantAttribute&) override;
 
     void visit(AST::Function&) override;
     void visit(AST::Structure&) override;
@@ -212,7 +229,6 @@ private:
     std::optional<AST::ParameterRole> m_parameterRole;
     std::optional<ShaderStage> m_entryPointStage;
     AST::Function* m_currentFunction { nullptr };
-    unsigned m_functionConstantIndex { 0 };
     AST::Continuing*m_continuing { nullptr };
     HashSet<AST::Function*> m_visitedFunctions;
     PrepareResult& m_prepareResult;
@@ -427,7 +443,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesWorkgroupUniformLoad()) {
         m_body.append(m_indent, "template<typename T>\n"_s,
-            m_indent, ((shaderValidationEnabled() && metalAppleGPUFamily() >= 9) ? "[[clang::optnone]] "_s : ""_s), "static T __workgroup_uniform_load(threadgroup T* const ptr)\n"_s,
+            m_indent, (shaderValidationEnabled() ? "[[clang::optnone]] "_s : ""_s), "static T __workgroup_uniform_load(threadgroup T* const ptr)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -773,7 +789,7 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
                 }
             }
             m_body.append(m_indent, "{ }\n"_s);
-        } else if (structDecl.role() == AST::StructureRole::FragmentOutputWrapper) {
+        } else if (structDecl.role() == AST::StructureRole::FragmentOutputWrapper || structDecl.role() == AST::StructureRole::VertexOutputWrapper) {
             ASSERT(structDecl.members().size() == 1);
             auto& member = structDecl.members()[0];
 
@@ -967,7 +983,7 @@ void FunctionDefinitionWriter::visit(AST::BuiltinAttribute& builtin)
     // Built-in attributes are only valid for parameters. If a struct member originally
     // had a built-in attribute it must have already been hoisted into a parameter, but
     // we keep the original struct so we can reconstruct it.
-    if (m_structRole.has_value() && *m_structRole != AST::StructureRole::VertexOutput && *m_structRole != AST::StructureRole::FragmentOutput && *m_structRole != AST::StructureRole::FragmentOutputWrapper)
+    if (m_structRole.has_value() && *m_structRole != AST::StructureRole::VertexOutput && *m_structRole != AST::StructureRole::VertexOutputWrapper && *m_structRole != AST::StructureRole::FragmentOutput && *m_structRole != AST::StructureRole::FragmentOutputWrapper)
         return;
 
     switch (builtin.builtin()) {
@@ -982,6 +998,7 @@ void FunctionDefinitionWriter::visit(AST::BuiltinAttribute& builtin)
         break;
     case Builtin::InstanceIndex:
         m_body.append("[[instance_id]]"_s);
+        break;
         break;
     case Builtin::LocalInvocationId:
         m_body.append("[[thread_position_in_threadgroup]]"_s);
@@ -1049,6 +1066,7 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         switch (role) {
         case AST::StructureRole::VertexOutput:
         case AST::StructureRole::FragmentInput:
+        case AST::StructureRole::VertexOutputWrapper:
             m_body.append("[[user(loc"_s, location.location().constantValue()->integerValue(), ")]]"_s);
             return;
         case AST::StructureRole::BindGroup:
@@ -1058,7 +1076,6 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         case AST::StructureRole::PackedResource:
             return;
         case AST::StructureRole::FragmentOutputWrapper:
-            RELEASE_ASSERT_NOT_REACHED();
         case AST::StructureRole::FragmentOutput:
             m_body.append("[[color("_s, location.location().constantValue()->integerValue(), ")]]"_s);
             return;
@@ -1123,6 +1140,14 @@ static ASCIILiteral convertToSampleMode(InterpolationType type, InterpolationSam
 void FunctionDefinitionWriter::visit(AST::InterpolateAttribute& attribute)
 {
     m_body.append("[["_s, convertToSampleMode(attribute.type(), attribute.sampling()), "]]"_s);
+}
+
+void FunctionDefinitionWriter::visit(AST::InvariantAttribute&)
+{
+    if (!m_structRole.has_value() || (*m_structRole != AST::StructureRole::VertexOutput && *m_structRole != AST::StructureRole::VertexOutputWrapper))
+        return;
+
+    m_body.append("[[invariant]]"_s);
 }
 
 // Types
@@ -1329,9 +1354,6 @@ void FunctionDefinitionWriter::visit(const Type* type, bool shouldPack)
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const TypeConstructor&) {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Bottom&) {
             RELEASE_ASSERT_NOT_REACHED();
         });
 }
@@ -2718,11 +2740,11 @@ void FunctionDefinitionWriter::visit(AST::SwitchStatement& statement)
         }
         if (isDefault)
             m_body.append('\n', m_indent, "default:"_s);
-        m_body.append("\n#if __wgslMetalAppleGPUFamily >= 9\n{ " DECLARE_FORWARD_PROGRESS "\n#endif\n"_s);
+        m_body.append("\n{ " DECLARE_FORWARD_PROGRESS "\n"_s);
         visit(clause.body);
 
         IndentationScope scope(m_indent);
-        m_body.append('\n', m_indent, "#if __wgslMetalAppleGPUFamily >= 9\n}\n#endif\nbreak;"_s);
+        m_body.append('\n', m_indent, "\n}\nbreak;"_s);
     };
 
     m_body.append("switch ("_s);
@@ -2910,9 +2932,6 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const TypeConstructor&) {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Bottom&) {
             RELEASE_ASSERT_NOT_REACHED();
         });
 }

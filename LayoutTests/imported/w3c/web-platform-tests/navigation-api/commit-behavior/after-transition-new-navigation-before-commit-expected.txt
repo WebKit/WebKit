@@ -1,3 +1,0 @@
-
-FAIL Cancel a { commit: 'after-transition' } navigation before commit() by starting a new navigation assert_array_equals: lengths differ, expected array ["committed", "finished"] length 2, got ["todo"] length 1
-

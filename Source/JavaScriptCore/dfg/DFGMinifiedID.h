@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DFGCommon.h"
+#include <JavaScriptCore/DFGCommon.h>
 #include <wtf/HashMap.h>
 #include <wtf/Packed.h>
 #include <wtf/PrintStream.h>

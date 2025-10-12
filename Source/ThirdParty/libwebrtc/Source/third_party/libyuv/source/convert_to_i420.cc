@@ -65,8 +65,9 @@ int ConvertToI420(const uint8_t* sample,
   const int inv_crop_height =
       (src_height < 0) ? -abs_crop_height : abs_crop_height;
 
-  if (!dst_y || !dst_u || !dst_v || !sample || src_width <= 0 || src_width > INT_MAX / 4 ||
-      crop_width <= 0 || src_height == 0 || crop_height == 0) {
+  if (!dst_y || !dst_u || !dst_v || !sample || src_width <= 0 ||
+      src_width > INT_MAX / 4 || crop_width <= 0 || src_height == 0 ||
+      crop_height == 0) {
     return -1;
   }
 
@@ -78,7 +79,8 @@ int ConvertToI420(const uint8_t* sample,
   if (need_buf) {
     int y_size = crop_width * abs_crop_height;
     int uv_size = ((crop_width + 1) / 2) * ((abs_crop_height + 1) / 2);
-    const uint64_t rotate_buffer_size = (uint64_t)y_size + (uint64_t)uv_size * 2;
+    const uint64_t rotate_buffer_size =
+        (uint64_t)y_size + (uint64_t)uv_size * 2;
     if (rotate_buffer_size > SIZE_MAX) {
       return -1;  // Invalid size.
     }

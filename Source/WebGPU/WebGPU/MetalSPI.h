@@ -35,9 +35,50 @@ DECLARE_SYSTEM_HEADER
 #import <Metal/MTLResource_Private.h>
 #import <Metal/MTLTexture_Private.h>
 #else
+constexpr MTLPixelFormat MTLPixelFormatYCBCR8_420_2P = static_cast<MTLPixelFormat>(500);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR8_422_1P = static_cast<MTLPixelFormat>(501);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR8_422_2P = static_cast<MTLPixelFormat>(502);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR8_444_2P = static_cast<MTLPixelFormat>(503);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_444_1P = static_cast<MTLPixelFormat>(504);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_420_2P = static_cast<MTLPixelFormat>(505);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_422_2P = static_cast<MTLPixelFormat>(506);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_444_2P = static_cast<MTLPixelFormat>(507);
 constexpr MTLPixelFormat MTLPixelFormatYCBCR10_420_2P_PACKED = static_cast<MTLPixelFormat>(508);
 constexpr MTLPixelFormat MTLPixelFormatYCBCR10_422_2P_PACKED = static_cast<MTLPixelFormat>(509);
 constexpr MTLPixelFormat MTLPixelFormatYCBCR10_444_2P_PACKED = static_cast<MTLPixelFormat>(510);
+
+constexpr MTLPixelFormat MTLPixelFormatYCBCR8_420_2P_sRGB = static_cast<MTLPixelFormat>(520);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR8_422_1P_sRGB = static_cast<MTLPixelFormat>(521);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR8_422_2P_sRGB = static_cast<MTLPixelFormat>(522);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR8_444_2P_sRGB = static_cast<MTLPixelFormat>(523);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_444_1P_sRGB = static_cast<MTLPixelFormat>(524);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_420_2P_sRGB = static_cast<MTLPixelFormat>(525);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_422_2P_sRGB = static_cast<MTLPixelFormat>(526);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_444_2P_sRGB = static_cast<MTLPixelFormat>(527);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_420_2P_PACKED_sRGB = static_cast<MTLPixelFormat>(528);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_422_2P_PACKED_sRGB = static_cast<MTLPixelFormat>(529);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_444_2P_PACKED_sRGB = static_cast<MTLPixelFormat>(530);
+
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_444_1P_PQ = static_cast<MTLPixelFormat>(563);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_420_2P_PQ = static_cast<MTLPixelFormat>(564);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_422_2P_PQ = static_cast<MTLPixelFormat>(565);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_444_2P_PQ = static_cast<MTLPixelFormat>(566);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_420_2P_PACKED_PQ = static_cast<MTLPixelFormat>(567);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_422_2P_PACKED_PQ = static_cast<MTLPixelFormat>(568);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_444_2P_PACKED_PQ = static_cast<MTLPixelFormat>(569);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR12_420_2P = static_cast<MTLPixelFormat>(570);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR12_422_2P = static_cast<MTLPixelFormat>(571);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR12_444_2P = static_cast<MTLPixelFormat>(572);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR12_420_2P_PQ = static_cast<MTLPixelFormat>(573);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR12_422_2P_PQ = static_cast<MTLPixelFormat>(574);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR12_444_2P_PQ = static_cast<MTLPixelFormat>(575);
+
+constexpr MTLPixelFormat MTLPixelFormatYCBCR12_420_2P_PACKED = static_cast<MTLPixelFormat>(580);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR12_422_2P_PACKED = static_cast<MTLPixelFormat>(581);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR12_444_2P_PACKED = static_cast<MTLPixelFormat>(582);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR12_420_2P_PACKED_PQ = static_cast<MTLPixelFormat>(583);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR12_422_2P_PACKED_PQ = static_cast<MTLPixelFormat>(584);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR12_444_2P_PACKED_PQ = static_cast<MTLPixelFormat>(585);
 
 @protocol MTLResourceSPI <MTLResource>
 @optional
@@ -52,6 +93,12 @@ constexpr MTLPixelFormat MTLPixelFormatYCBCR10_444_2P_PACKED = static_cast<MTLPi
 
 @protocol MTLDeviceSPI <MTLDevice>
 - (id <MTLSharedEvent>)newSharedEventWithMachPort:(mach_port_t)machPort;
+@end
+
+@protocol MTLRasterizationRateMapDescriptorSPI
+@property (nonatomic) float minFactor;
+@property (nonatomic) MTLMutability mutability;
+@property (nonatomic) BOOL skipSampleValidationAndApplySampleAtTileGranularity;
 @end
 
 #endif

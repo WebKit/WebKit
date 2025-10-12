@@ -11,10 +11,10 @@
 #ifndef MODULES_DESKTOP_CAPTURE_DESKTOP_AND_CURSOR_COMPOSER_H_
 #define MODULES_DESKTOP_CAPTURE_DESKTOP_AND_CURSOR_COMPOSER_H_
 
+#include <cstdint>
 #include <memory>
-#if defined(WEBRTC_USE_GIO)
+
 #include "modules/desktop_capture/desktop_capture_metadata.h"
-#endif  // defined(WEBRTC_USE_GIO)
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_capturer.h"

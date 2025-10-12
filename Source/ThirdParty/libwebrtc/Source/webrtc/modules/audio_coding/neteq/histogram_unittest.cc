@@ -11,6 +11,8 @@
 #include "modules/audio_coding/neteq/histogram.h"
 
 #include <cmath>
+#include <cstddef>
+#include <vector>
 
 #include "test/gtest.h"
 

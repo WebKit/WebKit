@@ -26,10 +26,10 @@
 
 #if ENABLE(MEDIA_RECORDER)
 
-#include "CAAudioStreamDescription.h"
-#include "MediaRecorderPrivateWriter.h"
-#include "SharedBuffer.h"
-#include "VideoEncoder.h"
+#include <WebCore/CAAudioStreamDescription.h>
+#include <WebCore/MediaRecorderPrivateWriter.h>
+#include <WebCore/SharedBuffer.h>
+#include <WebCore/VideoEncoder.h>
 #include <atomic>
 #include <span>
 #include <wtf/Deque.h>

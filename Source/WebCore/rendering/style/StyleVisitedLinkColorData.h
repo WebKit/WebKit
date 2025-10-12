@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "StyleColor.h"
+#include <WebCore/StyleColor.h>
 
 namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleVisitedLinkColorData);
 class StyleVisitedLinkColorData : public RefCounted<StyleVisitedLinkColorData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleVisitedLinkColorData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleVisitedLinkColorData, StyleVisitedLinkColorData);
 public:
     static Ref<StyleVisitedLinkColorData> create() { return adoptRef(*new StyleVisitedLinkColorData); }
     Ref<StyleVisitedLinkColorData> copy() const;

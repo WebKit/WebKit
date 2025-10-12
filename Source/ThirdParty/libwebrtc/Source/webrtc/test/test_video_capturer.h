@@ -10,20 +10,22 @@
 #ifndef TEST_TEST_VIDEO_CAPTURER_H_
 #define TEST_TEST_VIDEO_CAPTURER_H_
 
-#include <stddef.h>
-
 #include <memory>
+#include <optional>
+#include <utility>
 
 #include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
 #include "api/video/video_source_interface.h"
 #include "media/base/video_adapter.h"
 #include "media/base/video_broadcaster.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 namespace test {
 
-class TestVideoCapturer : public rtc::VideoSourceInterface<VideoFrame> {
+class TestVideoCapturer : public VideoSourceInterface<VideoFrame> {
  public:
   class FramePreprocessor {
    public:
@@ -34,9 +36,9 @@ class TestVideoCapturer : public rtc::VideoSourceInterface<VideoFrame> {
 
   ~TestVideoCapturer() override;
 
-  void AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
-                       const rtc::VideoSinkWants& wants) override;
-  void RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) override;
+  void AddOrUpdateSink(VideoSinkInterface<VideoFrame>* sink,
+                       const VideoSinkWants& wants) override;
+  void RemoveSink(VideoSinkInterface<VideoFrame>* sink) override;
   void SetFramePreprocessor(std::unique_ptr<FramePreprocessor> preprocessor) {
     MutexLock lock(&lock_);
     preprocessor_ = std::move(preprocessor);
@@ -61,7 +63,7 @@ class TestVideoCapturer : public rtc::VideoSourceInterface<VideoFrame> {
 
  protected:
   void OnFrame(const VideoFrame& frame);
-  rtc::VideoSinkWants GetSinkWants();
+  VideoSinkWants GetSinkWants();
 
  private:
   void UpdateVideoAdapter();
@@ -70,8 +72,8 @@ class TestVideoCapturer : public rtc::VideoSourceInterface<VideoFrame> {
   Mutex lock_;
   std::unique_ptr<FramePreprocessor> preprocessor_ RTC_GUARDED_BY(lock_);
   bool enable_adaptation_ RTC_GUARDED_BY(lock_) = true;
-  rtc::VideoBroadcaster broadcaster_;
-  cricket::VideoAdapter video_adapter_;
+  VideoBroadcaster broadcaster_;
+  VideoAdapter video_adapter_;
 };
 }  // namespace test
 }  // namespace webrtc

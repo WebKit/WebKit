@@ -29,7 +29,6 @@
     EnabledBySetting=WebXRLayersAPIEnabled,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=Window,
-    JSGenerateToJSObject,
     JSGenerateToNativeObject,
 ] interface XRProjectionLayer : XRCompositionLayer {
     readonly attribute unsigned long textureWidth;

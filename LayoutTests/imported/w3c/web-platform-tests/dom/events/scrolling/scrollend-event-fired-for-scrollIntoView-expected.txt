@@ -1,4 +1,0 @@
-
-FAIL Tests scrollend event for scrollIntoView. promise_test: Unhandled rejection with value: "DIV.scrollIntoView  did not receive scrollend event."
-FAIL Tests scrollend event for nested scrollIntoView. promise_test: Unhandled rejection with value: "Nested scrollIntoView did not receive scrollend event."
-

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "GlobalExecutable.h"
+#include <JavaScriptCore/GlobalExecutable.h>
 
 namespace JSC {
 
@@ -74,6 +74,8 @@ public:
         
     DECLARE_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
     TemplateObjectMap& ensureTemplateObjectMap(VM&);
 
 private:
@@ -81,8 +83,6 @@ private:
     friend class ScriptExecutable;
 
     ProgramExecutable(JSGlobalObject*, const SourceCode&);
-
-    DECLARE_VISIT_CHILDREN;
 
     std::unique_ptr<TemplateObjectMap> m_templateObjectMap;
 };

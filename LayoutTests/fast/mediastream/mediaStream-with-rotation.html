@@ -35,6 +35,7 @@
         if (window.testRunner)
             testRunner.setMockCameraOrientation(90);
         const stream = await navigator.mediaDevices.getUserMedia({ video : true });
+        t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
         let result1 = await setVideo(t, stream);
 
         let blob = await record(stream, 'video/webm');
@@ -48,6 +49,7 @@
         if (window.testRunner)
             testRunner.setMockCameraOrientation(90);
         const stream = await navigator.mediaDevices.getUserMedia({ video : true });
+        t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
         let result1 = await setVideo(t, stream);
 
         let blob = await record(stream, 'video/mp4');

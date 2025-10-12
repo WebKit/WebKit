@@ -11,92 +11,48 @@ includes: [compareArray.js]
 ---*/
 
 const order = [];
+function handleGet(name, value) {
+  order.push("get " + name);
+  return {
+    toString() {
+      order.push("toString " + name);
+      return value;
+    }
+  };
+}
 new Intl.Locale(
   { toString() { order.push("tag toString"); return "en"; } },
   {
-    get language() {
-      order.push("get language");
-      return {
-        toString() {
-          order.push("toString language");
-          return "de";
-        }
-      }
-    },
-
-    get script() {
-      order.push("get script");
-      return {
-        toString() {
-          order.push("toString script");
-          return "Latn";
-        }
-      }
-    },
-
-    get region() {
-      order.push("get region");
-      return {
-        toString() {
-          order.push("toString region");
-          return "DE";
-        }
-      }
-    },
-
     get calendar() {
-      order.push("get calendar");
-      return {
-        toString() {
-          order.push("toString calendar");
-          return "gregory";
-        }
-      }
+      return handleGet("calendar", "gregory");
     },
-
-    get collation() {
-      order.push("get collation");
-      return {
-        toString() {
-          order.push("toString collation");
-          return "zhuyin";
-        }
-      }
-    },
-
-    get hourCycle() {
-      order.push("get hourCycle");
-      return {
-        toString() {
-          order.push("toString hourCycle");
-          return "h24";
-        }
-      }
-    },
-
     get caseFirst() {
-      order.push("get caseFirst");
-      return {
-        toString() {
-          order.push("toString caseFirst");
-          return "upper";
-        }
-      }
+      return handleGet("caseFirst", "upper");
     },
-
+    get collation() {
+      return handleGet("collation", "zhuyin");
+    },
+    get hourCycle() {
+      return handleGet("hourCycle", "h24");
+    },
+    get language() {
+      return handleGet("language", "de");
+    },
+    get numberingSystem() {
+      return handleGet("numberingSystem", "latn");
+    },
     get numeric() {
       order.push("get numeric");
       return false;
     },
-
-    get numberingSystem() {
-      order.push("get numberingSystem");
-      return {
-        toString() {
-          order.push("toString numberingSystem");
-          return "latn";
-        }
-      }
+    get region() {
+      return handleGet("region", "DE");
+    },
+    get script() {
+      return handleGet("script", "Latn");
+    },
+    get variants() {
+      return handleGet("variants", "fonipa-1996");
     },
   }
 );
@@ -109,6 +65,8 @@ const expected_order = [
   "toString script",
   "get region",
   "toString region",
+  "get variants",
+  "toString variants",
   "get calendar",
   "toString calendar",
   "get collation",

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@
 #endif
 #endif
 
-#if ENABLE(MEDIA_SESSION_COORDINATOR)
+#if ENABLE(MEDIA_SESSION_COORDINATOR) || HAVE(DIGITAL_CREDENTIALS_UI)
 #import "WebProcess.h"
 #import <wtf/cocoa/Entitlements.h>
 #endif
@@ -113,29 +113,13 @@ bool defaultAppleMailPaginationQuirkEnabled()
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-
 bool defaultCaptureAudioInGPUProcessEnabled()
 {
-#if HAVE(REQUIRE_MICROPHONE_CAPTURE_IN_UIPROCESS)
-    // Newer versions can capture microphone in GPUProcess.
-    if (!WTF::MacApplication::isSafari())
-        return false;
-#endif
-
 #if ENABLE(GPU_PROCESS_BY_DEFAULT)
     return true;
 #else
     return false;
 #endif
-}
-
-bool defaultCaptureAudioInUIProcessEnabled()
-{
-#if PLATFORM(MAC)
-    return !defaultCaptureAudioInGPUProcessEnabled();
-#endif
-
-    return false;
 }
 
 bool defaultManageCaptureStatusBarInGPUProcessEnabled()
@@ -148,6 +132,19 @@ bool defaultManageCaptureStatusBarInGPUProcessEnabled()
 #endif
 }
 
+double defaultInactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes()
+{
+    constexpr double inactiveMediaCaptureStreamRepromptIntervalForDesktop = 10;
+
+#if PLATFORM(IOS_FAMILY)
+    constexpr double inactiveMediaCaptureStreamRepromptIntervalForiOS = 1;
+    if (!PAL::currentUserInterfaceIdiomIsDesktop())
+        return inactiveMediaCaptureStreamRepromptIntervalForiOS;
+#endif
+
+    return inactiveMediaCaptureStreamRepromptIntervalForDesktop;
+}
+
 #endif // ENABLE(MEDIA_STREAM)
 
 #if ENABLE(MEDIA_SOURCE)
@@ -157,6 +154,15 @@ bool defaultManagedMediaSourceEnabled()
     return true;
 #else
     return false;
+#endif
+}
+
+bool defaultMediaSourcePrefersDecompressionSession()
+{
+#if CPU(X86_64) || CPU(X86)
+    return false;
+#else
+    return true;
 #endif
 }
 #endif
@@ -251,7 +257,17 @@ bool defaultGamepadVibrationActuatorEnabled()
 bool defaultDigitalCredentialsEnabled()
 {
 #if HAVE(DIGITAL_CREDENTIALS_UI)
-    return true;
+    static dispatch_once_t onceToken;
+    static bool enabled { false };
+    dispatch_once(&onceToken, ^{
+        auto entitlementChecker = [inWebProcess = isInWebProcess()](auto entitlement) {
+            if (inWebProcess)
+                return WebProcess::singleton().parentProcessHasEntitlement(entitlement);
+            return WTF::processHasEntitlement(entitlement);
+        };
+        enabled = entitlementChecker("com.apple.developer.web-browser"_s) || entitlementChecker("com.apple.developer.identity-document-services.web-presentment-controller"_s);
+    });
+    return enabled;
 #else
     return false;
 #endif
@@ -404,11 +420,34 @@ bool defaultTrustedTypesEnabled()
 #endif
 }
 
-#if !ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+#if !PLATFORM(COCOA)
 bool defaultContentInsetBackgroundFillEnabled()
 {
     return false;
 }
 #endif
+
+#if !PLATFORM(COCOA)
+bool defaultTopContentInsetBackgroundCanChangeAfterScrolling()
+{
+    return false;
+}
+#endif
+
+#if !PLATFORM(COCOA)
+bool defaultIOSurfaceLosslessCompressionEnabled()
+{
+    return false;
+}
+#endif
+
+bool defaultScrollbarColorEnabled()
+{
+#if HAVE(APPKIT_SCROLLBAR_COLOR_SPI) || HAVE(UIKIT_SCROLLBAR_COLOR_SPI)
+    return true;
+#else
+    return false;
+#endif
+}
 
 } // namespace WebKit

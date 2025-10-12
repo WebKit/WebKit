@@ -217,6 +217,7 @@ JSC_DEFINE_HOST_FUNCTION(mapProtoFuncGetOrInsertComputed, (JSGlobalObject* globa
     if (!valueCallback.isCallable())
         return throwVMTypeError(globalObject, scope, "Map.prototype.getOrInsertComputed requires the callback argument to be callable."_s);
 
+    key = normalizeMapKey(key);
     RELEASE_AND_RETURN(scope, JSValue::encode(map->getOrInsert(globalObject, key, [&] {
         auto callData = JSC::getCallData(valueCallback);
         ASSERT(callData.type != CallData::Type::None);

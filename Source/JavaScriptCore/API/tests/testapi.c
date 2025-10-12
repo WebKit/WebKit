@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,6 +70,7 @@
 #include "MultithreadedMultiVMExecutionTest.h"
 #include "PingPongStackOverflowTest.h"
 #include "TypedArrayCTest.h"
+#include "VMManagerStopTheWorldTest.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -1192,42 +1193,54 @@ void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 static void checkJSStringOOBUTF8(void)
 {
     const size_t sourceCStringSize = 200;
-    const size_t outCStringSize = 10;
+    const size_t cStringSize = 10;
+    const size_t outCStringSize = cStringSize + sourceCStringSize;
 
-    char* sourceCString = (char*)malloc(sourceCStringSize);
-    memset(sourceCString, 0, sourceCStringSize);
+IGNORE_WARNINGS_BEGIN("vla")
+IGNORE_WARNINGS_BEGIN("gnu-folding-constant")
+    char sourceCString[sourceCStringSize];
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    memset(sourceCString, 0, sizeof(sourceCString));
     for (size_t i = 0; i < sourceCStringSize - 1; ++i)
         sourceCString[i] = '0' + (i%10);
 
-    char* outCString = (char*)malloc(outCStringSize + sourceCStringSize);
-    memset(outCString, 0x13, outCStringSize + sourceCStringSize);
+IGNORE_WARNINGS_BEGIN("vla")
+IGNORE_WARNINGS_BEGIN("gnu-folding-constant")
+    char outCString[outCStringSize];
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    memset(outCString, 0x13, sizeof(outCString));
 
     JSStringRef str = JSStringCreateWithUTF8CString(sourceCString);
-    size_t bytesWritten = JSStringGetUTF8CString(str, outCString, outCStringSize);
+    size_t bytesWritten = JSStringGetUTF8CString(str, outCString, cStringSize);
 
     assertTrue(bytesWritten == 10, "we report 10 bytes written precisely");
 
     for (size_t i = 0; i < sizeof(outCString); ++i) {
-        if (i == outCStringSize - 1)
+        if (i == cStringSize - 1)
             assertTrue(outCString[i] == '\0', "string terminated");
-        else if (i < outCStringSize - 1)
+        else if (i < cStringSize - 1)
             assertTrue(outCString[i] == sourceCString[i], "string copied");
         else
             assertTrue(outCString[i] == 0x13, "did not write past the end");
     }
 
     JSStringRelease(str);
-    free(outCString);
-    free(sourceCString);
 }
 
 static void checkJSStringOOBUTF16(void)
 {
     const size_t sourceCStringSize = 22;
-    const size_t outCStringSize = 20;
+    const size_t cStringSize = 20;
+    const size_t outCStringSize = cStringSize + sourceCStringSize;
 
-    char* sourceCString = (char*)malloc(sourceCStringSize);
-    memset(sourceCString, 0, sourceCStringSize);
+IGNORE_WARNINGS_BEGIN("vla")
+IGNORE_WARNINGS_BEGIN("gnu-folding-constant")
+    char sourceCString[sourceCStringSize];
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    memset(sourceCString, 0, sizeof(sourceCString));
     for (size_t i = 0; i < sourceCStringSize - 1; ++i)
         sourceCString[i] = '0' + (i%10);
 
@@ -1236,35 +1249,42 @@ static void checkJSStringOOBUTF16(void)
     sourceCString[5] = '\x98';
     sourceCString[6] = '\x81';
 
-    char* outCString = (char*)malloc(outCStringSize + sourceCStringSize);
-    memset(outCString, 0x13, outCStringSize + sourceCStringSize);
+IGNORE_WARNINGS_BEGIN("vla")
+IGNORE_WARNINGS_BEGIN("gnu-folding-constant")
+    char outCString[outCStringSize];
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    memset(outCString, 0x13, sizeof(outCString));
 
     JSStringRef str = JSStringCreateWithUTF8CString(sourceCString);
-    size_t bytesWritten = JSStringGetUTF8CString(str, outCString, outCStringSize);
+    size_t bytesWritten = JSStringGetUTF8CString(str, outCString, cStringSize);
 
     assertTrue(bytesWritten == 20, "we report 20 bytes written precisely");
 
     for (size_t i = 0; i < sizeof(outCString); ++i) {
-        if (i == outCStringSize - 1)
+        if (i == cStringSize - 1)
             assertTrue(outCString[i] == '\0', "string terminated");
-        else if (i < outCStringSize - 1)
+        else if (i < cStringSize - 1)
             assertTrue(outCString[i] == sourceCString[i], "string copied");
         else
             assertTrue(outCString[i] == 0x13, "did not write past the end");
     }
 
     JSStringRelease(str);
-    free(outCString);
-    free(sourceCString);
 }
 
 static void checkJSStringOOBUTF16AtEnd(void)
 {
     const size_t sourceCStringSize = 22;
-    const size_t outCStringSize = 20;
+    const size_t cStringSize = 20;
+    const size_t outCStringSize = cStringSize + sourceCStringSize;
 
-    char* sourceCString = (char*)malloc(sourceCStringSize);
-    memset(sourceCString, 0, sourceCStringSize);
+IGNORE_WARNINGS_BEGIN("vla")
+IGNORE_WARNINGS_BEGIN("gnu-folding-constant")
+    char sourceCString[sourceCStringSize];
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    memset(sourceCString, 0, sizeof(sourceCString));
     for (size_t i = 0; i < sourceCStringSize - 1; ++i)
         sourceCString[i] = '0' + (i%10);
 
@@ -1273,11 +1293,15 @@ static void checkJSStringOOBUTF16AtEnd(void)
     sourceCString[19] = '\x98';
     sourceCString[20] = '\x81';
 
-    char* outCString = (char*)malloc(outCStringSize + sourceCStringSize);
-    memset(outCString, 0x13, outCStringSize + sourceCStringSize);
+IGNORE_WARNINGS_BEGIN("vla")
+IGNORE_WARNINGS_BEGIN("gnu-folding-constant")
+    char outCString[outCStringSize];
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    memset(outCString, 0x13, sizeof(outCString));
 
     JSStringRef str = JSStringCreateWithUTF8CString(sourceCString);
-    size_t bytesWritten = JSStringGetUTF8CString(str, outCString, outCStringSize);
+    size_t bytesWritten = JSStringGetUTF8CString(str, outCString, cStringSize);
 
     assertTrue(bytesWritten == 18, "we report 18 bytes written precisely");
 
@@ -1291,8 +1315,6 @@ static void checkJSStringOOBUTF16AtEnd(void)
     }
 
     JSStringRelease(str);
-    free(outCString);
-    free(sourceCString);
 }
 
 static void checkJSStringOOB(void)
@@ -1600,7 +1622,7 @@ int main(int argc, char* argv[])
 
     RELEASE_ASSERT(!testCAPIViaCpp(filter));
     if (filter)
-        return 0;
+        return failed;
 
     testCompareAndSwap();
     startMultithreadedMultiVMExecutionTest();
@@ -2379,10 +2401,11 @@ int main(int argc, char* argv[])
     // For now, we'll just run them here at the end as a workaround.
     failed |= testPingPongStackOverflow();
     failed |= testExecutionTimeLimit();
+    failed |= testVMManagerStopTheWorld();
 
     if (failed) {
         printf("FAIL: Some tests failed.\n");
-        return 1;
+        return failed;
     }
 
     printf("PASS: Program exited normally.\n");

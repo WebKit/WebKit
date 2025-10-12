@@ -31,6 +31,7 @@
 
 #include "CAAudioStreamDescription.h"
 #include "RealtimeIncomingAudioSource.h"
+#include "Timer.h"
 #include "WebAudioBufferList.h"
 #include <CoreAudio/CoreAudioTypes.h>
 
@@ -40,10 +41,10 @@ namespace WebCore {
 
 class RealtimeIncomingAudioSourceCocoa final : public RealtimeIncomingAudioSource {
 public:
-    static Ref<RealtimeIncomingAudioSourceCocoa> create(rtc::scoped_refptr<webrtc::AudioTrackInterface>&&, String&&);
+    static Ref<RealtimeIncomingAudioSourceCocoa> create(Ref<webrtc::AudioTrackInterface>&&, String&&);
 
 private:
-    RealtimeIncomingAudioSourceCocoa(rtc::scoped_refptr<webrtc::AudioTrackInterface>&&, String&&);
+    RealtimeIncomingAudioSourceCocoa(Ref<webrtc::AudioTrackInterface>&&, String&&);
 
     // RealtimeMediaSource API
     void startProducingData() final;

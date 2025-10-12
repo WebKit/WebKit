@@ -1,0 +1,5 @@
+
+
+PASS Removing an element must update the named properties
+PASS Removing a non-element node must not cause errors
+

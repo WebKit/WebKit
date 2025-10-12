@@ -38,7 +38,7 @@ webkit_platform_headers: "CoreIPCPKSecureElementPass.h"
     Vector<uint8_t> ipcData()
 }
 
-[WebKitSecureCodingClass=PAL::getPKPaymentMerchantSessionClass(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentMerchantSession {
+[WebKitSecureCodingClass=PAL::getPKPaymentMerchantSessionClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentMerchantSession {
     merchantIdentifier: String
     merchantSessionIdentifier: String
     nonce: String
@@ -55,12 +55,7 @@ webkit_platform_headers: "CoreIPCPKSecureElementPass.h"
     signedFields: Array<String>?
 }
 
-webkit_platform_headers: "CoreIPCPKPaymentSetupFeature.h"
-[WebKitPlatform] class WebKit::CoreIPCPKPaymentSetupFeature {
-    Vector<uint8_t> ipcData()
-}
-
-[WebKitSecureCodingClass=PAL::getPKPaymentClass(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPayment {
+[WebKitSecureCodingClass=PAL::getPKPaymentClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPayment {
     token: PKPaymentToken
     shippingContact: PKContact
     billingContact: PKContact
@@ -71,7 +66,7 @@ webkit_platform_headers: "CoreIPCPKPaymentSetupFeature.h"
     installmentAuthorizationToken: String
 }
 
-[WebKitSecureCodingClass=PAL::getPKPaymentTokenClass(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentToken {
+[WebKitSecureCodingClass=PAL::getPKPaymentTokenClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentToken {
     paymentInstrumentName: String?
     paymentNetwork: String?
     transactionIdentifier: String
@@ -81,7 +76,7 @@ webkit_platform_headers: "CoreIPCPKPaymentSetupFeature.h"
     retryNonce: String
 }
 
-[WebKitSecureCodingClass=PAL::getPKShippingMethodClass(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKShippingMethod {
+[WebKitSecureCodingClass=PAL::getPKShippingMethodClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKShippingMethod {
     label: String
     amount: Number
     type: Number
@@ -94,13 +89,15 @@ webkit_platform_headers: "CoreIPCPKPaymentSetupFeature.h"
     dateComponentsRange: PKDateComponentsRange
 }
 
-[WebKitSecureCodingClass=PAL::getPKDateComponentsRangeClass(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKDateComponentsRange {
+#if !HAVE(WK_SECURE_CODING_PKDATECOMPONENTSRANGE)
+[WebKitSecureCodingClass=PAL::getPKDateComponentsRangeClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKDateComponentsRange {
     startDateComponents: NSDateComponents
     endDateComponents: NSDateComponents
 }
+#endif
 
 additional_forward_declaration: OBJC_CLASS PKSecureElementPass
-[WebKitSecureCodingClass=PAL::getPKPaymentMethodClass(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentMethod {
+[WebKitSecureCodingClass=PAL::getPKPaymentMethodClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentMethod {
     type: Number
     displayName: String
     network: String
@@ -109,6 +106,26 @@ additional_forward_declaration: OBJC_CLASS PKSecureElementPass
     billingAddress: CNContact
     installmentBindToken: String
     usePeerPaymentBalance: Number
+}
+
+additional_forward_declaration: OBJC_CLASS NSSet
+[WebKitSecureCodingClass=PAL::getPKPaymentSetupFeatureClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentSetupFeature {
+    identifiers: Set
+    localizedDisplayName: String
+    type: Number
+    state: Number
+    supportedOptions: Number
+    supportedDevices: Number
+    productIdentifier: String
+    partnerIdentifier: String
+    featureIdentifier: Number
+    lastUpdated: Date
+    expiry: Date
+    productType: Number
+    productState: Number
+    notificationTitle: String
+    notificationMessage: String
+    discoveryCardIdentifier: String
 }
 
 #endif // USE(PASSKIT)

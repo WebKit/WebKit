@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple, Inc. All Rights Reserved.
+ * Copyright (C) 2016 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "CachedResourceClient.h"
-#include "CachedResourceHandle.h"
 #include "CachedScript.h"
-#include "Document.h"
-#include "LoadableScript.h"
-#include "LoadableScriptError.h"
-#include "ReferrerPolicy.h"
+#include <WebCore/CachedResourceClient.h>
+#include <WebCore/CachedResourceHandle.h>
+#include <WebCore/Document.h>
+#include <WebCore/LoadableScript.h>
+#include <WebCore/LoadableScriptError.h>
+#include <WebCore/ReferrerPolicy.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -49,6 +49,7 @@ public:
     bool hasError() const final;
     std::optional<Error> takeError() final;
     bool wasCanceled() const final;
+    bool isInlineModule() const final { return false; }
 
     Document* document() { return m_weakDocument.get(); }
     CachedScript& cachedScript() { return *m_cachedScript; }

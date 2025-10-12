@@ -8,23 +8,28 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <atomic>
+
+#include "api/audio_options.h"
+#include "api/jsep.h"
+#include "api/test/network_emulation/network_emulation_interfaces.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
-#include "modules/rtp_rtcp/source/rtp_util.h"
 #include "pc/media_session.h"
 #include "pc/session_description.h"
-#include "test/field_trial.h"
+#include "rtc_base/checks.h"
 #include "test/gtest.h"
 #include "test/peer_scenario/peer_scenario.h"
+#include "test/peer_scenario/peer_scenario_client.h"
 
 namespace webrtc {
 namespace test {
 namespace {
 RtpHeaderExtensionMap AudioExtensions(
     const SessionDescriptionInterface& session) {
-  auto* audio_desc =
-      cricket::GetFirstAudioContentDescription(session.description());
+  auto* audio_desc = GetFirstAudioContentDescription(session.description());
   return RtpHeaderExtensionMap(audio_desc->rtp_header_extensions());
 }
 
@@ -76,7 +81,7 @@ TEST(RemoteEstimateEndToEnd, AudioUsesAbsSendTimeExtension) {
   s.net()->CreateRoute(callee->endpoint(), {ret_node}, caller->endpoint());
 
   auto signaling = s.ConnectSignaling(caller, callee, {send_node}, {ret_node});
-  caller->CreateAudio("AUDIO", cricket::AudioOptions());
+  caller->CreateAudio("AUDIO", AudioOptions());
   signaling.StartIceSignaling();
   RtpHeaderExtensionMap extension_map;
   std::atomic<bool> offer_exchange_done(false);

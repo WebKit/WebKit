@@ -7,6 +7,10 @@
 //   Tests to validate our Vulkan dynamic uniform updates are working as expected.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/angletypes.h"

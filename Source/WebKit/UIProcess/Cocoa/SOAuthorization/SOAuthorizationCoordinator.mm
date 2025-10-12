@@ -30,6 +30,7 @@
 
 #import "APIFrameHandle.h"
 #import "APINavigationAction.h"
+#import "APIPageConfiguration.h"
 #import "PopUpSOAuthorizationSession.h"
 #import "RedirectSOAuthorizationSession.h"
 #import "SubFrameSOAuthorizationSession.h"
@@ -39,9 +40,11 @@
 #import <WebCore/ResourceRequest.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/AuthKitSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/Function.h>
 #import <wtf/ThreadAssertions.h>
 #import <wtf/TZoneMallocInlines.h>
+
 #import <pal/cocoa/AppSSOSoftLink.h>
 
 #define AUTHORIZATIONCOORDINATOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(AppSSO, "%p - SOAuthorizationCoordinator::" fmt, this, ##__VA_ARGS__)
@@ -55,7 +58,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SOAuthorizationCoordinator);
 
 SOAuthorizationCoordinator::SOAuthorizationCoordinator()
 {
-    m_hasAppSSO = !!PAL::getSOAuthorizationClass();
+    m_hasAppSSO = !!PAL::getSOAuthorizationClassSingleton();
 #if PLATFORM(MAC)
     // In the case of base system, which doesn't have AppSSO.framework.
     if (!m_hasAppSSO)
@@ -71,15 +74,15 @@ void SOAuthorizationCoordinator::canAuthorize(const URL& url, CompletionHandler<
         completionHandler(false);
         return;
     }
-    if ([PAL::getSOAuthorizationClass() respondsToSelector:@selector(canPerformAuthorizationWithURL:responseCode:callerBundleIdentifier:useInternalExtensions:completion:)]) {
-        [PAL::getSOAuthorizationClass() canPerformAuthorizationWithURL:url.createNSURL().get() responseCode:0 callerBundleIdentifier:nil useInternalExtensions:YES completion:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (BOOL result) mutable {
+    if ([PAL::getSOAuthorizationClassSingleton() respondsToSelector:@selector(canPerformAuthorizationWithURL:responseCode:callerBundleIdentifier:useInternalExtensions:completion:)]) {
+        [PAL::getSOAuthorizationClassSingleton() canPerformAuthorizationWithURL:url.createNSURL().get() responseCode:0 callerBundleIdentifier:nil useInternalExtensions:YES completion:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (BOOL result) mutable {
             ensureOnMainRunLoop([completionHandler = WTFMove(completionHandler), result] () mutable {
                 completionHandler(result);
             });
         }).get()];
         return;
     }
-    completionHandler([PAL::getSOAuthorizationClass() canPerformAuthorizationWithURL:url.createNSURL().get() responseCode:0]);
+    completionHandler([PAL::getSOAuthorizationClassSingleton() canPerformAuthorizationWithURL:url.createNSURL().get() responseCode:0]);
 }
 
 void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Function<void(bool)>&& completionHandler)

@@ -1249,6 +1249,7 @@ static void write_bitdepth_colorspace_sampling(
     }
   } else {
     assert(cm->profile == PROFILE_1 || cm->profile == PROFILE_3);
+    assert(cm->subsampling_x == 0 && cm->subsampling_y == 0);
     vpx_wb_write_bit(wb, 0);  // unused
   }
 }

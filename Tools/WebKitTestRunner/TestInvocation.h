@@ -41,12 +41,13 @@
 namespace WTR {
 
 class TestInvocation final : public RefCounted<TestInvocation>, public UIScriptContextDelegate, public CanMakeWeakPtr<TestInvocation> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TestInvocation);
     WTF_MAKE_NONCOPYABLE(TestInvocation);
 public:
     static Ref<TestInvocation> create(WKURLRef, const TestOptions&);
     ~TestInvocation();
 
+    uint64_t identifier() const { return m_identifier; }
     WKURLRef url() const { return m_url.get(); }
     bool urlContains(StringView) const;
     
@@ -69,11 +70,6 @@ public:
     static void dumpWebProcessUnresponsiveness(const char* errorMessage);
     void outputText(const String&);
 
-    void didBeginSwipe();
-    void willEndSwipe();
-    void didEndSwipe();
-    void didRemoveSwipeSnapshot();
-
     void notifyDownloadDone();
 
     void dumpResourceLoadStatistics();
@@ -87,6 +83,12 @@ public:
     void loadTestInCrossOriginIframe();
 
     void dumpResourceLoadStatisticsIfNecessary();
+
+    void runUISideScript(WKStringRef, unsigned callbackID);
+
+    void dontForceRepaint() { m_forceRepaint = false; }
+    bool isPrinting() const { return m_isPrinting; }
+    void setPrinting() { m_isPrinting = true; }
 
 private:
     TestInvocation(WKURLRef, const TestOptions&);
@@ -118,23 +120,15 @@ private:
     bool compareActualHashToExpectedAndDumpResults(const std::string&);
 
     static void forceRepaintDoneCallback(WKErrorRef, void* context);
-    
-    struct UIScriptInvocationData {
-        unsigned callbackID;
-        WebKit::WKRetainPtr<WKStringRef> scriptString;
-        WeakPtr<TestInvocation> testInvocation;
-    };
-    static void runUISideScriptAfterUpdateCallback(WKErrorRef, void* context);
-    static void runUISideScriptImmediately(WKErrorRef, void* context);
 
     bool shouldLogHistoryClientCallbacks() const;
 
-    void runUISideScript(WKStringRef, unsigned callbackID);
     // UIScriptContextDelegate
     void uiScriptDidComplete(const String& result, unsigned callbackID) override;
 
     const TestOptions m_options;
     
+    uint64_t m_identifier;
     WKRetainPtr<WKURLRef> m_url;
     String m_urlString;
     RunLoop::Timer m_waitToDumpWatchdogTimer;
@@ -163,6 +157,7 @@ private:
     bool m_shouldDumpPrivateClickMeasurement { false };
     bool m_shouldDumpBackForwardListsForAllWindows { false };
     bool m_shouldDumpAllFrameScrollPositions { false };
+    bool m_isPrinting { false };
     WhatToDump m_whatToDump { WhatToDump::RenderTree };
 
     StringBuilder m_textOutput;

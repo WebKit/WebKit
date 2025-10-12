@@ -56,12 +56,12 @@ ImageBitmapRenderingContext::~ImageBitmapRenderingContext() = default;
 
 ImageBitmapCanvas ImageBitmapRenderingContext::canvas()
 {
-    auto& base = canvasBase();
+    WeakRef base = canvasBase();
 #if ENABLE(OFFSCREEN_CANVAS)
-    if (auto* offscreenCanvas = dynamicDowncast<OffscreenCanvas>(base))
+    if (RefPtr offscreenCanvas = dynamicDowncast<OffscreenCanvas>(base.get()))
         return offscreenCanvas;
 #endif
-    return &downcast<HTMLCanvasElement>(base);
+    return &downcast<HTMLCanvasElement>(base.get());
 }
 
 void ImageBitmapRenderingContext::setOutputBitmap(RefPtr<ImageBitmap> imageBitmap)
@@ -145,7 +145,7 @@ void ImageBitmapRenderingContext::setBlank()
     // can never be changed? Wouldn't a 1x1 buffer give the same rendering? The
     // only reason I can think of is toDataURL(), but that doesn't seem like
     // a good enough argument to waste memory.
-    auto buffer = ImageBuffer::create(FloatSize(canvasBase().width(), canvasBase().height()), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
+    auto buffer = ImageBuffer::create(FloatSize(canvasBase().width(), canvasBase().height()), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     canvasBase().setImageBufferAndMarkDirty(WTFMove(buffer));
 }
 

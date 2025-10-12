@@ -47,6 +47,7 @@ enum CSSAtRuleID : uint8_t {
     CSSAtRuleSupports,
     CSSAtRuleViewTransition,
 
+    CSSAtRuleInternalBaseAppearance,
     CSSAtRuleWebkitKeyframes,
     CSSAtRuleCounterStyle,
     CSSAtRuleLayer,
@@ -64,6 +65,7 @@ enum CSSAtRuleID : uint8_t {
     CSSAtRuleFontPaletteValues,
     CSSAtRuleScope,
     CSSAtRuleStartingStyle,
+    CSSAtRuleFunction,
 };
 
 CSSAtRuleID cssAtRuleID(StringView name);

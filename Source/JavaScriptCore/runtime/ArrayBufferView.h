@@ -25,11 +25,12 @@
 
 #pragma once
 
-#include "ArrayBuffer.h"
-#include "TypedArrayType.h"
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/TypedArrayType.h>
 #include <algorithm>
 #include <limits.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/NoVirtualDestructorBase.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -41,7 +42,7 @@ class JSArrayBufferView;
 class JSGlobalObject;
 class CallFrame;
 
-class ArrayBufferView : public RefCounted<ArrayBufferView> {
+class ArrayBufferView : public RefCounted<ArrayBufferView>, public NoVirtualDestructorBase {
 public:
     TypedArrayType getType() const { return m_type; }
 

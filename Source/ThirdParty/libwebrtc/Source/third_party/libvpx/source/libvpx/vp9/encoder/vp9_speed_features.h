@@ -148,9 +148,6 @@ typedef enum {
   // a 64X64 SB.
   VAR_BASED_PARTITION,
 
-  // Use non-fixed partitions based on source variance.
-  SOURCE_VAR_BASED_PARTITION,
-
   // Make partition decisions with machine learning models.
   ML_BASED_PARTITION
 } PARTITION_SEARCH_TYPE;
@@ -516,10 +513,6 @@ typedef struct SPEED_FEATURES {
   // used in inter frames.
   // TODO(aconverse): Fold this into one of the other many mode skips
   BLOCK_SIZE max_intra_bsize;
-
-  // The frequency that we check if SOURCE_VAR_BASED_PARTITION or
-  // FIXED_PARTITION search type should be used.
-  int search_type_check_frequency;
 
   // When partition is pre-set, the inter prediction result from pick_inter_mode
   // can be reused in final block encoding process. It is enabled only for real-

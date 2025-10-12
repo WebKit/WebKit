@@ -29,17 +29,20 @@
 
 #include "AuxiliaryProcess.h"
 #include "GPUProcessPreferences.h"
+#include "RemoteSnapshotIdentifier.h"
 #include "SandboxExtension.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/ImageBuffer.h>
 #include <WebCore/IntDegrees.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/ShareableBitmap.h>
-#include <WebCore/SnapshotIdentifier.h>
 #include <WebCore/Timer.h>
 #include <pal/SessionID.h>
 #include <wtf/Function.h>
+#include <wtf/Lock.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/WeakPtr.h>
@@ -70,6 +73,10 @@ class SecurityOriginData;
 struct MockMediaDevice;
 struct ScreenProperties;
 
+namespace DisplayList {
+class DisplayList;
+}
+
 enum class VideoFrameRotation : uint16_t;
 }
 
@@ -77,6 +84,7 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 class RemoteAudioSessionProxyManager;
+class RemoteSnapshot;
 struct CoreIPCAuditToken;
 struct GPUProcessConnectionParameters;
 struct GPUProcessCreationParameters;
@@ -85,7 +93,7 @@ struct SharedPreferencesForWebProcess;
 
 class GPUProcess final : public AuxiliaryProcess, public ThreadSafeRefCounted<GPUProcess> {
     WTF_MAKE_NONCOPYABLE(GPUProcess);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(GPUProcess);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GPUProcess);
 public:
     GPUProcess();
@@ -157,9 +165,8 @@ public:
     void setPresentingApplicationAuditToken(WebCore::ProcessIdentifier, WebCore::PageIdentifier, std::optional<CoreIPCAuditToken>&&);
 #endif
 
-#if PLATFORM(COCOA)
-    void didDrawRemoteToPDF(WebCore::PageIdentifier, RefPtr<WebCore::SharedBuffer>&&, WebCore::SnapshotIdentifier);
-#endif
+    Ref<RemoteSnapshot> getOrCreateSnapshot(RemoteSnapshotIdentifier);
+    RefPtr<RemoteSnapshot> snapshot(RemoteSnapshotIdentifier);
 
 #if PLATFORM(VISION) && ENABLE(MODEL_PROCESS)
     void requestSharedSimulationConnection(CoreIPCAuditToken&&, CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&&);
@@ -169,6 +176,12 @@ public:
 #endif
 #endif
 
+#if PLATFORM(COCOA)
+    void postWillTakeSnapshotNotification(CompletionHandler<void()>&&);
+    void registerFonts(Vector<SandboxExtension::Handle>&&);
+#endif
+
+    void terminateWebProcess(WebCore::ProcessIdentifier);
 private:
     void lowMemoryHandler(Critical, Synchronous);
 
@@ -221,6 +234,11 @@ private:
     void setScreenProperties(const WebCore::ScreenProperties&);
     void updateProcessName();
 #endif
+#if PLATFORM(COCOA)
+    void sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier, WebCore::FloatSize, WebCore::FrameIdentifier, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+#endif
+    void sinkCompletedSnapshotToBitmap(WebKit::RemoteSnapshotIdentifier, const WebCore::FloatSize&, WebCore::FrameIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
+    void releaseSnapshot(RemoteSnapshotIdentifier);
 
 #if USE(OS_STATE)
     RetainPtr<NSDictionary> additionalStateForDiagnosticReport() const final;
@@ -266,6 +284,12 @@ private:
 #if USE(GRAPHICS_LAYER_WC)
     WCSharedSceneContextHolder m_sharedSceneContext;
 #endif
+
+    // FIXME: This is a sign that we lack local id exchange protocol. The outcome is that
+    // the protocols are insecure and prone to id guessing and content stuffing.
+    // Do not add more globally shared resources.
+    Lock m_globalResourceLocker;
+    HashMap<RemoteSnapshotIdentifier, Ref<RemoteSnapshot>> m_snapshots WTF_GUARDED_BY_LOCK(m_globalResourceLocker);
 
     struct GPUSession {
         String mediaCacheDirectory;

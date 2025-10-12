@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "JSCJSValueInlines.h"
-#include "JSObject.h"
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSObject.h>
 
 namespace JSC {
 
@@ -46,6 +46,8 @@ public:
 
     DECLARE_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
     static ShadowRealmObject* create(VM&, Structure*, JSGlobalObject*);
 
     JSGlobalObject* globalObject() { return m_globalObject.get(); }
@@ -53,7 +55,6 @@ public:
 private:
     ShadowRealmObject(VM&, Structure*);
     void finishCreation(VM&);
-    DECLARE_VISIT_CHILDREN;
 
     WriteBarrier<JSGlobalObject> m_globalObject;
 };

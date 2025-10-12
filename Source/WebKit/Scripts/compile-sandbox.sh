@@ -21,7 +21,7 @@ if [[ $SDK_NAME =~ "iphone" || $SDK_NAME =~ "watch" || $SDK_NAME =~ "appletv" ||
             exit 1;
         fi
     fi;
-    if [[ $SANDBOX_NAME == "com.apple.WebKit.GPU" || $SANDBOX_NAME == "com.apple.WebKit.Networking" || $SANDBOX_NAME == "com.apple.WebKit.WebContent" ]]; then
+    if [[ $SANDBOX_NAME == "com.apple.WebKit.GPU*" || $SANDBOX_NAME == "com.apple.WebKit.Networking*" || $SANDBOX_NAME == "com.apple.WebKit.WebContent*" ]]; then
         xcrun --sdk $SDK_NAME sbutil compile $SANDBOX_PATH > /dev/null;
         if [[ $? != 0 ]]; then
             exit 1;

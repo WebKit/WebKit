@@ -116,7 +116,7 @@ bool decodeStructure(asn1_node* root, const char* elementName, const Vector<uint
         return false;
 
     int dataSize = data.size();
-    int ret = asn1_der_decoding2(root, data.data(), &dataSize, ASN1_DECODE_FLAG_STRICT_DER, nullptr);
+    int ret = asn1_der_decoding2(root, data.span().data(), &dataSize, ASN1_DECODE_FLAG_STRICT_DER, nullptr);
     return ret == ASN1_SUCCESS;
 }
 
@@ -135,7 +135,7 @@ std::optional<Vector<uint8_t>> elementData(asn1_node root, const char* elementNa
     }
 
     Vector<uint8_t> data(length);
-    ret = asn1_read_value(root, elementName, data.data(), &length);
+    ret = asn1_read_value(root, elementName, data.mutableSpan().data(), &length);
     if (ret != ASN1_SUCCESS)
         return std::nullopt;
 
@@ -150,7 +150,7 @@ std::optional<Vector<uint8_t>> encodedData(asn1_node root, const char* elementNa
         return std::nullopt;
 
     Vector<uint8_t> data(length);
-    ret = asn1_der_coding(root, elementName, data.data(), &length, nullptr);
+    ret = asn1_der_coding(root, elementName, data.mutableSpan().data(), &length, nullptr);
     if (ret != ASN1_SUCCESS)
         return std::nullopt;
 

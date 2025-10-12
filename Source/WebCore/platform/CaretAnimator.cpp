@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CaretAnimator.h"
 
-#include "DocumentInlines.h"
+#include "DocumentPage.h"
 #include "GraphicsContext.h"
 #include "PageInlines.h"
 #include <wtf/TZoneMallocInlines.h>

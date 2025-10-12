@@ -28,7 +28,8 @@
 
 #include <wtf/TZoneMallocInlines.h>
 
-#if ENABLE(ASSEMBLER) && (OS(DARWIN) || OS(LINUX))
+#if ENABLE(ASSEMBLER)
+#if OS(DARWIN) || OS(LINUX)
 
 #include "CallFrame.h"
 #include "CallFrameInlines.h"
@@ -141,12 +142,12 @@ public:
         {
         }
 
-        T* operator->() { return m_writer->rawSlotAt<T>(m_offset); }
-        T operator*() { return *m_writer->rawSlotAt<T>(m_offset); }
+        T* operator->() { return m_writer->template rawSlotAt<T>(m_offset); }
+        T operator*() { return *m_writer->template rawSlotAt<T>(m_offset); }
 
         void set(const T& value)
         {
-            writeUnalignedValue(m_writer->addressAt<T>(m_offset), value);
+            writeUnalignedValue(m_writer->template addressAt<T>(m_offset), value);
         }
 
         Slot<T> at(int i) { return Slot<T>(m_writer, m_offset + sizeof(T) * i); }
@@ -340,7 +341,7 @@ static void unregisterCodeEntry(JITCodeEntry* entry)
 
 template <typename THeader>
 class DebugSectionBase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DebugSectionBase);
 
 public:
     virtual ~DebugSectionBase() = default;
@@ -644,7 +645,7 @@ void ELFSection::populateHeader(Writer::Slot<ELFSection::Header> header, ELFStri
 
 #if OS(DARWIN)
 class MachO {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MachO);
 
 public:
     size_t addSection(std::unique_ptr<MachOSection> section)
@@ -1124,7 +1125,7 @@ public:
     void WriteLength(Ref<Writer>, Writer::Slot<uint32_t>* lengthSlot, int initialPosition);
 
 private:
-    Ref<CodeDescription> m_desc;
+    const Ref<CodeDescription> m_desc;
 
     // DWARF3 Specification, Table 7.23
     enum CFIInstructions {
@@ -1492,4 +1493,5 @@ void GdbJIT::log(const CString&, MacroAssemblerCodeRef<LinkBufferPtrTag>) { }
 
 } // namespace JSC
 
-#endif // ENABLE(ASSEMBLER) && (OS(DARWIN) || OS(LINUX))
+#endif // OS(DARWIN) || OS(LINUX)
+#endif // ENABLE(ASSEMBLER)

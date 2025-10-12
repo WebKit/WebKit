@@ -10,11 +10,15 @@
 
 #include "modules/audio_processing/audio_buffer.h"
 
-#include <string.h>
-
+#include <algorithm>
+#include <array>
 #include <cstdint>
+#include <cstring>
+#include <memory>
 
+#include "api/audio/audio_processing.h"
 #include "common_audio/channel_buffer.h"
+#include "common_audio/include/audio_util.h"
 #include "common_audio/resampler/push_sinc_resampler.h"
 #include "modules/audio_processing/splitting_filter.h"
 #include "rtc_base/checks.h"
@@ -51,7 +55,7 @@ AudioBuffer::AudioBuffer(size_t input_rate,
       output_num_channels_(0),
       num_channels_(buffer_num_channels),
       num_bands_(NumBandsFromFramesPerChannel(buffer_num_frames_)),
-      num_split_frames_(rtc::CheckedDivExact(buffer_num_frames_, num_bands_)),
+      num_split_frames_(CheckedDivExact(buffer_num_frames_, num_bands_)),
       data_(
           new ChannelBuffer<float>(buffer_num_frames_, buffer_num_channels_)) {
   RTC_DCHECK_GT(input_num_frames_, 0);
@@ -201,7 +205,7 @@ void AudioBuffer::CopyTo(AudioBuffer* buffer) const {
 void AudioBuffer::RestoreNumChannels() {
   num_channels_ = buffer_num_channels_;
   data_->set_num_channels(buffer_num_channels_);
-  if (split_data_.get()) {
+  if (split_data_) {
     split_data_->set_num_channels(buffer_num_channels_);
   }
 }
@@ -210,7 +214,7 @@ void AudioBuffer::set_num_channels(size_t num_channels) {
   RTC_DCHECK_GE(buffer_num_channels_, num_channels);
   num_channels_ = num_channels;
   data_->set_num_channels(num_channels);
-  if (split_data_.get()) {
+  if (split_data_) {
     split_data_->set_num_channels(num_channels);
   }
 }

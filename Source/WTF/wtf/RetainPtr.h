@@ -57,10 +57,6 @@
 #define NS_RETURNS_RETAINED
 #endif
 
-#ifndef __OBJC__
-typedef struct objc_object *id;
-#endif
-
 // Because ARC enablement is a compile-time choice, and we compile this header
 // both ways, we need a separate copy of our code when ARC is enabled.
 #if __has_feature(objc_arc)
@@ -121,9 +117,7 @@ public:
         return std::exchange(m_ptr, nullptr);
     }
 
-#if HAVE(CFAUTORELEASE)
     PtrType autorelease();
-#endif
 
 #ifdef __OBJC__
     id bridgingAutorelease();
@@ -167,9 +161,7 @@ private:
 
     static inline void retainFoundationPtr(CFTypeRef ptr) { CFRetain(ptr); }
     static inline void releaseFoundationPtr(CFTypeRef ptr) { CFRelease(ptr); }
-#if HAVE(CFAUTORELEASE)
     static inline void autoreleaseFoundationPtr(CFTypeRef ptr) { CFAutorelease(ptr); }
-#endif
 
 #ifdef __OBJC__
 #if __has_feature(objc_arc)
@@ -222,7 +214,6 @@ template<typename T> inline void RetainPtr<T>::clear()
         releaseFoundationPtr(ptr);
 }
 
-#if HAVE(CFAUTORELEASE)
 template<typename T> inline auto RetainPtr<T>::autorelease() -> PtrType
 {
     auto ptr = std::exchange(m_ptr, nullptr);
@@ -230,7 +221,6 @@ template<typename T> inline auto RetainPtr<T>::autorelease() -> PtrType
         autoreleaseFoundationPtr(ptr);
     return ptr;
 }
-#endif // HAVE(CFAUTORELEASE)
 
 #ifdef __OBJC__
 // FIXME: It would be better if we could base the return type on the type that is toll-free bridged with T rather than using id.

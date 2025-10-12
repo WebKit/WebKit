@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "MacroAssembler.h"
-#include "ProbeStack.h"
+#include <JavaScriptCore/MacroAssembler.h>
+#include <JavaScriptCore/ProbeStack.h>
 #include <wtf/TZoneMalloc.h>
 
 #if ENABLE(ASSEMBLER)

@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "Frame.h"
-#include "HTMLFrameOwnerElement.h"
-#include "Page.h"
+#include <WebCore/Frame.h>
+#include <WebCore/HTMLFrameOwnerElement.h>
+#include <WebCore/Page.h>
 
 namespace WebCore {
 
@@ -39,23 +39,6 @@ inline HTMLFrameOwnerElement* Frame::ownerElement() const
 inline RefPtr<HTMLFrameOwnerElement> Frame::protectedOwnerElement() const
 {
     return m_ownerElement.get();
-}
-
-inline Page* Frame::page() const
-{
-    return m_page.get();
-}
-
-inline RefPtr<Page> Frame::protectedPage() const
-{
-    return m_page.get();
-}
-
-inline std::optional<PageIdentifier> Frame::pageID() const
-{
-    if (auto* page = this->page())
-        return page->identifier();
-    return std::nullopt;
 }
 
 } // namespace WebCore

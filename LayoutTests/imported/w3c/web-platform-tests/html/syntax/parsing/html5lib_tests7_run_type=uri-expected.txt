@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
 html5lib Parser Test
 
 

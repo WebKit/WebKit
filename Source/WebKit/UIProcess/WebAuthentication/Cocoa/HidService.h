@@ -52,7 +52,7 @@ private:
     virtual void platformStartDiscovery();
     virtual Ref<HidConnection> createHidConnection(IOHIDDeviceRef) const;
 
-    RetainPtr<IOHIDManagerRef> m_manager;
+    const RetainPtr<IOHIDManagerRef> m_manager;
 };
 
 } // namespace WebKit

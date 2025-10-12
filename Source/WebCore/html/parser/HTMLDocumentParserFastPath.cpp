@@ -183,7 +183,7 @@ template<typename CharacterType> static inline bool isCharAfterUnquotedAttribute
 template<typename CharacterType>
 class HTMLFastPathParser {
     using CharacterSpan = std::span<const CharacterType>;
-    static_assert(std::is_same_v<CharacterType, UChar> || std::is_same_v<CharacterType, LChar>);
+    static_assert(std::is_same_v<CharacterType, char16_t> || std::is_same_v<CharacterType, Latin1Character>);
 
 public:
     HTMLFastPathParser(CharacterSpan source, Document& document, ContainerNode& destinationParent)
@@ -234,7 +234,7 @@ private:
     unsigned m_elementDepth { 0 };
     // 32 matches that used by HTMLToken::Attribute.
     Vector<CharacterType, 32> m_charBuffer;
-    Vector<UChar> m_ucharBuffer;
+    Vector<char16_t> m_ucharBuffer;
     // The inline capacity matches HTMLToken::AttributeList.
     Vector<Attribute, 10> m_attributeBuffer;
     Vector<AtomStringImpl*> m_attributeNames;
@@ -464,7 +464,7 @@ private:
     // We first try to scan text as an unmodified subsequence of the input.
     // However, if there are escape sequences, we have to copy the text to a
     // separate buffer and we might go outside of `Char` range if we are in an
-    // `LChar` parser.
+    // `Latin1Character` parser.
     String scanText()
     {
         auto start = m_parsingBuffer.span();
@@ -721,7 +721,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return HTMLNameCache::makeAttributeValue(m_ucharBuffer.span());
     }
 
-    void scanHTMLCharacterReference(Vector<UChar>& out)
+    void scanHTMLCharacterReference(Vector<char16_t>& out)
     {
         ASSERT(*m_parsingBuffer == '&');
         m_parsingBuffer.advance();

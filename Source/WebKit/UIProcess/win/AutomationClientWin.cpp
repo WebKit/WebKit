@@ -64,7 +64,7 @@ void AutomationClient::requestAutomationSession(const String& sessionIdentifier,
 
 void AutomationClient::closeAutomationSession()
 {
-    RunLoop::protectedMain()->dispatch([this] {
+    RunLoop::mainSingleton().dispatch([this] {
         auto processPool = protectedProcessPool();
         if (!processPool || !processPool->automationSession())
             return;

@@ -22,8 +22,8 @@
 
 #pragma once
 
-#include "HTMLAnchorElement.h"
-#include "LayoutRect.h"
+#include <WebCore/HTMLAnchorElement.h>
+#include <WebCore/LayoutRect.h>
 #include <memory>
 
 namespace WebCore {
@@ -57,7 +57,7 @@ private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     bool supportsFocus() const final;
     AtomString target() const final;
-    bool isKeyboardFocusable(KeyboardEvent*) const final;
+    bool isKeyboardFocusable(const FocusEventData&) const final;
     bool isMouseFocusable() const final;
     bool isFocusable() const final;
     RefPtr<Element> focusAppearanceUpdateTarget() final;

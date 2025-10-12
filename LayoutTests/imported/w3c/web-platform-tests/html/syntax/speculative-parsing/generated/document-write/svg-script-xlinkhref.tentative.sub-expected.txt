@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_not_equals: speculative case did not fetch got disallowed value ""
 
     <!-- speculative case in document.write -->
     <svg><script xlink:href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=58afcb59-649a-4d57-934e-594044c51cf9&amp;encodingcheck=&Gbreve;"></script></svg>

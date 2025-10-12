@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 206x17
           text run at (0,0) width 206: "TFOOT VALIGN=BASELINE"
-      RenderTable {TABLE} at (0,18) size 784x243 [border: (1px outset #000000)]
+      RenderTable {TABLE} at (0,18) size 784x265 [border: (1px outset #000000)]
         RenderTableSection {THEAD} at (1,1) size 782x26
           RenderTableRow {TR} at (0,2) size 782x22
             RenderTableCell {TD} at (2,2) size 304x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
@@ -15,8 +15,8 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (308,2) size 472x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 56x17
                 text run at (2,2) width 56: "THEAD"
-        RenderTableSection {TFOOT} at (1,51) size 782x191
-          RenderTableRow {TR} at (0,0) size 782x189
+        RenderTableSection {TFOOT} at (1,51) size 782x213
+          RenderTableRow {TR} at (0,0) size 782x211
             RenderTableCell {TD} at (2,0) size 304x189 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 300x185
             RenderTableCell {TD} at (308,171) size 472x40 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]

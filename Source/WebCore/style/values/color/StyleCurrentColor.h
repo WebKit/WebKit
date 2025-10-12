@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +26,7 @@
 
 #pragma once
 
-#include "Color.h"
+#include <WebCore/Color.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -50,8 +51,8 @@ constexpr bool containsCurrentColor(const CurrentColor&)
     return true;
 }
 
-void serializationForCSS(StringBuilder&, const CSS::SerializationContext&, const CurrentColor&);
-String serializationForCSS(const CSS::SerializationContext&, const CurrentColor&);
+void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const CurrentColor&);
+String serializationForCSSTokenization(const CSS::SerializationContext&, const CurrentColor&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const CurrentColor&);
 

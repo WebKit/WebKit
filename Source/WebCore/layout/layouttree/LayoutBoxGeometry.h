@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "LayoutGeometryRect.h"
-#include "LayoutUnits.h"
+#include <WebCore/LayoutGeometryRect.h>
+#include <WebCore/LayoutUnits.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

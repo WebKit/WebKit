@@ -10,6 +10,10 @@
 
 #include "modules/video_coding/utility/vp9_uncompressed_header_parser.h"
 
+#include <cstdint>
+#include <optional>
+
+#include "modules/video_coding/utility/vp9_constants.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 

@@ -289,20 +289,19 @@ static void generateWithAlreadyAllocatedRegisters(Code& code, CCallHelpers& jit)
             && block->successorBlock(0) == code.findNextBlock(block))
             continue;
 
-        addItem(block->last());
-
         if (isReturn(block->last().kind.opcode)) {
             // We currently don't represent the full prologue/epilogue in Air, so we need to
             // have this override.
+            addItem(block->last());
             auto start = jit.labelIgnoringWatchpoints();
             code.emitEpilogue(jit);
-            addItem(block->last());
             auto end = jit.labelIgnoringWatchpoints();
             if (disassembler)
                 disassembler->addInst(&block->last(), start, end);
             continue;
         }
 
+        addItem(block->last());
         auto start = jit.labelIgnoringWatchpoints();
         CCallHelpers::Jump jump = block->last().generate(jit, context);
         auto end = jit.labelIgnoringWatchpoints();
@@ -326,7 +325,6 @@ static void generateWithAlreadyAllocatedRegisters(Code& code, CCallHelpers& jit)
                 break;
             }
         }
-        addItem(block->last());
     }
     
     context.currentBlock = nullptr;
@@ -342,8 +340,11 @@ static void generateWithAlreadyAllocatedRegisters(Code& code, CCallHelpers& jit)
     if (disassembler)
         disassembler->startLatePath(jit);
 
-    for (auto& latePath : context.latePaths)
+    for (auto& [origin, latePath] : context.latePaths) {
+        if (code.shouldPreserveB3Origins())
+            pcToOriginMap.appendItem(jit.labelIgnoringWatchpoints(), origin);
         latePath->run(jit, context);
+    }
 
     if (disassembler)
         disassembler->endLatePath(jit);

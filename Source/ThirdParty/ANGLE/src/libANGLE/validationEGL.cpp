@@ -6,6 +6,10 @@
 
 // validationEGL.cpp: Validation functions for generic EGL entry point parameters
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/validationEGL_autogen.h"
 
 #include "common/utilities.h"
@@ -697,6 +701,8 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
         Optional<EGLAttrib> minorVersion;
         Optional<EGLAttrib> deviceType;
         Optional<EGLAttrib> eglHandle;
+        Optional<EGLAttrib> dawnProcTable;
+        Optional<EGLAttrib> webgpuDevice;
 
         for (const auto &curAttrib : attribMap)
         {
@@ -889,6 +895,35 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
                     }
                     deviceIdSpecified = true;
                     break;
+
+                case EGL_PLATFORM_ANGLE_DAWN_PROC_TABLE_ANGLE:
+                    if (!clientExtensions.platformANGLEWebgpu)
+                    {
+                        val->setError(EGL_BAD_ATTRIBUTE,
+                                      "EGL_ANGLE_platform_angle_webgpu is not supported");
+                        return false;
+                    }
+
+                    if (value != 0)
+                    {
+                        dawnProcTable = value;
+                    }
+                    break;
+
+                case EGL_PLATFORM_ANGLE_WEBGPU_DEVICE_ANGLE:
+                    if (!clientExtensions.platformANGLEWebgpu)
+                    {
+                        val->setError(EGL_BAD_ATTRIBUTE,
+                                      "EGL_ANGLE_platform_angle_webgpu is not supported");
+                        return false;
+                    }
+
+                    if (value != 0)
+                    {
+                        webgpuDevice = value;
+                    }
+                    break;
+
                 default:
                     break;
             }
@@ -1049,6 +1084,22 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
             val->setError(EGL_BAD_ATTRIBUTE,
                           "EGL_PLATFORM_ANGLE_EGL_HANDLE_ANGLE requires a "
                           "device type of EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE.");
+            return false;
+        }
+
+        if (dawnProcTable.valid() && platformType != EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE)
+        {
+            val->setError(EGL_BAD_ATTRIBUTE,
+                          "EGL_PLATFORM_ANGLE_DAWN_PROC_TABLE_ANGLE requires a "
+                          "platform type of EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE.");
+            return false;
+        }
+
+        if (webgpuDevice.valid() && platformType != EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE)
+        {
+            val->setError(EGL_BAD_ATTRIBUTE,
+                          "EGL_PLATFORM_ANGLE_WEBGPU_DEVICE_ANGLE requires a "
+                          "platform type of EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE.");
             return false;
         }
     }
@@ -1907,6 +1958,15 @@ bool ValidateCreateContextAttribute(const ValidationContext *val,
             }
             break;
 
+        case EGL_CONTEXT_PASSTHROUGH_SHADERS_ANGLE:
+            if (!display->getExtensions().createContextPassthroughShadersANGLE)
+            {
+                val->setError(EGL_BAD_ATTRIBUTE,
+                              "Attribute EGL_CONTEXT_PASSTHROUGH_SHADERS_ANGLE requires "
+                              "EGL_ANGLE_create_context_passthrough_shaders.");
+            }
+            break;
+
         default:
             val->setError(EGL_BAD_ATTRIBUTE, "Unknown attribute: 0x%04" PRIxPTR "X", attribute);
             return false;
@@ -2101,12 +2161,22 @@ bool ValidateCreateContextAttributeValue(const ValidationContext *val,
                 case EGL_CONTEXT_PRIORITY_MEDIUM_IMG:
                 case EGL_CONTEXT_PRIORITY_HIGH_IMG:
                     break;
+                case EGL_CONTEXT_PRIORITY_REALTIME_NV:
+                    if (!display->getExtensions().contextPriorityRealtimeNV)
+                    {
+                        val->setError(EGL_BAD_ATTRIBUTE,
+                                      "Attribute EGL_CONTEXT_PRIORITY_REALTIME_NV requires "
+                                      "extension EGL_NV_context_priority_realtime.");
+                        return false;
+                    }
+                    break;
                 default:
                     val->setError(EGL_BAD_ATTRIBUTE,
                                   "Attribute EGL_CONTEXT_PRIORITY_LEVEL_IMG "
                                   "must be one of: EGL_CONTEXT_PRIORITY_LOW_IMG, "
-                                  "EGL_CONTEXT_PRIORITY_MEDIUM_IMG, or "
-                                  "EGL_CONTEXT_PRIORITY_HIGH_IMG.");
+                                  "EGL_CONTEXT_PRIORITY_MEDIUM_IMG, "
+                                  "EGL_CONTEXT_PRIORITY_HIGH_IMG, or "
+                                  "EGL_CONTEXT_PRIORITY_REALTIME_NV.");
                     return false;
             }
             break;
@@ -2154,6 +2224,16 @@ bool ValidateCreateContextAttributeValue(const ValidationContext *val,
                 val->setError(EGL_BAD_ATTRIBUTE,
                               "EGL_CONTEXT_METAL_OWNERSHIP_IDENTITY_ANGLE must"
                               "be non-zero.");
+                return false;
+            }
+            break;
+
+        case EGL_CONTEXT_PASSTHROUGH_SHADERS_ANGLE:
+            if (value != EGL_TRUE && value != EGL_FALSE)
+            {
+                val->setError(EGL_BAD_ATTRIBUTE,
+                              "EGL_CONTEXT_PASSTHROUGH_SHADERS_ANGLE must "
+                              "be either EGL_TRUE or EGL_FALSE.");
                 return false;
             }
             break;
@@ -3029,6 +3109,19 @@ bool ValidateCreatePbufferFromClientBuffer(const ValidationContext *val,
             }
             break;
 
+        case EGL_WEBGPU_TEXTURE_ANGLE:
+            if (!displayExtensions.webgpuTextureClientBuffer)
+            {
+                val->setError(EGL_BAD_PARAMETER);
+                return false;
+            }
+            if (buffer == nullptr)
+            {
+                val->setError(EGL_BAD_PARAMETER);
+                return false;
+            }
+            break;
+
         case EGL_IOSURFACE_ANGLE:
             if (!displayExtensions.iosurfaceClientBuffer)
             {
@@ -3143,7 +3236,8 @@ bool ValidateCreatePbufferFromClientBuffer(const ValidationContext *val,
                 break;
 
             case EGL_TEXTURE_INTERNAL_FORMAT_ANGLE:
-                if (buftype != EGL_IOSURFACE_ANGLE && buftype != EGL_D3D_TEXTURE_ANGLE)
+                if (buftype != EGL_IOSURFACE_ANGLE && buftype != EGL_D3D_TEXTURE_ANGLE &&
+                    buftype != EGL_WEBGPU_TEXTURE_ANGLE)
                 {
                     val->setError(EGL_BAD_ATTRIBUTE,
                                   "<buftype> doesn't support texture internal format");
@@ -3398,11 +3492,11 @@ bool ValidateCreatePixmapSurface(const ValidationContext *val,
 
     if (!(config->surfaceType & EGL_PIXMAP_BIT))
     {
-        val->setError(EGL_BAD_MATCH, "Congfig does not suport pixmaps.");
+        val->setError(EGL_BAD_MATCH, "Config does not support pixmaps.");
         return false;
     }
 
-    ANGLE_EGL_TRY_RETURN(val->eglThread, display->valdiatePixmap(config, pixmap, attributes),
+    ANGLE_EGL_TRY_RETURN(val->eglThread, display->validatePixmap(config, pixmap, attributes),
                          val->entryPoint, val->labeledObject, false);
 
     return true;
@@ -3598,12 +3692,14 @@ bool ValidateCreateImage(const ValidationContext *val,
 
             case EGL_TEXTURE_INTERNAL_FORMAT_ANGLE:
                 if (!displayExtensions.imageD3D11Texture && !displayExtensions.vulkanImageANGLE &&
-                    !displayExtensions.mtlTextureClientBuffer)
+                    !displayExtensions.mtlTextureClientBuffer &&
+                    !displayExtensions.webgpuTextureClientBuffer)
                 {
                     val->setError(EGL_BAD_PARAMETER,
                                   "EGL_TEXTURE_INTERNAL_FORMAT_ANGLE cannot be used without "
-                                  "EGL_ANGLE_image_d3d11_texture, EGL_ANGLE_vulkan_image, or "
-                                  "EGL_ANGLE_metal_texture_client_buffer support.");
+                                  "EGL_ANGLE_image_d3d11_texture, EGL_ANGLE_vulkan_image, "
+                                  "EGL_ANGLE_metal_texture_client_buffer, or "
+                                  "EGL_ANGLE_webgpu_texture_client_buffer support.");
                     return false;
                 }
                 break;
@@ -4116,6 +4212,26 @@ bool ValidateCreateImage(const ValidationContext *val,
             if (!displayExtensions.imageD3D11Texture)
             {
                 val->setError(EGL_BAD_PARAMETER, "EGL_ANGLE_image_d3d11_texture not supported.");
+                return false;
+            }
+
+            if (context != nullptr)
+            {
+                val->setError(EGL_BAD_CONTEXT, "ctx must be EGL_NO_CONTEXT.");
+                return false;
+            }
+
+            ANGLE_EGL_TRY_RETURN(
+                val->eglThread,
+                display->validateImageClientBuffer(context, target, buffer, attributes),
+                val->entryPoint, val->labeledObject, false);
+            break;
+
+        case EGL_WEBGPU_TEXTURE_ANGLE:
+            if (!displayExtensions.webgpuTextureClientBuffer)
+            {
+                val->setError(EGL_BAD_PARAMETER,
+                              "EGL_ANGLE_webgpu_texture_client_buffer not supported.");
                 return false;
             }
 
@@ -6663,6 +6779,14 @@ bool ValidateQueryDeviceAttribEXT(const ValidationContext *val,
                 return false;
             }
             break;
+        case EGL_WEBGPU_DEVICE_ANGLE:
+        case EGL_WEBGPU_ADAPTER_ANGLE:
+            if (!device->getExtensions().deviceWebGPU)
+            {
+                val->setError(EGL_BAD_ATTRIBUTE);
+                return false;
+            }
+            break;
         case EGL_VULKAN_VERSION_ANGLE:
         case EGL_VULKAN_INSTANCE_ANGLE:
         case EGL_VULKAN_INSTANCE_EXTENSIONS_ANGLE:
@@ -6963,7 +7087,7 @@ bool ValidateQuerySurface64KHR(const ValidationContext *val,
             break;
         default:
         {
-            EGLint querySurfaceValue;
+            EGLint querySurfaceValue = 0;
             ANGLE_VALIDATION_TRY(
                 ValidateQuerySurface(val, dpy, surfaceID, attribute, &querySurfaceValue));
         }

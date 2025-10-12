@@ -12,16 +12,17 @@
 #define TEST_PC_E2E_CROSS_MEDIA_METRICS_REPORTER_H_
 
 #include <map>
-#include <optional>
 #include <string>
 
 #include "absl/strings/string_view.h"
 #include "api/numerics/samples_stats_counter.h"
+#include "api/scoped_refptr.h"
+#include "api/stats/rtc_stats_report.h"
 #include "api/test/metrics/metrics_logger.h"
 #include "api/test/peerconnection_quality_test_fixture.h"
 #include "api/test/track_id_stream_info_map.h"
-#include "api/units/timestamp.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
@@ -36,7 +37,7 @@ class CrossMediaMetricsReporter
              const TrackIdStreamInfoMap* reporter_helper) override;
   void OnStatsReports(
       absl::string_view pc_label,
-      const rtc::scoped_refptr<const RTCStatsReport>& report) override;
+      const scoped_refptr<const RTCStatsReport>& report) override;
   void StopAndReportResults() override;
 
  private:

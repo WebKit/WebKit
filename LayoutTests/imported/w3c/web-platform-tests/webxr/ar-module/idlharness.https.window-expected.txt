@@ -7,6 +7,7 @@ PASS Partial interface XRSession[2]: original interface defined
 PASS Partial interface XRSession[2]: member names are unique
 PASS Partial interface XRView: original interface defined
 PASS Partial interface XRView: member names are unique
+PASS XRView includes XRViewGeometry: member names are unique
 PASS XRSession interface: attribute environmentBlendMode
 PASS XRSession interface: attribute interactionMode
 PASS XRSession interface: xrSession must inherit property "environmentBlendMode" with the proper type

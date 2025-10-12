@@ -23,6 +23,10 @@ VULKAN_SAMPLE_DESCRIPTION
 samples utility functions
 */
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "vulkan_command_buffer_utils.h"
 
 #include <assert.h>

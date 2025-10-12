@@ -29,8 +29,8 @@
 
 #pragma once
 
-#include "LayoutShape.h"
-#include "LayoutSize.h"
+#include <WebCore/LayoutShape.h>
+#include <WebCore/LayoutSize.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMalloc.h>

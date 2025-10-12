@@ -133,8 +133,8 @@ public:
         uint32_t length = value.length();
         *this << length;
 
-        *this << static_cast<uint64_t>(length * sizeof(UChar));
-        encodeFixedLengthData(asBytes(StringView(value).upconvertedCharacters().span()), alignof(UChar));
+        *this << static_cast<uint64_t>(length * sizeof(char16_t));
+        encodeFixedLengthData(asBytes(StringView(value).upconvertedCharacters().span()), alignof(char16_t));
 
         return *this;
     }
@@ -419,7 +419,7 @@ static RetainPtr<CFDictionaryRef> createDictionary(std::initializer_list<std::pa
         values.append(keyValuePair.second);
     }
 
-    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys.data(), values.data(), keyValuePairs.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys.mutableSpan().data(), values.mutableSpan().data(), keyValuePairs.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
 
 static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListState& backForwardListState)
@@ -594,19 +594,19 @@ public:
         uint64_t lengthInBytes;
         *this >> lengthInBytes;
 
-        if (lengthInBytes % sizeof(UChar) || lengthInBytes / sizeof(UChar) != length) {
+        if (lengthInBytes % sizeof(char16_t) || lengthInBytes / sizeof(char16_t) != length) {
             markInvalid();
             return *this;
         }
 
-        if (!bufferIsLargeEnoughToContain<UChar>(length)) {
+        if (!bufferIsLargeEnoughToContain<char16_t>(length)) {
             markInvalid();
             return *this;
         }
 
-        std::span<UChar> buffer;
+        std::span<char16_t> buffer;
         auto string = String::createUninitialized(length, buffer);
-        decodeFixedLengthData(asMutableByteSpan(buffer), alignof(UChar));
+        decodeFixedLengthData(asMutableByteSpan(buffer), alignof(char16_t));
 
         value = string;
         return *this;

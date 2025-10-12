@@ -28,6 +28,7 @@
 
 #include "SpeechRecognitionRequest.h"
 #include "SpeechRecognitionUpdate.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/MediaTime.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -48,6 +49,8 @@ SpeechRecognizer::SpeechRecognizer(DelegateCallback&& delegateCallback, UniqueRe
 #endif
 {
 }
+
+SpeechRecognizer::~SpeechRecognizer() = default;
 
 void SpeechRecognizer::abort(std::optional<SpeechRecognitionError>&& error)
 {
@@ -105,13 +108,13 @@ void SpeechRecognizer::start(Ref<RealtimeMediaSource>&& source, bool mockSpeechR
 void SpeechRecognizer::startCapture(Ref<RealtimeMediaSource>&& source)
 {
     auto dataCallback = [weakThis = WeakPtr { *this }](const auto& time, const auto& data, const auto& description, auto sampleCount) {
-        if (weakThis)
-            weakThis->dataCaptured(time, data, description, sampleCount);
+        if (CheckedPtr checkedThis = weakThis.get())
+            checkedThis->dataCaptured(time, data, description, sampleCount);
     };
 
     auto stateUpdateCallback = [weakThis = WeakPtr { *this }](const auto& update) {
-        if (weakThis)
-            weakThis->m_delegateCallback(update);
+        if (CheckedPtr checkedThis = weakThis.get())
+            checkedThis->m_delegateCallback(update);
     };
 
     m_source = makeUnique<SpeechRecognitionCaptureSource>(clientIdentifier(), WTFMove(dataCallback), WTFMove(stateUpdateCallback), WTFMove(source));

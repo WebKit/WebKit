@@ -33,6 +33,7 @@
 #include "GraphicsTypesGL.h"
 #include "PlatformXR.h"
 #include "WebXRLayer.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -90,6 +91,8 @@ public:
 private:
     WebXRWebGLLayer(Ref<WebXRSession>&&, WebXRRenderingContext&&, std::unique_ptr<WebXROpaqueFramebuffer>&&, bool antialias, bool ignoreDepthValues, bool isCompositionEnabled);
 
+    bool isWebXRWebGLLayer() const final { return true; }
+
     void computeViewports();
     static IntSize computeNativeWebGLFramebufferResolution();
     static IntSize computeRecommendedWebGLFramebufferResolution();
@@ -97,6 +100,9 @@ private:
     void canvasChanged(CanvasBase&, const FloatRect&) final { };
     void canvasResized(CanvasBase&) final;
     void canvasDestroyed(CanvasBase&) final { };
+
+    void addConsoleMessage(JSC::MessageLevel, String&&) const;
+
     RefPtr<WebXRSession> m_session;
     WebXRRenderingContext m_context;
 
@@ -114,5 +120,9 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebXRWebGLLayer)
+    static bool isType(const WebCore::WebXRLayer& layer) { return layer.isWebXRWebGLLayer(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEBXR)

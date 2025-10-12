@@ -5,6 +5,10 @@
 //
 // LoadToNative_unittest.cpp: Unit tests for pixel loading functions.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <gmock/gmock.h>
 #include <vector>
 #include "common/debug.h"

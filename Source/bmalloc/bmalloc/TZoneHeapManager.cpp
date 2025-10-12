@@ -120,25 +120,21 @@ TZoneHeapManager::TZoneHeapManager()
 
 void determineTZoneMallocFallback()
 {
-    static Mutex s_mutex;
-    LockHolder lock(s_mutex);
-    {
-        if (tzoneMallocFallback != TZoneMallocFallback::Undecided)
-            return;
+    if (tzoneMallocFallback != TZoneMallocFallback::Undecided)
+        return;
 
-        if (Environment::get()->isDebugHeapEnabled()) {
-            tzoneMallocFallback = TZoneMallocFallback::ForceDebugMalloc;
-            return;
-        }
-
-        const char* env = getenv("bmalloc_TZoneHeap");
-        if (env && (!strcasecmp(env, "false") || !strcasecmp(env, "no") || !strcmp(env, "0"))) {
-            tzoneMallocFallback = TZoneMallocFallback::ForceDebugMalloc;
-            return;
-        }
-
-        tzoneMallocFallback = TZoneMallocFallback::DoNotFallBack;
+    if (Environment::get()->isSystemHeapEnabled()) {
+        tzoneMallocFallback = TZoneMallocFallback::ForceDebugMalloc;
+        return;
     }
+
+    const char* env = getenv("bmalloc_TZoneHeap");
+    if (env && (!strcasecmp(env, "false") || !strcasecmp(env, "no") || !strcmp(env, "0"))) {
+        tzoneMallocFallback = TZoneMallocFallback::ForceDebugMalloc;
+        return;
+    }
+
+    tzoneMallocFallback = TZoneMallocFallback::DoNotFallBack;
 }
 
 void TZoneHeapManager::requirePerBootSeed()
@@ -264,26 +260,25 @@ void TZoneHeapManager::init()
         TZONE_LOG_DEBUG("\n");
     }
 
-    alignas(8) unsigned char seed[CC_SHA1_DIGEST_LENGTH];
-    (void)CC_SHA256(&rawSeed, rawSeedLength, seed);
+    alignas(8) std::array<unsigned char, CC_SHA256_DIGEST_LENGTH> defaultSeed;
+    (void)CC_SHA256(&rawSeed, rawSeedLength, defaultSeed.data());
 #else // OS(DARWIN) => !OS(DARWIN)
     if constexpr (verbose)
         TZONE_LOG_DEBUG("using static seed\n");
 
-    const unsigned char defaultSeed[CC_SHA1_DIGEST_LENGTH] = { "DefaultSeed\x12\x34\x56\x78\x9a\xbc\xde\xf0" };
-    memcpy(m_tzoneKey.seed, defaultSeed, CC_SHA1_DIGEST_LENGTH);
+    const std::array<unsigned char, CC_SHA1_DIGEST_LENGTH> defaultSeed = { "DefaultSeed\x12\x34\x56\x78\x9a\xbc\xde\xf0" };
 #endif // OS(DARWIN) => !OS(DARWIN)
 
-    uint64_t* seedPtr = reinterpret_cast<uint64_t*>(seed);
+    const uint64_t* seedPtr = reinterpret_cast<const uint64_t*>(defaultSeed.data());
     m_tzoneKeySeed = 0;
-    unsigned remainingBytes = CC_SHA1_DIGEST_LENGTH;
+    unsigned remainingBytes = defaultSeed.size();
     while (remainingBytes > sizeof(m_tzoneKeySeed)) {
         m_tzoneKeySeed = m_tzoneKeySeed ^ *seedPtr++;
         remainingBytes -= sizeof(m_tzoneKeySeed);
     }
     uint64_t remainingSeed = 0;
-    unsigned char* seedBytes = reinterpret_cast<unsigned char*>(seedPtr);
-    while (remainingBytes > sizeof(m_tzoneKeySeed)) {
+    const unsigned char* seedBytes = reinterpret_cast<const unsigned char*>(seedPtr);
+    while (remainingBytes) {
         remainingSeed = (remainingSeed << 8) | *seedBytes++;
         remainingBytes--;
     }
@@ -291,12 +286,13 @@ void TZoneHeapManager::init()
 
     if constexpr (verbose) {
         TZONE_LOG_DEBUG("    Computed key {");
-        for (unsigned i = 0; i < CC_SHA1_DIGEST_LENGTH; ++i)
-            TZONE_LOG_DEBUG(" %02x", seed[i]);
+        for (unsigned char byte : defaultSeed)
+            TZONE_LOG_DEBUG(" %02x", byte);
         TZONE_LOG_DEBUG(" }\n");
     }
 
     s_state = State::Seeded;
+    initializeTZoneDynamicCompactMode();
 
     if (verbose)
         atexit(dumpRegisteredTypesAtExit);
@@ -513,6 +509,42 @@ BINLINE unsigned TZoneHeapManager::tzoneBucketForKey(const TZoneSpecification& s
     return bucket;
 }
 
+#if BUSE_DYNAMIC_TZONE_COMPACTION
+bool g_tzoneDynamicCompactModeEnabled = false;
+#endif
+
+void TZoneHeapManager::initializeTZoneDynamicCompactMode()
+{
+#if BUSE_DYNAMIC_TZONE_COMPACTION
+    RELEASE_BASSERT(s_state >= State::Seeded);
+    const char* envEnable = getenv("bmalloc_TZoneDynamicCompactModeEnable");
+    if (envEnable && (!strcasecmp(envEnable, "true") || !strcasecmp(envEnable, "yes") || !strcmp(envEnable, "1"))) {
+        g_tzoneDynamicCompactModeEnabled = true;
+
+        const char* envSeed = getenv("bmalloc_TZoneDynamicCompactModeSeed");
+        if (envSeed) {
+            errno = 0;
+            m_tzoneDynamicCompactModeSeed = std::strtoull(envSeed, nullptr, 16);
+            if (verbose && errno)
+                TZONE_LOG_DEBUG("Error in strtoull for bmalloc_TZoneDynamicCompactModeSeed: %s\n", strerror(errno));
+            RELEASE_BASSERT(!errno);
+        } else
+            m_tzoneDynamicCompactModeSeed = m_tzoneKeySeed;
+
+        // The generated seed can be zero, but that's OK:
+        // that corresponds to dynamic compaction being enabled for no types,
+        // which is a valid configuration that's worth fuzzing.
+        m_tzoneDynamicCompactModeSalt = WeakRandom::generate(m_tzoneDynamicCompactModeSeed);
+
+        if constexpr (verbose) {
+            TZONE_LOG_DEBUG("dynamicCompactionSeed: 0x%llx\n", m_tzoneDynamicCompactModeSeed);
+            TZONE_LOG_DEBUG("dynamicCompactionSalt: 0x%llx\n", m_tzoneDynamicCompactModeSalt);
+        }
+        RELEASE_BASSERT(m_tzoneDynamicCompactModeSalt);
+    }
+#endif
+}
+
 BALLOW_UNSAFE_BUFFER_USAGE_END
 
 TZoneHeapManager::TZoneTypeBuckets* TZoneHeapManager::populateBucketsForSizeClass(LockHolder& lock, SizeAndAlignment::Value sizeAndAlignment)
@@ -641,7 +673,10 @@ pas_heap_ref* TZoneHeapManager::TZoneHeapManager::heapRefForTZoneTypeDifferentSi
         spec.allocationMode,
         SizeAndAlignment::encode(newSize, alignment),
 #if BUSE_TZONE_SPEC_NAME_ARG
-        spec.name
+        spec.name,
+#endif
+#if BUSE_DYNAMIC_TZONE_COMPACTION
+        spec.dynamicCompactionKey,
 #endif
     };
     pas_heap_ref* result = heapRefForTZoneType(newSpec);

@@ -30,6 +30,7 @@
 #include "JSGeneratorFunction.h"
 #include "JSGlobalObject.h"
 #include "JSCInlines.h"
+#include "JSStringInlines.h"
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -93,25 +94,41 @@ static String stringifyFunction(JSGlobalObject* globalObject, const ArgList& arg
     if (args.isEmpty())
         program = makeString(prefix, functionName.string(), "(\n) {\n\n}"_s);
     else if (args.size() == 1) {
-        auto body = args.at(0).toWTFString(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        program = tryMakeString(prefix, functionName.string(), "(\n) {\n"_s, body, "\n}"_s);
+        JSValue arg0 = args.at(0);
+        if (arg0.isString()) [[likely]]
+            program = tryMakeString(prefix, functionName.string(), "(\n) {\n"_s, asString(arg0), "\n}"_s);
+        else {
+            auto body = arg0.toWTFString(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+            program = tryMakeString(prefix, functionName.string(), "(\n) {\n"_s, body, "\n}"_s);
+        }
+
         if (!program) [[unlikely]] {
             throwOutOfMemoryError(globalObject, scope);
             return { };
         }
     } else if (args.size() == 2) {
         // This is really common since it means (1) arguments + (2) body.
-        auto arg = args.at(0).toWTFString(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        auto body = args.at(1).toWTFString(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        program = tryMakeString(prefix, functionName.string(), "("_s, arg, "\n) {\n"_s, body, "\n}"_s);
+        JSValue arg0 = args.at(0);
+        JSValue arg1 = args.at(1);
+        size_t arg0Length = 0;
+        if (arg0.isString() && arg1.isString()) [[likely]] {
+            arg0Length = asString(arg0)->length();
+            program = tryMakeString(prefix, functionName.string(), "("_s, asString(arg0), "\n) {\n"_s, asString(arg1), "\n}"_s);
+        } else {
+            auto arg = arg0.toWTFString(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+            auto body = arg1.toWTFString(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+            arg0Length = arg.length();
+            program = tryMakeString(prefix, functionName.string(), "("_s, arg, "\n) {\n"_s, body, "\n}"_s);
+        }
+
         if (!program) [[unlikely]] {
             throwOutOfMemoryError(globalObject, scope);
             return { };
         }
-        functionConstructorParametersEndPosition = prefix.length() + functionName.string().length() + "("_s.length() + arg.length() + "\n)"_s.length();
+        functionConstructorParametersEndPosition = prefix.length() + functionName.string().length() + "("_s.length() + arg0Length + "\n)"_s.length();
     } else {
         StringBuilder builder(OverflowPolicy::RecordOverflow);
         builder.append(prefix, functionName.string(), '(');
@@ -159,7 +176,7 @@ JSObject* constructFunction(JSGlobalObject* globalObject, const ArgList& args, c
     auto code = stringifyFunction(globalObject, args, functionName, functionConstructionMode, scope, functionConstructorParametersEndPosition);
     EXCEPTION_ASSERT(!!scope.exception() == code.isNull());
 
-    if (globalObject->trustedTypesEnforcement() != TrustedTypesEnforcement::None) {
+    if (globalObject->trustedTypesEnforcement() != TrustedTypesEnforcement::None) [[unlikely]] {
         bool isTrusted = true;
         auto* structure = globalObject->trustedScriptStructure();
         for (size_t i = 0; i < args.size(); i++) {
@@ -201,9 +218,8 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(JSGlobalObject* globalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    SourceCode source = makeSource(program, sourceOrigin, taintedOrigin, sourceURL, position);
     JSObject* exception = nullptr;
-    FunctionExecutable* function = FunctionExecutable::fromGlobalCode(functionName, globalObject, source, lexicallyScopedFeatures, exception, overrideLineNumber, functionConstructorParametersEndPosition, functionConstructionMode);
+    FunctionExecutable* function = FunctionExecutable::fromGlobalCode(functionName, globalObject, WTFMove(program), sourceOrigin, taintedOrigin, sourceURL, position, lexicallyScopedFeatures, exception, overrideLineNumber, functionConstructorParametersEndPosition, functionConstructionMode);
     if (!function) [[unlikely]] {
         ASSERT(exception);
         throwException(globalObject, scope, exception);

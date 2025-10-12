@@ -1,0 +1,7 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+test-loading-archive-with-link.html - didFinishLoading
+Click me This tests that clicking a link to a webarchive is cancelled.

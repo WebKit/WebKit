@@ -1,0 +1,136 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 54x18
+          text run at (0,0) width 54: "Test for "
+        RenderInline {I} at (0,0) size 716x36
+          RenderInline {A} at (53,0) size 305x18 [color=#0000EE]
+            RenderText {#text} at (53,0) size 305x18
+              text run at (53,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=13775"
+          RenderText {#text} at (0,0) size 716x36
+            text run at (357,0) width 5: " "
+            text run at (361,0) width 355: "REGRESSION: Popup button text should use \"natural\""
+            text run at (0,18) width 330: "directionality to match the items in the popup menu"
+        RenderText {#text} at (329,18) size 5x18
+          text run at (329,18) width 5: "."
+      RenderBlock {DIV} at (0,52) size 784x42
+        RenderBlock {DIV} at (0,0) size 784x21
+          RenderMenuList {SELECT} at (0,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
+            RenderBlock (anonymous) at (1,1) size 68x19
+              RenderText at (8,2) size 15x13
+                text run at (8,2) width 8 RTL: "\x{5D0}"
+                text run at (15,2) width 8: "A"
+          RenderText {#text} at (70,0) size 4x18
+            text run at (70,0) width 4: " "
+          RenderMenuList {SELECT} at (74,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
+            RenderBlock (anonymous) at (1,1) size 68x19
+              RenderText at (8,2) size 15x13
+                text run at (8,2) width 8: "A"
+                text run at (15,2) width 8 RTL: "\x{5D0}"
+          RenderText {#text} at (144,0) size 4x18
+            text run at (144,0) width 4: " "
+          RenderMenuList {SELECT} at (148,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
+            RenderBlock (anonymous) at (1,1) size 68x19
+              RenderText at (8,2) size 19x13
+                text run at (8,2) width 5: "("
+                text run at (12,2) width 8 RTL: "\x{5D0}"
+                text run at (19,2) width 8: "A"
+          RenderText {#text} at (218,0) size 4x18
+            text run at (218,0) width 4: " "
+          RenderMenuList {SELECT} at (222,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
+            RenderBlock (anonymous) at (1,1) size 68x19
+              RenderText at (8,2) size 19x13
+                text run at (8,2) width 12: "(A"
+                text run at (19,2) width 8 RTL: "\x{5D0}"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (0,21) size 784x21
+          RenderMenuList {SELECT} at (492,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
+            RenderBlock (anonymous) at (1,1) size 68x19
+              RenderText at (8,2) size 15x13
+                text run at (8,2) width 8 RTL: "\x{5D0}"
+                text run at (15,2) width 8: "A"
+          RenderText {#text} at (562,0) size 4x18
+            text run at (562,0) width 4: " "
+          RenderMenuList {SELECT} at (566,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
+            RenderBlock (anonymous) at (1,1) size 68x19
+              RenderText at (8,2) size 15x13
+                text run at (8,2) width 8: "A"
+                text run at (15,2) width 8 RTL: "\x{5D0}"
+          RenderText {#text} at (636,0) size 4x18
+            text run at (636,0) width 4: " "
+          RenderMenuList {SELECT} at (640,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
+            RenderBlock (anonymous) at (1,1) size 68x19
+              RenderText at (8,2) size 19x13
+                text run at (8,2) width 5: "("
+                text run at (12,2) width 8 RTL: "\x{5D0}"
+                text run at (19,2) width 8: "A"
+          RenderText {#text} at (710,0) size 4x18
+            text run at (710,0) width 4: " "
+          RenderMenuList {SELECT} at (714,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
+            RenderBlock (anonymous) at (1,1) size 68x19
+              RenderText at (8,2) size 19x13
+                text run at (8,2) width 12: "(A"
+                text run at (19,2) width 8 RTL: "\x{5D0}"
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,94) size 784x42
+        RenderBlock {DIV} at (0,0) size 784x21
+          RenderMenuList {SELECT} at (222,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
+            RenderBlock (anonymous) at (1,1) size 68x19
+              RenderText at (45,2) size 15x13
+                text run at (45,2) width 8: "A"
+                text run at (52,2) width 8 RTL: "\x{5D0}"
+          RenderText {#text} at (218,0) size 4x18
+            text run at (218,0) width 4 RTL: " "
+          RenderMenuList {SELECT} at (148,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
+            RenderBlock (anonymous) at (1,1) size 68x19
+              RenderText at (45,2) size 15x13
+                text run at (45,2) width 8 RTL: "\x{5D0}"
+                text run at (52,2) width 8: "A"
+          RenderText {#text} at (144,0) size 4x18
+            text run at (144,0) width 4 RTL: " "
+          RenderMenuList {SELECT} at (74,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
+            RenderBlock (anonymous) at (1,1) size 68x19
+              RenderText at (41,2) size 19x13
+                text run at (41,2) width 8: "A"
+                text run at (48,2) width 12 RTL: "(\x{5D0}"
+          RenderText {#text} at (70,0) size 4x18
+            text run at (70,0) width 4 RTL: " "
+          RenderMenuList {SELECT} at (0,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
+            RenderBlock (anonymous) at (1,1) size 68x19
+              RenderText at (41,2) size 19x13
+                text run at (41,2) width 8 RTL: "\x{5D0}"
+                text run at (48,2) width 8: "A"
+                text run at (55,2) width 5 RTL: "("
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (0,21) size 784x21
+          RenderMenuList {SELECT} at (714,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
+            RenderBlock (anonymous) at (1,1) size 68x19
+              RenderText at (45,2) size 15x13
+                text run at (45,2) width 8: "A"
+                text run at (52,2) width 8 RTL: "\x{5D0}"
+          RenderText {#text} at (710,0) size 4x18
+            text run at (710,0) width 4 RTL: " "
+          RenderMenuList {SELECT} at (640,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
+            RenderBlock (anonymous) at (1,1) size 68x19
+              RenderText at (45,2) size 15x13
+                text run at (45,2) width 8 RTL: "\x{5D0}"
+                text run at (52,2) width 8: "A"
+          RenderText {#text} at (636,0) size 4x18
+            text run at (636,0) width 4 RTL: " "
+          RenderMenuList {SELECT} at (566,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
+            RenderBlock (anonymous) at (1,1) size 68x19
+              RenderText at (41,2) size 19x13
+                text run at (41,2) width 8: "A"
+                text run at (48,2) width 12 RTL: "(\x{5D0}"
+          RenderText {#text} at (562,0) size 4x18
+            text run at (562,0) width 4 RTL: " "
+          RenderMenuList {SELECT} at (492,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
+            RenderBlock (anonymous) at (1,1) size 68x19
+              RenderText at (41,2) size 19x13
+                text run at (41,2) width 8 RTL: "\x{5D0}"
+                text run at (48,2) width 8: "A"
+                text run at (55,2) width 5 RTL: "("
+          RenderText {#text} at (0,0) size 0x0

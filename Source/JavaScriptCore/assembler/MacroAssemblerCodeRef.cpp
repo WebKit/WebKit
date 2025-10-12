@@ -62,7 +62,7 @@ bool shouldDumpDisassemblyFor(CodeBlock* codeBlock)
 
 bool shouldDumpDisassemblyFor(Wasm::CompilationMode mode)
 {
-    if (Options::asyncDisassembly() || Options::dumpDisassembly() || Options::dumpWasmDisassembly())
+    if (Options::dumpDisassembly() || Options::dumpWasmDisassembly())
         return true;
     if (Wasm::isAnyBBQ(mode))
         return Options::dumpBBQDisassembly();

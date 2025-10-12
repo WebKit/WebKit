@@ -62,7 +62,6 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement
     EnabledBySetting=WebGLEnabled,
     GenerateIsReachable=ImplCanvasBase,
     JSCustomMarkFunction,
-    JSGenerateToJSObject,
     DoNotCheckConstants,
     Exposed=(Window,Worker),
     CallTracer=InspectorCanvasCallTracer,
@@ -463,7 +462,7 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement
     [OverrideIDLType=IDLWebGLAny] any getActiveUniforms(WebGLProgram program, sequence<GLuint> uniformIndices, GLenum pname);
     GLuint getUniformBlockIndex(WebGLProgram program, DOMString uniformBlockName);
     [OverrideIDLType=IDLWebGLAny] any getActiveUniformBlockParameter(WebGLProgram program, GLuint uniformBlockIndex, GLenum pname);
-    [OverrideIDLType=IDLWebGLAny] DOMString? getActiveUniformBlockName(WebGLProgram program, GLuint uniformBlockIndex);
+    DOMString? getActiveUniformBlockName(WebGLProgram program, GLuint uniformBlockIndex);
     undefined uniformBlockBinding(WebGLProgram program, GLuint uniformBlockIndex, GLuint uniformBlockBinding);
 
     // Vertex Array Objects.

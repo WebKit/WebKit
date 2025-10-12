@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2016 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -44,6 +44,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGSMILElement.h"
+#include "Settings.h"
 #include "XLinkNames.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -87,6 +88,17 @@ void SVGAElement::attributeChanged(const QualifiedName& name, const AtomString& 
         Ref { m_target }->setBaseValInternal(newValue);
         return;
     } else if (name == SVGNames::relAttr) {
+        // Update SVGAElement::relList() if more rel attributes values are supported.
+        static MainThreadNeverDestroyed<const AtomString> noReferrer("noreferrer"_s);
+        static MainThreadNeverDestroyed<const AtomString> noOpener("noopener"_s);
+        static MainThreadNeverDestroyed<const AtomString> opener("opener"_s);
+        SpaceSplitString relValue(newValue, SpaceSplitString::ShouldFoldCase::Yes);
+        if (relValue.contains(noReferrer))
+            m_linkRelations.add(Relation::NoReferrer);
+        if (relValue.contains(noOpener))
+            m_linkRelations.add(Relation::NoOpener);
+        if (relValue.contains(opener))
+            m_linkRelations.add(Relation::Opener);
         if (m_relList)
             m_relList->associatedAttributeValueChanged();
     }
@@ -138,13 +150,21 @@ void SVGAElement::defaultEventHandler(Event& event)
                 }
             }
 
+            Ref document = this->document();
+            URL completedURL = document->completeURL(url);
+
             auto target = this->target();
             if (target.isEmpty() && attributeWithoutSynchronization(XLinkNames::showAttr) == "new"_s)
                 target = blankTargetFrameName();
             event.setDefaultHandled();
 
-            if (RefPtr frame = document().frame())
-                frame->protectedLoader()->changeLocation(protectedDocument()->completeURL(url), target, &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
+            auto referrerPolicy = hasRel(Relation::NoReferrer) ? ReferrerPolicy::NoReferrer : ReferrerPolicy::EmptyString;
+            NewFrameOpenerPolicy newFrameOpenerPolicy = NewFrameOpenerPolicy::Allow;
+            if (hasRel(Relation::NoOpener) || hasRel(Relation::NoReferrer) || (!hasRel(Relation::Opener) && isBlankTargetFrameName(target) && !completedURL.protocolIsJavaScript()))
+                newFrameOpenerPolicy = NewFrameOpenerPolicy::Suppress;
+
+            if (RefPtr frame = document->frame())
+                frame->loader().changeLocation(completedURL, target, &event, referrerPolicy, document->shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy);
             return;
         }
     }
@@ -180,19 +200,19 @@ bool SVGAElement::isMouseFocusable() const
     return SVGElement::isMouseFocusable();
 }
 
-bool SVGAElement::isKeyboardFocusable(KeyboardEvent* event) const
+bool SVGAElement::isKeyboardFocusable(const FocusEventData& focusEventData) const
 {
     if (isFocusable() && Element::supportsFocus())
-        return SVGElement::isKeyboardFocusable(event);
+        return SVGElement::isKeyboardFocusable(focusEventData);
 
     RefPtr frame = document().frame();
     if (!frame)
         return false;
 
-    if (isLink() && !frame->eventHandler().tabsToLinks(event))
+    if (isLink() && !frame->eventHandler().tabsToLinks(focusEventData))
         return false;
 
-    return SVGElement::isKeyboardFocusable(event);
+    return SVGElement::isKeyboardFocusable(focusEventData);
 }
 
 bool SVGAElement::canStartSelection() const
@@ -237,10 +257,15 @@ DOMTokenList& SVGAElement::relList()
             if (equalLettersIgnoringASCIICase(token, "ar"_s))
                 return true;
 #endif
-            return equalLettersIgnoringASCIICase(token, "noreferrer"_s) || equalLettersIgnoringASCIICase(token, "noopener"_s);
+            return equalLettersIgnoringASCIICase(token, "noreferrer"_s) || equalLettersIgnoringASCIICase(token, "noopener"_s) || equalLettersIgnoringASCIICase(token, "opener"_s);
         }));
     }
     return *m_relList;
+}
+
+bool SVGAElement::hasRel(Relation relation) const
+{
+    return m_linkRelations.contains(relation);
 }
 
 } // namespace WebCore

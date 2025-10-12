@@ -1,0 +1,86 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "STScreenTimeConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "enforcesChildRestrictions", "name": "enforcesChildRestrictions"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithUpdateQueue:"},
+      {"access": "public", "name": "startObserving"},
+      {"access": "public", "name": "stopObserving"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "STScreenTimeConfigurationObserver",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "configuration", "name": "configuration"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "18.4", "name": "initWithBundleIdentifier:profileIdentifier:error:"},
+      {"access": "public", "introduced": "18.4", "name": "initWithProfileIdentifier:"},
+      {"access": "public", "name": "initWithBundleIdentifier:error:"},
+      {"access": "public", "introduced": "18.4", "name": "fetchHistoryDuringInterval:completionHandler:"},
+      {"access": "public", "introduced": "18.4", "name": "fetchAllHistoryWithCompletionHandler:"},
+      {"access": "public", "name": "deleteHistoryForURL:"},
+      {"access": "public", "name": "deleteHistoryDuringInterval:"},
+      {"access": "public", "name": "deleteAllHistory"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "STWebHistory",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setBundleIdentifier:error:"},
+      {"access": "public", "name": "initWithNibName:bundle:", "unavailable": true},
+      {"access": "public", "name": "initWithCoder:", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "STWebpageController",
+     "properties": [
+      {"access": "public", "getter": "suppressUsageRecording", "name": "suppressUsageRecording", "setter": "setSuppressUsageRecording:"},
+      {"access": "public", "getter": "URL", "name": "URL", "setter": "setURL:"},
+      {"access": "public", "getter": "URLIsPlayingVideo", "name": "URLIsPlayingVideo", "setter": "setURLIsPlayingVideo:"},
+      {"access": "public", "getter": "URLIsPictureInPicture", "name": "URLIsPictureInPicture", "setter": "setURLIsPictureInPicture:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "URLIsBlocked", "name": "URLIsBlocked"},
+      {"access": "public", "getter": "profileIdentifier", "introduced": "18.4", "name": "profileIdentifier", "setter": "setProfileIdentifier:"}
+     ],
+     "super": "UIViewController"
+    }
+   ],
+   "target": "arm64e-apple-ios26",
+   "typedefs": [
+    {"access": "public", "introduced": "18.4", "name": "STWebHistoryProfileIdentifier"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

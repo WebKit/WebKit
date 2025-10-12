@@ -48,6 +48,7 @@ enum class TaskSource : uint8_t {
     Reporting,
     ScreenWakelock,
     Speech,
+    SpeculationRules,
     Timer,
     UserInteraction,
     WebGL,

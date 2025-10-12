@@ -24,7 +24,6 @@
 #if ENABLE_QUICKLOOK_FULLSCREEN
 
 import OSLog
-import WebKitSwift
 
 #if USE_APPLE_INTERNAL_SDK
 @_spi(PreviewApplication) internal import QuickLook
@@ -40,6 +39,7 @@ internal import QuickLook_SPI_Temp
 
     // Used to workaround the fact that `@objc @implementation` does not support stored properties whose size can change
     // due to Library Evolution. Do not use this property directly.
+    @MainActor
     private final class Base {
         var previewSession: PreviewSession?
         var item: PreviewItem
@@ -95,67 +95,60 @@ internal import QuickLook_SPI_Temp
         super.init()
     }
 
-    func presentWindow() {
-        previewSession = PreviewApplication.open(items: [item], selectedItem: nil, configuration: previewConfiguration)
+    func presentWindow() async {
+        let session = PreviewApplication.open(items: [item], selectedItem: nil, configuration: previewConfiguration)
+        self.previewSession = session
 
-        Task.detached { [weak self] in
-            guard let session = self?.previewSession else { return }
-            for await event in session.events {
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self else { return }
-                    switch event {
-                    case .didOpen:
-                        self.isOpen = true
-                        self.windowOpenedContinuation?.resume()
-                    case .didFail(let error):
-                        self.isClosing = true
-                        self.delegate?.previewWindowControllerDidClose(self)
-                        windowOpenedContinuation?.resume(throwing: error)
-                        Self.logger.error("Preview open failed with error \(error)")
-                    case .didClose:
-                        self.isClosing = true
-                        self.delegate?.previewWindowControllerDidClose(self)
-                    default:
-                        break
-                    }
-                }
+        for await event in session.events {
+            switch event {
+            case .didOpen:
+                isOpen = true
+                windowOpenedContinuation?.resume()
+            case .didFail(let error):
+                isClosing = true
+                delegate?.previewWindowControllerDidClose(self)
+                windowOpenedContinuation?.resume(throwing: error)
+                Self.logger.error("Preview open failed with error \(error)")
+            case .didClose:
+                isClosing = true
+                delegate?.previewWindowControllerDidClose(self)
+            default:
+                break
             }
         }
     }
     
-    func updateImage(_ url: URL) {
+    func updateImage(_ url: URL) async {
         item = PreviewItem(url: url, displayName: nil, editingMode: .disabled);
         
-        Task {
-            do {
-                if !isOpen {
-                    if let continuation = windowOpenedContinuation {
-                        // The Quick Look window isn't ready yet, but there's already been an earlier update queued
-                        // Throw that update and queue this one instead
-                        continuation.resume(throwing: UpdateError.newUpdateQueued)
-                    }
-                    try await withCheckedThrowingContinuation { continuation in
-                        windowOpenedContinuation = continuation
-                    }
+        do {
+            if !isOpen {
+                if let continuation = windowOpenedContinuation {
+                    // The Quick Look window isn't ready yet, but there's already been an earlier update queued
+                    // Throw that update and queue this one instead
+                    continuation.resume(throwing: UpdateError.newUpdateQueued)
                 }
-                try await previewSession?.update(items: [item])
-            } catch UpdateError.newUpdateQueued {
-                Self.logger.debug("WKPreviewWindowController.updateImage skipped: newer image update queued");
-            } catch {
-                Self.logger.error("WKPreviewWindowController.updateImage failed: \(error, privacy: .public)")
+                try await withCheckedThrowingContinuation { continuation in
+                    windowOpenedContinuation = continuation
+                }
             }
+            try await previewSession?.update(items: [item])
+        } catch UpdateError.newUpdateQueued {
+            Self.logger.debug("WKPreviewWindowController.updateImage skipped: newer image update queued");
+        } catch {
+            Self.logger.error("WKPreviewWindowController.updateImage failed: \(error, privacy: .public)")
         }
     }
 
-    func dismissWindow() {
-        guard !isClosing else { return }
+    func dismissWindow() async {
+        guard !isClosing else {
+            return
+        }
 
-        Task {
-            do {
-                try await previewSession?.close();
-            } catch {
-                Self.logger.error("WKPreviewWindowController.dismissWindow failed: \(error, privacy: .public)")
-            }
+        do {
+            try await previewSession?.close();
+        } catch {
+            Self.logger.error("WKPreviewWindowController.dismissWindow failed: \(error, privacy: .public)")
         }
     }
 }

@@ -282,6 +282,11 @@ bool Box::isFlexItem() const
     return isInFlow() && parent().isFlexBox();
 }
 
+bool Box::isGridItem() const
+{
+    return isInFlow() && parent().isGridBox();
+}
+
 bool Box::isBlockContainer() const
 {
     auto display = m_style.display();

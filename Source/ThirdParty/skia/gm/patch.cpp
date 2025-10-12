@@ -12,6 +12,7 @@
 #include "include/core/SkImage.h"
 #include "include/core/SkPaint.h"
 #include "include/core/SkPath.h"
+#include "include/core/SkPathBuilder.h"
 #include "include/core/SkPoint.h"
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkScalar.h"
@@ -49,32 +50,32 @@ static void draw_control_points(SkCanvas* canvas, const SkPoint cubics[12]) {
     paint.setColor(SK_ColorBLACK);
     paint.setStrokeWidth(0.5f);
     SkPoint corners[4] = { bottom[0], bottom[3], top[0], top[3] };
-    canvas->drawPoints(SkCanvas::kLines_PointMode, 4, bottom, paint);
-    canvas->drawPoints(SkCanvas::kLines_PointMode, 2, bottom + 1, paint);
-    canvas->drawPoints(SkCanvas::kLines_PointMode, 4, top, paint);
-    canvas->drawPoints(SkCanvas::kLines_PointMode, 4, left, paint);
-    canvas->drawPoints(SkCanvas::kLines_PointMode, 4, right, paint);
+    canvas->drawPoints(SkCanvas::kLines_PointMode, {bottom, 4}, paint);
+    canvas->drawPoints(SkCanvas::kLines_PointMode, {bottom + 1, 2}, paint);
+    canvas->drawPoints(SkCanvas::kLines_PointMode, {top, 4}, paint);
+    canvas->drawPoints(SkCanvas::kLines_PointMode, {left, 4}, paint);
+    canvas->drawPoints(SkCanvas::kLines_PointMode, {right, 4}, paint);
 
-    canvas->drawPoints(SkCanvas::kLines_PointMode, 2, top + 1, paint);
-    canvas->drawPoints(SkCanvas::kLines_PointMode, 2, left + 1, paint);
-    canvas->drawPoints(SkCanvas::kLines_PointMode, 2, right + 1, paint);
+    canvas->drawPoints(SkCanvas::kLines_PointMode, {top + 1, 2}, paint);
+    canvas->drawPoints(SkCanvas::kLines_PointMode, {left + 1, 2}, paint);
+    canvas->drawPoints(SkCanvas::kLines_PointMode, {right + 1, 2}, paint);
 
     paint.setStrokeWidth(2);
 
     paint.setColor(SK_ColorRED);
-    canvas->drawPoints(SkCanvas::kPoints_PointMode, 4, corners, paint);
+    canvas->drawPoints(SkCanvas::kPoints_PointMode, {corners, 4}, paint);
 
     paint.setColor(SK_ColorBLUE);
-    canvas->drawPoints(SkCanvas::kPoints_PointMode, 2, bottom + 1, paint);
+    canvas->drawPoints(SkCanvas::kPoints_PointMode, {bottom + 1, 2}, paint);
 
     paint.setColor(SK_ColorCYAN);
-    canvas->drawPoints(SkCanvas::kPoints_PointMode, 2, top + 1, paint);
+    canvas->drawPoints(SkCanvas::kPoints_PointMode, {top + 1, 2}, paint);
 
     paint.setColor(SK_ColorYELLOW);
-    canvas->drawPoints(SkCanvas::kPoints_PointMode, 2, left + 1, paint);
+    canvas->drawPoints(SkCanvas::kPoints_PointMode, {left + 1, 2}, paint);
 
     paint.setColor(SK_ColorGREEN);
-    canvas->drawPoints(SkCanvas::kPoints_PointMode, 2, right + 1, paint);
+    canvas->drawPoints(SkCanvas::kPoints_PointMode, {right + 1, 2}, paint);
 }
 
 // The order of the colors and points is clockwise starting at upper-left corner.
@@ -195,12 +196,13 @@ DEF_SIMPLE_GM(patch_alpha_test, canvas, 550, 250) {
 
     canvas->translate(300, 0);
 
-    SkPath path;
-    path.moveTo(gCubics[0]);
-    path.cubicTo(gCubics[ 1], gCubics[ 2], gCubics[ 3]);
-    path.cubicTo(gCubics[ 4], gCubics[ 5], gCubics[ 6]);
-    path.cubicTo(gCubics[ 7], gCubics[ 8], gCubics[ 9]);
-    path.cubicTo(gCubics[10], gCubics[11], gCubics[ 0]);
+    SkPath path = SkPathBuilder()
+                  .moveTo(gCubics[0])
+                  .cubicTo(gCubics[ 1], gCubics[ 2], gCubics[ 3])
+                  .cubicTo(gCubics[ 4], gCubics[ 5], gCubics[ 6])
+                  .cubicTo(gCubics[ 7], gCubics[ 8], gCubics[ 9])
+                  .cubicTo(gCubics[10], gCubics[11], gCubics[ 0])
+                  .detach();
     paint.setColor(colors[0]);
     canvas->drawPath(path, paint);
 }

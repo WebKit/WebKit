@@ -10,8 +10,7 @@
 
 #include "modules/congestion_controller/goog_cc/probe_bitrate_estimator.h"
 
-#include <stddef.h>
-
+#include <cstddef>
 #include <cstdint>
 #include <optional>
 

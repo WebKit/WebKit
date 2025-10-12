@@ -30,10 +30,10 @@
 
 namespace WebCore {
 
-static auto cocoaFontClass()
+static auto cocoaFontClassSingleton()
 {
 #if PLATFORM(IOS_FAMILY)
-    return PAL::getUIFontClass();
+    return PAL::getUIFontClassSingleton();
 #else
     return NSFont.class;
 #endif
@@ -41,18 +41,18 @@ static auto cocoaFontClass()
 
 RetainPtr<CTFontDescriptorRef> SystemFontDatabaseCoreText::smallCaptionFontDescriptor()
 {
-    auto font = [cocoaFontClass() systemFontOfSize:[cocoaFontClass() smallSystemFontSize]];
+    auto font = [cocoaFontClassSingleton() systemFontOfSize:[cocoaFontClassSingleton() smallSystemFontSize]];
     return static_cast<CTFontDescriptorRef>(font.fontDescriptor);
 }
 
 RetainPtr<CTFontDescriptorRef> SystemFontDatabaseCoreText::menuFontDescriptor()
 {
-    return adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontMenuItem, [cocoaFontClass() systemFontSize], nullptr));
+    return adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontMenuItem, [cocoaFontClassSingleton() systemFontSize], nullptr));
 }
 
 RetainPtr<CTFontDescriptorRef> SystemFontDatabaseCoreText::statusBarFontDescriptor()
 {
-    return adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, [cocoaFontClass() labelFontSize], nullptr));
+    return adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, [cocoaFontClassSingleton() labelFontSize], nullptr));
 }
 
 RetainPtr<CTFontDescriptorRef> SystemFontDatabaseCoreText::miniControlFontDescriptor()
@@ -60,7 +60,7 @@ RetainPtr<CTFontDescriptorRef> SystemFontDatabaseCoreText::miniControlFontDescri
 #if PLATFORM(IOS_FAMILY)
     return adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontMiniSystem, 0, nullptr));
 #else
-    auto font = [cocoaFontClass() systemFontOfSize:[cocoaFontClass() systemFontSizeForControlSize:NSControlSizeMini]];
+    auto font = [cocoaFontClassSingleton() systemFontOfSize:[cocoaFontClassSingleton() systemFontSizeForControlSize:NSControlSizeMini]];
     return static_cast<CTFontDescriptorRef>(font.fontDescriptor);
 #endif
 }
@@ -70,7 +70,7 @@ RetainPtr<CTFontDescriptorRef> SystemFontDatabaseCoreText::smallControlFontDescr
 #if PLATFORM(IOS_FAMILY)
     return adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSmallSystem, 0, nullptr));
 #else
-    auto font = [cocoaFontClass() systemFontOfSize:[cocoaFontClass() systemFontSizeForControlSize:NSControlSizeSmall]];
+    auto font = [cocoaFontClassSingleton() systemFontOfSize:[cocoaFontClassSingleton() systemFontSizeForControlSize:NSControlSizeSmall]];
     return static_cast<CTFontDescriptorRef>(font.fontDescriptor);
 #endif
 }
@@ -80,7 +80,7 @@ RetainPtr<CTFontDescriptorRef> SystemFontDatabaseCoreText::controlFontDescriptor
 #if PLATFORM(IOS_FAMILY)
     return adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, 0, nullptr));
 #else
-    auto font = [cocoaFontClass() systemFontOfSize:[cocoaFontClass() systemFontSizeForControlSize:NSControlSizeRegular]];
+    auto font = [cocoaFontClassSingleton() systemFontOfSize:[cocoaFontClassSingleton() systemFontSizeForControlSize:NSControlSizeRegular]];
     return static_cast<CTFontDescriptorRef>(font.fontDescriptor);
 #endif
 }

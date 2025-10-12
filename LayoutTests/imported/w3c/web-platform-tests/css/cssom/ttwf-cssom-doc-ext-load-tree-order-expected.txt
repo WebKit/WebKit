@@ -1,3 +1,8 @@
 
 PASS styleSheets.length must be 5
+PASS styleSheets item 0 title must be aaa
+PASS styleSheets item 1 title must be zebra
+PASS styleSheets item 0 title must be kilo
+PASS styleSheets item 0 title must be alpha
+PASS styleSheets item 0 title must be zebra
 

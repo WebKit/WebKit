@@ -18,7 +18,7 @@
 
         consoleWrite('Test that playback will resume following a seek through media session.');
 
-        run("video.play()");
+        run("handlePromise(video.play())");
 
         run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekto", seekTime: 1})');
         testExpected("video.currentTime", 1);

@@ -26,8 +26,8 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "MediaKeySystemClient.h"
-#include "Supplementable.h"
+#include <WebCore/MediaKeySystemClient.h>
+#include <WebCore/Supplementable.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 

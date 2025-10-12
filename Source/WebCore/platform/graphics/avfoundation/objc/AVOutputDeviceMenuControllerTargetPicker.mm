@@ -73,7 +73,7 @@ AVOutputDeviceMenuControllerTargetPicker::~AVOutputDeviceMenuControllerTargetPic
 
 AVOutputDeviceMenuController *AVOutputDeviceMenuControllerTargetPicker::devicePicker()
 {
-    if (!getAVOutputDeviceMenuControllerClass())
+    if (!getAVOutputDeviceMenuControllerClassSingleton())
         return nullptr;
 
     if (!m_outputDeviceMenuController) {

@@ -12,4 +12,5 @@ layer at (0,433) size 800x167
       RenderImage {IMG} at (399,51) size 20x100 [bgcolor=#800080]
       RenderText {#text} at (419,43) size 72x40
         text run at (419,43) width 72: " text."
-caret: position 1 of child 0 {#text} of body
+selection start: position 1 of child 0 {#text} of body
+selection end:   position 1 of child 3 {IMG} of body

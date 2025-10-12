@@ -29,6 +29,11 @@ from webkitcorepy import Environment, OutputCapture, Terminal, string_utils
 _cache = dict()
 
 
+def handle_keyring_error(error):
+    sys.stderr.write('Could not access credentials from keychain. Please run `security unlock-keychain` before re-running this command.\n')
+    sys.exit(1)
+
+
 def credentials(url, required=True, name=None, prompt=None, key_name='password', validater=None, validate_existing_credentials=False, retry=3, save_in_keyring=None):
     global _cache
 
@@ -71,6 +76,8 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password',
                     username = keyring.get_password(url, 'username')
             except (RuntimeError, AttributeError):
                 pass
+            except keyring.errors.KeyringError as e:
+                handle_keyring_error(e)
 
             if not username and required:
                 if not sys.stderr.isatty() or not sys.stdin.isatty():
@@ -88,6 +95,8 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password',
                     key = keyring.get_password(url, username)
             except (RuntimeError, AttributeError):
                 pass
+            except keyring.errors.KeyringError as e:
+                handle_keyring_error(e)
 
             if not key and required:
                 if not sys.stderr.isatty() or not sys.stdin.isatty():
@@ -118,8 +127,11 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password',
             default='Yes',
         ) == 'Yes'):
             sys.stderr.write('Storing credentials...\n')
-            keyring.set_password(url, 'username', username)
-            keyring.set_password(url, username, key)
+            try:
+                keyring.set_password(url, 'username', username)
+                keyring.set_password(url, username, key)
+            except keyring.errors.KeyringError as e:
+                handle_keyring_error(e)
         else:
             sys.stderr.write('Credentials cached in process.\n')
 

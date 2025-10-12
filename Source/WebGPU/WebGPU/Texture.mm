@@ -104,6 +104,12 @@ std::optional<Texture::CompressFormat> Texture::compressedFormatType(WGPUTexture
     case WGPUTextureFormat_ASTC12x12Unorm:
     case WGPUTextureFormat_ASTC12x12UnormSrgb:
         return Texture::CompressFormat::ASTC;
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
     case WGPUTextureFormat_R8Unorm:
     case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_R8Uint:
@@ -167,6 +173,12 @@ static std::optional<WGPUTextureFormat> depthSpecificFormat(WGPUTextureFormat te
     case WGPUTextureFormat_R8Sint:
     case WGPUTextureFormat_R16Uint:
     case WGPUTextureFormat_R16Sint:
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
     case WGPUTextureFormat_R16Float:
     case WGPUTextureFormat_RG8Unorm:
     case WGPUTextureFormat_RG8Snorm:
@@ -282,6 +294,12 @@ static std::optional<WGPUTextureFormat> stencilSpecificFormat(WGPUTextureFormat 
     case WGPUTextureFormat_R8Sint:
     case WGPUTextureFormat_R16Uint:
     case WGPUTextureFormat_R16Sint:
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
     case WGPUTextureFormat_R16Float:
     case WGPUTextureFormat_RG8Unorm:
     case WGPUTextureFormat_RG8Snorm:
@@ -472,6 +490,12 @@ uint32_t Texture::texelBlockWidth(WGPUTextureFormat format)
     case WGPUTextureFormat_R8Sint:
     case WGPUTextureFormat_R16Uint:
     case WGPUTextureFormat_R16Sint:
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
     case WGPUTextureFormat_R16Float:
     case WGPUTextureFormat_RG8Unorm:
     case WGPUTextureFormat_RG8Snorm:
@@ -593,6 +617,12 @@ uint32_t Texture::texelBlockHeight(WGPUTextureFormat format)
     case WGPUTextureFormat_R8Sint:
     case WGPUTextureFormat_R16Uint:
     case WGPUTextureFormat_R16Sint:
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
     case WGPUTextureFormat_R16Float:
     case WGPUTextureFormat_RG8Unorm:
     case WGPUTextureFormat_RG8Snorm:
@@ -676,8 +706,15 @@ bool Texture::isColorRenderableFormat(WGPUTextureFormat format, const Device& de
     case WGPUTextureFormat_RGBA32Uint:
     case WGPUTextureFormat_RGBA32Sint:
         return true;
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
+        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
     case WGPUTextureFormat_RG11B10Ufloat:
-        return device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
+        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1) || device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
     case WGPUTextureFormat_Stencil8:
     case WGPUTextureFormat_Depth16Unorm:
     case WGPUTextureFormat_Depth24Plus:
@@ -688,6 +725,7 @@ bool Texture::isColorRenderableFormat(WGPUTextureFormat format, const Device& de
     case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_RG8Snorm:
     case WGPUTextureFormat_RGBA8Snorm:
+        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
     case WGPUTextureFormat_RGB9E5Ufloat:
     case WGPUTextureFormat_BC1RGBAUnorm:
     case WGPUTextureFormat_BC1RGBAUnormSrgb:
@@ -787,6 +825,12 @@ bool Texture::isDepthStencilRenderableFormat(WGPUTextureFormat format, const Dev
     case WGPUTextureFormat_RGBA32Uint:
     case WGPUTextureFormat_RGBA32Sint:
     case WGPUTextureFormat_RG11B10Ufloat:
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
         return false;
     case WGPUTextureFormat_Stencil8:
     case WGPUTextureFormat_Depth16Unorm:
@@ -903,11 +947,18 @@ bool Texture::isRenderableFormat(WGPUTextureFormat format, const Device& device)
     case WGPUTextureFormat_Depth32Float:
     case WGPUTextureFormat_Depth32FloatStencil8:
         return true;
-    case WGPUTextureFormat_RG11B10Ufloat:
-        return device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
     case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_RG8Snorm:
     case WGPUTextureFormat_RGBA8Snorm:
+        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
+    case WGPUTextureFormat_RG11B10Ufloat:
+        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1) || device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
     case WGPUTextureFormat_RGB9E5Ufloat:
     case WGPUTextureFormat_BC1RGBAUnorm:
     case WGPUTextureFormat_BC1RGBAUnormSrgb:
@@ -984,6 +1035,8 @@ uint32_t Texture::renderTargetPixelByteCost(WGPUTextureFormat format)
     case WGPUTextureFormat_RG8Unorm:
     case WGPUTextureFormat_RG8Uint:
     case WGPUTextureFormat_RG8Sint:
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
         return 2;
     case WGPUTextureFormat_R32Float:
     case WGPUTextureFormat_R32Uint:
@@ -991,6 +1044,8 @@ uint32_t Texture::renderTargetPixelByteCost(WGPUTextureFormat format)
     case WGPUTextureFormat_RG16Uint:
     case WGPUTextureFormat_RG16Sint:
     case WGPUTextureFormat_RG16Float:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
         return 4;
     case WGPUTextureFormat_RGBA8Unorm:
     case WGPUTextureFormat_RGBA8UnormSrgb:
@@ -1008,6 +1063,8 @@ uint32_t Texture::renderTargetPixelByteCost(WGPUTextureFormat format)
     case WGPUTextureFormat_RGBA16Uint:
     case WGPUTextureFormat_RGBA16Sint:
     case WGPUTextureFormat_RGBA16Float:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
         return 8;
     case WGPUTextureFormat_RGBA32Float:
     case WGPUTextureFormat_RGBA32Uint:
@@ -1106,12 +1163,18 @@ uint32_t Texture::renderTargetPixelByteAlignment(WGPUTextureFormat format)
     case WGPUTextureFormat_R16Uint:
     case WGPUTextureFormat_R16Sint:
     case WGPUTextureFormat_R16Float:
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
     case WGPUTextureFormat_RG16Uint:
     case WGPUTextureFormat_RG16Sint:
     case WGPUTextureFormat_RG16Float:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
     case WGPUTextureFormat_RGBA16Uint:
     case WGPUTextureFormat_RGBA16Sint:
     case WGPUTextureFormat_RGBA16Float:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
         return 2;
     case WGPUTextureFormat_R32Float:
     case WGPUTextureFormat_R32Uint:
@@ -1119,12 +1182,12 @@ uint32_t Texture::renderTargetPixelByteAlignment(WGPUTextureFormat format)
     case WGPUTextureFormat_RGB10A2Uint:
     case WGPUTextureFormat_RGB10A2Unorm:
     case WGPUTextureFormat_RG32Float:
+    case WGPUTextureFormat_RG11B10Ufloat:
     case WGPUTextureFormat_RG32Uint:
     case WGPUTextureFormat_RG32Sint:
     case WGPUTextureFormat_RGBA32Float:
     case WGPUTextureFormat_RGBA32Uint:
     case WGPUTextureFormat_RGBA32Sint:
-    case WGPUTextureFormat_RG11B10Ufloat:
         return 4;
     case WGPUTextureFormat_Stencil8:
     case WGPUTextureFormat_Depth16Unorm:
@@ -1202,14 +1265,12 @@ bool Texture::supportsMultisampling(WGPUTextureFormat format, const Device& devi
     switch (format) {
     // https://gpuweb.github.io/gpuweb/#texture-format-caps
     case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_R8Uint:
     case WGPUTextureFormat_R8Sint:
     case WGPUTextureFormat_R16Uint:
     case WGPUTextureFormat_R16Sint:
     case WGPUTextureFormat_R16Float:
     case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Snorm:
     case WGPUTextureFormat_RG8Uint:
     case WGPUTextureFormat_RG8Sint:
     case WGPUTextureFormat_R32Float:
@@ -1218,7 +1279,6 @@ bool Texture::supportsMultisampling(WGPUTextureFormat format, const Device& devi
     case WGPUTextureFormat_RG16Float:
     case WGPUTextureFormat_RGBA8Unorm:
     case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_RGBA8Snorm:
     case WGPUTextureFormat_RGBA8Uint:
     case WGPUTextureFormat_RGBA8Sint:
     case WGPUTextureFormat_BGRA8Unorm:
@@ -1236,8 +1296,19 @@ bool Texture::supportsMultisampling(WGPUTextureFormat format, const Device& devi
     case WGPUTextureFormat_Depth32Float:
     case WGPUTextureFormat_Depth32FloatStencil8:
         return true;
+    case WGPUTextureFormat_R8Snorm:
+    case WGPUTextureFormat_RG8Snorm:
+    case WGPUTextureFormat_RGBA8Snorm:
+        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
+        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
     case WGPUTextureFormat_RG11B10Ufloat:
-        return device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
+        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1) || device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
     case WGPUTextureFormat_R32Uint:
     case WGPUTextureFormat_R32Sint:
     case WGPUTextureFormat_RG32Float:
@@ -1322,8 +1393,19 @@ bool Texture::supportsResolve(WGPUTextureFormat format, const Device& device)
     case WGPUTextureFormat_RGB10A2Unorm:
     case WGPUTextureFormat_RGBA16Float:
         return true;
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
+        return false;
+    case WGPUTextureFormat_R8Snorm:
+    case WGPUTextureFormat_RG8Snorm:
+    case WGPUTextureFormat_RGBA8Snorm:
+        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
     case WGPUTextureFormat_RG11B10Ufloat:
-        return device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
+        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1) || device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
     case WGPUTextureFormat_R32Float:
     case WGPUTextureFormat_Stencil8:
     case WGPUTextureFormat_Depth16Unorm:
@@ -1331,15 +1413,12 @@ bool Texture::supportsResolve(WGPUTextureFormat format, const Device& device)
     case WGPUTextureFormat_Depth24PlusStencil8:
     case WGPUTextureFormat_Depth32Float:
     case WGPUTextureFormat_Depth32FloatStencil8:
-    case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_R8Uint:
     case WGPUTextureFormat_R8Sint:
     case WGPUTextureFormat_R16Uint:
     case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_RG8Snorm:
     case WGPUTextureFormat_RG8Uint:
     case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_RGBA8Snorm:
     case WGPUTextureFormat_RG16Uint:
     case WGPUTextureFormat_RG16Sint:
     case WGPUTextureFormat_RGBA8Uint:
@@ -1431,23 +1510,31 @@ bool Texture::supportsBlending(WGPUTextureFormat format, const Device& device)
     case WGPUTextureFormat_RGBA16Float:
     case WGPUTextureFormat_RGB10A2Unorm:
         return true;
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
+        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
     case WGPUTextureFormat_RG11B10Ufloat:
-        return device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
+        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1) || device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
     case WGPUTextureFormat_R32Float:
     case WGPUTextureFormat_RG32Float:
     case WGPUTextureFormat_RGBA32Float:
         return device.hasFeature(WGPUFeatureName_Float32Blendable);
     case WGPUTextureFormat_R8Snorm:
+    case WGPUTextureFormat_RG8Snorm:
+    case WGPUTextureFormat_RGBA8Snorm:
+        return device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
     case WGPUTextureFormat_R8Uint:
     case WGPUTextureFormat_R8Sint:
     case WGPUTextureFormat_R16Uint:
     case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_RG8Snorm:
     case WGPUTextureFormat_RG8Uint:
     case WGPUTextureFormat_RG8Sint:
     case WGPUTextureFormat_RG16Uint:
     case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RGBA8Snorm:
     case WGPUTextureFormat_RGBA8Uint:
     case WGPUTextureFormat_RGBA8Sint:
     case WGPUTextureFormat_RGB10A2Uint:
@@ -1552,7 +1639,7 @@ static uint32_t maximumMiplevelCount(WGPUTextureDimension dimension, WGPUExtent3
     return WTF::fastLog2(m);
 }
 
-bool Texture::hasStorageBindingCapability(WGPUTextureFormat format, const Device& device, WGPUStorageTextureAccess access)
+bool Texture::hasStorageBindingCapability(WGPUTextureFormat format, const Device& device, std::optional<WGPUStorageTextureAccess> access)
 {
     // https://gpuweb.github.io/gpuweb/#plain-color-formats
     switch (format) {
@@ -1569,33 +1656,40 @@ bool Texture::hasStorageBindingCapability(WGPUTextureFormat format, const Device
     case WGPUTextureFormat_RGBA32Sint:
     case WGPUTextureFormat_RG32Uint:
     case WGPUTextureFormat_RG32Sint:
-        return access != WGPUStorageTextureAccess_ReadWrite;
+        return !access || *access != WGPUStorageTextureAccess_ReadWrite;
     case WGPUTextureFormat_BGRA8Unorm:
-        return access != WGPUStorageTextureAccess_ReadWrite && device.hasFeature(WGPUFeatureName_BGRA8UnormStorage);
+        return (!access || *access == WGPUStorageTextureAccess_WriteOnly) && device.hasFeature(WGPUFeatureName_BGRA8UnormStorage);
     case WGPUTextureFormat_R32Float:
     case WGPUTextureFormat_R32Uint:
     case WGPUTextureFormat_R32Sint:
         return true;
-    case WGPUTextureFormat_RGBA8UnormSrgb:
     case WGPUTextureFormat_R8Unorm:
     case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_R8Uint:
     case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Float:
     case WGPUTextureFormat_RG8Unorm:
     case WGPUTextureFormat_RG8Snorm:
     case WGPUTextureFormat_RG8Uint:
     case WGPUTextureFormat_RG8Sint:
+    case WGPUTextureFormat_R16Float:
+    case WGPUTextureFormat_R16Uint:
+    case WGPUTextureFormat_R16Sint:
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
     case WGPUTextureFormat_RG16Uint:
     case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
+    case WGPUTextureFormat_RGB10A2Uint:
     case WGPUTextureFormat_RGB10A2Unorm:
     case WGPUTextureFormat_RG11B10Ufloat:
+    case WGPUTextureFormat_RG16Float:
+        return (!access || *access != WGPUStorageTextureAccess_ReadWrite) && device.hasFeature(WGPUFeatureName_TextureFormatsTier1);
+    case WGPUTextureFormat_RGBA8UnormSrgb:
+    case WGPUTextureFormat_BGRA8UnormSrgb:
     case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_RGB10A2Uint:
     case WGPUTextureFormat_Stencil8:
     case WGPUTextureFormat_Depth16Unorm:
     case WGPUTextureFormat_Depth24Plus:
@@ -1670,6 +1764,8 @@ WGPUTextureFormat Texture::removeSRGBSuffix(WGPUTextureFormat format)
     case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_R8Uint:
     case WGPUTextureFormat_R8Sint:
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
     case WGPUTextureFormat_R16Uint:
     case WGPUTextureFormat_R16Sint:
     case WGPUTextureFormat_R16Float:
@@ -1680,6 +1776,8 @@ WGPUTextureFormat Texture::removeSRGBSuffix(WGPUTextureFormat format)
     case WGPUTextureFormat_R32Float:
     case WGPUTextureFormat_R32Uint:
     case WGPUTextureFormat_R32Sint:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
     case WGPUTextureFormat_RG16Uint:
     case WGPUTextureFormat_RG16Sint:
     case WGPUTextureFormat_RG16Float:
@@ -1701,6 +1799,8 @@ WGPUTextureFormat Texture::removeSRGBSuffix(WGPUTextureFormat format)
     case WGPUTextureFormat_RG32Float:
     case WGPUTextureFormat_RG32Uint:
     case WGPUTextureFormat_RG32Sint:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
     case WGPUTextureFormat_RGBA16Uint:
     case WGPUTextureFormat_RGBA16Sint:
     case WGPUTextureFormat_RGBA16Float:
@@ -1958,6 +2058,10 @@ MTLPixelFormat Texture::pixelFormat(WGPUTextureFormat textureFormat)
         return MTLPixelFormatR8Uint;
     case WGPUTextureFormat_R8Sint:
         return MTLPixelFormatR8Sint;
+    case WGPUTextureFormat_R16Unorm:
+        return MTLPixelFormatR16Unorm;
+    case WGPUTextureFormat_R16Snorm:
+        return MTLPixelFormatR16Snorm;
     case WGPUTextureFormat_R16Uint:
         return MTLPixelFormatR16Uint;
     case WGPUTextureFormat_R16Sint:
@@ -1978,6 +2082,10 @@ MTLPixelFormat Texture::pixelFormat(WGPUTextureFormat textureFormat)
         return MTLPixelFormatR32Uint;
     case WGPUTextureFormat_R32Sint:
         return MTLPixelFormatR32Sint;
+    case WGPUTextureFormat_RG16Unorm:
+        return MTLPixelFormatRG16Unorm;
+    case WGPUTextureFormat_RG16Snorm:
+        return MTLPixelFormatRG16Snorm;
     case WGPUTextureFormat_RG16Uint:
         return MTLPixelFormatRG16Uint;
     case WGPUTextureFormat_RG16Sint:
@@ -2012,6 +2120,10 @@ MTLPixelFormat Texture::pixelFormat(WGPUTextureFormat textureFormat)
         return MTLPixelFormatRG32Uint;
     case WGPUTextureFormat_RG32Sint:
         return MTLPixelFormatRG32Sint;
+    case WGPUTextureFormat_RGBA16Unorm:
+        return MTLPixelFormatRGBA16Unorm;
+    case WGPUTextureFormat_RGBA16Snorm:
+        return MTLPixelFormatRGBA16Snorm;
     case WGPUTextureFormat_RGBA16Uint:
         return MTLPixelFormatRGBA16Uint;
     case WGPUTextureFormat_RGBA16Sint:
@@ -2112,7 +2224,7 @@ MTLPixelFormat Texture::pixelFormat(WGPUTextureFormat textureFormat)
         return MTLPixelFormatASTC_12x12_LDR;
     case WGPUTextureFormat_ASTC12x12UnormSrgb:
         return MTLPixelFormatASTC_12x12_sRGB;
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if !PLATFORM(WATCHOS)
     case WGPUTextureFormat_BC1RGBAUnorm:
         return MTLPixelFormatBC1_RGBA;
     case WGPUTextureFormat_BC1RGBAUnormSrgb:
@@ -2166,6 +2278,203 @@ MTLPixelFormat Texture::pixelFormat(WGPUTextureFormat textureFormat)
     }
 }
 
+WGPUTextureFormat Texture::textureFormat(MTLPixelFormat pixelFormat)
+{
+    switch (pixelFormat) {
+    case MTLPixelFormatR8Unorm:
+        return WGPUTextureFormat_R8Unorm;
+    case MTLPixelFormatR8Snorm:
+        return WGPUTextureFormat_R8Snorm;
+    case MTLPixelFormatR8Uint:
+        return WGPUTextureFormat_R8Uint;
+    case MTLPixelFormatR8Sint:
+        return WGPUTextureFormat_R8Sint;
+    case MTLPixelFormatR16Uint:
+        return WGPUTextureFormat_R16Uint;
+    case MTLPixelFormatR16Sint:
+        return WGPUTextureFormat_R16Sint;
+    case MTLPixelFormatR16Float:
+        return WGPUTextureFormat_R16Float;
+    case MTLPixelFormatRG8Unorm:
+        return WGPUTextureFormat_RG8Unorm;
+    case MTLPixelFormatRG8Snorm:
+        return WGPUTextureFormat_RG8Snorm;
+    case MTLPixelFormatRG8Uint:
+        return WGPUTextureFormat_RG8Uint;
+    case MTLPixelFormatRG8Sint:
+        return WGPUTextureFormat_RG8Sint;
+    case MTLPixelFormatR32Float:
+        return WGPUTextureFormat_R32Float;
+    case MTLPixelFormatR32Uint:
+        return WGPUTextureFormat_R32Uint;
+    case MTLPixelFormatR32Sint:
+        return WGPUTextureFormat_R32Sint;
+    case MTLPixelFormatRG16Uint:
+        return WGPUTextureFormat_RG16Uint;
+    case MTLPixelFormatRG16Sint:
+        return WGPUTextureFormat_RG16Sint;
+    case MTLPixelFormatRG16Float:
+        return WGPUTextureFormat_RG16Float;
+    case MTLPixelFormatRGBA8Unorm:
+        return WGPUTextureFormat_RGBA8Unorm;
+    case MTLPixelFormatRGBA8Unorm_sRGB:
+        return WGPUTextureFormat_RGBA8UnormSrgb;
+    case MTLPixelFormatRGBA8Snorm:
+        return WGPUTextureFormat_RGBA8Snorm;
+    case MTLPixelFormatRGBA8Uint:
+        return WGPUTextureFormat_RGBA8Uint;
+    case MTLPixelFormatRGBA8Sint:
+        return WGPUTextureFormat_RGBA8Sint;
+    case MTLPixelFormatBGRA8Unorm:
+        return WGPUTextureFormat_BGRA8Unorm;
+    case MTLPixelFormatBGRA8Unorm_sRGB:
+        return WGPUTextureFormat_BGRA8UnormSrgb;
+    case MTLPixelFormatRGB10A2Unorm:
+        return WGPUTextureFormat_RGB10A2Unorm;
+    case MTLPixelFormatRG11B10Float:
+        return WGPUTextureFormat_RG11B10Ufloat;
+    case MTLPixelFormatRGB9E5Float:
+        return WGPUTextureFormat_RGB9E5Ufloat;
+    case MTLPixelFormatRGB10A2Uint:
+        return WGPUTextureFormat_RGB10A2Uint;
+    case MTLPixelFormatRG32Float:
+        return WGPUTextureFormat_RG32Float;
+    case MTLPixelFormatRG32Uint:
+        return WGPUTextureFormat_RG32Uint;
+    case MTLPixelFormatRG32Sint:
+        return WGPUTextureFormat_RG32Sint;
+    case MTLPixelFormatRGBA16Uint:
+        return WGPUTextureFormat_RGBA16Uint;
+    case MTLPixelFormatRGBA16Sint:
+        return WGPUTextureFormat_RGBA16Sint;
+    case MTLPixelFormatRGBA16Float:
+        return WGPUTextureFormat_RGBA16Float;
+    case MTLPixelFormatRGBA32Float:
+        return WGPUTextureFormat_RGBA32Float;
+    case MTLPixelFormatRGBA32Uint:
+        return WGPUTextureFormat_RGBA32Uint;
+    case MTLPixelFormatRGBA32Sint:
+        return WGPUTextureFormat_RGBA32Sint;
+    case MTLPixelFormatStencil8:
+        return WGPUTextureFormat_Stencil8;
+    case MTLPixelFormatDepth16Unorm:
+        return WGPUTextureFormat_Depth16Unorm;
+    case MTLPixelFormatDepth32Float:
+        return WGPUTextureFormat_Depth24Plus;
+    case MTLPixelFormatDepth32Float_Stencil8:
+        return WGPUTextureFormat_Depth24PlusStencil8;
+    case MTLPixelFormatETC2_RGB8:
+        return WGPUTextureFormat_ETC2RGB8Unorm;
+    case MTLPixelFormatETC2_RGB8_sRGB:
+        return WGPUTextureFormat_ETC2RGB8UnormSrgb;
+    case MTLPixelFormatETC2_RGB8A1:
+        return WGPUTextureFormat_ETC2RGB8A1Unorm;
+    case MTLPixelFormatETC2_RGB8A1_sRGB:
+        return WGPUTextureFormat_ETC2RGB8A1UnormSrgb;
+    case MTLPixelFormatEAC_RGBA8:
+        return WGPUTextureFormat_ETC2RGBA8Unorm;
+    case MTLPixelFormatEAC_RGBA8_sRGB:
+        return WGPUTextureFormat_ETC2RGBA8UnormSrgb;
+    case MTLPixelFormatEAC_R11Unorm:
+        return WGPUTextureFormat_EACR11Unorm;
+    case MTLPixelFormatEAC_R11Snorm:
+        return WGPUTextureFormat_EACR11Snorm;
+    case MTLPixelFormatEAC_RG11Unorm:
+        return WGPUTextureFormat_EACRG11Unorm;
+    case MTLPixelFormatEAC_RG11Snorm:
+        return WGPUTextureFormat_EACRG11Snorm;
+    case MTLPixelFormatASTC_4x4_LDR:
+        return WGPUTextureFormat_ASTC4x4Unorm;
+    case MTLPixelFormatASTC_4x4_sRGB:
+        return WGPUTextureFormat_ASTC4x4UnormSrgb;
+    case MTLPixelFormatASTC_5x4_LDR:
+        return WGPUTextureFormat_ASTC5x4Unorm;
+    case MTLPixelFormatASTC_5x4_sRGB:
+        return WGPUTextureFormat_ASTC5x4UnormSrgb;
+    case MTLPixelFormatASTC_5x5_LDR:
+        return WGPUTextureFormat_ASTC5x5Unorm;
+    case MTLPixelFormatASTC_5x5_sRGB:
+        return WGPUTextureFormat_ASTC5x5UnormSrgb;
+    case MTLPixelFormatASTC_6x5_LDR:
+        return WGPUTextureFormat_ASTC6x5Unorm;
+    case MTLPixelFormatASTC_6x5_sRGB:
+        return WGPUTextureFormat_ASTC6x5UnormSrgb;
+    case MTLPixelFormatASTC_6x6_LDR:
+        return WGPUTextureFormat_ASTC6x6Unorm;
+    case MTLPixelFormatASTC_6x6_sRGB:
+        return WGPUTextureFormat_ASTC6x6UnormSrgb;
+    case MTLPixelFormatASTC_8x5_LDR:
+        return WGPUTextureFormat_ASTC8x5Unorm;
+    case MTLPixelFormatASTC_8x5_sRGB:
+        return WGPUTextureFormat_ASTC8x5UnormSrgb;
+    case MTLPixelFormatASTC_8x6_LDR:
+        return WGPUTextureFormat_ASTC8x6Unorm;
+    case MTLPixelFormatASTC_8x6_sRGB:
+        return WGPUTextureFormat_ASTC8x6UnormSrgb;
+    case MTLPixelFormatASTC_8x8_LDR:
+        return WGPUTextureFormat_ASTC8x8Unorm;
+    case MTLPixelFormatASTC_8x8_sRGB:
+        return WGPUTextureFormat_ASTC8x8UnormSrgb;
+    case MTLPixelFormatASTC_10x5_LDR:
+        return WGPUTextureFormat_ASTC10x5Unorm;
+    case MTLPixelFormatASTC_10x5_sRGB:
+        return WGPUTextureFormat_ASTC10x5UnormSrgb;
+    case MTLPixelFormatASTC_10x6_LDR:
+        return WGPUTextureFormat_ASTC10x6Unorm;
+    case MTLPixelFormatASTC_10x6_sRGB:
+        return WGPUTextureFormat_ASTC10x6UnormSrgb;
+    case MTLPixelFormatASTC_10x8_LDR:
+        return WGPUTextureFormat_ASTC10x8Unorm;
+    case MTLPixelFormatASTC_10x8_sRGB:
+        return WGPUTextureFormat_ASTC10x8UnormSrgb;
+    case MTLPixelFormatASTC_10x10_LDR:
+        return WGPUTextureFormat_ASTC10x10Unorm;
+    case MTLPixelFormatASTC_10x10_sRGB:
+        return WGPUTextureFormat_ASTC10x10UnormSrgb;
+    case MTLPixelFormatASTC_12x10_LDR:
+        return WGPUTextureFormat_ASTC12x10Unorm;
+    case MTLPixelFormatASTC_12x10_sRGB:
+        return WGPUTextureFormat_ASTC12x10UnormSrgb;
+    case MTLPixelFormatASTC_12x12_LDR:
+        return WGPUTextureFormat_ASTC12x12Unorm;
+    case MTLPixelFormatASTC_12x12_sRGB:
+        return WGPUTextureFormat_ASTC12x12UnormSrgb;
+#if !PLATFORM(WATCHOS)
+    case MTLPixelFormatBC1_RGBA:
+        return WGPUTextureFormat_BC1RGBAUnorm;
+    case MTLPixelFormatBC1_RGBA_sRGB:
+        return WGPUTextureFormat_BC1RGBAUnormSrgb;
+    case MTLPixelFormatBC2_RGBA:
+        return WGPUTextureFormat_BC2RGBAUnorm;
+    case MTLPixelFormatBC2_RGBA_sRGB:
+        return WGPUTextureFormat_BC2RGBAUnormSrgb;
+    case MTLPixelFormatBC3_RGBA:
+        return WGPUTextureFormat_BC3RGBAUnorm;
+    case MTLPixelFormatBC3_RGBA_sRGB:
+        return WGPUTextureFormat_BC3RGBAUnormSrgb;
+    case MTLPixelFormatBC4_RUnorm:
+        return WGPUTextureFormat_BC4RUnorm;
+    case MTLPixelFormatBC4_RSnorm:
+        return WGPUTextureFormat_BC4RSnorm;
+    case MTLPixelFormatBC5_RGUnorm:
+        return WGPUTextureFormat_BC5RGUnorm;
+    case MTLPixelFormatBC5_RGSnorm:
+        return WGPUTextureFormat_BC5RGSnorm;
+    case MTLPixelFormatBC6H_RGBUfloat:
+        return WGPUTextureFormat_BC6HRGBUfloat;
+    case MTLPixelFormatBC6H_RGBFloat:
+        return WGPUTextureFormat_BC6HRGBFloat;
+    case MTLPixelFormatBC7_RGBAUnorm:
+        return WGPUTextureFormat_BC7RGBAUnorm;
+    case MTLPixelFormatBC7_RGBAUnorm_sRGB:
+        return WGPUTextureFormat_BC7RGBAUnormSrgb;
+#endif
+    case MTLPixelFormatInvalid:
+    default:
+        return WGPUTextureFormat_Undefined;
+    }
+}
+
 NSUInteger Texture::bytesPerRow(WGPUTextureFormat format, uint32_t textureWidth, uint32_t sampleCount)
 {
     NSUInteger blockWidth = Texture::texelBlockWidth(format);
@@ -2193,6 +2502,8 @@ Checked<uint32_t> Texture::texelBlockSize(WGPUTextureFormat format) // Bytes
     case WGPUTextureFormat_R8Uint:
     case WGPUTextureFormat_R8Sint:
         return 1;
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
     case WGPUTextureFormat_R16Uint:
     case WGPUTextureFormat_R16Sint:
     case WGPUTextureFormat_R16Float:
@@ -2204,6 +2515,8 @@ Checked<uint32_t> Texture::texelBlockSize(WGPUTextureFormat format) // Bytes
     case WGPUTextureFormat_R32Float:
     case WGPUTextureFormat_R32Uint:
     case WGPUTextureFormat_R32Sint:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
     case WGPUTextureFormat_RG16Uint:
     case WGPUTextureFormat_RG16Sint:
     case WGPUTextureFormat_RG16Float:
@@ -2222,6 +2535,8 @@ Checked<uint32_t> Texture::texelBlockSize(WGPUTextureFormat format) // Bytes
     case WGPUTextureFormat_RG32Float:
     case WGPUTextureFormat_RG32Uint:
     case WGPUTextureFormat_RG32Sint:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
     case WGPUTextureFormat_RGBA16Uint:
     case WGPUTextureFormat_RGBA16Sint:
     case WGPUTextureFormat_RGBA16Float:
@@ -2344,6 +2659,8 @@ std::optional<MTLPixelFormat> Texture::depthOnlyAspectMetalFormat(WGPUTextureFor
     case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_R8Uint:
     case WGPUTextureFormat_R8Sint:
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
     case WGPUTextureFormat_R16Uint:
     case WGPUTextureFormat_R16Sint:
     case WGPUTextureFormat_R16Float:
@@ -2354,6 +2671,8 @@ std::optional<MTLPixelFormat> Texture::depthOnlyAspectMetalFormat(WGPUTextureFor
     case WGPUTextureFormat_R32Float:
     case WGPUTextureFormat_R32Uint:
     case WGPUTextureFormat_R32Sint:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
     case WGPUTextureFormat_RG16Uint:
     case WGPUTextureFormat_RG16Sint:
     case WGPUTextureFormat_RG16Float:
@@ -2371,6 +2690,8 @@ std::optional<MTLPixelFormat> Texture::depthOnlyAspectMetalFormat(WGPUTextureFor
     case WGPUTextureFormat_RG32Float:
     case WGPUTextureFormat_RG32Uint:
     case WGPUTextureFormat_RG32Sint:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
     case WGPUTextureFormat_RGBA16Uint:
     case WGPUTextureFormat_RGBA16Sint:
     case WGPUTextureFormat_RGBA16Float:
@@ -2457,6 +2778,8 @@ std::optional<MTLPixelFormat> Texture::stencilOnlyAspectMetalFormat(WGPUTextureF
     case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_R8Uint:
     case WGPUTextureFormat_R8Sint:
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
     case WGPUTextureFormat_R16Uint:
     case WGPUTextureFormat_R16Sint:
     case WGPUTextureFormat_R16Float:
@@ -2467,6 +2790,8 @@ std::optional<MTLPixelFormat> Texture::stencilOnlyAspectMetalFormat(WGPUTextureF
     case WGPUTextureFormat_R32Float:
     case WGPUTextureFormat_R32Uint:
     case WGPUTextureFormat_R32Sint:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
     case WGPUTextureFormat_RG16Uint:
     case WGPUTextureFormat_RG16Sint:
     case WGPUTextureFormat_RG16Float:
@@ -2484,6 +2809,8 @@ std::optional<MTLPixelFormat> Texture::stencilOnlyAspectMetalFormat(WGPUTextureF
     case WGPUTextureFormat_RG32Float:
     case WGPUTextureFormat_RG32Uint:
     case WGPUTextureFormat_RG32Sint:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
     case WGPUTextureFormat_RGBA16Uint:
     case WGPUTextureFormat_RGBA16Sint:
     case WGPUTextureFormat_RGBA16Float:
@@ -2583,7 +2910,7 @@ static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, bool supportsNonP
 
 Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 {
-    if (descriptor.nextInChain || !isValid())
+    if (!isValid())
         return Texture::createInvalid(*this);
 
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createtexture
@@ -2922,7 +3249,7 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
 {
     auto device = m_device;
 
-    if (inputDescriptor.nextInChain || m_destroyed)
+    if (m_destroyed)
         return TextureView::createInvalid(*this, device.get());
 
     // https://gpuweb.github.io/gpuweb/#dom-gputexture-createview
@@ -2941,6 +3268,11 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
     auto pixelFormat = Texture::pixelFormat(descriptor->format);
     if (pixelFormat == MTLPixelFormatInvalid) {
         device->generateAValidationError("GPUTexture.createView: invalid texture format"_s);
+        return TextureView::createInvalid(*this, device.get());
+    }
+
+    if (inputDescriptor.usage && (~usage() & inputDescriptor.usage)) {
+        device->generateAValidationError([NSString stringWithFormat:@"GPUTexture.createView: when the view's usage(%u) is specified it must be a subset of the Texture's usage(%u)", inputDescriptor.usage, usage()]);
         return TextureView::createInvalid(*this, device.get());
     }
 
@@ -3231,8 +3563,19 @@ ASCIILiteral Texture::formatToString(WGPUTextureFormat format)
         return "astc-12x12-unorm"_s;
     case WGPUTextureFormat_ASTC12x12UnormSrgb:
         return "astc-12x12-unorm-srgb"_s;
+    case WGPUTextureFormat_R16Unorm:
+        return "r16unorm"_s;
+    case WGPUTextureFormat_R16Snorm:
+        return "r16snorm"_s;
+    case WGPUTextureFormat_RG16Unorm:
+        return "rg16unorm"_s;
+    case WGPUTextureFormat_RG16Snorm:
+        return "rg16snorm"_s;
+    case WGPUTextureFormat_RGBA16Unorm:
+        return "rgba16unorm"_s;
+    case WGPUTextureFormat_RGBA16Snorm:
+        return "rgba16snorm"_s;
     case WGPUTextureFormat_Force32:
-    default:
         return "invalid format"_s;
     }
 }
@@ -3299,24 +3642,31 @@ WGPUExtent3D Texture::physicalMiplevelSpecificTextureExtent(uint32_t mipLevel)
 
 WGPUExtent3D Texture::physicalTextureExtent(WGPUTextureDimension dimension, WGPUTextureFormat format, WGPUExtent3D logicalExtent)
 {
-    ASSERT(texelBlockWidth(format));
-    ASSERT(texelBlockHeight(format));
+    auto blockWidth = texelBlockWidth(format);
+    auto blockHeight = texelBlockHeight(format);
+    if (!blockWidth || !blockHeight) {
+        return WGPUExtent3D {
+            .width = 1,
+            .height = 1,
+            .depthOrArrayLayers = 1
+        };
+    }
 
     switch (dimension) {
     case WGPUTextureDimension_1D:
         return {
-            .width = roundUpToMultipleOfNonPowerOfTwo(texelBlockWidth(format), logicalExtent.width),
+            .width = roundUpToMultipleOfNonPowerOfTwo(blockWidth, logicalExtent.width),
             .height = 1,
             .depthOrArrayLayers = logicalExtent.depthOrArrayLayers };
     case WGPUTextureDimension_2D:
         return {
-            .width = roundUpToMultipleOfNonPowerOfTwo(texelBlockWidth(format), logicalExtent.width),
-            .height = roundUpToMultipleOfNonPowerOfTwo(texelBlockHeight(format), logicalExtent.height),
+            .width = roundUpToMultipleOfNonPowerOfTwo(blockWidth, logicalExtent.width),
+            .height = roundUpToMultipleOfNonPowerOfTwo(blockHeight, logicalExtent.height),
             .depthOrArrayLayers = logicalExtent.depthOrArrayLayers };
     case WGPUTextureDimension_3D:
         return {
-            .width = roundUpToMultipleOfNonPowerOfTwo(texelBlockWidth(format), logicalExtent.width),
-            .height = roundUpToMultipleOfNonPowerOfTwo(texelBlockHeight(format), logicalExtent.height),
+            .width = roundUpToMultipleOfNonPowerOfTwo(blockWidth, logicalExtent.width),
+            .height = roundUpToMultipleOfNonPowerOfTwo(blockHeight, logicalExtent.height),
             .depthOrArrayLayers = logicalExtent.depthOrArrayLayers };
     case WGPUTextureDimension_Force32:
         ASSERT_NOT_REACHED();
@@ -3343,13 +3693,13 @@ NSString* Texture::errorValidatingImageCopyTexture(const WGPUImageCopyTexture& i
         return @"imageCopyTexture is not valid";
 
     if (imageCopyTexture.mipLevel >= fromAPI(imageCopyTexture.texture).mipLevelCount())
-        return @"imageCopyTexture mip level is greater than or equal to the mipLevelCount in the texture";
+        return [NSString stringWithFormat:@"imageCopyTexture mip level(%u) is greater than or equal to the mipLevelCount(%u) in the texture", imageCopyTexture.mipLevel, fromAPI(imageCopyTexture.texture).mipLevelCount()];
 
     if (imageCopyTexture.origin.x % blockWidth)
-        return @"imageCopyTexture.origin.x is not a multiple of the texture blockWidth";
+        return [NSString stringWithFormat:@"imageCopyTexture.origin.x(%u) is not a multiple of the texture blockWidth(%u)", imageCopyTexture.origin.x, blockWidth];
 
     if (imageCopyTexture.origin.y % blockHeight)
-        return @"imageCopyTexture.origin.y is not a multiple of the texture blockHeight";
+        return [NSString stringWithFormat:@"imageCopyTexture.origin.y(%u) is not a multiple of the texture blockHeight(%u)", imageCopyTexture.origin.y, blockHeight];
 
     if (Texture::isDepthOrStencilFormat(protectedFromAPI(imageCopyTexture.texture)->format())
         || protectedFromAPI(imageCopyTexture.texture)->sampleCount() > 1) {
@@ -3396,6 +3746,8 @@ bool Texture::isValidDepthStencilCopySource(WGPUTextureFormat format, WGPUTextur
     case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_R8Uint:
     case WGPUTextureFormat_R8Sint:
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
     case WGPUTextureFormat_R16Uint:
     case WGPUTextureFormat_R16Sint:
     case WGPUTextureFormat_R16Float:
@@ -3406,6 +3758,8 @@ bool Texture::isValidDepthStencilCopySource(WGPUTextureFormat format, WGPUTextur
     case WGPUTextureFormat_R32Float:
     case WGPUTextureFormat_R32Uint:
     case WGPUTextureFormat_R32Sint:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
     case WGPUTextureFormat_RG16Uint:
     case WGPUTextureFormat_RG16Sint:
     case WGPUTextureFormat_RG16Float:
@@ -3423,6 +3777,8 @@ bool Texture::isValidDepthStencilCopySource(WGPUTextureFormat format, WGPUTextur
     case WGPUTextureFormat_RG32Float:
     case WGPUTextureFormat_RG32Uint:
     case WGPUTextureFormat_RG32Sint:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
     case WGPUTextureFormat_RGBA16Uint:
     case WGPUTextureFormat_RGBA16Sint:
     case WGPUTextureFormat_RGBA16Float:
@@ -3515,6 +3871,8 @@ bool Texture::isValidDepthStencilCopyDestination(WGPUTextureFormat format, WGPUT
     case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_R8Uint:
     case WGPUTextureFormat_R8Sint:
+    case WGPUTextureFormat_R16Unorm:
+    case WGPUTextureFormat_R16Snorm:
     case WGPUTextureFormat_R16Uint:
     case WGPUTextureFormat_R16Sint:
     case WGPUTextureFormat_R16Float:
@@ -3525,6 +3883,8 @@ bool Texture::isValidDepthStencilCopyDestination(WGPUTextureFormat format, WGPUT
     case WGPUTextureFormat_R32Float:
     case WGPUTextureFormat_R32Uint:
     case WGPUTextureFormat_R32Sint:
+    case WGPUTextureFormat_RG16Unorm:
+    case WGPUTextureFormat_RG16Snorm:
     case WGPUTextureFormat_RG16Uint:
     case WGPUTextureFormat_RG16Sint:
     case WGPUTextureFormat_RG16Float:
@@ -3542,6 +3902,8 @@ bool Texture::isValidDepthStencilCopyDestination(WGPUTextureFormat format, WGPUT
     case WGPUTextureFormat_RG32Float:
     case WGPUTextureFormat_RG32Uint:
     case WGPUTextureFormat_RG32Sint:
+    case WGPUTextureFormat_RGBA16Unorm:
+    case WGPUTextureFormat_RGBA16Snorm:
     case WGPUTextureFormat_RGBA16Uint:
     case WGPUTextureFormat_RGBA16Sint:
     case WGPUTextureFormat_RGBA16Float:
@@ -3718,6 +4080,26 @@ NSString* Texture::errorValidatingLinearTextureData(const WGPUTextureDataLayout&
 
 #undef ERROR_STRING
     return nil;
+}
+
+bool Texture::previouslyCleared() const
+{
+    for (uint32_t m = 0; m < mipLevelCount(); ++m) {
+        for (uint32_t s = 0; s < arrayLayerCount(); ++s) {
+            if (!previouslyCleared(m, s))
+                return false;
+        }
+    }
+
+    return true;
+}
+
+void Texture::setPreviouslyCleared()
+{
+    for (uint32_t m = 0; m < mipLevelCount(); ++m) {
+        for (uint32_t s = 0; s < arrayLayerCount(); ++s)
+            setPreviouslyCleared(m, s);
+    }
 }
 
 bool Texture::previouslyCleared(uint32_t mipLevel, uint32_t slice) const

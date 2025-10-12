@@ -34,7 +34,7 @@
 namespace WTR {
 
 class InjectedBundlePage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(InjectedBundlePage);
 public:
     InjectedBundlePage(WKBundlePageRef);
     ~InjectedBundlePage();
@@ -43,7 +43,7 @@ public:
 
     void notifyDone();
     void forceImmediateCompletion();
-    void dump(bool forceRepaint);
+    void dump();
 
     void resetAfterTest();
 
@@ -67,8 +67,6 @@ private:
     static void willPerformClientRedirectForFrame(WKBundlePageRef, WKBundleFrameRef, WKURLRef url, double delay, double date, const void*);
     static void didSameDocumentNavigationForFrame(WKBundlePageRef, WKBundleFrameRef, WKSameDocumentNavigationType, WKTypeRef*, const void*);
     static void didHandleOnloadEventsForFrame(WKBundlePageRef, WKBundleFrameRef, const void*);
-    static void didDisplayInsecureContentForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void*);
-    static void didRunInsecureContentForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void*);
     static void didInitiateLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef, bool pageLoadIsProvisional, const void*);
     static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef, WKURLResponseRef, const void*);
     static void didReceiveResponseForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLResponseRef, const void*);
@@ -92,8 +90,6 @@ private:
     void didSameDocumentNavigationForFrame(WKBundleFrameRef, WKSameDocumentNavigationType);
     void didFinishDocumentLoadForFrame(WKBundleFrameRef);
     void didHandleOnloadEventsForFrame(WKBundleFrameRef);
-    void didDisplayInsecureContentForFrame(WKBundleFrameRef);
-    void didRunInsecureContentForFrame(WKBundleFrameRef);
     void willInjectUserScriptForFrame();
 
     // Resource Load Client

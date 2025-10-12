@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/CompactPointerTuple.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
@@ -33,7 +34,7 @@ namespace WTF {
 
 template<typename T, typename Type>
 class CompactRefPtrTuple final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CompactRefPtrTuple);
 
     static_assert(::allowCompactPointers<T>());
 public:

@@ -27,7 +27,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "ScrollingStateNode.h"
+#include <WebCore/ScrollingStateNode.h>
 
 namespace WebCore {
 

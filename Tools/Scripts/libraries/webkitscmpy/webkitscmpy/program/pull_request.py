@@ -321,6 +321,8 @@ class PullRequest(Command):
             existing_pr = pr
             if not existing_pr.opened:
                 continue
+            if branch != pr.head:
+                continue
             if user and existing_pr.author == user:
                 break
         return existing_pr

@@ -27,8 +27,8 @@
 
 #if ENABLE(JIT)
 
-#include "BytecodeIndex.h"
-#include "CodeLocation.h"
+#include <JavaScriptCore/BytecodeIndex.h>
+#include <JavaScriptCore/CodeLocation.h>
 #include <wtf/MallocPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>

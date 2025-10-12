@@ -25,49 +25,47 @@
 
 #include "config.h"
 
-#include <WebCore/GridPosition.h>
+#include <WebCore/StyleGridPosition.h>
 
 namespace TestWebKitAPI {
 
 TEST(GridPositionTest, GridPositionLimits)
 {
+    WebCore::Style::GridPosition gridPosition = WebCore::CSS::Keyword::Auto { };
 
-    WebCore::GridPosition gridPosition;
+    gridPosition = WebCore::Style::GridPosition::Explicit { { 999999 } };
+    EXPECT_EQ(gridPosition.explicitPosition(), 999999);
+    gridPosition = WebCore::Style::GridPosition::Explicit { { 1000000 } };
+    EXPECT_EQ(gridPosition.explicitPosition(), 1000000);
+    gridPosition = WebCore::Style::GridPosition::Explicit { { 1000001 } };
+    EXPECT_EQ(gridPosition.explicitPosition(), 1000000);
+    gridPosition = WebCore::Style::GridPosition::Explicit { { INT_MAX } };
+    EXPECT_EQ(gridPosition.explicitPosition(), 1000000);
+    gridPosition = WebCore::Style::GridPosition::Explicit { { -999999 } };
+    EXPECT_EQ(gridPosition.explicitPosition(), -999999);
+    gridPosition = WebCore::Style::GridPosition::Explicit { { -1000000 } };
+    EXPECT_EQ(gridPosition.explicitPosition(), -1000000);
+    gridPosition = WebCore::Style::GridPosition::Explicit { { -1000001 } };
+    EXPECT_EQ(gridPosition.explicitPosition(), -1000000);
+    gridPosition = WebCore::Style::GridPosition::Explicit { { INT_MIN } };
+    EXPECT_EQ(gridPosition.explicitPosition(), -1000000);
 
-    gridPosition.setExplicitPosition(999999, emptyString());
-    EXPECT_EQ(gridPosition.integerPosition(), 999999);
-    gridPosition.setExplicitPosition(1000000, emptyString());
-    EXPECT_EQ(gridPosition.integerPosition(), 1000000);
-    gridPosition.setExplicitPosition(1000001, emptyString());
-    EXPECT_EQ(gridPosition.integerPosition(), 1000000);
-    gridPosition.setExplicitPosition(INT_MAX, emptyString());
-    EXPECT_EQ(gridPosition.integerPosition(), 1000000);
-    gridPosition.setExplicitPosition(-999999, emptyString());
-    EXPECT_EQ(gridPosition.integerPosition(), -999999);
-    gridPosition.setExplicitPosition(-1000000, emptyString());
-    EXPECT_EQ(gridPosition.integerPosition(), -1000000);
-    gridPosition.setExplicitPosition(-1000001, emptyString());
-    EXPECT_EQ(gridPosition.integerPosition(), -1000000);
-    gridPosition.setExplicitPosition(INT_MIN, emptyString());
-    EXPECT_EQ(gridPosition.integerPosition(), -1000000);
-
-    gridPosition.setSpanPosition(999999, emptyString());
+    gridPosition = WebCore::Style::GridPosition::Span { { 999999 } };
     EXPECT_EQ(gridPosition.spanPosition(), 999999);
-    gridPosition.setSpanPosition(1000000, emptyString());
+    gridPosition = WebCore::Style::GridPosition::Span { { 1000000 } };
     EXPECT_EQ(gridPosition.spanPosition(), 1000000);
-    gridPosition.setSpanPosition(1000001, emptyString());
+    gridPosition = WebCore::Style::GridPosition::Span { { 1000001 } };
     EXPECT_EQ(gridPosition.spanPosition(), 1000000);
-    gridPosition.setSpanPosition(INT_MAX, emptyString());
+    gridPosition = WebCore::Style::GridPosition::Span { { INT_MAX } };
     EXPECT_EQ(gridPosition.spanPosition(), 1000000);
-    gridPosition.setSpanPosition(-999999, emptyString());
+    gridPosition = WebCore::Style::GridPosition::Span { { -999999 } };
     EXPECT_EQ(gridPosition.spanPosition(), -999999);
-    gridPosition.setSpanPosition(-1000000, emptyString());
+    gridPosition = WebCore::Style::GridPosition::Span { { -1000000 } };
     EXPECT_EQ(gridPosition.spanPosition(), -1000000);
-    gridPosition.setSpanPosition(-1000001, emptyString());
+    gridPosition = WebCore::Style::GridPosition::Span { { -1000001 } };
     EXPECT_EQ(gridPosition.spanPosition(), -1000000);
-    gridPosition.setSpanPosition(INT_MIN, emptyString());
+    gridPosition = WebCore::Style::GridPosition::Span { { INT_MIN } };
     EXPECT_EQ(gridPosition.spanPosition(), -1000000);
-
 }
 
 } // namespace TestWebKitAPI

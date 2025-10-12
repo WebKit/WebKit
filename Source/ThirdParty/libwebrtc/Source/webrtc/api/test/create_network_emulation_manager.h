@@ -22,7 +22,7 @@ namespace webrtc {
 std::unique_ptr<NetworkEmulationManager> CreateNetworkEmulationManager(
     NetworkEmulationManagerConfig config = NetworkEmulationManagerConfig());
 
-[[deprecated("Use version with NetworkEmulationManagerConfig)")]]
+[[deprecated("Use version with NetworkEmulationManagerConfig)")]]  //
 std::unique_ptr<NetworkEmulationManager>
 CreateNetworkEmulationManager(
     TimeMode time_mode,

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "RegistrableDomain.h"
+#include <WebCore/RegistrableDomain.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore::PCM {

@@ -11,7 +11,7 @@
 #ifndef MEDIA_BASE_MEDIA_CONFIG_H_
 #define MEDIA_BASE_MEDIA_CONFIG_H_
 
-namespace cricket {
+namespace webrtc {
 
 // Construction-time settings, passed on when creating
 // MediaChannels.
@@ -25,10 +25,10 @@ struct MediaConfig {
   // If true, RTCStats timestamps are sourced from the monotonically increasing
   // environment Clock, where the epoch is unspecified (i.e. up to the Clock
   // implementation). If false, RTCStats timestamps are either sourced from
-  // system clock via rtc::TimeUTCMicros() which is relative to 1970 but not
+  // system clock via TimeUTCMicros() which is relative to 1970 but not
   // necessarily monotonically increasing, or from a monotonic clock that is
-  // set to rtc::TimeUTCMicros() at first call, and then procceeds to increase
-  // monotonically.
+  // set to TimeUTCMicros() at first call, and then procceeds to
+  // increase monotonically.
   // TODO: bugs.webrtc.org/370535296 - Change default value to true and delete
   // this flag once downstream projects have migrated.
   bool stats_timestamp_with_environment_clock = false;
@@ -104,6 +104,7 @@ struct MediaConfig {
   bool operator!=(const MediaConfig& o) const { return !(*this == o); }
 };
 
-}  // namespace cricket
+}  //  namespace webrtc
+
 
 #endif  // MEDIA_BASE_MEDIA_CONFIG_H_

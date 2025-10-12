@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All Rights Reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,10 +27,12 @@
 
 #pragma once
 
-#include "CrossOriginEmbedderPolicy.h"
-#include "CrossOriginOpenerPolicy.h"
-#include "ReferrerPolicy.h"
+#include <WebCore/CrossOriginEmbedderPolicy.h>
+#include <WebCore/CrossOriginOpenerPolicy.h>
+#include <WebCore/IPAddressSpace.h>
+#include <WebCore/ReferrerPolicy.h>
 #include <memory>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
@@ -41,6 +43,7 @@ class SecurityOrigin;
 class SecurityOriginPolicy;
 class ContentSecurityPolicy;
 struct CrossOriginOpenerPolicy;
+struct IntegrityPolicy;
 struct PolicyContainer;
 enum class ReferrerPolicy : uint8_t;
 
@@ -83,8 +86,17 @@ public:
     virtual const CrossOriginOpenerPolicy& crossOriginOpenerPolicy() const { return m_crossOriginOpenerPolicy; }
     void setCrossOriginOpenerPolicy(const CrossOriginOpenerPolicy& crossOriginOpenerPolicy) { m_crossOriginOpenerPolicy = crossOriginOpenerPolicy; }
 
+    const IntegrityPolicy* integrityPolicy() const;
+    void setIntegrityPolicy(std::unique_ptr<IntegrityPolicy>&&);
+
+    const IntegrityPolicy* integrityPolicyReportOnly() const;
+    void setIntegrityPolicyReportOnly(std::unique_ptr<IntegrityPolicy>&&);
+
     virtual ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
     void setReferrerPolicy(ReferrerPolicy);
+
+    IPAddressSpace ipAddressSpace() const { return m_ipAddressSpace; }
+    void setIPAddressSpace(IPAddressSpace ipAddressSpace) { m_ipAddressSpace = ipAddressSpace; }
 
     WEBCORE_EXPORT PolicyContainer policyContainer() const;
     virtual void inheritPolicyContainerFrom(const PolicyContainer&);
@@ -95,24 +107,14 @@ public:
     static SandboxFlags parseSandboxPolicy(StringView policy, String& invalidTokensErrorMessage);
     static bool isSupportedSandboxPolicy(StringView);
 
-    enum MixedContentType : uint8_t {
-        Inactive = 1 << 0,
-        Active = 1 << 1,
-    };
-
     bool usedLegacyTLS() const { return m_usedLegacyTLS; }
     void setUsedLegacyTLS(bool used) { m_usedLegacyTLS = used; }
-    const OptionSet<MixedContentType>& foundMixedContent() const { return m_mixedContentTypes; }
     bool wasPrivateRelayed() const { return m_wasPrivateRelayed; }
     void setWasPrivateRelayed(bool privateRelayed) { m_wasPrivateRelayed = privateRelayed; }
-    void setFoundMixedContent(MixedContentType type) { m_mixedContentTypes.add(type); }
     bool geolocationAccessed() const { return m_geolocationAccessed; }
     void setGeolocationAccessed() { m_geolocationAccessed = true; }
     bool secureCookiesAccessed() const { return m_secureCookiesAccessed; }
     void setSecureCookiesAccessed() { m_secureCookiesAccessed = true; }
-
-    bool isStrictMixedContentMode() const { return m_isStrictMixedContentMode; }
-    void setStrictMixedContentMode(bool strictMixedContentMode) { m_isStrictMixedContentMode = strictMixedContentMode; }
 
     // This method implements the "Is the environment settings object settings a secure context?" algorithm from
     // the Secure Context spec: https://w3c.github.io/webappsec-secure-contexts/#settings-object (Editor's Draft, 17 November 2016)
@@ -139,14 +141,15 @@ private:
     std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
     CrossOriginEmbedderPolicy m_crossOriginEmbedderPolicy;
     CrossOriginOpenerPolicy m_crossOriginOpenerPolicy;
+    std::unique_ptr<IntegrityPolicy> m_integrityPolicy;
+    std::unique_ptr<IntegrityPolicy> m_integrityPolicyReportOnly;
     SandboxFlags m_creationSandboxFlags;
     SandboxFlags m_sandboxFlags;
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::Default };
-    OptionSet<MixedContentType> m_mixedContentTypes;
+    IPAddressSpace m_ipAddressSpace { IPAddressSpace::Public };
     bool m_haveInitializedSecurityOrigin { false };
     bool m_geolocationAccessed { false };
     bool m_secureCookiesAccessed { false };
-    bool m_isStrictMixedContentMode { false };
     bool m_usedLegacyTLS { false };
     bool m_wasPrivateRelayed { false };
     bool m_hasEmptySecurityOriginPolicy { false };

@@ -21,10 +21,11 @@
 
 #pragma once
 
-#include "CachedResourceHandle.h"
-#include "CachedStyleSheetClient.h"
-#include "MediaQuery.h"
-#include "StyleRule.h"
+#include <WebCore/CachedCSSStyleSheet.h>
+#include <WebCore/CachedResourceHandle.h>
+#include <WebCore/CachedStyleSheetClient.h>
+#include <WebCore/MediaQuery.h>
+#include <WebCore/StyleRule.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -34,7 +35,7 @@ class StyleSheetContents;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleImport);
 class StyleRuleImport final : public StyleRuleBase {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleImport);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleImport, StyleRuleImport);
 public:
     struct SupportsCondition {
         String text;

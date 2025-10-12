@@ -1,4 +1,4 @@
-//@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1")
+//@ requireOptions("--useBBQJIT=1")
 //@ skip
 // Failed:
 //  Exception: CompileError: WebAssembly.Module doesn't parse at byte 10: invalid opcode 18, in function at index 1 (evaluating 'new WebAssembly.Module(builder.toBuffer())')

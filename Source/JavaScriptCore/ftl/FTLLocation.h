@@ -27,10 +27,10 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "DFGCommon.h"
-#include "FPRInfo.h"
-#include "GPRInfo.h"
-#include "Reg.h"
+#include <JavaScriptCore/DFGCommon.h>
+#include <JavaScriptCore/FPRInfo.h>
+#include <JavaScriptCore/GPRInfo.h>
+#include <JavaScriptCore/Reg.h>
 #include <wtf/HashMap.h>
 
 namespace JSC {

@@ -29,6 +29,8 @@
 #include "config.h"
 #include "LegacyRenderSVGResourceFilterPrimitive.h"
 
+#include "RenderObjectDocument.h"
+#include "RenderStyleInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFEDiffuseLightingElement.h"
 #include "SVGFEDropShadowElement.h"
@@ -36,7 +38,6 @@
 #include "SVGFESpecularLightingElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
-#include "SVGRenderStyle.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -60,14 +61,14 @@ void LegacyRenderSVGResourceFilterPrimitive::styleDidChange(StyleDifference diff
     if (diff == StyleDifference::Equal || !oldStyle)
         return;
 
-    Ref newStyle = style().svgStyle();
+    auto& newStyle = style();
     if (is<SVGFEFloodElement>(filterPrimitiveElement()) || is<SVGFEDropShadowElement>(filterPrimitiveElement())) {
-        if (newStyle->floodColor() != oldStyle->svgStyle().floodColor())
+        if (newStyle.floodColor() != oldStyle->floodColor())
             filterPrimitiveElement().primitiveAttributeChanged(SVGNames::flood_colorAttr);
-        if (newStyle->floodOpacity() != oldStyle->svgStyle().floodOpacity())
+        if (newStyle.floodOpacity() != oldStyle->floodOpacity())
             filterPrimitiveElement().primitiveAttributeChanged(SVGNames::flood_opacityAttr);
     } else if (is<SVGFEDiffuseLightingElement>(filterPrimitiveElement()) || is<SVGFESpecularLightingElement>(filterPrimitiveElement())) {
-        if (newStyle->lightingColor() != oldStyle->svgStyle().lightingColor())
+        if (newStyle.lightingColor() != oldStyle->lightingColor())
             filterPrimitiveElement().primitiveAttributeChanged(SVGNames::lighting_colorAttr);
     }
 }

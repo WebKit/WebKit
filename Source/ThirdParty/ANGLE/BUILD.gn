@@ -125,8 +125,8 @@ if (angle_build_all) {
   }
 }
 
-if (build_angle_end2end_tests_aosp) {
-  group("angle_end2end_tests_aosp") {
+if (build_angle_end2end_tests_library) {
+  group("angle_end2end_tests_library") {
     testonly = true
     deps = [ "src/tests:angle_end2end_tests" ]
   }
@@ -318,6 +318,13 @@ config("constructor_and_destructor_warnings") {
       "-Wexit-time-destructors",
       "-Wglobal-constructors",
     ]
+  }
+}
+
+config("no_thread_safety_warnings") {
+  if (is_clang) {
+    cflags_cc = [ "-Wno-thread-safety" ]
+    cflags_objcc = [ "-Wno-thread-safety" ]
   }
 }
 
@@ -579,12 +586,20 @@ angle_common_lib("angle_common_shader_state") {
 
 angle_source_set("angle_capture_common") {
   sources = [
+    "src/common/frame_capture_binary_data.cpp",
+    "src/common/frame_capture_binary_data.h",
     "src/common/frame_capture_utils.cpp",
     "src/common/frame_capture_utils.h",
     "src/common/frame_capture_utils_autogen.cpp",
     "src/common/frame_capture_utils_autogen.h",
   ]
-  deps = [ ":angle_common" ]
+
+  # Required for 32-bit platform large file I/O
+  defines = [ "_FILE_OFFSET_BITS=64" ]
+  deps = [
+    ":angle_common",
+    ":angle_compression",
+  ]
   public_deps = [ ":angle_gl_enum_utils" ]
 }
 
@@ -685,7 +700,7 @@ angle_static_library("angle_gpu_info_util") {
 
     if (angle_use_x11 && angle_has_build) {
       sources += libangle_gpu_info_util_x11_sources
-      deps += [ "src/third_party/libXNVCtrl:libXNVCtrl" ]
+      deps += [ "src/third_party/libXNVCtrl" ]
       defines += [ "GPU_INFO_USE_X11" ]
       libs += [
         "X11",
@@ -1121,11 +1136,6 @@ angle_source_set("libANGLE_no_vulkan") {
     public_deps += [ "src/libANGLE/renderer/cl:angle_cl_backend" ]
   }
 
-  # Enable extra Chromium style warnings for libANGLE.
-  if (is_clang && angle_has_build && !is_nacl) {
-    suppressed_configs -= [ "//build/config/clang:find_bad_constructs" ]
-  }
-
   if (is_apple) {
     sources += libangle_mac_sources
   }
@@ -1136,6 +1146,9 @@ angle_source_set("libANGLE_no_vulkan") {
 
   if (is_debug) {
     defines += [ "ANGLE_GENERATE_SHADER_DEBUG_INFO" ]
+  }
+  if (build_with_chromium) {
+    defines += [ "ANGLE_ALWAYS_REPORT_VALIDATION_ERRORS" ]
   }
 
   configs += [ ":debug_annotations_config" ]
@@ -1157,6 +1170,7 @@ angle_source_set("angle_frame_capture_mock") {
   public_deps = [ ":libANGLE_headers" ]
   public_configs = [ ":angle_frame_capture_disabled" ]
   sources = [
+    "src/common/frame_capture_binary_data.h",
     "src/common/frame_capture_utils.h",
     "src/common/frame_capture_utils_autogen.h",
     "src/common/gl_enum_utils_autogen.h",
@@ -1607,7 +1621,8 @@ angle_executable("angle_shader_translator") {
   }
 }
 
-if (angle_standalone || build_with_chromium || build_angle_end2end_tests_aosp) {
+if (angle_standalone || build_with_chromium ||
+    build_angle_end2end_tests_library) {
   config("angle_feature_support_config") {
     include_dirs = [
       "include",

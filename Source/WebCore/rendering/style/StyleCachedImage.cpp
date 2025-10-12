@@ -257,13 +257,13 @@ bool StyleCachedImage::imageHasRelativeHeight() const
     return m_cachedImage->imageHasRelativeHeight();
 }
 
-void StyleCachedImage::computeIntrinsicDimensions(const RenderElement* renderer, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
+void StyleCachedImage::computeIntrinsicDimensions(const RenderElement* renderer, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
 {
     // In case of an SVG resource, we should return the container size.
     if (isRenderSVGResource(renderer)) {
         FloatSize size = floorSizeToDevicePixels(LayoutSize(m_containerSize), renderer ? renderer->document().deviceScaleFactor() : 1);
-        intrinsicWidth = Length(size.width(), LengthType::Fixed);
-        intrinsicHeight = Length(size.height(), LengthType::Fixed);
+        intrinsicWidth = size.width();
+        intrinsicHeight = size.height();
         intrinsicRatio = size;
         return;
     }
@@ -320,7 +320,7 @@ bool StyleCachedImage::hasImage() const
     return m_cachedImage->hasImage();
 }
 
-RefPtr<Image> StyleCachedImage::image(const RenderElement* renderer, const FloatSize&, bool) const
+RefPtr<Image> StyleCachedImage::image(const RenderElement* renderer, const FloatSize&, const GraphicsContext&, bool) const
 {
     ASSERT(!m_isPending);
 

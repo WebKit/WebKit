@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ParserError.h"
+#include <JavaScriptCore/ParserError.h>
 
 namespace JSC {
 

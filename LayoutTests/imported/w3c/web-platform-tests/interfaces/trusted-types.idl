@@ -1,7 +1,7 @@
 // GENERATED CONTENT - DO NOT EDIT
 // Content was automatically extracted by Reffy into webref
 // (https://github.com/w3c/webref)
-// Source: Trusted Types (https://w3c.github.io/webappsec-trusted-types/dist/spec/)
+// Source: Trusted Types (https://w3c.github.io/trusted-types/dist/spec/)
 
 [Exposed=(Window,Worker)]
 interface TrustedHTML {
@@ -32,12 +32,12 @@ interface TrustedScriptURL {
     DOMString? getAttributeType(
         DOMString tagName,
         DOMString attribute,
-        optional DOMString elementNs = "",
-        optional DOMString attrNs = "");
+        optional DOMString? elementNs = "",
+        optional DOMString? attrNs = "");
     DOMString? getPropertyType(
         DOMString tagName,
         DOMString property,
-        optional DOMString elementNs = "");
+        optional DOMString? elementNs = "");
     readonly attribute TrustedTypePolicy? defaultPolicy;
 };
 
@@ -50,17 +50,14 @@ interface TrustedTypePolicy {
 };
 
 dictionary TrustedTypePolicyOptions {
-   CreateHTMLCallback? createHTML;
-   CreateScriptCallback? createScript;
-   CreateScriptURLCallback? createScriptURL;
+   CreateHTMLCallback createHTML;
+   CreateScriptCallback createScript;
+   CreateScriptURLCallback createScriptURL;
 };
-callback CreateHTMLCallback = DOMString (DOMString input, any... arguments);
-callback CreateScriptCallback = DOMString (DOMString input, any... arguments);
-callback CreateScriptURLCallback = USVString (DOMString input, any... arguments);
+callback CreateHTMLCallback = DOMString? (DOMString input, any... arguments);
+callback CreateScriptCallback = DOMString? (DOMString input, any... arguments);
+callback CreateScriptURLCallback = USVString? (DOMString input, any... arguments);
 
-typedef [StringContext=TrustedHTML] DOMString HTMLString;
-typedef [StringContext=TrustedScript] DOMString ScriptString;
-typedef [StringContext=TrustedScriptURL] USVString ScriptURLString;
 typedef (TrustedHTML or TrustedScript or TrustedScriptURL) TrustedType;
 
 partial interface mixin WindowOrWorkerGlobalScope {

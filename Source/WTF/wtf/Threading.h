@@ -114,6 +114,17 @@ public:
     class ClientData : public ThreadSafeRefCounted<ClientData> {
     public:
         virtual ~ClientData() = default;
+
+        enum class Type : uint8_t {
+            WebCoreThreadGlobalData
+        };
+        Type type() const { return Type::WebCoreThreadGlobalData; }
+
+    protected:
+        explicit ClientData(Type type)
+        {
+            ASSERT_UNUSED(type, type == Type::WebCoreThreadGlobalData);
+        }
     };
 
     WTF_EXPORT_PRIVATE ~Thread();
@@ -144,7 +155,7 @@ public:
     static Thread& currentSingleton();
 
     // Set of all WTF::Thread created threads.
-    WTF_EXPORT_PRIVATE static UncheckedKeyHashSet<Thread*>& allThreads() WTF_REQUIRES_LOCK(allThreadsLock());
+    WTF_EXPORT_PRIVATE static HashSet<Thread*>& allThreads() WTF_REQUIRES_LOCK(allThreadsLock());
     WTF_EXPORT_PRIVATE static Lock& allThreadsLock() WTF_RETURNS_LOCK(s_allThreadsLock);
 
     WTF_EXPORT_PRIVATE unsigned numberOfThreadGroups();
@@ -210,6 +221,7 @@ public:
     WTF_EXPORT_PRIVATE static void setCurrentThreadIsUserInitiated(int relativePriority = 0);
     WTF_EXPORT_PRIVATE static QOS currentThreadQOS();
     WTF_EXPORT_PRIVATE static bool currentThreadIsRealtime();
+    bool isRealtime() const { return m_isRealtime; }
 
 #if HAVE(QOS_CLASSES)
     WTF_EXPORT_PRIVATE static void setGlobalMaxQOSClass(qos_class_t);

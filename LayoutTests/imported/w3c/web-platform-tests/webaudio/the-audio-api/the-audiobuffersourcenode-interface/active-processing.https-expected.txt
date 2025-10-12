@@ -1,16 +1,4 @@
 
-PASS # AUDIT TASK RUNNER STARTED.
-PASS Executing "Setup graph"
-PASS Executing "verify count change"
-PASS Audit report
-PASS > [Setup graph]
-PASS   AudioWorklet and graph construction resolved correctly.
-PASS < [Setup graph] All assertions passed. (total 1 assertions)
-PASS > [verify count change]
-PASS   Number of channels changed is true.
-PASS   Index where input channel count changed is less than or equal to 1280.
-PASS   Number of channels in input[0:255] contains only the constant 7.
-PASS   Number of channels in input[256:] contains only the constant 0.
-PASS < [verify count change] All assertions passed. (total 4 assertions)
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
+PASS Setup graph with AudioWorklet and AudioBufferSourceNode
+PASS Verify input channel count change after AudioBufferSourceNode stops
 

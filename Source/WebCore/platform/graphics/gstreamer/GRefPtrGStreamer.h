@@ -20,11 +20,9 @@
 #pragma once
 
 #if USE(GSTREAMER)
-
-#include <wtf/glib/GRefPtr.h>
-
 #include <gst/gst.h>
 #include <gst/pbutils/encoding-profile.h>
+#include <wtf/glib/GRefPtr.h>
 
 typedef struct _WebKitVideoSink WebKitVideoSink;
 struct WebKitWebSrc;
@@ -49,209 +47,82 @@ typedef struct _GstRTPHeaderExtension GstRTPHeaderExtension;
 typedef struct _GstWebRTCICE GstWebRTCICE;
 #endif
 
-#if USE(GSTREAMER_TRANSCODER)
-typedef struct _GstTranscoder GstTranscoder;
-typedef struct _GstTranscoderSignalAdapter GstTranscoderSignalAdapter;
-#endif
-
 namespace WTF {
 
-template<> GRefPtr<GstPlugin> adoptGRef(GstPlugin* ptr);
-template<> GstPlugin* refGPtr<GstPlugin>(GstPlugin* ptr);
-template<> void derefGPtr<GstPlugin>(GstPlugin* ptr);
+WTF_DEFINE_GREF_TRAITS_INLINE(GstMiniObject, gst_mini_object_ref, gst_mini_object_unref)
 
-template<> GRefPtr<GstMiniObject> adoptGRef(GstMiniObject* ptr);
-template<> GstMiniObject* refGPtr<GstMiniObject>(GstMiniObject* ptr);
-template<> void derefGPtr<GstMiniObject>(GstMiniObject* ptr);
+WTF_DEFINE_GREF_TRAITS_INLINE(GstPlugin, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstElement, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstBaseSink, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstPad, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstPadTemplate, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstTask, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstBus, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstElementFactory, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstBufferPool, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(WebKitVideoSink, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(WebKitWebSrc, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
 
-template<> GRefPtr<GstObject> adoptGRef(GstObject* ptr);
-template<> GstObject* refGPtr<GstObject>(GstObject* ptr);
-template<> void derefGPtr<GstObject>(GstObject* ptr);
+WTF_DEFINE_GREF_TRAITS_INLINE(GstObject, gst_object_ref, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstStream, gst_object_ref, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstStreamCollection, gst_object_ref, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstClock, gst_object_ref, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstDeviceMonitor, gst_object_ref, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstDeviceProvider, gst_object_ref, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstDevice, gst_object_ref, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstTracer, gst_object_ref, gst_object_unref, g_object_is_floating)
 
-template<> GRefPtr<GstElement> adoptGRef(GstElement* ptr);
-template<> GstElement* refGPtr<GstElement>(GstElement* ptr);
-template<> void derefGPtr<GstElement>(GstElement* ptr);
+WTF_DEFINE_GREF_TRAITS_INLINE(GstCaps, gst_caps_ref, gst_caps_unref)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstContext, gst_context_ref, gst_context_unref)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstBuffer, gst_buffer_ref, gst_buffer_unref)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstBufferList, gst_buffer_list_ref, gst_buffer_list_unref)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstMemory, gst_memory_ref, gst_memory_unref)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstSample, gst_sample_ref, gst_sample_unref)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstTagList, gst_tag_list_ref, gst_tag_list_unref)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstEvent, gst_event_ref, gst_event_unref)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstMessage, gst_message_ref, gst_message_unref)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstQuery, gst_query_ref, gst_query_unref)
 
-template<> GRefPtr<GstBaseSink> adoptGRef(GstBaseSink* ptr);
-template<> GstBaseSink* refGPtr<GstBaseSink>(GstBaseSink* ptr);
-template<> void derefGPtr<GstBaseSink>(GstBaseSink* ptr);
-
-template<> GRefPtr<GstPad> adoptGRef(GstPad* ptr);
-template<> GstPad* refGPtr<GstPad>(GstPad* ptr);
-template<> void derefGPtr<GstPad>(GstPad* ptr);
-
-template<> GRefPtr<GstPadTemplate> adoptGRef(GstPadTemplate* ptr);
-template<> GstPadTemplate* refGPtr<GstPadTemplate>(GstPadTemplate* ptr);
-template<> void derefGPtr<GstPadTemplate>(GstPadTemplate* ptr);
-
-template<> GRefPtr<GstCaps> adoptGRef(GstCaps* ptr);
-template<> GstCaps* refGPtr<GstCaps>(GstCaps* ptr);
-template<> void derefGPtr<GstCaps>(GstCaps* ptr);
-
-template<> GRefPtr<GstContext> adoptGRef(GstContext* ptr);
-template<> GstContext* refGPtr<GstContext>(GstContext* ptr);
-template<> void derefGPtr<GstContext>(GstContext* ptr);
-
-template<> GRefPtr<GstTask> adoptGRef(GstTask* ptr);
-template<> GstTask* refGPtr<GstTask>(GstTask* ptr);
-template<> void derefGPtr<GstTask>(GstTask* ptr);
-
-template<> GRefPtr<GstBus> adoptGRef(GstBus* ptr);
-template<> GstBus* refGPtr<GstBus>(GstBus* ptr);
-template<> void derefGPtr<GstBus>(GstBus* ptr);
-
-template<> GRefPtr<GstElementFactory> adoptGRef(GstElementFactory* ptr);
-template<> GstElementFactory* refGPtr<GstElementFactory>(GstElementFactory* ptr);
-template<> void derefGPtr<GstElementFactory>(GstElementFactory* ptr);
-
-template<> GRefPtr<GstBuffer> adoptGRef(GstBuffer* ptr);
-template<> GstBuffer* refGPtr<GstBuffer>(GstBuffer* ptr);
-template<> WEBCORE_EXPORT void derefGPtr<GstBuffer>(GstBuffer* ptr);
-
-template<> GRefPtr<GstBufferList> adoptGRef(GstBufferList*);
-template<> GstBufferList* refGPtr<GstBufferList>(GstBufferList*);
-template<> void derefGPtr<GstBufferList>(GstBufferList*);
-
-template<> GRefPtr<GstBufferPool> adoptGRef(GstBufferPool*);
-template<> GstBufferPool* refGPtr<GstBufferPool>(GstBufferPool*);
-template<> void derefGPtr<GstBufferPool>(GstBufferPool*);
-
-template<> GRefPtr<GstMemory> adoptGRef(GstMemory*);
-template<> GstMemory* refGPtr<GstMemory>(GstMemory*);
-template<> void derefGPtr<GstMemory>(GstMemory*);
-
-template<> GRefPtr<GstSample> adoptGRef(GstSample* ptr);
-template<> GstSample* refGPtr<GstSample>(GstSample* ptr);
-template<> void derefGPtr<GstSample>(GstSample* ptr);
-
-template<> GRefPtr<GstTagList> adoptGRef(GstTagList* ptr);
-template<> GstTagList* refGPtr<GstTagList>(GstTagList* ptr);
-template<> void derefGPtr<GstTagList>(GstTagList* ptr);
-
-template<> GRefPtr<GstEvent> adoptGRef(GstEvent* ptr);
-template<> GstEvent* refGPtr<GstEvent>(GstEvent* ptr);
-template<> void derefGPtr<GstEvent>(GstEvent* ptr);
-
-template<> GRefPtr<GstToc> adoptGRef(GstToc* ptr);
-template<> GstToc* refGPtr<GstToc>(GstToc* ptr);
-template<> void derefGPtr<GstToc>(GstToc* ptr);
-
-template<> GRefPtr<GstMessage> adoptGRef(GstMessage*);
-template<> GstMessage* refGPtr<GstMessage>(GstMessage*);
-template<> void derefGPtr<GstMessage>(GstMessage*);
-
-template<> GRefPtr<GstQuery> adoptGRef(GstQuery* ptr);
-template<> GstQuery* refGPtr<GstQuery>(GstQuery* ptr);
-template<> void derefGPtr<GstQuery>(GstQuery* ptr);
-
-template<> GRefPtr<WebKitVideoSink> adoptGRef(WebKitVideoSink* ptr);
-template<> WebKitVideoSink* refGPtr<WebKitVideoSink>(WebKitVideoSink* ptr);
-template<> void derefGPtr<WebKitVideoSink>(WebKitVideoSink* ptr);
-
-template<> GRefPtr<WebKitWebSrc> adoptGRef(WebKitWebSrc* ptr);
-GRefPtr<WebKitWebSrc> ensureGRef(WebKitWebSrc* ptr);
-template<> WebKitWebSrc* refGPtr<WebKitWebSrc>(WebKitWebSrc* ptr);
-template<> void derefGPtr<WebKitWebSrc>(WebKitWebSrc* ptr);
-
-template<> GRefPtr<GstStream> adoptGRef(GstStream*);
-template<> GstStream* refGPtr<GstStream>(GstStream*);
-template<> void derefGPtr<GstStream>(GstStream*);
-
-template<> GRefPtr<GstStreamCollection> adoptGRef(GstStreamCollection*);
-template<> GstStreamCollection* refGPtr<GstStreamCollection>(GstStreamCollection*);
-template<> void derefGPtr<GstStreamCollection>(GstStreamCollection*);
-
-template<> GRefPtr<GstClock> adoptGRef(GstClock*);
-template<> GstClock* refGPtr<GstClock>(GstClock*);
-template<> void derefGPtr<GstClock>(GstClock*);
-
-template<> GRefPtr<GstDeviceMonitor> adoptGRef(GstDeviceMonitor*);
-template<> GstDeviceMonitor* refGPtr<GstDeviceMonitor>(GstDeviceMonitor*);
-template<> void derefGPtr<GstDeviceMonitor>(GstDeviceMonitor*);
-
-template<> GRefPtr<GstDeviceProvider> adoptGRef(GstDeviceProvider*);
-template<> GstDeviceProvider* refGPtr<GstDeviceProvider>(GstDeviceProvider*);
-template<> void derefGPtr<GstDeviceProvider>(GstDeviceProvider*);
-
-template<> GRefPtr<GstDevice> adoptGRef(GstDevice*);
-template<> GstDevice* refGPtr<GstDevice>(GstDevice*);
-template<> void derefGPtr<GstDevice>(GstDevice*);
-
-template<> GRefPtr<GstTracer> adoptGRef(GstTracer*);
-template<> GstTracer* refGPtr<GstTracer>(GstTracer*);
-template<> void derefGPtr<GstTracer>(GstTracer*);
+WTF_DECLARE_GREF_TRAITS(GstEncodingProfile)
 
 #if USE(GSTREAMER_GL)
-template<> GRefPtr<GstGLDisplay> adoptGRef(GstGLDisplay* ptr);
-template<> GstGLDisplay* refGPtr<GstGLDisplay>(GstGLDisplay* ptr);
-template<> void derefGPtr<GstGLDisplay>(GstGLDisplay* ptr);
+WTF_DEFINE_GREF_TRAITS_INLINE(GstGLDisplay, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstGLContext, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstGLColorConvert, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
 
-template<> GRefPtr<GstGLContext> adoptGRef(GstGLContext* ptr);
-template<> GstGLContext* refGPtr<GstGLContext>(GstGLContext* ptr);
-template<> void derefGPtr<GstGLContext>(GstGLContext* ptr);
-
-template<> GRefPtr<GstEGLImage> adoptGRef(GstEGLImage* ptr);
-template<> GstEGLImage* refGPtr<GstEGLImage>(GstEGLImage* ptr);
-template<> void derefGPtr<GstEGLImage>(GstEGLImage* ptr);
-
-template<> GRefPtr<GstGLColorConvert> adoptGRef(GstGLColorConvert* ptr);
-template<> GstGLColorConvert* refGPtr<GstGLColorConvert>(GstGLColorConvert* ptr);
-template<> void derefGPtr<GstGLColorConvert>(GstGLColorConvert* ptr);
-
+WTF_DECLARE_GREF_TRAITS(GstEGLImage)
 #endif
-
-template<> GRefPtr<GstEncodingProfile> adoptGRef(GstEncodingProfile*);
-template<> GstEncodingProfile* refGPtr<GstEncodingProfile>(GstEncodingProfile*);
-template<> void derefGPtr<GstEncodingProfile>(GstEncodingProfile*);
 
 #if USE(GSTREAMER_WEBRTC)
-template <> GRefPtr<GstWebRTCRTPReceiver> adoptGRef(GstWebRTCRTPReceiver*);
-template <> GstWebRTCRTPReceiver* refGPtr<GstWebRTCRTPReceiver>(GstWebRTCRTPReceiver*);
-template <> void derefGPtr<GstWebRTCRTPReceiver>(GstWebRTCRTPReceiver*);
+WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCRTPReceiver, gst_object_ref, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCRTPSender, gst_object_ref, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCRTPTransceiver, gst_object_ref, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCDTLSTransport, gst_object_ref, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCICETransport, gst_object_ref, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstRTPHeaderExtension, gst_object_ref, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCICE, gst_object_ref, gst_object_unref, g_object_is_floating)
 
-template <> GRefPtr<GstWebRTCRTPSender> adoptGRef(GstWebRTCRTPSender*);
-template <> GstWebRTCRTPSender* refGPtr<GstWebRTCRTPSender>(GstWebRTCRTPSender*);
-template <> void derefGPtr<GstWebRTCRTPSender>(GstWebRTCRTPSender*);
-
-template <> GRefPtr<GstWebRTCRTPTransceiver> adoptGRef(GstWebRTCRTPTransceiver*);
-template <> GstWebRTCRTPTransceiver* refGPtr<GstWebRTCRTPTransceiver>(GstWebRTCRTPTransceiver*);
-template <> void derefGPtr<GstWebRTCRTPTransceiver>(GstWebRTCRTPTransceiver*);
-
-template <> GRefPtr<GstWebRTCDataChannel> adoptGRef(GstWebRTCDataChannel*);
-template <> GstWebRTCDataChannel* refGPtr<GstWebRTCDataChannel>(GstWebRTCDataChannel*);
-template <> void derefGPtr<GstWebRTCDataChannel>(GstWebRTCDataChannel*);
-
-template <> GRefPtr<GstWebRTCDTLSTransport> adoptGRef(GstWebRTCDTLSTransport*);
-template <> GstWebRTCDTLSTransport* refGPtr<GstWebRTCDTLSTransport>(GstWebRTCDTLSTransport*);
-template <> void derefGPtr<GstWebRTCDTLSTransport>(GstWebRTCDTLSTransport*);
-
-template <> GRefPtr<GstWebRTCICETransport> adoptGRef(GstWebRTCICETransport*);
-template <> GstWebRTCICETransport* refGPtr<GstWebRTCICETransport>(GstWebRTCICETransport*);
-template <> void derefGPtr<GstWebRTCICETransport>(GstWebRTCICETransport*);
-
-template <> GRefPtr<GstPromise> adoptGRef(GstPromise*);
-template <> GstPromise* refGPtr<GstPromise>(GstPromise*);
-template <> void derefGPtr<GstPromise>(GstPromise*);
-
-template<> GRefPtr<GstRTPHeaderExtension> adoptGRef(GstRTPHeaderExtension*);
-template<> GstRTPHeaderExtension* refGPtr<GstRTPHeaderExtension>(GstRTPHeaderExtension*);
-template<> void derefGPtr<GstRTPHeaderExtension>(GstRTPHeaderExtension*);
-
-template<> GRefPtr<GstWebRTCICE> adoptGRef(GstWebRTCICE*);
-template<> GstWebRTCICE* refGPtr<GstWebRTCICE>(GstWebRTCICE*);
-template<> void derefGPtr<GstWebRTCICE>(GstWebRTCICE*);
-
+WTF_DEFINE_GREF_TRAITS_INLINE(GstPromise, gst_promise_ref, gst_promise_unref)
 #endif
 
-#if USE(GSTREAMER_TRANSCODER)
-template<> GRefPtr<GstTranscoder> adoptGRef(GstTranscoder*);
-template<> GstTranscoder* refGPtr<GstTranscoder>(GstTranscoder*);
-template<> void derefGPtr<GstTranscoder>(GstTranscoder*);
-
-template<> GRefPtr<GstTranscoderSignalAdapter> adoptGRef(GstTranscoderSignalAdapter*);
-template<> GstTranscoderSignalAdapter* refGPtr<GstTranscoderSignalAdapter>(GstTranscoderSignalAdapter*);
-template<> void derefGPtr<GstTranscoderSignalAdapter>(GstTranscoderSignalAdapter*);
-#endif // USE(GSTREAMER_TRANSCODER)
+// GstToc needs to be defined manually because gst_toc_ref() causes a warning if return value is not used.
+template<> struct GRefPtrDefaultRefDerefTraits<GstToc> {
+    static inline GstToc* refIfNotNull(GstToc* ptr)
+    {
+        if (ptr) [[likely]]
+            return gst_toc_ref(ptr);
+        return nullptr;
+    }
+    static inline void derefIfNotNull(GstToc* ptr)
+    {
+        if (ptr) [[likely]]
+            gst_toc_unref(ptr);
+    }
+    static inline bool isFloating(GstToc*)
+    {
+        return false;
+    }
+};
 
 } // namespace WTF
 

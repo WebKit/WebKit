@@ -37,6 +37,8 @@
                 debug('<br><span class="pass">TEST COMPLETE</span>');
                 if (window.testRunner)
                     testRunner.notifyDone();
+                if (stream)
+                    stream.srcObject.getTracks().forEach(t => t.stop());
             }
 
             debug(`URL: ${window.location.href}`);

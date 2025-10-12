@@ -4,13 +4,13 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-extensions-shell.js]
 flags:
   - noStrict
 description: |
   pending
 esid: pending
 ---*/
+
 function innermost() { return arguments.callee.caller; }
 function nest() { return eval("innermost();"); }
 function nest2() { return nest(); }
@@ -35,7 +35,3 @@ function innermostEvalTwice() { return eval('eval("arguments.callee.caller");');
 var innermost = innermostEvalTwice;
 
 assert.sameValue(nest2(), nestTwice);
-
-/******************************************************************************/
-
-print("Tests complete");

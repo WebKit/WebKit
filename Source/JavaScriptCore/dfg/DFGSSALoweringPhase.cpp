@@ -90,7 +90,12 @@ private:
             lowerBoundsCheck(m_graph.varArgChild(m_node, 0), m_graph.varArgChild(m_node, 1), m_graph.varArgChild(m_node, 2));
             break;
         }
-            
+
+        case StringCharCodeAt: {
+            lowerStringBoundsCheck(m_graph.child(m_node, 0), m_graph.child(m_node, 1), m_graph.child(m_node, 2));
+            break;
+        }
+
         case EnumeratorPutByVal:
             break;
 
@@ -188,7 +193,18 @@ private:
         m_node->children = adjacencyList;
         return true;
     }
-    
+
+    bool lowerStringBoundsCheck(Edge base, Edge index, Edge& checkInBoundsEdge)
+    {
+        if (!m_node->arrayMode().isInBounds())
+            return false;
+
+        Node* length = m_insertionSet.insertNode(m_nodeIndex, SpecInt32Only, GetArrayLength, m_node->origin, OpInfo(m_node->arrayMode().asWord()), Edge(base.node(), KnownCellUse));
+        Node* checkInBounds = m_insertionSet.insertNode(m_nodeIndex, SpecInt32Only, CheckInBounds, m_node->origin, index, Edge(length, KnownInt32Use));
+        checkInBoundsEdge = Edge(checkInBounds, UntypedUse);
+        return true;
+    }
+
     InsertionSet m_insertionSet;
     BasicBlock* m_block;
     unsigned m_nodeIndex;

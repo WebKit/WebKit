@@ -217,6 +217,38 @@
                 "Enable multi-draw and base vertex base instance extensions for non-WebGL contexts if they are emulated."
             ],
             "issue": "http://anglebug.com/355645824"
+        },
+        {
+            "name": "force_passthrough_shaders",
+            "category": "Features",
+            "description": [
+                "Parse shaders for reflection but do not translate them."
+            ],
+            "issue": "https://anglebug.com/398857482"
+        },
+        {
+            "name": "clip_cull_distance_broken_with_passthrough_shaders",
+            "category": "Features",
+            "description": [
+                "GL_EXT_clip_cull_distance requires shader transformations to function at all on some drivers."
+            ],
+            "issue": "https://anglebug.com/398857482"
+        },
+        {
+            "name": "noperspective_interpolation_broken_with_passthrough_shaders",
+            "category": "Features",
+            "description": [
+                "GL_NV_shader_noperspective_interpolation requires shader transformations to function at all on some drivers."
+            ],
+            "issue": "https://anglebug.com/398857482"
+        },
+        {
+            "name": "force_debug_contexts",
+            "category": "Features",
+            "description": [
+                "Force every context into debug mode as if EGL_CONTEXT_OPENGL_DEBUG_BIT_KHR was used."
+            ],
+            "issue": "https://anglebug.com/423956139"
         }
     ]
 }

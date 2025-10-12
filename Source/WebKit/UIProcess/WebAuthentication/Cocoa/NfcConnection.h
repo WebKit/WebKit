@@ -56,8 +56,8 @@ private:
     void restartPolling();
     void startPolling();
 
-    RetainPtr<NFReaderSession> m_session;
-    RetainPtr<WKNFReaderSessionDelegate> m_delegate;
+    const RetainPtr<NFReaderSession> m_session;
+    const RetainPtr<WKNFReaderSessionDelegate> m_delegate;
     WeakPtr<NfcService> m_service;
     RunLoop::Timer m_retryTimer;
 };

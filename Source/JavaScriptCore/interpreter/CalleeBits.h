@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
+#include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/AccessibleAddress.h>
 #include <wtf/StdLibExtras.h>
 
@@ -137,18 +137,10 @@ public:
         return nullptr;
     }
 
-#if CPU(ARM64)
-    // NativeCallees are sometimes stored in ThreadSafeWeakOrStrongPtr, which relies on top byte ignore, so we need to strip the top byte on ARM64.
-    static constexpr uintptr_t nativeCalleeTopByteMask = std::numeric_limits<uintptr_t>::max() >> CHAR_BIT;
-#endif
-
     static void* boxNativeCallee(NativeCallee* callee)
     {
 #if USE(JSVALUE64)
         auto bits = std::bit_cast<uintptr_t>(callee);
-#if CPU(ARM64)
-        bits &= nativeCalleeTopByteMask;
-#endif
         CalleeBits result { static_cast<int64_t>((bits - lowestAccessibleAddress()) | JSValue::NativeCalleeTag) };
         ASSERT(result.isNativeCallee());
         return result.rawPtr();

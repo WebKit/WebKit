@@ -18,13 +18,22 @@
 #include <vector>
 
 #include "absl/strings/match.h"
-#include "api/audio_codecs/audio_codec_pair_id.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "api/audio_codecs/audio_format.h"
+#include "api/environment/environment.h"
+#include "api/field_trials_view.h"
 #include "modules/audio_coding/codecs/opus/audio_decoder_opus.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
+namespace {
+
+int GetDefaultNumChannels(const FieldTrialsView& field_trials) {
+  return field_trials.IsEnabled("WebRTC-Audio-OpusDecodeStereoByDefault") ? 2
+                                                                          : 1;
+}
+
+}  // namespace
 
 bool AudioDecoderOpus::Config::IsOk() const {
   if (sample_rate_hz != 16000 && sample_rate_hz != 48000) {
@@ -32,40 +41,37 @@ bool AudioDecoderOpus::Config::IsOk() const {
     // well; we can add support for them when needed.)
     return false;
   }
-  if (num_channels != 1 && num_channels != 2) {
-    return false;
-  }
-  return true;
+  return !num_channels.has_value() || *num_channels == 1 || *num_channels == 2;
 }
 
 std::optional<AudioDecoderOpus::Config> AudioDecoderOpus::SdpToConfig(
     const SdpAudioFormat& format) {
-  const auto num_channels = [&]() -> std::optional<int> {
-    auto stereo = format.parameters.find("stereo");
-    if (stereo != format.parameters.end()) {
-      if (stereo->second == "0") {
-        return 1;
-      } else if (stereo->second == "1") {
-        return 2;
-      } else {
-        return std::nullopt;  // Bad stereo parameter.
-      }
-    }
-    return 1;  // Default to mono.
-  }();
-  if (absl::EqualsIgnoreCase(format.name, "opus") &&
-      format.clockrate_hz == 48000 && format.num_channels == 2 &&
-      num_channels) {
-    Config config;
-    config.num_channels = *num_channels;
-    if (!config.IsOk()) {
-      RTC_DCHECK_NOTREACHED();
-      return std::nullopt;
-    }
-    return config;
-  } else {
+  if (!absl::EqualsIgnoreCase(format.name, "opus") ||
+      format.clockrate_hz != 48000 || format.num_channels != 2) {
     return std::nullopt;
   }
+
+  Config config;
+
+  // Parse the "stereo" codec parameter. If set, it overrides the default number
+  // of channels.
+  const auto stereo_param = format.parameters.find("stereo");
+  if (stereo_param != format.parameters.end()) {
+    if (stereo_param->second == "0") {
+      config.num_channels = 1;
+    } else if (stereo_param->second == "1") {
+      config.num_channels = 2;
+    } else {
+      // Malformed stereo parameter.
+      return std::nullopt;
+    }
+  }
+
+  if (!config.IsOk()) {
+    RTC_DCHECK_NOTREACHED();
+    return std::nullopt;
+  }
+  return config;
 }
 
 void AudioDecoderOpus::AppendSupportedDecoders(
@@ -86,7 +92,9 @@ std::unique_ptr<AudioDecoder> AudioDecoderOpus::MakeAudioDecoder(
     return nullptr;
   }
   return std::make_unique<AudioDecoderOpusImpl>(
-      env.field_trials(), config.num_channels, config.sample_rate_hz);
+      env.field_trials(),
+      config.num_channels.value_or(GetDefaultNumChannels(env.field_trials())),
+      config.sample_rate_hz);
 }
 
 }  // namespace webrtc

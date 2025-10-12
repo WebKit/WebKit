@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ContextDestructionObserver.h"
-#include "ScriptExecutionContext.h"
+#include <WebCore/ContextDestructionObserver.h>
+#include <WebCore/ScriptExecutionContext.h>
 
 namespace WebCore {
 

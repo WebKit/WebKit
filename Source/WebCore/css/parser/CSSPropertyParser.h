@@ -29,13 +29,14 @@ namespace WebCore {
 
 class CSSProperty;
 class CSSParserTokenRange;
-class CSSCustomPropertyValue;
+class CSSValue;
 struct CSSParserContext;
 struct CSSCustomPropertySyntax;
 struct ComputedStyleDependencies;
 
 enum CSSPropertyID : uint16_t;
 enum CSSValueID : uint16_t;
+enum class CSSWideKeyword : uint8_t;
 enum class IsImportant : bool;
 enum class StyleRuleType : uint8_t;
 
@@ -45,6 +46,7 @@ struct PropertyParserState;
 
 namespace Style {
 class BuilderState;
+class CustomProperty;
 }
 
 class CSSPropertyParser {
@@ -59,11 +61,13 @@ public:
     // Parses a @counter-style descriptor.
     static RefPtr<CSSValue> parseCounterStyleDescriptor(CSSPropertyID, const String&, const CSSParserContext&);
 
-    static RefPtr<CSSCustomPropertyValue> parseTypedCustomPropertyInitialValue(const AtomString&, const CSSCustomPropertySyntax&, CSSParserTokenRange, Style::BuilderState&, const CSSParserContext&);
-    static RefPtr<CSSCustomPropertyValue> parseTypedCustomPropertyValue(const AtomString& name, const CSSCustomPropertySyntax&, CSSParserTokenRange, Style::BuilderState&, const CSSParserContext&);
+    static RefPtr<const Style::CustomProperty> parseTypedCustomPropertyInitialValue(const AtomString&, const CSSCustomPropertySyntax&, CSSParserTokenRange, Style::BuilderState&, const CSSParserContext&);
+    static std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> parseTypedCustomPropertyValue(const AtomString& name, const CSSCustomPropertySyntax&, CSSParserTokenRange, Style::BuilderState&, const CSSParserContext&);
 
     static ComputedStyleDependencies collectParsedCustomPropertyValueDependencies(const CSSCustomPropertySyntax&, CSSParserTokenRange, const CSSParserContext&);
     static bool isValidCustomPropertyValueForSyntax(const CSSCustomPropertySyntax&, CSSParserTokenRange, const CSSParserContext&);
+
+    static std::optional<CSSWideKeyword> parseCSSWideKeyword(CSSParserTokenRange);
 };
 
 // MARK: - CSSPropertyID parsing

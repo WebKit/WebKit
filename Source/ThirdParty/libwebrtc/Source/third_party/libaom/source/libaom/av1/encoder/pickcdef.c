@@ -230,7 +230,7 @@ static inline void init_src_params(int *src_stride, int *width, int *height,
   *width = block_size_wide[bsize];
   *height = block_size_high[bsize];
   *width_log2 = MI_SIZE_LOG2 + mi_size_wide_log2[bsize];
-  *height_log2 = MI_SIZE_LOG2 + mi_size_wide_log2[bsize];
+  *height_log2 = MI_SIZE_LOG2 + mi_size_high_log2[bsize];
 }
 #if CONFIG_AV1_HIGHBITDEPTH
 /* Compute MSE only on the blocks we filtered. */
@@ -826,13 +826,13 @@ void av1_cdef_search(AV1_COMP *cpi) {
   CDEF_CONTROL cdef_control = cpi->oxcf.tool_cfg.cdef_control;
 
   assert(cdef_control != CDEF_NONE);
-  // For CDEF_ADAPTIVE, turning off CDEF around qindex 100 was best for still
+  // For CDEF_ADAPTIVE, turning off CDEF around qindex 32 was best for still
   // pictures
   if ((cdef_control == CDEF_REFERENCE &&
        cpi->ppi->rtc_ref.non_reference_frame) ||
       (cdef_control == CDEF_ADAPTIVE && cpi->oxcf.mode == ALLINTRA &&
        (cpi->oxcf.rc_cfg.mode == AOM_Q || cpi->oxcf.rc_cfg.mode == AOM_CQ) &&
-       cpi->oxcf.rc_cfg.cq_level < 100)) {
+       cpi->oxcf.rc_cfg.cq_level <= 32)) {
     CdefInfo *const cdef_info = &cm->cdef_info;
     cdef_info->nb_cdef_strengths = 1;
     cdef_info->cdef_bits = 0;
@@ -955,6 +955,44 @@ void av1_cdef_search(AV1_COMP *cpi) {
                                  luma_strength);
       STORE_CDEF_FILTER_STRENGTH(cdef_info->cdef_uv_strengths[j], pick_method,
                                  chroma_strength);
+    }
+  }
+
+  // For CDEF_ADAPTIVE, set primary and secondary CDEF at reduced strength for
+  // qindexes 33 through 220.
+  // Note 1: for odd strengths, the 0.5 discarded by ">> 1" is a significant
+  // part of the strength when the strength is small, and because there are
+  // few strength levels, odd strengths are reduced significantly more than a
+  // half. This is intended behavior for reduced strength.
+  // For example: a pri strength of 3 becomes 1, and a sec strength of 1
+  // becomes 0.
+  // Note 2: a (signaled) sec strength value of 3 is special as it results in an
+  // actual sec strength of 4. We tried adding +1 to the sec strength 3 so it
+  // maps to a reduced sec strength of 2. However, on Daala's subset1, the
+  // resulting SSIMULACRA 2 scores were either exactly the same (at cpu-used 6),
+  // or within noise level (at cpu-used 3). Given that there were no discernible
+  // improvements, this special mapping was left out for reduced strength.
+  if (cdef_control == CDEF_ADAPTIVE && cpi->oxcf.mode == ALLINTRA &&
+      (cpi->oxcf.rc_cfg.mode == AOM_Q || cpi->oxcf.rc_cfg.mode == AOM_CQ) &&
+      cpi->oxcf.rc_cfg.cq_level <= 220) {
+    for (int j = 0; j < cdef_info->nb_cdef_strengths; j++) {
+      const int luma_strength = cdef_info->cdef_strengths[j];
+      const int chroma_strength = cdef_info->cdef_uv_strengths[j];
+
+      const int new_pri_luma_strength =
+          (luma_strength / CDEF_SEC_STRENGTHS) >> 1;
+      const int new_sec_luma_strength =
+          (luma_strength % CDEF_SEC_STRENGTHS) >> 1;
+      const int new_pri_chroma_strength =
+          (chroma_strength / CDEF_SEC_STRENGTHS) >> 1;
+      const int new_sec_chroma_strength =
+          (chroma_strength % CDEF_SEC_STRENGTHS) >> 1;
+
+      cdef_info->cdef_strengths[j] =
+          new_pri_luma_strength * CDEF_SEC_STRENGTHS + new_sec_luma_strength;
+      cdef_info->cdef_uv_strengths[j] =
+          new_pri_chroma_strength * CDEF_SEC_STRENGTHS +
+          new_sec_chroma_strength;
     }
   }
 

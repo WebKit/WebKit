@@ -41,13 +41,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WheelEventDeltaFilterMac);
 WheelEventDeltaFilterMac::WheelEventDeltaFilterMac()
     : WheelEventDeltaFilter()
     , m_predominantAxisFilter(adoptNS([[_NSScrollingPredominantAxisFilter alloc] init]))
-    , m_initialWallTime(WallTime::now())
+    , m_initialMonotonicTime(MonotonicTime::now())
 {
 }
 
 void WheelEventDeltaFilterMac::updateFromEvent(const PlatformWheelEvent& event)
 {
-    if (event.momentumPhase() != PlatformWheelEventPhase::None) {
+    if (event.isMomentumEvent()) {
         if (event.momentumPhase() == PlatformWheelEventPhase::Began)
             updateCurrentVelocityFromEvent(event);
         m_lastIOHIDEventTimestamp = event.ioHIDEventTimestamp();
@@ -55,6 +55,7 @@ void WheelEventDeltaFilterMac::updateFromEvent(const PlatformWheelEvent& event)
     }
 
     switch (event.phase()) {
+    case PlatformWheelEventPhase::WillBegin:
     case PlatformWheelEventPhase::None:
     case PlatformWheelEventPhase::Ended:
         break;
@@ -81,7 +82,7 @@ void WheelEventDeltaFilterMac::updateFromEvent(const PlatformWheelEvent& event)
 void WheelEventDeltaFilterMac::updateCurrentVelocityFromEvent(const PlatformWheelEvent& event)
 {
     // The absolute value of timestamp doesn't matter; the filter looks at deltas from the previous event.
-    auto timestamp = event.timestamp() - m_initialWallTime;
+    auto timestamp = event.timestamp() - m_initialMonotonicTime;
 
     NSPoint filteredDeltaResult;
     NSPoint filteredVelocityResult;

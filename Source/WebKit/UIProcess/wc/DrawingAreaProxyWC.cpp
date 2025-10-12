@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2016-2019 Igalia S.L.
  * Copyright (C) 2021 Sony Interactive Entertainment Inc.
@@ -47,7 +47,7 @@ Ref<DrawingAreaProxyWC> DrawingAreaProxyWC::create(WebPageProxy& page, WebProces
 }
 
 DrawingAreaProxyWC::DrawingAreaProxyWC(WebPageProxy& webPageProxy, WebProcessProxy& webProcessProxy)
-    : DrawingAreaProxy(DrawingAreaType::WC, webPageProxy, webProcessProxy)
+    : DrawingAreaProxy(webPageProxy, webProcessProxy)
 {
 }
 
@@ -71,8 +71,8 @@ void DrawingAreaProxyWC::sizeDidChange()
 {
     discardBackingStore();
     m_currentBackingStoreStateID++;
-    if (m_webPageProxy)
-        send(Messages::DrawingArea::UpdateGeometryWC(m_currentBackingStoreStateID, m_size, m_webPageProxy->deviceScaleFactor(), m_webPageProxy->intrinsicDeviceScaleFactor()));
+    if (page())
+        send(Messages::DrawingArea::UpdateGeometryWC(m_currentBackingStoreStateID, size(), page()->deviceScaleFactor(), page()->intrinsicDeviceScaleFactor()));
 }
 
 void DrawingAreaProxyWC::update(uint64_t backingStoreStateID, UpdateInfo&& updateInfo)
@@ -95,7 +95,7 @@ void DrawingAreaProxyWC::incorporateUpdate(UpdateInfo&& updateInfo)
     if (!m_backingStore)
         m_backingStore.emplace(updateInfo.viewSize, updateInfo.deviceScaleFactor);
 
-    RefPtr page = m_webPageProxy.get();
+    RefPtr page = this->page();
     if (!page)
         return;
 

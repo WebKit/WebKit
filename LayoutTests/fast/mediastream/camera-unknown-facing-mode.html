@@ -18,11 +18,12 @@
         });
     }
 
-    async function getSettingsBeforeAndAfterRotation(deviceId)
+    async function getSettingsBeforeAndAfterRotation(test, deviceId)
     {
         testRunner.setMockCameraOrientation(0);
 
         const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId } });
+        test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
         video.srcObject = stream;
         await video.play();
 
@@ -43,7 +44,7 @@
      promise_test(async (test) => {
          await setup(test);
  
-         const results = await getSettingsBeforeAndAfterRotation("default");
+         const results = await getSettingsBeforeAndAfterRotation(test, "default");
  
          assert_equals(results[0].facingMode, "user");
          assert_equals(results[0].width, 640, "initial width");
@@ -66,7 +67,7 @@
         });
         stream.getVideoTracks()[0].stop();
 
-        const results = await getSettingsBeforeAndAfterRotation(deviceId);
+        const results = await getSettingsBeforeAndAfterRotation(test, deviceId);
 
          assert_equals(results[0].facingMode, undefined);
         assert_equals(results[0].width, 640, "initial width");

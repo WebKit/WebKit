@@ -311,6 +311,9 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
                         realRelativePath = realAbsolutePath[len(_configurationBuildDirectory)+1:]
                         contents.append(realRelativePath)
 
+        if platform == 'wpe':
+            contents.append('share')
+
         if platform == 'gtk':
             contents.extend([os.path.join('install', directory) for directory in ['include', os.path.join('lib64', 'pkgconfig')]])
 

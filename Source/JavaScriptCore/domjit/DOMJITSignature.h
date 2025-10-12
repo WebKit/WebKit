@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "ClassInfo.h"
-#include "DOMJITEffect.h"
-#include "SpeculatedType.h"
+#include <JavaScriptCore/ClassInfo.h>
+#include <JavaScriptCore/DOMJITEffect.h>
+#include <JavaScriptCore/SpeculatedType.h>
 #include <wtf/CodePtr.h>
 
 namespace JSC { namespace DOMJIT {

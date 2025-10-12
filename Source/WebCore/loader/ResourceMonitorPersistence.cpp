@@ -134,11 +134,9 @@ bool ResourceMonitorPersistence::openDatabase(String&& directoryPath)
         RESOURCEMONITOR_RELEASE_LOG("openDatabase: Index %" PUBLIC_LOG_STRING " created", accessIndexName.characters());
     }
 
-    auto insertStatement = m_sqliteDB->prepareHeapStatement(insertRecordSQL);
-    if (!insertStatement)
+    m_insertSQLStatement = m_sqliteDB->prepareStatement(insertRecordSQL);
+    if (!m_insertSQLStatement)
         return reportErrorAndCloseDatabase("prepare insert statement"_s);
-
-    m_insertSQLStatement = insertStatement.value().moveToUniquePtr();
 
     m_sqliteDB->turnOnIncrementalAutoVacuum();
 

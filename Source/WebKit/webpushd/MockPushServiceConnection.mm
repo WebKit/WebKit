@@ -52,7 +52,7 @@ void MockPushServiceConnection::subscribe(const String&, const Vector<uint8_t>& 
 {
     auto alwaysRejectedKey = base64URLDecode("BEAxaUMo1s8tjORxJfnSSvWhYb4u51kg1hWT2s_9gpV7Zxar1pF_2BQ8AncuAdS2BoLhN4qaxzBy2CwHE8BBzWg"_s).value();
     if (vapidPublicKey == alwaysRejectedKey) {
-        handler({ }, [NSError errorWithDomain:@"WebPush" code:-1 userInfo:nil]);
+        handler(nil, [NSError errorWithDomain:@"WebPush" code:-1 userInfo:nil]);
         return;
     }
 

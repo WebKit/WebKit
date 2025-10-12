@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "BackForwardFrameItemIdentifier.h"
-#include "FrameIdentifier.h"
+#include <WebCore/BackForwardFrameItemIdentifier.h>
+#include <WebCore/FrameIdentifier.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -65,23 +65,21 @@ public:
     WEBCORE_EXPORT unsigned backCount() const;
     WEBCORE_EXPORT unsigned forwardCount() const;
 
-    WEBCORE_EXPORT RefPtr<HistoryItem> itemAtIndex(int, std::optional<FrameIdentifier> = std::nullopt);
     bool containsItem(const HistoryItem&) const;
-
-    void close();
 
     WEBCORE_EXPORT RefPtr<HistoryItem> backItem(std::optional<FrameIdentifier> = std::nullopt);
     WEBCORE_EXPORT RefPtr<HistoryItem> currentItem(std::optional<FrameIdentifier> = std::nullopt);
     WEBCORE_EXPORT RefPtr<HistoryItem> forwardItem(std::optional<FrameIdentifier> = std::nullopt);
+    WEBCORE_EXPORT RefPtr<HistoryItem> itemAtIndex(int, std::optional<FrameIdentifier> = std::nullopt);
+    Vector<Ref<HistoryItem>> allItems(std::optional<FrameIdentifier> = std::nullopt);
 
-    Vector<Ref<HistoryItem>> allItems();
+    void close();
 
 private:
     Ref<Page> protectedPage() const;
-    Ref<BackForwardClient> protectedClient() const;
 
     WeakRef<Page> m_page;
-    Ref<BackForwardClient> m_client;
+    const Ref<BackForwardClient> m_client;
 };
 
 } // namespace WebCore

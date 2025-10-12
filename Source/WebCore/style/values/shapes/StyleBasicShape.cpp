@@ -25,6 +25,7 @@
 #include "config.h"
 #include "StyleBasicShape.h"
 
+#include "CSSBasicShapeValue.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
@@ -33,14 +34,45 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<BasicShape>::operator()(const BasicShape& value, const RenderStyle& style) -> CSS::BasicShape
+auto ToCSS<BasicShape>::operator()(const BasicShape& value, const RenderStyle& style, PathConversion conversion) -> CSS::BasicShape
 {
-    return WTF::switchOn(value, [&](const auto& alternative) { return CSS::BasicShape { toCSS(alternative, style) }; });
+    return WTF::switchOn(value,
+        [&](const auto& shape) {
+            return CSS::BasicShape { toCSS(shape, style) };
+        },
+        [&](const PathFunction& path) {
+            return CSS::BasicShape { toCSS(path, style, conversion) };
+        }
+    );
 }
 
-auto ToStyle<CSS::BasicShape>::operator()(const CSS::BasicShape& value, const BuilderState& builderState) -> BasicShape
+auto ToStyle<CSS::BasicShape>::operator()(const CSS::BasicShape& value, const BuilderState& builderState, std::optional<float> zoom) -> BasicShape
 {
-    return WTF::switchOn(value, [&](const auto& alternative) { return BasicShape { toStyle(alternative, builderState) }; });
+    return WTF::switchOn(value,
+        [&](const auto& shape) {
+            return BasicShape { toStyle(shape, builderState) };
+        },
+        [&](const CSS::PathFunction& path) {
+            return BasicShape { toStyle(path, builderState, zoom) };
+        }
+    );
+}
+
+Ref<CSSValue> CSSValueCreation<BasicShape>::operator()(CSSValuePool&, const RenderStyle& style, const BasicShape& value, PathConversion conversion)
+{
+    return CSSBasicShapeValue::create(toCSS(value, style, conversion));
+}
+
+BasicShape CSSValueConversion<BasicShape>::operator()(BuilderState& builderState, const CSSValue& value, std::optional<float> zoom)
+{
+    return toStyle(downcast<CSSBasicShapeValue>(value).shape(), builderState, zoom);
+}
+
+// MARK: - Serialization
+
+void Serialize<BasicShape>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const BasicShape& value, PathConversion conversion)
+{
+    CSS::serializationForCSS(builder, context, toCSS(value, style, conversion));
 }
 
 // MARK: - Blending

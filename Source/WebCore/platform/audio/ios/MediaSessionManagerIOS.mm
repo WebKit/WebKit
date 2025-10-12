@@ -45,17 +45,17 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSessionManageriOS);
 
-const std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create()
+RefPtr<PlatformMediaSessionManager> PlatformMediaSessionManager::create(PageIdentifier pageIdentifier)
 {
-    auto manager = std::unique_ptr<MediaSessionManageriOS>(new MediaSessionManageriOS);
+    auto manager = adoptRef(new MediaSessionManageriOS(pageIdentifier));
     MediaSessionHelper::sharedHelper().addClient(*manager);
     return manager;
 }
 
-MediaSessionManageriOS::MediaSessionManageriOS()
-    : MediaSessionManagerCocoa()
+MediaSessionManageriOS::MediaSessionManageriOS(PageIdentifier pageIdentifier)
+    : MediaSessionManagerCocoa(pageIdentifier)
 {
-    AudioSession::sharedSession().addInterruptionObserver(*this);
+    AudioSession::addInterruptionObserver(*this);
 }
 
 MediaSessionManageriOS::~MediaSessionManageriOS()
@@ -63,7 +63,7 @@ MediaSessionManageriOS::~MediaSessionManageriOS()
     if (m_isMonitoringWirelessRoutes)
         MediaSessionHelper::sharedHelper().stopMonitoringWirelessRoutes();
     MediaSessionHelper::sharedHelper().removeClient(*this);
-    AudioSession::sharedSession().removeInterruptionObserver(*this);
+    AudioSession::removeInterruptionObserver(*this);
 }
 
 #if !PLATFORM(MACCATALYST)
@@ -117,28 +117,6 @@ void MediaSessionManageriOS::configureWirelessTargetMonitoring()
 #endif
 }
 
-void MediaSessionManageriOS::providePresentingApplicationPIDIfNecessary(const std::optional<ProcessID>& pid)
-{
-#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
-    if (m_havePresentedApplicationPID || !pid)
-        return;
-    m_havePresentedApplicationPID = true;
-    MediaSessionHelper::sharedHelper().providePresentingApplicationPID(*pid);
-#else
-    UNUSED_PARAM(pid);
-#endif
-}
-
-void MediaSessionManageriOS::updatePresentingApplicationPIDIfNecessary(ProcessID pid)
-{
-#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
-    if (m_havePresentedApplicationPID)
-        MediaSessionHelper::sharedHelper().providePresentingApplicationPID(pid, MediaSessionHelper::ShouldOverride::Yes);
-#else
-    UNUSED_PARAM(pid);
-#endif
-}
-
 bool MediaSessionManageriOS::sessionWillBeginPlayback(PlatformMediaSessionInterface& session)
 {
     if (!MediaSessionManagerCocoa::sessionWillBeginPlayback(session))
@@ -151,8 +129,6 @@ bool MediaSessionManageriOS::sessionWillBeginPlayback(PlatformMediaSessionInterf
         session.setPlaybackTarget(*target);
     session.setShouldPlayToPlaybackTarget(playbackTargetSupportsAirPlayVideo);
 #endif
-
-    providePresentingApplicationPIDIfNecessary(session.presentingApplicationPID());
 
     return true;
 }

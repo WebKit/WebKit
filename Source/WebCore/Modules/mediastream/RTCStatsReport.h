@@ -26,10 +26,10 @@
 #pragma once
 
 #include "RTCDtlsTransportState.h"
-#include "RTCIceCandidateType.h"
-#include "RTCIceRole.h"
-#include "RTCIceServerTransportProtocol.h"
-#include "RTCIceTcpCandidateType.h"
+#include <WebCore/RTCIceCandidateType.h>
+#include <WebCore/RTCIceRole.h>
+#include <WebCore/RTCIceServerTransportProtocol.h>
+#include <WebCore/RTCIceTcpCandidateType.h>
 #include "RTCIceTransportState.h"
 #include <wtf/KeyValuePair.h>
 #include <wtf/RefCounted.h>

@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "pas_config.h"
@@ -29,7 +29,6 @@
 
 #include "pas_shared_page_directory_by_size.h"
 
-#include <math.h>
 #include "pas_heap_lock.h"
 #include "pas_immortal_heap.h"
 #include "pas_segregated_page_config.h"
@@ -52,7 +51,7 @@ pas_segregated_shared_page_directory* pas_shared_page_directory_by_size_get(
         unsigned max_index;
 
         log_shift = by_size->log_shift;
-        
+
         min_size = (unsigned)pas_segregated_page_config_min_align(*page_config);
         max_size = (unsigned)page_config->base.max_object_size;
 
@@ -61,7 +60,7 @@ pas_segregated_shared_page_directory* pas_shared_page_directory_by_size_get(
 
         max_index = pas_log2_rounded_up_safe(
             max_size >> page_config->base.min_align_shift) >> log_shift;
-        
+
         PAS_ASSERT(max_index <= max_size - min_size);
 
         num_directories = (unsigned)max_index + 1;
@@ -74,7 +73,7 @@ pas_segregated_shared_page_directory* pas_shared_page_directory_by_size_get(
             PAS_ASSERT(data->num_directories == num_directories);
         } else {
             unsigned index;
-            
+
             data = pas_immortal_heap_allocate(
                 PAS_OFFSETOF(pas_shared_page_directory_by_size_data, directories)
                 + sizeof(pas_segregated_shared_page_directory) * num_directories,
@@ -94,7 +93,7 @@ pas_segregated_shared_page_directory* pas_shared_page_directory_by_size_get(
 
             by_size->data = data;
         }
-        
+
         pas_heap_lock_unlock();
     }
 

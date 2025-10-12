@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT TestDriver - Set Storage Access Command Tests Test timed out
+PASS TestDriver - Set Storage Access Command Tests
 

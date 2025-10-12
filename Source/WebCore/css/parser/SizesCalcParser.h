@@ -39,7 +39,7 @@ class Document;
 struct SizesCalcValue {
     double value;
     bool isLength;
-    UChar operation;
+    char16_t operation;
 
     SizesCalcValue()
         : value(0)

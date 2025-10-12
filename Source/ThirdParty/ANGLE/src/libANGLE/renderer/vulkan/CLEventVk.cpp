@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // CLEventVk.cpp: Implements the class methods for CLEventVk.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
 
 #include "libANGLE/renderer/vulkan/CLEventVk.h"
 #include "libANGLE/renderer/vulkan/CLCommandQueueVk.h"

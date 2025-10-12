@@ -27,7 +27,7 @@
 
 #if ENABLE(CONTENT_FILTERING)
 
-#include "PlatformContentFilter.h"
+#include <WebCore/PlatformContentFilter.h>
 #include <objc/NSObjCRuntime.h>
 #include <wtf/Compiler.h>
 #include <wtf/OSObjectPtr.h>

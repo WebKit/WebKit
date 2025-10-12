@@ -67,6 +67,7 @@
                 assert_true(heardBip);
                 assert_true(heardBop);
                 test.done();
+                stream.getTracks().forEach(track => track.stop());
             };
 
             var timeout = setTimeout(() => { done(); }, 3000);

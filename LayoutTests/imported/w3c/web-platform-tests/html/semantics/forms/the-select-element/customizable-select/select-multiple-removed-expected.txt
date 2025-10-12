@@ -1,0 +1,4 @@
+
+
+PASS Removing the multiple attribute should not crash.
+

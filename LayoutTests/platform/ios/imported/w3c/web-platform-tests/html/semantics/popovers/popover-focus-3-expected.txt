@@ -1,0 +1,14 @@
+Invoker  after
+Show popover
+Toggle popover Popover with focusable element Other focusable element
+
+FAIL Circular reference tab navigation with popovertarget invocation assert_equals: circular reference: Step 2 expected Element node <button id="circular1" autofocus="" tabindex="0" popovert... but got Element node <button id="circular0" tabindex="0" popovertarget="popove...
+FAIL Circular reference tab navigation with command/commandfor invocation assert_equals: circular reference: Step 2 expected Element node <button id="circular1" autofocus="" tabindex="0" commandf... but got Element node <button id="circular0" tabindex="0" commandfor="popover4"...
+FAIL Circular reference tab navigation with imperative invocation assert_equals: circular reference: Step 2 expected Element node <button id="circular1" autofocus="" tabindex="0"></button> but got Element node <button id="circular0" tabindex="0">Invoker</button>
+FAIL Popover focus returns when popover is hidden by invoker with popovertarget invocation assert_true: popover should be invoked by invoker expected true got false
+FAIL Popover focus returns when popover is hidden by invoker with commandfor invocation assert_true: popover should be invoked by invoker expected true got false
+FAIL Popover focus returns when popover is hidden by invoker with imperative invocation assert_true: popover should be invoked by invoker expected true got false
+FAIL Popover focus only returns to invoker when focus is within the popover with popovertarget invocation assert_equals: next up is the popover expected Element node <button tabindex="0">focusable element</button> but got Element node <button tabindex="0" popovertarget="focus-return2-p">Togg...
+FAIL Popover focus only returns to invoker when focus is within the popover with command/commandfor invocation assert_true: popover should be invoked by invoker expected true got false
+FAIL Popover focus only returns to invoker when focus is within the popover with imperative invocation assert_equals: next up is the popover expected Element node <button tabindex="0">focusable element</button> but got Element node <button tabindex="0">Toggle popover</button>
+

@@ -1,8 +1,3 @@
-CONSOLE MESSAGE: LinkError: imported global ./js-wasm-cycle-value.js:val must be a number
-CONSOLE MESSAGE: LinkError: imported global ./js-wasm-cycle-global.js:glob must be a number
-CONSOLE MESSAGE: LinkError: Memory import ./js-wasm-cycle-memory.js:mem is not an instance of WebAssembly.Memory
-CONSOLE MESSAGE: LinkError: Table import ./js-wasm-cycle-table.js:tab is not an instance of WebAssembly.Table
-CONSOLE MESSAGE: LinkError: import function ./js-wasm-cycle-function-error.js:func must be callable
 
 PASS Check cyclic linking between JavaScript and WebAssembly where JavaScript is higher in the module graph.
 

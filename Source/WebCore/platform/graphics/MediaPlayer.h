@@ -25,26 +25,27 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(VIDEO)
 
-#include "ContentType.h"
-#include "Cookie.h"
-#include "FourCC.h"
-#include "GraphicsTypesGL.h"
-#include "LayoutRect.h"
-#include "MediaPlayerClientIdentifier.h"
-#include "MediaPlayerEnums.h"
-#include "MediaPlayerIdentifier.h"
-#include "MediaPromiseTypes.h"
-#include "PlatformDynamicRangeLimit.h"
-#include "PlatformLayer.h"
-#include "PlatformTextTrack.h"
-#include "ProcessIdentity.h"
-#include "SecurityOriginData.h"
-#include "Timer.h"
-#include "VideoPlaybackQualityMetrics.h"
-#include "VideoTarget.h"
 #include <JavaScriptCore/Forward.h>
+#include <WebCore/ContentType.h>
+#include <WebCore/Cookie.h>
+#include <WebCore/FourCC.h>
+#include <WebCore/GraphicsTypesGL.h>
+#include <WebCore/LayoutRect.h>
+#include <WebCore/MediaPlayerClientIdentifier.h>
+#include <WebCore/MediaPlayerEnums.h>
+#include <WebCore/MediaPlayerIdentifier.h>
+#include <WebCore/MediaPromiseTypes.h>
+#include <WebCore/PlatformDynamicRangeLimit.h>
+#include <WebCore/PlatformLayer.h>
+#include <WebCore/PlatformTextTrack.h>
+#include <WebCore/ProcessIdentity.h>
+#include <WebCore/SecurityOriginData.h>
+#include <WebCore/Timer.h>
+#include <WebCore/VideoPlaybackQualityMetrics.h>
+#include <WebCore/VideoTarget.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -76,7 +77,7 @@ typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
 #endif
 
 namespace WTF {
-class MachSendRight;
+struct MachSendRightAnnotated;
 }
 
 namespace WebCore {
@@ -107,13 +108,14 @@ class MediaStreamPrivate;
 class NativeImage;
 class PlatformMediaResourceLoader;
 class PlatformTimeRanges;
+class SecurityOriginData;
 class SharedBuffer;
 class TextTrackRepresentation;
 class VideoFrame;
 class VideoTrackPrivate;
 
 struct GraphicsDeviceAdapter;
-class SecurityOriginData;
+struct HostingContext;
 struct VideoFrameMetadata;
 
 struct MediaEngineSupportParameters {
@@ -132,7 +134,7 @@ struct MediaEngineSupportParameters {
 };
 
 struct SeekTarget {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SeekTarget);
     SeekTarget(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
         : time(targetTime)
         , negativeThreshold(negativeThreshold)
@@ -181,7 +183,7 @@ struct MediaPlayerLoadOptions {
     ContentType contentType { };
     bool requiresRemotePlayback { false };
     bool supportsLimitedMatroska { false };
-    VideoMediaSampleRendererPreferences videoMediaSampleRendererPreferences { };
+    VideoRendererPreferences videoRendererPreferences { };
 };
 
 class MediaPlayerClient : public CanMakeWeakPtr<MediaPlayerClient> {
@@ -396,7 +398,7 @@ public:
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     RetainPtr<PlatformLayer> createVideoFullscreenLayer();
     void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler = [] { });
-    void setVideoFullscreenFrame(FloatRect);
+    void setVideoFullscreenFrame(const FloatRect&);
     void updateVideoFullscreenInlineImage();
     using MediaPlayerEnums::VideoGravity;
     void setVideoFullscreenGravity(VideoGravity);
@@ -406,12 +408,12 @@ public:
     bool isVideoFullscreenStandby() const;
 #endif
 
-    using LayerHostingContextIDCallback = CompletionHandler<void(LayerHostingContextID)>;
-    void requestHostingContextID(LayerHostingContextIDCallback&&);
-    LayerHostingContextID hostingContextID() const;
+    using LayerHostingContextCallback = CompletionHandler<void(HostingContext)>;
+    void requestHostingContext(LayerHostingContextCallback&&);
+    HostingContext hostingContext() const;
     FloatSize videoLayerSize() const;
     void videoLayerSizeDidChange(const FloatSize&);
-    void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRight&&);
+    void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRightAnnotated&&);
 
 #if PLATFORM(IOS_FAMILY)
     NSArray *timedMetadata() const;
@@ -724,7 +726,7 @@ public:
     AVPlayer *objCAVFoundationAVPlayer() const;
 #endif
 
-    bool performTaskAtTime(Function<void()>&&, const MediaTime&);
+    bool performTaskAtTime(Function<void(const MediaTime&)>&&, const MediaTime&);
 
     bool shouldIgnoreIntrinsicSize();
 
@@ -813,6 +815,8 @@ public:
 
     void setMessageClientForTesting(WeakPtr<MessageClientForTesting>);
     MessageClientForTesting* messageClientForTesting() const;
+
+    void elementIdChanged(const String&) const;
 
 private:
     MediaPlayer(MediaPlayerClient&);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008-2009 Torch Mobile, Inc.
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  * Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
@@ -138,9 +138,6 @@ public:
 
     // Make the best effort guess to check if the requested frame has alpha channel.
     bool frameHasAlphaAtIndex(size_t) const override;
-
-    // Number of bytes in the decoded frame requested. Return 0 if not yet decoded.
-    unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const override;
 
     Seconds frameDurationAtIndex(size_t) const final;
 

@@ -15,7 +15,9 @@
         test.add_cleanup(() => { testRunner.resetMockMediaDevices(); });
 
         testRunner.setUserMediaPermission(true);
-        
+
+        if (stream)
+            stream.getTracks().forEach(track => track.stop());
         stream = null;
     }
 
@@ -70,6 +72,7 @@
         assert_equals(devices[0].label, "my mic");
 
         const micStream = await navigator.mediaDevices.getUserMedia({ audio : { deviceId : "id2" } });
+        test.add_cleanup(() => micStream.getTracks().forEach(track => track.stop()));
         assert_equals(micStream.getAudioTracks()[0].label, "my mic");
     }, "'devicechange' event fired when device list changes");
 
@@ -136,7 +139,7 @@
         await promise;
         assert_equals(document.visibilityState, "visible", "visible2");
 
-        return testPromise;
+        await testPromise;
     }, "'devicechange' event is not fired when the document is not visible");
     </script>
 </head>

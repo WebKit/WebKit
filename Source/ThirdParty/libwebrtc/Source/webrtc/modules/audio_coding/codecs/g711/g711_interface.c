@@ -8,10 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/audio_coding/codecs/g711/g711_interface.h"
+
 #include <string.h>
 
 #include "modules/third_party/g711/g711.h"
-#include "modules/audio_coding/codecs/g711/g711_interface.h"
 
 size_t WebRtcG711_EncodeA(const int16_t* speechIn,
                           size_t len,

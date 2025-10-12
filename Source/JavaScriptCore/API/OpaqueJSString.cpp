@@ -52,7 +52,7 @@ RefPtr<OpaqueJSString> OpaqueJSString::tryCreate(String&& string)
 OpaqueJSString::~OpaqueJSString()
 {
     // m_characters is put in a local here to avoid an extra atomic load.
-    UChar* characters = m_characters;
+    char16_t* characters = m_characters;
     if (!characters)
         return;
 
@@ -79,17 +79,17 @@ Identifier OpaqueJSString::identifier(VM* vm) const
     return Identifier::fromString(*vm, m_string.span16());
 }
 
-const UChar* OpaqueJSString::characters()
+const char16_t* OpaqueJSString::characters()
 {
     // m_characters is put in a local here to avoid an extra atomic load.
-    UChar* characters = m_characters;
+    char16_t* characters = m_characters;
     if (characters)
         return characters;
 
     if (m_string.isNull())
         return nullptr;
 
-    auto newCharacters = MallocSpan<UChar>::malloc(m_string.length() * sizeof(UChar));
+    auto newCharacters = MallocSpan<char16_t>::malloc(m_string.length() * sizeof(char16_t));
     StringView { m_string }.getCharacters(newCharacters.mutableSpan());
 
     if (!m_characters.compare_exchange_strong(characters, newCharacters.mutableSpan().data()))

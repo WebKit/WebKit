@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/resources/allowed.css
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/resources/blocked.css
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/resources/style-src-import.sub.css
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/resources/style-src-inject-style.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/resources/style-src.css

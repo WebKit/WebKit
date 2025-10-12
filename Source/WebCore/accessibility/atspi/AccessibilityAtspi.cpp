@@ -44,8 +44,8 @@ AccessibilityAtspi& AccessibilityAtspi::singleton()
 }
 
 AccessibilityAtspi::AccessibilityAtspi()
-    : m_cacheUpdateTimer(RunLoop::main(), this, &AccessibilityAtspi::cacheUpdateTimerFired)
-    , m_cacheClearTimer(RunLoop::main(), this, &AccessibilityAtspi::cacheClearTimerFired)
+    : m_cacheUpdateTimer(RunLoop::mainSingleton(), "AccessibilityAtspi::CacheUpdateTimer"_s, this, &AccessibilityAtspi::cacheUpdateTimerFired)
+    , m_cacheClearTimer(RunLoop::mainSingleton(), "AccessibilityAtspi::CacheClearTimer"_s, this, &AccessibilityAtspi::cacheClearTimerFired)
 {
     m_cacheUpdateTimer.setPriority(RunLoopSourcePriority::RunLoopDispatcher);
     m_cacheClearTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
@@ -643,7 +643,6 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
     { AccessibilityRole::DocumentNote, { "comment", N_("comment") } },
     { AccessibilityRole::Feed, { "panel", N_("panel") } },
     { AccessibilityRole::Figure, { "panel", N_("panel") } },
-    { AccessibilityRole::Footer, { "footer", N_("footer") } },
     { AccessibilityRole::Footnote, { "footnote", N_("footnote") } },
     { AccessibilityRole::Form, { "form", N_("form") } },
     { AccessibilityRole::Generic, { "section", N_("section") } },
@@ -696,6 +695,8 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
     { AccessibilityRole::ScrollArea, { "scroll pane", N_("scroll pane") } },
     { AccessibilityRole::ScrollBar, { "scroll bar", N_("scroll bar") } },
     { AccessibilityRole::SearchField, { "entry", N_("entry") } },
+    { AccessibilityRole::SectionFooter, { "section footer", N_("section footer") } },
+    { AccessibilityRole::SectionHeader, { "section header", N_("section header") } },
     { AccessibilityRole::Slider, { "slider", N_("slider") } },
     { AccessibilityRole::SpinButton, { "spin button", N_("spin button") } },
     { AccessibilityRole::Splitter, { "separator", N_("separator") } },
@@ -902,7 +903,7 @@ void AccessibilityAtspi::notifyStateChanged(AccessibilityObjectAtspi& atspiObjec
     const char* notification = notificationName(name);
     if (!notification)
         return;
-    
+
     notify(atspiObject, notification, value);
 }
 
@@ -912,7 +913,7 @@ void AccessibilityAtspi::notifyActiveDescendantChanged(AccessibilityObjectAtspi&
 }
 
 void AccessibilityAtspi::notifySelectionChanged(AccessibilityObjectAtspi& atspiObject) const
-{   
+{
     notify(atspiObject, "AXSelectedChildrenChanged", nullptr);
 }
 

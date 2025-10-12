@@ -72,7 +72,9 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
     if (m_selectionData->hasURL()) {
         CString urlString = m_selectionData->url().string().utf8();
         gchar* url = g_strdup_printf("%s\n%s", urlString.data(), m_selectionData->hasText() ? m_selectionData->text().utf8().data() : urlString.data());
+        IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
         GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_take(url, strlen(url)));
+        IGNORE_CLANG_WARNINGS_END
         providers.append(gdk_content_provider_new_for_bytes("_NETSCAPE_URL", bytes.get()));
     }
 
@@ -96,7 +98,7 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
 
     auto* surface = gtk_native_get_surface(gtk_widget_get_native(m_webView));
     auto* device = gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(m_webView)));
-    GRefPtr<GdkContentProvider> provider = adoptGRef(gdk_content_provider_new_union(providers.data(), providers.size()));
+    GRefPtr<GdkContentProvider> provider = adoptGRef(gdk_content_provider_new_union(providers.mutableSpan().data(), providers.size()));
     m_drag = adoptGRef(gdk_drag_begin(surface, device, provider.get(), dragOperationToGdkDragActions(operationMask), 0, 0));
     g_signal_connect(m_drag.get(), "dnd-finished", G_CALLBACK(+[](GdkDrag* gtkDrag, gpointer userData) {
         auto& drag = *static_cast<DragSource*>(userData);

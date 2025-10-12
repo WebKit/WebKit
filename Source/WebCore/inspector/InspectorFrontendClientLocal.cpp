@@ -35,6 +35,7 @@
 #include "Chrome.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
+#include "DocumentPage.h"
 #include "ExceptionDetails.h"
 #include "FloatRect.h"
 #include "FrameLoadRequest.h"
@@ -42,6 +43,7 @@
 #include "InspectorController.h"
 #include "InspectorFrontendHost.h"
 #include "InspectorPageAgent.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
@@ -165,8 +167,8 @@ InspectorFrontendClientLocal::InspectorFrontendClientLocal(InspectorController* 
 
 InspectorFrontendClientLocal::~InspectorFrontendClientLocal()
 {
-    if (m_frontendHost)
-        m_frontendHost->disconnectClient();
+    if (RefPtr frontendHost = m_frontendHost)
+        frontendHost->disconnectClient();
     m_frontendPage = nullptr;
     m_inspectedPageController = nullptr;
     m_dispatchTask->reset();
@@ -184,11 +186,12 @@ Page* InspectorFrontendClientLocal::frontendPage()
 
 void InspectorFrontendClientLocal::windowObjectCleared()
 {
-    if (m_frontendHost)
-        m_frontendHost->disconnectClient();
+    if (RefPtr frontendHost = m_frontendHost)
+        frontendHost->disconnectClient();
     
-    m_frontendHost = InspectorFrontendHost::create(this, frontendPage());
-    m_frontendHost->addSelfToGlobalObjectInWorld(debuggerWorldSingleton());
+    Ref frontendHost = InspectorFrontendHost::create(this, RefPtr { frontendPage() }.get());
+    m_frontendHost = frontendHost.copyRef();
+    frontendHost->addSelfToGlobalObjectInWorld(debuggerWorldSingleton());
 }
 
 void InspectorFrontendClientLocal::frontendLoaded()
@@ -245,8 +248,9 @@ bool InspectorFrontendClientLocal::canAttachWindow()
 
     // Don't allow the attach if the window would be too small to accommodate the minimum inspector size.
     Ref mainFrame = inspectedPageController->inspectedPage().mainFrame();
-    unsigned inspectedPageHeight = mainFrame->virtualView()->visibleHeight();
-    unsigned inspectedPageWidth = mainFrame->virtualView()->visibleWidth();
+    RefPtr view = mainFrame->virtualView();
+    unsigned inspectedPageHeight = view->visibleHeight();
+    unsigned inspectedPageWidth = view->visibleWidth();
     unsigned maximumAttachedHeight = inspectedPageHeight * maximumAttachedHeightRatio;
     return minimumAttachedHeight <= maximumAttachedHeight && minimumAttachedWidth <= inspectedPageWidth;
 }
@@ -261,9 +265,14 @@ RefPtr<InspectorController> InspectorFrontendClientLocal::protectedInspectedPage
     return m_inspectedPageController.get();
 }
 
+RefPtr<Page> InspectorFrontendClientLocal::protectedFrontendPage() const
+{
+    return m_frontendPage.get();
+}
+
 void InspectorFrontendClientLocal::changeAttachedWindowHeight(unsigned height)
 {
-    unsigned totalHeight = m_frontendPage->mainFrame().virtualView()->visibleHeight() + protectedInspectedPageController()->inspectedPage().mainFrame().virtualView()->visibleHeight();
+    unsigned totalHeight = protectedFrontendPage()->protectedMainFrame()->protectedVirtualView()->visibleHeight() + protectedInspectedPageController()->protectedInspectedPage()->protectedMainFrame()->protectedVirtualView()->visibleHeight();
     unsigned attachedHeight = constrainedAttachedWindowHeight(height, totalHeight);
     m_settings->setProperty(inspectorAttachedHeightSetting, String::number(attachedHeight));
     setAttachedWindowHeight(attachedHeight);
@@ -271,7 +280,7 @@ void InspectorFrontendClientLocal::changeAttachedWindowHeight(unsigned height)
 
 void InspectorFrontendClientLocal::changeAttachedWindowWidth(unsigned width)
 {
-    unsigned totalWidth = m_frontendPage->mainFrame().virtualView()->visibleWidth() + protectedInspectedPageController()->inspectedPage().mainFrame().virtualView()->visibleWidth();
+    unsigned totalWidth = protectedFrontendPage()->protectedMainFrame()->protectedVirtualView()->visibleWidth() + protectedInspectedPageController()->protectedInspectedPage()->protectedMainFrame()->protectedVirtualView()->visibleWidth();
     unsigned attachedWidth = constrainedAttachedWindowWidth(width, totalWidth);
     setAttachedWindowWidth(attachedWidth);
 }
@@ -283,14 +292,15 @@ void InspectorFrontendClientLocal::changeSheetRect(const FloatRect& rect)
 
 void InspectorFrontendClientLocal::openURLExternally(const String& url)
 {
-    RefPtr localMainFrame = protectedInspectedPageController()->inspectedPage().localMainFrame();
+    RefPtr localMainFrame = protectedInspectedPageController()->protectedInspectedPage()->localMainFrame();
     if (!localMainFrame)
         return;
     Ref mainFrame = *localMainFrame;
+    RefPtr mainFrameDocument = mainFrame->document();
 
-    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, mainFrame->document() };
+    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, mainFrameDocument.get() };
 
-    FrameLoadRequest frameLoadRequest { *mainFrame->document(), mainFrame->document()->securityOrigin(), { }, blankTargetFrameName(), InitiatedByMainFrame::Unknown };
+    FrameLoadRequest frameLoadRequest { *mainFrameDocument, mainFrameDocument->securityOrigin(), { }, blankTargetFrameName(), InitiatedByMainFrame::Unknown };
 
     auto [frame, created] = WebCore::createWindow(mainFrame, WTFMove(frameLoadRequest), { });
     if (!frame)
@@ -300,12 +310,13 @@ void InspectorFrontendClientLocal::openURLExternally(const String& url)
         return;
 
     ASSERT(localFrame->opener() == mainFrame.ptr());
-    localFrame->page()->setOpenedByDOM();
-    localFrame->page()->setOpenedByDOMWithOpener(true);
+    RefPtr page = localFrame->page();
+    page->setOpenedByDOM();
+    page->setOpenedByDOMWithOpener(true);
 
     // FIXME: Why do we compute the absolute URL with respect to |frame| instead of |mainFrame|?
-    ResourceRequest resourceRequest { localFrame->document()->completeURL(url) };
-    FrameLoadRequest frameLoadRequest2 { mainFrame->protectedDocument().releaseNonNull(), mainFrame->document()->securityOrigin(), WTFMove(resourceRequest), selfTargetFrameName(), InitiatedByMainFrame::Unknown };
+    ResourceRequest resourceRequest { localFrame->protectedDocument()->completeURL(url) };
+    FrameLoadRequest frameLoadRequest2 { *mainFrameDocument, mainFrameDocument->securityOrigin(), WTFMove(resourceRequest), selfTargetFrameName(), InitiatedByMainFrame::Unknown };
     localFrame->loader().changeLocation(WTFMove(frameLoadRequest2));
 }
 
@@ -339,7 +350,7 @@ void InspectorFrontendClientLocal::setAttachedWindow(DockSide dockSide)
 
 void InspectorFrontendClientLocal::restoreAttachedWindowHeight()
 {
-    unsigned inspectedPageHeight = protectedInspectedPageController()->inspectedPage().mainFrame().virtualView()->visibleHeight();
+    unsigned inspectedPageHeight = protectedInspectedPageController()->protectedInspectedPage()->protectedMainFrame()->protectedVirtualView()->visibleHeight();
     String value = m_settings->getProperty(inspectorAttachedHeightSetting);
     unsigned preferredHeight = value.isEmpty() ? defaultAttachedHeight : parseIntegerAllowingTrailingJunk<unsigned>(value).value_or(0);
 

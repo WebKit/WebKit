@@ -1,6 +1,5 @@
-FAIL range.commonAncestorContainer should be [object HTMLVideoElement]. Threw exception TypeError: null is not an object (evaluating 'range.commonAncestorContainer')
+PASS range.commonAncestorContainer is videoElement
 PASS successfullyParsed is true
-Some tests failed.
 
 TEST COMPLETE
 

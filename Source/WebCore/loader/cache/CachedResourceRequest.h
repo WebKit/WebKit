@@ -25,14 +25,14 @@
 
 #pragma once
 
-#include "CachedResource.h"
-#include "ContentSecurityPolicy.h"
-#include "Element.h"
-#include "ResourceLoadPriority.h"
-#include "ResourceLoaderOptions.h"
-#include "ResourceRequest.h"
-#include "SecurityOrigin.h"
-#include "ServiceWorkerIdentifier.h"
+#include <WebCore/CachedResource.h>
+#include <WebCore/ContentSecurityPolicy.h>
+#include <WebCore/Element.h>
+#include <WebCore/ResourceLoadPriority.h>
+#include <WebCore/ResourceLoaderOptions.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/SecurityOrigin.h>
+#include <WebCore/ServiceWorkerIdentifier.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/AtomString.h>
 
@@ -71,7 +71,7 @@ public:
     void setInitiatorType(const AtomString&);
     const AtomString& initiatorType() const;
 
-    bool allowsCaching() const { return m_options.cachingPolicy == CachingPolicy::AllowCaching; }
+    bool allowsCaching() const { return m_options.cachingPolicy == CachingPolicy::AllowCaching || m_options.cachingPolicy == CachingPolicy::AllowCachingPrefetch; }
     void setCachingPolicy(CachingPolicy policy) { m_options.cachingPolicy = policy;  }
 
     // Whether this request should impact request counting and delay window.onload.
@@ -113,7 +113,7 @@ public:
     void clearFragmentIdentifier() { m_fragmentIdentifier = { }; }
 
     static String splitFragmentIdentifierFromRequestURL(ResourceRequest&);
-    static String acceptHeaderValueFromType(CachedResource::Type);
+    static String acceptHeaderValueFromType(CachedResource::Type, bool usingSecureProtocol);
 
     void setClientIdentifierIfNeeded(ScriptExecutionContextIdentifier);
     void setSelectedServiceWorkerRegistrationIdentifierIfNeeded(ServiceWorkerRegistrationIdentifier);

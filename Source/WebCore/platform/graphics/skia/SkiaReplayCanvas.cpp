@@ -63,7 +63,7 @@ sk_sp<SkImage> SkiaReplayCanvas::waitForRenderingCompletionAndRewrapImageIfNeede
     m_recording->waitForFenceIfNeeded(*image);
 
     auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
-    if (image->isValid(grContext))
+    if (image->isValid(grContext->asRecorder()))
         return nullptr;
 
     // FIXME: Add error reporting mechanism, a failure from GetBackendTextureFromImage() should be visible / reported.
@@ -89,8 +89,8 @@ void SkiaReplayCanvas::invokeDrawFunctionWithPaint(const SkPaint& paint, Functio
     auto* shader = paint.getShader();
 
     SkMatrix localMatrix;
-    SkTileMode mode[2];
-    auto* image = shader ? shader->isAImage(&localMatrix, mode) : nullptr;
+    std::array<SkTileMode, 2> mode;
+    auto* image = shader ? shader->isAImage(&localMatrix, mode.data()) : nullptr;
     if (auto wrappedImage = waitForRenderingCompletionAndRewrapImageIfNeeded(image)) {
         // FIXME: There is no way to get the SkSamplingOptions that were used to create the original shader.
         // Add Skia API? (SkImageShader stores SkSamplingOptions but is private and not installed).
@@ -106,8 +106,8 @@ void SkiaReplayCanvas::invokeDrawFunctionWithPaint(const SkPaint& paint, Functio
 void SkiaReplayCanvas::invokeDrawFunctionWithShader(const SkShader* shader, Function<void(const SkShader*)>&& drawFunction)
 {
     SkMatrix localMatrix;
-    SkTileMode mode[2];
-    auto* image = shader ? shader->isAImage(&localMatrix, mode) : nullptr;
+    std::array<SkTileMode, 2> mode;
+    auto* image = shader ? shader->isAImage(&localMatrix, mode.data()) : nullptr;
     if (auto wrappedImage = waitForRenderingCompletionAndRewrapImageIfNeeded(image)) {
         // FIXME: There is no way to get the SkSamplingOptions that were used to create the original shader.
         // Add Skia API? (SkImageShader stores SkSamplingOptions but is private and not installed).

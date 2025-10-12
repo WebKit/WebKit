@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_DEVICE_MOCK_AUDIO_DEVICE_BUFFER_H_
 #define MODULES_AUDIO_DEVICE_MOCK_AUDIO_DEVICE_BUFFER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <optional>
 
 #include "modules/audio_device/audio_device_buffer.h"

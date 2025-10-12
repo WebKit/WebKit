@@ -10,17 +10,29 @@
 
 #include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_frames_comparator.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <map>
+#include <memory>
+#include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
+#include "api/numerics/samples_stats_counter.h"
 #include "api/test/create_frame_generator.h"
+#include "api/test/frame_generator_interface.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_type.h"
 #include "rtc_base/strings/string_builder.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_cpu_measurer.h"
+#include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_internal_shared_objects.h"
 #include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_shared_objects.h"
 
 namespace webrtc {
@@ -34,7 +46,7 @@ using ::testing::IsEmpty;
 using ::testing::Pair;
 using ::testing::SizeIs;
 
-using StatsSample = ::webrtc::SamplesStatsCounter::StatsSample;
+using StatsSample = SamplesStatsCounter::StatsSample;
 
 DefaultVideoQualityAnalyzerOptions AnalyzerOptionsForTest() {
   DefaultVideoQualityAnalyzerOptions options;
@@ -132,7 +144,7 @@ void AssertFirstMetadataHasField(const SamplesStatsCounter& counter,
 }
 
 std::string ToString(const SamplesStatsCounter& counter) {
-  rtc::StringBuilder out;
+  StringBuilder out;
   for (const StatsSample& s : counter.GetTimedSamples()) {
     out << "{ time_ms=" << s.time.ms() << "; value=" << s.value << "}, ";
   }

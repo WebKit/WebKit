@@ -57,7 +57,7 @@ JSValue Global::get(JSGlobalObject* globalObject) const
     case TypeKind::V128:
         throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Cannot get value of v128 global"_s));
         return { };
-    case TypeKind::Exn:
+    case TypeKind::Exnref:
     case TypeKind::Externref:
     case TypeKind::Funcref:
     case TypeKind::Ref:
@@ -141,7 +141,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
             return;
         } else {
             JSValue internref = Wasm::internalizeExternref(argument);
-            if (!Wasm::TypeInformation::castReference(internref, m_type.isNullable(), m_type.index)) {
+            if (!Wasm::TypeInformation::isReferenceValueAssignable(internref, m_type.isNullable(), m_type.index)) {
                 // FIXME: provide a better error message here
                 // https://bugs.webkit.org/show_bug.cgi?id=247746
                 throwTypeError(globalObject, throwScope, "Argument value did not match the reference type"_s);

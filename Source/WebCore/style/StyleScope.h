@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2010, 2012-2013, 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2011 Google Inc. All rights reserved.
@@ -27,11 +27,14 @@
 
 #pragma once
 
-#include "AnchorPositionEvaluator.h"
-#include "LayoutSize.h"
-#include "StyleScopeIdentifier.h"
-#include "StyleScopeOrdinal.h"
-#include "Timer.h"
+#include <WebCore/AnchorPositionEvaluator.h>
+#include <WebCore/Document.h>
+#include <WebCore/LayoutRect.h>
+#include <WebCore/LayoutSize.h>
+#include <WebCore/StyleScopeIdentifier.h>
+#include <WebCore/StyleScopeOrdinal.h>
+#include <WebCore/Styleable.h>
+#include <WebCore/Timer.h>
 #include <memory>
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
@@ -52,7 +55,6 @@ namespace WebCore {
 
 class CSSCounterStyleRegistry;
 class CSSStyleSheet;
-class Document;
 class Element;
 class HTMLSlotElement;
 class Node;
@@ -134,6 +136,7 @@ public:
     WEBCORE_EXPORT Resolver& resolver();
     Ref<Resolver> protectedResolver();
     Resolver* resolverIfExists() { return m_resolver.get(); }
+    const Resolver* resolverIfExists() const { return m_resolver.get(); }
     void clearResolver();
     void releaseMemory();
 
@@ -146,14 +149,19 @@ public:
     const ShadowRoot* shadowRoot() const { return m_shadowRoot; }
     ShadowRoot* shadowRoot() { return m_shadowRoot; }
 
+    CheckedPtr<const Scope> hostScope() const;
+
     static Scope& forNode(Node&);
     static const Scope& forNode(const Node&);
     static Scope* forOrdinal(Element&, ScopeOrdinal);
     static const Scope* forOrdinal(const Element&, ScopeOrdinal);
 
+    // The provided function is called for all the relevant scopes until it finds a name match from a scope and returns a truthy value.
+    template<typename F> static auto resolveTreeScopedReference(const Element&, const ScopedName&, const F&&);
+
     struct LayoutDependencyUpdateContext {
-        UncheckedKeyHashSet<CheckedRef<const Element>> invalidatedContainers;
-        UncheckedKeyHashSet<CheckedRef<const Element>> invalidatedAnchorPositioned;
+        HashSet<CheckedRef<const Element>> invalidatedContainers;
+        HashSet<CheckedRef<const Element>> invalidatedAnchorPositioned;
     };
     bool invalidateForLayoutDependencies(LayoutDependencyUpdateContext&);
 
@@ -165,6 +173,10 @@ public:
     AnchorPositionedToAnchorMap& anchorPositionedToAnchorMap() { return m_anchorPositionedToAnchorMap; }
     const AnchorPositionedToAnchorMap& anchorPositionedToAnchorMap() const { return m_anchorPositionedToAnchorMap; }
     void updateAnchorPositioningStateAfterStyleResolution();
+
+    std::optional<size_t> lastSuccessfulPositionOptionIndexFor(const Styleable&);
+    void setLastSuccessfulPositionOptionIndexMap(HashMap<AnchorPositionedKey, size_t>&&);
+    void forgetLastSuccessfulPositionOptionIndex(const Styleable&);
 
     bool invalidateForAnchorDependencies(LayoutDependencyUpdateContext&);
 
@@ -178,7 +190,7 @@ private:
     void updateActiveStyleSheets(UpdateType);
     void scheduleUpdate(UpdateType);
 
-    using ResolverScopes = UncheckedKeyHashMap<Ref<Resolver>, Vector<WeakPtr<Scope>>>;
+    using ResolverScopes = HashMap<Ref<Resolver>, Vector<WeakPtr<Scope>>>;
     ResolverScopes collectResolverScopes();
     template <typename TestFunction> void evaluateMediaQueries(TestFunction&&);
 
@@ -223,7 +235,7 @@ private:
     bool invalidateForContainerDependencies(LayoutDependencyUpdateContext&);
     bool invalidateForPositionTryFallbacks(LayoutDependencyUpdateContext&);
 
-    CheckedRef<Document> m_document;
+    const CheckedRef<Document> m_document;
     ShadowRoot* m_shadowRoot { nullptr };
 
     RefPtr<Resolver> m_resolver;
@@ -235,7 +247,7 @@ private:
 
     Timer m_pendingUpdateTimer;
 
-    mutable UncheckedKeyHashSet<SingleThreadWeakRef<const CSSStyleSheet>> m_weakCopyOfActiveStyleSheetListForFastLookup;
+    mutable HashSet<SingleThreadWeakRef<const CSSStyleSheet>> m_weakCopyOfActiveStyleSheetListForFastLookup;
 
     // Track the currently loading top-level stylesheets needed for rendering.
     // Sheets loaded using the @import directive are not included in this count.
@@ -259,15 +271,24 @@ private:
     std::optional<MediaQueryViewportState> m_viewportStateOnPreviousMediaQueryEvaluation;
     WeakHashMap<Element, LayoutSize, WeakPtrImplWithEventTargetData> m_queryContainerDimensionsOnLastUpdate;
 
-    SingleThreadWeakHashMap<const RenderBoxModelObject, LayoutRect> m_anchorRectsOnLastUpdate;
+    struct AnchorPosition {
+        LayoutRect absoluteRect;
+        Vector<LayoutSize, 2> containingBlockSizes;
+
+        bool operator==(const AnchorPosition&) const = default;
+    };
+    SingleThreadWeakHashMap<const RenderBoxModelObject, AnchorPosition> m_anchorPositionsOnLastUpdate;
+    // Stores the last successful position option for each anchor-positioned element.
+    // This is recorded when ResizeObserver events are delivered, at Document::updateResizeObservations
+    HashMap<AnchorPositionedKey, size_t> m_lastSuccessfulPositionOptionIndexes;
 
     std::unique_ptr<MatchResultCache> m_matchResultCache;
 
-    UniqueRef<CustomPropertyRegistry> m_customPropertyRegistry;
-    UniqueRef<CSSCounterStyleRegistry> m_counterStyleRegistry;
+    const UniqueRef<CustomPropertyRegistry> m_customPropertyRegistry;
+    const UniqueRef<CSSCounterStyleRegistry> m_counterStyleRegistry;
 
     // FIXME: These (and some things above) are only relevant for the root scope.
-    UncheckedKeyHashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;
+    HashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;
 
     AnchorPositionedToAnchorMap m_anchorPositionedToAnchorMap;
 };
@@ -281,6 +302,29 @@ inline void Scope::flushPendingUpdate()
         flushPendingDescendantUpdates();
     if (m_pendingUpdate)
         flushPendingSelfUpdate();
+}
+
+template<typename F>
+auto Scope::resolveTreeScopedReference(const Element& element, const ScopedName& reference, const F&& function)
+{
+    using ReturnType = std::invoke_result_t<F, Scope, AtomString>;
+
+    // https://drafts.csswg.org/css-scoping-1/#shadow-names
+    // "Whenever a tree-scoped reference is dereferenced to find the CSS construct it is referencing,
+    // first search only the tree-scoped names associated with the same root as the tree-scoped reference must be searched."
+    CheckedPtr firstScope = Scope::forOrdinal(element, reference.scopeOrdinal);
+    if (!firstScope)
+        return ReturnType { };
+
+    if (auto result = function(*firstScope, reference.name))
+        return result;
+
+    // "If no relevant tree-scoped name is found, and the root is a shadow root, then repeat this search in the root’s host’s node tree."
+    for (CheckedPtr hostScope = firstScope->hostScope(); hostScope; hostScope = hostScope->hostScope()) {
+        if (auto result = function(*hostScope, reference.name))
+            return result;
+    }
+    return ReturnType { };
 }
 
 }

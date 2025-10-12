@@ -1,5 +1,5 @@
 # Copyright (C) 2008-2020 Andrey Petrov and contributors.
-# Copyright (C) 2023 Apple Inc. All rights reserved.
+# Copyright (C) 2023-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -78,6 +78,7 @@ AutoInstall.register(Package('bs4', Version(4, 12, 0), pypi_name='beautifulsoup4
 AutoInstall.register(Package('configparser', Version(4, 0, 2), implicit_deps=['pyparsing'], aliases=['backports.configparser']))
 AutoInstall.register(Package('contextlib2', Version(0, 6, 0)))
 AutoInstall.register(Package('coverage', Version(7, 6, 1), wheel=True))
+AutoInstall.register(Package('dnslib', Version(0, 9, 26)))
 AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
 AutoInstall.register(Package('html5lib', Version(1, 1)))
 AutoInstall.register(Package('iniconfig', Version(1, 1, 1)))
@@ -87,13 +88,15 @@ AutoInstall.register(Package('mozprocess', Version(1, 3, 0)))
 AutoInstall.register(Package('mozlog', Version(7, 1, 0), wheel=True))
 AutoInstall.register(Package('mozterm', Version(1, 0, 0)))
 AutoInstall.register(Package('pluggy', Version(0, 13, 1)))
-AutoInstall.register(Package('pycodestyle', Version(2, 5, 0)))
+AutoInstall.register(Package('pycodestyle', Version(2, 14, 0)))
 AutoInstall.register(Package('pyfakefs', Version(5, 7, 3)))
 AutoInstall.register(Package('soupsieve', Version(2, 2, 1)))
 
 if sys.platform == 'linux':
-    AutoInstall.register(Package('selenium', Version(4, 24, 0), wheel=True, implicit_deps=[
-        Package('websocket', Version(1, 8, 0), pypi_name='websocket-client')]))
+    # Keep websocket toplevel for WebDriverTests' imported selenium
+    AutoInstall.register(Package('websocket', Version(1, 8, 0), pypi_name='websocket-client'))
+    AutoInstall.register(Package('selenium', Version(4, 24, 0), wheel=True, implicit_deps=['websocket']))
+    AutoInstall.register(Package('filetype', Version(1, 2, 0), wheel=True))
 else:
     AutoInstall.register(Package('selenium', Version(4, 12, 0), wheel=True))
 

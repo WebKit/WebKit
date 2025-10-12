@@ -98,6 +98,13 @@ fast/shadow-dom/pointerlockelement-in-shadow-tree.html [ Skip ]
 fast/shadow-dom/pointerlockelement-in-slot.html [ Skip ]
 pointer-lock [ Skip ]
 
+# WEB_AUTHN is disabled
+http/wpt/identity/ [ Skip ]
+imported/w3c/web-platform-tests/digital-credentials/ [ Skip ]
+
+# WEB_CODECS is disabled
+fast/webcodecs/audio-data-copy-to-crash.html [ Skip ]
+
 # WebGPU is disabled
 http/tests/webgpu [ Skip ]
 fast/webgpu [ Skip ]
@@ -218,6 +225,9 @@ fast/images/image-size-unsigned-overflow.html [ Skip ]
 fast/events/clipboard-dataTransferItemList.html [ Skip ]
 fast/events/drag-dataTransferItemList.html [ Skip ]
 fast/events/drag-dataTransferItemList-file-handling.html [ Skip ]
+
+# WebTransport only has a stub implementation
+imported/w3c/web-platform-tests/webtransport/ [ Skip ]
 
 # Drag and drop isn't supported yet, and GDI resource leaks <webkit.org/b/264999>
 editing/selection/drag-text-delay.html [ Skip ]
@@ -371,6 +381,7 @@ fast/canvas/offscreen-enabled.html [ Skip ]
 fast/canvas/offscreen-giant-transfer-to-imagebitmap.html [ Skip ]
 fast/canvas/offscreen-giant.html [ Skip ]
 fast/canvas/offscreen-nested-worker-serialization.html [ Skip ]
+fast/canvas/offscreen-no-script-context-crash.html [ Skip ]
 fast/canvas/offscreen-scaling.html [ Skip ]
 fast/canvas/offscreen-toggle-display.html [ Skip ]
 fast/canvas/offscreen-visibility-change.html [ Skip ]
@@ -432,13 +443,20 @@ storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.ht
 storage/domstorage/storage-close-database-on-idle.html [ Skip ]
 
 # testRunner.setStatisticsShouldDowngradeReferrer() is not supported
-http/tests/security/referrer-policy-header.html [ Skip ]
-http/tests/security/referrer-policy-header-multipart.html [ Skip ]
+http/tests/security/referrer-policy-header-empty.html [ Skip ]
+http/tests/security/referrer-policy-header-invalid.html [ Skip ]
+http/tests/security/referrer-policy-header-no-referrer-when-downgrade.html [ Skip ]
+http/tests/security/referrer-policy-header-no-referrer.html [ Skip ]
+http/tests/security/referrer-policy-header-origin-when-cross-origin.html [ Skip ]
+http/tests/security/referrer-policy-header-origin.html [ Skip ]
+http/tests/security/referrer-policy-header-same-origin.html [ Skip ]
+http/tests/security/referrer-policy-header-strict-origin-when-cross-origin.html [ Skip ]
+http/tests/security/referrer-policy-header-strict-origin.html [ Skip ]
+http/tests/security/referrer-policy-header-unsafe-url.html [ Skip ]
 http/tests/navigation/ping-attribute/area-cross-origin.html [ Skip ]
 http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Skip ]
 http/tests/referrer-policy/no-referrer-when-downgrade/ [ Skip ]
 http/tests/referrer-policy/unsafe-url/cross-origin-http-http.html [ Skip ]
-http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html [ Skip ]
 
 # testRunner.dontForceRepaint
 compositing/repaint/copy-forward-dirty-region-purged-backbuffer.html [ Skip ]
@@ -482,6 +500,15 @@ compositing/tiling/tiled-reflection-inwindow.html [ Skip ]
 
 # UIHelper.initiateUserScroll() doesn't resolve the promise
 http/tests/scroll-to-text-fragment/no-scroll-after-stylesheet-load.html [ Skip ] # Timeout
+
+# Mix of errors related to the harness:
+# Unhandled Promise Rejection: TypeError: Load failed
+# Harness Error (TIMEOUT), message = null
+imported/w3c/web-platform-tests/scroll-to-text-fragment/redirects.html
+imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-after-DOMContentLoaded.html
+imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-scroll-to-center.html
+imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-security.sub.html
+imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html
 
 # WebKitTestRunner: test fonts are not available in GPU process
 webkit.org/b/278895 fast/canvas/canvas-blending-text.html [ Skip ]
@@ -743,7 +770,6 @@ http/tests/mime/mime-type-sniff.html [ Skip ]
 http/tests/mime/html-with-nosniff-html.html [ Skip ]
 
 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
-http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 http/tests/misc/timer-vs-loading.html [ Skip ]
 http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
@@ -797,8 +823,13 @@ http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-wit
 http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction-js-cookie-checking.html [ Failure ]
 http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html [ Failure ]
 
+http/tests/resourceLoadStatistics/only-accept-first-party-cookies-with-third-party-cookie-blocking.html [ Skip ] 
 http/tests/resourceLoadStatistics/only-partitioned-third-party-cookies.https.html [ Skip ]
 http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect.https.html [ Skip ]
+http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect-fetch.https.html [ Skip ]
+
+http/tests/cookies/multiple-cookies-iframes.https.html [ Skip ]
+http/tests/cookies/multiple-cookies.https.html [ Skip ]
 
 http/tests/security/XFrameOptions/x-frame-options-deny.html [ Skip ] # Failure
 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html [ Skip ] # Failure
@@ -856,10 +887,7 @@ http/tests/security/contentSecurityPolicy/xsl-redirect-blocked.html [ Skip ] # F
 http/tests/security/contentSecurityPolicy/audioworklet-script-src-allowed.html [ Skip ] # Timeout
 http/tests/security/contentSecurityPolicy/audioworklet-script-src-blocked.html [ Skip ] # Timeout
 
-http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html [ Failure Pass ]
-
 webkit.org/b/291024 http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-open-window-upgrades-UpgradeMixedContent.html [ Skip ] # Failure Pass
-webkit.org/b/291024 http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-open-window-upgrades.html [ Skip ] # Failure Pass
 
 http/tests/security/cookie-module-import-propagate.html [ Skip ] # Failure
 http/tests/security/cookie-module-import.html [ Skip ] # Failure
@@ -1017,8 +1045,6 @@ http/wpt/service-workers/service-worker-spinning-install.https.html [ Failure Pa
 http/tests/workers/service/registerServiceWorkerClient-after-network-process-crash.html [ Failure ]
 http/wpt/push-api [ Skip ]
 
-webkit.org/b/282475 http/wpt/navigation-api/transition-promises.html [ Failure Pass ]
-
 http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
 
 http/tests/misc/webtiming-one-redirect.py [ Failure Pass ]
@@ -1103,6 +1129,7 @@ compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
 compositing/clipping/cached-cliprect-with-compositing-boundary.html [ ImageOnlyFailure ]
 compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html [ ImageOnlyFailure ]
 compositing/transforms/perspective-with-scrolling.html [ ImageOnlyFailure ]
+compositing/transforms/transformed-replaced-with-shadow-children.html [ ImageOnlyFailure ] # Might just need Windows-specific expectation, minor 0.01% difference on rounded corners
 
 # ImageOnlyFailure only on local PC. Depends on the graphis driver?
 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure Pass ]
@@ -1288,7 +1315,7 @@ webkit.org/b/151759 fast/dom/Window/property-access-on-cached-window-after-frame
 
 fast/dom/HTMLInputElement/change-type-in-input-event-listener.html [ Skip ]
 
-webkit.org/b/227753 fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Pass Failure ]
+webkit.org/b/227753 fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Skip ] # Pass Failure
 
 fast/editing/recursive-reapply-edit-command-crash.html [ Pass Failure ]
 
@@ -1836,18 +1863,65 @@ webkit.org/b/277121 [ Debug ] fast/events/event-handler-detached-document.html
 webkit.org/b/168136 performance-api/performance-observer-periodic.html [ Pass Failure ]
 
 # ReadableByteStreamController is not implemented
-streams/readable-byte-stream-controller.html [ Skip ]
-streams/readable-byte-stream-controller-worker.html [ Skip ]
 streams/readable-stream-byob-reader.html [ Skip ]
 streams/readable-stream-byob-reader-worker.html [ Skip ]
 streams/readable-stream-byob-request.html [ Skip ]
 streams/readable-stream-byob-request-worker.html [ Skip ]
 
 # The Cookie Store API is not fully implemented on the Windows port yet.
-imported/w3c/web-platform-tests/cookie-store [ Skip ]
+imported/w3c/web-platform-tests/cookiestore [ Skip ]
 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Skip ]
-http/tests/cookies/cookie-store-get-secure.https.html [ Skip ]
 http/tests/cookies/cookie-store-set-secure.https.html [ Skip ]
+http/tests/navigation/ping-attribute/anchor-cookie.html [ Skip ]
+http/tests/navigation/ping-attribute/cross-site-url-anchor-cookie-preexisting-cookie.html [ Skip ]
+http/tests/navigation/ping-attribute/cross-site-url-anchor-cookie.html [ Skip ]
+http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect.html [ Skip ]
+http/tests/workers/service/basic-install-event-sw-fetch-third-party.html [ Skip ]
+imported/w3c/web-platform-tests/cookies/prefix/__HostHttp.https.html [ Skip ]
+imported/w3c/web-platform-tests/cookies/prefix/__host.document-cookie.html [ Skip ]
+imported/w3c/web-platform-tests/cookies/prefix/__host.document-cookie.https.html [ Skip ]
+imported/w3c/web-platform-tests/cookies/prefix/__host.header.html [ Skip ]
+imported/w3c/web-platform-tests/cookies/prefix/__host.header.https.html [ Skip ]
+imported/w3c/web-platform-tests/cookies/prefix/__secure.document-cookie.html [ Skip ]
+imported/w3c/web-platform-tests/cookies/prefix/__secure.document-cookie.https.html [ Skip ]
+imported/w3c/web-platform-tests/cookies/prefix/__secure.header.html [ Skip ]
+
+# `scrollend` events are not supported on Windows
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-after-sequence-of-scrolls.tentative.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-after-snap.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-mandatory-snap-point-after-load.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-document.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-element-with-overscroll-behavior.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-window.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fires-on-visual-viewport.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fires-to-iframe-window.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-handler-content-attributes.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-not-fired-after-removing-scroller.tentative.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-not-fired-on-no-scroll.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-fires-to-text-input.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-with-snap-on-fractional-offset.html [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html?include=root-scrollBy-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html?include=root-scrollBy-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html?include=root-scrollTo-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html?include=root-scrollTo-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html?include=subframe-scrollBy-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html?include=subframe-scrollBy-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html?include=subframe-scrollTo-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html?include=subframe-scrollTo-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scroll-attr-change.html?include=root-scrollLeft-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scroll-attr-change.html?include=root-scrollLeft-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scroll-attr-change.html?include=root-scrollTop-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scroll-attr-change.html?include=root-scrollTop-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scroll-attr-change.html?include=subframe-scrollLeft-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scroll-attr-change.html?include=subframe-scrollLeft-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scroll-attr-change.html?include=subframe-scrollTop-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scroll-attr-change.html?include=subframe-scrollTop-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scrollIntoView.html?include=nested-scrollIntoView [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scrollIntoView.html?include=root-inline-end-block-end-behavior-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scrollIntoView.html?include=root-inline-start-block-start-behavior-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scrollIntoView.html?include=subframe-inline-end-block-end-behavior-auto [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scrollIntoView.html?include=subframe-inline-start-block-start-behavior-smooth [ Skip ]
+webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-for-user-scroll.html [ Skip ]
 
 webkit.org/b/271132 [ Debug ] fast/text/complex-text-with-bidi-boundary-crash.html [ Skip ] # Crash
 
@@ -1890,14 +1964,8 @@ webkit.org/b/222563 http/tests/loading/basic-auth-load-URL-with-consecutive-slas
 #  webkit.org/b/259464 fast/events/wheel/redispatched-wheel-event.html [ Failure Pass ]
 webkit.org/b/271223 fast/events/wheel/redispatched-wheel-event.html [ Skip ] # Timeout
 
-# Trusted Types aren't implemented yet
-webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting.html [ Skip ]
-webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting-report-only.html [ Skip ]
-webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting-no-unsafe-eval.html [ Skip ]
-webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting.html [ Skip ]
-webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/should-trusted-type-policy-creation-be-blocked-by-csp-001.html [ Skip ]
-webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/should-trusted-type-policy-creation-be-blocked-by-csp-002.html [ Skip ]
-webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/should-trusted-type-policy-creation-be-blocked-by-csp-003.html [ Skip ]
+# Trusted Types tests fail and timeout on Windows
+webkit.org/b/299516 imported/w3c/web-platform-tests/trusted-types/ [ Skip ]
 
 # Failing with non-English keyboard
 webkit.org/b/267251 imported/w3c/web-platform-tests/css/selectors/invalidation/user-valid-user-invalid.html [ Failure Pass ]
@@ -1906,6 +1974,20 @@ webkit.org/b/267251 imported/w3c/web-platform-tests/css/selectors/invalidation/u
 #//////////////////////////////////////////////////////////////////////////////////////////
 # TEMPORARY SKIPS -- these areas still need to be addressed individually
 #//////////////////////////////////////////////////////////////////////////////////////////
+
+imported/w3c/web-platform-tests/event-timing/interaction-count-tap.html [ Crash ]
+imported/w3c/web-platform-tests/event-timing/interaction-count-click.html [ Skip ]
+imported/w3c/web-platform-tests/event-timing/interaction-count-press-key.html [ Skip ]
+
+# Timeout:
+imported/w3c/web-platform-tests/event-timing/interactionid-orphan-pointerup.html [ Skip ]
+
+# Fail with AccessDeniedAccess
+imported/w3c/web-platform-tests/event-timing/contextmenu.html [ Skip ]
+imported/w3c/web-platform-tests/event-timing/interactionid-auxclick.html [ Skip ]
+imported/w3c/web-platform-tests/event-timing/interactionid-aux-pointerdown-and-pointerdown.html [ Skip ]
+imported/w3c/web-platform-tests/event-timing/interactionid-aux-pointerdown.html [ Skip ]
+imported/w3c/web-platform-tests/event-timing/first-input-interactionid-key.html [ Skip ]
 
 compositing/video [ Skip ]
 editing/pasteboard [ Skip ]
@@ -2349,13 +2431,12 @@ fast/text/cjk-multi-codepoint-cluster-vertical.html [ ImageOnlyFailure ]
 fast/text/combining-mark-paint.html [ ImageOnlyFailure ]
 fast/text/complex-small-caps-non-bmp-capitalize.html [ ImageOnlyFailure ]
 fast/text/emoji-overlap.html [ ImageOnlyFailure ]
+fast/text/emoji-style.html [ ImageOnlyFailure ]
 fast/text/emoji-synthesis.html [ ImageOnlyFailure ]
 fast/text/emoji-variation-selector.html [ ImageOnlyFailure ]
 fast/text/emoji-with-joiner.html [ Failure ]
 fast/text/emphasis-overlap.html [ Failure ]
 fast/text/fallback-language-han-2.html [ ImageOnlyFailure ]
-fast/text/font-collection-2.html [ ImageOnlyFailure ]
-fast/text/font-collection.html [ ImageOnlyFailure ]
 fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
 fast/text/hyphenate-avoid-orphaned-word.html [ Failure ]
 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
@@ -3210,7 +3291,6 @@ fast/css-generated-content/table-table-before-after-child-add.html [ Skip ]
 fast/css-generated-content/table-with-before.html [ Skip ]
 fast/css-generated-content/visibleContentHiddenParent.html [ Skip ]
 fast/css-generated-content/wbr-with-before-content.html [ Skip ]
-fast/css-grid-layout/grid-self-baseline-two-dimensional.html [ Skip ]
 fast/css/001.html [ Skip ]
 fast/css/002.html [ Skip ]
 fast/css/003.html [ Skip ]
@@ -3286,7 +3366,6 @@ fast/css/font-size-negative.html [ Skip ]
 fast/css/font-smoothing.html [ Skip ]
 fast/css/font-weight-1.html [ Skip ]
 fast/css/font_property_normal.html [ Skip ]
-fast/css/h1-in-section-elements.html [ Skip ]
 fast/css/hover-subselector.html [ Skip ]
 fast/css/hsl-color.html [ Skip ]
 fast/css/hsla-color.html [ Skip ]
@@ -4104,6 +4183,7 @@ compositing/layer-creation/scroll-partial-update.html [ Skip ]
 compositing/layer-creation/spanOverlapsCanvas.html [ Skip ]
 compositing/layer-creation/stacking-context-overlap-nested.html [ Skip ]
 compositing/layer-creation/stacking-context-overlap.html [ Skip ]
+compositing/layer-creation/sticky-overlap-extent.html [ Skip ]
 compositing/layer-creation/subpixel-adjacent-layers-overlap.html [ Skip ]
 compositing/layer-creation/translate-animation-overlap.html [ Skip ]
 compositing/layer-creation/translate-scale-animation-overlap.html [ Skip ]
@@ -4237,6 +4317,7 @@ fast/events/keydown-leftright-keys.html [ Failure ]
 fast/events/mouse-cursor-change.html [ Failure ]
 fast/events/mouse-cursor-no-mousemove.html [ Failure ]
 fast/events/mouse-cursor-udpate-during-raf.html [ Failure ]
+fast/events/page-visibility-resize-event-order.html [ Timeout ]
 fast/events/selectstart-by-single-click-with-shift.html [ Failure ]
 fast/text/font-download-font-face-src-list.html [ Failure ]
 fast/text/font-download-font-family-property.html [ Failure ]
@@ -4371,6 +4452,7 @@ storage/indexeddb/connection-leak.html [ Failure Pass ]
 fast/text/font-load-data-partitioned-alphabet.html [ Failure ]
 
 imported/w3c/web-platform-tests/navigation-api [ Skip ]
+webkit.org/b/282475 http/wpt/navigation-api [ Skip ]
 
 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Failure ]
 
@@ -4447,3 +4529,60 @@ imported/w3c/web-platform-tests/wasm/core/simd/simd_f64x2_cmp.wast.js.html [ Tim
 imported/w3c/web-platform-tests/wasm/core/simd/simd_f64x2_pmin_pmax.wast.js.html [ Timeout Pass ]
 
 http/tests/iframe-memory-monitor/media-video-autoplay-in-frames.html [ Skip ]
+
+imported/w3c/web-platform-tests/speculation-rules/prefetch/different-initiators.sub.https.html?cross-site-1 [ Failure ]
+imported/w3c/web-platform-tests/speculation-rules/prefetch/initiators-a-element.sub.https.html?cross-site [ Failure ]
+imported/w3c/web-platform-tests/speculation-rules/prefetch/initiators-window-open.sub.https.html?cross-site [ Failure ]
+imported/w3c/web-platform-tests/speculation-rules/prefetch/redirect-url.https.html?origin=cross-site-initial [ Failure ]
+imported/w3c/web-platform-tests/speculation-rules/prefetch/referrer-policy.https.html?4-last [ Failure ]
+imported/w3c/web-platform-tests/speculation-rules/prefetch/user-pass.https.html?cross-origin=false [ Failure ]
+imported/w3c/web-platform-tests/speculation-rules/prefetch/user-pass.https.html?cross-origin=true [ Failure ]
+imported/w3c/web-platform-tests/speculation-rules/speculation-tags/invalid-tags.https.html?tag-level=rule&type=prefetch [ Failure ]
+imported/w3c/web-platform-tests/speculation-rules/speculation-tags/invalid-tags.https.html?tag-level=ruleset&type=prefetch [ Failure ]
+imported/w3c/web-platform-tests/speculation-rules/speculation-tags/valid-tags.https.html?tag-level=rule&type=prefetch [ Failure ]
+imported/w3c/web-platform-tests/speculation-rules/speculation-tags/valid-tags.https.html?tag-level=ruleset&type=prefetch [ Failure ]
+
+# Lockdown Mode does not apply
+dom/xsl/lockdown-mode [ Skip ]
+http/tests/lockdown-mode [ Skip ]
+js/dom/lockdown-mode [ Skip ]
+
+imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinates.html?mouse [ Pass ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinates.html?pen [ Pass ]
+
+# New imported 'focus' timeout failures
+imported/w3c/web-platform-tests/focus/activeelement-after-focusing-different-site-iframe-contentwindow.html [ Failure ]
+imported/w3c/web-platform-tests/focus/activeelement-after-focusing-same-site-iframe-contentwindow.html [ Failure ]
+imported/w3c/web-platform-tests/focus/activeelement-after-focusing-same-site-iframe.html [ Failure ]
+imported/w3c/web-platform-tests/focus/focus-restoration-in-same-site-iframes-window.html [ Failure ]
+imported/w3c/web-platform-tests/focus/hasfocus-same-site.html [ Failure ]
+imported/w3c/web-platform-tests/focus/iframe-contentwindow-focus-with-different-site-intermediate-frame.html [ Failure ]
+imported/w3c/web-platform-tests/focus/iframe-contentwindow-focus-with-same-as-top-intermediate-frame.html [ Failure ]
+imported/w3c/web-platform-tests/focus/iframe-focus-with-different-site-intermediate-frame.html [ Failure ]
+
+# Now that partial fonts are working, two characters previously rendered as a square are now showing correctly, which makes the test fail. 
+# Probably the test should be updated.
+fast/text/text-combine-placement.html [ Failure ]
+
+fast/css/vertical-align-rem-on-root.html [ Skip ] # [ Timeout Pass ]
+
+css3/filters/drop-shadow-current-color.html [ Failure ] # Two missing right boxes
+
+# There's some extra properties on our event handlers here, which might just be Windows-specific. Need to verify before adding win-specific expectation.
+imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-getAttributeType-event-handler-content-attributes.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/trusted-types/set-event-handlers-content-attributes.tentative.html [ Failure ]
+
+# Expected localhost URLs but got web-platform.test URLs
+imported/w3c/web-platform-tests/css/css-mixins/function-attr.html [ Failure ]
+
+# Flaky crash due to running out of commit space due to 4GB wasm memory
+webgl/2.0.y/conformance2/wasm/teximage2d-2gb-in-4gb-wasm-memory.html [ Skip ]
+# Flaky crash due to running out of commit space
+workers/btoa-oom.html [ Skip ]
+
+webkit.org/b/298727 css3/text-decoration/text-decoration-line-spelling-error-1.html [ Skip ]
+webkit.org/b/298727 css3/text-decoration/text-decoration-line-spelling-error-2.html [ Skip ]
+webkit.org/b/298727 css3/text-decoration/text-decoration-line-spelling-error-3.html [ Skip ]
+webkit.org/b/298727 css3/text-decoration/text-decoration-line-grammar-error-1.html [ Skip ]
+webkit.org/b/298727 css3/text-decoration/text-decoration-line-grammar-error-2.html [ Skip ]
+webkit.org/b/298727 css3/text-decoration/text-decoration-line-grammar-error-3.html [ Skip ]

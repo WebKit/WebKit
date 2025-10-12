@@ -31,10 +31,6 @@
 
 #include <errno.h>
 #include <math.h>
-#include "pas_config.h"
-#include "pas_internal_config.h"
-#include "pas_log.h"
-#include "pas_utils.h"
 #include <stdio.h>
 #include <string.h>
 #if !PAS_OS(WINDOWS)
@@ -46,13 +42,34 @@
 #include <mach/vm_statistics.h>
 #endif
 
+#include "pas_internal_config.h"
+#include "pas_log.h"
+#include "pas_mte.h"
+#include "pas_utils.h"
+#include "pas_zero_memory.h"
+
 size_t pas_page_malloc_num_allocated_bytes;
 size_t pas_page_malloc_cached_alignment;
 size_t pas_page_malloc_cached_alignment_shift;
 
+#if defined(MADV_ZERO) && PAS_OS(DARWIN)
+#define PAS_USE_MADV_ZERO 1
+#else
+#define PAS_USE_MADV_ZERO 0
+#endif
+
 #if PAS_OS(DARWIN)
 bool pas_page_malloc_decommit_zero_fill = false;
 #endif /* PAS_OS(DARWIN) */
+
+#if PAS_USE_MADV_ZERO
+/* It is possible that MADV_ZERO is defined but still not supported by the
+ * running OS. In this case, we check once to see if we get ENOSUP, and if
+ * we thereafter short-circuit to the fallback (mmap), thus avoiding the
+ * extra overhead of calling into madvise(MADV_ZERO) every time. */
+static pthread_once_t madv_zero_once_control = PTHREAD_ONCE_INIT;
+static bool madv_zero_supported = false;
+#endif
 
 #if PAS_OS(DARWIN)
 #define PAS_VM_TAG VM_MAKE_TAG(VM_MEMORY_TCMALLOC)
@@ -66,6 +83,38 @@ bool pas_page_malloc_decommit_zero_fill = false;
 #define PAS_NORESERVE MAP_NORESERVE
 #else
 #define PAS_NORESERVE 0
+#endif
+
+#if PAS_OS(WINDOWS)
+static void* virtual_alloc_with_retry(LPVOID ptr, SIZE_T size, DWORD allocation_type, DWORD protection)
+{
+    void* result = VirtualAlloc(ptr, size, allocation_type, protection);
+    if (PAS_LIKELY(result))
+        return result;
+
+    DWORD error = GetLastError();
+    if (error != ERROR_COMMITMENT_LIMIT && error != ERROR_NOT_ENOUGH_MEMORY)
+        return result;
+
+    // Only retry commits
+    if (!(allocation_type & MEM_COMMIT))
+        return result;
+
+    const size_t max_attempts = 10;
+    const unsigned long delay_ms = 50;
+    for (size_t i = 0; i < max_attempts; ++i) {
+        Sleep(delay_ms);
+        result = VirtualAlloc(ptr, size, allocation_type, protection);
+
+        if (result)
+            return result;
+        DWORD error = GetLastError();
+        if (error != ERROR_COMMITMENT_LIMIT && error != ERROR_NOT_ENOUGH_MEMORY)
+            return result;
+    }
+
+    return result;
+}
 #endif
 
 PAS_NEVER_INLINE size_t pas_page_malloc_alignment_slow(void)
@@ -98,12 +147,14 @@ pas_page_malloc_try_map_pages(size_t size, bool may_contain_small_or_medium)
 {
 #if PAS_OS(WINDOWS)
     PAS_PROFILE(PAGE_ALLOCATION, size, may_contain_small_or_medium, PAS_VM_TAG);
+    PAS_MTE_HANDLE(PAGE_ALLOCATION, size, may_contain_small_or_medium, PAS_VM_TAG);
 
-    return VirtualAlloc(NULL, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    return virtual_alloc_with_retry(NULL, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 #else
     void* mmap_result = NULL;
 
     PAS_PROFILE(PAGE_ALLOCATION, size, may_contain_small_or_medium, PAS_VM_TAG);
+    PAS_MTE_HANDLE(PAGE_ALLOCATION, size, may_contain_small_or_medium, PAS_VM_TAG);
 
     mmap_result = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON | PAS_NORESERVE, PAS_VM_TAG, 0);
     if (mmap_result == MAP_FAILED) {
@@ -201,6 +252,32 @@ pas_page_malloc_try_allocate_without_deallocating_padding(
     return result;
 }
 
+#if PAS_USE_MADV_ZERO
+static void pas_page_malloc_zero_fill_latch_if_madv_zero_is_supported(void)
+{
+    /* It is possible that the MADV_ZERO macro is defined but that the kernel
+     * does not actually support it. In this case we want to avoid calling madvise
+     * since it will just return -1 every time, and so just short-circuit
+     * to the mmap fallback instead.
+     * However, we could also get unlucky and have the madvise fail for another
+     * reason (e.g. CoW memory) so we need to make sure we're getting ENOTSUP
+     * and not another error before we latch off madvise. */
+    size_t size;
+    void* base;
+
+    size = PAS_SMALL_PAGE_DEFAULT_SIZE;
+    base = mmap(NULL, PAS_SMALL_PAGE_DEFAULT_SIZE, PROT_NONE, MAP_PRIVATE | MAP_ANON | PAS_NORESERVE, PAS_VM_TAG, 0);
+    PAS_ASSERT(base);
+
+    int rc = madvise(base, size, MADV_ZERO);
+    if (rc)
+        madv_zero_supported = (errno != ENOTSUP);
+    else
+        madv_zero_supported = true;
+    munmap(base, size);
+}
+#endif
+
 void pas_page_malloc_zero_fill(void* base, size_t size)
 {
 #if PAS_OS(WINDOWS)
@@ -223,10 +300,21 @@ void pas_page_malloc_zero_fill(void* base, size_t size)
 
     int flags = MAP_PRIVATE | MAP_ANON | MAP_FIXED | PAS_NORESERVE;
     int tag = PAS_VM_TAG;
+
+#if PAS_USE_MADV_ZERO
+    pthread_once(&madv_zero_once_control, pas_page_malloc_zero_fill_latch_if_madv_zero_is_supported);
+    if (madv_zero_supported) {
+        int rc = madvise(base, size, MADV_ZERO);
+        if (rc != -1)
+            return;
+    }
+#endif /* PAS_USE_MADV_ZERO */
+
     PAS_PROFILE(ZERO_FILL_PAGE, base, size, flags, tag);
+    PAS_MTE_HANDLE(ZERO_FILL_PAGE, base, size, flags, tag);
     result_ptr = mmap(base, size, PROT_READ | PROT_WRITE, flags, tag, 0);
     PAS_ASSERT(result_ptr == base);
-#endif
+#endif /* PAS_OS(WINDOWS) */
 }
 
 static void commit_impl(void* ptr, size_t size, bool do_mprotect, pas_mmap_capability mmap_capability)
@@ -248,7 +336,7 @@ static void commit_impl(void* ptr, size_t size, bool do_mprotect, pas_mmap_capab
 
     if (PAS_MPROTECT_DECOMMITTED && do_mprotect && mmap_capability) {
 #if PAS_OS(WINDOWS)
-        PAS_ASSERT(VirtualAlloc(ptr, size, MEM_COMMIT, PAGE_READWRITE));
+        PAS_ASSERT(virtual_alloc_with_retry(ptr, size, MEM_COMMIT, PAGE_READWRITE));
 #else
         PAS_SYSCALL(mprotect((void*)base_as_int, end_as_int - base_as_int, PROT_READ | PROT_WRITE));
 #endif
@@ -266,7 +354,7 @@ static void commit_impl(void* ptr, size_t size, bool do_mprotect, pas_mmap_capab
         VirtualQuery(currentPtr, &memInfo, sizeof(memInfo));
         PAS_ASSERT(memInfo.State != 0x10000);
         PAS_ASSERT(memInfo.RegionSize > 0);
-        PAS_ASSERT(VirtualAlloc(currentPtr, memInfo.RegionSize, MEM_COMMIT, PAGE_READWRITE));
+        PAS_ASSERT(virtual_alloc_with_retry(currentPtr, PAS_MIN(memInfo.RegionSize, size - totalSeen), MEM_COMMIT, PAGE_READWRITE));
         currentPtr = (void*) ((uintptr_t) currentPtr + memInfo.RegionSize);
         totalSeen += memInfo.RegionSize;
     }
@@ -321,17 +409,37 @@ static void decommit_impl(void* ptr, size_t size,
     PAS_SYSCALL(madvise(ptr, size, MADV_DONTNEED));
     PAS_SYSCALL(madvise(ptr, size, MADV_DONTDUMP));
 #elif PAS_OS(WINDOWS)
-    /* Sometimes the returned memInfo.RegionSize < size, and VirtualAlloc can't span regions
-       We loop to make sure we get the full requested range. */
-    size_t totalSeen = 0;
-    void *currentPtr = ptr;
-    while (totalSeen < size) {
-        MEMORY_BASIC_INFORMATION memInfo;
-        VirtualQuery(currentPtr, &memInfo, sizeof(memInfo));
-        PAS_ASSERT(VirtualAlloc(currentPtr, memInfo.RegionSize, MEM_RESET, PAGE_READWRITE));
-        PAS_ASSERT(memInfo.RegionSize > 0);
-        currentPtr = (void*) ((uintptr_t) currentPtr + memInfo.RegionSize);
-        totalSeen += memInfo.RegionSize;
+    // DiscardVirtualMemory returns memory to the OS faster, but fails sometimes on Windows 10
+    // Fall back to VirtualAlloc in those cases
+    DWORD ret = DiscardVirtualMemory(ptr, size);
+    if (ret) {
+        /* Sometimes the returned memInfo.RegionSize < size, and VirtualAlloc can't span regions
+        We loop to make sure we get the full requested range. */
+        size_t totalSeen = 0;
+        void *currentPtr = ptr;
+        while (totalSeen < size) {
+            MEMORY_BASIC_INFORMATION memInfo;
+            VirtualQuery(currentPtr, &memInfo, sizeof(memInfo));
+            PAS_ASSERT(VirtualAlloc(currentPtr, PAS_MIN(memInfo.RegionSize, size - totalSeen), MEM_RESET, PAGE_READWRITE));
+            PAS_ASSERT(memInfo.RegionSize > 0);
+            currentPtr = (void*) ((uintptr_t) currentPtr + memInfo.RegionSize);
+            totalSeen += memInfo.RegionSize;
+        }
+    }
+
+    // We need to decommit the region as well, otherwise commit space will never shrink
+    // However we can't decommit if do_mprotect is false - decommitting is an implicit mprotect
+    if (do_mprotect) {
+        size_t totalSeen = 0;
+        void* currentPtr = ptr;
+        while (totalSeen < size) {
+            MEMORY_BASIC_INFORMATION memInfo;
+            VirtualQuery(currentPtr, &memInfo, sizeof(memInfo));
+            PAS_ASSERT(VirtualFree(currentPtr, PAS_MIN(memInfo.RegionSize, size - totalSeen), MEM_DECOMMIT));
+            PAS_ASSERT(memInfo.RegionSize > 0);
+            currentPtr = (void*)((uintptr_t)currentPtr + memInfo.RegionSize);
+            totalSeen += memInfo.RegionSize;
+        }
     }
 #else
     PAS_SYSCALL(madvise(ptr, size, MADV_DONTNEED));
@@ -339,7 +447,7 @@ static void decommit_impl(void* ptr, size_t size,
 
     if (PAS_MPROTECT_DECOMMITTED && do_mprotect && mmap_capability) {
 #if PAS_OS(WINDOWS)
-        PAS_ASSERT(VirtualAlloc(ptr, size, MEM_COMMIT, PAGE_NOACCESS));
+        PAS_ASSERT(virtual_alloc_with_retry(ptr, size, MEM_COMMIT, PAGE_NOACCESS));
 #else
         PAS_SYSCALL(mprotect((void*)base_as_int, end_as_int - base_as_int, PROT_NONE));
 #endif

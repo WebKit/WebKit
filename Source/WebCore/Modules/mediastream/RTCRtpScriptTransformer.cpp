@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "ContextDestructionObserverInlines.h"
 #include "DedicatedWorkerGlobalScope.h"
 #include "EventLoop.h"
 #include "FrameRateMonitor.h"
@@ -80,11 +81,6 @@ RTCRtpScriptTransformer::RTCRtpScriptTransformer(ScriptExecutionContext& context
 }
 
 RTCRtpScriptTransformer::~RTCRtpScriptTransformer() = default;
-
-ReadableStream& RTCRtpScriptTransformer::readable()
-{
-    return m_readable.get();
-}
 
 ExceptionOr<Ref<WritableStream>> RTCRtpScriptTransformer::writable()
 {
@@ -143,10 +139,11 @@ ExceptionOr<Ref<WritableStream>> RTCRtpScriptTransformer::writable()
 
 void RTCRtpScriptTransformer::start(Ref<RTCRtpTransformBackend>&& backend)
 {
-    m_backend = WTFMove(backend);
+    m_isVideo = backend->mediaType() == RTCRtpTransformBackend::MediaType::Video;
+    m_isSender = backend->side() == RTCRtpTransformBackend::Side::Sender;
 
-    auto& context = downcast<WorkerGlobalScope>(*scriptExecutionContext());
-    m_backend->setTransformableFrameCallback([weakThis = WeakPtr { *this }, thread = Ref { context.thread() }](Ref<RTCRtpTransformableFrame>&& frame) mutable {
+    Ref context = downcast<WorkerGlobalScope>(*scriptExecutionContext());
+    backend->setTransformableFrameCallback([weakThis = WeakPtr { *this }, thread = Ref { context->thread() }](Ref<RTCRtpTransformableFrame>&& frame) mutable {
         thread->runLoop().postTaskForMode([weakThis, frame = WTFMove(frame)](auto& context) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
@@ -156,12 +153,15 @@ void RTCRtpScriptTransformer::start(Ref<RTCRtpTransformBackend>&& backend)
             protectedThis->enqueueFrame(context, WTFMove(frame));
         }, WorkerRunLoop::defaultMode());
     });
+
+    m_backend = WTFMove(backend);
 }
 
 void RTCRtpScriptTransformer::clear(ClearCallback clearCallback)
 {
-    if (m_backend && clearCallback == ClearCallback::Yes)
-        m_backend->clearTransformableFrameCallback();
+    RefPtr backend = std::exchange(m_backend, { });
+    if (backend && clearCallback == ClearCallback::Yes)
+        backend->clearTransformableFrameCallback();
     m_backend = nullptr;
     stopPendingActivity();
 }
@@ -175,18 +175,17 @@ void RTCRtpScriptTransformer::enqueueFrame(ScriptExecutionContext& context, Ref<
     if (!globalObject)
         return;
 
-    auto& vm = globalObject->vm();
+    Ref vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);
 
-    bool isVideo = m_backend->mediaType() == RTCRtpTransformBackend::MediaType::Video;
-    if (isVideo && !m_pendingKeyFramePromises.isEmpty() && frame->isKeyFrame()) {
+    if (m_isVideo && !m_pendingKeyFramePromises.isEmpty() && frame->isKeyFrame()) {
         // FIXME: We should take into account rids to resolve promises.
-        for (auto& promise : std::exchange(m_pendingKeyFramePromises, { }))
+        for (Ref promise : std::exchange(m_pendingKeyFramePromises, { }))
             promise->resolve<IDLUnsignedLongLong>(frame->timestamp());
     }
 
 #if !RELEASE_LOG_DISABLED
-    if (m_enableAdditionalLogging && isVideo) {
+    if (m_enableAdditionalLogging && m_isVideo) {
         if (!m_readableFrameRateMonitor) {
             m_readableFrameRateMonitor = makeUnique<FrameRateMonitor>([identifier = m_identifier](auto info) {
                 RELEASE_LOG(WebRTC, "RTCRtpScriptTransformer readable %" PRIu64 ", frame at %f, previous frame was at %f, observed frame rate is %f, delay since last frame is %f ms, frame count is %lu", identifier.toUInt64(), info.frameTime.secondsSinceEpoch().value(), info.lastFrameTime.secondsSinceEpoch().value(), info.observedFrameRate, ((info.frameTime - info.lastFrameTime) * 1000).value(), info.frameCount);
@@ -196,7 +195,7 @@ void RTCRtpScriptTransformer::enqueueFrame(ScriptExecutionContext& context, Ref<
     }
 #endif
 
-    auto value = isVideo ? toJS(globalObject, globalObject, RTCEncodedVideoFrame::create(WTFMove(frame))) : toJS(globalObject, globalObject, RTCEncodedAudioFrame::create(WTFMove(frame)));
+    auto value = m_isVideo ? toJS(globalObject, globalObject, RTCEncodedVideoFrame::create(WTFMove(frame))) : toJS(globalObject, globalObject, RTCEncodedAudioFrame::create(WTFMove(frame)));
     m_readableSource->enqueue(value);
 }
 
@@ -224,7 +223,7 @@ static std::optional<Exception> validateRid(const String& rid)
 void RTCRtpScriptTransformer::generateKeyFrame(const String& rid, Ref<DeferredPromise>&& promise)
 {
     RefPtr context = scriptExecutionContext();
-    if (!context || !m_backend || m_backend->side() != RTCRtpTransformBackend::Side::Sender || m_backend->mediaType() != RTCRtpTransformBackend::MediaType::Video) {
+    if (!context || !m_isVideo || !m_isSender) {
         promise->reject(Exception { ExceptionCode::InvalidStateError, "Not attached to a valid video sender"_s });
         return;
     }
@@ -233,6 +232,10 @@ void RTCRtpScriptTransformer::generateKeyFrame(const String& rid, Ref<DeferredPr
         promise->reject(WTFMove(*exception));
         return;
     }
+
+    RefPtr backend = m_backend;
+    if (!backend)
+        return;
 
     if (!m_backend->requestKeyFrame(rid)) {
         context->eventLoop().queueTask(TaskSource::Networking, [promise = WTFMove(promise)]() mutable {
@@ -247,13 +250,17 @@ void RTCRtpScriptTransformer::generateKeyFrame(const String& rid, Ref<DeferredPr
 void RTCRtpScriptTransformer::sendKeyFrameRequest(Ref<DeferredPromise>&& promise)
 {
     RefPtr context = scriptExecutionContext();
-    if (!context || !m_backend || m_backend->side() != RTCRtpTransformBackend::Side::Receiver || m_backend->mediaType() != RTCRtpTransformBackend::MediaType::Video) {
+    if (!context || !m_isVideo || m_isSender) {
         promise->reject(Exception { ExceptionCode::InvalidStateError, "Not attached to a valid video receiver"_s });
         return;
     }
 
+    RefPtr backend = m_backend;
+    if (!backend)
+        return;
+
     // FIXME: We should be able to know when the FIR request is sent to resolve the promise at this exact time.
-    m_backend->requestKeyFrame({ });
+    backend->requestKeyFrame({ });
 
     context->eventLoop().queueTask(TaskSource::Networking, [promise = WTFMove(promise)]() mutable {
         promise->resolve();

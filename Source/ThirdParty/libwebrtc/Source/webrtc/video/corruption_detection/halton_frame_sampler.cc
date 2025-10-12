@@ -13,18 +13,25 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 #include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/nv12_buffer.h"
+#include "api/video/video_frame.h"
 #include "api/video/video_frame_buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_minmax.h"
 #include "video/corruption_detection/halton_sequence.h"
+#include "video/corruption_detection/video_frame_sampler.h"
 
 namespace webrtc {
 namespace {
 
+const double kCutoff = 0.2;
+const int kLowerBoundKernelSize = 3;
 constexpr int kMaxFramesBetweenSamples = 33;
 
 // Corresponds to 1 second for RTP timestamps (which are 90kHz).
@@ -95,56 +102,63 @@ void HaltonFrameSampler::SetCurrentIndex(int index) {
 }
 
 // Apply Gaussian filtering to the data.
-double GetFilteredElement(int width,
-                          int height,
-                          int stride,
-                          const uint8_t* data,
+double GetFilteredElement(const VideoFrameSampler& frame_sampler,
+                          VideoFrameSampler::ChannelType channel,
                           int row,
                           int column,
                           double std_dev) {
   RTC_CHECK_GE(row, 0);
-  RTC_CHECK_LT(row, height);
+  RTC_CHECK_LT(row, frame_sampler.height(channel));
   RTC_CHECK_GE(column, 0);
-  RTC_CHECK_LT(column, width);
-  RTC_CHECK_GE(stride, width);
+  RTC_CHECK_LT(column, frame_sampler.width(channel));
   RTC_CHECK_GE(std_dev, 0.0);
 
+  // `std_dev` being zero should ideally correspond to a very low QP value. In
+  // this case even a noisy pixel should be able to be encoded and transmitted
+  // correctly. Hence, the pixel value can be used as is.
   if (std_dev == 0.0) {
-    return data[row * stride + column];
+    return frame_sampler.GetSampleValue(channel, column, row);
   }
 
-  const double kCutoff = 0.2;
-  const int kMaxDistance =
-      std::ceil(sqrt(-2.0 * std::log(kCutoff) * std::pow(std_dev, 2.0))) - 1;
-  RTC_CHECK_GE(kMaxDistance, 0);
-  if (kMaxDistance == 0) {
-    return data[row * stride + column];
-  }
+  int max_distance =
+      std::ceil(std::sqrt(-2.0 * std::log(kCutoff) * std::pow(std_dev, 2.0))) -
+      1;
+  // In order to counteract unexpected distortions (such as noise), a lower
+  // bound for blurring is introduced. This is done to reduce false positives
+  // caused by these distortions.
+  // False positives are decreased since for small `std_dev`s the quantization
+  // is strong and would cut of many of the small continuous weights used for
+  // robust comparision.
+  max_distance = std::max(kLowerBoundKernelSize, max_distance);
 
   double element_sum = 0.0;
   double total_weight = 0.0;
-  for (int r = std::max(row - kMaxDistance, 0);
-       r < std::min(row + kMaxDistance + 1, height); ++r) {
-    for (int c = std::max(column - kMaxDistance, 0);
-         c < std::min(column + kMaxDistance + 1, width); ++c) {
+  for (int r = std::max(row - max_distance, 0);
+       r < std::min(row + max_distance + 1, frame_sampler.height(channel));
+       ++r) {
+    for (int c = std::max(column - max_distance, 0);
+         c < std::min(column + max_distance + 1, frame_sampler.width(channel));
+         ++c) {
       double weight =
           std::exp(-1.0 * (std::pow(row - r, 2) + std::pow(column - c, 2)) /
                    (2.0 * std::pow(std_dev, 2)));
-      element_sum += data[r * stride + c] * weight;
+      element_sum += frame_sampler.GetSampleValue(channel, c, r) * weight;
       total_weight += weight;
     }
   }
-  return element_sum / total_weight;
+
+  // Take the rounding errors into consideration.
+  return SafeClamp(element_sum / total_weight, 0.0, 255.0);
 }
 
 std::vector<FilteredSample> GetSampleValuesForFrame(
-    const scoped_refptr<I420BufferInterface> i420_frame_buffer,
+    const VideoFrame& frame,
     std::vector<HaltonFrameSampler::Coordinates> sample_coordinates,
     int scaled_width,
     int scaled_height,
     double std_dev_gaussian_blur) {
   // Validate input.
-  if (i420_frame_buffer == nullptr) {
+  if (frame.video_frame_buffer() == nullptr) {
     RTC_LOG(LS_WARNING) << "The framebuffer must not be nullptr";
     return {};
   }
@@ -173,13 +187,51 @@ std::vector<FilteredSample> GetSampleValuesForFrame(
         << std_dev_gaussian_blur << ".\n";
     return {};
   }
+  if (scaled_width > frame.width() || scaled_height > frame.height()) {
+    RTC_LOG(LS_WARNING)
+        << "Upscaling causes corruption. Therefore, only down-scaling is "
+           "permissible.";
+    return {};
+  }
 
-  // Scale the frame to the desired resolution:
-  // 1. Create a new buffer with the desired resolution.
-  // 2. Scale the old buffer to the size of the new buffer.
-  scoped_refptr<I420Buffer> scaled_i420_buffer =
-      I420Buffer::Create(scaled_width, scaled_height);
-  scaled_i420_buffer->ScaleFrom(*i420_frame_buffer);
+  VideoFrame scaled_frame = frame;
+  std::unique_ptr<VideoFrameSampler> frame_sampler;
+  if (scaled_width == frame.width() && scaled_height == frame.height()) {
+    frame_sampler = VideoFrameSampler::Create(frame);
+  } else {
+    // Scale the frame to the desired resolution:
+    // 1. Create a new buffer with the desired resolution.
+    // 2. Scale the old buffer to the size of the new buffer.
+    if (frame.video_frame_buffer()->type() == VideoFrameBuffer::Type::kNV12) {
+      scoped_refptr<NV12Buffer> scaled_buffer =
+          NV12Buffer::Create(scaled_width, scaled_height);
+      // Set crop width/height to full width/height so this is only a scaling
+      // operation, no cropping happening.
+      scaled_buffer->CropAndScaleFrom(
+          *frame.video_frame_buffer()->GetNV12(), /*offset_x=*/0,
+          /*offset_y=*/0, /*crop_width=*/frame.width(),
+          /*crop_height=*/frame.height());
+      scaled_frame.set_video_frame_buffer(scaled_buffer);
+    } else {
+      scoped_refptr<I420Buffer> scaled_buffer =
+          I420Buffer::Create(scaled_width, scaled_height);
+      scoped_refptr<I420BufferInterface> buffer =
+          frame.video_frame_buffer()->ToI420();
+      if (buffer == nullptr) {
+        RTC_LOG(LS_WARNING) << "Unable to convert frame to I420 format.";
+        return {};
+      }
+      scaled_buffer->ScaleFrom(*buffer);
+      scaled_frame.set_video_frame_buffer(scaled_buffer);
+    }
+    frame_sampler = VideoFrameSampler::Create(scaled_frame);
+  }
+  if (frame_sampler == nullptr) {
+    RTC_LOG(LS_WARNING) << "Unable to create frame sampler for buffer type "
+                        << VideoFrameBufferTypeToString(
+                               frame.video_frame_buffer()->type());
+    return {};
+  }
 
   // Treat the planes as if they would have the following 2-dimensional layout:
   // +------+---+
@@ -192,9 +244,14 @@ std::vector<FilteredSample> GetSampleValuesForFrame(
   // as if they were taken from the above layout. We then need to translate the
   // coordinates back to the corresponding plane's corresponding 2D coordinates.
   // Then we find the filtered value that corresponds to those coordinates.
+  RTC_DCHECK_EQ(frame_sampler->width(VideoFrameSampler::ChannelType::U),
+                frame_sampler->width(VideoFrameSampler::ChannelType::V))
+      << "Chroma channels are expected to be equal in resolution.";
   int width_merged_planes =
-      scaled_i420_buffer->width() + scaled_i420_buffer->ChromaWidth();
-  int height_merged_planes = scaled_i420_buffer->height();
+      frame_sampler->width(VideoFrameSampler::ChannelType::Y) +
+      frame_sampler->width(VideoFrameSampler::ChannelType::U);
+  int height_merged_planes =
+      frame_sampler->height(VideoFrameSampler::ChannelType::Y);
   // Fetch the sample value for all of the requested coordinates.
   std::vector<FilteredSample> filtered_samples;
   filtered_samples.reserve(sample_coordinates.size());
@@ -206,36 +263,44 @@ std::vector<FilteredSample> GetSampleValuesForFrame(
 
     // Map to plane coordinates and fetch the value.
     double value_for_coordinate;
-    if (column < scaled_i420_buffer->width()) {
+    if (column < frame_sampler->width(VideoFrameSampler::ChannelType::Y)) {
       // Y plane.
-      value_for_coordinate = GetFilteredElement(
-          scaled_i420_buffer->width(), scaled_i420_buffer->height(),
-          scaled_i420_buffer->StrideY(), scaled_i420_buffer->DataY(), row,
-          column, std_dev_gaussian_blur);
+      value_for_coordinate =
+          GetFilteredElement(*frame_sampler, VideoFrameSampler::ChannelType::Y,
+                             row, column, std_dev_gaussian_blur);
       filtered_samples.push_back(
           {.value = value_for_coordinate, .plane = ImagePlane::kLuma});
-    } else if (row < scaled_i420_buffer->ChromaHeight()) {
+    } else if (row < frame_sampler->height(VideoFrameSampler::ChannelType::U)) {
       // U plane.
-      column -= scaled_i420_buffer->width();
-      value_for_coordinate = GetFilteredElement(
-          scaled_i420_buffer->ChromaWidth(), scaled_i420_buffer->ChromaHeight(),
-          scaled_i420_buffer->StrideU(), scaled_i420_buffer->DataU(), row,
-          column, std_dev_gaussian_blur);
+      column -= frame_sampler->width(VideoFrameSampler::ChannelType::Y);
+      value_for_coordinate =
+          GetFilteredElement(*frame_sampler, VideoFrameSampler::ChannelType::U,
+                             row, column, std_dev_gaussian_blur);
       filtered_samples.push_back(
           {.value = value_for_coordinate, .plane = ImagePlane::kChroma});
     } else {
       // V plane.
-      column -= scaled_i420_buffer->width();
-      row -= scaled_i420_buffer->ChromaHeight();
-      value_for_coordinate = GetFilteredElement(
-          scaled_i420_buffer->ChromaWidth(), scaled_i420_buffer->ChromaHeight(),
-          scaled_i420_buffer->StrideV(), scaled_i420_buffer->DataV(), row,
-          column, std_dev_gaussian_blur);
+      column -= frame_sampler->width(VideoFrameSampler::ChannelType::Y);
+      row -= frame_sampler->height(VideoFrameSampler::ChannelType::U);
+      value_for_coordinate =
+          GetFilteredElement(*frame_sampler, VideoFrameSampler::ChannelType::V,
+                             row, column, std_dev_gaussian_blur);
       filtered_samples.push_back(
           {.value = value_for_coordinate, .plane = ImagePlane::kChroma});
     }
   }
   return filtered_samples;
+}
+
+[[deprecated]] std::vector<FilteredSample> GetSampleValuesForFrame(
+    scoped_refptr<I420BufferInterface> i420_frame_buffer,
+    std::vector<HaltonFrameSampler::Coordinates> sample_coordinates,
+    int scaled_width,
+    int scaled_height,
+    double std_dev_gaussian_blur) {
+  return GetSampleValuesForFrame(
+      VideoFrame::Builder().set_video_frame_buffer(i420_frame_buffer).build(),
+      sample_coordinates, scaled_width, scaled_height, std_dev_gaussian_blur);
 }
 
 }  // namespace webrtc

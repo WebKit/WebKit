@@ -58,7 +58,6 @@ struct InteractionInformationAtPosition {
     enum class Selectability : uint8_t {
         Selectable,
         UnselectableDueToFocusableElement,
-        UnselectableDueToLargeElementBounds,
         UnselectableDueToUserSelectNoneOrQuirk,
         UnselectableDueToMediaControls,
     };

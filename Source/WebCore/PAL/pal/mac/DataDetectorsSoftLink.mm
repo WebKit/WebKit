@@ -28,7 +28,7 @@
 
 #import <AppKit/AppKit.h>
 #import <pal/spi/mac/DataDetectorsSPI.h>
-#import <wtf/SoftLinking.h>
+#import <wtf/cocoa/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectors, PAL_EXPORT)
 

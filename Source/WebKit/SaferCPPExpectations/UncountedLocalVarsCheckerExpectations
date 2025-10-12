@@ -1,63 +1,40 @@
-NetworkProcess/NetworkConnectionToWebProcess.cpp
-NetworkProcess/NetworkProcess.cpp
-NetworkProcess/ServiceWorker/WebSWServerConnection.cpp
-NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp
-NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp
-NetworkProcess/storage/NetworkStorageManager.cpp
-UIProcess/API/Cocoa/_WKInspectorConfiguration.mm
-UIProcess/Cocoa/VideoPresentationManagerProxy.mm
-UIProcess/Notifications/WebNotificationManagerProxy.cpp
-UIProcess/UserContent/WebUserContentControllerProxy.cpp
-UIProcess/ViewGestureController.cpp
-UIProcess/WebPageProxy.cpp
-UIProcess/mac/WebViewImpl.mm
-WebProcess/Automation/WebAutomationSessionProxy.cpp
-WebProcess/Extensions/Bindings/JSWebExtensionWrapper.cpp
 WebProcess/FullScreen/WebFullScreenManager.cpp
-WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.cpp
-WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp
-WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm
-WebProcess/InjectedBundle/API/c/WKBundle.cpp
-WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp
 WebProcess/InjectedBundle/API/c/WKBundlePage.cpp
-WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm
-WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp
 WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp
-WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp
-WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp
-WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp
-WebProcess/InjectedBundle/mac/InjectedBundleMac.mm
-WebProcess/Inspector/WebInspectorClient.cpp
-WebProcess/Inspector/WebInspectorInternal.cpp
-WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm
-WebProcess/Network/WebLoaderStrategy.cpp
-WebProcess/Network/webrtc/LibWebRTCNetworkManager.cpp
-WebProcess/Network/webrtc/LibWebRTCProvider.cpp
-WebProcess/Network/webrtc/WebMDNSRegister.cpp
-WebProcess/Notifications/WebNotificationManager.cpp
-WebProcess/Storage/WebSWClientConnection.cpp
-WebProcess/Storage/WebServiceWorkerProvider.cpp
-WebProcess/WebCoreSupport/SessionStateConversion.cpp
-WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp
-WebProcess/WebCoreSupport/WebChromeClient.cpp
-WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp
-WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp
-WebProcess/WebCoreSupport/WebRemoteFrameClient.cpp
-WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp
-WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp
-WebProcess/WebCoreSupport/mac/WebDragClientMac.mm
-WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.mm
-WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.mm
-WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm
-WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm
-WebProcess/WebPage/ViewUpdateDispatcher.cpp
-WebProcess/WebPage/WebFrame.cpp
-WebProcess/WebPage/WebPage.cpp
-WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm
-WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm
-WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm
-WebProcess/WebProcess.cpp
-WebProcess/WebSleepDisablerClient.cpp
-WebProcess/WebStorage/StorageAreaMap.cpp
-WebProcess/cocoa/TextTrackRepresentationCocoa.mm
-WebProcess/cocoa/WebProcessCocoa.mm
+[ iOS ] GPUProcess/media/RemoteAudioSessionProxyManager.cpp
+[ iOS ] NetworkProcess/cocoa/NetworkSessionCocoa.mm
+[ iOS ] Shared/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm
+[ iOS ] Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm
+[ iOS ] UIProcess/API/C/WKWebsiteDataStoreRef.cpp
+[ iOS ] UIProcess/API/ios/WKWebViewIOS.mm
+[ iOS ] UIProcess/API/ios/WKWebViewTestingIOS.mm
+[ iOS ] UIProcess/Cocoa/ExtensionCapabilityGranter.mm
+[ iOS ] UIProcess/Cocoa/NavigationState.mm
+[ iOS ] UIProcess/Cocoa/SystemPreviewControllerCocoa.mm
+[ iOS ] UIProcess/Cocoa/VideoPresentationManagerProxy.mm
+[ iOS ] UIProcess/Cocoa/WebGeolocationManagerProxyCocoa.cpp
+[ iOS ] UIProcess/GPU/GPUProcessProxy.cpp
+[ iOS ] UIProcess/Network/NetworkProcessProxy.cpp
+[ iOS ] UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm
+[ iOS ] UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm
+[ iOS ] UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm
+[ iOS ] UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
+[ iOS ] UIProcess/ios/PageClientImplIOS.mm
+[ iOS ] UIProcess/ios/ViewGestureControllerIOS.mm
+[ iOS ] UIProcess/ios/WKContentView.mm
+[ iOS ] UIProcess/ios/WKContentViewInteraction.mm
+[ iOS ] UIProcess/ios/WebPageProxyIOS.mm
+[ iOS ] UIProcess/ios/forms/WKFileUploadPanel.mm
+[ iOS ] UIProcess/ios/fullscreen/WKFullScreenViewController.mm
+[ iOS ] UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm
+[ iOS ] WebProcess/GPU/graphics/RemoteGraphicsContextProxy.cpp
+[ iOS ] WebProcess/Network/NetworkProcessConnection.cpp
+[ iOS ] WebProcess/Plugins/PDF/WKAccessibilityPDFDocumentObject.mm
+[ iOS ] WebProcess/WebCoreSupport/WebLocalFrameLoaderClient.cpp
+[ iOS ] WebProcess/WebCoreSupport/ios/WebPreviewLoaderClient.cpp
+[ iOS ] WebProcess/WebPage/Cocoa/WebPageCocoa.mm
+[ iOS ] WebProcess/WebPage/ViewGestureGeometryCollector.cpp
+[ iOS ] WebProcess/WebPage/WebFrame.cpp
+[ iOS ] WebProcess/WebPage/WebPage.cpp
+[ iOS ] WebProcess/WebPage/ios/FindControllerIOS.mm
+[ iOS ] WebProcess/WebPage/ios/WebPageIOS.mm

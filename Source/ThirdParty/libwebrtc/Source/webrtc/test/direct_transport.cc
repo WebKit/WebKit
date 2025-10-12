@@ -9,14 +9,32 @@
  */
 #include "test/direct_transport.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <map>
+#include <memory>
+#include <optional>
+#include <utility>
+
+#include "api/array_view.h"
+#include "api/call/transport.h"
 #include "api/media_types.h"
+#include "api/rtp_headers.h"
+#include "api/rtp_parameters.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "call/call.h"
 #include "call/fake_network_pipe.h"
+#include "call/simulated_packet_receiver.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_util.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/copy_on_write_buffer.h"
+#include "rtc_base/network/sent_packet.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "rtc_base/time_utils.h"
 
@@ -28,7 +46,7 @@ Demuxer::Demuxer(const std::map<uint8_t, MediaType>& payload_type_map)
 
 MediaType Demuxer::GetMediaType(const uint8_t* packet_data,
                                 const size_t packet_length) const {
-  if (IsRtpPacket(rtc::MakeArrayView(packet_data, packet_length))) {
+  if (IsRtpPacket(MakeArrayView(packet_data, packet_length))) {
     RTC_CHECK_GE(packet_length, 2);
     const uint8_t payload_type = packet_data[1] & 0x7f;
     std::map<uint8_t, MediaType>::const_iterator it =
@@ -45,8 +63,8 @@ DirectTransport::DirectTransport(
     std::unique_ptr<SimulatedPacketReceiverInterface> pipe,
     Call* send_call,
     const std::map<uint8_t, MediaType>& payload_type_map,
-    rtc::ArrayView<const RtpExtension> audio_extensions,
-    rtc::ArrayView<const RtpExtension> video_extensions)
+    ArrayView<const RtpExtension> audio_extensions,
+    ArrayView<const RtpExtension> video_extensions)
     : send_call_(send_call),
       task_queue_(task_queue),
       demuxer_(payload_type_map),
@@ -64,34 +82,34 @@ void DirectTransport::SetReceiver(PacketReceiver* receiver) {
   fake_network_->SetReceiver(receiver);
 }
 
-bool DirectTransport::SendRtp(rtc::ArrayView<const uint8_t> data,
+bool DirectTransport::SendRtp(ArrayView<const uint8_t> data,
                               const PacketOptions& options) {
   if (send_call_) {
-    rtc::SentPacket sent_packet(options.packet_id, rtc::TimeMillis());
+    SentPacketInfo sent_packet(options.packet_id, TimeMillis());
     sent_packet.info.included_in_feedback = options.included_in_feedback;
     sent_packet.info.included_in_allocation = options.included_in_allocation;
     sent_packet.info.packet_size_bytes = data.size();
-    sent_packet.info.packet_type = rtc::PacketType::kData;
+    sent_packet.info.packet_type = PacketType::kData;
     send_call_->OnSentPacket(sent_packet);
   }
 
   const RtpHeaderExtensionMap* extensions = nullptr;
   MediaType media_type = demuxer_.GetMediaType(data.data(), data.size());
   switch (demuxer_.GetMediaType(data.data(), data.size())) {
-    case webrtc::MediaType::AUDIO:
+    case MediaType::AUDIO:
       extensions = &audio_extensions_;
       break;
-    case webrtc::MediaType::VIDEO:
+    case MediaType::VIDEO:
       extensions = &video_extensions_;
       break;
     default:
       RTC_CHECK_NOTREACHED();
   }
-  RtpPacketReceived packet(extensions, Timestamp::Micros(rtc::TimeMicros()));
+  RtpPacketReceived packet(extensions, Timestamp::Micros(TimeMicros()));
   if (media_type == MediaType::VIDEO) {
     packet.set_payload_type_frequency(kVideoPayloadTypeFrequency);
   }
-  RTC_CHECK(packet.Parse(rtc::CopyOnWriteBuffer(data)));
+  RTC_CHECK(packet.Parse(CopyOnWriteBuffer(data)));
   fake_network_->DeliverRtpPacket(
       media_type, std::move(packet),
       [](const RtpPacketReceived& packet) { return false; });
@@ -102,8 +120,9 @@ bool DirectTransport::SendRtp(rtc::ArrayView<const uint8_t> data,
   return true;
 }
 
-bool DirectTransport::SendRtcp(rtc::ArrayView<const uint8_t> data) {
-  fake_network_->DeliverRtcpPacket(rtc::CopyOnWriteBuffer(data));
+bool DirectTransport::SendRtcp(ArrayView<const uint8_t> data,
+                               const PacketOptions& /* options */) {
+  fake_network_->DeliverRtcpPacket(CopyOnWriteBuffer(data));
   MutexLock lock(&process_lock_);
   if (!next_process_task_.Running())
     ProcessPackets();

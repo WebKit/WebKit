@@ -1,63 +1,21 @@
-/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
- * All rights reserved.
- *
- * This package is an SSL implementation written
- * by Eric Young (eay@cryptsoft.com).
- * The implementation was written so as to conform with Netscapes SSL.
- *
- * This library is free for commercial and non-commercial use as long as
- * the following conditions are aheared to.  The following conditions
- * apply to all code found in this distribution, be it the RC4, RSA,
- * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
- * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- *
- * Copyright remains Eric Young's, and as such any Copyright notices in
- * the code are not to be removed.
- * If this package is used in a product, Eric Young should be given attribution
- * as the author of the parts of the library used.
- * This can be in the form of a textual message at program startup or
- * in documentation (online or textual) provided with the package.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *    "This product includes cryptographic software written by
- *     Eric Young (eay@cryptsoft.com)"
- *    The word 'cryptographic' can be left out if the rouines from the library
- *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from
- *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- *
- * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * The licence and distribution terms for any publically available version or
- * derivative of this code cannot be changed.  i.e. this code cannot simply be
- * copied and put under another distribution licence
- * [including the GNU Public Licence.] */
+// Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-#ifndef OPENSSL_HEADER_LHASH_INTERNAL_H
-#define OPENSSL_HEADER_LHASH_INTERNAL_H
+#ifndef OPENSSL_HEADER_CRYPTO_LHASH_INTERNAL_H
+#define OPENSSL_HEADER_CRYPTO_LHASH_INTERNAL_H
 
-#include <openssl/lhash.h>
+#include <openssl/base.h>
 
 #if defined(__cplusplus)
 extern "C" {
@@ -82,7 +40,13 @@ extern "C" {
 //
 // A macro will be defined for each of the |OPENSSL_lh_*| functions below. For
 // |LHASH_OF(foo)|, the macros would be |lh_foo_new|, |lh_foo_num_items| etc.
+//
+// TODO(davidben): Now that this type is completely internal, this can just be a
+// C++ template without any macros.
 
+
+#define LHASH_OF(type) struct lhash_st_##type
+#define DECLARE_LHASH_OF(type) LHASH_OF(type);
 
 // lhash_cmp_func is a comparison function that returns a value equal, or not
 // equal, to zero depending on whether |*a| is equal, or not equal to |*b|,
@@ -172,32 +136,32 @@ OPENSSL_EXPORT void OPENSSL_lh_doall_arg(_LHASH *lh,
   typedef int (*lhash_##type##_cmp_func)(const type *, const type *);          \
   typedef uint32_t (*lhash_##type##_hash_func)(const type *);                  \
                                                                                \
-  OPENSSL_INLINE int lh_##type##_call_cmp_func(lhash_cmp_func func,            \
-                                               const void *a, const void *b) { \
+  inline int lh_##type##_call_cmp_func(lhash_cmp_func func, const void *a,     \
+                                       const void *b) {                        \
     return ((lhash_##type##_cmp_func)func)((const type *)a, (const type *)b);  \
   }                                                                            \
                                                                                \
-  OPENSSL_INLINE uint32_t lh_##type##_call_hash_func(lhash_hash_func func,     \
-                                                     const void *a) {          \
+  inline uint32_t lh_##type##_call_hash_func(lhash_hash_func func,             \
+                                             const void *a) {                  \
     return ((lhash_##type##_hash_func)func)((const type *)a);                  \
   }                                                                            \
                                                                                \
-  OPENSSL_INLINE LHASH_OF(type) *lh_##type##_new(                              \
-      lhash_##type##_hash_func hash, lhash_##type##_cmp_func comp) {           \
+  inline LHASH_OF(type) *lh_##type##_new(lhash_##type##_hash_func hash,        \
+                                         lhash_##type##_cmp_func comp) {       \
     return (LHASH_OF(type) *)OPENSSL_lh_new((lhash_hash_func)hash,             \
                                             (lhash_cmp_func)comp);             \
   }                                                                            \
                                                                                \
-  OPENSSL_INLINE void lh_##type##_free(LHASH_OF(type) *lh) {                   \
+  inline void lh_##type##_free(LHASH_OF(type) *lh) {                           \
     OPENSSL_lh_free((_LHASH *)lh);                                             \
   }                                                                            \
                                                                                \
-  OPENSSL_INLINE size_t lh_##type##_num_items(const LHASH_OF(type) *lh) {      \
+  inline size_t lh_##type##_num_items(const LHASH_OF(type) *lh) {              \
     return OPENSSL_lh_num_items((const _LHASH *)lh);                           \
   }                                                                            \
                                                                                \
-  OPENSSL_INLINE type *lh_##type##_retrieve(const LHASH_OF(type) *lh,          \
-                                            const type *data) {                \
+  inline type *lh_##type##_retrieve(const LHASH_OF(type) *lh,                  \
+                                    const type *data) {                        \
     return (type *)OPENSSL_lh_retrieve((const _LHASH *)lh, data,               \
                                        lh_##type##_call_hash_func,             \
                                        lh_##type##_call_cmp_func);             \
@@ -208,13 +172,12 @@ OPENSSL_EXPORT void OPENSSL_lh_doall_arg(_LHASH *lh,
     const void *key;                                                           \
   } LHASH_CMP_KEY_##type;                                                      \
                                                                                \
-  OPENSSL_INLINE int lh_##type##_call_cmp_key(const void *key,                 \
-                                              const void *value) {             \
+  inline int lh_##type##_call_cmp_key(const void *key, const void *value) {    \
     const LHASH_CMP_KEY_##type *cb = (const LHASH_CMP_KEY_##type *)key;        \
     return cb->cmp_key(cb->key, (const type *)value);                          \
   }                                                                            \
                                                                                \
-  OPENSSL_INLINE type *lh_##type##_retrieve_key(                               \
+  inline type *lh_##type##_retrieve_key(                                       \
       const LHASH_OF(type) *lh, const void *key, uint32_t key_hash,            \
       int (*cmp_key)(const void *key, const type *value)) {                    \
     LHASH_CMP_KEY_##type cb = {cmp_key, key};                                  \
@@ -222,8 +185,8 @@ OPENSSL_EXPORT void OPENSSL_lh_doall_arg(_LHASH *lh,
                                            lh_##type##_call_cmp_key);          \
   }                                                                            \
                                                                                \
-  OPENSSL_INLINE int lh_##type##_insert(LHASH_OF(type) *lh, type **old_data,   \
-                                        type *data) {                          \
+  inline int lh_##type##_insert(LHASH_OF(type) *lh, type **old_data,           \
+                                type *data) {                                  \
     void *old_data_void = NULL;                                                \
     int ret = OPENSSL_lh_insert((_LHASH *)lh, &old_data_void, data,            \
                                 lh_##type##_call_hash_func,                    \
@@ -232,8 +195,7 @@ OPENSSL_EXPORT void OPENSSL_lh_doall_arg(_LHASH *lh,
     return ret;                                                                \
   }                                                                            \
                                                                                \
-  OPENSSL_INLINE type *lh_##type##_delete(LHASH_OF(type) *lh,                  \
-                                          const type *data) {                  \
+  inline type *lh_##type##_delete(LHASH_OF(type) *lh, const type *data) {      \
     return (type *)OPENSSL_lh_delete((_LHASH *)lh, data,                       \
                                      lh_##type##_call_hash_func,               \
                                      lh_##type##_call_cmp_func);               \
@@ -244,13 +206,13 @@ OPENSSL_EXPORT void OPENSSL_lh_doall_arg(_LHASH *lh,
     void *arg;                                                                 \
   } LHASH_DOALL_##type;                                                        \
                                                                                \
-  OPENSSL_INLINE void lh_##type##_call_doall_arg(void *value, void *arg) {     \
+  inline void lh_##type##_call_doall_arg(void *value, void *arg) {             \
     const LHASH_DOALL_##type *cb = (const LHASH_DOALL_##type *)arg;            \
     cb->doall_arg((type *)value, cb->arg);                                     \
   }                                                                            \
                                                                                \
-  OPENSSL_INLINE void lh_##type##_doall_arg(                                   \
-      LHASH_OF(type) *lh, void (*func)(type *, void *), void *arg) {           \
+  inline void lh_##type##_doall_arg(LHASH_OF(type) *lh,                        \
+                                    void (*func)(type *, void *), void *arg) { \
     LHASH_DOALL_##type cb = {func, arg};                                       \
     OPENSSL_lh_doall_arg((_LHASH *)lh, lh_##type##_call_doall_arg, &cb);       \
   }                                                                            \
@@ -262,4 +224,4 @@ OPENSSL_EXPORT void OPENSSL_lh_doall_arg(_LHASH *lh,
 }  // extern C
 #endif
 
-#endif  // OPENSSL_HEADER_LHASH_INTERNAL_H
+#endif  // OPENSSL_HEADER_CRYPTO_LHASH_INTERNAL_H

@@ -51,7 +51,6 @@ add_definitions(-DLIBDIR="${LIB_INSTALL_DIR}")
 add_definitions(-DPKGLIBDIR="${LIB_INSTALL_DIR}/wpe-webkit-${WPE_API_VERSION}")
 add_definitions(-DPKGLIBEXECDIR="${LIBEXEC_INSTALL_DIR}")
 add_definitions(-DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}")
-add_definitions(-DPKGDATADIR="${CMAKE_INSTALL_FULL_DATADIR}/wpe-webkit-${WPE_API_VERSION}")
 add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
 
 if (NOT DEVELOPER_MODE AND NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
@@ -107,10 +106,13 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
     "SourcesWPE.txt"
 )
 
-list(APPEND WebKit_SERIALIZATION_IN_FILES Shared/glib/DMABufRendererBufferFormat.serialization.in)
+list(APPEND WebKit_SERIALIZATION_IN_FILES Shared/glib/RendererBufferFormat.serialization.in)
 
 if (USE_GBM)
-  list(APPEND WebKit_SERIALIZATION_IN_FILES Shared/gbm/DMABufBuffer.serialization.in)
+  list(APPEND WebKit_SERIALIZATION_IN_FILES
+      Shared/gbm/DMABufBuffer.serialization.in
+      Shared/gbm/DRMDevice.serialization.in
+  )
 endif ()
 
 list(APPEND WebKit_SERIALIZATION_IN_FILES
@@ -212,6 +214,7 @@ set(WPE_API_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitUserMediaPermissionRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitUserMessage.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebContext.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionMatchPattern.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebResource.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebView.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebViewSessionState.h.in
@@ -220,12 +223,22 @@ set(WPE_API_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebsiteDataManager.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWindowProperties.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebsitePolicies.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitXRPermissionRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/webkit.h.in
 )
 
 if (ENABLE_2022_GLIB_API)
     list(APPEND WPE_API_HEADER_TEMPLATES
         ${WEBKIT_DIR}/UIProcess/API/glib/WebKitNetworkSession.h.in
+    )
+endif ()
+
+if (ENABLE_2022_GLIB_API)
+    list(APPEND WPE_API_HEADER_TEMPLATES
+        ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtension.h.in
+    )
+    list(APPEND WebKit_SOURCES
+        ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtension.cpp
     )
 endif ()
 
@@ -352,7 +365,14 @@ add_custom_command(
     VERBATIM
 )
 
-set(WebKitResources
+set(WebKitResources "")
+list(APPEND WebKitResources "        <file alias='css/wpe-theme.css'>wpe-theme.css</file>\n"
+  "        <file alias='images/missingImage@2x'>missingImage@2x.png</file>\n"
+  "        <file alias='images/missingImage@3x'>missingImage@3x.png</file>\n"
+  "        <file alias='images/missingImage'>missingImage.png</file>\n"
+  "        <file alias='images/panIcon'>panIcon.png</file>\n"
+  "        <file alias='images/textAreaResizeCorner@2x'>textAreaResizeCorner@2x.png</file>\n"
+  "        <file alias='images/textAreaResizeCorner'>textAreaResizeCorner.png</file>\n"
 )
 
 if (ENABLE_WEB_AUDIO)
@@ -375,6 +395,7 @@ GLIB_COMPILE_RESOURCES(
     SOURCE_XML    ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml
     RESOURCE_DIRS ${CMAKE_SOURCE_DIR}/Source/WebCore/Resources
                   ${CMAKE_SOURCE_DIR}/Source/WebCore/platform/audio/resources
+                  ${CMAKE_SOURCE_DIR}/Source/WebKit/Resources/wpe
 )
 
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
@@ -383,6 +404,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${FORWARDING_HEADERS_WPE_EXTENSION_DIR}"
     "${WEBKIT_DIR}/NetworkProcess/glib"
     "${WEBKIT_DIR}/NetworkProcess/soup"
+    "${WEBKIT_DIR}/Platform/IPC/android"
     "${WEBKIT_DIR}/Platform/IPC/glib"
     "${WEBKIT_DIR}/Platform/IPC/unix"
     "${WEBKIT_DIR}/Platform/classifier"
@@ -415,7 +437,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/soup"
     "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
-    "${WEBKIT_DIR}/WebProcess/WebPage/dmabuf"
     "${WEBKIT_DIR}/WebProcess/WebPage/glib"
     "${WEBKIT_DIR}/WebProcess/WebPage/libwpe"
     "${WEBKIT_DIR}/WebProcess/WebPage/soup"
@@ -428,17 +449,10 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc"
 )
 
-list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-    ${GIO_UNIX_INCLUDE_DIRS}
-    ${GLIB_INCLUDE_DIRS}
-    ${LIBSOUP_INCLUDE_DIRS}
-)
-
 list(APPEND WebKit_LIBRARIES
+    GLib::Module
+    Soup3::Soup3
     WPE::libwpe
-    ${GLIB_LIBRARIES}
-    ${GLIB_GMODULE_LIBRARIES}
-    ${LIBSOUP_LIBRARIES}
 )
 
 if (ANDROID)
@@ -454,6 +468,10 @@ if (USE_ATK)
         ATK::Bridge
         ${ATK_LIBRARIES}
     )
+endif ()
+
+if (USE_OPENXR)
+   list(APPEND WebKit_LIBRARIES OpenXR::openxr_loader)
 endif ()
 
 if (USE_CAIRO)
@@ -497,13 +515,31 @@ if (ENABLE_WPE_PLATFORM)
     )
 
     list(APPEND WebKit_PRIVATE_LIBRARIES
-        WPEPlatform-${WPE_API_VERSION}
+        WPEPlatform
     )
 
-    list(APPEND WebKit_MESSAGES_IN_FILES
-        UIProcess/dmabuf/AcceleratedBackingStoreDMABuf
+    if (ENABLE_WPE_PLATFORM_DRM)
+        list(APPEND WebKit_PRIVATE_LIBRARIES
+            WPEPlatformDRM
+        )
+    endif ()
 
-        WebProcess/WebPage/dmabuf/AcceleratedSurfaceDMABuf
+    if (ENABLE_WPE_PLATFORM_HEADLESS)
+        list(APPEND WebKit_PRIVATE_LIBRARIES
+            WPEPlatformHeadless
+        )
+    endif ()
+
+    if (ENABLE_WPE_PLATFORM_WAYLAND)
+        list(APPEND WebKit_PRIVATE_LIBRARIES
+            WPEPlatformWayland
+        )
+    endif ()
+
+    list(APPEND WebKit_MESSAGES_IN_FILES
+        UIProcess/glib/AcceleratedBackingStore
+
+        WebProcess/WebPage/CoordinatedGraphics/AcceleratedSurface
     )
 endif ()
 
@@ -580,17 +616,14 @@ if (ENABLE_WPE_QT_API)
                 Qt::Quick
             PRIVATE
                 Epoxy::Epoxy
+                GLib::GLib
+                GLib::Object
                 WebKit
-                ${GLIB_GOBJECT_LIBRARIES}
-                ${GLIB_LIBRARIES}
-                WPEPlatform-${WPE_API_VERSION}
         )
         target_include_directories(qtwpe PRIVATE
             $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>
             ${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
             ${CMAKE_BINARY_DIR}
-            ${GLIB_INCLUDE_DIRS}
-            ${LIBSOUP_INCLUDE_DIRS}
             ${WPE_INCLUDE_DIRS}
             ${WEBKIT_DIR}/UIProcess/API/wpe/qt6
         )
@@ -623,21 +656,18 @@ if (ENABLE_WPE_QT_API)
 
         set(qtwpe_LIBRARIES
             Epoxy::Epoxy
+            GLib::Object
             Qt5::Core Qt5::Quick
             WPE::FDO
             WebKit
-            ${GLIB_GOBJECT_LIBRARIES}
-            ${GLIB_LIBRARIES}
         )
 
         set(qtwpe_INCLUDE_DIRECTORIES
             $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>
             ${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
             ${CMAKE_BINARY_DIR}
-            ${GLIB_INCLUDE_DIRS}
             ${Qt5_INCLUDE_DIRS}
             ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
-            ${LIBSOUP_INCLUDE_DIRS}
             ${WPE_INCLUDE_DIRS}
         )
 
@@ -732,8 +762,8 @@ else ()
 endif ()
 
 set(WPE_LIBRARIES_FOR_INTROSPECTION
+    Soup-3.0:libsoup-3.0
     WPEJavaScriptCore
-    Soup-${SOUP_API_VERSION}:libsoup-${SOUP_API_VERSION}
 )
 
 set(WPE_INCLUDE_DIRS_FOR_INTROSPECTION
@@ -767,6 +797,7 @@ GI_INTROSPECT(WPEWebKit ${WPE_API_VERSION} wpe/webkit.h
 )
 GI_DOCGEN(WPEWebKit wpe/wpewebkit.toml.in
     CONTENT_TEMPLATES
+        glib/contributing.md
         glib/environment-variables.md
         glib/profiling.md
         glib/remote-inspector.md
@@ -789,7 +820,7 @@ GI_INTROSPECT(${WPE_WEB_PROCESS_EXTENSION_API_NAME} ${WPE_API_VERSION} wpe/${WPE
     SYMBOL_PREFIX webkit
     DEPENDENCIES
         WPEJavaScriptCore
-        Soup-${SOUP_API_VERSION}:libsoup-${SOUP_API_VERSION}
+        Soup-3.0:libsoup-3.0
     OPTIONS
         -I${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
         -I${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}

@@ -42,6 +42,7 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 static bool shouldCancelNavigation;
 static bool shouldDelayDecision;
@@ -65,7 +66,7 @@ static NSString *thirdURL = @"data:text/html,Third";
     if (shouldCancelNavigation) {
         int64_t deferredWaitTime = 100 * NSEC_PER_MSEC;
         dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
-        dispatch_after(when, dispatch_get_main_queue(), ^{
+        dispatch_after(when, mainDispatchQueueSingleton(), ^{
             decisionHandler(WKNavigationActionPolicyCancel);
             decidedPolicy = true;
         });
@@ -370,7 +371,7 @@ TEST(WebKit, DecidePolicyForNavigationActionOpenNewWindowAndDeallocSourceWebView
 
     EXPECT_EQ(WKNavigationTypeOther, [action navigationType]);
     EXPECT_TRUE([action sourceFrame] != [action targetFrame]);
-    EXPECT_EQ(newWebView.get(), [[action sourceFrame] webView]);
+    EXPECT_NULL([[action sourceFrame] webView]);
     EXPECT_EQ(newWebView.get(), [[action targetFrame] webView]);
 
     newWebView = nullptr;

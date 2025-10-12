@@ -87,14 +87,16 @@ private:
     {
     }
 
-    template<typename C, typename std::enable_if_t<std::is_same_v<typename C::ComponentType, float>>* = nullptr>
+    template<typename C>
+        requires std::is_same_v<typename C::ComponentType, float>
     static constexpr C resolve(C color)
     {
         auto [c1, c2, c3, alpha] = resolveColorComponents(asColorComponents(ExposedColorType<C, typename C::Model> { color }));
         return ColorType { c1, c2, c3, alpha };
     }
 
-    template<typename C, typename std::enable_if_t<std::is_same_v<typename C::ComponentType, uint8_t>>* = nullptr>
+    template<typename C>
+        requires std::is_same_v<typename C::ComponentType, uint8_t>
     static constexpr C resolve(C color)
     {
         return color;

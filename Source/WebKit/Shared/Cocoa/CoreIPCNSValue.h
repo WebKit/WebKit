@@ -29,6 +29,7 @@
 
 #include "ArgumentCodersCocoa.h"
 #include <CoreGraphics/CGGeometry.h>
+#include <WebCore/DoubleRect.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSValue;
@@ -36,6 +37,11 @@ OBJC_CLASS NSValue;
 namespace WebKit {
 
 class CoreIPCNSCFObject;
+
+struct IPCRange {
+    uint64_t location;
+    uint64_t length;
+};
 
 class CoreIPCNSValue {
 public:
@@ -49,7 +55,7 @@ public:
 
     static bool shouldWrapValue(NSValue *);
 
-    using Value = Variant<NSRange, CGRect, UniqueRef<CoreIPCNSCFObject>>;
+    using Value = Variant<IPCRange, WebCore::DoubleRect, UniqueRef<CoreIPCNSCFObject>>;
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCNSValue, void>;

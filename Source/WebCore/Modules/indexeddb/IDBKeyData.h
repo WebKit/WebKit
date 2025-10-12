@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "IDBKey.h"
+#include <WebCore/IDBKey.h>
 #include <wtf/Hasher.h>
 #include <wtf/StdSet.h>
 #include <wtf/TZoneMalloc.h>

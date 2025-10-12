@@ -27,10 +27,13 @@
 
 #include "WPEDRM.h"
 #include "WPEDRMCursor.h"
+#include "WPEDRMDevice.h"
 #include "WPEDRMSeat.h"
+#include "WPEDisplayDRM.h"
 #include "WPEScreen.h"
 
 const WPE::DRM::Connector& wpeDisplayDRMGetConnector(WPEDisplayDRM*);
+WPEDRMDevice* wpeDisplayDRMGetDisplayDevice(WPEDisplayDRM*);
 WPEScreen* wpeDisplayDRMGetScreen(WPEDisplayDRM*);
 const WPE::DRM::Plane& wpeDisplayDRMGetPrimaryPlane(WPEDisplayDRM*);
 WPE::DRM::Cursor* wpeDisplayDRMGetCursor(WPEDisplayDRM*);

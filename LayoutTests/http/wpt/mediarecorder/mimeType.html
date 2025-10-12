@@ -33,8 +33,9 @@ mimeTypeTests.forEach(mimeTypeTest => {
     }, "MediaRecorder.isTypeSupported - '" + mimeTypeTest[0] + "'");
 });
 
-promise_test(async () => {
+promise_test(async (test) => {
     const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    test.add_cleanup(() => mediaStream.getTracks().forEach(track => track.stop()));
 
     let recorder = new MediaRecorder(mediaStream);
     assert_equals(recorder.mimeType, "");
@@ -68,8 +69,9 @@ promise_test(async () => {
 
 }, "MediaRecorder mimeType MP4");
 
-promise_test(async () => {
+promise_test(async (test) => {
     const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    test.add_cleanup(() => mediaStream.getTracks().forEach(track => track.stop()));
 
     recorder = new MediaRecorder(new MediaStream([mediaStream.getVideoTracks()[0]]), { mimeType: "video/webm" });
     assert_equals(recorder.mimeType, "video/webm");
@@ -85,8 +87,9 @@ promise_test(async () => {
 
 }, "MediaRecorder mimeType WebM");
 
-promise_test(async () => {
+promise_test(async (test) => {
     const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    test.add_cleanup(() => mediaStream.getTracks().forEach(track => track.stop()));
 
     recorder = new MediaRecorder(new MediaStream([mediaStream.getAudioTracks()[0]]), { mimeType: "audio/mp4; codecs=opus" });
     assert_equals(recorder.mimeType, "audio/mp4; codecs=opus");

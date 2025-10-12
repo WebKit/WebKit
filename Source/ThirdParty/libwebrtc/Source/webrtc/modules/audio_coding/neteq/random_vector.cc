@@ -10,6 +10,9 @@
 
 #include "modules/audio_coding/neteq/random_vector.h"
 
+#include <cstddef>
+#include <cstdint>
+
 namespace webrtc {
 
 const int16_t RandomVector::kRandomTable[RandomVector::kRandomTableSize] = {

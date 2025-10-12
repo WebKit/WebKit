@@ -44,33 +44,19 @@
 namespace WebGPU {
 
 struct ShaderModuleParameters {
-    const WGPUShaderModuleWGSLDescriptor& wgsl;
+    const char* wgslCode;
     const WGPUShaderModuleCompilationHint* hints;
 };
 
 static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WGPUShaderModuleDescriptor& descriptor)
 {
-    const WGPUShaderModuleWGSLDescriptor* wgsl = nullptr;
+    const char* wgslCode = descriptor.wgslDescriptor;
     const WGPUShaderModuleCompilationHint* hints = descriptor.hints;
 
-    for (const WGPUChainedStruct* ptr = descriptor.nextInChain; ptr; ptr = ptr->next) {
-        auto type = ptr->sType;
-
-        switch (static_cast<int>(type)) {
-        case WGPUSType_ShaderModuleWGSLDescriptor:
-            if (wgsl)
-                return std::nullopt;
-            wgsl = reinterpret_cast<const WGPUShaderModuleWGSLDescriptor*>(ptr);
-            break;
-        default:
-            return std::nullopt;
-        }
-    }
-
-    if (!wgsl)
+    if (!wgslCode)
         return std::nullopt;
 
-    return { { *wgsl, hints } };
+    return { { wgslCode, hints } };
 }
 
 id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& msl, String&& label, NSError** error, WGSL::DeviceState&& deviceState)
@@ -94,6 +80,10 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     options.fastMathEnabled = !requireSafeMath;
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
+
+    if (deviceState.usesInvariant)
+        options.preserveInvariance = true;
+
     // FIXME(PERFORMANCE): Run the asynchronous version of this
     id<MTLLibrary> library = [device newLibraryWithSource:msl.createNSString().get() options:options error:error];
     if (error && *error) {
@@ -113,8 +103,6 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, Variant<WGS
     Vector<WGSL::PipelineLayout> wgslPipelineLayouts;
     wgslPipelineLayouts.reserveCapacity(suppliedHints.hintCount);
     for (const auto& hint : suppliedHints.hintsSpan()) {
-        if (hint.nextInChain)
-            return nullptr;
         auto hintKey = fromAPI(hint.entryPoint);
         Ref layout = WebGPU::protectedFromAPI(hint.layout);
         hints.add(hintKey, layout);
@@ -182,7 +170,7 @@ static Ref<ShaderModule> handleShaderSuccessOrFailure(WebGPU::Device &object, Va
 
 Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& descriptor)
 {
-    if (!descriptor.nextInChain || !isValid())
+    if (!isValid())
         return ShaderModule::createInvalid(*this);
 
     auto shaderModuleParameters = findShaderModuleParameters(descriptor);
@@ -190,7 +178,7 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
         return ShaderModule::createInvalid(*this);
 
     auto supportedFeatures = buildFeatureSet(m_capabilities.features);
-    auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgsl.code), std::nullopt, WGSL::Configuration {
+    auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgslCode), std::nullopt, WGSL::Configuration {
         .maxBuffersPlusVertexBuffersForVertexStage = maxBuffersPlusVertexBuffersForVertexStage(),
         .maxBuffersForFragmentStage = maxBuffersForFragmentStage(),
         .maxBuffersForComputeStage = maxBuffersForComputeStage(),
@@ -384,15 +372,15 @@ void ShaderModule::populateOutputState(const String& entryPoint, WGSL::Builtin b
     }
 }
 
-ShaderModule::FragmentOutputs ShaderModule::parseFragmentReturnType(const WGSL::Type& type, const String& entryPoint)
+ShaderModule::FragmentOutputs ShaderModule::parseFragmentReturnType(const WGSL::Type& type, const WGSL::CallGraph::EntryPoint& entryPoint)
 {
     ShaderModule::FragmentOutputs fragmentOutputs;
     if (auto* returnPrimitive = std::get_if<WGSL::Types::Primitive>(&type)) {
-        fragmentOutputs.add(0, metalDataTypeFromPrimitive(returnPrimitive));
+        fragmentOutputs.add(entryPoint.function.returnTypeLocation().value_or(0), metalDataTypeFromPrimitive(returnPrimitive));
         return fragmentOutputs;
     }
     if (std::get_if<WGSL::Types::Vector>(&type)) {
-        fragmentOutputs.add(0, metalDataTypeForStructMember(&type));
+        fragmentOutputs.add(entryPoint.function.returnTypeLocation().value_or(0), metalDataTypeForStructMember(&type));
         return fragmentOutputs;
     }
     auto* returnStruct = std::get_if<WGSL::Types::Struct>(&type);
@@ -401,13 +389,13 @@ ShaderModule::FragmentOutputs ShaderModule::parseFragmentReturnType(const WGSL::
 
     for (auto& member : returnStruct->structure.members()) {
         if (member.builtin())
-            populateOutputState(entryPoint, *member.builtin());
+            populateOutputState(entryPoint.originalName, *member.builtin());
 
         for (auto& attribute : member.attributes()) {
             auto* builtinAttribute = dynamicDowncast<WGSL::AST::BuiltinAttribute>(attribute);
             if (!builtinAttribute)
                 continue;
-            populateOutputState(entryPoint, builtinAttribute->builtin());
+            populateOutputState(entryPoint.originalName, builtinAttribute->builtin());
         }
 
         if (!member.location() || member.builtin())
@@ -630,7 +618,7 @@ ShaderModule::ShaderModule(Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& c
                 m_fragmentInputsForEntryPoint.add(entryPoint.originalName, parseFragmentInputs(entryPoint.function));
                 if (auto expression = entryPoint.function.maybeReturnType()) {
                     if (auto* inferredType = expression->inferredType())
-                        m_fragmentReturnTypeForEntryPoint.add(entryPoint.originalName, parseFragmentReturnType(*inferredType, entryPoint.originalName));
+                        m_fragmentReturnTypeForEntryPoint.add(entryPoint.originalName, parseFragmentReturnType(*inferredType, entryPoint));
                 }
                 if (!allowFragmentDefault || m_defaultFragmentEntryPoint.length()) {
                     allowFragmentDefault = false;
@@ -735,7 +723,6 @@ static CompilationMessageData convertMessages(const Messages& messages1, const s
         for (size_t i = 0; i < compilationMessages.messages.size(); ++i) {
             const auto& compilationMessage = compilationMessages.messages[i];
             flattenedCompilationMessages.append({
-                .nextInChain = nullptr,
                 .message = flattenedMessages[i + base],
                 .type = compilationMessages.type,
                 .lineNum = compilationMessage.lineNumber(),
@@ -761,9 +748,8 @@ void ShaderModule::getCompilationInfo(CompletionHandler<void(WGPUCompilationInfo
     WTF::switchOn(m_checkResult, [&](const WGSL::SuccessfulCheck& successfulCheck) {
         auto compilationMessageData(convertMessages({ successfulCheck.warnings, WGPUCompilationMessageType_Warning }));
         WGPUCompilationInfo compilationInfo {
-            nullptr,
-            static_cast<uint32_t>(compilationMessageData.compilationMessages.size()),
-            compilationMessageData.compilationMessages.span().data(),
+            .messageCount = static_cast<uint32_t>(compilationMessageData.compilationMessages.size()),
+            .messages = compilationMessageData.compilationMessages.span().data(),
         };
         callback(WGPUCompilationInfoRequestStatus_Success, compilationInfo);
     }, [&](const WGSL::FailedCheck& failedCheck) {
@@ -771,16 +757,14 @@ void ShaderModule::getCompilationInfo(CompletionHandler<void(WGPUCompilationInfo
             { failedCheck.errors, WGPUCompilationMessageType_Error },
             { { failedCheck.warnings, WGPUCompilationMessageType_Warning } }));
         WGPUCompilationInfo compilationInfo {
-            nullptr,
-            static_cast<uint32_t>(compilationMessageData.compilationMessages.size()),
-            compilationMessageData.compilationMessages.span().data(),
+            .messageCount = static_cast<uint32_t>(compilationMessageData.compilationMessages.size()),
+            .messages = compilationMessageData.compilationMessages.span().data(),
         };
         callback(WGPUCompilationInfoRequestStatus_Error, compilationInfo);
     }, [&](std::monostate) {
         WGPUCompilationInfo compilationInfo {
-            nullptr,
-            0u,
-            nullptr,
+            .messageCount = 0u,
+            .messages = nullptr,
         };
         callback(WGPUCompilationInfoRequestStatus_Error, compilationInfo);
     });
@@ -886,24 +870,70 @@ static WGSL::TexelFormat wgslFormat(WGPUTextureFormat format)
     switch (format) {
     case WGPUTextureFormat_BGRA8Unorm:
         return WGSL::TexelFormat::BGRA8unorm;
+    case WGPUTextureFormat_R16Float:
+        return WGSL::TexelFormat::R16float;
+    case WGPUTextureFormat_R16Sint:
+        return WGSL::TexelFormat::R16sint;
+    case WGPUTextureFormat_R16Snorm:
+        return WGSL::TexelFormat::R16snorm;
+    case WGPUTextureFormat_R16Uint:
+        return WGSL::TexelFormat::R16uint;
+    case WGPUTextureFormat_R16Unorm:
+        return WGSL::TexelFormat::R16unorm;
     case WGPUTextureFormat_R32Float:
         return WGSL::TexelFormat::R32float;
     case WGPUTextureFormat_R32Sint:
         return WGSL::TexelFormat::R32sint;
     case WGPUTextureFormat_R32Uint:
         return WGSL::TexelFormat::R32uint;
+    case WGPUTextureFormat_R8Sint:
+        return WGSL::TexelFormat::R8sint;
+    case WGPUTextureFormat_R8Snorm:
+        return WGSL::TexelFormat::R8snorm;
+    case WGPUTextureFormat_R8Uint:
+        return WGSL::TexelFormat::R8uint;
+    case WGPUTextureFormat_R8Unorm:
+        return WGSL::TexelFormat::R8unorm;
+    case WGPUTextureFormat_RG11B10Ufloat:
+        return WGSL::TexelFormat::RG11B10ufloat;
+    case WGPUTextureFormat_RG16Float:
+        return WGSL::TexelFormat::RG16float;
+    case WGPUTextureFormat_RG16Sint:
+        return WGSL::TexelFormat::RG16sint;
+    case WGPUTextureFormat_RG16Snorm:
+        return WGSL::TexelFormat::RG16snorm;
+    case WGPUTextureFormat_RG16Uint:
+        return WGSL::TexelFormat::RG16uint;
+    case WGPUTextureFormat_RG16Unorm:
+        return WGSL::TexelFormat::RG16unorm;
     case WGPUTextureFormat_RG32Float:
         return WGSL::TexelFormat::RG32float;
     case WGPUTextureFormat_RG32Sint:
         return WGSL::TexelFormat::RG32sint;
     case WGPUTextureFormat_RG32Uint:
         return WGSL::TexelFormat::RG32uint;
+    case WGPUTextureFormat_RG8Sint:
+        return WGSL::TexelFormat::RG8sint;
+    case WGPUTextureFormat_RG8Snorm:
+        return WGSL::TexelFormat::RG8snorm;
+    case WGPUTextureFormat_RG8Uint:
+        return WGSL::TexelFormat::RG8uint;
+    case WGPUTextureFormat_RG8Unorm:
+        return WGSL::TexelFormat::RG8unorm;
+    case WGPUTextureFormat_RGB10A2Uint:
+        return WGSL::TexelFormat::RGB10A2uint;
+    case WGPUTextureFormat_RGB10A2Unorm:
+        return WGSL::TexelFormat::RGB10A2unorm;
     case WGPUTextureFormat_RGBA16Float:
         return WGSL::TexelFormat::RGBA16float;
     case WGPUTextureFormat_RGBA16Sint:
         return WGSL::TexelFormat::RGBA16sint;
+    case WGPUTextureFormat_RGBA16Snorm:
+        return WGSL::TexelFormat::RGBA16snorm;
     case WGPUTextureFormat_RGBA16Uint:
         return WGSL::TexelFormat::RGBA16uint;
+    case WGPUTextureFormat_RGBA16Unorm:
+        return WGSL::TexelFormat::RGBA16unorm;
     case WGPUTextureFormat_RGBA32Float:
         return WGSL::TexelFormat::RGBA32float;
     case WGPUTextureFormat_RGBA32Sint:
@@ -1118,6 +1148,8 @@ String wgpuAdapterFeatureName(WGPUFeatureName feature)
         return "float32-renderable"_s;
     case WGPUFeatureName_CoreFeaturesAndLimits:
         return "core-features-and-limits"_s;
+    case WGPUFeatureName_TextureFormatsTier1:
+        return "texture-formats-tier1"_s;
     case WGPUFeatureName_Force32:
         return emptyString();
     }

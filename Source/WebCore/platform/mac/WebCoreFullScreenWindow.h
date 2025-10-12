@@ -23,7 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <wtf/Platform.h>
+
 #if PLATFORM(MAC)
+
+#import <AppKit/NSWindow.h>
+#import <WebCore/PlatformExportMacros.h>
 
 WEBCORE_EXPORT @interface WebCoreFullScreenWindow : NSWindow
 @end

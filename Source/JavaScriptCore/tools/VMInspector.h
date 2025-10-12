@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,54 +25,32 @@
 
 #pragma once
 
-#include "CallFrame.h"
-#include "VM.h"
-#include <wtf/DoublyLinkedList.h>
 #include <wtf/Expected.h>
-#include <wtf/IterationStatus.h>
-#include <wtf/Lock.h>
-#include <wtf/TZoneMalloc.h>
+#include <wtf/Noncopyable.h>
 
 namespace JSC {
 
+class CodeBlock;
+class CallFrame;
+class Heap;
+class JSCell;
+class JSValue;
+class VM;
+
 class VMInspector {
-    WTF_MAKE_TZONE_ALLOCATED(VMInspector);
+    WTF_FORBID_HEAP_ALLOCATION;
     WTF_MAKE_NONCOPYABLE(VMInspector);
-    VMInspector() = default;
 public:
     enum class Error {
         None,
         TimedOut
     };
 
-    static VMInspector& singleton();
-
-    void add(VM*);
-    void remove(VM*);
-    ALWAYS_INLINE static bool isValidVM(VM* vm)
-    {
-        return vm == m_recentVM ? true : isValidVMSlow(vm);
-    }
-
-    Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
-
-    void iterate(const Invocable<IterationStatus(VM&)> auto& functor) WTF_REQUIRES_LOCK(m_lock)
-    {
-        for (VM* vm = m_vmList.head(); vm; vm = vm->next()) {
-            IterationStatus status = functor(*vm);
-            if (status == IterationStatus::Done)
-                return;
-        }
-    }
-
-    JS_EXPORT_PRIVATE static void forEachVM(Function<IterationStatus(VM&)>&&);
-    JS_EXPORT_PRIVATE static void dumpVMs();
-
     // Returns null if the callFrame doesn't actually correspond to any active VM.
     JS_EXPORT_PRIVATE static VM* vmForCallFrame(CallFrame*);
 
-    Expected<bool, Error> isValidExecutableMemory(void*) WTF_REQUIRES_LOCK(m_lock);
-    Expected<CodeBlock*, Error> codeBlockForMachinePC(void*) WTF_REQUIRES_LOCK(m_lock);
+    JS_EXPORT_PRIVATE static Expected<bool, Error> isValidExecutableMemory(void*);
+    JS_EXPORT_PRIVATE static Expected<CodeBlock*, Error> codeBlockForMachinePC(void*);
 
     JS_EXPORT_PRIVATE static bool currentThreadOwnsJSLock(VM*);
     JS_EXPORT_PRIVATE static void gc(VM*);
@@ -92,13 +70,6 @@ public:
 #if USE(JSVALUE64)
     static bool verifyCell(VM&, JSCell*);
 #endif
-
-private:
-    JS_EXPORT_PRIVATE static bool isValidVMSlow(VM*);
-
-    Lock m_lock;
-    DoublyLinkedList<VM> m_vmList WTF_GUARDED_BY_LOCK(m_lock);
-    JS_EXPORT_PRIVATE static VM* m_recentVM;
 };
 
 } // namespace JSC

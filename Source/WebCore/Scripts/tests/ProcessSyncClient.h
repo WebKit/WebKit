@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "DOMAudioSession.h"
+#include <WebCore/DOMAudioSession.h>
 #include <wtf/URL.h>
 #include "StringifyThis"
 #include <wtf/TZoneMallocInlines.h>

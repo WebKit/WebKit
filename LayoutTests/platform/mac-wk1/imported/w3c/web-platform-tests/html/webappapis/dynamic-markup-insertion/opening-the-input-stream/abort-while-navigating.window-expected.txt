@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/common/blank.html due to access control checks.
-CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/common/blank.html due to access control checks.
 
 Harness Error (TIMEOUT), message = null
 

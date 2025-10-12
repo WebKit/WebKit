@@ -459,10 +459,12 @@ TEST(EditorStateTests, SelectedTextRange_CaretSelectionWithZoom)
     [webView stringByEvaluatingJavaScript:@"input.focus()"];
     [webView _synchronouslyExecuteEditCommand:@"InsertText" argument:@"Test"];
 
+    [webView waitForNextVisibleContentRectUpdate];
     [webView waitForNextPresentationUpdate];
 
     CGFloat zoomScale = 4;
-    [webView scrollView].zoomScale = zoomScale;
+    [webView setZoomScaleSimulatingUserTriggeredZoom:zoomScale];
+
     [webView waitForNextPresentationUpdate];
 
     RetainPtr contentView = [webView textInputContentView];
@@ -470,7 +472,11 @@ TEST(EditorStateTests, SelectedTextRange_CaretSelectionWithZoom)
 
     EXPECT_EQ([[contentView layer] transform].m11, zoomScale);
 
+#if ENABLE(FORM_CONTROL_REFRESH)
+    CGRect caretRect = CGRectMake(137, 107, 2, EditorStateTests::glyphWidth);
+#else
     CGRect caretRect = CGRectMake(137, 106, 3, EditorStateTests::glyphWidth);
+#endif
     EXPECT_EQ(caretRect, [contentView caretRectForPosition:[selectedTextRange start]]);
     EXPECT_EQ(caretRect, [contentView caretRectForPosition:[selectedTextRange end]]);
 }

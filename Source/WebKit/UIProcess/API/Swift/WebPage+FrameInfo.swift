@@ -29,7 +29,7 @@ internal import WebKit_Internal
 extension WebPage {
     /// A type that contains information about a frame on a webpage.
     @MainActor
-    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct FrameInfo {

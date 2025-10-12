@@ -28,13 +28,13 @@
 #include "config.h"
 #include "PseudoElement.h"
 
-#include "ContentData.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffectStack.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
 #include "RenderQuote.h"
 #include "RenderStyleInlines.h"
+#include "StylableInlines.h"
 #include "StyleResolver.h"
 #include <wtf/TZoneMallocInlines.h>
 

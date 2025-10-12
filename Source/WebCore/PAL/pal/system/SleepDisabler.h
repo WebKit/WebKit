@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <pal/ExportMacros.h>
 #include <wtf/Forward.h>
 
 namespace PAL {

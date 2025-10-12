@@ -29,10 +29,12 @@
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "Document.h"
+#include "FrameInlines.h"
 #include "FrameLoader.h"
 #include "HTMLIFrameElement.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameLoaderClient.h"
 #include "Logging.h"
 #include "Page.h"
@@ -222,7 +224,7 @@ void ResourceMonitor::checkNetworkUsageExcessIfNecessary()
 
         // If the frame has sticky user activation, don't do offloading.
         if (RefPtr protectedWindow = frame->window(); protectedWindow && protectedWindow->hasStickyActivation()) {
-            if (RefPtr page = frame->protectedPage())
+            if (RefPtr page = frame->page())
                 page->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::iframeResourceMonitoringKey(), "IFrame ResourceMonitoring Throttled"_s, diagnosticValues(), ShouldSample::No);
 
             RESOURCEMONITOR_RELEASE_LOG("But the frame has sticky user activation so ignoring.");

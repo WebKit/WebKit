@@ -94,14 +94,29 @@ GstElement* GStreamerQuirkRialto::createAudioSink()
     return sink;
 }
 
-GstElement* GStreamerQuirkRialto::createWebAudioSink()
+GstElement* /* transfer floating */ GStreamerQuirkRialto::createWebAudioSink()
 {
-    if (GstElement* sink = webkitAudioSinkNew())
+    if (GstElement* sink = webkitAudioSinkNew("webaudio"_s))
         return sink;
 
     auto sink = makeGStreamerElement("rialtowebaudiosink"_s);
     RELEASE_ASSERT_WITH_MESSAGE(sink, "rialtowebaudiosink should be available in the system but it is not");
-    return sink;
+
+    // Force audio conversion to 'interleaved' format. The rialtowebaudiosink doesn't support
+    // non-interleaved audio without special caps, which seems like a bug in that sink's caps
+    // template and/or caps negotiation implementation.
+    auto bin = gst_bin_new(nullptr);
+    auto capsFilter = gst_element_factory_make("capsfilter", nullptr);
+    auto caps = adoptGRef(gst_caps_new_simple("audio/x-raw", "layout", G_TYPE_STRING, "interleaved", nullptr));
+    g_object_set(capsFilter, "caps", caps.get(), nullptr);
+
+    gst_bin_add_many(GST_BIN_CAST(bin), capsFilter, sink, nullptr);
+    gst_element_link(capsFilter, sink);
+
+    auto pad = adoptGRef(gst_element_get_static_pad(capsFilter, "sink"));
+    gst_element_add_pad(bin, gst_ghost_pad_new("sink", pad.get()));
+
+    return bin;
 }
 
 std::optional<bool> GStreamerQuirkRialto::isHardwareAccelerated(GstElementFactory* factory)

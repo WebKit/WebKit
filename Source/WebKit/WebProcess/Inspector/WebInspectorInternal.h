@@ -28,7 +28,7 @@
 #include "Connection.h"
 #include "MessageReceiver.h"
 #include <WebCore/FrameIdentifier.h>
-#include <WebCore/InspectorClient.h>
+#include <WebCore/InspectorBackendClient.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -38,7 +38,7 @@ namespace WebKit {
 class WebPage;
 
 class WebInspector : public ThreadSafeRefCounted<WebInspector>, private IPC::Connection::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebInspector);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebInspector);
 public:
     static Ref<WebInspector> create(WebPage&);
@@ -56,7 +56,7 @@ public:
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) override { close(); }
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t indexOfObjectFailingDecoding) override { close(); }
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) override { close(); }
 
     void show(CompletionHandler<void()>&&);
     void close();
@@ -80,7 +80,7 @@ public:
     void elementSelectionChanged(bool);
     void timelineRecordingChanged(bool);
 
-    void setDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference, std::optional<bool>);
+    void setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference, std::optional<bool>);
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     void setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit);
 #endif
@@ -90,13 +90,13 @@ public:
     void disconnectFromPage() { close(); }
 
 private:
-    friend class WebInspectorClient;
+    friend class WebInspectorBackendClient;
 
     explicit WebInspector(WebPage&);
 
     bool canAttachWindow();
 
-    // Called from WebInspectorClient
+    // Called from WebInspectorBackendClient
     void openLocalInspectorFrontend();
     void closeFrontendConnection();
 

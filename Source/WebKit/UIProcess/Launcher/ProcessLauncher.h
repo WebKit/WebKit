@@ -125,11 +125,14 @@ public:
     public:
         virtual ~Client() { }
         
+        virtual void ref() const = 0;
+        virtual void deref() const = 0;
         virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier&&) = 0;
         virtual bool shouldConfigureJSCForTesting() const { return false; }
         virtual bool isJITEnabled() const { return true; }
         virtual bool shouldEnableSharedArrayBuffer() const { return false; }
         virtual bool shouldEnableLockdownMode() const { return false; }
+        virtual bool shouldEnableEnhancedSecurity() const { return false; }
         virtual bool shouldDisableJITCage() const { return false; }
 #if PLATFORM(COCOA)
         virtual RefPtr<XPCEventHandler> xpcEventHandler() const { return nullptr; }
@@ -173,8 +176,6 @@ private:
 
     void platformInvalidate();
     void platformDestroy();
-
-    CheckedPtr<Client> checkedClient() const;
 
 #if PLATFORM(COCOA)
     void terminateXPCConnection();

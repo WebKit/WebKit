@@ -33,8 +33,8 @@
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, AVFAudio)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAudioApplication)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFAudio, AVAudioApplicationInputMuteStateChangeNotification, NSString *)
-#define AVAudioApplicationInputMuteStateChangeNotification PAL::get_AVFAudio_AVAudioApplicationInputMuteStateChangeNotification()
+#define AVAudioApplicationInputMuteStateChangeNotification PAL::get_AVFAudio_AVAudioApplicationInputMuteStateChangeNotificationSingleton()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFAudio, AVAudioApplicationMuteStateKey, NSString *)
-#define AVAudioApplicationMuteStateKey PAL::get_AVFAudio_AVAudioApplicationMuteStateKey()
+#define AVAudioApplicationMuteStateKey PAL::get_AVFAudio_AVAudioApplicationMuteStateKeySingleton()
 
 #endif // HAVE(AVAUDIOAPPLICATION)

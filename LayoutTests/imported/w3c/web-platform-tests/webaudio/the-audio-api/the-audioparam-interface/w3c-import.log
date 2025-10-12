@@ -14,10 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/adding-events.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-cancel-and-hold.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-close.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-connect-audioratesignal.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-default-value.window.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-exceptional-values.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-exponentialRampToValueAtTime.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-large-endtime.html
@@ -33,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/automation-rate.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/cancel-scheduled-values.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/event-insertion.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/exponentialRamp-special-cases.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audiobuffersource-connections.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audioworklet-connections.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audioworklet.https.html
@@ -49,6 +52,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-stereo-panner.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/moderate-exponentialRamp.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/nan-param.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-exponentialRampToValueAtTime.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-linearRampToValueAtTime.html

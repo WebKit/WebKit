@@ -54,9 +54,10 @@ struct WebKit::WebHitTestResultData {
     bool isActivePDFAnnotation;
     WebKit::WebHitTestResultData::ElementType elementType;
     std::optional<WebKit::FrameInfoData> frameInfo;
+    std::optional<WebCore::FrameIdentifier> targetFrame;
     std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData;
     String lookupText;
-    String toolTipText;
+    String tooltipText;
     String imageText;
     std::optional<WebCore::SharedMemoryHandle> getImageSharedMemoryHandle();
     RefPtr<WebCore::ShareableBitmap> imageBitmap;

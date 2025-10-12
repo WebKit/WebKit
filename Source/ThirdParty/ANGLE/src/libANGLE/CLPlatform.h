@@ -89,8 +89,8 @@ class Platform final : public _cl_platform_id, public Object
     static PlatformPtrs &GetPointers();
 
     const rx::CLPlatformImpl::Ptr mImpl;
-    const rx::CLPlatformImpl::Info mInfo;
     const DevicePtrs mDevices;
+    const rx::CLPlatformImpl::Info mInfo;
     std::shared_ptr<angle::WorkerThreadPool> mMultiThreadPool;
 
     static constexpr char kVendor[]    = "ANGLE";

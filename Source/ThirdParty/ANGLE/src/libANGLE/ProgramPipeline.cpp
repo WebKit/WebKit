@@ -625,6 +625,9 @@ angle::Result ProgramPipeline::link(const Context *context)
         mState.mExecutable->copySamplerBindingsFromProgram(*executable);
         mState.mExecutable->copyImageBindingsFromProgram(*executable);
     }
+    // Update active uniform and storage buffer block indices mask
+    mState.mExecutable->updateActiveUniformBufferBlocks();
+    mState.mExecutable->updateActiveStorageBufferBlocks();
 
     if (mState.mExecutable->hasLinkedShaderStage(ShaderType::Fragment))
     {
@@ -675,6 +678,18 @@ bool ProgramPipeline::linkVaryings()
                 getShaderProgramExecutable(previousShaderType);
             ASSERT(previousExecutable);
 
+            if (previousExecutable == programExecutable)
+            {
+                continue;
+            }
+            if (!LinkValidateInOutNumberMatching(
+                    previousExecutable->getLinkedOutputVaryings(previousShaderType),
+                    programExecutable->getLinkedInputVaryings(shaderType), previousShaderType,
+                    shaderType, previousExecutable->getLinkedShaderVersion(previousShaderType),
+                    programExecutable->getLinkedShaderVersion(shaderType), mState.mInfoLog))
+            {
+                return false;
+            }
             if (!LinkValidateShaderInterfaceMatching(
                     previousExecutable->getLinkedOutputVaryings(previousShaderType),
                     programExecutable->getLinkedInputVaryings(shaderType), previousShaderType,

@@ -35,7 +35,7 @@ namespace WebCore {
 
 class CoordinatedPlatformLayerBuffer : public TextureMapperPlatformLayer {
     WTF_MAKE_NONCOPYABLE(CoordinatedPlatformLayerBuffer);
-    WTF_MAKE_FAST_ALLOCATED();
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED();
 public:
     enum class Type : uint8_t {
         RGB,

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WriteBarrier.h"
+#include <JavaScriptCore/WriteBarrier.h>
 
 namespace JSC {
 

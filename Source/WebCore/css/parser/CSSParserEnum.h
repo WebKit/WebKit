@@ -34,9 +34,10 @@ namespace WebCore {
 
 namespace CSSParserEnum {
 
-enum class NestedContextType : bool {
+enum class NestedContextType : uint8_t {
     Style,
     Scope,
+    Function,
 };
 
 using NestedContext = std::optional<NestedContextType>;

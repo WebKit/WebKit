@@ -63,9 +63,9 @@
     auto contentsLow = std::clamp(static_cast<unsigned>(range.location), context.length(), context.length() + contents.length());
     auto contentsHigh = std::clamp(static_cast<unsigned>(range.location + range.length), context.length(), context.length() + contents.length());
     auto contentsSubstring = contents.substring(contentsLow - context.length(), contentsHigh - contentsLow);
-    static_assert(std::is_same_v<std::make_unsigned_t<unichar>, std::make_unsigned_t<UChar>>);
+    static_assert(std::is_same_v<std::make_unsigned_t<unichar>, std::make_unsigned_t<char16_t>>);
     // FIXME: We don't actually know the size of buffer here.
-    auto bufferSpan = unsafeMakeSpan(reinterpret_cast<UChar*>(buffer), contextSubstring.length() + contentsSubstring.length());
+    auto bufferSpan = unsafeMakeSpan(reinterpret_cast<char16_t*>(buffer), contextSubstring.length() + contentsSubstring.length());
     contextSubstring.getCharacters(bufferSpan);
     contentsSubstring.getCharacters(bufferSpan.subspan(contextSubstring.length()));
 }

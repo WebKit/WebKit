@@ -168,7 +168,7 @@ JSValue JSTestReadOnlyMapLike::getConstructor(VM& vm, const JSGlobalObject* glob
 
 void JSTestReadOnlyMapLike::destroy(JSC::JSCell* cell)
 {
-    JSTestReadOnlyMapLike* thisObject = static_cast<JSTestReadOnlyMapLike*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestReadOnlyMapLike* thisObject = static_cast<JSTestReadOnlyMapLike*>(cell);
     thisObject->JSTestReadOnlyMapLike::~JSTestReadOnlyMapLike();
 }
 
@@ -298,7 +298,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_forEach, (JSGlob
 
 JSC::GCClient::IsoSubspace* JSTestReadOnlyMapLike::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestReadOnlyMapLike, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestReadOnlyMapLike, UseCustomHeapCellType::No>(vm, "JSTestReadOnlyMapLike"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestReadOnlyMapLike.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestReadOnlyMapLike = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestReadOnlyMapLike.get(); },
@@ -325,7 +325,7 @@ bool JSTestReadOnlyMapLikeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unk
 
 void JSTestReadOnlyMapLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestReadOnlyMapLike = static_cast<JSTestReadOnlyMapLike*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestReadOnlyMapLike = static_cast<JSTestReadOnlyMapLike*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestReadOnlyMapLike->protectedWrapped().ptr(), jsTestReadOnlyMapLike);
 }
@@ -338,7 +338,9 @@ extern "C" { extern void (*const __identifier("??_7TestReadOnlyMapLike@WebCore@@
 #else
 extern "C" { extern void* _ZTVN7WebCore19TestReadOnlyMapLikeE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestReadOnlyMapLike>, void>> static inline void verifyVTable(TestReadOnlyMapLike* ptr) {
+template<std::same_as<TestReadOnlyMapLike> T>
+static inline void verifyVTable(TestReadOnlyMapLike* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -357,8 +359,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestReadOnlyM
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestReadOnlyMapLike>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestReadOnlyMapLike>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestReadOnlyMapLike>(impl.ptr());
 #endif

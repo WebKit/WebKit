@@ -47,7 +47,7 @@ UITraitCollection *traitCollectionWithAdjustedIdiomForSystemColors(UITraitCollec
 
 LocalCurrentTraitCollection::LocalCurrentTraitCollection(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 {
-    m_savedTraitCollection = [PAL::getUITraitCollectionClass() currentTraitCollection];
+    m_savedTraitCollection = [PAL::getUITraitCollectionClassSingleton() currentTraitCollection];
 
     // FIXME: <rdar://problem/96607991> `-[UITraitCollection currentTraitCollection]` is not guaranteed
     // to return a useful set of traits in cases where it has not been explicitly set. Ideally, this
@@ -58,19 +58,19 @@ LocalCurrentTraitCollection::LocalCurrentTraitCollection(bool useDarkAppearance,
         traits.userInterfaceLevel = useElevatedUserInterfaceLevel ? UIUserInterfaceLevelElevated : UIUserInterfaceLevelBase;
     }];
 
-    [PAL::getUITraitCollectionClass() setCurrentTraitCollection:traitCollectionWithAdjustedIdiomForSystemColors(combinedTraits.get())];
+    [PAL::getUITraitCollectionClassSingleton() setCurrentTraitCollection:traitCollectionWithAdjustedIdiomForSystemColors(combinedTraits.get())];
 }
 
 LocalCurrentTraitCollection::LocalCurrentTraitCollection(UITraitCollection *traitCollection)
 {
-    m_savedTraitCollection = [PAL::getUITraitCollectionClass() currentTraitCollection];
+    m_savedTraitCollection = [PAL::getUITraitCollectionClassSingleton() currentTraitCollection];
     auto newTraitCollection = traitCollectionWithAdjustedIdiomForSystemColors(traitCollection);
-    [PAL::getUITraitCollectionClass() setCurrentTraitCollection:newTraitCollection];
+    [PAL::getUITraitCollectionClassSingleton() setCurrentTraitCollection:newTraitCollection];
 }
 
 LocalCurrentTraitCollection::~LocalCurrentTraitCollection()
 {
-    [PAL::getUITraitCollectionClass() setCurrentTraitCollection:m_savedTraitCollection.get()];
+    [PAL::getUITraitCollectionClassSingleton() setCurrentTraitCollection:m_savedTraitCollection.get()];
 }
 
 }

@@ -27,7 +27,7 @@
 
 #if ENABLE(VIDEO)
 
-#include "InbandTextTrackPrivateClient.h"
+#include <WebCore/InbandTextTrackPrivateClient.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

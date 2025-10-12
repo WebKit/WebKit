@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@ WKTypeID WKHTTPCookieStoreGetTypeID()
 
 void WKHTTPCookieStoreDeleteAllCookies(WKHTTPCookieStoreRef cookieStore, void* context, WKHTTPCookieStoreDeleteAllCookiesFunction callback)
 {
-    WebKit::toImpl(cookieStore)->deleteAllCookies([context, callback] {
+    WebKit::toProtectedImpl(cookieStore)->deleteAllCookies([context, callback] {
         if (callback)
             callback(context);
     });
@@ -44,7 +44,7 @@ void WKHTTPCookieStoreDeleteAllCookies(WKHTTPCookieStoreRef cookieStore, void* c
 
 void WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKHTTPCookieStoreRef cookieStore, WKHTTPCookieAcceptPolicy policy, void* context, WKHTTPCookieStoreSetHTTPCookieAcceptPolicyFunction callback)
 {
-    WebKit::toImpl(cookieStore)->setHTTPCookieAcceptPolicy(WebKit::toHTTPCookieAcceptPolicy(policy), [context, callback] {
+    WebKit::toProtectedImpl(cookieStore)->setHTTPCookieAcceptPolicy(WebKit::toHTTPCookieAcceptPolicy(policy), [context, callback] {
         if (callback)
             callback(context);
     });

@@ -50,7 +50,7 @@ static ExceptionOr<Vector<uint8_t>> signRSASSA_PKCS1_v1_5(CryptoAlgorithmIdentif
     Vector<uint8_t> signature(keyLength / 8); // Per https://tools.ietf.org/html/rfc3447#section-8.2.1
     size_t signatureSize = signature.size();
 
-    CCCryptorStatus status = CCRSACryptorSign(key, ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature.data(), &signatureSize);
+    CCCryptorStatus status = CCRSACryptorSign(key, ccPKCS1Padding, digestData.span().data(), digestData.size(), digestAlgorithm, 0, signature.mutableSpan().data(), &signatureSize);
     if (status)
         return Exception { ExceptionCode::OperationError };
 
@@ -72,7 +72,7 @@ static ExceptionOr<bool> verifyRSASSA_PKCS1_v1_5(CryptoAlgorithmIdentifier hash,
     digest->addBytes(data.span());
     auto digestData = digest->computeHash();
 
-    auto status = CCRSACryptorVerify(key, ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature.data(), signature.size());
+    auto status = CCRSACryptorVerify(key, ccPKCS1Padding, digestData.span().data(), digestData.size(), digestAlgorithm, 0, signature.span().data(), signature.size());
     if (!status)
         return true;
     if (status == kCCDecodeError)

@@ -34,14 +34,14 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 
 // This class triggers asynchronous loads independent of the networking context staying alive (i.e., auditing pingbacks).
 // The object just needs to live long enough to ensure the message was actually sent.
 // As soon as any callback is received from the ResourceHandle, this class will cancel the load and delete itself.
 
-class PingHandle final : public RefCounted<PingHandle>, private WebCore::ResourceHandleClient {
+class PingHandle final : public RefCountedAndCanMakeWeakPtr<PingHandle>, private WebCore::ResourceHandleClient {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(PingHandle);
     WTF_MAKE_NONCOPYABLE(PingHandle);
 public:

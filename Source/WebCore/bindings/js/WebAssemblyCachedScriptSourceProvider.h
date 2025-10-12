@@ -63,7 +63,7 @@ public:
         if (!m_buffer->isContiguous())
             m_buffer = RefPtr { m_buffer }->makeContiguous();
 
-        return Ref { downcast<SharedBuffer>(*m_buffer) }->span().data();
+        return downcast<SharedBuffer>(m_buffer)->span().data();
     }
 
     void lockUnderlyingBufferImpl() final

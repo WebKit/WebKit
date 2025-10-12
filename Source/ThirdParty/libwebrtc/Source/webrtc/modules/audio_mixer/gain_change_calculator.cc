@@ -10,11 +10,12 @@
 
 #include "modules/audio_mixer/gain_change_calculator.h"
 
-#include <math.h>
-
+#include <cmath>
+#include <cstdint>
 #include <cstdlib>
 #include <vector>
 
+#include "api/array_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -23,9 +24,8 @@ namespace {
 constexpr int16_t kReliabilityThreshold = 100;
 }  // namespace
 
-float GainChangeCalculator::CalculateGainChange(
-    rtc::ArrayView<const int16_t> in,
-    rtc::ArrayView<const int16_t> out) {
+float GainChangeCalculator::CalculateGainChange(ArrayView<const int16_t> in,
+                                                ArrayView<const int16_t> out) {
   RTC_DCHECK_EQ(in.size(), out.size());
 
   std::vector<float> gain(in.size());
@@ -37,9 +37,9 @@ float GainChangeCalculator::LatestGain() const {
   return last_reliable_gain_;
 }
 
-void GainChangeCalculator::CalculateGain(rtc::ArrayView<const int16_t> in,
-                                         rtc::ArrayView<const int16_t> out,
-                                         rtc::ArrayView<float> gain) {
+void GainChangeCalculator::CalculateGain(ArrayView<const int16_t> in,
+                                         ArrayView<const int16_t> out,
+                                         ArrayView<float> gain) {
   RTC_DCHECK_EQ(in.size(), out.size());
   RTC_DCHECK_EQ(in.size(), gain.size());
 
@@ -52,7 +52,7 @@ void GainChangeCalculator::CalculateGain(rtc::ArrayView<const int16_t> in,
 }
 
 float GainChangeCalculator::CalculateDifferences(
-    rtc::ArrayView<const float> values) {
+    ArrayView<const float> values) {
   float res = 0;
   for (float f : values) {
     res += fabs(f - last_value_);

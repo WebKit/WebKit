@@ -34,7 +34,6 @@
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
 #include "CommonAtomStrings.h"
-#include "DocumentInlines.h"
 #include "HTMLNames.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -62,7 +61,7 @@ static_assert(sizeof(RuleData) == sizeof(SameSizeAsRuleData), "RuleData should s
 
 static inline MatchBasedOnRuleHash computeMatchBasedOnRuleHash(const CSSSelector& selector)
 {
-    if (selector.tagHistory())
+    if (selector.precedingInComplexSelector())
         return MatchBasedOnRuleHash::None;
 
     if (selector.match() == CSSSelector::Match::Tag) {
@@ -86,28 +85,9 @@ static inline MatchBasedOnRuleHash computeMatchBasedOnRuleHash(const CSSSelector
     return MatchBasedOnRuleHash::None;
 }
 
-static bool selectorCanMatchPseudoElement(const CSSSelector& rootSelector)
-{
-    const CSSSelector* selector = &rootSelector;
-    do {
-        if (selector->matchesPseudoElement())
-            return true;
-
-        if (const CSSSelectorList* selectorList = selector->selectorList()) {
-            for (const CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
-                if (selectorCanMatchPseudoElement(*subSelector))
-                    return true;
-            }
-        }
-
-        selector = selector->tagHistory();
-    } while (selector);
-    return false;
-}
-
 static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector* selector)
 {
-    for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
+    for (const CSSSelector* component = selector; component; component = component->precedingInComplexSelector()) {
 #if ENABLE(VIDEO)
         // Property allow-list for `::cue`:
         if (component->match() == CSSSelector::Match::PseudoElement && component->pseudoElement() == CSSSelector::PseudoElement::UserAgentPart && component->value() == UserAgentParts::cue())
@@ -123,8 +103,8 @@ static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector* se
             return propertyAllowlistForPseudoId(PseudoId::Marker);
 
         if (const auto* selectorList = selector->selectorList()) {
-            for (const auto* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
-                auto allowlistType = determinePropertyAllowlist(subSelector);
+            for (auto& subSelector : *selectorList) {
+                auto allowlistType = determinePropertyAllowlist(&subSelector);
                 if (allowlistType != PropertyAllowlist::None)
                     return allowlistType;
             }
@@ -133,16 +113,15 @@ static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector* se
     return PropertyAllowlist::None;
 }
 
-RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned selectorListIndex, unsigned position, IsStartingStyle isStartingStyle)
+RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned selectorListIndex, unsigned position, OptionSet<UsedRuleType> usedRuleTypes)
     : m_styleRuleWithSelectorIndex(&styleRule, static_cast<uint16_t>(selectorIndex))
     , m_selectorListIndex(selectorListIndex)
-    , m_position(position)
     , m_matchBasedOnRuleHash(enumToUnderlyingType(computeMatchBasedOnRuleHash(*selector())))
-    , m_canMatchPseudoElement(selectorCanMatchPseudoElement(*selector()))
-    , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector()))
+    , m_canMatchPseudoElement(complexSelectorCanMatchPseudoElement(*selector()))
     , m_propertyAllowlist(enumToUnderlyingType(determinePropertyAllowlist(selector())))
-    , m_isStartingStyle(enumToUnderlyingType(isStartingStyle))
+    , m_usedRuleTypes(usedRuleTypes.toRaw())
     , m_isEnabled(true)
+    , m_position(position)
     , m_descendantSelectorIdentifierHashes(SelectorFilter::collectHashes(*selector()))
 {
     ASSERT(m_position == position);

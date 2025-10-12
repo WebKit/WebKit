@@ -4,8 +4,14 @@
 // found in the LICENSE file.
 //
 // CLDeviceVk.cpp: Implements the class methods for CLDeviceVk.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
+#include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/renderer/vulkan/clspv_utils.h"
 #include "libANGLE/renderer/vulkan/vk_renderer.h"
 
@@ -44,6 +50,23 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
         {cl::DeviceInfo::PrintfBufferSize, 1024 * 1024},
         {cl::DeviceInfo::PreferredWorkGroupSizeMultiple, 16},
     };
+
+    // Minimum float configs/support required
+    cl_ulong halfFPConfig   = 0;
+    cl_ulong singleFPConfig = CL_FP_ROUND_TO_NEAREST | CL_FP_INF_NAN | CL_FP_FMA;
+    cl_ulong doubleFPConfig = 0;
+
+    if (mRenderer->getFeatures().supportsShaderFloat16.enabled)
+    {
+        halfFPConfig |= CL_FP_ROUND_TO_NEAREST | CL_FP_INF_NAN;
+    }
+
+    if (mRenderer->getFeatures().supportsShaderFloat64.enabled)
+    {
+        doubleFPConfig |= CL_FP_FMA | CL_FP_ROUND_TO_NEAREST | CL_FP_ROUND_TO_ZERO |
+                          CL_FP_ROUND_TO_INF | CL_FP_INF_NAN | CL_FP_DENORM;
+    }
+
     mInfoULong = {
         {cl::DeviceInfo::LocalMemSize, props.limits.maxComputeSharedMemorySize},
         {cl::DeviceInfo::SVM_Capabilities, 0},
@@ -54,12 +77,12 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
 
         // TODO(aannestrand) Update these hardcoded platform/device queries
         // http://anglebug.com/42266935
-        {cl::DeviceInfo::HalfFpConfig, 0},
-        {cl::DeviceInfo::DoubleFpConfig, 0},
+        {cl::DeviceInfo::HalfFpConfig, halfFPConfig},
+        {cl::DeviceInfo::DoubleFpConfig, doubleFPConfig},
         {cl::DeviceInfo::GlobalMemCacheSize, 0},
         {cl::DeviceInfo::GlobalMemSize, 1024 * 1024 * 1024},
         {cl::DeviceInfo::MaxConstantBufferSize, 64 * 1024},
-        {cl::DeviceInfo::SingleFpConfig, CL_FP_ROUND_TO_NEAREST | CL_FP_INF_NAN | CL_FP_FMA},
+        {cl::DeviceInfo::SingleFpConfig, singleFPConfig},
         {cl::DeviceInfo::AtomicMemoryCapabilities,
          CL_DEVICE_ATOMIC_ORDER_RELAXED | CL_DEVICE_ATOMIC_SCOPE_WORK_GROUP},
         // TODO (http://anglebug.com/379669750) Add these based on the Vulkan features query
@@ -112,16 +135,16 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
         {cl::DeviceInfo::NativeVectorWidthInt, 1},
         {cl::DeviceInfo::NativeVectorWidthLong, 1},
         {cl::DeviceInfo::NativeVectorWidthFloat, 1},
-        {cl::DeviceInfo::NativeVectorWidthDouble, 1},
-        {cl::DeviceInfo::NativeVectorWidthHalf, 0},
+        {cl::DeviceInfo::NativeVectorWidthDouble, mRenderer->getNativeVectorWidthDouble()},
+        {cl::DeviceInfo::NativeVectorWidthHalf, mRenderer->getNativeVectorWidthHalf()},
         {cl::DeviceInfo::PartitionMaxSubDevices, 0},
+        {cl::DeviceInfo::PreferredVectorWidthChar, 4},
+        {cl::DeviceInfo::PreferredVectorWidthShort, 8},
         {cl::DeviceInfo::PreferredVectorWidthInt, 1},
         {cl::DeviceInfo::PreferredVectorWidthLong, 1},
-        {cl::DeviceInfo::PreferredVectorWidthChar, 4},
-        {cl::DeviceInfo::PreferredVectorWidthHalf, 0},
-        {cl::DeviceInfo::PreferredVectorWidthShort, 2},
         {cl::DeviceInfo::PreferredVectorWidthFloat, 1},
-        {cl::DeviceInfo::PreferredVectorWidthDouble, 0},
+        {cl::DeviceInfo::PreferredVectorWidthDouble, mRenderer->getPreferredVectorWidthDouble()},
+        {cl::DeviceInfo::PreferredVectorWidthHalf, mRenderer->getPreferredVectorWidthHalf()},
         {cl::DeviceInfo::PreferredLocalAtomicAlignment, 0},
         {cl::DeviceInfo::PreferredGlobalAtomicAlignment, 0},
         {cl::DeviceInfo::PreferredPlatformAtomicAlignment, 0},
@@ -156,8 +179,8 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
     info.image3D_MaxWidth  = properties.limits.maxImageDimension3D;
     info.image3D_MaxHeight = properties.limits.maxImageDimension3D;
     info.image3D_MaxDepth  = properties.limits.maxImageDimension3D;
-    // TODO (http://anglebug.com/379669750) For now set it minimum requirement.
-    info.imageMaxBufferSize        = 65536;
+    // Max number of pixels for a 1D image created from a buffer object.
+    info.imageMaxBufferSize        = properties.limits.maxTexelBufferElements;
     info.imageMaxArraySize         = properties.limits.maxImageArrayLayers;
     info.imagePitchAlignment       = 0u;
     info.imageBaseAddressAlignment = 0u;
@@ -193,10 +216,48 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
         cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0),
                         .name    = "cl_khr_local_int32_extended_atomics"},
     };
+
+    CLExtensions::ExternalMemoryHandleBitset supportedHandles;
+    supportedHandles.set(cl::ExternalMemoryHandle::OpaqueFd, supportsExternalMemoryFd());
+    supportedHandles.set(cl::ExternalMemoryHandle::DmaBuf, supportsExternalMemoryDmaBuf());
+
+    // Populate other extensions based on feature support
+    if (info.populateSupportedExternalMemoryHandleTypes(supportedHandles))
+    {
+        versionedExtensionList.push_back(
+            cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0), .name = "cl_khr_external_memory"});
+    }
+    if (mRenderer->getFeatures().supportsShaderFloat16.enabled)
+    {
+        versionedExtensionList.push_back(
+            cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0), .name = "cl_khr_fp16"});
+    }
+    if (mRenderer->getFeatures().supportsShaderFloat64.enabled)
+    {
+        versionedExtensionList.push_back(
+            cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0), .name = "cl_khr_fp64"});
+    }
     if (info.imageSupport && info.image3D_MaxDepth > 1)
     {
         versionedExtensionList.push_back(
             cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0), .name = "cl_khr_3d_image_writes"});
+    }
+    if (mRenderer->getQueueFamilyProperties().queueCount > 1)
+    {
+        versionedExtensionList.push_back(
+            cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0), .name = "cl_khr_priority_hints"});
+    }
+
+    info.integerDotProductCapabilities = getIntegerDotProductCapabilities();
+    info.integerDotProductAccelerationProperties8Bit =
+        getIntegerDotProductAccelerationProperties8Bit();
+    info.integerDotProductAccelerationProperties4x8BitPacked =
+        getIntegerDotProductAccelerationProperties4x8BitPacked();
+
+    if (mRenderer->getFeatures().supportsShaderIntegerDotProduct.enabled)
+    {
+        versionedExtensionList.push_back(cl_name_version{.version = CL_MAKE_VERSION(2, 0, 0),
+                                                         .name    = "cl_khr_integer_dot_product"});
     }
     info.initializeVersionedExtensions(std::move(versionedExtensionList));
 
@@ -220,6 +281,16 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
     {
         info.OpenCL_C_Features.push_back(
             cl_name_version{.version = CL_MAKE_VERSION(3, 0, 0), .name = "__opencl_c_int64"});
+    }
+
+    if (mRenderer->getFeatures().supportsShaderIntegerDotProduct.enabled)
+    {
+        info.OpenCL_C_Features.push_back(
+            cl_name_version{.version = CL_MAKE_VERSION(3, 0, 0),
+                            .name    = "__opencl_c_integer_dot_product_input_4x8bit"});
+        info.OpenCL_C_Features.push_back(
+            cl_name_version{.version = CL_MAKE_VERSION(3, 0, 0),
+                            .name    = "__opencl_c_integer_dot_product_input_4x8bit_packed"});
     }
 
     return info;
@@ -275,6 +346,16 @@ angle::Result CLDeviceVk::getInfoString(cl::DeviceInfo name, size_t size, char *
     ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
 }
 
+bool CLDeviceVk::supportsExternalMemoryFd() const
+{
+    return mRenderer->getFeatures().supportsExternalMemoryFd.enabled;
+}
+
+bool CLDeviceVk::supportsExternalMemoryDmaBuf() const
+{
+    return mRenderer->getFeatures().supportsExternalMemoryDmaBuf.enabled;
+}
+
 angle::Result CLDeviceVk::createSubDevices(const cl_device_partition_property *properties,
                                            cl_uint numDevices,
                                            CreateFuncs &subDevices,
@@ -287,7 +368,6 @@ angle::Result CLDeviceVk::createSubDevices(const cl_device_partition_property *p
 cl::WorkgroupSize CLDeviceVk::selectWorkGroupSize(const cl::NDRange &ndrange) const
 {
     // Limit total work-group size to the Vulkan device's limit
-    const VkPhysicalDeviceProperties &props = mRenderer->getPhysicalDeviceProperties();
     uint32_t maxSize = static_cast<uint32_t>(mInfoSizeT.at(cl::DeviceInfo::MaxWorkGroupSize));
     maxSize          = std::min(maxSize, 64u);
 
@@ -301,7 +381,7 @@ cl::WorkgroupSize CLDeviceVk::selectWorkGroupSize(const cl::NDRange &ndrange) co
             cl::WorkgroupSize newLocalSize = localSize;
             newLocalSize[i] *= 2;
 
-            if (newLocalSize[i] <= props.limits.maxComputeWorkGroupCount[i] &&
+            if (newLocalSize[i] <= ndrange.globalWorkSize[i] &&
                 newLocalSize[0] * newLocalSize[1] * newLocalSize[2] <= maxSize)
             {
                 localSize      = newLocalSize;
@@ -311,6 +391,74 @@ cl::WorkgroupSize CLDeviceVk::selectWorkGroupSize(const cl::NDRange &ndrange) co
     } while (keepIncreasing);
 
     return localSize;
+}
+
+cl_device_integer_dot_product_capabilities_khr CLDeviceVk::getIntegerDotProductCapabilities() const
+{
+    cl_device_integer_dot_product_capabilities_khr integerDotProductCapabilities = {};
+
+    if (mRenderer->getFeatures().supportsShaderIntegerDotProduct.enabled)
+    {
+        // If the VK extension is supported, then all the caps mentioned in the CL spec are
+        // supported by default.
+        integerDotProductCapabilities = (CL_DEVICE_INTEGER_DOT_PRODUCT_INPUT_4x8BIT_PACKED_KHR |
+                                         CL_DEVICE_INTEGER_DOT_PRODUCT_INPUT_4x8BIT_KHR);
+    }
+
+    return integerDotProductCapabilities;
+}
+
+cl_device_integer_dot_product_acceleration_properties_khr
+CLDeviceVk::getIntegerDotProductAccelerationProperties8Bit() const
+{
+
+    cl_device_integer_dot_product_acceleration_properties_khr
+        integerDotProductAccelerationProperties = {};
+    const VkPhysicalDeviceShaderIntegerDotProductProperties &integerDotProductProps =
+        mRenderer->getPhysicalDeviceShaderIntegerDotProductProperties();
+
+    integerDotProductAccelerationProperties.signed_accelerated =
+        integerDotProductProps.integerDotProduct8BitSignedAccelerated;
+    integerDotProductAccelerationProperties.unsigned_accelerated =
+        integerDotProductProps.integerDotProduct8BitUnsignedAccelerated;
+    integerDotProductAccelerationProperties.mixed_signedness_accelerated =
+        integerDotProductProps.integerDotProduct8BitMixedSignednessAccelerated;
+    integerDotProductAccelerationProperties.accumulating_saturating_signed_accelerated =
+        integerDotProductProps.integerDotProductAccumulatingSaturating8BitSignedAccelerated;
+    integerDotProductAccelerationProperties.accumulating_saturating_unsigned_accelerated =
+        integerDotProductProps.integerDotProductAccumulatingSaturating8BitUnsignedAccelerated;
+    integerDotProductAccelerationProperties.accumulating_saturating_mixed_signedness_accelerated =
+        integerDotProductProps
+            .integerDotProductAccumulatingSaturating8BitMixedSignednessAccelerated;
+
+    return integerDotProductAccelerationProperties;
+}
+
+cl_device_integer_dot_product_acceleration_properties_khr
+CLDeviceVk::getIntegerDotProductAccelerationProperties4x8BitPacked() const
+{
+
+    cl_device_integer_dot_product_acceleration_properties_khr
+        integerDotProductAccelerationProperties = {};
+    const VkPhysicalDeviceShaderIntegerDotProductProperties &integerDotProductProps =
+        mRenderer->getPhysicalDeviceShaderIntegerDotProductProperties();
+
+    integerDotProductAccelerationProperties.signed_accelerated =
+        integerDotProductProps.integerDotProduct4x8BitPackedSignedAccelerated;
+    integerDotProductAccelerationProperties.unsigned_accelerated =
+        integerDotProductProps.integerDotProduct4x8BitPackedUnsignedAccelerated;
+    integerDotProductAccelerationProperties.mixed_signedness_accelerated =
+        integerDotProductProps.integerDotProduct4x8BitPackedMixedSignednessAccelerated;
+    integerDotProductAccelerationProperties.accumulating_saturating_signed_accelerated =
+        integerDotProductProps.integerDotProductAccumulatingSaturating4x8BitPackedSignedAccelerated;
+    integerDotProductAccelerationProperties.accumulating_saturating_unsigned_accelerated =
+        integerDotProductProps
+            .integerDotProductAccumulatingSaturating4x8BitPackedUnsignedAccelerated;
+    integerDotProductAccelerationProperties.accumulating_saturating_mixed_signedness_accelerated =
+        integerDotProductProps
+            .integerDotProductAccumulatingSaturating4x8BitPackedMixedSignednessAccelerated;
+
+    return integerDotProductAccelerationProperties;
 }
 
 }  // namespace rx

@@ -34,7 +34,7 @@ namespace WTF {
 // count to it.
 template<typename T>
 class Box {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Box);
 public:
     Box() = default;
     Box(Box&&) = default;
@@ -55,13 +55,20 @@ public:
         return result;
     }
 
-    T* get() const { return &m_data->value; }
+    bool isValid() const { return static_cast<bool>(m_data); }
 
-    T& operator*() const { return m_data->value; }
-    T* operator->() const { return &m_data->value; }
+    T* get() const
+    {
+        if (!isValid())
+            return nullptr;
+        return &m_data->value;
+    }
 
-    explicit operator bool() const { return static_cast<bool>(m_data); }
-    
+    T& operator*() const { RELEASE_ASSERT(isValid()); return m_data->value; }
+    T* operator->() const { RELEASE_ASSERT(isValid()); return &m_data->value; }
+
+    explicit operator bool() const { return isValid(); }
+
 private:
     struct Data : ThreadSafeRefCounted<Data> {
         template<typename... Arguments>
@@ -69,7 +76,7 @@ private:
             : value(std::forward<Arguments>(arguments)...)
         {
         }
-        
+
         T value;
     };
 

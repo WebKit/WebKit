@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CSSNumericType.h"
-#include "CSSStyleValue.h"
+#include <WebCore/CSSNumericType.h>
+#include <WebCore/CSSStyleValue.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -68,7 +68,7 @@ public:
     static Ref<CSSNumericValue> rectifyNumberish(CSSNumberish&&);
 
     // https://drafts.css-houdini.org/css-typed-om/#sum-value-value
-    using UnitMap = UncheckedKeyHashMap<CSSUnitType, int, WTF::IntHash<CSSUnitType>, WTF::StrongEnumHashTraits<CSSUnitType>>;
+    using UnitMap = HashMap<CSSUnitType, int, WTF::IntHash<CSSUnitType>, WTF::StrongEnumHashTraits<CSSUnitType>>;
     struct Addend {
         double value;
         UnitMap units;
@@ -97,5 +97,5 @@ protected:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSNumericValue)
-    static bool isType(const WebCore::CSSStyleValue& styleValue) { return isCSSNumericValue(styleValue.getType()); }
+    static bool isType(const WebCore::CSSStyleValue& styleValue) { return isCSSNumericValue(styleValue.styleValueType()); }
 SPECIALIZE_TYPE_TRAITS_END()

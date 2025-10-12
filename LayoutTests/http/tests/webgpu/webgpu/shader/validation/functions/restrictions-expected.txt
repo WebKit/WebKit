@@ -388,8 +388,7 @@ FAIL :function_attributes:case="diagnostic";placement="func" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     2:0: invalid attribute for function declaration
-    TestFailedButDeviceReusable@
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :function_attributes:case="diagnostic";placement="param"
 PASS :function_attributes:case="diagnostic";placement="ret"

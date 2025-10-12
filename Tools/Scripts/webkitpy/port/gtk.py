@@ -77,6 +77,9 @@ class GtkPort(GLibPort):
         environment = super(GtkPort, self).setup_environ_for_server(server_name)
         environment['LIBOVERLAY_SCROLLBAR'] = '0'
 
+        # Copy all GTK Scene Graph Kit (GSK) env vars
+        self._copy_values_from_environ_with_prefix(environment, 'GSK_')
+
         # Configure the software libgl renderer if jhbuild ready and we test inside a virtualized window system
         if self._driver_class() in [XvfbDriver, WestonDriver] and (self._should_use_jhbuild() or self._is_flatpak()):
             if self._should_use_jhbuild():
@@ -119,8 +122,8 @@ class GtkPort(GLibPort):
     def _search_paths(self):
         search_paths = []
 
-        if self._is_gtk4_build():
-            search_paths.append(self.port_name + "4")
+        if self._is_gtk3_build():
+            search_paths.append(self.port_name + "3")
 
         if self._driver_class() in [WaylandDriver, WestonDriver]:
             search_paths.append(self.port_name + "-wayland")
@@ -175,8 +178,11 @@ class GtkPort(GLibPort):
         configuration['version_name'] = self._display_server.capitalize() if self._display_server else 'Xvfb'
         return configuration
 
+    def get_browser_path(self, browser_name):
+        return self._build_path('bin', browser_name)
+
     def run_minibrowser(self, args):
-        miniBrowser = self._build_path('bin', 'MiniBrowser')
+        miniBrowser = self.get_browser_path('MiniBrowser')
         if not self._filesystem.isfile(miniBrowser):
             print("%s not found... Did you run build-webkit?" % miniBrowser)
             return 1
@@ -191,16 +197,16 @@ class GtkPort(GLibPort):
         return self._executive.run_command(command + args, cwd=self.webkit_base(), stdout=None, return_stderr=False, decode_output=False, env=env, pass_fds=pass_fds)
 
     @memoized
-    def _is_gtk4_build(self):
+    def _is_gtk3_build(self):
         try:
             libdir = self._build_path('lib')
             candidates = self._filesystem.glob(os.path.join(libdir, 'libwebkit*gtk-*.so'))
             if not candidates:
                 return False
             if len(candidates) > 1:
-                _log.warning("Multiple WebKit2GTK libraries found. Skipping GTK4 detection.")
+                _log.warning("Multiple WebKit2GTK libraries found. Skipping GTK3 detection.")
                 return False
-            return os.path.basename(candidates[0]) == 'libwebkitgtk-6.0.so'
+            return os.path.basename(candidates[0]) == 'libwebkit2gtk-4.0.so'
 
         except (webkitpy.common.system.executive.ScriptError, IOError, OSError):
             return False

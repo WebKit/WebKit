@@ -416,7 +416,7 @@ void StructureStubInfo::visitAggregateImpl(Visitor& visitor)
 
 DEFINE_VISIT_AGGREGATE(StructureStubInfo);
 
-void StructureStubInfo::visitWeakReferences(const ConcurrentJSLockerBase& locker, CodeBlock* codeBlock)
+void StructureStubInfo::visitWeak(const ConcurrentJSLockerBase& locker, CodeBlock* codeBlock)
 {
     VM& vm = codeBlock->vm();
     {

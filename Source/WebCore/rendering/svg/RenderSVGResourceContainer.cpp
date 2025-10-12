@@ -22,6 +22,7 @@
 #include "RenderSVGResourceContainer.h"
 
 #include "RenderLayer.h"
+#include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGRoot.h"
@@ -64,7 +65,7 @@ void RenderSVGResourceContainer::styleDidChange(StyleDifference diff, const Rend
 void RenderSVGResourceContainer::idChanged()
 {
     // Remove old id, that is guaranteed to be present in cache.
-    m_id = element().getIdAttribute();
+    m_id = protectedElement()->getIdAttribute();
 
     registerResource();
 }

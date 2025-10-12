@@ -29,7 +29,7 @@
 
 #include "B3SparseCollection.h"
 #include "BasicBlockLocation.h"
-#include "CheckPrivateBrandVariant.h"
+#include "CheckPrivateBrandStatus.h"
 #include "CodeBlock.h"
 #include "DFGAdjacencyList.h"
 #include "DFGArithMode.h"
@@ -162,28 +162,23 @@ struct DataViewData {
 static_assert(sizeof(DataViewData) == sizeof(uint64_t));
 
 struct BranchTarget {
-    BranchTarget()
-        : block(nullptr)
-        , count(PNaN)
-    {
-    }
-    
+    BranchTarget() = default;
     explicit BranchTarget(BasicBlock* block)
         : block(block)
         , count(PNaN)
     {
     }
-    
+
     void setBytecodeIndex(unsigned bytecodeIndex)
     {
         block = std::bit_cast<BasicBlock*>(static_cast<uintptr_t>(bytecodeIndex));
     }
     unsigned bytecodeIndex() const { return std::bit_cast<uintptr_t>(block); }
-    
+
     void dump(PrintStream&) const;
-    
-    BasicBlock* block;
-    float count;
+
+    BasicBlock* block { nullptr };
+    float count { PNaN };
 };
 
 struct BranchData {
@@ -248,18 +243,19 @@ struct SwitchData {
     // Initializes most fields to obviously invalid values. Anyone
     // constructing this should make sure to initialize everything they
     // care about manually.
-    SwitchData()
-        : switchTableIndex(UINT_MAX)
-        , kind(static_cast<SwitchKind>(-1))
-        , didUseJumpTable(false)
+    SwitchData() = default;
+
+    bool hasSwitchTableIndex() const { return switchTableIndex != std::numeric_limits<size_t>::max(); }
+    void clearSwitchTableIndex()
     {
+        switchTableIndex = std::numeric_limits<size_t>::max();
     }
-    
+
     Vector<SwitchCase> cases;
     BranchTarget fallThrough;
-    size_t switchTableIndex;
-    SwitchKind kind;
-    bool didUseJumpTable;
+    size_t switchTableIndex { std::numeric_limits<size_t>::max() };
+    SwitchKind kind { static_cast<SwitchKind>(-1) };
+    bool didUseJumpTable { false };
 };
 
 struct EntrySwitchData {
@@ -327,7 +323,7 @@ enum class BucketOwnerType : uint32_t {
 // Node represents a single operation in the data flow graph.
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DFGNode);
 struct Node {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DFGNode);
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DFGNode, DFGNode);
 public:
     static const char HashSetTemplateInstantiationString[];
     
@@ -731,17 +727,22 @@ public:
         children.setChild1(index);
     }
 
-    void convertToPhantomNewArrayWithConstantSize()
+    void convertToPhantomNewArrayWithButterfly()
     {
-        ASSERT(m_op == NewArrayWithConstantSize);
-        m_op = PhantomNewArrayWithConstantSize;
-        m_flags &= ~NodeHasVarArgs;
-        m_flags |= NodeMustGenerate;
-        // No need to clear the infos, as the indexing type and array
-        // size are still required for materialization when an OSR exit occurs.
-        children = AdjacencyList();
+        ASSERT(m_op == NewArrayWithButterfly);
+        setOpAndDefaultFlags(PhantomNewArrayWithButterfly);
+        // OpInfo/children shouldn't change and are needed for OSR exit.
+        ASSERT(child1().useKind() == Int32Use);
     }
     
+    void convertToPhantomNewButterflyWithSize()
+    {
+        ASSERT(m_op == NewButterflyWithSize);
+        setOpAndDefaultFlags(PhantomNewButterflyWithSize);
+        // OpInfo/children shouldn't change and are needed for OSR exit.
+        ASSERT(child1().useKind() == Int32Use);
+    }
+
     void convertToPhantomNewObject()
     {
         ASSERT(m_op == NewObject);
@@ -920,7 +921,7 @@ public:
 
     void convertToNewArrayBuffer(FrozenValue* immutableButterfly);
     void convertToNewArrayWithSize();
-    void convertToNewArrayWithConstantSize(Graph&, uint32_t);
+    void convertToNewArrayWithButterfly(Graph&, Node* butterfly);
     void convertToNewArrayWithSizeAndStructure(Graph&, RegisteredStructure);
 
     void convertToNewBoundFunction(FrozenValue*);
@@ -1458,32 +1459,16 @@ public:
         return newArrayBufferData().vectorLengthHint;
     }
 
-    unsigned hasNewArraySize()
-    {
-        switch (op()) {
-        case NewArrayWithConstantSize:
-        case PhantomNewArrayWithConstantSize:
-        case MaterializeNewArrayWithConstantSize:
-            return true;
-        default:
-            return false;
-        }
-    }
-
-    unsigned newArraySize()
-    {
-        ASSERT(hasNewArraySize());
-        return op() == MaterializeNewArrayWithConstantSize ? objectMaterializationData().m_newArraySize : m_opInfo2.as<unsigned>();
-    }
-
     bool hasIndexingType()
     {
         switch (op()) {
         case NewArray:
         case NewArrayWithSize:
-        case NewArrayWithConstantSize:
-        case PhantomNewArrayWithConstantSize:
-        case MaterializeNewArrayWithConstantSize:
+        case NewArrayWithButterfly:
+        case NewButterflyWithSize:
+        case PhantomNewArrayWithButterfly:
+        case PhantomNewButterflyWithSize:
+        case MaterializeNewArrayWithButterfly:
         case NewArrayBuffer:
         case PhantomNewArrayBuffer:
         case NewArrayWithSpecies:
@@ -2083,6 +2068,7 @@ public:
         case CallForwardVarargs:
         case TailCallForwardVarargsInlinedCaller:
         case CallWasm:
+        case TailCallInlinedCallerWasm:
         case CallCustomAccessorGetter:
         case GetByOffset:
         case MultiGetByOffset:
@@ -2099,6 +2085,7 @@ public:
         case RegExpTestInline:
         case RegExpMatchFast:
         case RegExpMatchFastGlobal:
+        case RegExpSearch:
         case GetGlobalVar:
         case GetGlobalLexicalVariable:
         case StringReplace:
@@ -2194,6 +2181,7 @@ public:
         case DirectConstruct:
         case DirectTailCallInlinedCaller:
         case CallWasm:
+        case TailCallInlinedCallerWasm:
         case RegExpExecNonGlobalOrSticky:
         case RegExpMatchFastGlobal:
         case RegExpTestInline:
@@ -2515,7 +2503,7 @@ public:
     {
         switch (op()) {
         case MaterializeNewObject:
-        case MaterializeNewArrayWithConstantSize:
+        case MaterializeNewArrayWithButterfly:
         case MaterializeNewInternalFieldObject:
         case MaterializeCreateActivation:
             return true;
@@ -2603,7 +2591,8 @@ public:
     bool isPhantomAllocation()
     {
         switch (op()) {
-        case PhantomNewArrayWithConstantSize:
+        case PhantomNewArrayWithButterfly:
+        case PhantomNewButterflyWithSize:
         case PhantomNewObject:
         case PhantomDirectArguments:
         case PhantomCreateRest:

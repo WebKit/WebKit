@@ -10,14 +10,16 @@
 
 #include "rtc_base/experiments/rate_control_settings.h"
 
-#include <inttypes.h>
-#include <stdio.h>
-
+#include <cstdint>
+#include <memory>
+#include <optional>
 #include <string>
 
-#include "absl/strings/match.h"
+#include "absl/strings/string_view.h"
+#include "api/field_trials_view.h"
+#include "api/units/data_size.h"
+#include "rtc_base/experiments/struct_parameters_parser.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 

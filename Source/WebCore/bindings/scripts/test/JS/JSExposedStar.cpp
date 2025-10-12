@@ -233,7 +233,7 @@ JSC_DEFINE_HOST_FUNCTION(jsExposedStarPrototypeFunction_operationJustForWorkerCo
 
 JSC::GCClient::IsoSubspace* JSExposedStar::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSExposedStar, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSExposedStar, UseCustomHeapCellType::No>(vm, "JSExposedStar"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForExposedStar.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForExposedStar = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForExposedStar.get(); },
@@ -258,7 +258,9 @@ extern "C" { extern void (*const __identifier("??_7ExposedStar@WebCore@@6B@")[])
 #else
 extern "C" { extern void* _ZTVN7WebCore11ExposedStarE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, ExposedStar>, void>> static inline void verifyVTable(ExposedStar* ptr) {
+template<std::same_as<ExposedStar> T>
+static inline void verifyVTable(ExposedStar* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -277,8 +279,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, ExposedStar>,
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<ExposedStar>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<ExposedStar>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<ExposedStar>(impl.ptr());
 #endif

@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "stddef.h"
+#include <stddef.h>
 
-#include "rtc_base/checks.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "rtc_base/checks.h"
 
 // TODO(bjornv): Change the return type to report errors.
 
@@ -34,7 +34,7 @@ void WebRtcSpl_FilterARFastQ12(const int16_t* data_in,
       // Negative overflow is permitted here, because this is
       // auto-regressive filters, and the state for each batch run is
       // stored in the "negative" positions of the output vector.
-      sum += coefficients[j] * data_out[(ptrdiff_t) i - (ptrdiff_t) j];
+      sum += coefficients[j] * data_out[(ptrdiff_t)i - (ptrdiff_t)j];
     }
 
     output = coefficients[0] * data_in[i];

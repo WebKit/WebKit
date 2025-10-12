@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FrameIdentifier.h"
-#include "IntPoint.h"
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/IntPoint.h>
 
 namespace WebCore {
 

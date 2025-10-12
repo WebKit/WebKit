@@ -75,7 +75,7 @@ IPC::ArrayReferenceTuple<Types...> toArrayReferenceTuple(const GCGLSpanTuple<Spa
 
 RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(const WebCore::GraphicsContextGLAttributes& attributes, WebPage& page)
 {
-    return RemoteGraphicsContextGLProxy::create(attributes, page.ensureProtectedRemoteRenderingBackendProxy(), RunLoop::protectedMain().get());
+    return RemoteGraphicsContextGLProxy::create(attributes, page.ensureProtectedRemoteRenderingBackendProxy(), RunLoop::mainSingleton());
 }
 
 RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(const WebCore::GraphicsContextGLAttributes& attributes, RemoteRenderingBackendProxy& renderingBackend, SerialFunctionDispatcher& dispatcher)
@@ -108,7 +108,7 @@ RemoteGraphicsContextGLProxy::~RemoteGraphicsContextGLProxy()
     disconnectGpuProcessIfNeeded();
 }
 
-void RemoteGraphicsContextGLProxy::initializeIPC(Ref<IPC::StreamClientConnection>&& streamConnection, RenderingBackendIdentifier renderingBackend, IPC::StreamServerConnection::Handle&& serverHandle, SerialFunctionDispatcher& dispatcher)
+void RemoteGraphicsContextGLProxy::initializeIPC(Ref<IPC::StreamClientConnection>&& streamConnection, RemoteRenderingBackendIdentifier renderingBackend, IPC::StreamServerConnection::Handle&& serverHandle, SerialFunctionDispatcher& dispatcher)
 {
     m_streamConnection = streamConnection.ptr();
     streamConnection->open(*this, dispatcher);
@@ -117,19 +117,19 @@ void RemoteGraphicsContextGLProxy::initializeIPC(Ref<IPC::StreamClientConnection
         gpuProcessConnection->createGraphicsContextGL(m_identifier, contextAttributes(), renderingBackend, WTFMove(serverHandle));
         m_gpuProcessConnection = gpuProcessConnection.get();
 #if ENABLE(VIDEO)
-        m_videoFrameObjectHeapProxy = &gpuProcessConnection->videoFrameObjectHeapProxy();
+        m_videoFrameObjectHeapProxy = gpuProcessConnection->videoFrameObjectHeapProxy();
 #endif
     });
 
 }
 
-bool RemoteGraphicsContextGLProxy::supportsExtension(const String& name)
+bool RemoteGraphicsContextGLProxy::supportsExtension(const CString& name)
 {
     waitUntilInitialized();
     return m_availableExtensions.contains(name) || m_requestableExtensions.contains(name);
 }
 
-void RemoteGraphicsContextGLProxy::ensureExtensionEnabled(const String& name)
+void RemoteGraphicsContextGLProxy::ensureExtensionEnabled(const CString& name)
 {
     waitUntilInitialized();
     if (m_requestableExtensions.contains(name) && !m_enabledExtensions.contains(name)) {
@@ -142,7 +142,7 @@ void RemoteGraphicsContextGLProxy::ensureExtensionEnabled(const String& name)
     }
 }
 
-bool RemoteGraphicsContextGLProxy::isExtensionEnabled(const String& name)
+bool RemoteGraphicsContextGLProxy::isExtensionEnabled(const CString& name)
 {
     waitUntilInitialized();
     return m_availableExtensions.contains(name) || m_enabledExtensions.contains(name);
@@ -150,10 +150,10 @@ bool RemoteGraphicsContextGLProxy::isExtensionEnabled(const String& name)
 
 void RemoteGraphicsContextGLProxy::initialize(const RemoteGraphicsContextGLInitializationState& initializationState)
 {
-    for (auto extension : StringView(initializationState.availableExtensions).split(' '))
-        m_availableExtensions.add(extension.toString());
-    for (auto extension : StringView(initializationState.requestableExtensions).split(' '))
-        m_requestableExtensions.add(extension.toString());
+    for (auto extension : StringView(initializationState.availableExtensions.span()).split(' '))
+        m_availableExtensions.add(extension.utf8());
+    for (auto extension : StringView(initializationState.requestableExtensions.span()).split(' '))
+        m_requestableExtensions.add(extension.utf8());
     m_externalImageTarget = initializationState.externalImageTarget;
     m_externalImageBindingQuery = initializationState.externalImageBindingQuery;
 }
@@ -203,7 +203,7 @@ RefPtr<WebCore::VideoFrame> RemoteGraphicsContextGLProxy::surfaceBufferToVideoFr
     auto [result] = sendResult.takeReply();
     if (!result)
         return nullptr;
-    return RemoteVideoFrameProxy::create(WebProcess::singleton().ensureGPUProcessConnection().protectedConnection(), WebProcess::singleton().ensureProtectedGPUProcessConnection()->protectedVideoFrameObjectHeapProxy(), WTFMove(*result));
+    return RemoteVideoFrameProxy::create(WebProcess::singleton().ensureGPUProcessConnection().connection(), WebProcess::singleton().ensureProtectedGPUProcessConnection()->protectedVideoFrameObjectHeapProxy(), WTFMove(*result));
 }
 #endif
 
@@ -461,6 +461,63 @@ void RemoteGraphicsContextGLProxy::multiDrawElementsInstancedBaseVertexBaseInsta
     }
 }
 
+void RemoteGraphicsContextGLProxy::drawBuffers(std::span<const GCGLenum> bufs)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::DrawBuffers(bufs));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return;
+    }
+}
+
+void RemoteGraphicsContextGLProxy::drawBuffersEXT(std::span<const GCGLenum> bufs)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::DrawBuffersEXT(bufs));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return;
+    }
+}
+
+void RemoteGraphicsContextGLProxy::invalidateFramebuffer(GCGLenum target, std::span<const GCGLenum> attachments)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::InvalidateFramebuffer(target, attachments));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return;
+    }
+}
+
+void RemoteGraphicsContextGLProxy::invalidateSubFramebuffer(GCGLenum target, std::span<const GCGLenum> attachments, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::InvalidateSubFramebuffer(target, attachments, x, y, width, height));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return;
+    }
+}
+
+#if ENABLE(WEBXR)
+void RemoteGraphicsContextGLProxy::framebufferDiscard(GCGLenum target, std::span<const GCGLenum> attachments)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::FramebufferDiscard(target, attachments));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return;
+    }
+}
+#endif
+
 void RemoteGraphicsContextGLProxy::wasCreated(IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore, std::optional<RemoteGraphicsContextGLInitializationState>&& initializationState)
 {
     if (isContextLost())
@@ -482,7 +539,7 @@ void RemoteGraphicsContextGLProxy::wasLost()
     markContextLost();
 }
 
-void RemoteGraphicsContextGLProxy::addDebugMessage(GCGLenum type, GCGLenum id, GCGLenum severity, String&& message)
+void RemoteGraphicsContextGLProxy::addDebugMessage(GCGLenum type, GCGLenum id, GCGLenum severity, CString&& message)
 {
     if (isContextLost())
         return;

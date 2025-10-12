@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,7 @@ WebServiceWorkerProvider::WebServiceWorkerProvider()
 
 WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnection()
 {
-    return WebProcess::singleton().ensureNetworkProcessConnection().serviceWorkerConnection();
+    return WebProcess::singleton().ensureProtectedNetworkProcessConnection()->serviceWorkerConnection();
 }
 
 WebCore::SWClientConnection* WebServiceWorkerProvider::existingServiceWorkerConnection()
@@ -67,17 +67,17 @@ WebCore::SWClientConnection* WebServiceWorkerProvider::existingServiceWorkerConn
 
 void WebServiceWorkerProvider::updateThrottleState(bool isThrottleable)
 {
-    auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
+    RefPtr networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
     if (!networkProcessConnection)
         return;
-    auto& connection = networkProcessConnection->serviceWorkerConnection();
-    if (isThrottleable != connection.isThrottleable())
-        connection.updateThrottleState();
+    Ref connection = networkProcessConnection->serviceWorkerConnection();
+    if (isThrottleable != connection->isThrottleable())
+        connection->updateThrottleState();
 }
 
 void WebServiceWorkerProvider::terminateWorkerForTesting(WebCore::ServiceWorkerIdentifier identifier, CompletionHandler<void()>&& callback)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().serviceWorkerConnection().terminateWorkerForTesting(identifier, WTFMove(callback));
+    WebProcess::singleton().ensureProtectedNetworkProcessConnection()->protectedServiceWorkerConnection()->terminateWorkerForTesting(identifier, WTFMove(callback));
 }
 
 } // namespace WebKit

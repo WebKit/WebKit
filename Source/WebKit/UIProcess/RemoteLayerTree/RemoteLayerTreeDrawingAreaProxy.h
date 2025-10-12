@@ -26,13 +26,14 @@
 #pragma once
 
 #include "DrawingAreaProxy.h"
-#include "RemoteImageBufferSetIdentifier.h"
+#include "ImageBufferSetIdentifier.h"
 #include "RemoteLayerTreeHost.h"
 #include "TransactionID.h"
 #include <WebCore/AnimationFrameRate.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
+#include <wtf/Deque.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakHashMap.h>
 
@@ -88,6 +89,8 @@ public:
     WebCore::TrackingType eventTrackingTypeForPoint(WebCore::EventTrackingRegions::EventType, WebCore::IntPoint);
 #endif
 
+    void drawSlowFrameIndicator(WebCore::GraphicsContext&);
+
 protected:
     RemoteLayerTreeDrawingAreaProxy(WebPageProxy&, WebProcessProxy&);
 
@@ -107,6 +110,7 @@ protected:
         ProcessState& operator=(ProcessState&&) = default;
 
         CommitLayerTreeMessageState commitLayerTreeMessageState { Idle };
+        std::optional<MonotonicTime> transactionStartTime;
         std::optional<TransactionID> lastLayerTreeTransactionID;
         std::optional<TransactionID> pendingLayerTreeTransactionID;
 
@@ -122,11 +126,13 @@ protected:
     void forEachProcessState(NOESCAPE Function<void(ProcessState&, WebProcessProxy&)>&&);
 
 private:
+#if ENABLE(TILED_CA_DRAWING_AREA)
+    DrawingAreaType type() const final { return DrawingAreaType::RemoteLayerTree; }
+#endif
 
     void remotePageProcessDidTerminate(WebCore::ProcessIdentifier) final;
     void sizeDidChange() final;
     void deviceScaleFactorDidChange(CompletionHandler<void()>&&) final;
-    void windowKindDidChange() final;
     void minimumSizeForAutoLayoutDidChange() final;
     void sizeToContentAutoSizeMaximumSizeDidChange() final;
     void didUpdateGeometry();
@@ -142,12 +148,14 @@ private:
     void updateDebugIndicator(WebCore::IntSize contentsSize, bool rootLayerChanged, float scale, const WebCore::IntPoint& scrollPosition);
     void initializeDebugIndicator();
 
+    void initializeSlowFrameIndicator();
+    void updateSlowFrameIndicator();
+
     void waitForDidUpdateActivityState(ActivityStateChangeID) final;
     void hideContentUntilPendingUpdate() final;
     void hideContentUntilAnyUpdate() final;
+    void hideContentUntilDidUpdateActivityState(ActivityStateChangeID) final;
     bool hasVisibleContent() const final;
-
-    void prepareForAppSuspension() final;
 
     WebCore::FloatPoint indicatorLocation() const;
 
@@ -170,11 +178,11 @@ private:
 
     void willCommitLayerTree(IPC::Connection&, TransactionID);
     void commitLayerTreeNotTriggered(IPC::Connection&, TransactionID);
-    void commitLayerTree(IPC::Connection&, const Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>>&, HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&&);
+    void commitLayerTree(IPC::Connection&, const Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>>&, HashMap<ImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&&);
     void commitLayerTreeTransaction(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&);
     virtual void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&) { }
 
-    void asyncSetLayerContents(WebCore::PlatformLayerIdentifier, ImageBufferBackendHandle&&, const WebCore::RenderingResourceIdentifier&);
+    void asyncSetLayerContents(WebCore::PlatformLayerIdentifier, RemoteLayerBackingStoreProperties&&);
 
     void sendUpdateGeometry();
 
@@ -196,7 +204,12 @@ private:
     RetainPtr<CALayer> m_tileMapHostLayer;
     RetainPtr<CALayer> m_exposedRectIndicatorLayer;
 
+    RetainPtr<CALayer> m_slowFrameIndicatorLayer;
+    Deque<Seconds> m_frameDurations;
+
     Markable<IPC::AsyncReplyID> m_replyForUnhidingContent;
+    std::optional<ActivityStateChangeID> m_activityStateChangeForUnhidingContent;
+    bool m_hasDetachedRootLayer { false };
 
 #if ASSERT_ENABLED
     TransactionID m_lastVisibleTransactionID;

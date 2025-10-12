@@ -1,33 +1,4 @@
 
-PASS # AUDIT TASK RUNNER STARTED.
-PASS Executing "playbackRate"
-PASS Executing "detune"
-PASS Audit report
-PASS > [playbackRate] AudioBufferSource playbackRate
-PASS   playbackRate: refNode = new AudioBufferSourceNode(context, {"buffer":{}}) did not throw an exception.
-PASS   playbackRate: tstNode = new AudioBufferSourceNode(context, {"buffer":{}}) did not throw an exception.
-PASS   playbackRate: refNode[playbackRate].setValueAtTime(1, 0) did not throw an exception.
-PASS   playbackRate: refNode[playbackRate].linearRampToValueAtTime(2, 0.25) did not throw an exception.
-PASS   playbackRate: mod = new ConstantSourceNode(context, {offset: 0}) did not throw an exception.
-PASS   playbackRate: mod.offset.setValueAtTime(0, 0) did not throw an exception.
-PASS   playbackRate: mod.offset.linearRampToValueAtTime(1, 0.25) did not throw an exception.
-PASS   playbackRate: mod.connect(tstNode[playbackRate]) did not throw an exception.
-PASS   Expected k-rate playbackRate AudioParam with input is not constantly 0.
-PASS   Actual k-rate playbackRate AudioParam with input is not constantly 0.
-PASS   k-rate playbackRate AudioParam with input equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
-PASS < [playbackRate] All assertions passed. (total 11 assertions)
-PASS > [detune] AudioBufferSource detune
-PASS   detune: refNode = new AudioBufferSourceNode(context, {"buffer":{}}) did not throw an exception.
-PASS   detune: tstNode = new AudioBufferSourceNode(context, {"buffer":{}}) did not throw an exception.
-PASS   detune: refNode[detune].setValueAtTime(-1200, 0) did not throw an exception.
-PASS   detune: refNode[detune].linearRampToValueAtTime(1200, 0.25) did not throw an exception.
-PASS   detune: mod = new ConstantSourceNode(context, {offset: 0}) did not throw an exception.
-PASS   detune: mod.offset.setValueAtTime(-1200, 0) did not throw an exception.
-PASS   detune: mod.offset.linearRampToValueAtTime(1200, 0.25) did not throw an exception.
-PASS   detune: mod.connect(tstNode[detune]) did not throw an exception.
-PASS   Expected k-rate detune AudioParam with input is not constantly 0.
-PASS   Actual k-rate detune AudioParam with input is not constantly 0.
-PASS   k-rate detune AudioParam with input equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
-PASS < [detune] All assertions passed. (total 11 assertions)
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
+PASS Verify k-rate AudioParam input works correctly for playbackRate
+FAIL Verify k-rate AudioParam input works correctly for detune assert_array_approx_equals: AudioBufferSourceNode detune: actual matches expected for k-rate AudioParam input property 405, expected 0.11203312128782272 +/- 0, expected 0.11203312128782272 but got 0.11203312873840332
 

@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // CLProgramVk.cpp: Implements the class methods for CLProgramVk.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/renderer/vulkan/CLProgramVk.h"
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
@@ -345,6 +350,11 @@ std::string ProcessBuildOptions(const std::vector<std::string> &optionTokens,
             processedOptions += " --output-format=bc";
             continue;
         }
+        else if (optionToken == "-cl-std=CL2.0")
+        {
+            processedOptions += " -cl-std=CL2.0 -inline-entry-points";
+            continue;
+        }
         processedOptions += " " + optionToken;
     }
 
@@ -561,7 +571,7 @@ angle::Result CLProgramVk::compile(const cl::DevicePtrs &devices,
             ERR() << "Failed to create output path(s) for header(s)!";
             ANGLE_CL_RETURN_ERROR(CL_INVALID_OPERATION);
         }
-        writeFile(headerFilePath.c_str(), inputHeaderSrc.data(), inputHeaderSrc.size());
+        writeFile(headerFilePath.c_str(), inputHeaderSrc);
     }
 
     setBuildStatus(devicePtrs, CL_BUILD_IN_PROGRESS);

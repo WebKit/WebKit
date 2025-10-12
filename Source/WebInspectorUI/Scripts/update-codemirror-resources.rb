@@ -14,7 +14,7 @@ def verify_code_mirror_repository_path(path)
   end
 
   Dir.chdir(path) do
-    results = `git config --list | grep 'codemirror/CodeMirror\.git'`
+    results = `git config --list | grep 'codemirror/codemirror5\.git'`
     if $?.exitstatus != 0 || results.split("\n").empty?
       puts "ERROR: Provided CodeMirror path does not appear to be a CodeMirror checkout."
       exit 1
@@ -34,7 +34,6 @@ CODE_MIRROR_FILES_TO_COPY = %w(
   addon/display/placeholder.js
   addon/edit/closebrackets.js
   addon/edit/matchbrackets.js
-  addon/mode/overlay.js
   addon/runmode/runmode.js
   addon/search/searchcursor.js
   addon/selection/mark-selection.js
@@ -50,7 +49,6 @@ CODE_MIRROR_FILES_TO_COPY = %w(
   mode/jsx/jsx.js
   mode/livescript/livescript.js
   mode/sass/sass.js
-  mode/sql/sql.js
   mode/xml/xml.js
 )
 

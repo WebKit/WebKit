@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,17 +20,18 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "FloatPoint.h"
-#include "FloatSize.h"
-#include "ProcessQualified.h"
-#include "RectEdges.h"
-#include "ScrollbarMode.h"
-#include "ScrollingNodeID.h"
+#include <WebCore/Color.h>
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/ProcessQualified.h>
+#include <WebCore/RectEdges.h>
+#include <WebCore/ScrollbarMode.h>
+#include <WebCore/ScrollingNodeID.h>
 
 namespace WTF {
 class TextStream;
@@ -46,7 +47,7 @@ enum class ScrollBehavior : uint8_t;
 using ScrollPosition = IntPoint;
 // scrollOffset() is the value used by scrollbars (min is 0,0), and should never have negative components.
 using ScrollOffset = IntPoint;
-    
+
 enum class ScrollType : bool {
     User,
     Programmatic
@@ -186,6 +187,11 @@ enum class ScrollEventAxis : uint8_t {
     Vertical
 };
 
+enum class ScrollEventType : bool {
+    Scroll,
+    Scrollend
+};
+
 inline constexpr ScrollEventAxis axisFromDirection(ScrollDirection direction)
 {
     switch (direction) {
@@ -238,7 +244,7 @@ inline FloatPoint setValueForAxis(FloatPoint point, ScrollEventAxis axis, float 
     case ScrollEventAxis::Horizontal:
         point.setX(value);
         return point;
-    case ScrollEventAxis::Vertical: 
+    case ScrollEventAxis::Vertical:
         point.setY(value);
         return point;
     }
@@ -380,6 +386,12 @@ struct ScrollPositionChangeOptions {
     {
         return { ScrollType::Programmatic, ScrollClamping::Unclamped };
     }
+};
+
+struct ScrollbarColor {
+    Color thumbColor;
+    Color trackColor;
+    friend bool operator==(const ScrollbarColor&, const ScrollbarColor&) = default;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollType);

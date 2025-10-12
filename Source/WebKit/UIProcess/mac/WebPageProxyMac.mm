@@ -61,6 +61,8 @@
 #import <WebCore/DragItem.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
+#import <WebCore/LocalizedStrings.h>
+#import <WebCore/Pasteboard.h>
 #import <WebCore/Quirks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextAlternativeWithRange.h>
@@ -68,9 +70,11 @@
 #import <WebCore/UserAgent.h>
 #import <WebCore/ValidationBubble.h>
 #import <mach-o/dyld.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/WritingToolsSPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
+#import <pal/spi/mac/NSPasteboardSPI.h>
 #import <wtf/FileHandle.h>
 #import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
@@ -90,9 +94,9 @@
 
 #if ENABLE(PDF_PLUGIN)
 @interface WKPDFMenuTarget : NSObject {
-    NSMenuItem *_selectedMenuItem;
+    WeakObjCPtr<NSMenuItem> _selectedMenuItem;
 }
-- (NSMenuItem *)selectedMenuItem;
+- (RetainPtr<NSMenuItem>)selectedMenuItem;
 - (void)contextMenuAction:(NSMenuItem *)sender;
 @end
 
@@ -107,9 +111,9 @@
     return self;
 }
 
-- (NSMenuItem *)selectedMenuItem
+- (RetainPtr<NSMenuItem>)selectedMenuItem
 {
-    return _selectedMenuItem;
+    return _selectedMenuItem.get();
 }
 
 - (void)contextMenuAction:(NSMenuItem *)sender
@@ -156,27 +160,33 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
 void WebPageProxy::getIsSpeaking(CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    completionHandler([NSApp isSpeaking]);
+    // FIXME: This is a safer cpp false positive (rdar://problem/161068288).
+    SUPPRESS_UNRETAINED_ARG completionHandler([NSApp isSpeaking]);
 }
 
 void WebPageProxy::speak(const String& string)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    [NSApp speakString:string.createNSString().get()];
+    // FIXME: This is a safer cpp false positive (rdar://problem/161068288).
+    SUPPRESS_UNRETAINED_ARG [NSApp speakString:string.createNSString().get()];
 }
 
 void WebPageProxy::stopSpeaking()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    [NSApp stopSpeaking:nil];
+    // FIXME: This is a safer cpp false positive (rdar://problem/161068288).
+    SUPPRESS_UNRETAINED_ARG [NSApp stopSpeaking:nil];
 }
 
 void WebPageProxy::searchTheWeb(const String& string)
 {
     RetainPtr pasteboard = [NSPasteboard pasteboardWithUniqueName];
-    [pasteboard declareTypes:@[legacyStringPasteboardType()] owner:nil];
-    [pasteboard setString:string.createNSString().get() forType:legacyStringPasteboardType()];
-    
+    [pasteboard clearContents];
+    if (sessionID().isEphemeral())
+        [pasteboard _setExpirationDate:[NSDate dateWithTimeIntervalSinceNow:pasteboardExpirationDelay.seconds()]];
+    [pasteboard addTypes:@[legacyStringPasteboardTypeSingleton()] owner:nil];
+    [pasteboard setString:string.createNSString().get() forType:legacyStringPasteboardTypeSingleton()];
+
     NSPerformService(@"Search With %WebSearchProvider@", pasteboard.get());
 }
 
@@ -305,7 +315,7 @@ void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& diction
     if (RefPtr pageClient = this->pageClient()) {
         pageClient->didPerformDictionaryLookup(dictionaryPopupInfo);
 
-        DictionaryLookup::showPopup(dictionaryPopupInfo, pageClient->viewForPresentingRevealPopover(), [this](TextIndicator& textIndicator) {
+        DictionaryLookup::showPopup(dictionaryPopupInfo, pageClient->protectedViewForPresentingRevealPopover().get(), [this](TextIndicator& textIndicator) {
             setTextIndicator(textIndicator.data(), WebCore::TextIndicatorLifetime::Permanent);
         }, nullptr, [weakThis = WeakPtr { *this }] {
             if (!weakThis)
@@ -413,6 +423,9 @@ void WebPageProxy::handleAcceptsFirstMouse(bool acceptsFirstMouse)
 
 void WebPageProxy::setAutomaticallyAdjustsContentInsets(bool automaticallyAdjustsContentInsets)
 {
+    if (m_automaticallyAdjustsContentInsets == automaticallyAdjustsContentInsets)
+        return;
+
     m_automaticallyAdjustsContentInsets = automaticallyAdjustsContentInsets;
     updateContentInsetsIfAutomatic();
 }
@@ -425,6 +438,16 @@ void WebPageProxy::updateContentInsetsIfAutomatic()
     m_internals->pendingObscuredContentInsets = std::nullopt;
 
     scheduleSetObscuredContentInsetsDispatch();
+}
+
+void WebPageProxy::setOverflowHeightForTopScrollEdgeEffect(double value)
+{
+    if (m_overflowHeightForTopScrollEdgeEffect == value)
+        return;
+
+    m_overflowHeightForTopScrollEdgeEffect = value;
+
+    protectedLegacyMainFrameProcess()->send(Messages::WebPage::SetOverflowHeightForTopScrollEdgeEffect(value), webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::setObscuredContentInsetsAsync(const FloatBoxExtent& obscuredContentInsets)
@@ -490,16 +513,31 @@ CALayer *WebPageProxy::acceleratedCompositingRootLayer() const
     return pageClient ? pageClient->acceleratedCompositingRootLayer() : nullptr;
 }
 
+RetainPtr<CALayer> WebPageProxy::protectedAcceleratedCompositingRootLayer() const
+{
+    return acceleratedCompositingRootLayer();
+}
+
 CALayer *WebPageProxy::headerBannerLayer() const
 {
     RefPtr pageClient = this->pageClient();
     return pageClient ? pageClient->headerBannerLayer() : nullptr;
 }
 
+RetainPtr<CALayer> WebPageProxy::protectedHeaderBannerLayer() const
+{
+    return headerBannerLayer();
+}
+
 CALayer *WebPageProxy::footerBannerLayer() const
 {
     RefPtr pageClient = this->pageClient();
     return pageClient ? pageClient->footerBannerLayer() : nullptr;
+}
+
+RetainPtr<CALayer> WebPageProxy::protectedFooterBannerLayer() const
+{
+    return footerBannerLayer();
 }
 
 int WebPageProxy::headerBannerHeight() const
@@ -519,7 +557,8 @@ int WebPageProxy::footerBannerHeight() const
 static NSString *temporaryPDFDirectoryPath()
 {
     static NeverDestroyed path = [] {
-        RetainPtr temporaryDirectoryTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitPDFs-XXXXXX"];
+        RetainPtr temporaryDirectory = NSTemporaryDirectory();
+        RetainPtr temporaryDirectoryTemplate = [temporaryDirectory stringByAppendingPathComponent:@"WebKitPDFs-XXXXXX"];
         CString templateRepresentation = [temporaryDirectoryTemplate fileSystemRepresentation];
         if (mkdtemp(templateRepresentation.mutableSpanIncludingNullTerminator().data()))
             return adoptNS((NSString *)[[[NSFileManager defaultManager] stringWithFileSystemRepresentation:templateRepresentation.data() length:templateRepresentation.length()] copy]);
@@ -615,29 +654,24 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
 
         RetainPtr nsItem = adoptNS([[NSMenuItem alloc] init]);
 
-#if ENABLE(CONTEXT_MENU_IMAGES_FOR_INTERNAL_CLIENTS)
-        auto shouldSetImage = m_preferences->contextMenuImagesForInternalClientsEnabled();
-#endif
         if (isOpenWithDefaultViewerItem) {
             RetainPtr defaultPDFViewerPath = [[[NSWorkspace sharedWorkspace] URLForApplicationToOpenContentType:UTTypePDF] path];
             RetainPtr defaultPDFViewerName = [[NSFileManager defaultManager] displayNameAtPath:defaultPDFViewerPath.get()];
 
             String itemTitle = contextMenuItemPDFOpenWithDefaultViewer(defaultPDFViewerName.get());
             [nsItem setTitle:itemTitle.createNSString().get()];
-#if ENABLE(CONTEXT_MENU_IMAGES_FOR_INTERNAL_CLIENTS)
-            if (shouldSetImage) {
-                RetainPtr icon = [[NSWorkspace sharedWorkspace] iconForFile:defaultPDFViewerPath.get()];
-                [icon setSize:NSMakeSize(16.f, 16.f)];
-                [nsItem _setActionImage:icon.get()];
-            }
+#if ENABLE(CONTEXT_MENU_IMAGES_ON_MAC)
+            RetainPtr icon = [[NSWorkspace sharedWorkspace] iconForFile:defaultPDFViewerPath.get()];
+            [icon setSize:NSMakeSize(16.f, 16.f)];
+            [nsItem _setActionImage:icon.get()];
 #endif
         } else
             [nsItem setTitle:item.title.createNSString().get()];
 
         [nsItem setEnabled:item.enabled == ContextMenuItemEnablement::Enabled];
         [nsItem setState:item.state];
-#if ENABLE(CONTEXT_MENU_IMAGES_FOR_INTERNAL_CLIENTS)
-        if (shouldSetImage && ![nsItem _hasActionImage])
+#if ENABLE(CONTEXT_MENU_IMAGES_ON_MAC)
+        if (![nsItem _hasActionImage])
             addImageToMenuItem(nsItem.get(), item.action, false);
 #endif
         if (item.hasAction == ContextMenuItemHasAction::Yes) {
@@ -656,7 +690,7 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
 
     if (RetainPtr selectedMenuItem = [menuTarget selectedMenuItem]) {
         NSInteger tag = selectedMenuItem.get().tag;
-        if (contextMenu.openInPreviewTag && *contextMenu.openInPreviewTag == tag)
+        if (contextMenu.openInDefaultViewerTag == tag)
             pdfOpenWithPreview(identifier, frameID);
         return completionHandler(tag);
     }
@@ -671,7 +705,7 @@ void WebPageProxy::showTelephoneNumberMenu(const String& telephoneNumber, const 
     if (!pageClient)
         return;
 
-    RetainPtr menu = menuForTelephoneNumber(telephoneNumber, pageClient->viewForPresentingRevealPopover(), rect);
+    RetainPtr menu = menuForTelephoneNumber(telephoneNumber, pageClient->protectedViewForPresentingRevealPopover().get(), rect);
     pageClient->showPlatformContextMenu(menu.get(), point);
 }
 #endif
@@ -709,6 +743,11 @@ NSWindow *WebPageProxy::platformWindow()
 {
     RefPtr pageClient = m_pageClient.get();
     return pageClient ? pageClient->platformWindow() : nullptr;
+}
+
+RetainPtr<NSWindow> WebPageProxy::protectedPlatformWindow()
+{
+    return platformWindow();
 }
 
 void WebPageProxy::rootViewToWindow(const WebCore::IntRect& viewRect, WebCore::IntRect& windowRect)
@@ -820,6 +859,7 @@ void WebPageProxy::pdfSaveToPDF(PDFPluginIdentifier identifier, WebCore::FrameId
     } });
 }
 
+// FIXME: This is a misnomer since we conflate Preview.app with the default PDF viewer. Consider renaming.
 void WebPageProxy::pdfOpenWithPreview(PDFPluginIdentifier identifier, WebCore::FrameIdentifier frameID)
 {
     sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::OpenPDFWithPreview(identifier), Messages::WebPage::OpenPDFWithPreview::Reply { [this, protectedThis = Ref { *this }](String&& suggestedFilename, std::optional<FrameInfoData>&& frameInfo, std::span<const uint8_t> data) {
@@ -858,7 +898,7 @@ void WebPageProxy::showColorPanel()
 Color WebPageProxy::platformUnderPageBackgroundColor() const
 {
 #if ENABLE(DARK_MODE_CSS)
-    return WebCore::roundAndClampToSRGBALossy(NSColor.controlBackgroundColor.CGColor);
+    return WebCore::roundAndClampToSRGBALossy(RetainPtr { NSColor.controlBackgroundColor.CGColor }.get());
 #else
     return WebCore::Color::white;
 #endif
@@ -895,15 +935,15 @@ void WebPageProxy::handleContextMenuLookUpImage()
     if (!imageBitmap)
         return;
 
-    showImageInQuickLookPreviewPanel(*imageBitmap, result.toolTipText, URL { result.absoluteImageURL }, QuickLookPreviewActivity::VisualSearch);
+    showImageInQuickLookPreviewPanel(*imageBitmap, result.tooltipText, URL { result.absoluteImageURL }, QuickLookPreviewActivity::VisualSearch);
 }
 
 void WebPageProxy::showImageInQuickLookPreviewPanel(ShareableBitmap& imageBitmap, const String& tooltip, const URL& imageURL, QuickLookPreviewActivity activity)
 {
-    if (!PAL::isQuickLookUIFrameworkAvailable() || !PAL::getQLPreviewPanelClass() || ![PAL::getQLItemClass() instancesRespondToSelector:@selector(initWithDataProvider:contentType:previewTitle:)])
+    if (!PAL::isQuickLookUIFrameworkAvailable() || !PAL::getQLPreviewPanelClassSingleton() || ![PAL::getQLItemClassSingleton() instancesRespondToSelector:@selector(initWithDataProvider:contentType:previewTitle:)])
         return;
 
-    auto image = imageBitmap.makeCGImage();
+    RetainPtr image = imageBitmap.createPlatformImage(DontCopyBackingStore);
     if (!image)
         return;
 
@@ -924,7 +964,7 @@ void WebPageProxy::showImageInQuickLookPreviewPanel(ShareableBitmap& imageBitmap
     if (RefPtr pageClient = this->pageClient())
         pageClient->makeFirstResponder();
 
-    RetainPtr previewPanel = [PAL::getQLPreviewPanelClass() sharedPreviewPanel];
+    RetainPtr previewPanel = [PAL::getQLPreviewPanelClassSingleton() sharedPreviewPanel];
     [previewPanel makeKeyAndOrderFront:nil];
 
     if (![m_quickLookPreviewController isControlling:previewPanel.get()]) {
@@ -955,7 +995,10 @@ void WebPageProxy::handleContextMenuCopySubject(const String& preferredMIMEType)
 
     RetainPtr<NSPasteboard> pasteboard = NSPasteboard.generalPasteboard;
     RetainPtr pasteboardType = bridge_cast(type.get());
-    [pasteboard declareTypes:@[pasteboardType.get()] owner:nil];
+    [pasteboard clearContents];
+    if (sessionID().isEphemeral())
+        [pasteboard _setExpirationDate:[NSDate dateWithTimeIntervalSinceNow:pasteboardExpirationDelay.seconds()]];
+    [pasteboard addTypes:@[pasteboardType.get()] owner:nil];
     [pasteboard setData:data.get() forType:pasteboardType.get()];
 }
 
@@ -1050,6 +1093,22 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
 
     return WebContentMode::Recommended;
 }
+
+#if ENABLE(POINTER_LOCK)
+
+void WebPageProxy::platformLockPointer()
+{
+    CGDisplayHideCursor(CGMainDisplayID());
+    CGAssociateMouseAndMouseCursorPosition(false);
+}
+
+void WebPageProxy::platformUnlockPointer()
+{
+    CGAssociateMouseAndMouseCursorPosition(true);
+    CGDisplayShowCursor(CGMainDisplayID());
+}
+
+#endif
 
 } // namespace WebKit
 

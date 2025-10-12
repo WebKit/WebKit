@@ -29,6 +29,10 @@
 #include <wtf/HashTraits.h>
 #include <wtf/text/WTFString.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebKit {
 
 struct WebFoundTextRange {
@@ -46,6 +50,7 @@ struct WebFoundTextRange {
         uint64_t endOffset { 0 };
 
         bool operator==(const PDFData& other) const = default;
+        unsigned hash() const;
     };
 
     Variant<DOMData, PDFData> data { DOMData { } };
@@ -57,9 +62,47 @@ struct WebFoundTextRange {
     bool operator==(const WebFoundTextRange& other) const;
 };
 
+TextStream& operator<<(TextStream&, const WebKit::WebFoundTextRange::PDFData&);
+
 } // namespace WebKit
 
 namespace WTF {
+
+struct WebFoundTextRangePDFDataHash {
+    static unsigned hash(const WebKit::WebFoundTextRange::PDFData& data) { return data.hash(); }
+    static bool equal(const WebKit::WebFoundTextRange::PDFData& a, const WebKit::WebFoundTextRange::PDFData& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
+template<> struct HashTraits<WebKit::WebFoundTextRange::PDFData> : GenericHashTraits<WebKit::WebFoundTextRange::PDFData> {
+    static constexpr bool emptyValueIsZero = false;
+    static constexpr bool needsDeletedValue = true;
+
+private:
+    static constexpr auto sentinelUnit { std::numeric_limits<uint64_t>::max() };
+    static constexpr WebKit::WebFoundTextRange::PDFData sentinel { sentinelUnit, sentinelUnit, sentinelUnit, sentinelUnit };
+
+    static constexpr auto deletedSentinelUnit { sentinelUnit - 1 };
+    static constexpr WebKit::WebFoundTextRange::PDFData deletedSentinel { deletedSentinelUnit, deletedSentinelUnit, deletedSentinelUnit, deletedSentinelUnit };
+
+public:
+    static WebKit::WebFoundTextRange::PDFData emptyValue()
+    {
+        return sentinel;
+    }
+    static bool isEmptyValue(const WebKit::WebFoundTextRange::PDFData& data)
+    {
+        return data == sentinel;
+    }
+    static void constructDeletedValue(WebKit::WebFoundTextRange::PDFData& slot)
+    {
+        slot = deletedSentinel;
+    }
+    static bool isDeletedValue(const WebKit::WebFoundTextRange::PDFData& data)
+    {
+        return data == deletedSentinel;
+    }
+};
 
 struct WebFoundTextRangeHash {
     static unsigned hash(const WebKit::WebFoundTextRange& range) { return range.hash(); }
@@ -74,6 +117,7 @@ template<> struct HashTraits<WebKit::WebFoundTextRange> : GenericHashTraits<WebK
     static bool isDeletedValue(const WebKit::WebFoundTextRange& range) { return range.frameIdentifier.isHashTableDeletedValue(); }
 };
 
+template<> struct DefaultHash<WebKit::WebFoundTextRange::PDFData> : WebFoundTextRangePDFDataHash { };
 template<> struct DefaultHash<WebKit::WebFoundTextRange> : WebFoundTextRangeHash { };
 
 }

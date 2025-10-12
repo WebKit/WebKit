@@ -34,12 +34,13 @@ struct PasteboardImage;
 struct PasteboardWebContent;
 
 class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::PasteboardStrategy {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebPlatformStrategies);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebPlatformStrategies);
 public:
     static void initializeIfNecessary();
-    
-private:
     WebPlatformStrategies();
-    
+
+private:
     // WebCore::PlatformStrategies
     WebCore::LoaderStrategy* createLoaderStrategy() override;
     WebCore::PasteboardStrategy* createPasteboardStrategy() override;
@@ -83,6 +84,7 @@ private:
     int64_t setURL(const WebCore::PasteboardURL&, const String& pasteboardName, const WebCore::PasteboardContext*) override;
     int64_t setColor(const WebCore::Color&, const String& pasteboardName, const WebCore::PasteboardContext*) override;
     int64_t setStringForType(const String&, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
+    int64_t writeWebArchive(WebCore::LegacyWebArchive&, const String& pasteboardName) override { return 0; }
     bool containsStringSafeForDOMToReadForType(const String&, const String& pasteboardName, const WebCore::PasteboardContext*) override;
     bool containsURLStringSuitableForLoading(const String& pasteboardName, const WebCore::PasteboardContext*) override;
     String urlStringSuitableForLoading(const String& pasteboardName, String& title, const WebCore::PasteboardContext*) override;

@@ -14,5 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/resources/scope-implicit.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/resources/scope-imported.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/resources/scope.css

@@ -32,7 +32,6 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
 
-#import "APISerializedScriptValue.h"
 #import "CocoaHelpers.h"
 #import "JSWebExtensionWrapper.h"
 #import "JavaScriptEvaluationResult.h"

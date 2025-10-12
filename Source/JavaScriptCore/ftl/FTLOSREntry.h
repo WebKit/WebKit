@@ -27,7 +27,7 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "BytecodeIndex.h"
+#include <JavaScriptCore/BytecodeIndex.h>
 
 namespace JSC {
 

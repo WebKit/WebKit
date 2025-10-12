@@ -27,8 +27,8 @@
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 
-#include "AcceleratedEffect.h"
-#include "AcceleratedEffectValues.h"
+#include <WebCore/AcceleratedEffect.h>
+#include <WebCore/AcceleratedEffectValues.h>
 
 namespace WebCore {
 

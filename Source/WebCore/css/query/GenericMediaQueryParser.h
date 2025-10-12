@@ -29,6 +29,7 @@
 #include "GenericMediaQueryTypes.h"
 #include "MediaQueryParserContext.h"
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/SetForScope.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {

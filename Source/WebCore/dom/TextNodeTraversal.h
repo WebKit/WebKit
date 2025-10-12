@@ -77,7 +77,7 @@ inline Text* firstChild(const ContainerNode& current) { return firstTextChildTem
 template <class NodeType>
 inline Text* firstTextWithinTemplate(NodeType& current)
 {
-    for (auto* node = current.firstChild(); node; node = NodeTraversal::next(*node, &current)) {
+    for (RefPtr node = current.firstChild(); node; node = NodeTraversal::next(*node, &current)) {
         if (auto* text = dynamicDowncast<Text>(*node))
             return text;
     }
@@ -89,7 +89,7 @@ inline Text* firstWithin(const ContainerNode& current) { return firstTextWithinT
 template <class NodeType>
 inline Text* traverseNextTextTemplate(NodeType& current)
 {
-    for (auto* node = NodeTraversal::next(current); node; node = NodeTraversal::next(*node)) {
+    for (RefPtr node = NodeTraversal::next(current); node; node = NodeTraversal::next(*node)) {
         if (auto* text = dynamicDowncast<Text>(*node))
             return text;
     }
@@ -101,7 +101,7 @@ inline Text* next(const Text& current) { return traverseNextTextTemplate(current
 template <class NodeType>
 inline Text* traverseNextTextTemplate(NodeType& current, const Node* stayWithin)
 {
-    for (auto* node = NodeTraversal::next(current, stayWithin); node; node = NodeTraversal::next(*node, stayWithin)) {
+    for (RefPtr node = NodeTraversal::next(current, stayWithin); node; node = NodeTraversal::next(*node, stayWithin)) {
         if (auto* text = dynamicDowncast<Text>(*node))
             return text;
     }

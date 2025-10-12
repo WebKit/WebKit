@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CachedFrame.h"
+#include <WebCore/CachedFrame.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMalloc.h>
@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class BackForwardController;
 class Document;
 class DocumentLoader;
 class Page;
@@ -66,6 +67,8 @@ public:
     void markForContentsSizeChanged() { m_needsUpdateContentsSize = true; }
 
 private:
+    void restoreNavigationAPIHistoryItems(LocalFrame&, BackForwardController*);
+
     WeakRef<Page> m_page;
     MonotonicTime m_expirationTime;
     std::unique_ptr<CachedFrame> m_cachedMainFrame;

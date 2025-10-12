@@ -48,14 +48,22 @@ void TestWithDeferSendingOption::didReceiveMessage(IPC::Connection& connection, 
         return;
     }
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithDeferSendingOption::NoOptions::name())
-        return IPC::handleMessage<Messages::TestWithDeferSendingOption::NoOptions>(connection, decoder, this, &TestWithDeferSendingOption::noOptions);
-    if (decoder.messageName() == Messages::TestWithDeferSendingOption::NoIndices::name())
-        return IPC::handleMessage<Messages::TestWithDeferSendingOption::NoIndices>(connection, decoder, this, &TestWithDeferSendingOption::noIndices);
-    if (decoder.messageName() == Messages::TestWithDeferSendingOption::OneIndex::name())
-        return IPC::handleMessage<Messages::TestWithDeferSendingOption::OneIndex>(connection, decoder, this, &TestWithDeferSendingOption::oneIndex);
-    if (decoder.messageName() == Messages::TestWithDeferSendingOption::MultipleIndices::name())
-        return IPC::handleMessage<Messages::TestWithDeferSendingOption::MultipleIndices>(connection, decoder, this, &TestWithDeferSendingOption::multipleIndices);
+    if (decoder.messageName() == Messages::TestWithDeferSendingOption::NoOptions::name()) {
+        IPC::handleMessage<Messages::TestWithDeferSendingOption::NoOptions>(connection, decoder, this, &TestWithDeferSendingOption::noOptions);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithDeferSendingOption::NoIndices::name()) {
+        IPC::handleMessage<Messages::TestWithDeferSendingOption::NoIndices>(connection, decoder, this, &TestWithDeferSendingOption::noIndices);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithDeferSendingOption::OneIndex::name()) {
+        IPC::handleMessage<Messages::TestWithDeferSendingOption::OneIndex>(connection, decoder, this, &TestWithDeferSendingOption::oneIndex);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithDeferSendingOption::MultipleIndices::name()) {
+        IPC::handleMessage<Messages::TestWithDeferSendingOption::MultipleIndices>(connection, decoder, this, &TestWithDeferSendingOption::multipleIndices);
+        return;
+    }
     UNUSED_PARAM(connection);
     RELEASE_LOG_ERROR(IPC, "Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
     decoder.markInvalid();

@@ -149,24 +149,14 @@ void WindowSurfaceWGL::setSwapInterval(const egl::Display *display, EGLint inter
     }
 }
 
-EGLint WindowSurfaceWGL::getWidth() const
+gl::Extents WindowSurfaceWGL::getSize() const
 {
     RECT rect;
     if (!GetClientRect(mWindow, &rect))
     {
-        return 0;
+        return gl::Extents(0, 0, 1);
     }
-    return rect.right - rect.left;
-}
-
-EGLint WindowSurfaceWGL::getHeight() const
-{
-    RECT rect;
-    if (!GetClientRect(mWindow, &rect))
-    {
-        return 0;
-    }
-    return rect.bottom - rect.top;
+    return gl::Extents(rect.right - rect.left, rect.bottom - rect.top, 1);
 }
 
 EGLint WindowSurfaceWGL::isPostSubBufferSupported() const

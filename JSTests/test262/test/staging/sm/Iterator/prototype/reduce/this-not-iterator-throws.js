@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 features:
   - iterator-helpers
 info: |
@@ -15,7 +12,7 @@ esid: pending
 ---*/
 
 const sum = (x, y) => x + y;
-assertThrowsInstanceOf(Iterator.prototype.reduce.bind(undefined, sum), TypeError);
-assertThrowsInstanceOf(Iterator.prototype.reduce.bind({}, sum), TypeError);
-assertThrowsInstanceOf(Iterator.prototype.reduce.bind({next: 0}, sum), TypeError);
+assert.throws(TypeError, Iterator.prototype.reduce.bind(undefined, sum));
+assert.throws(TypeError, Iterator.prototype.reduce.bind({}, sum));
+assert.throws(TypeError, Iterator.prototype.reduce.bind({next: 0}, sum));
 

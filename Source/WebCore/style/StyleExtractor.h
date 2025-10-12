@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "PseudoElementIdentifier.h"
 #include "StyleExtractorState.h"
+#include <WebCore/PseudoElementIdentifier.h>
 #include <span>
 #include <wtf/RefPtr.h>
 
@@ -53,7 +53,7 @@ namespace Style {
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Extractor);
 class Extractor {
 public:
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Extractor);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Extractor, Extractor);
 public:
     Extractor(Node*, bool allowVisitedStyle = false);
     Extractor(Node*, bool allowVisitedStyle, const std::optional<Style::PseudoElementIdentifier>&);
@@ -80,6 +80,9 @@ public:
     // Extract a serialized value for the specified custom property.
     String customPropertyValueSerialization(const AtomString& propertyName, const CSS::SerializationContext&) const;
 
+    // Extract a serialized value for the specified custom property using the provided RenderStyle and RenderElement.
+    String customPropertyValueSerializationInStyle(const RenderStyle&, const AtomString& propertyName, const CSS::SerializationContext&) const;
+
     // Helper methods for HTML editing.
     Ref<MutableStyleProperties> copyProperties(std::span<const CSSPropertyID>) const;
     Ref<MutableStyleProperties> copyProperties() const;
@@ -96,6 +99,9 @@ private:
 
     // The RenderStyle we should use for resolving non-layout-dependent properties.
     const RenderStyle* computeStyle(CSSPropertyID, UpdateLayout, std::unique_ptr<RenderStyle>&) const;
+
+    // The RenderStyle we should use for resolving custom properties.
+    const RenderStyle* computeStyleForCustomProperty(std::unique_ptr<RenderStyle>&) const;
 
     RefPtr<Element> m_element;
     std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier;

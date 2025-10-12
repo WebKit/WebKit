@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBoxInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
@@ -126,7 +127,7 @@ LayoutSize RenderVideo::calculateIntrinsicSizeInternal()
     // The intrinsic height of a video element's playback area is the intrinsic height 
     // of the video resource, if that is available; otherwise it is the intrinsic 
     // height of the poster frame, if that is available; otherwise it is 150 CSS pixels.
-    Ref videoElement = protectedVideoElement();
+    Ref videoElement = this->videoElement();
     RefPtr player = videoElement->player();
     if (player && videoElement->readyState() >= HTMLVideoElement::HAVE_METADATA) {
         LayoutSize size(player->naturalSize());
@@ -182,7 +183,7 @@ void RenderVideo::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
 IntRect RenderVideo::videoBox() const
 {
-    Ref videoElement = protectedVideoElement();
+    Ref videoElement = this->videoElement();
     RefPtr mediaPlayer = videoElement->player();
     if (mediaPlayer && mediaPlayer->shouldIgnoreIntrinsicSize())
         return snappedIntRect(contentBoxRect());
@@ -213,37 +214,43 @@ bool RenderVideo::shouldDisplayVideo() const
 
 bool RenderVideo::failedToLoadPosterImage() const
 {
-    return imageResource().errorOccurred();
+    return checkedImageResource()->errorOccurred();
 }
 
 void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     ASSERT(!isSkippedContentRoot(*this));
 
-    Ref videoElement = protectedVideoElement();
+    Ref videoElement = this->videoElement();
+    Ref page = this->page();
     RefPtr mediaPlayer = videoElement->player();
     bool displayingPoster = videoElement->shouldDisplayPosterImage();
 
     if (!displayingPoster && !mediaPlayer) {
         if (paintInfo.phase == PaintPhase::Foreground)
-            page().addRelevantUnpaintedObject(*this, visualOverflowRect());
+            page->addRelevantUnpaintedObject(*this, visualOverflowRect());
         return;
     }
 
-    LayoutRect rect = videoBox();
-    if (rect.isEmpty()) {
+    LayoutRect videoBoxRect = videoBox();
+    if (videoBoxRect.isEmpty()) {
         if (paintInfo.phase == PaintPhase::Foreground)
-            page().addRelevantUnpaintedObject(*this, visualOverflowRect());
+            page->addRelevantUnpaintedObject(*this, visualOverflowRect());
         return;
     }
-    rect.moveBy(paintOffset);
 
-    if (paintInfo.phase == PaintPhase::Foreground)
-        page().addRelevantRepaintedObject(*this, rect);
+    auto rect = videoBoxRect;
+    rect.moveBy(paintOffset);
+    GraphicsContext& context = paintInfo.context();
+
+    if (paintInfo.phase == PaintPhase::Foreground) {
+        page->addRelevantRepaintedObject(*this, rect);
+        if (displayingPoster && !context.paintingDisabled())
+            protectedDocument()->didPaintImage(videoElement.get(), cachedImage(), videoBoxRect);
+    }
 
     LayoutRect contentRect = contentBoxRect();
     contentRect.moveBy(paintOffset);
-    GraphicsContext& context = paintInfo.context();
 
     if (context.detectingContentfulPaint()) {
         context.setContentfulPaintDetected();
@@ -320,7 +327,7 @@ bool RenderVideo::updatePlayer()
     auto intrinsicSizeChanged = updateIntrinsicSize();
     ASSERT(!intrinsicSizeChanged || !view().frameView().layoutContext().isInRenderTreeLayout());
 
-    Ref videoElement = protectedVideoElement();
+    Ref videoElement = this->videoElement();
     RefPtr mediaPlayer = videoElement->player();
     if (!mediaPlayer)
         return intrinsicSizeChanged;
@@ -360,7 +367,7 @@ bool RenderVideo::requiresImmediateCompositing() const
 
 bool RenderVideo::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const
 {
-    Ref videoElement = protectedVideoElement();
+    Ref videoElement = this->videoElement();
     if (videoElement->shouldDisplayPosterImage())
         return RenderImage::foregroundIsKnownToBeOpaqueInRect(localRect, maxDepthToTest);
 
@@ -387,7 +394,7 @@ bool RenderVideo::hasPosterFrameSize() const
     // so that contain: inline-size could affect the intrinsic size, which should be 0 x block-size.
     if (shouldApplyInlineSizeContainment())
         isEmpty = isHorizontalWritingMode() ? !m_cachedImageSize.height() : !m_cachedImageSize.width();
-    return protectedVideoElement()->shouldDisplayPosterImage() && !isEmpty && !imageResource().errorOccurred();
+    return protectedVideoElement()->shouldDisplayPosterImage() && !isEmpty && !checkedImageResource()->errorOccurred();
 }
 
 bool RenderVideo::hasDefaultObjectSize() const
@@ -397,7 +404,7 @@ bool RenderVideo::hasDefaultObjectSize() const
 
 void RenderVideo::invalidateLineLayout()
 {
-    if (auto* inlineLayout = LayoutIntegration::LineLayout::containing(*this))
+    if (CheckedPtr inlineLayout = LayoutIntegration::LineLayout::containing(*this))
         inlineLayout->boxContentWillChange(*this);
 }
 

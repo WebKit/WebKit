@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 
 #include <WebCore/BoundaryPointInlines.h>
 #include <WebCore/FrameSelection.h>
-#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameInlines.h>
 #include <WebCore/RangeBoundaryPointInlines.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/VisibleUnits.h>
@@ -46,7 +46,7 @@ std::optional<WebCore::SimpleRange> EditingRange::toRange(WebCore::LocalFrame& f
         // directly in the document DOM, so serialization is problematic. Our solution is
         // to use the root editable element of the selection start as the positional base.
         // That fits with AppKit's idea of an input context.
-        RefPtr element = frame.selection().rootEditableElementOrDocumentElement();
+        RefPtr element = frame.checkedSelection()->rootEditableElementOrDocumentElement();
         if (!element)
             return std::nullopt;
         return resolveCharacterRange(makeRangeSelectingNodeContents(*element), range);
@@ -69,7 +69,7 @@ EditingRange EditingRange::fromRange(WebCore::LocalFrame& frame, const std::opti
     if (!range)
         return { };
 
-    RefPtr element = frame.selection().rootEditableElementOrDocumentElement();
+    RefPtr element = frame.checkedSelection()->rootEditableElementOrDocumentElement();
     if (!element)
         return { };
 

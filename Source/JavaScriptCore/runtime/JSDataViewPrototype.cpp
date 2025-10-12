@@ -143,7 +143,7 @@ EncodedJSValue getData(JSGlobalObject* globalObject, CallFrame* callFrame)
     if (!dataView)
         return throwVMTypeError(globalObject, scope, "Receiver of DataView method must be a DataView"_s);
     
-    size_t byteOffset = callFrame->argument(0).toIndex(globalObject, "byteOffset"_s);
+    uint64_t byteOffset = callFrame->argument(0).toIndex(globalObject, "byteOffset"_s);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
     bool littleEndian = false;
@@ -187,7 +187,7 @@ EncodedJSValue setData(JSGlobalObject* globalObject, CallFrame* callFrame)
     if (!dataView)
         return throwVMTypeError(globalObject, scope, "Receiver of DataView method must be a DataView"_s);
     
-    size_t byteOffset = callFrame->argument(0).toIndex(globalObject, "byteOffset"_s);
+    uint64_t byteOffset = callFrame->argument(0).toIndex(globalObject, "byteOffset"_s);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     constexpr unsigned dataSize = sizeof(typename Adaptor::Type);

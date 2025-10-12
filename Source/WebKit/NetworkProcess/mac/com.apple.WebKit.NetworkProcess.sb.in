@@ -308,6 +308,7 @@
         "kern.tcsm_available" ;; Needed for IndexedDB support.
         "kern.tcsm_enable"
         "kern.willshutdown"
+        "machdep.ptrauth_enabled"
         "vm.malloc_ranges") ;; <rdar://problem/105161083>
     (sysctl-name-prefix "kern.proc.pid.")
     (sysctl-name-prefix "net.routetable"))
@@ -424,7 +425,8 @@
     (allow mach-lookup
         (global-name "com.apple.aggregated")
         (global-name "com.apple.analyticsd")
-        (global-name "com.apple.diagnosticd")))
+        (global-name "com.apple.diagnosticd")
+        (global-name "com.apple.ReportMemoryException"))) ;; FIXME: This should be removed after crash investigation as part of <rdar://problem/160965793>.
 
 (allow mach-lookup (global-name "com.apple.webkit.adattributiond.service"))
 (allow mach-lookup (global-name "org.webkit.pcmtestdaemon.service"))
@@ -878,4 +880,9 @@
 
 #if ENABLE(LLVM_PROFILE_GENERATION)
 (allow file-write* (subpath "/private/tmp/WebKitPGO"))
+#endif
+
+#if HAVE(WEBCONTENTRESTRICTIONS) && PLATFORM(MAC)
+(allow mach-lookup
+    (global-name "com.apple.familycontrols"))
 #endif

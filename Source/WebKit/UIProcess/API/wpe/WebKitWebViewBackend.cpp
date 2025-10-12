@@ -117,18 +117,5 @@ struct wpe_view_backend* webkit_web_view_backend_get_wpe_backend(WebKitWebViewBa
 }
 
 namespace WTF {
-
-template <> WebKitWebViewBackend* refGPtr(WebKitWebViewBackend* ptr)
-{
-    if (ptr)
-        webkitWebViewBackendRef(ptr);
-    return ptr;
-}
-
-template <> void derefGPtr(WebKitWebViewBackend* ptr)
-{
-    if (ptr)
-        webkitWebViewBackendUnref(ptr);
-}
-
+WTF_DEFINE_GREF_TRAITS(WebKitWebViewBackend, webkitWebViewBackendRef, webkitWebViewBackendUnref)
 }

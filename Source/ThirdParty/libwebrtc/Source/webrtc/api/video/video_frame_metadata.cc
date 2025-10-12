@@ -90,23 +90,23 @@ void VideoFrameMetadata::SetTemporalIndex(int temporal_index) {
   temporal_index_ = temporal_index;
 }
 
-rtc::ArrayView<const int64_t> VideoFrameMetadata::GetFrameDependencies() const {
+ArrayView<const int64_t> VideoFrameMetadata::GetFrameDependencies() const {
   return frame_dependencies_;
 }
 
 void VideoFrameMetadata::SetFrameDependencies(
-    rtc::ArrayView<const int64_t> frame_dependencies) {
+    ArrayView<const int64_t> frame_dependencies) {
   frame_dependencies_.assign(frame_dependencies.begin(),
                              frame_dependencies.end());
 }
 
-rtc::ArrayView<const DecodeTargetIndication>
+ArrayView<const DecodeTargetIndication>
 VideoFrameMetadata::GetDecodeTargetIndications() const {
   return decode_target_indications_;
 }
 
 void VideoFrameMetadata::SetDecodeTargetIndications(
-    rtc::ArrayView<const DecodeTargetIndication> decode_target_indications) {
+    ArrayView<const DecodeTargetIndication> decode_target_indications) {
   decode_target_indications_.assign(decode_target_indications.begin(),
                                     decode_target_indications.end());
 }

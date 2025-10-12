@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "InlineIteratorLineBox.h"
+#include <WebCore/InlineIteratorLineBox.h>
 
 namespace WebCore {
 

@@ -52,7 +52,7 @@ extern "C" {
  *
  *  The available flags are specified by AOM_CODEC_CAP_* defines.
  */
-/*!brief Can support external frame buffers */
+/*!\brief Can support external frame buffers */
 #define AOM_CODEC_CAP_EXTERNAL_FRAME_BUFFER 0x200000
 
 /*! \brief Initialization-time Feature Enabling

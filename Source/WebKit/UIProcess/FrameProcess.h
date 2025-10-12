@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,18 +42,25 @@ class FrameProcess : public RefCountedAndCanMakeWeakPtr<FrameProcess> {
 public:
     ~FrameProcess();
 
-    const WebCore::Site& site() const { return m_site; }
+    const std::optional<WebCore::Site>& site() const { return m_site; }
     const WebProcessProxy& process() const { return m_process.get(); }
     WebProcessProxy& process() { return m_process.get(); }
+    bool isSharedProcess() const { return !m_site; }
+    const WebCore::Site& sharedProcessMainFrameSite() const { ASSERT(!m_site); return m_mainFrameSite; }
 
 private:
     friend class BrowsingContextGroup; // FrameProcess should not be created except by BrowsingContextGroup.
-    static Ref<FrameProcess> create(WebProcessProxy& process, BrowsingContextGroup& group, const WebCore::Site& site, const WebPreferences& preferences, InjectBrowsingContextIntoProcess injectBrowsingContextIntoProcess) { return adoptRef(*new FrameProcess(process, group, site, preferences, injectBrowsingContextIntoProcess)); }
-    FrameProcess(WebProcessProxy&, BrowsingContextGroup&, const WebCore::Site&, const WebPreferences&, InjectBrowsingContextIntoProcess);
+    static Ref<FrameProcess> create(WebProcessProxy& process, BrowsingContextGroup& group, const std::optional<WebCore::Site>& site, const WebCore::Site& mainFrameSite,
+        const WebPreferences& preferences, InjectBrowsingContextIntoProcess injectBrowsingContextIntoProcess)
+    {
+        return adoptRef(*new FrameProcess(process, group, site, mainFrameSite, preferences, injectBrowsingContextIntoProcess));
+    }
+    FrameProcess(WebProcessProxy&, BrowsingContextGroup&, const std::optional<WebCore::Site>&, const WebCore::Site& mainFrameSite, const WebPreferences&, InjectBrowsingContextIntoProcess);
 
-    Ref<WebProcessProxy> m_process;
+    const Ref<WebProcessProxy> m_process;
     WeakPtr<BrowsingContextGroup> m_browsingContextGroup;
-    const WebCore::Site m_site;
+    const std::optional<WebCore::Site> m_site;
+    const WebCore::Site m_mainFrameSite;
 };
 
 }

@@ -25,6 +25,8 @@
 #include "AffineTransform.h"
 #include "Document.h"
 #include "FloatRect.h"
+#include "NodeDocument.h"
+#include "NodeInlines.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
@@ -95,12 +97,12 @@ std::optional<FloatRect> SVGFitToViewBox::parseViewBox(StringView value)
     });
 }
 
-std::optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<LChar>& buffer, bool validate)
+std::optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<Latin1Character>& buffer, bool validate)
 {
     return parseViewBoxGeneric(buffer, validate);
 }
 
-std::optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<UChar>& buffer, bool validate)
+std::optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<char16_t>& buffer, bool validate)
 {
     return parseViewBoxGeneric(buffer, validate);
 }

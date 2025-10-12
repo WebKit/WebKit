@@ -43,23 +43,23 @@ WKTypeID WKBundleRangeHandleGetTypeID()
 WKBundleRangeHandleRef WKBundleRangeHandleCreate(JSContextRef contextRef, JSObjectRef objectRef)
 {
     RefPtr<WebKit::InjectedBundleRangeHandle> rangeHandle = WebKit::InjectedBundleRangeHandle::getOrCreate(contextRef, objectRef);
-    return toAPI(rangeHandle.leakRef());
+    SUPPRESS_UNCOUNTED_ARG return toAPI(rangeHandle.leakRef());
 }
 
 WKRect WKBundleRangeHandleGetBoundingRectInWindowCoordinates(WKBundleRangeHandleRef rangeHandleRef)
 {
-    WebCore::IntRect boundingRect = WebKit::toImpl(rangeHandleRef)->boundingRectInWindowCoordinates();
+    WebCore::IntRect boundingRect = WebKit::toProtectedImpl(rangeHandleRef)->boundingRectInWindowCoordinates();
     return WKRectMake(boundingRect.x(), boundingRect.y(), boundingRect.width(), boundingRect.height());
 }
 
 WKImageRef WKBundleRangeHandleCopySnapshotWithOptions(WKBundleRangeHandleRef rangeHandleRef, WKSnapshotOptions options)
 {
-    RefPtr<WebKit::WebImage> image = WebKit::toImpl(rangeHandleRef)->renderedImage(WebKit::toSnapshotOptions(options));
-    return toAPI(image.leakRef());
+    RefPtr<WebKit::WebImage> image = WebKit::toProtectedImpl(rangeHandleRef)->renderedImage(WebKit::toSnapshotOptions(options));
+    SUPPRESS_UNCOUNTED_ARG return toAPI(image.leakRef());
 }
 
 WKBundleFrameRef WKBundleRangeHandleCopyDocumentFrame(WKBundleRangeHandleRef rangeHandleRef)
 {
-    RefPtr frame = WebKit::toImpl(rangeHandleRef)->document()->documentFrame();
-    return toAPI(frame.leakRef());
+    RefPtr frame = WebKit::toProtectedImpl(rangeHandleRef)->document()->documentFrame();
+    SUPPRESS_UNCOUNTED_ARG return toAPI(frame.leakRef());
 }

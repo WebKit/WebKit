@@ -1,7 +1,7 @@
 Name: fft
 Short Name: fft
-URL:
-Version: 0
+URL: This is the canonical repository.
+Version: N/A
 Date: 2018-07-26
 License: Custom license
 License File: LICENSE
@@ -11,3 +11,11 @@ Shipped: yes
 Description:
 Multivariate complex Fourier transform, computed in place
 using mixed-radix Fast Fourier Transform algorithm.
+
+This contribution has no upstream repo and is not pulled.
+It is maintained solely in the webrtc repo, and is solely
+used by the audio_processing/vad function.
+
+Bug for removal: https://issues.webrtc.org/42234774
+
+

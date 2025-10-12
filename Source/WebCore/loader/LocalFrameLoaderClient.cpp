@@ -52,4 +52,9 @@ void LocalFrameLoaderClient::didExceedNetworkUsageThreshold()
 }
 #endif
 
+RefPtr<Frame> LocalFrameLoaderClient::provisionalParentFrame() const
+{
+    return nullptr;
+}
+
 } // namespace WebCore

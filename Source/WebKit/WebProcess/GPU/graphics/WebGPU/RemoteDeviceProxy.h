@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,7 @@ public:
 
     virtual ~RemoteDeviceProxy();
 
-    RemoteAdapterProxy& parent() { return m_parent; }
+    RemoteAdapterProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
     Ref<RemoteGPUProxy> protectedRoot() { return m_parent->root(); }
     WebGPUIdentifier backing() const { return m_backing; }
@@ -116,7 +116,6 @@ private:
     void setLabelInternal(const String&) final;
     void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&) final;
 
-    Ref<ConvertToBackingContext> protectedConvertToBackingContext() const;
     Ref<WebCore::WebGPU::BindGroupLayout> emptyBindGroupLayout() const final;
 
     Ref<WebCore::WebGPU::CommandEncoder> invalidCommandEncoder() final;
@@ -128,17 +127,17 @@ private:
     bool isRemoteDeviceProxy() const final { return true; }
 
     WebGPUIdentifier m_backing;
-    Ref<ConvertToBackingContext> m_convertToBackingContext;
-    Ref<RemoteAdapterProxy> m_parent;
-    Ref<RemoteQueueProxy> m_queue;
+    const Ref<ConvertToBackingContext> m_convertToBackingContext;
+    const Ref<RemoteAdapterProxy> m_parent;
+    const Ref<RemoteQueueProxy> m_queue;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     WebKit::SharedVideoFrameWriter m_sharedVideoFrameWriter;
 #endif
-    Ref<WebCore::WebGPU::CommandEncoder> m_invalidCommandEncoder;
-    Ref<WebCore::WebGPU::RenderPassEncoder> m_invalidRenderPassEncoder;
-    Ref<WebCore::WebGPU::ComputePassEncoder> m_invalidComputePassEncoder;
-    Ref<WebCore::WebGPU::CommandBuffer> m_invalidCommandBuffer;
-    Ref<WebCore::WebGPU::BindGroupLayout> m_emptyBindGroupLayout;
+    const Ref<WebCore::WebGPU::CommandEncoder> m_invalidCommandEncoder;
+    const Ref<WebCore::WebGPU::RenderPassEncoder> m_invalidRenderPassEncoder;
+    const Ref<WebCore::WebGPU::ComputePassEncoder> m_invalidComputePassEncoder;
+    const Ref<WebCore::WebGPU::CommandBuffer> m_invalidCommandBuffer;
+    const Ref<WebCore::WebGPU::BindGroupLayout> m_emptyBindGroupLayout;
 };
 
 } // namespace WebKit::WebGPU

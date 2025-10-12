@@ -28,7 +28,7 @@
 #include "RenderTreeBuilder.h"
 
 #include "AXObjectCache.h"
-#include "DocumentInlines.h"
+#include "DocumentView.h"
 #include "FrameSelection.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LegacyRenderSVGContainer.h"
@@ -101,15 +101,15 @@ static void invalidateLineLayout(RenderObject& renderer, IsRemoval isRemoval)
         return;
     }
 
-    auto shouldInvalidateLineLayoutPath = [&](auto& inlineLayout) {
-        if (LayoutIntegration::LineLayout::shouldInvalidateLineLayoutPathAfterTreeMutation(*container, renderer, inlineLayout, isRemoval == IsRemoval::Yes))
+    auto shouldInvalidateLineLayout = [&](auto& inlineLayout) {
+        if (LayoutIntegration::LineLayout::shouldInvalidateLineLayoutAfterTreeMutation(*container, renderer, inlineLayout, isRemoval == IsRemoval::Yes))
             return true;
         if (isRemoval == IsRemoval::Yes)
             return !inlineLayout.removedFromTree(*renderer.parent(), renderer);
         return !inlineLayout.insertedIntoTree(*renderer.parent(), renderer);
     };
-    if (auto* inlineLayout = container->inlineLayout(); inlineLayout && shouldInvalidateLineLayoutPath(*inlineLayout))
-        container->invalidateLineLayoutPath(RenderBlockFlow::InvalidationReason::InsertionOrRemoval);
+    if (auto* inlineLayout = container->inlineLayout(); inlineLayout && shouldInvalidateLineLayout(*inlineLayout))
+        container->invalidateLineLayout(RenderBlockFlow::InvalidationReason::InsertionOrRemoval);
 }
 
 static void getInlineRun(RenderObject* start, RenderObject* boundary, RenderObject*& inlineRunStart, RenderObject*& inlineRunEnd)
@@ -152,20 +152,20 @@ static void getInlineRun(RenderObject* start, RenderObject* boundary, RenderObje
 
 RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
     : m_view(view)
-    , m_firstLetterBuilder(makeUnique<FirstLetter>(*this))
-    , m_listBuilder(makeUnique<List>(*this))
-    , m_multiColumnBuilder(makeUnique<MultiColumn>(*this))
-    , m_tableBuilder(makeUnique<Table>(*this))
-    , m_rubyBuilder(makeUnique<Ruby>(*this))
-    , m_formControlsBuilder(makeUnique<FormControls>(*this))
-    , m_blockBuilder(makeUnique<Block>(*this))
-    , m_blockFlowBuilder(makeUnique<BlockFlow>(*this))
-    , m_inlineBuilder(makeUnique<Inline>(*this))
-    , m_svgBuilder(makeUnique<SVG>(*this))
+    , m_firstLetterBuilder(makeUniqueRef<FirstLetter>(*this))
+    , m_listBuilder(makeUniqueRef<List>(*this))
+    , m_multiColumnBuilder(makeUniqueRef<MultiColumn>(*this))
+    , m_tableBuilder(makeUniqueRef<Table>(*this))
+    , m_rubyBuilder(makeUniqueRef<Ruby>(*this))
+    , m_formControlsBuilder(makeUniqueRef<FormControls>(*this))
+    , m_blockBuilder(makeUniqueRef<Block>(*this))
+    , m_blockFlowBuilder(makeUniqueRef<BlockFlow>(*this))
+    , m_inlineBuilder(makeUniqueRef<Inline>(*this))
+    , m_svgBuilder(makeUniqueRef<SVG>(*this))
 #if ENABLE(MATHML)
-    , m_mathMLBuilder(makeUnique<MathML>(*this))
+    , m_mathMLBuilder(makeUniqueRef<MathML>(*this))
 #endif
-    , m_continuationBuilder(makeUnique<Continuation>(*this))
+    , m_continuationBuilder(makeUniqueRef<Continuation>(*this))
 {
     RELEASE_ASSERT(!s_current || &m_view != &s_current->m_view);
     m_previous = s_current;
@@ -447,7 +447,7 @@ void RenderTreeBuilder::attachToRenderElement(RenderElement& parent, RenderPtr<R
         if (afterChild && afterChild->isAnonymous() && !afterChild->isBeforeContent())
             table = afterChild;
         else {
-            auto newTable = RenderTable::createAnonymousWithParentRenderer(parent);
+            auto newTable = Table::createAnonymousTableWithStyle(parent.protectedDocument(), parent.style());
             table = newTable.get();
             attach(parent, WTFMove(newTable), beforeChild);
         }
@@ -497,7 +497,7 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
             listItemRenderer->updateListMarkerNumbers();
     }
 
-    newChild->setNeedsLayoutAndPrefWidthsRecalc();
+    newChild->setNeedsLayoutAndPreferredWidthsUpdate();
     auto isOutOfFlowBox = newChild->style().hasOutOfFlowPosition();
     if (!isOutOfFlowBox)
         parent.setNeedsPreferredWidthsUpdate();
@@ -505,7 +505,7 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
     if (!parent.normalChildNeedsLayout()) {
         if (isOutOfFlowBox) {
             auto isEligibleForStaticPositionLayoutOnly = [&] {
-                // setNeedsLayoutAndPrefWidthsRecalc above already takes care of propagating dirty bits on the ancestor chain, but
+                // setNeedsLayoutAndPreferredWidthsUpdate above already takes care of propagating dirty bits on the ancestor chain, but
                 // in order to compute static position for out of flow boxes, the parent has to run normal flow layout as well (as opposed to simplified)
                 if (newChild->containingBlock() != &parent)
                     return false;
@@ -533,7 +533,7 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
     if (AXObjectCache* cache = parent.document().axObjectCache())
         cache->childrenChanged(parent, newChild);
 
-    if (parent.hasOutlineAutoAncestor() || parent.outlineStyleForRepaint().hasAutoOutlineStyle())
+    if (parent.hasOutlineAutoAncestor() || parent.outlineStyleForRepaint().outlineStyle() == OutlineStyle::Auto)
         if (!is<RenderMultiColumnSet>(newChild->previousSibling())) 
             newChild->setHasOutlineAutoAncestor();
 }
@@ -560,14 +560,12 @@ void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& t
     }
 
     auto findBFCRootAndDestroyInlineTree = [&] {
-        auto* containingBlock = &from;
-        while (containingBlock) {
+        for (CheckedPtr containingBlock = &from; containingBlock; containingBlock = containingBlock->containingBlock()) {
             containingBlock->setNeedsLayout();
-            if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*containingBlock)) {
-                blockFlow->deleteLines();
+            if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*containingBlock)) {
+                blockFlow->invalidateLineLayout(RenderBlockFlow::InvalidationReason::InternalMove);
                 break;
             }
-            containingBlock = containingBlock->containingBlock();
         }
     };
     // When moving a subtree out of a BFC we need to make sure that the line boxes generated for the inline tree are not accessible anymore from the renderers.
@@ -620,15 +618,12 @@ void RenderTreeBuilder::moveChildren(RenderBoxModelObject& from, RenderBoxModelO
         // When the |child| object will be moved, its firstLetter will be recreated,
         // so saving it now in nextSibling would leave us with a stale object.
         if (is<RenderTextFragment>(*child) && is<RenderText>(nextSibling)) {
-            RenderObject* firstLetterObj = nullptr;
-            if (RenderBlock* block = downcast<RenderTextFragment>(*child).blockForAccompanyingFirstLetter()) {
-                RenderElement* firstLetterContainer = nullptr;
-                block->getFirstLetter(firstLetterObj, firstLetterContainer, child);
+            if (auto* block = downcast<RenderTextFragment>(*child).blockForAccompanyingFirstLetter()) {
+                auto [firstLetter, firstLetterContainer] = block->firstLetterAndContainer(child);
+                // This is the first letter, skip it.
+                if (firstLetter == nextSibling)
+                    nextSibling = nextSibling->nextSibling();
             }
-
-            // This is the first letter, skip it.
-            if (firstLetterObj == nextSibling)
-                nextSibling = nextSibling->nextSibling();
         }
 
         move(from, to, *child, beforeChild, normalizeAfterInsertion);
@@ -754,7 +749,7 @@ void RenderTreeBuilder::createAnonymousWrappersForInlineContent(RenderBlock& par
     // means that we cannot coalesce inlines before |insertionPoint| with inlines following
     // |insertionPoint|, because the new child is going to be inserted in between the inlines,
     // splitting them.
-    ASSERT(parent.isNonReplacedAtomicInline() || !parent.isInline());
+    ASSERT(parent.isNonReplacedAtomicInlineLevelBox() || !parent.isInline());
     ASSERT(!insertionPoint || insertionPoint->parent() == &parent);
 
     parent.setChildrenInline(false);
@@ -763,7 +758,8 @@ void RenderTreeBuilder::createAnonymousWrappersForInlineContent(RenderBlock& par
     if (!child)
         return;
 
-    parent.deleteLines();
+    if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(parent))
+        blockFlow->invalidateLineLayout(RenderBlockFlow::InvalidationReason::InternalMove);
 
     while (child) {
         RenderObject* inlineRunStart = nullptr;
@@ -775,7 +771,7 @@ void RenderTreeBuilder::createAnonymousWrappersForInlineContent(RenderBlock& par
 
         child = inlineRunEnd->nextSibling();
 
-        auto newBlock = parent.createAnonymousBlock();
+        auto newBlock = Block::createAnonymousBlockWithStyle(parent.protectedDocument(), parent.style());
         auto& block = *newBlock;
         attachToRenderElementInternal(parent, WTFMove(newBlock), inlineRunStart);
         moveChildren(parent, block, inlineRunStart, child, RenderTreeBuilder::NormalizeAfterInsertion::No);
@@ -800,7 +796,7 @@ RenderObject* RenderTreeBuilder::splitAnonymousBoxesAroundChild(RenderBox& paren
 
             // We have to split the parent box into two boxes and move children
             // from |beforeChild| to end into the new post box.
-            auto newPostBox = boxToSplit.createAnonymousBoxWithSameTypeAs(parent);
+            auto newPostBox = createAnonymousBoxWithSameTypeAndWithStyle(boxToSplit, parent.style());
             auto& postBox = *newPostBox;
             postBox.setChildrenInline(boxToSplit.childrenInline());
             RenderBox* parentBox = downcast<RenderBox>(boxToSplit.parent());
@@ -845,7 +841,7 @@ void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement
     }
     // An anonymous block must be made to wrap this inline.
     auto* parent = child.parent();
-    auto newBlock = downcast<RenderBlock>(*parent).createAnonymousBlock();
+    auto newBlock = Block::createAnonymousBlockWithStyle(parent->protectedDocument(), parent->style());
     auto& block = *newBlock;
     attachToRenderElementInternal(*parent, WTFMove(newBlock), &child);
     auto thisToMove = detachFromRenderElement(*parent, child, WillBeDestroyed::No);
@@ -1030,7 +1026,7 @@ static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& chil
     }
 
     if (willBeDestroyed == RenderTreeBuilder::WillBeDestroyed::No)
-        child.setNeedsLayoutAndPrefWidthsRecalc();
+        child.setNeedsLayoutAndPreferredWidthsUpdate();
 
     // If we have a line box wrapper, delete it.
     if (CheckedPtr textRenderer = dynamicDowncast<RenderSVGInlineText>(child))
@@ -1107,9 +1103,11 @@ void RenderTreeBuilder::reportVisuallyNonEmptyContent(const RenderElement& paren
     if (child.isRenderOrLegacyRenderSVGRoot()) {
         auto fixedSize = [] (const auto& renderer) -> std::optional<IntSize> {
             auto& style = renderer.style();
-            if (!style.width().isFixed() || !style.height().isFixed())
+            auto fixedWidth = style.width().tryFixed();
+            auto fixedHeight = style.height().tryFixed();
+            if (!fixedWidth || !fixedHeight)
                 return { };
-            return std::make_optional(IntSize { style.width().intValue(), style.height().intValue() });
+            return std::make_optional(IntSize { static_cast<int>(fixedWidth->resolveZoom(Style::ZoomNeeded { })), static_cast<int>(fixedHeight->resolveZoom(Style::ZoomNeeded { })) });
         };
         // SVG content tends to have a fixed size construct. However this is known to be inaccurate in certain cases (box-sizing: border-box) or especially when the parent box is oversized.
         auto candidateSize = IntSize { };
@@ -1135,7 +1133,7 @@ void RenderTreeBuilder::markBoxForRelayoutAfterSplit(RenderBox& box)
     } else if (CheckedPtr tableSection = dynamicDowncast<RenderTableSection>(box))
         tableSection->setNeedsCellRecalc();
 
-    box.setNeedsLayoutAndPrefWidthsRecalc();
+    box.setNeedsLayoutAndPreferredWidthsUpdate();
 }
 
 void RenderTreeBuilder::removeFloatingObjects(RenderBlock& renderer)
@@ -1156,6 +1154,27 @@ void RenderTreeBuilder::removeFloatingObjects(RenderBlock& renderer)
     });
     for (auto* floatingObject : copyOfFloatingObjects)
         floatingObject->renderer().removeFloatingOrOutOfFlowChildFromBlockLists();
+}
+
+RenderPtr<RenderBox> RenderTreeBuilder::createAnonymousBoxWithSameTypeAndWithStyle(const RenderBox& renderer, const RenderStyle& style)
+{
+    if (is<RenderTableCell>(renderer))
+        return Table::createAnonymousTableCellWithStyle(renderer.protectedDocument(), style);
+
+    if (is<RenderTableRow>(renderer))
+        return Table::createAnonymousTableRowWithStyle(renderer.protectedDocument(), style);
+
+    if (is<RenderTableSection>(renderer))
+        return Table::createAnonymousTableSectionWithStyle(renderer.protectedDocument(), style);
+
+    if (is<RenderTable>(renderer))
+        return Table::createAnonymousTableWithStyle(renderer.protectedDocument(), style);
+
+    if (is<RenderBlock>(renderer))
+        return Block::createAnonymousBlockWithStyle(renderer.protectedDocument(), style);
+
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 }

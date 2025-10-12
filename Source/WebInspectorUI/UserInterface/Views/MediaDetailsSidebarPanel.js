@@ -120,10 +120,10 @@ WI.MediaDetailsSidebarPanel = class MediaDetailsSidebarPanel extends WI.DOMDetai
     {
         super.initialLayout();
 
-        this.element.appendChild(this.#ui.generalSection.element);
-        this.element.appendChild(this.#ui.videoSection.element);
-        this.element.appendChild(this.#ui.audioSection.element);
-        this.element.appendChild(this.#ui.spatialSection.element);
+        this.contentView.element.appendChild(this.#ui.generalSection.element);
+        this.contentView.element.appendChild(this.#ui.videoSection.element);
+        this.contentView.element.appendChild(this.#ui.audioSection.element);
+        this.contentView.element.appendChild(this.#ui.spatialSection.element);
     }
 
     // Private

@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x148
+  RenderBlock {HTML} at (0,0) size 800x148
+    RenderBody {BODY} at (8,16) size 784x124
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 554x17
+          text run at (0,0) width 554: "To PASS this test case the text of the button label should not be selected in the selection."
+      RenderBlock {DIV} at (0,34) size 784x90
+        RenderBlock (anonymous) at (0,0) size 784x45
+          RenderText {#text} at (0,0) size 49x17
+            text run at (0,0) width 49: "Buttons"
+          RenderBR {BR} at (49,0) size 0x17
+          RenderText {#text} at (0,22) size 59x17
+            text run at (0,22) width 59: "with text "
+          RenderButton {INPUT} at (59,18) size 67x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+            RenderBlock (anonymous) at (8,4) size 51x18
+              RenderText at (0,0) size 51x17
+                text run at (0,0) width 51: "too little"
+          RenderText {#text} at (126,22) size 55x17
+            text run at (126,22) width 55: " too little"
+        RenderBlock {DIV} at (0,45) size 784x27
+          RenderText {#text} at (0,4) size 54x17
+            text run at (0,4) width 54: "and text "
+          RenderButton {INPUT} at (54,0) size 75x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+            RenderBlock (anonymous) at (8,4) size 59x18
+              RenderText at (0,0) size 59x17
+                text run at (0,0) width 59: "too much"
+          RenderText {#text} at (129,4) size 63x17
+            text run at (129,4) width 63: " too much"
+        RenderBlock (anonymous) at (0,72) size 784x18
+          RenderText {#text} at (0,0) size 244x17
+            text run at (0,0) width 244: "Should not be selected in the selection."
+selection start: position 0 of child 0 {#text} of child 1 {P} of body
+selection end:   position 41 of child 6 {#text} of child 3 {DIV} of body

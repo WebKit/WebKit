@@ -31,6 +31,7 @@
 #include <WebCore/JSNode.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Node.h>
+#include <WebCore/NodeDocument.h>
 #include <WebCore/ScriptController.h>
 #include <glib/gi18n-lib.h>
 #include <jsc/JSCContextPrivate.h>

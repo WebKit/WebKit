@@ -8,22 +8,24 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
 #include <cstdint>
-#include <optional>
 
+#include "api/field_trials.h"
+#include "api/rtp_headers.h"
 #include "api/test/mock_video_decoder.h"
-#include "api/units/time_delta.h"
-#include "api/video/video_content_type.h"
-#include "api/video/video_frame.h"
+#include "api/video/video_codec_type.h"
 #include "api/video/video_frame_type.h"
 #include "api/video_codecs/video_decoder.h"
-#include "modules/video_coding/include/video_coding.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
+#include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
+#include "modules/video_coding/include/video_coding_defines.h"
 #include "modules/video_coding/timing/timing.h"
 #include "modules/video_coding/video_coding_impl.h"
 #include "system_wrappers/include/clock.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-#include "test/scoped_key_value_config.h"
 
 using ::testing::_;
 using ::testing::AnyNumber;
@@ -44,20 +46,9 @@ class MockPacketRequestCallback : public VCMPacketRequestCallback {
 class MockVCMReceiveCallback : public VCMReceiveCallback {
  public:
   MockVCMReceiveCallback() {}
-  virtual ~MockVCMReceiveCallback() {}
+  ~MockVCMReceiveCallback() override {}
 
-  MOCK_METHOD(int32_t,
-              FrameToRender,
-              (VideoFrame&,
-               std::optional<uint8_t>,
-               TimeDelta,
-               VideoContentType,
-               VideoFrameType),
-              (override));
-  MOCK_METHOD(int32_t,
-              OnFrameToRender,
-              (const struct FrameToRender&),
-              (override));
+  MOCK_METHOD(int32_t, OnFrameToRender, (const FrameToRender&), (override));
   MOCK_METHOD(void, OnIncomingPayloadType, (int), (override));
   MOCK_METHOD(void,
               OnDecoderInfoChanged,
@@ -71,11 +62,12 @@ class TestVideoReceiver : public ::testing::Test {
   static const uint16_t kMaxWaitTimeMs = 100;
 
   TestVideoReceiver()
-      : clock_(0),
+      : field_trials_(CreateTestFieldTrials()),
+        clock_(0),
         timing_(&clock_, field_trials_),
         receiver_(&clock_, &timing_, field_trials_) {}
 
-  virtual void SetUp() {
+  void SetUp() override {
     // Register decoder.
     receiver_.RegisterExternalDecoder(&decoder_, kUnusedPayloadType);
     VideoDecoder::Settings settings;
@@ -139,7 +131,7 @@ class TestVideoReceiver : public ::testing::Test {
     EXPECT_EQ(0, receiver_.Decode(kMaxWaitTimeMs));
   }
 
-  test::ScopedKeyValueConfig field_trials_;
+  FieldTrials field_trials_;
   SimulatedClock clock_;
   NiceMock<MockVideoDecoder> decoder_;
   NiceMock<MockPacketRequestCallback> packet_request_callback_;

@@ -27,9 +27,9 @@
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
-#include "AugmentableInspectorControllerClient.h"
-#include "InspectorBackendDispatcher.h"
-#include "InspectorFrontendRouter.h"
+#include <JavaScriptCore/AugmentableInspectorControllerClient.h>
+#include <JavaScriptCore/InspectorBackendDispatcher.h>
+#include <JavaScriptCore/InspectorFrontendRouter.h>
 
 namespace Inspector {
 

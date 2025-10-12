@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,13 +43,13 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCRtpSenderBackend);
 
-LibWebRTCRtpSenderBackend::LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend& backend, rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender)
+LibWebRTCRtpSenderBackend::LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend& backend, RefPtr<webrtc::RtpSenderInterface>&& rtcSender)
     : m_peerConnectionBackend(backend)
     , m_rtcSender(WTFMove(rtcSender))
 {
 }
 
-LibWebRTCRtpSenderBackend::LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend& backend, rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender, Source&& source)
+LibWebRTCRtpSenderBackend::LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend& backend, RefPtr<webrtc::RtpSenderInterface>&& rtcSender, Source&& source)
     : m_peerConnectionBackend(backend)
     , m_rtcSender(WTFMove(rtcSender))
     , m_source(WTFMove(source))
@@ -210,20 +210,20 @@ void LibWebRTCRtpSenderBackend::setParameters(const RTCRtpSendParameters& parame
 
 std::unique_ptr<RTCDTMFSenderBackend> LibWebRTCRtpSenderBackend::createDTMFBackend()
 {
-    return makeUnique<LibWebRTCDTMFSenderBackend>(m_rtcSender->GetDtmfSender());
+    return makeUnique<LibWebRTCDTMFSenderBackend>(toRef(m_rtcSender->GetDtmfSender()));
 }
 
 Ref<RTCRtpTransformBackend> LibWebRTCRtpSenderBackend::rtcRtpTransformBackend()
 {
     if (!m_transformBackend)
-        m_transformBackend = LibWebRTCRtpSenderTransformBackend::create(m_rtcSender);
+        lazyInitialize(m_transformBackend, LibWebRTCRtpSenderTransformBackend::create(*m_rtcSender));
     return *m_transformBackend;
 }
 
 std::unique_ptr<RTCDtlsTransportBackend> LibWebRTCRtpSenderBackend::dtlsTransportBackend()
 {
-    auto backend = m_rtcSender->dtls_transport();
-    return backend ? makeUnique<LibWebRTCDtlsTransportBackend>(WTFMove(backend)) : nullptr;
+    RefPtr backend = toRefPtr(m_rtcSender->dtls_transport());
+    return backend ? makeUnique<LibWebRTCDtlsTransportBackend>(backend.releaseNonNull()) : nullptr;
 }
 
 void LibWebRTCRtpSenderBackend::setMediaStreamIds(const FixedVector<String>& streamIds)

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSCInlines.h"
-#include "ShadowChicken.h"
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/ShadowChicken.h>
 
 namespace JSC {
 

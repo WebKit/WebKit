@@ -71,9 +71,9 @@ public:
         return forNode(edge);
     }
     
-    ALWAYS_INLINE void fastForwardAndFilterUnproven(AbstractValue& value, SpeculatedType type)
+    ALWAYS_INLINE FiltrationResult fastForwardAndFilterUnproven(AbstractValue& value, SpeculatedType type)
     {
-        value.filter(type);
+        return value.filter(type);
     }
     
     ALWAYS_INLINE void clearForNode(NodeFlowProjection node)

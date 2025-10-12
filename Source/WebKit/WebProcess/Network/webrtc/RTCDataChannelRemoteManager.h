@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,7 +62,7 @@ private:
     void changeReadyState(WebCore::RTCDataChannelIdentifier, WebCore::RTCDataChannelState);
     void receiveData(WebCore::RTCDataChannelIdentifier, bool isRaw, std::span<const uint8_t>);
     void detectError(WebCore::RTCDataChannelIdentifier, WebCore::RTCErrorDetailType, String&&);
-    void bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier, size_t);
+    void bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier, uint64_t);
 
     WebCore::RTCDataChannelRemoteSourceConnection& remoteSourceConnection();
     void postTaskToHandler(WebCore::RTCDataChannelIdentifier, Function<void(WebCore::RTCDataChannelRemoteHandler&)>&&);
@@ -79,8 +79,8 @@ private:
     private:
         explicit RemoteHandlerConnection(Ref<WorkQueue>&&);
 
-        Ref<IPC::Connection> m_connection;
-        Ref<WorkQueue> m_queue;
+        const Ref<IPC::Connection> m_connection;
+        const Ref<WorkQueue> m_queue;
     };
 
     class RemoteSourceConnection : public WebCore::RTCDataChannelRemoteSourceConnection {
@@ -94,9 +94,9 @@ private:
         void didReceiveStringData(WebCore::RTCDataChannelIdentifier, const String&) final;
         void didReceiveRawData(WebCore::RTCDataChannelIdentifier, std::span<const uint8_t>) final;
         void didDetectError(WebCore::RTCDataChannelIdentifier, WebCore::RTCErrorDetailType, const String&) final;
-        void bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier, size_t) final;
+        void bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier, uint64_t) final;
 
-        Ref<IPC::Connection> m_connection;
+        const Ref<IPC::Connection> m_connection;
     };
 
     struct RemoteHandler {
@@ -104,8 +104,8 @@ private:
         Markable<WebCore::ScriptExecutionContextIdentifier> contextIdentifier;
     };
 
-    Ref<WorkQueue> m_queue;
-    RefPtr<IPC::Connection> m_connection;
+    const Ref<WorkQueue> m_queue;
+    const Ref<IPC::Connection> m_connection;
     RefPtr<RemoteHandlerConnection> m_remoteHandlerConnection;
     RefPtr<RemoteSourceConnection> m_remoteSourceConnection;
     HashMap<WebCore::RTCDataChannelLocalIdentifier, UniqueRef<WebCore::RTCDataChannelRemoteSource>> m_sources;

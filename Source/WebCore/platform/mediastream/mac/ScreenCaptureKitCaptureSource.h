@@ -27,9 +27,9 @@
 
 #if HAVE(SCREEN_CAPTURE_KIT)
 
-#include "DisplayCaptureManager.h"
-#include "DisplayCaptureSourceCocoa.h"
-#include "ScreenCaptureKitSharingSessionManager.h"
+#include <WebCore/DisplayCaptureManager.h>
+#include <WebCore/DisplayCaptureSourceCocoa.h>
+#include <WebCore/ScreenCaptureKitSharingSessionManager.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>

@@ -31,9 +31,9 @@
 #import "CommonVM.h"
 #import "ComposedTreeIterator.h"
 #import "ContainerNodeInlines.h"
-#import "Document.h"
-#import "DocumentInlines.h"
 #import "DocumentMarkerController.h"
+#import "DocumentMarkers.h"
+#import "DocumentSecurityOrigin.h"
 #import "Editor.h"
 #import "EditorClient.h"
 #import "ElementRareData.h"
@@ -127,7 +127,7 @@ NSArray *LocalFrame::wordsInCurrentParagraph() const
 
     if (!isStartOfParagraph(end)) {
         VisiblePosition previous = end.previous();
-        UChar c(previous.characterAfter());
+        char16_t c(previous.characterAfter());
         // FIXME: Should use something from ICU or ASCIICType that is not subject to POSIX current language rather than iswpunct.
         if (!iswpunct(c) && !deprecatedIsSpaceOrNewline(c) && c != noBreakSpace)
             end = startOfWord(end);
@@ -166,7 +166,7 @@ NSArray *LocalFrame::wordsInCurrentParagraph() const
 
     if ([words count] > 0 && isEndOfParagraph(position) && !isStartOfParagraph(position)) {
         VisiblePosition previous = position.previous();
-        UChar c(previous.characterAfter());
+        char16_t c(previous.characterAfter());
         if (!deprecatedIsSpaceOrNewline(c) && c != noBreakSpace)
             [words removeLastObject];
     }
@@ -210,8 +210,8 @@ CGRect LocalFrame::renderRectForPoint(CGPoint point, bool* isReplaced, float* fo
             printf("%s %f %f %f %f\n", nodeName, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
         }
 #endif
-        if (renderer->isRenderBlock() || renderer->isNonReplacedAtomicInline() || renderer->isReplacedOrAtomicInline()) {
-            *isReplaced = renderer->isReplacedOrAtomicInline();
+        if (renderer->isRenderBlock() || renderer->isNonReplacedAtomicInlineLevelBox() || renderer->isBlockLevelReplacedOrAtomicInline()) {
+            *isReplaced = renderer->isBlockLevelReplacedOrAtomicInline();
 #if CHECK_FONT_SIZE
             for (RenderObject* textRenderer = hitRenderer; textRenderer; textRenderer = textRenderer->traverseNext(hitRenderer)) {
                 if (textRenderer->isText()) {
@@ -450,7 +450,7 @@ Node* LocalFrame::approximateNodeAtViewportLocationLegacy(const FloatPoint& view
                 pointerCursorStillValid = false;
 
             // If we haven't reached the body, and we are still paying attention to pointer cursors, and the node has a pointer cursor.
-            if (pointerCursorStillValid && node->renderStyle() && node->renderStyle()->cursor() == CursorType::Pointer)
+            if (pointerCursorStillValid && node->renderStyle() && node->renderStyle()->cursorType() == CursorType::Pointer)
                 pointerCursorNode = node;
             else if (pointerCursorNode) {
                 // We want the lowest unbroken chain of pointer cursors.
@@ -742,7 +742,7 @@ NSArray *LocalFrame::interpretationsForCurrentRoot() const
     for (auto& marker : markersInRoot)
         interpretationsCount *= std::get<Vector<String>>(marker->data()).size() + 1;
 
-    Vector<Vector<UChar>> interpretations;
+    Vector<Vector<char16_t>> interpretations;
     interpretations.grow(interpretationsCount);
 
     Position precedingTextStartPosition = makeDeprecatedLegacyPosition(root, 0);
@@ -789,7 +789,7 @@ NSArray *LocalFrame::interpretationsForCurrentRoot() const
     }
 
     return createNSArray(interpretations, [] (auto& interpretation) {
-        return adoptNS([[NSString alloc] initWithCharacters:reinterpret_cast<const unichar*>(interpretation.data()) length:interpretation.size()]);
+        return adoptNS([[NSString alloc] initWithCharacters:reinterpret_cast<const unichar*>(interpretation.span().data()) length:interpretation.size()]);
     }).autorelease();
 }
 
@@ -839,8 +839,8 @@ void LocalFrame::overflowScrollPositionChangedForNode(const IntPoint& position, 
 
 void LocalFrame::resetAllGeolocationPermission()
 {
-    if (document()->domWindow())
-        document()->domWindow()->resetAllGeolocationPermission();
+    if (document()->window())
+        document()->window()->resetAllGeolocationPermission();
 
     for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling()) {
         auto* localChild = dynamicDowncast<LocalFrame>(child.get());

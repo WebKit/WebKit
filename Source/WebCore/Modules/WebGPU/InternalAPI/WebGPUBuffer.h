@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPUIntegralTypes.h"
-#include "WebGPUMapMode.h"
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUMapMode.h>
 #include <cstdint>
 #include <optional>
 #include <wtf/CompletionHandler.h>

@@ -32,7 +32,6 @@ typedef void (*WKPageDidReceiveMessageFromInjectedBundleCallback)(WKPageRef page
 typedef void (*WKPageDidReceiveSynchronousMessageFromInjectedBundleCallback)(WKPageRef page, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData, const void *clientInfo);
 typedef WKTypeRef (*WKPageGetInjectedBundleInitializationUserDataCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageDidReceiveSynchronousMessageFromInjectedBundleWithListenerCallback)(WKPageRef page, WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef listener, const void* clientInfo);
-typedef void (*WKPageDidReceiveAsyncMessageFromInjectedBundleCallback)(WKPageRef page, WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef listener, const void* clientInfo);
 
 typedef struct WKPageInjectedBundleClientBase {
     int                                                                 version;
@@ -56,7 +55,6 @@ typedef struct WKPageInjectedBundleClientV1 {
 
     // Version 1.
     WKPageDidReceiveSynchronousMessageFromInjectedBundleWithListenerCallback didReceiveSynchronousMessageFromInjectedBundleWithListener;
-    WKPageDidReceiveAsyncMessageFromInjectedBundleCallback didReceiveAsyncMessageFromInjectedBundle;
 } WKPageInjectedBundleClientV1;
 
 #endif // WKPageInjectedBundleClient_h

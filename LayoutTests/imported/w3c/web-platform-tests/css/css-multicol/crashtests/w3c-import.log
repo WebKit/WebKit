@@ -30,7 +30,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/dynamic-simplified-layout-break-propagation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/fit-content-with-spanner-and-auto-scrollbar-sibling.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/float-becomes-non-float-spanner-surprises-inside.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/float-becomes-spanner-remove-child.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/float-becomes-spanner.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/float-cannot-be-spanner.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/float-multicol-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/floated-input-in-inline-next-column.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/forced-break-in-oof-in-column-balancing-nested.html
@@ -101,6 +103,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/remove-spanner-after-spanner-in-inline-before-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/remove-spanner-in-table-caption-nested-multicol.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/repeated-section-in-nested-table-nested-multicol.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/repeated-table-column.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/repeated-table-footer-in-caption-nested-multicol.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/restricted-height-bottom-border-overflow-and-spanner.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/scrollable-spanner-in-nested.html
@@ -122,3 +125,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/text-in-inline-interrupted-by-float.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/trailing-parent-padding-between-spanners.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/vertical-rl-column-rules-wide-columns.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/video-container-become-multicol.html

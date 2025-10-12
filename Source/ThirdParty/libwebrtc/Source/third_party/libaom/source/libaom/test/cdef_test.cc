@@ -618,7 +618,8 @@ TEST_P(CDEFCopyRect16to16Test, TestSIMDNoMismatch) {
 
 using std::make_tuple;
 
-#if ((AOM_ARCH_X86 && HAVE_SSSE3) || HAVE_SSE4_1 || HAVE_AVX2 || HAVE_NEON)
+#if ((AOM_ARCH_X86 && HAVE_SSSE3) || HAVE_SSE4_1 || HAVE_AVX2 || HAVE_NEON || \
+     HAVE_RVV)
 static const CdefFilterBlockFunctions kCdefFilterFuncC[] = {
   { &cdef_filter_8_0_c, &cdef_filter_8_1_c, &cdef_filter_8_2_c,
     &cdef_filter_8_3_c }
@@ -811,6 +812,46 @@ INSTANTIATE_TEST_SUITE_P(
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 #endif
 
+#if HAVE_RVV
+static const CdefFilterBlockFunctions kCdefFilterFuncRvv[] = {
+  { &cdef_filter_8_0_rvv, &cdef_filter_8_1_rvv, &cdef_filter_8_2_rvv,
+    &cdef_filter_8_3_rvv }
+};
+
+static const CdefFilterBlockFunctions kCdefFilterHighbdFuncRvv[] = {
+  { &cdef_filter_16_0_rvv, &cdef_filter_16_1_rvv, &cdef_filter_16_2_rvv,
+    &cdef_filter_16_3_rvv }
+};
+
+INSTANTIATE_TEST_SUITE_P(
+    RVV, CDEFBlockTest,
+    ::testing::Combine(::testing::ValuesIn(kCdefFilterFuncRvv),
+                       ::testing::ValuesIn(kCdefFilterFuncC),
+                       ::testing::Values(BLOCK_4X4, BLOCK_4X8, BLOCK_8X4,
+                                         BLOCK_8X8),
+                       ::testing::Range(0, 16), ::testing::Values(8)));
+INSTANTIATE_TEST_SUITE_P(
+    RVV, CDEFBlockHighbdTest,
+    ::testing::Combine(::testing::ValuesIn(kCdefFilterHighbdFuncRvv),
+                       ::testing::ValuesIn(kCdefFilterHighbdFuncC),
+                       ::testing::Values(BLOCK_4X4, BLOCK_4X8, BLOCK_8X4,
+                                         BLOCK_8X8),
+                       ::testing::Range(0, 16), ::testing::Range(10, 13, 2)));
+INSTANTIATE_TEST_SUITE_P(RVV, CDEFFindDirTest,
+                         ::testing::Values(make_tuple(&cdef_find_dir_rvv,
+                                                      &cdef_find_dir_c)));
+
+INSTANTIATE_TEST_SUITE_P(
+    RVV, CDEFCopyRect8to16Test,
+    ::testing::Values(make_tuple(&cdef_copy_rect8_8bit_to_16bit_c,
+                                 &cdef_copy_rect8_8bit_to_16bit_rvv)));
+
+INSTANTIATE_TEST_SUITE_P(
+    RVV, CDEFCopyRect16to16Test,
+    ::testing::Values(make_tuple(&cdef_copy_rect8_16bit_to_16bit_c,
+                                 &cdef_copy_rect8_16bit_to_16bit_rvv)));
+#endif
+
 // Test speed for all supported architectures
 #if AOM_ARCH_X86 && HAVE_SSSE3
 INSTANTIATE_TEST_SUITE_P(
@@ -903,6 +944,26 @@ INSTANTIATE_TEST_SUITE_P(NEON, CDEFFindDirSpeedTest,
 INSTANTIATE_TEST_SUITE_P(NEON, CDEFFindDirDualSpeedTest,
                          ::testing::Values(make_tuple(&cdef_find_dir_dual_neon,
                                                       &cdef_find_dir_dual_c)));
+#endif
+
+#if HAVE_RVV
+INSTANTIATE_TEST_SUITE_P(
+    RVV, CDEFSpeedTest,
+    ::testing::Combine(::testing::ValuesIn(kCdefFilterFuncRvv),
+                       ::testing::ValuesIn(kCdefFilterFuncC),
+                       ::testing::Values(BLOCK_4X4, BLOCK_4X8, BLOCK_8X4,
+                                         BLOCK_8X8),
+                       ::testing::Range(0, 16), ::testing::Values(8)));
+INSTANTIATE_TEST_SUITE_P(
+    RVV, CDEFSpeedHighbdTest,
+    ::testing::Combine(::testing::ValuesIn(kCdefFilterHighbdFuncRvv),
+                       ::testing::ValuesIn(kCdefFilterHighbdFuncC),
+                       ::testing::Values(BLOCK_4X4, BLOCK_4X8, BLOCK_8X4,
+                                         BLOCK_8X8),
+                       ::testing::Range(0, 16), ::testing::Values(10)));
+INSTANTIATE_TEST_SUITE_P(RVV, CDEFFindDirSpeedTest,
+                         ::testing::Values(make_tuple(&cdef_find_dir_rvv,
+                                                      &cdef_find_dir_c)));
 #endif
 
 }  // namespace

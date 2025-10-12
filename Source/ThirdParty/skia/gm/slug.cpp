@@ -30,17 +30,22 @@
 #include "include/gpu/graphite/ContextOptions.h"
 #endif
 
-#if defined(SK_GANESH) || defined(SK_GRAPHITE)
+#if defined(SK_GANESH)
 #include "include/gpu/ganesh/GrContextOptions.h"
+#endif
+
+#if defined(SK_GANESH) || defined(SK_GRAPHITE)
 
 class SlugGM : public skiagm::GM {
 public:
     SlugGM(const char* txt) : fText(txt) {}
 
 protected:
+#if defined(SK_GANESH)
     void modifyGrContextOptions(GrContextOptions* ctxOptions) override {
         ctxOptions->fSupportBilerpFromGlyphAtlas = true;
     }
+#endif
 
 #if defined(SK_GRAPHITE)
     void modifyGraphiteContextOptions(skgpu::graphite::ContextOptions* options) const override {
@@ -55,7 +60,7 @@ protected:
         int glyphCount = font.countText(fText, txtLen, SkTextEncoding::kUTF8);
 
         fGlyphs.append(glyphCount);
-        font.textToGlyphs(fText, txtLen, SkTextEncoding::kUTF8, fGlyphs.begin(), glyphCount);
+        font.textToGlyphs(fText, txtLen, SkTextEncoding::kUTF8, fGlyphs);
     }
 
     SkString getName() const override { return SkString("slug"); }

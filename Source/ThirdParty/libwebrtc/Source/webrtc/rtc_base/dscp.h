@@ -11,7 +11,7 @@
 #ifndef RTC_BASE_DSCP_H_
 #define RTC_BASE_DSCP_H_
 
-namespace rtc {
+namespace webrtc {
 // Differentiated Services Code Point.
 // See http://tools.ietf.org/html/rfc2474 for details.
 enum DiffServCodePoint {
@@ -40,6 +40,7 @@ enum DiffServCodePoint {
   DSCP_CS7 = 56,   // Control messages
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_DSCP_H_

@@ -10,8 +10,15 @@
 
 #include "modules/audio_processing/test/simulator_buffers.h"
 
+#include <cstddef>
+#include <memory>
+#include <vector>
+
+#include "api/audio/audio_processing.h"
+#include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/test/audio_buffer_tools.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/random.h"
 
 namespace webrtc {
 namespace test {
@@ -57,7 +64,7 @@ void SimulatorBuffers::CreateConfigAndBuffer(
     StreamConfig* config,
     std::vector<float*>* buffer_data,
     std::vector<float>* buffer_data_samples) {
-  int samples_per_channel = rtc::CheckedDivExact(sample_rate_hz, 100);
+  int samples_per_channel = CheckedDivExact(sample_rate_hz, 100);
   *config = StreamConfig(sample_rate_hz, num_channels);
   buffer->reset(
       new AudioBuffer(config->sample_rate_hz(), config->num_channels(),

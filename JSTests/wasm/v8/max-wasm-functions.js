@@ -1,4 +1,4 @@
-//@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1")
+//@ requireOptions("--useBBQJIT=1")
 //@ skip
 // Failure:
 // Exception: CompileError: WebAssembly.Module doesn't parse at byte 23: Function section's count is too big 1000010 maximum 1000000 (evaluating 'new WebAssembly.Module(this.toBuffer(debug))')

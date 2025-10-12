@@ -4,12 +4,12 @@ section
 article
 nav
 aside
-Should be IGNORED because it's inside an article, so it should not be a landmark
-Should be IGNORED because it's inside an article, so it should not be a landmark
-Should be IGNORED because it's inside a section, so it should not be a landmark
-Should be IGNORED because it's inside a section, so it should not be a landmark
-Should be IGNORED because it's inside a main, so it should not be a landmark
-Should be IGNORED because it's inside a main, so it should not be a landmark
+Should be section header because it's inside an article, and should not be a landmark
+Should be section footer because it's inside an article, and should not be a landmark
+Should be section header because it's inside a section, and should not be a landmark
+Should be section footer because it's inside a section, and should not be a landmark
+Should be section header because it's inside a main, and should not be a landmark
+Should be section footer because it's inside a main, and should not be a landmark
 This tests that the HTML5 section elements map to the correct AX roles.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -24,23 +24,23 @@ PASS body.childAtIndex(5).subrole is 'AXSubrole: AXLandmarkComplementary'
 PASS body.childAtIndex(6).domIdentifier is 'article'
 PASS body.childAtIndex(6).childAtIndex(0).domIdentifier is 'article_header'
 PASS body.childAtIndex(6).childAtIndex(0).role is 'AXRole: AXGroup'
-PASS body.childAtIndex(6).childAtIndex(0).subrole is 'AXSubrole: '
+PASS body.childAtIndex(6).childAtIndex(0).subrole is 'AXSubrole: AXSectionHeader'
 PASS body.childAtIndex(6).childAtIndex(1).domIdentifier is 'article_footer'
 PASS body.childAtIndex(6).childAtIndex(1).role is 'AXRole: AXGroup'
-PASS body.childAtIndex(6).childAtIndex(1).subrole is 'AXSubrole: AXFooter'
+PASS body.childAtIndex(6).childAtIndex(1).subrole is 'AXSubrole: AXSectionFooter'
 PASS body.childAtIndex(7).domIdentifier is 'section_header'
 PASS body.childAtIndex(7).role is 'AXRole: AXGroup'
-PASS body.childAtIndex(7).subrole is 'AXSubrole: '
+PASS body.childAtIndex(7).subrole is 'AXSubrole: AXSectionHeader'
 PASS body.childAtIndex(8).domIdentifier is 'section_footer'
 PASS body.childAtIndex(8).role is 'AXRole: AXGroup'
-PASS body.childAtIndex(8).subrole is 'AXSubrole: AXFooter'
+PASS body.childAtIndex(8).subrole is 'AXSubrole: AXSectionFooter'
 PASS body.childAtIndex(9).domIdentifier is 'main'
 PASS body.childAtIndex(9).childAtIndex(0).domIdentifier is 'main_header'
 PASS body.childAtIndex(9).childAtIndex(0).role is 'AXRole: AXGroup'
-PASS body.childAtIndex(9).childAtIndex(0).subrole is 'AXSubrole: '
+PASS body.childAtIndex(9).childAtIndex(0).subrole is 'AXSubrole: AXSectionHeader'
 PASS body.childAtIndex(9).childAtIndex(1).domIdentifier is 'main_footer'
 PASS body.childAtIndex(9).childAtIndex(1).role is 'AXRole: AXGroup'
-PASS body.childAtIndex(9).childAtIndex(1).subrole is 'AXSubrole: AXFooter'
+PASS body.childAtIndex(9).childAtIndex(1).subrole is 'AXSubrole: AXSectionFooter'
 PASS successfullyParsed is true
 
 TEST COMPLETE

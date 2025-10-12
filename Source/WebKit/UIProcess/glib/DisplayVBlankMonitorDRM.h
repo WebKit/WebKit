@@ -27,12 +27,12 @@
 
 #if USE(LIBDRM)
 
-#include "DisplayVBlankMonitor.h"
+#include "DisplayVBlankMonitorThreaded.h"
 #include <wtf/unix/UnixFileDescriptor.h>
 
 namespace WebKit {
 
-class DisplayVBlankMonitorDRM final : public DisplayVBlankMonitor {
+class DisplayVBlankMonitorDRM final : public DisplayVBlankMonitorThreaded {
 public:
     static std::unique_ptr<DisplayVBlankMonitor> create(PlatformDisplayID);
     DisplayVBlankMonitorDRM(unsigned, WTF::UnixFileDescriptor&&, int);

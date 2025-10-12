@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,9 +28,9 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ImageBufferBackendHandle.h"
-#include "RemoteDisplayListRecorderProxy.h"
+#include "RemoteGraphicsContextProxy.h"
+#include "RemoteRenderingBackendIdentifier.h"
 #include "RemoteSerializedImageBufferIdentifier.h"
-#include "RenderingBackendIdentifier.h"
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageBufferBackend.h>
 #include <wtf/Condition.h>
@@ -45,15 +45,16 @@ class Connection;
 namespace WebKit {
 
 class RemoteRenderingBackendProxy;
+class RemoteImageBufferProxyFlushFence;
 
 class RemoteImageBufferProxy final : public WebCore::ImageBuffer {
     WTF_MAKE_TZONE_ALLOCATED(RemoteImageBufferProxy);
     friend class RemoteSerializedImageBufferProxy;
 public:
     template<typename BackendType>
-    static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::ImageBufferPixelFormat pixelFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
+    static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::ImageBufferFormat bufferFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
     {
-        Parameters parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
+        Parameters parameters { size, resolutionScale, colorSpace, bufferFormat, purpose };
         auto backendParameters = ImageBuffer::backendParameters(parameters);
         if (BackendType::calculateSafeBackendSize(backendParameters).isEmpty())
             return nullptr;
@@ -80,7 +81,7 @@ public:
     // Messages
     void didCreateBackend(std::optional<ImageBufferBackendHandle>);
 
-    RemoteDisplayListRecorderIdentifier contextIdentifier() const { return m_context.identifier(); }
+    RemoteGraphicsContextIdentifier contextIdentifier() const { return m_context.identifier(); }
 private:
     RemoteImageBufferProxy(Parameters, const WebCore::ImageBufferBackend::Info&, RemoteRenderingBackendProxy&);
 
@@ -102,16 +103,18 @@ private:
 
     void flushDrawingContext() final;
     bool flushDrawingContextAsync() final;
+    std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> createFlusher() final;
 
     void prepareForBackingStoreChange();
 
     void assertDispatcherIsCurrent() const;
-    template<typename T> void send(T&& message);
-    template<typename T> auto sendSync(T&& message);
+    template<typename T> void send(T&& message) const;
+    template<typename T> auto sendSync(T&& message) const;
     RefPtr<IPC::StreamClientConnection> connection() const;
     void didBecomeUnresponsive() const;
 
-    mutable RemoteDisplayListRecorderProxy m_context;
+    RefPtr<RemoteImageBufferProxyFlushFence> m_pendingFlush;
+    mutable RemoteGraphicsContextProxy m_context;
     WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;
 };
 

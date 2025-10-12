@@ -78,7 +78,7 @@ if port.name() in ['gtk', 'wpe']:
         sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'jhbuild'))
         import jhbuildutils
 
-        if not jhbuildutils.enter_jhbuild_environment_if_available(port.name()):
+        if not jhbuildutils.enter_jhbuild_environment_if_available(port.name()) and os.environ.get('WEBKIT_BUILD_USE_SYSTEM_LIBRARIES') != '1':
             print('***')
             print('*** Warning: jhbuild environment not present and not running in flatpak.')
             print('*** Run update-webkitgtk-libs or update-webkit-flatpak before build-webkit to ensure proper testing..')

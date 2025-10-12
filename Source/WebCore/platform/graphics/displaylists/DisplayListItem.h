@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "RenderingResourceIdentifier.h"
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/OptionSet.h>
 
 namespace WTF {
@@ -58,8 +58,8 @@ class DrawFilteredImageBuffer;
 class DrawFocusRingPath;
 class DrawFocusRingRects;
 class DrawGlyphs;
-class DrawDecomposedGlyphs;
 class DrawDisplayList;
+class DrawPlaceholder;
 class DrawImageBuffer;
 class DrawLine;
 class DrawLinesForText;
@@ -103,6 +103,9 @@ class ApplyStrokePattern;
 class BeginPage;
 class EndPage;
 class SetURLForRect;
+#if USE(SKIA)
+class DrawTextBlob;
+#endif
 
 using Item = Variant
     < ApplyDeviceScaleFactor
@@ -124,8 +127,8 @@ using Item = Variant
     , DrawFocusRingPath
     , DrawFocusRingRects
     , DrawGlyphs
-    , DrawDecomposedGlyphs
     , DrawDisplayList
+    , DrawPlaceholder
     , DrawImageBuffer
     , DrawLine
     , DrawLinesForText
@@ -169,6 +172,9 @@ using Item = Variant
     , BeginPage
     , EndPage
     , SetURLForRect
+#if USE(SKIA)
+    , DrawTextBlob
+#endif
 >;
 
 enum class AsTextFlag : uint8_t {

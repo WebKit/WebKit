@@ -30,6 +30,7 @@
 #import "WebFrameView.h"
 #import "WebHTMLViewInternal.h"
 #import <WebCore/DeprecatedGlobalSettings.h>
+#import <WebCore/DocumentView.h>
 #import <WebCore/LocalFrameInlines.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/PlatformEventFactoryMac.h>

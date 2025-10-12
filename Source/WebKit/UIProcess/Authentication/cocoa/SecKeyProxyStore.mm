@@ -35,8 +35,11 @@ namespace WebKit {
 
 bool SecKeyProxyStore::initialize(const WebCore::Credential& credential)
 {
-    if (!credential.isEmpty() && credential.nsCredential().identity)
-        m_secKeyProxy = adoptNS([[SecKeyProxy alloc] initWithIdentity:credential.nsCredential().identity]);
+    if (!credential.isEmpty()) {
+        RetainPtr nsCredential = credential.nsCredential();
+        if (RetainPtr identity = [nsCredential.get() identity])
+            lazyInitialize(m_secKeyProxy, adoptNS([[SecKeyProxy alloc] initWithIdentity:identity.get()]));
+    }
     return isInitialized();
 }
 

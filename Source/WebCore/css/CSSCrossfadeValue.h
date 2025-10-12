@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,9 +65,9 @@ public:
 private:
     CSSCrossfadeValue(Ref<CSSValue>&& fromValueOrNone, Ref<CSSValue>&& toValueOrNone, Ref<CSSPrimitiveValue>&& percentageValue, bool isPrefixed);
 
-    Ref<CSSValue> m_fromValueOrNone;
-    Ref<CSSValue> m_toValueOrNone;
-    Ref<CSSPrimitiveValue> m_percentageValue;
+    const Ref<CSSValue> m_fromValueOrNone;
+    const Ref<CSSValue> m_toValueOrNone;
+    const Ref<CSSPrimitiveValue> m_percentageValue;
     bool m_isPrefixed;
 };
 

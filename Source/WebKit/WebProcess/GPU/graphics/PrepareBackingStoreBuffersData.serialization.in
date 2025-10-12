@@ -22,11 +22,11 @@
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 
+header: "ImageBufferSetIdentifier.h"
 header: "PrepareBackingStoreBuffersData.h"
-header: "RemoteImageBufferSetIdentifier.h"
 
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebKit::ImageBufferSetPrepareBufferForDisplayInputData {
-    WebKit::RemoteImageBufferSetIdentifier remoteBufferSet;
+    WebKit::ImageBufferSetIdentifier remoteBufferSet;
     WebCore::Region dirtyRegion;
     bool supportsPartialRepaint;
     bool hasEmptyDirtyRegion;

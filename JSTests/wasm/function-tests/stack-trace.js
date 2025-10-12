@@ -45,12 +45,12 @@ for (let i = 0; i < wasmTestLoopCount; ++i) {
     let found = false;
     for (let i = 0; i < stacktrace.length; ++i) {
         let str = stacktrace[i];
-        if (str !== "<?>.wasm-function[4]@[wasm code]")
+        if (str !== "4@wasm-function[4]")
             continue;
         found = true;
-        assert.eq(stacktrace[i + 1], "<?>.wasm-function[2]@[wasm code]");
-        assert.eq(stacktrace[i + 2], "<?>.wasm-function[3]@[wasm code]");
-        assert.eq(stacktrace[i + 3], "<?>.wasm-function[1]@[wasm code]");
+        assert.eq(stacktrace[i + 1], "2@wasm-function[2]");
+        assert.eq(stacktrace[i + 2], "3@wasm-function[3]");
+        assert.eq(stacktrace[i + 3], "1@wasm-function[1]");
     }
     assert.truthy(found);
     stacktrace = null;

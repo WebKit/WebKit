@@ -1,7 +1,5 @@
 Storage/InProcessIDBServer.cpp
-Storage/StorageAreaSync.cpp
 Storage/StorageSyncManager.cpp
-Storage/StorageTracker.cpp
 Storage/WebDatabaseProvider.cpp
 WebCoreSupport/SocketStreamHandleImpl.cpp
 WebCoreSupport/WebSocketChannel.cpp
@@ -84,31 +82,32 @@ mac/DOM/DOMXPathExpression.mm
 mac/DOM/DOMXPathResult.mm
 mac/DOM/WebDOMOperations.mm
 mac/Misc/WebElementDictionary.mm
-mac/Misc/WebNSPasteboardExtras.mm
-mac/Misc/WebSharingServicePickerController.mm
-mac/Misc/WebStringTruncator.mm
+[ Mac ] mac/Misc/WebNSPasteboardExtras.mm
+[ Mac ] mac/Misc/WebStringTruncator.mm
 mac/Plugins/WebPluginContainerCheck.mm
-mac/Plugins/WebPluginController.mm
-mac/WebCoreSupport/PopupMenuMac.mm
+[ Mac ] mac/Plugins/WebPluginController.mm
+[ Mac ] mac/WebCoreSupport/PopupMenuMac.mm
 mac/WebCoreSupport/WebChromeClient.mm
-mac/WebCoreSupport/WebContextMenuClient.mm
-mac/WebCoreSupport/WebEditorClient.mm
+[ Mac ] mac/WebCoreSupport/WebContextMenuClient.mm
+[ Mac ] mac/WebCoreSupport/WebEditorClient.mm
 mac/WebCoreSupport/WebFrameLoaderClient.mm
 mac/WebCoreSupport/WebGeolocationClient.mm
-mac/WebCoreSupport/WebInspectorClient.mm
+[ Mac ] mac/WebCoreSupport/WebInspectorClient.mm
 mac/WebCoreSupport/WebKitFullScreenListener.mm
 mac/WebCoreSupport/WebValidationMessageClient.mm
 mac/WebView/WebDeviceOrientationProviderMock.mm
 mac/WebView/WebFrame.mm
-mac/WebView/WebFrameView.mm
-mac/WebView/WebFullScreenController.mm
+[ Mac ] mac/WebView/WebFullScreenController.mm
 mac/WebView/WebHTMLRepresentation.mm
 mac/WebView/WebHTMLView.mm
-mac/WebView/WebImmediateActionController.mm
-mac/WebView/WebMediaPlaybackTargetPicker.mm
-mac/WebView/WebPDFView.mm
+[ Mac ] mac/WebView/WebImmediateActionController.mm
+[ Mac ] mac/WebView/WebPDFView.mm
 mac/WebView/WebPreferences.mm
 mac/WebView/WebScriptDebugger.mm
 mac/WebView/WebTextIterator.mm
-mac/WebView/WebVideoFullscreenController.mm
+[ Mac ] mac/WebView/WebVideoFullscreenController.mm
 mac/WebView/WebView.mm
+[ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
+[ iOS ] ios/WebCoreSupport/WebVisiblePosition.mm
+[ iOS ] ios/WebView/WebPDFViewPlaceholder.mm
+[ iOS ] mac/DOM/DOMUIKitExtensions.mm

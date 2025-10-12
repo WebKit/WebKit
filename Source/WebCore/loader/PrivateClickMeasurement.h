@@ -25,13 +25,14 @@
 
 #pragma once
 
-#include "AttributionSecondsUntilSendData.h"
-#include "AttributionTimeToSendData.h"
-#include "AttributionTriggerData.h"
-#include "EphemeralNonce.h"
-#include "PCMSites.h"
-#include "RegistrableDomain.h"
+#include <WebCore/AttributionSecondsUntilSendData.h>
+#include <WebCore/AttributionTimeToSendData.h>
+#include <WebCore/AttributionTriggerData.h>
+#include <WebCore/EphemeralNonce.h>
+#include <WebCore/PCMSites.h>
+#include <WebCore/RegistrableDomain.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Platform.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
 

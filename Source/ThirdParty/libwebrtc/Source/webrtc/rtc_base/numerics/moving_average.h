@@ -17,7 +17,7 @@
 #include <optional>
 #include <vector>
 
-namespace rtc {
+namespace webrtc {
 
 // Calculates average over fixed size window. If there are less than window
 // size elements, calculates average of all inserted so far elements.
@@ -61,5 +61,6 @@ class MovingAverage {
   std::vector<int> history_;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 #endif  // RTC_BASE_NUMERICS_MOVING_AVERAGE_H_

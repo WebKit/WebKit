@@ -12,13 +12,10 @@
 #define AUDIO_DEVICE_AUDIO_MIXER_MANAGER_PULSE_LINUX_H_
 
 #include <pulse/pulseaudio.h>
-#include <stdint.h>
+
+#include <cstdint>
 
 #include "api/sequence_checker.h"
-
-#ifndef UINT32_MAX
-#define UINT32_MAX ((uint32_t)-1)
-#endif
 
 namespace webrtc {
 

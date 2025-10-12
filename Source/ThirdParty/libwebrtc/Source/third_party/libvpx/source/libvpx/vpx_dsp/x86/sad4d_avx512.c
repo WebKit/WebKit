@@ -11,9 +11,10 @@
 #include "./vpx_dsp_rtcd.h"
 #include "vpx/vpx_integer.h"
 
-void vpx_sad64x64x4d_avx512(const uint8_t *src_ptr, int src_stride,
-                            const uint8_t *const ref_array[4], int ref_stride,
-                            uint32_t sad_array[4]) {
+static INLINE void sad64xhx4d_avx512(const uint8_t *src_ptr, int src_stride,
+                                     const uint8_t *const ref_array[4],
+                                     int ref_stride, int h,
+                                     uint32_t sad_array[4]) {
   __m512i src_reg, ref0_reg, ref1_reg, ref2_reg, ref3_reg;
   __m512i sum_ref0, sum_ref1, sum_ref2, sum_ref3;
   __m512i sum_mlow, sum_mhigh;
@@ -28,7 +29,7 @@ void vpx_sad64x64x4d_avx512(const uint8_t *src_ptr, int src_stride,
   sum_ref1 = _mm512_set1_epi16(0);
   sum_ref2 = _mm512_set1_epi16(0);
   sum_ref3 = _mm512_set1_epi16(0);
-  for (i = 0; i < 64; i++) {
+  for (i = 0; i < h; i++) {
     // load src and all ref[]
     src_reg = _mm512_loadu_si512((const __m512i *)src_ptr);
     ref0_reg = _mm512_loadu_si512((const __m512i *)ref0);
@@ -81,3 +82,24 @@ void vpx_sad64x64x4d_avx512(const uint8_t *src_ptr, int src_stride,
     _mm_storeu_si128((__m128i *)(sad_array), sum128);
   }
 }
+
+void vpx_sad64x64x4d_avx512(const uint8_t *src, int src_stride,
+                            const uint8_t *const ref_array[4], int ref_stride,
+                            uint32_t sad_array[4]) {
+  sad64xhx4d_avx512(src, src_stride, ref_array, ref_stride, 64, sad_array);
+}
+
+#define SADS64_H(h)                                                          \
+  void vpx_sad_skip_64x##h##x4d_avx512(                                      \
+      const uint8_t *src, int src_stride, const uint8_t *const ref_array[4], \
+      int ref_stride, uint32_t sad_array[4]) {                               \
+    sad64xhx4d_avx512(src, 2 * src_stride, ref_array, 2 * ref_stride,        \
+                      ((h) >> 1), sad_array);                                \
+    sad_array[0] <<= 1;                                                      \
+    sad_array[1] <<= 1;                                                      \
+    sad_array[2] <<= 1;                                                      \
+    sad_array[3] <<= 1;                                                      \
+  }
+
+SADS64_H(64)
+SADS64_H(32)

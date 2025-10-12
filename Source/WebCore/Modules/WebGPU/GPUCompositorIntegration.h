@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ public:
     }
 
 #if PLATFORM(COCOA)
-    Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, WebCore::WebGPU::Device&) const;
+    Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, unsigned bufferCount, WebCore::WebGPU::Device&) const;
 #endif
 
     void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void()>&&);
@@ -59,6 +59,7 @@ public:
     const WebGPU::CompositorIntegration& backing() const { return m_backing; }
 
     void paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t);
+    void updateContentsHeadroom(float);
 
 private:
     GPUCompositorIntegration(Ref<WebGPU::CompositorIntegration>&& backing)
@@ -66,7 +67,7 @@ private:
     {
     }
 
-    Ref<WebGPU::CompositorIntegration> m_backing;
+    const Ref<WebGPU::CompositorIntegration> m_backing;
 };
 
 }

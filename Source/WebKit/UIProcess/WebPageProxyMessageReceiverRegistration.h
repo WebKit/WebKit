@@ -38,9 +38,9 @@ class WebProcessProxy;
 class WebPageProxyMessageReceiverRegistration {
 public:
     ~WebPageProxyMessageReceiverRegistration();
-    void startReceivingMessages(WebProcessProxy&, WebCore::PageIdentifier, IPC::MessageReceiver&);
+    void startReceivingMessages(WebProcessProxy&, WebCore::PageIdentifier, IPC::MessageReceiver& webPageProxyReceiver, IPC::MessageReceiver& backForwardListReceiver);
     void stopReceivingMessages();
-    void transferMessageReceivingFrom(WebPageProxyMessageReceiverRegistration&, IPC::MessageReceiver& newReceiver);
+    void transferMessageReceivingFrom(WebPageProxyMessageReceiverRegistration&, IPC::MessageReceiver& newWebPageProxyReceiver, IPC::MessageReceiver& newBackForwardListReceiver);
 private:
     struct Data {
         WebCore::PageIdentifier webPageID;

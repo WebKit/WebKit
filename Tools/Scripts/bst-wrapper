@@ -25,7 +25,7 @@ scriptdir = os.path.abspath(os.path.dirname(__file__))
 SDK_PROJECT_PATH = os.path.join(scriptdir, "..", "buildstream")
 
 # DOCKER_IMAGE_ID from https://gitlab.com/freedesktop-sdk/freedesktop-sdk/-/blob/master/.gitlab-ci.yml
-IMAGE_ID = 'f2004eceea4b91b56e761826248274b2f66d28b3'
+IMAGE_ID = 'cbcc265ac10656eadfb404f03ca94400f5ecd9bb'
 
 TOOLBOX_NAME = f'bst2-{IMAGE_ID}'
 IMAGE = f'registry.gitlab.com/freedesktop-sdk/infrastructure/freedesktop-sdk-docker-images/bst2:{IMAGE_ID}'

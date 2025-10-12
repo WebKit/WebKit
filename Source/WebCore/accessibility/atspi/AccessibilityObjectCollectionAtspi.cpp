@@ -369,7 +369,6 @@ Vector<Ref<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::matches(Collecti
     case Atspi::CollectionSortOrder::SortOrderReverseTab:
         g_warning("Atspi collection sort method %u not implemented yet", static_cast<uint32_t>(sortOrder));
         break;
-
     }
 
     return matchList;

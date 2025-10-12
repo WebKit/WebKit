@@ -1,39 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
 <body>
 
-<div id="content" contenteditable tabindex="0">helloworld</div>
-
-<div id="console"></div>
+<div id="contenteditable" contenteditable tabindex="0">helloworld</div>
 
 <script>
-    if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
+var output = "This test exercises a combination of selectedTextRange, stringForRange, and newline manipulation.\n\n";
 
-        var content = document.getElementById("content");
-        content.focus();
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-        var text = accessibilityController.focusedElement;
-        text.setSelectedTextRange(5, 0);
-        shouldBecomeEqual("text.selectedTextRange", "'{5, 0}'", function() {
-            text.insertText("\n");
+    var contenteditable;
+    setTimeout(async function() {
+        contenteditable = await waitForFocus("contenteditable");
+        contenteditable.setSelectedTextRange(5, 0);
 
-            var t = text.stringForRange(0, 11);
-            t = t.replace(/(?:\r\n|\r|\n)/g, '[newline]');
-            debug("There must be only one [newline] between hello and world: " + t);
+        output += await expectAsync("contenteditable.selectedTextRange", "'{5, 0}'");
+        contenteditable.insertText("\n");
+        output += await expectAsync("contenteditable.stringForRange(0, 11).replace(new RegExp('(?:\\r\\n|\\r|\\n)', 'g'), '[newline]')", "'hello[newline]world'");
 
-            shouldBecomeEqual("text.selectedTextRange", "'{6, 0}'", function() {
-                var t = text.stringForRange(6, 5);
-                t = t.replace(/(?:\r\n|\r|\n)/g, '[newline]');
-                debug("The text after the newline should be world: " + t);
+        output += await expectAsync("contenteditable.selectedTextRange", "'{6, 0}'");
+        output += await expectAsync("contenteditable.stringForRange(6, 5)", "'world'");
 
-                finishJSTest();
-            });
-        });
-    }
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
+

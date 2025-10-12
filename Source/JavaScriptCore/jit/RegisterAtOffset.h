@@ -27,8 +27,8 @@
 
 #if ENABLE(ASSEMBLER)
 
-#include "Reg.h"
-#include "Width.h"
+#include <JavaScriptCore/Reg.h>
+#include <JavaScriptCore/Width.h>
 #include <cstddef>
 #include <wtf/PrintStream.h>
 

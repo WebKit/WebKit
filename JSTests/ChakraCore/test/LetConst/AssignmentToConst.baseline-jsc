@@ -35,7 +35,7 @@ TypeError: Attempted to assign to readonly property.
 test 18
 passed
 test 19
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'x' before initialization.
 test 20
 TypeError: Attempted to assign to readonly property.
 test 21
@@ -43,6 +43,6 @@ TypeError: Attempted to assign to readonly property.
 test 22
 TypeError: Attempted to assign to readonly property.
 test 23
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'x' before initialization.
 test 24
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'x' before initialization.

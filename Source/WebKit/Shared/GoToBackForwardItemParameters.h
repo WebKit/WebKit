@@ -30,8 +30,8 @@
 #include "SessionState.h"
 #include "WebsitePoliciesData.h"
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/HistoryItem.h>
 #include <WebCore/NavigationIdentifier.h>
+#include <WebCore/ProcessSwapDisposition.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
 #include <wtf/text/WTFString.h>

@@ -1,0 +1,4 @@
+
+PASS anchor() functions are not allowed in registered custom properties accepting <length> or <length-percentage>
+PASS anchor-size() using fallback value for registered custom properties accepting <length> or <length-percentage>
+

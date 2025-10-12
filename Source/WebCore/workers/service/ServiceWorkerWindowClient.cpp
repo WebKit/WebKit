@@ -51,8 +51,8 @@ void ServiceWorkerWindowClient::focus(ScriptExecutionContext& context, Ref<Defer
     }
 
     auto promiseIdentifier = serviceWorkerContext.clients().addPendingPromise(WTFMove(promise));
-    callOnMainThread([clientIdentifier = identifier(), promiseIdentifier, serviceWorkerIdentifier = serviceWorkerContext.thread().identifier()]() mutable {
-        SWContextManager::singleton().connection()->focus(clientIdentifier, [promiseIdentifier, serviceWorkerIdentifier](auto result) mutable {
+    callOnMainThread([clientIdentifier = identifier(), promiseIdentifier, serviceWorkerIdentifier = serviceWorkerContext.thread()->identifier()]() mutable {
+        SWContextManager::singleton().protectedConnection()->focus(clientIdentifier, [promiseIdentifier, serviceWorkerIdentifier](auto result) mutable {
             SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promiseIdentifier, result = crossThreadCopy(WTFMove(result))](auto& serviceWorkerContext) mutable {
                 auto promise = serviceWorkerContext.clients().takePendingPromise(promiseIdentifier);
                 if (!promise)
@@ -87,8 +87,8 @@ void ServiceWorkerWindowClient::navigate(ScriptExecutionContext& context, const 
     // We implement step 4 (checking of client's active service worker) in network process as we cannot do it synchronously.
     auto& serviceWorkerContext = downcast<ServiceWorkerGlobalScope>(context);
     auto promiseIdentifier = serviceWorkerContext.clients().addPendingPromise(WTFMove(promise));
-    callOnMainThread([clientIdentifier = identifier(), promiseIdentifier, serviceWorkerIdentifier = serviceWorkerContext.thread().identifier(), url = WTFMove(url).isolatedCopy()]() mutable {
-        SWContextManager::singleton().connection()->navigate(clientIdentifier, serviceWorkerIdentifier, url, [promiseIdentifier, serviceWorkerIdentifier](auto result) mutable {
+    callOnMainThread([clientIdentifier = identifier(), promiseIdentifier, serviceWorkerIdentifier = serviceWorkerContext.thread()->identifier(), url = WTFMove(url).isolatedCopy()]() mutable {
+        SWContextManager::singleton().protectedConnection()->navigate(clientIdentifier, serviceWorkerIdentifier, url, [promiseIdentifier, serviceWorkerIdentifier](auto result) mutable {
             SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promiseIdentifier, result = crossThreadCopy(WTFMove(result))](auto& serviceWorkerContext) mutable {
                 auto promise = serviceWorkerContext.clients().takePendingPromise(promiseIdentifier);
                 if (!promise)

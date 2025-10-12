@@ -28,11 +28,10 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "SQLValue.h"
 
 namespace WebCore {
-
-template<typename> class ExceptionOr;
 
 class SQLResultSetRowList : public RefCounted<SQLResultSetRowList> {
 public:

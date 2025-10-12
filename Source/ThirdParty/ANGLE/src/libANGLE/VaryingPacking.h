@@ -12,6 +12,10 @@
 #ifndef LIBANGLE_VARYINGPACKING_H_
 #define LIBANGLE_VARYINGPACKING_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <GLSLANG/ShaderVars.h>
 
 #include "angle_gl.h"

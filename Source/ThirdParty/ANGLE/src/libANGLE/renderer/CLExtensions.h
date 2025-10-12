@@ -27,11 +27,27 @@ struct CLExtensions
     void initializeExtensions(std::string &&extensionStr);
     void initializeVersionedExtensions(const NameVersionVector &versionedExtList);
 
+    using ExternalMemoryHandleType   = cl_external_memory_handle_type_khr;
+    using ExternalMemoryHandleBitset = angle::PackedEnumBitSet<cl::ExternalMemoryHandle>;
+    using ExternalMemoryHandleFixedVector =
+        angle::FixedVector<ExternalMemoryHandleType,
+                           static_cast<int>(cl::ExternalMemoryHandle::EnumCount)>;
+    bool populateSupportedExternalMemoryHandleTypes(ExternalMemoryHandleBitset supportedHandles);
+
     std::string versionStr;
     cl_version version = 0u;
 
     std::string extensions;
     NameVersionVector extensionsWithVersion;
+
+    cl_device_integer_dot_product_capabilities_khr integerDotProductCapabilities;
+    cl_device_integer_dot_product_acceleration_properties_khr
+        integerDotProductAccelerationProperties8Bit;
+    cl_device_integer_dot_product_acceleration_properties_khr
+        integerDotProductAccelerationProperties4x8BitPacked;
+    ExternalMemoryHandleBitset externalMemoryHandleSupport;
+    // keep an "OpenCL list" version of supported external memory types
+    ExternalMemoryHandleFixedVector externalMemoryHandleSupportList;
 
     // These Khronos extension names must be returned by all devices that support OpenCL 1.1.
     bool khrByteAddressableStore       = false;  // cl_khr_byte_addressable_store
@@ -53,6 +69,9 @@ struct CLExtensions
     bool khrICD                  = false;  // cl_khr_icd
     bool khrInt64BaseAtomics     = false;  // cl_khr_int64_base_atomics
     bool khrInt64ExtendedAtomics = false;  // cl_khr_int64_extended_atomics
+    bool khrIntegerDotProduct    = false;  // cl_khr_integer_dot_product
+    bool khrExternalMemory       = false;  // cl_khr_external_memory
+    bool khrPriorityHints        = false;  // cl_khr_priority_hints
 };
 
 }  // namespace rx

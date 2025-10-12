@@ -10,13 +10,19 @@
 #include "modules/remote_bitrate_estimator/remote_bitrate_estimator_unittest_helper.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <utility>
+#include <vector>
 
+#include "api/units/data_rate.h"
+#include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/checks.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -29,7 +35,7 @@ const int kNumInitialPackets = 2;
 namespace testing {
 
 void TestBitrateObserver::OnReceiveBitrateChanged(
-    const std::vector<uint32_t>& ssrcs,
+    const std::vector<uint32_t>& /* ssrcs */,
     uint32_t bitrate) {
   latest_bitrate_ = bitrate;
   updated_ = true;
@@ -91,7 +97,7 @@ int64_t RtpStream::next_rtp_time() const {
 // Generates an RTCP packet.
 RtpStream::RtcpPacket* RtpStream::Rtcp(int64_t time_now_us) {
   if (time_now_us < next_rtcp_time_) {
-    return NULL;
+    return nullptr;
   }
   RtcpPacket* rtcp = new RtcpPacket;
   int64_t send_time_us = time_now_us + kSendSideOffsetUs;
@@ -251,7 +257,7 @@ void RemoteBitrateEstimatorTest::IncomingPacket(uint32_t ssrc,
 // Returns true if an over-use was seen, false otherwise.
 // The StreamGenerator::updated() should be used to check for any changes in
 // target bitrate after the call to this function.
-bool RemoteBitrateEstimatorTest::GenerateAndProcessFrame(uint32_t ssrc,
+bool RemoteBitrateEstimatorTest::GenerateAndProcessFrame(uint32_t /* ssrc */,
                                                          uint32_t bitrate_bps) {
   RTC_DCHECK_GT(bitrate_bps, 0);
   stream_generator_->SetBitrateBps(bitrate_bps);

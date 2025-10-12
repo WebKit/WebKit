@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "ServiceWorkerData.h"
-#include "ServiceWorkerIdentifier.h"
-#include "ServiceWorkerRegistrationKey.h"
-#include "ServiceWorkerTypes.h"
-#include "ServiceWorkerUpdateViaCache.h"
+#include <WebCore/ServiceWorkerData.h>
+#include <WebCore/ServiceWorkerIdentifier.h>
+#include <WebCore/ServiceWorkerRegistrationKey.h>
+#include <WebCore/ServiceWorkerTypes.h>
+#include <WebCore/ServiceWorkerUpdateViaCache.h>
 #include <wtf/WallTime.h>
 
 namespace WebCore {
@@ -37,7 +37,7 @@ namespace WebCore {
 enum class ServiceWorkerUpdateViaCache : uint8_t;
 
 struct ServiceWorkerRegistrationData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ServiceWorkerRegistrationData);
 
     ServiceWorkerRegistrationKey key;
     ServiceWorkerRegistrationIdentifier identifier;

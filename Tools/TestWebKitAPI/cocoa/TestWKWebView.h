@@ -24,8 +24,12 @@
  */
 
 #import <WebKit/WebKit.h>
+
+#ifdef __cplusplus
 #import <wtf/Forward.h>
+#import <wtf/IterationStatus.h>
 #import <wtf/RetainPtr.h>
+#endif
 
 @class _WKFrameTreeNode;
 @class _WKProcessPoolConfiguration;
@@ -57,6 +61,8 @@
 #endif
 @end
 
+#ifdef __cplusplus
+
 namespace TestWebKitAPI {
 
 struct AutocorrectionContext {
@@ -84,7 +90,6 @@ class Color;
 #if HAVE(UI_WK_DOCUMENT_CONTEXT)
 - (void)synchronouslyAdjustSelectionWithDelta:(NSRange)range;
 #endif
-@property (nonatomic, readonly) UIView <UITextInputPrivate, UITextInputInternal, UITextInputMultiDocument, UIWKInteractionViewProtocol_Staging_95652872, UITextInputTokenizer> *textInputContentView;
 @property (nonatomic, readonly) TestWebKitAPI::AutocorrectionContext autocorrectionContext;
 @property (nonatomic, readonly) id<UITextInputTraits_Private> effectiveTextInputTraits;
 - (std::pair<CGRect, CGRect>)autocorrectionRectsForString:(NSString *)string;
@@ -106,8 +111,12 @@ class Color;
 #endif
 #endif // PLATFORM(IOS_FAMILY)
 
+- (CALayer *)firstLayerWithName:(NSString *)layerName;
+- (void)forEachCALayer:(IterationStatus(^)(CALayer *))visitor;
+
 @property (nonatomic, readonly) CGImageRef snapshotAfterScreenUpdates;
 @property (nonatomic, readonly) NSUInteger gpuToWebProcessConnectionCount;
+@property (nonatomic, readonly) NSUInteger modelProcessModelPlayerCount;
 @property (nonatomic, readonly) NSString *contentsAsString;
 @property (nonatomic, readonly) NSData *contentsAsWebArchive;
 @property (nonatomic, readonly) NSArray<NSString *> *tagsInBody;
@@ -135,11 +144,26 @@ class Color;
 - (id)objectByEvaluatingJavaScriptWithUserGesture:(NSString *)script;
 - (id)objectByEvaluatingJavaScript:(NSString *)script;
 - (id)objectByEvaluatingJavaScript:(NSString *)script inFrame:(WKFrameInfo *)frame;
+- (id)objectByEvaluatingJavaScript:(NSString *)script inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)world;
+- (id)objectByCallingAsyncFunction:(NSString *)script withArguments:(NSDictionary *)arguments;
 - (id)objectByCallingAsyncFunction:(NSString *)script withArguments:(NSDictionary *)arguments error:(NSError **)errorOut;
+- (id)objectByCallingAsyncFunction:(NSString *)script withArguments:(NSDictionary *)arguments inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)world;
 - (unsigned)waitUntilClientWidthIs:(unsigned)expectedClientWidth;
 - (CGRect)elementRectFromSelector:(NSString *)selector;
 - (CGPoint)elementMidpointFromSelector:(NSString *)selector;
 @end
+
+#endif // __cplusplus
+
+@interface WKWebView (TestWebKitAPI_NonCpp)
+
+#if PLATFORM(IOS_FAMILY)
+@property (nonatomic, readonly) UIView <UITextInputPrivate, UITextInputInternal, UITextInputMultiDocument, UIWKInteractionViewProtocol_Staging_95652872, UITextInputTokenizer> *textInputContentView;
+#endif
+
+@end
+
+#ifdef __cplusplus
 
 @interface TestMessageHandler : NSObject <WKScriptMessageHandler>
 - (void)addMessage:(NSString *)message withHandler:(dispatch_block_t)handler;
@@ -163,6 +187,7 @@ class Color;
 - (void)waitForNextPresentationUpdate;
 - (void)waitForNextVisibleContentRectUpdate;
 - (void)waitUntilActivityStateUpdateDone;
+- (void)forceLightMode;
 - (void)forceDarkMode;
 - (NSString *)stylePropertyAtSelectionStart:(NSString *)propertyName;
 - (NSString *)stylePropertyAtSelectionEnd:(NSString *)propertyName;
@@ -178,6 +203,7 @@ class Color;
 - (std::optional<CGPoint>)getElementMidpoint:(NSString *)selector;
 - (Vector<WebCore::Color>)sampleColors;
 - (Vector<WebCore::Color>)sampleColorsWithInterval:(unsigned)interval;
+- (RetainPtr<_WKFrameTreeNode>)frameTree;
 @end
 
 #if PLATFORM(IOS_FAMILY)
@@ -199,6 +225,7 @@ class Color;
 - (_WKActivatedElementInfo *)activatedElementAtPosition:(CGPoint)position;
 - (void)evaluateJavaScriptAndWaitForInputSessionToChange:(NSString *)script;
 - (WKContentView *)wkContentView;
+- (void)setZoomScaleSimulatingUserTriggeredZoom:(CGFloat)zoomScale;
 @end
 #endif
 
@@ -236,3 +263,4 @@ class Color;
 - (WKFindResult *)findStringAndWait:(NSString *)string withConfiguration:(WKFindConfiguration *)configuration;
 @end
 
+#endif // __cplusplus

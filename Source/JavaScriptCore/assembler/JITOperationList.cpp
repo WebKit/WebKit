@@ -32,6 +32,7 @@
 #include "LLIntData.h"
 #include "Opcode.h"
 #include "Options.h"
+#include "WebAssemblyBuiltin.h"
 
 #if HAVE(DLADDR)
 #include <cxxabi.h>
@@ -112,10 +113,6 @@ LLINT_DECLARE_ROUTINE_VALIDATE(llint_function_for_construct_arity_check);
 LLINT_DECLARE_ROUTINE_VALIDATE(llint_eval_prologue);
 LLINT_DECLARE_ROUTINE_VALIDATE(llint_program_prologue);
 LLINT_DECLARE_ROUTINE_VALIDATE(llint_module_program_prologue);
-LLINT_DECLARE_ROUTINE_VALIDATE(wasm_function_prologue_trampoline);
-LLINT_DECLARE_ROUTINE_VALIDATE(wasm_function_prologue);
-LLINT_DECLARE_ROUTINE_VALIDATE(wasm_function_prologue_simd_trampoline);
-LLINT_DECLARE_ROUTINE_VALIDATE(wasm_function_prologue_simd);
 LLINT_DECLARE_ROUTINE_VALIDATE(llint_throw_during_call_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(llint_handle_uncaught_exception);
 LLINT_DECLARE_ROUTINE_VALIDATE(checkpoint_osr_exit_trampoline);
@@ -123,13 +120,17 @@ LLINT_DECLARE_ROUTINE_VALIDATE(checkpoint_osr_exit_from_inlined_call_trampoline)
 LLINT_DECLARE_ROUTINE_VALIDATE(normal_osr_exit_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(fuzzer_return_early_from_loop_hint);
 LLINT_DECLARE_ROUTINE_VALIDATE(js_to_wasm_wrapper_entry);
-LLINT_DECLARE_ROUTINE_VALIDATE(wasm_to_wasm_wrapper_entry);
 LLINT_DECLARE_ROUTINE_VALIDATE(wasm_to_wasm_ipint_wrapper_entry);
 LLINT_DECLARE_ROUTINE_VALIDATE(wasm_to_js_wrapper_entry);
 LLINT_DECLARE_ROUTINE_VALIDATE(ipint_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(ipint_entry);
-LLINT_DECLARE_ROUTINE_VALIDATE(ipint_function_prologue_simd_trampoline);
-LLINT_DECLARE_ROUTINE_VALIDATE(ipint_function_prologue_simd);
+LLINT_DECLARE_ROUTINE_VALIDATE(ipint_simd_entry);
+LLINT_DECLARE_ROUTINE_VALIDATE(ipint_catch_entry);
+LLINT_DECLARE_ROUTINE_VALIDATE(ipint_catch_all_entry);
+LLINT_DECLARE_ROUTINE_VALIDATE(ipint_table_catch_entry);
+LLINT_DECLARE_ROUTINE_VALIDATE(ipint_table_catch_ref_entry);
+LLINT_DECLARE_ROUTINE_VALIDATE(ipint_table_catch_all_entry);
+LLINT_DECLARE_ROUTINE_VALIDATE(ipint_table_catch_allref_entry);
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
 #define LLINT_OP_EXTRAS(validateLabel) reinterpret_cast<void*>(validateLabel)
@@ -156,6 +157,27 @@ LLINT_DECLARE_ROUTINE_VALIDATE(ipint_function_prologue_simd);
 #define LLINT_RETURN_LOCATION(name, ...) \
     LLINT_OP(name##_return_location)
 
+#if ENABLE(JIT_OPERATION_VALIDATION) && !ENABLE(JIT_CAGE)
+// In this configuration the validation function is a static constexpr equal to the original function.
+// It is not visible here and does not produce a linkable symbol.
+#define BUILTIN_WASM_ENTRY_VALIDATE_NAME(setName, builtinName) BUILTIN_WASM_ENTRY_NAME(setName, builtinName)
+#else
+#define BUILTIN_WASM_ENTRY_VALIDATE_NAME(setName, builtinName) CONCAT(BUILTIN_WASM_ENTRY_NAME(setName, builtinName), Validate)
+#endif
+
+#define DECLARE_WASM_BUILTIN_ENTRY(setName, builtinName, signature) \
+    extern "C" EncodedJSValue BUILTIN_WASM_ENTRY_NAME(setName, builtinName)(); \
+    extern "C" EncodedJSValue BUILTIN_WASM_ENTRY_VALIDATE_NAME(setName, builtinName)();
+
+FOR_EACH_WASM_BUILTIN(DECLARE_WASM_BUILTIN_ENTRY)
+
+#undef DECLARE_WASM_BUILTIN_ENTRY
+
+#define WASM_BUILTIN_RECORD(setName, builtinName, signature) { \
+        std::bit_cast<void*>(&BUILTIN_WASM_ENTRY_NAME(setName, builtinName)), \
+        LLINT_OP_EXTRAS(BUILTIN_WASM_ENTRY_VALIDATE_NAME(setName, builtinName)) \
+    },
+
 struct LLIntOperations {
     const JITOperationAnnotation* operations;
     size_t numberOfOperations;
@@ -175,10 +197,6 @@ static LLIntOperations llintOperations()
             LLINT_ROUTINE(llint_eval_prologue)
             LLINT_ROUTINE(llint_program_prologue)
             LLINT_ROUTINE(llint_module_program_prologue)
-            LLINT_ROUTINE(wasm_function_prologue_trampoline)
-            LLINT_ROUTINE(wasm_function_prologue)
-            LLINT_ROUTINE(wasm_function_prologue_simd_trampoline)
-            LLINT_ROUTINE(wasm_function_prologue_simd)
             LLINT_ROUTINE(llint_throw_during_call_trampoline)
             LLINT_ROUTINE(llint_handle_uncaught_exception)
             LLINT_ROUTINE(checkpoint_osr_exit_trampoline)
@@ -186,21 +204,21 @@ static LLIntOperations llintOperations()
             LLINT_ROUTINE(normal_osr_exit_trampoline)
             LLINT_ROUTINE(fuzzer_return_early_from_loop_hint)
             LLINT_ROUTINE(js_to_wasm_wrapper_entry)
-            LLINT_ROUTINE(wasm_to_wasm_wrapper_entry)
             LLINT_ROUTINE(wasm_to_wasm_ipint_wrapper_entry)
             LLINT_ROUTINE(wasm_to_js_wrapper_entry)
             LLINT_ROUTINE(ipint_trampoline)
             LLINT_ROUTINE(ipint_entry)
-            LLINT_ROUTINE(ipint_function_prologue_simd_trampoline)
-            LLINT_ROUTINE(ipint_function_prologue_simd)
+            LLINT_ROUTINE(ipint_simd_entry)
+            LLINT_ROUTINE(ipint_catch_entry)
+            LLINT_ROUTINE(ipint_catch_all_entry)
+            LLINT_ROUTINE(ipint_table_catch_entry)
+            LLINT_ROUTINE(ipint_table_catch_ref_entry)
+            LLINT_ROUTINE(ipint_table_catch_all_entry)
+            LLINT_ROUTINE(ipint_table_catch_allref_entry)
+
+            FOR_EACH_WASM_BUILTIN(WASM_BUILTIN_RECORD)
 
             LLINT_OP(op_catch)
-            LLINT_OP(wasm_catch)
-            LLINT_OP(wasm_catch_all)
-            LLINT_OP(wasm_try_table_catch)
-            LLINT_OP(wasm_try_table_catchref)
-            LLINT_OP(wasm_try_table_catchall)
-            LLINT_OP(wasm_try_table_catchallref)
             LLINT_OP(llint_generic_return_point)
 
             FOR_EACH_LLINT_OPCODE_WITH_RETURN(LLINT_RETURN_LOCATION)
@@ -218,6 +236,7 @@ static LLIntOperations llintOperations()
 #undef LLINT_OP
 #undef LLINT_RETURN_LOCATION
 #undef LLINT_OP_EXTRAS
+#undef WASM_BUILTIN_RECORD
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
 

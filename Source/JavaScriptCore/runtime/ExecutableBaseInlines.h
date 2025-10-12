@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "ExecutableBase.h"
-#include "FunctionExecutable.h"
-#include "ImplementationVisibility.h"
-#include "NativeExecutable.h"
-#include "ScriptExecutable.h"
-#include "StructureInlines.h"
+#include <JavaScriptCore/ExecutableBase.h>
+#include <JavaScriptCore/FunctionExecutable.h>
+#include <JavaScriptCore/ImplementationVisibility.h>
+#include <JavaScriptCore/NativeExecutable.h>
+#include <JavaScriptCore/ScriptExecutable.h>
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace JSC {
 

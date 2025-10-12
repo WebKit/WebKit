@@ -38,6 +38,11 @@ async function setup()
     await waitForState(activeWorker, "activating");
 }
 
+function computeRedirectURL(path)
+{
+    return "http://127.0.0.1:8080/resources/redirect.py?url=http://localhost:8080/workers/service/" + path
+}
+
 async function checkIds()
 {
     activeWorker.postMessage("getResultingClientId");
@@ -49,7 +54,7 @@ async function checkIds()
     if (!self.step) {
         self.step = 1;
         self.withoutCoopResult = clientId === resultingClientId ? "PASS without coop" : "ids are not matching without coop: " + clientId + " vs. " + resultingClientId;
-        window.location = "resources/with-coop";
+        window.location = computeRedirectURL("resources/with-coop");
         return;
     }
 
@@ -59,11 +64,15 @@ async function checkIds()
         testRunner.notifyDone();
 }
 
-setup().then(async () => {
-    self.step = 0;
-    window.addEventListener("pageshow", checkIds);
-    window.location = "resources/without-coop";
-});
+if (window.location.host != "localhost:8080")
+    window.location = "http://localhost:8080" + window.location.pathname;
+else {
+    setup().then(async () => {
+        self.step = 0;
+        window.addEventListener("pageshow", checkIds);
+        window.location = computeRedirectURL("resources/without-coop");
+    });
+}
 </script>
 </body>
 </html>

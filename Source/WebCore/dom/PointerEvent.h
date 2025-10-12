@@ -25,11 +25,12 @@
 
 #pragma once
 
-#include "EventNames.h"
-#include "MouseEvent.h"
-#include "Node.h"
-#include "PointerEventTypeNames.h"
-#include "PointerID.h"
+#include <WebCore/EventNames.h>
+#include <WebCore/MouseEvent.h>
+#include <WebCore/Node.h>
+#include <WebCore/PointerEventTypeNames.h>
+#include <WebCore/PointerID.h>
+#include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
@@ -95,9 +96,9 @@ public:
     static Ref<PointerEvent> create(const AtomString& type, PointerID, const String& pointerType, IsPrimary = IsPrimary::No);
 
 #if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE))
-    static Ref<PointerEvent> create(const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const IntPoint& touchDelta = { });
-    static Ref<PointerEvent> create(const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, CanBubble, IsCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&& view, const IntPoint& touchDelta = { });
-    static Ref<PointerEvent> create(const AtomString& type, const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const IntPoint& touchDelta = { });
+    static Ref<PointerEvent> create(const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const DoublePoint& touchDelta = { });
+    static Ref<PointerEvent> create(const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, CanBubble, IsCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&& view, const DoublePoint& touchDelta = { });
+    static Ref<PointerEvent> create(const AtomString& type, const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const DoublePoint& touchDelta = { });
 #endif
 
     virtual ~PointerEvent();
@@ -114,6 +115,17 @@ public:
     double azimuthAngle() const { return m_azimuthAngle; }
     String pointerType() const { return m_pointerType; }
     bool isPrimary() const { return m_isPrimary; }
+    bool fractionalCoordinatesAllowed() const { return m_fractionalCoordinatesAllowed; }
+
+    double offsetX() override;
+    double offsetY() override;
+
+    double screenX() const override { return adjustedCoordinateForType(screenLocation().x()); }
+    double screenY() const override { return adjustedCoordinateForType(screenLocation().y()); }
+    double clientX() const override { return adjustedCoordinateForType(clientLocation().x()); }
+    double clientY() const override { return adjustedCoordinateForType(clientLocation().y()); }
+    double pageX() const override { return adjustedCoordinateForType(pageLocation().x()); }
+    double pageY() const override { return adjustedCoordinateForType(pageLocation().y()); }
 
     Vector<Ref<PointerEvent>> getCoalescedEvents() const;
 
@@ -170,11 +182,14 @@ private:
     static PointerEventAngle angleFromTilt(long tiltX, long tiltY);
     static PointerEventTilt tiltFromAngle(double altitudeAngle, double azimuthAngle);
 
+    static bool fractionalCoordinatesAllowedForType(const AtomString&);
+    double adjustedCoordinateForType(double) const;
+
     PointerEvent();
     PointerEvent(const AtomString&, Init&&, IsTrusted);
     PointerEvent(const AtomString& type, PointerID, const String& pointerType, IsPrimary);
 #if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE))
-    PointerEvent(const AtomString& type, const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, CanBubble canBubble, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const IntPoint& touchDelta = { });
+    PointerEvent(const AtomString& type, const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, CanBubble canBubble, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const DoublePoint& touchDelta = { });
 #endif
 
     PointerID m_pointerId { mousePointerID };
@@ -189,6 +204,7 @@ private:
     double m_azimuthAngle { 0 };
     String m_pointerType { mousePointerEventType() };
     bool m_isPrimary { false };
+    bool m_fractionalCoordinatesAllowed { true };
     Vector<Ref<PointerEvent>> m_coalescedEvents;
     Vector<Ref<PointerEvent>> m_predictedEvents;
 };

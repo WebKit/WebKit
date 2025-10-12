@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +30,12 @@
 
 #include "AudioSession.h"
 #include "ContextDestructionObserverInlines.h"
-#include "Document.h"
+#include "DocumentPage.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
 #include "EventTargetInterfaces.h"
 #include "ExceptionOr.h"
-#include "Page.h"
 #include "PermissionsPolicy.h"
 #include "PlatformMediaSessionManager.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -77,12 +76,12 @@ Ref<DOMAudioSession> DOMAudioSession::create(ScriptExecutionContext* context)
 DOMAudioSession::DOMAudioSession(ScriptExecutionContext* context)
     : ActiveDOMObject(context)
 {
-    AudioSession::protectedSharedSession()->addInterruptionObserver(*this);
+    AudioSession::addInterruptionObserver(*this);
 }
 
 DOMAudioSession::~DOMAudioSession()
 {
-    AudioSession::protectedSharedSession()->removeInterruptionObserver(*this);
+    AudioSession::removeInterruptionObserver(*this);
 }
 
 ExceptionOr<void> DOMAudioSession::setType(Type type)
@@ -91,7 +90,7 @@ ExceptionOr<void> DOMAudioSession::setType(Type type)
     if (!document)
         return Exception { ExceptionCode::InvalidStateError };
 
-    RefPtr page = document->protectedPage();
+    RefPtr page = document->page();
     if (!page)
         return Exception { ExceptionCode::InvalidStateError };
 
@@ -101,10 +100,12 @@ ExceptionOr<void> DOMAudioSession::setType(Type type)
     page->setAudioSessionType(type);
 
     auto categoryOverride = fromDOMAudioSessionType(type);
-    AudioSession::protectedSharedSession()->setCategoryOverride(categoryOverride);
+    AudioSession::singleton().setCategoryOverride(categoryOverride);
 
-    if (categoryOverride == AudioSessionCategory::None)
-        PlatformMediaSessionManager::updateAudioSessionCategoryIfNecessary();
+    if (categoryOverride == AudioSessionCategory::None) {
+        if (RefPtr manager = page->mediaSessionManager())
+            manager->updateAudioSessionCategoryIfNecessary();
+    }
 
     return { };
 }
@@ -118,7 +119,7 @@ DOMAudioSession::Type DOMAudioSession::type() const
     if (!document)
         return DOMAudioSession::Type::Auto;
 
-    if (RefPtr page = document->protectedPage())
+    if (RefPtr page = document->page())
         return page->audioSessionType();
 
     return DOMAudioSession::Type::Auto;
@@ -126,10 +127,10 @@ DOMAudioSession::Type DOMAudioSession::type() const
 
 static DOMAudioSession::State computeAudioSessionState()
 {
-    if (AudioSession::sharedSession().isInterrupted())
+    if (AudioSession::singleton().isInterrupted())
         return DOMAudioSession::State::Interrupted;
 
-    if (!AudioSession::sharedSession().isActive())
+    if (!AudioSession::singleton().isActive())
         return DOMAudioSession::State::Inactive;
 
     return DOMAudioSession::State::Active;

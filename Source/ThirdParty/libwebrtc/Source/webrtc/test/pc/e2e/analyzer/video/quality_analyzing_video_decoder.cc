@@ -14,13 +14,26 @@
 #include <cstring>
 #include <memory>
 #include <optional>
+#include <string>
 #include <utility>
+#include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/video/i420_buffer.h"
+#include "api/environment/environment.h"
+#include "api/scoped_refptr.h"
+#include "api/test/video_quality_analyzer_interface.h"
+#include "api/video/encoded_image.h"
 #include "api/video/video_frame.h"
+#include "api/video/video_frame_buffer.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_codec.h"
+#include "api/video_codecs/video_decoder.h"
+#include "api/video_codecs/video_decoder_factory.h"
 #include "modules/video_coding/include/video_error_codes.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "test/pc/e2e/analyzer/video/encoded_image_data_injector.h"
 #include "test/pc/e2e/analyzer/video/simulcast_dummy_buffer_helper.h"
 
 namespace webrtc {
@@ -189,19 +202,18 @@ int32_t
 QualityAnalyzingVideoDecoder::DecoderCallback::IrrelevantSimulcastStreamDecoded(
     uint16_t frame_id,
     uint32_t timestamp_ms) {
-  webrtc::VideoFrame dummy_frame =
-      webrtc::VideoFrame::Builder()
-          .set_video_frame_buffer(GetDummyFrameBuffer())
-          .set_rtp_timestamp(timestamp_ms)
-          .set_id(frame_id)
-          .build();
+  VideoFrame dummy_frame = VideoFrame::Builder()
+                               .set_video_frame_buffer(GetDummyFrameBuffer())
+                               .set_rtp_timestamp(timestamp_ms)
+                               .set_id(frame_id)
+                               .build();
   MutexLock lock(&callback_mutex_);
   RTC_DCHECK(delegate_callback_);
   delegate_callback_->Decoded(dummy_frame, std::nullopt, std::nullopt);
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
-rtc::scoped_refptr<webrtc::VideoFrameBuffer>
+scoped_refptr<VideoFrameBuffer>
 QualityAnalyzingVideoDecoder::DecoderCallback::GetDummyFrameBuffer() {
   if (!dummy_frame_buffer_) {
     dummy_frame_buffer_ = CreateDummyFrameBuffer();

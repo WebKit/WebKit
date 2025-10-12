@@ -56,7 +56,7 @@ WK_EXPORT void WKBundleFrameFocus(WKBundleFrameRef frame);
 
 WK_EXPORT void _WKBundleFrameGenerateTestReport(WKBundleFrameRef, WKStringRef message, WKStringRef group);
 
-WK_EXPORT void* WKAccessibilityRootObject(WKBundleFrameRef frame);
+WK_EXPORT void* _WKAccessibilityRootObjectForTesting(WKBundleFrameRef frame);
 
 #ifdef __cplusplus
 }

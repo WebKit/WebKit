@@ -33,6 +33,20 @@
 #include <TargetConditionals.h>
 #endif
 
+#if defined(__has_include)
+#if __has_include(<WebKitAdditions/pas_mte_additions.h>)
+#include <WebKitAdditions/pas_mte_additions.h>
+#endif // __has_include(<WebKitAdditions/pas_mte_additions.h>)
+#endif // defined(__has_include)
+
+#ifndef BASSERT_ENABLED
+#ifdef NDEBUG
+#define BASSERT_ENABLED 0
+#else
+#define BASSERT_ENABLED 1
+#endif
+#endif
+
 #define BPLATFORM(PLATFORM) (defined BPLATFORM_##PLATFORM && BPLATFORM_##PLATFORM)
 #define BOS(OS) (defined BOS_##OS && BOS_##OS)
 
@@ -336,6 +350,17 @@
 #define BENABLE_MALLOC_HEAP_BREAKDOWN 0
 #endif
 
+#if BPLATFORM(COCOA)
+/* Should be aligned with the definition in WTF/wtf/PlatformUse.h */
+#if defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)
+#define BUSE_APPLE_INTERNAL_SDK 1
+#else
+#define BUSE_APPLE_INTERNAL_SDK 0
+#endif
+#else // BPLATFORM(COCOA)
+#define BUSE_APPLE_INTERNAL_SDK 0
+#endif // !BPLATFORM(COCOA)
+
 /* This is used for debugging when hacking on how bmalloc calculates its physical footprint. */
 #define ENABLE_PHYSICAL_PAGE_MAP 0
 
@@ -360,6 +385,18 @@
 #endif
 #endif
 
+#if BUSE_LIBPAS
+#ifndef BUSE_OPENSOURCE_MTE
+#define BUSE_OPENSOURCE_MTE 0
+#endif // BUSE_OPENSOURCE_MTE
+
+#ifndef BENABLE_MTE
+#define BENABLE_MTE (BUSE(APPLE_INTERNAL_SDK) && BPLATFORM(IOS_FAMILY) && BCPU(ARM64E) && BUSE_OPENSOURCE_MTE)
+#endif // !defined(BENABLE_MTE)
+#else // !BUSE_LIBPAS
+#define BENABLE_MTE 0
+#endif // BUSE_LIBPAS
+
 #if !defined(BUSE_PRECOMPUTED_CONSTANTS_VMPAGE4K)
 #define BUSE_PRECOMPUTED_CONSTANTS_VMPAGE4K 1
 #endif
@@ -368,7 +405,7 @@
 #define BUSE_PRECOMPUTED_CONSTANTS_VMPAGE16K 1
 #endif
 
-/* We only export the mallocSize and mallocGoodSize APIs if they're supported by the DebugHeap allocator (currently only Darwin) and the current bmalloc allocator (currently only libpas). */
+/* We only export the mallocSize and mallocGoodSize APIs if they're supported by the SystemHeap allocator (currently only Darwin) and the current bmalloc allocator (currently only libpas). */
 #if BUSE(LIBPAS) && BOS(DARWIN)
 #define BENABLE_MALLOC_SIZE 1
 #define BENABLE_MALLOC_GOOD_SIZE 1
@@ -382,5 +419,13 @@
 #define BUSE_TZONE 1
 #else
 #define BUSE_TZONE 0
+#endif
+#endif
+
+#if !defined(BUSE_DYNAMIC_TZONE_COMPACTION)
+#if BUSE(TZONE) && (BASAN_ENABLED || BASSERT_ENABLED)
+#define BUSE_DYNAMIC_TZONE_COMPACTION 1
+#else
+#define BUSE_DYNAMIC_TZONE_COMPACTION 0
 #endif
 #endif

@@ -69,6 +69,9 @@ const expect = {
   ])
 };
 
+// ULP tolerance fo cross color space readback
+const kMaxDiffULPsForNormFormatWithDifferentColorSpaceCanvas = 3;
+
 /**
  * Given 4 pixels in rgba8unorm format, puts them into an ImageData
  * of the specified color space and then puts them into an srgb color space
@@ -181,7 +184,12 @@ sourceData)
     destinationColorSpace
   );
 
-  readPixelsFrom2DCanvasAndCompare(t, fromWebGPUCtx, expect, 2);
+  readPixelsFrom2DCanvasAndCompare(
+    t,
+    fromWebGPUCtx,
+    expect,
+    kMaxDiffULPsForNormFormatWithDifferentColorSpaceCanvas
+  );
 }
 
 function checkImageResult(

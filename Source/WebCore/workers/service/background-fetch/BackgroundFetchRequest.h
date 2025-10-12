@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "ContentSecurityPolicyResponseHeaders.h"
-#include "FetchHeadersGuard.h"
-#include "FetchOptions.h"
-#include "HTTPHeaderMap.h"
-#include "ResourceRequest.h"
+#include <WebCore/ContentSecurityPolicyResponseHeaders.h>
+#include <WebCore/FetchHeadersGuard.h>
+#include <WebCore/FetchOptions.h>
+#include <WebCore/HTTPHeaderMap.h>
+#include <WebCore/ResourceRequest.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/Markable.h>
 
@@ -44,7 +44,7 @@ struct BackgroundFetchRequest {
     FetchHeadersGuard guard;
     HTTPHeaderMap httpHeaders;
     String referrer;
-    Markable<ContentSecurityPolicyResponseHeaders, ContentSecurityPolicyResponseHeaders::MarkableTraits> cspResponseHeaders;
+    Markable<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
 };
 
 } // namespace WebCore

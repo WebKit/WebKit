@@ -41,7 +41,7 @@
 #include <WebCore/WebGPUCommandEncoder.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_streamConnection)
 
 namespace WebKit {
 
@@ -59,14 +59,6 @@ RemoteCommandEncoder::RemoteCommandEncoder(GPUConnectionToWebProcess& gpuConnect
 }
 
 RemoteCommandEncoder::~RemoteCommandEncoder() = default;
-
-RefPtr<IPC::Connection> RemoteCommandEncoder::connection() const
-{
-    RefPtr connection = m_gpuConnectionToWebProcess.get();
-    if (!connection)
-        return nullptr;
-    return &connection->connection();
-}
 
 void RemoteCommandEncoder::destruct()
 {

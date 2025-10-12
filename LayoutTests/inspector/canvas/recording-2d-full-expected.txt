@@ -305,19 +305,6 @@ frames:
         3: (anonymous function)
         4: executeFrameFunction
   15: (duration)
-    0: drawImageFromRect([object HTMLImageElement], 1, 2, 3, 4, 5, 6, 7, 8, "")
-      swizzleTypes: [Image, Number, Number, Number, Number, Number, Number, Number, Number, String]
-      trace:
-        0: drawImageFromRect
-        1: (anonymous function)
-        2: executeFrameFunction
-    1: drawImageFromRect([object HTMLImageElement], 9, 10, 11, 12, 13, 14, 15, 16, "test")
-      swizzleTypes: [Image, Number, Number, Number, Number, Number, Number, Number, Number, String]
-      trace:
-        0: drawImageFromRect
-        1: (anonymous function)
-        2: executeFrameFunction
-  16: (duration)
     0: ellipse(1, 2, 3, 4, 5, 6, 7, false)
       swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, Boolean]
       trace:
@@ -334,7 +321,7 @@ frames:
         2: ignoreException
         3: (anonymous function)
         4: executeFrameFunction
-  17: (duration)
+  16: (duration)
     0: fill("nonzero")
       swizzleTypes: [String]
       trace:
@@ -359,14 +346,14 @@ frames:
         0: fill
         1: (anonymous function)
         2: executeFrameFunction
-  18: (duration)
+  17: (duration)
     0: fillRect(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
         0: fillRect
         1: (anonymous function)
         2: executeFrameFunction
-  19: (duration)
+  18: (duration)
     0: fillStyle
       trace:
         0: (anonymous function)
@@ -391,7 +378,7 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  20: (duration)
+  19: (duration)
     0: fillText("testA", 1, 2)
       swizzleTypes: [String, Number, Number]
       trace:
@@ -404,7 +391,7 @@ frames:
         0: fillText
         1: (anonymous function)
         2: executeFrameFunction
-  21: (duration)
+  20: (duration)
     0: font
       trace:
         0: (anonymous function)
@@ -414,7 +401,7 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  22: (duration)
+  21: (duration)
     0: getImageData(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
@@ -423,19 +410,19 @@ frames:
         2: ignoreException
         3: (anonymous function)
         4: executeFrameFunction
-  23: (duration)
+  22: (duration)
     0: getLineDash()
       trace:
         0: getLineDash
         1: (anonymous function)
         2: executeFrameFunction
-  24: (duration)
+  23: (duration)
     0: getTransform()
       trace:
         0: getTransform
         1: (anonymous function)
         2: executeFrameFunction
-  25: (duration)
+  24: (duration)
     0: globalAlpha
       trace:
         0: (anonymous function)
@@ -445,7 +432,7 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  26: (duration)
+  25: (duration)
     0: globalCompositeOperation
       trace:
         0: (anonymous function)
@@ -455,7 +442,7 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  27: (duration)
+  26: (duration)
     0: imageSmoothingEnabled
       trace:
         0: (anonymous function)
@@ -465,7 +452,7 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  28: (duration)
+  27: (duration)
     0: imageSmoothingQuality
       trace:
         0: (anonymous function)
@@ -475,7 +462,7 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  29: (duration)
+  28: (duration)
     0: isPointInPath([object Path2D], 5, 6, "nonzero")
       swizzleTypes: [Path2D, Number, Number, String]
       trace:
@@ -500,7 +487,7 @@ frames:
         0: isPointInPath
         1: (anonymous function)
         2: executeFrameFunction
-  30: (duration)
+  29: (duration)
     0: isPointInStroke([object Path2D], 3, 4)
       swizzleTypes: [Path2D, Number, Number]
       trace:
@@ -513,12 +500,12 @@ frames:
         0: isPointInStroke
         1: (anonymous function)
         2: executeFrameFunction
-  31: (duration)
+  30: (duration)
     0: lineCap
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  32: (duration)
+  31: (duration)
     0: lineDashOffset
       trace:
         0: (anonymous function)
@@ -528,19 +515,19 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  33: (duration)
+  32: (duration)
     0: lineJoin
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  34: (duration)
+  33: (duration)
     0: lineTo(1, 2)
       swizzleTypes: [Number, Number]
       trace:
         0: lineTo
         1: (anonymous function)
         2: executeFrameFunction
-  35: (duration)
+  34: (duration)
     0: lineWidth
       trace:
         0: (anonymous function)
@@ -550,14 +537,14 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  36: (duration)
+  35: (duration)
     0: measureText("test")
       swizzleTypes: [String]
       trace:
         0: measureText
         1: (anonymous function)
         2: executeFrameFunction
-  37: (duration)
+  36: (duration)
     0: miterLimit
       trace:
         0: (anonymous function)
@@ -567,14 +554,14 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  38: (duration)
+  37: (duration)
     0: moveTo(1, 2)
       swizzleTypes: [Number, Number]
       trace:
         0: moveTo
         1: (anonymous function)
         2: executeFrameFunction
-  39: (duration)
+  38: (duration)
     0: putImageData([object ImageData], 5, 6)
       swizzleTypes: [ImageData, Number, Number]
       trace:
@@ -587,53 +574,53 @@ frames:
         0: putImageData
         1: (anonymous function)
         2: executeFrameFunction
-  40: (duration)
+  39: (duration)
     0: quadraticCurveTo(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
         0: quadraticCurveTo
         1: (anonymous function)
         2: executeFrameFunction
-  41: (duration)
+  40: (duration)
     0: rect(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
         0: rect
         1: (anonymous function)
         2: executeFrameFunction
-  42: (duration)
+  41: (duration)
     0: resetTransform()
       trace:
         0: resetTransform
         1: (anonymous function)
         2: executeFrameFunction
-  43: (duration)
+  42: (duration)
     0: restore()
       trace:
         0: restore
         1: (anonymous function)
         2: executeFrameFunction
-  44: (duration)
+  43: (duration)
     0: rotate(1)
       swizzleTypes: [Number]
       trace:
         0: rotate
         1: (anonymous function)
         2: executeFrameFunction
-  45: (duration)
+  44: (duration)
     0: save()
       trace:
         0: save
         1: (anonymous function)
         2: executeFrameFunction
-  46: (duration)
+  45: (duration)
     0: scale(1, 2)
       swizzleTypes: [Number, Number]
       trace:
         0: scale
         1: (anonymous function)
         2: executeFrameFunction
-  47: (duration)
+  46: (duration)
     0: setFillColor("testA")
       swizzleTypes: [String]
       trace:
@@ -664,7 +651,7 @@ frames:
         0: setFillColor
         1: (anonymous function)
         2: executeFrameFunction
-  48: (duration)
+  47: (duration)
     0: setLineCap("")
       swizzleTypes: [String]
       trace:
@@ -677,14 +664,14 @@ frames:
         0: setLineCap
         1: (anonymous function)
         2: executeFrameFunction
-  49: (duration)
+  48: (duration)
     0: setLineDash([1,2])
       swizzleTypes: [Array]
       trace:
         0: setLineDash
         1: (anonymous function)
         2: executeFrameFunction
-  50: (duration)
+  49: (duration)
     0: setLineJoin("")
       swizzleTypes: [String]
       trace:
@@ -697,7 +684,7 @@ frames:
         0: setLineJoin
         1: (anonymous function)
         2: executeFrameFunction
-  51: (duration)
+  50: (duration)
     0: setLineWidth(null)
       swizzleTypes: [Number]
       trace:
@@ -710,7 +697,7 @@ frames:
         0: setLineWidth
         1: (anonymous function)
         2: executeFrameFunction
-  52: (duration)
+  51: (duration)
     0: setMiterLimit(null)
       swizzleTypes: [Number]
       trace:
@@ -723,7 +710,7 @@ frames:
         0: setMiterLimit
         1: (anonymous function)
         2: executeFrameFunction
-  53: (duration)
+  52: (duration)
     0: setShadow(1, 2, 3, "")
       swizzleTypes: [Number, Number, Number, String]
       trace:
@@ -760,7 +747,7 @@ frames:
         0: setShadow
         1: (anonymous function)
         2: executeFrameFunction
-  54: (duration)
+  53: (duration)
     0: setStrokeColor("testA")
       swizzleTypes: [String]
       trace:
@@ -791,7 +778,7 @@ frames:
         0: setStrokeColor
         1: (anonymous function)
         2: executeFrameFunction
-  55: (duration)
+  54: (duration)
     0: setTransform(1, 2, 3, 4, 5, 6)
       swizzleTypes: [Number, Number, Number, Number, Number, Number]
       trace:
@@ -814,7 +801,7 @@ frames:
         2: ignoreException
         3: (anonymous function)
         4: executeFrameFunction
-  56: (duration)
+  55: (duration)
     0: shadowBlur
       trace:
         0: (anonymous function)
@@ -824,7 +811,7 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  57: (duration)
+  56: (duration)
     0: shadowColor
       trace:
         0: (anonymous function)
@@ -834,7 +821,7 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  58: (duration)
+  57: (duration)
     0: shadowOffsetX
       trace:
         0: (anonymous function)
@@ -844,7 +831,7 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  59: (duration)
+  58: (duration)
     0: shadowOffsetY
       trace:
         0: (anonymous function)
@@ -854,7 +841,7 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  60: (duration)
+  59: (duration)
     0: stroke()
       trace:
         0: stroke
@@ -866,14 +853,14 @@ frames:
         0: stroke
         1: (anonymous function)
         2: executeFrameFunction
-  61: (duration)
+  60: (duration)
     0: strokeRect(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
         0: strokeRect
         1: (anonymous function)
         2: executeFrameFunction
-  62: (duration)
+  61: (duration)
     0: strokeStyle
       trace:
         0: (anonymous function)
@@ -898,7 +885,7 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  63: (duration)
+  62: (duration)
     0: strokeText("testA", 1, 2)
       swizzleTypes: [String, Number, Number]
       trace:
@@ -911,31 +898,31 @@ frames:
         0: strokeText
         1: (anonymous function)
         2: executeFrameFunction
-  64: (duration)
+  63: (duration)
     0: textAlign
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  65: (duration)
+  64: (duration)
     0: textBaseline
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  66: (duration)
+  65: (duration)
     0: transform(1, 2, 3, 4, 5, 6)
       swizzleTypes: [Number, Number, Number, Number, Number, Number]
       trace:
         0: transform
         1: (anonymous function)
         2: executeFrameFunction
-  67: (duration)
+  66: (duration)
     0: translate(1, 2)
       swizzleTypes: [Number, Number]
       trace:
         0: translate
         1: (anonymous function)
         2: executeFrameFunction
-  68: (duration)
+  67: (duration)
     0: webkitLineDash
       trace:
         0: (anonymous function)
@@ -945,7 +932,7 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  69: (duration)
+  68: (duration)
     0: webkitLineDashOffset
       trace:
         0: (anonymous function)
@@ -955,7 +942,7 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  70: (duration)
+  69: (duration)
     0: width
       trace:
         0: (anonymous function)
@@ -965,7 +952,7 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  71: (duration)
+  70: (duration)
     0: height
       trace:
         0: (anonymous function)
@@ -975,7 +962,7 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  72: (duration)
+  71: (duration)
     0: roundRect(0, 0, 50, 50, 42)
       swizzleTypes: [Number, Number, Number, Number, Number]
       trace:

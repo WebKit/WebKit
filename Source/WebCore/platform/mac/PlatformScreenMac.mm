@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,7 +63,7 @@ static PlatformDisplayID displayID(Widget* widget)
     if (!widget)
         return 0;
 
-    auto* view = widget->root();
+    RefPtr view = widget->root();
     if (!view)
         return 0;
 
@@ -89,7 +89,13 @@ static NSWindow *window(Widget* widget)
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     if (!widget)
         return nil;
-    return widget->platformWidget().window;
+    RetainPtr platformWidget = widget->platformWidget();
+    return [platformWidget window];
+}
+
+static RetainPtr<NSWindow> protectedWindow(Widget* widget)
+{
+    return window(widget);
 }
 
 static NSScreen *screen(Widget* widget)
@@ -97,9 +103,24 @@ static NSScreen *screen(Widget* widget)
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     // If the widget is in a window, use that, otherwise use the display ID from the host window.
     // First case is for when the NSWindow is in the same process, second case for when it's not.
-    if (auto screenFromWindow = window(widget).screen)
-        return screenFromWindow;
+    if (RetainPtr<NSScreen> screenFromWindow = [protectedWindow(widget) screen])
+        return screenFromWindow.get();
     return screen(displayID(widget));
+}
+
+static RetainPtr<NSScreen> protectedScreen(Widget* widget)
+{
+    return screen(widget);
+}
+
+RetainPtr<NSScreen> protectedScreen(NSWindow *window)
+{
+    return screen(window);
+}
+
+RetainPtr<NSScreen> protectedScreen(PlatformDisplayID displayID)
+{
+    return screen(displayID);
 }
 
 #if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
@@ -107,13 +128,13 @@ static DynamicRangeMode convertAVVideoRangeToEnum(NSString* range)
 {
     if (!range)
         return DynamicRangeMode::None;
-    if (PAL::canLoad_AVFoundation_AVVideoRangeSDR() && [range isEqualTo:PAL::get_AVFoundation_AVVideoRangeSDR()])
+    if (PAL::canLoad_AVFoundation_AVVideoRangeSDR() && [range isEqualTo:PAL::get_AVFoundation_AVVideoRangeSDRSingleton()])
         return DynamicRangeMode::Standard;
-    if (PAL::canLoad_AVFoundation_AVVideoRangeHLG() && [range isEqualTo:PAL::get_AVFoundation_AVVideoRangeHLG()])
+    if (PAL::canLoad_AVFoundation_AVVideoRangeHLG() && [range isEqualTo:PAL::get_AVFoundation_AVVideoRangeHLGSingleton()])
         return DynamicRangeMode::HLG;
-    if (PAL::canLoad_AVFoundation_AVVideoRangeHDR10() && [range isEqualTo:PAL::get_AVFoundation_AVVideoRangeHDR10()])
+    if (PAL::canLoad_AVFoundation_AVVideoRangeHDR10() && [range isEqualTo:PAL::get_AVFoundation_AVVideoRangeHDR10Singleton()])
         return DynamicRangeMode::HDR10;
-    if (PAL::canLoad_AVFoundation_AVVideoRangeDolbyVisionPQ() && [range isEqualTo:PAL::get_AVFoundation_AVVideoRangeDolbyVisionPQ()])
+    if (PAL::canLoad_AVFoundation_AVVideoRangeDolbyVisionPQ() && [range isEqualTo:PAL::get_AVFoundation_AVVideoRangeDolbyVisionPQSingleton()])
         return DynamicRangeMode::DolbyVisionPQ;
 
     ASSERT_NOT_REACHED();
@@ -132,7 +153,7 @@ ScreenProperties collectScreenProperties()
         bool supportsHighDynamicRange = false;
 #if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
         if (PAL::isAVFoundationFrameworkAvailable()) {
-            dynamicRangeMode = convertAVVideoRangeToEnum([PAL::getAVPlayerClass() preferredVideoRangeForDisplays:@[ @(displayID) ]]);
+            dynamicRangeMode = convertAVVideoRangeToEnum([PAL::getAVPlayerClassSingleton() preferredVideoRangeForDisplays:@[ @(displayID) ]]);
             supportsHighDynamicRange = dynamicRangeMode > DynamicRangeMode::Standard;
         }
 #endif
@@ -175,6 +196,10 @@ ScreenProperties collectScreenProperties()
         screenData.screenSize = FloatSize { CGDisplayScreenSize(displayID) };
         screenData.scaleFactor = screen.backingScaleFactor;
         screenData.screenSupportsHighDynamicRange = screenSupportsHighDynamicRange(displayID, screenData.preferredDynamicRangeMode);
+#if HAVE(SUPPORT_HDR_DISPLAY)
+        screenData.maxEDRHeadroom = [screen maximumPotentialExtendedDynamicRangeColorComponentValue];
+        screenData.currentEDRHeadroom = [screen maximumExtendedDynamicRangeColorComponentValue];
+#endif
 
         screenProperties.screenDataMap.set(displayID, WTFMove(screenData));
         if (!screenProperties.primaryDisplayID)
@@ -291,7 +316,7 @@ int screenDepth(Widget* widget)
     }
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    return NSBitsPerPixelFromDepth(screen(widget).depth);
+    return NSBitsPerPixelFromDepth(protectedScreen(widget).get().depth);
 }
 
 int screenDepthPerComponent(Widget* widget)
@@ -302,7 +327,7 @@ int screenDepthPerComponent(Widget* widget)
     }
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    return NSBitsPerSampleFromDepth(screen(widget).depth);
+    return NSBitsPerSampleFromDepth(protectedScreen(widget).get().depth);
 }
 
 FloatRect screenRectForDisplay(PlatformDisplayID displayID)
@@ -313,7 +338,7 @@ FloatRect screenRectForDisplay(PlatformDisplayID displayID)
     }
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    return screen(displayID).frame;
+    return protectedScreen(displayID).get().frame;
 }
 
 FloatRect screenRectForPrimaryScreen()
@@ -321,13 +346,41 @@ FloatRect screenRectForPrimaryScreen()
     return screenRectForDisplay(primaryScreenDisplayID());
 }
 
+#if HAVE(SUPPORT_HDR_DISPLAY)
+float currentEDRHeadroomForDisplay(PlatformDisplayID displayID)
+{
+    if (auto data = screenData(displayID))
+        return data->currentEDRHeadroom;
+
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    return protectedScreen(displayID).get().maximumExtendedDynamicRangeColorComponentValue;
+}
+
+float maxEDRHeadroomForDisplay(PlatformDisplayID displayID)
+{
+    if (auto data = screenData(displayID))
+        return data->maxEDRHeadroom;
+
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    return protectedScreen(displayID).get().maximumPotentialExtendedDynamicRangeColorComponentValue;
+}
+
+bool suppressEDRForDisplay(PlatformDisplayID displayID)
+{
+    if (auto data = screenData(displayID))
+        return data->suppressEDR;
+
+    return false;
+}
+#endif
+
 FloatRect screenRect(Widget* widget)
 {
     if (auto data = screenProperties(widget))
         return data->screenRect;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    return toUserSpace([screen(widget) frame], window(widget));
+    return toUserSpace([protectedScreen(widget) frame], protectedWindow(widget).get());
 }
 
 FloatRect screenAvailableRect(Widget* widget)
@@ -336,7 +389,7 @@ FloatRect screenAvailableRect(Widget* widget)
         return data->screenAvailableRect;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    return toUserSpace([screen(widget) visibleFrame], window(widget));
+    return toUserSpace([protectedScreen(widget) visibleFrame], protectedWindow(widget).get());
 }
 
 NSScreen *screen(NSWindow *window)
@@ -361,7 +414,7 @@ DestinationColorSpace screenColorSpace(Widget* widget)
         return data->colorSpace;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    return DestinationColorSpace { screen(widget).colorSpace.CGColorSpace };
+    return DestinationColorSpace { protectedScreen(widget).get().colorSpace.CGColorSpace };
 }
 
 OptionSet<ContentsFormat> screenContentsFormats(Widget* widget)
@@ -393,25 +446,28 @@ bool screenSupportsExtendedColor(Widget* widget)
         return data->screenSupportsExtendedColor;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    return [screen(widget) canRepresentDisplayGamut:NSDisplayGamutP3];
+    return [protectedScreen(widget) canRepresentDisplayGamut:NSDisplayGamutP3];
 }
 
 bool screenSupportsHighDynamicRange(Widget* widget)
+{
+    return screenSupportsHighDynamicRange(displayID(widget));
+}
+
+bool screenSupportsHighDynamicRange(PlatformDisplayID displayID)
 {
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
     if (screenContentsFormatsForTesting().contains(ContentsFormat::RGBA16F))
         return true;
 #endif
 
-    if (auto data = screenProperties(widget))
+    if (auto data = screenData(displayID))
         return data->screenSupportsHighDynamicRange;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
 #if USE(MEDIATOOLBOX)
-    if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo()) {
-        auto displayID = WebCore::displayID(screen(widget));
+    if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
         return PAL::softLink_MediaToolbox_MTShouldPlayHDRVideo((__bridge CFArrayRef)@[ @(displayID) ]);
-    }
 #endif
     return false;
 }
@@ -424,8 +480,8 @@ DynamicRangeMode preferredDynamicRangeMode(Widget* widget)
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     if (PAL::isAVFoundationFrameworkAvailable()) {
-        auto displayID = WebCore::displayID(screen(widget));
-        return convertAVVideoRangeToEnum([PAL::getAVPlayerClass() preferredVideoRangeForDisplays:@[ @(displayID) ]]);
+        auto displayID = WebCore::displayID(protectedScreen(widget).get());
+        return convertAVVideoRangeToEnum([PAL::getAVPlayerClassSingleton() preferredVideoRangeForDisplays:@[ @(displayID) ]]);
     }
 
     return DynamicRangeMode::Standard;
@@ -435,7 +491,7 @@ DynamicRangeMode preferredDynamicRangeMode(Widget* widget)
 FloatRect toUserSpace(const NSRect& rect, NSWindow *destination)
 {
     FloatRect userRect = rect;
-    userRect.setY(NSMaxY([screen(destination) frame]) - (userRect.y() + userRect.height())); // flip
+    userRect.setY(NSMaxY([protectedScreen(destination) frame]) - (userRect.y() + userRect.height())); // flip
     return userRect;
 }
 
@@ -456,7 +512,7 @@ FloatPoint toUserSpaceForPrimaryScreen(const NSPoint& point)
 NSRect toDeviceSpace(const FloatRect& rect, NSWindow *source)
 {
     FloatRect deviceRect = rect;
-    deviceRect.setY(NSMaxY([screen(source) frame]) - (deviceRect.y() + deviceRect.height())); // flip
+    deviceRect.setY(NSMaxY([protectedScreen(source) frame]) - (deviceRect.y() + deviceRect.height())); // flip
     return deviceRect;
 }
 
@@ -470,11 +526,9 @@ NSPoint flipScreenPoint(const NSPoint& screenPoint, NSScreen *screen)
 FloatRect safeScreenFrame(NSScreen* screen)
 {
     FloatRect frame = screen.frame;
-#if HAVE(NSSCREEN_SAFE_AREA)
     auto insets = screen.safeAreaInsets;
     frame.contract(insets.left + insets.right, insets.top + insets.bottom);
     frame.move(insets.left, insets.bottom);
-#endif
     return frame;
 }
 

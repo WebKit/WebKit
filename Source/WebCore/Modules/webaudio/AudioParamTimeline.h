@@ -28,6 +28,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUDIO)
+
 #include "AudioContext.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/Lock.h>
@@ -213,3 +215,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUDIO)

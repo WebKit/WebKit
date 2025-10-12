@@ -43,6 +43,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #if USE(BROWSERENGINEKIT)
 #import <BrowserEngineKit/BrowserEngineKit.h>
@@ -709,7 +710,7 @@ IGNORE_WARNINGS_END
         [delegate dragInteraction:[_webView dragInteraction] sessionWillBegin:_dragSession.get()];
 
         RetainPtr<WKWebView> retainedWebView = _webView;
-        dispatch_async(dispatch_get_main_queue(), ^() {
+        dispatch_async(mainDispatchQueueSingleton(), ^() {
             [retainedWebView resignFirstResponder];
         });
 
@@ -988,7 +989,7 @@ IGNORE_WARNINGS_END
     if (!self.showCustomActionSheetBlock)
         return NO;
 
-    dispatch_async(dispatch_get_main_queue(), [strongSelf = retainPtr(self)] {
+    dispatch_async(mainDispatchQueueSingleton(), [strongSelf = retainPtr(self)] {
         [[strongSelf->_webView dragInteractionDelegate] dragInteraction:[strongSelf->_webView dragInteraction] sessionWillBegin:strongSelf->_dragSession.get()];
         strongSelf->_phase = DragAndDropPhaseBegan;
         [strongSelf _scheduleAdvanceProgress];

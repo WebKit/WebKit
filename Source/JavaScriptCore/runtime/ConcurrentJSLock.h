@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DeferGC.h"
+#include <JavaScriptCore/DeferGC.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
 #include <wtf/NoLock.h>

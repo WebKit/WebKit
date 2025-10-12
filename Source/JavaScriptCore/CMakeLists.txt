@@ -6,10 +6,12 @@ list(APPEND JavaScriptCore_UNIFIED_SOURCE_LIST_FILES
 
 set(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JavaScriptCore_FRAMEWORK_HEADERS_DIR}"
+    "${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}"
 )
 
 set(JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
+    "${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/JavaScriptCore"
     "${JAVASCRIPTCORE_DIR}"
     "${JAVASCRIPTCORE_DIR}/API"
     "${JAVASCRIPTCORE_DIR}/assembler"
@@ -40,6 +42,7 @@ set(JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/runtime"
     "${JAVASCRIPTCORE_DIR}/tools"
     "${JAVASCRIPTCORE_DIR}/wasm"
+    "${JAVASCRIPTCORE_DIR}/wasm/debugger"
     "${JAVASCRIPTCORE_DIR}/wasm/js"
     "${JAVASCRIPTCORE_DIR}/yarr"
     "${JavaScriptCore_DERIVED_SOURCES_DIR}"
@@ -122,6 +125,8 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/TemporalPlainDatePrototype.cpp
     runtime/TemporalPlainDateTimeConstructor.cpp
     runtime/TemporalPlainDateTimePrototype.cpp
+    runtime/TemporalPlainMonthDayConstructor.cpp
+    runtime/TemporalPlainMonthDayPrototype.cpp
     runtime/TemporalPlainTimeConstructor.cpp
     runtime/TemporalPlainTimePrototype.cpp
     runtime/TemporalTimeZoneConstructor.cpp
@@ -212,9 +217,6 @@ set(LLINT_ASM
     llint/LowLevelInterpreter.asm
     llint/LowLevelInterpreter32_64.asm
     llint/LowLevelInterpreter64.asm
-    llint/WebAssembly.asm
-    llint/WebAssembly32_64.asm
-    llint/WebAssembly64.asm
 )
 
 set(OFFLINE_ASM
@@ -258,10 +260,10 @@ set(GENERATOR
 )
 
 add_custom_command(
-    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeIndices.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/WasmLLIntGeneratorInlines.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitWasm.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeDumperGenerated.cpp
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeIndices.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeDumperGenerated.cpp
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/generator/main.rb
     DEPENDS ${GENERATOR} bytecode/BytecodeList.rb ${JAVASCRIPTCORE_DIR}/wasm/wasm.json
-    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/generator/main.rb --bytecodes_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h --init_bytecodes_asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm --bytecode_structs_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h --bytecode_indices_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeIndices.h ${JAVASCRIPTCORE_DIR}/bytecode/BytecodeList.rb --wasm_json ${JAVASCRIPTCORE_DIR}/wasm/wasm.json --wasm_llint_generator_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/WasmLLIntGeneratorInlines.h --init_wasm_llint ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitWasm.asm --bytecode_dumper ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeDumperGenerated.cpp
+    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/generator/main.rb --bytecodes_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h --init_bytecodes_asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm --bytecode_structs_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h --bytecode_indices_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeIndices.h ${JAVASCRIPTCORE_DIR}/bytecode/BytecodeList.rb --wasm_json ${JAVASCRIPTCORE_DIR}/wasm/wasm.json  --bytecode_dumper ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeDumperGenerated.cpp
     VERBATIM)
 add_custom_target(Bytecodes DEPENDS "${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h")
 
@@ -304,14 +306,14 @@ list(APPEND JavaScriptCore_HEADERS
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredSettings.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/generate_settings_extractor.rb
-    DEPENDS ${LLINT_ASM} ${OFFLINE_ASM} ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitWasm.asm
+    DEPENDS ${LLINT_ASM} ${OFFLINE_ASM} ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm
     COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_settings_extractor.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredSettings.h ${OFFLINE_ASM_BACKEND}
     VERBATIM)
 
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredOffsets.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb
-    DEPENDS LLIntSettingsExtractor ${LLINT_ASM} ${OFFLINE_ASM} ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitWasm.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/AirOpcode.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/WasmOps.h
+    DEPENDS LLIntSettingsExtractor ${LLINT_ASM} ${OFFLINE_ASM} ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/AirOpcode.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/WasmOps.h
     COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm $<TARGET_FILE:LLIntSettingsExtractor> ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredOffsets.h ${OFFLINE_ASM_BACKEND} ${BUILD_VARIANTS}
     VERBATIM)
 
@@ -339,6 +341,7 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/ArrayConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/ArrayIteratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/ArrayPrototype.js
+    ${JAVASCRIPTCORE_DIR}/builtins/AsyncDisposableStackPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/AsyncFunctionPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/AsyncGeneratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/AsyncIteratorPrototype.js
@@ -402,9 +405,10 @@ set(LLIntSettingsExtractor_SOURCES
 
 set(LLIntSettingsExtractor_PRIVATE_INCLUDE_DIRECTORIES
     $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>
+    "${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/JavaScriptCore"
 )
 set(LLIntSettingsExtractor_FRAMEWORKS ${JavaScriptCore_FRAMEWORKS})
-set(LLIntSettingsExtractor_DEPENDENCIES JavaScriptCore_CopyHeaders)
+set(LLIntSettingsExtractor_DEPENDENCIES JavaScriptCore_CopyHeaders JavaScriptCore_CopyPrivateHeaders)
 WEBKIT_EXECUTABLE(LLIntSettingsExtractor)
 
 # LLIntSettingsExtractor target needs to have a direct or indirect
@@ -421,9 +425,10 @@ set(LLIntOffsetsExtractor_SOURCES
 
 set(LLIntOffsetsExtractor_PRIVATE_INCLUDE_DIRECTORIES
     $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>
+    "${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/JavaScriptCore"
 )
 set(LLIntOffsetsExtractor_FRAMEWORKS ${JavaScriptCore_FRAMEWORKS})
-set(LLIntOffsetsExtractor_DEPENDENCIES JavaScriptCore_CopyHeaders JSCBuiltins)
+set(LLIntOffsetsExtractor_DEPENDENCIES JavaScriptCore_CopyHeaders JavaScriptCore_CopyPrivateHeaders JSCBuiltins)
 WEBKIT_EXECUTABLE(LLIntOffsetsExtractor)
 
 # The build system will execute asm.rb every time LLIntOffsetsExtractor's mtime is newer than
@@ -445,7 +450,7 @@ endif ()
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput}
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/asm.rb
-    DEPENDS LLIntOffsetsExtractor ${LLINT_ASM} ${OFFLINE_ASM} ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitWasm.asm
+    DEPENDS LLIntOffsetsExtractor ${LLINT_ASM} ${OFFLINE_ASM} ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm
     COMMAND ${CMAKE_COMMAND} -E env CMAKE_CXX_COMPILER_ID=${CMAKE_CXX_COMPILER_ID} GCC_OFFLINEASM_SOURCE_MAP=${GCC_OFFLINEASM_SOURCE_MAP} ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/asm.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm $<TARGET_FILE:LLIntOffsetsExtractor> ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput} ${BUILD_VARIANTS} ${OFFLINE_ASM_ARGS}
     COMMAND ${CMAKE_COMMAND} -E touch_nocreate ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput}
     WORKING_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}
@@ -522,41 +527,65 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorFrontendDispatchers.h
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorProtocolObjects.h
 
+    config.h
+
     API/APICallbackFunction.h
     API/APICast.h
-    API/APIUtils.h
+    API/APIIntegrityPrivate.h
     API/JSAPIValueWrapper.h
-    API/JSAPIWrapperObject.h
+    API/JSBase.h
     API/JSBasePrivate.h
+    API/JavaScript.h
+    API/JavaScriptCore.h
     API/JSCTestRunnerUtils.h
-    API/JSCallbackConstructor.h
-    API/JSCallbackFunction.h
     API/JSCallbackObject.h
-    API/JSCallbackObjectFunctions.h
     API/JSClassRef.h
+    API/JSContext.h
     API/JSContextInternal.h
     API/JSContextPrivate.h
+    API/JSContextRef.h
     API/JSContextRefInspectorSupport.h
-    API/JSContextRefInternal.h
     API/JSContextRefPrivate.h
+    API/JSExport.h
     API/JSHeapFinalizerPrivate.h
-    API/JSManagedValueInternal.h
+    API/JSLockRefPrivate.h
+    API/JSManagedValue.h
     API/JSMarkingConstraintPrivate.h
+    API/JSObjectRef.h
     API/JSObjectRefPrivate.h
     API/JSRemoteInspector.h
     API/JSRetainPtr.h
+    API/JSScript.h
     API/JSScriptRefPrivate.h
+    API/JSStringRef.h
+    API/JSStringRefCF.h
     API/JSStringRefPrivate.h
+    API/JSTypedArray.h
+    API/JSValue.h
     API/JSValueInternal.h
     API/JSValuePrivate.h
+    API/JSValueRef.h
+    API/JSVirtualMachine.h
     API/JSVirtualMachineInternal.h
+    API/JSVirtualMachinePrivate.h
     API/JSWeakObjectMapRefInternal.h
     API/JSWeakObjectMapRefPrivate.h
     API/JSWeakPrivate.h
-    API/JSWrapperMap.h
-    API/ObjCCallbackFunction.h
-    API/ObjcRuntimeExtras.h
+    API/JSWeakValue.h
     API/OpaqueJSString.h
+
+    API/glib/JSAPIWrapperGlobalObject.h
+    API/glib/JSCAutocleanups.h
+    API/glib/JSCCallbackFunction.h
+    API/glib/JSCClassPrivate.h
+    API/glib/JSCContextInternal.h
+    API/glib/JSCContextPrivate.h
+    API/glib/JSCExceptionPrivate.h
+    API/glib/JSCGLibWrapperObject.h
+    API/glib/JSCOptions.h
+    API/glib/JSCValuePrivate.h
+    API/glib/JSCVirtualMachinePrivate.h
+    API/glib/JSCWrapperMap.h
 
     assembler/ARM64Assembler.h
     assembler/ARM64Registers.h
@@ -569,7 +598,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/AssemblerCommon.h
     assembler/AssemblyComments.h
     assembler/CPU.h
-    assembler/CPUInlines.h
     assembler/CodeLocation.h
     assembler/DisallowMacroScratchRegisterUsage.h
     assembler/FastJITPermissions.h
@@ -581,29 +609,39 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/MacroAssemblerARMv7.h
     assembler/MacroAssemblerCodeRef.h
     assembler/MacroAssemblerHelpers.h
-    assembler/MacroAssemblerRISCV64.h
     assembler/MacroAssemblerX86_64.h
+    assembler/MaxFrameExtentForSlowPathCall.h
     assembler/OSCheck.h
     assembler/Printer.h
-    assembler/RISCV64Assembler.h
-    assembler/RISCV64Registers.h
+    assembler/ProbeContext.h
+    assembler/ProbeStack.h
     assembler/RegisterInfo.h
     assembler/SecureARM64EHashPins.h
     assembler/SecureARM64EHashPinsInlines.h
     assembler/X86Assembler.h
     assembler/X86_64Registers.h
 
+    b3/air/AirAllocateRegistersByGraphColoring.h
+    b3/air/AirDisassembler.h
+    b3/B3CanonicalizePrePostIncrements.h
     b3/B3Common.h
+    b3/B3Compile.h
+    b3/B3SlotBaseValue.h
+    b3/B3SSACalculator.h
     b3/B3Type.h
     b3/B3ValueRep.h
+    b3/testb3.h
 
+    builtins/BuiltinExecutables.h
     builtins/BuiltinNames.h
     builtins/BuiltinUtils.h
 
     bytecode/ArithProfile.h
     bytecode/ArrayAllocationProfile.h
     bytecode/ArrayProfile.h
+    bytecode/BytecodeBasicBlock.h
     bytecode/BytecodeConventions.h
+    bytecode/BytecodeGeneratorification.h
     bytecode/BytecodeIndex.h
     bytecode/BytecodeIntrinsicRegistry.h
     bytecode/CallEdge.h
@@ -611,74 +649,96 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/CallLinkInfoBase.h
     bytecode/CallMode.h
     bytecode/CallVariant.h
-    bytecode/CallVariantInlines.h
     bytecode/ChainedWatchpoint.h
-    bytecode/CheckPrivateBrandStatus.h
-    bytecode/CheckPrivateBrandVariant.h
     bytecode/CodeBlock.h
     bytecode/CodeBlockHash.h
+    bytecode/CodeBlockInlines.h
+    bytecode/CodeBlockJettisoningWatchpoint.h
+    bytecode/CodeBlockWithJITType.h
     bytecode/CodeOrigin.h
     bytecode/CodeType.h
-    bytecode/DFGExitProfile.h
+    bytecode/ComplexGetStatus.h
     bytecode/DataFormat.h
+    bytecode/DeferredCompilationCallback.h
+    bytecode/DeferredSourceDump.h
+    bytecode/DFGExitProfile.h
     bytecode/DirectEvalCodeCache.h
     bytecode/ExecutableInfo.h
     bytecode/ExecutionCounter.h
-    bytecode/ExitKind.h
     bytecode/ExitingInlineKind.h
     bytecode/ExitingJITType.h
+    bytecode/ExitKind.h
     bytecode/ExpressionInfo.h
     bytecode/ExpressionInfoInlines.h
     bytecode/HandlerInfo.h
     bytecode/ICStatusMap.h
+    bytecode/InlineAccess.h
     bytecode/InlineCallFrame.h
+    bytecode/InlineCallFrameSet.h
     bytecode/Instruction.h
     bytecode/InstructionStream.h
     bytecode/InternalFunctionAllocationProfile.h
     bytecode/IterationModeMetadata.h
     bytecode/JumpTable.h
-    bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h
     bytecode/LazyOperandValueProfile.h
     bytecode/LazyValueProfile.h
     bytecode/LineColumn.h
     bytecode/LinkTimeConstant.h
     bytecode/MetadataTable.h
+    bytecode/MethodOfGettingAValueProfile.h
     bytecode/ObjectAllocationProfile.h
     bytecode/ObjectPropertyCondition.h
+    bytecode/ObjectPropertyConditionSet.h
     bytecode/Opcode.h
     bytecode/OpcodeSize.h
     bytecode/Operands.h
+    bytecode/OperandsInlines.h
+    bytecode/ParseHash.h
+    bytecode/PolyProtoAccessChain.h
+    bytecode/PreciseJumpTargets.h
     bytecode/PropertyCondition.h
     bytecode/PutByIdFlags.h
-    bytecode/SetPrivateBrandStatus.h
-    bytecode/SetPrivateBrandVariant.h
+    bytecode/ReduceWhitespace.h
     bytecode/SourceID.h
     bytecode/SpeculatedType.h
     bytecode/StructureSet.h
     bytecode/SuperSampler.h
     bytecode/ToThisStatus.h
+    bytecode/TrackedReferences.h
     bytecode/TypeLocation.h
     bytecode/UnlinkedCodeBlock.h
     bytecode/UnlinkedEvalCodeBlock.h
+    bytecode/UnlinkedFunctionCodeBlock.h
     bytecode/UnlinkedFunctionExecutable.h
     bytecode/UnlinkedGlobalCodeBlock.h
     bytecode/UnlinkedMetadataTable.h
+    bytecode/UnlinkedModuleProgramCodeBlock.h
+    bytecode/UnlinkedProgramCodeBlock.h
     bytecode/ValueProfile.h
     bytecode/ValueRecovery.h
     bytecode/VariableWriteFireDetail.h
     bytecode/VirtualRegister.h
     bytecode/Watchpoint.h
 
+    bytecompiler/StaticPropertyAnalysis.h
+
     debugger/Breakpoint.h
     debugger/Debugger.h
     debugger/DebuggerCallFrame.h
     debugger/DebuggerParseData.h
     debugger/DebuggerPrimitives.h
+    debugger/ScriptProfilingScope.h
 
+    dfg/DFGCPSRethreadingPhase.h
     dfg/DFGCodeOriginPool.h
     dfg/DFGCommon.h
+    dfg/DFGCSEPhase.h
     dfg/DFGDoesGCCheck.h
+    dfg/DFGInPlaceAbstractState.h
+    dfg/DFGLiveCatchVariablePreservationPhase.h
     dfg/DFGMinifiedID.h
+    dfg/DFGRegisteredStructure.h
+    dfg/DFGRegisteredStructureSet.h
 
     domjit/DOMJITAbstractHeap.h
     domjit/DOMJITCallDOMGetterSnippet.h
@@ -686,6 +746,22 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     domjit/DOMJITGetterSetter.h
     domjit/DOMJITHeapRange.h
     domjit/DOMJITSignature.h
+
+    ftl/FTLAbbreviatedTypes.h
+    ftl/FTLCommonValues.h
+    ftl/FTLExitArgument.h
+    ftl/FTLExitArgumentForOperand.h
+    ftl/FTLExitValue.h
+    ftl/FTLFormattedValue.h
+    ftl/FTLLocation.h
+    ftl/FTLOSREntry.h
+    ftl/FTLRecoveryOpcode.h
+    ftl/FTLSaveRestore.h
+    ftl/FTLSlowPathCallKey.h
+    ftl/FTLStackmapArgumentList.h
+    ftl/FTLThunks.h
+    ftl/FTLValueFromBlock.h
+    ftl/FTLValueRange.h
 
     heap/AbstractSlotVisitor.h
     heap/AbstractSlotVisitorInlines.h
@@ -743,12 +819,10 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/HeapInlines.h
     heap/HeapObserver.h
     heap/HeapSnapshotBuilder.h
-    heap/HeapSubspaceTypes.h
     heap/IncrementalSweeper.h
     heap/IsoCellSet.h
     heap/IsoHeapCellType.h
     heap/IsoInlinedHeapCellType.h
-    heap/IsoInlinedHeapCellTypeInlines.h
     heap/IsoSubspace.h
     heap/IsoSubspaceInlines.h
     heap/LocalAllocator.h
@@ -760,7 +834,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/MarkedBlockSet.h
     heap/MarkedSpace.h
     heap/MarkingConstraint.h
-    heap/MarkingConstraintExecutorPair.h
     heap/MutatorState.h
     heap/PackedCellPtr.h
     heap/PreciseAllocation.h
@@ -768,14 +841,12 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/RegisterState.h
     heap/RootMarkReason.h
     heap/RunningScope.h
-    heap/SimpleMarkingConstraint.h
     heap/SlotVisitor.h
     heap/SlotVisitorInlines.h
     heap/SlotVisitorMacros.h
     heap/Strong.h
     heap/StrongForward.h
     heap/StrongInlines.h
-    heap/StructureAlignedMemoryAllocator.h
     heap/Subspace.h
     heap/SubspaceInlines.h
     heap/Synchronousness.h
@@ -831,22 +902,27 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/remote/RemoteInspectionTarget.h
     inspector/remote/RemoteInspector.h
 
-    interpreter/CLoopStack.h
+    interpreter/CachedCall.h
+    interpreter/CalleeBits.h
     interpreter/CallFrame.h
     interpreter/CallFrameInlines.h
-    interpreter/CalleeBits.h
+    interpreter/CheckpointOSRExitSideState.h
+    interpreter/CLoopStack.h
+    interpreter/CLoopStackInlines.h
     interpreter/EntryFrame.h
     interpreter/FrameTracers.h
     interpreter/Interpreter.h
+    interpreter/ProtoCallFrame.h
+    interpreter/ProtoCallFrameInlines.h
     interpreter/Register.h
     interpreter/RegisterInlines.h
     interpreter/ShadowChicken.h
+    interpreter/ShadowChickenInlines.h
     interpreter/StackVisitor.h
     interpreter/VMEntryRecord.h
 
     jit/AssemblyHelpers.h
     jit/AssemblyHelpersSpoolers.h
-    jit/BaselineJITCode.h
     jit/BaselineJITRegisters.h
     jit/CallFrameShuffleData.h
     jit/CCallHelpers.h
@@ -875,6 +951,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/RegisterSet.h
     jit/SIMDInfo.h
     jit/SIMDShuffle.h
+    jit/SimpleRegisterAllocator.h
     jit/ScratchRegisterAllocator.h
     jit/Snippet.h
     jit/SnippetParams.h
@@ -885,7 +962,14 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/ThunkGenerator.h
     jit/Width.h
 
+    llint/InPlaceInterpreter.h
+    llint/LLIntCLoop.h
+    llint/LLIntCommon.h
+    llint/LLIntEntrypoint.h
+    llint/LLIntExceptions.h
+    llint/LLIntOfflineAsmConfig.h
     llint/LLIntOpcode.h
+    llint/LLIntPCRanges.h
     llint/LLIntThunks.h
 
     parser/Lexer.h
@@ -924,24 +1008,23 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ArgList.h
     runtime/ArgumentsMode.h
     runtime/ArityCheckMode.h
-    runtime/ArrayConstructor.h
     runtime/ArrayBuffer.h
     runtime/ArrayBufferSharingMode.h
     runtime/ArrayBufferView.h
+    runtime/ArrayConstructor.h
     runtime/ArrayConventions.h
+    runtime/ArrayIteratorPrototype.h
     runtime/ArrayPrototype.h
     runtime/ArrayStorage.h
     runtime/ArrayStorageInlines.h
-    runtime/AssertInvariants.h
-    runtime/AsyncDisposableStackConstructor.h
-    runtime/AsyncDisposableStackPrototype.h
-    runtime/AsyncDisposableStackPrototypeInlines.h
     runtime/AsyncIteratorPrototype.h
     runtime/AuxiliaryBarrier.h
     runtime/AuxiliaryBarrierInlines.h
     runtime/BasicBlockLocation.h
     runtime/BatchedTransitionOptimizer.h
     runtime/BigInt64Array.h
+    runtime/BigIntConstructor.h
+    runtime/BigInteger.h
     runtime/BigIntObject.h
     runtime/BigIntPrototype.h
     runtime/BigUint64Array.h
@@ -953,15 +1036,14 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ButterflyInlines.h
     runtime/BytecodeCacheError.h
     runtime/CachePayload.h
-    runtime/CacheUpdate.h
     runtime/CacheableIdentifier.h
     runtime/CacheableIdentifierInlines.h
     runtime/CachedBytecode.h
     runtime/CachedTypes.h
+    runtime/CacheUpdate.h
     runtime/CagedBarrierPtr.h
     runtime/CallData.h
     runtime/CatchScope.h
-    runtime/CellSize.h
     runtime/ClassInfo.h
     runtime/ClonedArguments.h
     runtime/CodeSpecializationKind.h
@@ -980,13 +1062,12 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ControlFlowProfiler.h
     runtime/CustomGetterSetter.h
     runtime/DOMAnnotation.h
-    runtime/DOMAttributeGetterSetter.h
     runtime/DataView.h
     runtime/DateInstance.h
     runtime/DateInstanceCache.h
-    runtime/DeferTermination.h
     runtime/DeferredWorkTimer.h
     runtime/DeferredWorkTimerInlines.h
+    runtime/DeferTermination.h
     runtime/DefinePropertyAttributes.h
     runtime/DeletePropertySlot.h
     runtime/DirectArguments.h
@@ -994,9 +1075,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/DirectEvalExecutable.h
     runtime/DisallowScope.h
     runtime/DisallowVMEntry.h
-    runtime/DisposableStackConstructor.h
-    runtime/DisposableStackPrototype.h
-    runtime/DisposableStackPrototypeInlines.h
+    runtime/DOMAttributeGetterSetter.h
     runtime/DumpContext.h
     runtime/ECMAMode.h
     runtime/EnsureStillAliveHere.h
@@ -1010,6 +1089,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/Exception.h
     runtime/ExceptionEventLocation.h
     runtime/ExceptionExpectation.h
+    runtime/ExceptionFuzz.h
     runtime/ExceptionHelpers.h
     runtime/ExceptionScope.h
     runtime/ExecutableBase.h
@@ -1020,12 +1100,17 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/Forward.h
     runtime/FunctionConstructor.h
     runtime/FunctionExecutable.h
+    runtime/FunctionExecutableDump.h
     runtime/FunctionHasExecutedCache.h
     runtime/FunctionPrototype.h
     runtime/FunctionRareData.h
     runtime/FuzzerAgent.h
     runtime/Gate.h
+    runtime/GeneratorFunctionConstructor.h
+    runtime/GeneratorFunctionPrototype.h
+    runtime/GeneratorPrototype.h
     runtime/GenericArgumentsImpl.h
+    runtime/GenericArgumentsImplInlines.h
     runtime/GenericOffset.h
     runtime/GenericTypedArrayView.h
     runtime/GenericTypedArrayViewInlines.h
@@ -1035,6 +1120,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/GlobalExecutable.h
     runtime/GlobalObjectMethodTable.h
     runtime/HashMapHelper.h
+    runtime/HasOwnPropertyCache.h
     runtime/Identifier.h
     runtime/IdentifierInlines.h
     runtime/ImplementationVisibility.h
@@ -1042,6 +1128,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/IndexingHeader.h
     runtime/IndexingHeaderInlines.h
     runtime/IndexingType.h
+    runtime/IndirectEvalExecutable.h
     runtime/InferredValue.h
     runtime/InitializeThreading.h
     runtime/InlineAttribute.h
@@ -1053,41 +1140,44 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/IterationKind.h
     runtime/IteratorOperations.h
     runtime/JSArray.h
-    runtime/JSArrayInlines.h
-    runtime/JSArrayBuffer.h
+    runtime/JSArrayBufferConstructor.h
     runtime/JSArrayBufferPrototype.h
     runtime/JSArrayBufferView.h
     runtime/JSArrayBufferViewInlines.h
+    runtime/JSArrayInlines.h
     runtime/JSArrayIterator.h
-    runtime/JSAsyncDisposableStack.h
-    runtime/JSAsyncDisposableStackInlines.h
-    runtime/JSAsyncFromSyncIterator.h
+    runtime/JSArrayBuffer.h
     runtime/JSBigInt.h
     runtime/JSBoundFunction.h
     runtime/JSCBytecodeCacheVersion.h
     runtime/JSCConfig.h
-    runtime/JSCInlines.h
-    runtime/JSCJSValue.h
-    runtime/JSCJSValueInlines.h
-    runtime/JSCPtrTag.h
     runtime/JSCallee.h
     runtime/JSCalleeInlines.h
     runtime/JSCast.h
     runtime/JSCell.h
+    runtime/JSCellButterfly.h
     runtime/JSCellInlines.h
+    runtime/JSCInlines.h
+    runtime/JSCJSValue.h
+    runtime/JSCJSValueInlines.h
+    runtime/JSCPtrTag.h
     runtime/JSCustomGetterFunction.h
     runtime/JSCustomSetterFunction.h
     runtime/JSDataView.h
+    runtime/JSDataViewPrototype.h
     runtime/JSDateMath.h
     runtime/JSDestructibleObject.h
     runtime/JSDestructibleObjectHeapCellType.h
-    runtime/JSDisposableStack.h
-    runtime/JSDisposableStackInlines.h
     runtime/JSExportMacros.h
+    runtime/JSFloat16Array.h
+    runtime/JSFloat32Array.h
+    runtime/JSFloat64Array.h
     runtime/JSFunction.h
     runtime/JSFunctionInlines.h
     runtime/JSGenerator.h
+    runtime/JSGeneratorFunction.h
     runtime/JSGenericTypedArrayView.h
+    runtime/JSGenericTypedArrayViewConstructor.h
     runtime/JSGenericTypedArrayViewInlines.h
     runtime/JSGenericTypedArrayViewPrototype.h
     runtime/JSGenericTypedArrayViewPrototypeInlines.h
@@ -1097,50 +1187,65 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSGlobalObjectInlines.h
     runtime/JSGlobalProxy.h
     runtime/JSGlobalProxyInlines.h
-    runtime/JSImmutableButterfly.h
+    runtime/JSInt16Array.h
+    runtime/JSInt32Array.h
+    runtime/JSInt8Array.h
     runtime/JSInternalFieldObjectImpl.h
     runtime/JSInternalPromise.h
-    runtime/JSIterator.h
-    runtime/JSIteratorConstructor.h
-    runtime/JSIteratorHelper.h
+    runtime/JSInternalPromiseConstructor.h
     runtime/JSIteratorPrototype.h
     runtime/JSLexicalEnvironment.h
     runtime/JSLock.h
     runtime/JSMap.h
     runtime/JSMapInlines.h
     runtime/JSMapIterator.h
+    runtime/MapIteratorPrototype.h
+    runtime/MapIteratorPrototypeInlines.h
     runtime/JSMicrotask.h
-    runtime/JSModuleLoader.h
+    runtime/JSModuleEnvironment.h
+    runtime/JSModuleNamespaceObject.h
     runtime/JSModuleRecord.h
     runtime/JSNativeStdFunction.h
     runtime/JSONAtomStringCache.h
-    runtime/JSONObject.h
     runtime/JSObject.h
     runtime/JSObjectInlines.h
+    runtime/JSONObject.h
     runtime/JSPromise.h
     runtime/JSPromiseConstructor.h
     runtime/JSPropertyNameEnumerator.h
-    runtime/JSRegExpStringIterator.h
     runtime/JSRemoteFunction.h
     runtime/JSRunLoopTimer.h
     runtime/JSScope.h
     runtime/JSScriptFetchParameters.h
     runtime/JSScriptFetcher.h
+    runtime/JSScriptFetchParametersInlines.h
     runtime/JSSegmentedVariableObject.h
     runtime/JSSet.h
     runtime/JSSetInlines.h
     runtime/JSSetIterator.h
+    runtime/JSSetIteratorInlines.h
+    runtime/SetIteratorPrototype.h
+    runtime/SetIteratorPrototypeInlines.h
     runtime/JSSourceCode.h
+    runtime/JSSourceCodeInlines.h
     runtime/JSString.h
     runtime/JSStringInlines.h
+    runtime/JSStringIterator.h
+    runtime/JSStringIteratorInlines.h
+    runtime/JSStringJoiner.h
     runtime/JSSymbolTableObject.h
+    runtime/JSTemplateObjectDescriptor.h
     runtime/JSType.h
     runtime/JSTypeInfo.h
+    runtime/JSTypedArrayConstructors.h
+    runtime/JSTypedArrayPrototypes.h
+    runtime/JSTypedArrayViewPrototype.h
     runtime/JSTypedArrays.h
-    runtime/JSWeakMap.h
-    runtime/JSWeakMapInlines.h
+    runtime/JSUint16Array.h
+    runtime/JSUint32Array.h
+    runtime/JSUint8Array.h
+    runtime/JSUint8ClampedArray.h
     runtime/JSWithScope.h
-    runtime/JSWrapForValidIterator.h
     runtime/JSWrapperObject.h
     runtime/KeyAtomStringCache.h
     runtime/KeyAtomStringCacheInlines.h
@@ -1148,9 +1253,10 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/LazyProperty.h
     runtime/LeafExecutable.h
     runtime/Lookup.h
-    runtime/MapConstructor.h
+    runtime/MachineContext.h
     runtime/MatchResult.h
     runtime/MathCommon.h
+    runtime/MathObject.h
     runtime/MegamorphicCache.h
     runtime/MemoryMode.h
     runtime/MemoryStatistics.h
@@ -1159,6 +1265,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/MicrotaskQueueInlines.h
     runtime/ModuleProgramExecutable.h
     runtime/NativeCallee.h
+    runtime/NativeCalleeRegistry.h
     runtime/NativeExecutable.h
     runtime/NativeFunction.h
     runtime/NullGetterFunction.h
@@ -1166,6 +1273,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/NumberObject.h
     runtime/NumberPrototype.h
     runtime/NumericStrings.h
+    runtime/ObjectAdaptiveStructureWatchpoint.h
     runtime/ObjectConstructor.h
     runtime/ObjectInitializationScope.h
     runtime/ObjectPrototype.h
@@ -1178,6 +1286,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ParseInt.h
     runtime/PrivateFieldPutKind.h
     runtime/PrivateName.h
+    runtime/ProfilerSupport.h
     runtime/ProgramExecutable.h
     runtime/PropertyDescriptor.h
     runtime/PropertyName.h
@@ -1188,31 +1297,39 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/PropertyTable.h
     runtime/Protect.h
     runtime/PrototypeKey.h
+    runtime/ProxyConstructor.h
     runtime/ProxyObject.h
+    runtime/ProxyRevoke.h
     runtime/PureNaN.h
     runtime/PutDirectIndexMode.h
     runtime/PutPropertySlot.h
+    runtime/ReflectObject.h
     runtime/RegExp.h
+    runtime/RegExpCache.h
     runtime/RegExpCachedResult.h
     runtime/RegExpGlobalData.h
+    runtime/RegExpInlines.h
     runtime/RegExpKey.h
+    runtime/RegExpMatchesArray.h
     runtime/RegExpObject.h
-    runtime/RegExpStringIteratorPrototype.h
     runtime/RegExpSubstringGlobalAtomCache.h
     runtime/ResourceExhaustion.h
     runtime/RuntimeFlags.h
     runtime/RuntimeType.h
+    runtime/SamplingCounter.h
     runtime/SamplingProfiler.h
-    runtime/ScopeOffset.h
     runtime/ScopedArguments.h
     runtime/ScopedArgumentsTable.h
+    runtime/ScopeOffset.h
     runtime/Scribble.h
     runtime/ScriptExecutable.h
-    runtime/ScriptExecutableInlines.h
     runtime/ScriptFetchParameters.h
     runtime/ScriptFetcher.h
+    runtime/ShadowRealmConstructor.h
     runtime/ShadowRealmObject.h
+    runtime/ShadowRealmPrototype.h
     runtime/SideDataRepository.h
+    runtime/SimpleTypedArrayController.h
     runtime/SlowPathFunction.h
     runtime/SmallStrings.h
     runtime/SourceOrigin.h
@@ -1220,6 +1337,10 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/StableSort.h
     runtime/StackAlignment.h
     runtime/StackFrame.h
+    runtime/StackManager.h
+    runtime/StackManagerInlines.h
+    runtime/StopTheWorldCallback.h
+    runtime/StringIteratorPrototype.h
     runtime/StringObject.h
     runtime/StringPrototype.h
     runtime/StringReplaceCache.h
@@ -1234,19 +1355,21 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/StructureTransitionTable.h
     runtime/SubspaceAccess.h
     runtime/Symbol.h
+    runtime/SymbolConstructor.h
+    runtime/SymbolObject.h
     runtime/SymbolPrototype.h
     runtime/SymbolTable.h
     runtime/SymbolTableOrScopeDepth.h
     runtime/SyntheticModuleRecord.h
     runtime/TemplateObjectDescriptor.h
-    runtime/TemporalNow.h
-    runtime/TemporalObject.h
     runtime/TestRunnerUtils.h
     runtime/ThrowScope.h
     runtime/ToNativeFromValue.h
     runtime/TypeError.h
     runtime/TypeInfoBlob.h
-    runtime/TypeSet.h
+    runtime/TypeLocationCache.h
+    runtime/TypeProfiler.h
+    runtime/TypeProfilerLog.h
     runtime/TypedArrayAdaptersForwardDeclarations.h
     runtime/TypedArrayAdaptors.h
     runtime/TypedArrayController.h
@@ -1254,57 +1377,59 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/TypedArrayType.h
     runtime/TypedArrays.h
     runtime/TypeofType.h
+    runtime/TypeSet.h
     runtime/UGPRPair.h
     runtime/Uint16Array.h
     runtime/Uint32Array.h
     runtime/Uint8Array.h
     runtime/Uint8ClampedArray.h
+    runtime/VarOffset.h
     runtime/VM.h
     runtime/VMEntryScope.h
     runtime/VMEntryScopeInlines.h
     runtime/VMInlines.h
+    runtime/VMManager.h
+    runtime/VMThreadContext.h
     runtime/VMTraps.h
     runtime/VMTrapsInlines.h
-    runtime/VarOffset.h
+    runtime/WaiterListManager.h
     runtime/Watchdog.h
     runtime/WeakGCHashTable.h
     runtime/WeakGCMap.h
     runtime/WeakGCMapInlines.h
     runtime/WeakGCSet.h
     runtime/WeakGCSetInlines.h
-    runtime/WrapForValidIteratorPrototype.h
-    runtime/WrapForValidIteratorPrototypeInlines.h
+    runtime/WeakSetConstructor.h
+    runtime/WeakSetPrototype.h
     runtime/WriteBarrier.h
     runtime/WriteBarrierInlines.h
 
     tools/Integrity.h
-    tools/IntegrityInlines.h
     tools/LLVMProfiling.h
     tools/SourceProfiler.h
-    tools/VMInspector.h
-    tools/VMInspectorInlines.h
 
+    wasm/WasmBaselineData.h
     wasm/WasmBranchHints.h
+    wasm/WasmCallProfile.h
     wasm/WasmCallee.h
     wasm/WasmCalleeGroup.h
     wasm/WasmCallingConvention.h
     wasm/WasmCapabilities.h
-    wasm/WasmCompilationContext.h
     wasm/WasmCompilationMode.h
     wasm/WasmContext.h
     wasm/WasmCreationMode.h
     wasm/WasmExceptionType.h
     wasm/WasmFaultSignalHandler.h
     wasm/WasmFormat.h
-    wasm/WasmFunctionCodeBlockGenerator.h
     wasm/WasmFunctionIPIntMetadataGenerator.h
+    wasm/WasmGlobal.h
     wasm/WasmHandlerInfo.h
-    wasm/WasmIPIntTierUpCounter.h
     wasm/WasmIPIntGenerator.h
+    wasm/WasmIPIntTierUpCounter.h
     wasm/WasmIndexOrName.h
+    wasm/WasmInstanceAnchor.h
     wasm/WasmJS.h
-    wasm/WasmLLIntBuiltin.h
-    wasm/WasmLLIntTierUpCounter.h
+    wasm/WasmLimits.h
     wasm/WasmMemory.h
     wasm/WasmMemoryInformation.h
     wasm/WasmModule.h
@@ -1313,21 +1438,45 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmNameSection.h
     wasm/WasmOSREntryData.h
     wasm/WasmOpcodeOrigin.h
+    wasm/WasmParser.h
+    wasm/WasmPlan.h
     wasm/WasmSIMDOpcodes.h
     wasm/WasmSections.h
-    wasm/WasmTypeDefinition.h
-    wasm/WasmTypeDefinitionInlines.h
+    wasm/WasmSIMDOpcodes.h
     wasm/WasmStreamingCompiler.h
     wasm/WasmStreamingParser.h
+    wasm/WasmTable.h
+    wasm/WasmThunks.h
     wasm/WasmTierUpCount.h
+    wasm/WasmTypeDefinition.h
+    wasm/WasmTypeDefinitionInlines.h
     wasm/WasmValueLocation.h
 
+    wasm/debugger/WasmBreakpointManager.h
+    wasm/debugger/WasmDebugServer.h
+    wasm/debugger/WasmDebugServerUtilities.h
+    wasm/debugger/WasmExecutionHandler.h
+    wasm/debugger/WasmMemoryHandler.h
+    wasm/debugger/WasmModuleDebugInfo.h
+    wasm/debugger/WasmModuleManager.h
+    wasm/debugger/WasmQueryHandler.h
+    wasm/debugger/WasmVirtualAddress.h
+
     wasm/js/JSWebAssembly.h
+    wasm/js/JSWebAssemblyGlobal.h
+    wasm/js/JSWebAssemblyInstance.h
+    wasm/js/JSWebAssemblyLinkError.h
     wasm/js/JSWebAssemblyMemory.h
     wasm/js/JSWebAssemblyModule.h
+    wasm/js/JSWebAssemblyTable.h
+    wasm/js/WebAssemblyBuiltin.h
+    wasm/js/WebAssemblyFunction.h
+    wasm/js/WebAssemblyFunctionBase.h
     wasm/js/WebAssemblyGCStructure.h
+    wasm/js/WebAssemblyLinkErrorConstructor.h
+    wasm/js/WebAssemblyLinkErrorPrototype.h
     wasm/js/WebAssemblyModuleRecord.h
-
+    wasm/js/WebAssemblyWrapperFunction.h
 
     yarr/RegularExpression.h
     yarr/Yarr.h
@@ -1504,22 +1653,16 @@ WEBKIT_COPY_FILES(JavaScriptCore_CopyHeaders
     FLATTENED
 )
 
-WEBKIT_COPY_FILES(JavaScriptCore_CopyPrivateHeaders
+WEBKIT_SYMLINK_FILES(JavaScriptCore_CopyPrivateHeaders
     DESTINATION ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/JavaScriptCore
     FILES ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS}
     FLATTENED
 )
+
 add_dependencies(JavaScriptCore_CopyPrivateHeaders Bytecodes JSCBuiltins)
-# JavaScriptCore_CopyPrivateHeaders needs to have a direct or indirect
-# dependency of JavaScriptCore for CMake Visual Studio generator to
-# eliminate duplicated custom commands. Otherwise,
-# CombinedDomains.json will be generated in both projects.
-if (NOT INTERNAL_BUILD)
-    add_dependencies(JavaScriptCore_CopyPrivateHeaders JavaScriptCore)
-endif ()
 
 target_include_directories(LowLevelInterpreterLib
-    PRIVATE "$<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>")
+    PRIVATE "$<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>" "${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/JavaScriptCore")
 add_dependencies(LowLevelInterpreterLib Bytecodes JSCBuiltins)
 if (TARGET WTF_CopyHeaders)
     add_dependencies(LowLevelInterpreterLib WTF_CopyHeaders)
@@ -1536,7 +1679,7 @@ if (CMAKE_COMPILER_IS_GNUCXX AND GCC_OFFLINEASM_SOURCE_MAP)
     set_property(TARGET LowLevelInterpreterLib
         PROPERTY RULE_LAUNCH_COMPILE "${LowLevelInterpreter_LAUNCHER}")
 
-    # Pass in the filename as a magic preprocessor directive, so that
+    # Pass in the filename as a magic preprocessStrong.h:32or directive, so that
     # the wrapper can accurately identify the source file. This is incompatible
     # with LTO.
     set_source_files_properties("llint/LowLevelInterpreter.cpp"

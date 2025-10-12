@@ -35,13 +35,15 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include "WebProcessExtensionManager.h"
+#include <WebCore/DocumentView.h>
 #include <WebCore/Editor.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
-#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/PointerCharacteristics.h>
 #include <WebCore/Range.h>
+#include <WebCore/Settings.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/UserAgent.h>
 #include <WebCore/VisiblePosition.h>

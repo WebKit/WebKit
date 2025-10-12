@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DOMJITHeapRange.h"
+#include <JavaScriptCore/DOMJITHeapRange.h>
 
 namespace JSC { namespace DOMJIT {
 

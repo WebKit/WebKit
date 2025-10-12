@@ -25,13 +25,14 @@
 
 #pragma once
 
-#include "CustomElementDefaultARIA.h"
-#include "DocumentInlines.h"
-#include "Element.h"
-#include "ElementData.h"
-#include "HTMLNames.h"
-#include "RenderStyleInlines.h"
-#include "StyleChange.h"
+#include <WebCore/CustomElementDefaultARIA.h>
+#include <WebCore/Element.h>
+#include <WebCore/ElementData.h>
+#include <WebCore/HTMLNames.h>
+#include <WebCore/NodeDocument.h>
+#include <WebCore/NodeInlines.h>
+#include <WebCore/RenderStyle.h>
+#include <WebCore/StyleChange.h>
 
 namespace WebCore {
 
@@ -94,6 +95,20 @@ inline String Element::attributeTrimmedWithDefaultARIA(const QualifiedName& name
 
     auto value = originalValue.string();
     return value.trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
+}
+
+inline bool Document::shouldMaskURLForBindings(const URL& urlToMask) const
+{
+    if (urlToMask.protocolIsInHTTPFamily()) [[likely]]
+        return false;
+    return shouldMaskURLForBindingsInternal(urlToMask);
+}
+
+inline const URL& Document::maskedURLForBindingsIfNeeded(const URL& url) const
+{
+    if (shouldMaskURLForBindings(url)) [[unlikely]]
+        return maskedURLForBindings();
+    return url;
 }
 
 inline URL Element::getURLAttributeForBindings(const QualifiedName& name) const

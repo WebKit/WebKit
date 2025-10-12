@@ -11,12 +11,10 @@
 #ifndef MODULES_AUDIO_PROCESSING_AGC2_SPEECH_LEVEL_ESTIMATOR_H_
 #define MODULES_AUDIO_PROCESSING_AGC2_SPEECH_LEVEL_ESTIMATOR_H_
 
-#include <stddef.h>
-
+#include <cstddef>
 #include <type_traits>
 
 #include "api/audio/audio_processing.h"
-#include "modules/audio_processing/agc2/agc2_common.h"
 
 namespace webrtc {
 class ApmDataDumper;

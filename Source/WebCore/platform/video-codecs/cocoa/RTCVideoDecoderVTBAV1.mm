@@ -297,7 +297,7 @@ static RetainPtr<CMVideoFormatDescriptionRef> computeAV1InputFormat(std::span<co
 }
 
 struct RTCFrameDecodeParams {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RTCFrameDecodeParams);
 
     BlockPtr<void(CVPixelBufferRef, long long, long long, bool)> callback;
     int64_t timestamp { 0 };
@@ -442,7 +442,7 @@ static void av1DecompressionOutputCallback(void* decoderRef, void* params, OSSta
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         WebCore::kCVPixelBufferOpenGLCompatibilityKey,
 #elif PLATFORM(IOS_FAMILY)
-        WebCore::get_CoreVideo_kCVPixelBufferOpenGLESCompatibilityKey(),
+        WebCore::kCVPixelBufferExtendedPixelsRightKey,
 #endif
         WebCore::kCVPixelBufferIOSurfacePropertiesKey,
         WebCore::kCVPixelBufferPixelFormatTypeKey

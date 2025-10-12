@@ -123,7 +123,7 @@ class JNIEnvironment {
 //   JNIEnv* jni = ::base::android::AttachCurrentThread();
 //   JavaVM* jvm = NULL;
 //   jni->GetJavaVM(&jvm);
-//   webrtc::JVM::Initialize(jvm);
+//   JVM::Initialize(jvm);
 //
 //   // Header (.h) file of example class called User.
 //   std::unique_ptr<JNIEnvironment> env;

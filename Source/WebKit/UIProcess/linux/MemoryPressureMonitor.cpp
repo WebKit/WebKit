@@ -42,6 +42,8 @@
 
 namespace WebKit {
 
+IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
+
 static const size_t notSet = static_cast<size_t>(-1);
 
 static const Seconds s_minPollingInterval { 1_s };
@@ -374,7 +376,7 @@ void MemoryPressureMonitor::start()
 
             if (usedPercentage >= s_memoryPresurePercentageThreshold) {
                 bool isCritical = (usedPercentage >= s_memoryPresurePercentageThresholdCritical);
-                RunLoop::protectedMain()->dispatch([isCritical] {
+                RunLoop::mainSingleton().dispatch([isCritical] {
                     for (auto& processPool : WebProcessPool::allProcessPools())
                         processPool->sendMemoryPressureEvent(isCritical);
                 });
@@ -508,6 +510,8 @@ size_t CGroupMemoryController::getMemoryUsageWithCgroup()
 
     return notSet;
 }
+
+IGNORE_CLANG_WARNINGS_END
 
 } // namespace WebKit
 

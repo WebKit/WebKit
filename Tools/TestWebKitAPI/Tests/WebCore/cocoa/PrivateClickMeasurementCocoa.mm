@@ -71,7 +71,7 @@ TEST(PrivateClickMeasurement, ValidBlindedSecret)
 
     size_t exportSize = ccder_encode_rsa_pub_size(rsaPublicKey);
     Vector<uint8_t> rawKeyBytes(exportSize);
-    ccder_encode_rsa_pub(rsaPublicKey, rawKeyBytes.data(), rawKeyBytes.data() + exportSize);
+    ccder_encode_rsa_pub(rsaPublicKey, rawKeyBytes.begin(), rawKeyBytes.end());
 
     auto wrappedKeyBytes = wrapPublicKeyWithRSAPSSOID(WTFMove(rawKeyBytes));
 
@@ -90,7 +90,7 @@ TEST(PrivateClickMeasurement, ValidBlindedSecret)
     auto blindedMessage = base64URLDecode(sourceUnlinkableToken->getString("source_unlinkable_token"_s));
 
     RetainPtr blindedSignature = adoptNS([[NSMutableData alloc] initWithLength:modulusNBytes]);
-    ccrsabssa_sign_blinded_message(ciphersuite, rsaPrivateKey, blindedMessage->data(), blindedMessage->size(), static_cast<uint8_t *>([blindedSignature mutableBytes]), [blindedSignature length], rng);
+    ccrsabssa_sign_blinded_message(ciphersuite, rsaPrivateKey, blindedMessage->span().data(), blindedMessage->size(), static_cast<uint8_t *>([blindedSignature mutableBytes]), [blindedSignature length], rng);
 
     // Continue the test.
     errorMessage = pcm.calculateAndUpdateSourceSecretToken(base64URLEncodeToString(span(blindedSignature.get())));

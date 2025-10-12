@@ -34,7 +34,6 @@
 #include <wtf/MainThread.h>
 #include <wtf/MappedFileData.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/StringExtras.h>
 #include <wtf/text/MakeString.h>
 
 namespace TestWebKitAPI {
@@ -43,7 +42,7 @@ constexpr auto FileSystemTestData = "This is a test"_s;
 
 static void createTestFile(const String& path)
 {
-    auto written = FileSystem::overwriteEntireFile(path, FileSystemTestData.span8());
+    auto written = FileSystem::overwriteEntireFile(path, byteCast<uint8_t>(FileSystemTestData.span()));
     EXPECT_TRUE(written);
     EXPECT_GE(*written, 0u);
 }
@@ -59,7 +58,7 @@ public:
         auto result = FileSystem::openTemporaryFile("tempTestFile"_s);
         m_tempFilePath = result.first;
         auto handle = WTFMove(result.second);
-        handle.write(FileSystemTestData.span8());
+        handle.write(byteCast<uint8_t>(FileSystemTestData.span()));
         handle = { };
 
         m_tempFileSymlinkPath = FileSystem::createTemporaryFile("tempTestFile-symlink"_s);
@@ -236,7 +235,7 @@ TEST_F(FileSystemTest, openExistingFileTruncate)
     // Check the existing file WAS truncated when the operation succeded.
     EXPECT_EQ(FileSystem::fileSize(tempFilePath()), 0);
     // Write data to it and check the file size grows.
-    handle.write(FileSystemTestData.span8());
+    handle.write(byteCast<uint8_t>(FileSystemTestData.span()));
     EXPECT_EQ(FileSystem::fileSize(tempFilePath()), strlen(FileSystemTestData));
 }
 
@@ -256,8 +255,8 @@ TEST_F(FileSystemTest, openExistingFileReadWrite)
     // ReadWrite mode shouldn't truncate the contents of the file.
     EXPECT_EQ(FileSystem::fileSize(tempFilePath()), strlen(FileSystemTestData));
     // Write data to it and check the file size grows.
-    handle.write(FileSystemTestData.span8());
-    handle.write(FileSystemTestData.span8());
+    handle.write(byteCast<uint8_t>(FileSystemTestData.span()));
+    handle.write(byteCast<uint8_t>(FileSystemTestData.span()));
     EXPECT_EQ(FileSystem::fileSize(tempFilePath()), strlen(FileSystemTestData) * 2);
 }
 
@@ -450,7 +449,7 @@ TEST_F(FileSystemTest, deleteEmptyDirectoryContainingDSStoreFile)
     // Create .DSStore file.
     auto dsStorePath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), ".DS_Store"_s);
     auto dsStoreHandle = FileSystem::openFile(dsStorePath, FileSystem::FileOpenMode::Truncate);
-    dsStoreHandle.write(FileSystemTestData.span8());
+    dsStoreHandle.write(byteCast<uint8_t>(FileSystemTestData.span()));
     dsStoreHandle = { };
     EXPECT_TRUE(FileSystem::fileExists(dsStorePath));
 
@@ -466,14 +465,14 @@ TEST_F(FileSystemTest, deleteEmptyDirectoryOnNonEmptyDirectory)
     // Create .DSStore file.
     auto dsStorePath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), ".DS_Store"_s);
     auto dsStoreHandle = FileSystem::openFile(dsStorePath, FileSystem::FileOpenMode::Truncate);
-    dsStoreHandle.write(FileSystemTestData.span8());
+    dsStoreHandle.write(byteCast<uint8_t>(FileSystemTestData.span()));
     dsStoreHandle = { };
     EXPECT_TRUE(FileSystem::fileExists(dsStorePath));
 
     // Create a dummy file.
     auto dummyFilePath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "dummyFile"_s);
     auto dummyFileHandle = FileSystem::openFile(dummyFilePath, FileSystem::FileOpenMode::Truncate);
-    dummyFileHandle.write(FileSystemTestData.span8());
+    dummyFileHandle.write(byteCast<uint8_t>(FileSystemTestData.span()));
     dummyFileHandle = { };
     EXPECT_TRUE(FileSystem::fileExists(dummyFilePath));
 
@@ -541,7 +540,7 @@ TEST_F(FileSystemTest, moveDirectory)
     EXPECT_TRUE(FileSystem::makeAllDirectories(temporaryTestFolder));
     auto testFilePath = FileSystem::pathByAppendingComponent(temporaryTestFolder, "testFile"_s);
     auto fileHandle = FileSystem::openFile(testFilePath, FileSystem::FileOpenMode::Truncate);
-    fileHandle.write(FileSystemTestData.span8());
+    fileHandle.write(byteCast<uint8_t>(FileSystemTestData.span()));
     fileHandle = { };
 
     EXPECT_TRUE(FileSystem::fileExists(testFilePath));
@@ -753,7 +752,7 @@ static void runGetFileModificationTimeTest(const String& path, Function<std::opt
     // Modify the file.
     auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::ReadWrite);
     EXPECT_TRUE(!!fileHandle);
-    fileHandle.write("foo"_span8);
+    fileHandle.write(byteCast<uint8_t>("foo"_span));
     fileHandle = { };
 
     auto newModificationTime = fileModificationTime(path);
@@ -940,8 +939,8 @@ TEST_F(FileSystemTest, readEntireFile)
 
     auto buffer = FileSystem::readEntireFile(tempFilePath());
     EXPECT_TRUE(buffer);
-    auto contents = String::adopt(WTFMove(buffer.value()));
-    EXPECT_STREQ(contents.utf8().data(), FileSystemTestData);
+    auto contents = String { byteCast<Latin1Character>(buffer.value().span()) }.utf8();
+    EXPECT_STREQ(contents.data(), FileSystemTestData);
 }
 
 TEST_F(FileSystemTest, makeSafeToUseMemoryMapForPath)
@@ -999,8 +998,8 @@ TEST_F(FileSystemTest, isAncestor)
         EXPECT_EQ(
             input.second,
                 FileSystem::isAncestor(
-                    std::span<const UChar> { static_cast<const UChar *>(input.first.first), std::char_traits<char16_t>::length(input.first.first) },
-                    std::span<const UChar> { static_cast<const UChar*>(input.first.second), std::char_traits<char16_t>::length(input.first.second) }
+                    std::span<const char16_t> { static_cast<const char16_t *>(input.first.first), std::char_traits<char16_t>::length(input.first.first) },
+                    std::span<const char16_t> { static_cast<const char16_t*>(input.first.second), std::char_traits<char16_t>::length(input.first.second) }
                 )
             );
         }

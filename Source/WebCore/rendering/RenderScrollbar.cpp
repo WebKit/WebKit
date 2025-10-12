@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2013, 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,11 +28,14 @@
 
 #include "ContainerNodeInlines.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
+#include "RenderObjectInlines.h"
 #include "RenderScrollbarPart.h"
 #include "RenderScrollbarTheme.h"
 #include "RenderStyleSetters.h"
 #include "RenderWidget.h"
+#include "ScrollbarInlines.h"
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
 
@@ -359,7 +362,7 @@ float RenderScrollbar::opacity() const
     if (!partRenderer)
         return 1;
 
-    return partRenderer->style().opacity();
+    return partRenderer->style().opacity().value.value;
 }
 
 bool RenderScrollbar::isHiddenByStyle() const

@@ -4,24 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  [].reverse should swap elements low to high using accesses to low elements, then accesses to high elements
+info: bugzilla.mozilla.org/show_bug.cgi?id=858677
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 858677;
-var summary =
-  "[].reverse should swap elements low to high using accesses to low " +
-  "elements, then accesses to high elements";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 var observed = [];
 
@@ -73,7 +60,7 @@ var expectedObserved =
    "index 6 get",
    "index 2 get"
    /* nothing for 3/4 */];
-print(observed);
+
 // Do this before the assertions below futz even more with |observed|.
 assert.sameValue(observed.length, expectedObserved.length);
 for (var i = 0; i < expectedObserved.length; i++)
@@ -87,7 +74,3 @@ assert.sameValue(4 in arr, false); // never there
 assert.sameValue(arr[5], "index 2 get"); // copies result of getter
 assert.sameValue(6 in arr, false); // deleted
 assert.sameValue(arr[7], "index 7 get"); // no deletion, setter doesn't overwrite
-
-/******************************************************************************/
-
-print("Tests complete");

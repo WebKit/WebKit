@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "AlphaPremultiplication.h"
-#include "ColorInterpolationMethod.h"
+#include <WebCore/AlphaPremultiplication.h>
+#include <WebCore/ColorInterpolationMethod.h>
 #include "ColorNormalization.h"
-#include "ColorTypes.h"
+#include <WebCore/ColorTypes.h>
 
 namespace WebCore {
 

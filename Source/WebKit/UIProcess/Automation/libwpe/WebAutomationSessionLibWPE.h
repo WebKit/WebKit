@@ -35,7 +35,7 @@ namespace WebKit {
 void platformSimulateMouseInteractionLibWPE(WebPageProxy&, MouseInteraction, MouseButton, const WebCore::IntPoint& locationInView, OptionSet<WebEventModifier> keyModifiers, const String& pointerType, unsigned& currentModifiers);
 #endif
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
-void platformSimulateKeyboardInteractionLibWPE(WebPageProxy&, KeyboardInteraction, std::variant<VirtualKey, CharKey>&&, unsigned& currentModifiers);
+void platformSimulateKeyboardInteractionLibWPE(WebPageProxy&, KeyboardInteraction, Variant<VirtualKey, CharKey>&&, unsigned& currentModifiers);
 void platformSimulateKeySequenceLibWPE(WebPageProxy&, const String& keySequence, unsigned& currentModifiers);
 #endif
 #if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)

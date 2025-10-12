@@ -11,19 +11,20 @@
 #ifndef RTC_BASE_NULL_SOCKET_SERVER_H_
 #define RTC_BASE_NULL_SOCKET_SERVER_H_
 
+#include "api/units/time_delta.h"
 #include "rtc_base/event.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_server.h"
 #include "rtc_base/system/rtc_export.h"
 
-namespace rtc {
+namespace webrtc {
 
 class RTC_EXPORT NullSocketServer : public SocketServer {
  public:
   NullSocketServer();
   ~NullSocketServer() override;
 
-  bool Wait(webrtc::TimeDelta max_wait_duration, bool process_io) override;
+  bool Wait(TimeDelta max_wait_duration, bool process_io) override;
   void WakeUp() override;
 
   Socket* CreateSocket(int family, int type) override;
@@ -32,6 +33,7 @@ class RTC_EXPORT NullSocketServer : public SocketServer {
   Event event_;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_NULL_SOCKET_SERVER_H_

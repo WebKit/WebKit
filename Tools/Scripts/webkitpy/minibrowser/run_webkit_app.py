@@ -16,7 +16,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-from __future__ import print_function
 import argparse
 import sys
 import traceback
@@ -48,6 +47,8 @@ def main(argv):
 
     option_parser.add_argument('url', metavar='url', type=lambda s: decode(s, 'utf8'), nargs='?',
                                help='Website URL to load')
+    option_parser.add_argument('--site-isolation', action=argparse.BooleanOptionalAction, default=None, help='Enable Site Isolation')
+    option_parser.add_argument('--web-inspector', '-i', action="store_true", default=False, help='Open Web Inspector')
     options, args = option_parser.parse_known_args(argv)
 
     if not options.platform:
@@ -57,7 +58,14 @@ def main(argv):
     # URL. convert_arg_line_to_args() returns a list containing a single
     # string, so it needs to be split again.
     browser_args = [decode(s, "utf-8") for s in option_parser.convert_arg_line_to_args(' '.join(args))[0].split()]
+    if options.platform == "mac" and options.site_isolation is not None:
+        browser_args.append('--force-site-isolation')
+        browser_args.append('YES' if options.site_isolation else 'NO')
+    if options.web_inspector:
+        browser_args.append('--web-inspector')
     if options.url:
+        if options.platform == "mac":
+            browser_args.append('--url')
         browser_args.append(options.url)
 
     try:

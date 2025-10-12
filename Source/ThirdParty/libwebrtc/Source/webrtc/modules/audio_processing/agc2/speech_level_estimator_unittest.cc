@@ -15,7 +15,8 @@
 #include "api/audio/audio_processing.h"
 #include "modules/audio_processing/agc2/agc2_common.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
-#include "rtc_base/gunit.h"
+#include "rtc_base/checks.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {

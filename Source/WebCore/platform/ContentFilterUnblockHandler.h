@@ -53,7 +53,7 @@ public:
     using UnblockRequesterFunction = std::function<void(DecisionHandlerFunction)>;
 
     ContentFilterUnblockHandler() = default;
-    WEBCORE_EXPORT ContentFilterUnblockHandler(String unblockURLHost, UnblockRequesterFunction);
+    WEBCORE_EXPORT ContentFilterUnblockHandler(String unblockURLHost, UnblockRequesterFunction&&);
 #if HAVE(WEBCONTENTRESTRICTIONS)
     ContentFilterUnblockHandler(const URL& evaluatedURL);
 #endif
@@ -75,8 +75,11 @@ public:
 
     WEBCORE_EXPORT bool needsUIProcess() const;
     WEBCORE_EXPORT bool canHandleRequest(const ResourceRequest&) const;
-    WEBCORE_EXPORT void requestUnblockAsync(DecisionHandlerFunction);
+    WEBCORE_EXPORT void requestUnblockAsync(DecisionHandlerFunction&&);
     void wrapWithDecisionHandler(const DecisionHandlerFunction&);
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    WEBCORE_EXPORT bool needsNetworkProcess() const;
+#endif
 
     const String& unblockURLHost() const { return m_unblockURLHost; }
     const URL& unreachableURL() const { return m_unreachableURL; }

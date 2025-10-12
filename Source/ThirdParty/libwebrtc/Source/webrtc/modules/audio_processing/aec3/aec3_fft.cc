@@ -11,11 +11,15 @@
 #include "modules/audio_processing/aec3/aec3_fft.h"
 
 #include <algorithm>
+#include <array>
 #include <functional>
 #include <iterator>
 
+#include "api/array_view.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/fft_data.h"
 #include "rtc_base/checks.h"
-#include "system_wrappers/include/cpu_features_wrapper.h"
+#include "rtc_base/cpu_info.h"
 
 namespace webrtc {
 
@@ -73,7 +77,7 @@ const float kSqrtHanning128[kFftLength] = {
 
 bool IsSse2Available() {
 #if defined(WEBRTC_ARCH_X86_FAMILY)
-  return GetCPUInfo(kSSE2) != 0;
+  return cpu_info::Supports(cpu_info::ISA::kSSE2);
 #else
   return false;
 #endif
@@ -84,7 +88,7 @@ bool IsSse2Available() {
 Aec3Fft::Aec3Fft() : ooura_fft_(IsSse2Available()) {}
 
 // TODO(peah): Change x to be std::array once the rest of the code allows this.
-void Aec3Fft::ZeroPaddedFft(rtc::ArrayView<const float> x,
+void Aec3Fft::ZeroPaddedFft(ArrayView<const float> x,
                             Window window,
                             FftData* X) const {
   RTC_DCHECK(X);
@@ -110,8 +114,8 @@ void Aec3Fft::ZeroPaddedFft(rtc::ArrayView<const float> x,
   Fft(&fft, X);
 }
 
-void Aec3Fft::PaddedFft(rtc::ArrayView<const float> x,
-                        rtc::ArrayView<const float> x_old,
+void Aec3Fft::PaddedFft(ArrayView<const float> x,
+                        ArrayView<const float> x_old,
                         Window window,
                         FftData* X) const {
   RTC_DCHECK(X);

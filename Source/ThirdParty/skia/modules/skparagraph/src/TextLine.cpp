@@ -684,9 +684,9 @@ std::unique_ptr<Run> TextLine::shapeEllipsis(const SkString& ellipsis, const Clu
     auto shaped = [&](sk_sp<SkTypeface> typeface, sk_sp<SkFontMgr> fallback) -> std::unique_ptr<Run> {
         ShapeHandler handler(run.heightMultiplier(), run.useHalfLeading(), run.baselineShift(), ellipsis);
         SkFont font(std::move(typeface), textStyle.getFontSize());
-        font.setEdging(SkFont::Edging::kAntiAlias);
-        font.setHinting(SkFontHinting::kSlight);
-        font.setSubpixel(true);
+        font.setEdging(textStyle.getFontEdging());
+        font.setHinting(textStyle.getFontHinting());
+        font.setSubpixel(textStyle.getSubpixel());
 
         std::unique_ptr<SkShaper> shaper = SkShapers::HB::ShapeDontWrapOrReorder(
                 fOwner->getUnicode(), fallback ? fallback : SkFontMgr::RefEmpty());
@@ -754,7 +754,8 @@ std::unique_ptr<Run> TextLine::shapeEllipsis(const SkString& ellipsis, const Clu
         auto typeface = fOwner->fontCollection()->defaultFallback(
                                             unicode,
                                             textStyle.getFontStyle(),
-                                            textStyle.getLocale());
+                                            textStyle.getLocale(),
+                                            textStyle.getFontArguments());
         if (typeface) {
             ellipsisRun = shaped(typeface, fOwner->fontCollection()->getFallbackManager());
             if (ellipsisRun->isResolved()) {

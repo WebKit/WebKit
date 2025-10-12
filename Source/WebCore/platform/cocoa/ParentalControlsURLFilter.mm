@@ -29,9 +29,12 @@
 #if HAVE(WEBCONTENTRESTRICTIONS)
 
 #import "Logging.h"
+#import "ParentalControlsContentFilter.h"
+#import "ParentalControlsURLFilterParameters.h"
 #import <wtf/CompletionHandler.h>
 #import <wtf/MainThread.h>
 #import <wtf/URL.h>
+#import <wtf/cf/NotificationCenterCF.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #import <pal/cocoa/WebContentRestrictionsSoftLink.h>
@@ -43,9 +46,9 @@ namespace WebCore {
 static bool wcrBrowserEngineClientEnabled(const String& path)
 {
     if (!path.isEmpty())
-        return [PAL::getWCRBrowserEngineClientClass() shouldEvaluateURLsForConfigurationAtPath:path.createNSString().get()];
+        return [PAL::getWCRBrowserEngineClientClassSingleton() shouldEvaluateURLsForConfigurationAtPath:path.createNSString().get()];
 
-    return [PAL::getWCRBrowserEngineClientClass() shouldEvaluateURLs];
+    return [PAL::getWCRBrowserEngineClientClassSingleton() shouldEvaluateURLs];
 }
 
 static HashMap<String, UniqueRef<ParentalControlsURLFilter>>& allFiltersWithConfigurationPath()
@@ -76,7 +79,7 @@ ParentalControlsURLFilter::ParentalControlsURLFilter(const String& configuration
 
 static bool wcrBrowserEngineClientEnabled()
 {
-    return [PAL::getWCRBrowserEngineClientClass() shouldEvaluateURLs];
+    return [PAL::getWCRBrowserEngineClientClassSingleton() shouldEvaluateURLs];
 }
 
 ParentalControlsURLFilter& ParentalControlsURLFilter::singleton()
@@ -88,6 +91,12 @@ ParentalControlsURLFilter& ParentalControlsURLFilter::singleton()
 ParentalControlsURLFilter::ParentalControlsURLFilter() = default;
 
 #endif
+
+static WorkQueue& globalQueue()
+{
+    static MainThreadNeverDestroyed<Ref<WorkQueue>> queue = WorkQueue::create("ParentalControlsContentFilter queue"_s);
+    return queue.get();
+}
 
 static void webContentFilterTypeDidChange(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
 {
@@ -103,7 +112,7 @@ static void registerNotificationForWebContentFilterTypeChange()
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), nullptr, &webContentFilterTypeDidChange, CFSTR("com.apple.ManagedConfiguration.webContentFilterTypeChanged"), nullptr, CFNotificationSuspensionBehaviorCoalesce);
+        CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenterSingleton(), nullptr, &webContentFilterTypeDidChange, CFSTR("com.apple.ManagedConfiguration.webContentFilterTypeChanged"), nullptr, CFNotificationSuspensionBehaviorCoalesce);
     });
 }
 
@@ -112,14 +121,24 @@ void ParentalControlsURLFilter::resetIsEnabled()
     m_isEnabled = std::nullopt;
 }
 
+bool ParentalControlsURLFilter::isWCRBrowserEngineClientEnabled() const
+{
+#if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
+    return wcrBrowserEngineClientEnabled(m_configurationPath);
+#else
+    return wcrBrowserEngineClientEnabled();
+#endif
+}
+
 bool ParentalControlsURLFilter::isEnabled() const
 {
-    if (!m_isEnabled) {
-#if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-        m_isEnabled = wcrBrowserEngineClientEnabled(m_configurationPath);
-#else
-        m_isEnabled = wcrBrowserEngineClientEnabled();
+#if PLATFORM(MAC)
+    // FIXME: This can be removed after rdar://159207397 is fixed.
+    return isWCRBrowserEngineClientEnabled();
 #endif
+
+    if (!m_isEnabled) {
+        m_isEnabled = isWCRBrowserEngineClientEnabled();
         RELEASE_LOG(ContentFiltering, "%p - ParentalControlsURLFilter::isEnabled %d", this, *m_isEnabled);
     }
 
@@ -128,21 +147,23 @@ bool ParentalControlsURLFilter::isEnabled() const
     return *m_isEnabled;
 }
 
-void ParentalControlsURLFilter::isURLAllowedWithQueue(const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler, WTF::WorkQueue& completionHandlerQueue)
+void ParentalControlsURLFilter::isURLAllowed(const URL& url, ParentalControlsContentFilter& filter)
 {
     ASSERT(isMainThread());
 
     RetainPtr wcrBrowserEngineClient = effectiveWCRBrowserEngineClient();
     if (!wcrBrowserEngineClient) {
-        completionHandlerQueue.dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
-            completionHandler(true, nullptr);
+        globalQueue().dispatch([weakFilter = ThreadSafeWeakPtr { filter }]() mutable {
+            if (RefPtr filter = weakFilter.get())
+                filter->didReceiveAllowDecisionOnQueue(true, nullptr);
         });
         return;
     }
 
-    [wcrBrowserEngineClient evaluateURL:url.createNSURL().get() withCompletion:makeBlockPtr([url = url.isolatedCopy(), completionHandler = WTFMove(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
-        completionHandler(!shouldBlock, replacementData);
-    }).get() onCompletionQueue:completionHandlerQueue.dispatchQueue()];
+    [wcrBrowserEngineClient evaluateURL:url.createNSURL().get() withCompletion:makeBlockPtr([weakFilter = ThreadSafeWeakPtr { filter }](BOOL shouldBlock, NSData *replacementData) mutable {
+        if (RefPtr filter = weakFilter.get())
+            filter->didReceiveAllowDecisionOnQueue(!shouldBlock, replacementData);
+    }).get() onCompletionQueue:globalQueue().dispatchQueue()];
 }
 
 void ParentalControlsURLFilter::allowURL(const URL& url, CompletionHandler<void(bool)>&& completionHandler)
@@ -155,24 +176,35 @@ void ParentalControlsURLFilter::allowURL(const URL& url, CompletionHandler<void(
 
     [wcrBrowserEngineClient allowURL:url.createNSURL().get() withCompletion:makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL didAllow, NSError *) mutable {
         ASSERT(isMainThread());
+        RELEASE_LOG(ContentFiltering, "ParentalControlsURLFilter::allowURL result %d.\n", didAllow);
         completionHandler(didAllow);
     }).get()];
 }
 
-RetainPtr<WCRBrowserEngineClient> ParentalControlsURLFilter::effectiveWCRBrowserEngineClient()
+void ParentalControlsURLFilter::allowURL(const ParentalControlsURLFilterParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
+{
+#if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
+    auto& filter = WebCore::ParentalControlsURLFilter::filterWithConfigurationPath(parameters.configurationPath);
+#else
+    auto& filter = WebCore::ParentalControlsURLFilter::singleton();
+#endif
+    filter.allowURL(parameters.urlToAllow, WTFMove(completionHandler));
+}
+
+WCRBrowserEngineClient* ParentalControlsURLFilter::effectiveWCRBrowserEngineClient()
 {
     if (!isEnabled())
         return nullptr;
 
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     if (!m_wcrBrowserEngineClient && !m_configurationPath.isEmpty())
-        m_wcrBrowserEngineClient = adoptNS([PAL::allocWCRBrowserEngineClientInstance() initWithConfigurationAtPath:m_configurationPath.createNSString().get()]);
+        lazyInitialize(m_wcrBrowserEngineClient, adoptNS([PAL::allocWCRBrowserEngineClientInstance() initWithConfigurationAtPath:m_configurationPath.createNSString().get()]));
 #endif
 
     if (!m_wcrBrowserEngineClient)
-        m_wcrBrowserEngineClient = adoptNS([PAL::allocWCRBrowserEngineClientInstance() init]);
+        lazyInitialize(m_wcrBrowserEngineClient, adoptNS([PAL::allocWCRBrowserEngineClientInstance() init]));
 
-    return m_wcrBrowserEngineClient;
+    return m_wcrBrowserEngineClient.get();
 }
 
 } // namespace WebCore

@@ -30,6 +30,8 @@
 namespace WebCore {
 
 class DNSResolveQueueCurl final : public DNSResolveQueue {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DNSResolveQueueCurl);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DNSResolveQueueCurl);
 public:
     DNSResolveQueueCurl() = default;
     void resolve(const String& hostname, uint64_t identifier, DNSCompletionHandler&&) final;

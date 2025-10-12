@@ -27,6 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferences.h>
@@ -37,6 +38,7 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -138,7 +140,7 @@ TEST(AnimatedResize, AnimatedResizeDoesNotHang)
             [webView setFrame:CGRectMake(0, 0, [webView frame].size.width + 100, 400)];
         }];
 
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             [webView _endAnimatedResize];
         });
 
@@ -594,7 +596,97 @@ TEST(AnimatedResize, PinScrollPositionRelativeToTopEdgeOnPageScaleChange)
     EXPECT_TRUE(CGPointEqualToPoint([scrollView contentOffset], top));
 }
 
+TEST(AnimatedResize, PinScrollPositionRelativeToTopEdgeOnPageScaleChangeAfterIncreasedSize)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    RetainPtr scrollView = [webView scrollView];
+
+    static constexpr unsigned layoutWidth = 375;
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<head><meta name='viewport' content='width=%u'></head><body style='height: 10000px'>Content</body>", layoutWidth]];
+
+    EXPECT_EQ([scrollView contentOffset], CGPointZero);
+
+    [webView _beginLiveResize];
+    [webView setFrame:CGRectMake(0, 0, layoutWidth, 600)];
+    [webView _endLiveResize];
+
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ([scrollView contentOffset], CGPointZero);
+}
+
+TEST(AnimatedResize, ChangingWebViewGeometryDuringLiveResizeDoesNotHang)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='initial-scale=1' />"];
+
+    RetainPtr window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [window addSubview:webView.get()];
+    [window setHidden:NO];
+
+    [webView _beginLiveResize];
+
+    [webView _setObscuredInsets:UIEdgeInsetsMake(50, 50, 0, 0)];
+    auto layoutSize = CGSizeMake(100, 200);
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:layoutSize minimumUnobscuredSizeOverride:layoutSize maximumUnobscuredSizeOverride:layoutSize];
+
+    [webView _endLiveResize];
+
+    __block bool didReadLayoutSize = false;
+
+    [webView _doAfterNextPresentationUpdate:^{
+        [webView evaluateJavaScript:@"[window.innerWidth, window.innerHeight]" completionHandler:^(id value, NSError *error) {
+            CGFloat innerWidth = [[value objectAtIndex:0] floatValue];
+            CGFloat innerHeight = [[value objectAtIndex:1] floatValue];
+
+            EXPECT_EQ(innerWidth, 150);
+            EXPECT_EQ(innerHeight, 150);
+
+            didReadLayoutSize = true;
+        }];
+    }];
+
+    TestWebKitAPI::Util::run(&didReadLayoutSize);
+}
+
 #endif
+
+TEST(AnimatedResize, ChangingWebViewGeometryDuringAnimatedResizeDoesNotHang)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='initial-scale=1' />"];
+
+    RetainPtr window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [window addSubview:webView.get()];
+    [window setHidden:NO];
+
+    [webView _beginAnimatedResizeWithUpdates:^{
+        [webView setFrame:CGRectMake(0, 0, [webView frame].size.width + 100, 400)];
+    }];
+
+    [webView _setObscuredInsets:UIEdgeInsetsMake(50, 50, 0, 0)];
+    auto layoutSize = CGSizeMake(100, 200);
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:layoutSize minimumUnobscuredSizeOverride:layoutSize maximumUnobscuredSizeOverride:layoutSize];
+
+    [webView _endAnimatedResize];
+
+
+    __block bool didReadLayoutSize = false;
+
+    [webView _doAfterNextPresentationUpdate:^{
+        [webView evaluateJavaScript:@"[window.innerWidth, window.innerHeight]" completionHandler:^(id value, NSError *error) {
+            CGFloat innerWidth = [[value objectAtIndex:0] floatValue];
+            CGFloat innerHeight = [[value objectAtIndex:1] floatValue];
+
+            EXPECT_EQ(innerWidth, 300);
+            EXPECT_EQ(innerHeight, 400);
+
+            didReadLayoutSize = true;
+        }];
+    }];
+
+    TestWebKitAPI::Util::run(&didReadLayoutSize);
+}
 
 TEST(AnimatedResize, ResizeWithWithSubsequentNoOpResizeIsNotCancelled)
 {

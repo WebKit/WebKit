@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google, Inc.  All rights reserved.
+ * Copyright (C) 2011 Google, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@ enum class UnicodeBidi : uint8_t {
     IsolateOverride,
 }; 
 
-inline bool isIsolated(const UnicodeBidi& unicodeBidi)
+inline bool isIsolated(UnicodeBidi unicodeBidi)
 {
     return unicodeBidi == UnicodeBidi::Isolate || unicodeBidi == UnicodeBidi::IsolateOverride || unicodeBidi == UnicodeBidi::Plaintext;
 }

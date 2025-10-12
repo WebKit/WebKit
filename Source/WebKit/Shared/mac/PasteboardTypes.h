@@ -37,12 +37,12 @@ public:
     static NSString * const WebURLPboardType;
     static NSString * const WebURLNamePboardType;
     static NSString * const WebDummyPboardType;
-    
-    static NSArray *forEditing();
-    static NSArray *forURL();
-    static NSArray *forImages();
-    static NSArray *forImagesWithArchive();
-    static NSArray *forSelection();
+
+    static NSArray *forEditingSingleton();
+    static NSArray *forURLSingleton();
+    static NSArray *forImagesSingleton();
+    static NSArray *forImagesWithArchiveSingleton();
+    static NSArray *forSelectionSingleton();
 };
 
 } // namespace WebKit

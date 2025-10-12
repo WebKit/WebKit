@@ -67,6 +67,11 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, GameController, ControllerClassForService
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(WebCore, GameController, GCEventInteraction, WEBCORE_EXPORT)
 #endif
 
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && ENABLE(POINTER_LOCK)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(WebCore, GameController, GCMouse, WEBCORE_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(WebCore, GameController, GCMouseDidStopBeingCurrentNotification, NSString *, WEBCORE_EXPORT)
+#endif
+
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/GameControllerSoftLinkAdditions.mm>)
 #import <WebKitAdditions/GameControllerSoftLinkAdditions.mm>
 #endif

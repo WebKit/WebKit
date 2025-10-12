@@ -37,6 +37,7 @@
 #import <WebKit/WebKitLegacy.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <wtf/Assertions.h>
+#import <wtf/text/MakeString.h>
 
 @interface NSURL (DRTExtras)
 - (NSString *)_drt_descriptionSuitableForTestResult;
@@ -60,7 +61,7 @@
     NSString *str = [NSString stringWithFormat:@"<NSError domain %@, code %ld", [self domain], static_cast<long>([self code])];
     NSURL *failingURL;
 
-    if ((failingURL = [[self userInfo] objectForKey:@"NSErrorFailingURLKey"]))
+    if ((failingURL = [[self userInfo] objectForKey:NSURLErrorFailingURLErrorKey]))
         str = [str stringByAppendingFormat:@", failing URL \"%@\"", [failingURL _drt_descriptionSuitableForTestResult]];
 
     str = [str stringByAppendingFormat:@">"];
@@ -184,7 +185,10 @@ BOOL canAuthenticateServerTrustAgainstProtectionSpace(NSString *host)
             String blockedURL = [url absoluteString];
             replace(blockedURL, JSC::Yarr::RegularExpression("&key=[^&]+&"_s), "&key=GENERATED_KEY&"_s);
             replace(blockedURL, JSC::Yarr::RegularExpression("reportID=[-0123456789abcdefABCDEF]+"_s), "reportID=GENERATED_REPORT_ID"_s);
-            printf("Blocked access to external URL %s\n", blockedURL.utf8().data());
+            auto script = makeString("console.log('Blocked access to external URL "_s, blockedURL, "');"_s);
+            auto scriptRef = adopt(JSStringCreateWithUTF8CString(script.utf8().data()));
+            JSGlobalContextRef jsContext = [mainFrame globalContext];
+            JSEvaluateScript(jsContext, scriptRef.get(), 0, 0, 0, 0);
             return nil;
         }
     }
@@ -271,7 +275,7 @@ BOOL canAuthenticateServerTrustAgainstProtectionSpace(NSString *host)
 -(void)webView: (WebView *)wv resource:identifier didFailLoadingWithError:(NSError *)error fromDataSource:(WebDataSource *)dataSource
 {
     if (!gUsingServerMode && done) {
-        NSURL *failingURL = [error.userInfo[@"NSErrorFailingURLKey"] _webkit_canonicalize_with_wtf];
+        NSURL *failingURL = [error.userInfo[NSURLErrorFailingURLErrorKey] _webkit_canonicalize_with_wtf];
         if ([self.mainResourceURL isEqual:failingURL]) {
             NSString *string = [NSString stringWithFormat:@"Failed to load %@\n%@", identifier, [error _drt_descriptionSuitableForTestResult]];
             printf("%s\n", string.UTF8String);

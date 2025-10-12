@@ -29,6 +29,7 @@
 #include "CSSSelector.h"
 #include "Element.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "ScriptWrappableInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -66,5 +67,7 @@ bool CustomStateSet::has(const AtomString& state) const
 {
     return m_states.contains(state);
 }
+
+CustomStateSet::~CustomStateSet() = default;
 
 } // namespace WebCore

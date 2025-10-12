@@ -65,7 +65,8 @@ bool StrCpy(const char* src, char** dst_ptr) {
   if (dst == NULL)
     return false;
 
-  strcpy(dst, src);  // NOLINT
+  memcpy(dst, src, size - 1);
+  dst[size - 1] = '\0';
   return true;
 }
 
@@ -76,7 +77,7 @@ bool CopyChromaticity(const PrimaryChromaticity* src,
     return false;
 
   dst->reset(new (std::nothrow) PrimaryChromaticity(src->x(), src->y()));
-  if (!dst->get())
+  if (!dst)
     return false;
 
   return true;
@@ -151,12 +152,17 @@ bool ChunkedCopy(mkvparser::IMkvReader* source, mkvmuxer::IMkvWriter* dst,
                  int64_t start, int64_t size) {
   // TODO(vigneshv): Check if this is a reasonable value.
   const uint32_t kBufSize = 2048;
-  uint8_t* buf = new uint8_t[kBufSize];
+  uint8_t* buf = new (std::nothrow) uint8_t[kBufSize];
+  if (!buf) {
+    return false;
+  }
   int64_t offset = start;
   while (size > 0) {
     const int64_t read_len = (size > kBufSize) ? kBufSize : size;
-    if (source->Read(offset, static_cast<long>(read_len), buf))
+    if (source->Read(offset, static_cast<long>(read_len), buf)) {
+      delete[] buf;
       return false;
+    }
     dst->Write(buf, static_cast<uint32_t>(read_len));
     offset += read_len;
     size -= read_len;
@@ -607,10 +613,10 @@ bool ContentEncoding::Write(IMkvWriter* writer) const {
   return true;
 }
 
-uint64_t ContentEncoding::EncodingSize(uint64_t compresion_size,
+uint64_t ContentEncoding::EncodingSize(uint64_t compression_size,
                                        uint64_t encryption_size) const {
   // TODO(fgalligan): Add support for compression settings.
-  if (compresion_size != 0)
+  if (compression_size != 0)
     return 0;
 
   uint64_t encoding_size = 0;
@@ -774,7 +780,7 @@ bool Track::Write(IMkvWriter* writer) const {
     return false;
 
   // AV1 tracks require a CodecPrivate. See
-  // https://github.com/Matroska-Org/matroska-specification/blob/av1-mappin/codec/av1.md
+  // https://github.com/ietf-wg-cellar/matroska-specification/blob/HEAD/codec/av1.md
   // TODO(tomfinegan): Update the above link to the AV1 Matroska mappings to
   // point to a stable version once it is finalized, or our own WebM mappings
   // page on webmproject.org should we decide to release them.
@@ -919,11 +925,8 @@ void Track::set_codec_id(const char* codec_id) {
     const size_t length = strlen(codec_id) + 1;
     codec_id_ = new (std::nothrow) char[length];  // NOLINT
     if (codec_id_) {
-#ifdef _MSC_VER
-      strcpy_s(codec_id_, length, codec_id);
-#else
-      strcpy(codec_id_, codec_id);
-#endif
+      memcpy(codec_id_, codec_id, length - 1);
+      codec_id_[length - 1] = '\0';
     }
   }
 }
@@ -936,11 +939,8 @@ void Track::set_language(const char* language) {
     const size_t length = strlen(language) + 1;
     language_ = new (std::nothrow) char[length];  // NOLINT
     if (language_) {
-#ifdef _MSC_VER
-      strcpy_s(language_, length, language);
-#else
-      strcpy(language_, language);
-#endif
+      memcpy(language_, language, length - 1);
+      language_[length - 1] = '\0';
     }
   }
 }
@@ -952,11 +952,8 @@ void Track::set_name(const char* name) {
     const size_t length = strlen(name) + 1;
     name_ = new (std::nothrow) char[length];  // NOLINT
     if (name_) {
-#ifdef _MSC_VER
-      strcpy_s(name_, length, name);
-#else
-      strcpy(name_, name);
-#endif
+      memcpy(name_, name, length - 1);
+      name_[length - 1] = '\0';
     }
   }
 }
@@ -1240,8 +1237,9 @@ bool Colour::Write(IMkvWriter* writer) const {
 }
 
 bool Colour::SetMasteringMetadata(const MasteringMetadata& mastering_metadata) {
-  std::unique_ptr<MasteringMetadata> mm_ptr(new MasteringMetadata());
-  if (!mm_ptr.get())
+  std::unique_ptr<MasteringMetadata> mm_ptr(new (std::nothrow)
+                                                MasteringMetadata());
+  if (!mm_ptr)
     return false;
 
   mm_ptr->set_luminance_max(mastering_metadata.luminance_max());
@@ -1559,18 +1557,15 @@ void VideoTrack::set_colour_space(const char* colour_space) {
     const size_t length = strlen(colour_space) + 1;
     colour_space_ = new (std::nothrow) char[length];  // NOLINT
     if (colour_space_) {
-#ifdef _MSC_VER
-      strcpy_s(colour_space_, length, colour_space);
-#else
-      strcpy(colour_space_, colour_space);
-#endif
+      memcpy(colour_space_, colour_space, length - 1);
+      colour_space_[length - 1] = '\0';
     }
   }
 }
 
 bool VideoTrack::SetColour(const Colour& colour) {
-  std::unique_ptr<Colour> colour_ptr(new Colour());
-  if (!colour_ptr.get())
+  std::unique_ptr<Colour> colour_ptr(new (std::nothrow) Colour());
+  if (!colour_ptr)
     return false;
 
   if (colour.mastering_metadata()) {
@@ -1597,8 +1592,8 @@ bool VideoTrack::SetColour(const Colour& colour) {
 }
 
 bool VideoTrack::SetProjection(const Projection& projection) {
-  std::unique_ptr<Projection> projection_ptr(new Projection());
-  if (!projection_ptr.get())
+  std::unique_ptr<Projection> projection_ptr(new (std::nothrow) Projection());
+  if (!projection_ptr)
     return false;
 
   if (projection.private_data()) {
@@ -2622,8 +2617,7 @@ bool Cluster::Finalize(bool set_last_frame_duration, uint64_t duration) {
 
 uint64_t Cluster::Size() const {
   const uint64_t element_size =
-      EbmlMasterElementSize(static_cast<uint64_t>(libwebm::kMkvCluster),
-                            uint64_t{0xFFFFFFFFFFFFFFFFU}) +
+      EbmlMasterElementSize(libwebm::kMkvCluster, 0xFFFFFFFFFFFFFFFFULL) +
       payload_size_;
   return element_size;
 }
@@ -2684,7 +2678,10 @@ bool Cluster::QueueOrWriteFrame(const Frame* const frame) {
 
   // Queue the current frame.
   uint64_t track_number = frame->track_number();
-  Frame* const frame_to_store = new Frame();
+  Frame* const frame_to_store = new (std::nothrow) Frame();
+  if (!frame_to_store) {
+    return false;
+  }
   frame_to_store->CopyFrom(*frame);
   stored_frames_[track_number].push_back(frame_to_store);
 
@@ -2857,13 +2854,13 @@ bool SeekHead::AddSeekEntry(uint32_t id, uint64_t pos) {
 
 uint32_t SeekHead::GetId(int index) const {
   if (index < 0 || index >= kSeekEntryCount)
-    return UINT_MAX;
+    return UINT32_MAX;
   return seek_entry_id_[index];
 }
 
 uint64_t SeekHead::GetPosition(int index) const {
   if (index < 0 || index >= kSeekEntryCount)
-    return ULLONG_MAX;
+    return UINT64_MAX;
   return seek_entry_pos_[index];
 }
 
@@ -2897,7 +2894,7 @@ SegmentInfo::SegmentInfo()
       muxing_app_(NULL),
       timecode_scale_(1000000ULL),
       writing_app_(NULL),
-      date_utc_(LLONG_MIN),
+      date_utc_(INT64_MIN),
       duration_pos_(-1) {}
 
 SegmentInfo::~SegmentInfo() {
@@ -2928,11 +2925,8 @@ bool SegmentInfo::Init() {
   if (!muxing_app_)
     return false;
 
-#ifdef _MSC_VER
-  strcpy_s(muxing_app_, app_len, temp);
-#else
-  strcpy(muxing_app_, temp);
-#endif
+  memcpy(muxing_app_, temp, app_len - 1);
+  muxing_app_[app_len - 1] = '\0';
 
   set_writing_app(temp);
   if (!writing_app_)
@@ -2975,7 +2969,7 @@ bool SegmentInfo::Write(IMkvWriter* writer) {
   if (duration_ > 0.0)
     size +=
         EbmlElementSize(libwebm::kMkvDuration, static_cast<float>(duration_));
-  if (date_utc_ != LLONG_MIN)
+  if (date_utc_ != INT64_MIN)
     size += EbmlDateElementSize(libwebm::kMkvDateUTC);
   size += EbmlElementSize(libwebm::kMkvMuxingApp, muxing_app_);
   size += EbmlElementSize(libwebm::kMkvWritingApp, writing_app_);
@@ -3000,7 +2994,7 @@ bool SegmentInfo::Write(IMkvWriter* writer) {
       return false;
   }
 
-  if (date_utc_ != LLONG_MIN)
+  if (date_utc_ != INT64_MIN)
     WriteEbmlDateElement(writer, libwebm::kMkvDateUTC, date_utc_);
 
   if (!WriteEbmlElement(writer, libwebm::kMkvMuxingApp, muxing_app_))
@@ -3023,11 +3017,8 @@ void SegmentInfo::set_muxing_app(const char* app) {
     if (!temp_str)
       return;
 
-#ifdef _MSC_VER
-    strcpy_s(temp_str, length, app);
-#else
-    strcpy(temp_str, app);
-#endif
+    memcpy(temp_str, app, length - 1);
+    temp_str[length - 1] = '\0';
 
     delete[] muxing_app_;
     muxing_app_ = temp_str;
@@ -3041,11 +3032,8 @@ void SegmentInfo::set_writing_app(const char* app) {
     if (!temp_str)
       return;
 
-#ifdef _MSC_VER
-    strcpy_s(temp_str, length, app);
-#else
-    strcpy(temp_str, app);
-#endif
+    memcpy(temp_str, app, length - 1);
+    temp_str[length - 1] = '\0';
 
     delete[] writing_app_;
     writing_app_ = temp_str;
@@ -3593,8 +3581,13 @@ bool Segment::AddGenericFrame(const Frame* frame) {
     return false;
 
   if (new_cuepoint_ && cues_track_ == frame->track_number()) {
-    if (!AddCuePoint(frame->timestamp(), cues_track_))
+    // Only add a cue point at the start of a cluster if the frame is a
+    // keyframe.
+    if (frame->is_key() && !AddCuePoint(frame->timestamp(), cues_track_)) {
       return false;
+    } else {
+      new_cuepoint_ = false;
+    }
   }
 
   last_timestamp_ = frame->timestamp();
@@ -3629,19 +3622,17 @@ bool Segment::SetChunking(bool chunking, const char* filename) {
     if (chunking_ && !strcmp(filename, chunking_base_name_))
       return true;
 
-    const size_t name_length = strlen(filename) + 1;
-    char* const temp = new (std::nothrow) char[name_length];  // NOLINT
+    const size_t filename_length = strlen(filename);
+    char* const temp = new (std::nothrow) char[filename_length + 1];  // NOLINT
     if (!temp)
       return false;
 
-#ifdef _MSC_VER
-    strcpy_s(temp, name_length, filename);
-#else
-    strcpy(temp, filename);
-#endif
+    memcpy(temp, filename, filename_length);
+    temp[filename_length] = '\0';
 
     delete[] chunking_base_name_;
     chunking_base_name_ = temp;
+    // From this point, strlen(chunking_base_name_) == filename_length
 
     if (!UpdateChunkName("chk", &chunk_name_))
       return false;
@@ -3667,18 +3658,16 @@ bool Segment::SetChunking(bool chunking, const char* filename) {
     if (!chunk_writer_cluster_->Open(chunk_name_))
       return false;
 
-    const size_t header_length = strlen(filename) + strlen(".hdr") + 1;
+    const size_t hdr_length = strlen(".hdr");
+    const size_t header_length = filename_length + hdr_length + 1;
     char* const header = new (std::nothrow) char[header_length];  // NOLINT
     if (!header)
       return false;
 
-#ifdef _MSC_VER
-    strcpy_s(header, header_length - strlen(".hdr"), chunking_base_name_);
-    strcat_s(header, header_length, ".hdr");
-#else
-    strcpy(header, chunking_base_name_);
-    strcat(header, ".hdr");
-#endif
+    memcpy(header, chunking_base_name_, filename_length);
+    memcpy(&header[filename_length], ".hdr", hdr_length);
+    header[filename_length + hdr_length] = '\0';
+
     if (!chunk_writer_header_->Open(header)) {
       delete[] header;
       return false;
@@ -4023,18 +4012,16 @@ bool Segment::UpdateChunkName(const char* ext, char** name) const {
   snprintf(ext_chk, sizeof(ext_chk), "_%06d.%s", chunk_count_, ext);
 #endif
 
-  const size_t length = strlen(chunking_base_name_) + strlen(ext_chk) + 1;
+  const size_t chunking_base_name_length = strlen(chunking_base_name_);
+  const size_t ext_chk_length = strlen(ext_chk);
+  const size_t length = chunking_base_name_length + ext_chk_length + 1;
   char* const str = new (std::nothrow) char[length];  // NOLINT
   if (!str)
     return false;
 
-#ifdef _MSC_VER
-  strcpy_s(str, length - strlen(ext_chk), chunking_base_name_);
-  strcat_s(str, length, ext_chk);
-#else
-  strcpy(str, chunking_base_name_);
-  strcat(str, ext_chk);
-#endif
+  memcpy(str, chunking_base_name_, chunking_base_name_length);
+  memcpy(&str[chunking_base_name_length], ext_chk, ext_chk_length);
+  str[chunking_base_name_length + ext_chk_length] = '\0';
 
   delete[] * name;
   *name = str;
@@ -4113,9 +4100,13 @@ int Segment::WriteFramesAll() {
     }
 
     if (new_cuepoint_ && cues_track_ == frame->track_number()) {
-      if (!AddCuePoint(frame->timestamp(), cues_track_)) {
+      // Only add a cue point at the start of a cluster if the frame is a
+      // keyframe.
+      if (frame->is_key() && !AddCuePoint(frame->timestamp(), cues_track_)) {
         delete frame;
         continue;
+      } else {
+        new_cuepoint_ = false;
       }
     }
 

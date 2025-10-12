@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,8 +39,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #if USE(SYSTEM_MALLOC)
 namespace Gigacage {
-// The first 4 slots are reserved for the use of the ExecutableAllocator and additionalReservedSlots.
-constexpr size_t reservedSlotsForGigacageConfig = 4;
+// The first 6 slots are reserved for use by system allocators
+constexpr size_t reservedSlotsForGigacageConfig = 6;
 constexpr size_t reservedBytesForGigacageConfig = reservedSlotsForGigacageConfig * sizeof(uint64_t);
 }
 #else
@@ -53,15 +53,21 @@ using Slot = uint64_t;
 extern "C" WTF_EXPORT_PRIVATE Slot g_config[];
 
 constexpr size_t reservedSlotsForExecutableAllocator = 2;
-constexpr size_t additionalReservedSlots = 2;
+constexpr size_t reservedSlotsForMTEConfiguration = 2;
+constexpr size_t reservedSlotsForAllocationProfiling = 2;
 
 enum ReservedConfigByteOffset {
+    ReservedByteForExecutableAllocator0 = 0,
+    ReservedByteForExecutableAllocator1,
+    // The MTE offsets must be kept in sync with pas_mte_config.h
+    ReservedByteForMTEEnablement,
+    ReservedByteForMTEExtendedConfiguration,
     ReservedByteForAllocationProfiling,
     ReservedByteForAllocationProfilingMode,
     NumberOfReservedConfigBytes
 };
 
-static_assert(NumberOfReservedConfigBytes <= sizeof(Slot) * additionalReservedSlots);
+static_assert(NumberOfReservedConfigBytes <= sizeof(Slot) * (reservedSlotsForExecutableAllocator + reservedSlotsForMTEConfiguration + reservedSlotsForAllocationProfiling));
 
 } // namespace WebConfig
 
@@ -91,7 +97,7 @@ struct Config {
     bool isPermanentlyFrozen;
     bool disabledFreezingForTesting;
     bool useSpecialAbortForExtraSecurityImplications;
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || OS(ANDROID)
     bool disableForwardingVPrintfStdErrToOSLog;
 #endif
 
@@ -117,6 +123,14 @@ static_assert(Gigacage::reservedBytesForGigacageConfig + sizeof(WTF::Config) <= 
 static_assert(roundUpToMultipleOf<alignmentOfWTFConfig>(startOffsetOfWTFConfig) == startOffsetOfWTFConfig);
 
 WTF_EXPORT_PRIVATE void setPermissionsOfConfigPage();
+
+WTF_EXPORT_PRIVATE void makePagesFreezable(void* base, size_t); // Works together with permanentlyFreezePages().
+
+enum class FreezePagePermission {
+    None, // Remove all permissions i.e. no permissions at all.
+    ReadOnly, // The pages can be read.
+};
+WTF_EXPORT_PRIVATE void permanentlyFreezePages(void* base, size_t, FreezePagePermission);
 
 // Workaround to localize bounds safety warnings to this file.
 // FIXME: Use real types to make materializing WTF::Config* bounds-safe and type-safe.

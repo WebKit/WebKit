@@ -6,6 +6,10 @@
 
 // VertexBuffer11.cpp: Defines the D3D11 VertexBuffer implementation.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d11/VertexBuffer11.h"
 
 #include "libANGLE/Buffer.h"

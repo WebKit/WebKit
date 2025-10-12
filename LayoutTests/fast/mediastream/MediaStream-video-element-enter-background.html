@@ -11,6 +11,7 @@
     <script>
 promise_test(async (test) => {
     video.srcObject = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => video.srcObject.getTracks().forEach(track => track.stop()));
     const track = video.srcObject.getTracks()[0];
 
     await video.play();

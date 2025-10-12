@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FragmentDirectiveParser.h"
-#include "SimpleRange.h"
+#include <WebCore/FragmentDirectiveParser.h>
+#include <WebCore/SimpleRange.h>
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 

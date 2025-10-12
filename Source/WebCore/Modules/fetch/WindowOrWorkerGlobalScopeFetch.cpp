@@ -27,13 +27,12 @@
 #include "WindowOrWorkerGlobalScopeFetch.h"
 
 #include "CachedResourceRequestInitiatorTypes.h"
-#include "DocumentInlines.h"
+#include "DocumentQuirks.h"
 #include "EventLoop.h"
 #include "FetchResponse.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFetchResponse.h"
 #include "LocalDOMWindow.h"
-#include "Quirks.h"
 #include "UserGestureIndicator.h"
 #include "WorkerGlobalScope.h"
 

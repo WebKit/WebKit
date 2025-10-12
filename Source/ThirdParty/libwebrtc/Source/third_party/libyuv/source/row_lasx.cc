@@ -1148,24 +1148,26 @@ void ARGBAttenuateRow_LASX(const uint8_t* src_argb,
   __m256i b, g, r, a, dst0, dst1;
   __m256i control = {0x0005000100040000, 0x0007000300060002, 0x0005000100040000,
                      0x0007000300060002};
+  __m256i zero = __lasx_xvldi(0);
+  __m256i const_add = __lasx_xvldi(0x8ff);
 
   for (x = 0; x < len; x++) {
     DUP2_ARG2(__lasx_xvld, src_argb, 0, src_argb, 32, src0, src1);
     tmp0 = __lasx_xvpickev_b(src1, src0);
     tmp1 = __lasx_xvpickod_b(src1, src0);
-    b = __lasx_xvpackev_b(tmp0, tmp0);
-    r = __lasx_xvpackod_b(tmp0, tmp0);
-    g = __lasx_xvpackev_b(tmp1, tmp1);
-    a = __lasx_xvpackod_b(tmp1, tmp1);
-    reg0 = __lasx_xvmulwev_w_hu(b, a);
-    reg1 = __lasx_xvmulwod_w_hu(b, a);
-    reg2 = __lasx_xvmulwev_w_hu(r, a);
-    reg3 = __lasx_xvmulwod_w_hu(r, a);
-    reg4 = __lasx_xvmulwev_w_hu(g, a);
-    reg5 = __lasx_xvmulwod_w_hu(g, a);
-    reg0 = __lasx_xvssrani_h_w(reg1, reg0, 24);
-    reg2 = __lasx_xvssrani_h_w(reg3, reg2, 24);
-    reg4 = __lasx_xvssrani_h_w(reg5, reg4, 24);
+    b = __lasx_xvpackev_b(zero, tmp0);
+    r = __lasx_xvpackod_b(zero, tmp0);
+    g = __lasx_xvpackev_b(zero, tmp1);
+    a = __lasx_xvpackod_b(zero, tmp1);
+    reg0 = __lasx_xvmaddwev_w_hu(const_add, b, a);
+    reg1 = __lasx_xvmaddwod_w_hu(const_add, b, a);
+    reg2 = __lasx_xvmaddwev_w_hu(const_add, r, a);
+    reg3 = __lasx_xvmaddwod_w_hu(const_add, r, a);
+    reg4 = __lasx_xvmaddwev_w_hu(const_add, g, a);
+    reg5 = __lasx_xvmaddwod_w_hu(const_add, g, a);
+    reg0 = __lasx_xvssrani_h_w(reg1, reg0, 8);
+    reg2 = __lasx_xvssrani_h_w(reg3, reg2, 8);
+    reg4 = __lasx_xvssrani_h_w(reg5, reg4, 8);
     reg0 = __lasx_xvshuf_h(control, reg0, reg0);
     reg2 = __lasx_xvshuf_h(control, reg2, reg2);
     reg4 = __lasx_xvshuf_h(control, reg4, reg4);
@@ -2000,11 +2002,13 @@ void NV21ToARGBRow_LASX(const uint8_t* src_y,
   }
 }
 
+#ifndef RgbConstants
 struct RgbConstants {
   uint8_t kRGBToY[4];
   uint16_t kAddY;
   uint16_t pad;
 };
+#define RgbConstants RgbConstants
 
 // RGB to JPeg coefficients
 // B * 0.1140 coefficient = 29
@@ -2030,6 +2034,7 @@ static const struct RgbConstants kRgb24I601Constants = {{25, 129, 66, 0},
 static const struct RgbConstants kRawI601Constants = {{66, 129, 25, 0},
                                                       0x1080,
                                                       0};
+#endif  // RgbConstants
 
 // ARGB expects first 3 values to contain RGB and 4th value is ignored.
 static void ARGBToYMatrixRow_LASX(const uint8_t* src_argb,
@@ -2037,7 +2042,7 @@ static void ARGBToYMatrixRow_LASX(const uint8_t* src_argb,
                                   int width,
                                   const struct RgbConstants* rgbconstants) {
   int32_t shuff[8] = {0, 4, 1, 5, 2, 6, 3, 7};
-  asm volatile (
+  asm volatile(
       "xvldrepl.b      $xr0,  %3,    0             \n\t"  // load rgbconstants
       "xvldrepl.b      $xr1,  %3,    1             \n\t"  // load rgbconstants
       "xvldrepl.b      $xr2,  %3,    2             \n\t"  // load rgbconstants
@@ -2099,7 +2104,7 @@ static void RGBAToYMatrixRow_LASX(const uint8_t* src_rgba,
                                   int width,
                                   const struct RgbConstants* rgbconstants) {
   int32_t shuff[8] = {0, 4, 1, 5, 2, 6, 3, 7};
-  asm volatile (
+  asm volatile(
       "xvldrepl.b      $xr0,  %3,    0             \n\t"  // load rgbconstants
       "xvldrepl.b      $xr1,  %3,    1             \n\t"  // load rgbconstants
       "xvldrepl.b      $xr2,  %3,    2             \n\t"  // load rgbconstants
@@ -2163,7 +2168,7 @@ static void RGBToYMatrixRow_LASX(const uint8_t* src_rgba,
       1,  0,  4,  0,  7,  0, 10, 0,  13, 0,  16, 0,  19, 0,  22, 0,
       25, 0,  28, 0,  31, 0, 2,  0,  5,  0,  8,  0,  11, 0,  14, 0,
       25, 0,  28, 0,  31, 0, 2,  0,  5,  0,  8,  0,  11, 0,  14, 0};
-  asm volatile (
+  asm volatile(
       "xvldrepl.b      $xr0,  %3,    0             \n\t"  // load rgbconstants
       "xvldrepl.b      $xr1,  %3,    1             \n\t"  // load rgbconstants
       "xvldrepl.b      $xr2,  %3,    2             \n\t"  // load rgbconstants
@@ -2295,6 +2300,17 @@ void ARGBToUVJRow_LASX(const uint8_t* src_argb,
     next_argb += 128;
   }
 }
+
+// undef for unified sources build
+#undef ALPHA_VAL
+#undef YUVTORGB_SETUP
+#undef READYUV422_D
+#undef READYUV422
+#undef YUVTORGB_D
+#undef YUVTORGB
+#undef STOREARGB_D
+#undef STOREARGB
+#undef RGBTOUV
 
 #ifdef __cplusplus
 }  // extern "C"

@@ -1,5 +1,3 @@
-//@ skip unless $isWasmPlatform
-
 function opt(access, instance, transition) {
     let result;
     instance.x;
@@ -28,5 +26,4 @@ function main() {
     }
 }
 
-if (typeof WebAssembly === "object")
-    main();
+main();

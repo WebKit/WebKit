@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
-#include "CSSPropertyInitialValues.h"
-#include "ImmutableStyleProperties.h"
-#include "MutableStyleProperties.h"
+#include <WebCore/CSSPrimitiveValue.h>
+#include <WebCore/CSSPropertyInitialValues.h>
+#include <WebCore/ImmutableStyleProperties.h>
+#include <WebCore/MutableStyleProperties.h>
 
 namespace WebCore {
 

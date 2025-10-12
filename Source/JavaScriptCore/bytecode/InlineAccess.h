@@ -27,8 +27,8 @@
 
 #if ENABLE(JIT)
 
-#include "CodeLocation.h"
-#include "PropertyOffset.h"
+#include <JavaScriptCore/CodeLocation.h>
+#include <JavaScriptCore/PropertyOffset.h>
 
 namespace JSC {
 

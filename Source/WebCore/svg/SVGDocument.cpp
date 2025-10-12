@@ -60,9 +60,4 @@ void SVGDocument::updatePan(const FloatPoint& position) const
     element->setCurrentTranslate(position - m_panningOffset);
 }
 
-Ref<Document> SVGDocument::cloneDocumentWithoutChildren() const
-{
-    return create(nullptr, settings(), url());
-}
-
 }

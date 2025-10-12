@@ -241,6 +241,9 @@ Expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorageError
     if (!manager)
         return makeUnexpected(FileSystemStorageError::Unknown);
 
+    if (!FileSystem::fileExists(m_path))
+        return makeUnexpected(FileSystemStorageError::FileNotFound);
+
     bool acquired = manager->acquireLockForFile(m_path, FileSystemStorageManager::LockType::Shared);
     if (!acquired)
         return makeUnexpected(FileSystemStorageError::InvalidState);

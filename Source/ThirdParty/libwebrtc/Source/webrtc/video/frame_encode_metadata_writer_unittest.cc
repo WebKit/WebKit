@@ -11,15 +11,27 @@
 #include "video/frame_encode_metadata_writer.h"
 
 #include <cstddef>
+#include <cstdint>
 #include <vector>
 
+#include "api/rtp_packet_infos.h"
+#include "api/scoped_refptr.h"
+#include "api/video/color_space.h"
+#include "api/video/encoded_image.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_content_type.h"
 #include "api/video/video_frame.h"
+#include "api/video/video_frame_type.h"
+#include "api/video/video_rotation.h"
 #include "api/video/video_timing.h"
+#include "api/video_codecs/video_codec.h"
+#include "api/video_codecs/video_encoder.h"
 #include "common_video/h264/h264_common.h"
 #include "common_video/test/utilities.h"
+#include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_coding_defines.h"
-#include "rtc_base/time_utils.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -27,7 +39,7 @@ namespace webrtc {
 namespace test {
 namespace {
 
-const rtc::scoped_refptr<I420Buffer> kFrameBuffer = I420Buffer::Create(4, 4);
+const scoped_refptr<I420Buffer> kFrameBuffer = I420Buffer::Create(4, 4);
 
 inline size_t FrameSize(const size_t& min_frame_size,
                         const size_t& max_frame_size,
@@ -374,8 +386,7 @@ TEST(FrameEncodeMetadataWriterTest, CopiesColorSpace) {
   bitrate_allocation.SetBitrate(0, 0, 500000);
   encode_timer.OnSetRates(bitrate_allocation, 30);
 
-  webrtc::ColorSpace color_space =
-      CreateTestColorSpace(/*with_hdr_metadata=*/true);
+  ColorSpace color_space = CreateTestColorSpace(/*with_hdr_metadata=*/true);
   image.SetRtpTimestamp(static_cast<uint32_t>(kTimestampMs * 90));
   VideoFrame frame = VideoFrame::Builder()
                          .set_timestamp_ms(kTimestampMs)

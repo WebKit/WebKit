@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Apple Inc.  All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -288,6 +288,15 @@ bool BitmapImageDescriptor::isSpatial() const
 {
     if (RefPtr decoder = m_source->decoderIfExists())
         return decoder->isSpatial();
+    return false;
+}
+#endif
+
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+bool BitmapImageDescriptor::isMaybePanoramic() const
+{
+    if (RefPtr decoder = m_source->decoderIfExists())
+        return decoder->isMaybePanoramic();
     return false;
 }
 #endif

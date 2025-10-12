@@ -11,6 +11,10 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_PACKET_SEQUENCER_H_
 #define MODULES_RTP_RTCP_SOURCE_PACKET_SEQUENCER_H_
 
+#include <cstdint>
+#include <optional>
+
+#include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "system_wrappers/include/clock.h"

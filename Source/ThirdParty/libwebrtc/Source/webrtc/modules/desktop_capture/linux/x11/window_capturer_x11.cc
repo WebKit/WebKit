@@ -10,18 +10,23 @@
 
 #include "modules/desktop_capture/linux/x11/window_capturer_x11.h"
 
+#include <X11/X.h>
+#include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/composite.h>
-#include <string.h>
 
+#include <cstring>
 #include <memory>
 #include <string>
 #include <utility>
 
 #include "api/scoped_refptr.h"
+#include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/desktop_region.h"
 #include "modules/desktop_capture/linux/x11/shared_x_display.h"
 #include "modules/desktop_capture/linux/x11/window_finder_x11.h"

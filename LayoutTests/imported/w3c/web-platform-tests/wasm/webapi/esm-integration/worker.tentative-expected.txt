@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Error: assert_unreached: worker got an error Reached unreachable code
-CONSOLE MESSAGE: SyntaxError: Invalid character: '\0'
 
 FAIL Testing WebAssembly worker Error: assert_unreached: worker got an error Reached unreachable code
 

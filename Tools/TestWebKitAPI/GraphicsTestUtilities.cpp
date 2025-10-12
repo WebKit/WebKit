@@ -51,7 +51,7 @@ using namespace WebCore;
 
 ::testing::AssertionResult imagePixelIs(Color expected, Image& image, FloatPoint point)
 {
-    RefPtr buffer = ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(),ImageBufferPixelFormat::BGRA8); // NOLINT
+    RefPtr buffer = ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(),PixelFormat::BGRA8); // NOLINT
     if (!buffer)
         return ::testing::AssertionFailure() << "failed to allocate temp buffer";
     buffer->context().drawImage(image, { 0, 0, 1, 1 }, { point, FloatSize { 1, 1 } });
@@ -60,7 +60,7 @@ using namespace WebCore;
 
 ::testing::AssertionResult imagePixelIs(Color expected, NativeImage& image, FloatPoint point)
 {
-    RefPtr buffer = ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(),ImageBufferPixelFormat::BGRA8); // NOLINT
+    RefPtr buffer = ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(),PixelFormat::BGRA8); // NOLINT
     if (!buffer)
         return ::testing::AssertionFailure() << "failed to allocate temp buffer";
     buffer->context().drawNativeImage(image, { 0, 0, 1, 1 }, { point, FloatSize { 1, 1 } });

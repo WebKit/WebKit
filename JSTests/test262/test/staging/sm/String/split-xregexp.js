@@ -2,11 +2,9 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-String-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  String.prototype.split with regexp separator
+info: bugzilla.mozilla.org/show_bug.cgi?id=614608
 esid: pending
 ---*/
 /*
@@ -34,14 +32,6 @@ esid: pending
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var BUGNUMBER = 614608;
-var summary = "String.prototype.split with regexp separator";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 var ecmaSampleRe = /<(\/)?([^<>]+)>/;
 
@@ -122,5 +112,3 @@ function testSplit() {
 }
 
 testSplit();
-
-print("All tests passed!");

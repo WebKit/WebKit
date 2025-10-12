@@ -139,7 +139,7 @@ std::optional<Vector<uint8_t>> mpiData(gcry_mpi_t paramMPI)
 
     // Copy the MPI data into a properly-sized buffer.
     Vector<uint8_t> output(*length);
-    gcry_error_t error = gcry_mpi_print(GCRYMPI_FMT_USG, output.data(), output.size(), nullptr, paramMPI);
+    gcry_error_t error = gcry_mpi_print(GCRYMPI_FMT_USG, output.mutableSpan().data(), output.size(), nullptr, paramMPI);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;

@@ -33,8 +33,10 @@
 #include "DedicatedWorkerThread.h"
 
 #include "DedicatedWorkerGlobalScope.h"
+#include "IDBConnectionProxy.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorker.h"
+#include "SocketProvider.h"
 #include "WorkerObjectProxy.h"
 
 namespace WebCore {
@@ -54,6 +56,12 @@ Ref<WorkerGlobalScope> DedicatedWorkerThread::createWorkerGlobalScope(const Work
         scope->setActiveServiceWorker(ServiceWorker::getOrCreate(scope.get(), ServiceWorkerData { *params.serviceWorkerData }));
     scope->updateServiceWorkerClientData();
     return scope;
+}
+
+void DedicatedWorkerThread::clearProxies()
+{
+    m_workerObjectProxy = nullptr;
+    WorkerThread::clearProxies();
 }
 
 } // namespace WebCore

@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "CSSRule.h"
+#include <WebCore/CSSRule.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -75,7 +75,7 @@ private:
     void cssTextForRulesWithReplacementURLs(StringBuilder& rules, const CSS::SerializationContext&) const;
 
     Ref<StyleRule> m_styleRule;
-    Ref<DeclaredStylePropertyMap> m_styleMap;
+    const Ref<DeclaredStylePropertyMap> m_styleMap;
     RefPtr<StyleRuleCSSStyleProperties> m_propertiesCSSOMWrapper;
 
     mutable Vector<RefPtr<CSSRule>> m_childRuleCSSOMWrappers;

@@ -28,9 +28,9 @@
 
 namespace WebCore {
 
-enum FontBaseline { AlphabeticBaseline, IdeographicBaseline, CentralBaseline };
+enum class FontBaseline : uint8_t { Alphabetic, Ideographic, Central };
 
-enum BaselineSynthesisEdge { ContentBox, BorderBox, MarginBox };
+enum class BaselineSynthesisEdge : uint8_t { ContentBox, BorderBox, MarginBox };
 
 } // namespace WebCore
 

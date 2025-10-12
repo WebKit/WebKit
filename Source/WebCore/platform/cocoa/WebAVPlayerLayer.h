@@ -27,9 +27,9 @@
 
 #if HAVE(AVKIT)
 
-#include "FloatRect.h"
 #include <CoreGraphics/CGGeometry.h>
 #include <QuartzCore/CALayer.h>
+#include <WebCore/FloatRect.h>
 #include <pal/spi/cocoa/FoundationSPI.h>
 
 OBJC_CLASS AVPlayerController;

@@ -25,18 +25,19 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(IOS_FAMILY)
 
-#include "EventListener.h"
-#include "HTMLMediaElementEnums.h"
-#include "MediaPlayerIdentifier.h"
-#include "PlatformImage.h"
-#include "PlatformLayer.h"
-#include "PlaybackSessionInterfaceIOS.h"
-#include "SpatialVideoMetadata.h"
-#include "VideoFullscreenCaptions.h"
-#include "VideoPresentationLayerProvider.h"
-#include "VideoPresentationModel.h"
+#include <WebCore/EventListener.h>
+#include <WebCore/HTMLMediaElementEnums.h>
+#include <WebCore/MediaPlayerIdentifier.h>
+#include <WebCore/PlatformImage.h>
+#include <WebCore/PlatformLayer.h>
+#include <WebCore/PlaybackSessionInterfaceIOS.h>
+#include <WebCore/SpatialVideoMetadata.h>
+#include <WebCore/VideoFullscreenCaptions.h>
+#include <WebCore/VideoPresentationLayerProvider.h>
+#include <WebCore/VideoPresentationModel.h>
 #include <objc/objc.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -47,13 +48,13 @@
 #include <wtf/ThreadSafeWeakPtr.h>
 
 OBJC_CLASS AVPlayerViewController;
-OBJC_CLASS LMPlayableViewController;
 OBJC_CLASS UIImage;
 OBJC_CLASS UIViewController;
 OBJC_CLASS UIWindow;
 OBJC_CLASS UIView;
 OBJC_CLASS CALayer;
 OBJC_CLASS NSError;
+OBJC_CLASS WKSPlayableViewControllerHost;
 OBJC_CLASS WebAVPlayerController;
 
 namespace WebCore {
@@ -86,6 +87,7 @@ public:
     WEBCORE_EXPORT void videoDimensionsChanged(const FloatSize&) override;
     WEBCORE_EXPORT void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>) override;
     WEBCORE_EXPORT void audioSessionCategoryChanged(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy) override;
+    WEBCORE_EXPORT void routingContextUIDChanged(const String&) final;
 
     // PlaybackSessionModelClient
     WEBCORE_EXPORT void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
@@ -113,7 +115,7 @@ public:
     WEBCORE_EXPORT virtual void enterExternalPlayback(CompletionHandler<void(bool, UIViewController *)>&&, CompletionHandler<void(bool)>&&);
     WEBCORE_EXPORT virtual void exitExternalPlayback();
     virtual bool cleanupExternalPlayback() { return false; }
-
+    virtual void didSetPlayerIdentifier() { }
 
     enum class ExitFullScreenReason {
         DoneButtonTapped,
@@ -177,7 +179,7 @@ public:
     WEBCORE_EXPORT std::optional<MediaPlayerIdentifier> playerIdentifier() const;
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    virtual LMPlayableViewController *playableViewController() { return nil; }
+    virtual WKSPlayableViewControllerHost *playableViewController() { return nil; }
 #endif
 
     virtual void swapFullscreenModesWith(VideoPresentationInterfaceIOS&) { }

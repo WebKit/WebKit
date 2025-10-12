@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -70,7 +70,7 @@ static unsigned findFormListedElement(const Vector<WeakPtr<HTMLElement, WeakPtrI
     for (unsigned i = 0; i < elements.size(); ++i) {
         RefPtr currentElement = elements[i].get();
         ASSERT(currentElement);
-        auto* listedElement = currentElement->asFormListedElement();
+        RefPtr listedElement = currentElement->asFormListedElement();
         ASSERT(listedElement);
         if (listedElement->isEnumeratable() && currentElement == &element)
             return i;
@@ -97,7 +97,7 @@ HTMLElement* HTMLFormControlsCollection::customElementAfter(Element* current) co
         if (element->asFormListedElement()->isEnumeratable()) {
             m_cachedElement = element.get();
             m_cachedElementOffsetInArray = i;
-            return element.get();
+            return element.unsafeGet();
         }
     }
     return nullptr;
@@ -115,21 +115,21 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
 
     auto cache = makeUnique<CollectionNamedElementCache>();
 
-    UncheckedKeyHashSet<AtomString> foundInputElements;
+    HashSet<AtomString> foundInputElements;
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     for (auto& weakElement : ownerNode().unsafeListedElements()) {
-        RefPtr element { weakElement.get() };
+        RefPtr element = weakElement.get();
         ASSERT(element);
-        auto* associatedElement = element->asFormListedElement();
+        RefPtr associatedElement = element->asFormListedElement();
         ASSERT(associatedElement);
         if (associatedElement->isEnumeratable()) {
-            const AtomString& id = element->getIdAttribute();
+            auto& id = element->getIdAttribute();
             if (!id.isEmpty()) {
                 cache->appendToIdCache(id, *element);
                 foundInputElements.add(id);
             }
-            const AtomString& name = element->getNameAttribute();
+            auto& name = element->getNameAttribute();
             if (!name.isEmpty() && id != name) {
                 cache->appendToNameCache(name, *element);
                 foundInputElements.add(name);
@@ -137,16 +137,16 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
         }
     }
 
-    for (auto& elementPtr : ownerNode().imageElements()) {
-        if (!elementPtr)
+    for (auto& weakElement : ownerNode().imageElements()) {
+        RefPtr element = weakElement.get();
+        if (!element)
             continue;
-        HTMLImageElement& element = *elementPtr;
-        const AtomString& id = element.getIdAttribute();
+        auto& id = element->getIdAttribute();
         if (!id.isEmpty() && !foundInputElements.contains(id))
-            cache->appendToIdCache(id, element);
-        const AtomString& name = element.getNameAttribute();
+            cache->appendToIdCache(id, *element);
+        auto& name = element->getNameAttribute();
         if (!name.isEmpty() && id != name && !foundInputElements.contains(name))
-            cache->appendToNameCache(name, element);
+            cache->appendToNameCache(name, *element);
     }
 
     setNamedItemCache(WTFMove(cache));

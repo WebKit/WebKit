@@ -16,14 +16,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/soup/ResourceResponse.h
     platform/network/soup/SoupNetworkProxySettings.h
     platform/network/soup/SoupNetworkSession.h
-    platform/network/soup/SoupVersioning.h
     platform/network/soup/URLSoup.h
 )
 
-list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-    ${LIBSOUP_INCLUDE_DIRS}
-)
-
-list(APPEND WebCore_LIBRARIES
-    ${LIBSOUP_LIBRARIES}
-)
+list(APPEND WebCore_LIBRARIES Soup3::Soup3)

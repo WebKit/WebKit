@@ -30,7 +30,7 @@
 ]
 messages -> RemoteSampleBufferDisplayLayer {
 #if !RELEASE_LOG_DISABLED
-    SetLogIdentifier(String logIdentifier)
+    SetLogIdentifier(uint64_t logIdentifier)
 #endif
     UpdateDisplayMode(bool hideDisplayLayer, bool hideRootLayer)
     Flush()

@@ -19,7 +19,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/running_statistics.h"
 
-namespace rtc {
+namespace webrtc {
 
 // RollingAccumulator stores and reports statistics
 // over N most recent samples.
@@ -42,7 +42,7 @@ class RollingAccumulator {
   size_t count() const { return static_cast<size_t>(stats_.Size()); }
 
   void Reset() {
-    stats_ = webrtc::webrtc_impl::RunningStatistics<T>();
+    stats_ = webrtc_impl::RunningStatistics<T>();
     next_index_ = 0U;
     max_ = T();
     max_stale_ = false;
@@ -131,7 +131,7 @@ class RollingAccumulator {
   double ComputeVariance() const { return stats_.GetVariance().value_or(0); }
 
  private:
-  webrtc::webrtc_impl::RunningStatistics<T> stats_;
+  webrtc_impl::RunningStatistics<T> stats_;
   size_t next_index_;
   mutable T max_;
   mutable bool max_stale_;
@@ -140,6 +140,7 @@ class RollingAccumulator {
   std::vector<T> samples_;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_ROLLING_ACCUMULATOR_H_

@@ -36,7 +36,7 @@ promise_test(async (test) => {
 
     assert_throws_dom("InvalidStateError", () => transceiver2.sender.transform = senderTransform, "set a used transform 3");
     assert_throws_dom("InvalidStateError", () => transceiver2.receiver.transform = receiverTransform, "set a used transform 4");
-}, "Receiver and sender read, try to reuse transforms.");
+}, "Once a transform has been attached, it cannot be reused elsewhere.");
 
 promise_test(async (test) => {
     const worker = new Worker('RTCRtpScriptTransform-encoded-transform-worker.js');

@@ -122,7 +122,7 @@ TEST(Leb128Test, WriteNearlyMaxValue) {
   uint8_t buffer[16];
   EXPECT_EQ(WriteLeb128(0x7fff'ffff'ffff'ffff, buffer), 9);
   EXPECT_THAT(
-      rtc::MakeArrayView(buffer, 9),
+      MakeArrayView(buffer, 9),
       ElementsAre(0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f));
 }
 
@@ -130,7 +130,7 @@ TEST(Leb128Test, WriteMaxValue) {
   uint8_t buffer[16];
   EXPECT_EQ(WriteLeb128(0xffff'ffff'ffff'ffff, buffer), 10);
   EXPECT_THAT(
-      rtc::MakeArrayView(buffer, 10),
+      MakeArrayView(buffer, 10),
       ElementsAre(0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01));
 }
 

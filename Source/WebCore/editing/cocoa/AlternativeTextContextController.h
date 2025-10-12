@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "DictationContext.h"
-#import "PlatformTextAlternatives.h"
+#import <WebCore/DictationContext.h>
+#import <WebCore/PlatformTextAlternatives.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 
@@ -40,8 +40,8 @@ public:
     PlatformTextAlternatives *alternativesForContext(DictationContext) const;
 
 private:
-    UncheckedKeyHashMap<DictationContext, RetainPtr<PlatformTextAlternatives>> m_alternatives;
-    UncheckedKeyHashMap<RetainPtr<PlatformTextAlternatives>, DictationContext> m_contexts;
+    HashMap<DictationContext, RetainPtr<PlatformTextAlternatives>> m_alternatives;
+    HashMap<RetainPtr<PlatformTextAlternatives>, DictationContext> m_contexts;
 };
 
 } // namespace WebCore

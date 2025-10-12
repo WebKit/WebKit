@@ -22,10 +22,10 @@
 
 #pragma once
 
-#include "GlyphDisplayListCacheRemoval.h"
-#include "LegacyInlineBox.h"
-#include "TextBoxSelectableRange.h"
-#include "TextRun.h"
+#include <WebCore/GlyphDisplayListCacheRemoval.h>
+#include <WebCore/LegacyInlineBox.h>
+#include <WebCore/TextBoxSelectableRange.h>
+#include <WebCore/TextRun.h>
 
 namespace WebCore {
 
@@ -65,9 +65,6 @@ public:
     void markDirty(bool dirty = true) final;
 
     using LegacyInlineBox::setIsInGlyphDisplayListCache;
-
-    LayoutUnit baselinePosition(FontBaseline) const final;
-    LayoutUnit lineHeight() const final;
 
     void setLogicalOverflowRect(const LayoutRect&);
 

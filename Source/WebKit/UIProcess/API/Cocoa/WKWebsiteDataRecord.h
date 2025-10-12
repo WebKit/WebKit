@@ -39,7 +39,7 @@ WK_EXTERN NSString * const WKWebsiteDataTypeDiskCache WK_API_AVAILABLE(macos(10.
 WK_EXTERN NSString * const WKWebsiteDataTypeMemoryCache WK_API_AVAILABLE(macos(10.11), ios(9.0));
 
 /*! @constant WKWebsiteDataTypeOfflineWebApplicationCache HTML offline web application caches. */
-WK_EXTERN NSString * const WKWebsiteDataTypeOfflineWebApplicationCache WK_API_AVAILABLE(macos(10.11), ios(9.0));
+WK_EXTERN NSString * const WKWebsiteDataTypeOfflineWebApplicationCache WK_API_DEPRECATED("WebApplicationCache is no longer supported", macos(10.11, WK_MAC_TBA), ios(9.0, WK_IOS_TBA));
 
 /*! @constant WKWebsiteDataTypeCookies Cookies. */
 WK_EXTERN NSString * const WKWebsiteDataTypeCookies WK_API_AVAILABLE(macos(10.11), ios(9.0));
@@ -72,7 +72,7 @@ WK_EXTERN NSString * const WKWebsiteDataTypeMediaKeys WK_API_AVAILABLE(macos(14.
 WK_EXTERN NSString * const WKWebsiteDataTypeHashSalt WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
 /*! @constant WKWebsiteDataTypeScreenTime Screen Time information */
-WK_EXTERN NSString * const WKWebsiteDataTypeScreenTime WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXTERN NSString * const WKWebsiteDataTypeScreenTime WK_API_AVAILABLE(macos(26.0), ios(26.0));
 
 /*! A WKWebsiteDataRecord represents website data, grouped by domain name using the public suffix list. */
 WK_SWIFT_UI_ACTOR

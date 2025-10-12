@@ -57,6 +57,10 @@ public:
 #if PLATFORM(IOS_FAMILY)
     virtual void requestPresentingViewController(CompletionHandler<void(UIViewController *, NSError *)>&&) { }
 #endif
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    virtual bool preventDocking(WebKit::WebPageProxy*) { return false; }
+#endif
 };
 
 } // namespace API

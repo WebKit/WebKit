@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +49,7 @@ InlineLayoutUnit LineBoxVerticalAligner::computeLogicalHeightAndAlign(LineBox& l
         if (rootBox().style().lineBoxContain() != RenderStyle::initialLineBoxContain())
             return false;
         auto& rootInlineBox = lineBox.rootInlineBox();
-        if (!layoutState().inStandardsMode() || rootInlineBox.verticalAlign().type != VerticalAlign::Baseline)
+        if (!layoutState().inStandardsMode() || !WTF::holdsAlternative<CSS::Keyword::Baseline>(rootInlineBox.verticalAlign()))
             return false;
         if (rootInlineBox.hasTextEmphasis())
             return false;
@@ -59,7 +60,7 @@ InlineLayoutUnit LineBoxVerticalAligner::computeLogicalHeightAndAlign(LineBox& l
                     return false;
                 // Baseline aligned, non-stretchy direct children are considered to be simple for now.
                 auto& layoutBox = inlineLevelBox.layoutBox();
-                if (&layoutBox.parent() != &rootInlineBox.layoutBox() || inlineLevelBox.verticalAlign().type != VerticalAlign::Baseline)
+                if (&layoutBox.parent() != &rootInlineBox.layoutBox() || !WTF::holdsAlternative<CSS::Keyword::Baseline>(inlineLevelBox.verticalAlign()))
                     return false;
 
                 if (inlineLevelBox.isAtomicInlineBox()) {
@@ -128,42 +129,53 @@ InlineLayoutUnit LineBoxVerticalAligner::simplifiedVerticalAlignment(LineBox& li
     return lineBoxLogicalBottom - lineBoxLogicalTop;
 }
 
-InlineLayoutUnit LineBoxVerticalAligner::logicalTopOffsetFromParentBaseline(const InlineLevelBox& inlineLevelBox, const InlineLevelBox& parentInlineBox, IsInlineLeveBoxAlignment isInlineLeveBoxAlignment) const
+InlineLayoutUnit LineBoxVerticalAligner::logicalTopOffsetFromParentBaseline(const InlineLevelBox& inlineLevelBox, const InlineLevelBox& parentInlineBox, IsInlineLevelBoxAlignment isInlineLevelBoxAlignment) const
 {
     ASSERT(parentInlineBox.isInlineBox());
 
-    auto verticalAlign = inlineLevelBox.verticalAlign();
-    auto ascent = isInlineLeveBoxAlignment == IsInlineLeveBoxAlignment::Yes ? inlineLevelBox.ascent() : inlineLevelBox.layoutBounds().ascent;
-    auto height = isInlineLeveBoxAlignment == IsInlineLeveBoxAlignment::Yes ? inlineLevelBox.logicalHeight() : inlineLevelBox.layoutBounds().height();
+    auto ascent = isInlineLevelBoxAlignment == IsInlineLevelBoxAlignment::Yes ? inlineLevelBox.ascent() : inlineLevelBox.layoutBounds().ascent;
+    auto height = isInlineLevelBoxAlignment == IsInlineLevelBoxAlignment::Yes ? inlineLevelBox.logicalHeight() : inlineLevelBox.layoutBounds().height();
 
-    switch (verticalAlign.type) {
-    case VerticalAlign::Baseline:
-        return ascent;
-    case VerticalAlign::Middle:
-        return height / 2 + parentInlineBox.primarymetricsOfPrimaryFont().xHeight().value_or(0) / 2;
-    case VerticalAlign::BaselineMiddle:
-        return height / 2;
-    case VerticalAlign::Length:
-        return *verticalAlign.baselineOffset + ascent;
-    case VerticalAlign::TextTop:
-        if (isInlineLeveBoxAlignment == IsInlineLeveBoxAlignment::No)
-            return parentInlineBox.ascent();
-        // Note that text-top aligns with the inline box's font metrics top (ascent) and not the layout bounds top.
-        return parentInlineBox.ascent() + (inlineLevelBox.ascent() - inlineLevelBox.layoutBounds().ascent);
-    case VerticalAlign::TextBottom:
-        if (isInlineLeveBoxAlignment == IsInlineLeveBoxAlignment::No)
-            return height - parentInlineBox.descent();
-        // Note that text-bottom aligns with the inline box's font metrics bottom (descent) and not the layout bounds bottom.
-        return (inlineLevelBox.ascent() + inlineLevelBox.layoutBounds().descent) - parentInlineBox.descent();
-    case VerticalAlign::Sub:
-        return ascent - (parentInlineBox.fontSize() / 5 + 1);
-    case VerticalAlign::Super:
-        return ascent + parentInlineBox.fontSize() / 3 + 1;
-    default:
-        ASSERT_NOT_IMPLEMENTED_YET();
-        break;
-    }
-    return { };
+    return WTF::switchOn(inlineLevelBox.verticalAlign(),
+        [&](const CSS::Keyword::Baseline&) -> InlineLayoutUnit {
+            return ascent;
+        },
+        [&](const CSS::Keyword::Sub&) -> InlineLayoutUnit {
+            return ascent - (parentInlineBox.fontSize() / 5 + 1);
+        },
+        [&](const CSS::Keyword::Super&) -> InlineLayoutUnit {
+            return ascent + parentInlineBox.fontSize() / 3 + 1;
+        },
+        [&](const CSS::Keyword::Top&) -> InlineLayoutUnit {
+            ASSERT_NOT_IMPLEMENTED_YET();
+            return { };
+        },
+        [&](const CSS::Keyword::TextTop&) -> InlineLayoutUnit {
+            if (isInlineLevelBoxAlignment == IsInlineLevelBoxAlignment::No)
+                return parentInlineBox.ascent();
+            // Note that text-top aligns with the inline box's font metrics top (ascent) and not the layout bounds top.
+            return parentInlineBox.ascent() + (inlineLevelBox.ascent() - inlineLevelBox.layoutBounds().ascent);
+        },
+        [&](const CSS::Keyword::Middle&) -> InlineLayoutUnit {
+            return height / 2 + parentInlineBox.primarymetricsOfPrimaryFont().xHeight().value_or(0) / 2;
+        },
+        [&](const CSS::Keyword::Bottom&) -> InlineLayoutUnit {
+            ASSERT_NOT_IMPLEMENTED_YET();
+            return { };
+        },
+        [&](const CSS::Keyword::TextBottom&) -> InlineLayoutUnit {
+            if (isInlineLevelBoxAlignment == IsInlineLevelBoxAlignment::No)
+                return height - parentInlineBox.descent();
+            // Note that text-bottom aligns with the inline box's font metrics bottom (descent) and not the layout bounds bottom.
+            return (inlineLevelBox.ascent() + inlineLevelBox.layoutBounds().descent) - parentInlineBox.descent();
+        },
+        [&](const CSS::Keyword::WebkitBaselineMiddle&) -> InlineLayoutUnit {
+            return height / 2;
+        },
+        [&](const InlineLayoutUnit& baselineOffset) -> InlineLayoutUnit {
+            return baselineOffset + ascent;
+        }
+    );
 }
 
 LineBoxVerticalAligner::LineBoxAlignmentContent LineBoxVerticalAligner::computeLineBoxLogicalHeight(LineBox& lineBox) const
@@ -183,7 +195,7 @@ LineBoxVerticalAligner::LineBoxAlignmentContent LineBoxVerticalAligner::computeL
         InlineLayoutUnit top { 0 };
         InlineLayoutUnit bottom { 0 };
     };
-    UncheckedKeyHashMap<const InlineLevelBox*, AbsoluteTopAndBottom> inlineLevelBoxAbsoluteTopAndBottomMap;
+    HashMap<const InlineLevelBox*, AbsoluteTopAndBottom> inlineLevelBoxAbsoluteTopAndBottomMap;
 
     auto minimumLogicalTop = std::optional<InlineLayoutUnit> { };
     auto maximumLogicalBottom = std::optional<InlineLayoutUnit> { };
@@ -229,11 +241,11 @@ LineBoxVerticalAligner::LineBoxAlignmentContent LineBoxVerticalAligner::computeL
             continue;
         // This line box relative aligned inline level box stretches the line box.
         auto inlineLevelBoxHeight = lineBoxRelativeInlineLevelBox->layoutBounds().height();
-        if (lineBoxRelativeInlineLevelBox->verticalAlign().type == VerticalAlign::Top) {
+        if (WTF::holdsAlternative<CSS::Keyword::Top>(lineBoxRelativeInlineLevelBox->verticalAlign())) {
             topAlignedBoxesMaximumHeight = std::max(inlineLevelBoxHeight, topAlignedBoxesMaximumHeight.value_or(0.f));
             continue;
         }
-        if (lineBoxRelativeInlineLevelBox->verticalAlign().type == VerticalAlign::Bottom) {
+        if (WTF::holdsAlternative<CSS::Keyword::Bottom>(lineBoxRelativeInlineLevelBox->verticalAlign())) {
             bottomAlignedBoxesMaximumHeight = std::max(inlineLevelBoxHeight, bottomAlignedBoxesMaximumHeight.value_or(0.f));
             continue;
         }
@@ -248,7 +260,7 @@ void LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition(LineBox& lineB
     auto& formattingUtils = this->formattingUtils();
     auto hasTopAlignedInlineLevelBox = false;
 
-    UncheckedKeyHashMap<const InlineLevelBox*, InlineLayoutUnit> inlineLevelBoxAbsoluteBaselineOffsetMap;
+    HashMap<const InlineLevelBox*, InlineLayoutUnit> inlineLevelBoxAbsoluteBaselineOffsetMap;
     inlineLevelBoxAbsoluteBaselineOffsetMap.add(&rootInlineBox, InlineLayoutUnit { });
 
     auto maximumTopOffsetFromRootInlineBoxBaseline = std::optional<InlineLayoutUnit> { };
@@ -263,11 +275,11 @@ void LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition(LineBox& lineB
         auto layoutBounds = inlineLevelBox.layoutBounds();
 
         if (inlineLevelBox.hasLineBoxRelativeAlignment()) {
-            auto verticalAlign = inlineLevelBox.verticalAlign();
-            if (verticalAlign.type == VerticalAlign::Top) {
+            auto& verticalAlign = inlineLevelBox.verticalAlign();
+            if (WTF::holdsAlternative<CSS::Keyword::Top>(verticalAlign)) {
                 hasTopAlignedInlineLevelBox = hasTopAlignedInlineLevelBox || affectsRootInlineBoxVerticalPosition(inlineLevelBox);
                 inlineLevelBoxAbsoluteBaselineOffsetMap.add(&inlineLevelBox, rootInlineBox.layoutBounds().ascent - layoutBounds.ascent);
-            } else if (verticalAlign.type == VerticalAlign::Bottom)
+            } else if (WTF::holdsAlternative<CSS::Keyword::Bottom>(verticalAlign))
                 inlineLevelBoxAbsoluteBaselineOffsetMap.add(&inlineLevelBox, layoutBounds.descent - rootInlineBox.layoutBounds().descent);
             else
                 ASSERT_NOT_REACHED();
@@ -368,7 +380,7 @@ void LineBoxVerticalAligner::alignInlineLevelBoxes(LineBox& lineBox, InlineLayou
             continue;
         }
         auto& parentInlineBox = lineBox.parentInlineBox(inlineLevelBox);
-        auto inlineBoxTopOffsetFromParentBaseline = logicalTopOffsetFromParentBaseline(inlineLevelBox, parentInlineBox, IsInlineLeveBoxAlignment::Yes);
+        auto inlineBoxTopOffsetFromParentBaseline = logicalTopOffsetFromParentBaseline(inlineLevelBox, parentInlineBox, IsInlineLevelBoxAlignment::Yes);
         auto inlineLevelBoxLogicalTop = parentInlineBox.ascent() - inlineBoxTopOffsetFromParentBaseline;
         inlineLevelBox.setLogicalTop(inlineLevelBoxLogicalTop);
     }
@@ -376,31 +388,29 @@ void LineBoxVerticalAligner::alignInlineLevelBoxes(LineBox& lineBox, InlineLayou
     for (auto index : lineBoxRelativeInlineLevelBoxes) {
         auto& inlineLevelBox = nonRootInlineLevelBoxes[index];
         auto logicalTop = InlineLayoutUnit { };
-        switch (inlineLevelBox.verticalAlign().type) {
-        case VerticalAlign::Top: {
-            auto ascent = inlineLevelBox.layoutBounds().ascent;
-            if (inlineLevelBox.isInlineBox()) {
-                if (auto descendantsEnclosingGeometry = layoutBoundsForInlineBoxSubtree(nonRootInlineLevelBoxes, index))
-                    ascent = !inlineLevelBox.hasContent() ? descendantsEnclosingGeometry->ascent : std::max(descendantsEnclosingGeometry->ascent, ascent);
+        WTF::switchOn(inlineLevelBox.verticalAlign(),
+            [&](const CSS::Keyword::Top&) {
+                auto ascent = inlineLevelBox.layoutBounds().ascent;
+                if (inlineLevelBox.isInlineBox()) {
+                    if (auto descendantsEnclosingGeometry = layoutBoundsForInlineBoxSubtree(nonRootInlineLevelBoxes, index))
+                        ascent = !inlineLevelBox.hasContent() ? descendantsEnclosingGeometry->ascent : std::max(descendantsEnclosingGeometry->ascent, ascent);
+                }
+                // Note that this logical top is not relative to the parent inline box.
+                logicalTop = ascent - inlineLevelBox.ascent();
+            },
+            [&](const CSS::Keyword::Bottom&) {
+                auto descent = inlineLevelBox.layoutBounds().descent;
+                if (inlineLevelBox.isInlineBox()) {
+                    if (auto descendantsEnclosingGeometry = layoutBoundsForInlineBoxSubtree(nonRootInlineLevelBoxes, index))
+                        descent = !inlineLevelBox.hasContent() ? descendantsEnclosingGeometry->descent : std::max(descendantsEnclosingGeometry->descent, descent);
+                }
+                // Note that this logical top is not relative to the parent inline box.
+                logicalTop = lineBoxLogicalHeight - (inlineLevelBox.ascent() + descent);
+            },
+            [](const auto&) {
+                ASSERT_NOT_REACHED();
             }
-            // Note that this logical top is not relative to the parent inline box.
-            logicalTop = ascent - inlineLevelBox.ascent();
-            break;
-        }
-        case VerticalAlign::Bottom: {
-            auto descent = inlineLevelBox.layoutBounds().descent;
-            if (inlineLevelBox.isInlineBox()) {
-                if (auto descendantsEnclosingGeometry = layoutBoundsForInlineBoxSubtree(nonRootInlineLevelBoxes, index))
-                    descent = !inlineLevelBox.hasContent() ? descendantsEnclosingGeometry->descent : std::max(descendantsEnclosingGeometry->descent, descent);
-            }
-            // Note that this logical top is not relative to the parent inline box.
-            logicalTop = lineBoxLogicalHeight - (inlineLevelBox.ascent() + descent);
-            break;
-        }
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
+        );
         inlineLevelBox.setLogicalTop(logicalTop);
     }
 }
@@ -416,31 +426,47 @@ InlineLayoutUnit LineBoxVerticalAligner::adjustForAnnotationIfNeeded(LineBox& li
             auto inlineBoxTop = lineBox.inlineLevelBoxAbsoluteTop(inlineLevelBox);
             auto inlineBoxBottom = inlineBoxTop + inlineLevelBox.logicalHeight();
 
-            switch (inlineLevelBox.verticalAlign().type) {
-            case VerticalAlign::Baseline:
-            case VerticalAlign::Middle:
-            case VerticalAlign::BaselineMiddle:
-            case VerticalAlign::Length:
-            case VerticalAlign::Sub:
-            case VerticalAlign::Super:
-            case VerticalAlign::TextTop:
-            case VerticalAlign::TextBottom:
-            case VerticalAlign::Bottom:
+            auto defaultCase = [&] {
                 if (auto aboveSpace = inlineLevelBox.textEmphasisAbove())
                     lineBoxTop = std::min(lineBoxTop, inlineBoxTop - *aboveSpace);
                 if (auto belowSpace = inlineLevelBox.textEmphasisBelow())
                     lineBoxBottom = std::max(lineBoxBottom, inlineBoxBottom + *belowSpace);
-                break;
-            case VerticalAlign::Top: {
-                // FIXME: Check if horizontal vs. vertical writing mode should be taking into account.
-                auto annotationSpace = inlineLevelBox.textEmphasisAbove().value_or(0.f) + inlineLevelBox.textEmphasisBelow().value_or(0.f);
-                lineBoxBottom = std::max(lineBoxBottom, inlineBoxBottom + annotationSpace);
-                break;
-            }
-            default:
-                ASSERT_NOT_IMPLEMENTED_YET();
-                break;
-            }
+            };
+
+            WTF::switchOn(inlineLevelBox.verticalAlign(),
+                [&](const CSS::Keyword::Baseline&) {
+                    defaultCase();
+                },
+                [&](const CSS::Keyword::Sub&) {
+                    defaultCase();
+                },
+                [&](const CSS::Keyword::Super&) {
+                    defaultCase();
+                },
+                [&](const CSS::Keyword::Top&) {
+                    // FIXME: Check if horizontal vs. vertical writing mode should be taking into account.
+                    auto annotationSpace = inlineLevelBox.textEmphasisAbove().value_or(0.f) + inlineLevelBox.textEmphasisBelow().value_or(0.f);
+                    lineBoxBottom = std::max(lineBoxBottom, inlineBoxBottom + annotationSpace);
+                },
+                [&](const CSS::Keyword::TextTop&) {
+                    defaultCase();
+                },
+                [&](const CSS::Keyword::Middle&) {
+                    defaultCase();
+                },
+                [&](const CSS::Keyword::Bottom&) {
+                    defaultCase();
+                },
+                [&](const CSS::Keyword::TextBottom&) {
+                    defaultCase();
+                },
+                [&](const CSS::Keyword::WebkitBaselineMiddle&) {
+                    defaultCase();
+                },
+                [&](const InlineLayoutUnit&) {
+                    defaultCase();
+                }
+            );
         };
 
         adjustLineBoxTopAndBottomForInlineBox(lineBox.rootInlineBox());
@@ -462,21 +488,19 @@ InlineLayoutUnit LineBoxVerticalAligner::adjustForAnnotationIfNeeded(LineBox& li
             rootInlineBox.setLogicalTop(annotationOffset + rootInlineBoxTop);
 
             for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-                switch (inlineLevelBox.verticalAlign().type) {
-                case VerticalAlign::Top: {
-                    auto inlineBoxTop = inlineLevelBox.layoutBounds().ascent - inlineLevelBox.ascent();
-                    inlineLevelBox.setLogicalTop(inlineLevelBox.textEmphasisAbove().value_or(0.f) + inlineBoxTop);
-                    break;
-                }
-                case VerticalAlign::Bottom: {
-                    auto inlineBoxTop = adjustedLineBoxHeight - (inlineLevelBox.layoutBounds().descent + inlineLevelBox.ascent());
-                    inlineLevelBox.setLogicalTop(inlineBoxTop - inlineLevelBox.textEmphasisBelow().value_or(0.f));
-                    break;
-                }
-                default:
-                    // These alignment positions are relative to the root inline box's baseline.
-                    break;
-                }
+                WTF::switchOn(inlineLevelBox.verticalAlign(),
+                    [&](const CSS::Keyword::Top&) {
+                        auto inlineBoxTop = inlineLevelBox.layoutBounds().ascent - inlineLevelBox.ascent();
+                        inlineLevelBox.setLogicalTop(inlineLevelBox.textEmphasisAbove().value_or(0.f) + inlineBoxTop);
+                    },
+                    [&](const CSS::Keyword::Bottom&) {
+                        auto inlineBoxTop = adjustedLineBoxHeight - (inlineLevelBox.layoutBounds().descent + inlineLevelBox.ascent());
+                        inlineLevelBox.setLogicalTop(inlineBoxTop - inlineLevelBox.textEmphasisBelow().value_or(0.f));
+                    },
+                    [](const auto&) {
+                        // These alignment positions are relative to the root inline box's baseline.
+                    }
+                );
             }
         };
         adjustContentTopWithAnnotationSpace();

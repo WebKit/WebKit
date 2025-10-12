@@ -81,7 +81,7 @@ class RtpTransportControllerSend final
       const RtpSenderObservers& observers,
       std::unique_ptr<FecController> fec_controller,
       const RtpSenderFrameEncryptionConfig& frame_encryption_config,
-      rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) override;
+      scoped_refptr<FrameTransformerInterface> frame_transformer) override;
   void DestroyRtpVideoSender(
       RtpVideoSenderInterface* rtp_video_sender) override;
 
@@ -103,13 +103,13 @@ class RtpTransportControllerSend final
   void RegisterTargetTransferRateObserver(
       TargetTransferRateObserver* observer) override;
   void OnNetworkRouteChanged(absl::string_view transport_name,
-                             const rtc::NetworkRoute& network_route) override;
+                             const NetworkRoute& network_route) override;
   void OnNetworkAvailability(bool network_available) override;
   NetworkLinkRtcpObserver* GetRtcpObserver() override;
   int64_t GetPacerQueuingDelayMs() const override;
   std::optional<Timestamp> GetFirstPacketTime() const override;
   void EnablePeriodicAlrProbing(bool enable) override;
-  void OnSentPacket(const rtc::SentPacket& sent_packet) override;
+  void OnSentPacket(const SentPacketInfo& sent_packet) override;
   void OnReceivedPacket(const ReceivedPacket& packet_msg) override;
 
   void SetSdpBitrateParameters(const BitrateConstraints& constraints) override;
@@ -126,7 +126,7 @@ class RtpTransportControllerSend final
   void OnReceiverEstimatedMaxBitrate(Timestamp receive_time,
                                      DataRate bitrate) override;
   void OnReport(Timestamp receive_time,
-                rtc::ArrayView<const ReportBlockData> report_blocks) override;
+                ArrayView<const ReportBlockData> report_blocks) override;
   void OnRttUpdate(Timestamp receive_time, TimeDelta rtt) override;
   void OnTransportFeedback(Timestamp receive_time,
                            const rtcp::TransportFeedback& feedback) override;
@@ -142,8 +142,22 @@ class RtpTransportControllerSend final
     return controller_.get();
   }
 
+  // Called once it's known that the remote end supports RFC 8888.
+  void EnableCongestionControlFeedbackAccordingToRfc8888() override;
+
+  int ReceivedCongestionControlFeedbackCount() const override {
+    RTC_DCHECK_RUN_ON(&sequence_checker_);
+    return feedback_count_;
+  }
+  int ReceivedTransportCcFeedbackCount() const override {
+    RTC_DCHECK_RUN_ON(&sequence_checker_);
+    return transport_cc_feedback_count_;
+  }
+
  private:
   void MaybeCreateControllers() RTC_RUN_ON(sequence_checker_);
+  void HandleTransportPacketsFeedback(const TransportPacketsFeedback& feedback)
+      RTC_RUN_ON(sequence_checker_);
   void UpdateNetworkAvailability() RTC_RUN_ON(sequence_checker_);
   void UpdateInitialConstraints(TargetRateConstraints new_contraints)
       RTC_RUN_ON(sequence_checker_);
@@ -152,8 +166,8 @@ class RtpTransportControllerSend final
   void UpdateControllerWithTimeInterval() RTC_RUN_ON(sequence_checker_);
 
   std::optional<BitrateConstraints> ApplyOrLiftRelayCap(bool is_relayed);
-  bool IsRelevantRouteChange(const rtc::NetworkRoute& old_route,
-                             const rtc::NetworkRoute& new_route) const;
+  bool IsRelevantRouteChange(const NetworkRoute& old_route,
+                             const NetworkRoute& new_route) const;
   void UpdateBitrateConstraints(const BitrateConstraints& updated);
   void UpdateStreamsConfig() RTC_RUN_ON(sequence_checker_);
   void PostUpdates(NetworkControlUpdate update) RTC_RUN_ON(sequence_checker_);
@@ -165,7 +179,7 @@ class RtpTransportControllerSend final
   // Called by packet router just before packet is sent to the RTP modules.
   void NotifyBweOfPacedSentPacket(const RtpPacketToSend& packet,
                                   const PacedPacketInfo& pacing_info);
-  void ProcessSentPacket(const rtc::SentPacket& sent_packet)
+  void ProcessSentPacket(const SentPacketInfo& sent_packet)
       RTC_RUN_ON(sequence_checker_);
   void ProcessSentPacketUpdates(NetworkControlUpdate updates)
       RTC_RUN_ON(sequence_checker_);
@@ -178,7 +192,7 @@ class RtpTransportControllerSend final
   std::vector<std::unique_ptr<RtpVideoSenderInterface>> video_rtp_senders_
       RTC_GUARDED_BY(&sequence_checker_);
   RtpBitrateConfigurator bitrate_configurator_;
-  std::map<std::string, rtc::NetworkRoute> network_routes_
+  std::map<std::string, NetworkRoute> network_routes_
       RTC_GUARDED_BY(sequence_checker_);
   BandwidthEstimationSettings bwe_settings_ RTC_GUARDED_BY(sequence_checker_);
   bool pacer_started_ RTC_GUARDED_BY(sequence_checker_);
@@ -228,6 +242,12 @@ class RtpTransportControllerSend final
 
   DataSize congestion_window_size_ RTC_GUARDED_BY(sequence_checker_);
   bool is_congested_ RTC_GUARDED_BY(sequence_checker_);
+  bool transport_maybe_support_ecn_ =
+      false;  // True if RFC8888 has been negotiated.
+  bool sending_packets_as_ect1_ = false;
+  // Count of feedback messages received.
+  int feedback_count_ RTC_GUARDED_BY(sequence_checker_) = 0;
+  int transport_cc_feedback_count_ RTC_GUARDED_BY(sequence_checker_) = 0;
 
   // Protected by internal locks.
   RateLimiter retransmission_rate_limiter_;

@@ -34,7 +34,6 @@ namespace WebKit {
 
 struct UserContentControllerParameters {
     UserContentControllerIdentifier identifier;
-    Vector<ContentWorldData> userContentWorlds;
     Vector<WebUserScriptData> userScripts;
     Vector<WebUserStyleSheetData> userStyleSheets;
     Vector<WebScriptMessageHandlerData> messageHandlers;

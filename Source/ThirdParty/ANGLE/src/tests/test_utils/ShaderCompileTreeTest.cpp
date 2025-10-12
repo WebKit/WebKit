@@ -111,7 +111,6 @@ class OnlyContainsZeroConstantsTraverser final : public TIntermTraverser
 
 void ShaderCompileTreeTest::SetUp()
 {
-    mAllocator.push();
     SetGlobalPoolAllocator(&mAllocator);
 
     ShBuiltInResources resources;
@@ -128,7 +127,7 @@ void ShaderCompileTreeTest::TearDown()
     delete mTranslator;
 
     SetGlobalPoolAllocator(nullptr);
-    mAllocator.pop();
+    mAllocator.reset();
 }
 
 bool ShaderCompileTreeTest::compile(const std::string &shaderString)

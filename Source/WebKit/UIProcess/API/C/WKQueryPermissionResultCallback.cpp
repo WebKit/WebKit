@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,15 +38,15 @@ WKTypeID WKQueryPermissionResultCallbackGetTypeID()
 
 void WKQueryPermissionResultCallbackCompleteWithDenied(WKQueryPermissionResultCallbackRef callback)
 {
-    return toImpl(callback)->setPermission(WebCore::PermissionState::Denied);
+    return toProtectedImpl(callback)->setPermission(WebCore::PermissionState::Denied);
 }
 
 void WKQueryPermissionResultCallbackCompleteWithGranted(WKQueryPermissionResultCallbackRef callback)
 {
-    return toImpl(callback)->setPermission(WebCore::PermissionState::Granted);
+    return toProtectedImpl(callback)->setPermission(WebCore::PermissionState::Granted);
 }
 
 void WKQueryPermissionResultCallbackCompleteWithPrompt(WKQueryPermissionResultCallbackRef callback)
 {
-    return toImpl(callback)->setPermission(WebCore::PermissionState::Prompt);
+    return toProtectedImpl(callback)->setPermission(WebCore::PermissionState::Prompt);
 }

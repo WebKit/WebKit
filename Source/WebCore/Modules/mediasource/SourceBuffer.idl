@@ -34,7 +34,6 @@
 };
 
 [
-    CustomToJSObject,
     JSGenerateToNativeObject,
     ActiveDOMObject,
     Conditional=MEDIA_SOURCE,

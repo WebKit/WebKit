@@ -1,0 +1,3 @@
+
+PASS window.load event should be fired with pending same-document navigation
+

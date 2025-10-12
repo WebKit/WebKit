@@ -28,9 +28,9 @@
 
 #if ENABLE(VIDEO)
 
-#include "SerializedPlatformDataCue.h"
-#include "TextTrackCue.h"
 #include <JavaScriptCore/Strong.h>
+#include <WebCore/SerializedPlatformDataCue.h>
+#include <WebCore/TextTrackCue.h>
 #include <wtf/MediaTime.h>
 #include <wtf/TypeCasts.h>
 

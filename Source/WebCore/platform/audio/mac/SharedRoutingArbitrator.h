@@ -27,18 +27,10 @@
 
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
 
-#include "AudioSession.h"
+#include <WebCore/AudioSession.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
-
-namespace WebCore {
-class SharedRoutingArbitratorToken;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SharedRoutingArbitratorToken> : std::true_type { };
-}
 
 namespace WTF {
 class Logger;
@@ -46,8 +38,9 @@ class Logger;
 
 namespace WebCore {
 
-class WEBCORE_EXPORT SharedRoutingArbitratorToken : public CanMakeWeakPtr<SharedRoutingArbitratorToken> {
+class WEBCORE_EXPORT SharedRoutingArbitratorToken : public CanMakeWeakPtr<SharedRoutingArbitratorToken>, public CanMakeCheckedPtr<SharedRoutingArbitratorToken> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(SharedRoutingArbitratorToken, WEBCORE_EXPORT);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SharedRoutingArbitratorToken);
 public:
     static UniqueRef<SharedRoutingArbitratorToken> create();
     uint64_t logIdentifier() const;

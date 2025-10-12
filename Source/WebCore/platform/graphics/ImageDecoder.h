@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "DecodingOptions.h"
-#include "ImageOrientation.h"
-#include "ImageTypes.h"
-#include "IntPoint.h"
-#include "IntSize.h"
-#include "PlatformImage.h"
+#include <WebCore/DecodingOptions.h>
+#include <WebCore/ImageOrientation.h>
+#include <WebCore/ImageTypes.h>
+#include <WebCore/IntPoint.h>
+#include <WebCore/IntSize.h>
+#include <WebCore/PlatformImage.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -100,15 +100,17 @@ public:
     virtual bool isSpatial() const { return false; }
 #endif
 
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    virtual bool isMaybePanoramic() const { return false; }
+#endif
+
     virtual IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const = 0;
     virtual bool frameIsCompleteAtIndex(size_t) const = 0;
     virtual ImageOrientation frameOrientationAtIndex(size_t) const { return ImageOrientation::Orientation::None; }
-    virtual Headroom frameHeadroomAtIndex(size_t) const { return Headroom::None; }
     virtual std::optional<IntSize> frameDensityCorrectedSizeAtIndex(size_t) const { return std::nullopt; }
 
     virtual Seconds frameDurationAtIndex(size_t) const = 0;
     virtual bool frameHasAlphaAtIndex(size_t) const = 0;
-    virtual unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const = 0;
 
     WEBCORE_EXPORT virtual bool fetchFrameMetaDataAtIndex(size_t, SubsamplingLevel, const DecodingOptions&, ImageFrame&) const;
 

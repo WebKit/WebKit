@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: LinkError: imported global ./wasm-export-i64-global.wasm:g must be a same type
 
 PASS Link errors for imports between WebAssembly modules should be reported.
 

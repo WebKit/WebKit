@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "VM.h"
-#include "VMEntryScope.h"
+#include <JavaScriptCore/VM.h>
+#include <JavaScriptCore/VMEntryScope.h>
 
 namespace JSC {
 

@@ -68,7 +68,7 @@ void IPCConnectionTester::didClose(IPC::Connection&)
 {
 }
 
-void IPCConnectionTester::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t)
+void IPCConnectionTester::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>&)
 {
     ASSERT_NOT_REACHED();
 }

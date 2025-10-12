@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/event-timing/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/event-timing/TapToStopFling.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/event-timing/auxclick.html
 /LayoutTests/imported/w3c/web-platform-tests/event-timing/buffered-and-duration-threshold.html
 /LayoutTests/imported/w3c/web-platform-tests/event-timing/buffered-flag.html
@@ -64,6 +65,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/event-timing/mouseover.html
 /LayoutTests/imported/w3c/web-platform-tests/event-timing/mouseup.html
 /LayoutTests/imported/w3c/web-platform-tests/event-timing/only-observe-firstInput.html
+/LayoutTests/imported/w3c/web-platform-tests/event-timing/orphan-keydown.html
 /LayoutTests/imported/w3c/web-platform-tests/event-timing/pointerdown.html
 /LayoutTests/imported/w3c/web-platform-tests/event-timing/pointerenter.html
 /LayoutTests/imported/w3c/web-platform-tests/event-timing/pointerleave.html

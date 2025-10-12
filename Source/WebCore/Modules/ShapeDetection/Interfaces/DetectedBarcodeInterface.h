@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "BarcodeFormatInterface.h"
-#include "FloatPoint.h"
-#include "FloatRect.h"
+#include <WebCore/BarcodeFormatInterface.h>
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatRect.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

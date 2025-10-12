@@ -25,7 +25,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/text-anchor-computed.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/text-anchor-invalid.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/text-anchor-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/text-decoration-color-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/text-decoration-fill-computed.tentative.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/text-decoration-fill-invalid.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/text-decoration-fill-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/text-decoration-line-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/text-decoration-stroke-computed.tentative.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/text-decoration-stroke-invalid.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/text-decoration-stroke-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/parsing/text-decoration-style-computed.svg

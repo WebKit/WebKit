@@ -5,7 +5,8 @@ Test related to depth buffer, depth op, compare func, etc.
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 
 import { isStencilTextureFormat, kDepthTextureFormats } from '../../../format_info.js';
-import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
+import * as ttu from '../../../texture_test_utils.js';
 import { TexelView } from '../../../util/texture/texel_view.js';
 
 const backgroundColor = [0x00, 0x00, 0x00, 0xff];
@@ -21,7 +22,7 @@ const kGreenStencilColor = new Float32Array([0.0, 1.0, 0.0, 1.0]);
 
 
 
-class DepthTest extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {
+class DepthTest extends AllFeaturesMaxLimitsGPUTest {
   runDepthStateTest(testStates, expectedColor) {
     const renderTargetFormat = 'rgba8unorm';
 
@@ -82,7 +83,12 @@ class DepthTest extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {
     };
     const expTexelView = TexelView.fromTexelsAsColors(renderTargetFormat, (_coords) => expColor);
 
-    this.expectTexelViewComparisonIsOkInTexture({ texture: renderTarget }, expTexelView, [1, 1]);
+    ttu.expectTexelViewComparisonIsOkInTexture(
+      this,
+      { texture: renderTarget },
+      expTexelView,
+      [1, 1]
+    );
   }
 
   createRenderPipelineForTest(
@@ -283,9 +289,12 @@ fn((t) => {
   t.runDepthStateTest(testStates, _expectedColor);
 });
 
-// Use a depth value that's not exactly 0.5 because it is exactly between two depth16unorm value and
-// can get rounded either way (and a different way between shaders and clearDepthValue).
-const kMiddleDepthValue = 0.5001;
+// Use a depth value of 0.4, which is exactly representable in depth16unorm (26214 / (2^16-1))
+// and depth24unorm (6710886 / (2^24-1)), and closely approximated in depth32float
+// (0.4000000059604644775390625).
+// This can help prevent shaders and depthClearValue get rounded in different way making equal
+// comparison result unexpected.
+const kMiddleDepthValue = 0.4;
 
 g.test('depth_compare_func').
 desc(
@@ -411,7 +420,7 @@ fn((t) => {
   pass.end();
   t.device.queue.submit([encoder.finish()]);
 
-  t.expectSinglePixelComparisonsAreOkInTexture({ texture: colorAttachment }, [
+  ttu.expectSinglePixelComparisonsAreOkInTexture(t, { texture: colorAttachment }, [
   {
     coord: { x: 0, y: 0 },
     exp: new Uint8Array(_expected)
@@ -519,7 +528,7 @@ fn((t) => {
   pass.end();
   t.device.queue.submit([encoder.finish()]);
 
-  t.expectSinglePixelComparisonsAreOkInTexture({ texture: colorAttachment }, [
+  ttu.expectSinglePixelComparisonsAreOkInTexture(t, { texture: colorAttachment }, [
   {
     coord: { x: 0, y: 0 },
     exp: new Uint8Array(

@@ -25,9 +25,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if USE(AUDIO_SESSION) && PLATFORM(IOS_FAMILY)
 
-#include "AudioSessionCocoa.h"
+#include <WebCore/AudioSessionCocoa.h>
 #include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WebInterruptionObserverHelper;
@@ -78,7 +79,7 @@ private:
     SoundStageSize soundStageSize() const final { return m_soundStageSize; }
 
     String m_lastSetPreferredMicrophoneID;
-    RetainPtr<WebInterruptionObserverHelper> m_interruptionObserverHelper;
+    const RetainPtr<WebInterruptionObserverHelper> m_interruptionObserverHelper;
     String m_sceneIdentifier;
     SoundStageSize m_soundStageSize { SoundStageSize::Automatic };
 #if PLATFORM(IOS_FAMILY_SIMULATOR)

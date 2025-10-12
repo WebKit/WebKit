@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
+#include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/JSONValues.h>
 #include <wtf/text/CString.h>
 

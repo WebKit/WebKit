@@ -1,8 +1,3 @@
-CONSOLE MESSAGE: TypeError: Import assertion type "css" is not valid
-CONSOLE MESSAGE: TypeError: Import assertion type "css" is not valid
-CONSOLE MESSAGE: TypeError: Import assertion type "css" is not valid
-CONSOLE MESSAGE: TypeError: Import assertion type "css" is not valid
-CONSOLE MESSAGE: TypeError: Import assertion type "css" is not valid
 
 Harness Error (FAIL), message = TypeError: Import assertion type "css" is not valid
 

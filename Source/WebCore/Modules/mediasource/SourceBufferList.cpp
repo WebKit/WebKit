@@ -117,6 +117,11 @@ void SourceBufferList::scheduleEvent(const AtomString& eventName)
     queueTaskToDispatchEvent(*this, TaskSource::MediaElement, Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
+ScriptExecutionContext* SourceBufferList::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
+}
+
 WebCoreOpaqueRoot root(SourceBufferList* list)
 {
     return WebCoreOpaqueRoot { list };

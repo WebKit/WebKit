@@ -12,13 +12,14 @@
 #define MEDIA_BASE_AUDIO_SOURCE_H_
 
 #include <cstddef>
+#include <cstdint>
 #include <optional>
 
-namespace cricket {
+namespace webrtc {
 
 // Abstract interface for providing the audio data.
 // TODO(deadbeef): Rename this to AudioSourceInterface, and rename
-// webrtc::AudioSourceInterface to AudioTrackSourceInterface.
+// AudioSourceInterface to AudioTrackSourceInterface.
 class AudioSource {
  public:
   class Sink {
@@ -52,6 +53,7 @@ class AudioSource {
   virtual ~AudioSource() {}
 };
 
-}  // namespace cricket
+}  //  namespace webrtc
+
 
 #endif  // MEDIA_BASE_AUDIO_SOURCE_H_

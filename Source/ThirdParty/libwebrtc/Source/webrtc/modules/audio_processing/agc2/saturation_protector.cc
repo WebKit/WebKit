@@ -10,12 +10,13 @@
 
 #include "modules/audio_processing/agc2/saturation_protector.h"
 
+#include <algorithm>
 #include <memory>
 
 #include "modules/audio_processing/agc2/agc2_common.h"
 #include "modules/audio_processing/agc2/saturation_protector_buffer.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
-#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_compare.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
@@ -64,7 +65,7 @@ void UpdateSaturationProtectorState(float peak_dbfs,
   // Get the max peak over `kPeakEnveloperSuperFrameLengthMs` ms.
   state.max_peaks_dbfs = std::max(state.max_peaks_dbfs, peak_dbfs);
   state.time_since_push_ms += kFrameDurationMs;
-  if (rtc::SafeGt(state.time_since_push_ms, kPeakEnveloperSuperFrameLengthMs)) {
+  if (SafeGt(state.time_since_push_ms, kPeakEnveloperSuperFrameLengthMs)) {
     // Push `max_peaks_dbfs` back into the ring buffer.
     state.peak_delay_buffer.PushBack(state.max_peaks_dbfs);
     // Reset.
@@ -88,7 +89,7 @@ void UpdateSaturationProtectorState(float peak_dbfs,
   }
 
   state.headroom_db =
-      rtc::SafeClamp<float>(state.headroom_db, kMinMarginDb, kMaxMarginDb);
+      SafeClamp<float>(state.headroom_db, kMinMarginDb, kMaxMarginDb);
 }
 
 // Saturation protector which recommends a headroom based on the recent peaks.
@@ -104,7 +105,7 @@ class SaturationProtectorImpl : public SaturationProtector {
   }
   SaturationProtectorImpl(const SaturationProtectorImpl&) = delete;
   SaturationProtectorImpl& operator=(const SaturationProtectorImpl&) = delete;
-  ~SaturationProtectorImpl() = default;
+  ~SaturationProtectorImpl() override = default;
 
   float HeadroomDb() override { return headroom_db_; }
 

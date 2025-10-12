@@ -1,0 +1,13 @@
+<body>
+    <p>This test passes if it doesn't crash.</p>
+    <svg>
+        <path id="path" d="M0,0 L100, 100 z" stroke-linecap="square" marker-end="url(#no-link)" stroke="url(#no-link)" stroke-dasharray="0" />
+    </svg>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        let pathSegList = path.pathSegList;
+        let pathSeg = path.createSVGPathSegMovetoAbs(NaN, NaN);
+        pathSegList.replaceItem(pathSeg, 1);
+    </script>
+</body>

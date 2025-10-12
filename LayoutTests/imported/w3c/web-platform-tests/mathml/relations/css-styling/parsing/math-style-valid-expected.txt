@@ -1,0 +1,4 @@
+
+PASS e.style['math-style'] = "normal" should set the property value
+PASS e.style['math-style'] = "compact" should set the property value
+

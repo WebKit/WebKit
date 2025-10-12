@@ -8,14 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stdio.h>
-
+#include <algorithm>
+#include <cstdio>
+#include <memory>
 #include <string>
 
 #include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/resolution.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
-#include "rtc_base/logging.h"
+#include "rtc_base/checks.h"
 #include "test/frame_utils.h"
 #include "test/testsupport/file_utils.h"
 #include "test/testsupport/frame_reader.h"
@@ -44,15 +46,15 @@ int WrapFrameNum(int frame_num, int num_frames, RepeatMode mode) {
   return wrapped_num;
 }
 
-rtc::scoped_refptr<I420Buffer> Scale(rtc::scoped_refptr<I420Buffer> buffer,
-                                     Resolution resolution) {
+scoped_refptr<I420Buffer> Scale(scoped_refptr<I420Buffer> buffer,
+                                Resolution resolution) {
   if (buffer->width() == resolution.width &&
       buffer->height() == resolution.height) {
     return buffer;
   }
-  rtc::scoped_refptr<I420Buffer> scaled(
+  scoped_refptr<I420Buffer> scaled(
       I420Buffer::Create(resolution.width, resolution.height));
-  scaled->ScaleFrom(*buffer.get());
+  scaled->ScaleFrom(*buffer);
   return scaled;
 }
 }  // namespace
@@ -94,7 +96,7 @@ void YuvFrameReaderImpl::Init() {
       CalcBufferSize(VideoType::kI420, resolution_.width, resolution_.height);
 
   file_ = fopen(filepath_.c_str(), "rb");
-  RTC_CHECK(file_ != NULL) << "Cannot open " << filepath_;
+  RTC_CHECK(file_ != nullptr) << "Cannot open " << filepath_;
 
   size_t file_size_bytes = GetFileSize(filepath_);
   RTC_CHECK_GT(file_size_bytes, 0u) << "File " << filepath_ << " is empty";
@@ -103,18 +105,17 @@ void YuvFrameReaderImpl::Init() {
   RTC_CHECK_GT(num_frames_, 0u) << "File " << filepath_ << " is too small";
 }
 
-rtc::scoped_refptr<I420Buffer> YuvFrameReaderImpl::PullFrame() {
+scoped_refptr<I420Buffer> YuvFrameReaderImpl::PullFrame() {
   return PullFrame(/*frame_num=*/nullptr);
 }
 
-rtc::scoped_refptr<I420Buffer> YuvFrameReaderImpl::PullFrame(int* frame_num) {
+scoped_refptr<I420Buffer> YuvFrameReaderImpl::PullFrame(int* frame_num) {
   return PullFrame(frame_num, resolution_, /*framerate_scale=*/kNoScale);
 }
 
-rtc::scoped_refptr<I420Buffer> YuvFrameReaderImpl::PullFrame(
-    int* frame_num,
-    Resolution resolution,
-    Ratio framerate_scale) {
+scoped_refptr<I420Buffer> YuvFrameReaderImpl::PullFrame(int* frame_num,
+                                                        Resolution resolution,
+                                                        Ratio framerate_scale) {
   frame_num_ += framerate_scaler_.Skip(framerate_scale);
   auto buffer = ReadFrame(frame_num_, resolution);
   if (frame_num != nullptr) {
@@ -123,13 +124,12 @@ rtc::scoped_refptr<I420Buffer> YuvFrameReaderImpl::PullFrame(
   return buffer;
 }
 
-rtc::scoped_refptr<I420Buffer> YuvFrameReaderImpl::ReadFrame(int frame_num) {
+scoped_refptr<I420Buffer> YuvFrameReaderImpl::ReadFrame(int frame_num) {
   return ReadFrame(frame_num, resolution_);
 }
 
-rtc::scoped_refptr<I420Buffer> YuvFrameReaderImpl::ReadFrame(
-    int frame_num,
-    Resolution resolution) {
+scoped_refptr<I420Buffer> YuvFrameReaderImpl::ReadFrame(int frame_num,
+                                                        Resolution resolution) {
   int wrapped_num = WrapFrameNum(frame_num, num_frames_, repeat_mode_);
   if (wrapped_num >= num_frames_) {
     RTC_CHECK_EQ(RepeatMode::kSingle, repeat_mode_);

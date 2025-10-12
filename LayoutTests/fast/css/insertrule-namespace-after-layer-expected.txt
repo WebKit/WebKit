@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: HierarchyRequestError: The operation would yield an incorrect node tree.
+CONSOLE MESSAGE: InvalidStateError: The object is in an invalid state.
 Test passes if doesn't crash

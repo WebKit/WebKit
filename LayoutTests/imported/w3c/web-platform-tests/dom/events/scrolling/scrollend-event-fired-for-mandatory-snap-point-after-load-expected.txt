@@ -13,5 +13,5 @@ Page B
 Page C
 
 
-FAIL scrollend event fired after load for mandatory snap point promise_test: Unhandled rejection with value: "No scrollend event received for target [object HTMLDivElement]"
+PASS scrollend event fired after load for mandatory snap point
 

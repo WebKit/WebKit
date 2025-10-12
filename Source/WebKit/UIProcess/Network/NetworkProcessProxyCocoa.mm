@@ -54,7 +54,7 @@ RefPtr<XPCEventHandler> NetworkProcessProxy::xpcEventHandler() const
     return adoptRef(new NetworkProcessProxy::XPCEventHandler(*this));
 }
 
-bool NetworkProcessProxy::XPCEventHandler::handleXPCEvent(xpc_object_t event) const
+bool NetworkProcessProxy::XPCEventHandler::handleXPCEvent(xpc_object_t event)
 {
     RefPtr networkProcess = m_networkProcess.get();
     if (!networkProcess)

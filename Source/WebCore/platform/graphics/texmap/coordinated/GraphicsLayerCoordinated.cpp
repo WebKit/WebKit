@@ -46,6 +46,8 @@
 
 namespace WebCore {
 
+static constexpr uint32_t s_maxDamageRectanglesForHighResolutionDamage = 32;
+
 Ref<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client, Type layerType)
 {
     if (factory)
@@ -103,7 +105,7 @@ void GraphicsLayerCoordinated::setNeedsDisplayInRect(const FloatRect& initialRec
         return;
 
     auto rect = initialRect;
-    if (shouldClip == ClipToLayer)
+    if (shouldClip == ShouldClipToLayer::Clip)
         rect.intersect({ { }, m_size });
 
     if (rect.isEmpty())
@@ -112,7 +114,7 @@ void GraphicsLayerCoordinated::setNeedsDisplayInRect(const FloatRect& initialRec
     addRepaintRect(rect);
 
     if (!m_dirtyRegion)
-        m_dirtyRegion = Damage(m_size, Damage::Mode::Rectangles, 32);
+        m_dirtyRegion = Damage(m_size, Damage::Mode::Rectangles, s_maxDamageRectanglesForHighResolutionDamage);
 
     if (m_dirtyRegion->add(rect))
         noteLayerPropertyChanged(Change::DirtyRegion, ScheduleFlush::Yes);
@@ -331,6 +333,24 @@ void GraphicsLayerCoordinated::setContentsNeedsDisplay()
 {
     if (m_contentsDisplayDelegate)
         noteLayerPropertyChanged(Change::ContentsBufferNeedsDisplay, ScheduleFlush::Yes);
+}
+
+void GraphicsLayerCoordinated::setContentsNeedsDisplayInRect(const FloatRect& rect)
+{
+    if (!m_contentsDisplayDelegate)
+        return;
+
+#if ENABLE(DAMAGE_TRACKING)
+    if (!rect.isEmpty() && m_contentsVisible && !m_size.isEmpty()) {
+        if (!m_contentsDirtyRegion)
+            m_contentsDirtyRegion = Damage(m_size, Damage::Mode::Rectangles, s_maxDamageRectanglesForHighResolutionDamage);
+
+        m_contentsDirtyRegion->add(rect);
+    }
+#else
+    UNUSED_PARAM(rect);
+#endif
+    noteLayerPropertyChanged(Change::ContentsBufferNeedsDisplay, ScheduleFlush::Yes);
 }
 
 void GraphicsLayerCoordinated::setContentsToPlatformLayer(PlatformLayer* contentsLayer, ContentsLayerPurpose)
@@ -567,12 +587,15 @@ void GraphicsLayerCoordinated::setBackdropFiltersRect(const FloatRoundedRect& ba
     noteLayerPropertyChanged(Change::BackdropRect, ScheduleFlush::Yes);
 }
 
-bool GraphicsLayerCoordinated::addAnimation(const KeyframeValueList& valueList, const FloatSize& boxSize, const Animation* animation, const String& animationName, double timeOffset)
+bool GraphicsLayerCoordinated::addAnimation(const KeyframeValueList& valueList, const GraphicsLayerAnimation* animation, const String& animationName, double timeOffset)
 {
     ASSERT(!animationName.isEmpty());
     ASSERT(animation);
 
-    if (animation->isEmptyOrZeroDuration() || valueList.size() < 2)
+    if (animation->isZeroDuration() || valueList.size() < 2)
+        return false;
+
+    if (animation->playbackRate() != 1 || !animation->directionIsForwards())
         return false;
 
     switch (valueList.property()) {
@@ -583,6 +606,10 @@ bool GraphicsLayerCoordinated::addAnimation(const KeyframeValueList& valueList, 
             return false;
 
         const auto& filters = static_cast<const FilterAnimationValue&>(valueList.at(listIndex)).value();
+        // The animation of drop-shadow filter with currentColor isn't supported yet.
+        // GraphicsLayerCA doesn't accept animations with drap-shadow. Do it here.
+        if (filters.hasFilterOfType<FilterOperation::Type::DropShadowWithStyleColor>())
+            return false;
         if (!filtersCanBeComposited(filters))
             return false;
         break;
@@ -597,7 +624,7 @@ bool GraphicsLayerCoordinated::addAnimation(const KeyframeValueList& valueList, 
         return false;
     }
 
-    m_animations.add(TextureMapperAnimation(animationName, valueList, boxSize, *animation, MonotonicTime::now() - Seconds(timeOffset), 0_s, TextureMapperAnimation::State::Playing));
+    m_animations.add(TextureMapperAnimation(animationName, valueList, *animation, MonotonicTime::now() - Seconds(timeOffset), 0_s, TextureMapperAnimation::State::Playing));
     noteLayerPropertyChanged(Change::Animations, ScheduleFlush::Yes);
     return true;
 }
@@ -980,7 +1007,7 @@ void GraphicsLayerCoordinated::commitLayerChanges(CommitState& commitState, floa
     bool contentsBufferNeedsDisplay = false;
     if (m_pendingChanges.contains(Change::ContentsBufferNeedsDisplay)) {
         if (m_contentsDisplayDelegate) {
-            if (!m_contentsDisplayDelegate->display(m_platformLayer.get()))
+            if (!m_contentsDisplayDelegate->display(m_platformLayer.get(), std::exchange(m_contentsDirtyRegion, std::nullopt)))
                 contentsBufferNeedsDisplay = true;
         } else if (m_contentsBufferProxy)
             m_contentsBufferProxy->consumePendingBufferIfNeeded();

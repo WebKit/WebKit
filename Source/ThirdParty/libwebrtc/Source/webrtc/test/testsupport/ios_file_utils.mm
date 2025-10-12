@@ -24,7 +24,8 @@ namespace test {
 // For iOS, resource files are added to the application bundle in the root
 // and not in separate folders as is the case for other platforms. This method
 // therefore removes any prepended folders and uses only the actual file name.
-std::string IOSResourcePath(absl::string_view name, absl::string_view extension) {
+std::string IOSResourcePath(absl::string_view name,
+                            absl::string_view extension) {
   @autoreleasepool {
     NSString* path = [NSString stringForAbslStringView:name];
     NSString* fileName = path.lastPathComponent;
@@ -46,11 +47,10 @@ std::string IOSRootPath() {
 // For iOS, we don't have access to the output directory. Return the path to the
 // temporary directory instead. This is mostly used by tests that need to write
 // output files to disk.
-std::string IOSOutputPath()  {
+std::string IOSOutputPath() {
   @autoreleasepool {
     NSString* tempDir = NSTemporaryDirectory();
-    if (tempDir == nil)
-        tempDir = @"/tmp";
+    if (tempDir == nil) tempDir = @"/tmp";
     return [NSString stdStringForString:tempDir];
   }
 }

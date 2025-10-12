@@ -24,17 +24,17 @@
 
 #pragma once
 
-#include "CSSBasicShape.h"
-#include "StyleCircleFunction.h"
-#include "StyleEllipseFunction.h"
-#include "StyleInsetFunction.h"
-#include "StylePathComputation.h"
-#include "StylePathFunction.h"
-#include "StylePolygonFunction.h"
-#include "StyleRectFunction.h"
-#include "StyleShapeFunction.h"
-#include "StyleWindRuleComputation.h"
-#include "StyleXywhFunction.h"
+#include <WebCore/CSSBasicShape.h>
+#include <WebCore/StyleCircleFunction.h>
+#include <WebCore/StyleEllipseFunction.h>
+#include <WebCore/StyleInsetFunction.h>
+#include <WebCore/StylePathComputation.h>
+#include <WebCore/StylePathFunction.h>
+#include <WebCore/StylePolygonFunction.h>
+#include <WebCore/StyleRectFunction.h>
+#include <WebCore/StyleShapeFunction.h>
+#include <WebCore/StyleWindRuleComputation.h>
+#include <WebCore/StyleXywhFunction.h>
 
 namespace WebCore {
 namespace Style {
@@ -54,8 +54,15 @@ template<typename T> concept ShapeWithCenterCoordinate = std::same_as<T, CircleF
 
 // MARK: - Conversion
 
-template<> struct ToCSS<BasicShape> { auto operator()(const BasicShape&, const RenderStyle&) -> CSS::BasicShape; };
-template<> struct ToStyle<CSS::BasicShape> { auto operator()(const CSS::BasicShape&, const BuilderState&) -> BasicShape; };
+template<> struct ToCSS<BasicShape> { auto operator()(const BasicShape&, const RenderStyle&, PathConversion = PathConversion::None) -> CSS::BasicShape; };
+template<> struct ToStyle<CSS::BasicShape> { auto operator()(const CSS::BasicShape&, const BuilderState&, std::optional<float> zoom = 1.0f) -> BasicShape; };
+
+template<> struct CSSValueCreation<BasicShape> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const BasicShape&, PathConversion = PathConversion::None); };
+template<> struct CSSValueConversion<BasicShape> { BasicShape operator()(BuilderState&, const CSSValue&, std::optional<float> zoom = 1.0f); };
+
+// MARK: - Serialization
+
+template<> struct Serialize<BasicShape> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const BasicShape&, PathConversion = PathConversion::None); };
 
 // MARK: - Blending
 

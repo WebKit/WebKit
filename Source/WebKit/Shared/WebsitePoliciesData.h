@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "UserContentControllerParameters.h"
 #include "WebContentMode.h"
 #include "WebsiteAutoplayPolicy.h"
 #include "WebsiteAutoplayQuirk.h"
@@ -40,6 +41,7 @@
 #include <WebCore/DeviceOrientationOrMotionPermissionState.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/ResourceRequest.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/TZoneMalloc.h>
@@ -86,8 +88,12 @@ public:
     bool idempotentModeAutosizingOnlyHonorsPercentages { false };
     bool allowPrivacyProxy { true };
     bool allowSiteSpecificQuirksToOverrideContentMode { false };
+    bool allowSharedProcess { true };
+    bool allowsJSHandleCreationInPageWorld { false };
     WebsitePushAndNotificationsEnabledPolicy pushAndNotificationsEnabledPolicy { WebsitePushAndNotificationsEnabledPolicy::UseGlobalPolicy };
     WebsiteInlineMediaPlaybackPolicy inlineMediaPlaybackPolicy { WebsiteInlineMediaPlaybackPolicy::Default };
+    WebCore::ResourceRequest alternateRequest;
+    std::optional<UserContentControllerParameters> userContentControllerParameters;
 };
 
 } // namespace WebKit

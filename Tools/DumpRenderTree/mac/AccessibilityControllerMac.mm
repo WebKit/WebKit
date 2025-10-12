@@ -24,12 +24,12 @@
  */
 
 #import "config.h"
-#import "DumpRenderTree.h"
 #import "AccessibilityController.h"
 
 #import "AccessibilityCommonMac.h"
 #import "AccessibilityNotificationHandler.h"
 #import "AccessibilityUIElement.h"
+#import "DumpRenderTree.h"
 #import "JSBasics.h"
 #import <AppKit/NSColor.h>
 #import <Foundation/Foundation.h>
@@ -56,7 +56,7 @@ AccessibilityController::~AccessibilityController()
 AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)
 {
     id accessibilityObject = [[[mainFrame frameView] documentView] accessibilityHitTest:NSMakePoint(x, y)];
-    return AccessibilityUIElement(accessibilityObject);    
+    return AccessibilityUIElement(accessibilityObject);
 }
 
 AccessibilityUIElement AccessibilityController::focusedElement()
@@ -68,10 +68,10 @@ AccessibilityUIElement AccessibilityController::focusedElement()
 AccessibilityUIElement AccessibilityController::rootElement()
 {
     // FIXME: we could do some caching here.
-    
+
     // Layout tests expect that the root element will be the scroll area
     // containing the web area object. That will be the parent of the accessibilityRoot on WK1.
-    
+
     id accessibilityObject = [[mainFrame accessibilityRoot] accessibilityAttributeValue:NSAccessibilityParentAttribute];
     return AccessibilityUIElement(accessibilityObject);
 }
@@ -108,6 +108,11 @@ AccessibilityUIElement AccessibilityController::accessibleElementById(JSStringRe
     return nullptr;
 }
 
+void AccessibilityController::printTrees()
+{
+    [[mainFrame accessibilityRoot] accessibilityPerformAction:@"AXLogTrees"];
+}
+
 void AccessibilityController::setLogFocusEvents(bool)
 {
 }
@@ -134,7 +139,7 @@ bool AccessibilityController::addNotificationListener(JSObjectRef functionCallba
 {
     if (!functionCallback)
         return false;
- 
+
     // Mac programmers should not be adding more than one global notification listener.
     // Other platforms may be different.
     if (m_globalNotificationHandler)

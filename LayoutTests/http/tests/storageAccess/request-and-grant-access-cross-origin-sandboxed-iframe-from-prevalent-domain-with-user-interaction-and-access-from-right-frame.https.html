@@ -124,7 +124,7 @@
                     // Navigate the frame same-site.
                     let existingIframe1 = document.getElementById("TheIframeThatRequestsStorageAccess");
                     existingIframe1.onload = function () {
-                        debug("Did navigate iframe same-site and will now check that it still has storage access.");
+                        debug("Did navigate iframe from a cross-site parent and will now check that it does not have storage access.");
                         let iframe = document.getElementById("TheIframeThatRequestsStorageAccess");
                         iframe.contentWindow.postMessage("reportBackCookies", "https://localhost:8443");
                     };
@@ -132,19 +132,30 @@
                     break;
                 case "#step8":
                     document.location.hash = "step9";
-                    // Navigate the frame cross-site. This should clear out storage access.
+                    // Re-grant storage access after same-site navigation.
                     let existingIframe2 = document.getElementById("TheIframeThatRequestsStorageAccess");
-                    existingIframe2.onload = runTest;
-                    existingIframe2.src = "https://" + partitionHost;
+                    existingIframe2.onload = function() {
+                        testRunner.statisticsUpdateCookieBlocking(function() {
+                            activateElement("TheIframeThatRequestsStorageAccess");
+                        });
+                    };
+                    existingIframe2.src = "https://localhost:8443/storageAccess/resources/request-storage-access-iframe.html?bogus#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess,isNotSameOriginIframe";
                     break;
                 case "#step9":
                     document.location.hash = "step10";
-                    // Again open localhost in the existing frame and check that no cookie gets sent for localhost under 127.0.0.1 since it has been navigated cross-site.
+                    // Navigate the frame cross-site. This should clear out storage access.
                     let existingIframe3 = document.getElementById("TheIframeThatRequestsStorageAccess");
                     existingIframe3.onload = runTest;
-                    existingIframe3.src = thirdPartyBaseUrl + subPathToGetCookies + "&message=After the top frame navigates the sub frame cross-site and back, the sub frame should no longer have access to cookies.";
+                    existingIframe3.src = "https://" + partitionHost;
                     break;
                 case "#step10":
+                    document.location.hash = "step11";
+                    // Again open localhost in the existing frame and check that no cookie gets sent for localhost under 127.0.0.1 since it has been navigated cross-site.
+                    let existingIframe4 = document.getElementById("TheIframeThatRequestsStorageAccess");
+                    existingIframe4.onload = runTest;
+                    existingIframe4.src = thirdPartyBaseUrl + subPathToGetCookies + "&message=After the top frame navigates the sub frame cross-site and back, the sub frame should no longer have access to cookies.";
+                    break;
+                case "#step11":
                     // Reset access scope.
                     internals.settings.setStorageAccessAPIPerPageScopeEnabled(true);
                     setEnableFeature(false, finishJSTest);

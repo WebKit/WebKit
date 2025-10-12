@@ -26,3 +26,7 @@
 #include "BaseTarget.xcconfig"
 
 SKIP_INSTALL = YES;
+
+WK_AUDIT_SPI_ALLOWLISTS = $(SRCROOT)/Configurations/AllowedSPI.toml $(SRCROOT)/Configurations/AllowedSPI-legacy.toml $(WK_AUDIT_SPI_ALLOWLISTS_$(USE_INTERNAL_SDK));
+WK_AUDIT_SPI_ALLOWLISTS_YES = $(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/AllowedSPI/AllowedSPI-WebKit.toml;
+

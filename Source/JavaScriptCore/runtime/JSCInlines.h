@@ -40,24 +40,24 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-#include "ExceptionHelpers.h"
-#include "GCIncomingRefCountedInlines.h"
-#include "HeapInlines.h"
-#include "IdentifierInlines.h"
-#include "JSArrayBufferViewInlines.h"
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
-#include "JSFunctionInlines.h"
-#include "JSGlobalObjectInlines.h"
-#include "JSGlobalProxy.h"
-#include "JSObjectInlines.h"
-#include "JSString.h"
-#include "Operations.h"
-#include "SlotVisitorInlines.h"
-#include "StrongInlines.h"
-#include "StructureInlines.h"
-#include "ThrowScope.h"
-#include "WeakGCMapInlines.h"
-#include "WeakGCSetInlines.h"
+#include <JavaScriptCore/ExceptionHelpers.h>
+#include <JavaScriptCore/GCIncomingRefCountedInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/IdentifierInlines.h>
+#include <JavaScriptCore/JSArrayBufferViewInlines.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSCellInlines.h>
+#include <JavaScriptCore/JSFunctionInlines.h>
+#include <JavaScriptCore/JSGlobalObjectInlines.h>
+#include <JavaScriptCore/JSGlobalProxy.h>
+#include <JavaScriptCore/JSObjectInlines.h>
+#include <JavaScriptCore/JSString.h>
+#include <JavaScriptCore/Operations.h>
+#include <JavaScriptCore/SlotVisitorInlines.h>
+#include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
+#include <JavaScriptCore/ThrowScope.h>
+#include <JavaScriptCore/WeakGCMapInlines.h>
+#include <JavaScriptCore/WeakGCSetInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

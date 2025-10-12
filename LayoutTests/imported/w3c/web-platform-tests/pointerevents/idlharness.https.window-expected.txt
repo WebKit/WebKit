@@ -12,13 +12,13 @@ PASS Partial interface MouseEvent: member names are unique
 PASS Partial interface UIEvent[2]: member names are unique
 PASS Partial dictionary UIEventInit: member names are unique
 PASS Partial interface Document: member names are unique
+PASS Partial interface Navigator[2]: member names are unique
+PASS Partial interface Element[2]: member names are unique
 PASS Partial interface mixin NavigatorID: member names are unique
 PASS Partial interface Document[2]: member names are unique
 PASS Partial interface Window: member names are unique
 PASS Document includes GlobalEventHandlers: member names are unique
-PASS Document includes DocumentAndElementEventHandlers: member names are unique
 PASS HTMLElement includes GlobalEventHandlers: member names are unique
-PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
 PASS HTMLElement includes ElementContentEditable: member names are unique
 PASS HTMLElement includes HTMLOrSVGElement: member names are unique
 PASS Window includes GlobalEventHandlers: member names are unique
@@ -35,6 +35,7 @@ PASS Window includes AnimationFrameProvider: member names are unique
 PASS Window includes WindowSessionStorage: member names are unique
 PASS Window includes WindowLocalStorage: member names are unique
 PASS Document includes NonElementParentNode: member names are unique
+PASS Document includes DocumentOrShadowRoot: member names are unique
 PASS Document includes ParentNode: member names are unique
 PASS Element includes ParentNode: member names are unique
 PASS Element includes NonDocumentTypeChildNode: member names are unique
@@ -59,6 +60,7 @@ PASS PointerEvent interface: attribute altitudeAngle
 PASS PointerEvent interface: attribute azimuthAngle
 PASS PointerEvent interface: attribute pointerType
 PASS PointerEvent interface: attribute isPrimary
+FAIL PointerEvent interface: attribute persistentDeviceId assert_true: The prototype object must have a property "persistentDeviceId" expected true got false
 PASS PointerEvent interface: operation getCoalescedEvents()
 PASS PointerEvent interface: operation getPredictedEvents()
 PASS PointerEvent must be primary interface of new PointerEvent("type")
@@ -75,65 +77,66 @@ PASS PointerEvent interface: new PointerEvent("type") must inherit property "alt
 PASS PointerEvent interface: new PointerEvent("type") must inherit property "azimuthAngle" with the proper type
 PASS PointerEvent interface: new PointerEvent("type") must inherit property "pointerType" with the proper type
 PASS PointerEvent interface: new PointerEvent("type") must inherit property "isPrimary" with the proper type
+FAIL PointerEvent interface: new PointerEvent("type") must inherit property "persistentDeviceId" with the proper type assert_inherits: property "persistentDeviceId" not found in prototype chain
 PASS PointerEvent interface: new PointerEvent("type") must inherit property "getCoalescedEvents()" with the proper type
 PASS PointerEvent interface: new PointerEvent("type") must inherit property "getPredictedEvents()" with the proper type
-PASS HTMLElement interface: attribute ongotpointercapture
-PASS HTMLElement interface: attribute onlostpointercapture
+PASS HTMLElement interface: attribute onpointerover
+PASS HTMLElement interface: attribute onpointerenter
 PASS HTMLElement interface: attribute onpointerdown
 PASS HTMLElement interface: attribute onpointermove
 FAIL HTMLElement interface: attribute onpointerrawupdate assert_true: The prototype object must have a property "onpointerrawupdate" expected true got false
 PASS HTMLElement interface: attribute onpointerup
 PASS HTMLElement interface: attribute onpointercancel
-PASS HTMLElement interface: attribute onpointerover
 PASS HTMLElement interface: attribute onpointerout
-PASS HTMLElement interface: attribute onpointerenter
 PASS HTMLElement interface: attribute onpointerleave
-PASS Window interface: attribute ongotpointercapture
-PASS Window interface: attribute onlostpointercapture
+PASS HTMLElement interface: attribute ongotpointercapture
+PASS HTMLElement interface: attribute onlostpointercapture
+PASS Window interface: attribute onpointerover
+PASS Window interface: attribute onpointerenter
 PASS Window interface: attribute onpointerdown
 PASS Window interface: attribute onpointermove
 FAIL Window interface: attribute onpointerrawupdate assert_own_property: The global object must have a property "onpointerrawupdate" expected property "onpointerrawupdate" missing
 PASS Window interface: attribute onpointerup
 PASS Window interface: attribute onpointercancel
-PASS Window interface: attribute onpointerover
 PASS Window interface: attribute onpointerout
-PASS Window interface: attribute onpointerenter
 PASS Window interface: attribute onpointerleave
-PASS Window interface: window must inherit property "ongotpointercapture" with the proper type
-PASS Window interface: window must inherit property "onlostpointercapture" with the proper type
+PASS Window interface: attribute ongotpointercapture
+PASS Window interface: attribute onlostpointercapture
+PASS Window interface: window must inherit property "onpointerover" with the proper type
+PASS Window interface: window must inherit property "onpointerenter" with the proper type
 PASS Window interface: window must inherit property "onpointerdown" with the proper type
 PASS Window interface: window must inherit property "onpointermove" with the proper type
 FAIL Window interface: window must inherit property "onpointerrawupdate" with the proper type assert_own_property: expected property "onpointerrawupdate" missing
 PASS Window interface: window must inherit property "onpointerup" with the proper type
 PASS Window interface: window must inherit property "onpointercancel" with the proper type
-PASS Window interface: window must inherit property "onpointerover" with the proper type
 PASS Window interface: window must inherit property "onpointerout" with the proper type
-PASS Window interface: window must inherit property "onpointerenter" with the proper type
 PASS Window interface: window must inherit property "onpointerleave" with the proper type
+PASS Window interface: window must inherit property "ongotpointercapture" with the proper type
+PASS Window interface: window must inherit property "onlostpointercapture" with the proper type
 PASS Navigator interface: attribute maxTouchPoints
 PASS Navigator interface: navigator must inherit property "maxTouchPoints" with the proper type
-PASS Document interface: attribute ongotpointercapture
-PASS Document interface: attribute onlostpointercapture
+PASS Document interface: attribute onpointerover
+PASS Document interface: attribute onpointerenter
 PASS Document interface: attribute onpointerdown
 PASS Document interface: attribute onpointermove
 FAIL Document interface: attribute onpointerrawupdate assert_true: The prototype object must have a property "onpointerrawupdate" expected true got false
 PASS Document interface: attribute onpointerup
 PASS Document interface: attribute onpointercancel
-PASS Document interface: attribute onpointerover
 PASS Document interface: attribute onpointerout
-PASS Document interface: attribute onpointerenter
 PASS Document interface: attribute onpointerleave
-PASS Document interface: document must inherit property "ongotpointercapture" with the proper type
-PASS Document interface: document must inherit property "onlostpointercapture" with the proper type
+PASS Document interface: attribute ongotpointercapture
+PASS Document interface: attribute onlostpointercapture
+PASS Document interface: document must inherit property "onpointerover" with the proper type
+PASS Document interface: document must inherit property "onpointerenter" with the proper type
 PASS Document interface: document must inherit property "onpointerdown" with the proper type
 PASS Document interface: document must inherit property "onpointermove" with the proper type
 FAIL Document interface: document must inherit property "onpointerrawupdate" with the proper type assert_inherits: property "onpointerrawupdate" not found in prototype chain
 PASS Document interface: document must inherit property "onpointerup" with the proper type
 PASS Document interface: document must inherit property "onpointercancel" with the proper type
-PASS Document interface: document must inherit property "onpointerover" with the proper type
 PASS Document interface: document must inherit property "onpointerout" with the proper type
-PASS Document interface: document must inherit property "onpointerenter" with the proper type
 PASS Document interface: document must inherit property "onpointerleave" with the proper type
+PASS Document interface: document must inherit property "ongotpointercapture" with the proper type
+PASS Document interface: document must inherit property "onlostpointercapture" with the proper type
 PASS Element interface: operation setPointerCapture(long)
 PASS Element interface: operation releasePointerCapture(long)
 PASS Element interface: operation hasPointerCapture(long)

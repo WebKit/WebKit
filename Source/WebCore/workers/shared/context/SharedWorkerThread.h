@@ -25,16 +25,16 @@
 
 #pragma once
 
-#include "SharedWorkerIdentifier.h"
-#include "WorkerThread.h"
+#include <WebCore/SharedWorkerIdentifier.h>
+#include <WebCore/WorkerThread.h>
 
 namespace WebCore {
 
 class WorkerObjectProxy;
 
-class SharedWorkerThread : public WorkerThread {
+class SharedWorkerThread final : public WorkerThread {
 public:
-    template<typename... Args> static Ref<SharedWorkerThread> create(Args&&... args) { return adoptRef(*new SharedWorkerThread(std::forward<Args>(args)...)); }
+    static Ref<SharedWorkerThread> create(SharedWorkerIdentifier, const WorkerParameters&, const ScriptBuffer& sourceCode, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerObjectProxy&, WorkerBadgeProxy&, WorkerThreadStartMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, JSC::RuntimeFlags);
 
     SharedWorkerIdentifier identifier() const { return m_identifier; }
 
@@ -43,9 +43,14 @@ private:
 
     Ref<WorkerGlobalScope> createWorkerGlobalScope(const WorkerParameters&, Ref<SecurityOrigin>&&, Ref<SecurityOrigin>&& topOrigin) final;
     ASCIILiteral threadName() const final { return "WebCore: SharedWorker"_s; }
+    bool isSharedWorkerThread() const final { return true; }
 
     SharedWorkerIdentifier m_identifier;
     String m_name;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SharedWorkerThread)
+    static bool isType(const WebCore::WorkerOrWorkletThread& thread) { return thread.isSharedWorkerThread(); }
+SPECIALIZE_TYPE_TRAITS_END()

@@ -294,7 +294,13 @@ enum Opcode : uint8_t {
     // Wasm it is important that the first child initially be a ZExt32 so the top bits are cleared.
     // We do WasmAddress(ZExt32(ptr), ...) so that we can avoid generating extraneous moves in Air.
     WasmAddress,
-    
+
+    // This is used for Wasm bulk memory operation `memory.copy`
+    MemoryCopy,
+
+    // This is used for Wasm bulk memory operation `memory.fill`
+    MemoryFill,
+
     // This is used to represent standalone fences - i.e. fences that are not part of other
     // instructions. It's expressive enough to expose mfence on x86 and dmb ish/ishst on ARM. On
     // x86, it also acts as a compiler store-store fence in those cases where it would have been a
@@ -382,6 +388,8 @@ enum Opcode : uint8_t {
     VectorAddSat,
     VectorSubSat,
     VectorMul,
+    VectorMulHigh,
+    VectorMulLow,
     VectorDotProduct,
     VectorDiv,
     VectorMin,
@@ -636,13 +644,4 @@ inline Opcode signExtendOpcode(Width width)
 JS_EXPORT_PRIVATE Opcode storeOpcode(Bank bank, Width width);
 
 } } // namespace JSC::B3
-
-namespace WTF {
-
-class PrintStream;
-
-JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Opcode);
-
-} // namespace WTF
-
 #endif // ENABLE(B3_JIT)

@@ -1,8 +1,0 @@
-Test dialog modal is closed by escape key with input focused
-
-
-
-Harness Error (TIMEOUT), message = null
-
-NOTRUN Test dialog modal is closed by escape key with input focused
-

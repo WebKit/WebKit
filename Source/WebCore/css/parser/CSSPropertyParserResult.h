@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "CSSProperty.h"
+#include <WebCore/CSSProperty.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

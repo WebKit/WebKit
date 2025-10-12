@@ -1,7 +1,7 @@
 /*
  * This file is part of the XSL implementation.
  *
- * Copyright (C) 2004, 2005, 2006, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,12 +23,12 @@
 
 #if ENABLE(XSLT)
 
-#include "CachedResourceLoader.h"
-#include "DocumentInlines.h"
+#include "DocumentResourceLoader.h"
+#include "FrameConsoleClient.h"
 #include "FrameDestructionObserverInlines.h"
 #include "LocalFrame.h"
+#include "NodeDocument.h"
 #include "Page.h"
-#include "PageConsoleClient.h"
 #include "TransformSource.h"
 #include "XMLDocumentParser.h"
 #include "XMLDocumentParserScope.h"
@@ -120,7 +120,7 @@ void XSLStyleSheet::clearXSLStylesheetDocument()
 
 CachedResourceLoader* XSLStyleSheet::cachedResourceLoader()
 {
-    Document* document = ownerDocument();
+    RefPtr document = ownerDocument();
     if (!document)
         return nullptr;
     return &document->cachedResourceLoader();
@@ -132,17 +132,16 @@ bool XSLStyleSheet::parseString(const String& string)
     const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&byteOrderMark);
     clearXSLStylesheetDocument();
 
-    PageConsoleClient* console = nullptr;
-    auto* frame = ownerDocument()->frame();
-    if (frame && frame->page())
-        console = &frame->page()->console();
+    FrameConsoleClient* console = nullptr;
+    if (RefPtr frame = ownerDocument()->frame())
+        console = &frame->console();
 
     XMLDocumentParserScope scope(cachedResourceLoader(), XSLTProcessor::genericErrorFunc, XSLTProcessor::parseErrorFunc, console);
 
     auto upconvertedCharacters = StringView(string).upconvertedCharacters();
     const char* buffer = reinterpret_cast<const char*>(upconvertedCharacters.get());
     CheckedUint32 unsignedSize = string.length();
-    unsignedSize *= sizeof(UChar);
+    unsignedSize *= sizeof(char16_t);
     if (unsignedSize.hasOverflowed() || unsignedSize > static_cast<unsigned>(std::numeric_limits<int>::max()))
         return false;
 
@@ -265,7 +264,7 @@ void XSLStyleSheet::setParentStyleSheet(XSLStyleSheet* parent)
 Document* XSLStyleSheet::ownerDocument()
 {
     for (RefPtr styleSheet = this; styleSheet; styleSheet = styleSheet->parentStyleSheet()) {
-        if (auto* node = styleSheet->ownerNode())
+        if (RefPtr node = styleSheet->ownerNode())
             return &node->document();
     }
     return nullptr;

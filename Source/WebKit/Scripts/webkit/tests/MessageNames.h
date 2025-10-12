@@ -26,10 +26,20 @@
 
 #include <algorithm>
 #include <array>
+#include <type_traits>
 #include <wtf/EnumTraits.h>
 #include <wtf/text/ASCIILiteral.h>
 
 namespace IPC {
+
+enum class ProcessName : uint8_t {
+    UI,
+    Networking,
+    GPU,
+    WebContent,
+    Model,
+    Unknown
+};
 
 enum class ReceiverName : uint8_t {
     TestWithCVPixelBuffer = 1
@@ -58,13 +68,13 @@ enum class ReceiverName : uint8_t {
     , TestWithoutAttributes = 24
     , TestWithoutUsingIPCConnection = 25
     , IPC = 26
-    , AsyncReply = 27
-    , Invalid = 28
+    , Invalid = 27
 };
 
 enum class MessageName : uint16_t {
 #if USE(AVFOUNDATION)
     TestWithCVPixelBuffer_ReceiveCVPixelBuffer,
+    TestWithCVPixelBuffer_ReceiveCVPixelBufferReply,
     TestWithCVPixelBuffer_SendCVPixelBuffer,
 #endif
     TestWithDeferSendingOption_MultipleIndices,
@@ -82,12 +92,14 @@ enum class MessageName : uint16_t {
     TestWithIfMessage_LoadURL,
 #endif
     TestWithImageData_ReceiveImageData,
+    TestWithImageData_ReceiveImageDataReply,
     TestWithImageData_SendImageData,
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
     TestWithLegacyReceiver_AddEvent,
 #endif
     TestWithLegacyReceiver_Close,
     TestWithLegacyReceiver_CreatePlugin,
+    TestWithLegacyReceiver_CreatePluginReply,
 #if ENABLE(DEPRECATED_FEATURE)
     TestWithLegacyReceiver_DeprecatedOperation,
 #endif
@@ -99,8 +111,10 @@ enum class MessageName : uint16_t {
     TestWithLegacyReceiver_ExperimentalOperation,
 #endif
     TestWithLegacyReceiver_GetPlugins,
+    TestWithLegacyReceiver_GetPluginsReply,
 #if PLATFORM(MAC)
     TestWithLegacyReceiver_InterpretKeyEvent,
+    TestWithLegacyReceiver_InterpretKeyEventReply,
 #endif
 #if ENABLE(TOUCH_EVENTS)
     TestWithLegacyReceiver_LoadSomething,
@@ -109,6 +123,7 @@ enum class MessageName : uint16_t {
     TestWithLegacyReceiver_LoadURL,
     TestWithLegacyReceiver_PreferencesDidChange,
     TestWithLegacyReceiver_RunJavaScriptAlert,
+    TestWithLegacyReceiver_RunJavaScriptAlertReply,
     TestWithLegacyReceiver_SendDoubleAndFloat,
     TestWithLegacyReceiver_SendInts,
     TestWithLegacyReceiver_SetVideoLayerID,
@@ -119,6 +134,7 @@ enum class MessageName : uint16_t {
 #endif
     TestWithMultiLineExtendedAttributes_AlwaysEnabled,
     TestWithSemaphore_ReceiveSemaphore,
+    TestWithSemaphore_ReceiveSemaphoreReply,
     TestWithSemaphore_SendSemaphore,
     TestWithSpanOfConst_TestSpanOfConstFloat,
     TestWithSpanOfConst_TestSpanOfConstFloatSegments,
@@ -126,24 +142,31 @@ enum class MessageName : uint16_t {
     TestWithStreamBuffer_SendStreamBuffer,
     TestWithStreamServerConnectionHandle_SendStreamServerConnection,
     TestWithStream_CallWithIdentifier,
+    TestWithStream_CallWithIdentifierReply,
 #if PLATFORM(COCOA)
     TestWithStream_SendMachSendRight,
 #endif
     TestWithStream_SendString,
     TestWithStream_SendStringAsync,
+    TestWithStream_SendStringAsyncReply,
     TestWithSuperclassAndWantsAsyncDispatch_LoadURL,
     TestWithSuperclassAndWantsDispatch_LoadURL,
     TestWithSuperclass_LoadURL,
 #if ENABLE(TEST_FEATURE)
     TestWithSuperclass_TestAsyncMessage,
+    TestWithSuperclass_TestAsyncMessageReply,
     TestWithSuperclass_TestAsyncMessageWithConnection,
+    TestWithSuperclass_TestAsyncMessageWithConnectionReply,
     TestWithSuperclass_TestAsyncMessageWithMultipleArguments,
+    TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply,
     TestWithSuperclass_TestAsyncMessageWithNoArguments,
+    TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply,
 #endif
     TestWithValidator_AlwaysEnabled,
     TestWithValidator_EnabledIfPassValidation,
     TestWithValidator_EnabledIfSomeFeatureEnabledAndPassValidation,
     TestWithValidator_MessageWithReply,
+    TestWithValidator_MessageWithReplyReply,
     TestWithWantsAsyncDispatch_TestMessage,
     TestWithWantsDispatchNoSyncMessages_TestMessage,
     TestWithWantsDispatch_TestMessage,
@@ -152,6 +175,7 @@ enum class MessageName : uint16_t {
 #endif
     TestWithoutAttributes_Close,
     TestWithoutAttributes_CreatePlugin,
+    TestWithoutAttributes_CreatePluginReply,
 #if ENABLE(DEPRECATED_FEATURE)
     TestWithoutAttributes_DeprecatedOperation,
 #endif
@@ -163,8 +187,10 @@ enum class MessageName : uint16_t {
     TestWithoutAttributes_ExperimentalOperation,
 #endif
     TestWithoutAttributes_GetPlugins,
+    TestWithoutAttributes_GetPluginsReply,
 #if PLATFORM(MAC)
     TestWithoutAttributes_InterpretKeyEvent,
+    TestWithoutAttributes_InterpretKeyEventReply,
 #endif
 #if ENABLE(TOUCH_EVENTS)
     TestWithoutAttributes_LoadSomething,
@@ -173,6 +199,7 @@ enum class MessageName : uint16_t {
     TestWithoutAttributes_LoadURL,
     TestWithoutAttributes_PreferencesDidChange,
     TestWithoutAttributes_RunJavaScriptAlert,
+    TestWithoutAttributes_RunJavaScriptAlertReply,
     TestWithoutAttributes_SendDoubleAndFloat,
     TestWithoutAttributes_SendInts,
     TestWithoutAttributes_SetVideoLayerID,
@@ -183,10 +210,14 @@ enum class MessageName : uint16_t {
 #endif
     TestWithoutUsingIPCConnection_MessageWithArgument,
     TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply,
+    TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReplyReply,
     TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument,
+    TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgumentReply,
     TestWithoutUsingIPCConnection_MessageWithoutArgument,
     TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply,
+    TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReplyReply,
     TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument,
+    TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgumentReply,
     CancelSyncMessageReply,
 #if PLATFORM(COCOA)
     InitializeConnection,
@@ -195,36 +226,6 @@ enum class MessageName : uint16_t {
     ProcessOutOfStreamMessage,
     SetStreamDestinationID,
     SyncMessageReply,
-#if USE(AVFOUNDATION)
-    TestWithCVPixelBuffer_ReceiveCVPixelBufferReply,
-#endif
-    TestWithImageData_ReceiveImageDataReply,
-    TestWithLegacyReceiver_CreatePluginReply,
-    TestWithLegacyReceiver_GetPluginsReply,
-#if PLATFORM(MAC)
-    TestWithLegacyReceiver_InterpretKeyEventReply,
-#endif
-    TestWithLegacyReceiver_RunJavaScriptAlertReply,
-    TestWithSemaphore_ReceiveSemaphoreReply,
-    TestWithStream_CallWithIdentifierReply,
-    TestWithStream_SendStringAsyncReply,
-#if ENABLE(TEST_FEATURE)
-    TestWithSuperclass_TestAsyncMessageReply,
-    TestWithSuperclass_TestAsyncMessageWithConnectionReply,
-    TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply,
-    TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply,
-#endif
-    TestWithValidator_MessageWithReplyReply,
-    TestWithoutAttributes_CreatePluginReply,
-    TestWithoutAttributes_GetPluginsReply,
-#if PLATFORM(MAC)
-    TestWithoutAttributes_InterpretKeyEventReply,
-#endif
-    TestWithoutAttributes_RunJavaScriptAlertReply,
-    TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReplyReply,
-    TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgumentReply,
-    TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReplyReply,
-    TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgumentReply,
     FirstSynchronous,
     LastAsynchronous = FirstSynchronous - 1,
     TestWithLegacyReceiver_GetPluginProcessConnection,
@@ -254,6 +255,9 @@ struct MessageDescription {
     ReceiverName receiverName;
     bool messageAllowedWhenWaitingForSyncReply : 1;
     bool messageAllowedWhenWaitingForUnboundedSyncReply : 1;
+    bool isAsyncReply : 1;
+    ProcessName dispatchedFrom;
+    ProcessName dispatchedTo;
 };
 
 using MessageDescriptionsArray = std::array<MessageDescription, static_cast<size_t>(MessageName::Count) + 1>;
@@ -285,10 +289,20 @@ inline bool messageAllowedWhenWaitingForUnboundedSyncReply(MessageName messageNa
     return Detail::messageDescriptions[static_cast<size_t>(messageName)].messageAllowedWhenWaitingForUnboundedSyncReply;
 }
 
+inline bool isAsyncReply(MessageName messageName)
+{
+    messageName = std::min(messageName, MessageName::Last);
+    return Detail::messageDescriptions[static_cast<size_t>(messageName)].isAsyncReply;
+}
+
 constexpr bool messageIsSync(MessageName name)
 {
     return name >= MessageName::FirstSynchronous;
 }
+
+ASCIILiteral processLiteral(ProcessName);
+ASCIILiteral dispatchedFrom(MessageName);
+ASCIILiteral dispatchedTo(MessageName);
 
 } // namespace IPC
 

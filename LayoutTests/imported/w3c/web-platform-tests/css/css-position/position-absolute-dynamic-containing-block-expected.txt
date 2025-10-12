@@ -4,7 +4,7 @@ PASS abs containing block moves from outer to intermediate
 PASS abs containing block moves from intermediate to outer
 PASS target is no longer absolute
 PASS target becomes absolute
-FAIL fixed containing block moves from outer to intermediate assert_equals: expected 210 but got 310
+PASS fixed containing block moves from outer to intermediate
 PASS fixed containing block moves from intermediate to outer
 PASS target is no longer fixed
 PASS target becomes fixed

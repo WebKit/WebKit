@@ -1,4 +1,0 @@
-
-PASS :sample_mask:entryPoint="fsWithoutSampleMaskUsage"
-PASS :sample_mask:entryPoint="fsWithSampleMaskUsage"
-

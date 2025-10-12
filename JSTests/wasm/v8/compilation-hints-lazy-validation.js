@@ -1,4 +1,4 @@
-//@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1")
+//@ requireOptions("--useBBQJIT=1")
 //@ skip
 // Failure:
 // Exception: CompileError: WebAssembly.Module doesn't validate: I32Mul right value type mismatch, in function at index 0 (evaluating 'new WebAssembly.Module(this.toBuffer(debug))')

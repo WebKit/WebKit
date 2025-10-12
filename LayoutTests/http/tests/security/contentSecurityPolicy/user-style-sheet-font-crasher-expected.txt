@@ -1,11 +1,11 @@
 CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/example_font.woff because it does not appear in the font-src directive of the Content Security Policy.
 CONSOLE MESSAGE: Promoted URL from http://webkit.org/report to https
-Blocked access to external URL https://webkit.org/report
+CONSOLE MESSAGE: Blocked access to external URL https://webkit.org/report
 CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/example_font.woff because it does not appear in the font-src directive of the Content Security Policy.
 CONSOLE MESSAGE: Promoted URL from http://webkit.org/report to https
-Blocked access to external URL https://webkit.org/report
+CONSOLE MESSAGE: Blocked access to external URL https://webkit.org/report
 CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/example_font.woff because it does not appear in the font-src directive of the Content Security Policy.
 CONSOLE MESSAGE: Promoted URL from http://webkit.org/report to https
-Blocked access to external URL https://webkit.org/report
+CONSOLE MESSAGE: Blocked access to external URL https://webkit.org/report
 The iframe below triggers a violation report creating the initial empty document. It should not crash the web process.
 

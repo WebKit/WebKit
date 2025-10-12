@@ -1,0 +1,14 @@
+basic stretch into definite width
+basic stretch into definite height
+indefinite height stretch is ignored
+indefinite min-height stretch is ignored
+
+PASS p + div > div 1
+FAIL p + div > div 2 assert_equals:
+<div style="outline: 5px solid; aspect-ratio: 2 / 1; height: stretch;" data-expected-width="200">
+      <div class="grandchild"></div>
+    </div>
+width expected 200 but got 784
+PASS p + div > div 3
+PASS p + div > div 4
+

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "IdentityCredentialProtocol.h"
+#include <WebCore/IdentityCredentialProtocol.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

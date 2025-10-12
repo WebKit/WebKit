@@ -9,9 +9,9 @@
  */
 #include "net/dcsctp/packet/chunk/shutdown_ack_chunk.h"
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <optional>
+#include <string>
 #include <vector>
 
 #include "api/array_view.h"
@@ -28,7 +28,7 @@ namespace dcsctp {
 constexpr int ShutdownAckChunk::kType;
 
 std::optional<ShutdownAckChunk> ShutdownAckChunk::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   if (!ParseTLV(data).has_value()) {
     return std::nullopt;
   }

@@ -11,16 +11,19 @@
 #ifndef P2P_BASE_STUN_DICTIONARY_H_
 #define P2P_BASE_STUN_DICTIONARY_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <deque>
 #include <map>
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
 #include "api/rtc_error.h"
 #include "api/transport/stun.h"
 
-namespace cricket {
+namespace webrtc {
 
 // A StunDictionaryView is a dictionary of StunAttributes.
 //   - the StunAttributes can be read using the |Get|-methods.
@@ -72,7 +75,7 @@ class StunDictionaryView {
   // a pair with
   // - StunUInt64Attribute to ack the |delta|.
   // - vector of keys that was modified.
-  webrtc::RTCErrorOr<
+  RTCErrorOr<
       std::pair<std::unique_ptr<StunUInt64Attribute>, std::vector<uint16_t>>>
   ApplyDelta(const StunByteStringAttribute& delta);
 
@@ -83,7 +86,7 @@ class StunDictionaryView {
       int key,
       std::optional<StunAttributeValueType> = std::nullopt) const;
   size_t GetLength(int key) const;
-  static webrtc::RTCErrorOr<
+  static RTCErrorOr<
       std::pair<uint64_t, std::deque<std::unique_ptr<StunAttribute>>>>
   ParseDelta(const StunByteStringAttribute& delta);
 
@@ -199,6 +202,7 @@ class StunDictionaryWriter {
   std::map<uint16_t, std::unique_ptr<StunAttribute>> tombstones_;
 };
 
-}  // namespace cricket
+}  //  namespace webrtc
+
 
 #endif  // P2P_BASE_STUN_DICTIONARY_H_

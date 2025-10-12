@@ -8,9 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 
 #include "modules/audio_coding/codecs/pcm16b/audio_decoder_pcm16b.h"
+#include "rtc_base/checks.h"
 #include "test/fuzzers/audio_decoder_fuzzer.h"
 
 namespace webrtc {

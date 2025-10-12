@@ -27,7 +27,7 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "RTCRtpTransformBackend.h"
+#include <WebCore/RTCRtpTransformBackend.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>

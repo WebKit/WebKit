@@ -8,6 +8,7 @@
 #include "modules/svg/include/SkSVGEllipse.h"
 
 #include "include/core/SkCanvas.h"
+#include "include/core/SkPathTypes.h"
 #include "include/core/SkRect.h"
 #include "modules/svg/include/SkSVGAttributeParser.h"
 #include "modules/svg/include/SkSVGRenderContext.h"
@@ -15,7 +16,6 @@
 #include "modules/svg/src/SkSVGRectPriv.h"
 
 class SkPaint;
-enum class SkPathFillType;
 
 SkSVGEllipse::SkSVGEllipse() : INHERITED(SkSVGTag::kEllipse) {}
 
@@ -50,8 +50,5 @@ void SkSVGEllipse::onDraw(SkCanvas* canvas, const SkSVGLengthContext& lctx,
 }
 
 SkPath SkSVGEllipse::onAsPath(const SkSVGRenderContext& ctx) const {
-    SkPath path = SkPath::Oval(this->resolve(ctx.lengthContext()));
-    this->mapToParent(&path);
-
-    return path;
+    return this->mapToParent(SkPath::Oval(this->resolve(ctx.lengthContext())));
 }

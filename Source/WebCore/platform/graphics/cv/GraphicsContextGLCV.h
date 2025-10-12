@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBGL) && USE(AVFOUNDATION)
 
-#include "GraphicsContextGL.h"
+#include <WebCore/GraphicsContextGL.h>
 
 namespace WebCore {
 class VideoFrameCV;

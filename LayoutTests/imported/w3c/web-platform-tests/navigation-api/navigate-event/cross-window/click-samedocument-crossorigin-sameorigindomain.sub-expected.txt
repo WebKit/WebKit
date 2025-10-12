@@ -1,8 +1,4 @@
-Blocked access to external URL http://www1.localhost:8800/navigation-api/navigate-event/cross-window/resources/document-domain-setter.sub.html
-Blocked access to external URL http://www1.localhost:8800/navigation-api/navigate-event/cross-window/resources/document-domain-setter.sub.html#foo
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT clicking on an <a> element that navigates same-document targeting a same-origin-domain (but cross-origin) window Test timed out
+PASS clicking on an <a> element that navigates same-document targeting a same-origin-domain (but cross-origin) window
 

@@ -26,6 +26,7 @@
 #include "RenderTextControl.h"
 
 namespace WebCore {
+class RenderTextControlInnerBlock;
 
 class RenderTextControlSingleLine : public RenderTextControl {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderTextControlSingleLine);
@@ -33,6 +34,10 @@ class RenderTextControlSingleLine : public RenderTextControl {
 public:
     RenderTextControlSingleLine(Type, HTMLInputElement&, RenderStyle&&);
     virtual ~RenderTextControlSingleLine();
+
+    RenderTextControlInnerBlock* innerTextRenderer() const;
+
+    bool innerTextElementHasNonVisibleOverflow() const;
 
 protected:
     HTMLElement* containerElement() const;
@@ -59,6 +64,7 @@ private:
     int scrollHeight() const override;
     void setScrollLeft(int, const ScrollPositionChangeOptions&) override;
     void setScrollTop(int, const ScrollPositionChangeOptions&) override;
+    void setScrollPosition(const ScrollPosition&, const ScrollPositionChangeOptions&) override;
     bool scroll(ScrollDirection, ScrollGranularity, unsigned stepCount = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint()) final;
     bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, unsigned stepCount = 1, Element** stopElement = nullptr) final;
 

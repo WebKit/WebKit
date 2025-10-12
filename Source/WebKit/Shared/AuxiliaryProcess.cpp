@@ -27,10 +27,12 @@
 #include "AuxiliaryProcess.h"
 
 #include "AuxiliaryProcessCreationParameters.h"
+#include "Connection.h"
 #include "ContentWorldShared.h"
 #include "LogInitialization.h"
 #include "Logging.h"
 #include "SandboxInitializationParameters.h"
+#include "StreamClientConnection.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/LogInitialization.h>
 #include <pal/SessionID.h>
@@ -44,6 +46,9 @@
 
 #if OS(LINUX)
 #include <wtf/MemoryPressureHandler.h>
+#if USE(GLIB)
+#include <wtf/glib/Sandbox.h>
+#endif
 #endif
 
 #if PLATFORM(COCOA)
@@ -107,7 +112,6 @@ void AuxiliaryProcess::initialize(AuxiliaryProcessInitializationParameters&& par
 
     // In WebKit2, only the UI process should ever be generating certain identifiers.
     PAL::SessionID::enableGenerationProtection();
-    ContentWorldIdentifier::enableGenerationProtection();
     WebPageProxyIdentifier::enableGenerationProtection();
 
     Ref connection = IPC::Connection::createClientConnection(WTFMove(parameters.connectionIdentifier));
@@ -132,8 +136,15 @@ void AuxiliaryProcess::initializeProcessName(const AuxiliaryProcessInitializatio
 {
 }
 
-void AuxiliaryProcess::initializeConnection(IPC::Connection*)
+void AuxiliaryProcess::initializeConnection(IPC::Connection* connection)
 {
+#if OS(LINUX) && USE(GLIB)
+    // When bubblewrap sandbox is used isInsideFlatpak() also returns true in the web process.
+    if (isInsideFlatpak())
+        connection->sendCredentials();
+#else
+    UNUSED_PARAM(connection);
+#endif
 }
 
 bool AuxiliaryProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -220,7 +231,7 @@ void AuxiliaryProcess::stopRunLoop()
 #if !PLATFORM(COCOA)
 void AuxiliaryProcess::platformStopRunLoop()
 {
-    RunLoop::protectedMain()->stop();
+    RunLoop::mainSingleton().stop();
 }
 #endif
 
@@ -247,6 +258,12 @@ void AuxiliaryProcess::applyProcessCreationParameters(AuxiliaryProcessCreationPa
 #if PLATFORM(COCOA)
     SecureCoding::applyProcessCreationParameters(WTFMove(parameters));
 #endif
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+    if (parameters.shouldEnableIPCSignposts)
+        IPC::Connection::forceEnableSignposts();
+    if (parameters.shouldEnableStreamingIPCSignposts)
+        IPC::StreamClientConnection::forceEnableSignposts();
+#endif
 }
 
 void AuxiliaryProcess::grantAccessToContainerTempDirectory(const SandboxExtension::Handle& handle)
@@ -271,7 +288,7 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
 {
 }
 
-void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName, int32_t)
+void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName, const Vector<uint32_t>&)
 {
     WTFLogAlways("Received invalid message: '%s'", description(messageName).characters());
     CRASH();

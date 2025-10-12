@@ -41,7 +41,7 @@ namespace WTF {
 
 template<typename Graph>
 class Dominators {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Dominators);
 public:
     using List = typename Graph::List;
 
@@ -325,7 +325,7 @@ private:
     // https://www.clear.rice.edu/comp512/Lectures/Papers/TR06-33870-Dom.pdf
 
     class IterativeDominance {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(IterativeDominance);
         constexpr static uint16_t undefinedIdom = std::numeric_limits<uint16_t>::max();
     public:
         IterativeDominance(Graph& graph)
@@ -453,7 +453,7 @@ private:
     // list" (see http://dl.acm.org/citation.cfm?id=802184).
 
     class LengauerTarjan {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LengauerTarjan);
     public:
         LengauerTarjan(Graph& graph)
             : m_graph(graph)
@@ -621,7 +621,7 @@ private:
         }
 
         struct BlockData {
-            WTF_MAKE_STRUCT_FAST_ALLOCATED;
+            WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(BlockData);
 
             BlockData()
                 : parent(nullptr)
@@ -648,7 +648,7 @@ private:
     };
 
     class NaiveDominators {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NaiveDominators);
     public:
         NaiveDominators(Graph& graph)
             : m_graph(graph)
@@ -662,7 +662,7 @@ private:
             // Allocate storage for the dense dominance matrix. 
             m_results.grow(numBlocks);
             for (unsigned i = numBlocks; i--;)
-                m_results[i].resize(numBlocks);
+                m_results[i].grow(numBlocks);
             m_scratch.resize(numBlocks);
 
             // We know that the entry block is only dominated by itself.
@@ -754,7 +754,7 @@ private:
     };
 
     struct ValidationContext {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ValidationContext);
 
         ValidationContext(Graph& graph, Dominators& dominators)
             : graph(graph)
@@ -820,7 +820,7 @@ private:
         NaiveDominators naiveDominators;
     
         struct Error {
-            WTF_MAKE_STRUCT_FAST_ALLOCATED;
+            WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Error);
 
             typename Graph::Node from;
             typename Graph::Node to;
@@ -879,7 +879,7 @@ private:
     }
     
     struct BlockData {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(BlockData);
 
         BlockData()
             : idomParent(nullptr)

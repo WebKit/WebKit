@@ -1,7 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unsupported permission name "storage-access".
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT WebSocket inherits storage access Test timed out
-NOTRUN WebSocket omits unpartitioned cookies without storage access
+PASS WebSocket inherits storage access
+PASS WebSocket omits unpartitioned cookies without storage access
 

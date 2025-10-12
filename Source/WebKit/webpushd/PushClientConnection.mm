@@ -116,7 +116,7 @@ static bool isValidPushPartition(String partition)
         return true;
 
     // On iOS, the push partition is expected to match the format of a web clip identifier.
-    auto isASCIIDigitOrUpper = [](UChar character) {
+    auto isASCIIDigitOrUpper = [](char16_t character) {
         return isASCIIDigit(character) || isASCIIUpper(character);
     };
     return partition.length() == 32 && partition.containsOnly<isASCIIDigitOrUpper>();

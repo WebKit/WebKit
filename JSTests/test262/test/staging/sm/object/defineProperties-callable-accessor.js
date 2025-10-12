@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-object-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -23,7 +20,7 @@ const descriptors = [
 ];
 
 for (const descriptor of descriptors) {
-    assertThrowsInstanceOf(() => Object.create(null, {x: descriptor}), TypeError);
-    assertThrowsInstanceOf(() => Object.defineProperties({}, {x: descriptor}), TypeError);
+    assert.throws(TypeError, () => Object.create(null, {x: descriptor}));
+    assert.throws(TypeError, () => Object.defineProperties({}, {x: descriptor}));
 }
 

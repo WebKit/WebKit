@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -156,12 +156,12 @@ private:
     template<typename PC = IPC::Connection::NoOpPromiseConverter, typename T>
     auto sendWithPromisedReply(T&& message)
     {
-        return m_gpuProcessConnection.get()->protectedConnection()->sendWithPromisedReply<PC, T>(std::forward<T>(message), m_remoteSourceBufferIdentifier);
+        return m_gpuProcessConnection.get()->connection().sendWithPromisedReply<PC, T>(std::forward<T>(message), m_remoteSourceBufferIdentifier);
     }
 
     friend class MessageReceiver;
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
-    Ref<MessageReceiver> m_receiver;
+    const Ref<MessageReceiver> m_receiver;
     const RemoteSourceBufferIdentifier m_remoteSourceBufferIdentifier;
 
     std::atomic<uint64_t> m_totalTrackBufferSizeInBytes = { 0 };
@@ -182,7 +182,7 @@ private:
     const Logger& sourceBufferLogger() const final { return m_logger.get(); }
     uint64_t sourceBufferLogIdentifier() final { return logIdentifier(); }
 
-    Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
 #endif
 };
@@ -190,7 +190,7 @@ private:
 template<typename T>
 void SourceBufferPrivateRemote::sendToProxy(T&& message)
 {
-    m_gpuProcessConnection.get()->protectedConnection()->send(WTFMove(message), m_remoteSourceBufferIdentifier);
+    m_gpuProcessConnection.get()->connection().send(WTFMove(message), m_remoteSourceBufferIdentifier);
 }
 
 } // namespace WebKit

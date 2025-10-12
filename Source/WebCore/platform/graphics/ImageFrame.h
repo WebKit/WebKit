@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,19 +25,13 @@
 
 #pragma once
 
-#include "Color.h"
-#include "DecodingOptions.h"
-#include "ImageOrientation.h"
-#include "ImageTypes.h"
-#include "IntSize.h"
-#include "NativeImage.h"
+#include <WebCore/Color.h>
+#include <WebCore/DecodingOptions.h>
+#include <WebCore/ImageOrientation.h>
+#include <WebCore/ImageTypes.h>
+#include <WebCore/IntSize.h>
+#include <WebCore/NativeImage.h>
 #include <wtf/Seconds.h>
-
-// X11 headers define a bunch of macros with common terms, interfering with WebCore and WTF enum values.
-// As a workaround, we explicitly undef them here.
-#if defined(None)
-#undef None
-#endif
 
 namespace WebCore {
 
@@ -58,7 +52,8 @@ public:
 
     ImageFrame& operator=(const ImageFrame& other);
 
-    unsigned clearImage();
+    unsigned clearSourceImage(ShouldDecodeToHDR);
+    unsigned clearImage(std::optional<ShouldDecodeToHDR> = std::nullopt);
     unsigned clear();
 
     void setDecodingStatus(DecodingStatus);
@@ -71,20 +66,19 @@ public:
     void setSize(const IntSize& size) { m_size = size; }
     IntSize size() const { return m_size; }
 
-    unsigned frameBytes() const { return hasNativeImage() ? (size().area() * sizeof(uint32_t)).value() : 0; }
-    SubsamplingLevel subsamplingLevel() const { return m_subsamplingLevel; }
-    DecodingOptions decodingOptions() const { return m_decodingOptions; }
-
-    RefPtr<NativeImage> nativeImage() const { return m_nativeImage; }
-
-    void setOrientation(ImageOrientation orientation) { m_orientation = orientation; };
-    ImageOrientation orientation() const { return m_orientation; }
-
-    void setHeadroom(Headroom headroom) { m_headroom = headroom; };
-    Headroom headroom() const { return m_headroom; }
+    unsigned sizeInBytes() const { return (size().area() * sizeof(uint32_t)).value(); }
 
     void setDensityCorrectedSize(const IntSize& size) { m_densityCorrectedSize = size; }
     std::optional<IntSize> densityCorrectedSize() const { return m_densityCorrectedSize; }
+
+    SubsamplingLevel subsamplingLevel() const { return m_subsamplingLevel; }
+
+    RefPtr<NativeImage> nativeImage(std::optional<ShouldDecodeToHDR> shouldDecodeToHDR) const { return source(shouldDecodeToHDR).nativeImage; }
+    DecodingOptions decodingOptions(std::optional<ShouldDecodeToHDR> shouldDecodeToHDR) const { return source(shouldDecodeToHDR).decodingOptions; }
+    Headroom headroom(std::optional<ShouldDecodeToHDR> shouldDecodeToHDR) const { return source(shouldDecodeToHDR).headroom; }
+
+    void setOrientation(ImageOrientation orientation) { m_orientation = orientation; };
+    ImageOrientation orientation() const { return m_orientation; }
 
     void setDuration(const Seconds& duration) { m_duration = duration; }
     Seconds duration() const { return m_duration; }
@@ -92,24 +86,76 @@ public:
     void setHasAlpha(bool hasAlpha) { m_hasAlpha = hasAlpha; }
     bool hasAlpha() const { return !hasMetadata() || m_hasAlpha; }
 
-    bool hasNativeImage(const std::optional<SubsamplingLevel>& = { }) const;
-    bool hasFullSizeNativeImage(const std::optional<SubsamplingLevel>& = { }) const;
-    bool hasDecodedNativeImageCompatibleWithOptions(const std::optional<SubsamplingLevel>&, const DecodingOptions&) const;
+    bool hasNativeImage(ShouldDecodeToHDR shouldDecodeToHDR) const { return source(shouldDecodeToHDR).hasNativeImage(); }
+    bool hasNativeImage(ShouldDecodeToHDR, SubsamplingLevel) const;
+    bool hasFullSizeNativeImage(ShouldDecodeToHDR, SubsamplingLevel) const;
+    bool hasDecodedNativeImageCompatibleWithOptions(const DecodingOptions&, SubsamplingLevel) const;
     bool hasMetadata() const { return !size().isEmpty(); }
 
 private:
-    DecodingStatus m_decodingStatus { DecodingStatus::Invalid };
-    IntSize m_size;
+    struct Source {
+        RefPtr<NativeImage> nativeImage;
+        DecodingOptions decodingOptions { DecodingMode::Auto };
+        Headroom headroom { Headroom::None };
 
-    RefPtr<NativeImage> m_nativeImage;
+        bool hasNativeImage() const { return nativeImage; }
+
+        bool hasFullSizeNativeImage() const
+        {
+            return hasNativeImage() && decodingOptions.hasFullSize();
+        }
+
+        bool hasDecodedNativeImageCompatibleWithOptions(const DecodingOptions& decodingOptions) const
+        {
+            return hasNativeImage() && this->decodingOptions.isCompatibleWith(decodingOptions);
+        }
+
+        void clear()
+        {
+            if (!nativeImage)
+                return;
+
+            nativeImage->clearSubimages();
+            nativeImage = nullptr;
+            decodingOptions = DecodingOptions();
+            headroom = Headroom::None;
+        }
+    };
+
+    ShouldDecodeToHDR shouldDecodeToHDRIfExists() const
+    {
+        return hasNativeImage(ShouldDecodeToHDR::Yes) ? ShouldDecodeToHDR::Yes : ShouldDecodeToHDR::No;
+    }
+
+    Source& source(std::optional<ShouldDecodeToHDR> shouldDecodeToHDR)
+    {
+        if (shouldDecodeToHDR)
+            return *shouldDecodeToHDR == ShouldDecodeToHDR::No ? m_source : m_hdrSource;
+
+        return shouldDecodeToHDRIfExists() == ShouldDecodeToHDR::No ? m_source : m_hdrSource;
+    }
+
+    const Source& source(std::optional<ShouldDecodeToHDR> shouldDecodeToHDR) const
+    {
+        if (shouldDecodeToHDR)
+            return *shouldDecodeToHDR == ShouldDecodeToHDR::No ? m_source : m_hdrSource;
+
+        return shouldDecodeToHDRIfExists() == ShouldDecodeToHDR::No ? m_source : m_hdrSource;
+    }
+
+    DecodingStatus m_decodingStatus { DecodingStatus::Invalid };
+
+    IntSize m_size;
+    std::optional<IntSize> m_densityCorrectedSize;
+
     SubsamplingLevel m_subsamplingLevel { SubsamplingLevel::Default };
-    DecodingOptions m_decodingOptions { DecodingMode::Auto };
 
     ImageOrientation m_orientation { ImageOrientation::Orientation::None };
-    Headroom m_headroom { Headroom::None };
-    std::optional<IntSize> m_densityCorrectedSize;
     Seconds m_duration;
     bool m_hasAlpha { true };
+
+    Source m_source;
+    Source m_hdrSource;
 };
 
 } // namespace WebCore

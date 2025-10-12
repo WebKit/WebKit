@@ -6,6 +6,10 @@
 
 // Blit11.cpp: Texture copy utility class.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d11/Blit11.h"
 
 #include <float.h>

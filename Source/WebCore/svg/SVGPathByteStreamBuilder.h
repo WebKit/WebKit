@@ -54,13 +54,7 @@ private:
     template<typename DataType>
     void writeType(const DataType& data)
     {
-        typedef union {
-            DataType value;
-            uint8_t bytes[sizeof(DataType)];
-        } ByteType;
-
-        ByteType type = { data };
-        m_byteStream->append(std::span { type.bytes, sizeof(ByteType) });
+        m_byteStream->append(asByteSpan(data));
     }
 
     void writeSegmentType(SVGPathSegType type)

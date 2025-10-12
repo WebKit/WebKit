@@ -1,0 +1,5 @@
+
+Harness Error (FAIL), message = Error: assert_equals: click deviceId is 0 expected (number) 0 but got (undefined) undefined
+
+PASS PointerEvent.persistentDeviceId
+

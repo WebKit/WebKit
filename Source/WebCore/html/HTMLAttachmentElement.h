@@ -25,10 +25,11 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-#include "HTMLElement.h"
-#include "Image.h"
+#include <WebCore/HTMLElement.h>
+#include <WebCore/Image.h>
 
 namespace WebCore {
 
@@ -111,7 +112,7 @@ private:
     void setNeedsIconRequest();
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
-    bool isReplaced(const RenderStyle&) const final { return true; }
+    bool isReplaced(const RenderStyle* = nullptr) const final { return true; }
     bool shouldSelectOnMouseDown() final {
 #if PLATFORM(IOS_FAMILY)
         return false;

@@ -30,12 +30,17 @@ namespace WebCore {
 
 String GPUCommandBuffer::label() const
 {
-    return m_backing->label();
+    return m_overrideLabel ? *m_overrideLabel : m_backing->label();
 }
 
 void GPUCommandBuffer::setLabel(String&& label)
 {
-    m_backing->setLabel(WTFMove(label));
+    Ref { m_backing }->setLabel(WTFMove(label));
+}
+
+void GPUCommandBuffer::setOverrideLabel(String&& label)
+{
+    m_overrideLabel = WTFMove(label);
 }
 
 void GPUCommandBuffer::setBacking(WebGPU::CommandEncoder& commandEncoder, WebGPU::CommandBuffer& commandBuffer)

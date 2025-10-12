@@ -6,6 +6,10 @@
 
 // StateManager11.cpp: Defines a class for caching D3D11 state
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d11/StateManager11.h"
 
 #include "common/angleutils.h"
@@ -2142,6 +2146,8 @@ angle::Result StateManager11::syncCurrentValueAttribs(
         currentValueAttrib->currentValueType    = currentValue.Type;
         currentValueAttrib->attribute           = attrib;
         currentValueAttrib->binding             = &vertexBindings[attrib->bindingIndex];
+        currentValueAttrib->bufferBindingPointer =
+            &mVertexArray11->getBufferBindingPointer(attrib->bindingIndex);
 
         mDirtyVertexBufferRange.extend(static_cast<unsigned int>(attribIndex));
 
@@ -3165,7 +3171,7 @@ angle::Result StateManager11::applyVertexBuffers(const gl::Context *context,
                 BufferFeedback feedback;
                 ANGLE_TRY(bufferStorage->getBuffer(
                     context, BUFFER_USAGE_VERTEX_OR_TRANSFORM_FEEDBACK, &buffer, &feedback));
-                attrib.binding->getBuffer().get()->applyImplFeedback(context, feedback);
+                attrib.bufferBindingPointer->get()->applyImplFeedback(context, feedback);
             }
 
             vertexStride = attrib.stride;
@@ -3191,7 +3197,7 @@ angle::Result StateManager11::applyIndexBuffer(const gl::Context *context,
     }
 
     gl::DrawElementsType destElementType = mVertexArray11->getCachedDestinationIndexType();
-    gl::Buffer *elementArrayBuffer       = mVertexArray11->getState().getElementArrayBuffer();
+    gl::Buffer *elementArrayBuffer       = mVertexArray11->getElementArrayBuffer();
 
     TranslatedIndexData indexInfo;
     ANGLE_TRY(mIndexDataManager.prepareIndexData(context, indexType, destElementType, indexCount,

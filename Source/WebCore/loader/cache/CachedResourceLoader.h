@@ -25,15 +25,15 @@
 
 #pragma once
 
-#include "CachedResource.h"
-#include "CachedResourceHandle.h"
-#include "CachedResourceRequest.h"
-#include "ContentSecurityPolicy.h"
-#include "Document.h"
-#include "KeepaliveRequestTracker.h"
-#include "MixedContentChecker.h"
-#include "ResourceTimingInformation.h"
-#include "Timer.h"
+#include <WebCore/CachedResource.h>
+#include <WebCore/CachedResourceHandle.h>
+#include <WebCore/CachedResourceRequest.h>
+#include <WebCore/ContentSecurityPolicy.h>
+#include <WebCore/Document.h>
+#include <WebCore/KeepaliveRequestTracker.h>
+#include <WebCore/MixedContentChecker.h>
+#include <WebCore/ResourceTimingInformation.h>
+#include <WebCore/Timer.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Expected.h>
 #include <wtf/HashMap.h>
@@ -83,7 +83,7 @@ const String& convertEnumerationToString(FetchMetadataSite);
 // are initialized without a Frame), so a Document can keep a CachedResourceLoader
 // alive past detach if scripts still reference the Document.
 class CachedResourceLoader : public RefCountedAndCanMakeWeakPtr<CachedResourceLoader> {
-    WTF_MAKE_NONCOPYABLE(CachedResourceLoader); WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_MAKE_NONCOPYABLE(CachedResourceLoader); WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedResourceLoader, Loader);
 friend class ImageLoader;
 friend class ResourceCacheValidationSuppressor;
 
@@ -240,7 +240,7 @@ private:
 
 class ResourceCacheValidationSuppressor {
     WTF_MAKE_NONCOPYABLE(ResourceCacheValidationSuppressor);
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ResourceCacheValidationSuppressor, Loader);
 public:
     ResourceCacheValidationSuppressor(CachedResourceLoader& loader)
         : m_loader(loader)

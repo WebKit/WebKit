@@ -13,7 +13,6 @@
 
 #include <stddef.h>
 
-#include <vector>
 
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/block.h"

@@ -35,7 +35,6 @@
 #include <WebCore/SharedBufferChunkReader.h>
 #endif
 #include <wtf/MainThread.h>
-#include <wtf/StringExtras.h>
 #include <wtf/text/StringCommon.h>
 
 using namespace WebCore;
@@ -53,12 +52,12 @@ TEST_F(FragmentedSharedBufferTest, createWithContentsOfExistingFile)
     auto buffer = SharedBuffer::createWithContentsOfFile(tempFilePath());
     ASSERT_NOT_NULL(buffer);
     EXPECT_TRUE(buffer->size() == strlen(FragmentedSharedBufferTest::testData()));
-    EXPECT_TRUE(String::fromLatin1(FragmentedSharedBufferTest::testData()) == String(buffer->makeContiguous()->span()));
+    EXPECT_TRUE(String::fromLatin1(FragmentedSharedBufferTest::testData()) == String(byteCast<Latin1Character>(buffer->makeContiguous()->span())));
 }
 
 TEST_F(FragmentedSharedBufferTest, createWithContentsOfExistingEmptyFile)
 {
-    auto buffer = SharedBuffer::createWithContentsOfFile(tempEmptyFilePath());
+    RefPtr<FragmentedSharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(tempEmptyFilePath());
     ASSERT_NOT_NULL(buffer);
     EXPECT_TRUE(buffer->isContiguous());
     EXPECT_TRUE(buffer->isEmpty());
@@ -66,13 +65,13 @@ TEST_F(FragmentedSharedBufferTest, createWithContentsOfExistingEmptyFile)
 
 TEST_F(FragmentedSharedBufferTest, copyBufferCreatedWithContentsOfExistingFile)
 {
-    auto buffer = SharedBuffer::createWithContentsOfFile(tempFilePath());
+    RefPtr<FragmentedSharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(tempFilePath());
     ASSERT_NOT_NULL(buffer);
     EXPECT_TRUE(buffer->isContiguous());
-    auto copy = buffer->copy();
+    RefPtr copy = buffer->copy();
+    EXPECT_TRUE(!!dynamicDowncast<SharedBuffer>(copy));
     EXPECT_GT(buffer->size(), 0U);
-    EXPECT_TRUE(buffer->size() == copy->size());
-    EXPECT_TRUE(!memcmp(buffer->span().data(), copy->makeContiguous()->span().data(), buffer->size()));
+    EXPECT_TRUE(equalSpans(dynamicDowncast<SharedBuffer>(buffer)->span(), copy->makeContiguous()->span()));
 }
 
 TEST_F(FragmentedSharedBufferTest, appendBufferCreatedWithContentsOfExistingFile)
@@ -96,6 +95,38 @@ TEST_F(FragmentedSharedBufferTest, tryCreateArrayBuffer)
     char expectedConcatenation[] = "HelloWorldGoodbye";
     ASSERT_EQ(strlen(expectedConcatenation), arrayBuffer->byteLength());
     EXPECT_EQ(0, memcmp(expectedConcatenation, arrayBuffer->data(), strlen(expectedConcatenation)));
+}
+
+TEST_F(FragmentedSharedBufferTest, contiguousAlwaysStayContiguous)
+{
+    SharedBufferBuilder builder(std::in_place, "Hello"_span);
+    RefPtr<FragmentedSharedBuffer> contiguousBuffer = builder.get()->makeContiguous();
+    EXPECT_TRUE(contiguousBuffer->isContiguous());
+    EXPECT_EQ(contiguousBuffer->segmentsCount(), 1u);
+    builder.append("Goodbye"_span);
+    EXPECT_TRUE(contiguousBuffer->isContiguous());
+    EXPECT_EQ(contiguousBuffer->segmentsCount(), 1u);
+}
+
+TEST_F(FragmentedSharedBufferTest, getReturnsContiguous)
+{
+    SharedBufferBuilder builder;
+    EXPECT_TRUE(!builder.get());
+    builder.append("Hello"_span);
+    EXPECT_TRUE(builder.get());
+    EXPECT_TRUE(builder.get()->isContiguous());
+    // makeContiguous is a no-op if already contiguous.
+    RefPtr<FragmentedSharedBuffer> contiguousBuffer = builder.get()->makeContiguous();
+    EXPECT_TRUE(contiguousBuffer->isContiguous());
+    EXPECT_EQ(builder.get().get(), contiguousBuffer.get());
+    EXPECT_EQ(contiguousBuffer->segmentsCount(), 1u);
+    builder.append("Hi"_span);
+    EXPECT_TRUE(contiguousBuffer->isContiguous());
+    EXPECT_EQ(contiguousBuffer->segmentsCount(), 1u);
+    EXPECT_FALSE(builder.get()->isContiguous());
+    EXPECT_EQ(builder.get()->segmentsCount(), 2u);
+    builder.append("Goodbye"_span);
+    EXPECT_EQ(builder.get()->segmentsCount(), 3u);
 }
 
 TEST_F(FragmentedSharedBufferTest, tryCreateArrayBufferLargeSegments)
@@ -191,6 +222,26 @@ TEST_F(FragmentedSharedBufferTest, builder)
     builder2.empty();
     EXPECT_FALSE(builder2.isNull());
     EXPECT_TRUE(builder2.isEmpty());
+}
+
+TEST_F(FragmentedSharedBufferTest, builderEmptyFollowedByGet)
+{
+    SharedBufferBuilder builder;
+    EXPECT_TRUE(!builder.get());
+    builder.empty();
+    EXPECT_FALSE(!builder.get());
+}
+
+TEST_F(FragmentedSharedBufferTest, builderInPlace)
+{
+    SharedBufferBuilder builder(std::in_place, "Hello"_span, "GoodBye"_span);
+    EXPECT_FALSE(builder.isNull());
+    EXPECT_FALSE(builder.isEmpty());
+    EXPECT_FALSE(builder.isContiguous());
+    EXPECT_EQ(builder.take()->segmentsCount(), 2u);
+    EXPECT_TRUE(builder.isNull());
+    EXPECT_TRUE(builder.isEmpty());
+    EXPECT_TRUE(builder.isContiguous());
 }
 
 static void checkBufferWithLength(const uint8_t* buffer, size_t bufferLength, const char* expected, size_t length)
@@ -318,12 +369,12 @@ TEST_F(FragmentedSharedBufferTest, read)
     auto check = [](FragmentedSharedBuffer& sharedBuffer) {
         Vector<uint8_t> data = sharedBuffer.read(4, 3);
         EXPECT_EQ(data.size(), 3u);
-        EXPECT_EQ(StringView(data.subspan(0, 3)), " is"_s);
+        EXPECT_EQ(" is"_s, StringView(byteCast<Latin1Character>(data.subspan(0, 3))));
 
         data = sharedBuffer.read(4, 1000);
         EXPECT_EQ(data.size(), 18u);
 
-        EXPECT_EQ(StringView(data.subspan(0, 18)), " is a simple test."_s);
+        EXPECT_EQ(" is a simple test."_s, StringView(byteCast<Latin1Character>(data.subspan(0, 18))));
     };
     auto sharedBuffer = SharedBuffer::create(simpleText);
     check(sharedBuffer);
@@ -349,17 +400,47 @@ TEST_F(FragmentedSharedBufferTest, extractData)
     auto vector = copy->extractData();
     EXPECT_TRUE(copy->isEmpty());
     EXPECT_FALSE(original->isEmpty());
-    ASSERT_TRUE(original->hasOneSegment());
+    ASSERT_EQ(original->segmentsCount(), 1u);
     EXPECT_GT(original->begin()->segment->size(), 0u);
 }
 
 TEST_F(FragmentedSharedBufferTest, copyIsContiguous)
 {
     EXPECT_TRUE(SharedBuffer::create()->copy()->isContiguous());
-    EXPECT_FALSE(FragmentedSharedBuffer::create()->copy()->isContiguous());
     const auto simpleText = "This is a simple test."_span;
     EXPECT_TRUE(SharedBuffer::create(simpleText)->copy()->isContiguous());
-    EXPECT_FALSE(FragmentedSharedBuffer::create(simpleText)->copy()->isContiguous());
+}
+
+TEST_F(FragmentedSharedBufferTest, takeDataIsContiguousWhenPossible)
+{
+    SharedBufferBuilder builder(std::in_place, "Part1"_span);
+    Ref buffer = builder.take();
+    EXPECT_TRUE(buffer->isContiguous());
+    builder.append("Part1"_span);
+    builder.append("Part2"_span);
+    buffer = builder.take();
+    EXPECT_FALSE(buffer->isContiguous());
+}
+
+TEST_F(FragmentedSharedBufferTest, getIsContiguousWhenPossible)
+{
+    SharedBufferBuilder builder;
+    EXPECT_TRUE(!builder.get());
+    builder.append("Part1"_span);
+    EXPECT_FALSE(!builder.get());
+    EXPECT_TRUE(builder.get()->isContiguous());
+    builder.append("Part2"_span);
+    EXPECT_FALSE(builder.get()->isContiguous());
+}
+
+TEST_F(FragmentedSharedBufferTest, emptySharedBufferBuilderIsContiguous)
+{
+    SharedBufferBuilder builder;
+    Ref buffer = builder.copy();
+    EXPECT_TRUE(buffer->isContiguous());
+    buffer = builder.take();
+    EXPECT_TRUE(buffer->isContiguous());
+    EXPECT_TRUE(is<SharedBuffer>(buffer));
 }
 
 #if ENABLE(MHTML)
@@ -421,8 +502,8 @@ TEST_F(SharedBufferChunkReaderTest, includeSeparator)
     check(builder.take());
 
     for (size_t i = 0; i < 256; ++i) {
-        LChar c = i;
-        builder.append(std::span<const uint8_t> { &c, 1 });
+        const uint8_t byte = i;
+        builder.append(std::span { &byte, 1 });
     }
     check(builder.take());
 }
@@ -441,12 +522,12 @@ TEST_F(SharedBufferChunkReaderTest, peekData)
         size_t read = chunkReader.peek(data, 3);
         EXPECT_EQ(read, 3u);
 
-        EXPECT_EQ(String({ data.data(), 3 }), " is"_s);
+        EXPECT_EQ(" is"_s, StringView(byteCast<Latin1Character>(data.span().first(3))));
 
         read = chunkReader.peek(data, 1000);
         EXPECT_EQ(read, 18u);
 
-        EXPECT_EQ(String({ data.data(), 18 }), " is a simple test."_s);
+        EXPECT_EQ(" is a simple test."_s, StringView(byteCast<Latin1Character>(data.span().first(18))));
 
         // Ensure the cursor has not changed.
         chunk = chunkReader.nextChunkAsUTF8StringWithLatin1Fallback();

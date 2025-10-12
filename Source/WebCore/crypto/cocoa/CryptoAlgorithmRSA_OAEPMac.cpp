@@ -40,7 +40,7 @@ static ExceptionOr<Vector<uint8_t>> encryptRSA_OAEP(CryptoAlgorithmIdentifier ha
 
     Vector<uint8_t> cipherText(keyLength / 8); // Per Step 3.c of https://tools.ietf.org/html/rfc3447#section-7.1.1
     size_t cipherTextLength = cipherText.size();
-    if (CCRSACryptorEncrypt(key, ccOAEPPadding, data.data(), data.size(), cipherText.data(), &cipherTextLength, label.data(), label.size(), digestAlgorithm))
+    if (CCRSACryptorEncrypt(key, ccOAEPPadding, data.span().data(), data.size(), cipherText.mutableSpan().data(), &cipherTextLength, label.span().data(), label.size(), digestAlgorithm))
         return Exception { ExceptionCode::OperationError };
 
     return WTFMove(cipherText);
@@ -54,10 +54,10 @@ static ExceptionOr<Vector<uint8_t>> decryptRSA_OAEP(CryptoAlgorithmIdentifier ha
 
     Vector<uint8_t> plainText(keyLength / 8); // Per Step 1.b of https://tools.ietf.org/html/rfc3447#section-7.1.1
     size_t plainTextLength = plainText.size();
-    if (CCRSACryptorDecrypt(key, ccOAEPPadding, data.data(), data.size(), plainText.data(), &plainTextLength, label.data(), label.size(), digestAlgorithm))
+    if (CCRSACryptorDecrypt(key, ccOAEPPadding, data.span().data(), data.size(), plainText.mutableSpan().data(), &plainTextLength, label.span().data(), label.size(), digestAlgorithm))
         return Exception { ExceptionCode::OperationError };
 
-    plainText.resize(plainTextLength);
+    plainText.shrink(plainTextLength);
     return WTFMove(plainText);
 }
 

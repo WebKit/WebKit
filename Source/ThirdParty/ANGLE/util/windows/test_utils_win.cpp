@@ -6,6 +6,10 @@
 
 // test_utils_win.cpp: Implementation of OS-specific functions for Windows
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "util/test_utils.h"
 
 #include <aclapi.h>

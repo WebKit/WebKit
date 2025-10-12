@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -123,7 +123,7 @@ RemoteLayerTreeEventDispatcher::~RemoteLayerTreeEventDispatcher()
 // This must be called to break the cycle between RemoteLayerTreeEventDispatcherDisplayLinkClient and this.
 void RemoteLayerTreeEventDispatcher::invalidate()
 {
-    m_displayLinkClient->invalidate();
+    checkedDisplayLinkClient()->invalidate();
 
     removeDisplayLinkClient();
 
@@ -156,6 +156,11 @@ RefPtr<RemoteScrollingTree> RemoteLayerTreeEventDispatcher::scrollingTree()
     }
     
     return result;
+}
+
+CheckedPtr<RemoteLayerTreeEventDispatcherDisplayLinkClient> RemoteLayerTreeEventDispatcher::checkedDisplayLinkClient()
+{
+    return m_displayLinkClient.get();
 }
 
 void RemoteLayerTreeEventDispatcher::wheelEventHysteresisUpdated(PAL::HysteresisState state)
@@ -214,7 +219,7 @@ void RemoteLayerTreeEventDispatcher::scrollingThreadHandleWheelEvent(const WebWh
     ASSERT(ScrollingThread::isCurrentThread());
     
     auto continueEventHandlingOnMainThread = [protectedThis = Ref { *this }](WheelEventHandlingResult handlingResult) {
-        RunLoop::protectedMain()->dispatch([protectedThis, handlingResult] {
+        RunLoop::mainSingleton().dispatch([protectedThis, handlingResult] {
             protectedThis->continueWheelEventHandling(handlingResult);
         });
     };
@@ -252,13 +257,14 @@ void RemoteLayerTreeEventDispatcher::scrollingThreadHandleWheelEvent(const WebWh
 void RemoteLayerTreeEventDispatcher::continueWheelEventHandling(WheelEventHandlingResult handlingResult)
 {
     ASSERT(isMainRunLoop());
-    if (!m_scrollingCoordinator)
+    CheckedPtr scrollingCoordinator = m_scrollingCoordinator.get();
+    if (!scrollingCoordinator)
         return;
 
     LOG_WITH_STREAM(Scrolling, stream << "RemoteLayerTreeEventDispatcher::continueWheelEventHandling - result " << handlingResult);
 
     auto event = m_wheelEventsBeingProcessed.takeFirst();
-    m_scrollingCoordinator->continueWheelEventHandling(event, handlingResult);
+    scrollingCoordinator->continueWheelEventHandling(event, handlingResult);
 }
 
 OptionSet<WheelEventProcessingSteps> RemoteLayerTreeEventDispatcher::determineWheelEventProcessing(const PlatformWheelEvent& wheelEvent, RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges)
@@ -305,8 +311,8 @@ void RemoteLayerTreeEventDispatcher::wheelEventHandlingCompleted(const PlatformW
             return;
 
         auto result = scrollingTree->handleWheelEventAfterDefaultHandling(wheelEvent, scrollingNodeID, gestureState);
-        RunLoop::protectedMain()->dispatch([protectedThis, wasHandled, result]() {
-            if (auto* scrollingCoordinator = protectedThis->scrollingCoordinator())
+        RunLoop::mainSingleton().dispatch([protectedThis, wasHandled, result]() {
+            if (CheckedPtr scrollingCoordinator = protectedThis->m_scrollingCoordinator.get())
                 scrollingCoordinator->protectedWebPageProxy()->wheelEventHandlingCompleted(wasHandled || result.wasHandled);
         });
 
@@ -328,7 +334,7 @@ PlatformWheelEvent RemoteLayerTreeEventDispatcher::filteredWheelEvent(const Plat
 
 RemoteLayerTreeDrawingAreaProxyMac& RemoteLayerTreeEventDispatcher::drawingAreaMac() const
 {
-    return *downcast<RemoteLayerTreeDrawingAreaProxyMac>(m_scrollingCoordinator->webPageProxy().drawingArea());
+    return *downcast<RemoteLayerTreeDrawingAreaProxyMac>(CheckedRef { *m_scrollingCoordinator }->webPageProxy().drawingArea());
 }
 
 Ref<RemoteLayerTreeDrawingAreaProxyMac> RemoteLayerTreeEventDispatcher::protectedDrawingAreaMac() const
@@ -363,7 +369,7 @@ void RemoteLayerTreeEventDispatcher::startOrStopDisplayLink()
         return;
     }
 
-    RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }] {
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }] {
         protectedThis->startOrStopDisplayLinkOnMainThread();
     });
 }
@@ -412,7 +418,7 @@ void RemoteLayerTreeEventDispatcher::startDisplayLinkObserver()
 
     m_displayRefreshObserverID = DisplayLinkObserverID::generate();
     // This display link always runs at the display update frequency (e.g. 120Hz).
-    displayLink->addObserver(*m_displayLinkClient, *m_displayRefreshObserverID, displayLink->nominalFramesPerSecond());
+    displayLink->addObserver(*checkedDisplayLinkClient(), *m_displayRefreshObserverID, displayLink->nominalFramesPerSecond());
 }
 
 void RemoteLayerTreeEventDispatcher::stopDisplayLinkObserver()
@@ -426,7 +432,7 @@ void RemoteLayerTreeEventDispatcher::stopDisplayLinkObserver()
 
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] RemoteLayerTreeEventDispatcher::stopDisplayLinkObserver");
 
-    displayLink->removeObserver(*m_displayLinkClient, *m_displayRefreshObserverID);
+    displayLink->removeObserver(*checkedDisplayLinkClient(), *m_displayRefreshObserverID);
     m_displayRefreshObserverID = { };
 }
 
@@ -437,7 +443,7 @@ void RemoteLayerTreeEventDispatcher::removeDisplayLinkClient()
         return;
 
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] RemoteLayerTreeEventDispatcher::removeDisplayLinkClient");
-    displayLink->removeClient(*m_displayLinkClient);
+    displayLink->removeClient(*checkedDisplayLinkClient());
     m_displayRefreshObserverID = { };
 }
 
@@ -492,7 +498,7 @@ void RemoteLayerTreeEventDispatcher::scheduleDelayedRenderingUpdateDetectionTime
     ASSERT(ScrollingThread::isCurrentThread());
 
     if (!m_delayedRenderingUpdateDetectionTimer)
-        m_delayedRenderingUpdateDetectionTimer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), [weakThis = ThreadSafeWeakPtr { *this }] {
+        m_delayedRenderingUpdateDetectionTimer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), "RemoteLayerTreeEventDispatcher::DelayedRenderingUpdateDetectionTimer"_s, [weakThis = ThreadSafeWeakPtr { *this }] {
             auto strongThis = weakThis.get();
             if (strongThis)
                 strongThis->delayedRenderingUpdateDetectionTimerFired();
@@ -634,7 +640,7 @@ void RemoteLayerTreeEventDispatcher::animationsWereRemovedFromNode(RemoteLayerTr
     ASSERT(isMainRunLoop());
     assertIsHeld(m_effectStacksLock);
     if (auto effectStack = m_effectStacks.take(node.layerID()))
-        effectStack->clear(node.layer());
+        effectStack->clear(node.protectedLayer().get());
 }
 
 void RemoteLayerTreeEventDispatcher::updateAnimations()

@@ -1,0 +1,3 @@
+
+FAIL Test SVGNumber animation with invalid values: String values in from and to attributes. assert_equals: expected 1 but got 0
+

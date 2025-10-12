@@ -28,7 +28,6 @@
 #include "Attribute.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedResource.h"
-#include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
@@ -36,10 +35,13 @@
 #include "DefaultResourceLoadPriority.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
+#include "DocumentResourceLoader.h"
+#include "DocumentView.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "EventSender.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "HTMLAnchorElement.h"
@@ -278,19 +280,9 @@ bool HTMLLinkElement::shouldLoadLink()
     return isConnected();
 }
 
-void HTMLLinkElement::setCrossOrigin(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(crossoriginAttr, value);
-}
-
 String HTMLLinkElement::crossOrigin() const
 {
     return parseCORSSettingsAttribute(attributeWithoutSynchronization(crossoriginAttr));
-}
-
-void HTMLLinkElement::setAs(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(asAttr, value);
 }
 
 String HTMLLinkElement::as() const
@@ -850,11 +842,6 @@ void HTMLLinkElement::removePendingSheet()
     m_styleScope->removePendingSheet(*this);
 }
 
-void HTMLLinkElement::setReferrerPolicyForBindings(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(referrerpolicyAttr, value);
-}
-
 String HTMLLinkElement::referrerPolicyForBindings() const
 {
     return referrerPolicyToString(referrerPolicy());
@@ -868,11 +855,6 @@ ReferrerPolicy HTMLLinkElement::referrerPolicy() const
 String HTMLLinkElement::debugDescription() const
 {
     return makeString(HTMLElement::debugDescription(), ' ', type(), ' ', href().string());
-}
-
-void HTMLLinkElement::setFetchPriorityForBindings(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(fetchpriorityAttr, value);
 }
 
 String HTMLLinkElement::fetchPriorityForBindings() const

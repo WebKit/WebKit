@@ -35,7 +35,6 @@
 #include <WebCore/AudioIOCallback.h>
 #include <wtf/CrossThreadQueue.h>
 #include <wtf/MediaTime.h>
-#include <wtf/Threading.h>
 
 #if PLATFORM(COCOA)
 #include "SharedCARingBuffer.h"
@@ -109,7 +108,6 @@ private:
     RefPtr<WebCore::SharedMemory> m_frameCount;
     uint32_t m_lastFrameCount { 0 };
     std::atomic<bool> m_shouldStopThread { false };
-    bool m_isRealtimeThread { false };
 };
 
 } // namespace WebKit

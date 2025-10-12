@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "CSSRule.h"
-#include "CSSStyleSheet.h"
-#include "JSStyleSheetCustom.h"
-#include "MediaList.h"
-#include "WebCoreOpaqueRootInlines.h"
+#include <WebCore/CSSRule.h>
+#include <WebCore/CSSStyleSheet.h>
+#include <WebCore/JSStyleSheetCustom.h>
+#include <WebCore/MediaList.h>
+#include <WebCore/WebCoreOpaqueRootInlines.h>
 
 namespace WebCore {
 

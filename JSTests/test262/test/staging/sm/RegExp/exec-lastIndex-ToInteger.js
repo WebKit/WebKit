@@ -2,11 +2,9 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-RegExp-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  RegExp.prototype.exec doesn't get the lastIndex and ToInteger() it for non-global regular expressions when it should
+info: bugzilla.mozilla.org/show_bug.cgi?id=646490
 esid: pending
 ---*/
 /*
@@ -15,17 +13,6 @@ esid: pending
  *
  * Author: Geoffrey Sneddon <geoffers+mozilla@gmail.com>
  */
-
-var BUGNUMBER = 646490;
-var summary =
-  "RegExp.prototype.exec doesn't get the lastIndex and ToInteger() it for " +
-  "non-global regular expressions when it should";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 var re = /./, called = 0;
 re.lastIndex = {valueOf: function() { called++; return 0; }};
@@ -38,7 +25,3 @@ re.lastIndex = {
 };
 re.exec(".");
 assert.sameValue(called, 3, "FAIL, got " + called);
-
-/******************************************************************************/
-
-print("All tests passed!");

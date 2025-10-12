@@ -12,18 +12,27 @@
 
 #include <list>
 #include <memory>
+#include <string>
 #include <unordered_set>
-#include <utility>
 #include <vector>
 
+#include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
-#include "api/sequence_checker.h"
+#include "api/location.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/task_queue/task_queue_factory.h"
 #include "api/test/time_controller.h"
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/fake_clock.h"
 #include "rtc_base/platform_thread_types.h"
+#include "rtc_base/socket_server.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/synchronization/yield_policy.h"
+#include "rtc_base/thread.h"
+#include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace sim_time_impl {
@@ -43,7 +52,7 @@ class SimulatedSequenceRunner {
 };
 
 class SimulatedTimeControllerImpl : public TaskQueueFactory,
-                                    public rtc::YieldInterface {
+                                    public YieldInterface {
  public:
   explicit SimulatedTimeControllerImpl(Timestamp start_time);
   ~SimulatedTimeControllerImpl() override;
@@ -58,9 +67,9 @@ class SimulatedTimeControllerImpl : public TaskQueueFactory,
   void YieldExecution() RTC_LOCKS_EXCLUDED(time_lock_, lock_) override;
 
   // Create thread using provided `socket_server`.
-  std::unique_ptr<rtc::Thread> CreateThread(
+  std::unique_ptr<Thread> CreateThread(
       const std::string& name,
-      std::unique_ptr<rtc::SocketServer> socket_server)
+      std::unique_ptr<SocketServer> socket_server)
       RTC_LOCKS_EXCLUDED(time_lock_, lock_);
 
   // Runs all runners in `runners_` that has tasks or modules ready for
@@ -83,8 +92,8 @@ class SimulatedTimeControllerImpl : public TaskQueueFactory,
   void StopYield(TaskQueueBase* yielding_from);
 
  private:
-  const rtc::PlatformThreadId thread_id_;
-  const std::unique_ptr<rtc::Thread> dummy_thread_ = rtc::Thread::Create();
+  const PlatformThreadId thread_id_;
+  const std::unique_ptr<Thread> dummy_thread_ = Thread::Create();
   mutable Mutex time_lock_;
   Timestamp current_time_ RTC_GUARDED_BY(time_lock_);
   mutable Mutex lock_;
@@ -122,8 +131,8 @@ class TokenTaskQueue : public TaskQueueBase {
 // TimeController implementation using completely simulated time. Task queues
 // and process threads created by this controller will run delayed activities
 // when AdvanceTime() is called. Overrides the global clock backing
-// rtc::TimeMillis() and rtc::TimeMicros(). Note that this is not thread safe
-// since it modifies global state.
+// webrtc::TimeMillis() and webrtc::TimeMicros(). Note that this is not thread
+// safe since it modifies global state.
 class GlobalSimulatedTimeController : public TimeController {
  public:
   explicit GlobalSimulatedTimeController(Timestamp start_time);
@@ -131,10 +140,10 @@ class GlobalSimulatedTimeController : public TimeController {
 
   Clock* GetClock() override;
   TaskQueueFactory* GetTaskQueueFactory() override;
-  std::unique_ptr<rtc::Thread> CreateThread(
+  std::unique_ptr<Thread> CreateThread(
       const std::string& name,
-      std::unique_ptr<rtc::SocketServer> socket_server) override;
-  rtc::Thread* GetMainThread() override;
+      std::unique_ptr<SocketServer> socket_server) override;
+  Thread* GetMainThread() override;
 
   void AdvanceTime(TimeDelta duration) override;
 
@@ -142,24 +151,13 @@ class GlobalSimulatedTimeController : public TimeController {
   // Useful for simulating contention on destination queues.
   void SkipForwardBy(TimeDelta duration);
 
-  // Makes the simulated time controller aware of a custom
-  // SimulatedSequenceRunner.
-  // TODO(bugs.webrtc.org/11581): remove method once the ModuleRtpRtcpImpl2 unit
-  // test stops using it.
-  void Register(sim_time_impl::SimulatedSequenceRunner* runner);
-  // Removes a previously installed custom SimulatedSequenceRunner from the
-  // simulated time controller.
-  // TODO(bugs.webrtc.org/11581): remove method once the ModuleRtpRtcpImpl2 unit
-  // test stops using it.
-  void Unregister(sim_time_impl::SimulatedSequenceRunner* runner);
-
  private:
-  rtc::ScopedBaseFakeClock global_clock_;
+  ScopedBaseFakeClock global_clock_;
   // Provides simulated CurrentNtpInMilliseconds()
   SimulatedClock sim_clock_;
   sim_time_impl::SimulatedTimeControllerImpl impl_;
-  rtc::ScopedYieldPolicy yield_policy_;
-  std::unique_ptr<rtc::Thread> main_thread_;
+  ScopedYieldPolicy yield_policy_;
+  std::unique_ptr<Thread> main_thread_;
 };
 }  // namespace webrtc
 

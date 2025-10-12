@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #import "config.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
 
-#if !PLATFORM(IOS_FAMILY)
+#if ENABLE(TILED_CA_DRAWING_AREA)
 
 #import "DrawingAreaMessages.h"
 #import "DrawingAreaProxyMessages.h"
@@ -52,7 +52,7 @@ Ref<TiledCoreAnimationDrawingAreaProxy> TiledCoreAnimationDrawingAreaProxy::crea
 }
 
 TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy(WebPageProxy& webPageProxy, WebProcessProxy& webProcessProxy)
-    : DrawingAreaProxy(DrawingAreaType::TiledCoreAnimation, webPageProxy, webProcessProxy)
+    : DrawingAreaProxy(webPageProxy, webProcessProxy)
 {
 }
 
@@ -60,13 +60,13 @@ TiledCoreAnimationDrawingAreaProxy::~TiledCoreAnimationDrawingAreaProxy() = defa
 
 void TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange(CompletionHandler<void()>&& completionHandler)
 {
-    if (RefPtr webPageProxy = m_webPageProxy.get())
-        sendWithAsyncReply(Messages::DrawingArea::SetDeviceScaleFactor(webPageProxy->deviceScaleFactor()), WTFMove(completionHandler));
+    if (RefPtr page = this->page())
+        sendWithAsyncReply(Messages::DrawingArea::SetDeviceScaleFactor(page->deviceScaleFactor()), WTFMove(completionHandler));
 }
 
 void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()
 {
-    RefPtr page = m_webPageProxy.get();
+    RefPtr page = this->page();
     if (!page || !page->hasRunningProcess())
         return;
 
@@ -80,13 +80,13 @@ void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()
 
 void TiledCoreAnimationDrawingAreaProxy::colorSpaceDidChange()
 {
-    if (RefPtr page = m_webPageProxy.get())
+    if (RefPtr page = this->page())
         send(Messages::DrawingArea::SetColorSpace(page->colorSpace()));
 }
 
 void TiledCoreAnimationDrawingAreaProxy::minimumSizeForAutoLayoutDidChange()
 {
-    RefPtr page = m_webPageProxy.get();
+    RefPtr page = this->page();
     if (!page || !page->hasRunningProcess())
         return;
 
@@ -100,7 +100,7 @@ void TiledCoreAnimationDrawingAreaProxy::minimumSizeForAutoLayoutDidChange()
 
 void TiledCoreAnimationDrawingAreaProxy::sizeToContentAutoSizeMaximumSizeDidChange()
 {
-    RefPtr page = m_webPageProxy.get();
+    RefPtr page = this->page();
     if (!page || !page->hasRunningProcess())
         return;
 
@@ -114,19 +114,19 @@ void TiledCoreAnimationDrawingAreaProxy::sizeToContentAutoSizeMaximumSizeDidChan
 
 void TiledCoreAnimationDrawingAreaProxy::enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)
 {
-    if (RefPtr page = m_webPageProxy.get())
+    if (RefPtr page = this->page())
         page->enterAcceleratedCompositingMode(layerTreeContext);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)
 {
-    if (RefPtr page = m_webPageProxy.get())
+    if (RefPtr page = this->page())
         page->updateAcceleratedCompositingMode(layerTreeContext);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::didFirstLayerFlush(uint64_t /* backingStoreStateID */, const LayerTreeContext& layerTreeContext)
 {
-    if (RefPtr page = m_webPageProxy.get())
+    if (RefPtr page = this->page())
         page->didFirstLayerFlush(layerTreeContext);
 }
 
@@ -136,7 +136,7 @@ void TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry()
 
     m_isWaitingForDidUpdateGeometry = false;
 
-    RefPtr page = m_webPageProxy.get();
+    RefPtr page = this->page();
     if (!page)
         return;
 
@@ -145,39 +145,39 @@ void TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry()
 
     // If the WKView was resized while we were waiting for a DidUpdateGeometry reply from the web process,
     // we need to resend the new size here.
-    if (m_lastSentSize != m_size || m_lastSentMinimumSizeForAutoLayout != minimumSizeForAutoLayout || m_lastSentSizeToContentAutoSizeMaximumSize != sizeToContentAutoSizeMaximumSize)
+    if (m_lastSentSize != size() || m_lastSentMinimumSizeForAutoLayout != minimumSizeForAutoLayout || m_lastSentSizeToContentAutoSizeMaximumSize != sizeToContentAutoSizeMaximumSize)
         sendUpdateGeometry();
 }
 
 void TiledCoreAnimationDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStateChangeID)
 {
-    RefPtr page = m_webPageProxy.get();
+    RefPtr page = this->page();
     if (!page)
         return;
 
     Seconds activityStateUpdateTimeout = Seconds::fromMilliseconds(250);
-    protectedWebProcessProxy()->protectedConnection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateActivityState>(page->webPageIDInMainFrameProcess(), activityStateUpdateTimeout, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+    webProcessProxy().protectedConnection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateActivityState>(page->webPageIDInMainFrameProcess(), activityStateUpdateTimeout, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::willSendUpdateGeometry()
 {
-    RefPtr page = m_webPageProxy.get();
+    RefPtr page = this->page();
     if (!page)
         return;
 
     m_lastSentMinimumSizeForAutoLayout = page->minimumSizeForAutoLayout();
     m_lastSentSizeToContentAutoSizeMaximumSize = page->sizeToContentAutoSizeMaximumSize();
-    m_lastSentSize = m_size;
+    m_lastSentSize = size();
     m_isWaitingForDidUpdateGeometry = true;
 }
 
 MachSendRight TiledCoreAnimationDrawingAreaProxy::createFence()
 {
-    RefPtr page = m_webPageProxy.get();
+    RefPtr page = this->page();
     if (!page)
         return MachSendRight();
 
-    RetainPtr<CAContext> rootLayerContext = [page->acceleratedCompositingRootLayer() context];
+    RetainPtr<CAContext> rootLayerContext = [page->protectedAcceleratedCompositingRootLayer() context];
     if (!rootLayerContext)
         return MachSendRight();
 
@@ -185,10 +185,10 @@ MachSendRight TiledCoreAnimationDrawingAreaProxy::createFence()
     // will likely get dropped on the floor (if the Web process is terminated)
     // or queued up until process launch completes, and there's nothing useful
     // to synchronize in these cases.
-    if (!m_webProcessProxy->hasConnection())
+    if (!webProcessProxy().hasConnection())
         return MachSendRight();
 
-    Ref connection = m_webProcessProxy->connection();
+    Ref connection = webProcessProxy().connection();
 
     // Don't fence if we have incoming synchronous messages, because we may not
     // be able to reply to the message until the fence times out.
@@ -214,7 +214,7 @@ void TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry()
     ASSERT(!m_isWaitingForDidUpdateGeometry);
 
     willSendUpdateGeometry();
-    sendWithAsyncReply(Messages::DrawingArea::UpdateGeometry(m_size, true /* flushSynchronously */, createFence()), [weakThis = WeakPtr { *this }] {
+    sendWithAsyncReply(Messages::DrawingArea::UpdateGeometry(size(), true /* flushSynchronously */, createFence()), [weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         weakThis->didUpdateGeometry();
@@ -234,6 +234,7 @@ void TiledCoreAnimationDrawingAreaProxy::commitTransientZoom(double scale, Float
 void TiledCoreAnimationDrawingAreaProxy::dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection& connection, Vector<IPC::AsyncReplyID>&& callbackIDs)
 {
     for (auto& callbackID : callbackIDs) {
+        removeOutstandingPresentationUpdateCallback(connection, callbackID);
         if (auto callback = connection.takeAsyncReplyHandler(callbackID))
             callback(nullptr, nullptr);
     }
@@ -241,11 +242,11 @@ void TiledCoreAnimationDrawingAreaProxy::dispatchPresentationCallbacksAfterFlush
 
 std::optional<WebCore::FramesPerSecond> TiledCoreAnimationDrawingAreaProxy::displayNominalFramesPerSecond()
 {
-    if (!m_webPageProxy || !m_webPageProxy->displayID())
+    if (!page() || !page()->displayID())
         return std::nullopt;
-    return protectedWebProcessProxy()->nominalFramesPerSecondForDisplay(*m_webPageProxy->displayID());
+    return webProcessProxy().nominalFramesPerSecondForDisplay(*page()->displayID());
 }
 
 } // namespace WebKit
 
-#endif // !PLATFORM(IOS_FAMILY)
+#endif // ENABLE(TILED_CA_DRAWING_AREA)

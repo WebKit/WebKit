@@ -6,12 +6,18 @@
 // IntermNode_util.cpp: High-level utilities for creating AST nodes and node hierarchies. Mostly
 // meant to be used in AST transforms.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "compiler/translator/tree_util/IntermNode_util.h"
 
 #include "compiler/translator/FunctionLookup.h"
 #include "compiler/translator/Name.h"
+#include "compiler/translator/Symbol.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/SymbolUniqueId.h"
+#include "compiler/translator/Types.h"
 
 namespace sh
 {
@@ -306,21 +312,27 @@ std::pair<const TVariable *, const TVariable *> DeclareStructure(
     return {typeVar, instanceVar};
 }
 
-const TVariable *DeclareInterfaceBlock(TIntermBlock *root,
-                                       TSymbolTable *symbolTable,
+TInterfaceBlock *DeclareInterfaceBlock(TSymbolTable *symbolTable,
                                        TFieldList *fieldList,
-                                       TQualifier qualifier,
                                        const TLayoutQualifier &layoutQualifier,
-                                       const TMemoryQualifier &memoryQualifier,
-                                       uint32_t arraySize,
-                                       const ImmutableString &blockTypeName,
-                                       const ImmutableString &blockVariableName)
+                                       const ImmutableString &blockTypeName)
 {
     // Define an interface block.
     TInterfaceBlock *interfaceBlock = new TInterfaceBlock(
         symbolTable, blockTypeName, fieldList, layoutQualifier, SymbolType::AngleInternal);
 
-    // Turn the inteface block into a declaration.
+    return interfaceBlock;
+}
+
+const TVariable *DeclareInterfaceBlockVariable(TIntermBlock *root,
+                                               TSymbolTable *symbolTable,
+                                               TQualifier qualifier,
+                                               const TInterfaceBlock *interfaceBlock,
+                                               const TLayoutQualifier &layoutQualifier,
+                                               const TMemoryQualifier &memoryQualifier,
+                                               const uint32_t arraySize,
+                                               const ImmutableString &blockVariableName)
+{
     TType *interfaceBlockType = new TType(interfaceBlock, qualifier, layoutQualifier);
     interfaceBlockType->setMemoryQualifier(memoryQualifier);
     if (arraySize > 0)
@@ -396,12 +408,27 @@ TIntermBinary &AccessFieldByIndex(TIntermTyped &object, int index)
     ASSERT(!type.isArray());
     const TStructure *structure = type.getStruct();
     ASSERT(structure);
+
     ASSERT(0 <= index);
     ASSERT(static_cast<size_t>(index) < structure->fields().size());
 
     return *new TIntermBinary(
         TOperator::EOpIndexDirectStruct, &object,
         new TIntermConstantUnion(new TConstantUnion(index), *new TType(TBasicType::EbtInt)));
+}
+
+TIntermBinary *AccessFieldOfNamedInterfaceBlock(const TVariable *object, int index)
+{
+    ASSERT(object->getType().getInterfaceBlock());
+    const TFieldList &fieldList = object->getType().getInterfaceBlock()->fields();
+
+    ASSERT(0 <= index);
+    ASSERT(static_cast<size_t>(index) < fieldList.size());
+
+    ASSERT(object->symbolType() != SymbolType::Empty);
+
+    return new TIntermBinary(TOperator::EOpIndexDirectInterfaceBlock, new TIntermSymbol(object),
+                             CreateIndexNode(index));
 }
 
 TIntermBlock *EnsureBlock(TIntermNode *node)

@@ -30,13 +30,12 @@
 #include "config.h"
 #include "FetchRequest.h"
 
-#include "Document.h"
-#include "DocumentInlines.h"
+#include "ContextDestructionObserverInlines.h"
+#include "DocumentQuirks.h"
 #include "HTTPParsers.h"
 #include "JSAbortSignal.h"
 #include "Logging.h"
 #include "OriginAccessPatterns.h"
-#include "Quirks.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -135,6 +134,21 @@ static bool methodCanHaveBody(const ResourceRequest& request)
     return request.httpMethod() != "GET"_s && request.httpMethod() != "HEAD"_s;
 }
 
+static IPAddressSpace updateTargetAddressSpaceIfNeeded(IPAddressSpace currentAddressSpace, const URL& url)
+{
+    auto host = url.host();
+    if (host.isEmpty())
+        return currentAddressSpace;
+
+    if (WebCore::isLocalIPAddressSpace(url))
+        return IPAddressSpace::Local;
+
+    if (host.endsWithIgnoringASCIICase(".local"_s))
+        return IPAddressSpace::Local;
+
+    return currentAddressSpace;
+}
+
 inline FetchRequest::FetchRequest(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, String&& referrer)
     : FetchBodyOwner(&context, WTFMove(body), WTFMove(headers))
     , m_request(WTFMove(request))
@@ -150,7 +164,7 @@ ExceptionOr<void> FetchRequest::initializeOptions(const Init& init)
 {
     ASSERT(scriptExecutionContext());
 
-    auto exception = buildOptions(m_options, m_request, m_referrer, m_priority, *scriptExecutionContext(), init);
+    auto exception = buildOptions(m_options, m_request, m_referrer, m_priority, *protectedScriptExecutionContext(), init);
     if (exception)
         return WTFMove(exception.value());
 
@@ -179,9 +193,9 @@ static inline std::optional<Exception> processInvalidSignal(ScriptExecutionConte
 
 ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
 {
-    ASSERT(scriptExecutionContext());
+    Ref context = *scriptExecutionContext();
 
-    URL requestURL = scriptExecutionContext()->completeURL(url, ScriptExecutionContext::ForceUTF8::Yes);
+    URL requestURL = context->completeURL(url, ScriptExecutionContext::ForceUTF8::Yes);
     if (!requestURL.isValid() || requestURL.hasCredentials())
         return Exception { ExceptionCode::TypeError, "URL is not valid or contains user credentials."_s };
 
@@ -189,18 +203,21 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
     m_options.credentials = Credentials::SameOrigin;
     m_referrer = "client"_s;
     m_request.setURL(WTFMove(requestURL));
-    m_requestURL = { m_request.url(), scriptExecutionContext()->topOrigin().data() };
-    m_request.setInitiatorIdentifier(scriptExecutionContext()->resourceRequestIdentifier());
+    m_requestURL = { m_request.url(), context->topOrigin().data() };
+    m_request.setInitiatorIdentifier(context->resourceRequestIdentifier());
+
+    if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext()); document && document->settings().localNetworkAccessEnabled())
+        m_targetAddressSpace = updateTargetAddressSpaceIfNeeded(m_targetAddressSpace, m_request.url());
 
     auto optionsResult = initializeOptions(init);
     if (optionsResult.hasException())
         return optionsResult.releaseException();
 
     if (init.signal) {
-        if (auto* signal = JSAbortSignal::toWrapped(scriptExecutionContext()->vm(), init.signal))
-            protectedSignal()->signalFollow(*signal);
+        if (RefPtr signal = JSAbortSignal::toWrapped(context->vm(), init.signal))
+            m_signal->signalFollow(*signal);
         else if (!init.signal.isUndefinedOrNull())  {
-            if (auto exception = processInvalidSignal(*scriptExecutionContext()))
+            if (auto exception = processInvalidSignal(context.get()))
                 return WTFMove(*exception);
         }
     }
@@ -223,7 +240,8 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
 ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
 {
     m_request = input.m_request;
-    m_requestURL = { m_request.url(), scriptExecutionContext()->topOrigin().data() };
+    Ref context = *scriptExecutionContext();
+    m_requestURL = { m_request.url(), context->topOrigin().data() };
 
     m_options = input.m_options;
     m_referrer = input.m_referrer;
@@ -235,15 +253,15 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
         return optionsResult.releaseException();
 
     if (init.signal && !init.signal.isUndefined()) {
-        if (auto* signal = JSAbortSignal::toWrapped(scriptExecutionContext()->vm(), init.signal))
-            protectedSignal()->signalFollow(*signal);
+        if (RefPtr signal = JSAbortSignal::toWrapped(context->vm(), init.signal))
+            m_signal->signalFollow(*signal);
         else if (!init.signal.isNull()) {
-            if (auto exception = processInvalidSignal(*scriptExecutionContext()))
+            if (auto exception = processInvalidSignal(context.get()))
                 return WTFMove(*exception);
         }
 
     } else
-        protectedSignal()->signalFollow(input.m_signal.get());
+        m_signal->signalFollow(input.m_signal.get());
 
     if (init.hasMembers()) {
         auto fillResult = init.headers ? m_headers->fill(*init.headers) : m_headers->fill(input.headers());
@@ -253,6 +271,21 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
     } else {
         m_headers->setInternalHeaders(HTTPHeaderMap { input.headers().internalHeaders() });
         m_navigationPreloadIdentifier = input.m_navigationPreloadIdentifier;
+    }
+
+    if (RefPtr executionContext = scriptExecutionContext()) {
+        if (RefPtr document = dynamicDowncast<Document>(*executionContext); document && document->settings().localNetworkAccessEnabled()) {
+            switch (init.targetAddressSpace) {
+            case IPAddressSpace::Public:
+                m_targetAddressSpace = IPAddressSpace::Public;
+                break;
+            case IPAddressSpace::Local:
+                m_targetAddressSpace = IPAddressSpace::Local;
+                break;
+            }
+
+            m_targetAddressSpace = updateTargetAddressSpaceIfNeeded(m_targetAddressSpace, m_request.url());
+        }
     }
 
     auto setBodyResult = init.body ? setBody(WTFMove(*init.body)) : setBody(input);
@@ -305,7 +338,7 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::create(ScriptExecutionContext& cont
         if (result.hasException())
             return result.releaseException();
     } else {
-        auto result = request->initializeWith(*std::get<RefPtr<FetchRequest>>(input), WTFMove(init));
+        auto result = request->initializeWith(Ref { *std::get<RefPtr<FetchRequest>>(input) }.get(), WTFMove(init));
         if (result.hasException())
             return result.releaseException();
     }
@@ -344,20 +377,29 @@ ResourceRequest FetchRequest::resourceRequest() const
     if (!isBodyNull())
         request.setHTTPBody(body().bodyAsFormData());
 
+    if (RefPtr context = scriptExecutionContext()) {
+        if (RefPtr document = dynamicDowncast<Document>(*context); document && document->settings().localNetworkAccessEnabled())
+            request.setTargetAddressSpace(m_targetAddressSpace);
+    }
+
     return request;
 }
 
-ExceptionOr<Ref<FetchRequest>> FetchRequest::clone()
+ExceptionOr<Ref<FetchRequest>> FetchRequest::clone(JSDOMGlobalObject& globalObject)
 {
     if (isDisturbedOrLocked())
         return Exception { ExceptionCode::TypeError, "Body is disturbed or locked"_s };
-
-    auto clone = adoptRef(*new FetchRequest(*scriptExecutionContext(), std::nullopt, FetchHeaders::create(m_headers.get()), ResourceRequest { m_request }, FetchOptions { m_options }, String { m_referrer }));
+    RefPtr context = scriptExecutionContext();
+    if (!context)
+        return Exception { ExceptionCode::InvalidStateError, "Cannot clone FetchRequest without a valid script execution context"_s };
+    auto clone = adoptRef(*new FetchRequest(*context, std::nullopt, FetchHeaders::create(m_headers.get()), ResourceRequest { m_request }, FetchOptions { m_options }, String { m_referrer }));
     clone->suspendIfNeeded();
-    clone->cloneBody(*this);
+    clone->cloneBody(globalObject, *this);
     clone->setNavigationPreloadIdentifier(m_navigationPreloadIdentifier);
     clone->m_enableContentExtensionsCheck = m_enableContentExtensionsCheck;
-    clone->protectedSignal()->signalFollow(m_signal);
+    if (RefPtr document = dynamicDowncast<Document>(*context); document && document->settings().localNetworkAccessEnabled())
+        clone->m_targetAddressSpace = m_targetAddressSpace;
+    clone->m_signal->signalFollow(m_signal);
     return clone;
 }
 

@@ -55,13 +55,11 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmbr.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
-#include "rtc_base/arraysize.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/random.h"
-#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/ntp_time.h"
-#include "test/explicit_key_value_config.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -84,7 +82,6 @@ using ::testing::SizeIs;
 using ::testing::StrEq;
 using ::testing::StrictMock;
 using ::testing::UnorderedElementsAre;
-using ::webrtc::test::ExplicitKeyValueConfig;
 
 class MockRtcpPacketTypeCounterObserver : public RtcpPacketTypeCounterObserver {
  public:
@@ -128,7 +125,7 @@ class MockModuleRtpRtcp : public RTCPReceiver::ModuleRtpRtcp {
   MOCK_METHOD(void, OnReceivedNack, (const std::vector<uint16_t>&), (override));
   MOCK_METHOD(void,
               OnReceivedRtcpReportBlocks,
-              (rtc::ArrayView<const ReportBlockData>),
+              (ArrayView<const ReportBlockData>),
               (override));
 };
 
@@ -187,11 +184,9 @@ struct ReceiverMocks {
 };
 
 RTCPReceiver Create(ReceiverMocks& mocks) {
-  return RTCPReceiver(
-      CreateEnvironment(
-          &mocks.clock,
-          std::make_unique<test::ExplicitKeyValueConfig>(mocks.field_trials)),
-      mocks.config, &mocks.rtp_rtcp_impl);
+  return RTCPReceiver(CreateEnvironment(&mocks.clock, CreateTestFieldTrialsPtr(
+                                                          mocks.field_trials)),
+                      mocks.config, &mocks.rtp_rtcp_impl);
 }
 
 TEST(RtcpReceiverTest, BrokenPacketIsIgnored) {
@@ -897,7 +892,7 @@ TEST(RtcpReceiverTest, InjectExtendedReportsPacketWithUnknownReportBlock) {
   xr.SetRrtr(rrtr);
   xr.AddDlrrItem(ReceiveTimeInfo(kReceiverMainSsrc, 0x12345, 0x67890));
 
-  rtc::Buffer packet = xr.Build();
+  Buffer packet = xr.Build();
   // Modify the DLRR block to have an unsupported block type, from 5 to 6.
   ASSERT_EQ(5, packet.data()[20]);
   packet.data()[20] = 6;
@@ -1747,13 +1742,13 @@ TEST(RtcpReceiverTest, NotifiesNetworkLinkObserverOnCongestionControlFeedback) {
   ReceiverMocks mocks;
   mocks.field_trials = "WebRTC-RFC8888CongestionControlFeedback/Enabled/";
   RTCPReceiver receiver = Create(mocks);
-  receiver.SetRemoteSSRC(kSenderSsrc);
 
-  rtcp::CongestionControlFeedback packet({{
-                                             .ssrc = 123,
-                                             .sequence_number = 1,
-                                         }},
-                                         /*report_timestamp_compact_ntp=*/324);
+  rtcp::CongestionControlFeedback packet(
+      {{
+          .ssrc = mocks.config.local_media_ssrc,
+          .sequence_number = 1,
+      }},
+      /*report_timestamp_compact_ntp=*/324);
   packet.SetSenderSsrc(kSenderSsrc);
 
   EXPECT_CALL(
@@ -1762,6 +1757,33 @@ TEST(RtcpReceiverTest, NotifiesNetworkLinkObserverOnCongestionControlFeedback) {
           mocks.clock.CurrentTime(),
           Property(&rtcp::CongestionControlFeedback::packets, SizeIs(1))));
   receiver.IncomingPacket(packet.Build());
+}
+
+TEST(RtcpReceiverTest, FiltersCongestionControlFeedbackOnFirstSsrc) {
+  ReceiverMocks mocks_1;
+  mocks_1.field_trials = "WebRTC-RFC8888CongestionControlFeedback/Enabled/";
+  RTCPReceiver receiver_1 = Create(mocks_1);
+
+  ReceiverMocks mocks_2;
+  mocks_2.field_trials = "WebRTC-RFC8888CongestionControlFeedback/Enabled/";
+  mocks_2.config.local_media_ssrc = 789;
+  mocks_2.config.rtx_send_ssrc = 345;
+  RTCPReceiver receiver_2 = Create(mocks_2);
+
+  rtcp::CongestionControlFeedback packet(
+      {{
+          .ssrc = mocks_2.config.local_media_ssrc,
+          .sequence_number = 1,
+      }},
+      /*report_timestamp_compact_ntp=*/324);
+  packet.SetSenderSsrc(kSenderSsrc);
+
+  EXPECT_CALL(mocks_1.network_link_rtcp_observer, OnCongestionControlFeedback)
+      .Times(0);
+  EXPECT_CALL(mocks_2.network_link_rtcp_observer, OnCongestionControlFeedback)
+      .Times(1);
+  receiver_1.IncomingPacket(packet.Build());
+  receiver_2.IncomingPacket(packet.Build());
 }
 
 TEST(RtcpReceiverTest,
@@ -1826,7 +1848,7 @@ TEST(RtcpReceiverTest, HandlesInvalidCongestionControlFeedback) {
                                          }},
                                          /*report_timestamp_compact_ntp=*/324);
   packet.SetSenderSsrc(kSenderSsrc);
-  rtc::Buffer built_packet = packet.Build();
+  Buffer built_packet = packet.Build();
   // Modify the CongestionControlFeedback packet so that it is invalid.
   const size_t kNumReportsOffset = 14;
   ByteWriter<uint16_t>::WriteBigEndian(&built_packet.data()[kNumReportsOffset],
@@ -1903,7 +1925,7 @@ TEST(RtcpReceiverTest, HandlesInvalidTransportFeedback) {
   rtcp::CompoundPacket compound;
   compound.Append(std::move(packet));
   compound.Append(std::move(remb));
-  rtc::Buffer built_packet = compound.Build();
+  Buffer built_packet = compound.Build();
 
   // Modify the TransportFeedback packet so that it is invalid.
   const size_t kStatusCountOffset = 14;
@@ -1926,7 +1948,7 @@ TEST(RtcpReceiverTest, Nack) {
   const uint16_t kNackList1[] = {1, 2, 3, 5};
   const uint16_t kNackList23[] = {5, 7, 30, 40, 41, 58, 59, 61, 63};
   const size_t kNackListLength2 = 4;
-  const size_t kNackListLength3 = arraysize(kNackList23) - kNackListLength2;
+  const size_t kNackListLength3 = std::size(kNackList23) - kNackListLength2;
   std::set<uint16_t> nack_set;
   nack_set.insert(std::begin(kNackList1), std::end(kNackList1));
   nack_set.insert(std::begin(kNackList23), std::end(kNackList23));
@@ -1934,7 +1956,7 @@ TEST(RtcpReceiverTest, Nack) {
   auto nack1 = std::make_unique<rtcp::Nack>();
   nack1->SetSenderSsrc(kSenderSsrc);
   nack1->SetMediaSsrc(kReceiverMainSsrc);
-  nack1->SetPacketIds(kNackList1, arraysize(kNackList1));
+  nack1->SetPacketIds(kNackList1, std::size(kNackList1));
 
   EXPECT_CALL(mocks.rtp_rtcp_impl,
               OnReceivedNack(ElementsAreArray(kNackList1)));
@@ -1942,9 +1964,9 @@ TEST(RtcpReceiverTest, Nack) {
               RtcpPacketTypesCounterUpdated(
                   kReceiverMainSsrc,
                   AllOf(Field(&RtcpPacketTypeCounter::nack_requests,
-                              arraysize(kNackList1)),
+                              std::size(kNackList1)),
                         Field(&RtcpPacketTypeCounter::unique_nack_requests,
-                              arraysize(kNackList1)))));
+                              std::size(kNackList1)))));
   receiver.IncomingPacket(nack1->Build());
 
   auto nack2 = std::make_unique<rtcp::Nack>();
@@ -1967,7 +1989,7 @@ TEST(RtcpReceiverTest, Nack) {
               RtcpPacketTypesCounterUpdated(
                   kReceiverMainSsrc,
                   AllOf(Field(&RtcpPacketTypeCounter::nack_requests,
-                              arraysize(kNackList1) + arraysize(kNackList23)),
+                              std::size(kNackList1) + std::size(kNackList23)),
                         Field(&RtcpPacketTypeCounter::unique_nack_requests,
                               nack_set.size()))));
   receiver.IncomingPacket(two_nacks.Build());

@@ -1,0 +1,5 @@
+fallback
+
+
+PASS Background image-set images should be eligible for LCP candidates
+

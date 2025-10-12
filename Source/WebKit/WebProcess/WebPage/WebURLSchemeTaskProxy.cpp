@@ -34,6 +34,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include "WebURLSchemeHandlerProxy.h"
+#include <WebCore/DocumentPage.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoader.h>

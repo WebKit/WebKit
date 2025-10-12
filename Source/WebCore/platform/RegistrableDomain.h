@@ -25,8 +25,9 @@
 
 #pragma once
 
-#include "PublicSuffixStore.h"
-#include "SecurityOriginData.h"
+#include <WebCore/BlobURL.h>
+#include <WebCore/PublicSuffixStore.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/HashTraits.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
@@ -42,7 +43,7 @@ public:
     RegistrableDomain() = default;
 
     explicit RegistrableDomain(const URL& url)
-        : RegistrableDomain(registrableDomainFromHost(url.host().toString()))
+        : RegistrableDomain(registrableDomainFromHost(url))
     {
     }
 
@@ -114,6 +115,14 @@ private:
         if (host.length() == m_registrableDomain.length())
             return true;
         return host[host.length() - m_registrableDomain.length() - 1] == '.';
+    }
+
+    static inline String registrableDomainFromHost(const URL& url)
+    {
+        if (url.protocolIsBlob())
+            return registrableDomainFromHost(BlobURL::getOriginURL(url).host().toString());
+
+        return registrableDomainFromHost(url.host().toString());
     }
 
     static inline String registrableDomainFromHost(const String& host)

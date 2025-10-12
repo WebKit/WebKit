@@ -432,6 +432,7 @@ enum TOperator : uint16_t
     EOpInterpolateAtCenter,
 
     // Group MetalCommon
+    EOpLoopForwardProgress,
     EOpSaturate,
 };
 

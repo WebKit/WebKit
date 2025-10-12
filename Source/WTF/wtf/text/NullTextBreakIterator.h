@@ -25,7 +25,7 @@
 namespace WTF {
 
 class NullTextBreakIterator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NullTextBreakIterator);
 public:
     NullTextBreakIterator() = default;
     NullTextBreakIterator(const NullTextBreakIterator&) = delete;
@@ -51,7 +51,7 @@ public:
         return false;
     }
 
-    void setText(StringView, std::span<const UChar>)
+    void setText(StringView, std::span<const char16_t>)
     {
         ASSERT_NOT_REACHED();
     }

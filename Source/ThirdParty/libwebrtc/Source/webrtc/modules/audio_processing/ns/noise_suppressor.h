@@ -11,6 +11,9 @@
 #ifndef MODULES_AUDIO_PROCESSING_NS_NOISE_SUPPRESSOR_H_
 #define MODULES_AUDIO_PROCESSING_NS_NOISE_SUPPRESSOR_H_
 
+#include <array>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <vector>
 
@@ -21,6 +24,7 @@
 #include "modules/audio_processing/ns/ns_config.h"
 #include "modules/audio_processing/ns/ns_fft.h"
 #include "modules/audio_processing/ns/speech_probability_estimator.h"
+#include "modules/audio_processing/ns/suppression_params.h"
 #include "modules/audio_processing/ns/wiener_filter.h"
 
 namespace webrtc {
@@ -83,8 +87,7 @@ class NoiseSuppressor {
   std::vector<std::unique_ptr<ChannelState>> channels_;
 
   // Aggregates the Wiener filters into a single filter to use.
-  void AggregateWienerFilters(
-      rtc::ArrayView<float, kFftSizeBy2Plus1> filter) const;
+  void AggregateWienerFilters(ArrayView<float, kFftSizeBy2Plus1> filter) const;
 };
 
 }  // namespace webrtc

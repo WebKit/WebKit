@@ -187,12 +187,15 @@ ${returnAssignments}
 
     FrontendDispatcherDomainDispatcherDeclaration = (
 """${classAndExportMacro} ${domainName}FrontendDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(${domainName}FrontendDispatcher);
 public:
-    ${domainName}FrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
+    ${domainName}FrontendDispatcher(FrontendRouter&);
+    ~${domainName}FrontendDispatcher();
+    WTF_MAKE_NONCOPYABLE(${domainName}FrontendDispatcher);
+    WTF_MAKE_NONMOVABLE(${domainName}FrontendDispatcher);
 ${eventDeclarations}
 private:
-    FrontendRouter& m_frontendRouter;
+    const CheckedRef<FrontendRouter> m_frontendRouter;
 };""")
 
     ProtocolObjectBuilderDeclarationPrelude = (

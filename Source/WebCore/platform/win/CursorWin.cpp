@@ -71,7 +71,7 @@ static Ref<SharedCursor> createSharedCursor(Image* img, const IntPoint& hotSpot)
 
     Vector<unsigned char, 128> maskBits;
     maskBits.fill(0xff, (img->width() + 7) / 8 * img->height());
-    auto hMask = adoptGDIObject(::CreateBitmap(img->width(), img->height(), 1, 1, maskBits.data()));
+    auto hMask = adoptGDIObject(::CreateBitmap(img->width(), img->height(), 1, 1, maskBits.span().data()));
 
     ICONINFO ii;
     ii.fIcon = FALSE;

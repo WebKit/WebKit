@@ -34,7 +34,7 @@ public:
         return adoptRef(*new JSTestCallbackFunctionWithTypedefs(callback, globalObject));
     }
 
-    ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const;
 
     ~JSTestCallbackFunctionWithTypedefs() final;
     JSCallbackData* callbackData() { return m_data; }

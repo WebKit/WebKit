@@ -4,8 +4,6 @@
 #include <openssl/asm_base.h>
 
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_ARM) && defined(__ELF__)
-#include <openssl/arm_arch.h>
-
 .text
 #if defined(__thumb2__)
 .syntax	unified

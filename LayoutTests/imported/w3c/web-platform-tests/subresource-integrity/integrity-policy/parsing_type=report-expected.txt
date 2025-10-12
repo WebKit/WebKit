@@ -1,16 +1,14 @@
 
 
-Harness Error (TIMEOUT), message = null
-
 PASS Ensure that test is working with a valid destination
 PASS Ensure that test is working with a valid destination and source
-TIMEOUT Ensure that an empty header does not block Test timed out
-NOTRUN Ensure that a destination header with a token value does not parse
-NOTRUN Ensure that a destination header with an inner list of strings does not parse
-NOTRUN Ensure that a destination header with an inner list of single-quote strings does not parse
-NOTRUN Ensure that a destination header with an unclosed inner list does not parse
-NOTRUN Ensure that a destination header with a malformed inner list does not parse
-NOTRUN Ensure that an unknown destination does not enforce a policy
-NOTRUN Ensure that an unknown source causes the policy to not be enforced
-NOTRUN Ensure that an invalid source causes the policy to not be enforced
+PASS Ensure that an empty header does not block
+PASS Ensure that a destination header with a token value does not parse
+PASS Ensure that a destination header with an inner list of strings does not parse
+PASS Ensure that a destination header with an inner list of single-quote strings does not parse
+PASS Ensure that a destination header with an unclosed inner list does not parse
+PASS Ensure that a destination header with a malformed inner list does not parse
+PASS Ensure that an unknown destination does not enforce a policy
+PASS Ensure that an unknown source causes the policy to not be enforced
+PASS Ensure that an invalid source causes the policy to not be enforced
 

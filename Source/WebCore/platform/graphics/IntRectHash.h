@@ -25,9 +25,9 @@
  
 #pragma once
 
-#include "IntPointHash.h"
-#include "IntRect.h"
-#include "IntSizeHash.h"
+#include <WebCore/IntPointHash.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/IntSizeHash.h>
 
 namespace WTF {
 

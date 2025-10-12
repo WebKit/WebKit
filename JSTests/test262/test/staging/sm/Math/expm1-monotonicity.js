@@ -2,17 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-Math-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  expm1 should be monotonically increasing
+info: bugzilla.mozilla.org/show_bug.cgi?id=897634
 esid: pending
 ---*/
-var BUGNUMBER = 897634;
-var summary = "expm1 should be monotonically increasing";
-
-print(BUGNUMBER + ": " + summary);
 
 function test(x, prev, next) {
     assert.sameValue(Math.expm1(prev) <= Math.expm1(x), true);
@@ -100,4 +94,3 @@ test(10000000000, 9999999999.999998, 10000000000.000002);
 test(1e+100, 9.999999999999998e+99, 1.0000000000000002e+100);
 test(1e+223, 9.999999999999999e+222, 1.0000000000000002e+223);
 test(1.7976931348623157e+308, 1.7976931348623155e+308, Infinity);
-

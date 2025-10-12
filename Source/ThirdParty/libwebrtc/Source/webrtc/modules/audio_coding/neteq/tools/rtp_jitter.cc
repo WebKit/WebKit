@@ -8,16 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stdio.h>
-
 #include <algorithm>
+#include <cstdint>
+#include <cstdio>
 #include <fstream>
 #include <iostream>
+#include <string>
+#include <utility>
 #include <vector>
 
 #include "api/array_view.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "rtc_base/buffer.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {
@@ -26,14 +29,14 @@ namespace {
 constexpr size_t kRtpDumpHeaderLength = 8;
 
 // Returns the next packet or an empty buffer if end of file was encountered.
-rtc::Buffer ReadNextPacket(FILE* file) {
+Buffer ReadNextPacket(FILE* file) {
   // Read the rtpdump header for the next packet.
-  rtc::Buffer buffer;
-  buffer.SetData(kRtpDumpHeaderLength, [&](rtc::ArrayView<uint8_t> x) {
+  Buffer buffer;
+  buffer.SetData(kRtpDumpHeaderLength, [&](ArrayView<uint8_t> x) {
     return fread(x.data(), 1, x.size(), file);
   });
   if (buffer.size() != kRtpDumpHeaderLength) {
-    return rtc::Buffer();
+    return Buffer();
   }
 
   // Get length field. This is the total length for this packet written to file,
@@ -42,7 +45,7 @@ rtc::Buffer ReadNextPacket(FILE* file) {
   RTC_CHECK_GE(len, kRtpDumpHeaderLength);
 
   // Read remaining data from file directly into buffer.
-  buffer.AppendData(len - kRtpDumpHeaderLength, [&](rtc::ArrayView<uint8_t> x) {
+  buffer.AppendData(len - kRtpDumpHeaderLength, [&](ArrayView<uint8_t> x) {
     return fread(x.data(), 1, x.size(), file);
   });
   if (buffer.size() != len) {
@@ -52,7 +55,7 @@ rtc::Buffer ReadNextPacket(FILE* file) {
 }
 
 struct PacketAndTime {
-  rtc::Buffer packet;
+  Buffer packet;
   int time;
 };
 

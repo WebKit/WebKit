@@ -11,7 +11,9 @@
 #include "test/pc/e2e/analyzer/video/dvqa/frames_storage.h"
 
 #include <cstdint>
+#include <cstring>
 #include <memory>
+#include <optional>
 
 #include "api/scoped_refptr.h"
 #include "api/test/time_controller.h"
@@ -27,7 +29,7 @@ namespace webrtc {
 namespace {
 
 VideoFrame Create2x2Frame(uint16_t frame_id) {
-  rtc::scoped_refptr<I420Buffer> buffer =
+  scoped_refptr<I420Buffer> buffer =
       I420Buffer::Create(/*width=*/2, /*height=*/2);
   memset(buffer->MutableDataY(), static_cast<uint8_t>(frame_id), 4);
   memset(buffer->MutableDataU(), static_cast<uint8_t>(frame_id + 1), 1);

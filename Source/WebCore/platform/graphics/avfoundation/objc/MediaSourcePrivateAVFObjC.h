@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,8 +79,6 @@ public:
 
     bool hasSelectedVideo() const;
 
-    void willSeek();
-
     FloatSize naturalSize() const;
 
     void hasSelectedVideoChanged(SourceBufferPrivateAVFObjC&);
@@ -89,12 +87,7 @@ public:
     void videoRendererWillReconfigure(VideoMediaSampleRenderer&);
     void videoRendererDidReconfigure(VideoMediaSampleRenderer&);
 
-#if PLATFORM(IOS_FAMILY)
-    void applicationWillResignActive();
-    void applicationDidBecomeActive();
-#endif
-
-    void flushActiveSourceBuffersIfNeeded();
+    void flushAndReenqueueActiveVideoSourceBuffers();
 
 #if ENABLE(ENCRYPTED_MEDIA)
     void cdmInstanceAttached(CDMInstance&);
@@ -149,12 +142,12 @@ private:
     RefPtr<CDMInstance> m_cdmInstance;
 #endif
 #if !RELEASE_LOG_DISABLED
-    Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
     uint64_t m_nextSourceBufferID { 0 };
 #endif
 
-    UncheckedKeyHashMap<SourceBufferPrivate*, Vector<PlatformTimeRanges>> m_bufferedRanges;
+    HashMap<SourceBufferPrivate*, Vector<PlatformTimeRanges>> m_bufferedRanges;
     ProcessIdentity m_resourceOwner;
 };
 

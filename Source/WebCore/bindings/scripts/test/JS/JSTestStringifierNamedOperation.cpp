@@ -153,7 +153,7 @@ JSValue JSTestStringifierNamedOperation::getConstructor(VM& vm, const JSGlobalOb
 
 void JSTestStringifierNamedOperation::destroy(JSC::JSCell* cell)
 {
-    JSTestStringifierNamedOperation* thisObject = static_cast<JSTestStringifierNamedOperation*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestStringifierNamedOperation* thisObject = static_cast<JSTestStringifierNamedOperation*>(cell);
     thisObject->JSTestStringifierNamedOperation::~JSTestStringifierNamedOperation();
 }
 
@@ -199,7 +199,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestStringifierNamedOperationPrototypeFunction_toStri
 
 JSC::GCClient::IsoSubspace* JSTestStringifierNamedOperation::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestStringifierNamedOperation, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestStringifierNamedOperation, UseCustomHeapCellType::No>(vm, "JSTestStringifierNamedOperation"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestStringifierNamedOperation.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestStringifierNamedOperation = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestStringifierNamedOperation.get(); },
@@ -226,7 +226,7 @@ bool JSTestStringifierNamedOperationOwner::isReachableFromOpaqueRoots(JSC::Handl
 
 void JSTestStringifierNamedOperationOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestStringifierNamedOperation = static_cast<JSTestStringifierNamedOperation*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestStringifierNamedOperation = static_cast<JSTestStringifierNamedOperation*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestStringifierNamedOperation->protectedWrapped().ptr(), jsTestStringifierNamedOperation);
 }
@@ -239,7 +239,9 @@ extern "C" { extern void (*const __identifier("??_7TestStringifierNamedOperation
 #else
 extern "C" { extern void* _ZTVN7WebCore29TestStringifierNamedOperationE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestStringifierNamedOperation>, void>> static inline void verifyVTable(TestStringifierNamedOperation* ptr) {
+template<std::same_as<TestStringifierNamedOperation> T>
+static inline void verifyVTable(TestStringifierNamedOperation* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -258,8 +260,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestStringifi
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestStringifierNamedOperation>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestStringifierNamedOperation>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestStringifierNamedOperation>(impl.ptr());
 #endif

@@ -29,7 +29,7 @@ namespace webrtc {
 FixedLengthEncodingParametersV3
 FixedLengthEncodingParametersV3::CalculateParameters(
     uint64_t base,
-    const rtc::ArrayView<const uint64_t> values,
+    const ArrayView<const uint64_t> values,
     uint64_t value_bit_width,
     bool values_optional) {
   // As a special case, if all of the elements are identical to the base

@@ -135,21 +135,6 @@ ScopedFramebuffer::~ScopedFramebuffer()
     GL_DeleteFramebuffers(1, &m_object);
 }
 
-void ScopedGLFence::reset()
-{
-    if (m_object) {
-        GL_DeleteSync(static_cast<GLsync>(m_object));
-        m_object = { };
-    }
-}
-
-void ScopedGLFence::fenceSync()
-{
-    reset();
-    m_object = GL_FenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-}
-
-
 ScopedGLCapability::ScopedGLCapability(GCGLenum capability, bool enable)
     : m_capability(capability)
     , m_original(GL_IsEnabled(m_capability) == enable ? std::nullopt : std::optional<bool>(!enable))

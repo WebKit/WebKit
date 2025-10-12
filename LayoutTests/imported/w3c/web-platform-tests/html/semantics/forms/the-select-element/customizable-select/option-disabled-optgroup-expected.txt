@@ -1,0 +1,8 @@
+
+
+FAIL options should check ancestor optgroup for disabled state. assert_equals: color after optgroup disabled expected "rgb(128, 128, 128)" but got "rgb(0, 0, 0)"
+PASS nested optgroup
+PASS disabled select
+PASS select in optgroup
+PASS nested options
+

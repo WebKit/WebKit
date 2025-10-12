@@ -6,6 +6,10 @@
 
 // RendererGL.cpp: Implements the class methods for RendererGL.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "libANGLE/renderer/gl/RendererGL.h"
 
 #include <EGL/eglext.h>

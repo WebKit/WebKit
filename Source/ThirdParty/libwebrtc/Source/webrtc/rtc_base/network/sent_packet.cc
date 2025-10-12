@@ -10,18 +10,20 @@
 
 #include "rtc_base/network/sent_packet.h"
 
-namespace rtc {
+#include <cstdint>
+
+namespace webrtc {
 
 PacketInfo::PacketInfo() = default;
 PacketInfo::PacketInfo(const PacketInfo& info) = default;
 PacketInfo::~PacketInfo() = default;
 
-SentPacket::SentPacket() = default;
-SentPacket::SentPacket(int64_t packet_id, int64_t send_time_ms)
+SentPacketInfo::SentPacketInfo() = default;
+SentPacketInfo::SentPacketInfo(int64_t packet_id, int64_t send_time_ms)
     : packet_id(packet_id), send_time_ms(send_time_ms) {}
-SentPacket::SentPacket(int64_t packet_id,
-                       int64_t send_time_ms,
-                       const rtc::PacketInfo& info)
+SentPacketInfo::SentPacketInfo(int64_t packet_id,
+                               int64_t send_time_ms,
+                               const PacketInfo& info)
     : packet_id(packet_id), send_time_ms(send_time_ms), info(info) {}
 
-}  // namespace rtc
+}  // namespace webrtc

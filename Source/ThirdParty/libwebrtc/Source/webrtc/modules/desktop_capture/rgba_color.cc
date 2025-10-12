@@ -10,6 +10,8 @@
 
 #include "modules/desktop_capture/rgba_color.h"
 
+#include <cstdint>
+
 #include "rtc_base/system/arch.h"
 
 namespace webrtc {

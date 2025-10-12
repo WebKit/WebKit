@@ -23,13 +23,12 @@ namespace webrtc {
 // from the string. If any error was found in the parsing, parsing_successful is
 // set to false.
 void Aec3ConfigFromJsonString(absl::string_view json_string,
-                                         EchoCanceller3Config* config,
-                                         bool* parsing_successful);
+                              EchoCanceller3Config* config,
+                              bool* parsing_successful);
 
 // Encodes an Aec3 config in JSON format. Fields corresponds to substruct names,
 // with the addition that the top-level node is named "aec3".
-std::string Aec3ConfigToJsonString(
-    const EchoCanceller3Config& config);
+std::string Aec3ConfigToJsonString(const EchoCanceller3Config& config);
 
 }  // namespace webrtc
 

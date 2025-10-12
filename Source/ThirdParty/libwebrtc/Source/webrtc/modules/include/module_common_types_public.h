@@ -11,12 +11,8 @@
 #ifndef MODULES_INCLUDE_MODULE_COMMON_TYPES_PUBLIC_H_
 #define MODULES_INCLUDE_MODULE_COMMON_TYPES_PUBLIC_H_
 
-#if defined(WEBRTC_WEBKIT_BUILD)
 #include <cstdint>
-#endif
-
 #include <limits>
-#include <optional>
 
 namespace webrtc {
 

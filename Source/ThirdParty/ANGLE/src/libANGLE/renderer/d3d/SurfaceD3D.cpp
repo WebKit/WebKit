@@ -312,8 +312,8 @@ egl::Error SurfaceD3D::swapRect(DisplayD3D *displayD3D,
 egl::Error SurfaceD3D::checkForOutOfDateSwapChain(DisplayD3D *displayD3D)
 {
     RECT client;
-    int clientWidth  = getWidth();
-    int clientHeight = getHeight();
+    int clientWidth  = mWidth;
+    int clientHeight = mHeight;
     bool sizeDirty   = false;
     if (!mFixedSize && !mNativeWindow->isIconic())
     {
@@ -329,13 +329,13 @@ egl::Error SurfaceD3D::checkForOutOfDateSwapChain(DisplayD3D *displayD3D)
         // information.
         clientWidth  = client.right - client.left;
         clientHeight = client.bottom - client.top;
-        sizeDirty    = clientWidth != getWidth() || clientHeight != getHeight();
+        sizeDirty    = clientWidth != mWidth || clientHeight != mHeight;
     }
     else if (mFixedSize)
     {
         clientWidth  = mFixedWidth;
         clientHeight = mFixedHeight;
-        sizeDirty    = mFixedWidth != getWidth() || mFixedHeight != getHeight();
+        sizeDirty    = mFixedWidth != mWidth || mFixedHeight != mHeight;
     }
 
     if (mSwapIntervalDirty)
@@ -392,14 +392,9 @@ void SurfaceD3D::setFixedHeight(EGLint height)
     mFixedHeight = height;
 }
 
-EGLint SurfaceD3D::getWidth() const
+gl::Extents SurfaceD3D::getSize() const
 {
-    return mWidth;
-}
-
-EGLint SurfaceD3D::getHeight() const
-{
-    return mHeight;
+    return gl::Extents(mWidth, mHeight, 1);
 }
 
 EGLint SurfaceD3D::isPostSubBufferSupported() const
@@ -429,7 +424,7 @@ egl::Error SurfaceD3D::querySurfacePointerANGLE(EGLint attribute, void **value)
     return egl::NoError();
 }
 
-const angle::Format *SurfaceD3D::getD3DTextureColorFormat() const
+const angle::Format *SurfaceD3D::getClientBufferTextureColorFormat() const
 {
     return mColorFormat;
 }

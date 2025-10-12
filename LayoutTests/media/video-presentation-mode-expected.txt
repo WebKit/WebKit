@@ -22,6 +22,14 @@ EVENT(webkitpresentationmodechanged)
 EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
 EXPECTED (video.webkitPresentationMode == 'picture-in-picture') OK
 
+** Try to return to fullscreen
+RUN(video.webkitSetPresentationMode('fullscreen'))
+EVENT(webkitpresentationmodechanged)
+
+** Received webkitpresentationmodechanged event
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (video.webkitPresentationMode == 'fullscreen') OK
+
 ** Try to return to inline
 RUN(video.webkitSetPresentationMode('inline'))
 EVENT(webkitpresentationmodechanged)

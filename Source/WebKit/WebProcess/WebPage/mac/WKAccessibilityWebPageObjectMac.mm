@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 #import "WKString.h"
 #import "WKStringCF.h"
 #import <WebCore/AXObjectCache.h>
+#import <WebCore/DocumentView.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/Page.h>
@@ -85,7 +86,7 @@ namespace ax = WebCore::Accessibility;
         return;
     }
 
-    auto* corePage = page->corePage();
+    RefPtr corePage = page->corePage();
     if (!corePage) {
         m_parameterizedAttributeNames = @[];
         return;
@@ -170,7 +171,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
             if (WebCore::AXObjectCache::isIsolatedTreeEnabled())
-                WebCore::AXObjectCache::initializeAXThreadIfNeeded();
+                [protectedSelf _buildIsolatedTreeIfNeeded];
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
             float roundedHeight = std::round(WebCore::screenRectForPrimaryScreen().size().height());
@@ -331,30 +332,30 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (id)accessibilityHitTest:(NSPoint)point
 {
-    auto convertedPoint = ax::retrieveValueFromMainThread<WebCore::IntPoint>([&point, PROTECTED_SELF] () -> WebCore::IntPoint {
-        if (!protectedSelf->m_page)
-            return WebCore::IntPoint(point);
+    return ax::retrieveAutoreleasedValueFromMainThread<id>([&point, PROTECTED_SELF] () -> id {
+        WebCore::IntPoint convertedPoint;
 
-        // PDF plug-in handles the scroll view offset natively as part of the layer conversions.
-        if (protectedSelf->m_page->mainFramePlugIn())
-            return WebCore::IntPoint(point);
-
-        auto convertedPoint = protectedSelf->m_page->screenToRootView(WebCore::IntPoint(point));
-
-        if (CheckedPtr localFrameView = protectedSelf->m_page->localMainFrameView())
-            convertedPoint.moveBy(localFrameView->scrollPosition());
-        else if (RefPtr focusedLocalFrame = [protectedSelf focusedLocalFrame]) {
-            if (CheckedPtr frameView = focusedLocalFrame->view())
-                convertedPoint.moveBy(frameView->scrollPosition());
+        bool shouldFallbackToWebContentAXObject = !protectedSelf->m_hasMainFramePlugin || [protectedSelf shouldFallbackToWebContentAXObjectForMainFramePlugin];
+        if (!shouldFallbackToWebContentAXObject) {
+            // PDF plug-in handles the scroll view offset natively as part of the layer conversions, so don't
+            // do a coordinate conversion for those hit tests.
+            convertedPoint = WebCore::IntPoint { point };
+        } else {
+            convertedPoint = protectedSelf->m_page->screenToRootView(WebCore::IntPoint(point));
+            if (CheckedPtr localFrameView = protectedSelf->m_page->localMainFrameView())
+                convertedPoint.moveBy(localFrameView->scrollPosition());
+            else if (RefPtr focusedLocalFrame = [protectedSelf focusedLocalFrame]) {
+                if (CheckedPtr frameView = focusedLocalFrame->view())
+                    convertedPoint.moveBy(frameView->scrollPosition());
+            }
+            if (RefPtr page = protectedSelf->m_page->corePage()) {
+                auto obscuredContentInsets = page->obscuredContentInsets();
+                convertedPoint.move(-obscuredContentInsets.left(), -obscuredContentInsets.top());
+            }
         }
-        if (RefPtr page = protectedSelf->m_page->corePage()) {
-            auto obscuredContentInsets = page->obscuredContentInsets();
-            convertedPoint.move(-obscuredContentInsets.left(), -obscuredContentInsets.top());
-        }
-        return convertedPoint;
+
+        return [[protectedSelf accessibilityRootObjectWrapper:[protectedSelf focusedLocalFrame]] accessibilityHitTest:convertedPoint];
     });
-    
-    return [[self accessibilityRootObjectWrapper:[self focusedLocalFrame]] accessibilityHitTest:convertedPoint];
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 

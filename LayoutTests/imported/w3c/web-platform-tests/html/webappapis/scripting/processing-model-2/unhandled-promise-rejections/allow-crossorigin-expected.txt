@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: 42
 
 PASS Promise rejection event should be received for the cross-origin CORS script
 

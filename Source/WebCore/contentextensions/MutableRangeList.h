@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "MutableRange.h"
+#include <WebCore/MutableRange.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 

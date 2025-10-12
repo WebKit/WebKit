@@ -381,46 +381,6 @@ void aom_dist_wtd_comp_avg_pred_c(uint8_t *comp_pred, const uint8_t *pred, int w
 void aom_dist_wtd_comp_avg_pred_neon(uint8_t *comp_pred, const uint8_t *pred, int width, int height, const uint8_t *ref, int ref_stride, const DIST_WTD_COMP_PARAMS *jcp_param);
 #define aom_dist_wtd_comp_avg_pred aom_dist_wtd_comp_avg_pred_neon
 
-unsigned int aom_dist_wtd_sad128x128_avg_c(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad128x128_avg_neon(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad128x128_avg_neon_dotprod(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-RTCD_EXTERN unsigned int (*aom_dist_wtd_sad128x128_avg)(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-
-unsigned int aom_dist_wtd_sad128x64_avg_c(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad128x64_avg_neon(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad128x64_avg_neon_dotprod(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-RTCD_EXTERN unsigned int (*aom_dist_wtd_sad128x64_avg)(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-
-unsigned int aom_dist_wtd_sad16x16_avg_c(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad16x16_avg_neon(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad16x16_avg_neon_dotprod(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-RTCD_EXTERN unsigned int (*aom_dist_wtd_sad16x16_avg)(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-
-unsigned int aom_dist_wtd_sad16x32_avg_c(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad16x32_avg_neon(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad16x32_avg_neon_dotprod(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-RTCD_EXTERN unsigned int (*aom_dist_wtd_sad16x32_avg)(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-
-unsigned int aom_dist_wtd_sad16x8_avg_c(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad16x8_avg_neon(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad16x8_avg_neon_dotprod(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-RTCD_EXTERN unsigned int (*aom_dist_wtd_sad16x8_avg)(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-
-unsigned int aom_dist_wtd_sad32x16_avg_c(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad32x16_avg_neon(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad32x16_avg_neon_dotprod(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-RTCD_EXTERN unsigned int (*aom_dist_wtd_sad32x16_avg)(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-
-unsigned int aom_dist_wtd_sad32x32_avg_c(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad32x32_avg_neon(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad32x32_avg_neon_dotprod(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-RTCD_EXTERN unsigned int (*aom_dist_wtd_sad32x32_avg)(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-
-unsigned int aom_dist_wtd_sad32x64_avg_c(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad32x64_avg_neon(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad32x64_avg_neon_dotprod(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-RTCD_EXTERN unsigned int (*aom_dist_wtd_sad32x64_avg)(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-
 unsigned int aom_dist_wtd_sad4x4_avg_c(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
 unsigned int aom_dist_wtd_sad4x4_avg_neon(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
 #define aom_dist_wtd_sad4x4_avg aom_dist_wtd_sad4x4_avg_neon
@@ -428,21 +388,6 @@ unsigned int aom_dist_wtd_sad4x4_avg_neon(const uint8_t *src_ptr, int src_stride
 unsigned int aom_dist_wtd_sad4x8_avg_c(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
 unsigned int aom_dist_wtd_sad4x8_avg_neon(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
 #define aom_dist_wtd_sad4x8_avg aom_dist_wtd_sad4x8_avg_neon
-
-unsigned int aom_dist_wtd_sad64x128_avg_c(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad64x128_avg_neon(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad64x128_avg_neon_dotprod(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-RTCD_EXTERN unsigned int (*aom_dist_wtd_sad64x128_avg)(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-
-unsigned int aom_dist_wtd_sad64x32_avg_c(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad64x32_avg_neon(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad64x32_avg_neon_dotprod(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-RTCD_EXTERN unsigned int (*aom_dist_wtd_sad64x32_avg)(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-
-unsigned int aom_dist_wtd_sad64x64_avg_c(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad64x64_avg_neon(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-unsigned int aom_dist_wtd_sad64x64_avg_neon_dotprod(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
-RTCD_EXTERN unsigned int (*aom_dist_wtd_sad64x64_avg)(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
 
 unsigned int aom_dist_wtd_sad8x16_avg_c(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
 unsigned int aom_dist_wtd_sad8x16_avg_neon(const uint8_t *src_ptr, int src_stride, const uint8_t *ref_ptr, int ref_stride, const uint8_t *second_pred, const DIST_WTD_COMP_PARAMS *jcp_param);
@@ -2123,72 +2068,6 @@ static void setup_rtcd_internal(void)
 #if HAVE_NEON_DOTPROD
   if (flags & HAS_NEON_DOTPROD) {
     aom_convolve8_vert = aom_convolve8_vert_neon_dotprod;
-  }
-#endif
-  aom_dist_wtd_sad128x128_avg = aom_dist_wtd_sad128x128_avg_neon;
-#if HAVE_NEON_DOTPROD
-  if (flags & HAS_NEON_DOTPROD) {
-    aom_dist_wtd_sad128x128_avg = aom_dist_wtd_sad128x128_avg_neon_dotprod;
-  }
-#endif
-  aom_dist_wtd_sad128x64_avg = aom_dist_wtd_sad128x64_avg_neon;
-#if HAVE_NEON_DOTPROD
-  if (flags & HAS_NEON_DOTPROD) {
-    aom_dist_wtd_sad128x64_avg = aom_dist_wtd_sad128x64_avg_neon_dotprod;
-  }
-#endif
-  aom_dist_wtd_sad16x16_avg = aom_dist_wtd_sad16x16_avg_neon;
-#if HAVE_NEON_DOTPROD
-  if (flags & HAS_NEON_DOTPROD) {
-    aom_dist_wtd_sad16x16_avg = aom_dist_wtd_sad16x16_avg_neon_dotprod;
-  }
-#endif
-  aom_dist_wtd_sad16x32_avg = aom_dist_wtd_sad16x32_avg_neon;
-#if HAVE_NEON_DOTPROD
-  if (flags & HAS_NEON_DOTPROD) {
-    aom_dist_wtd_sad16x32_avg = aom_dist_wtd_sad16x32_avg_neon_dotprod;
-  }
-#endif
-  aom_dist_wtd_sad16x8_avg = aom_dist_wtd_sad16x8_avg_neon;
-#if HAVE_NEON_DOTPROD
-  if (flags & HAS_NEON_DOTPROD) {
-    aom_dist_wtd_sad16x8_avg = aom_dist_wtd_sad16x8_avg_neon_dotprod;
-  }
-#endif
-  aom_dist_wtd_sad32x16_avg = aom_dist_wtd_sad32x16_avg_neon;
-#if HAVE_NEON_DOTPROD
-  if (flags & HAS_NEON_DOTPROD) {
-    aom_dist_wtd_sad32x16_avg = aom_dist_wtd_sad32x16_avg_neon_dotprod;
-  }
-#endif
-  aom_dist_wtd_sad32x32_avg = aom_dist_wtd_sad32x32_avg_neon;
-#if HAVE_NEON_DOTPROD
-  if (flags & HAS_NEON_DOTPROD) {
-    aom_dist_wtd_sad32x32_avg = aom_dist_wtd_sad32x32_avg_neon_dotprod;
-  }
-#endif
-  aom_dist_wtd_sad32x64_avg = aom_dist_wtd_sad32x64_avg_neon;
-#if HAVE_NEON_DOTPROD
-  if (flags & HAS_NEON_DOTPROD) {
-    aom_dist_wtd_sad32x64_avg = aom_dist_wtd_sad32x64_avg_neon_dotprod;
-  }
-#endif
-  aom_dist_wtd_sad64x128_avg = aom_dist_wtd_sad64x128_avg_neon;
-#if HAVE_NEON_DOTPROD
-  if (flags & HAS_NEON_DOTPROD) {
-    aom_dist_wtd_sad64x128_avg = aom_dist_wtd_sad64x128_avg_neon_dotprod;
-  }
-#endif
-  aom_dist_wtd_sad64x32_avg = aom_dist_wtd_sad64x32_avg_neon;
-#if HAVE_NEON_DOTPROD
-  if (flags & HAS_NEON_DOTPROD) {
-    aom_dist_wtd_sad64x32_avg = aom_dist_wtd_sad64x32_avg_neon_dotprod;
-  }
-#endif
-  aom_dist_wtd_sad64x64_avg = aom_dist_wtd_sad64x64_avg_neon;
-#if HAVE_NEON_DOTPROD
-  if (flags & HAS_NEON_DOTPROD) {
-    aom_dist_wtd_sad64x64_avg = aom_dist_wtd_sad64x64_avg_neon_dotprod;
   }
 #endif
   aom_get_var_sse_sum_16x16_dual = aom_get_var_sse_sum_16x16_dual_neon;

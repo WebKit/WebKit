@@ -33,7 +33,7 @@ namespace webrtc {
 namespace webrtc_pc_e2e {
 
 // A sink to inject video quality analyzer as a sink into WebRTC.
-class AnalyzingVideoSink : public rtc::VideoSinkInterface<VideoFrame> {
+class AnalyzingVideoSink : public VideoSinkInterface<VideoFrame> {
  public:
   struct Stats {
     // Time required to scale video frame to the requested rendered resolution.
@@ -76,7 +76,7 @@ class AnalyzingVideoSink : public rtc::VideoSinkInterface<VideoFrame> {
 
     // Is set if dumping of output video was requested;
     test::VideoFrameWriter* video_frame_writer = nullptr;
-    std::vector<std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>>> sinks;
+    std::vector<std::unique_ptr<VideoSinkInterface<VideoFrame>>> sinks;
   };
 
   // Scales video frame to `required_resolution` if necessary. Crashes if video

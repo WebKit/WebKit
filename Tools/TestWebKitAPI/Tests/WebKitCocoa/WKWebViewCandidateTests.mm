@@ -32,6 +32,7 @@
 #import <Carbon/Carbon.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebKitPrivate.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 static NSString *GetInputValueJSExpression = @"document.querySelector('input').value";
 static NSString *GetDocumentScrollTopJSExpression = @"document.body.scrollTop";
@@ -117,7 +118,7 @@ static NSString *GetDocumentScrollTopJSExpression = @"document.body.scrollTop";
 - (void)typeString:(NSString *)string inputMessage:(NSString *)inputMessage
 {
     for (uint64_t i = 0; i < string.length; ++i) {
-        dispatch_async(dispatch_get_main_queue(), ^()
+        dispatch_async(mainDispatchQueueSingleton(), ^()
         {
             [self typeCharacter:[string characterAtIndex:i]];
         });
@@ -198,7 +199,7 @@ TEST(WKWebViewCandidateTests, ClickingInTextFieldDoesNotThrashCandidateVisibilit
     [wkWebView typeString:@"test" inputMessage:@"input"];
     [wkWebView expectCandidateListVisibilityUpdates:0 whenPerformingActions:^()
     {
-        dispatch_async(dispatch_get_main_queue(), ^()
+        dispatch_async(mainDispatchQueueSingleton(), ^()
         {
             [wkWebView mouseDownAtPoint:NSMakePoint(100, 300) simulatePressure:YES];
         });
@@ -214,7 +215,7 @@ TEST(WKWebViewCandidateTests, ShouldNotRequestCandidatesInPasswordField)
     [wkWebView waitForMessage:@"loaded"];
     [wkWebView _forceRequestCandidates];
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         [wkWebView mouseDownAtPoint:NSMakePoint(400, 150) simulatePressure:YES];
     });
     [wkWebView waitForMessage:@"password-focused"];
@@ -233,7 +234,7 @@ TEST(WKWebViewCandidateTests, ShouldRequestCandidatesInTextField)
     [wkWebView waitForMessage:@"loaded"];
     [wkWebView _forceRequestCandidates];
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         [wkWebView mouseDownAtPoint:NSMakePoint(400, 450) simulatePressure:YES];
     });
     [wkWebView waitForMessage:@"text-focused"];

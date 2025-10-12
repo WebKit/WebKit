@@ -27,8 +27,8 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "ContentExtensionsDebugging.h"
-#include "Term.h"
+#include <WebCore/ContentExtensionsDebugging.h>
+#include <WebCore/Term.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 

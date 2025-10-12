@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "LocalFrameView.h"
-#include "RenderWidget.h"
+#include <WebCore/LocalFrameView.h>
+#include <WebCore/RenderWidget.h>
 
 namespace WebCore {
 

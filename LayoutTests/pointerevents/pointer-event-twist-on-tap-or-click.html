@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../resources/js-test.js"></script>
+    <script src="../resources/ui-helper.js"></script>
+</head>
+<script>
+    jsTestIsAsync = true;
+
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+
+        document.addEventListener("pointerdown", function (e) {
+            twist = e.twist;
+            shouldBe("twist", "0");
+            finishJSTest();
+        });
+
+        UIHelper.activateAt(10, 10);
+    }
+</script>
+</html>

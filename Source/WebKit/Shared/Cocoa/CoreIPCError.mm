@@ -74,7 +74,11 @@ RetainPtr<id> CoreIPCError::toID() const
         if (!underlyingNSError)
             return nil;
 
-        auto mutableUserInfo = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, CFDictionaryGetCount(m_userInfo.get()) + 1, m_userInfo.get()));
+        RetainPtr<CFMutableDictionaryRef> mutableUserInfo;
+        if (!m_userInfo)
+            mutableUserInfo = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL));
+        else
+            mutableUserInfo = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, CFDictionaryGetCount(m_userInfo.get()) + 1, m_userInfo.get()));
         CFDictionarySetValue(mutableUserInfo.get(), (__bridge CFStringRef)NSUnderlyingErrorKey, (__bridge CFTypeRef)underlyingNSError.get());
         return adoptNS([[NSError alloc] initWithDomain:m_domain.createNSString().get() code:m_code userInfo:(__bridge NSDictionary *)mutableUserInfo.get()]);
     }

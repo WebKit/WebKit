@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://localhost:8800". The frame requesting access set "document.domain" to "localhost", but the frame being accessed did not. Both must set "document.domain" to the same value to allow access.
-CONSOLE MESSAGE: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://localhost:8800". The frame requesting access set "document.domain" to "localhost", but the frame being accessed did not. Both must set "document.domain" to the same value to allow access.
 
 FAIL Test embed/frame/iframe/object nested document APIs for same origin-domain and cross origin-domain current settings object assert_not_equals: frame.contentDocument got disallowed value null
 

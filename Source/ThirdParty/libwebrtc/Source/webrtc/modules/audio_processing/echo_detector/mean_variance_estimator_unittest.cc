@@ -11,6 +11,8 @@
 
 #include "modules/audio_processing/echo_detector/mean_variance_estimator.h"
 
+#include <cstddef>
+
 #include "test/gtest.h"
 
 namespace webrtc {

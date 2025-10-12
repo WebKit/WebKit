@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,12 +32,20 @@
 #include <WebCore/SharedMemory.h>
 #include <wtf/TZoneMalloc.h>
 
+#if HAVE(IOSURFACE)
+#include <WebCore/IOSurfacePool.h>
+#endif
+
 namespace WebKit {
 
 class ImageBufferShareableAllocator final : public WebCore::ImageBufferAllocator {
     WTF_MAKE_TZONE_ALLOCATED(ImageBufferShareableAllocator);
 public:
+#if HAVE(IOSURFACE)
+    ImageBufferShareableAllocator(const WebCore::ProcessIdentity&, WebCore::IOSurfacePool*);
+#else
     ImageBufferShareableAllocator(const WebCore::ProcessIdentity&);
+#endif
 
 private:
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace&, WebCore::RenderingMode) const final;
@@ -46,6 +54,9 @@ private:
     void transferMemoryOwnership(WebCore::SharedMemory::Handle&&) const;
 
     const WebCore::ProcessIdentity m_resourceOwner;
+#if HAVE(IOSURFACE)
+    RefPtr<WebCore::IOSurfacePool> m_ioSurfacePool;
+#endif
 };
 
 } // namespace WebKit

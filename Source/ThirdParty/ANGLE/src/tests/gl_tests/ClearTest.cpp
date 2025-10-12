@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <variant>
 
 #include "test_utils/ANGLETest.h"
@@ -118,8 +122,27 @@ class ClearTestES3 : public ClearTestBase
             glDepthMask(GL_FALSE);
         }
         glDepthFunc(GL_LESS);
-        drawQuad(depthTestProgram, essl1_shaders::PositionAttrib(), depthValue * 2 - 1 - 0.01f);
-        drawQuad(depthTestProgramFail, essl1_shaders::PositionAttrib(), depthValue * 2 - 1 + 0.01f);
+
+        GLfloat normalizedDepth = depthValue * 2 - 1;
+
+        // A depth value clamped to 0.0 will be normalized to -1.0. In this case, clear the color
+        // buffer to blue and then attempt to draw red only. Otherwise, attempt to draw blue and
+        // red.
+        if (normalizedDepth < -0.999999f)
+        {
+            glClearColor(0.0, 0.0, 1.0, 1.0);
+            glClear(GL_COLOR_BUFFER_BIT);
+            GLfloat redNormalizedDepth = normalizedDepth + 0.01f;
+            drawQuad(depthTestProgramFail, essl1_shaders::PositionAttrib(), redNormalizedDepth);
+        }
+        else
+        {
+            GLfloat blueNormalizedDepth = normalizedDepth - 0.01f;
+            GLfloat redNormalizedDepth  = normalizedDepth + 0.01f;
+            drawQuad(depthTestProgram, essl1_shaders::PositionAttrib(), blueNormalizedDepth);
+            drawQuad(depthTestProgramFail, essl1_shaders::PositionAttrib(), redNormalizedDepth);
+        }
+
         if (!hasDepthTest)
         {
             glDisable(GL_DEPTH_TEST);
@@ -4212,6 +4235,60 @@ TEST_P(ClearTestES3, RepeatedDepthClear)
     glClear(GL_DEPTH_BUFFER_BIT);
 
     verifyDepth(0.25f, 1);
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Tests that calls to glClearBufferfi clamp the depth value.
+TEST_P(ClearTestES3, ClampDepthClearBufferfi)
+{
+    glClearBufferfi(GL_DEPTH_STENCIL, 0, -0.01f, 0x55);
+    verifyDepth(0.00f, 1);
+
+    glClearBufferfi(GL_DEPTH_STENCIL, 0, 0.00f, 0x55);
+    verifyDepth(0.00f, 1);
+
+    glClearBufferfi(GL_DEPTH_STENCIL, 0, 0.01f, 0x55);
+    verifyDepth(0.01f, 1);
+
+    glClearBufferfi(GL_DEPTH_STENCIL, 0, 0.99f, 0x55);
+    verifyDepth(0.99f, 1);
+
+    glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.00f, 0x55);
+    verifyDepth(1.00f, 1);
+
+    glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.01f, 0x55);
+    verifyDepth(1.0f, 1);
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Tests that calls to glClearBufferfv clamp the depth value.
+TEST_P(ClearTestES3, ClampDepthClearBufferfv)
+{
+    float depthClearValue = -0.01f;
+    glClearBufferfv(GL_DEPTH, 0, &depthClearValue);
+    verifyDepth(0.00f, 1);
+
+    depthClearValue = 0.00f;
+    glClearBufferfv(GL_DEPTH, 0, &depthClearValue);
+    verifyDepth(0.00f, 1);
+
+    depthClearValue = 0.01f;
+    glClearBufferfv(GL_DEPTH, 0, &depthClearValue);
+    verifyDepth(0.01f, 1);
+
+    depthClearValue = 0.99f;
+    glClearBufferfv(GL_DEPTH, 0, &depthClearValue);
+    verifyDepth(0.99f, 1);
+
+    depthClearValue = 1.00f;
+    glClearBufferfv(GL_DEPTH, 0, &depthClearValue);
+    verifyDepth(1.00f, 1);
+
+    depthClearValue = 1.01f;
+    glClearBufferfv(GL_DEPTH, 0, &depthClearValue);
+    verifyDepth(1.0f, 1);
 
     ASSERT_GL_NO_ERROR();
 }

@@ -76,7 +76,7 @@ WI.StorageTabContentView = class StorageTabContentView extends WI.ContentBrowser
 
     get canHandleFindEvent()
     {
-        return this.contentBrowser.currentContentView.canFocusFilterBar;
+        return this.contentBrowser.currentContentView?.canFocusFilterBar; // No default view selected for an origin inspected for the first time.
     }
 
     handleFindEvent(event)

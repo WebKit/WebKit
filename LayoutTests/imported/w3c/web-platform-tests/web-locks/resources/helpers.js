@@ -10,7 +10,9 @@
   };
   self.uniqueNameByQuery = () => {
     const prefix = new URL(location.href).searchParams.get('prefix');
-    return `${prefix}-${++res_num}`;
+    // Add randomness to prevent tests from timing out on leaked locks from
+    // previous sub-tests in the same file.
+    return `${prefix}-${++res_num}-${Math.random()}`;
   }
 
   // Inject an iframe showing the given url into the page, and resolve
@@ -69,9 +71,17 @@
    * @returns
    */
   self.requestLockAndHold = (t, name, options = {}) => {
-    return navigator.locks.request(name, options, () => {
-      return new Promise(resolve => t.add_cleanup(resolve));
+    let [promise, resolve] = self.makePromiseAndResolveFunc();
+    const released = navigator.locks.request(name, options, () => promise);
+    // Add a cleanup function that releases the lock by resolving the promise,
+    // and then waits until the lock is really released, to avoid contaminating
+    // following tests with temporarily held locks.
+    t.add_cleanup(() => {
+      resolve();
+      // Cleanup shouldn't fail if the request is aborted.
+      return released.catch(() => undefined);
     });
+    return released;
   };
 
   self.makePromiseAndResolveFunc = () => {

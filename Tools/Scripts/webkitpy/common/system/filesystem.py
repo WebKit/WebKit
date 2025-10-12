@@ -231,6 +231,9 @@ class FileSystem(object):
     def normpath(self, path):
         return os.path.normpath(path)
 
+    def symlink(self, src, dst):
+        return os.symlink(src, dst)
+
     def open_binary_tempfile(self, suffix):
         """Create, open, and return a binary temp file. Returns a tuple of the file and the name."""
         temp_fd, temp_name = tempfile.mkstemp(suffix)

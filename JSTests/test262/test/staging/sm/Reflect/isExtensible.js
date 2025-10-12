@@ -4,9 +4,7 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-Reflect-shell.js]
-flags:
-  - noStrict
+includes: [sm/assertThrowsValue.js]
 description: |
   pending
 esid: pending
@@ -60,7 +58,7 @@ assertThrowsValue(() => Reflect.isExtensible(proxy), "oops");
 proxy = new Proxy({}, {
     isExtensible() { return false; }
 });
-assertThrowsInstanceOf(() => Reflect.isExtensible(proxy), TypeError);
+assert.throws(TypeError, () => Reflect.isExtensible(proxy));
 
 // For more Reflect.isExtensible tests, see target.js.
 

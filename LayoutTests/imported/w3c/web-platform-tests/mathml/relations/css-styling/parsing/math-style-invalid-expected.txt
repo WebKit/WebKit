@@ -1,0 +1,5 @@
+
+PASS e.style['math-style'] = "auto" should not set the property value
+PASS e.style['math-style'] = "invalid" should not set the property value
+PASS e.style['math-style'] = "normal compact" should not set the property value
+

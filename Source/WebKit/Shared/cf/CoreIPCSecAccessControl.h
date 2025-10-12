@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(SEC_ACCESS_CONTROL)
+#if USE(CF)
 
 #import <wtf/RetainPtr.h>
 #import <wtf/cf/VectorCF.h>
@@ -78,4 +78,4 @@ private:
 
 } // namespace WebKit
 
-#endif // HAVE(SEC_ACCESS_CONTROL)
+#endif // USE(CF)

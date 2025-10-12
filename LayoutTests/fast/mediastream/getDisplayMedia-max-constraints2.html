@@ -11,8 +11,9 @@
         <script>
 let defaultWidth;
 let defaultHeight;
-promise_test(async () => {
-    stream = await callGetDisplayMedia({ video: true });
+promise_test(async (test) => {
+    const stream = await callGetDisplayMedia({ video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     let settings = stream.getVideoTracks()[0].getSettings();
     defaultWidth = settings.width;
     defaultHeight = settings.height;
@@ -20,6 +21,7 @@ promise_test(async () => {
 
 promise_test(async (test) => {
     const stream = await callGetDisplayMedia({ video: { height: { max: 100 }, width : { max : 500 } } });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
     const expectedWidth = Math.floor(100 * (defaultWidth / defaultHeight)) 
     await waitForWidth(stream.getVideoTracks()[0], expectedWidth);

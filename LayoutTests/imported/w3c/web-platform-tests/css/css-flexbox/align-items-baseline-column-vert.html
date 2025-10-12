@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <link rel="help" href="https://drafts.csswg.org/css-align-3/#baseline-export">
-<link rel="match" href="align-items-baseline-column-vert-ref.html">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
 <style>
 #target {
+  font-family: Ahem;
   writing-mode: vertical-rl;
   display: flex;
   flex-direction: column;
@@ -16,11 +17,13 @@
 #target > :nth-child(1) {
   background: lime;
   font-size: 30px;
+  line-height: 30px;
   writing-mode: horizontal-tb;
 }
 #target > :nth-child(2) {
   background: hotpink;
   font-size: 20px;
+  line-height: 30px;
   writing-mode: horizontal-tb;
 }
 #target > :nth-child(3) {
@@ -29,8 +32,13 @@
   height: 40px;
 }
 </style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('#target > div')">
 <div id="target">
-  <div>line1<br>line2</div>
-  <div>line1<br>line2</div>
-  <div></div>
+  <div data-offset-y="16">line1<br>line2</div>
+  <div data-offset-y="19">line1<br>line2</div>
+  <div data-offset-y="20"></div>
 </div>
+</body>

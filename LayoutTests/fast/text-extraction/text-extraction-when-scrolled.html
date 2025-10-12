@@ -32,6 +32,8 @@ addEventListener("load", async () => {
     await UIHelper.renderingUpdate();
 
     const extractionResult = await UIHelper.requestTextExtraction({
+        mergeParagraphs: true,
+        skipNearlyTransparentContent: true,
         clipToBounds: true,
         includeRects: true
     });

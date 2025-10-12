@@ -70,9 +70,8 @@ int ConvertToARGB(const uint8_t* sample,
   uint8_t* rotate_buffer = NULL;
   int abs_crop_height = (crop_height < 0) ? -crop_height : crop_height;
 
-  if (dst_argb == NULL || sample == NULL ||
-      src_width <= 0 || src_width > INT_MAX / 4 ||
-      crop_width <= 0 || crop_width > INT_MAX / 4 ||
+  if (dst_argb == NULL || sample == NULL || src_width <= 0 ||
+      src_width > INT_MAX / 4 || crop_width <= 0 || crop_width > INT_MAX / 4 ||
       src_height == 0 || crop_height == 0) {
     return -1;
   }
@@ -81,7 +80,8 @@ int ConvertToARGB(const uint8_t* sample,
   }
 
   if (need_buf) {
-    const uint64_t rotate_buffer_size = (uint64_t)crop_width * 4 * abs_crop_height;
+    const uint64_t rotate_buffer_size =
+        (uint64_t)crop_width * 4 * abs_crop_height;
     if (rotate_buffer_size > SIZE_MAX) {
       return -1;  // Invalid size.
     }

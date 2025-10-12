@@ -94,11 +94,11 @@ layer at (0,0) size 480x360
             RenderSVGContainer {g} at (385,92) size 50x18
               RenderSVGPath {polyline} at (385,92) size 20x18 [fill={[type=SOLID] [color=#CCCCCC]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
               RenderSVGPath {polyline} at (415,92) size 20x18 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [fill={[type=SOLID] [color=#CCCCCC] [fill rule=EVEN-ODD]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
-          RenderSVGPath {polyline} at (163,90) size 23x22 [stroke={[type=SOLID] [color=#CC0066]}] [fill={[type=SOLID] [color=#CC0066] [fill rule=EVEN-ODD]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
+          RenderSVGPath {polyline} at (163,90) size 23x22 [stroke={[type=SOLID] [color=#CC0066]}] [fill={[type=SOLID] [color=#CC0066]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
           RenderSVGContainer {g} at (273,90) size 23x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(110.00,0.00)}]
-            RenderSVGPath {polyline} at (273,90) size 23x22 [stroke={[type=SOLID] [color=#CC0066]}] [fill={[type=SOLID] [color=#CC0066] [fill rule=EVEN-ODD]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
+            RenderSVGPath {polyline} at (273,90) size 23x22 [stroke={[type=SOLID] [color=#CC0066]}] [fill={[type=SOLID] [color=#CC0066]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
           RenderSVGContainer {a} at (383,90) size 23x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,0.00)}]
-            RenderSVGPath {polyline} at (383,90) size 23x22 [stroke={[type=SOLID] [color=#CC0066]}] [fill={[type=SOLID] [color=#CC0066] [fill rule=EVEN-ODD]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
+            RenderSVGPath {polyline} at (383,90) size 23x22 [stroke={[type=SOLID] [color=#CC0066]}] [fill={[type=SOLID] [color=#CC0066]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
         RenderSVGContainer {g} at (168,118) size 262x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,45.00)}]
           RenderSVGHiddenContainer {defs} at (0,0) size 0x0
             RenderSVGContainer {g} at (168,118) size 42x12

@@ -96,6 +96,7 @@
                 shouldThrow("pc.removeTrack(null);");
                 shouldThrow("pc.removeTrack(undefined);");
 
+                stream.getTracks().forEach(track => track.stop());
                 finishJSTest();
             })
             .catch(function (error) {

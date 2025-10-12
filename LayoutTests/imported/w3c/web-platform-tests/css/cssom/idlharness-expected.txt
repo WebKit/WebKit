@@ -10,6 +10,7 @@ PASS Partial interface mixin DocumentOrShadowRoot: member names are unique
 PASS Partial interface Window: original interface defined
 PASS Partial interface Window: member names are unique
 PASS Partial interface mixin DocumentOrShadowRoot[2]: member names are unique
+PASS Partial interface Element: member names are unique
 PASS Partial interface HTMLLinkElement: member names are unique
 PASS Partial interface HTMLStyleElement: member names are unique
 PASS Partial interface Window[2]: member names are unique
@@ -18,12 +19,10 @@ PASS HTMLElement includes ElementCSSInlineStyle: member names are unique
 PASS SVGElement includes ElementCSSInlineStyle: member names are unique
 PASS MathMLElement includes ElementCSSInlineStyle: member names are unique
 PASS SVGElement includes GlobalEventHandlers: member names are unique
-PASS SVGElement includes DocumentAndElementEventHandlers: member names are unique
 PASS SVGElement includes SVGElementInstance: member names are unique
 PASS SVGElement includes HTMLOrSVGElement: member names are unique
 PASS SVGStyleElement includes LinkStyle: member names are unique
 PASS HTMLElement includes GlobalEventHandlers: member names are unique
-PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
 PASS HTMLElement includes ElementContentEditable: member names are unique
 PASS HTMLElement includes HTMLOrSVGElement: member names are unique
 PASS HTMLLinkElement includes LinkStyle: member names are unique
@@ -48,7 +47,6 @@ PASS CharacterData includes ChildNode: member names are unique
 PASS Element includes Slottable: member names are unique
 PASS Document includes XPathEvaluatorBase: member names are unique
 PASS MathMLElement includes GlobalEventHandlers: member names are unique
-PASS MathMLElement includes DocumentAndElementEventHandlers: member names are unique
 PASS MathMLElement includes HTMLOrSVGElement: member names are unique
 PASS MediaList interface: existence and properties of interface object
 PASS MediaList interface object length

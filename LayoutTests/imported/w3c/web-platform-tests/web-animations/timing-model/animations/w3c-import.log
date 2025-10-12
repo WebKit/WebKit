@@ -36,6 +36,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/setting-the-start-time-of-an-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/setting-the-target-effect-of-an-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/setting-the-timeline-of-an-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/start-time-compat.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times.html

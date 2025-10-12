@@ -1,6 +1,6 @@
 
 PASS Ensure the correct JSON parser is used
-FAIL Ensure UTF-16 results in an error promise_rejects_js: function "function() { throw e }" threw object "SyntaxError: The string did not match the expected pattern." ("SyntaxError") expected instance of function "function SyntaxError() {
+FAIL Ensure UTF-16 results in an error promise_rejects_js: function "function() { throw e; }" threw object "SyntaxError: The string did not match the expected pattern." ("SyntaxError") expected instance of function "function SyntaxError() {
     [native code]
 }" ("SyntaxError")
 

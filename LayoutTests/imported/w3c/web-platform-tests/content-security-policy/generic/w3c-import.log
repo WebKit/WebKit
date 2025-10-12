@@ -15,12 +15,13 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/304-response-should-update-csp.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/case-insensitive-scheme.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/cspro-not-enforced-in-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/cspro-not-enforced-in-worker.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/directive-name-case-insensitive.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/duplicate-directive.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/eval-typecheck-callout-order.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/eval-typecheck-callout-order.tentative.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/eval-typecheck-callout-order.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/eval-typecheck-callout-order.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/fail-0_1.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/filesystem-urls-do-not-match-self.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/filesystem-urls-match-filesystem.sub.html
@@ -34,6 +35,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_8.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_8_1.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_9.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/image-document-ignores-csp-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/image-document-ignores-csp-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/image-document-ignores-csp.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/invalid-characters-in-policy.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/negativeTests.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/no-default-src.sub.html
@@ -44,8 +48,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/policy-inherited-correctly-by-plznavigate.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/policy-inherited-correctly-by-plznavigate.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/positiveTest.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/src-trailing-dot.sub.any.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/src-trailing-dot.sub.any.js.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/test-case.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/unreached.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/wildcard-host-part.sub.window.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/wildcardHostTest.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/wildcardHostTestFailure.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/wildcardHostTestSuceeds.js

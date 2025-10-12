@@ -11,15 +11,18 @@
 #ifndef MODULES_DESKTOP_CAPTURE_LINUX_WAYLAND_BASE_CAPTURER_PIPEWIRE_H_
 #define MODULES_DESKTOP_CAPTURE_LINUX_WAYLAND_BASE_CAPTURER_PIPEWIRE_H_
 
+#include <cstdint>
+#include <memory>
+
 #include "modules/desktop_capture/delegated_source_list_controller.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
+#include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/linux/wayland/screen_capture_portal_interface.h"
 #include "modules/desktop_capture/linux/wayland/screencast_portal.h"
-#include "modules/desktop_capture/linux/wayland/shared_screencast_stream.h"
 #include "modules/portal/portal_request_response.h"
-#include "modules/portal/xdg_desktop_portal_utils.h"
 #include "modules/portal/xdg_session_details.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 

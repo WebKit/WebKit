@@ -22,8 +22,8 @@
 
 #pragma once
 
-#include "HTMLElement.h"
-#include "InlineStyleSheetOwner.h"
+#include <WebCore/HTMLElement.h>
+#include <WebCore/InlineStyleSheetOwner.h>
 
 namespace WebCore {
 

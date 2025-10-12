@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2016, 2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2016, 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ static String localeInfo(LCTYPE localeType, const String& fallback)
     int localeChars = GetLocaleInfo(langID, localeType, nullptr, 0);
     if (!localeChars)
         return fallback;
-    std::span<UChar> localeNameBuf;
+    std::span<char16_t> localeNameBuf;
     String localeName = String::createUninitialized(localeChars, localeNameBuf);
     localeChars = GetLocaleInfo(langID, localeType, wcharFrom(localeNameBuf.data()), localeChars);
     if (!localeChars)

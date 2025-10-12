@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ThreadSafeDataBuffer.h"
+#include <WebCore/ThreadSafeDataBuffer.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 

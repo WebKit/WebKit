@@ -244,11 +244,11 @@ JSFormatter = class JSFormatter
             if (nodeType === "ForStatement") {
                 builder.appendToken(tokenValue, tokenOffset);
                 // Do not include spaces in empty for loop header sections: for(;;)
-                if (node.test || node.update) {
-                    if (node.test && this._isRangeWhitespace(token.range[1], node.test.range[0]))
+                for (let value of [node.test, node.test?.expression, node.update]) {
+                    if (value?.range?.length && this._isRangeWhitespace(token.range[1], value.range[0])) {
                         builder.appendSpace();
-                    else if (node.update && this._isRangeWhitespace(token.range[1], node.update.range[0]))
-                        builder.appendSpace();
+                        break;
+                    }
                 }
                 return;
             }

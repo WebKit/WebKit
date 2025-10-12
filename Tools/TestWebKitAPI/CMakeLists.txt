@@ -32,6 +32,7 @@ set(TestWTF_SOURCES
     Tests/WTF/BoxPtr.cpp
     Tests/WTF/BumpPointerAllocator.cpp
     Tests/WTF/CString.cpp
+    Tests/WTF/CStringView.cpp
     Tests/WTF/CharacterProperties.cpp
     Tests/WTF/CheckedArithmeticOperations.cpp
     Tests/WTF/CompactPtr.cpp
@@ -62,6 +63,7 @@ set(TestWTF_SOURCES
     Tests/WTF/IndexSparseSet.cpp
     Tests/WTF/Int128.cpp
     Tests/WTF/IntegerToStringConversion.cpp
+    Tests/WTF/IntervalSet.cpp
     Tests/WTF/IteratorRange.cpp
     Tests/WTF/JSONValue.cpp
     Tests/WTF/LEBDecoder.cpp
@@ -85,6 +87,7 @@ set(TestWTF_SOURCES
     Tests/WTF/PackedRef.cpp
     Tests/WTF/PackedRefPtr.cpp
     Tests/WTF/ParkingLot.cpp
+    Tests/WTF/PreciseSum.cpp
     Tests/WTF/PriorityQueue.cpp
     Tests/WTF/RedBlackTree.cpp
     Tests/WTF/Ref.cpp
@@ -211,9 +214,11 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/IntRectTests.cpp
         Tests/WebCore/IntSizeTests.cpp
         Tests/WebCore/KeyedCoding.cpp
+        Tests/WebCore/LayoutRoundedRectTests.cpp
         Tests/WebCore/LayoutUnitTests.cpp
         Tests/WebCore/MIMESniffer.cpp
         Tests/WebCore/MIMETypeRegistry.cpp
+        Tests/WebCore/MediaReorderQueue.cpp
         Tests/WebCore/MixedContentChecker.cpp
         Tests/WebCore/MonospaceFontTests.cpp
         Tests/WebCore/NowPlayingInfoTests.cpp

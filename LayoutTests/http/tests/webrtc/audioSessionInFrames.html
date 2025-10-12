@@ -15,7 +15,8 @@ function with_iframe(url, allow) {
 
 promise_test(async () => {
     navigator.audioSession.type = "play-and-record";
-    await navigator.mediaDevices.getUserMedia({ audio: true });
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach(t => t.stop());
 
     const frame1 = await with_iframe("http://localhost:8080/webrtc/resources/audioSessionFrame.html", "microphone:'none'");
     const result1 = await new Promise(resolve => window.onmessage = (event) => resolve(event.data));

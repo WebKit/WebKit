@@ -28,6 +28,7 @@
 #include "Decoder.h"
 #include "MessageReceiveQueue.h"
 #include <wtf/HashMap.h>
+#include <wtf/Variant.h>
 
 namespace IPC {
 
@@ -37,11 +38,6 @@ class MessageReceiveQueueMap {
 public:
     MessageReceiveQueueMap() = default;
     ~MessageReceiveQueueMap() = default;
-
-    static bool isValidMessage(const Decoder& message)
-    {
-        return QueueMap::isValidKey(std::make_pair(static_cast<uint8_t>(message.messageReceiverName()), message.destinationID()));
-    }
 
     void add(MessageReceiveQueue& queue, const ReceiverMatcher& matcher) { addImpl(StoreType(&queue), matcher); }
     void add(std::unique_ptr<MessageReceiveQueue>&& queue, const ReceiverMatcher& matcher) { addImpl(StoreType(WTFMove(queue)), matcher); }

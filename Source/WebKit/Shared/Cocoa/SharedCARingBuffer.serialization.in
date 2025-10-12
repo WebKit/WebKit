@@ -25,7 +25,7 @@
 header: "SharedCARingBuffer.h"
 [CustomHeader, RValue] struct WebKit::ConsumerSharedCARingBufferHandle {
     WebCore::SharedMemoryHandle memory;
-    size_t frameCount;
+    uint64_t frameCount;
 };
 
 #endif

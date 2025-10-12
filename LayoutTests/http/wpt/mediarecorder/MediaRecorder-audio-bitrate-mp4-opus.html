@@ -10,6 +10,7 @@
 <script>
     promise_test(async (t) => {
         const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+        t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
         const bitRates = [128000, 256000];
         let promises = [];
         bitRates.forEach(bitRate => {

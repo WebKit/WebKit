@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2023 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,8 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include "BufferSource.h"
-#include "WebCodecsEncodedAudioChunkData.h"
+#include <WebCore/BufferSource.h>
+#include <WebCore/WebCodecsEncodedAudioChunkData.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -78,7 +78,7 @@ private:
     explicit WebCodecsEncodedAudioChunk(Init&&);
     explicit WebCodecsEncodedAudioChunk(Ref<WebCodecsEncodedAudioChunkStorage>&&);
 
-    Ref<WebCodecsEncodedAudioChunkStorage> m_storage;
+    const Ref<WebCodecsEncodedAudioChunkStorage> m_storage;
 };
 
 inline WebCodecsEncodedAudioChunkStorage::WebCodecsEncodedAudioChunkStorage(WebCodecsEncodedAudioChunkData&& data)

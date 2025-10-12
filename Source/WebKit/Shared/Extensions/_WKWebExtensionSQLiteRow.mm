@@ -34,7 +34,9 @@
 
 #import "_WKWebExtensionSQLiteDatabase.h"
 #import "_WKWebExtensionSQLiteStatement.h"
+#import <WebCore/SQLiteExtras.h>
 #import <sqlite3.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 @interface _WKWebExtensionSQLiteRow ()
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
@@ -79,9 +81,7 @@
 
     sqlite3_stmt* handle = _handle;
 
-    const unsigned char* text = sqlite3_column_text(handle, index);
-    int length = sqlite3_column_bytes(handle, index);
-    return CFBridgingRelease(CFStringCreateWithBytes(kCFAllocatorDefault, text, length, kCFStringEncodingUTF8, false));
+    return WebCore::sqliteColumnText(handle, index).createNSString().autorelease();
 }
 
 - (int)intAtIndex:(NSUInteger)index
@@ -112,7 +112,7 @@
     RawData data = [self uncopiedRawDataAtIndex:index];
     if (data.isNull)
         return nil;
-    return [NSData dataWithBytes:data.bytes length:data.length];
+    return toNSData(data.bytes).autorelease();
 }
 
 - (NSData *)uncopiedDataAtIndex:(NSUInteger)index
@@ -120,23 +120,19 @@
     RawData data = [self uncopiedRawDataAtIndex:index];
     if (data.isNull)
         return nil;
-    return [NSData dataWithBytesNoCopy:const_cast<void *>(data.bytes) length:data.length freeWhenDone:NO];
+    return toNSDataNoCopy(data.bytes, FreeWhenDone::No).autorelease();
 }
 
 - (RawData)uncopiedRawDataAtIndex:(NSUInteger)index
 {
     dispatch_assert_queue(_statement.database.queue);
     if ([self _isNullAtIndex:index])
-        return (RawData) { true, nullptr, 0 };
+        return RawData { true, { } };
 
     sqlite3_stmt* handle = _handle;
 
-    const void* blob = sqlite3_column_blob(handle, index);
-    if (!blob)
-        return (RawData) { false, nullptr, 0 };
-
-    int length = sqlite3_column_bytes(handle, index);
-    return (RawData) { false, blob, length };
+    auto blob = WebCore::sqliteColumnBlob(handle, index);
+    return RawData { false, blob };
 }
 
 - (BOOL)_isNullAtIndex:(NSUInteger)index

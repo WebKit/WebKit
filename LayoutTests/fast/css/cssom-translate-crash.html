@@ -1,0 +1,8 @@
+<script>
+window.testRunner?.dumpAsText();
+
+const n2 = document.createElement('div');
+document.documentElement.appendChild(n2);
+n2.attributeStyleMap.set('translate', ...document.documentElement.computedStyleMap().getAll('border-image-slice'));
+</script>
+This test passes if it doesn't crash.

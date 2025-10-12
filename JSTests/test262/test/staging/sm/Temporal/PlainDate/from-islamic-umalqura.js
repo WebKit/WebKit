@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 features:
   - Temporal
 description: |
@@ -13,7 +10,7 @@ esid: pending
 ---*/
 
 // https://github.com/unicode-org/icu4x/issues/4914
-assertThrowsInstanceOf(() => {
+assert.throws(RangeError, () => {
   let date = Temporal.PlainDate.from({
     calendar: "islamic-umalqura",
     year: -6823,
@@ -21,5 +18,5 @@ assertThrowsInstanceOf(() => {
     day: 1,
   });
   // assert.sameValue(date.day, 1);
-}, RangeError);
+});
 

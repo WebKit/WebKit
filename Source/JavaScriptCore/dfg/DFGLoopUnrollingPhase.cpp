@@ -651,7 +651,7 @@ bool LoopUnrollingPhase::LoopData::isProfitableToUnroll()
         // Avoid unrolling loops that only perform stores. These tend to increase code size
         // without improving performance, since they are often memory-bound and unrolling
         // doesn't expose additional optimization opportunities. (e.g., rdar://150524264)
-        dataLogLnIf(Options::verboseLoopUnrolling(), "Skipping loop with header ", *header(), " since putByValCount=", putByValCount, " getByValCount=", getByValCount);
+        dataLogLnIf(Options::verboseLoopUnrolling(), "Skipping loop with header ", *header(), " since loop only has stores putByValCount=", putByValCount, " getByValCount=", getByValCount);
         return false;
     }
 
@@ -863,7 +863,8 @@ bool LoopUnrollingPhase::LoopData::isMaterialNode(Graph& graph, Node* node)
     case ZombieHint:
     case ExitOK:
     case PhantomNewObject:
-    case PhantomNewArrayWithConstantSize:
+    case PhantomNewArrayWithButterfly:
+    case PhantomNewButterflyWithSize:
     case PhantomNewFunction:
     case PhantomNewGeneratorFunction:
     case PhantomNewAsyncGeneratorFunction:

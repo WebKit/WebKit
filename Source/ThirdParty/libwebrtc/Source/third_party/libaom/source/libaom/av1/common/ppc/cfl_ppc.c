@@ -19,7 +19,6 @@
 #define OFF_1 16
 #define OFF_2 32
 #define OFF_3 48
-#define CFL_BUF_LINE_BYTES 64
 #define CFL_LINE_1 64
 #define CFL_LINE_2 128
 #define CFL_LINE_3 192
@@ -35,8 +34,6 @@ typedef vector unsigned long long uint64x2_t;  // NOLINT(runtime/int)
 static inline void subtract_average_vsx(const uint16_t *src_ptr, int16_t *dst,
                                         int width, int height, int round_offset,
                                         int num_pel_log2) {
-  //  int16_t *dst = dst_ptr;
-  const int16_t *dst_end = dst + height * CFL_BUF_LINE;
   const int16_t *sum_buf = (const int16_t *)src_ptr;
   const int16_t *end = sum_buf + height * CFL_BUF_LINE;
   const uint32x4_t div_shift = vec_splats((uint32_t)num_pel_log2);
@@ -63,7 +60,8 @@ static inline void subtract_average_vsx(const uint16_t *src_ptr, int16_t *dst,
       sum_32x4_1 =
           vec_sum4s(vec_vsx_ld(OFF_3 + CFL_LINE_1, sum_buf), sum_32x4_1);
     }
-  } while ((sum_buf += (CFL_BUF_LINE * 2)) < end);
+    sum_buf += CFL_BUF_LINE * 2;
+  } while (sum_buf < end);
   int32x4_t sum_32x4 = vec_add(sum_32x4_0, sum_32x4_1);
 
   const int32x4_t perm_64 = vec_perm(sum_32x4, sum_32x4, mask_64);
@@ -72,41 +70,44 @@ static inline void subtract_average_vsx(const uint16_t *src_ptr, int16_t *dst,
   sum_32x4 = vec_add(sum_32x4, perm_32);
   const int32x4_t avg = vec_sr(sum_32x4, div_shift);
   const int16x8_t vec_avg = vec_pack(avg, avg);
+  const int16_t *src = (const int16_t *)src_ptr;
   do {
-    vec_vsx_st(vec_sub(vec_vsx_ld(OFF_0, dst), vec_avg), OFF_0, dst);
-    vec_vsx_st(vec_sub(vec_vsx_ld(OFF_0 + CFL_LINE_1, dst), vec_avg),
-               OFF_0 + CFL_BUF_LINE_BYTES, dst);
-    vec_vsx_st(vec_sub(vec_vsx_ld(OFF_0 + CFL_LINE_2, dst), vec_avg),
+    vec_vsx_st(vec_sub(vec_vsx_ld(OFF_0, src), vec_avg), OFF_0, dst);
+    vec_vsx_st(vec_sub(vec_vsx_ld(OFF_0 + CFL_LINE_1, src), vec_avg),
+               OFF_0 + CFL_LINE_1, dst);
+    vec_vsx_st(vec_sub(vec_vsx_ld(OFF_0 + CFL_LINE_2, src), vec_avg),
                OFF_0 + CFL_LINE_2, dst);
-    vec_vsx_st(vec_sub(vec_vsx_ld(OFF_0 + CFL_LINE_3, dst), vec_avg),
+    vec_vsx_st(vec_sub(vec_vsx_ld(OFF_0 + CFL_LINE_3, src), vec_avg),
                OFF_0 + CFL_LINE_3, dst);
     if (width >= 16) {
-      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_1, dst), vec_avg), OFF_1, dst);
-      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_1 + CFL_LINE_1, dst), vec_avg),
+      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_1, src), vec_avg), OFF_1, dst);
+      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_1 + CFL_LINE_1, src), vec_avg),
                  OFF_1 + CFL_LINE_1, dst);
-      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_1 + CFL_LINE_2, dst), vec_avg),
+      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_1 + CFL_LINE_2, src), vec_avg),
                  OFF_1 + CFL_LINE_2, dst);
-      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_1 + CFL_LINE_3, dst), vec_avg),
+      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_1 + CFL_LINE_3, src), vec_avg),
                  OFF_1 + CFL_LINE_3, dst);
     }
     if (width == 32) {
-      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_2, dst), vec_avg), OFF_2, dst);
-      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_2 + CFL_LINE_1, dst), vec_avg),
+      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_2, src), vec_avg), OFF_2, dst);
+      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_2 + CFL_LINE_1, src), vec_avg),
                  OFF_2 + CFL_LINE_1, dst);
-      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_2 + CFL_LINE_2, dst), vec_avg),
+      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_2 + CFL_LINE_2, src), vec_avg),
                  OFF_2 + CFL_LINE_2, dst);
-      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_2 + CFL_LINE_3, dst), vec_avg),
+      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_2 + CFL_LINE_3, src), vec_avg),
                  OFF_2 + CFL_LINE_3, dst);
 
-      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_3, dst), vec_avg), OFF_3, dst);
-      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_3 + CFL_LINE_1, dst), vec_avg),
+      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_3, src), vec_avg), OFF_3, dst);
+      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_3 + CFL_LINE_1, src), vec_avg),
                  OFF_3 + CFL_LINE_1, dst);
-      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_3 + CFL_LINE_2, dst), vec_avg),
+      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_3 + CFL_LINE_2, src), vec_avg),
                  OFF_3 + CFL_LINE_2, dst);
-      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_3 + CFL_LINE_3, dst), vec_avg),
+      vec_vsx_st(vec_sub(vec_vsx_ld(OFF_3 + CFL_LINE_3, src), vec_avg),
                  OFF_3 + CFL_LINE_3, dst);
     }
-  } while ((dst += CFL_BUF_LINE * 4) < dst_end);
+    src += CFL_BUF_LINE * 4;
+    dst += CFL_BUF_LINE * 4;
+  } while (src < end);
 }
 
 // Declare wrappers for VSX sizes

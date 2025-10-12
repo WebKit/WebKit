@@ -59,11 +59,6 @@ const String& Report::url() const
     return m_url;
 }
 
-const RefPtr<ReportBody>& Report::body() const
-{
-    return m_body;
-}
-
 Ref<FormData> Report::createReportFormDataForViolation(const String& type, const URL& url, const String& userAgent, const String& destination, NOESCAPE const Function<void(JSON::Object&)>& populateBody)
 {
     auto body = JSON::Object::create();

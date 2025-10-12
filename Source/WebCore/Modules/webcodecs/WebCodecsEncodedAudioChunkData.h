@@ -28,7 +28,7 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include "WebCodecsEncodedAudioChunkType.h"
+#include <WebCore/WebCodecsEncodedAudioChunkType.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

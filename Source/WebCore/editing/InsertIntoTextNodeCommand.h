@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,30 +33,31 @@ class Text;
 
 class InsertIntoTextNodeCommand : public SimpleEditCommand {
 public:
-    static Ref<InsertIntoTextNodeCommand> create(Ref<Text>&& node, unsigned offset, const String& text, EditAction editingAction = EditAction::Insert)
+    static Ref<InsertIntoTextNodeCommand> create(Ref<Text>&& node, unsigned offset, const String& text, AllowPasswordEcho allowPasswordEcho = AllowPasswordEcho::Yes, EditAction editingAction = EditAction::Insert)
     {
-        return adoptRef(*new InsertIntoTextNodeCommand(WTFMove(node), offset, text, editingAction));
+        return adoptRef(*new InsertIntoTextNodeCommand(WTFMove(node), offset, text, allowPasswordEcho, editingAction));
     }
 
     const String& insertedText();
 
 protected:
-    InsertIntoTextNodeCommand(Ref<Text>&& node, unsigned offset, const String& text, EditAction editingAction);
+    InsertIntoTextNodeCommand(Ref<Text>&& node, unsigned offset, const String& text, AllowPasswordEcho, EditAction editingAction);
 
 private:
     void doApply() override;
     void doUnapply() override;
     void doReapply() override;
 
-    Ref<Text> protectedNode() const { return m_node.get(); }
-    
 #ifndef NDEBUG
     void getNodesInCommand(NodeSet&) override;
 #endif
+
+    bool shouldEnablePasswordEcho() const;
     
-    Ref<Text> m_node;
+    const Ref<Text> m_node;
     unsigned m_offset;
     String m_text;
+    AllowPasswordEcho m_allowPasswordEcho { AllowPasswordEcho::Yes };
 };
 
 inline const String& InsertIntoTextNodeCommand::insertedText()

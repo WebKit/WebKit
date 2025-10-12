@@ -13,6 +13,8 @@
 #include <libloaderapi.h>
 #include <roapi.h>
 
+#include "rtc_base/win/hstring.h"
+
 namespace {
 
 FARPROC LoadComBaseFunction(const char* function_name) {

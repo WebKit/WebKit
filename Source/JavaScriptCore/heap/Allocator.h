@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "AllocationFailureMode.h"
+#include <JavaScriptCore/AllocationFailureMode.h>
 #include <climits>
 
 namespace JSC {

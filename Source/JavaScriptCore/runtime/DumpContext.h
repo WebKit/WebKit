@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Structure.h"
+#include <JavaScriptCore/Structure.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StringHashDumpContext.h>
 

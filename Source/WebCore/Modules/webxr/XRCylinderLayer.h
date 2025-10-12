@@ -36,6 +36,8 @@ namespace WebCore {
 // https://immersive-web.github.io/layers/#xrcylinderayertype
 class XRCylinderLayer : public XRCompositionLayer {
 public:
+    virtual ~XRCylinderLayer();
+
     const WebXRSpace& space() const { RELEASE_ASSERT_NOT_REACHED(); }
     [[noreturn]] void setSpace(WebXRSpace&) { RELEASE_ASSERT_NOT_REACHED(); }
     const WebXRRigidTransform& transform() const { RELEASE_ASSERT_NOT_REACHED(); }
@@ -47,9 +49,20 @@ public:
     [[noreturn]] void setCentralAngle(float) { RELEASE_ASSERT_NOT_REACHED(); }
     float aspectRatio() const { RELEASE_ASSERT_NOT_REACHED(); }
     [[noreturn]] void setAspectRatio(float) { RELEASE_ASSERT_NOT_REACHED(); }
+
+private:
+    bool isXRCylinderLayer() const final { return true; }
+
+    // WebXRLayer.
+    [[noreturn]] void startFrame(PlatformXR::FrameData&) final { RELEASE_ASSERT_NOT_REACHED(); }
+    [[noreturn]] PlatformXR::Device::Layer endFrame() final { RELEASE_ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::XRCylinderLayer)
+    static bool isType(const WebCore::WebXRLayer& layer) { return layer.isXRCylinderLayer(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEBXR_LAYERS)
 

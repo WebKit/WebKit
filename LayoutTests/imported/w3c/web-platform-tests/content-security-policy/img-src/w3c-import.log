@@ -14,13 +14,17 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/css-filter-blocked.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/icon-allowed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/icon-blocked.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-4_1.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-full-host-wildcard-blocked.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-host-partial-wildcard-allowed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-none-blocks-data-uri.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-none-blocks.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-port-wildcard-allowed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-self-unique-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-targeting.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-wildcard-allowed.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/report-blocked-data-uri.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/svg-use-blocked.tentative.html

@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/crashtests/broken-reference-crash-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/crashtests/external-reference-in-interleaved-oof-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/crashtests/felighting-display-none-mutation-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/crashtests/multiple-references-id-crash-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/crashtests/multiple-references-id-crash-002.html

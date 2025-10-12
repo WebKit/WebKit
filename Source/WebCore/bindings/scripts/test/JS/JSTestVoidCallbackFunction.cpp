@@ -148,6 +148,10 @@ JSC::JSValue toJS(TestVoidCallbackFunction& impl)
     return static_cast<JSTestVoidCallbackFunction&>(impl).callbackData()->callback();
 }
 
+ScriptExecutionContext* JSTestVoidCallbackFunction::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
+}
 } // namespace WebCore
 
 #endif // ENABLE(TEST_CONDITIONAL)

@@ -30,7 +30,6 @@
     ConditionalForWorker=OFFSCREEN_CANVAS_IN_WORKERS,
     EnabledForContext,
     Exposed=(Window,Worker),
-    JSGenerateToJSObject,
     JSCustomMarkFunction,
     TaggedWrapper,
     CallTracer=InspectorCanvasCallTracer,

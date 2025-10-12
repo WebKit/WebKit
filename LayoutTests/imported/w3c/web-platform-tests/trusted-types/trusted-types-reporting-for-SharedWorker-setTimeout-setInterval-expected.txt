@@ -1,8 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT No violation reported for setTimeout with TrustedScript. Test timed out
-NOTRUN No violation reported for setInterval with TrustedScript.
-NOTRUN Violation report for setTimeout with plain string.
-NOTRUN Violation report for setInterval with plain string.
-

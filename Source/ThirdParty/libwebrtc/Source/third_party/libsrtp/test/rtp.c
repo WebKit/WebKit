@@ -131,10 +131,9 @@ int rtp_recvfrom(rtp_receiver_t receiver, void *msg, int *len)
     if (stat) {
         fprintf(stderr, "error: srtp unprotection failed with code %d%s\n",
                 stat,
-                stat == srtp_err_status_replay_fail
-                    ? " (replay check failed)"
-                    : stat == srtp_err_status_auth_fail ? " (auth check failed)"
-                                                        : "");
+                stat == srtp_err_status_replay_fail ? " (replay check failed)"
+                : stat == srtp_err_status_auth_fail ? " (auth check failed)"
+                                                    : "");
         return -1;
     }
     strncpy(msg, receiver->message.body, octets_recvd);

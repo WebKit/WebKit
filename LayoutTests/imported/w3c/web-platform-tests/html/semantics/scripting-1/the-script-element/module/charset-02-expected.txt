@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Invalid character '\ufffd'
-CONSOLE MESSAGE: SyntaxError: Invalid character '\ufffd'
 
 PASS UTF-8 module script with UTF-8 BOM
 PASS UTF-16 module script with UTF-16BE BOM

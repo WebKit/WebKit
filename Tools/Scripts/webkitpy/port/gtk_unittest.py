@@ -107,8 +107,7 @@ class GtkPortTest(port_testcase.PortTestCase):
                               ['/mock-checkout/LayoutTests/TestExpectations',
                                '/mock-checkout/LayoutTests/platform/wk2/TestExpectations',
                                '/mock-checkout/LayoutTests/platform/glib/TestExpectations',
-                               '/mock-checkout/LayoutTests/platform/gtk/TestExpectations',
-                               '/mock-checkout/LayoutTests/platform/gtk4/TestExpectations'])
+                               '/mock-checkout/LayoutTests/platform/gtk/TestExpectations'])
 
     def test_gtk3_expectations_binary_only(self):
         port = self.make_port()
@@ -121,7 +120,8 @@ class GtkPortTest(port_testcase.PortTestCase):
                               ['/mock-checkout/LayoutTests/TestExpectations',
                                '/mock-checkout/LayoutTests/platform/wk2/TestExpectations',
                                '/mock-checkout/LayoutTests/platform/glib/TestExpectations',
-                               '/mock-checkout/LayoutTests/platform/gtk/TestExpectations'])
+                               '/mock-checkout/LayoutTests/platform/gtk/TestExpectations',
+                               '/mock-checkout/LayoutTests/platform/gtk3/TestExpectations'])
 
     def test_gtk_expectations_both_binaries(self):
         port = self.make_port()
@@ -136,7 +136,7 @@ class GtkPortTest(port_testcase.PortTestCase):
                                '/mock-checkout/LayoutTests/platform/wk2/TestExpectations',
                                '/mock-checkout/LayoutTests/platform/glib/TestExpectations',
                                '/mock-checkout/LayoutTests/platform/gtk/TestExpectations'])
-            self.assertEqual(captured.root.log.getvalue(), 'Multiple WebKit2GTK libraries found. Skipping GTK4 detection.\n')
+            self.assertEqual(captured.root.log.getvalue(), 'Multiple WebKit2GTK libraries found. Skipping GTK3 detection.\n')
 
     def test_setup_environ_for_test_gstreamer_prefix(self):
         environment_user = {}

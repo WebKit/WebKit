@@ -227,54 +227,6 @@ struct VP9EncoderConfig;
 int vp9_get_frames_to_next_key(const struct VP9EncoderConfig *oxcf,
                                const TWO_PASS *const twopass, int kf_show_idx,
                                int min_gf_interval);
-#if CONFIG_RATE_CTRL
-/* Call this function to get info about the next group of pictures.
- * This function should be called after vp9_create_compressor() when encoding
- * starts or after vp9_get_compressed_data() when the encoding process of
- * the last group of pictures is just finished.
- */
-void vp9_get_next_group_of_picture(const struct VP9_COMP *cpi,
-                                   int *first_is_key_frame, int *use_alt_ref,
-                                   int *coding_frame_count, int *first_show_idx,
-                                   int *last_gop_use_alt_ref);
-
-/*!\brief Call this function before coding a new group of pictures to get
- * information about it.
- * \param[in] oxcf                 Encoder config
- * \param[in] twopass              Twopass info
- * \param[in] frame_info           Frame info
- * \param[in] rc                   Rate control state
- * \param[in] show_idx             Show index of the first frame in the group
- * \param[in] multi_layer_arf      Is multi-layer alternate reference used
- * \param[in] allow_alt_ref        Is alternate reference allowed
- * \param[in] first_is_key_frame   Is the first frame in the group a key frame
- * \param[in] last_gop_use_alt_ref Does the last group use alternate reference
- *
- * \param[out] use_alt_ref         Does this group use alternate reference
- *
- * \return Returns coding frame count
- */
-int vp9_get_gop_coding_frame_count(const struct VP9EncoderConfig *oxcf,
-                                   const TWO_PASS *const twopass,
-                                   const FRAME_INFO *frame_info,
-                                   const RATE_CONTROL *rc, int show_idx,
-                                   int multi_layer_arf, int allow_alt_ref,
-                                   int first_is_key_frame,
-                                   int last_gop_use_alt_ref, int *use_alt_ref);
-
-int vp9_get_coding_frame_num(const struct VP9EncoderConfig *oxcf,
-                             const TWO_PASS *const twopass,
-                             const FRAME_INFO *frame_info, int multi_layer_arf,
-                             int allow_alt_ref);
-
-/*!\brief Compute a key frame binary map indicates whether key frames appear
- * in the corresponding positions. The passed in key_frame_map must point to an
- * integer array with length equal to twopass->first_pass_info.num_frames,
- * which is the number of show frames in the video.
- */
-void vp9_get_key_frame_map(const struct VP9EncoderConfig *oxcf,
-                           const TWO_PASS *const twopass, int *key_frame_map);
-#endif  // CONFIG_RATE_CTRL
 
 FIRSTPASS_STATS vp9_get_frame_stats(const TWO_PASS *twopass);
 FIRSTPASS_STATS vp9_get_total_stats(const TWO_PASS *twopass);

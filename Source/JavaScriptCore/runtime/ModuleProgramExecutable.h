@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "GlobalExecutable.h"
+#include <JavaScriptCore/GlobalExecutable.h>
 
 namespace JSC {
 
@@ -68,6 +68,8 @@ public:
 
     DECLARE_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
     bool isAsync() const { return features() & AwaitFeature; }
 
     SymbolTable* moduleEnvironmentSymbolTable() { return m_moduleEnvironmentSymbolTable.get(); }
@@ -79,8 +81,6 @@ private:
     friend class ScriptExecutable;
 
     ModuleProgramExecutable(JSGlobalObject*, const SourceCode&);
-
-    DECLARE_VISIT_CHILDREN;
 
     WriteBarrier<SymbolTable> m_moduleEnvironmentSymbolTable;
     std::unique_ptr<TemplateObjectMap> m_templateObjectMap;

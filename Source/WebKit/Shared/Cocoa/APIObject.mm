@@ -51,6 +51,7 @@
 #import "WKOpenPanelParametersInternal.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
+#import "WKScriptMessageInternal.h"
 #import "WKSecurityOriginInternal.h"
 #import "WKURLSchemeTaskInternal.h"
 #import "WKUserContentControllerInternal.h"
@@ -83,10 +84,12 @@
 #import "_WKInspectorConfigurationInternal.h"
 #import "_WKInspectorDebuggableInfoInternal.h"
 #import "_WKInspectorInternal.h"
+#import "_WKJSHandleInternal.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 #import "_WKResourceLoadInfoInternal.h"
 #import "_WKResourceLoadStatisticsFirstPartyInternal.h"
 #import "_WKResourceLoadStatisticsThirdPartyInternal.h"
+#import "_WKSerializedNodeInternal.h"
 #import "_WKTargetedElementInfoInternal.h"
 #import "_WKTargetedElementRequestInternal.h"
 #import "_WKTextRunInternal.h"
@@ -128,17 +131,18 @@ namespace API {
 
 void Object::ref() const
 {
-    CFRetain(m_wrapper);
+    SUPPRESS_UNRETAINED_ARG CFRetain(m_wrapper);
 }
 
 void Object::deref() const
 {
-    CFRelease(m_wrapper);
+    SUPPRESS_UNRETAINED_ARG CFRelease(m_wrapper);
 }
 
 static id <WKObject> allocateWKObject(Class cls, size_t size)
 {
-    return class_createInstance(cls, size + maximumExtraSpaceForAlignment);
+    // This is an alloc function, the result will be adopted once we call init.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return class_createInstance(cls, size + maximumExtraSpaceForAlignment);
 }
 
 API::Object& Object::fromWKObjectExtraSpace(id <WKObject> obj)
@@ -159,365 +163,381 @@ void* Object::newObject(size_t size, Type type)
 
     switch (type) {
     case Type::ApplicationManifest:
-        wrapper = [_WKApplicationManifest alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKApplicationManifest alloc];
         break;
 
     case Type::Array:
-        wrapper = [WKNSArray alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKNSArray alloc];
         break;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     case Type::Attachment:
-        wrapper = [_WKAttachment alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKAttachment alloc];
         break;
 #endif
 
     case Type::AuthenticationChallenge:
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        wrapper = allocateWKObject([WKNSURLAuthenticationChallenge class], size);
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = allocateWKObject([WKNSURLAuthenticationChallenge class], size);
 ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 
     case Type::AutomationSession:
-        wrapper = [_WKAutomationSession alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKAutomationSession alloc];
         break;
 
     case Type::BackForwardList:
-        wrapper = [WKBackForwardList alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKBackForwardList alloc];
         break;
 
     case Type::BackForwardListItem:
-        wrapper = [WKBackForwardListItem alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKBackForwardListItem alloc];
         break;
 
     case Type::Boolean:
     case Type::Double:
     case Type::UInt64:
     case Type::Int64:
-        wrapper = [WKNSNumber alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKNSNumber alloc];
         ((WKNSNumber *)wrapper)->_type = type;
         break;
 
     case Type::Bundle:
-        wrapper = [WKWebProcessPlugInController alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebProcessPlugInController alloc];
         break;
 
     case Type::BundlePage:
-        wrapper = [WKWebProcessPlugInBrowserContextController alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebProcessPlugInBrowserContextController alloc];
         break;
 
     case Type::DebuggableInfo:
-        wrapper = [_WKInspectorDebuggableInfo alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKInspectorDebuggableInfo alloc];
         break;
 
     case Type::Preferences:
-        wrapper = [WKPreferences alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKPreferences alloc];
         break;
 
     case Type::ProcessPool:
-        wrapper = [WKProcessPool alloc];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKProcessPool alloc];
+        ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 
     case Type::ProcessPoolConfiguration:
-        wrapper = [_WKProcessPoolConfiguration alloc];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKProcessPoolConfiguration alloc];
+        ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 
     case Type::PageConfiguration:
-        wrapper = [WKWebViewConfiguration alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebViewConfiguration alloc];
         break;
 
     case Type::Data:
-        wrapper = [WKNSData alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKNSData alloc];
         break;
 
     case Type::DataTask:
-        wrapper = [_WKDataTask alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKDataTask alloc];
         break;
 
     case Type::Dictionary:
-        wrapper = [WKNSDictionary alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKNSDictionary alloc];
         break;
 
     case Type::Download:
-        wrapper = [WKDownload alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKDownload alloc];
         break;
 
     case Type::Error:
-        wrapper = allocateWKObject([WKNSError class], size);
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = allocateWKObject([WKNSError class], size);
         break;
 
     case Type::Feature:
-        wrapper = [_WKFeature alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKFeature alloc];
         break;
         
     case Type::FrameHandle:
-        wrapper = [_WKFrameHandle alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKFrameHandle alloc];
         break;
 
     case Type::FrameInfo:
-        wrapper = [WKFrameInfo alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKFrameInfo alloc];
         break;
 
     case Type::FrameTreeNode:
-        wrapper = [_WKFrameTreeNode alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKFrameTreeNode alloc];
         break;
 #if PLATFORM(IOS_FAMILY)
     case Type::GeolocationPosition:
-        wrapper = [_WKGeolocationPosition alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKGeolocationPosition alloc];
         break;
 #endif
 
     case Type::HTTPCookieStore:
-        wrapper = [WKHTTPCookieStore alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKHTTPCookieStore alloc];
         break;
 
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     case Type::HitTestResult:
-        wrapper = [_WKHitTestResult alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKHitTestResult alloc];
         break;
 #endif
 
     case Type::Inspector:
-        wrapper = [_WKInspector alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKInspector alloc];
         break;
 
     case Type::InspectorConfiguration:
-        wrapper = [_WKInspectorConfiguration alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKInspectorConfiguration alloc];
         break;
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     case Type::InspectorExtension:
-        wrapper = [_WKInspectorExtension alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKInspectorExtension alloc];
         break;
 #endif
 
     case Type::Navigation:
-        wrapper = [WKNavigation alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKNavigation alloc];
         break;
 
     case Type::NavigationAction:
-        wrapper = [WKNavigationAction alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKNavigationAction alloc];
         break;
 
     case Type::NavigationData:
-        wrapper = [WKNavigationData alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKNavigationData alloc];
         break;
 
     case Type::NavigationResponse:
-        wrapper = [WKNavigationResponse alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKNavigationResponse alloc];
         break;
 
     case Type::OpenPanelParameters:
-        wrapper = [WKOpenPanelParameters alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKOpenPanelParameters alloc];
         break;
 
     case Type::SecurityOrigin:
-        wrapper = [WKSecurityOrigin alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKSecurityOrigin alloc];
         break;
 
     case Type::String:
-        wrapper = allocateWKObject([WKNSString class], size);
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = allocateWKObject([WKNSString class], size);
         break;
 
     case Type::URL:
-        wrapper = allocateWKObject([WKNSURL class], size);
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = allocateWKObject([WKNSURL class], size);
         break;
 
     case Type::URLRequest:
-        wrapper = allocateWKObject([WKNSURLRequest class], size);
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = allocateWKObject([WKNSURLRequest class], size);
         break;
 
     case Type::URLSchemeTask:
-        wrapper = [WKURLSchemeTaskImpl alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKURLSchemeTaskImpl alloc];
         break;
 
     case Type::UserContentController:
-        wrapper = [WKUserContentController alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKUserContentController alloc];
         break;
 
     case Type::ContentRuleList:
-        wrapper = [WKContentRuleList alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKContentRuleList alloc];
         break;
 
     case Type::ContentRuleListAction:
-        wrapper = [_WKContentRuleListAction alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKContentRuleListAction alloc];
         break;
 
     case Type::ContentRuleListStore:
-        wrapper = [WKContentRuleListStore alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKContentRuleListStore alloc];
         break;
 
 #if PLATFORM(IOS_FAMILY)
     case Type::ContextMenuElementInfo:
-        wrapper = [WKContextMenuElementInfo alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKContextMenuElementInfo alloc];
         break;
 #endif
 
 #if PLATFORM(MAC)
     case Type::ContextMenuElementInfoMac:
-        wrapper = [_WKContextMenuElementInfo alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKContextMenuElementInfo alloc];
         break;
 #endif
 
     case Type::CustomHeaderFields:
-        wrapper = [_WKCustomHeaderFields alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKCustomHeaderFields alloc];
         break;
 
     case Type::ResourceLoadInfo:
-        wrapper = [_WKResourceLoadInfo alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKResourceLoadInfo alloc];
         break;
             
     case Type::ResourceLoadStatisticsFirstParty:
-        wrapper = [_WKResourceLoadStatisticsFirstParty alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKResourceLoadStatisticsFirstParty alloc];
         break;
 
     case Type::ResourceLoadStatisticsThirdParty:
-        wrapper = [_WKResourceLoadStatisticsThirdParty alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKResourceLoadStatisticsThirdParty alloc];
         break;
 
     case Type::ContentWorld:
-        wrapper = [WKContentWorld alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKContentWorld alloc];
         break;
 
     case Type::TargetedElementInfo:
-        wrapper = [_WKTargetedElementInfo alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKTargetedElementInfo alloc];
         break;
 
     case Type::TargetedElementRequest:
-        wrapper = [_WKTargetedElementRequest alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKTargetedElementRequest alloc];
         break;
 
     case Type::TextRun:
-        wrapper = [_WKTextRun alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKTextRun alloc];
         break;
 
     case Type::UserInitiatedAction:
-        wrapper = [_WKUserInitiatedAction alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKUserInitiatedAction alloc];
         break;
 
     case Type::UserScript:
-        wrapper = [WKUserScript alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKUserScript alloc];
         break;
 
     case Type::UserStyleSheet:
-        wrapper = [_WKUserStyleSheet alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKUserStyleSheet alloc];
         break;
 
     case Type::VisitedLinkStore:
-        wrapper = [_WKVisitedLinkStore alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKVisitedLinkStore alloc];
         break;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
     case Type::WebExtension:
-        wrapper = [WKWebExtension alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebExtension alloc];
         break;
 
     case Type::WebExtensionContext:
-        wrapper = [WKWebExtensionContext alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebExtensionContext alloc];
         break;
 
     case Type::WebExtensionAction:
-        wrapper = [WKWebExtensionAction alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebExtensionAction alloc];
         break;
 
     case Type::WebExtensionCommand:
-        wrapper = [WKWebExtensionCommand alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebExtensionCommand alloc];
         break;
 
     case Type::WebExtensionController:
-        wrapper = [WKWebExtensionController alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebExtensionController alloc];
         break;
 
     case Type::WebExtensionControllerConfiguration:
-        wrapper = [WKWebExtensionControllerConfiguration alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebExtensionControllerConfiguration alloc];
         break;
 
     case Type::WebExtensionDataRecord:
-        wrapper = [WKWebExtensionDataRecord alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebExtensionDataRecord alloc];
         break;
 
     case Type::WebExtensionMatchPattern:
-        wrapper = [WKWebExtensionMatchPattern alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebExtensionMatchPattern alloc];
         break;
 
     case Type::WebExtensionMessagePort:
-        wrapper = [WKWebExtensionMessagePort alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebExtensionMessagePort alloc];
         break;
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
     case Type::WebExtensionSidebar:
-        wrapper = [_WKWebExtensionSidebar alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKWebExtensionSidebar alloc];
         break;
 #endif
 #endif // ENABLE(WK_WEB_EXTENSIONS)
 
     case Type::WebPushDaemonConnection:
-        wrapper = [_WKWebPushDaemonConnection alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKWebPushDaemonConnection alloc];
         break;
 
     case Type::WebPushMessage:
-        wrapper = [_WKWebPushMessage alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKWebPushMessage alloc];
         break;
 
     case Type::WebPushSubscriptionData:
-        wrapper = [_WKWebPushSubscriptionData alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKWebPushSubscriptionData alloc];
         break;
 
     case Type::WebsiteDataRecord:
-        wrapper = [WKWebsiteDataRecord alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebsiteDataRecord alloc];
         break;
 
     case Type::WebsiteDataStore:
-        wrapper = [WKWebsiteDataStore alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebsiteDataStore alloc];
         break;
         
     case Type::WebsiteDataStoreConfiguration:
-        wrapper = [_WKWebsiteDataStoreConfiguration alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKWebsiteDataStoreConfiguration alloc];
         break;
 
     case Type::WebsitePolicies:
-        wrapper = [WKWebpagePreferences alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebpagePreferences alloc];
         break;
 
     case Type::WindowFeatures:
-        wrapper = [WKWindowFeatures alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWindowFeatures alloc];
         break;
 
 #if ENABLE(WEB_AUTHN)
     case Type::WebAuthenticationPanel:
-        wrapper = [_WKWebAuthenticationPanel alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKWebAuthenticationPanel alloc];
         break;
     case Type::WebAuthenticationAssertionResponse:
-        wrapper = [_WKWebAuthenticationAssertionResponse alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKWebAuthenticationAssertionResponse alloc];
         break;
 #endif
 
     case Type::BundleFrame:
-        wrapper = [WKWebProcessPlugInFrame alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebProcessPlugInFrame alloc];
         break;
 
     case Type::BundleHitTestResult:
-        wrapper = [WKWebProcessPlugInHitTestResult alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebProcessPlugInHitTestResult alloc];
         break;
 
     case Type::BundleCSSStyleDeclarationHandle:
-        wrapper = [WKWebProcessPlugInCSSStyleDeclarationHandle alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebProcessPlugInCSSStyleDeclarationHandle alloc];
         break;
 
     case Type::BundleNodeHandle:
-        wrapper = [WKWebProcessPlugInNodeHandle alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebProcessPlugInNodeHandle alloc];
         break;
 
     case Type::BundleRangeHandle:
-        wrapper = [WKWebProcessPlugInRangeHandle alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebProcessPlugInRangeHandle alloc];
         break;
 
     case Type::BundleScriptWorld:
-        wrapper = [WKWebProcessPlugInScriptWorld alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKWebProcessPlugInScriptWorld alloc];
+        break;
+
+    case Type::ScriptMessage:
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKScriptMessage alloc];
+        break;
+
+    case Type::SerializedNode:
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKSerializedNode alloc];
+        break;
+
+    case Type::JSHandle:
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKJSHandle alloc];
         break;
 
     default:
-        wrapper = allocateWKObject([WKObject class], size);
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = allocateWKObject([WKObject class], size);
         break;
     }
 

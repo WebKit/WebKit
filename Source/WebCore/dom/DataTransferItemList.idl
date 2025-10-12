@@ -32,7 +32,6 @@
 [
     EnabledBySetting=DataTransferItemsEnabled,
     JSGenerateToNativeObject,
-    JSGenerateToJSObject,
     Exposed=Window
 ] interface DataTransferItemList {
     readonly attribute long length;

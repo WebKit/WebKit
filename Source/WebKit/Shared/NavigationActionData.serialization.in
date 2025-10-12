@@ -39,7 +39,7 @@ struct WebKit::NavigationActionData {
     bool hasOpener;
     bool isPerformingHTTPFallback;
     bool isInitialFrameSrcLoad;
-    bool isContentExtensionRedirect;
+    bool isContentRuleListRedirect;
     String openedMainFrameName;
     WebCore::SecurityOriginData requesterOrigin;
     WebCore::SecurityOriginData requesterTopOrigin;
@@ -49,6 +49,7 @@ struct WebKit::NavigationActionData {
     WebCore::LockBackForwardList lockBackForwardList;
     String clientRedirectSourceForHistory;
     WebCore::SandboxFlags effectiveSandboxFlags;
+    WebCore::ReferrerPolicy effectiveReferrerPolicy;
     std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy;
     std::optional<WebCore::PrivateClickMeasurement> privateClickMeasurement;
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
@@ -62,4 +63,5 @@ struct WebKit::NavigationActionData {
     std::optional<WebCore::NavigationIdentifier> navigationID;
     WebCore::ResourceRequest originalRequest;
     [EncodeRequestBody] WebCore::ResourceRequest request;
+    String invalidURLString;
 };

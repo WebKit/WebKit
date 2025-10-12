@@ -31,8 +31,8 @@
 /* These need to be included first. */
 #include "pas_thread.h"
 #if defined(__has_include)
-#if __has_include(<System/pthread_machdep.h>)
-#include <System/pthread_machdep.h>
+#if __has_include(<pthread/tsd_private.h>)
+#include <pthread/tsd_private.h>
 #define PAS_HAVE_PTHREAD_MACHDEP_H 1
 #else
 #define PAS_HAVE_PTHREAD_MACHDEP_H 0
@@ -56,6 +56,10 @@ PAS_IGNORE_CLANG_WARNINGS_BEGIN("qualifier-requires-header")
 
 #define PAS_BEGIN_EXTERN_C __PAS_BEGIN_EXTERN_C
 #define PAS_END_EXTERN_C __PAS_END_EXTERN_C
+
+#if defined(PAS_BMALLOC) && PAS_BMALLOC
+#include "pas_mte_config.h"
+#endif // defined(PAS_BMALLOC) && PAS_BMALLOC
 
 #if defined(PAS_BMALLOC) && PAS_BMALLOC
 #if defined(__has_include)
@@ -202,14 +206,9 @@ PAS_BEGIN_EXTERN_C;
 #ifndef PAS_PROFILE
 #define PAS_PROFILE(kind, ...) PAS_UNUSED_V(__VA_ARGS__)
 #endif
-
-static PAS_ALWAYS_INLINE void pas_zero_memory(void* memory, size_t size)
-{
-    PAS_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    PAS_PROFILE(ZERO_MEMORY, memory, size);
-    memset(memory, 0, size);
-    PAS_ALLOW_UNSAFE_BUFFER_USAGE_END
-}
+#ifndef PAS_SHOULD_PROFILE_BASIC_HEAP_PAGE
+#define PAS_SHOULD_PROFILE_BASIC_HEAP_PAGE(size_category) (false)
+#endif
 
 /* NOTE: panic format string must have \n at the end. */
 PAS_API PAS_NO_RETURN void pas_panic(const char* format, ...) PAS_FORMAT_PRINTF(1, 2);
@@ -283,6 +282,8 @@ static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer(
     pas_assertion_failed(filename, line, function, expression);
 }
 
+PAS_IGNORE_WARNINGS_END
+
 #if PAS_OS(DARWIN) && PAS_VA_OPT_SUPPORTED
 
 /* FIXME: Consider whether it makes sense to capture the filename, function, and expression
@@ -310,6 +311,8 @@ PAS_NEVER_INLINE void pas_report_assertion_failed(
 #define PAS_REPORT_ASSERTION_FAILED(filename, line, function, expression) \
     PAS_UNUSED_ASSERTION_FAILED_ARGS(filename, line, function, expression)
 #endif
+
+PAS_IGNORE_WARNINGS_BEGIN("missing-noreturn")
 
 static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer1(
     const char* filename, int line, const char* function, const char* expression, uint64_t misc1)

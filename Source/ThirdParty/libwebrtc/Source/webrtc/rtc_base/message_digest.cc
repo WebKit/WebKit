@@ -10,16 +10,16 @@
 
 #include "rtc_base/message_digest.h"
 
-#include <string.h>
-
 #include <cstdint>
+#include <cstring>
 #include <memory>
+#include <string>
 
 #include "absl/strings/string_view.h"
 #include "rtc_base/openssl_digest.h"
 #include "rtc_base/string_encode.h"
 
-namespace rtc {
+namespace webrtc {
 
 // From RFC 4572.
 const char DIGEST_MD5[] = "md5";
@@ -180,4 +180,4 @@ std::string ComputeHmac(absl::string_view alg,
   return output;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

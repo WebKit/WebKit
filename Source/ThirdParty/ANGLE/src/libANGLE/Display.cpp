@@ -8,6 +8,10 @@
 // display on which graphics are drawn. Implements EGLDisplay.
 // [EGL 1.4] section 2.1.2 page 3.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/Display.h"
 
 #include <algorithm>
@@ -423,8 +427,13 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
             break;
 
 #    elif defined(ANGLE_PLATFORM_LINUX)
-#        if defined(ANGLE_USE_GBM)
+#        if defined(ANGLE_USE_GBM) || defined(ANGLE_USE_WAYLAND)
             if (platformType == 0)
+            {
+                impl = new rx::DisplayEGL(state);
+                break;
+            }
+            if (platformType == EGL_PLATFORM_GBM_KHR)
             {
                 impl = new rx::DisplayEGL(state);
                 break;
@@ -469,8 +478,13 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
 #    if defined(ANGLE_PLATFORM_WINDOWS)
             impl = new rx::DisplayWGL(state);
 #    elif defined(ANGLE_PLATFORM_LINUX)
-#        if defined(ANGLE_USE_GBM)
+#        if defined(ANGLE_USE_GBM) || defined(ANGLE_USE_WAYLAND)
             if (platformType == 0)
+            {
+                impl = new rx::DisplayEGL(state);
+                break;
+            }
+            if (platformType == EGL_PLATFORM_GBM_KHR)
             {
                 impl = new rx::DisplayEGL(state);
                 break;
@@ -2128,7 +2142,7 @@ static ClientExtensions GenerateClientExtensions()
     extensions.platformDevice   = true;
 #endif
 
-#if defined(ANGLE_USE_GBM)
+#if defined(ANGLE_USE_GBM) || defined(ANGLE_USE_WAYLAND)
     extensions.platformGbmKHR = true;
 #endif
 
@@ -2289,7 +2303,7 @@ Error Display::validateImageClientBuffer(const gl::Context *context,
     return mImplementation->validateImageClientBuffer(context, target, clientBuffer, attribs);
 }
 
-Error Display::valdiatePixmap(const Config *config,
+Error Display::validatePixmap(const Config *config,
                               EGLNativePixmapType pixmap,
                               const AttributeMap &attributes) const
 {

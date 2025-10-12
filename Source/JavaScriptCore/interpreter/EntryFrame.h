@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "StackAlignment.h"
-#include "VMEntryRecord.h"
+#include <JavaScriptCore/StackAlignment.h>
+#include <JavaScriptCore/VMEntryRecord.h>
 
 namespace JSC {
 

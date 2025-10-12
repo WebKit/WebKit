@@ -29,10 +29,9 @@
 
 #pragma once
 
-#include "BackForwardItemIdentifier.h"
-#include "FrameLoader.h"
-#include "HistoryItem.h"
-#include "ProcessSwapDisposition.h"
+#include <WebCore/BackForwardItemIdentifier.h>
+#include <WebCore/FrameLoader.h>
+#include <WebCore/ProcessSwapDisposition.h>
 
 namespace WebCore {
 
@@ -49,7 +48,7 @@ struct StringWithDirection;
 
 class HistoryController final : public CanMakeWeakPtr<HistoryController>  {
     WTF_MAKE_NONCOPYABLE(HistoryController);
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(HistoryController, Loader);
 public:
     enum HistoryUpdateType { UpdateAll, UpdateAllExceptBackForwardList };
 
@@ -71,7 +70,7 @@ public:
     void invalidateCurrentItemCachedPage();
 
     void updateForBackForwardNavigation();
-    void updateForReload();
+    void updateForReloadOrReplace();
     void updateForStandardLoad(HistoryUpdateType updateType = UpdateAll);
     void updateForRedirectWithLockedBackForwardList();
     void updateForClientRedirect();
@@ -119,7 +118,7 @@ private:
     enum class ForNavigationAPI : bool { No, Yes };
     void recursiveSetProvisionalItem(HistoryItem&, HistoryItem*, ForNavigationAPI = ForNavigationAPI::No);
     void recursiveGoToItem(HistoryItem&, HistoryItem*, FrameLoadType, ShouldTreatAsContinuingLoad);
-    bool isReplaceLoadTypeWithProvisionalItem(FrameLoadType);
+    bool isMultipartReplaceLoadTypeWithProvisionalItem(FrameLoadType);
     bool isReloadTypeWithProvisionalItem(FrameLoadType);
     void recursiveUpdateForCommit();
     void recursiveUpdateForSameDocumentNavigation();

@@ -10,11 +10,12 @@
 
 #include "modules/audio_processing/agc/utility.h"
 
-#include <math.h>
+#include <cmath>
+#include <numbers>
 
 namespace webrtc {
 
-static const double kLog10 = 2.30258509299;
+static const double kLog10 = std::numbers::ln10;
 static const double kLinear2DbScale = 20.0 / kLog10;
 static const double kLinear2LoudnessScale = 13.4 / kLog10;
 

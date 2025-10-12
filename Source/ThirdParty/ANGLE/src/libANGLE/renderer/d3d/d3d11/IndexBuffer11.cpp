@@ -6,6 +6,10 @@
 
 // IndexBuffer11.cpp: Defines the D3D11 IndexBuffer implementation.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d11/IndexBuffer11.h"
 
 #include "libANGLE/Context.h"

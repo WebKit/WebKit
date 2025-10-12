@@ -46,7 +46,7 @@ SystemFallbackFontCache& SystemFallbackFontCache::forCurrentThread()
 
 SystemFallbackFontCache* SystemFallbackFontCache::forCurrentThreadIfExists()
 {
-    auto* cache = FontCache::forCurrentThreadIfExists();
+    CheckedPtr cache = FontCache::forCurrentThreadIfExists();
     if (!cache)
         return nullptr;
 
@@ -82,7 +82,7 @@ RefPtr<Font> SystemFallbackFontCache::systemFallbackFontForCharacterCluster(cons
         RefPtr fallbackFont = FontCache::forCurrentThread()->systemFallbackForCharacterCluster(description, *font, isForPlatformFont, FontCache::PreferColoredFont::No, stringBuilder);
         if (fallbackFont)
             fallbackFont->setIsUsedInSystemFallbackFontCache();
-        return fallbackFont.get();
+        return fallbackFont.unsafeGet();
     }).iterator->value;
 }
 

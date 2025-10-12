@@ -395,17 +395,17 @@ OWN PROPERTIES:
     __proto__
 
 DISPLAYABLE PROPERTIES:
-    prototype
     length
     name
+    prototype
     arguments
     caller
     __proto__
 
 ALL PROPERTIES:
-    prototype
     length
     name
+    prototype
     toString
     apply
     call

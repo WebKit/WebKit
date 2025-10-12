@@ -29,6 +29,7 @@
 
 #import "WKIdentityDocumentRawRequestValidator.h"
 #import <Foundation/Foundation.h>
+#import <JavaScriptCore/ConsoleMessage.h>
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/DigitalCredentialsProtocols.h>
 #import <WebCore/Document.h>
@@ -37,6 +38,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/UnvalidatedDigitalCredentialRequest.h>
 #import <WebKit/WKIdentityDocumentPresentmentMobileDocumentRequest.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import "WebKitSwiftSoftLink.h"
 
 namespace WebKit {
@@ -153,6 +155,14 @@ Vector<WebCore::ValidatedDigitalCredentialRequest> DigitalCredentials::validateR
     for (auto request : unvalidatedRequests) {
         if (!std::holds_alternative<WebCore::MobileDocumentRequest>(request)) {
             LOG(DigitalCredentials, "Incoming unvalidated request is not a supported type.");
+
+            const_cast<Document&>(document).addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(
+                MessageSource::JS,
+                MessageType::Log,
+                MessageLevel::Warning,
+                "Encountered an unsupported request protocol. The request will be ignored."_s
+            ));
+
             continue;
         }
 
@@ -163,11 +173,28 @@ Vector<WebCore::ValidatedDigitalCredentialRequest> DigitalCredentials::validateR
 
         RetainPtr iso18013Request = adoptNS([WebKit::allocWKISO18013RequestInstance() initWithEncryptionInfo:convertedEncryptionInfo.get() deviceRequest:convertedDeviceRequest.get()]);
 
-        auto validatedISORequest = [validator validateISO18013Request:iso18013Request.get() origin:convertedTopOrigin.get()];
+        NSError *error = nil;
+        auto validatedISORequest = [validator validateISO18013Request:iso18013Request.get() origin:convertedTopOrigin.get() error:&error];
+
         if (validatedISORequest) {
             auto validatedMobileDocumentRequest = buildValidatedRequest(validatedISORequest);
             auto resultVariant = WTF::Variant<WebCore::ValidatedMobileDocumentRequest, WebCore::OpenID4VPRequest>(validatedMobileDocumentRequest);
             validatedRequests.append(WTFMove(resultVariant));
+        } else if (error) {
+            RetainPtr debugDescription = dynamic_objc_cast<NSString>(error.userInfo[NSDebugDescriptionErrorKey]);
+            String errorMessage = "An error occurred validating the incoming 'org-iso-mdoc' request. The request will be ignored."_s;
+
+            if ([debugDescription length])
+                errorMessage = makeString(errorMessage, " ("_s, String(debugDescription.get()), ")"_s);
+
+            const_cast<Document&>(document).addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(
+                MessageSource::JS,
+                MessageType::Log,
+                MessageLevel::Warning,
+                errorMessage
+            ));
+
+            LOG(DigitalCredentials, "Validation failed for request: %@", error);
         }
     }
 

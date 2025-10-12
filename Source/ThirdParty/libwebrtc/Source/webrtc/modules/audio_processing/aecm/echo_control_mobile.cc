@@ -10,18 +10,20 @@
 
 #include "modules/audio_processing/aecm/echo_control_mobile.h"
 
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
 #ifdef AEC_DEBUG
-#include <stdio.h>
+#include <cstdio>
 #endif
-#include <stdlib.h>
-#include <string.h>
+
+#include "modules/audio_processing/aecm/aecm_core.h"
 
 extern "C" {
 #include "common_audio/ring_buffer.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "modules/audio_processing/aecm/aecm_defines.h"
 }
-#include "modules/audio_processing/aecm/aecm_core.h"
 
 namespace webrtc {
 
@@ -33,12 +35,12 @@ namespace {
 // The factor of 2 handles wb, and the + 1 is as a safety margin
 #define MAX_RESAMP_LEN (5 * FRAME_LEN)
 
-static const size_t kBufSizeSamp =
+const size_t kBufSizeSamp =
     BUF_SIZE_FRAMES * FRAME_LEN;  // buffer size (samples)
-static const int kSampMsNb = 8;   // samples per ms in nb
+const int kSampMsNb = 8;          // samples per ms in nb
 // Target suppression levels for nlp modes
 // log{0.001, 0.00001, 0.00000001}
-static const int kInitCheck = 42;
+const int kInitCheck = 42;
 
 typedef struct {
   int sampFreq;
@@ -95,13 +97,13 @@ void* WebRtcAecm_Create() {
   aecm->aecmCore = WebRtcAecm_CreateCore();
   if (!aecm->aecmCore) {
     WebRtcAecm_Free(aecm);
-    return NULL;
+    return nullptr;
   }
 
   aecm->farendBuf = WebRtc_CreateBuffer(kBufSizeSamp, sizeof(int16_t));
   if (!aecm->farendBuf) {
     WebRtcAecm_Free(aecm);
-    return NULL;
+    return nullptr;
   }
 
 #ifdef AEC_DEBUG
@@ -121,7 +123,7 @@ void* WebRtcAecm_Create() {
 void WebRtcAecm_Free(void* aecmInst) {
   AecMobile* aecm = static_cast<AecMobile*>(aecmInst);
 
-  if (aecm == NULL) {
+  if (aecm == nullptr) {
     return;
   }
 
@@ -145,7 +147,7 @@ int32_t WebRtcAecm_Init(void* aecmInst, int32_t sampFreq) {
   AecMobile* aecm = static_cast<AecMobile*>(aecmInst);
   AecmConfig aecConfig;
 
-  if (aecm == NULL) {
+  if (aecm == nullptr) {
     return -1;
   }
 
@@ -199,10 +201,10 @@ int32_t WebRtcAecm_GetBufferFarendError(void* aecmInst,
                                         size_t nrOfSamples) {
   AecMobile* aecm = static_cast<AecMobile*>(aecmInst);
 
-  if (aecm == NULL)
+  if (aecm == nullptr)
     return -1;
 
-  if (farend == NULL)
+  if (farend == nullptr)
     return AECM_NULL_POINTER_ERROR;
 
   if (aecm->initFlag != kInitCheck)
@@ -251,15 +253,15 @@ int32_t WebRtcAecm_Process(void* aecmInst,
   short msInAECBuf;
 #endif
 
-  if (aecm == NULL) {
+  if (aecm == nullptr) {
     return -1;
   }
 
-  if (nearendNoisy == NULL) {
+  if (nearendNoisy == nullptr) {
     return AECM_NULL_POINTER_ERROR;
   }
 
-  if (out == NULL) {
+  if (out == nullptr) {
     return AECM_NULL_POINTER_ERROR;
   }
 
@@ -285,7 +287,7 @@ int32_t WebRtcAecm_Process(void* aecmInst,
   nBlocks10ms = nFrames / aecm->aecmCore->mult;
 
   if (aecm->ECstartup) {
-    if (nearendClean == NULL) {
+    if (nearendClean == nullptr) {
       if (out != nearendNoisy) {
         memcpy(out, nearendNoisy, sizeof(short) * nrOfSamples);
       }
@@ -362,7 +364,7 @@ int32_t WebRtcAecm_Process(void* aecmInst,
     // Note only 1 block supported for nb and 2 blocks for wb
     for (i = 0; i < nFrames; i++) {
       int16_t farend[FRAME_LEN];
-      const int16_t* farend_ptr = NULL;
+      const int16_t* farend_ptr = nullptr;
 
       nmbrOfFilledBuffers =
           (short)WebRtc_available_read(aecm->farendBuf) / FRAME_LEN;
@@ -393,7 +395,7 @@ int32_t WebRtcAecm_Process(void* aecmInst,
        &out[FRAME_LEN * i], aecm->knownDelay);*/
       if (WebRtcAecm_ProcessFrame(
               aecm->aecmCore, farend_ptr, &nearendNoisy[FRAME_LEN * i],
-              (nearendClean ? &nearendClean[FRAME_LEN * i] : NULL),
+              (nearendClean ? &nearendClean[FRAME_LEN * i] : nullptr),
               &out[FRAME_LEN * i]) == -1)
         return -1;
     }
@@ -412,7 +414,7 @@ int32_t WebRtcAecm_Process(void* aecmInst,
 int32_t WebRtcAecm_set_config(void* aecmInst, AecmConfig config) {
   AecMobile* aecm = static_cast<AecMobile*>(aecmInst);
 
-  if (aecm == NULL) {
+  if (aecm == nullptr) {
     return -1;
   }
 
@@ -486,10 +488,10 @@ int32_t WebRtcAecm_InitEchoPath(void* aecmInst,
   AecMobile* aecm = static_cast<AecMobile*>(aecmInst);
   const int16_t* echo_path_ptr = static_cast<const int16_t*>(echo_path);
 
-  if (aecmInst == NULL) {
+  if (aecmInst == nullptr) {
     return -1;
   }
-  if (echo_path == NULL) {
+  if (echo_path == nullptr) {
     return AECM_NULL_POINTER_ERROR;
   }
   if (size_bytes != WebRtcAecm_echo_path_size_bytes()) {
@@ -511,10 +513,10 @@ int32_t WebRtcAecm_GetEchoPath(void* aecmInst,
   AecMobile* aecm = static_cast<AecMobile*>(aecmInst);
   int16_t* echo_path_ptr = static_cast<int16_t*>(echo_path);
 
-  if (aecmInst == NULL) {
+  if (aecmInst == nullptr) {
     return -1;
   }
-  if (echo_path == NULL) {
+  if (echo_path == nullptr) {
     return AECM_NULL_POINTER_ERROR;
   }
   if (size_bytes != WebRtcAecm_echo_path_size_bytes()) {

@@ -31,6 +31,7 @@
 #include "GraphicsContext.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderObjectInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -44,6 +45,11 @@ RenderMathMLSpace::RenderMathMLSpace(MathMLSpaceElement& element, RenderStyle&& 
 }
 
 RenderMathMLSpace::~RenderMathMLSpace() = default;
+
+MathMLSpaceElement& RenderMathMLSpace::element() const
+{
+    return static_cast<MathMLSpaceElement&>(nodeForNonAnonymous());
+}
 
 void RenderMathMLSpace::computePreferredLogicalWidths()
 {
@@ -101,10 +107,6 @@ void RenderMathMLSpace::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
     applySizeToMathContent(LayoutPhase::Layout, sizes);
 
     adjustLayoutForBorderAndPadding();
-
-    updateScrollInfoAfterLayout();
-
-    clearNeedsLayout();
 }
 
 std::optional<LayoutUnit> RenderMathMLSpace::firstLineBaseline() const

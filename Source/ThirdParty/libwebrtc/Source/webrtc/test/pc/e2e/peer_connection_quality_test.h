@@ -10,12 +10,14 @@
 #ifndef TEST_PC_E2E_PEER_CONNECTION_QUALITY_TEST_H_
 #define TEST_PC_E2E_PEER_CONNECTION_QUALITY_TEST_H_
 
+#include <functional>
 #include <memory>
-#include <queue>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/rtp_transceiver_interface.h"
+#include "api/scoped_refptr.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/test/audio_quality_analyzer_interface.h"
 #include "api/test/metrics/metrics_logger.h"
@@ -24,17 +26,21 @@
 #include "api/test/pclf/peer_configurer.h"
 #include "api/test/peerconnection_quality_test_fixture.h"
 #include "api/test/time_controller.h"
+#include "api/test/video_quality_analyzer_interface.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_annotations.h"
-#include "system_wrappers/include/clock.h"
 #include "test/pc/e2e/analyzer/video/single_process_encoded_image_data_injector.h"
 #include "test/pc/e2e/analyzer/video/video_quality_analyzer_injection_helper.h"
 #include "test/pc/e2e/analyzer_helper.h"
 #include "test/pc/e2e/media/media_helper.h"
+#include "test/pc/e2e/media/test_video_capturer_video_track_source.h"
 #include "test/pc/e2e/sdp/sdp_changer.h"
 #include "test/pc/e2e/test_activities_executor.h"
 #include "test/pc/e2e/test_peer.h"
@@ -86,12 +92,9 @@ class PeerConnectionE2EQualityTest
     ~PeerHandleImpl() override = default;
   };
 
-  // For some functionality some field trials have to be enabled, they will be
-  // enabled in Run().
-  std::string GetFieldTrials(const RunParams& run_params);
   void OnTrackCallback(absl::string_view peer_name,
                        VideoSubscription peer_subscription,
-                       rtc::scoped_refptr<RtpTransceiverInterface> transceiver,
+                       scoped_refptr<RtpTransceiverInterface> transceiver,
                        std::vector<VideoConfig> remote_video_configs);
   // Have to be run on the signaling thread.
   void SetupCallOnSignalingThread(const RunParams& run_params);
@@ -99,12 +102,12 @@ class PeerConnectionE2EQualityTest
   void SetPeerCodecPreferences(TestPeer* peer);
   std::unique_ptr<SignalingInterceptor> CreateSignalingInterceptor(
       const RunParams& run_params);
-  void WaitUntilIceCandidatesGathered(rtc::Thread* signaling_thread);
-  void WaitUntilPeersAreConnected(rtc::Thread* signaling_thread);
+  void WaitUntilIceCandidatesGathered(Thread* signaling_thread);
+  void WaitUntilPeersAreConnected(Thread* signaling_thread);
   void ExchangeOfferAnswer(SignalingInterceptor* signaling_interceptor);
   void ExchangeIceCandidates(SignalingInterceptor* signaling_interceptor);
   void StartVideo(
-      const std::vector<rtc::scoped_refptr<TestVideoCapturerVideoTrackSource>>&
+      const std::vector<scoped_refptr<TestVideoCapturerVideoTrackSource>>&
           sources);
   void TearDownCall();
   void ReportGeneralTestResults();
@@ -116,7 +119,7 @@ class PeerConnectionE2EQualityTest
   std::unique_ptr<VideoQualityAnalyzerInjectionHelper>
       video_quality_analyzer_injection_helper_;
   std::unique_ptr<MediaHelper> media_helper_;
-  std::unique_ptr<EncodedImageDataPropagator> encoded_image_data_propagator_;
+  SingleProcessEncodedImageDataInjector encoded_image_data_propagator_;
   std::unique_ptr<AudioQualityAnalyzerInterface> audio_quality_analyzer_;
   std::unique_ptr<TestActivitiesExecutor> executor_;
   test::MetricsLogger* const metrics_logger_;
@@ -129,11 +132,11 @@ class PeerConnectionE2EQualityTest
   std::vector<std::unique_ptr<QualityMetricsReporter>>
       quality_metrics_reporters_;
 
-  std::vector<rtc::scoped_refptr<TestVideoCapturerVideoTrackSource>>
+  std::vector<scoped_refptr<TestVideoCapturerVideoTrackSource>>
       alice_video_sources_;
-  std::vector<rtc::scoped_refptr<TestVideoCapturerVideoTrackSource>>
+  std::vector<scoped_refptr<TestVideoCapturerVideoTrackSource>>
       bob_video_sources_;
-  std::vector<std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>>>
+  std::vector<std::unique_ptr<VideoSinkInterface<VideoFrame>>>
       output_video_sinks_;
   AnalyzerHelper analyzer_helper_;
 

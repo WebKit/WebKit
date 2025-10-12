@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/UniqueRef.h>
 
@@ -80,6 +81,8 @@ private:
 
     void buildTreeForInlineContent();
     void buildTreeForFlexContent();
+    void buildTreeForGridContent();
+
     void insertChild(UniqueRef<Layout::Box>, RenderObject&, const RenderObject* beforeChild = nullptr);
 
     RenderBlock& m_rootRenderer;

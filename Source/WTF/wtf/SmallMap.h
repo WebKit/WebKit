@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <utility>
+#include <variant>
+
 #include <wtf/HashMap.h>
 #include <wtf/ScopedLambda.h>
 #include <wtf/StdLibExtras.h>
@@ -37,7 +40,7 @@ template<typename Key, typename Value>
 class SmallMap {
 public:
     using Pair = KeyValuePair<Key, Value>;
-    using Map = UncheckedKeyHashMap<Key, Value>;
+    using Map = HashMap<Key, Value>;
     using Storage = Variant<std::monostate, Pair, Map>;
 
     static_assert(sizeof(Pair) <= 4 * sizeof(uint64_t), "Don't use SmallMap with large types. It probably wastes memory.");

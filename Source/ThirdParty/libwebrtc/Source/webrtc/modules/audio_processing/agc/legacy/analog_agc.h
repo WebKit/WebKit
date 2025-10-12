@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_PROCESSING_AGC_LEGACY_ANALOG_AGC_H_
 #define MODULES_AUDIO_PROCESSING_AGC_LEGACY_ANALOG_AGC_H_
 
+#include <cstdint>
+
 #include "modules/audio_processing/agc/legacy/digital_agc.h"
 #include "modules/audio_processing/agc/legacy/gain_control.h"
 

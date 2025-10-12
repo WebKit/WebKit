@@ -1,0 +1,4 @@
+
+PASS No violation reported for Worker constructor with TrustedScriptURL.
+PASS Violation report for Worker constructor with plain string.
+

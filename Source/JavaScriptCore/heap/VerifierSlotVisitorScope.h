@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Heap.h"
-#include "VerifierSlotVisitor.h"
+#include <JavaScriptCore/Heap.h>
+#include <JavaScriptCore/VerifierSlotVisitor.h>
 
 namespace JSC {
 

@@ -11,15 +11,22 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_QUALITY_TEST_H_
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_QUALITY_TEST_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <fstream>
 #include <memory>
+#include <set>
 
+#include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/neteq/neteq.h"
+#include "api/rtp_headers.h"
+#include "api/scoped_refptr.h"
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "modules/audio_coding/neteq/tools/rtp_generator.h"
-#include "system_wrappers/include/clock.h"
+#include "rtc_base/buffer.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -96,13 +103,12 @@ class FixedLossModel : public LossModel {
 
 class NetEqQualityTest : public ::testing::Test {
  protected:
-  NetEqQualityTest(
-      int block_duration_ms,
-      int in_sampling_khz,
-      int out_sampling_khz,
-      const SdpAudioFormat& format,
-      const rtc::scoped_refptr<AudioDecoderFactory>& decoder_factory =
-          webrtc::CreateBuiltinAudioDecoderFactory());
+  NetEqQualityTest(int block_duration_ms,
+                   int in_sampling_khz,
+                   int out_sampling_khz,
+                   const SdpAudioFormat& format,
+                   const scoped_refptr<AudioDecoderFactory>& decoder_factory =
+                       webrtc::CreateBuiltinAudioDecoderFactory());
   ~NetEqQualityTest() override;
 
   void SetUp() override;
@@ -114,7 +120,7 @@ class NetEqQualityTest : public ::testing::Test {
   // 3. returns the length of the payload (in bytes),
   virtual int EncodeBlock(int16_t* in_data,
                           size_t block_size_samples,
-                          rtc::Buffer* payload,
+                          Buffer* payload,
                           size_t max_bytes) = 0;
 
   // PacketLost(...) determines weather a packet sent at an indicated time gets
@@ -163,7 +169,7 @@ class NetEqQualityTest : public ::testing::Test {
   std::unique_ptr<LossModel> loss_model_;
 
   std::unique_ptr<int16_t[]> in_data_;
-  rtc::Buffer payload_;
+  Buffer payload_;
   AudioFrame out_frame_;
   RTPHeader rtp_header_;
 

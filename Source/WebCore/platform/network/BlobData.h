@@ -31,9 +31,9 @@
 #ifndef BlobData_h
 #define BlobData_h
 
-#include "BlobDataFileReference.h"
-#include "PolicyContainer.h"
-#include "SharedBuffer.h"
+#include <WebCore/BlobDataFileReference.h>
+#include <WebCore/PolicyContainer.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>

@@ -11,8 +11,7 @@
 #ifndef RTC_TOOLS_RTC_EVENT_LOG_VISUALIZER_ALERTS_H_
 #define RTC_TOOLS_RTC_EVENT_LOG_VISUALIZER_ALERTS_H_
 
-#include <stdio.h>
-
+#include <cstdio>
 #include <functional>
 #include <map>
 #include <string>

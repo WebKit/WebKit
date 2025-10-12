@@ -33,6 +33,7 @@
 #include "pas_bitfit_view.h"
 #include "pas_epoch.h"
 #include "pas_log.h"
+#include "pas_zero_memory.h"
 
 void pas_bitfit_page_construct(pas_bitfit_page* page,
                                pas_bitfit_view* view,

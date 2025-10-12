@@ -45,6 +45,7 @@
 #include "AudioWorkletNodeOptions.h"
 #include "AudioWorkletProcessor.h"
 #include "BaseAudioContext.h"
+#include "ContextDestructionObserverInlines.h"
 #include "ErrorEvent.h"
 #include "EventNames.h"
 #include "JSAudioWorkletNodeOptions.h"
@@ -83,7 +84,7 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject&
     if (!context.scriptExecutionContext())
         return Exception { ExceptionCode::InvalidStateError, "Audio context's frame is detached"_s };
 
-    auto messageChannel = MessageChannel::create(*context.scriptExecutionContext());
+    auto messageChannel = MessageChannel::create(*context.protectedScriptExecutionContext());
     auto& nodeMessagePort = messageChannel->port1();
     auto& processorMessagePort = messageChannel->port2();
 
@@ -186,7 +187,7 @@ void AudioWorkletNode::setProcessor(RefPtr<AudioWorkletProcessor>&& processor)
     if (processor) {
         Locker locker { m_processLock };
         m_processor = WTFMove(processor);
-        m_workletThread = &Thread::currentSingleton();
+        m_workletThread = Thread::currentSingleton();
     } else
         fireProcessorErrorOnMainThread(ProcessorError::ConstructorError);
 }

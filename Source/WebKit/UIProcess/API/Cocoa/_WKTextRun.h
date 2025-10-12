@@ -29,7 +29,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 NS_SWIFT_SENDABLE
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_CLASS_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
 @interface _WKTextRun : NSObject
 
 @property (nonatomic, readonly, copy) NSString *text;

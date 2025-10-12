@@ -2,9 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-object-shell.js, deepEqual.js]
-flags:
-  - noStrict
+includes: [compareArray.js]
 description: |
   pending
 esid: pending
@@ -29,9 +27,9 @@ function logProxy(object = {}, handler = {}) {
 
 var {proxy, log} = logProxy();
 Object.freeze(proxy);
-assert.deepEqual(log, ["preventExtensions", "ownKeys"]);
+assert.compareArray(log, ["preventExtensions", "ownKeys"]);
 
 var {proxy, log} = logProxy();
 Object.freeze(Object.freeze(proxy));
-assert.deepEqual(log, ["preventExtensions", "ownKeys", "preventExtensions", "ownKeys"]);
+assert.compareArray(log, ["preventExtensions", "ownKeys", "preventExtensions", "ownKeys"]);
 

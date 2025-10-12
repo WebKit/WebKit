@@ -2,7 +2,7 @@
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (c) 2000 Daniel Molkentin (molkentin@kde.org)
  *  Copyright (c) 2000 Stefan Schimanski (schimmi@kde.org)
- *  Copyright (C) 2003-2025 Apple Inc.
+ *  Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  *  Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  *  This library is free software; you can redistribute it and/or
@@ -30,29 +30,34 @@
 #include "DOMMimeTypeArray.h"
 #include "DOMPlugin.h"
 #include "DOMPluginArray.h"
-#include "Document.h"
-#include "DocumentInlines.h"
+#include "DocumentPage.h"
+#include "DocumentQuirks.h"
+#include "FrameInlines.h"
 #include "FrameLoader.h"
 #include "GPU.h"
 #include "Geolocation.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LoaderStrategy.h"
-#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameLoaderClient.h"
 #include "LocalizedStrings.h"
-#include "Page.h"
+#include "NavigatorUAData.h"
 #include "PermissionsPolicy.h"
 #include "PlatformStrategies.h"
 #include "PluginData.h"
-#include "Quirks.h"
 #include "ResourceLoadObserver.h"
 #include "ScriptController.h"
+#include "ScriptWrappableInlines.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "ShareData.h"
 #include "ShareDataReader.h"
 #include "SharedBuffer.h"
+#include "UserAgentStringData.h"
+#include "UserAgentStringParser.h"
+#include "inspector/InspectorInstrumentation.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <optional>
 #include <wtf/Language.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
@@ -77,7 +82,7 @@ String Navigator::appVersion() const
     if (!frame)
         return String();
     if (frame->settings().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::AppVersion);
+        ResourceLoadObserver::singleton().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::AppVersion);
     return NavigatorBase::appVersion();
 }
 
@@ -87,12 +92,12 @@ const String& Navigator::userAgent() const
     if (!frame || !frame->page())
         return m_userAgent;
     if (frame->settings().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::UserAgent);
+        ResourceLoadObserver::singleton().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::UserAgent);
     if (m_userAgent.isNull())
         m_userAgent = frame->loader().userAgent(frame->document()->url());
     return m_userAgent;
 }
-    
+
 String Navigator::platform() const
 {
     RefPtr frame = this->frame();
@@ -101,7 +106,7 @@ String Navigator::platform() const
 
     if (m_platform.isNull())
         m_platform = frame->loader().navigatorPlatform();
-    
+
     if (m_platform.isNull())
         m_platform = NavigatorBase::platform();
     return m_platform;
@@ -188,7 +193,7 @@ void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPro
         if (m_loader)
             m_loader->cancel();
 
-        m_loader = ShareDataReader::create([this, promise = WTFMove(promise)] (ExceptionOr<ShareDataWithParsedURL&> readData) mutable {
+        m_loader = ShareDataReader::create([this, promise = WTFMove(promise)](ExceptionOr<ShareDataWithParsedURL&> readData) mutable {
             showShareData(readData, WTFMove(promise));
         });
         m_loader->start(&document, WTFMove(shareData));
@@ -203,7 +208,7 @@ void Navigator::showShareData(ExceptionOr<ShareDataWithParsedURL&> readData, Ref
         promise->reject(readData.releaseException());
         return;
     }
-    
+
     RefPtr frame = this->frame();
     if (!frame || !frame->page())
         return;
@@ -211,17 +216,17 @@ void Navigator::showShareData(ExceptionOr<ShareDataWithParsedURL&> readData, Ref
     m_hasPendingShare = true;
 
     if (frame->page()->isControlledByAutomation()) {
-        RunLoop::protectedMain()->dispatch([promise = WTFMove(promise), weakThis = WeakPtr { *this }] {
+        RunLoop::mainSingleton().dispatch([promise = WTFMove(promise), weakThis = WeakPtr { *this }] {
             if (weakThis)
                 weakThis->m_hasPendingShare = false;
             promise->resolve();
         });
         return;
     }
-    
+
     auto shareData = readData.returnValue();
-    
-    frame->page()->chrome().showShareSheet(WTFMove(shareData), [promise = WTFMove(promise), weakThis = WeakPtr { *this }] (bool completed) {
+
+    frame->page()->chrome().showShareSheet(WTFMove(shareData), [promise = WTFMove(promise), weakThis = WeakPtr { *this }](bool completed) {
         if (weakThis)
             weakThis->m_hasPendingShare = false;
         if (completed) {
@@ -287,7 +292,7 @@ void Navigator::initializePluginAndMimeTypeArrays()
         pdfPluginInfo.name = currentDummyName;
         pdfPluginInfo.desc = navigatorPDFDescription;
         domPlugins.append(DOMPlugin::create(*this, pdfPluginInfo));
-        
+
         // Register the copy of the PluginInfo using the generic 'PDF Viewer' name
         // as the handler for PDF MIME type to match the specification.
         if (currentDummyName == genericPDFViewerName)
@@ -301,7 +306,7 @@ void Navigator::initializePluginAndMimeTypeArrays()
 DOMPluginArray& Navigator::plugins()
 {
     if (RefPtr frame = this->frame(); frame && frame->settings().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::Plugins);
+        ResourceLoadObserver::singleton().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::Plugins);
 
     initializePluginAndMimeTypeArrays();
     return *m_plugins;
@@ -310,7 +315,7 @@ DOMPluginArray& Navigator::plugins()
 DOMMimeTypeArray& Navigator::mimeTypes()
 {
     if (RefPtr frame = this->frame(); frame && frame->settings().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::MimeTypes);
+        ResourceLoadObserver::singleton().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::MimeTypes);
 
     initializePluginAndMimeTypeArrays();
     return *m_mimeTypes;
@@ -330,7 +335,7 @@ bool Navigator::cookieEnabled() const
         return false;
 
     if (frame->settings().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::CookieEnabled);
+        ResourceLoadObserver::singleton().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::CookieEnabled);
 
     RefPtr page = frame->page();
     if (!page)
@@ -446,5 +451,25 @@ int Navigator::maxTouchPoints() const
 
     return 0;
 }
+
+NavigatorUAData& Navigator::userAgentData() const
+{
+    RefPtr frame = this->frame();
+    if (frame && frame->page()) {
+        RefPtr client = frame->loader().client();
+        if (client->hasCustomUserAgent() || (frame->document() && frame->document()->quirks().needsCustomUserAgentData())) {
+            auto userAgentString = frame->loader().userAgent({ });
+            Ref parser = UserAgentStringParser::create(userAgentString);
+            std::optional userAgentStringData = parser->parse();
+            if (userAgentStringData) {
+                m_navigatorUAData = NavigatorUAData::create(WTFMove(*userAgentStringData));
+                return *m_navigatorUAData;
+            }
+        }
+    }
+
+    m_navigatorUAData = NavigatorUAData::create();
+    return *m_navigatorUAData;
+};
 
 } // namespace WebCore

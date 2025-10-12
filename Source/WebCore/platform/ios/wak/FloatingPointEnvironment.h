@@ -27,6 +27,7 @@
 #define FloatingPointEnvironment_h
 
 #import <fenv.h>
+#import <wtf/Platform.h>
 
 namespace WebCore {
 

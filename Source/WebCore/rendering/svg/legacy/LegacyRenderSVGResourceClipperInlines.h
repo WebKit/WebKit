@@ -42,7 +42,7 @@ inline Ref<SVGClipPathElement> LegacyRenderSVGResourceClipper::protectedClipPath
 
 inline SVGUnitTypes::SVGUnitType LegacyRenderSVGResourceClipper::clipPathUnits() const
 {
-    return clipPathElement().clipPathUnits();
+    return protectedClipPathElement()->clipPathUnits();
 }
 
 } // namespace WebCore

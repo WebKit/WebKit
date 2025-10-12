@@ -8,6 +8,10 @@
 //   EXT_shader_framebuffer_fetch_non_coherent extensions.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "common/debug.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"

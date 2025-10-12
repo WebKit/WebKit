@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -157,7 +157,15 @@ NSURLAuthenticationChallenge *mac(const AuthenticationChallenge& coreChallenge)
     if (coreChallenge.nsURLAuthenticationChallenge())
         return coreChallenge.nsURLAuthenticationChallenge();
         
-    return adoptNS([[NSURLAuthenticationChallenge alloc] initWithProtectionSpace:coreChallenge.protectionSpace().nsSpace() proposedCredential:coreChallenge.proposedCredential().nsCredential() previousFailureCount:coreChallenge.previousFailureCount() failureResponse:coreChallenge.failureResponse().nsURLResponse() error:coreChallenge.error() sender:coreChallenge.sender()]).autorelease();
+    return adoptNS([[NSURLAuthenticationChallenge alloc] initWithProtectionSpace:coreChallenge.protectionSpace().protectedNSSpace().get() proposedCredential:coreChallenge.proposedCredential().protectedNSCredential().get() previousFailureCount:coreChallenge.previousFailureCount() failureResponse:coreChallenge.failureResponse().protectedNSURLResponse().get() error:coreChallenge.error().protectedNSError().get() sender:coreChallenge.protectedSender().get()]).autorelease();
+}
+
+RetainPtr<NSURLAuthenticationChallenge> protectedMac(const AuthenticationChallenge& coreChallenge)
+{
+    if (coreChallenge.nsURLAuthenticationChallenge())
+        return coreChallenge.nsURLAuthenticationChallenge();
+
+    return adoptNS([[NSURLAuthenticationChallenge alloc] initWithProtectionSpace:coreChallenge.protectionSpace().protectedNSSpace().get() proposedCredential:coreChallenge.proposedCredential().protectedNSCredential().get() previousFailureCount:coreChallenge.previousFailureCount() failureResponse:coreChallenge.failureResponse().protectedNSURLResponse().get() error:coreChallenge.error().protectedNSError().get() sender:coreChallenge.protectedSender().get()]);
 }
 
 AuthenticationChallenge core(NSURLAuthenticationChallenge *macChallenge)

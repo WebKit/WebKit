@@ -8,6 +8,10 @@
 #ifndef COMMON_VECTOR_UTILS_H_
 #define COMMON_VECTOR_UTILS_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <cmath>
 #include <cstddef>
 #include <ostream>

@@ -5,4 +5,4 @@ layer at (0,0) size 480x360
     RenderSVGContainer {g} at (0,0) size 0x0
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (135,140) size 210x199
-      RenderSVGPath {path} at (135,140) size 210x199 [fill={[type=SOLID] [color=#000000]}] [data="M 240 140 L 272.328 205.504 L 344.616 216.008 L 292.308 266.996 L 304.657 338.992 L 240 305 L 175.344 338.992 L 187.692 266.996 L 135.384 216.009 L 207.672 205.504 Z"]
+      RenderSVGPath {path} at (135,140) size 210x199 [fill={[type=SOLID] [color=#00000000]}] [data="M 240 140 L 272.328 205.504 L 344.616 216.008 L 292.308 266.996 L 304.657 338.992 L 240 305 L 175.344 338.992 L 187.692 266.996 L 135.384 216.009 L 207.672 205.504 Z"]

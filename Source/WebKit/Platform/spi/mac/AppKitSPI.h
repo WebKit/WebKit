@@ -43,6 +43,10 @@ DECLARE_SYSTEM_HEADER
 #import <AppKit/NSWindow_Private.h>
 #import <AppKit/NSScrollViewSeparatorTrackingAdapter_Private.h>
 
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+#import <AppKit/NSScrollPocket_Private.h>
+#endif
+
 #else
 
 @interface NSInspectorBar : NSObject
@@ -73,6 +77,8 @@ typedef NS_OPTIONS(NSUInteger, NSWindowShadowOptions) {
     NSWindowShadowSecondaryWindow = 0x2,
 };
 
+static const NSWindowStyleMask NSWindowStyleMaskAlertWindow = (NSWindowStyleMask)(1ull << 33ull);
+
 @interface NSWindow ()
 - (NSInspectorBar *)inspectorBar;
 - (void)setInspectorBar:(NSInspectorBar *)bar;
@@ -89,6 +95,29 @@ typedef NS_OPTIONS(NSUInteger, NSWindowShadowOptions) {
 
 @interface NSPreviewRepresentingActivityItem ()
 - (instancetype)initWithItem:(id)item linkMetadata:(LPLinkMetadata *)linkMetadata;
+@end
+
+typedef NS_ENUM(NSInteger, NSScrollPocketStyle) {
+    NSScrollPocketStyleAutomatic,
+    NSScrollPocketStyleSoft,
+    NSScrollPocketStyleHard,
+};
+
+typedef NS_ENUM(NSInteger, NSScrollPocketEdge) {
+    NSScrollPocketEdgeTop    = 0,
+    NSScrollPocketEdgeBottom = 1,
+    NSScrollPocketEdgeLeft   = 2,
+    NSScrollPocketEdgeRight  = 3,
+};
+
+@interface NSScrollPocket : NSView
+- (void)addElementContainer:(NSView *)elementContainer;
+- (void)removeElementContainer:(NSView *)elementContainer;
+@property (nonatomic) BOOL prefersSolidColorHardPocket;
+@property NSScrollPocketEdge edge;
+@property NSScrollPocketStyle style;
+@property (copy, nullable) NSColor *captureColor;
+@property (readonly, strong) NSView *captureView;
 @end
 
 #endif
@@ -116,10 +145,6 @@ typedef NS_OPTIONS(NSUInteger, NSWindowShadowOptions) {
 typedef void (^NSWindowSnapshotReadinessHandler) (void);
 - (NSWindowSnapshotReadinessHandler)_holdResizeSnapshotWithReason:(NSString *)reason;
 @end
-#endif
-
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AppKitSPIAdditions.h>)
-#import <WebKitAdditions/AppKitSPIAdditions.h>
 #endif
 
 #endif // PLATFORM(MAC)

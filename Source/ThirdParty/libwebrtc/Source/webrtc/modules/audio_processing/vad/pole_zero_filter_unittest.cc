@@ -10,14 +10,11 @@
 
 #include "modules/audio_processing/vad/pole_zero_filter.h"
 
-#include <math.h>
-#include <stdio.h>
-
+#include <cstdint>
 #include <memory>
 
 #include "modules/audio_processing/vad/vad_audio_proc_internal.h"
 #include "test/gtest.h"
-#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 

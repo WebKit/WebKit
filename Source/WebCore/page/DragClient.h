@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,16 +25,20 @@
 
 #pragma once
 
-#include "DragActions.h"
-#include "DragData.h"
-#include "DragItem.h"
-#include "FloatPoint.h"
-#include "IntPoint.h"
+#include <WebCore/DragActions.h>
+#include <WebCore/DragData.h>
+#include <WebCore/DragItem.h>
+#include <WebCore/FloatPoint.h>
+#include <WebCore/IntPoint.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
-struct ElementIdentifierType;
-using ElementIdentifier = ObjectIdentifier<ElementIdentifierType>;
+struct NodeIdentifierType;
+using NodeIdentifier = ObjectIdentifier<NodeIdentifierType>;
+
+struct FrameIdentifierType;
+using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
     
 class DataTransfer;
 class Element;
@@ -56,7 +60,7 @@ public:
     virtual void didConcludeEditDrag() { }
     virtual OptionSet<DragSourceAction> dragSourceActionMaskForPoint(const IntPoint& rootViewPoint) = 0;
     
-    virtual void startDrag(DragItem, DataTransfer&, Frame&, const std::optional<ElementIdentifier>&) = 0;
+    virtual void startDrag(DragItem, DataTransfer&, Frame&, const std::optional<NodeIdentifier>&) = 0;
     virtual void dragEnded() { }
 
     virtual void beginDrag(DragItem, LocalFrame&, const IntPoint&, const IntPoint&, DataTransfer&, DragSourceAction) { }

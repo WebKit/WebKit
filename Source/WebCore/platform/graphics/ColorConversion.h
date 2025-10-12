@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ColorTypes.h"
+#include <WebCore/ColorTypes.h>
 #include <numeric>
 #include <wtf/MathExtras.h>
 

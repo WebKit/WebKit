@@ -1,17 +1,42 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x182
-  RenderBlock {HTML} at (0,0) size 800x182
-    RenderBody {BODY} at (8,21) size 784x145
-      RenderBlock {H1} at (0,0) size 784x37
-        RenderText {#text} at (0,0) size 206x37
-          text run at (0,0) width 206: "Error response"
-      RenderBlock {P} at (0,58) size 784x19
-        RenderText {#text} at (0,0) size 101x18
-          text run at (0,0) width 101: "Error code: 404"
-      RenderBlock {P} at (0,92) size 784x19
-        RenderText {#text} at (0,0) size 160x18
-          text run at (0,0) width 160: "Message: File not found."
-      RenderBlock {P} at (0,126) size 784x19
-        RenderText {#text} at (0,0) size 556x18
-          text run at (0,0) width 556: "Error code explanation: HTTPStatus.NOT_FOUND - Nothing matches the given URI."
+
+PASS :from_orientation_metadata_file:imageName="four-colors.jpg";objectTypeFromFile="ImageBitmap-from-Blob";srcDoFlipYDuringCopy=true
+PASS :from_orientation_metadata_file:imageName="four-colors.jpg";objectTypeFromFile="ImageBitmap-from-Blob";srcDoFlipYDuringCopy=false
+PASS :from_orientation_metadata_file:imageName="four-colors.jpg";objectTypeFromFile="ImageBitmap-from-Image";srcDoFlipYDuringCopy=true
+PASS :from_orientation_metadata_file:imageName="four-colors.jpg";objectTypeFromFile="ImageBitmap-from-Image";srcDoFlipYDuringCopy=false
+PASS :from_orientation_metadata_file:imageName="four-colors.jpg";objectTypeFromFile="Image";srcDoFlipYDuringCopy=true
+PASS :from_orientation_metadata_file:imageName="four-colors.jpg";objectTypeFromFile="Image";srcDoFlipYDuringCopy=false
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-90-cw.jpg";objectTypeFromFile="ImageBitmap-from-Blob";srcDoFlipYDuringCopy=true
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-90-cw.jpg";objectTypeFromFile="ImageBitmap-from-Blob";srcDoFlipYDuringCopy=false
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-90-cw.jpg";objectTypeFromFile="ImageBitmap-from-Image";srcDoFlipYDuringCopy=true
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-90-cw.jpg";objectTypeFromFile="ImageBitmap-from-Image";srcDoFlipYDuringCopy=false
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-90-cw.jpg";objectTypeFromFile="Image";srcDoFlipYDuringCopy=true
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-90-cw.jpg";objectTypeFromFile="Image";srcDoFlipYDuringCopy=false
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-180-cw.jpg";objectTypeFromFile="ImageBitmap-from-Blob";srcDoFlipYDuringCopy=true
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-180-cw.jpg";objectTypeFromFile="ImageBitmap-from-Blob";srcDoFlipYDuringCopy=false
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-180-cw.jpg";objectTypeFromFile="ImageBitmap-from-Image";srcDoFlipYDuringCopy=true
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-180-cw.jpg";objectTypeFromFile="ImageBitmap-from-Image";srcDoFlipYDuringCopy=false
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-180-cw.jpg";objectTypeFromFile="Image";srcDoFlipYDuringCopy=true
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-180-cw.jpg";objectTypeFromFile="Image";srcDoFlipYDuringCopy=false
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-270-cw.jpg";objectTypeFromFile="ImageBitmap-from-Blob";srcDoFlipYDuringCopy=true
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-270-cw.jpg";objectTypeFromFile="ImageBitmap-from-Blob";srcDoFlipYDuringCopy=false
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-270-cw.jpg";objectTypeFromFile="ImageBitmap-from-Image";srcDoFlipYDuringCopy=true
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-270-cw.jpg";objectTypeFromFile="ImageBitmap-from-Image";srcDoFlipYDuringCopy=false
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-270-cw.jpg";objectTypeFromFile="Image";srcDoFlipYDuringCopy=true
+PASS :from_orientation_metadata_file:imageName="four-colors-rotate-270-cw.jpg";objectTypeFromFile="Image";srcDoFlipYDuringCopy=false
+PASS :from_multiple_formats:imageName="four-colors.jpg";srcDoFlipYDuringCopy=true
+PASS :from_multiple_formats:imageName="four-colors.jpg";srcDoFlipYDuringCopy=false
+PASS :from_multiple_formats:imageName="four-colors.png";srcDoFlipYDuringCopy=true
+PASS :from_multiple_formats:imageName="four-colors.png";srcDoFlipYDuringCopy=false
+PASS :from_multiple_formats:imageName="four-colors.bmp";srcDoFlipYDuringCopy=true
+PASS :from_multiple_formats:imageName="four-colors.bmp";srcDoFlipYDuringCopy=false
+PASS :from_multiple_formats:imageName="four-colors.webp";srcDoFlipYDuringCopy=true
+PASS :from_multiple_formats:imageName="four-colors.webp";srcDoFlipYDuringCopy=false
+PASS :from_multiple_formats:imageName="four-colors.gif";srcDoFlipYDuringCopy=true
+PASS :from_multiple_formats:imageName="four-colors.gif";srcDoFlipYDuringCopy=false
+PASS :from_multiple_formats:imageName="four-colors.avif";srcDoFlipYDuringCopy=true
+PASS :from_multiple_formats:imageName="four-colors.avif";srcDoFlipYDuringCopy=false
+PASS :from_multiple_formats:imageName="four-colors.ico";srcDoFlipYDuringCopy=true
+PASS :from_multiple_formats:imageName="four-colors.ico";srcDoFlipYDuringCopy=false
+PASS :from_multiple_formats:imageName="four-colors.svg";srcDoFlipYDuringCopy=true
+PASS :from_multiple_formats:imageName="four-colors.svg";srcDoFlipYDuringCopy=false
+

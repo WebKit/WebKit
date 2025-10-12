@@ -26,11 +26,11 @@
 #include "config.h"
 #include "LazyLoadImageObserver.h"
 
-#include "DocumentInlines.h"
 #include "HTMLImageElement.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
 #include "LocalFrame.h"
+#include "NodeDocument.h"
 #include <limits>
 #include <wtf/TZoneMallocInlines.h>
 

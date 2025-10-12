@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,7 +49,7 @@ RemotePresentationContextProxy::~RemotePresentationContextProxy() = default;
 
 bool RemotePresentationContextProxy::configure(const WebCore::WebGPU::CanvasConfiguration& canvasConfiguration)
 {
-    auto convertedConfiguration = protectedConvertToBackingContext()->convertToBacking(canvasConfiguration);
+    auto convertedConfiguration = m_convertToBackingContext->convertToBacking(canvasConfiguration);
     if (!convertedConfiguration)
         return false;
 
@@ -77,7 +77,7 @@ RefPtr<WebCore::WebGPU::Texture> RemotePresentationContextProxy::getCurrentTextu
         if (sendResult != IPC::Error::NoError)
             return nullptr;
 
-        m_currentTexture[frameIndex] = RemoteTextureProxy::create(protectedRoot(), protectedConvertToBackingContext(), identifier, true);
+        m_currentTexture[frameIndex] = RemoteTextureProxy::create(protectedRoot(), m_convertToBackingContext, identifier, true);
     } else
         RefPtr { m_currentTexture[frameIndex] }->undestroy();
 
@@ -95,11 +95,6 @@ void RemotePresentationContextProxy::present(uint32_t frameIndex, bool presentTo
 RefPtr<WebCore::NativeImage> RemotePresentationContextProxy::getMetalTextureAsNativeImage(uint32_t, bool&)
 {
     RELEASE_ASSERT_NOT_REACHED();
-}
-
-Ref<ConvertToBackingContext> RemotePresentationContextProxy::protectedConvertToBackingContext() const
-{
-    return m_convertToBackingContext;
 }
 
 } // namespace WebKit::WebGPU

@@ -32,10 +32,12 @@
 #import "WebPageProxy.h"
 #import <QuartzCore/CATransaction.h>
 #import <WebCore/Color.h>
+#import <pal/spi/cf/CoreTextSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/mac/NSImageSPI.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/spi/darwin/OSVariantSPI.h>
 
 //  The HUD items should have the following spacing:
@@ -117,8 +119,9 @@ static NSArray<NSString *> *controlArray()
     [self setFrame:frame];
 
     WeakObjCPtr<WKPDFHUDView> weakSelf = self;
-    WorkQueue::protectedMain()->dispatchAfter(Seconds { initialHideTimeInterval }, [weakSelf] {
-        [weakSelf _hideTimerFired];
+    WorkQueue::mainSingleton().dispatchAfter(Seconds { initialHideTimeInterval }, [weakSelf] {
+        if (RetainPtr protectedSelf = weakSelf.get())
+            [protectedSelf _hideTimerFired];
     });
     return self;
 }
@@ -241,8 +244,10 @@ static NSArray<NSString *> *controlArray()
 
 - (NSString *)_controlForEvent:(NSEvent *)event
 {
-    if (auto index = [self _controlIndexForEvent:event])
-        return controlArray()[*index];
+    if (auto index = [self _controlIndexForEvent:event]) {
+        RetainPtr array = controlArray();
+        return array.get()[*index];
+    }
     return nil;
 }
 
@@ -272,8 +277,26 @@ static NSArray<NSString *> *controlArray()
 
 - (void)_loadIconImages
 {
-    for (NSString *controlName in controlArray())
-        [self _imageForControlName:controlName];
+    WebCore::FloatSize maxIconImageSize;
+    for (NSString *controlName in controlArray()) {
+        WebCore::FloatSize iconImageSize { [self _imageForControlName:controlName].size };
+        maxIconImageSize = maxIconImageSize.expandedTo(iconImageSize);
+    }
+    [self _pinIconImagesToSize:maxIconImageSize];
+}
+
+// FIXME: <rdar://160812053> This can be removed once symbol images with the same configuration are better aligned.
+- (void)_pinIconImagesToSize:(NSSize)pinnedSize
+{
+    NSRect pinnedRect = NSMakeRect(0, 0, pinnedSize.width, pinnedSize.height);
+    for (NSString *controlName in controlArray()) {
+        RetainPtr iconImage = [_cachedIcons valueForKey:controlName];
+        if (!iconImage)
+            continue;
+        RetainPtr iconImageRep = [iconImage bestRepresentationForRect:pinnedRect context:nil hints:nil];
+        iconImage = [NSImage imageWithImageRep:iconImageRep.get()];
+        _cachedIcons.get()[controlName] = iconImage.get();
+    }
 }
 
 - (void)_setupLayer:(CALayer *)parentLayer
@@ -302,7 +325,7 @@ static NSArray<NSString *> *controlArray()
             controllerWidth = layerSeparatorControllerSize;
             controllerHeight = minIconImageHeight + (2.0 * layerImageVerticalMargin) - (2.0 * layerSeparatorVerticalMargin);
             
-            [controlLayer setBackgroundColor:[[NSColor lightGrayColor] CGColor]];
+            [controlLayer setBackgroundColor:RetainPtr { [[NSColor lightGrayColor] CGColor] }.get()];
         } else {
             RetainPtr controlImage = [self _imageForControlName:controlName];
             [controlLayer setContents:controlImage.get()];
@@ -349,11 +372,10 @@ static NSArray<NSString *> *controlArray()
     if (!iconImage)
         return nil;
 
-    iconImage = [iconImage imageWithSymbolConfiguration:[NSImageSymbolConfiguration configurationWithTextStyle:NSFontTextStyleTitle2 scale:NSImageSymbolScaleLarge]];
-        
-    NSRect iconImageRect = NSMakeRect(0, 0, [iconImage size].width * layerImageScale * _deviceScaleFactor, [iconImage size].height * layerImageScale * _deviceScaleFactor);
-    RetainPtr iconImageRep = [iconImage bestRepresentationForRect:iconImageRect context:nil hints:nil];
-    iconImage = [NSImage imageWithImageRep:iconImageRep.get()];
+    NSFontWeight weight = 0;
+    CGFloat pointSize = CTFontDescriptorGetTextStyleSize(checked_cf_cast<CFStringRef>(NSFontTextStyleTitle2), kCTFontContentSizeCategoryL, kCTFontTextStylePlatformDefault, &weight, NULL);
+    pointSize *= layerImageScale * _deviceScaleFactor;
+    iconImage = [iconImage imageWithSymbolConfiguration:[NSImageSymbolConfiguration configurationWithPointSize:pointSize weight:weight scale:NSImageSymbolScaleLarge]];
     
     _cachedIcons.get()[control] = iconImage.get();
     return iconImage.autorelease();

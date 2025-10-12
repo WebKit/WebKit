@@ -56,10 +56,10 @@ void FunctionExecutable::destroy(JSCell* cell)
 FunctionCodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKind kind)
 {
     CodeBlock* codeBlock = nullptr;
-    if (kind == CodeForCall)
+    if (kind == CodeSpecializationKind::CodeForCall)
         codeBlock = codeBlockForCall();
     else {
-        RELEASE_ASSERT(kind == CodeForConstruct);
+        RELEASE_ASSERT(kind == CodeSpecializationKind::CodeForConstruct);
         codeBlock = codeBlockForConstruct();
     }
     if (!codeBlock)
@@ -129,15 +129,14 @@ void FunctionExecutable::visitOutputConstraintsImpl(JSCell* cell, Visitor& visit
 
 DEFINE_VISIT_OUTPUT_CONSTRAINTS(FunctionExecutable);
 
-FunctionExecutable* FunctionExecutable::fromGlobalCode(
-    const Identifier& name, JSGlobalObject* globalObject, const SourceCode& source, LexicallyScopedFeatures lexicallyScopedFeatures,
-    JSObject*& exception, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition, FunctionConstructionMode functionConstructionMode)
+FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& name, JSGlobalObject* globalObject, String&& program, const SourceOrigin& sourceOrigin, SourceTaintedOrigin taintedOrigin, const String& sourceURL, const TextPosition& position, LexicallyScopedFeatures lexicallyScopedFeatures, JSObject*& exception, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition, FunctionConstructionMode functionConstructionMode)
 {
     if (overrideLineNumber == overrideLineNumberNotFound) {
-        if (auto* executable = globalObject->tryGetCachedFunctionExecutableForFunctionConstructor(name, source, lexicallyScopedFeatures, functionConstructionMode))
+        if (auto* executable = globalObject->tryGetCachedFunctionExecutableForFunctionConstructor(name, program, sourceOrigin, taintedOrigin, sourceURL, position, lexicallyScopedFeatures, functionConstructionMode))
             return executable;
     }
 
+    auto source = makeSource(WTFMove(program), sourceOrigin, taintedOrigin, sourceURL, position);
     UnlinkedFunctionExecutable* unlinkedExecutable = 
         UnlinkedFunctionExecutable::fromGlobalCode(
             name, globalObject, source, lexicallyScopedFeatures, exception, overrideLineNumber, functionConstructorParametersEndPosition);

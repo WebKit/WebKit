@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
 PASS eval with plain string with Trusted Types and permissive CSP throws (no type).
 PASS indirect eval with plain string with Trusted Types and permissive CSP throws (no type).

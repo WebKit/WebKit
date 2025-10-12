@@ -1,5 +1,5 @@
 Click me
 Click me
 
-FAIL Event Timing: eventCounts. assert_implements: Event Counts isn't supported undefined
+PASS Event Timing: eventCounts.
 

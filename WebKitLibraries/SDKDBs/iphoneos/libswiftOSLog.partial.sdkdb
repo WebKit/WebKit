@@ -1,0 +1,23 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "globals": [
+    {"access": "public", "linkage": "exported", "name": "_$sSo10OSLogStoreC0A0E10getEntries4with2at8matchings11AnySequenceVySo0A5EntryCGSo0A17EnumeratorOptionsV_So0A8PositionCSgSo11NSPredicateCSgtKF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo21OSLogMessageComponentC0A0E8ArgumentO4datayAE10Foundation4DataVcAEmFWC"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo21OSLogMessageComponentC0A0E8ArgumentO6doubleyAESdcAEmFWC"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo21OSLogMessageComponentC0A0E8ArgumentO6signedyAEs5Int64VcAEmFWC"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo21OSLogMessageComponentC0A0E8ArgumentO6stringyAESScAEmFWC"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo21OSLogMessageComponentC0A0E8ArgumentO8unsignedyAEs6UInt64VcAEmFWC"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo21OSLogMessageComponentC0A0E8ArgumentO9undefinedyA2EmFWC"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo21OSLogMessageComponentC0A0E8ArgumentOMa"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo21OSLogMessageComponentC0A0E8ArgumentOMn"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo21OSLogMessageComponentC0A0E8ArgumentON"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo21OSLogMessageComponentC0A0E8argumentAbCE8ArgumentOvg"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo21OSLogMessageComponentC0A0E8argumentAbCE8ArgumentOvpMV"}
+   ],
+   "target": "arm64e-apple-ios26.0"
+  }
+ ],
+ "version": "1.0"
+}

@@ -11,18 +11,29 @@
 #ifndef AUDIO_VOIP_AUDIO_CHANNEL_H_
 #define AUDIO_VOIP_AUDIO_CHANNEL_H_
 
+#include <cstdint>
 #include <map>
 #include <memory>
-#include <queue>
+#include <optional>
 #include <utility>
 
-#include "api/task_queue/task_queue_factory.h"
+#include "api/array_view.h"
+#include "api/audio/audio_mixer.h"
+#include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/audio_format.h"
+#include "api/environment/environment.h"
+#include "api/ref_count.h"
+#include "api/scoped_refptr.h"
 #include "api/voip/voip_base.h"
 #include "api/voip/voip_statistics.h"
 #include "audio/voip/audio_egress.h"
 #include "audio/voip/audio_ingress.h"
+#include "call/audio_sender.h"
+#include "modules/rtp_rtcp/include/receive_statistics.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_impl2.h"
-#include "rtc_base/ref_count.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -35,7 +46,7 @@ class AudioChannel : public RefCountInterface {
                Transport* transport,
                uint32_t local_ssrc,
                AudioMixer* audio_mixer,
-               rtc::scoped_refptr<AudioDecoderFactory> decoder_factory);
+               scoped_refptr<AudioDecoderFactory> decoder_factory);
   ~AudioChannel() override;
 
   // Set and get ChannelId that this audio channel belongs for debugging and
@@ -72,10 +83,10 @@ class AudioChannel : public RefCountInterface {
 
   // APIs relayed to AudioIngress.
   bool IsPlaying() const { return ingress_->IsPlaying(); }
-  void ReceivedRTPPacket(rtc::ArrayView<const uint8_t> rtp_packet) {
+  void ReceivedRTPPacket(ArrayView<const uint8_t> rtp_packet) {
     ingress_->ReceivedRTPPacket(rtp_packet);
   }
-  void ReceivedRTCPPacket(rtc::ArrayView<const uint8_t> rtcp_packet) {
+  void ReceivedRTCPPacket(ArrayView<const uint8_t> rtcp_packet) {
     ingress_->ReceivedRTCPPacket(rtcp_packet);
   }
   void SetReceiveCodecs(const std::map<int, SdpAudioFormat>& codecs) {

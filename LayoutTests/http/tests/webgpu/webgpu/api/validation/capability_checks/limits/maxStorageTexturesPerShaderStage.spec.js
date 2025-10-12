@@ -22,7 +22,7 @@ import {
 
 
   kBindingCombinations,
-  getStageVisibilityForBinidngCombination,
+  getStageVisibilityForBindingCombination,
 
   addMaximumLimitUpToDependentLimit } from
 './limit_utils.js';
@@ -233,7 +233,7 @@ params(
   combine('access', kStorageTextureAccessValues).
   filter((t) =>
   filterWriteAccessInVertexStage(
-    getStageVisibilityForBinidngCombination(t.bindingCombination),
+    getStageVisibilityForBindingCombination(t.bindingCombination),
     t.access
   )
   ).
@@ -258,7 +258,7 @@ fn(async (t) => {
         `can not test ${testValue} bindings in same group because maxBindingsPerBindGroup = ${device.limits.maxBindingsPerBindGroup}`
       );
 
-      const visibility = getStageVisibilityForBinidngCombination(bindingCombination);
+      const visibility = getStageVisibilityForBindingCombination(bindingCombination);
       skipIfNotEnoughStorageTexturesInStage(t, visibility, testValue);
 
       const { wgslAccess } = storageTextureBindingTypeInfo({ access });

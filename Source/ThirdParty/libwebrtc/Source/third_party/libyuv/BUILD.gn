@@ -198,9 +198,7 @@ static_library("libyuv_internal") {
     deps += [ "//third_party:jpeg_includes" ]
   }
 
-  # Always enable optimization for Release and NaCl builds (to workaround
-  # crbug.com/538243).
-  if (!is_debug || is_nacl) {
+  if (!is_debug) {
     configs -= [ "//build/config/compiler:default_optimization" ]
 
     # Enable optimize for speed (-O2) over size (-Os).
@@ -236,6 +234,8 @@ if (libyuv_use_neon) {
 
     public_configs = [ ":libyuv_config" ]
 
+    # The -march arguments below are incompatible with libc++ modules.
+    use_libcxx_modules = false
     if (current_cpu == "arm64") {
       cflags = [ "-march=armv8-a+dotprod+i8mm" ]
     } else {
@@ -253,21 +253,29 @@ if (libyuv_use_sve) {
 
     public_configs = [ ":libyuv_config" ]
 
+    # The -march arguments below are incompatible with libc++ modules.
+    use_libcxx_modules = false
     # SVE2 is an Armv9-A feature.
-    cflags = [ "-march=armv9-a+sve2" ]
+    cflags = [ "-march=armv9-a+i8mm+sve2" ]
   }
 }
 
 if (libyuv_use_sme) {
   static_library("libyuv_sme") {
-    sources = [ "source/rotate_sme.cc" ]
+    sources = [
+      "source/rotate_sme.cc",
+      "source/row_sme.cc",
+      "source/scale_sme.cc",
+    ]
 
     deps = [ ":libyuv_internal" ]
 
     public_configs = [ ":libyuv_config" ]
 
+    # The -march arguments below are incompatible with libc++ modules.
+    use_libcxx_modules = false
     # SME is an Armv9-A feature.
-    cflags = [ "-march=armv9-a+sme" ]
+    cflags = [ "-march=armv9-a+i8mm+sme" ]
   }
 }
 
@@ -391,6 +399,9 @@ if (libyuv_include_tests) {
 
     if (is_linux || is_chromeos) {
       cflags = [ "-fexceptions" ]
+
+      # For enabling ASLR.
+      ldflags = [ "-pie" ]
     }
     if (is_ios) {
       configs -= [ "//build/config/compiler:default_symbols" ]
@@ -399,9 +410,6 @@ if (libyuv_include_tests) {
     }
     if (!is_ios && !libyuv_disable_jpeg) {
       defines += [ "HAVE_JPEG" ]
-    }
-    if (is_android) {
-      deps += [ "//testing/android/native_test:native_test_native_code" ]
     }
 
     # TODO(YangZhang): These lines can be removed when high accuracy
@@ -482,5 +490,20 @@ if (libyuv_include_tests) {
       "util/cpuid.c",
     ]
     deps = [ ":libyuv" ]
+  }
+}
+
+if (!build_with_chromium) {
+  # GN evaluates each .gn file once per toolchain, so restricting to default
+  # toolchain will ensure write_file() is called only once.
+  if (current_toolchain == default_toolchain) {
+    # Write debug logs to gn_logs.txt.
+    # This is also required for Siso builds.
+    import("//build/gn_logs.gni")
+    lines = [
+              "Generated during 'gn gen' by //BUILD.gn.",
+              "",
+            ] + build_gn_logs
+    write_file("$root_build_dir/gn_logs.txt", lines)
   }
 }

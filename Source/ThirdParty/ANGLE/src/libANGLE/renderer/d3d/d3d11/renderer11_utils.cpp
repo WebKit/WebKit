@@ -7,6 +7,10 @@
 // renderer11_utils.cpp: Conversion functions and other utility routines
 // specific to the D3D11 renderer.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
 
 #include <algorithm>
@@ -1680,7 +1684,6 @@ void GenerateCaps(ID3D11Device *device,
     extensions->unpackSubimageEXT                   = true;
     extensions->packSubimageNV                      = true;
     extensions->lossyEtcDecodeANGLE                 = true;
-    extensions->syncQueryCHROMIUM                   = GetEventQuerySupport(featureLevel);
     extensions->copyTextureCHROMIUM                 = true;
     extensions->copyCompressedTextureCHROMIUM       = true;
     extensions->textureStorageMultisample2dArrayOES = true;
@@ -2143,8 +2146,6 @@ D3D11_QUERY ConvertQueryType(gl::QueryType type)
         case gl::QueryType::Timestamp:
             // A disjoint query is also created for timestamp
             return D3D11_QUERY_TIMESTAMP_DISJOINT;
-        case gl::QueryType::CommandsCompleted:
-            return D3D11_QUERY_EVENT;
         default:
             UNREACHABLE();
             return D3D11_QUERY_EVENT;

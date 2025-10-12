@@ -24,7 +24,6 @@
 
 [
     Conditional=WEB_AUDIO,
-    JSGenerateToJSObject,
     EnabledBySetting=WebAudioEnabled,
     Exposed=Window
 ] interface IIRFilterNode : AudioNode {

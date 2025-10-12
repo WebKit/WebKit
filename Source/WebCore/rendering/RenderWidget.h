@@ -21,10 +21,10 @@
 
 #pragma once
 
-#include "HTMLFrameOwnerElement.h"
-#include "OverlapTestRequestClient.h"
-#include "RenderReplaced.h"
-#include "Widget.h"
+#include <WebCore/HTMLFrameOwnerElement.h>
+#include <WebCore/OverlapTestRequestClient.h>
+#include <WebCore/RenderReplaced.h>
+#include <WebCore/Widget.h>
 
 namespace WebCore {
 
@@ -48,7 +48,7 @@ public:
     static void scheduleWidgetToMove(Widget&, LocalFrameView*);
 
 private:
-    using WidgetToParentMap = UncheckedKeyHashMap<RefPtr<Widget>, SingleThreadWeakPtr<LocalFrameView>>;
+    using WidgetToParentMap = HashMap<RefPtr<Widget>, SingleThreadWeakPtr<LocalFrameView>>;
     static WidgetToParentMap& widgetNewParentMap();
 
     WEBCORE_EXPORT void moveWidgets();

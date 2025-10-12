@@ -163,7 +163,9 @@ private:
     bool m_respondsToIsPrivate : 1 { false };
     bool m_respondsToFrame : 1 { false };
     bool m_respondsToSetFrame : 1 { false };
+#if PLATFORM(MAC)
     bool m_respondsToScreenFrame : 1 { false };
+#endif
     bool m_respondsToFocus : 1 { false };
     bool m_respondsToClose : 1 { false };
 };

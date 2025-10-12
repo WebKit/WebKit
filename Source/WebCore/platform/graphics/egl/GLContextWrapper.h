@@ -30,6 +30,7 @@ public:
     virtual Type type() const = 0;
     virtual bool makeCurrentImpl() = 0;
     virtual bool unmakeCurrentImpl() = 0;
+    virtual unsigned glVersion() const = 0;
 
     bool isCurrent() const;
     void didMakeContextCurrent();

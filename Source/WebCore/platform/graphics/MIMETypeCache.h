@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "MediaPlayerEnums.h"
+#include <WebCore/MediaPlayerEnums.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
@@ -61,7 +61,7 @@ private:
     bool shouldOverrideExtendedType(const ContentType&);
 
     std::optional<HashSet<String>> m_supportedTypes;
-    std::optional<UncheckedKeyHashMap<String, MediaPlayerEnums::SupportsType>> m_cachedResults;
+    std::optional<HashMap<String, MediaPlayerEnums::SupportsType>> m_cachedResults;
 };
 
 } // namespace WebCore

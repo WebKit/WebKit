@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -299,25 +299,25 @@ static void traceFunctionPrologue(CallFrame* callFrame, const char* comment, Cod
 
 LLINT_SLOW_PATH_DECL(trace_prologue_function_for_call)
 {
-    traceFunctionPrologue(callFrame, "call prologue", CodeForCall);
+    traceFunctionPrologue(callFrame, "call prologue", CodeSpecializationKind::CodeForCall);
     LLINT_END_IMPL();
 }
 
 LLINT_SLOW_PATH_DECL(trace_prologue_function_for_construct)
 {
-    traceFunctionPrologue(callFrame, "construct prologue", CodeForConstruct);
+    traceFunctionPrologue(callFrame, "construct prologue", CodeSpecializationKind::CodeForConstruct);
     LLINT_END_IMPL();
 }
 
 LLINT_SLOW_PATH_DECL(trace_arityCheck_for_call)
 {
-    traceFunctionPrologue(callFrame, "call arity check", CodeForCall);
+    traceFunctionPrologue(callFrame, "call arity check", CodeSpecializationKind::CodeForCall);
     LLINT_END_IMPL();
 }
 
 LLINT_SLOW_PATH_DECL(trace_arityCheck_for_construct)
 {
-    traceFunctionPrologue(callFrame, "construct arity check", CodeForConstruct);
+    traceFunctionPrologue(callFrame, "construct arity check", CodeSpecializationKind::CodeForConstruct);
     LLINT_END_IMPL();
 }
 
@@ -432,7 +432,7 @@ static UGPRPair entryOSR(CodeBlock* codeBlock, const char *name, EntryKind kind)
     if (kind == Prologue)
         LLINT_RETURN_TWO(codeBlock->jitCode()->executableAddress(), nullptr);
     ASSERT(kind == ArityCheck);
-    LLINT_RETURN_TWO(codeBlock->jitCode()->addressForCall(MustCheckArity).taggedPtr(), nullptr);
+    LLINT_RETURN_TWO(codeBlock->jitCode()->addressForCall(ArityCheckMode::MustCheckArity).taggedPtr(), nullptr);
 }
 #else // ENABLE(JIT)
 static UGPRPair entryOSR(CodeBlock* codeBlock, const char*, EntryKind)
@@ -540,41 +540,70 @@ LLINT_SLOW_PATH_DECL(replace)
 #endif // ENABLE(JIT)
 }
 
-LLINT_SLOW_PATH_DECL(stack_check)
+UGPRPair SYSV_ABI llint_check_stack_and_vm_traps(CallFrame* callFrame, const JSInstruction* pc, void* newTopOfStack)
 {
     // It's ok to create the SlowPathFrameTracer here before we
-    // convertToStackOverflowFrame() because this function is always called
+    // convertToZombieFrame() because this function is always called
     // after the frame has been propulated with a proper CodeBlock and callee.
     LLINT_BEGIN();
 
-    slowPathLogF("Checking stack height with callFrame = %p.\n", callFrame);
-    slowPathLog("CodeBlock = ", codeBlock, "\n");
-    if (codeBlock) {
-        slowPathLogF("Num callee registers = %u.\n", codeBlock->numCalleeLocals());
-        slowPathLogF("Num vars = %u.\n", codeBlock->numVars());
-    }
-    slowPathLogF("Current OS stack end is at %p.\n", vm.softStackLimit());
+    if (Options::traceLLIntSlowPath()) [[unlikely]] {
+        slowPathLogF("Checking VMTraps and stack height with callFrame = %p.\n", callFrame);
+        slowPathLog("CodeBlock = ", codeBlock, "\n");
+        if (codeBlock) {
+            slowPathLogF("Num callee registers = %u.\n", codeBlock->numCalleeLocals());
+            slowPathLogF("Num vars = %u.\n", codeBlock->numVars());
+        }
+        slowPathLogF("Current OS stack end is at %p.\n", vm.softStackLimit());
 #if ENABLE(C_LOOP)
-    slowPathLogF("Current C Loop stack end is at %p.\n", vm.cloopStackLimit());
+        slowPathLogF("Current C Loop stack end is at %p.\n", vm.cloopStackLimit());
 #endif
+    }
 
-    // If the stack check succeeds and we don't need to throw the error, then
+    if (vm.traps().handleTrapsIfNeeded()) {
+        if (vm.hasPendingTerminationException()) {
+            throwScope.release();
+            callFrame->convertToZombieFrame(vm, codeBlock);
+            pc = returnToThrow(vm);
+            LLINT_RETURN_TWO(pc, callFrame);
+        }
+    }
+    throwScope.assertNoException();
+
+    // Redo stack check because we may really have gotten here due to an imminent StackOverflow.
+    bool imminentOverflowDetected = false;
+
+#if ENABLE(C_LOOP)
+    Register* newTopOfStackRegister = reinterpret_cast<Register*>(newTopOfStack);
+    if (newTopOfStackRegister < reinterpret_cast<Register*>(callFrame)) {
+        if (!vm.ensureJSStackCapacityFor(newTopOfStackRegister))
+            imminentOverflowDetected = true;
+    } else
+        imminentOverflowDetected = true; // Stack underflow == overflow.
+#else // not C_LOOP case
+
+    void* softStackLimit = vm.softStackLimit();
+#if CPU(ADDRESS32)
+    // With 32-bit addresses, there's a chance that we can underflow, and need this check.
+    // The new stack pointer should only grow smaller. The only way it can be larger than
+    // the callFrame is if subtracting the stack frame size resulted in an underflow.
+    if (std::bit_cast<uintptr_t>(newTopOfStack) > std::bit_cast<uintptr_t>(callFrame))
+        imminentOverflowDetected = true;
+#endif
+    if (newTopOfStack < softStackLimit)
+        imminentOverflowDetected = true;
+
+#endif // end of not C_LOOP case
+
+    // If the stack check succeeds and we don't need to throw any errors, then
     // we'll return 0 instead. The prologue will check for a non-zero value
     // when determining whether to set the callFrame or not.
+    if (!imminentOverflowDetected)
+        LLINT_RETURN_TWO(pc, 0);
 
-    // For JIT enabled builds which uses the C stack, the stack is not growable.
     // Hence, if we get here, then we know a stack overflow is imminent. So, just
     // throw the StackOverflowError unconditionally.
-#if ENABLE(C_LOOP)
-    Register* topOfFrame = callFrame->topOfFrame();
-    if (topOfFrame < reinterpret_cast<Register*>(callFrame)) [[likely]] {
-        ASSERT(!vm.interpreter.cloopStack().containsAddress(topOfFrame));
-        if (vm.ensureStackCapacityFor(topOfFrame)) [[likely]]
-            LLINT_RETURN_TWO(pc, 0);
-    }
-#endif
-
-    callFrame->convertToStackOverflowFrame(vm, codeBlock);
+    callFrame->convertToZombieFrame(vm, codeBlock);
     ErrorHandlingScope errorScope(vm);
     throwStackOverflowError(globalObject, throwScope);
     pc = returnToThrow(vm);
@@ -1259,25 +1288,6 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_val)
     auto bytecode = pc->as<OpGetByVal>();
     JSValue baseValue = getOperand(callFrame, bytecode.m_base);
     JSValue subscript = getOperand(callFrame, bytecode.m_property);
-
-    if (subscript.isString() || subscript.isSymbol()) {
-        auto& metadata = bytecode.metadata(codeBlock);
-        if (metadata.m_seenIdentifiers.count() <= Options::getByValICMaxNumberOfIdentifiers()) {
-            const UniquedStringImpl* impl = nullptr;
-            if (subscript.isSymbol())
-                impl = &jsCast<Symbol*>(subscript)->privateName().uid();
-            else {
-                JSString* string = asString(subscript);
-                if (auto* maybeUID = string->tryGetValueImpl()) {
-                    if (maybeUID->isAtom())
-                        impl = static_cast<const UniquedStringImpl*>(maybeUID);
-                }
-            }
-
-            metadata.m_seenIdentifiers.observe(impl);
-        }
-    }
-    
     LLINT_RETURN_PROFILED(getByVal(vm, globalObject, codeBlock, baseValue, subscript, bytecode));
 }
 
@@ -1879,14 +1889,23 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_imm)
     LLINT_BEGIN();
     auto bytecode = pc->as<OpSwitchImm>();
     JSValue scrutinee = getOperand(callFrame, bytecode.m_scrutinee);
-    ASSERT(scrutinee.isDouble());
-    double value = scrutinee.asDouble();
+    double value = scrutinee.asNumber();
     int32_t intValue = static_cast<int32_t>(value);
     auto& unlinkedTable = codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex);
-    if (value == intValue)
-        JUMP_TO(unlinkedTable.offsetForValue(intValue));
-    else
-        JUMP_TO(unlinkedTable.defaultOffset());
+    if (value == intValue) [[likely]] {
+        if (!unlinkedTable.isList()) {
+            JUMP_TO(unlinkedTable.offsetForValue(intValue));
+            LLINT_END();
+        }
+
+        for (unsigned i = 0; i < unlinkedTable.m_branchOffsets.size(); i += 2) {
+            if (unlinkedTable.m_branchOffsets[i] == intValue) {
+                JUMP_TO(unlinkedTable.m_branchOffsets[i + 1]);
+                LLINT_END();
+            }
+        }
+    }
+    JUMP_TO(unlinkedTable.defaultOffset());
     LLINT_END();
 }
 
@@ -1900,7 +1919,19 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_char)
     ASSERT(string->length() == 1);
     auto& unlinkedTable = codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex);
     auto str = string->value(globalObject);
-    JUMP_TO(unlinkedTable.offsetForValue(str.data[0]));
+    int32_t intValue = str.data[0];
+    if (!unlinkedTable.isList()) {
+        JUMP_TO(unlinkedTable.offsetForValue(intValue));
+        LLINT_END();
+    }
+
+    for (unsigned i = 0; i < unlinkedTable.m_branchOffsets.size(); i += 2) {
+        if (unlinkedTable.m_branchOffsets[i] == intValue) {
+            JUMP_TO(unlinkedTable.m_branchOffsets[i + 1]);
+            LLINT_END();
+        }
+    }
+    JUMP_TO(unlinkedTable.defaultOffset());
     LLINT_END();
 }
 
@@ -2032,7 +2063,7 @@ static UGPRPair handleHostCall(CallFrame* calleeFrame, JSValue callee, CodeSpeci
     calleeFrame->setCodeBlock(nullptr);
     calleeFrame->clearReturnPC();
 
-    if (kind == CodeForCall) {
+    if (kind == CodeSpecializationKind::CodeForCall) {
         auto callData = JSC::getCallData(callee);
         ASSERT(callData.type != CallData::Type::JS);
 
@@ -2051,7 +2082,7 @@ static UGPRPair handleHostCall(CallFrame* calleeFrame, JSValue callee, CodeSpeci
         LLINT_CALL_THROW(globalObject, createNotAFunctionError(globalObject, callee));
     }
 
-    ASSERT(kind == CodeForConstruct);
+    ASSERT(kind == CodeSpecializationKind::CodeForConstruct);
 
     auto constructData = JSC::getConstructData(callee);
     ASSERT(constructData.type != CallData::Type::JS);
@@ -2102,7 +2133,7 @@ static inline UGPRPair setUpCall(CallFrame* calleeFrame, CodeSpecializationKind 
     // FIXME: Support wasm IC.
     // https://bugs.webkit.org/show_bug.cgi?id=220339
     if (executable->isHostFunction())
-        codePtr = executable->entrypointFor(kind, MustCheckArity);
+        codePtr = executable->entrypointFor(kind, ArityCheckMode::MustCheckArity);
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
         if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
@@ -2117,9 +2148,9 @@ static inline UGPRPair setUpCall(CallFrame* calleeFrame, CodeSpecializationKind 
 
         ArityCheckMode arity;
         if (calleeFrame->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))
-            arity = MustCheckArity;
+            arity = ArityCheckMode::MustCheckArity;
         else
-            arity = ArityCheckNotRequired;
+            arity = ArityCheckMode::ArityCheckNotRequired;
         codePtr = functionExecutable->entrypointFor(kind, arity);
     }
 
@@ -2238,27 +2269,27 @@ static inline UGPRPair varargsSetup(CallFrame* callFrame, const JSInstruction* p
 
 LLINT_SLOW_PATH_DECL(slow_path_call_varargs)
 {
-    return varargsSetup<OpCallVarargs, SetArgumentsWith::Object>(callFrame, pc, CodeForCall);
+    return varargsSetup<OpCallVarargs, SetArgumentsWith::Object>(callFrame, pc, CodeSpecializationKind::CodeForCall);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_tail_call_varargs)
 {
-    return varargsSetup<OpTailCallVarargs, SetArgumentsWith::Object>(callFrame, pc, CodeForCall);
+    return varargsSetup<OpTailCallVarargs, SetArgumentsWith::Object>(callFrame, pc, CodeSpecializationKind::CodeForCall);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_tail_call_forward_arguments)
 {
-    return varargsSetup<OpTailCallForwardArguments, SetArgumentsWith::CurrentArguments>(callFrame, pc, CodeForCall);
+    return varargsSetup<OpTailCallForwardArguments, SetArgumentsWith::CurrentArguments>(callFrame, pc, CodeSpecializationKind::CodeForCall);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_construct_varargs)
 {
-    return varargsSetup<OpConstructVarargs, SetArgumentsWith::Object>(callFrame, pc, CodeForConstruct);
+    return varargsSetup<OpConstructVarargs, SetArgumentsWith::Object>(callFrame, pc, CodeSpecializationKind::CodeForConstruct);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_super_construct_varargs)
 {
-    return varargsSetup<OpSuperConstructVarargs, SetArgumentsWith::Object>(callFrame, pc, CodeForConstruct);
+    return varargsSetup<OpSuperConstructVarargs, SetArgumentsWith::Object>(callFrame, pc, CodeSpecializationKind::CodeForConstruct);
 }
 
 static inline UGPRPair commonCallDirectEval(CallFrame* callFrame, const JSInstruction* pc, MacroAssemblerCodeRef<JSEntryPtrTag> returnPoint)
@@ -2278,10 +2309,10 @@ static inline UGPRPair commonCallDirectEval(CallFrame* callFrame, const JSInstru
     
     JSScope* callerScopeChain = jsCast<JSScope*>(getOperand(callFrame, bytecode.m_scope));
     JSValue thisValue = getOperand(callFrame, bytecode.m_thisValue);
-    JSValue result = eval(calleeFrame, thisValue, callerScopeChain, bytecode.m_lexicallyScopedFeatures);
+    JSValue result = eval(calleeFrame, thisValue, callerScopeChain, codeBlock, BytecodeIndex(codeBlock->bytecodeOffset(pc)), bytecode.m_lexicallyScopedFeatures);
     LLINT_CALL_CHECK_EXCEPTION(globalObject);
     if (!result)
-        RELEASE_AND_RETURN(throwScope, setUpCall(calleeFrame, CodeForCall, calleeAsValue));
+        RELEASE_AND_RETURN(throwScope, setUpCall(calleeFrame, CodeSpecializationKind::CodeForCall, calleeAsValue));
 
     vm.encodedHostCallReturnValue = JSValue::encode(result);
     AssertNoGC assertNoGC;
@@ -2375,7 +2406,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
             // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
             result = slot.getValue(globalObject, ident);
             if (result == jsTDZValue())
-                return throwException(globalObject, throwScope, createTDZError(globalObject));
+                return throwException(globalObject, throwScope, createTDZError(globalObject, ident.string()));
         }
 
         CommonSlowPaths::tryCacheGetFromScopeGlobal(globalObject, codeBlock, vm, bytecode, scope, slot, ident);
@@ -2416,7 +2447,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
         PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);
         JSGlobalLexicalEnvironment::getOwnPropertySlot(scope, globalObject, ident, slot);
         if (slot.getValue(globalObject, ident) == jsTDZValue())
-            LLINT_THROW(createTDZError(globalObject));
+            LLINT_THROW(createTDZError(globalObject, ident.string()));
     }
 
     if (metadata.m_getPutInfo.resolveMode() == ThrowIfNotFound && !hasProperty)
@@ -2529,7 +2560,7 @@ static ALWAYS_INLINE int arityCheckFor(VM& vm, CallFrame* callFrame, CodeBlock* 
 
     Register* newStack = callFrame->registers() - WTF::roundUpToMultipleOf(stackAlignmentRegisters(), padding);
 
-    if (!vm.ensureStackCapacityFor(newStack)) [[unlikely]]
+    if (!vm.ensureJSStackCapacityFor(newStack)) [[unlikely]]
         return -1;
     return padding;
 }
@@ -2539,7 +2570,7 @@ LLINT_SLOW_PATH_DECL(slow_path_arityCheck)
     LLINT_BEGIN();
     int slotsToAdd = arityCheckFor(vm, callFrame, codeBlock);
     if (slotsToAdd < 0) [[unlikely]] {
-        callFrame->convertToStackOverflowFrame(vm, codeBlock);
+        callFrame->convertToZombieFrame(vm, codeBlock);
         SlowPathFrameTracer tracer(vm, callFrame);
         ErrorHandlingScope errorScope(vm);
         throwScope.release();
@@ -2729,37 +2760,21 @@ extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit_from_inlined_ca
     }
 
     case op_instanceof: {
-        auto& dst = callFrame->uncheckedR(destinationFor(pc->as<OpInstanceof>(), bytecodeIndex.checkpoint()).virtualRegister());
         const auto& bytecode = pc->as<OpInstanceof>();
-        auto value = getOperand(callFrame, bytecode.m_value);
-        auto hasInstanceOrPrototype = JSValue::decode(result);
-
         switch (bytecodeIndex.checkpoint()) {
-        case OpInstanceof::getHasInstance: {
+        case OpInstanceof::getHasInstance: // First one is not handled by checkpoint.
+        case OpInstanceof::instanceof: // No inlined calls exist at the last checkpoint.
             RELEASE_ASSERT_NOT_REACHED();
             break;
-        }
         case OpInstanceof::getPrototype: {
-            auto constructor = getOperand(callFrame, bytecode.m_constructor);
-            ASSERT(constructor.isObject());
-            if (hasInstanceOrPrototype != globalObject->functionProtoHasInstanceSymbolFunction() || !constructor.getObject()->structure()->typeInfo().implementsDefaultHasInstance()) {
-                dst = jsBoolean(constructor.getObject()->hasInstance(globalObject, value, hasInstanceOrPrototype));
-                RETURN_IF_EXCEPTION(throwScope, { });
-                break;
-            }
-            if (!value.isObject()) {
-                dst = jsBoolean(false);
-                break;
-            }
-            hasInstanceOrPrototype = constructor.get(globalObject, vm.propertyNames->prototype);
-            RETURN_IF_EXCEPTION(throwScope, { });
-            [[fallthrough]];
-        }
-        case OpInstanceof::instanceof:
-            bool result = JSObject::defaultHasInstance(globalObject, value, hasInstanceOrPrototype);
+            auto& dst = callFrame->uncheckedR(bytecode.m_dst);
+            auto value = getOperand(callFrame, bytecode.m_value);
+            auto prototype = JSValue::decode(result);
+            bool result = JSObject::defaultHasInstance(globalObject, value, prototype);
             RETURN_IF_EXCEPTION(throwScope, { });
             dst = jsBoolean(result);
             break;
+        }
         }
         break;
     }
@@ -2834,7 +2849,7 @@ extern "C" UGPRPair SYSV_ABI llint_throw_stack_overflow_error(VM* vm, ProtoCallF
 #if ENABLE(C_LOOP)
 extern "C" UGPRPair SYSV_ABI llint_stack_check_at_vm_entry(VM* vm, Register* newTopOfStack)
 {
-    bool success = vm->ensureStackCapacityFor(newTopOfStack);
+    bool success = vm->ensureJSStackCapacityFor(newTopOfStack);
     return encodeResult(reinterpret_cast<void*>(success), 0);
 }
 #endif

@@ -33,6 +33,7 @@
 #include "WebSocketTaskCurl.h"
 #else
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebKit {
 class WebSocketTask;
@@ -42,7 +43,7 @@ namespace WebKit {
 
 struct SessionSet;
 
-class WebSocketTask : public CanMakeWeakPtr<WebSocketTask>, public CanMakeCheckedPtr<WebSocketTask> {
+class WebSocketTask : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebSocketTask> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(WebSocketTask);
 public:
     typedef uint64_t TaskIdentifier;

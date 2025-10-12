@@ -38,13 +38,13 @@ RunLoopObserver::~RunLoopObserver()
 
 void RunLoopObserver::runLoopObserverFired()
 {
-#if USE(CF)
+#if USE(CF) || USE(GLIB)
     ASSERT(m_runLoopObserver);
 #endif
     m_callback();
 }
 
-#if !USE(CF)
+#if !USE(CF) && !USE(GLIB)
 
 void RunLoopObserver::schedule(PlatformRunLoop, OptionSet<Activity>)
 {

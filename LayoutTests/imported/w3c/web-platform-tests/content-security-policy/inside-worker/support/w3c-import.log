@@ -20,3 +20,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/support/connect-src-self.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/support/script-src-allow.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/support/script-src-self.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/support/worker-src-none.sub.js

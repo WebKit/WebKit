@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT event and promise ordering for same-document navigation.back() intercepted by intercept() Test timed out
+FAIL event and promise ordering for same-document navigation.back() intercepted by intercept() assert_array_equals: expected property 2 to be "currententrychange" but got "handler run" (expected array ["promise microtask", "navigate", "currententrychange", "handler run", "committed fulfilled", "navigatesuccess", "finished fulfilled", "transition.finished fulfilled"] got ["promise microtask", "navigate", "handler run", "currententrychange", "committed fulfilled", "navigatesuccess", "finished fulfilled", "transition.finished fulfilled"])
 

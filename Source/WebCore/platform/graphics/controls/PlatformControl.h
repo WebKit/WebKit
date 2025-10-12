@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ControlStyle.h"
-#include "FloatRect.h"
+#include <WebCore/ControlStyle.h>
+#include <WebCore/FloatRect.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

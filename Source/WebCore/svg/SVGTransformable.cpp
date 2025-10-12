@@ -27,193 +27,13 @@
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include "SVGTransform.h"
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
 
 SVGTransformable::~SVGTransformable() = default;
-
-template<typename CharacterType> static int parseTransformParamList(StringParsingBuffer<CharacterType>& buffer, std::span<float, 6> values, int required, int optional)
-{
-    int optionalParams = 0, requiredParams = 0;
-    
-    if (!skipOptionalSVGSpaces(buffer) || *buffer != '(')
-        return -1;
-    
-    ++buffer;
-   
-    skipOptionalSVGSpaces(buffer);
-
-    while (requiredParams < required) {
-        if (buffer.atEnd())
-            return -1;
-        auto parsedNumber = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
-        if (!parsedNumber)
-            return -1;
-        values[requiredParams] = *parsedNumber;
-        requiredParams++;
-        if (requiredParams < required)
-            skipOptionalSVGSpacesOrDelimiter(buffer);
-    }
-    if (!skipOptionalSVGSpaces(buffer))
-        return -1;
-    
-    bool delimParsed = skipOptionalSVGSpacesOrDelimiter(buffer);
-
-    if (buffer.atEnd())
-        return -1;
-    
-    if (*buffer == ')') {
-        // skip optionals
-        ++buffer;
-        if (delimParsed)
-            return -1;
-    } else {
-        while (optionalParams < optional) {
-            if (buffer.atEnd())
-                return -1;
-            auto parsedNumber = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
-            if (!parsedNumber)
-                return -1;
-            values[requiredParams + optionalParams] = *parsedNumber;
-            optionalParams++;
-            if (optionalParams < optional)
-                skipOptionalSVGSpacesOrDelimiter(buffer);
-        }
-        
-        if (!skipOptionalSVGSpaces(buffer))
-            return -1;
-        
-        delimParsed = skipOptionalSVGSpacesOrDelimiter(buffer);
-        
-        if (buffer.atEnd() || *buffer != ')' || delimParsed)
-            return -1;
-        ++buffer;
-    }
-
-    return requiredParams + optionalParams;
-}
-
-// These should be kept in sync with enum SVGTransformType
-static constexpr std::array requiredValuesForType { 0, 6, 1, 1, 1, 1, 1 };
-static constexpr std::array optionalValuesForType { 0, 0, 1, 1, 2, 0, 0 };
-
-template<typename CharacterType>
-bool SVGTransformable::parseAndReplaceTransform(SVGTransformValue::SVGTransformType type, StringParsingBuffer<CharacterType>& buffer, SVGTransform& transform)
-{
-    ASSERT(type == transform.value().type());
-
-    if (type == SVGTransformValue::SVG_TRANSFORM_UNKNOWN)
-        return false;
-
-    std::array<float, 6> values { 0, 0, 0, 0, 0, 0 };
-    int valueCount = parseTransformParamList(buffer, values, requiredValuesForType[type], optionalValuesForType[type]);
-    if (valueCount < 0)
-        return false;
-
-    switch (type) {
-    case SVGTransformValue::SVG_TRANSFORM_UNKNOWN:
-        ASSERT_NOT_REACHED();
-        return false;
-
-    case SVGTransformValue::SVG_TRANSFORM_SKEWX:
-        transform.value().setSkewX(values[0]);
-        return true;
-
-    case SVGTransformValue::SVG_TRANSFORM_SKEWY:
-        transform.value().setSkewY(values[0]);
-        return true;
-
-    case SVGTransformValue::SVG_TRANSFORM_SCALE:
-        if (valueCount == 1)
-            transform.value().setScale(values[0], values[0]);
-        else
-            transform.value().setScale(values[0], values[1]);
-        return true;
-
-    case SVGTransformValue::SVG_TRANSFORM_TRANSLATE:
-        if (valueCount == 1)
-            transform.value().setTranslate(values[0], values[0]);
-        else
-            transform.value().setTranslate(values[0], values[1]);
-        return true;
-
-    case SVGTransformValue::SVG_TRANSFORM_ROTATE:
-        if (valueCount == 1)
-            transform.value().setRotate(values[0], 0, 0);
-        else
-            transform.value().setRotate(values[0], values[1], values[2]);
-        return true;
-
-    case SVGTransformValue::SVG_TRANSFORM_MATRIX:
-        transform.value().setMatrix(AffineTransform(values[0], values[1], values[2], values[3], values[4], values[5]));
-        return true;
-    }
-
-    return false;
-}
-
-template<typename CharacterType>
-RefPtr<SVGTransform> SVGTransformable::parseTransform(SVGTransformValue::SVGTransformType type, StringParsingBuffer<CharacterType>& buffer)
-{
-    if (type == SVGTransformValue::SVG_TRANSFORM_UNKNOWN)
-        return nullptr;
-
-    std::array<float, 6> values { 0, 0, 0, 0, 0, 0 };
-    int valueCount = parseTransformParamList(buffer, values, requiredValuesForType[type], optionalValuesForType[type]);
-    if (valueCount < 0)
-        return nullptr;
-
-    switch (type) {
-    case SVGTransformValue::SVG_TRANSFORM_UNKNOWN:
-        ASSERT_NOT_REACHED();
-        return nullptr;
-
-    case SVGTransformValue::SVG_TRANSFORM_SKEWX: {
-        SVGTransformValue transform;
-        transform.setSkewX(values[0]);
-        return SVGTransform::create(WTFMove(transform));
-    }
-    case SVGTransformValue::SVG_TRANSFORM_SKEWY: {
-        SVGTransformValue transform;
-        transform.setSkewY(values[0]);
-        return SVGTransform::create(WTFMove(transform));
-    }
-    case SVGTransformValue::SVG_TRANSFORM_SCALE: {
-        auto resultValue = [&]() {
-            if (valueCount == 1) // Spec: if only one param given, assume uniform scaling
-                return SVGTransformValue::scaleTransformValue({ values[0], values[0] });
-
-            return SVGTransformValue::scaleTransformValue({ values[0], values[1] });
-        };
-
-        return SVGTransform::create(resultValue());
-    }
-    case SVGTransformValue::SVG_TRANSFORM_TRANSLATE: {
-        if (valueCount == 1) // Spec: if only one param given, assume 2nd param to be 0
-            return SVGTransform::create(SVGTransformValue::translateTransformValue({ values[0], 0 }));
-
-        return SVGTransform::create(SVGTransformValue::translateTransformValue({ values[0], values[1] }));
-    }
-    case SVGTransformValue::SVG_TRANSFORM_ROTATE: {
-        auto resultValue = [&]() {
-            if (valueCount == 1)
-                return SVGTransformValue::rotateTransformValue(values[0], { });
-
-            return SVGTransformValue::rotateTransformValue(values[0], { values[1], values[2] });
-        };
-        return SVGTransform::create(resultValue());
-    }
-    case SVGTransformValue::SVG_TRANSFORM_MATRIX: {
-        SVGTransformValue transform;
-        transform.setMatrix(AffineTransform(values[0], values[1], values[2], values[3], values[4], values[5]));
-        return SVGTransform::create(transform);
-    }
-    }
-
-    return nullptr;
-}
 
 template<typename CharacterType> static constexpr std::array<CharacterType, 5> skewXDesc  { 's', 'k', 'e', 'w', 'X' };
 template<typename CharacterType> static constexpr std::array<CharacterType, 5> skewYDesc  { 's', 'k', 'e', 'w', 'Y' };
@@ -254,12 +74,12 @@ std::optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransf
     });
 }
 
-std::optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransformType(StringParsingBuffer<LChar>& buffer)
+std::optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransformType(StringParsingBuffer<Latin1Character>& buffer)
 {
     return parseTransformTypeGeneric(buffer);
 }
 
-std::optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransformType(StringParsingBuffer<UChar>& buffer)
+std::optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransformType(StringParsingBuffer<char16_t>& buffer)
 {
     return parseTransformTypeGeneric(buffer);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc.  All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -49,6 +49,7 @@
 #include "ThreadableBlobRegistry.h"
 #include "ThreadableLoader.h"
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -57,6 +58,8 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FileReaderLoader);
 
 const int defaultBufferLength = 32768;
 
@@ -227,7 +230,7 @@ void FileReaderLoader::didReceiveData(const SharedBuffer& buffer)
                 failed(ExceptionCode::NotReadableError);
                 return;
             }
-            memcpySpan(newData->mutableSpan(), m_rawData->span().first(m_bytesLoaded));
+            memcpySpan(newData->mutableSpan(), protectedRawData()->span().first(m_bytesLoaded));
 
             m_rawData = newData;
             m_totalBytes = static_cast<unsigned>(newLength);
@@ -240,7 +243,7 @@ void FileReaderLoader::didReceiveData(const SharedBuffer& buffer)
     if (length <= 0)
         return;
 
-    memcpySpan(m_rawData->mutableSpan().subspan(m_bytesLoaded), buffer.span().first(length));
+    memcpySpan(protectedRawData()->mutableSpan().subspan(m_bytesLoaded), buffer.span().first(length));
     m_bytesLoaded += length;
 
     m_isRawDataConverted = false;
@@ -252,7 +255,7 @@ void FileReaderLoader::didReceiveData(const SharedBuffer& buffer)
 void FileReaderLoader::didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&)
 {
     if (m_variableLength && m_totalBytes > m_bytesLoaded) {
-        m_rawData = m_rawData->slice(0, m_bytesLoaded);
+        m_rawData = protectedRawData()->slice(0, m_bytesLoaded);
         m_totalBytes = m_bytesLoaded;
     }
     cleanup();
@@ -310,7 +313,7 @@ RefPtr<ArrayBuffer> FileReaderLoader::arrayBufferResult() const
         return m_rawData;
 
     // Otherwise, return a copy.
-    return ArrayBuffer::create(*m_rawData);
+    return ArrayBuffer::create(*protectedRawData());
 }
 
 String FileReaderLoader::stringResult()
@@ -330,7 +333,7 @@ String FileReaderLoader::stringResult()
         // No conversion is needed.
         break;
     case ReadAsBinaryString:
-        m_stringResult = m_rawData->span().first(m_bytesLoaded);
+        m_stringResult = byteCast<Latin1Character>(protectedRawData()->span().first(m_bytesLoaded));
         break;
     case ReadAsText:
         convertToText();
@@ -361,15 +364,16 @@ void FileReaderLoader::convertToText()
     if (!m_decoder)
         m_decoder = TextResourceDecoder::create("text/plain"_s, m_encoding.isValid() ? m_encoding : PAL::UTF8Encoding());
     Ref decoder = *m_decoder;
+    Ref rawData = *m_rawData;
     if (isCompleted())
-        m_stringResult = decoder->decodeAndFlush(m_rawData->span().first(m_bytesLoaded));
+        m_stringResult = decoder->decodeAndFlush(rawData->span().first(m_bytesLoaded));
     else
-        m_stringResult = decoder->decode(m_rawData->span().first(m_bytesLoaded));
+        m_stringResult = decoder->decode(rawData->span().first(m_bytesLoaded));
 }
 
 void FileReaderLoader::convertToDataURL()
 {
-    m_stringResult = makeString("data:"_s, m_dataType.isEmpty() ? "application/octet-stream"_s : m_dataType, ";base64,"_s, base64Encoded(m_rawData ? m_rawData->span().first(m_bytesLoaded) : std::span<const uint8_t>()));
+    m_stringResult = makeString("data:"_s, m_dataType.isEmpty() ? "application/octet-stream"_s : m_dataType, ";base64,"_s, base64Encoded(m_rawData ? protectedRawData()->span().first(m_bytesLoaded) : std::span<const uint8_t>()));
 }
 
 bool FileReaderLoader::isCompleted() const

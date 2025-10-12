@@ -31,7 +31,7 @@
             renderingPurpose: 0,
             resolutionScale: 1.0,
             colorSpace: {serializableColorSpace: {alias: {m_cgColorSpace: {alias: {variantType: 'WebCore::ColorSpace', variant: 1}}}}},
-            pixelFormat: 0,
+            bufferFormat: { pixelFormat: 1, useLosslessCompression: 0 },
             identifier: imageBufferIdentifier,
             contextIdentifier: contextIdentifier,
         });
@@ -42,7 +42,7 @@
         remoteImageBuffer.FilteredNativeImage({
             filter: {
                 subclasses: {
-                    variantType: 'WebCore::SVGFilter',
+                    variantType: 'WebCore::SVGFilterRenderer',
                     variant: {
                         targetBoundingBox: {
                             location: {x: 0, y: 0},

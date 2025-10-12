@@ -22,15 +22,21 @@
 
 #if USE(GSTREAMER)
 
+#include "AudioUtilities.h"
 #include "GStreamerAudioMixer.h"
 #include "GStreamerCommon.h"
 #include <wtf/glib/WTFGType.h>
+
+#if ENABLE(WEB_AUDIO)
+#include "AudioDestination.h"
+#endif
 
 using namespace WebCore;
 
 struct _WebKitAudioSinkPrivate {
     GRefPtr<GstElement> interAudioSink;
     GRefPtr<GstPad> mixerPad;
+    String role;
 };
 
 enum {
@@ -50,6 +56,7 @@ WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitAudioSink, webkit_audio_sink, GST_TYPE_BIN,
     GST_DEBUG_CATEGORY_INIT(webkit_audio_sink_debug, "webkitaudiosink", 0, "webkit audio sink element")
 )
 
+IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 static bool webKitAudioSinkConfigure(WebKitAudioSink* sink)
 {
     const char* value = g_getenv("WEBKIT_GST_ENABLE_AUDIO_MIXER");
@@ -65,10 +72,41 @@ static bool webKitAudioSinkConfigure(WebKitAudioSink* sink)
         gst_bin_add(GST_BIN_CAST(sink), sink->priv->interAudioSink.get());
         auto targetPad = adoptGRef(gst_element_get_static_pad(sink->priv->interAudioSink.get(), "sink"));
         gst_element_add_pad(GST_ELEMENT_CAST(sink), webkitGstGhostPadFromStaticTemplate(&audioSinkTemplate, "sink"_s, targetPad.get()));
+
+        if (sink->priv->role != "webaudio"_s)
+            return true;
+
+        // Match the interaudiosrc period-time with the WebAudio renderQuantumSize applied to the
+        // sample rate, otherwise the samples created by the source will have clipping, leading to
+        // garbled rendering. For this to work the sample rate also needs to match between
+        // webkitaudiosink and the caps negotiated on the audiomixer sink pad (this is handled in
+        // webKitAudioSinkChangeState()).
+        gst_pad_add_probe(targetPad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad* pad, GstPadProbeInfo* info, gpointer) -> GstPadProbeReturn {
+            auto event = GST_PAD_PROBE_INFO_EVENT(info);
+            if (GST_EVENT_TYPE(event) != GST_EVENT_CAPS)
+                return GST_PAD_PROBE_OK;
+
+            GstCaps* caps;
+            gst_event_parse_caps(event, &caps);
+
+            if (gst_caps_is_empty(caps) || gst_caps_is_any(caps)) [[unlikely]]
+                return GST_PAD_PROBE_OK;
+
+            auto structure = gst_caps_get_structure(caps, 0);
+            auto sampleRate = gstStructureGet<int>(structure, "rate"_s);
+            if (!sampleRate) [[unlikely]]
+                return GST_PAD_PROBE_OK;
+
+            auto sink = adoptGRef(gst_pad_get_parent_element(pad));
+            uint64_t periodTime = gst_util_uint64_scale_ceil(AudioUtilities::renderQuantumSize, GST_SECOND, *sampleRate);
+            GStreamerAudioMixer::singleton().configureSourcePeriodTime(StringView::fromLatin1(GST_ELEMENT_NAME(sink.get())), periodTime);
+            return GST_PAD_PROBE_OK;
+        }), nullptr, nullptr);
         return true;
     }
     return false;
 }
+IGNORE_CLANG_WARNINGS_END
 
 static void webKitAudioSinkSetProperty(GObject* object, guint propID, const GValue* value, GParamSpec* pspec)
 {
@@ -116,8 +154,14 @@ static GstStateChangeReturn webKitAudioSinkChangeState(GstElement* element, GstS
     GST_DEBUG_OBJECT(sink, "Handling %s transition", gst_state_change_get_name(stateChange));
 
     auto& mixer = GStreamerAudioMixer::singleton();
-    if (priv->interAudioSink && stateChange == GST_STATE_CHANGE_NULL_TO_READY)
-        priv->mixerPad = mixer.registerProducer(priv->interAudioSink.get());
+    if (priv->interAudioSink && stateChange == GST_STATE_CHANGE_NULL_TO_READY) {
+        std::optional<int> forcedSampleRate;
+#if ENABLE(WEB_AUDIO)
+        if (priv->role == "webaudio"_s)
+            forcedSampleRate = AudioDestination::hardwareSampleRate();
+#endif
+        priv->mixerPad = mixer.registerProducer(priv->interAudioSink.get(), forcedSampleRate);
+    }
 
     if (priv->mixerPad)
         mixer.ensureState(stateChange);
@@ -135,10 +179,10 @@ static GstStateChangeReturn webKitAudioSinkChangeState(GstElement* element, GstS
 static void webKitAudioSinkConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_audio_sink_parent_class)->constructed(object);
-IGNORE_WARNINGS_BEGIN("cast-align")
+    IGNORE_WARNINGS_BEGIN("cast-align");
     GST_OBJECT_FLAG_SET(GST_OBJECT_CAST(object), GST_ELEMENT_FLAG_SINK);
     gst_bin_set_suppressed_flags(GST_BIN_CAST(object), static_cast<GstElementFlags>(GST_ELEMENT_FLAG_SOURCE | GST_ELEMENT_FLAG_SINK));
-IGNORE_WARNINGS_END
+    IGNORE_WARNINGS_END;
 }
 
 static void webkit_audio_sink_class_init(WebKitAudioSinkClass* klass)
@@ -164,15 +208,18 @@ static void webkit_audio_sink_class_init(WebKitAudioSinkClass* klass)
     eklass->change_state = GST_DEBUG_FUNCPTR(webKitAudioSinkChangeState);
 }
 
-GstElement* /* (transfer floating) */ webkitAudioSinkNew()
+GstElement* /* (transfer floating) */ webkitAudioSinkNew(const String& role)
 {
-    auto* sink = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_AUDIO_SINK, nullptr));
-    if (!webKitAudioSinkConfigure(WEBKIT_AUDIO_SINK(sink))) {
-        gst_object_unref(sink);
+    auto element = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_AUDIO_SINK, nullptr));
+    auto audioSink = WEBKIT_AUDIO_SINK(element);
+
+    audioSink->priv->role = role;
+    if (!webKitAudioSinkConfigure(audioSink)) {
+        gst_object_unref(element);
         return nullptr;
     }
-    ASSERT(g_object_is_floating(sink));
-    return sink;
+    ASSERT(g_object_is_floating(element));
+    return element;
 }
 
 #undef GST_CAT_DEFAULT

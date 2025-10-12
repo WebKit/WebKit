@@ -43,6 +43,11 @@ messages -> WebExtensionContextProxy {
     // Cookies
     DispatchCookiesChangedEvent()
 
+#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
+    // DeclarativeNetRequest
+    DispatchOnRuleMatchedDebugEvent(struct WebCore::ContentRuleListMatchedRule matchedRule)
+#endif
+
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // DevTools
     AddInspectorPageIdentifier(WebCore::PageIdentifier pageID, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier)
@@ -83,15 +88,17 @@ messages -> WebExtensionContextProxy {
     DispatchTabsCreatedEvent(WebKit::WebExtensionTabParameters tabParameters)
     DispatchTabsUpdatedEvent(WebKit::WebExtensionTabParameters tabParameters, WebKit::WebExtensionTabParameters changedParameters)
     DispatchTabsReplacedEvent(WebKit::WebExtensionTabIdentifier replacedTabIdentifier, WebKit::WebExtensionTabIdentifier newTabIdentifier)
-    DispatchTabsDetachedEvent(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier oldWindowIdentifier, size_t oldIndex)
-    DispatchTabsMovedEvent(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, size_t oldIndex, size_t newIndex)
-    DispatchTabsAttachedEvent(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier newWindowIdentifier, size_t newIndex)
+    DispatchTabsDetachedEvent(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier oldWindowIdentifier, uint64_t oldIndex)
+    DispatchTabsMovedEvent(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, uint64_t oldIndex, uint64_t newIndex)
+    DispatchTabsAttachedEvent(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier newWindowIdentifier, uint64_t newIndex)
     DispatchTabsActivatedEvent(WebKit::WebExtensionTabIdentifier previousActiveTabIdentifier, WebKit::WebExtensionTabIdentifier newActiveTabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier)
     DispatchTabsHighlightedEvent(Vector<WebKit::WebExtensionTabIdentifier> tabs, WebKit::WebExtensionWindowIdentifier windowIdentifier)
     DispatchTabsRemovedEvent(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, WebKit::WebExtensionContext::WindowIsClosing windowIsClosing)
 
     // Test Events
     DispatchTestMessageEvent(String message, String argumentJSON, WebKit::WebExtensionContentWorldType contentWorldType)
+    DispatchTestStartedEvent(String argumentJSON, WebKit::WebExtensionContentWorldType contentWorldType)
+    DispatchTestFinishedEvent(String argumentJSON, WebKit::WebExtensionContentWorldType contentWorldType)
 
     // Web Navigation
     DispatchWebNavigationEvent(WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionTabIdentifier tabID, struct WebKit::WebExtensionFrameParameters frameParamaters, WallTime timestamp)

@@ -46,7 +46,7 @@ public:
 private:
     ApplePaySessionError unknownError() const;
 
-    RetainPtr<NSError> m_platformError;
+    const RetainPtr<NSError> m_platformError;
 };
 
 } // namespace WebCore

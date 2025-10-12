@@ -12,7 +12,10 @@
 #include "modules/video_coding/codecs/h264/h264_encoder_impl.h"
 
 #include "api/environment/environment_factory.h"
+#include "api/video/video_codec_type.h"
+#include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
+#include "modules/video_coding/codecs/h264/include/h264_globals.h"
 #include "modules/video_coding/include/video_error_codes.h"
 #include "test/gtest.h"
 
@@ -20,8 +23,8 @@ namespace webrtc {
 
 namespace {
 
-const int kMaxPayloadSize = 1024;
-const int kNumCores = 1;
+constexpr int kMaxPayloadSize = 1024;
+constexpr int kNumCores = 1;
 
 const VideoEncoder::Capabilities kCapabilities(false);
 const VideoEncoder::Settings kSettings(kCapabilities,

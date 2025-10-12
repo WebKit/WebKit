@@ -1,0 +1,7 @@
+SVG A
+SVG A
+ Other Button
+
+FAIL InterestEvent is not dispatched unless the svg <a> has an href assert_true: interest should now be fired expected true got false
+FAIL InterestEvent dispatches on svg <a> hover assert_true: InterestEvent is fired expected true got false
+

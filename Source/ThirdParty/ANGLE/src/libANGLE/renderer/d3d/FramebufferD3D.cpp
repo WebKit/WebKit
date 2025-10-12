@@ -8,6 +8,10 @@
 
 #include "libANGLE/renderer/d3d/FramebufferD3D.h"
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "common/bitset_utils.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/ErrorStrings.h"

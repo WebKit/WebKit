@@ -51,7 +51,8 @@
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/Scope.h>
 #import <wtf/WorkQueue.h>
-#include <wtf/cocoa/VectorCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #import "CoreVideoSoftLink.h"
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -106,7 +107,7 @@ static dispatch_queue_t globaVideoCaptureSerialQueue()
     static dispatch_queue_t globalQueue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        globalQueue = dispatch_queue_create_with_target("WebCoreAVVideoCaptureSource video capture queue", DISPATCH_QUEUE_SERIAL, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0));
+        globalQueue = dispatch_queue_create_with_target("WebCoreAVVideoCaptureSource video capture queue", DISPATCH_QUEUE_SERIAL, globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_HIGH, 0));
     });
     return globalQueue;
 }
@@ -221,7 +222,7 @@ void AVVideoCaptureSource::setUseAVCaptureDeviceRotationCoordinatorAPI(bool valu
 
 CaptureSourceOrError AVVideoCaptureSource::create(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier)
 {
-    auto *avDevice = [PAL::getAVCaptureDeviceClass() deviceWithUniqueID:device.persistentId().createNSString().get()];
+    auto *avDevice = [PAL::getAVCaptureDeviceClassSingleton() deviceWithUniqueID:device.persistentId().createNSString().get()];
     if (!avDevice)
         return CaptureSourceOrError({ "No AVVideoCaptureSource device"_s , MediaAccessDenialReason::PermissionDenied });
 
@@ -278,8 +279,10 @@ AVVideoCaptureSource::~AVVideoCaptureSource()
 void AVVideoCaptureSource::verifyIsCapturing()
 {
     ASSERT(m_isRunning);
-    if (m_lastFramesCount != m_framesCount) {
-        m_lastFramesCount = m_framesCount;
+
+    uint64_t framesCount = m_framesCount;
+    if (m_lastFramesCount != framesCount) {
+        m_lastFramesCount = framesCount;
         return;
     }
 
@@ -292,6 +295,8 @@ void AVVideoCaptureSource::updateVerifyCapturingTimer()
     if (!m_isRunning || m_interrupted) {
         if (m_verifyCapturingTimer)
             m_verifyCapturingTimer->stop();
+        m_framesCount = 0;
+        m_lastFramesCount = 0;
         return;
     }
 
@@ -589,7 +594,7 @@ const RealtimeMediaSourceCapabilities& AVVideoCaptureSource::capabilities()
 
 AVCapturePhotoOutput* AVVideoCaptureSource::photoOutput()
 {
-    assertIsCurrent(RunLoop::main());
+    assertIsCurrent(RunLoop::mainSingleton());
 
     if (!m_photoOutput) {
         m_photoOutput = adoptNS([PAL::allocAVCapturePhotoOutputInstance() init]);
@@ -666,13 +671,13 @@ IntSize AVVideoCaptureSource::maxPhotoSizeForCurrentPreset(IntSize requestedSize
 
 RetainPtr<AVCapturePhotoSettings> AVVideoCaptureSource::photoConfiguration(const PhotoSettings& photoSettings)
 {
-    assertIsCurrent(RunLoop::main());
+    assertIsCurrent(RunLoop::mainSingleton());
 
     IntSize requestedPhotoDimensions = { 0, 0 };
     if (photoSettings.imageHeight && photoSettings.imageWidth)
         requestedPhotoDimensions = { static_cast<int>(*photoSettings.imageWidth), static_cast<int>(*photoSettings.imageHeight) };
 
-    AVCapturePhotoSettings* avPhotoSettings = [PAL::getAVCapturePhotoSettingsClass() photoSettingsWithFormat:@{
+    AVCapturePhotoSettings* avPhotoSettings = [PAL::getAVCapturePhotoSettingsClassSingleton() photoSettingsWithFormat:@{
         AVVideoCodecKey : AVVideoCodecTypeJPEG,
         AVVideoCompressionPropertiesKey : @{ AVVideoQualityKey : @(1) }
     }];
@@ -702,7 +707,7 @@ RetainPtr<AVCapturePhotoSettings> AVVideoCaptureSource::photoConfiguration(const
 
 auto AVVideoCaptureSource::takePhotoInternal(PhotoSettings&& photoSettings) -> Ref<TakePhotoNativePromise>
 {
-    assertIsCurrent(RunLoop::main());
+    assertIsCurrent(RunLoop::mainSingleton());
 
     RetainPtr<AVCapturePhotoOutput> photoOutput = this->photoOutput();
     if (!photoOutput)
@@ -827,8 +832,25 @@ double AVVideoCaptureSource::facingModeFitnessScoreAdjustment() const
 void AVVideoCaptureSource::applyFrameRateAndZoomWithPreset(double requestedFrameRate, double requestedZoom, std::optional<VideoPreset>&& preset)
 {
     requestedZoom *= m_zoomScaleFactor;
-    if (m_currentFrameRate == requestedFrameRate && m_currentZoom == requestedZoom && preset && m_currentPreset && preset->format() == m_currentPreset->format())
+    bool isSamePresetAndFrameRate = m_currentFrameRate == requestedFrameRate && preset && m_currentPreset && preset->format() == m_currentPreset->format();
+    if (isSamePresetAndFrameRate && m_currentZoom == requestedZoom)
         return;
+
+    if (isSamePresetAndFrameRate) {
+        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, ", applying zoom only");
+        if (!lockForConfiguration())
+            return;
+
+        @try {
+            [device() setVideoZoomFactor:requestedZoom];
+            m_currentZoom = requestedZoom;
+        } @catch(NSException *exception) {
+            ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "error applying zoom ", exception.name, ", reason : ", exception.reason);
+        }
+
+        [device() unlockForConfiguration];
+        return;
+    }
 
     beginConfigurationForConstraintsIfNeeded();
 
@@ -1068,7 +1090,7 @@ bool AVVideoCaptureSource::setupSession()
     String mediaEnvironment = RealtimeMediaSourceCenter::singleton().currentMediaEnvironment();
     WARNING_LOG_IF(loggerPtr() && mediaEnvironment.isEmpty(), "Media environment is empty");
     // FIXME (119325252): Remove staging code for -[AVCaptureSession initWithMediaEnvironment:]
-    if (!mediaEnvironment.isEmpty() && [PAL::getAVCaptureSessionClass() instancesRespondToSelector:@selector(initWithMediaEnvironment:)])
+    if (!mediaEnvironment.isEmpty() && [PAL::getAVCaptureSessionClassSingleton() instancesRespondToSelector:@selector(initWithMediaEnvironment:)])
         m_session = adoptNS([PAL::allocAVCaptureSessionInstance() initWithMediaEnvironment:mediaEnvironment.createNSString().get()]);
 #endif
 
@@ -1077,7 +1099,7 @@ bool AVVideoCaptureSource::setupSession()
         auto identity = RealtimeMediaSourceCenter::singleton().identity();
         ERROR_LOG_IF(loggerPtr() && !identity, LOGIDENTIFIER, "RealtimeMediaSourceCenter::identity() returned null!");
 
-        if (identity && [PAL::getAVCaptureSessionClass() instancesRespondToSelector:@selector(initWithAssumedIdentity:)])
+        if (identity && [PAL::getAVCaptureSessionClassSingleton() instancesRespondToSelector:@selector(initWithAssumedIdentity:)])
             m_session = adoptNS([PAL::allocAVCaptureSessionInstance() initWithAssumedIdentity:identity.get()]);
     }
 #endif
@@ -1261,7 +1283,7 @@ void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCa
         return;
 
     auto videoFrame = VideoFrameCV::create(sampleBuffer, [captureConnection isVideoMirrored], m_videoFrameRotation);
-    m_buffer = &videoFrame.get();
+    m_buffer = videoFrame.get();
     setIntrinsicSize(expandedIntSize(videoFrame->presentationSize()));
     VideoFrameTimeMetadata metadata;
     metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
@@ -1272,7 +1294,7 @@ void AVVideoCaptureSource::captureOutputDidFinishProcessingPhoto(RetainPtr<AVCap
 {
     if (error) {
         rejectPendingPhotoRequest("AVCapturePhotoOutput failed"_s);
-        RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, logIdentifier = LOGIDENTIFIER, error = WTFMove(error)] {
+        RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, logIdentifier = LOGIDENTIFIER, error = WTFMove(error)] {
             ASSERT(isMainThread());
             ALWAYS_LOG_WITH_THIS_IF_POSSIBLE(protectedThis, logIdentifier, "failed: ", [error code], ", ", error.get());
         });

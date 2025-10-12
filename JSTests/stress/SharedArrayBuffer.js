@@ -107,7 +107,7 @@ for (idx of [-1, -1000000000000, 10000, 10000000000000]) {
     shouldFail(() => waiterListSize(i32a, idx), RangeError);
 }
 
-for (idx of ["hello"]) {
+for (idx of ["hello", -Number.EPSILON, -0.1, -0.9, -1 + Number.EPSILON]) {
     for (a of [i8a, i16a, i32a, u8a, u16a, u32a]) {
         shouldSucceed(() => Atomics.add(a, idx, 0));
         shouldSucceed(() => Atomics.and(a, idx, 0));

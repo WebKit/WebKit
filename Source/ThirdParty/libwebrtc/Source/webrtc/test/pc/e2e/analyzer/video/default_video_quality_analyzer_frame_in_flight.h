@@ -11,11 +11,12 @@
 #ifndef TEST_PC_E2E_ANALYZER_VIDEO_DEFAULT_VIDEO_QUALITY_ANALYZER_FRAME_IN_FLIGHT_H_
 #define TEST_PC_E2E_ANALYZER_VIDEO_DEFAULT_VIDEO_QUALITY_ANALYZER_FRAME_IN_FLIGHT_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <map>
 #include <optional>
 #include <set>
 #include <unordered_map>
-#include <utility>
 #include <vector>
 
 #include "api/numerics/samples_stats_counter.h"
@@ -25,6 +26,7 @@
 #include "api/video/video_frame.h"
 #include "api/video/video_frame_type.h"
 #include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_internal_shared_objects.h"
+#include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_shared_objects.h"
 
 namespace webrtc {
 
@@ -138,6 +140,7 @@ class FrameInFlight {
   void MarkSuperfluous(size_t peer) {
     receiver_stats_[peer].superfluous = true;
   }
+  bool IsSuperfluous(size_t peer) const;
 
   void SetPrevFrameRenderedTime(size_t peer, webrtc::Timestamp time) {
     receiver_stats_[peer].prev_frame_rendered_time = time;
@@ -150,8 +153,6 @@ class FrameInFlight {
   FrameStats GetStatsForPeer(size_t peer) const;
 
  private:
-  bool IsSuperfluous(size_t peer) const;
-
   const size_t stream_;
   // Set of peer's indexes who are expected to receive this frame. This is not
   // the set of peer's indexes that received the frame. For example, if peer A

@@ -51,7 +51,7 @@ DownloadManager::~DownloadManager() = default;
 void DownloadManager::startDownload(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, std::optional<WebCore::ProcessIdentifier> webProcessID)
 {
     Ref client = m_client.get();
-    auto* networkSession = client->networkSession(sessionID);
+    CheckedPtr networkSession = client->networkSession(sessionID);
     if (!networkSession)
         return;
 
@@ -102,7 +102,7 @@ void DownloadManager::resumeDownload(PAL::SessionID sessionID, DownloadID downlo
 #if !PLATFORM(COCOA)
     notImplemented();
 #else
-    auto* networkSession = protectedClient()->networkSession(sessionID);
+    CheckedPtr networkSession = protectedClient()->networkSession(sessionID);
     if (!networkSession)
         return;
     Ref download = Download::create(*this, downloadID, nullptr, *networkSession);

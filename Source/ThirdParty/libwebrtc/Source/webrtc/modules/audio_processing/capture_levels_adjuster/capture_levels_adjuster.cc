@@ -80,7 +80,7 @@ void CaptureLevelsAdjuster::SetAnalogMicGainLevel(int level) {
   RTC_DCHECK_GE(level, kMinAnalogMicGainLevel);
   RTC_DCHECK_LE(level, kMaxAnalogMicGainLevel);
   int clamped_level =
-      rtc::SafeClamp(level, kMinAnalogMicGainLevel, kMaxAnalogMicGainLevel);
+      SafeClamp(level, kMinAnalogMicGainLevel, kMaxAnalogMicGainLevel);
 
   emulated_analog_mic_gain_level_ = clamped_level;
   UpdatePreAdjustmentGain();

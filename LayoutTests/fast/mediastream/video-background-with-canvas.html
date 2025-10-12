@@ -27,6 +27,7 @@ promise_test(async (test) => {
         return Promise.reject("Test requires internals API");
 
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     video1.srcObject = stream;
     video2.srcObject = stream;
     await video1.play();
@@ -52,6 +53,7 @@ promise_test(async (test) => {
     internals.setPageVisibility(true);
 
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     video1.srcObject = stream;
     video2.srcObject = stream;
     await video1.play();

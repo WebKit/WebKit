@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "BufferSource.h"
-#include "StringAdaptors.h"
 #include <JavaScriptCore/HandleTypes.h>
 #include <JavaScriptCore/Strong.h>
+#include <WebCore/BufferSource.h>
+#include <WebCore/StringAdaptors.h>
 #include <wtf/Brigand.h>
 #include <wtf/Compiler.h>
 #include <wtf/Markable.h>
@@ -37,8 +37,8 @@
 #include <wtf/WallTime.h>
 
 #if ENABLE(WEBGL)
-#include "WebGLAny.h"
-#include "WebGLExtensionAny.h"
+#include <WebCore/WebGLAny.h>
+#include <WebCore/WebGLExtensionAny.h>
 #endif
 
 namespace JSC {

@@ -10,7 +10,7 @@
 
 #include "api/rtp_packet_infos.h"
 
-#include <stddef.h>
+#include <cstddef>
 
 #include "api/rtp_headers.h"
 #include "api/rtp_packet_info.h"

@@ -34,7 +34,7 @@ class RTC_EXPORT DesktopFrameCGImage final : public DesktopFrame {
       CGWindowID window_id);
 
   static std::unique_ptr<DesktopFrameCGImage> CreateFromCGImage(
-      rtc::ScopedCFTypeRef<CGImageRef> cg_image);
+      ScopedCFTypeRef<CGImageRef> cg_image);
 
   ~DesktopFrameCGImage() override;
 
@@ -46,11 +46,11 @@ class RTC_EXPORT DesktopFrameCGImage final : public DesktopFrame {
   DesktopFrameCGImage(DesktopSize size,
                       int stride,
                       uint8_t* data,
-                      rtc::ScopedCFTypeRef<CGImageRef> cg_image,
-                      rtc::ScopedCFTypeRef<CFDataRef> cg_data);
+                      ScopedCFTypeRef<CGImageRef> cg_image,
+                      ScopedCFTypeRef<CFDataRef> cg_data);
 
-  const rtc::ScopedCFTypeRef<CGImageRef> cg_image_;
-  const rtc::ScopedCFTypeRef<CFDataRef> cg_data_;
+  const ScopedCFTypeRef<CGImageRef> cg_image_;
+  const ScopedCFTypeRef<CFDataRef> cg_data_;
 };
 
 }  // namespace webrtc

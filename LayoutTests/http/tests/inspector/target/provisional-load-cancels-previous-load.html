@@ -23,7 +23,10 @@ function test()
             WI.Target.prototype._resumeIfPaused = () => {};
 
             WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
-                let target = event.data.target;
+                let { target } = event.data;
+                if (!(target instanceof WI.PageTarget))
+                    return;
+
                 let targetId = targetIdMap.get(target.identifier);
                 InspectorTest.pass(`Should receive TargetAdded event for target ${targetId}.`);
                 InspectorTest.expectTrue(target.isProvisional, `Target ${targetId} should be provisional.`);
@@ -42,11 +45,18 @@ function test()
 
             WI.targetManager.addEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, (event) => {
                 let {previousTargetId, target} = event.data;
+                if (!(target instanceof WI.PageTarget))
+                    return;
+
                 InspectorTest.pass(`Should receive DidCommitProvisionalTarget event ${targetIdMap.get(previousTargetId)} => ${targetIdMap.get(target.identifier)}.`);
             });
 
             WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, (event) =>{
-                let targetId = targetIdMap.get(event.data.target.identifier);
+                let { target } = event.data;
+                if (!(target instanceof WI.PageTarget))
+                    return;
+
+                let targetId = targetIdMap.get(target.identifier);
                 InspectorTest.pass(`Should receive TargetRemoved event for target ${targetId}`);
             });
 

@@ -8,6 +8,7 @@ PASS URL interface: legacy window alias
 PASS URL interface: existence and properties of interface prototype object
 PASS URL interface: existence and properties of interface prototype object's "constructor" property
 PASS URL interface: existence and properties of interface prototype object's @@unscopables property
+PASS URL interface: operation parse(USVString, optional USVString)
 PASS URL interface: operation canParse(USVString, optional USVString)
 PASS URL interface: attribute href
 PASS URL interface: stringifier
@@ -25,6 +26,8 @@ PASS URL interface: attribute hash
 PASS URL interface: operation toJSON()
 PASS URL must be primary interface of new URL("http://foo")
 PASS Stringification of new URL("http://foo")
+PASS URL interface: new URL("http://foo") must inherit property "parse(USVString, optional USVString)" with the proper type
+PASS URL interface: calling parse(USVString, optional USVString) on new URL("http://foo") with too few arguments must throw TypeError
 PASS URL interface: new URL("http://foo") must inherit property "canParse(USVString, optional USVString)" with the proper type
 PASS URL interface: calling canParse(USVString, optional USVString) on new URL("http://foo") with too few arguments must throw TypeError
 PASS URL interface: new URL("http://foo") must inherit property "href" with the proper type

@@ -53,6 +53,7 @@
                 shouldBe('mediaStream.getAudioTracks().length', '0');
 
                 finishJSTest();
+                mediaStream.getTracks().forEach(track => track.stop());
             }
 
             function canplay()

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: eventTarget.addEventListener is not a function. (In 'eventTarget.addEventListener(type, eventListener)', 'eventTarget.addEventListener' is undefined)
 
 Harness Error (FAIL), message = Unhandled rejection: eventTarget.addEventListener is not a function. (In 'eventTarget.addEventListener(type, eventListener)', 'eventTarget.addEventListener' is undefined)
 

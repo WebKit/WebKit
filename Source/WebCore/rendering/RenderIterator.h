@@ -144,7 +144,8 @@ inline RenderObject* firstChild(RenderText&)
     return nullptr;
 }
 
-inline RenderObject* nextAncestorSibling(RenderObject& current, const RenderObject* stayWithin)
+template <typename U>
+inline RenderObject* nextAncestorSibling(U& current, const RenderObject* stayWithin)
 {
     for (auto* ancestor = current.parent(); ancestor; ancestor = ancestor->parent()) {
         if (ancestor == stayWithin)

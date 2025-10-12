@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Cancelled load to https://localhost:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/common/blank.html due to access control checks.
 
 PASS Cross-Origin-Embedder-Policy and data: URLs
 

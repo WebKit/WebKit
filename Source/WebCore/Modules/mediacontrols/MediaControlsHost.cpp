@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@
 
 #include "MediaControlsHost.h"
 
-#include "AddEventListenerOptions.h"
+#include "AddEventListenerOptionsInlines.h"
 #include "AudioTrackList.h"
 #include "CaptionUserPreferences.h"
 #include "Chrome.h"
@@ -38,12 +38,14 @@
 #include "ContextMenuController.h"
 #include "ContextMenuItem.h"
 #include "ContextMenuProvider.h"
-#include "DocumentInlines.h"
+#include "DocumentPage.h"
+#include "DocumentQuirks.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "FloatRect.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLVideoElement.h"
@@ -56,11 +58,12 @@
 #include "Navigator.h"
 #include "NavigatorMediaSession.h"
 #include "Node.h"
+#include "NodeDocument.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "Quirks.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
+#include "Settings.h"
 #include "TextTrack.h"
 #include "TextTrackCueList.h"
 #include "TextTrackList.h"
@@ -99,14 +102,19 @@ static const AtomString& manualKeyword()
     return alwaysOn;
 }
 
-Ref<MediaControlsHost> MediaControlsHost::create(HTMLMediaElement& mediaElement)
-{
-    return adoptRef(*new MediaControlsHost(mediaElement));
-}
-
 MediaControlsHost::MediaControlsHost(HTMLMediaElement& mediaElement)
     : m_mediaElement(mediaElement)
 {
+}
+
+void MediaControlsHost::ref() const
+{
+    m_mediaElement->ref();
+}
+
+void MediaControlsHost::deref() const
+{
+    m_mediaElement->deref();
 }
 
 MediaControlsHost::~MediaControlsHost()
@@ -145,7 +153,7 @@ const AtomString& MediaControlsHost::mediaControlsContainerClassName() const
 
 Vector<RefPtr<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackList& trackList)
 {
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     if (!mediaElement)
         return { };
 
@@ -158,7 +166,7 @@ Vector<RefPtr<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackLis
 
 Vector<RefPtr<AudioTrack>> MediaControlsHost::sortedTrackListForMenu(AudioTrackList& trackList)
 {
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     if (!mediaElement)
         return { };
 
@@ -171,7 +179,7 @@ Vector<RefPtr<AudioTrack>> MediaControlsHost::sortedTrackListForMenu(AudioTrackL
 
 String MediaControlsHost::displayNameForTrack(const std::optional<TextOrAudioTrack>& track)
 {
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     if (!mediaElement || !track)
         return emptyString();
 
@@ -196,7 +204,7 @@ TextTrack& MediaControlsHost::captionMenuAutomaticItem()
 
 AtomString MediaControlsHost::captionDisplayMode() const
 {
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     if (!mediaElement)
         return emptyAtom();
 
@@ -221,14 +229,14 @@ AtomString MediaControlsHost::captionDisplayMode() const
 
 void MediaControlsHost::setSelectedTextTrack(TextTrack* track)
 {
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     if (mediaElement)
         mediaElement->setSelectedTextTrack(track);
 }
 
 Element* MediaControlsHost::textTrackContainer()
 {
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     if (!m_textTrackContainer && mediaElement)
         m_textTrackContainer = MediaControlTextTrackContainerElement::create(mediaElement->document(), *mediaElement);
 
@@ -280,50 +288,50 @@ void MediaControlsHost::updateCaptionDisplaySizes(ForceUpdate force)
     
 bool MediaControlsHost::allowsInlineMediaPlayback() const
 {
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     return mediaElement && !mediaElement->mediaSession().requiresFullscreenForVideoPlayback();
 }
 
 bool MediaControlsHost::supportsFullscreen() const
 {
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     return mediaElement && mediaElement->supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard);
 }
 
 bool MediaControlsHost::isVideoLayerInline() const
 {
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     return mediaElement && mediaElement->isVideoLayerInline();
 }
 
 bool MediaControlsHost::isInMediaDocument() const
 {
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     return mediaElement && mediaElement->document().isMediaDocument();
 }
 
 bool MediaControlsHost::userGestureRequired() const
 {
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     return mediaElement && !mediaElement->mediaSession().playbackStateChangePermitted(MediaPlaybackState::Playing);
 }
 
 bool MediaControlsHost::shouldForceControlsDisplay() const
 {
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     return mediaElement && mediaElement->shouldForceControlsDisplay();
 }
 
 bool MediaControlsHost::supportsSeeking() const
 {
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     return mediaElement && mediaElement->supportsSeeking();
 }
 
 bool MediaControlsHost::inWindowFullscreen() const
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     if (!mediaElement)
         return false;
 
@@ -342,7 +350,7 @@ bool MediaControlsHost::supportsRewind() const
 
 bool MediaControlsHost::needsChromeMediaControlsPseudoElement() const
 {
-    if (RefPtr mediaElement = protectedElement())
+    if (RefPtr mediaElement = m_mediaElement.ptr())
         return mediaElement->document().quirks().needsChromeMediaControlsPseudoElement();
     return false;
 }
@@ -350,7 +358,7 @@ bool MediaControlsHost::needsChromeMediaControlsPseudoElement() const
 String MediaControlsHost::externalDeviceDisplayName() const
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     if (!mediaElement)
         return emptyString();
 
@@ -373,7 +381,7 @@ auto MediaControlsHost::externalDeviceType() const -> DeviceType
 #if !ENABLE(WIRELESS_PLAYBACK_TARGET)
     return DeviceType::None;
 #else
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     if (!mediaElement)
         return DeviceType::None;
 
@@ -399,13 +407,13 @@ auto MediaControlsHost::externalDeviceType() const -> DeviceType
 
 bool MediaControlsHost::controlsDependOnPageScaleFactor() const
 {
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     return mediaElement && mediaElement->mediaControlsDependOnPageScaleFactor();
 }
 
 void MediaControlsHost::setControlsDependOnPageScaleFactor(bool value)
 {
-    if (RefPtr mediaElement = protectedElement())
+    if (RefPtr mediaElement = m_mediaElement.ptr())
         mediaElement->setMediaControlsDependOnPageScaleFactor(value);
 }
 
@@ -414,9 +422,9 @@ String MediaControlsHost::generateUUID()
     return createVersion4UUIDString();
 }
 
-Vector<String> MediaControlsHost::shadowRootStyleSheets() const
+Vector<String, 2> MediaControlsHost::shadowRootStyleSheets() const
 {
-    if (RefPtr mediaElement = protectedElement())
+    if (RefPtr mediaElement = m_mediaElement.ptr())
         return RenderTheme::singleton().mediaControlsStyleSheets(*mediaElement);
     return { };
 }
@@ -424,11 +432,6 @@ Vector<String> MediaControlsHost::shadowRootStyleSheets() const
 String MediaControlsHost::base64StringForIconNameAndType(const String& iconName, const String& iconType)
 {
     return RenderTheme::singleton().mediaControlsBase64StringForIconNameAndType(iconName, iconType);
-}
-
-String MediaControlsHost::formattedStringForDuration(double durationInSeconds)
-{
-    return RenderTheme::singleton().mediaControlsFormattedStringForDuration(durationInSeconds);
 }
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
@@ -520,7 +523,7 @@ private:
     {
     }
 
-    Ref<MediaControlsContextMenuProvider> m_contextMenuProvider;
+    const Ref<MediaControlsContextMenuProvider> m_contextMenuProvider;
 };
 
 #endif // ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
@@ -531,7 +534,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
     if (m_showMediaControlsContextMenuCallback)
         return false;
 
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     if (!mediaElement)
         return false;
 
@@ -738,7 +741,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
         if (selectedItemID == invalidMenuItemIdentifier)
             return;
 
-        RefPtr mediaElement = protectedThis->protectedElement();
+        RefPtr mediaElement = protectedThis->m_mediaElement.ptr();
         if (!mediaElement)
             return;
 
@@ -824,7 +827,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 
 auto MediaControlsHost::sourceType() const -> std::optional<SourceType>
 {
-    if (RefPtr mediaElement = protectedElement())
+    if (RefPtr mediaElement = m_mediaElement.ptr())
         return mediaElement->sourceType();
     return std::nullopt;
 }
@@ -843,7 +846,7 @@ void MediaControlsHost::savePreviouslySelectedTextTrackIfNecessary()
     if (m_previouslySelectedTextTrack)
         return;
 
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     if (!mediaElement)
         return;
 
@@ -866,12 +869,12 @@ void MediaControlsHost::savePreviouslySelectedTextTrackIfNecessary()
 
     switch (page->group().ensureCaptionPreferences().captionDisplayMode()) {
     case CaptionUserPreferences::CaptionDisplayMode::Automatic:
-        m_previouslySelectedTextTrack = &TextTrack::captionMenuAutomaticItem();
+        m_previouslySelectedTextTrack = TextTrack::captionMenuAutomaticItem();
         return;
     case CaptionUserPreferences::CaptionDisplayMode::ForcedOnly:
     case CaptionUserPreferences::CaptionDisplayMode::Manual:
     case CaptionUserPreferences::CaptionDisplayMode::AlwaysOn:
-        m_previouslySelectedTextTrack = &TextTrack::captionMenuOffItem();
+        m_previouslySelectedTextTrack = TextTrack::captionMenuOffItem();
         return;
     }
 }
@@ -884,7 +887,7 @@ void MediaControlsHost::restorePreviouslySelectedTextTrackIfNecessary()
     if (!m_previouslySelectedTextTrack)
         return;
 
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     if (!mediaElement)
         return;
 
@@ -905,11 +908,11 @@ void MediaControlsHost::restorePreviouslySelectedTextTrackIfNecessary()
 #if ENABLE(MEDIA_SESSION)
 RefPtr<MediaSession> MediaControlsHost::mediaSession() const
 {
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     if (!mediaElement)
         return { };
 
-    RefPtr window = mediaElement->document().domWindow();
+    RefPtr window = mediaElement->document().window();
     if (!window)
         return { };
 
@@ -927,7 +930,7 @@ void MediaControlsHost::ensureMediaSessionObserver()
 
 void MediaControlsHost::metadataChanged(const RefPtr<MediaMetadata>&)
 {
-    RefPtr mediaElement = protectedElement();
+    RefPtr mediaElement = m_mediaElement.ptr();
     if (!mediaElement)
         return;
 

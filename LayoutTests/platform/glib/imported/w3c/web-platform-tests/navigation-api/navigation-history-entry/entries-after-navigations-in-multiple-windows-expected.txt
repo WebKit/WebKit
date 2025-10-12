@@ -1,4 +1,0 @@
-
-
-PASS navigation.entries() behavior when multiple windows navigate.
-

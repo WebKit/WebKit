@@ -34,7 +34,7 @@ namespace TestWebKitAPI {
 
 TEST(WTF, StringParsingBufferEmpty)
 {
-    StringParsingBuffer<LChar> parsingBuffer;
+    StringParsingBuffer<Latin1Character> parsingBuffer;
 
     EXPECT_TRUE(parsingBuffer.atEnd());
     EXPECT_FALSE(parsingBuffer.hasCharactersRemaining());

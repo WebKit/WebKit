@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "EphemeralNonce.h"
-#include "PCMTokens.h"
-#include "RegistrableDomain.h"
+#include <WebCore/EphemeralNonce.h>
+#include <WebCore/PCMTokens.h>
+#include <WebCore/RegistrableDomain.h>
 #include <wtf/JSONValues.h>
 #include <wtf/URL.h>
 

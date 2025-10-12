@@ -175,14 +175,12 @@ const lengthPairType = {
 
       let expected = '30px 30px';
       if (serializesToSingleValue) {
-         expected = '30px';
+        expected = '30px';
       }
 
       testAnimationSamples(animation, idlName,
-                           [{ time: 500,  expected}]);
+                           [{ time: 500,  expected }]);
     }, `${property} supports animating as a length pair`);
-
-    
 
     test(t => {
       const idlName = propertyToIDL(property);
@@ -194,11 +192,11 @@ const lengthPairType = {
 
       let expected = '30px 30px';
       if (serializesToSingleValue) {
-          expected = '30px';
+        expected = '30px';
       }
 
       testAnimationSamples(animation, idlName,
-                           [{ time: 500,  expected}]);
+                           [{ time: 500,  expected }]);
     }, `${property} supports animating as a length pair of rem`);
   },
 
@@ -214,7 +212,7 @@ const lengthPairType = {
 
       let expected = '20px 20px';
       if (serializesToSingleValue) {
-          expected = '20px';
+        expected = '20px';
       }
 
       testAnimationSamples(
@@ -232,10 +230,11 @@ const lengthPairType = {
         { [idlName]: ['1rem 1rem', '5rem 5rem'] },
         { duration: 1000, composite }
       );
-      
+
+
       let expected = '20px 20px';
       if (serializesToSingleValue) {
-          expected = '20px';
+        expected = '20px';
       }
 
       testAnimationSamples(

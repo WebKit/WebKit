@@ -29,6 +29,7 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderFrameSet.h"
 #include "RenderWidgetInlines.h"
+#include <wtf/Ref.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -50,7 +51,8 @@ HTMLFrameElement& RenderFrame::frameElement() const
 
 FrameEdgeInfo RenderFrame::edgeInfo() const
 {
-    return FrameEdgeInfo(frameElement().noResize(), frameElement().hasFrameBorder());
+    Ref frameElement = this->frameElement();
+    return FrameEdgeInfo(frameElement->noResize(), frameElement->hasFrameBorder());
 }
 
 void RenderFrame::updateFromElement()

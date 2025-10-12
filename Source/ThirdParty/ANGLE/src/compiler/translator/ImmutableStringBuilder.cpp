@@ -7,6 +7,10 @@
 // the maximum length is known in advance.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "compiler/translator/ImmutableStringBuilder.h"
 
 #include <inttypes.h>

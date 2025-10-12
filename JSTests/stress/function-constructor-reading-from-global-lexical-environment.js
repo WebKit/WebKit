@@ -73,7 +73,7 @@ test(function() {
         f();
     } catch(e) {
         threw = true;
-        assert(e.toString() === "ReferenceError: Cannot access uninitialized variable.")
+        assert(e.toString() === "ReferenceError: Cannot access 'constTDZ' before initialization.")
     }
     assert(threw);
 });
@@ -85,7 +85,7 @@ test(function() {
         f();
     } catch(e) {
         threw = true;
-        assert(e.toString() === "ReferenceError: Cannot access uninitialized variable.")
+        assert(e.toString() === "ReferenceError: Cannot access 'constTDZ' before initialization.")
     }
     assert(threw);
 });
@@ -97,7 +97,7 @@ test(function() {
         f();
     } catch(e) {
         threw = true;
-        assert(e.toString() === "ReferenceError: Cannot access uninitialized variable.")
+        assert(e.toString() === "ReferenceError: Cannot access 'letTDZ' before initialization.")
     }
     assert(threw);
 });
@@ -109,7 +109,7 @@ test(function() {
         f();
     } catch(e) {
         threw = true;
-        assert(e.toString() === "ReferenceError: Cannot access uninitialized variable.")
+        assert(e.toString() === "ReferenceError: Cannot access 'letTDZ' before initialization.")
     }
     assert(threw);
 });
@@ -121,7 +121,7 @@ test(function() {
         f();
     } catch(e) {
         threw = true;
-        assert(e.toString() === "ReferenceError: Cannot access uninitialized variable.")
+        assert(e.toString() === "ReferenceError: Cannot access 'ClassTDZ' before initialization.")
     }
     assert(threw);
 });

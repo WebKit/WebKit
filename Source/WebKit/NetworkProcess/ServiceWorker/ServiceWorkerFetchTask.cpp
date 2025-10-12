@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,7 +59,7 @@ Ref<ServiceWorkerFetchTask> ServiceWorkerFetchTask::create(WebSWServerConnection
     return adoptRef(*new ServiceWorkerFetchTask(connection, loader, WTFMove(request), connectionIdentifier, workerIdentifier, registration, session, isWorkerReady));
 }
 
-Ref<ServiceWorkerFetchTask> ServiceWorkerFetchTask::create(WebSWServerConnection& connection, NetworkResourceLoader& loader, std::unique_ptr<ServiceWorkerNavigationPreloader>&& preloader)
+Ref<ServiceWorkerFetchTask> ServiceWorkerFetchTask::create(WebSWServerConnection& connection, NetworkResourceLoader& loader, RefPtr<ServiceWorkerNavigationPreloader>&& preloader)
 {
     return adoptRef(*new ServiceWorkerFetchTask(connection, loader, WTFMove(preloader)));
 }
@@ -79,7 +79,7 @@ RefPtr<ServiceWorkerFetchTask> ServiceWorkerFetchTask::fromNavigationPreloader(W
     return ServiceWorkerFetchTask::create(swServerConnection, loader, WTFMove(preload));
 }
 
-ServiceWorkerFetchTask::ServiceWorkerFetchTask(WebSWServerConnection& swServerConnection, NetworkResourceLoader& loader, std::unique_ptr<ServiceWorkerNavigationPreloader>&& preloader)
+ServiceWorkerFetchTask::ServiceWorkerFetchTask(WebSWServerConnection& swServerConnection, NetworkResourceLoader& loader, RefPtr<ServiceWorkerNavigationPreloader>&& preloader)
     : m_swServerConnection(swServerConnection)
     , m_loader(loader)
     , m_fetchIdentifier(WebCore::FetchIdentifier::generate())
@@ -114,10 +114,10 @@ ServiceWorkerFetchTask::ServiceWorkerFetchTask(WebSWServerConnection& swServerCo
     if (shouldDoNavigationPreload && (!isWorkerReady || registration.navigationPreloadState().enabled)) {
         NetworkLoadParameters parameters = loader.parameters().networkLoadParameters();
         parameters.request = m_currentRequest;
-        m_preloader = makeUnique<ServiceWorkerNavigationPreloader>(*session, WTFMove(parameters), registration.navigationPreloadState(), loader.shouldCaptureExtraNetworkLoadMetrics());
+        m_preloader = ServiceWorkerNavigationPreloader::create(*session, WTFMove(parameters), registration.navigationPreloadState(), loader.shouldCaptureExtraNetworkLoadMetrics());
         session->addNavigationPreloaderTask(*this);
 
-        m_preloader->waitForResponse([weakThis = WeakPtr { *this }] {
+        protectedPreloader()->waitForResponse([weakThis = WeakPtr { *this }] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->preloadResponseIsReady();
         });
@@ -141,13 +141,13 @@ RefPtr<IPC::Connection> ServiceWorkerFetchTask::serviceWorkerConnection()
     if (!serviceWorkerConnection)
         return { };
 
-    return serviceWorkerConnection->protectedIPCConnection();
+    return serviceWorkerConnection->ipcConnection();
 }
 
 template<typename Message> bool ServiceWorkerFetchTask::sendToClient(Message&& message)
 {
     Ref loader = *m_loader;
-    return loader->protectedConnectionToWebProcess()->protectedConnection()->send(std::forward<Message>(message), loader->coreIdentifier()) == IPC::Error::NoError;
+    return loader->protectedConnectionToWebProcess()->connection().send(std::forward<Message>(message), loader->coreIdentifier()) == IPC::Error::NoError;
 }
 
 void ServiceWorkerFetchTask::start(WebSWServerToContextConnection& serviceWorkerConnection)
@@ -400,7 +400,7 @@ void ServiceWorkerFetchTask::cannotHandle()
 {
     SWFETCH_RELEASE_LOG("cannotHandle:");
     // Make sure we call didNotHandle asynchronously because failing synchronously would get the NetworkResourceLoader in a bad state.
-    RunLoop::protectedMain()->dispatch([weakThis = WeakPtr { *this }] {
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->didNotHandle();
     });
@@ -485,7 +485,7 @@ void ServiceWorkerFetchTask::loadResponseFromPreloader()
         return;
 
     m_isLoadingFromPreloader = true;
-    m_preloader->waitForResponse([weakThis = WeakPtr { *this }] {
+    protectedPreloader()->waitForResponse([weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->preloadResponseIsReady();
     });
@@ -530,6 +530,11 @@ void ServiceWorkerFetchTask::sendNavigationPreloadUpdate()
     connection->send(Messages::WebSWContextManagerConnection::NavigationPreloadIsReady { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier, m_preloader->response() }, 0);
 }
 
+RefPtr<ServiceWorkerNavigationPreloader> ServiceWorkerFetchTask::protectedPreloader()
+{
+    return m_preloader;
+}
+
 void ServiceWorkerFetchTask::loadBodyFromPreloader()
 {
     SWFETCH_RELEASE_LOG("loadBodyFromPreloader");
@@ -541,7 +546,7 @@ void ServiceWorkerFetchTask::loadBodyFromPreloader()
         return;
     }
 
-    m_preloader->waitForBody([weakThis = WeakPtr { *this }](RefPtr<const WebCore::FragmentedSharedBuffer>&& chunk) {
+    protectedPreloader()->waitForBody([weakThis = WeakPtr { *this }](RefPtr<const WebCore::FragmentedSharedBuffer>&& chunk) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -563,10 +568,10 @@ void ServiceWorkerFetchTask::cancelPreloadIfNecessary()
     if (!m_preloader)
         return;
 
-    if (auto* session = this->session())
+    if (CheckedPtr session = this->session())
         session->removeNavigationPreloaderTask(*this);
 
-    m_preloader->cancel();
+    protectedPreloader()->cancel();
     m_preloader = nullptr;
 }
 
@@ -578,8 +583,8 @@ NetworkSession* ServiceWorkerFetchTask::session()
 
 bool ServiceWorkerFetchTask::convertToDownload(DownloadManager& manager, DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
 {
-    if (m_preloader)
-        return m_preloader->convertToDownload(manager, downloadID, request, response);
+    if (RefPtr preloader = m_preloader.get())
+        return preloader->convertToDownload(manager, downloadID, request, response);
 
     CheckedPtr session = this->session();
     if (!session)
@@ -618,6 +623,15 @@ MonotonicTime ServiceWorkerFetchTask::startTime() const
 RefPtr<NetworkResourceLoader> ServiceWorkerFetchTask::protectedLoader() const
 {
     return m_loader.get();
+}
+
+std::optional<SharedPreferencesForWebProcess> ServiceWorkerFetchTask::sharedPreferencesForWebProcess() const
+{
+    RefPtr loader = m_loader.get();
+    if (!loader)
+        return std::nullopt;
+
+    return loader->connectionToWebProcess().sharedPreferencesForWebProcess();
 }
 
 } // namespace WebKit

@@ -12,31 +12,27 @@
 
 #include <algorithm>
 #include <array>
+#include <cstddef>
 #include <cstdint>
-#include <iterator>
 #include <memory>
-#include <string>
 #include <utility>
 #include <vector>
 
 #include "api/array_view.h"
-#include "api/audio/audio_processing.h"
+#include "api/audio/audio_frame.h"
+#include "api/audio/audio_view.h"
 #include "api/rtp_packet_info.h"
 #include "api/rtp_packet_infos.h"
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_mixer/audio_frame_manipulator.h"
-#include "modules/audio_mixer/audio_mixer_impl.h"
-#include "modules/audio_processing/include/audio_frame_view.h"
+#include "modules/audio_processing/agc2/limiter.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
-#include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/numerics/safe_conversions.h"
-#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 namespace {
 
-void SetAudioFrameFields(rtc::ArrayView<const AudioFrame* const> mix_list,
+void SetAudioFrameFields(ArrayView<const AudioFrame* const> mix_list,
                          size_t number_of_channels,
                          int sample_rate,
                          size_t /* number_of_streams */,
@@ -74,7 +70,7 @@ void SetAudioFrameFields(rtc::ArrayView<const AudioFrame* const> mix_list,
   }
 }
 
-void MixFewFramesWithNoLimiter(rtc::ArrayView<const AudioFrame* const> mix_list,
+void MixFewFramesWithNoLimiter(ArrayView<const AudioFrame* const> mix_list,
                                AudioFrame* audio_frame_for_mixing) {
   if (mix_list.empty()) {
     audio_frame_for_mixing->Mute();
@@ -86,12 +82,11 @@ void MixFewFramesWithNoLimiter(rtc::ArrayView<const AudioFrame* const> mix_list,
   CopySamples(dst, mix_list[0]->data_view());
 }
 
-void MixToFloatFrame(rtc::ArrayView<const AudioFrame* const> mix_list,
+void MixToFloatFrame(ArrayView<const AudioFrame* const> mix_list,
                      DeinterleavedView<float>& mixing_buffer) {
   const size_t number_of_channels = NumChannels(mixing_buffer);
   // Clear the mixing buffer.
-  rtc::ArrayView<float> raw_data = mixing_buffer.data();
-  ClearSamples(raw_data);
+  mixing_buffer.Clear();
 
   // Convert to FloatS16 and mix.
   for (size_t i = 0; i < mix_list.size(); ++i) {
@@ -141,7 +136,7 @@ FrameCombiner::FrameCombiner(bool use_limiter)
 
 FrameCombiner::~FrameCombiner() = default;
 
-void FrameCombiner::Combine(rtc::ArrayView<AudioFrame* const> mix_list,
+void FrameCombiner::Combine(ArrayView<AudioFrame* const> mix_list,
                             size_t number_of_channels,
                             int sample_rate,
                             size_t number_of_streams,

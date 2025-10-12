@@ -36,6 +36,7 @@
 #include "CSSUnparsedValue.h"
 #include "CSSVariableData.h"
 #include "Document.h"
+#include "ExceptionOr.h"
 #include "PaintWorkletGlobalScope.h"
 #include "StylePropertyShorthand.h"
 #include <wtf/text/MakeString.h>
@@ -61,7 +62,7 @@ ExceptionOr<MainThreadStylePropertyMapReadOnly::CSSStyleValueOrUndefined> MainTh
         return { std::monostate { } };
 
     if (isCustomPropertyName(property)) {
-        if (auto value = reifyValue(*document, customPropertyValue(property), std::nullopt))
+        if (auto value = reifyValue(*document, customPropertyValue(property), CSSPropertyCustom))
             return { WTFMove(value) };
 
         return { std::monostate { } };
@@ -92,7 +93,7 @@ ExceptionOr<Vector<RefPtr<CSSStyleValue>>> MainThreadStylePropertyMapReadOnly::g
         return Vector<RefPtr<CSSStyleValue>> { };
 
     if (isCustomPropertyName(property))
-        return reifyValueToVector(*document, customPropertyValue(property), std::nullopt);
+        return reifyValueToVector(*document, customPropertyValue(property), CSSPropertyCustom);
 
     auto propertyID = cssPropertyID(property);
     if (!isExposed(propertyID, &document->settings()))

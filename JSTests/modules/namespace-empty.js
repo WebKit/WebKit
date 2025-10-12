@@ -10,7 +10,7 @@ noInline(access);
 for (var i = 0; i < 1e3; ++i) {
     shouldThrow(() => {
         access(ns);
-    }, `ReferenceError: Cannot access uninitialized variable.`);
+    }, `ReferenceError: Cannot access 'test' before initialization.`);
 }
 
 

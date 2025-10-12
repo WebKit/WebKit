@@ -11,11 +11,12 @@
 #ifndef MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_DEBUG_DUMP_WRITER_H_
 #define MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_DEBUG_DUMP_WRITER_H_
 
+#include <cstdint>
+#include <cstdio>
 #include <memory>
 
 #include "modules/audio_coding/audio_network_adaptor/controller.h"
-#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
-#include "rtc_base/system/file_wrapper.h"
+#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 
 #if WEBRTC_ENABLE_PROTOBUF
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD

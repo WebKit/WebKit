@@ -1,58 +1,16 @@
-/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
- * All rights reserved.
- *
- * This package is an SSL implementation written
- * by Eric Young (eay@cryptsoft.com).
- * The implementation was written so as to conform with Netscapes SSL.
- *
- * This library is free for commercial and non-commercial use as long as
- * the following conditions are aheared to.  The following conditions
- * apply to all code found in this distribution, be it the RC4, RSA,
- * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
- * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- *
- * Copyright remains Eric Young's, and as such any Copyright notices in
- * the code are not to be removed.
- * If this package is used in a product, Eric Young should be given attribution
- * as the author of the parts of the library used.
- * This can be in the form of a textual message at program startup or
- * in documentation (online or textual) provided with the package.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *    "This product includes cryptographic software written by
- *     Eric Young (eay@cryptsoft.com)"
- *    The word 'cryptographic' can be left out if the rouines from the library
- *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from
- *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- *
- * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * The licence and distribution terms for any publically available version or
- * derivative of this code cannot be changed.  i.e. this code cannot simply be
- * copied and put under another distribution licence
- * [including the GNU Public Licence.] */
+// Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <openssl/ssl.h>
 
@@ -68,8 +26,8 @@
 #include <openssl/mem.h>
 #include <openssl/span.h>
 
-#include "internal.h"
 #include "../crypto/internal.h"
+#include "internal.h"
 
 
 BSSL_NAMESPACE_BEGIN
@@ -143,12 +101,25 @@ static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
 };
 
 static const SSL_SIGNATURE_ALGORITHM *get_signature_algorithm(uint16_t sigalg) {
-  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(kSignatureAlgorithms); i++) {
-    if (kSignatureAlgorithms[i].sigalg == sigalg) {
-      return &kSignatureAlgorithms[i];
+  for (const auto &alg : kSignatureAlgorithms) {
+    if (alg.sigalg == sigalg) {
+      return &alg;
     }
   }
-  return NULL;
+  return nullptr;
+}
+
+bssl::UniquePtr<EVP_PKEY> ssl_parse_peer_subject_public_key_info(
+    Span<const uint8_t> spki) {
+  // Ideally the set of reachable algorithms would flow from |SSL_CTX| for dead
+  // code elimination, but for now we just specify every algorithm that might be
+  // reachable from libssl.
+  const EVP_PKEY_ALG *const algs[] = {
+      EVP_pkey_rsa(),     EVP_pkey_ec_p256(), EVP_pkey_ec_p384(),
+      EVP_pkey_ec_p521(), EVP_pkey_ed25519(),
+  };
+  return bssl::UniquePtr<EVP_PKEY>(EVP_PKEY_from_subject_public_key_info(
+      spki.data(), spki.size(), algs, std::size(algs)));
 }
 
 bool ssl_pkey_supports_algorithm(const SSL *ssl, EVP_PKEY *pkey,
@@ -196,8 +167,7 @@ bool ssl_pkey_supports_algorithm(const SSL *ssl, EVP_PKEY *pkey,
     // EC keys have a curve requirement.
     if (alg->pkey_type == EVP_PKEY_EC &&
         (alg->curve == NID_undef ||
-         EC_GROUP_get_curve_name(
-             EC_KEY_get0_group(EVP_PKEY_get0_EC_KEY(pkey))) != alg->curve)) {
+         EVP_PKEY_get_ec_curve_nid(pkey) != alg->curve)) {
       return false;
     }
   } else if (!alg->tls12_ok) {
@@ -227,7 +197,7 @@ static bool setup_ctx(SSL *ssl, EVP_MD_CTX *ctx, EVP_PKEY *pkey,
 
   if (alg->is_rsa_pss) {
     if (!EVP_PKEY_CTX_set_rsa_padding(pctx, RSA_PKCS1_PSS_PADDING) ||
-        !EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, -1 /* salt len = hash len */)) {
+        !EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, RSA_PSS_SALTLEN_DIGEST)) {
       return false;
     }
   }
@@ -255,9 +225,9 @@ enum ssl_private_key_result_t ssl_private_key_sign(
   // Replay the signature from handshake hints if available.
   if (hints && !hs->hints_requested &&         //
       sigalg == hints->signature_algorithm &&  //
-      in == hints->signature_input &&
-      MakeConstSpan(spki) == hints->signature_spki &&
-      !hints->signature.empty() &&  //
+      in == hints->signature_input &&          //
+      Span(spki) == hints->signature_spki &&   //
+      !hints->signature.empty() &&             //
       hints->signature.size() <= max_out) {
     // Signature algorithm and input both match. Reuse the signature from hints.
     *out_len = hints->signature.size();
@@ -298,7 +268,7 @@ enum ssl_private_key_result_t ssl_private_key_sign(
     hints->signature_algorithm = sigalg;
     hints->signature_spki = std::move(spki);
     if (!hints->signature_input.CopyFrom(in) ||
-        !hints->signature.CopyFrom(MakeConstSpan(out, *out_len))) {
+        !hints->signature.CopyFrom(Span(out, *out_len))) {
       return ssl_private_key_failure;
     }
   }
@@ -314,10 +284,10 @@ bool ssl_public_key_verify(SSL *ssl, Span<const uint8_t> signature,
   }
   bool ok = EVP_DigestVerify(ctx.get(), signature.data(), signature.size(),
                              in.data(), in.size());
-#if defined(BORINGSSL_UNSAFE_FUZZER_MODE)
-  ok = true;
-  ERR_clear_error();
-#endif
+  if (CRYPTO_fuzzer_mode_enabled()) {
+    ok = true;
+    ERR_clear_error();
+  }
   return ok;
 }
 
@@ -371,7 +341,7 @@ int SSL_use_RSAPrivateKey(SSL *ssl, RSA *rsa) {
   }
 
   UniquePtr<EVP_PKEY> pkey(EVP_PKEY_new());
-  if (!pkey ||
+  if (!pkey ||  //
       !EVP_PKEY_set1_RSA(pkey.get(), rsa)) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_EVP_LIB);
     return 0;
@@ -424,8 +394,7 @@ int SSL_CTX_use_RSAPrivateKey(SSL_CTX *ctx, RSA *rsa) {
   }
 
   UniquePtr<EVP_PKEY> pkey(EVP_PKEY_new());
-  if (!pkey ||
-      !EVP_PKEY_set1_RSA(pkey.get(), rsa)) {
+  if (!pkey || !EVP_PKEY_set1_RSA(pkey.get(), rsa)) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_EVP_LIB);
     return 0;
   }
@@ -539,9 +508,9 @@ const char *SSL_get_signature_algorithm_name(uint16_t sigalg,
 size_t SSL_get_all_signature_algorithm_names(const char **out, size_t max_out) {
   const char *kPredefinedNames[] = {"ecdsa_sha256", "ecdsa_sha384",
                                     "ecdsa_sha512"};
-  return GetAllNames(out, max_out, MakeConstSpan(kPredefinedNames),
+  return GetAllNames(out, max_out, kPredefinedNames,
                      &SignatureAlgorithmName::name,
-                     MakeConstSpan(kSignatureAlgorithmNames));
+                     Span(kSignatureAlgorithmNames));
 }
 
 int SSL_get_signature_algorithm_key_type(uint16_t sigalg) {
@@ -562,18 +531,6 @@ int SSL_is_signature_algorithm_rsa_pss(uint16_t sigalg) {
   return alg != nullptr && alg->is_rsa_pss;
 }
 
-static int compare_uint16_t(const void *p1, const void *p2) {
-  uint16_t u1 = *((const uint16_t *)p1);
-  uint16_t u2 = *((const uint16_t *)p2);
-  if (u1 < u2) {
-    return -1;
-  } else if (u1 > u2) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
 static bool sigalgs_unique(Span<const uint16_t> in_sigalgs) {
   if (in_sigalgs.size() < 2) {
     return true;
@@ -584,8 +541,7 @@ static bool sigalgs_unique(Span<const uint16_t> in_sigalgs) {
     return false;
   }
 
-  qsort(sigalgs.data(), sigalgs.size(), sizeof(uint16_t), compare_uint16_t);
-
+  std::sort(sigalgs.begin(), sigalgs.end());
   for (size_t i = 1; i < sigalgs.size(); i++) {
     if (sigalgs[i - 1] == sigalgs[i]) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_DUPLICATE_SIGNATURE_ALGORITHM);
@@ -651,7 +607,7 @@ int SSL_CREDENTIAL_set1_signing_algorithm_prefs(SSL_CREDENTIAL *cred,
     return 0;
   }
 
-  return set_sigalg_prefs(&cred->sigalgs, MakeConstSpan(prefs, num_prefs));
+  return set_sigalg_prefs(&cred->sigalgs, Span(prefs, num_prefs));
 }
 
 int SSL_CTX_set_signing_algorithm_prefs(SSL_CTX *ctx, const uint16_t *prefs,
@@ -701,7 +657,7 @@ static bool parse_sigalg_pairs(Array<uint16_t> *out, const int *values,
 
   for (size_t i = 0; i < num_values; i += 2) {
     const int hash_nid = values[i];
-    const int pkey_type = values[i+1];
+    const int pkey_type = values[i + 1];
 
     bool found = false;
     for (const auto &candidate : kSignatureAlgorithmsMapping) {
@@ -789,7 +745,7 @@ static bool parse_sigalgs_list(Array<uint16_t> *out, const char *str) {
   int pkey_type = 0, hash_nid = 0;
 
   // Note that the loop runs to len+1, i.e. it'll process the terminating NUL.
-  for (size_t offset = 0; offset < len+1; offset++) {
+  for (size_t offset = 0; offset < len + 1; offset++) {
     const unsigned char c = str[offset];
 
     switch (c) {
@@ -808,7 +764,7 @@ static bool parse_sigalgs_list(Array<uint16_t> *out, const char *str) {
 
         if (strcmp(buf, "RSA") == 0) {
           pkey_type = EVP_PKEY_RSA;
-        } else if (strcmp(buf, "RSA-PSS") == 0 ||
+        } else if (strcmp(buf, "RSA-PSS") == 0 ||  //
                    strcmp(buf, "PSS") == 0) {
           pkey_type = EVP_PKEY_RSA_PSS;
         } else if (strcmp(buf, "ECDSA") == 0) {
@@ -824,7 +780,7 @@ static bool parse_sigalgs_list(Array<uint16_t> *out, const char *str) {
         break;
 
       case ':':
-        OPENSSL_FALLTHROUGH;
+        [[fallthrough]];
       case 0:
         if (buf_used == 0) {
           OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SIGNATURE_ALGORITHM);
@@ -947,8 +903,7 @@ int SSL_set1_sigalgs_list(SSL *ssl, const char *str) {
 
 int SSL_CTX_set_verify_algorithm_prefs(SSL_CTX *ctx, const uint16_t *prefs,
                                        size_t num_prefs) {
-  return set_sigalg_prefs(&ctx->verify_sigalgs,
-                          MakeConstSpan(prefs, num_prefs));
+  return set_sigalg_prefs(&ctx->verify_sigalgs, Span(prefs, num_prefs));
 }
 
 int SSL_set_verify_algorithm_prefs(SSL *ssl, const uint16_t *prefs,
@@ -958,6 +913,5 @@ int SSL_set_verify_algorithm_prefs(SSL *ssl, const uint16_t *prefs,
     return 0;
   }
 
-  return set_sigalg_prefs(&ssl->config->verify_sigalgs,
-                          MakeConstSpan(prefs, num_prefs));
+  return set_sigalg_prefs(&ssl->config->verify_sigalgs, Span(prefs, num_prefs));
 }

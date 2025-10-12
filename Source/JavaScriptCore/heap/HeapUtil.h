@@ -46,13 +46,13 @@ public:
     {
         // It could point to a large allocation.
         if (pointer->isPreciseAllocation()) {
-            auto* set = heap.objectSpace().preciseAllocationSet();
+            auto& set = heap.objectSpace().preciseAllocationSet();
             ASSERT(set);
-            if (set->isEmpty())
-                return false;
 #if USE(JSVALUE32_64)
             // In 32bit systems a cell pointer can be 0xFFFFFFFF (an entries in the call frame), and this
             // value clashes with the deletedValue in a set<JSCell*>.
+            // FIXME: In this case, the ASSERT(set) above could fail too so this check is too late.
+            // FIXME: Why couldn't a cell pointer be 0xFFFFFFFFFFFFFFFF on 64-bit systems too?
             if (!set->isValidValue(pointer))
                 return false;
 #endif

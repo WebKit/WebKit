@@ -16,6 +16,7 @@ promise_test(async (test) => {
     const key4 = await crypto.subtle.importKey("raw", new Uint8Array([146, 77, 43, 10, 72, 19, 37, 67, 236, 219, 24, 93, 26, 165, 91, 178]), "HKDF", false, ["deriveBits", "deriveKey"]);
 
     const localStream = await navigator.mediaDevices.getUserMedia({audio: true});
+    test.add_cleanup(() => localStream.getTracks().forEach(t => t.stop()));
     let receiver;
     const stream = await new Promise((resolve, reject) => {
         const connections = createConnections(test, (firstConnection) => {
@@ -50,6 +51,7 @@ promise_test(async (test) => {
     const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
     assert_equals(data, "registered");
     const localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    test.add_cleanup(() => localStream.getTracks().forEach(t => t.stop()));
 
     let sender, receiver;
 

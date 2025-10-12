@@ -11,7 +11,7 @@
 #ifndef MODULES_DESKTOP_CAPTURE_FULL_SCREEN_APPLICATION_HANDLER_H_
 #define MODULES_DESKTOP_CAPTURE_FULL_SCREEN_APPLICATION_HANDLER_H_
 
-#include <memory>
+#include <cstdint>
 
 #include "modules/desktop_capture/desktop_capturer.h"
 
@@ -41,7 +41,23 @@ class FullScreenApplicationHandler {
   // FullScreenApplicationHandler
   DesktopCapturer::SourceId GetSourceId() const;
 
+  void SetUseHeuristicFullscreenPowerPointWindows(
+      bool use_heuristic_fullscreen_powerpoint_windows) {
+    use_heuristic_fullscreen_powerpoint_windows_ =
+        use_heuristic_fullscreen_powerpoint_windows;
+  }
+
+  bool UseHeuristicFullscreenPowerPointWindows() const {
+    return use_heuristic_fullscreen_powerpoint_windows_;
+  }
+
+  virtual void SetSlideShowCreationStateForTest(
+      bool fullscreen_slide_show_started_after_capture_start) {}
+
  private:
+  // `use_heuristic_fullscreen_powerpoint_windows_` is used to implement a
+  // killswitch.
+  bool use_heuristic_fullscreen_powerpoint_windows_ = true;
   const DesktopCapturer::SourceId source_id_;
 };
 

@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "BackgroundFetchRecordIdentifier.h"
-#include "FetchHeadersGuard.h"
-#include "FetchOptions.h"
-#include "HTTPHeaderMap.h"
-#include "ResourceRequest.h"
+#include <WebCore/BackgroundFetchRecordIdentifier.h>
+#include <WebCore/FetchHeadersGuard.h>
+#include <WebCore/FetchOptions.h>
+#include <WebCore/HTTPHeaderMap.h>
+#include <WebCore/ResourceRequest.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

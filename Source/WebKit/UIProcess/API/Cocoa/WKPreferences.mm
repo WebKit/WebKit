@@ -722,6 +722,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     _preferences->setInactiveMediaCaptureStreamRepromptIntervalInMinutes(interval);
 }
 
+- (double)_inactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes
+{
+    return _preferences->inactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes();
+}
+
+- (void)_setInactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes:(double)interval
+{
+    _preferences->setInactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes(interval);
+}
+
 - (BOOL)_interruptAudioOnPageVisibilityChangeEnabled
 {
     return _preferences->interruptAudioOnPageVisibilityChangeEnabled();
@@ -1489,12 +1499,12 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (BOOL)_fileSystemAccessEnabled
 {
-    return _preferences->fileSystemAccessEnabled();
+    return _preferences->fileSystemEnabled();
 }
 
 - (void)_setFileSystemAccessEnabled:(BOOL)fileSystemAccessEnabled
 {
-    _preferences->setFileSystemAccessEnabled(fileSystemAccessEnabled);
+    _preferences->setFileSystemEnabled(fileSystemAccessEnabled);
 }
 
 - (BOOL)_storageAPIEnabled
@@ -1670,24 +1680,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 {
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     return _preferences->overlayRegionsEnabled();
-#else
-    return NO;
-#endif
-}
-
-- (void)_setSpatialVideoEnabled:(BOOL)enabled
-{
-#if ENABLE(LINEAR_MEDIA_PLAYER)
-    _preferences->setSpatialVideoEnabled(enabled);
-#else
-    UNUSED_PARAM(enabled);
-#endif
-}
-
-- (BOOL)_spatialVideoEnabled
-{
-#if ENABLE(LINEAR_MEDIA_PLAYER)
-    return _preferences->spatialVideoEnabled();
 #else
     return NO;
 #endif

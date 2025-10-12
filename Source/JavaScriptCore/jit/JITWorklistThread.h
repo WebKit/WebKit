@@ -60,6 +60,7 @@ private:
     Lock m_rightToRun;
     JITWorklist& m_worklist;
     RefPtr<JITPlan> m_plan { nullptr };
+    unsigned m_planLoad { 0 };
     Safepoint* m_safepoint { nullptr };
 };
 

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "HTMLTableCellElement.h"
-#include "HTMLTablePartElement.h"
+#include <WebCore/HTMLTableCellElement.h>
+#include <WebCore/HTMLTablePartElement.h>
 
 namespace WebCore {
 

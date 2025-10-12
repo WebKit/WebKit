@@ -3,6 +3,8 @@ FAIL getComputedStyle() for ::selection at #child1 assert_equals: Background col
 FAIL getComputedStyle() for ::selection at #child2 assert_equals: Background color is green. expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
 FAIL getComputedStyle() for ::target-text at #child1 assert_equals: Background color is green. expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
 FAIL getComputedStyle() for ::target-text at #child2 assert_equals: Background color is green. expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
+FAIL getComputedStyle() for ::search-text at #child1 assert_equals: Background color is green. expected "rgb(0, 128, 0)" but got ""
+FAIL getComputedStyle() for ::search-text at #child2 assert_equals: Background color is green. expected "rgb(0, 128, 0)" but got ""
 FAIL getComputedStyle() for ::spelling-error at #child1 assert_equals: Background color is green. expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
 FAIL getComputedStyle() for ::spelling-error at #child2 assert_equals: Background color is green. expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
 FAIL getComputedStyle() for ::grammar-error at #child1 assert_equals: Background color is green. expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"

@@ -8,7 +8,8 @@
         "HostTimerResolution": "CL_PLATFORM_HOST_TIMER_RESOLUTION",
         "NumericVersion": "CL_PLATFORM_NUMERIC_VERSION",
         "ExtensionsWithVersion": "CL_PLATFORM_EXTENSIONS_WITH_VERSION",
-        "IcdSuffix": "CL_PLATFORM_ICD_SUFFIX_KHR"
+        "IcdSuffix": "CL_PLATFORM_ICD_SUFFIX_KHR",
+        "ExternalMemory": "CL_PLATFORM_EXTERNAL_MEMORY_IMPORT_HANDLE_TYPES_KHR"
     },
     "DeviceInfo": {
         "Type": "CL_DEVICE_TYPE",
@@ -119,7 +120,12 @@
         "OpenCL_C_Features": "CL_DEVICE_OPENCL_C_FEATURES",
         "DeviceEnqueueCapabilities": "CL_DEVICE_DEVICE_ENQUEUE_CAPABILITIES",
         "PipeSupport": "CL_DEVICE_PIPE_SUPPORT",
-        "LatestConformanceVersionPassed": "CL_DEVICE_LATEST_CONFORMANCE_VERSION_PASSED"
+        "LatestConformanceVersionPassed": "CL_DEVICE_LATEST_CONFORMANCE_VERSION_PASSED",
+        "IntegerDotProductCapabilities": "CL_DEVICE_INTEGER_DOT_PRODUCT_CAPABILITIES_KHR",
+        "IntegerDotProductAccelerationProperties8bit": "CL_DEVICE_INTEGER_DOT_PRODUCT_ACCELERATION_PROPERTIES_8BIT_KHR",
+        "IntegerDotProductAccelerationProperties4x8bitPacked": "CL_DEVICE_INTEGER_DOT_PRODUCT_ACCELERATION_PROPERTIES_4x8BIT_PACKED_KHR",
+        "ExternalMemoryImportHandleTypes": "CL_DEVICE_EXTERNAL_MEMORY_IMPORT_HANDLE_TYPES_KHR",
+        "ExternalMemoryLinearImagesHandleTypes": "CL_DEVICE_EXTERNAL_MEMORY_IMPORT_ASSUME_LINEAR_IMAGES_HANDLE_TYPES_KHR"
     },
     "ContextInfo": {
         "ReferenceCount": "CL_CONTEXT_REFERENCE_COUNT",
@@ -164,6 +170,10 @@
         "Offset": "CL_MEM_OFFSET",
         "UsesSVM_Pointer": "CL_MEM_USES_SVM_POINTER",
         "Properties": "CL_MEM_PROPERTIES"
+    },
+    "MemProperties": {
+        "ExternalMemoryHandleListStart":"CL_MEM_DEVICE_HANDLE_LIST_KHR",
+        "ExternalMemoryHandleListEnd":"CL_MEM_DEVICE_HANDLE_LIST_END_KHR"
     },
     "ImageInfo": {
         "Format": "CL_IMAGE_FORMAT",
@@ -270,5 +280,15 @@
         "CommandStart": "CL_PROFILING_COMMAND_START",
         "CommandEnd": "CL_PROFILING_COMMAND_END",
         "CommandComplete": "CL_PROFILING_COMMAND_COMPLETE"
+    },
+    "ExternalMemoryHandle": {
+        "OpaqueFd": "CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_FD_KHR",
+        "OpaqueWin32": "CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KHR",
+        "OpaqueWin32Kmt": "CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KMT_KHR",
+        "D3D11Texture": "CL_EXTERNAL_MEMORY_HANDLE_D3D11_TEXTURE_KHR",
+        "D3D11TextureKmt": "CL_EXTERNAL_MEMORY_HANDLE_D3D11_TEXTURE_KMT_KHR",
+        "D3D12Heap": "CL_EXTERNAL_MEMORY_HANDLE_D3D12_HEAP_KHR",
+        "D3D12Resource": "CL_EXTERNAL_MEMORY_HANDLE_D3D12_RESOURCE_KHR",
+        "DmaBuf": "CL_EXTERNAL_MEMORY_HANDLE_DMA_BUF_KHR"
     }
 }

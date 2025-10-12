@@ -14,22 +14,27 @@
 #include <openssl/err.h>
 #include <openssl/pem.h>
 #include <openssl/pool.h>
-#include <stdint.h>
-#include <string.h>
 
+#include <cstdint>
+#include <cstring>
+#include <ctime>
 #include <memory>
+#include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
+#include "rtc_base/boringssl_certificate.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
-#include "rtc_base/openssl.h"
+#include "rtc_base/openssl_key_pair.h"
 #include "rtc_base/openssl_utility.h"
+#include "rtc_base/ssl_certificate.h"
+#include "rtc_base/ssl_identity.h"
 
-namespace rtc {
+namespace webrtc {
 
 BoringSSLIdentity::BoringSSLIdentity(
     std::unique_ptr<OpenSSLKeyPair> key_pair,
@@ -111,9 +116,8 @@ std::unique_ptr<SSLIdentity> BoringSSLIdentity::CreateFromPEMStrings(
 std::unique_ptr<SSLIdentity> BoringSSLIdentity::CreateFromPEMChainStrings(
     absl::string_view private_key,
     absl::string_view certificate_chain) {
-  bssl::UniquePtr<BIO> bio(
-      BIO_new_mem_buf(certificate_chain.data(),
-                      rtc::dchecked_cast<int>(certificate_chain.size())));
+  bssl::UniquePtr<BIO> bio(BIO_new_mem_buf(
+      certificate_chain.data(), dchecked_cast<int>(certificate_chain.size())));
   if (!bio) {
     return nullptr;
   }
@@ -171,7 +175,7 @@ const BoringSSLCertificate& BoringSSLIdentity::certificate() const {
 }
 
 const SSLCertChain& BoringSSLIdentity::cert_chain() const {
-  return *cert_chain_.get();
+  return *cert_chain_;
 }
 
 std::unique_ptr<SSLIdentity> BoringSSLIdentity::CloneInternal() const {
@@ -214,4 +218,4 @@ bool BoringSSLIdentity::operator!=(const BoringSSLIdentity& other) const {
   return !(*this == other);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

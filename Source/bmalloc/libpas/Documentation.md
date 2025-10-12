@@ -120,7 +120,7 @@ calling functions declared in headers that `pas_foo.h` can't include), and `pas_
 
 Some libpas "classes" are singletons. The standard way of implementing a singleton in libpas is that there is
 really no struct, only global variables and functions that are declared in the header. See `pas_page_malloc` or
-`pas_debug_heap` for examples of singletons.
+`pas_system_heap` for examples of singletons.
 
 Not everything in libpas is a class. In cases where a bunch of not-class-like things can be grouped together in
 a way that makes sense, we usually do something like a singleton. In cases where a function can't easily be

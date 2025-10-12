@@ -1,0 +1,4 @@
+
+PASS <model> should not update entity transform after resize if stagemode=none
+PASS <model> should update entity transform after resize if stagemode=orbit
+

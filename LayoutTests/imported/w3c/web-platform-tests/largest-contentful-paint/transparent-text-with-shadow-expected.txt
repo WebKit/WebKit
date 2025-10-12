@@ -1,0 +1,4 @@
+fake LCP
+
+PASS Transparent text with shadow decoration should not be excluded from LCP.
+

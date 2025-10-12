@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ProcessIdentifier.h"
+#include <WebCore/ProcessIdentifier.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Hasher.h>
 

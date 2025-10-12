@@ -21,6 +21,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+#if ENABLE_SWIFTUI
+
 internal import SwiftUI
 @_spi(Private) internal import WebKit
 
@@ -43,3 +45,10 @@ struct ScrollInputBehaviorContext {
     let behavior: ScrollInputBehavior
     let input: ScrollInputKind
 }
+
+struct ScrollEdgeEffectStyleContext {
+    let style: ScrollEdgeEffectStyle?
+    let edges: Edge.Set
+}
+
+#endif

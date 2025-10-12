@@ -32,6 +32,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 namespace WebKit {
 using namespace fido;
@@ -76,9 +77,9 @@ void HidConnection::initialize()
 {
 #if HAVE(SECURITY_KEY_API)
     IOHIDDeviceOpen(m_device.get(), kIOHIDOptionsTypeSeizeDevice);
-    IOHIDDeviceScheduleWithRunLoop(m_device.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+    IOHIDDeviceScheduleWithRunLoop(m_device.get(), retainPtr(CFRunLoopGetCurrent()).get(), kCFRunLoopDefaultMode);
     m_inputBuffer.resize(kHidMaxPacketSize);
-    IOHIDDeviceRegisterInputReportCallback(m_device.get(), m_inputBuffer.data(), m_inputBuffer.size(), &reportReceived, this);
+    IOHIDDeviceRegisterInputReportCallback(m_device.get(), m_inputBuffer.mutableSpan().data(), m_inputBuffer.size(), &reportReceived, this);
 #endif
     m_isInitialized = true;
 }
@@ -86,8 +87,8 @@ void HidConnection::initialize()
 void HidConnection::terminate()
 {
 #if HAVE(SECURITY_KEY_API)
-    IOHIDDeviceRegisterInputReportCallback(m_device.get(), m_inputBuffer.data(), m_inputBuffer.size(), nullptr, nullptr);
-    IOHIDDeviceUnscheduleFromRunLoop(m_device.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+    IOHIDDeviceRegisterInputReportCallback(m_device.get(), m_inputBuffer.mutableSpan().data(), m_inputBuffer.size(), nullptr, nullptr);
+    IOHIDDeviceUnscheduleFromRunLoop(m_device.get(), retainPtr(CFRunLoopGetCurrent()).get(), kCFRunLoopDefaultMode);
     IOHIDDeviceClose(m_device.get(), kIOHIDOptionsTypeNone);
 #endif
     m_isInitialized = false;
@@ -97,7 +98,7 @@ auto HidConnection::sendSync(const Vector<uint8_t>& data) -> DataSent
 {
 #if HAVE(SECURITY_KEY_API)
     ASSERT(m_isInitialized);
-    auto status = IOHIDDeviceSetReport(m_device.get(), kIOHIDReportTypeOutput, kHidReportId, data.data(), data.size());
+    auto status = IOHIDDeviceSetReport(m_device.get(), kIOHIDReportTypeOutput, kHidReportId, data.span().data(), data.size());
     if (status) {
         LOG_ERROR("Couldn't send report to the authenticator: %d", status);
         return DataSent::No;
@@ -116,7 +117,7 @@ void HidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback)
 
 #if HAVE(SECURITY_KEY_API)
         DataSent sent = DataSent::Yes;
-        auto status = IOHIDDeviceSetReport(device.get(), kIOHIDReportTypeOutput, kHidReportId, data.data(), data.size());
+        auto status = IOHIDDeviceSetReport(device.get(), kIOHIDReportTypeOutput, kHidReportId, data.span().data(), data.size());
         if (status) {
             LOG_ERROR("Couldn't send report to the authenticator: %d", status);
             sent = DataSent::No;
@@ -124,11 +125,11 @@ void HidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback)
 #else
         DataSent sent = DataSent::No;
 #endif
-        RunLoop::protectedMain()->dispatch([callback = WTFMove(callback), sent]() mutable {
+        RunLoop::mainSingleton().dispatch([callback = WTFMove(callback), sent]() mutable {
             callback(sent);
         });
     });
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), task.get());
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), task.get());
 }
 
 void HidConnection::registerDataReceivedCallback(DataReceivedCallback&& callback)

@@ -46,8 +46,8 @@ void WebGLVertexArrayObjectBase::setElementArrayBuffer(const AbstractLocker& loc
 {
     if (buffer)
         buffer->onAttached();
-    if (m_boundElementArrayBuffer)
-        m_boundElementArrayBuffer->onDetached(locker, context()->protectedGraphicsContextGL().get());
+    if (RefPtr boundElementArrayBuffer = m_boundElementArrayBuffer.get())
+        boundElementArrayBuffer->onDetached(locker, context()->protectedGraphicsContextGL().get());
     m_boundElementArrayBuffer = buffer;
     
 }
@@ -69,8 +69,8 @@ void WebGLVertexArrayObjectBase::setVertexAttribState(const AbstractLocker& lock
     bool bindingWasValid = state.validateBinding();
     if (buffer)
         buffer->onAttached();
-    if (state.bufferBinding)
-        state.bufferBinding->onDetached(locker, context()->protectedGraphicsContextGL().get());
+    if (RefPtr bufferBinding = state.bufferBinding.get())
+        bufferBinding->onDetached(locker, context()->protectedGraphicsContextGL().get());
     state.bufferBinding = buffer;
     if (!state.validateBinding())
         m_allEnabledAttribBuffersBoundCache = false;
@@ -88,8 +88,8 @@ void WebGLVertexArrayObjectBase::setVertexAttribState(const AbstractLocker& lock
 
 void WebGLVertexArrayObjectBase::unbindBuffer(const AbstractLocker& locker, WebGLBuffer& buffer)
 {
-    if (m_boundElementArrayBuffer == &buffer) {
-        m_boundElementArrayBuffer->onDetached(locker, context()->protectedGraphicsContextGL().get());
+    if (RefPtr boundElementArrayBuffer = m_boundElementArrayBuffer.get(); boundElementArrayBuffer == &buffer) {
+        boundElementArrayBuffer->onDetached(locker, context()->protectedGraphicsContextGL().get());
         m_boundElementArrayBuffer = nullptr;
     }
     
@@ -110,9 +110,9 @@ void WebGLVertexArrayObjectBase::setVertexAttribDivisor(GCGLuint index, GCGLuint
 
 void WebGLVertexArrayObjectBase::addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor& visitor)
 {
-    addWebCoreOpaqueRoot(visitor, m_boundElementArrayBuffer.get());
+    SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, m_boundElementArrayBuffer.get());
     for (auto& state : m_vertexAttribState)
-        addWebCoreOpaqueRoot(visitor, state.bufferBinding.get());
+        SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, state.bufferBinding.get());
 }
 
 bool WebGLVertexArrayObjectBase::areAllEnabledAttribBuffersBound()

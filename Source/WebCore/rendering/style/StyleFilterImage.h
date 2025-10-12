@@ -28,18 +28,18 @@
 
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
-#include "FilterOperations.h"
+#include "StyleFilter.h"
 #include "StyleGeneratedImage.h"
 
 namespace WebCore {
 
 class StyleFilterImage final : public StyleGeneratedImage, private CachedImageClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StyleFilterImage);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StyleFilterImage);
 public:
-    static Ref<StyleFilterImage> create(RefPtr<StyleImage> image, FilterOperations filterOperations)
+    static Ref<StyleFilterImage> create(RefPtr<StyleImage> image, Style::Filter filter)
     {
-        return adoptRef(*new StyleFilterImage(WTFMove(image), WTFMove(filterOperations)));
+        return adoptRef(*new StyleFilterImage(WTFMove(image), WTFMove(filter)));
     }
     virtual ~StyleFilterImage();
 
@@ -48,17 +48,17 @@ public:
     bool equalInputImages(const StyleFilterImage&) const;
 
     RefPtr<StyleImage> inputImage() const { return m_image; }
-    const FilterOperations& filterOperations() const { return m_filterOperations; }
+    const Style::Filter& filter() const { return m_filter; }
 
     static constexpr bool isFixedSize = true;
 
 private:
-    explicit StyleFilterImage(RefPtr<StyleImage>&&, FilterOperations&&);
+    explicit StyleFilterImage(RefPtr<StyleImage>&&, Style::Filter&&);
 
     Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
     bool isPending() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
-    RefPtr<Image> image(const RenderElement*, const FloatSize&, bool isForFirstLine) const final;
+    RefPtr<Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     FloatSize fixedSize(const RenderElement&) const final;
     void didAddClient(RenderElement&) final { }
@@ -68,7 +68,7 @@ private:
     void imageChanged(CachedImage*, const IntRect* = nullptr) final;
 
     RefPtr<StyleImage> m_image;
-    FilterOperations m_filterOperations;
+    Style::Filter m_filter;
 
     // FIXME: Rather than caching and tracking the input image via CachedImages, we should
     // instead use a new, StyleImage specific notification, to allow correct tracking of

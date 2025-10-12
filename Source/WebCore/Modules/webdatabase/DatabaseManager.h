@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DatabaseDetails.h"
+#include <WebCore/DatabaseDetails.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>

@@ -27,10 +27,11 @@
 #include "StyleCustomPropertyData.h"
 
 namespace WebCore {
+namespace Style {
 
 static constexpr auto maximumAncestorCount = 4;
 
-StyleCustomPropertyData::StyleCustomPropertyData(const StyleCustomPropertyData& other)
+CustomPropertyData::CustomPropertyData(const CustomPropertyData& other)
     : m_size(other.m_size)
     , m_mayHaveAnimatableProperties(other.m_mayHaveAnimatableProperties)
 {
@@ -50,7 +51,7 @@ StyleCustomPropertyData::StyleCustomPropertyData(const StyleCustomPropertyData& 
 
     // If there are mutations on multiple levels this constructs a linked list of property data objects.
     if (shouldReferenceAsParentValues)
-        m_parentValues = &other;
+        m_parentValues = other;
     else {
         m_parentValues = other.m_parentValues;
         m_ownValues = other.m_ownValues;
@@ -65,7 +66,7 @@ StyleCustomPropertyData::StyleCustomPropertyData(const StyleCustomPropertyData& 
 #endif
 }
 
-const CSSCustomPropertyValue* StyleCustomPropertyData::get(const AtomString& name) const
+const CustomProperty* CustomPropertyData::get(const AtomString& name) const
 {
     for (auto* propertyData = this; propertyData; propertyData = propertyData->m_parentValues.get()) {
         if (auto* value = propertyData->m_ownValues.get(name))
@@ -74,12 +75,12 @@ const CSSCustomPropertyValue* StyleCustomPropertyData::get(const AtomString& nam
     return nullptr;
 }
 
-void StyleCustomPropertyData::set(const AtomString& name, Ref<const CSSCustomPropertyValue>&& value)
+void CustomPropertyData::set(const AtomString& name, Ref<const CustomProperty>&& value)
 {
     ASSERT(!m_hasChildren);
     ASSERT([&] {
         auto* existing = get(name);
-        return !existing || !existing->equals(value);
+        return !existing || *existing != value.get();
     }());
 
     m_mayHaveAnimatableProperties = m_mayHaveAnimatableProperties || value->isAnimatable();
@@ -91,7 +92,7 @@ void StyleCustomPropertyData::set(const AtomString& name, Ref<const CSSCustomPro
         ++m_size;
 }
 
-bool StyleCustomPropertyData::operator==(const StyleCustomPropertyData& other) const
+bool CustomPropertyData::operator==(const CustomPropertyData& other) const
 {
     if (m_size != other.m_size)
         return false;
@@ -103,7 +104,7 @@ bool StyleCustomPropertyData::operator==(const StyleCustomPropertyData& other) c
 
         for (auto& entry : m_ownValues) {
             auto* otherValue = other.m_ownValues.get(entry.key);
-            if (!otherValue || !entry.value->equals(*otherValue))
+            if (!otherValue || *entry.value != *otherValue)
                 return false;
         }
         return true;
@@ -112,7 +113,7 @@ bool StyleCustomPropertyData::operator==(const StyleCustomPropertyData& other) c
     bool isEqual = true;
     forEachInternal([&](auto& entry) {
         auto* otherValue = other.get(entry.key);
-        if (!otherValue || !entry.value->equals(*otherValue)) {
+        if (!otherValue || *entry.value != *otherValue) {
             isEqual = false;
             return IterationStatus::Done;
         }
@@ -123,9 +124,9 @@ bool StyleCustomPropertyData::operator==(const StyleCustomPropertyData& other) c
 }
 
 template<typename Callback>
-void StyleCustomPropertyData::forEachInternal(Callback&& callback) const
+void CustomPropertyData::forEachInternal(Callback&& callback) const
 {
-    Vector<const StyleCustomPropertyData*, maximumAncestorCount> descendants;
+    Vector<const CustomPropertyData*, maximumAncestorCount> descendants;
 
     auto isOverridenByDescendants = [&](auto& key) {
         for (auto* descendant : descendants) {
@@ -151,12 +152,12 @@ void StyleCustomPropertyData::forEachInternal(Callback&& callback) const
     }
 }
 
-void StyleCustomPropertyData::forEach(NOESCAPE const Function<IterationStatus(const KeyValuePair<AtomString, RefPtr<const CSSCustomPropertyValue>>&)>& callback) const
+void CustomPropertyData::forEach(NOESCAPE const Function<IterationStatus(const KeyValuePair<AtomString, RefPtr<const CustomProperty>>&)>& callback) const
 {
     forEachInternal(callback);
 }
 
-AtomString StyleCustomPropertyData::findKeyAtIndex(unsigned index) const
+AtomString CustomPropertyData::findKeyAtIndex(unsigned index) const
 {
     unsigned currentIndex = 0;
     AtomString key;
@@ -172,11 +173,12 @@ AtomString StyleCustomPropertyData::findKeyAtIndex(unsigned index) const
 }
 
 #if !LOG_DISABLED
-void StyleCustomPropertyData::dumpDifferences(TextStream& ts, const StyleCustomPropertyData& other) const
+void CustomPropertyData::dumpDifferences(TextStream& ts, const CustomPropertyData& other) const
 {
     if (*this != other)
         ts << "custom properies differ\n"_s;
 }
 #endif // !LOG_DISABLED
 
+} // namespace Style
 } // namespace WebCore

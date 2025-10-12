@@ -29,14 +29,15 @@
 
   test((t) => {
     element.style = 'background: url("/favicon.ico") 0% 0% / 10rem;';
-    assert_equals(element.style.background , 'url("/favicon.ico") 0% 0% / 10rem');
+    // background-size should always serialize to two values per https://github.com/w3c/csswg-drafts/issues/7802
+    assert_equals(element.style.background , 'url("/favicon.ico") 0% 0% / 10rem auto');
   }, "background-size with non-initial background-position");
 
   test((t) => {
     element.style = `background: url(/favicon.ico) top left no-repeat,
         url(/favicon.ico) center / 100% 100% no-repeat,
         url(/favicon.ico) white;`;
-    assert_equals(element.style.background , 'url("/favicon.ico") left top no-repeat, url("/favicon.ico") center center / 100% 100% no-repeat, white url("/favicon.ico")');
+    assert_equals(element.style.background , 'url("/favicon.ico") left top no-repeat, url("/favicon.ico") center center / 100% 100% no-repeat, url("/favicon.ico") white');
   }, "multiple backgrounds with varying values");
 
   test((t) => {

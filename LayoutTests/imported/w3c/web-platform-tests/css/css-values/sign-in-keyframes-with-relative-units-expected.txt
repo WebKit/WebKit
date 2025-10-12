@@ -1,0 +1,4 @@
+
+FAIL Initially, the font-size is 8px for #target, so the result is 0.75 assert_equals: expected (string) "0.75%" but got (undefined) undefined
+FAIL Changing the font-size of #target changes the start point, so the result should be 1.75 assert_equals: expected (string) "1.75%" but got (undefined) undefined
+

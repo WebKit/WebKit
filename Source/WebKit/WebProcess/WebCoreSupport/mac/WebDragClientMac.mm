@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,11 +33,12 @@
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import <WebCore/CachedImage.h>
-#import <WebCore/Document.h>
+#import <WebCore/DocumentPage.h>
 #import <WebCore/DragController.h>
 #import <WebCore/Editor.h>
 #import <WebCore/ElementInlines.h>
-#import <WebCore/FrameDestructionObserver.h>
+#import <WebCore/FrameDestructionObserverInlines.h>
+#import <WebCore/FrameIdentifier.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/LegacyWebArchive.h>
@@ -68,7 +69,7 @@ using DragImage = CGImageRef;
 
 static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const IntSize& size, Frame& frame)
 {
-    auto bitmap = ShareableBitmap::create({ size, screenColorSpace(frame.mainFrame().virtualView()) });
+    auto bitmap = ShareableBitmap::create({ size, screenColorSpace(frame.protectedMainFrame()->virtualView()) });
     if (!bitmap)
         return nullptr;
 
@@ -86,7 +87,7 @@ static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const I
     return bitmap;
 }
 
-void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame& frame, const std::optional<ElementIdentifier>& elementID)
+void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame& frame, const std::optional<NodeIdentifier>& nodeID)
 {
     auto& image = dragItem.image;
 
@@ -103,7 +104,7 @@ void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame& frame, co
         return;
 
     m_page->willStartDrag();
-    m_page->send(Messages::WebPageProxy::StartDrag(dragItem, WTFMove(*handle), elementID));
+    m_page->send(Messages::WebPageProxy::StartDrag(dragItem, WTFMove(*handle), nodeID));
 }
 
 void WebDragClient::didConcludeEditDrag()
@@ -117,7 +118,7 @@ void WebDragClient::didConcludeEditDrag()
 
 static WebCore::CachedImage* cachedImage(Element& element)
 {
-    auto* renderImage = dynamicDowncast<WebCore::RenderImage>(element.renderer());
+    CheckedPtr renderImage = dynamicDowncast<WebCore::RenderImage>(element.renderer());
     if (!renderImage)
         return nullptr;
     auto* image = renderImage->cachedImage();
@@ -134,7 +135,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
 
     String extension;
     if (image) {
-        extension = image->image()->filenameExtension();
+        extension = image->protectedImage()->filenameExtension();
         if (extension.isEmpty())
             return;
     }
@@ -150,11 +151,11 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
 
     RetainPtr response = image->response().nsURLResponse();
     
-    auto imageBuffer = image->image()->data();
+    RefPtr imageBuffer = image->image()->data();
 
     std::optional<SharedMemory::Handle> imageHandle;
     {
-        auto sharedMemoryBuffer = SharedMemory::copyBuffer(*imageBuffer);
+        auto sharedMemoryBuffer = SharedMemory::copyBuffer(imageBuffer.releaseNonNull());
         if (!sharedMemoryBuffer)
             return;
         imageHandle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
@@ -180,7 +181,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
             filename = downloadFilename;
     }
 
-    m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, WTFMove(*imageHandle), filename, extension, title, String([[response URL] absoluteString]), WTF::userVisibleString(url.createNSURL().get()), WTFMove(*archiveHandle), element.document().originIdentifierForPasteboard()));
+    m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, WTFMove(*imageHandle), filename, extension, title, String([[response URL] absoluteString]), WTF::userVisibleString(url.createNSURL().get()), WTFMove(*archiveHandle), element.protectedDocument()->originIdentifierForPasteboard()));
 }
 
 #else

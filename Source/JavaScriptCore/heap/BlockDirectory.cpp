@@ -111,13 +111,13 @@ MarkedBlock::Handle* BlockDirectory::findBlockForAllocation(LocalAllocator& allo
 {
     Locker locker(bitvectorLock());
     for (;;) {
-        allocator.m_allocationCursor = ((canAllocateButNotEmptyBits() | emptyBits()) & ~inUseBits()).findBit(allocator.m_allocationCursor, true);
+        allocator.m_allocationCursor = (canAllocateBits() & ~inUseBits()).findBit(allocator.m_allocationCursor, true);
         if (allocator.m_allocationCursor >= m_blocks.size())
             return nullptr;
         
         unsigned blockIndex = allocator.m_allocationCursor++;
         MarkedBlock::Handle* result = m_blocks[blockIndex];
-        setIsCanAllocateButNotEmpty(blockIndex, false);
+        setIsCanAllocate(blockIndex, false);
         dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", blockIndex, " in use (findBlockForAllocation) for ", *this);
         setIsInUse(blockIndex, true);
         return result;
@@ -296,7 +296,7 @@ void BlockDirectory::endMarking()
     
     // Sweeper is suspended so we don't need the lock here.
     emptyBits() = liveBits() & ~markingNotEmptyBits();
-    canAllocateButNotEmptyBits() = liveBits() & markingNotEmptyBits() & ~markingRetiredBits();
+    canAllocateBits() = (liveBits() & markingNotEmptyBits() & ~markingRetiredBits()) | emptyBits();
 
     switch (m_attributes.destruction) {
     case NeedsDestruction: {

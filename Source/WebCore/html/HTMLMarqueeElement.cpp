@@ -24,6 +24,7 @@
 #include "HTMLMarqueeElement.h"
 
 #include "Attribute.h"
+#include "ContainerNodeInlines.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "ElementInlines.h"
@@ -41,6 +42,9 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLMarqueeElement);
 
 using namespace HTMLNames;
+
+static constexpr unsigned defaultScrollAmount = 6;
+static constexpr unsigned defaultScrollDelay = 85;
 
 inline HTMLMarqueeElement::HTMLMarqueeElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
@@ -118,7 +122,7 @@ void HTMLMarqueeElement::collectPresentationalHintsForAttribute(const QualifiedN
         break;
     case AttributeNames::scrolldelayAttr:
         if (!value.isEmpty())
-            addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitMarqueeSpeed, limitToOnlyHTMLNonNegative(value, RenderStyle::initialMarqueeSpeed()), CSSUnitType::CSS_MS);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitMarqueeSpeed, limitToOnlyHTMLNonNegative(value, defaultScrollDelay), CSSUnitType::CSS_MS);
         break;
     case AttributeNames::loopAttr:
         if (!value.isEmpty()) {
@@ -156,27 +160,27 @@ void HTMLMarqueeElement::stop()
 
 unsigned HTMLMarqueeElement::scrollAmount() const
 {
-    return limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(scrollamountAttr), RenderStyle::initialMarqueeIncrement().intValue());
+    return limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(scrollamountAttr), defaultScrollAmount);
 }
-    
+
 void HTMLMarqueeElement::setScrollAmount(unsigned scrollAmount)
 {
-    setUnsignedIntegralAttribute(scrollamountAttr, limitToOnlyHTMLNonNegative(scrollAmount, RenderStyle::initialMarqueeIncrement().intValue()));
+    setUnsignedIntegralAttribute(scrollamountAttr, limitToOnlyHTMLNonNegative(scrollAmount, defaultScrollAmount));
 }
-    
+
 unsigned HTMLMarqueeElement::scrollDelay() const
 {
-    return limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(scrolldelayAttr), RenderStyle::initialMarqueeSpeed());
+    return limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(scrolldelayAttr), defaultScrollDelay);
 }
 
 void HTMLMarqueeElement::setScrollDelay(unsigned scrollDelay)
 {
-    setUnsignedIntegralAttribute(scrolldelayAttr, limitToOnlyHTMLNonNegative(scrollDelay, RenderStyle::initialMarqueeSpeed()));
+    setUnsignedIntegralAttribute(scrolldelayAttr, limitToOnlyHTMLNonNegative(scrollDelay, defaultScrollDelay));
 }
-    
+
 int HTMLMarqueeElement::loop() const
 {
-    int loopValue = getIntegralAttribute(loopAttr);
+    int loopValue = integralAttribute(loopAttr);
     return loopValue > 0 ? loopValue : -1;
 }
     

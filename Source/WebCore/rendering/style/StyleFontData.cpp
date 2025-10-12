@@ -26,12 +26,22 @@
 #include "config.h"
 #include "StyleFontData.h"
 
+#include "RenderStyleInlines.h"
+#include "StylePrimitiveKeyword+Logging.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
+
 namespace WebCore {
 
-StyleFontData::StyleFontData() = default;
+StyleFontData::StyleFontData()
+    : letterSpacing(RenderStyle::initialLetterSpacing())
+    , wordSpacing(RenderStyle::initialWordSpacing())
+{
+}
 
 StyleFontData::StyleFontData(const StyleFontData& o)
-    : fontCascade(o.fontCascade)
+    : letterSpacing(o.letterSpacing)
+    , wordSpacing(o.wordSpacing)
+    , fontCascade(o.fontCascade)
 {
 }
 
@@ -42,7 +52,9 @@ Ref<StyleFontData> StyleFontData::copy() const
 
 bool StyleFontData::operator==(const StyleFontData& o) const
 {
-    return fontCascade == o.fontCascade;
+    return letterSpacing == o.letterSpacing
+        && wordSpacing == o.wordSpacing
+        && fontCascade == o.fontCascade;
 }
 
 #if !LOG_DISABLED

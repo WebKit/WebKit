@@ -371,7 +371,7 @@ void SQLTransactionBackend::doCleanup()
 
     // Release the lock on this database
     if (m_frontend.m_lockAcquired)
-        m_frontend.m_database->transactionCoordinator()->releaseLock(m_frontend);
+        m_frontend.m_database->transactionCoordinator().releaseLock(m_frontend);
 
     // Do some aggresive clean up here except for m_database.
     //

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #include "SourceTaintedOrigin.h"
 
 #include "CodeBlock.h"
+#include "JSWebAssemblyInstance.h"
 #include "StackVisitor.h"
 #include "VM.h"
 
@@ -53,6 +54,18 @@ std::pair<SourceTaintedOrigin, URL> sourceTaintedOriginFromStack(VM& vm, CallFra
 
     URL sourceURL;
     StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) -> IterationStatus {
+#if ENABLE(WEBASSEMBLY)
+        if (visitor->callFrame()->callee().isNativeCallee() && visitor->callFrame()->wasmInstance()) {
+            JSWebAssemblyInstance* instance = std::bit_cast<JSWebAssemblyInstance*>(*visitor->callFrame()->addressOfCodeBlock());
+            result = std::max(result, instance->taintedness());
+            if (result != SourceTaintedOrigin::KnownTainted)
+                return IterationStatus::Continue;
+
+            sourceURL = instance->sourceURL();
+            return IterationStatus::Done;
+        }
+#endif
+
         if (!visitor->codeBlock() || !visitor->codeBlock()->couldBeTainted())
             return IterationStatus::Continue;
 
@@ -75,6 +88,16 @@ SourceTaintedOrigin computeNewSourceTaintedOriginFromStack(VM& vm, CallFrame* ca
 
     SourceTaintedOrigin result = SourceTaintedOrigin::IndirectlyTaintedByHistory;
     StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) -> IterationStatus {
+#if ENABLE(WEBASSEMBLY)
+        if (visitor->callFrame()->callee().isNativeCallee() && visitor->callFrame()->wasmInstance()) {
+            JSWebAssemblyInstance* instance = std::bit_cast<JSWebAssemblyInstance*>(*visitor->callFrame()->addressOfCodeBlock());
+            if (instance->taintedness() >= SourceTaintedOrigin::IndirectlyTainted) {
+                result = SourceTaintedOrigin::IndirectlyTainted;
+                return IterationStatus::Done;
+            }
+        }
+#endif
+
         if (visitor->codeBlock() && visitor->codeBlock()->couldBeTainted()) {
             SourceTaintedOrigin currentTaintedOrigin = visitor->codeBlock()->source().provider()->sourceTaintedOrigin();
             if (currentTaintedOrigin >= SourceTaintedOrigin::IndirectlyTainted) {

@@ -31,15 +31,14 @@
 #include "Chrome.h"
 #include "CredentialRequestCoordinator.h"
 #include "CredentialRequestOptions.h"
-#include "Document.h"
-#include "DocumentInlines.h"
+#include "DocumentPage.h"
 #include "ExceptionOr.h"
+#include "FrameDestructionObserverInlines.h"
 #include "IDLTypes.h"
 #include "IdentityCredentialProtocol.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "MediationRequirement.h"
-#include "Page.h"
 #include "PermissionsPolicy.h"
 #include "VisibilityState.h"
 #include <Logging.h>
@@ -67,6 +66,11 @@ static ExceptionOr<UnvalidatedDigitalCredentialRequest> jsToCredentialRequest(co
 {
     auto scope = DECLARE_THROW_SCOPE(document.globalObject()->vm());
     auto* globalObject = document.globalObject();
+
+    // Check that the object is JSON stringifiable.
+    JSC::JSONStringify(globalObject, request.data.get(), 0);
+    if (scope.exception()) [[unlikely]]
+        return Exception { ExceptionCode::ExistingExceptionError };
 
     switch (request.protocol) {
     case IdentityCredentialProtocol::OrgIsoMdoc: {
@@ -118,15 +122,15 @@ void DigitalCredential::discoverFromExternalSource(const Document& document, Cre
         return;
     }
 
-    RefPtr frame = document.protectedFrame();
-    RefPtr window = document.protectedWindow();
+    RefPtr frame = document.frame();
+    RefPtr window = document.window();
     if (!frame || !window) {
         LOG(DigitalCredentials, "Preconditions for DigitalCredential.get() are not met");
         promise.reject(ExceptionCode::InvalidStateError, "Preconditions for calling .get() are not met."_s);
         return;
     }
 
-    RefPtr page = frame->protectedPage();
+    RefPtr page = frame->page();
     if (!page) {
         LOG(DigitalCredentials, "Preconditions for DigitalCredential.get() are not met");
         promise.reject(ExceptionCode::InvalidStateError, "Preconditions for calling .get() are not met."_s);

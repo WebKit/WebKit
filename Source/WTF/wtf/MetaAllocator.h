@@ -42,7 +42,7 @@ namespace WTF {
 #define ENABLE_META_ALLOCATOR_PROFILE 0
 
 class MetaAllocatorTracker {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MetaAllocatorTracker);
 public:
     void notify(MetaAllocatorHandle&);
     void release(MetaAllocatorHandle&);
@@ -88,7 +88,7 @@ public:
     
     // Atomic method for getting allocator statistics.
     struct Statistics {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Statistics);
         size_t bytesAllocated;
         size_t bytesReserved;
         size_t bytesCommitted;

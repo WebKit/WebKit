@@ -158,7 +158,7 @@ GStreamerVideoFrameConverter::Pipeline& GStreamerVideoFrameConverter::ensurePipe
     if (features && gst_caps_features_contains(features, GST_CAPS_FEATURE_MEMORY_DMABUF)) {
         if (!m_dmabufMemoryPipeline) {
             m_dmabufMemoryPipeline = makeUnique<Pipeline>(Pipeline::Type::DMABufMemory);
-            m_releaseUnusedDMABufMemoryPipelineTimer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), this, &GStreamerVideoFrameConverter::releaseUnusedDMABufMemoryPipelineTimerFired);
+            m_releaseUnusedDMABufMemoryPipelineTimer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), "GStreamerVideoFrameConverter::ReleaseUnusedDMABufMemoryPipelineTimer"_s, this, &GStreamerVideoFrameConverter::releaseUnusedDMABufMemoryPipelineTimerFired);
             m_releaseUnusedDMABufMemoryPipelineTimer->setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
         }
         m_releaseUnusedDMABufMemoryPipelineTimer->startOneShot(s_releaseUnusedPipelinesTimerInterval);
@@ -168,7 +168,7 @@ GStreamerVideoFrameConverter::Pipeline& GStreamerVideoFrameConverter::ensurePipe
     if (features && gst_caps_features_contains(features, GST_CAPS_FEATURE_MEMORY_GL_MEMORY)) {
         if (!m_glMemoryPipeline) {
             m_glMemoryPipeline = makeUnique<Pipeline>(Pipeline::Type::GLMemory);
-            m_releaseUnusedGLMemoryPipelineTimer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), this, &GStreamerVideoFrameConverter::releaseUnusedGLMemoryPipelineTimerFired);
+            m_releaseUnusedGLMemoryPipelineTimer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), "GStreamerVideoFrameConverter::ReleaseUnusedGLMemoryPipelineTimer"_s, this, &GStreamerVideoFrameConverter::releaseUnusedGLMemoryPipelineTimerFired);
             m_releaseUnusedGLMemoryPipelineTimer->setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
         }
         m_releaseUnusedGLMemoryPipelineTimer->startOneShot(s_releaseUnusedPipelinesTimerInterval);
@@ -180,7 +180,7 @@ GStreamerVideoFrameConverter::Pipeline& GStreamerVideoFrameConverter::ensurePipe
 
     if (!m_systemMemoryPipeline) {
         m_systemMemoryPipeline = makeUnique<Pipeline>(Pipeline::Type::SystemMemory);
-        m_releaseUnusedSystemMemoryPipelineTimer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), this, &GStreamerVideoFrameConverter::releaseUnusedSystemMemoryPipelineTimerFired);
+        m_releaseUnusedSystemMemoryPipelineTimer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), "GStreamerVideoFrameConverter::ReleaseUnusedSystemMemoryPipelineTimer"_s, this, &GStreamerVideoFrameConverter::releaseUnusedSystemMemoryPipelineTimerFired);
         m_releaseUnusedSystemMemoryPipelineTimer->setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
     }
     m_releaseUnusedSystemMemoryPipelineTimer->startOneShot(s_releaseUnusedPipelinesTimerInterval);
@@ -214,9 +214,9 @@ IGNORE_WARNINGS_END
     auto structure = gst_caps_get_structure(destinationCaps.get(), 0);
     auto width = gstStructureGet<int>(structure, "width"_s);
     auto height = gstStructureGet<int>(structure, "height"_s);
-    auto formatStringView = gstStructureGetString(structure, "format"_s);
-    if (width && height && !formatStringView.isEmpty()) {
-        auto format = gst_video_format_from_string(formatStringView.toStringWithoutCopying().ascii().data());
+    auto formatString = gstStructureGetString(structure, "format"_s);
+    if (width && height && !formatString.isEmpty()) {
+        auto format = gst_video_format_from_string(formatString.utf8());
         gst_buffer_add_video_meta(writableBuffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, *width, *height);
     }
     gst_sample_set_buffer(convertedSample.get(), writableBuffer.get());

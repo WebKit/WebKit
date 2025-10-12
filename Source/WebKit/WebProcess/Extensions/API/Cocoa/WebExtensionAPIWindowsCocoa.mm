@@ -122,7 +122,7 @@ static NSDictionary *toWebAPI(const WebExtensionWindowParameters& parameters)
     } mutableCopy];
 
     if (parameters.frame) {
-        CGRect frame = parameters.frame.value();
+        CGRect frame = parameters.frame.value().toCG();
         [result addEntriesFromDictionary:@{
             topKey: @(frame.origin.y),
             leftKey: @(frame.origin.x),

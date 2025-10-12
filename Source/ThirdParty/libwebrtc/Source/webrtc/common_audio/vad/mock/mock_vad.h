@@ -11,6 +11,9 @@
 #ifndef COMMON_AUDIO_VAD_MOCK_MOCK_VAD_H_
 #define COMMON_AUDIO_VAD_MOCK_MOCK_VAD_H_
 
+#include <cstddef>
+#include <cstdint>
+
 #include "common_audio/vad/include/vad.h"
 #include "test/gmock.h"
 

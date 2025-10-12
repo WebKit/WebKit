@@ -645,7 +645,7 @@ void AudioDeviceIOS::HandlePlayoutGlitchDetected() {
   RTCLog(@"Number of detected playout glitches: %lld", num_detected_playout_glitches_);
 
   int64_t glitch_count = num_detected_playout_glitches_;
-  dispatch_async(dispatch_get_main_queue(), ^{
+  dispatch_async(mainDispatchQueueSingleton(), ^{
     RTCAudioSession* session = [RTCAudioSession sharedInstance];
     [session notifyDidDetectPlayoutGlitch:glitch_count];
   });

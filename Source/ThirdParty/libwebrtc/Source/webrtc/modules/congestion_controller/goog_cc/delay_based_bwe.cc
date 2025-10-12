@@ -80,9 +80,9 @@ DelayBasedBwe::DelayBasedBwe(const FieldTrialsView* key_value_config,
       last_video_packet_recv_time_(Timestamp::MinusInfinity()),
       network_state_predictor_(network_state_predictor),
       video_delay_detector_(
-          new TrendlineEstimator(key_value_config_, network_state_predictor_)),
+          new TrendlineEstimator(*key_value_config_, network_state_predictor_)),
       audio_delay_detector_(
-          new TrendlineEstimator(key_value_config_, network_state_predictor_)),
+          new TrendlineEstimator(*key_value_config_, network_state_predictor_)),
       active_delay_detector_(video_delay_detector_.get()),
       last_seen_packet_(Timestamp::MinusInfinity()),
       uma_recorded_(false),
@@ -155,9 +155,9 @@ void DelayBasedBwe::IncomingPacketFeedback(const PacketResult& packet_feedback,
         std::make_unique<InterArrivalDelta>(kSendTimeGroupLength);
 
     video_delay_detector_.reset(
-        new TrendlineEstimator(key_value_config_, network_state_predictor_));
+        new TrendlineEstimator(*key_value_config_, network_state_predictor_));
     audio_delay_detector_.reset(
-        new TrendlineEstimator(key_value_config_, network_state_predictor_));
+        new TrendlineEstimator(*key_value_config_, network_state_predictor_));
     active_delay_detector_ = video_delay_detector_.get();
   }
   last_seen_packet_ = at_time;

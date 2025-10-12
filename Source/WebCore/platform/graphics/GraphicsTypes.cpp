@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Rik Cabanier (cabanier@adobe.com)
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *

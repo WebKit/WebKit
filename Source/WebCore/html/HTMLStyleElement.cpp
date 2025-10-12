@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
+#include "NodeDocument.h"
 #include "NodeName.h"
 #include "Page.h"
 #include "ScriptableDocumentParser.h"

@@ -1,5 +1,5 @@
 Tap me
 Tap me
 
-FAIL EventTiming: verify interactionCount for tap interaction assert_implements: Event Timing is not supported undefined
+FAIL EventTiming: verify interactionCount for tap interaction step_wait_func: interactionCount did not increase enough Timed out waiting on condition
 

@@ -28,7 +28,7 @@ HitTestLocation::HitTestLocation() = default;
 
 HitTestLocation::HitTestLocation(const LayoutPoint& point)
     : m_point(point)
-    , m_boundingBox(LayoutRect { flooredIntPoint(point), LayoutSize { 1, 1 } })
+    , m_boundingBox(LayoutRect { point, LayoutSize { 1, 1 } })
     , m_transformedPoint(point)
     , m_transformedRect(m_boundingBox)
 {
@@ -93,7 +93,7 @@ void HitTestLocation::move(const LayoutSize& offset)
     m_point.move(offset);
     m_transformedPoint.move(offset);
     m_transformedRect.move(offset);
-    m_boundingBox = enclosingIntRect(m_transformedRect.boundingBox());
+    m_boundingBox = LayoutRect { m_transformedRect.boundingBox() };
 }
 
 template<typename RectType>
@@ -128,7 +128,7 @@ bool HitTestLocation::intersects(const FloatRect& rect) const
     return intersectsRect(rect);
 }
 
-bool HitTestLocation::intersects(const RoundedRect& rect) const
+bool HitTestLocation::intersects(const LayoutRoundedRect& rect) const
 {
     return rect.intersectsQuad(m_transformedRect);
 }

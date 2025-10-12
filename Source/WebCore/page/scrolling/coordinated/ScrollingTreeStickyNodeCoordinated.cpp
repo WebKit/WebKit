@@ -62,7 +62,7 @@ bool ScrollingTreeStickyNodeCoordinated::commitStateBeforeChildren(const Scrolli
 
 void ScrollingTreeStickyNodeCoordinated::applyLayerPositions()
 {
-    auto layerPosition = computeAnchorLayerPosition();
+    auto layerPosition = computeConstrainingRectAndAnchorLayerPosition().second;
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeStickyNodeCoordinated " << scrollingNodeID() << " constrainingRectAtLastLayout " << m_constraints.constrainingRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " layerPosition " << layerPosition);
 

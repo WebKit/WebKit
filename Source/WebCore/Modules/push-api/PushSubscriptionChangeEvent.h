@@ -43,8 +43,14 @@ public:
 private:
     PushSubscriptionChangeEvent(const AtomString&, ExtendableEventInit&&, RefPtr<PushSubscription>&& newSubscription, RefPtr<PushSubscription>&& oldSubscription, IsTrusted);
 
+    bool isPushSubscriptionChangeEvent() const final { return true; }
+
     RefPtr<PushSubscription> m_newSubscription;
     RefPtr<PushSubscription> m_oldSubscription;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PushSubscriptionChangeEvent)
+    static bool isType(const WebCore::ExtendableEvent& event) { return event.isPushSubscriptionChangeEvent(); }
+SPECIALIZE_TYPE_TRAITS_END()

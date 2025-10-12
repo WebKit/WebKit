@@ -11,17 +11,19 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_TEST_H_
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_TEST_H_
 
+#include <cstdint>
 #include <fstream>
 #include <map>
 #include <memory>
 #include <optional>
-#include <string>
-#include <utility>
 
+#include "absl/strings/string_view.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/environment/environment.h"
 #include "api/neteq/neteq.h"
 #include "api/neteq/neteq_factory.h"
+#include "api/scoped_refptr.h"
 #include "api/test/neteq_simulator.h"
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
@@ -83,7 +85,7 @@ class NetEqTest : public NetEqSimulator {
   // Sets up the test with given configuration, codec mappings, input, ouput,
   // and callback objects for error reporting.
   NetEqTest(const NetEq::Config& config,
-            rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
+            scoped_refptr<AudioDecoderFactory> decoder_factory,
             const DecoderMap& codecs,
             std::unique_ptr<std::ofstream> text_log,
             NetEqFactory* neteq_factory,

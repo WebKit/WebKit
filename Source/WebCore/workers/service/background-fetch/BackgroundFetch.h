@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +25,17 @@
 
 #pragma once
 
-#include "BackgroundFetchFailureReason.h"
-#include "BackgroundFetchOptions.h"
-#include "BackgroundFetchRecordIdentifier.h"
-#include "BackgroundFetchRecordLoader.h"
-#include "BackgroundFetchRequest.h"
-#include "BackgroundFetchResult.h"
-#include "BackgroundFetchStore.h"
-#include "ClientOrigin.h"
-#include "ResourceResponse.h"
-#include "ServiceWorkerRegistrationKey.h"
-#include "ServiceWorkerTypes.h"
+#include <WebCore/BackgroundFetchFailureReason.h>
+#include <WebCore/BackgroundFetchOptions.h>
+#include <WebCore/BackgroundFetchRecordIdentifier.h>
+#include <WebCore/BackgroundFetchRecordLoader.h>
+#include <WebCore/BackgroundFetchRequest.h>
+#include <WebCore/BackgroundFetchResult.h>
+#include <WebCore/BackgroundFetchStore.h>
+#include <WebCore/ClientOrigin.h>
+#include <WebCore/ResourceResponse.h>
+#include <WebCore/ServiceWorkerRegistrationKey.h>
+#include <WebCore/ServiceWorkerTypes.h>
 #include <wtf/Identified.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -178,7 +178,7 @@ private:
     uint64_t m_currentDownloadSize { 0 };
     uint64_t m_currentUploadSize { 0 };
 
-    Ref<BackgroundFetchStore> m_store;
+    const Ref<BackgroundFetchStore> m_store;
     NotificationCallback m_notificationCallback;
     ClientOrigin m_origin;
 };

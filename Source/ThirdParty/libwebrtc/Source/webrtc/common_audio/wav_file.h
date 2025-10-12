@@ -11,11 +11,10 @@
 #ifndef COMMON_AUDIO_WAV_FILE_H_
 #define COMMON_AUDIO_WAV_FILE_H_
 
-#include <stdint.h>
-
 #include <cstddef>
-#include <string>
+#include <cstdint>
 
+#include "absl/strings/string_view.h"
 #include "common_audio/wav_header.h"
 #include "rtc_base/system/file_wrapper.h"
 

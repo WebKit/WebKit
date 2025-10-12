@@ -64,7 +64,7 @@ Inspector::Protocol::ErrorStringOr<void> PageHeapAgent::disable()
 
 String PageHeapAgent::heapSnapshotBuilderOverrideClassName(JSC::HeapSnapshotBuilder& builder, JSC::JSCell* cell, const String& currentClassName)
 {
-    if (currentClassName == "HTMLElement") {
+    if (currentClassName == "HTMLElement"_s) {
         if (auto* jsElement = jsDynamicCast<JSElement*>(cell)) {
             Ref element = jsElement->wrapped();
             if (element->isDefinedCustomElement()) {

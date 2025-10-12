@@ -11,6 +11,7 @@
 #include "rtc_base/untyped_function.h"
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "test/gmock.h"

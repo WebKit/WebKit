@@ -10,6 +10,10 @@
 #ifndef COMMON_SPAN_H_
 #define COMMON_SPAN_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <type_traits>
 
 #include "common/log_utils.h"
@@ -100,6 +104,12 @@ class Span
     {
         ASSERT(offset + count <= mSize);
         return count == 0 ? Span() : Span(mData + offset, count);
+    }
+
+    constexpr Span subspan(size_type offset) const
+    {
+        ASSERT(offset <= mSize);
+        return offset == mSize ? Span() : Span(mData + offset, mSize - offset);
     }
 
   private:

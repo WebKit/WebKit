@@ -8,6 +8,11 @@
 //   - in memory, in buffer object, or combination of both
 //   - sequential or interleaved
 //   - various combinations of data types
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include <vector>
 

@@ -10,6 +10,10 @@
 
 #include "modules/rtp_rtcp/source/capture_clock_offset_updater.h"
 
+#include <cstdint>
+#include <optional>
+
+#include "api/units/time_delta.h"
 #include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {

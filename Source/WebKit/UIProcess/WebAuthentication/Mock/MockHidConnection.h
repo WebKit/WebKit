@@ -48,6 +48,8 @@ public:
     static Ref<MockHidConnection> create(IOHIDDeviceRef, const WebCore::MockWebAuthenticationConfiguration&);
     virtual ~MockHidConnection() = default;
 
+    void validateExpectedCommandsCompleted();
+
 private:
     MockHidConnection(IOHIDDeviceRef, const WebCore::MockWebAuthenticationConfiguration&);
 
@@ -64,6 +66,8 @@ private:
     bool stagesMatch() const;
     void shouldContinueFeedReports();
     void continueFeedReports();
+    void validateExpectedCommand(const Vector<uint8_t>& actualCommand);
+    void initializeExpectedCommands();
 
     WebCore::MockWebAuthenticationConfiguration m_configuration;
     std::optional<fido::FidoHidMessage> m_requestMessage;
@@ -73,6 +77,8 @@ private:
     bool m_requireResidentKey { false };
     bool m_requireUserVerification  { false };
     Vector<uint8_t> m_nonce;
+    Vector<Vector<uint8_t>> m_expectedCommands;
+    size_t m_currentExpectedCommandIndex { 0 };
 };
 
 } // namespace WebKit

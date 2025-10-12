@@ -35,8 +35,10 @@
 #if ENABLE(VIDEO)
 
 #include "CommonAtomStrings.h"
+#include "ContextDestructionObserverInlines.h"
 #include "DataCue.h"
 #include "Event.h"
+#include "ExceptionOr.h"
 #include "SourceBuffer.h"
 #include "TextTrackClient.h"
 #include "TextTrackCueList.h"
@@ -152,7 +154,7 @@ void TextTrack::didMoveToNewDocument(Document& newDocument)
 {
     TrackBase::didMoveToNewDocument(newDocument);
     ActiveDOMObject::didMoveToNewDocument(newDocument);
-    if (RefPtr cues = protectedCues())
+    if (RefPtr cues = this->cues())
         cues->didMoveToNewDocument(newDocument);
 }
 
@@ -418,13 +420,13 @@ void TextTrack::removeCuesNotInTimeRanges(const PlatformTimeRanges& buffered)
 
     Vector<Ref<TextTrackCue>> toPurge;
     for (size_t i = 0; i < m_cues->length(); ++i) {
-        auto cue = m_cues->item(i);
+        RefPtr cue = m_cues->item(i);
         ASSERT(cue->track() == this);
 
         PlatformTimeRanges activeCueRange { cue->startMediaTime(), cue->endMediaTime() };
         activeCueRange.intersectWith(buffered);
         if (!activeCueRange.length())
-            toPurge.append(*cue);
+            toPurge.append(cue.releaseNonNull());
     }
 
     if (!toPurge.size())
@@ -455,6 +457,11 @@ VTTRegionList* TextTrack::regions()
     if (m_mode == Mode::Disabled)
         return nullptr;
     return &ensureVTTRegionList();
+}
+
+RefPtr<VTTRegionList> TextTrack::protectedRegions()
+{
+    return regions();
 }
 
 void TextTrack::cueWillChange(TextTrackCue& cue)
@@ -632,6 +639,11 @@ void TextTrack::newCuesAvailable(const TextTrackCueList& list)
     m_clients.forEach([&] (auto& client) {
         client.textTrackAddCues(*this, list);
     });
+}
+
+ScriptExecutionContext* TextTrack::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 } // namespace WebCore

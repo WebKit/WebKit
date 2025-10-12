@@ -10,8 +10,7 @@
 
 #include "logging/rtc_event_log/rtc_event_processor.h"
 
-#include <stddef.h>
-
+#include <cstddef>
 #include <cstdint>
 #include <initializer_list>
 #include <limits>

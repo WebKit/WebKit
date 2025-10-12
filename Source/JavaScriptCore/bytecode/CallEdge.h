@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CallVariant.h"
+#include <JavaScriptCore/CallVariant.h>
 
 namespace JSC {
 

@@ -27,9 +27,9 @@
 
 #if ENABLE(PREVIEW_CONVERTER)
 
-#include "ResourceError.h"
-#include "ResourceResponse.h"
-#include "SharedBuffer.h"
+#include <WebCore/ResourceError.h>
+#include <WebCore/ResourceResponse.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -95,7 +95,7 @@ public:
     WEBCORE_EXPORT static void setPasswordForTesting(const String&);
 
 private:
-    static UncheckedKeyHashSet<String, ASCIICaseInsensitiveHash> platformSupportedMIMETypes();
+    static HashSet<String, ASCIICaseInsensitiveHash> platformSupportedMIMETypes();
 
     PreviewConverter(const ResourceResponse&, PreviewConverterProvider&);
 

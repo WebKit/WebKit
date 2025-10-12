@@ -62,7 +62,6 @@
 
 - (instancetype)initWithCallback:(WebCore::ScreenCaptureKitSharingSessionManager*)callback;
 - (void)disconnect;
-- (BOOL)hasObservingSession;
 - (void)startObservingSession:(SCContentSharingSession *)session;
 - (void)stopObservingSession:(SCContentSharingSession *)session;
 - (void)sessionDidEnd:(SCContentSharingSession *)session;
@@ -97,11 +96,6 @@
     _sessions.clear();
 }
 
-- (BOOL)hasObservingSession
-{
-    return _sessions.isEmpty();
-}
-
 - (void)startObservingSession:(SCContentSharingSession *)session
 {
     ASSERT(!_sessions.contains(session));
@@ -125,7 +119,7 @@
     if (index == notFound)
         return;
 
-    RunLoop::protectedMain()->dispatch([self, protectedSelf = RetainPtr { self }, session = RetainPtr { session }]() mutable {
+    RunLoop::mainSingleton().dispatch([self, protectedSelf = RetainPtr { self }, session = RetainPtr { session }]() mutable {
         if (RefPtr callback = _callback.get())
             callback->sharingSessionDidEnd(session.get());
     });
@@ -133,7 +127,7 @@
 
 - (void)sessionDidChangeContent:(SCContentSharingSession *)session
 {
-    RunLoop::protectedMain()->dispatch([self, protectedSelf = RetainPtr { self }, session = RetainPtr { session }]() mutable {
+    RunLoop::mainSingleton().dispatch([self, protectedSelf = RetainPtr { self }, session = RetainPtr { session }]() mutable {
         if (RefPtr callback = _callback.get())
             callback->sharingSessionDidChangeContent(session.get());
     });
@@ -141,7 +135,7 @@
 
 - (void)pickerCanceledForSession:(SCContentSharingSession *)session
 {
-    RunLoop::protectedMain()->dispatch([self, protectedSelf = RetainPtr { self }, session = RetainPtr { session }]() mutable {
+    RunLoop::mainSingleton().dispatch([self, protectedSelf = RetainPtr { self }, session = RetainPtr { session }]() mutable {
         if (RefPtr callback = _callback.get())
             callback->cancelPicking();
     });
@@ -151,7 +145,7 @@
 - (void)contentSharingPicker:(SCContentSharingPicker *)picker didCancelForStream:(SCStream *)stream
 {
     UNUSED_PARAM(picker);
-    RunLoop::protectedMain()->dispatch([self, protectedSelf = RetainPtr { self }]() mutable {
+    RunLoop::mainSingleton().dispatch([self, protectedSelf = RetainPtr { self }]() mutable {
         if (RefPtr callback = _callback.get())
             callback->cancelPicking();
     });
@@ -159,7 +153,7 @@
 
 - (void)contentSharingPickerStartDidFailWithError:(NSError *)error
 {
-    RunLoop::protectedMain()->dispatch([self, protectedSelf = RetainPtr { self }, error = RetainPtr { error }]() mutable {
+    RunLoop::mainSingleton().dispatch([self, protectedSelf = RetainPtr { self }, error = RetainPtr { error }]() mutable {
         if (RefPtr callback = _callback.get())
             callback->contentSharingPickerFailedWithError(error.get());
     });
@@ -167,7 +161,7 @@
 
 - (void)contentSharingPicker:(SCContentSharingPicker *)picker didUpdateWithFilter:(SCContentFilter *)filter forStream:(SCStream *)stream {
     UNUSED_PARAM(picker);
-    RunLoop::protectedMain()->dispatch([self, protectedSelf = RetainPtr { self }, filter = RetainPtr { filter }, stream = RetainPtr { stream }]() mutable {
+    RunLoop::mainSingleton().dispatch([self, protectedSelf = RetainPtr { self }, filter = RetainPtr { filter }, stream = RetainPtr { stream }]() mutable {
         if (RefPtr callback = _callback.get())
             callback->contentSharingPickerUpdatedFilterForStream(filter.get(), stream.get());
     });
@@ -178,6 +172,8 @@
     if (_observingPicker)
         return;
 
+    [picker setActive:YES];
+
     _observingPicker = YES;
     [picker addObserver:self];
 }
@@ -186,6 +182,8 @@
 {
     if (!_observingPicker)
         return;
+
+    [picker setActive:NO];
 
     _observingPicker = NO;
     [picker removeObserver:self];
@@ -199,11 +197,11 @@ namespace WebCore {
 bool ScreenCaptureKitSharingSessionManager::isAvailable()
 {
 #if HAVE(SC_CONTENT_SHARING_PICKER)
-    if (PAL::getSCContentSharingPickerClass() && PAL::getSCContentSharingPickerConfigurationClass())
+    if (PAL::getSCContentSharingPickerClassSingleton() && PAL::getSCContentSharingPickerConfigurationClassSingleton())
         return true;
 #endif
 
-    return PAL::getSCContentSharingSessionClass();
+    return PAL::getSCContentSharingSessionClassSingleton();
 }
 
 bool ScreenCaptureKitSharingSessionManager::useSCContentSharingPicker()
@@ -256,11 +254,10 @@ void ScreenCaptureKitSharingSessionManager::cancelPicking()
     };
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     if (useSCContentSharingPicker()) {
-        RetainPtr picker = [PAL::getSCContentSharingPickerClass() sharedPicker];
-        if (![m_promptHelper hasObservingSession])
-            [picker setActive:NO];
-        if (m_activeSources.isEmpty())
+        if (m_activeSources.isEmpty()) {
+            RetainPtr picker = [PAL::getSCContentSharingPickerClassSingleton() sharedPicker];
             [m_promptHelper stopObservingPicker:picker.get()];
+        }
     }
 #endif
 
@@ -422,7 +419,7 @@ void ScreenCaptureKitSharingSessionManager::promptForGetDisplayMedia(DisplayCapt
     }
 
     constexpr Seconds userPromptWatchdogInterval = 60_s;
-    m_promptWatchdogTimer = makeUnique<RunLoop::Timer>(RunLoop::protectedMain(), [weakThis = WeakPtr { *this }, interval = userPromptWatchdogInterval]() mutable {
+    m_promptWatchdogTimer = makeUnique<RunLoop::Timer>(RunLoop::mainSingleton(), "ScreenCaptureKitSharingSessionManager::PromptWatchdogTimer"_s, [weakThis = WeakPtr { *this }, interval = userPromptWatchdogInterval]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -470,10 +467,9 @@ bool ScreenCaptureKitSharingSessionManager::promptWithSCContentSharingPicker(Dis
         break;
     }
 
-    RetainPtr picker = [PAL::getSCContentSharingPickerClass() sharedPicker];
+    RetainPtr picker = [PAL::getSCContentSharingPickerClassSingleton() sharedPicker];
     [picker setDefaultConfiguration:configuration.get()];
     [picker setMaximumStreamCount:@(std::numeric_limits<unsigned>::max())];
-    [picker setActive:YES];
     [m_promptHelper startObservingPicker:picker.get()];
 
     if (shareableContentStyle != SCShareableContentStyleNone && [picker respondsToSelector:@selector(presentPickerUsingContentStyle:)])

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DisplayListRecorder.h"
+#include <WebCore/DisplayListRecorder.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -33,7 +33,7 @@ namespace WebCore {
 namespace DisplayList {
 
 class RecorderImpl : public Recorder {
-    WTF_MAKE_TZONE_ALLOCATED(RecorderImpl);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(RecorderImpl, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(RecorderImpl);
 public:
     WEBCORE_EXPORT RecorderImpl(const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), DrawGlyphsMode = DrawGlyphsMode::Normal);
@@ -72,7 +72,7 @@ public:
     void endTransparencyLayer() final;
     void drawFilteredImageBuffer(ImageBuffer*, const FloatRect&, Filter&, FilterResults&) final;
     void drawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
-    void drawNativeImageInternal(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
+    void drawNativeImage(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
     void drawSystemImage(SystemImage&, const FloatRect&) final;
     void drawRect(const FloatRect&, float) final;
     void drawLine(const FloatPoint& point1, const FloatPoint& point2) final;
@@ -95,7 +95,6 @@ public:
     void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect&, const Color&) final;
     void drawGlyphs(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& localAnchor, FontSmoothingMode) final;
     void drawGlyphsImmediate(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& localAnchor, FontSmoothingMode) final;
-    void drawDecomposedGlyphs(const Font&, const DecomposedGlyphs&) final;
     void drawDisplayList(const DisplayList&, ControlFactory&) final;
 #if ENABLE(VIDEO)
     void drawVideoFrame(VideoFrame&, const FloatRect& destination, ImageOrientation, bool shouldDiscardAlpha) final;
@@ -111,10 +110,17 @@ public:
 #endif
     void applyDeviceScaleFactor(float) final;
 
-    void beginPage(const IntSize&) final;
+    void beginPage(const FloatRect&) final;
     void endPage() final;
 
     void setURLForRect(const URL&, const FloatRect&) final;
+
+    // Appends a deferred placeholder command.
+    // The function is called during the display list playback, drawDisplayList().
+    // The function may be called multiple times.
+    // The function may be called from an arbitrary thread.
+    // The function should always produce the same GraphicsContext calls.
+    WEBCORE_EXPORT void drawPlaceholder(Function<void(GraphicsContext&)>&&);
 
 private:
     void appendStateChangeItemIfNecessary() final;

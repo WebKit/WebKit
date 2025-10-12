@@ -139,7 +139,7 @@ TEST(DropoutTest, KeepsSmallCoeffsAmongLargeOnes) {
     0, 0,  0, 10, 0,  0, 2, 0,   // should be kept
     0, 0,  0, 0,  0,  0, 0, 0,   //
     0, -2, 0, 0,  0,  0, 0, 0    // should be removed
-  };                             // should be removed
+  };
   Dropout(tx_size, kTxType, dropout_num_before, dropout_num_after, qcoeff_scan);
   ExpectArrayEq(qcoeff_scan, { 1, 0, 0, 0,  -5, 0, 0, -1,  //
                                0, 0, 0, 10, 0,  0, 2, 0,   //

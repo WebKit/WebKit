@@ -69,4 +69,6 @@ template<> struct LogArgument<WebCore::OverSampleType> {
     
 } // namespace WTF
 
+SPECIALIZE_TYPE_TRAITS_AUDIONODE(WaveShaperNode, NodeTypeWaveShaper);
+
 #endif // ENABLE(WEB_AUDIO)

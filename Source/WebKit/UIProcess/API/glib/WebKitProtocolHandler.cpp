@@ -22,7 +22,7 @@
 
 #include "APIPageConfiguration.h"
 #include "BuildRevision.h"
-#include "DRMDevice.h"
+#include "DRMMainDevice.h"
 #include "DisplayVBlankMonitor.h"
 #include "RendererBufferTransportMode.h"
 #include "WebKitError.h"
@@ -59,7 +59,7 @@
 #endif
 
 #if PLATFORM(GTK)
-#include "AcceleratedBackingStoreDMABuf.h"
+#include "AcceleratedBackingStore.h"
 #include "Display.h"
 #include <gtk/gtk.h>
 #endif
@@ -67,6 +67,7 @@
 #if PLATFORM(WPE)
 #include "WPEUtilities.h"
 #if ENABLE(WPE_PLATFORM)
+#include "DisplayVBlankMonitorWPE.h"
 #include <wpe/wpe-platform.h>
 #endif
 #endif
@@ -191,10 +192,10 @@ static String dmabufRendererWithSupportedBuffers()
     buffers.append("DMABuf (Supported buffers: "_s);
 
 #if PLATFORM(GTK)
-    auto mode = AcceleratedBackingStoreDMABuf::rendererBufferTransportMode();
+    auto mode = AcceleratedBackingStore::rendererBufferTransportMode();
 #else
     OptionSet<RendererBufferTransportMode> mode;
-    if (wpe_display_get_drm_render_node(wpe_display_get_primary()))
+    if (wpe_display_get_drm_device(wpe_display_get_primary()))
         mode.add(RendererBufferTransportMode::Hardware);
     mode.add(RendererBufferTransportMode::SharedMemory);
 #endif
@@ -251,48 +252,60 @@ static char* webkitDrmGetFormatName(uint32_t format)
     return str;
 }
 
-static String renderBufferFormat(WebKitURISchemeRequest* request)
+static String renderBufferDescription(WebKitURISchemeRequest* request)
 {
-    StringBuilder bufferFormat;
-    auto format = webkitWebViewGetRendererBufferFormat(webkit_uri_scheme_request_get_web_view(request));
-    if (format.fourcc) {
-        auto* formatName = webkitDrmGetFormatName(format.fourcc);
-        switch (format.type) {
-        case RendererBufferFormat::Type::DMABuf: {
+    StringBuilder bufferDescription;
+    auto description = webkitWebViewGetRendererBufferDescription(webkit_uri_scheme_request_get_web_view(request));
+    if (description.fourcc) {
+        auto* formatName = webkitDrmGetFormatName(description.fourcc);
+        switch (description.type) {
+        case RendererBufferDescription::Type::DMABuf: {
 #if HAVE(DRM_GET_FORMAT_MODIFIER_VENDOR) && HAVE(DRM_GET_FORMAT_MODIFIER_NAME)
-            auto* modifierVendor = drmGetFormatModifierVendor(format.modifier);
-            auto* modifierName = drmGetFormatModifierName(format.modifier);
-            bufferFormat.append("DMA-BUF: "_s, String::fromUTF8(formatName), " ("_s, String::fromUTF8(modifierVendor), "_"_s, String::fromUTF8(modifierName), ")"_s);
+            auto* modifierVendor = drmGetFormatModifierVendor(description.modifier);
+            auto* modifierName = drmGetFormatModifierName(description.modifier);
+            bufferDescription.append("DMA-BUF: "_s, String::fromUTF8(formatName), " ("_s, String::fromUTF8(modifierVendor), "_"_s, String::fromUTF8(modifierName), ")"_s);
             free(modifierVendor);
             free(modifierName);
 #else
-            bufferFormat.append("Unknown"_s);
+            bufferDescription.append("Unknown"_s);
 #endif
             break;
         }
-        case RendererBufferFormat::Type::SharedMemory:
-            bufferFormat.append("Shared Memory: "_s, String::fromUTF8(formatName));
+        case RendererBufferDescription::Type::SharedMemory:
+            bufferDescription.append("Shared Memory: "_s, String::fromUTF8(formatName));
             break;
         }
         free(formatName);
-        switch (format.usage) {
-        case DMABufRendererBufferFormat::Usage::Rendering:
-            bufferFormat.append(" [Rendering]"_s);
+        switch (description.usage) {
+        case RendererBufferFormat::Usage::Rendering:
+            bufferDescription.append(" [Rendering]"_s);
             break;
-        case DMABufRendererBufferFormat::Usage::Scanout:
-            bufferFormat.append(" [Scanout]"_s);
+        case RendererBufferFormat::Usage::Scanout:
+            bufferDescription.append(" [Scanout]"_s);
             break;
-        case DMABufRendererBufferFormat::Usage::Mapping:
-            bufferFormat.append(" [Mapping]"_s);
+        case RendererBufferFormat::Usage::Mapping:
+            bufferDescription.append(" [Mapping]"_s);
             break;
         }
     } else
-        bufferFormat.append("Unknown"_s);
+        bufferDescription.append("Unknown"_s);
 
-    return bufferFormat.toString();
+    return bufferDescription.toString();
 }
 #endif
 #endif
+
+static String vblankMonitorType(const DisplayVBlankMonitor& monitor)
+{
+#if ENABLE(WPE_PLATFORM)
+    if (monitor.type() == DisplayVBlankMonitor::Type::Wpe) {
+        const auto& wpeMonitor = *static_cast<const DisplayVBlankMonitorWPE*>(&monitor);
+        return makeString("WPE ("_s, String::fromUTF8(G_OBJECT_TYPE_NAME(wpeMonitor.observer())), ')');
+    }
+#endif
+
+    return monitor.type() == DisplayVBlankMonitor::Type::Timer ? "Timer"_s : "DRM"_s;
+}
 
 static String prettyPrintJSON(const String& jsonString)
 {
@@ -448,7 +461,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #if PLATFORM(GTK)
     addTableRow(versionObject, "GTK version"_s, makeString(GTK_MAJOR_VERSION, '.', GTK_MINOR_VERSION, '.', GTK_MICRO_VERSION, " (build) "_s, gtk_get_major_version(), '.', gtk_get_minor_version(), '.', gtk_get_micro_version(), " (runtime)"_s));
 
-    bool usingDMABufRenderer = AcceleratedBackingStoreDMABuf::checkRequirements();
+    bool usingDMABufRenderer = AcceleratedBackingStore::checkRequirements();
 #endif
 
 #if PLATFORM(WPE)
@@ -485,6 +498,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 
     rect = IntRect(screenAvailableRect(nullptr));
     addTableRow(displayObject, "Screen work area"_s, makeString(rect.x(), ',', rect.y(), ' ', rect.width(), 'x', rect.height()));
+    addTableRow(displayObject, "Device scale"_s, String::number(page->deviceScaleFactor()));
     addTableRow(displayObject, "Depth"_s, String::number(screenDepth(nullptr)));
     addTableRow(displayObject, "Bits per color component"_s, String::number(screenDepthPerComponent(nullptr)));
     addTableRow(displayObject, "Font Scaling DPI"_s, String::number(fontDPI()));
@@ -495,20 +509,21 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     if (displayID) {
         if (auto* displayLink = page->configuration().processPool().displayLinks().existingDisplayLinkForDisplay(*displayID)) {
             auto& vblankMonitor = displayLink->vblankMonitor();
-            addTableRow(displayObject, "VBlank type"_s, vblankMonitor.type() == DisplayVBlankMonitor::Type::Timer ? "Timer"_s : "DRM"_s);
+            addTableRow(displayObject, "VBlank type"_s, vblankMonitorType(vblankMonitor));
             addTableRow(displayObject, "VBlank refresh rate"_s, makeString(vblankMonitor.refreshRate(), "Hz"_s));
         }
     }
 
+#if USE(GBM)
     if (policy != "never"_s) {
-        auto deviceFile = drmPrimaryDevice();
-        if (!deviceFile.isEmpty())
-            addTableRow(displayObject, "DRM Device"_s, deviceFile);
-
-        auto renderNode = drmRenderNodeDevice();
-        if (!renderNode.isEmpty())
-            addTableRow(displayObject, "DRM Render Node"_s, renderNode);
+        auto drmDevice = drmMainDevice();
+        if (!drmDevice.isNull()) {
+            addTableRow(displayObject, "DRM Primary Node"_s, String::fromUTF8(drmDevice.primaryNode.span()));
+            if (!drmDevice.renderNode.isNull())
+                addTableRow(displayObject, "DRM Render Node"_s, String::fromUTF8(drmDevice.renderNode.span()));
+        }
     }
+#endif
 
     stopTable();
     jsonObject->setObject("Display Information"_s, WTFMove(displayObject));
@@ -531,14 +546,14 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         if (usingDMABufRenderer) {
             addTableRow(hardwareAccelerationObject, "Renderer"_s, dmabufRendererWithSupportedBuffers());
 #if USE(LIBDRM)
-            addTableRow(hardwareAccelerationObject, "Buffer format"_s, renderBufferFormat(request));
+            addTableRow(hardwareAccelerationObject, "Buffer format"_s, renderBufferDescription(request));
 #endif
         }
 #elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
         if (usingWPEPlatformAPI) {
             addTableRow(hardwareAccelerationObject, "Renderer"_s, dmabufRendererWithSupportedBuffers());
 #if USE(LIBDRM)
-            addTableRow(hardwareAccelerationObject, "Buffer format"_s, renderBufferFormat(request));
+            addTableRow(hardwareAccelerationObject, "Buffer format"_s, renderBufferDescription(request));
 #endif
         }
 #endif
@@ -559,9 +574,10 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         struct gbm_device* device = nullptr;
         const char* disableGBM = getenv("WEBKIT_DMABUF_RENDERER_DISABLE_GBM");
         if (!disableGBM || !strcmp(disableGBM, "0")) {
-            auto renderNode = drmRenderNodeDevice();
-            if (!renderNode.isEmpty()) {
-                fd = UnixFileDescriptor { open(renderNode.utf8().data(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
+            auto drmDevice = drmMainDevice();
+            if (!drmDevice.isNull()) {
+                const auto& filename = !drmDevice.renderNode.isNull() ? drmDevice.renderNode : drmDevice.primaryNode;
+                fd = UnixFileDescriptor { open(filename.data(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
                 if (fd) {
                     device = gbm_create_device(fd.value());
                     if (device)
@@ -604,7 +620,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
             jsonObject->setObject("Hardware Acceleration Information (Render process)"_s, WTFMove(hardwareAccelerationObject));
 
             // Clear the contexts used by the display before it's destroyed.
-            platformDisplay->clearSharingGLContext();
+            platformDisplay->clearGLContexts();
         }
 
 #if USE(GBM)
@@ -620,7 +636,10 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #if USE(GBM)
         UnixFileDescriptor fd;
         struct gbm_device* device = nullptr;
-        if (const char* node = wpe_display_get_drm_render_node(wpe_display_get_primary())) {
+        if (auto* drmDevice = wpe_display_get_drm_device(wpe_display_get_primary())) {
+            const char* node = wpe_drm_device_get_render_node(drmDevice);
+            if (!node)
+                node = wpe_drm_device_get_primary_node(drmDevice);
             fd = UnixFileDescriptor { open(node, O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
             if (fd) {
                 device = gbm_create_device(fd.value());
@@ -655,7 +674,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
             stopTable();
             jsonObject->setObject("Hardware Acceleration Information (Render process)"_s, WTFMove(hardwareAccelerationObject));
 
-            platformDisplay->clearSharingGLContext();
+            platformDisplay->clearGLContexts();
         }
 
 #if USE(GBM)

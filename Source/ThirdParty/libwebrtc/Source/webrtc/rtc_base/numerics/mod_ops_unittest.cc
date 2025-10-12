@@ -10,7 +10,7 @@
 
 #include "rtc_base/numerics/mod_ops.h"
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "test/gtest.h"
 

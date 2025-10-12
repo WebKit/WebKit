@@ -27,17 +27,21 @@
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 
-#include "FilterOperations.h"
-#include "Length.h"
-#include "LengthPoint.h"
-#include "OffsetRotation.h"
-#include "PathOperation.h"
-#include "RenderStyleConstants.h"
-#include "RotateTransformOperation.h"
-#include "ScaleTransformOperation.h"
-#include "TransformOperations.h"
-#include "TransformationMatrix.h"
-#include "TranslateTransformOperation.h"
+#include <WebCore/AcceleratedEffectOffsetAnchor.h>
+#include <WebCore/AcceleratedEffectOffsetDistance.h>
+#include <WebCore/AcceleratedEffectOffsetPosition.h>
+#include <WebCore/AcceleratedEffectOffsetRotate.h>
+#include <WebCore/AcceleratedEffectOpacity.h>
+#include <WebCore/AcceleratedEffectTransformBox.h>
+#include <WebCore/AcceleratedEffectTransformOrigin.h>
+#include <WebCore/FilterOperations.h>
+#include <WebCore/FloatPoint.h>
+#include <WebCore/PathOperation.h>
+#include <WebCore/RotateTransformOperation.h>
+#include <WebCore/ScaleTransformOperation.h>
+#include <WebCore/TransformOperations.h>
+#include <WebCore/TransformationMatrix.h>
+#include <WebCore/TranslateTransformOperation.h>
 
 namespace WebCore {
 
@@ -47,38 +51,42 @@ class RenderLayerModelObject;
 class RenderStyle;
 
 struct AcceleratedEffectValues {
-    float opacity { 1 };
+    AcceleratedEffectOpacity opacity { };
+    // FIXME: It is a layering violation to use `TransformOperationData` here, as it is defined in the rendering directory.
     std::optional<TransformOperationData> transformOperationData;
-    LengthPoint transformOrigin { };
-    TransformBox transformBox { TransformBox::ContentBox };
+    AcceleratedEffectTransformOrigin transformOrigin { };
+    AcceleratedEffectTransformBox transformBox { AcceleratedEffectTransformBox::ContentBox };
     TransformOperations transform { };
     RefPtr<TransformOperation> translate;
     RefPtr<TransformOperation> scale;
     RefPtr<TransformOperation> rotate;
+    // FIXME: It is a layering violation to use `PathOperation` here, as it is defined in the rendering directory.
     RefPtr<PathOperation> offsetPath;
-    Length offsetDistance { };
-    LengthPoint offsetPosition { };
-    LengthPoint offsetAnchor { };
-    OffsetRotation offsetRotate { };
+    AcceleratedEffectOffsetDistance offsetDistance { };
+    // FIXME: This `offsetPosition` is not used.
+    AcceleratedEffectOffsetPosition offsetPosition { };
+    AcceleratedEffectOffsetAnchor offsetAnchor { };
+    AcceleratedEffectOffsetRotate offsetRotate { };
     FilterOperations filter { };
     FilterOperations backdropFilter { };
 
     AcceleratedEffectValues() = default;
+    // FIXME: It is a layering violation to use `RenderStyle` and `RenderLayerModelObject` here, as they are defined in the rendering directory.
     AcceleratedEffectValues(const RenderStyle&, const IntRect&, const RenderLayerModelObject* = nullptr);
-    AcceleratedEffectValues(float opacity, std::optional<TransformOperationData>&& transformOperationData, LengthPoint&& transformOrigin, TransformBox transformBox, TransformOperations&& transform, RefPtr<TransformOperation>&& translate, RefPtr<TransformOperation>&& scale, RefPtr<TransformOperation>&& rotate, RefPtr<PathOperation>&& offsetPath, Length&& offsetDistance, LengthPoint&& offsetPosition, LengthPoint&& offsetAnchor, OffsetRotation&& offsetRotate, FilterOperations&& filter, FilterOperations&& backdropFilter)
+    AcceleratedEffectValues(AcceleratedEffectOpacity opacity, std::optional<TransformOperationData>&& transformOperationData, AcceleratedEffectTransformOrigin transformOrigin, AcceleratedEffectTransformBox transformBox, TransformOperations&& transform, RefPtr<TransformOperation>&& translate, RefPtr<TransformOperation>&& scale, RefPtr<TransformOperation>&& rotate, RefPtr<PathOperation>&& offsetPath, AcceleratedEffectOffsetDistance offsetDistance, AcceleratedEffectOffsetPosition offsetPosition, AcceleratedEffectOffsetAnchor offsetAnchor, AcceleratedEffectOffsetRotate offsetRotate, FilterOperations&& filter, FilterOperations&& backdropFilter)
         : opacity(opacity)
         , transformOperationData(WTFMove(transformOperationData))
-        , transformOrigin(WTFMove(transformOrigin))
+        , transformOrigin(transformOrigin)
         , transformBox(transformBox)
         , transform(WTFMove(transform))
         , translate(WTFMove(translate))
         , scale(WTFMove(scale))
         , rotate(WTFMove(rotate))
         , offsetPath(WTFMove(offsetPath))
-        , offsetDistance(WTFMove(offsetDistance))
-        , offsetPosition(WTFMove(offsetPosition))
-        , offsetAnchor(WTFMove(offsetAnchor))
-        , offsetRotate(WTFMove(offsetRotate))
+        , offsetDistance(offsetDistance)
+        , offsetPosition(offsetPosition)
+        , offsetAnchor(offsetAnchor)
+        , offsetRotate(offsetRotate)
         , filter(WTFMove(filter))
         , backdropFilter(WTFMove(backdropFilter))
     {

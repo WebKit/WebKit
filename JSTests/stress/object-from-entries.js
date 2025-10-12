@@ -23,9 +23,9 @@ shouldBe(Object.fromEntries.length, 1);
 
 shouldThrow(() => Object.fromEntries(null), `TypeError: null is not an object`);
 shouldThrow(() => Object.fromEntries(undefined), `TypeError: undefined is not an object`);
-shouldThrow(() => Object.fromEntries(0), `TypeError: undefined is not a function`);
-shouldThrow(() => Object.fromEntries(true), `TypeError: undefined is not a function`);
-shouldThrow(() => Object.fromEntries(Symbol("Cocoa")), `TypeError: undefined is not a function`);
+shouldThrow(() => Object.fromEntries(0), `TypeError: number is not iterable`);
+shouldThrow(() => Object.fromEntries(true), `TypeError: true is not iterable`);
+shouldThrow(() => Object.fromEntries(Symbol("Cocoa")), `TypeError: value is not iterable`);
 shouldThrow(() => Object.fromEntries("Cocoa"), `TypeError: Object.fromEntries requires the first iterable parameter yields objects`);
 shouldThrow(() => Object.fromEntries([0]), `TypeError: Object.fromEntries requires the first iterable parameter yields objects`);
 shouldThrow(() => Object.fromEntries([["Cocoa", "Cappuccino"], 0]), `TypeError: Object.fromEntries requires the first iterable parameter yields objects`);

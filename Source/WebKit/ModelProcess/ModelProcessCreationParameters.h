@@ -37,6 +37,7 @@ struct ModelProcessCreationParameters {
     ProcessID parentPID;
     String applicationVisibleName;
     bool restrictiveRenderingMode { false };
+    std::optional<int> debugEntityMemoryLimit;
 };
 
 } // namespace WebKit

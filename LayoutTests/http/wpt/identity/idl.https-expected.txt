@@ -11,13 +11,14 @@ PASS Partial dictionary CredentialRequestOptions[2]: original dictionary defined
 PASS Partial dictionary CredentialRequestOptions[2]: member names are unique
 PASS Partial dictionary CredentialCreationOptions[2]: original dictionary defined
 PASS Partial dictionary CredentialCreationOptions[2]: member names are unique
+PASS Partial interface Navigator[2]: member names are unique
+PASS Partial interface Element: member names are unique
 PASS Partial interface mixin NavigatorID: member names are unique
 PASS Partial dictionary CredentialRequestOptions[3]: original dictionary defined
 PASS Partial dictionary CredentialRequestOptions[3]: member names are unique
 PASS PasswordCredential includes CredentialUserData: member names are unique
 PASS FederatedCredential includes CredentialUserData: member names are unique
 PASS HTMLElement includes GlobalEventHandlers: member names are unique
-PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
 PASS HTMLElement includes ElementContentEditable: member names are unique
 PASS HTMLElement includes HTMLOrSVGElement: member names are unique
 PASS Navigator includes NavigatorID: member names are unique
@@ -35,6 +36,8 @@ PASS Credential interface: existence and properties of interface prototype objec
 PASS Credential interface: existence and properties of interface prototype object's @@unscopables property
 PASS Credential interface: attribute id
 PASS Credential interface: attribute type
+PASS Credential interface: operation isConditionalMediationAvailable()
+FAIL Credential interface: operation willRequestConditionalCreation() assert_own_property: interface object missing static operation expected property "willRequestConditionalCreation" missing
 PASS CredentialsContainer interface: existence and properties of interface object
 PASS CredentialsContainer interface object length
 PASS CredentialsContainer interface object name
@@ -82,4 +85,6 @@ PASS DigitalCredential interface: existence and properties of interface prototyp
 PASS DigitalCredential interface: existence and properties of interface prototype object's @@unscopables property
 PASS DigitalCredential interface: attribute protocol
 PASS DigitalCredential interface: attribute data
+PASS DigitalCredential interface: operation userAgentAllowsProtocol(DOMString)
+PASS DigitalCredential interface: operation toJSON()
 

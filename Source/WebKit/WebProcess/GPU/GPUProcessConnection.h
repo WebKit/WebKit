@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,10 +30,10 @@
 #include "AudioMediaStreamTrackRendererInternalUnitIdentifier.h"
 #include "Connection.h"
 #include "GPUProcessConnectionIdentifier.h"
-#include "GraphicsContextGLIdentifier.h"
 #include "MediaOverridesForTesting.h"
 #include "MessageReceiverMap.h"
-#include "RenderingBackendIdentifier.h"
+#include "RemoteGraphicsContextGLIdentifier.h"
+#include "RemoteRenderingBackendIdentifier.h"
 #include "StreamServerConnection.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/AudioSession.h>
@@ -71,7 +71,7 @@ class RemoteVideoFrameObjectHeapProxy;
 #endif
 
 class GPUProcessConnection : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GPUProcessConnection>, public IPC::Connection::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(GPUProcessConnection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GPUProcessConnection);
 public:
     static Ref<GPUProcessConnection> create(Ref<IPC::Connection>&&);
@@ -82,7 +82,6 @@ public:
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     IPC::Connection& connection() { return m_connection.get(); }
-    Ref<IPC::Connection> protectedConnection() { return m_connection; }
     IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
 
     void didBecomeUnresponsive();
@@ -120,13 +119,13 @@ public:
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
 
-    void createRenderingBackend(RenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
-    void releaseRenderingBackend(RenderingBackendIdentifier);
+    void createRenderingBackend(RemoteRenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
+    void releaseRenderingBackend(RemoteRenderingBackendIdentifier);
 #if ENABLE(WEBGL)
-    void createGraphicsContextGL(GraphicsContextGLIdentifier, const WebCore::GraphicsContextGLAttributes&, RenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
-    void releaseGraphicsContextGL(GraphicsContextGLIdentifier);
+    void createGraphicsContextGL(RemoteGraphicsContextGLIdentifier, const WebCore::GraphicsContextGLAttributes&, RemoteRenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
+    void releaseGraphicsContextGL(RemoteGraphicsContextGLIdentifier);
 #endif
-    void createGPU(WebGPUIdentifier, RenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
+    void createGPU(WebGPUIdentifier, RemoteRenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
     void releaseGPU(WebGPUIdentifier);
 
     class Client : public AbstractThreadSafeRefCountedAndCanMakeWeakPtr {
@@ -146,8 +145,8 @@ private:
     // IPC::Connection::Client
     void didClose(IPC::Connection&) override;
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t indexOfObjectFailingDecoding) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) override;
 
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
     bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
@@ -162,7 +161,7 @@ private:
 #endif
 
     // The connection from the web process to the GPU process.
-    Ref<IPC::Connection> m_connection;
+    const Ref<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
     GPUProcessConnectionIdentifier m_identifier { GPUProcessConnectionIdentifier::generate() };
     bool m_hasInitialized { false };

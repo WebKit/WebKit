@@ -29,6 +29,7 @@
 #include "CachedCall.h"
 #include "CallLinkInfo.h"
 #include "JSCJSValueInlines.h"
+#include "JSFunctionInlines.h"
 #include "PolymorphicCallStubRoutine.h"
 
 namespace JSC {

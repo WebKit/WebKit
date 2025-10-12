@@ -20,13 +20,15 @@
 #include "absl/strings/string_view.h"
 #include "rtc_base/system/rtc_export.h"
 
-namespace rtc {
+namespace webrtc {
 
 // Interface for RNG implementations.
 class RandomGenerator {
  public:
-  virtual ~RandomGenerator() {}
-  virtual bool Init(const void* seed, size_t len) = 0;
+  virtual ~RandomGenerator() = default;
+  [[deprecated]] virtual bool Init(const void* seed, size_t len) {
+    return true;
+  }
   virtual bool Generate(void* buf, size_t len) = 0;
 };
 
@@ -43,8 +45,8 @@ void SetRandomGenerator(std::unique_ptr<RandomGenerator> generator);
 void SetRandomTestMode(bool test);
 
 // Initializes the RNG, and seeds it with the specified entropy.
-bool InitRandom(int seed);
-bool InitRandom(const char* seed, size_t len);
+[[deprecated]] bool InitRandom(int seed);
+[[deprecated]] bool InitRandom(const char* seed, size_t len);
 
 // Generates a (cryptographically) random string of the given length.
 // We generate base64 values so that they will be printable.
@@ -83,6 +85,7 @@ uint32_t CreateRandomNonZeroId();
 // Generates a random double between 0.0 (inclusive) and 1.0 (exclusive).
 double CreateRandomDouble();
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_CRYPTO_RANDOM_H_

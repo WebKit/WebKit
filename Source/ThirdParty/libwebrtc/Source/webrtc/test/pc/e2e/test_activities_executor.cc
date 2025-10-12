@@ -10,13 +10,18 @@
 
 #include "test/pc/e2e/test_activities_executor.h"
 
-#include <memory>
+#include <functional>
+#include <optional>
 #include <utility>
 
-#include "absl/memory/memory.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/task_queue_for_test.h"
+#include "rtc_base/task_utils/repeating_task.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {

@@ -27,8 +27,8 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "ContentExtensionActions.h"
-#include "ResourceLoadInfo.h"
+#include <WebCore/ContentExtensionActions.h>
+#include <WebCore/ResourceLoadInfo.h>
 #include <wtf/Hasher.h>
 #include <wtf/text/WTFString.h>
 
@@ -148,11 +148,12 @@ class ContentExtensionRule {
 public:
     WEBCORE_EXPORT ContentExtensionRule(Trigger&&, Action&&);
 
+    ContentExtensionRule isolatedCopy() const & { return { m_trigger.isolatedCopy(), m_action.isolatedCopy() }; }
+    ContentExtensionRule isolatedCopy() && { return { WTFMove(m_trigger).isolatedCopy(), WTFMove(m_action).isolatedCopy() }; }
+
     const Trigger& trigger() const { return m_trigger; }
     const Action& action() const { return m_action; }
 
-    ContentExtensionRule isolatedCopy() const & { return { m_trigger.isolatedCopy(), m_action.isolatedCopy() }; }
-    ContentExtensionRule isolatedCopy() && { return { WTFMove(m_trigger).isolatedCopy(), WTFMove(m_action).isolatedCopy() }; }
     friend bool operator==(const ContentExtensionRule&, const ContentExtensionRule&) = default;
 
 private:

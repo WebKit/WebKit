@@ -134,6 +134,13 @@
     [localObject doSomethingWithCompletionHandler:^{ }];
 }
 
+- (void)callUIProcessMethodWithInvalidTypeSignature
+{
+    // Note: The purposeful cast to the wrong protocol here allows us to trigger a remote invocation with a different type signature than expected.
+    id<IntegerReplyObjectProtocol> integerObject = [[_browserContextController _remoteObjectRegistry] remoteObjectProxyWithInterface:stringReplyObjectInterface()];
+    [integerObject methodWithCompletionHandler:^(uint64_t, uint64_t, uint64_t, uint64_t) { }];
+}
+
 - (void)getGroupIdentifier:(void(^)(NSString *))completionHandler
 {
     completionHandler([_browserContextController _groupIdentifier]);

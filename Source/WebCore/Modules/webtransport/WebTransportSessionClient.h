@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
@@ -32,8 +33,8 @@ namespace WebCore {
 class Exception;
 class ReadableStreamSource;
 class WebTransportReceiveStreamSource;
+class WebTransportSendStreamSink;
 
-struct WebTransportBidirectionalStreamConstructionParameters;
 struct WebTransportStreamIdentifierType;
 
 using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
@@ -43,9 +44,9 @@ public:
     virtual ~WebTransportSessionClient() { }
     virtual void receiveDatagram(std::span<const uint8_t>, bool, std::optional<Exception>&&) = 0;
     virtual void receiveIncomingUnidirectionalStream(WebTransportStreamIdentifier) = 0;
-    virtual void receiveBidirectionalStream(WebTransportBidirectionalStreamConstructionParameters&&) = 0;
+    virtual void receiveBidirectionalStream(Ref<WebTransportSendStreamSink>&&) = 0;
     virtual void streamReceiveBytes(WebTransportStreamIdentifier, std::span<const uint8_t>, bool, std::optional<Exception>&&) = 0;
-    virtual void networkProcessCrashed() = 0;
+    virtual void didFail() = 0;
 };
 
 }

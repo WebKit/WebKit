@@ -39,7 +39,8 @@ struct VertexBufferWithOffset
 class VertexArrayWgpu : public VertexArrayImpl
 {
   public:
-    VertexArrayWgpu(const gl::VertexArrayState &data);
+    VertexArrayWgpu(const gl::VertexArrayState &data,
+                    const gl::VertexArrayBuffers &vertexArrayBuffers);
 
     angle::Result syncState(const gl::Context *context,
                             const gl::VertexArray::DirtyBits &dirtyBits,

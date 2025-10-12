@@ -45,8 +45,9 @@
 #include "ApplePayShippingMethodSelectedEvent.h"
 #include "ApplePayShippingMethodUpdate.h"
 #include "ApplePayValidateMerchantEvent.h"
-#include "DocumentInlines.h"
+#include "ContextDestructionObserverInlines.h"
 #include "DocumentLoader.h"
+#include "DocumentPage.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
 #include "JSDOMPromiseDeferred.h"
@@ -55,14 +56,13 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Page.h"
-#include "PageConsoleClient.h"
 #include "PaymentContact.h"
 #include "PaymentCoordinator.h"
 #include "PaymentMerchantSession.h"
 #include "PaymentMethod.h"
 #include "PaymentRequestUtilities.h"
 #include "PaymentRequestValidator.h"
-#include "ScriptTelemetryCategory.h"
+#include "ScriptTrackingPrivacyCategory.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
@@ -495,7 +495,7 @@ ExceptionOr<Ref<ApplePaySession>> ApplePaySession::create(Document& document, un
     if (!document.page())
         return Exception { ExceptionCode::InvalidAccessError, "Frame is detached"_s };
 
-    auto convertedPaymentRequest = convertAndValidate(document, version, WTFMove(paymentRequest), document.page()->paymentCoordinator());
+    auto convertedPaymentRequest = convertAndValidate(document, version, WTFMove(paymentRequest), document.protectedPage()->protectedPaymentCoordinator().get());
     if (convertedPaymentRequest.hasException())
         return convertedPaymentRequest.releaseException();
 
@@ -523,17 +523,17 @@ ExceptionOr<bool> ApplePaySession::supportsVersion(Document& document, unsigned 
     if (canCall.hasException())
         return canCall.releaseException();
 
-    auto* page = document.page();
+    RefPtr page = document.page();
     if (!page)
         return Exception { ExceptionCode::InvalidAccessError };
 
-    return page->paymentCoordinator().supportsVersion(document, version);
+    return page->protectedPaymentCoordinator()->supportsVersion(document, version);
 }
 
 static bool shouldDiscloseApplePayCapability(Document& document)
 {
-    auto* page = document.page();
-    if (!page || page->usesEphemeralSession() || document.requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Payments))
+    RefPtr page = document.page();
+    if (!page || page->usesEphemeralSession() || document.requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::Payments))
         return false;
 
     return document.settings().applePayCapabilityDisclosureAllowed();
@@ -545,11 +545,11 @@ ExceptionOr<bool> ApplePaySession::canMakePayments(Document& document)
     if (canCall.hasException())
         return canCall.releaseException();
 
-    auto* page = document.page();
+    RefPtr page = document.page();
     if (!page)
         return Exception { ExceptionCode::InvalidAccessError };
 
-    return page->paymentCoordinator().canMakePayments();
+    return page->protectedPaymentCoordinator()->canMakePayments();
 }
 
 ExceptionOr<void> ApplePaySession::canMakePaymentsWithActiveCard(Document& document, const String& merchantIdentifier, Ref<DeferredPromise>&& passedPromise)
@@ -560,26 +560,23 @@ ExceptionOr<void> ApplePaySession::canMakePaymentsWithActiveCard(Document& docum
 
     RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
     if (!shouldDiscloseApplePayCapability(document)) {
-        auto* page = document.page();
+        RefPtr page = document.page();
         if (!page)
             return Exception { ExceptionCode::InvalidAccessError };
 
-        auto& paymentCoordinator = page->paymentCoordinator();
-        bool canMakePayments = paymentCoordinator.canMakePayments();
+        bool canMakePayments = page->protectedPaymentCoordinator()->canMakePayments();
 
-        RunLoop::protectedMain()->dispatch([promise, canMakePayments]() mutable {
+        RunLoop::mainSingleton().dispatch([promise, canMakePayments]() mutable {
             promise->resolve<IDLBoolean>(canMakePayments);
         });
         return { };
     }
 
-    auto* page = document.page();
+    RefPtr page = document.page();
     if (!page)
         return Exception { ExceptionCode::InvalidAccessError };
 
-    auto& paymentCoordinator = page->paymentCoordinator();
-
-    paymentCoordinator.canMakePaymentsWithActiveCard(document, merchantIdentifier, [promise](bool canMakePayments) mutable {
+    page->protectedPaymentCoordinator()->canMakePaymentsWithActiveCard(document, merchantIdentifier, [promise](bool canMakePayments) mutable {
         promise->resolve<IDLBoolean>(canMakePayments);
     });
     return { };
@@ -594,14 +591,12 @@ ExceptionOr<void> ApplePaySession::openPaymentSetup(Document& document, const St
     if (!UserGestureIndicator::processingUserGesture())
         return Exception { ExceptionCode::InvalidAccessError, "Must call ApplePaySession.openPaymentSetup from a user gesture handler."_s };
 
-    auto* page = document.page();
+    RefPtr page = document.page();
     if (!page)
         return Exception { ExceptionCode::InvalidAccessError };
 
-    auto& paymentCoordinator = page->paymentCoordinator();
-
     RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
-    paymentCoordinator.openPaymentSetup(document, merchantIdentifier, [promise](bool result) mutable {
+    page->protectedPaymentCoordinator()->openPaymentSetup(document, merchantIdentifier, [promise](bool result) mutable {
         promise->resolve<IDLBoolean>(result);
     });
 
@@ -642,13 +637,13 @@ ExceptionOr<void> ApplePaySession::completeMerchantValidation(JSC::JSGlobalObjec
     if (!merchantSessionValue.isObject())
         return Exception { ExceptionCode::TypeError };
 
-    auto& document = *downcast<Document>(scriptExecutionContext());
-    auto& window = *document.domWindow();
+    Ref document = *downcast<Document>(scriptExecutionContext());
+    Ref window = *document->window();
 
     String errorMessage;
     auto merchantSession = PaymentMerchantSession::fromJS(state, asObject(merchantSessionValue), errorMessage);
     if (!merchantSession) {
-        window.printErrorMessage(errorMessage);
+        window->printErrorMessage(errorMessage);
         return Exception { ExceptionCode::InvalidAccessError };
     }
 
@@ -1221,6 +1216,11 @@ bool ApplePaySession::isFinalState() const
 bool ApplePaySession::virtualHasPendingActivity() const
 {
     return m_state != State::Idle && !isFinalState();
+}
+
+ScriptExecutionContext* ApplePaySession::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "RenderingBackendIdentifier.h"
+#include "RemoteRenderingBackendIdentifier.h"
 #include "ShapeDetectionIdentifier.h"
 #include <WebCore/TextDetectorInterface.h>
 #include <wtf/CompletionHandler.h>
@@ -49,12 +49,12 @@ namespace WebKit::ShapeDetection {
 class RemoteTextDetectorProxy : public WebCore::ShapeDetection::TextDetector {
     WTF_MAKE_TZONE_ALLOCATED(RemoteTextDetectorProxy);
 public:
-    static Ref<RemoteTextDetectorProxy> create(Ref<IPC::StreamClientConnection>&&, RenderingBackendIdentifier, ShapeDetectionIdentifier);
+    static Ref<RemoteTextDetectorProxy> create(Ref<IPC::StreamClientConnection>&&, RemoteRenderingBackendIdentifier, ShapeDetectionIdentifier);
 
     virtual ~RemoteTextDetectorProxy();
 
 private:
-    RemoteTextDetectorProxy(Ref<IPC::StreamClientConnection>&&, RenderingBackendIdentifier, ShapeDetectionIdentifier);
+    RemoteTextDetectorProxy(Ref<IPC::StreamClientConnection>&&, RemoteRenderingBackendIdentifier, ShapeDetectionIdentifier);
 
     RemoteTextDetectorProxy(const RemoteTextDetectorProxy&) = delete;
     RemoteTextDetectorProxy(RemoteTextDetectorProxy&&) = delete;
@@ -66,8 +66,8 @@ private:
     void detect(Ref<WebCore::ImageBuffer>&&, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedText>&&)>&&) final;
 
     ShapeDetectionIdentifier m_backing;
-    Ref<IPC::StreamClientConnection> m_streamClientConnection;
-    RenderingBackendIdentifier m_renderingBackendIdentifier;
+    const Ref<IPC::StreamClientConnection> m_streamClientConnection;
+    RemoteRenderingBackendIdentifier m_renderingBackendIdentifier;
 };
 
 } // namespace WebKit::ShapeDetection

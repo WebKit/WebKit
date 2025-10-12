@@ -4,7 +4,12 @@
 // found in the LICENSE file.
 //
 
-// angletypes.h : Defines a variety of structures and enum types that are used throughout libGLESv2
+// angletypes.cpp : Defines a variety of structures and enum types that are used throughout
+// libGLESv2
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/angletypes.h"
 #include "libANGLE/Program.h"
@@ -995,10 +1000,10 @@ void Box::extend(const Box &other)
     depth  = z1 - z0;
 }
 
-bool ValidateComponentTypeMasks(unsigned long outputTypes,
-                                unsigned long inputTypes,
-                                unsigned long outputMask,
-                                unsigned long inputMask)
+bool ValidateComponentTypeMasks(uint64_t outputTypes,
+                                uint64_t inputTypes,
+                                uint64_t outputMask,
+                                uint64_t inputMask)
 {
     static_assert(IMPLEMENTATION_MAX_DRAW_BUFFERS <= kMaxComponentTypeMaskIndex,
                   "Output/input masks should fit into 16 bits - 1 bit per draw buffer. The "

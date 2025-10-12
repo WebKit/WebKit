@@ -611,10 +611,10 @@ static CString getShaderLog(GLuint shader)
 
     Vector<GLchar> info(logLength);
     GLsizei infoLength = 0;
-    glGetShaderInfoLog(shader, logLength, &infoLength, info.data());
+    glGetShaderInfoLog(shader, logLength, &infoLength, info.mutableSpan().data());
 
     size_t stringLength = std::max(infoLength, 0);
-    return unsafeMakeSpan<const char>(info.data(), stringLength);
+    return byteCast<char>(info.span().first(stringLength));
 }
 
 static CString getProgramLog(GLuint program)
@@ -626,10 +626,10 @@ static CString getProgramLog(GLuint program)
 
     Vector<GLchar> info(logLength);
     GLsizei infoLength = 0;
-    glGetProgramInfoLog(program, logLength, &infoLength, info.data());
+    glGetProgramInfoLog(program, logLength, &infoLength, info.mutableSpan().data());
 
     size_t stringLength = std::max(infoLength, 0);
-    return unsafeMakeSpan<const char>(info.data(), stringLength);
+    return byteCast<char>(info.span().first(stringLength));
 }
 #endif
 

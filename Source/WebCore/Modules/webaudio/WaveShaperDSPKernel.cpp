@@ -87,7 +87,7 @@ void WaveShaperDSPKernel::processCurve(std::span<const float> source, std::span<
     ASSERT(source.data() && destination.data() && waveShaperProcessor());
 
     assertIsHeld(waveShaperProcessor()->processLock());
-    Float32Array* curve = waveShaperProcessor()->curve();
+    RefPtr curve = waveShaperProcessor()->curve();
     if (!curve) {
         // Act as "straight wire" pass-through if no curve is set.
         memcpySpan(destination, source);

@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "JSCJSValueInlines.h"
-#include "VM.h"
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/VM.h>
 
 #if ENABLE(REFTRACKER)
-#include "InitializeThreading.h"
+#include <JavaScriptCore/InitializeThreading.h>
 #endif
 
 namespace JSC {

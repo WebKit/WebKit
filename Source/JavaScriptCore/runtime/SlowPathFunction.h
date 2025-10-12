@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "UGPRPair.h"
+#include <JavaScriptCore/UGPRPair.h>
 
 namespace JSC {
 

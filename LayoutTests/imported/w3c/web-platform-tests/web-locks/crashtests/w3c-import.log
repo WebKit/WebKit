@@ -18,3 +18,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-locks/crashtests/iframe-append-2.https.html
 /LayoutTests/imported/w3c/web-platform-tests/web-locks/crashtests/iframe-append.https.html
 /LayoutTests/imported/w3c/web-platform-tests/web-locks/crashtests/settle-after-steal.https.html
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/crashtests/worker-termination.https.html

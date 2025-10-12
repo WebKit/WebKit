@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,13 +63,13 @@ WTF::TextStream& operator<<(TextStream& ts, const SourceBrush& brush)
 {
     ts.dumpProperty("color"_s, brush.color());
 
-    if (auto gradient = brush.gradient()) {
+    if (RefPtr gradient = brush.gradient()) {
         ts.dumpProperty("gradient"_s, *gradient);
         ts.dumpProperty("gradient-space-transform"_s, brush.gradientSpaceTransform());
     }
 
-    if (auto pattern = brush.pattern())
-        ts.dumpProperty("pattern"_s, pattern);
+    if (RefPtr pattern = brush.pattern())
+        ts.dumpProperty("pattern"_s, pattern.get());
 
     return ts;
 }

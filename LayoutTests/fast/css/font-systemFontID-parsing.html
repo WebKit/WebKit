@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <div id="testDivInvalid" style="font: caption icon"></div>
 <div id="testDivValid" style="font: caption"></div>
 <script>
-description("Tests 'font' CSS property parsing with system font values.");
-shouldBeNull("testDivInvalid.style.getPropertyCSSValue('font')");
-shouldBeEqualToString("testDivValid.style.getPropertyCSSValue('font')", "caption");
-shouldBeNull("testDivInvalid.style.getPropertyCSSValue('font-family')");
-shouldBeNull("testDivValid.style.getPropertyCSSValue('font-family')");
+description("Tests 'font' CSS property parsing with system font values.")
+shouldBeEqualToString("testDivInvalid.style.getPropertyValue('font')", "")
+shouldBeEqualToString("testDivValid.style.getPropertyValue('font')", "caption")
+shouldBeEqualToString("testDivInvalid.style.getPropertyValue('font-family')", "")
+shouldBeEqualToString("testDivValid.style.getPropertyValue('font-family')", "")
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

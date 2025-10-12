@@ -3,11 +3,15 @@ name = "bssl-crypto"
 version = "0.2.0"
 edition = "2021"
 publish = false
-license = "ISC"
+license = "Apache-2.0"
 
 [dependencies]
 bssl-sys = {path = "../bssl-sys"}
 
 [features]
 default = []
+# `std` depends on the Rust `std` crate, but adds some useful trait impls if
+# available.
 std = []
+# `mlalgs` enables ML-KEM and ML-DSA support. This requires Rust 1.82.
+mlalgs = []

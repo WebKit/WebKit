@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,7 +65,7 @@ private:
 
     Vector<Ref<DOMCache>> m_caches;
     uint64_t m_updateCounter { 0 };
-    Ref<CacheStorageConnection> m_connection;
+    const Ref<CacheStorageConnection> m_connection;
     bool m_isStopped { false };
 };
 

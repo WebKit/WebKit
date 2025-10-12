@@ -38,6 +38,8 @@
 #import <wtf/Deque.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cf/NotificationCenterCF.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/spi/cf/CFBundleSPI.h>
 
 SOFT_LINK_FRAMEWORK(CoreLocation)
@@ -85,7 +87,7 @@ static RetainPtr<NSString> getToken(const WebCore::SecurityOriginData& securityO
 }
 
 struct PermissionRequest {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(PermissionRequest);
 
     static std::unique_ptr<PermissionRequest> create(const WebCore::SecurityOriginData& origin, NSURL *requestingURL, WKWebView *view, id<WKWebAllowDenyPolicyListener> listener)
     {
@@ -128,14 +130,14 @@ struct PermissionRequest {
 
     _diskDispatchQueue = adoptNS(dispatch_queue_create("com.apple.WebKit.WKWebGeolocationPolicyDecider", DISPATCH_QUEUE_SERIAL));
 
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), self, clearGeolocationCache, CLAppResetChangedNotification, NULL, CFNotificationSuspensionBehaviorCoalesce);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenterSingleton(), self, clearGeolocationCache, CLAppResetChangedNotification, NULL, CFNotificationSuspensionBehaviorCoalesce);
 
     return self;
 }
 
 - (void)dealloc
 {
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), self, CLAppResetChangedNotification, NULL);
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenterSingleton(), self, CLAppResetChangedNotification, NULL);
     [super dealloc];
 }
 
@@ -262,7 +264,7 @@ static RetainPtr<NSMutableDictionary> createChallengeDictionary(NSData *data)
         else
             sites = adoptNS([[NSMutableDictionary alloc] init]);
 
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             if (!_sites)
                 _sites = sites;
             completionHandler();

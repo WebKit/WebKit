@@ -62,13 +62,13 @@ NetworkSessionCurl::~NetworkSessionCurl()
 
 void NetworkSessionCurl::clearAlternativeServices(WallTime)
 {
-    if (auto* storageSession = networkStorageSession())
+    if (CheckedPtr storageSession = networkStorageSession())
         storageSession->clearAlternativeServices();
 }
 
-std::unique_ptr<WebSocketTask> NetworkSessionCurl::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin& clientOrigin, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, StoredCredentialsPolicy)
+RefPtr<WebSocketTask> NetworkSessionCurl::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin& clientOrigin, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, StoredCredentialsPolicy)
 {
-    return makeUnique<WebSocketTask>(channel, webPageProxyID, request, protocol, clientOrigin);
+    return WebSocketTask::create(channel, webPageProxyID, request, protocol, clientOrigin);
 }
 
 void NetworkSessionCurl::didReceiveChallenge(WebSocketTask& webSocketTask, WebCore::AuthenticationChallenge&& challenge, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&& challengeCompletionHandler)

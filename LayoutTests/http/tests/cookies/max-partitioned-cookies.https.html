@@ -1,0 +1,102 @@
+<!DOCTYPE html><!-- webkit-test-runner [ OptInPartitionedCookiesEnabled=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="../resourceLoadStatistics/resources/util.js"></script>
+</head>
+<body>
+<script>
+    description("Tests that an upper-bound is enforced on the number of partitioned cookies that can be set.");
+
+    const partitionHost = "127.0.0.1:8443";
+    const thirdPartyOrigin = "https://localhost:8443";
+    const resourcePath = "/resourceLoadStatistics/resources";
+    const thirdPartyBaseUrl = thirdPartyOrigin + resourcePath;
+    const firstPartyCookieName = "firstPartyCookie";
+    const subPathToSetFirstPartyCookie = "/set-cookie.py?name=" + firstPartyCookieName + "&value=value";
+    const returnUrl = "https://" + partitionHost + "/cookies/max-partitioned-cookies.https.html";
+    const maxLoops = 200;
+    const setPartitionedCookie = `https://localhost:8443/cookies/resources/set-cookie-and-serve.py?cookie-count=${maxLoops}&cookie-name=test_cookie&cookie-value=1234;Secure;Partitioned;`;
+    const maximumCookiesCount = 180;
+    const lowerBoundExpectedCookieCount = 120;
+    let iteration = 0;
+
+    function openIframe(url, onLoadHandler) {
+        const element = document.createElement("iframe");
+        element.src = url;
+        if (onLoadHandler) {
+            element.onload = onLoadHandler;
+        }
+        document.body.appendChild(element);
+        return element;
+    }
+
+    async function createIframeSetCookieAndTest() {
+        let iframeElement = openIframe(setPartitionedCookie, () => {
+            fetch(thirdPartyOrigin + "/cookies/resources/echo-cookies.py", { credentials: "include" }).then((r) => r.text()).then((text) => {
+                const cookiesArePrefix = "Cookies are:\n";
+                const cookies = text.substring(cookiesArePrefix.length).trim().split("\n");
+                const cookiesSubstr = text.substring(cookiesArePrefix.length);
+
+                if (cookies.length > maximumCookiesCount) {
+                    testFailed(`Found ${cookies.length} cookies, more than ${maximumCookiesCount}: '${text}'`);
+                    document.location.hash = "step5";
+                    return;
+                }
+
+                if (cookies.length < maximumCookiesCount && cookies.length < lowerBoundExpectedCookieCount) {
+                    testFailed(`Found ${cookies.length} cookies, lower bound: ${lowerBoundExpectedCookieCount}, upper-bound: ${maximumCookiesCount}: '${text}'`);
+                    document.location.hash = "step5";
+                    return;
+                }
+
+                testPassed(`Found ${cookies.length} cookies: ${text}`);
+                runTest();
+            });
+        });
+    }
+
+    function runTest() {
+        switch (document.location.hash) {
+            case "#step1":
+                document.location.hash = "step2";
+                createIframeSetCookieAndTest();
+                break;
+            case "#step2":
+                document.location.hash = "step3";
+                fetch(`/clear-site-data/resources/clear-site-data-cookies.py`).then((r) => {
+                    setTimeout(runTest, 100);
+                });
+                break;
+            case "#step3":
+                // Check that the cookie gets sent for localhost under 127.0.0.1 since localhost is not prevalent.
+                document.location.href = thirdPartyBaseUrl + subPathToSetFirstPartyCookie + "#" + returnUrl + "#step4";
+                break;
+            case "#step4":
+                document.location.hash = "step5";
+                createIframeSetCookieAndTest();
+                break;
+            case "#step5":
+                testRunner.setStatisticsShouldBlockThirdPartyCookies(false, () => {
+                    setEnableFeature(false, () => {
+                        testRunner.notifyDone();
+                    });
+                }, false, true);
+                break;
+        }
+    }
+
+    if (document.location.hash === "") {
+        setEnableFeature(true, function () {
+            testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
+            document.location.hash = "step1";
+            testRunner.setStatisticsShouldBlockThirdPartyCookies(true, runTest, false, true);
+        });
+    } else {
+        runTest();
+    }
+</script>
+</body>
+</html>

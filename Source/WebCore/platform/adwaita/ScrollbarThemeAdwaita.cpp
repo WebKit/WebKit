@@ -33,6 +33,7 @@
 #include "GraphicsContext.h"
 #include "PlatformMouseEvent.h"
 #include "ScrollableArea.h"
+#include "ScrollbarInlines.h"
 #include "Scrollbar.h"
 #include "ThemeAdwaita.h"
 

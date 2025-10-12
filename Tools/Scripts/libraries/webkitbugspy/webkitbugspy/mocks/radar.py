@@ -137,8 +137,9 @@ class RadarModel(object):
             self.tentpoles = milestone._tentpoles
 
     class Keyword(object):
-        def __init__(self, name):
+        def __init__(self, name, isClosed=False):
             self.name = name
+            self.isClosed = isClosed
 
     class RadarGroup(object):
         def __init__(self, name):
@@ -448,7 +449,7 @@ class RadarClient(object):
             reproducible='Always',
         ))
 
-    def keywords_for_name(self, keyword_name):
+    def keywords_for_name(self, keyword_name, additional_fields=None):
         self.parent.request_count += 1
 
         return [

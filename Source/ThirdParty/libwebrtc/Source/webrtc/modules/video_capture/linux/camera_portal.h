@@ -12,7 +12,6 @@
 #define MODULES_VIDEO_CAPTURE_LINUX_CAMERA_PORTAL_H_
 
 #include <memory>
-#include <string>
 
 #include "modules/portal/portal_request_response.h"
 #include "rtc_base/system/rtc_export.h"

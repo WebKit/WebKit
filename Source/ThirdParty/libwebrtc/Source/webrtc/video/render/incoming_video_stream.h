@@ -26,11 +26,11 @@
 
 namespace webrtc {
 
-class IncomingVideoStream : public rtc::VideoSinkInterface<VideoFrame> {
+class IncomingVideoStream : public VideoSinkInterface<VideoFrame> {
  public:
   IncomingVideoStream(TaskQueueFactory* task_queue_factory,
                       int32_t delay_ms,
-                      rtc::VideoSinkInterface<VideoFrame>* callback);
+                      VideoSinkInterface<VideoFrame>* callback);
   ~IncomingVideoStream() override;
 
  private:
@@ -38,10 +38,10 @@ class IncomingVideoStream : public rtc::VideoSinkInterface<VideoFrame> {
   void Dequeue();
 
   SequenceChecker main_thread_checker_;
-  rtc::RaceChecker decoder_race_checker_;
+  RaceChecker decoder_race_checker_;
 
   VideoRenderFrames render_buffers_ RTC_GUARDED_BY(incoming_render_queue_);
-  rtc::VideoSinkInterface<VideoFrame>* const callback_;
+  VideoSinkInterface<VideoFrame>* const callback_;
   std::unique_ptr<TaskQueueBase, TaskQueueDeleter> incoming_render_queue_;
 };
 

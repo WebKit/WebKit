@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2011 The Chromium Authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "InspectorFrontendRouter.h"
-#include "InspectorProtocolTypes.h"
+#include <JavaScriptCore/InspectorFrontendRouter.h>
+#include <JavaScriptCore/InspectorProtocolTypes.h>
 #include <functional>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
@@ -58,7 +58,7 @@ public:
     JS_EXPORT_PRIVATE virtual ~SupplementalBackendDispatcher();
     virtual void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) = 0;
 protected:
-    Ref<BackendDispatcher> m_backendDispatcher;
+    const Ref<BackendDispatcher> m_backendDispatcher;
 };
 
 class BackendDispatcher : public RefCounted<BackendDispatcher> {
@@ -77,7 +77,7 @@ public:
         JS_EXPORT_PRIVATE void sendFailure(const ErrorString&);
 
     private:
-        Ref<BackendDispatcher> m_backendDispatcher;
+        const Ref<BackendDispatcher> m_backendDispatcher;
         long m_requestId;
         bool m_alreadySent { false };
     };
@@ -124,7 +124,7 @@ private:
     template<typename T>
     WTF_INTERNAL T getPropertyValue(JSON::Object*, const String& name, bool required, std::function<T(JSON::Value&)> converter, ASCIILiteral typeName);
 
-    Ref<FrontendRouter> m_frontendRouter;
+    const Ref<FrontendRouter> m_frontendRouter;
     UncheckedKeyHashMap<String, SupplementalBackendDispatcher*> m_dispatchers;
 
     // Protocol errors reported for the top-level request being processed.

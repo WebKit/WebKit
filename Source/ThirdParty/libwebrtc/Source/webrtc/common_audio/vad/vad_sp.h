@@ -13,6 +13,9 @@
 #ifndef COMMON_AUDIO_VAD_VAD_SP_H_
 #define COMMON_AUDIO_VAD_VAD_SP_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "common_audio/vad/vad_core.h"
 
 // Downsamples the signal by a factor 2, eg. 32->16 or 16->8.

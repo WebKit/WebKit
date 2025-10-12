@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ void WritingToolsCompositionCommand::replaceContentsOfRangeWithFragment(RefPtr<D
     if (matchStyle == MatchStyle::Yes)
         options.add(ReplaceSelectionCommand::MatchStyle);
 
-    applyCommandToComposite(ReplaceSelectionCommand::create(protectedDocument(), WTFMove(fragment), options, EditAction::InsertReplacement), range);
+    applyCommandToComposite(ReplaceSelectionCommand::create(document(), WTFMove(fragment), options, EditAction::InsertReplacement), range);
 
     // Restore the context range to what it previously was, while taking into account the newly replaced contents.
     auto newContextRange = rangeExpandedAroundRangeByCharacters(endingSelection(), resolvedCharacterRange.location, contextRangeCount - (resolvedCharacterRange.location + resolvedCharacterRange.length));

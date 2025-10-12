@@ -31,6 +31,7 @@
 #include "webrtc/modules/video_coding/codecs/vp8/include/vp8.h"
 #include "webrtc/modules/video_coding/codecs/vp8/libvpx_vp8_decoder.h"
 #include "webrtc/modules/video_coding/include/video_codec_interface.h"
+#include "webrtc/modules/video_coding/include/video_error_codes.h"
 #include <gst/app/gstappsink.h>
 #include <gst/app/gstappsrc.h>
 #include <gst/video/video.h>
@@ -76,7 +77,7 @@ public:
     GstElement* makeElement(ASCIILiteral factoryName)
     {
         static Atomic<uint32_t> elementId;
-        auto name = makeString(ASCIILiteral::fromLiteralUnsafe(Name()), "-dec-"_s, factoryName, "-"_s, elementId.exchangeAdd(1));
+        auto name = makeString(unsafeSpan(Name()), "-dec-"_s, factoryName, "-"_s, elementId.exchangeAdd(1));
         return makeGStreamerElement(factoryName, name);
     }
 

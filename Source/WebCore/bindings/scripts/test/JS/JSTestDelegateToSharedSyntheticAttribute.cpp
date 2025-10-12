@@ -156,7 +156,7 @@ JSValue JSTestDelegateToSharedSyntheticAttribute::getConstructor(VM& vm, const J
 
 void JSTestDelegateToSharedSyntheticAttribute::destroy(JSC::JSCell* cell)
 {
-    JSTestDelegateToSharedSyntheticAttribute* thisObject = static_cast<JSTestDelegateToSharedSyntheticAttribute*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestDelegateToSharedSyntheticAttribute* thisObject = static_cast<JSTestDelegateToSharedSyntheticAttribute*>(cell);
     thisObject->JSTestDelegateToSharedSyntheticAttribute::~JSTestDelegateToSharedSyntheticAttribute();
 }
 
@@ -240,7 +240,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDelegateToSharedSyntheticAttribute_sharedAttri
 
 JSC::GCClient::IsoSubspace* JSTestDelegateToSharedSyntheticAttribute::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestDelegateToSharedSyntheticAttribute, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestDelegateToSharedSyntheticAttribute, UseCustomHeapCellType::No>(vm, "JSTestDelegateToSharedSyntheticAttribute"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestDelegateToSharedSyntheticAttribute.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDelegateToSharedSyntheticAttribute = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestDelegateToSharedSyntheticAttribute.get(); },
@@ -267,7 +267,7 @@ bool JSTestDelegateToSharedSyntheticAttributeOwner::isReachableFromOpaqueRoots(J
 
 void JSTestDelegateToSharedSyntheticAttributeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestDelegateToSharedSyntheticAttribute = static_cast<JSTestDelegateToSharedSyntheticAttribute*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestDelegateToSharedSyntheticAttribute = static_cast<JSTestDelegateToSharedSyntheticAttribute*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestDelegateToSharedSyntheticAttribute->protectedWrapped().ptr(), jsTestDelegateToSharedSyntheticAttribute);
 }
@@ -280,7 +280,9 @@ extern "C" { extern void (*const __identifier("??_7TestDelegateToSharedSynthetic
 #else
 extern "C" { extern void* _ZTVN7WebCore38TestDelegateToSharedSyntheticAttributeE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestDelegateToSharedSyntheticAttribute>, void>> static inline void verifyVTable(TestDelegateToSharedSyntheticAttribute* ptr) {
+template<std::same_as<TestDelegateToSharedSyntheticAttribute> T>
+static inline void verifyVTable(TestDelegateToSharedSyntheticAttribute* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -299,8 +301,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestDelegateT
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestDelegateToSharedSyntheticAttribute>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestDelegateToSharedSyntheticAttribute>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestDelegateToSharedSyntheticAttribute>(impl.ptr());
 #endif

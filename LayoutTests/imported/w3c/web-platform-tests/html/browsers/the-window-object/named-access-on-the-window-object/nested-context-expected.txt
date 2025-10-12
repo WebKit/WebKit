@@ -1,0 +1,5 @@
+
+
+PASS A named property that matches any element that contains a nested browsing context, must return the WindowProxy of that context
+PASS A named property that matches an element that contains a nested browsing context must return the element if using id
+

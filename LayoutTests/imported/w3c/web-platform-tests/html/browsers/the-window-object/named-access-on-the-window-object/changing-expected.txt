@@ -1,0 +1,8 @@
+
+
+PASS Changing an attribute must update the named properties (id)
+PASS Changing an attribute must update the named properties (name)
+PASS Changing an attribute must not remove the named properties if a different attribute still matches (id)
+PASS Changing an attribute must not remove the named properties if a different attribute still matches (name)
+PASS Changing an attribute that is not id or name must not cause errors
+

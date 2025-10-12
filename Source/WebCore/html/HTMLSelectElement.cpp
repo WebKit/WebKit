@@ -33,11 +33,13 @@
 #include "ChromeClient.h"
 #include "ContainerNodeInlines.h"
 #include "DOMFormData.h"
-#include "DocumentInlines.h"
+#include "DocumentPage.h"
+#include "DocumentSecurityOrigin.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementTraversal.h"
 #include "EventHandler.h"
 #include "EventNames.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FormController.h"
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLFormElement.h"
@@ -48,12 +50,11 @@
 #include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
 #include "LocalDOMWindow.h"
-#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "NodeName.h"
 #include "NodeRareData.h"
-#include "Page.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
 #include "RenderTheme.h"
@@ -253,7 +254,7 @@ void HTMLSelectElement::remove(int optionIndex)
 
 String HTMLSelectElement::value() const
 {
-    if (protectedDocument()->requiresScriptExecutionTelemetry(ScriptTelemetryCategory::FormControls))
+    if (protectedDocument()->requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::FormControls))
         return emptyString();
     for (auto& item : listItems()) {
         if (RefPtr option = dynamicDowncast<HTMLOptionElement>(item.get())) {
@@ -326,11 +327,11 @@ int HTMLSelectElement::defaultTabIndex() const
     return 0;
 }
 
-bool HTMLSelectElement::isKeyboardFocusable(KeyboardEvent* event) const
+bool HTMLSelectElement::isKeyboardFocusable(const FocusEventData& focusEventData) const
 {
     if (renderer())
         return isFocusable();
-    return HTMLFormControlElement::isKeyboardFocusable(event);
+    return HTMLFormControlElement::isKeyboardFocusable(focusEventData);
 }
 
 bool HTMLSelectElement::isMouseFocusable() const
@@ -829,13 +830,13 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates, AllowStyleInv
         m_listItems.append(&option);
         if (updateSelectedStates && !m_multiple) {
             if (!firstOption)
-                firstOption = &option;
+                firstOption = option;
             if (option.selected()) {
                 if (foundSelected)
                     foundSelected->setSelectedState(false, allowStyleInvalidation);
-                foundSelected = &option;
+                foundSelected = option;
             } else if (m_size <= 1 && !foundSelected && !option.isDisabledFormControl()) {
-                foundSelected = &option;
+                foundSelected = option;
                 foundSelected->setSelectedState(true, allowStyleInvalidation);
             }
         }

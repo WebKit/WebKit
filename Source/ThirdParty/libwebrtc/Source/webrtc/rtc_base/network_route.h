@@ -23,7 +23,7 @@
 // the media code can rely on and the network code can implement, and both can
 // depend on that, but not depend on each other. Then, move this file to that
 // directory.
-namespace rtc {
+namespace webrtc {
 
 class RouteEndpoint {
  public:
@@ -75,7 +75,7 @@ struct NetworkRoute {
   int packet_overhead = 0;
 
   RTC_NO_INLINE inline std::string DebugString() const {
-    rtc::StringBuilder oss;
+    StringBuilder oss;
     oss << "[ connected: " << connected << " local: [ " << local.adapter_id()
         << "/" << local.network_id() << " "
         << AdapterTypeToString(local.adapter_type())
@@ -91,6 +91,7 @@ struct NetworkRoute {
   bool operator!=(const NetworkRoute& other) { return !operator==(other); }
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_NETWORK_ROUTE_H_

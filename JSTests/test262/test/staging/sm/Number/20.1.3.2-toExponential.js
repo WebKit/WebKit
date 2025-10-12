@@ -4,23 +4,12 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
+includes: [sm/assertThrowsValue.js]
 description: |
-  pending
+  Number.prototype.toExponential
+info: bugzilla.mozilla.org/show_bug.cgi?id=818617
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-
-var BUGNUMBER = 818617;
-var summary = "ECMAScript 2017 Draft ECMA-262 Section 20.1.3.2: Number.prototype.toExponential";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 // With NaN, fractionDigits out of range.
 assert.sameValue(Number.prototype.toExponential.call(NaN, 555), 'NaN');
@@ -51,8 +40,4 @@ assertThrowsValue(
   "hello");
 
 // Not a number throws TypeError
-assertThrowsInstanceOf(() => Number.prototype.toExponential.call("Hello"), TypeError);
-
-if (typeof assert.sameValue === "function") {
-}
-
+assert.throws(TypeError, () => Number.prototype.toExponential.call("Hello"));

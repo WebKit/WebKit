@@ -6,6 +6,10 @@
 
 // VertexPointerTest.cpp: Tests basic usage of built-in vertex attributes of GLES1.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 

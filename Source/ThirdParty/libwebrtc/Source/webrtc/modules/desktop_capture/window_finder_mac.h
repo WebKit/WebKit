@@ -12,6 +12,8 @@
 #define MODULES_DESKTOP_CAPTURE_WINDOW_FINDER_MAC_H_
 
 #include "api/scoped_refptr.h"
+#include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/window_finder.h"
 
 namespace webrtc {
@@ -22,14 +24,14 @@ class DesktopConfigurationMonitor;
 class WindowFinderMac final : public WindowFinder {
  public:
   explicit WindowFinderMac(
-      rtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor);
+      scoped_refptr<DesktopConfigurationMonitor> configuration_monitor);
   ~WindowFinderMac() override;
 
   // WindowFinder implementation.
   WindowId GetWindowUnderPoint(DesktopVector point) override;
 
  private:
-  const rtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor_;
+  const scoped_refptr<DesktopConfigurationMonitor> configuration_monitor_;
 };
 
 }  // namespace webrtc

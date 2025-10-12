@@ -11,13 +11,13 @@
 #ifndef MODULES_RTP_RTCP_INCLUDE_RECEIVE_STATISTICS_H_
 #define MODULES_RTP_RTCP_INCLUDE_RECEIVE_STATISTICS_H_
 
-#include <map>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <vector>
 
 #include "call/rtp_packet_sink_interface.h"
-#include "modules/rtp_rtcp/include/rtcp_statistics.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 

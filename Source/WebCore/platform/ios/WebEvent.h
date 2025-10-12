@@ -36,12 +36,12 @@ typedef enum {
     WebEventMouseDown,
     WebEventMouseUp,
     WebEventMouseMoved,
-    
+
     WebEventScrollWheel,
-    
+
     WebEventKeyDown,
     WebEventKeyUp,
-    
+
     WebEventTouchBegin,
     WebEventTouchChange,
     WebEventTouchEnd,
@@ -112,9 +112,9 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
 @private
     WebEventType _type;
     CFTimeInterval _timestamp;
-    
+
     CGPoint _locationInWindow;
-    
+
     NSString *_characters;
     NSString *_charactersIgnoringModifiers;
     WebEventFlags _modifierFlags;
@@ -123,10 +123,10 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
     NSString *_inputManagerHint;
     uint16_t _keyCode;
     BOOL _tabKey;
-    
+
     float _deltaX;
     float _deltaY;
-    
+
     unsigned _touchCount;
     NSArray *_touchLocations;
     NSArray *_touchIdentifiers;

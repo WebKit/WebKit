@@ -43,6 +43,10 @@ std::optional<BindGroupEntry> ConvertToBackingContext::convertToBacking(const We
         auto identifier = convertToBacking(Ref { sampler.get() }.get());
 
         return { { bindGroupEntry.binding, { identifier }, identifier, BindingResourceType::Sampler } };
+    }, [&] (std::reference_wrapper<WebCore::WebGPU::Texture> texture) -> std::optional<BindGroupEntry> {
+        auto identifier = convertToBacking(Ref { texture.get() }.get());
+
+        return { { bindGroupEntry.binding, { identifier }, identifier, BindingResourceType::Texture } };
     }, [&] (std::reference_wrapper<WebCore::WebGPU::TextureView> textureView) -> std::optional<BindGroupEntry> {
         auto identifier = convertToBacking(Ref { textureView.get() }.get());
 
@@ -68,6 +72,12 @@ std::optional<WebCore::WebGPU::BindGroupEntry> ConvertFromBackingContext::conver
         if (!sampler)
             return std::nullopt;
         return { { bindGroupEntry.binding, { *sampler } } };
+    }
+    case BindingResourceType::Texture: {
+        WeakPtr texture = convertTextureFromBacking(bindGroupEntry.identifier);
+        if (!texture)
+            return std::nullopt;
+        return { { bindGroupEntry.binding, { *texture } } };
     }
     case BindingResourceType::TextureView: {
         WeakPtr textureView = convertTextureViewFromBacking(bindGroupEntry.identifier);

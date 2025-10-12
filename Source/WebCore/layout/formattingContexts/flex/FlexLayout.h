@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "FlexFormattingConstraints.h"
-#include "FlexRect.h"
-#include "LogicalFlexItem.h"
-#include "RenderStyleConstants.h"
+#include <WebCore/FlexFormattingConstraints.h>
+#include <WebCore/FlexRect.h>
+#include <WebCore/LogicalFlexItem.h>
+#include <WebCore/RenderStyleConstants.h>
 #include <wtf/Range.h>
 
 namespace WebCore {

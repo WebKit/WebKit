@@ -6,6 +6,10 @@
 
 // GeometryShaderTest.cpp : Tests of the implementation of geometry shader
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -108,7 +112,11 @@ class GeometryShaderTestES32 : public GeometryShaderTest
 // ES 3.1 is required.
 TEST_P(GeometryShaderTestES3, CreateGeometryShaderInES3)
 {
-    EXPECT_TRUE(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+    // Only run the test against OpenGL ES 3.0.
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() == 3 && getClientMinorVersion() > 0);
+    // GL_EXT_geometry_shader requires OpenGL ES 3.1.
+    ASSERT_FALSE(IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+
     GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER_EXT);
     EXPECT_EQ(0u, geometryShader);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
@@ -2066,7 +2074,7 @@ void main()
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GeometryShaderTestES3);
-ANGLE_INSTANTIATE_TEST_ES3(GeometryShaderTestES3);
+ANGLE_INSTANTIATE_TEST_ES3_AND_ES31_AND_ES32(GeometryShaderTestES3);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GeometryShaderTest);
 ANGLE_INSTANTIATE_TEST_ES31_AND(GeometryShaderTest,

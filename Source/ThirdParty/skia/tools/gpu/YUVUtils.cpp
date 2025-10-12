@@ -12,18 +12,21 @@
 #include "include/core/SkColorFilter.h"
 #include "include/core/SkData.h"
 #include "include/core/SkSurface.h"
-#include "include/gpu/ganesh/GrRecordingContext.h"
-#include "include/gpu/ganesh/GrYUVABackendTextures.h"
-#include "include/gpu/ganesh/SkImageGanesh.h"
-#include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #include "src/codec/SkCodecImageGenerator.h"
 #include "src/core/SkColorPriv.h"
 #include "src/core/SkYUVAInfoLocation.h"
 #include "src/core/SkYUVMath.h"
-#include "src/gpu/ganesh/GrDirectContextPriv.h"
-#include "src/gpu/ganesh/GrRecordingContextPriv.h"
 #include "src/image/SkImage_Base.h"
 #include "tools/gpu/ManagedBackendTexture.h"
+
+#ifdef SK_GANESH
+#include "include/gpu/ganesh/GrRecordingContext.h"
+#include "include/gpu/ganesh/GrYUVABackendTextures.h"
+#include "include/gpu/ganesh/SkImageGanesh.h"
+#include "include/gpu/ganesh/SkSurfaceGanesh.h"
+#include "src/gpu/ganesh/GrDirectContextPriv.h"
+#include "src/gpu/ganesh/GrRecordingContextPriv.h"
+#endif
 
 #ifdef SK_GRAPHITE
 #include "include/gpu/graphite/Image.h"
@@ -168,9 +171,12 @@ MakeYUVAPlanesAsA8(SkImage* src,
     for (int i = 0; i < n; ++i) {
         SkImageInfo info = SkImageInfo::MakeA8(dims[i]);
         sk_sp<SkSurface> surf;
+#if defined(SK_GANESH)
         if (rContext) {
             surf = SkSurfaces::RenderTarget(rContext, skgpu::Budgeted::kYes, info, 1, nullptr);
-        } else {
+        } else
+#endif
+        {
             surf = SkSurfaces::Raster(info);
         }
         if (!surf) {
@@ -228,6 +234,16 @@ sk_sp<SkImage> LazyYUVImage::refImage(GrRecordingContext* rContext, Type type) {
         return nullptr;
     }
 }
+
+sk_sp<SkImage> LazyYUVImage::refImage(GrDirectContext* dContext, Type type) {
+#if defined(SK_GANESH)
+    return this->refImage(static_cast<GrRecordingContext *>(dContext), type);
+#else
+    SkASSERT(!dContext);
+    return this->refImage(static_cast<GrRecordingContext *>(nullptr), type);
+#endif
+}
+
 
 #if defined(SK_GRAPHITE)
 sk_sp<SkImage> LazyYUVImage::refImage(skgpu::graphite::Recorder* recorder, Type type) {
@@ -287,12 +303,15 @@ bool LazyYUVImage::reset(SkYUVAPixmaps pixmaps,
 bool LazyYUVImage::ensureYUVImage(GrRecordingContext* rContext, Type type) {
     size_t idx = static_cast<size_t>(type);
     SkASSERT(idx < std::size(fYUVImage));
-    if (fYUVImage[idx] && fYUVImage[idx]->isValid(rContext)) {
+#if defined(SK_GANESH)
+    if (fYUVImage[idx] && fYUVImage[idx]->isValid(rContext->asRecorder())) {
         return true;  // Have already made a YUV image valid for this context.
     }
+#endif
     // Try to make a new YUV image for this context.
     switch (type) {
         case Type::kFromPixmaps:
+#if defined(SK_GANESH)
             if (!rContext || rContext->abandoned()) {
                 return false;
             }
@@ -301,6 +320,9 @@ bool LazyYUVImage::ensureYUVImage(GrRecordingContext* rContext, Type type) {
                                                               fMipmapped,
                                                               /*limit to max tex size*/ false,
                                                               fColorSpace);
+#else
+            return false;
+#endif
             break;
         case Type::kFromGenerator: {
             // Make sure the generator has ownership of its backing planes.
@@ -309,6 +331,7 @@ bool LazyYUVImage::ensureYUVImage(GrRecordingContext* rContext, Type type) {
             break;
         }
         case Type::kFromTextures:
+#if defined(SK_GANESH)
             if (!rContext || rContext->abandoned()) {
                 return false;
             }
@@ -343,6 +366,9 @@ bool LazyYUVImage::ensureYUVImage(GrRecordingContext* rContext, Type type) {
                         sk_gpu_test::ManagedBackendTexture::ReleaseProc,
                         planeRelContext);
             }
+#else
+            return false;
+#endif
             break;
         case Type::kFromImages:
             // Not supported in Ganesh

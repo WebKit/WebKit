@@ -87,6 +87,7 @@ public:
     void clear();
 
     WebCore::PageOverlay* coreOverlay() const { return m_overlay.get(); }
+    RefPtr<WebCore::PageOverlay> protectedCoreOverlay() const { return m_overlay; }
     Client& client() const { return *m_client; }
 
 #if PLATFORM(MAC)

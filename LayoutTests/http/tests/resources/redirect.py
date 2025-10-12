@@ -18,6 +18,16 @@ def set_cookie(cookies):
     for cookie in cookies:
         sys.stdout.write('Set-Cookie: {}\r\n'.format(cookie.replace(':', '=')))
 
+
+def add_cors(allowHeaders):
+    sys.stdout.write(
+        'Access-Control-Allow-Credentials: true\r\n'
+        'Access-Control-Allow-External: true\r\n'
+        'Access-Control-Allow-Headers: {}\r\n'
+        'Access-Control-Allow-Origin: {}\r\n'.format(allowHeaders, os.environ.get('HTTP_ORIGIN', ''))
+    )
+
+
 query = {}
 for key_value in os.environ.get('QUERY_STRING', '').split('&'):
     arr = key_value.split('=')
@@ -35,8 +45,17 @@ code = int(query.get('code', [302])[0])
 refresh = query.get('refresh', [None])[0]
 url = query.get('url', [''])[0]
 cookies = query.get('cookie', [''])
+allow_cross_origin = query.get('allowCrossOrigin', [None])[0]
+allow_headers = query.get('allowHeaders', [None])[0]
 
 sys.stdout.write('Content-Type: text/html\r\n')
+
+if allow_cross_origin:
+    add_cors(allow_headers)
+
+if os.environ.get('REQUEST_METHOD', 'GET') == 'OPTIONS':
+    sys.stdout.write('status: 200\r\n\r\n')
+    sys.exit(0)
 
 if refresh is not None:
     sys.stdout.write(

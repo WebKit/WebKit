@@ -1,26 +1,25 @@
-/* Copyright (c) 2023, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2023 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package kyber
 
 // This code is ported from kyber.c.
 
 import (
+	"crypto/sha3"
 	"crypto/subtle"
 	"io"
-
-	"golang.org/x/crypto/sha3"
 )
 
 const (
@@ -255,8 +254,7 @@ func (s *scalar) fromKeccakVartime(keccak io.Reader) {
 }
 
 func (s *scalar) centeredBinomialEta2(input *[33]byte) {
-	var entropy [128]byte
-	sha3.ShakeSum256(entropy[:], input[:])
+	entropy := sha3.SumSHAKE256(input[:], 128)
 
 	for i := 0; i < len(s); i += 2 {
 		b := uint16(entropy[i/2])
@@ -452,7 +450,7 @@ func (v *vector) decompress(bits int) {
 type matrix [rank][rank]scalar
 
 func (m *matrix) expand(rho *[32]byte) {
-	shake := sha3.NewShake128()
+	shake := sha3.NewSHAKE128()
 
 	var input [34]byte
 	copy(input[:], rho[:])
@@ -538,7 +536,7 @@ func (pub *PublicKey) Encap(outSharedSecret []byte, entropy *[32]byte) *[Ciphert
 	ciphertext := pub.encryptCPA(entropy, (*[32]byte)(prekeyAndRandomness[32:]))
 	ciphertextHash := sha3.Sum256(ciphertext[:])
 	copy(prekeyAndRandomness[32:], ciphertextHash[:])
-	sha3.ShakeSum256(outSharedSecret, prekeyAndRandomness[:])
+	copy(outSharedSecret, sha3.SumSHAKE256(prekeyAndRandomness[:], len(outSharedSecret)))
 	return ciphertext
 }
 
@@ -605,7 +603,7 @@ func (priv *PrivateKey) Decap(outSharedSecret []byte, ciphertext *[CiphertextSiz
 	}
 	ciphertextHash := sha3.Sum256(ciphertext[:])
 
-	shake := sha3.NewShake256()
+	shake := sha3.NewSHAKE256()
 	shake.Write(secret[:])
 	shake.Write(ciphertextHash[:])
 	shake.Read(outSharedSecret)

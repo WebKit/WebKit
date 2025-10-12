@@ -11,6 +11,7 @@
 
 #include <memory>
 #include <ostream>
+#include <unordered_map>
 
 #include "gtest/gtest.h"
 
@@ -66,11 +67,32 @@ const TestVideoParam kTestVectors[] = {
 #endif
 };
 
+// List of psnr thresholds for speed settings 1-3 and low complexity decode mode
+// keys: content -> speed -> PSNR threshold
+std::unordered_map<std::string, std::unordered_map<int, double>>
+    kPsnrThresholdLcMode = { { "SDR_Animal_oqo7.y4m",
+                               {
+                                   { 1, 27.9 },
+                                   { 2, 27.8 },
+                                   { 3, 27.3 },
+                               } },
+                             { "SDR_Health_rtd0_720p.y4m",
+                               {
+                                   { 1, 41.8 },
+                                   { 2, 41.4 },
+                                   { 3, 41.1 },
+                               } } };
+
 // Encoding modes tested
 const libaom_test::TestMode kEncodingModeVectors[] = {
   ::libaom_test::kTwoPassGood,
   ::libaom_test::kOnePassGood,
   ::libaom_test::kRealTime,
+};
+
+const TestVideoParam kTestVectorsLcMode[] = {
+  { "SDR_Animal_oqo7.y4m", 8, AOM_IMG_FMT_I420, AOM_BITS_8, 0 },
+  { "SDR_Health_rtd0_720p.y4m", 8, AOM_IMG_FMT_I420, AOM_BITS_8, 0 },
 };
 
 // Speed settings tested
@@ -91,7 +113,8 @@ class EndToEndTest
   void SetUp() override {
     InitializeConfig(encoding_mode_);
     if (encoding_mode_ == ::libaom_test::kOnePassGood ||
-        encoding_mode_ == ::libaom_test::kTwoPassGood) {
+        encoding_mode_ == ::libaom_test::kTwoPassGood ||
+        encoding_mode_ == ::libaom_test::kLowComplexityDecode) {
       cfg_.g_lag_in_frames = 5;
     } else if (encoding_mode_ == ::libaom_test::kRealTime) {
       cfg_.rc_buf_sz = 1000;
@@ -113,8 +136,16 @@ class EndToEndTest
   void PreEncodeFrameHook(::libaom_test::VideoSource *video,
                           ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
-      encoder->Control(AV1E_SET_FRAME_PARALLEL_DECODING, 1);
-      encoder->Control(AV1E_SET_TILE_COLUMNS, 4);
+      if (encoding_mode_ == ::libaom_test::kLowComplexityDecode) {
+        ASSERT_LE(cpu_used_, 3);
+        encoder->Control(AV1E_SET_TILE_COLUMNS, 1);
+        encoder->Control(AV1E_SET_TILE_ROWS, 1);
+        encoder->Control(AV1E_SET_ENABLE_CDEF, 0);
+        encoder->Control(AV1E_SET_ENABLE_LOW_COMPLEXITY_DECODE, 1);
+      } else {
+        encoder->Control(AV1E_SET_FRAME_PARALLEL_DECODING, 1);
+        encoder->Control(AV1E_SET_TILE_COLUMNS, 4);
+      }
       encoder->Control(AOME_SET_CPUUSED, cpu_used_);
       // Test screen coding tools at cpu_used = 1 && encoding mode is two-pass.
       if (cpu_used_ == 1 && encoding_mode_ == ::libaom_test::kTwoPassGood)
@@ -122,7 +153,8 @@ class EndToEndTest
       else
         encoder->Control(AV1E_SET_TUNE_CONTENT, AOM_CONTENT_DEFAULT);
       if (encoding_mode_ == ::libaom_test::kOnePassGood ||
-          encoding_mode_ == ::libaom_test::kTwoPassGood) {
+          encoding_mode_ == ::libaom_test::kTwoPassGood ||
+          encoding_mode_ == ::libaom_test::kLowComplexityDecode) {
         encoder->Control(AOME_SET_ENABLEAUTOALTREF, 1);
         encoder->Control(AOME_SET_ARNR_MAXFRAMES, 7);
         encoder->Control(AOME_SET_ARNR_STRENGTH, 5);
@@ -138,7 +170,10 @@ class EndToEndTest
   }
 
   double GetPsnrThreshold() {
-    return kPsnrThreshold[cpu_used_][encoding_mode_];
+    if (encoding_mode_ == ::libaom_test::kLowComplexityDecode)
+      return kPsnrThresholdLcMode[test_video_param_.filename][cpu_used_];
+    else
+      return kPsnrThreshold[cpu_used_][encoding_mode_];
   }
 
   void DoTest() {
@@ -182,6 +217,10 @@ class EndToEndAllIntraTestLarge : public EndToEndTest {};
 
 class EndToEndAllIntraTest : public EndToEndTest {};
 
+class EndToEndLcModeTestLarge : public EndToEndTest {};
+
+class EndToEndLcModeTest : public EndToEndTest {};
+
 TEST_P(EndToEndTestLarge, EndtoEndPSNRTest) { DoTest(); }
 
 TEST_P(EndToEndTest, EndtoEndPSNRTest) { DoTest(); }
@@ -189,6 +228,10 @@ TEST_P(EndToEndTest, EndtoEndPSNRTest) { DoTest(); }
 TEST_P(EndToEndAllIntraTestLarge, EndtoEndPSNRTest) { DoTest(); }
 
 TEST_P(EndToEndAllIntraTest, EndtoEndPSNRTest) { DoTest(); }
+
+TEST_P(EndToEndLcModeTestLarge, EndtoEndPSNRTest) { DoTest(); }
+
+TEST_P(EndToEndLcModeTest, EndtoEndPSNRTest) { DoTest(); }
 
 AV1_INSTANTIATE_TEST_SUITE(EndToEndTestLarge,
                            ::testing::ValuesIn(kEncodingModeVectors),
@@ -209,4 +252,15 @@ AV1_INSTANTIATE_TEST_SUITE(EndToEndAllIntraTest,
                            ::testing::Values(::libaom_test::kAllIntra),
                            ::testing::Values(kTestVectors[0]),  // 420
                            ::testing::Values(6));               // cpu_used
+
+AV1_INSTANTIATE_TEST_SUITE(
+    EndToEndLcModeTestLarge,
+    ::testing::Values(::libaom_test::kLowComplexityDecode),
+    ::testing::ValuesIn(kTestVectorsLcMode),
+    ::testing::Values(1, 3));  // cpu_used
+
+AV1_INSTANTIATE_TEST_SUITE(
+    EndToEndLcModeTest, ::testing::Values(::libaom_test::kLowComplexityDecode),
+    ::testing::ValuesIn(kTestVectorsLcMode),
+    ::testing::Values(2));  // cpu_used
 }  // namespace

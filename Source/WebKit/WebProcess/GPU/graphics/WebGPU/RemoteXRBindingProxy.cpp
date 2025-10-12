@@ -85,7 +85,7 @@ RefPtr<WebCore::WebGPU::XRSubImage> RemoteXRBindingProxy::getViewSubImage(WebCor
 
 WebCore::WebGPU::TextureFormat RemoteXRBindingProxy::getPreferredColorFormat()
 {
-    return WebCore::WebGPU::TextureFormat::Bgra8unormSRGB;
+    return WebCore::WebGPU::TextureFormat::Bgra8unorm;
 }
 
 } // namespace WebKit::WebGPU

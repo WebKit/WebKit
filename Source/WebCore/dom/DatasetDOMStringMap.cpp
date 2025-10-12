@@ -27,6 +27,7 @@
 #include "DatasetDOMStringMap.h"
 
 #include "ElementInlines.h"
+#include "ScriptWrappableInlines.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
@@ -56,7 +57,7 @@ static String convertAttributeNameToPropertyName(const String& name)
 
     unsigned length = name.length();
     for (unsigned i = 5; i < length; ++i) {
-        UChar character = name[i];
+        char16_t character = name[i];
         if (character != '-')
             stringBuilder.append(character);
         else {
@@ -111,8 +112,8 @@ static AtomString convertPropertyNameToAttributeName(const String& name)
 
     StringImpl* nameImpl = name.impl();
     if (nameImpl->is8Bit())
-        return convertPropertyNameToAttributeName<LChar>(*nameImpl);
-    return convertPropertyNameToAttributeName<UChar>(*nameImpl);
+        return convertPropertyNameToAttributeName<Latin1Character>(*nameImpl);
+    return convertPropertyNameToAttributeName<char16_t>(*nameImpl);
 }
 
 void DatasetDOMStringMap::ref()
@@ -210,5 +211,7 @@ Ref<Element> DatasetDOMStringMap::protectedElement() const
 {
     return m_element.get();
 }
+
+DatasetDOMStringMap::~DatasetDOMStringMap() = default;
 
 } // namespace WebCore

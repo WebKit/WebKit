@@ -91,7 +91,7 @@ L$oop_outer:
 	movq	%rbp,64+0(%rsp)
 	movl	$10,%ebp
 	movq	%rsi,64+8(%rsp)
-.byte	102,72,15,126,214
+	movq	%xmm2,%rsi
 	movq	%rdi,64+16(%rsp)
 	movq	%rsi,%rdi
 	shrq	$32,%rdi
@@ -354,7 +354,7 @@ L$oop_outer_ssse3:
 L$oop_ssse3:
 	paddd	%xmm1,%xmm0
 	pxor	%xmm0,%xmm3
-.byte	102,15,56,0,222
+	pshufb	%xmm6,%xmm3
 	paddd	%xmm3,%xmm2
 	pxor	%xmm2,%xmm1
 	movdqa	%xmm1,%xmm4
@@ -363,7 +363,7 @@ L$oop_ssse3:
 	por	%xmm4,%xmm1
 	paddd	%xmm1,%xmm0
 	pxor	%xmm0,%xmm3
-.byte	102,15,56,0,223
+	pshufb	%xmm7,%xmm3
 	paddd	%xmm3,%xmm2
 	pxor	%xmm2,%xmm1
 	movdqa	%xmm1,%xmm4
@@ -376,7 +376,7 @@ L$oop_ssse3:
 	nop
 	paddd	%xmm1,%xmm0
 	pxor	%xmm0,%xmm3
-.byte	102,15,56,0,222
+	pshufb	%xmm6,%xmm3
 	paddd	%xmm3,%xmm2
 	pxor	%xmm2,%xmm1
 	movdqa	%xmm1,%xmm4
@@ -385,7 +385,7 @@ L$oop_ssse3:
 	por	%xmm4,%xmm1
 	paddd	%xmm1,%xmm0
 	pxor	%xmm0,%xmm3
-.byte	102,15,56,0,223
+	pshufb	%xmm7,%xmm3
 	paddd	%xmm3,%xmm2
 	pxor	%xmm2,%xmm1
 	movdqa	%xmm1,%xmm4
@@ -540,8 +540,8 @@ L$oop4x:
 	paddd	%xmm13,%xmm9
 	pxor	%xmm8,%xmm0
 	pxor	%xmm9,%xmm1
-.byte	102,15,56,0,199
-.byte	102,15,56,0,207
+	pshufb	%xmm7,%xmm0
+	pshufb	%xmm7,%xmm1
 	paddd	%xmm0,%xmm4
 	paddd	%xmm1,%xmm5
 	pxor	%xmm4,%xmm12
@@ -559,8 +559,8 @@ L$oop4x:
 	paddd	%xmm13,%xmm9
 	pxor	%xmm8,%xmm0
 	pxor	%xmm9,%xmm1
-.byte	102,15,56,0,198
-.byte	102,15,56,0,206
+	pshufb	%xmm6,%xmm0
+	pshufb	%xmm6,%xmm1
 	paddd	%xmm0,%xmm4
 	paddd	%xmm1,%xmm5
 	pxor	%xmm4,%xmm12
@@ -582,8 +582,8 @@ L$oop4x:
 	paddd	%xmm15,%xmm11
 	pxor	%xmm10,%xmm2
 	pxor	%xmm11,%xmm3
-.byte	102,15,56,0,215
-.byte	102,15,56,0,223
+	pshufb	%xmm7,%xmm2
+	pshufb	%xmm7,%xmm3
 	paddd	%xmm2,%xmm4
 	paddd	%xmm3,%xmm5
 	pxor	%xmm4,%xmm14
@@ -601,8 +601,8 @@ L$oop4x:
 	paddd	%xmm15,%xmm11
 	pxor	%xmm10,%xmm2
 	pxor	%xmm11,%xmm3
-.byte	102,15,56,0,214
-.byte	102,15,56,0,222
+	pshufb	%xmm6,%xmm2
+	pshufb	%xmm6,%xmm3
 	paddd	%xmm2,%xmm4
 	paddd	%xmm3,%xmm5
 	pxor	%xmm4,%xmm14
@@ -620,8 +620,8 @@ L$oop4x:
 	paddd	%xmm14,%xmm9
 	pxor	%xmm8,%xmm3
 	pxor	%xmm9,%xmm0
-.byte	102,15,56,0,223
-.byte	102,15,56,0,199
+	pshufb	%xmm7,%xmm3
+	pshufb	%xmm7,%xmm0
 	paddd	%xmm3,%xmm4
 	paddd	%xmm0,%xmm5
 	pxor	%xmm4,%xmm13
@@ -639,8 +639,8 @@ L$oop4x:
 	paddd	%xmm14,%xmm9
 	pxor	%xmm8,%xmm3
 	pxor	%xmm9,%xmm0
-.byte	102,15,56,0,222
-.byte	102,15,56,0,198
+	pshufb	%xmm6,%xmm3
+	pshufb	%xmm6,%xmm0
 	paddd	%xmm3,%xmm4
 	paddd	%xmm0,%xmm5
 	pxor	%xmm4,%xmm13
@@ -662,8 +662,8 @@ L$oop4x:
 	paddd	%xmm12,%xmm11
 	pxor	%xmm10,%xmm1
 	pxor	%xmm11,%xmm2
-.byte	102,15,56,0,207
-.byte	102,15,56,0,215
+	pshufb	%xmm7,%xmm1
+	pshufb	%xmm7,%xmm2
 	paddd	%xmm1,%xmm4
 	paddd	%xmm2,%xmm5
 	pxor	%xmm4,%xmm15
@@ -681,8 +681,8 @@ L$oop4x:
 	paddd	%xmm12,%xmm11
 	pxor	%xmm10,%xmm1
 	pxor	%xmm11,%xmm2
-.byte	102,15,56,0,206
-.byte	102,15,56,0,214
+	pshufb	%xmm6,%xmm1
+	pshufb	%xmm6,%xmm2
 	paddd	%xmm1,%xmm4
 	paddd	%xmm2,%xmm5
 	pxor	%xmm4,%xmm15

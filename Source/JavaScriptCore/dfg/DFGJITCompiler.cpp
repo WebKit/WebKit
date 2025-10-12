@@ -192,6 +192,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             tables[index++] = WTFMove(entry.value);
         m_jitCode->common.m_stringSearchTable8 = WTFMove(tables);
     }
+    m_jitCode->common.m_concatKeyAtomStringCaches = WTFMove(m_graph.m_concatKeyAtomStringCaches);
 
 #if USE(JSVALUE32_64)
     m_jitCode->common.doubleConstants = WTFMove(m_graph.m_doubleConstants);
@@ -212,7 +213,10 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         case SwitchChar:
         case SwitchImm: {
             if (!data.didUseJumpTable) {
-                ASSERT(m_jitCode->m_switchJumpTables[data.switchTableIndex].isEmpty());
+#if ASSERT_ENABLED
+                if (data.hasSwitchTableIndex())
+                    ASSERT(m_jitCode->m_switchJumpTables[data.switchTableIndex].isEmpty());
+#endif
                 continue;
             }
 
@@ -232,7 +236,10 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 
         case SwitchString: {
             if (!data.didUseJumpTable) {
-                ASSERT(m_jitCode->m_stringSwitchJumpTables[data.switchTableIndex].isEmpty());
+#if ASSERT_ENABLED
+                if (data.hasSwitchTableIndex())
+                    ASSERT(m_jitCode->m_stringSwitchJumpTables[data.switchTableIndex].isEmpty());
+#endif
                 continue;
             }
 

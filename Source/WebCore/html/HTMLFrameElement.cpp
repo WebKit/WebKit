@@ -24,12 +24,14 @@
 #include "config.h"
 #include "HTMLFrameElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "ElementInlines.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "LocalFrame.h"
 #include "RenderFrame.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -56,7 +58,8 @@ bool HTMLFrameElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderPtr<RenderElement> HTMLFrameElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderFrame>(*this, WTFMove(style));
+    // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.
+    SUPPRESS_UNCOUNTED_ARG return createRenderer<RenderFrame>(*this, WTFMove(style));
 }
 
 bool HTMLFrameElement::noResize() const
@@ -86,7 +89,7 @@ void HTMLFrameElement::attributeChanged(const QualifiedName& name, const AtomStr
         m_frameBorderSet = !newValue.isNull();
         // FIXME: If we are already attached, this has no effect.
     } else if (name == noresizeAttr) {
-        if (auto* renderer = this->renderer())
+        if (CheckedPtr renderer = this->renderer())
             renderer->updateFromElement();
     } else
         HTMLFrameElementBase::attributeChanged(name, oldValue, newValue, attributeModificationReason);

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ResourceCryptographicDigest.h"
+#include <WebCore/ResourceCryptographicDigest.h>
 
 namespace WebCore {
 

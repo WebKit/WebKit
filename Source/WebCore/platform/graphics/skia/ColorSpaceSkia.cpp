@@ -32,18 +32,18 @@
 
 namespace WebCore {
 
-sk_sp<SkColorSpace> sRGBColorSpaceRef()
+sk_sp<SkColorSpace> sRGBColorSpaceSingleton()
 {
     return SkColorSpace::MakeSRGB();
 }
 
-sk_sp<SkColorSpace> linearSRGBColorSpaceRef()
+sk_sp<SkColorSpace> linearSRGBColorSpaceSingleton()
 {
     return SkColorSpace::MakeSRGBLinear();
 }
 
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-sk_sp<SkColorSpace> displayP3ColorSpaceRef()
+sk_sp<SkColorSpace> displayP3ColorSpaceSingleton()
 {
     return SkColorSpace::MakeRGB(SkNamedTransferFn::kSRGB, SkNamedGamut::kDisplayP3);
 }

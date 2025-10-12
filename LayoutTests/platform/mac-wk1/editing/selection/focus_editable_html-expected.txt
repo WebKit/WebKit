@@ -1,0 +1,29 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of HTML > #document to 2 of HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of BODY > HTML > #document to 0 of BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of HTML > #document to 2 of HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 9 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 2008x2088
+  RenderView at (0,0) size 783x583
+layer at (0,0) size 783x2088
+  RenderBlock {HTML} at (0,0) size 783x2088
+    RenderBody {BODY} at (8,8) size 767x2072
+      RenderBlock (anonymous) at (0,0) size 767x54
+        RenderText {#text} at (0,0) size 595x18
+          text run at (0,0) width 595: "This test makes sure that we don't scroll unnecessarily to reveal an editable HTML Element. "
+        RenderBR {BR} at (594,0) size 1x18
+        RenderText {#text} at (0,18) size 269x18
+          text run at (0,18) width 269: "If the document doesn't scroll, test passes."
+        RenderBR {BR} at (268,18) size 1x18
+        RenderInline {B} at (0,36) size 537x18
+          RenderText {#text} at (0,36) size 537x18
+            text run at (0,36) width 537: "This demonstrates a bug: normally, focusing an element will select its contents."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,54) size 2000x2000
+      RenderBlock (anonymous) at (0,2054) size 767x18
+        RenderText {#text} at (0,0) size 245x18
+          text run at (0,0) width 245: "If the document scrolls here, test fails."
+caret: position 1 of child 0 {#text} of body

@@ -1,0 +1,44 @@
+{
+    "domain": "BidiPermissions",
+    "exposedAs": "permissions",
+    "condition": "ENABLE(WEBDRIVER_BIDI)",
+    "description": "The permissions module contains commands for managing the remote end browser permissions.",
+    "spec": "https://www.w3.org/TR/permissions/#webdriver-bidi-module-permissions",
+    "types": [
+        {
+            "id": "PermissionState",
+            "type": "string",
+            "spec": "https://www.w3.org/TR/permissions/#dom-permissionstate",
+            "description": "Values represent the concept of a permission state.",
+            "enum": [
+                "granted",
+                "denied",
+                "prompt"
+            ]
+        },
+        {
+            "id": "PermissionDescriptor",
+            "type": "object",
+            "spec": "https://www.w3.org/TR/permissions/#webdriver-bidi-type-permissions-PermissionDescriptor",
+            "description": "Describes a permission. Note that optional properties represent fields present in spec subclasses of PermissionDescriptor.",
+            "properties": [
+                { "name": "name", "type": "string", "description": "The name of the permission." }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "setPermission",
+            "description": "Simulates user modification of a PermissionDescriptor's permission state.",
+            "spec": "https://www.w3.org/TR/permissions/#webdriver-bidi-command-permissions-setPermission",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/external/permissions/set_permission",
+            "parameters": [
+                { "name": "descriptor", "$ref": "BidiPermissions.PermissionDescriptor", "description": "Extensible object describing a permission and any associated metadata." },
+                { "name": "origin", "type": "string", "description": "The origin from which the permission is being requested." },
+                { "name": "state", "$ref": "BidiPermissions.PermissionState", "description": "The state of the permission." },
+                { "name": "userContext", "$ref": "BidiBrowser.UserContext", "optional": true }
+            ],
+            "async": true
+        }
+    ]
+}

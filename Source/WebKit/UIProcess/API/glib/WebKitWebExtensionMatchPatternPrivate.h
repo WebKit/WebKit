@@ -25,5 +25,9 @@
 
 typedef struct _WebKitWebExtensionMatchPattern WebKitWebExtensionMatchPattern;
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+
 WebKitWebExtensionMatchPattern* webkitWebExtensionMatchPatternCreate(Ref<WebKit::WebExtensionMatchPattern>&);
 WebKitWebExtensionMatchPattern* webkitWebExtensionMatchPatternCreate(const RefPtr<WebKit::WebExtensionMatchPattern>&);
+
+#endif

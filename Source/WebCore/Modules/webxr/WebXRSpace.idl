@@ -27,7 +27,6 @@
 [
     Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
-    CustomToJSObject,
     SecureContext,
     Exposed=Window,
     InterfaceName=XRSpace

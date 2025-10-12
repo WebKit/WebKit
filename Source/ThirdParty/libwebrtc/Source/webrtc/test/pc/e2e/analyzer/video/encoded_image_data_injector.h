@@ -13,7 +13,6 @@
 
 #include <cstdint>
 #include <optional>
-#include <utility>
 
 #include "api/video/encoded_image.h"
 

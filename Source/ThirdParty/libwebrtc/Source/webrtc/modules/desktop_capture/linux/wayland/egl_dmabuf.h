@@ -11,11 +11,12 @@
 #ifndef MODULES_DESKTOP_CAPTURE_LINUX_WAYLAND_EGL_DMABUF_H_
 #define MODULES_DESKTOP_CAPTURE_LINUX_WAYLAND_EGL_DMABUF_H_
 
-#include <epoxy/egl.h>
-#include <epoxy/gl.h>
+#include <EGL/egl.h>
+#include <EGL/eglplatform.h>
+#include <GL/gl.h>
 #include <gbm.h>
 
-#include <memory>
+#include <cstdint>
 #include <optional>
 #include <string>
 #include <vector>

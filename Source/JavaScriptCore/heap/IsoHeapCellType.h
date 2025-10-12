@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "HeapCellType.h"
+#include <JavaScriptCore/HeapCellType.h>
 #include <wtf/PtrTag.h>
 #include <wtf/TZoneMalloc.h>
 

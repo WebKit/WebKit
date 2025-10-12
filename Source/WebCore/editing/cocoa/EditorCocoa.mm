@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,19 +33,21 @@
 #import "CachedResourceLoader.h"
 #import "ColorMac.h"
 #import "DOMURL.h"
+#import "DataTransfer.h"
 #import "DeprecatedGlobalSettings.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
+#import "DocumentPage.h"
 #import "Editing.h"
 #import "EditingStyle.h"
 #import "EditorClient.h"
 #import "ElementInlines.h"
 #import "FontAttributes.h"
 #import "FontCascade.h"
+#import "FrameDestructionObserverInlines.h"
 #import "FrameLoader.h"
 #import "FrameSelection.h"
 #import "HTMLAttachmentElement.h"
-#import "HTMLConverter.h"
 #import "HTMLImageElement.h"
 #import "HTMLPictureElement.h"
 #import "HTMLSourceElement.h"
@@ -55,6 +57,7 @@
 #import "LegacyNSPasteboardTypes.h"
 #import "LegacyWebArchive.h"
 #import "LocalFrame.h"
+#import "NodeHTMLConverter.h"
 #import "Page.h"
 #import "PagePasteboardContext.h"
 #import "Pasteboard.h"
@@ -76,14 +79,6 @@
 #import <wtf/text/MakeString.h>
 
 namespace WebCore {
-
-static RefPtr<SharedBuffer> archivedDataForAttributedString(NSAttributedString *attributedString)
-{
-    if (!attributedString.length)
-        return nullptr;
-
-    return SharedBuffer::create([NSKeyedArchiver archivedDataWithRootObject:attributedString requiringSecureCoding:YES error:nullptr]);
-}
 
 String Editor::selectionInHTMLFormat()
 {
@@ -170,18 +165,24 @@ void populateRichTextDataIfNeeded(PasteboardContent& content, const Document& do
     auto string = selectionAsAttributedString(document);
     content.dataInRTFDFormat = [string containsAttachments] ? Editor::dataInRTFDFormat(string.get()) : nullptr;
     content.dataInRTFFormat = Editor::dataInRTFFormat(string.get());
-    content.dataInAttributedStringFormat = archivedDataForAttributedString(string.get());
+    content.dataInAttributedStringFormat = AttributedString::fromNSAttributedString(string.get());
 }
 
 void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 {
-    Ref document = protectedDocument();
+    Ref document = this->document();
     PasteboardWebContent content;
     content.contentOrigin = document->originIdentifierForPasteboard();
     content.canSmartCopyOrDelete = canSmartCopyOrDelete();
     if (!pasteboard.isStatic()) {
         if (!document->isTextDocument()) {
             content.dataInWebArchiveFormat = selectionInWebArchiveFormat();
+            LegacyWebArchive::ArchiveOptions options {
+                LegacyWebArchive::ShouldSaveScriptsFromMemoryCache::Yes,
+                LegacyWebArchive::ShouldArchiveSubframes::No
+            };
+            if (document->settings().siteIsolationEnabled())
+                content.webArchive = LegacyWebArchive::createFromSelection(document->frame(), WTFMove(options));
             populateRichTextDataIfNeeded(content, document);
         }
         client()->getClientPasteboardData(selectedRange(), content.clientTypesAndData);
@@ -197,7 +198,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 
 void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
 {
-    Ref document = protectedDocument();
+    Ref document = this->document();
 
     PasteboardWriterData::WebContent webContent;
     webContent.contentOrigin = document->originIdentifierForPasteboard();
@@ -241,7 +242,7 @@ String Editor::stringSelectionForPasteboardWithImageAltText()
 
 void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributedString, MailBlockquoteHandling mailBlockquoteHandling)
 {
-    Ref document = protectedDocument();
+    Ref document = this->document();
     if (document->selection().isNone())
         return;
 
@@ -308,10 +309,10 @@ void Editor::takeFindStringFromSelection()
     auto stringFromSelection = document().frame()->displayStringModifiedByEncoding(selectedTextForDataTransfer());
 #if PLATFORM(MAC)
     Vector<String> types;
-    types.append(String(legacyStringPasteboardType()));
+    types.append(String(legacyStringPasteboardTypeSingleton()));
     auto context = PagePasteboardContext::create(document().pageID());
     platformStrategies()->pasteboardStrategy()->setTypes(types, NSPasteboardNameFind, context.get());
-    platformStrategies()->pasteboardStrategy()->setStringForType(WTFMove(stringFromSelection), legacyStringPasteboardType(), NSPasteboardNameFind, context.get());
+    platformStrategies()->pasteboardStrategy()->setStringForType(WTFMove(stringFromSelection), legacyStringPasteboardTypeSingleton(), NSPasteboardNameFind, context.get());
 #else
     if (auto* client = this->client()) {
         // Since the find pasteboard doesn't exist on iOS, WebKit maintains its own notion of the latest find string,
@@ -331,11 +332,20 @@ String Editor::platformContentTypeForBlobType(const String& type) const
 
 void Editor::readSelectionFromPasteboard(const String& pasteboardName)
 {
-    Pasteboard pasteboard(PagePasteboardContext::create(document().pageID()), pasteboardName);
+    Ref dataTransfer = DataTransfer::createForCopyAndPaste(document(),
+        DataTransfer::StoreMode::Readonly,
+        makeUnique<Pasteboard>(PagePasteboardContext::create(document().pageID()), pasteboardName));
+
+    if (!dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::Paste, dataTransfer.copyRef()))
+        return;
+
+    if (!canEdit())
+        return;
+
     if (document().selection().selection().isContentRichlyEditable())
-        pasteWithPasteboard(&pasteboard, { PasteOption::AllowPlainText });
+        pasteWithPasteboard(&dataTransfer->pasteboard(), { PasteOption::AllowPlainText });
     else
-        pasteAsPlainTextWithPasteboard(pasteboard);
+        pasteAsPlainTextWithPasteboard(dataTransfer->pasteboard());
 }
 
 static void maybeCopyNodeAttributesToFragment(const Node& node, DocumentFragment& fragment)
@@ -373,7 +383,7 @@ void Editor::replaceNodeFromPasteboard(Node& node, const String& pasteboardName,
     if (!range)
         return;
 
-    Ref document = protectedDocument();
+    Ref document = this->document();
     document->selection().setSelection({ *range }, FrameSelection::SetSelectionOption::DoNotSetFocus);
 
     Pasteboard pasteboard(PagePasteboardContext::create(document->pageID()), pasteboardName);
@@ -441,14 +451,14 @@ static RetainPtr<CGImageRef> fallbackImageForMultiRepresentationHEIC(std::span<c
 
 void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data, const String& altText)
 {
-    auto document = protectedDocument();
+    Ref document = this->document();
 
     String primaryType = "image/x-apple-adaptive-glyph"_s;
-    auto primaryBuffer = FragmentedSharedBuffer::create(data);
+    Ref primaryBuffer = SharedBuffer::create(data);
 
     String fallbackType = "image/png"_s;
     auto fallbackData = encodeData(fallbackImageForMultiRepresentationHEIC(data).get(), fallbackType, std::nullopt);
-    auto fallbackBuffer = FragmentedSharedBuffer::create(WTFMove(fallbackData));
+    Ref fallbackBuffer = SharedBuffer::create(WTFMove(fallbackData));
 
     auto picture = HTMLPictureElement::create(HTMLNames::pictureTag, document);
 
@@ -458,7 +468,7 @@ void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data,
     picture->appendChild(WTFMove(source));
 
     auto image = HTMLImageElement::create(document);
-    image->setSrc(AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), fallbackBuffer->copyData(), fallbackType)) });
+    image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), fallbackBuffer->copyData(), fallbackType)) });
     if (!altText.isEmpty())
         image->setAttributeWithoutSynchronization(HTMLNames::altAttr, AtomString { altText });
     picture->appendChild(WTFMove(image));

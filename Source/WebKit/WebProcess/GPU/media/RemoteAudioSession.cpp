@@ -49,7 +49,7 @@ Ref<RemoteAudioSession> RemoteAudioSession::create()
 
 RemoteAudioSession::RemoteAudioSession()
 {
-    addInterruptionObserver(*this);
+    AudioSession::addInterruptionObserver(*this);
 }
 
 RemoteAudioSession::~RemoteAudioSession()
@@ -57,7 +57,7 @@ RemoteAudioSession::~RemoteAudioSession()
     if (auto gpuProcessConnection = m_gpuProcessConnection.get())
         gpuProcessConnection->messageReceiverMap().removeMessageReceiver(Messages::RemoteAudioSession::messageReceiverName());
 
-    removeInterruptionObserver(*this);
+    AudioSession::removeInterruptionObserver(*this);
 }
 
 void RemoteAudioSession::gpuProcessConnectionDidClose(GPUProcessConnection& connection)
@@ -69,9 +69,9 @@ void RemoteAudioSession::gpuProcessConnectionDidClose(GPUProcessConnection& conn
 
 IPC::Connection& RemoteAudioSession::ensureConnection()
 {
-    auto gpuProcessConnection = m_gpuProcessConnection.get();
+    RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
     if (!gpuProcessConnection) {
-        gpuProcessConnection = &WebProcess::singleton().ensureGPUProcessConnection();
+        gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
         m_gpuProcessConnection = gpuProcessConnection;
         gpuProcessConnection->addClient(*this);
         gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteAudioSession::messageReceiverName(), *this);
@@ -169,6 +169,7 @@ void RemoteAudioSession::configurationChanged(RemoteAudioSessionConfiguration&& 
     bool bufferSizeChanged = !m_configuration || configuration.bufferSize != (*m_configuration).bufferSize;
     bool sampleRateChanged = !m_configuration || configuration.sampleRate != (*m_configuration).sampleRate;
     bool isActiveChanged = !m_configuration || configuration.isActive != (*m_configuration).isActive;
+    bool routingContextUIDChanged = !m_configuration || configuration.routingContextUID != (*m_configuration).routingContextUID;
 
     m_configuration = WTFMove(configuration);
 
@@ -181,6 +182,9 @@ void RemoteAudioSession::configurationChanged(RemoteAudioSessionConfiguration&& 
 
         if (sampleRateChanged)
             observer.sampleRateDidChange(*this);
+
+        if (routingContextUIDChanged)
+            observer.routingContextUIDDidChange(*this);
     });
     if (isActiveChanged)
         activeStateChanged();
@@ -188,16 +192,16 @@ void RemoteAudioSession::configurationChanged(RemoteAudioSessionConfiguration&& 
 
 void RemoteAudioSession::beginInterruptionRemote()
 {
-    removeInterruptionObserver(*this);
+    AudioSession::removeInterruptionObserver(*this);
     beginInterruption();
-    addInterruptionObserver(*this);
+    AudioSession::addInterruptionObserver(*this);
 }
 
 void RemoteAudioSession::endInterruptionRemote(MayResume mayResume)
 {
-    removeInterruptionObserver(*this);
+    AudioSession::removeInterruptionObserver(*this);
     endInterruption(mayResume);
-    addInterruptionObserver(*this);
+    AudioSession::addInterruptionObserver(*this);
 }
 
 void RemoteAudioSession::beginAudioSessionInterruption()

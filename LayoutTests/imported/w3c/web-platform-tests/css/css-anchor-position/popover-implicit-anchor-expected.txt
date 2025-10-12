@@ -1,4 +1,4 @@
 Button Popover
 
-FAIL Popover invokers form an implicit anchor reference assert_equals: expected 100 but got 55
+PASS Popover invokers form an implicit anchor reference
 

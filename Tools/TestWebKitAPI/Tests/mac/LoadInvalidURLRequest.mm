@@ -52,7 +52,7 @@ static bool didFailProvisionalLoad;
 
     static char literal[] = "https://www.example.com$/";
     NSURL *failedURL = WTF::URLWithData([NSData dataWithBytes:literal length:strlen(literal)], nil);
-    EXPECT_TRUE([error.userInfo[@"NSErrorFailingURLKey"] isEqual:failedURL]);
+    EXPECT_TRUE([error.userInfo[NSURLErrorFailingURLErrorKey] isEqual:failedURL]);
 
     didFailProvisionalLoad = true;
     didFinishTest = true;

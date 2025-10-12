@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "FloatPoint.h"
+#include <WebCore/FloatPoint.h>
 #include <wtf/Deque.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMalloc.h>

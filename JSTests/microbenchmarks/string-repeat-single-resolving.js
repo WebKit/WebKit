@@ -6,5 +6,5 @@ function test(str, count)
     return repeated[0] + repeated[count >> 1] + repeated[repeated.length - 1];
 }
 
-for (var i = 0; i < 1e4; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     test(' ', i);

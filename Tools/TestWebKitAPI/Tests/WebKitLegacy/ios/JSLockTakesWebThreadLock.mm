@@ -49,12 +49,12 @@ TEST(WebKitLegacy, JSLockTakesWebThreadLock)
     EXPECT_TRUE(!!jsContext.get());
 
     RetainPtr<JSVirtualMachine> jsVM = [jsContext virtualMachine];
-    EXPECT_TRUE([jsVM isWebThreadAware]);
+    EXPECT_TRUE(!WebThreadIsEnabled() || [jsVM isWebThreadAware]);
 
     // Release WebThread lock.
     Util::spinRunLoop(1);
 
-    EXPECT_FALSE(WebThreadIsLocked());
+    EXPECT_FALSE(WebThreadIsEnabled() && WebThreadIsLocked());
     // XMLHttpRequest has Timer, which has thread afinity.
     [jsContext evaluateScript:@"for (var i = 0; i < 1e3; ++i) { var request = new XMLHttpRequest; request.property = new Array(10000); }"];
 }

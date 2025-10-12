@@ -112,7 +112,7 @@ void WorkerMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortI
     uint64_t callbackIdentifier = ++m_lastCallbackIdentifier;
     m_takeAllMessagesCallbacks.add(callbackIdentifier, WTFMove(callback));
 
-    callOnMainThread([weakThis = WeakPtr { *this }, workerThread = RefPtr { m_scope->workerOrWorkletThread() }, callbackIdentifier, identifier]() mutable {
+    callOnMainThread([weakThis = WeakPtr { *this }, workerThread = Ref { m_scope.get() }->workerOrWorkletThread(), callbackIdentifier, identifier]() mutable {
         MessagePortChannelProvider::singleton().takeAllMessagesForPort(identifier, [weakThis = WTFMove(weakThis), workerThread = WTFMove(workerThread), callbackIdentifier](Vector<MessageWithMessagePorts>&& messages, Function<void()>&& completionHandler) mutable {
             workerThread->runLoop().postTaskForMode([weakThis = WTFMove(weakThis), callbackIdentifier, messages = WTFMove(messages), completionHandler = MainThreadCompletionHandler(WTFMove(completionHandler))](auto&) mutable {
                 CheckedPtr checkedThis = weakThis.get();

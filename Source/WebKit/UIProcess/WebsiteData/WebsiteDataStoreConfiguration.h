@@ -83,9 +83,6 @@ public:
     bool isDeclarativeWebPushEnabled() const { return m_isDeclarativeWebPushEnabled; }
     void setIsDeclarativeWebPushEnabled(bool enabled) { m_isDeclarativeWebPushEnabled = enabled; }
 #endif
-
-    const String& applicationCacheDirectory() const { return m_directories.applicationCacheDirectory; }
-    void setApplicationCacheDirectory(String&& directory) { m_directories.applicationCacheDirectory = WTFMove(directory); }
     
     const String& mediaCacheDirectory() const { return m_directories.mediaCacheDirectory; }
     void setMediaCacheDirectory(String&& directory) { m_directories.mediaCacheDirectory = WTFMove(directory); }
@@ -186,9 +183,6 @@ public:
 
     const String& webPushPartitionString() const { return m_webPushPartitionString; }
     void setWebPushPartitionString(String&& string) { m_webPushPartitionString = WTFMove(string); }
-
-    const String& applicationCacheFlatFileSubdirectoryName() const { return m_directories.applicationCacheFlatFileSubdirectoryName; }
-    void setApplicationCacheFlatFileSubdirectoryName(String&& directory) { m_directories.applicationCacheFlatFileSubdirectoryName = WTFMove(directory); }
     
     const String& serviceWorkerRegistrationDirectory() const { return m_directories.serviceWorkerRegistrationDirectory; }
     void setServiceWorkerRegistrationDirectory(String&& directory) { m_directories.serviceWorkerRegistrationDirectory = WTFMove(directory); }
@@ -265,8 +259,6 @@ public:
 #endif
 
     struct Directories {
-        String applicationCacheFlatFileSubdirectoryName { "Files"_s };
-        String applicationCacheDirectory;
         String alternativeServicesDirectory;
         String cacheStorageDirectory;
         String cookieStorageFile;

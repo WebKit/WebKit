@@ -464,6 +464,23 @@ TEST(WTF, clampInfinityToInteger)
     EXPECT_EQ(10U, clampTo<unsigned>(-std::numeric_limits<float>::infinity(), 10, 20));
 }
 
+TEST(WTF, normalizedFloat)
+{
+    EXPECT_EQ(normalizedFloat(std::numeric_limits<float>::min()), std::numeric_limits<float>::min());
+    EXPECT_EQ(normalizedFloat(-std::numeric_limits<float>::min()), -std::numeric_limits<float>::min());
+    EXPECT_EQ(normalizedFloat(std::numeric_limits<float>::denorm_min()), std::numeric_limits<float>::min());
+    EXPECT_EQ(normalizedFloat(-std::numeric_limits<float>::denorm_min()), -std::numeric_limits<float>::min());
+    EXPECT_EQ(normalizedFloat(0.0f), 0.0f);
+    EXPECT_EQ(normalizedFloat(-0.0f), -0.0f);
+    EXPECT_EQ(normalizedFloat(1.0f), 1.0f);
+    EXPECT_EQ(normalizedFloat(-1.0f), -1.0f);
+    EXPECT_EQ(normalizedFloat(1.17549e-38), std::numeric_limits<float>::min());
+    EXPECT_EQ(normalizedFloat(-1.17549e-38), -std::numeric_limits<float>::min());
+    EXPECT_EQ(normalizedFloat(std::numeric_limits<float>::infinity()), std::numeric_limits<float>::infinity());
+    EXPECT_EQ(normalizedFloat(-std::numeric_limits<float>::infinity()), -std::numeric_limits<float>::infinity());
+    EXPECT_TRUE(std::isnan(normalizedFloat(std::numeric_limits<float>::quiet_NaN())));
+}
+
 TEST(WTF, roundUpToPowerOfTwo)
 {
     EXPECT_EQ(roundUpToPowerOfTwo(1U), 1U);

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/dom/render-blocking/element-render-blocking-020.html' because non CSS MIME types are not allowed in strict mode.
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum augue nibh, venenatis a ligula in, tempus pharetra urna. Fusce semper, velit tincidunt lobortis sollicitudin, sapien velit fermentum odio, ultricies tempor mi est eget ipsum egestas.
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum augue nibh, venenatis a ligula in, tempus pharetra urna. Fusce semper, velit tincidunt lobortis sollicitudin, sapien velit fermentum odio, ultricies tempor mi est eget ipsum egestas.
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum augue nibh, venenatis a ligula in, tempus pharetra urna. Fusce semper, velit tincidunt lobortis sollicitudin, sapien velit fermentum odio, ultricies tempor mi est eget ipsum egestas.

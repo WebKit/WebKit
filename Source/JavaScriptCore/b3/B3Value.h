@@ -535,6 +535,8 @@ protected:
         case VectorAddSat:
         case VectorSubSat:
         case VectorMul:
+        case VectorMulHigh:
+        case VectorMulLow:
         case VectorDotProduct:
         case VectorDiv:
         case VectorMin:
@@ -562,6 +564,8 @@ protected:
         case VectorRelaxedMAdd:
         case VectorRelaxedNMAdd:
         case VectorRelaxedLaneSelect:
+        case MemoryFill:
+        case MemoryCopy:
             return 3 * sizeof(Value*);
         case CCall:
         case Check:
@@ -771,6 +775,8 @@ private:
         case VectorAddSat:
         case VectorSubSat:
         case VectorMul:
+        case VectorMulHigh:
+        case VectorMulLow:
         case VectorDotProduct:
         case VectorDiv:
         case VectorMin:
@@ -798,6 +804,8 @@ private:
         case VectorRelaxedMAdd:
         case VectorRelaxedNMAdd:
         case VectorRelaxedLaneSelect:
+        case MemoryCopy:
+        case MemoryFill:
             if (numArgs != 3) [[unlikely]]
                 badKind(kind, numArgs);
             return Three;

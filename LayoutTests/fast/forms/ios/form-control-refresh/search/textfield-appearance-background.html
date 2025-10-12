@@ -20,7 +20,7 @@ description("Test that setting -webkit-appearance: textfield on a search input s
 searchBackgroundColor = window.getComputedStyle(search).backgroundColor;
 textBackgroundColor = window.getComputedStyle(text).backgroundColor;
 shouldBeEqualToString("textBackgroundColor", "rgb(255, 255, 255)");
-shouldBe("searchBackgroundColor", "textBackgroundColor");
+shouldBeEqualToString("searchBackgroundColor", "rgb(238, 238, 239)");
 
 </script>
 </html>

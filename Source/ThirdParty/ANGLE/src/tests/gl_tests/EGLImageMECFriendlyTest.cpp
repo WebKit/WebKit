@@ -8,6 +8,10 @@
 //   MEC will have to capture everything, and we can test with capture/replay
 //   whether this is done correctly. In this case the focus is on external images
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
@@ -50,7 +54,6 @@ class EGLImageMECFriendlyTest : public ANGLETest<>
                 data[(y * texSize + x) * 4 + 0] = 0;
                 data[(y * texSize + x) * 4 + 1] = static_cast<GLubyte>(green * 255);
                 data[(y * texSize + x) * 4 + 2] = static_cast<GLubyte>(blue * 255);
-                ;
                 data[(y * texSize + x) * 4 + 3] = 255;
             }
         }

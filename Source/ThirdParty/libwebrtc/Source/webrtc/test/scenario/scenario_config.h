@@ -12,10 +12,13 @@
 
 #include <stddef.h>
 
+#include <functional>
 #include <optional>
 #include <string>
+#include <vector>
 
 #include "api/fec_controller.h"
+#include "api/field_trials.h"
 #include "api/rtp_parameters.h"
 #include "api/test/frame_generator_interface.h"
 #include "api/transport/network_control.h"
@@ -24,6 +27,7 @@
 #include "api/units/time_delta.h"
 #include "api/video/video_codec_type.h"
 #include "api/video_codecs/scalability_mode.h"
+#include "test/create_test_field_trials.h"
 #include "test/scenario/performance_stats.h"
 
 namespace webrtc {
@@ -53,6 +57,7 @@ struct TransportControllerConfig {
 
 struct CallClientConfig {
   TransportControllerConfig transport;
+  FieldTrials field_trials = CreateTestFieldTrials();
   // Allows the pacer to send out multiple packets in a burst.
   // The number of bites that can be sent in one burst is pacer_burst_interval *
   // current bwe. 40ms is the default Chrome setting.

@@ -32,7 +32,7 @@ static const double rate_ratio[MAX_SEGMENTS] = { 2.5,  2.0, 1.5, 1.0,
                                                  0.75, 1.0, 1.0, 1.0 };
 static const int segment_id[ENERGY_SPAN] = { 0, 1, 1, 2, 3, 4 };
 
-#define SEGMENT_ID(i) segment_id[(i)-ENERGY_MIN]
+#define SEGMENT_ID(i) segment_id[(i) - ENERGY_MIN]
 
 DECLARE_ALIGNED(16, static const uint8_t, vp9_64_zeros[64]) = { 0 };
 #if CONFIG_VP9_HIGHBITDEPTH

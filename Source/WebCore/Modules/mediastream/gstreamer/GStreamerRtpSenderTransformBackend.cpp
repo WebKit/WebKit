@@ -30,14 +30,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerRtpSenderTransformBackend);
 
-static inline GStreamerRtpSenderTransformBackend::MediaType mediaTypeFromSender(const GstWebRTCRTPSender&)
+static inline GStreamerRtpSenderTransformBackend::MediaType mediaTypeFromSender(GstWebRTCRTPSender*)
 {
     notImplemented();
     return RTCRtpTransformBackend::MediaType::Video;
 }
 
 GStreamerRtpSenderTransformBackend::GStreamerRtpSenderTransformBackend(const GRefPtr<GstWebRTCRTPSender>& rtcSender)
-    : GStreamerRtpTransformBackend(mediaTypeFromSender(*rtcSender), Side::Sender)
+    : GStreamerRtpTransformBackend(mediaTypeFromSender(rtcSender.get()), Side::Sender)
     , m_rtcSender(rtcSender)
 {
 }

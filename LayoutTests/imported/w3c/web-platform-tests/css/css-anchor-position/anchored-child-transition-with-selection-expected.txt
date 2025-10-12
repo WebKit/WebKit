@@ -1,0 +1,4 @@
+FAIL
+
+PASS Should transition scale property on anchored child
+

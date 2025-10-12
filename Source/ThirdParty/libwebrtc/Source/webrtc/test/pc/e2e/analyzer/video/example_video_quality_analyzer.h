@@ -11,16 +11,19 @@
 #ifndef TEST_PC_E2E_ANALYZER_VIDEO_EXAMPLE_VIDEO_QUALITY_ANALYZER_H_
 #define TEST_PC_E2E_ANALYZER_VIDEO_EXAMPLE_VIDEO_QUALITY_ANALYZER_H_
 
-#include <atomic>
+#include <cstdint>
 #include <map>
 #include <set>
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "api/test/video_quality_analyzer_interface.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_frame.h"
+#include "api/video_codecs/video_encoder.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
@@ -34,7 +37,7 @@ class ExampleVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   ~ExampleVideoQualityAnalyzer() override;
 
   void Start(std::string test_case_name,
-             rtc::ArrayView<const std::string> peer_names,
+             ArrayView<const std::string> peer_names,
              int max_threads_count) override;
   uint16_t OnFrameCaptured(absl::string_view peer_name,
                            const std::string& stream_label,

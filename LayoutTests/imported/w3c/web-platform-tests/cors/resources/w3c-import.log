@@ -23,6 +23,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cors/resources/cors-makeheader.py
 /LayoutTests/imported/w3c/web-platform-tests/cors/resources/expose-headers.py
 /LayoutTests/imported/w3c/web-platform-tests/cors/resources/image-tainting-checker.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/cors/resources/preflight-cache-partitioning-iframe.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/cors/resources/preflight-cache-partitioning.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/cors/resources/preflight-partitioning.py
 /LayoutTests/imported/w3c/web-platform-tests/cors/resources/preflight.py
 /LayoutTests/imported/w3c/web-platform-tests/cors/resources/remote-xhrer.html
 /LayoutTests/imported/w3c/web-platform-tests/cors/resources/status.py

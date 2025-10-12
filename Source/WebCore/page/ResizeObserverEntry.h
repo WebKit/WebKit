@@ -60,8 +60,8 @@ private:
     {
     }
 
-    RefPtr<Element> m_target;
-    Ref<DOMRectReadOnly> m_contentRect;
+    const RefPtr<Element> m_target;
+    const Ref<DOMRectReadOnly> m_contentRect;
     // The spec is designed to allow mulitple boxes for multicol scenarios, but for now these vectors only ever contain one entry.
     Vector<Ref<ResizeObserverSize>> m_borderBoxSizes;
     Vector<Ref<ResizeObserverSize>> m_contentBoxSizes;

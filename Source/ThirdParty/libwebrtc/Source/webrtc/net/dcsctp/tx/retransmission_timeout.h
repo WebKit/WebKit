@@ -10,9 +10,7 @@
 #ifndef NET_DCSCTP_TX_RETRANSMISSION_TIMEOUT_H_
 #define NET_DCSCTP_TX_RETRANSMISSION_TIMEOUT_H_
 
-#include <cstdint>
-#include <functional>
-
+#include "api/units/time_delta.h"
 #include "net/dcsctp/public/dcsctp_options.h"
 
 namespace dcsctp {

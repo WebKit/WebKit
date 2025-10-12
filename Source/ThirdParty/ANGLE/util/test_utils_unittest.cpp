@@ -125,6 +125,7 @@ TEST(TestUtils, MAYBE_RunApp)
         EXPECT_TRUE(setEnvDone);
 
         ProcessHandle process(LaunchProcess(args, ProcessOutputCapture::StdoutAndStderrSeparately));
+        EXPECT_TRUE(process);
         EXPECT_TRUE(process->started());
         EXPECT_TRUE(process->finish());
 

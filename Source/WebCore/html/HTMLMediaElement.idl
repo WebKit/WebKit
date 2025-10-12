@@ -51,10 +51,10 @@ typedef (
     readonly attribute MediaError? error;
 
     // network state
-    [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
+    [CEReactions=NotNeeded, ReflectURL] attribute USVString src;
     attribute MediaProvider? srcObject;
     [URL] readonly attribute USVString currentSrc;
-    [CEReactions=NotNeeded] attribute [AtomString] DOMString? crossOrigin;
+    [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString? crossOrigin;
 
     const unsigned short NETWORK_EMPTY = 0;
     const unsigned short NETWORK_IDLE = 1;
@@ -101,7 +101,7 @@ typedef (
     [CEReactions=NotNeeded] attribute boolean controls;
     attribute double volume;
     attribute boolean muted;
-    [CEReactions=NotNeeded, Reflect=muted] attribute boolean defaultMuted;
+    [CEReactions=NotNeeded, Reflect="muted"] attribute boolean defaultMuted;
 
     // The number of bytes consumed by the media decoder.
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitAudioDecodedByteCount;
@@ -128,4 +128,7 @@ typedef (
 
     [Conditional=WIRELESS_PLAYBACK_TARGET, EnabledBySetting=WirelessPlaybackTargetAPIEnabled] undefined webkitShowPlaybackTargetPicker();
     [Conditional=WIRELESS_PLAYBACK_TARGET, EnabledBySetting=WirelessPlaybackTargetAPIEnabled] readonly attribute boolean webkitCurrentPlaybackTargetIsWireless;
+
+    // Internal
+    [EnabledForWorld=isMediaControls, ImplementedAs=mediaControlsHost] readonly attribute MediaControlsHost? controlsHost;
 };

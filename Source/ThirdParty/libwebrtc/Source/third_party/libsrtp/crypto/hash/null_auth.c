@@ -102,6 +102,10 @@ static srtp_err_status_t srtp_null_auth_init(void *statev,
                                              int key_len)
 {
     /* srtp_null_auth_ctx_t *state = (srtp_null_auth_ctx_t *)statev; */
+    (void)statev;
+    (void)key;
+    (void)key_len;
+
     /* accept any length of key, and do nothing */
 
     return srtp_err_status_ok;
@@ -114,6 +118,11 @@ static srtp_err_status_t srtp_null_auth_compute(void *statev,
                                                 uint8_t *result)
 {
     /* srtp_null_auth_ctx_t *state = (srtp_null_auth_ctx_t *)statev; */
+    (void)statev;
+    (void)message;
+    (void)msg_octets;
+    (void)tag_len;
+    (void)result;
 
     return srtp_err_status_ok;
 }
@@ -123,6 +132,9 @@ static srtp_err_status_t srtp_null_auth_update(void *statev,
                                                int msg_octets)
 {
     /* srtp_null_auth_ctx_t *state = (srtp_null_auth_ctx_t *)statev; */
+    (void)statev;
+    (void)message;
+    (void)msg_octets;
 
     return srtp_err_status_ok;
 }
@@ -130,6 +142,7 @@ static srtp_err_status_t srtp_null_auth_update(void *statev,
 static srtp_err_status_t srtp_null_auth_start(void *statev)
 {
     /* srtp_null_auth_ctx_t *state = (srtp_null_auth_ctx_t *)statev; */
+    (void)statev;
 
     return srtp_err_status_ok;
 }

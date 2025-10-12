@@ -1,4 +1,0 @@
-You shouldn't see an orange image at the end of this line
-
-FAIL Select image at the end of the line. assert_equals: The image should be selected and then deleted. expected null but got Element node <img id="target" src="data:image/svg+xml,<svg xmlns="http...
-

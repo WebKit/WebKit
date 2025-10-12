@@ -37,7 +37,7 @@ namespace WebCore {
 class DOMWrapperWorld;
 class UserMessageHandlerDescriptor;
 
-typedef UncheckedKeyHashMap<std::pair<AtomString, RefPtr<DOMWrapperWorld>>, RefPtr<UserMessageHandlerDescriptor>> UserMessageHandlerDescriptorMap;
+typedef HashMap<std::pair<AtomString, RefPtr<DOMWrapperWorld>>, RefPtr<UserMessageHandlerDescriptor>> UserMessageHandlerDescriptorMap;
 
 } // namespace WebCore
 

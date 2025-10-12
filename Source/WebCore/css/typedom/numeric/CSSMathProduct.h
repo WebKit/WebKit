@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,19 +43,19 @@ public:
 
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Product; }
-    CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathProduct; }
+    CSSStyleValueType styleValueType() const final { return CSSStyleValueType::CSSMathProduct; }
     void serialize(StringBuilder&, OptionSet<SerializationArguments>) const;
     std::optional<SumValue> toSumValue() const final;
     bool equals(const CSSNumericValue& other) const final { return equalsImpl<CSSMathProduct>(other); }
 
     CSSMathProduct(Vector<Ref<CSSNumericValue>>, CSSNumericType);
-    Ref<CSSNumericArray> m_values;
+    const Ref<CSSNumericArray> m_values;
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSMathProduct)
-static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSMathProduct; }
-static bool isType(const WebCore::CSSNumericValue& numericValue) { return numericValue.getType() == WebCore::CSSStyleValueType::CSSMathProduct; }
-static bool isType(const WebCore::CSSMathValue& mathValue) { return mathValue.getType() == WebCore::CSSStyleValueType::CSSMathProduct; }
+static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.styleValueType() == WebCore::CSSStyleValueType::CSSMathProduct; }
+static bool isType(const WebCore::CSSNumericValue& numericValue) { return numericValue.styleValueType() == WebCore::CSSStyleValueType::CSSMathProduct; }
+static bool isType(const WebCore::CSSMathValue& mathValue) { return mathValue.styleValueType() == WebCore::CSSStyleValueType::CSSMathProduct; }
 SPECIALIZE_TYPE_TRAITS_END()

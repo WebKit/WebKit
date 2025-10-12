@@ -57,6 +57,11 @@ void JSAsyncDisposableStack::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     Base::visitChildren(thisObject, visitor);
 }
 
+bool JSAsyncDisposableStack::disposed()
+{
+    return internalField(Field::State).get().asInt32() == static_cast<int32_t>(State::Disposed);
+}
+
 DEFINE_VISIT_CHILDREN(JSAsyncDisposableStack);
 
 } // namespace JSC

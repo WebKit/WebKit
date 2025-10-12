@@ -4,6 +4,7 @@
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,10 +25,14 @@
 
 #pragma once
 
-#include "Length.h"
-#include "RenderStyleConstants.h"
-#include <wtf/RefCounted.h>
+#include <WebCore/RenderStyleConstants.h>
+#include <WebCore/StyleMaximumSize.h>
+#include <WebCore/StyleMinimumSize.h>
+#include <WebCore/StylePreferredSize.h>
+#include <WebCore/StyleVerticalAlign.h>
+#include <WebCore/StyleZIndex.h>
 #include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WTF {
 class TextStream;
@@ -37,7 +42,7 @@ namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleBoxData);
 class StyleBoxData : public RefCounted<StyleBoxData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleBoxData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleBoxData, StyleBoxData);
 public:
     static Ref<StyleBoxData> create() { return adoptRef(*new StyleBoxData); }
     Ref<StyleBoxData> copy() const;
@@ -48,26 +53,22 @@ public:
     void dumpDifferences(TextStream&, const StyleBoxData&) const;
 #endif
 
-    const Length& width() const { return m_width; }
-    const Length& height() const { return m_height; }
-    
-    const Length& minWidth() const { return m_minWidth; }
-    const Length& minHeight() const { return m_minHeight; }
-    
-    const Length& maxWidth() const { return m_maxWidth; }
-    const Length& maxHeight() const { return m_maxHeight; }
-    
-    const Length& verticalAlignLength() const { return m_verticalAlignLength; }
-    
-    int specifiedZIndex() const { return m_specifiedZIndex; }
-    bool hasAutoSpecifiedZIndex() const { return m_hasAutoSpecifiedZIndex; }
+    const Style::PreferredSize& width() const { return m_width; }
+    const Style::PreferredSize& height() const { return m_height; }
 
-    int usedZIndex() const { return m_usedZIndex; }
-    bool hasAutoUsedZIndex() const { return m_hasAutoUsedZIndex; }
+    const Style::MinimumSize& minWidth() const { return m_minWidth; }
+    const Style::MinimumSize& minHeight() const { return m_minHeight; }
+
+    const Style::MaximumSize& maxWidth() const { return m_maxWidth; }
+    const Style::MaximumSize& maxHeight() const { return m_maxHeight; }
+    
+    const Style::VerticalAlign& verticalAlign() const { return m_verticalAlign; }
+
+    Style::ZIndex specifiedZIndex() const { return { static_cast<bool>(m_hasAutoSpecifiedZIndex), m_specifiedZIndexValue }; }
+    Style::ZIndex usedZIndex() const { return { static_cast<bool>(m_hasAutoUsedZIndex), m_usedZIndexValue }; }
 
     BoxSizing boxSizing() const { return static_cast<BoxSizing>(m_boxSizing); }
     BoxDecorationBreak boxDecorationBreak() const { return static_cast<BoxDecorationBreak>(m_boxDecorationBreak); }
-    VerticalAlign verticalAlign() const { return static_cast<VerticalAlign>(m_verticalAlign); }
 
 private:
     friend class RenderStyle;
@@ -75,24 +76,24 @@ private:
     StyleBoxData();
     StyleBoxData(const StyleBoxData&);
 
-    Length m_width;
-    Length m_height;
+    Style::PreferredSize m_width;
+    Style::PreferredSize m_height;
 
-    Length m_minWidth;
-    Length m_maxWidth;
+    Style::MinimumSize m_minWidth;
+    Style::MaximumSize m_maxWidth;
 
-    Length m_minHeight;
-    Length m_maxHeight;
+    Style::MinimumSize m_minHeight;
+    Style::MaximumSize m_maxHeight;
 
-    Length m_verticalAlignLength;
+    Style::VerticalAlign m_verticalAlign;
 
-    int m_specifiedZIndex;
-    int m_usedZIndex;
-    unsigned m_hasAutoSpecifiedZIndex : 1;
-    unsigned m_hasAutoUsedZIndex : 1;
-    unsigned m_boxSizing : 1; // BoxSizing
-    unsigned m_boxDecorationBreak : 1; // BoxDecorationBreak
-    unsigned m_verticalAlign : 4; // VerticalAlign
+    PREFERRED_TYPE(bool) uint8_t m_hasAutoSpecifiedZIndex : 1;
+    PREFERRED_TYPE(bool) uint8_t m_hasAutoUsedZIndex : 1;
+    PREFERRED_TYPE(BoxSizing) uint8_t m_boxSizing : 1;
+    PREFERRED_TYPE(BoxDecorationBreak) uint8_t m_boxDecorationBreak : 1;
+
+    Style::ZIndex::Value m_specifiedZIndexValue;
+    Style::ZIndex::Value m_usedZIndexValue;
 };
 
 } // namespace WebCore

@@ -24,15 +24,17 @@
 
 #pragma once
 
-#include "FloatPoint.h"
-#include "GlyphBuffer.h"
-#include "TextSpacing.h"
+#include <WebCore/FloatPoint.h>
+#include <WebCore/GlyphBuffer.h>
+#include <WebCore/TextSpacing.h>
 #include <wtf/HashSet.h>
+#include <wtf/Platform.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 typedef unsigned short CGGlyph;
@@ -61,6 +63,7 @@ public:
     ComplexTextController(const FontCascade&, const TextRun&, bool mayUseNaturalWritingDirection = false, SingleThreadWeakHashSet<const Font>* fallbackFonts = 0, bool forTextEmphasis = false);
 
     static std::pair<float, float> enclosingGlyphBoundsForTextRun(const FontCascade&, const TextRun&);
+    static Vector<float> glyphAdvancesForTextRun(const FontCascade&, const TextRun&);
 
     class ComplexTextRun;
     WEBCORE_EXPORT ComplexTextController(const FontCascade&, const TextRun&, Vector<Ref<ComplexTextRun>>&);
@@ -83,29 +86,29 @@ public:
 
     class ComplexTextRun : public RefCounted<ComplexTextRun> {
     public:
-        static Ref<ComplexTextRun> create(CTRunRef ctRun, const Font& font, std::span<const UChar> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd)
+        static Ref<ComplexTextRun> create(CTRunRef ctRun, const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd)
         {
             return adoptRef(*new ComplexTextRun(ctRun, font, characters, stringLocation, indexBegin, indexEnd));
         }
 
-        static Ref<ComplexTextRun> create(hb_buffer_t* buffer, const Font& font, std::span<const UChar> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd)
+        static Ref<ComplexTextRun> create(hb_buffer_t* buffer, const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd)
         {
             return adoptRef(*new ComplexTextRun(buffer, font, characters, stringLocation, indexBegin, indexEnd));
         }
 
-        static Ref<ComplexTextRun> create(const Font& font, std::span<const UChar> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, bool ltr)
+        static Ref<ComplexTextRun> create(const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, bool ltr)
         {
             return adoptRef(*new ComplexTextRun(font, characters, stringLocation, indexBegin, indexEnd, ltr));
         }
 
-        static Ref<ComplexTextRun> create(const Vector<FloatSize>& advances, const Vector<FloatPoint>& origins, const Vector<Glyph>& glyphs, const Vector<unsigned>& stringIndices, FloatSize initialAdvance, const Font& font, std::span<const UChar> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, bool ltr)
+        static Ref<ComplexTextRun> create(const Vector<FloatSize>& advances, const Vector<FloatPoint>& origins, const Vector<Glyph>& glyphs, const Vector<unsigned>& stringIndices, FloatSize initialAdvance, const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, bool ltr)
         {
             return adoptRef(*new ComplexTextRun(advances, origins, glyphs, stringIndices, initialAdvance, font, characters, stringLocation, indexBegin, indexEnd, ltr));
         }
 
         unsigned glyphCount() const { return m_glyphCount; }
         const Font& font() const { return m_font; }
-        std::span<const UChar> characters() const { return m_characters; }
+        std::span<const char16_t> characters() const { return m_characters; }
         unsigned stringLocation() const { return m_stringLocation; }
         size_t stringLength() const { return m_characters.size(); }
         ALWAYS_INLINE unsigned indexAt(unsigned) const;
@@ -124,10 +127,10 @@ public:
         float textAutospaceSize() const { return m_textAutospaceSize; }
 
     private:
-        ComplexTextRun(CTRunRef, const Font&, std::span<const UChar> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd);
-        ComplexTextRun(hb_buffer_t*, const Font&, std::span<const UChar> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd);
-        ComplexTextRun(const Font&, std::span<const UChar> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, bool ltr);
-        WEBCORE_EXPORT ComplexTextRun(const Vector<FloatSize>& advances, const Vector<FloatPoint>& origins, const Vector<Glyph>& glyphs, const Vector<unsigned>& stringIndices, FloatSize initialAdvance, const Font&, std::span<const UChar> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, bool ltr);
+        ComplexTextRun(CTRunRef, const Font&, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd);
+        ComplexTextRun(hb_buffer_t*, const Font&, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd);
+        ComplexTextRun(const Font&, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, bool ltr);
+        WEBCORE_EXPORT ComplexTextRun(const Vector<FloatSize>& advances, const Vector<FloatPoint>& origins, const Vector<Glyph>& glyphs, const Vector<unsigned>& stringIndices, FloatSize initialAdvance, const Font&, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, bool ltr);
 
         using BaseAdvancesVector = Vector<FloatSize, 64>;
         using GlyphVector = Vector<CGGlyph, 64>;
@@ -139,8 +142,8 @@ public:
         Vector<unsigned, 64> m_glyphEndOffsets;
         CoreTextIndicesVector m_coreTextIndices;
         FloatSize m_initialAdvance;
-        const Font& m_font;
-        std::span<const UChar> m_characters;
+        SingleThreadWeakRef<const Font> m_font;
+        std::span<const char16_t> m_characters;
         unsigned m_indexBegin;
         unsigned m_indexEnd;
         unsigned m_glyphCount;
@@ -160,7 +163,7 @@ private:
 
     void collectComplexTextRuns();
 
-    void collectComplexTextRunsForCharacters(std::span<const UChar>, unsigned stringLocation, const Font*);
+    void collectComplexTextRunsForCharacters(std::span<const char16_t>, unsigned stringLocation, const Font*);
     void adjustGlyphsAndAdvances();
 
     unsigned indexOfCurrentRun(unsigned& leftmostGlyph);
@@ -177,7 +180,7 @@ private:
     Vector<CGGlyph, 256> m_adjustedGlyphs;
     Vector<float, 256> m_textAutoSpaceSpacings;
 
-    Vector<UChar, 256> m_smallCapsBuffer;
+    Vector<char16_t, 256> m_smallCapsBuffer;
 
     // There is a 3-level hierarchy here. At the top, we are interested in m_run.string(). We partition that string
     // into Lines, each of which is a sequence of characters which should use the same Font. Core Text then partitions
@@ -201,8 +204,8 @@ private:
 
     SingleThreadWeakHashSet<const Font>* m_fallbackFonts { nullptr };
 
-    CheckedRef<const FontCascade> m_fontCascade;
-    CheckedRef<const TextRun> m_run;
+    const CheckedRef<const FontCascade> m_fontCascade;
+    const CheckedRef<const TextRun> m_run;
 
     unsigned m_currentCharacter { 0 };
     unsigned m_end { 0 };

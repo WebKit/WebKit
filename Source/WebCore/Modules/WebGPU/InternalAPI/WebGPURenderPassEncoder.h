@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "WebGPUColor.h"
-#include "WebGPUIndexFormat.h"
-#include "WebGPUIntegralTypes.h"
+#include <WebCore/WebGPUColor.h>
+#include <WebCore/WebGPUIndexFormat.h>
+#include <WebCore/WebGPUIntegralTypes.h>
 #include <cstdint>
 #include <functional>
 #include <optional>

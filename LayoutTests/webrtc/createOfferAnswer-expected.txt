@@ -1,4 +1,5 @@
 
 PASS Ensuring that offer is a RTCSessionDescriptionInit
 PASS Ensuring that answer is a RTCSessionDescriptionInit
+PASS SDP offer for recvonly transceiver should not contain a msid attribute
 

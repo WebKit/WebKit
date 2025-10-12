@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: target0.requestPointerLock is not a function. (In 'target0.requestPointerLock()', 'target0.requestPointerLock' is undefined)
 PointerMove
 
 Test Description: This test checks if pointermove event are triggered by button state changes
@@ -14,6 +13,10 @@ The following pointer types were detected: (none).
 
 Refresh the page to run the tests again.
 
+
+Harness Error (FAIL), message = TypeError: target0.requestPointerLock is not a function. (In 'target0.requestPointerLock()', 'target0.requestPointerLock' is undefined)
+
+NOTRUN pointer locked pointermove events received for button state changes
 
 Harness Error (FAIL), message = TypeError: target0.requestPointerLock is not a function. (In 'target0.requestPointerLock()', 'target0.requestPointerLock' is undefined)
 

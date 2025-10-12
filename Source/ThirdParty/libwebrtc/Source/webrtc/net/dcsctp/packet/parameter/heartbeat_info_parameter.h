@@ -9,13 +9,13 @@
  */
 #ifndef NET_DCSCTP_PACKET_PARAMETER_HEARTBEAT_INFO_PARAMETER_H_
 #define NET_DCSCTP_PACKET_PARAMETER_HEARTBEAT_INFO_PARAMETER_H_
-#include <stddef.h>
 
+#include <cstddef>
 #include <cstdint>
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
 #include "net/dcsctp/packet/tlv_trait.h"
@@ -34,16 +34,16 @@ class HeartbeatInfoParameter : public Parameter,
  public:
   static constexpr int kType = HeartbeatInfoParameterConfig::kType;
 
-  explicit HeartbeatInfoParameter(rtc::ArrayView<const uint8_t> info)
+  explicit HeartbeatInfoParameter(webrtc::ArrayView<const uint8_t> info)
       : info_(info.begin(), info.end()) {}
 
   static std::optional<HeartbeatInfoParameter> Parse(
-      rtc::ArrayView<const uint8_t> data);
+      webrtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;
 
-  rtc::ArrayView<const uint8_t> info() const { return info_; }
+  webrtc::ArrayView<const uint8_t> info() const { return info_; }
 
  private:
   std::vector<uint8_t> info_;

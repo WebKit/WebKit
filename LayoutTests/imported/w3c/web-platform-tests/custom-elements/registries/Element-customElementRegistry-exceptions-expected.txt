@@ -1,15 +1,3 @@
-CONSOLE MESSAGE: function TypeError() {
-    [native code]
-}
-CONSOLE MESSAGE: NotSupportedError: A newly constructed custom element has incorrect local name
-CONSOLE MESSAGE: function TypeError() {
-    [native code]
-}
-CONSOLE MESSAGE: TypeError: Custom element constructor returned a wrong element
-CONSOLE MESSAGE: function TypeError() {
-    [native code]
-}
-CONSOLE MESSAGE: NotSupportedError: A newly constructed custom element has incorrect local name
 
 PASS customElementRegistry on a failed custom element created by calling createElement on CustomElementRegistry should return the registry
 PASS customElementRegistry on a failed custom element created by setting innerHTML should return the associated scoped registry

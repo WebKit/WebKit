@@ -55,7 +55,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FTPDirectoryDocument);
 using namespace HTMLNames;
     
 class FTPDirectoryDocumentParser final : public HTMLDocumentParser {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(HTMLDocumentParser);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FTPDirectoryDocumentParser, HTMLDocumentParser);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FTPDirectoryDocumentParser);
 public:
     static Ref<FTPDirectoryDocumentParser> create(HTMLDocument& document)
@@ -94,7 +94,7 @@ private:
     bool m_skipLF { false };
     
     size_t m_size { 254 };
-    Vector<UChar> m_buffer;
+    Vector<char16_t> m_buffer;
     size_t m_destIndex { 0 };
     StringBuilder m_carryOver;
     
@@ -254,7 +254,7 @@ void FTPDirectoryDocumentParser::parseAndAppendOneLine(const String& inputLine)
     ListResult result;
     CString latin1Input = inputLine.latin1();
 
-    FTPEntryType typeResult = parseOneFTPLine(byteCast<LChar>(latin1Input.mutableSpan()), m_listState, result);
+    FTPEntryType typeResult = parseOneFTPLine(byteCast<Latin1Character>(latin1Input.mutableSpan()), m_listState, result);
 
     // FTPMiscEntry is a comment or usage statistic which we don't care about, and junk is invalid data - bail in these 2 cases
     if (typeResult == FTPMiscEntry || typeResult == FTPJunkEntry)
@@ -294,7 +294,7 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
         return false;
     }
 
-    HTMLDocumentParser::insert(String(templateDocumentData.get()->span()));
+    HTMLDocumentParser::insert(String(byteCast<Latin1Character>(templateDocumentData.get()->span())));
 
     Ref document = *this->document();
 
@@ -355,7 +355,7 @@ void FTPDirectoryDocumentParser::append(RefPtr<StringImpl>&& inputSource)
     m_destIndex = 0;
     SegmentedString string { String { WTFMove(inputSource) } };
     while (!string.isEmpty()) {
-        UChar c = string.currentCharacter();
+        char16_t c = string.currentCharacter();
 
         if (c == '\r') {
             m_buffer[m_destIndex++] = '\n';

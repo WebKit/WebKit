@@ -35,8 +35,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/individual-transform-2d.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/individual-transform-2e-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/individual-transform-2e.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/individual-transform-3-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/individual-transform-3.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/stacking-context-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/stacking-context-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/stacking-context-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/stacking-context-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/stacking-context-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/stacking-context-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/stacking-context-004-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/stacking-context-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/stacking-context-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/translate-fill-box-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/translate-fill-box.html

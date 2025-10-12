@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -291,13 +291,13 @@ WebSharedWorkerServerToContextConnection* WebSharedWorkerServer::contextConnecti
 
 void WebSharedWorkerServer::postErrorToWorkerObject(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent)
 {
-    auto* sharedWorker = WebSharedWorker::fromIdentifier(sharedWorkerIdentifier);
-    RELEASE_LOG_ERROR(SharedWorker, "WebSharedWorkerServer::postErrorToWorkerObject: sharedWorkerIdentifier=%" PRIu64 ", sharedWorker=%p", sharedWorkerIdentifier.toUInt64(), sharedWorker);
+    RefPtr sharedWorker = WebSharedWorker::fromIdentifier(sharedWorkerIdentifier);
+    RELEASE_LOG_ERROR(SharedWorker, "WebSharedWorkerServer::postErrorToWorkerObject: sharedWorkerIdentifier=%" PRIu64 ", sharedWorker=%p", sharedWorkerIdentifier.toUInt64(), sharedWorker.get());
     if (!sharedWorker)
         return;
 
     sharedWorker->forEachSharedWorkerObject([&](auto sharedWorkerObjectIdentifier, auto&) {
-        if (auto* serverConnection = m_connections.get(sharedWorkerObjectIdentifier.processIdentifier()))
+        if (RefPtr serverConnection = m_connections.get(sharedWorkerObjectIdentifier.processIdentifier()))
             serverConnection->postErrorToWorkerObject(sharedWorkerObjectIdentifier, errorMessage, lineNumber, columnNumber, sourceURL, isErrorEvent);
     });
 }
@@ -323,13 +323,13 @@ void WebSharedWorkerServer::terminateContextConnectionWhenPossible(const WebCore
 #if ENABLE(CONTENT_EXTENSIONS)
 void WebSharedWorkerServer::reportNetworkUsageToAllSharedWorkerObjects(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, size_t bytesTransferredOverNetworkDelta)
 {
-    auto* sharedWorker = WebSharedWorker::fromIdentifier(sharedWorkerIdentifier);
-    RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::reportNetworkUsageToAllSharedWorkerObjects: sharedWorkerIdentifier=%" PRIu64 ", sharedWorker=%p, bytesTransferredOverNetworkDelta=%zu", sharedWorkerIdentifier.toUInt64(), sharedWorker, bytesTransferredOverNetworkDelta);
+    RefPtr sharedWorker = WebSharedWorker::fromIdentifier(sharedWorkerIdentifier);
+    RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::reportNetworkUsageToAllSharedWorkerObjects: sharedWorkerIdentifier=%" PRIu64 ", sharedWorker=%p, bytesTransferredOverNetworkDelta=%zu", sharedWorkerIdentifier.toUInt64(), sharedWorker.get(), bytesTransferredOverNetworkDelta);
     if (!sharedWorker)
         return;
 
     sharedWorker->forEachSharedWorkerObject([&](auto sharedWorkerObjectIdentifier, auto&) {
-        if (auto* serverConnection = m_connections.get(sharedWorkerObjectIdentifier.processIdentifier()))
+        if (RefPtr serverConnection = m_connections.get(sharedWorkerObjectIdentifier.processIdentifier()))
             serverConnection->reportNetworkUsageToWorkerObject(sharedWorkerObjectIdentifier, bytesTransferredOverNetworkDelta);
     });
 }

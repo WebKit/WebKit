@@ -1,7 +1,7 @@
-<!DOCTYPE HTML>
+<!DOCTYPE HTML> <!-- webkit-test-runner [ PointerLockEnabled=true ] -->
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
 <script src="../resources/pointer-lock/pointer-lock-test-harness.js"></script>
 </head>
 <body>
@@ -12,6 +12,7 @@
 <script>
     description("Test sandboxed iframe blocks pointer lock.")
     window.jsTestIsAsync = true;
+    window.testRunner?.setHasMouseDeviceForTesting(true);
 
     targetDiv1 = document.getElementById("target1");
     iframe = document.getElementsByTagName("iframe")[0];
@@ -29,6 +30,5 @@
     ];
     // doNextStep() called by iframe onload handler.
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

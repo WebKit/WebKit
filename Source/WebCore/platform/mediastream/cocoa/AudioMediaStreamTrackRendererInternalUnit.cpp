@@ -227,7 +227,7 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::createAudioUnitIfNeeded()
             return;
         }
 
-        outputDescription.mSampleRate = AudioSession::protectedSharedSession()->sampleRate();
+        outputDescription.mSampleRate = AudioSession::singleton().sampleRate();
         m_outputDescription = outputDescription;
     }
     error = PAL::AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &m_outputDescription->streamDescription(), sizeof(m_outputDescription->streamDescription()));

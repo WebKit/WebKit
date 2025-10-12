@@ -9,7 +9,7 @@ const timeControl = new TimeControl({ layoutTraits: new MacOSLayoutTraits(Layout
 document.body.appendChild(timeControl.element);
 
 shouldBeEqualToString("timeControl.element.localName", "div");
-shouldBeEqualToString("timeControl.element.className", "time-control");
+shouldBeTrue("timeControl.element.classList.contains('time-control')");
 
 debug("");
 shouldBeType("timeControl.elapsedTimeLabel", "TimeLabel");
@@ -18,73 +18,56 @@ shouldBeType("timeControl.durationTimeLabel", "TimeLabel");
 shouldBeType("timeControl.remainingTimeLabel", "TimeLabel");
 
 debug("");
+scheduler.flushScheduledLayoutCallbacks();
+shouldBe("timeControl.children.length", "4");
+shouldBe("timeControl.children[0]", "timeControl.elapsedTimeLabel");
+shouldBe("timeControl.children[1]", "timeControl.scrubber");
+shouldBe("timeControl.children[2]", "timeControl.remainingTimeLabel");
+shouldBe("timeControl.children[3]", "timeControl.durationTimeLabel");
+
+debug("");
 debug("timeControl.width = 500;");
 timeControl.width = 500;
 scheduler.flushScheduledLayoutCallbacks();
-shouldBe("timeControl.children.length", "3");
-shouldBe("timeControl.children[0]", "timeControl.elapsedTimeLabel");
-shouldBe("timeControl.children[1]", "timeControl.scrubber");
-shouldBe("timeControl.children[2]", "timeControl.durationTimeLabel");
-shouldBe("timeControl.elapsedTimeLabel.x", "0");
-shouldBe("timeControl.elapsedTimeLabel.visible", "true");
-shouldBe("timeControl.scrubber.x", "32");
-shouldBe("timeControl.scrubber.width", "436");
-shouldBe("timeControl.durationTimeLabel.x", "473");
+shouldBe("timeControl.durationTimeLabel.x", "0");
+shouldNotBe("getComputedStyle(timeControl.elapsedTimeLabel.element).display", "'none'");
+shouldBe("getComputedStyle(timeControl.remainingTimeLabel.element).display", "'none'");
+shouldNotBe("getComputedStyle(timeControl.durationTimeLabel.element).display", "'none'");
 
 debug("");
 debug("timeControl.width = 100;");
 timeControl.width = 100;
 scheduler.flushScheduledLayoutCallbacks();
-shouldBe("timeControl.children.length", "3");
-shouldBe("timeControl.children[0]", "timeControl.elapsedTimeLabel");
-shouldBe("timeControl.children[1]", "timeControl.scrubber");
-shouldBe("timeControl.children[2]", "timeControl.remainingTimeLabel");
-shouldBe("timeControl.elapsedTimeLabel.visible", "false");
-shouldBe("timeControl.scrubber.x", "0");
-shouldBe("timeControl.scrubber.width", "62");
-shouldBe("timeControl.remainingTimeLabel.x", "67");
+shouldBe("getComputedStyle(timeControl.elapsedTimeLabel.element).display", "'none'");
+shouldNotBe("getComputedStyle(timeControl.remainingTimeLabel.element).display", "'none'");
+shouldBe("getComputedStyle(timeControl.durationTimeLabel.element).display", "'none'");
 
 debug("");
 debug("timeControl.width = 200;");
 timeControl.width = 200;
 scheduler.flushScheduledLayoutCallbacks();
-shouldBe("timeControl.children.length", "3");
-shouldBe("timeControl.children[0]", "timeControl.elapsedTimeLabel");
-shouldBe("timeControl.children[1]", "timeControl.scrubber");
-shouldBe("timeControl.children[2]", "timeControl.durationTimeLabel");
 shouldBe("timeControl.elapsedTimeLabel.x", "0");
-shouldBe("timeControl.elapsedTimeLabel.visible", "true");
-shouldBe("timeControl.scrubber.x", "32");
-shouldBe("timeControl.scrubber.width", "136");
-shouldBe("timeControl.durationTimeLabel.x", "173");
+shouldNotBe("getComputedStyle(timeControl.elapsedTimeLabel.element).display", "'none'");
+shouldBe("getComputedStyle(timeControl.remainingTimeLabel.element).display", "'none'");
+shouldNotBe("getComputedStyle(timeControl.durationTimeLabel.element).display", "'none'");
 
 debug("");
 debug("timeControl.durationTimeLabel.element.click();");
 timeControl.durationTimeLabel.element.click()
 scheduler.flushScheduledLayoutCallbacks();
-shouldBe("timeControl.children.length", "3");
-shouldBe("timeControl.children[0]", "timeControl.elapsedTimeLabel");
-shouldBe("timeControl.children[1]", "timeControl.scrubber");
-shouldBe("timeControl.children[2]", "timeControl.remainingTimeLabel");
 shouldBe("timeControl.elapsedTimeLabel.x", "0");
-shouldBe("timeControl.elapsedTimeLabel.visible", "true");
-shouldBe("timeControl.scrubber.x", "32");
-shouldBe("timeControl.scrubber.width", "130");
-shouldBe("timeControl.remainingTimeLabel.x", "167");
+shouldNotBe("getComputedStyle(timeControl.elapsedTimeLabel.element).display", "'none'");
+shouldNotBe("getComputedStyle(timeControl.remainingTimeLabel.element).display", "'none'");
+shouldBe("getComputedStyle(timeControl.durationTimeLabel.element).display", "'none'");
 
 debug("");
 debug("timeControl.remainingTimeLabel.element.click();");
 timeControl.remainingTimeLabel.element.click();
 scheduler.flushScheduledLayoutCallbacks();
-shouldBe("timeControl.children.length", "3");
-shouldBe("timeControl.children[0]", "timeControl.elapsedTimeLabel");
-shouldBe("timeControl.children[1]", "timeControl.scrubber");
-shouldBe("timeControl.children[2]", "timeControl.durationTimeLabel");
 shouldBe("timeControl.elapsedTimeLabel.x", "0");
-shouldBe("timeControl.elapsedTimeLabel.visible", "true");
-shouldBe("timeControl.scrubber.x", "32");
-shouldBe("timeControl.scrubber.width", "136");
-shouldBe("timeControl.durationTimeLabel.x", "173");
+shouldNotBe("getComputedStyle(timeControl.elapsedTimeLabel.element).display", "'none'");
+shouldBe("getComputedStyle(timeControl.remainingTimeLabel.element).display", "'none'");
+shouldNotBe("getComputedStyle(timeControl.durationTimeLabel.element).display", "'none'");
 
 debug("");
 

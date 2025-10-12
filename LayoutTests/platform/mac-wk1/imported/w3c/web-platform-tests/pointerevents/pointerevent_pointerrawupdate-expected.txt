@@ -1,0 +1,4 @@
+
+FAIL pointerrawupdate event is not fired assert_equals: events received expected "pointermove,pointerdown,pointermove,pointermove,pointerup" but got "pointermove,pointerdown,pointermove,pointermove,pointermove,pointerup,pointermove"
+PASS onpointerrawupdate is not exposed
+

@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>

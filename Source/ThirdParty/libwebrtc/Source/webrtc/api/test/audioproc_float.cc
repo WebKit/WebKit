@@ -27,14 +27,14 @@ int AudioprocFloat(int argc, char* argv[]) {
 }
 
 int AudioprocFloat(
-    absl::Nonnull<std::unique_ptr<BuiltinAudioProcessingBuilder>> ap_builder,
+    absl_nonnull std::unique_ptr<BuiltinAudioProcessingBuilder> ap_builder,
     int argc,
     char* argv[]) {
   return AudioprocFloatImpl(std::move(ap_builder), argc, argv);
 }
 
 int AudioprocFloat(
-    absl::Nonnull<std::unique_ptr<AudioProcessingBuilderInterface>> ap_builder,
+    absl_nonnull std::unique_ptr<AudioProcessingBuilderInterface> ap_builder,
     int argc,
     char* argv[]) {
   return AudioprocFloatImpl(std::move(ap_builder), argc, argv);

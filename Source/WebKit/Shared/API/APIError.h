@@ -42,6 +42,11 @@ public:
         return adoptRef(*new Error(error));
     }
 
+    static Ref<Error> create(const WebCore::ResourceError& error, const RefPtr<API::Error>& underlyingError)
+    {
+        return adoptRef(*new Error(error, underlyingError));
+    }
+
     enum General {
         Internal = 300
     };
@@ -100,6 +105,7 @@ public:
     const WTF::String& localizedDescription() const { return m_platformError.localizedDescription(); }
 
     const WebCore::ResourceError& platformError() const { return m_platformError; }
+    const RefPtr<Error> underlyingError() const { return m_underlyingError; }
 
 private:
     Error()
@@ -111,7 +117,14 @@ private:
     {
     }
 
+    Error(const WebCore::ResourceError& error, const RefPtr<Error>& underlyingError)
+        : m_platformError(error)
+        , m_underlyingError(underlyingError)
+    {
+    }
+
     WebCore::ResourceError m_platformError;
+    RefPtr<Error> m_underlyingError;
 };
 
 } // namespace API

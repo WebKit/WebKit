@@ -2574,7 +2574,7 @@ static inline uint8x16_t negate_s8q(const uint8x16_t v) {
   static void smooth_##W##xh_neon(                                          \
       uint8_t *dst, ptrdiff_t stride, const uint8_t *const top_row,         \
       const uint8_t *const left_column, const int height) {                 \
-    const uint8_t top_right = top_row[(W)-1];                               \
+    const uint8_t top_right = top_row[(W) - 1];                             \
     const uint8_t bottom_left = left_column[height - 1];                    \
     const uint8_t *const weights_y = smooth_weights + height - 4;           \
                                                                             \
@@ -2592,7 +2592,7 @@ static inline uint8x16_t negate_s8q(const uint8x16_t v) {
     const uint8x8_t bottom_left_v = vdup_n_u8(bottom_left);                 \
                                                                             \
     uint8x16_t weights_x_v[4];                                              \
-    weights_x_v[0] = vld1q_u8(smooth_weights + (W)-4);                      \
+    weights_x_v[0] = vld1q_u8(smooth_weights + (W) - 4);                    \
     if ((W) > 16) {                                                         \
       weights_x_v[1] = vld1q_u8(smooth_weights + (W) + 16 - 4);             \
       if ((W) == 64) {                                                      \
@@ -2842,11 +2842,11 @@ SMOOTH_V_NXM_WIDE(64, 64)
   static void smooth_h_##W##xh_neon(                                        \
       uint8_t *dst, ptrdiff_t stride, const uint8_t *const top_row,         \
       const uint8_t *const left_column, const int height) {                 \
-    const uint8_t top_right = top_row[(W)-1];                               \
+    const uint8_t top_right = top_row[(W) - 1];                             \
                                                                             \
     const uint8x8_t top_right_v = vdup_n_u8(top_right);                     \
     /* Over-reads for 4xN but still within the array. */                    \
-    const uint8x8_t weights_x = vld1_u8(smooth_weights + (W)-4);            \
+    const uint8x8_t weights_x = vld1_u8(smooth_weights + (W) - 4);          \
     const uint8x8_t scaled_weights_x = negate_s8(weights_x);                \
     const uint16x8_t weighted_tr = vmull_u8(scaled_weights_x, top_right_v); \
                                                                             \
@@ -2915,12 +2915,12 @@ static inline uint8x16_t calculate_horizontal_weights_and_pred(
   static void smooth_h_##W##xh_neon(                                       \
       uint8_t *dst, ptrdiff_t stride, const uint8_t *const top_row,        \
       const uint8_t *const left_column, const int height) {                \
-    const uint8_t top_right = top_row[(W)-1];                              \
+    const uint8_t top_right = top_row[(W) - 1];                            \
                                                                            \
     const uint8x8_t top_right_v = vdup_n_u8(top_right);                    \
                                                                            \
     uint8x16_t weights_x[4];                                               \
-    weights_x[0] = vld1q_u8(smooth_weights + (W)-4);                       \
+    weights_x[0] = vld1q_u8(smooth_weights + (W) - 4);                     \
     if ((W) > 16) {                                                        \
       weights_x[1] = vld1q_u8(smooth_weights + (W) + 16 - 4);              \
       if ((W) == 64) {                                                     \

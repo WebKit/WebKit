@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,11 +63,12 @@ public:
 private:
     // PlatformCALayerClient
     PlatformLayerIdentifier platformCALayerIdentifier() const override;
-    GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const override { return GraphicsLayer::CompositingCoordinatesOrientation::TopDown; }
+    GraphicsLayerCompositingCoordinatesOrientation platformCALayerContentsOrientation() const override { return GraphicsLayerCompositingCoordinatesOrientation::TopDown; }
     bool platformCALayerContentsOpaque() const override { return true; }
     bool platformCALayerDrawsContent() const override { return true; }
     void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>) override;
     float platformCALayerDeviceScaleFactor() const override;
+    OptionSet<ContentsFormat> screenContentsFormats() const override;
 
     void updateTimerFired();
     
@@ -75,10 +76,10 @@ private:
     
     Timer m_updateTimer;
 
-    Ref<PlatformCALayer> m_layer;
-    Ref<PlatformCALayer> m_visibleViewportIndicatorLayer;
-    Ref<PlatformCALayer> m_layoutViewportIndicatorLayer;
-    Ref<PlatformCALayer> m_coverageRectIndicatorLayer;
+    const Ref<PlatformCALayer> m_layer;
+    const Ref<PlatformCALayer> m_visibleViewportIndicatorLayer;
+    const Ref<PlatformCALayer> m_layoutViewportIndicatorLayer;
+    const Ref<PlatformCALayer> m_coverageRectIndicatorLayer;
 
     FloatPoint m_position;
 };

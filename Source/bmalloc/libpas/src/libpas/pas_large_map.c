@@ -31,6 +31,7 @@
 
 #include "pas_large_heap.h"
 #include "pas_large_utility_free_heap.h"
+#include "pas_mte.h"
 
 pas_large_map_hashtable pas_large_map_hashtable_instance = PAS_HASHTABLE_INITIALIZER;
 pas_large_map_hashtable_in_flux_stash pas_large_map_hashtable_instance_in_flux_stash;
@@ -43,6 +44,7 @@ pas_tiny_large_map_second_level_hashtable_in_flux_stash pas_tiny_large_map_secon
 pas_large_map_entry pas_large_map_find(uintptr_t begin)
 {
     PAS_PROFILE(LARGE_MAP_FIND, begin);
+    PAS_MTE_HANDLE(LARGE_MAP_FIND, begin);
 
     uintptr_t tiny_base;
     pas_first_level_tiny_large_map_entry* first_level_tiny_entry;
@@ -79,6 +81,7 @@ void pas_large_map_add(pas_large_map_entry entry)
     pas_heap_lock_assert_held();
 
     PAS_PROFILE(LARGE_MAP_ADD, entry.begin, entry.end);
+    PAS_MTE_HANDLE(LARGE_MAP_ADD, entry.begin, entry.end);
 
     if (verbose)
         pas_log("large map adding %p...%p, heap = %p.\n", (void*)entry.begin, (void*)entry.end, entry.heap);
@@ -157,6 +160,7 @@ pas_large_map_entry pas_large_map_take(uintptr_t begin)
     pas_small_large_map_entry small_entry;
 
     PAS_PROFILE(LARGE_MAP_TAKE, begin);
+    PAS_MTE_HANDLE(LARGE_MAP_TAKE, begin);
 
     pas_heap_lock_assert_held();
 

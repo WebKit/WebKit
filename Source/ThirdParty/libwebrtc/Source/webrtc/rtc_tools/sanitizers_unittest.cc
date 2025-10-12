@@ -8,18 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stddef.h>
-#include <stdio.h>
+#include <cstddef>
+#include <memory>  // IWYU pragma: keep
+#include <random>  // IWYU pragma: keep
 
-#include <memory>
-#include <random>
+#include "rtc_base/checks.h"              // IWYU pragma: keep
+#include "rtc_base/null_socket_server.h"  // IWYU pragma: keep
+#include "rtc_base/thread.h"              // IWYU pragma: keep
+#include "test/gtest.h"                   // IWYU pragma: keep
 
-#include "rtc_base/checks.h"
-#include "rtc_base/null_socket_server.h"
-#include "rtc_base/thread.h"
-#include "test/gtest.h"
-
-namespace rtc {
+namespace webrtc {
 
 namespace {
 
@@ -122,4 +120,4 @@ TEST(SanitizersDeathTest, ThreadSanitizer) {
 
 }  // namespace
 
-}  // namespace rtc
+}  // namespace webrtc

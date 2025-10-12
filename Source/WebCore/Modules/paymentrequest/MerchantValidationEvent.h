@@ -28,6 +28,7 @@
 #if ENABLE(PAYMENT_REQUEST)
 
 #include "Event.h"
+#include "ExceptionOr.h"
 #include <wtf/URL.h>
 
 namespace WebCore {

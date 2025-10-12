@@ -8,4 +8,5 @@ PASS WebVTT cue data parser test tree-building - 325c1e590e74f1ff33ca5b4838c04cf
 PASS WebVTT cue data parser test tree-building - 92847ed2694c9639ba96f4cc61e2215362a74904
 PASS WebVTT cue data parser test tree-building - c0da62d1c8716ca544c96799f06ac7e4664500fb
 PASS WebVTT cue data parser test tree-building - b85bd616672eba0591718182ef32e3307d223bb0
+PASS WebVTT cue data parser test tree-building - 421c76d77563afa1914846b010bd164f395bd34c
 

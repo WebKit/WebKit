@@ -50,7 +50,7 @@ void CacheStorageRecordInformation::updateVaryHeaders(const WebCore::ResourceReq
     }
 
     varyValue.split(',', [&](StringView view) {
-        if (!m_hasVaryStar && view.trim(isASCIIWhitespaceWithoutFF<UChar>) == "*"_s)
+        if (!m_hasVaryStar && view.trim(isASCIIWhitespaceWithoutFF<char16_t>) == "*"_s)
             m_hasVaryStar = true;
         m_varyHeaders.add(view.toString(), request.httpHeaderField(view));
     });

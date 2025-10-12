@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,11 +79,11 @@ private:
 
     void updateServiceWorkerPageFrontendCount();
 
-    Ref<InstrumentingAgents> m_instrumentingAgents;
-    std::unique_ptr<WebInjectedScriptManager> m_injectedScriptManager;
-    Ref<Inspector::FrontendRouter> m_frontendRouter;
-    Ref<Inspector::BackendDispatcher> m_backendDispatcher;
-    Ref<WTF::Stopwatch> m_executionStopwatch;
+    const Ref<InstrumentingAgents> m_instrumentingAgents;
+    const UniqueRef<WebInjectedScriptManager> m_injectedScriptManager;
+    const Ref<Inspector::FrontendRouter> m_frontendRouter;
+    const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
+    const Ref<WTF::Stopwatch> m_executionStopwatch;
     std::unique_ptr<WorkerDebugger> m_debugger;
     Inspector::AgentRegistry m_agents;
     CheckedPtr<WorkerDebuggerAgent> m_debuggerAgent;

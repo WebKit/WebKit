@@ -1,0 +1,38 @@
+#!/bin/sh
+
+for search_path in "${BUILT_PRODUCTS_DIR}" "${SDKROOT}"; do
+    candidate="${search_path}/usr/local/include/WebKitAdditions/Scripts/postprocess-framework-headers-definitions"
+    test -f "${candidate}" && source "${candidate}" && break
+done
+
+# The WebKitAdditions code above may set a platform-specific _VERSION variable.
+# If it didn't, use the current deployment target version. The fallback
+# versions for other platforms are not knowable. Set them to the same 9999
+# placeholder that the swift stdlib uses.
+
+if [[ "${WK_PLATFORM_NAME}" == "macosx" ]]; then
+    [[ -n ${OSX_VERSION} ]] || OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET}
+    [[ -n ${XROS_VERSION} ]] || XROS_VERSION="9999"
+    [[ -n ${IOS_VERSION} ]] || IOS_VERSION="9999"
+elif [[ "${WK_PLATFORM_NAME}" == "maccatalyst" ]]; then
+    # On Mac Catalyst `LLVM_TARGET_TRIPLE_OS_VERSION` will be in the format `ios{major}.{minor}`.
+    [[ -n ${IOS_VERSION} ]] || IOS_VERSION=${LLVM_TARGET_TRIPLE_OS_VERSION#ios}
+    [[ -n ${XROS_VERSION} ]] || XROS_VERSION="9999"
+    [[ -n ${OSX_VERSION} ]] || OSX_VERSION="9999"
+elif [[ "${WK_PLATFORM_NAME}" =~ "iphone" ]]; then
+    [[ -n ${IOS_VERSION} ]] || IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET}
+    [[ -n ${XROS_VERSION} ]] || XROS_VERSION="9999"
+    [[ -n ${OSX_VERSION} ]] || OSX_VERSION="9999"
+elif [[ "${PLATFORM_NAME}" == xr* ]]; then
+    [[ -n ${XROS_VERSION} ]] || XROS_VERSION=${XROS_DEPLOYMENT_TARGET}
+    [[ -n ${IOS_VERSION} ]] || IOS_VERSION="9999"
+    [[ -n ${OSX_VERSION} ]] || OSX_VERSION="9999"
+else
+    [[ -n ${OSX_VERSION} ]] || OSX_VERSION="9999"
+    [[ -n ${XROS_VERSION} ]] || XROS_VERSION="9999"
+    [[ -n ${IOS_VERSION} ]] || IOS_VERSION="9999"
+fi
+
+echo "-Xfrontend -define-availability -Xfrontend \"WK_IOS_TBA:iOS ${IOS_VERSION}\"" \
+    "-Xfrontend -define-availability -Xfrontend \"WK_MAC_TBA:macOS ${OSX_VERSION}\"" \
+    "-Xfrontend -define-availability -Xfrontend \"WK_XROS_TBA:visionOS ${XROS_VERSION}\"" | tee "${SCRIPT_OUTPUT_FILE_0}"

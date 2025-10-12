@@ -23,7 +23,6 @@
 typedef USVString CSSOMString;
 
 [
-    CustomToJSObject,
     ExportMacro=WEBCORE_EXPORT,
     GenerateIsReachable,
     JSCustomHeader,

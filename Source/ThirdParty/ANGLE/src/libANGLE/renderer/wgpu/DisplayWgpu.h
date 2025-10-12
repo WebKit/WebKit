@@ -16,6 +16,7 @@
 #include "libANGLE/renderer/ShareGroupImpl.h"
 #include "libANGLE/renderer/wgpu/wgpu_format_utils.h"
 #include "libANGLE/renderer/wgpu/wgpu_utils.h"
+#include "platform/autogen/FeaturesWgpu_autogen.h"
 
 namespace rx
 {
@@ -45,6 +46,15 @@ class DisplayWgpu : public DisplayImpl
 
     bool testDeviceLost() override;
     egl::Error restoreLostDevice(const egl::Display *display) override;
+
+    egl::Error validateClientBuffer(const egl::Config *configuration,
+                                    EGLenum buftype,
+                                    EGLClientBuffer clientBuffer,
+                                    const egl::AttributeMap &attribs) const override;
+    egl::Error validateImageClientBuffer(const gl::Context *context,
+                                         EGLenum target,
+                                         EGLClientBuffer clientBuffer,
+                                         const egl::AttributeMap &attribs) const override;
 
     bool isValidNativeWindow(EGLNativeWindowType window) const override;
 
@@ -76,6 +86,10 @@ class DisplayWgpu : public DisplayImpl
                            const gl::Context *context,
                            EGLenum target,
                            const egl::AttributeMap &attribs) override;
+    ExternalImageSiblingImpl *createExternalImageSibling(const gl::Context *context,
+                                                         EGLenum target,
+                                                         EGLClientBuffer buffer,
+                                                         const egl::AttributeMap &attribs) override;
 
     ContextImpl *createContext(const gl::State &state,
                                gl::ErrorSet *errorSet,
@@ -88,10 +102,12 @@ class DisplayWgpu : public DisplayImpl
 
     ShareGroupImpl *createShareGroup(const egl::ShareGroupState &state) override;
 
-    void populateFeatureList(angle::FeatureList *features) override {}
+    void populateFeatureList(angle::FeatureList *features) override;
 
     angle::NativeWindowSystem getWindowSystem() const override;
 
+    const DawnProcTable *getProcs() const { return &mProcTable; }
+    const angle::FeaturesWgpu &getFeatures() const { return mFeatures; }
     webgpu::AdapterHandle getAdapter() { return mAdapter; }
     webgpu::DeviceHandle getDevice() { return mDevice; }
     webgpu::QueueHandle getQueue() { return mQueue; }
@@ -110,11 +126,21 @@ class DisplayWgpu : public DisplayImpl
         return mFormatTable[internalFormat];
     }
 
+    const webgpu::Format *getFormatForImportedTexture(const egl::AttributeMap &attribs,
+                                                      WGPUTextureFormat wgpuFormat) const;
+
   private:
+    egl::Error validateExternalWebGPUTexture(EGLClientBuffer buffer,
+                                             const egl::AttributeMap &attribs) const;
+
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
     void generateCaps(egl::Caps *outCaps) const override;
 
+    void initializeFeatures();
+
     egl::Error createWgpuDevice();
+
+    DawnProcTable mProcTable;
 
     webgpu::AdapterHandle mAdapter;
     webgpu::InstanceHandle mInstance;
@@ -133,6 +159,8 @@ class DisplayWgpu : public DisplayImpl
     ShPixelLocalStorageOptions mPLSOptions;
 
     webgpu::FormatTable mFormatTable;
+
+    angle::FeaturesWgpu mFeatures;
 };
 
 }  // namespace rx

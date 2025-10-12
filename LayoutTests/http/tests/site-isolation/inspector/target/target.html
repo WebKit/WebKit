@@ -1,0 +1,41 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function appendAndRemoveIframe() {
+    let iframe = document.createElement("iframe");
+    iframe.src = "http://localhost:8000/site-isolation/inspector/target/resources/middle-iframe.html";
+    iframe.addEventListener("load", () => {
+        setTimeout(() => {
+            iframe.remove();
+        }, 0);
+    });
+    document.body.append(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Target");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Target.FrameTargetLifecycleEvents",
+        description: "Target lifecycle events for frame creation and deletion.",
+        test(resolve) {
+            let eventsSeen = 0;
+            const eventsExpected = 4;
+
+            let handleTargetManagerEvent = (event) => {
+                InspectorTest.log({ eventType: event.type, targetType: event.data.target.type });
+                ++eventsSeen;
+                if (eventsSeen == eventsExpected)
+                    resolve();
+            }
+            WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, handleTargetManagerEvent);
+            WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, handleTargetManagerEvent);
+
+            InspectorTest.evaluateInPage(`appendAndRemoveIframe();`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()"></body>

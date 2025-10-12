@@ -7,7 +7,7 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include <stddef.h>
+#include <cstddef>
 
 #include "test/linux/glx_renderer.h"
 #include "test/video_renderer.h"
@@ -19,10 +19,10 @@ VideoRenderer* VideoRenderer::CreatePlatformRenderer(const char* window_title,
                                                      size_t width,
                                                      size_t height) {
   GlxRenderer* glx_renderer = GlxRenderer::Create(window_title, width, height);
-  if (glx_renderer != NULL) {
+  if (glx_renderer != nullptr) {
     return glx_renderer;
   }
-  return NULL;
+  return nullptr;
 }
 }  // namespace test
 }  // namespace webrtc

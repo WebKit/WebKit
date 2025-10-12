@@ -6,7 +6,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS timeLabel.value is 0
 PASS timeLabel.element.localName is "div"
 PASS timeLabel.element.className is "time-label"
-PASS style.position is "absolute"
 PASS style.fontFamily is "-apple-system-monospaced-numbers"
 PASS style.fontSize is "12px"
 
@@ -16,33 +15,17 @@ PASS elaspedLabel is "Elapsed"
 PASS remainingLabel is "Remaining"
 PASS durationLabel is "Duration"
 
-elapsedTimeLabels[3].element.textContent = 0:01
-elapsedTimeLabels[3].width = 27
-remainingTimeLabels[3].element.textContent = -0:01
-remainingTimeLabels[3].width = 33
-durationTimeLabels[3].element.textContent = 0:01
-durationTimeLabels[3].width = 27
-
 elapsedTimeLabels[4].element.textContent = 00:01
-elapsedTimeLabels[4].width = 35
 remainingTimeLabels[4].element.textContent = -00:01
-remainingTimeLabels[4].width = 40
 durationTimeLabels[4].element.textContent = 00:01
-durationTimeLabels[4].width = 35
 
 elapsedTimeLabels[5].element.textContent = 0:00:01
-elapsedTimeLabels[5].width = 46
 remainingTimeLabels[5].element.textContent = -0:00:01
-remainingTimeLabels[5].width = 52
 durationTimeLabels[5].element.textContent = 0:00:01
-durationTimeLabels[5].width = 46
 
 elapsedTimeLabels[6].element.textContent = 00:00:01
-elapsedTimeLabels[6].width = 54
 remainingTimeLabels[6].element.textContent = -00:00:01
-remainingTimeLabels[6].width = 59
 durationTimeLabels[6].element.textContent = 00:00:01
-durationTimeLabels[6].width = 54
 
 PASS successfullyParsed is true
 

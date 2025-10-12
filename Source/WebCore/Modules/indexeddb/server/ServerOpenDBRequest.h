@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "IDBConnectionToClient.h"
-#include "IDBDatabaseConnectionIdentifier.h"
-#include "IDBOpenRequestData.h"
+#include <WebCore/IDBConnectionToClient.h>
+#include <WebCore/IDBDatabaseConnectionIdentifier.h>
+#include <WebCore/IDBOpenRequestData.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>

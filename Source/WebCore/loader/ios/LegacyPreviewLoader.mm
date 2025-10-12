@@ -70,11 +70,6 @@ RefPtr<PreviewConverter> LegacyPreviewLoader::protectedConverter() const
     return m_converter;
 }
 
-Ref<LegacyPreviewLoaderClient> LegacyPreviewLoader::protectedClient() const
-{
-    return m_client;
-}
-
 bool LegacyPreviewLoader::didReceiveData(const SharedBuffer& buffer)
 {
     if (m_finishedLoadingDataIntoConverter)
@@ -83,7 +78,7 @@ bool LegacyPreviewLoader::didReceiveData(const SharedBuffer& buffer)
     LOG(Network, "LegacyPreviewLoader appending buffer with size %ld.", buffer.size());
     m_originalData.append(buffer);
     protectedConverter()->updateMainResource();
-    protectedClient()->didReceiveData(buffer);
+    m_client->didReceiveData(buffer);
     return true;
 }
 
@@ -95,7 +90,7 @@ bool LegacyPreviewLoader::didFinishLoading()
     LOG(Network, "LegacyPreviewLoader finished appending data.");
     m_finishedLoadingDataIntoConverter = true;
     protectedConverter()->finishUpdating();
-    protectedClient()->didFinishLoading();
+    m_client->didFinishLoading();
     return true;
 }
 
@@ -107,7 +102,7 @@ void LegacyPreviewLoader::didFail()
     LOG(Network, "LegacyPreviewLoader failed.");
     m_finishedLoadingDataIntoConverter = true;
     protectedConverter()->failedUpdating();
-    protectedClient()->didFail();
+    m_client->didFail();
     m_converter = nullptr;
 }
 

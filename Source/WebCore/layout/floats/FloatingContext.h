@@ -26,8 +26,8 @@
 #pragma once
 
 #include "FormattingContext.h"
-#include "LayoutElementBox.h"
-#include "PlacedFloats.h"
+#include <WebCore/LayoutElementBox.h>
+#include <WebCore/PlacedFloats.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -75,7 +75,7 @@ private:
 
     const ElementBox& root() const { return m_formattingContextRoot; }
     // FIXME: Turn this into an actual geometry cache.
-    const LayoutState& containingBlockGeometries() const { return m_layoutState; }
+    const LayoutState& containingBlockGeometries() const;
 
     void findPositionForFormattingContextRoot(FloatAvoider&, BoxGeometry::HorizontalEdges containingBlockContentBoxEdges) const;
 
@@ -85,7 +85,7 @@ private:
     Point mapPointFromFloatingContextRootToBlockFormattingContextRoot(Point) const;
 
     CheckedRef<const ElementBox> m_formattingContextRoot;
-    const LayoutState& m_layoutState;
+    const CheckedRef<const LayoutState> m_layoutState;
     const PlacedFloats& m_placedFloats;
 };
 

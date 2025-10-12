@@ -1,3 +1,0 @@
-
-PASS Check if the <link>'s error event fires for each stylesheet it fails to load
-

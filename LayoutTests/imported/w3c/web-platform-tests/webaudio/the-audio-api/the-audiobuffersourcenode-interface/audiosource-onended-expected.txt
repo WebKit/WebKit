@@ -1,21 +1,6 @@
 
-PASS # AUDIT TASK RUNNER STARTED.
-PASS Executing "absn-set-onended"
-PASS Executing "absn-add-listener"
-PASS Executing "osc-set-onended"
-PASS Executing "osc-add-listener"
-PASS Audit report
-PASS > [absn-set-onended]
-PASS   AudioBufferSource.onended called when ended set directly is equal to true.
-PASS < [absn-set-onended] All assertions passed. (total 1 assertions)
-PASS > [absn-add-listener]
-PASS   AudioBufferSource.onended called when using addEventListener is equal to true.
-PASS < [absn-add-listener] All assertions passed. (total 1 assertions)
-PASS > [osc-set-onended]
-PASS   Oscillator.onended called when ended set directly is equal to true.
-PASS < [osc-set-onended] All assertions passed. (total 1 assertions)
-PASS > [osc-add-listener]
-PASS   Oscillator.onended called when using addEventListener is equal to true.
-PASS < [osc-add-listener] All assertions passed. (total 1 assertions)
-PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully.
+PASS absn-set-onended: onended event fires for AudioBufferSourceNode when set directly
+PASS absn-add-listener: onended event fires for AudioBufferSourceNode when using addEventListener
+PASS osc-set-onended: onended event fires for OscillatorNode when set directly
+PASS osc-add-listener: onended event fires for OscillatorNode when using addEventListener
 

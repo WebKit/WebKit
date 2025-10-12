@@ -10,16 +10,28 @@
 
 #include "video/encoder_bitrate_adjuster.h"
 
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "api/field_trials_view.h"
+#include "api/field_trials.h"
 #include "api/units/data_rate.h"
-#include "rtc_base/logging.h"
-#include "rtc_base/numerics/safe_conversions.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_codec_constants.h"
+#include "api/video/video_codec_type.h"
+#include "api/video_codecs/scalability_mode.h"
+#include "api/video_codecs/video_codec.h"
+#include "api/video_codecs/video_encoder.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/time_utils.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
-#include "test/scoped_key_value_config.h"
 #include "test/time_controller/simulated_time_controller.h"
 
 namespace webrtc {
@@ -47,7 +59,7 @@ class EncoderBitrateAdjusterTest : public Test,
         target_framerate_fps_(kDefaultFrameRateFps),
         tl_pattern_idx_{},
         sequence_idx_{},
-        scoped_field_trial_(GetParam()) {}
+        field_trials_(CreateTestFieldTrials(GetParam())) {}
 
  protected:
   void SetUpAdjusterWithCodec(size_t num_spatial_layers,
@@ -65,7 +77,7 @@ class EncoderBitrateAdjusterTest : public Test,
     }
 
     adjuster_ = std::make_unique<EncoderBitrateAdjuster>(
-        codec_, scoped_field_trial_, *time_controller_.GetClock());
+        codec_, field_trials_, *time_controller_.GetClock());
     adjuster_->OnEncoderInfo(encoder_info_);
     current_adjusted_allocation_ =
         adjuster_->AdjustRateAllocation(VideoEncoder::RateControlParameters(
@@ -118,9 +130,8 @@ class EncoderBitrateAdjusterTest : public Test,
     RTC_DCHECK_EQ(media_utilization_factors.size(),
                   network_utilization_factors.size());
 
-    const int64_t start_us = rtc::TimeMicros();
-    while (rtc::TimeMicros() <
-           start_us + (duration_ms * rtc::kNumMicrosecsPerMillisec)) {
+    const int64_t start_us = TimeMicros();
+    while (TimeMicros() < start_us + (duration_ms * kNumMicrosecsPerMillisec)) {
       time_controller_.AdvanceTime(TimeDelta::Seconds(1) /
                                    target_framerate_fps_);
       for (size_t si = 0; si < NumSpatialLayers(); ++si) {
@@ -253,7 +264,7 @@ class EncoderBitrateAdjusterTest : public Test,
   double target_framerate_fps_;
   int tl_pattern_idx_[kMaxSpatialLayers];
   int sequence_idx_[kMaxSpatialLayers][kMaxTemporalStreams];
-  test::ScopedKeyValueConfig scoped_field_trial_;
+  FieldTrials field_trials_;
 
   const std::vector<int> kTlPatterns[kMaxTemporalStreams] = {
       {0},

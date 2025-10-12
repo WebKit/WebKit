@@ -31,6 +31,7 @@ struct WebKit::FrameInfoData {
     WebCore::SecurityOriginData securityOrigin;
     String frameName;
     WebCore::FrameIdentifier frameID;
+    Markable<WebKit::WebPageProxyIdentifier> webPageProxyID;
     Markable<WebCore::FrameIdentifier> parentFrameID;
     Markable<WebCore::ScriptExecutionContextIdentifier> documentID;
     WebCore::CertificateInfo certificateInfo;

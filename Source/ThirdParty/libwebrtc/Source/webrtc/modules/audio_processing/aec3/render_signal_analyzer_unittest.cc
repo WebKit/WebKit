@@ -10,18 +10,23 @@
 
 #include "modules/audio_processing/aec3/render_signal_analyzer.h"
 
-#include <math.h>
-
+#include <algorithm>
 #include <array>
 #include <cmath>
-#include <vector>
+#include <cstddef>
+#include <memory>
+#include <numbers>
+#include <optional>
+#include <string>
 
 #include "api/array_view.h"
+#include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/aec3_fft.h"
-#include "modules/audio_processing/aec3/fft_data.h"
+#include "modules/audio_processing/aec3/block.h"
 #include "modules/audio_processing/aec3/render_delay_buffer.h"
 #include "modules/audio_processing/test/echo_canceller_test_tools.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/random.h"
 #include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
@@ -29,7 +34,7 @@
 namespace webrtc {
 namespace {
 
-constexpr float kPi = 3.141592f;
+constexpr float kPi = std::numbers::pi_v<float>;
 
 void ProduceSinusoidInNoise(int sample_rate_hz,
                             size_t sinusoid_channel,
@@ -107,7 +112,7 @@ void RunNarrowBandDetectionTest(size_t num_channels) {
 }
 
 std::string ProduceDebugText(size_t num_channels) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "number of channels: " << num_channels;
   return ss.Release();
 }

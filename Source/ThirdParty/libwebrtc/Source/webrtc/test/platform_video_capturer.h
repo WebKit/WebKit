@@ -10,6 +10,7 @@
 #ifndef TEST_PLATFORM_VIDEO_CAPTURER_H_
 #define TEST_PLATFORM_VIDEO_CAPTURER_H_
 
+#include <cstddef>
 #include <memory>
 
 #include "test/test_video_capturer.h"

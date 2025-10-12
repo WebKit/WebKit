@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "WebGPUIndexFormat.h"
-#include "WebGPUIntegralTypes.h"
-#include "WebGPURenderBundleDescriptor.h"
+#include <WebCore/WebGPUIndexFormat.h>
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPURenderBundleDescriptor.h>
 #include <cstdint>
 #include <optional>
 #include <wtf/Ref.h>

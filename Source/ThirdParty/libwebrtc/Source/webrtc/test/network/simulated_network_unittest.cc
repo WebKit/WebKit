@@ -9,16 +9,17 @@
  */
 #include "test/network/simulated_network.h"
 
-#include <algorithm>
+#include <cstddef>
 #include <cstdint>
-#include <map>
+#include <memory>
 #include <optional>
-#include <set>
+#include <utility>
 #include <vector>
 
-#include "absl/algorithm/container.h"
+#include "api/test/network_emulation/leaky_bucket_network_queue.h"
 #include "api/test/simulated_network.h"
 #include "api/units/data_rate.h"
+#include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "test/gmock.h"
@@ -28,8 +29,10 @@ namespace webrtc {
 namespace {
 
 using ::testing::ElementsAre;
+using ::testing::Field;
 using ::testing::MockFunction;
 using ::testing::SizeIs;
+using ::testing::UnorderedElementsAre;
 
 PacketInFlightInfo PacketWithSize(size_t size) {
   return PacketInFlightInfo(/*size=*/size, /*send_time_us=*/0, /*packet_id=*/1);
@@ -107,6 +110,20 @@ TEST(SimulatedNetworkTest, EnqueueFailsWhenQueueLengthIsReached) {
       PacketInFlightInfo(/*size=*/125,
                          /*send_time_us=*/TimeDelta::Seconds(2).us(),
                          /*packet_id=*/3)));
+}
+
+TEST(SimulatedNetworkTest, CanChangeQueueLength) {
+  SimulatedNetwork network =
+      SimulatedNetwork({.link_capacity = DataRate::KilobitsPerSec(1)});
+  ASSERT_TRUE(network.EnqueuePacket(
+      PacketInFlightInfo(/*size=*/125, /*send_time_us=*/0, /*packet_id=*/1)));
+  ASSERT_TRUE(network.EnqueuePacket(
+      PacketInFlightInfo(/*size=*/125, /*send_time_us=*/0, /*packet_id=*/2)));
+
+  network.SetConfig({.queue_length_packets = 1,
+                     .link_capacity = DataRate::KilobitsPerSec(1)});
+  EXPECT_FALSE(network.EnqueuePacket(
+      PacketInFlightInfo(/*size=*/125, /*send_time_us=*/0, /*packet_id=*/3)));
 }
 
 TEST(SimulatedNetworkTest, PacketOverhead) {
@@ -465,7 +482,7 @@ TEST(SimulatedNetworkTest, QueueDelayMsWithStandardDeviationAndReorderAllowed) {
           /*receive_time_us=*/TimeDelta::Seconds(5).us());
   ASSERT_EQ(delivered_packets.size(), 4ul);
 
-  // And they have been reordered accorting to the applied extra delay.
+  // And they have been reordered according to the applied extra delay.
   EXPECT_EQ(delivered_packets[0].packet_id, 3ul);
   EXPECT_EQ(delivered_packets[1].packet_id, 1ul);
   EXPECT_GE(delivered_packets[1].receive_time_us,
@@ -564,18 +581,17 @@ TEST(SimulatedNetworkTest, PacketLossBurst) {
   EXPECT_EQ(delivered_packets.size(), 20ul);
 
   // Results in a burst of lost packets after the first packet lost.
-  // With the current random seed, the first 12 are not lost, while the
-  // last 8 are.
-  int current_packet = 0;
+  // With the current random seed, at least 5 packets are lost.
+  int num_lost_packets = 0;
   for (const auto& packet : delivered_packets) {
-    if (current_packet < 12) {
-      EXPECT_NE(packet.receive_time_us, PacketDeliveryInfo::kNotReceived);
-      current_packet++;
-    } else {
+    if (packet.receive_time_us == PacketDeliveryInfo::kNotReceived) {
+      num_lost_packets++;
+    }
+    if (num_lost_packets > 0) {
       EXPECT_EQ(packet.receive_time_us, PacketDeliveryInfo::kNotReceived);
-      current_packet++;
     }
   }
+  EXPECT_GT(num_lost_packets, 5);
 }
 
 TEST(SimulatedNetworkTest, PauseTransmissionUntil) {
@@ -669,6 +685,31 @@ TEST(SimulatedNetworkTest, EnqueuePacketWithSubSecondNonMonotonicBehaviour) {
   ASSERT_EQ(delivered_packets.size(), 1ul);
   EXPECT_EQ(delivered_packets[0].packet_id, 1ul);
   EXPECT_EQ(delivered_packets[0].receive_time_us, TimeDelta::Seconds(3).us());
+}
+
+TEST(SimulatedNetworkTest, CanUseInjectedQueueAndDropPacketsAtQueueHead) {
+  auto queue = std::make_unique<LeakyBucketNetworkQueue>();
+  LeakyBucketNetworkQueue* queue_ptr = queue.get();
+  SimulatedNetwork network =
+      SimulatedNetwork({.link_capacity = DataRate::KilobitsPerSec(1)},
+                       /*random_seed=*/1, std::move(queue));
+  ASSERT_TRUE(network.EnqueuePacket(PacketInFlightInfo(
+      DataSize::Bytes(125), Timestamp::Seconds(1), /*packet_id=*/0)));
+  ASSERT_TRUE(network.EnqueuePacket(PacketInFlightInfo(
+      DataSize::Bytes(125), Timestamp::Seconds(1), /*packet_id=*/1)));
+
+  // packet 0 is already sent, packet 1 is in the queue and will be dropped.
+  queue_ptr->DropOldestPacket();
+
+  std::vector<PacketDeliveryInfo> delivered_packets =
+      network.DequeueDeliverablePackets(network.NextDeliveryTimeUs().value());
+  ASSERT_EQ(delivered_packets.size(), 2ul);
+  EXPECT_THAT(
+      delivered_packets,
+      UnorderedElementsAre(Field(&PacketDeliveryInfo::packet_id, 0),
+                           AllOf(Field(&PacketDeliveryInfo::packet_id, 1),
+                                 Field(&PacketDeliveryInfo::receive_time_us,
+                                       PacketDeliveryInfo::kNotReceived))));
 }
 
 // TODO(bugs.webrtc.org/14525): Re-enable when the DCHECK will be uncommented

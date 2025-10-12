@@ -35,6 +35,7 @@
 #include <limits>
 #include <math.h>
 #include <stdlib.h>
+#include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 #include <wtf/MathExtras.h>
 #include <wtf/SaturatedArithmetic.h>
@@ -703,6 +704,19 @@ template<> struct HashTraits<WebCore::LayoutUnit> : GenericHashTraits<WebCore::L
     }
     static void constructDeletedValue(WebCore::LayoutUnit& slot) { slot.setRawValue(std::numeric_limits<int>::max()); }
     static bool isDeletedValue(WebCore::LayoutUnit value) { return value.rawValue() == std::numeric_limits<int>::max(); }
+};
+
+template<>
+struct MarkableTraits<WebCore::LayoutUnit> {
+    static bool isEmptyValue(WebCore::LayoutUnit value)
+    {
+        return value == WebCore::LayoutUnit(-1);
+    }
+
+    static WebCore::LayoutUnit emptyValue()
+    {
+        return WebCore::LayoutUnit(-1);
+    }
 };
 
 } // namespace WTF

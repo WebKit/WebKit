@@ -41,6 +41,15 @@ find_library(OPENXR_LIBRARIES
     HINTS ${PC_OPENXR_LIBDIR} ${PC_OPENXR_LIBRARY_DIRS}
 )
 
+if (OPENXR_LIBRARIES AND NOT TARGET OpenXR::openxr_loader)
+    add_library(OpenXR::openxr_loader UNKNOWN IMPORTED GLOBAL)
+    set_target_properties(OpenXR::openxr_loader PROPERTIES
+        IMPORTED_LOCATION "${OPENXR_LIBRARIES}"
+        INTERFACE_COMPILE_OPTIONS "${OPENXR_COMPILE_OPTIONS}"
+        INTERFACE_INCLUDE_DIRECTORIES "${OPENXR_INCLUDE_DIRS}"
+    )
+endif ()
+
 mark_as_advanced(OPENXR_INCLUDE_DIRS OPENXR_LIBRARIES)
 
 include(FindPackageHandleStandardArgs)

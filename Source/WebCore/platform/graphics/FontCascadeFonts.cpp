@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc.  All rights reserved.
- * Copyright (C) 2014 Google Inc.  All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -353,7 +353,7 @@ static RefPtr<const Font> findBestFallbackFont(FontCascadeFonts& fontCascadeFont
             break;
         RefPtr currentFont = fontRanges.glyphDataForCharacter(character, ExternalResourceDownloadPolicy::Forbid).font.get();
         if (!currentFont)
-            currentFont = &fontRanges.fontForFirstRange();
+            currentFont = fontRanges.fontForFirstRange();
 
         if (!currentFont->isInterstitial())
             return currentFont;
@@ -367,7 +367,7 @@ GlyphData FontCascadeFonts::glyphDataForSystemFallback(char32_t character, const
     RefPtr font = findBestFallbackFont(*this, description, fontSelector, character);
 
     if (!font)
-        font = &realizeFallbackRangesAt(description, fontSelector, 0).fontForFirstRange();
+        font = realizeFallbackRangesAt(description, fontSelector, 0).fontForFirstRange();
 
     StringBuilder stringBuilder;
     stringBuilder.append(character);
@@ -434,7 +434,7 @@ GlyphData FontCascadeFonts::glyphDataForVariant(char32_t character, const FontCa
         if (!data.isValid())
             continue;
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(SKIA)
         if (fontRanges.isGenericFontFamily()) {
             if (resolvedEmojiPolicy == ResolvedEmojiPolicy::RequireText && data.colorGlyphType == ColorGlyphType::Color)
                 continue;
@@ -453,7 +453,7 @@ GlyphData FontCascadeFonts::glyphDataForVariant(char32_t character, const FontCa
         }
 
         if (fallbackVisibility == FallbackVisibility::Invisible && data.font->visibility() == Font::Visibility::Visible)
-            data.font = &Ref { *data.font }->invisibleFont();
+            data.font = Ref { *data.font }->invisibleFont();
 
         if (variant == NormalVariant) {
             if (data.font->platformData().orientation() == FontOrientation::Vertical && !data.font->isTextOrientationFallback()) {

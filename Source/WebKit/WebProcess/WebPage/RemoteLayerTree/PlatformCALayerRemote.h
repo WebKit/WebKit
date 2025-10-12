@@ -32,6 +32,7 @@
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/PlatformCALayerDelegatedContents.h>
 #include <WebCore/PlatformLayer.h>
+#include <wtf/MachSendRightAnnotated.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -43,6 +44,7 @@ struct AcceleratedEffectValues;
 #if ENABLE(MODEL_PROCESS)
 class ModelContext;
 #endif
+enum class GraphicsLayerCustomAppearance : bool;
 }
 
 namespace WebKit {
@@ -212,14 +214,20 @@ public:
     WebCore::WindRule shapeWindRule() const override;
     void setShapeWindRule(WebCore::WindRule) override;
 
-    WebCore::GraphicsLayer::CustomAppearance customAppearance() const override;
-    void updateCustomAppearance(WebCore::GraphicsLayer::CustomAppearance) override;
+    WebCore::GraphicsLayerCustomAppearance customAppearance() const override;
+    void updateCustomAppearance(WebCore::GraphicsLayerCustomAppearance) override;
 
     void setEventRegion(const WebCore::EventRegion&) override;
 
 #if ENABLE(SCROLLING_THREAD)
     std::optional<WebCore::ScrollingNodeID> scrollingNodeID() const override;
     void setScrollingNodeID(std::optional<WebCore::ScrollingNodeID>) override;
+#endif
+
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    bool setNeedsDisplayIfEDRHeadroomExceeds(float) override;
+    void setTonemappingEnabled(bool) override;
+    bool tonemappingEnabled() const override;
 #endif
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
@@ -272,6 +280,11 @@ public:
     void purgeFrontBufferForTesting() override;
     void purgeBackBufferForTesting() override;
 
+#if ENABLE(MACH_PORT_LAYER_HOSTING)
+    void setSendRightAnnotated(WTF::MachSendRightAnnotated sendRightAnnotated) { m_sendRightAnnotated = sendRightAnnotated; }
+    std::optional<WTF::MachSendRightAnnotated> sendRightAnnotated() const { return m_sendRightAnnotated; }
+#endif
+
 protected:
     PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
     PlatformCALayerRemote(const PlatformCALayerRemote&, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
@@ -301,6 +314,10 @@ private:
 
     bool m_acceleratesDrawing { false };
     WeakPtr<RemoteLayerTreeContext> m_context;
+
+#if ENABLE(MACH_PORT_LAYER_HOSTING)
+    std::optional<WTF::MachSendRightAnnotated> m_sendRightAnnotated;
+#endif
 };
 
 } // namespace WebKit

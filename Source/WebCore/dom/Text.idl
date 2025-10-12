@@ -19,7 +19,6 @@
  */
 
 [
-    CustomToJSObject,
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface Text : CharacterData {

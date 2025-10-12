@@ -10,7 +10,6 @@
 #if defined(SK_VULKAN)
 
 #include "include/core/SkSurface.h"
-#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/vk/VulkanBackendContext.h"
 #include "include/gpu/vk/VulkanMemoryAllocator.h"
 #include "tests/TestType.h"
@@ -19,6 +18,7 @@
 
 #if defined(SK_GANESH)
 #include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/ganesh/vk/GrVkDirectContext.h"
 #endif
 
@@ -210,9 +210,6 @@ bool VkTestHelper::setupBackendContext() {
         return false;
     }
 
-    fFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-    fFeatures.pNext = nullptr;
-
     fBackendContext.fInstance = VK_NULL_HANDLE;
     fBackendContext.fDevice = VK_NULL_HANDLE;
 
@@ -269,8 +266,6 @@ VkTestHelper::~VkTestHelper() {
         fVkDestroyInstance(fBackendContext.fInstance, nullptr);
         fBackendContext.fInstance = VK_NULL_HANDLE;
     }
-
-    sk_gpu_test::FreeVulkanFeaturesStructs(&fFeatures);
 }
 
 #endif // SK_VULKAN

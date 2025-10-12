@@ -36,7 +36,6 @@ enum AlignSetting { "start", "center", "end", "left", "right" };
 [
     Conditional=VIDEO,
     ExportMacro=WEBCORE_EXPORT,
-    JSGenerateToJSObject,
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface VTTCue : TextTrackCue {

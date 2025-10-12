@@ -29,6 +29,7 @@
 #if ENABLE(PAYMENT_REQUEST)
 
 #include "ApplePayPaymentHandler.h"
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
@@ -372,12 +373,13 @@ PaymentRequest::~PaymentRequest()
 // https://www.w3.org/TR/payment-request/#show-method
 void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromise, ShowPromise&& promise)
 {
-    if (!document.frame()) {
+    RefPtr frame = document.frame();
+    if (!frame) {
         promise.reject(Exception { ExceptionCode::AbortError });
         return;
     }
 
-    RefPtr window = document.frame()->window();
+    RefPtr window = frame->window();
     if (!window || !window->consumeTransientActivation()) {
         promise.reject(Exception { ExceptionCode::SecurityError, "show() must be triggered by user activation."_s });
         return;
@@ -450,10 +452,15 @@ void PaymentRequest::abortWithException(Exception&& exception)
     ASSERT(m_state == State::Interactive);
     closeActivePaymentHandler();
 
-    if (m_response)
-        m_response->abortWithException(WTFMove(exception));
+    if (RefPtr response = m_response)
+        response->abortWithException(WTFMove(exception));
     else
         settleShowPromise(WTFMove(exception));
+}
+
+RefPtr<PaymentHandler> PaymentRequest::protectedActivePaymentHandler()
+{
+    return activePaymentHandler();
 }
 
 void PaymentRequest::settleShowPromise(ExceptionOr<PaymentResponse&>&& result)
@@ -465,7 +472,7 @@ void PaymentRequest::settleShowPromise(ExceptionOr<PaymentResponse&>&& result)
 void PaymentRequest::closeActivePaymentHandler()
 {
     if (auto activePaymentHandler = std::exchange(m_activePaymentHandler, std::nullopt))
-        activePaymentHandler->paymentHandler->hide();
+        Ref { activePaymentHandler->paymentHandler }->hide();
 
     m_isUpdating = false;
     m_state = State::Closed;
@@ -493,6 +500,16 @@ void PaymentRequest::suspend(ReasonForSuspension reason)
     stop();
 }
 
+ScriptExecutionContext* PaymentRequest::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
+RefPtr<ScriptExecutionContext> PaymentRequest::protectedScriptExecutionContext() const
+{
+    return scriptExecutionContext();
+}
+
 // https://www.w3.org/TR/payment-request/#abort()-method
 void PaymentRequest::abort(AbortPromise&& promise)
 {
@@ -506,7 +523,7 @@ void PaymentRequest::abort(AbortPromise&& promise)
         return;
     }
 
-    if (m_activePaymentHandler && !activePaymentHandler()->canAbortSession()) {
+    if (m_activePaymentHandler && !protectedActivePaymentHandler()->canAbortSession()) {
         promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
@@ -590,8 +607,8 @@ ExceptionOr<void> PaymentRequest::updateWith(UpdateReason reason, Ref<DOMPromise
     m_isUpdating = true;
 
     ASSERT(!m_detailsPromise);
-    m_detailsPromise = WTFMove(promise);
-    m_detailsPromise->whenSettled([protectedThis = Ref { *this }, reason]() {
+    m_detailsPromise = promise.copyRef();
+    promise->whenSettled([protectedThis = Ref { *this }, reason]() {
         protectedThis->settleDetailsPromise(reason);
     });
 
@@ -606,18 +623,19 @@ ExceptionOr<void> PaymentRequest::completeMerchantValidation(Event& event, Ref<D
     event.stopPropagation();
     event.stopImmediatePropagation();
 
-    m_merchantSessionPromise = WTFMove(merchantSessionPromise);
-    m_merchantSessionPromise->whenSettled([protectedThis = Ref { *this }]() {
+    m_merchantSessionPromise = merchantSessionPromise.copyRef();
+    merchantSessionPromise->whenSettled([protectedThis = Ref { *this }]() {
         if (protectedThis->m_state != State::Interactive)
             return;
 
-        if (protectedThis->m_merchantSessionPromise->status() == DOMPromise::Status::Rejected) {
+        RefPtr merchantSessionPromise = protectedThis->m_merchantSessionPromise;
+        if (merchantSessionPromise->status() == DOMPromise::Status::Rejected) {
             protectedThis->abortWithException(Exception { ExceptionCode::AbortError });
             return;
         }
 
         Ref activePaymentHandler = *protectedThis->activePaymentHandler();
-        auto exception = activePaymentHandler->merchantValidationCompleted(protectedThis->m_merchantSessionPromise->result());
+        auto exception = activePaymentHandler->merchantValidationCompleted(merchantSessionPromise->result());
         if (exception.hasException()) {
             protectedThis->abortWithException(exception.releaseException());
             return;
@@ -634,7 +652,7 @@ void PaymentRequest::dispatchAndCheckUpdateEvent(Ref<PaymentRequestUpdateEvent>&
     if (event->didCallUpdateWith())
         return;
 
-    scriptExecutionContext()->addConsoleMessage(JSC::MessageSource::PaymentRequest, JSC::MessageLevel::Warning, makeString("updateWith() should be called synchronously when handling \""_s, event->type(), "\"."_s));
+    protectedScriptExecutionContext()->addConsoleMessage(JSC::MessageSource::PaymentRequest, JSC::MessageLevel::Warning, makeString("updateWith() should be called synchronously when handling \""_s, event->type(), "\"."_s));
 }
 
 void PaymentRequest::settleDetailsPromise(UpdateReason reason)
@@ -648,16 +666,17 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
     if (m_state != State::Interactive)
         return;
 
-    if (m_isCancelPending || m_detailsPromise->status() == DOMPromise::Status::Rejected) {
+    RefPtr detailsPromise = m_detailsPromise;
+    if (m_isCancelPending || detailsPromise->status() == DOMPromise::Status::Rejected) {
         abortWithException(Exception { ExceptionCode::AbortError });
         return;
     }
 
     Ref activePaymentHandler = *this->activePaymentHandler();
 
-    auto& context = *m_detailsPromise->scriptExecutionContext();
-    auto throwScope = DECLARE_THROW_SCOPE(context.vm());
-    auto detailsUpdateConversion = convertDictionary<PaymentDetailsUpdate>(*context.globalObject(), m_detailsPromise->result());
+    Ref context = *detailsPromise->scriptExecutionContext();
+    auto throwScope = DECLARE_THROW_SCOPE(context->vm());
+    auto detailsUpdateConversion = convertDictionary<PaymentDetailsUpdate>(*context->globalObject(), detailsPromise->result());
     if (detailsUpdateConversion.hasException(throwScope)) {
         abortWithException(Exception { ExceptionCode::ExistingExceptionError });
         return;
@@ -672,7 +691,7 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
         }
     }
 
-    auto detailsResult = checkAndCanonicalizeDetails(context, detailsUpdate, m_options.requestShipping, IsUpdate::Yes);
+    auto detailsResult = checkAndCanonicalizeDetails(context.get(), detailsUpdate, m_options.requestShipping, IsUpdate::Yes);
     if (detailsResult.hasException()) {
         abortWithException(detailsResult.releaseException());
         return;
@@ -702,20 +721,21 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
 
 void PaymentRequest::whenDetailsSettled(std::function<void()>&& callback)
 {
-    auto whenSettledFunction = [this, callback = WTFMove(callback)] {
-        ASSERT(m_state == State::Interactive);
-        ASSERT(!m_isUpdating);
-        ASSERT(!m_isCancelPending);
-        ASSERT_UNUSED(this, this);
+    auto whenSettledFunction = [protectedThis = Ref { *this }, callback = WTFMove(callback)] {
+        ASSERT(protectedThis->m_state == State::Interactive);
+        ASSERT(!protectedThis->m_isUpdating);
+        ASSERT(!protectedThis->m_isCancelPending);
+        ASSERT_UNUSED(protectedThis, protectedThis.ptr());
         callback();
     };
 
-    if (!m_detailsPromise) {
+    RefPtr detailsPromise = m_detailsPromise;
+    if (!detailsPromise) {
         whenSettledFunction();
         return;
     }
 
-    m_detailsPromise->whenSettled([protectedThis = Ref { *this }, whenSettledFunction = WTFMove(whenSettledFunction)] {
+    detailsPromise->whenSettled([protectedThis = Ref { *this }, whenSettledFunction = WTFMove(whenSettledFunction)] {
         if (protectedThis->m_state == State::Interactive)
             whenSettledFunction();
     });
@@ -726,25 +746,27 @@ void PaymentRequest::accept(const String& methodName, PaymentResponse::DetailsFu
     ASSERT(!m_isUpdating);
     ASSERT(m_state == State::Interactive);
 
+    RefPtr response = m_response;
     bool isRetry = m_response;
     if (!isRetry) {
-        m_response = PaymentResponse::create(scriptExecutionContext(), *this);
-        m_response->setRequestId(m_details.id);
+        response = PaymentResponse::create(protectedScriptExecutionContext().get(), *this);
+        m_response = response.copyRef();
+        response->setRequestId(m_details.id);
     }
 
-    m_response->setMethodName(methodName);
-    m_response->setDetailsFunction(WTFMove(detailsFunction));
-    m_response->setShippingAddress(nullptr);
-    m_response->setShippingOption(nullString());
-    m_response->setPayerName(nullString());
-    m_response->setPayerEmail(nullString());
-    m_response->setPayerPhone(nullString());
+    response->setMethodName(methodName);
+    response->setDetailsFunction(WTFMove(detailsFunction));
+    response->setShippingAddress(nullptr);
+    response->setShippingOption(nullString());
+    response->setPayerName(nullString());
+    response->setPayerEmail(nullString());
+    response->setPayerPhone(nullString());
 
     if (!isRetry)
-        settleShowPromise(*m_response);
+        settleShowPromise(*response);
     else {
-        ASSERT(m_response->hasRetryPromise());
-        m_response->settleRetryPromise();
+        ASSERT(response->hasRetryPromise());
+        response->settleRetryPromise();
     }
 
     m_state = State::Closed;
@@ -755,25 +777,27 @@ void PaymentRequest::accept(const String& methodName, PaymentResponse::DetailsFu
     ASSERT(!m_isUpdating);
     ASSERT(m_state == State::Interactive);
 
+    RefPtr response = m_response;
     bool isRetry = m_response;
     if (!isRetry) {
-        m_response = PaymentResponse::create(scriptExecutionContext(), *this);
-        m_response->setRequestId(m_details.id);
+        response = PaymentResponse::create(protectedScriptExecutionContext().get(), *this);
+        m_response = response.copyRef();
+        response->setRequestId(m_details.id);
     }
 
-    m_response->setMethodName(methodName);
-    m_response->setDetailsFunction(WTFMove(detailsFunction));
-    m_response->setShippingAddress(m_options.requestShipping ? shippingAddress.ptr() : nullptr);
-    m_response->setShippingOption(m_options.requestShipping ? m_shippingOption : String { });
-    m_response->setPayerName(m_options.requestPayerName ? payerName : String { });
-    m_response->setPayerEmail(m_options.requestPayerEmail ? payerEmail : String { });
-    m_response->setPayerPhone(m_options.requestPayerPhone ? payerPhone : String { });
+    response->setMethodName(methodName);
+    response->setDetailsFunction(WTFMove(detailsFunction));
+    response->setShippingAddress(m_options.requestShipping ? shippingAddress.ptr() : nullptr);
+    response->setShippingOption(m_options.requestShipping ? m_shippingOption : String { });
+    response->setPayerName(m_options.requestPayerName ? payerName : String { });
+    response->setPayerEmail(m_options.requestPayerEmail ? payerEmail : String { });
+    response->setPayerPhone(m_options.requestPayerPhone ? payerPhone : String { });
 
     if (!isRetry)
-        settleShowPromise(*m_response);
+        settleShowPromise(*response);
     else {
-        ASSERT(m_response->hasRetryPromise());
-        m_response->settleRetryPromise();
+        ASSERT(response->hasRetryPromise());
+        response->settleRetryPromise();
     }
 
     m_state = State::Closed;
@@ -817,7 +841,7 @@ void PaymentRequest::cancel()
 
     if (m_isUpdating) {
         m_isCancelPending = true;
-        scriptExecutionContext()->addConsoleMessage(JSC::MessageSource::PaymentRequest, JSC::MessageLevel::Error, "payment request timed out while waiting for Promise given to show() or updateWith() to settle."_s);
+        protectedScriptExecutionContext()->addConsoleMessage(JSC::MessageSource::PaymentRequest, JSC::MessageLevel::Error, "payment request timed out while waiting for Promise given to show() or updateWith() to settle."_s);
         return;
     }
 

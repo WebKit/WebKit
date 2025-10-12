@@ -10,17 +10,23 @@
 
 #include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_frame_in_flight.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <optional>
+#include <set>
 #include <unordered_map>
 #include <utility>
 #include <vector>
 
+#include "api/numerics/samples_stats_counter.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_frame_type.h"
+#include "rtc_base/checks.h"
 #include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_internal_shared_objects.h"
+#include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_shared_objects.h"
 
 namespace webrtc {
 namespace {
@@ -78,7 +84,7 @@ bool FrameInFlight::HaveAllPeersReceived() const {
 }
 
 void FrameInFlight::OnFrameEncoded(
-    webrtc::Timestamp time,
+    Timestamp time,
     std::optional<TimeDelta> time_between_encoded_frames,
     VideoFrameType frame_type,
     DataSize encoded_image_size,
@@ -113,8 +119,8 @@ void FrameInFlight::OnFrameEncoded(
 }
 
 void FrameInFlight::OnFramePreDecode(size_t peer,
-                                     webrtc::Timestamp received_time,
-                                     webrtc::Timestamp decode_start_time,
+                                     Timestamp received_time,
+                                     Timestamp decode_start_time,
                                      VideoFrameType frame_type,
                                      DataSize encoded_image_size) {
   receiver_stats_[peer].received_time = received_time;
@@ -132,7 +138,7 @@ bool FrameInFlight::HasReceivedTime(size_t peer) const {
 }
 
 void FrameInFlight::OnFrameDecoded(size_t peer,
-                                   webrtc::Timestamp time,
+                                   Timestamp time,
                                    int width,
                                    int height,
                                    const StreamCodecInfo& used_decoder,
@@ -158,7 +164,7 @@ bool FrameInFlight::HasDecodeEndTime(size_t peer) const {
   return it->second.decode_end_time.IsFinite();
 }
 
-void FrameInFlight::OnFrameRendered(size_t peer, webrtc::Timestamp time) {
+void FrameInFlight::OnFrameRendered(size_t peer, Timestamp time) {
   receiver_stats_[peer].rendered_time = time;
 }
 

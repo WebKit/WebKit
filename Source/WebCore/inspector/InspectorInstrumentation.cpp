@@ -34,9 +34,11 @@
 
 #include "CachedResource.h"
 #include "ComputedEffectTiming.h"
+#include "ContextDestructionObserverInlines.h"
 #include "DOMWrapperWorld.h"
 #include "DocumentLoader.h"
 #include "Event.h"
+#include "EventTargetInlines.h"
 #include "InspectorAnimationAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorCanvasAgent.h"
@@ -63,6 +65,7 @@
 #include "PageTimelineAgent.h"
 #include "PlatformStrategies.h"
 #include "RenderObjectInlines.h"
+#include "RenderObjectNode.h"
 #include "RenderView.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
@@ -528,10 +531,10 @@ void InspectorInstrumentation::willLayoutImpl(InstrumentingAgents& instrumenting
         pageTimelineAgent->willLayout();
 }
 
-void InspectorInstrumentation::didLayoutImpl(InstrumentingAgents& instrumentingAgents, RenderObject& root)
+void InspectorInstrumentation::didLayoutImpl(InstrumentingAgents& instrumentingAgents, const Vector<FloatQuad>& layoutAreas)
 {
     if (auto* pageTimelineAgent = instrumentingAgents.trackingPageTimelineAgent())
-        pageTimelineAgent->didLayout(root);
+        pageTimelineAgent->didLayout(layoutAreas);
     if (auto* pageAgent = instrumentingAgents.enabledPageAgent())
         pageAgent->didLayout();
 }
@@ -817,9 +820,6 @@ void InspectorInstrumentation::frameStartedLoadingImpl(InstrumentingAgents& inst
         if (auto* pageTimelineAgent = instrumentingAgents.enabledPageTimelineAgent())
             pageTimelineAgent->mainFrameStartedLoading();
     }
-
-    if (auto* inspectorPageAgent = instrumentingAgents.enabledPageAgent())
-        inspectorPageAgent->frameStartedLoading(frame);
 }
 
 void InspectorInstrumentation::didCompleteRenderingFrameImpl(InstrumentingAgents& instrumentingAgents)
@@ -834,21 +834,6 @@ void InspectorInstrumentation::frameStoppedLoadingImpl(InstrumentingAgents& inst
         if (auto* pageDebuggerAgent = instrumentingAgents.enabledPageDebuggerAgent())
             pageDebuggerAgent->mainFrameStoppedLoading();
     }
-
-    if (auto* inspectorPageAgent = instrumentingAgents.enabledPageAgent())
-        inspectorPageAgent->frameStoppedLoading(frame);
-}
-
-void InspectorInstrumentation::frameScheduledNavigationImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, Seconds delay)
-{
-    if (auto* inspectorPageAgent = instrumentingAgents.enabledPageAgent())
-        inspectorPageAgent->frameScheduledNavigation(frame, delay);
-}
-
-void InspectorInstrumentation::frameClearedScheduledNavigationImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
-{
-    if (auto* inspectorPageAgent = instrumentingAgents.enabledPageAgent())
-        inspectorPageAgent->frameClearedScheduledNavigation(frame);
 }
 
 void InspectorInstrumentation::accessibilitySettingsDidChangeImpl(InstrumentingAgents& instrumentingAgents)
@@ -1131,6 +1116,13 @@ void InspectorInstrumentation::didEnableExtensionImpl(InstrumentingAgents& instr
         canvasAgent->didEnableExtension(contextWebGLBase, extension);
 }
 
+void InspectorInstrumentation::willDestroyWebGLProgram(WebGLProgram& program)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (RefPtr agents = instrumentingAgents(program.protectedScriptExecutionContext().get()))
+        willDestroyWebGLProgramImpl(*agents, program);
+}
+
 void InspectorInstrumentation::didCreateWebGLProgramImpl(InstrumentingAgents& instrumentingAgents, WebGLRenderingContextBase& contextWebGLBase, WebGLProgram& program)
 {
     if (auto* canvasAgent = instrumentingAgents.enabledCanvasAgent())
@@ -1325,6 +1317,24 @@ InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(WorkerOrWorkl
 InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(ServiceWorkerGlobalScope& globalScope)
 {
     return globalScope.inspectorController().m_instrumentingAgents;
+}
+
+InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(const LocalFrameView& frameView)
+{
+    return instrumentingAgents(frameView.frame());
+}
+
+InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(const Frame& frame)
+{
+    return instrumentingAgents(frame.page());
+}
+
+InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(Document& document)
+{
+    Page* page = document.page();
+    if (!page && document.templateDocumentHost())
+        page = document.templateDocumentHost()->page();
+    return instrumentingAgents(page);
 }
 
 InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(Page& page)

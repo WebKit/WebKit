@@ -36,17 +36,6 @@ test(() => {
 }, 'ReadableStreamDefaultReader property names');
 
 test(() => {
-    let stream = new ReadableStream({
-        start: function(c) {
-            controller = c;
-        },
-        type: "bytes"
-    });
-    let reader = stream.getReader({ mode: 'byob' });
-    tryGetOwnPropertyDescriptorGetName(reader.__proto__, 'closed', 'get closed');
-}, 'ReadableStreamBYOBReader property names');
-
-test(() => {
     let stream = new WritableStream();
     let writer = stream.getWriter();
     tryGetOwnPropertyDescriptorGetName(writer.__proto__, 'closed', 'get closed');

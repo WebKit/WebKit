@@ -99,6 +99,7 @@ PASS IDBObjectStore interface: operation get(any)
 PASS IDBObjectStore interface: operation getKey(any)
 PASS IDBObjectStore interface: operation getAll(optional any, optional unsigned long)
 PASS IDBObjectStore interface: operation getAllKeys(optional any, optional unsigned long)
+FAIL IDBObjectStore interface: operation getAllRecords(optional IDBGetAllOptions) assert_own_property: interface prototype object missing non-static operation expected property "getAllRecords" missing
 PASS IDBObjectStore interface: operation count(optional any)
 PASS IDBObjectStore interface: operation openCursor(optional any, optional IDBCursorDirection)
 PASS IDBObjectStore interface: operation openKeyCursor(optional any, optional IDBCursorDirection)
@@ -120,6 +121,7 @@ PASS IDBIndex interface: operation get(any)
 PASS IDBIndex interface: operation getKey(any)
 PASS IDBIndex interface: operation getAll(optional any, optional unsigned long)
 PASS IDBIndex interface: operation getAllKeys(optional any, optional unsigned long)
+FAIL IDBIndex interface: operation getAllRecords(optional IDBGetAllOptions) assert_own_property: interface prototype object missing non-static operation expected property "getAllRecords" missing
 PASS IDBIndex interface: operation count(optional any)
 PASS IDBIndex interface: operation openCursor(optional any, optional IDBCursorDirection)
 PASS IDBIndex interface: operation openKeyCursor(optional any, optional IDBCursorDirection)
@@ -154,6 +156,15 @@ PASS IDBKeyRange interface: [object IDBKeyRange] must inherit property "bound(an
 PASS IDBKeyRange interface: calling bound(any, any, optional boolean, optional boolean) on [object IDBKeyRange] with too few arguments must throw TypeError
 PASS IDBKeyRange interface: [object IDBKeyRange] must inherit property "includes(any)" with the proper type
 PASS IDBKeyRange interface: calling includes(any) on [object IDBKeyRange] with too few arguments must throw TypeError
+FAIL IDBRecord interface: existence and properties of interface object assert_own_property: self does not have own property "IDBRecord" expected property "IDBRecord" missing
+FAIL IDBRecord interface object length assert_own_property: self does not have own property "IDBRecord" expected property "IDBRecord" missing
+FAIL IDBRecord interface object name assert_own_property: self does not have own property "IDBRecord" expected property "IDBRecord" missing
+FAIL IDBRecord interface: existence and properties of interface prototype object assert_own_property: self does not have own property "IDBRecord" expected property "IDBRecord" missing
+FAIL IDBRecord interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "IDBRecord" expected property "IDBRecord" missing
+FAIL IDBRecord interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "IDBRecord" expected property "IDBRecord" missing
+FAIL IDBRecord interface: attribute key assert_own_property: self does not have own property "IDBRecord" expected property "IDBRecord" missing
+FAIL IDBRecord interface: attribute primaryKey assert_own_property: self does not have own property "IDBRecord" expected property "IDBRecord" missing
+FAIL IDBRecord interface: attribute value assert_own_property: self does not have own property "IDBRecord" expected property "IDBRecord" missing
 PASS IDBCursor interface: existence and properties of interface object
 PASS IDBCursor interface object length
 PASS IDBCursor interface object name

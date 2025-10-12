@@ -41,22 +41,4 @@ id makeNSArrayElement(const IntRect& rect)
 #endif
 }
 
-#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
-
-IntRect::operator NSRect() const
-{
-    return NSMakeRect(x(), y(), width(), height());
-}
-
-IntRect enclosingIntRect(const NSRect& rect)
-{
-    int left = clampTo<int>(std::floor(rect.origin.x));
-    int top = clampTo<int>(std::floor(rect.origin.y));
-    int right = clampTo<int>(std::ceil(NSMaxX(rect)));
-    int bottom = clampTo<int>(std::ceil(NSMaxY(rect)));
-    return { left, top, right - left, bottom - top };
-}
-
-#endif
-
 }

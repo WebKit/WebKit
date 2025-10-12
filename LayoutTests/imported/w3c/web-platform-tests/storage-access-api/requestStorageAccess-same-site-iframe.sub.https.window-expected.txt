@@ -1,5 +1,6 @@
-Blocked access to external URL https://www.localhost:9443/storage-access-api/resources/requestStorageAccess-iframe.https.html?testCase=same-site-frame
 
-Harness Error (TIMEOUT), message = null
-
+PASS [same-site-frame] document.requestStorageAccess() should exist on the document interface
+PASS [same-site-frame] document.requestStorageAccess() should resolve in top-level frame or same-site iframe, otherwise reject with a NotAllowedError with no user gesture.
+PASS [same-site-frame] document.requestStorageAccess() should be resolved with no user gesture when a permission grant exists, and should allow cookie access
+PASS [same-site-frame] document.requestStorageAccess() should resolve without permission grant or user gesture
 

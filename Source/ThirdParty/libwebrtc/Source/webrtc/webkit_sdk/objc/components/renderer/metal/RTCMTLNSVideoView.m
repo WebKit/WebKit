@@ -106,7 +106,7 @@
 
 - (void)setSize:(CGSize)size {
   _metalView.drawableSize = size;
-  dispatch_async(dispatch_get_main_queue(), ^{
+  dispatch_async(mainDispatchQueueSingleton(), ^{
     [self.delegate videoView:self didChangeVideoSize:size];
   });
   [_metalView draw];

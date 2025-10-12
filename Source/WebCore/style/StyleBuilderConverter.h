@@ -29,11 +29,8 @@
 #pragma once
 
 #include "AnchorPositionEvaluator.h"
-#include "BlockEllipsis.h"
-#include "CSSBasicShapeValue.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
-#include "CSSColorSchemeValue.h"
 #include "CSSContentDistributionValue.h"
 #include "CSSCounterStyleRegistry.h"
 #include "CSSDynamicRangeLimitValue.h"
@@ -41,10 +38,6 @@
 #include "CSSFontStyleWithAngleValue.h"
 #include "CSSFontVariationValue.h"
 #include "CSSFunctionValue.h"
-#include "CSSGridAutoRepeatValue.h"
-#include "CSSGridIntegerRepeatValue.h"
-#include "CSSGridLineNamesValue.h"
-#include "CSSGridLineValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSOffsetRotateValue.h"
@@ -53,55 +46,62 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParserConsumer+Font.h"
-#include "CSSRayValue.h"
-#include "CSSReflectValue.h"
 #include "CSSSubgridValue.h"
 #include "CSSURLValue.h"
 #include "CSSValuePair.h"
 #include "CalculationValue.h"
-#include "FontPalette.h"
+#include "DocumentQuirks.h"
+#include "DocumentView.h"
 #include "FontSelectionValueInlines.h"
 #include "FontSizeAdjust.h"
 #include "FrameDestructionObserverInlines.h"
-#include "GridPositionsResolver.h"
-#include "LineClampValue.h"
 #include "LocalFrame.h"
-#include "PathOperation.h"
-#include "Quirks.h"
-#include "QuotesData.h"
 #include "RenderStyleInlines.h"
 #include "RotateTransformOperation.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGPathElement.h"
-#include "SVGRenderStyle.h"
-#include "SVGURIReference.h"
 #include "ScaleTransformOperation.h"
+#include "ScopedName.h"
 #include "ScrollAxis.h"
-#include "ScrollbarColor.h"
-#include "ScrollbarGutter.h"
 #include "Settings.h"
 #include "StyleBasicShape.h"
-#include "StyleBuilderState.h"
+#include "StyleBuilderChecking.h"
+#include "StyleClipPath.h"
 #include "StyleColorScheme.h"
 #include "StyleCornerShapeValue.h"
 #include "StyleDynamicRangeLimit.h"
 #include "StyleEasingFunction.h"
+#include "StyleFlexBasis.h"
+#include "StyleInset.h"
+#include "StyleLengthWrapper+CSSValueConversion.h"
 #include "StyleLineBoxContain.h"
-#include "StylePathData.h"
+#include "StyleMargin.h"
+#include "StyleMaximumSize.h"
+#include "StyleMinimumSize.h"
+#include "StyleOffsetAnchor.h"
+#include "StyleOffsetDistance.h"
+#include "StyleOffsetPath.h"
+#include "StyleOffsetPosition.h"
+#include "StyleOffsetRotate.h"
+#include "StylePadding.h"
+#include "StylePerspective.h"
+#include "StylePreferredSize.h"
+#include "StylePrimitiveKeyword+CSSValueConversion.h"
+#include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleRayFunction.h"
-#include "StyleReflection.h"
 #include "StyleResolveForFont.h"
+#include "StyleRotate.h"
+#include "StyleSVGPaint.h"
+#include "StyleScale.h"
 #include "StyleScrollMargin.h"
 #include "StyleScrollPadding.h"
-#include "StyleScrollSnapPoints.h"
-#include "StyleTextEdge.h"
+#include "StyleTextEdge+CSSValueConversion.h"
+#include "StyleTranslate.h"
 #include "StyleURL.h"
-#include "TabSize.h"
+#include "StyleValueTypes+CSSValueConversion.h"
 #include "TextSpacing.h"
-#include "TimelineRange.h"
 #include "TouchAction.h"
-#include "TransformOperationsBuilder.h"
 #include "ViewTimeline.h"
 #include "WillChangeData.h"
 #include <ranges>
@@ -115,505 +115,54 @@ namespace Style {
 
 class BuilderConverter {
 public:
-    static WebCore::Length convertLength(BuilderState&, const CSSValue&);
-    static WebCore::Length convertLengthOrAuto(BuilderState&, const CSSValue&);
-    static WebCore::Length convertLengthSizing(BuilderState&, const CSSValue&);
-    static WebCore::Length convertLengthMaxSizing(BuilderState&, const CSSValue&);
-    static WebCore::Length convertLengthAllowingNumber(BuilderState&, const CSSValue&); // Assumes unit is 'px' if input is a number.
-    static WebCore::Length convertTextLengthOrNormal(BuilderState&, const CSSValue&); // Converts length by text zoom factor, normal to zero
-    static TabSize convertTabSize(BuilderState&, const CSSValue&);
-    template<typename T> static T convertComputedLength(BuilderState&, const CSSValue&);
-    template<typename T> static T convertLineWidth(BuilderState&, const CSSValue&);
-    static LengthSize convertRadius(BuilderState&, const CSSValue&);
-    static LengthPoint convertPosition(BuilderState&, const CSSValue&);
-    static LengthPoint convertPositionOrAuto(BuilderState&, const CSSValue&);
-    static LengthPoint convertPositionOrAutoOrNormal(BuilderState&, const CSSValue&);
-    static WebCore::Length convertPositionComponentX(BuilderState&, const CSSValue&);
-    static WebCore::Length convertPositionComponentY(BuilderState&, const CSSValue&);
-    static OptionSet<TextDecorationLine> convertTextDecorationLine(BuilderState&, const CSSValue&);
+    template<typename T, typename... Rest> static T convertStyleType(BuilderState&, const CSSValue&, Rest&&...);
+
     static OptionSet<TextTransform> convertTextTransform(BuilderState&, const CSSValue&);
-    template<typename T> static T convertNumber(BuilderState&, const CSSValue&);
-    template<typename T, CSSValueID> static T convertNumberOrKeyword(BuilderState&, const CSSValue&);
-    static RefPtr<StyleImage> convertImageOrNone(BuilderState&, CSSValue&);
     static ImageOrientation convertImageOrientation(BuilderState&, const CSSValue&);
-    static TransformOperations convertTransform(BuilderState&, const CSSValue&);
-    static RefPtr<RotateTransformOperation> convertRotate(BuilderState&, const CSSValue&);
-    static RefPtr<ScaleTransformOperation> convertScale(BuilderState&, const CSSValue&);
-    static RefPtr<TranslateTransformOperation> convertTranslate(BuilderState&, const CSSValue&);
-#if ENABLE(DARK_MODE_CSS)
-    static Style::ColorScheme convertColorScheme(BuilderState&, const CSSValue&);
-#endif
-    static String convertString(BuilderState&, const CSSValue&);
-    template<CSSValueID> static String convertStringOrKeyword(BuilderState&, const CSSValue&);
-    template<CSSValueID> static String convertCustomIdentOrKeyword(BuilderState&, const CSSValue&);
-    template<CSSValueID> static AtomString convertStringAtomOrKeyword(BuilderState&, const CSSValue&);
     template<CSSValueID> static AtomString convertCustomIdentAtomOrKeyword(BuilderState&, const CSSValue&);
 
     static OptionSet<TextEmphasisPosition> convertTextEmphasisPosition(BuilderState&, const CSSValue&);
     static TextAlignMode convertTextAlign(BuilderState&, const CSSValue&);
     static TextAlignLast convertTextAlignLast(BuilderState&, const CSSValue&);
-    static RefPtr<StylePathData> convertDPath(BuilderState&, const CSSValue&);
-    static RefPtr<PathOperation> convertPathOperation(BuilderState&, const CSSValue&);
     static Resize convertResize(BuilderState&, const CSSValue&);
-    static int convertMarqueeRepetition(BuilderState&, const CSSValue&);
-    static int convertMarqueeSpeed(BuilderState&, const CSSValue&);
-    static RefPtr<QuotesData> convertQuotes(BuilderState&, const CSSValue&);
     static OptionSet<TextUnderlinePosition> convertTextUnderlinePosition(BuilderState&, const CSSValue&);
-    static TextUnderlineOffset convertTextUnderlineOffset(BuilderState&, const CSSValue&);
-    static TextDecorationThickness convertTextDecorationThickness(BuilderState&, const CSSValue&);
-    static RefPtr<StyleReflection> convertReflection(BuilderState&, const CSSValue&);
-    static TextEdge convertTextEdge(BuilderState&, const CSSValue&);
-    static IntSize convertInitialLetter(BuilderState&, const CSSValue&);
-    static float convertTextStrokeWidth(BuilderState&, const CSSValue&);
     static OptionSet<LineBoxContain> convertLineBoxContain(BuilderState&, const CSSValue&);
-    static RefPtr<ShapeValue> convertShapeValue(BuilderState&, const CSSValue&);
-    static ScrollSnapType convertScrollSnapType(BuilderState&, const CSSValue&);
-    static ScrollSnapAlign convertScrollSnapAlign(BuilderState&, const CSSValue&);
-    static std::optional<ScrollbarColor> convertScrollbarColor(BuilderState&, const CSSValue&);
-    static ScrollbarGutter convertScrollbarGutter(BuilderState&, const CSSValue&);
     // scrollbar-width converter is only needed for quirking.
     static ScrollbarWidth convertScrollbarWidth(BuilderState&, const CSSValue&);
-    static GridTrackSize convertGridTrackSize(BuilderState&, const CSSValue&);
-    static Vector<GridTrackSize> convertGridTrackSizeList(BuilderState&, const CSSValue&);
-    static std::optional<GridTrackList> convertGridTrackList(BuilderState&, const CSSValue&);
-    static GridPosition convertGridPosition(BuilderState&, const CSSValue&);
     static GridAutoFlow convertGridAutoFlow(BuilderState&, const CSSValue&);
-    static Vector<StyleContentAlignmentData> convertContentAlignmentDataList(BuilderState&, const CSSValue&);
-    static std::optional<float> convertPerspective(BuilderState&, const CSSValue&);
-    static std::optional<WebCore::Length> convertMarqueeIncrement(BuilderState&, const CSSValue&);
-    static FilterOperations convertFilterOperations(BuilderState&, const CSSValue&);
-    static FilterOperations convertAppleColorFilterOperations(BuilderState&, const CSSValue&);
-    static ListStyleType convertListStyleType(BuilderState&, const CSSValue&);
-#if PLATFORM(IOS_FAMILY)
-    static bool convertTouchCallout(BuilderState&, const CSSValue&);
-#endif
-#if ENABLE(TOUCH_EVENTS)
-    static Color convertTapHighlightColor(BuilderState&, const CSSValue&);
-#endif
     static OptionSet<TouchAction> convertTouchAction(BuilderState&, const CSSValue&);
-#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
-    static bool convertOverflowScrolling(BuilderState&, const CSSValue&);
-#endif
-    static bool convertSmoothScrolling(BuilderState&, const CSSValue&);
 
-    static FontSizeAdjust convertFontSizeAdjust(BuilderState&, const CSSValue&);
-    static std::optional<FontSelectionValue> convertFontStyleFromValue(BuilderState&, const CSSValue&);
-    static FontSelectionValue convertFontWeight(BuilderState&, const CSSValue&);
-    static FontSelectionValue convertFontWidth(BuilderState&, const CSSValue&);
-    static FontSelectionValue convertFontStyle(BuilderState&, const CSSValue&);
-    static FontFeatureSettings convertFontFeatureSettings(BuilderState&, const CSSValue&);
-    static FontVariationSettings convertFontVariationSettings(BuilderState&, const CSSValue&);
-    static Vector<WebCore::Length> convertStrokeDashArray(BuilderState&, const CSSValue&);
     static PaintOrder convertPaintOrder(BuilderState&, const CSSValue&);
-    static float convertOpacity(BuilderState&, const CSSValue&);
-    static Style::URL convertSVGURIReference(BuilderState&, const CSSValue&);
     static StyleSelfAlignmentData convertSelfOrDefaultAlignmentData(BuilderState&, const CSSValue&);
     static StyleContentAlignmentData convertContentAlignmentData(BuilderState&, const CSSValue&);
-    static GlyphOrientation convertGlyphOrientation(BuilderState&, const CSSValue&);
-    static GlyphOrientation convertGlyphOrientationOrAuto(BuilderState&, const CSSValue&);
-    static WebCore::Length convertLineHeight(BuilderState&, const CSSValue&, float multiplier = 1.f);
-    static FontPalette convertFontPalette(BuilderState&, const CSSValue&);
-    
-    static BreakBetween convertPageBreakBetween(BuilderState&, const CSSValue&);
-    static BreakInside convertPageBreakInside(BuilderState&, const CSSValue&);
-    static BreakBetween convertColumnBreakBetween(BuilderState&, const CSSValue&);
-    static BreakInside convertColumnBreakInside(BuilderState&, const CSSValue&);
 
     static OptionSet<HangingPunctuation> convertHangingPunctuation(BuilderState&, const CSSValue&);
 
     static OptionSet<SpeakAs> convertSpeakAs(BuilderState&, const CSSValue&);
 
-    static GapLength convertGapLength(BuilderState&, const CSSValue&);
-
-    static OffsetRotation convertOffsetRotate(BuilderState&, const CSSValue&);
-
     static OptionSet<Containment> convertContain(BuilderState&, const CSSValue&);
-    static Vector<ScopedName> convertContainerNames(BuilderState&, const CSSValue&);
 
     static OptionSet<MarginTrimType> convertMarginTrim(BuilderState&, const CSSValue&);
 
     static TextSpacingTrim convertTextSpacingTrim(BuilderState&, const CSSValue&);
     static TextAutospace convertTextAutospace(BuilderState&, const CSSValue&);
 
-    static std::optional<WebCore::Length> convertBlockStepSize(BuilderState&, const CSSValue&);
-
-    static Vector<ScopedName> convertViewTransitionClasses(BuilderState&, const CSSValue&);
-    static ViewTransitionName convertViewTransitionName(BuilderState&, const CSSValue&);
     static RefPtr<WillChangeData> convertWillChange(BuilderState&, const CSSValue&);
-    
-    static Vector<AtomString> convertScrollTimelineNames(BuilderState&, const CSSValue&);
-    static Vector<ScrollAxis> convertScrollTimelineAxes(BuilderState&, const CSSValue&);
-    static Vector<ViewTimelineInsets> convertViewTimelineInsets(BuilderState&, const CSSValue&);
 
-    static Vector<ScopedName> convertAnchorNames(BuilderState&, const CSSValue&);
     static std::optional<ScopedName> convertPositionAnchor(BuilderState&, const CSSValue&);
     static std::optional<PositionArea> convertPositionArea(BuilderState&, const CSSValue&);
     static OptionSet<PositionVisibility> convertPositionVisibility(BuilderState&, const CSSValue&);
 
-    static BlockEllipsis convertBlockEllipsis(BuilderState&, const CSSValue&);
-    static size_t convertMaxLines(BuilderState&, const CSSValue&);
-
-    static LineClampValue convertLineClamp(BuilderState&, const CSSValue&);
-
-    static RefPtr<TimingFunction> convertTimingFunction(BuilderState&, const CSSValue&);
-
     static NameScope convertNameScope(BuilderState&, const CSSValue&);
 
-    static SingleTimelineRange convertAnimationRangeStart(BuilderState&, const CSSValue&);
-    static SingleTimelineRange convertAnimationRangeEnd(BuilderState&, const CSSValue&);
+    static FixedVector<PositionTryFallback> convertPositionTryFallbacks(BuilderState&, const CSSValue&);
 
-    static Style::ScrollPaddingEdge convertScrollPaddingEdge(BuilderState&, const CSSValue&);
-    static Style::ScrollMarginEdge convertScrollMarginEdge(BuilderState&, const CSSValue&);
-    static Style::DynamicRangeLimit convertDynamicRangeLimit(BuilderState&, const CSSValue&);
-    static Style::CornerShapeValue convertCornerShapeValue(BuilderState&, const CSSValue&);
-
-    static Vector<PositionTryFallback> convertPositionTryFallbacks(BuilderState&, const CSSValue&);
-
-    template<class ValueType> static const ValueType* requiredDowncast(BuilderState&, const CSSValue&);
-    template<class ValueType> static std::optional<std::pair<const ValueType&, const ValueType&>> requiredPairDowncast(BuilderState&, const CSSValue&);
-
-    template<class ValueType> struct TypedListIterator {
-        using iterator_category = std::forward_iterator_tag;
-        using value_type = const ValueType&;
-        using difference_type = ptrdiff_t;
-        using pointer = const ValueType*;
-        using reference = const ValueType&;
-
-        TypedListIterator(CSSValueList::iterator iterator)
-            : iterator(iterator)
-        { }
-        TypedListIterator& operator++() { ++iterator; return *this; }
-        const ValueType& operator*() const { return downcast<ValueType>(*iterator); }
-        bool operator!=(const TypedListIterator& other) const { return iterator != other.iterator; }
-
-        CSSValueList::iterator iterator;
-    };
-    template<class ListType, class ValueType> struct TypedList {
-        TypedList(const ListType& list)
-            : list(list)
-        { }
-
-        unsigned size() const { return list->size(); }
-        const ValueType& item(unsigned index) const { return downcast<ValueType>(*list->item(index)); }
-        TypedListIterator<ValueType> begin() const { return list->begin(); }
-        TypedListIterator<ValueType> end() const { return list->end(); }
-
-        Ref<const ListType> list;
-    };
-    template<class ListType, class ValueType, unsigned minimumLength = 1> static std::optional<TypedList<ListType, ValueType>> requiredListDowncast(BuilderState&, const CSSValue&);
-    template<CSSValueID, class ValueType, unsigned minimumLength = 1> static std::optional<TypedList<CSSFunctionValue, ValueType>> requiredFunctionDowncast(BuilderState&, const CSSValue&);
-
-private:
-    friend class BuilderCustom;
-
-    static WebCore::Length convertToRadiusLength(BuilderState&, const CSSPrimitiveValue&);
-    static WebCore::Length parseSnapCoordinate(BuilderState&, const CSSValue&);
-
-    static GridLength createGridTrackBreadth(BuilderState&, const CSSPrimitiveValue&);
-    static GridTrackSize createGridTrackSize(BuilderState&, const CSSValue&);
-    static std::optional<GridTrackList> createGridTrackList(BuilderState&, const CSSValue&);
-    static GridPosition createGridPosition(BuilderState&, const CSSValue&);
-    static NamedGridLinesMap createImplicitNamedGridLinesFromGridArea(BuilderState&, const NamedGridAreaMap&, GridTrackSizingDirection);
-
-    static Style::BasicShape convertBasicShape(BuilderState&, const CSSBasicShapeValue&, std::optional<float> zoom);
-
-    static CSSToLengthConversionData cssToLengthConversionDataWithTextZoomFactor(BuilderState&);
+    static MaskMode convertFillLayerMaskMode(BuilderState&, const CSSValue&);
 };
 
-template<class ValueType>
-inline const ValueType* BuilderConverter::requiredDowncast(BuilderState& builderState, const CSSValue& value)
+template<typename T, typename... Rest> inline T BuilderConverter::convertStyleType(BuilderState& builderState, const CSSValue& value, Rest&&... rest)
 {
-    auto* typedValue = dynamicDowncast<ValueType>(value);
-    if (!typedValue) [[unlikely]] {
-        builderState.setCurrentPropertyInvalidAtComputedValueTime();
-        return nullptr;
-    }
-    return typedValue;
-}
-
-template<class ValueType>
-inline std::optional<std::pair<const ValueType&, const ValueType&>> BuilderConverter::requiredPairDowncast(BuilderState& builderState, const CSSValue& value)
-{
-    auto* pairValue = requiredDowncast<CSSValuePair>(builderState, value);
-    if (!pairValue) [[unlikely]]
-        return { };
-    auto* firstValue = requiredDowncast<ValueType>(builderState, pairValue->first());
-    if (!firstValue) [[unlikely]]
-        return { };
-    auto* secondValue = requiredDowncast<ValueType>(builderState, pairValue->second());
-    if (!secondValue) [[unlikely]]
-        return { };
-    return { { *firstValue, *secondValue } };
-}
-
-template<class ListType, class ValueType, unsigned minimumSize>
-inline auto BuilderConverter::requiredListDowncast(BuilderState& builderState, const CSSValue& value) -> std::optional<TypedList<ListType, ValueType>>
-{
-    auto* listValue = requiredDowncast<ListType>(builderState, value);
-    if (!listValue) [[unlikely]]
-        return { };
-    if (listValue->size() < minimumSize) [[unlikely]] {
-        builderState.setCurrentPropertyInvalidAtComputedValueTime();
-        return { };
-    }
-    for (auto& value : *listValue) {
-        if (!requiredDowncast<ValueType>(builderState, value)) [[unlikely]]
-            return { };
-    }
-    return TypedList<ListType, ValueType> { *listValue };
-}
-
-template<CSSValueID functionName, class ValueType, unsigned minimumSize>
-inline auto BuilderConverter::requiredFunctionDowncast(BuilderState& builderState, const CSSValue& value) -> std::optional<TypedList<CSSFunctionValue, ValueType>>
-{
-    auto function = requiredListDowncast<CSSFunctionValue, ValueType, minimumSize>(builderState, value);
-    if (!function) [[unlikely]]
-        return { };
-    if (function->list->name() != functionName) {
-        builderState.setCurrentPropertyInvalidAtComputedValueTime();
-        return { };
-    }
-    return function;
-}
-
-inline WebCore::Length BuilderConverter::convertLength(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
-        builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
-        : builderState.cssToLengthConversionData();
-
-    if (primitiveValue->isLength()) {
-        auto length = primitiveValue->resolveAsLength<WebCore::Length>(conversionData);
-        length.setHasQuirk(primitiveValue->primitiveType() == CSSUnitType::CSS_QUIRKY_EM);
-        return length;
-    }
-
-    if (primitiveValue->isPercentage())
-        return WebCore::Length(primitiveValue->resolveAsPercentage(conversionData), LengthType::Percent);
-
-    if (primitiveValue->isCalculatedPercentageWithLength())
-        return WebCore::Length(primitiveValue->cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }));
-
-    ASSERT_NOT_REACHED();
-    return WebCore::Length(0, LengthType::Fixed);
-}
-
-inline WebCore::Length BuilderConverter::convertLengthAllowingNumber(BuilderState& builderState, const CSSValue& value)
-{
-    CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
-        builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
-        : builderState.cssToLengthConversionData();
-
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    if (primitiveValue->isNumberOrInteger())
-        return WebCore::Length(primitiveValue->resolveAsNumber(conversionData), LengthType::Fixed);
-    return convertLength(builderState, value);
-}
-
-inline WebCore::Length BuilderConverter::convertLengthOrAuto(BuilderState& builderState, const CSSValue& value)
-{
-    if (value.valueID() == CSSValueAuto)
-        return WebCore::Length(LengthType::Auto);
-    return convertLength(builderState, value);
-}
-
-inline WebCore::Length BuilderConverter::convertLengthSizing(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    switch (primitiveValue->valueID()) {
-    case CSSValueInvalid:
-        return convertLength(builderState, value);
-    case CSSValueIntrinsic:
-        return WebCore::Length(LengthType::Intrinsic);
-    case CSSValueMinIntrinsic:
-        return WebCore::Length(LengthType::MinIntrinsic);
-    case CSSValueMinContent:
-    case CSSValueWebkitMinContent:
-        return WebCore::Length(LengthType::MinContent);
-    case CSSValueMaxContent:
-    case CSSValueWebkitMaxContent:
-        return WebCore::Length(LengthType::MaxContent);
-    case CSSValueWebkitFillAvailable:
-        return WebCore::Length(LengthType::FillAvailable);
-    case CSSValueFitContent:
-    case CSSValueWebkitFitContent:
-        return WebCore::Length(LengthType::FitContent);
-    case CSSValueAuto:
-        return WebCore::Length(LengthType::Auto);
-    case CSSValueContent:
-        return WebCore::Length(LengthType::Content);
-    default:
-        ASSERT_NOT_REACHED();
-        return { };
-    }
-}
-
-inline ListStyleType BuilderConverter::convertListStyleType(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    if (primitiveValue->isValueID()) {
-        if (primitiveValue->valueID() == CSSValueNone)
-            return { ListStyleType::Type::None, nullAtom() };
-        return { ListStyleType::Type::CounterStyle, makeAtomString(primitiveValue->stringValue()) };
-    }
-    if (primitiveValue->isCustomIdent())
-        return { ListStyleType::Type::CounterStyle, makeAtomString(primitiveValue->stringValue()) };
-    return { ListStyleType::Type::String, makeAtomString(primitiveValue->stringValue()) };
-}
-
-inline WebCore::Length BuilderConverter::convertLengthMaxSizing(BuilderState& builderState, const CSSValue& value)
-{
-    if (value.valueID() == CSSValueNone)
-        return WebCore::Length(LengthType::Undefined);
-    return convertLengthSizing(builderState, value);
-}
-
-inline TabSize BuilderConverter::convertTabSize(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-    if (primitiveValue->isNumber())
-        return TabSize(primitiveValue->resolveAsNumber<float>(builderState.cssToLengthConversionData()), SpaceValueType);
-    return TabSize(primitiveValue->resolveAsLength<float>(builderState.cssToLengthConversionData()), LengthValueType);
-}
-
-template<typename T>
-inline T BuilderConverter::convertComputedLength(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-    return primitiveValue->resolveAsLength<T>(builderState.cssToLengthConversionData());
-}
-
-template<typename T>
-inline T BuilderConverter::convertLineWidth(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-    switch (primitiveValue->valueID()) {
-    case CSSValueThin:
-        return 1;
-    case CSSValueMedium:
-        return 3;
-    case CSSValueThick:
-        return 5;
-    case CSSValueInvalid: {
-        // Any original result that was >= 1 should not be allowed to fall below 1.
-        // This keeps border lines from vanishing.
-        T result = convertComputedLength<T>(builderState, value);
-        if (builderState.style().usedZoom() < 1.0f && result < 1.0) {
-            T originalLength = primitiveValue->resolveAsLength<T>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0));
-            if (originalLength >= 1.0)
-                return 1;
-        }
-        float minimumLineWidth = 1 / builderState.document().deviceScaleFactor();
-        if (result > 0 && result < minimumLineWidth)
-            return minimumLineWidth;
-        return floorToDevicePixel(result, builderState.document().deviceScaleFactor());
-    }
-    default:
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-}
-
-inline WebCore::Length BuilderConverter::convertToRadiusLength(BuilderState& builderState, const CSSPrimitiveValue& value)
-{
-    auto& conversionData = builderState.cssToLengthConversionData();
-    if (value.isPercentage())
-        return WebCore::Length(value.resolveAsPercentage(conversionData), LengthType::Percent);
-    if (value.isCalculatedPercentageWithLength())
-        return WebCore::Length(value.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }));
-    auto length = value.resolveAsLength<WebCore::Length>(conversionData);
-    if (length.isNegative())
-        return { 0, LengthType::Fixed };
-    return length;
-}
-
-inline LengthSize BuilderConverter::convertRadius(BuilderState& builderState, const CSSValue& value)
-{
-    if (!value.isPair())
-        return { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
-
-    auto pair = requiredPairDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!pair)
-        return { };
-
-    LengthSize radius {
-        convertToRadiusLength(builderState, pair->first),
-        convertToRadiusLength(builderState, pair->second)
-    };
-
-    ASSERT(!radius.width.isNegative());
-    ASSERT(!radius.height.isNegative());
-    return radius;
-}
-
-inline LengthPoint BuilderConverter::convertPosition(BuilderState& builderState, const CSSValue& value)
-{
-    RefPtr positionValue = requiredDowncast<CSSPositionValue>(builderState, value);
-    if (!positionValue)
-        return RenderStyle::initialObjectPosition();
-    return Style::toPlatform(Style::toStyle(positionValue->position(), builderState));
-}
-
-inline LengthPoint BuilderConverter::convertPositionOrAutoOrNormal(BuilderState& builderState, const CSSValue& value)
-{
-    if (value.isPositionValue())
-        return convertPosition(builderState, value);
-    if (value.valueID() == CSSValueNormal)
-        return { { LengthType::Normal }, { LengthType::Normal } };
-    return { };
-}
-
-inline LengthPoint BuilderConverter::convertPositionOrAuto(BuilderState& builderState, const CSSValue& value)
-{
-    if (value.isPositionValue())
-        return convertPosition(builderState, value);
-    return { };
-}
-
-inline WebCore::Length BuilderConverter::convertPositionComponentX(BuilderState& builderState, const CSSValue& value)
-{
-    RefPtr positionXValue = requiredDowncast<CSSPositionXValue>(builderState, value);
-    if (!positionXValue)
-        return { };
-    return Style::toPlatform(Style::toStyle(positionXValue->position(), builderState));
-}
-
-inline WebCore::Length BuilderConverter::convertPositionComponentY(BuilderState& builderState, const CSSValue& value)
-{
-    RefPtr positionYValue = requiredDowncast<CSSPositionYValue>(builderState, value);
-    if (!positionYValue)
-        return { };
-    return Style::toPlatform(Style::toStyle(positionYValue->position(), builderState));
-}
-
-
-inline OptionSet<TextDecorationLine> BuilderConverter::convertTextDecorationLine(BuilderState&, const CSSValue& value)
-{
-    auto result = RenderStyle::initialTextDecorationLine();
-    if (auto* list = dynamicDowncast<CSSValueList>(value)) {
-        for (auto& currentValue : *list)
-            result.add(fromCSSValue<TextDecorationLine>(currentValue));
-    }
-    return result;
+    return toStyleFromCSSValue<T>(builderState, value, std::forward<Rest>(rest)...);
 }
 
 inline OptionSet<TextTransform> BuilderConverter::convertTextTransform(BuilderState&, const CSSValue& value)
@@ -626,28 +175,6 @@ inline OptionSet<TextTransform> BuilderConverter::convertTextTransform(BuilderSt
     return result;
 }
 
-template<typename T>
-inline T BuilderConverter::convertNumber(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-    return primitiveValue->resolveAsNumber<T>(builderState.cssToLengthConversionData());
-}
-
-template<typename T, CSSValueID keyword>
-inline T BuilderConverter::convertNumberOrKeyword(BuilderState& builderState, const CSSValue& value)
-{
-    if (value.valueID() == keyword)
-        return -1;
-    return convertNumber<T>(builderState, value);
-}
-
-inline RefPtr<StyleImage> BuilderConverter::convertImageOrNone(BuilderState& builderState, CSSValue& value)
-{
-    return builderState.createStyleImage(value);
-}
-
 inline ImageOrientation BuilderConverter::convertImageOrientation(BuilderState& builderState, const CSSValue& value)
 {
     auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
@@ -658,82 +185,15 @@ inline ImageOrientation BuilderConverter::convertImageOrientation(BuilderState& 
     return ImageOrientation::Orientation::None;
 }
 
-inline TransformOperations BuilderConverter::convertTransform(BuilderState& builderState, const CSSValue& value)
-{
-    CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
-        builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
-        : builderState.cssToLengthConversionData();
-    return createTransformOperations(value, conversionData);
-}
-
-inline RefPtr<TranslateTransformOperation> BuilderConverter::convertTranslate(BuilderState& builderState, const CSSValue& value)
-{
-    CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
-        builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
-        : builderState.cssToLengthConversionData();
-    return createTranslate(value, conversionData);
-}
-
-inline RefPtr<RotateTransformOperation> BuilderConverter::convertRotate(BuilderState& builderState, const CSSValue& value)
-{
-    CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
-        builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
-        : builderState.cssToLengthConversionData();
-    return createRotate(value, conversionData);
-}
-
-inline RefPtr<ScaleTransformOperation> BuilderConverter::convertScale(BuilderState& builderState, const CSSValue& value)
-{
-    CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
-        builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
-        : builderState.cssToLengthConversionData();
-    return createScale(value, conversionData);
-}
-
-#if ENABLE(DARK_MODE_CSS)
-inline Style::ColorScheme BuilderConverter::convertColorScheme(BuilderState& builderState, const CSSValue& value)
-{
-    RefPtr colorSchemeValue = requiredDowncast<CSSColorSchemeValue>(builderState, value);
-    if (!colorSchemeValue)
-        return { };
-    return Style::toStyle(colorSchemeValue->colorScheme(), builderState);
-}
-#endif
-
-inline String BuilderConverter::convertString(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-    return primitiveValue->stringValue();
-}
-
-template<CSSValueID keyword> inline String BuilderConverter::convertStringOrKeyword(BuilderState& builderState, const CSSValue& value)
-{
-    if (value.valueID() == keyword)
-        return nullAtom();
-    return convertString(builderState, value);
-}
-
-template<CSSValueID keyword> inline String BuilderConverter::convertCustomIdentOrKeyword(BuilderState& builderState, const CSSValue& value)
-{
-    if (value.valueID() == keyword)
-        return nullAtom();
-    return convertString(builderState, value);
-}
-
-template<CSSValueID keyword> inline AtomString BuilderConverter::convertStringAtomOrKeyword(BuilderState& builderState, const CSSValue& value)
-{
-    if (value.valueID() == keyword)
-        return nullAtom();
-    return AtomString { convertString(builderState, value) };
-}
-
 template<CSSValueID keyword> inline AtomString BuilderConverter::convertCustomIdentAtomOrKeyword(BuilderState& builderState, const CSSValue& value)
 {
-    if (value.valueID() == keyword)
+    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
+    if (!primitiveValue)
         return nullAtom();
-    return AtomString { convertString(builderState, value) };
+
+    if (primitiveValue->valueID() == keyword)
+        return nullAtom();
+    return AtomString { primitiveValue->stringValue() };
 }
 
 inline static OptionSet<TextEmphasisPosition> valueToEmphasisPosition(const CSSPrimitiveValue& primitiveValue)
@@ -825,83 +285,6 @@ inline TextAlignLast BuilderConverter::convertTextAlignLast(BuilderState& builde
     return parentStyle.textAlignLast();
 }
 
-inline RefPtr<StylePathData> BuilderConverter::convertDPath(BuilderState& builderState, const CSSValue& value)
-{
-    if (RefPtr pathValue = dynamicDowncast<CSSPathValue>(value))
-        return StylePathData::create(Style::toStyle(pathValue->path(), builderState));
-
-    ASSERT(is<CSSPrimitiveValue>(value));
-    ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
-    return nullptr;
-}
-
-inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState& builderState, const CSSValue& value)
-{
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        ASSERT_UNUSED(primitiveValue, primitiveValue->valueID() == CSSValueNone);
-        return nullptr;
-    }
-
-    if (RefPtr url = dynamicDowncast<CSSURLValue>(value)) {
-        auto styleURL = Style::toStyle(url->url(), builderState);
-
-        // FIXME: ReferencePathOperation are not hooked up to support remote URLs yet, so only works with document local references. To see an example of how this should work, see ReferenceFilterOperation which supports both document local and remote URLs.
-
-        auto fragment = SVGURIReference::fragmentIdentifierFromIRIString(styleURL, builderState.document());
-
-        const TreeScope* treeScope = nullptr;
-        if (builderState.element())
-            treeScope = &builderState.element()->treeScopeForSVGReferences();
-        else
-            treeScope = &builderState.document();
-        auto target = SVGURIReference::targetElementFromIRIString(styleURL, *treeScope);
-
-        return ReferencePathOperation::create(WTFMove(styleURL), fragment, dynamicDowncast<SVGElement>(target.element.get()));
-    }
-
-    if (RefPtr ray = dynamicDowncast<CSSRayValue>(value))
-        return RayPathOperation::create(Style::toStyle(ray->ray(), builderState));
-
-    RefPtr<PathOperation> operation;
-    auto referenceBox = CSSBoxType::BoxMissing;
-    auto processSingleValue = [&](const CSSValue& singleValue) {
-        ASSERT(!is<CSSValueList>(singleValue));
-        if (RefPtr ray = dynamicDowncast<CSSRayValue>(singleValue))
-            operation = RayPathOperation::create(Style::toStyle(ray->ray(), builderState));
-        else if (RefPtr shape = dynamicDowncast<CSSBasicShapeValue>(singleValue))
-            operation = ShapePathOperation::create(convertBasicShape(builderState, *shape, std::nullopt));
-        else
-            referenceBox = fromCSSValue<CSSBoxType>(singleValue);
-    };
-
-    if (auto* list = dynamicDowncast<CSSValueList>(value)) {
-        for (auto& currentValue : *list)
-            processSingleValue(currentValue);
-    } else
-        processSingleValue(value);
-
-    if (operation)
-        operation->setReferenceBox(referenceBox);
-    else {
-        ASSERT(referenceBox != CSSBoxType::BoxMissing);
-        operation = BoxPathOperation::create(referenceBox);
-    }
-
-    return operation;
-}
-
-inline Style::BasicShape BuilderConverter::convertBasicShape(BuilderState& builderState, const CSSBasicShapeValue& value, std::optional<float> zoom)
-{
-    return WTF::switchOn(value.shape(),
-        [&](const auto& shape) {
-            return Style::BasicShape { Style::toStyle(shape, builderState) };
-        },
-        [&](const CSS::PathFunction& path) {
-            return Style::BasicShape { Style::overrideToStyle(path, builderState, zoom) };
-        }
-    );
-}
-
 inline Resize BuilderConverter::convertResize(BuilderState& builderState, const CSSValue& value)
 {
     auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
@@ -915,60 +298,6 @@ inline Resize BuilderConverter::convertResize(BuilderState& builderState, const 
         resize = fromCSSValue<Resize>(value);
 
     return resize;
-}
-
-inline int BuilderConverter::convertMarqueeRepetition(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-    if (primitiveValue->valueID() == CSSValueInfinite)
-        return -1; // -1 means repeat forever.
-
-    ASSERT(primitiveValue->isNumber());
-    return primitiveValue->resolveAsNumber<int>(builderState.cssToLengthConversionData());
-}
-
-inline int BuilderConverter::convertMarqueeSpeed(BuilderState& builderState, const CSSValue& value)
-{
-    auto& conversionData = builderState.cssToLengthConversionData();
-
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-    if (primitiveValue->isTime())
-        return primitiveValue->resolveAsTime<int, CSS::TimeUnit::Ms>(conversionData);
-
-    // For scrollamount support.
-    ASSERT(primitiveValue->isNumber());
-    return primitiveValue->resolveAsNumber<int>(conversionData);
-}
-
-inline RefPtr<QuotesData> BuilderConverter::convertQuotes(BuilderState& builderState, const CSSValue& value)
-{
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (primitiveValue->valueID() == CSSValueNone)
-            return QuotesData::create({ });
-        ASSERT(primitiveValue->valueID() == CSSValueAuto);
-        return nullptr;
-    }
-
-    auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
-    if (!list)
-        return { };
-
-    Vector<std::pair<String, String>> quotes;
-    quotes.reserveInitialCapacity(list->size() / 2);
-    for (unsigned i = 0; i < list->size(); i += 2) {
-        auto& first = list->item(i);
-        if (list->size() <= i + 1)
-            break;
-        auto& second = list->item(i + 1);
-        String startQuote = first.stringValue();
-        String endQuote = second.stringValue();
-        quotes.append(std::make_pair(startQuote, endQuote));
-    }
-    return QuotesData::create(quotes);
 }
 
 inline static OptionSet<TextUnderlinePosition> valueToUnderlinePosition(const CSSPrimitiveValue& primitiveValue)
@@ -1006,172 +335,6 @@ inline OptionSet<TextUnderlinePosition> BuilderConverter::convertTextUnderlinePo
     auto position = valueToUnderlinePosition(pair->first);
     position.add(valueToUnderlinePosition(pair->second));
     return position;
-}
-
-inline TextUnderlineOffset BuilderConverter::convertTextUnderlineOffset(BuilderState& builderState, const CSSValue& value)
-{
-    return TextUnderlineOffset::createWithLength(BuilderConverter::convertLengthOrAuto(builderState, value));
-}
-
-inline TextDecorationThickness BuilderConverter::convertTextDecorationThickness(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-    switch (primitiveValue->valueID()) {
-    case CSSValueAuto:
-        return TextDecorationThickness::createWithAuto();
-    case CSSValueFromFont:
-        return TextDecorationThickness::createFromFont();
-    default: {
-        auto conversionData = builderState.cssToLengthConversionData();
-
-        if (primitiveValue->isPercentage())
-            return TextDecorationThickness::createWithLength(WebCore::Length(clampTo<float>(primitiveValue->resolveAsPercentage(conversionData), minValueForCssLength, maxValueForCssLength), LengthType::Percent));
-
-        if (primitiveValue->isCalculatedPercentageWithLength())
-            return TextDecorationThickness::createWithLength(WebCore::Length(primitiveValue->cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { })));
-
-        ASSERT(primitiveValue->isLength());
-        return TextDecorationThickness::createWithLength(primitiveValue->resolveAsLength<WebCore::Length>(conversionData));
-    }
-    }
-}
-
-inline RefPtr<StyleReflection> BuilderConverter::convertReflection(BuilderState& builderState, const CSSValue& value)
-{
-    if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(value.valueID() == CSSValueNone);
-        return nullptr;
-    }
-
-    auto* reflectValue = requiredDowncast<CSSReflectValue>(builderState, value);
-    if (!reflectValue)
-        return { };
-
-    NinePieceImage mask(NinePieceImage::Type::Mask);
-    mask.setFill(true);
-
-    builderState.styleMap().mapNinePieceImage(reflectValue->mask(), mask);
-
-    auto reflection = StyleReflection::create();
-    reflection->setDirection(fromCSSValueID<ReflectionDirection>(reflectValue->direction()));
-    reflection->setOffset(reflectValue->offset().convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData()));
-    reflection->setMask(mask);
-    return reflection;
-}
-
-inline TextEdge BuilderConverter::convertTextEdge(BuilderState& builderState, const CSSValue& value)
-{
-    auto overValue = [&](CSSValueID valueID) {
-        switch (valueID) {
-        case CSSValueText:
-            return TextEdgeType::Text;
-        case CSSValueCap:
-            return TextEdgeType::CapHeight;
-        case CSSValueEx:
-            return TextEdgeType::ExHeight;
-        case CSSValueIdeographic:
-            return TextEdgeType::CJKIdeographic;
-        case CSSValueIdeographicInk:
-            return TextEdgeType::CJKIdeographicInk;
-        default:
-            ASSERT_NOT_REACHED();
-            return TextEdgeType::Auto;
-        }
-    };
-
-    auto underValue = [&](CSSValueID valueID) {
-        switch (valueID) {
-        case CSSValueText:
-            return TextEdgeType::Text;
-        case CSSValueAlphabetic:
-            return TextEdgeType::Alphabetic;
-        case CSSValueIdeographic:
-            return TextEdgeType::CJKIdeographic;
-        case CSSValueIdeographicInk:
-            return TextEdgeType::CJKIdeographicInk;
-        default:
-            ASSERT_NOT_REACHED();
-            return TextEdgeType::Auto;
-        }
-    };
-
-    // One value was given.
-    if (is<CSSPrimitiveValue>(value)) {
-        switch (value.valueID()) {
-        case CSSValueAuto:
-            return { TextEdgeType::Auto, TextEdgeType::Auto };
-        case CSSValueLeading:
-            return { TextEdgeType::Leading, TextEdgeType::Leading };
-        // https://www.w3.org/TR/css-inline-3/#text-edges
-        // "If only one value is specified, both edges are assigned that same keyword if possible; else text is assumed as the missing value."
-        case CSSValueCap:
-        case CSSValueEx:
-            return { overValue(value.valueID()), TextEdgeType::Text };
-        default:
-            return { overValue(value.valueID()), underValue(value.valueID()) };
-        }
-    }
-
-    // Two values were given.
-    auto pair = requiredPairDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!pair)
-        return { };
-
-    return {
-        overValue(pair->first.valueID()),
-        underValue(pair->second.valueID())
-    };
-}
-
-inline IntSize BuilderConverter::convertInitialLetter(BuilderState& builderState, const CSSValue& value)
-{
-    if (value.valueID() == CSSValueNormal)
-        return IntSize();
-
-    auto& conversionData = builderState.cssToLengthConversionData();
-
-    auto pair = requiredPairDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!pair)
-        return { };
-
-    return {
-        pair->second.resolveAsNumber<int>(conversionData),
-        pair->first.resolveAsNumber<int>(conversionData)
-    };
-}
-
-inline float BuilderConverter::convertTextStrokeWidth(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    float width = 0;
-    switch (primitiveValue->valueID()) {
-    case CSSValueThin:
-    case CSSValueMedium:
-    case CSSValueThick: {
-        double result = 1.0 / 48;
-        if (primitiveValue->valueID() == CSSValueMedium)
-            result *= 3;
-        else if (primitiveValue->valueID() == CSSValueThick)
-            result *= 5;
-        auto emsValue = CSSPrimitiveValue::create(result, CSSUnitType::CSS_EM);
-        width = convertComputedLength<float>(builderState, emsValue);
-        break;
-    }
-    case CSSValueInvalid: {
-        width = convertComputedLength<float>(builderState, *primitiveValue);
-        break;
-    }
-    default:
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-
-    return width;
 }
 
 inline OptionSet<LineBoxContain> BuilderConverter::convertLineBoxContain(BuilderState& builderState, const CSSValue& value)
@@ -1236,107 +399,6 @@ inline OptionSet<LineBoxContain> BuilderConverter::convertLineBoxContain(Builder
     return result;
 }
 
-inline RefPtr<ShapeValue> BuilderConverter::convertShapeValue(BuilderState& builderState, const CSSValue& value)
-{
-    if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(value.valueID() == CSSValueNone);
-        return nullptr;
-    }
-
-    if (value.isImage())
-        return ShapeValue::create(builderState.createStyleImage(value).releaseNonNull());
-
-    std::optional<Style::BasicShape> shape;
-    auto referenceBox = CSSBoxType::BoxMissing;
-    auto processSingleValue = [&](const CSSValue& currentValue) {
-        if (RefPtr shapeValue = dynamicDowncast<CSSBasicShapeValue>(currentValue))
-            shape = convertBasicShape(builderState, *shapeValue, 1);
-        else
-            referenceBox = fromCSSValue<CSSBoxType>(currentValue);
-    };
-    if (auto* list = dynamicDowncast<CSSValueList>(value)) {
-        for (auto& currentValue : *list)
-            processSingleValue(currentValue);
-    } else
-        processSingleValue(value);
-
-    
-    if (shape)
-        return ShapeValue::create(WTFMove(*shape), referenceBox);
-
-    if (referenceBox != CSSBoxType::BoxMissing)
-        return ShapeValue::create(referenceBox);
-
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
-inline ScrollSnapType BuilderConverter::convertScrollSnapType(BuilderState& builderState, const CSSValue& value)
-{
-    ScrollSnapType type;
-    auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
-    if (!list)
-        return { };
-
-    auto& firstValue = list->item(0);
-    if (firstValue.valueID() == CSSValueNone)
-        return type;
-
-    type.axis = fromCSSValue<ScrollSnapAxis>(firstValue);
-    if (list->size() == 2)
-        type.strictness = fromCSSValue<ScrollSnapStrictness>(list->item(1));
-    else
-        type.strictness = ScrollSnapStrictness::Proximity;
-
-    return type;
-}
-
-inline ScrollSnapAlign BuilderConverter::convertScrollSnapAlign(BuilderState& builderState, const CSSValue& value)
-{
-    auto pair = requiredPairDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!pair)
-        return { };
-
-    return {
-        fromCSSValue<ScrollSnapAxisAlignType>(pair->first),
-        fromCSSValue<ScrollSnapAxisAlignType>(pair->second)
-    };
-}
-
-inline std::optional<ScrollbarColor> BuilderConverter::convertScrollbarColor(BuilderState& builderState, const CSSValue& value)
-{
-    if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(value.valueID() == CSSValueAuto);
-        return std::nullopt;
-    }
-
-    auto* pair = requiredDowncast<CSSValuePair>(builderState, value);
-    if (!pair)
-        return { };
-
-    return ScrollbarColor {
-        builderState.createStyleColor(pair->first()),
-        builderState.createStyleColor(pair->second()),
-    };
-}
-
-inline ScrollbarGutter BuilderConverter::convertScrollbarGutter(BuilderState&, const CSSValue& value)
-{
-    ScrollbarGutter gutter;
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (primitiveValue->valueID() == CSSValueStable)
-            gutter.isAuto = false;
-        return gutter;
-    }
-
-    ASSERT(value.isPair());
-
-    gutter.isAuto = false;
-    gutter.bothEdges = true;
-
-    return gutter;
-}
-
 inline ScrollbarWidth BuilderConverter::convertScrollbarWidth(BuilderState& builderState, const CSSValue& value)
 {
     auto scrollbarWidth = fromCSSValue<ScrollbarWidth>(value);
@@ -1344,234 +406,6 @@ inline ScrollbarWidth BuilderConverter::convertScrollbarWidth(BuilderState& buil
         return ScrollbarWidth::Auto;
 
     return scrollbarWidth;
-}
-
-inline GridLength BuilderConverter::createGridTrackBreadth(BuilderState& builderState, const CSSPrimitiveValue& primitiveValue)
-{
-    if (primitiveValue.valueID() == CSSValueMinContent || primitiveValue.valueID() == CSSValueWebkitMinContent)
-        return WebCore::Length(LengthType::MinContent);
-
-    if (primitiveValue.valueID() == CSSValueMaxContent || primitiveValue.valueID() == CSSValueWebkitMaxContent)
-        return WebCore::Length(LengthType::MaxContent);
-
-    auto& conversionData = builderState.cssToLengthConversionData();
-
-    // Fractional unit.
-    if (primitiveValue.isFlex())
-        return GridLength(primitiveValue.resolveAsFlex<double>(conversionData));
-
-    auto length = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | AutoConversion>(conversionData);
-    if (!length.isUndefined())
-        return length;
-    return WebCore::Length(0.0, LengthType::Fixed);
-}
-
-inline GridTrackSize BuilderConverter::createGridTrackSize(BuilderState& builderState, const CSSValue& value)
-{
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value))
-        return GridTrackSize(createGridTrackBreadth(builderState, *primitiveValue));
-
-    auto function = requiredListDowncast<CSSFunctionValue, CSSPrimitiveValue>(builderState, value);
-    if (!function)
-        return { };
-
-    if (function->size() == 1)
-        return GridTrackSize(createGridTrackBreadth(builderState, function->item(0)), FitContentTrackSizing);
-
-    GridLength minTrackBreadth(createGridTrackBreadth(builderState, function->item(0)));
-    GridLength maxTrackBreadth(createGridTrackBreadth(builderState, function->item(1)));
-    return GridTrackSize(minTrackBreadth, maxTrackBreadth);
-}
-
-inline std::optional<GridTrackList> BuilderConverter::createGridTrackList(BuilderState& builderState, const CSSValue& value)
-{
-    RefPtr<const CSSValueContainingVector> valueList;
-
-    GridTrackList trackList;
-
-    auto* subgridValue = dynamicDowncast<CSSSubgridValue>(value);
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (primitiveValue->valueID() == CSSValueMasonry) {
-            trackList.list.append(GridTrackEntryMasonry());
-            return { WTFMove(trackList) };
-        }
-        if (primitiveValue->valueID() == CSSValueNone)
-            return { WTFMove(trackList) };
-    } else if (subgridValue) {
-        valueList = subgridValue;
-        trackList.list.append(GridTrackEntrySubgrid());
-    } else if (auto* list = dynamicDowncast<CSSValueList>(value))
-        valueList = list;
-    else
-        return std::nullopt;
-
-    // https://drafts.csswg.org/css-grid-2/#computed-tracks
-    // The computed track list of a non-subgrid axis is a list alternating between line name sets
-    // and track sections, with the first and last items being line name sets.
-    auto ensureLineNames = [&](auto& list) {
-        if (subgridValue)
-            return;
-        if (list.isEmpty() || !std::holds_alternative<Vector<String>>(list.last()))
-            list.append(Vector<String>());
-    };
-
-    auto buildRepeatList = [&](const CSSValue& repeatValue, RepeatTrackList& repeatList) {
-        auto vectorValue = requiredDowncast<CSSValueContainingVector>(builderState, repeatValue);
-        if (!vectorValue)
-            return;
-        for (auto& currentValue : *vectorValue) {
-            if (auto* namesValue = dynamicDowncast<CSSGridLineNamesValue>(currentValue))
-                repeatList.append(Vector<String>(namesValue->names()));
-            else {
-                ensureLineNames(repeatList);
-                repeatList.append(createGridTrackSize(builderState, currentValue));
-            }
-        }
-
-        if (!repeatList.isEmpty())
-            ensureLineNames(repeatList);
-    };
-
-    auto addOne = [&](const CSSValue& currentValue) {
-        if (auto* namesValue = dynamicDowncast<CSSGridLineNamesValue>(currentValue)) {
-            trackList.list.append(Vector<String>(namesValue->names()));
-            return;
-        }
-
-        ensureLineNames(trackList.list);
-
-        if (auto* repeatValue = dynamicDowncast<CSSGridAutoRepeatValue>(currentValue)) {
-            CSSValueID autoRepeatID = repeatValue->autoRepeatID();
-            ASSERT(autoRepeatID == CSSValueAutoFill || autoRepeatID == CSSValueAutoFit);
-
-            GridTrackEntryAutoRepeat repeat;
-            repeat.type = autoRepeatID == CSSValueAutoFill ? AutoRepeatType::Fill : AutoRepeatType::Fit;
-
-            buildRepeatList(currentValue, repeat.list);
-            trackList.list.append(WTFMove(repeat));
-        } else if (auto* repeatValue = dynamicDowncast<CSSGridIntegerRepeatValue>(currentValue)) {
-            auto repetitions = clampTo(repeatValue->repetitions().resolveAsInteger(builderState.cssToLengthConversionData()), 1, GridPosition::max());
-
-            GridTrackEntryRepeat repeat;
-            repeat.repeats = repetitions;
-
-            buildRepeatList(currentValue, repeat.list);
-            trackList.list.append(WTFMove(repeat));
-        } else
-            trackList.list.append(createGridTrackSize(builderState, currentValue));
-    };
-
-    if (!valueList)
-        addOne(value);
-    else {
-        for (auto& value : *valueList)
-            addOne(value);
-    }
-
-    if (!trackList.list.isEmpty())
-        ensureLineNames(trackList.list);
-
-    return { WTFMove(trackList) };
-}
-
-inline GridPosition BuilderConverter::createGridPosition(BuilderState& builderState, const CSSValue& value)
-{
-    GridPosition position;
-
-    // We accept the specification's grammar:
-    // auto | <custom-ident> | [ <integer> && <custom-ident>? ] | [ span && [ <integer> || <custom-ident> ] ]
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (primitiveValue->isCustomIdent()) {
-            position.setNamedGridArea(primitiveValue->stringValue());
-            return position;
-        }
-
-        ASSERT(primitiveValue->valueID() == CSSValueAuto);
-        return position;
-    }
-
-    auto* gridLineValue = requiredDowncast<CSSGridLineValue>(builderState, value);
-    if (!gridLineValue)
-        return { };
-
-    RefPtr uncheckedSpanValue = gridLineValue->spanValue();
-    RefPtr uncheckedNumericValue = gridLineValue->numericValue();
-    RefPtr uncheckedGridLineName = gridLineValue->gridLineName();
-
-    auto gridLineNumber = uncheckedNumericValue && uncheckedNumericValue->isInteger() ? uncheckedNumericValue->resolveAsInteger(builderState.cssToLengthConversionData()) : 0;
-    auto gridLineName = uncheckedGridLineName && uncheckedGridLineName->isCustomIdent() ? uncheckedGridLineName->stringValue() : String();
-
-    if (uncheckedSpanValue && uncheckedSpanValue->valueID() == CSSValueSpan)
-        position.setSpanPosition(gridLineNumber > 0 ? gridLineNumber : 1, gridLineName);
-    else
-        position.setExplicitPosition(gridLineNumber, gridLineName);
-
-    return position;
-}
-
-inline NamedGridLinesMap BuilderConverter::createImplicitNamedGridLinesFromGridArea(BuilderState&, const NamedGridAreaMap& namedGridAreas, GridTrackSizingDirection direction)
-{
-    NamedGridLinesMap namedGridLines;
-
-    for (auto& area : namedGridAreas.map) {
-        GridSpan areaSpan = direction == GridTrackSizingDirection::ForRows ? area.value.rows : area.value.columns;
-        {
-            auto& startVector = namedGridLines.map.add(makeString(area.key, "-start"_s), Vector<unsigned>()).iterator->value;
-            startVector.append(areaSpan.startLine());
-            std::ranges::sort(startVector);
-        }
-        {
-            auto& endVector = namedGridLines.map.add(makeString(area.key, "-end"_s), Vector<unsigned>()).iterator->value;
-            endVector.append(areaSpan.endLine());
-            std::ranges::sort(endVector);
-        }
-    }
-    // FIXME: For acceptable performance, should sort once at the end, not as we add each item, or at least insert in sorted order instead of using std::sort each time.
-
-    return namedGridLines;
-}
-
-inline Vector<GridTrackSize> BuilderConverter::convertGridTrackSizeList(BuilderState& builderState, const CSSValue& value)
-{
-    auto validateValue = [](const CSSValue& value) {
-        ASSERT_UNUSED(value, !value.isGridLineNamesValue());
-        ASSERT_UNUSED(value, !value.isGridAutoRepeatValue());
-        ASSERT_UNUSED(value, !value.isGridIntegerRepeatValue());
-    };
-
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (primitiveValue->isValueID()) {
-            ASSERT(primitiveValue->valueID() == CSSValueAuto);
-            return RenderStyle::initialGridAutoRows();
-        }
-        // Values coming from CSS Typed OM may not have been converted to a CSSValueList yet.
-        validateValue(*primitiveValue);
-        return Vector<GridTrackSize>({ convertGridTrackSize(builderState, *primitiveValue) });
-    }
-
-    if (auto* valueList = dynamicDowncast<CSSValueList>(value))  {
-        return WTF::map(*valueList, [&](auto& currentValue) {
-            validateValue(currentValue);
-            return convertGridTrackSize(builderState, currentValue);
-        });
-    }
-    validateValue(value);
-    return Vector<GridTrackSize>({ convertGridTrackSize(builderState, value) });
-}
-
-inline GridTrackSize BuilderConverter::convertGridTrackSize(BuilderState& builderState, const CSSValue& value)
-{
-    return createGridTrackSize(builderState, value);
-}
-
-inline std::optional<GridTrackList> BuilderConverter::convertGridTrackList(BuilderState& builderState, const CSSValue& value)
-{
-    return createGridTrackList(builderState, value);
-}
-
-inline GridPosition BuilderConverter::convertGridPosition(BuilderState& builderState, const CSSValue& value)
-{
-    return createGridPosition(builderState, value);
 }
 
 inline GridAutoFlow BuilderConverter::convertGridAutoFlow(BuilderState& builderState, const CSSValue& value)
@@ -1616,17 +450,6 @@ inline GridAutoFlow BuilderConverter::convertGridAutoFlow(BuilderState& builderS
     return autoFlow;
 }
 
-inline Vector<StyleContentAlignmentData> BuilderConverter::convertContentAlignmentDataList(BuilderState& builderState, const CSSValue& value)
-{
-    auto list = requiredListDowncast<CSSValueList, CSSContentDistributionValue>(builderState, value);
-    if (!list)
-        return { };
-
-    return WTF::map(*list, [&](auto& value) {
-        return convertContentAlignmentData(builderState, value);
-    });
-}
-
 inline float zoomWithTextZoomFactor(BuilderState& builderState)
 {
     if (auto* frame = builderState.document().frame()) {
@@ -1635,130 +458,6 @@ inline float zoomWithTextZoomFactor(BuilderState& builderState)
     }
     return builderState.cssToLengthConversionData().zoom();
 }
-
-inline CSSToLengthConversionData BuilderConverter::cssToLengthConversionDataWithTextZoomFactor(BuilderState& builderState)
-{
-    float zoom = zoomWithTextZoomFactor(builderState);
-    if (zoom == builderState.cssToLengthConversionData().zoom())
-        return builderState.cssToLengthConversionData();
-
-    return builderState.cssToLengthConversionData().copyWithAdjustedZoom(zoom);
-}
-
-inline WebCore::Length BuilderConverter::convertTextLengthOrNormal(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-    auto conversionData = (builderState.useSVGZoomRulesForLength())
-        ? builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
-        : cssToLengthConversionDataWithTextZoomFactor(builderState);
-
-    if (primitiveValue->valueID() == CSSValueNormal)
-        return RenderStyle::zeroLength();
-    if (primitiveValue->isLength())
-        return primitiveValue->resolveAsLength<WebCore::Length>(conversionData);
-    if (primitiveValue->isPercentage())
-        return WebCore::Length(clampTo<float>(primitiveValue->resolveAsPercentage(conversionData), minValueForCssLength, maxValueForCssLength), LengthType::Percent);
-    if (primitiveValue->isCalculatedPercentageWithLength())
-        return WebCore::Length(primitiveValue->cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }));
-    if (primitiveValue->isNumber())
-        return WebCore::Length(primitiveValue->resolveAsNumber(conversionData), LengthType::Fixed);
-    ASSERT_NOT_REACHED();
-    return RenderStyle::zeroLength();
-}
-
-inline std::optional<float> BuilderConverter::convertPerspective(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    if (primitiveValue->valueID() == CSSValueNone)
-        return RenderStyle::initialPerspective();
-
-    auto& conversionData = builderState.cssToLengthConversionData();
-
-    float perspective = -1;
-    if (primitiveValue->isLength())
-        perspective = primitiveValue->resolveAsLength<float>(conversionData);
-    else if (primitiveValue->isNumber())
-        perspective = primitiveValue->resolveAsNumber<float>(conversionData) * conversionData.zoom();
-    else
-        ASSERT_NOT_REACHED();
-
-    return perspective < 0 ? std::optional<float>(std::nullopt) : std::optional<float>(perspective);
-}
-
-inline std::optional<WebCore::Length> BuilderConverter::convertMarqueeIncrement(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    auto length = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
-    if (length.isUndefined())
-        return std::nullopt;
-    return length;
-}
-
-inline FilterOperations BuilderConverter::convertFilterOperations(BuilderState& builderState, const CSSValue& value)
-{
-    return builderState.createFilterOperations(value);
-}
-
-inline FilterOperations BuilderConverter::convertAppleColorFilterOperations(BuilderState& builderState, const CSSValue& value)
-{
-    return builderState.createAppleColorFilterOperations(value);
-}
-
-// The input value needs to parsed and valid, this function returns std::nullopt if the input was "normal".
-inline std::optional<FontSelectionValue> BuilderConverter::convertFontStyleFromValue(BuilderState& builderState, const CSSValue& value)
-{
-    return Style::fontStyleFromCSSValue(builderState, value);
-}
-
-inline FontSelectionValue BuilderConverter::convertFontWeight(BuilderState& builderState, const CSSValue& value)
-{
-    return Style::fontWeightFromCSSValue(builderState, value);
-}
-
-inline FontSelectionValue BuilderConverter::convertFontWidth(BuilderState& builderState, const CSSValue& value)
-{
-    return Style::fontStretchFromCSSValue(builderState, value);
-}
-
-inline FontFeatureSettings BuilderConverter::convertFontFeatureSettings(BuilderState& builderState, const CSSValue& value)
-{
-    return Style::fontFeatureSettingsFromCSSValue(builderState, value);
-}
-
-inline FontVariationSettings BuilderConverter::convertFontVariationSettings(BuilderState& builderState, const CSSValue& value)
-{
-    return Style::fontVariationSettingsFromCSSValue(builderState, value);
-}
-
-inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState& builderState, const CSSValue& value)
-{
-    return Style::fontSizeAdjustFromCSSValue(builderState, value);
-}
-
-#if PLATFORM(IOS_FAMILY)
-inline bool BuilderConverter::convertTouchCallout(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-    return !equalLettersIgnoringASCIICase(primitiveValue->stringValue(), "none"_s);
-}
-#endif
-
-#if ENABLE(TOUCH_EVENTS)
-inline Color BuilderConverter::convertTapHighlightColor(BuilderState& builderState, const CSSValue& value)
-{
-    return builderState.createStyleColor(value);
-}
-#endif
 
 inline OptionSet<TouchAction> BuilderConverter::convertTouchAction(BuilderState&, const CSSValue& value)
 {
@@ -1777,37 +476,6 @@ inline OptionSet<TouchAction> BuilderConverter::convertTouchAction(BuilderState&
     }
 
     return RenderStyle::initialTouchActions();
-}
-
-#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
-inline bool BuilderConverter::convertOverflowScrolling(BuilderState&, const CSSValue& value)
-{
-    return value.valueID() == CSSValueTouch;
-}
-#endif
-
-inline bool BuilderConverter::convertSmoothScrolling(BuilderState&, const CSSValue& value)
-{
-    return value.valueID() == CSSValueSmooth;
-}
-
-inline Vector<WebCore::Length> BuilderConverter::convertStrokeDashArray(BuilderState& builderState, const CSSValue& value)
-{
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (primitiveValue->valueID() == CSSValueNone)
-            return SVGRenderStyle::initialStrokeDashArray();
-
-        // Values coming from CSS-Typed-OM may not have been converted to a CSSValueList yet.
-        return Vector { convertLengthAllowingNumber(builderState, *primitiveValue) };
-    }
-
-    auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
-    if (!list)
-        return { };
-
-    return WTF::map(*list, [&](auto& item) {
-        return convertLengthAllowingNumber(builderState, item);
-    });
 }
 
 inline PaintOrder BuilderConverter::convertPaintOrder(BuilderState& builderState, const CSSValue& value)
@@ -1834,29 +502,6 @@ inline PaintOrder BuilderConverter::convertPaintOrder(BuilderState& builderState
     }
 }
 
-inline float BuilderConverter::convertOpacity(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    float opacity = primitiveValue->valueDividingBy100IfPercentage(builderState.cssToLengthConversionData());
-    return std::max(0.0f, std::min(1.0f, opacity));
-}
-
-inline Style::URL BuilderConverter::convertSVGURIReference(BuilderState& builderState, const CSSValue& value)
-{
-    if (auto url = dynamicDowncast<CSSURLValue>(value))
-        return Style::toStyle(url->url(), builderState);
-
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return Style::URL::none();
-
-    ASSERT(primitiveValue->valueID() == CSSValueNone);
-    return Style::URL::none();
-}
-
 // Get the "opposite" ItemPosition to the provided ItemPosition.
 // e.g: start -> end, end -> start, self-start -> self-end.
 // Position that doesn't have an opposite value is returned as-is.
@@ -1871,6 +516,7 @@ inline ItemPosition oppositeItemPosition(ItemPosition position)
     case ItemPosition::LastBaseline:
     case ItemPosition::Center:
     case ItemPosition::AnchorCenter:
+    case ItemPosition::Dialog:
         return position;
 
     case ItemPosition::Start:
@@ -1974,92 +620,6 @@ inline StyleContentAlignmentData BuilderConverter::convertContentAlignmentData(B
     return alignmentData;
 }
 
-inline GlyphOrientation BuilderConverter::convertGlyphOrientation(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    float angle = std::abs(fmodf(primitiveValue->resolveAsAngle(builderState.cssToLengthConversionData()), 360.0f));
-    if (angle <= 45.0f || angle > 315.0f)
-        return GlyphOrientation::Degrees0;
-    if (angle > 45.0f && angle <= 135.0f)
-        return GlyphOrientation::Degrees90;
-    if (angle > 135.0f && angle <= 225.0f)
-        return GlyphOrientation::Degrees180;
-    return GlyphOrientation::Degrees270;
-}
-
-inline GlyphOrientation BuilderConverter::convertGlyphOrientationOrAuto(BuilderState& builderState, const CSSValue& value)
-{
-    if (value.valueID() == CSSValueAuto)
-        return GlyphOrientation::Auto;
-    return convertGlyphOrientation(builderState, value);
-}
-
-inline WebCore::Length BuilderConverter::convertLineHeight(BuilderState& builderState, const CSSValue& value, float multiplier)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    auto valueID = primitiveValue->valueID();
-    if (valueID == CSSValueNormal)
-        return RenderStyle::initialLineHeight();
-
-    if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID))
-        return RenderStyle::initialLineHeight();
-
-    auto conversionData = builderState.cssToLengthConversionData().copyForLineHeight(zoomWithTextZoomFactor(builderState));
-
-    if (primitiveValue->isLength() || primitiveValue->isCalculatedPercentageWithLength()) {
-        WebCore::Length length;
-        if (primitiveValue->isLength())
-            length = primitiveValue->resolveAsLength<WebCore::Length>(conversionData);
-        else {
-            auto value = primitiveValue->cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { })->evaluate(builderState.style().computedFontSize());
-            length = { clampTo<float>(value, minValueForCssLength, maxValueForCssLength), LengthType::Fixed };
-        }
-        if (multiplier != 1.f)
-            length = WebCore::Length(length.value() * multiplier, LengthType::Fixed);
-        return length;
-    }
-
-    // Line-height percentages need to inherit as if they were Fixed pixel values. In the example:
-    // <div style="font-size: 10px; line-height: 150%;"><div style="font-size: 100px;"></div></div>
-    // the inner element should have line-height of 15px. However, in this example:
-    // <div style="font-size: 10px; line-height: 1.5;"><div style="font-size: 100px;"></div></div>
-    // the inner element should have a line-height of 150px. Therefore, we map percentages to Fixed
-    // values and raw numbers to percentages.
-    if (primitiveValue->isPercentage()) {
-        // FIXME: percentage should not be restricted to an integer here.
-        return WebCore::Length((builderState.style().computedFontSize() * primitiveValue->resolveAsPercentage<int>(conversionData)) / 100, LengthType::Fixed);
-    }
-
-    ASSERT(primitiveValue->isNumber());
-    return WebCore::Length(primitiveValue->resolveAsNumber(conversionData) * 100.0, LengthType::Percent);
-}
-
-inline FontPalette BuilderConverter::convertFontPalette(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    switch (primitiveValue->valueID()) {
-    case CSSValueLight:
-        return { FontPalette::Type::Light, nullAtom() };
-    case CSSValueDark:
-        return { FontPalette::Type::Dark, nullAtom() };
-    case CSSValueInvalid:
-        ASSERT(primitiveValue->isCustomIdent());
-        return { FontPalette::Type::Custom, AtomString { primitiveValue->stringValue() } };
-    default:
-        ASSERT(primitiveValue->valueID() == CSSValueNormal || CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue->valueID()));
-        return { FontPalette::Type::Normal, nullAtom() };
-    }
-}
-    
 inline OptionSet<SpeakAs> BuilderConverter::convertSpeakAs(BuilderState&, const CSSValue& value)
 {
     auto result = RenderStyle::initialSpeakAs();
@@ -2080,65 +640,6 @@ inline OptionSet<HangingPunctuation> BuilderConverter::convertHangingPunctuation
             result.add(fromCSSValue<HangingPunctuation>(currentValue));
     }
     return result;
-}
-
-inline GapLength BuilderConverter::convertGapLength(BuilderState& builderState, const CSSValue& value)
-{
-    return (value.valueID() == CSSValueNormal) ? GapLength() : GapLength(convertLength(builderState, value));
-}
-
-inline OffsetRotation BuilderConverter::convertOffsetRotate(BuilderState& builderState, const CSSValue& value)
-{
-    RefPtr<const CSSPrimitiveValue> modifierValue;
-    RefPtr<const CSSPrimitiveValue> angleValue;
-
-    if (auto* offsetRotateValue = dynamicDowncast<CSSOffsetRotateValue>(value)) {
-        modifierValue = offsetRotateValue->modifier();
-        angleValue = offsetRotateValue->angle();
-    } else if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        // Values coming from CSSTypedOM didn't go through the parser and may not have been converted to a CSSOffsetRotateValue.
-        if (primitiveValue->valueID() == CSSValueAuto || primitiveValue->valueID() == CSSValueReverse)
-            modifierValue = primitiveValue;
-        else if (primitiveValue->isAngle())
-            angleValue = primitiveValue;
-    }
-
-    bool hasAuto = false;
-    float angleInDegrees = 0;
-
-    if (angleValue)
-        angleInDegrees = angleValue->resolveAsAngle<float>(builderState.cssToLengthConversionData());
-
-    if (modifierValue) {
-        switch (modifierValue->valueID()) {
-        case CSSValueAuto:
-            hasAuto = true;
-            break;
-        case CSSValueReverse:
-            hasAuto = true;
-            angleInDegrees += 180.0;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-        }
-    }
-
-    return OffsetRotation(hasAuto, angleInDegrees);
-}
-
-inline Vector<Style::ScopedName> BuilderConverter::convertContainerNames(BuilderState& builderState, const CSSValue& value)
-{
-    if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(value.valueID() == CSSValueNone);
-        return { };
-    }
-    auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
-    if (!list)
-        return { };
-
-    return WTF::map(*list, [&](auto& item) {
-        return Style::ScopedName { AtomString { item.stringValue() }, builderState.styleScopeOrdinal() };
-    });
 }
 
 inline OptionSet<MarginTrimType> BuilderConverter::convertMarginTrim(BuilderState&, const CSSValue& value)
@@ -2227,13 +728,6 @@ inline TextAutospace BuilderConverter::convertTextAutospace(BuilderState& builde
     return options;
 }
 
-inline std::optional<WebCore::Length> BuilderConverter::convertBlockStepSize(BuilderState& builderState, const CSSValue& value)
-{
-    if (value.valueID() == CSSValueNone)
-        return { };
-    return convertLength(builderState, value);
-}
-
 inline OptionSet<Containment> BuilderConverter::convertContain(BuilderState& builderState, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
@@ -2275,41 +769,6 @@ inline OptionSet<Containment> BuilderConverter::convertContain(BuilderState& bui
     return containment;
 }
 
-inline Vector<Style::ScopedName> BuilderConverter::convertViewTransitionClasses(BuilderState& builderState, const CSSValue& value)
-{
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (value.valueID() == CSSValueNone)
-            return { };
-        return { Style::ScopedName { AtomString { primitiveValue->stringValue() }, builderState.styleScopeOrdinal() } };
-    }
-
-    auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
-    if (!list)
-        return { };
-
-    return WTF::map(*list, [&](auto& item) {
-        return Style::ScopedName { AtomString { item.stringValue() }, builderState.styleScopeOrdinal() };
-    });
-}
-
-inline Style::ViewTransitionName BuilderConverter::convertViewTransitionName(BuilderState& state, const CSSValue& value)
-{
-    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
-    if (!primitiveValue)
-        return Style::ViewTransitionName::createWithNone();
-
-    if (value.valueID() == CSSValueNone)
-        return Style::ViewTransitionName::createWithNone();
-
-    if (value.valueID() == CSSValueAuto)
-        return Style::ViewTransitionName::createWithAuto(state.styleScopeOrdinal());
-
-    if (value.valueID() == CSSValueMatchElement)
-        return Style::ViewTransitionName::createWithMatchElement(state.styleScopeOrdinal());
-
-    return Style::ViewTransitionName::createWithCustomIdent(state.styleScopeOrdinal(), AtomString { primitiveValue->stringValue() });
-}
-
 inline RefPtr<WillChangeData> BuilderConverter::convertWillChange(BuilderState& builderState, const CSSValue& value)
 {
     if (value.valueID() == CSSValueAuto)
@@ -2344,93 +803,11 @@ inline RefPtr<WillChangeData> BuilderConverter::convertWillChange(BuilderState& 
     return willChange;
 }
 
-inline Vector<AtomString> BuilderConverter::convertScrollTimelineNames(BuilderState& builderState, const CSSValue& value)
-{
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (value.valueID() == CSSValueNone)
-            return { };
-        return { AtomString { primitiveValue->stringValue() } };
-    }
-
-    auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
-    if (!list)
-        return { };
-
-    return WTF::map(*list, [&](auto& item) {
-        return AtomString { item.stringValue() };
-    });
-}
-
-inline Vector<ScrollAxis> BuilderConverter::convertScrollTimelineAxes(BuilderState& builderState, const CSSValue& value)
-{
-    if (is<CSSPrimitiveValue>(value))
-        return { fromCSSValueID<ScrollAxis>(value.valueID()) };
-
-    auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
-    if (!list)
-        return { };
-
-    return WTF::map(*list, [&](auto& item) {
-        return fromCSSValueID<ScrollAxis>(item.valueID());
-    });
-}
-
-inline Vector<ViewTimelineInsets> BuilderConverter::convertViewTimelineInsets(BuilderState& builderState, const CSSValue& value)
-{
-    // While parsing, consumeViewTimelineInset() and consumeViewTimelineShorthand() yield a CSSValueList exclusively.
-    auto list = requiredListDowncast<CSSValueList, CSSValue>(builderState, value);
-    if (!list)
-        return { };
-
-    return WTF::map(*list, [&](auto& item) -> ViewTimelineInsets {
-        // Each item is either a single value or a CSSValuePair.
-        if (auto* pair = dynamicDowncast<CSSValuePair>(item))
-            return { convertLengthOrAuto(builderState, pair->first()), convertLengthOrAuto(builderState, pair->second()) };
-        if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(item))
-            return { convertLengthOrAuto(builderState, *primitiveValue), std::nullopt };
-        return { };
-    });
-}
-
-inline Vector<ScopedName> BuilderConverter::convertAnchorNames(BuilderState& builderState, const CSSValue& value)
-{
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (value.valueID() == CSSValueNone)
-            return { };
-
-        ScopedName scopedName {
-            .name = AtomString { primitiveValue->stringValue() },
-            .scopeOrdinal = builderState.styleScopeOrdinal()
-        };
-
-        return { scopedName };
-    }
-
-    auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue>(builderState, value);
-    if (!list)
-        return { };
-
-    return WTF::map(*list, [&](auto& item) {
-        return ScopedName {
-            .name = AtomString { item.stringValue() },
-            .scopeOrdinal = builderState.styleScopeOrdinal()
-        };
-    });
-}
-
 inline std::optional<ScopedName> BuilderConverter::convertPositionAnchor(BuilderState& builderState, const CSSValue& value)
 {
     if (value.valueID() == CSSValueAuto)
         return { };
-
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    return ScopedName {
-        .name = AtomString { primitiveValue->stringValue() },
-        .scopeOrdinal = builderState.styleScopeOrdinal()
-    };
+    return convertStyleType<ScopedName>(builderState, value);
 }
 
 static std::optional<PositionAreaAxis> positionAreaKeywordToAxis(CSSValueID keyword)
@@ -2450,22 +827,22 @@ static std::optional<PositionAreaAxis> positionAreaKeywordToAxis(CSSValueID keyw
 
     case CSSValueXStart:
     case CSSValueSpanXStart:
-    case CSSValueXSelfStart:
-    case CSSValueSpanXSelfStart:
+    case CSSValueSelfXStart:
+    case CSSValueSpanSelfXStart:
     case CSSValueXEnd:
     case CSSValueSpanXEnd:
-    case CSSValueXSelfEnd:
-    case CSSValueSpanXSelfEnd:
+    case CSSValueSelfXEnd:
+    case CSSValueSpanSelfXEnd:
         return PositionAreaAxis::X;
 
     case CSSValueYStart:
     case CSSValueSpanYStart:
-    case CSSValueYSelfStart:
-    case CSSValueSpanYSelfStart:
+    case CSSValueSelfYStart:
+    case CSSValueSpanSelfYStart:
     case CSSValueYEnd:
     case CSSValueSpanYEnd:
-    case CSSValueYSelfEnd:
-    case CSSValueSpanYSelfEnd:
+    case CSSValueSelfYEnd:
+    case CSSValueSpanSelfYEnd:
         return PositionAreaAxis::Y;
 
     case CSSValueBlockStart:
@@ -2512,9 +889,9 @@ static PositionAreaTrack positionAreaKeywordToTrack(CSSValueID keyword)
     case CSSValueLeft:
     case CSSValueTop:
     case CSSValueXStart:
-    case CSSValueXSelfStart:
+    case CSSValueSelfXStart:
     case CSSValueYStart:
-    case CSSValueYSelfStart:
+    case CSSValueSelfYStart:
     case CSSValueBlockStart:
     case CSSValueSelfBlockStart:
     case CSSValueInlineStart:
@@ -2526,9 +903,9 @@ static PositionAreaTrack positionAreaKeywordToTrack(CSSValueID keyword)
     case CSSValueSpanLeft:
     case CSSValueSpanTop:
     case CSSValueSpanXStart:
-    case CSSValueSpanXSelfStart:
+    case CSSValueSpanSelfXStart:
     case CSSValueSpanYStart:
-    case CSSValueSpanYSelfStart:
+    case CSSValueSpanSelfYStart:
     case CSSValueSpanBlockStart:
     case CSSValueSpanSelfBlockStart:
     case CSSValueSpanInlineStart:
@@ -2540,9 +917,9 @@ static PositionAreaTrack positionAreaKeywordToTrack(CSSValueID keyword)
     case CSSValueRight:
     case CSSValueBottom:
     case CSSValueXEnd:
-    case CSSValueXSelfEnd:
+    case CSSValueSelfXEnd:
     case CSSValueYEnd:
-    case CSSValueYSelfEnd:
+    case CSSValueSelfYEnd:
     case CSSValueBlockEnd:
     case CSSValueSelfBlockEnd:
     case CSSValueInlineEnd:
@@ -2554,9 +931,9 @@ static PositionAreaTrack positionAreaKeywordToTrack(CSSValueID keyword)
     case CSSValueSpanRight:
     case CSSValueSpanBottom:
     case CSSValueSpanXEnd:
-    case CSSValueSpanXSelfEnd:
+    case CSSValueSpanSelfXEnd:
     case CSSValueSpanYEnd:
-    case CSSValueSpanYSelfEnd:
+    case CSSValueSpanSelfYEnd:
     case CSSValueSpanBlockEnd:
     case CSSValueSpanSelfBlockEnd:
     case CSSValueSpanInlineEnd:
@@ -2611,14 +988,14 @@ static PositionAreaSelf positionAreaKeywordToSelf(CSSValueID keyword)
     case CSSValueSpanAll:
         return PositionAreaSelf::No;
 
-    case CSSValueXSelfStart:
-    case CSSValueSpanXSelfStart:
-    case CSSValueXSelfEnd:
-    case CSSValueSpanXSelfEnd:
-    case CSSValueYSelfStart:
-    case CSSValueSpanYSelfStart:
-    case CSSValueYSelfEnd:
-    case CSSValueSpanYSelfEnd:
+    case CSSValueSelfXStart:
+    case CSSValueSpanSelfXStart:
+    case CSSValueSelfXEnd:
+    case CSSValueSpanSelfXEnd:
+    case CSSValueSelfYStart:
+    case CSSValueSpanSelfYStart:
+    case CSSValueSelfYEnd:
+    case CSSValueSpanSelfYEnd:
     case CSSValueSelfBlockStart:
     case CSSValueSpanSelfBlockStart:
     case CSSValueSelfBlockEnd:
@@ -2780,48 +1157,6 @@ inline OptionSet<PositionVisibility> BuilderConverter::convertPositionVisibility
     return result;
 }
 
-inline BlockEllipsis BuilderConverter::convertBlockEllipsis(BuilderState& builderState, const CSSValue& value)
-{
-    if (value.valueID() == CSSValueNone)
-        return { };
-    if (value.valueID() == CSSValueAuto)
-        return { BlockEllipsis::Type::Auto, { } };
-    return { BlockEllipsis::Type::String, AtomString { convertString(builderState, value) } };
-
-}
-
-inline size_t BuilderConverter::convertMaxLines(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    if (primitiveValue->valueID() == CSSValueNone)
-        return 0;
-    return convertNumber<size_t>(builderState, value);
-}
-
-inline LineClampValue BuilderConverter::convertLineClamp(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    if (primitiveValue->primitiveType() == CSSUnitType::CSS_INTEGER)
-        return LineClampValue(std::max(primitiveValue->resolveAsInteger<int>(builderState.cssToLengthConversionData()), 1), LineClamp::LineCount);
-
-    if (primitiveValue->primitiveType() == CSSUnitType::CSS_PERCENTAGE)
-        return LineClampValue(std::max(primitiveValue->resolveAsPercentage<int>(builderState.cssToLengthConversionData()), 0), LineClamp::Percentage);
-
-    ASSERT(primitiveValue->valueID() == CSSValueNone);
-    return LineClampValue();
-}
-
-inline RefPtr<TimingFunction> BuilderConverter::convertTimingFunction(BuilderState& builderState, const CSSValue& value)
-{
-    return Style::createTimingFunction(value, builderState.cssToLengthConversionData());
-}
-
 inline NameScope BuilderConverter::convertNameScope(BuilderState& builderState, const CSSValue& value)
 {
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
@@ -2829,9 +1164,9 @@ inline NameScope BuilderConverter::convertNameScope(BuilderState& builderState, 
         case CSSValueNone:
             return { };
         case CSSValueAll:
-            return { NameScope::Type::All, { } };
+            return { NameScope::Type::All, { }, builderState.styleScopeOrdinal() };
         default:
-            return { NameScope::Type::Ident, { AtomString { primitiveValue->stringValue() } } };
+            return { NameScope::Type::Ident, { AtomString { primitiveValue->stringValue() } }, builderState.styleScopeOrdinal() };
         }
     }
 
@@ -2843,18 +1178,19 @@ inline NameScope BuilderConverter::convertNameScope(BuilderState& builderState, 
     for (auto& name : *list)
         nameHashSet.add(AtomString { name.stringValue() });
 
-    return { NameScope::Type::Ident, WTFMove(nameHashSet) };
+    return { NameScope::Type::Ident, WTFMove(nameHashSet), builderState.styleScopeOrdinal() };
 }
 
-inline Vector<PositionTryFallback> BuilderConverter::convertPositionTryFallbacks(BuilderState& builderState, const CSSValue& value)
+inline FixedVector<PositionTryFallback> BuilderConverter::convertPositionTryFallbacks(BuilderState& builderState, const CSSValue& value)
 {
-    auto convertFallback = [&](const CSSValue& fallbackValue) -> std::optional<PositionTryFallback> {
+    // FIXME: SaferCPP analysis reports that 'builderState' is an unsafe capture, even though this lambda does not escape.
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE auto convertFallback = [&](const CSSValue& fallbackValue) -> std::optional<PositionTryFallback> {
         auto* valueList = dynamicDowncast<CSSValueList>(fallbackValue);
         if (!valueList) {
             // Turn the inlined position-area fallback into properties object that can be applied similarly to @position-try declarations.
             auto property = CSSProperty { CSSPropertyPositionArea, Ref { const_cast<CSSValue&>(fallbackValue) } };
             return PositionTryFallback {
-                .positionAreaProperties = ImmutableStyleProperties::create(std::span { &property, 1 }, HTMLStandardMode)
+                .positionAreaProperties = ImmutableStyleProperties::createDeduplicating(std::span { &property, 1 }, HTMLStandardMode)
             };
         }
 
@@ -2865,7 +1201,7 @@ inline Vector<PositionTryFallback> BuilderConverter::convertPositionTryFallbacks
 
         for (auto& item : *valueList) {
             if (item.isCustomIdent())
-                fallback.positionTryRuleName = Style::ScopedName { AtomString { item.customIdent() }, builderState.styleScopeOrdinal() };
+                fallback.positionTryRuleName = ScopedName { AtomString { item.customIdent() }, builderState.styleScopeOrdinal() };
             else {
                 auto tacticValue = fromCSSValueID<PositionTryFallback::Tactic>(item.valueID());
                 if (fallback.tactics.contains(tacticValue)) {
@@ -2889,84 +1225,27 @@ inline Vector<PositionTryFallback> BuilderConverter::convertPositionTryFallbacks
     if (!list)
         return { };
 
-    return WTF::map(*list, [&](auto& item) {
+    return FixedVector<PositionTryFallback>::map(*list, [&](auto& item) {
         auto fallback = convertFallback(item);
         return fallback ? *fallback : PositionTryFallback { };
     });
 }
 
-inline Style::ScrollPaddingEdge BuilderConverter::convertScrollPaddingEdge(BuilderState& builderState, const CSSValue& value)
+inline MaskMode BuilderConverter::convertFillLayerMaskMode(BuilderState& builderState, const CSSValue& value)
 {
-    return Style::scrollPaddingEdgeFromCSSValue(value, builderState);
-}
-
-inline Style::ScrollMarginEdge BuilderConverter::convertScrollMarginEdge(BuilderState& builderState, const CSSValue& value)
-{
-    return Style::scrollMarginEdgeFromCSSValue(value, builderState);
-}
-
-inline Style::DynamicRangeLimit BuilderConverter::convertDynamicRangeLimit(BuilderState& builderState, const CSSValue& value)
-{
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        switch (primitiveValue->valueID()) {
-        case CSSValueStandard:
-            return Style::DynamicRangeLimit { CSS::Keyword::Standard { } };
-        case CSSValueConstrained:
-            return Style::DynamicRangeLimit { CSS::Keyword::Constrained { } };
-        case CSSValueNoLimit:
-            return Style::DynamicRangeLimit { CSS::Keyword::NoLimit { } };
-        default:
-            break;
-        }
-
+    switch (value.valueID()) {
+    case CSSValueAlpha:
+        return MaskMode::Alpha;
+    case CSSValueLuminance:
+        return MaskMode::Luminance;
+    case CSSValueMatchSource:
+        return MaskMode::MatchSource;
+    case CSSValueAuto: // -webkit-mask-source-type
+        return MaskMode::MatchSource;
+    default:
         builderState.setCurrentPropertyInvalidAtComputedValueTime();
-        return Style::DynamicRangeLimit { CSS::Keyword::NoLimit { } };
+        return MaskMode::MatchSource;
     }
-
-    RefPtr dynamicRangeLimit = requiredDowncast<CSSDynamicRangeLimitValue>(builderState, value);
-    if (!dynamicRangeLimit)
-        return Style::DynamicRangeLimit { CSS::Keyword::NoLimit { } };
-
-    return toStyle(dynamicRangeLimit->dynamicRangeLimit(), builderState);
-}
-
-inline Style::CornerShapeValue BuilderConverter::convertCornerShapeValue(BuilderState& builderState, const CSSValue& value)
-{
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        switch (primitiveValue->valueID()) {
-        case CSSValueRound:
-            return Style::CornerShapeValue::round();
-        case CSSValueScoop:
-            return Style::CornerShapeValue::scoop();
-        case CSSValueBevel:
-            return Style::CornerShapeValue::bevel();
-        case CSSValueNotch:
-            return Style::CornerShapeValue::notch();
-        case CSSValueStraight:
-            return Style::CornerShapeValue::straight();
-        case CSSValueSquircle:
-            return Style::CornerShapeValue::squircle();
-        default:
-            break;
-        }
-
-        builderState.setCurrentPropertyInvalidAtComputedValueTime();
-        return Style::CornerShapeValue::round();
-    }
-
-    auto superellipseFunction = requiredFunctionDowncast<CSSValueSuperellipse, CSSPrimitiveValue>(builderState, value);
-    if (!superellipseFunction)
-        return Style::CornerShapeValue::round();
-
-    Ref superellipseDescriptor = superellipseFunction->item(0);
-    if (superellipseDescriptor->valueID() == CSSValueInfinity)
-        return { Style::SuperellipseFunction { Style::Number<CSS::Nonnegative>(std::numeric_limits<double>::infinity()) } };
-
-    if (superellipseDescriptor->isNumber())
-        return { Style::SuperellipseFunction { Style::Number<CSS::Nonnegative>(std::max(0.0, superellipseDescriptor->resolveAsNumber<double>(builderState.cssToLengthConversionData()))) } };
-
-    builderState.setCurrentPropertyInvalidAtComputedValueTime();
-    return Style::CornerShapeValue::round();
 }
 
 } // namespace Style

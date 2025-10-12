@@ -25,7 +25,6 @@
 [
     Conditional=WEB_AUDIO,
     EnabledBySetting=WebAudioEnabled,
-    JSGenerateToJSObject,
     ActiveDOMObject,
     Exposed=Window
 ] interface AudioScheduledSourceNode : AudioNode {

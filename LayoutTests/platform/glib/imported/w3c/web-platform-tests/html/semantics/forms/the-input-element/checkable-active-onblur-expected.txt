@@ -1,5 +1,0 @@
-
-
-FAIL Checkboxes should clear :active when the user tabs away from them while holding spacebar. assert_equals: Checkboxes should be :active while the spacebar is pressed down. expected Element node <input type="checkbox" id="checkbox" checked=""></input> but got null
-FAIL Radios should clear :active when the user tabs away from them while holding spacebar. assert_equals: Radios should be :active while the spacebar is pressed down. expected Element node <input type="radio" id="radio" checked=""></input> but got null
-

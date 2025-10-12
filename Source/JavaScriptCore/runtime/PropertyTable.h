@@ -20,10 +20,11 @@
 
 #pragma once
 
-#include "JSExportMacros.h"
-#include "PropertyOffset.h"
-#include "Structure.h"
-#include "WriteBarrier.h"
+#include <JavaScriptCore/JSExportMacros.h>
+#include <JavaScriptCore/PropertyOffset.h>
+#include <JavaScriptCore/Structure.h>
+#include <JavaScriptCore/VM.h>
+#include <JavaScriptCore/WriteBarrier.h>
 #include <wtf/HashTable.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>

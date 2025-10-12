@@ -1,0 +1,35 @@
+<style>
+div {
+  width: 2000px; /* trigger tiling via horizontal scrolling */
+  padding-top: 380px;
+  display: none;
+  font-family: Ahem;
+}
+
+.inline-box-container {
+  position: relative;            
+}
+
+.overflow {
+  font-size: 200px;
+}
+        
+</style>
+<div id=make_this_visible>
+  <span class=inline-box-container>
+    <span class=overflow>XXX</span>
+  </span>
+</div>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+window.testRunner?.waitUntilDone();
+
+async function runTest() {
+  make_this_visible.style.display = "block";
+
+  await UIHelper.renderingUpdate();
+
+  window.testRunner.notifyDone();
+}
+window.addEventListener('load', runTest);
+</script>

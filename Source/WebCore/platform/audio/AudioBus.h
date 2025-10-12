@@ -29,7 +29,7 @@
 #ifndef AudioBus_h
 #define AudioBus_h
 
-#include "AudioChannel.h"
+#include <WebCore/AudioChannel.h>
 #include <memory>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSafeRefCounted.h>

@@ -9,6 +9,10 @@
 #ifndef COMMON_BINARYSTREAM_H_
 #define COMMON_BINARYSTREAM_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <stdint.h>
 #include <cstddef>
 #include <string>

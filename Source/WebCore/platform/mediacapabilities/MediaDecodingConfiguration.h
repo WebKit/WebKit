@@ -25,13 +25,16 @@
 
 #pragma once
 
-#include "MediaConfiguration.h"
-#include "MediaDecodingType.h"
+#include <WebCore/MediaConfiguration.h>
+#include <WebCore/MediaDecodingType.h>
+#include <WebCore/PageIdentifier.h>
 
 namespace WebCore {
 
 struct MediaDecodingConfiguration : MediaConfiguration {
     MediaDecodingType type;
+
+    std::optional<PageIdentifier> pageIdentifier;
 
     bool canExposeVP9 { true };
 
@@ -40,7 +43,7 @@ struct MediaDecodingConfiguration : MediaConfiguration {
 
 inline MediaDecodingConfiguration MediaDecodingConfiguration::isolatedCopy() const
 {
-    return { MediaConfiguration::isolatedCopy(), type, canExposeVP9 };
+    return { MediaConfiguration::isolatedCopy(), type, pageIdentifier, canExposeVP9 };
 }
 
 } // namespace WebCore

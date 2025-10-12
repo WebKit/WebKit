@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,28 +54,15 @@ RemotePageDrawingAreaProxy::RemotePageDrawingAreaProxy(DrawingAreaProxy& drawing
 RemotePageDrawingAreaProxy::~RemotePageDrawingAreaProxy()
 {
     for (auto& name : m_names)
-        protectedProcess()->removeMessageReceiver(name, m_identifier);
+        m_process->removeMessageReceiver(name, m_identifier);
     if (RefPtr drawingArea = m_drawingArea.get())
         drawingArea->removeRemotePageDrawingAreaProxy(*this);
-}
-
-Ref<WebProcessProxy> RemotePageDrawingAreaProxy::protectedProcess()
-{
-    return m_process;
 }
 
 void RemotePageDrawingAreaProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (RefPtr drawingArea = m_drawingArea.get())
         drawingArea->didReceiveMessage(connection, decoder);
-}
-
-bool RemotePageDrawingAreaProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
-{
-    if (RefPtr drawingArea = m_drawingArea.get())
-        return drawingArea->didReceiveSyncMessage(connection, decoder, encoder);
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 }

@@ -10,13 +10,16 @@
 
 #include "audio/test/audio_end_to_end_test.h"
 
-#include <algorithm>
+#include <cstddef>
 #include <memory>
+#include <vector>
 
-#include "api/task_queue/task_queue_base.h"
-#include "call/fake_network_pipe.h"
+#include "api/audio/audio_device.h"
+#include "api/audio_codecs/audio_format.h"
+#include "call/audio_receive_stream.h"
+#include "call/audio_send_stream.h"
 #include "modules/audio_device/include/test_audio_device.h"
-#include "system_wrappers/include/sleep.h"
+#include "test/call_test.h"
 #include "test/gtest.h"
 #include "test/video_test_constants.h"
 
@@ -63,8 +66,7 @@ void AudioEndToEndTest::ModifyAudioConfigs(
     AudioSendStream::Config* send_config,
     std::vector<AudioReceiveStreamInterface::Config>* /* receive_configs */) {
   // Large bitrate by default.
-  const webrtc::SdpAudioFormat kDefaultFormat("opus", 48000, 2,
-                                              {{"stereo", "1"}});
+  const SdpAudioFormat kDefaultFormat("opus", 48000, 2, {{"stereo", "1"}});
   send_config->send_codec_spec = AudioSendStream::Config::SendCodecSpec(
       test::VideoTestConstants::kAudioSendPayloadType, kDefaultFormat);
   send_config->min_bitrate_bps = 32000;

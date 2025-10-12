@@ -71,8 +71,16 @@ public:
 
     void setWasRestoredFromSession();
 
+#if !LOG_DISABLED
+    String loggingString();
+#endif
+
 private:
     WebBackForwardListFrameItem(WebBackForwardListItem&, WebBackForwardListFrameItem* parentItem, Ref<FrameState>&&);
+
+#if !LOG_DISABLED
+    String loggingStringAtIndent(size_t);
+#endif
 
     static HashMap<std::pair<WebCore::BackForwardFrameItemIdentifier, WebCore::BackForwardItemIdentifier>, WeakRef<WebBackForwardListFrameItem>>& allItems();
 

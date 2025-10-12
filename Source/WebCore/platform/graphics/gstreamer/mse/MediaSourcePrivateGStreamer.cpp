@@ -245,6 +245,12 @@ MediaSourcePrivateGStreamer::RegisteredTrack MediaSourcePrivateGStreamer::regist
     return info;
 }
 
+void MediaSourcePrivateGStreamer::willSeek()
+{
+    for (auto* sourceBuffer : m_activeSourceBuffers)
+        downcast<SourceBufferPrivateGStreamer>(sourceBuffer)->willSeek();
+}
+
 void MediaSourcePrivateGStreamer::unregisterTrack(TrackID trackId)
 {
     ASSERT(isMainThread());

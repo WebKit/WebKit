@@ -198,7 +198,7 @@ void PageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& dirt
     
 bool PageOverlay::mouseEvent(const PlatformMouseEvent& mouseEvent)
 {
-    IntPoint mousePositionInOverlayCoordinates(mouseEvent.position());
+    IntPoint mousePositionInOverlayCoordinates(flooredIntPoint(mouseEvent.position()));
 
     if (m_overlayType == PageOverlay::OverlayType::Document)
         mousePositionInOverlayCoordinates = m_page->mainFrame().virtualView()->windowToContents(mousePositionInOverlayCoordinates);

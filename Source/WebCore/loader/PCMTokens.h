@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #include <wtf/Seconds.h>
 
 #if PLATFORM(COCOA)

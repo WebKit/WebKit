@@ -48,10 +48,10 @@ std::unique_ptr<PlatformDisplayWin> PlatformDisplayWin::create()
         CRASH();
     }
 
-    return std::unique_ptr<PlatformDisplayWin>(new PlatformDisplayWin(WTFMove(glDisplay)));
+    return std::unique_ptr<PlatformDisplayWin>(new PlatformDisplayWin(glDisplay.releaseNonNull()));
 }
 
-PlatformDisplayWin::PlatformDisplayWin(std::unique_ptr<GLDisplay>&& glDisplay)
+PlatformDisplayWin::PlatformDisplayWin(Ref<GLDisplay>&& glDisplay)
     : PlatformDisplay(WTFMove(glDisplay))
 {
 }

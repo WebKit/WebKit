@@ -25,7 +25,7 @@
 #include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread_annotations.h"
 
-namespace cricket {
+namespace webrtc {
 
 // VideoAdapter adapts an input video frame to an output frame based on the
 // specified input and output formats. The adaptation includes dropping frames
@@ -100,8 +100,7 @@ class RTC_EXPORT VideoAdapter {
   // The sink resolution alignment requirement is given by
   // `sink_wants.resolution_alignment`.
   // Note: Should be called from the sink only.
-  void OnSinkWants(const rtc::VideoSinkWants& sink_wants)
-      RTC_LOCKS_EXCLUDED(mutex_);
+  void OnSinkWants(const VideoSinkWants& sink_wants) RTC_LOCKS_EXCLUDED(mutex_);
 
   // Returns maximum image area, which shouldn't impose any adaptations.
   // Can return `numeric_limits<int>::max()` if no limit is set.
@@ -149,8 +148,7 @@ class RTC_EXPORT VideoAdapter {
   int resolution_request_target_pixel_count_ RTC_GUARDED_BY(mutex_);
   int resolution_request_max_pixel_count_ RTC_GUARDED_BY(mutex_);
   int max_framerate_request_ RTC_GUARDED_BY(mutex_);
-  std::optional<webrtc::Resolution> scale_resolution_down_to_
-      RTC_GUARDED_BY(mutex_);
+  std::optional<Resolution> scale_resolution_down_to_ RTC_GUARDED_BY(mutex_);
 
   // Stashed OutputFormatRequest that is used to save value of
   // OnOutputFormatRequest in case all active encoders are using
@@ -163,12 +161,13 @@ class RTC_EXPORT VideoAdapter {
   std::optional<OutputFormatRequest> stashed_output_format_request_
       RTC_GUARDED_BY(mutex_);
 
-  webrtc::FramerateController framerate_controller_ RTC_GUARDED_BY(mutex_);
+  FramerateController framerate_controller_ RTC_GUARDED_BY(mutex_);
 
   // The critical section to protect the above variables.
-  mutable webrtc::Mutex mutex_;
+  mutable Mutex mutex_;
 };
 
-}  // namespace cricket
+}  //  namespace webrtc
+
 
 #endif  // MEDIA_BASE_VIDEO_ADAPTER_H_

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Inc.  All rights reserved.
- * Copyright (C) 2008 Collabora, Ltd.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,10 @@
 
 #pragma once
 
-#include "CompositionUnderline.h"
-#include "KeypressCommand.h"
-#include "PlatformEvent.h"
+#include <WebCore/CompositionUnderline.h>
+#include <WebCore/KeypressCommand.h>
+#include <WebCore/PlatformEvent.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WindowsExtras.h>
 #include <wtf/text/WTFString.h>
@@ -52,8 +53,10 @@ namespace WebCore {
         {
         }
 
+        static std::optional<PlatformKeyboardEvent> syntheticEventFromText(Type, const String&);
+
         PlatformKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& key, const String& code,
-        const String& keyIdentifier, int windowsVirtualKeyCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier> modifiers, WallTime timestamp)
+        const String& keyIdentifier, int windowsVirtualKeyCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier> modifiers, MonotonicTime timestamp)
             : PlatformEvent(type, modifiers, timestamp)
             , m_autoRepeat(isAutoRepeat)
             , m_isKeypad(isKeypad)
@@ -88,8 +91,9 @@ namespace WebCore {
 
         // Most compatible Windows virtual key code associated with the event.
         // Zero for Char events.
-        int windowsVirtualKeyCode() const { return m_windowsVirtualKeyCode; }
+        int windowsVirtualKeyCode() const { return m_type != Type::Char ? m_windowsVirtualKeyCode : 0; }
         void setWindowsVirtualKeyCode(int code) { m_windowsVirtualKeyCode = code; }
+        int windowsVirtualKeyCodeWithoutKeyPressOverride() const { return m_windowsVirtualKeyCode; }
 
 #if USE(APPKIT) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || USE(LIBWPE)
         bool handledByInputMethod() const { return m_handledByInputMethod; }
@@ -123,10 +127,6 @@ namespace WebCore {
 #else
         ::WebEvent *event() const { return m_Event.get(); }
 #endif
-#endif
-
-#if PLATFORM(WIN)
-        WEBCORE_EXPORT PlatformKeyboardEvent(HWND, WPARAM, LPARAM, Type, bool);
 #endif
 
 #if PLATFORM(GTK)

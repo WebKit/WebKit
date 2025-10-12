@@ -114,8 +114,8 @@ private:
 @end
 
 @implementation WKTextFinderMatch {
-    __weak WKTextFinderClient *_client;
-    __weak NSView *_view;
+    WeakObjCPtr<WKTextFinderClient> _client;
+    WeakObjCPtr<NSView> _view;
     RetainPtr<NSArray> _rects;
     unsigned _index;
 }
@@ -138,7 +138,7 @@ private:
 - (NSView *)containingView
 {
     // To maintain binary compatibility, this is weakly held even though `containingView` is marked `retain`.
-    return _view;
+    return _view.getAutoreleased();
 }
 
 - (NSArray *)textRects
@@ -148,7 +148,7 @@ private:
 
 - (void)generateTextImage:(void (^)(NSImage *generatedImage))completionHandler
 {
-    RetainPtr strongClient = _client;
+    RetainPtr strongClient = _client.get();
     if (!strongClient)
         return completionHandler(nil);
 
@@ -164,7 +164,7 @@ private:
 
 @implementation WKTextFinderClient {
     WeakPtr<WebKit::WebPageProxy> _page;
-    NSView *_view;
+    WeakObjCPtr<NSView> _view;
     Deque<WTF::Function<void(NSArray *, bool didWrap)>> _findReplyCallbacks;
     Deque<WTF::Function<void(NSImage *)>> _imageReplyCallbacks;
     BOOL _usePlatformFindUI;
@@ -299,7 +299,8 @@ private:
             rectsArray = createNSArray(rects);
         else
             rectsArray = @[];
-        return adoptNS([[WKTextFinderMatch alloc] initWithClient:self view:_view index:index++ rects:rectsArray.get()]);
+        RetainPtr strongView = _view.get();
+        return adoptNS([[WKTextFinderMatch alloc] initWithClient:self view:strongView.get() index:index++ rects:rectsArray.get()]);
     });
 
     _findReplyCallbacks.takeFirst()(matchObjects.get(), didWrapAround);

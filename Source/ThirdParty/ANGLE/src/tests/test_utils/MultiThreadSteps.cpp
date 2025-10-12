@@ -6,6 +6,10 @@
 // MultiThreadSteps.cpp:
 //   Synchronization help for tests that use multiple threads.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "MultiThreadSteps.h"
 
 #include "angle_test_platform.h"

@@ -2,9 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, deepEqual.js]
-flags:
-  - noStrict
+includes: [compareArray.js]
 description: |
   pending
 esid: pending
@@ -33,7 +31,7 @@ const testArr = [525600, "Fred"];
 class derived extends base {
     constructor() { super(); }
     prepForTest() { seenValues = []; }
-    testAsserts() { assert.deepEqual(seenValues, testArr); }
+    testAsserts() { assert.compareArray(seenValues, testArr); }
     testProps() {
         this.prepForTest();
         [super.minutes, super.intendent] = testArr;

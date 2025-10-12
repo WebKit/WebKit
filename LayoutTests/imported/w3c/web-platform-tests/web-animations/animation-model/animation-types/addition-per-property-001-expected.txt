@@ -12,6 +12,9 @@ PASS align-items: "flex-start" onto "flex-end"
 PASS align-self (type: discrete) has testAddition function
 PASS align-self: "flex-end" onto "flex-start"
 PASS align-self: "flex-start" onto "flex-end"
+PASS anchor-name (type: discrete) has testAddition function
+PASS anchor-name: "--anchor" onto "none"
+PASS anchor-name: "none" onto "--anchor"
 PASS anchor-scope (type: discrete) has testAddition function
 PASS anchor-scope: "all" onto "none"
 PASS anchor-scope: "none" onto "all"

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8800" from accessing a frame with origin "http://localhost:8800". Protocols, domains, and ports must match.
 
 
 PASS The window's frameElement attribute must return null if it is not a nested browsing context

@@ -1,0 +1,5 @@
+
+PASS setup
+PASS Ensures that the XRSession's visibilityState is correctly reported and that the associated visibilitychange event fires for non-immersive sessions. - webgl
+PASS Ensures that the XRSession's visibilityState is correctly reported and that the associated visibilitychange event fires for non-immersive sessions. - webgl2
+

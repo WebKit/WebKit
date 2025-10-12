@@ -25,9 +25,12 @@
 
 #if compiler(>=6.0)
 internal import WebKit_Internal
+internal import WebKit_Private
 #else
 @_implementationOnly import WebKit_Internal
+@_implementationOnly import WebKit_Private
 #endif
+
 @_spiOnly import UIIntelligenceSupport
 
 #if canImport(UIKit)
@@ -80,10 +83,12 @@ private func createIntelligenceElement(item: WKTextExtractionItem) -> Intelligen
 
 @_spi(WKIntelligenceSupport)
 extension WKWebView {
+    // swift-format-ignore: NoLeadingUnderscores
     open override var _intelligenceBaseClass: AnyClass {
         WKWebView.self
     }
 
+    // swift-format-ignore: NoLeadingUnderscores
     open override func _intelligenceCollectContent(in visibleRect: CGRect, collector: UIIntelligenceElementCollector) {
         #if canImport(UIIntelligenceSupport, _version: 9007)
         let context = collector.context.createRemoteContext(description: "WKWebView")
@@ -93,6 +98,7 @@ extension WKWebView {
         collector.collect(.remote(context))
     }
 
+    // swift-format-ignore: NoLeadingUnderscores
     open override func _intelligenceCollectRemoteContent(
         in visibleRect: CGRect,
         remoteContextWrapper: UIIntelligenceCollectionRemoteContextWrapper
@@ -101,8 +107,14 @@ extension WKWebView {
             let coordinator = IntelligenceCollectionCoordinator.shared
             let collector = coordinator.createCollector(remoteContextWrapper: remoteContextWrapper)
 
-            if let item = await _requestTextExtraction(visibleRect) {
-                collector.collect(createIntelligenceElement(item: item))
+            let configuration = _WKTextExtractionConfiguration()
+            configuration.targetRect = visibleRect
+            configuration.mergeParagraphs = true
+            configuration.skipNearlyTransparentContent = true
+            configuration.canIncludeIdentifiers = false
+            configuration.shouldFilterText = false
+            if let result = await _requestTextExtraction(configuration) {
+                collector.collect(createIntelligenceElement(item: result.rootItem))
             }
 
             coordinator.finishCollection(collector)

@@ -21,10 +21,10 @@
 
 #pragma once
 
-#include "BlockDirectory.h"
-#include "MarkedBlock.h"
-#include "MarkedBlockSet.h"
-#include "PreciseAllocation.h"
+#include <JavaScriptCore/BlockDirectory.h>
+#include <JavaScriptCore/MarkedBlock.h>
+#include <JavaScriptCore/MarkedBlockSet.h>
+#include <JavaScriptCore/PreciseAllocation.h>
 #include <array>
 #include <wtf/Bag.h>
 #include <wtf/HashSet.h>
@@ -133,7 +133,6 @@ public:
 
     void shrink();
     void freeBlock(MarkedBlock::Handle*);
-    void freeOrShrinkBlock(MarkedBlock::Handle*);
 
     void didAddBlock(MarkedBlock::Handle*);
     void didConsumeFreeList(MarkedBlock::Handle*);
@@ -163,7 +162,7 @@ public:
     const Vector<PreciseAllocation*>& preciseAllocations() const { return m_preciseAllocations; }
     unsigned preciseAllocationsNurseryOffset() const { return m_preciseAllocationsNurseryOffset; }
     unsigned preciseAllocationsOffsetForThisCollection() const { return m_preciseAllocationsOffsetForThisCollection; }
-    UncheckedKeyHashSet<HeapCell*>* preciseAllocationSet() const { return m_preciseAllocationSet.get(); }
+    std::optional<UncheckedKeyHashSet<HeapCell*>>& preciseAllocationSet() { return m_preciseAllocationSet; }
 
     void enablePreciseAllocationTracking();
     
@@ -207,7 +206,7 @@ private:
 
     Vector<Subspace*> m_subspaces;
 
-    std::unique_ptr<UncheckedKeyHashSet<HeapCell*>> m_preciseAllocationSet;
+    std::optional<UncheckedKeyHashSet<HeapCell*>> m_preciseAllocationSet;
     Vector<PreciseAllocation*> m_preciseAllocations;
     unsigned m_preciseAllocationsNurseryOffset { 0 };
     unsigned m_preciseAllocationsOffsetForThisCollection { 0 };

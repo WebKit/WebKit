@@ -14,11 +14,17 @@
 #include <cstdint>
 #include <cstring>
 #include <memory>
+#include <vector>
 
+#include "api/task_queue/task_queue_base.h"
+#include "api/units/time_delta.h"
+#include "modules/include/module_common_types.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/thread.h"
 #include "system_wrappers/include/clock.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 #include "test/run_loop.h"
-#include "test/scoped_key_value_config.h"
 
 namespace webrtc {
 // TODO(bugs.webrtc.org/11594): Use the use the GlobalSimulatedTimeController
@@ -34,7 +40,7 @@ class TestNackRequester : public ::testing::Test,
   void SetUp() override {}
 
   void SendNack(const std::vector<uint16_t>& sequence_numbers,
-                bool buffering_allowed) override {
+                bool /* buffering_allowed */) override {
     sent_nacks_.insert(sent_nacks_.end(), sequence_numbers.begin(),
                        sequence_numbers.end());
     if (waiting_for_send_nack_) {
@@ -80,16 +86,15 @@ class TestNackRequester : public ::testing::Test,
     RTC_DCHECK(!nack_module_.get());
     nack_periodic_processor_ =
         std::make_unique<NackPeriodicProcessor>(interval);
-    test::ScopedKeyValueConfig empty_field_trials_;
     nack_module_ = std::make_unique<NackRequester>(
         TaskQueueBase::Current(), nack_periodic_processor_.get(), clock_.get(),
-        this, this, empty_field_trials_);
+        this, this, CreateTestFieldTrials());
     nack_module_->UpdateRtt(kDefaultRttMs);
-    return *nack_module_.get();
+    return *nack_module_;
   }
 
   static constexpr int64_t kDefaultRttMs = 20;
-  rtc::AutoThread main_thread_;
+  AutoThread main_thread_;
   test::RunLoop loop_;
   std::unique_ptr<SimulatedClock> clock_;
   std::unique_ptr<NackPeriodicProcessor> nack_periodic_processor_;
@@ -265,26 +270,24 @@ class TestNackRequesterWithFieldTrial : public ::testing::Test,
                                         public KeyFrameRequestSender {
  protected:
   TestNackRequesterWithFieldTrial()
-      : nack_delay_field_trial_("WebRTC-SendNackDelayMs/10/"),
-        clock_(new SimulatedClock(0)),
+      : clock_(new SimulatedClock(0)),
         nack_module_(TaskQueueBase::Current(),
                      &nack_periodic_processor_,
                      clock_.get(),
                      this,
                      this,
-                     nack_delay_field_trial_),
+                     CreateTestFieldTrials("WebRTC-SendNackDelayMs/10/")),
         keyframes_requested_(0) {}
 
   void SendNack(const std::vector<uint16_t>& sequence_numbers,
-                bool buffering_allowed) override {
+                bool /* buffering_allowed */) override {
     sent_nacks_.insert(sent_nacks_.end(), sequence_numbers.begin(),
                        sequence_numbers.end());
   }
 
   void RequestKeyFrame() override { ++keyframes_requested_; }
 
-  test::ScopedKeyValueConfig nack_delay_field_trial_;
-  rtc::AutoThread main_thread_;
+  AutoThread main_thread_;
   std::unique_ptr<SimulatedClock> clock_;
   NackPeriodicProcessor nack_periodic_processor_;
   NackRequester nack_module_;

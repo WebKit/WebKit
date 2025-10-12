@@ -10,9 +10,9 @@
 
 #include "rtc_base/crypto_random.h"
 
-#include <string.h>
-
+#include <cstdint>
 #include <cstring>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -20,7 +20,7 @@
 #include "test/gmock.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 namespace {
 
 using ::testing::_;
@@ -128,7 +128,6 @@ class MockRandomGenerator : public RandomGenerator {
   MOCK_METHOD(void, Die, ());
   ~MockRandomGenerator() override { Die(); }
 
-  MOCK_METHOD(bool, Init, (const void* seed, size_t len), (override));
   MOCK_METHOD(bool, Generate, (void* buf, size_t len), (override));
 };
 
@@ -137,14 +136,6 @@ TEST(RandomTest, TestSetRandomGenerator) {
       std::make_unique<MockRandomGenerator>();
   MockRandomGenerator* generator = will_move.get();
   SetRandomGenerator(std::move(will_move));
-
-  EXPECT_CALL(*generator, Init(_, sizeof(int))).WillOnce(Return(true));
-  EXPECT_TRUE(InitRandom(5));
-
-  std::string seed = "seed";
-  EXPECT_CALL(*generator, Init(seed.data(), seed.size()))
-      .WillOnce(Return(true));
-  EXPECT_TRUE(InitRandom(seed.data(), seed.size()));
 
   uint32_t id = 4658;
   EXPECT_CALL(*generator, Generate(_, sizeof(uint32_t)))
@@ -169,4 +160,4 @@ TEST(RandomTest, TestSetRandomGenerator) {
 }
 
 }  // namespace
-}  // namespace rtc
+}  // namespace webrtc

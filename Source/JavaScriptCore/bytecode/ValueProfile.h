@@ -28,10 +28,10 @@
 
 #pragma once
 
-#include "ConcurrentJSLock.h"
-#include "SpeculatedType.h"
-#include "Structure.h"
-#include "VirtualRegister.h"
+#include <JavaScriptCore/ConcurrentJSLock.h>
+#include <JavaScriptCore/SpeculatedType.h>
+#include <JavaScriptCore/Structure.h>
+#include <JavaScriptCore/VirtualRegister.h>
 #include <span>
 #include <wtf/PrintStream.h>
 #include <wtf/StringPrintStream.h>

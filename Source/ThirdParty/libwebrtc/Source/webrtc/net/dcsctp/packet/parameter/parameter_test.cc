@@ -10,15 +10,15 @@
 #include "net/dcsctp/packet/parameter/parameter.h"
 
 #include <cstdint>
-#include <type_traits>
 #include <vector>
 
 #include "api/array_view.h"
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/parameter/outgoing_ssn_reset_request_parameter.h"
-#include "net/dcsctp/packet/tlv_trait.h"
+#include "net/dcsctp/public/types.h"
 #include "net/dcsctp/testing/testing_macros.h"
-#include "rtc_base/gunit.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace {
@@ -33,7 +33,7 @@ TEST(ParameterTest, SerializeDeserializeParameter) {
                                                 TSN(789), {StreamID(42)}))
           .Build();
 
-  rtc::ArrayView<const uint8_t> serialized = parameters.data();
+  webrtc::ArrayView<const uint8_t> serialized = parameters.data();
 
   ASSERT_HAS_VALUE_AND_ASSIGN(Parameters parsed, Parameters::Parse(serialized));
   auto descriptors = parsed.descriptors();

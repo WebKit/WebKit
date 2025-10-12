@@ -25,11 +25,10 @@
 
 #pragma once
 
-#include "GraphicsLayer.h"
 #include <wtf/RefCounted.h>
 
 #if !USE(CA) && !USE(COORDINATED_GRAPHICS)
-#include "PlatformLayer.h"
+#include <WebCore/PlatformLayer.h>
 #endif
 
 namespace WebCore {
@@ -39,7 +38,10 @@ class PlatformCALayer;
 #elif USE(COORDINATED_GRAPHICS)
 class CoordinatedPlatformLayer;
 class CoordinatedPlatformLayerBuffer;
+class Damage;
 #endif
+
+enum class GraphicsLayerCompositingCoordinatesOrientation : uint8_t;
 
 // Platform specific interface for attaching contents to GraphicsLayer.
 // Responsible for creating compositor resources to show the particular contents
@@ -52,10 +54,10 @@ public:
     virtual void prepareToDelegateDisplay(PlatformCALayer&);
     // Must not detach the platform layer backing store.
     virtual void display(PlatformCALayer&) = 0;
-    virtual GraphicsLayer::CompositingCoordinatesOrientation orientation() const;
+    virtual GraphicsLayerCompositingCoordinatesOrientation orientation() const;
 #elif USE(COORDINATED_GRAPHICS)
     virtual void setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&) = 0;
-    virtual bool display(CoordinatedPlatformLayer&) = 0;
+    virtual bool display(CoordinatedPlatformLayer&, std::optional<Damage>&&) = 0;
 #else
     virtual PlatformLayer* platformLayer() const = 0;
 #endif
@@ -65,7 +67,7 @@ class GraphicsLayerAsyncContentsDisplayDelegate : public GraphicsLayerContentsDi
 public:
     virtual ~GraphicsLayerAsyncContentsDisplayDelegate() = default;
 
-    virtual bool WEBCORE_EXPORT tryCopyToLayer(ImageBuffer&) = 0;
+    virtual bool WEBCORE_EXPORT tryCopyToLayer(ImageBuffer&, bool opaque) = 0;
 
     virtual bool isGraphicsLayerAsyncContentsDisplayDelegateCocoa() const { return false; }
     virtual bool isGraphicsLayerCARemoteAsyncContentsDisplayDelegate() const { return false; }

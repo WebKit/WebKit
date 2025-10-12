@@ -75,13 +75,13 @@ void FindClient::didFailToFindString(WebPageProxy*, const String& string)
 void FindClient::didAddLayerForFindOverlay(WebKit::WebPageProxy*, PlatformLayer* layer)
 {
     if (m_delegateMethods.webviewDidAddLayerForFindOverlay)
-        [m_delegate _webView:m_webView.get().get() didAddLayerForFindOverlay:layer];
+        [m_delegate.get() _webView:m_webView.get().get() didAddLayerForFindOverlay:layer];
 }
 
 void FindClient::didRemoveLayerForFindOverlay(WebKit::WebPageProxy*)
 {
     if (m_delegateMethods.webviewDidRemoveLayerForFindOverlay)
-        [m_delegate _webViewDidRemoveLayerForFindOverlay:m_webView.get().get()];
+        [m_delegate.get() _webViewDidRemoveLayerForFindOverlay:m_webView.get().get()];
 }
 
 } // namespace WebKit

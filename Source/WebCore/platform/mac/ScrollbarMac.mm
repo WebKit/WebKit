@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,11 @@ ScrollbarMac::ScrollbarMac(ScrollableArea& scrollableArea, ScrollbarOrientation 
 NSScrollerImp* ScrollbarMac::scrollerImp() const
 {
     return m_scrollerImp.get();
+}
+
+RetainPtr<NSScrollerImp> ScrollbarMac::protectedScrollerImp() const
+{
+    return scrollerImp();
 }
 
 void ScrollbarMac::createScrollerImp(NSScrollerImp* oldScrollerImp)

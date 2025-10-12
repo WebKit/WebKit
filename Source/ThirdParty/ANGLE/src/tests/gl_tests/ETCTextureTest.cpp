@@ -7,6 +7,10 @@
 //   Tests for ETC lossy decode formats.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 
 #include "media/etc2bc_srgb8_alpha8.inc"

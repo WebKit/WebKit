@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "WebGPUBlendFactor.h"
-#include "WebGPUBlendOperation.h"
-#include "WebGPUIntegralTypes.h"
+#include <WebCore/WebGPUBlendFactor.h>
+#include <WebCore/WebGPUBlendOperation.h>
+#include <WebCore/WebGPUIntegralTypes.h>
 #include <cstdint>
 #include <wtf/OptionSet.h>
 

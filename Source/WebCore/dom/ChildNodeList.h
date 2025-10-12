@@ -54,7 +54,7 @@ private:
 
     bool isEmptyNodeList() const override { return true; }
 
-    Ref<Node> m_owner;
+    const Ref<Node> m_owner;
 };
 
 class ChildNodeList final : public NodeList, public CanMakeSingleThreadWeakPtr<ChildNodeList> {
@@ -94,7 +94,7 @@ private:
 
     bool isChildNodeList() const override { return true; }
 
-    Ref<ContainerNode> m_parent;
+    const Ref<ContainerNode> m_parent;
     mutable CollectionIndexCache<ChildNodeList, Node*> m_indexCache;
 };
 

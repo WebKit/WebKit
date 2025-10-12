@@ -49,4 +49,6 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_EVENT(SpeechSynthesisErrorEvent)
+
 #endif // ENABLE(SPEECH_SYNTHESIS)

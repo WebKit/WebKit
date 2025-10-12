@@ -4,25 +4,15 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
 ---*/
-function test(fn, thisv) {
-  assertThrowsInstanceOfWithMessageCheck(
-    () => fn.call(thisv),
-    TypeError,
-    message =>
-      /^\w+ method called on incompatible.+/.test(message) && !message.includes("std_"));
-}
 
 for (var thisv of [null, undefined, false, true, 0, ""]) {
-  test(Map.prototype.values, thisv);
-  test(Map.prototype.keys, thisv);
-  test(Map.prototype.entries, thisv);
-  test(Map.prototype[Symbol.iterator], thisv);
+  assert.throws(TypeError, () => Map.prototype.values.call(thisv));
+  assert.throws(TypeError, () => Map.prototype.keys.call(thisv));
+  assert.throws(TypeError, () => Map.prototype.entries.call(thisv));
+  assert.throws(TypeError, () => Map.prototype[Symbol.iterator].call(thisv));
 }
 

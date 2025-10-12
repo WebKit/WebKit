@@ -1,0 +1,6 @@
+x
+x
+
+PASS orphaned treeitem outside the context of tree
+PASS orphaned button with treeitem role outside tree context
+

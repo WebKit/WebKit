@@ -42,7 +42,7 @@ public:
     struct wpe_renderer_backend_egl* backend() const { return m_backend; }
 
 private:
-    PlatformDisplayLibWPE(std::unique_ptr<GLDisplay>&&, struct wpe_renderer_backend_egl*);
+    PlatformDisplayLibWPE(Ref<GLDisplay>&&, struct wpe_renderer_backend_egl*);
 
     Type type() const override { return PlatformDisplay::Type::WPE; }
 

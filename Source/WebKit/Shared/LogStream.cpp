@@ -26,16 +26,17 @@
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 
-#include <wtf/OSObjectPtr.h>
-
-#if HAVE(OS_SIGNPOST)
-#include <wtf/SystemTracing.h>
-#endif
-
 #include "LogStreamMessages.h"
 #include "Logging.h"
 #include "StreamConnectionWorkQueue.h"
 #include "StreamServerConnection.h"
+#include "WebProcessProxy.h"
+#include <wtf/OSObjectPtr.h>
+#include <wtf/TZoneMallocInlines.h>
+
+#if HAVE(OS_SIGNPOST)
+#include <wtf/SystemTracing.h>
+#endif
 
 #define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
 
@@ -43,22 +44,25 @@ namespace WebKit {
 
 static std::atomic<unsigned> globalLogCountForTesting { 0 };
 
-LogStream::LogStream(int32_t pid, LogStreamIdentifier logStreamIdentifier)
-    : m_logStreamIdentifier(logStreamIdentifier)
-    , m_pid(pid)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LogStream);
+
+LogStream::LogStream(WebProcessProxy& process, Ref<ConnectionType>&& connection, LogStreamIdentifier identifier)
+    : m_connection(WTFMove(connection))
+#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+    , m_process(process)
+#endif
+    , m_identifier(identifier)
+    , m_pid(process.processID())
 {
 }
 
-LogStream::~LogStream()
-{
-}
+LogStream::~LogStream() = default;
 
 void LogStream::stopListeningForIPC()
 {
     assertIsMainRunLoop();
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-    if (RefPtr logStreamConnection = m_logStreamConnection)
-        logStreamConnection->stopReceivingMessages(Messages::LogStream::messageReceiverName(), m_logStreamIdentifier.toUInt64());
+    m_connection->stopReceivingMessages(Messages::LogStream::messageReceiverName(), m_identifier.toUInt64());
 #endif
 }
 
@@ -67,18 +71,17 @@ void LogStream::logOnBehalfOfWebContent(std::span<const uint8_t> logSubsystem, s
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
     ASSERT(!isMainRunLoop());
 #endif
-
     auto isNullTerminated = [](std::span<const uint8_t> view) {
         return view.data() && !view.empty() && view.back() == '\0';
     };
 
     bool isValidLogType = logType == OS_LOG_TYPE_DEFAULT || logType == OS_LOG_TYPE_INFO || logType == OS_LOG_TYPE_DEBUG || logType == OS_LOG_TYPE_ERROR || logType == OS_LOG_TYPE_FAULT;
-#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-    MESSAGE_CHECK(isNullTerminated(nullTerminatedLogString) && isValidLogType, m_logStreamConnection->connection());
-#else
-    RefPtr logConnection = m_logConnection.get();
-    MESSAGE_CHECK(isNullTerminated(nullTerminatedLogString) && isValidLogType, logConnection);
-#endif
+
+    RefPtr connection = m_connection.get();
+    MESSAGE_CHECK(isNullTerminated(nullTerminatedLogString) && isValidLogType, connection);
+    MESSAGE_CHECK(logSubsystem.size() <= logSubsystemMaxSize, connection);
+    MESSAGE_CHECK(logCategory.size() <= logCategoryMaxSize, connection);
+    MESSAGE_CHECK(nullTerminatedLogString.size() <= logStringMaxSize, connection);
 
     // os_log_hook on sender side sends a null category and subsystem when logging to OS_LOG_DEFAULT.
     auto osLog = OSObjectPtr<os_log_t>();
@@ -99,27 +102,41 @@ void LogStream::logOnBehalfOfWebContent(std::span<const uint8_t> logSubsystem, s
 
     // Use '%{public}s' in the format string for the preprocessed string from the WebContent process.
     // This should not reveal any redacted information in the string, since it has already been composed in the WebContent process.
-    os_log_with_type(osLogPointer, static_cast<os_log_type_t>(logType), "WP[PID=%d] %{public}s", m_pid, byteCast<char>(nullTerminatedLogString).data());
+    os_log_with_type(osLogPointer, static_cast<os_log_type_t>(logType), "WebContent[%d] %{public}s", m_pid, byteCast<char>(nullTerminatedLogString).data());
 }
 
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-void LogStream::setup(IPC::StreamServerConnectionHandle&& serverConnection, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&& completionHandler)
-{
-    m_logStreamConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnection), { });
 
+RefPtr<LogStream> LogStream::create(WebProcessProxy& process, IPC::StreamServerConnectionHandle&& serverConnection, LogStreamIdentifier identifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&& completionHandler)
+{
+    RefPtr connection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnection), { });
+    if (!connection)
+        return nullptr;
     static NeverDestroyed<Ref<IPC::StreamConnectionWorkQueue>> logQueue = IPC::StreamConnectionWorkQueue::create("Log work queue"_s);
 
-    if (RefPtr logStreamConnection = m_logStreamConnection) {
-        logStreamConnection->open(logQueue.get());
-        logStreamConnection->startReceivingMessages(*this, Messages::LogStream::messageReceiverName(), m_logStreamIdentifier.toUInt64());
-        completionHandler(logQueue.get()->wakeUpSemaphore(), logStreamConnection->clientWaitSemaphore());
-    }
+    Ref instance = adoptRef(*new LogStream(process, connection.releaseNonNull(), identifier));
+    instance->m_connection->open(instance.get(), logQueue.get());
+    instance->m_connection->startReceivingMessages(instance, Messages::LogStream::messageReceiverName(), identifier.toUInt64());
+    completionHandler(logQueue.get()->wakeUpSemaphore(), instance->m_connection->clientWaitSemaphore());
+    return instance;
 }
-#else
-void LogStream::setup(IPC::Connection& connection)
+
+void LogStream::didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName messageName, const Vector<uint32_t>&)
 {
-    m_logConnection = &connection;
+    RELEASE_LOG_FAULT(IPC, "Received an invalid message '%" PUBLIC_LOG_STRING "' from WebContent process, requesting for it to be terminated.", description(messageName).characters());
+    callOnMainRunLoop([weakProcess = m_process] {
+        if (RefPtr process = weakProcess.get())
+            process->terminate();
+    });
 }
+
+#else
+
+Ref<LogStream> LogStream::create(WebProcessProxy& process, Ref<IPC::Connection>&& connection, LogStreamIdentifier identifier)
+{
+    return adoptRef(*new LogStream(process, WTFMove(connection), identifier));
+}
+
 #endif
 
 unsigned LogStream::logCountForTesting()

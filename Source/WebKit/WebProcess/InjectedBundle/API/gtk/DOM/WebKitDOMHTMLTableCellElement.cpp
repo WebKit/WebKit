@@ -642,7 +642,7 @@ void webkit_dom_html_table_cell_element_set_scope(WebKitDOMHTMLTableCellElement*
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_CELL_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTableCellElement* item = WebKit::core(self);
-    item->setScope(WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::scopeAttr, WTF::AtomString::fromUTF8(value));
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

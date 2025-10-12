@@ -9,13 +9,12 @@
  */
 #include "net/dcsctp/packet/error_cause/invalid_stream_identifier_cause.h"
 
-#include <stdint.h>
-
-#include <type_traits>
+#include <cstdint>
 #include <vector>
 
+#include "net/dcsctp/public/types.h"
 #include "net/dcsctp/testing/testing_macros.h"
-#include "rtc_base/gunit.h"
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace {

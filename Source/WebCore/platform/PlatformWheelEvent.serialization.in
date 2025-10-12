@@ -29,5 +29,6 @@ enum class WebCore::PlatformWheelEventPhase : uint8_t {
     Ended,
     Cancelled,
     MayBegin,
+    WillBegin,
 #endif
 };

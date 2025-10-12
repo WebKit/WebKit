@@ -13,12 +13,11 @@
 
 #include <limits>
 #include <optional>
-#include <string>
 #include <type_traits>
 
 #include "absl/strings/string_view.h"
 
-namespace rtc {
+namespace webrtc {
 
 // This file declares a family of functions to parse integers from strings.
 // The standard C library functions either fail to indicate errors (atoi, etc.)
@@ -100,6 +99,7 @@ StringToNumber(absl::string_view str, int /* base */ = 10) {
   return string_to_number_internal::ParseFloatingPoint<T>(str);
 }
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_STRING_TO_NUMBER_H_

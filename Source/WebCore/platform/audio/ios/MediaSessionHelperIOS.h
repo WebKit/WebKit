@@ -25,8 +25,11 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(IOS_FAMILY)
 
+#include <WebCore/MediaPlaybackTarget.h>
+#include <wtf/ProcessID.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -39,8 +42,6 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MediaSession
 }
 
 namespace WebCore {
-
-class MediaPlaybackTarget;
 
 enum class SuspendedUnderLock : bool { No, Yes };
 enum class HasAvailableTargets : bool { No, Yes };
@@ -91,9 +92,8 @@ public:
     void startMonitoringWirelessRoutes();
     void stopMonitoringWirelessRoutes();
 
-    enum class ShouldOverride : bool { No, Yes };
-    void providePresentingApplicationPID(int pid) { providePresentingApplicationPID(pid, ShouldOverride::No); }
-    virtual void providePresentingApplicationPID(int, ShouldOverride) = 0;
+    virtual std::optional<ProcessID> presentedApplicationPID() const;
+    virtual void providePresentingApplicationPID(ProcessID);
 
     void setIsExternalOutputDeviceAvailable(bool);
 

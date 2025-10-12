@@ -25,7 +25,6 @@
 
 import Foundation
 import WebKit
-import WebKitSwift
 @_spi(Private) import WebKit
 
 #if USE_APPLE_INTERNAL_SDK
@@ -59,38 +58,49 @@ import WebKitSwift
 // 8. WT generates the response (which takes some time)
 // 9. WT calls the delegate method `didReceiveText...`
 
-@_objcImplementation extension WKIntelligenceSmartReplyTextEffectCoordinator {
+@objc
+@implementation
+extension WKIntelligenceSmartReplyTextEffectCoordinator {
     private struct ReplacementOperationRequest {
         let processedRange: Range<Int>
         let characterDelta: Int
         let operation: (() async -> Void)
     }
 
-    @nonobjc final private let delegate: (any WKIntelligenceTextEffectCoordinatorDelegate)
-    @nonobjc final private lazy var viewManager = IntelligenceTextEffectViewManager(source: self, contentView: self.delegate.view(forIntelligenceTextEffectCoordinator: self))
+    @nonobjc
+    final private let delegate: (any WKIntelligenceTextEffectCoordinatorDelegate)
+    @nonobjc
+    final private lazy var viewManager = IntelligenceTextEffectViewManager(
+        source: self,
+        contentView: self.delegate.view(forIntelligenceTextEffectCoordinator: self)
+    )
 
     // If there are still pending replacements/animations when the user has accepted or rejected the Writing Tools
     // suggestions, they first need to all be flushed out and invoked so that the state is not incomplete, and then
     // the acceptance/rejection can properly occur.
-    @nonobjc final private var onFlushCompletion: (() async -> Void)? = nil
+    @nonobjc
+    final private var onFlushCompletion: (() async -> Void)? = nil
 
-    @nonobjc final private var processedRangeOffset = 0
-    @nonobjc final private var contextRange: Range<Int>? = nil
+    @nonobjc
+    final private var processedRangeOffset = 0
+    @nonobjc
+    final private var contextRange: Range<Int>? = nil
 
-    @nonobjc final private var replacementQueue: [ReplacementOperationRequest] = []
+    @nonobjc
+    final private var replacementQueue: [ReplacementOperationRequest] = []
 
-    @objc(hasActiveEffects)
-    public var hasActiveEffects: Bool {
+    var hasActiveEffects: Bool {
         viewManager.hasActiveEffects
     }
 
-    @objc(initWithDelegate:)
-    public init(delegate: any WKIntelligenceTextEffectCoordinatorDelegate) {
+    // The initializer is required to be `public`, but the class itself is `internal` so this is not API.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    public required init(delegate: any WKIntelligenceTextEffectCoordinatorDelegate) {
         self.delegate = delegate
     }
 
     @objc(startAnimationForRange:completion:)
-    public func startAnimation(for range: NSRange) async {
+    func startAnimation(for range: NSRange) async {
         self.viewManager.assertPonderingEffectIsInactive()
         self.viewManager.assertReplacementEffectIsInactive()
 
@@ -106,7 +116,12 @@ import WebKitSwift
     }
 
     @objc(requestReplacementWithProcessedRange:finished:characterDelta:operation:completion:)
-    public func requestReplacement(withProcessedRange processedRange: NSRange, finished: Bool, characterDelta: Int, operation: @escaping (@escaping () -> Void) -> Void) async {
+    func requestReplacement(
+        withProcessedRange processedRange: NSRange,
+        finished: Bool,
+        characterDelta: Int,
+        operation: @MainActor @Sendable @escaping (@MainActor @Sendable @escaping () -> Void) -> Void
+    ) async {
         guard let range = Range(processedRange) else {
             assertionFailure("Intelligence text effect coordinator: Unable to create Swift.Range from NSRange \(processedRange)")
             return
@@ -126,8 +141,7 @@ import WebKitSwift
         }
     }
 
-    @objc(flushReplacementsWithCompletion:)
-    public func flushReplacements() async {
+    func flushReplacements() async {
         assert(self.onFlushCompletion == nil)
 
         // If the replacement queue is empty, there's no effects pending completion and nothing to flush,
@@ -150,31 +164,30 @@ import WebKitSwift
         }
     }
 
-    @objc(restoreSelectionAcceptedReplacements:completion:)
-    public func restoreSelection(acceptedReplacements: Bool) async {
+    func restoreSelectionAcceptedReplacements(_ acceptedReplacements: Bool) async {
         guard let contextRange = self.contextRange else {
             return
         }
 
-        let range = acceptedReplacements ? contextRange.lowerBound..<(contextRange.upperBound + self.processedRangeOffset) : contextRange;
+        let range = acceptedReplacements ? contextRange.lowerBound..<(contextRange.upperBound + self.processedRangeOffset) : contextRange
         await self.delegate.intelligenceTextEffectCoordinator(self, setSelectionFor: NSRange(range))
     }
 
-    @objc(hideEffectsWithCompletion:)
-    public func hideEffects() async {
+    func hideEffects() async {
         await self.viewManager.hideEffects()
     }
 
-    @objc(showEffectsWithCompletion:)
-    public func showEffects() async {
+    func showEffects() async {
         await self.viewManager.showEffects()
     }
 
-    @nonobjc final private func removeActiveEffects() async {
+    @nonobjc
+    final private func removeActiveEffects() async {
         await self.viewManager.removeActiveEffects()
     }
 
-    @nonobjc final private func startReplacementAnimation(using request: ReplacementOperationRequest) async {
+    @nonobjc
+    final private func startReplacementAnimation(using request: ReplacementOperationRequest) async {
         self.viewManager.assertReplacementEffectIsInactive()
 
         if !request.processedRange.isEmpty {
@@ -222,7 +235,12 @@ extension WKIntelligenceSmartReplyTextEffectCoordinator: IntelligenceTextEffectV
             return
         }
 
-        await self.delegate.intelligenceTextEffectCoordinator(self, updateTextVisibilityFor: NSRange(chunk.range), visible: visible, identifier: chunk.id)
+        await self.delegate.intelligenceTextEffectCoordinator(
+            self,
+            updateTextVisibilityFor: NSRange(chunk.range),
+            visible: visible,
+            identifier: chunk.id
+        )
     }
 }
 
@@ -238,7 +256,10 @@ extension WKIntelligenceSmartReplyTextEffectCoordinator: PlatformIntelligenceTex
         await self.updateTextChunkVisibility(chunk, visible: visible, force: false)
     }
 
-    func performReplacementAndGeneratePreview(for chunk: IntelligenceTextEffectChunk, effect: PlatformIntelligenceReplacementTextEffect<IntelligenceTextEffectChunk>) async -> (PlatformTextPreview?, remainder: PlatformContentPreview?) {
+    func performReplacementAndGeneratePreview(
+        for chunk: IntelligenceTextEffectChunk,
+        effect: PlatformIntelligenceReplacementTextEffect<IntelligenceTextEffectChunk>
+    ) async -> (PlatformTextPreview?, remainder: PlatformContentPreview?) {
         // FIXME: Implement the remainder text effect for Smart Replies.
 
         guard let chunk = chunk as? IntelligenceTextEffectChunk.Replacement else {
@@ -286,7 +307,7 @@ extension WKIntelligenceSmartReplyTextEffectCoordinator: PlatformIntelligenceTex
 // MARK: Misc. helper functions
 
 /// Converts a block with a completion handler into an async block.
-fileprivate func async(_ block: @escaping (@escaping () -> Void) -> Void) -> (() async -> Void) {
+private func async(_ block: @MainActor @Sendable @escaping (@MainActor @Sendable @escaping () -> Void) -> Void) -> (() async -> Void) {
     { @MainActor in
         await withCheckedContinuation { continuation in
             block(continuation.resume)

@@ -21,6 +21,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+#if ENABLE_SWIFTUI
+
 public import SwiftUI
 @_spi(Private) @_spi(CrossImportOverlay) import WebKit
 
@@ -192,7 +194,12 @@ class CocoaWebViewAdapter: CocoaView, PlatformTextSearching {
 
     // MARK: Scroll Geometry
 
-    var onScrollGeometryChange: OnScrollGeometryChangeContext?
+    var onScrollGeometryChange: OnScrollGeometryChangeContext? = nil {
+        willSet {
+            webView?.setNeedsScrollGeometryUpdates(newValue != nil)
+        }
+    }
+
     private var currentScrollGeometry = ScrollGeometry(
         contentOffset: .zero,
         contentSize: .zero,
@@ -326,3 +333,5 @@ extension CocoaWebViewAdapter: WebPageWebView.Delegate {
         onScrollGeometryChange.action(transformedOld, transformedNew)
     }
 }
+
+#endif

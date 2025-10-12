@@ -17,12 +17,13 @@
 #include <memory>
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/openssl_certificate.h"
 #include "rtc_base/openssl_key_pair.h"
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_identity.h"
 
-namespace rtc {
+namespace webrtc {
 
 // Holds a keypair and certificate together, and a method to generate
 // them consistently.
@@ -70,6 +71,7 @@ class OpenSSLIdentity final : public SSLIdentity {
   std::unique_ptr<SSLCertChain> cert_chain_;
 };
 
-}  // namespace rtc
+}  // namespace webrtc
+
 
 #endif  // RTC_BASE_OPENSSL_IDENTITY_H_

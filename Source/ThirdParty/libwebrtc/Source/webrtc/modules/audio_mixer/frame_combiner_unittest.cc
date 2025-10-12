@@ -10,15 +10,17 @@
 
 #include "modules/audio_mixer/frame_combiner.h"
 
+#include <cstddef>
 #include <cstdint>
 #include <initializer_list>
 #include <numeric>
-#include <optional>
 #include <string>
-#include <type_traits>
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/audio/audio_frame.h"
+#include "api/audio/audio_view.h"
+#include "api/audio/channel_layout.h"
 #include "api/rtp_packet_info.h"
 #include "api/rtp_packet_infos.h"
 #include "api/units/timestamp.h"
@@ -48,7 +50,7 @@ struct FrameCombinerConfig {
 std::string ProduceDebugText(int sample_rate_hz,
                              int number_of_channels,
                              int number_of_sources) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Sample rate: " << sample_rate_hz << " ,";
   ss << "number of channels: " << number_of_channels << " ,";
   ss << "number of sources: " << number_of_sources;
@@ -56,7 +58,7 @@ std::string ProduceDebugText(int sample_rate_hz,
 }
 
 std::string ProduceDebugText(const FrameCombinerConfig& config) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Sample rate: " << config.sample_rate_hz << " ,";
   ss << "number of channels: " << config.number_of_channels << " ,";
   ss << "limiter active: " << (config.use_limiter ? "on" : "off") << " ,";
@@ -82,7 +84,7 @@ void SetUpFrames(int sample_rate_hz, int number_of_channels) {
   frame2.packet_infos_ = RtpPacketInfos({packet_info2, packet_info3});
 
   for (auto* frame : {&frame1, &frame2}) {
-    frame->UpdateFrame(0, nullptr, rtc::CheckedDivExact(sample_rate_hz, 100),
+    frame->UpdateFrame(0, nullptr, CheckedDivExact(sample_rate_hz, 100),
                        sample_rate_hz, AudioFrame::kNormalSpeech,
                        AudioFrame::kVadActive, number_of_channels);
   }
@@ -145,14 +147,13 @@ TEST(FrameCombinerDeathTest, BuildCrashesWithManyChannels) {
   FrameCombiner combiner(true);
   for (const int rate : {8000, 18000, 34000, 48000}) {
     for (const int number_of_channels : {10, 20, 21}) {
+      RTC_DCHECK_LE(number_of_channels, kMaxNumberOfAudioChannels);
       if (static_cast<size_t>(rate / 100 * number_of_channels) >
           AudioFrame::kMaxDataSizeSamples) {
         continue;
       }
       const std::vector<AudioFrame*> all_frames = {&frame1, &frame2};
-      // With an unsupported channel count, this will crash in
-      // `AudioFrame::UpdateFrame`.
-      EXPECT_DEATH(SetUpFrames(rate, number_of_channels), "");
+      SetUpFrames(rate, number_of_channels);
 
       const int number_of_frames = 2;
       SCOPED_TRACE(
@@ -319,9 +320,9 @@ TEST(FrameCombiner, GainCurveIsSmoothForAlternatingNumberOfStreams) {
                        config.sample_rate_hz, number_of_streams,
                        &audio_frame_for_mixing);
       cumulative_change += change_calculator.CalculateGainChange(
-          rtc::ArrayView<const int16_t>(frame1.data(), number_of_samples),
-          rtc::ArrayView<const int16_t>(audio_frame_for_mixing.data(),
-                                        number_of_samples));
+          ArrayView<const int16_t>(frame1.data(), number_of_samples),
+          ArrayView<const int16_t>(audio_frame_for_mixing.data(),
+                                   number_of_samples));
     }
 
     // Check that the gain doesn't vary too much.

@@ -1,0 +1,17 @@
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(source.duration = loader.duration())
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(1)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(2)))
+EVENT(update)
+RUN(source.endOfStream())
+EVENT(sourceended)
+EXPECTED (canvas.getContext("2d").getImageData(250, 130, 1, 1).data[0] != '0') OK
+END OF TEST
+

@@ -16,7 +16,6 @@
 
 namespace webrtc {
 
-using webrtc::RtpExtension;
 
 static const char kExtensionUri1[] = "extension-uri1";
 static const char kExtensionUri2[] = "extension-uri2";

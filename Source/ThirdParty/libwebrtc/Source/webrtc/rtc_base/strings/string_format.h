@@ -13,7 +13,7 @@
 
 #include <string>
 
-namespace rtc {
+namespace webrtc {
 
 #if defined(__GNUC__)
 #define RTC_PRINTF_FORMAT(format_param, dots_param) \
@@ -26,6 +26,7 @@ namespace rtc {
 // Based on base::StringPrintf() in Chrome but without its fancy dynamic memory
 // allocation for any size of the input buffer.
 std::string StringFormat(const char* fmt, ...) RTC_PRINTF_FORMAT(1, 2);
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_STRINGS_STRING_FORMAT_H_

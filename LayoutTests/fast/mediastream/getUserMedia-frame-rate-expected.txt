@@ -1,4 +1,4 @@
 
 
-PASS Ensure getDisplayMedia generate frames with valid frame rate and size in case of clones
+PASS Ensure getUserMedia generate frames with valid frame rate and size in case of clones
 

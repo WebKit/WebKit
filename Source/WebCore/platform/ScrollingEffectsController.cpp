@@ -548,8 +548,8 @@ void ScrollingEffectsController::scrollAnimationDidEnd(ScrollAnimation& animatio
     UNUSED_PARAM(animation);
 #endif
 
-    // FIXME: Need to track state better and only call this when the running animation is for CSS smooth scrolling. Calling should be harmless, though.
-    m_client.didStopAnimatedScroll();
+    if (is<ScrollAnimationKeyboard>(animation) || is<ScrollAnimationSmooth>(animation))
+        m_client.didStopAnimatedScroll();
 
     if (is<ScrollAnimationKeyboard>(animation)) {
         didStopKeyboardScrolling();

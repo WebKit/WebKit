@@ -64,6 +64,11 @@ RTCDtlsTransport::~RTCDtlsTransport()
     m_backend->unregisterClient();
 }
 
+ScriptExecutionContext* RTCDtlsTransport::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
 Vector<Ref<JSC::ArrayBuffer>> RTCDtlsTransport::getRemoteCertificates()
 {
     return m_remoteCertificates;

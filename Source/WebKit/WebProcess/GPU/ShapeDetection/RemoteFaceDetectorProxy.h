@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "RenderingBackendIdentifier.h"
+#include "RemoteRenderingBackendIdentifier.h"
 #include "ShapeDetectionIdentifier.h"
 #include <WebCore/FaceDetectorInterface.h>
 #include <wtf/CompletionHandler.h>
@@ -50,12 +50,12 @@ namespace WebKit::ShapeDetection {
 class RemoteFaceDetectorProxy : public WebCore::ShapeDetection::FaceDetector {
     WTF_MAKE_TZONE_ALLOCATED(RemoteFaceDetectorProxy);
 public:
-    static Ref<RemoteFaceDetectorProxy> create(Ref<IPC::StreamClientConnection>&&, RenderingBackendIdentifier, ShapeDetectionIdentifier, const WebCore::ShapeDetection::FaceDetectorOptions&);
+    static Ref<RemoteFaceDetectorProxy> create(Ref<IPC::StreamClientConnection>&&, RemoteRenderingBackendIdentifier, ShapeDetectionIdentifier, const WebCore::ShapeDetection::FaceDetectorOptions&);
 
     virtual ~RemoteFaceDetectorProxy();
 
 private:
-    RemoteFaceDetectorProxy(Ref<IPC::StreamClientConnection>&&, RenderingBackendIdentifier, ShapeDetectionIdentifier);
+    RemoteFaceDetectorProxy(Ref<IPC::StreamClientConnection>&&, RemoteRenderingBackendIdentifier, ShapeDetectionIdentifier);
 
     RemoteFaceDetectorProxy(const RemoteFaceDetectorProxy&) = delete;
     RemoteFaceDetectorProxy(RemoteFaceDetectorProxy&&) = delete;
@@ -64,13 +64,11 @@ private:
 
     ShapeDetectionIdentifier backing() const { return m_backing; }
 
-    Ref<IPC::StreamClientConnection> protectedStreamClientConnection() const;
-
     void detect(Ref<WebCore::ImageBuffer>&&, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedFace>&&)>&&) final;
 
     ShapeDetectionIdentifier m_backing;
-    Ref<IPC::StreamClientConnection> m_streamClientConnection;
-    RenderingBackendIdentifier m_renderingBackendIdentifier;
+    const Ref<IPC::StreamClientConnection> m_streamClientConnection;
+    RemoteRenderingBackendIdentifier m_renderingBackendIdentifier;
 };
 
 } // namespace WebKit::ShapeDetection

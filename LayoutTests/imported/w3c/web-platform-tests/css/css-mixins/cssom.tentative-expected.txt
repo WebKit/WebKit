@@ -1,0 +1,7 @@
+
+FAIL serialization of @mixin assert_equals: expected 4 but got 2
+FAIL serialization of rule with @apply assert_equals: expected "#foo {\n  @apply --m1;\n}" but got "#foo { color: red; }"
+FAIL serialization of @mixin with @contents undefined is not an object (evaluating 'ss.cssRules[2].cssText')
+FAIL serialization of rule with @apply and contents argument undefined is not an object (evaluating 'ss.cssRules[3].cssText')
+PASS @apply is not legal at top level
+

@@ -61,10 +61,9 @@ public:
 
     ~ScriptMessageClient() { }
 
-    void didPostMessage(WebPageProxy& page, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&& jsMessage) override
+    void didPostMessage(WebPageProxy& page, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&& jsMessage, CompletionHandler<void(Expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler) override
     {
-        Ref serializedScriptValue = API::SerializedScriptValue::createFromWireBytes(jsMessage.wireBytes());
-        auto valueAsString = serializedScriptValue->internalRepresentation().toString();
+        auto valueAsString = jsMessage.toString();
         auto tokens = StringView { valueAsString }.split(':');
         uint32_t connectionID = 0;
         uint32_t targetID = 0;
@@ -78,23 +77,15 @@ public:
             else if (i == 2)
                 type = token.toString();
             else
-                return;
+                return completionHandler(makeUnexpected(String()));
             ++i;
         }
         if (i != 3)
-            return;
+            return completionHandler(makeUnexpected(String()));
 
         URL requestURL { page.pageLoadState().url() };
         m_inspectorProtocolHandler->inspect(requestURL.hostAndPort(), connectionID, targetID, type);
-    }
-    
-    bool supportsAsyncReply() override
-    {
-        return false;
-    }
-    
-    void didPostMessageWithAsyncReply(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&&, WTF::Function<void(Expected<JavaScriptEvaluationResult, String>&&)>&&) override
-    {
+        completionHandler(makeUnexpected(String()));
     }
 
 private:

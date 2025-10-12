@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #if defined(_MSC_VER)
 #    pragma warning(disable : 4718)
 #endif
@@ -414,6 +418,11 @@ bool TType::isStructureContainingType(TBasicType t) const
 bool TType::isStructureContainingSamplers() const
 {
     return mStructure ? mStructure->containsSamplers() : false;
+}
+
+bool TType::isStructureContainingOnlySamplers() const
+{
+    return mStructure ? mStructure->containsOnlySamplers() : false;
 }
 
 bool TType::isInterfaceBlockContainingType(TBasicType t) const
@@ -837,6 +846,20 @@ bool TFieldListCollection::containsSamplers() const
             return true;
     }
     return false;
+}
+
+bool TFieldListCollection::containsOnlySamplers() const
+{
+    for (const auto *field : *mFields)
+    {
+        const TType *fieldType = field->type();
+        if (!IsSampler(fieldType->getBasicType()) &&
+            !fieldType->isStructureContainingOnlySamplers())
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 TString TFieldListCollection::buildMangledFieldList() const

@@ -24,18 +24,18 @@
 
 #pragma once
 
+#include <WebCore/RenderStyleConstants.h>
+#include <WebCore/StyleWebKitBoxFlex.h>
+#include <WebCore/StyleWebKitBoxFlexGroup.h>
+#include <WebCore/StyleWebKitBoxOrdinalGroup.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
-
-namespace WTF {
-class TextStream;
-}
 
 namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleDeprecatedFlexibleBoxData);
 class StyleDeprecatedFlexibleBoxData : public RefCounted<StyleDeprecatedFlexibleBoxData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleDeprecatedFlexibleBoxData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleDeprecatedFlexibleBoxData, StyleDeprecatedFlexibleBoxData);
 public:
     static Ref<StyleDeprecatedFlexibleBoxData> create() { return adoptRef(*new StyleDeprecatedFlexibleBoxData); }
     Ref<StyleDeprecatedFlexibleBoxData> copy() const;
@@ -46,14 +46,14 @@ public:
     void dumpDifferences(TextStream&, const StyleDeprecatedFlexibleBoxData&) const;
 #endif
 
-    float flex;
-    unsigned flexGroup;
-    unsigned ordinalGroup;
+    Style::WebkitBoxFlex flex;
+    Style::WebkitBoxFlexGroup flexGroup;
+    Style::WebkitBoxOrdinalGroup ordinalGroup;
 
-    unsigned align : 3; // BoxAlignment
-    unsigned pack: 2; // BoxPack
-    unsigned orient: 1; // BoxOrient
-    unsigned lines : 1; // BoxLines
+    PREFERRED_TYPE(BoxAlignment) unsigned align : 3;
+    PREFERRED_TYPE(BoxPack) unsigned pack: 2;
+    PREFERRED_TYPE(BoxOrient) unsigned orient: 1;
+    PREFERRED_TYPE(BoxLines) unsigned lines : 1;
 
 private:
     StyleDeprecatedFlexibleBoxData();

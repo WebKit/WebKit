@@ -177,7 +177,7 @@ JSValue JSTestDomainSecurity::getConstructor(VM& vm, const JSGlobalObject* globa
 
 void JSTestDomainSecurity::destroy(JSC::JSCell* cell)
 {
-    JSTestDomainSecurity* thisObject = static_cast<JSTestDomainSecurity*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestDomainSecurity* thisObject = static_cast<JSTestDomainSecurity*>(cell);
     thisObject->JSTestDomainSecurity::~JSTestDomainSecurity();
 }
 
@@ -314,7 +314,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_overloadedMethod,
 
 JSC::GCClient::IsoSubspace* JSTestDomainSecurity::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestDomainSecurity, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestDomainSecurity, UseCustomHeapCellType::No>(vm, "JSTestDomainSecurity"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestDomainSecurity.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDomainSecurity = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestDomainSecurity.get(); },
@@ -341,7 +341,7 @@ bool JSTestDomainSecurityOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unkn
 
 void JSTestDomainSecurityOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestDomainSecurity = static_cast<JSTestDomainSecurity*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestDomainSecurity = static_cast<JSTestDomainSecurity*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestDomainSecurity->protectedWrapped().ptr(), jsTestDomainSecurity);
 }
@@ -354,7 +354,9 @@ extern "C" { extern void (*const __identifier("??_7TestDomainSecurity@WebCore@@6
 #else
 extern "C" { extern void* _ZTVN7WebCore18TestDomainSecurityE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestDomainSecurity>, void>> static inline void verifyVTable(TestDomainSecurity* ptr) {
+template<std::same_as<TestDomainSecurity> T>
+static inline void verifyVTable(TestDomainSecurity* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -373,8 +375,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestDomainSec
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestDomainSecurity>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestDomainSecurity>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestDomainSecurity>(impl.ptr());
 #endif

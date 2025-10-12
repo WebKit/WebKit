@@ -4,25 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Properly evaluate a bigint literal that's initially tokenized by a syntax parser (because the bigint literal appears immediately after an arrow function with expression body)
+info: bugzilla.mozilla.org/show_bug.cgi?id=1596706
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 1596706;
-var summary =
-  "Properly evaluate a bigint literal that's initially tokenized by a syntax " +
-  "parser (because the bigint literal appears immediately after an arrow " +
-  "function with expression body)";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 // block followed by semicolon
 assert.sameValue(eval(`x=>{};
@@ -39,7 +25,3 @@ assert.sameValue(eval(`x=>y;
 // expr not followed by semicolon
 assert.sameValue(eval(`x=>y
 78051120n`), 78051120n);
-
-/******************************************************************************/
-
-print("Tests complete");

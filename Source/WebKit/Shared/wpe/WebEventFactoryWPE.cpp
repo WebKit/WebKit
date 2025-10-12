@@ -32,18 +32,17 @@
 #include <WebCore/Scrollbar.h>
 #include <wpe/wpe-platform.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/WallTime.h>
 
 namespace WebKit {
 
 using namespace WebCore;
 
-static WallTime wallTimeForEvent(WPEEvent* event)
+static MonotonicTime monotonicTimeForEvent(WPEEvent* event)
 {
     auto time = wpe_event_get_time(event);
     if (!time)
-        return WallTime::now();
-    return wallTimeForEventTimeInMilliseconds(time);
+        return MonotonicTime::now();
+    return monotonicTimeForEventTimeInMilliseconds(time);
 }
 
 static OptionSet<WebEventModifier> modifiersFromWPEModifiers(WPEModifiers wpeModifiers)
@@ -72,6 +71,17 @@ static WebMouseEventButton buttonForWPEButton(guint button)
     case 3:
         return WebMouseEventButton::Right;
     }
+    return WebMouseEventButton::None;
+}
+
+static WebMouseEventButton buttonForWPEModifiers(WPEModifiers modifiers)
+{
+    if (modifiers & WPE_MODIFIER_POINTER_BUTTON1)
+        return WebMouseEventButton::Left;
+    if (modifiers & WPE_MODIFIER_POINTER_BUTTON2)
+        return WebMouseEventButton::Middle;
+    if (modifiers & WPE_MODIFIER_POINTER_BUTTON3)
+        return WebMouseEventButton::Right;
     return WebMouseEventButton::None;
 }
 
@@ -138,13 +148,14 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(WPEEvent* event)
     case WPE_EVENT_POINTER_ENTER:
     case WPE_EVENT_POINTER_LEAVE:
         type = WebEventType::MouseMove;
+        button = buttonForWPEModifiers(modifiers);
         movementDelta = movementDeltaFromEvent(event);
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    return WebMouseEvent({ type.value(), modifiersFromWPEModifiers(modifiers), wallTimeForEvent(event) },
+    return WebMouseEvent({ type.value(), modifiersFromWPEModifiers(modifiers), monotonicTimeForEvent(event) },
         button,
         pressedMouseButtons(modifiers),
         position,
@@ -197,7 +208,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(WPEEvent* event, WebWheelEven
         delta = wheelTicks.scaled(stepX, stepY);
     }
 
-    return WebWheelEvent({ WebEventType::Wheel, modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), wallTimeForEvent(event) },
+    return WebWheelEvent({ WebEventType::Wheel, modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), monotonicTimeForEvent(event) },
         position, position, delta, wheelTicks, WebWheelEvent::ScrollByPixelWheelEvent, phase, WebWheelEvent::Phase::PhaseNone, hasPreciseScrollingDeltas);
 }
 
@@ -206,7 +217,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(WPEEvent* event, const 
     auto type = wpe_event_get_event_type(event) == WPE_EVENT_KEYBOARD_KEY_DOWN ? WebEventType::KeyDown : WebEventType::KeyUp;
     auto keyval = wpe_event_keyboard_get_keyval(event);
     auto keycode = wpe_event_keyboard_get_keycode(event);
-    return WebKeyboardEvent({ type, modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), wallTimeForEvent(event) },
+    return WebKeyboardEvent({ type, modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), monotonicTimeForEvent(event) },
         text.isNull() ? WebKeyboardEvent::singleCharacterStringForWPEKeyval(keyval) : text,
         WebKeyboardEvent::keyValueStringForWPEKeyval(keyval),
         WebKeyboardEvent::keyCodeStringForWPEKeycode(keycode),
@@ -237,7 +248,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(WPEEvent* event, Vector<WebPl
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    return WebTouchEvent({ type.value(), modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), wallTimeForEvent(event) }, WTFMove(touchPoints), { }, { });
+    return WebTouchEvent({ type.value(), modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), monotonicTimeForEvent(event) }, WTFMove(touchPoints), { }, { });
 }
 #endif // ENABLE(TOUCH_EVENTS)
 

@@ -312,7 +312,7 @@ class CommitterList(object):
         if not len(self._contributors_by_name):
             for contributor in self._contributors:
                 assert contributor.full_name
-                assert contributor.full_name.lower() not in self._contributors_by_name  # We should never have duplicate names.
+                assert contributor.full_name.lower() not in self._contributors_by_name, f'Duplicate name: {contributor.full_name}'  # We should never have duplicate names.
                 self._contributors_by_name[contributor.full_name.lower()] = contributor
                 if contributor.aliases is None:
                     continue
@@ -325,7 +325,7 @@ class CommitterList(object):
         if not len(self._accounts_by_email):
             for account in self._contributors:
                 for email in account.emails:
-                    assert(email not in self._accounts_by_email)  # We should never have duplicate emails.
+                    assert email not in self._accounts_by_email, f'Duplicate email: {email}'  # We should never have duplicate emails.
                     self._accounts_by_email[email] = account
         return self._accounts_by_email
 

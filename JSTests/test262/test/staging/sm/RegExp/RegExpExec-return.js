@@ -2,17 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-RegExp-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  RegExpExec should throw if returned value is not an object nor null.
+info: bugzilla.mozilla.org/show_bug.cgi?id=887016
 esid: pending
 ---*/
-var BUGNUMBER = 887016;
-var summary = "RegExpExec should throw if returned value is not an object nor null.";
-
-print(BUGNUMBER + ": " + summary);
 
 for (var ret of [null, {}, [], /a/]) {
   assert.sameValue(RegExp.prototype[Symbol.match].call({
@@ -26,7 +20,7 @@ for (var ret of [null, {}, [], /a/]) {
 }
 
 for (ret of [undefined, 1, true, false, Symbol.iterator]) {
-  assertThrowsInstanceOf(() => {
+  assert.throws(TypeError, () => {
     RegExp.prototype[Symbol.match].call({
       get global() {
         return false;
@@ -35,6 +29,5 @@ for (ret of [undefined, 1, true, false, Symbol.iterator]) {
         return ret;
       }
     }, "foo");
-  }, TypeError);
+  });
 }
-

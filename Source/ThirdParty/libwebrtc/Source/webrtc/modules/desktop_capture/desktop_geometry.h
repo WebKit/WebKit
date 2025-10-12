@@ -13,6 +13,7 @@
 
 #include <stdint.h>
 
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -44,6 +45,12 @@ class DesktopVector {
   }
 
   DesktopVector operator-() const { return DesktopVector(-x_, -y_); }
+
+  template <typename Sink>
+  friend void AbslStringify(Sink& sink, const DesktopVector& self) {
+    StringBuilder sb;
+    sink.Append((sb << "x: " << self.x() << ", y: " << self.y()).str());
+  }
 
  private:
   int32_t x_;

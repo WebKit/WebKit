@@ -52,7 +52,7 @@ bool RotateTransformOperation::operator==(const TransformOperation& other) const
     return m_angle == r.m_angle && m_x == r.m_x && m_y == r.m_y && m_z == r.m_z;
 }
 
-Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
+Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity) const
 {
     if (blendToIdentity) {
         if (context.compositeOperation == CompositeOperation::Accumulate)
@@ -61,7 +61,7 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
     }
     auto outputType = sharedPrimitiveType(from);
     if (!outputType)
-        return *this;
+        return const_cast<RotateTransformOperation&>(*this);
 
     const RotateTransformOperation* fromOp = downcast<RotateTransformOperation>(from);
     const RotateTransformOperation* toOp = this;

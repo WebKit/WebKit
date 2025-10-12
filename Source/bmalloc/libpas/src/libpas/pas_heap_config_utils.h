@@ -103,6 +103,8 @@ typedef struct {
     .small_segregated_config = { \
         .base = { \
             .is_enabled = true, \
+            .allow_profiling = PAS_SHOULD_PROFILE_BASIC_HEAP_PAGE(pas_page_config_size_category_small), \
+            .allow_mte_tagging = PAS_SHOULD_MTE_TAG_BASIC_HEAP_PAGE(pas_page_config_size_category_small), \
             .heap_config_ptr = &name ## _heap_config, \
             .page_config_ptr = &name ## _heap_config.small_segregated_config.base, \
             .page_config_kind = pas_page_config_kind_segregated, \
@@ -172,6 +174,8 @@ typedef struct {
         .base = { \
             .is_enabled = \
                 ((pas_basic_heap_config_arguments){__VA_ARGS__}).use_medium_segregated, \
+            .allow_profiling = PAS_SHOULD_PROFILE_BASIC_HEAP_PAGE(pas_page_config_size_category_medium), \
+            .allow_mte_tagging = PAS_SHOULD_MTE_TAG_BASIC_HEAP_PAGE(pas_page_config_size_category_medium), \
             .heap_config_ptr = &name ## _heap_config, \
             .page_config_ptr = &name ## _heap_config.medium_segregated_config.base, \
             .page_config_kind = pas_page_config_kind_segregated, \
@@ -227,6 +231,8 @@ typedef struct {
         .base = { \
             .is_enabled = \
                 ((pas_basic_heap_config_arguments){__VA_ARGS__}).use_small_bitfit, \
+            .allow_profiling = PAS_SHOULD_PROFILE_BASIC_HEAP_PAGE(pas_page_config_size_category_small), \
+            .allow_mte_tagging = PAS_SHOULD_MTE_TAG_BASIC_HEAP_PAGE(pas_page_config_size_category_small), \
             .heap_config_ptr = &name ## _heap_config, \
             .page_config_ptr = &name ## _heap_config.small_bitfit_config.base, \
             .page_config_kind = pas_page_config_kind_bitfit, \
@@ -269,6 +275,8 @@ typedef struct {
         .base = { \
             .is_enabled = \
                 ((pas_basic_heap_config_arguments){__VA_ARGS__}).use_medium_bitfit, \
+            .allow_profiling = PAS_SHOULD_PROFILE_BASIC_HEAP_PAGE(pas_page_config_size_category_medium), \
+            .allow_mte_tagging = PAS_SHOULD_MTE_TAG_BASIC_HEAP_PAGE(pas_page_config_size_category_medium), \
             .heap_config_ptr = &name ## _heap_config, \
             .page_config_ptr = &name ## _heap_config.medium_bitfit_config.base, \
             .page_config_kind = pas_page_config_kind_bitfit, \
@@ -279,9 +287,10 @@ typedef struct {
                 ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_page_size, \
             .granule_size = \
                 ((pas_basic_heap_config_arguments){__VA_ARGS__}).granule_size, \
-            .max_object_size = PAS_MAX_BITFIT_OBJECT_SIZE( \
+            .max_object_size = PAS_MAX_BITFIT_OBJECT_SIZE_WITH_MAX_BITS( \
                 ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_page_size, \
-                ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_bitfit_min_align_shift), \
+                ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_bitfit_min_align_shift, \
+                PAS_BITFIT_MAX_FREE_MAX_VALID_MEDIUM), \
             .page_header_for_boundary = name ## _medium_bitfit_page_header_for_boundary, \
             .boundary_for_page_header = name ## _medium_bitfit_boundary_for_page_header, \
             .page_header_for_boundary_remote = name ## _medium_bitfit_page_header_for_boundary_remote, \
@@ -300,6 +309,8 @@ typedef struct {
         .base = { \
             .is_enabled = \
                 ((pas_basic_heap_config_arguments){__VA_ARGS__}).use_marge_bitfit, \
+            .allow_profiling = PAS_SHOULD_PROFILE_BASIC_HEAP_PAGE(pas_page_config_size_category_marge), \
+            .allow_mte_tagging = PAS_SHOULD_MTE_TAG_BASIC_HEAP_PAGE(pas_page_config_size_category_marge), \
             .heap_config_ptr = &name ## _heap_config, \
             .page_config_ptr = &name ## _heap_config.marge_bitfit_config.base, \
             .page_config_kind = pas_page_config_kind_bitfit, \

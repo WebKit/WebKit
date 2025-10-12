@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Handle.h"
+#include <JavaScriptCore/Handle.h>
 
 namespace JSC {
 

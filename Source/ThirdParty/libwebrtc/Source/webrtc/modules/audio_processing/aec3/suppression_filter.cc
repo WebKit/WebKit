@@ -11,11 +11,16 @@
 #include "modules/audio_processing/aec3/suppression_filter.h"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstring>
-#include <functional>
 #include <iterator>
+#include <vector>
 
+#include "api/array_view.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/block.h"
+#include "modules/audio_processing/aec3/fft_data.h"
 #include "modules/audio_processing/aec3/vector_math.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_minmax.h"
@@ -81,11 +86,11 @@ SuppressionFilter::SuppressionFilter(Aec3Optimization optimization,
 SuppressionFilter::~SuppressionFilter() = default;
 
 void SuppressionFilter::ApplyGain(
-    rtc::ArrayView<const FftData> comfort_noise,
-    rtc::ArrayView<const FftData> comfort_noise_high_band,
+    ArrayView<const FftData> comfort_noise,
+    ArrayView<const FftData> comfort_noise_high_band,
     const std::array<float, kFftLengthBy2Plus1>& suppression_gain,
     float high_bands_gain,
-    rtc::ArrayView<const FftData> E_lowest_band,
+    ArrayView<const FftData> E_lowest_band,
     Block* e) {
   RTC_DCHECK(e);
   RTC_DCHECK_EQ(e->NumBands(), NumBandsForRate(sample_rate_hz_));
@@ -171,7 +176,7 @@ void SuppressionFilter::ApplyGain(
     for (int b = 0; b < e->NumBands(); ++b) {
       auto e_band = e->View(b, ch);
       for (size_t i = 0; i < kFftLengthBy2; ++i) {
-        e_band[i] = rtc::SafeClamp(e_band[i], -32768.f, 32767.f);
+        e_band[i] = SafeClamp(e_band[i], -32768.f, 32767.f);
       }
     }
   }

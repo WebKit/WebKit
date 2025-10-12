@@ -98,7 +98,7 @@ extern bool gForceHighPrecisionRasterPipeline;
 #include "src/gpu/ganesh/GrCaps.h"
 #include "src/gpu/ganesh/GrDirectContextPriv.h"
 #include "src/gpu/ganesh/SkGr.h"
-#include "tools/gpu/GrContextFactory.h"
+#include "tools/ganesh/GrContextFactory.h"
 
 using namespace skia_private;
 
@@ -1331,7 +1331,7 @@ private:
     int fCurrentAnimSKP = 0;
 };
 
-// Some runs (mostly, Valgrind) are so slow that the bot framework thinks we've hung.
+// Some runs are so slow that the Swarming thinks we've hung.
 // This prints something every once in a while so that it knows we're still working.
 static void start_keepalive() {
     static std::thread* intentionallyLeaked = new std::thread([]{

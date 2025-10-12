@@ -32,6 +32,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Logging.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/cf/NotificationCenterCF.h>
 #include <wtf/spi/cf/CFBundleSPI.h>
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
@@ -81,7 +82,7 @@ void listenForLanguageChangeNotifications()
 #if PLATFORM(MAC)
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        CFNotificationCenterAddObserver(CFNotificationCenterGetDistributedCenter(), nullptr, &languagePreferencesDidChange, CFSTR("AppleLanguagePreferencesChangedNotification"), nullptr, CFNotificationSuspensionBehaviorCoalesce);
+        CFNotificationCenterAddObserver(CFNotificationCenterGetDistributedCenterSingleton(), nullptr, &languagePreferencesDidChange, CFSTR("AppleLanguagePreferencesChangedNotification"), nullptr, CFNotificationSuspensionBehaviorCoalesce);
     });
 #endif
 }

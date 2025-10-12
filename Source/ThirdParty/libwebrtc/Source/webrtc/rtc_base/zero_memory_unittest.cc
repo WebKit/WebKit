@@ -10,12 +10,13 @@
 
 #include "rtc_base/zero_memory.h"
 
-#include <stdint.h>
+#include <cstddef>
+#include <cstdint>
 
 #include "api/array_view.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 TEST(ZeroMemoryTest, TestZeroMemory) {
   static const size_t kBufferSize = 32;
@@ -35,7 +36,7 @@ TEST(ZeroMemoryTest, TestZeroArrayView) {
   for (size_t i = 0; i < kBufferSize; i++) {
     buffer[i] = static_cast<uint8_t>(i + 1);
   }
-  ExplicitZeroMemory(rtc::ArrayView<uint8_t>(buffer, sizeof(buffer)));
+  ExplicitZeroMemory(ArrayView<uint8_t>(buffer, sizeof(buffer)));
   for (size_t i = 0; i < kBufferSize; i++) {
     EXPECT_EQ(buffer[i], 0);
   }
@@ -50,4 +51,4 @@ TEST(ZeroMemoryTest, TestZeroMemoryUnused) {
   ExplicitZeroMemory(buffer, sizeof(buffer));
 }
 
-}  // namespace rtc
+}  // namespace webrtc

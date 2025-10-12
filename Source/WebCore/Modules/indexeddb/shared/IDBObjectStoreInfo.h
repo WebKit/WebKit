@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "IDBIndexIdentifier.h"
-#include "IDBIndexInfo.h"
-#include "IDBKeyPath.h"
-#include "IDBObjectStoreIdentifier.h"
+#include <WebCore/IDBIndexIdentifier.h>
+#include <WebCore/IDBIndexInfo.h>
+#include <WebCore/IDBKeyPath.h>
+#include <WebCore/IDBObjectStoreIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 

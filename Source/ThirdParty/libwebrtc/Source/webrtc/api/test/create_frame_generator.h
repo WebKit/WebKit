@@ -55,13 +55,10 @@ std::unique_ptr<FrameGeneratorInterface> CreateFromNV12FileFrameGenerator(
     size_t height,
     int frame_repeat_count = 1);
 
-// Creates a frame generator that repeatedly plays an ivf file.
-[[deprecated]] std::unique_ptr<FrameGeneratorInterface>
-CreateFromIvfFileFrameGenerator(std::string filename);
-
-absl::Nonnull<std::unique_ptr<FrameGeneratorInterface>>
+absl_nonnull std::unique_ptr<FrameGeneratorInterface>
 CreateFromIvfFileFrameGenerator(const Environment& env,
-                                absl::string_view filename);
+                                absl::string_view filename,
+                                std::optional<int> fps_hint = std::nullopt);
 
 // Creates a frame generator which takes a set of yuv files (wrapping a
 // frame generator created by CreateFromYuvFile() above), but outputs frames

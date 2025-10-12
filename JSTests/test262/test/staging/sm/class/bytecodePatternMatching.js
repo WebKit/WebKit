@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -20,7 +17,7 @@ function a() {
         }
     };
 
-    assertThrowsInstanceOf(() => "a".replace(/a/, X), TypeError);
+    assert.throws(TypeError, () => "a".replace(/a/, X));
 }
 
 function b() {
@@ -30,7 +27,7 @@ function b() {
         }
     }
 
-    assertThrowsInstanceOf(() => [1, 2, 3].sort(X), TypeError);
+    assert.throws(TypeError, () => [1, 2, 3].sort(X));
 }
 
 a();

@@ -29,6 +29,7 @@
 #include "pas_heap_table.h"
 #include "pas_large_map_entry.h"
 #include "pas_utils.h"
+#include "pas_zero_memory.h"
 
 PAS_BEGIN_EXTERN_C;
 

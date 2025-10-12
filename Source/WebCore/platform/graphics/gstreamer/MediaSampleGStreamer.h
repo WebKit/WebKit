@@ -51,7 +51,7 @@ public:
     Ref<MediaSample> createNonDisplayingCopy() const override;
     SampleFlags flags() const override { return m_flags; }
     PlatformSample platformSample() const override;
-    PlatformSample::Type platformSampleType() const override { return PlatformSample::GStreamerSampleType; }
+    Type type() const override { return Type::GStreamerSample; }
     void dump(PrintStream&) const override;
 
     const GRefPtr<GstSample>& sample() const { return m_sample; }

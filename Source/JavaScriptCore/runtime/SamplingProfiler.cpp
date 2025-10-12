@@ -139,14 +139,14 @@ protected:
 #if ENABLE(WEBASSEMBLY)
                     // At this point, Wasm::Callee would be dying (ref count is 0), but its fields are still live.
                     // And we can safely copy Wasm::IndexOrName even when any lock is held by suspended threads.
-                    auto* wasmCallee = static_cast<Wasm::Callee*>(nativeCallee);
+                    auto* wasmCallee = uncheckedDowncast<Wasm::Callee>(nativeCallee);
                     stackTrace[m_depth].wasmCompilationMode = wasmCallee->compilationMode();
                     stackTrace[m_depth].wasmIndexOrName = wasmCallee->indexOrName();
                     stackTrace[m_depth].callSiteIndex = m_callFrame->unsafeCallSiteIndex();
 #if ENABLE(JIT)
                     // FIXME: We should be able to add all stack traces including inlined ones in SamplingProfiler.
                     if (wasmCallee->compilationMode() == Wasm::CompilationMode::OMGMode) {
-                        auto* omgCallee = static_cast<const Wasm::OptimizingJITCallee*>(wasmCallee);
+                        auto* omgCallee = uncheckedDowncast<const Wasm::OptimizingJITCallee>(wasmCallee);
                         bool isInlined = false;
                         auto origin = omgCallee->getOrigin(stackTrace[m_depth].callSiteIndex.bits(), 0, isInlined);
                         if (isInlined)
@@ -1023,7 +1023,6 @@ struct Tiers {
     static constexpr ASCIILiteral ftl { "FTL"_s };
     static constexpr ASCIILiteral builtin { "js builtin"_s };
     static constexpr ASCIILiteral ipint { "IPInt"_s };
-    static constexpr ASCIILiteral wasmllint { "WasmLLInt"_s };
     static constexpr ASCIILiteral bbq { "BBQ"_s };
     static constexpr ASCIILiteral omg { "OMG"_s };
     static constexpr ASCIILiteral wasm { "Wasm"_s };
@@ -1056,13 +1055,12 @@ static String tierName(SamplingProfiler::StackFrame& frame)
     case SamplingProfiler::FrameType::Wasm:
         if (frame.wasmCompilationMode) {
             switch (frame.wasmCompilationMode.value()) {
-            case Wasm::CompilationMode::LLIntMode:
-                return Tiers::wasmllint;
             case Wasm::CompilationMode::IPIntMode:
                 return Tiers::ipint;
-            case Wasm::CompilationMode::JSToWasmEntrypointMode:
+            case Wasm::CompilationMode::JSToWasmMode:
             case Wasm::CompilationMode::JSToWasmICMode:
             case Wasm::CompilationMode::WasmToJSMode:
+            case Wasm::CompilationMode::WasmBuiltinMode:
                 // Just say "Wasm" for now.
                 break;
             case Wasm::CompilationMode::BBQMode:
@@ -1295,7 +1293,6 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
         func(Tiers::ftl);
         func(Tiers::builtin);
         func(Tiers::ipint);
-        func(Tiers::wasmllint);
         func(Tiers::bbq);
         func(Tiers::omg);
         func(Tiers::wasm);

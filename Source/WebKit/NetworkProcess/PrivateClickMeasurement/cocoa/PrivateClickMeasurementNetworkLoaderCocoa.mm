@@ -47,7 +47,7 @@ static bool trustsServerForLocalTests(NSURLAuthenticationChallenge *challenge)
         || !allowedLocalTestServerTrust())
         return false;
 
-    return WebCore::certificatesMatch(allowedLocalTestServerTrust().get(), challenge.protectionSpace.serverTrust);
+    return WebCore::certificatesMatch(allowedLocalTestServerTrust().get(), RetainPtr { challenge.protectionSpace.serverTrust }.get());
 }
 
 @interface WKNetworkSessionDelegateAllowingOnlyNonRedirectedJSON : NSObject <NSURLSessionDataDelegate>
@@ -71,7 +71,7 @@ static bool trustsServerForLocalTests(NSURLAuthenticationChallenge *challenge)
 {
     if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]
         && trustsServerForLocalTests(challenge))
-        return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+        return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust: RetainPtr { challenge.protectionSpace.serverTrust }.get()]);
     completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
 }
 
@@ -87,7 +87,7 @@ static HashMap<LoadTaskIdentifier, RetainPtr<NSURLSessionDataTask>>& taskMap()
     return map.get();
 }
 
-static NSURLSession *statelessSessionWithoutRedirects()
+static NSURLSession *statelessSessionWithoutRedirectsSingleton()
 {
     static NeverDestroyed<RetainPtr<WKNetworkSessionDelegateAllowingOnlyNonRedirectedJSON>> delegate = adoptNS([WKNetworkSessionDelegateAllowingOnlyNonRedirectedJSON new]);
     static NeverDestroyed<RetainPtr<NSURLSession>> session = [&] {
@@ -127,7 +127,7 @@ void NetworkLoader::start(URL&& url, RefPtr<JSON::Object>&& jsonPayload, WebCore
     setPCMDataCarriedOnRequest(pcmDataCarried, request.get());
 
     auto identifier = LoadTaskIdentifier::generate();
-    RetainPtr task = [statelessSessionWithoutRedirects() dataTaskWithRequest:request.get() completionHandler:makeBlockPtr([callback = WTFMove(callback), identifier](NSData *data, NSURLResponse *response, NSError *error) mutable {
+    RetainPtr task = [statelessSessionWithoutRedirectsSingleton() dataTaskWithRequest:request.get() completionHandler:makeBlockPtr([callback = WTFMove(callback), identifier](NSData *data, NSURLResponse *response, NSError *error) mutable {
         taskMap().remove(identifier);
         if (error)
             return callback(error.localizedDescription, { });

@@ -2,9 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-TypedArray-shell.js]
-flags:
-  - noStrict
+includes: [sm/non262-TypedArray-shell.js]
 description: |
   pending
 esid: pending
@@ -32,8 +30,8 @@ var throws = [
 ];
 
 for (var desc of throws) {
-    assertThrowsInstanceOf(function() { Object.defineProperty(obj, 0, desc); }, TypeError);
-    assertThrowsInstanceOf(function() { Object.defineProperties(obj, {0: desc}); }, TypeError);
+    assert.throws(TypeError, function() { Object.defineProperty(obj, 0, desc); });
+    assert.throws(TypeError, function() { Object.defineProperties(obj, {0: desc}); });
 }
 
 Object.defineProperty(obj, 0, {});

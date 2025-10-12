@@ -124,4 +124,9 @@ void TextInputController::insertText(JSStringRef text)
     WKBundlePageConfirmCompositionWithText(InjectedBundle::singleton().page()->page(), toWK(text).get());
 }
 
+void TextInputController::setPageEditable(bool isEditable)
+{
+    WKBundlePageSetEditable(InjectedBundle::singleton().page()->page(), isEditable);
+}
+
 } // namespace WTR

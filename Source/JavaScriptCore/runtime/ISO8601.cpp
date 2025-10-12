@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2021 Sony Interactive Entertainment Inc.
- * Copyright (C) 2021 Apple Inc.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,10 @@
 #include "config.h"
 #include "ISO8601.h"
 
+#include "FractionToDouble.h"
 #include "IntlObject.h"
 #include "ParseInt.h"
+#include "TemporalObject.h"
 #include <limits>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DateMath.h>
@@ -47,9 +49,6 @@ static constexpr int64_t nsPerMinute = 1000LL * 1000 * 1000 * 60;
 static constexpr int64_t nsPerSecond = 1000LL * 1000 * 1000;
 static constexpr int64_t nsPerMillisecond = 1000LL * 1000;
 static constexpr int64_t nsPerMicrosecond = 1000LL;
-
-static constexpr int32_t maxYear = 275760;
-static constexpr int32_t minYear = -271821;
 
 std::optional<TimeZoneID> parseTimeZoneName(StringView string)
 {
@@ -80,7 +79,7 @@ static void handleFraction(Duration& duration, int factor, StringView fractionSt
     ASSERT(fractionLength && fractionLength <= 9 && fractionString.containsOnlyASCII());
     ASSERT(fractionType == TemporalUnit::Hour || fractionType == TemporalUnit::Minute || fractionType == TemporalUnit::Second);
 
-    Vector<LChar, 9> padded(9, '0');
+    Vector<Latin1Character, 9> padded(9, '0');
     for (unsigned i = 0; i < fractionLength; i++)
         padded[i] = fractionString[i];
 
@@ -363,7 +362,7 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     if (!digits)
         return std::nullopt;
 
-    Vector<LChar, 9> padded(9, '0');
+    Vector<Latin1Character, 9> padded(9, '0');
     for (size_t i = 0; i < digits; ++i)
         padded[i] = buffer[i];
     buffer.advanceBy(digits);
@@ -592,7 +591,7 @@ static bool canBeRFC9557Annotation(const StringParsingBuffer<CharacterType>& buf
 template<typename CharacterType>
 static bool canBeTimeZone(const StringParsingBuffer<CharacterType>& buffer, CharacterType character)
 {
-    switch (static_cast<UChar>(character)) {
+    switch (static_cast<char16_t>(character)) {
     // UTCDesignator
     // https://tc39.es/proposal-temporal/#prod-UTCDesignator
     case 'z':
@@ -617,7 +616,7 @@ static bool canBeTimeZone(const StringParsingBuffer<CharacterType>& buffer, Char
 }
 
 template<typename CharacterType>
-static std::optional<Variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotation(StringParsingBuffer<CharacterType>& buffer)
+static std::optional<Variant<Vector<Latin1Character>, int64_t>> parseTimeZoneAnnotation(StringParsingBuffer<CharacterType>& buffer)
 {
     // https://tc39.es/proposal-temporal/#prod-TimeZoneAnnotation
     // TimeZoneAnnotation :
@@ -636,7 +635,7 @@ static std::optional<Variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotation(St
     if (*buffer == '!')
         buffer.advance();
 
-    switch (static_cast<UChar>(*buffer)) {
+    switch (static_cast<char16_t>(*buffer)) {
     case '+':
     case '-': {
         auto offset = parseUTCOffset(buffer, false);
@@ -751,7 +750,7 @@ static std::optional<Variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotation(St
         if (!isValidComponent(currentNameComponentStartIndex, nameLength))
             return std::nullopt;
 
-        Vector<LChar> result(buffer.consume(nameLength));
+        Vector<Latin1Character> result(buffer.consume(nameLength));
 
         if (buffer.atEnd())
             return std::nullopt;
@@ -768,7 +767,7 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
 {
     if (buffer.atEnd())
         return std::nullopt;
-    switch (static_cast<UChar>(*buffer)) {
+    switch (static_cast<char16_t>(*buffer)) {
     // UTCDesignator
     // https://tc39.es/proposal-temporal/#prod-UTCDesignator
     case 'z':
@@ -904,7 +903,7 @@ static std::optional<RFC9557Annotation> parseOneRFC9557Annotation(StringParsingB
     if (!isValidComponent(currentNameComponentStartIndex, nameLength))
         return std::nullopt;
 
-    Vector<LChar, maxCalendarLength> result(buffer.consume(nameLength));
+    Vector<Latin1Character, maxCalendarLength> result(buffer.consume(nameLength));
 
     if (buffer.atEnd())
         return std::nullopt;
@@ -1090,6 +1089,10 @@ static std::optional<PlainDate> parseDate(StringParsingBuffer<CharacterType>& bu
         buffer.advance();
     } else
         return std::nullopt;
+
+    // PlainDate represents out-of-range years using outOfRangeYear
+    if (!isYearWithinLimits(year)) [[unlikely]]
+        year = outOfRangeYear;
 
     return PlainDate(year, month, day);
 }
@@ -1406,7 +1409,7 @@ String formatTimeZoneOffsetString(int64_t offset)
 
     if (nanoseconds) {
         // Since nsPerSecond is 1000000000, stringified nanoseconds takes at most 9 characters (999999999).
-        auto fraction = numberToStringUnsigned<Vector<LChar, 9>>(nanoseconds);
+        auto fraction = numberToStringUnsigned<Vector<Latin1Character, 9>>(nanoseconds);
         unsigned paddingLength = 9 - fraction.size();
         unsigned index = fraction.size();
         std::optional<unsigned> validLength;
@@ -1441,7 +1444,7 @@ String temporalTimeToString(PlainTime plainTime, std::tuple<Precision, unsigned>
     if (precisionType == Precision::Auto) {
         if (!fractionNanoseconds)
             return makeString(pad('0', 2, plainTime.hour()), ':', pad('0', 2, plainTime.minute()), ':', pad('0', 2, plainTime.second()));
-        auto fraction = numberToStringUnsigned<Vector<LChar, 9>>(fractionNanoseconds);
+        auto fraction = numberToStringUnsigned<Vector<Latin1Character, 9>>(fractionNanoseconds);
         unsigned paddingLength = 9 - fraction.size();
         unsigned index = fraction.size();
         std::optional<unsigned> validLength;
@@ -1459,7 +1462,7 @@ String temporalTimeToString(PlainTime plainTime, std::tuple<Precision, unsigned>
     }
     if (!precisionValue)
         return makeString(pad('0', 2, plainTime.hour()), ':', pad('0', 2, plainTime.minute()), ':', pad('0', 2, plainTime.second()));
-    auto fraction = numberToStringUnsigned<Vector<LChar, 9>>(fractionNanoseconds);
+    auto fraction = numberToStringUnsigned<Vector<Latin1Character, 9>>(fractionNanoseconds);
     unsigned paddingLength = 9 - fraction.size();
     paddingLength = std::min(paddingLength, precisionValue);
     precisionValue -= paddingLength;
@@ -1467,9 +1470,10 @@ String temporalTimeToString(PlainTime plainTime, std::tuple<Precision, unsigned>
     return makeString(pad('0', 2, plainTime.hour()), ':', pad('0', 2, plainTime.minute()), ':', pad('0', 2, plainTime.second()), '.', pad('0', paddingLength, emptyString()), fraction);
 }
 
-String temporalDateToString(PlainDate plainDate)
+static String temporalDateToString(int32_t year, int32_t month)
 {
-    auto year = plainDate.year();
+    // If we're printing a date, it should be within range
+    ASSERT(isYearWithinLimits(year));
 
     String prefix;
     auto yearDigits = 4;
@@ -1479,12 +1483,34 @@ String temporalDateToString(PlainDate plainDate)
         year = std::abs(year);
     }
 
-    return makeString(prefix, pad('0', yearDigits, year), '-', pad('0', 2, plainDate.month()), '-', pad('0', 2, plainDate.day()));
+    return makeString(prefix, pad('0', yearDigits, year), '-', pad('0', 2, month));
+}
+
+static String temporalDateToString(int32_t year, int32_t month, int32_t day)
+{
+    auto first = temporalDateToString(year, month);
+    return makeString(first, '-', pad('0', 2, day));
 }
 
 String temporalDateTimeToString(PlainDate plainDate, PlainTime plainTime, std::tuple<Precision, unsigned> precision)
 {
     return makeString(temporalDateToString(plainDate), 'T', temporalTimeToString(plainTime, precision));
+}
+
+String temporalDateToString(PlainDate plainDate)
+{
+    return temporalDateToString(plainDate.year(), plainDate.month(), plainDate.day());
+}
+
+String temporalMonthDayToString(PlainMonthDay plainMonthDay, StringView calendarName)
+{
+    if (calendarName == "always"_s) {
+        // FIXME: print the correct calendar ID when calendars are fully implemented
+        auto first = temporalDateToString(plainMonthDay.isoPlainDate());
+        return makeString(first, "[u-ca=iso8601]"_s);
+    }
+
+    return makeString(pad('0', 2, plainMonthDay.month()), '-', pad('0', 2, plainMonthDay.day()));
 }
 
 String monthCode(uint32_t month)
@@ -1523,9 +1549,9 @@ ExactTime ExactTime::fromISOPartsAndOffset(int32_t year, uint8_t month, uint8_t 
     return ExactTime { utcNanoseconds - offset };
 }
 
-using CheckedInt128 = Checked<Int128, RecordOverflow>;
+} // namespace ISO8601
 
-static CheckedInt128 checkedCastDoubleToInt128(double n)
+CheckedInt128 checkedCastDoubleToInt128(double n)
 {
     // Based on __fixdfti() and __fixunsdfti() from compiler_rt:
     // https://github.com/llvm/llvm-project/blob/f3671de5500ff1f8210419226a9603a7d83b1a31/compiler-rt/lib/builtins/fp_fixint_impl.inc
@@ -1564,6 +1590,8 @@ static CheckedInt128 checkedCastDoubleToInt128(double n)
     result *= sign;
     return { result };
 }
+
+namespace ISO8601 {
 
 template<TemporalUnit unit>
 std::optional<Int128> Duration::totalNanoseconds() const
@@ -1608,13 +1636,6 @@ template std::optional<Int128> Duration::totalNanoseconds<TemporalUnit::Day>() c
 template std::optional<Int128> Duration::totalNanoseconds<TemporalUnit::Second>() const;
 template std::optional<Int128> Duration::totalNanoseconds<TemporalUnit::Millisecond>() const;
 template std::optional<Int128> Duration::totalNanoseconds<TemporalUnit::Microsecond>() const;
-
-static constexpr Int128 absInt128(const Int128& value)
-{
-    if (value < 0)
-        return -value;
-    return value;
-}
 
 // IsValidDuration ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds )
 // https://tc39.es/proposal-temporal/#sec-temporal-isvalidduration
@@ -1680,20 +1701,84 @@ std::optional<ExactTime> ExactTime::add(Duration duration) const
     return result;
 }
 
-Int128 ExactTime::round(Int128 quantity, unsigned increment, TemporalUnit unit, RoundingMode roundingMode)
+// https://tc39.es/proposal-temporal/#sec-temporal-roundtemporalinstant
+static Int128 roundTemporalInstant(Int128 ns, unsigned increment, TemporalUnit unit, RoundingMode roundingMode)
 {
-    Int128 incrementNs { increment };
-    switch (unit) {
-    case TemporalUnit::Hour: incrementNs *= ExactTime::nsPerHour; break;
-    case TemporalUnit::Minute: incrementNs *= ExactTime::nsPerMinute; break;
-    case TemporalUnit::Second: incrementNs *= ExactTime::nsPerSecond; break;
-    case TemporalUnit::Millisecond: incrementNs *= ExactTime::nsPerMillisecond; break;
-    case TemporalUnit::Microsecond: incrementNs *= ExactTime::nsPerMicrosecond; break;
-    case TemporalUnit::Nanosecond: break;
-    default:
-        ASSERT_NOT_REACHED();
+    auto unitLength = lengthInNanoseconds(unit);
+    auto incrementNs = increment * unitLength;
+    return roundNumberToIncrementAsIfPositive(ns, incrementNs, roundingMode);
+}
+
+// https://tc39.es/proposal-temporal/#sec-validatetemporalroundingincrement
+static void validateTemporalRoundingIncrement(JSGlobalObject* globalObject, unsigned increment,
+    Int128 dividend, Inclusivity inclusive)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Int128 maximum = 0;
+    switch (inclusive) {
+    case Inclusivity::Inclusive:
+        maximum = dividend;
+        break;
+    case Inclusivity::Exclusive:
+        ASSERT(dividend > 1);
+        maximum = dividend - 1;
+        break;
     }
-    return roundNumberToIncrement(quantity, incrementNs, roundingMode);
+    if (increment > maximum)
+        throwRangeError(globalObject, scope, "Rounding increment exceeds maximum value"_s);
+    else if (dividend % increment)
+        throwRangeError(globalObject, scope, "Rounding increment does not divide evenly into maximum value"_s);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.instant.prototype.round
+// (Steps 10-17 only)
+ExactTime ExactTime::round(JSGlobalObject* globalObject, unsigned increment,
+    TemporalUnit unit, RoundingMode roundingMode) const
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Int128 maximum = 0;
+    switch (unit) {
+    case TemporalUnit::Hour: maximum = static_cast<Int128>(WTF::hoursPerDay); break;
+    case TemporalUnit::Minute: maximum = static_cast<Int128>(minutesPerHour * WTF::hoursPerDay); break;
+    case TemporalUnit::Second: maximum = static_cast<Int128>(secondsPerMinute * minutesPerHour * WTF::hoursPerDay); break;
+    case TemporalUnit::Millisecond: maximum = static_cast<Int128>(msPerDay); break;
+    case TemporalUnit::Microsecond: maximum = static_cast<Int128>(msPerDay * 1000); break;
+    case TemporalUnit::Nanosecond: maximum = nsPerDay; break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    validateTemporalRoundingIncrement(globalObject, increment, maximum, Inclusivity::Inclusive);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto roundedNs = roundTemporalInstant(m_epochNanoseconds, increment, unit, roundingMode);
+    return ExactTime { roundedNs };
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-roundtimedurationtoincrement
+static Int128 roundTimeDurationToIncrement(JSGlobalObject* globalObject, Int128 d, Int128 increment,
+    RoundingMode roundingMode)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Int128 rounded = roundNumberToIncrementInt128(d, increment, roundingMode);
+    if (absInt128(rounded) > InternalDuration::maxTimeDuration) {
+        throwRangeError(globalObject, scope, "Rounded time duration exceeds maximum"_s);
+        return 0;
+    }
+    return rounded;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-roundtimeduration
+Int128 roundTimeDuration(JSGlobalObject* globalObject, Int128 timeDuration, unsigned increment, TemporalUnit unit, RoundingMode roundingMode)
+{
+    auto divisor = lengthInNanoseconds(unit);
+
+    return roundTimeDurationToIncrement(globalObject, timeDuration,
+        (divisor * increment), roundingMode);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-datedurationsign
@@ -1733,21 +1818,17 @@ InternalDuration InternalDuration::combineDateAndTimeDuration(Duration dateDurat
     int32_t dateSign = dateDurationSign(dateDuration);
     int32_t timeSign = timeDuration < 0 ? -1 : timeDuration > 0 ? 1 : 0;
     bool signsDiffer = dateSign && timeSign && dateSign != timeSign;
-    ASSERT_UNUSED(signsDiffer, signsDiffer);
+    ASSERT_UNUSED(signsDiffer, !signsDiffer);
     return InternalDuration { WTFMove(dateDuration), timeDuration };
 }
 
 // DifferenceInstant ( ns1, ns2, roundingIncrement, smallestUnit, roundingMode )
 // https://tc39.es/proposal-temporal/#sec-temporal-differenceinstant
-Int128 ExactTime::difference(ExactTime other, unsigned increment, TemporalUnit unit, RoundingMode roundingMode) const
+InternalDuration ExactTime::difference(JSGlobalObject* globalObject, ExactTime other, unsigned roundingIncrement, TemporalUnit smallestUnit, RoundingMode roundingMode) const
 {
-    Int128 diff = other.m_epochNanoseconds - m_epochNanoseconds;
-    return round(diff, increment, unit, roundingMode);
-}
-
-ExactTime ExactTime::round(unsigned increment, TemporalUnit unit, RoundingMode roundingMode) const
-{
-    return ExactTime { round(m_epochNanoseconds, increment, unit, roundingMode) };
+    Int128 timeDuration = other.m_epochNanoseconds - m_epochNanoseconds;
+    timeDuration = roundTimeDuration(globalObject, timeDuration, roundingIncrement, smallestUnit, roundingMode);
+    return InternalDuration::combineDateAndTimeDuration(ISO8601::Duration(), timeDuration);
 }
 
 ExactTime ExactTime::now()
@@ -1770,6 +1851,24 @@ bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned h
 bool isYearWithinLimits(double year)
 {
     return year >= minYear && year <= maxYear;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-isvalidisodate
+bool isValidISODate(double year, double month, double day)
+{
+    if (month < 1 || month > 12)
+        return false;
+    auto daysInMonth1 = daysInMonth(year, month);
+    if (day < 1 || day > daysInMonth1)
+        return false;
+    return true;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-create-iso-date-record
+PlainDate createISODateRecord(double year, double month, double day)
+{
+    ASSERT(isValidISODate(year, month, day));
+    return PlainDate(year, month, day);
 }
 
 } // namespace ISO8601

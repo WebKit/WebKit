@@ -24,8 +24,8 @@ layer at (0,0) size 800x600
                           RenderTable {TABLE} at (2,1) size 132x35 [border: (1.50px solid #FFFF00)]
                             RenderTableSection {TBODY} at (1,1) size 129x32
                               RenderTableRow {TR} at (0,0) size 128x31
-                                RenderTableCell {TD} at (0,2) size 104x27 [border: (1.50px solid #FFFF00)] [r=0 c=0 rs=1 cs=1]
-                                  RenderTextControl {INPUT} at (2,4) size 93x23 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+                                RenderTableCell {TD} at (0,3) size 104x25 [border: (1.50px solid #FFFF00)] [r=0 c=0 rs=1 cs=1]
+                                  RenderTextControl {INPUT} at (2,5) size 92x21 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
                                   RenderText {#text} at (0,0) size 0x0
                                 RenderTableCell {TD} at (103,0) size 26x31 [border: (1.50px solid #FFFF00)] [r=0 c=1 rs=1 cs=1]
                                   RenderImage {INPUT} at (2,6) size 20x19
@@ -59,5 +59,5 @@ layer at (0,0) size 800x600
                       RenderTableCell {TD} at (0,0) size 478x25 [border: (1.50px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (2,2) size 49x20
                           text run at (2,2) width 49: "overlap"
-layer at (103,71) size 78x14
-  RenderBlock {DIV} at (6,3) size 80x15
+layer at (103,72) size 79x14 backgroundClip at (103,72) size 78x14 clip at (103,72) size 78x14
+  RenderBlock {DIV} at (6,3) size 79x14

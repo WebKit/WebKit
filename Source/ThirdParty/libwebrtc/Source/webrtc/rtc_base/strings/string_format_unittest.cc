@@ -10,14 +10,15 @@
 
 #include "rtc_base/strings/string_format.h"
 
+#include <algorithm>
+#include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/string_encode.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 TEST(StringFormatTest, Empty) {
   EXPECT_EQ("", StringFormat("%s", ""));
@@ -40,7 +41,7 @@ TEST(StringFormatTest, MaxSizeShouldWork) {
 // whe using `%.*s`.
 TEST(StringFormatTest, FormatStringView) {
   const std::string main_string("This is a substring test.");
-  std::vector<absl::string_view> string_views = rtc::split(main_string, ' ');
+  std::vector<absl::string_view> string_views = split(main_string, ' ');
   ASSERT_EQ(string_views.size(), 5u);
 
   const absl::string_view& sv = string_views[3];
@@ -49,4 +50,4 @@ TEST(StringFormatTest, FormatStringView) {
   EXPECT_EQ(formatted.compare("We have a substring."), 0);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

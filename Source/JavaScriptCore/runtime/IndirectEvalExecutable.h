@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "EvalExecutable.h"
+#include <JavaScriptCore/EvalExecutable.h>
 
 namespace JSC {
 

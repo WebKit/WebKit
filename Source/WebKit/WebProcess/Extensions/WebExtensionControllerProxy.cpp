@@ -106,11 +106,11 @@ void WebExtensionControllerProxy::load(const WebExtensionContextParameters& cont
 void WebExtensionControllerProxy::unload(WebExtensionContextIdentifier contextIdentifier)
 {
     m_extensionContextBaseURLMap.removeIf([&](auto& entry) {
-        return entry.value->identifier() == contextIdentifier;
+        return entry.value->unprivilegedIdentifier() == contextIdentifier;
     });
 
     m_extensionContexts.removeIf([&](auto& entry) {
-        return entry->identifier() == contextIdentifier;
+        return entry->unprivilegedIdentifier() == contextIdentifier;
     });
 }
 

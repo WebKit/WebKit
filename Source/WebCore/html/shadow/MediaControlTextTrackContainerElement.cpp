@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,8 +32,11 @@
 
 #if ENABLE(VIDEO)
 
+#include "ContainerNodeInlines.h"
 #include "DOMTokenList.h"
+#include "DocumentEventLoop.h"
 #include "DocumentFullscreen.h"
+#include "DocumentView.h"
 #include "ElementChildIteratorInlines.h"
 #include "EventHandler.h"
 #include "EventLoop.h"
@@ -55,6 +58,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "TextTrackCueGeneric.h"
 #include "TextTrackList.h"
 #include "UserAgentParts.h"
@@ -83,11 +87,6 @@ MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement(Doc
 {
 }
 
-RefPtr<HTMLMediaElement> MediaControlTextTrackContainerElement::protectedMediaElement() const
-{
-    return m_mediaElement.get();
-}
-
 RenderPtr<RenderElement> MediaControlTextTrackContainerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, *this, WTFMove(style));
@@ -100,7 +99,7 @@ static bool compareCueIntervalForDisplay(const CueInterval& one, const CueInterv
 
 void MediaControlTextTrackContainerElement::updateDisplay()
 {
-    RefPtr mediaElement = protectedMediaElement();
+    RefPtr mediaElement = m_mediaElement.get();
     if (mediaElement && !mediaElement->closedCaptionsVisible())
         removeChildren();
 
@@ -165,12 +164,11 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         removeChildren();
 
     activeCues.removeAllMatching([] (CueInterval& cueInterval) {
-        RefPtr cue = cueInterval.data();
-        return !cue->track()
-            || !cue->track()->isRendered()
-            || cue->track()->mode() == TextTrack::Mode::Disabled
-            || !cue->isActive()
-            || !cue->isRenderable();
+        Ref cue = *cueInterval.data();
+        if (!cue->isActive() || !cue->isRenderable())
+            return true;
+        RefPtr track = cue->track();
+        return !track || !track->isRendered() || track->mode() == TextTrack::Mode::Disabled;
     });
 
     // Sort the active cues for the appropriate display order. For example, for roll-up
@@ -183,13 +181,13 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         // corresponding CSS boxes added to output, in text track cue order, run the
         // following substeps:
         for (auto& interval : activeCues) {
-            auto cue = interval.data();
+            Ref cue = *interval.data();
 
-            if (cue->track()->isSpoken())
+            if (cue->protectedTrack()->isSpoken())
                 continue;
 
             cue->setFontSize(m_fontSize, m_fontSizeIsImportant);
-            if (RefPtr vttCue = dynamicDowncast<VTTCue>(*cue))
+            if (RefPtr vttCue = dynamicDowncast<VTTCue>(cue))
                 processActiveVTTCue(*vttCue);
             else {
                 auto displayBox = cue->getDisplayTree();
@@ -228,13 +226,13 @@ void MediaControlTextTrackContainerElement::processActiveVTTCue(VTTCue& cue)
 {
     DEBUG_LOG(LOGIDENTIFIER, "adding and positioning cue: \"", cue.text(), "\", start=", cue.startTime(), ", end=", cue.endTime());
 
-    if (auto region = cue.track()->regions()->getRegionById(cue.regionId())) {
+    if (RefPtr region = cue.track()->protectedRegions()->getRegionById(cue.regionId())) {
         // Let region be the WebVTT region whose region identifier
         // matches the text track cue region identifier of cue.
-        Ref<HTMLDivElement> regionNode = region->getDisplayTree();
+        Ref regionNode = region->getDisplayTree();
 
         if (!contains(regionNode.ptr()))
-            appendChild(region->getDisplayTree());
+            appendChild(regionNode);
 
         region->appendTextTrackCueBox(*cue.getDisplayTree());
     } else {
@@ -254,11 +252,11 @@ void MediaControlTextTrackContainerElement::updateActiveCuesFontSize()
     if (!document().page())
         return;
 
-    RefPtr mediaElement = protectedMediaElement();
+    RefPtr mediaElement = m_mediaElement.get();
     if (!mediaElement)
         return;
 
-    float fontScale = document().page()->group().ensureCaptionPreferences().captionFontSizeScaleAndImportance(m_fontSizeIsImportant);
+    float fontScale = document().page()->group().ensureProtectedCaptionPreferences()->captionFontSizeScaleAndImportance(m_fontSizeIsImportant);
 
     // Caption fonts are defined as |size vh| units, so there's no need to
     // scale by display size. Since |vh| is a decimal percentage, multiply
@@ -277,7 +275,7 @@ void MediaControlTextTrackContainerElement::updateTextStrokeStyle()
     if (!document().page())
         return;
 
-    RefPtr mediaElement = protectedMediaElement();
+    RefPtr mediaElement = m_mediaElement.get();
     if (!mediaElement)
         return;
     
@@ -300,13 +298,13 @@ void MediaControlTextTrackContainerElement::updateTextStrokeStyle()
     bool important;
 
     // FIXME: find a way to set this property in the stylesheet like the other user style preferences, see <https://bugs.webkit.org/show_bug.cgi?id=169874>.
-    if (document().page()->group().ensureCaptionPreferences().captionStrokeWidthForFont(m_fontSize, language, strokeWidth, important))
+    if (document().page()->group().ensureProtectedCaptionPreferences()->captionStrokeWidthForFont(m_fontSize, language, strokeWidth, important))
         setInlineStyleProperty(CSSPropertyStrokeWidth, strokeWidth, CSSUnitType::CSS_PX, important ? IsImportant::Yes : IsImportant::No);
 }
 
 void MediaControlTextTrackContainerElement::updateTextTrackRepresentationIfNeeded()
 {
-    RefPtr mediaElement = protectedMediaElement();
+    RefPtr mediaElement = m_mediaElement.get();
     if (!mediaElement)
         return;
 
@@ -341,7 +339,7 @@ void MediaControlTextTrackContainerElement::clearTextTrackRepresentation()
     ALWAYS_LOG(LOGIDENTIFIER);
 
     m_textTrackRepresentation = nullptr;
-    if (RefPtr mediaElement = protectedMediaElement())
+    if (RefPtr mediaElement = m_mediaElement.get())
         mediaElement->setTextTrackRepresentation(nullptr);
 }
 
@@ -386,7 +384,7 @@ bool MediaControlTextTrackContainerElement::updateVideoDisplaySize()
     if (!document().page())
         return false;
 
-    RefPtr mediaElement = protectedMediaElement();
+    RefPtr mediaElement = m_mediaElement.get();
     if (!mediaElement)
         return false;
 
@@ -394,7 +392,7 @@ bool MediaControlTextTrackContainerElement::updateVideoDisplaySize()
     if (m_textTrackRepresentation)
         videoBox = m_textTrackRepresentation->bounds();
     else {
-        if (auto* renderVideo = dynamicDowncast<RenderVideo>(mediaElement->renderer()))
+        if (CheckedPtr renderVideo = dynamicDowncast<RenderVideo>(mediaElement->renderer()))
             videoBox = renderVideo->videoBox();
         else
             return false;
@@ -412,8 +410,12 @@ void MediaControlTextTrackContainerElement::updateSizes(ForceUpdate force)
     if (!updateVideoDisplaySize() && force != ForceUpdate::Yes)
         return;
 
-    RefPtr mediaElement = protectedMediaElement();
-    if (!document().page() || !mediaElement)
+    Ref document = this->document();
+    if (!document->page())
+        return;
+
+    RefPtr mediaElement = m_mediaElement.get();
+    if (!mediaElement)
         return;
 
     mediaElement->syncTextTrackBounds();
@@ -423,7 +425,7 @@ void MediaControlTextTrackContainerElement::updateSizes(ForceUpdate force)
     for (auto& activeCue : mediaElement->currentlyActiveCues())
         activeCue.data()->recalculateStyles();
 
-    document().eventLoop().queueTask(TaskSource::MediaElement, [weakThis = WeakPtr { *this }] () {
+    document->checkedEventLoop()->queueTask(TaskSource::MediaElement, [weakThis = WeakPtr { *this }] () {
         if (weakThis)
             weakThis->updateDisplay();
     });
@@ -440,14 +442,14 @@ RefPtr<NativeImage> MediaControlTextTrackContainerElement::createTextTrackRepres
 
     protectedDocument()->updateLayout();
 
-    auto* renderer = this->renderer();
+    CheckedPtr renderer = this->renderer();
     if (!renderer)
         return nullptr;
 
     if (!renderer->hasLayer())
         return nullptr;
 
-    RenderLayer* layer = downcast<RenderLayerModelObject>(*renderer).layer();
+    CheckedPtr layer = downcast<RenderLayerModelObject>(*renderer).layer();
 
     float deviceScaleFactor = 1;
     if (Page* page = document().page())
@@ -456,12 +458,13 @@ RefPtr<NativeImage> MediaControlTextTrackContainerElement::createTextTrackRepres
     IntRect paintingRect = IntRect(IntPoint(), layer->size());
 
     // FIXME (149422): This buffer should not be unconditionally unaccelerated.
-    auto buffer = ImageBuffer::create(paintingRect.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, deviceScaleFactor, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
+    auto buffer = ImageBuffer::create(paintingRect.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, deviceScaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!buffer)
         return nullptr;
 
     auto paintFlags = RenderLayer::paintLayerPaintingCompositingAllPhasesFlags();
     paintFlags.add(RenderLayer::PaintLayerFlag::TemporaryClipRects);
+    paintFlags.add(RenderLayer::PaintLayerFlag::AppliedTransform);
     layer->paint(buffer->context(), paintingRect, LayoutSize(), { PaintBehavior::FlattenCompositingLayers, PaintBehavior::Snapshotting }, nullptr, paintFlags);
 
     return ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
@@ -485,7 +488,7 @@ void MediaControlTextTrackContainerElement::show()
 
 bool MediaControlTextTrackContainerElement::isShowing() const
 {
-    const StyleProperties* propertySet = inlineStyle();
+    RefPtr propertySet = inlineStyle();
 
     // Following the code from show() and hide() above, we only have
     // to check for the presense of inline display.
@@ -497,7 +500,7 @@ bool MediaControlTextTrackContainerElement::isShowing() const
 const Logger& MediaControlTextTrackContainerElement::logger() const
 {
     if (!m_logger)
-        m_logger = &document().logger();
+        m_logger = protectedDocument()->logger();
 
     return *m_logger;
 }
@@ -507,7 +510,7 @@ uint64_t MediaControlTextTrackContainerElement::logIdentifier() const
     if (m_logIdentifier)
         return m_logIdentifier;
 
-    if (RefPtr mediaElement = protectedMediaElement())
+    if (RefPtr mediaElement = m_mediaElement.get())
         m_logIdentifier = mediaElement->logIdentifier();
 
     return m_logIdentifier;

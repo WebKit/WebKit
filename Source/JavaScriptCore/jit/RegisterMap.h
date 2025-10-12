@@ -27,10 +27,10 @@
 
 #if ENABLE(ASSEMBLER)
 
-#include "FPRInfo.h"
-#include "GPRInfo.h"
-#include "MacroAssembler.h"
-#include "Reg.h"
+#include <JavaScriptCore/FPRInfo.h>
+#include <JavaScriptCore/GPRInfo.h>
+#include <JavaScriptCore/MacroAssembler.h>
+#include <JavaScriptCore/Reg.h>
 
 namespace JSC {
 

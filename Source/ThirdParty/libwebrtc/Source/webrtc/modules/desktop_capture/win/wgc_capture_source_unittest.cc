@@ -30,10 +30,10 @@ namespace {
 
 const WCHAR kWindowTitle[] = L"WGC Capture Source Test Window";
 
-const int kFirstXCoord = 25;
-const int kFirstYCoord = 50;
-const int kSecondXCoord = 50;
-const int kSecondYCoord = 75;
+constexpr int kFirstXCoord = 25;
+constexpr int kFirstYCoord = 50;
+constexpr int kSecondXCoord = 50;
+constexpr int kSecondYCoord = 75;
 
 }  // namespace
 

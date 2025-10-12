@@ -11,12 +11,13 @@
 #include "modules/utility/include/helpers_android.h"
 
 #include <android/log.h>
-#include <pthread.h>
+#include <jni.h>
 #include <stddef.h>
-#include <unistd.h>
+
+#include <cstdint>
 
 #include "rtc_base/checks.h"
-#include "rtc_base/platform_thread.h"
+#include "rtc_base/platform_thread_types.h"
 
 #define TAG "HelpersAndroid"
 #define ALOGD(...) __android_log_print(ANDROID_LOG_DEBUG, TAG, __VA_ARGS__)
@@ -94,7 +95,7 @@ AttachThreadScoped::AttachThreadScoped(JavaVM* jvm)
     // Adding debug log here so we can track down potential leaks and figure
     // out why we sometimes see "Native thread exiting without having called
     // DetachCurrentThread" in logcat outputs.
-    ALOGD("Attaching thread to JVM[tid=%d]", rtc::CurrentThreadId());
+    ALOGD("Attaching thread to JVM[tid=%d]", CurrentThreadId());
     jint res = jvm->AttachCurrentThread(&env_, NULL);
     attached_ = (res == JNI_OK);
     RTC_CHECK(attached_) << "AttachCurrentThread failed: " << res;
@@ -103,7 +104,7 @@ AttachThreadScoped::AttachThreadScoped(JavaVM* jvm)
 
 AttachThreadScoped::~AttachThreadScoped() {
   if (attached_) {
-    ALOGD("Detaching thread from JVM[tid=%d]", rtc::CurrentThreadId());
+    ALOGD("Detaching thread from JVM[tid=%d]", CurrentThreadId());
     jint res = jvm_->DetachCurrentThread();
     RTC_CHECK(res == JNI_OK) << "DetachCurrentThread failed: " << res;
     RTC_CHECK(!GetEnv(jvm_));

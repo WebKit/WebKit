@@ -3,6 +3,6 @@ before anchor after target
 before anchor after target
 
 PASS Initial position of the targets
-FAIL #target1 should scroll with #anchor1 assert_equals: expected 120 but got 140
+PASS #target1 should scroll with #anchor1
 PASS #target2 should scroll with #anchor2
 

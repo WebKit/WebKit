@@ -110,7 +110,7 @@ Variant<MediaPlaybackTargetContextCocoa, MediaPlaybackTargetContextMock> MediaPl
     propertyList[@"AVOutputContextSerializationKeyContextID"] = m_contextID.createNSString().get();
     propertyList[@"AVOutputContextSerializationKeyContextType"] = m_contextType.createNSString().get();
     auto unarchiver = adoptNS([[WKKeyedCoder alloc] initWithDictionary:propertyList]);
-    auto outputContext = adoptNS([[PAL::getAVOutputContextClass() alloc] initWithCoder:unarchiver.get()]);
+    auto outputContext = adoptNS([[PAL::getAVOutputContextClassSingleton() alloc] initWithCoder:unarchiver.get()]);
     // Variant construction in older clang gives either an error, a vtable linkage error unless we construct it this way.
     Variant<MediaPlaybackTargetContextCocoa, MediaPlaybackTargetContextMock> variant { WTF::InPlaceType<MediaPlaybackTargetContextCocoa>, WTFMove(outputContext) };
     return variant;

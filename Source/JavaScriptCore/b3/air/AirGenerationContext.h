@@ -47,7 +47,7 @@ public:
     typedef void LatePathFunction(CCallHelpers&, GenerationContext&);
     typedef SharedTask<LatePathFunction> LatePath;
 
-    Vector<RefPtr<LatePath>> latePaths;
+    Vector<std::tuple<Origin, Ref<LatePath>>> latePaths;
     IndexMap<BasicBlock*, Box<MacroAssembler::Label>> blockLabels;
     BasicBlock* currentBlock { nullptr };
     unsigned indexInBlock { UINT_MAX };

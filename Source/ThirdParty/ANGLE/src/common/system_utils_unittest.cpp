@@ -5,6 +5,10 @@
 
 // system_utils_unittest.cpp: Unit tests for ANGLE's system utility functions
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

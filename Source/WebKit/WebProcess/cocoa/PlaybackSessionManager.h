@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,9 +28,10 @@
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #include "MessageReceiver.h"
-#include "PlaybackSessionContextIdentifier.h"
 #include <WebCore/EventListener.h>
 #include <WebCore/HTMLMediaElementEnums.h>
+#include <WebCore/HTMLMediaElementIdentifier.h>
+#include <WebCore/MediaPlayerClientIdentifier.h>
 #if HAVE(PIP_SKIP_PREROLL)
 #include <WebCore/MediaSession.h>
 #endif
@@ -68,7 +69,7 @@ class PlaybackSessionInterfaceContext final
     WTF_MAKE_TZONE_ALLOCATED(PlaybackSessionInterfaceContext);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceContext);
 public:
-    static Ref<PlaybackSessionInterfaceContext> create(PlaybackSessionManager& manager, PlaybackSessionContextIdentifier contextId)
+    static Ref<PlaybackSessionInterfaceContext> create(PlaybackSessionManager& manager, WebCore::HTMLMediaElementIdentifier contextId)
     {
         return adoptRef(*new PlaybackSessionInterfaceContext(manager, contextId));
     }
@@ -106,10 +107,10 @@ private:
     void spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>&) final;
     void videoProjectionMetadataChanged(const std::optional<WebCore::VideoProjectionMetadata>&) final;
 
-    PlaybackSessionInterfaceContext(PlaybackSessionManager&, PlaybackSessionContextIdentifier);
+    PlaybackSessionInterfaceContext(PlaybackSessionManager&, WebCore::HTMLMediaElementIdentifier);
 
     CheckedPtr<PlaybackSessionManager> m_manager;
-    PlaybackSessionContextIdentifier m_contextId;
+    WebCore::HTMLMediaElementIdentifier m_contextId;
 };
 
 class PlaybackSessionManager
@@ -120,7 +121,7 @@ class PlaybackSessionManager
     , public WebCore::MediaSessionObserver
 #endif
     {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PlaybackSessionManager);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionManager);
 public:
     static Ref<PlaybackSessionManager> create(WebPage&);
@@ -136,9 +137,9 @@ public:
     void setUpPlaybackControlsManager(WebCore::HTMLMediaElement&);
     void clearPlaybackControlsManager();
     void mediaEngineChanged(WebCore::HTMLMediaElement&);
-    PlaybackSessionContextIdentifier contextIdForMediaElement(WebCore::HTMLMediaElement&);
+    WebCore::HTMLMediaElementIdentifier contextIdForMediaElement(WebCore::HTMLMediaElement&);
 
-    WebCore::HTMLMediaElement* mediaElementWithContextId(PlaybackSessionContextIdentifier) const;
+    WebCore::HTMLMediaElement* mediaElementWithContextId(WebCore::HTMLMediaElementIdentifier) const;
     WebCore::HTMLMediaElement* currentPlaybackControlsElement() const;
 
 #if HAVE(PIP_SKIP_PREROLL)
@@ -156,75 +157,75 @@ private:
     explicit PlaybackSessionManager(WebPage&);
 
     typedef std::tuple<Ref<WebCore::PlaybackSessionModelMediaElement>, Ref<PlaybackSessionInterfaceContext>> ModelInterfaceTuple;
-    ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier);
-    const ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
-    Ref<WebCore::PlaybackSessionModelMediaElement> ensureModel(PlaybackSessionContextIdentifier);
-    Ref<PlaybackSessionInterfaceContext> ensureInterface(PlaybackSessionContextIdentifier);
-    void removeContext(PlaybackSessionContextIdentifier);
-    void addClientForContext(PlaybackSessionContextIdentifier);
-    void removeClientForContext(PlaybackSessionContextIdentifier);
+    ModelInterfaceTuple createModelAndInterface(WebCore::HTMLMediaElementIdentifier);
+    const ModelInterfaceTuple& ensureModelAndInterface(WebCore::HTMLMediaElementIdentifier);
+    Ref<WebCore::PlaybackSessionModelMediaElement> ensureModel(WebCore::MediaPlayerClientIdentifier);
+    Ref<PlaybackSessionInterfaceContext> ensureInterface(WebCore::MediaPlayerClientIdentifier);
+    void removeContext(WebCore::MediaPlayerClientIdentifier);
+    void addClientForContext(WebCore::MediaPlayerClientIdentifier);
+    void removeClientForContext(WebCore::MediaPlayerClientIdentifier);
 #if HAVE(PIP_SKIP_PREROLL)
     void setMediaSessionAndRegisterAsObserver();
 #endif
 
     // Interface to PlaybackSessionInterfaceContext
-    void durationChanged(PlaybackSessionContextIdentifier, double);
-    void currentTimeChanged(PlaybackSessionContextIdentifier, double currentTime, double anchorTime);
-    void bufferedTimeChanged(PlaybackSessionContextIdentifier, double bufferedTime);
-    void playbackStartedTimeChanged(PlaybackSessionContextIdentifier, double playbackStartedTime);
-    void rateChanged(PlaybackSessionContextIdentifier, OptionSet<WebCore::PlaybackSessionModel::PlaybackState>, double playbackRate, double defaultPlaybackRate);
-    void seekableRangesChanged(PlaybackSessionContextIdentifier, const WebCore::PlatformTimeRanges&, double lastModifiedTime, double liveUpdateInterval);
-    void canPlayFastReverseChanged(PlaybackSessionContextIdentifier, bool value);
-    void audioMediaSelectionOptionsChanged(PlaybackSessionContextIdentifier, const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex);
-    void legibleMediaSelectionOptionsChanged(PlaybackSessionContextIdentifier, const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex);
-    void audioMediaSelectionIndexChanged(PlaybackSessionContextIdentifier, uint64_t selectedIndex);
-    void legibleMediaSelectionIndexChanged(PlaybackSessionContextIdentifier, uint64_t selectedIndex);
-    void externalPlaybackChanged(PlaybackSessionContextIdentifier, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, String localizedDeviceName);
-    void wirelessVideoPlaybackDisabledChanged(PlaybackSessionContextIdentifier, bool);
-    void mutedChanged(PlaybackSessionContextIdentifier, bool);
-    void volumeChanged(PlaybackSessionContextIdentifier, double);
-    void isPictureInPictureSupportedChanged(PlaybackSessionContextIdentifier, bool);
-    void isInWindowFullscreenActiveChanged(PlaybackSessionContextIdentifier, bool);
-    void spatialVideoMetadataChanged(PlaybackSessionContextIdentifier, const std::optional<WebCore::SpatialVideoMetadata>&);
-    void videoProjectionMetadataChanged(PlaybackSessionContextIdentifier, const std::optional<WebCore::VideoProjectionMetadata>&);
+    void durationChanged(WebCore::MediaPlayerClientIdentifier, double);
+    void currentTimeChanged(WebCore::MediaPlayerClientIdentifier, double currentTime, double anchorTime);
+    void bufferedTimeChanged(WebCore::MediaPlayerClientIdentifier, double bufferedTime);
+    void playbackStartedTimeChanged(WebCore::MediaPlayerClientIdentifier, double playbackStartedTime);
+    void rateChanged(WebCore::MediaPlayerClientIdentifier, OptionSet<WebCore::PlaybackSessionModel::PlaybackState>, double playbackRate, double defaultPlaybackRate);
+    void seekableRangesChanged(WebCore::MediaPlayerClientIdentifier, const WebCore::PlatformTimeRanges&, double lastModifiedTime, double liveUpdateInterval);
+    void canPlayFastReverseChanged(WebCore::MediaPlayerClientIdentifier, bool value);
+    void audioMediaSelectionOptionsChanged(WebCore::MediaPlayerClientIdentifier, const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex);
+    void legibleMediaSelectionOptionsChanged(WebCore::MediaPlayerClientIdentifier, const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex);
+    void audioMediaSelectionIndexChanged(WebCore::MediaPlayerClientIdentifier, uint64_t selectedIndex);
+    void legibleMediaSelectionIndexChanged(WebCore::MediaPlayerClientIdentifier, uint64_t selectedIndex);
+    void externalPlaybackChanged(WebCore::MediaPlayerClientIdentifier, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, String localizedDeviceName);
+    void wirelessVideoPlaybackDisabledChanged(WebCore::MediaPlayerClientIdentifier, bool);
+    void mutedChanged(WebCore::MediaPlayerClientIdentifier, bool);
+    void volumeChanged(WebCore::MediaPlayerClientIdentifier, double);
+    void isPictureInPictureSupportedChanged(WebCore::MediaPlayerClientIdentifier, bool);
+    void isInWindowFullscreenActiveChanged(WebCore::MediaPlayerClientIdentifier, bool);
+    void spatialVideoMetadataChanged(WebCore::MediaPlayerClientIdentifier, const std::optional<WebCore::SpatialVideoMetadata>&);
+    void videoProjectionMetadataChanged(WebCore::MediaPlayerClientIdentifier, const std::optional<WebCore::VideoProjectionMetadata>&);
 #if HAVE(PIP_SKIP_PREROLL)
-    void canSkipAdChanged(PlaybackSessionContextIdentifier, bool);
+    void canSkipAdChanged(WebCore::MediaPlayerClientIdentifier, bool);
 #endif
 
     // Messages from PlaybackSessionManagerProxy
-    void play(PlaybackSessionContextIdentifier);
-    void pause(PlaybackSessionContextIdentifier);
-    void togglePlayState(PlaybackSessionContextIdentifier);
-    void beginScrubbing(PlaybackSessionContextIdentifier);
-    void endScrubbing(PlaybackSessionContextIdentifier);
-    void seekToTime(PlaybackSessionContextIdentifier, double time, double toleranceBefore, double toleranceAfter);
-    void fastSeek(PlaybackSessionContextIdentifier, double time);
-    void beginScanningForward(PlaybackSessionContextIdentifier);
-    void beginScanningBackward(PlaybackSessionContextIdentifier);
-    void endScanning(PlaybackSessionContextIdentifier);
-    void setDefaultPlaybackRate(PlaybackSessionContextIdentifier, float);
-    void setPlaybackRate(PlaybackSessionContextIdentifier, float);
-    void selectAudioMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
-    void selectLegibleMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
-    void handleControlledElementIDRequest(PlaybackSessionContextIdentifier);
-    void togglePictureInPicture(PlaybackSessionContextIdentifier);
-    void enterFullscreen(PlaybackSessionContextIdentifier);
-    void setPlayerIdentifierForVideoElement(PlaybackSessionContextIdentifier);
-    void exitFullscreen(PlaybackSessionContextIdentifier);
-    void enterInWindow(PlaybackSessionContextIdentifier);
-    void exitInWindow(PlaybackSessionContextIdentifier);
-    void toggleMuted(PlaybackSessionContextIdentifier);
-    void setMuted(PlaybackSessionContextIdentifier, bool muted);
-    void setVolume(PlaybackSessionContextIdentifier, double volume);
-    void setPlayingOnSecondScreen(PlaybackSessionContextIdentifier, bool value);
-    void sendRemoteCommand(PlaybackSessionContextIdentifier, WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
-    void setSoundStageSize(PlaybackSessionContextIdentifier, WebCore::AudioSessionSoundStageSize);
+    void play(WebCore::MediaPlayerClientIdentifier);
+    void pause(WebCore::MediaPlayerClientIdentifier);
+    void togglePlayState(WebCore::MediaPlayerClientIdentifier);
+    void beginScrubbing(WebCore::MediaPlayerClientIdentifier);
+    void endScrubbing(WebCore::MediaPlayerClientIdentifier);
+    void seekToTime(WebCore::MediaPlayerClientIdentifier, double time, double toleranceBefore, double toleranceAfter);
+    void fastSeek(WebCore::MediaPlayerClientIdentifier, double time);
+    void beginScanningForward(WebCore::MediaPlayerClientIdentifier);
+    void beginScanningBackward(WebCore::MediaPlayerClientIdentifier);
+    void endScanning(WebCore::MediaPlayerClientIdentifier);
+    void setDefaultPlaybackRate(WebCore::MediaPlayerClientIdentifier, float);
+    void setPlaybackRate(WebCore::MediaPlayerClientIdentifier, float);
+    void selectAudioMediaOption(WebCore::MediaPlayerClientIdentifier, uint64_t index);
+    void selectLegibleMediaOption(WebCore::MediaPlayerClientIdentifier, uint64_t index);
+    void handleControlledElementIDRequest(WebCore::MediaPlayerClientIdentifier);
+    void togglePictureInPicture(WebCore::MediaPlayerClientIdentifier);
+    void enterFullscreen(WebCore::MediaPlayerClientIdentifier);
+    void setPlayerIdentifierForVideoElement(WebCore::MediaPlayerClientIdentifier);
+    void exitFullscreen(WebCore::MediaPlayerClientIdentifier);
+    void enterInWindow(WebCore::MediaPlayerClientIdentifier);
+    void exitInWindow(WebCore::MediaPlayerClientIdentifier);
+    void toggleMuted(WebCore::MediaPlayerClientIdentifier);
+    void setMuted(WebCore::MediaPlayerClientIdentifier, bool muted);
+    void setVolume(WebCore::MediaPlayerClientIdentifier, double volume);
+    void setPlayingOnSecondScreen(WebCore::MediaPlayerClientIdentifier, bool value);
+    void sendRemoteCommand(WebCore::MediaPlayerClientIdentifier, WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
+    void setSoundStageSize(WebCore::MediaPlayerClientIdentifier, WebCore::AudioSessionSoundStageSize);
 #if HAVE(PIP_SKIP_PREROLL)
-    void skipAd(PlaybackSessionContextIdentifier);
+    void skipAd(WebCore::MediaPlayerClientIdentifier);
 #endif
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    void setSpatialTrackingLabel(PlaybackSessionContextIdentifier, const String&);
+    void setSpatialTrackingLabel(WebCore::MediaPlayerClientIdentifier, const String&);
 #endif
 
     void forEachModel(Function<void(WebCore::PlaybackSessionModel&)>&&);
@@ -238,16 +239,16 @@ private:
 
     WeakPtr<WebPage> m_page;
     WeakHashSet<WebCore::HTMLMediaElement> m_mediaElements;
-    HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
-    Markable<PlaybackSessionContextIdentifier> m_controlsManagerContextId;
-    HashCountedSet<PlaybackSessionContextIdentifier> m_clientCounts;
+    HashMap<WebCore::MediaPlayerClientIdentifier, ModelInterfaceTuple> m_contextMap;
+    Markable<WebCore::MediaPlayerClientIdentifier> m_controlsManagerContextId;
+    HashCountedSet<WebCore::MediaPlayerClientIdentifier> m_clientCounts;
 #if HAVE(PIP_SKIP_PREROLL)
     WeakPtr<WebCore::MediaSession> m_mediaSession;
     bool m_canSkipAd { false };
 #endif
 
 #if !RELEASE_LOG_DISABLED
-    Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
 #endif
 };

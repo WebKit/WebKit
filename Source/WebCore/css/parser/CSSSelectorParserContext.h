@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CSSParserMode.h"
+#include <WebCore/CSSParserMode.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/Hasher.h>
 

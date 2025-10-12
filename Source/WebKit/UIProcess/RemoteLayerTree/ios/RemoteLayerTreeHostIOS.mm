@@ -37,6 +37,7 @@
 #import "WebPreferences.h"
 #import <UIKit/UIScrollView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/MachSendRightAnnotated.h>
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 #import "WKModelView.h"
@@ -107,7 +108,13 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeT
         if (properties.videoElementData) {
             if (auto videoManager = m_drawingArea->page() ? m_drawingArea->page()->videoPresentationManager() : nullptr) {
                 m_videoLayers.add(*properties.layerID, properties.videoElementData->playerIdentifier);
-                return makeWithView(videoManager->createViewWithID(properties.videoElementData->playerIdentifier, properties.hostingContextID(), properties.videoElementData->initialSize, properties.videoElementData->naturalSize, properties.hostingDeviceScaleFactor()));
+                WebCore::HostingContext hostingContext;
+                hostingContext.contextID = properties.hostingContextID();
+#if ENABLE(MACH_PORT_LAYER_HOSTING)
+                if (auto sendRightAnnotated = properties.sendRightAnnotated())
+                    hostingContext.sendRightAnnotated = WTFMove(*sendRightAnnotated);
+#endif
+                return makeWithView(videoManager->createViewWithID(properties.videoElementData->playerIdentifier, WTFMove(hostingContext), properties.videoElementData->initialSize, properties.videoElementData->naturalSize, properties.hostingDeviceScaleFactor()));
             }
         }
 #endif

@@ -29,8 +29,8 @@
 
 #include "pas_string_stream.h"
 
-#include "pas_bootstrap_free_heap.h"
 #include "pas_snprintf.h"
+#include "pas_zero_memory.h"
 
 static PAS_FORMAT_PRINTF(2, 0) void string_stream_vprintf(pas_stream* stream, const char* format, va_list arg_list)
 {

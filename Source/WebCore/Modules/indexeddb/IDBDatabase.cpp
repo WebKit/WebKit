@@ -26,9 +26,11 @@
 #include "config.h"
 #include "IDBDatabase.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "DOMStringList.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
+#include "ExceptionOr.h"
 #include "IDBConnectionProxy.h"
 #include "IDBConnectionToServer.h"
 #include "IDBIndex.h"
@@ -117,6 +119,11 @@ Ref<DOMStringList> IDBDatabase::objectStoreNames() const
     return objectStoreNames;
 }
 
+RefPtr<IDBTransaction> IDBDatabase::protectedVersionChangeTransaction() const
+{
+    return m_versionChangeTransaction;
+}
+
 void IDBDatabase::renameObjectStore(IDBObjectStore& objectStore, const String& newName)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
@@ -125,7 +132,7 @@ void IDBDatabase::renameObjectStore(IDBObjectStore& objectStore, const String& n
 
     m_info.renameObjectStore(objectStore.info().identifier(), newName);
 
-    m_versionChangeTransaction->renameObjectStore(objectStore, newName);
+    protectedVersionChangeTransaction()->renameObjectStore(objectStore, newName);
 }
 
 void IDBDatabase::renameIndex(IDBIndex& index, const String& newName)
@@ -137,7 +144,12 @@ void IDBDatabase::renameIndex(IDBIndex& index, const String& newName)
 
     m_info.infoForExistingObjectStore(index.objectStore().info().name())->infoForExistingIndex(index.info().identifier())->rename(newName);
 
-    m_versionChangeTransaction->renameIndex(index, newName);
+    protectedVersionChangeTransaction()->renameIndex(index, newName);
+}
+
+ScriptExecutionContext* IDBDatabase::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 ExceptionOr<Ref<IDBObjectStore>> IDBDatabase::createObjectStore(const String& name, ObjectStoreParameters&& parameters)
@@ -147,10 +159,11 @@ ExceptionOr<Ref<IDBObjectStore>> IDBDatabase::createObjectStore(const String& na
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(!m_versionChangeTransaction || m_versionChangeTransaction->isVersionChange());
 
-    if (!m_versionChangeTransaction)
+    RefPtr versionChangeTransaction = m_versionChangeTransaction;
+    if (!versionChangeTransaction)
         return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'createObjectStore' on 'IDBDatabase': The database is not running a version change transaction."_s };
 
-    if (!m_versionChangeTransaction->isActive())
+    if (!versionChangeTransaction->isActive())
         return Exception { ExceptionCode::TransactionInactiveError };
 
     auto& keyPath = parameters.keyPath;
@@ -167,7 +180,7 @@ ExceptionOr<Ref<IDBObjectStore>> IDBDatabase::createObjectStore(const String& na
     auto info = m_info.createNewObjectStore(name, WTFMove(keyPath), parameters.autoIncrement);
 
     // Create the actual IDBObjectStore from the transaction, which also schedules the operation server side.
-    return m_versionChangeTransaction->createObjectStore(info);
+    return versionChangeTransaction->createObjectStore(info);
 }
 
 ExceptionOr<Ref<IDBTransaction>> IDBDatabase::transaction(StringOrVectorOfStrings&& storeNames, IDBTransactionMode mode, TransactionOptions options)
@@ -220,17 +233,18 @@ ExceptionOr<void> IDBDatabase::deleteObjectStore(const String& objectStoreName)
 
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    if (!m_versionChangeTransaction)
+    RefPtr versionChangeTransaction = m_versionChangeTransaction;
+    if (!versionChangeTransaction)
         return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'deleteObjectStore' on 'IDBDatabase': The database is not running a version change transaction."_s };
 
-    if (!m_versionChangeTransaction->isActive())
+    if (!versionChangeTransaction->isActive())
         return Exception { ExceptionCode::TransactionInactiveError };
 
     if (!m_info.hasObjectStore(objectStoreName))
         return Exception { ExceptionCode::NotFoundError, "Failed to execute 'deleteObjectStore' on 'IDBDatabase': The specified object store was not found."_s };
 
     m_info.deleteObjectStore(objectStoreName);
-    m_versionChangeTransaction->deleteObjectStore(objectStoreName);
+    versionChangeTransaction->deleteObjectStore(objectStoreName);
 
     return { };
 }
@@ -332,7 +346,7 @@ Ref<IDBTransaction> IDBDatabase::startVersionChangeTransaction(const IDBTransact
     ASSERT(scriptExecutionContext());
 
     Ref<IDBTransaction> transaction = IDBTransaction::create(*this, info, request);
-    m_versionChangeTransaction = &transaction.get();
+    m_versionChangeTransaction = transaction.get();
 
     m_activeTransactions.set(transaction->info().identifier(), &transaction.get());
 

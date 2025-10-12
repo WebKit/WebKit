@@ -26,11 +26,16 @@
 #include "config.h"
 #include "AXObjectCache.h"
 
+#include "AXNotifications.h"
 #include "AccessibilityObject.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "DocumentPage.h"
+#include "DocumentView.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLSelectElement.h"
 #include "LocalFrame.h"
+#include "NodeDocument.h"
 #include "Page.h"
 
 namespace WebCore {
@@ -86,7 +91,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
         || object.document()->childNeedsStyleRecalc())
         return;
 
-    RefPtr protectedObject = &object;
+    RefPtr protectedObject = object;
     switch (notification) {
     case AXNotification::SelectedChildrenChanged:
         protectedObject = downcast<AccessibilityObject>(notifyChildrenSelectionChange(protectedObject.get()));

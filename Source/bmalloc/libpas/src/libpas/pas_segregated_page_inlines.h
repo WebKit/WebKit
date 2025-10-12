@@ -28,6 +28,7 @@
 
 #include "pas_config.h"
 #include "pas_log.h"
+#include "pas_mte.h"
 #include "pas_page_base_inlines.h"
 #include "pas_segregated_deallocation_mode.h"
 #include "pas_segregated_exclusive_view_inlines.h"
@@ -37,6 +38,7 @@
 #include "pas_segregated_shared_handle.h"
 #include "pas_segregated_shared_handle_inlines.h"
 #include "pas_thread_local_cache_node.h"
+#include "pas_zero_memory.h"
 
 PAS_BEGIN_EXTERN_C;
 
@@ -366,6 +368,7 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
     
     word = page->alloc_bits[word_index];
 
+    // FIXME: Try removing this guard and unconditionally checking for double frees https://bugs.webkit.org/show_bug.cgi?id=295638
     if (page_config.check_deallocation) {
 #if !PAS_ARM && !PAS_RISCV
         new_word = word;
@@ -463,6 +466,7 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
     }
 
     PAS_PROFILE(SEGREGATED_PAGE_DEALLOCATION, page_config, begin, object_size);
+    PAS_MTE_HANDLE(SEGREGATED_PAGE_DEALLOCATION, page_config, begin, object_size);
 
     if (page_config.base.page_size > page_config.base.granule_size) {
         /* This is the partial decommit case. It's intended for medium pages. It requires doing
@@ -485,6 +489,10 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
     }
     
     if (!new_word) {
+        /* Double check we didn't somehow double free this allocation. */
+        if (PAS_UNLIKELY(!word))
+             pas_segregated_page_deallocation_did_fail(begin);
+
         PAS_TESTING_ASSERT(page->emptiness.num_non_empty_words);
         uintptr_t num_non_empty_words = page->emptiness.num_non_empty_words;
         if (!--num_non_empty_words) {

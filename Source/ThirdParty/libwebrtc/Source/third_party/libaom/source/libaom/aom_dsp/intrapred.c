@@ -79,7 +79,7 @@ static inline void paeth_predictor(uint8_t *dst, ptrdiff_t stride, int bw,
   assert(weights_scale - weights_h[bh - 1] < weights_scale);          \
   assert(pred_scale < 31)  // ensures no overflow when calculating predictor.
 
-#define divide_round(value, bits) (((value) + (1 << ((bits)-1))) >> (bits))
+#define divide_round(value, bits) (((value) + (1 << ((bits) - 1))) >> (bits))
 
 static inline void smooth_predictor(uint8_t *dst, ptrdiff_t stride, int bw,
                                     int bh, const uint8_t *above,

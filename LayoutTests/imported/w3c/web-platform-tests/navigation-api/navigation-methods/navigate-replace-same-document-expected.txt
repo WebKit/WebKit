@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: expected 3 but got 4
 
 PASS navigate() with history: 'replace' option
 

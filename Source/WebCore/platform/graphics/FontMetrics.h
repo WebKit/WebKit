@@ -20,7 +20,7 @@
 #ifndef FontMetrics_h
 #define FontMetrics_h
 
-#include "FontBaseline.h"
+#include <WebCore/FontBaseline.h>
 #include <wtf/Markable.h>
 #include <wtf/MathExtras.h>
 
@@ -30,39 +30,27 @@ class FontMetrics {
 public:
     static constexpr unsigned defaultUnitsPerEm = 1000;
 
-    struct MarkableTraits {
-        constexpr static bool isEmptyValue(float value)
-        {
-            return value != value;
-        }
-
-        constexpr static float emptyValue()
-        {
-            return std::numeric_limits<float>::quiet_NaN();
-        }
-    };
-
     unsigned unitsPerEm() const { return m_unitsPerEm; }
     void setUnitsPerEm(unsigned unitsPerEm) { m_unitsPerEm = unitsPerEm; }
 
-    float height(FontBaseline baselineType = AlphabeticBaseline) const
+    float height(FontBaseline baselineType = FontBaseline::Alphabetic) const
     {
         return ascent(baselineType) + descent(baselineType);
     }
-    int intHeight(FontBaseline baselineType = AlphabeticBaseline) const
+    int intHeight(FontBaseline baselineType = FontBaseline::Alphabetic) const
     {
         return intAscent(baselineType) + intDescent(baselineType);
     }
 
-    float ascent(FontBaseline baselineType = AlphabeticBaseline) const
+    float ascent(FontBaseline baselineType = FontBaseline::Alphabetic) const
     {
-        if (baselineType == AlphabeticBaseline)
+        if (baselineType == FontBaseline::Alphabetic)
             return m_ascent.value_or(0.f);
         return height() / 2;
     }
-    int intAscent(FontBaseline baselineType = AlphabeticBaseline) const
+    int intAscent(FontBaseline baselineType = FontBaseline::Alphabetic) const
     {
-        if (baselineType == AlphabeticBaseline)
+        if (baselineType == FontBaseline::Alphabetic)
             return m_intAscent;
         return intHeight() - intHeight() / 2;
     }
@@ -72,15 +60,15 @@ public:
         m_intAscent = std::max(static_cast<int>(lroundf(ascent)), 0);
     }
 
-    float descent(FontBaseline baselineType = AlphabeticBaseline) const
+    float descent(FontBaseline baselineType = FontBaseline::Alphabetic) const
     {
-        if (baselineType == AlphabeticBaseline)
+        if (baselineType == FontBaseline::Alphabetic)
             return m_descent.value_or(0.f);
         return height() / 2;
     }
-    int intDescent(FontBaseline baselineType = AlphabeticBaseline) const
+    int intDescent(FontBaseline baselineType = FontBaseline::Alphabetic) const
     {
-        if (baselineType == AlphabeticBaseline)
+        if (baselineType == FontBaseline::Alphabetic)
             return m_intDescent;
         return intHeight() / 2;
     }
@@ -106,10 +94,10 @@ public:
         m_intLineSpacing = lroundf(lineSpacing);
     }
 
-    Markable<float, FontMetrics::MarkableTraits> xHeight() const { return m_xHeight; }
+    Markable<float> xHeight() const { return m_xHeight; }
     void setXHeight(float xHeight) { m_xHeight = xHeight; }
 
-    Markable<float, FontMetrics::MarkableTraits> capHeight() const { return m_capHeight; }
+    Markable<float> capHeight() const { return m_capHeight; }
     int intCapHeight() const { return m_intCapHeight; }
     void setCapHeight(float capHeight)
     {
@@ -117,16 +105,16 @@ public:
         m_intCapHeight = lroundf(capHeight);
     }
 
-    Markable<float, FontMetrics::MarkableTraits> zeroWidth() const { return m_zeroWidth; }
+    Markable<float> zeroWidth() const { return m_zeroWidth; }
     void setZeroWidth(float zeroWidth) { m_zeroWidth = zeroWidth; }
 
-    Markable<float, FontMetrics::MarkableTraits> ideogramWidth() const { return m_ideogramWidth; }
+    Markable<float> ideogramWidth() const { return m_ideogramWidth; }
     void setIdeogramWidth(float ideogramWidth) { m_ideogramWidth = ideogramWidth; }
 
-    Markable<float, FontMetrics::MarkableTraits> underlinePosition() const { return m_underlinePosition; }
+    Markable<float> underlinePosition() const { return m_underlinePosition; }
     void setUnderlinePosition(float underlinePosition) { m_underlinePosition = underlinePosition; }
 
-    Markable<float, FontMetrics::MarkableTraits> underlineThickness() const { return m_underlineThickness; }
+    Markable<float> underlineThickness() const { return m_underlineThickness; }
     void setUnderlineThickness(float underlineThickness) { m_underlineThickness = underlineThickness; }
 
     bool hasIdenticalAscentDescentAndLineGap(const FontMetrics& other) const
@@ -163,16 +151,16 @@ private:
 
     unsigned m_unitsPerEm { defaultUnitsPerEm };
 
-    Markable<float, FontMetrics::MarkableTraits> m_ascent;
-    Markable<float, FontMetrics::MarkableTraits> m_capHeight;
-    Markable<float, FontMetrics::MarkableTraits> m_descent;
-    Markable<float, FontMetrics::MarkableTraits> m_ideogramWidth;
-    Markable<float, FontMetrics::MarkableTraits> m_lineGap;
-    Markable<float, FontMetrics::MarkableTraits> m_lineSpacing;
-    Markable<float, FontMetrics::MarkableTraits> m_underlinePosition;
-    Markable<float, FontMetrics::MarkableTraits> m_underlineThickness;
-    Markable<float, FontMetrics::MarkableTraits> m_xHeight;
-    Markable<float, FontMetrics::MarkableTraits> m_zeroWidth;
+    Markable<float> m_ascent;
+    Markable<float> m_capHeight;
+    Markable<float> m_descent;
+    Markable<float> m_ideogramWidth;
+    Markable<float> m_lineGap;
+    Markable<float> m_lineSpacing;
+    Markable<float> m_underlinePosition;
+    Markable<float> m_underlineThickness;
+    Markable<float> m_xHeight;
+    Markable<float> m_zeroWidth;
 
     // Integer variants of certain metrics are cached for HTML rendering performance.
     int m_intAscent { 0 };

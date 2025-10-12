@@ -30,15 +30,22 @@
 #import "Buffer.h"
 #import "CommandEncoder.h"
 #import "Device.h"
+#import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU {
 
+Lock QuerySet::querySetLock;
+__attribute__((no_destroy)) std::unique_ptr<Vector<id<MTLCounterSampleBuffer>>> QuerySet::m_counterSampleBuffers;
+__attribute__((no_destroy)) std::unique_ptr<Vector<RangeSet<Range<uint32_t>>>> QuerySet::m_counterSampleBufferFreeRanges;
+
 Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
 {
+    QuerySet::createContainersIfNeeded();
+
     auto count = descriptor.count;
     constexpr auto maxCountAllowed = 4096;
-    if (descriptor.nextInChain || count > maxCountAllowed || !isValid()) {
+    if (count > maxCountAllowed || !isValid()) {
         generateAValidationError("GPUQuerySetDescriptor.count must be <= 4096"_s);
         return QuerySet::createInvalid(*this);
     }
@@ -49,16 +56,11 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
     switch (type) {
     case WGPUQueryType_Timestamp: {
 #if !PLATFORM(WATCHOS)
-        MTLCounterSampleBufferDescriptor* sampleBufferDesc = [MTLCounterSampleBufferDescriptor new];
-        sampleBufferDesc.sampleCount = count;
-        sampleBufferDesc.storageMode = MTLStorageModeShared;
-        sampleBufferDesc.counterSet = m_capabilities.baseCapabilities.timestampCounterSet;
-
-        NSError* error = nil;
-        id<MTLCounterSampleBuffer> buffer = [m_device newCounterSampleBufferWithDescriptor:sampleBufferDesc error:&error];
-        if (error)
+        std::pair<id<MTLCounterSampleBuffer>, uint32_t> querySetWithOffset = QuerySet::counterSampleBufferWithOffsetForDevice(count, *this);
+        if (!querySetWithOffset.first)
             return QuerySet::createInvalid(*this);
-        return QuerySet::create(buffer, count, type, *this);
+
+        return QuerySet::create(WTFMove(querySetWithOffset), count, type, *this);
 #else
         return QuerySet::createInvalid(*this);
 #endif
@@ -83,9 +85,9 @@ QuerySet::QuerySet(id<MTLBuffer> buffer, uint32_t count, WGPUQueryType type, Dev
     RELEASE_ASSERT(m_type != WGPUQueryType_Force32);
 }
 
-QuerySet::QuerySet(id<MTLCounterSampleBuffer> buffer, uint32_t count, WGPUQueryType type, Device& device)
+QuerySet::QuerySet(CounterSampleBuffer&& buffer, uint32_t count, WGPUQueryType type, Device& device)
     : m_device(device)
-    , m_timestampBuffer(buffer)
+    , m_timestampBufferWithOffset(WTFMove(buffer))
     , m_count(count)
     , m_type(type)
 {
@@ -98,11 +100,14 @@ QuerySet::QuerySet(Device& device)
 {
 }
 
-QuerySet::~QuerySet() = default;
+QuerySet::~QuerySet()
+{
+    QuerySet::destroyQuerySet(*this);
+}
 
 bool QuerySet::isValid() const
 {
-    return isDestroyed() || m_visibilityBuffer || m_timestampBuffer;
+    return isDestroyed() || m_visibilityBuffer || m_timestampBufferWithOffset.first;
 }
 
 bool QuerySet::isDestroyed() const
@@ -113,9 +118,10 @@ bool QuerySet::isDestroyed() const
 void QuerySet::destroy()
 {
     m_destroyed = true;
+    QuerySet::destroyQuerySet(*this);
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueryset-destroy
     m_visibilityBuffer = nil;
-    m_timestampBuffer = nil;
+    m_timestampBufferWithOffset.first = nil;
     for (auto commandEncoder : m_commandEncoders) {
         if (RefPtr ptr = m_device->commandEncoderFromIdentifier(commandEncoder))
             ptr->makeSubmitInvalid();
@@ -138,9 +144,92 @@ void QuerySet::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
     CommandEncoder::trackEncoder(commandEncoder, m_commandEncoders);
     commandEncoder.addBuffer(m_visibilityBuffer);
-    commandEncoder.addBuffer(m_timestampBuffer);
+    commandEncoder.addBuffer(m_timestampBufferWithOffset.first);
     if (isDestroyed())
         commandEncoder.makeSubmitInvalid();
+}
+
+QuerySet::CounterSampleBuffer QuerySet::counterSampleBufferWithOffset() const
+{
+    return m_timestampBufferWithOffset;
+}
+
+void QuerySet::destroyQuerySet(const QuerySet& querySet)
+{
+    auto querySetWithOffset = querySet.counterSampleBufferWithOffset();
+    if (!querySetWithOffset.first)
+        return;
+
+    auto sampleCountInBytes = querySet.count() * sizeof(uint64_t);
+    Locker locker { querySetLock };
+    for (uint32_t i = 0; i < maxCounterSampleBuffers; ++i) {
+        if (querySetWithOffset.first != (*m_counterSampleBuffers)[i])
+            continue;
+
+        uint32_t offsetInBytes = static_cast<uint32_t>(querySetWithOffset.second * sizeof(uint64_t));
+        auto endOffset = static_cast<uint32_t>(offsetInBytes + sampleCountInBytes);
+        RELEASE_ASSERT(offsetInBytes < 32 * KB);
+        (*m_counterSampleBufferFreeRanges)[i].add({ offsetInBytes, endOffset });
+        (*m_counterSampleBufferFreeRanges)[i].compact();
+    }
+}
+
+QuerySet::CounterSampleBuffer QuerySet::counterSampleBufferWithOffsetForDevice(size_t sampleCount, const Device& device)
+{
+    Locker locker { querySetLock };
+    uint32_t sampleCountInBytes = static_cast<uint32_t>(sampleCount * sizeof(uint64_t));
+    constexpr uint32_t maxSampleBufferSize = 32 * KB;
+
+    for (uint32_t i = 0; i < maxCounterSampleBuffers; ++i) {
+        if ((*m_counterSampleBuffers)[i]) {
+            RangeSet<Range<uint32_t>> newRangeSet;
+            std::optional<uint32_t> result { std::nullopt };
+
+            for (auto& r : (*m_counterSampleBufferFreeRanges)[i]) {
+                if (!result && r.end() - r.begin() >= sampleCountInBytes) {
+                    newRangeSet.add({ static_cast<uint32_t>(r.begin() + sampleCountInBytes), r.end() });
+                    result = r.begin();
+                } else
+                    newRangeSet.add(r);
+            }
+
+            if (result) {
+                (*m_counterSampleBufferFreeRanges)[i] = newRangeSet;
+                RELEASE_ASSERT(*result / sizeof(uint64_t) < 4096);
+                return std::make_pair((*m_counterSampleBuffers)[i], *result / sizeof(uint64_t));
+            }
+
+            continue;
+        }
+
+        MTLCounterSampleBufferDescriptor* sampleBufferDesc = [MTLCounterSampleBufferDescriptor new];
+        sampleBufferDesc.sampleCount = maxSampleBufferSize / sizeof(uint64_t);
+        sampleBufferDesc.storageMode = MTLStorageModeShared;
+        sampleBufferDesc.counterSet = device.baseCapabilities().timestampCounterSet;
+
+        NSError* error;
+        id<MTLCounterSampleBuffer> result = [device.device() newCounterSampleBufferWithDescriptor:sampleBufferDesc error:&error];
+        if (error)
+            return std::make_pair(nil, 0);
+
+        (*m_counterSampleBuffers)[i] = result;
+        (*m_counterSampleBufferFreeRanges)[i].add({ sampleCountInBytes, maxSampleBufferSize });
+        return std::make_pair(result, 0);
+    }
+
+    return std::make_pair(nil, 0);
+}
+
+void QuerySet::createContainersIfNeeded()
+{
+    {
+        Locker locker { querySetLock };
+        if (!QuerySet::m_counterSampleBuffers)
+            QuerySet::m_counterSampleBuffers = makeUnique<Vector<id<MTLCounterSampleBuffer>>>(QuerySet::maxCounterSampleBuffers);
+
+        if (!QuerySet::m_counterSampleBufferFreeRanges)
+            QuerySet::m_counterSampleBufferFreeRanges = makeUnique<Vector<RangeSet<Range<uint32_t>>>>(QuerySet::maxCounterSampleBuffers);
+    }
 }
 
 } // namespace WebGPU

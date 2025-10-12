@@ -11,16 +11,16 @@
 #ifndef TEST_TESTSUPPORT_FRAME_READER_H_
 #define TEST_TESTSUPPORT_FRAME_READER_H_
 
-#include <stdio.h>
-
+#include <cstdio>
+#include <memory>
 #include <optional>
 #include <string>
 
 #include "api/scoped_refptr.h"
+#include "api/video/i420_buffer.h"
 #include "api/video/resolution.h"
 
 namespace webrtc {
-class I420Buffer;
 namespace test {
 
 // Handles reading of I420 frames from video files.
@@ -37,30 +37,30 @@ class FrameReader {
 
   // Reads and returns next frame. Returns `nullptr` if reading failed or end of
   // stream is reached.
-  virtual rtc::scoped_refptr<I420Buffer> PullFrame() = 0;
+  virtual scoped_refptr<I420Buffer> PullFrame() = 0;
 
   // Reads and returns next frame. `frame_num` stores unwrapped frame number
   // which can be passed to `ReadFrame` to re-read this frame later. Returns
   // `nullptr` if reading failed or end of stream is reached.
-  virtual rtc::scoped_refptr<I420Buffer> PullFrame(int* frame_num) = 0;
+  virtual scoped_refptr<I420Buffer> PullFrame(int* frame_num) = 0;
 
   // Reads and returns frame specified by `frame_num`. Returns `nullptr` if
   // reading failed.
-  virtual rtc::scoped_refptr<I420Buffer> ReadFrame(int frame_num) = 0;
+  virtual scoped_refptr<I420Buffer> ReadFrame(int frame_num) = 0;
 
   // Reads next frame, resizes and returns it. `frame_num` stores unwrapped
   // frame number which can be passed to `ReadFrame` to re-read this frame
   // later. `resolution` specifies resolution of the returned frame.
   // `framerate_scale` specifies frame rate scale factor. Frame rate scaling is
   // done by skipping or repeating frames.
-  virtual rtc::scoped_refptr<I420Buffer> PullFrame(int* frame_num,
-                                                   Resolution resolution,
-                                                   Ratio framerate_scale) = 0;
+  virtual scoped_refptr<I420Buffer> PullFrame(int* frame_num,
+                                              Resolution resolution,
+                                              Ratio framerate_scale) = 0;
 
   // Reads frame specified by `frame_num`, resizes and returns it. Returns
   // `nullptr` if reading failed.
-  virtual rtc::scoped_refptr<I420Buffer> ReadFrame(int frame_num,
-                                                   Resolution resolution) = 0;
+  virtual scoped_refptr<I420Buffer> ReadFrame(int frame_num,
+                                              Resolution resolution) = 0;
 
   // Total number of retrievable frames.
   virtual int num_frames() const = 0;
@@ -83,18 +83,18 @@ class YuvFrameReaderImpl : public FrameReader {
 
   virtual void Init();
 
-  rtc::scoped_refptr<I420Buffer> PullFrame() override;
+  scoped_refptr<I420Buffer> PullFrame() override;
 
-  rtc::scoped_refptr<I420Buffer> PullFrame(int* frame_num) override;
+  scoped_refptr<I420Buffer> PullFrame(int* frame_num) override;
 
-  rtc::scoped_refptr<I420Buffer> PullFrame(int* frame_num,
-                                           Resolution resolution,
-                                           Ratio framerate_scale) override;
+  scoped_refptr<I420Buffer> PullFrame(int* frame_num,
+                                      Resolution resolution,
+                                      Ratio framerate_scale) override;
 
-  rtc::scoped_refptr<I420Buffer> ReadFrame(int frame_num) override;
+  scoped_refptr<I420Buffer> ReadFrame(int frame_num) override;
 
-  rtc::scoped_refptr<I420Buffer> ReadFrame(int frame_num,
-                                           Resolution resolution) override;
+  scoped_refptr<I420Buffer> ReadFrame(int frame_num,
+                                      Resolution resolution) override;
 
   int num_frames() const override { return num_frames_; }
 

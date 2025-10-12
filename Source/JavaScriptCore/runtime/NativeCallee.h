@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CalleeBits.h"
-#include "ImplementationVisibility.h"
+#include <JavaScriptCore/CalleeBits.h>
+#include <JavaScriptCore/ImplementationVisibility.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>

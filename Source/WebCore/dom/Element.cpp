@@ -4,7 +4,7 @@
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *           (C) 2007 Eric Seidel (eric@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -49,7 +49,9 @@
 #include "DOMTokenList.h"
 #include "DocumentFullscreen.h"
 #include "DocumentInlines.h"
+#include "DocumentQuirks.h"
 #include "DocumentSharedObjectPool.h"
+#include "DocumentView.h"
 #include "Editing.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementAnimationRareData.h"
@@ -114,9 +116,9 @@
 #include "PointerLockOptions.h"
 #include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
-#include "Quirks.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
@@ -126,6 +128,7 @@
 #include "RenderObjectInlines.h"
 #include "RenderSVGModelObject.h"
 #include "RenderStyleSetters.h"
+#include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
@@ -142,10 +145,12 @@
 #include "ScrollToOptions.h"
 #include "SecurityPolicyViolationEvent.h"
 #include "SelectorQuery.h"
+#include "SerializedNode.h"
 #include "Settings.h"
 #include "ShadowRootInit.h"
 #include "SimulatedClick.h"
 #include "SlotAssignment.h"
+#include "StylableInlines.h"
 #include "StyleInvalidator.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
@@ -177,6 +182,10 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#import <pal/system/ios/UserInterfaceIdiom.h>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Element);
@@ -191,9 +200,9 @@ static_assert(sizeof(Element) == sizeof(SameSizeAsElement), "Element should stay
 using namespace HTMLNames;
 using namespace XMLNames;
 
-static UncheckedKeyHashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, Vector<RefPtr<Attr>>>& attrNodeListMap()
+static HashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, Vector<RefPtr<Attr>>>& attrNodeListMap()
 {
-    static NeverDestroyed<UncheckedKeyHashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, Vector<RefPtr<Attr>>>> map;
+    static NeverDestroyed<HashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, Vector<RefPtr<Attr>>>> map;
     return map;
 }
 
@@ -237,7 +246,7 @@ static Attr* findAttrNodeInList(Vector<RefPtr<Attr>>& attrNodeList, const Qualif
 static bool shouldAutofocus(const Element& element)
 {
     Ref document = element.document();
-    RefPtr page = document->protectedPage();
+    RefPtr page = document->page();
     if (!page || page->autofocusProcessed())
         return false;
 
@@ -282,12 +291,6 @@ static bool shouldAutofocus(const Element& element)
     return allAncestorsAreSameOrigin;
 }
 
-static UncheckedKeyHashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, ElementIdentifier>& elementIdentifiersMap()
-{
-    static MainThreadNeverDestroyed<UncheckedKeyHashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, ElementIdentifier>> map;
-    return map;
-}
-
 Ref<Element> Element::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new Element(tagName, document, { }));
@@ -303,11 +306,6 @@ Element::~Element()
 {
     ASSERT(!beforePseudoElement());
     ASSERT(!afterPseudoElement());
-
-    if (hasStateFlag(StateFlag::HasElementIdentifier)) [[unlikely]]
-        elementIdentifiersMap().remove(*this);
-    else
-        ASSERT(!elementIdentifiersMap().contains(*this));
 
     ASSERT(!is<HTMLImageElement>(*this) || !intersectionObserverDataIfExists());
     disconnectFromIntersectionObservers();
@@ -440,7 +438,7 @@ void Element::setTabIndexForBindings(int value)
     setIntegralAttribute(tabindexAttr, value);
 }
 
-bool Element::isKeyboardFocusable(KeyboardEvent*) const
+bool Element::isKeyboardFocusable(const FocusEventData&) const
 {
     if (!isFocusable() || shouldBeIgnoredInSequentialFocusNavigation() || tabIndexSetExplicitly().value_or(0) < 0)
         return false;
@@ -630,52 +628,103 @@ bool Element::dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouse
     return simulateClick(*this, underlyingEvent, eventOptions, visualOptions, SimulatedClickSource::UserAgent);
 }
 
-Ref<Node> Element::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* registry)
+Ref<Node> Element::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* fallbackRegistry) const
 {
     switch (type) {
     case CloningOperation::SelfOnly:
     case CloningOperation::SelfWithTemplateContent: {
-        Ref clone = cloneElementWithoutChildren(document, registry);
+        Ref clone = cloneElementWithoutChildren(document, fallbackRegistry);
         ScriptDisallowedScope::EventAllowedScope eventAllowedScope { clone };
-        cloneShadowTreeIfPossible(clone, registry);
+        cloneShadowTreeIfPossible(clone);
         return clone;
     }
     case CloningOperation::Everything:
         break;
     }
-    return cloneElementWithChildren(document, registry);
+    return cloneElementWithChildren(document, fallbackRegistry);
 }
 
-void Element::cloneShadowTreeIfPossible(Element& newHost, CustomElementRegistry* registry)
+template<typename ShadowRoot>
+std::optional<ShadowRoot> Element::serializeShadowRoot() const
+{
+    RefPtr oldShadowRoot = this->shadowRoot();
+    if (!oldShadowRoot || !oldShadowRoot->isClonable())
+        return std::nullopt;
+    return std::get<ShadowRoot>(oldShadowRoot->serializeNode(Node::CloningOperation::SelfWithTemplateContent).data);
+}
+template std::optional<SerializedNode::ShadowRoot> Element::serializeShadowRoot() const;
+
+template<typename Attribute>
+Vector<Attribute> Element::serializeAttributes() const
+{
+    return this->elementData() ? WTF::map(this->attributes(), [] (const auto& attribute) {
+        return Attribute { { attribute.name() }, attribute.value() };
+    }) : Vector<Attribute>();
+}
+template Vector<SerializedNode::Element::Attribute> Element::serializeAttributes() const;
+
+SerializedNode Element::serializeNode(CloningOperation type) const
+{
+    Vector<SerializedNode> children;
+    switch (type) {
+    case CloningOperation::SelfOnly:
+    case CloningOperation::SelfWithTemplateContent:
+        break;
+    case CloningOperation::Everything:
+        children = serializeChildNodes();
+        break;
+    }
+
+    return { SerializedNode::Element {
+        { WTFMove(children) },
+        { tagQName() },
+        serializeAttributes<SerializedNode::Element::Attribute>(),
+        serializeShadowRoot<SerializedNode::ShadowRoot>()
+    } };
+}
+
+void Element::cloneShadowTreeIfPossible(Element& newHost) const
 {
     RefPtr oldShadowRoot = this->shadowRoot();
     if (!oldShadowRoot || !oldShadowRoot->isClonable())
         return;
 
     Ref clonedShadowRoot = [&] {
-        Ref clone = oldShadowRoot->cloneNodeInternal(newHost.document(), Node::CloningOperation::SelfWithTemplateContent, registry);
+        Ref clone = oldShadowRoot->cloneNodeInternal(newHost.document(), Node::CloningOperation::SelfWithTemplateContent, nullptr);
         return downcast<ShadowRoot>(WTFMove(clone));
     }();
     if (oldShadowRoot->usesNullCustomElementRegistry())
         clonedShadowRoot->setUsesNullCustomElementRegistry(); // Set this flag for Element::insertedIntoAncestor.
-    else if (RefPtr registry = oldShadowRoot->customElementRegistry())
-        clonedShadowRoot->setCustomElementRegistry(registry.releaseNonNull());
+    else {
+        clonedShadowRoot->clearUsesNullCustomElementRegistry(); // Unset flag potentially set by DocumentFragment constructor
+        if (RefPtr registry = oldShadowRoot->customElementRegistry()) {
+            if (!registry->isScoped())
+                registry = newHost.document().effectiveGlobalCustomElementRegistry();
+            clonedShadowRoot->setCustomElementRegistry(WTFMove(registry));
+        }
+    }
     newHost.addShadowRoot(clonedShadowRoot.copyRef());
-    oldShadowRoot->cloneChildNodes(newHost.document(), clonedShadowRoot->usesNullCustomElementRegistry() ? nullptr : registry, clonedShadowRoot);
+    oldShadowRoot->cloneChildNodes(newHost.document(), nullptr, clonedShadowRoot);
 }
 
-Ref<Element> Element::cloneElementWithChildren(Document& document, CustomElementRegistry* registry)
+Ref<Element> Element::cloneElementWithChildren(Document& document, CustomElementRegistry* fallbackRegistry) const
 {
-    Ref clone = cloneElementWithoutChildren(document, registry);
+    Ref clone = cloneElementWithoutChildren(document, fallbackRegistry);
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { clone };
-    cloneShadowTreeIfPossible(clone, registry);
-    cloneChildNodes(document, registry, clone);
+    cloneShadowTreeIfPossible(clone);
+    cloneChildNodes(document, fallbackRegistry, clone);
     return clone;
 }
 
-Ref<Element> Element::cloneElementWithoutChildren(Document& document, CustomElementRegistry* registry)
+Ref<Element> Element::cloneElementWithoutChildren(Document& document, CustomElementRegistry* fallbackRegistry) const
 {
-    Ref clone = cloneElementWithoutAttributesAndChildren(document, registry);
+    RefPtr registry = CustomElementRegistry::registryForElement(*this);
+    if (!registry)
+        registry = fallbackRegistry;
+    if (registry && !registry->isScoped())
+        registry = document.effectiveGlobalCustomElementRegistry();
+
+    Ref clone = cloneElementWithoutAttributesAndChildren(document, registry.get());
 
     // This will catch HTML elements in the wrong namespace that are not correctly copied.
     // This is a sanity check as HTML overloads some of the DOM methods.
@@ -689,7 +738,7 @@ Ref<Element> Element::cloneElementWithoutChildren(Document& document, CustomElem
     return clone;
 }
 
-Ref<Element> Element::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry* registry)
+Ref<Element> Element::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry* registry) const
 {
     return document.createElement(tagQName(), false, registry);
 }
@@ -726,7 +775,7 @@ bool Element::removeAttribute(const QualifiedName& name)
 void Element::setBooleanAttribute(const QualifiedName& name, bool value)
 {
     if (value)
-        setAttribute(name, emptyAtom());
+        setAttributeWithoutSynchronization(name, emptyAtom());
     else
         removeAttribute(name);
 }
@@ -1235,18 +1284,26 @@ void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
     LocalFrameView::scrollRectToVisible(absoluteBounds, *renderer, insideFixed, { SelectionRevealMode::Reveal, alignX, alignY, ShouldAllowCrossOriginScrolling::No });
 }
 
-void Element::scrollIntoViewIfNotVisible(bool centerIfNotVisible)
+void Element::scrollIntoViewIfNotVisible(bool centerIfNotVisible, AllowScrollingOverflowHidden allowScrollingOverflowHidden)
 {
     protectedDocument()->updateLayoutIgnorePendingStylesheets(LayoutOptions::UpdateCompositingLayers);
 
     CheckedPtr renderer = this->renderer();
     if (!renderer)
         return;
-    
+
     bool insideFixed;
     LayoutRect absoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed).marginRect;
     auto align = centerIfNotVisible ? ScrollAlignment::alignCenterIfNotVisible : ScrollAlignment::alignToEdgeIfNotVisible;
-    LocalFrameView::scrollRectToVisible(absoluteBounds, *renderer, insideFixed, { SelectionRevealMode::Reveal, align, align, ShouldAllowCrossOriginScrolling::No });
+    ScrollRectToVisibleOptions options = {
+        .revealMode = SelectionRevealMode::Reveal,
+        .alignX = align,
+        .alignY = align,
+        .shouldAllowCrossOriginScrolling = ShouldAllowCrossOriginScrolling::No,
+        .allowScrollingOverflowHidden = allowScrollingOverflowHidden
+    };
+
+    LocalFrameView::scrollRectToVisible(absoluteBounds, *renderer, insideFixed, options);
 }
 
 void Element::scrollBy(const ScrollToOptions& options)
@@ -1299,7 +1356,7 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, 
         // If the element is the scrolling element and is not potentially scrollable,
         // invoke scroll() on window with options as the only argument, and terminate these steps.
         // FIXME: Scrolling an independently scrollable body is broken: webkit.org/b/161612.
-        RefPtr window = document->domWindow();
+        RefPtr window = document->window();
         if (!window)
             return;
 
@@ -1310,7 +1367,15 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, 
     // If the element does not have any associated CSS layout box, the element has no associated scrolling box,
     // or the element has no overflow, terminate these steps.
     CheckedPtr renderer = renderBox();
-    if (!renderer || !renderer->hasNonVisibleOverflow())
+    if (!renderer)
+        return;
+
+    auto rendererCanScroll = [&] {
+        if (CheckedPtr renderTextControlSingleLine = dynamicDowncast<RenderTextControlSingleLine>(renderer.get()))
+            return renderTextControlSingleLine->innerTextElementHasNonVisibleOverflow();
+        return renderer->hasNonVisibleOverflow();
+    };
+    if (!rendererCanScroll())
         return;
 
     auto scrollToOptions = normalizeNonFiniteCoordinatesOrFallBackTo(options,
@@ -1386,9 +1451,9 @@ static int adjustOffsetForZoomAndSubpixelLayout(RenderBoxModelObject& renderer, 
     return convertToNonSubpixelValue(offsetLeft / zoomFactor, Round);
 }
 
-static UncheckedKeyHashSet<TreeScope*> collectAncestorTreeScopeAsHashSet(Node& node)
+static HashSet<TreeScope*> collectAncestorTreeScopeAsHashSet(Node& node)
 {
-    UncheckedKeyHashSet<TreeScope*> ancestors;
+    HashSet<TreeScope*> ancestors;
     for (auto* currentScope = &node.treeScope(); currentScope; currentScope = currentScope->parentTreeScope())
         ancestors.add(currentScope);
     return ancestors;
@@ -1581,6 +1646,23 @@ int Element::clientHeight()
         return convertToNonSubpixelValue(adjustLayoutUnitForAbsoluteZoom(clientHeight, *renderer).toDouble());
     }
     return 0;
+}
+
+double Element::currentCSSZoom()
+{
+    Ref document = this->document();
+
+    document->updateStyleIfNeeded();
+
+    float initialZoom = 1.0f;
+    if (RefPtr frame = document->frame()) {
+        if (!document->printing())
+            initialZoom = frame->pageZoomFactor();
+    }
+
+    if (CheckedPtr renderer = this->renderer())
+        return renderer->style().usedZoom() / initialZoom;
+    return 1.0;
 }
 
 ALWAYS_INLINE LocalFrame* Element::documentFrameWithNonNullView() const
@@ -2605,9 +2687,9 @@ bool Element::allowsDoubleTapGesture() const
 Style::Resolver& Element::styleResolver()
 {
     if (RefPtr shadowRoot = containingShadowRoot())
-        return shadowRoot->checkedStyleScope()->resolver();
+        return shadowRoot->styleScope().resolver();
 
-    return document().checkedStyleScope()->resolver();
+    return document().styleScope().resolver();
 }
 
 Style::UnadjustedStyle Element::resolveStyle(const Style::ResolutionContext& resolutionContext)
@@ -3204,6 +3286,9 @@ void Element::setInvokedPopover(RefPtr<Element>&& element)
 {
     auto& data = ensureElementRareData();
     data.setInvokedPopover(WTFMove(element));
+
+    // Invalidate so isPopoverInvoker style bit gets updated.
+    invalidateStyleInternal();
 }
 
 void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
@@ -3234,6 +3319,24 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
 
     if (shadowRoot->mode() == ShadowRootMode::UserAgent)
         didAddUserAgentShadowRoot(shadowRoot);
+    else
+        enqueueShadowRootAttachedEvent();
+}
+
+void Element::enqueueShadowRootAttachedEvent()
+{
+    if (hasStateFlag(StateFlag::IsShadowRootAttachedEventPending))
+        return;
+    setStateFlag(StateFlag::IsShadowRootAttachedEventPending);
+    MutationObserver::enqueueShadowRootAttachedEvent(*this);
+}
+
+void Element::dispatchShadowRootAttachedEvent()
+{
+    Ref<Event> event = Event::create(eventNames().webkitshadowrootattachedEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::Yes);
+    event->setIsShadowRootAttachedEvent();
+    event->setTarget(Ref { *this });
+    dispatchEvent(event);
 }
 
 void Element::removeShadowRootSlow(ShadowRoot& oldRoot)
@@ -3283,7 +3386,7 @@ static bool canAttachAuthorShadowRoot(const Element& element)
     }
 
     if (auto localName = element.localName(); Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
-        if (RefPtr window = element.document().domWindow()) {
+        if (RefPtr window = element.document().window()) {
             RefPtr registry = window->customElementRegistry();
             if (registry && registry->isShadowDisabled(localName))
                 return false;
@@ -3295,7 +3398,7 @@ static bool canAttachAuthorShadowRoot(const Element& element)
     return false;
 }
 
-ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init, CustomElementRegistryKind registryKind)
+ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init, std::optional<CustomElementRegistryKind> registryKind)
 {
     if (init.mode == ShadowRootMode::UserAgent)
         return Exception { ExceptionCode::TypeError };
@@ -3313,20 +3416,24 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init, Custo
         return Exception { ExceptionCode::NotSupportedError };
     }
     RefPtr registry = init.customElementRegistry;
-    auto scopedRegistry = ShadowRoot::ScopedCustomElementRegistry::No;
+    if (registry && !registry->isScoped() && registry != document().customElementRegistry())
+        return Exception { ExceptionCode::NotSupportedError };
+    auto scopedRegistry = ShadowRootScopedCustomElementRegistry::No;
+    if (!registryKind)
+        registryKind = !registry && usesNullCustomElementRegistry() ? CustomElementRegistryKind::Null : CustomElementRegistryKind::Window;
     if (registryKind == CustomElementRegistryKind::Null) {
         ASSERT(!registry);
-        scopedRegistry = ShadowRoot::ScopedCustomElementRegistry::Yes;
+        scopedRegistry = ShadowRootScopedCustomElementRegistry::Yes;
     } else if (registry) {
         ASSERT(registryKind == CustomElementRegistryKind::Window);
-        scopedRegistry = ShadowRoot::ScopedCustomElementRegistry::Yes;
+        scopedRegistry = ShadowRootScopedCustomElementRegistry::Yes;
     } else
         registry = document().customElementRegistry();
     Ref shadow = ShadowRoot::create(document(), init.mode, init.slotAssignment,
-        init.delegatesFocus ? ShadowRoot::DelegatesFocus::Yes : ShadowRoot::DelegatesFocus::No,
+        init.delegatesFocus ? ShadowRootDelegatesFocus::Yes : ShadowRootDelegatesFocus::No,
         init.clonable ? ShadowRoot::Clonable::Yes : ShadowRoot::Clonable::No,
-        init.serializable ? ShadowRoot::Serializable::Yes : ShadowRoot::Serializable::No,
-        isPrecustomizedOrDefinedCustomElement() ? ShadowRoot::AvailableToElementInternals::Yes : ShadowRoot::AvailableToElementInternals::No,
+        init.serializable ? ShadowRootSerializable::Yes : ShadowRootSerializable::No,
+        isPrecustomizedOrDefinedCustomElement() ? ShadowRootAvailableToElementInternals::Yes : ShadowRootAvailableToElementInternals::No,
         WTFMove(registry), scopedRegistry);
     if (registryKind == CustomElementRegistryKind::Null)
         shadow->setUsesNullCustomElementRegistry(); // Set this flag for Element::insertedIntoAncestor.
@@ -3366,6 +3473,11 @@ RefPtr<ShadowRoot> Element::shadowRootForBindings(JSC::JSGlobalObject& lexicalGl
     if (JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->world().shadowRootIsAlwaysOpen())
         return shadow;
     return nullptr;
+}
+
+RefPtr<ShadowRoot> Element::openOrClosedShadowRoot() const
+{
+    return shadowRoot();
 }
 
 RefPtr<Element> Element::resolveReferenceTarget() const
@@ -3410,7 +3522,7 @@ RefPtr<ShadowRoot> Element::protectedUserAgentShadowRoot() const
 ShadowRoot& Element::ensureUserAgentShadowRoot()
 {
     if (RefPtr shadow = userAgentShadowRoot())
-        return *shadow;
+        return *shadow.unsafeGet();
     return createUserAgentShadowRoot();
 }
 
@@ -3500,7 +3612,7 @@ CustomElementReactionQueue* Element::reactionQueue() const
 
 CustomElementRegistry* Element::customElementRegistry() const
 {
-    if (RefPtr window = document().domWindow())
+    if (RefPtr window = document().window())
         window->ensureCustomElementRegistry(); // Create the global registry before querying since registryForElement doesn't ensure it.
     return CustomElementRegistry::registryForElement(*this);
 }
@@ -3566,7 +3678,8 @@ void Element::childrenChanged(const ChildChange& change)
     }
 
     if (document().isDirAttributeDirty()) [[unlikely]] {
-        if (selfOrPrecedingNodesAffectDirAuto())
+        // Inserting a replaced Element (image, canvas, input, etc) should be treated as a neutral character.
+        if (selfOrPrecedingNodesAffectDirAuto() && !(change.type == ChildChange::Type::ElementInserted && change.siblingChanged->isReplaced()))
             updateEffectiveTextDirection();
     }
 }
@@ -3618,6 +3731,13 @@ static void appendAttributes(StringBuilder& builder, const Element& element)
             builder.append(" ..."_s);
         builder.append('\'');
     }
+}
+
+String Element::attributesForDescription() const
+{
+    StringBuilder builder;
+    appendAttributes(builder, *this);
+    return builder.toString();
 }
 
 String Element::description() const
@@ -3998,7 +4118,7 @@ RefPtr<Element> Element::findFocusDelegateForTarget(ContainerNode& target, Focus
     if (RefPtr element = autoFocusDelegate(target, trigger))
         return element;
     for (Ref element : descendantsOfType<Element>(target)) {
-        if (is<HTMLDialogElement>(&target) && element->isKeyboardFocusable(nullptr))
+        if (is<HTMLDialogElement>(&target) && element->isKeyboardFocusable({ }))
             return element;
 
         switch (trigger) {
@@ -4070,7 +4190,7 @@ void Element::focus(const FocusOptions& options)
 
     if (RefPtr page = document->page()) {
         Ref frame = *document->frame();
-        if (!frame->hasHadUserInteraction() && !frame->isMainFrame() && !document->topOrigin().isSameOriginDomain(document->securityOrigin()))
+        if (!frame->hasHadUserInteraction() && !UserGestureIndicator::processingUserGesture() && !frame->isMainFrame() && !document->topOrigin().isSameOriginDomain(document->securityOrigin()))
             return;
 
         FocusOptions optionsWithVisibility = options;
@@ -4084,7 +4204,7 @@ void Element::focus(const FocusOptions& options)
         // Focus and change event handlers can cause us to lose our last ref.
         // If a focus event handler changes the focus to a different node it
         // does not make sense to continue and update appearence.
-        if (!page->checkedFocusController()->setFocusedElement(newTarget.get(), frame, optionsWithVisibility))
+        if (!page->focusController().setFocusedElement(newTarget.get(), frame.ptr(), optionsWithVisibility))
             return;
     }
 
@@ -4129,15 +4249,17 @@ void Element::updateFocusAppearance(SelectionRestorationMode, SelectionRevealMod
             return;
         
         // When focusing an editable element in an iframe, don't reset the selection if it already contains a selection.
-        if (this == frame->selection().selection().rootEditableElement())
+        if (this == frame->selection().selection().rootEditableElement()) {
+            frame->selection().revealSelection();
             return;
+        }
 
         // FIXME: We should restore the previous selection if there is one.
         VisibleSelection newSelection = VisibleSelection(firstPositionInOrBeforeNode(this));
         
         if (frame->selection().shouldChangeSelection(newSelection)) {
             frame->selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(), Element::defaultFocusTextStateChangeIntent());
-            frame->selection().revealSelection(revealMode);
+            frame->selection().revealSelection({ revealMode });
             return;
         }
     }
@@ -4150,7 +4272,7 @@ void Element::blur()
 {
     if (treeScope().focusedElementInScope() == this) {
         if (RefPtr frame = document().frame())
-            frame->page()->checkedFocusController()->setFocusedElement(nullptr, *frame);
+            frame->protectedPage()->focusController().setFocusedElement(nullptr, frame.get());
         else
             protectedDocument()->setFocusedElement(nullptr);
     }
@@ -4220,7 +4342,7 @@ bool Element::dispatchMouseForceWillBegin()
     if (!frame)
         return false;
 
-    PlatformMouseEvent platformMouseEvent { frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), MouseButton::None, PlatformEvent::Type::NoType, 1, { }, WallTime::now(), ForceAtClick, SyntheticClickType::NoTap };
+    PlatformMouseEvent platformMouseEvent { frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), MouseButton::None, PlatformEvent::Type::NoType, 1, { }, MonotonicTime::now(), ForceAtClick, SyntheticClickType::NoTap };
     auto mouseForceWillBeginEvent = MouseEvent::create(eventNames().webkitmouseforcewillbeginEvent, document().windowProxy(), platformMouseEvent, { }, { }, 0, nullptr);
     mouseForceWillBeginEvent->setTarget(Ref { *this });
     dispatchEvent(mouseForceWillBeginEvent);
@@ -4534,7 +4656,7 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
     ASSERT(isConnected());
 
     Ref document = this->document();
-    document->checkedStyleScope()->flushPendingUpdate();
+    document->styleScope().flushPendingUpdate();
 
     bool isInDisplayNoneTree = false;
 
@@ -4784,6 +4906,20 @@ PseudoElement* Element::afterPseudoElement() const
     return hasRareData() ? elementRareData()->afterPseudoElement() : nullptr;
 }
 
+RefPtr<PseudoElement> Element::pseudoElementIfExists(Style::PseudoElementIdentifier pseudoElementIdentifier)
+{
+    if (pseudoElementIdentifier.pseudoId == PseudoId::Before)
+        return beforePseudoElement();
+    if (pseudoElementIdentifier.pseudoId == PseudoId::After)
+        return afterPseudoElement();
+    return nullptr;
+}
+
+RefPtr<const PseudoElement> Element::pseudoElementIfExists(Style::PseudoElementIdentifier pseudoElementIdentifier) const
+{
+    return const_cast<Element&>(*this).pseudoElementIfExists(pseudoElementIdentifier);
+}
+
 static void disconnectPseudoElement(PseudoElement* pseudoElement)
 {
     if (!pseudoElement)
@@ -4922,24 +5058,24 @@ URL Element::getNonEmptyURLAttribute(const QualifiedName& name) const
     return document().completeURL(value);
 }
 
-int Element::getIntegralAttribute(const QualifiedName& attributeName) const
+int Element::integralAttribute(const QualifiedName& attributeName) const
 {
-    return parseHTMLInteger(getAttribute(attributeName)).value_or(0);
+    return parseHTMLInteger(attributeWithoutSynchronization(attributeName)).value_or(0);
 }
 
 void Element::setIntegralAttribute(const QualifiedName& attributeName, int value)
 {
-    setAttribute(attributeName, AtomString::number(value));
+    setAttributeWithoutSynchronization(attributeName, AtomString::number(value));
 }
 
-unsigned Element::getUnsignedIntegralAttribute(const QualifiedName& attributeName) const
+unsigned Element::unsignedIntegralAttribute(const QualifiedName& attributeName) const
 {
-    return parseHTMLNonNegativeInteger(getAttribute(attributeName)).value_or(0);
+    return parseHTMLNonNegativeInteger(attributeWithoutSynchronization(attributeName)).value_or(0);
 }
 
 void Element::setUnsignedIntegralAttribute(const QualifiedName& attributeName, unsigned value)
 {
-    setAttribute(attributeName, AtomString::number(limitToOnlyHTMLNonNegative(value)));
+    setAttributeWithoutSynchronization(attributeName, AtomString::number(limitToOnlyHTMLNonNegative(value)));
 }
 
 bool Element::childShouldCreateRenderer(const Node& child) const
@@ -4959,9 +5095,23 @@ void Element::webkitRequestFullscreen()
     requestFullscreen({ }, nullptr);
 }
 
-// FIXME: Options are currently ignored.
-void Element::requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPromise>&& promise)
+// FIXME: Only KeyboardLock option is currently considered.
+void Element::requestFullscreen(FullscreenOptions&& options, RefPtr<DeferredPromise>&& promise)
 {
+#if PLATFORM(IOS_FAMILY)
+    bool optionsEnabled = document().settings().fullScreenKeyboardLock() && PAL::currentUserInterfaceIdiomIsDesktop();
+#else
+    bool optionsEnabled = document().settings().fullScreenKeyboardLock();
+#endif
+    if (optionsEnabled && document().page() && document().page()->hardwareKeyboardAttached())
+        protectedDocument()->fullscreen().setKeyboardLockMode(options.keyboardLock);
+    else {
+        if (options.keyboardLock != FullscreenOptions::KeyboardLock::None) {
+            promise->reject(ExceptionCode::NotSupportedError, "options.keyboardLock is unavailable."_s);
+            return;
+        }
+    }
+
     protectedDocument()->fullscreen().requestFullscreen(*this, DocumentFullscreen::EnforceIFrameAllowFullscreenRequirement, [promise = WTFMove(promise)] (auto result) {
         if (!promise)
             return;
@@ -6002,23 +6152,6 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(std::optional<GetAnimationsO
     return animations;
 }
 
-ElementIdentifier Element::identifier() const
-{
-    return elementIdentifiersMap().ensure(const_cast<Element&>(*this), [&] {
-        setStateFlag(StateFlag::HasElementIdentifier);
-        return ElementIdentifier::generate();
-    }).iterator->value;
-}
-
-Element* Element::fromIdentifier(ElementIdentifier identifier)
-{
-    for (auto& [element, elementIdentifier] : elementIdentifiersMap()) {
-        if (elementIdentifier == identifier)
-            return element.ptr();
-    }
-    return nullptr;
-}
-
 StylePropertyMap* Element::attributeStyleMap()
 {
     if (!hasRareData())
@@ -6140,7 +6273,7 @@ bool Element::checkVisibility(const CheckVisibilityOptions& options)
         if (ancestorStyle->display() == DisplayType::None)
             return false;
 
-        if ((options.opacityProperty || options.checkOpacity) && ancestorStyle->opacity() == 0.0f)
+        if ((options.opacityProperty || options.checkOpacity) && ancestorStyle->opacity().isTransparent())
             return false;
     }
 
@@ -6235,7 +6368,7 @@ TextStream& operator<<(TextStream& ts, ContentRelevancy relevancy)
 HTMLElement* Element::topmostPopoverAncestor(TopLayerElementType topLayerType)
 {
     // Store positions to avoid having to do O(n) search for every popover invoker.
-    UncheckedKeyHashMap<Ref<const Element>, size_t> topLayerPositions;
+    HashMap<Ref<const Element>, size_t> topLayerPositions;
     size_t i = 0;
     for (auto& element : document().autoPopoverList())
         topLayerPositions.add(element, i++);
@@ -6253,7 +6386,7 @@ HTMLElement* Element::topmostPopoverAncestor(TopLayerElementType topLayerType)
 
         // https://html.spec.whatwg.org/#nearest-inclusive-open-popover
         auto nearestInclusiveOpenPopover = [](Element& candidate) -> HTMLElement* {
-            for (RefPtr element = &candidate; element; element = element->parentElementInComposedTree()) {
+            for (RefPtr element = candidate; element; element = element->parentElementInComposedTree()) {
                 if (auto* htmlElement = dynamicDowncast<HTMLElement>(element.get())) {
                     if (htmlElement->popoverState() == PopoverState::Auto && htmlElement->popoverData()->visibilityState() == PopoverVisibilityState::Showing)
                         return htmlElement;
@@ -6274,7 +6407,7 @@ HTMLElement* Element::topmostPopoverAncestor(TopLayerElementType topLayerType)
     if (topLayerType == TopLayerElementType::Popover)
         checkAncestor(popoverData()->invoker());
 
-    return topmostAncestor.get();
+    return topmostAncestor.unsafeGet();
 }
 
 double Element::lookupCSSRandomBaseValue(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const CSSCalc::RandomCachingKey& key) const
@@ -6287,6 +6420,468 @@ bool Element::hasRandomCachingKeyMap() const
     if (!hasRareData())
         return false;
     return elementRareData()->hasRandomCachingKeyMap();
+}
+
+void Element::setNumericAttribute(const QualifiedName& attributeName, double value)
+{
+    setAttributeWithoutSynchronization(attributeName, AtomString::number(value));
+}
+
+const AtomString& Element::ariaAtomic() const
+{
+    const AtomString& value = getAttribute(aria_atomicAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+
+        if (value.isNull())
+            return nullAtom();
+        if (equalLettersIgnoringASCIICase(value, "true"_s))
+            return trueValue.get();
+        if (equalLettersIgnoringASCIICase(value, "false"_s))
+            return falseValue.get();
+        return falseValue.get();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaAutoComplete() const
+{
+    const AtomString& value = getAttribute(aria_autocompleteAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> inlineValue("inline"_s);
+        static MainThreadNeverDestroyed<const AtomString> listValue("list"_s);
+        static MainThreadNeverDestroyed<const AtomString> bothValue("both"_s);
+        static MainThreadNeverDestroyed<const AtomString> noneValue("none"_s);
+
+        if (value.isNull())
+            return noneValue.get();
+        if (equalLettersIgnoringASCIICase(value, "inline"_s))
+            return inlineValue.get();
+        if (equalLettersIgnoringASCIICase(value, "list"_s))
+            return listValue.get();
+        if (equalLettersIgnoringASCIICase(value, "both"_s))
+            return bothValue.get();
+        if (equalLettersIgnoringASCIICase(value, "none"_s))
+            return noneValue.get();
+        return noneValue.get();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaBusy() const
+{
+    const AtomString& value = getAttribute(aria_busyAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+
+        if (value.isNull())
+            return falseValue.get();
+        if (equalLettersIgnoringASCIICase(value, "true"_s))
+            return trueValue.get();
+        if (equalLettersIgnoringASCIICase(value, "false"_s))
+            return falseValue.get();
+        return falseValue.get();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaChecked() const
+{
+    const AtomString& value = getAttribute(aria_checkedAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const AtomString> mixedValue("mixed"_s);
+
+        if (value.isNull())
+            return nullAtom();
+        if (equalLettersIgnoringASCIICase(value, "true"_s))
+            return trueValue.get();
+        if (equalLettersIgnoringASCIICase(value, "false"_s))
+            return falseValue.get();
+        if (equalLettersIgnoringASCIICase(value, "mixed"_s))
+            return mixedValue.get();
+        return nullAtom();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaCurrent() const
+{
+    const AtomString& value = getAttribute(aria_currentAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> pageValue("page"_s);
+        static MainThreadNeverDestroyed<const AtomString> stepValue("step"_s);
+        static MainThreadNeverDestroyed<const AtomString> locationValue("location"_s);
+        static MainThreadNeverDestroyed<const AtomString> dateValue("date"_s);
+        static MainThreadNeverDestroyed<const AtomString> timeValue("time"_s);
+        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+
+        if (value.isNull())
+            return falseValue.get();
+        if (equalLettersIgnoringASCIICase(value, "page"_s))
+            return pageValue.get();
+        if (equalLettersIgnoringASCIICase(value, "step"_s))
+            return stepValue.get();
+        if (equalLettersIgnoringASCIICase(value, "location"_s))
+            return locationValue.get();
+        if (equalLettersIgnoringASCIICase(value, "date"_s))
+            return dateValue.get();
+        if (equalLettersIgnoringASCIICase(value, "time"_s))
+            return timeValue.get();
+        if (equalLettersIgnoringASCIICase(value, "true"_s))
+            return trueValue.get();
+        if (equalLettersIgnoringASCIICase(value, "false"_s) || value.isEmpty())
+            return falseValue.get();
+        return trueValue.get();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaDisabled() const
+{
+    const AtomString& value = getAttribute(aria_disabledAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+
+        if (value.isNull())
+            return falseValue.get();
+        if (equalLettersIgnoringASCIICase(value, "true"_s))
+            return trueValue.get();
+        if (equalLettersIgnoringASCIICase(value, "false"_s))
+            return falseValue.get();
+        return falseValue.get();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaExpanded() const
+{
+    const AtomString& value = getAttribute(aria_expandedAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+
+        if (value.isNull())
+            return nullAtom();
+        if (equalLettersIgnoringASCIICase(value, "true"_s))
+            return trueValue.get();
+        if (equalLettersIgnoringASCIICase(value, "false"_s))
+            return falseValue.get();
+        return nullAtom();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaHasPopup() const
+{
+    const AtomString& value = getAttribute(aria_haspopupAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const AtomString> menuValue("menu"_s);
+        static MainThreadNeverDestroyed<const AtomString> dialogValue("dialog"_s);
+        static MainThreadNeverDestroyed<const AtomString> listboxValue("listbox"_s);
+        static MainThreadNeverDestroyed<const AtomString> treeValue("tree"_s);
+        static MainThreadNeverDestroyed<const AtomString> gridValue("grid"_s);
+
+        if (value.isNull())
+            return nullAtom();
+        if (equalLettersIgnoringASCIICase(value, "true"_s))
+            return trueValue.get();
+        if (equalLettersIgnoringASCIICase(value, "false"_s))
+            return falseValue.get();
+        if (equalLettersIgnoringASCIICase(value, "menu"_s))
+            return menuValue.get();
+        if (equalLettersIgnoringASCIICase(value, "dialog"_s))
+            return dialogValue.get();
+        if (equalLettersIgnoringASCIICase(value, "listbox"_s))
+            return listboxValue.get();
+        if (equalLettersIgnoringASCIICase(value, "tree"_s))
+            return treeValue.get();
+        if (equalLettersIgnoringASCIICase(value, "grid"_s))
+            return gridValue.get();
+        return falseValue.get();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaHidden() const
+{
+    const AtomString& value = getAttribute(aria_hiddenAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+
+        if (value.isNull())
+            return falseValue.get();
+        if (equalLettersIgnoringASCIICase(value, "true"_s))
+            return trueValue.get();
+        if (equalLettersIgnoringASCIICase(value, "false"_s))
+            return falseValue.get();
+        return falseValue.get();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaInvalid() const
+{
+    const AtomString& value = getAttribute(aria_invalidAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> grammarValue("grammar"_s);
+        static MainThreadNeverDestroyed<const AtomString> spellingValue("spelling"_s);
+        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+
+        if (value.isNull())
+            return falseValue.get();
+        if (equalLettersIgnoringASCIICase(value, "grammar"_s))
+            return grammarValue.get();
+        if (equalLettersIgnoringASCIICase(value, "spelling"_s))
+            return spellingValue.get();
+        if (equalLettersIgnoringASCIICase(value, "true"_s))
+            return trueValue.get();
+        if (equalLettersIgnoringASCIICase(value, "false"_s) || value.isEmpty())
+            return falseValue.get();
+        return trueValue.get();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaLive() const
+{
+    const AtomString& value = getAttribute(aria_liveAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> politeValue("polite"_s);
+        static MainThreadNeverDestroyed<const AtomString> assertiveValue("assertive"_s);
+        static MainThreadNeverDestroyed<const AtomString> offValue("off"_s);
+
+        if (value.isNull())
+            return offValue.get();
+        if (equalLettersIgnoringASCIICase(value, "polite"_s))
+            return politeValue.get();
+        if (equalLettersIgnoringASCIICase(value, "assertive"_s))
+            return assertiveValue.get();
+        if (equalLettersIgnoringASCIICase(value, "off"_s))
+            return offValue.get();
+        return offValue.get();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaModal() const
+{
+    const AtomString& value = getAttribute(aria_modalAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+
+        if (value.isNull())
+            return falseValue.get();
+        if (equalLettersIgnoringASCIICase(value, "true"_s))
+            return trueValue.get();
+        if (equalLettersIgnoringASCIICase(value, "false"_s))
+            return falseValue.get();
+        return falseValue.get();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaMultiLine() const
+{
+    const AtomString& value = getAttribute(aria_multilineAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+
+        if (value.isNull())
+            return falseValue.get();
+        if (equalLettersIgnoringASCIICase(value, "true"_s))
+            return trueValue.get();
+        if (equalLettersIgnoringASCIICase(value, "false"_s))
+            return falseValue.get();
+        return falseValue.get();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaMultiSelectable() const
+{
+    const AtomString& value = getAttribute(aria_multiselectableAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+
+        if (value.isNull())
+            return falseValue.get();
+        if (equalLettersIgnoringASCIICase(value, "true"_s))
+            return trueValue.get();
+        if (equalLettersIgnoringASCIICase(value, "false"_s))
+            return falseValue.get();
+        return falseValue.get();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaOrientation() const
+{
+    const AtomString& value = getAttribute(aria_orientationAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> horizontalValue("horizontal"_s);
+        static MainThreadNeverDestroyed<const AtomString> verticalValue("vertical"_s);
+
+        if (value.isNull())
+            return nullAtom();
+        if (equalLettersIgnoringASCIICase(value, "horizontal"_s))
+            return horizontalValue.get();
+        if (equalLettersIgnoringASCIICase(value, "vertical"_s))
+            return verticalValue.get();
+        return nullAtom();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaPressed() const
+{
+    const AtomString& value = getAttribute(aria_pressedAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const AtomString> mixedValue("mixed"_s);
+
+        if (value.isNull())
+            return nullAtom();
+        if (equalLettersIgnoringASCIICase(value, "true"_s))
+            return trueValue.get();
+        if (equalLettersIgnoringASCIICase(value, "false"_s))
+            return falseValue.get();
+        if (equalLettersIgnoringASCIICase(value, "mixed"_s))
+            return mixedValue.get();
+        return nullAtom();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaReadOnly() const
+{
+    const AtomString& value = getAttribute(aria_readonlyAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+
+        if (value.isNull())
+            return falseValue.get();
+        if (equalLettersIgnoringASCIICase(value, "true"_s))
+            return trueValue.get();
+        if (equalLettersIgnoringASCIICase(value, "false"_s))
+            return falseValue.get();
+        return falseValue.get();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaRequired() const
+{
+    const AtomString& value = getAttribute(aria_requiredAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+
+        if (value.isNull())
+            return falseValue.get();
+        if (equalLettersIgnoringASCIICase(value, "true"_s))
+            return trueValue.get();
+        if (equalLettersIgnoringASCIICase(value, "false"_s))
+            return falseValue.get();
+        return falseValue.get();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaSelected() const
+{
+    const AtomString& value = getAttribute(aria_selectedAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+
+        if (value.isNull())
+            return nullAtom();
+        if (equalLettersIgnoringASCIICase(value, "true"_s))
+            return trueValue.get();
+        if (equalLettersIgnoringASCIICase(value, "false"_s))
+            return falseValue.get();
+        return nullAtom();
+    }
+
+    return value.isNull() ? nullAtom() : value;
+}
+
+const AtomString& Element::ariaSort() const
+{
+    const AtomString& value = getAttribute(aria_sortAttr);
+
+    if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
+        static MainThreadNeverDestroyed<const AtomString> ascendingValue("ascending"_s);
+        static MainThreadNeverDestroyed<const AtomString> descendingValue("descending"_s);
+        static MainThreadNeverDestroyed<const AtomString> otherValue("other"_s);
+        static MainThreadNeverDestroyed<const AtomString> noneValue("none"_s);
+
+        if (value.isNull())
+            return noneValue.get();
+        if (equalLettersIgnoringASCIICase(value, "ascending"_s))
+            return ascendingValue.get();
+        if (equalLettersIgnoringASCIICase(value, "descending"_s))
+            return descendingValue.get();
+        if (equalLettersIgnoringASCIICase(value, "other"_s))
+            return otherValue.get();
+        if (equalLettersIgnoringASCIICase(value, "none"_s))
+            return noneValue.get();
+        return noneValue.get();
+    }
+
+    return value.isNull() ? nullAtom() : value;
 }
 
 } // namespace WebCore

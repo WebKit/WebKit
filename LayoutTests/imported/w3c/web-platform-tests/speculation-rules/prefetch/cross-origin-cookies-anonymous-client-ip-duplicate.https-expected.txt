@@ -1,0 +1,3 @@
+
+FAIL speculation rules based prefetch should not use cookies for cross origin urls and should issue only the IP-anonymized request if that one is first. assert_equals: expected "prefetch" but got "navigate"
+

@@ -28,6 +28,7 @@
 
 #include "pas_config.h"
 #include "pas_internal_config.h"
+#include "pas_mte.h"
 #include "pas_page_base_config.h"
 #include "pas_page_header_placement_mode.h"
 #include "pas_page_header_table.h"
@@ -69,16 +70,21 @@ typedef struct {
         case pas_page_header_at_head_of_page: { \
             uintptr_t ptr = (uintptr_t)boundary; \
             PAS_PROFILE(PAGE_BASE_FROM_BOUNDARY, ptr); \
+            PAS_MTE_HANDLE(PAGE_BASE_FROM_BOUNDARY, ptr); \
             return (pas_page_base*)ptr; \
         } \
         \
         case pas_page_header_in_table: { \
             uintptr_t page_base = (uintptr_t)boundary; \
             PAS_PROFILE(PAGE_BASE_FROM_BOUNDARY, page_base); \
+            PAS_MTE_HANDLE(PAGE_BASE_FROM_BOUNDARY, page_base); \
             page_base = (uintptr_t)pas_page_header_table_get_for_boundary( \
                 arguments.header_table, config.page_size, (pas_page_base*)page_base); \
             PAS_TESTING_ASSERT(page_base); \
             PAS_PROFILE(PAGE_BASE_FROM_TABLE, page_base); \
+            /* Does not need to be MTE-tagged since page-bases should always */ \
+            /* be zero-tagged, and the page header table should already have */ \
+            /* cleared the pointer it gave us. */ \
             return (pas_page_base*)page_base; \
         } } \
         \

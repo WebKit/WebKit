@@ -42,19 +42,23 @@ namespace WebKit {
 class WebPage;
 
 class PlatformXRSystemProxy : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PlatformXRSystemProxy);
 public:
     PlatformXRSystemProxy(WebPage&);
     virtual ~PlatformXRSystemProxy();
 
     void enumerateImmersiveXRDevices(CompletionHandler<void(const PlatformXR::Instance::DeviceList&)>&&);
     void requestPermissionOnSessionFeatures(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& /* granted */, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, const PlatformXR::Device::FeatureList& /* requiredFeaturesRequested */, const PlatformXR::Device::FeatureList& /* optionalFeaturesRequested */,  CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&&);
-    void initializeTrackingAndRendering();
+    void initializeTrackingAndRendering(std::optional<WebCore::XRCanvasConfiguration>&&);
     void shutDownTrackingAndRendering();
     void didCompleteShutdownTriggeredBySystem();
     void requestFrame(std::optional<PlatformXR::RequestData>&&, PlatformXR::Device::RequestFrameCallback&&);
     std::optional<PlatformXR::LayerHandle> createLayerProjection(uint32_t, uint32_t, bool);
+#if USE(OPENXR)
+    void submitFrame(Vector<PlatformXR::Device::Layer>&&);
+#else
     void submitFrame();
+#endif
 
     void ref() const final;
     void deref() const final;

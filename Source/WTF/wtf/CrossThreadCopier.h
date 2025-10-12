@@ -36,7 +36,9 @@
 #include <wtf/Assertions.h>
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
+#include <wtf/HashIterators.h>
 #include <wtf/HashSet.h>
+#include <wtf/KeyValuePair.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>

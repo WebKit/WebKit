@@ -20,6 +20,7 @@ feature_files = {
     'gl_features.json': ('OpenGL', 'FeaturesGL'),
     'mtl_features.json': ('Metal', 'FeaturesMtl'),
     'vk_features.json': ('Vulkan', 'FeaturesVk'),
+    'wgpu_features.json': ('WebGPU', 'FeaturesWgpu'),
 }
 feature_list_header_file = '../../util/autogen/angle_features_autogen.h'
 feature_list_source_file = '../../util/autogen/angle_features_autogen.cpp'

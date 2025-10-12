@@ -68,7 +68,7 @@ private:
     static constexpr char ff = static_cast<char>(0xFF);
 };
 
-template <typename T>
+template<typename T>
 class FontTaggedSetting {
 private:
     friend struct IPC::ArgumentCoder<FontTaggedSetting, void>;
@@ -76,7 +76,7 @@ public:
     FontTaggedSetting() = delete;
     FontTaggedSetting(FontTag, T value);
 
-    friend bool operator==(const FontTaggedSetting&, const FontTaggedSetting&) = default;
+    bool operator==(const FontTaggedSetting&) const = default;
     bool operator<(const FontTaggedSetting<T>& other) const;
 
     FontTag tag() const { return m_tag; }
@@ -88,7 +88,7 @@ private:
     T m_value;
 };
 
-template <typename T>
+template<typename T>
 FontTaggedSetting<T>::FontTaggedSetting(FontTag tag, T value)
     : m_tag(tag)
     , m_value(value)
@@ -100,7 +100,7 @@ template<typename T> void add(Hasher& hasher, const FontTaggedSetting<T>& settin
     add(hasher, setting.tag(), setting.value());
 }
 
-template <typename T>
+template<typename T>
 class FontTaggedSettings {
 private:
     friend struct IPC::ArgumentCoder<FontTaggedSettings, void>;
@@ -108,7 +108,8 @@ public:
     using Setting = FontTaggedSetting<T>;
 
     void insert(FontTaggedSetting<T>&&);
-    friend bool operator==(const FontTaggedSettings&, const FontTaggedSettings&) = default;
+
+    bool operator==(const FontTaggedSettings&) const = default;
 
     bool isEmpty() const { return !size(); }
     size_t size() const { return m_list.size(); }
@@ -124,7 +125,7 @@ private:
     Vector<FontTaggedSetting<T>> m_list;
 };
 
-template <typename T>
+template<typename T>
 void FontTaggedSettings<T>::insert(FontTaggedSetting<T>&& feature)
 {
     // This vector will almost always have 0 or 1 items in it. Don't bother with the overhead of a binary search or a hash set.
@@ -147,4 +148,4 @@ using FontVariationSettings = FontTaggedSettings<float>;
 TextStream& operator<<(TextStream&, const FontTaggedSettings<int>&);
 TextStream& operator<<(TextStream&, const FontTaggedSettings<float>&);
 
-}
+} // namespace WebCore

@@ -71,7 +71,7 @@ void StyleGradientImage::load(CachedResourceLoader&, const ResourceLoaderOptions
 {
 }
 
-RefPtr<Image> StyleGradientImage::image(const RenderElement* renderer, const FloatSize& size, bool isForFirstLine) const
+RefPtr<Image> StyleGradientImage::image(const RenderElement* renderer, const FloatSize& size, const GraphicsContext&, bool isForFirstLine) const
 {
     if (!renderer)
         return &Image::nullImage();

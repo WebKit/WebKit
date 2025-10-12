@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "WebGPUIntegralTypes.h"
-#include "WebGPUVertexAttribute.h"
-#include "WebGPUVertexStepMode.h"
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUVertexAttribute.h>
+#include <WebCore/WebGPUVertexStepMode.h>
 #include <wtf/Vector.h>
 
 namespace WebCore::WebGPU {

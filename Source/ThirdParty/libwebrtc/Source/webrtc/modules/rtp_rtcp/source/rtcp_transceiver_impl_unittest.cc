@@ -10,27 +10,48 @@
 
 #include "modules/rtp_rtcp/source/rtcp_transceiver_impl.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <functional>
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
+#include "api/array_view.h"
 #include "api/rtp_headers.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/task_queue/task_queue_factory.h"
 #include "api/test/create_time_controller.h"
 #include "api/test/time_controller.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_codec_constants.h"
 #include "modules/rtp_rtcp/include/receive_statistics.h"
 #include "modules/rtp_rtcp/include/report_block_data.h"
 #include "modules/rtp_rtcp/mocks/mock_network_link_rtcp_observer.h"
-#include "modules/rtp_rtcp/mocks/mock_rtcp_rtt_stats.h"
 #include "modules/rtp_rtcp/source/ntp_time_util.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/app.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/bye.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/compound_packet.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/congestion_control_feedback.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/dlrr.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/extended_reports.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/fir.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/nack.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/pli.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/receiver_report.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/remb.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/rrtr.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/target_bitrate.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
+#include "modules/rtp_rtcp/source/rtcp_transceiver_config.h"
 #include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/ntp_time.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
@@ -38,6 +59,11 @@
 namespace webrtc {
 namespace {
 
+using rtcp::Bye;
+using rtcp::CompoundPacket;
+using rtcp::ReportBlock;
+using rtcp::SenderReport;
+using test::RtcpPacketParser;
 using ::testing::_;
 using ::testing::ElementsAre;
 using ::testing::ElementsAreArray;
@@ -50,11 +76,6 @@ using ::testing::SizeIs;
 using ::testing::StrictMock;
 using ::testing::UnorderedElementsAre;
 using ::testing::WithArg;
-using ::webrtc::rtcp::Bye;
-using ::webrtc::rtcp::CompoundPacket;
-using ::webrtc::rtcp::ReportBlock;
-using ::webrtc::rtcp::SenderReport;
-using ::webrtc::test::RtcpPacketParser;
 
 class MockReceiveStatisticsProvider : public ReceiveStatisticsProvider {
  public:
@@ -87,7 +108,7 @@ class MockRtpStreamRtcpHandler : public RtpStreamRtcpHandler {
   MOCK_METHOD(RtpStats, SentStats, (), (override));
   MOCK_METHOD(void,
               OnNack,
-              (uint32_t, rtc::ArrayView<const uint16_t>),
+              (uint32_t, ArrayView<const uint16_t>),
               (override));
   MOCK_METHOD(void, OnFir, (uint32_t), (override));
   MOCK_METHOD(void, OnPli, (uint32_t), (override));
@@ -110,8 +131,8 @@ class FakeRtcpTransport {
  public:
   explicit FakeRtcpTransport(TimeController& time) : time_(time) {}
 
-  std::function<void(rtc::ArrayView<const uint8_t>)> AsStdFunction() {
-    return [this](rtc::ArrayView<const uint8_t>) { sent_rtcp_ = true; };
+  std::function<void(ArrayView<const uint8_t>)> AsStdFunction() {
+    return [this](ArrayView<const uint8_t>) { sent_rtcp_ = true; };
   }
 
   // Returns true when packet was received by the transport.
@@ -127,9 +148,9 @@ class FakeRtcpTransport {
   bool sent_rtcp_ = false;
 };
 
-std::function<void(rtc::ArrayView<const uint8_t>)> RtcpParserTransport(
+std::function<void(ArrayView<const uint8_t>)> RtcpParserTransport(
     RtcpPacketParser& parser) {
-  return [&parser](rtc::ArrayView<const uint8_t> packet) {
+  return [&parser](ArrayView<const uint8_t> packet) {
     return parser.Parse(packet);
   };
 }
@@ -322,7 +343,7 @@ TEST_F(RtcpTransceiverImplTest, SendCompoundPacketDelaysPeriodicSendPackets) {
 }
 
 TEST_F(RtcpTransceiverImplTest, SendsNoRtcpWhenNetworkStateIsDown) {
-  MockFunction<void(rtc::ArrayView<const uint8_t>)> mock_transport;
+  MockFunction<void(ArrayView<const uint8_t>)> mock_transport;
   RtcpTransceiverConfig config = DefaultTestConfig();
   config.initial_ready_to_send = false;
   config.rtcp_transport = mock_transport.AsStdFunction();
@@ -339,7 +360,7 @@ TEST_F(RtcpTransceiverImplTest, SendsNoRtcpWhenNetworkStateIsDown) {
 }
 
 TEST_F(RtcpTransceiverImplTest, SendsRtcpWhenNetworkStateIsUp) {
-  MockFunction<void(rtc::ArrayView<const uint8_t>)> mock_transport;
+  MockFunction<void(ArrayView<const uint8_t>)> mock_transport;
   RtcpTransceiverConfig config = DefaultTestConfig();
   config.initial_ready_to_send = false;
   config.rtcp_transport = mock_transport.AsStdFunction();
@@ -405,13 +426,13 @@ TEST_F(RtcpTransceiverImplTest, SendsMinimalCompoundPacket) {
 }
 
 TEST_F(RtcpTransceiverImplTest, AvoidsEmptyPacketsInReducedMode) {
-  MockFunction<void(rtc::ArrayView<const uint8_t>)> transport;
+  MockFunction<void(ArrayView<const uint8_t>)> transport;
   EXPECT_CALL(transport, Call).Times(0);
   NiceMock<MockReceiveStatisticsProvider> receive_statistics;
 
   RtcpTransceiverConfig config = DefaultTestConfig();
   config.rtcp_transport = transport.AsStdFunction();
-  config.rtcp_mode = webrtc::RtcpMode::kReducedSize;
+  config.rtcp_mode = RtcpMode::kReducedSize;
   config.receive_statistics = &receive_statistics;
   RtcpTransceiverImpl rtcp_transceiver(config);
 
@@ -424,7 +445,7 @@ TEST_F(RtcpTransceiverImplTest, AvoidsEmptyReceiverReportsInReducedMode) {
 
   RtcpTransceiverConfig config = DefaultTestConfig();
   config.rtcp_transport = RtcpParserTransport(rtcp_parser);
-  config.rtcp_mode = webrtc::RtcpMode::kReducedSize;
+  config.rtcp_mode = RtcpMode::kReducedSize;
   config.receive_statistics = &receive_statistics;
   // Set it to produce something (RRTR) in the "periodic" rtcp packets.
   config.non_sender_rtt_measurement = true;
@@ -524,7 +545,7 @@ TEST_F(RtcpTransceiverImplTest,
   const uint32_t kSenderSsrc = 12345;
   RtcpTransceiverConfig config = DefaultTestConfig();
   config.send_remb_on_change = true;
-  config.rtcp_mode = webrtc::RtcpMode::kReducedSize;
+  config.rtcp_mode = RtcpMode::kReducedSize;
   config.feedback_ssrc = kSenderSsrc;
   RtcpPacketParser rtcp_parser;
   config.rtcp_transport = RtcpParserTransport(rtcp_parser);
@@ -696,12 +717,12 @@ TEST_F(RtcpTransceiverImplTest, CallsObserverOnTargetBitrateBySenderSsrc) {
   rtcp_transceiver.AddMediaReceiverRtcpObserver(kRemoteSsrc1, &observer1);
   rtcp_transceiver.AddMediaReceiverRtcpObserver(kRemoteSsrc2, &observer2);
 
-  webrtc::rtcp::TargetBitrate target_bitrate;
+  rtcp::TargetBitrate target_bitrate;
   target_bitrate.AddTargetBitrate(0, 0, /*target_bitrate_kbps=*/10);
   target_bitrate.AddTargetBitrate(0, 1, /*target_bitrate_kbps=*/20);
   target_bitrate.AddTargetBitrate(1, 0, /*target_bitrate_kbps=*/40);
   target_bitrate.AddTargetBitrate(1, 1, /*target_bitrate_kbps=*/80);
-  webrtc::rtcp::ExtendedReports xr;
+  rtcp::ExtendedReports xr;
   xr.SetSenderSsrc(kRemoteSsrc1);
   xr.SetTargetBitrate(target_bitrate);
   auto raw_packet = xr.Build();
@@ -723,12 +744,12 @@ TEST_F(RtcpTransceiverImplTest, SkipsIncorrectTargetBitrateEntries) {
   RtcpTransceiverImpl rtcp_transceiver(config);
   rtcp_transceiver.AddMediaReceiverRtcpObserver(kRemoteSsrc, &observer);
 
-  webrtc::rtcp::TargetBitrate target_bitrate;
+  rtcp::TargetBitrate target_bitrate;
   target_bitrate.AddTargetBitrate(0, 0, /*target_bitrate_kbps=*/10);
-  target_bitrate.AddTargetBitrate(0, webrtc::kMaxTemporalStreams, 20);
-  target_bitrate.AddTargetBitrate(webrtc::kMaxSpatialLayers, 0, 40);
+  target_bitrate.AddTargetBitrate(0, kMaxTemporalStreams, 20);
+  target_bitrate.AddTargetBitrate(kMaxSpatialLayers, 0, 40);
 
-  webrtc::rtcp::ExtendedReports xr;
+  rtcp::ExtendedReports xr;
   xr.SetTargetBitrate(target_bitrate);
   xr.SetSenderSsrc(kRemoteSsrc);
   auto raw_packet = xr.Build();
@@ -769,7 +790,7 @@ TEST_F(RtcpTransceiverImplTest, CallsObserverOnByeBehindUnknownRtcpPacket) {
 
   CompoundPacket compound;
   // Use Application-Defined rtcp packet as unknown.
-  auto app = std::make_unique<webrtc::rtcp::App>();
+  auto app = std::make_unique<rtcp::App>();
   compound.Append(std::move(app));
   auto bye = std::make_unique<Bye>();
   bye->SetSenderSsrc(kRemoteSsrc);
@@ -1159,7 +1180,7 @@ TEST_F(RtcpTransceiverImplTest, KeyFrameRequestCreatesCompoundPacket) {
   RtcpPacketParser rtcp_parser;
   config.rtcp_transport = RtcpParserTransport(rtcp_parser);
 
-  config.rtcp_mode = webrtc::RtcpMode::kCompound;
+  config.rtcp_mode = RtcpMode::kCompound;
 
   RtcpTransceiverImpl rtcp_transceiver(config);
   rtcp_transceiver.SendFullIntraRequest(kRemoteSsrcs, true);
@@ -1177,7 +1198,7 @@ TEST_F(RtcpTransceiverImplTest, KeyFrameRequestCreatesReducedSizePacket) {
   RtcpPacketParser rtcp_parser;
   config.rtcp_transport = RtcpParserTransport(rtcp_parser);
 
-  config.rtcp_mode = webrtc::RtcpMode::kReducedSize;
+  config.rtcp_mode = RtcpMode::kReducedSize;
 
   RtcpTransceiverImpl rtcp_transceiver(config);
   rtcp_transceiver.SendFullIntraRequest(kRemoteSsrcs, true);
@@ -1372,10 +1393,10 @@ TEST_F(RtcpTransceiverImplTest, IgnoresUnknownSsrcInDlrr) {
   RtcpTransceiverImpl rtcp_transceiver(config);
 
   Timestamp time = Timestamp::Micros(12345678);
-  webrtc::rtcp::ReceiveTimeInfo rti;
+  rtcp::ReceiveTimeInfo rti;
   rti.ssrc = kUnknownSsrc;
   rti.last_rr = CompactNtp(config.clock->ConvertTimestampToNtpTime(time));
-  webrtc::rtcp::ExtendedReports xr;
+  rtcp::ExtendedReports xr;
   xr.AddDlrrItem(rti);
   auto raw_packet = xr.Build();
 
@@ -1401,6 +1422,31 @@ TEST_F(RtcpTransceiverImplTest, ParsesTransportFeedback) {
   tb.AddReceivedPacket(/*base_sequence=*/321, Timestamp::Micros(15));
   tb.AddReceivedPacket(/*base_sequence=*/322, Timestamp::Micros(17));
   rtcp_transceiver.ReceivePacket(tb.Build(), receive_time);
+}
+
+TEST_F(RtcpTransceiverImplTest, ParsesCongestionControlFeedback) {
+  MockNetworkLinkRtcpObserver link_observer;
+  RtcpTransceiverConfig config = DefaultTestConfig();
+  config.network_link_observer = &link_observer;
+  const uint32_t receive_time_ntp = 5678;
+  Timestamp receive_time = Timestamp::Seconds(9843);
+  RtcpTransceiverImpl rtcp_transceiver(config);
+
+  EXPECT_CALL(link_observer, OnCongestionControlFeedback(receive_time, _))
+      .WillOnce(WithArg<1>([](const rtcp::CongestionControlFeedback& message) {
+        EXPECT_EQ(message.report_timestamp_compact_ntp(), 5678u);
+        EXPECT_THAT(message.packets(), SizeIs(2));
+      }));
+
+  std::vector<rtcp::CongestionControlFeedback::PacketInfo> packets = {
+      {.ssrc = 1,
+       .sequence_number = 321,
+       .arrival_time_offset = TimeDelta::Millis(15)},
+      {.ssrc = 1,
+       .sequence_number = 322,
+       .arrival_time_offset = TimeDelta::Millis(17)}};
+  rtcp::CongestionControlFeedback ccfb(std::move(packets), receive_time_ntp);
+  rtcp_transceiver.ReceivePacket(ccfb.Build(), receive_time);
 }
 
 TEST_F(RtcpTransceiverImplTest, ParsesRemb) {
@@ -1586,10 +1632,10 @@ TEST_F(RtcpTransceiverImplTest, RotatesSendersWhenAllSenderReportDoNotFit) {
     rtcp_receiver.AddMediaReceiverRtcpObserver(kSenderSsrc[i], &receiver[i]);
   }
 
-  MockFunction<void(rtc::ArrayView<const uint8_t>)> transport;
+  MockFunction<void(ArrayView<const uint8_t>)> transport;
   EXPECT_CALL(transport, Call)
       .Times(kNumSenders)
-      .WillRepeatedly([&](rtc::ArrayView<const uint8_t> packet) {
+      .WillRepeatedly([&](ArrayView<const uint8_t> packet) {
         rtcp_receiver.ReceivePacket(packet, CurrentTime());
         return true;
       });

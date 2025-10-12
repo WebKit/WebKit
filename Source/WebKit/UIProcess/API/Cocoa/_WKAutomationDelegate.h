@@ -30,6 +30,8 @@
 
 @protocol _WKAutomationDelegate <NSObject>
 @optional
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (BOOL)_processPoolAllowsRemoteAutomation:(WKProcessPool *)processPool WK_API_AVAILABLE(macos(10.13), ios(11.0));
 - (void)_processPool:(WKProcessPool *)processPool didRequestAutomationSessionWithIdentifier:(NSString *)identifier configuration:(_WKAutomationSessionConfiguration *)configuration WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
@@ -37,4 +39,5 @@
 - (NSString *)_processPoolBrowserVersionForAutomation:(WKProcessPool *)processPool WK_API_AVAILABLE(macos(10.14), ios(12.0));
 
 - (void)_processPoolDidRequestInspectorDebuggablesToWakeUp:(WKProcessPool *)processPool WK_API_AVAILABLE(macos(12.0), ios(15.0));
+#pragma clang diagnostic pop
 @end

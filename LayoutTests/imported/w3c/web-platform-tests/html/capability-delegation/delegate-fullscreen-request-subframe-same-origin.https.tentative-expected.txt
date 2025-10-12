@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Cannot request fullscreen without transient activation.
 Verifies that element.requestFullscreen() calls from a same-origin subframe without user activation work if and only if the top frame has user activation, regardless of whether it delegates the capability or not. https://wicg.github.io/capability-delegation/spec.html See wpt/html/user-activation/propagation*.html for frame tree user activation visibility tests.
 
 

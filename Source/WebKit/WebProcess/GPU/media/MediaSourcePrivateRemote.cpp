@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,7 +90,7 @@ MediaSourcePrivateRemote::MediaSourcePrivateRemote(GPUProcessConnection& gpuProc
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    gpuProcessConnection.protectedConnection()->addWorkQueueMessageReceiver(Messages::MediaSourcePrivateRemoteMessageReceiver::messageReceiverName(), queueSingleton(), m_receiver, m_identifier.toUInt64());
+    gpuProcessConnection.connection().addWorkQueueMessageReceiver(Messages::MediaSourcePrivateRemoteMessageReceiver::messageReceiverName(), queueSingleton(), m_receiver, m_identifier.toUInt64());
 
 #if !RELEASE_LOG_DISABLED
     client.setLogIdentifier(m_logIdentifier);
@@ -101,7 +101,7 @@ MediaSourcePrivateRemote::~MediaSourcePrivateRemote()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     if (auto gpuProcessConnection = m_gpuProcessConnection.get())
-        gpuProcessConnection->protectedConnection()->removeWorkQueueMessageReceiver(Messages::MediaSourcePrivateRemoteMessageReceiver::messageReceiverName(), m_identifier.toUInt64());
+        gpuProcessConnection->connection().removeWorkQueueMessageReceiver(Messages::MediaSourcePrivateRemoteMessageReceiver::messageReceiverName(), m_identifier.toUInt64());
 }
 
 MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const ContentType& contentType, const MediaSourceConfiguration& configuration, RefPtr<SourceBufferPrivate>& outPrivate)
@@ -128,7 +128,7 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
             return;
         }
 
-        auto sendResult = gpuProcessConnection->protectedConnection()->sendSync(Messages::RemoteMediaSourceProxy::AddSourceBuffer(WTFMove(contentType), configuration), m_identifier);
+        auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteMediaSourceProxy::AddSourceBuffer(WTFMove(contentType), configuration), m_identifier);
         auto [status, remoteSourceBufferIdentifier] = sendResult.takeReplyOr(AddStatus::NotSupported, std::nullopt);
 
         if (status == AddStatus::Ok) {
@@ -167,7 +167,7 @@ void MediaSourcePrivateRemote::shutdown()
         if (!gpuProcessConnection)
             return;
 
-        gpuProcessConnection->protectedConnection()->send(Messages::RemoteMediaSourceProxy::Shutdown(), m_identifier);
+        gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::Shutdown(), m_identifier);
     });
 }
 
@@ -180,7 +180,7 @@ void MediaSourcePrivateRemote::durationChanged(const MediaTime& duration)
         if (!isGPURunning() || !gpuProcessConnection)
             return;
 
-        gpuProcessConnection->protectedConnection()->send(Messages::RemoteMediaSourceProxy::DurationChanged(duration), m_identifier);
+        gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::DurationChanged(duration), m_identifier);
     });
 }
 
@@ -194,7 +194,7 @@ void MediaSourcePrivateRemote::bufferedChanged(const PlatformTimeRanges& buffere
         if (!isGPURunning() || !gpuProcessConnection)
             return;
 
-        gpuProcessConnection->protectedConnection()->send(Messages::RemoteMediaSourceProxy::BufferedChanged(buffered), m_identifier);
+        gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::BufferedChanged(buffered), m_identifier);
     });
 }
 
@@ -205,7 +205,7 @@ void MediaSourcePrivateRemote::markEndOfStream(EndOfStreamStatus status)
         auto gpuProcessConnection = m_gpuProcessConnection.get();
         if (!isGPURunning() || !gpuProcessConnection)
             return;
-        gpuProcessConnection->protectedConnection()->send(Messages::RemoteMediaSourceProxy::MarkEndOfStream(status), m_identifier);
+        gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::MarkEndOfStream(status), m_identifier);
     });
 }
 
@@ -217,7 +217,7 @@ void MediaSourcePrivateRemote::unmarkEndOfStream()
         auto gpuProcessConnection = m_gpuProcessConnection.get();
         if (!isGPURunning() || !gpuProcessConnection)
             return;
-        gpuProcessConnection->protectedConnection()->send(Messages::RemoteMediaSourceProxy::UnmarkEndOfStream(), m_identifier);
+        gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::UnmarkEndOfStream(), m_identifier);
     });
 }
 
@@ -243,7 +243,7 @@ void MediaSourcePrivateRemote::setMediaPlayerReadyState(MediaPlayer::ReadyState 
         auto gpuProcessConnection = m_gpuProcessConnection.get();
         if (!isGPURunning() || !gpuProcessConnection)
             return;
-        gpuProcessConnection->protectedConnection()->send(Messages::RemoteMediaSourceProxy::SetMediaPlayerReadyState(readyState), m_identifier);
+        gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::SetMediaPlayerReadyState(readyState), m_identifier);
     });
 }
 
@@ -254,7 +254,7 @@ void MediaSourcePrivateRemote::setTimeFudgeFactor(const MediaTime& fudgeFactor)
         if (!isGPURunning() || !gpuProcessConnection)
             return;
 
-        gpuProcessConnection->protectedConnection()->send(Messages::RemoteMediaSourceProxy::SetTimeFudgeFactor(fudgeFactor), m_identifier);
+        gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::SetTimeFudgeFactor(fudgeFactor), m_identifier);
         MediaSourcePrivate::setTimeFudgeFactor(fudgeFactor);
     });
 }
@@ -277,17 +277,6 @@ void MediaSourcePrivateRemote::MessageReceiver::proxyWaitForTarget(const WebCore
         return;
     }
     completionHandler(makeUnexpected(PlatformMediaError::ClientDisconnected));
-}
-
-void MediaSourcePrivateRemote::MessageReceiver::proxySeekToTime(const MediaTime& time, CompletionHandler<void(MediaPromise::Result&&)>&& completionHandler)
-{
-    assertIsCurrent(MediaSourcePrivateRemote::queueSingleton());
-
-    if (auto client = this->client()) {
-        client->seekToTime(time)->whenSettled(MediaSourcePrivateRemote::queueSingleton(), WTFMove(completionHandler));
-        return;
-    }
-    completionHandler(makeUnexpected(PlatformMediaError::SourceRemoved));
 }
 
 MediaSourcePrivateRemote::MessageReceiver::MessageReceiver(MediaSourcePrivateRemote& parent)

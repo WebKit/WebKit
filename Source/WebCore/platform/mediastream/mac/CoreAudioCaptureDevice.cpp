@@ -149,7 +149,7 @@ Vector<AudioDeviceID> CoreAudioCaptureDevice::relatedAudioDeviceIDs(AudioDeviceI
         return { };
 
     Vector<AudioDeviceID> devices(size / sizeof(AudioDeviceID));
-    error = AudioObjectGetPropertyData(deviceID, &property, 0, nullptr, &size, devices.data());
+    error = AudioObjectGetPropertyData(deviceID, &property, 0, nullptr, &size, devices.mutableSpan().data());
     if (error)
         return { };
     return devices;

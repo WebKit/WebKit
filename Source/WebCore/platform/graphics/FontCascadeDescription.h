@@ -24,12 +24,13 @@
 
 #pragma once
 
-#include "CSSValueKeywords.h"
-#include "FontDescription.h"
+#include <WebCore/CSSValueKeywords.h>
+#include <WebCore/FontDescription.h>
+#include <wtf/Platform.h>
 #include <wtf/RefCountedFixedVector.h>
 
 #if PLATFORM(COCOA)
-#include "FontFamilySpecificationCoreText.h"
+#include <WebCore/FontFamilySpecificationCoreText.h>
 #else
 #include "FontFamilySpecificationNull.h"
 #endif
@@ -125,31 +126,6 @@ public:
 
     WEBCORE_EXPORT void resolveFontSizeAdjustFromFontIfNeeded(const Font&);
 
-    // Initial values for font properties.
-    static std::optional<FontSelectionValue> initialItalic() { return std::nullopt; }
-    static FontStyleAxis initialFontStyleAxis() { return FontStyleAxis::slnt; }
-    static FontSelectionValue initialWeight() { return normalWeightValue(); }
-    static FontSelectionValue initialWidth() { return normalWidthValue(); }
-    static FontSmallCaps initialSmallCaps() { return FontSmallCaps::Off; }
-    static Kerning initialKerning() { return Kerning::Auto; }
-    static FontSmoothingMode initialFontSmoothing() { return FontSmoothingMode::AutoSmoothing; }
-    static TextRenderingMode initialTextRenderingMode() { return TextRenderingMode::AutoTextRendering; }
-    static FontSynthesisLonghandValue initialFontSynthesisWeight() { return FontSynthesisLonghandValue::Auto; }
-    static FontSynthesisLonghandValue initialFontSynthesisStyle() { return FontSynthesisLonghandValue::Auto; }
-    static FontSynthesisLonghandValue initialFontSynthesisSmallCaps() { return FontSynthesisLonghandValue::Auto; }
-    static FontVariantPosition initialVariantPosition() { return FontVariantPosition::Normal; }
-    static FontVariantCaps initialVariantCaps() { return FontVariantCaps::Normal; }
-    static FontVariantAlternates initialVariantAlternates() { return FontVariantAlternates::Normal(); }
-    static FontVariantEmoji initialVariantEmoji() { return FontVariantEmoji::Normal; }
-    static FontOpticalSizing initialOpticalSizing() { return FontOpticalSizing::Enabled; }
-    static const AtomString& initialSpecifiedLocale() { return nullAtom(); }
-    static FontPalette initialFontPalette() { return { FontPalette::Type::Normal, nullAtom() }; }
-    static FontSizeAdjust initialFontSizeAdjust() { return { FontSizeAdjust::Metric::ExHeight }; }
-    static TextSpacingTrim initialTextSpacingTrim() { return { }; }
-    static TextAutospace initialTextAutospace() { return { }; }
-    static FontFeatureSettings initialFeatureSettings() { return { }; }
-    static FontVariationSettings initialVariationSettings() { return { }; }
-
 private:
     Ref<RefCountedFixedVector<AtomString>> m_families;
 
@@ -170,7 +146,7 @@ private:
 inline bool FontCascadeDescription::operator==(const FontCascadeDescription& other) const
 {
     return static_cast<const FontDescription&>(*this) == static_cast<const FontDescription&>(other)
-        && m_families.get() == other.m_families.get()
+        && arePointingToEqualData(m_families, other.m_families)
         && m_specifiedSize == other.m_specifiedSize
         && m_isAbsoluteSize == other.m_isAbsoluteSize
         && m_kerning == other.m_kerning

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FloatPoint.h"
-#include "FloatRect.h"
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatRect.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "CSSBorderRadius.h"
-#include "CSSPrimitiveNumericTypes.h"
-#include "RectEdges.h"
+#include <WebCore/CSSBorderRadius.h>
+#include <WebCore/CSSPrimitiveNumericTypes.h>
+#include <WebCore/RectEdges.h>
 
 namespace WebCore {
 namespace CSS {

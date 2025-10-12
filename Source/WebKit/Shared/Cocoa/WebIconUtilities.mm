@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,9 +40,12 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreMedia/CoreMedia.h>
 #import <ImageIO/ImageIO.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/PlatformImage.h>
 #import <wtf/MathExtras.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
+#import <wtf/text/WTFString.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -64,7 +67,7 @@ static CGRect squareCropRectForSize(CGSize size)
     return cropRect;
 }
 
-static PlatformImagePtr squareImage(CGImageRef image)
+static WebCore::PlatformImagePtr squareImage(CGImageRef image)
 {
     if (!image)
         return nil;
@@ -182,15 +185,12 @@ RetainPtr<CocoaImage> iconForFiles(const Vector<String>& filenames)
     if (!fileExtension.get().length)
         return nil;
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    RetainPtr<CFStringRef> fileUTI = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)fileExtension.get(), 0));
-
-    if (UTTypeConformsTo(fileUTI.get(), kUTTypeImage))
+    RetainPtr fileUTI = [UTType typeWithFilenameExtension:fileExtension.get()];
+    if ([fileUTI conformsToType:UTTypeImage])
         return iconForImageFile(file.get());
 
-    if (UTTypeConformsTo(fileUTI.get(), kUTTypeMovie))
+    if ([fileUTI conformsToType:UTTypeMovie])
         return iconForVideoFile(file.get());
-ALLOW_DEPRECATED_DECLARATIONS_END
 
     return fallbackIconForFile(file.get());
 }

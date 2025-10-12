@@ -32,13 +32,13 @@
 
 #include "CommonAtomStrings.h"
 #include "ContainerNodeInlines.h"
-#include "Document.h"
-#include "DocumentInlines.h"
+#include "DocumentQuirks.h"
+#include "DocumentView.h"
 #include "Editing.h"
 #include "FrameSelection.h"
 #include "LocalFrame.h"
+#include "NodeDocument.h"
 #include "NodeInlines.h"
-#include "Quirks.h"
 #include "Range.h"
 #include "ShadowRoot.h"
 #include "StaticRange.h"
@@ -360,7 +360,7 @@ Vector<Ref<StaticRange>> DOMSelection::getComposedRanges(std::optional<Variant<R
     if (!range)
         return { };
 
-    UncheckedKeyHashSet<Ref<ShadowRoot>> shadowRootSet;
+    HashSet<Ref<ShadowRoot>> shadowRootSet;
     if (firstShadowRootOrOptions) {
         if (auto* firstShadowRoot = std::get_if<RefPtr<ShadowRoot>>(&*firstShadowRootOrOptions)) {
             shadowRootSet.reserveInitialCapacity(remainingShadowRoots.size() + 1);

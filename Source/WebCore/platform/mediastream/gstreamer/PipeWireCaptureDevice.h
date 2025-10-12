@@ -27,7 +27,7 @@
 namespace WebCore {
 
 class PipeWireCaptureDevice : public CaptureDevice {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PipeWireCaptureDevice);
 
 public:
     PipeWireCaptureDevice(PipeWireNodeData& nodeData, const String& persistentId, DeviceType type, const String& label, const String& groupId = emptyString())

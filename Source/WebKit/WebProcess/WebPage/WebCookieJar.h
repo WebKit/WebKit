@@ -77,7 +77,7 @@ public:
 
     void clearCache() final;
 
-#if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     void setOptInCookiePartitioningEnabled(bool);
 #endif
 
@@ -97,7 +97,7 @@ private:
     HashMap<String, WeakHashSet<WebCore::CookieChangeListener>> m_changeListeners;
 
 #if PLATFORM(COCOA)
-    RetainPtr<NSHTTPCookieStorage> m_partitionedStorageForDOMCookies;
+    const RetainPtr<NSHTTPCookieStorage> m_partitionedStorageForDOMCookies;
 #endif
 };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "SourceID.h"
-#include "TypeLocation.h"
-#include "TypeLocationCache.h"
+#include <JavaScriptCore/SourceID.h>
+#include <JavaScriptCore/TypeLocation.h>
+#include <JavaScriptCore/TypeLocationCache.h>
 #include <wtf/Bag.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>

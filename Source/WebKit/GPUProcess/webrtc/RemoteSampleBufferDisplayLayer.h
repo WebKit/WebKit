@@ -34,6 +34,7 @@
 #include "RemoteVideoFrameIdentifier.h"
 #include "SampleBufferDisplayLayerIdentifier.h"
 #include "SharedVideoFrame.h"
+#include <WebCore/HostingContext.h>
 #include <WebCore/SampleBufferDisplayLayer.h>
 #include <wtf/MediaTime.h>
 #include <wtf/TZoneMalloc.h>
@@ -61,14 +62,14 @@ public:
 
     USING_CAN_MAKE_WEAKPTR(WebCore::SampleBufferDisplayLayerClient);
 
-    using LayerInitializationCallback = CompletionHandler<void(std::optional<LayerHostingContextID>)>;
+    using LayerInitializationCallback = CompletionHandler<void(WebCore::HostingContext)>;
     void initialize(bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, bool canShowWhileLocked, LayerInitializationCallback&&);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     CGRect bounds() const;
-    void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRight>&&);
+    void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRightAnnotated>&&);
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
@@ -78,7 +79,7 @@ private:
     RefPtr<WebCore::LocalSampleBufferDisplayLayer> protectedSampleBufferDisplayLayer() const;
 
 #if !RELEASE_LOG_DISABLED
-    void setLogIdentifier(String&&);
+    void setLogIdentifier(uint64_t);
 #endif
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer);
     void flush();
@@ -103,8 +104,8 @@ private:
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnection WTF_GUARDED_BY_CAPABILITY(m_consumeThread);
     SampleBufferDisplayLayerIdentifier m_identifier;
-    Ref<IPC::Connection> m_connection;
-    RefPtr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
+    const Ref<IPC::Connection> m_connection;
+    const RefPtr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     SharedVideoFrameReader m_sharedVideoFrameReader;
     ThreadLikeAssertion m_consumeThread NO_UNIQUE_ADDRESS;

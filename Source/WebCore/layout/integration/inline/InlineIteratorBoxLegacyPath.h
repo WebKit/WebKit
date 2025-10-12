@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "LegacyInlineTextBox.h"
-#include "LegacyRootInlineBox.h"
-#include "RenderSVGInlineText.h"
-#include "SVGInlineTextBox.h"
-#include "TextBoxSelectableRange.h"
+#include <WebCore/LegacyInlineTextBox.h>
+#include <WebCore/LegacyRootInlineBox.h>
+#include <WebCore/RenderSVGInlineText.h>
+#include <WebCore/SVGInlineTextBox.h>
+#include <WebCore/TextBoxSelectableRange.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

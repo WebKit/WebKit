@@ -68,4 +68,9 @@ void EventTargetForTesting::sendInternalMessage(const MessageForTesting& message
     }));
 }
 
+ScriptExecutionContext* EventTargetForTesting::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
 }

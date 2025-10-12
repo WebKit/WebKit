@@ -1,0 +1,9 @@
+This test ensures we don't hang when traversing and getting the accessibility text of a link that is part of an inline continuation.
+
+PASS: No hang.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Clickable
+

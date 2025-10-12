@@ -74,7 +74,7 @@ private:
         RTCDataChannelState state;
         std::optional<GError*> error;
     };
-    using Message = std::variant<StateChange, String, Ref<FragmentedSharedBuffer>>;
+    using Message = Variant<StateChange, String, Ref<FragmentedSharedBuffer>>;
     using PendingMessages = Vector<Message>;
 
     Lock m_clientLock;

@@ -27,12 +27,14 @@
 
 #if ENABLE(MODEL_PROCESS)
 
+#include <WebCore/FloatPoint3D.h>
 #include <WebCore/ModelPlayerTransformState.h>
+#include <WebCore/TransformationMatrix.h>
 
 namespace WebKit {
 
 class ModelProcessModelPlayerTransformState final : public WebCore::ModelPlayerTransformState {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ModelProcessModelPlayerTransformState);
 
 public:
     static std::unique_ptr<ModelProcessModelPlayerTransformState> create(std::optional<WebCore::TransformationMatrix> entityTransform, std::optional<WebCore::FloatPoint3D> boundingBoxCenter, std::optional<WebCore::FloatPoint3D> boundingBoxExtents, bool hasPortal, WebCore::StageModeOperation);

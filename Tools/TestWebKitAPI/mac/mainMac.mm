@@ -45,6 +45,9 @@ static void handleArguments(int argc, char** argv, NSMutableDictionary *argument
     argumentDefaults[@"NSOverlayScrollersEnabled"] = @NO;
     argumentDefaults[@"AppleShowScrollBars"] = @"Always";
 
+    // FIXME: Remove once the root cause is fixed in rdar://159372811
+    argumentDefaults[@"NSEventConcurrentProcessingEnabled"] = @NO;
+
     for (int i = 1; i < argc; ++i) {
         // These defaults are not propagated manually but are only consulted in the UI process.
         if (strcmp(argv[i], "--remote-layer-tree") == 0)

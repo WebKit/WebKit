@@ -63,7 +63,7 @@ private:
     void setLabelInternal(const String&) final;
 
     WebGPUPtr<WGPUShaderModule> m_backing;
-    Ref<ConvertToBackingContext> m_convertToBackingContext;
+    const Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 
 } // namespace WebCore::WebGPU

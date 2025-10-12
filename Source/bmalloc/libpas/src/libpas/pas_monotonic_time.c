@@ -106,8 +106,8 @@ uint64_t pas_get_current_monotonic_time_nanoseconds(void)
         return -1;
 
     /* Convert to seconds and nanoseconds */
-    long sec = counter.QuadPart / frequency.QuadPart;
-    long nsec = (long)((counter.QuadPart % frequency.QuadPart) * 1000000000LL / frequency.QuadPart);
+    uint64_t sec = counter.QuadPart / frequency.QuadPart;
+    uint64_t nsec = (uint64_t)((counter.QuadPart % frequency.QuadPart) * 1000000000ULL / frequency.QuadPart);
 
     return sec * 1.0e9 + nsec;
 }

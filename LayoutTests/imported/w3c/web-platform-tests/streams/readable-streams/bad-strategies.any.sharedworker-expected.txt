@@ -6,4 +6,5 @@ PASS Readable stream: throwing strategy.size method
 PASS Readable stream: throwing strategy.highWaterMark getter
 PASS Readable stream: invalid strategy.highWaterMark
 PASS Readable stream: invalid strategy.size return value
+PASS Readable stream: invalid strategy.size return value when pulling
 

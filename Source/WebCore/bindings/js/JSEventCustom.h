@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "JSDOMBinding.h"
-#include "JSEvent.h"
+#include <WebCore/JSDOMBinding.h>
+#include <WebCore/JSEvent.h>
 
 namespace JSC {
 namespace JSCastingHelpers {

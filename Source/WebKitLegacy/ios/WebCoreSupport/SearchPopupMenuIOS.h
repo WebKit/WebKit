@@ -38,7 +38,7 @@ public:
     bool enabled() override;
 
 private:
-    Ref<PopupMenuIOS> m_popup;
+    const Ref<PopupMenuIOS> m_popup;
 };
 
 #endif // SearchPopupMenuIOS_h

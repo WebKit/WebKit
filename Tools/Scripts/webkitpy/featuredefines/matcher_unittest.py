@@ -23,8 +23,6 @@
 """Tests for matcher.py."""
 
 
-from __future__ import print_function
-
 import unittest
 
 from webkitpy.featuredefines.matcher import flag_matcher, usage_matcher, idl_usage_matcher, cmake_options_matcher, declaration_matcher

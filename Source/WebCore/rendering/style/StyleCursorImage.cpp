@@ -89,7 +89,7 @@ bool StyleCursorImage::equals(const StyleCursorImage& other) const
 
 bool StyleCursorImage::equalInputImages(const StyleCursorImage& other) const
 {
-    return m_image.get() == other.m_image.get();
+    return arePointingToEqualData(m_image, other.m_image);
 }
 
 Ref<CSSValue> StyleCursorImage::computedStyleValue(const RenderStyle& style) const

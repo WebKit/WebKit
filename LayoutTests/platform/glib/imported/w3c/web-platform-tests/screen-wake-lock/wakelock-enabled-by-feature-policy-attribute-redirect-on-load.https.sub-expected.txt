@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Permission policy 'ScreenWakeLock' check failed for document with origin 'https://www1.web-platform.test:9443'.
 
 PASS Feature-Policy allow="screen-wake-lock" allows same-origin relocation
 PASS Feature-Policy allow="screen-wake-lock" disallows cross-origin relocation

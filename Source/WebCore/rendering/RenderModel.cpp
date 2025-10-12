@@ -28,7 +28,10 @@
 
 #if ENABLE(MODEL_ELEMENT)
 
+#include "GraphicsLayer.h"
 #include "HTMLModelElement.h"
+#include "RenderLayer.h"
+#include "RenderLayerBacking.h"
 #include "RenderStyle.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -67,6 +70,19 @@ void RenderModel::update()
         return;
     
     contentChanged(ContentChangeType::Model);
+#if ENABLE(GPUP_MODEL)
+    auto renderLayer = layer();
+    if (!renderLayer)
+        return;
+
+    auto backing = renderLayer->backing();
+    if (!backing)
+        return;
+
+    auto graphicsLayer = backing->graphicsLayer();
+    if (graphicsLayer)
+        graphicsLayer->setNeedsDisplay();
+#endif
 }
 
 }

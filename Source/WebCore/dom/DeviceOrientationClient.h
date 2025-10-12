@@ -27,7 +27,7 @@
 
 #pragma once
 
-#include "DeviceClient.h"
+#include <WebCore/DeviceClient.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 

@@ -32,6 +32,7 @@
 #include "JSGlobalObject.h"
 #include "VM.h"
 #include <wtf/RunLoop.h>
+#include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
@@ -89,6 +90,21 @@ void DeferredWorkTimer::doWork(VM& vm)
     if (!m_runTasks)
         return;
 
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE auto stopRunLoopIfNecessary = makeScopeExit([&] {
+        locker.assertIsHolding(m_taskLock);
+        if (vm.hasPendingTerminationException()) {
+            vm.setExecutionForbidden();
+            if (m_shouldStopRunLoopWhenAllTicketsFinish)
+                RunLoop::currentSingleton().stop();
+            return;
+        }
+
+        if (m_shouldStopRunLoopWhenAllTicketsFinish && m_pendingTickets.isEmpty()) {
+            ASSERT(m_tasks.isEmpty());
+            RunLoop::currentSingleton().stop();
+        }
+    });
+
     Vector<std::tuple<Ticket, Task>> suspendedTasks;
 
     while (!m_tasks.isEmpty()) {
@@ -124,9 +140,9 @@ void DeferredWorkTimer::doWork(VM& vm)
         // But we want to keep ticketData while running task since its globalObject ensures dependencies are strongly held.
         auto ticketData = m_pendingTickets.take(pendingTicket);
 
-        // Allow tasks we are about to run to schedule work.
-        m_currentlyRunningTask = true;
         {
+            // Allow tasks we are about to run to schedule work.
+            SetForScope<bool> runningTask(m_currentlyRunningTask, true);
             auto dropper = DropLockForScope(locker);
 
             // This is the start of a runloop turn, we can release any weakrefs here.
@@ -138,12 +154,16 @@ void DeferredWorkTimer::doWork(VM& vm)
             if (Exception* exception = scope.exception()) {
                 if (scope.clearExceptionExceptTermination())
                     globalObject->globalObjectMethodTable()->reportUncaughtExceptionAtEventLoop(globalObject, exception);
+                else if (vm.hasPendingTerminationException()) [[unlikely]]
+                    return;
             }
 
             vm.drainMicrotasks();
-            ASSERT(!vm.exceptionForInspection() || vm.hasPendingTerminationException());
+            if (vm.hasPendingTerminationException()) [[unlikely]]
+                return;
+
+            scope.assertNoException();
         }
-        m_currentlyRunningTask = false;
     }
 
     while (!suspendedTasks.isEmpty())
@@ -155,11 +175,6 @@ void DeferredWorkTimer::doWork(VM& vm)
     m_pendingTickets.removeIf([] (auto& ticket) {
         return ticket->isCancelled();
     });
-
-    if (m_pendingTickets.isEmpty() && m_shouldStopRunLoopWhenAllTicketsFinish) {
-        ASSERT(m_tasks.isEmpty());
-        RunLoop::currentSingleton().stop();
-    }
 }
 
 void DeferredWorkTimer::runRunLoop()

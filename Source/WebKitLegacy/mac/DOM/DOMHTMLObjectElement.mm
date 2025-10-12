@@ -164,7 +164,7 @@
 - (int)hspace
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getIntegralAttribute(WebCore::HTMLNames::hspaceAttr);
+    return IMPL->integralAttribute(WebCore::HTMLNames::hspaceAttr);
 }
 
 - (void)setHspace:(int)newHspace
@@ -224,7 +224,7 @@
 - (int)vspace
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getIntegralAttribute(WebCore::HTMLNames::vspaceAttr);
+    return IMPL->integralAttribute(WebCore::HTMLNames::vspaceAttr);
 }
 
 - (void)setVspace:(int)newVspace

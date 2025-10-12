@@ -36,7 +36,7 @@ void SequesteredArenaAllocator::logLiveAllocationDebugInfos()
         if (!info.live)
             continue;
         ++printCount;
-        std::span<const LChar> span = info.proximateFrame.span8();
+        std::span<const Latin1Character> span = info.proximateFrame.span8();
         std::string toPrint { span.begin(), span.end() };
         // No newline since we assume the stack frame will have it
         dataLogIf(verbose, "Allocator ", id(), ": ", info.size, "B @ ",

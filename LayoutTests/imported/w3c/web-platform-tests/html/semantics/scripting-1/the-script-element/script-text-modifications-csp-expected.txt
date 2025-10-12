@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 
 FAIL Modify inline script element's text after prepare-a-script before evaluation (CSP) assert_unreached: CSP check was done against the updated text Reached unreachable code
 

@@ -53,7 +53,7 @@ void JSModuleNamespaceObject::finishCreation(JSGlobalObject* globalObject, Abstr
     //     The list is ordered as if an Array of those String values had been sorted using Array.prototype.sort using SortCompare as comparator.
     //
     // Sort the exported names by the code point order.
-    std::sort(resolutions.begin(), resolutions.end(), [] (const auto& lhs, const auto& rhs) {
+    std::sort(resolutions.begin(), resolutions.end(), [](const auto& lhs, const auto& rhs) {
         return codePointCompare(lhs.first.impl(), rhs.first.impl()) < 0;
     });
 
@@ -77,8 +77,8 @@ void JSModuleNamespaceObject::finishCreation(JSGlobalObject* globalObject, Abstr
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-setprototypeof-v
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-isextensible
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-preventextensions
+    scope.release();
     methodTable()->preventExtensions(this, globalObject);
-    scope.assertNoExceptionExceptTermination();
 }
 
 void JSModuleNamespaceObject::destroy(JSCell* cell)
@@ -153,7 +153,8 @@ bool JSModuleNamespaceObject::getOwnPropertySlotCommon(JSGlobalObject* globalObj
         JSValue value = getValue(environment, exportEntry.localName, scopeOffset);
         // If the value is filled with TDZ value, throw a reference error.
         if (!value) {
-            throwVMError(globalObject, scope, createTDZError(globalObject));
+            RefPtr uid = propertyName.uid();
+            throwVMError(globalObject, scope, createTDZError(globalObject, *uid));
             return false;
         }
 

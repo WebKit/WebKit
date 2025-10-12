@@ -37,7 +37,7 @@
 #endif
 
 class AccessibilityController {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AccessibilityController);
 public:
     AccessibilityController();
     ~AccessibilityController();
@@ -71,6 +71,12 @@ public:
     // Helper methods so this class can add the listeners on behalf of AccessibilityUIElement.
     void winAddNotificationListener(PlatformUIElement, JSObjectRef functionCallback);
     void winNotificationReceived(PlatformUIElement, const std::string& eventName);
+#endif
+
+#if PLATFORM(MAC)
+    void printTrees();
+#else
+    void printTrees() { }
 #endif
 
 private:

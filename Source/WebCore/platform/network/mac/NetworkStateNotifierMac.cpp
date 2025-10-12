@@ -43,28 +43,28 @@ void NetworkStateNotifier::updateStateWithoutNotifying()
     if (!propertyList)
         return;
 
-    auto netInterfaces = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(propertyList.get(), kSCDynamicStorePropNetInterfaces));
+    RetainPtr netInterfaces = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(propertyList.get(), kSCDynamicStorePropNetInterfaces));
     if (!netInterfaces)
         return;
 
-    for (CFIndex i = 0; i < CFArrayGetCount(netInterfaces); i++) {
-        auto interfaceName = dynamic_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(netInterfaces, i));
+    for (CFIndex i = 0; i < CFArrayGetCount(netInterfaces.get()); i++) {
+        RetainPtr interfaceName = dynamic_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(netInterfaces.get(), i));
         if (!interfaceName)
             continue;
 
         // Ignore the loopback interface.
-        if (CFStringHasPrefix(interfaceName, CFSTR("lo")))
+        if (CFStringHasPrefix(interfaceName.get(), CFSTR("lo")))
             continue;
 
         // Ignore Parallels virtual interfaces on host machine as these are always up.
-        if (CFStringHasPrefix(interfaceName, CFSTR("vnic")))
+        if (CFStringHasPrefix(interfaceName.get(), CFSTR("vnic")))
             continue;
 
         // Ignore VMWare virtual interfaces on host machine as these are always up.
-        if (CFStringHasPrefix(interfaceName, CFSTR("vmnet")))
+        if (CFStringHasPrefix(interfaceName.get(), CFSTR("vmnet")))
             continue;
 
-        auto key = adoptCF(SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, interfaceName, kSCEntNetIPv4));
+        auto key = adoptCF(SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, interfaceName.get(), kSCEntNetIPv4));
         if (auto value = adoptCF(SCDynamicStoreCopyValue(m_store.get(), key.get()))) {
             m_isOnLine = true;
             return;
@@ -88,7 +88,7 @@ void NetworkStateNotifier::startObserving()
     if (!source)
         return;
 
-    CFRunLoopAddSource(CFRunLoopGetMain(), source.get(), kCFRunLoopCommonModes);
+    CFRunLoopAddSource(RetainPtr { CFRunLoopGetMain() }.get(), source.get(), kCFRunLoopCommonModes);
 
     auto keys = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
     CFArrayAppendValue(keys.get(), adoptCF(SCDynamicStoreKeyCreateNetworkGlobalEntity(0, kSCDynamicStoreDomainState, kSCEntNetIPv4)).get());

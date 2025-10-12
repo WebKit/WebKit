@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "ConstructAbility.h"
-#include "ConstructorKind.h"
-#include "Identifier.h"
-#include "InlineAttribute.h"
+#include <JavaScriptCore/ConstructAbility.h>
+#include <JavaScriptCore/ConstructorKind.h>
+#include <JavaScriptCore/Identifier.h>
+#include <JavaScriptCore/InlineAttribute.h>
 
 namespace JSC {
 

@@ -23,29 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <wtf/Platform.h>
+
 #if HAVE(MOUSE_DEVICE_OBSERVATION)
 
-#import "BackBoardServicesSPI.h"
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-namespace WebKit {
-class WebProcessProxy;
-}
-
-@interface WKMouseDeviceObserver : NSObject<BKSMousePointerDeviceObserver>
+NS_SWIFT_UI_ACTOR
+@interface WKMouseDeviceObserver : NSObject
 
 + (WKMouseDeviceObserver *)sharedInstance;
 + (instancetype)new NS_UNAVAILABLE;
-- (instancetype)init NS_UNAVAILABLE;
 
 - (void)start;
-- (void)startWithCompletionHandler:(void (^)(void))completionHandler;
 - (void)stop;
-- (void)stopWithCompletionHandler:(void (^)(void))completionHandler;
 
 @property (nonatomic, readonly) BOOL hasMouseDevice;
 
 - (void)_setHasMouseDeviceForTesting:(BOOL)hasMouseDevice;
 
 @end
+
+@interface WKMouseDeviceObserver (Cpp)
+
+- (void)mousePointerDevicesDidChange:(BOOL)hasMouseDevice;
+
+@end
+
+NS_HEADER_AUDIT_END(nullability, sendability)
 
 #endif // HAVE(MOUSE_DEVICE_OBSERVATION)

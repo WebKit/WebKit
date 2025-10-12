@@ -15,8 +15,10 @@
 
 namespace webrtc {
 namespace field_trial {
-#if GTEST_HAS_DEATH_TEST && RTC_DCHECK_IS_ON && !defined(WEBRTC_ANDROID) && \
-    !defined(WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT)
+#if GTEST_HAS_DEATH_TEST && RTC_DCHECK_IS_ON && !defined(WEBRTC_ANDROID)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 TEST(FieldTrialValidationTest, AcceptsValidInputs) {
   InitFieldTrialsFromString("");
   InitFieldTrialsFromString("Audio/Enabled/");
@@ -100,8 +102,8 @@ TEST(FieldTrialMergingTest, HandlesEmptyInput) {
   EXPECT_EQ(MergeFieldTrialsStrings("Audio/Enabled/", ""), "Audio/Enabled/");
   EXPECT_EQ(MergeFieldTrialsStrings("", ""), "");
 }
+#pragma clang diagnostic pop
 #endif  // GTEST_HAS_DEATH_TEST && RTC_DCHECK_IS_ON && !defined(WEBRTC_ANDROID)
-        // && !defined(WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT)
 
 }  // namespace field_trial
 }  // namespace webrtc

@@ -188,24 +188,4 @@ uint32_t GPUSupportedLimits::maxComputeWorkgroupsPerDimension() const
     return m_backing->maxComputeWorkgroupsPerDimension();
 }
 
-uint32_t GPUSupportedLimits::maxStorageBuffersInFragmentStage() const
-{
-    return m_backing->maxStorageBuffersInFragmentStage();
-}
-
-uint32_t GPUSupportedLimits::maxStorageTexturesInFragmentStage() const
-{
-    return m_backing->maxStorageTexturesInFragmentStage();
-}
-
-uint32_t GPUSupportedLimits::maxStorageBuffersInVertexStage() const
-{
-    return m_backing->maxStorageBuffersInVertexStage();
-}
-
-uint32_t GPUSupportedLimits::maxStorageTexturesInVertexStage() const
-{
-    return m_backing->maxStorageTexturesInVertexStage();
-}
-
 }

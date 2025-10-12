@@ -2,9 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-TypedArray-shell.js, compareArray.js]
-flags:
-  - noStrict
+includes: [sm/non262-TypedArray-shell.js, compareArray.js]
 description: |
   pending
 esid: pending
@@ -17,7 +15,7 @@ const float64Constructors = anyTypedArrayConstructors.filter(isFloatConstructor)
                                                      .filter(c => c.BYTES_PER_ELEMENT === 8);
 
 // Also test with cross-compartment typed arrays.
-const otherGlobal = createNewGlobal();
+const otherGlobal = $262.createRealm().global;
 float32Constructors.push(otherGlobal.Float32Array);
 float64Constructors.push(otherGlobal.Float64Array);
 

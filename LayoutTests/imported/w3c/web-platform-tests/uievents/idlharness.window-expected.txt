@@ -256,22 +256,4 @@ PASS UIEvent interface: (() => { const ev = document.createEvent("TextEvent"); e
 PASS UIEvent interface: (() => { const ev = document.createEvent("TextEvent"); ev.initTextEvent("event"); return ev; })() must inherit property "initUIEvent(DOMString, optional boolean, optional boolean, optional Window?, optional long)" with the proper type
 PASS UIEvent interface: calling initUIEvent(DOMString, optional boolean, optional boolean, optional Window?, optional long) on (() => { const ev = document.createEvent("TextEvent"); ev.initTextEvent("event"); return ev; })() with too few arguments must throw TypeError
 PASS UIEvent interface: (() => { const ev = document.createEvent("TextEvent"); ev.initTextEvent("event"); return ev; })() must inherit property "which" with the proper type
-PASS MutationEvent interface: existence and properties of interface object
-PASS MutationEvent interface object length
-PASS MutationEvent interface object name
-PASS MutationEvent interface: existence and properties of interface prototype object
-PASS MutationEvent interface: existence and properties of interface prototype object's "constructor" property
-PASS MutationEvent interface: existence and properties of interface prototype object's @@unscopables property
-PASS MutationEvent interface: constant MODIFICATION on interface object
-PASS MutationEvent interface: constant MODIFICATION on interface prototype object
-PASS MutationEvent interface: constant ADDITION on interface object
-PASS MutationEvent interface: constant ADDITION on interface prototype object
-PASS MutationEvent interface: constant REMOVAL on interface object
-PASS MutationEvent interface: constant REMOVAL on interface prototype object
-PASS MutationEvent interface: attribute relatedNode
-PASS MutationEvent interface: attribute prevValue
-PASS MutationEvent interface: attribute newValue
-PASS MutationEvent interface: attribute attrName
-PASS MutationEvent interface: attribute attrChange
-PASS MutationEvent interface: operation initMutationEvent(DOMString, optional boolean, optional boolean, optional Node?, optional DOMString, optional DOMString, optional DOMString, optional unsigned short)
 

@@ -10,8 +10,17 @@
 
 #include "modules/audio_coding/neteq/tools/neteq_rtp_dump_input.h"
 
+#include <cstdint>
+#include <map>
+#include <memory>
+#include <optional>
+
 #include "absl/strings/string_view.h"
+#include "api/rtp_headers.h"
+#include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "modules/audio_coding/neteq/tools/rtp_file_source.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 
 namespace webrtc {
 namespace test {
@@ -50,28 +59,17 @@ class NetEqRtpDumpInput : public NetEqInput {
   void AdvanceSetMinimumDelay() override {}
 
   std::optional<int64_t> NextPacketTime() const override {
-    return packet_ ? std::optional<int64_t>(
-                         static_cast<int64_t>(packet_->time_ms()))
-                   : std::nullopt;
+    return packet_ ? std::optional(packet_->arrival_time().ms()) : std::nullopt;
   }
 
   std::unique_ptr<PacketData> PopPacket() override {
     if (!packet_) {
       return std::unique_ptr<PacketData>();
     }
-    std::unique_ptr<PacketData> packet_data(new PacketData);
-    packet_data->header = packet_->header();
-    if (packet_->payload_length_bytes() == 0 &&
-        packet_->virtual_payload_length_bytes() > 0) {
-      // This is a header-only "dummy" packet. Set the payload to all zeros,
-      // with length according to the virtual length.
-      packet_data->payload.SetSize(packet_->virtual_payload_length_bytes());
-      std::fill_n(packet_data->payload.data(), packet_data->payload.size(), 0);
-    } else {
-      packet_data->payload.SetData(packet_->payload(),
-                                   packet_->payload_length_bytes());
-    }
-    packet_data->time_ms = packet_->time_ms();
+    auto packet_data = std::make_unique<PacketData>();
+    packet_->GetHeader(&packet_data->header);
+    packet_data->payload.SetData(packet_->payload());
+    packet_data->time_ms = packet_->arrival_time().ms();
 
     LoadNextPacket();
 
@@ -79,7 +77,12 @@ class NetEqRtpDumpInput : public NetEqInput {
   }
 
   std::optional<RTPHeader> NextHeader() const override {
-    return packet_ ? std::optional<RTPHeader>(packet_->header()) : std::nullopt;
+    if (packet_ == nullptr) {
+      return std::nullopt;
+    }
+    RTPHeader rtp_header;
+    packet_->GetHeader(&rtp_header);
+    return rtp_header;
   }
 
   bool ended() const override { return !next_output_event_ms_; }
@@ -91,7 +94,7 @@ class NetEqRtpDumpInput : public NetEqInput {
   static constexpr int64_t kOutputPeriodMs = 10;
 
   std::unique_ptr<RtpFileSource> source_;
-  std::unique_ptr<Packet> packet_;
+  std::unique_ptr<RtpPacketReceived> packet_;
 };
 
 }  // namespace

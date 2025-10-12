@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
- * Copyright (C) 2015-2021 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010 Google, Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +48,7 @@ class PumpSession;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HTMLDocumentParser);
 class HTMLDocumentParser : public ScriptableDocumentParser, private HTMLScriptRunnerHost, private PendingScriptClient, public CanMakeCheckedPtr<HTMLDocumentParser> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(HTMLDocumentParser);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(HTMLDocumentParser, HTMLDocumentParser);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLDocumentParser);
 public:
     static Ref<HTMLDocumentParser> create(HTMLDocument&, OptionSet<ParserContentPolicy> = DefaultParserContentPolicy);
@@ -81,7 +81,7 @@ protected:
     void appendSynchronously(RefPtr<StringImpl>&&) override;
     void finish() override;
 
-    HTMLTreeBuilder& treeBuilder();
+    HTMLTreeBuilder& treeBuilder() { return m_treeBuilder; }
 
 private:
     HTMLDocumentParser(DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy>, CustomElementRegistry*);
@@ -143,7 +143,7 @@ private:
 
     HTMLTokenizer m_tokenizer;
     std::unique_ptr<HTMLScriptRunner> m_scriptRunner;
-    std::unique_ptr<HTMLTreeBuilder> m_treeBuilder;
+    const UniqueRef<HTMLTreeBuilder> m_treeBuilder;
     std::unique_ptr<HTMLPreloadScanner> m_preloadScanner;
     std::unique_ptr<HTMLPreloadScanner> m_insertionPreloadScanner;
     RefPtr<HTMLParserScheduler> m_parserScheduler;
@@ -169,12 +169,6 @@ inline HTMLInputStream& HTMLDocumentParser::inputStream()
 inline bool HTMLDocumentParser::hasPreloadScanner() const
 {
     return m_preloadScanner.get();
-}
-
-inline HTMLTreeBuilder& HTMLDocumentParser::treeBuilder()
-{
-    ASSERT(m_treeBuilder);
-    return *m_treeBuilder;
 }
 
 } // namespace WebCore

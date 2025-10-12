@@ -4,9 +4,7 @@ Also verifies Allowed Accessibility Child Roles from 5.2.6 Allowed Accessibility
 
 x
 x
-x
 
 PASS footer scoped to body element is contentinfo
 PASS contentinfo region scoped to body element is contentinfo
-PASS footer element scoped to main element is generic
 

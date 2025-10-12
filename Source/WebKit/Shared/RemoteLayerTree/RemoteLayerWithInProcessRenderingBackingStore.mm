@@ -37,7 +37,7 @@
 #import "SwapBuffersDisplayRequirement.h"
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/IOSurfacePool.h>
-#import <WebCore/ImageBufferPixelFormat.h>
+#import <WebCore/PixelFormat.h>
 #import <WebCore/PlatformCALayerClient.h>
 #import <wtf/Scope.h>
 #import <wtf/TZoneMalloc.h>
@@ -68,7 +68,7 @@ bool RemoteLayerWithInProcessRenderingBackingStore::frontBufferMayBeVolatile() c
 void RemoteLayerWithInProcessRenderingBackingStore::clearBackingStore()
 {
     m_bufferSet.clearBuffers();
-    m_contentsBufferHandle = std::nullopt;
+    RemoteLayerBackingStore::clearBackingStore();
 }
 
 static std::optional<ImageBufferBackendHandle> handleFromBuffer(ImageBuffer& buffer)
@@ -122,32 +122,54 @@ class ImageBufferBackingStoreFlusher final : public ThreadSafeImageBufferSetFlus
     WTF_MAKE_TZONE_ALLOCATED_INLINE(ImageBufferBackingStoreFlusher);
     WTF_MAKE_NONCOPYABLE(ImageBufferBackingStoreFlusher);
 public:
-    static std::unique_ptr<ImageBufferBackingStoreFlusher> create(std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> imageBufferFlusher)
+    static std::unique_ptr<ImageBufferBackingStoreFlusher> create(ImageBufferSetIdentifier identifier, std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> imageBufferFlusher, std::unique_ptr<BufferSetBackendHandle> handles)
     {
-        return std::unique_ptr<ImageBufferBackingStoreFlusher> { new ImageBufferBackingStoreFlusher(WTFMove(imageBufferFlusher)) };
+        return std::unique_ptr<ImageBufferBackingStoreFlusher> { new ImageBufferBackingStoreFlusher(identifier, WTFMove(imageBufferFlusher), WTFMove(handles)) };
     }
 
-    bool flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&) final
+    bool flushAndCollectHandles(HashMap<ImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>& handlesMap) final
     {
-        m_imageBufferFlusher->flush();
+        if (m_imageBufferFlusher)
+            m_imageBufferFlusher->flush();
+        handlesMap.add(m_identifier, WTFMove(m_handles));
         return true;
     }
 
 private:
-    ImageBufferBackingStoreFlusher(std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> imageBufferFlusher)
-        : m_imageBufferFlusher(WTFMove(imageBufferFlusher))
+    ImageBufferBackingStoreFlusher(ImageBufferSetIdentifier identifier, std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> imageBufferFlusher, std::unique_ptr<BufferSetBackendHandle> handles)
+        : m_identifier(identifier)
+        , m_imageBufferFlusher(WTFMove(imageBufferFlusher))
+        , m_handles(WTFMove(handles))
     {
     }
+
+    ImageBufferSetIdentifier m_identifier;
     std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> m_imageBufferFlusher;
+    std::unique_ptr<BufferSetBackendHandle> m_handles;
 };
 
 std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteLayerWithInProcessRenderingBackingStore::createFlusher(ThreadSafeImageBufferSetFlusher::FlushType flushType)
 {
-    if (flushType == ThreadSafeImageBufferSetFlusher::FlushType::BackendHandlesOnly)
-        return nullptr;
-    RefPtr frontBuffer = m_bufferSet.m_frontBuffer;
-    frontBuffer->flushDrawingContextAsync();
-    return ImageBufferBackingStoreFlusher::create(frontBuffer->createFlusher());
+    std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> flusher;
+    if (flushType != ThreadSafeImageBufferSetFlusher::FlushType::BackendHandlesOnly) {
+        RefPtr frontBuffer = m_bufferSet.m_frontBuffer;
+        frontBuffer->flushDrawingContextAsync();
+        flusher = frontBuffer->createFlusher();
+    }
+
+    auto handles = makeUnique<BufferSetBackendHandle>(BufferSetBackendHandle {
+        frontBufferHandle(),
+        m_bufferSet.m_frontBuffer ? std::optional { BufferAndBackendInfo::fromImageBuffer(Ref { *m_bufferSet.m_frontBuffer }) } : std::nullopt,
+        m_bufferSet.m_backBuffer ? std::optional { BufferAndBackendInfo::fromImageBuffer(Ref { *m_bufferSet.m_backBuffer }) } : std::nullopt,
+        m_bufferSet.m_secondaryBackBuffer ? std::optional { BufferAndBackendInfo::fromImageBuffer(Ref { *m_bufferSet.m_secondaryBackBuffer }) } : std::nullopt,
+    });
+
+    return ImageBufferBackingStoreFlusher::create(m_bufferSet.identifier(), WTFMove(flusher), WTFMove(handles));
+}
+
+std::optional<ImageBufferSetIdentifier> RemoteLayerWithInProcessRenderingBackingStore::bufferSetIdentifier() const
+{
+    return m_bufferSet.identifier();
 }
 
 bool RemoteLayerWithInProcessRenderingBackingStore::setBufferVolatile(RefPtr<WebCore::ImageBuffer>& buffer, bool forcePurge)
@@ -193,29 +215,29 @@ bool RemoteLayerWithInProcessRenderingBackingStore::setBufferVolatile(BufferType
 }
 
 template<typename ImageBufferType>
-static RefPtr<ImageBuffer> allocateBufferInternal(RemoteLayerBackingStore::Type type, const WebCore::FloatSize& logicalSize, WebCore::RenderingPurpose purpose, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::ImageBufferPixelFormat pixelFormat, WebCore::ImageBufferCreationContext& creationContext)
+static RefPtr<ImageBuffer> allocateBufferInternal(RemoteLayerBackingStore::Type type, const WebCore::FloatSize& logicalSize, WebCore::RenderingPurpose purpose, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::ImageBufferFormat bufferFormat, WebCore::ImageBufferCreationContext& creationContext)
 {
     switch (type) {
     case RemoteLayerBackingStore::Type::IOSurface:
-        return WebCore::ImageBuffer::create<ImageBufferShareableMappedIOSurfaceBackend, ImageBufferType>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
+        return WebCore::ImageBuffer::create<ImageBufferShareableMappedIOSurfaceBackend, ImageBufferType>(logicalSize, resolutionScale, colorSpace, bufferFormat, purpose, creationContext);
     case RemoteLayerBackingStore::Type::Bitmap:
-        return WebCore::ImageBuffer::create<ImageBufferShareableBitmapBackend, ImageBufferType>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
+        return WebCore::ImageBuffer::create<ImageBufferShareableBitmapBackend, ImageBufferType>(logicalSize, resolutionScale, colorSpace, bufferFormat, purpose, creationContext);
     }
 }
 
 RefPtr<WebCore::ImageBuffer> RemoteLayerWithInProcessRenderingBackingStore::allocateBuffer()
 {
     ImageBufferCreationContext creationContext;
-    creationContext.surfacePool = &WebCore::IOSurfacePool::sharedPoolSingleton();
+    creationContext.surfacePool = WebCore::IOSurfacePool::sharedPoolSingleton();
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     if (m_parameters.includeDisplayList == WebCore::IncludeDynamicContentScalingDisplayList::Yes) {
         creationContext.dynamicContentScalingResourceCache = ensureDynamicContentScalingResourceCache();
-        return allocateBufferInternal<DynamicContentScalingBifurcatedImageBuffer>(type(), size(), RenderingPurpose::LayerBacking, scale(), colorSpace(), pixelFormat(), creationContext);
+        return allocateBufferInternal<DynamicContentScalingBifurcatedImageBuffer>(type(), size(), RenderingPurpose::LayerBacking, scale(), colorSpace(), { pixelFormat(), UseLosslessCompression::No }, creationContext);
     }
 #endif
 
-    return allocateBufferInternal<ImageBuffer>(type(), size(), RenderingPurpose::LayerBacking, scale(), colorSpace(), pixelFormat(), creationContext);
+    return allocateBufferInternal<ImageBuffer>(type(), size(), RenderingPurpose::LayerBacking, scale(), colorSpace(), { pixelFormat(), UseLosslessCompression::No }, creationContext);
 }
 
 void RemoteLayerWithInProcessRenderingBackingStore::ensureFrontBuffer()
@@ -239,9 +261,6 @@ void RemoteLayerWithInProcessRenderingBackingStore::prepareToDisplay()
 
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " prepareToDisplay()");
 
-    if (performDelegatedLayerDisplay())
-        return;
-
     m_contentsBufferHandle = std::nullopt;
     auto displayRequirement = m_bufferSet.swapBuffersForDisplay(hasEmptyDirtyRegion(), supportsPartialRepaint());
     if (displayRequirement == SwapBuffersDisplayRequirement::NeedsNoDisplay)
@@ -252,22 +271,6 @@ void RemoteLayerWithInProcessRenderingBackingStore::prepareToDisplay()
 
     dirtyRepaintCounterIfNecessary();
     ensureFrontBuffer();
-}
-
-void RemoteLayerWithInProcessRenderingBackingStore::encodeBufferAndBackendInfos(IPC::Encoder& encoder) const
-{
-    auto encodeBuffer = [&](const RefPtr<WebCore::ImageBuffer>& buffer) {
-        if (buffer) {
-            encoder << std::optional { BufferAndBackendInfo::fromImageBuffer(*buffer) };
-            return;
-        }
-
-        encoder << std::optional<BufferAndBackendInfo>();
-    };
-
-    encodeBuffer(m_bufferSet.m_frontBuffer);
-    encodeBuffer(m_bufferSet.m_backBuffer);
-    encodeBuffer(m_bufferSet.m_secondaryBackBuffer);
 }
 
 void RemoteLayerWithInProcessRenderingBackingStore::dump(WTF::TextStream& ts) const

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <memory>
 #include <wtf/EmbeddedFixedVector.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>

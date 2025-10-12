@@ -133,6 +133,7 @@ header: "CoreIPCNSURLRequest.h"
     bool privacyProxyFailClosed;
     bool privacyProxyFailClosedForUnreachableNonMainHosts;
     bool privacyProxyFailClosedForUnreachableHosts;
+    bool privacyProxyStrictFailClosed;
     std::optional<bool> requiresDNSSECValidation;
     bool allowsPersistentDNS;
     bool prohibitPrivacyProxy;

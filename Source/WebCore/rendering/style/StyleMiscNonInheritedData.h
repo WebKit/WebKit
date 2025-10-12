@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +26,21 @@
 
 #pragma once
 
-#include "LengthPoint.h"
-#include "StyleContentAlignmentData.h"
-#include "StyleSelfAlignmentData.h"
+#include <WebCore/StyleAnimations.h>
+#include <WebCore/StyleAppearance.h>
+#include <WebCore/StyleAspectRatio.h>
+#include <WebCore/StyleBoxShadow.h>
+#include <WebCore/StyleContent.h>
+#include <WebCore/StyleContentAlignmentData.h>
+#include <WebCore/StyleMaskLayer.h>
+#include <WebCore/StyleObjectPosition.h>
+#include <WebCore/StyleOpacity.h>
+#include <WebCore/StyleOrder.h>
+#include <WebCore/StyleSelfAlignmentData.h>
+#include <WebCore/StyleTransitions.h>
 #include <memory>
 #include <wtf/DataRef.h>
+#include <wtf/FixedVector.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -40,10 +51,6 @@ class TextStream;
 
 namespace WebCore {
 
-class AnimationList;
-class ContentData;
-class FillLayer;
-class ShadowData;
 class StyleDeprecatedFlexibleBoxData;
 class StyleFilterData;
 class StyleFlexibleBoxData;
@@ -51,11 +58,9 @@ class StyleMultiColData;
 class StyleTransformData;
 class StyleVisitedLinkColorData;
 
-constexpr int appearanceBitWidth = 7;
-
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleMiscNonInheritedData);
 class StyleMiscNonInheritedData : public RefCounted<StyleMiscNonInheritedData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleMiscNonInheritedData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleMiscNonInheritedData, StyleMiscNonInheritedData);
 public:
     static Ref<StyleMiscNonInheritedData> create() { return adoptRef(*new StyleMiscNonInheritedData); }
     Ref<StyleMiscNonInheritedData> copy() const;
@@ -67,53 +72,47 @@ public:
     void dumpDifferences(TextStream&, const StyleMiscNonInheritedData&) const;
 #endif
 
-    bool hasOpacity() const { return opacity < 1; }
-    bool hasZeroOpacity() const { return !opacity; }
     bool hasFilters() const;
-    bool contentDataEquivalent(const StyleMiscNonInheritedData&) const;
 
     // This is here to pack in with m_refCount.
-    float opacity;
+    Style::Opacity opacity;
 
     DataRef<StyleDeprecatedFlexibleBoxData> deprecatedFlexibleBox; // Flexible box properties
     DataRef<StyleFlexibleBoxData> flexibleBox;
     DataRef<StyleMultiColData> multiCol; //  CSS3 multicol properties
     DataRef<StyleFilterData> filter; // Filter operations (url, sepia, blur, etc.)
     DataRef<StyleTransformData> transform; // Transform properties (rotate, scale, skew, etc.)
-    DataRef<FillLayer> mask;
     DataRef<StyleVisitedLinkColorData> visitedLinkColor;
 
-    RefPtr<AnimationList> animations;
-    RefPtr<AnimationList> transitions;
-    std::unique_ptr<ContentData> content;
-    std::unique_ptr<ShadowData> boxShadow; // For box-shadow decorations.
-    String altText;
-    double aspectRatioWidth;
-    double aspectRatioHeight;
+    Style::MaskLayers mask;
+    Style::Animations animations;
+    Style::Transitions transitions;
+    Style::Content content;
+    Style::BoxShadows boxShadow;
+    Style::AspectRatio aspectRatio;
     StyleContentAlignmentData alignContent;
     StyleContentAlignmentData justifyContent;
     StyleSelfAlignmentData alignItems;
     StyleSelfAlignmentData alignSelf;
     StyleSelfAlignmentData justifyItems;
     StyleSelfAlignmentData justifySelf;
-    LengthPoint objectPosition;
-    int order;
+    Style::ObjectPosition objectPosition;
+    Style::Order order;
 
-    unsigned hasAttrContent : 1 { false };
-    unsigned hasDisplayAffectedByAnimations : 1 { false };
+    PREFERRED_TYPE(bool) unsigned hasAttrContent : 1 { false };
+    PREFERRED_TYPE(bool) unsigned hasDisplayAffectedByAnimations : 1 { false };
 #if ENABLE(DARK_MODE_CSS)
-    unsigned hasExplicitlySetColorScheme : 1 { false };
+    PREFERRED_TYPE(bool) unsigned hasExplicitlySetColorScheme : 1 { false };
 #endif
-    unsigned hasExplicitlySetDirection : 1 { false };
-    unsigned hasExplicitlySetWritingMode : 1 { false };
-    unsigned tableLayout : 1; // TableLayoutType
-    unsigned aspectRatioType : 2; // AspectRatioType
-    unsigned appearance : appearanceBitWidth; // StyleAppearance
-    unsigned usedAppearance : appearanceBitWidth; // StyleAppearance
-    unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
-    unsigned userDrag : 2; // UserDrag
-    unsigned objectFit : 3; // ObjectFit
-    unsigned resize : 3; // Resize
+    PREFERRED_TYPE(bool) unsigned hasExplicitlySetDirection : 1 { false };
+    PREFERRED_TYPE(bool) unsigned hasExplicitlySetWritingMode : 1 { false };
+    PREFERRED_TYPE(TableLayoutType) unsigned tableLayout : 1;
+    PREFERRED_TYPE(StyleAppearance) unsigned appearance : appearanceBitWidth;
+    PREFERRED_TYPE(StyleAppearance) unsigned usedAppearance : appearanceBitWidth;
+    PREFERRED_TYPE(bool) unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
+    PREFERRED_TYPE(UserDrag) unsigned userDrag : 2;
+    PREFERRED_TYPE(ObjectFit) unsigned objectFit : 3;
+    PREFERRED_TYPE(Resize) unsigned resize : 3;
 
 private:
     StyleMiscNonInheritedData();

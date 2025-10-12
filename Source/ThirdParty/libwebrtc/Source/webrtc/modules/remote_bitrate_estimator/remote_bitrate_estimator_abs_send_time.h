@@ -17,30 +17,29 @@
 #include <list>
 #include <map>
 #include <memory>
-#include <vector>
 
 #include "absl/base/nullability.h"
 #include "api/environment/environment.h"
-#include "api/rtp_headers.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "modules/remote_bitrate_estimator/aimd_rate_control.h"
+#include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
 #include "modules/remote_bitrate_estimator/inter_arrival.h"
 #include "modules/remote_bitrate_estimator/overuse_detector.h"
 #include "modules/remote_bitrate_estimator/overuse_estimator.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/bitrate_tracker.h"
-#include "rtc_base/checks.h"
 
 namespace webrtc {
 
 class RemoteBitrateEstimatorAbsSendTime : public RemoteBitrateEstimator {
  public:
-  RemoteBitrateEstimatorAbsSendTime(
-      const Environment& env,
-      absl::Nonnull<RemoteBitrateObserver*> observer);
+  RemoteBitrateEstimatorAbsSendTime(const Environment& env,
+                                    RemoteBitrateObserver* absl_nonnull
+                                        observer);
 
   RemoteBitrateEstimatorAbsSendTime() = delete;
   RemoteBitrateEstimatorAbsSendTime(const RemoteBitrateEstimatorAbsSendTime&) =
@@ -100,7 +99,7 @@ class RemoteBitrateEstimatorAbsSendTime : public RemoteBitrateEstimator {
   void TimeoutStreams(Timestamp now);
 
   const Environment env_;
-  const absl::Nonnull<RemoteBitrateObserver*> observer_;
+  RemoteBitrateObserver* absl_nonnull const observer_;
   std::unique_ptr<InterArrival> inter_arrival_;
   std::unique_ptr<OveruseEstimator> estimator_;
   OveruseDetector detector_;

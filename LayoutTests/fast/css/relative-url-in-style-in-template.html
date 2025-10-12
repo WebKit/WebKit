@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<template>
+    <div class="container" style="background-image: url('resources/green-128x128.png');"></div>
+</template>
+<div id="container">
+  <div id="target"></div>
+</div>
+<script>
+
+test(() => {
+  const template = document.querySelector("template");
+
+  document.body.appendChild(template.content.cloneNode(true));
+  const viaFragment = document.body.lastElementChild;
+
+  const resolved = new URL("resources/green-128x128.png", document.URL).href;
+
+  assert_equals(viaFragment.style.backgroundImage, `url("resources/green-128x128.png")`)
+  assert_equals(window.getComputedStyle(viaFragment).backgroundImage, `url("${resolved}")`)
+}, "Cloning a template via document fragment");
+
+test(() => {
+  const template = document.querySelector("template");
+
+  document.body.appendChild(template.content.children[0]);
+  const viaElement = document.body.lastElementChild;
+
+  const resolved = new URL("resources/green-128x128.png", document.URL).href;
+
+  assert_equals(viaElement.style.backgroundImage, `url("resources/green-128x128.png")`)
+  assert_equals(window.getComputedStyle(viaElement).backgroundImage, `url("${resolved}")`)
+}, "Cloning a template via element");
+
+</script>
+</body>
+</html>

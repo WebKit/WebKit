@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 features:
   - iterator-helpers
 info: |
@@ -15,5 +12,5 @@ esid: pending
 ---*/
 
 const iter = [].values();
-assertThrowsInstanceOf(() => iter.reduce((x, y) => x + y), TypeError);
+assert.throws(TypeError, () => iter.reduce((x, y) => x + y));
 

@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "Image.h"
-#include "Timer.h"
+#include <WebCore/Image.h>
+#include <WebCore/Timer.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -89,7 +89,7 @@ private:
     void setContainerSize(const FloatSize&) final;
     IntSize containerSize() const;
     bool usesContainerSize() const final { return true; }
-    void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) final;
+    void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) final;
 
     void reportApproximateMemoryCost() const;
     EncodedDataStatus dataChanged(bool allDataReceived) final;
@@ -98,6 +98,7 @@ private:
 
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const final { return false; }
+    bool currentFrameIsComplete() const final { return !!m_page; }
 
     bool hasHDRContent() const final;
     RefPtr<NativeImage> nativeImage(const DestinationColorSpace& = DestinationColorSpace::SRGB()) final;

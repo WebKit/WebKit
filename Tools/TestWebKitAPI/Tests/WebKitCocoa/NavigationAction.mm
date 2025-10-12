@@ -34,6 +34,7 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 @interface NavigationActionTestDelegate : NSObject <WKNavigationDelegate>
 
@@ -209,7 +210,7 @@ TEST(WKNavigationAction, BlobRequestBody)
         if ([action.request.URL.absoluteString isEqualToString:@"about:blank"])
             completionHandler(WKNavigationActionPolicyAllow);
         else {
-            EXPECT_WK_STREQ(action.request.URL.absoluteString, "");
+            EXPECT_WK_STREQ(action.request.URL.absoluteString, "/formAction");
             completionHandler(WKNavigationActionPolicyCancel);
             done = true;
         }
@@ -229,12 +230,12 @@ TEST(WKNavigationAction, NonMainThread)
     [webView setNavigationDelegate:delegate.get()];
     __block bool done = false;
     delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             completionHandler(WKNavigationActionPolicyAllow);
         });
     };
     delegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *action, void (^completionHandler)(WKNavigationResponsePolicy)) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             completionHandler(WKNavigationResponsePolicyAllow);
         });
     };

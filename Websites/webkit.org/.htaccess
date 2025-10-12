@@ -7,6 +7,17 @@ RewriteRule .*\.svn.* - [F]
 RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)
 RewriteRule .* - [F]
 
+# Prevent access to readme, license, config, and sample files
+RewriteRule (?:readme|license|changelog|security|-config|-sample)\.(?:php|md|txt|html?) /index.php [NC,L]
+
+# Prevent plugin directories
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^wp-content/plugins/[^/]+/?$ /index.php [L]
+
+# prevent nested plugin directories
+RewriteCond %{REQUEST_FILENAME} -d  
+RewriteRule ^wp-content/plugins/.+/?$ /index.php [L]
+
 RewriteCond %{HTTP_HOST} ^queues.webkit.org$
 RewriteRule (.*) https://webkit-queues.webkit.org/$1 [L,R=301]
 

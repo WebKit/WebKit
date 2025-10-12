@@ -40,6 +40,7 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/text/MakeString.h>
 
 @interface CookieAcceptPolicyMessageHandler : NSObject <WKScriptMessageHandler>
@@ -117,7 +118,7 @@ TEST(WKHTTPCookieStore, CookiePolicy)
     bool requestHadCookie { false };
     HTTPServer server(HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask { while (true) {
         auto request = co_await connection.awaitableReceiveHTTPRequest();
-        requestHadCookie = strnstr(request.data(), "Cookie", request.size());
+        requestHadCookie = contains(request.span(), "Cookie"_span);
         co_await connection.awaitableSend(HTTPResponse({ { "Set-Cookie"_s, "testCookie=42"_s } }, "hi"_s).serialize());
     } });
 
@@ -163,7 +164,7 @@ TEST(WKHTTPCookieStore, CookiePolicyAllowIsOnlyFromMainDocumentDomain)
                     "\r\n"_s, body
                 );
             } else {
-                EXPECT_TRUE(strnstr(request.data(), "GET http://www.example.com/ HTTP/1.1\r\n", request.size()));
+                EXPECT_TRUE(contains(request.span(), "GET http://www.example.com/ HTTP/1.1\r\n"_span));
                 reply =
                     "HTTP/1.1 200 OK\r\n"
                     "Content-Length: 0\r\n"

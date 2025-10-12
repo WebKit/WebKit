@@ -34,13 +34,14 @@
 
 #include "MutationObserverRegistration.h"
 #include "MutationRecord.h"
+#include "NodeInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MutationObserverInterestGroup);
 
-inline MutationObserverInterestGroup::MutationObserverInterestGroup(UncheckedKeyHashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions>&& observers, MutationRecordDeliveryOptions oldValueFlag)
+inline MutationObserverInterestGroup::MutationObserverInterestGroup(HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions>&& observers, MutationRecordDeliveryOptions oldValueFlag)
     : m_observers(WTFMove(observers))
     , m_oldValueFlag(oldValueFlag)
 {

@@ -25,6 +25,7 @@
 #include "av1/common/idct.h"
 #include "av1/common/reconinter.h"
 #include "av1/encoder/allintra_vis.h"
+#include "av1/encoder/aq_variance.h"
 #include "av1/encoder/encoder.h"
 #include "av1/encoder/ethread.h"
 #include "av1/encoder/hybrid_fwd_txfm.h"
@@ -33,6 +34,11 @@
 
 #define MB_WIENER_PRED_BLOCK_SIZE BLOCK_128X128
 #define MB_WIENER_PRED_BUF_STRIDE 128
+
+// Maximum delta-q range allowed for Variance Boost after scaling
+#define VAR_BOOST_MAX_DELTAQ_RANGE 80
+// Maximum quantization step boost allowed for Variance Boost
+#define VAR_BOOST_MAX_BOOST 8.0
 
 void av1_alloc_mb_wiener_var_pred_buf(AV1_COMMON *cm, ThreadData *td) {
   const int is_high_bitdepth = is_cur_buf_hbd(&td->mb.e_mbd);
@@ -141,9 +147,9 @@ static int64_t get_sse(AV1_COMP *const cpi, BLOCK_SIZE bsize, int mi_row,
   return (int)distortion;
 }
 
-static double get_max_scale(AV1_COMP *const cpi, BLOCK_SIZE bsize, int mi_row,
-                            int mi_col) {
-  AV1_COMMON *const cm = &cpi->common;
+static double get_max_scale(const AV1_COMP *const cpi, BLOCK_SIZE bsize,
+                            int mi_row, int mi_col) {
+  const AV1_COMMON *const cm = &cpi->common;
   const int mi_wide = mi_size_wide[bsize];
   const int mi_high = mi_size_high[bsize];
   const int mi_step = mi_size_wide[cpi->weber_bsize];
@@ -154,7 +160,7 @@ static double get_max_scale(AV1_COMP *const cpi, BLOCK_SIZE bsize, int mi_row,
     for (int col = mi_col; col < mi_col + mi_wide; col += mi_step) {
       if (row >= cm->mi_params.mi_rows || col >= cm->mi_params.mi_cols)
         continue;
-      WeberStats *weber_stats =
+      const WeberStats *weber_stats =
           &cpi->mb_weber_stats[(row / mi_step) * mb_stride + (col / mi_step)];
       if (weber_stats->max_scale < 1.0) continue;
       if (weber_stats->max_scale < min_max_scale)
@@ -164,9 +170,9 @@ static double get_max_scale(AV1_COMP *const cpi, BLOCK_SIZE bsize, int mi_row,
   return min_max_scale;
 }
 
-static int get_window_wiener_var(AV1_COMP *const cpi, BLOCK_SIZE bsize,
+static int get_window_wiener_var(const AV1_COMP *const cpi, BLOCK_SIZE bsize,
                                  int mi_row, int mi_col) {
-  AV1_COMMON *const cm = &cpi->common;
+  const AV1_COMMON *const cm = &cpi->common;
   const int mi_wide = mi_size_wide[bsize];
   const int mi_high = mi_size_high[bsize];
 
@@ -183,7 +189,7 @@ static int get_window_wiener_var(AV1_COMP *const cpi, BLOCK_SIZE bsize,
       if (row >= cm->mi_params.mi_rows || col >= cm->mi_params.mi_cols)
         continue;
 
-      WeberStats *weber_stats =
+      const WeberStats *weber_stats =
           &cpi->mb_weber_stats[(row / mi_step) * mb_stride + (col / mi_step)];
 
       base_num += ((double)weber_stats->distortion) *
@@ -207,9 +213,9 @@ static int get_window_wiener_var(AV1_COMP *const cpi, BLOCK_SIZE bsize,
   return (int)sb_wiener_var;
 }
 
-static int get_var_perceptual_ai(AV1_COMP *const cpi, BLOCK_SIZE bsize,
+static int get_var_perceptual_ai(const AV1_COMP *const cpi, BLOCK_SIZE bsize,
                                  int mi_row, int mi_col) {
-  AV1_COMMON *const cm = &cpi->common;
+  const AV1_COMMON *const cm = &cpi->common;
   const int mi_wide = mi_size_wide[bsize];
   const int mi_high = mi_size_high[bsize];
 
@@ -679,8 +685,8 @@ void av1_set_mb_wiener_variance(AV1_COMP *cpi) {
   av1_dealloc_mb_wiener_var_pred_buf(&cpi->td);
 }
 
-static int get_rate_guided_quantizer(AV1_COMP *const cpi, BLOCK_SIZE bsize,
-                                     int mi_row, int mi_col) {
+static int get_rate_guided_quantizer(const AV1_COMP *const cpi,
+                                     BLOCK_SIZE bsize, int mi_row, int mi_col) {
   // Calculation uses 8x8.
   const int mb_step = mi_size_wide[cpi->weber_bsize];
   // Accumulate to 16x16
@@ -718,7 +724,7 @@ static int get_rate_guided_quantizer(AV1_COMP *const cpi, BLOCK_SIZE bsize,
   double min_max_scale = AOMMAX(1.0, get_max_scale(cpi, bsize, mi_row, mi_col));
   scale = 1.0 / AOMMIN(1.0 / scale, min_max_scale);
 
-  AV1_COMMON *const cm = &cpi->common;
+  const AV1_COMMON *const cm = &cpi->common;
   const int base_qindex = cm->quant_params.base_qindex;
   int offset =
       av1_get_deltaq_offset(cm->seq_params->bit_depth, base_qindex, scale);
@@ -734,13 +740,13 @@ static int get_rate_guided_quantizer(AV1_COMP *const cpi, BLOCK_SIZE bsize,
   return qindex;
 }
 
-int av1_get_sbq_perceptual_ai(AV1_COMP *const cpi, BLOCK_SIZE bsize, int mi_row,
-                              int mi_col) {
+int av1_get_sbq_perceptual_ai(const AV1_COMP *const cpi, BLOCK_SIZE bsize,
+                              int mi_row, int mi_col) {
   if (cpi->oxcf.enable_rate_guide_deltaq) {
     return get_rate_guided_quantizer(cpi, bsize, mi_row, mi_col);
   }
 
-  AV1_COMMON *const cm = &cpi->common;
+  const AV1_COMMON *const cm = &cpi->common;
   const int base_qindex = cm->quant_params.base_qindex;
   int sb_wiener_var = get_var_perceptual_ai(cpi, bsize, mi_row, mi_col);
   int offset = 0;
@@ -1036,10 +1042,11 @@ void av1_set_mb_ur_variance(AV1_COMP *cpi) {
 }
 #endif
 
-int av1_get_sbq_user_rating_based(AV1_COMP *const cpi, int mi_row, int mi_col) {
+int av1_get_sbq_user_rating_based(const AV1_COMP *const cpi, int mi_row,
+                                  int mi_col) {
   const BLOCK_SIZE bsize = cpi->common.seq_params->sb_size;
   const CommonModeInfoParams *const mi_params = &cpi->common.mi_params;
-  AV1_COMMON *const cm = &cpi->common;
+  const AV1_COMMON *const cm = &cpi->common;
   const int base_qindex = cm->quant_params.base_qindex;
   if (base_qindex == MINQ || base_qindex == MAXQ) return base_qindex;
 
@@ -1055,3 +1062,62 @@ int av1_get_sbq_user_rating_based(AV1_COMP *const cpi, int mi_row, int mi_col) {
 
   return qindex;
 }
+
+#if !CONFIG_REALTIME_ONLY
+
+// Variance Boost: a variance adaptive quantization implementation
+// SVT-AV1 appendix with an overview and a graphical, step-by-step explanation
+// of the implementation
+// https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/Appendix-Variance-Boost.md
+int av1_get_sbq_variance_boost(const AV1_COMP *cpi, const MACROBLOCK *x) {
+  const AV1_COMMON *cm = &cpi->common;
+  const int base_qindex = cm->quant_params.base_qindex;
+  const aom_bit_depth_t bit_depth = cm->seq_params->bit_depth;
+
+  // Variance Boost only supports 64x64 SBs.
+  assert(cm->seq_params->sb_size == BLOCK_64X64);
+
+  unsigned int variance = av1_get_variance_boost_block_variance(cpi, x);
+  // Compute Variance Boost strength from the deltaq_strength value.
+  double strength = (cpi->oxcf.q_cfg.deltaq_strength / 100.0) * 3.0;
+
+  // Clamp strength to a reasonable range.
+  // deltaq_strength can go up to 1000%, which is too strong for the Variance
+  // Boost scaling. Testing revealed strengths as high as 6 (200%) are still
+  // reasonable for some specific scenarios.
+  strength = fclamp(strength, 0.0, 6.0);
+
+  // Variance = 0 areas are either completely flat patches or have very fine
+  // gradients. Boost these blocks as if they have a variance of 1.
+  if (variance == 0) {
+    variance = 1;
+  }
+
+  // Compute a boost based on a fast-growing formula.
+  // High and medium variance SBs essentially get no boost, while lower variance
+  // SBs get increasingly stronger boosts.
+  // Still picture curve, with variance crossover point at 1024.
+  double qstep_ratio = 0.15 * strength * (-log2((double)variance) + 10.0) + 1.0;
+  qstep_ratio = fclamp(qstep_ratio, 1.0, VAR_BOOST_MAX_BOOST);
+
+  double base_q = av1_convert_qindex_to_q(base_qindex, bit_depth);
+  double target_q = base_q / qstep_ratio;
+  int target_qindex = av1_convert_q_to_qindex(target_q, bit_depth);
+
+  // Determine the SB's delta_q boost by computing an (unscaled) delta_q from
+  // the base and target q values, then scale that delta_q according to the
+  // frame's base qindex.
+  // The scaling coefficients were chosen empirically to maximize SSIMULACRA 2
+  // scores, 10th percentile scores, and subjective quality. Boosts become
+  // smaller (for a given variance) the lower the base qindex.
+  int boost = (int)round((base_qindex + 544.0) * (base_qindex - target_qindex) /
+                         1279.0);
+  boost = AOMMIN(VAR_BOOST_MAX_DELTAQ_RANGE, boost);
+
+  // Variance Boost was designed to always operate in the lossy domain, so MINQ
+  // is excluded.
+  int sb_qindex = AOMMAX(base_qindex - boost, MINQ + 1);
+
+  return sb_qindex;
+}
+#endif

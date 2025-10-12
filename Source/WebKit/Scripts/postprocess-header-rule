@@ -28,19 +28,10 @@ if [[ -z "${SCRIPT_HEADER_VISIBILITY}" ]]; then
     exit 0
 fi
 
-function process_definitions () {
-    local DEFINITIONS_FILE=$1
-
-    if [[ ! -f "${DEFINITIONS_FILE}" ]]; then
-        return 1
-    fi
-
-    source "${DEFINITIONS_FILE}"
-}
-
-DEFINITIONS_PATH=usr/local/include/WebKitAdditions/Scripts/postprocess-framework-headers-definitions
-
-process_definitions "${BUILT_PRODUCTS_DIR}/${DEFINITIONS_PATH}" || process_definitions "${SDKROOT}/${DEFINITIONS_PATH}"
+for search_path in "${BUILT_PRODUCTS_DIR}" "${SDKROOT}"; do
+    candidate="${search_path}/usr/local/include/WebKitAdditions/Scripts/postprocess-framework-headers-definitions"
+    test -f "${candidate}" && source "${candidate}" && break
+done
 
 # Determine what postprocessor steps to run based on build settings and the file being
 # processed, then pipe together all the commands we need and write the output file.

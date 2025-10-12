@@ -31,7 +31,7 @@
 namespace WTF {
 
 struct CPUTime {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CPUTime);
 
     MonotonicTime cpuTime;
     Seconds userTime;

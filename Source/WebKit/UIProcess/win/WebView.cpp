@@ -243,7 +243,7 @@ WebView::WebView(RECT rect, const API::PageConfiguration& configuration, HWND pa
     m_page = processPool.createWebPage(*m_pageClient, WTFMove(pageConfiguration));
 
     auto& configurationFromPage = m_page->configuration();
-    m_page->initializeWebPage(configurationFromPage.openedSite(), configurationFromPage.initialSandboxFlags());
+    m_page->initializeWebPage(configurationFromPage.openedSite(), configurationFromPage.initialSandboxFlags(), configurationFromPage.initialReferrerPolicy());
 
     m_page->setIntrinsicDeviceScaleFactor(deviceScaleFactorForWindow(m_window));
 
@@ -526,18 +526,11 @@ void WebView::paint(HDC hdc, const IntRect& dirtyRect)
             for (auto& rect : unpaintedRects)
                 drawPageBackground(hdc, m_page.get(), rect);
         };
-        switch (m_page->drawingArea()->type()) {
 #if USE(GRAPHICS_LAYER_WC)
-        case DrawingAreaType::WC:
-            painter(static_cast<DrawingAreaProxyWC*>(m_page->drawingArea()));
-            break;
+        painter(static_cast<DrawingAreaProxyWC*>(m_page->drawingArea()));
+#else
+        painter(static_cast<DrawingAreaProxyCoordinatedGraphics*>(m_page->drawingArea()));
 #endif
-        case DrawingAreaType::CoordinatedGraphics:
-            painter(static_cast<DrawingAreaProxyCoordinatedGraphics*>(m_page->drawingArea()));
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-        }
     } else
         drawPageBackground(hdc, m_page.get(), dirtyRect);
 }
@@ -661,12 +654,12 @@ LRESULT WebView::onMenuCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 
     menuItemInfo.cch++;
     Vector<WCHAR> buffer(menuItemInfo.cch);
-    menuItemInfo.dwTypeData = buffer.data();
+    menuItemInfo.dwTypeData = buffer.mutableSpan().data();
     menuItemInfo.fMask |= MIIM_ID;
 
     ::GetMenuItemInfo(hMenu, index, TRUE, &menuItemInfo);
 
-    String title(buffer.data(), menuItemInfo.cch);
+    String title(buffer.span().data(), menuItemInfo.cch);
     ContextMenuAction action = static_cast<ContextMenuAction>(menuItemInfo.wID);
     bool enabled = !(menuItemInfo.fState & MFS_DISABLED);
     bool checked = menuItemInfo.fState & MFS_CHECKED;
@@ -957,7 +950,7 @@ void WebView::setToolTip(const String& toolTip)
         info.uFlags = TTF_IDISHWND;
         info.uId = reinterpret_cast<UINT_PTR>(nativeWindow());
         auto toolTipCharacters = truncatedString(toolTip); // Retain buffer long enough to make the SendMessage call
-        info.lpszText = toolTipCharacters.data();
+        info.lpszText = toolTipCharacters.mutableSpan().data();
         ::SendMessage(m_toolTipWindow, TTM_UPDATETIPTEXT, 0, reinterpret_cast<LPARAM>(&info));
     }
 

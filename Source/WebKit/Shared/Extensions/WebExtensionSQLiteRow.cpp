@@ -32,6 +32,7 @@
 #include "WebExtensionSQLiteStatement.h"
 #include <sqlite3.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <WebCore/SQLiteExtras.h>
 
 namespace WebKit {
 
@@ -51,8 +52,7 @@ String WebExtensionSQLiteRow::getString(int index)
     if (isNullAtIndex(index))
         return emptyString();
 
-    sqlite3_stmt* handle = m_handle;
-    return String::fromUTF8(reinterpret_cast<const char*>(sqlite3_column_text(handle, index)));
+    return WebCore::sqliteColumnText(m_handle, index);
 }
 
 int WebExtensionSQLiteRow::getInt(int index)
@@ -84,15 +84,11 @@ RefPtr<API::Data> WebExtensionSQLiteRow::getData(int index)
     if (isNullAtIndex(index))
         return nullptr;
 
-    auto* blob = static_cast<const uint8_t*>(sqlite3_column_blob(m_handle, index));
-    if (!blob)
+    auto blob = WebCore::sqliteColumnBlob(m_handle, index);
+    if (blob.empty())
         return nullptr;
 
-    int blobSize = sqlite3_column_bytes(m_handle, index);
-    if (blobSize <= 0)
-        return nullptr;
-
-    return API::Data::create(unsafeMakeSpan(blob, blobSize));
+    return API::Data::create(blob);
 }
 
 bool WebExtensionSQLiteRow::isNullAtIndex(int index)

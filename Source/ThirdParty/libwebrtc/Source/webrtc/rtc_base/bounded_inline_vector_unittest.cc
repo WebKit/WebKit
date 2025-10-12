@@ -12,9 +12,9 @@
 
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <utility>
 
-#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {

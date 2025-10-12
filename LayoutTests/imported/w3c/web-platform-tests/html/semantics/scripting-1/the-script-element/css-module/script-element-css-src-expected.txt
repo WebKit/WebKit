@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: 'text/css' is not a valid JavaScript MIME type.
 
 PASS Test that <script> doesn't load when the src is CSS.
 

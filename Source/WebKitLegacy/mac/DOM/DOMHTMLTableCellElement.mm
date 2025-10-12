@@ -211,7 +211,7 @@
 - (void)setScope:(NSString *)newScope
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setScope(newScope);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::scopeAttr, newScope);
 }
 
 @end

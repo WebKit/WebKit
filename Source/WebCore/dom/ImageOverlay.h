@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "IntRect.h"
+#include <WebCore/IntRect.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 

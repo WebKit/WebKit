@@ -24,10 +24,10 @@
 
 #pragma once
 
+#include <WebCore/DOMAudioSession.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include "DOMAudioSession.h"
 
 namespace WebCore {
 

@@ -11,7 +11,10 @@
 #ifndef MODULES_AUDIO_DEVICE_INCLUDE_AUDIO_DEVICE_DEFAULT_H_
 #define MODULES_AUDIO_DEVICE_INCLUDE_AUDIO_DEVICE_DEFAULT_H_
 
+#include <cstdint>
+
 #include "api/audio/audio_device.h"
+#include "api/audio/audio_device_defines.h"
 
 namespace webrtc {
 namespace webrtc_impl {
@@ -124,7 +127,7 @@ class AudioDeviceModuleDefault : public T {
   bool BuiltInAGCIsAvailable() const override { return false; }
   int32_t EnableBuiltInAGC(bool /* enable */) override { return -1; }
   bool BuiltInNSIsAvailable() const override { return false; }
-  int32_t EnableBuiltInNS(bool enable) override { return -1; }
+  int32_t EnableBuiltInNS(bool /* enable */) override { return -1; }
 
   int32_t GetPlayoutUnderrunCount() const override { return -1; }
 

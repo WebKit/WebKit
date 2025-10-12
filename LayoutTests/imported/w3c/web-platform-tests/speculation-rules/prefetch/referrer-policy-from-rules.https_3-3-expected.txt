@@ -1,0 +1,3 @@
+
+FAIL with "no-referrer" referrer policy in rule set overriding "unsafe-url" of cross-site referring page assert_equals: must send no referrer expected (undefined) undefined but got (string) "https://web-platform.test:9443/speculation-rules/prefetch/resources/executor.sub.html?uuid=53bc575f-af0b-402c-bf23-ff308a563d2a"
+

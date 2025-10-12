@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include "Heap.h"
-#include "JSCJSValue.h"
+#include <JavaScriptCore/Heap.h>
+#include <JavaScriptCore/JSCJSValue.h>
 
 namespace JSC {
 

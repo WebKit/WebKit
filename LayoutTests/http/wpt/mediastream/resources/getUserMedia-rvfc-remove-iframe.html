@@ -10,6 +10,7 @@ async function start()
 
     video.requestVideoFrameCallback(() => { });
     video.requestVideoFrameCallback(() => {
+        localStream.getTracks().forEach(t => t.stop());
         self.parent.window.removeFrame();
     });
     video.requestVideoFrameCallback(() => { });

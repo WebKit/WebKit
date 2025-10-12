@@ -1,7 +1,8 @@
 {
     "timeout": 1200,
     "count": 5,
-    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/JetStream/@r190897",
+    "local_git_archive": "PerformanceTests/JetStream@3e2f1f4881d91cbf488ad87a5bfa9e7f844de06f",
+    "github_source": "https://github.com/WebKit/WebKit/tree/3e2f1f4881d91cbf488ad87a5bfa9e7f844de06f/PerformanceTests/JetStream",
     "webserver_benchmark_patch": "data/patches/webserver/JetStream.patch",
     "webdriver_benchmark_patch": "data/patches/webdriver/JetStream.patch",
     "create_script": ["ruby", "create.rb"],

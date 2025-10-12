@@ -76,7 +76,7 @@ async function parseSVG(path) {
 
     let imgs = [];
     if (!path.includes("#")) {
-        let variants = dom.querySelectorAll(":root > :matches(svg, g)[id]");
+        let variants = dom.querySelectorAll(":root > :is(svg, g)[id]");
         if (variants.length) {
             for (let variant of variants) {
                 let target = variant.getAttribute("id");

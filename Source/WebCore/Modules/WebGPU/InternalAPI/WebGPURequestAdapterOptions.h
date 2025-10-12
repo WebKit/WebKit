@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUPowerPreference.h"
+#include <WebCore/WebGPUPowerPreference.h>
 #include <optional>
 
 namespace WebCore::WebGPU {

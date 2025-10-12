@@ -10,13 +10,12 @@
 
 #include "modules/audio_coding/neteq/delay_manager.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #include <algorithm>
+#include <cstdlib>
 #include <memory>
 
 #include "api/field_trials_view.h"
+#include "api/neteq/neteq_controller.h"
 #include "api/neteq/tick_timer.h"
 #include "modules/audio_coding/neteq/reorder_optimizer.h"
 #include "rtc_base/experiments/struct_parameters_parser.h"
@@ -74,9 +73,9 @@ DelayManager::DelayManager(const Config& config, const TickTimer* tick_timer)
   Reset();
 }
 
-DelayManager::~DelayManager() {}
-
-void DelayManager::Update(int arrival_delay_ms, bool reordered) {
+void DelayManager::Update(int arrival_delay_ms,
+                          bool reordered,
+                          NetEqController::PacketArrivedInfo info) {
   if (!reorder_optimizer_ || !reordered) {
     underrun_optimizer_.Update(arrival_delay_ms);
   }
@@ -100,6 +99,5 @@ void DelayManager::Reset() {
 int DelayManager::TargetDelayMs() const {
   return target_level_ms_;
 }
-
 
 }  // namespace webrtc

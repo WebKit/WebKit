@@ -9,16 +9,14 @@
  */
 #include "net/dcsctp/packet/error_cause/unresolvable_address_cause.h"
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <optional>
-#include <type_traits>
+#include <string>
 #include <vector>
 
 #include "api/array_view.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
-#include "net/dcsctp/packet/tlv_trait.h"
 
 namespace dcsctp {
 
@@ -33,7 +31,7 @@ namespace dcsctp {
 constexpr int UnresolvableAddressCause::kType;
 
 std::optional<UnresolvableAddressCause> UnresolvableAddressCause::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;

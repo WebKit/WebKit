@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ReportBody.h"
-#include "ViolationReportType.h"
+#include <WebCore/ReportBody.h>
+#include <WebCore/ViolationReportType.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 

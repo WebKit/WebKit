@@ -48,37 +48,37 @@ WebMediaPlaybackTargetPicker::WebMediaPlaybackTargetPicker(WebView *webView, Web
 
 void WebMediaPlaybackTargetPicker::addPlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier contextId)
 {
-    WebCore::WebMediaSessionManager::shared().addPlaybackTargetPickerClient(*this, contextId);
+    WebCore::WebMediaSessionManager::singleton().addPlaybackTargetPickerClient(*this, contextId);
 }
 
 void WebMediaPlaybackTargetPicker::removePlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier contextId)
 {
-    WebCore::WebMediaSessionManager::shared().removePlaybackTargetPickerClient(*this, contextId);
+    WebCore::WebMediaSessionManager::singleton().removePlaybackTargetPickerClient(*this, contextId);
 }
 
 void WebMediaPlaybackTargetPicker::showPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier contextId, const WebCore::FloatRect& rect, bool hasVideo)
 {
-    WebCore::WebMediaSessionManager::shared().showPlaybackTargetPicker(*this, contextId, WebCore::IntRect(rect), hasVideo, m_page ? m_page->useDarkAppearance() : false);
+    WebCore::WebMediaSessionManager::singleton().showPlaybackTargetPicker(*this, contextId, WebCore::IntRect(rect), hasVideo, m_page ? m_page->useDarkAppearance() : false);
 }
 
 void WebMediaPlaybackTargetPicker::playbackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier contextId, WebCore::MediaProducerMediaStateFlags state)
 {
-    WebCore::WebMediaSessionManager::shared().clientStateDidChange(*this, contextId, state);
+    WebCore::WebMediaSessionManager::singleton().clientStateDidChange(*this, contextId, state);
 }
 
 void WebMediaPlaybackTargetPicker::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
 {
-    WebCore::WebMediaSessionManager::shared().setMockMediaPlaybackTargetPickerEnabled(enabled);
+    WebCore::WebMediaSessionManager::singleton().setMockMediaPlaybackTargetPickerEnabled(enabled);
 }
 
 void WebMediaPlaybackTargetPicker::setMockMediaPlaybackTargetPickerState(const String& name, WebCore::MediaPlaybackTargetContext::MockState state)
 {
-    WebCore::WebMediaSessionManager::shared().setMockMediaPlaybackTargetPickerState(name, state);
+    WebCore::WebMediaSessionManager::singleton().setMockMediaPlaybackTargetPickerState(name, state);
 }
 
 void WebMediaPlaybackTargetPicker::mockMediaPlaybackTargetPickerDismissPopup()
 {
-    WebCore::WebMediaSessionManager::shared().mockMediaPlaybackTargetPickerDismissPopup();
+    WebCore::WebMediaSessionManager::singleton().mockMediaPlaybackTargetPickerDismissPopup();
 }
 
 void WebMediaPlaybackTargetPicker::setPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier contextId, Ref<WebCore::MediaPlaybackTarget>&& target)
@@ -115,7 +115,7 @@ void WebMediaPlaybackTargetPicker::invalidate()
 {
     m_page = nullptr;
     m_webView = nil;
-    WebCore::WebMediaSessionManager::shared().removeAllPlaybackTargetPickerClients(*this);
+    WebCore::WebMediaSessionManager::singleton().removeAllPlaybackTargetPickerClients(*this);
 }
 
 RetainPtr<CocoaView> WebMediaPlaybackTargetPicker::platformView() const

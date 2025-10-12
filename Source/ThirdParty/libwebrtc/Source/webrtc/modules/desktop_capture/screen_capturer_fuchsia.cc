@@ -93,7 +93,7 @@ void ScreenCapturerFuchsia::CaptureFrame() {
     return;
   }
 
-  int64_t capture_start_time_nanos = rtc::TimeNanos();
+  int64_t capture_start_time_nanos = TimeNanos();
 
   zx::event event;
   zx::event dup;
@@ -148,8 +148,8 @@ void ScreenCapturerFuchsia::CaptureFrame() {
                       << release_result.err();
   }
 
-  int capture_time_ms = (rtc::TimeNanos() - capture_start_time_nanos) /
-                        rtc::kNumNanosecsPerMillisec;
+  int capture_time_ms =
+      (TimeNanos() - capture_start_time_nanos) / kNumNanosecsPerMillisec;
   frame->set_capture_time_ms(capture_time_ms);
   callback_->OnCaptureResult(Result::SUCCESS, std::move(frame));
 }
@@ -175,20 +175,23 @@ ScreenCapturerFuchsia::GetBufferConstraints() {
                                        fuchsia::sysmem2::CPU_USAGE_WRITE);
   constraints.set_min_buffer_count(kMinBufferCount);
 
-  auto& bmc = *constraints.mutable_buffer_memory_constraints();
-  bmc.set_ram_domain_supported(true);
-  bmc.set_cpu_domain_supported(true);
+  auto& memory_constraints = *constraints.mutable_buffer_memory_constraints();
+  memory_constraints.set_ram_domain_supported(true);
+  memory_constraints.set_cpu_domain_supported(true);
 
-  fuchsia::sysmem2::ImageFormatConstraints& ifc =
+  fuchsia::sysmem2::ImageFormatConstraints& image_constraints =
       constraints.mutable_image_format_constraints()->emplace_back();
-  ifc.mutable_color_spaces()->emplace_back(kSRGBColorSpace);
-  ifc.set_pixel_format(kBGRA32PixelFormatType);
-  ifc.set_pixel_format_modifier(fuchsia::images2::PixelFormatModifier::LINEAR);
+  image_constraints.mutable_color_spaces()->emplace_back(kSRGBColorSpace);
+  image_constraints.set_pixel_format(kBGRA32PixelFormatType);
+  image_constraints.set_pixel_format_modifier(
+      fuchsia::images2::PixelFormatModifier::LINEAR);
 
-  ifc.set_required_min_size(fuchsia::math::SizeU{width_, height_});
-  ifc.set_required_max_size(fuchsia::math::SizeU{width_, height_});
+  image_constraints.set_required_min_size(
+      fuchsia::math::SizeU{width_, height_});
+  image_constraints.set_required_max_size(
+      fuchsia::math::SizeU{width_, height_});
 
-  ifc.set_bytes_per_row_divisor(kFuchsiaBytesPerPixel);
+  image_constraints.set_bytes_per_row_divisor(kFuchsiaBytesPerPixel);
 
   return constraints;
 }
@@ -218,7 +221,8 @@ void ScreenCapturerFuchsia::SetupBuffers() {
   status = component_context_->svc()->Connect(sysmem_allocator_.NewRequest());
   if (status != ZX_OK) {
     fatal_error_ = true;
-    RTC_LOG(LS_ERROR) << "Failed to connect to fuchsia.sysmem2.Allocator: " << status;
+    RTC_LOG(LS_ERROR) << "Failed to connect to fuchsia.sysmem2.Allocator: "
+                      << status;
     return;
   }
 
@@ -263,7 +267,8 @@ void ScreenCapturerFuchsia::SetupBuffers() {
   if (status != ZX_OK) {
     fatal_error_ = true;
     RTC_LOG(LS_ERROR)
-        << "fuchsia.sysmem2.Allocator.BindSharedCollection() failed: " << status;
+        << "fuchsia.sysmem2.Allocator.BindSharedCollection() failed: "
+        << status;
     return;
   }
 
@@ -298,9 +303,8 @@ void ScreenCapturerFuchsia::SetupBuffers() {
 
   fuchsia::ui::composition::RegisterBufferCollectionArgs buffer_collection_args;
   buffer_collection_args.set_export_token(std::move(export_token));
-  buffer_collection_args.set_buffer_collection_token(
-      fuchsia::sysmem::BufferCollectionTokenHandle(
-          flatland_token.Unbind().TakeChannel()));
+  buffer_collection_args.set_buffer_collection_token2(
+      std::move(flatland_token));
   buffer_collection_args.set_usage(
       fuchsia::ui::composition::RegisterBufferCollectionUsage::SCREENSHOT);
 
@@ -382,7 +386,7 @@ void ScreenCapturerFuchsia::SetupBuffers() {
     const zx::vmo& virt_mem =
         buffer_collection_info_.buffers()[buffer_index].vmo();
     virtual_memory_mapped_addrs_[buffer_index] = nullptr;
-    auto status = zx::vmar::root_self()->map(
+    status = zx::vmar::root_self()->map(
         ZX_VM_PERM_READ, /*vmar_offset*/ 0, virt_mem,
         /*vmo_offset*/ 0, virt_mem_bytes,
         reinterpret_cast<uintptr_t*>(

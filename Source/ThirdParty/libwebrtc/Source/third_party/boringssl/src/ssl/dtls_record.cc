@@ -1,113 +1,16 @@
-/* DTLS implementation written by Nagendra Modadugu
- * (nagendra@cs.stanford.edu) for the OpenSSL project 2005. */
-/* ====================================================================
- * Copyright (c) 1998-2005 The OpenSSL Project.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
- *
- * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission. For written permission, please contact
- *    openssl-core@openssl.org.
- *
- * 5. Products derived from this software may not be called "OpenSSL"
- *    nor may "OpenSSL" appear in their names without prior written
- *    permission of the OpenSSL Project.
- *
- * 6. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit (http://www.openssl.org/)"
- *
- * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
- *
- * This product includes cryptographic software written by Eric Young
- * (eay@cryptsoft.com).  This product includes software written by Tim
- * Hudson (tjh@cryptsoft.com).
- *
- */
-/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
- * All rights reserved.
- *
- * This package is an SSL implementation written
- * by Eric Young (eay@cryptsoft.com).
- * The implementation was written so as to conform with Netscapes SSL.
- *
- * This library is free for commercial and non-commercial use as long as
- * the following conditions are aheared to.  The following conditions
- * apply to all code found in this distribution, be it the RC4, RSA,
- * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
- * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- *
- * Copyright remains Eric Young's, and as such any Copyright notices in
- * the code are not to be removed.
- * If this package is used in a product, Eric Young should be given attribution
- * as the author of the parts of the library used.
- * This can be in the form of a textual message at program startup or
- * in documentation (online or textual) provided with the package.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *    "This product includes cryptographic software written by
- *     Eric Young (eay@cryptsoft.com)"
- *    The word 'cryptographic' can be left out if the rouines from the library
- *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from
- *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- *
- * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * The licence and distribution terms for any publically available version or
- * derivative of this code cannot be changed.  i.e. this code cannot simply be
- * copied and put under another distribution licence
- * [including the GNU Public Licence.] */
+// Copyright 2005-2016 The OpenSSL Project Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <openssl/ssl.h>
 
@@ -117,8 +20,8 @@
 #include <openssl/bytestring.h>
 #include <openssl/err.h>
 
-#include "internal.h"
 #include "../crypto/internal.h"
+#include "internal.h"
 
 
 BSSL_NAMESPACE_BEGIN
@@ -216,8 +119,35 @@ uint64_t reconstruct_seqnum(uint16_t wire_seq, uint64_t seq_mask,
   return seqnum;
 }
 
+DTLSReadEpoch *dtls_get_read_epoch(const SSL *ssl, uint16_t epoch) {
+  if (epoch == ssl->d1->read_epoch.epoch) {
+    return &ssl->d1->read_epoch;
+  }
+  if (ssl->d1->next_read_epoch != nullptr &&
+      epoch == ssl->d1->next_read_epoch->epoch) {
+    return ssl->d1->next_read_epoch.get();
+  }
+  if (ssl->d1->prev_read_epoch != nullptr &&
+      epoch == ssl->d1->prev_read_epoch->epoch.epoch) {
+    return &ssl->d1->prev_read_epoch->epoch;
+  }
+  return nullptr;
+}
+
+DTLSWriteEpoch *dtls_get_write_epoch(const SSL *ssl, uint16_t epoch) {
+  if (ssl->d1->write_epoch.epoch() == epoch) {
+    return &ssl->d1->write_epoch;
+  }
+  for (const auto &e : ssl->d1->extra_write_epochs) {
+    if (e->epoch() == epoch) {
+      return e.get();
+    }
+  }
+  return nullptr;
+}
+
 static Span<uint8_t> cbs_to_writable_bytes(CBS cbs) {
-  return MakeSpan(const_cast<uint8_t *>(CBS_data(&cbs)), CBS_len(&cbs));
+  return Span(const_cast<uint8_t *>(CBS_data(&cbs)), CBS_len(&cbs));
 }
 
 struct ParsedDTLSRecord {
@@ -243,9 +173,11 @@ static bool parse_dtls13_record(SSL *ssl, CBS *in, ParsedDTLSRecord *out) {
     return false;
   }
 
-  // TODO(crbug.com/42290594): Add a runner test that performs many
-  // key updates to verify epoch reconstruction works for epochs larger than 3.
-  uint16_t epoch = reconstruct_epoch(out->type, ssl->d1->read_epoch.epoch);
+  uint16_t max_epoch = ssl->d1->read_epoch.epoch;
+  if (ssl->d1->next_read_epoch != nullptr) {
+    max_epoch = std::max(max_epoch, ssl->d1->next_read_epoch->epoch);
+  }
+  uint16_t epoch = reconstruct_epoch(out->type, max_epoch);
   size_t seq_len = (out->type & 0x08) ? 2 : 1;
   CBS seq_bytes;
   if (!CBS_get_bytes(in, &seq_bytes, seq_len)) {
@@ -263,15 +195,16 @@ static bool parse_dtls13_record(SSL *ssl, CBS *in, ParsedDTLSRecord *out) {
     BSSL_CHECK(CBS_get_bytes(in, &out->body, CBS_len(in)));
   }
 
+  // Drop the previous read epoch if expired.
+  if (ssl->d1->prev_read_epoch != nullptr &&
+      ssl_ctx_get_current_time(ssl->ctx.get()).tv_sec >
+          ssl->d1->prev_read_epoch->expire) {
+    ssl->d1->prev_read_epoch = nullptr;
+  }
+
   // Look up the corresponding epoch. This header form only matches encrypted
   // DTLS 1.3 epochs.
-  DTLSReadEpoch *read_epoch = nullptr;
-  if (epoch == ssl->d1->read_epoch.epoch) {
-    read_epoch = &ssl->d1->read_epoch;
-  } else if (ssl->d1->next_read_epoch != nullptr &&
-             epoch == ssl->d1->next_read_epoch->epoch) {
-    read_epoch = ssl->d1->next_read_epoch.get();
-  }
+  DTLSReadEpoch *read_epoch = dtls_get_read_epoch(ssl, epoch);
   if (read_epoch != nullptr && use_dtls13_record_header(ssl, epoch)) {
     out->read_epoch = read_epoch;
 
@@ -432,21 +365,31 @@ enum ssl_open_record_t dtls_open_record(SSL *ssl, uint8_t *out_type,
 
   record.read_epoch->bitmap.Record(record.number.sequence());
 
-  // Once we receive a record from the next epoch, it becomes the current epoch.
+  // Once we receive a record from the next epoch in DTLS 1.3, it becomes the
+  // current epoch. Also save the previous epoch. This allows us to handle
+  // packet reordering on KeyUpdate, as well as ACK retransmissions of the
+  // Finished flight.
   if (record.read_epoch == ssl->d1->next_read_epoch.get()) {
+    assert(ssl_protocol_version(ssl) >= TLS1_3_VERSION);
+    auto prev = MakeUnique<DTLSPrevReadEpoch>();
+    if (prev == nullptr) {
+      *out_alert = SSL_AD_INTERNAL_ERROR;
+      return ssl_open_record_error;
+    }
+
+    // Release the epoch after a timeout.
+    prev->expire = ssl_ctx_get_current_time(ssl->ctx.get()).tv_sec;
+    if (prev->expire >= UINT64_MAX - DTLS_PREV_READ_EPOCH_EXPIRE_SECONDS) {
+      prev->expire = UINT64_MAX;  // Saturate on overflow.
+    } else {
+      prev->expire += DTLS_PREV_READ_EPOCH_EXPIRE_SECONDS;
+    }
+
+    prev->epoch = std::move(ssl->d1->read_epoch);
+    ssl->d1->prev_read_epoch = std::move(prev);
     ssl->d1->read_epoch = std::move(*ssl->d1->next_read_epoch);
     ssl->d1->next_read_epoch = nullptr;
   }
-
-  // We do not retain previous epochs, so it is guaranteed records come in at
-  // the "current" epoch. (But the current epoch may be one behind the
-  // handshake.)
-  //
-  // TODO(crbug.com/374890768): In DTLS 1.3, where rekeys may occur
-  // mid-connection, retaining previous epochs would make us more robust to
-  // packet reordering. If we do this, we'll need to take care to not
-  // accidentally accept data at the wrong epoch.
-  assert(record.number.epoch() == ssl->d1->read_epoch.epoch);
 
   // TODO(davidben): Limit the number of empty records as in TLS? This is only
   // useful if we also limit discarded packets.
@@ -481,18 +424,6 @@ enum ssl_open_record_t dtls_open_record(SSL *ssl, uint8_t *out_type,
   return ssl_open_record_success;
 }
 
-static DTLSWriteEpoch *get_write_epoch(const SSL *ssl, uint16_t epoch) {
-  if (ssl->d1->write_epoch.epoch() == epoch) {
-    return &ssl->d1->write_epoch;
-  }
-  for (const auto &e : ssl->d1->extra_write_epochs) {
-    if (e->epoch() == epoch) {
-      return e.get();
-    }
-  }
-  return nullptr;
-}
-
 size_t dtls_record_header_write_len(const SSL *ssl, uint16_t epoch) {
   if (!use_dtls13_record_header(ssl, epoch)) {
     return DTLS_PLAINTEXT_RECORD_HEADER_LENGTH;
@@ -505,9 +436,8 @@ size_t dtls_record_header_write_len(const SSL *ssl, uint16_t epoch) {
   return DTLS1_3_RECORD_HEADER_WRITE_LENGTH;
 }
 
-size_t dtls_max_seal_overhead(const SSL *ssl,
-                              uint16_t epoch) {
-  DTLSWriteEpoch *write_epoch = get_write_epoch(ssl, epoch);
+size_t dtls_max_seal_overhead(const SSL *ssl, uint16_t epoch) {
+  DTLSWriteEpoch *write_epoch = dtls_get_write_epoch(ssl, epoch);
   if (write_epoch == nullptr) {
     return 0;
   }
@@ -521,7 +451,7 @@ size_t dtls_max_seal_overhead(const SSL *ssl,
 }
 
 size_t dtls_seal_prefix_len(const SSL *ssl, uint16_t epoch) {
-  DTLSWriteEpoch *write_epoch = get_write_epoch(ssl, epoch);
+  DTLSWriteEpoch *write_epoch = dtls_get_write_epoch(ssl, epoch);
   if (write_epoch == nullptr) {
     return 0;
   }
@@ -530,7 +460,7 @@ size_t dtls_seal_prefix_len(const SSL *ssl, uint16_t epoch) {
 }
 
 size_t dtls_seal_max_input_len(const SSL *ssl, uint16_t epoch, size_t max_out) {
-  DTLSWriteEpoch *write_epoch = get_write_epoch(ssl, epoch);
+  DTLSWriteEpoch *write_epoch = dtls_get_write_epoch(ssl, epoch);
   if (write_epoch == nullptr) {
     return 0;
   }
@@ -558,7 +488,7 @@ bool dtls_seal_record(SSL *ssl, DTLSRecordNumber *out_number, uint8_t *out,
   }
 
   // Determine the parameters for the current epoch.
-  DTLSWriteEpoch *write_epoch = get_write_epoch(ssl, epoch);
+  DTLSWriteEpoch *write_epoch = dtls_get_write_epoch(ssl, epoch);
   if (write_epoch == nullptr) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return false;
@@ -621,8 +551,7 @@ bool dtls_seal_record(SSL *ssl, DTLSRecordNumber *out_number, uint8_t *out,
     CRYPTO_store_u64_be(out + 3, record_number.combined());
     CRYPTO_store_u16_be(out + 11, ciphertext_len);
   }
-  Span<const uint8_t> header = MakeConstSpan(out, record_header_len);
-
+  Span<const uint8_t> header(out, record_header_len);
 
   if (!write_epoch->aead->SealScatter(
           out + record_header_len, out + prefix, out + prefix + in_len, type,
@@ -637,8 +566,7 @@ bool dtls_seal_record(SSL *ssl, DTLSRecordNumber *out_number, uint8_t *out,
     // generate the mask used for encryption. For simplicity, pass in the whole
     // ciphertext as the sample - GenerateRecordNumberMask will read only what
     // it needs (and error if |sample| is too short).
-    Span<const uint8_t> sample =
-        MakeConstSpan(out + record_header_len, ciphertext_len);
+    Span<const uint8_t> sample(out + record_header_len, ciphertext_len);
     uint8_t mask[2];
     if (!write_epoch->rn_encrypter->GenerateMask(mask, sample)) {
       return false;

@@ -42,8 +42,8 @@ typedef (HTMLImageElement
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasfillstrokestyles
 interface mixin CanvasFillStrokeStyles {
     // colors and styles (see also the CanvasPathDrawingStyles and CanvasTextDrawingStyles interfaces)
-    attribute (DOMString or CanvasGradient or CanvasPattern) strokeStyle; // (default black)
-    attribute (DOMString or CanvasGradient or CanvasPattern) fillStyle; // (default black)
+    [OptimizedUnionSetterUsingOverloads] attribute (DOMString or CanvasGradient or CanvasPattern) strokeStyle; // (default black)
+    [OptimizedUnionSetterUsingOverloads] attribute (DOMString or CanvasGradient or CanvasPattern) fillStyle; // (default black)
 
     CanvasGradient createLinearGradient(double x0, double y0, double x1, double y1);
     CanvasGradient createRadialGradient(double x0, double y0, double r0, double x1, double y1, double r1);

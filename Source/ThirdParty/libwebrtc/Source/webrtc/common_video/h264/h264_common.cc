@@ -10,14 +10,19 @@
 
 #include "common_video/h264/h264_common.h"
 
+#include <cstddef>
 #include <cstdint>
+#include <vector>
+
+#include "api/array_view.h"
+#include "rtc_base/buffer.h"
 
 namespace webrtc {
 namespace H264 {
 
 const uint8_t kNaluTypeMask = 0x1F;
 
-std::vector<NaluIndex> FindNaluIndices(rtc::ArrayView<const uint8_t> buffer) {
+std::vector<NaluIndex> FindNaluIndices(ArrayView<const uint8_t> buffer) {
   // This is sorta like Boyer-Moore, but with only the first optimization step:
   // given a 3-byte sequence we're looking at, if the 3rd byte isn't 1 or 0,
   // skip ahead to the next 3-byte sequence. 0s and 1s are relatively rare, so
@@ -65,7 +70,7 @@ NaluType ParseNaluType(uint8_t data) {
   return static_cast<NaluType>(data & kNaluTypeMask);
 }
 
-std::vector<uint8_t> ParseRbsp(rtc::ArrayView<const uint8_t> data) {
+std::vector<uint8_t> ParseRbsp(ArrayView<const uint8_t> data) {
   std::vector<uint8_t> out;
   out.reserve(data.size());
 
@@ -88,7 +93,7 @@ std::vector<uint8_t> ParseRbsp(rtc::ArrayView<const uint8_t> data) {
   return out;
 }
 
-void WriteRbsp(rtc::ArrayView<const uint8_t> bytes, rtc::Buffer* destination) {
+void WriteRbsp(ArrayView<const uint8_t> bytes, Buffer* destination) {
   static const uint8_t kZerosInStartSequence = 2;
   static const uint8_t kEmulationByte = 0x03u;
   size_t num_consecutive_zeros = 0;

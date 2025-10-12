@@ -50,8 +50,8 @@ private:
     void muteConsole() final { }
     void unmuteConsole() final { }
 
-    std::unique_ptr<RuntimeFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<RuntimeBackendDispatcher> m_backendDispatcher;
+    const UniqueRef<RuntimeFrontendDispatcher> m_frontendDispatcher;
+    const Ref<RuntimeBackendDispatcher> m_backendDispatcher;
     JSC::JSGlobalObject& m_globalObject;
 };
 

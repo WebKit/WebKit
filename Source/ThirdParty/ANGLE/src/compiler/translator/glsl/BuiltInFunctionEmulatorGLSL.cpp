@@ -23,52 +23,6 @@ void InitBuiltInAbsFunctionEmulatorForGLSLWorkarounds(BuiltInFunctionEmulator *e
     }
 }
 
-void InitBuiltInIsnanFunctionEmulatorForGLSLWorkarounds(BuiltInFunctionEmulator *emu,
-                                                        int targetGLSLVersion)
-{
-    // isnan() is supported since GLSL 1.3.
-    if (targetGLSLVersion < GLSL_VERSION_130)
-        return;
-
-    // !(x > 0.0 || x < 0.0 || x == 0.0) will be optimized and always equal to false.
-    emu->addEmulatedFunction(
-        BuiltInId::isnan_Float1,
-        "bool isnan_emu(float x) { return (x > 0.0 || x < 0.0) ? false : x != 0.0; }");
-    emu->addEmulatedFunction(
-        BuiltInId::isnan_Float2,
-        "bvec2 isnan_emu(vec2 x)\n"
-        "{\n"
-        "    bvec2 isnan;\n"
-        "    for (int i = 0; i < 2; i++)\n"
-        "    {\n"
-        "        isnan[i] = (x[i] > 0.0 || x[i] < 0.0) ? false : x[i] != 0.0;\n"
-        "    }\n"
-        "    return isnan;\n"
-        "}\n");
-    emu->addEmulatedFunction(
-        BuiltInId::isnan_Float3,
-        "bvec3 isnan_emu(vec3 x)\n"
-        "{\n"
-        "    bvec3 isnan;\n"
-        "    for (int i = 0; i < 3; i++)\n"
-        "    {\n"
-        "        isnan[i] = (x[i] > 0.0 || x[i] < 0.0) ? false : x[i] != 0.0;\n"
-        "    }\n"
-        "    return isnan;\n"
-        "}\n");
-    emu->addEmulatedFunction(
-        BuiltInId::isnan_Float4,
-        "bvec4 isnan_emu(vec4 x)\n"
-        "{\n"
-        "    bvec4 isnan;\n"
-        "    for (int i = 0; i < 4; i++)\n"
-        "    {\n"
-        "        isnan[i] = (x[i] > 0.0 || x[i] < 0.0) ? false : x[i] != 0.0;\n"
-        "    }\n"
-        "    return isnan;\n"
-        "}\n");
-}
-
 void InitBuiltInAtanFunctionEmulatorForGLSLWorkarounds(BuiltInFunctionEmulator *emu)
 {
     emu->addEmulatedFunction(BuiltInId::atan_Float1_Float1,

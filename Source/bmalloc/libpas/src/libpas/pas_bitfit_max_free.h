@@ -36,6 +36,8 @@ typedef uint8_t pas_bitfit_max_free;
 #define PAS_BITFIT_MAX_FREE_UNPROCESSED ((pas_bitfit_max_free)254)
 #define PAS_BITFIT_MAX_FREE_EMPTY       ((pas_bitfit_max_free)255)
 
+#define PAS_BITFIT_MAX_FREE_MAX_VALID_MEDIUM   ((pas_bitfit_max_free)64)
+
 PAS_END_EXTERN_C;
 
 #endif /* PAS_BITFIT_MAX_FREE_H */

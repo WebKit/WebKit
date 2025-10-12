@@ -37,7 +37,8 @@
 namespace WebKit {
 
 struct WebExtensionContextParameters {
-    WebExtensionContextIdentifier identifier;
+    WebExtensionContextIdentifier unprivilegedIdentifier;
+    Markable<WebExtensionContextIdentifier> privilegedIdentifier;
 
     URL baseURL;
     String uniqueIdentifier;

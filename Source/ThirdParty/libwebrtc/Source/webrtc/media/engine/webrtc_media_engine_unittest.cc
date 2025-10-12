@@ -10,16 +10,17 @@
 
 #include "media/engine/webrtc_media_engine.h"
 
-#include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
+#include "absl/strings/string_view.h"
+#include "api/field_trials.h"
+#include "api/rtp_parameters.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
-#include "test/scoped_key_value_config.h"
 
-using webrtc::RtpExtension;
-
-namespace cricket {
+namespace webrtc {
 namespace {
 
 std::vector<RtpExtension> MakeUniqueExtensions() {
@@ -53,7 +54,7 @@ bool SupportedExtensions2(absl::string_view name) {
   return name != "a" && name != "n";
 }
 
-bool IsSorted(const std::vector<webrtc::RtpExtension>& extensions) {
+bool IsSorted(const std::vector<RtpExtension>& extensions) {
   const std::string* last = nullptr;
   for (const auto& extension : extensions) {
     if (last && *last > extension.uri) {
@@ -128,16 +129,16 @@ TEST(WebRtcMediaEngineTest, ValidateRtpExtensionsChangeIdForUrl) {
 
 TEST(WebRtcMediaEngineTest, FilterRtpExtensionsEmptyList) {
   std::vector<RtpExtension> extensions;
-  webrtc::test::ScopedKeyValueConfig trials;
-  std::vector<webrtc::RtpExtension> filtered =
+  FieldTrials trials = CreateTestFieldTrials();
+  std::vector<RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions1, true, trials);
   EXPECT_EQ(0u, filtered.size());
 }
 
 TEST(WebRtcMediaEngineTest, FilterRtpExtensionsIncludeOnlySupported) {
   std::vector<RtpExtension> extensions = MakeUniqueExtensions();
-  webrtc::test::ScopedKeyValueConfig trials;
-  std::vector<webrtc::RtpExtension> filtered =
+  FieldTrials trials = CreateTestFieldTrials();
+  std::vector<RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions1, false, trials);
   EXPECT_EQ(2u, filtered.size());
   EXPECT_EQ("c", filtered[0].uri);
@@ -146,8 +147,8 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensionsIncludeOnlySupported) {
 
 TEST(WebRtcMediaEngineTest, FilterRtpExtensionsSortedByName1) {
   std::vector<RtpExtension> extensions = MakeUniqueExtensions();
-  webrtc::test::ScopedKeyValueConfig trials;
-  std::vector<webrtc::RtpExtension> filtered =
+  FieldTrials trials = CreateTestFieldTrials();
+  std::vector<RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, false, trials);
   EXPECT_EQ(12u, filtered.size());
   EXPECT_TRUE(IsSorted(filtered));
@@ -155,8 +156,8 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensionsSortedByName1) {
 
 TEST(WebRtcMediaEngineTest, FilterRtpExtensionsSortedByName2) {
   std::vector<RtpExtension> extensions = MakeUniqueExtensions();
-  webrtc::test::ScopedKeyValueConfig trials;
-  std::vector<webrtc::RtpExtension> filtered =
+  FieldTrials trials = CreateTestFieldTrials();
+  std::vector<RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true, trials);
   EXPECT_EQ(12u, filtered.size());
   EXPECT_TRUE(IsSorted(filtered));
@@ -164,8 +165,8 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensionsSortedByName2) {
 
 TEST(WebRtcMediaEngineTest, FilterRtpExtensionsDontRemoveRedundant) {
   std::vector<RtpExtension> extensions = MakeRedundantExtensions();
-  webrtc::test::ScopedKeyValueConfig trials;
-  std::vector<webrtc::RtpExtension> filtered =
+  FieldTrials trials = CreateTestFieldTrials();
+  std::vector<RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, false, trials);
   EXPECT_EQ(12u, filtered.size());
   EXPECT_TRUE(IsSorted(filtered));
@@ -174,8 +175,8 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensionsDontRemoveRedundant) {
 
 TEST(WebRtcMediaEngineTest, FilterRtpExtensionsRemoveRedundant) {
   std::vector<RtpExtension> extensions = MakeRedundantExtensions();
-  webrtc::test::ScopedKeyValueConfig trials;
-  std::vector<webrtc::RtpExtension> filtered =
+  FieldTrials trials = CreateTestFieldTrials();
+  std::vector<RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true, trials);
   EXPECT_EQ(6u, filtered.size());
   EXPECT_TRUE(IsSorted(filtered));
@@ -184,12 +185,12 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensionsRemoveRedundant) {
 
 TEST(WebRtcMediaEngineTest, FilterRtpExtensionsRemoveRedundantEncrypted1) {
   std::vector<RtpExtension> extensions;
-  extensions.push_back(webrtc::RtpExtension("b", 1));
-  extensions.push_back(webrtc::RtpExtension("b", 2, true));
-  extensions.push_back(webrtc::RtpExtension("c", 3));
-  extensions.push_back(webrtc::RtpExtension("b", 4));
-  webrtc::test::ScopedKeyValueConfig trials;
-  std::vector<webrtc::RtpExtension> filtered =
+  extensions.push_back(RtpExtension("b", 1));
+  extensions.push_back(RtpExtension("b", 2, true));
+  extensions.push_back(RtpExtension("c", 3));
+  extensions.push_back(RtpExtension("b", 4));
+  FieldTrials trials = CreateTestFieldTrials();
+  std::vector<RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true, trials);
   EXPECT_EQ(3u, filtered.size());
   EXPECT_TRUE(IsSorted(filtered));
@@ -201,12 +202,12 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensionsRemoveRedundantEncrypted1) {
 
 TEST(WebRtcMediaEngineTest, FilterRtpExtensionsRemoveRedundantEncrypted2) {
   std::vector<RtpExtension> extensions;
-  extensions.push_back(webrtc::RtpExtension("b", 1, true));
-  extensions.push_back(webrtc::RtpExtension("b", 2));
-  extensions.push_back(webrtc::RtpExtension("c", 3));
-  extensions.push_back(webrtc::RtpExtension("b", 4));
-  webrtc::test::ScopedKeyValueConfig trials;
-  std::vector<webrtc::RtpExtension> filtered =
+  extensions.push_back(RtpExtension("b", 1, true));
+  extensions.push_back(RtpExtension("b", 2));
+  extensions.push_back(RtpExtension("c", 3));
+  extensions.push_back(RtpExtension("b", 4));
+  FieldTrials trials = CreateTestFieldTrials();
+  std::vector<RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true, trials);
   EXPECT_EQ(3u, filtered.size());
   EXPECT_TRUE(IsSorted(filtered));
@@ -217,8 +218,8 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensionsRemoveRedundantEncrypted2) {
 }
 
 TEST(WebRtcMediaEngineTest, FilterRtpExtensionsRemoveRedundantBwe1) {
-  webrtc::test::ScopedKeyValueConfig trials(
-      "WebRTC-FilterAbsSendTimeExtension/Enabled/");
+  FieldTrials trials =
+      CreateTestFieldTrials("WebRTC-FilterAbsSendTimeExtension/Enabled/");
   std::vector<RtpExtension> extensions;
   extensions.push_back(
       RtpExtension(RtpExtension::kTransportSequenceNumberUri, 3));
@@ -227,7 +228,7 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensionsRemoveRedundantBwe1) {
   extensions.push_back(
       RtpExtension(RtpExtension::kTransportSequenceNumberUri, 1));
   extensions.push_back(RtpExtension(RtpExtension::kTimestampOffsetUri, 14));
-  std::vector<webrtc::RtpExtension> filtered =
+  std::vector<RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true, trials);
   EXPECT_EQ(1u, filtered.size());
   EXPECT_EQ(RtpExtension::kTransportSequenceNumberUri, filtered[0].uri);
@@ -243,8 +244,8 @@ TEST(WebRtcMediaEngineTest,
   extensions.push_back(
       RtpExtension(RtpExtension::kTransportSequenceNumberUri, 1));
   extensions.push_back(RtpExtension(RtpExtension::kTimestampOffsetUri, 14));
-  webrtc::test::ScopedKeyValueConfig trials;
-  std::vector<webrtc::RtpExtension> filtered =
+  FieldTrials trials = CreateTestFieldTrials();
+  std::vector<RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true, trials);
   EXPECT_EQ(2u, filtered.size());
   EXPECT_EQ(RtpExtension::kTransportSequenceNumberUri, filtered[0].uri);
@@ -252,8 +253,8 @@ TEST(WebRtcMediaEngineTest,
 }
 
 TEST(WebRtcMediaEngineTest, FilterRtpExtensionsRemoveRedundantBweEncrypted1) {
-  webrtc::test::ScopedKeyValueConfig trials(
-      "WebRTC-FilterAbsSendTimeExtension/Enabled/");
+  FieldTrials trials =
+      CreateTestFieldTrials("WebRTC-FilterAbsSendTimeExtension/Enabled/");
   std::vector<RtpExtension> extensions;
   extensions.push_back(
       RtpExtension(RtpExtension::kTransportSequenceNumberUri, 3));
@@ -266,7 +267,7 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensionsRemoveRedundantBweEncrypted1) {
   extensions.push_back(
       RtpExtension(RtpExtension::kTransportSequenceNumberUri, 2, true));
   extensions.push_back(RtpExtension(RtpExtension::kTimestampOffsetUri, 14));
-  std::vector<webrtc::RtpExtension> filtered =
+  std::vector<RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true, trials);
   EXPECT_EQ(2u, filtered.size());
   EXPECT_EQ(RtpExtension::kTransportSequenceNumberUri, filtered[0].uri);
@@ -288,8 +289,8 @@ TEST(WebRtcMediaEngineTest,
   extensions.push_back(
       RtpExtension(RtpExtension::kTransportSequenceNumberUri, 2, true));
   extensions.push_back(RtpExtension(RtpExtension::kTimestampOffsetUri, 14));
-  webrtc::test::ScopedKeyValueConfig trials;
-  std::vector<webrtc::RtpExtension> filtered =
+  FieldTrials trials = CreateTestFieldTrials();
+  std::vector<RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true, trials);
   EXPECT_EQ(3u, filtered.size());
   EXPECT_EQ(RtpExtension::kTransportSequenceNumberUri, filtered[0].uri);
@@ -303,8 +304,8 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensionsRemoveRedundantBwe2) {
   extensions.push_back(RtpExtension(RtpExtension::kTimestampOffsetUri, 1));
   extensions.push_back(RtpExtension(RtpExtension::kAbsSendTimeUri, 14));
   extensions.push_back(RtpExtension(RtpExtension::kTimestampOffsetUri, 7));
-  webrtc::test::ScopedKeyValueConfig trials;
-  std::vector<webrtc::RtpExtension> filtered =
+  FieldTrials trials = CreateTestFieldTrials();
+  std::vector<RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true, trials);
   EXPECT_EQ(1u, filtered.size());
   EXPECT_EQ(RtpExtension::kAbsSendTimeUri, filtered[0].uri);
@@ -314,11 +315,11 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensionsRemoveRedundantBwe3) {
   std::vector<RtpExtension> extensions;
   extensions.push_back(RtpExtension(RtpExtension::kTimestampOffsetUri, 2));
   extensions.push_back(RtpExtension(RtpExtension::kTimestampOffsetUri, 14));
-  webrtc::test::ScopedKeyValueConfig trials;
-  std::vector<webrtc::RtpExtension> filtered =
+  FieldTrials trials = CreateTestFieldTrials();
+  std::vector<RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true, trials);
   EXPECT_EQ(1u, filtered.size());
   EXPECT_EQ(RtpExtension::kTimestampOffsetUri, filtered[0].uri);
 }
 
-}  // namespace cricket
+}  // namespace webrtc

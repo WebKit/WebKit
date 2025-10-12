@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "GradientColorStop.h"
+#include <WebCore/GradientColorStop.h>
 #include <algorithm>
 #include <optional>
 #include <ranges>

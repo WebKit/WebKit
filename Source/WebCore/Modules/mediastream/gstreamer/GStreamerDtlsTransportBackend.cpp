@@ -25,6 +25,7 @@
 #include "GStreamerIceTransportBackend.h"
 #include "GStreamerWebRTCUtils.h"
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {
@@ -33,6 +34,7 @@ GST_DEBUG_CATEGORY(webkit_webrtc_dtls_transport_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_dtls_transport_debug
 
 class GStreamerDtlsTransportBackendObserver final : public ThreadSafeRefCounted<GStreamerDtlsTransportBackendObserver> {
+    WTF_MAKE_NONCOPYABLE(GStreamerDtlsTransportBackendObserver);
 public:
     static Ref<GStreamerDtlsTransportBackendObserver> create(RTCDtlsTransportBackendClient& client, GRefPtr<GstWebRTCDTLSTransport>&& backend) { return adoptRef(*new GStreamerDtlsTransportBackendObserver(client, WTFMove(backend))); }
 
@@ -80,12 +82,10 @@ void GStreamerDtlsTransportBackendObserver::stateChanged()
             GUniqueOutPtr<char> remoteCertificate;
             GUniqueOutPtr<char> certificate;
             g_object_get(m_backend.get(), "remote-certificate", &remoteCertificate.outPtr(), "certificate", &certificate.outPtr(), nullptr);
-
             if (remoteCertificate)
-                certificates.append(JSC::ArrayBuffer::create(unsafeSpan8(remoteCertificate.get())));
-
+                certificates.append(JSC::ArrayBuffer::create(byteCast<uint8_t>(unsafeSpan(remoteCertificate.get()))));
             if (certificate)
-                certificates.append(JSC::ArrayBuffer::create(unsafeSpan8(certificate.get())));
+                certificates.append(JSC::ArrayBuffer::create(byteCast<uint8_t>(unsafeSpan(certificate.get()))));
         }
         m_client->onStateChanged(toRTCDtlsTransportState(state), WTFMove(certificates));
     });

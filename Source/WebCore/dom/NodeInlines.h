@@ -20,18 +20,38 @@
 
 #pragma once
 
-#include "CharacterData.h"
-#include "Document.h"
-#include "Element.h"
-#include "InspectorInstrumentationPublic.h"
-#include "LayoutRect.h"
-#include "Node.h"
-#include "PseudoElement.h"
-#include "RenderBox.h"
-#include "TreeScopeInlines.h"
-#include "WebCoreOpaqueRoot.h"
+#include <WebCore/CharacterData.h>
+#include <WebCore/Document.h>
+#include <WebCore/Element.h>
+#include <WebCore/InspectorInstrumentationPublic.h>
+#include <WebCore/LayoutRect.h>
+#include <WebCore/Node.h>
+#include <WebCore/PseudoElement.h>
+#include <WebCore/RenderBox.h>
+#include <WebCore/ShadowRoot.h>
+#include <WebCore/TreeScopeInlines.h>
+#include <WebCore/WebCoreOpaqueRoot.h>
 
 namespace WebCore {
+
+inline bool Node::isUserAgentShadowRoot() const
+{
+    auto* shadowRoot = dynamicDowncast<ShadowRoot>(*this);
+    return shadowRoot && shadowRoot->mode() == ShadowRootMode::UserAgent;
+}
+
+inline ContainerNode* Node::parentOrShadowHostNode() const
+{
+    ASSERT(isMainThreadOrGCThread());
+    if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(*this))
+        return shadowRoot->host();
+    return parentNode();
+}
+
+inline RefPtr<ContainerNode> Node::protectedParentOrShadowHostNode() const
+{
+    return parentOrShadowHostNode();
+}
 
 inline RefPtr<ScriptExecutionContext> Node::protectedScriptExecutionContext() const
 {
@@ -40,21 +60,12 @@ inline RefPtr<ScriptExecutionContext> Node::protectedScriptExecutionContext() co
 
 inline WebCoreOpaqueRoot Node::opaqueRoot() const
 {
+    if (isConnected()) {
+        Locker locker { TreeScope::treeScopeMutationLock() };
+        return WebCoreOpaqueRoot { &treeScope().documentScope() };
+    }
     // FIXME: Possible race?
-    // https://bugs.webkit.org/show_bug.cgi?id=165713
-    if (isConnected())
-        return WebCoreOpaqueRoot { &document() };
     return traverseToOpaqueRoot();
-}
-
-inline Document& Node::document() const
-{
-    return treeScope().documentScope();
-}
-
-inline Ref<Document> Node::protectedDocument() const
-{
-    return document();
 }
 
 inline Ref<TreeScope> Node::protectedTreeScope() const
@@ -242,6 +253,12 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
 {
     ASSERT(!isShadowRoot());
     return parentNode();
+}
+
+inline void Node::setTreeScope(TreeScope& scope)
+{
+    Locker locker { TreeScope::treeScopeMutationLock() };
+    m_treeScope = &scope;
 }
 
 template<typename NodeClass>

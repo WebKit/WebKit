@@ -84,9 +84,9 @@ private:
     void getSizeForNext();
     void dispatchDidReceiveResponse();
     std::optional<Error> seek();
-    void consumeData(std::span<const uint8_t>);
+    bool consumeData(std::span<const uint8_t>);
     void read();
-    void readData(const WebCore::BlobDataItem&);
+    bool readData(const WebCore::BlobDataItem&);
     void readFile(const WebCore::BlobDataItem&);
     void download();
     bool writeDownload(std::span<const uint8_t>);
@@ -117,7 +117,7 @@ private:
 
     Vector<RefPtr<WebCore::BlobDataFileReference>> m_fileReferences;
     RefPtr<SandboxExtension> m_sandboxExtension;
-    Ref<NetworkProcess> m_networkProcess;
+    const Ref<NetworkProcess> m_networkProcess;
 };
 
 } // namespace WebKit

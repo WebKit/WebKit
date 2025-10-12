@@ -10,7 +10,7 @@
 
 #include "common_video/h265/h265_inline.h"
 
-#include <stdint.h>
+#include <cstdint>
 
 // Table used by WebRtcVideo_CountLeadingZeros32_NotBuiltin. For each uint32_t n
 // that's a sequence of 0 bits followed by a sequence of 1 bits, the entry at

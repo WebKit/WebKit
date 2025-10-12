@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "DecodingOptions.h"
 #include "ImageTypes.h"
 #include "Timer.h"
+#include <wtf/CanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
@@ -36,7 +37,7 @@ namespace WebCore {
 class BitmapImageSource;
 class ImageFrame;
 
-class ImageFrameAnimator {
+class ImageFrameAnimator : public CanMakeWeakPtr<ImageFrameAnimator> {
     WTF_MAKE_TZONE_ALLOCATED(ImageFrameAnimator);
 public:
     explicit ImageFrameAnimator(BitmapImageSource&);

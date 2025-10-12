@@ -31,6 +31,7 @@
 #import "PlatformUtilities.h"
 #import "PlatformWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 namespace TestWebKitAPI {
 
@@ -77,7 +78,7 @@ TEST(WebKit, DeferredViewInWindowStateChange)
 
     __block bool done = false;
     WKPageRef page = webView.page();
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         EXPECT_JS_TRUE(page, "document.hidden");
         done = true;
     });

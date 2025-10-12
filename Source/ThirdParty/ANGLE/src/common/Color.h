@@ -9,6 +9,10 @@
 #ifndef COMMON_COLOR_H_
 #define COMMON_COLOR_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <cstdint>
 #include <cstring>
 

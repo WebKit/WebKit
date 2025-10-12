@@ -7,6 +7,10 @@
 //   Performance tests for ANGLE instanced draw calls.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "ANGLEPerfTest.h"
 
 #include <cmath>

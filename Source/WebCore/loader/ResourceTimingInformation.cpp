@@ -27,8 +27,10 @@
 #include "ResourceTimingInformation.h"
 
 #include "CachedResource.h"
-#include "DocumentInlines.h"
+#include "DocumentSecurityOrigin.h"
+#include "DocumentView.h"
 #include "FrameDestructionObserverInlines.h"
+#include "FrameInlines.h"
 #include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
 #include "LocalDOMWindow.h"
@@ -59,7 +61,7 @@ void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Docu
     if (info.added == Added)
         return;
 
-    RefPtr initiatorDocument = &document;
+    RefPtr initiatorDocument = document;
     if (resource.type() == CachedResource::Type::MainResource && document.frame() && document.frame()->loader().shouldReportResourceTimingToParentFrame()) {
         initiatorDocument = document.parentDocument();
         if (initiatorDocument)
@@ -68,7 +70,7 @@ void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Docu
     if (!initiatorDocument)
         return;
 
-    RefPtr initiatorWindow = initiatorDocument->domWindow();
+    RefPtr initiatorWindow = initiatorDocument->window();
     if (!initiatorWindow)
         return;
 

@@ -414,11 +414,11 @@ static BOOL isManagedSession(id self, SEL _cmd)
 TEST(ContentFiltering, LazilyLoadPlatformFrameworks)
 {
     // Swizzle [NEFilterSource filterRequired] to return YES in the UI process since NetworkExtension will not be loaded otherwise.
-    Method method = class_getClassMethod(getNEFilterSourceClass(), @selector(filterRequired));
+    Method method = class_getClassMethod(getNEFilterSourceClassSingleton(), @selector(filterRequired));
     method_setImplementation(method, reinterpret_cast<IMP>(filterRequired));
 
     // Swizzle [WebFilterEvaluator isManagedSession] to return YES in the UI process since WebContentAnalysis will not be loaded otherwise.
-    method = class_getClassMethod(getWebFilterEvaluatorClass(), @selector(isManagedSession));
+    method = class_getClassMethod(getWebFilterEvaluatorClassSingleton(), @selector(isManagedSession));
     method_setImplementation(method, reinterpret_cast<IMP>(isManagedSession));
 
     @autoreleasepool {

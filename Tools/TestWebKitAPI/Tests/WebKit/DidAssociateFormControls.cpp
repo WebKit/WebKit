@@ -25,13 +25,13 @@
 
 #include "config.h"
 
-#if WK_HAVE_C_SPI
-
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include "Test.h"
 
 namespace TestWebKitAPI {
+
+#if WK_HAVE_C_SPI
 
 static bool didReceiveAllMessages = false;
 static bool receivedMessageForAddingForm = false;
@@ -71,7 +71,7 @@ static void setInjectedBundleClient(WKContextRef context)
     WKContextSetInjectedBundleClient(context, &injectedBundleClient.base);
 }
 
-TEST(WebKit, DidAssociateFormControls)
+TEST(WebKit, DidAssociateFormControlsWithInjectedBundle)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("DidAssociateFormControlsTest"));
     setInjectedBundleClient(context.get());
@@ -81,6 +81,6 @@ TEST(WebKit, DidAssociateFormControls)
     Util::run(&didReceiveAllMessages);
 }
 
-} // namespace TestWebKitAPI
-
 #endif
+
+} // namespace TestWebKitAPI

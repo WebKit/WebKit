@@ -31,6 +31,7 @@
 #include <WebCore/CurlMultipartHandleClient.h>
 #include <WebCore/CurlResponse.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringCommon.h>
 
@@ -57,7 +58,7 @@ static CurlResponse createCurlResponse(std::optional<String> contentType = "mult
 }
 
 class MultipartHandleClient final : public CurlMultipartHandleClient, public CanMakeCheckedPtr<MultipartHandleClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MultipartHandleClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MultipartHandleClient);
 public:
     void setMultipartHandle();
@@ -149,19 +150,19 @@ TEST(CurlMultipartHandleTests, SimpleMessage)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "ABCDEF"_span));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<html></html>"_span));
     EXPECT_TRUE(!client.complete());
 
     handle->didCompleteMessage();
@@ -180,11 +181,11 @@ TEST(CurlMultipartHandleTests, NoHeader)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 0);
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "ABCDEF"_span));
 
     handle->didCompleteMessage();
     EXPECT_TRUE(client.complete());
@@ -202,7 +203,7 @@ TEST(CurlMultipartHandleTests, NoBody)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
@@ -235,19 +236,19 @@ TEST(CurlMultipartHandleTests, TransportPadding)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "ABCDEF"_span));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<html></html>"_span));
     EXPECT_TRUE(!client.complete());
 
     handle->didCompleteMessage();
@@ -267,24 +268,24 @@ TEST(CurlMultipartHandleTests, NoEndOfBoundary)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "ABCDEF"_span));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
     // Retain "Initial CRLF + (boundary - 1)" bytes.
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<h", 2));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<h"_span));
     EXPECT_TRUE(!client.complete());
 
     handle->didCompleteMessage();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<html></html>"_span));
     EXPECT_TRUE(client.complete());
 }
 
@@ -301,7 +302,7 @@ TEST(CurlMultipartHandleTests, NoEndOfBoundaryAfterCompleted)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
 
@@ -310,14 +311,14 @@ TEST(CurlMultipartHandleTests, NoEndOfBoundaryAfterCompleted)
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "ABCDEF"_span));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     EXPECT_TRUE(!client.complete());
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<html></html>"_span));
     EXPECT_TRUE(client.complete());
 }
 
@@ -335,24 +336,24 @@ TEST(CurlMultipartHandleTests, NoCloseDelimiter)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "ABCDEF"_span));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
     // Retain "Initial CRLF + (boundary - 1)" bytes
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<h", 2));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<h"_span));
     EXPECT_TRUE(!client.complete());
 
     handle->didCompleteMessage();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<html></html>"_span));
     EXPECT_TRUE(client.complete());
 }
 
@@ -370,7 +371,7 @@ TEST(CurlMultipartHandleTests, NoCloseDelimiterAfterCompleted)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
 
@@ -379,14 +380,14 @@ TEST(CurlMultipartHandleTests, NoCloseDelimiterAfterCompleted)
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "ABCDEF"_span));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     EXPECT_TRUE(!client.complete());
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<html></html>"_span));
     EXPECT_TRUE(client.complete());
 }
 
@@ -404,19 +405,19 @@ TEST(CurlMultipartHandleTests, CloseDelimiter)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "ABCDEF"_span));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<html></html>"_span));
     EXPECT_TRUE(!client.complete());
 
     handle->didCompleteMessage();
@@ -437,7 +438,7 @@ TEST(CurlMultipartHandleTests, CloseDelimiterAfterCompleted)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
 
@@ -446,14 +447,14 @@ TEST(CurlMultipartHandleTests, CloseDelimiterAfterCompleted)
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "ABCDEF"_span));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     EXPECT_TRUE(!client.complete());
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<html></html>"_span));
     EXPECT_TRUE(client.complete());
 }
 
@@ -472,22 +473,22 @@ TEST(CurlMultipartHandleTests, DivideFirstDelimiter)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 0);
 
-    handle->didReceiveMessage(nextData);
+    handle->didReceiveMessage(byteCast<uint8_t>(nextData));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "ABCDEF"_span));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<html></html>"_span));
     EXPECT_TRUE(!client.complete());
 
     handle->didCompleteMessage();
@@ -509,7 +510,7 @@ TEST(CurlMultipartHandleTests, DivideSecondDelimiter)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
@@ -517,14 +518,14 @@ TEST(CurlMultipartHandleTests, DivideSecondDelimiter)
     handle->completeHeaderProcessing();
     EXPECT_EQ(client.headers().size(), 0);
 
-    handle->didReceiveMessage(nextData);
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
+    handle->didReceiveMessage(byteCast<uint8_t>(nextData));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "ABCDEF"_span));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<html></html>"_span));
     EXPECT_TRUE(!client.complete());
 
     handle->didCompleteMessage();
@@ -546,24 +547,24 @@ TEST(CurlMultipartHandleTests, DivideLastDelimiter)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "ABCDEF"_span));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
     // Retain "Initial CRLF + (boundary - 1)" bytes
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<h", 2));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<h"_span));
     EXPECT_TRUE(!client.complete());
 
-    handle->didReceiveMessage(nextData);
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
+    handle->didReceiveMessage(byteCast<uint8_t>(nextData));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<html></html>"_span));
 
     handle->didCompleteMessage();
     EXPECT_TRUE(client.complete());
@@ -584,24 +585,24 @@ TEST(CurlMultipartHandleTests, DivideCloseDelimiter)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "ABCDEF"_span));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
     // Retain "Initial CRLF + (boundary - 1)" bytes
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<h", 2));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<h"_span));
     EXPECT_TRUE(!client.complete());
 
-    handle->didReceiveMessage(nextData);
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
+    handle->didReceiveMessage(byteCast<uint8_t>(nextData));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<html></html>"_span));
 
     handle->didCompleteMessage();
     EXPECT_TRUE(client.complete());
@@ -623,22 +624,22 @@ TEST(CurlMultipartHandleTests, DivideTransportPadding)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
     EXPECT_EQ(client.headers().size(), 0);
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "ABCDEF"_span));
 
-    handle->didReceiveMessage(nextData);
+    handle->didReceiveMessage(byteCast<uint8_t>(nextData));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<html></html>"_span));
     EXPECT_TRUE(!client.complete());
 
     handle->didCompleteMessage();
@@ -660,22 +661,22 @@ TEST(CurlMultipartHandleTests, DivideHeader)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "ABCDEF"_span));
     EXPECT_EQ(client.headers().size(), 0);
 
-    handle->didReceiveMessage(nextData);
+    handle->didReceiveMessage(byteCast<uint8_t>(nextData));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<html></html>"_span));
     EXPECT_TRUE(!client.complete());
 
     handle->didCompleteMessage();
@@ -699,7 +700,7 @@ TEST(CurlMultipartHandleTests, DivideBody)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
@@ -707,8 +708,8 @@ TEST(CurlMultipartHandleTests, DivideBody)
     handle->completeHeaderProcessing();
     EXPECT_EQ(client.data().size(), 0);
 
-    handle->didReceiveMessage(secondData);
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
+    handle->didReceiveMessage(byteCast<uint8_t>(secondData));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "ABCDEF"_span));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     client.clear();
@@ -716,8 +717,8 @@ TEST(CurlMultipartHandleTests, DivideBody)
     handle->completeHeaderProcessing();
     EXPECT_EQ(client.data().size(), 0);
 
-    handle->didReceiveMessage(lastData);
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
+    handle->didReceiveMessage(byteCast<uint8_t>(lastData));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<html></html>"_span));
     EXPECT_TRUE(!client.complete());
 
     handle->didCompleteMessage();
@@ -740,17 +741,17 @@ TEST(CurlMultipartHandleTests, CompleteWhileHeaderProcessing)
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(data);
+    handle->didReceiveMessage(byteCast<uint8_t>(data));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     EXPECT_EQ(client.data().size(), 0);
     client.clear();
 
-    handle->didReceiveMessage(secondData);
+    handle->didReceiveMessage(byteCast<uint8_t>(secondData));
     EXPECT_EQ(client.headers().size(), 0);
     EXPECT_EQ(client.data().size(), 0);
 
-    handle->didReceiveMessage(lastData);
+    handle->didReceiveMessage(byteCast<uint8_t>(lastData));
     EXPECT_EQ(client.headers().size(), 0);
     EXPECT_EQ(client.data().size(), 0);
 
@@ -760,14 +761,14 @@ TEST(CurlMultipartHandleTests, CompleteWhileHeaderProcessing)
     EXPECT_TRUE(!client.complete());
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "ABCDEF"_span));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     EXPECT_TRUE(!client.complete());
     client.clear();
 
     handle->completeHeaderProcessing();
-    EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
+    EXPECT_TRUE(spanHasPrefix(client.data().span(), "<html></html>"_span));
     EXPECT_TRUE(client.complete());
 }
 

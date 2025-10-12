@@ -38,4 +38,4 @@ using AppleInvertLightnessFunction = FunctionNotation<CSSValueAppleInvertLightne
 } // namespace CSS
 } // namespace WebCore
 
-template<> inline constexpr auto WebCore::TreatAsEmptyLike<WebCore::CSS::AppleInvertLightness> = true;
+DEFINE_EMPTY_LIKE_CONFORMANCE(WebCore::CSS::AppleInvertLightness)

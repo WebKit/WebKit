@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "ExceptionData.h"
-#include "FetchRequestDestination.h"
-#include "FetchRequestMode.h"
-#include "RouterSourceDict.h"
-#include "RouterSourceEnum.h"
-#include "RunningStatus.h"
+#include <WebCore/ExceptionData.h>
+#include <WebCore/FetchRequestDestination.h>
+#include <WebCore/FetchRequestMode.h>
+#include <WebCore/RouterSourceDict.h>
+#include <WebCore/RouterSourceEnum.h>
+#include <WebCore/RunningStatus.h>
 #include <optional>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -56,7 +56,7 @@ struct ServiceWorkerRoutePattern {
 };
 
 struct ServiceWorkerRouteCondition {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ServiceWorkerRouteCondition);
 
     ServiceWorkerRouteCondition isolatedCopy() &&;
     ServiceWorkerRouteCondition copy() const;

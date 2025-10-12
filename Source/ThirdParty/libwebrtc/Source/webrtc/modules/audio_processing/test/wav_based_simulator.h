@@ -27,7 +27,7 @@ class WavBasedSimulator final : public AudioProcessingSimulator {
  public:
   WavBasedSimulator(
       const SimulationSettings& settings,
-      absl::Nonnull<scoped_refptr<AudioProcessing>> audio_processing);
+      absl_nonnull scoped_refptr<AudioProcessing> audio_processing);
 
   WavBasedSimulator() = delete;
   WavBasedSimulator(const WavBasedSimulator&) = delete;

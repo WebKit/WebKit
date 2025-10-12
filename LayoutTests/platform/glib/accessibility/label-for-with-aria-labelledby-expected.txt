@@ -1,0 +1,12 @@
+This tests that the aria-labelledby pointing to a label works when the label has a `for` attribute.
+
+	AXTitle: Hello
+	AXDescription:
+Changing inner HTML of label:
+	AXTitle: World
+	AXDescription:
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ World

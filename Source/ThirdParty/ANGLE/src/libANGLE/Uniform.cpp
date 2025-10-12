@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "libANGLE/Uniform.h"
 #include "common/BinaryStream.h"
 #include "libANGLE/ProgramLinkedResources.h"
@@ -77,6 +81,7 @@ LinkedUniform::LinkedUniform(const UsedUniform &usedUniform)
 
     SetBitField(pod.flagBits.isFragmentInOut, usedUniform.isFragmentInOut);
     SetBitField(pod.flagBits.texelFetchStaticUse, usedUniform.texelFetchStaticUse);
+    SetBitField(pod.flagBits.isFloat16, usedUniform.isFloat16);
     ASSERT(!usedUniform.isArray() || pod.arraySize == usedUniform.getArraySizeProduct());
 }
 

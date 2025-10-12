@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: A VideoFrame was destroyed without having been closed explicitly
 
 PASS VP8 codec GC without calling VideoFrame.close
 

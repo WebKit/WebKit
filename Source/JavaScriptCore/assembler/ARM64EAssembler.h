@@ -29,7 +29,7 @@
 
 #if ENABLE(ASSEMBLER) && CPU(ARM64E)
 
-#include "ARM64Assembler.h"
+#include <JavaScriptCore/ARM64Assembler.h>
 
 namespace JSC {
 

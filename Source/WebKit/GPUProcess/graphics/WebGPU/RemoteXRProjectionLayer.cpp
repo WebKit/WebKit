@@ -38,7 +38,7 @@
 #include <wtf/MachSendRight.h>
 #include <wtf/TZoneMalloc.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, m_streamConnection)
 
 namespace WebKit {
 
@@ -71,23 +71,15 @@ Ref<RemoteGPU> RemoteXRProjectionLayer::protectedGPU() const
     return m_gpu.get();
 }
 
-RefPtr<IPC::Connection> RemoteXRProjectionLayer::connection() const
-{
-    RefPtr connection = protectedGPU()->gpuConnectionToWebProcess();
-    if (!connection)
-        return nullptr;
-    return &connection->connection();
-}
-
 void RemoteXRProjectionLayer::destruct()
 {
     Ref { m_objectHeap.get() }->removeObject(m_identifier);
 }
 
 #if PLATFORM(COCOA)
-void RemoteXRProjectionLayer::startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex)
+void RemoteXRProjectionLayer::startFrame(uint64_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, uint64_t reusableTextureIndex, PlatformXR::RateMapDescription&& rateMapDescription)
 {
-    protectedBacking()->startFrame(frameIndex, WTFMove(colorBuffer), WTFMove(depthBuffer), WTFMove(completionSyncEvent), reusableTextureIndex);
+    protectedBacking()->startFrame(frameIndex, WTFMove(colorBuffer), WTFMove(depthBuffer), WTFMove(completionSyncEvent), reusableTextureIndex, WTFMove(rateMapDescription));
 }
 #endif
 

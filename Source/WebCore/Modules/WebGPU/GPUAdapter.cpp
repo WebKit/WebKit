@@ -42,14 +42,22 @@ String GPUAdapter::name() const
     return m_backing->name();
 }
 
+GPUAdapter::GPUAdapter(Ref<WebGPU::Adapter>&& backing)
+    : m_backing(WTFMove(backing))
+    , m_features(GPUSupportedFeatures::create(WebGPU::SupportedFeatures::clone(m_backing->features())))
+    , m_limits(GPUSupportedLimits::create(WebGPU::SupportedLimits::clone(m_backing->limits())))
+    , m_info(GPUAdapterInfo::create(name()))
+{
+}
+
 Ref<GPUSupportedFeatures> GPUAdapter::features() const
 {
-    return GPUSupportedFeatures::create(WebGPU::SupportedFeatures::clone(m_backing->features()));
+    return m_features;
 }
 
 Ref<GPUSupportedLimits> GPUAdapter::limits() const
 {
-    return GPUSupportedLimits::create(WebGPU::SupportedLimits::clone(m_backing->limits()));
+    return m_limits;
 }
 
 bool GPUAdapter::isFallbackAdapter() const
@@ -86,6 +94,7 @@ static GPUFeatureName convertFeatureNameToEnum(const String& stringValue)
         { "texture-compression-bc"_s, GPUFeatureName::TextureCompressionBc },
         { "texture-compression-bc-sliced-3d"_s, GPUFeatureName::TextureCompressionBcSliced3d },
         { "texture-compression-etc2"_s, GPUFeatureName::TextureCompressionEtc2 },
+        { "texture-formats-tier1"_s, GPUFeatureName::TextureFormatsTier1 },
         { "timestamp-query"_s, GPUFeatureName::TimestampQuery },
     };
     static constexpr SortedArrayMap enumerationMapping { mappings };
@@ -117,12 +126,12 @@ void GPUAdapter::requestDevice(ScriptExecutionContext& scriptExecutionContext, c
         return;
     }
 
-    m_backing->requestDevice(convertToBacking(deviceDescriptor), [deviceDescriptor, promise = WTFMove(promise), scriptExecutionContextRef = Ref { scriptExecutionContext }](RefPtr<WebGPU::Device>&& device) mutable {
+    m_backing->requestDevice(convertToBacking(deviceDescriptor), [protectedThis = Ref { *this }, deviceDescriptor, promise = WTFMove(promise), scriptExecutionContextRef = Ref { scriptExecutionContext }](RefPtr<WebGPU::Device>&& device) mutable {
         if (!device.get())
             promise.reject(Exception(ExceptionCode::OperationError));
         else {
             auto queueLabel = deviceDescriptor->defaultQueue.label;
-            Ref<GPUDevice> gpuDevice = GPUDevice::create(scriptExecutionContextRef.ptr(), device.releaseNonNull(), deviceDescriptor ? WTFMove(queueLabel) : ""_s);
+            Ref<GPUDevice> gpuDevice = GPUDevice::create(scriptExecutionContextRef.ptr(), device.releaseNonNull(), deviceDescriptor ? WTFMove(queueLabel) : ""_s, GPUAdapterInfo::create(protectedThis->name()));
             gpuDevice->suspendIfNeeded();
             promise.resolve(WTFMove(gpuDevice));
         }
@@ -131,7 +140,7 @@ void GPUAdapter::requestDevice(ScriptExecutionContext& scriptExecutionContext, c
 
 Ref<GPUAdapterInfo> GPUAdapter::info()
 {
-    return GPUAdapterInfo::create(name());
+    return m_info;
 }
 
 }

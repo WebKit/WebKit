@@ -27,7 +27,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "DFABytecode.h"
+#include <WebCore/DFABytecode.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

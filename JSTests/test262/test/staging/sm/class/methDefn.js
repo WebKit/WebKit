@@ -2,28 +2,17 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Method Definitions
+info: bugzilla.mozilla.org/show_bug.cgi?id=924672
 esid: pending
 ---*/
-var BUGNUMBER = 924672;
-var summary = 'Method Definitions'
-
-print(BUGNUMBER + ": " + summary);
 
 // Function definitions.
 function syntaxError (script) {
-    try {
+    assert.throws(SyntaxError, function() {
         Function(script);
-    } catch (e) {
-        if (e instanceof SyntaxError) {
-            return;
-        }
-    }
-    throw new Error('Expected syntax error: ' + script);
+    });
 }
 
 
@@ -46,6 +35,8 @@ syntaxError("b = {a() => 0}");
 syntaxError("b = {a() void 0}");
 syntaxError("b = {a() 1}");
 syntaxError("b = {a() false}");
+
+var b;
 
 b = {a(){return 5;}};
 assert.sameValue(b.a(), 5);
@@ -175,7 +166,7 @@ var obj = {
     meth : 3
 }
 assert.sameValue(obj.meth, 3);
-assertThrowsInstanceOf(function() {obj.meth();}, TypeError);
+assert.throws(TypeError, function() {obj.meth();});
 
 // Strict mode
 a = {b(c){"use strict";return c;}};
@@ -209,5 +200,4 @@ testStrictMode();
 
 // Tests provided by benvie in the bug to distinguish from ES5 desugar.
 assert.sameValue(({ method() {} }).method.name, "method");
-assertThrowsInstanceOf(function() {({ method() { method() } }).method() }, ReferenceError);
-
+assert.throws(ReferenceError, function() {({ method() { method() } }).method() });

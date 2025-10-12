@@ -14,10 +14,11 @@
 #include <map>
 #include <optional>
 #include <set>
+#include <variant>
+#include <vector>
 
 #include "absl/container/inlined_vector.h"
-#include "absl/types/variant.h"
-#include "api/transport/field_trial_based_config.h"
+#include "api/field_trials.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/color_space.h"
 #include "api/video/encoded_image.h"
@@ -34,9 +35,9 @@
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "modules/video_coding/include/video_codec_interface.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-#include "test/scoped_key_value_config.h"
 
 namespace webrtc {
 namespace {
@@ -53,14 +54,14 @@ using ::testing::SizeIs;
 
 using GenericDescriptorInfo = RTPVideoHeader::GenericDescriptorInfo;
 
-const uint32_t kSsrc1 = 12345;
-const uint32_t kSsrc2 = 23456;
-const int16_t kPictureId = 123;
-const int16_t kTl0PicIdx = 20;
-const uint8_t kTemporalIdx = 1;
-const int16_t kInitialPictureId1 = 222;
-const int16_t kInitialTl0PicIdx1 = 99;
-const int64_t kDontCare = 0;
+constexpr uint32_t kSsrc1 = 12345;
+constexpr uint32_t kSsrc2 = 23456;
+constexpr int16_t kPictureId = 123;
+constexpr int16_t kTl0PicIdx = 20;
+constexpr uint8_t kTemporalIdx = 1;
+constexpr int16_t kInitialPictureId1 = 222;
+constexpr int16_t kInitialTl0PicIdx1 = 99;
+constexpr int64_t kDontCare = 0;
 
 TEST(RtpPayloadParamsTest, InfoMappedToRtpVideoHeader_Vp8) {
   RtpPayloadState state2;
@@ -68,7 +69,7 @@ TEST(RtpPayloadParamsTest, InfoMappedToRtpVideoHeader_Vp8) {
   state2.tl0_pic_idx = kTl0PicIdx;
   std::map<uint32_t, RtpPayloadState> states = {{kSsrc2, state2}};
 
-  RtpPayloadParams params(kSsrc2, &state2, FieldTrialBasedConfig());
+  RtpPayloadParams params(kSsrc2, &state2, CreateTestFieldTrials());
   EncodedImage encoded_image;
   encoded_image.rotation_ = kVideoRotation_90;
   encoded_image.content_type_ = VideoContentType::SCREENSHARE;
@@ -95,7 +96,7 @@ TEST(RtpPayloadParamsTest, InfoMappedToRtpVideoHeader_Vp8) {
   EXPECT_EQ(1, header.simulcastIdx);
   EXPECT_EQ(kVideoCodecVP8, header.codec);
   const auto& vp8_header =
-      absl::get<RTPVideoHeaderVP8>(header.video_type_header);
+      std::get<RTPVideoHeaderVP8>(header.video_type_header);
   EXPECT_EQ(kPictureId + 2, vp8_header.pictureId);
   EXPECT_EQ(kTemporalIdx, vp8_header.temporalIdx);
   EXPECT_EQ(kTl0PicIdx + 1, vp8_header.tl0PicIdx);
@@ -108,7 +109,7 @@ TEST(RtpPayloadParamsTest, InfoMappedToRtpVideoHeader_Vp9) {
   RtpPayloadState state;
   state.picture_id = kPictureId;
   state.tl0_pic_idx = kTl0PicIdx;
-  RtpPayloadParams params(kSsrc1, &state, FieldTrialBasedConfig());
+  RtpPayloadParams params(kSsrc1, &state, CreateTestFieldTrials());
 
   EncodedImage encoded_image;
   encoded_image.rotation_ = kVideoRotation_90;
@@ -129,7 +130,7 @@ TEST(RtpPayloadParamsTest, InfoMappedToRtpVideoHeader_Vp9) {
   EXPECT_EQ(kVideoCodecVP9, header.codec);
   EXPECT_FALSE(header.color_space);
   const auto& vp9_header =
-      absl::get<RTPVideoHeaderVP9>(header.video_type_header);
+      std::get<RTPVideoHeaderVP9>(header.video_type_header);
   EXPECT_EQ(kPictureId + 1, vp9_header.picture_id);
   EXPECT_EQ(kTl0PicIdx, vp9_header.tl0_pic_idx);
   EXPECT_EQ(vp9_header.temporal_idx, codec_info.codecSpecific.VP9.temporal_idx);
@@ -171,12 +172,12 @@ TEST(RtpPayloadParamsTest, PictureIdIsSetForVp8) {
   CodecSpecificInfo codec_info;
   codec_info.codecType = kVideoCodecVP8;
 
-  RtpPayloadParams params(kSsrc1, &state, FieldTrialBasedConfig());
+  RtpPayloadParams params(kSsrc1, &state, CreateTestFieldTrials());
   RTPVideoHeader header =
       params.GetRtpVideoHeader(encoded_image, &codec_info, kDontCare);
   EXPECT_EQ(kVideoCodecVP8, header.codec);
   EXPECT_EQ(kInitialPictureId1 + 1,
-            absl::get<RTPVideoHeaderVP8>(header.video_type_header).pictureId);
+            std::get<RTPVideoHeaderVP8>(header.video_type_header).pictureId);
 
   // State should hold latest used picture id and tl0_pic_idx.
   state = params.state();
@@ -194,12 +195,11 @@ TEST(RtpPayloadParamsTest, PictureIdWraps) {
   codec_info.codecType = kVideoCodecVP8;
   codec_info.codecSpecific.VP8.temporalIdx = kNoTemporalIdx;
 
-  RtpPayloadParams params(kSsrc1, &state, FieldTrialBasedConfig());
+  RtpPayloadParams params(kSsrc1, &state, CreateTestFieldTrials());
   RTPVideoHeader header =
       params.GetRtpVideoHeader(encoded_image, &codec_info, kDontCare);
   EXPECT_EQ(kVideoCodecVP8, header.codec);
-  EXPECT_EQ(0,
-            absl::get<RTPVideoHeaderVP8>(header.video_type_header).pictureId);
+  EXPECT_EQ(0, std::get<RTPVideoHeaderVP8>(header.video_type_header).pictureId);
 
   // State should hold latest used picture id and tl0_pic_idx.
   EXPECT_EQ(0, params.state().picture_id);  // Wrapped.
@@ -211,7 +211,7 @@ TEST(RtpPayloadParamsTest, CreatesGenericDescriptorForVp8) {
   constexpr auto kNotPresent = DecodeTargetIndication::kNotPresent;
 
   RtpPayloadState state;
-  RtpPayloadParams params(kSsrc1, &state, FieldTrialBasedConfig());
+  RtpPayloadParams params(kSsrc1, &state, CreateTestFieldTrials());
 
   EncodedImage key_frame_image;
   key_frame_image._frameType = VideoFrameType::kVideoFrameKey;
@@ -299,13 +299,13 @@ TEST(RtpPayloadParamsTest, Tl0PicIdxUpdatedForVp8) {
   codec_info.codecType = kVideoCodecVP8;
   codec_info.codecSpecific.VP8.temporalIdx = 1;
 
-  RtpPayloadParams params(kSsrc1, &state, FieldTrialBasedConfig());
+  RtpPayloadParams params(kSsrc1, &state, CreateTestFieldTrials());
   RTPVideoHeader header =
       params.GetRtpVideoHeader(encoded_image, &codec_info, kDontCare);
 
   EXPECT_EQ(kVideoCodecVP8, header.codec);
   const auto& vp8_header =
-      absl::get<RTPVideoHeaderVP8>(header.video_type_header);
+      std::get<RTPVideoHeaderVP8>(header.video_type_header);
   EXPECT_EQ(kInitialPictureId1 + 1, vp8_header.pictureId);
   EXPECT_EQ(kInitialTl0PicIdx1, vp8_header.tl0PicIdx);
 
@@ -335,13 +335,13 @@ TEST(RtpPayloadParamsTest, Tl0PicIdxUpdatedForVp9) {
   codec_info.codecSpecific.VP9.temporal_idx = 1;
   codec_info.codecSpecific.VP9.first_frame_in_picture = true;
 
-  RtpPayloadParams params(kSsrc1, &state, FieldTrialBasedConfig());
+  RtpPayloadParams params(kSsrc1, &state, CreateTestFieldTrials());
   RTPVideoHeader header =
       params.GetRtpVideoHeader(encoded_image, &codec_info, kDontCare);
 
   EXPECT_EQ(kVideoCodecVP9, header.codec);
   const auto& vp9_header =
-      absl::get<RTPVideoHeaderVP9>(header.video_type_header);
+      std::get<RTPVideoHeaderVP9>(header.video_type_header);
   EXPECT_EQ(kInitialPictureId1 + 1, vp9_header.picture_id);
   EXPECT_EQ(kInitialTl0PicIdx1, vp9_header.tl0_pic_idx);
 
@@ -377,7 +377,7 @@ TEST(RtpPayloadParamsTest, GenerateFrameIdWhenExternalFrameIdsAreNotProvided) {
   CodecSpecificInfo codec_info;
   codec_info.codecType = kVideoCodecGeneric;
 
-  RtpPayloadParams params(kSsrc1, &state, FieldTrialBasedConfig());
+  RtpPayloadParams params(kSsrc1, &state, CreateTestFieldTrials());
   RTPVideoHeader header =
       params.GetRtpVideoHeader(encoded_image, &codec_info, std::nullopt);
 
@@ -393,7 +393,8 @@ TEST(RtpPayloadParamsTest, GenerateFrameIdWhenExternalFrameIdsAreNotProvided) {
 }
 
 TEST(RtpPayloadParamsTest, PictureIdForOldGenericFormat) {
-  test::ScopedKeyValueConfig field_trials("WebRTC-GenericPictureId/Enabled/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-GenericPictureId/Enabled/");
   RtpPayloadState state{};
 
   EncodedImage encoded_image;
@@ -407,14 +408,13 @@ TEST(RtpPayloadParamsTest, PictureIdForOldGenericFormat) {
 
   EXPECT_EQ(kVideoCodecGeneric, header.codec);
   const auto* generic =
-      absl::get_if<RTPVideoHeaderLegacyGeneric>(&header.video_type_header);
+      std::get_if<RTPVideoHeaderLegacyGeneric>(&header.video_type_header);
   ASSERT_TRUE(generic);
   EXPECT_EQ(0, generic->picture_id);
 
   encoded_image._frameType = VideoFrameType::kVideoFrameDelta;
   header = params.GetRtpVideoHeader(encoded_image, &codec_info, 20);
-  generic =
-      absl::get_if<RTPVideoHeaderLegacyGeneric>(&header.video_type_header);
+  generic = std::get_if<RTPVideoHeaderLegacyGeneric>(&header.video_type_header);
   ASSERT_TRUE(generic);
   EXPECT_EQ(1, generic->picture_id);
 }
@@ -427,7 +427,7 @@ TEST(RtpPayloadParamsTest, GenericDescriptorForGenericCodec) {
   CodecSpecificInfo codec_info;
   codec_info.codecType = kVideoCodecGeneric;
 
-  RtpPayloadParams params(kSsrc1, &state, FieldTrialBasedConfig());
+  RtpPayloadParams params(kSsrc1, &state, CreateTestFieldTrials());
   RTPVideoHeader header =
       params.GetRtpVideoHeader(encoded_image, &codec_info, 0);
 
@@ -459,7 +459,7 @@ TEST(RtpPayloadParamsTest, SetsGenericFromGenericFrameInfo) {
   EncodedImage encoded_image;
   CodecSpecificInfo codec_info;
 
-  RtpPayloadParams params(kSsrc1, &state, FieldTrialBasedConfig());
+  RtpPayloadParams params(kSsrc1, &state, CreateTestFieldTrials());
 
   encoded_image._frameType = VideoFrameType::kVideoFrameKey;
   codec_info.generic_frame_info =
@@ -503,7 +503,7 @@ class RtpPayloadParamsVp8ToGenericTest : public ::testing::Test {
   enum LayerSync { kNoSync, kSync };
 
   RtpPayloadParamsVp8ToGenericTest()
-      : state_(), params_(123, &state_, trials_config_) {}
+      : state_(), params_(123, &state_, CreateTestFieldTrials()) {}
 
   void ConvertAndCheck(int temporal_index,
                        int64_t shared_frame_id,
@@ -539,7 +539,6 @@ class RtpPayloadParamsVp8ToGenericTest : public ::testing::Test {
   }
 
  protected:
-  FieldTrialBasedConfig trials_config_;
   RtpPayloadState state_;
   RtpPayloadParams params_;
 };
@@ -594,7 +593,7 @@ TEST_F(RtpPayloadParamsVp8ToGenericTest, FrameIdGaps) {
 
 TEST(RtpPayloadParamsVp9ToGenericTest, NoScalability) {
   RtpPayloadState state;
-  RtpPayloadParams params(/*ssrc=*/123, &state, FieldTrialBasedConfig());
+  RtpPayloadParams params(/*ssrc=*/123, &state, CreateTestFieldTrials());
 
   EncodedImage encoded_image;
   CodecSpecificInfo codec_info;
@@ -646,7 +645,7 @@ TEST(RtpPayloadParamsVp9ToGenericTest, NoScalability) {
 
 TEST(RtpPayloadParamsVp9ToGenericTest, NoScalabilityNonFlexibleMode) {
   RtpPayloadState state;
-  RtpPayloadParams params(/*ssrc=*/123, &state, FieldTrialBasedConfig());
+  RtpPayloadParams params(/*ssrc=*/123, &state, CreateTestFieldTrials());
 
   EncodedImage encoded_image;
   CodecSpecificInfo codec_info;
@@ -699,7 +698,7 @@ TEST(RtpPayloadParamsVp9ToGenericTest, TemporalScalabilityWith2Layers) {
   //   /   /   /   ...
   //  0---2---4---
   RtpPayloadState state;
-  RtpPayloadParams params(/*ssrc=*/123, &state, FieldTrialBasedConfig());
+  RtpPayloadParams params(/*ssrc=*/123, &state, CreateTestFieldTrials());
 
   EncodedImage image;
   CodecSpecificInfo info;
@@ -810,7 +809,7 @@ TEST(RtpPayloadParamsVp9ToGenericTest, TemporalScalabilityWith3Layers) {
   // Test with 3 temporal layers structure that is not used by webrtc, but used
   // by chromium: https://imgur.com/pURAGvp
   RtpPayloadState state;
-  RtpPayloadParams params(/*ssrc=*/123, &state, FieldTrialBasedConfig());
+  RtpPayloadParams params(/*ssrc=*/123, &state, CreateTestFieldTrials());
 
   EncodedImage image;
   CodecSpecificInfo info;
@@ -964,7 +963,7 @@ TEST(RtpPayloadParamsVp9ToGenericTest, SpatialScalabilityKSvc) {
   //  |     ...
   //  0---2--
   RtpPayloadState state;
-  RtpPayloadParams params(/*ssrc=*/123, &state, FieldTrialBasedConfig());
+  RtpPayloadParams params(/*ssrc=*/123, &state, CreateTestFieldTrials());
 
   EncodedImage image;
   CodecSpecificInfo info;
@@ -1073,7 +1072,7 @@ TEST(RtpPayloadParamsVp9ToGenericTest,
   //        | ...
   // S0 1---3--
   RtpPayloadState state;
-  RtpPayloadParams params(/*ssrc=*/123, &state, FieldTrialBasedConfig());
+  RtpPayloadParams params(/*ssrc=*/123, &state, CreateTestFieldTrials());
 
   EncodedImage image;
   CodecSpecificInfo info;
@@ -1175,7 +1174,7 @@ TEST(RtpPayloadParamsVp9ToGenericTest, ChangeFirstActiveLayer) {
   //
   // S0 0---2           6
   RtpPayloadState state;
-  RtpPayloadParams params(/*ssrc=*/123, &state, FieldTrialBasedConfig());
+  RtpPayloadParams params(/*ssrc=*/123, &state, CreateTestFieldTrials());
 
   EncodedImage image;
   CodecSpecificInfo info;
@@ -1337,7 +1336,7 @@ class RtpPayloadParamsH264ToGenericTest : public ::testing::Test {
   enum LayerSync { kNoSync, kSync };
 
   RtpPayloadParamsH264ToGenericTest()
-      : state_(), params_(123, &state_, trials_config_) {}
+      : state_(), params_(123, &state_, CreateTestFieldTrials()) {}
 
   void ConvertAndCheck(int temporal_index,
                        int64_t shared_frame_id,
@@ -1382,7 +1381,6 @@ class RtpPayloadParamsH264ToGenericTest : public ::testing::Test {
   }
 
  protected:
-  FieldTrialBasedConfig trials_config_;
   RtpPayloadState state_;
   RtpPayloadParams params_;
 };

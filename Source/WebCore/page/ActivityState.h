@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <WebCore/PlatformExportMacros.h>
+#include <cstdint>
 #include <wtf/OptionSet.h>
 
 namespace WTF {

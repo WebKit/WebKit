@@ -22,9 +22,6 @@
 
 """Supports webkitpy logging."""
 
-# FIXME: Move this file to webkitpy/python24 since logging needs to
-#        be configured prior to running version-checking code.
-
 import logging
 import os
 import sys

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "IntSize.h"
+#include <WebCore/IntSize.h>
 
 #include <wtf/Forward.h>
 #include <wtf/WorkQueue.h>

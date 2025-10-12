@@ -28,18 +28,17 @@
 #include "AccessibilityObject.h"
 
 namespace WebCore {
-    
-class AccessibilityMockObject : public AccessibilityObject {
 
+class AccessibilityMockObject : public AccessibilityObject {
 public:
     virtual ~AccessibilityMockObject();
-    
+
     AccessibilityObject* parentObject() const override { return m_parent.get(); }
     virtual void setParent(AccessibilityObject* parent) { m_parent = parent; }
     bool isEnabled() const override { return true; }
 
 protected:
-    explicit AccessibilityMockObject(AXID);
+    explicit AccessibilityMockObject(AXID, AXObjectCache&);
 
     WeakPtr<AccessibilityObject> m_parent;
 
@@ -53,6 +52,6 @@ private:
     bool computeIsIgnored() const override;
 };
 
-} // namespace WebCore 
+} // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityMockObject, isMockObject())

@@ -10,14 +10,25 @@
 
 #include "audio/voip/audio_channel.h"
 
+#include <cstdint>
+#include <memory>
 #include <utility>
-#include <vector>
 
-#include "api/audio_codecs/audio_format.h"
-#include "api/task_queue/task_queue_factory.h"
+#include "api/audio/audio_mixer.h"
+#include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/call/transport.h"
+#include "api/environment/environment.h"
+#include "api/rtp_headers.h"
+#include "api/scoped_refptr.h"
+#include "api/voip/voip_statistics.h"
+#include "audio/voip/audio_egress.h"
+#include "audio/voip/audio_ingress.h"
+#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/rtp_rtcp/include/receive_statistics.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_impl2.h"
-#include "rtc_base/logging.h"
+#include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -27,12 +38,11 @@ constexpr int kRtcpReportIntervalMs = 5000;
 
 }  // namespace
 
-AudioChannel::AudioChannel(
-    const Environment& env,
-    Transport* transport,
-    uint32_t local_ssrc,
-    AudioMixer* audio_mixer,
-    rtc::scoped_refptr<AudioDecoderFactory> decoder_factory)
+AudioChannel::AudioChannel(const Environment& env,
+                           Transport* transport,
+                           uint32_t local_ssrc,
+                           AudioMixer* audio_mixer,
+                           scoped_refptr<AudioDecoderFactory> decoder_factory)
     : audio_mixer_(audio_mixer) {
   RTC_DCHECK(audio_mixer);
 

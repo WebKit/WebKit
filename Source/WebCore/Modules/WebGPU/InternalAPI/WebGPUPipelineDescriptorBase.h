@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPUObjectDescriptorBase.h"
-#include "WebGPUPipelineLayout.h"
+#include <WebCore/WebGPUObjectDescriptorBase.h>
+#include <WebCore/WebGPUPipelineLayout.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore::WebGPU {

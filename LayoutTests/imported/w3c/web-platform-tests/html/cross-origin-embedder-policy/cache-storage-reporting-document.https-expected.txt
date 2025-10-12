@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Cache API operation failed: Cross-Origin-Resource-Policy failure
 
 
 Harness Error (TIMEOUT), message = null

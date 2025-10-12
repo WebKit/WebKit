@@ -59,11 +59,11 @@ public:
     template<typename Encoder>
     void encode(Encoder& encoder)
     {
-        encoder << m_s0;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_s0;
     }
 
 private:
-    const RefPtr<WebCore::ImageData>& m_s0;
+    SUPPRESS_FORWARD_DECL_MEMBER const RefPtr<WebCore::ImageData>& m_s0;
 };
 
 class ReceiveImageData {
@@ -91,6 +91,31 @@ public:
     }
 
 private:
+};
+
+class ReceiveImageDataReply {
+public:
+    using Arguments = std::tuple<RefPtr<WebCore::ImageData>>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithImageData_ReceiveImageDataReply; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    explicit ReceiveImageDataReply(const RefPtr<WebCore::ImageData>& r0)
+        : m_r0(r0)
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_r0;
+    }
+
+private:
+    SUPPRESS_FORWARD_DECL_MEMBER const RefPtr<WebCore::ImageData>& m_r0;
 };
 
 } // namespace TestWithImageData

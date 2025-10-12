@@ -11,6 +11,9 @@
 #include "modules/audio_coding/neteq/underrun_optimizer.h"
 
 #include <algorithm>
+#include <optional>
+
+#include "api/neteq/tick_timer.h"
 
 namespace webrtc {
 

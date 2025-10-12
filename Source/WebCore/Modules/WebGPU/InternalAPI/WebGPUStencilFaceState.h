@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPUCompareFunction.h"
-#include "WebGPUStencilOperation.h"
+#include <WebCore/WebGPUCompareFunction.h>
+#include <WebCore/WebGPUStencilOperation.h>
 
 namespace WebCore::WebGPU {
 

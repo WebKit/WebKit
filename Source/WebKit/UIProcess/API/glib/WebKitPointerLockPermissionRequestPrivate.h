@@ -23,8 +23,9 @@
 
 #include "WebKitPointerLockPermissionRequest.h"
 #include "WebKitWebView.h"
+#include <wtf/CompletionHandler.h>
 
-WebKitPointerLockPermissionRequest* webkitPointerLockPermissionRequestCreate(WebKitWebView*);
+WebKitPointerLockPermissionRequest* webkitPointerLockPermissionRequestCreate(WebKitWebView*, CompletionHandler<void(bool)>&&);
 void webkitPointerLockPermissionRequestDidLosePointerLock(WebKitPointerLockPermissionRequest*);
 
 #endif // ENABLE(POINTER_LOCK)

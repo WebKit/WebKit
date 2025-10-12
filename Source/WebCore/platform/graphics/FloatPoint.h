@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2004-2016 Apple Inc.  All rights reserved.
- * Copyright (C) 2005 Nokia.  All rights reserved.
+ * Copyright (C) 2004-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2005 Nokia. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,12 @@
 
 #pragma once
 
-#include "FloatSize.h"
-#include "IntPoint.h"
+#include <WebCore/DoublePoint.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/IntPoint.h>
 #include <wtf/Hasher.h>
 #include <wtf/MathExtras.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 
 #if USE(CG)
@@ -37,11 +39,7 @@ typedef struct CGPoint CGPoint;
 #endif
 
 #if PLATFORM(MAC)
-#ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGPoint NSPoint;
-#else
-typedef struct _NSPoint NSPoint;
-#endif
 #endif // PLATFORM(MAC)
 
 namespace WTF {
@@ -62,6 +60,8 @@ public:
     constexpr FloatPoint(float x, float y) : m_x(x), m_y(y) { }
     WEBCORE_EXPORT FloatPoint(const IntPoint&);
     explicit FloatPoint(const FloatSize& size) : m_x(size.width()), m_y(size.height()) { }
+    explicit FloatPoint(const DoublePoint& point)
+        : m_x(static_cast<float>(point.x())), m_y(static_cast<float>(point.y())) { }
 
     static constexpr FloatPoint zero() { return FloatPoint(); }
     constexpr bool isZero() const { return !m_x && !m_y; }
@@ -172,14 +172,14 @@ public:
         return { m_y, m_x };
     }
 
+    FloatPoint scaledBy(float scale) const
+    {
+        return FloatPoint(m_x * scale, m_y * scale);
+    }
+
 #if USE(CG)
     WEBCORE_EXPORT FloatPoint(const CGPoint&);
     WEBCORE_EXPORT operator CGPoint() const;
-#endif
-
-#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
-    WEBCORE_EXPORT FloatPoint(const NSPoint&);
-    WEBCORE_EXPORT operator NSPoint() const;
 #endif
 
 #if PLATFORM(WIN)
@@ -195,25 +195,14 @@ public:
     WEBCORE_EXPORT String toJSONString() const;
     WEBCORE_EXPORT Ref<JSON::Object> toJSONObject() const;
 
+    operator DoublePoint() const { return { m_x, m_y }; }
+
     friend bool operator==(const FloatPoint&, const FloatPoint&) = default;
-
-    struct MarkableTraits {
-        constexpr static bool isEmptyValue(const FloatPoint& point)
-        {
-            return point.isNaN();
-        }
-
-        constexpr static FloatPoint emptyValue()
-        {
-            return FloatPoint::nanPoint();
-        }
-    };
 
 private:
     float m_x { 0 };
     float m_y { 0 };
 };
-
 
 inline FloatPoint& operator+=(FloatPoint& a, const FloatSize& b)
 {
@@ -280,6 +269,13 @@ inline IntSize flooredIntSize(const FloatPoint& p)
     return IntSize(clampToInteger(floorf(p.x())), clampToInteger(floorf(p.y())));
 }
 
+#if USE(CG)
+inline IntPoint roundedIntPoint(const CGPoint& p)
+{
+    return IntPoint(clampToInteger(roundf(p.x)), clampToInteger(roundf(p.y)));
+}
+#endif
+
 inline IntPoint roundedIntPoint(const FloatPoint& p)
 {
     return IntPoint(clampToInteger(roundf(p.x())), clampToInteger(roundf(p.y())));
@@ -315,9 +311,9 @@ inline FloatPoint toFloatPoint(const FloatSize& a)
     return FloatPoint(a.width(), a.height());
 }
 
-inline bool areEssentiallyEqual(const FloatPoint& a, const FloatPoint& b)
+inline bool areEssentiallyEqual(const FloatPoint& a, const FloatPoint& b, float epsilon = std::numeric_limits<float>::epsilon())
 {
-    return WTF::areEssentiallyEqual(a.x(), b.x()) && WTF::areEssentiallyEqual(a.y(), b.y());
+    return WTF::areEssentiallyEqual(a.x(), b.x(), epsilon) && WTF::areEssentiallyEqual(a.y(), b.y(), epsilon);
 }
 
 inline void add(Hasher& hasher, const FloatPoint& point)
@@ -350,6 +346,19 @@ struct LogArgument<WebCore::FloatPoint> {
     static String toString(const WebCore::FloatPoint& point)
     {
         return point.toJSONString();
+    }
+};
+
+template<>
+struct MarkableTraits<WebCore::FloatPoint> {
+    constexpr static bool isEmptyValue(const WebCore::FloatPoint& point)
+    {
+        return point.isNaN();
+    }
+
+    constexpr static WebCore::FloatPoint emptyValue()
+    {
+        return WebCore::FloatPoint::nanPoint();
     }
 };
 

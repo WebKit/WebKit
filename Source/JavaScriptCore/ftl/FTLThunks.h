@@ -27,9 +27,9 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "FTLLocation.h"
-#include "FTLSlowPathCallKey.h"
-#include "MacroAssemblerCodeRef.h"
+#include <JavaScriptCore/FTLLocation.h>
+#include <JavaScriptCore/FTLSlowPathCallKey.h>
+#include <JavaScriptCore/MacroAssemblerCodeRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 

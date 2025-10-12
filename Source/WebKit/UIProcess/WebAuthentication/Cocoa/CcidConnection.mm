@@ -45,7 +45,7 @@ Ref<CcidConnection> CcidConnection::create(RetainPtr<TKSmartCard>&& smartCard, C
 CcidConnection::CcidConnection(RetainPtr<TKSmartCard>&& smartCard, CcidService& service)
     : m_smartCard(WTFMove(smartCard))
     , m_service(service)
-    , m_retryTimer(RunLoop::main(), this, &CcidConnection::startPolling)
+    , m_retryTimer(RunLoop::mainSingleton(), "CcidConnection::RetryTimer"_s, this, &CcidConnection::startPolling)
 {
     startPolling();
 }
@@ -103,7 +103,7 @@ void CcidConnection::transact(Vector<uint8_t>&& data, DataReceivedCallback&& cal
     [m_smartCard beginSessionWithReply:makeBlockPtr([this, protectedThis = Ref { *this }, data = WTFMove(data), callback = WTFMove(callback)] (BOOL success, NSError *error) mutable {
         if (!success)
             return;
-        [m_smartCard transmitRequest:toNSData(data).autorelease() reply:makeBlockPtr([this, protectedThis = Ref { *this }, callback = WTFMove(callback)](NSData * _Nullable nsResponse, NSError * _Nullable error) mutable {
+        [m_smartCard transmitRequest:toNSData(data).get() reply:makeBlockPtr([this, protectedThis = Ref { *this }, callback = WTFMove(callback)](NSData * _Nullable nsResponse, NSError * _Nullable error) mutable {
             [m_smartCard endSession];
             callOnMainRunLoop([response = makeVector(nsResponse), callback = WTFMove(callback)] () mutable {
                 callback(WTFMove(response));

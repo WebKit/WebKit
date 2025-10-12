@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without

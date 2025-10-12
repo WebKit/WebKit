@@ -23,6 +23,7 @@
 #include "src/gpu/graphite/RecorderPriv.h"
 #include "src/gpu/graphite/Resource.h"
 #include "src/gpu/graphite/ResourceProvider.h"
+#include "src/gpu/graphite/RuntimeEffectDictionary.h"
 #include "src/gpu/graphite/Sampler.h"
 #include "src/gpu/graphite/Texture.h"  // IWYU pragma: keep
 #include "src/gpu/graphite/TextureProxy.h"
@@ -327,9 +328,9 @@ DispatchResourceOptional Builder::allocateResource(const ComputeStep* step,
             size_t bufferSize = step->calculateBufferSize(resourceIdx, resource);
             SkASSERT(bufferSize);
             if (resource.fPolicy == ResourcePolicy::kMapped) {
-                auto [ptr, bufInfo] = bufferMgr->getStoragePointer(bufferSize);
-                if (ptr) {
-                    step->prepareStorageBuffer(resourceIdx, resource, ptr, bufferSize);
+                auto [writer, bufInfo] = bufferMgr->getSsboWriter(bufferSize, /*stride=*/1);
+                if (writer) {
+                    step->prepareStorageBuffer(resourceIdx, resource, std::move(writer));
                     result = bufInfo;
                 }
             } else {

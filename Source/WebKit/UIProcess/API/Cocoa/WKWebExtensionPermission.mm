@@ -32,6 +32,7 @@
 
 WKWebExtensionPermission const WKWebExtensionPermissionActiveTab = @"activeTab";
 WKWebExtensionPermission const WKWebExtensionPermissionAlarms = @"alarms";
+WKWebExtensionPermission const WKWebExtensionPermissionBookmarks = @"bookmarks";
 WKWebExtensionPermission const WKWebExtensionPermissionClipboardWrite = @"clipboardWrite";
 WKWebExtensionPermission const WKWebExtensionPermissionContextMenus = @"contextMenus";
 WKWebExtensionPermission const WKWebExtensionPermissionCookies = @"cookies";

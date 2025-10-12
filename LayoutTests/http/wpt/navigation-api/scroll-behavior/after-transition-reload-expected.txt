@@ -1,0 +1,3 @@
+
+PASS scroll: after-transition should work on a reload navigation
+

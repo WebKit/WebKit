@@ -31,14 +31,14 @@ namespace WebCore {
 
 class AccessibilitySpinButtonPart final : public AccessibilityMockObject {
 public:
-    static Ref<AccessibilitySpinButtonPart> create(AXID);
+    static Ref<AccessibilitySpinButtonPart> create(AXID, AXObjectCache&);
     virtual ~AccessibilitySpinButtonPart() = default;
 
     bool isIncrementor() const final { return m_isIncrementor; }
     void setIsIncrementor(bool value) { m_isIncrementor = value; }
 
 private:
-    explicit AccessibilitySpinButtonPart(AXID);
+    explicit AccessibilitySpinButtonPart(AXID, AXObjectCache&);
 
     bool press() final;
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::SpinButtonPart; }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +25,11 @@
 
 #pragma once
 
-#include "CachedSubimage.h"
-#include "FloatRect.h"
-#include "GraphicsTypes.h"
-#include "Image.h"
+#include <WebCore/CachedSubimage.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/GraphicsTypes.h>
+#include <WebCore/Image.h>
+#include <wtf/Platform.h>
 #include <wtf/RuntimeApplicationChecks.h>
 
 #if USE(CG)
@@ -68,7 +69,7 @@ private:
 
     void destroyDecodedData(bool destroyAll = true) override;
 
-    void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override;
+    void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) override;
     FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const override;
 
     bool shouldDrawFromCachedSubimage(GraphicsContext&) const override;
@@ -82,6 +83,7 @@ private:
 
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const override { return false; }
+    bool currentFrameIsComplete() const override { return m_hasPage; }
 
     void dump(WTF::TextStream&) const override;
 

@@ -36,13 +36,13 @@ TEST(Base64, Encode)
 {
     static constexpr OptionSet<Base64EncodeOption> options;
 
-    EXPECT_ENCODE("", ""_span8);
-    EXPECT_ENCODE("Zg==", "f"_span8);
-    EXPECT_ENCODE("Zm8=", "fo"_span8);
-    EXPECT_ENCODE("Zm9v", "foo"_span8);
-    EXPECT_ENCODE("Zm9vYg==", "foob"_span8);
-    EXPECT_ENCODE("Zm9vYmE=", "fooba"_span8);
-    EXPECT_ENCODE("Zm9vYmFy", "foobar"_span8);
+    EXPECT_ENCODE("", byteCast<uint8_t>(""_span));
+    EXPECT_ENCODE("Zg==", byteCast<uint8_t>("f"_span));
+    EXPECT_ENCODE("Zm8=", byteCast<uint8_t>("fo"_span));
+    EXPECT_ENCODE("Zm9v", byteCast<uint8_t>("foo"_span));
+    EXPECT_ENCODE("Zm9vYg==", byteCast<uint8_t>("foob"_span));
+    EXPECT_ENCODE("Zm9vYmE=", byteCast<uint8_t>("fooba"_span));
+    EXPECT_ENCODE("Zm9vYmFy", byteCast<uint8_t>("foobar"_span));
 
     EXPECT_ENCODE("AA==", Vector<uint8_t>({ 0 }));
     EXPECT_ENCODE("AQ==", Vector<uint8_t>({ 1 }));
@@ -58,13 +58,13 @@ TEST(Base64, EncodeOmitPadding)
 {
     static constexpr OptionSet<Base64EncodeOption> options = { Base64EncodeOption::OmitPadding };
 
-    EXPECT_ENCODE("", ""_span8);
-    EXPECT_ENCODE("Zg", "f"_span8);
-    EXPECT_ENCODE("Zm8", "fo"_span8);
-    EXPECT_ENCODE("Zm9v", "foo"_span8);
-    EXPECT_ENCODE("Zm9vYg", "foob"_span8);
-    EXPECT_ENCODE("Zm9vYmE", "fooba"_span8);
-    EXPECT_ENCODE("Zm9vYmFy", "foobar"_span8);
+    EXPECT_ENCODE("", byteCast<uint8_t>(""_span));
+    EXPECT_ENCODE("Zg", byteCast<uint8_t>("f"_span));
+    EXPECT_ENCODE("Zm8", byteCast<uint8_t>("fo"_span));
+    EXPECT_ENCODE("Zm9v", byteCast<uint8_t>("foo"_span));
+    EXPECT_ENCODE("Zm9vYg", byteCast<uint8_t>("foob"_span));
+    EXPECT_ENCODE("Zm9vYmE", byteCast<uint8_t>("fooba"_span));
+    EXPECT_ENCODE("Zm9vYmFy", byteCast<uint8_t>("foobar"_span));
 
     EXPECT_ENCODE("AA", Vector<uint8_t>({ 0 }));
     EXPECT_ENCODE("AQ", Vector<uint8_t>({ 1 }));
@@ -80,13 +80,13 @@ TEST(Base64, EncodeURL)
 {
     static constexpr OptionSet<Base64EncodeOption> options = { Base64EncodeOption::URL };
 
-    EXPECT_ENCODE("", ""_span8);
-    EXPECT_ENCODE("Zg==", "f"_span8);
-    EXPECT_ENCODE("Zm8=", "fo"_span8);
-    EXPECT_ENCODE("Zm9v", "foo"_span8);
-    EXPECT_ENCODE("Zm9vYg==", "foob"_span8);
-    EXPECT_ENCODE("Zm9vYmE=", "fooba"_span8);
-    EXPECT_ENCODE("Zm9vYmFy", "foobar"_span8);
+    EXPECT_ENCODE("", byteCast<uint8_t>(""_span));
+    EXPECT_ENCODE("Zg==", byteCast<uint8_t>("f"_span));
+    EXPECT_ENCODE("Zm8=", byteCast<uint8_t>("fo"_span));
+    EXPECT_ENCODE("Zm9v", byteCast<uint8_t>("foo"_span));
+    EXPECT_ENCODE("Zm9vYg==", byteCast<uint8_t>("foob"_span));
+    EXPECT_ENCODE("Zm9vYmE=", byteCast<uint8_t>("fooba"_span));
+    EXPECT_ENCODE("Zm9vYmFy", byteCast<uint8_t>("foobar"_span));
 
     EXPECT_ENCODE("AA==", Vector<uint8_t>({ 0 }));
     EXPECT_ENCODE("AQ==", Vector<uint8_t>({ 1 }));
@@ -102,13 +102,13 @@ TEST(Base64, EncodeURLOmitPadding)
 {
     static constexpr OptionSet<Base64EncodeOption> options = { Base64EncodeOption::URL, Base64EncodeOption::OmitPadding };
 
-    EXPECT_ENCODE("", ""_span8);
-    EXPECT_ENCODE("Zg", "f"_span8);
-    EXPECT_ENCODE("Zm8", "fo"_span8);
-    EXPECT_ENCODE("Zm9v", "foo"_span8);
-    EXPECT_ENCODE("Zm9vYg", "foob"_span8);
-    EXPECT_ENCODE("Zm9vYmE", "fooba"_span8);
-    EXPECT_ENCODE("Zm9vYmFy", "foobar"_span8);
+    EXPECT_ENCODE("", byteCast<uint8_t>(""_span));
+    EXPECT_ENCODE("Zg", byteCast<uint8_t>("f"_span));
+    EXPECT_ENCODE("Zm8", byteCast<uint8_t>("fo"_span));
+    EXPECT_ENCODE("Zm9v", byteCast<uint8_t>("foo"_span));
+    EXPECT_ENCODE("Zm9vYg", byteCast<uint8_t>("foob"_span));
+    EXPECT_ENCODE("Zm9vYmE", byteCast<uint8_t>("fooba"_span));
+    EXPECT_ENCODE("Zm9vYmFy", byteCast<uint8_t>("foobar"_span));
 
     EXPECT_ENCODE("AA", Vector<uint8_t>({ 0 }));
     EXPECT_ENCODE("AQ", Vector<uint8_t>({ 1 }));

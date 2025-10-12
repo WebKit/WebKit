@@ -1,16 +1,16 @@
-/* Copyright (c) 2015, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2015 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #ifndef OPENSSL_HEADER_CRYPTO_TEST_FILE_TEST_H
 #define OPENSSL_HEADER_CRYPTO_TEST_FILE_TEST_H
@@ -19,17 +19,13 @@
 
 #include <stdint.h>
 
-OPENSSL_MSVC_PRAGMA(warning(push))
-OPENSSL_MSVC_PRAGMA(warning(disable : 4702))
-
 #include <functional>
 #include <map>
 #include <memory>
 #include <set>
 #include <string>
+#include <string_view>
 #include <vector>
-
-OPENSSL_MSVC_PRAGMA(warning(pop))
 
 // File-based test framework.
 //
@@ -143,36 +139,36 @@ class FileTest {
   const std::string &GetParameter();
 
   // HasAttribute returns true if the current test has an attribute named |key|.
-  bool HasAttribute(const std::string &key);
+  bool HasAttribute(std::string_view key);
 
   // GetAttribute looks up the attribute with key |key|. It sets |*out_value| to
   // the value and returns true if it exists and returns false with an error to
   // |stderr| otherwise.
-  bool GetAttribute(std::string *out_value, const std::string &key);
+  bool GetAttribute(std::string *out_value, std::string_view key);
 
   // GetAttributeOrDie looks up the attribute with key |key| and aborts if it is
   // missing. It should only be used after a |HasAttribute| call.
-  const std::string &GetAttributeOrDie(const std::string &key);
+  const std::string &GetAttributeOrDie(std::string_view key);
 
   // IgnoreAttribute marks the attribute with key |key| as used.
-  void IgnoreAttribute(const std::string &key) { HasAttribute(key); }
+  void IgnoreAttribute(std::string_view key) { HasAttribute(key); }
 
   // GetBytes looks up the attribute with key |key| and decodes it as a byte
   // string. On success, it writes the result to |*out| and returns
   // true. Otherwise it returns false with an error to |stderr|. The value may
   // be either a hexadecimal string or a quoted ASCII string. It returns true on
   // success and returns false with an error to |stderr| on failure.
-  bool GetBytes(std::vector<uint8_t> *out, const std::string &key);
+  bool GetBytes(std::vector<uint8_t> *out, std::string_view key);
 
   // AtNewInstructionBlock returns true if the current test was immediately
   // preceded by an instruction block.
   bool IsAtNewInstructionBlock() const;
 
   // HasInstruction returns true if the current test has an instruction.
-  bool HasInstruction(const std::string &key);
+  bool HasInstruction(std::string_view key);
 
   // IgnoreInstruction marks the instruction with key |key| as used.
-  void IgnoreInstruction(const std::string &key) { HasInstruction(key); }
+  void IgnoreInstruction(std::string_view key) { HasInstruction(key); }
 
   // IgnoreAllUnusedInstructions disables checking for unused instructions.
   void IgnoreAllUnusedInstructions();
@@ -181,15 +177,15 @@ class FileTest {
   // |*out_value| to the value (empty string if the instruction has no value)
   // and returns true if it exists and returns false with an error to |stderr|
   // otherwise.
-  bool GetInstruction(std::string *out_value, const std::string &key);
+  bool GetInstruction(std::string *out_value, std::string_view key);
 
   // GetInstructionOrDie looks up the instruction with key |key| and aborts if
   // it is missing. It should only be used after a |HasInstruction| call.
-  const std::string &GetInstructionOrDie(const std::string &key);
+  const std::string &GetInstructionOrDie(std::string_view key);
 
   // GetInstructionBytes behaves like GetBytes, but looks up the corresponding
   // instruction.
-  bool GetInstructionBytes(std::vector<uint8_t> *out, const std::string &key);
+  bool GetInstructionBytes(std::vector<uint8_t> *out, std::string_view key);
 
   // CurrentTestToString returns the file content parsed for the current test.
   // If the current test was preceded by an instruction block, the return test
@@ -199,7 +195,7 @@ class FileTest {
 
   // InjectInstruction adds a key value pair to the most recently parsed set of
   // instructions.
-  void InjectInstruction(const std::string &key, const std::string &value);
+  void InjectInstruction(std::string key, std::string value);
 
   // SkipCurrent passes the current test case. Unused attributes are ignored.
   void SkipCurrent();
@@ -207,9 +203,9 @@ class FileTest {
  private:
   void ClearTest();
   void ClearInstructions();
-  void OnKeyUsed(const std::string &key);
-  void OnInstructionUsed(const std::string &key);
-  bool ConvertToBytes(std::vector<uint8_t> *out, const std::string &value);
+  void OnKeyUsed(std::string_view key);
+  void OnInstructionUsed(std::string_view key);
+  bool ConvertToBytes(std::vector<uint8_t> *out, std::string_view value);
 
   std::unique_ptr<LineReader> reader_;
   // line_ is the number of lines read.
@@ -223,17 +219,17 @@ class FileTest {
   std::string parameter_;
   // attribute_count_ maps unsuffixed attribute names to the number of times
   // they have occurred so far.
-  std::map<std::string, size_t> attribute_count_;
+  std::map<std::string, size_t, std::less<>> attribute_count_;
   // attributes_ contains all attributes in the test, including the first.
-  std::map<std::string, std::string> attributes_;
+  std::map<std::string, std::string, std::less<>> attributes_;
   // instructions_ contains all instructions in scope for the test.
-  std::map<std::string, std::string> instructions_;
+  std::map<std::string, std::string, std::less<>> instructions_;
 
   // unused_attributes_ is the set of attributes that have not been queried.
-  std::set<std::string> unused_attributes_;
+  std::set<std::string, std::less<>> unused_attributes_;
 
   // unused_instructions_ is the set of instructions that have not been queried.
-  std::set<std::string> unused_instructions_;
+  std::set<std::string, std::less<>> unused_instructions_;
 
   std::string current_test_;
 

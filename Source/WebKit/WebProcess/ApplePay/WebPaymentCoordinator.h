@@ -107,7 +107,7 @@ private:
 #endif
     void didCancelPaymentSession(WebCore::PaymentSessionError&&);
 
-    WebCore::PaymentCoordinator& paymentCoordinator();
+    Ref<WebCore::PaymentCoordinator> protectedPaymentCoordinator();
 
     using AvailablePaymentNetworksSet = HashSet<String, ASCIICaseInsensitiveHash>;
     static AvailablePaymentNetworksSet platformAvailablePaymentNetworks();

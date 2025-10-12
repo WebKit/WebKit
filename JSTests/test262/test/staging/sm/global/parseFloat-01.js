@@ -4,18 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  parseFloat(string)
+info: bugzilla.mozilla.org/show_bug.cgi?id=613492
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 613492;
-var summary = "ES5 15.1.2.3 parseFloat(string)";
-
-print(BUGNUMBER + ": " + summary);
 
 assert.sameValue(parseFloat("Infinity"), Infinity);
 assert.sameValue(parseFloat("+Infinity"), Infinity);
@@ -27,5 +20,3 @@ assert.sameValue(parseFloat("infinity"), NaN);
 
 assert.sameValue(parseFloat("nan"), NaN);
 assert.sameValue(parseFloat("NaN"), NaN);
-
-print("All tests passed!");

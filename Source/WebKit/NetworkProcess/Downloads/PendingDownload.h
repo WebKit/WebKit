@@ -52,7 +52,7 @@ class NetworkSession;
 
 struct NetworkLoadParameters;
 
-class PendingDownload : public RefCountedAndCanMakeWeakPtr<PendingDownload>, public NetworkLoadClient, public IPC::MessageSender {
+class PendingDownload : public RefCounted<PendingDownload>, public NetworkLoadClient, public IPC::MessageSender {
     WTF_MAKE_TZONE_ALLOCATED(PendingDownload);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PendingDownload);
 public:
@@ -65,6 +65,9 @@ public:
     {
         return adoptRef(*new PendingDownload(connection, WTFMove(networkLoad), WTFMove(responseCompletionHandler), downloadID, resourceRequest, resourceResponse));
     }
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     virtual ~PendingDownload();
 

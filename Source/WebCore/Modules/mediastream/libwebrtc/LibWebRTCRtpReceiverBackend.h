@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,13 +27,10 @@
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "LibWebRTCMacros.h"
+#include "LibWebRTCRefWrappers.h"
 #include "RTCRtpReceiverBackend.h"
 #include <webrtc/api/scoped_refptr.h>
 #include <wtf/TZoneMalloc.h>
-
-namespace webrtc {
-class RtpReceiverInterface;
-}
 
 namespace WebCore {
 class Document;
@@ -42,10 +39,10 @@ class RealtimeMediaSource;
 class LibWebRTCRtpReceiverBackend final : public RTCRtpReceiverBackend {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCRtpReceiverBackend);
 public:
-    explicit LibWebRTCRtpReceiverBackend(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&&);
+    explicit LibWebRTCRtpReceiverBackend(Ref<webrtc::RtpReceiverInterface>&&);
     ~LibWebRTCRtpReceiverBackend();
 
-    webrtc::RtpReceiverInterface* rtcReceiver() { return m_rtcReceiver.get(); }
+    webrtc::RtpReceiverInterface& rtcReceiver() { return m_rtcReceiver.get(); }
 
     Ref<RealtimeMediaSource> createSource(Document&);
 
@@ -56,8 +53,8 @@ private:
     Ref<RTCRtpTransformBackend> rtcRtpTransformBackend() final;
     std::unique_ptr<RTCDtlsTransportBackend> dtlsTransportBackend() final;
 
-    rtc::scoped_refptr<webrtc::RtpReceiverInterface> m_rtcReceiver;
-    RefPtr<RTCRtpTransformBackend> m_transformBackend;
+    const Ref<webrtc::RtpReceiverInterface> m_rtcReceiver;
+    const RefPtr<RTCRtpTransformBackend> m_transformBackend;
 };
 
 } // namespace WebCore

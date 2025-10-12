@@ -18,7 +18,7 @@
 namespace webrtc {
 
 TEST(ResidualEchoDetectorTests, Echo) {
-  auto echo_detector = rtc::make_ref_counted<ResidualEchoDetector>();
+  auto echo_detector = make_ref_counted<ResidualEchoDetector>();
   echo_detector->SetReliabilityForTest(1.0f);
   std::vector<float> ones(160, 1.f);
   std::vector<float> zeros(160, 0.f);
@@ -45,7 +45,7 @@ TEST(ResidualEchoDetectorTests, Echo) {
 }
 
 TEST(ResidualEchoDetectorTests, NoEcho) {
-  auto echo_detector = rtc::make_ref_counted<ResidualEchoDetector>();
+  auto echo_detector = make_ref_counted<ResidualEchoDetector>();
   echo_detector->SetReliabilityForTest(1.0f);
   std::vector<float> ones(160, 1.f);
   std::vector<float> zeros(160, 0.f);
@@ -67,7 +67,7 @@ TEST(ResidualEchoDetectorTests, NoEcho) {
 }
 
 TEST(ResidualEchoDetectorTests, EchoWithRenderClockDrift) {
-  auto echo_detector = rtc::make_ref_counted<ResidualEchoDetector>();
+  auto echo_detector = make_ref_counted<ResidualEchoDetector>();
   echo_detector->SetReliabilityForTest(1.0f);
   std::vector<float> ones(160, 1.f);
   std::vector<float> zeros(160, 0.f);
@@ -104,7 +104,7 @@ TEST(ResidualEchoDetectorTests, EchoWithRenderClockDrift) {
 }
 
 TEST(ResidualEchoDetectorTests, EchoWithCaptureClockDrift) {
-  auto echo_detector = rtc::make_ref_counted<ResidualEchoDetector>();
+  auto echo_detector = make_ref_counted<ResidualEchoDetector>();
   echo_detector->SetReliabilityForTest(1.0f);
   std::vector<float> ones(160, 1.f);
   std::vector<float> zeros(160, 0.f);

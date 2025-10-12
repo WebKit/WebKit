@@ -54,6 +54,7 @@
 #import <WebKit/_WKSpatialBackdropSource.h>
 #import <WebKit/_WKTargetedElementInfo.h>
 #import <WebKit/_WKTargetedElementRequest.h>
+#import <WebKit/_WKTextExtraction.h>
 #import <WebKit/_WKTextRun.h>
 #import <WebKit/_WKThumbnailView.h>
 #import <WebKit/_WKVisitedLinkStore.h>

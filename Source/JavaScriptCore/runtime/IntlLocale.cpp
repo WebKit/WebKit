@@ -81,7 +81,7 @@ public:
     bool initialize(const String&);
     CString toCanonical();
 
-    void overrideLanguageScriptRegion(StringView language, StringView script, StringView region);
+    void overrideLanguageScriptRegionVariants(StringView language, StringView script, StringView region, StringView variants = { });
     bool setKeywordValue(ASCIILiteral key, StringView value);
 
 private:
@@ -108,8 +108,8 @@ CString LocaleIDBuilder::toCanonical()
     return canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTFMove(buffer.value())).span();
 }
 
-// Because ICU's C API doesn't have set[Language|Script|Region] functions...
-void LocaleIDBuilder::overrideLanguageScriptRegion(StringView language, StringView script, StringView region)
+// Because ICU's C API doesn't have set[Language|Script|Region|Variants] functions...
+void LocaleIDBuilder::overrideLanguageScriptRegionVariants(StringView language, StringView script, StringView region, StringView variants)
 {
     unsigned length = strlen(m_buffer.span().data());
 
@@ -143,6 +143,20 @@ void LocaleIDBuilder::overrideLanguageScriptRegion(StringView language, StringVi
             subtags[index] = region;
         else
             subtags.insert(index, region);
+    }
+
+    if (!variants.isNull()) {
+        while (subtags.size() > 1) {
+            auto& lastSubtag = subtags.last();
+            bool isVariant = (lastSubtag.length() >= 5 && lastSubtag.length() <= 8) || (lastSubtag.length() == 4 && isASCIIDigit(lastSubtag[0]));
+            if (!isVariant)
+                break;
+            subtags.removeLast();
+        }
+        if (!variants.isEmpty()) {
+            for (auto variant : variants.split('-'))
+                subtags.append(variant);
+        }
     }
 
     Vector<char, 32> buffer;
@@ -180,7 +194,7 @@ bool LocaleIDBuilder::setKeywordValue(ASCIILiteral key, StringView value)
 
     ASSERT(value.containsOnlyASCII());
     Vector<char, 32> rawValue(value.length() + 1);
-    value.getCharacters(byteCast<LChar>(rawValue.mutableSpan()));
+    value.getCharacters(byteCast<Latin1Character>(rawValue.mutableSpan()));
     rawValue[value.length()] = '\0';
 
     UErrorCode status = U_ZERO_ERROR;
@@ -286,8 +300,39 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
         return;
     }
 
-    if (!language.isNull() || !script.isNull() || !region.isNull())
-        localeID.overrideLanguageScriptRegion(language, script, region);
+    String variants = intlStringOption(globalObject, options, vm.propertyNames->variants, { }, { }, { });
+    RETURN_IF_EXCEPTION(scope, void());
+    if (!variants.isNull()) {
+        constexpr auto variantsErrorMessage = "variants is not a well-formed variants value"_s;
+        if (variants.isEmpty() || variants.startsWith('-') || variants.endsWith('-') || variants.contains("--")) [[unlikely]] {
+            throwRangeError(globalObject, scope, variantsErrorMessage);
+            return;
+        }
+        auto variantList = variants.split('-');
+        if (variantList.size() == 1) {
+            if (!isUnicodeVariantSubtag(variantList[0])) [[unlikely]] {
+                throwRangeError(globalObject, scope, variantsErrorMessage);
+                return;
+            }
+        } else {
+            HashSet<String> seenVariants;
+            for (auto variant : variantList) {
+                if (!isUnicodeVariantSubtag(variant)) [[unlikely]] {
+                    throwRangeError(globalObject, scope, variantsErrorMessage);
+                    return;
+                }
+                String lowerVariant = variant.convertToASCIILowercase();
+                if (seenVariants.contains(lowerVariant)) [[unlikely]] {
+                    throwRangeError(globalObject, scope, variantsErrorMessage);
+                    return;
+                }
+                seenVariants.add(lowerVariant);
+            }
+        }
+    }
+
+    if (!language.isNull() || !script.isNull() || !region.isNull() || !variants.isNull())
+        localeID.overrideLanguageScriptRegionVariants(language, script, region, variants);
 
     String calendar = intlStringOption(globalObject, options, vm.propertyNames->calendar, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
@@ -490,7 +535,10 @@ const String& IntlLocale::language()
         Vector<char, 8> buffer;
         auto status = callBufferProducingFunction(uloc_getLanguage, m_localeID.data(), buffer);
         ASSERT_UNUSED(status, U_SUCCESS(status));
-        m_language = buffer.span();
+        if (!buffer.size())
+            m_language = "und"_s;
+        else
+            m_language = buffer.span();
     }
     return m_language;
 }
@@ -517,6 +565,36 @@ const String& IntlLocale::region()
         m_region = buffer.span();
     }
     return m_region;
+}
+
+// https://tc39.es/ecma402/#sec-Intl.Locale.prototype.variants
+const String& IntlLocale::variants()
+{
+    if (m_variants.isNull()) {
+        const String& baseNameValue = baseName();
+        Vector<String> variantParts;
+        if (!baseNameValue.isEmpty()) {
+            auto parts = baseNameValue.split('-');
+            for (size_t i = 1; i < parts.size(); i++) {
+                const String& part = parts[i];
+                if (isUnicodeVariantSubtag(part))
+                    variantParts.append(part.convertToASCIILowercase());
+            }
+        }
+        if (variantParts.size() > 0) {
+            StringBuilder builder;
+            bool first = true;
+            for (const auto& variant : variantParts) {
+                if (!first)
+                    builder.append('-');
+                builder.append(variant);
+                first = false;
+            }
+            m_variants = builder.toString();
+        } else
+            m_variants = emptyString();
+    }
+    return m_variants;
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.calendar
@@ -676,8 +754,8 @@ JSArray* IntlLocale::hourCycles(JSGlobalObject* globalObject)
     }
 
     // Use "j" skeleton and parse pattern to retrieve the configured hour-cycle information.
-    constexpr const UChar skeleton[] = { 'j', 0 };
-    Vector<UChar, 32> pattern;
+    constexpr const char16_t skeleton[] = { 'j', 0 };
+    Vector<char16_t, 32> pattern;
     status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, generator.get(), skeleton, 1, UDATPG_MATCH_HOUR_FIELD_LENGTH, pattern);
     if (!U_SUCCESS(status)) {
         throwTypeError(globalObject, scope, "invalid locale"_s);

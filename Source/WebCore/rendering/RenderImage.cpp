@@ -31,7 +31,7 @@
 #include "AXObjectCache.h"
 #include "BitmapImage.h"
 #include "CachedImage.h"
-#include "DocumentInlines.h"
+#include "DocumentView.h"
 #include "FocusController.h"
 #include "FontCache.h"
 #include "FontCascade.h"
@@ -56,6 +56,7 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderImageResourceStyleImage.h"
 #include "RenderObjectInlines.h"
@@ -65,13 +66,15 @@
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
+#include "SVGSVGElement.h"
 #include "Settings.h"
 #include "TextPainter.h"
 #include <wtf/StackStats.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include "LogicalSelectionOffsetCaches.h"
+#include "LogicalSelectionOffsetCachesInlines.h"
 #include "SelectionGeometry.h"
 #endif
 
@@ -306,18 +309,6 @@ LayoutUnit RenderImage::computeReplacedLogicalHeight(std::optional<LayoutUnit> e
     return RenderReplaced::computeReplacedLogicalHeight(estimatedUsedWidth);
 }
 
-LayoutUnit RenderImage::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
-{
-    LayoutUnit offset;
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    if (isMultiRepresentationHEIC()) {
-        auto metrics = style().fontCascade().primaryFont()->metricsForMultiRepresentationHEIC();
-        offset = LayoutUnit::fromFloatRound(metrics.descent);
-    }
-#endif
-    return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode) - offset;
-}
-
 void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 {
     if (renderTreeBeingDestroyed())
@@ -352,8 +343,13 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
         imageSizeChange = setImageSizeForAltText(cachedImage());
     }
     repaintOrMarkForLayout(imageSizeChange, rect);
-    if (AXObjectCache* cache = document().existingAXObjectCache())
+    if (CheckedPtr cache = document().existingAXObjectCache())
         cache->deferRecomputeIsIgnoredIfNeeded(element());
+
+    if (auto* image = cachedImage(); image && image->currentFrameIsComplete(this)) {
+        if (auto styleable = Styleable::fromRenderer(*this))
+            protectedDocument()->didLoadImage(styleable->protectedElement().get(), image);
+    }
 }
 
 void RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize)
@@ -410,7 +406,9 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
         if (rect) {
             // The image changed rect is in source image coordinates (pre-zooming),
             // so map from the bounds of the image to the contentsBox.
-            repaintRect.intersect(enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), imageResource().imageSize(1.0f)), repaintRect)));
+            RefPtr<Image> srcImg = imageResource().image(flooredIntSize(contentBoxSize()));
+            FloatSize sourceSize = srcImg->size() / style().usedZoom();
+            repaintRect.intersect(enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), sourceSize), repaintRect)));
         }
         repaintRectangle(repaintRect);
     }
@@ -460,6 +458,20 @@ bool RenderImage::isShowingAltText() const
 bool RenderImage::shouldDisplayBrokenImageIcon() const
 {
     return imageResource().errorOccurred();
+}
+
+// Per CSSWG resolution, we should respect 0px inline sizes.
+// See: https://github.com/w3c/csswg-drafts/issues/11236#issuecomment-2718502765
+bool RenderImage::shouldRespectZeroIntrinsicWidth() const
+{
+    auto* cachedImage = this->cachedImage();
+    if (!cachedImage)
+        return false;
+    if (auto* svgImage = dynamicDowncast<SVGImage>(cachedImage->image())) {
+        if (auto rootElement = svgImage->rootElement())
+            return rootElement->hasIntrinsicWidth();
+    }
+    return false;
 }
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
@@ -647,7 +659,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (showBorderForIncompleteImage && (result != ImageDrawResult::DidDraw || (cachedImage() && cachedImage()->isLoading())))
         paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);
     
-    if (cachedImage() && paintInfo.phase == PaintPhase::Foreground) {
+    if (cachedImage() && paintInfo.phase == PaintPhase::Foreground && !context.paintingDisabled()) {
         // For now, count images as unpainted if they are still progressively loading. We may want 
         // to refine this in the future to account for the portion of the image that has painted.
         LayoutRect visibleRect = intersection(replacedContentRect, contentBoxRect);
@@ -655,17 +667,25 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             page().addRelevantUnpaintedObject(*this, visibleRect);
         else
             page().addRelevantRepaintedObject(*this, visibleRect);
+
+        if (cachedImage()->currentFrameIsComplete(this)) {
+            if (auto styleable = Styleable::fromRenderer(*this)) {
+                auto localVisibleRect = visibleRect;
+                localVisibleRect.moveBy(-paintOffset);
+                protectedDocument()->didPaintImage(styleable->element, cachedImage(), localVisibleRect);
+            }
+        }
     }
 }
 
 void RenderImage::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     RenderReplaced::paint(paintInfo, paintOffset);
-    
+
     if (paintInfo.phase == PaintPhase::Outline)
         paintAreaElementFocusRing(paintInfo, paintOffset);
 }
-    
+
 void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (document().printing() || !frame().selection().isFocusedAndActive())
@@ -682,7 +702,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPo
     if (!areaElementStyle)
         return;
 
-    float outlineWidth = areaElementStyle->outlineWidth();
+    auto outlineWidth = Style::evaluate<float>(areaElementStyle->outlineWidth(), Style::ZoomNeeded { });
     if (!outlineWidth)
         return;
 
@@ -729,7 +749,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         return ImageDrawResult::DidNothing;
 
     // FIXME: Document when image != img.get().
-    auto* image = imageResource().image().get();
+    auto* image = imageResource().image().unsafeGet();
 
     ImagePaintingOptions options = {
         CompositeOperator::SourceOver,
@@ -741,6 +761,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
 #if USE(SKIA)
         StrictImageClamping::No,
 #endif
+        paintInfo.paintBehavior.contains(PaintBehavior::DrawsHDRContent) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
         style().dynamicRangeLimit().toPlatformDynamicRangeLimit()
     };
 
@@ -777,20 +798,18 @@ bool RenderImage::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
         return false;
     if (!contentBoxRect().contains(localRect))
         return false;
-    FillBox backgroundClip = style().backgroundClip();
+    auto backgroundClip = style().backgroundLayers().first().clip();
     // Background paints under borders.
     if (backgroundClip == FillBox::BorderBox && style().hasBorder() && !borderObscuresBackground())
         return false;
     // Background shows in padding area.
-    if ((backgroundClip == FillBox::BorderBox || backgroundClip == FillBox::PaddingBox) && style().hasPadding())
+    if ((backgroundClip == FillBox::BorderBox || backgroundClip == FillBox::PaddingBox) && !Style::isKnownZero(style().paddingBox()))
         return false;
     // Object-fit may leave parts of the content box empty.
-    ObjectFit objectFit = style().objectFit();
-    if (objectFit != ObjectFit::Fill && objectFit != ObjectFit::Cover)
+    if (auto objectFit = style().objectFit(); objectFit != ObjectFit::Fill && objectFit != ObjectFit::Cover)
         return false;
 
-    LengthPoint objectPosition = style().objectPosition();
-    if (objectPosition != RenderStyle::initialObjectPosition())
+    if (style().objectPosition() != RenderStyle::initialObjectPosition())
         return false;
 
     // Check for image with alpha.
@@ -852,6 +871,12 @@ void RenderImage::updateAltText()
         m_altText = input->altText();
     else if (auto* image = dynamicDowncast<HTMLImageElement>(*element()))
         m_altText = image->altText();
+
+    if (m_altText.isNull()) {
+        // We check isNull() and not isEmpty() because we don't want to override empty-string
+        // alt text provided by either of the above branches.
+        m_altText = style().altFromContent();
+    }
 }
 
 bool RenderImage::canHaveChildren() const
@@ -878,10 +903,10 @@ void RenderImage::layout()
         layoutShadowContent(oldSize);
 }
 
-void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, FloatSize& intrinsicRatio) const
+FloatSize RenderImage::computeIntrinsicSize() const
 {
     ASSERT(!shouldApplySizeContainment());
-    RenderReplaced::computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio);
+    auto intrinsicSize = RenderReplaced::computeIntrinsicSize();
 
     // Our intrinsicSize is empty if we're rendering generated images with relative width/height. Figure out the right intrinsic size to use.
     if (intrinsicSize.isEmpty() && (imageResource().imageHasRelativeWidth() || imageResource().imageHasRelativeHeight())) {
@@ -892,14 +917,21 @@ void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, Flo
         }
     }
 
+    return intrinsicSize;
+}
+
+FloatSize RenderImage::preferredAspectRatio() const
+{
+    ASSERT(!shouldApplySizeContainment());
+
     // Don't compute an intrinsic ratio to preserve historical WebKit behavior if we're painting alt text and/or a broken image.
     if (shouldDisplayBrokenImageIcon()) {
-        if (style().aspectRatioType() == AspectRatioType::AutoAndRatio && !isShowingAltText())
-            intrinsicRatio = FloatSize::narrowPrecision(style().aspectRatioLogicalWidth(), style().aspectRatioLogicalHeight());
-        else
-            intrinsicRatio = { 1.0, 1.0 };
-        return;
+        if (style().aspectRatio().isAutoAndRatio() && !isShowingAltText())
+            return FloatSize::narrowPrecision(style().aspectRatioLogicalWidth().value, style().aspectRatioLogicalHeight().value);
+        return { 1.0, 1.0 };
     }
+
+    return RenderReplaced::preferredAspectRatio();
 }
 
 bool RenderImage::shouldInvalidatePreferredWidths() const

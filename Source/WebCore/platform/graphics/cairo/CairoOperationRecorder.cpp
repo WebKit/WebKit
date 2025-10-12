@@ -32,7 +32,6 @@
 
 #if USE(CAIRO)
 #include "CairoOperations.h"
-#include "DecomposedGlyphs.h"
 #include "Filter.h"
 #include "FilterResults.h"
 #include "FloatRoundedRect.h"
@@ -62,14 +61,18 @@ struct OperationData {
 template<> struct OperationData<> { };
 
 template<typename T, typename... Args>
-auto createCommand(Args&&... arguments) -> std::enable_if_t<std::is_base_of<OperationData<std::decay_t<Args>...>, T>::value, std::unique_ptr<PaintingOperation>> {
+    requires std::derived_from<T, OperationData<std::decay_t<Args>...>>
+auto createCommand(Args&&... arguments) -> std::unique_ptr<PaintingOperation>
+{
     auto* command = new T();
     command->arguments = std::make_tuple(std::forward<Args>(arguments)...);
     return std::unique_ptr<PaintingOperation>(command);
 }
 
 template<typename T>
-auto createCommand() -> std::enable_if_t<std::is_base_of<OperationData<>, T>::value, std::unique_ptr<PaintingOperation>> {
+    requires std::derived_from<T, OperationData<>>
+auto createCommand() -> std::unique_ptr<PaintingOperation>
+{
     return makeUnique<T>();
 }
 
@@ -555,11 +558,6 @@ void OperationRecorder::drawGlyphs(const Font& font, std::span<const GlyphBuffer
         state.strokeThickness(), state.dropShadow(), fontSmoothing));
 }
 
-void OperationRecorder::drawDecomposedGlyphs(const Font& font, const DecomposedGlyphs& decomposedGlyphs)
-{
-    return drawGlyphs(font, decomposedGlyphs.glyphs(), decomposedGlyphs.advances(), decomposedGlyphs.localAnchor(), decomposedGlyphs.fontSmoothingMode());
-}
-
 void OperationRecorder::drawImageBuffer(ImageBuffer& buffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     struct DrawImageBuffer final : PaintingOperation, OperationData<RefPtr<cairo_surface_t>, FloatRect, FloatRect, ImagePaintingOptions, float, Cairo::ShadowState> {
@@ -618,7 +616,7 @@ void OperationRecorder::drawFilteredImageBuffer(ImageBuffer* srcImage, const Flo
     append(createCommand<DrawFilteredImageBuffer>(nativeImage->platformImage(), FloatRect(result->absoluteImageRect()), FloatRect({ } , imageBuffer->logicalSize()), filter.filterScale(), ImagePaintingOptions(state.imageInterpolationQuality()), state.alpha(), Cairo::ShadowState(state)));
 }
 
-void OperationRecorder::drawNativeImageInternal(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void OperationRecorder::drawNativeImage(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     struct DrawNativeImage final : PaintingOperation, OperationData<RefPtr<cairo_surface_t>, FloatRect, FloatRect, ImagePaintingOptions, float, Cairo::ShadowState> {
         virtual ~DrawNativeImage() = default;

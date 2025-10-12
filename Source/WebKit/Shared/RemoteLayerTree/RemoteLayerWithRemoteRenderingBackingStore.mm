@@ -50,7 +50,7 @@ RemoteLayerWithRemoteRenderingBackingStore::RemoteLayerWithRemoteRenderingBackin
         return;
     }
 
-    m_bufferSet = collection->protectedLayerTreeContext()->ensureProtectedRemoteRenderingBackendProxy()->createImageBufferSet();
+    lazyInitialize(m_bufferSet, collection->protectedLayerTreeContext()->ensureProtectedRemoteRenderingBackendProxy()->createImageBufferSet(*CheckedPtr { this }.get()));
 }
 
 RemoteLayerWithRemoteRenderingBackingStore::~RemoteLayerWithRemoteRenderingBackingStore()
@@ -73,12 +73,24 @@ bool RemoteLayerWithRemoteRenderingBackingStore::frontBufferMayBeVolatile() cons
 
 void RemoteLayerWithRemoteRenderingBackingStore::prepareToDisplay()
 {
+    if (performDelegatedLayerDisplay())
+        return;
+
+    RefPtr bufferSet = this->bufferSet();
+    if (!bufferSet)
+        return;
+
+    if (!hasFrontBuffer() || !supportsPartialRepaint())
+        setNeedsDisplay();
+
+    dirtyRepaintCounterIfNecessary();
+
+    bufferSet->prepareToDisplay(dirtyRegion(), supportsPartialRepaint(), hasEmptyDirtyRegion(), drawingRequiresClearedPixels());
     m_contentsBufferHandle = std::nullopt;
 }
 
 void RemoteLayerWithRemoteRenderingBackingStore::clearBackingStore()
 {
-    m_contentsBufferHandle = std::nullopt;
     m_cleared = true;
 }
 
@@ -91,7 +103,7 @@ std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteLayerWithRemoteRenderingB
 
 void RemoteLayerWithRemoteRenderingBackingStore::createContextAndPaintContents()
 {
-    auto bufferSet = protectedBufferSet();
+    RefPtr bufferSet = m_bufferSet;
     if (!bufferSet)
         return;
 
@@ -110,14 +122,19 @@ void RemoteLayerWithRemoteRenderingBackingStore::ensureBackingStore(const Parame
         return;
 
     m_parameters = parameters;
-    m_cleared = true;
+    clearBackingStore();
+
+    auto useLosslessCompression = UseLosslessCompression::No;
+    if (RefPtr context = m_layer->context())
+        useLosslessCompression = context->useIOSurfaceLosslessCompression();
+
     if (m_bufferSet) {
         RemoteImageBufferSetConfiguration configuration {
             .logicalSize = size(),
             .resolutionScale = scale(),
             .colorSpace = colorSpace(),
             .contentsFormat = contentsFormat(),
-            .pixelFormat = pixelFormat(),
+            .bufferFormat = { pixelFormat(), useLosslessCompression },
             .renderingMode = type() == RemoteLayerBackingStore::Type::IOSurface ? RenderingMode::Accelerated : RenderingMode::Unaccelerated,
             .renderingPurpose = WebCore::RenderingPurpose::LayerBacking,
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
@@ -128,27 +145,16 @@ void RemoteLayerWithRemoteRenderingBackingStore::ensureBackingStore(const Parame
     }
 }
 
-void RemoteLayerWithRemoteRenderingBackingStore::encodeBufferAndBackendInfos(IPC::Encoder& encoder) const
-{
-    auto encodeBuffer = [&](const  std::optional<WebCore::RenderingResourceIdentifier>& bufferIdentifier) {
-        if (bufferIdentifier) {
-            encoder << std::optional { BufferAndBackendInfo { *bufferIdentifier, m_bufferSet->generation() } };
-            return;
-        }
-
-        encoder << std::optional<BufferAndBackendInfo>();
-    };
-
-    encodeBuffer(m_bufferCacheIdentifiers.front);
-    encodeBuffer(m_bufferCacheIdentifiers.back);
-    encodeBuffer(m_bufferCacheIdentifiers.secondaryBack);
-}
-
-std::optional<RemoteImageBufferSetIdentifier> RemoteLayerWithRemoteRenderingBackingStore::bufferSetIdentifier() const
+std::optional<ImageBufferSetIdentifier> RemoteLayerWithRemoteRenderingBackingStore::bufferSetIdentifier() const
 {
     if (!m_bufferSet)
         return std::nullopt;
     return m_bufferSet->identifier();
+}
+
+void RemoteLayerWithRemoteRenderingBackingStore::setNeedsDisplay()
+{
+    RemoteLayerBackingStore::setNeedsDisplay();
 }
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
@@ -163,8 +169,11 @@ std::optional<DynamicContentScalingDisplayList> RemoteLayerWithRemoteRenderingBa
 void RemoteLayerWithRemoteRenderingBackingStore::dump(WTF::TextStream& ts) const
 {
     ts.dumpProperty("buffer set"_s, m_bufferSet);
-    ts.dumpProperty("cache identifiers"_s, m_bufferCacheIdentifiers);
     ts.dumpProperty("is opaque"_s, isOpaque());
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    ts.dumpProperty("requested-headroom", m_maxRequestedEDRHeadroom);
+    ts.dumpProperty("painted-headroom", m_maxPaintedEDRHeadroom);
+#endif
 }
 
 } // namespace WebKit

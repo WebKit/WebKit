@@ -78,7 +78,7 @@ void InitializeWebKit2()
         if ([NSThread isMainThread] || linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::InitializeWebKit2MainThreadAssertion))
             runInitializationCode();
         else
-            WorkQueue::protectedMain()->dispatchSync([] { runInitializationCode(); });
+            WorkQueue::mainSingleton().dispatchSync([] { runInitializationCode(); });
     });
 }
 

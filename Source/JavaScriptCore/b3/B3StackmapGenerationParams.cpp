@@ -99,6 +99,11 @@ StackmapGenerationParams::StackmapGenerationParams(
 {
 }
 
+Origin StackmapGenerationParams::origin() const
+{
+    return m_value->origin();
+}
+
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

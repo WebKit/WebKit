@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CSSValueList.h"
-#include "DeprecatedCSSOMValue.h"
+#include <WebCore/CSSValueList.h>
+#include <WebCore/DeprecatedCSSOMValue.h>
 
 namespace WebCore {
     

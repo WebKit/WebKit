@@ -43,14 +43,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorMemoryAgent);
 
 InspectorMemoryAgent::InspectorMemoryAgent(PageAgentContext& context)
     : InspectorAgentBase("Memory"_s, context)
-    , m_frontendDispatcher(makeUnique<Inspector::MemoryFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUniqueRef<Inspector::MemoryFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::MemoryBackendDispatcher::create(context.backendDispatcher, this))
 {
 }
 
 InspectorMemoryAgent::~InspectorMemoryAgent() = default;
 
-void InspectorMemoryAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
+void InspectorMemoryAgent::didCreateFrontendAndBackend()
 {
     m_instrumentingAgents.setPersistentMemoryAgent(this);
 }

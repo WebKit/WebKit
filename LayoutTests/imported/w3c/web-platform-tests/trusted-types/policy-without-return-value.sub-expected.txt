@@ -1,0 +1,6 @@
+
+PASS createHTML with a policy that returns undefined DOMParser
+PASS createHTML with a policy that returns undefined iframe.srcdoc
+PASS createScript with a policy that returns undefined <div onload>
+PASS createScriptURL with a policy that returns undefined script.src
+

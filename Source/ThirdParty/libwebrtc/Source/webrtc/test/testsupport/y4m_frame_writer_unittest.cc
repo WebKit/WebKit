@@ -8,10 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stdint.h>
 #include <stdio.h>
-#include <string.h>
 
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
 #include <memory>
 #include <string>
 
@@ -23,10 +24,10 @@ namespace webrtc {
 namespace test {
 
 namespace {
-const size_t kFrameWidth = 50;
-const size_t kFrameHeight = 20;
-const size_t kFrameLength = 3 * kFrameWidth * kFrameHeight / 2;  // I420.
-const size_t kFrameRate = 30;
+constexpr size_t kFrameWidth = 50;
+constexpr size_t kFrameHeight = 20;
+constexpr size_t kFrameLength = 3 * kFrameWidth * kFrameHeight / 2;  // I420.
+constexpr size_t kFrameRate = 30;
 
 const std::string kFileHeader = "YUV4MPEG2 W50 H20 F30:1 C420\n";
 const std::string kFrameHeader = "FRAME\n";
@@ -38,8 +39,8 @@ class Y4mFrameWriterTest : public ::testing::Test {
   ~Y4mFrameWriterTest() override = default;
 
   void SetUp() override {
-    temp_filename_ = webrtc::test::TempFilename(webrtc::test::OutputPath(),
-                                                "y4m_frame_writer_unittest");
+    temp_filename_ =
+        test::TempFilename(test::OutputPath(), "y4m_frame_writer_unittest");
     frame_writer_.reset(new Y4mFrameWriterImpl(temp_filename_, kFrameWidth,
                                                kFrameHeight, kFrameRate));
     ASSERT_TRUE(frame_writer_->Init());

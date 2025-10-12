@@ -39,13 +39,13 @@ Lock messageHandlerLoggerObserverLock;
 String Logger::LogSiteIdentifier::toString() const
 {
     if (className)
-        return makeString(className, "::"_s, unsafeSpan(methodName), '(', hex(objectIdentifier), ") "_s);
-    return makeString(unsafeSpan(methodName), '(', hex(objectIdentifier), ") "_s);
+        return makeString(className, "::"_s, unsafeSpan(methodName), '(', objectIdentifier, ") "_s);
+    return makeString(unsafeSpan(methodName), '(', objectIdentifier, ") "_s);
 }
 
 String LogArgument<const void*>::toString(const void* argument)
 {
-    return makeString('(', hex(reinterpret_cast<uintptr_t>(argument)), ')');
+    return makeString('(', reinterpret_cast<uintptr_t>(argument), ')');
 }
 
 Vector<std::reference_wrapper<Logger::Observer>>& Logger::observers()

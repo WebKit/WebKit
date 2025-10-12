@@ -13,4 +13,5 @@ PASS e.style['animation-timing-function'] = "steps(0, jump-start)" should not se
 PASS e.style['animation-timing-function'] = "steps(0, jump-end)" should not set the property value
 PASS e.style['animation-timing-function'] = "steps(0, jump-both)" should not set the property value
 PASS e.style['animation-timing-function'] = "steps(1, jump-none)" should not set the property value
+FAIL e.style['animation-timing-function'] = "steps(calc(0/0), jump-none)" should not set the property value assert_equals: expected "" but got "steps(calc(NaN), jump-none)"
 

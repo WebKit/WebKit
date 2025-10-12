@@ -46,7 +46,8 @@ CGImageRef WKImageCreateCGImage(WKImageRef imageRef)
         return nullptr;
 
     auto platformImage = nativeImage->platformImage();
-    return platformImage.leakRef();
+    // FIXME(rdar://162218496): SaferCPP should notice that our API is a create.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return platformImage.leakRef();
 }
 
 WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)

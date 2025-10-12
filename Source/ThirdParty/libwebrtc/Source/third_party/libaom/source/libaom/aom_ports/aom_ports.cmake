@@ -38,6 +38,9 @@ endif()
 list(APPEND AOM_PORTS_SOURCES_PPC "${AOM_ROOT}/aom_ports/ppc.h"
             "${AOM_ROOT}/aom_ports/ppc_cpudetect.c")
 
+list(APPEND AOM_PORTS_SOURCES_RISCV "${AOM_ROOT}/aom_ports/riscv.h"
+            "${AOM_ROOT}/aom_ports/riscv_cpudetect.c")
+
 # For arm and x86 targets:
 #
 # * Creates the aom_ports build target, adds the includes in aom_ports to the
@@ -68,9 +71,12 @@ function(setup_aom_ports_targets)
   elseif("${AOM_TARGET_CPU}" MATCHES "ppc")
     add_library(aom_ports OBJECT ${AOM_PORTS_SOURCES_PPC})
     set(aom_ports_has_symbols 1)
+  elseif("${AOM_TARGET_CPU}" MATCHES "riscv")
+    add_library(aom_ports OBJECT ${AOM_PORTS_SOURCES_RISCV})
+    set(aom_ports_has_symbols 1)
   endif()
 
-  if("${AOM_TARGET_CPU}" MATCHES "arm|ppc")
+  if("${AOM_TARGET_CPU}" MATCHES "arm|ppc|riscv")
     target_sources(aom PRIVATE $<TARGET_OBJECTS:aom_ports>)
     if(BUILD_SHARED_LIBS)
       target_sources(aom_static PRIVATE $<TARGET_OBJECTS:aom_ports>)

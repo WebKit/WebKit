@@ -26,26 +26,26 @@
 
 #pragma once
 
-#include "ClipboardAccessPolicy.h"
-#include "ContentType.h"
-#include "EditableLinkBehavior.h"
-#include "EditingBehaviorType.h"
-#include "FontGenericFamilies.h"
-#include "FontLoadTimingOverride.h"
-#include "ForcedAccessibilityValue.h"
-#include "FourCC.h"
-#include "HTMLParserScriptingFlagPolicy.h"
-#include "MediaPlayerEnums.h"
-#include "StorageBlockingPolicy.h"
-#include "StorageMap.h"
-#include "TextDirectionSubmenuInclusionBehavior.h"
-#include "Timer.h"
-#include "TrustedFonts.h"
-#include "UserInterfaceDirectionPolicy.h"
-#include "WritingMode.h"
 #include <JavaScriptCore/RuntimeFlags.h>
+#include <WebCore/ClipboardAccessPolicy.h>
+#include <WebCore/ContentType.h>
+#include <WebCore/EditableLinkBehavior.h>
+#include <WebCore/EditingBehaviorType.h>
+#include <WebCore/FontGenericFamilies.h>
+#include <WebCore/FontLoadTimingOverride.h>
+#include <WebCore/ForcedAccessibilityValue.h>
+#include <WebCore/FourCC.h>
+#include <WebCore/HTMLParserScriptingFlagPolicy.h>
+#include <WebCore/MediaPlayerEnums.h>
+#include <WebCore/StorageBlockingPolicy.h>
+#include <WebCore/StorageMap.h>
+#include <WebCore/TextDirectionSubmenuInclusionBehavior.h>
+#include <WebCore/Timer.h>
+#include <WebCore/TrustedFonts.h>
+#include <WebCore/UserInterfaceDirectionPolicy.h>
+#include <WebCore/WritingMode.h>
 #include <unicode/uscript.h>
-#include <wtf/AbstractRefCounted.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
@@ -53,14 +53,14 @@
 #include <wtf/Vector.h>
 
 #if ENABLE(DATA_DETECTION)
-#include "DataDetectorType.h"
+#include <WebCore/DataDetectorType.h>
 #endif
 
 namespace WebCore {
 
 class Page;
 
-class SettingsBase : public AbstractRefCounted {
+class SettingsBase : public AbstractRefCountedAndCanMakeWeakPtr<SettingsBase> {
     WTF_MAKE_TZONE_ALLOCATED(SettingsBase);
     WTF_MAKE_NONCOPYABLE(SettingsBase);
 public:
@@ -97,6 +97,9 @@ public:
     WEBCORE_EXPORT void setPictographFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
     WEBCORE_EXPORT const String& pictographFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
+    WEBCORE_EXPORT void setMathFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
+    WEBCORE_EXPORT const String& mathFontFamily(UScriptCode = USCRIPT_COMMON) const;
+
     WEBCORE_EXPORT void setMinimumDOMTimerInterval(Seconds); // Initialized to DOMTimer::defaultMinimumInterval().
     Seconds minimumDOMTimerInterval() const { return m_minimumDOMTimerInterval; }
 
@@ -132,6 +135,9 @@ public:
 
     WEBCORE_EXPORT void resetToConsistentState();
 
+    WEBCORE_EXPORT RefPtr<Page> protectedPage() const;
+    WeakPtr<Page> page() const { return m_page; }
+
 protected:
     explicit SettingsBase(Page*);
     virtual ~SettingsBase();
@@ -162,12 +168,9 @@ protected:
     void mockCaptureDevicesEnabledChanged();
 #endif
     void layerBasedSVGEngineEnabledChanged();
-#if USE(MODERN_AVCONTENTKEYSESSION)
-    void shouldUseModernAVContentKeySessionChanged();
-#endif
     void useSystemAppearanceChanged();
     void fontFallbackPrefersPictographsChanged();
-    RefPtr<Page> protectedPage() const;
+    void updateDisplayEDRHeadroom();
 
     WeakPtr<Page> m_page;
 

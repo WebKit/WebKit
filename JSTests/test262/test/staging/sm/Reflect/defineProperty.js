@@ -6,9 +6,7 @@
 /*---
 features:
   - IsHTMLDDA
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-Reflect-shell.js, deepEqual.js]
-flags:
-  - noStrict
+includes: [sm/assertThrowsValue.js, sm/non262-Reflect-shell.js, deepEqual.js]
 description: |
   pending
 esid: pending
@@ -79,13 +77,11 @@ assert.sameValue(Reflect.defineProperty(proxy, "prop", attributes), true);
 // many error cases to check that behavior.
 
 // missing attributes argument
-assertThrowsInstanceOf(() => Reflect.defineProperty(obj, "y"),
-                       TypeError);
+assert.throws(TypeError, () => Reflect.defineProperty(obj, "y"));
 
 // non-object attributes argument
 for (var attributes of SOME_PRIMITIVE_VALUES) {
-    assertThrowsInstanceOf(() => Reflect.defineProperty(obj, "y", attributes),
-                           TypeError);
+    assert.throws(TypeError, () => Reflect.defineProperty(obj, "y", attributes));
 }
 
 // inextensible object
@@ -134,9 +130,7 @@ assert.sameValue(Reflect.defineProperty(obj, "prop", {set: g}), false);
 assert.sameValue(Reflect.defineProperty(obj, "prop", {set: s}), true);  // no-op
 
 // Proxy defineProperty handler method that returns false
-var falseValues = [false, 0, -0, "", NaN, null, undefined];
-if (typeof createIsHTMLDDA === "function")
-    falseValues.push(createIsHTMLDDA());
+var falseValues = [false, 0, -0, "", NaN, null, undefined, $262.IsHTMLDDA];
 var value;
 proxy = new Proxy({}, {
     defineProperty(t, id, desc) {
@@ -155,8 +149,8 @@ proxy = new Proxy(obj, {
         return true;
     }
 });
-assertThrowsInstanceOf(() => Reflect.defineProperty(proxy, "x", {value: 2}), TypeError);
-assertThrowsInstanceOf(() => Reflect.defineProperty(proxy, "y", {value: 0}), TypeError);
+assert.throws(TypeError, () => Reflect.defineProperty(proxy, "x", {value: 2}));
+assert.throws(TypeError, () => Reflect.defineProperty(proxy, "y", {value: 0}));
 assert.sameValue(Reflect.defineProperty(proxy, "x", {value: 1}), true);
 
 // The second argument is converted ToPropertyKey before any internal methods

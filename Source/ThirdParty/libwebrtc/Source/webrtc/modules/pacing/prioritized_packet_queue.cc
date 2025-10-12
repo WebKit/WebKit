@@ -204,12 +204,12 @@ void PrioritizedPacketQueue::Push(Timestamp enqueue_time,
 
   static constexpr TimeDelta kTimeout = TimeDelta::Millis(500);
   if (enqueue_time - last_culling_time_ > kTimeout) {
-    for (auto it = streams_.begin(); it != streams_.end();) {
-      if (it->second->IsEmpty() &&
-          it->second->LastEnqueueTime() + kTimeout < enqueue_time) {
-        streams_.erase(it++);
+    for (auto stream_it = streams_.begin(); stream_it != streams_.end();) {
+      if (stream_it->second->IsEmpty() &&
+          stream_it->second->LastEnqueueTime() + kTimeout < enqueue_time) {
+        streams_.erase(stream_it++);
       } else {
-        ++it;
+        ++stream_it;
       }
     }
     last_culling_time_ = enqueue_time;

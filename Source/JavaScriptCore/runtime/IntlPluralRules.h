@@ -62,10 +62,14 @@ public:
 
     DECLARE_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
     template<typename IntlType>
     friend void setNumberFormatDigitOptions(JSGlobalObject*, IntlType*, JSObject*, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation);
     template<typename IntlType>
     friend void appendNumberFormatDigitOptionsToSkeleton(IntlType*, StringBuilder&);
+    template<typename IntlType>
+    friend void appendNumberFormatNotationOptionsToSkeleton(IntlType*, StringBuilder&);
 
     void initializePluralRules(JSGlobalObject*, JSValue locales, JSValue options);
     JSValue select(JSGlobalObject*, double value) const;
@@ -75,7 +79,6 @@ public:
 private:
     IntlPluralRules(VM&, Structure*);
     DECLARE_DEFAULT_FINISH_CREATION;
-    DECLARE_VISIT_CHILDREN;
 
     static Vector<String> localeData(const String&, RelevantExtensionKey);
 

@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // CLContext.cpp: Implements the cl::Context class.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/CLContext.h"
 
@@ -86,6 +91,9 @@ cl_command_queue Context::createCommandQueueWithProperties(cl_device_id device,
     CommandQueue::PropArray propArray;
     CommandQueueProperties props;
     cl_uint size = CommandQueue::kNoSize;
+    // If CL_QUEUE_PRIORITY_KHR is not specified, the default priority CL_QUEUE_PRIORITY_MED_KHR is
+    // used.
+    CommandQueue::Priority priority = CL_QUEUE_PRIORITY_MED_KHR;
     if (properties != nullptr)
     {
         const cl_queue_properties *propIt = properties;
@@ -99,6 +107,9 @@ cl_command_queue Context::createCommandQueueWithProperties(cl_device_id device,
                 case CL_QUEUE_SIZE:
                     size = static_cast<decltype(size)>(*propIt++);
                     break;
+                case CL_QUEUE_PRIORITY_KHR:
+                    priority = static_cast<cl_queue_priority_khr>(*propIt++);
+                    break;
             }
         }
         // Include the trailing zero
@@ -106,8 +117,8 @@ cl_command_queue Context::createCommandQueueWithProperties(cl_device_id device,
         propArray.reserve(propIt - properties);
         propArray.insert(propArray.cend(), properties, propIt);
     }
-    return Object::Create<CommandQueue>(*this, device->cast<Device>(), std::move(propArray), props,
-                                        size);
+    return Object::Create<CommandQueue>(*this, device->cast<Device>(), std::move(propArray),
+                                        priority, props, size);
 }
 
 cl_command_queue Context::createCommandQueue(cl_device_id device, CommandQueueProperties properties)

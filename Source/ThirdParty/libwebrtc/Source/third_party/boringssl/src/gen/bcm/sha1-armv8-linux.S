@@ -4,8 +4,6 @@
 #include <openssl/asm_base.h>
 
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_AARCH64) && defined(__ELF__)
-#include <openssl/arm_arch.h>
-
 .text
 
 .globl	sha1_block_data_order_nohw

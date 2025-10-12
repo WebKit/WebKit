@@ -66,10 +66,8 @@ static CFObjectValue variantFromCFType(CFTypeRef cfType)
         return CoreIPCCFURL((CFURLRef)cfType);
     case IPC::CFType::SecCertificate:
         return CoreIPCSecCertificate((SecCertificateRef)const_cast<void*>(cfType));
-#if HAVE(SEC_ACCESS_CONTROL)
     case IPC::CFType::SecAccessControl:
         return CoreIPCSecAccessControl((SecAccessControlRef)const_cast<void*>(cfType));
-#endif
     case IPC::CFType::SecTrust:
         return CoreIPCSecTrust((SecTrustRef)const_cast<void*>(cfType));
     case IPC::CFType::CGColorSpace:
@@ -131,10 +129,8 @@ RetainPtr<CFTypeRef> CoreIPCCFType::toCFType() const
         return colorSpace.toCF();
     }, [] (const WebCore::Color& color) -> RetainPtr<CFTypeRef> {
         return WebCore::cachedCGColor(color);
-#if HAVE(SEC_ACCESS_CONTROL)
     }, [] (const CoreIPCSecAccessControl& accessControl) -> RetainPtr<CFTypeRef> {
         return accessControl.createSecAccessControl();
-#endif
     });
 }
 
@@ -174,10 +170,8 @@ CFType typeFromCFTypeRef(CFTypeRef type)
         return CFType::CGColor;
     if (typeID == SecCertificateGetTypeID())
         return CFType::SecCertificate;
-#if HAVE(SEC_ACCESS_CONTROL)
     if (typeID == SecAccessControlGetTypeID())
         return CFType::SecAccessControl;
-#endif
     if (typeID == SecTrustGetTypeID())
         return CFType::SecTrust;
 

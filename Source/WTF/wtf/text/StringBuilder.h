@@ -35,7 +35,7 @@ namespace WTF {
 class StringBuilder {
     // Disallow copying since we don't want to share m_buffer between two builders.
     WTF_MAKE_NONCOPYABLE(StringBuilder);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StringBuilder);
 
 public:
     StringBuilder() = default;
@@ -54,16 +54,16 @@ public:
     template<StringTypeAdaptable... StringTypes> void append(const StringTypes&...);
 
     // FIXME: We should keep these overloads only if optimizations make them more efficient than the single-argument form of the variadic append above.
-    WTF_EXPORT_PRIVATE void append(std::span<const UChar>);
-    WTF_EXPORT_PRIVATE void append(std::span<const LChar>);
+    WTF_EXPORT_PRIVATE void append(std::span<const char16_t>);
+    WTF_EXPORT_PRIVATE void append(std::span<const Latin1Character>);
     void append(const AtomString& string) { append(string.string()); }
     void append(const String&);
     void append(StringView);
     void append(ASCIILiteral);
     void append(const char*) = delete; // Pass ASCIILiteral or span instead.
-    void append(UChar);
-    void append(LChar);
-    void append(char character) { append(byteCast<LChar>(character)); }
+    void append(char16_t);
+    void append(Latin1Character);
+    void append(char character) { append(byteCast<Latin1Character>(character)); }
 
     template<typename... StringTypeAdapters> void appendFromAdapters(const StringTypeAdapters&...);
 
@@ -85,11 +85,11 @@ public:
     unsigned length() const;
 
     operator StringView() const LIFETIME_BOUND;
-    UChar operator[](unsigned i) const;
+    char16_t operator[](unsigned i) const;
 
     bool is8Bit() const;
-    std::span<const LChar> span8() const LIFETIME_BOUND { return span<LChar>(); }
-    std::span<const UChar> span16() const LIFETIME_BOUND { return span<UChar>(); }
+    std::span<const Latin1Character> span8() const LIFETIME_BOUND { return span<Latin1Character>(); }
+    std::span<const char16_t> span16() const LIFETIME_BOUND { return span<char16_t>(); }
     template<typename CharacterType> std::span<const CharacterType> span() const LIFETIME_BOUND;
     
     unsigned capacity() const;
@@ -110,8 +110,8 @@ private:
 
     template<typename CharacterType> std::span<CharacterType> extendBufferForAppending(unsigned requiredLength);
     template<typename CharacterType> std::span<CharacterType> extendBufferForAppendingSlowCase(unsigned requiredLength);
-    WTF_EXPORT_PRIVATE std::span<LChar> extendBufferForAppendingLChar(unsigned requiredLength);
-    WTF_EXPORT_PRIVATE std::span<UChar> extendBufferForAppendingWithUpconvert(unsigned requiredLength);
+    WTF_EXPORT_PRIVATE std::span<Latin1Character> extendBufferForAppendingLatin1Character(unsigned requiredLength);
+    WTF_EXPORT_PRIVATE std::span<char16_t> extendBufferForAppendingWithUpconvert(unsigned requiredLength);
 
     WTF_EXPORT_PRIVATE void reifyString() const;
 
@@ -156,32 +156,32 @@ inline void StringBuilder::swap(StringBuilder& other)
 inline StringBuilder::operator StringView() const
 {
     if (is8Bit())
-        return span<LChar>();
-    return span<UChar>();
+        return span<Latin1Character>();
+    return span<char16_t>();
 }
 
-inline void StringBuilder::append(UChar character)
+inline void StringBuilder::append(char16_t character)
 {
     if (m_buffer && m_length < m_buffer->length() && m_string.isNull()) {
         if (!m_buffer->is8Bit()) {
-            spanConstCast<UChar>(m_buffer->span16())[m_length++] = character;
+            spanConstCast<char16_t>(m_buffer->span16())[m_length++] = character;
             return;
         }
         if (isLatin1(character)) {
-            spanConstCast<LChar>(m_buffer->span8())[m_length++] = static_cast<LChar>(character);
+            spanConstCast<Latin1Character>(m_buffer->span8())[m_length++] = static_cast<Latin1Character>(character);
             return;
         }
     }
     append(WTF::span(character));
 }
 
-inline void StringBuilder::append(LChar character)
+inline void StringBuilder::append(Latin1Character character)
 {
     if (m_buffer && m_length < m_buffer->length() && m_string.isNull()) {
         if (m_buffer->is8Bit())
-            spanConstCast<LChar>(m_buffer->span8())[m_length++] = character;
+            spanConstCast<Latin1Character>(m_buffer->span8())[m_length++] = character;
         else
-            spanConstCast<UChar>(m_buffer->span16())[m_length++] = character;
+            spanConstCast<char16_t>(m_buffer->span16())[m_length++] = character;
         return;
     }
     append(WTF::span(character));
@@ -294,9 +294,9 @@ inline unsigned StringBuilder::capacity() const
     return m_buffer ? m_buffer->length() : length();
 }
 
-inline UChar StringBuilder::operator[](unsigned i) const
+inline char16_t StringBuilder::operator[](unsigned i) const
 {
-    return is8Bit() ? span8()[i] : span16()[i];
+    return is8Bit() ? char16_t { span8()[i] } : span16()[i];
 }
 
 inline bool StringBuilder::is8Bit() const
@@ -327,7 +327,7 @@ template<typename... StringTypeAdapters> void StringBuilder::appendFromAdapters(
     } else {
         auto requiredLength = saturatedSum<uint32_t>(m_length, adapters.length()...);
         if (is8Bit() && are8Bit(adapters...)) {
-            auto destination = extendBufferForAppendingLChar(requiredLength);
+            auto destination = extendBufferForAppendingLatin1Character(requiredLength);
             if (!destination.data())
                 return;
             stringTypeAdapterAccumulator(destination, adapters...);
@@ -368,7 +368,7 @@ template<typename CharacterType> bool equal(const StringBuilder& builder, std::s
 template<> struct IntegerToStringConversionTrait<StringBuilder> {
     using ReturnType = void;
     using AdditionalArgumentType = StringBuilder;
-    static void flush(std::span<const LChar> characters, StringBuilder* builder) { builder->append(characters); }
+    static void flush(std::span<const Latin1Character> characters, StringBuilder* builder) { builder->append(characters); }
 };
 
 // Helper functor useful in generic contexts where both makeString() and StringBuilder are being used.

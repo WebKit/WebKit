@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <wtf/Platform.h>
+
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
 #import <pal/spi/cocoa/AVKitSPI.h>
@@ -61,9 +63,11 @@ WEBCORE_EXPORT
 
 @property (assign) WebCore::PlaybackSessionInterfaceMac* playbackSessionInterfaceMac;
 @property (readwrite) NSTimeInterval contentDuration;
-@property (nonatomic, retain, readwrite) AVValueTiming *timing;
+/* This is a safer cpp false positive (rdar://161063702). */
+@property (nonatomic, retain, readwrite) AVValueTiming *timing SUPPRESS_UNRETAINED_MEMBER;
 @property (nonatomic) NSTimeInterval seekToTime;
-@property (nonatomic, retain, readwrite) NSArray *seekableTimeRanges;
+/* This is a safer cpp false positive (rdar://161063702). */
+@property (nonatomic, retain, readwrite) NSArray *seekableTimeRanges SUPPRESS_UNRETAINED_MEMBER;
 @property (nonatomic) BOOL hasEnabledAudio;
 @property (nonatomic) BOOL hasEnabledVideo;
 @property (getter=isPlaying) BOOL playing;

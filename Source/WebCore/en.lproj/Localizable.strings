@@ -65,7 +65,7 @@
 "%@ Web Content (Prewarmed)" = "%@ Web Content (Prewarmed)";
 
 /* Extension's process name that appears in Activity Monitor where the parameter is the name of the extension */
-"%@ Web Extension" = "%@ Web Extension";
+"%s Web Extension" = "%s Web Extension";
 
 /* Visible name of Web Inspector's web process. The argument is the application name. */
 "%@ Web Inspector" = "%@ Web Inspector";
@@ -77,13 +77,13 @@
 "%@ in %%@" = "%@ in %%@";
 
 /* Label for an inspectable Web Extension background page */
-"%@ — Extension Background Page" = "%@ — Extension Background Page";
+"%s — Extension Background Page" = "%s— Extension Background Page";
 
 /* Label for an inspectable Web Extension popup page */
 "%@ — Extension Popup Page" = "%@ — Extension Popup Page";
 
 /* Label for an inspectable Web Extension service worker */
-"%@ — Extension Service Worker" = "%@ — Extension Service Worker";
+"%s — Extension Service Worker" = "%s — Extension Service Worker";
 
 /* Label to describe the number of files selected in a file upload control that allows multiple files */
 "%d files" = "%d files";
@@ -588,6 +588,9 @@
 
 /* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many enabled static rulesets */
 "Exceeded maximum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored." = "Exceeded maximum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored.";
+
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for a duplicated rule id */
+"`declarative_net_request` ruleset with id `%@` duplicates the rule id `%@`." = "`declarative_net_request` ruleset with id `%@` duplicates the rule id `%@`.";
 
 /* Button for exiting full screen when in full screen media playback */
 "Exit Full Screen" = "Exit Full Screen";
@@ -1153,6 +1156,9 @@
 /* Undo action name */
 "Outline (Undo action name)" = "Outline";
 
+/* Label for panorama photos with image controls next to pano glyph */
+"PANORAMA" = "PANORAMA";
+
 /* Paragraph direction context sub-menu item */
 "Paragraph Direction" = "Paragraph Direction";
 
@@ -1357,8 +1363,8 @@
 /* Show fonts context menu item */
 "Show Fonts" = "Show Fonts";
 
-/* Media stats context menu item */
-"Show Media Stats" = "Show Media Stats";
+/* Media statistics context menu item */
+"Show Media Statistics" = "Show Media Statistics";
 
 /* menu item title */
 "Show Spelling and Grammar" = "Show Spelling and Grammar";
@@ -1389,6 +1395,12 @@
 
 /* Smart Quotes context menu item */
 "Smart Quotes" = "Smart Quotes";
+
+/* Smart Lists context menu item */
+"Smart Lists" = "Smart Lists";
+
+/* Label for Spatial Photos with image controls next to spatial glyph */
+"SPATIAL" = "SPATIAL";
 
 /* Speech context sub-menu item */
 "Speech" = "Speech";
@@ -2070,6 +2082,12 @@
 
 /* accessibility role description for a horizontal rule [<hr>] */
 "separator" = "separator";
+
+/* accessibility role description for a footer region [<footer>] */
+"section footer" = "section footer";
+
+/* accessibility role description for a header region [<header>] */
+"section header" = "section header";
 
 /* accessibility label for show closed captions button */
 "show closed captions" = "show closed captions";

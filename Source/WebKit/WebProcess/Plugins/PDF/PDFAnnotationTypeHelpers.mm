@@ -40,14 +40,14 @@ static std::optional<WidgetType> widgetType(PDFAnnotation *annotation)
     if (!annotationIsOfType(annotation, AnnotationType::Widget))
         return { };
 
-    NSString *type = [annotation valueForAnnotationKey:get_PDFKit_PDFAnnotationKeyWidgetFieldType()];
-    if ([type isEqualToString:get_PDFKit_PDFAnnotationWidgetSubtypeButton()])
+    RetainPtr type = [annotation valueForAnnotationKey:get_PDFKit_PDFAnnotationKeyWidgetFieldTypeSingleton()];
+    if ([type.get() isEqualToString:get_PDFKit_PDFAnnotationWidgetSubtypeButtonSingleton()])
         return WidgetType::Button;
-    if ([type isEqualToString:get_PDFKit_PDFAnnotationWidgetSubtypeChoice()])
+    if ([type.get() isEqualToString:get_PDFKit_PDFAnnotationWidgetSubtypeChoiceSingleton()])
         return WidgetType::Choice;
-    if ([type isEqualToString:get_PDFKit_PDFAnnotationWidgetSubtypeSignature()])
+    if ([type.get() isEqualToString:get_PDFKit_PDFAnnotationWidgetSubtypeSignatureSingleton()])
         return WidgetType::Signature;
-    if ([type isEqualToString:get_PDFKit_PDFAnnotationWidgetSubtypeText()])
+    if ([type.get() isEqualToString:get_PDFKit_PDFAnnotationWidgetSubtypeTextSingleton()])
         return WidgetType::Text;
 
     ASSERT_NOT_REACHED();
@@ -56,14 +56,14 @@ static std::optional<WidgetType> widgetType(PDFAnnotation *annotation)
 
 static std::optional<AnnotationType> annotationType(PDFAnnotation *annotation)
 {
-    NSString *type = [annotation valueForAnnotationKey:get_PDFKit_PDFAnnotationKeySubtype()];
-    if ([type isEqualToString:get_PDFKit_PDFAnnotationSubtypeLink()])
+    RetainPtr type = [annotation valueForAnnotationKey:get_PDFKit_PDFAnnotationKeySubtypeSingleton()];
+    if ([type.get() isEqualToString:get_PDFKit_PDFAnnotationSubtypeLinkSingleton()])
         return AnnotationType::Link;
-    if ([type isEqualToString:get_PDFKit_PDFAnnotationSubtypePopup()])
+    if ([type.get() isEqualToString:get_PDFKit_PDFAnnotationSubtypePopupSingleton()])
         return AnnotationType::Popup;
-    if ([type isEqualToString:get_PDFKit_PDFAnnotationSubtypeText()])
+    if ([type.get() isEqualToString:get_PDFKit_PDFAnnotationSubtypeTextSingleton()])
         return AnnotationType::Text;
-    if ([type isEqualToString:get_PDFKit_PDFAnnotationSubtypeWidget()])
+    if ([type.get() isEqualToString:get_PDFKit_PDFAnnotationSubtypeWidgetSingleton()])
         return AnnotationType::Widget;
 
     ASSERT_NOT_REACHED();

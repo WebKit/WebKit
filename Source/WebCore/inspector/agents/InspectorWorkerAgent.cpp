@@ -49,7 +49,7 @@ InspectorWorkerAgent::~InspectorWorkerAgent()
     m_pageChannel->detachFromParentAgent();
 }
 
-void InspectorWorkerAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
+void InspectorWorkerAgent::didCreateFrontendAndBackend()
 {
     m_instrumentingAgents.setPersistentWorkerAgent(this);
 }

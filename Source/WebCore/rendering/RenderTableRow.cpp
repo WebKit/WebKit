@@ -33,6 +33,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderLayoutState.h"
 #include "RenderObjectInlines.h"
 #include "RenderTableCell.h"
@@ -107,7 +108,7 @@ void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* old
             // itself.
             auto propagageNeedsLayoutOnBorderSizeChange = [&] (auto& row) {
                 for (auto* cell = row.firstCell(); cell; cell = cell->nextCell())
-                    cell->setNeedsLayoutAndPrefWidthsRecalc();
+                    cell->setNeedsLayoutAndPreferredWidthsUpdate();
             };
             propagageNeedsLayoutOnBorderSizeChange(*this);
             if (auto* previousRow = this->previousRow())
@@ -259,26 +260,9 @@ void RenderTableRow::imageChanged(WrappedImagePtr, const IntRect*)
     repaint();
 }
 
-RenderPtr<RenderTableRow> RenderTableRow::createTableRowWithStyle(Document& document, const RenderStyle& style)
-{
-    auto row = createRenderer<RenderTableRow>(document, RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::TableRow));
-    row->initializeStyle();
-    return row;
-}
-
-RenderPtr<RenderTableRow> RenderTableRow::createAnonymousWithParentRenderer(const RenderTableSection& parent)
-{
-    return RenderTableRow::createTableRowWithStyle(parent.document(), parent.style());
-}
-
 bool RenderTableRow::requiresLayer() const
 {
     return hasNonVisibleOverflow() || hasTransformRelatedProperty() || hasHiddenBackface() || hasClipPath() || createsGroup() || isStickilyPositioned() || requiresRenderingConsolidationForViewTransition();
-}
-
-RenderPtr<RenderBox> RenderTableRow::createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const
-{
-    return RenderTableRow::createTableRowWithStyle(renderer.document(), renderer.style());
 }
 
 } // namespace WebCore

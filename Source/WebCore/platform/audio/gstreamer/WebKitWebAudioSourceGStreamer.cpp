@@ -154,7 +154,7 @@ static GstCaps* getGStreamerAudioCaps(float sampleRate, unsigned numberOfChannel
         return webKitWebAudioGStreamerChannelPosition(channelIndex);
     });
 
-    gst_audio_channel_positions_to_mask(reinterpret_cast<GstAudioChannelPosition*>(positions.data()),
+    gst_audio_channel_positions_to_mask(reinterpret_cast<GstAudioChannelPosition*>(positions.mutableSpan().data()),
         numberOfChannels, FALSE, &channelMask);
 
     return gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, static_cast<int>(sampleRate),

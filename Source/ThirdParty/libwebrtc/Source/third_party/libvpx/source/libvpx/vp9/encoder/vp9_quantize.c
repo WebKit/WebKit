@@ -289,7 +289,7 @@ void vp9_frame_init_quantizer(VP9_COMP *cpi) {
   vp9_init_plane_quantizers(cpi, &cpi->td.mb);
 }
 
-void vp9_set_quantizer(VP9_COMP *cpi, int q) {
+void vp9_set_quantizer(VP9_COMP *cpi, int q, int ext_rc_delta_q_uv) {
   VP9_COMMON *cm = &cpi->common;
   // quantizer has to be reinitialized with vp9_init_quantizer() if any
   // delta_q changes.
@@ -297,6 +297,13 @@ void vp9_set_quantizer(VP9_COMP *cpi, int q) {
   cm->y_dc_delta_q = 0;
   cm->uv_dc_delta_q = 0;
   cm->uv_ac_delta_q = 0;
+
+  if (ext_rc_delta_q_uv != 0) {
+    cm->uv_dc_delta_q = cm->uv_ac_delta_q = ext_rc_delta_q_uv;
+    vp9_init_quantizer(cpi);
+    return;
+  }
+
   if (cpi->oxcf.delta_q_uv != 0) {
     cm->uv_dc_delta_q = cm->uv_ac_delta_q = cpi->oxcf.delta_q_uv;
     vp9_init_quantizer(cpi);

@@ -59,14 +59,4 @@ PASS BlobEvent must be primary interface of [object BlobEvent]
 PASS Stringification of [object BlobEvent]
 PASS BlobEvent interface: [object BlobEvent] must inherit property "data" with the proper type
 PASS BlobEvent interface: [object BlobEvent] must inherit property "timecode" with the proper type
-PASS MediaRecorderErrorEvent interface: existence and properties of interface object
-PASS MediaRecorderErrorEvent interface object length
-PASS MediaRecorderErrorEvent interface object name
-PASS MediaRecorderErrorEvent interface: existence and properties of interface prototype object
-PASS MediaRecorderErrorEvent interface: existence and properties of interface prototype object's "constructor" property
-PASS MediaRecorderErrorEvent interface: existence and properties of interface prototype object's @@unscopables property
-PASS MediaRecorderErrorEvent interface: attribute error
-PASS MediaRecorderErrorEvent must be primary interface of [object MediaRecorderErrorEvent]
-PASS Stringification of [object MediaRecorderErrorEvent]
-PASS MediaRecorderErrorEvent interface: [object MediaRecorderErrorEvent] must inherit property "error" with the proper type
 

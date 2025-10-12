@@ -25,10 +25,8 @@
 
 #pragma once
 
-#include "DocumentInlines.h"
-#include "ElementInlines.h"
-#include "JSNodeCustomInlines.h"
-#include "WebCoreOpaqueRoot.h"
+#include <WebCore/JSNodeCustomInlines.h>
+#include <WebCore/WebCoreOpaqueRoot.h>
 
 namespace WebCore {
 

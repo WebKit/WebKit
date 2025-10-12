@@ -23,29 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "AttributedString.h"
-#import "SimpleRange.h"
+//#import "AttributedString.h"
+//#import "SimpleRange.h"
+
+@interface NSURL (WebCoreNSURLDetails)
+// FIXME: What is the reason to use this Foundation method, and not +[NSURL URLWithString:relativeToURL:]?
++ (NSURL *)_web_URLWithString:(NSString *)string relativeToURL:(NSURL *)baseURL;
+@end
 
 namespace WebCore {
 
-enum class IgnoreUserSelectNone : bool;
-enum class TextIteratorBehavior : uint16_t;
-
-WEBCORE_EXPORT AttributedString attributedString(const SimpleRange&, IgnoreUserSelectNone);
-
-// This alternate implementation of HTML conversion doesn't handle as many advanced features,
-// such as tables, and doesn't produce document attributes, but it does use TextIterator so
-// text offsets will exactly match plain text and other editing machinery.
-// FIXME: This function and the one above should be merged.
-
-enum class IncludedElement : uint8_t {
-    Images = 1 << 0,
-    Attachments = 1 << 1,
-    PreservedContent = 1 << 2,
-    NonRenderedContent = 1 << 3,
-};
-
-WEBCORE_EXPORT AttributedString editingAttributedString(const SimpleRange&, OptionSet<IncludedElement> = { IncludedElement::Images });
-WEBCORE_EXPORT AttributedString editingAttributedStringReplacingNoBreakSpace(const SimpleRange&, OptionSet<TextIteratorBehavior>, OptionSet<IncludedElement>);
+#if !PLATFORM(IOS_FAMILY)
+// Returns the font to be used if the NSFontAttributeName doesn't exist
+WEBCORE_EXPORT NSFont *WebDefaultFont();
+#endif
 
 } // namespace WebCore

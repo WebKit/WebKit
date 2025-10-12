@@ -20,15 +20,15 @@
 
 #pragma once
 
-#include "DOMAnnotation.h"
-#include "DisallowVMEntry.h"
-#include "GetVM.h"
-#include "JSCJSValue.h"
-#include "JSCPtrTag.h"
-#include "PropertyName.h"
-#include "PropertyOffset.h"
-#include "ScopeOffset.h"
-#include "Watchpoint.h"
+#include <JavaScriptCore/DOMAnnotation.h>
+#include <JavaScriptCore/DisallowVMEntry.h>
+#include <JavaScriptCore/GetVM.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSCPtrTag.h>
+#include <JavaScriptCore/PropertyName.h>
+#include <JavaScriptCore/PropertyOffset.h>
+#include <JavaScriptCore/ScopeOffset.h>
+#include <JavaScriptCore/Watchpoint.h>
 #include <wtf/Assertions.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/FunctionPtr.h>

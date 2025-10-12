@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,7 @@
 #include "config.h"
 #include "WebAnimationUtilities.h"
 
-#include "Animation.h"
 #include "AnimationEventBase.h"
-#include "AnimationList.h"
 #include "AnimationPlaybackEvent.h"
 #include "CSSAnimation.h"
 #include "CSSAnimationEvent.h"
@@ -38,8 +36,11 @@
 #include "CSSTransition.h"
 #include "CSSTransitionEvent.h"
 #include "Element.h"
+#include "EventTargetInlines.h"
 #include "KeyframeEffectStack.h"
+#include "NodeDocument.h"
 #include "ScriptExecutionContext.h"
+#include "StyleAnimations.h"
 #include "StyleOriginatedAnimation.h"
 #include "ViewTransition.h"
 #include "WebAnimation.h"
@@ -106,12 +107,12 @@ static bool compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeO
         }
     };
 
-    auto& aReferenceElement = a.element;
-    auto& bReferenceElement = b.element;
+    Ref aReferenceElement = a.element;
+    Ref bReferenceElement = b.element;
 
-    if (&aReferenceElement == &bReferenceElement) {
+    if (aReferenceElement.ptr() == bReferenceElement.ptr()) {
         if (isNamedViewTransitionPseudoElement(a.pseudoElementIdentifier) && isNamedViewTransitionPseudoElement(b.pseudoElementIdentifier) && a.pseudoElementIdentifier->nameArgument != b.pseudoElementIdentifier->nameArgument) {
-            RefPtr activeViewTransition = aReferenceElement.document().activeViewTransition();
+            RefPtr activeViewTransition = aReferenceElement->document().activeViewTransition();
             ASSERT(activeViewTransition);
             for (auto& key : activeViewTransition->namedElements().keys()) {
                 if (key == a.pseudoElementIdentifier->nameArgument)
@@ -128,7 +129,7 @@ static bool compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeO
         return aSortingIndex < bSortingIndex;
     }
 
-    return is_lt(treeOrder<Tree>(aReferenceElement, bReferenceElement));
+    return is_lt(treeOrder<Tree>(aReferenceElement.get(), bReferenceElement.get()));
 }
 
 static bool compareCSSTransitions(const CSSTransition& a, const CSSTransition& b)
@@ -164,16 +165,16 @@ static bool compareCSSAnimations(const CSSAnimation& a, const CSSAnimation& b)
         return compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeOrder(*aOwningElement, *bOwningElement);
 
     // Sort A and B based on their position in the computed value of the animation-name property of the (common) owning element.
-    auto* cssAnimationList = aOwningElement->ensureKeyframeEffectStack().cssAnimationList();
+    auto& cssAnimationList = aOwningElement->ensureKeyframeEffectStack().cssAnimationList();
     ASSERT(cssAnimationList);
-    ASSERT(!cssAnimationList->isEmpty());
+    ASSERT(!cssAnimationList->isNone());
 
-    auto& aBackingAnimation = a.backingAnimation();
-    auto& bBackingAnimation = b.backingAnimation();
+    auto& aBackingAnimation = a.backingStyleAnimation();
+    auto& bBackingAnimation = b.backingStyleAnimation();
     for (auto& animation : *cssAnimationList) {
-        if (animation.ptr() == &aBackingAnimation)
+        if (animation.sortingIdentity() == aBackingAnimation.sortingIdentity())
             return true;
-        if (animation.ptr() == &bBackingAnimation)
+        if (animation.sortingIdentity() == bBackingAnimation.sortingIdentity())
             return false;
     }
 
@@ -233,8 +234,8 @@ static std::optional<bool> compareStyleOriginatedAnimationEvents(const Animation
     if (aScheduledTime != bScheduledTime)
         return aScheduledTime < bScheduledTime;
 
-    auto* aTarget = a.target();
-    auto* bTarget = b.target();
+    RefPtr aTarget = a.target();
+    RefPtr bTarget = b.target();
     if (aTarget == bTarget)
         return false;
 
@@ -288,8 +289,8 @@ bool compareAnimationEventsByCompositeOrder(const AnimationEventBase& a, const A
         }
 
         // JS-originated animations sort last based on their position in the global animation list.
-        auto* aAnimation = a.animation();
-        auto* bAnimation = b.animation();
+        RefPtr aAnimation = a.animation();
+        RefPtr bAnimation = b.animation();
         if (aAnimation == bAnimation)
             return false;
 

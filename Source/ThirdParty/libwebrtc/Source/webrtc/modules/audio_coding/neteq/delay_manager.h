@@ -15,13 +15,15 @@
 #include <optional>
 
 #include "api/field_trials_view.h"
+#include "api/neteq/delay_manager_interface.h"
+#include "api/neteq/neteq_controller.h"
 #include "api/neteq/tick_timer.h"
 #include "modules/audio_coding/neteq/reorder_optimizer.h"
 #include "modules/audio_coding/neteq/underrun_optimizer.h"
 
 namespace webrtc {
 
-class DelayManager {
+class DelayManager : public DelayManagerInterface {
  public:
   struct Config {
     explicit Config(const FieldTrialsView& field_trials);
@@ -40,7 +42,7 @@ class DelayManager {
 
   DelayManager(const Config& config, const TickTimer* tick_timer);
 
-  virtual ~DelayManager();
+  ~DelayManager() override = default;
 
   DelayManager(const DelayManager&) = delete;
   DelayManager& operator=(const DelayManager&) = delete;
@@ -49,15 +51,17 @@ class DelayManager {
   // `arrival_delay_ms`. This updates the statistics and a new target buffer
   // level is calculated. The `reordered` flag indicates if the packet was
   // reordered.
-  virtual void Update(int arrival_delay_ms, bool reordered);
+  void Update(int arrival_delay_ms,
+              bool reordered,
+              NetEqController::PacketArrivedInfo info) override;
 
   // Resets all state.
-  virtual void Reset();
+  void Reset() override;
 
   // Gets the target buffer level in milliseconds. If a minimum or maximum delay
   // has been set, the target delay reported here also respects the configured
   // min/max delay.
-  virtual int TargetDelayMs() const;
+  int TargetDelayMs() const override;
 
  private:
   UnderrunOptimizer underrun_optimizer_;

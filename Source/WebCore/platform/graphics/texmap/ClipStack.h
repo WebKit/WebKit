@@ -74,8 +74,8 @@ public:
     int getStencilIndex() const { return clipState.stencilIndex; }
 
     void addRoundedRect(const FloatRoundedRect&, const TransformationMatrix&);
-    const float* roundedRectComponents() const { return m_roundedRectComponents.data(); }
-    const float* roundedRectInverseTransformComponents() const { return m_roundedRectInverseTransformComponents.data(); }
+    const float* roundedRectComponents() const { return m_roundedRectComponents.span().data(); }
+    const float* roundedRectInverseTransformComponents() const { return m_roundedRectInverseTransformComponents.span().data(); }
     unsigned roundedRectCount() const { return clipState.roundedRectCount; }
     bool isRoundedRectClipEnabled() const { return !!clipState.roundedRectCount; }
     bool isRoundedRectClipAllowed() const { return clipState.roundedRectCount < s_roundedRectMaxClips; }

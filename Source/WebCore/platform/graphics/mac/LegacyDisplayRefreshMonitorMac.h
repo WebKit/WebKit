@@ -27,10 +27,9 @@
 
 #if PLATFORM(MAC)
 
+#include "CoreVideoExtras.h"
 #include "DisplayRefreshMonitor.h"
 #include <wtf/WeakPtr.h>
-
-typedef struct __CVDisplayLink *CVDisplayLinkRef;
 
 namespace WebCore {
 
@@ -60,7 +59,7 @@ private:
 
     static FramesPerSecond nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef);
 
-    CVDisplayLinkRef m_displayLink { nullptr };
+    RefPtr<__CVDisplayLink> m_displayLink;
     
     DisplayUpdate m_currentUpdate;
     bool m_displayLinkIsActive { false };

@@ -10,10 +10,14 @@
 
 #include "modules/video_coding/codecs/vp8/include/temporal_layers_checker.h"
 
+#include <cstdint>
 #include <memory>
 
+#include "api/video_codecs/vp8_frame_config.h"
+#include "api/video_codecs/vp8_temporal_layers.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "modules/video_coding/codecs/vp8/default_temporal_layers.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {

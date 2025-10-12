@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: ':::not-going-to-be-valid' is not a valid selector.
-CONSOLE MESSAGE: Not executing script because it moved between documents during fetching
 
 
 PASS Script elements (parser-blocking) still delay the load event in the original Document after move

@@ -30,6 +30,7 @@
 
 #include <WebCore/ScrollableArea.h>
 #include <WebCore/ScrollbarThemeMac.h>
+#include <WebCore/ScrollbarsControllerInlines.h>
 #include <WebCore/ScrollingCoordinator.h>
 #include <pal/spi/mac/NSScrollerImpSPI.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -49,25 +50,25 @@ RemoteScrollbarsController::RemoteScrollbarsController(WebCore::ScrollableArea& 
 void RemoteScrollbarsController::scrollbarLayoutDirectionChanged(WebCore::UserInterfaceLayoutDirection scrollbarLayoutDirection)
 {
     if (RefPtr scrollingCoordinator = m_coordinator.get())
-        scrollingCoordinator->setScrollbarLayoutDirection(scrollableArea(), scrollbarLayoutDirection);
+        scrollingCoordinator->setScrollbarLayoutDirection(checkedScrollableArea(), scrollbarLayoutDirection);
 }
 
 void RemoteScrollbarsController::mouseEnteredContentArea()
 {
     if (auto scrollingCoordinator = m_coordinator.get())
-        scrollingCoordinator->setMouseIsOverContentArea(scrollableArea(), true);
+        scrollingCoordinator->setMouseIsOverContentArea(checkedScrollableArea(), true);
 }
 
 void RemoteScrollbarsController::mouseExitedContentArea()
 {
     if (auto scrollingCoordinator = m_coordinator.get())
-        scrollingCoordinator->setMouseIsOverContentArea(scrollableArea(), false);
+        scrollingCoordinator->setMouseIsOverContentArea(checkedScrollableArea(), false);
 }
 
 void RemoteScrollbarsController::mouseMovedInContentArea()
 {
     if (auto scrollingCoordinator = m_coordinator.get())
-        scrollingCoordinator->setMouseMovedInContentArea(scrollableArea());
+        scrollingCoordinator->setMouseMovedInContentArea(checkedScrollableArea());
 }
 
 void RemoteScrollbarsController::mouseEnteredScrollbar(WebCore::Scrollbar* scrollbar) const
@@ -108,7 +109,7 @@ bool RemoteScrollbarsController::shouldDrawIntoScrollbarLayer(WebCore::Scrollbar
 
 bool RemoteScrollbarsController::shouldRegisterScrollbars() const
 {
-    return !scrollableArea().usesAsyncScrolling();
+    return !checkedScrollableArea()->usesAsyncScrolling();
 }
 
 void RemoteScrollbarsController::setScrollbarMinimumThumbLength(WebCore::ScrollbarOrientation orientation, int minimumThumbLength)
@@ -133,7 +134,7 @@ void RemoteScrollbarsController::updateScrollbarEnabledState(WebCore::Scrollbar&
 void RemoteScrollbarsController::scrollbarWidthChanged(WebCore::ScrollbarWidth width)
 {
     if (auto scrollingCoordinator = m_coordinator.get())
-        scrollingCoordinator->setScrollbarWidth(scrollableArea(), width);
+        scrollingCoordinator->setScrollbarWidth(checkedScrollableArea(), width);
 
     updateScrollbarsThickness();
 }
@@ -149,8 +150,15 @@ void RemoteScrollbarsController::updateScrollbarStyle()
     // and length are properly updated.
     updateScrollbarsThickness();
 
-    scrollableArea().scrollbarStyleChanged(theme.usesOverlayScrollbars() ? WebCore::ScrollbarStyle::Overlay : WebCore::ScrollbarStyle::AlwaysVisible, true);
+    checkedScrollableArea()->scrollbarStyleChanged(theme.usesOverlayScrollbars() ? WebCore::ScrollbarStyle::Overlay : WebCore::ScrollbarStyle::AlwaysVisible, true);
 }
+
+void RemoteScrollbarsController::scrollbarColorChanged(std::optional<WebCore::ScrollbarColor> color)
+{
+    if (auto scrollingCoordinator = m_coordinator.get())
+        scrollingCoordinator->setScrollbarColor(checkedScrollableArea(), color);
+}
+
 
 }
 #endif // PLATFORM(MAC)

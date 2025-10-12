@@ -1,69 +1,22 @@
-/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
- * All rights reserved.
- *
- * This package is an SSL implementation written
- * by Eric Young (eay@cryptsoft.com).
- * The implementation was written so as to conform with Netscapes SSL.
- *
- * This library is free for commercial and non-commercial use as long as
- * the following conditions are aheared to.  The following conditions
- * apply to all code found in this distribution, be it the RC4, RSA,
- * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
- * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- *
- * Copyright remains Eric Young's, and as such any Copyright notices in
- * the code are not to be removed.
- * If this package is used in a product, Eric Young should be given attribution
- * as the author of the parts of the library used.
- * This can be in the form of a textual message at program startup or
- * in documentation (online or textual) provided with the package.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *    "This product includes cryptographic software written by
- *     Eric Young (eay@cryptsoft.com)"
- *    The word 'cryptographic' can be left out if the rouines from the library
- *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from
- *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- *
- * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * The licence and distribution terms for any publically available version or
- * derivative of this code cannot be changed.  i.e. this code cannot simply be
- * copied and put under another distribution licence
- * [including the GNU Public Licence.]
- */
-/* ====================================================================
- * Copyright 2002 Sun Microsystems, Inc. ALL RIGHTS RESERVED.
- * ECDH support in OpenSSL originally developed by
- * SUN MICROSYSTEMS, INC., and contributed to the OpenSSL project.
- */
+// Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved.
+// Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #ifndef OPENSSL_HEADER_X509_H
 #define OPENSSL_HEADER_X509_H
 
-#include <openssl/base.h>
+#include <openssl/base.h>   // IWYU pragma: export
 
 #include <time.h>
 
@@ -77,14 +30,12 @@
 #include <openssl/ecdh.h>
 #include <openssl/ecdsa.h>
 #include <openssl/evp.h>
-#include <openssl/lhash.h>
 #include <openssl/obj.h>
 #include <openssl/pkcs7.h>
 #include <openssl/pool.h>
 #include <openssl/rsa.h>
-#include <openssl/sha.h>
+#include <openssl/sha2.h>
 #include <openssl/stack.h>
-#include <openssl/thread.h>
 #include <openssl/x509v3_errors.h>  // IWYU pragma: export
 
 #if defined(__cplusplus)
@@ -137,9 +88,8 @@ OPENSSL_EXPORT STACK_OF(X509) *X509_chain_up_ref(STACK_OF(X509) *chain);
 // |i2d_X509_AUX|) are not preserved. Additionally, if |x509| is incomplete,
 // this function may fail.
 //
-// TODO(https://crbug.com/boringssl/407): This function should be const and
-// thread-safe but is currently neither in some cases, notably if |crl| was
-// mutated.
+// TODO(crbug.com/42290269): This function should be const and thread-safe but
+// is currently neither in some cases, notably if |crl| was mutated.
 OPENSSL_EXPORT X509 *X509_dup(X509 *x509);
 
 // X509_free decrements |x509|'s reference count and, if zero, releases memory
@@ -159,9 +109,8 @@ OPENSSL_EXPORT X509 *X509_parse_from_buffer(CRYPTO_BUFFER *buf);
 // i2d_X509 marshals |x509| as a DER-encoded X.509 Certificate (RFC 5280), as
 // described in |i2d_SAMPLE|.
 //
-// TODO(https://crbug.com/boringssl/407): This function should be const and
-// thread-safe but is currently neither in some cases, notably if |x509| was
-// mutated.
+// TODO(crbug.com/42290269): This function should be const and thread-safe but
+// is currently neither in some cases, notably if |x509| was mutated.
 OPENSSL_EXPORT int i2d_X509(X509 *x509, uint8_t **outp);
 
 // X509_VERSION_* are X.509 version numbers. Note the numerical values of all
@@ -478,8 +427,8 @@ OPENSSL_EXPORT void X509_email_free(STACK_OF(OPENSSL_STRING) *sk);
 // as equal. This function should only be used with |X509| objects that were
 // parsed from bytes and never mutated.
 //
-// TODO(https://crbug.com/boringssl/407): This function is const, but it is not
-// always thread-safe, notably if |a| and |b| were mutated.
+// TODO(crbug.com/42290269): This function is const, but it is not always
+// thread-safe, notably if |a| and |b| were mutated.
 OPENSSL_EXPORT int X509_cmp(const X509 *a, const X509 *b);
 
 
@@ -613,7 +562,7 @@ OPENSSL_EXPORT int X509_set1_signature_value(X509 *x509, const uint8_t *sig,
 // ASN.1 element. Directly embedding the output in a larger ASN.1 structure will
 // not behave correctly.
 //
-// TODO(crbug.com/boringssl/407): |x509| should be const.
+// TODO(crbug.com/42290269): |x509| should be const.
 OPENSSL_EXPORT int i2d_X509_AUX(X509 *x509, uint8_t **outp);
 
 // d2i_X509_AUX parses up to |length| bytes from |*inp| as a DER-encoded X.509
@@ -724,9 +673,8 @@ OPENSSL_EXPORT int X509_CRL_up_ref(X509_CRL *crl);
 // function works by serializing the structure, so if |crl| is incomplete, it
 // may fail.
 //
-// TODO(https://crbug.com/boringssl/407): This function should be const and
-// thread-safe but is currently neither in some cases, notably if |crl| was
-// mutated.
+// TODO(crbug.com/42290269): This function should be const and thread-safe but
+// is currently neither in some cases, notably if |crl| was mutated.
 OPENSSL_EXPORT X509_CRL *X509_CRL_dup(X509_CRL *crl);
 
 // X509_CRL_free decrements |crl|'s reference count and, if zero, releases
@@ -741,9 +689,8 @@ OPENSSL_EXPORT X509_CRL *d2i_X509_CRL(X509_CRL **out, const uint8_t **inp,
 // i2d_X509_CRL marshals |crl| as a X.509 CertificateList (RFC 5280), as
 // described in |i2d_SAMPLE|.
 //
-// TODO(https://crbug.com/boringssl/407): This function should be const and
-// thread-safe but is currently neither in some cases, notably if |crl| was
-// mutated.
+// TODO(crbug.com/42290269): This function should be const and thread-safe but
+// is currently neither in some cases, notably if |crl| was mutated.
 OPENSSL_EXPORT int i2d_X509_CRL(X509_CRL *crl, uint8_t **outp);
 
 // X509_CRL_match compares |a| and |b| and returns zero if they are equal, a
@@ -1117,9 +1064,8 @@ OPENSSL_EXPORT int X509_REVOKED_add1_ext_i2d(X509_REVOKED *x, int nid,
 // function works by serializing the structure, so if |req| is incomplete, it
 // may fail.
 //
-// TODO(https://crbug.com/boringssl/407): This function should be const and
-// thread-safe but is currently neither in some cases, notably if |req| was
-// mutated.
+// TODO(crbug.com/42290269): This function should be const and thread-safe but
+// is currently neither in some cases, notably if |req| was mutated.
 OPENSSL_EXPORT X509_REQ *X509_REQ_dup(X509_REQ *req);
 
 // X509_REQ_free releases memory associated with |req|.
@@ -1133,9 +1079,8 @@ OPENSSL_EXPORT X509_REQ *d2i_X509_REQ(X509_REQ **out, const uint8_t **inp,
 // i2d_X509_REQ marshals |req| as a CertificateRequest (RFC 2986), as described
 // in |i2d_SAMPLE|.
 //
-// TODO(https://crbug.com/boringssl/407): This function should be const and
-// thread-safe but is currently neither in some cases, notably if |req| was
-// mutated.
+// TODO(crbug.com/42290269): This function should be const and thread-safe but
+// is currently neither in some cases, notably if |req| was mutated.
 OPENSSL_EXPORT int i2d_X509_REQ(X509_REQ *req, uint8_t **outp);
 
 // X509_REQ_VERSION_1 is the version constant for |X509_REQ| objects. No other
@@ -1401,24 +1346,22 @@ OPENSSL_EXPORT X509_NAME *d2i_X509_NAME(X509_NAME **out, const uint8_t **inp,
 // i2d_X509_NAME marshals |in| as a DER-encoded X.509 Name (RFC 5280), as
 // described in |i2d_SAMPLE|.
 //
-// TODO(https://crbug.com/boringssl/407): This function should be const and
-// thread-safe but is currently neither in some cases, notably if |in| was
-// mutated.
+// TODO(crbug.com/42290269): This function should be const and thread-safe but
+// is currently neither in some cases, notably if |in| was mutated.
 OPENSSL_EXPORT int i2d_X509_NAME(X509_NAME *in, uint8_t **outp);
 
 // X509_NAME_dup returns a newly-allocated copy of |name|, or NULL on error.
 //
-// TODO(https://crbug.com/boringssl/407): This function should be const and
-// thread-safe but is currently neither in some cases, notably if |name| was
-// mutated.
+// TODO(crbug.com/42290269): This function should be const and thread-safe but
+// is currently neither in some cases, notably if |name| was mutated.
 OPENSSL_EXPORT X509_NAME *X509_NAME_dup(X509_NAME *name);
 
 // X509_NAME_cmp compares |a| and |b|'s canonicalized forms. It returns zero if
 // they are equal, one if |a| sorts after |b|, -1 if |b| sorts after |a|, and -2
 // on error.
 //
-// TODO(https://crbug.com/boringssl/407): This function is const, but it is not
-// always thread-safe, notably if |name| was mutated.
+// TODO(crbug.com/42290269): This function is const, but it is not always
+// thread-safe, notably if |name| was mutated.
 //
 // TODO(https://crbug.com/boringssl/355): The -2 return is very inconvenient to
 // pass to a sorting function. Can we make this infallible? In the meantime,
@@ -1435,17 +1378,15 @@ OPENSSL_EXPORT int X509_NAME_cmp(const X509_NAME *a, const X509_NAME *b);
 // Avoid this function and prefer |i2d_X509_NAME|. It is one of the reasons
 // |X509_NAME| functions, including this one, are not consistently thread-safe
 // or const-correct. Depending on the resolution of
-// https://crbug.com/boringssl/407, this function may be removed or cause poor
-// performance.
+// crbug.com/42290269, this function may be removed or cause poor performance.
 OPENSSL_EXPORT int X509_NAME_get0_der(X509_NAME *name, const uint8_t **out_der,
                                       size_t *out_der_len);
 
 // X509_NAME_set makes a copy of |name|. On success, it frees |*xn|, sets |*xn|
 // to the copy, and returns one. Otherwise, it returns zero.
 //
-// TODO(https://crbug.com/boringssl/407): This function should be const and
-// thread-safe but is currently neither in some cases, notably if |name| was
-// mutated.
+// TODO(crbug.com/42290269): This function should be const and thread-safe but
+// is currently neither in some cases, notably if |name| was mutated.
 OPENSSL_EXPORT int X509_NAME_set(X509_NAME **xn, X509_NAME *name);
 
 // X509_NAME_entry_count returns the number of entries in |name|.
@@ -1551,9 +1492,12 @@ OPENSSL_EXPORT int X509_NAME_ENTRY_set_object(X509_NAME_ENTRY *entry,
 // pointer for OpenSSL compatibility, but callers should not mutate the result.
 // Doing so will break internal invariants in the library.
 //
-// TODO(https://crbug.com/boringssl/412): Although the spec says any ASN.1 type
-// is allowed, we currently only allow an ad-hoc set of types. Additionally, it
-// is unclear if some types can even be represented by this function.
+// See |ASN1_STRING| for how values are represented in this library. Where a
+// specific |ASN1_STRING| representation exists, that representation is used.
+// Otherwise, the |V_ASN1_OTHER| representation is used. Note that NULL, OBJECT
+// IDENTIFIER, and BOOLEAN attribute values are represented as |V_ASN1_OTHER|,
+// because their usual representation in this library is not
+// |ASN1_STRING|-compatible.
 OPENSSL_EXPORT ASN1_STRING *X509_NAME_ENTRY_get_data(
     const X509_NAME_ENTRY *entry);
 
@@ -2139,18 +2083,18 @@ OPENSSL_EXPORT GENERAL_NAME *d2i_GENERAL_NAME(GENERAL_NAME **out,
 // i2d_GENERAL_NAME marshals |in| as a DER-encoded X.509 GeneralName (RFC 5280),
 // as described in |i2d_SAMPLE|.
 //
-// TODO(https://crbug.com/boringssl/407): This function should be const and
-// thread-safe but is currently neither in some cases, notably if |in| is an
-// directoryName and the |X509_NAME| has been modified.
+// TODO(crbug.com/42290269): This function should be const and thread-safe but
+// is currently neither in some cases, notably if |in| is an directoryName and
+// the |X509_NAME| has been modified.
 OPENSSL_EXPORT int i2d_GENERAL_NAME(GENERAL_NAME *in, uint8_t **outp);
 
 // GENERAL_NAME_dup returns a newly-allocated copy of |gen|, or NULL on error.
 // This function works by serializing the structure, so it will fail if |gen| is
 // empty.
 //
-// TODO(https://crbug.com/boringssl/407): This function should be const and
-// thread-safe but is currently neither in some cases, notably if |gen| is an
-// directoryName and the |X509_NAME| has been modified.
+// TODO(crbug.com/42290269): This function should be const and thread-safe but
+// is currently neither in some cases, notably if |gen| is an directoryName and
+// the |X509_NAME| has been modified.
 OPENSSL_EXPORT GENERAL_NAME *GENERAL_NAME_dup(GENERAL_NAME *gen);
 
 // GENERAL_NAMES_new returns a new, empty |GENERAL_NAMES|, or NULL on error.
@@ -2167,9 +2111,9 @@ OPENSSL_EXPORT GENERAL_NAMES *d2i_GENERAL_NAMES(GENERAL_NAMES **out,
 // i2d_GENERAL_NAMES marshals |in| as a DER-encoded SEQUENCE OF GeneralName, as
 // described in |i2d_SAMPLE|.
 //
-// TODO(https://crbug.com/boringssl/407): This function should be const and
-// thread-safe but is currently neither in some cases, notably if some element
-// of |in| is an directoryName and the |X509_NAME| has been modified.
+// TODO(crbug.com/42290269): This function should be const and thread-safe but
+// is currently neither in some cases, notably if some element of |in| is an
+// directoryName and the |X509_NAME| has been modified.
 OPENSSL_EXPORT int i2d_GENERAL_NAMES(GENERAL_NAMES *in, uint8_t **outp);
 
 // OTHERNAME_new returns a new, empty |OTHERNAME|, or NULL on error.
@@ -2275,8 +2219,8 @@ OPENSSL_EXPORT AUTHORITY_KEYID *d2i_AUTHORITY_KEYID(AUTHORITY_KEYID **out,
 // i2d_AUTHORITY_KEYID marshals |akid| as a DER-encoded AuthorityKeyIdentifier
 // (RFC 5280), as described in |i2d_SAMPLE|.
 //
-// TODO(https://crbug.com/boringssl/407): |akid| is not const because it
-// contains an |X509_NAME|.
+// TODO(crbug.com/42290269): |akid| is not const because it contains an
+// |X509_NAME|.
 OPENSSL_EXPORT int i2d_AUTHORITY_KEYID(AUTHORITY_KEYID *akid, uint8_t **outp);
 
 
@@ -2368,8 +2312,8 @@ OPENSSL_EXPORT AUTHORITY_INFO_ACCESS *d2i_AUTHORITY_INFO_ACCESS(
 // i2d_AUTHORITY_INFO_ACCESS marshals |aia| as a DER-encoded
 // AuthorityInfoAccessSyntax (RFC 5280), as described in |i2d_SAMPLE|.
 //
-// TODO(https://crbug.com/boringssl/407): |aia| is not const because it
-// contains an |X509_NAME|.
+// TODO(crbug.com/42290269): |aia| is not const because it contains an
+// |X509_NAME|.
 OPENSSL_EXPORT int i2d_AUTHORITY_INFO_ACCESS(AUTHORITY_INFO_ACCESS *aia,
                                              uint8_t **outp);
 
@@ -2443,8 +2387,8 @@ OPENSSL_EXPORT CRL_DIST_POINTS *d2i_CRL_DIST_POINTS(CRL_DIST_POINTS **out,
 // i2d_CRL_DIST_POINTS marshals |crldp| as a DER-encoded CRLDistributionPoints
 // (RFC 5280), as described in |i2d_SAMPLE|.
 //
-// TODO(https://crbug.com/boringssl/407): |crldp| is not const because it
-// contains an |X509_NAME|.
+// TODO(crbug.com/42290269): |crldp| is not const because it contains an
+// |X509_NAME|.
 OPENSSL_EXPORT int i2d_CRL_DIST_POINTS(CRL_DIST_POINTS *crldp, uint8_t **outp);
 
 // A ISSUING_DIST_POINT_st, aka |ISSUING_DIST_POINT|, represents a
@@ -2477,8 +2421,8 @@ OPENSSL_EXPORT ISSUING_DIST_POINT *d2i_ISSUING_DIST_POINT(
 // i2d_ISSUING_DIST_POINT marshals |idp| as a DER-encoded
 // IssuingDistributionPoint (RFC 5280), as described in |i2d_SAMPLE|.
 //
-// TODO(https://crbug.com/boringssl/407): |idp| is not const because it
-// contains an |X509_NAME|.
+// TODO(crbug.com/42290269): |idp| is not const because it contains an
+// |X509_NAME|.
 OPENSSL_EXPORT int i2d_ISSUING_DIST_POINT(ISSUING_DIST_POINT *idp,
                                           uint8_t **outp);
 
@@ -3751,9 +3695,8 @@ OPENSSL_EXPORT int X509_load_cert_crl_file(X509_LOOKUP *lookup,
 // there will be hash collisions. It also depends on an OpenSSL-specific
 // canonicalization process.
 //
-// TODO(https://crbug.com/boringssl/407): This should be const and thread-safe
-// but currently is neither, notably if |name| was modified from its parsed
-// value.
+// TODO(crbug.com/42290269): This should be const and thread-safe but currently
+// is neither, notably if |name| was modified from its parsed value.
 OPENSSL_EXPORT uint32_t X509_NAME_hash(X509_NAME *name);
 
 // X509_NAME_hash_old returns a hash of |name|, or zero on error. This is the
@@ -3764,9 +3707,8 @@ OPENSSL_EXPORT uint32_t X509_NAME_hash(X509_NAME *name);
 // not suitable for general-purpose X.509 name processing. It is very short, so
 // there will be hash collisions.
 //
-// TODO(https://crbug.com/boringssl/407): This should be const and thread-safe
-// but currently is neither, notably if |name| was modified from its parsed
-// value.
+// TODO(crbug.com/42290269): This should be const and thread-safe but currently
+// is neither, notably if |name| was modified from its parsed value.
 OPENSSL_EXPORT uint32_t X509_NAME_hash_old(X509_NAME *name);
 
 // X509_STORE_set_default_paths configures |store| to read from some "default"
@@ -4485,6 +4427,9 @@ OPENSSL_EXPORT int X509_CRL_cmp(const X509_CRL *a, const X509_CRL *b);
 // not suitable for general-purpose X.509 name processing. It is very short, so
 // there will be hash collisions. It also depends on an OpenSSL-specific
 // canonicalization process.
+//
+// TODO(crbug.com/42290269): This should be const and thread-safe but currently
+// is neither, notably if |x509| was modified from its parsed value.
 OPENSSL_EXPORT uint32_t X509_issuer_name_hash(X509 *x509);
 
 // X509_subject_name_hash returns the hash of |x509|'s subject name with
@@ -4494,6 +4439,9 @@ OPENSSL_EXPORT uint32_t X509_issuer_name_hash(X509 *x509);
 // not suitable for general-purpose X.509 name processing. It is very short, so
 // there will be hash collisions. It also depends on an OpenSSL-specific
 // canonicalization process.
+//
+// TODO(crbug.com/42290269): This should be const and thread-safe but currently
+// is neither, notably if |x509| was modified from its parsed value.
 OPENSSL_EXPORT uint32_t X509_subject_name_hash(X509 *x509);
 
 // X509_issuer_name_hash_old returns the hash of |x509|'s issuer name with
@@ -4502,6 +4450,9 @@ OPENSSL_EXPORT uint32_t X509_subject_name_hash(X509 *x509);
 // This hash is specific to the |X509_LOOKUP_add_dir| filesystem format and is
 // not suitable for general-purpose X.509 name processing. It is very short, so
 // there will be hash collisions.
+//
+// TODO(crbug.com/42290269): This should be const and thread-safe but currently
+// is neither, notably if |x509| was modified from its parsed value.
 OPENSSL_EXPORT uint32_t X509_issuer_name_hash_old(X509 *x509);
 
 // X509_subject_name_hash_old returns the hash of |x509|'s usjbect name with
@@ -4510,6 +4461,9 @@ OPENSSL_EXPORT uint32_t X509_issuer_name_hash_old(X509 *x509);
 // This hash is specific to the |X509_LOOKUP_add_dir| filesystem format and is
 // not suitable for general-purpose X.509 name processing. It is very short, so
 // there will be hash collisions.
+//
+// TODO(crbug.com/42290269): This should be const and thread-safe but currently
+// is neither, notably if |x509| was modified from its parsed value.
 OPENSSL_EXPORT uint32_t X509_subject_name_hash_old(X509 *x509);
 
 
@@ -4581,6 +4535,9 @@ OPENSSL_EXPORT int ASN1_item_verify(const ASN1_ITEM *it,
 // |md|, or |pkey|'s default if NULL. Other signing parameters use |pkey|'s
 // defaults. To customize them, use |ASN1_item_sign_ctx|.
 //
+// |algor1| and |algor2| may point into part of |asn| and will be updated before
+// |asn| is serialized.
+//
 // WARNING: |data| must be a pointer with the same type as |it|'s corresponding
 // C type. Using the wrong type is a potentially exploitable memory error.
 OPENSSL_EXPORT int ASN1_item_sign(const ASN1_ITEM *it, X509_ALGOR *algor1,
@@ -4595,6 +4552,9 @@ OPENSSL_EXPORT int ASN1_item_sign(const ASN1_ITEM *it, X509_ALGOR *algor1,
 //
 // On success or failure, this function mutates |ctx| and resets it to the empty
 // state. Caller should not rely on its contents after the function returns.
+//
+// |algor1| and |algor2| may point into part of |asn| and will be updated before
+// |asn| is serialized.
 //
 // WARNING: |data| must be a pointer with the same type as |it|'s corresponding
 // C type. Using the wrong type is a potentially exploitable memory error.
@@ -4628,7 +4588,7 @@ OPENSSL_EXPORT int X509_supported_extension(const X509_EXTENSION *ex);
 // This function returning one does not indicate that |x509| is trusted, only
 // that it is eligible to be a CA.
 //
-// TODO(crbug.com/boringssl/407): |x509| should be const.
+// TODO(crbug.com/42290269): |x509| should be const.
 OPENSSL_EXPORT int X509_check_ca(X509 *x509);
 
 // X509_check_issued checks if |issuer| and |subject|'s name, authority key
@@ -4639,13 +4599,13 @@ OPENSSL_EXPORT int X509_check_ca(X509 *x509);
 // intended to prune the set of possible issuer certificates during
 // path-building.
 //
-// TODO(crbug.com/boringssl/407): Both parameters should be const.
+// TODO(crbug.com/42290269): Both parameters should be const.
 OPENSSL_EXPORT int X509_check_issued(X509 *issuer, X509 *subject);
 
 // NAME_CONSTRAINTS_check checks if |x509| satisfies name constraints in |nc|.
 // It returns |X509_V_OK| on success and some |X509_V_ERR_*| constant on error.
 //
-// TODO(crbug.com/boringssl/407): Both parameters should be const.
+// TODO(crbug.com/42290269): Both parameters should be const.
 OPENSSL_EXPORT int NAME_CONSTRAINTS_check(X509 *x509, NAME_CONSTRAINTS *nc);
 
 // X509_check_host checks if |x509| matches the DNS name |chk|. It returns one
@@ -4725,7 +4685,7 @@ OPENSSL_EXPORT int X509_check_ip_asc(const X509 *x509, const char *ipasc,
 // This function only searches for trusted issuers. It does not consider
 // untrusted intermediates passed in to |X509_STORE_CTX_init|.
 //
-// TODO(crbug.com/boringssl/407): |x509| should be const.
+// TODO(crbug.com/42290269): |x509| should be const.
 OPENSSL_EXPORT int X509_STORE_CTX_get1_issuer(X509 **out_issuer,
                                               X509_STORE_CTX *ctx, X509 *x509);
 
@@ -4759,7 +4719,7 @@ OPENSSL_EXPORT int X509_check_trust(X509 *x509, int id, int flags);
 // NULL on error. The caller must release the result with |sk_X509_pop_free| and
 // |X509_free| when done.
 //
-// TODO(crbug.com/boringssl/407): |name| should be const.
+// TODO(crbug.com/42290269): |name| should be const.
 OPENSSL_EXPORT STACK_OF(X509) *X509_STORE_CTX_get1_certs(X509_STORE_CTX *ctx,
                                                          X509_NAME *name);
 
@@ -4768,7 +4728,7 @@ OPENSSL_EXPORT STACK_OF(X509) *X509_STORE_CTX_get1_certs(X509_STORE_CTX *ctx,
 // The caller must release the result with |sk_X509_CRL_pop_free| and
 // |X509_CRL_free| when done.
 //
-// TODO(crbug.com/boringssl/407): |name| should be const.
+// TODO(crbug.com/42290269): |name| should be const.
 OPENSSL_EXPORT STACK_OF(X509_CRL) *X509_STORE_CTX_get1_crls(X509_STORE_CTX *ctx,
                                                             X509_NAME *name);
 
@@ -4786,7 +4746,7 @@ OPENSSL_EXPORT STACK_OF(X509_CRL) *X509_STORE_CTX_get1_crls(X509_STORE_CTX *ctx,
 // case, this function returns an arbitrary match. Use
 // |X509_STORE_CTX_get1_certs| or |X509_STORE_CTX_get1_crls| instead.
 //
-// TODO(crbug.com/boringssl/407): |name| should be const.
+// TODO(crbug.com/42290269): |name| should be const.
 OPENSSL_EXPORT int X509_STORE_CTX_get_by_subject(X509_STORE_CTX *ctx, int type,
                                                  X509_NAME *name,
                                                  X509_OBJECT *ret);
@@ -5020,11 +4980,7 @@ OPENSSL_EXPORT X509_EXTENSION *X509V3_EXT_nconf_nid(const CONF *conf,
                                                     const char *value);
 
 // X509V3_EXT_conf_nid calls |X509V3_EXT_nconf_nid|. |conf| must be NULL.
-//
-// TODO(davidben): This is the only exposed instance of an LHASH in our public
-// headers. cryptography.io wraps this function so we cannot, yet, replace the
-// type with a dummy struct.
-OPENSSL_EXPORT X509_EXTENSION *X509V3_EXT_conf_nid(LHASH_OF(CONF_VALUE) *conf,
+OPENSSL_EXPORT X509_EXTENSION *X509V3_EXT_conf_nid(CRYPTO_MUST_BE_NULL *conf,
                                                    const X509V3_CTX *ctx,
                                                    int ext_nid,
                                                    const char *value);

@@ -2,9 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-generators-shell.js]
-flags:
-  - noStrict
+includes: [sm/assertThrowsValue.js]
 description: |
   pending
 esid: pending

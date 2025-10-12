@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,13 +27,13 @@
 
 #if ENABLE(FULLSCREEN_API)
 
+#include <WebCore/BoxExtents.h>
 #include <WebCore/EventListener.h>
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/HTMLMediaElementEnums.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/LengthBox.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
@@ -102,9 +102,10 @@ protected:
     WebCore::IntRect m_initialFrame;
     WebCore::IntRect m_finalFrame;
     WebCore::IntPoint m_scrollPosition;
-    Ref<WebPage> m_page;
+    const Ref<WebPage> m_page;
     RefPtr<WebCore::Element> m_element;
     WeakPtr<WebCore::Element, WebCore::WeakPtrImplWithEventTargetData> m_elementToRestore;
+    std::optional<WebCore::FrameIdentifier> m_elementFrameIdentifier;
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     WebCore::FloatSize m_oldSize;
     double m_scaleFactor { 1 };
@@ -154,7 +155,7 @@ private:
     bool m_closing { false };
     bool m_inWindowFullScreenMode { false };
 #if !RELEASE_LOG_DISABLED
-    Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
 #endif
 };

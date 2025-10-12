@@ -27,10 +27,10 @@
 
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
 
-#include "AudioSourceProvider.h"
+#include <WebCore/AudioSourceProvider.h>
 #include <wtf/MediaTime.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
@@ -53,7 +53,7 @@ class CAAudioStreamDescription;
 class CARingBuffer;
 class PlatformAudioData;
 
-class AudioSourceProviderAVFObjC : public ThreadSafeRefCounted<AudioSourceProviderAVFObjC>, public AudioSourceProvider {
+class AudioSourceProviderAVFObjC : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioSourceProviderAVFObjC>, public AudioSourceProvider {
 public:
     using WeakValueType = AudioSourceProviderAVFObjC;
     static RefPtr<AudioSourceProviderAVFObjC> create(AVPlayerItem*);

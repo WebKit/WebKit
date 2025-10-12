@@ -23,12 +23,28 @@ extern "C" {
 }  // extern "C"
 
 #include <algorithm>
+#include <array>
+#include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <memory>
+#include <optional>
 
+#include "api/scoped_refptr.h"
 #include "api/video/color_space.h"
+#include "api/video/encoded_image.h"
 #include "api/video/i010_buffer.h"
+#include "api/video/i210_buffer.h"
+#include "api/video/i410_buffer.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/i422_buffer.h"
+#include "api/video/i444_buffer.h"
+#include "api/video/render_resolution.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_buffer.h"
+#include "api/video/video_rotation.h"
+#include "api/video_codecs/video_decoder.h"
 #include "common_video/include/video_frame_buffer.h"
 #include "modules/video_coding/codecs/h264/h264_color_space.h"
 #include "modules/video_coding/include/video_error_codes.h"
@@ -119,13 +135,13 @@ int H264DecoderImpl::AVGetBuffer2(AVCodecContext* context,
   // http://crbug.com/390941. Our pool is set up to zero-initialize new buffers.
   // TODO(https://crbug.com/390941): Delete that feature from the video pool,
   // instead add an explicit call to InitializeData here.
-  rtc::scoped_refptr<PlanarYuvBuffer> frame_buffer;
-  rtc::scoped_refptr<I444Buffer> i444_buffer;
-  rtc::scoped_refptr<I420Buffer> i420_buffer;
-  rtc::scoped_refptr<I422Buffer> i422_buffer;
-  rtc::scoped_refptr<I010Buffer> i010_buffer;
-  rtc::scoped_refptr<I210Buffer> i210_buffer;
-  rtc::scoped_refptr<I410Buffer> i410_buffer;
+  scoped_refptr<PlanarYuvBuffer> frame_buffer;
+  scoped_refptr<I444Buffer> i444_buffer;
+  scoped_refptr<I420Buffer> i420_buffer;
+  scoped_refptr<I422Buffer> i422_buffer;
+  scoped_refptr<I010Buffer> i010_buffer;
+  scoped_refptr<I210Buffer> i210_buffer;
+  scoped_refptr<I410Buffer> i410_buffer;
   int bytes_per_pixel = 1;
   switch (context->pix_fmt) {
     case AV_PIX_FMT_YUV420P:
@@ -405,44 +421,44 @@ int32_t H264DecoderImpl::Decode(const EncodedImage& input_image,
   VideoFrame* input_frame =
       static_cast<VideoFrame*>(av_buffer_get_opaque(av_frame_->buf[0]));
   RTC_DCHECK(input_frame);
-  rtc::scoped_refptr<VideoFrameBuffer> frame_buffer =
+  scoped_refptr<VideoFrameBuffer> frame_buffer =
       input_frame->video_frame_buffer();
 
   // Instantiate Planar YUV buffer according to video frame buffer type
-  const webrtc::PlanarYuvBuffer* planar_yuv_buffer = nullptr;
-  const webrtc::PlanarYuv8Buffer* planar_yuv8_buffer = nullptr;
-  const webrtc::PlanarYuv16BBuffer* planar_yuv16_buffer = nullptr;
+  const PlanarYuvBuffer* planar_yuv_buffer = nullptr;
+  const PlanarYuv8Buffer* planar_yuv8_buffer = nullptr;
+  const PlanarYuv16BBuffer* planar_yuv16_buffer = nullptr;
   VideoFrameBuffer::Type video_frame_buffer_type = frame_buffer->type();
   switch (video_frame_buffer_type) {
     case VideoFrameBuffer::Type::kI420:
       planar_yuv_buffer = frame_buffer->GetI420();
       planar_yuv8_buffer =
-          reinterpret_cast<const webrtc::PlanarYuv8Buffer*>(planar_yuv_buffer);
+          reinterpret_cast<const PlanarYuv8Buffer*>(planar_yuv_buffer);
       break;
     case VideoFrameBuffer::Type::kI444:
       planar_yuv_buffer = frame_buffer->GetI444();
       planar_yuv8_buffer =
-          reinterpret_cast<const webrtc::PlanarYuv8Buffer*>(planar_yuv_buffer);
+          reinterpret_cast<const PlanarYuv8Buffer*>(planar_yuv_buffer);
       break;
     case VideoFrameBuffer::Type::kI422:
       planar_yuv_buffer = frame_buffer->GetI422();
       planar_yuv8_buffer =
-          reinterpret_cast<const webrtc::PlanarYuv8Buffer*>(planar_yuv_buffer);
+          reinterpret_cast<const PlanarYuv8Buffer*>(planar_yuv_buffer);
       break;
     case VideoFrameBuffer::Type::kI010:
       planar_yuv_buffer = frame_buffer->GetI010();
-      planar_yuv16_buffer = reinterpret_cast<const webrtc::PlanarYuv16BBuffer*>(
-          planar_yuv_buffer);
+      planar_yuv16_buffer =
+          reinterpret_cast<const PlanarYuv16BBuffer*>(planar_yuv_buffer);
       break;
     case VideoFrameBuffer::Type::kI210:
       planar_yuv_buffer = frame_buffer->GetI210();
-      planar_yuv16_buffer = reinterpret_cast<const webrtc::PlanarYuv16BBuffer*>(
-          planar_yuv_buffer);
+      planar_yuv16_buffer =
+          reinterpret_cast<const PlanarYuv16BBuffer*>(planar_yuv_buffer);
       break;
     case VideoFrameBuffer::Type::kI410:
       planar_yuv_buffer = frame_buffer->GetI410();
-      planar_yuv16_buffer = reinterpret_cast<const webrtc::PlanarYuv16BBuffer*>(
-          planar_yuv_buffer);
+      planar_yuv16_buffer =
+          reinterpret_cast<const PlanarYuv16BBuffer*>(planar_yuv_buffer);
       break;
     default:
       // If this code is changed to allow other video frame buffer type,
@@ -530,7 +546,7 @@ int32_t H264DecoderImpl::Decode(const EncodedImage& input_image,
       return WEBRTC_VIDEO_CODEC_ERROR;
   }
 
-  rtc::scoped_refptr<webrtc::VideoFrameBuffer> cropped_buffer;
+  scoped_refptr<VideoFrameBuffer> cropped_buffer;
   switch (video_frame_buffer_type) {
     case VideoFrameBuffer::Type::kI420:
       cropped_buffer = WrapI420Buffer(

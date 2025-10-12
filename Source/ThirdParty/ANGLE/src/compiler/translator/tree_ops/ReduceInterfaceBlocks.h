@@ -20,14 +20,6 @@ using InterfaceBlockInstanceVarNameGen = std::function<ImmutableString()>;
 
 // This rewrites interface block declarations only.
 //
-// Access of interface blocks is not rewritten (e.g. TOperator::EOpIndexDirectInterfaceBlock). //
-// XXX: ^ Still true?
-//
-// Example:
-//  uniform Foo { int x; };
-// Becomes:
-//  uniform int x;
-//
 // Example:
 //  uniform Foo { int x; } foo;
 // Becomes:

@@ -98,32 +98,32 @@ private:
     bool isPCM() const;
     void setTimeFromSample(CMSampleBufferRef);
 
-    Ref<WorkQueue> queue() const { return m_serialDispatchQueue; }
+    WorkQueue& queue() const { return m_serialDispatchQueue; }
     const Ref<WorkQueue> m_serialDispatchQueue;
 
-    RetainPtr<CMBufferQueueRef> m_outputBufferQueue; // initialized on the caller's thread once, never modified after that.
-    RetainPtr<CMBufferQueueRef> m_inputBufferQueue; // initialized on the caller's thread once, never modified after that.
-    bool m_isEncoding WTF_GUARDED_BY_CAPABILITY(queue().get()) { true };
-    bool m_isDraining WTF_GUARDED_BY_CAPABILITY(queue().get()) { false };
+    const RetainPtr<CMBufferQueueRef> m_outputBufferQueue; // initialized on the caller's thread once, never modified after that.
+    const RetainPtr<CMBufferQueueRef> m_inputBufferQueue; // initialized on the caller's thread once, never modified after that.
+    bool m_isEncoding WTF_GUARDED_BY_CAPABILITY(queue()) { true };
+    bool m_isDraining WTF_GUARDED_BY_CAPABILITY(queue()) { false };
 
-    AudioConverterRef m_converter WTF_GUARDED_BY_CAPABILITY(queue().get()) { nullptr };
-    AudioStreamBasicDescription m_sourceFormat WTF_GUARDED_BY_CAPABILITY(queue().get());
-    AudioStreamBasicDescription m_destinationFormat WTF_GUARDED_BY_CAPABILITY(queue().get());
-    RetainPtr<CMFormatDescriptionRef> m_destinationFormatDescription WTF_GUARDED_BY_CAPABILITY(queue().get());
-    RetainPtr<NSNumber> m_gdrCountNum WTF_GUARDED_BY_CAPABILITY(queue().get());
-    UInt32 m_maxOutputPacketSize WTF_GUARDED_BY_CAPABILITY(queue().get()) { 0 };
-    Vector<AudioStreamPacketDescription> m_destinationPacketDescriptions WTF_GUARDED_BY_CAPABILITY(queue().get());
+    AudioConverterRef m_converter WTF_GUARDED_BY_CAPABILITY(queue()) { nullptr };
+    AudioStreamBasicDescription m_sourceFormat WTF_GUARDED_BY_CAPABILITY(queue());
+    AudioStreamBasicDescription m_destinationFormat WTF_GUARDED_BY_CAPABILITY(queue());
+    RetainPtr<CMFormatDescriptionRef> m_destinationFormatDescription WTF_GUARDED_BY_CAPABILITY(queue());
+    RetainPtr<NSNumber> m_gdrCountNum WTF_GUARDED_BY_CAPABILITY(queue());
+    UInt32 m_maxOutputPacketSize WTF_GUARDED_BY_CAPABILITY(queue()) { 0 };
+    Vector<AudioStreamPacketDescription> m_destinationPacketDescriptions WTF_GUARDED_BY_CAPABILITY(queue());
 
-    CMTime m_currentNativePresentationTimeStamp WTF_GUARDED_BY_CAPABILITY(queue().get());
-    CMTime m_currentOutputPresentationTimeStamp WTF_GUARDED_BY_CAPABILITY(queue().get());
-    CMTime m_remainingPrimeDuration WTF_GUARDED_BY_CAPABILITY(queue().get());
+    CMTime m_currentNativePresentationTimeStamp WTF_GUARDED_BY_CAPABILITY(queue());
+    CMTime m_currentOutputPresentationTimeStamp WTF_GUARDED_BY_CAPABILITY(queue());
+    CMTime m_remainingPrimeDuration WTF_GUARDED_BY_CAPABILITY(queue());
 
-    Vector<uint8_t> m_destinationBuffer WTF_GUARDED_BY_CAPABILITY(queue().get());
+    Vector<uint8_t> m_destinationBuffer WTF_GUARDED_BY_CAPABILITY(queue());
 
     CMBufferQueueTriggerToken m_triggerToken;
-    RetainPtr<CMBlockBufferRef> m_blockBuffer WTF_GUARDED_BY_CAPABILITY(queue().get());
-    Vector<AudioStreamPacketDescription> m_packetDescriptions WTF_GUARDED_BY_CAPABILITY(queue().get());
-    OSStatus m_lastError WTF_GUARDED_BY_CAPABILITY(queue().get()) { 0 };
+    RetainPtr<CMBlockBufferRef> m_blockBuffer WTF_GUARDED_BY_CAPABILITY(queue());
+    Vector<AudioStreamPacketDescription> m_packetDescriptions WTF_GUARDED_BY_CAPABILITY(queue());
+    OSStatus m_lastError WTF_GUARDED_BY_CAPABILITY(queue()) { 0 };
     const AudioFormatID m_outputCodecType;
     const Options m_options;
     std::atomic<unsigned> m_defaultBitRate { 0 };

@@ -24,22 +24,21 @@
 namespace webrtc {
 
 SchedulableNetworkNodeBuilder::SchedulableNetworkNodeBuilder(
-    webrtc::NetworkEmulationManager& net,
+    NetworkEmulationManager& net,
     network_behaviour::NetworkConfigSchedule schedule)
     : net_(net),
       schedule_(std::move(schedule)),
-      start_condition_([](webrtc::Timestamp) { return true; }) {}
+      start_condition_([](Timestamp) { return true; }) {}
 
 void SchedulableNetworkNodeBuilder::set_start_condition(
-    absl::AnyInvocable<bool(webrtc::Timestamp)> start_condition) {
+    absl::AnyInvocable<bool(Timestamp)> start_condition) {
   start_condition_ = std::move(start_condition);
 }
 
-webrtc::EmulatedNetworkNode* SchedulableNetworkNodeBuilder::Build(
+EmulatedNetworkNode* SchedulableNetworkNodeBuilder::Build(
     std::optional<uint64_t> random_seed) {
-  uint64_t seed = random_seed.has_value()
-                      ? *random_seed
-                      : static_cast<uint64_t>(rtc::TimeNanos());
+  uint64_t seed = random_seed.has_value() ? *random_seed
+                                          : static_cast<uint64_t>(TimeNanos());
   return net_.CreateEmulatedNode(std::make_unique<SchedulableNetworkBehavior>(
       std::move(schedule_), seed, *net_.time_controller()->GetClock(),
       std::move(start_condition_)));

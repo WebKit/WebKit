@@ -1,0 +1,18 @@
+PASS clickError is ""
+PASS clickCount.textContent is "1"
+PASS textInputError is ""
+PASS textField.value is "bar"
+PASS selectMenuItemError is ""
+PASS select.value is "Three"
+PASS selectTextError is ""
+PASS getSelection().toString() is "Subject"
+PASS invalidActionError is "Failed to resolve nodeIdentifier 4294967293"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test
+Subject
+
+Hello world.
+
+1

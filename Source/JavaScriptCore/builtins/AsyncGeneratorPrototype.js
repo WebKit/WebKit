@@ -146,14 +146,6 @@ function asyncGeneratorYield(generator, value, resumeMode)
 }
 
 @linkTimeConstant
-function awaitValue(generator, value, onFulfilled)
-{
-    "use strict";
-
-    @resolveWithoutPromiseForAsyncAwait(value, onFulfilled, @asyncGeneratorYieldOnRejected, generator);
-}
-
-@linkTimeConstant
 function doAsyncGeneratorBodyCallOnFulfilledNormal(result, generator)
 {
     "use strict";

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUIntegralTypes.h"
+#include <WebCore/WebGPUIntegralTypes.h>
 
 namespace WebCore::WebGPU {
 

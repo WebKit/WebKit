@@ -36,6 +36,7 @@
 #include "FontPlatformData.h"
 #include "Logging.h"
 #include "MemoryCache.h"
+#include "Settings.h"
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"

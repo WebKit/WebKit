@@ -1,4 +1,33 @@
 ================
+WebKitGTK 2.49.4
+================
+
+What's new in WebKitGTK 2.49.4?
+
+  - Enable CSS property font-variant-emoji is now enabled by default.
+  - Improve emoji font selection.
+  - Add SVT-AV1 encoder support to media backend.
+  - Show device scale factor in webkit://gpu.
+  - Fix font rendering of composed characters with certain fonts.
+  - Fix handling of font synthesis properties (bold/italic).
+  - Fix documentation of WebKitDeviceInfoPermissionRequest.
+  - Fix several crashes and rendering issues.
+
+================
+WebKitGTK 2.49.3
+================
+
+What's new in WebKitGTK 2.49.3?
+
+  - Add new API to get the theme color of a WebKitWebView.
+  - Fix rendering with GTK 3.
+  - Notify automation session on abnormal disconnections.
+  - Fix a crash by ensuring SkiaRecordingResult is destroyed on the main thread.
+  - Fix build on s390x.
+  - Fix the build with GTK 3.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.49.2
 ================
 

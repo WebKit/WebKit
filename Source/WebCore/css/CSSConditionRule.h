@@ -29,7 +29,7 @@
 
 #pragma once
 
-#include "CSSGroupingRule.h"
+#include <WebCore/CSSGroupingRule.h>
 
 namespace WebCore {
 
@@ -37,8 +37,14 @@ class CSSConditionRule : public CSSGroupingRule {
 public:
     virtual String conditionText() const = 0;
 
+    bool isCSSConditionRule() const final { return true; }
+
 protected:
     CSSConditionRule(StyleRuleGroup&, CSSStyleSheet* parent);
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSConditionRule)
+    static bool isType(const WebCore::CSSGroupingRule& rule) { return rule.isCSSConditionRule(); }
+SPECIALIZE_TYPE_TRAITS_END()

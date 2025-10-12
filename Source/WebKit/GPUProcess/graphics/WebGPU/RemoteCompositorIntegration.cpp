@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUConnectionToWebProcess.h"
+#include "Logging.h"
 #include "RemoteCompositorIntegrationMessages.h"
 #include "RemoteGPU.h"
 #include "StreamServerConnection.h"
@@ -36,7 +37,7 @@
 #include <WebCore/WebGPUCompositorIntegration.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, *connection(), completion)
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, m_streamConnection, completion)
 
 namespace WebKit {
 
@@ -53,14 +54,6 @@ RemoteCompositorIntegration::RemoteCompositorIntegration(WebCore::WebGPU::Compos
 }
 
 RemoteCompositorIntegration::~RemoteCompositorIntegration() = default;
-
-RefPtr<IPC::Connection> RemoteCompositorIntegration::connection() const
-{
-    RefPtr connection = protectedGPU()->gpuConnectionToWebProcess();
-    if (!connection)
-        return nullptr;
-    return &connection->connection();
-}
 
 void RemoteCompositorIntegration::destruct()
 {
@@ -83,12 +76,12 @@ void RemoteCompositorIntegration::stopListeningForIPC()
 }
 
 #if PLATFORM(COCOA)
-void RemoteCompositorIntegration::recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode, WebCore::WebGPU::TextureFormat textureFormat, WebKit::WebGPUIdentifier deviceIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
+void RemoteCompositorIntegration::recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode, WebCore::WebGPU::TextureFormat textureFormat, unsigned bufferCount, WebKit::WebGPUIdentifier deviceIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
 {
     auto convertedDevice = protectedObjectHeap()->convertDeviceFromBacking(deviceIdentifier);
     MESSAGE_CHECK_COMPLETION(convertedDevice, callback({ }));
 
-    callback(protectedBacking()->recreateRenderBuffers(width, height, WTFMove(destinationColorSpace), alphaMode, textureFormat, *convertedDevice));
+    callback(protectedBacking()->recreateRenderBuffers(width, height, WTFMove(destinationColorSpace), alphaMode, textureFormat, bufferCount, *convertedDevice));
 }
 #endif
 
@@ -107,6 +100,11 @@ Ref<WebCore::WebGPU::CompositorIntegration> RemoteCompositorIntegration::protect
 Ref<IPC::StreamServerConnection> RemoteCompositorIntegration::protectedStreamConnection() const
 {
     return m_streamConnection;
+}
+
+void RemoteCompositorIntegration::updateContentsHeadroom(float headroom)
+{
+    protectedBacking()->updateContentsHeadroom(headroom);
 }
 
 } // namespace WebKit

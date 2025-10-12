@@ -494,7 +494,7 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
 
 + (WebEventFlags)modifierFlags
 {
-    return GSEventIsHardwareKeyboardAttached() ? GSKeyboardGetModifierState([PAL::getUIApplicationClass() sharedApplication]._hardwareKeyboard) : 0;
+    return GSEventIsHardwareKeyboardAttached() ? GSKeyboardGetModifierState([PAL::getUIApplicationClassSingleton() sharedApplication]._hardwareKeyboard) : 0;
 }
 
 @end

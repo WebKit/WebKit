@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // system_utils_win32.cpp: Implementation of OS-specific functions for Windows.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "common/FastVector.h"
 #include "system_utils.h"

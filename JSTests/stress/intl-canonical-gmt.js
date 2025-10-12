@@ -3,4 +3,4 @@ function shouldBe(actual, expected) {
         throw new Error('bad value: ' + actual);
 }
 
-shouldBe(new Intl.DateTimeFormat('en', { timeZone: "GMT" }).resolvedOptions().timeZone, "UTC")
+shouldBe(new Intl.DateTimeFormat('en', { timeZone: "GMT" }).resolvedOptions().timeZone, "GMT")

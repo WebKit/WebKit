@@ -20,6 +20,8 @@
                 assert_true(typeof settings.deviceId === 'string', true);
                 assert_true(typeof capabilities.deviceId === 'string', true);
                 assert_equals(capabilities.deviceId, settings.deviceId);
+
+                stream.getTracks().forEach(track => track.stop());
             }, "check settings");
         </script>
     </body>

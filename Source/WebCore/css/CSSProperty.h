@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Inc.
+ * Copyright (C) 2004, 2005, 2006 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Intel Corporation. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -21,10 +21,10 @@
 
 #pragma once
 
-#include "CSSPropertyNames.h"
-#include "CSSValue.h"
-#include "IsImportant.h"
-#include "WritingMode.h"
+#include <WebCore/CSSPropertyNames.h>
+#include <WebCore/CSSValue.h>
+#include <WebCore/IsImportant.h>
+#include <WebCore/WritingMode.h>
 #include <wtf/BitSet.h>
 #include <wtf/RefPtr.h>
 
@@ -83,8 +83,8 @@ public:
     static bool isInLogicalPropertyGroup(CSSPropertyID);
     static bool areInSameLogicalPropertyGroupWithDifferentMappingLogic(CSSPropertyID, CSSPropertyID);
     static bool isDescriptorOnly(CSSPropertyID);
-    static UChar listValuedPropertySeparator(CSSPropertyID);
-    static bool isListValuedProperty(CSSPropertyID propertyID) { return !!listValuedPropertySeparator(propertyID); }
+    static char16_t listValuedPropertySeparator(CSSPropertyID);
+    static bool isListValuedProperty(CSSPropertyID propertyID) { return !!listValuedPropertySeparator(propertyID) || propertyID == CSSPropertyCustom; }
     static bool allowsNumberOrIntegerInput(CSSPropertyID);
 
     static bool animationUsesNonAdditiveOrCumulativeInterpolation(CSSPropertyID);

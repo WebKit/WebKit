@@ -60,6 +60,8 @@
 - (void)videoControlsManagerDidChange;
 - (void)videosInElementFullscreenChanged;
 - (void)didCleanupFullscreen;
+- (void)didEnterVideoFullscreen;
+- (void)didExitVideoFullscreen;
 
 #if PLATFORM(VISION)
 - (void)toggleSceneDimming;

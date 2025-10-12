@@ -10,7 +10,6 @@
 
 #import "ARDAppDelegate.h"
 
-#import "sdk/objc/api/peerconnection/RTCFieldTrials.h"
 #import "sdk/objc/api/peerconnection/RTCSSLAdapter.h"
 #import "sdk/objc/api/peerconnection/RTCTracing.h"
 #import "sdk/objc/base/RTCLogging.h"
@@ -25,16 +24,14 @@
 
 - (BOOL)application:(UIApplication *)application
     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-  NSDictionary *fieldTrials = @{};
-  RTCInitFieldTrialDictionary(fieldTrials);
   RTCInitializeSSL();
   RTCSetupInternalTracer();
-  _window =  [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+  _window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   [_window makeKeyAndVisible];
   ARDMainViewController *viewController = [[ARDMainViewController alloc] init];
 
-  UINavigationController *root =
-      [[UINavigationController alloc] initWithRootViewController:viewController];
+  UINavigationController *root = [[UINavigationController alloc]
+      initWithRootViewController:viewController];
   root.navigationBar.translucent = NO;
   _window.rootViewController = root;
 

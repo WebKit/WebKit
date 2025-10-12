@@ -28,6 +28,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
 
+#import "DocumentView.h"
 #import "LocalFrameInlines.h"
 #import "LocalFrameView.h"
 #import "Logging.h"

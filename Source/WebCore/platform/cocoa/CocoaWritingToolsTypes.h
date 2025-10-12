@@ -47,6 +47,8 @@ constexpr auto CocoaWritingToolsResultTable = UIWritingToolsResultTable;
 
 #else
 
+#import <AppKit/NSTextCheckingClient.h>
+
 using CocoaWritingToolsBehavior = NSWritingToolsBehavior;
 
 constexpr auto CocoaWritingToolsBehaviorNone = NSWritingToolsBehaviorNone;

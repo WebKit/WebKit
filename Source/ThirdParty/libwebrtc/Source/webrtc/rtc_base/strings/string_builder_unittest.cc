@@ -10,13 +10,14 @@
 
 #include "rtc_base/strings/string_builder.h"
 
-#include <string.h>
+#include <cstring>
+#include <string>
 
 #include "rtc_base/checks.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 TEST(SimpleStringBuilder, Limit) {
   char sb_buf[10];
@@ -199,4 +200,4 @@ TEST(StringBuilder, Reset) {
   EXPECT_EQ("123!", sb.str());
 }
 
-}  // namespace rtc
+}  // namespace webrtc

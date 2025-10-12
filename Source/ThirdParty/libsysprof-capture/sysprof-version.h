@@ -69,14 +69,14 @@
  *
  * sysprof major version component (e.g. 1 if %SYSPROF_VERSION is 1.2.3)
  */
-#define SYSPROF_MAJOR_VERSION (47)
+#define SYSPROF_MAJOR_VERSION (48)
 
 /**
  * SYSPROF_MINOR_VERSION:
  *
  * sysprof minor version component (e.g. 2 if %SYSPROF_VERSION is 1.2.3)
  */
-#define SYSPROF_MINOR_VERSION (0)
+#define SYSPROF_MINOR_VERSION (1)
 
 /**
  * SYSPROF_MICRO_VERSION:
@@ -90,7 +90,7 @@
  *
  * sysprof version.
  */
-#define SYSPROF_VERSION (47.0)
+#define SYSPROF_VERSION (48.1)
 
 /**
  * SYSPROF_VERSION_S:
@@ -98,7 +98,7 @@
  * sysprof version, encoded as a string, useful for printing and
  * concatenation.
  */
-#define SYSPROF_VERSION_S "47.0"
+#define SYSPROF_VERSION_S "48.1"
 
 #define SYSPROF_ENCODE_VERSION(major,minor,micro) \
         ((major) << 24 | (minor) << 16 | (micro) << 8)

@@ -20,7 +20,7 @@
 [
     Exposed=Window
 ] interface HTMLBaseElement : HTMLElement {
-    [CEReactions=NotNeeded] attribute [AtomString] USVString href;
+    [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] USVString href;
 
     [CEReactions=NotNeeded, Reflect] attribute DOMString target;
 };

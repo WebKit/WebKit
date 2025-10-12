@@ -136,6 +136,8 @@ class BuiltinsGenerator:
         inlineAttribute = "None"
         if function.is_always_inline:
             inlineAttribute = "Always"
+        elif function.is_never_inline:
+            inlineAttribute = "Never"
 
         return {
             'codeName': BuiltinsGenerator.mangledNameForFunction(function) + 'Code',

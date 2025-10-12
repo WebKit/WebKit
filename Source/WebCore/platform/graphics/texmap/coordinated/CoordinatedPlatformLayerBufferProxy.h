@@ -40,7 +40,7 @@ class TextureMapperLayer;
 class CoordinatedPlatformLayerBufferProxy final : public ThreadSafeRefCounted<CoordinatedPlatformLayerBufferProxy> {
 public:
     static Ref<CoordinatedPlatformLayerBufferProxy> create();
-    virtual ~CoordinatedPlatformLayerBufferProxy();
+    ~CoordinatedPlatformLayerBufferProxy();
 
     void setTargetLayer(CoordinatedPlatformLayer*);
     void consumePendingBufferIfNeeded();

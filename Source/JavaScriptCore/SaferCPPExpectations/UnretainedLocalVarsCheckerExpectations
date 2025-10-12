@@ -5,6 +5,4 @@ API/JSWrapperMap.mm
 API/ObjCCallbackFunction.mm
 API/ObjcRuntimeExtras.h
 API/tests/testapi.c
-inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm
-inspector/remote/cocoa/RemoteInspectorCocoa.mm
-inspector/remote/cocoa/RemoteInspectorXPCConnection.mm
+[ iOS ] runtime/ObjectPrototype.cpp

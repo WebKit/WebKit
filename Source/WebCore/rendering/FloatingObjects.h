@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include "LegacyRootInlineBox.h"
+#include <WebCore/LegacyRootInlineBox.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>

@@ -84,7 +84,7 @@ GCC_WARN_UNUSED_FUNCTION = YES;
 GCC_WARN_UNUSED_VARIABLE = YES;
 OTHER_MIGFLAGS = -F$(BUILT_PRODUCTS_DIR);
 PREBINDING = NO;
-WARNING_CFLAGS = $(inherited) $(WK_FIXME_WARNING_CFLAGS) -Wcast-qual -Wchar-subscripts -Wextra-tokens -Winit-self -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla -Wliteral-conversion -Wthread-safety -Wno-profile-instr-out-of-date -Wno-profile-instr-unprofiled -Wunsafe-buffer-usage $(WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL) -Wno-missing-field-initializers;
+WARNING_CFLAGS = $(inherited) $(WK_FIXME_WARNING_CFLAGS) -Wcast-qual -Wchar-subscripts -Wextra-tokens -Winit-self -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla -Wliteral-conversion -Wthread-safety -Wno-profile-instr-out-of-date -Wno-profile-instr-unprofiled -Wunsafe-buffer-usage $(WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL) -fsafe-buffer-usage-suggestions -Wno-missing-field-initializers;
 
 // Remove WK_FIXME_WARNING_CFLAGS once all warnings are fixed.
 WK_FIXME_WARNING_CFLAGS = -Wno-unused-parameter;
@@ -120,29 +120,17 @@ SWIFT_VERSION = $(SWIFT_VERSION$(WK_XCODE_16));
 SWIFT_VERSION_XCODE_BEFORE_16 = 5.0;
 SWIFT_VERSION_XCODE_SINCE_16 = 6.0;
 
-OTHER_SWIFT_FLAGS = $(inherited) -no-warnings-as-errors -Xfrontend -experimental-spi-only-imports $(OTHER_SWIFT_FLAGS$(WK_XCODE_16)) @$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/platform-enabled-swift-args.$(arch).resp $(OTHER_SWIFT_FLAGS_AVAILABILITY_$(USE_INTERNAL_SDK));
-OTHER_SWIFT_FLAGS_AVAILABILITY_YES = @$(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/Scripts/availability-definitions.txt;
-OTHER_SWIFT_FLAGS_AVAILABILITY_ = -Xfrontend -define-availability -Xfrontend "WK_IOS_TBA:iOS $(IPHONEOS_DEPLOYMENT_TARGET:default=1.0)" -Xfrontend -define-availability -Xfrontend "WK_MAC_TBA:macOS $(MACOSX_DEPLOYMENT_TARGET:default=10.0)" -Xfrontend -define-availability -Xfrontend "WK_XROS_TBA:visionOS $(XROS_DEPLOYMENT_TARGET:default=1.0)";
+OTHER_SWIFT_FLAGS = $(inherited) -no-warnings-as-errors -Xfrontend -experimental-spi-only-imports $(OTHER_SWIFT_FLAGS$(WK_XCODE_16)) @$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/platform-enabled-swift-args.$(arch).resp @$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/swift-tba-availability-macros.resp;
 OTHER_SWIFT_FLAGS_XCODE_BEFORE_16 = -Xfrontend -enable-experimental-concurrency -Xfrontend -enable-upcoming-feature -Xfrontend IsolatedDefaultValues;
 
 WK_ENABLE_SWIFTUI = YES;
-WK_ENABLE_SWIFTUI[sdk=macosx*] = $(WK_ENABLE_SWIFTUI$(WK_MACOS_1500));
-WK_ENABLE_SWIFTUI[sdk=macosx13*] = NO;
 WK_ENABLE_SWIFTUI[sdk=macosx14*] = NO;
 WK_ENABLE_SWIFTUI[sdk=macosx15*] = NO;
-WK_ENABLE_SWIFTUI_MACOS_SINCE_1500 = YES;
-WK_ENABLE_SWIFTUI_MACOS_BEFORE_1500 = NO;
-WK_ENABLE_SWIFTUI[sdk=iphone*17*] = NO;
-WK_ENABLE_SWIFTUI[sdk=iphone*18*] = NO;
+WK_ENABLE_SWIFTUI[sdk=iphone*18.*] = NO;
 WK_ENABLE_SWIFTUI[sdk=watch*] = NO;
 WK_ENABLE_SWIFTUI[sdk=appletv*] = NO;
-WK_ENABLE_SWIFTUI[sdk=xros1*] = NO;
-WK_ENABLE_SWIFTUI[sdk=xros2*] = NO;
-WK_ENABLE_SWIFTUI[sdk=xrsimulator1*] = NO;
-WK_ENABLE_SWIFTUI[sdk=xrsimulator2*] = NO;
-
-SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) $(SWIFT_ACTIVE_COMPILATION_CONDITIONS_SWIFTUI_$(WK_ENABLE_SWIFTUI))
-SWIFT_ACTIVE_COMPILATION_CONDITIONS_SWIFTUI_YES = ENABLE_SWIFTUI
+WK_ENABLE_SWIFTUI[sdk=xros2.*] = NO;
+WK_ENABLE_SWIFTUI[sdk=xrsimulator2.*] = NO;
 
 OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 
@@ -169,7 +157,7 @@ WK_USE_RESTRICTED_ENTITLEMENTS = $(USE_INTERNAL_SDK);
 WK_WEBKIT_DERIVEDSOURCES_INPUT_XCFILELIST_ADDITIONS = $(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/WebKit/DerivedSources-input.xcfilelist;
 WK_WEBKIT_DERIVEDSOURCES_OUTPUT_XCFILELIST_ADDITIONS = $(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/WebKit/DerivedSources-output.xcfilelist;
 WK_WEBKIT_RESOURCES_INPUT_XCFILELIST_ADDITIONS = $(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/WebKit/AdditionalResources-input.xcfilelist;
-WK_WEBKIT_RESOURCES_OUTPUT_XCFILELIST_ADDITIONS =$(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/WebKit/AdditionalResources-input.xcfilelist;
+WK_WEBKIT_RESOURCES_OUTPUT_XCFILELIST_ADDITIONS = $(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/WebKit/AdditionalResources-output.xcfilelist;
 
 LLVM_LTO = $(WK_USER_LTO_MODE_$(WK_LTO_MODE));
 

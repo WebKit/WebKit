@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "ConcurrentJSLock.h"
-#include "RuntimeType.h"
-#include "StructureSet.h"
+#include <JavaScriptCore/ConcurrentJSLock.h>
+#include <JavaScriptCore/RuntimeType.h>
+#include <JavaScriptCore/StructureSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RefCounted.h>

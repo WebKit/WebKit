@@ -435,10 +435,10 @@ void WebExtensionContext::sidebarGetActionClickBehavior(CompletionHandler<void(E
     completionHandler(m_actionClickBehavior);
 }
 
-bool WebExtensionContext::isSidebarMessageAllowed()
+bool WebExtensionContext::isSidebarMessageAllowed(IPC::Decoder& message)
 {
-    if (auto *controller = extensionController())
-        return controller->isFeatureEnabled(@"WebExtensionSidebarEnabled");
+    if (RefPtr controller = extensionController())
+        return isLoadedAndPrivilegedMessage(message) && controller->isFeatureEnabled(@"WebExtensionSidebarEnabled");
     return false;
 }
 

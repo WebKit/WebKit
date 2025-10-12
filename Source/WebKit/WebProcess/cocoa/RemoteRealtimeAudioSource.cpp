@@ -40,7 +40,7 @@ Ref<RealtimeMediaSource> RemoteRealtimeAudioSource::create(const CaptureDevice& 
 {
     auto source = adoptRef(*new RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(hashSalts), manager, shouldCaptureInGPUProcess, pageIdentifier));
     manager.addSource(source.copyRef());
-    manager.remoteCaptureSampleManager().addSource(source.copyRef());
+    manager.protectedRemoteCaptureSampleManager()->addSource(source.copyRef());
     source->createRemoteMediaSource();
     return source;
 }
@@ -61,7 +61,7 @@ void RemoteRealtimeAudioSource::remoteAudioSamplesAvailable(const MediaTime& tim
 
 void RemoteRealtimeAudioSource::setIsInBackground(bool value)
 {
-    connection().send(Messages::UserMediaCaptureManagerProxy::SetIsInBackground { identifier(), value }, 0);
+    Ref { connection() }->send(Messages::UserMediaCaptureManagerProxy::SetIsInBackground { identifier(), value }, 0);
 }
 
 void RemoteRealtimeAudioSource::setDescription(const WebCore::CAAudioStreamDescription& description)

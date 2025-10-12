@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "XPathNodeSet.h"
+#include <WebCore/XPathNodeSet.h>
 
 namespace WebCore {
 namespace XPath {

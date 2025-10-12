@@ -41,9 +41,11 @@
 #include "HTMLParserIdioms.h"
 #include "JSEventListener.h"
 #include "LegacyRenderSVGResourceContainer.h"
+#include "NodeInlines.h"
 #include "NodeName.h"
 #include "RenderAncestorIterator.h"
 #include "RenderSVGResourceContainer.h"
+#include "RenderStyleInlines.h"
 #include "ResolvedStyle.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementRareData.h"
@@ -54,12 +56,13 @@
 #include "SVGNames.h"
 #include "SVGParsingError.h"
 #include "SVGPropertyAnimatorFactory.h"
-#include "SVGRenderStyle.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include "SVGRenderSupport.h"
 #include "SVGResourceElementClient.h"
 #include "SVGSVGElement.h"
 #include "SVGTitleElement.h"
 #include "SVGUseElement.h"
+#include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleAdjuster.h"
 #include "StyleExtractor.h"
@@ -78,7 +81,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGElement);
 
 SVGElement::SVGElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry, OptionSet<TypeFlag> typeFlags)
     : StyledElement(tagName, document, typeFlags | TypeFlag::IsSVGElement | TypeFlag::HasCustomStyleResolveCallbacks)
-    , m_propertyAnimatorFactory(makeUnique<SVGPropertyAnimatorFactory>())
+    , m_propertyAnimatorFactory(makeUniqueRef<SVGPropertyAnimatorFactory>())
     , m_propertyRegistry(WTFMove(propertyRegistry))
     , m_className(SVGAnimatedString::create(this))
 {
@@ -692,7 +695,7 @@ const RenderStyle* SVGElement::computedStyle(const std::optional<Style::PseudoEl
 ColorInterpolation SVGElement::colorInterpolation() const
 {
     if (auto renderer = this->renderer())
-        return renderer->style().svgStyle().colorInterpolationFilters();
+        return renderer->style().colorInterpolationFilters();
 
     // Try to determine the property value from the computed style.
     if (auto value = Style::Extractor(const_cast<SVGElement*>(this)).propertyValue(CSSPropertyColorInterpolationFilters, Style::Extractor::UpdateLayout::No))
@@ -826,7 +829,7 @@ bool SVGElement::filterOutAnimatableAttribute(const QualifiedName&) const
 
 String SVGElement::title() const
 {
-    RefPtr page = document().protectedPage();
+    RefPtr page = document().page();
     if (!page)
         return String();
 

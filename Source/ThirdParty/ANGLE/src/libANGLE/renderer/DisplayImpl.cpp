@@ -102,7 +102,7 @@ egl::Error DisplayImpl::validatePixmap(const egl::Config *config,
                                        const egl::AttributeMap &attributes) const
 {
     UNREACHABLE();
-    return egl::Error(EGL_BAD_DISPLAY, "DisplayImpl::valdiatePixmap unimplemented.");
+    return egl::Error(EGL_BAD_DISPLAY, "DisplayImpl::validatePixmap unimplemented.");
 }
 
 const egl::Caps &DisplayImpl::getCaps() const
@@ -126,7 +126,7 @@ angle::NativeWindowSystem DisplayImpl::getWindowSystem() const
     return angle::NativeWindowSystem::Other;
 }
 
-bool DisplayImpl::supportsDmaBufFormat(EGLint format) const
+bool DisplayImpl::supportsDmaBufFormat(EGLint format)
 {
     UNREACHABLE();
     return false;

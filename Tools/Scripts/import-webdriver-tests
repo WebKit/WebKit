@@ -33,6 +33,7 @@ import argparse
 import os
 import sys
 
+from webkitpy.w3c.common import WPTPaths
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.logutils import configure_logging
@@ -103,7 +104,7 @@ importers = []
 
 if options.w3c:
     importer_config_path = webkit_finder.path_from_webkit_base('WebDriverTests', 'imported', 'w3c', 'importer.json')
-    download_path = webkit_finder.path_from_webkit_base('WebKitBuild', 'w3c-tests', 'web-platform-tests')
+    download_path = WPTPaths.default_wpt_checkout_path(webkit_finder)
     import_path = webkit_finder.path_from_webkit_base('WebDriverTests', 'imported', 'w3c')
     importers.append(Importer(importer_config_path, download_path, import_path))
 

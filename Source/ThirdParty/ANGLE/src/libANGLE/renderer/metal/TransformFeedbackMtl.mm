@@ -7,6 +7,10 @@
 //    Defines the class interface for TransformFeedbackMtl, implementing TransformFeedbackImpl.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/metal/TransformFeedbackMtl.h"
 
 #include "common/debug.h"

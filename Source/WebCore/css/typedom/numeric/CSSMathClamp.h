@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,22 +41,22 @@ public:
 
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Clamp; }
-    CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathClamp; }
+    CSSStyleValueType styleValueType() const final { return CSSStyleValueType::CSSMathClamp; }
     void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
     std::optional<SumValue> toSumValue() const final;
     bool equals(const CSSNumericValue&) const final;
 
     CSSMathClamp(CSSNumericType&&, Ref<CSSNumericValue>&&, Ref<CSSNumericValue>&&, Ref<CSSNumericValue>&&);
 
-    Ref<CSSNumericValue> m_lower;
-    Ref<CSSNumericValue> m_value;
-    Ref<CSSNumericValue> m_upper;
+    const Ref<CSSNumericValue> m_lower;
+    const Ref<CSSNumericValue> m_value;
+    const Ref<CSSNumericValue> m_upper;
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSMathClamp)
-static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSMathClamp; }
-static bool isType(const WebCore::CSSNumericValue& numericValue) { return numericValue.getType() == WebCore::CSSStyleValueType::CSSMathClamp; }
-static bool isType(const WebCore::CSSMathValue& mathValue) { return mathValue.getType() == WebCore::CSSStyleValueType::CSSMathClamp; }
+static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.styleValueType() == WebCore::CSSStyleValueType::CSSMathClamp; }
+static bool isType(const WebCore::CSSNumericValue& numericValue) { return numericValue.styleValueType() == WebCore::CSSStyleValueType::CSSMathClamp; }
+static bool isType(const WebCore::CSSMathValue& mathValue) { return mathValue.styleValueType() == WebCore::CSSStyleValueType::CSSMathClamp; }
 SPECIALIZE_TYPE_TRAITS_END()

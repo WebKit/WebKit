@@ -32,6 +32,10 @@
 #import "TestWebExtensionsDelegate.h"
 #import "WebExtensionUtilities.h"
 
+#if USE(APPKIT)
+#import "AppKitSPI.h"
+#endif
+
 namespace TestWebKitAPI {
 
 static auto *actionPopupManifest = @{
@@ -947,6 +951,54 @@ TEST(WKWebExtensionAPIAction, SetIconWithMultipleDataURLs)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIAction, SetIconSymbolSinglePath)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"await browser.action.setIcon({ path: 'symbol:star' })",
+    ]);
+
+    auto manager = Util::loadExtension(actionPopupManifest, @{ @"background.js": backgroundScript, @"popup.html": @"Hello world!" });
+
+    manager.get().internalDelegate.didUpdateAction = ^(WKWebExtensionAction *action) {
+        auto *icon = [action iconForSize:CGSizeMake(16, 16)];
+        EXPECT_NOT_NULL(icon);
+#if PLATFORM(MAC)
+        EXPECT_TRUE([icon isKindOfClass:NSImage.class]);
+        EXPECT_TRUE(icon._isSymbolImage);
+#else
+        EXPECT_TRUE([icon isKindOfClass:UIImage.class]);
+        EXPECT_TRUE(icon.isSymbolImage);
+#endif
+        [manager done];
+    };
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIAction, SetIconSymbolIconsDictionary)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"await browser.action.setIcon({ path: { '16': 'symbol:heart.fill' } })",
+    ]);
+
+    auto manager = Util::loadExtension(actionPopupManifest, @{ @"background.js": backgroundScript, @"popup.html": @"Hello world!" });
+
+    manager.get().internalDelegate.didUpdateAction = ^(WKWebExtensionAction *action) {
+        auto *icon = [action iconForSize:CGSizeMake(16, 16)];
+        EXPECT_NOT_NULL(icon);
+#if PLATFORM(MAC)
+        EXPECT_TRUE([icon isKindOfClass:NSImage.class]);
+        EXPECT_TRUE(icon._isSymbolImage);
+#else
+        EXPECT_TRUE([icon isKindOfClass:UIImage.class]);
+        EXPECT_TRUE(icon.isSymbolImage);
+#endif
+        [manager done];
+    };
+
+    [manager run];
+}
+
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
 TEST(WKWebExtensionAPIAction, SetIconWithVariants)
 {
@@ -1180,6 +1232,34 @@ TEST(WKWebExtensionAPIAction, SetIconWithAnySizeVariantAndSVGDataURL)
             EXPECT_TRUE(Util::compareColors(Util::pixelColor(iconAnySize), [CocoaColor blackColor]));
         });
 
+        [manager done];
+    };
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIAction, SetIconWithSymbolVariants)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"await browser.test.assertSafeResolve(() => browser.action.setIcon({",
+        @"    variants: [",
+        @"        { any: 'symbol:star' }",
+        @"    ]",
+        @"}))",
+    ]);
+
+    auto manager = Util::loadExtension(actionPopupManifest, @{ @"background.js": backgroundScript, @"popup.html": @"Hello world!" });
+
+    manager.get().internalDelegate.didUpdateAction = ^(WKWebExtensionAction *action) {
+        auto *icon = [action iconForSize:CGSizeMake(32, 32)];
+        EXPECT_NOT_NULL(icon);
+#if PLATFORM(MAC)
+        EXPECT_TRUE([icon isKindOfClass:NSImage.class]);
+        EXPECT_TRUE(icon._isSymbolImage);
+#elif PLATFORM(IOS_FAMILY)
+        EXPECT_TRUE([icon isKindOfClass:UIImage.class]);
+        EXPECT_TRUE(icon.isSymbolImage);
+#endif
         [manager done];
     };
 

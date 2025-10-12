@@ -34,6 +34,7 @@
 #include "pas_thread_local_cache_layout_entry.h"
 #include "pas_thread_local_cache_layout_node.h"
 #include "pas_utils.h"
+#include "pas_zero_memory.h"
 
 PAS_BEGIN_EXTERN_C;
 

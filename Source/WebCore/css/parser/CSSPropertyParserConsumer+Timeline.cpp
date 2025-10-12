@@ -37,7 +37,7 @@
 #include "CSSScrollValue.h"
 #include "CSSValuePair.h"
 #include "CSSViewValue.h"
-#include "TimelineRange.h"
+#include "StyleSingleAnimationRange.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
@@ -143,10 +143,19 @@ RefPtr<CSSValue> parseSingleViewTimelineInsetItem(const String& string, const CS
     return result;
 }
 
-RefPtr<CSSValue> consumeSingleAnimationRange(CSSParserTokenRange& range, CSS::PropertyParserState& state, SingleTimelineRange::Type type)
+RefPtr<CSSValue> consumeSingleAnimationRange(CSSParserTokenRange& range, CSS::PropertyParserState& state, Style::SingleAnimationRangeType type)
 {
     // <'animation-range-{start|end}'> = normal | <length-percentage> | <timeline-range-name> <length-percentage>?
     // https://drafts.csswg.org/scroll-animations-1/#propdef-animation-range-start
+
+    auto isDefault = [&](auto& value) {
+        if (!value.isPercentage() || value.isCalculated())
+            return false;
+        auto percentageValue = value.resolveAsPercentageNoConversionDataRequired();
+        if (type == Style::SingleAnimationRangeType::Start)
+            return percentageValue == 0;
+        return percentageValue == 100;
+    };
 
     if (auto name = consumeIdent(range)) {
         if (name->valueID() == CSSValueNormal)
@@ -154,7 +163,7 @@ RefPtr<CSSValue> consumeSingleAnimationRange(CSSParserTokenRange& range, CSS::Pr
         if (!isAnimationRangeKeyword(name->valueID()))
             return nullptr;
         if (auto offset = CSSPrimitiveValueResolver<CSS::LengthPercentage<>>::consumeAndResolve(range, state)) {
-            if (SingleTimelineRange::isDefault(*offset, type))
+            if (isDefault(*offset))
                 return name;
             return CSSValuePair::createNoncoalescing(name.releaseNonNull(), offset.releaseNonNull());
         }
@@ -165,15 +174,15 @@ RefPtr<CSSValue> consumeSingleAnimationRange(CSSParserTokenRange& range, CSS::Pr
 
 RefPtr<CSSValue> consumeSingleAnimationRangeStart(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
-    return consumeSingleAnimationRange(range, state, SingleTimelineRange::Type::Start);
+    return consumeSingleAnimationRange(range, state, Style::SingleAnimationRangeType::Start);
 }
 
 RefPtr<CSSValue> consumeSingleAnimationRangeEnd(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
-    return consumeSingleAnimationRange(range, state, SingleTimelineRange::Type::End);
+    return consumeSingleAnimationRange(range, state, Style::SingleAnimationRangeType::End);
 }
 
-RefPtr<CSSValue> parseSingleAnimationRange(const String& string, const CSSParserContext& context, SingleTimelineRange::Type type)
+RefPtr<CSSValue> parseSingleAnimationRange(const String& string, const CSSParserContext& context, Style::SingleAnimationRangeType type)
 {
     auto tokenizer = CSSTokenizer(string);
     auto range = tokenizer.tokenRange();

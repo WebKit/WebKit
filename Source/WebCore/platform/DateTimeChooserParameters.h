@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "IntRect.h"
+#include <WebCore/IntRect.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

@@ -7,6 +7,11 @@
 //  Can run just these tests by adding "--gtest_filter=VulkanCommandBufferPerfTest*"
 //   option to angle_white_box_perftests.
 //  When running on Android with run_angle_white_box_perftests, use "-v" option.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "ANGLEPerfTest.h"
 #include "common/platform.h"

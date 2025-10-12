@@ -28,6 +28,7 @@
 
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/DDModelPlayer.h>
 #include <WebCore/ModelPlayer.h>
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
@@ -73,9 +74,14 @@ RefPtr<WebCore::ModelPlayer> WebModelPlayerProvider::createModelPlayer(WebCore::
     Ref page = m_page.get();
     UNUSED_PARAM(page);
 #if ENABLE(MODEL_PROCESS)
-    if (page->corePage()->settings().modelProcessEnabled())
+    if (page->corePage() && page->corePage()->settings().modelProcessEnabled())
         return WebProcess::singleton().modelProcessModelPlayerManager().createModelProcessModelPlayer(page, client);
 #endif
+#if ENABLE(GPUP_MODEL)
+    if (page->corePage() && page->corePage()->settings().modelElementEnabled())
+        return WebCore::DDModelPlayer::create(*page->corePage(), client);
+#endif
+
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     if (page->useARKitForModel())
         return ARKitInlinePreviewModelPlayerMac::create(page, client);
@@ -96,8 +102,8 @@ void WebModelPlayerProvider::deleteModelPlayer(WebCore::ModelPlayer& modelPlayer
 {
 #if ENABLE(MODEL_PROCESS)
     Ref page = m_page.get();
-    if (page->corePage()->settings().modelProcessEnabled())
-        return WebProcess::singleton().modelProcessModelPlayerManager().deleteModelProcessModelPlayer(modelPlayer);
+    if (page->corePage() && page->corePage()->settings().modelProcessEnabled())
+        WebProcess::singleton().modelProcessModelPlayerManager().deleteModelProcessModelPlayer(modelPlayer);
 #else
     UNUSED_PARAM(modelPlayer);
 #endif

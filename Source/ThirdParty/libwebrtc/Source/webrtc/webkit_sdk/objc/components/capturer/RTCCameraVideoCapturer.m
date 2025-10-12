@@ -159,7 +159,7 @@ const int64_t kNanosecondsPerSecond = 1000000000;
                       RTCLogInfo("startCaptureWithDevice %@ @ %ld fps", format, (long)fps);
 
 #if TARGET_OS_IPHONE
-                      dispatch_async(dispatch_get_main_queue(), ^{
+                      dispatch_async(mainDispatchQueueSingleton(), ^{
                         if (!self->_generatingOrientationNotifications) {
                           [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
                           self->_generatingOrientationNotifications = YES;
@@ -206,7 +206,7 @@ const int64_t kNanosecondsPerSecond = 1000000000;
                       [self.captureSession stopRunning];
 
 #if TARGET_OS_IPHONE
-                      dispatch_async(dispatch_get_main_queue(), ^{
+                      dispatch_async(mainDispatchQueueSingleton(), ^{
                         if (self->_generatingOrientationNotifications) {
                           [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
                           self->_generatingOrientationNotifications = NO;

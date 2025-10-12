@@ -11,18 +11,20 @@
 #ifndef VIDEO_VIDEO_STREAM_ENCODER_INTERFACE_H_
 #define VIDEO_VIDEO_STREAM_ENCODER_INTERFACE_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <vector>
 
 #include "api/adaptation/resource.h"
 #include "api/fec_controller_override.h"
-#include "api/rtc_error.h"
 #include "api/rtp_parameters.h"  // For DegradationPreference.
 #include "api/rtp_sender_interface.h"
 #include "api/scoped_refptr.h"
 #include "api/units/data_rate.h"
-#include "api/video/video_bitrate_allocator.h"
+#include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_type.h"
 #include "api/video/video_layers_allocation.h"
-#include "api/video/video_sink_interface.h"
 #include "api/video/video_source_interface.h"
 #include "api/video_codecs/video_encoder.h"
 #include "video/config/video_encoder_config.h"
@@ -67,9 +69,8 @@ class VideoStreamEncoderInterface {
   // TODO(https://crbug.com/webrtc/11565): When the ResourceAdaptationProcessor
   // is moved to Call this method could be deleted altogether in favor of
   // Call-level APIs only.
-  virtual void AddAdaptationResource(rtc::scoped_refptr<Resource> resource) = 0;
-  virtual std::vector<rtc::scoped_refptr<Resource>>
-  GetAdaptationResources() = 0;
+  virtual void AddAdaptationResource(scoped_refptr<Resource> resource) = 0;
+  virtual std::vector<scoped_refptr<Resource>> GetAdaptationResources() = 0;
 
   // Sets the source that will provide video frames to the VideoStreamEncoder's
   // OnFrame method. `degradation_preference` control whether or not resolution
@@ -79,7 +80,7 @@ class VideoStreamEncoderInterface {
   // TODO(bugs.webrtc.org/14246): When adaptation logic is extracted from this
   // class, it no longer needs to know the source.
   virtual void SetSource(
-      rtc::VideoSourceInterface<VideoFrame>* source,
+      VideoSourceInterface<VideoFrame>* source,
       const DegradationPreference& degradation_preference) = 0;
 
   // Sets the `sink` that gets the encoded frames. `rotation_applied` means
@@ -110,14 +111,10 @@ class VideoStreamEncoderInterface {
 
   // Set the currently estimated network properties. A `target_bitrate`
   // of zero pauses the encoder.
-  // `stable_target_bitrate` is a filtered version of `target_bitrate`. It  is
-  // always less or equal to it. It can be used to avoid rapid changes of
-  // expensive encoding settings, such as resolution.
   // `link_allocation` is the bandwidth available for this video stream on the
   // network link. It is always at least `target_bitrate` but may be higher
   // if we are not network constrained.
   virtual void OnBitrateUpdated(DataRate target_bitrate,
-                                DataRate stable_target_bitrate,
                                 DataRate link_allocation,
                                 uint8_t fraction_lost,
                                 int64_t round_trip_time_ms,

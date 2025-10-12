@@ -137,7 +137,15 @@ static void tryNextSupportedConfiguration(Document& document, RefPtr<CDM>&& impl
         MediaKeySystemConfiguration candidateConfiguration = WTFMove(supportedConfigurations.first());
         supportedConfigurations.removeAt(0);
 
-        CDM::SupportedConfigurationCallback callback = [&document, implementation = implementation, supportedConfigurations = WTFMove(supportedConfigurations), promise, logger = WTFMove(logger), identifier = WTFMove(identifier)] (std::optional<MediaKeySystemConfiguration> supportedConfiguration) mutable {
+        CDM::SupportedConfigurationCallback callback = [weakDocument = WeakPtr { document }, implementation = implementation, supportedConfigurations = WTFMove(supportedConfigurations), promise, logger = WTFMove(logger), identifier = WTFMove(identifier)] (std::optional<MediaKeySystemConfiguration> supportedConfiguration) mutable {
+            RefPtr document = weakDocument.get();
+            if (!document) {
+                infoLog(logger, identifier, "Rejected: document no longer exists");
+                if (promise)
+                    promise->reject(ExceptionCode::InvalidStateError);
+                return;
+            }
+
             // 6.3.3. If supported configuration is not NotSupported, run the following steps:
             if (supportedConfiguration) {
                 // 6.3.3.1. Let access be a new MediaKeySystemAccess object, and initialize it as follows:
@@ -147,7 +155,7 @@ static void tryNextSupportedConfiguration(Document& document, RefPtr<CDM>&& impl
 
                 // Obtain reference to the key system string before the `implementation` RefPtr<> is cleared out.
                 const String& keySystem = implementation->keySystem();
-                auto access = MediaKeySystemAccess::create(document, keySystem, WTFMove(supportedConfiguration.value()), implementation.releaseNonNull());
+                auto access = MediaKeySystemAccess::create(*document, keySystem, WTFMove(supportedConfiguration.value()), implementation.releaseNonNull());
 
                 // 6.3.3.2. Resolve promise with access and abort the parallel steps of this algorithm.
                 infoLog(logger, identifier, "Resolved: keySystem(", keySystem, "), supportedConfiguration(", supportedConfiguration, ")");
@@ -156,7 +164,7 @@ static void tryNextSupportedConfiguration(Document& document, RefPtr<CDM>&& impl
                 return;
             }
 
-            tryNextSupportedConfiguration(document, WTFMove(implementation), WTFMove(supportedConfigurations), WTFMove(promise), WTFMove(logger), WTFMove(identifier));
+            tryNextSupportedConfiguration(*document, WTFMove(implementation), WTFMove(supportedConfigurations), WTFMove(promise), WTFMove(logger), WTFMove(identifier));
         };
         implementation->getSupportedConfiguration(WTFMove(candidateConfiguration), WTFMove(callback));
         return;

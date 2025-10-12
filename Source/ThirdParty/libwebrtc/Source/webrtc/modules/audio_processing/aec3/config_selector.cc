@@ -11,6 +11,9 @@
 
 #include "modules/audio_processing/aec3/config_selector.h"
 
+#include <optional>
+
+#include "api/audio/echo_canceller3_config.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

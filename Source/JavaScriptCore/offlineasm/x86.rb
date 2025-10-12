@@ -79,7 +79,7 @@ end
 
 class SpecialRegister < NoChildren
     def x86Operand(kind)
-        raise unless @name =~ /^r/
+        raise unless @name =~ /^r/ or @name =~ /^xmm/
         case kind
         when :half
             register(@name + "w")
@@ -90,7 +90,8 @@ class SpecialRegister < NoChildren
         when :quad
             register(@name)
         else
-            raise codeOriginString
+            raise codeOriginString unless [:float, :double].include? kind
+            register(@name)
         end
     end
     def x86CallOperand(kind)
@@ -100,6 +101,7 @@ class SpecialRegister < NoChildren
 end
 
 X64_SCRATCH_REGISTER = SpecialRegister.new("r11")
+X64_SCRATCH_FPR = SpecialRegister.new("xmm7")
 
 def x86GPRName(name, kind)
     case name
@@ -166,21 +168,21 @@ class RegisterID
 
     def x86GPR
         case name
-        when "t0", "r0", "ws0"
+        when "t0"
             "eax"
-        when "t6", "a0", "wa0"
+        when "t6"
             "edi"
-        when "t1", "a1", "wa1"
+        when "t1"
             "esi"
-        when "t2", "r1", "a2", "wa2"
+        when "t2"
             "edx"
-        when "t3", "a3", "wa3"
+        when "t3"
             "ecx"
-        when "t4", "a4", "wa4"
+        when "t4"
             "r8"
-        when "t5", "ws1"
+        when "t5"
             "r10"
-        when "t7", "a5", "wa5"
+        when "t7"
             "r9"
         when "csr0"
             "ebx"
@@ -218,21 +220,21 @@ class FPRegisterID
     def x86Operand(kind)
         raise unless [:float, :double, :vector].include? kind
         case name
-        when "ft0", "fa0", "fr", "wfa0"
+        when "ft0"
             register("xmm0")
-        when "ft1", "fa1", "wfa1"
+        when "ft1"
             register("xmm1")
-        when "ft2", "fa2", "wfa2"
+        when "ft2"
             register("xmm2")
-        when "ft3", "fa3", "wfa3"
+        when "ft3"
             register("xmm3")
-        when "ft4", "wfa4"
+        when "ft4"
             register("xmm4")
-        when "ft5", "wfa5"
+        when "ft5"
             register("xmm5")
-        when "wfa6"
+        when "ft6"
             register("xmm6")
-        when "wfa7"
+        when "ft7"
             register("xmm7")
         else
             raise "Bad register #{name} for X86 at #{codeOriginString}"
@@ -565,7 +567,8 @@ class Instruction
             $asm.puts "#{opcode} #{orderOperands(operands[0].x86Operand(:byte), operands[1].x86Operand(kind))}"
         else
             $asm.puts "xchg#{x86Suffix(:ptr)} #{operands[0].x86Operand(:ptr)}, #{x86GPRName("ecx", :ptr)}"
-            $asm.puts "#{opcode} #{orderOperands(register("cl"), operands[1].x86Operand(kind))}"
+            destIndex = operands[1].x86GPR == "ecx" ? 0 : 1;
+            $asm.puts "#{opcode} #{orderOperands(register("cl"), operands[destIndex].x86Operand(kind))}"
             $asm.puts "xchg#{x86Suffix(:ptr)} #{operands[0].x86Operand(:ptr)}, #{x86GPRName("ecx", :ptr)}"
         end
     end
@@ -612,7 +615,7 @@ class Instruction
             $asm.puts "#{setOpcode} #{operand.x86Operand(:byte)}"
             $asm.puts "movzbl #{orderOperands(operand.x86Operand(:byte), operand.x86Operand(:int))}"
         else
-            ax = RegisterID.new(nil, "r0")
+            ax = RegisterID.new(nil, "t0")
             $asm.puts "xchg#{x86Suffix(:ptr)} #{operand.x86Operand(:ptr)}, #{ax.x86Operand(:ptr)}"
             $asm.puts "#{setOpcode} #{ax.x86Operand(:byte)}"
             $asm.puts "movzbl #{ax.x86Operand(:byte)}, #{ax.x86Operand(:int)}"
@@ -920,7 +923,7 @@ class Instruction
         slow = LocalLabel.unique(codeOrigin, "slow")
         done = LocalLabel.unique(codeOrigin, "done")
         gprScratch = X64_SCRATCH_REGISTER
-        fprScratch = FPRegisterID.forName(codeOrigin, "wfa7")
+        fprScratch = X64_SCRATCH_FPR
         int64SignBit = Immediate.new(codeOrigin, 0x8000000000000000)
         case kind
         when :float
@@ -1326,7 +1329,7 @@ class Instruction
             $asm.puts "movsbl #{operands[0].x86Operand(:byte)}, #{operands[1].x86Operand(:int)}"
         when "sxh2i"
             $asm.puts "movswl #{operands[0].x86Operand(:half)}, #{operands[1].x86Operand(:int)}"
-        when "sxb2q"
+        when "sxb2q", "sxb2p"
             $asm.puts "movsbq #{operands[0].x86Operand(:byte)}, #{operands[1].x86Operand(:quad)}"
         when "sxh2q"
             $asm.puts "movswq #{operands[0].x86Operand(:half)}, #{operands[1].x86Operand(:quad)}"
@@ -1787,4 +1790,3 @@ class Instruction
         end
     end
 end
-

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ namespace JSC { namespace Bindings {
 // comments in this file claimed that problem #1 was an issue in Java, in particular, 
 // because Java, allegedly, didn't always call finalize when collecting an object.
 
-typedef UncheckedKeyHashSet<RootObject*> RootObjectSet;
+using RootObjectSet = HashSet<RootObject*>;
 
 static RootObjectSet& rootObjectSet()
 {
@@ -117,8 +117,8 @@ void RootObject::invalidate()
     m_globalObject.clear();
 
     {
-        UncheckedKeyHashSet<InvalidationCallback*>::iterator end = m_invalidationCallbacks.end();
-        for (UncheckedKeyHashSet<InvalidationCallback*>::iterator iter = m_invalidationCallbacks.begin(); iter != end; ++iter)
+        HashSet<InvalidationCallback*>::iterator end = m_invalidationCallbacks.end();
+        for (auto iter = m_invalidationCallbacks.begin(); iter != end; ++iter)
             (**iter)(this);
 
         m_invalidationCallbacks.clear();

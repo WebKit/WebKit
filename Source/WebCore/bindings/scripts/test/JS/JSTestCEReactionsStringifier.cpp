@@ -159,7 +159,7 @@ JSValue JSTestCEReactionsStringifier::getConstructor(VM& vm, const JSGlobalObjec
 
 void JSTestCEReactionsStringifier::destroy(JSC::JSCell* cell)
 {
-    JSTestCEReactionsStringifier* thisObject = static_cast<JSTestCEReactionsStringifier*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestCEReactionsStringifier* thisObject = static_cast<JSTestCEReactionsStringifier*>(cell);
     thisObject->JSTestCEReactionsStringifier::~JSTestCEReactionsStringifier();
 }
 
@@ -258,7 +258,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestCEReactionsStringifierPrototypeFunction_toString,
 
 JSC::GCClient::IsoSubspace* JSTestCEReactionsStringifier::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestCEReactionsStringifier, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestCEReactionsStringifier, UseCustomHeapCellType::No>(vm, "JSTestCEReactionsStringifier"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestCEReactionsStringifier.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestCEReactionsStringifier = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestCEReactionsStringifier.get(); },
@@ -285,7 +285,7 @@ bool JSTestCEReactionsStringifierOwner::isReachableFromOpaqueRoots(JSC::Handle<J
 
 void JSTestCEReactionsStringifierOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestCEReactionsStringifier = static_cast<JSTestCEReactionsStringifier*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestCEReactionsStringifier = static_cast<JSTestCEReactionsStringifier*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestCEReactionsStringifier->protectedWrapped().ptr(), jsTestCEReactionsStringifier);
 }
@@ -298,7 +298,9 @@ extern "C" { extern void (*const __identifier("??_7TestCEReactionsStringifier@We
 #else
 extern "C" { extern void* _ZTVN7WebCore26TestCEReactionsStringifierE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestCEReactionsStringifier>, void>> static inline void verifyVTable(TestCEReactionsStringifier* ptr) {
+template<std::same_as<TestCEReactionsStringifier> T>
+static inline void verifyVTable(TestCEReactionsStringifier* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -317,8 +319,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestCEReactio
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestCEReactionsStringifier>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestCEReactionsStringifier>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestCEReactionsStringifier>(impl.ptr());
 #endif

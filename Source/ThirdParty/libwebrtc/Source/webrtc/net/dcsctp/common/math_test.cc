@@ -9,7 +9,9 @@
  */
 #include "net/dcsctp/common/math.h"
 
-#include "test/gmock.h"
+#include <cstdint>
+
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace {

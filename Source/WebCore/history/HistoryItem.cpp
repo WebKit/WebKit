@@ -83,7 +83,7 @@ HistoryItem::HistoryItem(const HistoryItem& item)
     , m_isTargetItem(item.m_isTargetItem)
     , m_itemSequenceNumber(item.m_itemSequenceNumber)
     , m_documentSequenceNumber(item.m_documentSequenceNumber)
-    , m_formData(item.m_formData ? RefPtr<FormData> { item.m_formData->copy() } : nullptr)
+    , m_formData(item.m_formData ? RefPtr<FormData> { RefPtr { item.m_formData }->copy() } : nullptr)
     , m_formContentType(item.m_formContentType)
 #if PLATFORM(IOS_FAMILY)
     , m_obscuredInsets(item.m_obscuredInsets)
@@ -393,9 +393,9 @@ bool HistoryItem::hasSameDocumentTree(HistoryItem& otherItem) const
         return false;
 
     for (size_t i = 0; i < children().size(); i++) {
-        auto& child = children()[i].get();
-        auto* otherChild = otherItem.childItemWithDocumentSequenceNumber(child.documentSequenceNumber());
-        if (!otherChild || !child.hasSameDocumentTree(*otherChild))
+        Ref child = children()[i].get();
+        RefPtr otherChild = otherItem.childItemWithDocumentSequenceNumber(child->documentSequenceNumber());
+        if (!otherChild || !child->hasSameDocumentTree(*otherChild))
             return false;
     }
 

@@ -7,6 +7,10 @@
 //    Implements the class methods for BufferMtl.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/metal/BufferMtl.h"
 
 #include "common/debug.h"

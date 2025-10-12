@@ -23,7 +23,8 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 struct WebKit::WebExtensionContextParameters {
-    WebKit::WebExtensionContextIdentifier identifier;
+    WebKit::WebExtensionContextIdentifier unprivilegedIdentifier;
+    Markable<WebKit::WebExtensionContextIdentifier> privilegedIdentifier;
 
     URL baseURL;
     String uniqueIdentifier;

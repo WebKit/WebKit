@@ -27,10 +27,10 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include "AudioSampleDataSource.h"
-#include "CAAudioStreamDescription.h"
-#include "WebAudioSourceProvider.h"
 #include <CoreAudio/CoreAudioTypes.h>
+#include <WebCore/AudioSampleDataSource.h>
+#include <WebCore/CAAudioStreamDescription.h>
+#include <WebCore/WebAudioSourceProvider.h>
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

@@ -22,13 +22,16 @@
 #include "config.h"
 #include "JSDOMBindingSecurity.h"
 
-#include "DocumentInlines.h"
+#include "DocumentSecurityOrigin.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTTPParsers.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindowBase.h"
+#include "JSDOMWindowCustom.h"
 #include "LocalDOMWindow.h"
-#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
+#include "NodeDocument.h"
+#include "RemoteDOMWindow.h"
 #include "SecurityOrigin.h"
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
@@ -40,14 +43,14 @@ void printErrorMessageForFrame(LocalFrame* frame, const String& message)
 {
     if (!frame)
         return;
-    frame->document()->domWindow()->printErrorMessage(message);
+    frame->document()->window()->printErrorMessage(message);
 }
 
 // FIXME: Refactor to share code with LocalDOMWindow::crossDomainAccessErrorMessage.
 static String remoteFrameAccessError(JSC::JSGlobalObject* lexicalGlobalObject)
 {
-    auto& active = activeDOMWindow(*lexicalGlobalObject);
-    Ref activeOrigin = active.document()->securityOrigin();
+    RefPtr remoteWindow = dynamicDowncast<RemoteDOMWindow>(asJSDOMWindow(lexicalGlobalObject)->wrapped());
+    Ref activeOrigin = remoteWindow ? remoteWindow->frame()->frameDocumentSecurityOriginOrOpaque() : activeDOMWindow(*lexicalGlobalObject).document()->securityOrigin();
     return makeString("Blocked a frame with origin \""_s, activeOrigin->toString(), "\" from accessing a cross-origin frame. Protocols, domains, and ports must match."_s);
 }
 
@@ -86,11 +89,11 @@ static inline bool canAccessDocument(JSC::JSGlobalObject* lexicalGlobalObject, D
     case ThrowSecurityError: {
         VM& vm = lexicalGlobalObject->vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
-        throwSecurityError(*lexicalGlobalObject, scope, targetDocument->domWindow()->crossDomainAccessErrorMessage(active, IncludeTargetOrigin::No));
+        throwSecurityError(*lexicalGlobalObject, scope, targetDocument->window()->crossDomainAccessErrorMessage(active, IncludeTargetOrigin::No));
         break;
     }
     case LogSecurityError:
-        printErrorMessageForFrame(targetDocument->frame(), targetDocument->domWindow()->crossDomainAccessErrorMessage(active, IncludeTargetOrigin::Yes));
+        printErrorMessageForFrame(targetDocument->frame(), targetDocument->window()->crossDomainAccessErrorMessage(active, IncludeTargetOrigin::Yes));
         break;
     case DoNotReportSecurityError:
         break;
@@ -103,7 +106,7 @@ bool BindingSecurity::shouldAllowAccessToFrame(JSGlobalObject& lexicalGlobalObje
 {
     if (BindingSecurity::shouldAllowAccessToFrame(&lexicalGlobalObject, &frame, DoNotReportSecurityError))
         return true;
-    message = frame.document()->domWindow()->crossDomainAccessErrorMessage(activeDOMWindow(lexicalGlobalObject), IncludeTargetOrigin::No);
+    message = frame.document()->window()->crossDomainAccessErrorMessage(activeDOMWindow(lexicalGlobalObject), IncludeTargetOrigin::No);
     return false;
 }
 

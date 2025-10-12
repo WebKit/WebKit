@@ -42,9 +42,7 @@ Ref<PresentationContextIOSurface> PresentationContextIOSurface::create(const WGP
 {
     auto presentationContextIOSurface = adoptRef(*new PresentationContextIOSurface(surfaceDescriptor, instance));
 
-    ASSERT(surfaceDescriptor.nextInChain);
-    ASSERT(surfaceDescriptor.nextInChain->sType == static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking));
-    const auto& descriptor = *reinterpret_cast<const WGPUSurfaceDescriptorCocoaCustomSurface*>(surfaceDescriptor.nextInChain);
+    const auto& descriptor = surfaceDescriptor.cocoaDescriptor;
     descriptor.compositorIntegrationRegister([presentationContext = presentationContextIOSurface.copyRef()](CFArrayRef ioSurfaces) {
         presentationContext->renderBuffersWereRecreated(bridge_cast(ioSurfaces));
     }, [presentationContext = presentationContextIOSurface.copyRef()](WGPUWorkItem workItem) {
@@ -105,7 +103,7 @@ RetainPtr<CGImageRef> PresentationContextIOSurface::getTextureAsNativeImage(uint
         return nullptr;
 
     id<MTLTexture> mtlTexture = texture->texture();
-    if (!mtlTexture || mtlTexture.pixelFormat == MTLPixelFormatBGRA8Unorm || mtlTexture.pixelFormat == MTLPixelFormatBGRA8Unorm_sRGB) {
+    if (!mtlTexture || mtlTexture.pixelFormat == MTLPixelFormatBGRA8Unorm || mtlTexture.pixelFormat == MTLPixelFormatBGRA8Unorm_sRGB || mtlTexture.pixelFormat == MTLPixelFormatRGBA16Float) {
         isIOSurfaceSupportedFormat = true;
         return nullptr;
     }
@@ -156,11 +154,8 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     m_renderBuffers.clear();
     m_invalidTexture = Texture::createInvalid(device);
 
-    if (descriptor.nextInChain)
-        return;
-
     bool reportValidationErrors = descriptor.reportValidationErrors;
-    m_device = &device;
+    m_device = device;
     auto allowedFormat = ^(WGPUTextureFormat format) {
         return format == WGPUTextureFormat_BGRA8Unorm || format == WGPUTextureFormat_RGBA8Unorm || format == WGPUTextureFormat_RGBA16Float;
     };
@@ -174,19 +169,19 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     auto height = std::min<uint32_t>(limits.maxTextureDimension2D, descriptor.height);
     auto effectiveFormat = allowedFormat(descriptor.format) ? descriptor.format : WGPUTextureFormat_BGRA8Unorm;
     WGPUTextureDescriptor wgpuTextureDescriptor = {
-        nullptr,
-        descriptor.label,
-        descriptor.usage,
-        WGPUTextureDimension_2D, {
+        .label = descriptor.label,
+        .usage = descriptor.usage,
+        .dimension = WGPUTextureDimension_2D,
+        .size = {
             width,
             height,
             1,
         },
-        effectiveFormat,
-        1,
-        1,
-        descriptor.viewFormats.size() ?: 1,
-        descriptor.viewFormats.size() ? &descriptor.viewFormats[0] : &effectiveFormat,
+        .format = effectiveFormat,
+        .mipLevelCount = 1,
+        .sampleCount = 1,
+        .viewFormatCount = descriptor.viewFormats.size() ?: 1,
+        .viewFormats = descriptor.viewFormats.size() ? &descriptor.viewFormats[0] : &effectiveFormat,
     };
     m_colorSpace = descriptor.colorSpace;
     m_toneMappingMode = descriptor.toneMappingMode;

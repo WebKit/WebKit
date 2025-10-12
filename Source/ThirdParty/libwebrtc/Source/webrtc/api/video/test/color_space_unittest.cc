@@ -10,7 +10,7 @@
 
 #include "api/video/color_space.h"
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "test/gtest.h"
 

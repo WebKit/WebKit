@@ -15,7 +15,6 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
 #pragma once
@@ -30,7 +29,7 @@ namespace WTF {
 
 template<typename Value, typename HashFunctions, typename Traits>
 class HashCountedSet final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(HashCountedSet);
 private:
     using ImplType = HashMap<Value, unsigned, HashFunctions, Traits>;
 public:
@@ -107,18 +106,38 @@ public:
     void clear();
 
     // Overloads for smart pointer keys that take the raw pointer type as the parameter.
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, iterator>::type find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*);
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, const_iterator>::type find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*) const;
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*) const;
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, unsigned>::type count(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*) const;
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*);
+    template<typename V = ValueType>
+        requires IsSmartPtrV<V>
+    iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*);
+    template<typename V = ValueType>
+        requires IsSmartPtrV<V>
+    const_iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*) const;
+    template<typename V = ValueType>
+        requires IsSmartPtrV<V>
+    bool contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*) const;
+    template<typename V = ValueType>
+        requires IsSmartPtrV<V>
+    unsigned count(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*) const;
+    template<typename V = ValueType>
+        requires IsSmartPtrV<V>
+    bool remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*);
 
     // Overloads for non-nullable smart pointer values that take the raw reference type as the parameter.
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, iterator>::type find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&);
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, const_iterator>::type find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&) const;
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, bool>::type contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&) const;
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, unsigned>::type count(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&) const;
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, bool>::type remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&);
+    template<typename V = ValueType>
+        requires (IsSmartPtrV<V> && !IsSmartPtrNullableV<V>)
+    iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&);
+    template<typename V = ValueType>
+        requires (IsSmartPtrV<V> && !IsSmartPtrNullableV<V>)
+    const_iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&) const;
+    template<typename V = ValueType>
+        requires (IsSmartPtrV<V> && !IsSmartPtrNullableV<V>)
+    bool contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&) const;
+    template<typename V = ValueType>
+        requires (IsSmartPtrV<V> && !IsSmartPtrNullableV<V>)
+    unsigned count(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&) const;
+    template<typename V = ValueType>
+        requires (IsSmartPtrV<V> && !IsSmartPtrNullableV<V>)
+    bool remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&);
 
     static bool isValidValue(const ValueType&);
 
@@ -314,70 +333,80 @@ inline bool HashCountedSet<Value, HashFunctions, Traits>::isValidValue(const Val
 
 template<typename Value, typename HashFunctions, typename Traits>
 template<typename V>
-inline auto HashCountedSet<Value, HashFunctions, Traits>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) -> typename std::enable_if<IsSmartPtr<V>::value, iterator>::type
+    requires IsSmartPtrV<V>
+inline auto HashCountedSet<Value, HashFunctions, Traits>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) -> iterator
 {
     return m_impl.find(value);
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
 template<typename V>
-inline auto HashCountedSet<Value, HashFunctions, Traits>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) const -> typename std::enable_if<IsSmartPtr<V>::value, const_iterator>::type
+    requires IsSmartPtrV<V>
+inline auto HashCountedSet<Value, HashFunctions, Traits>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) const -> const_iterator
 {
     return m_impl.find(value);
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
 template<typename V>
-inline auto HashCountedSet<Value, HashFunctions, Traits>::contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) const -> typename std::enable_if<IsSmartPtr<V>::value, bool>::type
+    requires IsSmartPtrV<V>
+inline auto HashCountedSet<Value, HashFunctions, Traits>::contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) const -> bool
 {
     return m_impl.contains(value);
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
 template<typename V>
-inline auto HashCountedSet<Value, HashFunctions, Traits>::count(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) const -> typename std::enable_if<IsSmartPtr<V>::value, unsigned>::type
+    requires IsSmartPtrV<V>
+inline auto HashCountedSet<Value, HashFunctions, Traits>::count(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) const -> unsigned
 {
     return m_impl.get(value);
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
 template<typename V>
-inline auto HashCountedSet<Value, HashFunctions, Traits>::remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) -> typename std::enable_if<IsSmartPtr<V>::value, bool>::type
+    requires IsSmartPtrV<V>
+inline auto HashCountedSet<Value, HashFunctions, Traits>::remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) -> bool
 {
     return remove(find(value));
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
 template<typename V>
-inline auto HashCountedSet<Value, HashFunctions, Traits>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) -> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, iterator>::type
+    requires (IsSmartPtrV<V> && !IsSmartPtrNullableV<V>)
+inline auto HashCountedSet<Value, HashFunctions, Traits>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) -> iterator
 {
     return find(&value);
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
 template<typename V>
-inline auto HashCountedSet<Value, HashFunctions, Traits>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) const -> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, const_iterator>::type
+    requires (IsSmartPtrV<V> && !IsSmartPtrNullableV<V>)
+inline auto HashCountedSet<Value, HashFunctions, Traits>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) const -> const_iterator
 {
     return find(&value);
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
 template<typename V>
-inline auto HashCountedSet<Value, HashFunctions, Traits>::contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) const -> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, bool>::type
+    requires (IsSmartPtrV<V> && !IsSmartPtrNullableV<V>)
+inline auto HashCountedSet<Value, HashFunctions, Traits>::contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) const -> bool
 {
     return contains(&value);
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
 template<typename V>
-inline auto HashCountedSet<Value, HashFunctions, Traits>::count(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) const -> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, unsigned>::type
+    requires (IsSmartPtrV<V> && !IsSmartPtrNullableV<V>)
+inline auto HashCountedSet<Value, HashFunctions, Traits>::count(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) const -> unsigned
 {
     return count(&value);
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
 template<typename V>
-inline auto HashCountedSet<Value, HashFunctions, Traits>::remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) -> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, bool>::type
+    requires (IsSmartPtrV<V> && !IsSmartPtrNullableV<V>)
+inline auto HashCountedSet<Value, HashFunctions, Traits>::remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) -> bool
 {
     return remove(&value);
 }

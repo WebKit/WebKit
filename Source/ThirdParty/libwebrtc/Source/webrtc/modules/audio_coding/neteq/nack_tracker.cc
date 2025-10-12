@@ -10,10 +10,14 @@
 
 #include "modules/audio_coding/neteq/nack_tracker.h"
 
+#include <cstddef>
 #include <cstdint>
+#include <optional>
 #include <utility>
+#include <vector>
 
 #include "api/field_trials_view.h"
+#include "modules/include/module_common_types_public.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/struct_parameters_parser.h"
 #include "rtc_base/logging.h"

@@ -1,0 +1,29 @@
+<!DOCTYPE html><html lang><meta charset="utf-8">
+<title>find-in-page with closed details elements</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<hr>
+<script>
+findStringInDetails = (id, contents) => {
+    promise_test(async () => {
+        document.body.insertAdjacentHTML("beforeend", `<details id=${id}>${contents}</details>`);
+        const details = document.getElementById(id);
+        let e = await new Promise((resolve) => {
+            details.addEventListener("toggle", resolve, { once: true });
+            testRunner.findString(id, []);
+        });
+        details.remove();
+        assert_equals(e.newState, "open", `newState is “open”: ${id}`);
+        assert_equals(e.oldState, "closed", `oldState was “closed”: ${id}`);
+        assert_true(details.open, `details element is open: ${id}`);
+    }, `auto-expand on find-in-page match: ${id}`);
+}
+let target;
+target = "details-simple"; findStringInDetails(target, target);
+target = "details-in-p"; findStringInDetails(target, `<p>${target}</p>`);
+target = "details-in-table"; findStringInDetails(target, `<table><tr><td>${target}</table>`);
+target = "details-nested-simple"; findStringInDetails(target, `<details>${target}</details>`);
+target = "details-nested-target-in-p"; findStringInDetails(target, `<details><p>${target}</p></details>`);
+target = "details-nested-target-in-table"; findStringInDetails(target, `<details><table><tr><td>${target}</table></details>`);
+target = "details-summary-nested-simple"; findStringInDetails(target, `<details><summary>${target}</summary></details>`);
+</script>

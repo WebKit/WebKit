@@ -34,11 +34,11 @@
 #include "CDM.h"
 #include "CDMInstance.h"
 #include "CDMKeyGroupingStrategy.h"
+#include "ContextDestructionObserverInlines.h"
 #include "DOMPromiseProxy.h"
-#include "DocumentInlines.h"
+#include "DocumentPage.h"
 #include "EventLoop.h"
 #include "EventNames.h"
-#include "FrameInlines.h"
 #include "JSMediaKeyStatusMap.h"
 #include "Logging.h"
 #include "MediaKeyMessageEvent.h"
@@ -809,13 +809,16 @@ String MediaKeySession::mediaKeysStorageDirectory() const
 
 CDMKeyGroupingStrategy MediaKeySession::keyGroupingStrategy() const
 {
-#if USE(MODERN_AVCONTENTKEYSESSION)
-    RefPtr document = downcast<Document>(scriptExecutionContext());
-    if (document && document->settings().shouldUseModernAVContentKeySession())
-        return CDMKeyGroupingStrategy::BuiltIn;
-#endif
-
+#if USE(AVFOUNDATION)
+    return CDMKeyGroupingStrategy::BuiltIn;
+#else
     return CDMKeyGroupingStrategy::Platform;
+#endif
+}
+
+ScriptExecutionContext* MediaKeySession::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 bool MediaKeySession::virtualHasPendingActivity() const
@@ -833,12 +836,13 @@ void MediaKeySession::stop()
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_instanceSession->closeSession(m_sessionId, [this, weakThis = WeakPtr { this }, logIdentifier = LOGIDENTIFIER] {
-        if (!weakThis)
+    m_instanceSession->closeSession(m_sessionId, [weakThis = WeakPtr { this }, logIdentifier = LOGIDENTIFIER] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
-        ALWAYS_LOG(logIdentifier, "::lambda, closed");
-        sessionClosed();
+        ALWAYS_LOG_WITH_THIS(protectedThis, logIdentifier, "::lambda, closed");
+        protectedThis->sessionClosed();
     });
 }
 

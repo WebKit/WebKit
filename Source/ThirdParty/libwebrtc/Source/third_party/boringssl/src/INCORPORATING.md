@@ -67,7 +67,7 @@ top-level build logic, maintained by the embedder.
 
 Source lists for various build systems are pre-generated and live in the `gen`
 directory. For example, source lists for
-[GN](https://gn.googlesource.com/gn/+/master/docs/quick_start.md) live in
+[GN](https://gn.googlesource.com/gn/+/main/docs/quick_start.md) live in
 [gen/sources.gni](./gen/sources.gni). There is also a generic
 [gen/sources.json](./gen/sources.json) file for projects to consume if needed.
 [util/build/build.go](./util/build/build.go) describes what the various source

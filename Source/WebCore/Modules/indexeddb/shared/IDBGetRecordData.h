@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "IDBKeyRangeData.h"
+#include <WebCore/IDBKeyRangeData.h>
 
 namespace WebCore {
 

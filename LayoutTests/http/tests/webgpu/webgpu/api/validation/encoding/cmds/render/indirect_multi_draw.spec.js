@@ -9,14 +9,14 @@ import {
   kMaxUnsignedLongValue,
   kMaxUnsignedLongLongValue } from
 '../../../../../constants.js';
-import { kResourceStates } from '../../../../../gpu_test.js';
-import { AllFeaturesMaxLimitsValidationTest } from '../../../validation_test.js';
+import { kResourceStates, AllFeaturesMaxLimitsGPUTest } from '../../../../../gpu_test.js';
+import * as vtu from '../../../validation_test_utils.js';
 
 const kIndirectMultiDrawTestParams = kUnitCaseParamsBuilder.
 combine('indexed', [true, false]).
 combine('useDrawCountBuffer', [true, false]);
 
-class F extends AllFeaturesMaxLimitsValidationTest {
+class F extends AllFeaturesMaxLimitsGPUTest {
   makeIndexBuffer() {
     return this.createBufferTracked({
       size: 16,
@@ -50,19 +50,19 @@ paramsSubcasesOnly(
 fn((t) => {
   t.skipIfDeviceDoesNotHaveFeature('chromium-experimental-multi-draw-indirect');
   const { indexed, indirectState, useDrawCountBuffer, drawCountState } = t.params;
-  const indirectBuffer = t.createBufferWithState(indirectState, {
+  const indirectBuffer = vtu.createBufferWithState(t, indirectState, {
     size: 256,
     usage: GPUBufferUsage.INDIRECT
   });
   const drawCountBuffer = useDrawCountBuffer ?
-  t.createBufferWithState(drawCountState, {
+  vtu.createBufferWithState(t, drawCountState, {
     size: 256,
     usage: GPUBufferUsage.INDIRECT
   }) :
   undefined;
 
   const { encoder, validateFinishAndSubmit } = t.createEncoder('render pass');
-  encoder.setPipeline(t.createNoOpRenderPipeline());
+  encoder.setPipeline(vtu.createNoOpRenderPipeline(t));
   if (indexed) {
     encoder.setIndexBuffer(t.makeIndexBuffer(), 'uint32');
 
@@ -117,7 +117,7 @@ fn((t) => {
   undefined;
 
   const { encoder, validateFinish } = t.createEncoder('render pass');
-  encoder.setPipeline(t.createNoOpRenderPipeline());
+  encoder.setPipeline(vtu.createNoOpRenderPipeline(t));
   if (indexed) {
     encoder.setIndexBuffer(t.makeIndexBuffer(), 'uint32');
 
@@ -164,7 +164,7 @@ fn((t) => {
   undefined;
 
   const { encoder, validateFinish } = t.createEncoder('render pass');
-  encoder.setPipeline(t.createNoOpRenderPipeline());
+  encoder.setPipeline(vtu.createNoOpRenderPipeline(t));
   if (indexed) {
     encoder.setIndexBuffer(t.makeIndexBuffer(), 'uint32');
 
@@ -214,7 +214,7 @@ fn((t) => {
   undefined;
 
   const { encoder, validateFinish } = t.createEncoder('render pass');
-  encoder.setPipeline(t.createNoOpRenderPipeline());
+  encoder.setPipeline(vtu.createNoOpRenderPipeline(t));
   if (indexed) {
     encoder.setIndexBuffer(t.makeIndexBuffer(), 'uint32');
 
@@ -288,7 +288,7 @@ fn((t) => {
   });
 
   const { encoder, validateFinish } = t.createEncoder('render pass');
-  encoder.setPipeline(t.createNoOpRenderPipeline());
+  encoder.setPipeline(vtu.createNoOpRenderPipeline(t));
   if (indexed) {
     encoder.setIndexBuffer(t.makeIndexBuffer(), 'uint32');
 
@@ -339,7 +339,7 @@ fn((t) => {
   });
 
   const { encoder, validateFinish } = t.createEncoder('render pass');
-  encoder.setPipeline(t.createNoOpRenderPipeline());
+  encoder.setPipeline(vtu.createNoOpRenderPipeline(t));
   if (indexed) {
     encoder.setIndexBuffer(t.makeIndexBuffer(), 'uint32');
 

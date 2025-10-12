@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Pasteboard.h"
+#include <WebCore/Pasteboard.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>

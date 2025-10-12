@@ -25,7 +25,6 @@
 [
     Conditional=WEB_AUDIO,
     EnabledBySetting=WebAudioEnabled,
-    JSGenerateToJSObject,
     SkipVTableValidation,
     Exposed=Window
 ] interface AudioDestinationNode : AudioNode {

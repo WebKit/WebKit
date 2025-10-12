@@ -91,11 +91,15 @@ inline void tryCachePutToScopeGlobal(
             return;
         }
 
-        scope->structure()->didCachePropertyReplacement(vm, slot.cachedOffset());
+        Structure* structure = scope->structure();
+        structure->didCachePropertyReplacement(vm, slot.cachedOffset());
 
-        ConcurrentJSLocker locker(codeBlock->m_lock);
-        metadata.m_structure.set(vm, codeBlock, scope->structure());
-        metadata.m_operand = slot.cachedOffset();
+        {
+            ConcurrentJSLocker locker(codeBlock->m_lock);
+            metadata.m_structureID.setWithoutWriteBarrier(structure);
+            metadata.m_operand = slot.cachedOffset();
+        }
+        vm.writeBarrier(codeBlock);
     }
 }
 
@@ -144,23 +148,24 @@ inline void tryCacheGetFromScopeGlobal(
             Structure* structure = scope->structure();
             {
                 ConcurrentJSLocker locker(codeBlock->m_lock);
-                metadata.m_structure.set(vm, codeBlock, structure);
+                metadata.m_structureID.setWithoutWriteBarrier(structure);
                 metadata.m_operand = slot.cachedOffset();
             }
+            vm.writeBarrier(codeBlock);
             structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
         }
     }
 }
 
-ALWAYS_INLINE JSImmutableButterfly* trySpreadFast(JSGlobalObject* globalObject, JSCell* iterable)
+ALWAYS_INLINE JSCellButterfly* trySpreadFast(JSGlobalObject* globalObject, JSCell* iterable)
 {
     if (isJSArray(iterable)) {
         JSArray* array = jsCast<JSArray*>(iterable);
         if (array->isIteratorProtocolFastAndNonObservable()) {
-            // JSImmutableButterfly::createFromArray does not consult the prototype chain,
+            // JSCellButterfly::createFromArray does not consult the prototype chain,
             // so we must be sure that not consulting the prototype chain would
             // produce the same value during iteration.
-            return JSImmutableButterfly::createFromArray(globalObject, globalObject->vm(), array);
+            return JSCellButterfly::createFromArray(globalObject, globalObject->vm(), array);
         }
         return nullptr;
     }
@@ -168,25 +173,25 @@ ALWAYS_INLINE JSImmutableButterfly* trySpreadFast(JSGlobalObject* globalObject, 
     switch (iterable->type()) {
     case StringType: {
         if (globalObject->isStringPrototypeIteratorProtocolFastAndNonObservable()) [[likely]]
-            return JSImmutableButterfly::createFromString(globalObject, jsCast<JSString*>(iterable));
+            return JSCellButterfly::createFromString(globalObject, jsCast<JSString*>(iterable));
         return nullptr;
     }
     case ClonedArgumentsType: {
         auto* arguments = jsCast<ClonedArguments*>(iterable);
         if (arguments->isIteratorProtocolFastAndNonObservable()) [[likely]]
-            return JSImmutableButterfly::createFromClonedArguments(globalObject, arguments);
+            return JSCellButterfly::createFromClonedArguments(globalObject, arguments);
         return nullptr;
     }
     case DirectArgumentsType: {
         auto* arguments = jsCast<DirectArguments*>(iterable);
         if (arguments->isIteratorProtocolFastAndNonObservable()) [[likely]]
-            return JSImmutableButterfly::createFromDirectArguments(globalObject, arguments);
+            return JSCellButterfly::createFromDirectArguments(globalObject, arguments);
         return nullptr;
     }
     case ScopedArgumentsType: {
         auto* arguments = jsCast<ScopedArguments*>(iterable);
         if (arguments->isIteratorProtocolFastAndNonObservable()) [[likely]]
-            return JSImmutableButterfly::createFromScopedArguments(globalObject, arguments);
+            return JSCellButterfly::createFromScopedArguments(globalObject, arguments);
         return nullptr;
     }
     default:

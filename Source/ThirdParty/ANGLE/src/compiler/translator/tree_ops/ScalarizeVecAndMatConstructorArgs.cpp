@@ -106,6 +106,12 @@ class ScalarizeTraverser : public TIntermTraverser
                            size_t componentCount,
                            TIntermSequence *componentsOut);
 
+    void createConstructorScalarFromVector(TIntermAggregate *node,
+                                           const TFunction *helper,
+                                           TIntermSequence *constructorArgsOut);
+    void createConstructorScalarFromMatrix(TIntermAggregate *node,
+                                           const TFunction *helper,
+                                           TIntermSequence *constructorArgsOut);
     void createConstructorVectorFromScalar(TIntermAggregate *node,
                                            const TFunction *helper,
                                            TIntermSequence *constructorArgsOut);
@@ -153,7 +159,12 @@ bool ScalarizeTraverser::shouldScalarize(TIntermTyped *typed)
     const TIntermSequence &arguments = *node->getSequence();
     const TType &arg0Type            = arguments[0]->getAsTyped()->getType();
 
-    const bool isSingleVectorCast = arguments.size() == 1 && type.isVector() &&
+    const bool isCastNonScalarToScalar =
+        arguments.size() == 1 && type.isScalar() && (arg0Type.isVector() || arg0Type.isMatrix());
+    // In the case of a scalar constructor, early out if the constructor argument isn't a non-scalar
+    // (which need special handling).
+    const bool isInactionableScalar = type.isScalar() && !isCastNonScalarToScalar;
+    const bool isSingleVectorCast   = arguments.size() == 1 && type.isVector() &&
                                     arg0Type.isVector() &&
                                     type.getNominalSize() == arg0Type.getNominalSize();
     const bool isSingleMatrixCast = arguments.size() == 1 && type.isMatrix() &&
@@ -161,8 +172,8 @@ bool ScalarizeTraverser::shouldScalarize(TIntermTyped *typed)
                                     type.getRows() == arg0Type.getRows();
 
     // Skip non-vector non-matrix constructors, as well as trivial constructors.
-    if (type.isArray() || type.getStruct() != nullptr || type.isScalar() || isSingleVectorCast ||
-        isSingleMatrixCast)
+    if (type.isArray() || type.getStruct() != nullptr || isInactionableScalar ||
+        isSingleVectorCast || isSingleMatrixCast)
     {
         return false;
     }
@@ -225,7 +236,18 @@ TIntermTyped *ScalarizeTraverser::createConstructor(TIntermTyped *typed)
     const TFunction *helper = createHelper(node);
     TIntermSequence constructorArgs;
 
-    if (type.isVector())
+    if (type.isScalar())
+    {
+        if (arg0Type.isVector())
+        {
+            createConstructorScalarFromVector(node, helper, &constructorArgs);
+        }
+        else if (arg0Type.isMatrix())
+        {
+            createConstructorScalarFromMatrix(node, helper, &constructorArgs);
+        }
+    }
+    else if (type.isVector())
     {
         if (arguments.size() == 1 && arg0Type.isScalar())
         {
@@ -311,6 +333,27 @@ void ScalarizeTraverser::extractComponents(TIntermAggregate *node,
     }
 }
 
+void ScalarizeTraverser::createConstructorScalarFromVector(TIntermAggregate *node,
+                                                           const TFunction *helper,
+                                                           TIntermSequence *constructorArgsOut)
+{
+    TIntermTyped *vec = new TIntermSymbol(helper->getParam(0));
+    ASSERT(vec->getType().isVector());
+    // No need to cast since the scalar constructor is the cast.
+    constructorArgsOut->push_back(new TIntermSwizzle(vec, {0}));
+}
+
+void ScalarizeTraverser::createConstructorScalarFromMatrix(TIntermAggregate *node,
+                                                           const TFunction *helper,
+                                                           TIntermSequence *constructorArgsOut)
+{
+    TIntermTyped *matrix = new TIntermSymbol(helper->getParam(0));
+    ASSERT(matrix->getType().isMatrix());
+    TIntermTyped *col = new TIntermBinary(EOpIndexDirect, matrix, CreateIndexNode(0));
+    // No need to cast since the scalar constructor is the cast.
+    constructorArgsOut->push_back(new TIntermSwizzle(col, {static_cast<uint32_t>(0)}));
+}
+
 void ScalarizeTraverser::createConstructorVectorFromScalar(TIntermAggregate *node,
                                                            const TFunction *helper,
                                                            TIntermSequence *constructorArgsOut)
@@ -348,7 +391,7 @@ void ScalarizeTraverser::createConstructorMatrixFromScalar(TIntermAggregate *nod
         {
             if (columnIndex == rowIndex)
             {
-                constructorArgsOut->push_back(scalar->deepCopy());
+                constructorArgsOut->push_back(CastScalar(node, scalar->deepCopy()));
             }
             else
             {
@@ -385,7 +428,7 @@ void ScalarizeTraverser::createConstructorMatrixFromMatrix(TIntermAggregate *nod
                 TIntermTyped *col = new TIntermBinary(EOpIndexDirect, matrix->deepCopy(),
                                                       CreateIndexNode(columnIndex));
                 constructorArgsOut->push_back(
-                    new TIntermSwizzle(col, {static_cast<uint32_t>(rowIndex)}));
+                    CastScalar(node, new TIntermSwizzle(col, {static_cast<uint32_t>(rowIndex)})));
             }
             else
             {

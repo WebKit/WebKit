@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "BoxSides.h"
+#include <WebCore/BoxSides.h>
 #include <array>
 #include <type_traits>
 #include <wtf/text/TextStream.h>

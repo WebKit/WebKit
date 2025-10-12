@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,7 +99,7 @@ RefPtr<Uint8Array> RemoteLegacyCDMSession::generateKeyRequest(const String& mime
         return nullptr;
 
     auto ipcInitData = convertToSharedBuffer(initData);
-    auto sendResult = m_factory->gpuProcessConnection().protectedConnection()->sendSync(Messages::RemoteLegacyCDMSessionProxy::GenerateKeyRequest(mimeType, ipcInitData, m_client->mediaKeysHashSalt()), m_identifier);
+    auto sendResult = m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::GenerateKeyRequest(mimeType, ipcInitData, m_client->mediaKeysHashSalt()), m_identifier);
 
     RefPtr<SharedBuffer> ipcNextMessage;
     if (sendResult.succeeded())
@@ -116,7 +116,7 @@ void RemoteLegacyCDMSession::releaseKeys()
     if (!m_factory)
         return;
 
-    m_factory->gpuProcessConnection().protectedConnection()->send(Messages::RemoteLegacyCDMSessionProxy::ReleaseKeys(), m_identifier);
+    m_factory->gpuProcessConnection().connection().send(Messages::RemoteLegacyCDMSessionProxy::ReleaseKeys(), m_identifier);
     m_cachedKeyCache.clear();
 }
 
@@ -126,7 +126,7 @@ bool RemoteLegacyCDMSession::update(Uint8Array* keyData, RefPtr<Uint8Array>& nex
         return false;
 
     auto ipcKeyData = convertToSharedBuffer(keyData);
-    auto sendResult = m_factory->gpuProcessConnection().protectedConnection()->sendSync(Messages::RemoteLegacyCDMSessionProxy::Update(ipcKeyData), m_identifier);
+    auto sendResult = m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::Update(ipcKeyData), m_identifier);
 
     bool succeeded { false };
     RefPtr<SharedBuffer> ipcNextMessage;
@@ -148,7 +148,7 @@ RefPtr<ArrayBuffer> RemoteLegacyCDMSession::cachedKeyForKeyID(const String& keyI
     if (foundInCache != m_cachedKeyCache.end())
         return foundInCache->value;
 
-    auto sendResult = m_factory->gpuProcessConnection().protectedConnection()->sendSync(Messages::RemoteLegacyCDMSessionProxy::CachedKeyForKeyID(keyId), m_identifier);
+    auto sendResult = m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::CachedKeyForKeyID(keyId), m_identifier);
     auto [ipcKey] = sendResult.takeReplyOr(nullptr);
 
     if (!ipcKey)

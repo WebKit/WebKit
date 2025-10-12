@@ -3,7 +3,7 @@
 PASS sendKeyFrameRequest resolves for video receiver, and throws for video sender
 PASS sendKeyFrameRequest throws for audio sender/receiver
 PASS sendKeyFrameRequest throws for unused transforms
-PASS sendKeyFrameRequest throws for unset transforms
-FAIL sendKeyFrameRequest rejects when the receiver is negotiated inactive, and resumes succeeding when negotiated back to active assert_equals: expected "failure: InvalidStateError" but got "success"
-PASS sendKeyFrameRequest rejects when the receiver is stopped
+PASS sendKeyFrameRequest does not throw for unset transforms
+PASS sendKeyFrameRequest does not reject when the receiver is negotiated inactive, and resumes succeeding when negotiated back to active
+PASS sendKeyFrameRequest does not reject when the receiver is stopped
 

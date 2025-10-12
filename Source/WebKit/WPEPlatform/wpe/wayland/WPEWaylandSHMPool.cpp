@@ -156,4 +156,14 @@ struct wl_buffer* WaylandSHMPool::createBuffer(uint32_t offset, uint32_t width, 
     return wl_shm_pool_create_buffer(m_pool, offset, width, height, stride, WL_SHM_FORMAT_ARGB8888);
 }
 
+void WaylandSHMPool::write(std::span<const uint8_t> data, int offset)
+{
+    memcpySpan(mutableSpan().subspan(offset), data);
+}
+
+void WaylandSHMPool::write(std::span<const uint32_t> data, int offset)
+{
+    write(asBytes(data), offset);
+}
+
 } // namespace WPE

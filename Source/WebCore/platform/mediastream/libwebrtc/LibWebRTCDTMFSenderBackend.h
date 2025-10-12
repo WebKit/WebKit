@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,16 +27,10 @@
 #if USE(LIBWEBRTC)
 
 #include "LibWebRTCMacros.h"
+#include "LibWebRTCRefWrappers.h"
 #include "RTCDTMFSenderBackend.h"
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
-
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
-
-#include <webrtc/api/dtmf_sender_interface.h>
-#include <webrtc/api/scoped_refptr.h>
-
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 class LibWebRTCDTMFSenderBackend;
@@ -53,7 +47,7 @@ namespace WebCore {
 class LibWebRTCDTMFSenderBackend final : public RTCDTMFSenderBackend, private webrtc::DtmfSenderObserverInterface, public CanMakeWeakPtr<LibWebRTCDTMFSenderBackend, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCDTMFSenderBackend);
 public:
-    explicit LibWebRTCDTMFSenderBackend(rtc::scoped_refptr<webrtc::DtmfSenderInterface>&&);
+    explicit LibWebRTCDTMFSenderBackend(Ref<webrtc::DtmfSenderInterface>&&);
     ~LibWebRTCDTMFSenderBackend();
 
 private:
@@ -68,7 +62,7 @@ private:
     // DtmfSenderObserverInterface
     void OnToneChange(const std::string& tone, const std::string&) final;
 
-    rtc::scoped_refptr<webrtc::DtmfSenderInterface> m_sender;
+    const Ref<webrtc::DtmfSenderInterface> m_sender;
     Function<void()> m_onTonePlayed;
 };
 

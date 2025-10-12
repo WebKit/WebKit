@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "GraphicsTypesGL.h"
+#include <WebCore/GraphicsTypesGL.h>
 #include <type_traits>
 #include <wtf/Vector.h>
 
@@ -44,7 +44,7 @@ struct GCGLSpanTuple {
                 RELEASE_ASSERT(((otherVectors.size() == size) && ...));
                 return size;
             }(dataVectors...))
-        , dataTuple { dataVectors.data()... }
+        , dataTuple { dataVectors.span().data()... }
     { }
 
     template<unsigned I>

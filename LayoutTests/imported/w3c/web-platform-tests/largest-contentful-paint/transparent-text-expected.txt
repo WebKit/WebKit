@@ -1,0 +1,4 @@
+fake LCP
+
+PASS Transparent text should not be LCP.
+

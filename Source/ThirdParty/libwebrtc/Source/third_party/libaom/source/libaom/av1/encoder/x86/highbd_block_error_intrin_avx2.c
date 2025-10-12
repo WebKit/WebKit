@@ -23,7 +23,7 @@ int64_t av1_highbd_block_error_avx2(const tran_low_t *coeff,
   int64_t temp1[8];
   int64_t error = 0, sqcoeff = 0;
   const int shift = 2 * (bps - 8);
-  const int rounding = shift > 0 ? 1 << (shift - 1) : 0;
+  const int rounding = (1 << shift) >> 1;
 
   for (i = 0; i < block_size; i += 16) {
     __m256i mm256_coeff = _mm256_loadu_si256((__m256i *)(coeff + i));
@@ -55,7 +55,6 @@ int64_t av1_highbd_block_error_avx2(const tran_low_t *coeff,
     error += temp1[0] + temp1[1] + temp1[2] + temp1[3];
     sqcoeff += temp1[4] + temp1[5] + temp1[6] + temp1[7];
   }
-  assert(error >= 0 && sqcoeff >= 0);
   error = (error + rounding) >> shift;
   sqcoeff = (sqcoeff + rounding) >> shift;
 

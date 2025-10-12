@@ -12,14 +12,50 @@
 }
 </style>
 <script>
-window.onload = function() {
+function waitForElementReady(id) {
+    return new Promise((resolve) => {
+        const element = document.getElementById(id);
+        if (element) {
+            if (element.tagName === 'IMG' && (!element.complete || !element.src)) {
+                element.addEventListener('load', () => {
+                    resolve();
+                });
+                return;
+            }
+            resolve();
+            return;
+        }
+
+        const observer = new MutationObserver((mutations, obs) => {
+            const currentElement = document.getElementById(id);
+            if (currentElement && currentElement.complete !== false) {
+                obs.disconnect();
+                resolve();
+            }
+        });
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+          attributes: true
+        });
+    });
+}
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+window.onload = async function() {
+    await waitForElementReady("image");
+    await waitForElementReady("area");
     document.getElementById("area").focus();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </head>
 <body>
 <div class=paintroot>
-  <img src="./resources/green.jpg" width=50 height=50 usemap="#map"/>
+  <img src="./resources/green.jpg" id=image width=50 height=50 usemap="#map"/>
   <map name="map"><area id=area shape="rectangle" coords="5, 5, 25, 25" href="#"></map>
 </div>
 </body>

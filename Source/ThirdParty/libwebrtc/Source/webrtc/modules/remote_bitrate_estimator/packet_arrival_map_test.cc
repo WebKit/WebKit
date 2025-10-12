@@ -9,7 +9,9 @@
  */
 #include "modules/remote_bitrate_estimator/packet_arrival_map.h"
 
-#include "test/gmock.h"
+#include <cstdint>
+
+#include "api/units/timestamp.h"
 #include "test/gtest.h"
 
 namespace webrtc {

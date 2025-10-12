@@ -20,11 +20,11 @@
 
 #pragma once
 
-#include "CommonIdentifiers.h"
-#include "InternalFunction.h"
-#include "JSGlobalObject.h"
-#include "ObjectPrototype.h"
-#include "VM.h"
+#include <JavaScriptCore/CommonIdentifiers.h>
+#include <JavaScriptCore/InternalFunction.h>
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/ObjectPrototype.h>
+#include <JavaScriptCore/VM.h>
 
 namespace JSC {
 

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ServiceWorkerTypes.h"
+#include <WebCore/ServiceWorkerTypes.h>
 
 #include <wtf/text/MakeString.h>
 

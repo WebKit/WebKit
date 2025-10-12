@@ -55,13 +55,14 @@ enum class LayoutOptions : uint8_t {
     IgnorePendingStylesheets = 1 << 1,
     TreatContentVisibilityHiddenAsVisible = 1 << 2,
     TreatContentVisibilityAutoAsVisible = 1 << 3,
-    UpdateCompositingLayers = 1 << 4,
-    DoNotLayoutAncestorDocuments = 1 << 5,
+    TreatRevealedWhenFoundAsVisible = 1 << 4,
+    UpdateCompositingLayers = 1 << 5,
+    DoNotLayoutAncestorDocuments = 1 << 6,
     // Doesn't call RenderLayer::recursiveUpdateLayerPositionsAfterLayout if
     // possible. The caller should use a LocalFrameView::AutoPreventLayerAccess
     // for the scope that layout is expected to be flushed to stop any access to
     // the stale RenderLayers.
-    CanDeferUpdateLayerPositions = 1 << 6
+    CanDeferUpdateLayerPositions = 1 << 7
 };
 
 enum class CanNavigateState : uint8_t {

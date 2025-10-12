@@ -28,6 +28,7 @@
 
 #import "DictionaryLookup.h"
 #import "Editor.h"
+#import "LocalFrameInlines.h"
 
 #if PLATFORM(COCOA)
 

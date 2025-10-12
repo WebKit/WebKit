@@ -25,6 +25,7 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderCounter.h"
 #include "RenderElement.h"
+#include "RenderObjectDocument.h"
 #include "RenderView.h"
 #include <stdio.h>
 #include <wtf/CheckedArithmetic.h>
@@ -108,7 +109,7 @@ CounterNode* CounterNode::nextInPreOrderAfterChildren(const CounterNode* stayWit
         if (!current || current == stayWithin)
             return nullptr;
     }
-    return next.get();
+    return next.unsafeGet();
 }
 
 CounterNode* CounterNode::nextInPreOrder(const CounterNode* stayWithin) const

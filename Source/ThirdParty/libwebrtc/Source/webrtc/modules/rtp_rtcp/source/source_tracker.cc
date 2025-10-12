@@ -10,10 +10,17 @@
 
 #include "modules/rtp_rtcp/source/source_tracker.h"
 
-#include <algorithm>
+#include <cstdint>
 #include <utility>
+#include <vector>
 
+#include "api/rtp_packet_info.h"
+#include "api/rtp_packet_infos.h"
+#include "api/transport/rtp/rtp_source.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/trace_event.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 

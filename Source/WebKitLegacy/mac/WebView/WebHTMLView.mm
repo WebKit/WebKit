@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  *           (C) 2006, 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,10 +72,10 @@
 #import "WebViewInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <QuartzCore/QuartzCore.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/CSSStyleProperties.h>
 #import <WebCore/CachedImage.h>
 #import <WebCore/CachedResourceClient.h>
-#import <WebCore/CachedResourceLoader.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/CompositionHighlight.h>
@@ -87,10 +87,13 @@
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentFragment.h>
-#import <WebCore/DocumentInlines.h>
 #import <WebCore/DocumentMarkerController.h>
+#import <WebCore/DocumentMarkers.h>
+#import <WebCore/DocumentResourceLoader.h>
+#import <WebCore/DocumentView.h>
 #import <WebCore/DragController.h>
 #import <WebCore/DragImage.h>
+#import <WebCore/EditingHTMLConverter.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EditorDeleteAction.h>
 #import <WebCore/Element.h>
@@ -101,9 +104,9 @@
 #import <WebCore/FontAttributeChanges.h>
 #import <WebCore/FontAttributes.h>
 #import <WebCore/FontCache.h>
+#import <WebCore/FrameDestructionObserverInlines.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameSelection.h>
-#import <WebCore/HTMLConverter.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Image.h>
@@ -111,14 +114,16 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LegacyWebArchive.h>
-#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameInlines.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MutableStyleProperties.h>
+#import <WebCore/NodeHTMLConverter.h>
 #import <WebCore/Page.h>
 #import <WebCore/PrintContext.h>
 #import <WebCore/Range.h>
+#import <WebCore/RenderStyleInlines.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
 #import <WebCore/SharedBuffer.h>
@@ -129,6 +134,7 @@
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextUndoInsertionMarkupMac.h>
 #import <WebCore/WebCoreJITOperations.h>
+#import <WebCore/WebCoreMainThread.h>
 #import <WebCore/WebCoreNSFontManagerExtras.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebNSAttributedStringExtras.h>
@@ -1037,17 +1043,14 @@ static NSControlStateValue kit(TriState state)
 
 @implementation WebHTMLViewPrivate
 
-#if PLATFORM(MAC)
-
 + (void)initialize
 {
     // FIXME: Shouldn't all of this move into +[WebHTMLView initialize]?
     // And some of this work is likely redundant since +[WebHTMLView initialize] is guaranteed to run first.
 
-    JSC::initialize();
-    WTF::initializeMainThread();
-    WebCore::populateJITOperations();
+    WebCore::initializeMainThreadIfNeeded();
 
+#if PLATFORM(MAC)
     if (!oldSetCursorForMouseLocationIMP) {
         Method setCursorMethod = class_getInstanceMethod([NSWindow class], @selector(_setCursorForMouseLocation:));
         ASSERT(setCursorMethod);
@@ -1056,9 +1059,8 @@ static NSControlStateValue kit(TriState state)
     }
 
     method_exchangeImplementations(class_getInstanceMethod([NSView class], @selector(setNeedsDisplayInRect:)), class_getInstanceMethod([NSView class], @selector(_web_setNeedsDisplayInRect:)));
-}
-
 #endif
+}
 
 - (void)dealloc
 {
@@ -1181,33 +1183,31 @@ static NSControlStateValue kit(TriState state)
     if ([types containsObject:WebArchivePboardType] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebArchivePboardType inContext:context subresources:0]))
         return fragment;
 
-    if ([types containsObject:WebCore::legacyFilenamesPasteboardType()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebCore::legacyFilenamesPasteboardType() inContext:context subresources:0]))
+    if ([types containsObject:WebCore::legacyFilenamesPasteboardTypeSingleton()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebCore::legacyFilenamesPasteboardTypeSingleton() inContext:context subresources:0]))
         return fragment;
     
-    if ([types containsObject:WebCore::legacyHTMLPasteboardType()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebCore::legacyHTMLPasteboardType() inContext:context subresources:0]))
+    if ([types containsObject:WebCore::legacyHTMLPasteboardTypeSingleton()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebCore::legacyHTMLPasteboardTypeSingleton() inContext:context subresources:0]))
         return fragment;
     
-    if ([types containsObject:WebCore::legacyRTFDPasteboardType()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebCore::legacyRTFDPasteboardType() inContext:context subresources:0]))
+    if ([types containsObject:WebCore::legacyRTFDPasteboardTypeSingleton()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebCore::legacyRTFDPasteboardTypeSingleton() inContext:context subresources:0]))
         return fragment;
     
-    if ([types containsObject:WebCore::legacyRTFPasteboardType()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebCore::legacyRTFPasteboardType() inContext:context subresources:0]))
+    if ([types containsObject:WebCore::legacyRTFPasteboardTypeSingleton()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebCore::legacyRTFPasteboardTypeSingleton() inContext:context subresources:0]))
         return fragment;
 
-    if ([types containsObject:WebCore::legacyTIFFPasteboardType()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebCore::legacyTIFFPasteboardType() inContext:context subresources:0]))
+    if ([types containsObject:WebCore::legacyTIFFPasteboardTypeSingleton()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebCore::legacyTIFFPasteboardTypeSingleton() inContext:context subresources:0]))
         return fragment;
 
-    if ([types containsObject:WebCore::legacyPDFPasteboardType()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebCore::legacyPDFPasteboardType() inContext:context subresources:0]))
+    if ([types containsObject:WebCore::legacyPDFPasteboardTypeSingleton()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebCore::legacyPDFPasteboardTypeSingleton() inContext:context subresources:0]))
         return fragment;
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if ([types containsObject:(NSString *)kUTTypePNG] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:(NSString *)kUTTypePNG inContext:context subresources:0]))
-        return fragment;
-ALLOW_DEPRECATED_DECLARATIONS_END
-
-    if ([types containsObject:WebCore::legacyURLPasteboardType()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebCore::legacyURLPasteboardType() inContext:context subresources:0]))
+    if ([types containsObject:UTTypePNG.identifier] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:UTTypePNG.identifier inContext:context subresources:0]))
         return fragment;
 
-    if (allowPlainText && [types containsObject:WebCore::legacyStringPasteboardType()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebCore::legacyStringPasteboardType() inContext:context subresources:0]))
+    if ([types containsObject:WebCore::legacyURLPasteboardTypeSingleton()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebCore::legacyURLPasteboardTypeSingleton() inContext:context subresources:0]))
+        return fragment;
+
+    if (allowPlainText && [types containsObject:WebCore::legacyStringPasteboardTypeSingleton()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebCore::legacyStringPasteboardTypeSingleton() inContext:context subresources:0]))
         return fragment;
     
     return nil;
@@ -1217,19 +1217,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     NSArray *types = [pasteboard types];
     
-    if ([types containsObject:WebCore::legacyStringPasteboardType()])
-        return [[pasteboard stringForType:WebCore::legacyStringPasteboardType()] precomposedStringWithCanonicalMapping];
+    if ([types containsObject:WebCore::legacyStringPasteboardTypeSingleton()])
+        return [[pasteboard stringForType:WebCore::legacyStringPasteboardTypeSingleton()] precomposedStringWithCanonicalMapping];
 
     RetainPtr<NSAttributedString> attributedString;
-    if ([types containsObject:WebCore::legacyRTFDPasteboardType()])
-        attributedString = adoptNS([[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:WebCore::legacyRTFDPasteboardType()] documentAttributes:NULL]);
-    if (!attributedString && [types containsObject:WebCore::legacyRTFPasteboardType()])
-        attributedString = adoptNS([[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:WebCore::legacyRTFPasteboardType()] documentAttributes:NULL]);
+    if ([types containsObject:WebCore::legacyRTFDPasteboardTypeSingleton()])
+        attributedString = adoptNS([[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:WebCore::legacyRTFDPasteboardTypeSingleton()] documentAttributes:NULL]);
+    if (!attributedString && [types containsObject:WebCore::legacyRTFPasteboardTypeSingleton()])
+        attributedString = adoptNS([[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:WebCore::legacyRTFPasteboardTypeSingleton()] documentAttributes:NULL]);
     if (attributedString)
         return adoptNS([[attributedString string] copy]).autorelease();
 
-    if ([types containsObject:WebCore::legacyFilenamesPasteboardType()]) {
-        if (NSString *string = [[pasteboard propertyListForType:WebCore::legacyFilenamesPasteboardType()] componentsJoinedByString:@"\n"])
+    if ([types containsObject:WebCore::legacyFilenamesPasteboardTypeSingleton()]) {
+        if (NSString *string = [[pasteboard propertyListForType:WebCore::legacyFilenamesPasteboardTypeSingleton()] componentsJoinedByString:@"\n"])
             return string;
     }
 
@@ -1357,34 +1357,34 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     // Put HTML on the pasteboard.
     if ([types containsObject:WebArchivePboardType]) {
-        if (auto coreArchive = WebCore::LegacyWebArchive::createFromSelection(core([self _frame]), false)) {
+        if (auto coreArchive = WebCore::LegacyWebArchive::createFromSelection(core([self _frame]), { WebCore::LegacyWebArchive::ShouldSaveScriptsFromMemoryCache::No })) {
             if (RetainPtr<CFDataRef> data = coreArchive ? coreArchive->rawDataRepresentation() : 0)
                 [pasteboard setData:(__bridge NSData *)data.get() forType:WebArchivePboardType];
         }
     }
 
     // Put the attributed string on the pasteboard (RTF/RTFD format).
-    if ([types containsObject:WebCore::legacyRTFDPasteboardType()]) {
+    if ([types containsObject:WebCore::legacyRTFDPasteboardTypeSingleton()]) {
         if (attributedString == nil) {
             attributedString = [self selectedAttributedString];
         }        
         NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:@{ }];
-        [pasteboard setData:RTFDData forType:WebCore::legacyRTFDPasteboardType()];
+        [pasteboard setData:RTFDData forType:WebCore::legacyRTFDPasteboardTypeSingleton()];
     }        
-    if ([types containsObject:WebCore::legacyRTFPasteboardType()]) {
+    if ([types containsObject:WebCore::legacyRTFPasteboardTypeSingleton()]) {
         if (!attributedString)
             attributedString = [self selectedAttributedString];
         if ([attributedString containsAttachments])
             attributedString = WebCore::attributedStringByStrippingAttachmentCharacters(attributedString);
         NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:@{ }];
-        [pasteboard setData:RTFData forType:WebCore::legacyRTFPasteboardType()];
+        [pasteboard setData:RTFData forType:WebCore::legacyRTFPasteboardTypeSingleton()];
     }
 
     // Put plain string on the pasteboard.
-    if ([types containsObject:WebCore::legacyStringPasteboardType()]) {
+    if ([types containsObject:WebCore::legacyStringPasteboardTypeSingleton()]) {
         // Map &nbsp; to a plain old space because this is better for source code, other browsers do it, and
         // because HTML forces content creators and editors to use this character any time they want two spaces in a row.
-        [pasteboard setString:[[self selectedString] stringByReplacingOccurrencesOfString:@"\u00A0" withString:@" "] forType:WebCore::legacyStringPasteboardType()];
+        [pasteboard setString:[[self selectedString] stringByReplacingOccurrencesOfString:@"\u00A0" withString:@" "] forType:WebCore::legacyStringPasteboardTypeSingleton()];
     }
 
     if ([self _canSmartCopyOrDelete] && [types containsObject:WebSmartPastePboardType])
@@ -1503,9 +1503,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSEventTypeMouseMoved
         location:[[self window]
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        convertScreenToBase:[NSEvent mouseLocation]]
-ALLOW_DEPRECATED_DECLARATIONS_END
+        convertPointFromScreen:[NSEvent mouseLocation]]
         modifierFlags:[[NSApp currentEvent] modifierFlags]
         timestamp:[NSDate timeIntervalSinceReferenceDate]
         windowNumber:[[self window] windowNumber]
@@ -1964,9 +1962,9 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     static NeverDestroyed<RetainPtr<NSArray>> types = @[
-        WebArchivePboardType, WebCore::legacyHTMLPasteboardType(), WebCore::legacyFilenamesPasteboardType(), WebCore::legacyTIFFPasteboardType(),
-        WebCore::legacyPDFPasteboardType(), WebCore::legacyURLPasteboardType(), WebCore::legacyRTFDPasteboardType(), WebCore::legacyRTFPasteboardType(),
-        WebCore::legacyStringPasteboardType(), WebCore::legacyColorPasteboardType(), (NSString *)kUTTypePNG,
+        WebArchivePboardType, WebCore::legacyHTMLPasteboardTypeSingleton(), WebCore::legacyFilenamesPasteboardTypeSingleton(), WebCore::legacyTIFFPasteboardTypeSingleton(),
+        WebCore::legacyPDFPasteboardTypeSingleton(), WebCore::legacyURLPasteboardTypeSingleton(), WebCore::legacyRTFDPasteboardTypeSingleton(), WebCore::legacyRTFPasteboardTypeSingleton(),
+        WebCore::legacyStringPasteboardTypeSingleton(), WebCore::legacyColorPasteboardTypeSingleton(), UTTypePNG.identifier,
     ];
 ALLOW_DEPRECATED_DECLARATIONS_END
     return types.get().get();
@@ -1975,7 +1973,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 + (NSArray *)_selectionPasteboardTypes
 {
     // FIXME: We should put data for NSHTMLPboardType on the pasteboard but Microsoft Excel doesn't like our format of HTML (3640423).
-    return @[WebArchivePboardType, WebCore::legacyRTFDPasteboardType(), WebCore::legacyRTFPasteboardType(), WebCore::legacyStringPasteboardType()];
+    return @[WebArchivePboardType, WebCore::legacyRTFDPasteboardTypeSingleton(), WebCore::legacyRTFPasteboardTypeSingleton(), WebCore::legacyStringPasteboardTypeSingleton()];
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -1989,12 +1987,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)pasteboard:(NSPasteboard *)pasteboard provideDataForType:(NSString *)type
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    if ([type isEqualToString:WebCore::legacyRTFDPasteboardType()] && [[pasteboard types] containsObject:WebArchivePboardType]) {
+    if ([type isEqualToString:WebCore::legacyRTFDPasteboardTypeSingleton()] && [[pasteboard types] containsObject:WebArchivePboardType]) {
         auto archive = adoptNS([[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]]);
-        [pasteboard _web_writePromisedRTFDFromArchive:archive.get() containsImage:[[pasteboard types] containsObject:WebCore::legacyTIFFPasteboardType()]];
-    } else if ([type isEqualToString:WebCore::legacyTIFFPasteboardType()] && _private->promisedDragTIFFDataSource) {
+        [pasteboard _web_writePromisedRTFDFromArchive:archive.get() containsImage:[[pasteboard types] containsObject:WebCore::legacyTIFFPasteboardTypeSingleton()]];
+    } else if ([type isEqualToString:WebCore::legacyTIFFPasteboardTypeSingleton()] && _private->promisedDragTIFFDataSource) {
         if (auto* image = _private->promisedDragTIFFDataSource->image())
-            [pasteboard setData:(__bridge NSData *)image->adapter().tiffRepresentation() forType:WebCore::legacyTIFFPasteboardType()];
+            [pasteboard setData:(__bridge NSData *)image->adapter().tiffRepresentation() forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
         [self setPromisedDragTIFFDataSource:nullptr];
     }
 }
@@ -2084,9 +2082,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDragged
         location:[[self window]
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        convertScreenToBase:[NSEvent mouseLocation]]
-ALLOW_DEPRECATED_DECLARATIONS_END
+        convertPointFromScreen:[NSEvent mouseLocation]]
         modifierFlags:[[NSApp currentEvent] modifierFlags]
         timestamp:[NSDate timeIntervalSinceReferenceDate]
         windowNumber:[[self window] windowNumber]
@@ -2156,17 +2152,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (![self _hasSelection])
         return nil;
 
-    auto* coreFrame = core([self _frame]);
+    RefPtr coreFrame = core([self _frame]);
     if (!coreFrame)
         return nil;
 
-    Ref protectedCoreFrame(*coreFrame);
+    auto [dragImageRef, textIndicator] = createDragImageForSelection(*coreFrame);
+    [dragImageRef _web_dissolveToFraction:WebDragImageAlpha];
 
-    WebCore::TextIndicatorData textIndicator;
-    auto dragImage = createDragImageForSelection(*coreFrame, textIndicator);
-    [dragImage _web_dissolveToFraction:WebDragImageAlpha];
-
-    return dragImage.autorelease();
+    return dragImageRef.autorelease();
 }
 
 - (NSRect)_selectionDraggingRect
@@ -2238,7 +2231,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr<NSMutableArray> mutableTypes;
     if (![attributedString containsAttachments]) {
         mutableTypes = adoptNS([types mutableCopy]);
-        [mutableTypes removeObject:WebCore::legacyRTFDPasteboardType()];
+        [mutableTypes removeObject:WebCore::legacyRTFDPasteboardTypeSingleton()];
         types = mutableTypes.get();
     }
 
@@ -2303,11 +2296,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return [[self _dataSource] _documentFragmentWithArchive:archive.get()];
     }
 
-    if ([pboardType isEqualToString:WebCore::legacyFilenamesPasteboardType()])
-        return [self _documentFragmentWithPaths:[pasteboard propertyListForType:WebCore::legacyFilenamesPasteboardType()]];
+    if ([pboardType isEqualToString:WebCore::legacyFilenamesPasteboardTypeSingleton()])
+        return [self _documentFragmentWithPaths:[pasteboard propertyListForType:WebCore::legacyFilenamesPasteboardTypeSingleton()]];
 
-    if ([pboardType isEqualToString:WebCore::legacyHTMLPasteboardType()]) {
-        NSString *HTMLString = [pasteboard stringForType:WebCore::legacyHTMLPasteboardType()];
+    if ([pboardType isEqualToString:WebCore::legacyHTMLPasteboardTypeSingleton()]) {
+        NSString *HTMLString = [pasteboard stringForType:WebCore::legacyHTMLPasteboardTypeSingleton()];
         // This is a hack to make Microsoft's HTML pasteboard data work. See 3778785.
         if ([HTMLString hasPrefix:@"Version:"]) {
             NSRange range = [HTMLString rangeOfString:@"<html" options:NSCaseInsensitiveSearch];
@@ -2319,12 +2312,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return [[self _frame] _documentFragmentWithMarkupString:HTMLString baseURLString:nil];
     }
 
-    if ([pboardType isEqualToString:WebCore::legacyRTFPasteboardType()] || [pboardType isEqualToString:WebCore::legacyRTFDPasteboardType()]) {
+    if ([pboardType isEqualToString:WebCore::legacyRTFPasteboardTypeSingleton()] || [pboardType isEqualToString:WebCore::legacyRTFDPasteboardTypeSingleton()]) {
         RetainPtr<NSAttributedString> string;
-        if ([pboardType isEqualToString:WebCore::legacyRTFDPasteboardType()])
-            string = adoptNS([[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:WebCore::legacyRTFDPasteboardType()] documentAttributes:NULL]);
+        if ([pboardType isEqualToString:WebCore::legacyRTFDPasteboardTypeSingleton()])
+            string = adoptNS([[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:WebCore::legacyRTFDPasteboardTypeSingleton()] documentAttributes:NULL]);
         if (!string)
-            string = adoptNS([[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:WebCore::legacyRTFPasteboardType()] documentAttributes:NULL]);
+            string = adoptNS([[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:WebCore::legacyRTFPasteboardTypeSingleton()] documentAttributes:NULL]);
         if (!string)
             return nil;
 
@@ -2352,16 +2345,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return fragment;
     }
 
-    if ([pboardType isEqualToString:WebCore::legacyTIFFPasteboardType()])
-        return [self _web_documentFragmentFromPasteboard:pasteboard pasteboardType:WebCore::legacyTIFFPasteboardType() imageMIMEType:@"image/tiff"];
-    if ([pboardType isEqualToString:WebCore::legacyPDFPasteboardType()])
-        return [self _web_documentFragmentFromPasteboard:pasteboard pasteboardType:WebCore::legacyPDFPasteboardType() imageMIMEType:@"application/pdf"];
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if ([pboardType isEqualToString:(NSString *)kUTTypePNG])
-        return [self _web_documentFragmentFromPasteboard:pasteboard pasteboardType:(NSString *)kUTTypePNG imageMIMEType:@"image/png"];
-ALLOW_DEPRECATED_DECLARATIONS_END
+    if ([pboardType isEqualToString:WebCore::legacyTIFFPasteboardTypeSingleton()])
+        return [self _web_documentFragmentFromPasteboard:pasteboard pasteboardType:WebCore::legacyTIFFPasteboardTypeSingleton() imageMIMEType:@"image/tiff"];
+    if ([pboardType isEqualToString:WebCore::legacyPDFPasteboardTypeSingleton()])
+        return [self _web_documentFragmentFromPasteboard:pasteboard pasteboardType:WebCore::legacyPDFPasteboardTypeSingleton() imageMIMEType:@"application/pdf"];
+    if ([pboardType isEqualToString:UTTypePNG.identifier])
+        return [self _web_documentFragmentFromPasteboard:pasteboard pasteboardType:UTTypePNG.identifier imageMIMEType:@"image/png"];
 
-    if ([pboardType isEqualToString:WebCore::legacyURLPasteboardType()]) {
+    if ([pboardType isEqualToString:WebCore::legacyURLPasteboardTypeSingleton()]) {
         NSURL *URL = [NSURL URLFromPasteboard:pasteboard];
         DOMDocument* document = [[self _frame] DOMDocument];
         ASSERT(document);
@@ -2380,10 +2371,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return fragment;
     }
 
-    if ([pboardType isEqualToString:WebCore::legacyStringPasteboardType()]) {
+    if ([pboardType isEqualToString:WebCore::legacyStringPasteboardTypeSingleton()]) {
         if (!context)
             return nil;
-        auto string = [[pasteboard stringForType:WebCore::legacyStringPasteboardType()] precomposedStringWithCanonicalMapping];
+        auto string = [[pasteboard stringForType:WebCore::legacyStringPasteboardTypeSingleton()] precomposedStringWithCanonicalMapping];
         return kit(createFragmentFromText(makeSimpleRange(*core(context)), string).ptr());
     }
 
@@ -2553,18 +2544,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @implementation WebHTMLView
 
-#if PLATFORM(MAC)
-
 + (void)initialize
 {
+#if PLATFORM(MAC)
     [NSApp registerServicesMenuSendTypes:[[self class] _selectionPasteboardTypes] returnTypes:[[self class] _insertablePasteboardTypes]];
-
-    JSC::initialize();
-    WTF::initializeMainThread();
-    WebCore::populateJITOperations();
-}
-
 #endif
+
+    WebCore::initializeMainThreadIfNeeded();
+}
 
 - (id)initWithFrame:(NSRect)frame
 {
@@ -2842,7 +2829,7 @@ WEBCORE_COMMAND(toggleUnderline)
         isReturnTypeOK = YES;
     else if ([[[self class] _insertablePasteboardTypes] containsObject:returnType] && [self _isEditable]) {
         // We can insert strings in any editable context.  We can insert other types, like images, only in rich edit contexts.
-        isReturnTypeOK = [returnType isEqualToString:WebCore::legacyStringPasteboardType()] || [self _canEditRichly];
+        isReturnTypeOK = [returnType isEqualToString:WebCore::legacyStringPasteboardTypeSingleton()] || [self _canEditRichly];
     }
     if (isSendTypeOK && isReturnTypeOK)
         return self;
@@ -2861,7 +2848,7 @@ WEBCORE_COMMAND(toggleUnderline)
     COMMAND_PROLOGUE
 
     if (auto* coreFrame = core([self _frame]))
-        coreFrame->selection().revealSelection(WebCore::SelectionRevealMode::Reveal, WebCore::ScrollAlignment::alignCenterAlways);
+        coreFrame->selection().revealSelection({ WebCore::SelectionRevealMode::Reveal, WebCore::ScrollAlignment::alignCenterAlways });
 }
 
 #if PLATFORM(MAC)
@@ -5046,9 +5033,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 #if PLATFORM(IOS_FAMILY)
         return [accTree accessibilityHitTest:point];
 #else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        NSPoint windowCoord = [[self window] convertScreenToBase:point];
-ALLOW_DEPRECATED_DECLARATIONS_END
+        NSPoint windowCoord = [[self window] convertPointFromScreen:point];
         return [accTree accessibilityHitTest:[self convertPoint:windowCoord fromView:nil]];
 #endif
     }
@@ -5071,7 +5056,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     COMMAND_PROLOGUE
 
     if (auto* coreFrame = core([self _frame]))
-        coreFrame->selection().revealSelection(WebCore::SelectionRevealMode::Reveal, WebCore::ScrollAlignment::alignCenterAlways);
+        coreFrame->selection().revealSelection({ WebCore::SelectionRevealMode::Reveal, WebCore::ScrollAlignment::alignCenterAlways });
 }
 
 #if PLATFORM(MAC)
@@ -5089,7 +5074,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSPasteboard *fontPasteboard = [NSPasteboard pasteboardWithName:NSPasteboardNameFont];
     if (fontPasteboard == nil)
         return nil;
-    NSData *data = [fontPasteboard dataForType:WebCore::legacyFontPasteboardType()];
+    NSData *data = [fontPasteboard dataForType:WebCore::legacyFontPasteboardTypeSingleton()];
     if (data == nil || [data length] == 0)
         return nil;
     // NSTextView does something more efficient by parsing the attributes only, but that's not available in API.
@@ -5110,9 +5095,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSString *)_colorAsString:(NSColor *)color
 {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    NSColor *rgbColor = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-ALLOW_DEPRECATED_DECLARATIONS_END
+    NSColor *rgbColor = [color colorUsingColorSpace:NSColorSpace.deviceRGBColorSpace];
     // FIXME: If color is non-nil and rgbColor is nil, that means we got some kind
     // of fancy color that can't be converted to RGB. Changing that to "transparent"
     // might not be great, but it's probably OK.
@@ -5296,8 +5279,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // Put RTF with font attributes on the pasteboard.
     // Maybe later we should add a pasteboard type that contains CSS text for "native" copy and paste font.
     NSPasteboard *fontPasteboard = [NSPasteboard pasteboardWithName:NSPasteboardNameFont];
-    [fontPasteboard declareTypes:@[WebCore::legacyFontPasteboardType()] owner:nil];
-    [fontPasteboard setData:[self _selectionStartFontAttributesAsRTF] forType:WebCore::legacyFontPasteboardType()];
+    [fontPasteboard declareTypes:@[WebCore::legacyFontPasteboardTypeSingleton()] owner:nil];
+    [fontPasteboard setData:[self _selectionStartFontAttributesAsRTF] forType:WebCore::legacyFontPasteboardTypeSingleton()];
 }
 
 - (void)pasteFont:(id)sender
@@ -5739,22 +5722,22 @@ static BOOL writingDirectionKeyBindingsEnabled()
         return;
 
     bool multipleFonts = false;
-    NSFont *font = nil;
+    RetainPtr<NSFont> font;
     RetainPtr<NSDictionary> attributes;
     if (auto* coreFrame = core([self _frame])) {
         if (auto coreFont = coreFrame->editor().fontForSelection(multipleFonts))
-            font = (NSFont *)coreFont->platformData().registeredFont();
+            font = (NSFont *)coreFont->platformData().registeredFont().get();
         attributes = coreFrame->editor().fontAttributesAtSelectionStart().createDictionary();
     }
 
     // FIXME: for now, return a bogus font that distinguishes the empty selection from the non-empty
     // selection. We should be able to remove this once the rest of this code works properly.
-    if (font == nil)
+    if (!font)
         font = [self _hasSelection] ? [NSFont menuFontOfSize:23] : [NSFont toolTipsFontOfSize:17];
-    ASSERT(font != nil);
+    ASSERT(font);
 
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
-    [fontManager setSelectedFont:font isMultiple:multipleFonts];
+    [fontManager setSelectedFont:font.get() isMultiple:multipleFonts];
     [fontManager setSelectedAttributes:(attributes ? attributes.get() : @{ }) isMultiple:multipleFonts];
 }
 
@@ -6373,7 +6356,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     
     DOMRange *range = [frame _convertNSRangeToDOMRange:theRange];
     if (!range) {
-        LOG(TextInput, "firstRectForCharacterRange:(%u, %u) -> (0, 0, 0, 0)", theRange.location, theRange.length);
+        LOG(TextInput, "firstRectForCharacterRange:(%zu, %zu) -> (0, 0, 0, 0)", theRange.location, theRange.length);
         return NSZeroRect;
     }
     
@@ -6387,7 +6370,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (window)
         resultRect.origin = [window convertRectToScreen:resultRect].origin;
     
-    LOG(TextInput, "firstRectForCharacterRange:(%u, %u) -> (%f, %f, %f, %f)", theRange.location, theRange.length, resultRect.origin.x, resultRect.origin.y, resultRect.size.width, resultRect.size.height);
+    LOG(TextInput, "firstRectForCharacterRange:(%zu, %zu) -> (%f, %f, %f, %f)", theRange.location, theRange.length, resultRect.origin.x, resultRect.origin.y, resultRect.size.width, resultRect.size.height);
     return resultRect;
 }
 
@@ -6403,7 +6386,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
     NSRange result = [[self _frame] _selectedNSRange];
 
-    LOG(TextInput, "selectedRange -> (%u, %u)", result.location, result.length);
+    LOG(TextInput, "selectedRange -> (%zu, %zu)", result.location, result.length);
     return result;
 }
 
@@ -6423,7 +6406,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return NSMakeRange(NSNotFound, 0);
 
     NSRange result = [webFrame _convertToNSRange:*range];
-    LOG(TextInput, "markedRange -> (%u, %u)", result.location, result.length);
+    LOG(TextInput, "markedRange -> (%zu, %zu)", result.location, result.length);
     return result;
 }
 
@@ -6438,12 +6421,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     WebFrame *frame = [self _frame];
     auto* coreFrame = core(frame);
     if (!isTextInput(coreFrame) || isInPasswordField(coreFrame)) {
-        LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> nil", nsRange.location, nsRange.length);
+        LOG(TextInput, "attributedSubstringFromRange:(%zu, %zu) -> nil", nsRange.location, nsRange.length);
         return nil;
     }
     auto range = [frame _convertToDOMRange:nsRange];
     if (!range) {
-        LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> nil", nsRange.location, nsRange.length);
+        LOG(TextInput, "attributedSubstringFromRange:(%zu, %zu) -> nil", nsRange.location, nsRange.length);
         return nil;
     }
 
@@ -6457,7 +6440,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         ASSERT([[result string] characterAtIndex:nsRange.length] == '\n' || [[result string] characterAtIndex:nsRange.length] == ' ');
         result = [result attributedSubstringFromRange:NSMakeRange(0, nsRange.length)];
     }
-    LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> \"%@\"", nsRange.location, nsRange.length, [result string]);
+    LOG(TextInput, "attributedSubstringFromRange:(%zu, %zu) -> \"%@\"", nsRange.location, nsRange.length, [result string]);
     return result.autorelease();
 }
 
@@ -6542,7 +6525,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]];
     ASSERT(isAttributedString || [string isKindOfClass:[NSString class]]);
 
-    LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%u, %u)", isAttributedString ? [string string] : string, newSelRange.location, newSelRange.length);
+    LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%zu, %zu)", isAttributedString ? [string string] : string, newSelRange.location, newSelRange.length);
 #endif
 
     // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
@@ -6915,7 +6898,7 @@ static CGImageRef imageFromRect(WebCore::LocalFrame* frame, CGRect rect)
     size_t bitsPerComponent = 8;
     size_t bitsPerPixel = 4 * bitsPerComponent;
     size_t bytesPerRow = ((bitsPerPixel + 7) / 8) * width;
-    RetainPtr<CGContextRef> context = adoptCF(CGBitmapContextCreate(NULL, width, height, bitsPerComponent, bytesPerRow, WebCore::sRGBColorSpaceRef(), kCGImageAlphaPremultipliedLast));
+    RetainPtr<CGContextRef> context = adoptCF(CGBitmapContextCreate(NULL, width, height, bitsPerComponent, bytesPerRow, WebCore::sRGBColorSpaceSingleton(), kCGImageAlphaPremultipliedLast));
     if (!context)
         return nil;
     
@@ -6967,17 +6950,15 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     if (![self _hasSelection])
         return nil;
 
-    auto* coreFrame = core([self _frame]);
+    RefPtr coreFrame = core([self _frame]);
     if (!coreFrame)
         return nil;
 
-    Ref<WebCore::LocalFrame> protectedCoreFrame(*coreFrame);
-
 #if PLATFORM(IOS_FAMILY)
-    return selectionImage(coreFrame, forceBlackText);
+    return selectionImage(coreFrame.get(), forceBlackText);
 #else
-    WebCore::TextIndicatorData textIndicator;
-    return createDragImageForSelection(*coreFrame, textIndicator, forceBlackText).autorelease();
+    auto [dragImageRef, textIndicator] = createDragImageForSelection(*coreFrame, forceBlackText);
+    return dragImageRef.autorelease();
 #endif
 }
 

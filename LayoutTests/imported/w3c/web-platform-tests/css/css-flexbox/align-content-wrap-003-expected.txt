@@ -10,22 +10,8 @@ PASS .flexbox 8
 PASS .flexbox 9
 PASS .flexbox 10
 PASS .flexbox 11
-FAIL .flexbox 12 assert_equals:
-<div data-expected-height="30" class="flexbox horizontal" style="align-content: space-around; height: 30px">
-  <div data-offset-x="0" data-offset-y="0" data-expected-height="20"></div>
-  <div data-offset-x="100" data-offset-y="0" data-expected-height="20"></div>
-  <div data-offset-x="0" data-offset-y="20" data-expected-height="20"></div>
-  <div data-offset-x="0" data-offset-y="40" data-expected-height="20"></div>
-</div>
-offsetTop expected 0 but got -15
-FAIL .flexbox 13 assert_equals:
-<div data-expected-height="30" class="flexbox horizontal" style="align-content: space-evenly; height: 30px">
-  <div data-offset-x="0" data-offset-y="0" data-expected-height="20"></div>
-  <div data-offset-x="100" data-offset-y="0" data-expected-height="20"></div>
-  <div data-offset-x="0" data-offset-y="20" data-expected-height="20"></div>
-  <div data-offset-x="0" data-offset-y="40" data-expected-height="20"></div>
-</div>
-offsetTop expected 0 but got -15
+PASS .flexbox 12
+PASS .flexbox 13
 PASS .flexbox 14
 PASS .flexbox 15
 PASS .flexbox 16
@@ -46,22 +32,8 @@ PASS .flexbox 30
 PASS .flexbox 31
 PASS .flexbox 32
 PASS .flexbox 33
-FAIL .flexbox 34 assert_equals:
-<div data-expected-width="30" class="flexbox vertical-rl" style="align-content: space-around; width: 30px;">
-  <div data-offset-x="10" data-offset-y="0" data-expected-width="20"></div>
-  <div data-offset-x="10" data-offset-y="10" data-expected-width="20"></div>
-  <div data-offset-x="-10" data-offset-y="0" data-expected-width="20"></div>
-  <div data-offset-x="-30" data-offset-y="0" data-expected-width="20"></div>
-</div>
-offsetLeft expected 10 but got 25
-FAIL .flexbox 35 assert_equals:
-<div data-expected-width="30" class="flexbox vertical-rl" style="align-content: space-evenly; width: 30px;">
-  <div data-offset-x="10" data-offset-y="0" data-expected-width="20"></div>
-  <div data-offset-x="10" data-offset-y="10" data-expected-width="20"></div>
-  <div data-offset-x="-10" data-offset-y="0" data-expected-width="20"></div>
-  <div data-offset-x="-30" data-offset-y="0" data-expected-width="20"></div>
-</div>
-offsetLeft expected 10 but got 25
+PASS .flexbox 34
+PASS .flexbox 35
 PASS .flexbox 36
 PASS .flexbox 37
 PASS .flexbox 38

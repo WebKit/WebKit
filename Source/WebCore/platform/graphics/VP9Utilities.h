@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "PlatformVideoColorSpace.h"
-#include "ScreenDataOverrides.h"
+#include <WebCore/PlatformVideoColorSpace.h>
+#include <WebCore/ScreenDataOverrides.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 namespace WebCore {

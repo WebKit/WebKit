@@ -34,12 +34,12 @@ shouldBecomeEqual("media.paused", "false", () => {
 
         // Controls are now visible, let's hover over the mute button to make the volume control visible.
         const muteButtonBounds = muteButtonElement.getBoundingClientRect();
-        eventSender.mouseMoveTo(muteButtonBounds.left + muteButtonBounds.width / 2, muteButtonBounds.top + muteButtonBounds.height / 2);
+        eventSender.mouseMoveTo(Math.floor(muteButtonBounds.left + muteButtonBounds.width / 2), Math.floor(muteButtonBounds.top + muteButtonBounds.height / 2));
 
         shouldBecomeEqual("!!volumeSliderElement.getBoundingClientRect().width", "true", () => {
             // Volume slider is visible, let's click in the middle of it.
             const volumeSliderBounds = volumeSliderElement.getBoundingClientRect();
-            eventSender.mouseMoveTo(volumeSliderBounds.left + volumeSliderBounds.width / 2, volumeSliderBounds.top + volumeSliderBounds.height / 2);
+            eventSender.mouseMoveTo(Math.floor(volumeSliderBounds.left + volumeSliderBounds.width / 2), Math.floor(volumeSliderBounds.top + volumeSliderBounds.height / 2));
             eventSender.mouseDown();
             eventSender.mouseUp();
 

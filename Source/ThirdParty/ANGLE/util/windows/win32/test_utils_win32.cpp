@@ -6,6 +6,10 @@
 
 // test_utils_win32.cpp: Implementation of OS-specific functions for Win32 (Windows)
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "util/test_utils.h"
 
 #include <windows.h>

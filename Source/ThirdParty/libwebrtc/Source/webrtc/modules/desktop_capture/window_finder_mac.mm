@@ -22,7 +22,7 @@
 namespace webrtc {
 
 WindowFinderMac::WindowFinderMac(
-    rtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor)
+    webrtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor)
     : configuration_monitor_(std::move(configuration_monitor)) {}
 WindowFinderMac::~WindowFinderMac() = default;
 

@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "RegisterState.h"
+#include <JavaScriptCore/RegisterState.h>
 #include <wtf/Lock.h>
 #include <wtf/ScopedLambda.h>
 #include <wtf/TZoneMalloc.h>

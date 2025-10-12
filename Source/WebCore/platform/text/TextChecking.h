@@ -31,10 +31,11 @@
 
 #pragma once
 
-#include "CharacterRange.h"
-#include "TextCheckingRequestIdentifier.h"
+#include <WebCore/CharacterRange.h>
+#include <WebCore/TextCheckingRequestIdentifier.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/OptionSet.h>
+#include <wtf/Platform.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

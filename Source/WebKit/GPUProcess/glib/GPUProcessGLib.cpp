@@ -31,7 +31,9 @@
 #include "GPUProcessCreationParameters.h"
 
 #if USE(GBM)
+#include <WebCore/DRMDevice.h>
 #include <WebCore/DRMDeviceManager.h>
+#include <WebCore/GBMDevice.h>
 #include <WebCore/PlatformDisplayGBM.h>
 #endif
 
@@ -40,10 +42,10 @@ namespace WebKit {
 void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters& parameters)
 {
 #if USE(GBM)
-    WebCore::DRMDeviceManager::singleton().initializeMainDevice(parameters.renderDeviceFile);
+    WebCore::DRMDeviceManager::singleton().initializeMainDevice(WTFMove(parameters.drmDevice));
 
-    if (auto* device = WebCore::DRMDeviceManager::singleton().mainGBMDeviceNode(WebCore::DRMDeviceManager::NodeType::Render)) {
-        WebCore::PlatformDisplay::setSharedDisplay(WebCore::PlatformDisplayGBM::create(device));
+    if (auto device = WebCore::DRMDeviceManager::singleton().mainGBMDevice(WebCore::DRMDeviceManager::NodeType::Render)) {
+        WebCore::PlatformDisplay::setSharedDisplay(WebCore::PlatformDisplayGBM::create(device->device()));
         return;
     }
 #else

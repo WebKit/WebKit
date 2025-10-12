@@ -215,7 +215,7 @@ $L$mul_body:
 	pshufd	xmm1,xmm0,0x4e
 	por	xmm0,xmm1
 	lea	r12,[256+r12]
-DB	102,72,15,126,195
+	movq	rbx,xmm0
 
 	mov	r8,QWORD[r8]
 	mov	rax,QWORD[rsi]
@@ -341,7 +341,7 @@ $L$outer:
 	lea	r12,[256+r12]
 
 	mov	rax,QWORD[rsi]
-DB	102,72,15,126,195
+	movq	rbx,xmm0
 
 	xor	r15,r15
 	mov	rbp,r8
@@ -725,7 +725,7 @@ mul4x_internal:
 	pshufd	xmm1,xmm0,0x4e
 	por	xmm0,xmm1
 	lea	r12,[256+r12]
-DB	102,72,15,126,195
+	movq	rbx,xmm0
 
 	mov	QWORD[((16+8))+rsp],r13
 	mov	QWORD[((56+8))+rsp],rdi
@@ -933,7 +933,7 @@ $L$outer4x:
 	pshufd	xmm0,xmm4,0x4e
 	por	xmm0,xmm4
 	lea	r12,[256+r12]
-DB	102,72,15,126,195
+	movq	rbx,xmm0
 
 	mov	r10,QWORD[r9*1+r14]
 	mov	rbp,r8
@@ -1216,10 +1216,10 @@ $L$pwr_page_walk_done:
 	mov	QWORD[40+rsp],rax
 
 $L$power5_body:
-DB	102,72,15,110,207
-DB	102,72,15,110,209
-DB	102,73,15,110,218
-DB	102,72,15,110,226
+	movq	xmm1,rdi
+	movq	xmm2,rcx
+	movq	xmm3,r10
+	movq	xmm4,rdx
 
 	call	__bn_sqr8x_internal
 	call	__bn_post4x_internal
@@ -1232,8 +1232,8 @@ DB	102,72,15,110,226
 	call	__bn_sqr8x_internal
 	call	__bn_post4x_internal
 
-DB	102,72,15,126,209
-DB	102,72,15,126,226
+	movq	rcx,xmm2
+	movq	rdx,xmm4
 	mov	rdi,rsi
 	mov	rax,QWORD[40+rsp]
 	lea	r8,[32+rsp]
@@ -1786,7 +1786,7 @@ $L$sqr4x_shift_n_add:
 	adc	r8,rdx
 	mov	QWORD[((-16))+rdi],rbx
 	mov	QWORD[((-8))+rdi],r8
-DB	102,72,15,126,213
+	movq	rbp,xmm2
 __bn_sqr8x_reduction:
 	xor	rax,rax
 	lea	rcx,[rbp*1+r9]
@@ -2030,11 +2030,11 @@ $L$8x_no_tail:
 	mov	rcx,QWORD[((-8))+rbp]
 	xor	rsi,rsi
 
-DB	102,72,15,126,213
+	movq	rbp,xmm2
 
 	mov	QWORD[rdi],r8
 	mov	QWORD[8+rdi],r9
-DB	102,73,15,126,217
+	movq	r9,xmm3
 	mov	QWORD[16+rdi],r10
 	mov	QWORD[24+rdi],r11
 	mov	QWORD[32+rdi],r12
@@ -2055,9 +2055,9 @@ __bn_post4x_internal:
 	mov	r12,QWORD[rbp]
 	lea	rbx,[r9*1+rdi]
 	mov	rcx,r9
-DB	102,72,15,126,207
+	movq	rdi,xmm1
 	neg	rax
-DB	102,72,15,126,206
+	movq	rsi,xmm1
 	sar	rcx,3+2
 	dec	r12
 	xor	r10,r10
@@ -2380,7 +2380,7 @@ mulx4x_internal:
 	pshufd	xmm1,xmm0,0x4e
 	por	xmm0,xmm1
 	lea	rdi,[256+rdi]
-DB	102,72,15,126,194
+	movq	rdx,xmm0
 	lea	rbx,[((64+32+8))+rsp]
 
 	mov	r9,rdx
@@ -2531,7 +2531,7 @@ $L$mulx4x_outer:
 	pshufd	xmm0,xmm4,0x4e
 	por	xmm0,xmm4
 	lea	rdi,[256+rdi]
-DB	102,72,15,126,194
+	movq	rdx,xmm0
 
 	mov	QWORD[rbx],rbp
 	lea	rbx,[32+rax*1+rbx]
@@ -2759,10 +2759,10 @@ $L$pwrx_page_walk_done:
 
 
 	pxor	xmm0,xmm0
-DB	102,72,15,110,207
-DB	102,72,15,110,209
-DB	102,73,15,110,218
-DB	102,72,15,110,226
+	movq	xmm1,rdi
+	movq	xmm2,rcx
+	movq	xmm3,r10
+	movq	xmm4,rdx
 	mov	QWORD[32+rsp],r8
 	mov	QWORD[40+rsp],rax
 
@@ -2781,8 +2781,8 @@ $L$powerx5_body:
 
 	mov	r9,r10
 	mov	rdi,rsi
-DB	102,72,15,126,209
-DB	102,72,15,126,226
+	movq	rcx,xmm2
+	movq	rdx,xmm4
 	mov	rax,QWORD[40+rsp]
 
 	call	mulx4x_internal
@@ -3148,7 +3148,7 @@ $L$sqrx8x_break:
 ALIGN	32
 $L$sqrx8x_outer_break:
 	mov	QWORD[72+rdi],r9
-DB	102,72,15,126,217
+	movq	rcx,xmm3
 	mov	QWORD[80+rdi],r10
 	mov	QWORD[88+rdi],r11
 	mov	QWORD[96+rdi],r12
@@ -3222,7 +3222,7 @@ $L$sqrx4x_shift_n_add_break:
 	mov	QWORD[48+rdi],rax
 	mov	QWORD[56+rdi],rbx
 	lea	rdi,[64+rdi]
-DB	102,72,15,126,213
+	movq	rbp,xmm2
 __bn_sqrx8x_reduction:
 	xor	eax,eax
 	mov	rbx,QWORD[((32+8))+rsp]
@@ -3402,10 +3402,10 @@ $L$sqrx8x_tail_done:
 	sub	rsi,QWORD[((16+8))+rsp]
 $L$sqrx8x_no_tail:
 	adc	r8,QWORD[rdi]
-DB	102,72,15,126,217
+	movq	rcx,xmm3
 	adc	r9,QWORD[8+rdi]
 	mov	rsi,QWORD[56+rbp]
-DB	102,72,15,126,213
+	movq	rbp,xmm2
 	adc	r10,QWORD[16+rdi]
 	adc	r11,QWORD[24+rdi]
 	adc	r12,QWORD[32+rdi]
@@ -3443,8 +3443,8 @@ __bn_postx4x_internal:
 	neg	rax
 	sar	rcx,3+2
 
-DB	102,72,15,126,202
-DB	102,72,15,126,206
+	movq	rdx,xmm1
+	movq	rsi,xmm1
 	dec	r12
 	mov	r13,QWORD[8+rbp]
 	xor	r8,r8

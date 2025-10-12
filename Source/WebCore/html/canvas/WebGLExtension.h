@@ -25,10 +25,13 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBGL)
 
 #include <atomic>
 #include <wtf/RefCounted.h>
+
 namespace WebCore {
 
 class WebCoreOpaqueRoot;

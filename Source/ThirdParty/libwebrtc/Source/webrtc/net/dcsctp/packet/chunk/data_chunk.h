@@ -9,20 +9,21 @@
  */
 #ifndef NET_DCSCTP_PACKET_CHUNK_DATA_CHUNK_H_
 #define NET_DCSCTP_PACKET_CHUNK_DATA_CHUNK_H_
-#include <stddef.h>
-#include <stdint.h>
 
+#include <cstddef>
 #include <cstdint>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/chunk/chunk.h"
 #include "net/dcsctp/packet/chunk/data_common.h"
 #include "net/dcsctp/packet/data.h"
 #include "net/dcsctp/packet/tlv_trait.h"
+#include "net/dcsctp/public/types.h"
 
 namespace dcsctp {
 
@@ -59,7 +60,7 @@ class DataChunk : public AnyDataChunk, public TLVTrait<DataChunkConfig> {
   DataChunk(TSN tsn, Data&& data, bool immediate_ack)
       : AnyDataChunk(tsn, std::move(data), immediate_ack) {}
 
-  static std::optional<DataChunk> Parse(rtc::ArrayView<const uint8_t> data);
+  static std::optional<DataChunk> Parse(webrtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

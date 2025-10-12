@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error: error
 
 FAIL Test evaluation order of modules assert_array_equals: lengths differ, expected array ["step-1-1", "step-1-2", "microtask", "global-error", "error", "script-load", "global-load"] length 7, got ["step-1-1", "step-1-2", "global-error", "error", "script-load", "global-load"] length 6
 

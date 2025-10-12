@@ -14,6 +14,7 @@ PASS Transformed progress for ease-out function
 PASS Transformed progress for easing function which produces values greater than 1
 PASS Transformed progress for easing function which produces values less than 1
 PASS Test bounds point of step-start easing
+PASS Test start bounds of step-start easing with no delay
 PASS Test bounds point of step-start easing with reverse direction
 PASS Test bounds point of step-start easing with iterationStart not at a transition point
 PASS Test bounds point of step-start easing with iterationStart and delay
@@ -30,4 +31,5 @@ PASS Test bounds point of steps(jump-both) easing with iterationStart not at a t
 PASS Test bounds point of steps(jump-none) easing
 PASS Test bounds point of steps(jump-none) easing with iterationStart and delay
 PASS Test bounds point of steps(jump-none) easing with iterationStart not at a transition point
+PASS Test global timing function with values outside [0,1] with a step timing function on the keyframe
 

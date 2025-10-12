@@ -39,7 +39,7 @@ namespace WebKit {
 class WebURLSchemeTask;
 
 class RemoteInspectorProtocolHandler final : public RemoteInspectorObserver, public WebURLSchemeHandler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RemoteInspectorProtocolHandler);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteInspectorProtocolHandler);
 public:
     static Ref<RemoteInspectorProtocolHandler> create(WebPageProxy& page) { return adoptRef(*new RemoteInspectorProtocolHandler(page)); }

@@ -4,24 +4,17 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-object-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Object.isSealed() should return true when given primitive values as input
+info: bugzilla.mozilla.org/show_bug.cgi?id=1062860
 esid: pending
+features: [Symbol]
 ---*/
-var BUGNUMBER = 1062860;
-var summary = "Object.isSealed() should return true when given primitive values as input";
 
-print(BUGNUMBER + ": " + summary);
 assert.sameValue(Object.isSealed(), true);
 assert.sameValue(Object.isSealed(undefined), true);
 assert.sameValue(Object.isSealed(null), true);
 assert.sameValue(Object.isSealed(1), true);
 assert.sameValue(Object.isSealed("foo"), true);
 assert.sameValue(Object.isSealed(true), true);
-if (typeof Symbol === "function") {
-    assert.sameValue(Object.isSealed(Symbol()), true);
-}
-
+assert.sameValue(Object.isSealed(Symbol()), true);

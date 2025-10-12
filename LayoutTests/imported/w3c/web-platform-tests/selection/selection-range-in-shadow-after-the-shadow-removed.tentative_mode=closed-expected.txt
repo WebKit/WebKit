@@ -1,3 +1,6 @@
 
 FAIL Selection range in shadow should not be as a selection range after the host is removed assert_equals: startContainer should not be changed expected Text node "ABC" but got Element node <div id="container"></div>
+FAIL Selection range in shadow should not be as a selection range after the host parent is removed assert_equals: startContainer should not be changed expected Text node "ABC" but got Element node <div id="container"></div>
+FAIL Selection range in shadow should not be as a selection range after the host is replaced with itself (.replaceWith) assert_equals: startContainer should not be changed expected Text node "ABC" but got Element node <div id="container"><div id="host"></div></div>
+FAIL Selection range in shadow should not be as a selection range after the host is replaced with itself (.replaceChild assert_equals: startContainer should not be changed expected Text node "ABC" but got Element node <div id="container"><div id="host"></div><div id="host"><...
 

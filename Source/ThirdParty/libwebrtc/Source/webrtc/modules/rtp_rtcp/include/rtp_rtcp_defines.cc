@@ -10,12 +10,12 @@
 
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
-#include <string.h>
-
-#include <type_traits>
+#include <cctype>
+#include <cstring>
 
 #include "absl/algorithm/container.h"
-#include "api/array_view.h"
+#include "absl/strings/string_view.h"
+#include "api/units/time_delta.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 

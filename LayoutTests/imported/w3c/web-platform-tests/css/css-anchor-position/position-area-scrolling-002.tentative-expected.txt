@@ -1,8 +1,8 @@
 
 PASS Initial scroll position
 FAIL Scroll to 40,60 assert_equals: e1 x expected 60 but got 100
-PASS Reattach at 40,60
-FAIL Redisplay at 40,60 assert_equals: e1 x expected 80 but got 100
+FAIL Reattach at 40,60 assert_equals: e1 x expected 100 but got 80
+PASS Redisplay at 40,60
 FAIL Scroll to 0,0 and relayout assert_equals: e1 x expected 120 but got 100
 PASS Redisplay at 0,0
 

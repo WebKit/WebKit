@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true obscuredInset.top=50 obscuredInset.left=50 ] -->
 <html>
 <head>
     <meta charset="utf-8">
@@ -11,15 +11,15 @@
             font-family: system-ui;
         }
 
-        .popup {
+        .banner {
             position: fixed;
             top: 0;
-            bottom: 0;
             left: 0;
+            height: 100px;
             right: 0;
         }
 
-        .popup-content {
+        .banner-content {
             background: rgb(100, 100, 100);
             width: 100%;
             height: 100%;
@@ -35,11 +35,12 @@
         await UIHelper.ensurePresentationUpdate();
         edgeColorsBeforeUnparenting = await UIHelper.fixedContainerEdgeColors();
         shouldBeEqualToString("edgeColorsBeforeUnparenting.top", "rgb(100, 100, 100)");
-        shouldBeEqualToString("edgeColorsBeforeUnparenting.left", "rgb(100, 100, 100)");
-        shouldBeEqualToString("edgeColorsBeforeUnparenting.right", "rgb(100, 100, 100)");
-        shouldBeEqualToString("edgeColorsBeforeUnparenting.bottom", "rgb(100, 100, 100)");
+        shouldBeNull("edgeColorsBeforeUnparenting.left");
+        shouldBeNull("edgeColorsBeforeUnparenting.right");
+        shouldBeNull("edgeColorsBeforeUnparenting.bottom");
 
-        document.querySelector(".popup").remove();
+        document.querySelector(".banner.one").remove();
+        document.querySelector(".banner.two").style.visibility = "hidden";
         edgeColorsAfterUnparenting = await UIHelper.fixedContainerEdgeColors();
         shouldBeNull("edgeColorsAfterUnparenting.top");
         shouldBeNull("edgeColorsAfterUnparenting.left");
@@ -51,8 +52,11 @@
     </script>
 </head>
 <body>
-<div class="popup">
-    <div class="popup-content"></div>
+<div class="banner one">
+    <div class="banner-content"></div>
+</div>
+<div class="banner two">
+    <div class="banner-content"></div>
 </div>
 <div class="tall"></div>
 </body>

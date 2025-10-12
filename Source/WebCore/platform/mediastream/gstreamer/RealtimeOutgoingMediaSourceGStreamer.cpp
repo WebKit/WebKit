@@ -48,7 +48,7 @@ RealtimeOutgoingMediaSourceGStreamer::RealtimeOutgoingMediaSourceGStreamer(Type 
 {
     initialize();
 
-    m_track = &track.privateTrack();
+    m_track = track.privateTrack();
     m_outgoingSource = webkitMediaStreamSrcNew();
     GST_DEBUG_OBJECT(m_bin.get(), "Created outgoing source %" GST_PTR_FORMAT, m_outgoingSource.get());
     gst_bin_add(GST_BIN_CAST(m_bin.get()), m_outgoingSource.get());
@@ -388,7 +388,7 @@ void RealtimeOutgoingMediaSourceGStreamer::replaceTrack(RefPtr<MediaStreamTrack>
     m_track->removeObserver(*this);
     RefPtr<MediaStreamTrackPrivate> trackPrivate;
     if (newTrack)
-        trackPrivate = &(newTrack->privateTrack());
+        trackPrivate = newTrack->privateTrack();
 
     webkitMediaStreamSrcReplaceTrack(WEBKIT_MEDIA_STREAM_SRC_CAST(m_outgoingSource.get()), RefPtr(trackPrivate));
     if (!newTrack)
@@ -433,7 +433,7 @@ void RealtimeOutgoingMediaSourceGStreamer::setParameters(GUniquePtr<GstStructure
         if (!rid)
             continue;
 
-        auto packetizer = getPacketizerForRid(rid);
+        auto packetizer = getPacketizerForRid(rid.toString());
         if (!packetizer)
             continue;
 
@@ -442,7 +442,7 @@ void RealtimeOutgoingMediaSourceGStreamer::setParameters(GUniquePtr<GstStructure
     m_parameters = WTFMove(parameters);
 }
 
-RefPtr<GStreamerRTPPacketizer> RealtimeOutgoingMediaSourceGStreamer::getPacketizerForRid(StringView rid)
+RefPtr<GStreamerRTPPacketizer> RealtimeOutgoingMediaSourceGStreamer::getPacketizerForRid(const String& rid)
 {
     for (auto& packetizer : m_packetizers) {
         if (packetizer->rtpStreamId() == rid)

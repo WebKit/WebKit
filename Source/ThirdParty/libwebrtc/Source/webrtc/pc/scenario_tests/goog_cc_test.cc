@@ -8,11 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "api/stats/rtc_stats_collector_callback.h"
+#include "api/audio_options.h"
+#include "api/make_ref_counted.h"
+#include "api/rtc_error.h"
 #include "api/stats/rtcstats_objects.h"
+#include "api/test/simulated_network.h"
 #include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
 #include "pc/test/mock_peer_connection_observers.h"
-#include "test/field_trial.h"
 #include "test/gtest.h"
 #include "test/peer_scenario/peer_scenario.h"
 #include "test/peer_scenario/peer_scenario_client.h"
@@ -28,19 +31,20 @@ namespace test {
 #define MAYBE_NoBweChangeFromVideoUnmute NoBweChangeFromVideoUnmute
 #endif
 TEST(GoogCcPeerScenarioTest, MAYBE_NoBweChangeFromVideoUnmute) {
+  PeerScenarioClient::Config config;
   // If transport wide sequence numbers are used for audio, and the call
   // switches from audio only to video only, there will be a sharp change in
   // packets sizes. This will create a change in propagation time which might be
   // detected as an overuse. Using separate overuse detectors for audio and
   // video avoids the issue.
-  std::string audio_twcc_trials("WebRTC-Audio-AlrProbing/Disabled/");
-  std::string separate_audio_video(
-      "WebRTC-Bwe-SeparateAudioPackets/"
-      "enabled:true,packet_threshold:15,time_threshold:1000ms/");
-  ScopedFieldTrials field_trial(audio_twcc_trials + separate_audio_video);
+  config.field_trials.Set("WebRTC-Audio-AlrProbing", "Disabled");
+  config.field_trials.Set(
+      "WebRTC-Bwe-SeparateAudioPackets",
+      "enabled:true,packet_threshold:15,time_threshold:1000ms");
+
   PeerScenario s(*test_info_);
-  auto* caller = s.CreateClient(PeerScenarioClient::Config());
-  auto* callee = s.CreateClient(PeerScenarioClient::Config());
+  auto* caller = s.CreateClient(config);
+  auto* callee = s.CreateClient(config);
 
   BuiltInNetworkBehaviorConfig net_conf;
   net_conf.link_capacity = DataRate::KilobitsPerSec(350);
@@ -51,7 +55,7 @@ TEST(GoogCcPeerScenarioTest, MAYBE_NoBweChangeFromVideoUnmute) {
   PeerScenarioClient::VideoSendTrackConfig video_conf;
   video_conf.generator.squares_video->framerate = 15;
   auto video = caller->CreateVideo("VIDEO", video_conf);
-  auto audio = caller->CreateAudio("AUDIO", cricket::AudioOptions());
+  auto audio = caller->CreateAudio("AUDIO", AudioOptions());
 
   // Start ICE and exchange SDP.
   s.SimpleConnection(caller, callee, {send_node}, {ret_node});
@@ -74,8 +78,7 @@ TEST(GoogCcPeerScenarioTest, MAYBE_NoBweChangeFromVideoUnmute) {
   ASSERT_EQ(num_video_streams, 1);  // Exactly 1 video stream.
 
   auto get_bwe = [&] {
-    auto callback =
-        rtc::make_ref_counted<webrtc::MockRTCStatsCollectorCallback>();
+    auto callback = make_ref_counted<MockRTCStatsCollectorCallback>();
     caller->pc()->GetStats(callback.get());
     s.net()->time_controller()->Wait([&] { return callback->called(); });
     auto stats =

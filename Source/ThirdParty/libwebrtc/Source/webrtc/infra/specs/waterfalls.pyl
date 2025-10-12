@@ -18,7 +18,7 @@
         ],
         'test_suites': {
           'gtest_tests': 'android_tests',
-          'junit_tests': 'android_junit_tests',
+          'isolated_scripts': 'android_junit_tests',
         },
       },
       'Android32 (dbg)': {
@@ -28,7 +28,7 @@
         ],
         'test_suites': {
           'gtest_tests': 'android_tests',
-          'junit_tests': 'android_junit_tests',
+          'isolated_scripts': 'android_junit_tests',
         },
       },
       'Android32 (more configs)': {
@@ -50,7 +50,7 @@
         ],
         'test_suites': {
           'gtest_tests': 'android_tests',
-          'junit_tests': 'android_junit_tests',
+          'isolated_scripts': 'android_junit_tests',
         },
       },
       'Android64 (dbg)': {
@@ -60,7 +60,7 @@
         ],
         'test_suites': {
           'gtest_tests': 'android_tests',
-          'junit_tests': 'android_junit_tests',
+          'isolated_scripts': 'android_junit_tests',
         },
       },
       'Android64 Builder arm64': {},
@@ -86,14 +86,14 @@
       },
       'Linux Asan': {
         'os_type': 'linux',
-        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'linux_tests',
         },
       },
       'Linux MSan': {
         'os_type': 'linux',
-        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           # TODO(crbug.com/webrtc/14568): Using 'linux_tests'
           # fails on "MemorySanitizer: use-of-uninitialized-value in
@@ -103,7 +103,7 @@
       },
       'Linux Tsan v2': {
         'os_type': 'linux',
-        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           # TODO(crbug.com/webrtc/14568): Using 'linux_tests'
           # fails on "ThreadSanitizer: data race on vptr (ctor/dtor vs
@@ -113,14 +113,14 @@
       },
       'Linux UBSan': {
         'os_type': 'linux',
-        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'linux_tests',
         },
       },
       'Linux UBSan vptr': {
         'os_type': 'linux',
-        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'linux_tests',
         },
@@ -272,12 +272,11 @@
           'isolated_scripts': 'perf_tests',
         }
       },
-      'Perf Linux Bionic': {
+      'Perf Linux': {
         'os_type':
         'linux',
         'mixins': [
-          'linux-bionic', 'perf-pool', 'timeout-3h',
-          'resultdb-gtest-json-format'
+          'linux-jammy', 'perf-pool', 'timeout-3h', 'resultdb-gtest-json-format'
         ],
         'test_suites': {
           'isolated_scripts': 'perf_tests_save_worst_frame',
@@ -322,7 +321,7 @@
     'machines': {
       'iOS64 Debug': {
         'mixins': [
-          'ios-device-16.7', 'webrtc-xctest', 'chrome-tester-service-account',
+          'ios-device-18', 'webrtc-xctest', 'chrome-tester-service-account',
           'xcode_15_main', 'mac_toolchain', 'has_native_resultdb_integration',
           'out_dir_arg'
         ],
@@ -345,7 +344,7 @@
       },
       'iOS64 Release': {
         'mixins': [
-          'ios-device-16.7', 'webrtc-xctest', 'chrome-tester-service-account',
+          'ios-device-18', 'webrtc-xctest', 'chrome-tester-service-account',
           'xcode_15_main', 'mac_toolchain', 'has_native_resultdb_integration',
           'out_dir_arg'
         ],
@@ -366,7 +365,7 @@
         ],
         'test_suites': {
           'gtest_tests': 'android_tests_tryserver',
-          'junit_tests': 'android_junit_tests',
+          'isolated_scripts': 'android_junit_tests',
         },
       },
       'android_arm64_rel': {
@@ -376,7 +375,7 @@
         ],
         'test_suites': {
           'gtest_tests': 'android_tests_tryserver',
-          'junit_tests': 'android_junit_tests',
+          'isolated_scripts': 'android_junit_tests',
         },
       },
       'android_arm_dbg': {
@@ -386,7 +385,7 @@
         ],
         'test_suites': {
           'gtest_tests': 'android_tests_tryserver',
-          'junit_tests': 'android_junit_tests',
+          'isolated_scripts': 'android_junit_tests',
         },
       },
       'android_arm_more_configs': {
@@ -405,7 +404,7 @@
         ],
         'test_suites': {
           'gtest_tests': 'android_tests_tryserver',
-          'junit_tests': 'android_junit_tests',
+          'isolated_scripts': 'android_junit_tests',
         },
       },
       'android_compile_arm64_dbg': {},
@@ -441,7 +440,7 @@
       'iwyu_verifier': {},
       'linux_asan': {
         'os_type': 'linux',
-        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'linux_tests',
         },
@@ -480,7 +479,7 @@
       },
       'linux_msan': {
         'os_type': 'linux',
-        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           # TODO(crbug.com/webrtc/14568): Using 'linux_tests'
           # fails on "MemorySanitizer: use-of-uninitialized-value in
@@ -497,7 +496,7 @@
       },
       'linux_tsan2': {
         'os_type': 'linux',
-        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           # TODO(crbug.com/webrtc/14568): Using 'linux_tests'
           # fails on "ThreadSanitizer: data race on vptr (ctor/dtor vs
@@ -507,14 +506,14 @@
       },
       'linux_ubsan': {
         'os_type': 'linux',
-        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'linux_tests',
         },
       },
       'linux_ubsan_vptr': {
         'os_type': 'linux',
-        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'linux_tests',
         },

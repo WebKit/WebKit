@@ -45,12 +45,15 @@ class DownloadManager;
 class NetworkLoad;
 class NetworkSession;
 
-class ServiceWorkerNavigationPreloader final : public NetworkLoadClient, public CanMakeWeakPtr<ServiceWorkerNavigationPreloader> {
+class ServiceWorkerNavigationPreloader final : public NetworkLoadClient, public RefCounted<ServiceWorkerNavigationPreloader> {
     WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerNavigationPreloader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ServiceWorkerNavigationPreloader);
 public:
-    ServiceWorkerNavigationPreloader(NetworkSession&, NetworkLoadParameters&&, const WebCore::NavigationPreloadState&, bool shouldCaptureExtraNetworkLoadMetrics);
+    static Ref<ServiceWorkerNavigationPreloader> create(NetworkSession&, NetworkLoadParameters&&, const WebCore::NavigationPreloadState&, bool shouldCaptureExtraNetworkLoadMetrics);
     ~ServiceWorkerNavigationPreloader();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void cancel();
 
@@ -70,6 +73,8 @@ public:
     MonotonicTime startTime() const { return m_startTime; }
 
 private:
+    ServiceWorkerNavigationPreloader(NetworkSession&, NetworkLoadParameters&&, const WebCore::NavigationPreloadState&, bool shouldCaptureExtraNetworkLoadMetrics);
+
     // NetworkLoadClient.
     void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent) final { }
     bool isSynchronous() const final { return false; }

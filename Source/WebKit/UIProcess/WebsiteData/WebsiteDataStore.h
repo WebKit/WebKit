@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -202,6 +202,8 @@ public:
     void setUserAgentStringQuirkForTesting(const String& domain, const String& userAgentString, CompletionHandler<void()>&&);
     void setPrivateTokenIPCForTesting(bool enabled);
 
+    void fetchDomainsWithUserInteraction(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&);
+
     void fetchData(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, Function<void(Vector<WebsiteDataRecord>)>&& completionHandler);
     void removeData(OptionSet<WebsiteDataType>, WallTime modifiedSince, Function<void()>&& completionHandler);
     void removeData(OptionSet<WebsiteDataType>, const Vector<WebsiteDataRecord>&, Function<void()>&& completionHandler);
@@ -217,6 +219,7 @@ public:
     void clearUserInteraction(const URL&, CompletionHandler<void()>&&);
     void dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&&);
     void logTestingEvent(const String&);
+    void didHaveUserInteractionForSiteIsolation(const URL&);
     void logUserInteraction(const URL&, CompletionHandler<void()>&&);
     void getAllStorageAccessEntries(WebPageProxyIdentifier, CompletionHandler<void(Vector<String>&& domains)>&&);
     void hasHadUserInteraction(const URL&, CompletionHandler<void(bool)>&&);
@@ -351,7 +354,6 @@ public:
     API::HTTPCookieStore& cookieStore();
     Ref<API::HTTPCookieStore> protectedCookieStore();
     WebCore::LocalWebLockRegistry& webLockRegistry() { return m_webLockRegistry.get(); }
-    Ref<WebCore::LocalWebLockRegistry> protectedWebLockRegistry();
 
     void renameOriginInWebsiteData(WebCore::SecurityOriginData&&, WebCore::SecurityOriginData&&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);
     void originDirectoryForTesting(WebCore::ClientOrigin&&, OptionSet<WebsiteDataType>, CompletionHandler<void(const String&)>&&);
@@ -380,7 +382,6 @@ public:
     static String defaultResourceLoadStatisticsDirectory(const String& baseDataDirectory = nullString());
     static String defaultNetworkCacheDirectory(const String& baseCacheDirectory = nullString());
     static String defaultAlternativeServicesDirectory(const String& baseCacheDirectory = nullString());
-    static String defaultApplicationCacheDirectory(const String& baseCacheDirectory = nullString());
     static String defaultWebSQLDatabaseDirectory(const String& baseDataDirectory = nullString());
     static String defaultHSTSStorageDirectory(const String& baseCacheDirectory = nullString());
 #if ENABLE(ARKIT_INLINE_PREVIEW)
@@ -446,7 +447,7 @@ public:
     void updateBundleIdentifierInNetworkProcess(const String&, CompletionHandler<void()>&&);
     void clearBundleIdentifierInNetworkProcess(CompletionHandler<void()>&&);
 
-    void countNonDefaultSessionSets(CompletionHandler<void(size_t)>&&);
+    void countNonDefaultSessionSets(CompletionHandler<void(uint64_t)>&&);
 
     bool showPersistentNotification(IPC::Connection*, const WebCore::NotificationData&);
     void cancelServiceWorkerNotification(const WTF::UUID& notificationID);
@@ -518,6 +519,9 @@ public:
     uint64_t cookiesVersion() const { return m_cookiesVersion; }
     void setCookies(Vector<WebCore::Cookie>&&, CompletionHandler<void()>&&);
 
+    void setStorageAccessPermissionForTesting(bool, WebPageProxyIdentifier, const String& topFrameDomain, const String& subFrameDomain, CompletionHandler<void()>&&);
+    void clearStorageAccessForTesting(CompletionHandler<void()>&&);
+
 private:
     enum class ForceReinitialization : bool { No, Yes };
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -535,8 +539,6 @@ private:
 
     WebsiteDataStore();
     static WorkQueue& websiteDataStoreIOQueueSingleton();
-
-    Ref<WorkQueue> protectedQueue() const;
 
     // FIXME: Only Cocoa ports respect ShouldCreateDirectory, so you cannot rely on it to create
     // directories. This is confusing.
@@ -577,8 +579,7 @@ private:
 
     void handleResolvedDirectoriesAsynchronously(const WebsiteDataStoreConfiguration::Directories&, bool);
 
-    enum class ServiceWorkerProcessCanBeActive : bool { No, Yes };
-    HashSet<WebCore::ProcessIdentifier> activeWebProcesses(ServiceWorkerProcessCanBeActive) const;
+    HashSet<WebCore::ProcessIdentifier> activeWebProcesses() const;
     void removeDataInNetworkProcess(WebsiteDataStore::ProcessAccessType, OptionSet<WebsiteDataType>, WallTime, CompletionHandler<void()>&&);
 
     const PAL::SessionID m_sessionID;
@@ -590,9 +591,9 @@ private:
     FileSystem::Salt m_mediaKeysStorageSalt WTF_GUARDED_BY_LOCK(m_resolveDirectoriesLock);
     const Ref<const WebsiteDataStoreConfiguration> m_configuration;
     bool m_hasResolvedDirectories { false };
-    RefPtr<DeviceIdHashSaltStorage> m_deviceIdHashSaltStorage;
+    const RefPtr<DeviceIdHashSaltStorage> m_deviceIdHashSaltStorage;
 #if ENABLE(ENCRYPTED_MEDIA)
-    RefPtr<DeviceIdHashSaltStorage> m_mediaKeysHashSaltStorage;
+    const RefPtr<DeviceIdHashSaltStorage> m_mediaKeysHashSaltStorage;
 #endif
 #if PLATFORM(IOS_FAMILY)
     String m_resolvedContainerCachesWebContentDirectory;
@@ -600,6 +601,10 @@ private:
     String m_resolvedContainerTemporaryDirectory;
     String m_resolvedCookieStorageDirectory;
 #endif
+
+    std::optional<HashSet<WebCore::RegistrableDomain>> m_domainsWithUserInteractions;
+    Vector<WebCore::RegistrableDomain> m_pendingDomainsWithUserInteractions;
+    Vector<CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>> m_domainsWithUserInteractionsCompletionHandler;
 
     bool m_trackingPreventionDebugMode { false };
     enum class TrackingPreventionEnabled : uint8_t { Default, No, Yes };
@@ -642,21 +647,23 @@ private:
 
     UniqueRef<WebsiteDataStoreClient> m_client;
 
-    RefPtr<API::HTTPCookieStore> m_cookieStore;
+    const RefPtr<API::HTTPCookieStore> m_cookieStore;
     RefPtr<NetworkProcessProxy> m_networkProcess;
 
 #if HAVE(APP_SSO)
-    std::unique_ptr<SOAuthorizationCoordinator> m_soAuthorizationCoordinator;
+    const std::unique_ptr<SOAuthorizationCoordinator> m_soAuthorizationCoordinator;
 #endif
     mutable std::optional<WebCore::ThirdPartyCookieBlockingMode> m_thirdPartyCookieBlockingMode; // Lazily computed.
-    Ref<WebCore::LocalWebLockRegistry> m_webLockRegistry;
+    const Ref<WebCore::LocalWebLockRegistry> m_webLockRegistry;
 
     RefPtr<WebPreferences> m_serviceWorkerOverridePreferences;
     CompletionHandler<void(String&&)> m_completionHandlerForRemovalFromNetworkProcess;
 
     bool m_inspectionForServiceWorkersAllowed { true };
     bool m_isBlobRegistryPartitioningEnabled { false };
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     bool m_isOptInCookiePartitioningEnabled { false };
+#endif
 
     HashMap<WebCore::RegistrableDomain, RestrictedOpenerType> m_restrictedOpenerTypesForTesting;
 

@@ -1,6 +1,6 @@
 {
   "doc/ExtensionSupport.md":
-    "4e4943bc2019bee1ca32d95f15ad23f3",
+    "4d970d444b6f5b531a383aefb5348db1",
   "scripts/egl_angle_ext.xml":
     "8389749098fae1d5c832a06b5be51dc1",
   "scripts/extension_data/intel_630_linux.json":
@@ -20,23 +20,23 @@
   "scripts/extension_data/swiftshader_win10_gles1.json":
     "bea8e2106d62e1ea0e8938f150865a37",
   "scripts/gl_angle_ext.xml":
-    "da4ecccdd77635f1b0e9d4664f856706",
+    "2cba159af592da788a15449eae941cb4",
   "scripts/registry_xml.py":
-    "c56e84017783474a6b4698370cf5864a",
+    "cf2238984047673faa30d75bdfc3f6e7",
   "src/libANGLE/gen_extensions.py":
     "dc4727460d1ece9f98a2ae47bf15ddb3",
   "src/libANGLE/gles_extensions_autogen.cpp":
-    "39e28d0efac04802059f22d9bc8c2097",
+    "44adef75b9f3d699727fa1a589b3aa4c",
   "src/libANGLE/gles_extensions_autogen.h":
-    "04d239f1165ef43cbeb441452df4e8ac",
+    "2178701d90b5cc3a37d7095b14697925",
   "third_party/EGL-Registry/src/api/egl.xml":
     "2056d54ea07156f1988ca1366bdee21a",
   "third_party/OpenCL-Docs/src/xml/cl.xml":
     "6d0bf09e20a8f8c3ae440d79eda08bf9",
   "third_party/OpenGL-Registry/src/xml/gl.xml":
-    "49f0afe5cac23951c74420e457b0cb23",
+    "d7ed846c15f72e084763c22d70adf1e2",
   "third_party/OpenGL-Registry/src/xml/glx.xml":
-    "94f3eee4b076801d117804eb466714b7",
+    "6e1745b04a1ac673c60aaa5dd819f3c4",
   "third_party/OpenGL-Registry/src/xml/wgl.xml":
     "eae784bf4d1b983a42af5671b140b7c4"
 }

@@ -31,17 +31,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class WKPreviewWindowController;
 
+NS_SWIFT_UI_ACTOR
 @protocol WKPreviewWindowControllerDelegate <NSObject>
 - (void)previewWindowControllerDidClose:(WKPreviewWindowController *)previewWindowController;
 @end
 
+NS_SWIFT_UI_ACTOR
 @interface WKPreviewWindowController : NSObject
 @property (nonatomic, weak, nullable) id <WKPreviewWindowControllerDelegate> delegate;
 
 - (instancetype)initWithURL:(NSURL *)url sceneID:(NSString *)sceneID NS_DESIGNATED_INITIALIZER;
-- (void)presentWindow;
-- (void)updateImage:(NSURL *)url;
-- (void)dismissWindow;
+- (void)presentWindowWithCompletionHandler:(NS_SWIFT_UI_ACTOR void(^)(void))completionHandler;
+- (void)updateImage:(NSURL *)url completionHandler:(NS_SWIFT_UI_ACTOR void(^)(void))completionHandler;
+- (void)dismissWindowWithCompletionHandler:(NS_SWIFT_UI_ACTOR void(^)(void))completionHandler;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -26,12 +26,11 @@
 #pragma once
 
 #include "InspectorWebAgentBase.h"
+#include "WorkerOrWorkletGlobalScope.h"
 #include <JavaScriptCore/InspectorAuditAgent.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
-
-class WorkerOrWorkletGlobalScope;
 
 class WorkerAuditAgent final : public Inspector::InspectorAuditAgent {
     WTF_MAKE_NONCOPYABLE(WorkerAuditAgent);
@@ -43,7 +42,7 @@ public:
 private:
     Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
 
-    WorkerOrWorkletGlobalScope& m_globalScope;
+    const CheckedRef<WorkerOrWorkletGlobalScope> m_globalScope;
 };
 
 } // namespace WebCore

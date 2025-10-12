@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2013, 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008, 2013, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2009 Joseph Pecoraro
  *

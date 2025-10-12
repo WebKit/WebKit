@@ -32,8 +32,8 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
-#include "ContextMenuContext.h"
-#include "ContextMenuItem.h"
+#include <WebCore/ContextMenuContext.h>
+#include <WebCore/ContextMenuItem.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

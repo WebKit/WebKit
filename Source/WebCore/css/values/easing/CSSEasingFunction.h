@@ -66,4 +66,4 @@ struct EasingFunction {
 } // namespace CSS
 } // namespace WebCore
 
-template<> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::EasingFunction> = true;
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::EasingFunction)

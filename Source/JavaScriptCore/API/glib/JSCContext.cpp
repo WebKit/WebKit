@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2018 Igalia S.L.
- * Copyright (C) 2023 Apple Inc.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -786,7 +786,7 @@ void jsc_context_clear_exception(JSCContext* context)
  * jsc_context_throw_exception() in @handler like the default one does.
  * The last exception handler pushed is the only one used by the #JSCContext, use
  * jsc_context_pop_exception_handler() to remove it and set the previous one. When @handler
- * is removed from the context, @destroy_notify i called with @user_data as parameter.
+ * is removed from the context, @destroy_notify is called with @user_data as parameter.
  */
 void jsc_context_push_exception_handler(JSCContext* context, JSCExceptionHandler handler, gpointer userData, GDestroyNotify destroyNotify)
 {

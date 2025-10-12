@@ -28,7 +28,13 @@ namespace libaom_test {
 class CodecFactory;
 class VideoSource;
 
-enum TestMode { kRealTime, kOnePassGood, kTwoPassGood, kAllIntra };
+enum TestMode {
+  kRealTime,
+  kOnePassGood,
+  kTwoPassGood,
+  kAllIntra,
+  kLowComplexityDecode
+};
 #define ALL_TEST_MODES                                                     \
   ::testing::Values(::libaom_test::kRealTime, ::libaom_test::kOnePassGood, \
                     ::libaom_test::kTwoPassGood)
@@ -146,6 +152,10 @@ class Encoder {
 
 #if CONFIG_AV1_ENCODER
   void Control(int ctrl_id, aom_active_map_t *arg) {
+    const aom_codec_err_t res = aom_codec_control(&encoder_, ctrl_id, arg);
+    ASSERT_EQ(AOM_CODEC_OK, res) << EncoderError();
+  }
+  void Control(int ctrl_id, aom_roi_map_t *arg) {
     const aom_codec_err_t res = aom_codec_control(&encoder_, ctrl_id, arg);
     ASSERT_EQ(AOM_CODEC_OK, res) << EncoderError();
   }

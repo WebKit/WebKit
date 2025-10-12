@@ -28,9 +28,6 @@
     DispatchedTo=WebContent
 ]
 messages -> WebUserContentController {
-    AddContentWorlds(Vector<WebKit::ContentWorldData> worlds);
-    RemoveContentWorlds(Vector<WebKit::ContentWorldIdentifier> worldIdentifiers);
-
     AddUserScripts(Vector<WebKit::WebUserScriptData> userScripts, enum:bool WebKit::InjectUserScriptImmediately immediately);
     RemoveUserScript(WebKit::ContentWorldIdentifier worldIdentifier, WebKit::UserScriptIdentifier identifier);
     RemoveAllUserScripts(Vector<WebKit::ContentWorldIdentifier> worldIdentifiers);

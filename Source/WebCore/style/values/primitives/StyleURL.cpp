@@ -25,7 +25,9 @@
 #include "config.h"
 #include "StyleURL.h"
 
+#include "CSSURLValue.h"
 #include "Document.h"
+#include "StyleBuilderChecking.h"
 #include "StyleBuilderState.h"
 #include <wtf/text/TextStream.h>
 
@@ -79,15 +81,36 @@ auto ToStyle<CSS::URL>::operator()(const CSS::URL& url, const BuilderState& stat
     return toStyleWithScriptExecutionContext(url, state.protectedDocument());
 }
 
+Ref<CSSValue> CSSValueCreation<URL>::operator()(CSSValuePool&, const RenderStyle& style, const URL& value)
+{
+    return CSSURLValue::create(toCSS(value, style));
+}
+
+auto CSSValueConversion<URL>::operator()(BuilderState& state, const CSSValue& value) -> URL
+{
+    if (RefPtr url = requiredDowncast<CSSURLValue>(state, value))
+        return toStyle(url->url(), state);
+    return { .resolved = WTF::URL { emptyString() }, .modifiers = { } };
+}
+
+// MARK: - Serialization
+
+void Serialize<URL>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const URL& value)
+{
+    CSS::serializationForCSS(builder, context, toCSS(value, style));
+}
+
 // MARK: - Logging
 
 TextStream& operator<<(TextStream& ts, const URL& value)
 {
     ts << "url(\""_s << value.resolved << "\"";
 
-    if (value.modifiers.crossorigin) {
-        ts << " crossorigin("_s;
-        WTF::switchOn(value.modifiers.crossorigin->parameters, [&](const auto& alternative) { ts << alternative; });
+    if (value.modifiers.crossOrigin) {
+        ts << " cross-origin("_s;
+        WTF::switchOn(value.modifiers.crossOrigin->parameters, [&](const auto& alternative) {
+            ts << alternative;
+        });
         ts << ")"_s;
     }
     if (value.modifiers.integrity) {
@@ -95,9 +118,11 @@ TextStream& operator<<(TextStream& ts, const URL& value)
         ts << *value.modifiers.integrity;
         ts << ")"_s;
     }
-    if (value.modifiers.referrerpolicy) {
-        ts << " referrerpolicy("_s;
-        WTF::switchOn(value.modifiers.referrerpolicy->parameters, [&](const auto& alternative) { ts << alternative; });
+    if (value.modifiers.referrerPolicy) {
+        ts << " referrer-policy("_s;
+        WTF::switchOn(value.modifiers.referrerPolicy->parameters, [&](const auto& alternative) {
+            ts << alternative;
+        });
         ts << ")"_s;
     }
 

@@ -30,9 +30,9 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "CDMMediaCapability.h"
-#include "CDMRequirement.h"
-#include "CDMSessionType.h"
+#include <WebCore/CDMMediaCapability.h>
+#include <WebCore/CDMRequirement.h>
+#include <WebCore/CDMSessionType.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

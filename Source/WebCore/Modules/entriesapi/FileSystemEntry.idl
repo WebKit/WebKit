@@ -25,7 +25,6 @@
 
 [
     ActiveDOMObject,
-    CustomToJSObject,
     EnabledBySetting=DirectoryUploadEnabled,
     Exposed=Window
 ] interface FileSystemEntry {

@@ -75,10 +75,10 @@ private:
 
     BiquadFilterType m_type { BiquadFilterType::Lowpass };
 
-    Ref<AudioParam> m_parameter1;
-    Ref<AudioParam> m_parameter2;
-    Ref<AudioParam> m_parameter3;
-    Ref<AudioParam> m_parameter4;
+    const Ref<AudioParam> m_parameter1;
+    const Ref<AudioParam> m_parameter2;
+    const Ref<AudioParam> m_parameter3;
+    const Ref<AudioParam> m_parameter4;
 
     // so DSP kernels know when to re-compute coefficients
     bool m_filterCoefficientsDirty { true };

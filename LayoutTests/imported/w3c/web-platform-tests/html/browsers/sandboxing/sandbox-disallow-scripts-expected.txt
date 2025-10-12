@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Blocked script execution in 'http://localhost:8800/html/browsers/sandboxing/inner-iframe.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 Script execution in sandbox iframe
 
 

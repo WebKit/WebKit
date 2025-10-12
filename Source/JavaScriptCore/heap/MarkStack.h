@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "GCSegmentedArray.h"
+#include <JavaScriptCore/GCSegmentedArray.h>
 
 namespace JSC {
 

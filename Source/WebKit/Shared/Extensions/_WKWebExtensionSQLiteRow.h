@@ -50,8 +50,7 @@ typedef int _WKSQLiteErrorCode;
 
 struct RawData {
     const bool isNull;
-    const void* bytes;
-    const int length;
+    const std::span<const uint8_t> bytes;
 };
 
 - (struct RawData)uncopiedRawDataAtIndex:(NSUInteger)index;

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-array.prototype.toSpliced
+esid: sec-array.prototype.tospliced
 description: >
   Array.prototype.toSpliced converts the this value length to a number.
 info: |

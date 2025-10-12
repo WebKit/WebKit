@@ -66,6 +66,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/section-no-tbody-percent-distribution.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/table-fixed-minmax.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/table-height-redistribution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/table-limited-quirks.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/table-minmax.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/table-quirks.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/table-rows-with-zero-columns.html

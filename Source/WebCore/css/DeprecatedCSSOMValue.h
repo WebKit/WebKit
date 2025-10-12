@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CSSStyleDeclaration.h"
-#include "CSSValue.h"
-#include "ExceptionOr.h"
+#include <WebCore/CSSStyleDeclaration.h>
+#include <WebCore/CSSValue.h>
+#include <WebCore/ExceptionOr.h>
 #include <wtf/NoVirtualDestructorBase.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
@@ -86,7 +86,7 @@ protected:
     unsigned m_valueSeparator : CSSValue::ValueSeparatorBits;
     unsigned m_classType : ClassTypeBits; // ClassType
     
-    Ref<CSSStyleDeclaration> m_owner;
+    const Ref<CSSStyleDeclaration> m_owner;
 };
 
 class DeprecatedCSSOMComplexValue : public DeprecatedCSSOMValue {
@@ -106,10 +106,8 @@ protected:
     {
     }
 
-    Ref<const CSSValue> protectedValue() const { return m_value; }
-
 private:
-    Ref<const CSSValue> m_value;
+    const Ref<const CSSValue> m_value;
 };
     
 } // namespace WebCore

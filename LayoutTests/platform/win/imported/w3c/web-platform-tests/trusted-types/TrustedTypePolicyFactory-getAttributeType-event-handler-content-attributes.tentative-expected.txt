@@ -80,4 +80,7 @@ PASS getAttributeType("dummy", "onrejectionhandled", "dummyNs", attrNs)
 PASS getAttributeType("dummy", "onstorage", "dummyNs", attrNs)
 PASS getAttributeType("dummy", "onunhandledrejection", "dummyNs", attrNs)
 PASS getAttributeType("dummy", "onunload", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onencrypted", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onwaitingforkey", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onrepeat", "dummyNs", attrNs)
 

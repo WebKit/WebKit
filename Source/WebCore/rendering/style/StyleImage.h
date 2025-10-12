@@ -23,11 +23,11 @@
 
 #pragma once
 
-#include "CSSValue.h"
-#include "FloatSize.h"
-#include "Image.h"
-#include "RenderObject.h"
-#include "StyleURL.h"
+#include <WebCore/CSSValue.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/Image.h>
+#include <WebCore/RenderObject.h>
+#include <WebCore/StyleURL.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
@@ -73,14 +73,14 @@ public:
     // Size / scale.
     virtual FloatSize imageSize(const RenderElement*, float multiplier) const = 0;
     virtual bool usesImageContainerSize() const = 0;
-    virtual void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) = 0;
+    virtual void computeIntrinsicDimensions(const RenderElement*, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) = 0;
     virtual bool imageHasRelativeWidth() const = 0;
     virtual bool imageHasRelativeHeight() const = 0;
     virtual float imageScaleFactor() const { return 1; }
     virtual bool imageHasNaturalDimensions() const { return true; }
 
     // Image.
-    virtual RefPtr<Image> image(const RenderElement*, const FloatSize&, bool isForFirstLine = false) const = 0;
+    virtual RefPtr<Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine = false) const = 0;
     virtual StyleImage* selectedImage() { return this; }
     virtual const StyleImage* selectedImage() const { return this; }
     virtual CachedImage* cachedImage() const { return nullptr; }

@@ -37,7 +37,7 @@ namespace WebCore {
 
 RetainPtr<UIColor> cocoaColor(const Color& color)
 {
-    return [PAL::getUIColorClass() _disambiguated_due_to_CIImage_colorWithCGColor:cachedCGColor(color).get()];
+    return [PAL::getUIColorClassSingleton() _disambiguated_due_to_CIImage_colorWithCGColor:cachedCGColor(color).get()];
 }
 
 #endif

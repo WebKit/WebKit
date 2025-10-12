@@ -1,3 +1,0 @@
-
-FAIL animatedPoints represents non-animated value assert_equals: expected 20 but got 170
-

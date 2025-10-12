@@ -27,7 +27,7 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include "RemoteControllableTarget.h"
+#include <JavaScriptCore/RemoteControllableTarget.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {

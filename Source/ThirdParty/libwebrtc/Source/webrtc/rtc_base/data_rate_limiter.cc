@@ -10,7 +10,9 @@
 
 #include "rtc_base/data_rate_limiter.h"
 
-namespace rtc {
+#include <cstddef>
+
+namespace webrtc {
 
 bool DataRateLimiter::CanUse(size_t desired, double time) {
   return ((time > period_end_ && desired <= max_per_period_) ||
@@ -26,4 +28,4 @@ void DataRateLimiter::Use(size_t used, double time) {
   used_in_period_ += used;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

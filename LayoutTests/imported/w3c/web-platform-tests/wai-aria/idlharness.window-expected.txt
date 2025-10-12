@@ -16,7 +16,7 @@ PASS Element interface: attribute ariaBusy
 PASS Element interface: attribute ariaChecked
 PASS Element interface: attribute ariaColCount
 PASS Element interface: attribute ariaColIndex
-FAIL Element interface: attribute ariaColIndexText assert_true: The prototype object must have a property "ariaColIndexText" expected true got false
+PASS Element interface: attribute ariaColIndexText
 PASS Element interface: attribute ariaColSpan
 PASS Element interface: attribute ariaControlsElements
 PASS Element interface: attribute ariaCurrent
@@ -44,11 +44,12 @@ PASS Element interface: attribute ariaPlaceholder
 PASS Element interface: attribute ariaPosInSet
 PASS Element interface: attribute ariaPressed
 PASS Element interface: attribute ariaReadOnly
+PASS Element interface: attribute ariaRelevant
 PASS Element interface: attribute ariaRequired
 PASS Element interface: attribute ariaRoleDescription
 PASS Element interface: attribute ariaRowCount
 PASS Element interface: attribute ariaRowIndex
-FAIL Element interface: attribute ariaRowIndexText assert_true: The prototype object must have a property "ariaRowIndexText" expected true got false
+PASS Element interface: attribute ariaRowIndexText
 PASS Element interface: attribute ariaRowSpan
 PASS Element interface: attribute ariaSelected
 PASS Element interface: attribute ariaSetSize
@@ -67,7 +68,7 @@ PASS Element interface: element must inherit property "ariaBusy" with the proper
 PASS Element interface: element must inherit property "ariaChecked" with the proper type
 PASS Element interface: element must inherit property "ariaColCount" with the proper type
 PASS Element interface: element must inherit property "ariaColIndex" with the proper type
-FAIL Element interface: element must inherit property "ariaColIndexText" with the proper type assert_inherits: property "ariaColIndexText" not found in prototype chain
+PASS Element interface: element must inherit property "ariaColIndexText" with the proper type
 PASS Element interface: element must inherit property "ariaColSpan" with the proper type
 PASS Element interface: element must inherit property "ariaControlsElements" with the proper type
 PASS Element interface: element must inherit property "ariaCurrent" with the proper type
@@ -95,11 +96,12 @@ PASS Element interface: element must inherit property "ariaPlaceholder" with the
 PASS Element interface: element must inherit property "ariaPosInSet" with the proper type
 PASS Element interface: element must inherit property "ariaPressed" with the proper type
 PASS Element interface: element must inherit property "ariaReadOnly" with the proper type
+PASS Element interface: element must inherit property "ariaRelevant" with the proper type
 PASS Element interface: element must inherit property "ariaRequired" with the proper type
 PASS Element interface: element must inherit property "ariaRoleDescription" with the proper type
 PASS Element interface: element must inherit property "ariaRowCount" with the proper type
 PASS Element interface: element must inherit property "ariaRowIndex" with the proper type
-FAIL Element interface: element must inherit property "ariaRowIndexText" with the proper type assert_inherits: property "ariaRowIndexText" not found in prototype chain
+PASS Element interface: element must inherit property "ariaRowIndexText" with the proper type
 PASS Element interface: element must inherit property "ariaRowSpan" with the proper type
 PASS Element interface: element must inherit property "ariaSelected" with the proper type
 PASS Element interface: element must inherit property "ariaSetSize" with the proper type

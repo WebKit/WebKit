@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #import "WebProcess.h"
 #import <WebCore/CVUtilities.h>
 #import <WebCore/GraphicsLayerContentsDisplayDelegate.h>
+#import <WebCore/GraphicsLayerEnums.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/PlatformCALayer.h>
 #import <WebCore/PlatformCALayerDelegatedContents.h>
@@ -100,9 +101,9 @@ public:
             layer.clearContents();
     }
 
-    WebCore::GraphicsLayer::CompositingCoordinatesOrientation orientation() const final
+    WebCore::GraphicsLayerCompositingCoordinatesOrientation orientation() const final
     {
-        return WebCore::GraphicsLayer::CompositingCoordinatesOrientation::BottomUp;
+        return WebCore::GraphicsLayerCompositingCoordinatesOrientation::BottomUp;
     }
 
     void setDisplayBuffer(MachSendRight&& displayBuffer, RefPtr<DisplayBufferFence> finishedFence)
@@ -130,7 +131,7 @@ private:
 };
 
 class RemoteGraphicsContextGLProxyCocoa final : public RemoteGraphicsContextGLProxy {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RemoteGraphicsContextGLProxyCocoa);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteGraphicsContextGLProxyCocoa);
 public:
     // RemoteGraphicsContextGLProxy overrides.
@@ -145,14 +146,12 @@ private:
     {
     }
 
-    Ref<DisplayBufferDisplayDelegate> protectedLayerContentsDisplayDelegate() const { return m_layerContentsDisplayDelegate; }
-
     void addNewFence(Ref<DisplayBufferFence> newFence);
     static constexpr size_t maxPendingFences = 3;
     size_t m_oldestFenceIndex { 0 };
     std::array<RefPtr<DisplayBufferFence>, maxPendingFences> m_frameCompletionFences;
 
-    Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
+    const Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
     friend class RemoteGraphicsContextGLProxy;
 };
 
@@ -171,7 +170,7 @@ void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
         return;
     auto finishedFence = DisplayBufferFence::create(WTFMove(finishedSignaller));
     addNewFence(finishedFence);
-    protectedLayerContentsDisplayDelegate()->setDisplayBuffer(WTFMove(displayBufferSendRight), WTFMove(finishedFence));
+    m_layerContentsDisplayDelegate->setDisplayBuffer(WTFMove(displayBufferSendRight), WTFMove(finishedFence));
 }
 
 void RemoteGraphicsContextGLProxyCocoa::forceContextLost()

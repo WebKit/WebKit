@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style type="text/css">
+canvas {
+    width: 100px;
+    height: 100px;
+}
+</style>
+<canvas id="target"></canvas>
+<script src="../resources/runner.js"></script>
+<script>
+var source = new OffscreenCanvas(2000, 2000);
+var ctx1 = source.getContext("2d");
+ctx1.globalCompositeOperation = "copy";
+
+target.width = source.width;
+target.height = source.height;
+var ctx2 = target.getContext("2d");
+ctx2.globalCompositeOperation = "copy";
+var i = 0;
+PerfTestRunner.measureRunsPerSecond({run: function() {
+    ctx1.fillStyle = `rgba(0, ${i}, 0, 0.5)`;
+    ctx1.fillRect(0, 0, source.width, source.height);
+    i += 1;
+   if (i > 255)
+        i = 0;
+    ctx2.drawImage(source, 0, 0);   
+    ctx2.getImageData(0, 0, 1, 1); // FIXME: WebKit does not have backpressure, draws too much.
+}});
+</script>
+</body>
+</html>

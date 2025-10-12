@@ -29,6 +29,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/Site.h>
 #include <pal/SessionID.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>
@@ -41,19 +42,19 @@ class ProcessThrottlerActivity;
 class WebProcessPool;
 class WebsiteDataStore;
 
-class WebProcessCache final : public CanMakeCheckedPtr<WebProcessCache> {
+class WebProcessCache final : public AbstractRefCountedAndCanMakeWeakPtr<WebProcessCache> {
     WTF_MAKE_TZONE_ALLOCATED(WebProcessCache);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebProcessCache);
 public:
     explicit WebProcessCache(WebProcessPool&);
 
     bool addProcessIfPossible(Ref<WebProcessProxy>&&);
-    RefPtr<WebProcessProxy> takeProcess(const WebCore::Site&, WebsiteDataStore&, WebProcessProxy::LockdownMode, const API::PageConfiguration&);
+    RefPtr<WebProcessProxy> takeProcess(const WebCore::Site&, WebsiteDataStore&, WebProcessProxy::LockdownMode, WebProcessProxy::EnhancedSecurity, const API::PageConfiguration&);
+    RefPtr<WebProcessProxy> takeSharedProcess(const WebCore::Site& mainFrameSite, WebsiteDataStore&, WebProcessProxy::LockdownMode, WebProcessProxy::EnhancedSecurity, const API::PageConfiguration&);
 
     void updateCapacity(WebProcessPool&);
     unsigned capacity() const { return m_capacity; }
 
-    unsigned size() const { return m_processesPerSite.size(); }
+    unsigned size() const { return m_processesPerSite.size() + m_sharedProcessesPerSite.size(); }
 
     void clear();
     void setApplicationIsActive(bool);
@@ -63,6 +64,10 @@ public:
     enum class ShouldShutDownProcess : bool { No, Yes };
     void removeProcess(WebProcessProxy&, ShouldShutDownProcess);
     static void setCachedProcessSuspensionDelayForTesting(Seconds);
+    void setCachedProcessLifetimeForTesting(Seconds);
+
+    void ref() const final;
+    void deref() const final;
 
 private:
     static Seconds cachedProcessLifetime;
@@ -71,7 +76,7 @@ private:
     class CachedProcess : public RefCounted<CachedProcess> {
         WTF_MAKE_TZONE_ALLOCATED(CachedProcess);
     public:
-        static Ref<CachedProcess> create(Ref<WebProcessProxy>&&);
+        static Ref<CachedProcess> create(Ref<WebProcessProxy>&&, Seconds);
         ~CachedProcess();
 
         Ref<WebProcessProxy> takeProcess();
@@ -79,21 +84,21 @@ private:
         RefPtr<WebProcessProxy> protectedProcess() const { return m_process; }
         void startSuspensionTimer();
 
-#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
         bool isSuspended() const { return !m_suspensionTimer.isActive(); }
 #endif
 
     private:
-        explicit CachedProcess(Ref<WebProcessProxy>&&);
+        explicit CachedProcess(Ref<WebProcessProxy>&&, Seconds);
 
         void evictionTimerFired();
-#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
         void suspensionTimerFired();
 #endif
 
         RefPtr<WebProcessProxy> m_process;
         RunLoop::Timer m_evictionTimer;
-#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
         RunLoop::Timer m_suspensionTimer;
         RefPtr<ProcessThrottlerActivity> m_backgroundActivity;
 #endif
@@ -102,12 +107,16 @@ private:
     bool canCacheProcess(WebProcessProxy&) const;
     void platformInitialize();
     bool addProcess(Ref<CachedProcess>&&);
+    void evictAtRandomIfNeeded();
 
     unsigned m_capacity { 0 };
 
+    WeakRef<WebProcessPool> m_processPool;
     HashMap<uint64_t, Ref<CachedProcess>> m_pendingAddRequests;
     HashMap<WebCore::Site, Ref<CachedProcess>> m_processesPerSite;
+    HashMap<WebCore::Site, Ref<CachedProcess>> m_sharedProcessesPerSite;
     RunLoop::Timer m_evictionTimer;
+    Seconds m_cachedProcessLifetime;
 };
 
 } // namespace WebKit

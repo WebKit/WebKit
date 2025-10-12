@@ -96,6 +96,11 @@ NSURLCredential *Credential::nsCredential() const
     return m_nsCredential.get();
 }
 
+RetainPtr<NSURLCredential> Credential::protectedNSCredential() const
+{
+    return nsCredential();
+}
+
 bool Credential::isEmpty() const
 {
     if (m_nsCredential)
@@ -104,12 +109,17 @@ bool Credential::isEmpty() const
     return CredentialBase::isEmpty();
 }
 
+bool Credential::encodingRequiresPlatformData() const
+{
+    return m_nsCredential && encodingRequiresPlatformData(RetainPtr { m_nsCredential }.get());
+}
+
 bool Credential::platformCompare(const Credential& a, const Credential& b)
 {
     if (!a.m_nsCredential && !b.m_nsCredential)
         return true;
 
-    return [a.nsCredential() isEqual:b.nsCredential()];
+    return [a.protectedNSCredential() isEqual:b.protectedNSCredential().get()];
 }
 
 bool Credential::encodingRequiresPlatformData(NSURLCredential *credential)

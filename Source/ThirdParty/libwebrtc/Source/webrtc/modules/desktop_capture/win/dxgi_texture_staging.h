@@ -12,11 +12,11 @@
 #define MODULES_DESKTOP_CAPTURE_WIN_DXGI_TEXTURE_STAGING_H_
 
 #include <d3d11.h>
+#include <dxgi.h>
 #include <dxgi1_2.h>
 #include <wrl/client.h>
 
 #include "modules/desktop_capture/desktop_geometry.h"
-#include "modules/desktop_capture/desktop_region.h"
 #include "modules/desktop_capture/win/d3d_device.h"
 #include "modules/desktop_capture/win/dxgi_texture.h"
 

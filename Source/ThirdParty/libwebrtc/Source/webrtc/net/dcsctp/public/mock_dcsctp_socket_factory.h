@@ -12,7 +12,11 @@
 
 #include <memory>
 
+#include "absl/strings/string_view.h"
+#include "net/dcsctp/public/dcsctp_options.h"
+#include "net/dcsctp/public/dcsctp_socket.h"
 #include "net/dcsctp/public/dcsctp_socket_factory.h"
+#include "net/dcsctp/public/packet_observer.h"
 #include "test/gmock.h"
 
 namespace dcsctp {

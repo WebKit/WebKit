@@ -42,8 +42,7 @@ VideoSendStream::StreamStats::StreamStats() = default;
 VideoSendStream::StreamStats::~StreamStats() = default;
 
 std::string VideoSendStream::StreamStats::ToString() const {
-  char buf[1024];
-  rtc::SimpleStringBuilder ss(buf);
+  StringBuilder ss;
   ss << "type: " << StreamTypeToString(type);
   if (referenced_media_ssrc.has_value())
     ss << " (for: " << referenced_media_ssrc.value() << ")";
@@ -71,10 +70,9 @@ VideoSendStream::Stats::Stats() = default;
 VideoSendStream::Stats::~Stats() = default;
 
 std::string VideoSendStream::Stats::ToString(int64_t time_ms) const {
-  char buf[2048];
-  rtc::SimpleStringBuilder ss(buf);
+  StringBuilder ss;
   ss << "VideoSendStream stats: " << time_ms << ", {";
-  ss << "input_fps: " << rtc::StringFormat("%.1f", input_frame_rate) << ", ";
+  ss << "input_fps: " << StringFormat("%.1f", input_frame_rate) << ", ";
   ss << "encode_fps: " << encode_frame_rate << ", ";
   ss << "encode_ms: " << avg_encode_time_ms << ", ";
   ss << "encode_usage_perc: " << encode_usage_percent << ", ";
@@ -90,13 +88,13 @@ std::string VideoSendStream::Stats::ToString(int64_t time_ms) const {
      << ", ";
   ss << "#cpu_adaptations: " << number_of_cpu_adapt_changes << ", ";
   ss << "#quality_adaptations: " << number_of_quality_adapt_changes;
-  ss << '}';
+  ss << "}";
   for (const auto& substream : substreams) {
     if (substream.second.type ==
         VideoSendStream::StreamStats::StreamType::kMedia) {
       ss << " {ssrc: " << substream.first << ", ";
       ss << substream.second.ToString();
-      ss << '}';
+      ss << "}";
     }
   }
   return ss.str();
@@ -113,8 +111,7 @@ VideoSendStream::Config& VideoSendStream::Config::operator=(Config&&) = default;
 VideoSendStream::Config::Config::~Config() = default;
 
 std::string VideoSendStream::Config::ToString() const {
-  char buf[2 * 1024];
-  rtc::SimpleStringBuilder ss(buf);
+  StringBuilder ss;
   ss << "{encoder_settings: { experiment_cpu_load_estimator: "
      << (encoder_settings.experiment_cpu_load_estimator ? "on" : "off") << "}}";
   ss << ", rtp: " << rtp.ToString();
@@ -124,7 +121,7 @@ std::string VideoSendStream::Config::ToString() const {
   ss << ", target_delay_ms: " << target_delay_ms;
   ss << ", suspend_below_min_bitrate: "
      << (suspend_below_min_bitrate ? "on" : "off");
-  ss << '}';
+  ss << "}";
   return ss.str();
 }
 

@@ -30,7 +30,6 @@
 #include "BumpAllocator.h"
 #include "Chunk.h"
 #include "CryptoRandom.h"
-#include "DebugHeap.h"
 #include "Environment.h"
 #include "Gigacage.h"
 #include "HeapConstants.h"
@@ -38,6 +37,7 @@
 #include "Scavenger.h"
 #include "SmallLine.h"
 #include "SmallPage.h"
+#include "SystemHeap.h"
 #include "bmalloc.h"
 #include <thread>
 #include <vector>
@@ -53,7 +53,7 @@ namespace bmalloc {
 Heap::Heap(HeapKind kind, LockHolder&)
     : m_kind { kind }, m_constants { *HeapConstants::get() }
 {
-    BASSERT(!Environment::get()->isDebugHeapEnabled());
+    BASSERT(!Environment::get()->isSystemHeapEnabled());
 
     Gigacage::ensureGigacage();
 #if GIGACAGE_ENABLED

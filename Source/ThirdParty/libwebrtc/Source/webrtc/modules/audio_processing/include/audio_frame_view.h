@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_PROCESSING_INCLUDE_AUDIO_FRAME_VIEW_H_
 
 #include "api/audio/audio_view.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -30,7 +31,7 @@ class AudioFrameView {
   // channel pointers can be calculated based on that (which is what the class
   // now uses `DeinterleavedView<>` internally for).
   AudioFrameView(T* const* audio_samples, int num_channels, int channel_size)
-      : view_(num_channels && channel_size ? audio_samples[0] : nullptr,
+      : view_(num_channels && channel_size ? audio_samples : nullptr,
               channel_size,
               num_channels) {
     RTC_DCHECK_GE(view_.num_channels(), 0);

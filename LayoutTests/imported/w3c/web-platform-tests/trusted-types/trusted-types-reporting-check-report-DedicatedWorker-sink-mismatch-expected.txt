@@ -1,0 +1,7 @@
+
+PASS Passing a plain string to setTimeout works since it's report-only.
+PASS Passing a TrustedScript to setTimeout works.
+PASS Passing a plain string to eval throws.
+FAIL Test report-uri works with require-trusted-types-for violation. undefined is not an object (evaluating 'data[0]["body"]')
+FAIL Test number of sent reports. assert_equals: Report count was not what was expected. expected 3 but got 0
+

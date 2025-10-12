@@ -10,20 +10,31 @@
 
 #include "modules/audio_processing/gain_controller2.h"
 
+#include <algorithm>
+#include <atomic>
+#include <cmath>
 #include <memory>
-#include <utility>
+#include <optional>
 
 #include "api/audio/audio_frame.h"
+#include "api/audio/audio_processing.h"
+#include "api/audio/audio_view.h"
+#include "api/environment/environment.h"
+#include "api/field_trials_view.h"
 #include "common_audio/include/audio_util.h"
+#include "modules/audio_processing/agc2/adaptive_digital_gain_controller.h"
 #include "modules/audio_processing/agc2/agc2_common.h"
 #include "modules/audio_processing/agc2/cpu_features.h"
+#include "modules/audio_processing/agc2/input_volume_controller.h"
+#include "modules/audio_processing/agc2/interpolated_gain_curve.h"
+#include "modules/audio_processing/agc2/noise_level_estimator.h"
+#include "modules/audio_processing/agc2/saturation_protector.h"
+#include "modules/audio_processing/agc2/speech_level_estimator.h"
+#include "modules/audio_processing/agc2/vad_wrapper.h"
 #include "modules/audio_processing/audio_buffer.h"
-#include "modules/audio_processing/include/audio_frame_view.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/strings/string_builder.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 namespace {
@@ -37,15 +48,16 @@ constexpr int kLogLimiterStatsPeriodNumFrames =
     kLogLimiterStatsPeriodMs / kFrameLengthMs;
 
 // Detects the available CPU features and applies any kill-switches.
-AvailableCpuFeatures GetAllowedCpuFeatures() {
+AvailableCpuFeatures GetAllowedCpuFeatures(
+    const FieldTrialsView& field_trials) {
   AvailableCpuFeatures features = GetAvailableCpuFeatures();
-  if (field_trial::IsEnabled("WebRTC-Agc2SimdSse2KillSwitch")) {
+  if (field_trials.IsEnabled("WebRTC-Agc2SimdSse2KillSwitch")) {
     features.sse2 = false;
   }
-  if (field_trial::IsEnabled("WebRTC-Agc2SimdAvx2KillSwitch")) {
+  if (field_trials.IsEnabled("WebRTC-Agc2SimdAvx2KillSwitch")) {
     features.avx2 = false;
   }
-  if (field_trial::IsEnabled("WebRTC-Agc2SimdNeonKillSwitch")) {
+  if (field_trials.IsEnabled("WebRTC-Agc2SimdNeonKillSwitch")) {
     features.neon = false;
   }
   return features;
@@ -85,12 +97,13 @@ AudioLevels ComputeAudioLevels(DeinterleavedView<float> frame,
 std::atomic<int> GainController2::instance_count_(0);
 
 GainController2::GainController2(
+    const Environment& env,
     const Agc2Config& config,
     const InputVolumeControllerConfig& input_volume_controller_config,
     int sample_rate_hz,
     int num_channels,
     bool use_internal_vad)
-    : cpu_features_(GetAllowedCpuFeatures()),
+    : cpu_features_(GetAllowedCpuFeatures(env.field_trials())),
       data_dumper_(instance_count_.fetch_add(1) + 1),
       fixed_gain_applier_(
           /*hard_clip_samples=*/false,

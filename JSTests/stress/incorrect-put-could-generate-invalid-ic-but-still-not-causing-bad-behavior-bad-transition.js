@@ -1,6 +1,6 @@
 //@ mustCrash!
 //@ skip if $buildType != "debug" # crash relies on a Debug ASSERT
-//@ $skipModes << :lockdown # because signal handler not supported.
+//@ runNoCJIT
 
 function shouldBe(actual, expected) {
     if (actual !== expected)

@@ -23,6 +23,7 @@
 #include "config.h"
 #include "SVGTextPathElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "LegacyRenderSVGResource.h"
 #include "NodeName.h"
 #include "RenderSVGTextPath.h"
@@ -32,6 +33,7 @@
 #include "SVGNames.h"
 #include "SVGParsingError.h"
 #include "SVGPathElement.h"
+#include "Settings.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -163,6 +165,9 @@ void SVGTextPathElement::buildPendingResource()
         }
     } else if (RefPtr pathElement = dynamicDowncast<SVGPathElement>(*target.element))
         pathElement->addReferencingElement(*this);
+
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return;
 
     CheckedPtr renderer = this->renderer();
     if (!renderer)

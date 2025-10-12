@@ -43,6 +43,7 @@
 
 namespace WebCore {
 
+class Document;
 class GPUDisplayBufferDisplayDelegate;
 
 class GPUCanvasContextCocoa final : public GPUCanvasContext {
@@ -54,14 +55,15 @@ public:
     using CanvasType = Variant<RefPtr<HTMLCanvasElement>>;
 #endif
 
-    static std::unique_ptr<GPUCanvasContextCocoa> create(CanvasBase&, GPU&);
+    static std::unique_ptr<GPUCanvasContextCocoa> create(CanvasBase&, GPU&, Document*);
 
     DestinationColorSpace colorSpace() const override;
     bool compositingResultsNeedUpdating() const override { return m_compositingResultsNeedsUpdating; }
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
     bool needsPreparationForDisplay() const override { return true; }
     void prepareForDisplay() override;
-    ImageBufferPixelFormat pixelFormat() const override;
+    PixelFormat pixelFormat() const override;
+    bool isOpaque() const override;
     void reshape() override;
 
 
@@ -74,8 +76,13 @@ public:
     ExceptionOr<RefPtr<GPUTexture>> getCurrentTexture() override;
     RefPtr<ImageBuffer> transferToImageBuffer() override;
 
+#if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
+    void setDynamicRangeLimit(PlatformDynamicRangeLimit) override;
+    std::optional<double> getEffectiveDynamicRangeLimitValue() const override;
+#endif
+
 private:
-    explicit GPUCanvasContextCocoa(CanvasBase&, Ref<GPUCompositorIntegration>&&, Ref<GPUPresentationContext>&&);
+    explicit GPUCanvasContextCocoa(CanvasBase&, Ref<GPUCompositorIntegration>&&, Ref<GPUPresentationContext>&&, Document*);
 
     void markContextChangedAndNotifyCanvasObservers();
 
@@ -87,6 +94,12 @@ private:
     CanvasType htmlOrOffscreenCanvas() const;
     ExceptionOr<void> configure(GPUCanvasConfiguration&&, bool);
     void present(uint32_t frameIndex);
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    float computeContentsHeadroom();
+    void updateContentsHeadroom();
+    void updateScreenHeadroom(float, bool suppressEDR);
+    void updateScreenHeadroomFromScreenProperties();
+#endif // HAVE(SUPPORT_HDR_DISPLAY)
 
     struct Configuration {
         Ref<GPUDevice> device;
@@ -108,6 +121,13 @@ private:
 
     GPUIntegerCoordinate m_width { 0 };
     GPUIntegerCoordinate m_height { 0 };
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    using ScreenPropertiesChangedObserver = Observer<void(PlatformDisplayID)>;
+    std::optional<ScreenPropertiesChangedObserver> m_screenPropertiesChangedObserver;
+    PlatformDynamicRangeLimit m_dynamicRangeLimit { PlatformDynamicRangeLimit::initialValue() };
+    float m_currentEDRHeadroom { 1 };
+    bool m_suppressEDR { false };
+#endif // HAVE(SUPPORT_HDR_DISPLAY)
     bool m_compositingResultsNeedsUpdating { false };
 };
 

@@ -21,15 +21,15 @@
 
 #include "SVGTextLayoutAttributes.h"
 #include "TextRun.h"
-#include "WidthIterator.h"
-#include "platform/graphics/ComplexTextController.h"
 
 namespace WebCore {
 
+class ComplexTextController;
 class RenderElement;
 class RenderSVGInlineText;
 class RenderSVGText;
 struct MeasureTextData;
+struct WidthIterator;
 
 class SVGTextMetricsBuilder {
     WTF_MAKE_NONCOPYABLE(SVGTextMetricsBuilder);
@@ -39,32 +39,27 @@ public:
     void buildMetricsAndLayoutAttributes(RenderSVGText&, RenderSVGInlineText* stopAtLeaf, SVGCharacterDataMap& allCharactersMap);
 
 private:
-    bool advance();
-    void advanceSimpleText();
-    void advanceComplexText();
+    template<typename Iterator> bool advance(Iterator&);
+    void advanceIterator(WidthIterator&);
+    void advanceIterator(ComplexTextController&);
     bool currentCharacterStartsSurrogatePair() const;
 
     void initializeMeasurementWithTextRenderer(RenderSVGInlineText&);
     void walkTree(RenderElement&, RenderSVGInlineText* stopAtLeaf, MeasureTextData&);
-    std::tuple<unsigned, UChar> measureTextRenderer(RenderSVGInlineText&, const MeasureTextData&, std::tuple<unsigned, UChar>);
+    std::tuple<unsigned, char16_t> measureTextRenderer(RenderSVGInlineText&, const MeasureTextData&, std::tuple<unsigned, char16_t>);
+
+    template<typename Iterator> std::tuple<unsigned, char16_t> measureTextRendererWithIterator(Iterator&, RenderSVGInlineText&, const MeasureTextData&, std::tuple<unsigned, char16_t>);
 
     SingleThreadWeakPtr<RenderSVGInlineText> m_text;
     TextRun m_run;
-    unsigned m_textPosition;
+    unsigned m_textPosition { 0 };
     bool m_isComplexText { false };
     bool m_canUseSimplifiedTextMeasuring { false };
     SVGTextMetrics m_currentMetrics;
-    float m_totalWidth;
-
-    // Simple text only.
-    std::unique_ptr<WidthIterator> m_simpleWidthIterator;
+    float m_totalWidth { 0 };
 
     // Complex text only.
     SVGTextMetrics m_complexStartToCurrentMetrics;
-
-#if PLATFORM(COCOA)
-    std::unique_ptr<ComplexTextController> m_complexTextController;
-#endif
 };
 
 } // namespace WebCore

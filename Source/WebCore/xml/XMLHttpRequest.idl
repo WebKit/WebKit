@@ -42,7 +42,6 @@ enum XMLHttpRequestResponseType {
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,DedicatedWorker,SharedWorker),
     JSCustomMarkFunction,
-    JSGenerateToJSObject,
     JSGenerateToNativeObject,
     ReportExtraMemoryCost,
 ] interface XMLHttpRequest : XMLHttpRequestEventTarget {

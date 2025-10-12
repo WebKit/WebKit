@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2008 Google Inc. All rights reserved.
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,12 +33,11 @@
 #include "ScriptCachedFrameData.h"
 
 #include "CommonVM.h"
-#include "Document.h"
-#include "GCController.h"
+#include "DocumentPage.h"
+#include "FrameConsoleClient.h"
+#include "GarbageCollectionController.h"
 #include "JSDOMWindow.h"
-#include "LocalFrame.h"
-#include "Page.h"
-#include "PageConsoleClient.h"
+#include "LocalFrameInlines.h"
 #include "PageGroup.h"
 #include "ScriptController.h"
 #include <JavaScriptCore/JSLock.h>
@@ -81,8 +80,8 @@ void ScriptCachedFrameData::restore(LocalFrame& frame)
         if (auto* window = m_windows.get(world).get())
             windowProxy->setWindow(window->vm(), *window);
         else {
-            ASSERT(frame.document()->domWindow());
-            auto& domWindow = *frame.document()->domWindow();
+            ASSERT(frame.document()->window());
+            auto& domWindow = *frame.document()->window();
             if (&windowProxy->wrapped() == &domWindow)
                 continue;
 
@@ -94,8 +93,7 @@ void ScriptCachedFrameData::restore(LocalFrame& frame)
             }
         }
 
-        if (page)
-            windowProxy->window()->setConsoleClient(page->console());
+        windowProxy->window()->setConsoleClient(frame.console());
     }
 }
 
@@ -106,7 +104,7 @@ void ScriptCachedFrameData::clear()
 
     JSLockHolder lock(commonVM());
     m_windows.clear();
-    GCController::singleton().garbageCollectSoon();
+    GarbageCollectionController::singleton().garbageCollectSoon();
 }
 
 } // namespace WebCore

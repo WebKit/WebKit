@@ -23,9 +23,9 @@
 
 #pragma once
 
-#include "ExceptionDetails.h"
-#include "ExceptionOr.h"
 #include <JavaScriptCore/ThrowScope.h>
+#include <WebCore/ExceptionDetails.h>
+#include <WebCore/ExceptionOr.h>
 
 namespace JSC {
 class CatchScope;

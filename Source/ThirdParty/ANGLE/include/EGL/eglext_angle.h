@@ -96,6 +96,8 @@
 #ifndef EGL_ANGLE_platform_angle_webgpu
 #define EGL_ANGLE_platform_angle_webgpu 1
 #define EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE 0x34DD
+#define EGL_PLATFORM_ANGLE_DAWN_PROC_TABLE_ANGLE 0x3468
+#define EGL_PLATFORM_ANGLE_WEBGPU_DEVICE_ANGLE 0x34F6
 #endif /* EGL_ANGLE_platform_angle_webgpu */
 
 #ifndef EGL_ANGLE_platform_angle_vulkan
@@ -447,6 +449,24 @@ EGLAPI void EGLAPIENTRY eglSetValidationEnabledANGLE(EGLBoolean validationState)
 #define EGL_ANGLE_memory_usage_report 1
 #define EGL_CONTEXT_MEMORY_USAGE_ANGLE 0x3462
 #endif /* EGL_ANGLE_memory_usage_report */
+
+#ifndef EGL_ANGLE_device_webgpu
+#define EGL_ANGLE_device_webgpu 1
+#define EGL_WEBGPU_DEVICE_ANGLE 0x34F3
+#define EGL_WEBGPU_ADAPTER_ANGLE 0x34F4
+#endif /* EGL_ANGLE_device_webgpu */
+
+#ifndef ANGLE_webgpu_texture_client_buffer
+#define ANGLE_webgpu_texture_client_buffer 1
+#define EGL_WEBGPU_TEXTURE_ANGLE 0x34F5
+#define EGL_TEXTURE_TYPE_ANGLE 0x345C
+#define EGL_TEXTURE_INTERNAL_FORMAT_ANGLE 0x345D
+#endif /* ANGLE_webgpu_texture_client_buffer */
+
+#ifndef EGL_ANGLE_create_context_passthrough_shaders
+#define EGL_ANGLE_create_context_passthrough_shaders 1
+#define EGL_CONTEXT_PASSTHROUGH_SHADERS_ANGLE 0x3463
+#endif /* EGL_ANGLE_create_context_passthrough_shaders */
 
 // clang-format on
 

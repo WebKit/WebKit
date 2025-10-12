@@ -56,7 +56,7 @@ bool ValidateCreateShaderProgramvBase(const Context *context,
                                       angle::EntryPoint entryPoint,
                                       ShaderType typePacked,
                                       GLsizei count,
-                                      const GLchar **strings);
+                                      const GLchar *const *strings);
 bool ValidateDeleteProgramPipelinesBase(const Context *context,
                                         angle::EntryPoint entryPoint,
                                         GLsizei n,

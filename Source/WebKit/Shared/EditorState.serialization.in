@@ -56,6 +56,7 @@ struct WebKit::EditorState {
     bool isInPlugin;
 #if PLATFORM(MAC)
     bool canEnableAutomaticSpellingCorrection;
+    bool inputMethodUsesCorrectKeyEventOrder;
 #endif
     std::optional<WebKit::EditorState::PostLayoutData> postLayoutData;
     std::optional<WebKit::EditorState::VisualData> visualData;
@@ -109,7 +110,6 @@ using WebCore::ScrollOffset = WebCore::IntPoint;
     uint64_t surroundingContextCursorPosition;
     uint64_t surroundingContextSelectionPosition;
 #endif
-    std::optional<WebCore::FontAttributes> fontAttributes;
     bool canCut;
     bool canCopy;
     bool canPaste;
@@ -133,5 +133,6 @@ using WebCore::ScrollOffset = WebCore::IntPoint;
     std::optional<WebCore::ScrollingNodeID> scrollingNodeIDAtStart;
     std::optional<WebCore::ScrollingNodeID> scrollingNodeIDAtEnd;
     WebCore::ScrollOffset enclosingScrollOffset;
+    bool enclosingLayerUsesContentsLayer;
 #endif
 };

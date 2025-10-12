@@ -27,6 +27,7 @@
 #include "WebPluginInfoProvider.h"
 
 #include <WebCore/Page.h>
+#include <WebCore/Settings.h>
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(PDF_PLUGIN)

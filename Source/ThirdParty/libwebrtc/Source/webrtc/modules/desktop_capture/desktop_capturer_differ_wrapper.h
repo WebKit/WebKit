@@ -12,9 +12,8 @@
 #define MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURER_DIFFER_WRAPPER_H_
 
 #include <memory>
-#if defined(WEBRTC_USE_GIO)
+
 #include "modules/desktop_capture/desktop_capture_metadata.h"
-#endif  // defined(WEBRTC_USE_GIO)
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"

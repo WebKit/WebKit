@@ -1,5 +1,6 @@
 
 PASS SVGGeometryElement.prototype.isPointInStroke, no arguments.
+PASS SVGGeometryElement.prototype.isPointInStroke, null/undefined.
 PASS SVGGeometryElement.prototype.isPointInStroke, non-finite argument.
 PASS SVGGeometryElement.prototype.isPointInStroke, functional test.
 PASS SVGGeometryElement.prototype.isPointInStroke, 'stroke-dasharray'.

@@ -1,0 +1,74 @@
+# These are the layout test expectations for the GTK port of WebKit when running with GTK3
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+#
+# Never add any test to this file without opening a bug on bugzilla.webkit.org or a comment
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# TESTS PASSING
+#
+# These tests are passing on GTK3 but they do not in other ports or GTK4
+# Note: Passing tests should be on the top of the file to ensure that
+#       expected failures below are not overriden by a folder that is
+#       set to Pass to unskip it from the main expectations file and
+#       declared after the expected failure.
+#       The layout test runner evaluates the rules from top to bottom and
+#       it picks as the valid rule the last one matching.
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/277166 fast/dom/Window/window-focus-self.html [ Pass ]
+webkit.org/b/277166 fast/dom/Window/window-resize-and-move-arguments.html [ Pass ]
+webkit.org/b/277166 fast/dom/Window/window-resize.html [ Pass ]
+webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-left.html [ Pass ]
+webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-screenx.html [ Pass ]
+webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-top.html [ Pass ]
+webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-screenx-screeny.html [ Pass ]
+webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-top-left.html [ Pass ]
+
+webkit.org/b/277401 editing/pasteboard/data-transfer-set-data-sanitize-url-when-copying-in-null-origin.html [ Pass ]
+webkit.org/b/277402 fast/events/context-activated-by-key-event.html [ Pass ]
+webkit.org/b/277414 imported/w3c/web-platform-tests/html/interaction/focus/document-level-focus-apis/document-has-system-focus.html [ Pass ]
+
+webkit.org/b/277426 editing/async-clipboard/clipboard-read-text-same-origin.html [ Pass ]
+
+webkit.org/b/277427 fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html [ Pass ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of PASSING tests. See below where to put expected failures.
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/277166 fast/dom/Window/window-focus-self.html [ Failure ]
+webkit.org/b/277166 fast/dom/Window/window-resize-and-move-arguments.html [ Failure ]
+webkit.org/b/277166 fast/dom/Window/window-resize.html [ Failure ]
+webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-left.html [ Failure ]
+webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-screenx.html [ Failure ]
+webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-top.html [ Failure ]
+webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-screenx-screeny.html [ Failure ]
+webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-top-left.html [ Failure ]
+
+webkit.org/b/277399 fast/text/hyphenate-locale.html [ Failure ]
+webkit.org/b/277401 editing/pasteboard/data-transfer-set-data-sanitize-url-when-copying-in-null-origin.html [ Failure ]
+webkit.org/b/277402 fast/events/context-activated-by-key-event.html [ Failure ]
+webkit.org/b/277403 fast/events/drag-parent-node.html [ Failure ]
+webkit.org/b/277405 fast/events/dropzone-005.html [ Failure ]
+webkit.org/b/277414 imported/w3c/web-platform-tests/html/interaction/focus/document-level-focus-apis/document-has-system-focus.html [ Failure ]
+
+webkit.org/b/277426 editing/async-clipboard/clipboard-read-text-same-origin.html [ Skip ] # Timeout
+
+webkit.org/b/277427 fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html [ Skip ] # Timeout
+
+gamepad/gamepad-user-activation.html [ Failure ]
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# Triaged Expectations
+# * KEEP THE SECTIONS SORTED ALPHABETICALLY.
+# * ALWAYS WITH BUG ENTRIES for things like Timeout, Failure and Crash.
+#
+# For more info, check the glib/TestExpectations file
+# If unsure of where to put the expectations, add the test to the end of the file and
+# ask for triaging.
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# End of Triaged Expectations
+#//////////////////////////////////////////////////////////////////////////////////////////

@@ -1,9 +1,3 @@
-CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/dummy.js?from-header&without-nonce because it does not appear in the script-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load http://localhost:8800/resources/testharness.js because it does not appear in the script-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load http://localhost:8800/resources/testharnessreport.js because it does not appear in the script-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load http://localhost:8800/common/utils.js because it does not appear in the script-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/preload_helper.js because it does not appear in the script-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x8

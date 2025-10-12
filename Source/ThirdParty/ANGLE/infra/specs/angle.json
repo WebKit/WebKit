@@ -423,6 +423,35 @@
       {
         "args": [
           "--use-angle=vulkan",
+          "--surface-height=64",
+          "--surface-width=64",
+          "--deqp-base-seed=1",
+          "-v",
+          "--shard-timeout=500"
+        ],
+        "merge": {
+          "script": "//scripts/angle_deqp_test_merge.py"
+        },
+        "name": "angle_deqp_khr_glesext_vulkan_tests",
+        "swarming": {
+          "containment_type": "AUTO",
+          "dimensions": {
+            "device_os": "AP1A.240405.002",
+            "device_os_type": "userdebug",
+            "device_type": "oriole",
+            "os": "Android",
+            "pool": "chromium.tests.gpu"
+          },
+          "expiration": 21600,
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_deqp_khr_glesext_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_glesext_tests/",
+        "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
+          "--use-angle=vulkan",
           "-v",
           "--shard-timeout=500"
         ],
@@ -616,7 +645,8 @@
         "args": [
           "--use-angle=vulkan",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -642,7 +672,8 @@
         "args": [
           "--use-angle=vulkan",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -668,7 +699,8 @@
         "args": [
           "--use-angle=vulkan",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -693,7 +725,8 @@
         "args": [
           "--use-angle=vulkan",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -718,7 +751,8 @@
         "args": [
           "--use-angle=vulkan",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -744,7 +778,8 @@
         "args": [
           "--use-angle=vulkan",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -769,7 +804,8 @@
         "args": [
           "--use-angle=vulkan",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -794,7 +830,8 @@
         "args": [
           "--use-angle=vulkan",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -823,7 +860,8 @@
           "--surface-width=64",
           "--deqp-base-seed=1",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -851,7 +889,8 @@
           "--surface-width=64",
           "--deqp-base-seed=1",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -879,7 +918,8 @@
           "--surface-height=64",
           "--surface-width=64",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -907,7 +947,8 @@
           "--surface-width=113",
           "--surface-height=47",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -936,7 +977,8 @@
           "--surface-height=64",
           "--deqp-gl-config-name=rgba8888d24s8",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -965,7 +1007,8 @@
           "--surface-height=-1",
           "--deqp-gl-config-name=rgba8888d24s8",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -993,7 +1036,8 @@
           "--surface-width=64",
           "--deqp-base-seed=1",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -1017,8 +1061,38 @@
       {
         "args": [
           "--use-angle=vulkan",
+          "--surface-height=64",
+          "--surface-width=64",
+          "--deqp-base-seed=1",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
+        ],
+        "merge": {
+          "script": "//scripts/angle_deqp_test_merge.py"
+        },
+        "name": "angle_deqp_khr_glesext_vulkan_tests",
+        "swarming": {
+          "containment_type": "AUTO",
+          "dimensions": {
+            "device_os": "AP3A.240905.015.A2",
+            "device_os_type": "user",
+            "device_type": "s5e9945",
+            "os": "Android",
+            "pool": "chromium.tests.gpu"
+          },
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_deqp_khr_glesext_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_glesext_tests/",
+        "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
+          "--use-angle=vulkan",
+          "-v",
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -1043,7 +1117,8 @@
         "args": [
           "--use-angle=vulkan",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -1068,7 +1143,8 @@
         "args": [
           "--use-angle=vulkan",
           "-v",
-          "--shard-timeout=500"
+          "--shard-timeout=500",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -1094,7 +1170,8 @@
           "--gtest_filter=*Vulkan*:-*Vulkan_SwiftShader*",
           "--shard-timeout=300",
           "-v",
-          "--render-test-output-dir=${ISOLATED_OUTDIR}"
+          "--render-test-output-dir=${ISOLATED_OUTDIR}",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
@@ -1118,7 +1195,8 @@
       },
       {
         "args": [
-          "-v"
+          "-v",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
@@ -1146,7 +1224,8 @@
           "--test-machine-name",
           "${buildername}",
           "-v",
-          "--git-revision=${got_angle_revision}"
+          "--git-revision=${got_angle_revision}",
+          "--do-not-store-tombstones"
         ],
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
@@ -1654,6 +1733,34 @@
         },
         "test": "angle_deqp_khr_gles3_tests",
         "test_id_prefix": "ninja://src/tests:angle_deqp_khr_gles3_tests/",
+        "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
+          "--use-angle=vulkan",
+          "--surface-height=64",
+          "--surface-width=64",
+          "--deqp-base-seed=1",
+          "-v",
+          "--shard-timeout=500"
+        ],
+        "merge": {
+          "script": "//scripts/angle_deqp_test_merge.py"
+        },
+        "name": "angle_deqp_khr_glesext_vulkan_tests",
+        "swarming": {
+          "containment_type": "AUTO",
+          "dimensions": {
+            "device_os": "RP1A.201105.002",
+            "device_os_type": "userdebug",
+            "device_type": "flame",
+            "os": "Android",
+            "pool": "chromium.tests.gpu"
+          },
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_deqp_khr_glesext_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_glesext_tests/",
         "use_isolated_scripts_api": true
       },
       {
@@ -2454,6 +2561,34 @@
         },
         "test": "angle_deqp_khr_gles3_tests",
         "test_id_prefix": "ninja://src/tests:angle_deqp_khr_gles3_tests/",
+        "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
+          "--use-angle=vulkan",
+          "--surface-height=64",
+          "--surface-width=64",
+          "--deqp-base-seed=1",
+          "-v",
+          "--shard-timeout=500"
+        ],
+        "merge": {
+          "script": "//scripts/angle_deqp_test_merge.py"
+        },
+        "name": "angle_deqp_khr_glesext_vulkan_tests",
+        "swarming": {
+          "containment_type": "AUTO",
+          "dimensions": {
+            "device_os": "TP1A.220624.021",
+            "device_os_type": "userdebug",
+            "device_type": "oriole",
+            "os": "Android",
+            "pool": "chromium.tests.gpu"
+          },
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_deqp_khr_glesext_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_glesext_tests/",
         "use_isolated_scripts_api": true
       },
       {
@@ -3284,6 +3419,31 @@
       {
         "args": [
           "--use-angle=vulkan",
+          "--surface-height=64",
+          "--surface-width=64",
+          "--deqp-base-seed=1",
+          "--no-xvfb"
+        ],
+        "merge": {
+          "script": "//scripts/angle_deqp_test_merge.py"
+        },
+        "name": "angle_deqp_khr_glesext_vulkan_tests",
+        "swarming": {
+          "containment_type": "AUTO",
+          "dimensions": {
+            "gpu": "10de:2184-535.183.01",
+            "os": "Ubuntu-22.04",
+            "pool": "chromium.tests.gpu"
+          },
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_deqp_khr_glesext_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_glesext_tests/",
+        "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
+          "--use-angle=vulkan",
           "--no-xvfb"
         ],
         "merge": {
@@ -3365,7 +3525,7 @@
             "pool": "chromium.tests.gpu"
           },
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
-          "shards": 2
+          "shards": 3
         },
         "test": "angle_end2end_tests",
         "test_id_prefix": "ninja://src/tests:angle_end2end_tests/",
@@ -3759,7 +3919,8 @@
             "os": "Ubuntu-22.04",
             "pool": "chromium.tests.gpu"
           },
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
+          "shards": 3
         },
         "test": "angle_restricted_trace_gold_tests",
         "test_id_prefix": "ninja://src/tests/restricted_traces:angle_restricted_trace_gold_tests/"
@@ -3867,7 +4028,7 @@
             "pool": "chromium.tests.gpu"
           },
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
-          "shards": 2
+          "shards": 3
         },
         "test": "angle_end2end_tests",
         "test_id_prefix": "ninja://src/tests:angle_end2end_tests/",
@@ -4009,7 +4170,8 @@
             "os": "Ubuntu-22.04",
             "pool": "chromium.tests.gpu"
           },
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
+          "shards": 3
         },
         "test": "angle_restricted_trace_gold_tests",
         "test_id_prefix": "ninja://src/tests/restricted_traces:angle_restricted_trace_gold_tests/"
@@ -4723,6 +4885,31 @@
       {
         "args": [
           "--use-angle=vulkan",
+          "--surface-height=64",
+          "--surface-width=64",
+          "--deqp-base-seed=1",
+          "--no-xvfb"
+        ],
+        "merge": {
+          "script": "//scripts/angle_deqp_test_merge.py"
+        },
+        "name": "angle_deqp_khr_glesext_vulkan_tests",
+        "swarming": {
+          "containment_type": "AUTO",
+          "dimensions": {
+            "gpu": "10de:2184-440.100",
+            "os": "Ubuntu-18.04.5|Ubuntu-18.04.6",
+            "pool": "chromium.tests.gpu"
+          },
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_deqp_khr_glesext_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_glesext_tests/",
+        "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
+          "--use-angle=vulkan",
           "--no-xvfb"
         ],
         "merge": {
@@ -4804,7 +4991,7 @@
             "pool": "chromium.tests.gpu"
           },
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
-          "shards": 2
+          "shards": 3
         },
         "test": "angle_end2end_tests",
         "test_id_prefix": "ninja://src/tests:angle_end2end_tests/",
@@ -5198,7 +5385,8 @@
             "os": "Ubuntu-18.04.5|Ubuntu-18.04.6",
             "pool": "chromium.tests.gpu"
           },
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
+          "shards": 3
         },
         "test": "angle_restricted_trace_gold_tests",
         "test_id_prefix": "ninja://src/tests/restricted_traces:angle_restricted_trace_gold_tests/"
@@ -6070,7 +6258,7 @@
           "hard_timeout": 900,
           "io_timeout": 900,
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
-          "shards": 8
+          "shards": 11
         },
         "test": "angle_deqp_gles3_tests",
         "test_id_prefix": "ninja://src/tests:angle_deqp_gles3_tests/",
@@ -6303,7 +6491,7 @@
           "hard_timeout": 900,
           "io_timeout": 900,
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
-          "shards": 8
+          "shards": 11
         },
         "test": "angle_deqp_gles3_tests",
         "test_id_prefix": "ninja://src/tests:angle_deqp_gles3_tests/",
@@ -7129,7 +7317,6 @@
       }
     ]
   },
-  "mac-exp-nvidia": {},
   "mac-intel": {
     "gtest_tests": [
       {
@@ -7339,57 +7526,6 @@
       }
     ]
   },
-  "mac-nvidia": {
-    "gtest_tests": [
-      {
-        "args": [
-          "--gtest_filter=-*Vulkan_SwiftShader*",
-          "--flaky-retries=2"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_end2end_tests",
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "cpu": "x86-64",
-            "display_attached": "1",
-            "gpu": "10de:0fe9",
-            "hidpi": "1",
-            "os": "Mac-11.7.9",
-            "pool": "chromium.tests.gpu"
-          },
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
-          "shards": 2
-        },
-        "test": "angle_end2end_tests",
-        "test_id_prefix": "ninja://src/tests:angle_end2end_tests/",
-        "use_isolated_scripts_api": true
-      },
-      {
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_unittests",
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "cpu": "x86-64",
-            "display_attached": "1",
-            "gpu": "10de:0fe9",
-            "hidpi": "1",
-            "os": "Mac-11.7.9",
-            "pool": "chromium.tests.gpu"
-          },
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_unittests",
-        "test_id_prefix": "ninja://src/tests:angle_unittests/",
-        "use_isolated_scripts_api": true
-      }
-    ]
-  },
   "win10-x64-exp-intel": {
     "gtest_tests": [
       {
@@ -7433,7 +7569,7 @@
             "pool": "chromium.tests.gpu"
           },
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
-          "shards": 3
+          "shards": 5
         },
         "test": "angle_end2end_tests",
         "test_id_prefix": "ninja://src/tests:angle_end2end_tests/",
@@ -7574,7 +7710,8 @@
             "os": "Windows-10-19045.3930",
             "pool": "chromium.tests.gpu"
           },
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
+          "shards": 4
         },
         "test": "angle_restricted_trace_gold_tests",
         "test_id_prefix": "ninja://src/tests/restricted_traces:angle_restricted_trace_gold_tests/"
@@ -7632,7 +7769,7 @@
             "pool": "chromium.tests.gpu"
           },
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
-          "shards": 2
+          "shards": 4
         },
         "test": "angle_trace_perf_tests",
         "test_id_prefix": "ninja://src/tests:angle_trace_perf_tests/"
@@ -7682,7 +7819,7 @@
             "pool": "chromium.tests.gpu"
           },
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
-          "shards": 4
+          "shards": 10
         },
         "test": "angle_end2end_tests",
         "test_id_prefix": "ninja://src/tests:angle_end2end_tests/",
@@ -7827,7 +7964,8 @@
             "os": "Windows-10",
             "pool": "chromium.tests.gpu"
           },
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
+          "shards": 5
         },
         "test": "angle_restricted_trace_gold_tests",
         "test_id_prefix": "ninja://src/tests/restricted_traces:angle_restricted_trace_gold_tests/"
@@ -7885,7 +8023,7 @@
             "pool": "chromium.tests.gpu"
           },
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
-          "shards": 2
+          "shards": 3
         },
         "test": "angle_trace_perf_tests",
         "test_id_prefix": "ninja://src/tests:angle_trace_perf_tests/"
@@ -8635,6 +8773,31 @@
       },
       {
         "args": [
+          "--use-angle=vulkan",
+          "--surface-height=64",
+          "--surface-width=64",
+          "--deqp-base-seed=1"
+        ],
+        "merge": {
+          "script": "//scripts/angle_deqp_test_merge.py"
+        },
+        "name": "angle_deqp_khr_glesext_vulkan_tests",
+        "swarming": {
+          "containment_type": "AUTO",
+          "dimensions": {
+            "display_attached": "1",
+            "gpu": "10de:2184-31.0.15.4601",
+            "os": "Windows-10-19045",
+            "pool": "chromium.tests.gpu"
+          },
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_deqp_khr_glesext_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_glesext_tests/",
+        "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
           "--use-angle=vulkan"
         ],
         "merge": {
@@ -8716,7 +8879,7 @@
             "pool": "chromium.tests.gpu"
           },
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
-          "shards": 2
+          "shards": 3
         },
         "test": "angle_end2end_tests",
         "test_id_prefix": "ninja://src/tests:angle_end2end_tests/",
@@ -8857,7 +9020,8 @@
             "os": "Windows-10-19045",
             "pool": "chromium.tests.gpu"
           },
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
+          "shards": 3
         },
         "test": "angle_restricted_trace_gold_tests",
         "test_id_prefix": "ninja://src/tests/restricted_traces:angle_restricted_trace_gold_tests/"
@@ -9515,7 +9679,7 @@
           "hard_timeout": 900,
           "io_timeout": 900,
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
-          "shards": 10
+          "shards": 14
         },
         "test": "angle_end2end_tests",
         "test_id_prefix": "ninja://src/tests:angle_end2end_tests/",

@@ -1,21 +1,20 @@
-/* Copyright (c) 2024, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */
+// Copyright 2024 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 //! Helpers to ensure that some temporary objects are always freed.
 
-use crate::initialized_struct;
+use crate::{initialized_struct, FfiSlice};
 
 /// A scoped `EC_KEY`.
 pub struct EvpPkey(*mut bssl_sys::EVP_PKEY);
@@ -31,6 +30,48 @@ impl EvpPkey {
 
     pub fn from_ptr(ptr: *mut bssl_sys::EVP_PKEY) -> Self {
         EvpPkey(ptr)
+    }
+
+    pub fn from_ptr_or_null(ptr: *mut bssl_sys::EVP_PKEY) -> Option<Self> {
+        if ptr.is_null() {
+            None
+        } else {
+            Some(EvpPkey::from_ptr(ptr))
+        }
+    }
+
+    pub fn from_der_subject_public_key_info(
+        spki: &[u8],
+        algs: &[*const bssl_sys::EVP_PKEY_ALG],
+    ) -> Option<Self> {
+        EvpPkey::from_ptr_or_null(
+            // Safety: Both input buffers are valid.
+            unsafe {
+                bssl_sys::EVP_PKEY_from_subject_public_key_info(
+                    spki.as_ffi_ptr(),
+                    spki.len(),
+                    algs.as_ffi_ptr(),
+                    algs.len(),
+                )
+            },
+        )
+    }
+
+    pub fn from_der_private_key_info(
+        spki: &[u8],
+        algs: &[*const bssl_sys::EVP_PKEY_ALG],
+    ) -> Option<Self> {
+        EvpPkey::from_ptr_or_null(
+            // Safety: Both input buffers are valid.
+            unsafe {
+                bssl_sys::EVP_PKEY_from_private_key_info(
+                    spki.as_ffi_ptr(),
+                    spki.len(),
+                    algs.as_ffi_ptr(),
+                    algs.len(),
+                )
+            },
+        )
     }
 
     pub fn as_ffi_ptr(&mut self) -> *mut bssl_sys::EVP_PKEY {

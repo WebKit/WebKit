@@ -1,0 +1,77 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filter-basic-blur-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filter-boundary-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filter-clip-rect-2-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filter-edge-clipping-2-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filter-edge-mirror-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filter-edge-pixels-2-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filter-plus-will-change-opacity-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filter-svg-blur-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filter-svg-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filters-grayscale-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filters-grayscale-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filters-grayscale-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/background-image-blur-repaint-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/clip-under-filter-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/clip-under-filter-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/clip-under-filter-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/drop-shadow-clipped-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/dynamic-filter-changes-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-add-hw-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-after-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-delete-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-displacement-negative-scale-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-feimage-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-feimage-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-feimage-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-feimage-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-lighting-no-light.tentative-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-local-url-with-base-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-merge-no-inputs.tentative-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-obb-dimensions-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-on-span-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-on-transparent-element-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-rename-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-rename-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-source-alpha-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-source-alpha-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/empty-element-with-filter-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/fecomposite-non-zero-inoffset-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/filter-effect-remove-unattached-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/filter-region-negative-positioned-child-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/filter-region-transformed-child-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/filter-region-transformed-composited-child-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/filter-turbulence-invalid-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/filter-url-to-non-existent-filter-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/filters-drop-shadow-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/filters-drop-shadow-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/filters-drop-shadow-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/filters-opacity-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/filters-opacity-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/green-100x100.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/green-98-100x100.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/green-blue-stripe-100x100.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/reference-filter-update-on-attribute-change-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/remove-filter-repaint-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/repaint-added-backdrop-filter-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/root-element-with-opacity-filter-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/svg-feflood-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/svg-feimage-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/svg-feoffset-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/svg-relative-urls-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/svg-relative-urls-002-ref.html

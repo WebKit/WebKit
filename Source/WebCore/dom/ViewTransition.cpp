@@ -33,8 +33,10 @@
 #include "CSSValuePool.h"
 #include "CheckVisibilityOptions.h"
 #include "ContainerNodeInlines.h"
-#include "Document.h"
+#include "ContextDestructionObserverInlines.h"
+#include "DocumentEventLoop.h"
 #include "DocumentTimeline.h"
+#include "DocumentView.h"
 #include "ElementInlines.h"
 #include "FrameSnapshotting.h"
 #include "HostWindow.h"
@@ -58,6 +60,7 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "Styleable.h"
+#include "TransformState.h"
 #include "ViewTransitionTypeSet.h"
 #include "WebAnimation.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -131,8 +134,6 @@ RefPtr<ViewTransition> ViewTransition::resolveInboundCrossDocumentViewTransition
 
     Ref { viewTransition->m_updateCallbackDone.second }->resolve();
     viewTransition->m_phase = ViewTransitionPhase::UpdateCallbackCalled;
-
-    // FIXME: Setup implementation-defined timeout.
 
     return viewTransition;
 }
@@ -347,30 +348,49 @@ static AtomString effectiveViewTransitionName(RenderLayerModelObject& renderer, 
     if (renderer.isSkippedContent())
         return nullAtom();
 
-    auto transitionName = renderer.style().viewTransitionName();
-    if (transitionName.isNone())
-        return nullAtom();
+    auto& transitionName = renderer.style().viewTransitionName();
 
-    auto scope = Style::Scope::forOrdinal(originatingElement, transitionName.scopeOrdinal());
-    if (!scope || scope != &documentScope)
-        return nullAtom();
+    auto computeScope = [&] -> Style::Scope* {
+        auto scope = Style::Scope::forOrdinal(originatingElement, transitionName.scopeOrdinal());
+        if (!scope || scope != &documentScope)
+            return nullptr;
+        return scope;
+    };
 
-    if (transitionName.isCustomIdent())
-        return transitionName.customIdent();
+    return WTF::switchOn(transitionName,
+        [&](const CSS::Keyword::None&) {
+            return nullAtom();
+        },
+        [&](const CSS::Keyword::Auto&) {
+            auto scope = computeScope();
+            if (!scope || !renderer.element())
+                return nullAtom();
 
-    ASSERT(transitionName.isAuto() || transitionName.isMatchElement());
+            Ref element = *renderer.element();
+            if (scope == &Style::Scope::forNode(element) && element->hasID())
+                return makeAtomString("-ua-id-"_s, renderer.protectedElement()->getIdAttribute());
 
-    if (!renderer.element())
-        return nullAtom();
+            if (isCrossDocument)
+                return nullAtom();
 
-    Ref element = *renderer.element();
-    if (transitionName.isAuto() && scope == &Style::Scope::forNode(element) && element->hasID())
-        return makeAtomString("-ua-id-"_s, renderer.element()->getIdAttribute());
+            return makeAtomString("-ua-auto-"_s, String::number(element->nodeIdentifier().toRawValue()));
+        },
+        [&](const CSS::Keyword::MatchElement&) {
+            auto scope = computeScope();
+            if (!scope || isCrossDocument || !renderer.element())
+                return nullAtom();
 
-    if (isCrossDocument)
-        return nullAtom();
+            Ref element = *renderer.element();
+            return makeAtomString("-ua-auto-"_s, String::number(element->nodeIdentifier().toRawValue()));
+        },
+        [&](const CustomIdentifier& customIdentifier) {
+            auto scope = computeScope();
+            if (!scope)
+                return nullAtom();
 
-    return makeAtomString("-ua-auto-"_s, String::number(element->identifier().toRawValue()));
+            return customIdentifier.value;
+        }
+    );
 }
 
 static ExceptionOr<void> checkDuplicateViewTransitionName(const AtomString& name, ListHashSet<AtomString>& usedTransitionNames)
@@ -383,17 +403,20 @@ static ExceptionOr<void> checkDuplicateViewTransitionName(const AtomString& name
 
 static Vector<AtomString> effectiveViewTransitionClassList(RenderLayerModelObject& renderer, Element& originatingElement, Style::Scope& documentScope)
 {
-    auto classList = renderer.style().viewTransitionClasses();
-    if (classList.isEmpty())
-        return { };
+    return WTF::switchOn(renderer.style().viewTransitionClasses(),
+        [](const CSS::Keyword::None&) -> Vector<AtomString> {
+            return { };
+        },
+        [&](const auto& list) -> Vector<AtomString> {
+            auto scope = Style::Scope::forOrdinal(originatingElement, list[0].scopeOrdinal);
+            if (!scope || scope != &documentScope)
+                return { };
 
-    auto scope = Style::Scope::forOrdinal(originatingElement, classList.first().scopeOrdinal);
-    if (!scope || scope != &documentScope)
-        return { };
-
-    return WTF::map(classList, [&](auto& item) {
-        return item.name;
-    });
+            return WTF::map(list, [&](auto& item) {
+                return item.name;
+            });
+        }
+    );
 }
 
 LayoutRect ViewTransition::captureOverflowRect(RenderLayerModelObject& renderer)
@@ -443,7 +466,7 @@ static RefPtr<ImageBuffer> snapshotElementVisualOverflowClippedToViewport(LocalF
         return nullptr;
     auto hostWindow = frameView->root() ? RefPtr { frameView->root() }->hostWindow() : nullptr;
 
-    auto buffer = ImageBuffer::create(paintRect.size(), RenderingMode::Accelerated, RenderingPurpose::Snapshot, scaleFactor, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8, hostWindow);
+    auto buffer = ImageBuffer::create(paintRect.size(), RenderingMode::Accelerated, RenderingPurpose::Snapshot, scaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, hostWindow);
     if (!buffer)
         return nullptr;
 
@@ -469,7 +492,14 @@ static ExceptionOr<void> forEachRendererInPaintOrder(NOESCAPE const std::functio
     if (result.hasException())
         return result.releaseException();
 
+    if (auto* renderBox = dynamicDowncast<RenderBox>(layer.renderer()); renderBox && isSkippedContentRoot(*renderBox))
+        return { };
+
     layer.updateLayerListsIfNeeded();
+
+#if ASSERT_ENABLED
+    LayerListMutationDetector mutationChecker(layer);
+#endif
 
     for (auto* child : layer.negativeZOrderLayers()) {
         auto result = forEachRendererInPaintOrder(function, *child);
@@ -515,8 +545,8 @@ ExceptionOr<void> ViewTransition::captureOldState()
     ListHashSet<AtomString> usedTransitionNames;
     Vector<CheckedRef<RenderLayerModelObject>> captureRenderers;
 
-    // Ensure style & render tree are up-to-date.
-    protectedDocument()->updateStyleIfNeeded();
+    // Ensure style & layout are up-to-date.
+    protectedDocument()->updateLayoutIgnorePendingStylesheets();
 
     if (CheckedPtr view = document()->renderView()) {
         Ref frame = CheckedRef { view->frameView() }->frame();
@@ -730,8 +760,8 @@ void ViewTransition::activateViewTransition()
 
     protectedDocument()->clearRenderingIsSuppressedForViewTransition();
 
-    // Ensure style & render tree are up-to-date.
-    protectedDocument()->updateStyleIfNeeded();
+    // Ensure style & layout are up-to-date.
+    protectedDocument()->updateLayoutIgnorePendingStylesheets();
 
     auto checkSize = checkForViewportSizeChange();
     if (checkSize.hasException()) {
@@ -911,28 +941,32 @@ void ViewTransition::copyElementBaseProperties(RenderLayerModelObject& renderer,
         output.isRootElement = false;
         output.size = renderBox->borderBoundingBox().size();
 
-        if (auto transform = renderer.viewTransitionTransform()) {
-            // FIXME: This transform is the concatenation of layout offsets and transforms up
-            // to the root. Normal drawing would snap the subset up to the nearest composited
-            // ancestor transform, not on the combination.
-            output.subpixelOffset = snapTransformationTranslationToDevicePixels(*transform, renderer.protectedDocument()->deviceScaleFactor());
-            output.layerToLayoutOffset = layerToLayoutOffset(renderer);
-            transform->translate(output.layerToLayoutOffset.x(), output.layerToLayoutOffset.y());
-
-            auto offset = -toFloatSize(frameView->visibleContentRect().location());
-            transform->translateRight(offset.width(), offset.height());
-
-            auto mapped = transform->mapRect(output.overflowRect);
-            output.intersectsViewport = mapped.intersects(frameView->boundsRect());
-
-            // Apply the inverse of what will be added by the default value of 'transform-origin',
-            // since the computed transform has already included it.
-            transform->translate(output.size.width() / 2, output.size.height() / 2);
-            transform->translateRight(-output.size.width() / 2, -output.size.height() / 2);
-
-            Ref transformListValue = CSSTransformListValue::create(Style::ExtractorConverter::convertTransformationMatrix(documentElementRenderer->style(), *transform));
-            RefPtr { output.properties }->setProperty(CSSPropertyTransform, WTFMove(transformListValue));
+        auto transformState = renderer.viewTransitionTransform();
+        TransformationMatrix transform;
+        if (transformState.accumulatedTransform()) {
+            transform = *transformState.accumulatedTransform();
+            output.subpixelOffset = { };
+        } else {
+            transform.translate(transformState.accumulatedOffset().width(), transformState.accumulatedOffset().height());
+            output.subpixelOffset = snapTransformationTranslationToDevicePixels(transform, renderer.protectedDocument()->deviceScaleFactor());
         }
+
+        output.layerToLayoutOffset = layerToLayoutOffset(renderer);
+        transform.translate(output.layerToLayoutOffset.x(), output.layerToLayoutOffset.y());
+
+        auto offset = -toFloatSize(frameView->visibleContentRect().location());
+        transform.translateRight(offset.width(), offset.height());
+
+        auto mapped = transform.mapRect(output.overflowRect);
+        output.intersectsViewport = mapped.intersects(frameView->boundsRect());
+
+        // Apply the inverse of what will be added by the default value of 'transform-origin',
+        // since the computed transform has already included it.
+        transform.translate(output.size.width() / 2, output.size.height() / 2);
+        transform.translateRight(-output.size.width() / 2, -output.size.height() / 2);
+
+        Ref transformListValue = CSSTransformListValue::create(Style::ExtractorConverter::convertTransformationMatrix(documentElementRenderer->style(), transform));
+        RefPtr { output.properties }->setProperty(CSSPropertyTransform, WTFMove(transformListValue));
     }
 
     // Factor out the zoom from the nearest common ancestor of the captured element and the view transition
@@ -950,6 +984,8 @@ ExceptionOr<void> ViewTransition::updatePseudoElementStylesRead()
     RefPtr document = this->document();
     if (!document)
         return { };
+
+    document->updateLayoutIgnorePendingStylesheets();
 
     for (auto& [name, capturedElement] : m_namedElements.map()) {
         if (auto newStyleable = capturedElement->newElement.styleable()) {
@@ -973,7 +1009,7 @@ void ViewTransition::updatePseudoElementStylesWrite()
 
     bool changed = false;
     for (auto& [name, capturedElement] : m_namedElements.map())
-        changed |= updatePropertiesForGroupPseudo(*capturedElement, name);
+        changed |= updatePropertiesForGroupPseudo(capturedElement, name);
 
     if (changed) {
         if (RefPtr documentElement = document->documentElement())
@@ -991,7 +1027,7 @@ ExceptionOr<void> ViewTransition::updatePseudoElementRenderers()
     if (!documentElement)
         return { };
 
-    document->updateStyleIfNeeded();
+    document->updateStyleIfNeededIgnoringPendingStylesheets();
 
     for (auto& [name, capturedElement] : m_namedElements.map()) {
         if (auto newStyleable = capturedElement->newElement.styleable()) {
@@ -1007,7 +1043,7 @@ ExceptionOr<void> ViewTransition::updatePseudoElementRenderers()
 
                 RefPtr<ImageBuffer> image;
                 if (RefPtr frame = document->frame(); !viewTransitionCapture->canUseExistingLayers()) {
-                    document->updateLayout();
+                    document->updateLayoutIgnorePendingStylesheets();
                     image = snapshotElementVisualOverflowClippedToViewport(*frame, *renderer, capturedElement->newState.overflowRect);
                 } else if (CheckedPtr layer = renderer->isDocumentElementRenderer() ? renderer->view().layer() : renderer->layer())
                     layer->setNeedsCompositingGeometryUpdate();
@@ -1060,6 +1096,11 @@ void ViewTransition::stop()
 
     if (protectedDocument()->activeViewTransition() == this)
         clearViewTransition();
+}
+
+Document* ViewTransition::document() const
+{
+    return downcast<Document>(scriptExecutionContext());
 }
 
 bool ViewTransition::documentElementIsCaptured() const

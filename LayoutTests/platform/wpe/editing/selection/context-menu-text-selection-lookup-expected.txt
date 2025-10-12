@@ -1,0 +1,6 @@
+This test checks that triggering the context menu selects/doesn't select using surround text as context (as platform-appropriate).
+
+New York
+FAILURE: We expected New York, but we got New.
+SUCCESS
+SUCCESS

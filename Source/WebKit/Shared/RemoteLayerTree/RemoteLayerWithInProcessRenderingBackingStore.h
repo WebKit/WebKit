@@ -44,16 +44,16 @@ public:
     void prepareToDisplay() final;
     void createContextAndPaintContents() final;
     std::unique_ptr<ThreadSafeImageBufferSetFlusher> createFlusher(ThreadSafeImageBufferSetFlusher::FlushType) final;
+    std::optional<ImageBufferSetIdentifier> bufferSetIdentifier() const final;
 
     void clearBackingStore() final;
 
     bool setBufferVolatile(BufferType, bool forcePurge = false);
 
-    std::optional<ImageBufferBackendHandle> frontBufferHandle() const final;
+    std::optional<ImageBufferBackendHandle> frontBufferHandle() const;
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     std::optional<WebCore::DynamicContentScalingDisplayList> displayListHandle() const final;
 #endif
-    void encodeBufferAndBackendInfos(IPC::Encoder&) const final;
 
     void dump(WTF::TextStream&) const final;
 

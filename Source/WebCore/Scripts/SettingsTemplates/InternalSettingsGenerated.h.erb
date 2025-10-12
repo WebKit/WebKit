@@ -41,6 +41,7 @@ public:
     virtual ~InternalSettingsGenerated();
 
     void resetToConsistentState();
+    virtual bool isInternalSettings() const { return false; }
 
 <%- for @setting in @allSettingsSet.settings do -%>
 <%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>

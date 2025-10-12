@@ -13,11 +13,22 @@ function terminateWorker() {
     worker.terminate();
 }
 
+let iframe;
+
+function appendIframe() {
+    iframe = document.createElement("iframe");
+    document.body.append(iframe);
+}
+
+function removeIframe() {
+    iframe.remove();
+}
+
 function test()
 {
     function dumpTargets() {
-        for (let target of WI.targets)
-            InspectorTest.log(`Target - ${String(target.type)} - ${target.displayName}`);
+        let targetList = WI.targets.map((x) => `Target - ${String(x.type)} - ${x.displayName}`);
+        InspectorTest.log(targetList.sort().join("\n"));
     }
 
     let suite = InspectorTest.createAsyncSuite("TargetManager");
@@ -27,8 +38,8 @@ function test()
         description: "We should always have the main target.",
         async test() {
             InspectorTest.assert(WI.targets === WI.targetManager.targets);
-            InspectorTest.expectEqual(WI.targets.length, 1, "Targets list should always start out with the main target.");
-            InspectorTest.expectEqual([...WI.targets][0], WI.mainTarget, "Target list should always contain the main target.");
+            InspectorTest.expectEqual(WI.targets.length, 2, "Targets list should always start out with the main page target and the main frame target.");
+            InspectorTest.expectThat(WI.targets.includes(WI.mainTarget), "Target list should always contain the main page target.");
             InspectorTest.expectNotNull(WI.mainTarget.executionContext, "Main target should have an ExecutionContext.");
             InspectorTest.expectEqual(WI.mainTarget.RuntimeAgent, WI.pageTarget.RuntimeAgent, "Main target should have the page target's RuntimeAgent.");
             dumpTargets();
@@ -42,7 +53,7 @@ function test()
             InspectorTest.evaluateInPage("createWorker()");
             let event = await WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
             let target = event.data.target;
-            InspectorTest.assert(target instanceof WI.Target);
+            InspectorTest.assert(target instanceof WI.WorkerTarget);
             InspectorTest.expectEqual(target.type, WI.TargetType.Worker, "Added Target should have Worker type.");
             InspectorTest.expectNotNull(target.executionContext, "Added Target should have an ExecutionContext.");
             InspectorTest.expectNotNull(target.RuntimeAgent, "Added Target should have a RuntimeAgent.");
@@ -53,13 +64,40 @@ function test()
 
     suite.addTestCase({
         name: "TargetManager.WorkerTarget.Remove",
-        description: "Creating a Worker should create a new Worker Target.",
+        description: "Removing a Worker should remove the Worker Target.",
         async test() {
             InspectorTest.evaluateInPage("terminateWorker()");
             let event = await WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
             let target = event.data.target;
-            InspectorTest.assert(target instanceof WI.Target);
+            InspectorTest.assert(target instanceof WI.WorkerTarget);
             InspectorTest.expectEqual(target.type, WI.TargetType.Worker, "Removed Target should have Worker type.");
+            dumpTargets();
+        }
+    });
+
+    suite.addTestCase({
+        name: "TargetManager.FrameTarget.Create",
+        description: "Appending an iframe should create a new Frame Target.",
+        async test() {
+            InspectorTest.evaluateInPage("appendIframe()");
+            let event = await WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            let target = event.data.target;
+            InspectorTest.assert(target instanceof WI.FrameTarget);
+            InspectorTest.expectEqual(target.type, WI.TargetType.Frame, "Added Target should have Frame type.");
+            // FIXME: <https://webkit.org/b/298977> Consider giving meaningful names to frame targets so we can distinguish them.
+            dumpTargets();
+        }
+    });
+
+    suite.addTestCase({
+        name: "TargetManager.FrameTarget.Remove",
+        description: "Removing an iframe should remove the Frame Target.",
+        async test() {
+            InspectorTest.evaluateInPage("removeIframe()");
+            let event = await WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
+            let target = event.data.target;
+            InspectorTest.assert(target instanceof WI.FrameTarget);
+            InspectorTest.expectEqual(target.type, WI.TargetType.Frame, "Removed Target should have Frame type.");
             dumpTargets();
         }
     });

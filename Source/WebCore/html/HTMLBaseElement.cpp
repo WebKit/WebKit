@@ -94,9 +94,4 @@ String HTMLBaseElement::href() const
     return urlRecord.string();
 }
 
-void HTMLBaseElement::setHref(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(hrefAttr, value);
-}
-
 }

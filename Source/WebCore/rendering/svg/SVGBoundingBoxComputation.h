@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "RenderLayerModelObject.h"
+#include <WebCore/RenderLayerModelObject.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OptionSet.h>
 

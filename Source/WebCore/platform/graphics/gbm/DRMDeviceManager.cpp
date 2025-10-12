@@ -26,11 +26,8 @@
 #include "config.h"
 #include "DRMDeviceManager.h"
 
-#include <wtf/text/WTFString.h>
-
-#if USE(LIBDRM)
-#include "DRMDeviceNode.h"
-#include <xf86drm.h>
+#if USE(GBM)
+#include "GBMDevice.h"
 
 namespace WebCore {
 
@@ -46,97 +43,45 @@ DRMDeviceManager& DRMDeviceManager::singleton()
 
 DRMDeviceManager::~DRMDeviceManager() = default;
 
-static void drmForeachDevice(Function<bool(drmDevice*)>&& functor)
-{
-    std::array<drmDevicePtr, 64> devices = { };
-
-    int numDevices = drmGetDevices2(0, devices.data(), std::size(devices));
-    if (numDevices <= 0)
-        return;
-
-    for (int i = 0; i < numDevices; ++i) {
-        if (!functor(devices[i]))
-            break;
-    }
-    drmFreeDevices(devices.data(), numDevices);
-}
-
-void DRMDeviceManager::initializeMainDevice(const String& deviceFile)
+void DRMDeviceManager::initializeMainDevice(DRMDevice&& device)
 {
     RELEASE_ASSERT(isMainThread());
     RELEASE_ASSERT(!m_mainDevice.isInitialized);
     m_mainDevice.isInitialized = true;
-    if (deviceFile.isEmpty())
-        return;
-
-    drmForeachDevice([&](drmDevice* device) {
-        const auto nodes = unsafeMakeSpan(device->nodes, DRM_NODE_MAX);
-        for (int i = 0; i < DRM_NODE_MAX; ++i) {
-            if (!(device->available_nodes & (1 << i)))
-                continue;
-
-            if (String::fromUTF8(nodes[i]) == deviceFile) {
-                RELEASE_ASSERT(device->available_nodes & (1 << DRM_NODE_PRIMARY));
-                if (device->available_nodes & (1 << DRM_NODE_RENDER)) {
-                    m_mainDevice.primaryNode = DRMDeviceNode::create(CString { nodes[DRM_NODE_PRIMARY] });
-                    m_mainDevice.renderNode = DRMDeviceNode::create(CString { nodes[DRM_NODE_RENDER] });
-                } else
-                    m_mainDevice.primaryNode = DRMDeviceNode::create(CString { nodes[DRM_NODE_PRIMARY] });
-                return false;
-            }
-        }
-        return true;
-    });
-
-    if (!m_mainDevice.primaryNode)
-        WTFLogAlways("Failed to find DRM device for %s", deviceFile.utf8().data());
+    m_mainDevice.device = WTFMove(device);
 }
 
-RefPtr<DRMDeviceNode> DRMDeviceManager::mainDeviceNode(DRMDeviceManager::NodeType nodeType) const
+RefPtr<GBMDevice> DRMDeviceManager::mainGBMDevice(NodeType nodeType) const
 {
     RELEASE_ASSERT(m_mainDevice.isInitialized);
-
-    if (nodeType == NodeType::Render)
-        return m_mainDevice.renderNode ? m_mainDevice.renderNode : m_mainDevice.primaryNode;
-
-    return m_mainDevice.primaryNode ? m_mainDevice.primaryNode : m_mainDevice.renderNode;
-}
-
-#if USE(GBM)
-struct gbm_device* DRMDeviceManager::mainGBMDeviceNode(NodeType nodeType) const
-{
-    auto node = mainDeviceNode(nodeType);
-    return node ? node->gbmDevice() : nullptr;
-}
-#endif
-
-RefPtr<DRMDeviceNode> DRMDeviceManager::deviceNode(const CString& filename)
-{
-    RELEASE_ASSERT(isMainThread());
-    RELEASE_ASSERT(m_mainDevice.isInitialized);
-
-    if (filename.isNull())
+    if (m_mainDevice.device.isNull())
         return nullptr;
 
-    auto node = [&] -> RefPtr<DRMDeviceNode> {
-        if (m_mainDevice.primaryNode && m_mainDevice.primaryNode->filename() == filename)
-            return m_mainDevice.primaryNode;
+    if (nodeType == NodeType::Render) {
+        if (m_mainDevice.gbmRenderNode)
+            return *m_mainDevice.gbmRenderNode;
 
-        if (m_mainDevice.renderNode && m_mainDevice.renderNode->filename() == filename)
-            return m_mainDevice.renderNode;
+        if (!m_mainDevice.device.renderNode.isNull()) {
+            m_mainDevice.gbmRenderNode = GBMDevice::create(m_mainDevice.device.renderNode);
+            return *m_mainDevice.gbmRenderNode;
+        }
+        // Fallback to primary node.
+    }
 
-        return DRMDeviceNode::create(CString { filename.data() });
-    }();
+    if (!m_mainDevice.gbmPrimaryNode)
+        m_mainDevice.gbmPrimaryNode = GBMDevice::create(m_mainDevice.device.primaryNode);
+    return *m_mainDevice.gbmPrimaryNode;
+}
 
-#if USE(GBM)
-    // Make sure GBMDevice is created in the main thread.
-    if (node)
-        node->gbmDevice();
-#endif
+RefPtr<GBMDevice> DRMDeviceManager::gbmDevice(const DRMDevice& device, NodeType nodeType) const
+{
+    RELEASE_ASSERT(m_mainDevice.isInitialized);
+    if (device.primaryNode == m_mainDevice.device.primaryNode)
+        return mainGBMDevice(nodeType);
 
-    return node;
+    return GBMDevice::create(nodeType == NodeType::Render && !device.renderNode.isNull() ? device.renderNode : device.primaryNode);
 }
 
 } // namespace WebCore
 
-#endif // USE(LIBDRM)
+#endif // USE(GBM)

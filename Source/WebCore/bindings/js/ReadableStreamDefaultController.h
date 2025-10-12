@@ -29,11 +29,11 @@
 
 #pragma once
 
-#include "JSDOMConvertBufferSource.h"
 #include "JSReadableStreamDefaultController.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/TypedArrays.h>
+#include <WebCore/JSDOMConvertBufferSource.h>
 
 namespace WebCore {
 

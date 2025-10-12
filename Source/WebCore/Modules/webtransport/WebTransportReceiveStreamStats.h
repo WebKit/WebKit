@@ -28,9 +28,16 @@
 namespace WebCore {
 
 struct WebTransportReceiveStreamStats {
-    double timestamp { 0 };
     uint64_t bytesReceived { 0 };
     uint64_t bytesRead { 0 };
+
+    WebTransportReceiveStreamStats isolatedCopy() const
+    {
+        return {
+            bytesReceived,
+            bytesRead
+        };
+    }
 };
 
 }

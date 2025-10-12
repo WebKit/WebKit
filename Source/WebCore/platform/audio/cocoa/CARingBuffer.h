@@ -27,8 +27,8 @@
 
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
 
-#include "AudioStreamDescription.h"
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <WebCore/AudioStreamDescription.h>
 #include <optional>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Lock.h>
@@ -127,7 +127,7 @@ public:
 
 protected:
     WEBCORE_EXPORT InProcessCARingBuffer(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams, Vector<uint8_t>&& buffer);
-    void* data() final { return m_buffer.data(); }
+    void* data() final { return m_buffer.mutableSpan().data(); }
     TimeBoundsBuffer& timeBoundsBuffer() final { return m_timeBoundsBuffer; }
 
 private:

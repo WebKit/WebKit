@@ -31,18 +31,18 @@
 #include "ScriptWrappable.h"
 #include "SubscribeOptions.h"
 #include "VoidCallback.h"
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 
 class ScriptExecutionContext;
 
-class Subscriber final : public ActiveDOMObject, public ScriptWrappable, public RefCounted<Subscriber> {
+class Subscriber final : public ActiveDOMObject, public ScriptWrappable, public RefCountedAndCanMakeWeakPtr<Subscriber> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Subscriber);
 
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
+    void ref() const final { RefCountedAndCanMakeWeakPtr::ref(); }
+    void deref() const final { RefCountedAndCanMakeWeakPtr::deref(); }
 
     void next(JSC::JSValue);
     void complete();
@@ -52,9 +52,9 @@ public:
     bool active() { return m_active; }
     AbortSignal& signal() { return m_signal.get(); }
 
-    Ref<AbortSignal> protectedSignal() const { return m_signal; }
-
     static Ref<Subscriber> create(ScriptExecutionContext&, Ref<InternalObserver>&&, const SubscribeOptions&);
+
+    ~Subscriber();
 
     void reportErrorObject(JSC::JSValue);
 
@@ -86,8 +86,8 @@ private:
 
     bool m_active = true;
     Lock m_teardownsLock;
-    Ref<AbortSignal> m_signal;
-    Ref<InternalObserver> m_observer;
+    const Ref<AbortSignal> m_signal;
+    const Ref<InternalObserver> m_observer;
     SubscribeOptions m_options;
     Vector<Ref<VoidCallback>> m_teardowns WTF_GUARDED_BY_LOCK(m_teardownsLock);
 };

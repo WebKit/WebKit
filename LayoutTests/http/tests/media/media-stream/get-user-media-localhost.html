@@ -20,7 +20,8 @@
             else {
                 window.addEventListener("load", async () => {
                     try {
-                        await window.navigator.mediaDevices.getUserMedia({audio:true});
+                        const stream = await window.navigator.mediaDevices.getUserMedia({audio:true});
+                        stream.getTracks().forEach(track => track.stop());
                         testPassed("getUserMedia succeeded");
                     } catch(err) {
                         testFailed(`getUserMedia should have succeeded but failed with error "${err}"`);

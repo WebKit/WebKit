@@ -33,7 +33,7 @@ class XPCEventHandler : public ThreadSafeRefCounted<XPCEventHandler> {
 public:
     virtual ~XPCEventHandler() { }
 
-    virtual bool handleXPCEvent(xpc_object_t) const = 0;
+    virtual bool handleXPCEvent(xpc_object_t) = 0;
 };
 
 }

@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "IDBDatabaseIdentifier.h"
-#include "IDBIndexIdentifier.h"
-#include "IDBObjectStoreIdentifier.h"
-#include "IDBResourceIdentifier.h"
-#include "IndexedDB.h"
+#include <WebCore/IDBDatabaseIdentifier.h>
+#include <WebCore/IDBIndexIdentifier.h>
+#include <WebCore/IDBObjectStoreIdentifier.h>
+#include <WebCore/IDBResourceIdentifier.h>
+#include <WebCore/IndexedDB.h>
 #include <optional>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Markable.h>

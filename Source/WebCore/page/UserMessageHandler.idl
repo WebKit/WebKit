@@ -31,4 +31,5 @@
     Exposed=Window
 ] interface UserMessageHandler {
     [CallWith=CurrentGlobalObject] Promise<any> postMessage(any message);
+    [CallWith=CurrentGlobalObject, EnabledForWorld=allowPostLegacySynchronousMessage] any postLegacySynchronousMessage(any message);
 };

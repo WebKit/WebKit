@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,10 +36,13 @@
 
 namespace WebCore {
 
-class CSSCustomPropertyValue;
 class CSSVariableData;
 class Document;
 class WeakPtrImplWithEventTargetData;
+
+namespace Style {
+class CustomProperty;
+}
 
 enum class ConstantProperty {
     SafeAreaInsetTop,
@@ -58,7 +61,7 @@ class ConstantPropertyMap {
 public:
     explicit ConstantPropertyMap(Document&);
 
-    typedef UncheckedKeyHashMap<AtomString, Ref<CSSCustomPropertyValue>> Values;
+    using Values = HashMap<AtomString, Ref<const Style::CustomProperty>>;
     const Values& values() const;
 
     void didChangeSafeAreaInsets();

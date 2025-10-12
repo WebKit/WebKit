@@ -16,17 +16,14 @@ FirstSecondThird
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
       (viewport rect at last layout at (0,0) size 800x600)
-      (layer position at last layout (100,100))
     )
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
       (viewport rect at last layout at (0,0) size 800x600)
-      (layer position at last layout (150,50))
     )
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
       (viewport rect at last layout at (0,0) size 800x600)
-      (layer position at last layout (8,13))
     )
   )
 )

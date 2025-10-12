@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-TypedArray-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -41,7 +38,7 @@ Object.defineProperty(i8Array, "length", {value: 15});
 (new Uint8Array(4)).set(i8Array, 3);
 
 // Ensure that it works across globals
-let g2 = createNewGlobal();
+let g2 = $262.createRealm().global;
 
 i8Array = new Int8Array(8);
 Object.defineProperty(i8Array, "length", {value: 0});

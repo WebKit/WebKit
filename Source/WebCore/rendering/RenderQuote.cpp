@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Nokia Inc.  All rights reserved.
+ * Copyright (C) 2011 Nokia Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  * Copyright (C) 2013, 2017 Apple Inc. All rights reserved.
  *
@@ -23,8 +23,8 @@
 #include "config.h"
 #include "RenderQuote.h"
 
-#include "QuotesData.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderObjectInlines.h"
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
@@ -53,10 +53,10 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderQuote);
 struct QuotesForLanguage {
     std::span<const char> language;
     uint8_t checkFurther { 0 };
-    UChar open1 { 0 };
-    UChar close1 { 0 };
-    UChar open2 { 0 };
-    UChar close2 { 0 };
+    char16_t open1 { 0 };
+    char16_t close1 { 0 };
+    char16_t open2 { 0 };
+    char16_t close2 { 0 };
 };
 
 // Table of quotes from http://www.whatwg.org/specs/web-apps/current-work/multipage/rendering.html#quotes
@@ -248,10 +248,10 @@ constexpr unsigned maxDistinctQuoteCharacters = 16;
 
 #if ASSERT_ENABLED
 
-static void checkNumberOfDistinctQuoteCharacters(UChar character)
+static void checkNumberOfDistinctQuoteCharacters(char16_t character)
 {
     ASSERT(character);
-    static std::array<UChar, maxDistinctQuoteCharacters> distinctQuoteCharacters;
+    static std::array<char16_t, maxDistinctQuoteCharacters> distinctQuoteCharacters;
     for (unsigned i = 0; i < maxDistinctQuoteCharacters; ++i) {
         if (distinctQuoteCharacters[i] == character)
             return;
@@ -401,7 +401,7 @@ static const QuotesForLanguage* quotesForLanguage(const String& language)
 
     Vector<char> languageKeyBuffer(length);
     for (unsigned i = 0; i < length; ++i) {
-        UChar character = toASCIILower(language[i]);
+        char16_t character = toASCIILower(language[i]);
         if (!(isASCIILower(character) || character == '-'))
             return nullptr;
         languageKeyBuffer[i] = static_cast<char>(character);
@@ -410,12 +410,12 @@ static const QuotesForLanguage* quotesForLanguage(const String& language)
     return binaryFindQuotes({ languageKeyBuffer.span() });
 }
 
-static StringImpl* stringForQuoteCharacter(UChar character)
+static StringImpl* stringForQuoteCharacter(char16_t character)
 {
     // Use linear search because there is a small number of distinct characters, thus binary search is unneeded.
     ASSERT(character);
     struct StringForCharacter {
-        UChar character;
+        char16_t character;
         StringImpl* string;
     };
     static std::array<StringForCharacter, maxDistinctQuoteCharacters> strings;
@@ -471,8 +471,8 @@ String RenderQuote::computeText() const
         isOpenQuote = true;
         [[fallthrough]];
     case QuoteType::CloseQuote:
-        if (const auto* quotes = style().quotes())
-            return isOpenQuote ? quotes->openQuote(m_depth).impl() : quotes->closeQuote(m_depth).impl();
+        if (!style().quotes().isAuto())
+            return isOpenQuote ? style().quotes().openQuote(m_depth).impl() : style().quotes().closeQuote(m_depth).impl();
         if (const auto* quotes = quotesForLanguage(style().computedLocale()))
             return stringForQuoteCharacter(isOpenQuote ? (m_depth ? quotes->open2 : quotes->open1) : (m_depth ? quotes->close2 : quotes->close1));
         // FIXME: Should the default be the quotes for "en" rather than straight quotes?

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: constructor is not a function. (In 'constructor(coep_none)', 'constructor' is undefined)
 
 Harness Error (FAIL), message = TypeError: constructor is not a function. (In 'constructor(coep_none)', 'constructor' is undefined)
 

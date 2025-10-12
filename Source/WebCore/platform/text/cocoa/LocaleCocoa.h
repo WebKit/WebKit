@@ -40,7 +40,7 @@
 #if PLATFORM(MAC)
 #define PlatformNSParagraphStyle NSParagraphStyle.class
 #else
-#define PlatformNSParagraphStyle PAL::getNSParagraphStyleClass()
+#define PlatformNSParagraphStyle PAL::getNSParagraphStyleClassSingleton()
 #endif
 
 OBJC_CLASS NSCalendar;

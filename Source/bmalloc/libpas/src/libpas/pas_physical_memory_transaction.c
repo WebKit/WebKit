@@ -28,6 +28,7 @@
 #if LIBPAS_ENABLED
 
 #include "pas_physical_memory_transaction.h"
+#include "pas_zero_memory.h"
 
 void pas_physical_memory_transaction_construct(pas_physical_memory_transaction* transaction)
 {

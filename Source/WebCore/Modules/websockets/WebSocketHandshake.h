@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,12 +31,12 @@
 
 #pragma once
 
-#include "CookieRequestHeaderFieldProxy.h"
-#include <wtf/URL.h>
-#include "ResourceResponse.h"
-#include "WebSocketExtensionDispatcher.h"
-#include "WebSocketExtensionProcessor.h"
+#include <WebCore/CookieRequestHeaderFieldProxy.h>
+#include <WebCore/ResourceResponse.h>
+#include <WebCore/WebSocketExtensionDispatcher.h>
+#include <WebCore/WebSocketExtensionProcessor.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 

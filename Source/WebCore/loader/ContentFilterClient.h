@@ -51,7 +51,7 @@ public:
     virtual ~ContentFilterClient() = default;
 
     virtual void dataReceivedThroughContentFilter(const SharedBuffer&) = 0;
-    virtual ResourceError contentFilterDidBlock(ContentFilterUnblockHandler, String&& unblockRequestDeniedScript) = 0;
+    virtual ResourceError contentFilterDidBlock(ContentFilterUnblockHandler&&, String&& unblockRequestDeniedScript) = 0;
     virtual void cancelMainResourceLoadForContentFilter(const ResourceError&) = 0;
     virtual void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, SubstituteData&&) = 0;
 

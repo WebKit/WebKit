@@ -35,17 +35,20 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ContainerNodeInlines.h"
+#include "DocumentPage.h"
 #include "EventHandler.h"
 #include "EventNames.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
+#include "LayoutPoint.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
-#include "Page.h"
+#include "NodeDocument.h"
 #include "RenderElement.h"
 #include "RenderStyleInlines.h"
 #include "RenderTheme.h"
@@ -123,7 +126,7 @@ void CheckboxInputType::handleMouseDownEvent(MouseEvent& event)
     Ref element = *this->element();
     if (element->isDisabledFormControl() || !element->renderer())
         return;
-    startSwitchPointerTracking(event.absoluteLocation());
+    startSwitchPointerTracking(LayoutPoint(event.absoluteLocation()));
 }
 
 void CheckboxInputType::handleMouseMoveEvent(MouseEvent& event)
@@ -139,7 +142,7 @@ void CheckboxInputType::handleMouseMoveEvent(MouseEvent& event)
         return;
     }
 
-    updateIsSwitchVisuallyOnFromAbsoluteLocation(event.absoluteLocation());
+    updateIsSwitchVisuallyOnFromAbsoluteLocation(LayoutPoint(event.absoluteLocation()));
 }
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -150,7 +153,7 @@ static Touch* findTouchWithIdentifier(TouchList& list, unsigned identifier)
     for (unsigned i = 0; i < length; ++i) {
         RefPtr touch = list.item(i);
         if (touch->identifier() == identifier)
-            return touch.get();
+            return touch.unsafeGet();
     }
     return nullptr;
 }
@@ -190,7 +193,7 @@ void CheckboxInputType::handleTouchEvent(TouchEvent& event)
             m_switchHeldTimer = makeUnique<Timer>([protectedThis = Ref { *this }, touch] {
                 if (!protectedThis->isSwitch() || !protectedThis->element() || !protectedThis->element()->renderer())
                     return;
-                protectedThis->startSwitchPointerTracking({ touch->pageX(), touch->pageY() });
+                protectedThis->startSwitchPointerTracking({ static_cast<float>(touch->pageX()), static_cast<float>(touch->pageY()) });
                 protectedThis->setIsSwitchHeld(true);
             });
         }
@@ -277,7 +280,7 @@ void CheckboxInputType::startSwitchPointerTracking(LayoutPoint absoluteLocation)
     Ref element = *this->element();
     ASSERT(element->renderer());
     if (RefPtr frame = element->protectedDocument()->frame()) {
-        frame->checkedEventHandler()->setCapturingMouseEventsElement(element.ptr());
+        frame->eventHandler().setCapturingMouseEventsElement(element.ptr());
         m_isSwitchVisuallyOn = element->checked();
         m_switchPointerTrackingLogicalLeftPositionStart = switchPointerTrackingLogicalLeftPosition(element.get(), absoluteLocation);
     }
@@ -290,7 +293,7 @@ void CheckboxInputType::stopSwitchPointerTracking()
         return;
 
     if (RefPtr frame = protectedElement()->protectedDocument()->frame())
-        frame->checkedEventHandler()->setCapturingMouseEventsElement(nullptr);
+        frame->eventHandler().setCapturingMouseEventsElement(nullptr);
     m_hasSwitchVisuallyOnChanged = false;
     m_switchPointerTrackingLogicalLeftPositionStart = { };
 }

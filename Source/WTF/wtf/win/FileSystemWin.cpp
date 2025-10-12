@@ -53,7 +53,7 @@ static const ULONGLONG kSecondsFromFileTimeToTimet = 11644473600;
 
 static bool getFindData(String path, WIN32_FIND_DATAW& findData)
 {
-    HANDLE handle = FindFirstFileW(path.wideCharacters().data(), &findData);
+    HANDLE handle = FindFirstFileW(path.wideCharacters().span().data(), &findData);
     if (handle == INVALID_HANDLE_VALUE)
         return false;
     FindClose(handle);
@@ -102,11 +102,11 @@ CString fileSystemRepresentation(const String& path)
 
 static String storageDirectory(DWORD pathIdentifier)
 {
-    Vector<UChar> buffer(MAX_PATH);
-    if (FAILED(SHGetFolderPathW(nullptr, pathIdentifier | CSIDL_FLAG_CREATE, nullptr, 0, wcharFrom(buffer.data()))))
+    Vector<char16_t> buffer(MAX_PATH);
+    if (FAILED(SHGetFolderPathW(nullptr, pathIdentifier | CSIDL_FLAG_CREATE, nullptr, 0, wcharFrom(buffer.mutableSpan().data()))))
         return String();
 
-    buffer.shrink(wcslen(wcharFrom(buffer.data())));
+    buffer.shrink(wcslen(wcharFrom(buffer.span().data())));
     String directory = String::adopt(WTFMove(buffer));
 
     directory = pathByAppendingComponent(directory, "Apple Computer\\WebKit"_s);
@@ -168,7 +168,7 @@ std::pair<String, FileHandle> openTemporaryFile(StringView, StringView suffix)
 
     String proposedPath = generateTemporaryPath([&handle](const String& proposedPath) {
         // use CREATE_NEW to avoid overwriting an existing file with the same name
-        handle = FileHandle::adopt(::CreateFileW(proposedPath.wideCharacters().data(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr));
+        handle = FileHandle::adopt(::CreateFileW(proposedPath.wideCharacters().span().data(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr));
 
         return handle || GetLastError() == ERROR_ALREADY_EXISTS;
     });
@@ -204,7 +204,7 @@ FileHandle openFile(const String& path, FileOpenMode mode, FileAccessPermission,
         creationDisposition = CREATE_NEW;
 
     String destination = path;
-    return FileHandle::adopt(CreateFile(destination.wideCharacters().data(), desiredAccess, shareMode, nullptr, creationDisposition, FILE_ATTRIBUTE_NORMAL, nullptr), lockMode);
+    return FileHandle::adopt(CreateFile(destination.wideCharacters().span().data(), desiredAccess, shareMode, nullptr, creationDisposition, FILE_ATTRIBUTE_NORMAL, nullptr), lockMode);
 }
 
 String localUserSpecificStorageDirectory()
@@ -240,7 +240,7 @@ String createTemporaryDirectory()
 std::optional<uint32_t> volumeFileBlockSize(const String& path)
 {
     DWORD sectorsPerCluster, bytesPerSector, freeClusters, totalClusters;
-    if (!GetDiskFreeSpaceW(path.wideCharacters().data(), &sectorsPerCluster, &bytesPerSector, &freeClusters, &totalClusters))
+    if (!GetDiskFreeSpaceW(path.wideCharacters().span().data(), &sectorsPerCluster, &bytesPerSector, &freeClusters, &totalClusters))
         return std::nullopt;
 
     return sectorsPerCluster * bytesPerSector;

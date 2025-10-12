@@ -2,4 +2,5 @@ include_rules = [
   "+logging",
   "+net",
   "+system_wrappers",
+  "+absl/functional/any_invocable.h",
 ]

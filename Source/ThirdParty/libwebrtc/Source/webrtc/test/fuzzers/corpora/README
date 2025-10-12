@@ -30,8 +30,6 @@ prefixed by the byte 0xff. Some of the rtp fuzzers need to decide
 which header extensions to enable, and the first byte of the fuzz data
 is used for this.
 
-### PseudoTCP ###
-Very small corpus minimised from the unit tests.
 
 ### SCTP ###
 This corpus was extracted from a few manually recorder wireshark dumps.

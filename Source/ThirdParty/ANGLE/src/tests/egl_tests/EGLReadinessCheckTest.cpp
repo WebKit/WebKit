@@ -7,6 +7,10 @@
 // EGLReadinessCheckTest.cpp:
 //      Tests used to check environment in which other tests are run.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include <gtest/gtest.h>
 
 #include "gpu_info_util/SystemInfo.h"

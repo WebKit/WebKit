@@ -41,7 +41,7 @@ namespace CSS {
 struct PlatformColorResolutionState;
 
 struct ColorMix {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ColorMix);
 
     struct Component {
         using Percentage = CSS::Percentage<Range{0, 100}>;
@@ -58,6 +58,8 @@ struct ColorMix {
 
     bool operator==(const ColorMix&) const = default;
 };
+
+static constexpr auto defaultInterpolationMethodForColorMix = ColorInterpolationMethod { ColorInterpolationMethod::OKLab { }, AlphaPremultiplication::Premultiplied };
 
 WebCore::Color createColor(const ColorMix&, PlatformColorResolutionState&);
 bool containsCurrentColor(const ColorMix&);

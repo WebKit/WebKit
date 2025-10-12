@@ -1,5 +1,0 @@
-
-PASS HttpOnly cookies are not observed
-PASS HttpOnly cookies can not be set by document.cookie
-PASS HttpOnly cookies can not be set by CookieStore
-

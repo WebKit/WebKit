@@ -100,12 +100,12 @@ void WebInspectorUIProxy::showSavePanelForSingleFile(HWND parentWindow, Vector<W
     OPENFILENAME ofn { };
     ofn.lStructSize = sizeof(OPENFILENAME);
     ofn.hwndOwner = parentWindow;
-    ofn.lpstrFile = filePath.data();
+    ofn.lpstrFile = filePath.mutableSpan().data();
     ofn.nMaxFile = MAX_PATH;
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT;
 
     if (GetSaveFileName(&ofn)) {
-        auto fileHandle = FileSystem::openFile(filePath.data(), FileSystem::FileOpenMode::ReadWrite);
+        auto fileHandle = FileSystem::openFile(filePath.span().data(), FileSystem::FileOpenMode::ReadWrite);
         if (!fileHandle)
             return;
 
@@ -116,7 +116,7 @@ void WebInspectorUIProxy::showSavePanelForSingleFile(HWND parentWindow, Vector<W
             auto message = systemErrorMessage(GetLastError());
             if (message.isEmpty())
                 message = makeString("Error: writeToFile returns "_s, bytesWritten ? static_cast<int64_t>(*bytesWritten) : -1, ", contentLength = "_s, content.length());
-            MessageBox(parentWindow, message.wideCharacters().data(), L"Export HAR", MB_OK | MB_ICONEXCLAMATION);
+            MessageBox(parentWindow, message.wideCharacters().span().data(), L"Export HAR", MB_OK | MB_ICONEXCLAMATION);
         }
     } else {
         auto errorCode = CommDlgExtendedError();
@@ -127,7 +127,7 @@ void WebInspectorUIProxy::showSavePanelForSingleFile(HWND parentWindow, Vector<W
                 message = "Error: A file name is invalid."_s;
             else
                 message = makeString("Error: "_s, errorCode);
-            MessageBox(parentWindow, message.wideCharacters().data(), L"Export HAR", MB_OK | MB_ICONEXCLAMATION);
+            MessageBox(parentWindow, message.wideCharacters().span().data(), L"Export HAR", MB_OK | MB_ICONEXCLAMATION);
         }
     }
 }
@@ -298,7 +298,7 @@ RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
     };
 
     RECT r = { 0, 0, static_cast<LONG>(initialWindowWidth), static_cast<LONG>(initialWindowHeight) };
-    auto page = protectedInspectedPage();
+    RefPtr page = inspectedPage();
     m_inspectedViewWindow = reinterpret_cast<HWND>(page->viewWidget());
     m_inspectedViewParentWindow = ::GetParent(m_inspectedViewWindow);
     auto view = WebView::create(r, pageConfiguration, m_inspectedViewParentWindow);

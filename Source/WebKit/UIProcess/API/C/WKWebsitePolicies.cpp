@@ -179,3 +179,13 @@ void WKWebsitePoliciesSetDataStore(WKWebsitePoliciesRef websitePolicies, WKWebsi
 {
     toProtectedImpl(websitePolicies)->setWebsiteDataStore(toProtectedImpl(websiteDataStore));
 }
+
+bool WKWebsitePoliciesGetAllowsJSHandleCreationInPageWorld(WKWebsitePoliciesRef websitePolicies)
+{
+    return toProtectedImpl(websitePolicies)->allowsJSHandleCreationInPageWorld();
+}
+
+void WKWebsitePoliciesSetAllowsJSHandleCreationInPageWorld(WKWebsitePoliciesRef websitePolicies, bool allows)
+{
+    toProtectedImpl(websitePolicies)->setAllowsJSHandleCreationInPageWorld(allows);
+}

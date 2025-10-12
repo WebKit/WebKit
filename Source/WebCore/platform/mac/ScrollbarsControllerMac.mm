@@ -33,9 +33,10 @@
 #import "NSScrollerImpDetails.h"
 #import "ScrollAnimator.h"
 #import "ScrollableArea.h"
-#import "Scrollbar.h"
+#import "ScrollbarInlines.h"
 #import "ScrollbarMac.h"
 #import "ScrollbarThemeMac.h"
+#import "ScrollbarsControllerInlines.h"
 #import "TimingFunction.h"
 #import "WheelEventTestMonitor.h" // FIXME: This is  layering violation.
 
@@ -128,7 +129,7 @@ static NSScrollerImp *scrollerImpForScrollbar(Scrollbar& scrollbar)
     if (!scrollableArea || !scrollerImp)
         return NSZeroPoint;
 
-    WebCore::Scrollbar* scrollbar = 0;
+    RefPtr<WebCore::Scrollbar> scrollbar;
     if ([scrollerImp isHorizontal])
         scrollbar = scrollableArea->horizontalScrollbar();
     else
@@ -170,7 +171,8 @@ static NSScrollerImp *scrollerImpForScrollbar(Scrollbar& scrollbar)
 
     [scrollerImpPair setScrollerStyle:newRecommendedScrollerStyle];
 
-    static_cast<WebCore::ScrollbarsControllerMac&>(scrollableArea->scrollbarsController()).updateScrollerStyle();
+    CheckedRef scrollbarsController = downcast<WebCore::ScrollbarsControllerMac>(scrollableArea->scrollbarsController());
+    scrollbarsController->updateScrollerStyle();
 }
 
 @end
@@ -207,7 +209,7 @@ using WebCore::LogOverlayScrollbars;
     NSTimeInterval _duration;
     RetainPtr<NSTimer> _timer;
     RetainPtr<NSDate> _startDate;
-    RefPtr<WebCore::CubicBezierTimingFunction> _timingFunction;
+    const RefPtr<WebCore::CubicBezierTimingFunction> _timingFunction;
 }
 - (id)initWithScrollbar:(WebCore::Scrollbar*)scrollbar featureToAnimate:(FeatureToAnimate)featureToAnimate animateFrom:(CGFloat)startValue animateTo:(CGFloat)endValue duration:(NSTimeInterval)duration;
 - (void)setCurrentProgress:(NSTimer *)timer;
@@ -226,7 +228,7 @@ using WebCore::LogOverlayScrollbars;
     const NSTimeInterval timeInterval = 0.01;
     _timer = adoptNS([[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:0] interval:timeInterval target:self selector:@selector(setCurrentProgress:) userInfo:nil repeats:YES]);
     _duration = duration;
-    _timingFunction = WebCore::CubicBezierTimingFunction::create(WebCore::CubicBezierTimingFunction::TimingFunctionPreset::EaseInOut);
+    lazyInitialize(_timingFunction, WebCore::CubicBezierTimingFunction::create(WebCore::CubicBezierTimingFunction::TimingFunctionPreset::EaseInOut));
 
     LOG_WITH_STREAM(OverlayScrollbars, stream << "Creating WebScrollbarPartAnimation for " << featureToAnimate << " from " << startValue << " to " << endValue);
 
@@ -361,7 +363,7 @@ using WebCore::LogOverlayScrollbars;
 
 - (NakedPtr<WebCore::ScrollbarsControllerMac>)scrollbarsController
 {
-    return &static_cast<WebCore::ScrollbarsControllerMac&>(_scrollbar->scrollableArea().scrollbarsController());
+    return &downcast<WebCore::ScrollbarsControllerMac>(_scrollbar->checkedScrollableArea()->scrollbarsController());
 }
 
 - (NSRect)convertRectToBacking:(NSRect)aRect
@@ -382,25 +384,26 @@ using WebCore::LogOverlayScrollbars;
     if (!WebCore::ScrollbarThemeMac::isCurrentlyDrawingIntoLayer())
         return nil;
 
-    WebCore::GraphicsLayer* layer;
+    RefPtr<WebCore::GraphicsLayer> layer;
     if (_scrollbar->orientation() == WebCore::ScrollbarOrientation::Vertical)
-        layer = _scrollbar->scrollableArea().layerForVerticalScrollbar();
+        layer = _scrollbar->checkedScrollableArea()->layerForVerticalScrollbar();
     else
-        layer = _scrollbar->scrollableArea().layerForHorizontalScrollbar();
+        layer = _scrollbar->checkedScrollableArea()->layerForHorizontalScrollbar();
 
-    static CALayer *dummyLayer = [[CALayer alloc] init];
-    return layer ? layer->platformLayer() : dummyLayer;
+    static NeverDestroyed<RetainPtr<CALayer>> dummyLayer = adoptNS([[CALayer alloc] init]);
+    return layer ? layer->platformLayer() : dummyLayer.get().get();
 }
 
 - (NSPoint)mouseLocationInScrollerForScrollerImp:(NSScrollerImp *)scrollerImp
 {
-    if (!_scrollbar)
+    RefPtr scrollbar = _scrollbar.get();
+    if (!scrollbar)
         return NSZeroPoint;
 
-    ASSERT_UNUSED(scrollerImp, scrollerImp == scrollerImpForScrollbar(*_scrollbar));
+    ASSERT_UNUSED(scrollerImp, scrollerImp == scrollerImpForScrollbar(*scrollbar));
 
-    auto positionInView = _scrollbar->scrollableArea().lastKnownMousePositionInView();
-    return _scrollbar->convertFromContainingView(positionInView);
+    auto positionInView = _scrollbar->checkedScrollableArea()->lastKnownMousePositionInView();
+    return scrollbar->convertFromContainingView(positionInView);
 }
 
 - (NSRect)convertRectToLayer:(NSRect)rect
@@ -412,10 +415,8 @@ using WebCore::LogOverlayScrollbars;
 {
     UNUSED_PARAM(scrollerImp);
 
-    if (!_scrollbar)
-        return false;
-
-    return _scrollbar->supportsUpdateOnSecondaryThread();
+    RefPtr scrollbar = _scrollbar.get();
+    return scrollbar && scrollbar->supportsUpdateOnSecondaryThread();
 }
 
 - (NSAppearance *)effectiveAppearanceForScrollerImp:(NSScrollerImp *)scrollerImp
@@ -427,7 +428,7 @@ using WebCore::LogOverlayScrollbars;
 
     // Keep this in sync with LocalFrameView::paintScrollCorner.
     // The base system does not support dark Aqua, so we might get a null result.
-    bool useDarkAppearance = _scrollbar->scrollableArea().useDarkAppearanceForScrollbars();
+    bool useDarkAppearance = _scrollbar->checkedScrollableArea()->useDarkAppearanceForScrollbars();
     if (auto *appearance = [NSAppearance appearanceNamed:useDarkAppearance ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua])
         return appearance;
     return [NSAppearance currentDrawingAppearance];
@@ -435,22 +436,25 @@ using WebCore::LogOverlayScrollbars;
 
 - (void)setUpAlphaAnimation:(RetainPtr<WebScrollbarPartAnimation>&)scrollbarPartAnimation scrollerPainter:(NSScrollerImp *)scrollerPainter part:(WebCore::ScrollbarPart)part animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
 {
+    CheckedPtr scrollbarsController = [self scrollbarsController].get();
+
     // If the user has scrolled the page, then the scrollbars must be animated here.
     // This overrides the early returns.
-    bool mustAnimate = ![self scrollbarsController]->scrollbarAnimationsUnsuspendedByUserInteraction();
+    bool mustAnimate = !scrollbarsController->scrollbarAnimationsUnsuspendedByUserInteraction();
 
-    LOG_WITH_STREAM(OverlayScrollbars, stream << "WebScrollerImpDelegate for [" << _scrollbar->scrollableArea() << "] setUpAlphaAnimation: scrollbarAnimationsUnsuspendedByUserInteraction " << [self scrollbarsController]->scrollbarAnimationsUnsuspendedByUserInteraction() << " shouldSuspendScrollAnimations " << _scrollbar->scrollableArea().shouldSuspendScrollAnimations());
+    RefPtr scrollbar = _scrollbar.get();
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "WebScrollerImpDelegate for [" << scrollbar->scrollableArea() << "] setUpAlphaAnimation: scrollbarAnimationsUnsuspendedByUserInteraction " << [self scrollbarsController]->scrollbarAnimationsUnsuspendedByUserInteraction() << " shouldSuspendScrollAnimations " << _scrollbar->scrollableArea().shouldSuspendScrollAnimations());
 
-    if ([self scrollbarsController]->scrollbarPaintTimerIsActive() && !mustAnimate)
+    if (scrollbarsController->scrollbarPaintTimerIsActive() && !mustAnimate)
         return;
 
-    if ([self scrollbarsController]->shouldSuspendScrollbarAnimations() && !mustAnimate) {
-        [self scrollbarsController]->startScrollbarPaintTimer();
+    if (scrollbarsController->shouldSuspendScrollbarAnimations() && !mustAnimate) {
+        scrollbarsController->startScrollbarPaintTimer();
         return;
     }
 
     // At this point, we are definitely going to animate now, so stop the timer.
-    [self scrollbarsController]->stopScrollbarPaintTimer();
+    scrollbarsController->stopScrollbarPaintTimer();
 
     // If we are currently animating, stop
     if (scrollbarPartAnimation) {
@@ -459,17 +463,17 @@ using WebCore::LogOverlayScrollbars;
     }
 
     if (auto* macTheme = WebCore::macScrollbarTheme())
-        macTheme->setPaintCharacteristicsForScrollbar(*_scrollbar);
+        macTheme->setPaintCharacteristicsForScrollbar(*scrollbar);
 
-    if (part == WebCore::ThumbPart && _scrollbar->orientation() == WebCore::ScrollbarOrientation::Vertical) {
+    if (part == WebCore::ThumbPart && scrollbar->orientation() == WebCore::ScrollbarOrientation::Vertical) {
         if (newAlpha == 1) {
             auto thumbRect = WebCore::IntRect([scrollerPainter rectForPart:NSScrollerKnob]);
-            [self scrollbarsController]->setVisibleScrollerThumbRect(thumbRect);
+            scrollbarsController->setVisibleScrollerThumbRect(thumbRect);
         } else
-            [self scrollbarsController]->setVisibleScrollerThumbRect({ });
+            scrollbarsController->setVisibleScrollerThumbRect({ });
     }
 
-    scrollbarPartAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar.get()
+    scrollbarPartAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:scrollbar.get()
                                                                        featureToAnimate:part == WebCore::ThumbPart ? ThumbAlpha : TrackAlpha
                                                                             animateFrom:part == WebCore::ThumbPart ? [scrollerPainter knobAlpha] : [scrollerPainter trackAlpha]
                                                                               animateTo:newAlpha
@@ -479,22 +483,23 @@ using WebCore::LogOverlayScrollbars;
 
 - (void)scrollerImp:(NSScrollerImp *)scrollerImp animateKnobAlphaTo:(CGFloat)newKnobAlpha duration:(NSTimeInterval)duration
 {
-    if (!_scrollbar)
+    RefPtr scrollbar = _scrollbar.get();
+    if (!scrollbar)
         return;
 
-    ASSERT(scrollerImp == scrollerImpForScrollbar(*_scrollbar));
+    ASSERT(scrollerImp == scrollerImpForScrollbar(*scrollbar));
 
     NSScrollerImp *scrollerPainter = (NSScrollerImp *)scrollerImp;
-    if (![self scrollbarsController]->scrollbarsCanBeActive()) {
+    if (!CheckedRef { *[self scrollbarsController] }->scrollbarsCanBeActive()) {
         [scrollerImp setKnobAlpha:0];
-        _scrollbar->invalidate();
+        scrollbar->invalidate();
         return;
     }
 
     // If we are fading the scrollbar away, that is a good indication that we are no longer going to
     // be moving it around on the scrolling thread. Calling [scrollerPainter setUsePresentationValue:NO]
     // will pass that information on to the NSScrollerImp API.
-    if (newKnobAlpha == 0 && _scrollbar->supportsUpdateOnSecondaryThread())
+    if (!newKnobAlpha && scrollbar->supportsUpdateOnSecondaryThread())
         [scrollerPainter setUsePresentationValue:NO];
 
     [self setUpAlphaAnimation:_knobAlphaAnimation scrollerPainter:scrollerPainter part:WebCore::ThumbPart animateAlphaTo:newKnobAlpha duration:duration];
@@ -513,20 +518,21 @@ using WebCore::LogOverlayScrollbars;
 
 - (void)scrollerImp:(NSScrollerImp *)scrollerImp animateUIStateTransitionWithDuration:(NSTimeInterval)duration
 {
-    if (!_scrollbar)
+    RefPtr scrollbar = _scrollbar.get();
+    if (!scrollbar)
         return;
 
-    ASSERT(scrollerImp == scrollerImpForScrollbar(*_scrollbar));
+    ASSERT(scrollerImp == scrollerImpForScrollbar(*scrollbar));
 
     // UIStateTransition always animates to 1. In case an animation is in progress this avoids a hard transition.
     [scrollerImp setUiStateTransitionProgress:1 - [scrollerImp uiStateTransitionProgress]];
 
     // If the UI state transition is happening, then we are no longer moving the scrollbar on the scrolling thread.
-    if (_scrollbar->supportsUpdateOnSecondaryThread())
+    if (scrollbar->supportsUpdateOnSecondaryThread())
         [scrollerImp setUsePresentationValue:NO];
 
     if (!_uiStateTransitionAnimation) {
-        _uiStateTransitionAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar.get()
+        _uiStateTransitionAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:scrollbar.get()
             featureToAnimate:UIStateTransition
             animateFrom:[scrollerImp uiStateTransitionProgress]
             animateTo:1.0
@@ -542,16 +548,17 @@ using WebCore::LogOverlayScrollbars;
 
 - (void)scrollerImp:(NSScrollerImp *)scrollerImp animateExpansionTransitionWithDuration:(NSTimeInterval)duration
 {
-    if (!_scrollbar)
+    RefPtr scrollbar = _scrollbar.get();
+    if (!scrollbar)
         return;
 
-    ASSERT(scrollerImp == scrollerImpForScrollbar(*_scrollbar));
+    ASSERT(scrollerImp == scrollerImpForScrollbar(*scrollbar));
 
     // ExpansionTransition always animates to 1. In case an animation is in progress this avoids a hard transition.
     [scrollerImp setExpansionTransitionProgress:1 - [scrollerImp expansionTransitionProgress]];
 
     if (!_expansionTransitionAnimation) {
-        _expansionTransitionAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar.get()
+        _expansionTransitionAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:scrollbar.get()
             featureToAnimate:ExpansionTransition
             animateFrom:[scrollerImp expansionTransitionProgress]
             animateTo:1.0
@@ -573,7 +580,7 @@ using WebCore::LogOverlayScrollbars;
 
 - (void)invalidate
 {
-    _scrollbar = 0;
+    _scrollbar = nullptr;
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [_knobAlphaAnimation invalidate];
     [_trackAlphaAnimation invalidate];
@@ -626,13 +633,14 @@ void ScrollbarsControllerMac::cancelAnimations()
 void ScrollbarsControllerMac::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
 {
     auto rectInViewCoordinates = scrollerThumb;
-    if (auto* verticalScrollbar = scrollableArea().verticalScrollbar())
+    CheckedRef scrollableArea = this->scrollableArea();
+    if (RefPtr verticalScrollbar = scrollableArea->verticalScrollbar())
         rectInViewCoordinates = verticalScrollbar->convertToContainingView(scrollerThumb);
 
     if (rectInViewCoordinates == m_visibleScrollerThumbRect)
         return;
 
-    scrollableArea().setVisibleScrollerThumbRect(rectInViewCoordinates);
+    scrollableArea->setVisibleScrollerThumbRect(rectInViewCoordinates);
     m_visibleScrollerThumbRect = rectInViewCoordinates;
 }
 
@@ -683,7 +691,7 @@ void ScrollbarsControllerMac::mouseEnteredScrollbar(Scrollbar* scrollbar) const
     if ([m_scrollerImpPair overlayScrollerStateIsLocked])
         return;
 
-    if (NSScrollerImp *painter = scrollerImpForScrollbar(*scrollbar))
+    if (RetainPtr painter = scrollerImpForScrollbar(*scrollbar))
         [painter mouseEnteredScroller];
 }
 
@@ -696,7 +704,7 @@ void ScrollbarsControllerMac::mouseExitedScrollbar(Scrollbar* scrollbar) const
     if ([m_scrollerImpPair overlayScrollerStateIsLocked])
         return;
 
-    if (NSScrollerImp *painter = scrollerImpForScrollbar(*scrollbar))
+    if (RetainPtr painter = scrollerImpForScrollbar(*scrollbar))
         [painter mouseExitedScroller];
 }
 
@@ -705,7 +713,7 @@ void ScrollbarsControllerMac::mouseIsDownInScrollbar(Scrollbar* scrollbar, bool 
     if ([m_scrollerImpPair overlayScrollerStateIsLocked])
         return;
 
-    if (NSScrollerImp *painter = scrollerImpForScrollbar(*scrollbar)) {
+    if (RetainPtr painter = scrollerImpForScrollbar(*scrollbar)) {
         [painter setTracking:mouseIsDown];
         if (mouseIsDown)
             [m_scrollerImpPair beginScrollGesture];
@@ -765,8 +773,8 @@ void ScrollbarsControllerMac::didBeginScrollGesture()
 
     [m_scrollerImpPair beginScrollGesture];
 
-    if (auto* monitor = wheelEventTestMonitor())
-        monitor->deferForReason(scrollableArea().scrollingNodeIDForTesting(), WheelEventTestMonitor::DeferReason::ContentScrollInProgress);
+    if (RefPtr monitor = wheelEventTestMonitor())
+        monitor->deferForReason(checkedScrollableArea()->scrollingNodeIDForTesting(), WheelEventTestMonitor::DeferReason::ContentScrollInProgress);
 
     ScrollbarsController::didBeginScrollGesture();
 }
@@ -780,8 +788,8 @@ void ScrollbarsControllerMac::didEndScrollGesture()
 
     [m_scrollerImpPair endScrollGesture];
 
-    if (auto* monitor = wheelEventTestMonitor())
-        monitor->removeDeferralForReason(scrollableArea().scrollingNodeIDForTesting(), WheelEventTestMonitor::DeferReason::ContentScrollInProgress);
+    if (RefPtr monitor = wheelEventTestMonitor())
+        monitor->removeDeferralForReason(checkedScrollableArea()->scrollingNodeIDForTesting(), WheelEventTestMonitor::DeferReason::ContentScrollInProgress);
 
     ScrollbarsController::didEndScrollGesture();
 }
@@ -820,7 +828,7 @@ bool ScrollbarsControllerMac::scrollbarsCanBeActive() const
 
 void ScrollbarsControllerMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
 {
-    NSScrollerImp *painter = scrollerImpForScrollbar(*scrollbar);
+    RetainPtr painter = scrollerImpForScrollbar(*scrollbar);
     if (!painter)
         return;
 
@@ -828,17 +836,17 @@ void ScrollbarsControllerMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
     m_verticalScrollerImpDelegate = adoptNS([[WebScrollerImpDelegate alloc] initWithScrollbar:scrollbar]);
 
     [painter setDelegate:m_verticalScrollerImpDelegate.get()];
-    if (GraphicsLayer* layer = scrollbar->scrollableArea().layerForVerticalScrollbar())
-        [painter setLayer:layer->platformLayer()];
+    if (RefPtr layer = scrollbar->checkedScrollableArea()->layerForVerticalScrollbar())
+        [painter setLayer:layer->protectedPlatformLayer().get()];
 
-    [m_scrollerImpPair setVerticalScrollerImp:painter];
+    [m_scrollerImpPair setVerticalScrollerImp:painter.get()];
     if (scrollableArea().inLiveResize())
         [painter setKnobAlpha:1];
 }
 
 void ScrollbarsControllerMac::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
 {
-    NSScrollerImp *painter = scrollerImpForScrollbar(*scrollbar);
+    RetainPtr painter = scrollerImpForScrollbar(*scrollbar);
     if (!painter)
         return;
 
@@ -852,7 +860,7 @@ void ScrollbarsControllerMac::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
 
 void ScrollbarsControllerMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 {
-    NSScrollerImp *painter = scrollerImpForScrollbar(*scrollbar);
+    RetainPtr painter = scrollerImpForScrollbar(*scrollbar);
     if (!painter)
         return;
 
@@ -860,17 +868,17 @@ void ScrollbarsControllerMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
     m_horizontalScrollerImpDelegate = adoptNS([[WebScrollerImpDelegate alloc] initWithScrollbar:scrollbar]);
 
     [painter setDelegate:m_horizontalScrollerImpDelegate.get()];
-    if (GraphicsLayer* layer = scrollbar->scrollableArea().layerForHorizontalScrollbar())
-        [painter setLayer:layer->platformLayer()];
+    if (RefPtr layer = scrollbar->checkedScrollableArea()->layerForHorizontalScrollbar())
+        [painter setLayer:layer->protectedPlatformLayer().get()];
 
-    [m_scrollerImpPair setHorizontalScrollerImp:painter];
+    [m_scrollerImpPair setHorizontalScrollerImp:painter.get()];
     if (scrollableArea().inLiveResize())
         [painter setKnobAlpha:1];
 }
 
 void ScrollbarsControllerMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
 {
-    NSScrollerImp *painter = scrollerImpForScrollbar(*scrollbar);
+    RetainPtr painter = scrollerImpForScrollbar(*scrollbar);
     if (!painter)
         return;
 
@@ -883,36 +891,38 @@ void ScrollbarsControllerMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar
 
 void ScrollbarsControllerMac::invalidateScrollbarPartLayers(Scrollbar* scrollbar)
 {
-    NSScrollerImp *painter = scrollerImpForScrollbar(*scrollbar);
+    RetainPtr painter = scrollerImpForScrollbar(*scrollbar);
     [painter setNeedsDisplay:YES];
 }
 
 void ScrollbarsControllerMac::verticalScrollbarLayerDidChange()
 {
-    GraphicsLayer* layer = scrollableArea().layerForVerticalScrollbar();
-    Scrollbar* scrollbar = scrollableArea().verticalScrollbar();
+    CheckedRef scrollableArea = this->scrollableArea();
+    RefPtr layer = scrollableArea->layerForVerticalScrollbar();
+    RefPtr scrollbar = scrollableArea->verticalScrollbar();
     if (!scrollbar)
         return;
 
-    NSScrollerImp *painter = scrollerImpForScrollbar(*scrollbar);
+    RetainPtr painter = scrollerImpForScrollbar(*scrollbar);
     if (!painter)
         return;
 
-    [painter setLayer:layer ? layer->platformLayer() : nil];
+    [painter setLayer:RetainPtr { layer ? layer->platformLayer() : nil }.get()];
 }
 
 void ScrollbarsControllerMac::horizontalScrollbarLayerDidChange()
 {
-    GraphicsLayer* layer = scrollableArea().layerForHorizontalScrollbar();
-    Scrollbar* scrollbar = scrollableArea().horizontalScrollbar();
+    CheckedRef scrollableArea = this->scrollableArea();
+    RefPtr layer = scrollableArea->layerForHorizontalScrollbar();
+    RefPtr scrollbar = scrollableArea->horizontalScrollbar();
     if (!scrollbar)
         return;
 
-    NSScrollerImp *painter = scrollerImpForScrollbar(*scrollbar);
+    RetainPtr painter = scrollerImpForScrollbar(*scrollbar);
     if (!painter)
         return;
 
-    [painter setLayer:layer ? layer->platformLayer() : nil];
+    [painter setLayer:RetainPtr { layer ? layer->platformLayer() : nil }.get()];
 }
 
 bool ScrollbarsControllerMac::shouldScrollbarParticipateInHitTesting(Scrollbar* scrollbar)
@@ -922,7 +932,7 @@ bool ScrollbarsControllerMac::shouldScrollbarParticipateInHitTesting(Scrollbar* 
         return true;
 
     // Overlay scrollbars should participate in hit testing whenever they are at all visible.
-    NSScrollerImp *painter = scrollerImpForScrollbar(*scrollbar);
+    RetainPtr painter = scrollerImpForScrollbar(*scrollbar);
     if (!painter)
         return false;
     return [painter knobAlpha] > 0;
@@ -936,7 +946,7 @@ void ScrollbarsControllerMac::notifyContentAreaScrolled(const FloatSize& delta)
     if ([m_scrollerImpPair overlayScrollerStateIsLocked])
         return;
 
-    if (scrollableArea().isHandlingWheelEvent())
+    if (checkedScrollableArea()->isHandlingWheelEvent())
         sendContentAreaScrolled(delta);
     else
         sendContentAreaScrolledSoon(delta);
@@ -944,24 +954,25 @@ void ScrollbarsControllerMac::notifyContentAreaScrolled(const FloatSize& delta)
 
 void ScrollbarsControllerMac::updateScrollerImps()
 {
-    Scrollbar* verticalScrollbar = scrollableArea().verticalScrollbar();
+    CheckedRef scrollableArea = this->scrollableArea();
+    RefPtr verticalScrollbar = scrollableArea->verticalScrollbar();
     if (verticalScrollbar && !verticalScrollbar->isCustomScrollbar()) {
         verticalScrollbar->invalidate();
 
         NSScrollerImp *oldVerticalPainter = [m_scrollerImpPair verticalScrollerImp];
-        auto* verticalScrollbarMac = dynamicDowncast<ScrollbarMac>(verticalScrollbar);
+        RefPtr verticalScrollbarMac = dynamicDowncast<ScrollbarMac>(verticalScrollbar);
         verticalScrollbarMac->createScrollerImp(WTFMove(oldVerticalPainter));
-        [m_scrollerImpPair setVerticalScrollerImp:verticalScrollbarMac->scrollerImp()];
+        [m_scrollerImpPair setVerticalScrollerImp:verticalScrollbarMac->protectedScrollerImp().get()];
     }
 
-    Scrollbar* horizontalScrollbar = scrollableArea().horizontalScrollbar();
+    RefPtr horizontalScrollbar = scrollableArea->horizontalScrollbar();
     if (horizontalScrollbar && !horizontalScrollbar->isCustomScrollbar()) {
         horizontalScrollbar->invalidate();
 
         NSScrollerImp *oldHorizontalPainter = [m_scrollerImpPair horizontalScrollerImp];
-        auto* horizontalScrollbarMac = dynamicDowncast<ScrollbarMac>(horizontalScrollbar);
+        RefPtr horizontalScrollbarMac = dynamicDowncast<ScrollbarMac>(horizontalScrollbar);
         horizontalScrollbarMac->createScrollerImp(WTFMove(oldHorizontalPainter));
-        [m_scrollerImpPair setHorizontalScrollerImp:horizontalScrollbarMac->scrollerImp()];
+        [m_scrollerImpPair setHorizontalScrollerImp:horizontalScrollbarMac->protectedScrollerImp().get()];
     }
 }
 
@@ -991,7 +1002,7 @@ void ScrollbarsControllerMac::updateScrollerStyle()
 
     // If m_needsScrollerStyleUpdate is true, then the page is restoring from the back/forward cache, and
     // a relayout will happen on its own. Otherwise, we must initiate a re-layout ourselves.
-    scrollableArea().scrollbarStyleChanged(newStyle == NSScrollerStyleOverlay ? ScrollbarStyle::Overlay : ScrollbarStyle::AlwaysVisible, !m_needsScrollerStyleUpdate);
+    checkedScrollableArea()->scrollbarStyleChanged(newStyle == NSScrollerStyleOverlay ? ScrollbarStyle::Overlay : ScrollbarStyle::AlwaysVisible, !m_needsScrollerStyleUpdate);
 
     m_needsScrollerStyleUpdate = false;
 }
@@ -1026,8 +1037,8 @@ void ScrollbarsControllerMac::sendContentAreaScrolledTimerFired()
     sendContentAreaScrolled(m_contentAreaScrolledTimerScrollDelta);
     m_contentAreaScrolledTimerScrollDelta = { };
 
-    if (auto* monitor = wheelEventTestMonitor())
-        monitor->removeDeferralForReason(scrollableArea().scrollingNodeIDForTesting(), WheelEventTestMonitor::DeferReason::ContentScrollInProgress);
+    if (RefPtr monitor = wheelEventTestMonitor())
+        monitor->removeDeferralForReason(checkedScrollableArea()->scrollingNodeIDForTesting(), WheelEventTestMonitor::DeferReason::ContentScrollInProgress);
 }
 
 void ScrollbarsControllerMac::sendContentAreaScrolledSoon(const FloatSize& delta)
@@ -1037,8 +1048,8 @@ void ScrollbarsControllerMac::sendContentAreaScrolledSoon(const FloatSize& delta
     if (!m_sendContentAreaScrolledTimer.isActive())
         m_sendContentAreaScrolledTimer.startOneShot(0_s);
 
-    if (auto* monitor = wheelEventTestMonitor())
-        monitor->deferForReason(scrollableArea().scrollingNodeIDForTesting(), WheelEventTestMonitor::DeferReason::ContentScrollInProgress);
+    if (RefPtr monitor = wheelEventTestMonitor())
+        monitor->deferForReason(checkedScrollableArea()->scrollingNodeIDForTesting(), WheelEventTestMonitor::DeferReason::ContentScrollInProgress);
 }
 
 void ScrollbarsControllerMac::sendContentAreaScrolled(const FloatSize& delta)
@@ -1063,23 +1074,23 @@ static String scrollbarState(Scrollbar* scrollbar)
     if (!scrollbar->isOverlayScrollbar())
         return result.toString();
 
-    NSScrollerImp *scrollerImp = scrollerImpForScrollbar(*scrollbar);
+    RetainPtr scrollerImp = scrollerImpForScrollbar(*scrollbar);
     if (!scrollerImp)
         return result.toString();
 
-    if (scrollerImp.expanded)
+    if (scrollerImp.get().expanded)
         result.append(",expanded"_s);
 
-    if (scrollerImp.trackAlpha > 0)
+    if ([scrollerImp trackAlpha] > 0)
         result.append(",visible_track"_s);
 
-    if (scrollerImp.knobAlpha > 0)
+    if ([scrollerImp knobAlpha] > 0)
         result.append(",visible_thumb"_s);
 
-    if (scrollerImp.userInterfaceLayoutDirection == NSUserInterfaceLayoutDirectionRightToLeft)
+    if ([scrollerImp userInterfaceLayoutDirection] == NSUserInterfaceLayoutDirectionRightToLeft)
         result.append(",RTL"_s);
 
-    if (scrollerImp.controlSize != NSControlSizeRegular)
+    if ([scrollerImp controlSize] != NSControlSizeRegular)
         result.append(",thin"_s);
 
     return result.toString();
@@ -1087,17 +1098,17 @@ static String scrollbarState(Scrollbar* scrollbar)
 
 String ScrollbarsControllerMac::horizontalScrollbarStateForTesting() const
 {
-    return scrollbarState(scrollableArea().horizontalScrollbar());
+    return scrollbarState(checkedScrollableArea()->protectedHorizontalScrollbar().get());
 }
 
 String ScrollbarsControllerMac::verticalScrollbarStateForTesting() const
 {
-    return scrollbarState(scrollableArea().verticalScrollbar());
+    return scrollbarState(checkedScrollableArea()->protectedVerticalScrollbar().get());
 }
 
 WheelEventTestMonitor* ScrollbarsControllerMac::wheelEventTestMonitor() const
 {
-    return scrollableArea().scrollAnimator().wheelEventTestMonitor();
+    return checkedScrollableArea()->scrollAnimator().wheelEventTestMonitor();
 }
 
 

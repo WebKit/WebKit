@@ -31,8 +31,8 @@
 
 #pragma once
 
-#include "HTMLElement.h"
-#include "TypedElementDescendantIterator.h"
+#include <WebCore/HTMLElement.h>
+#include <WebCore/TypedElementDescendantIterator.h>
 
 namespace WebCore {
 

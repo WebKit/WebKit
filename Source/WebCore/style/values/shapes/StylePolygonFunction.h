@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include "CSSPolygonFunction.h"
-#include "StyleFillRule.h"
-#include "StylePathComputation.h"
-#include "StylePrimitiveNumericTypes.h"
-#include "StyleWindRuleComputation.h"
+#include <WebCore/CSSPolygonFunction.h>
+#include <WebCore/StyleFillRule.h>
+#include <WebCore/StylePathComputation.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
+#include <WebCore/StyleWindRuleComputation.h>
 
 namespace WebCore {
 namespace Style {

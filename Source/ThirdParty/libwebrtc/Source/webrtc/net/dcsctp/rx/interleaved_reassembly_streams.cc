@@ -9,23 +9,25 @@
  */
 #include "net/dcsctp/rx/interleaved_reassembly_streams.h"
 
-#include <stddef.h>
-
+#include <cstddef>
 #include <cstdint>
-#include <functional>
 #include <iterator>
 #include <map>
-#include <numeric>
-#include <unordered_map>
+#include <tuple>
 #include <utility>
 #include <vector>
 
 #include "absl/algorithm/container.h"
+#include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/common/sequence_numbers.h"
 #include "net/dcsctp/packet/chunk/forward_tsn_common.h"
 #include "net/dcsctp/packet/data.h"
+#include "net/dcsctp/public/dcsctp_handover_state.h"
+#include "net/dcsctp/public/dcsctp_message.h"
 #include "net/dcsctp/public/types.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
 namespace dcsctp {
@@ -221,8 +223,9 @@ int InterleavedReassemblyStreams::Add(UnwrappedTSN tsn, Data data) {
 }
 
 size_t InterleavedReassemblyStreams::HandleForwardTsn(
-    UnwrappedTSN new_cumulative_ack_tsn,
-    rtc::ArrayView<const AnyForwardTsnChunk::SkippedStream> skipped_streams) {
+    UnwrappedTSN /* new_cumulative_ack_tsn */,
+    webrtc::ArrayView<const AnyForwardTsnChunk::SkippedStream>
+        skipped_streams) {
   size_t removed_bytes = 0;
   for (const auto& skipped : skipped_streams) {
     removed_bytes +=
@@ -233,7 +236,7 @@ size_t InterleavedReassemblyStreams::HandleForwardTsn(
 }
 
 void InterleavedReassemblyStreams::ResetStreams(
-    rtc::ArrayView<const StreamID> stream_ids) {
+    webrtc::ArrayView<const StreamID> stream_ids) {
   if (stream_ids.empty()) {
     for (auto& entry : streams_) {
       entry.second.Reset();
@@ -273,16 +276,16 @@ void InterleavedReassemblyStreams::RestoreFromState(
   // Validate that the component is in pristine state.
   RTC_DCHECK(streams_.empty());
 
-  for (const DcSctpSocketHandoverState::OrderedStream& state :
+  for (const DcSctpSocketHandoverState::OrderedStream& stream_state :
        state.rx.ordered_streams) {
-    FullStreamId stream_id(IsUnordered(false), StreamID(state.id));
+    FullStreamId stream_id(IsUnordered(false), StreamID(stream_state.id));
     streams_.emplace(
         std::piecewise_construct, std::forward_as_tuple(stream_id),
-        std::forward_as_tuple(stream_id, this, MID(state.next_ssn)));
+        std::forward_as_tuple(stream_id, this, MID(stream_state.next_ssn)));
   }
-  for (const DcSctpSocketHandoverState::UnorderedStream& state :
+  for (const DcSctpSocketHandoverState::UnorderedStream& stream_state :
        state.rx.unordered_streams) {
-    FullStreamId stream_id(IsUnordered(true), StreamID(state.id));
+    FullStreamId stream_id(IsUnordered(true), StreamID(stream_state.id));
     streams_.emplace(std::piecewise_construct, std::forward_as_tuple(stream_id),
                      std::forward_as_tuple(stream_id, this));
   }

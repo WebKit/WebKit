@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2010 Google, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -112,10 +112,10 @@ void HTMLFormattingElementList::removeUpdatingBookmark(Element& element, Bookmar
         m_entries.removeAt(index);
         // Removing an element from the list can change the position of the bookmarked
         // item. Update the address pointed by the bookmark, when needed.
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        if (bookmarkIndex > index)
-            bookmark.m_mark--;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        if (bookmarkIndex > index) {
+            auto span = m_entries.mutableSpan();
+            bookmark.m_mark = span.subspan(bookmark.m_mark - span.data() - 1).data();
+        }
     }
 }
 

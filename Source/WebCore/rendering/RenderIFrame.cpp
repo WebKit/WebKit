@@ -58,12 +58,6 @@ HTMLIFrameElement& RenderIFrame::iframeElement() const
     return downcast<HTMLIFrameElement>(RenderFrameBase::frameOwnerElement());
 }
 
-bool RenderIFrame::isNonReplacedAtomicInline() const
-{
-    // FIXME: iFrames should not override this function.
-    return isInline();
-}
-
 bool RenderIFrame::requiresLayer() const
 {
     return RenderFrameBase::requiresLayer() || style().resize() != Resize::None;

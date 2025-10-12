@@ -10,15 +10,19 @@
 
 #include "modules/audio_mixer/sine_wave_generator.h"
 
-#include <math.h>
-#include <stddef.h>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <numbers>
 
+#include "api/audio/audio_frame.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 
 namespace {
-constexpr float kPi = 3.14159265f;
+constexpr float kPi = std::numbers::pi_v<float>;
 }  // namespace
 
 void SineWaveGenerator::GenerateNextFrame(AudioFrame* frame) {
@@ -27,7 +31,7 @@ void SineWaveGenerator::GenerateNextFrame(AudioFrame* frame) {
   for (size_t i = 0; i < frame->samples_per_channel_; ++i) {
     for (size_t ch = 0; ch < frame->num_channels_; ++ch) {
       frame_data[frame->num_channels_ * i + ch] =
-          rtc::saturated_cast<int16_t>(amplitude_ * sinf(phase_));
+          saturated_cast<int16_t>(amplitude_ * sinf(phase_));
     }
     phase_ += wave_frequency_hz_ * 2 * kPi / frame->sample_rate_hz_;
   }

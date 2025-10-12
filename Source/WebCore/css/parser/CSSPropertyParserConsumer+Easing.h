@@ -52,7 +52,6 @@ std::optional<CSS::EasingFunction> consumeUnresolvedEasingFunction(CSSParserToke
 RefPtr<CSSValue> consumeEasingFunction(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 // MARK: <easing-function> parsing (raw)
-RefPtr<TimingFunction> parseEasingFunction(const String&, const CSSParserContext&, const CSSToLengthConversionData&);
 RefPtr<TimingFunction> parseEasingFunctionDeprecated(const String&, const CSSParserContext&);
 
 } // namespace CSSPropertyParserHelpers

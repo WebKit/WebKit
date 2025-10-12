@@ -25,8 +25,6 @@
 
 // FIXME: Remove this header.
 
-#include "ExceptionOr.h"
-#include "JSDOMWrapperCache.h"
 #include <JavaScriptCore/AuxiliaryBarrierInlines.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSArray.h>
@@ -38,6 +36,8 @@
 #include <JavaScriptCore/SlotVisitorInlines.h>
 #include <JavaScriptCore/StructureInlines.h>
 #include <JavaScriptCore/WriteBarrier.h>
+#include <WebCore/ExceptionOr.h>
+#include <WebCore/JSDOMWrapperCache.h>
 #include <cstddef>
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>

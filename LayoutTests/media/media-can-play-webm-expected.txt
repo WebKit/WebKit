@@ -7,5 +7,7 @@ EXPECTED (video.canPlayType('audio/webm') == 'maybe') OK
 EXPECTED (video.canPlayType('video/webm') == 'maybe') OK
 EXPECTED (video.canPlayType('audio/webm; codecs=vorbis') == 'probably') OK
 EXPECTED (video.canPlayType('video/webm; codecs=vp8,vorbis') == 'probably') OK
+EXPECTED (video.canPlayType('audio/webm; codecs=opus') == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs=vp8,opus') == 'probably') OK
 END OF TEST
 

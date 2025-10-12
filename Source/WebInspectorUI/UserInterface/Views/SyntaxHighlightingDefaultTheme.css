@@ -38,7 +38,7 @@
     color: var(--syntax-highlight-comment-color);
 }
 
-.cm-s-default :is(.cm-tag, .cm-bracket, .cm-atom, .cm-keyword, .cm-m-javascript.cm-builtin),
+.cm-s-default :is(.cm-tag, .cm-bracket, .cm-atom, .cm-variable.cm-callee, .cm-keyword, .cm-m-javascript.cm-builtin),
 .cm-s-default .cm-m-css:is(.cm-atom, .cm-meta, .cm-variable-2, .cm-variable-3, .cm-property),
 .syntax-highlighted :is(.css-keyword, .css-tag, .css-at-rule, .css-important, .javascript-keyword, .html-tag) {
     color: var(--syntax-highlight-boolean-color);

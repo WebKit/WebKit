@@ -42,6 +42,11 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerNavigationPreloader);
 
+Ref<ServiceWorkerNavigationPreloader> ServiceWorkerNavigationPreloader::create(NetworkSession& session, NetworkLoadParameters&& parameters, const WebCore::NavigationPreloadState& state, bool shouldCaptureExtraNetworkLoadMetrics)
+{
+    return adoptRef(*new ServiceWorkerNavigationPreloader(session, WTFMove(parameters), state, shouldCaptureExtraNetworkLoadMetrics));
+}
+
 ServiceWorkerNavigationPreloader::ServiceWorkerNavigationPreloader(NetworkSession& session, NetworkLoadParameters&& parameters, const WebCore::NavigationPreloadState& state, bool shouldCaptureExtraNetworkLoadMetric)
     : m_session(session)
     , m_parameters(WTFMove(parameters))
@@ -49,6 +54,7 @@ ServiceWorkerNavigationPreloader::ServiceWorkerNavigationPreloader(NetworkSessio
     , m_shouldCaptureExtraNetworkLoadMetrics(shouldCaptureExtraNetworkLoadMetrics())
     , m_startTime(MonotonicTime::now())
 {
+    relaxAdoptionRequirement();
     RELEASE_LOG(ServiceWorker, "ServiceWorkerNavigationPreloader::ServiceWorkerNavigationPreloader %p", this);
     start();
 }
@@ -68,33 +74,33 @@ void ServiceWorkerNavigationPreloader::start()
     if (RefPtr cache = session->cache()) {
         NetworkCache::GlobalFrameID globalID { *m_parameters.webPageProxyID, *m_parameters.webPageID, *m_parameters.webFrameID };
         cache->retrieve(m_parameters.request, globalID, m_parameters.isNavigatingToAppBoundDomain, m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections, [weakThis = WeakPtr { *this }](auto&& entry, auto&&) mutable {
-            CheckedPtr checkedThis = weakThis.get();
-            if (!checkedThis || checkedThis->m_isCancelled)
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis || protectedThis->m_isCancelled)
                 return;
 
             if (entry && !entry->needsValidation()) {
-                checkedThis->loadWithCacheEntry(*entry);
+                protectedThis->loadWithCacheEntry(*entry);
                 return;
             }
 
-            checkedThis->m_parameters.request.setCachePolicy(ResourceRequestCachePolicy::RefreshAnyCacheData);
+            protectedThis->m_parameters.request.setCachePolicy(ResourceRequestCachePolicy::RefreshAnyCacheData);
             if (entry) {
-                checkedThis->m_cacheEntry = WTFMove(entry);
+                protectedThis->m_cacheEntry = WTFMove(entry);
 
-                auto eTag = checkedThis->m_cacheEntry->response().httpHeaderField(HTTPHeaderName::ETag);
+                auto eTag = protectedThis->m_cacheEntry->response().httpHeaderField(HTTPHeaderName::ETag);
                 if (!eTag.isEmpty())
-                    checkedThis->m_parameters.request.setHTTPHeaderField(HTTPHeaderName::IfNoneMatch, eTag);
+                    protectedThis->m_parameters.request.setHTTPHeaderField(HTTPHeaderName::IfNoneMatch, eTag);
 
-                auto lastModified = checkedThis->m_cacheEntry->response().httpHeaderField(HTTPHeaderName::LastModified);
+                auto lastModified = protectedThis->m_cacheEntry->response().httpHeaderField(HTTPHeaderName::LastModified);
                 if (!lastModified.isEmpty())
-                    checkedThis->m_parameters.request.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
+                    protectedThis->m_parameters.request.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
             }
 
-            if (!checkedThis->m_session) {
-                checkedThis->didFailLoading(ResourceError { ResourceError::Type::Cancellation });
+            if (!protectedThis->m_session) {
+                protectedThis->didFailLoading(ResourceError { ResourceError::Type::Cancellation });
                 return;
             }
-            checkedThis->loadFromNetwork();
+            protectedThis->loadFromNetwork();
         });
         return;
     }
@@ -148,7 +154,7 @@ void ServiceWorkerNavigationPreloader::loadFromNetwork()
     if (m_state.enabled)
         m_parameters.request.addHTTPHeaderField(HTTPHeaderName::ServiceWorkerNavigationPreload, m_state.headerValue);
 
-    Ref networkLoad = NetworkLoad::create(*this, WTFMove(m_parameters), *m_session);
+    Ref networkLoad = NetworkLoad::create(*this, WTFMove(m_parameters), CheckedRef { *m_session });
     m_networkLoad = networkLoad.copyRef();
     networkLoad->start();
 }

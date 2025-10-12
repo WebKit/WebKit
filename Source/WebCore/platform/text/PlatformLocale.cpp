@@ -323,7 +323,7 @@ String Locale::convertFromLocalizedNumber(const String& localized)
         else if (symbolIndex == GroupSeparatorIndex)
             return input;
         else
-            builder.append(static_cast<UChar>('0' + symbolIndex));
+            builder.append(static_cast<char16_t>('0' + symbolIndex));
     }
     String converted = builder.toString();
     // Ignore trailing '.', but will reject '.'-only string later.

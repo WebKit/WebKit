@@ -3,9 +3,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// Texture upload format tests:
+// TextureUploadFormatTest.cpp:
 //   Test all texture unpack/upload formats for sampling correctness.
 //
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "common/mathutil.h"
 #include "image_util/copyimage.h"

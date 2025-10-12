@@ -7,6 +7,7 @@ PASS willValidate should throw NotSupportedError if the target element is not a 
 PASS validity and setValidity()
 PASS validity.customError should be false if not explicitly set via setValidity()
 PASS "anchor" argument of setValidity()
+PASS "anchor" argument of setValidity(): passing self
 PASS checkValidity() should throw NotSupportedError if the target element is not a form-associated custom element
 PASS checkValidity()
 PASS reportValidity() should throw NotSupportedError if the target element is not a form-associated custom element

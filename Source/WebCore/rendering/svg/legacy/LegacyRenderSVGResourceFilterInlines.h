@@ -42,12 +42,12 @@ inline Ref<SVGFilterElement> LegacyRenderSVGResourceFilter::protectedFilterEleme
 
 inline SVGUnitTypes::SVGUnitType LegacyRenderSVGResourceFilter::filterUnits() const
 {
-    return filterElement().filterUnits();
+    return protectedFilterElement()->filterUnits();
 }
 
 inline SVGUnitTypes::SVGUnitType LegacyRenderSVGResourceFilter::primitiveUnits() const
 {
-    return filterElement().primitiveUnits();
+    return protectedFilterElement()->primitiveUnits();
 }
 
 } // namespace WebCore

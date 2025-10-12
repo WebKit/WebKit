@@ -43,6 +43,8 @@ addEventListener("load", async () => {
     window.testRunner?.waitUntilDone();
 
     document.body.textContent = await UIHelper.requestTextExtraction({
+        mergeParagraphs: true,
+        skipNearlyTransparentContent: true,
         clipToBounds: true,
         includeRects: true
     });

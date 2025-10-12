@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 features:
   - iterator-helpers
 info: |
@@ -26,29 +23,29 @@ class TestIterator {
 }
 
 const nextMethod = Iterator.from(new TestIterator()).next;
-assertThrowsInstanceOf(() => nextMethod.call(undefined), TypeError);
-assertThrowsInstanceOf(() => nextMethod.call(null), TypeError);
-assertThrowsInstanceOf(() => nextMethod.call(0), TypeError);
-assertThrowsInstanceOf(() => nextMethod.call(false), TypeError);
-assertThrowsInstanceOf(() => nextMethod.call('test'), TypeError);
-assertThrowsInstanceOf(() => nextMethod.call(Object(1)), TypeError);
-assertThrowsInstanceOf(() => nextMethod.call({}), TypeError);
+assert.throws(TypeError, () => nextMethod.call(undefined));
+assert.throws(TypeError, () => nextMethod.call(null));
+assert.throws(TypeError, () => nextMethod.call(0));
+assert.throws(TypeError, () => nextMethod.call(false));
+assert.throws(TypeError, () => nextMethod.call('test'));
+assert.throws(TypeError, () => nextMethod.call(Object(1)));
+assert.throws(TypeError, () => nextMethod.call({}));
 
 const returnMethod = Iterator.from(new TestIterator()).next;
-assertThrowsInstanceOf(() => returnMethod.call(undefined), TypeError);
-assertThrowsInstanceOf(() => returnMethod.call(null), TypeError);
-assertThrowsInstanceOf(() => returnMethod.call(0), TypeError);
-assertThrowsInstanceOf(() => returnMethod.call(false), TypeError);
-assertThrowsInstanceOf(() => returnMethod.call('test'), TypeError);
-assertThrowsInstanceOf(() => returnMethod.call(Object(1)), TypeError);
-assertThrowsInstanceOf(() => returnMethod.call({}), TypeError);
+assert.throws(TypeError, () => returnMethod.call(undefined));
+assert.throws(TypeError, () => returnMethod.call(null));
+assert.throws(TypeError, () => returnMethod.call(0));
+assert.throws(TypeError, () => returnMethod.call(false));
+assert.throws(TypeError, () => returnMethod.call('test'));
+assert.throws(TypeError, () => returnMethod.call(Object(1)));
+assert.throws(TypeError, () => returnMethod.call({}));
 
 const throwMethod = Iterator.from(new TestIterator()).next;
-assertThrowsInstanceOf(() => throwMethod.call(undefined), TypeError);
-assertThrowsInstanceOf(() => throwMethod.call(null), TypeError);
-assertThrowsInstanceOf(() => throwMethod.call(0), TypeError);
-assertThrowsInstanceOf(() => throwMethod.call(false), TypeError);
-assertThrowsInstanceOf(() => throwMethod.call('test'), TypeError);
-assertThrowsInstanceOf(() => throwMethod.call(Object(1)), TypeError);
-assertThrowsInstanceOf(() => throwMethod.call({}), TypeError);
+assert.throws(TypeError, () => throwMethod.call(undefined));
+assert.throws(TypeError, () => throwMethod.call(null));
+assert.throws(TypeError, () => throwMethod.call(0));
+assert.throws(TypeError, () => throwMethod.call(false));
+assert.throws(TypeError, () => throwMethod.call('test'));
+assert.throws(TypeError, () => throwMethod.call(Object(1)));
+assert.throws(TypeError, () => throwMethod.call({}));
 

@@ -28,9 +28,9 @@
 
 #pragma once
 
-#include "ImageDataStorageFormat.h"
 #include <JavaScriptCore/Float16Array.h>
 #include <JavaScriptCore/Uint8ClampedArray.h>
+#include <WebCore/ImageDataPixelFormat.h>
 #include <optional>
 #include <wtf/JSONValues.h>
 
@@ -38,16 +38,16 @@ namespace WebCore {
 
 class ImageDataArray {
 public:
-    static constexpr bool isSupported(JSC::TypedArrayType type) { return !!toImageDataStorageFormat(type); }
+    static constexpr bool isSupported(JSC::TypedArrayType type) { return !!toImageDataPixelFormat(type); }
     static bool isSupported(const JSC::ArrayBufferView&);
 
     ImageDataArray(Ref<JSC::Uint8ClampedArray>&&);
     ImageDataArray(Ref<JSC::Float16Array>&&);
-    ImageDataArray(ImageDataArray&& original, std::optional<ImageDataStorageFormat> overridingStorageFormat);
+    ImageDataArray(ImageDataArray&& original, std::optional<ImageDataPixelFormat> overridingPixelFormat);
 
-    static std::optional<ImageDataArray> tryCreate(size_t, ImageDataStorageFormat, std::span<const uint8_t> = { });
+    static std::optional<ImageDataArray> tryCreate(size_t, ImageDataPixelFormat, std::span<const uint8_t> = { });
 
-    ImageDataStorageFormat storageFormat() const;
+    ImageDataPixelFormat pixelFormat() const;
     size_t length() const;
 
     JSC::ArrayBufferView& arrayBufferView() const { return m_arrayBufferView.get(); }
@@ -64,7 +64,7 @@ public:
 private:
     ImageDataArray(Ref<JSC::ArrayBufferView>&&);
 
-    Ref<ArrayBufferView> extractBufferViewWithStorageFormat(std::optional<ImageDataStorageFormat>) &&;
+    Ref<ArrayBufferView> extractBufferViewWithPixelFormat(std::optional<ImageDataPixelFormat>) &&;
 
     // Needed by `toJS<IDLUnion<IDLUint8ClampedArray, ...>, const ImageDataArray&>()`
     template<typename IDL, bool needsState, bool needsGlobalObject> friend struct JSConverterOverloader;

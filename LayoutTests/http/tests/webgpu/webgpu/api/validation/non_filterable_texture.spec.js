@@ -2,10 +2,11 @@
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
 **/export const description = `
 Tests that non-filterable textures used with filtering samplers generate a validation error.
-`;import { makeTestGroup } from '../../../common/framework/test_group.js';
+`;import { AllFeaturesMaxLimitsGPUTest } from '../.././gpu_test.js';
+import { makeTestGroup } from '../../../common/framework/test_group.js';
 import { keysOf } from '../../../common/util/data_tables.js';
 
-import { ValidationTest } from './validation_test.js';
+import * as vtu from './validation_test_utils.js';
 
 const kNonFilterableCaseInfo = {
   sint: { type: 'i32', component: '0,' },
@@ -16,7 +17,7 @@ const kNonFilterableCaseInfo = {
 };
 const kNonFilterableCases = keysOf(kNonFilterableCaseInfo);
 
-export const g = makeTestGroup(ValidationTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 g.test('non_filterable_texture_with_filtering_sampler').
 desc(
@@ -30,13 +31,11 @@ combine('sampleType', kNonFilterableCases).
 combine('viewDimension', ['2d', '2d-array', 'cube', 'cube-array']).
 combine('sameGroup', [true, false])
 ).
-beforeAllSubcases((t) =>
-t.skipIfTextureViewDimensionNotSupportedDeprecated(t.params.viewDimension)
-).
 fn((t) => {
   const { device } = t;
   const { pipeline, async, sampleType, viewDimension, sameGroup } = t.params;
   const { type, component } = kNonFilterableCaseInfo[sampleType];
+  t.skipIfTextureViewDimensionNotSupported(viewDimension);
 
   const coord = viewDimension.startsWith('2d') ? 'vec2f(0)' : 'vec3f(0)';
   const dimensionSuffix = viewDimension.replace('-', '_');
@@ -114,12 +113,12 @@ fn((t) => {
   const success = sampleType === 'float';
 
   if (pipeline === 'compute') {
-    t.doCreateComputePipelineTest(async, success, {
+    vtu.doCreateComputePipelineTest(t, async, success, {
       layout,
       compute: { module }
     });
   } else {
-    t.doCreateRenderPipelineTest(async, success, {
+    vtu.doCreateRenderPipelineTest(t, async, success, {
       layout,
       vertex: { module },
       fragment: { module, targets: [{ format: 'rgba8unorm' }] }

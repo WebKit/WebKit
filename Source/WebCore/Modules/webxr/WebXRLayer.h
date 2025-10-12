@@ -49,6 +49,14 @@ public:
     virtual void startFrame(PlatformXR::FrameData&) = 0;
     virtual PlatformXR::Device::Layer endFrame() = 0;
 
+    virtual bool isWebXRWebGLLayer() const { return false; }
+    virtual bool isXRCompositionLayer() const { return false; }
+    virtual bool isXRCubeLayer() const { return false; }
+    virtual bool isXRCylinderLayer() const { return false; }
+    virtual bool isXREquirectLayer() const { return false; }
+    virtual bool isXRProjectionLayer() const { return false; }
+    virtual bool isXRQuadLayer() const { return false; }
+
 protected:
     explicit WebXRLayer(ScriptExecutionContext*);
 

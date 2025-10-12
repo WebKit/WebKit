@@ -39,11 +39,11 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
 #include "RenderView.h"
-#include "SVGRenderStyle.h"
 #include "SVGResourceElementClient.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGURIReference.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -59,44 +59,34 @@ static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResource
         
         // But always use the initial fill paint server.
         LegacyRenderSVGResourceSolidColor* colorResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
-        colorResource->setColor(SVGRenderStyle::initialFillPaintColor().resolvedColor());
+        colorResource->setColor(RenderStyle::initialFill().colorDisregardingType().resolvedColor());
         return colorResource;
     }
 
-    const auto& svgStyle = style.svgStyle();
-    auto paintType = applyToFill ? svgStyle.fillPaintType() : svgStyle.strokePaintType();
+    const auto& paint = applyToFill ? style.fill() : style.stroke();
 
     // If we have no fill/stroke, return nullptr.
-    if (paintType == SVGPaintType::None)
+    if (paint.isNone())
         return nullptr;
 
     Color color;
-    switch (paintType) {
-    case SVGPaintType::CurrentColor:
-    case SVGPaintType::RGBColor:
-    case SVGPaintType::URICurrentColor:
-    case SVGPaintType::URIRGBColor:
-        color = style.colorResolvingCurrentColor(applyToFill ? svgStyle.fillPaintColor() : svgStyle.strokePaintColor());
-        break;
-    default:
-        break;
-    }
+    if (auto paintColor = paint.tryAnyColor())
+        color = style.colorResolvingCurrentColor(*paintColor);
 
     if (style.insideLink() == InsideLink::InsideVisited) {
         // FIXME: This code doesn't support the uri component of the visited link paint, https://bugs.webkit.org/show_bug.cgi?id=70006
-        SVGPaintType visitedPaintType = applyToFill ? svgStyle.visitedLinkFillPaintType() : svgStyle.visitedLinkStrokePaintType();
+        auto& visitedPaint = applyToFill ? style.visitedLinkFill() : style.visitedLinkStroke();
 
-        // For SVGPaintType::CurrentColor, 'color' already contains the 'visitedColor'.
-        if (visitedPaintType < SVGPaintType::URINone && visitedPaintType != SVGPaintType::CurrentColor) {
-            const Color& visitedColor = style.colorResolvingCurrentColor(applyToFill ? svgStyle.visitedLinkFillPaintColor() : svgStyle.visitedLinkStrokePaintColor());
-            if (visitedColor.isValid())
+        // For `currentcolor`, 'color' already contains the 'visitedColor'.
+        if (auto visitedPaintColor = visitedPaint.tryColor(); visitedPaintColor && !visitedPaintColor->isCurrentColor()) {
+            if (auto visitedColor = style.colorResolvingCurrentColor(*visitedPaintColor); visitedColor.isValid())
                 color = visitedColor.colorWithAlpha(color.alphaAsFloat());
         }
     }
 
     // If the primary resource is just a color, return immediately.
-    LegacyRenderSVGResourceSolidColor* colorResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
-    if (paintType < SVGPaintType::URINone) {
+    auto* colorResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
+    if (paint.isColor()) {
         colorResource->setColor(color);
         return colorResource;
     }
@@ -113,7 +103,7 @@ static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResource
     // If the requested resource is not available, return the color resource or 'none'.
     if (!uriResource) {
         // The fallback is 'none'. (SVG2 say 'none' is implied when no fallback is specified.)
-        if (paintType == SVGPaintType::URINone)
+        if (paint.isURLNone())
             return nullptr;
 
         colorResource->setColor(color);

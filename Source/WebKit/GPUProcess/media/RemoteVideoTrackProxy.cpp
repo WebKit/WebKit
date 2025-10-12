@@ -51,7 +51,7 @@ RemoteVideoTrackProxy::RemoteVideoTrackProxy(GPUConnectionToWebProcess& connecti
     m_clientRegistrationId = trackPrivate.addClient([](auto&& task) {
         ensureOnMainThread(WTFMove(task));
     }, *this);
-    connectionToWebProcess.protectedConnection()->send(Messages::MediaPlayerPrivateRemote::AddRemoteVideoTrack(configuration()), m_mediaPlayerIdentifier);
+    connectionToWebProcess.connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteVideoTrack(configuration()), m_mediaPlayerIdentifier);
 }
 
 RemoteVideoTrackProxy::~RemoteVideoTrackProxy()
@@ -78,7 +78,7 @@ VideoTrackPrivateRemoteConfiguration RemoteVideoTrackProxy::configuration()
 void RemoteVideoTrackProxy::updateConfiguration()
 {
     if (RefPtr connection = m_connectionToWebProcess.get())
-        connection->protectedConnection()->send(Messages::MediaPlayerPrivateRemote::RemoteVideoTrackConfigurationChanged(std::exchange(m_id, m_trackPrivate->id()), configuration()), m_mediaPlayerIdentifier);
+        connection->connection().send(Messages::MediaPlayerPrivateRemote::RemoteVideoTrackConfigurationChanged(std::exchange(m_id, m_trackPrivate->id()), configuration()), m_mediaPlayerIdentifier);
 }
 
 void RemoteVideoTrackProxy::willRemove()

@@ -28,7 +28,6 @@
 #include "include/core/SkTypeface.h"
 #include "include/core/SkTypes.h"
 #include "include/effects/SkGradientShader.h"
-#include "include/gpu/ganesh/GrDirectContext.h"
 #include "src/base/SkMathPriv.h"
 #include "src/core/SkBlurMask.h"
 #include "tools/GpuToolUtils.h"
@@ -146,16 +145,9 @@ static void imagesubsetproc(SkCanvas* canvas, sk_sp<SkImage> image, const SkBitm
         return;
     }
 
-    auto direct = GrAsDirectContext(canvas->recordingContext());
-    if (sk_sp<SkImage> subset = image->makeSubset(direct, srcR)) {
-        canvas->drawImageRect(subset, dstR, sampling, paint);
-        return;
-    }
-#if defined(SK_GRAPHITE)
-    if (sk_sp<SkImage> subset = image->makeSubset(canvas->recorder(), srcR, {})) {
+    if (sk_sp<SkImage> subset = image->makeSubset(canvas->baseRecorder(), srcR, {})) {
         canvas->drawImageRect(subset, dstR, sampling, paint);
     }
-#endif
 }
 
 typedef void DrawRectRectProc(SkCanvas*, sk_sp<SkImage>, const SkBitmap&,
@@ -185,7 +177,7 @@ protected:
     SkISize getISize() override { return SkISize::Make(gSize, gSize); }
 
     DrawResult onDraw(SkCanvas* canvas, SkString* errorMsg) override {
-        if (!fImage || !fImage->isValid(canvas->recordingContext())) {
+        if (!fImage || !fImage->isValid(canvas->baseRecorder())) {
             fImage = ToolUtils::MakeTextureImage(canvas,
                                                  makebm(canvas, &fLargeBitmap, gBmpSize, gBmpSize));
             if (!fImage) {

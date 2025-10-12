@@ -144,10 +144,6 @@ function performActions() {
             ignoreException(() => ctx.drawImage(bitmap, 47, 48, 49, 410, 411, 412, 413, 414));
         },
         () => {
-            ctx.drawImageFromRect?.(image, 1, 2, 3, 4, 5, 6, 7, 8)
-            ctx.drawImageFromRect?.(image, 9, 10, 11, 12, 13, 14, 15, 16, "test");
-        },
-        () => {
             ignoreException(() => ctx.ellipse(1, 2, 3, 4, 5, 6, 7));
             ignoreException(() => ctx.ellipse(8, 9, 10, 11, 12, 13, 14, true));
         },

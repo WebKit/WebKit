@@ -30,6 +30,7 @@
 
 #include "CairoUtilities.h"
 #include "GraphicsContext.h"
+#include "NativeImage.h"
 
 namespace WebCore {
 

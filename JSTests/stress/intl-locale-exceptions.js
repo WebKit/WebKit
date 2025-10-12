@@ -1,5 +1,3 @@
-//@ skip
-
 function shouldThrow(func, errorType) {
     let error;
     try {
@@ -14,7 +12,7 @@ function shouldThrow(func, errorType) {
 
 shouldThrow(() => {
     let calendarValue = 'buddhist';
-    calendarValue = calendarValue.toLocaleString().padEnd(calendarValue.length + 510 * 4, -169);
+    calendarValue = calendarValue.toLocaleString().padEnd(calendarValue.length + 510 * 5, -169);
     var loc = new Intl.Locale('ko', {
         calendar: calendarValue,
     });
@@ -22,7 +20,7 @@ shouldThrow(() => {
 
 shouldThrow(() => {
     let collationValue = 'zhuyin';
-    collationValue = collationValue.toLocaleString().padEnd(collationValue.length + 510 * 4, -169);
+    collationValue = collationValue.toLocaleString().padEnd(collationValue.length + 510 * 5, -169);
     var loc = new Intl.Locale('ko', {
         collation: collationValue,
     });
@@ -30,7 +28,7 @@ shouldThrow(() => {
 
 shouldThrow(() => {
     let numberingSystemValue = 'latn';
-    numberingSystemValue = numberingSystemValue.toLocaleString().padEnd(numberingSystemValue.length + 510 * 4, -169);
+    numberingSystemValue = numberingSystemValue.toLocaleString().padEnd(numberingSystemValue.length + 510 * 5, -169);
     var loc = new Intl.Locale('ko', {
         numberingSystem: numberingSystemValue,
     });

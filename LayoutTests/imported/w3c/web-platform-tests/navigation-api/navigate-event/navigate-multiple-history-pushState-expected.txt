@@ -1,0 +1,3 @@
+
+FAIL history.pushState() called multiple times gives correct event order assert_array_equals: lengths differ, expected array ["navigate #1", "navigateerror #1", "navigate #3", "navigateerror #3", "navigate #2", "navigatesuccess #2"] length 6, got ["navigate #1", "navigateerror #1", "navigate #3", "navigate #2", "navigatesuccess #2"] length 5
+

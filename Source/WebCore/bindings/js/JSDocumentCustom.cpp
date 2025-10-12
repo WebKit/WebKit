@@ -35,28 +35,12 @@
 namespace WebCore {
 using namespace JSC;
 
-static inline JSValue createNewDocumentWrapper(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, Ref<Document>&& passedDocument)
-{
-    auto& document = passedDocument.get();
-    JSObject* wrapper;
-    if (document.isHTMLDocument())
-        wrapper = createWrapper<HTMLDocument>(&globalObject, WTFMove(passedDocument));
-    else if (document.isXMLDocument())
-        wrapper = createWrapper<XMLDocument>(&globalObject, WTFMove(passedDocument));
-    else
-        wrapper = createWrapper<Document>(&globalObject, WTFMove(passedDocument));
-
-    reportMemoryForDocumentIfFrameless(lexicalGlobalObject, document);
-
-    return wrapper;
-}
-
 JSObject* cachedDocumentWrapper(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, Document& document)
 {
     if (auto* wrapper = getCachedWrapper(globalObject.world(), document))
         return wrapper;
 
-    RefPtr window = document.domWindow();
+    RefPtr window = document.window();
     if (!window)
         return nullptr;
 
@@ -84,18 +68,6 @@ void reportMemoryForDocumentIfFrameless(JSGlobalObject& lexicalGlobalObject, Doc
     vm.heap.deprecatedReportExtraMemory(memoryCost);
 }
 
-JSValue toJSNewlyCreated(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<Document>&& document)
-{
-    return createNewDocumentWrapper(*lexicalGlobalObject, *globalObject, WTFMove(document));
-}
-
-JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Document& document)
-{
-    if (auto* wrapper = cachedDocumentWrapper(*lexicalGlobalObject, *globalObject, document))
-        return wrapper;
-    return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref<Document>(document));
-}
-
 void setAdoptedStyleSheetsOnTreeScope(TreeScope& treeScope, JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
@@ -118,7 +90,8 @@ void JSDocument::setAdoptedStyleSheets(JSC::JSGlobalObject& lexicalGlobalObject,
 template<typename Visitor>
 void JSDocument::visitAdditionalChildren(Visitor& visitor)
 {
-    addWebCoreOpaqueRoot(visitor, static_cast<ScriptExecutionContext&>(wrapped()));
+    // This may get called on the GC thread so we cannot ref this object.
+    SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, static_cast<ScriptExecutionContext&>(wrapped()));
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSDocument);

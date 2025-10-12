@@ -8,8 +8,6 @@ import("//build_overrides/clspv.gni")
 #   `clang/include/clang/Basic/BUILD.gn`
 #   `clang/lib/Basic/BUILD.gn`
 import(
-    "//$clspv_llvm_dir/llvm/utils/gn/secondary/clang/lib/ARCMigrate/enable.gni")
-import(
     "//$clspv_llvm_dir/llvm/utils/gn/secondary/clang/lib/StaticAnalyzer/Frontend/enable.gni")
 import("//$clspv_llvm_dir/llvm/utils/gn/secondary/llvm/version.gni")
 import("../../write_cmake_config.gni")
@@ -24,6 +22,7 @@ write_cmake_config("version") {
     "CLANG_VERSION_MAJOR=$llvm_version_major",
     "CLANG_VERSION_MINOR=$llvm_version_minor",
     "CLANG_VERSION_PATCHLEVEL=$llvm_version_patch",
+    "MAX_CLANG_ABI_COMPAT_VERSION=$llvm_version_major",
   ]
 }
 
@@ -70,12 +69,6 @@ write_cmake_config("Config") {
     "CLANG_SYSTEMZ_DEFAULT_ARCH=z10",
     "PPC_LINUX_DEFAULT_IEEELONGDOUBLE=",
   ]
-
-  if (clang_enable_arcmt) {
-    values += [ "CLANG_ENABLE_ARCMT=1" ]
-  } else {
-    values += [ "CLANG_ENABLE_ARCMT=" ]
-  }
 
   if (clang_enable_static_analyzer) {
     values += [ "CLANG_ENABLE_STATIC_ANALYZER=1" ]

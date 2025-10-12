@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CSSPropertyNames.h"
+#include <WebCore/CSSPropertyNames.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>

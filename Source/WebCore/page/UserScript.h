@@ -25,10 +25,10 @@
  
 #pragma once
 
-#include <wtf/URL.h>
-#include "UserContentTypes.h"
-#include "UserScriptTypes.h"
+#include <WebCore/UserContentTypes.h>
+#include <WebCore/UserScriptTypes.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/URL.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -51,6 +51,7 @@ public:
     UserScriptInjectionTime injectionTime() const { return m_injectionTime; }
     UserContentInjectedFrames injectedFrames() const { return m_injectedFrames; }
     UserContentMatchParentFrame matchParentFrame() const { return m_matchParentFrame; }
+    String debugDescription() const;
 
 private:
     String m_source;

@@ -9,7 +9,6 @@
  */
 
 #include <array>
-#include <vector>
 
 #include "api/audio/audio_processing.h"
 #include "modules/audio_processing/echo_control_mobile_impl.h"

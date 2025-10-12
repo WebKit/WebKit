@@ -27,7 +27,7 @@
 #include "LayoutIntegrationInlineContentBuilder.h"
 
 #include "InlineDamage.h"
-#include "InlineDisplayBox.h"
+#include "InlineDisplayBoxInlines.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationInlineContent.h"
 #include "LayoutState.h"
@@ -194,9 +194,12 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
                     childInkOverflow.move(box.left(), box.top());
                     lineInkOverflowRect.unite(childInkOverflow);
                 }
-                auto childScrollableOverflow = renderer.layoutOverflowRectForPropagation(renderer.parent()->writingMode());
-                childScrollableOverflow.move(box.left(), box.top());
-                lineScrollableOverflowRect.unite(childScrollableOverflow);
+
+                if (!renderer.hasControlClip()) {
+                    auto childScrollableOverflow = renderer.layoutOverflowRectForPropagation(renderer.parent()->writingMode());
+                    childScrollableOverflow.move(box.left(), box.top());
+                    lineScrollableOverflowRect.unite(childScrollableOverflow);
+                }
                 continue;
             }
 
@@ -237,11 +240,11 @@ void InlineContentBuilder::computeIsFirstIsLastBoxAndBidiReorderingForInlineCont
         return;
     }
 
-    UncheckedKeyHashMap<const Layout::Box*, size_t> lastDisplayBoxForLayoutBoxIndexes;
+    HashMap<const Layout::Box*, size_t> lastDisplayBoxForLayoutBoxIndexes;
     lastDisplayBoxForLayoutBoxIndexes.reserveInitialCapacity(boxes.size() - 1);
 
     ASSERT(boxes[0].isRootInlineBox());
-    boxes[0].setIsFirstForLayoutBox(true);
+    boxes[0].setIsFirstForLayoutBox();
     size_t lastRootInlineBoxIndex = 0;
 
     for (size_t index = 1; index < boxes.size(); ++index) {
@@ -255,12 +258,12 @@ void InlineContentBuilder::computeIsFirstIsLastBoxAndBidiReorderingForInlineCont
             downcast<RenderText>(*layoutBox.rendererForIntegration()).setNeedsVisualReordering();
 
         if (lastDisplayBoxForLayoutBoxIndexes.set(&layoutBox, index).isNewEntry)
-            displayBox.setIsFirstForLayoutBox(true);
+            displayBox.setIsFirstForLayoutBox();
     }
     for (auto index : lastDisplayBoxForLayoutBoxIndexes.values())
-        boxes[index].setIsLastForLayoutBox(true);
+        boxes[index].setIsLastForLayoutBox();
 
-    boxes[lastRootInlineBoxIndex].setIsLastForLayoutBox(true);
+    boxes[lastRootInlineBoxIndex].setIsLastForLayoutBox();
 }
 
 FloatRect InlineContentBuilder::handlePartialDisplayContentUpdate(Layout::InlineLayoutResult&& layoutResult, InlineContent& inlineContent, const Layout::InlineDamage* lineDamage) const

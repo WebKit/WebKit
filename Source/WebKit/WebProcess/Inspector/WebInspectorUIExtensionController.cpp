@@ -37,6 +37,7 @@
 #include "WebProcess.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSContextRef.h>
 #include <WebCore/ExceptionDetails.h>
 #include <WebCore/InspectorFrontendAPIDispatcher.h>
 #include <WebCore/JSDOMGlobalObject.h>
@@ -284,7 +285,7 @@ void WebInspectorUIExtensionController::evaluateScriptForExtension(const Inspect
 
         JSC::JSValue resultPayload = objectResult->get(frontendGlobalObject, JSC::Identifier::fromString(frontendGlobalObject->vm(), "result"_s));
 
-        if (auto extracted = JavaScriptEvaluationResult::extract(JSContextGetGlobalContext(toRef(frontendGlobalObject)), toRef(resultPayload)))
+        if (auto extracted = JavaScriptEvaluationResult::extract(JSContextGetGlobalContext(toRef(frontendGlobalObject)), toRef(frontendGlobalObject, resultPayload)))
             completionHandler(WTFMove(*extracted), std::nullopt);
         else
             completionHandler(makeUnexpected(std::nullopt), std::nullopt);
@@ -466,7 +467,7 @@ void WebInspectorUIExtensionController::evaluateScriptInExtensionTab(const Inspe
 
         JSC::JSValue resultPayload = objectResult->get(frontendGlobalObject, JSC::Identifier::fromString(frontendGlobalObject->vm(), "result"_s));
 
-        if (auto extracted = JavaScriptEvaluationResult::extract(JSContextGetGlobalContext(toRef(frontendGlobalObject)), toRef(resultPayload)))
+        if (auto extracted = JavaScriptEvaluationResult::extract(JSContextGetGlobalContext(toRef(frontendGlobalObject)), toRef(frontendGlobalObject, resultPayload)))
             completionHandler(WTFMove(*extracted), std::nullopt);
         else
             completionHandler(makeUnexpected(std::nullopt), std::nullopt);

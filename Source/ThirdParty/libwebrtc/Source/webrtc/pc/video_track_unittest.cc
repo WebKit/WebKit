@@ -12,36 +12,34 @@
 
 #include <memory>
 
+#include "api/make_ref_counted.h"
+#include "api/media_stream_interface.h"
+#include "api/scoped_refptr.h"
 #include "media/base/fake_frame_source.h"
 #include "pc/test/fake_video_track_renderer.h"
 #include "pc/test/fake_video_track_source.h"
-#include "pc/video_track_source.h"
+#include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
 #include "test/gtest.h"
 
-using webrtc::FakeVideoTrackRenderer;
-using webrtc::FakeVideoTrackSource;
-using webrtc::MediaSourceInterface;
-using webrtc::MediaStreamTrackInterface;
-using webrtc::VideoTrack;
-using webrtc::VideoTrackInterface;
-using webrtc::VideoTrackSource;
+namespace webrtc {
+namespace {
 
 class VideoTrackTest : public ::testing::Test {
  public:
-  VideoTrackTest() : frame_source_(640, 480, rtc::kNumMicrosecsPerSec / 30) {
+  VideoTrackTest() : frame_source_(640, 480, kNumMicrosecsPerSec / 30) {
     static const char kVideoTrackId[] = "track_id";
-    video_track_source_ = rtc::make_ref_counted<FakeVideoTrackSource>(
+    video_track_source_ = make_ref_counted<FakeVideoTrackSource>(
         /*is_screencast=*/false);
     video_track_ = VideoTrack::Create(kVideoTrackId, video_track_source_,
-                                      rtc::Thread::Current());
+                                      Thread::Current());
   }
 
  protected:
-  rtc::AutoThread main_thread_;
-  rtc::scoped_refptr<FakeVideoTrackSource> video_track_source_;
-  rtc::scoped_refptr<VideoTrack> video_track_;
-  cricket::FakeFrameSource frame_source_;
+  AutoThread main_thread_;
+  scoped_refptr<FakeVideoTrackSource> video_track_source_;
+  scoped_refptr<VideoTrack> video_track_;
+  FakeFrameSource frame_source_;
 };
 
 // VideoTrack::Create will create an API proxy around the source object.
@@ -101,3 +99,6 @@ TEST_F(VideoTrackTest, DisableTrackBlackout) {
   EXPECT_EQ(3, renderer->num_rendered_frames());
   EXPECT_FALSE(renderer->black_frame());
 }
+
+}  // namespace
+}  // namespace webrtc

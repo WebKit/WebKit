@@ -37,10 +37,10 @@ namespace WebCore {
 
 class RealtimeIncomingVideoSourceLibWebRTC final : public RealtimeIncomingVideoSource {
 public:
-    static Ref<RealtimeIncomingVideoSourceLibWebRTC> create(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
+    static Ref<RealtimeIncomingVideoSourceLibWebRTC> create(Ref<webrtc::VideoTrackInterface>&&, String&&);
 
 private:
-    RealtimeIncomingVideoSourceLibWebRTC(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
+    RealtimeIncomingVideoSourceLibWebRTC(Ref<webrtc::VideoTrackInterface>&&, String&&);
     ~RealtimeIncomingVideoSourceLibWebRTC() { }
 
     // rtc::VideoSinkInterface

@@ -2593,30 +2593,43 @@ WI._showTabAtIndexFromShortcut = function(i)
 
 WI._showJavaScriptTypeInformationSettingChanged = function(event)
 {
-    if (WI.settings.showJavaScriptTypeInformation.value) {
-        for (let target of WI.targets)
+    let shouldEnable = WI.settings.showJavaScriptTypeInformation.value;
+    for (let target of WI.targets) {
+        // FIXME: <https://webkit.org/b/298910> Add Runtime support for FrameTarget.
+        if (target instanceof WI.FrameTarget)
+            continue;
+
+        if (shouldEnable)
             target.RuntimeAgent.enableTypeProfiler();
-    } else {
-        for (let target of WI.targets)
+        else
             target.RuntimeAgent.disableTypeProfiler();
     }
 };
 
 WI._enableControlFlowProfilerSettingChanged = function(event)
 {
-    if (WI.settings.enableControlFlowProfiler.value) {
-        for (let target of WI.targets)
+    let shouldEnable = WI.settings.enableControlFlowProfiler.value;
+    for (let target of WI.targets) {
+        // FIXME: <https://webkit.org/b/298910> Add Runtime support for FrameTarget.
+        if (target instanceof WI.FrameTarget)
+            continue;
+
+        if (shouldEnable)
             target.RuntimeAgent.enableControlFlowProfiler();
-    } else {
-        for (let target of WI.targets)
+        else
             target.RuntimeAgent.disableControlFlowProfiler();
     }
 };
 
 WI._resourceCachingDisabledSettingChanged = function(event)
 {
-    for (let target of WI.targets)
+    for (let target of WI.targets) {
+        // FIXME: <https://webkit.org/b/298979> Add Network support for FrameTarget.
+        if (target instanceof WI.FrameTarget)
+            continue;
+
         target.NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
+    }
 };
 
 WI._allowInspectingInspectorSettingChanged = function(event)

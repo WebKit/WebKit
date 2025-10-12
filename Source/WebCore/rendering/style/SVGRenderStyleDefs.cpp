@@ -8,7 +8,7 @@
     Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
     Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
     Copyright (C) 2002-2003 Dirk Mueller (mueller@kde.org)
-    Copyright (C) 2002 Apple Inc.
+    Copyright (C) 2002 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -32,6 +32,8 @@
 #include "RenderStyleDifference.h"
 #include "RenderStyleInlines.h"
 #include "SVGRenderStyle.h"
+#include "StylePrimitiveKeyword+Logging.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/PointerComparison.h>
 #include <wtf/text/TextStream.h>
 
@@ -40,25 +42,17 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleFillData);
 
 StyleFillData::StyleFillData()
-    : opacity(SVGRenderStyle::initialFillOpacity())
-    , paintColor(SVGRenderStyle::initialFillPaintColor())
-    , visitedLinkPaintColor(SVGRenderStyle::initialFillPaintColor())
-    , paintUri(SVGRenderStyle::initialFillPaintUri())
-    , visitedLinkPaintUri(SVGRenderStyle::initialFillPaintUri())
-    , paintType(SVGRenderStyle::initialFillPaintType())
-    , visitedLinkPaintType(SVGRenderStyle::initialFillPaintType())
+    : opacity(RenderStyle::initialFillOpacity())
+    , paint(RenderStyle::initialFill())
+    , visitedLinkPaint(RenderStyle::initialFill())
 {
 }
 
 inline StyleFillData::StyleFillData(const StyleFillData& other)
     : RefCounted<StyleFillData>()
     , opacity(other.opacity)
-    , paintColor(other.paintColor)
-    , visitedLinkPaintColor(other.visitedLinkPaintColor)
-    , paintUri(other.paintUri)
-    , visitedLinkPaintUri(other.visitedLinkPaintUri)
-    , paintType(other.paintType)
-    , visitedLinkPaintType(other.visitedLinkPaintType)
+    , paint(other.paint)
+    , visitedLinkPaint(other.visitedLinkPaint)
 {
 }
 
@@ -71,53 +65,36 @@ Ref<StyleFillData> StyleFillData::copy() const
 void StyleFillData::dumpDifferences(TextStream& ts, const StyleFillData& other) const
 {
     LOG_IF_DIFFERENT(opacity);
-    LOG_IF_DIFFERENT(paintColor);
-    LOG_IF_DIFFERENT(visitedLinkPaintColor);
-    LOG_IF_DIFFERENT(paintUri);
-    LOG_IF_DIFFERENT(visitedLinkPaintUri);
-    LOG_IF_DIFFERENT(paintType);
-    LOG_IF_DIFFERENT(visitedLinkPaintType);
+    LOG_IF_DIFFERENT(paint);
+    LOG_IF_DIFFERENT(visitedLinkPaint);
 }
 #endif
 
 bool StyleFillData::operator==(const StyleFillData& other) const
 {
     return opacity == other.opacity
-        && paintColor == other.paintColor
-        && visitedLinkPaintColor == other.visitedLinkPaintColor
-        && paintUri == other.paintUri
-        && visitedLinkPaintUri == other.visitedLinkPaintUri
-        && paintType == other.paintType
-        && visitedLinkPaintType == other.visitedLinkPaintType;
-    
+        && paint == other.paint
+        && visitedLinkPaint == other.visitedLinkPaint;
 }
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleStrokeData);
 
 StyleStrokeData::StyleStrokeData()
-    : opacity(SVGRenderStyle::initialStrokeOpacity())
-    , paintColor(SVGRenderStyle::initialStrokePaintColor())
-    , visitedLinkPaintColor(SVGRenderStyle::initialStrokePaintColor())
-    , paintUri(SVGRenderStyle::initialStrokePaintUri())
-    , visitedLinkPaintUri(SVGRenderStyle::initialStrokePaintUri())
-    , dashOffset(RenderStyle::zeroLength())
-    , dashArray(SVGRenderStyle::initialStrokeDashArray())
-    , paintType(SVGRenderStyle::initialStrokePaintType())
-    , visitedLinkPaintType(SVGRenderStyle::initialStrokePaintType())
+    : opacity(RenderStyle::initialStrokeOpacity())
+    , paint(RenderStyle::initialStroke())
+    , visitedLinkPaint(RenderStyle::initialStroke())
+    , dashOffset(RenderStyle::initialStrokeDashOffset())
+    , dashArray(RenderStyle::initialStrokeDashArray())
 {
 }
 
 inline StyleStrokeData::StyleStrokeData(const StyleStrokeData& other)
     : RefCounted<StyleStrokeData>()
     , opacity(other.opacity)
-    , paintColor(other.paintColor)
-    , visitedLinkPaintColor(other.visitedLinkPaintColor)
-    , paintUri(other.paintUri)
-    , visitedLinkPaintUri(other.visitedLinkPaintUri)
+    , paint(other.paint)
+    , visitedLinkPaint(other.visitedLinkPaint)
     , dashOffset(other.dashOffset)
     , dashArray(other.dashArray)
-    , paintType(other.paintType)
-    , visitedLinkPaintType(other.visitedLinkPaintType)
 {
 }
 
@@ -129,38 +106,28 @@ Ref<StyleStrokeData> StyleStrokeData::copy() const
 bool StyleStrokeData::operator==(const StyleStrokeData& other) const
 {
     return opacity == other.opacity
-        && paintColor == other.paintColor
-        && visitedLinkPaintColor == other.visitedLinkPaintColor
-        && paintUri == other.paintUri
-        && visitedLinkPaintUri == other.visitedLinkPaintUri
+        && paint == other.paint
+        && visitedLinkPaint == other.visitedLinkPaint
         && dashOffset == other.dashOffset
-        && dashArray == other.dashArray
-        && paintType == other.paintType
-        && visitedLinkPaintType == other.visitedLinkPaintType;
+        && dashArray == other.dashArray;
 }
 
 #if !LOG_DISABLED
 void StyleStrokeData::dumpDifferences(TextStream& ts, const StyleStrokeData& other) const
 {
     LOG_IF_DIFFERENT(opacity);
-    LOG_IF_DIFFERENT(paintColor);
-    LOG_IF_DIFFERENT(visitedLinkPaintColor);
-    LOG_IF_DIFFERENT(paintUri);
-    LOG_IF_DIFFERENT(visitedLinkPaintUri);
-
+    LOG_IF_DIFFERENT(paint);
+    LOG_IF_DIFFERENT(visitedLinkPaint);
     LOG_IF_DIFFERENT(dashOffset);
     LOG_IF_DIFFERENT(dashArray);
-
-    LOG_IF_DIFFERENT(paintType);
-    LOG_IF_DIFFERENT(visitedLinkPaintType);
 }
 #endif
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleStopData);
 
 StyleStopData::StyleStopData()
-    : opacity(SVGRenderStyle::initialStopOpacity())
-    , color(SVGRenderStyle::initialStopColor())
+    : opacity(RenderStyle::initialStopOpacity())
+    , color(RenderStyle::initialStopColor())
 {
 }
 
@@ -193,10 +160,10 @@ void StyleStopData::dumpDifferences(TextStream& ts, const StyleStopData& other) 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleMiscData);
 
 StyleMiscData::StyleMiscData()
-    : floodOpacity(SVGRenderStyle::initialFloodOpacity())
-    , floodColor(SVGRenderStyle::initialFloodColor())
-    , lightingColor(SVGRenderStyle::initialLightingColor())
-    , baselineShiftValue(SVGRenderStyle::initialBaselineShiftValue())
+    : floodOpacity(RenderStyle::initialFloodOpacity())
+    , floodColor(RenderStyle::initialFloodColor())
+    , lightingColor(RenderStyle::initialLightingColor())
+    , baselineShift(RenderStyle::initialBaselineShift())
 {
 }
 
@@ -205,7 +172,7 @@ inline StyleMiscData::StyleMiscData(const StyleMiscData& other)
     , floodOpacity(other.floodOpacity)
     , floodColor(other.floodColor)
     , lightingColor(other.lightingColor)
-    , baselineShiftValue(other.baselineShiftValue)
+    , baselineShift(other.baselineShift)
 {
 }
 
@@ -219,7 +186,7 @@ bool StyleMiscData::operator==(const StyleMiscData& other) const
     return floodOpacity == other.floodOpacity
         && floodColor == other.floodColor
         && lightingColor == other.lightingColor
-        && baselineShiftValue == other.baselineShiftValue;
+        && baselineShift == other.baselineShift;
 }
 
 #if !LOG_DISABLED
@@ -228,19 +195,20 @@ void StyleMiscData::dumpDifferences(TextStream& ts, const StyleMiscData& other) 
     LOG_IF_DIFFERENT(floodOpacity);
     LOG_IF_DIFFERENT(floodColor);
     LOG_IF_DIFFERENT(lightingColor);
-    LOG_IF_DIFFERENT(baselineShiftValue);
+    LOG_IF_DIFFERENT(baselineShift);
 }
 #endif
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleShadowSVGData);
 
 StyleShadowSVGData::StyleShadowSVGData()
+    : shadow { RenderStyle::initialBoxShadow() }
 {
 }
 
 inline StyleShadowSVGData::StyleShadowSVGData(const StyleShadowSVGData& other)
     : RefCounted<StyleShadowSVGData>()
-    , shadow(other.shadow ? makeUnique<ShadowData>(*other.shadow) : nullptr)
+    , shadow(other.shadow)
 {
 }
 
@@ -251,7 +219,7 @@ Ref<StyleShadowSVGData> StyleShadowSVGData::copy() const
 
 bool StyleShadowSVGData::operator==(const StyleShadowSVGData& other) const
 {
-    return arePointingToEqualData(shadow, other.shadow);
+    return shadow == other.shadow;
 }
 
 #if !LOG_DISABLED
@@ -264,9 +232,9 @@ void StyleShadowSVGData::dumpDifferences(TextStream& ts, const StyleShadowSVGDat
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleInheritedResourceData);
 
 StyleInheritedResourceData::StyleInheritedResourceData()
-    : markerStart(SVGRenderStyle::initialMarkerStartResource())
-    , markerMid(SVGRenderStyle::initialMarkerMidResource())
-    , markerEnd(SVGRenderStyle::initialMarkerEndResource())
+    : markerStart(RenderStyle::initialMarkerStart())
+    , markerMid(RenderStyle::initialMarkerMid())
+    , markerEnd(RenderStyle::initialMarkerEnd())
 {
 }
 
@@ -302,14 +270,14 @@ void StyleInheritedResourceData::dumpDifferences(TextStream& ts, const StyleInhe
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleLayoutData);
 
 StyleLayoutData::StyleLayoutData()
-    : cx(RenderStyle::zeroLength())
-    , cy(RenderStyle::zeroLength())
-    , r(RenderStyle::zeroLength())
-    , rx(RenderStyle::initialRadius())
-    , ry(RenderStyle::initialRadius())
-    , x(RenderStyle::zeroLength())
-    , y(RenderStyle::zeroLength())
-    , d(nullptr)
+    : cx(RenderStyle::initialCx())
+    , cy(RenderStyle::initialCy())
+    , r(RenderStyle::initialR())
+    , rx(RenderStyle::initialRx())
+    , ry(RenderStyle::initialRy())
+    , x(RenderStyle::initialX())
+    , y(RenderStyle::initialY())
+    , d(RenderStyle::initialD())
 {
 }
 
@@ -357,172 +325,21 @@ void StyleLayoutData::dumpDifferences(TextStream& ts, const StyleLayoutData& oth
 }
 #endif
 
-TextStream& operator<<(TextStream& ts, AlignmentBaseline value)
-{
-    switch (value) {
-    case AlignmentBaseline::Baseline: ts << "baseline"_s; break;
-    case AlignmentBaseline::BeforeEdge: ts << "before-edge"_s; break;
-    case AlignmentBaseline::TextBeforeEdge: ts << "text-before-edge"_s; break;
-    case AlignmentBaseline::Middle: ts << "middle"_s; break;
-    case AlignmentBaseline::Central: ts << "central"_s; break;
-    case AlignmentBaseline::AfterEdge: ts << "after-edge"_s; break;
-    case AlignmentBaseline::TextAfterEdge: ts << "text-after-edge"_s; break;
-    case AlignmentBaseline::Ideographic: ts << "ideographic"_s; break;
-    case AlignmentBaseline::Alphabetic: ts << "alphabetic"_s; break;
-    case AlignmentBaseline::Hanging: ts << "hanging"_s; break;
-    case AlignmentBaseline::Mathematical: ts << "mathematical"_s; break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, BaselineShift value)
-{
-    switch (value) {
-    case BaselineShift::Baseline: ts << "baseline"_s; break;
-    case BaselineShift::Sub: ts << "sub"_s; break;
-    case BaselineShift::Super: ts << "super"_s; break;
-    case BaselineShift::Length: ts << "length"_s; break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, BufferedRendering value)
-{
-    switch (value) {
-    case BufferedRendering::Auto: ts << "auto"_s; break;
-    case BufferedRendering::Dynamic: ts << "dynamic"_s; break;
-    case BufferedRendering::Static: ts << "static"_s; break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, ColorInterpolation value)
-{
-    switch (value) {
-    case ColorInterpolation::Auto: ts << "auto"_s; break;
-    case ColorInterpolation::SRGB: ts << "sRGB"_s; break;
-    case ColorInterpolation::LinearRGB: ts << "linearRGB"_s; break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, ColorRendering value)
-{
-    switch (value) {
-    case ColorRendering::Auto: ts << "auto"_s; break;
-    case ColorRendering::OptimizeSpeed: ts << "optimizeSpeed"_s; break;
-    case ColorRendering::OptimizeQuality: ts << "optimizeQuality"_s; break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, DominantBaseline value)
-{
-    switch (value) {
-    case DominantBaseline::Auto: ts << "auto"_s; break;
-    case DominantBaseline::UseScript: ts << "use-script"_s; break;
-    case DominantBaseline::NoChange: ts << "no-change"_s; break;
-    case DominantBaseline::ResetSize: ts << "reset-size"_s; break;
-    case DominantBaseline::Ideographic: ts << "ideographic"_s; break;
-    case DominantBaseline::Alphabetic: ts << "alphabetic"_s; break;
-    case DominantBaseline::Hanging: ts << "hanging"_s; break;
-    case DominantBaseline::Mathematical: ts << "mathematical"_s; break;
-    case DominantBaseline::Central: ts << "central"_s; break;
-    case DominantBaseline::Middle: ts << "middle"_s; break;
-    case DominantBaseline::TextAfterEdge: ts << "text-after-edge"_s; break;
-    case DominantBaseline::TextBeforeEdge: ts << "text-before-edge"_s; break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, GlyphOrientation value)
-{
-    switch (value) {
-    case GlyphOrientation::Degrees0: ts << '0'; break;
-    case GlyphOrientation::Degrees90: ts << "90"_s; break;
-    case GlyphOrientation::Degrees180: ts << "180"_s; break;
-    case GlyphOrientation::Degrees270: ts << "270"_s; break;
-    case GlyphOrientation::Auto: ts << "Auto"_s; break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, MaskType value)
-{
-    switch (value) {
-    case MaskType::Luminance: ts << "luminance"_s; break;
-    case MaskType::Alpha: ts << "alpha"_s; break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, SVGPaintType paintType)
-{
-    switch (paintType) {
-    case SVGPaintType::RGBColor: ts << "rgb-color"_s; break;
-    case SVGPaintType::None: ts << "none"_s; break;
-    case SVGPaintType::CurrentColor: ts << "current-color"_s; break;
-    case SVGPaintType::URINone: ts << "uri-none"_s; break;
-    case SVGPaintType::URICurrentColor: ts << "uri-current-color"_s; break;
-    case SVGPaintType::URIRGBColor: ts << "uri-rgb-color"_s; break;
-    case SVGPaintType::URI: ts << "uri"_s; break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, ShapeRendering value)
-{
-    switch (value) {
-    case ShapeRendering::Auto: ts << "auto"_s; break;
-    case ShapeRendering::OptimizeSpeed: ts << "optimizeSpeed"_s; break;
-    case ShapeRendering::CrispEdges: ts << "crispEdges"_s; break;
-    case ShapeRendering::GeometricPrecision: ts << "geometricPrecision"_s; break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, TextAnchor value)
-{
-    switch (value) {
-    case TextAnchor::Start: ts << "start"_s; break;
-    case TextAnchor::Middle: ts << "middle"_s; break;
-    case TextAnchor::End: ts << "end"_s; break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, VectorEffect value)
-{
-    switch (value) {
-    case VectorEffect::None: ts << "none"_s; break;
-    case VectorEffect::NonScalingStroke: ts << "non-scaling-stroke"_s; break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, const StyleFillData& data)
 {
     ts.dumpProperty("opacity"_s, data.opacity);
-    ts.dumpProperty("paint-color"_s, data.paintColor);
-    ts.dumpProperty("visited link paint-color"_s, data.visitedLinkPaintColor);
-    ts.dumpProperty("paint uri"_s, data.paintUri);
-    ts.dumpProperty("visited link paint uri"_s, data.visitedLinkPaintUri);
-    ts.dumpProperty("visited link paint type"_s, data.paintType);
-    ts.dumpProperty("visited link paint type"_s, data.visitedLinkPaintType);
+    ts.dumpProperty("paint"_s, data.paint);
+    ts.dumpProperty("visited link paint"_s, data.visitedLinkPaint);
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const StyleStrokeData& data)
 {
     ts.dumpProperty("opacity"_s, data.opacity);
-    ts.dumpProperty("paint-color"_s, data.paintColor);
-    ts.dumpProperty("visited link paint-color"_s, data.visitedLinkPaintColor);
-    ts.dumpProperty("paint uri"_s, data.paintUri);
-    ts.dumpProperty("visited link paint uri"_s, data.visitedLinkPaintUri);
+    ts.dumpProperty("paint"_s, data.paint);
+    ts.dumpProperty("visited link paint"_s, data.visitedLinkPaint);
     ts.dumpProperty("dashOffset"_s, data.dashOffset);
     ts.dumpProperty("dash array"_s, data.dashArray);
-    ts.dumpProperty("visited link paint type"_s, data.paintType);
-    ts.dumpProperty("visited link paint type"_s, data.visitedLinkPaintType);
     return ts;
 }
 
@@ -538,14 +355,13 @@ TextStream& operator<<(TextStream& ts, const StyleMiscData& data)
     ts.dumpProperty("flood-opacity"_s, data.floodOpacity);
     ts.dumpProperty("flood-color"_s, data.floodColor);
     ts.dumpProperty("lighting-color"_s, data.lightingColor);
-    ts.dumpProperty("baseline-shift"_s, data.baselineShiftValue);
+    ts.dumpProperty("baseline-shift"_s, data.baselineShift);
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const StyleShadowSVGData& data)
 {
-    if (data.shadow)
-        ts.dumpProperty("shadow"_s, *data.shadow);
+    ts.dumpProperty("shadow"_s, data.shadow);
     return ts;
 }
 
@@ -566,6 +382,7 @@ TextStream& operator<<(TextStream& ts, const StyleLayoutData& data)
     ts.dumpProperty("ry"_s, data.ry);
     ts.dumpProperty("x"_s, data.x);
     ts.dumpProperty("y"_s, data.y);
+    ts.dumpProperty("d"_s, data.d);
     return ts;
 }
 

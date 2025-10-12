@@ -21,7 +21,7 @@
 #include "logging/rtc_event_log/encoder/delta_encoding.h"
 #include "logging/rtc_event_log/encoder/optional_blob_encoding.h"
 #include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
-#include "logging/rtc_event_log/rtc_event_log2_proto_include.h"
+#include "logging/rtc_event_log/rtc_event_log2_proto_include.h"  // IWYU pragma: keep
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
@@ -30,7 +30,7 @@ namespace webrtc {
 // static
 std::optional<rtclog2::DependencyDescriptorsWireInfo>
 RtcEventLogDependencyDescriptorEncoderDecoder::Encode(
-    const std::vector<rtc::ArrayView<const uint8_t>>& raw_dd_data) {
+    const std::vector<ArrayView<const uint8_t>>& raw_dd_data) {
   if (raw_dd_data.empty()) {
     return {};
   }
@@ -43,9 +43,9 @@ RtcEventLogDependencyDescriptorEncoderDecoder::Encode(
   }
 
   rtclog2::DependencyDescriptorsWireInfo res;
-  const rtc::ArrayView<const uint8_t>& base_dd = raw_dd_data[0];
+  const ArrayView<const uint8_t>& base_dd = raw_dd_data[0];
   auto delta_dds =
-      rtc::MakeArrayView(raw_dd_data.data(), raw_dd_data.size()).subview(1);
+      MakeArrayView(raw_dd_data.data(), raw_dd_data.size()).subview(1);
 
   // Start and end bit.
   {

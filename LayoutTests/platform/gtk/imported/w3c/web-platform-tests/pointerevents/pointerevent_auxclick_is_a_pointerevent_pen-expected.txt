@@ -1,0 +1,5 @@
+
+
+PASS auxclick using pen is a PointerEvent with correct properties
+PASS auxclick using pen is a PointerEvent with correct properties when no other PointerEvent listeners are present
+

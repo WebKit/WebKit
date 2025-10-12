@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,10 +38,10 @@ WKTypeID WKNotificationPermissionRequestGetTypeID()
 
 void WKNotificationPermissionRequestAllow(WKNotificationPermissionRequestRef notificationPermissionRequest)
 {
-    return toImpl(notificationPermissionRequest)->didReceiveDecision(true);
+    return toProtectedImpl(notificationPermissionRequest)->didReceiveDecision(true);
 }
 
 void WKNotificationPermissionRequestDeny(WKNotificationPermissionRequestRef notificationPermissionRequest)
 {
-    return toImpl(notificationPermissionRequest)->didReceiveDecision(false);
+    return toProtectedImpl(notificationPermissionRequest)->didReceiveDecision(false);
 }

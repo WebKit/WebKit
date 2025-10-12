@@ -27,9 +27,9 @@
 
 #if ENABLE(VIDEO)
 
-#include "PlatformVideoTrackConfiguration.h"
-#include "TrackPrivateBase.h"
-#include "VideoTrackPrivateClient.h"
+#include <WebCore/PlatformVideoTrackConfiguration.h>
+#include <WebCore/TrackPrivateBase.h>
+#include <WebCore/VideoTrackPrivateClient.h>
 #include <wtf/Function.h>
 #include <wtf/TZoneMallocInlines.h>
 

@@ -39,6 +39,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKThumbnailView.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 static bool didFinishLoad;
 static bool didTakeSnapshot;
@@ -327,7 +328,7 @@ static std::pair<WebCore::Color, WebCore::Color> leftCornerColorsForThumbnailVie
 {
     __block RetainPtr<CGImageRef> snapshot;
     __block bool done = false;
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         snapshot = thumbnailView._test_cgImage;
         done = true;
     });

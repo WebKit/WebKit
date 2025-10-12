@@ -629,6 +629,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'prune-coresymbolicationd-cache-if-too-large',
             'install-cmake',
             'install-ninja',
+            'get-llvm-version',
             'print-clang-version',
             'checkout-llvm-project',
             'update-clang',
@@ -677,6 +678,20 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'jscore-test'
         ],
         'Apple-Sonoma-AppleSilicon-Release-JSC-Tests': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'prune-coresymbolicationd-cache-if-too-large',
+            'download-built-product',
+            'extract-built-product',
+            'jscore-test'
+        ],
+        'Apple-Sonoma-Intel-Release-JSC-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1710,6 +1725,26 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'download-built-product',
             'extract-built-product',
             'MVT-tests'
+        ],
+        'WPE-Linux-64-bit-Release-Legacy-API-Tests': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'jhbuild',
+            'download-built-product',
+            'extract-built-product',
+            'layout-test',
+            'dashboard-tests',
+            'archive-test-results',
+            'upload',
+            'extract-test-results',
+            'set-permissions',
+            'API-tests'
         ],
     }
 

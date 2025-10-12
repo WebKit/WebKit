@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <style>
+    h4 {
+        color: white;
+        display: inline-block;
+    }
+    </style>
+</head>
+<body>
+    <button id="test-button" aria-label="Click Me">Test</button>
+    <input type="email" placeholder="Recipient address" value="foo" />
+    <select role="menu">
+        <option>One</option>
+        <option selected>Two</option>
+        <option>Three</option>
+    </select>
+    <div aria-label="Compose a new message" contenteditable="plaintext-only">
+        <h3 aria-label="Heading">Subject</h3>
+        <p>“The quick brown fox jumped over the lazy dog”</p>
+    </div>
+    <h1 class="click-count">0</h1>
+    <h4 aria-label="Top secret">Here’s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They’re not fond of rules. And they have no respect for the status quo. You can quote them, disagree with them, glorify or vilify them. About the only thing you can’t do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.</h4>
+    <script>
+    addEventListener("load", async () => {
+        textField = document.querySelector("input");
+        select = document.querySelector("select");
+        clickCount = document.querySelector(".click-count");
+        document.getElementById("test-button").addEventListener("click", () => {
+            clickCount.textContent = parseInt(clickCount.textContent) + 1;
+        });
+    });
+    </script>
+</body>
+</html>

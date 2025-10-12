@@ -30,6 +30,11 @@
 #include <wtf/MachSendRight.h>
 #endif
 
+#if OS(ANDROID)
+#include <wtf/Variant.h>
+#include <wtf/android/RefPtrAndroid.h>
+#endif
+
 #if USE(UNIX_DOMAIN_SOCKETS)
 #include <wtf/unix/UnixFileDescriptor.h>
 #endif
@@ -42,6 +47,8 @@ namespace IPC {
 using Attachment = MachSendRight;
 #elif OS(WINDOWS)
 struct Attachment { }; // Windows does not need attachments at the moment.
+#elif OS(ANDROID)
+using Attachment = Variant<UnixFileDescriptor, RefPtr<AHardwareBuffer>>;
 #elif USE(UNIX_DOMAIN_SOCKETS)
 using Attachment = UnixFileDescriptor;
 #else

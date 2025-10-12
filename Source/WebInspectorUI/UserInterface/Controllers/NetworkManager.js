@@ -73,6 +73,18 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                 for (let serializedLocalResourceOverride of serializedLocalResourceOverrides) {
                     let localResourceOverride = WI.LocalResourceOverride.fromJSON(serializedLocalResourceOverride);
 
+                    if (localResourceOverride.isRegex) {
+                        // FIXME <https://webkit.org/b/294126> Remove fix for stored local overrides created before URL regex checking was added
+                        try {
+                            localResourceOverride._urlRegex;
+                        } catch {
+                            const key = null;
+                            WI.objectStores.localResourceOverrides.associateObject(localResourceOverride, key, serializedLocalResourceOverride);
+                            WI.objectStores.localResourceOverrides.deleteObject(localResourceOverride);
+                            continue;
+                        }
+                    }
+
                     let supported = false;
                     switch (localResourceOverride.type) {
                     case WI.LocalResourceOverride.InterceptType.Block:
@@ -271,8 +283,13 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         this._emulatedCondition = condition;
 
-        for (let target of WI.targets)
+        for (let target of WI.targets) {
+            // FIXME: <https://webkit.org/b/298979> Add Network support for FrameTarget.
+            if (target instanceof WI.FrameTarget)
+                continue;
+
             this._applyEmulatedCondition(target);
+        }
 
         this.dispatchEventToListeners(WI.NetworkManager.Event.EmulatedConditionChanged);
     }

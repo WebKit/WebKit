@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'event.deviceProperties.uniqueId')
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'event.deviceProperties.uniqueId')
 
 Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'event.deviceProperties.uniqueId')
 

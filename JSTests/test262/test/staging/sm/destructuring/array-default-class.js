@@ -2,17 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Function in computed property in class expression in array destructuring default
+info: bugzilla.mozilla.org/show_bug.cgi?id=1322314
 esid: pending
 ---*/
-var BUGNUMBER = 1322314;
-var summary = "Function in computed property in class expression in array destructuring default";
-
-print(BUGNUMBER + ": " + summary);
 
 function* g([
   a = class E {
@@ -31,4 +25,3 @@ assert.sameValue(x.foo(), 10);
 C = [...g([undefined])][0];
 x = new C();
 assert.sameValue(x.foo(), 10);
-

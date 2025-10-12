@@ -31,10 +31,10 @@
 #include "PDFPageCoverage.h"
 #include "PDFPluginBase.h"
 #include <WebCore/ContextMenuItem.h>
-#include <WebCore/ElementIdentifier.h>
-#include <WebCore/GraphicsLayer.h>
 #include <WebCore/GraphicsLayerClient.h>
+#include <WebCore/NodeIdentifier.h>
 #include <WebCore/Page.h>
+#include <WebCore/ScrollView.h>
 #include <WebCore/Timer.h>
 #include <WebCore/ViewportConfiguration.h>
 #include <wtf/OptionSet.h>
@@ -51,6 +51,8 @@ class TextStream;
 
 namespace WebCore {
 class FrameView;
+class GraphicsLayer;
+class GraphicsLayerFactory;
 class LocalFrameView;
 class PageOverlay;
 class PlatformWheelEvent;
@@ -58,6 +60,7 @@ class ShadowRoot;
 class AXCoreObject;
 
 enum class DelegatedScrollingMode : uint8_t;
+enum class GraphicsLayerType : uint8_t;
 
 struct DataDetectorElementInfo;
 }
@@ -96,6 +99,7 @@ public:
     RepaintRequirements finishAnnotationTracking(PDFAnnotation* annotationUnderMouse, WebEventType, WebMouseEventButton);
 
     PDFAnnotation *trackedAnnotation() const { return m_trackedAnnotation.get(); }
+    RetainPtr<PDFAnnotation> protectedTrackedAnnotation() const { return m_trackedAnnotation; }
     bool isBeingHovered() const;
 
 private:
@@ -143,7 +147,7 @@ public:
     WebCore::LocalFrameView* frameView() const;
     WebCore::FrameView* mainFrameView() const;
 
-    CGRect pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>&) const final;
+    CGRect pluginBoundsForAnnotation(PDFAnnotation*) const final;
     void setActiveAnnotation(SetActiveAnnotationParams&&) final;
     void focusNextAnnotation() final;
     void focusPreviousAnnotation() final;
@@ -239,7 +243,7 @@ private:
     bool isUnifiedPDFPlugin() const override { return true; }
 
     WebCore::PluginLayerHostingStrategy layerHostingStrategy() const override { return WebCore::PluginLayerHostingStrategy::GraphicsLayer; }
-    WebCore::GraphicsLayer* graphicsLayer() const override;
+    WebCore::GraphicsLayer* graphicsLayer() const override { return m_rootLayer.get(); }
 
     void teardown() override;
 
@@ -373,7 +377,7 @@ private:
     String titleForContextMenuItemTag(ContextMenuItemTag) const;
     bool isDisplayModeContextMenuItemTag(ContextMenuItemTag) const;
     PDFContextMenuItem separatorContextMenuItem() const;
-    Vector<PDFContextMenuItem> selectionContextMenuItems(const WebCore::IntPoint& contextMenuEventRootViewPoint) const;
+    Vector<PDFContextMenuItem> selectionContextMenuItems(const WebCore::IntPoint& contextMenuEventRootViewPoint, bool shouldPresentLookupAndSearchOptions) const;
     Vector<PDFContextMenuItem> displayModeContextMenuItems() const;
     Vector<PDFContextMenuItem> scaleContextMenuItems() const;
     Vector<PDFContextMenuItem> navigationContextMenuItemsForPageAtIndex(PDFDocumentLayout::PageIndex) const;
@@ -436,12 +440,12 @@ private:
     void updateFindOverlay(HideFindIndicator = HideFindIndicator::No);
 
     Vector<WebFoundTextRange::PDFData> findTextMatches(const String&, WebCore::FindOptions) final;
-    Vector<WebCore::FloatRect> rectsForTextMatch(const WebFoundTextRange::PDFData&) final;
+    Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const Vector<WebFoundTextRange::PDFData>&, const WebCore::IntRect&) final;
     RefPtr<WebCore::TextIndicator> textIndicatorForTextMatch(const WebFoundTextRange::PDFData&, WebCore::TextIndicatorPresentationTransition) final;
     void scrollToRevealTextMatch(const WebFoundTextRange::PDFData&) final;
 
-    Vector<WebCore::FloatRect> visibleRectsForFindMatchRects(PDFPageCoverage) const;
-    PDFSelection *selectionFromWebFoundTextRangePDFData(const WebFoundTextRange::PDFData&) const;
+    Vector<WebCore::FloatRect> visibleRectsForFindMatchRects(const PDFPageCoverage&, const WebCore::IntRect&) const;
+    PDFSelection *selectionFromWebFoundTextRangePDFData(const WebFoundTextRange::PDFData&);
 
     static WebCore::Color selectionTextIndicatorHighlightColor();
     RefPtr<WebCore::TextIndicator> textIndicatorForCurrentSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition) final;
@@ -571,8 +575,8 @@ private:
     void revealAnnotation(PDFAnnotation *);
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() const;
-    RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(GraphicsLayerClient&, WebCore::GraphicsLayer::Type);
-    RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, WebCore::GraphicsLayer::Type);
+    RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(GraphicsLayerClient&, WebCore::GraphicsLayerType);
+    RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, WebCore::GraphicsLayerType);
 
     void setNeedsRepaintForIncrementalLoad();
     void setNeedsRepaintForAnnotation(PDFAnnotation *, RepaintRequirements);
@@ -647,6 +651,13 @@ private:
 
     bool shouldUseInProcessBackingStore() const;
 
+    bool delegatesScrollingToMainFrame() const final;
+
+    RefPtr<PDFPresentationController> protectedPresentationController() const;
+
+    RefPtr<WebCore::GraphicsLayer> protectedScrollContainerLayer() const;
+    RefPtr<WebCore::GraphicsLayer> protectedOverflowControlsContainer() const;
+
     RefPtr<PDFPresentationController> m_presentationController;
 
     PDFDocumentLayout m_documentLayout;
@@ -713,6 +724,8 @@ private:
 
     RefPtr<WebCore::ShadowRoot> m_shadowRoot;
 
+    std::unique_ptr<WebCore::ScrollView::ProhibitScrollingWhenChangingContentSizeForScope> m_prohibitScrollingDueToContentSizeChanges;
+
     // FIXME: We should rationalize these with the values in ViewGestureController.
     // For now, we'll leave them differing as they do in PDFPlugin.
 #if PLATFORM(IOS_FAMILY)
@@ -727,6 +740,10 @@ private:
 #else
     static constexpr bool hasFullAnnotationSupport = false;
 #endif
+
+    HashMap<WebFoundTextRange::PDFData, RetainPtr<PDFSelection>> m_webFoundTextRangePDFDataSelectionMap;
+
+    mutable std::optional<bool> m_cachedIsFullMainFramePlugin;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, RepaintRequirement);

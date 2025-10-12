@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Importing a module script failed.
 
 PASS Static import.
 FAIL Static import (cross-origin). promise_test: Unhandled rejection with value: "unknown error"

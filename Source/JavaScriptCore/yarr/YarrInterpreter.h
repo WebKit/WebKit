@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "ConcurrentJSLock.h"
-#include "YarrErrorCode.h"
-#include "YarrFlags.h"
-#include "YarrPattern.h"
+#include <JavaScriptCore/ConcurrentJSLock.h>
+#include <JavaScriptCore/YarrErrorCode.h>
+#include <JavaScriptCore/YarrFlags.h>
+#include <JavaScriptCore/YarrPattern.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WTF {

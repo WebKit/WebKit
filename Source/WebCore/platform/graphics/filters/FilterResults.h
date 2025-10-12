@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "FilterEffect.h"
-#include "FilterImageVector.h"
-#include "ImageBufferAllocator.h"
+#include <WebCore/FilterEffect.h>
+#include <WebCore/FilterImageVector.h>
+#include <WebCore/ImageBufferAllocator.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
@@ -52,11 +52,11 @@ private:
     size_t memoryCost() const;
     bool canCacheResult(const FilterImage&) const;
 
-    UncheckedKeyHashMap<Ref<FilterEffect>, Ref<FilterImage>> m_results;
+    HashMap<Ref<FilterEffect>, Ref<FilterImage>> m_results;
 
     // The value is a list of FilterEffects, whose FilterImages depend on the key FilterImage.
-    using FilterEffectSet = UncheckedKeyHashSet<Ref<FilterEffect>>;
-    UncheckedKeyHashMap<Ref<FilterImage>, FilterEffectSet> m_resultReferences;
+    using FilterEffectSet = HashSet<Ref<FilterEffect>>;
+    HashMap<Ref<FilterImage>, FilterEffectSet> m_resultReferences;
 
     std::unique_ptr<ImageBufferAllocator> m_allocator;
 };

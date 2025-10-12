@@ -6,6 +6,10 @@
 // OutputSPIRV: Generate SPIR-V from the AST.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "compiler/translator/spirv/OutputSPIRV.h"
 
 #include "angle_gl.h"
@@ -447,6 +451,7 @@ spv::StorageClass GetStorageClass(const ShCompileOptions &compileOptions,
         case EvqFragCoord:
         case EvqFrontFacing:
         case EvqPointCoord:
+        case EvqShadingRateEXT:
         case EvqSampleID:
         case EvqSamplePosition:
         case EvqSampleMaskIn:
@@ -472,6 +477,7 @@ spv::StorageClass GetStorageClass(const ShCompileOptions &compileOptions,
         case EvqFragDepth:
         case EvqSampleMask:
         case EvqLayerOut:
+        case EvqPrimitiveShadingRateEXT:
             return spv::StorageClassOutput;
 
         case EvqClipDistance:
@@ -601,6 +607,18 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
             mBuilder.addCapability(spv::CapabilitySampleRateShading);
             uniqueId = &symbol->uniqueId();
             break;
+        case EvqShadingRateEXT:
+            name              = "gl_ShadingRateEXT";
+            builtInDecoration = spv::BuiltInShadingRateKHR;
+            mBuilder.addCapability(spv::CapabilityFragmentShadingRateKHR);
+            mBuilder.addExtension(SPIRVExtensions::FragmentShadingRate);
+            break;
+        case EvqPrimitiveShadingRateEXT:
+            name              = "gl_PrimitiveShadingRateEXT";
+            builtInDecoration = spv::BuiltInPrimitiveShadingRateKHR;
+            mBuilder.addCapability(spv::CapabilityFragmentShadingRateKHR);
+            mBuilder.addExtension(SPIRVExtensions::FragmentShadingRate);
+            break;
         case EvqSamplePosition:
             name              = "gl_SamplePosition";
             builtInDecoration = spv::BuiltInSamplePosition;
@@ -719,6 +737,7 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
     switch (type.getQualifier())
     {
         case EvqLayerIn:
+        case EvqShadingRateEXT:
         case EvqSampleID:
         case EvqPrimitiveID:
         case EvqViewIDOVR:
@@ -3890,7 +3909,6 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
         // - sampler2DRect, vec4 P
         // - sampler3D, vec4 P
         // - sampler2DShadow, vec4 P
-        // - sampler2DRectShadow, vec4 P
         //
         // Of these cases, only (sampler2D*, vec4 P) requires moving the proj channel from .w to the
         // appropriate location (.y for 1D and .z for 2D).

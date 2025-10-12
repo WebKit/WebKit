@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: Blocked setting javascript:/,test as the base URL because it does not have an allowed scheme.
-CONSOLE MESSAGE: Blocked setting javascript:/,test as the base URL because it does not have an allowed scheme.
-CONSOLE MESSAGE: Blocked setting javascript:/,more-test as the base URL because it does not have an allowed scheme.
 
 PASS First <base> has a javascript: URL so fallback is used
 PASS First <base> is removed so second is used

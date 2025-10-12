@@ -32,6 +32,7 @@
     }
   },
   'chromium-tester-service-account': {
+    'fail_if_unused': False,
     'swarming': {
       'service_account':
       'chromium-tester@chops-service-accounts.iam.gserviceaccount.com'
@@ -65,10 +66,10 @@
       'has_native_resultdb_integration': True
     }
   },
-  'ios-device-16.7': {
+  'ios-device-18': {
     'swarming': {
       'dimensions': {
-        'os': 'iOS-16.7.5',
+        'os': 'iOS-18',
         'pool': 'chrome.tests'
       }
     }
@@ -114,21 +115,8 @@
       'expiration': 10800
     }
   },
-  'linux-bionic': {
-    'swarming': {
-      'dimensions': {
-        'os': 'Ubuntu-18.04'
-      }
-    }
-  },
-  'linux-focal': {
-    'swarming': {
-      'dimensions': {
-        'os': 'Ubuntu-20.04'
-      }
-    }
-  },
   'linux-jammy': {
+    'fail_if_unused': False,
     'swarming': {
       'dimensions': {
         'os': 'Ubuntu-22.04'
@@ -181,7 +169,7 @@
         'location':
         '.',
         'revision':
-        'git_revision:a18b7d95d26f3c6bf9591978b19cf0ca8268ac7d'
+        'git_revision:4c7290150d1c360cecc6a93c0214dc531585c3ab'
       }]
     }
   },
@@ -312,6 +300,7 @@
     }
   },
   'x86-64': {
+    'fail_if_unused': False,
     'swarming': {
       'dimensions': {
         'cpu': 'x86-64'

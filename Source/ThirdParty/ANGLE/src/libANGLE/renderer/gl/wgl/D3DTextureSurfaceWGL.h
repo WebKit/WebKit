@@ -58,14 +58,13 @@ class D3DTextureSurfaceWGL : public SurfaceWGL
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
     void setSwapInterval(const egl::Display *display, EGLint interval) override;
 
-    EGLint getWidth() const override;
-    EGLint getHeight() const override;
+    gl::Extents getSize() const override;
 
     EGLint isPostSubBufferSupported() const override;
     EGLint getSwapBehavior() const override;
 
     HDC getDC() const override;
-    const angle::Format *getD3DTextureColorFormat() const override;
+    const angle::Format *getClientBufferTextureColorFormat() const override;
 
     egl::Error attachToFramebuffer(const gl::Context *context,
                                    gl::Framebuffer *framebuffer) override;

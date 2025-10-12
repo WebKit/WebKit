@@ -10,6 +10,10 @@
 
 #include "modules/video_coding/deprecated/decoding_state.h"
 
+#include <cstdint>
+
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame_type.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"

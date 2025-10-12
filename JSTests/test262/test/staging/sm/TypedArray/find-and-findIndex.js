@@ -4,16 +4,13 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-TypedArray-shell.js]
-flags:
-  - noStrict
+includes: [sm/non262-TypedArray-shell.js]
 description: |
-  pending
+  Implement %TypedArray%.prototype.{find, findIndex}
+info: bugzilla.mozilla.org/show_bug.cgi?id=1078975
 esid: pending
+features: [Symbol]
 ---*/
-var BUGNUMBER = 1078975;
-var summary = "Implement %TypedArray%.prototype.{find, findIndex}";
-print(BUGNUMBER + ": " + summary);
 
 const methods = ["find", "findIndex"];
 
@@ -30,16 +27,14 @@ anyTypedArrayConstructors.forEach(constructor => {
         assert.sameValue(arr[method](v => v === 3), 3);
         assert.sameValue(arr[method](v => v === 6), method === "find" ? undefined : -1);
 
-        var thisValues = [undefined, null, true, 1, "foo", [], {}];
-        if (typeof Symbol == "function")
-            thisValues.push(Symbol());
+        var thisValues = [undefined, null, true, 1, "foo", [], {}, Symbol()];
 
         thisValues.forEach(thisArg =>
-            assertThrowsInstanceOf(() => arr[method].call(thisArg, () => true), TypeError)
+            assert.throws(TypeError, () => arr[method].call(thisArg, () => true))
         );
 
-        assertThrowsInstanceOf(() => arr[method](), TypeError);
-        assertThrowsInstanceOf(() => arr[method](1), TypeError);
+        assert.throws(TypeError, () => arr[method]());
+        assert.throws(TypeError, () => arr[method](1));
     });
 });
 
@@ -54,5 +49,3 @@ anyTypedArrayConstructors.filter(isFloatConstructor).forEach(constructor => {
     assert.sameValue(arr.find(v => Object.is(v, -0)), -0);
     assert.sameValue(arr.findIndex(v => Object.is(v, -0)), 0);
 })
-
-

@@ -34,6 +34,7 @@
 #import "UIKitSPIForTesting.h"
 #import "WKTouchEventsGestureRecognizer.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 @interface UIView (WKContentView)
 - (void)_touchEventsRecognized;
@@ -60,7 +61,7 @@ static WKWebView *globalWebView = nil;
 
 @end
 
-static Class touchEventsGestureRecognizerClass()
+static Class touchEventsGestureRecognizerClassSingleton()
 {
     static Class result = nil;
     static dispatch_once_t onceToken;
@@ -72,7 +73,7 @@ static Class touchEventsGestureRecognizerClass()
 
 namespace TestWebKitAPI {
 
-static WebKit::WKTouchPoint globalTouchPoint { CGPointZero, CGPointZero, 100, UITouchPhaseBegan, 1, 0, 0, 0, WebKit::WKTouchPointType::Direct };
+static WebKit::WKTouchPoint globalTouchPoint { CGPointZero, CGPointZero, 100, UITouchPhaseBegan, 1, 0, 0, 0, 0, WebKit::WKTouchPointType::Direct };
 static WebKit::WKTouchEvent globalTouchEvent { WebKit::WKTouchEventType::Begin, CACurrentMediaTime(), CGPointZero, 1, 0, false, { globalTouchPoint }, { }, { }, true };
 static void updateSimulatedTouchEvent(CGPoint location, UITouchPhase phase)
 {
@@ -103,7 +104,7 @@ static const WebKit::WKTouchEvent* simulatedTouchEvent(id, SEL)
 
 TEST(TouchEventTests, DestroyWebViewWhileHandlingTouchEnd)
 {
-    InstanceMethodSwizzler lastTouchEventSwizzler { touchEventsGestureRecognizerClass(), @selector(lastTouchEvent), reinterpret_cast<IMP>(simulatedTouchEvent) };
+    InstanceMethodSwizzler lastTouchEventSwizzler { touchEventsGestureRecognizerClassSingleton(), @selector(lastTouchEvent), reinterpret_cast<IMP>(simulatedTouchEvent) };
     @autoreleasepool {
         RetainPtr messageHandler = adoptNS([TouchEventScriptMessageHandler new]);
         RetainPtr controller = adoptNS([[WKUserContentController alloc] init]);
@@ -128,7 +129,7 @@ TEST(TouchEventTests, DestroyWebViewWhileHandlingTouchEnd)
     }
 
     __block bool done = false;
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         done = true;
     });
     TestWebKitAPI::Util::run(&done);

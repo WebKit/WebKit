@@ -224,16 +224,16 @@ void reference_16x16_dct_2d(int16_t input[256], double output[256]) {
   }
 }
 
-typedef void (*FdctFunc)(const int16_t *in, tran_low_t *out, int stride);
-typedef void (*IdctFunc)(const tran_low_t *in, uint8_t *out, int stride);
-typedef void (*FhtFunc)(const int16_t *in, tran_low_t *out, int stride,
-                        int tx_type);
-typedef void (*IhtFunc)(const tran_low_t *in, uint8_t *out, int stride,
-                        int tx_type);
+using FdctFunc = void (*)(const int16_t *in, tran_low_t *out, int stride);
+using IdctFunc = void (*)(const tran_low_t *in, uint8_t *out, int stride);
+using FhtFunc = void (*)(const int16_t *in, tran_low_t *out, int stride,
+                         int tx_type);
+using IhtFunc = void (*)(const tran_low_t *in, uint8_t *out, int stride,
+                         int tx_type);
 
-typedef std::tuple<FdctFunc, IdctFunc, int, vpx_bit_depth_t> Dct16x16Param;
-typedef std::tuple<FhtFunc, IhtFunc, int, vpx_bit_depth_t> Ht16x16Param;
-typedef std::tuple<IdctFunc, IdctFunc, int, vpx_bit_depth_t> Idct16x16Param;
+using Dct16x16Param = std::tuple<FdctFunc, IdctFunc, int, vpx_bit_depth_t>;
+using Ht16x16Param = std::tuple<FhtFunc, IhtFunc, int, vpx_bit_depth_t>;
+using Idct16x16Param = std::tuple<IdctFunc, IdctFunc, int, vpx_bit_depth_t>;
 
 void fdct16x16_ref(const int16_t *in, tran_low_t *out, int stride,
                    int /*tx_type*/) {

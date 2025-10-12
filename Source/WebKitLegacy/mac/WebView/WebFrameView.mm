@@ -53,10 +53,13 @@
 #import "WebViewPrivate.h"
 #import <Foundation/NSURLRequest.h>
 #import <WebCore/BackForwardController.h>
+#import <WebCore/DocumentPage.h>
+#import <WebCore/DocumentView.h>
 #import <WebCore/DragController.h>
 #import <WebCore/EventHandler.h>
+#import <WebCore/FrameInlines.h>
 #import <WebCore/HistoryItem.h>
-#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameInlines.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/Page.h>
 #import <WebCore/RenderView.h>

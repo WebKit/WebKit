@@ -28,8 +28,11 @@
 
 #include "InspectorFrontendChannel.h"
 #include <wtf/Assertions.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace Inspector {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FrontendRouter);
 
 Ref<FrontendRouter> FrontendRouter::create()
 {

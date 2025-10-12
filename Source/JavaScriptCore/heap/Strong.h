@@ -29,12 +29,12 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-#include "Handle.h"
-#include "HandleSet.h"
-#include "Heap.h"
-#include "InitializeThreading.h"
-#include "JSLock.h"
-#include "StrongForward.h"
+#include <JavaScriptCore/Handle.h>
+#include <JavaScriptCore/HandleSet.h>
+#include <JavaScriptCore/Heap.h>
+#include <JavaScriptCore/InitializeThreading.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/StrongForward.h>
 #include <wtf/RefTrackerMixin.h>
 
 namespace JSC {

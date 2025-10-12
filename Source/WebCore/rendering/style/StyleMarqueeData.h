@@ -24,7 +24,10 @@
 
 #pragma once
 
-#include "Length.h"
+#include <WebCore/RenderStyleConstants.h>
+#include <WebCore/StyleWebKitMarqueeIncrement.h>
+#include <WebCore/StyleWebKitMarqueeRepetition.h>
+#include <WebCore/StyleWebKitMarqueeSpeed.h>
 #include <wtf/RefCounted.h>
 
 namespace WTF {
@@ -43,11 +46,12 @@ struct StyleMarqueeData : RefCounted<StyleMarqueeData> {
     void dumpDifferences(TextStream&, const StyleMarqueeData&) const;
 #endif
 
-    Length increment;
-    int speed;
-    int loops; // -1 means infinite.
-    unsigned behavior : 2; // MarqueeBehavior 
-    unsigned direction : 3; // MarqueeDirection
+    Style::WebkitMarqueeIncrement increment;
+    Style::WebkitMarqueeSpeed speed;
+    Style::WebkitMarqueeRepetition repetition;
+
+    PREFERRED_TYPE(MarqueeBehavior) unsigned behavior : 2;
+    PREFERRED_TYPE(MarqueeDirection) unsigned direction : 3;
 
 private:
     StyleMarqueeData();

@@ -1,4 +1,0 @@
-
-FAIL Test that the child iframe navigation is not allowed assert_equals: expected "fail" but got "success"
-FAIL Violation report status OK. undefined is not an object (evaluating 'data[0]["body"]')
-

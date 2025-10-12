@@ -64,7 +64,7 @@ struct Benchmark {
         std::unique_ptr<unsigned[]> counts = makeUniqueWithoutFastMallocCheck<unsigned[]>(numThreads);
         std::unique_ptr<RefPtr<Thread>[]> threads = makeUniqueWithoutFastMallocCheck<RefPtr<Thread>[]>(numThreads);
     
-        volatile bool keepGoing = true;
+        std::atomic<bool> keepGoing = true;
     
         lock.lock();
     

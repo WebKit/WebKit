@@ -9,6 +9,10 @@
 //    time.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>

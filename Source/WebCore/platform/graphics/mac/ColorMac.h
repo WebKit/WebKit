@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "ColorCocoa.h"
+#include <WebCore/ColorCocoa.h>
 
 #if USE(APPKIT)
 

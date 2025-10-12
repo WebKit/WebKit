@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Cancelled load to https://www.web-platform.test:9444/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
 
 PASS Test that local scheme workers inherit COEP: require-corp from the creating document
 PASS blob URL dedicated worker: Same origin should be allowed.

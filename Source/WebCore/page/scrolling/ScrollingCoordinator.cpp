@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,8 @@
 
 #include "ScrollingCoordinator.h"
 
-#include "Document.h"
 #include "DocumentClasses.h"
+#include "DocumentView.h"
 #include "EventNames.h"
 #include "GraphicsLayer.h"
 #include "LocalFrame.h"
@@ -171,7 +171,8 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
 
         EventTrackingRegions subframeRegion = absoluteEventTrackingRegionsForFrame(*localSubframe);
         // Map from the frame document to our document.
-        IntPoint offset = subframeView->contentsToContainingViewContents(IntPoint());
+        // Event regions are integral, and can't represent subpixel frame positions.
+        auto offset = subframeView->contentsToContainingViewContents(IntPoint());
 
         // FIXME: this translation ignores non-trival transforms on the frame.
         subframeRegion.translate(toIntSize(offset));
@@ -179,14 +180,13 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
     }
 
 #if !ENABLE(WHEEL_EVENT_REGIONS)
-    auto wheelHandlerRegion = frame.document()->absoluteRegionForEventTargets(frame.document()->wheelEventTargets());
+    auto wheelHandlerRegion = frame.document()->absoluteRegionForWheelEventTargets();
     bool wheelHandlerInFixedContent = wheelHandlerRegion.second;
     if (wheelHandlerInFixedContent) {
         // FIXME: need to handle position:sticky here too.
         LayoutRect inflatedWheelHandlerBounds = frameView->fixedScrollableAreaBoundsInflatedForScrolling(LayoutRect(wheelHandlerRegion.first.bounds()));
         wheelHandlerRegion.first.unite(enclosingIntRect(inflatedWheelHandlerBounds));
     }
-    
     nonFastScrollableRegion.unite(wheelHandlerRegion.first);
 #endif
 
@@ -343,7 +343,7 @@ void ScrollingCoordinator::updateSynchronousScrollingReasons(LocalFrameView& fra
     if (hasVisibleSlowRepaintViewportConstrainedObjects(frameView))
         newSynchronousScrollingReasons.add(SynchronousScrollingReason::HasNonLayerViewportConstrainedObjects);
 
-    RefPtr page = frameView.frame().protectedPage();
+    RefPtr page = frameView.frame().page();
     if (page && page->topDocumentHasDocumentClass(DocumentClass::Image))
         newSynchronousScrollingReasons.add(SynchronousScrollingReason::IsImageDocument);
 
@@ -352,7 +352,7 @@ void ScrollingCoordinator::updateSynchronousScrollingReasons(LocalFrameView& fra
 
 void ScrollingCoordinator::updateSynchronousScrollingReasonsForAllFrames()
 {
-    for (RefPtr frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (RefPtr frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -450,6 +450,11 @@ String ScrollingCoordinator::synchronousScrollingReasonsAsText() const
 FrameIdentifier ScrollingCoordinator::mainFrameIdentifier() const
 {
     return m_page->mainFrame().frameID();
+}
+
+void ScrollingCoordinator::setScrollbarColor(ScrollableArea&, std::optional<ScrollbarColor>)
+{
+
 }
 
 } // namespace WebCore

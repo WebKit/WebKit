@@ -34,9 +34,9 @@
 #include "DOMPoint.h"
 #include "MutableStyleProperties.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptWrappableInlines.h"
 #include "StyleProperties.h"
-#include "TransformOperations.h"
-#include "TransformOperationsBuilder.h"
+#include "StyleTransform.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
@@ -230,20 +230,22 @@ ExceptionOr<DOMMatrixReadOnly::AbstractMatrix> DOMMatrixReadOnly::parseStringInt
     if (string.isEmpty())
         return AbstractMatrix { };
 
-    CSSToLengthConversionData conversionData;
-    auto operations = CSSPropertyParserHelpers::parseTransformRaw(string, CSSParserContext(HTMLStandardMode), conversionData);
-    if (!operations)
+    auto transform = CSSPropertyParserHelpers::parseTransformRaw(string, CSSParserContext(HTMLStandardMode));
+    if (!transform)
         return Exception { ExceptionCode::SyntaxError };
 
     // Check for an empty transform operations list, in which case we can use the default identity matrix.
-    if (operations->isEmpty())
+    if (transform->isNone())
         return AbstractMatrix { };
 
+    auto [isWidthDependent, isHeightDependent] = transform->computeSizeDependencies();
+    if (isWidthDependent || isHeightDependent)
+        return Exception { ExceptionCode::SyntaxError };
+
     AbstractMatrix matrix;
-    for (auto& operation : *operations) {
-        if (operation->apply(matrix.matrix, { 0, 0 }))
-            return Exception { ExceptionCode::SyntaxError };
-        if (operation->is3DOperation())
+    for (auto& function : *transform) {
+        function->apply(matrix.matrix, { 0, 0 });
+        if (function->is3DOperation())
             matrix.is2D = false;
     }
 
@@ -414,5 +416,7 @@ ExceptionOr<String> DOMMatrixReadOnly::toString() const
 
     return makeString("matrix3d("_s, m_matrix.m11(), ", "_s, m_matrix.m12(), ", "_s, m_matrix.m13(), ", "_s, m_matrix.m14(), ", "_s, m_matrix.m21(), ", "_s, m_matrix.m22(), ", "_s, m_matrix.m23(), ", "_s, m_matrix.m24(), ", "_s, m_matrix.m31(), ", "_s, m_matrix.m32(), ", "_s, m_matrix.m33(), ", "_s, m_matrix.m34(), ", "_s, m_matrix.m41(), ", "_s, m_matrix.m42(), ", "_s, m_matrix.m43(), ", "_s, m_matrix.m44(), ')');
 }
+
+DOMMatrixReadOnly::~DOMMatrixReadOnly() = default;
 
 } // namespace WebCore

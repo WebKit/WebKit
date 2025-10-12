@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "HTTPServer.h"
 #import "WebExtensionUtilities.h"
 
 namespace TestWebKitAPI {
@@ -48,6 +49,48 @@ static auto *manifest = @{
         @"js": @[ @"content.js" ]
     }]
 };
+
+TEST(WKWebExtensionAPITest, TestStartedEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.onTestStarted.addListener((data) => {",
+        @"  browser.test.assertEq(data?.testName, 'test', 'data.testName should be')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.sendMessage('Send Test Message')"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    [manager runUntilTestMessage:@"Send Test Message"];
+
+    [manager sendTestStartedWithArgument:@{ @"testName": @"test" }];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITest, TestFinishedEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.onTestFinished.addListener((data) => {",
+        @"  browser.test.assertEq(data?.testName, 'test', 'data.testName should be')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.sendMessage('Send Test Message')"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    [manager runUntilTestMessage:@"Send Test Message"];
+
+    [manager sendTestFinishedWithArgument:@{ @"testName": @"test" }];
+
+    [manager run];
+}
 
 TEST(WKWebExtensionAPITest, MessageEvent)
 {
@@ -608,6 +651,49 @@ TEST(WKWebExtensionAPITest, RunTestsWithAsyncTestThatFails)
     EXPECT_NS_EQUAL(manager.get().testsAdded, testNames);
     EXPECT_NS_EQUAL(manager.get().testsStarted, testNames);
     EXPECT_NS_EQUAL(manager.get().testResults, (@{ testNames.firstObject: @YES, testNames.lastObject: @NO }));
+}
+
+TEST(WKWebExtensionAPITest, RunTestsVerifyFailedTestAborts)
+{
+    auto *testNames = @[ @"testAssertTrue", @"testAssertFalse", @"testAssertEq", @"testAssertDeepEq", @"testAssertThrows" ];
+    auto *backgroundScript = Util::constructScript(@[
+        @"function testAssertTrue() {",
+        @"  browser.test.assertTrue(false)",
+        @"  browser.test.notifyFail()",
+        @"}",
+
+        @"function testAssertFalse() {",
+        @"  browser.test.assertFalse(true)",
+        @"  browser.test.notifyFail()",
+        @"}",
+
+        @"function testAssertEq() {",
+        @"  browser.test.assertEq(false, 4)",
+        @"  browser.test.notifyFail()",
+        @"}",
+
+        @"function testAssertDeepEq() {",
+        @"  browser.test.assertDeepEq({ 'key': 'value' }, { 'key2': 'value2' })",
+        @"  browser.test.notifyFail()",
+        @"}",
+
+        @"function testAssertThrows() {",
+        @"  browser.test.assertThrows(() => browser.permissions.getAll())",
+        @"  browser.test.notifyFail()",
+        @"}",
+
+        @"browser.test.assertRejects(browser.test.runTests([",
+        @"  testAssertTrue, testAssertFalse, testAssertEq, testAssertDeepEq, testAssertThrows",
+        @"]))",
+        @"  .then(() => browser.test.notifyPass())",
+        @"  .catch(() => browser.test.notifyFail('Test(s) with failing assertions resolved the promise.'))"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    [manager run];
+
+    EXPECT_EQ(manager.get().testResults.count, testNames.count);
 }
 
 } // namespace TestWebKitAPI

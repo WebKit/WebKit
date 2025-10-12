@@ -29,6 +29,7 @@
 
 #if ENABLE(WEBXR)
 #include "EventNames.h"
+#include "ScriptWrappableInlines.h"
 #include "WebXRInputSource.h"
 #include "WebXRSession.h"
 #include "XRInputSourceEvent.h"
@@ -89,7 +90,7 @@ void WebXRInputSourceArray::update(double timestamp, const InputSourceList& inpu
         init.session = &m_session;
         init.added = WTFMove(added);
         init.removed = WTFMove(removed);
-        
+
         auto event = XRInputSourcesChangeEvent::create(eventNames().inputsourceschangeEvent, init);
         ActiveDOMObject::queueTaskToDispatchEvent(m_session, TaskSource::WebXR, WTFMove(event));
     }

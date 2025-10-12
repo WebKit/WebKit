@@ -1,8 +1,8 @@
 0
 0
 0
-ReferenceError: Cannot access uninitialized variable.
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'x' before initialization.
+ReferenceError: Cannot access 'x' before initialization.
 1
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'x' before initialization.
 string

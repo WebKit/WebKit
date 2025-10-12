@@ -11,6 +11,8 @@
 #ifndef MODULES_VIDEO_CODING_DEPRECATED_JITTER_BUFFER_H_
 #define MODULES_VIDEO_CODING_DEPRECATED_JITTER_BUFFER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <list>
 #include <map>
 #include <memory>
@@ -18,12 +20,10 @@
 #include <vector>
 
 #include "api/field_trials_view.h"
-#include "modules/include/module_common_types.h"
 #include "modules/include/module_common_types_public.h"
 #include "modules/video_coding/deprecated/decoding_state.h"
 #include "modules/video_coding/deprecated/event_wrapper.h"
 #include "modules/video_coding/deprecated/jitter_buffer_common.h"
-#include "modules/video_coding/include/video_coding_defines.h"
 #include "modules/video_coding/timing/inter_frame_delay_variation_calculator.h"
 #include "modules/video_coding/timing/jitter_estimator.h"
 #include "rtc_base/synchronization/mutex.h"

@@ -62,9 +62,11 @@ for file_number in range(int(os.environ["SCRIPT_OUTPUT_FILE_LIST_COUNT"])):
                 postprocess_rule_env["SCRIPT_HEADER_VISIBILITY"] = "public"
             print("RuleScriptExecution", output_file, input_file, file=sys.stderr)
             subprocess.check_call((migrate_rule), env=postprocess_rule_env)
-        else:
+        elif os.path.exists(input_file):
             print(output_file, "->", input_file, file=sys.stderr)
             shutil.copy(input_file, output_file)
+        else:
+            print("Skipping ", input_file, " (does not exist)", file=sys.stderr)
 
 if timestamp:
     Path(timestamp).touch()

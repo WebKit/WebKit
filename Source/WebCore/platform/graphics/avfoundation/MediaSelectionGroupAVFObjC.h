@@ -78,7 +78,7 @@ public:
 
     void updateOptions(const Vector<String>& characteristics);
 
-    using OptionContainer = UncheckedKeyHashMap<CFTypeRef, RefPtr<MediaSelectionOptionAVFObjC>>;
+    using OptionContainer = HashMap<CFTypeRef, RefPtr<MediaSelectionOptionAVFObjC>>;
     typename OptionContainer::ValuesIteratorRange options() { return m_options.values(); }
 
     AVMediaSelectionGroup *avMediaSelectionGroup() const { return m_mediaSelectionGroup.get(); }

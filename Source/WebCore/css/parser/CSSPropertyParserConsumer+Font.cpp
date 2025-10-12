@@ -229,6 +229,8 @@ const AtomString& genericFontFamily(CSSValueID ident)
         return WebKitFontFamilyNames::pictographFamily.get();
     case CSSValueSystemUi:
         return WebKitFontFamilyNames::systemUiFamily.get();
+    case CSSValueMath:
+        return WebKitFontFamilyNames::mathFamily.get();
     default:
         return nullAtom();
     }
@@ -251,6 +253,8 @@ WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID ident)
         return WebKitFontFamilyNames::FamilyNamesIndex::PictographFamily;
     case CSSValueSystemUi:
         return WebKitFontFamilyNames::FamilyNamesIndex::SystemUiFamily;
+    case CSSValueMath:
+        return WebKitFontFamilyNames::FamilyNamesIndex::MathFamily;
     default:
         ASSERT_NOT_REACHED();
         return WebKitFontFamilyNames::FamilyNamesIndex::StandardFamily;
@@ -286,7 +290,7 @@ static AtomString consumeFamilyNameUnresolved(CSSParserTokenRange& range)
 
 static std::optional<CSSValueID> consumeGenericFamilyUnresolved(CSSParserTokenRange& range)
 {
-    return consumeIdentRaw<CSSValueSerif, CSSValueSansSerif, CSSValueCursive, CSSValueFantasy, CSSValueMonospace, CSSValueWebkitBody, CSSValueWebkitPictograph, CSSValueSystemUi>(range);
+    return consumeIdentRaw<CSSValueSerif, CSSValueSansSerif, CSSValueCursive, CSSValueFantasy, CSSValueMonospace, CSSValueWebkitBody, CSSValueWebkitPictograph, CSSValueSystemUi, CSSValueMath>(range);
 }
 
 static RefPtr<CSSValue> consumeGenericFamily(CSSParserTokenRange& range, CSS::PropertyParserState& state)

@@ -1,0 +1,10 @@
+
+
+
+
+PASS Horizontal drag on a horizontal slider.
+PASS Vertical drag on a horizontal slider.
+PASS Vertical drag on a horizontal slider with touch-action:none.
+PASS Vertical drag on a vertical slider.
+PASS Horizontal drag on a vertical slider.
+

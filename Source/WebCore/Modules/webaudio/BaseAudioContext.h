@@ -72,6 +72,7 @@ class DynamicsCompressorNode;
 class GainNode;
 class IIRFilterNode;
 class MediaElementAudioSourceNode;
+class MediaSessionManagerInterface;
 class OscillatorNode;
 class PannerNode;
 class PeriodicWave;
@@ -214,6 +215,7 @@ public:
 
     // EventTarget
     ScriptExecutionContext* scriptExecutionContext() const final;
+    using ActiveDOMObject::protectedScriptExecutionContext;
 
     virtual void sourceNodeWillBeginPlayback(AudioNode&);
     // When a source node has no more processing to do (has finished playing), then it tells the context to dereference it.
@@ -257,6 +259,8 @@ protected:
 
     void clear();
 
+    RefPtr<MediaSessionManagerInterface> mediaSessionManager() const;
+
 protected:
     // Only accessed when the graph lock is held.
     const Vector<AudioConnectionRefPtr<AudioNode>>& referencedSourceNodes() const { return m_referencedSourceNodes; }
@@ -292,7 +296,7 @@ private:
     void disableOutputsForFinishedTailProcessingNodes();
 
 #if !RELEASE_LOG_DISABLED
-    Ref<Logger> m_logger;
+    const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
     uint64_t m_nextAudioNodeIdentifier { 0 };
     uint64_t m_nextAudioParameterIdentifier { 0 };
@@ -300,7 +304,7 @@ private:
 
     uint64_t m_contextID;
 
-    Ref<AudioWorklet> m_worklet;
+    const Ref<AudioWorklet> m_worklet;
 
     // Either accessed when the graph lock is held, or on the main thread when the audio thread has finished.
     Vector<AudioConnectionRefPtr<AudioNode>> m_referencedSourceNodes;
@@ -357,7 +361,7 @@ private:
     Vector<AudioNode*> m_deferredBreakConnectionList;
     Vector<Vector<DOMPromiseDeferred<void>>> m_stateReactions;
 
-    Ref<AudioListener> m_listener;
+    const Ref<AudioListener> m_listener;
 
     std::atomic<Thread*> m_audioThread;
 

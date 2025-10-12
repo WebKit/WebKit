@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "IDBCursorRecord.h"
-#include "IDBKey.h"
-#include "IDBKeyData.h"
-#include "IDBKeyPath.h"
-#include "IDBValue.h"
-#include "SharedBuffer.h"
+#include <WebCore/IDBCursorRecord.h>
+#include <WebCore/IDBKey.h>
+#include <WebCore/IDBKeyData.h>
+#include <WebCore/IDBKeyPath.h>
+#include <WebCore/IDBValue.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

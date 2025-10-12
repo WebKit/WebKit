@@ -7,8 +7,10 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "test/scenario/performance_stats.h"
 
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/numerics/event_rate_counter.h"
 #include "test/gtest.h"
 
 namespace webrtc {

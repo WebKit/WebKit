@@ -26,16 +26,14 @@
 #include "config.h"
 #include "StyleMiscNonInheritedData.h"
 
-#include "AnimationList.h"
-#include "ContentData.h"
-#include "FillLayer.h"
 #include "RenderStyleDifference.h"
 #include "RenderStyleInlines.h"
-#include "ShadowData.h"
 #include "StyleDeprecatedFlexibleBoxData.h"
 #include "StyleFilterData.h"
 #include "StyleFlexibleBoxData.h"
 #include "StyleMultiColData.h"
+#include "StylePrimitiveKeyword+Logging.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
 #include "StyleTransformData.h"
 #include "StyleVisitedLinkColorData.h"
 #include <wtf/PointerComparison.h>
@@ -51,10 +49,13 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData()
     , multiCol(StyleMultiColData::create())
     , filter(StyleFilterData::create())
     , transform(StyleTransformData::create())
-    , mask(FillLayer::create(FillLayerType::Mask))
     , visitedLinkColor(StyleVisitedLinkColorData::create())
-    , aspectRatioWidth(RenderStyle::initialAspectRatioWidth())
-    , aspectRatioHeight(RenderStyle::initialAspectRatioHeight())
+    , mask(RenderStyle::initialMaskLayers())
+    , animations(RenderStyle::initialAnimations())
+    , transitions(RenderStyle::initialTransitions())
+    , content(RenderStyle::initialContent())
+    , boxShadow(RenderStyle::initialBoxShadow())
+    , aspectRatio(RenderStyle::initialAspectRatio())
     , alignContent(RenderStyle::initialContentAlignment())
     , justifyContent(RenderStyle::initialContentAlignment())
     , alignItems(RenderStyle::initialDefaultAlignment())
@@ -64,7 +65,6 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData()
     , objectPosition(RenderStyle::initialObjectPosition())
     , order(RenderStyle::initialOrder())
     , tableLayout(static_cast<unsigned>(RenderStyle::initialTableLayout()))
-    , aspectRatioType(static_cast<unsigned>(RenderStyle::initialAspectRatioType()))
     , appearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
     , usedAppearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
     , textOverflow(static_cast<unsigned>(RenderStyle::initialTextOverflow()))
@@ -82,15 +82,13 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData(const StyleMiscNonInherited
     , multiCol(o.multiCol)
     , filter(o.filter)
     , transform(o.transform)
-    , mask(o.mask)
     , visitedLinkColor(o.visitedLinkColor)
-    , animations(o.animations ? o.animations->copy() : o.animations)
-    , transitions(o.transitions ? o.transitions->copy() : o.transitions)
-    , content(o.content ? o.content->clone() : nullptr)
-    , boxShadow(o.boxShadow ? makeUnique<ShadowData>(*o.boxShadow) : nullptr)
-    , altText(o.altText)
-    , aspectRatioWidth(o.aspectRatioWidth)
-    , aspectRatioHeight(o.aspectRatioHeight)
+    , mask(o.mask)
+    , animations(o.animations)
+    , transitions(o.transitions)
+    , content(o.content)
+    , boxShadow(o.boxShadow)
+    , aspectRatio(o.aspectRatio)
     , alignContent(o.alignContent)
     , justifyContent(o.justifyContent)
     , alignItems(o.alignItems)
@@ -107,7 +105,6 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData(const StyleMiscNonInherited
     , hasExplicitlySetDirection(o.hasExplicitlySetDirection)
     , hasExplicitlySetWritingMode(o.hasExplicitlySetWritingMode)
     , tableLayout(o.tableLayout)
-    , aspectRatioType(o.aspectRatioType)
     , appearance(o.appearance)
     , usedAppearance(o.usedAppearance)
     , textOverflow(o.textOverflow)
@@ -132,15 +129,13 @@ bool StyleMiscNonInheritedData::operator==(const StyleMiscNonInheritedData& o) c
         && multiCol == o.multiCol
         && filter == o.filter
         && transform == o.transform
-        && mask == o.mask
         && visitedLinkColor == o.visitedLinkColor
-        && arePointingToEqualData(animations, o.animations)
-        && arePointingToEqualData(transitions, o.transitions)
-        && contentDataEquivalent(o)
-        && arePointingToEqualData(boxShadow, o.boxShadow)
-        && altText == o.altText
-        && aspectRatioWidth == o.aspectRatioWidth
-        && aspectRatioHeight == o.aspectRatioHeight
+        && mask == o.mask
+        && animations == o.animations
+        && transitions == o.transitions
+        && content == o.content
+        && boxShadow == o.boxShadow
+        && aspectRatio == o.aspectRatio
         && alignContent == o.alignContent
         && justifyContent == o.justifyContent
         && alignItems == o.alignItems
@@ -156,7 +151,6 @@ bool StyleMiscNonInheritedData::operator==(const StyleMiscNonInheritedData& o) c
 #endif
         && hasExplicitlySetDirection == o.hasExplicitlySetDirection
         && hasExplicitlySetWritingMode == o.hasExplicitlySetWritingMode
-        && aspectRatioType == o.aspectRatioType
         && tableLayout == o.tableLayout
         && appearance == o.appearance
         && usedAppearance == o.usedAppearance
@@ -166,20 +160,9 @@ bool StyleMiscNonInheritedData::operator==(const StyleMiscNonInheritedData& o) c
         && resize == o.resize;
 }
 
-bool StyleMiscNonInheritedData::contentDataEquivalent(const StyleMiscNonInheritedData& other) const
-{
-    auto* a = content.get();
-    auto* b = other.content.get();
-    while (a && b && *a == *b) {
-        a = a->next();
-        b = b->next();
-    }
-    return !a && !b;
-}
-
 bool StyleMiscNonInheritedData::hasFilters() const
 {
-    return !filter->operations.isEmpty();
+    return !filter->filter.isNone();
 }
 
 #if !LOG_DISABLED
@@ -194,9 +177,9 @@ void StyleMiscNonInheritedData::dumpDifferences(TextStream& ts, const StyleMiscN
     filter->dumpDifferences(ts, other.filter);
     transform->dumpDifferences(ts, other.transform);
 
-    LOG_IF_DIFFERENT(mask);
-
     visitedLinkColor->dumpDifferences(ts, other.visitedLinkColor);
+
+    LOG_IF_DIFFERENT(mask);
 
     LOG_IF_DIFFERENT(animations);
     LOG_IF_DIFFERENT(transitions);
@@ -204,10 +187,7 @@ void StyleMiscNonInheritedData::dumpDifferences(TextStream& ts, const StyleMiscN
     LOG_IF_DIFFERENT(content);
     LOG_IF_DIFFERENT(boxShadow);
 
-    LOG_IF_DIFFERENT(altText);
-    LOG_IF_DIFFERENT(aspectRatioWidth);
-    LOG_IF_DIFFERENT(aspectRatioHeight);
-
+    LOG_IF_DIFFERENT(aspectRatio);
     LOG_IF_DIFFERENT(alignContent);
     LOG_IF_DIFFERENT(justifyContent);
     LOG_IF_DIFFERENT(alignItems);
@@ -228,7 +208,6 @@ void StyleMiscNonInheritedData::dumpDifferences(TextStream& ts, const StyleMiscN
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetWritingMode);
 
     LOG_IF_DIFFERENT_WITH_CAST(TableLayoutType, tableLayout);
-    LOG_IF_DIFFERENT_WITH_CAST(AspectRatioType, aspectRatioType);
     LOG_IF_DIFFERENT_WITH_CAST(StyleAppearance, appearance);
     LOG_IF_DIFFERENT_WITH_CAST(StyleAppearance, usedAppearance);
 

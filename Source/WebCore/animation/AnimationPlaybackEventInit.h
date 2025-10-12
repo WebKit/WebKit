@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "EventInit.h"
-#include "WebAnimationTypes.h"
+#include <WebCore/EventInit.h>
+#include <WebCore/WebAnimationTypes.h>
 
 namespace WebCore {
 

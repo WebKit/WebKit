@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "RemoteUserInputEventData.h"
+#include <WebCore/RemoteUserInputEventData.h>
 
 namespace WebCore {
 

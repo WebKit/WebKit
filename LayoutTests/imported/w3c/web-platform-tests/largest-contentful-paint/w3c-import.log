@@ -1,0 +1,77 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/background-image-set-image.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/broken-image-icon.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/contracted-image.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/cross-origin-image.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/element-only-when-fully-active.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/expanded-image.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/first-letter-background.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/first-paint-equals-lcp-text.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/idlharness.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/iframe-content-not-observed.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-TAO.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-full-viewport.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-inside-svg.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-not-fully-visible.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-removed-before-load.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-src-change.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-sw-same-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-upscaling.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/initially-invisible-images.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/invisible-images-composited-1.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/invisible-images-composited-2.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/invisible-images.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/larger-image.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/larger-text.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/loadTime-after-appendChild.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/multiple-image-same-src.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/multiple-redirects-TAO.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-after-untrusted-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-css-generated-image.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-css-generated-text.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-image.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-mathml.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-random-namespace.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-svg-background-image.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-svg-data-uri-background-image.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-svg-data-uri-image.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-svg-image.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-text.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/placeholder-image.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/progressively-loaded-image.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/redirects-tao-star.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/repeated-image.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/resized-image-not-reconsidered.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/same-origin-redirects.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/supported-lcp-type.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/text-with-display-style.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/toJSON.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/transparent-text-with-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/transparent-text-with-text-stroke.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/transparent-text.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/update-on-style-change.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/video-data-uri.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/video-play-after-poster.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/video-poster.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/web-font-styled-text-resize-block.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/web-font-styled-text-resize-swap-after-interaction.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/web-font-styled-text-resize-swap-smaller.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/web-font-styled-text-resize-swap-subnode.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/web-font-styled-text-resize-swap.html

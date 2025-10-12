@@ -27,7 +27,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "DFA.h"
+#include <WebCore/DFA.h>
 
 namespace WebCore {
 

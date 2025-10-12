@@ -38,7 +38,7 @@ class ResultsDatabase(object):
     HOSTNAME = 'https://results.webkit.org'
     # TODO: Support more suites (Note, the API we're talking to already does)
     DEFAULT_SUITE = 'layout-tests'
-    SUITES = ('layout-tests', 'api-tests', 'safer-cpp-checks')
+    SUITES = ('layout-tests', 'api-tests', 'safer-cpp-checks', 'javascriptcore-tests')
     PERCENT_THRESHOLD = 10
     PERCENT_SUCCESS_RATE_FOR_PRE_EXISTING_FAILURE = 80
     CONFIGURATION_KEYS = [

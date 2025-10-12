@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "CSSFillRule.h"
-#include "CSSPrimitiveNumericTypes.h"
-#include "SVGPathByteStream.h"
+#include <WebCore/CSSFillRule.h>
+#include <WebCore/CSSPrimitiveNumericTypes.h>
+#include <WebCore/SVGPathByteStream.h>
 
 namespace WebCore {
 namespace CSS {

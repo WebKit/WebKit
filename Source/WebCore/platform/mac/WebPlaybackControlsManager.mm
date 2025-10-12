@@ -57,8 +57,8 @@ using WebCore::PlaybackSessionInterfaceMac;
 
 - (void)dealloc
 {
-    if (_playbackSessionInterfaceMac)
-        _playbackSessionInterfaceMac->setPlayBackControlsManager(nullptr);
+    if (RefPtr playbackSessionInterfaceMac = _playbackSessionInterfaceMac)
+        playbackSessionInterfaceMac->setPlayBackControlsManager(nullptr);
     [super dealloc];
 }
 
@@ -123,10 +123,11 @@ using WebCore::PlaybackSessionInterfaceMac;
 
 - (void)seekToTime:(NSTimeInterval)time toleranceBefore:(NSTimeInterval)toleranceBefore toleranceAfter:(NSTimeInterval)toleranceAfter
 {
-    if (!_playbackSessionInterfaceMac)
+    RefPtr playbackSessionInterfaceMac = _playbackSessionInterfaceMac;
+    if (!playbackSessionInterfaceMac)
         return;
 
-    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
+    if (CheckedPtr model = playbackSessionInterfaceMac->playbackSessionModel())
         model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand, { time, toleranceBefore || toleranceAfter });
 }
 
@@ -164,23 +165,25 @@ using WebCore::PlaybackSessionInterfaceMac;
 
 - (void)beginTouchBarScrubbing
 {
-    if (!_playbackSessionInterfaceMac)
+    RefPtr playbackSessionInterfaceMac = _playbackSessionInterfaceMac;
+    if (!playbackSessionInterfaceMac)
         return;
 
-    auto* model = _playbackSessionInterfaceMac->playbackSessionModel();
+    CheckedPtr model = playbackSessionInterfaceMac->playbackSessionModel();
     if (!model)
         return;
         
-    _playbackSessionInterfaceMac->willBeginScrubbing();
+    playbackSessionInterfaceMac->willBeginScrubbing();
     model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::BeginScrubbingCommand, { });
 }
 
 - (void)endTouchBarScrubbing
 {
-    if (!_playbackSessionInterfaceMac)
+    RefPtr playbackSessionInterfaceMac = _playbackSessionInterfaceMac;
+    if (!playbackSessionInterfaceMac)
         return;
 
-    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
+    if (CheckedPtr model = playbackSessionInterfaceMac->playbackSessionModel())
         model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::EndScrubbingCommand, { });
 }
 
@@ -211,7 +214,7 @@ using WebCore::PlaybackSessionInterfaceMac;
     if (audioMediaSelectionOption && _audioTouchBarMediaSelectionOptions)
         index = [_audioTouchBarMediaSelectionOptions indexOfObject:audioMediaSelectionOption];
 
-    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
+    if (CheckedPtr model = Ref { *_playbackSessionInterfaceMac }->playbackSessionModel())
         model->selectAudioMediaOption(index != NSNotFound ? index : UINT64_MAX);
 }
 
@@ -242,7 +245,7 @@ using WebCore::PlaybackSessionInterfaceMac;
     if (legibleMediaSelectionOption && _legibleTouchBarMediaSelectionOptions)
         index = [_legibleTouchBarMediaSelectionOptions indexOfObject:legibleMediaSelectionOption];
 
-    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
+    if (CheckedPtr model = Ref { *_playbackSessionInterfaceMac }->playbackSessionModel())
         model->selectLegibleMediaOption(index != NSNotFound ? index : UINT64_MAX);
 }
 
@@ -314,21 +317,22 @@ static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOptio
     if (_playbackSessionInterfaceMac == playbackSessionInterfaceMac)
         return;
 
-    if (_playbackSessionInterfaceMac)
-        _playbackSessionInterfaceMac->setPlayBackControlsManager(nullptr);
+    if (RefPtr playbackSessionInterfaceMac = _playbackSessionInterfaceMac)
+        playbackSessionInterfaceMac->setPlayBackControlsManager(nullptr);
 
     _playbackSessionInterfaceMac = playbackSessionInterfaceMac;
 
-    if (_playbackSessionInterfaceMac)
-        _playbackSessionInterfaceMac->setPlayBackControlsManager(self);
+    if (RefPtr playbackSessionInterfaceMac = _playbackSessionInterfaceMac)
+        playbackSessionInterfaceMac->setPlayBackControlsManager(self);
 }
 
 - (void)togglePlayback
 {
-    if (!_playbackSessionInterfaceMac)
+    RefPtr playbackSessionInterfaceMac = _playbackSessionInterfaceMac;
+    if (!playbackSessionInterfaceMac)
         return;
 
-    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
+    if (CheckedPtr model = playbackSessionInterfaceMac->playbackSessionModel())
         model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::TogglePlayPauseCommand, { });
 }
 
@@ -340,10 +344,11 @@ static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOptio
         [self didChangeValueForKey:@"playing"];
     }
 
-    if (!_playbackSessionInterfaceMac)
+    RefPtr playbackSessionInterfaceMac = _playbackSessionInterfaceMac;
+    if (!playbackSessionInterfaceMac)
         return;
 
-    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel(); model && model->isPlaying() != _playing)
+    if (CheckedPtr model = playbackSessionInterfaceMac->playbackSessionModel(); model && model->isPlaying() != _playing)
         model->sendRemoteCommand(_playing ? WebCore::PlatformMediaSession::RemoteControlCommandType::PlayCommand : WebCore::PlatformMediaSession::RemoteControlCommandType::PauseCommand, { });
 }
 
@@ -369,9 +374,11 @@ static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOptio
 
     _defaultPlaybackRate = defaultPlaybackRate;
 
-    if (!fromJavaScript && _playbackSessionInterfaceMac) {
-        if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel(); model && model->defaultPlaybackRate() != _defaultPlaybackRate)
-            model->setDefaultPlaybackRate(_defaultPlaybackRate);
+    if (!fromJavaScript) {
+        if (RefPtr playbackSessionInterfaceMac = _playbackSessionInterfaceMac) {
+            if (CheckedPtr model = playbackSessionInterfaceMac->playbackSessionModel(); model && model->defaultPlaybackRate() != _defaultPlaybackRate)
+                model->setDefaultPlaybackRate(_defaultPlaybackRate);
+        }
     }
 
     if ([self isPlaying])
@@ -409,27 +416,29 @@ static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOptio
     // `defaultPlaybackRate` in these cases when communicating with AVKit.
     [self setDefaultPlaybackRate:_rate fromJavaScript:fromJavaScript];
 
-    if (!fromJavaScript && _playbackSessionInterfaceMac) {
-        if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel(); model && model->playbackRate() != _rate)
-            model->setPlaybackRate(_rate);
+    if (!fromJavaScript) {
+        if (RefPtr playbackSessionInterfaceMac = _playbackSessionInterfaceMac) {
+            if (CheckedPtr model = playbackSessionInterfaceMac->playbackSessionModel(); model && model->playbackRate() != _rate)
+                model->setPlaybackRate(_rate);
+        }
     }
 }
 
 - (void)togglePictureInPicture
 {
-    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
+    if (CheckedPtr model = Ref { *_playbackSessionInterfaceMac }->playbackSessionModel())
         model->togglePictureInPicture();
 }
 
 - (void)enterInWindow
 {
-    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
+    if (CheckedPtr model = Ref { *_playbackSessionInterfaceMac }->playbackSessionModel())
         model->enterInWindowFullscreen();
 }
 
 - (void)exitInWindow
 {
-    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
+    if (CheckedPtr model = Ref { *_playbackSessionInterfaceMac }->playbackSessionModel())
         model->exitInWindowFullscreen();
 }
 

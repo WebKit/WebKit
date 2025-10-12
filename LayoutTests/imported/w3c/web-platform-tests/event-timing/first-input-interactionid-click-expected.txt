@@ -1,4 +1,4 @@
 Click me
 
-FAIL The interactionId of the first input entry should match the same pointerdown entry of event timing when click. assert_implements: Event Timing is not supported. undefined
+PASS The interactionId of the first input entry should match the same pointerdown entry of event timing when click.
 

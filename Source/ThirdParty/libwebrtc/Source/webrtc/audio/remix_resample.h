@@ -11,6 +11,8 @@
 #ifndef AUDIO_REMIX_RESAMPLE_H_
 #define AUDIO_REMIX_RESAMPLE_H_
 
+#include <cstdint>
+
 #include "api/audio/audio_frame.h"
 #include "api/audio/audio_view.h"
 #include "common_audio/resampler/include/push_resampler.h"

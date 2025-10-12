@@ -28,7 +28,10 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "HTTPServer.h"
+#import "TestUIDelegate.h"
+#import "TestWKWebView.h"
 #import "WebExtensionUtilities.h"
+#import <wtf/darwin/DispatchExtras.h>
 
 namespace TestWebKitAPI {
 
@@ -298,6 +301,29 @@ TEST(WKWebExtensionAPIRuntime, GetManifest)
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertDeepEq(browser.runtime.getManifest(), { manifest_version: 3, background: { persistent: false, scripts: [ 'background.js' ], type: 'module' }, unused: null })",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(testManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIRuntime, GetVersion)
+{
+    auto *testManifest = @{
+        @"manifest_version": @3,
+
+        @"version": @"1.0",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        }
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(browser.runtime.getVersion(), '1.0')",
 
         @"browser.test.notifyPass()"
     ]);
@@ -827,6 +853,91 @@ TEST(WKWebExtensionAPIRuntime, SendMessageWithTabFrameAndAsyncReply)
     [manager run];
 }
 
+TEST(WKWebExtensionAPITabs, SendMessageFromBackgroundToOpenedWindow)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<script>browser.test.runWithUserGesture(() => { window.open('/window.html', '_blank') })</script>"_s } },
+        { "/window.html"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    static auto *manifest = @{
+        @"manifest_version": @3,
+        @"name": @"Tabs Test",
+        @"description": @"Tabs Test",
+        @"version": @"1",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"content_scripts": @[
+            @{ @"js": @[ @"main-script.js" ], @"matches": @[ @"*://localhost/" ], @"all_frames": @NO },
+            @{ @"js": @[ @"window-script.js" ], @"matches": @[ @"*://localhost/window.html" ], @"all_frames": @NO }
+        ],
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener(async (message, sender) => {",
+        @"  browser.test.assertEq(message, 'Begin Test', 'Message content should match')",
+
+        @"  const tabId = sender?.tab?.id",
+        @"  browser.test.assertTrue(typeof tabId === 'number', 'tabId should be a valid number')",
+
+        @"  const response = await browser.tabs.sendMessage(tabId, 'Hello, window!')",
+        @"  browser.test.assertEq(response, 'Message received', 'Should receive response from window script')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')",
+    ]);
+
+    auto *mainScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener(() => {",
+        @"  browser.test.fail('Main page should not receive messages intended for opened window')",
+        @"})",
+    ]);
+
+    auto *windowScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message, 'Hello, window!', 'Message should be received in the opened window')",
+        @"  sendResponse('Message received')",
+        @"})",
+
+        @"browser.runtime.sendMessage('Begin Test')",
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"main-script.js": mainScript,
+        @"window-script.js": windowScript,
+    };
+
+    auto manager = Util::loadExtension(manifest, resources);
+
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:@"*" host:@"localhost" path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    __block RetainPtr<TestWebExtensionWindow> testWindow;
+
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().createWebViewWithConfiguration = ^WKWebView *(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
+        testWindow = [manager openNewWindowUsingPrivateBrowsing:NO];
+        testWindow.get().activeTab.webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]).get();
+        return testWindow.get().activeTab.webView;
+    };
+
+    auto *webView = manager.get().defaultTab.webView;
+    webView.UIDelegate = uiDelegate.get();
+    [webView loadRequest:server.requestWithLocalhost()];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIRuntime, SendMessageWithNaNValue)
 {
     TestWebKitAPI::HTTPServer server({
@@ -1309,7 +1420,7 @@ TEST(WKWebExtensionAPIRuntime, SendNativeMessage)
         EXPECT_NS_EQUAL(applicationIdentifier, @"test");
         EXPECT_NS_EQUAL(message, @"Hello");
 
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), mainDispatchQueueSingleton(), ^{
             replyHandler(@"Received", nil);
         });
     };
@@ -1333,7 +1444,7 @@ TEST(WKWebExtensionAPIRuntime, SendNativeMessageWithInvalidReply)
         EXPECT_NS_EQUAL(applicationIdentifier, @"test");
         EXPECT_NS_EQUAL(message, @"Hello");
 
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), mainDispatchQueueSingleton(), ^{
             replyHandler(@{ @"bad": NSUUID.UUID }, nil);
         });
     };
@@ -1915,75 +2026,6 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromWebPageWithWrongIdentifier)
     [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
-
-    [manager run];
-}
-
-TEST(WKWebExtensionAPIRuntime, SendMessageFromOptionsPage)
-{
-    auto *baseURLString = @"test-extension://76C788B8-3374-400D-8259-40E5B9DF79D3/";
-
-    auto *optionsScript = Util::constructScript(@[
-        @"(async () => {",
-        @"  const response = await browser.runtime.sendMessage({ content: 'Hello' })",
-
-        @"  browser.test.assertEq(response?.content, 'Received', 'Should get the response from the background script')",
-
-        @"  browser.test.notifyPass()",
-        @"})()"
-    ]);
-
-    auto *backgroundScript = Util::constructScript(@[
-        [NSString stringWithFormat:@"const expectedURL = '%@options.html'", baseURLString],
-        [NSString stringWithFormat:@"const expectedOrigin = '%@'", [baseURLString substringToIndex:baseURLString.length - 1]],
-
-        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
-        @"  browser.test.assertEq(message?.content, 'Hello', 'Should receive the correct message from the options page')",
-
-        @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
-
-        @"  browser.test.assertEq(typeof sender.tab, 'object', 'sender.tab should be an object')",
-        @"  browser.test.assertEq(sender?.tab?.url, expectedURL, 'sender.tab.url should be the expected URL')",
-
-        @"  browser.test.assertEq(sender?.url, expectedURL, 'sender.url should be the expected URL')",
-        @"  browser.test.assertEq(sender?.origin, expectedOrigin, 'sender.origin should be the expected origin')",
-
-        @"  browser.test.assertEq(sender?.frameId, 0, 'sender.frameId should be 0')",
-
-        @"  browser.test.assertEq(typeof sender?.documentId, 'string', 'sender.documentId should be')",
-        @"  browser.test.assertEq(sender?.documentId?.length, 36, 'sender.documentId.length should be')",
-
-        @"  sendResponse({ content: 'Received' })",
-        @"})",
-
-        @"browser.test.sendMessage('Loaded')"
-    ]);
-
-    auto manager = Util::parseExtension(runtimeManifest, @{
-        @"background.js": backgroundScript,
-        @"options.html": @"<script type='module' src='options.js'></script>",
-        @"options.js": optionsScript
-    });
-
-    // Set a base URL so it is a known value and not the default random one.
-    [WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
-    manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
-
-    [manager load];
-    [manager runUntilTestMessage:@"Loaded"];
-
-    [manager.get().defaultWindow openNewTab];
-
-    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2lu);
-
-    auto *optionsPageURL = manager.get().context.optionsPageURL;
-    EXPECT_NOT_NULL(optionsPageURL);
-
-    auto *defaultTab = manager.get().defaultTab;
-    EXPECT_NOT_NULL(defaultTab);
-
-    [defaultTab changeWebViewIfNeededForURL:optionsPageURL forExtensionContext:manager.get().context];
-    [defaultTab.webView loadRequest:[NSURLRequest requestWithURL:optionsPageURL]];
 
     [manager run];
 }

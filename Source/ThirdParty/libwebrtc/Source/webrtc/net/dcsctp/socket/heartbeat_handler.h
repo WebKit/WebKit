@@ -10,15 +10,13 @@
 #ifndef NET_DCSCTP_SOCKET_HEARTBEAT_HANDLER_H_
 #define NET_DCSCTP_SOCKET_HEARTBEAT_HANDLER_H_
 
-#include <stdint.h>
 
 #include <memory>
-#include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/units/time_delta.h"
 #include "net/dcsctp/packet/chunk/heartbeat_ack_chunk.h"
 #include "net/dcsctp/packet/chunk/heartbeat_request_chunk.h"
-#include "net/dcsctp/packet/sctp_packet.h"
 #include "net/dcsctp/public/dcsctp_options.h"
 #include "net/dcsctp/socket/context.h"
 #include "net/dcsctp/timer/timer.h"

@@ -11,8 +11,7 @@
 #ifndef AUDIO_DEVICE_LATEBINDINGSYMBOLTABLE_LINUX_H_
 #define AUDIO_DEVICE_LATEBINDINGSYMBOLTABLE_LINUX_H_
 
-#include <stddef.h>  // for NULL
-#include <string.h>
+#include <cstddef>
 
 #include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"

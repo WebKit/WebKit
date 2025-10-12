@@ -10,5 +10,5 @@ Test passes if pointer events has fractional coordinates.
 
 
 PASS pen pointerevent events in capturing
-FAIL pen assert_true: pointerdown should have fractional coordinates expected true got false
+PASS pen
 

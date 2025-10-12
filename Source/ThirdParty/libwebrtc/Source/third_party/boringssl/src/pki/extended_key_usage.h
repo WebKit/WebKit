@@ -1,6 +1,16 @@
 // Copyright 2015 The Chromium Authors
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #ifndef BSSL_PKI_EXTENDED_KEY_USAGE_H_
 #define BSSL_PKI_EXTENDED_KEY_USAGE_H_
@@ -67,6 +77,24 @@ inline constexpr uint8_t kTimeStamping[] = {0x2b, 0x06, 0x01, 0x05,
 // In dotted notation: 1.3.6.1.5.5.7.3.9
 inline constexpr uint8_t kOCSPSigning[] = {0x2b, 0x06, 0x01, 0x05,
                                            0x05, 0x07, 0x03, 0x09};
+
+// From RFC 9336 section 3.1:
+// id-kp-documentSigning  OBJECT IDENTIFIER  ::=  { id-kp 36 }
+// In dotted notation: 1.3.6.1.5.5.7.3.36
+inline constexpr uint8_t kDocumentSigning[] = {0x2b, 0x06, 0x01, 0x05,
+                                               0x05, 0x07, 0x03, 0x24};
+
+// From GSMA RCC.16 v1.0 End-to-End Encryption Specification.
+// id-gsmaRCSE2EE OBJECT IDENTIFIER ::=  { joint-iso-itu-t(2)
+// international-organizations(23) gsma(146) rcs(2) rcsE2EE (1)}
+// (Note this spec incorrectly says id-appleDraftRCSE2EE in place of
+// id-gmsaRCSE2EE in several places)
+//
+// From GSMA RCC.16 v1.0 End-to-End Encryption Specification section A.2.8.8,
+// and A.3.8.7.
+// id-kp-rcsMlsClient OBJECT IDENTIFIER ::= { id-gmsaRCS2EE 3 }
+// In dotted notation: 2.23.146.2.1.3
+inline constexpr uint8_t kRcsMlsClient[] = {0x67, 0x81, 0x12, 0x02, 0x01, 0x03};
 
 // Parses |extension_value|, which contains the extnValue field of an X.509v3
 // Extended Key Usage extension, and populates |eku_oids| with the list of

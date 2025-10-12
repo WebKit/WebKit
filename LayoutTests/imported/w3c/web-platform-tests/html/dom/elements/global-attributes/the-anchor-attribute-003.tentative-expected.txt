@@ -1,5 +1,5 @@
 
-FAIL ::before uses originating element's implicit anchor assert_equals: expected "50px" but got "0px"
-FAIL ::after uses originating element's implicit anchor assert_equals: expected "250px" but got "0px"
+FAIL ::before uses originating element's implicit anchor assert_equals: expected "50px" but got "-100px"
+FAIL ::after uses originating element's implicit anchor assert_equals: expected "250px" but got "800px"
 FAIL ::backdrop uses originating element's implicit anchor assert_equals: expected "140px" but got "-10px"
 

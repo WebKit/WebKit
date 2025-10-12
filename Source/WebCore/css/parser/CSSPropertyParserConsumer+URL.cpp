@@ -49,11 +49,11 @@ namespace CSSPropertyParserHelpers {
 // <url()> = url( <string> <url-modifier>* ) | <url-token>
 // <src()> = src( <string> <url-modifier>* )
 
-// <url-modifier> = <crossorigin-modifier> | <integrity-modifier> | <referrerpolicy-modifier>
+// <url-modifier> = <cross-origin-modifier> | <integrity-modifier> | <referrer-policy-modifier>
 //
-// <crossorigin-modifier> = crossorigin( anonymous | use-credentials )
+// <cross-origin-modifier> = cross-origin( anonymous | use-credentials )
 // <integrity-modifier> = integrity( <string> )
-// <referrerpolicy-modifier> = referrerpolicy( no-referrer | no-referrer-when-downgrade | same-origin | origin | strict-origin | origin-when-cross-origin | strict-origin-when-cross-origin | unsafe-url)
+// <referrer-policy-modifier> = referrer-policy( no-referrer | no-referrer-when-downgrade | same-origin | origin | strict-origin | origin-when-cross-origin | strict-origin-when-cross-origin | unsafe-url)
 
 std::optional<CSS::URL> consumeURLRaw(CSSParserTokenRange& range, CSS::PropertyParserState& state, OptionSet<AllowedURLModifiers> allowedURLModifiers)
 {
@@ -85,22 +85,24 @@ std::optional<CSS::URL> consumeURLRaw(CSSParserTokenRange& range, CSS::PropertyP
         } else {
             while (!args.atEnd()) {
                 switch (args.peek().functionId()) {
-                case CSSValueCrossorigin: {
+                case CSSValueCrossOrigin: {
                     if (!allowedURLModifiers.contains(AllowedURLModifiers::CrossOrigin))
                         return { };
-                    if (result->modifiers.crossorigin)
+                    if (result->modifiers.crossOrigin)
                         return { };
-                    auto crossoriginArgs = consumeFunction(args);
-                    auto crossoriginValue = MetaConsumer<
+                    auto crossOriginArgs = consumeFunction(args);
+                    auto crossOriginValue = MetaConsumer<
                         CSS::Keyword::Anonymous,
                         CSS::Keyword::UseCredentials
-                    >::consume(crossoriginArgs, state);
-                    if (!crossoriginValue || !crossoriginArgs.atEnd())
+                    >::consume(crossOriginArgs, state);
+                    if (!crossOriginValue || !crossOriginArgs.atEnd())
                         return { };
-                    result->modifiers.crossorigin = CSS::URLCrossoriginFunction { .parameters = { *crossoriginValue } };
+                    result->modifiers.crossOrigin = CSS::URLCrossOriginFunction { .parameters = { *crossOriginValue } };
                     break;
                 }
                 case CSSValueIntegrity: {
+                    if (!state.context.cssURLIntegrityModifierEnabled)
+                        return { };
                     if (!allowedURLModifiers.contains(AllowedURLModifiers::Integrity))
                         return { };
                     if (result->modifiers.integrity)
@@ -112,13 +114,13 @@ std::optional<CSS::URL> consumeURLRaw(CSSParserTokenRange& range, CSS::PropertyP
                     result->modifiers.integrity = CSS::URLIntegrityFunction { .parameters = { integrityValue.toString() } };
                     break;
                 }
-                case CSSValueReferrerpolicy: {
+                case CSSValueReferrerPolicy: {
                     if (!allowedURLModifiers.contains(AllowedURLModifiers::ReferrerPolicy))
                         return { };
-                    if (result->modifiers.referrerpolicy)
+                    if (result->modifiers.referrerPolicy)
                         return { };
-                    auto referrerpolicyArgs = consumeFunction(args);
-                    auto referrerpolicyValue = MetaConsumer<
+                    auto referrerPolicyArgs = consumeFunction(args);
+                    auto referrerPolicyValue = MetaConsumer<
                         CSS::Keyword::NoReferrer,
                         CSS::Keyword::NoReferrerWhenDowngrade,
                         CSS::Keyword::SameOrigin,
@@ -127,10 +129,10 @@ std::optional<CSS::URL> consumeURLRaw(CSSParserTokenRange& range, CSS::PropertyP
                         CSS::Keyword::OriginWhenCrossOrigin,
                         CSS::Keyword::StrictOriginWhenCrossOrigin,
                         CSS::Keyword::UnsafeUrl
-                    >::consume(referrerpolicyArgs, state);
-                    if (!referrerpolicyValue || !referrerpolicyArgs.atEnd())
+                    >::consume(referrerPolicyArgs, state);
+                    if (!referrerPolicyValue || !referrerPolicyArgs.atEnd())
                         return { };
-                    result->modifiers.referrerpolicy = CSS::URLReferrerpolicyFunction { .parameters = { *referrerpolicyValue } };
+                    result->modifiers.referrerPolicy = CSS::URLReferrerPolicyFunction { .parameters = { *referrerPolicyValue } };
                     break;
                 }
                 default:

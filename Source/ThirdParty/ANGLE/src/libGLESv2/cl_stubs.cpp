@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // cl_stubs.cpp: Stubs for CL entry points.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/cl_utils.h"
 #include "libGLESv2/cl_stubs_autogen.h"
@@ -1128,6 +1133,28 @@ cl_int EnqueueSVMMigrateMem(cl_command_queue command_queue,
 {
     WARN_NOT_SUPPORTED(EnqueueSVMMigrateMem);
     return CL_INVALID_OPERATION;
+}
+
+cl_int EnqueueAcquireExternalMemObjectsKHR(cl_command_queue command_queue,
+                                           cl_uint num_mem_objects,
+                                           const cl_mem *mem_objects,
+                                           cl_uint num_events_in_wait_list,
+                                           const cl_event *event_wait_list,
+                                           cl_event *event)
+{
+    CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueAcquireExternalMemObjectsKHR(
+        num_mem_objects, mem_objects, num_events_in_wait_list, event_wait_list, event));
+}
+
+cl_int EnqueueReleaseExternalMemObjectsKHR(cl_command_queue command_queue,
+                                           cl_uint num_mem_objects,
+                                           const cl_mem *mem_objects,
+                                           cl_uint num_events_in_wait_list,
+                                           const cl_event *event_wait_list,
+                                           cl_event *event)
+{
+    CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueReleaseExternalMemObjectsKHR(
+        num_mem_objects, mem_objects, num_events_in_wait_list, event_wait_list, event));
 }
 
 void *GetExtensionFunctionAddressForPlatform(cl_platform_id platform, const char *func_name)

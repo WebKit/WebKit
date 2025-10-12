@@ -1,5 +1,6 @@
 //@ skip unless $isSIMDPlatform
 //@ $skipModes << "wasm-no-wasm-jit".to_sym
+//@ $skipModes << "wasm-no-jit".to_sym
 
 function shouldBe(actual, expected) {
     if (actual !== expected)

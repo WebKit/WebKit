@@ -182,7 +182,7 @@ void RenderSVGModelObject::mapLocalToContainer(const RenderLayerModelObject* anc
     mapLocalToSVGContainer(ancestorContainer, transformState, mode, wasFixed);
 }
 
-LayoutSize RenderSVGModelObject::offsetFromContainer(RenderElement& container, const LayoutPoint&, bool*) const
+LayoutSize RenderSVGModelObject::offsetFromContainer(const RenderElement& container, const LayoutPoint&, bool*) const
 {
     ASSERT_UNUSED(container, &container == this->container());
     ASSERT(!isInFlowPositioned());
@@ -255,7 +255,7 @@ LayoutSize RenderSVGModelObject::cachedSizeForOverflowClip() const
 bool RenderSVGModelObject::applyCachedClipAndScrollPosition(RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
     // Based on RenderBox::applyCachedClipAndScrollPosition -- unused options removed.
-    if (!context.options.contains(VisibleRectContextOption::ApplyContainerClip) && this == container)
+    if (!context.options.contains(VisibleRectContext::Option::ApplyContainerClip) && this == container)
         return true;
 
     LayoutRect clipRect(LayoutPoint(), cachedSizeForOverflowClip());
@@ -265,7 +265,7 @@ bool RenderSVGModelObject::applyCachedClipAndScrollPosition(RepaintRects& rects,
         clipRect.expandToInfiniteY();
 
     bool intersects;
-    if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
+    if (context.options.contains(VisibleRectContext::Option::UseEdgeInclusiveIntersection))
         intersects = rects.edgeInclusiveIntersect(clipRect);
     else
         intersects = rects.intersect(clipRect);

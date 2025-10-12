@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUBindGroupLayout.h"
+#include <WebCore/WebGPUBindGroupLayout.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>

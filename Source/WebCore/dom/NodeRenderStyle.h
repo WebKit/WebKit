@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "RenderObjectInlines.h"
-#include "RenderStyle.h"
-#include "Node.h"
+#include <WebCore/Node.h>
+#include <WebCore/RenderObjectStyle.h>
+#include <WebCore/RenderStyle.h>
 
 namespace WebCore {
 

@@ -8,15 +8,32 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstdint>
 #include <optional>
+#include <string>
+#include <vector>
 
+#include "api/array_view.h"
+#include "api/environment/environment.h"
+#include "api/rtp_parameters.h"
 #include "api/test/video/function_video_encoder_factory.h"
+#include "api/units/timestamp.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/metrics.h"
 #include "test/call_test.h"
 #include "test/gtest.h"
+#include "test/rtp_rtcp_observer.h"
 #include "test/video_test_constants.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 namespace {
@@ -43,7 +60,7 @@ void HistogramTest::VerifyHistogramStats(bool use_rtx,
                                          bool use_fec,
                                          bool screenshare) {
   class FrameObserver : public test::EndToEndTest,
-                        public rtc::VideoSinkInterface<VideoFrame> {
+                        public VideoSinkInterface<VideoFrame> {
    public:
     FrameObserver(bool use_rtx, bool use_fec, bool screenshare)
         : EndToEndTest(test::VideoTestConstants::kLongTimeout),
@@ -70,7 +87,7 @@ void HistogramTest::VerifyHistogramStats(bool use_rtx,
       }
     }
 
-    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
+    Action OnSendRtp(ArrayView<const uint8_t> packet) override {
       if (MinMetricRunTimePassed() && MinNumberOfFramesReceived())
         observation_complete_.Set();
 
@@ -78,12 +95,11 @@ void HistogramTest::VerifyHistogramStats(bool use_rtx,
     }
 
     bool MinMetricRunTimePassed() {
-      int64_t now_ms = Clock::GetRealTimeClock()->TimeInMilliseconds();
-      if (!start_runtime_ms_)
-        start_runtime_ms_ = now_ms;
+      Timestamp now = Clock::GetRealTimeClock()->CurrentTime();
+      if (!start_runtime_)
+        start_runtime_ = now;
 
-      int64_t elapsed_sec = (now_ms - *start_runtime_ms_) / 1000;
-      return elapsed_sec > metrics::kMinRunTimeInSeconds * 2;
+      return now - *start_runtime_ > metrics::kMinRunTime * 2;
     }
 
     bool MinNumberOfFramesReceived() const {
@@ -152,7 +168,7 @@ void HistogramTest::VerifyHistogramStats(bool use_rtx,
     const bool use_fec_;
     const bool screenshare_;
     test::FunctionVideoEncoderFactory encoder_factory_;
-    std::optional<int64_t> start_runtime_ms_;
+    std::optional<Timestamp> start_runtime_;
     int num_frames_received_ RTC_GUARDED_BY(&mutex_);
   } test(use_rtx, use_fec, screenshare);
 

@@ -27,10 +27,10 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "FTLExitArgument.h"
-#include "FTLRecoveryOpcode.h"
-#include "JSCJSValue.h"
-#include "VirtualRegister.h"
+#include <JavaScriptCore/FTLExitArgument.h>
+#include <JavaScriptCore/FTLRecoveryOpcode.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/VirtualRegister.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC {

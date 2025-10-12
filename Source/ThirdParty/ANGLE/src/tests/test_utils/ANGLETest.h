@@ -10,6 +10,10 @@
 #ifndef ANGLE_TESTS_ANGLE_TEST_H_
 #define ANGLE_TESTS_ANGLE_TEST_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <array>
@@ -18,6 +22,7 @@
 #include "angle_test_configs.h"
 #include "angle_test_platform.h"
 #include "common/angleutils.h"
+#include "common/platform_helpers.h"
 #include "common/system_utils.h"
 #include "common/vector_utils.h"
 #include "platform/PlatformMethods.h"
@@ -236,6 +241,8 @@ bool IsFormatEmulated(GLenum target);
 GPUTestConfig::API GetTestConfigAPIFromRenderer(angle::GLESDriverType driverType,
                                                 EGLenum renderer,
                                                 EGLenum deviceType);
+
+EGLenum GetEglPlatform();
 }  // namespace angle
 
 #define EXPECT_PIXEL_EQ(x, y, r, g, b, a) \
@@ -395,7 +402,7 @@ struct TestPlatformContext final : private angle::NonCopyable
     ANGLETestBase *currentTest = nullptr;
 };
 
-class ANGLETestBase
+class ANGLETestBase : public ::testing::Test
 {
   protected:
     ANGLETestBase(const angle::PlatformParameters &params);
@@ -583,12 +590,20 @@ class ANGLETestBase
                mCurrentParams->isSwiftshader();
     }
 
+    bool isDriverSystemEgl() const
+    {
+        return mCurrentParams->driver == angle::GLESDriverType::SystemEGL;
+    }
+
+    angle::GLESDriverType getDriverType() const { return mCurrentParams->driver; }
+
     bool platformSupportsMultithreading() const;
 
     bool mIsSetUp = false;
 
   private:
     void checkD3D11SDKLayersMessages();
+    void checkUnsupportedExtensions();
 
     void drawQuad(GLuint program,
                   const std::string &positionAttribName,
@@ -656,7 +671,7 @@ class ANGLETestBase
 };
 
 template <typename Params = angle::PlatformParameters>
-class ANGLETest : public ANGLETestBase, public ::testing::TestWithParam<Params>
+class ANGLETest : public ANGLETestBase, public ::testing::WithParamInterface<Params>
 {
   protected:
     ANGLETest();

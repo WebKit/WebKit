@@ -43,11 +43,9 @@
     void deleteShader(ShaderProgramID shaderPacked);                                               \
     void deleteTextures(GLsizei n, const TextureID *texturesPacked);                               \
     void detachShader(ShaderProgramID programPacked, ShaderProgramID shaderPacked);                \
-    void disableVertexAttribArray(GLuint index);                                                   \
     void drawArrays(PrimitiveMode modePacked, GLint first, GLsizei count);                         \
     void drawElements(PrimitiveMode modePacked, GLsizei count, DrawElementsType typePacked,        \
                       const void *indices);                                                        \
-    void enableVertexAttribArray(GLuint index);                                                    \
     void finish();                                                                                 \
     void flush();                                                                                  \
     void framebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget,      \

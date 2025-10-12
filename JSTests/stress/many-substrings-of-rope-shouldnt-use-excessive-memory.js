@@ -1,4 +1,4 @@
-//@ skip if $architecture == "arm"
+//@ skip if $architecture == "arm" or $memoryLimited
 //@ runDefault
 
 function getLongRopeString() {

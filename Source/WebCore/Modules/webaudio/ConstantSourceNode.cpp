@@ -33,6 +33,7 @@
 #include "AudioParam.h"
 #include "AudioUtilities.h"
 #include "ConstantSourceOptions.h"
+#include "ExceptionOr.h"
 #include <algorithm>
 #include <wtf/TZoneMallocInlines.h>
 

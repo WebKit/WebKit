@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "JSDOMWrapper.h"
+#include <WebCore/JSDOMWrapper.h>
 
 namespace WebCore {
 

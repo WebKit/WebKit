@@ -33,6 +33,7 @@
 
 #include "BaseCheckableInputType.h"
 #include "SwitchTrigger.h"
+#include <wtf/CanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -41,10 +42,12 @@ namespace WebCore {
 class Touch;
 #endif
 
+class LayoutPoint;
+
 enum class WasSetByJavaScript : bool;
 enum class SwitchAnimationType : bool { VisuallyOn, Held };
 
-class CheckboxInputType final : public BaseCheckableInputType {
+class CheckboxInputType final : public BaseCheckableInputType, public CanMakeWeakPtr<CheckboxInputType> {
     WTF_MAKE_TZONE_ALLOCATED(CheckboxInputType);
 public:
     static Ref<CheckboxInputType> create(HTMLInputElement& element)

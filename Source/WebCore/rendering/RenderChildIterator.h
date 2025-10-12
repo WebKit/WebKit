@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,7 +55,7 @@ public:
     T* last();
 
 private:
-    CheckedRef<RenderElement> m_parent;
+    const CheckedRef<RenderElement> m_parent;
 };
 
 template <typename T>
@@ -68,7 +68,7 @@ public:
     const T* last() const;
 
 private:
-    CheckedRef<const RenderElement> m_parent;
+    const CheckedRef<const RenderElement> m_parent;
 };
 
 template <typename T> RenderChildIteratorAdapter<T> childrenOfType(RenderElement&);

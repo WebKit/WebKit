@@ -92,12 +92,13 @@ public:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
     NetworkSession* session();
+    CheckedPtr<NetworkSession> checkedSession();
     PAL::SessionID sessionID() const;
 
     RefPtr<ServiceWorkerFetchTask> createFetchTask(NetworkResourceLoader&, const WebCore::ResourceRequest&);
     void fetchTaskTimedOut(WebCore::ServiceWorkerIdentifier);
 
-    void transferServiceWorkerLoadToNewWebProcess(NetworkResourceLoader&, WebCore::SWServerRegistration&, WebCore::ProcessIdentifier);
+    void transferServiceWorkerLoadToNewWebProcess(NetworkResourceLoader&, WebCore::SWServerRegistration&, const WebCore::ResourceRequest&);
     std::optional<WebCore::SWServer::GatheredClientData> gatherClientData(WebCore::ScriptExecutionContextIdentifier);
 
     void registerServiceWorkerClient(WebCore::ClientOrigin&&, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent);
@@ -105,7 +106,7 @@ public:
     void unregisterServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    void reportNetworkUsageToWorkerClient(WebCore::ScriptExecutionContextIdentifier, size_t bytesTransferredOverNetworkDelta);
+    void reportNetworkUsageToWorkerClient(WebCore::ScriptExecutionContextIdentifier, uint64_t bytesTransferredOverNetworkDelta);
 #endif
 
 private:
@@ -132,6 +133,7 @@ private:
     void startFetch(ServiceWorkerFetchTask&, WebCore::SWServerWorker&);
 
     void matchRegistration(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
+    void whenRegistrationReady(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
     void getRegistrations(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(const Vector<WebCore::ServiceWorkerRegistrationData>&)>&&);
 
     void terminateWorkerFromClient(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
@@ -175,6 +177,8 @@ private:
     void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
 #endif
 
+    void checkTopOrigin(const WebCore::SecurityOriginData&);
+
     URL clientURLFromIdentifier(WebCore::ServiceWorkerOrClientIdentifier);
 
     IPC::Connection* messageSenderConnection() const final { return m_contentConnection.ptr(); }
@@ -187,7 +191,7 @@ private:
     bool isWebSWServerConnection() const final { return true; }
 
     WeakPtr<NetworkConnectionToWebProcess> m_networkConnectionToWebProcess;
-    Ref<IPC::Connection> m_contentConnection;
+    const Ref<IPC::Connection> m_contentConnection;
     HashMap<WebCore::ScriptExecutionContextIdentifier, WebCore::ClientOrigin> m_clientOrigins;
     HashMap<WebCore::ServiceWorkerJobIdentifier, CompletionHandler<void(UnregisterJobResult&&)>> m_unregisterJobs;
     bool m_isThrottleable { true };

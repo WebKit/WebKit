@@ -1,0 +1,7 @@
+
+FAIL Sec-Speculation-Tags: deduped and sorted tags assert_equals: expected (string) "prefetch" but got (object) null
+FAIL Sec-Speculation-Tags: deduped and sorted tags within rules assert_equals: expected (string) "prefetch" but got (object) null
+FAIL Sec-Speculation-Tags: deduped and sorted tags within multiple rulesets assert_equals: expected "\"abc\", \"def\", \"ghi\", \"jkl\"" but got "\"def\", \"jkl\""
+FAIL Sec-Speculation-Tags: 'null' tags and no tags within multiple rulesets assert_equals: expected "null, \"abc\", \"def\", \"null\"" but got "null"
+FAIL Sec-Speculation-Tags: removed ruleset assert_equals: expected "\"def\", \"ghi\", \"jkl\"" but got "\"def\", \"jkl\""
+

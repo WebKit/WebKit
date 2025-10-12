@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CustomElementFormValue.h"
-#include "HTMLMaybeFormAssociatedCustomElement.h"
-#include "ValidatedFormListedElement.h"
-#include "ValidityStateFlags.h"
+#include <WebCore/CustomElementFormValue.h>
+#include <WebCore/HTMLMaybeFormAssociatedCustomElement.h>
+#include <WebCore/ValidatedFormListedElement.h>
+#include <WebCore/ValidityStateFlags.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

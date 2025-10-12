@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include "InspectorFrontendChannel.h"
+#include <JavaScriptCore/InspectorFrontendChannel.h>
+#include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,10 +41,9 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<Inspector::InspectorT
 
 namespace Inspector {
 
-// FIXME: Add DedicatedWorker Inspector Targets
-// FIXME: Add ServiceWorker Inspector Targets
 enum class InspectorTargetType : uint8_t {
     Page,
+    Frame,
     DedicatedWorker,
     ServiceWorker,
 };

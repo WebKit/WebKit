@@ -35,7 +35,6 @@
 #include "CachedCSSStyleSheet.h"
 #include "CachedRawResource.h"
 #include "CachedResource.h"
-#include "CachedResourceLoader.h"
 #include "CachedResourceRequestInitiatorTypes.h"
 #include "CachedScript.h"
 #include "CertificateInfo.h"
@@ -44,6 +43,7 @@
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentThreadableLoader.h"
+#include "DocumentView.h"
 #include "FormData.h"
 #include "FrameLoader.h"
 #include "HTTPHeaderMap.h"
@@ -108,7 +108,7 @@ namespace {
 
 class InspectorThreadableLoaderClient final : public ThreadableLoaderClient {
     WTF_MAKE_NONCOPYABLE(InspectorThreadableLoaderClient);
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(InspectorThreadableLoaderClient, Loader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorThreadableLoaderClient);
 public:
     InspectorThreadableLoaderClient(RefPtr<LoadResourceCallback>&& callback)
@@ -191,16 +191,16 @@ Ref<Inspector::Protocol::Network::WebSocketFrame> buildWebSocketMessage(const We
 
 InspectorNetworkAgent::InspectorNetworkAgent(WebAgentContext& context, const NetworkResourcesData::Settings& networkResourcesDataSettings)
     : InspectorAgentBase("Network"_s, context)
-    , m_frontendDispatcher(makeUnique<Inspector::NetworkFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUniqueRef<Inspector::NetworkFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::NetworkBackendDispatcher::create(context.backendDispatcher, this))
     , m_injectedScriptManager(context.injectedScriptManager)
-    , m_resourcesData(makeUnique<NetworkResourcesData>(networkResourcesDataSettings))
+    , m_resourcesData(makeUniqueRef<NetworkResourcesData>(networkResourcesDataSettings))
 {
 }
 
 InspectorNetworkAgent::~InspectorNetworkAgent() = default;
 
-void InspectorNetworkAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
+void InspectorNetworkAgent::didCreateFrontendAndBackend()
 {
 }
 
@@ -362,8 +362,7 @@ static Inspector::Protocol::Network::Response::Source responseSource(ResourceRes
 {
     switch (source) {
     case ResourceResponse::Source::DOMCache:
-    case ResourceResponse::Source::ApplicationCache:
-        // FIXME: Add support for ApplicationCache in inspector.
+    case ResourceResponse::Source::LegacyApplicationCachePlaceholder:
     case ResourceResponse::Source::Unknown:
         return Inspector::Protocol::Network::Response::Source::Unknown;
     case ResourceResponse::Source::Network:
@@ -1459,6 +1458,7 @@ bool InspectorNetworkAgent::cachedResourceContent(CachedResource& resource, Stri
         *result = downcast<CachedCSSStyleSheet>(resource).sheetText();
         // The above can return a null String if the MIME type is invalid.
         return !result->isNull();
+    case CachedResource::Type::JSON:
     case CachedResource::Type::Script:
         *base64Encoded = false;
         *result = downcast<CachedScript>(resource).script().toString();

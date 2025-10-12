@@ -18,7 +18,7 @@
 
 using ::testing::Eq;
 
-namespace rtc {
+namespace webrtc {
 
 TEST(SampleCounterTest, ProcessesNoSamples) {
   constexpr int kMinSamples = 1;
@@ -82,4 +82,4 @@ TEST(SampleCounterTest, AggregatesTwoCounters) {
   EXPECT_THAT(counter1.Variance(kMinSamples), Eq(2));
 }
 
-}  // namespace rtc
+}  // namespace webrtc

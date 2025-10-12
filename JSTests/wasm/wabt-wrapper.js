@@ -16,6 +16,12 @@ export async function compile(wat, options = {}) {
     return new WebAssembly.Module(binaryResult.buffer);
 }
 
+export async function watToWasm(wat, options = {}) {
+    const wabtModule = await WabtModule();
+    let parseResult = wabtModule.parseWat("noFilename", wat, options);
+    return parseResult.toBinary(options).buffer;
+}
+
 export async function instantiate(wat, imports = {}, options = {}) {
     const module = await compile(wat, options);
     return new WebAssembly.Instance(module, imports);

@@ -10,8 +10,6 @@
 
 #include "modules/audio_processing/vad/vad_circular_buffer.h"
 
-#include <stdio.h>
-
 #include <memory>
 
 #include "test/gtest.h"

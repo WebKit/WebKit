@@ -25,10 +25,12 @@
 #include "Event.h"
 #include "RenderCombineText.h"
 #include "RenderSVGInlineText.h"
+#include "RenderStyleInlines.h"
 #include "RenderText.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include "ScopedEventQueue.h"
+#include "SerializedNode.h"
 #include "ShadowRoot.h"
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
@@ -104,13 +106,13 @@ static const Text* latestLogicallyAdjacentTextNode(const Text* text)
 
 String Text::wholeText() const
 {
-    const Text* startText = earliestLogicallyAdjacentTextNode(this);
-    const Text* endText = latestLogicallyAdjacentTextNode(this);
+    RefPtr startText = earliestLogicallyAdjacentTextNode(this);
+    RefPtr endText = latestLogicallyAdjacentTextNode(this);
     ASSERT(endText);
-    const Node* onePastEndText = TextNodeTraversal::nextSibling(*endText);
+    RefPtr<const Node> onePastEndText = TextNodeTraversal::nextSibling(*endText);
 
     StringBuilder result;
-    for (const Text* text = startText; text != onePastEndText; text = TextNodeTraversal::nextSibling(*text))
+    for (RefPtr text = startText; text != onePastEndText; text = TextNodeTraversal::nextSibling(*text))
         result.append(text->data());
     return result.toString();
 }
@@ -151,9 +153,14 @@ String Text::nodeName() const
     return "#text"_s;
 }
 
-Ref<Node> Text::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*)
+Ref<Node> Text::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*) const
 {
     return create(document, String { data() });
+}
+
+SerializedNode Text::serializeNode(CloningOperation) const
+{
+    return { SerializedNode::Text { data() } };
 }
 
 static bool isSVGShadowText(const Text& text)

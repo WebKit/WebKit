@@ -87,7 +87,7 @@ egl::Error TextureImageSiblingMtl::ValidateClientBuffer(const DisplayMtl *displa
     }
 
     angle::FormatID srcAngleFormatId = mtl::Format::MetalToAngleFormatID(texture.pixelFormat);
-    const mtl::Format &srcFormat = display->getPixelFormat(srcAngleFormatId);
+    const mtl::Format &srcFormat     = display->getPixelFormat(srcAngleFormatId);
     if (!format.isViewCompatible(srcFormat))
     {
         return egl::Error(EGL_BAD_ATTRIBUTE, "Incompatible format");
@@ -134,10 +134,8 @@ angle::Result TextureImageSiblingMtl::initImpl(DisplayMtl *displayMtl)
         mtl::TextureRef baseTexture = std::move(mNativeTexture);
         unsigned textureArraySlice =
             static_cast<unsigned>(mAttribs.getAsInt(EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, 0));
-        mNativeTexture =
-        baseTexture->createSliceMipViewWithCompatibleFormat(textureArraySlice,
-                                                            mtl::kZeroNativeMipLevel,
-                                                            mFormat.metalFormat);
+        mNativeTexture = baseTexture->createSliceMipViewWithCompatibleFormat(
+            textureArraySlice, mtl::kZeroNativeMipLevel, mFormat.metalFormat);
     }
 
     if (mNativeTexture)

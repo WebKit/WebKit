@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ScopedName.h"
+#include <WebCore/ScopedName.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/TextStream.h>
 
@@ -36,6 +36,8 @@ class StyleProperties;
 namespace Style {
 
 struct PositionTryFallback {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(PositionTryFallback);
+
     std::optional<ScopedName> positionTryRuleName { };
 
     enum class Tactic : uint8_t {
@@ -49,9 +51,10 @@ struct PositionTryFallback {
     RefPtr<const StyleProperties> positionAreaProperties { };
 
     ~PositionTryFallback();
-    bool operator==(const PositionTryFallback&) const;
+    friend bool operator==(const PositionTryFallback&, const PositionTryFallback&);
 };
 
+TextStream& operator<<(TextStream&, const PositionTryFallback::Tactic&);
 TextStream& operator<<(TextStream&, const PositionTryFallback&);
 TextStream& operator<<(TextStream&, const Vector<PositionTryFallback>&);
 

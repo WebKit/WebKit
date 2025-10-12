@@ -11,8 +11,7 @@
 #ifndef RTC_TOOLS_RTC_EVENT_LOG_TO_TEXT_CONVERTER_H_
 #define RTC_TOOLS_RTC_EVENT_LOG_TO_TEXT_CONVERTER_H_
 
-#include <stdio.h>
-
+#include <cstdio>
 #include <string>
 
 #include "absl/base/attributes.h"

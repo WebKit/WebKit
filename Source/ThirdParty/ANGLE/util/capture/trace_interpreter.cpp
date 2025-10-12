@@ -7,6 +7,10 @@
 //   Parser and interpreter for the C-based replays.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "trace_interpreter.h"
 
 #include "anglebase/no_destructor.h"

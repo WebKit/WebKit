@@ -1,0 +1,27 @@
+
+PASS min(1em, 110px / 10px * 1px) should be used-value-equivalent to 10px
+PASS max(10px, 110px / 10px * 1px) should be used-value-equivalent to 11px
+PASS max(1em + 2px, 110px / 10px * 1px) should be used-value-equivalent to 12px
+PASS max(1em + 2%, 110px / 10px * 1px) should be used-value-equivalent to 12px
+PASS clamp(110px / 10px * 1px, 1em + 200%, 200% * 1% / 1em) should be used-value-equivalent to 20px
+PASS calc(3 + sign(10px / 1rem - sign(1em + 1px))) should be used-value-equivalent to 3
+PASS calc(10em / 1em) should be used-value-equivalent to 10
+PASS calc(10em / 1rem) should be used-value-equivalent to 10
+PASS calc(10em / 1px) should be used-value-equivalent to 100
+PASS calc(1px / 10em * NaN) should be used-value-equivalent to 0
+PASS Property width value 'calc(1px * 10em / 0em)'
+PASS Property width value 'calc(1px / 1px * 10em * infinity)'
+PASS Property margin-left value 'calc(1px * 10em / -0em)'
+PASS Property z-index value 'calc(10em / 0em)'
+PASS sign(-0em / 1px) should be used-value-equivalent to 0
+PASS clamp(-1, 1 / sign(-0em / 1px), 1) should be used-value-equivalent to -1
+PASS sign( 0cqi / 1px) should be used-value-equivalent to 0
+PASS clamp(-1, 1 / sign( 0cqi / 1px), 1) should be used-value-equivalent to 1
+PASS sign(atan2(-0cap / 1px, 0em / 1px)) should be used-value-equivalent to 0
+PASS clamp(-1, 1 / sign(atan2(-0cap / 1px, 0em / 1px)), 1) should be used-value-equivalent to -1
+PASS sign(exp(-1vh / 0px)) should be used-value-equivalent to 0
+PASS clamp(-1, 1 / sign(exp(-1vh / 0px)), 1) should be used-value-equivalent to 1
+PASS calc(20cqw / 1rem) should be used-value-equivalent to 2
+PASS Property animation-duration value 'calc(2s / (10s - 10s) * 1s)'
+PASS subtraction of angle unit: deg minus turn
+

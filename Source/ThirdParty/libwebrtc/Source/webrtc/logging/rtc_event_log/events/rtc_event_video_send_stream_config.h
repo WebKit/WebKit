@@ -53,7 +53,7 @@ class RtcEventVideoSendStreamConfig final : public RtcEvent {
 
   const rtclog::StreamConfig& config() const { return *config_; }
 
-  static std::string Encode(rtc::ArrayView<const RtcEvent*> /* batch */) {
+  static std::string Encode(ArrayView<const RtcEvent*> /* batch */) {
     // TODO(terelius): Implement
     return "";
   }

@@ -2,13 +2,12 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, deepEqual.js]
-flags:
-  - noStrict
+includes: [compareArray.js]
 description: |
   pending
 esid: pending
 ---*/
+
 const tests = [
   [Int8Array,         [9, 10, 11, 12, 13, 14, 15, 16]],
   [Uint8Array,        [9, 10, 11, 12, 13, 14, 15, 16]],
@@ -58,8 +57,8 @@ for (let [ctor, answer] of tests) {
   logs.length = 0;
   let buf = arr.buffer.slice(8, 16);
   assert.sameValue(buf.constructor, MyArrayBuffer);
-  assert.deepEqual(logs, ["get @@species", "get ctor.prototype", "call ctor"]);
-  assert.deepEqual([...new ctor(buf)], answer);
+  assert.compareArray(logs, ["get @@species", "get ctor.prototype", "call ctor"]);
+  assert.compareArray([...new ctor(buf)], answer);
 
 
   // modified @@species
@@ -69,7 +68,7 @@ for (let [ctor, answer] of tests) {
   };
   let b = a.slice(8, 16);
   assert.sameValue(b.constructor, MyArrayBuffer);
-  assert.deepEqual([...new ctor(b)], answer);
+  assert.compareArray([...new ctor(b)], answer);
 
   class MyArrayBufferWithSpecies extends ArrayBuffer {
     get [Symbol.species]() {
@@ -80,7 +79,7 @@ for (let [ctor, answer] of tests) {
   a.constructor = MyArrayBufferWithSpecies;
   b = a.slice(8, 16);
   assert.sameValue(b.constructor, MyArrayBufferWithSpecies);
-  assert.deepEqual([...new ctor(b)], answer);
+  assert.compareArray([...new ctor(b)], answer);
 
   // no @@species
   a = arr.buffer;
@@ -89,7 +88,7 @@ for (let [ctor, answer] of tests) {
   };
   b = a.slice(8, 16);
   assert.sameValue(b.constructor, ArrayBuffer);
-  assert.deepEqual([...new ctor(b)], answer);
+  assert.compareArray([...new ctor(b)], answer);
 
   a = arr.buffer;
   a.constructor = {
@@ -97,7 +96,7 @@ for (let [ctor, answer] of tests) {
   };
   b = a.slice(8, 16);
   assert.sameValue(b.constructor, ArrayBuffer);
-  assert.deepEqual([...new ctor(b)], answer);
+  assert.compareArray([...new ctor(b)], answer);
 
   // invalid @@species
   for (let species of [0, 1.1, true, false, "a", /a/, Symbol.iterator, [], {}]) {
@@ -105,7 +104,7 @@ for (let [ctor, answer] of tests) {
     a.constructor = {
       [Symbol.species]: species
     };
-    assertThrowsInstanceOf(() => a.slice(8, 16), TypeError);
+    assert.throws(TypeError, () => a.slice(8, 16));
   }
 
   // undefined constructor
@@ -113,17 +112,17 @@ for (let [ctor, answer] of tests) {
   a.constructor = undefined;
   b = a.slice(8, 16);
   assert.sameValue(b.constructor, ArrayBuffer);
-  assert.deepEqual([...new ctor(b)], answer);
+  assert.compareArray([...new ctor(b)], answer);
 
   // invalid constructor
   for (let ctor of [null, 0, 1.1, true, false, "a", Symbol.iterator]) {
     a = arr.buffer;
     a.constructor = ctor;
-    assertThrowsInstanceOf(() => a.slice(8, 16), TypeError);
+    assert.throws(TypeError, () => a.slice(8, 16));
   }
 
   // @@species from different global
-  let g = createNewGlobal();
+  let g = $262.createRealm().global;
   g.eval("var MyArrayBuffer = class MyArrayBuffer extends ArrayBuffer {};");
   a = arr.buffer;
   a.constructor = {
@@ -131,7 +130,7 @@ for (let [ctor, answer] of tests) {
   };
   b = a.slice(8, 16);
   assert.sameValue(b.constructor, g.MyArrayBuffer);
-  assert.deepEqual([...new ctor(b)], answer);
+  assert.compareArray([...new ctor(b)], answer);
 
   a = arr.buffer;
   a.constructor = {
@@ -139,7 +138,7 @@ for (let [ctor, answer] of tests) {
   };
   b = a.slice(8, 16);
   assert.sameValue(b.constructor, g.ArrayBuffer);
-  assert.deepEqual([...new ctor(b)], answer);
+  assert.compareArray([...new ctor(b)], answer);
 
   // constructor from different global
   g.eval(`
@@ -153,7 +152,7 @@ var MyArrayBufferWithSpecies = class MyArrayBufferWithSpecies extends ArrayBuffe
   a.constructor = g.MyArrayBufferWithSpecies;
   b = a.slice(8, 16);
   assert.sameValue(b.constructor, g.MyArrayBufferWithSpecies);
-  assert.deepEqual([...new ctor(b)], answer);
+  assert.compareArray([...new ctor(b)], answer);
 
   g.eval(`
 var arr = new ${ctor.name}([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
@@ -161,12 +160,12 @@ var a = arr.buffer;
 `);
   b = ArrayBuffer.prototype.slice.call(g.a, 8, 16);
   assert.sameValue(b.constructor, g.ArrayBuffer);
-  assert.deepEqual([...new ctor(b)], answer);
+  assert.compareArray([...new ctor(b)], answer);
 
   // running in different global
   b = g.a.slice(8, 16);
   assert.sameValue(b.constructor, g.ArrayBuffer);
-  assert.deepEqual([...new ctor(b)], answer);
+  assert.compareArray([...new ctor(b)], answer);
 
   // subclasses
   // not-modified @@species
@@ -186,4 +185,3 @@ var a = arr.buffer;
   b = a.slice(8, 16);
   assert.sameValue(b.constructor, MyArrayBuffer2);
 }
-

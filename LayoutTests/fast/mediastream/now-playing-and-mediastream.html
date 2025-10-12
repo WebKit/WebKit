@@ -27,6 +27,7 @@ promise_test(async test => {
     assert_false(!!internals.nowPlayingState.uniqueIdentifier, "test1");
 
     video.srcObject = await navigator.mediaDevices.getUserMedia({ audio:true, video:true });
+    test.add_cleanup(() => video.srcObject.getTracks().forEach(track => track.stop()));
     await video.play();
 
     await waitFor(500);

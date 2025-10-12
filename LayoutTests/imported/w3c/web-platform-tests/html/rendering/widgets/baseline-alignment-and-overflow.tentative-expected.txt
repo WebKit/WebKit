@@ -1,40 +1,40 @@
 
 PASS <input type="text" value="x" style="overflow: visible; appearance: auto;">
 PASS <input type="text" value="x" style="overflow: hidden; appearance: auto;">
-FAIL <input type="text" value="x" style="overflow: scroll; appearance: auto;"> assert_equals: <span>.offsetTop expected 33 but got 70
+PASS <input type="text" value="x" style="overflow: scroll; appearance: auto;">
 PASS <input type="text" value="x" style="overflow: visible; appearance: none;">
 PASS <input type="text" value="x" style="overflow: hidden; appearance: none;">
-FAIL <input type="text" value="x" style="overflow: scroll; appearance: none;"> assert_equals: <span>.offsetTop expected 33 but got 70
+PASS <input type="text" value="x" style="overflow: scroll; appearance: none;">
 FAIL <input type="search" value="x" style="overflow: visible; appearance: auto;"> assert_equals: <span>.offsetTop expected 33 but got 12
 FAIL <input type="search" value="x" style="overflow: hidden; appearance: auto;"> assert_equals: <span>.offsetTop expected 33 but got 12
-FAIL <input type="search" value="x" style="overflow: scroll; appearance: auto;"> assert_equals: <span>.offsetTop expected 33 but got 27
+FAIL <input type="search" value="x" style="overflow: scroll; appearance: auto;"> assert_equals: <span>.offsetTop expected 33 but got 12
 PASS <input type="search" value="x" style="overflow: visible; appearance: none;">
 PASS <input type="search" value="x" style="overflow: hidden; appearance: none;">
-FAIL <input type="search" value="x" style="overflow: scroll; appearance: none;"> assert_equals: <span>.offsetTop expected 33 but got 70
+PASS <input type="search" value="x" style="overflow: scroll; appearance: none;">
 PASS <input type="tel" value="x" style="overflow: visible; appearance: auto;">
 PASS <input type="tel" value="x" style="overflow: hidden; appearance: auto;">
-FAIL <input type="tel" value="x" style="overflow: scroll; appearance: auto;"> assert_equals: <span>.offsetTop expected 33 but got 70
+PASS <input type="tel" value="x" style="overflow: scroll; appearance: auto;">
 PASS <input type="tel" value="x" style="overflow: visible; appearance: none;">
 PASS <input type="tel" value="x" style="overflow: hidden; appearance: none;">
-FAIL <input type="tel" value="x" style="overflow: scroll; appearance: none;"> assert_equals: <span>.offsetTop expected 33 but got 70
+PASS <input type="tel" value="x" style="overflow: scroll; appearance: none;">
 PASS <input type="url" value="data:,x" style="overflow: visible; appearance: auto;">
 PASS <input type="url" value="data:,x" style="overflow: hidden; appearance: auto;">
-FAIL <input type="url" value="data:,x" style="overflow: scroll; appearance: auto;"> assert_equals: <span>.offsetTop expected 33 but got 70
+PASS <input type="url" value="data:,x" style="overflow: scroll; appearance: auto;">
 PASS <input type="url" value="data:,x" style="overflow: visible; appearance: none;">
 PASS <input type="url" value="data:,x" style="overflow: hidden; appearance: none;">
-FAIL <input type="url" value="data:,x" style="overflow: scroll; appearance: none;"> assert_equals: <span>.offsetTop expected 33 but got 70
+PASS <input type="url" value="data:,x" style="overflow: scroll; appearance: none;">
 PASS <input type="email" value="x" style="overflow: visible; appearance: auto;">
 PASS <input type="email" value="x" style="overflow: hidden; appearance: auto;">
-FAIL <input type="email" value="x" style="overflow: scroll; appearance: auto;"> assert_equals: <span>.offsetTop expected 33 but got 70
+PASS <input type="email" value="x" style="overflow: scroll; appearance: auto;">
 PASS <input type="email" value="x" style="overflow: visible; appearance: none;">
 PASS <input type="email" value="x" style="overflow: hidden; appearance: none;">
-FAIL <input type="email" value="x" style="overflow: scroll; appearance: none;"> assert_equals: <span>.offsetTop expected 33 but got 70
+PASS <input type="email" value="x" style="overflow: scroll; appearance: none;">
 PASS <input type="password" value="x" style="overflow: visible; appearance: auto;">
 PASS <input type="password" value="x" style="overflow: hidden; appearance: auto;">
-FAIL <input type="password" value="x" style="overflow: scroll; appearance: auto;"> assert_equals: <span>.offsetTop expected 33 but got 70
+PASS <input type="password" value="x" style="overflow: scroll; appearance: auto;">
 PASS <input type="password" value="x" style="overflow: visible; appearance: none;">
 PASS <input type="password" value="x" style="overflow: hidden; appearance: none;">
-FAIL <input type="password" value="x" style="overflow: scroll; appearance: none;"> assert_equals: <span>.offsetTop expected 33 but got 70
+PASS <input type="password" value="x" style="overflow: scroll; appearance: none;">
 PASS <input type="date" value="2020-01-01" style="overflow: visible; appearance: auto;">
 PASS <input type="date" value="2020-01-01" style="overflow: hidden; appearance: auto;">
 FAIL <input type="date" value="2020-01-01" style="overflow: scroll; appearance: auto;"> assert_equals: <span>.offsetTop expected 33 but got 26
@@ -67,10 +67,10 @@ PASS <input type="datetime-local" value="2020-01-01T00:00" style="overflow: hidd
 FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: scroll; appearance: none;"> assert_equals: <span>.offsetTop expected 33 but got 26
 PASS <input type="number" value="0" style="overflow: visible; appearance: auto;">
 PASS <input type="number" value="0" style="overflow: hidden; appearance: auto;">
-FAIL <input type="number" value="0" style="overflow: scroll; appearance: auto;"> assert_equals: <span>.offsetTop expected 33 but got 70
+PASS <input type="number" value="0" style="overflow: scroll; appearance: auto;">
 PASS <input type="number" value="0" style="overflow: visible; appearance: none;">
 PASS <input type="number" value="0" style="overflow: hidden; appearance: none;">
-FAIL <input type="number" value="0" style="overflow: scroll; appearance: none;"> assert_equals: <span>.offsetTop expected 33 but got 70
+PASS <input type="number" value="0" style="overflow: scroll; appearance: none;">
 FAIL <input type="range" style="overflow: visible; appearance: auto;"> assert_equals: <span>.offsetTop expected 70 but got 60
 FAIL <input type="range" style="overflow: hidden; appearance: auto;"> assert_equals: <span>.offsetTop expected 70 but got 60
 FAIL <input type="range" style="overflow: scroll; appearance: auto;"> assert_equals: <span>.offsetTop expected 70 but got 60
@@ -79,10 +79,10 @@ FAIL <input type="range" style="overflow: hidden; appearance: none;"> assert_equ
 FAIL <input type="range" style="overflow: scroll; appearance: none;"> assert_equals: <span>.offsetTop expected 70 but got 60
 FAIL <input type="color" value="#000000" style="overflow: visible; appearance: auto;"> assert_equals: <span>.offsetTop expected 50 but got 45
 FAIL <input type="color" value="#000000" style="overflow: hidden; appearance: auto;"> assert_equals: <span>.offsetTop expected 50 but got 45
-FAIL <input type="color" value="#000000" style="overflow: scroll; appearance: auto;"> assert_equals: <span>.offsetTop expected 50 but got 70
+FAIL <input type="color" value="#000000" style="overflow: scroll; appearance: auto;"> assert_equals: <span>.offsetTop expected 50 but got 30
 FAIL <input type="color" value="#000000" style="overflow: visible; appearance: none;"> assert_equals: <span>.offsetTop expected 50 but got 43
 FAIL <input type="color" value="#000000" style="overflow: hidden; appearance: none;"> assert_equals: <span>.offsetTop expected 50 but got 43
-FAIL <input type="color" value="#000000" style="overflow: scroll; appearance: none;"> assert_equals: <span>.offsetTop expected 50 but got 70
+FAIL <input type="color" value="#000000" style="overflow: scroll; appearance: none;"> assert_equals: <span>.offsetTop expected 50 but got 28
 FAIL <input type="checkbox" style="overflow: visible; appearance: auto;"> assert_equals: <span>.offsetTop expected 60 but got 58
 FAIL <input type="checkbox" style="overflow: hidden; appearance: auto;"> assert_equals: <span>.offsetTop expected 60 but got 58
 FAIL <input type="checkbox" style="overflow: scroll; appearance: auto;"> assert_equals: <span>.offsetTop expected 60 but got 58
@@ -97,10 +97,10 @@ PASS <input type="radio" style="overflow: hidden; appearance: none;">
 PASS <input type="radio" style="overflow: scroll; appearance: none;">
 PASS <input type="file" style="overflow: visible; appearance: auto;">
 PASS <input type="file" style="overflow: hidden; appearance: auto;">
-FAIL <input type="file" style="overflow: scroll; appearance: auto;"> assert_equals: <span>.offsetTop expected 22 but got 70
+PASS <input type="file" style="overflow: scroll; appearance: auto;">
 PASS <input type="file" style="overflow: visible; appearance: none;">
 PASS <input type="file" style="overflow: hidden; appearance: none;">
-FAIL <input type="file" style="overflow: scroll; appearance: none;"> assert_equals: <span>.offsetTop expected 22 but got 70
+PASS <input type="file" style="overflow: scroll; appearance: none;">
 PASS <input type="submit" value="x" style="overflow: visible; appearance: auto;">
 PASS <input type="submit" value="x" style="overflow: hidden; appearance: auto;">
 FAIL <input type="submit" value="x" style="overflow: scroll; appearance: auto;"> assert_equals: <span>.offsetTop expected 33 but got 26

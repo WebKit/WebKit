@@ -42,19 +42,4 @@ id makeNSArrayElement(const WebCore::FloatRect& rect)
 #endif
 }
 
-#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
-
-FloatRect::FloatRect(const NSRect& rect)
-    : m_location(rect.origin)
-    , m_size(rect.size)
-{
-}
-
-FloatRect::operator NSRect() const
-{
-    return NSMakeRect(x(), y(), width(), height());
-}
-
-#endif
-
 }

@@ -91,7 +91,7 @@ void CtapCcidDriver::transact(Vector<uint8_t>&& data, ResponseCallback&& callbac
 
 void CtapCcidDriver::respondAsync(ResponseCallback&& callback, Vector<uint8_t>&& response) const
 {
-    RunLoop::protectedMain()->dispatch([callback = WTFMove(callback), response = WTFMove(response)] () mutable {
+    RunLoop::mainSingleton().dispatch([callback = WTFMove(callback), response = WTFMove(response)] () mutable {
         callback(WTFMove(response));
     });
 }

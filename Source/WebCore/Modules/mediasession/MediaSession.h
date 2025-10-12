@@ -27,13 +27,13 @@
 
 #if ENABLE(MEDIA_SESSION)
 
-#include "ActiveDOMObject.h"
-#include "MediaPositionState.h"
-#include "MediaProducer.h"
-#include "MediaSessionAction.h"
-#include "MediaSessionActionHandler.h"
-#include "MediaSessionPlaybackState.h"
-#include "MediaSessionReadyState.h"
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/MediaPositionState.h>
+#include <WebCore/MediaProducer.h>
+#include <WebCore/MediaSessionAction.h>
+#include <WebCore/MediaSessionActionHandler.h>
+#include <WebCore/MediaSessionPlaybackState.h>
+#include <WebCore/MediaSessionReadyState.h>
 #include <wtf/Logger.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -58,6 +58,7 @@ class HTMLMediaElement;
 class MediaMetadata;
 class MediaSessionCoordinator;
 class MediaSessionCoordinatorPrivate;
+class MediaSessionManagerInterface;
 class Navigator;
 struct NowPlayingInfo;
 template<typename> class DOMPromiseDeferred;
@@ -106,8 +107,9 @@ public:
     void willBeginPlayback();
     void willPausePlayback();
 
-    Document* document() const;
-    
+    WEBCORE_EXPORT Document* document() const;
+    RefPtr<Document> protectedDocument() const;
+
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     MediaSessionReadyState readyState() const { return m_readyState; };
     void setReadyState(MediaSessionReadyState);
@@ -170,6 +172,8 @@ private:
     void suspend(ReasonForSuspension) final;
     void stop() final;
     bool virtualHasPendingActivity() const final;
+
+    RefPtr<MediaSessionManagerInterface> sessionManager() const;
 
     WeakPtr<Navigator> m_navigator;
     RefPtr<MediaMetadata> m_metadata;

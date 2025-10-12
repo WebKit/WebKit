@@ -72,7 +72,7 @@ messages -> RemoteMediaPlayerProxy {
     SetPresentationSize(WebCore::IntSize size)
 
 #if PLATFORM(COCOA)
-    SetVideoLayerSizeFenced(WebCore::FloatSize size, MachSendRight machSendRight)
+    SetVideoLayerSizeFenced(WebCore::FloatSize size, struct MachSendRightAnnotated sendRightAnnotated)
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -146,7 +146,7 @@ messages -> RemoteMediaPlayerProxy {
 
     SetShouldDisableHDR(bool shouldDisable)
 
-    RequestHostingContextID() -> (uint32_t contextID)
+    RequestHostingContext() -> (struct WebCore::HostingContext layerHostingContext)
 
     SetShouldCheckHardwareSupport(bool value)
 

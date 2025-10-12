@@ -33,7 +33,9 @@
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
 
-struct WGPUTextureViewImpl {
+// FIXME(rdar://155970441): this annotation should be in WebGPU.h, move it once we support
+// annotating incomplete types
+struct SWIFT_SHARED_REFERENCE(wgpuTextureViewReference, wgpuTextureViewRelease) WGPUTextureViewImpl {
 };
 
 namespace WebGPU {
@@ -90,6 +92,10 @@ public:
     Texture& apiParentTexture() { return m_parentTexture; }
     uint32_t parentRelativeSlice() const;
     uint32_t parentRelativeMipLevel() const;
+    bool is2DTexture() const { return dimension() == WGPUTextureViewDimension_2D; }
+    bool is2DArrayTexture() const { return dimension() == WGPUTextureViewDimension_2DArray; }
+    bool is3DTexture() const { return dimension() == WGPUTextureViewDimension_3D; }
+    id<MTLRasterizationRateMap> rasterizationMapForSlice(uint32_t slice) const;
 
 private:
     TextureView(id<MTLTexture>, const WGPUTextureViewDescriptor&, const std::optional<WGPUExtent3D>&, Texture&, Device&);
@@ -101,7 +107,7 @@ private:
     const std::optional<WGPUExtent3D> m_renderExtent;
 
     const Ref<Device> m_device;
-    Ref<Texture> m_parentTexture;
+    const Ref<Texture> m_parentTexture;
     mutable Vector<uint64_t> m_commandEncoders;
 } SWIFT_SHARED_REFERENCE(refTextureView, derefTextureView);
 

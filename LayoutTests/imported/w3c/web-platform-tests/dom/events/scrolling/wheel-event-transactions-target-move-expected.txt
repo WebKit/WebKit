@@ -1,0 +1,3 @@
+
+FAIL Move the initial wheel event target. assert_equals: Initial wheel event has the moved element as the target expected Element node <div id="initialTarget" class="spacer" style="background:... but got Element node <div id="firstRootSpacer" class="spacer" style="backgroun...
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #import "Test.h"
 #import "TestURLSchemeHandler.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WebArchive.h>
 #import <wtf/RetainPtr.h>
@@ -72,16 +73,16 @@ TEST(DragAndDropTests, ModernWebArchiveType)
     NSData *markupData = [@"<strong><i>Hello world</i></strong>" dataUsingEncoding:NSUTF8StringEncoding];
     auto mainResource = adoptNS([[WebResource alloc] initWithData:markupData URL:[NSURL URLWithString:@"foo.html"] MIMEType:@"text/html" textEncodingName:@"utf-8" frameName:nil]);
     auto archive = adoptNS([[WebArchive alloc] initWithMainResource:mainResource.get() subresources:@[ ] subframeArchives:@[ ]]);
-    NSString *webArchiveType = (__bridge NSString *)kUTTypeWebArchive;
+    NSString *webArchiveType = UTTypeWebArchive.identifier;
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:CGRectMake(0, 0, 320, 500)]);
     auto webView = [simulator webView];
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width'><body style='width: 100%; height: 100%;' contenteditable>"];
 #if PLATFORM(MAC)
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
-    [pasteboard declareTypes:@[webArchiveType, (__bridge NSString *)kUTTypeUTF8PlainText] owner:nil];
+    [pasteboard declareTypes:@[webArchiveType, UTTypeUTF8PlainText.identifier] owner:nil];
     [pasteboard setData:[archive data] forType:webArchiveType];
-    [pasteboard setData:[@"Hello world" dataUsingEncoding:NSUTF8StringEncoding] forType:(__bridge NSString *)kUTTypeUTF8PlainText];
+    [pasteboard setData:[@"Hello world" dataUsingEncoding:NSUTF8StringEncoding] forType:UTTypeUTF8PlainText.identifier];
     [simulator setExternalDragPasteboard:pasteboard];
 #else
     auto item = adoptNS([[NSItemProvider alloc] init]);
@@ -89,7 +90,7 @@ TEST(DragAndDropTests, ModernWebArchiveType)
         completionHandler([archive data], nil);
         return nil;
     }];
-    [item registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeUTF8PlainText visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[&] (void (^completionHandler)(NSData *, NSError *)) -> NSProgress * {
+    [item registerDataRepresentationForTypeIdentifier:UTTypeUTF8PlainText.identifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[&] (void (^completionHandler)(NSData *, NSError *)) -> NSProgress * {
         completionHandler([@"Hello world" dataUsingEncoding:NSUTF8StringEncoding], nil);
         return nil;
     }];
@@ -403,10 +404,10 @@ TEST(DragAndDropTests, DragElementWithImageOverlay)
     [[simulator webView] synchronouslyLoadTestPageNamed:@"simple-image-overlay"];
 
     [simulator runFrom:NSMakePoint(150, 40) to:NSMakePoint(300, 40)];
-    EXPECT_FALSE([simulator containsDraggedType:(__bridge NSString *)kUTTypeJPEG]);
+    EXPECT_FALSE([simulator containsDraggedType:UTTypeJPEG.identifier]);
 
     [simulator runFrom:NSMakePoint(150, 200) to:NSMakePoint(300, 200)];
-    EXPECT_TRUE([simulator containsDraggedType:(__bridge NSString *)kUTTypeJPEG]);
+    EXPECT_TRUE([simulator containsDraggedType:UTTypeJPEG.identifier]);
 }
 
 TEST(DragAndDropTests, DragSelectedTextInImageOverlay)
@@ -421,13 +422,13 @@ TEST(DragAndDropTests, DragSelectedTextInImageOverlay)
 
     [simulator runFrom:NSMakePoint(150, 40) to:NSMakePoint(300, 300)];
 
-    EXPECT_TRUE([simulator containsDraggedType:(__bridge NSString *)kUTTypeUTF8PlainText]);
-    EXPECT_FALSE([simulator containsDraggedType:(__bridge NSString *)kUTTypeHTML]);
-    EXPECT_FALSE([simulator containsDraggedType:(__bridge NSString *)kUTTypeRTF]);
+    EXPECT_TRUE([simulator containsDraggedType:UTTypeUTF8PlainText.identifier]);
+    EXPECT_FALSE([simulator containsDraggedType:UTTypeHTML.identifier]);
+    EXPECT_FALSE([simulator containsDraggedType:UTTypeRTF.identifier]);
 
     RetainPtr<NSString> draggedText;
 #if USE(APPKIT)
-    draggedText = [[simulator draggingInfo].draggingPasteboard stringForType:(__bridge NSString *)kUTTypeUTF8PlainText];
+    draggedText = [[simulator draggingInfo].draggingPasteboard stringForType:UTTypeUTF8PlainText.identifier];
 #else
     bool doneLoadingString = false;
     [[simulator sourceItemProviders].firstObject loadObjectOfClass:NSString.class completionHandler:[&](NSString *string, NSError *error) {

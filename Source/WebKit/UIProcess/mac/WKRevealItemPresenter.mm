@@ -56,7 +56,8 @@
 
     _impl = impl;
     _presenter = adoptNS([PAL::allocRVPresenterInstance() init]);
-    _presentingContext = adoptNS([PAL::allocRVPresentingContextInstance() initWithPointerLocationInView:menuLocationInView inView:impl.view() highlightDelegate:self]);
+    RetainPtr view = impl.view();
+    _presentingContext = adoptNS([PAL::allocRVPresentingContextInstance() initWithPointerLocationInView:menuLocationInView inView:view.get() highlightDelegate:self]);
     _item = item;
     _frameInView = frameInView;
     _menuLocationInView = menuLocationInView;
@@ -65,10 +66,11 @@
 
 - (void)showContextMenu
 {
-    if (!_impl)
+    CheckedPtr impl = _impl.get();
+    if (!impl)
         return;
 
-    RetainPtr view = _impl->view();
+    RetainPtr view = impl->view();
     if (!view)
         return;
 
@@ -89,10 +91,11 @@
 
 - (void)_callDidFinishPresentationIfNeeded
 {
-    if (!_impl || _isHighlightingItem)
+    CheckedPtr impl = _impl.get();
+    if (!impl || _isHighlightingItem)
         return;
 
-    _impl->didFinishPresentation(self);
+    impl->didFinishPresentation(self);
 }
 
 #pragma mark - RVPresenterHighlightDelegate

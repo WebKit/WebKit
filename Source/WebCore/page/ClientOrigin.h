@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "RegistrableDomain.h"
-#include "SecurityOriginData.h"
+#include <WebCore/RegistrableDomain.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Hasher.h>
 #include <wtf/URL.h>

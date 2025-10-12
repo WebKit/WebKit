@@ -36,6 +36,11 @@
 
 namespace JSC { namespace Wasm { namespace BBQJITImpl {
 
+ALWAYS_INLINE bool BBQJIT::typeNeedsGPR2(TypeKind)
+{
+    return false;
+}
+
 template<typename Functor>
 auto BBQJIT::emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint32_t uoffset, uint32_t sizeOfOperation, Functor&& functor) -> decltype(auto)
 {
@@ -51,14 +56,14 @@ auto BBQJIT::emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint32
             switch (m_mode) {
             case MemoryMode::BoundsChecking: {
                 m_jit.move(TrustedImmPtr(constantPointer + boundary), wasmScratchGPR);
-                throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, wasmScratchGPR, wasmBoundsCheckingSizeRegister));
+                recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, wasmScratchGPR, wasmBoundsCheckingSizeRegister));
                 break;
             }
             case MemoryMode::Signaling: {
                 if (uoffset >= Memory::fastMappedRedzoneBytes()) {
                     uint64_t maximum = m_info.memory.maximum() ? m_info.memory.maximum().bytes() : std::numeric_limits<uint32_t>::max();
                     if ((constantPointer + boundary) >= maximum)
-                        throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.jump());
+                        recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.jump());
                 }
                 break;
             }
@@ -82,7 +87,7 @@ auto BBQJIT::emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint32
             m_jit.addPtr(TrustedImmPtr(boundary), pointerLocation.asGPR(), wasmScratchGPR);
             pointerGPR = wasmScratchGPR;
         }
-        throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, pointerGPR, wasmBoundsCheckingSizeRegister));
+        recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, pointerGPR, wasmBoundsCheckingSizeRegister));
         break;
     }
 
@@ -104,7 +109,7 @@ auto BBQJIT::emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint32
                 m_jit.addPtr(TrustedImmPtr(boundary), pointerLocation.asGPR(), wasmScratchGPR);
                 pointerGPR = wasmScratchGPR;
             }
-            throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, pointerGPR, TrustedImmPtr(static_cast<int64_t>(maximum))));
+            recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, pointerGPR, TrustedImmPtr(static_cast<int64_t>(maximum))));
         }
         break;
     }
@@ -173,7 +178,7 @@ void BBQJIT::emitModOrDiv(Value& lhs, Location lhsLocation, Value& rhs, Location
     Jump isZero = is32
         ? m_jit.branchTest32(ResultCondition::Zero, rhsLocation.asGPR())
         : m_jit.branchTest64(ResultCondition::Zero, rhsLocation.asGPR());
-    throwExceptionIf(ExceptionType::DivisionByZero, isZero);
+    recordJumpToThrowException(ExceptionType::DivisionByZero, isZero);
     if constexpr (isSigned) {
         if constexpr (is32)
             m_jit.compare32(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1), scratches.gpr(0));
@@ -196,7 +201,7 @@ void BBQJIT::emitModOrDiv(Value& lhs, Location lhsLocation, Value& rhs, Location
             toEnd = m_jit.jump();
         } else {
             Jump isNegativeOne = m_jit.branchTest64(ResultCondition::NonZero, scratches.gpr(1));
-            throwExceptionIf(ExceptionType::IntegerOverflow, isNegativeOne);
+            recordJumpToThrowException(ExceptionType::IntegerOverflow, isNegativeOne);
         }
     }
 
@@ -261,7 +266,7 @@ void BBQJIT::emitModOrDiv(Value& lhs, Location lhsLocation, Value& rhs, Location
                 Jump jump = is32
                     ? m_jit.branch32(RelationalCondition::Equal, lhsLocation.asGPR(), TrustedImm32(std::numeric_limits<int32_t>::min()))
                     : m_jit.branch64(RelationalCondition::Equal, lhsLocation.asGPR(), TrustedImm64(std::numeric_limits<int64_t>::min()));
-                throwExceptionIf(ExceptionType::IntegerOverflow, jump);
+                recordJumpToThrowException(ExceptionType::IntegerOverflow, jump);
             }
 
             if constexpr (isSigned) {
@@ -361,7 +366,7 @@ void BBQJIT::emitModOrDiv(Value& lhs, Location lhsLocation, Value& rhs, Location
         Jump isZero = is32
             ? m_jit.branchTest32(ResultCondition::Zero, rhsLocation.asGPR())
             : m_jit.branchTest64(ResultCondition::Zero, rhsLocation.asGPR());
-        throwExceptionIf(ExceptionType::DivisionByZero, isZero);
+        recordJumpToThrowException(ExceptionType::DivisionByZero, isZero);
         checkedForZero = true;
 
         if (!dividend) {
@@ -375,7 +380,7 @@ void BBQJIT::emitModOrDiv(Value& lhs, Location lhsLocation, Value& rhs, Location
             Jump isNegativeOne = is32
                 ? m_jit.branch32(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1))
                 : m_jit.branch64(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm64(-1));
-            throwExceptionIf(ExceptionType::IntegerOverflow, isNegativeOne);
+            recordJumpToThrowException(ExceptionType::IntegerOverflow, isNegativeOne);
         }
         checkedForNegativeOne = true;
 
@@ -388,7 +393,7 @@ void BBQJIT::emitModOrDiv(Value& lhs, Location lhsLocation, Value& rhs, Location
         Jump isZero = is32
             ? m_jit.branchTest32(ResultCondition::Zero, rhsLocation.asGPR())
             : m_jit.branchTest64(ResultCondition::Zero, rhsLocation.asGPR());
-        throwExceptionIf(ExceptionType::DivisionByZero, isZero);
+        recordJumpToThrowException(ExceptionType::DivisionByZero, isZero);
     }
 
     ScratchScope<1, 0> scratches(*this, lhsLocation, rhsLocation, resultLocation);
@@ -413,7 +418,7 @@ void BBQJIT::emitModOrDiv(Value& lhs, Location lhsLocation, Value& rhs, Location
         }
         m_jit.and64(wasmScratchGPR, scratches.gpr(0), wasmScratchGPR);
         Jump isNegativeOne = m_jit.branchTest64(ResultCondition::NonZero, wasmScratchGPR);
-        throwExceptionIf(ExceptionType::IntegerOverflow, isNegativeOne);
+        recordJumpToThrowException(ExceptionType::IntegerOverflow, isNegativeOne);
     }
 
     GPRReg divResult = IsMod ? scratches.gpr(0) : resultLocation.asGPR();
@@ -541,14 +546,14 @@ void BBQJIT::emitCCall(Func function, const Vector<Value, N>& arguments, Value& 
     case TypeKind::Arrayref:
     case TypeKind::Structref:
     case TypeKind::Funcref:
-    case TypeKind::Exn:
+    case TypeKind::Exnref:
     case TypeKind::Externref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
-    case TypeKind::Nullexn:
-    case TypeKind::Nullref:
-    case TypeKind::Nullfuncref:
-    case TypeKind::Nullexternref:
+    case TypeKind::Noexnref:
+    case TypeKind::Noneref:
+    case TypeKind::Nofuncref:
+    case TypeKind::Noexternref:
     case TypeKind::Rec:
     case TypeKind::Sub:
     case TypeKind::Subfinal:
@@ -556,18 +561,18 @@ void BBQJIT::emitCCall(Func function, const Vector<Value, N>& arguments, Value& 
     case TypeKind::Struct:
     case TypeKind::Func: {
         resultLocation = Location::fromGPR(GPRInfo::returnValueGPR);
-        ASSERT(m_validGPRs.contains(GPRInfo::returnValueGPR, IgnoreVectors));
+        ASSERT(validGPRs().contains(GPRInfo::returnValueGPR, IgnoreVectors));
         break;
     }
     case TypeKind::F32:
     case TypeKind::F64: {
         resultLocation = Location::fromFPR(FPRInfo::returnValueFPR);
-        ASSERT(m_validFPRs.contains(FPRInfo::returnValueFPR, Width::Width128));
+        ASSERT(validFPRs().contains(FPRInfo::returnValueFPR, Width::Width128));
         break;
     }
     case TypeKind::V128: {
         resultLocation = Location::fromFPR(FPRInfo::returnValueFPR);
-        ASSERT(m_validFPRs.contains(FPRInfo::returnValueFPR, Width::Width128));
+        ASSERT(validFPRs().contains(FPRInfo::returnValueFPR, Width::Width128));
         break;
     }
     case TypeKind::Void:
@@ -577,9 +582,9 @@ void BBQJIT::emitCCall(Func function, const Vector<Value, N>& arguments, Value& 
 
     RegisterBinding currentBinding;
     if (resultLocation.isGPR())
-        currentBinding = gprBindings()[resultLocation.asGPR()];
+        currentBinding = bindingFor(resultLocation.asGPR());
     else if (resultLocation.isFPR())
-        currentBinding = fprBindings()[resultLocation.asFPR()];
+        currentBinding = bindingFor(resultLocation.asFPR());
     RELEASE_ASSERT(!currentBinding.isScratch());
 
     bind(result, resultLocation);

@@ -99,7 +99,7 @@
 - (void)setCrossOrigin:(NSString *)newCrossOrigin
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setCrossOrigin(newCrossOrigin);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::crossoriginAttr, newCrossOrigin);
 }
 
 - (int)height
@@ -111,13 +111,13 @@
 - (void)setHeight:(int)newHeight
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setHeight(newHeight);
+    IMPL->setIntegralAttribute(WebCore::HTMLNames::heightAttr, newHeight);
 }
 
 - (int)hspace
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getIntegralAttribute(WebCore::HTMLNames::hspaceAttr);
+    return IMPL->integralAttribute(WebCore::HTMLNames::hspaceAttr);
 }
 
 - (void)setHspace:(int)newHspace
@@ -207,7 +207,7 @@
 - (int)vspace
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getIntegralAttribute(WebCore::HTMLNames::vspaceAttr);
+    return IMPL->integralAttribute(WebCore::HTMLNames::vspaceAttr);
 }
 
 - (void)setVspace:(int)newVspace
@@ -225,7 +225,7 @@
 - (void)setWidth:(int)newWidth
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setWidth(newWidth);
+    IMPL->setIntegralAttribute(WebCore::HTMLNames::widthAttr, newWidth);
 }
 
 - (BOOL)complete
@@ -273,7 +273,7 @@
 - (NSString *)altDisplayString
 {
     WebCore::JSMainThreadNullState state;
-    return WebCore::displayString(IMPL->alt(), core(self)).createNSString().autorelease();
+    return WebCore::displayString(IMPL->attributeWithoutSynchronization(WebCore::HTMLNames::altAttr), core(self)).createNSString().autorelease();
 }
 
 - (NSURL *)absoluteImageURL

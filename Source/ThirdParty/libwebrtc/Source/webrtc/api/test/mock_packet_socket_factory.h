@@ -21,7 +21,7 @@
 #include "rtc_base/socket_address.h"
 #include "test/gmock.h"
 
-namespace rtc {
+namespace webrtc {
 class MockPacketSocketFactory : public PacketSocketFactory {
  public:
   MOCK_METHOD(AsyncPacketSocket*,
@@ -38,7 +38,7 @@ class MockPacketSocketFactory : public PacketSocketFactory {
                const SocketAddress&,
                const PacketSocketTcpOptions&),
               (override));
-  MOCK_METHOD(std::unique_ptr<webrtc::AsyncDnsResolverInterface>,
+  MOCK_METHOD(std::unique_ptr<AsyncDnsResolverInterface>,
               CreateAsyncDnsResolver,
               (),
               (override));
@@ -46,6 +46,7 @@ class MockPacketSocketFactory : public PacketSocketFactory {
 
 static_assert(!std::is_abstract_v<MockPacketSocketFactory>, "");
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // API_TEST_MOCK_PACKET_SOCKET_FACTORY_H_

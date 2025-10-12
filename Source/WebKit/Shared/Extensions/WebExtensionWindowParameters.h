@@ -30,6 +30,7 @@
 #include "WebExtensionTabParameters.h"
 #include "WebExtensionWindow.h"
 #include "WebExtensionWindowIdentifier.h"
+#include <WebCore/DoubleRect.h>
 #include <wtf/Forward.h>
 
 namespace WebKit {
@@ -43,7 +44,7 @@ struct WebExtensionWindowParameters {
     std::optional<Vector<WebExtensionTabParameters>> tabs;
 
 #if PLATFORM(COCOA)
-    std::optional<CGRect> frame;
+    std::optional<WebCore::DoubleRect> frame;
 #endif
 
     std::optional<bool> focused;

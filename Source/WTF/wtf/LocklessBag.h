@@ -35,11 +35,11 @@ namespace WTF {
 
 template<typename T>
 class LocklessBag final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LocklessBag);
     WTF_MAKE_NONCOPYABLE(LocklessBag);
 public:
     struct Node {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Node);
     public:
         T data;
         Node* next;

@@ -68,19 +68,25 @@
 #import <WebCore/FileChooser.h>
 #import <WebCore/FileIconLoader.h>
 #import <WebCore/FloatRect.h>
+#import <WebCore/FocusControllerTypes.h>
+#import <WebCore/FocusOptions.h>
+#import <WebCore/Frame.h>
+#import <WebCore/FrameDestructionObserverInlines.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>
-#import <WebCore/HTMLPlugInImageElement.h>
+#import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Icon.h>
 #import <WebCore/IntPoint.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameInlines.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/ModalContainerTypes.h>
 #import <WebCore/NavigationAction.h>
+#import <WebCore/NodeDocument.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
@@ -127,7 +133,6 @@ NSString *WebConsoleMessageJSMessageSource = @"JSMessageSource";
 NSString *WebConsoleMessageNetworkMessageSource = @"NetworkMessageSource";
 NSString *WebConsoleMessageConsoleAPIMessageSource = @"ConsoleAPIMessageSource";
 NSString *WebConsoleMessageStorageMessageSource = @"StorageMessageSource";
-NSString *WebConsoleMessageAppCacheMessageSource = @"AppCacheMessageSource";
 NSString *WebConsoleMessageRenderingMessageSource = @"RenderingMessageSource";
 NSString *WebConsoleMessageCSSMessageSource = @"CSSMessageSource";
 NSString *WebConsoleMessageAccessibilityMessageSource = @"AccessibilityMessageSource";
@@ -239,7 +244,7 @@ void WebChromeClient::takeFocus(FocusDirection direction)
 #endif
 }
 
-void WebChromeClient::focusedElementChanged(Element* element)
+void WebChromeClient::focusedElementChanged(Element* element, LocalFrame*, FocusOptions, BroadcastFocusedElement)
 {
     if (!is<HTMLInputElement>(element))
         return;
@@ -311,6 +316,15 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         if (!features.wantsNoOpener()) {
             m_webView.page->protectedStorageNamespaceProvider()->cloneSessionStorageNamespaceForPage(*m_webView.page, *newPage);
             newPage->mainFrame().setOpenerForWebKitLegacy(&frame);
+
+            auto& newPageClient = static_cast<WebChromeClient&>(newPage->chrome().client());
+            setToolbarsVisible(features.toolBarVisible || features.locationBarVisible);
+            if (features.statusBarVisible)
+                newPageClient.setStatusbarVisible(*features.statusBarVisible);
+            if (features.scrollbarsVisible)
+                newPageClient.setScrollbarsVisible(*features.scrollbarsVisible);
+            if (features.menuBarVisible)
+                newPageClient.setMenubarVisible(*features.menuBarVisible);
             newPage->applyWindowFeatures(features);
         }
 
@@ -318,6 +332,8 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         if (!effectiveSandboxFlags.contains(WebCore::SandboxFlag::PropagatesToAuxiliaryBrowsingContexts))
             effectiveSandboxFlags = { };
         newPage->mainFrame().updateSandboxFlags(effectiveSandboxFlags, WebCore::Frame::NotifyUIProcess::No);
+        auto effectiveReferrerPolicy = frame.document()->referrerPolicy();
+        newPage->mainFrame().updateReferrerPolicy(effectiveReferrerPolicy);
         newPage->chrome().show();
         newPage->mainFrame().tree().setSpecifiedName(AtomString(openedMainFrameName));
     }
@@ -400,8 +416,6 @@ inline static NSString *stringForMessageSource(MessageSource source)
         return WebConsoleMessageConsoleAPIMessageSource;
     case MessageSource::Storage:
         return WebConsoleMessageStorageMessageSource;
-    case MessageSource::AppCache:
-        return WebConsoleMessageAppCacheMessageSource;
     case MessageSource::Rendering:
         return WebConsoleMessageRenderingMessageSource;
     case MessageSource::CSS:
@@ -733,30 +747,36 @@ void WebChromeClient::updateTextIndicator(const WebCore::TextIndicatorData& indi
 }
 
 #if ENABLE(POINTER_LOCK)
-bool WebChromeClient::requestPointerLock()
+void WebChromeClient::requestPointerLock(CompletionHandler<void(WebCore::PointerLockRequestResult)>&& completionHandler)
 {
 #if PLATFORM(MAC)
-    if (![m_webView page])
-        return false;
+    if (![m_webView page]) {
+        completionHandler(WebCore::PointerLockRequestResult::Failure);
+        return;
+    }
 
     CGDisplayHideCursor(CGMainDisplayID());
     CGAssociateMouseAndMouseCursorPosition(false);
     [m_webView page]->pointerLockController().didAcquirePointerLock();
     
-    return true;
+    completionHandler(WebCore::PointerLockRequestResult::Success);
 #else
-    return false;
+    completionHandler(WebCore::PointerLockRequestResult::Failure);
 #endif
 }
 
-void WebChromeClient::requestPointerUnlock()
+void WebChromeClient::requestPointerUnlock(CompletionHandler<void(bool)>&& completionHandler)
 {
 #if PLATFORM(MAC)
     CGAssociateMouseAndMouseCursorPosition(true);
     CGDisplayShowCursor(CGMainDisplayID());
-    if ([m_webView page])
+    if ([m_webView page]) {
         [m_webView page]->pointerLockController().didLosePointerLock();
+        completionHandler(true);
+        return;
+    }
 #endif
+    completionHandler(false);
 }
 #endif
 
@@ -956,7 +976,7 @@ void WebChromeClient::triggerRenderingUpdate()
 
 #if ENABLE(VIDEO)
 
-bool WebChromeClient::canEnterVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const
+bool WebChromeClient::canEnterVideoFullscreen(HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const
 {
 #if !PLATFORM(IOS_FAMILY) || HAVE(AVKIT)
     return true;

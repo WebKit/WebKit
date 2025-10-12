@@ -40,8 +40,7 @@ class MockSurfaceImpl : public rx::SurfaceImpl
     MOCK_METHOD3(getSyncValues, egl::Error(EGLuint64KHR *, EGLuint64KHR *, EGLuint64KHR *));
     MOCK_METHOD2(getMscRate, egl::Error(EGLint *, EGLint *));
     MOCK_METHOD2(setSwapInterval, void(const egl::Display *, EGLint));
-    MOCK_CONST_METHOD0(getWidth, EGLint());
-    MOCK_CONST_METHOD0(getHeight, EGLint());
+    MOCK_CONST_METHOD0(getSize, gl::Extents());
     MOCK_CONST_METHOD0(isPostSubBufferSupported, EGLint(void));
     MOCK_CONST_METHOD0(getSwapBehavior, EGLint(void));
     MOCK_METHOD5(getAttachmentRenderTarget,

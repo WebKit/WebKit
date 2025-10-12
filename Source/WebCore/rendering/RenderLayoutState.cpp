@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -176,7 +176,7 @@ void RenderLayoutState::computePaginationInformation(const LocalFrameViewLayoutC
     }
 
     // If we have a new grid to track, then add it to our set.
-    if (renderer.style().lineGrid() != RenderStyle::initialLineGrid()) {
+    if (!renderer.style().lineGrid().isNone()) {
         if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderer))
             establishLineGrid(layoutStateStack, *blockFlow);
     }
@@ -358,12 +358,15 @@ ContentVisibilityOverrideScope::ContentVisibilityOverrideScope(LocalFrameViewLay
         layoutContext.setIsVisiblityHiddenIgnored(true);
     if (overrideTypes.contains(OverrideType::Auto))
         layoutContext.setIsVisiblityAutoIgnored(true);
+    if (overrideTypes.contains(OverrideType::RevealedWhenFound))
+        layoutContext.setIsRevealedWhenFoundIgnored(true);
 }
 
 ContentVisibilityOverrideScope::~ContentVisibilityOverrideScope()
 {
     m_layoutContext->setIsVisiblityHiddenIgnored(false);
     m_layoutContext->setIsVisiblityAutoIgnored(false);
+    m_layoutContext->setIsRevealedWhenFoundIgnored(false);
 }
 
 } // namespace WebCore

@@ -10,16 +10,14 @@
 
 #include "modules/rtp_rtcp/source/ulpfec_header_reader_writer.h"
 
-#include <string.h>
-
+#include <cstdint>
+#include <cstring>
 #include <memory>
-#include <utility>
 
 #include "api/scoped_refptr.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/random.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -71,7 +69,7 @@ std::unique_ptr<ReceivedFecPacket> ReadHeader(const Packet& written_packet) {
   UlpfecHeaderReader reader;
   std::unique_ptr<ReceivedFecPacket> read_packet(new ReceivedFecPacket());
   read_packet->ssrc = kMediaSsrc;
-  read_packet->pkt = rtc::scoped_refptr<Packet>(new Packet());
+  read_packet->pkt = scoped_refptr<Packet>(new Packet());
   read_packet->pkt->data = written_packet.data;
   EXPECT_TRUE(reader.ReadFecHeader(read_packet.get()));
   return read_packet;
@@ -115,7 +113,7 @@ TEST(UlpfecHeaderReaderTest, ReadsSmallHeader) {
   };
   const size_t packet_length = sizeof(packet);
   ReceivedFecPacket read_packet;
-  read_packet.pkt = rtc::scoped_refptr<Packet>(new Packet());
+  read_packet.pkt = scoped_refptr<Packet>(new Packet());
   read_packet.pkt->data.SetData(packet, packet_length);
 
   UlpfecHeaderReader reader;
@@ -139,7 +137,7 @@ TEST(UlpfecHeaderReaderTest, ReadsLargeHeader) {
   };
   const size_t packet_length = sizeof(packet);
   ReceivedFecPacket read_packet;
-  read_packet.pkt = rtc::scoped_refptr<Packet>(new Packet());
+  read_packet.pkt = scoped_refptr<Packet>(new Packet());
   read_packet.pkt->data.SetData(packet, packet_length);
 
   UlpfecHeaderReader reader;

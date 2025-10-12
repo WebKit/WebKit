@@ -28,6 +28,7 @@
 
 #import "_WKTextInputContextInternal.h"
 #import <WebCore/ElementContext.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @implementation _WKTextInputContext {
     WebCore::ElementContext _textInputContext;
@@ -73,7 +74,7 @@
 
 - (NSUInteger)hash
 {
-    return _textInputContext.elementIdentifier ? _textInputContext.elementIdentifier->toUInt64() : 0;
+    return _textInputContext.nodeIdentifier ? _textInputContext.nodeIdentifier->toUInt64() : 0;
 }
 
 - (id)copyWithZone:(NSZone *)zone

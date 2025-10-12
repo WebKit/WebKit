@@ -21,11 +21,11 @@
 
 #pragma once
 
-#include "CallFrame.h"
-#include "ExceptionHelpers.h"
-#include "JSBigInt.h"
-#include "JSGlobalObject.h"
-#include "JSString.h"
+#include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/ExceptionHelpers.h>
+#include <JavaScriptCore/JSBigInt.h>
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/JSString.h>
 #include <wtf/text/MakeString.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -101,7 +101,7 @@ ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, const String& u1,
     // We do not account u1 cost in (2) since u1 may be shared StringImpl, and it may not introduce additional cost.
     // We conservatively consider the cost of u1. Currently, we are not considering about is8Bit() case because 16-bit
     // strings are relatively rare. But we can do that if we need to consider it.
-    if (s2->isRope() || (StringImpl::headerSize<LChar>() + length1 + length2) >= sizeof(JSRopeString))
+    if (s2->isRope() || (StringImpl::headerSize<Latin1Character>() + length1 + length2) >= sizeof(JSRopeString))
         return JSRopeString::create(vm, jsString(vm, u1), s2);
 
     ASSERT(!s2->isRope());
@@ -134,7 +134,7 @@ ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, JSString* s1, con
 
     // (1) Cost of making JSString    : sizeof(JSString) (for new string) + sizeof(StringImpl header) + length1 + length2
     // (2) Cost of making JSRopeString: sizeof(JSString) (for u2) + sizeof(JSRopeString)
-    if (s1->isRope() || (StringImpl::headerSize<LChar>() + length1 + length2) >= sizeof(JSRopeString))
+    if (s1->isRope() || (StringImpl::headerSize<Latin1Character>() + length1 + length2) >= sizeof(JSRopeString))
         return JSRopeString::create(vm, s1, jsString(vm, u2));
 
     ASSERT(!s1->isRope());
@@ -213,7 +213,7 @@ ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, const String& u1,
 
     // (1) Cost of making JSString    : sizeof(JSString) (for new string) + sizeof(StringImpl header) + length1 + length2
     // (2) Cost of making JSRopeString: sizeof(JSString) (for u1) + sizeof(JSString) (for u2) + sizeof(JSRopeString)
-    if ((StringImpl::headerSize<LChar>() + length1 + length2) >= (sizeof(JSRopeString) + sizeof(JSString)))
+    if ((StringImpl::headerSize<Latin1Character>() + length1 + length2) >= (sizeof(JSRopeString) + sizeof(JSString)))
         return JSRopeString::create(vm, jsString(vm, u1), jsString(vm, u2));
 
     String newString = tryMakeString(u1, u2);
@@ -253,7 +253,7 @@ ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, const String& u1,
 
     // (1) Cost of making JSString    : sizeof(JSString) (for new string) + sizeof(StringImpl header) + length1 + length2 + length3
     // (2) Cost of making JSRopeString: sizeof(JSString) (for u1) + sizeof(JSString) (for u2) + sizeof(JSString) (for u3) + sizeof(JSRopeString)
-    if ((StringImpl::headerSize<LChar>() + length1 + length2 + length3) >= (sizeof(JSRopeString) + sizeof(JSString) * 2))
+    if ((StringImpl::headerSize<Latin1Character>() + length1 + length2 + length3) >= (sizeof(JSRopeString) + sizeof(JSString) * 2))
         return JSRopeString::create(vm, jsString(vm, u1), jsString(vm, u2), jsString(vm, u3));
 
     String newString = tryMakeString(u1, u2, u3);

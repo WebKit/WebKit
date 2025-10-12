@@ -235,3 +235,27 @@ testRegExp(/(?<!(AB*))c/, "A", null);
 
 // Test 101
 testRegExp(/(?<=Result = |<)(\w+(?:Error|Response))/, "<Result = LoadFinishedResponse>(", ["LoadFinishedResponse", "LoadFinishedResponse"]);
+testRegExp(/(?<=\k<a>(?<a>[abx]))d/, "abxxd", ["d", "x"]);
+testRegExp(/(?<=\k<a>(?<a>\w+))c/, "ababc", ["c", "ab"]);
+testRegExp(/(?<=\k<a>(?<a>\w+))c/, "ababbc", ["c", "b"]);
+testRegExp(/(?<=\k<a>(?<a>\w+))c/, "ababbc", ["c", "b"]);
+
+// Test 106
+testRegExp(/(?<!(A)|\1{0})B/, "AB", null);
+testRegExp(/(?<!(A)|\1{0})B/, "XB", null);
+testRegExp(/(?<=(A)|\1{0})B/, "AB", ["B", "A"]);
+testRegExp(/(?<=(A)|\1{0})B/, "XB", ["B", undefined]);
+testRegExp(/(?<!(A)C|\1)B/, "AB", null);
+
+// Test 111
+testRegExp(/(?<!(A)C|\1)B/, "XB", null);
+testRegExp(/(?<!(.)C|\1)B/, "XB", null);
+testRegExp(/(?<=(A)C|\1)B/, "AB", ["B", undefined]);
+testRegExp(/(?<=(A)C|\1)B/, "XB", ["B", undefined]);
+testRegExp(/(?<!(?<alpha>A)C|\k<alpha>)B/, "AB", null);
+
+// Test 116
+testRegExp(/(?<!(?<alpha>A)C|\k<alpha>)B/, "XB", null);
+testRegExp(/(?<!(?<alpha>.)C|\k<alpha>)B/, "XB", null);
+testRegExp(/(?<=(?<alpha>A)C|\k<alpha>)B/, "AB", ["B", undefined]);
+testRegExp(/(?<=(?<alpha>A)C|\k<alpha>)B/, "XB", ["B", undefined]);

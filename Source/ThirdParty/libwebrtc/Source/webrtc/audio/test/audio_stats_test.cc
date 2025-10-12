@@ -8,9 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstdint>
+#include <cstdlib>
+
+#include "api/test/simulated_network.h"
 #include "audio/test/audio_end_to_end_test.h"
-#include "rtc_base/numerics/safe_compare.h"
-#include "system_wrappers/include/sleep.h"
+#include "call/audio_receive_stream.h"
+#include "call/audio_send_stream.h"
+#include "rtc_base/thread.h"
+#include "test/call_test.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -42,10 +48,11 @@ class NoLossTest : public AudioEndToEndTest {
   }
 
   void PerformTest() override {
-    SleepMs(kTestDurationMs);
+    Thread::SleepMs(kTestDurationMs);
     send_audio_device()->StopRecording();
     // and some extra time to account for network delay.
-    SleepMs(GetSendTransportConfig().queue_delay_ms + kExtraRecordTimeMs);
+    Thread::SleepMs(GetSendTransportConfig().queue_delay_ms +
+                    kExtraRecordTimeMs);
   }
 
   void OnStreamsStopped() override {

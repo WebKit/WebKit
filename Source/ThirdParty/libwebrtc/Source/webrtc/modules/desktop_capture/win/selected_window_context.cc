@@ -10,6 +10,9 @@
 
 #include "modules/desktop_capture/win/selected_window_context.h"
 
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/win/window_capture_utils.h"
+
 namespace webrtc {
 
 SelectedWindowContext::SelectedWindowContext(

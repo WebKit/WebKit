@@ -25,7 +25,6 @@
 
 import Foundation
 import WebKit
-import WebKitSwift
 @_spi(Private) import WebKit
 
 #if USE_APPLE_INTERNAL_SDK
@@ -44,7 +43,9 @@ import WebKitSwift
 
 // MARK: Implementation
 
-@_objcImplementation extension WKIntelligenceReplacementTextEffectCoordinator {
+@objc
+@implementation
+extension WKIntelligenceReplacementTextEffectCoordinator {
     private struct ReplacementOperationRequest {
         let processedRange: Range<Int>
         let finished: Bool
@@ -52,40 +53,48 @@ import WebKitSwift
         let operation: (() async -> Void)
     }
 
-    @nonobjc final private let delegate: (any WKIntelligenceTextEffectCoordinatorDelegate)
-    @nonobjc final private lazy var viewManager = IntelligenceTextEffectViewManager(source: self, contentView: self.delegate.view(forIntelligenceTextEffectCoordinator: self))
+    @nonobjc
+    final private let delegate: (any WKIntelligenceTextEffectCoordinatorDelegate)
+    @nonobjc
+    final private lazy var viewManager = IntelligenceTextEffectViewManager(
+        source: self,
+        contentView: self.delegate.view(forIntelligenceTextEffectCoordinator: self)
+    )
 
-    @nonobjc final private var processedRangeOffset = 0
-    @nonobjc final private var contextRange: Range<Int>? = nil
+    @nonobjc
+    final private var processedRangeOffset = 0
+    @nonobjc
+    final private var contextRange: Range<Int>? = nil
 
     // Maintain a replacement operation queue to ensure that no matter how many batches of replacements are received,
     // there is only ever one ongoing effect at a time.
-    @nonobjc final private var replacementQueue: [ReplacementOperationRequest] = []
+    @nonobjc
+    final private var replacementQueue: [ReplacementOperationRequest] = []
 
     // If there are still pending replacements/animations when the user has accepted or rejected the Writing Tools
     // suggestions, they first need to all be flushed out and invoked so that the state is not incomplete, and then
     // the acceptance/rejection can properly occur.
-    @nonobjc final private var onFlushCompletion: (() async -> Void)? = nil
+    @nonobjc
+    final private var onFlushCompletion: (() async -> Void)? = nil
 
-    @objc(hasActiveEffects)
-    public var hasActiveEffects: Bool {
+    var hasActiveEffects: Bool {
         viewManager.hasActiveEffects
     }
 
-    @objc(characterDeltaForReceivedSuggestions:)
-    public class func characterDelta(forReceivedSuggestions suggestions: [WTTextSuggestion]) -> Int {
+    class func characterDelta(forReceivedSuggestions suggestions: [WTTextSuggestion]) -> Int {
         suggestions.reduce(0) { partialResult, suggestion in
             partialResult + (suggestion.replacement.count - suggestion.originalRange.length)
         }
     }
 
-    @objc(initWithDelegate:)
-    public init(delegate: any WKIntelligenceTextEffectCoordinatorDelegate) {
+    // The initializer is required to be `public`, but the class itself is `internal` so this is not API.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    public required init(delegate: any WKIntelligenceTextEffectCoordinatorDelegate) {
         self.delegate = delegate
     }
 
     @objc(startAnimationForRange:completion:)
-    public func startAnimation(for range: NSRange) async {
+    func startAnimation(for range: NSRange) async {
         self.reset()
 
         self.viewManager.assertPonderingEffectIsInactive()
@@ -105,14 +114,24 @@ import WebKitSwift
     }
 
     @objc(requestReplacementWithProcessedRange:finished:characterDelta:operation:completion:)
-    public func requestReplacement(withProcessedRange processedRange: NSRange, finished: Bool, characterDelta: Int, operation: @escaping (@escaping () -> Void) -> Void) async {
+    func requestReplacement(
+        withProcessedRange processedRange: NSRange,
+        finished: Bool,
+        characterDelta: Int,
+        operation: @MainActor @Sendable @escaping (@MainActor @Sendable @escaping () -> Void) -> Void
+    ) async {
         guard let range = Range(processedRange) else {
             assertionFailure("Intelligence text effect coordinator: Unable to create Swift.Range from NSRange \(processedRange)")
             return
         }
 
         let asyncBlock = async(operation)
-        let request = Self.ReplacementOperationRequest(processedRange: range, finished: finished, characterDelta: characterDelta, operation: asyncBlock)
+        let request = Self.ReplacementOperationRequest(
+            processedRange: range,
+            finished: finished,
+            characterDelta: characterDelta,
+            operation: asyncBlock
+        )
 
         self.replacementQueue.append(request)
 
@@ -121,8 +140,7 @@ import WebKitSwift
         }
     }
 
-    @objc(flushReplacementsWithCompletion:)
-    public func flushReplacements() async {
+    func flushReplacements() async {
         assert(self.onFlushCompletion == nil)
 
         // If the replacement queue is empty, there's no effects pending completion and nothing to flush,
@@ -145,38 +163,40 @@ import WebKitSwift
         }
     }
 
-    @objc(restoreSelectionAcceptedReplacements:completion:)
-    public func restoreSelection(acceptedReplacements: Bool) async {
+    func restoreSelectionAcceptedReplacements(_ acceptedReplacements: Bool) async {
         guard let contextRange = self.contextRange else {
             assertionFailure()
             return
         }
 
-        let range = acceptedReplacements ? contextRange.lowerBound..<(contextRange.upperBound + self.processedRangeOffset) : contextRange;
+        let range = acceptedReplacements ? contextRange.lowerBound..<(contextRange.upperBound + self.processedRangeOffset) : contextRange
         await self.delegate.intelligenceTextEffectCoordinator(self, setSelectionFor: NSRange(range))
     }
 
-    @objc(hideEffectsWithCompletion:)
-    public func hideEffects() async {
+    func hideEffects() async {
         await self.viewManager.hideEffects()
     }
 
-    @objc(showEffectsWithCompletion:)
-    public func showEffects() async {
+    func showEffects() async {
         await self.viewManager.showEffects()
     }
 
-    @nonobjc final private func removeActiveEffects() async {
+    @nonobjc
+    final private func removeActiveEffects() async {
         await self.viewManager.removeActiveEffects()
     }
 
-    @nonobjc final private func startReplacementAnimation(using request: WKIntelligenceReplacementTextEffectCoordinator.ReplacementOperationRequest) async {
+    @nonobjc
+    final private func startReplacementAnimation(
+        using request: WKIntelligenceReplacementTextEffectCoordinator.ReplacementOperationRequest
+    ) async {
         self.viewManager.assertReplacementEffectIsInactive()
 
         let processedRange = request.processedRange
         let characterDelta = request.characterDelta
 
-        let processedRangeRelativeToCurrentText = (processedRange.lowerBound + self.processedRangeOffset)..<(processedRange.upperBound + self.processedRangeOffset)
+        let processedRangeRelativeToCurrentText =
+            (processedRange.lowerBound + self.processedRangeOffset)..<(processedRange.upperBound + self.processedRangeOffset)
 
         let chunk = IntelligenceTextEffectChunk.Replacement(
             range: processedRangeRelativeToCurrentText,
@@ -194,7 +214,8 @@ import WebKitSwift
         self.processedRangeOffset += characterDelta
     }
 
-    @nonobjc final private func reset() {
+    @nonobjc
+    final private func reset() {
         self.viewManager.reset()
 
         self.processedRangeOffset = 0
@@ -222,7 +243,12 @@ extension WKIntelligenceReplacementTextEffectCoordinator: IntelligenceTextEffect
             return
         }
 
-        await self.delegate.intelligenceTextEffectCoordinator(self, updateTextVisibilityFor: NSRange(chunk.range), visible: visible, identifier: chunk.id)
+        await self.delegate.intelligenceTextEffectCoordinator(
+            self,
+            updateTextVisibilityFor: NSRange(chunk.range),
+            visible: visible,
+            identifier: chunk.id
+        )
     }
 }
 
@@ -238,13 +264,18 @@ extension WKIntelligenceReplacementTextEffectCoordinator: PlatformIntelligenceTe
         await self.updateTextChunkVisibility(chunk, visible: visible, force: false)
     }
 
-    func performReplacementAndGeneratePreview(for chunk: IntelligenceTextEffectChunk, effect: PlatformIntelligenceReplacementTextEffect<IntelligenceTextEffectChunk>) async -> (PlatformTextPreview?, remainder: PlatformContentPreview?) {
+    func performReplacementAndGeneratePreview(
+        for chunk: IntelligenceTextEffectChunk,
+        effect: PlatformIntelligenceReplacementTextEffect<IntelligenceTextEffectChunk>
+    ) async -> (PlatformTextPreview?, remainder: PlatformContentPreview?) {
         guard let chunk = chunk as? IntelligenceTextEffectChunk.Replacement else {
             fatalError()
         }
 
         guard let contextRange = self.contextRange else {
-            assertionFailure("Intelligence text effect coordinator: Invariant failed (replacement effect will begin without a context range)")
+            assertionFailure(
+                "Intelligence text effect coordinator: Invariant failed (replacement effect will begin without a context range)"
+            )
             return (nil, nil)
         }
 
@@ -252,8 +283,14 @@ extension WKIntelligenceReplacementTextEffectCoordinator: PlatformIntelligenceTe
         // of the entire context range, with any prior replacement offsets taken into account.
 
         let remainderRangeBeforeReplacement = chunk.range.upperBound..<(contextRange.upperBound + self.processedRangeOffset)
-        let contentPreview = await self.delegate.intelligenceTextEffectCoordinator(self, contentPreviewFor: NSRange(remainderRangeBeforeReplacement))
-        let remainderPreview = PlatformContentPreview(previewImage: contentPreview.previewImage, presentationFrame: contentPreview.presentationFrame)
+        let contentPreview = await self.delegate.intelligenceTextEffectCoordinator(
+            self,
+            contentPreviewFor: NSRange(remainderRangeBeforeReplacement)
+        )
+        let remainderPreview = PlatformContentPreview(
+            previewImage: contentPreview.previewImage,
+            presentationFrame: contentPreview.presentationFrame
+        )
 
         let characterDelta = chunk.characterDelta
 
@@ -276,11 +313,14 @@ extension WKIntelligenceReplacementTextEffectCoordinator: PlatformIntelligenceTe
 
         let previews = await self.delegate.intelligenceTextEffectCoordinator(self, textPreviewsFor: NSRange(chunk.range))
 
-#if canImport(UIKit)
-        let suggestionRects = [NSValue]()
-#else
-        let suggestionRects = await self.delegate.intelligenceTextEffectCoordinator(self, rectsForProofreadingSuggestionsIn: NSRange(chunk.range))
-#endif
+        #if canImport(UIKit)
+        let suggestionRects: [NSValue] = []
+        #else
+        let suggestionRects = await self.delegate.intelligenceTextEffectCoordinator(
+            self,
+            rectsForProofreadingSuggestionsIn: NSRange(chunk.range)
+        )
+        #endif
 
         let platformPreview = platformTextPreview(from: previews, suggestionRects: suggestionRects)
         return (platformPreview, remainder: remainderPreview)
@@ -292,7 +332,9 @@ extension WKIntelligenceReplacementTextEffectCoordinator: PlatformIntelligenceTe
         }
 
         guard let contextRange = self.contextRange else {
-            assertionFailure("Intelligence text effect coordinator: Invariant failed (replacement effect will begin without a context range)")
+            assertionFailure(
+                "Intelligence text effect coordinator: Invariant failed (replacement effect will begin without a context range)"
+            )
             return
         }
 
@@ -306,13 +348,19 @@ extension WKIntelligenceReplacementTextEffectCoordinator: PlatformIntelligenceTe
 
         let rangeToHide = lowerBound..<upperBound
 
-        await self.delegate.intelligenceTextEffectCoordinator(self, updateTextVisibilityFor: NSRange(rangeToHide), visible: false, identifier: effect.chunk.id)
+        await self.delegate.intelligenceTextEffectCoordinator(
+            self,
+            updateTextVisibilityFor: NSRange(rangeToHide),
+            visible: false,
+            identifier: effect.chunk.id
+        )
 
         // Stop the current pondering effect, and then create a new pondering effect once the replacement effect is complete.
         await self.viewManager.setActivePonderingEffect(nil)
     }
 
-    @discardableResult private func flushRemainingReplacementsIfNeeded() async -> Bool {
+    @discardableResult
+    private func flushRemainingReplacementsIfNeeded() async -> Bool {
         guard let onFlushCompletion = self.onFlushCompletion else {
             return false
         }
@@ -335,7 +383,9 @@ extension WKIntelligenceReplacementTextEffectCoordinator: PlatformIntelligenceTe
 
     func replacementEffectDidComplete(_ effect: PlatformIntelligenceReplacementTextEffect<Chunk>) async {
         guard let contextRange = self.contextRange else {
-            assertionFailure("Intelligence text effect coordinator: Invariant failed (replacement effect completed without a context range)")
+            assertionFailure(
+                "Intelligence text effect coordinator: Invariant failed (replacement effect completed without a context range)"
+            )
             return
         }
 
@@ -414,7 +464,7 @@ extension WKIntelligenceReplacementTextEffectCoordinator: PlatformIntelligenceTe
 // MARK: Misc. helper functions
 
 /// Converts a block with a completion handler into an async block.
-fileprivate func async(_ block: @escaping (@escaping () -> Void) -> Void) -> (() async -> Void) {
+private func async(_ block: @MainActor @Sendable @escaping (@MainActor @Sendable @escaping () -> Void) -> Void) -> (() async -> Void) {
     { @MainActor in
         await withCheckedContinuation { continuation in
             block(continuation.resume)
@@ -429,7 +479,16 @@ func platformTextPreview(from source: UITargetedPreview, suggestionRects: [NSVal
 #else
 func platformTextPreview(from source: [_WKTextPreview], suggestionRects: [NSValue] = []) -> PlatformTextPreview {
     source.map {
-        _WTTextPreview(snapshotImage: $0.previewImage, presentationFrame: $0.presentationFrame, backgroundColor: nil, clippingPath: nil, scale: 1, candidateRects: suggestionRects)!
+        // Misannotated WritingToolsUI symbol which never actually returns `nil`.
+        // swift-format-ignore: NeverForceUnwrap
+        _WTTextPreview(
+            snapshotImage: $0.previewImage,
+            presentationFrame: $0.presentationFrame,
+            backgroundColor: nil,
+            clippingPath: nil,
+            scale: 1,
+            candidateRects: suggestionRects
+        )!
     }
 }
 #endif

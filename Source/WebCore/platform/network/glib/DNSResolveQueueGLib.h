@@ -36,6 +36,8 @@
 namespace WebCore {
 
 class DNSResolveQueueGLib final : public DNSResolveQueue {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DNSResolveQueueGLib);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DNSResolveQueueGLib);
 public:
     DNSResolveQueueGLib() = default;
 
@@ -44,7 +46,7 @@ public:
 
 private:
     struct Request {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Request);
 
         Request(uint64_t identifier, DNSCompletionHandler&& completionHandler)
             : identifier(identifier)

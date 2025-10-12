@@ -236,14 +236,6 @@ bool ImageDecoderGStreamer::frameHasAlphaAtIndex(size_t index) const
     return sampleData ? sampleData->hasAlpha() : false;
 }
 
-unsigned ImageDecoderGStreamer::frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
-{
-    if (!frameIsCompleteAtIndex(index))
-        return 0;
-
-    return frameSizeAtIndex(index, subsamplingLevel).area() * 4;
-}
-
 PlatformImagePtr ImageDecoderGStreamer::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)
 {
     Locker locker { m_sampleGeneratorLock };

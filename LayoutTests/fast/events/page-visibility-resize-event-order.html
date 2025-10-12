@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description(`This test checks that resize event fires after visibilitychange event when a frame is resized while the page is hidden.<br>
+To manually test, minimize this window and restore the window. You should see a series of "PASS" below:`);
+
+const iframe = document.createElement('iframe');
+iframe.style = 'width: 100px; height: 100px;';
+iframe.onload = () => {
+    iframe.contentWindow.requestAnimationFrame(() => {
+        setTimeout(startTest, 0);
+    });
+}
+document.body.appendChild(iframe);
+
+var jsTestIsAsync = true;
+
+function setPageVisibility(state) {
+    if (window.testRunner)
+        testRunner.setPageVisibility(state);
+}
+
+function checkIsPageVisible() {
+    shouldBeEqualToString("document.visibilityState", "visible");
+    shouldBeFalse("document.hidden");
+}
+
+function checkIsPageHidden() {
+    shouldBeEqualToString("document.visibilityState", "hidden");
+    shouldBeTrue("document.hidden");
+}
+
+function startTest() {
+    iframe.contentDocument.onvisibilitychange = function () {
+        checkIsPageHidden();
+        iframe.style = 'width: 200px; height: 200px;';
+        iframe.contentDocument.onvisibilitychange = function () {
+            window.didReceiveResizeEvent = false;
+            iframe.contentWindow.addEventListener('resize', () => {
+                window.didReceiveResizeEvent = true;
+            });
+
+            checkIsPageVisible();
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    shouldBeTrue('didReceiveResizeEvent');
+                    if (window.testRunner)
+                        testRunner.resetPageVisibility();
+                    finishJSTest();
+                }, 0);
+            });
+        }
+        setTimeout(() => setPageVisibility("visible"), 20);
+    };
+    checkIsPageVisible();
+    setPageVisibility("hidden");
+}
+
+
+</script>
+</body>
+</html>

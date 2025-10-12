@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "FloatPoint.h"
-#include "FloatSize.h"
-#include "LayoutPoint.h"
-#include "PlatformWheelEvent.h"
-#include "ScrollAnimationMomentum.h"
-#include "ScrollSnapOffsetsInfo.h"
-#include "ScrollTypes.h"
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/LayoutPoint.h>
+#include <WebCore/PlatformWheelEvent.h>
+#include <WebCore/ScrollAnimationMomentum.h>
+#include <WebCore/ScrollSnapOffsetsInfo.h>
+#include <WebCore/ScrollTypes.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -98,10 +98,10 @@ private:
     bool setupAnimationForState(ScrollSnapState, const ScrollExtents&, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
     void teardownAnimationForState(ScrollSnapState);
 
-    bool preserveCurrentTargetForAxis(ScrollEventAxis, ElementIdentifier);
+    bool preserveCurrentTargetForAxis(ScrollEventAxis, NodeIdentifier);
 
     Vector<SnapOffset<LayoutUnit>> currentlySnappedOffsetsForAxis(ScrollEventAxis) const;
-    UncheckedKeyHashSet<ElementIdentifier> currentlySnappedBoxes(const Vector<SnapOffset<LayoutUnit>>& horizontalOffsets, const Vector<SnapOffset<LayoutUnit>>& verticalOffsets) const;
+    HashSet<NodeIdentifier> currentlySnappedBoxes(const Vector<SnapOffset<LayoutUnit>>& horizontalOffsets, const Vector<SnapOffset<LayoutUnit>>& verticalOffsets) const;
 
     bool setNearestScrollSnapIndexForAxisAndOffsetInternal(ScrollEventAxis, ScrollOffset, const ScrollExtents&, float pageScale);
     void updateCurrentlySnappedBoxes();
@@ -122,7 +122,7 @@ private:
     
     std::optional<unsigned> m_activeSnapIndexX;
     std::optional<unsigned> m_activeSnapIndexY;
-    UncheckedKeyHashSet<ElementIdentifier> m_currentlySnappedBoxes;
+    HashSet<NodeIdentifier> m_currentlySnappedBoxes;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ScrollSnapAnimatorState&);

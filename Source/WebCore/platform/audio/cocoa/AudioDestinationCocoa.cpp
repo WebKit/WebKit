@@ -53,7 +53,7 @@ Ref<AudioDestination> AudioDestination::create(const CreationOptions& options)
     if (options.numberOfInputChannels)
         RELEASE_LOG(Media, "AudioDestination::create(%u, %u, %f) - unhandled input channels", options.numberOfInputChannels, options.numberOfOutputChannels, options.sampleRate);
 
-    if (options.numberOfOutputChannels > AudioSession::sharedSession().maximumNumberOfOutputChannels())
+    if (options.numberOfOutputChannels > AudioSession::singleton().maximumNumberOfOutputChannels())
         RELEASE_LOG(Media, "AudioDestination::create(%u, %u, %f) - unhandled output channels", options.numberOfInputChannels, options.numberOfOutputChannels, options.sampleRate);
 
     if (AudioDestinationCocoa::createOverride)
@@ -66,12 +66,12 @@ Ref<AudioDestination> AudioDestination::create(const CreationOptions& options)
 
 float AudioDestination::hardwareSampleRate()
 {
-    return AudioSession::sharedSession().sampleRate();
+    return AudioSession::singleton().sampleRate();
 }
 
 unsigned long AudioDestination::maxChannelCount()
 {
-    return AudioSession::sharedSession().maximumNumberOfOutputChannels();
+    return AudioSession::singleton().maximumNumberOfOutputChannels();
 }
 
 AudioDestinationCocoa::AudioDestinationCocoa(const CreationOptions& options)
@@ -133,7 +133,7 @@ OSStatus AudioDestinationCocoa::render(double sampleTime, uint64_t hostTime, UIn
 
 MediaTime AudioDestinationCocoa::outputLatency() const
 {
-    return MediaTime { static_cast<int64_t>(m_audioOutputUnitAdaptor.outputLatency()), static_cast<uint32_t>(sampleRate()) } + MediaTime { static_cast<int64_t>(AudioSession::protectedSharedSession()->outputLatency()), static_cast<uint32_t>(AudioSession::protectedSharedSession()->sampleRate()) };
+    return MediaTime { static_cast<int64_t>(m_audioOutputUnitAdaptor.outputLatency()), static_cast<uint32_t>(sampleRate()) } + MediaTime { static_cast<int64_t>(AudioSession::singleton().outputLatency()), static_cast<uint32_t>(AudioSession::singleton().sampleRate()) };
 }
 
 #if PLATFORM(IOS_FAMILY)

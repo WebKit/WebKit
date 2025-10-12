@@ -10,28 +10,27 @@
 
 #include "rtc_base/deprecated/recursive_critical_section.h"
 
-#include <stddef.h>
-#include <stdint.h>
-
+#include <atomic>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <set>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
-#include "absl/base/attributes.h"
-#include "rtc_base/arraysize.h"
+#include "api/units/time_delta.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/thread.h"
+#include "rtc_base/thread_annotations.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 
-constexpr webrtc::TimeDelta kLongTime = webrtc::TimeDelta::Seconds(10);
+constexpr TimeDelta kLongTime = TimeDelta::Seconds(10);
 constexpr int kNumThreads = 16;
 constexpr int kOperationsToRun = 1000;
 
@@ -189,7 +188,7 @@ class PerfTestData {
   ~PerfTestData() {}
 
   void AddToCounter(int add) {
-    rtc::CritScope cs(&lock_);
+    CritScope cs(&lock_);
     my_counter_ += add;
     if (my_counter_ == expected_count_)
       event_->Set();
@@ -273,7 +272,7 @@ TEST(RecursiveCriticalSectionTest, DISABLED_Performance) {
   Event event;
 
   static const int kThreadRepeats = 10000000;
-  static const int kExpectedCount = kThreadRepeats * arraysize(threads);
+  static const int kExpectedCount = kThreadRepeats * std::ssize(threads);
   PerfTestData test_data(kExpectedCount, &event);
 
   for (auto& t : threads)
@@ -285,4 +284,4 @@ TEST(RecursiveCriticalSectionTest, DISABLED_Performance) {
     t.Stop();
 }
 
-}  // namespace rtc
+}  // namespace webrtc

@@ -61,6 +61,7 @@ ANGLE_CHROMIUM_DEPS = [
     'third_party/depot_tools',
     'third_party/flatbuffers/src',
     'third_party/fuchsia-sdk/sdk',
+    'third_party/googletest/src',
     'third_party/ijar',
     'third_party/jdk',
     'third_party/jdk/extras',
@@ -82,6 +83,7 @@ ANGLE_CHROMIUM_DEPS = [
     'third_party/qemu-mac-x64',
     'third_party/r8/cipd',
     'third_party/r8/d8/cipd',
+    'third_party/re2/src',
     'third_party/requests/src',
     'third_party/rust',
     'third_party/siso/cipd',
@@ -104,6 +106,7 @@ ANGLE_CHROMIUM_DEPS = [
     'tools/skia_goldctl/mac_arm64',
     'tools/skia_goldctl/win',
     'tools/valgrind',
+    'tools/win',
 ]
 
 ANGLE_URL = 'https://chromium.googlesource.com/angle/angle'

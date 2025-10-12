@@ -1,13 +1,15 @@
-hello
+This test exercises a combination of selectedTextRange, stringForRange, and newline manipulation.
 
-world
-PASS text.selectedTextRange became '{5, 0}'
-There must be only one [newline] between hello and world: hello[newline]world
-PASS text.selectedTextRange became '{6, 0}'
-There must be two [newline] between hello and world: hello[newline][newline]world
-PASS text.selectedTextRange became '{7, 0}'
-The text after the newline should be world: world
+PASS: contenteditable.selectedTextRange === '{5, 0}'
+PASS: contenteditable.stringForRange(0, 11).replace(newlineRegex, '[newline]') === 'hello[newline]world'
+PASS: contenteditable.selectedTextRange === '{6, 0}'
+PASS: contenteditable.stringForRange(0, 12).replace(newlineRegex, '[newline]') === 'hello[newline][newline]world'
+PASS: contenteditable.selectedTextRange === '{7, 0}'
+PASS: contenteditable.stringForRange(7, 5) === 'world'
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
+hello
 
+world

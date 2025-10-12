@@ -30,8 +30,6 @@
 #include <span>
 #include <wtf/NeverDestroyed.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 template<typename KeyType, typename ValueType>
@@ -44,7 +42,7 @@ struct TinyLRUCachePolicy {
 
 template<typename KeyType, typename ValueType, size_t capacity = 4, typename Policy = TinyLRUCachePolicy<KeyType, ValueType>>
 class TinyLRUCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TinyLRUCache);
 public:
     const ValueType& get(const KeyType& key)
     {
@@ -91,5 +89,3 @@ private:
 
 using WTF::TinyLRUCache;
 using WTF::TinyLRUCachePolicy;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

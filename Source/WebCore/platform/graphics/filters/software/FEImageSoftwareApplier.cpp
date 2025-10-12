@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@ bool FEImageSoftwareApplier::apply(const Filter& filter, std::span<const Ref<Fil
     auto primitiveSubregion = result.primitiveSubregion();
     auto& context = resultImage->context();
 
-    if (RefPtr nativeImage = sourceImage.nativeImageIfExists()) {
+    if (auto nativeImage = sourceImage.nativeImageIfExists()) {
         auto imageRect = primitiveSubregion;
         auto srcRect = m_effect->sourceImageRect();
         m_effect->preserveAspectRatio().transformRect(imageRect, srcRect);
@@ -56,7 +56,7 @@ bool FEImageSoftwareApplier::apply(const Filter& filter, std::span<const Ref<Fil
         return true;
     }
 
-    if (RefPtr imageBuffer = sourceImage.imageBufferIfExists()) {
+    if (auto imageBuffer = sourceImage.imageBufferIfExists()) {
         auto imageRect = primitiveSubregion;
         imageRect.moveBy(m_effect->sourceImageRect().location());
         imageRect.scale(filter.filterScale());

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,6 +108,7 @@ static Vector<int32_t> int32Operands()
         42,
         -42,
         64,
+        static_cast<int32_t>(0x80000000U),
         std::numeric_limits<int32_t>::max(),
         std::numeric_limits<int32_t>::min(),
     };
@@ -155,6 +156,7 @@ static Vector<int64_t> int64Operands()
         42,
         -42,
         64,
+        static_cast<int64_t>(0x8000000000000000ULL),
         std::numeric_limits<int32_t>::max(),
         std::numeric_limits<int32_t>::min(),
         std::numeric_limits<int64_t>::max(),
@@ -376,6 +378,128 @@ void testBranchTruncateDoubleToInt32(double val, int32_t expected)
         jit.ret();
     }), expected);
 }
+
+static void testBranch32()
+{
+    auto compare = [](CCallHelpers::RelationalCondition cond, int32_t v1, int32_t v2) -> int {
+        switch (cond) {
+        case CCallHelpers::LessThan:
+            return !!(static_cast<int32_t>(v1) < static_cast<int32_t>(v2));
+        case CCallHelpers::LessThanOrEqual:
+            return !!(static_cast<int32_t>(v1) <= static_cast<int32_t>(v2));
+        case CCallHelpers::GreaterThan:
+            return !!(static_cast<int32_t>(v1) > static_cast<int32_t>(v2));
+        case CCallHelpers::GreaterThanOrEqual:
+            return !!(static_cast<int32_t>(v1) >= static_cast<int32_t>(v2));
+        case CCallHelpers::Below:
+            return !!(static_cast<uint32_t>(v1) < static_cast<uint32_t>(v2));
+        case CCallHelpers::BelowOrEqual:
+            return !!(static_cast<uint32_t>(v1) <= static_cast<uint32_t>(v2));
+        case CCallHelpers::Above:
+            return !!(static_cast<uint32_t>(v1) > static_cast<uint32_t>(v2));
+        case CCallHelpers::AboveOrEqual:
+            return !!(static_cast<uint32_t>(v1) >= static_cast<uint32_t>(v2));
+        case CCallHelpers::Equal:
+            return !!(static_cast<uint32_t>(v1) == static_cast<uint32_t>(v2));
+        case CCallHelpers::NotEqual:
+            return !!(static_cast<uint32_t>(v1) != static_cast<uint32_t>(v2));
+        }
+        return 0;
+    };
+
+    for (auto value : int32Operands()) {
+        for (auto value2 : int32Operands()) {
+            auto tryTest = [&](CCallHelpers::RelationalCondition cond) {
+                auto test = compile([=](CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    auto branch = jit.branch32(cond, GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(value2));
+                    jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+                    auto done = jit.jump();
+                    branch.link(&jit);
+                    jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+                    done.link(&jit);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+                CHECK_EQ(invoke<int>(test, value), compare(cond, value, value2));
+            };
+            tryTest(CCallHelpers::LessThan);
+            tryTest(CCallHelpers::LessThanOrEqual);
+            tryTest(CCallHelpers::GreaterThan);
+            tryTest(CCallHelpers::GreaterThanOrEqual);
+            tryTest(CCallHelpers::Below);
+            tryTest(CCallHelpers::BelowOrEqual);
+            tryTest(CCallHelpers::Above);
+            tryTest(CCallHelpers::AboveOrEqual);
+            tryTest(CCallHelpers::Equal);
+            tryTest(CCallHelpers::NotEqual);
+        }
+    }
+}
+
+#if CPU(X86_64) || CPU(ARM64)
+static void testBranch64()
+{
+    auto compare = [](CCallHelpers::RelationalCondition cond, int64_t v1, int64_t v2) -> int {
+        switch (cond) {
+        case CCallHelpers::LessThan:
+            return !!(static_cast<int64_t>(v1) < static_cast<int64_t>(v2));
+        case CCallHelpers::LessThanOrEqual:
+            return !!(static_cast<int64_t>(v1) <= static_cast<int64_t>(v2));
+        case CCallHelpers::GreaterThan:
+            return !!(static_cast<int64_t>(v1) > static_cast<int64_t>(v2));
+        case CCallHelpers::GreaterThanOrEqual:
+            return !!(static_cast<int64_t>(v1) >= static_cast<int64_t>(v2));
+        case CCallHelpers::Below:
+            return !!(static_cast<uint64_t>(v1) < static_cast<uint64_t>(v2));
+        case CCallHelpers::BelowOrEqual:
+            return !!(static_cast<uint64_t>(v1) <= static_cast<uint64_t>(v2));
+        case CCallHelpers::Above:
+            return !!(static_cast<uint64_t>(v1) > static_cast<uint64_t>(v2));
+        case CCallHelpers::AboveOrEqual:
+            return !!(static_cast<uint64_t>(v1) >= static_cast<uint64_t>(v2));
+        case CCallHelpers::Equal:
+            return !!(static_cast<uint64_t>(v1) == static_cast<uint64_t>(v2));
+        case CCallHelpers::NotEqual:
+            return !!(static_cast<uint64_t>(v1) != static_cast<uint64_t>(v2));
+        }
+        return 0;
+    };
+
+    for (auto value : int64Operands()) {
+        for (auto value2 : int64Operands()) {
+            auto tryTest = [&](CCallHelpers::RelationalCondition cond) {
+                auto test = compile([=](CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    auto branch = jit.branch64(cond, GPRInfo::argumentGPR0, CCallHelpers::TrustedImm64(value2));
+                    jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+                    auto done = jit.jump();
+                    branch.link(&jit);
+                    jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+                    done.link(&jit);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+                CHECK_EQ(invoke<int>(test, value), compare(cond, value, value2));
+            };
+            tryTest(CCallHelpers::LessThan);
+            tryTest(CCallHelpers::LessThanOrEqual);
+            tryTest(CCallHelpers::GreaterThan);
+            tryTest(CCallHelpers::GreaterThanOrEqual);
+            tryTest(CCallHelpers::Below);
+            tryTest(CCallHelpers::BelowOrEqual);
+            tryTest(CCallHelpers::Above);
+            tryTest(CCallHelpers::AboveOrEqual);
+            tryTest(CCallHelpers::Equal);
+            tryTest(CCallHelpers::NotEqual);
+        }
+    }
+}
+#endif
 
 void testBranchTest8()
 {
@@ -6027,6 +6151,61 @@ static void testBranchConvertDoubleToInt52()
 }
 #endif
 
+#if CPU(X86_64)
+#define CHECK_CODE_WAS_EMITTED(_jit, _emitter) do {                      \
+        size_t _beforeCodeSize = _jit.m_assembler.buffer().codeSize();   \
+        _emitter;                                                        \
+        size_t _afterCodeSize = _jit.m_assembler.buffer().codeSize();    \
+        if (_afterCodeSize > _beforeCodeSize)                            \
+            break;                                                       \
+        crashLock.lock();                                                \
+        dataLog("FAILED while testing " #_emitter ": expected it to emit code\n"); \
+        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, "CHECK_CODE_WAS_EMITTED("#_jit ", " #_emitter ")"); \
+        CRASH();                                                         \
+    } while (false)
+
+static void testAtomicAndEmitsCode()
+{
+    // On x86, atomic (seqcst) RMW operations must emit a seqcst store (so a
+    // LOCK-prefixed store or a fence or something).
+    //
+    // This tests that the optimization to elide and'ing -1 must not be
+    // applied when the and is atomic.
+
+    auto test32 = compile([] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        GPRReg scratch = GPRInfo::argumentGPR2;
+        jit.move(CCallHelpers::TrustedImm32(0), scratch);
+        CHECK_CODE_WAS_EMITTED(jit, jit.atomicAnd32(CCallHelpers::TrustedImm32(-1), CCallHelpers::Address(GPRInfo::argumentGPR0)));
+        CHECK_CODE_WAS_EMITTED(jit, jit.atomicAnd32(CCallHelpers::TrustedImm32(-1), CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, scratch, CCallHelpers::TimesEight, 0)));
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    auto test64 = compile([] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        GPRReg scratch = GPRInfo::argumentGPR2;
+        jit.move(CCallHelpers::TrustedImm32(0), scratch);
+        CHECK_CODE_WAS_EMITTED(jit, jit.atomicAnd64(CCallHelpers::TrustedImm32(-1), CCallHelpers::Address(GPRInfo::argumentGPR0)));
+        CHECK_CODE_WAS_EMITTED(jit, jit.atomicAnd64(CCallHelpers::TrustedImm32(-1), CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, scratch, CCallHelpers::TimesEight, 0)));
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    uint64_t value = 42;
+
+    invoke<void>(test32, &value);
+    CHECK_EQ(value, 42);
+
+    invoke<void>(test64, &value);
+    CHECK_EQ(value, 42);
+}
+#endif
+
 static void testGPRInfoConsistency()
 {
     for (unsigned index = 0; index < GPRInfo::numberOfRegisters; ++index) {
@@ -6061,7 +6240,9 @@ static void testGPRInfoConsistency()
 // Using WTF_IGNORES_THREAD_SAFETY_ANALYSIS because the function is still holding crashLock when exiting.
 void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
-    JSC::initialize();
+    JSC::initialize([] {
+        JSC::Options::useJITCage() = false;
+    });
     unsigned numberOfTests = 0;
 
     Deque<RefPtr<SharedTask<void()>>> tasks;
@@ -6111,6 +6292,8 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testLoadStorePair32());
     RUN(testSub32ArgImm());
 
+    RUN(testBranch32());
+
     RUN(testBranchTest8());
     RUN(testBranchTest16());
 
@@ -6124,6 +6307,7 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 #endif
 
 #if CPU(X86_64) || CPU(ARM64)
+    RUN(testBranch64());
     RUN(testClearBit64());
     RUN(testClearBits64WithMask());
     RUN(testClearBits64WithMaskTernary());
@@ -6288,6 +6472,10 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testBranchIfNotType());
 #if CPU(X86_64) || CPU(ARM64)
     RUN(testBranchConvertDoubleToInt52());
+#endif
+
+#if CPU(X86_64)
+    RUN(testAtomicAndEmitsCode());
 #endif
 
     RUN(testOrImmMem());

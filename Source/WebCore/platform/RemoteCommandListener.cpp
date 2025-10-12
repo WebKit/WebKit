@@ -81,7 +81,7 @@ RemoteCommandListener::~RemoteCommandListener() = default;
 void RemoteCommandListener::scheduleSupportedCommandsUpdate()
 {
     if (!m_updateCommandsTask.isPending()) {
-        m_updateCommandsTask.scheduleTask([this] ()  {
+        m_updateCommandsTask.scheduleTask([this, protectedThis = Ref { *this }] ()  {
             updateSupportedCommands();
         });
     }

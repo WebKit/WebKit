@@ -261,11 +261,11 @@ class Port(object):
 
         return paths
 
-    def sharding_groups(self):
+    def sharding_groups(self, suite=None):
         return {}
 
-    def group_for_shard(self, shard):
-        for group, filter_fn in self.sharding_groups().items():
+    def group_for_shard(self, shard, suite=None):
+        for group, filter_fn in self.sharding_groups(suite=suite).items():
             if filter_fn(shard):
                 return group
         return None
@@ -1238,8 +1238,11 @@ class Port(object):
 
     API_TEST_BINARY_NAMES = ['TestWTF', 'TestWebKitAPI']
 
+    def path_to_api_test(self, program_name):
+        return self._build_path(program_name)
+
     def path_to_api_test_binaries(self):
-        return {binary: self._build_path(binary) for binary in self.API_TEST_BINARY_NAMES}
+        return {binary: self.path_to_api_test(binary) for binary in self.API_TEST_BINARY_NAMES}
 
     def _webkit_baseline_path(self, platform):
         """Return the  full path to the top of the baseline tree for a

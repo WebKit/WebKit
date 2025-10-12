@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "Element.h"
-#include "NodeTraversal.h"
+#include <WebCore/Element.h>
+#include <WebCore/NodeTraversal.h>
 
 namespace WebCore {
 

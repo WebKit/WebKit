@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Frame.h"
-#include "LayerHostingContextIdentifier.h"
+#include <WebCore/Frame.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/UniqueRef.h>
@@ -81,6 +81,8 @@ public:
     AutoplayPolicy autoplayPolicy() const final;
 
     void updateScrollingMode() final;
+    void reportMixedContentViolation(bool blocked, const URL& target) const final;
+    const SecurityOrigin& frameDocumentSecurityOriginOrOpaque() const;
 
 private:
     WEBCORE_EXPORT explicit RemoteFrame(Page&, ClientCreator&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent, Markable<LayerHostingContextIdentifier>, Frame* opener, Ref<FrameTreeSyncData>&&, AddToFrameTree = AddToFrameTree::Yes);
@@ -88,10 +90,12 @@ private:
     void frameDetached() final;
     bool preventsParentFromBeingComplete() const final;
     void changeLocation(FrameLoadRequest&&) final;
+    void loadFrameRequest(FrameLoadRequest&&, Event*) final;
     void didFinishLoadInAnotherProcess() final;
     bool isRootFrame() const final { return false; }
     void documentURLForConsoleLog(CompletionHandler<void(const URL&)>&&) final;
     RefPtr<SecurityOrigin> frameDocumentSecurityOrigin() const final;
+    String frameURLProtocol() const final;
 
     FrameView* virtualView() const final;
     void disconnectView() final;
@@ -99,9 +103,9 @@ private:
     FrameLoaderClient& loaderClient() final;
     void reinitializeDocumentSecurityContext() final { }
 
-    Ref<RemoteDOMWindow> m_window;
+    const Ref<RemoteDOMWindow> m_window;
     RefPtr<RemoteFrameView> m_view;
-    UniqueRef<RemoteFrameClient> m_client;
+    const UniqueRef<RemoteFrameClient> m_client;
     Markable<LayerHostingContextIdentifier> m_layerHostingContextIdentifier;
     String m_customUserAgent;
     String m_customUserAgentAsSiteSpecificQuirks;

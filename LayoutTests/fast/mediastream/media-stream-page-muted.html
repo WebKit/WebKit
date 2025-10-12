@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
 <html>
 <head>
     <title>mediastream page muted</title>
@@ -194,6 +194,7 @@
             }
 
             finishJSTest();
+            cameraStream.getTracks().forEach(track => track.stop());
         })()
 
     </script>

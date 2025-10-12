@@ -11,6 +11,7 @@
 #include "modules/desktop_capture/win/d3d_device.h"
 
 #include <utility>
+#include <vector>
 
 #include "modules/desktop_capture/win/desktop_capture_utils.h"
 #include "rtc_base/logging.h"

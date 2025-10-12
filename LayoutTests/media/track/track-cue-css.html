@@ -12,21 +12,24 @@
             setTimeout(endTest, 100);
         }
         
-        function loaded()
-        {
-            consoleWrite("Test that CSS in VTT file is applied correctly.");
-            findMediaElement();
-            video.src = findMediaFile('video', '../content/test');
-            waitForEvent('seeked', seeked);
-            waitForEvent('canplaythrough', function() { video.currentTime = 0; });
-        }
-
         setCaptionDisplayMode('Automatic');
         </script>
     </head>
-    <body onload="loaded()">
-        <video controls >
-            <track src="captions-webvtt/css-styling.vtt" kind="captions" default>
+    <body>
+        <video controls>
+            <track id="testTrack" src="captions-webvtt/css-styling.vtt" kind="captions" default>
         </video>
+        <script>
+            function onTrackLoad() {
+                consoleWrite("Test that CSS in VTT file is applied correctly.");
+                parent.postMessage("webvttParsed");
+                findMediaElement();
+                video.src = findMediaFile('video', '../content/test');
+                waitForEvent('seeked', seeked);
+                waitForEvent('canplaythrough', function() { video.currentTime = 0; });
+            }
+
+            document.getElementById('testTrack').addEventListener('load', onTrackLoad);
+        </script>
     </body>
 </html>

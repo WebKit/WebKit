@@ -11,13 +11,11 @@
 #ifndef VIDEO_ADAPTATION_VIDEO_STREAM_ENCODER_RESOURCE_MANAGER_H_
 #define VIDEO_ADAPTATION_VIDEO_STREAM_ENCODER_RESOURCE_MANAGER_H_
 
-#include <atomic>
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <optional>
 #include <string>
-#include <unordered_map>
-#include <utility>
 #include <vector>
 
 #include "api/adaptation/resource.h"
@@ -25,19 +23,22 @@
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
 #include "api/task_queue/task_queue_base.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
 #include "api/video/video_adaptation_counters.h"
 #include "api/video/video_adaptation_reason.h"
+#include "api/video/video_codec_type.h"
 #include "api/video/video_frame.h"
-#include "api/video/video_source_interface.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
+#include "call/adaptation/adaptation_constraint.h"
+#include "call/adaptation/degradation_preference_provider.h"
+#include "call/adaptation/encoder_settings.h"
 #include "call/adaptation/resource_adaptation_processor_interface.h"
+#include "call/adaptation/video_source_restrictions.h"
 #include "call/adaptation/video_stream_adapter.h"
 #include "call/adaptation/video_stream_input_state_provider.h"
-#include "rtc_base/experiments/quality_scaler_settings.h"
-#include "rtc_base/ref_count.h"
-#include "rtc_base/strings/string_builder.h"
-#include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/experiments/balanced_degradation_settings.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
 #include "video/adaptation/balanced_constraint.h"
@@ -47,7 +48,6 @@
 #include "video/adaptation/overuse_frame_detector.h"
 #include "video/adaptation/pixel_limit_resource.h"
 #include "video/adaptation/quality_scaler_resource.h"
-#include "video/adaptation/video_stream_encoder_resource.h"
 #include "video/config/video_encoder_config.h"
 #include "video/video_stream_encoder_observer.h"
 
@@ -125,9 +125,9 @@ class VideoStreamEncoderResourceManager
 
   // Resources need to be mapped to an AdaptReason (kCpu or kQuality) in order
   // to update legacy getStats().
-  void AddResource(rtc::scoped_refptr<Resource> resource,
+  void AddResource(scoped_refptr<Resource> resource,
                    VideoAdaptationReason reason);
-  void RemoveResource(rtc::scoped_refptr<Resource> resource);
+  void RemoveResource(scoped_refptr<Resource> resource);
   std::vector<AdaptationConstraint*> AdaptationConstraints() const;
   // If true, the VideoStreamEncoder should execute its logic to maybe drop
   // frames based on size and bitrate.
@@ -140,11 +140,11 @@ class VideoStreamEncoderResourceManager
   void OnVideoSourceRestrictionsUpdated(
       VideoSourceRestrictions restrictions,
       const VideoAdaptationCounters& adaptation_counters,
-      rtc::scoped_refptr<Resource> reason,
+      scoped_refptr<Resource> reason,
       const VideoSourceRestrictions& unfiltered_restrictions) override;
   void OnResourceLimitationChanged(
-      rtc::scoped_refptr<Resource> resource,
-      const std::map<rtc::scoped_refptr<Resource>, VideoAdaptationCounters>&
+      scoped_refptr<Resource> resource,
+      const std::map<scoped_refptr<Resource>, VideoAdaptationCounters>&
           resource_limitations) override;
 
   static bool IsSimulcastOrMultipleSpatialLayers(
@@ -155,7 +155,7 @@ class VideoStreamEncoderResourceManager
   class InitialFrameDropper;
 
   VideoAdaptationReason GetReasonFromResource(
-      rtc::scoped_refptr<Resource> resource) const;
+      scoped_refptr<Resource> resource) const;
 
   CpuOveruseOptions GetCpuOveruseOptions() const;
   int LastFrameSizeOrDefault() const;
@@ -171,7 +171,8 @@ class VideoStreamEncoderResourceManager
   void UpdateBandwidthQualityScalerSettings(
       bool bandwidth_quality_scaling_allowed,
       const std::vector<VideoEncoder::ResolutionBitrateLimits>&
-          resolution_bitrate_limits);
+          resolution_bitrate_limits,
+      VideoCodecType codec_type);
 
   void UpdateStatsAdaptationSettings() const;
 
@@ -185,10 +186,10 @@ class VideoStreamEncoderResourceManager
       RTC_GUARDED_BY(encoder_queue_);
   const std::unique_ptr<BalancedConstraint> balanced_constraint_
       RTC_GUARDED_BY(encoder_queue_);
-  const rtc::scoped_refptr<EncodeUsageResource> encode_usage_resource_;
-  const rtc::scoped_refptr<QualityScalerResource> quality_scaler_resource_;
-  rtc::scoped_refptr<PixelLimitResource> pixel_limit_resource_;
-  const rtc::scoped_refptr<BandwidthQualityScalerResource>
+  const scoped_refptr<EncodeUsageResource> encode_usage_resource_;
+  const scoped_refptr<QualityScalerResource> quality_scaler_resource_;
+  scoped_refptr<PixelLimitResource> pixel_limit_resource_;
+  const scoped_refptr<BandwidthQualityScalerResource>
       bandwidth_quality_scaler_resource_;
 
   TaskQueueBase* encoder_queue_;
@@ -223,7 +224,7 @@ class VideoStreamEncoderResourceManager
 
   // Ties a resource to a reason for statistical reporting. This AdaptReason is
   // also used by this module to make decisions about how to adapt up/down.
-  std::map<rtc::scoped_refptr<Resource>, VideoAdaptationReason> resources_
+  std::map<scoped_refptr<Resource>, VideoAdaptationReason> resources_
       RTC_GUARDED_BY(encoder_queue_);
 };
 

@@ -27,10 +27,10 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "ArityCheckMode.h"
-#include "MacroAssemblerCodeRef.h"
-#include "WasmCallee.h"
-#include "WebAssemblyFunctionBase.h"
+#include <JavaScriptCore/ArityCheckMode.h>
+#include <JavaScriptCore/MacroAssemblerCodeRef.h>
+#include <JavaScriptCore/WasmCallee.h>
+#include <JavaScriptCore/WebAssemblyFunctionBase.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
@@ -40,6 +40,8 @@ struct ProtoCallFrame;
 class WebAssemblyInstance;
 
 class WebAssemblyFunction final : public WebAssemblyFunctionBase {
+    friend JSC::LLIntOffsetsExtractor;
+
 public:
     using Base = WebAssemblyFunctionBase;
 
@@ -56,21 +58,26 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, Structure*, unsigned, const String&, JSWebAssemblyInstance*, Wasm::JSEntrypointCallee& jsEntrypoint, Wasm::Callee& wasmCallee, WasmToWasmImportableFunction::LoadLocation, Wasm::TypeIndex, RefPtr<const Wasm::RTT>&&);
+    DECLARE_VISIT_CHILDREN;
+
+    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, Structure*, unsigned, const String&, JSWebAssemblyInstance*, Wasm::JSToWasmCallee&, Wasm::IPIntCallee&, WasmToWasmImportableFunction::LoadLocation, Wasm::TypeIndex, Ref<const Wasm::RTT>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    Wasm::JSEntrypointCallee* jsToWasmCallee() const { return m_boxedJSToWasmCallee.ptr(); }
-    CodePtr<WasmEntryPtrTag> jsEntrypoint(ArityCheckMode arity)
+    Wasm::JSToWasmCallee* jsToWasmCallee() const { return m_boxedJSToWasmCallee.ptr(); }
+    CodePtr<WasmEntryPtrTag> jsToWasm(ArityCheckMode arity)
     {
-        ASSERT_UNUSED(arity, arity == ArityCheckNotRequired || arity == MustCheckArity);
+        ASSERT_UNUSED(arity, arity == ArityCheckMode::ArityCheckNotRequired || arity == ArityCheckMode::MustCheckArity);
         return m_boxedJSToWasmCallee->entrypoint();
     }
 
     CodePtr<JSEntryPtrTag> jsCallICEntrypoint()
     {
 #if ENABLE(JIT)
+        if (m_taintedness >= SourceTaintedOrigin::IndirectlyTainted)
+            return nullptr;
+
         // Prep the entrypoint for the slow path.
-        executable()->entrypointFor(CodeForCall, MustCheckArity);
+        executable()->entrypointFor(CodeSpecializationKind::CodeForCall, ArityCheckMode::MustCheckArity);
         if (!m_jsToWasmICJITCode)
             m_jsToWasmICJITCode = signature().jsToWasmICEntrypoint();
         return m_jsToWasmICJITCode;
@@ -79,22 +86,21 @@ public:
 #endif
     }
 
-    static constexpr ptrdiff_t offsetOfBoxedWasmCallee() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_boxedWasmCallee); }
+    SourceTaintedOrigin taintedness() const { return m_taintedness; }
+
     static constexpr ptrdiff_t offsetOfBoxedJSToWasmCallee() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_boxedJSToWasmCallee); }
     static constexpr ptrdiff_t offsetOfFrameSize() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_frameSize); }
 
 private:
-    DECLARE_VISIT_CHILDREN;
-    WebAssemblyFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSWebAssemblyInstance*, Wasm::JSEntrypointCallee& jsEntrypoint, Wasm::Callee& wasmCallee, WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation, Wasm::TypeIndex, RefPtr<const Wasm::RTT>&&);
+    WebAssemblyFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSWebAssemblyInstance*, Wasm::JSToWasmCallee&, Wasm::IPIntCallee&, WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation, Wasm::TypeIndex, Ref<const Wasm::RTT>&&);
 
     CodePtr<JSEntryPtrTag> jsCallEntrypointSlow();
 
-    // This is the callee needed by LLInt/IPInt
-    // FIXME: Make this a Wasm::IPIntCallee once wasm LLInt goes away.
-    Ref<Wasm::Callee, BoxedNativeCalleePtrTraits<Wasm::Callee>> m_boxedWasmCallee;
     // This let's the JS->Wasm interpreter find its metadata
-    Ref<Wasm::JSEntrypointCallee, BoxedNativeCalleePtrTraits<Wasm::JSEntrypointCallee>> m_boxedJSToWasmCallee;
+    Ref<Wasm::JSToWasmCallee, BoxedNativeCalleePtrTraits<Wasm::JSToWasmCallee>> m_boxedJSToWasmCallee;
     uint32_t m_frameSize;
+    SourceTaintedOrigin m_taintedness;
+
 #if ENABLE(JIT)
     CodePtr<JSEntryPtrTag> m_jsToWasmICJITCode;
 #endif

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Fullscreen request aborted by a request to exit fullscreen.
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Fullscreen request aborted by a fullscreen request for another element.
 Enter fullscreen with target1
 RUN(target1.requestFullscreen())
 EVENT(fullscreenchange)

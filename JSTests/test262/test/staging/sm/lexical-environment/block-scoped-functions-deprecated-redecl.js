@@ -2,13 +2,13 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
 flags:
   - noStrict
 description: |
   pending
 esid: pending
 ---*/
+
 {
   assert.sameValue(f(), 4);
   function f() { return 3; }
@@ -47,41 +47,27 @@ function test() {
 
 test();
 
-var log = '';
-
-try {
-  // Strict mode still cannot redeclare.
+// Strict mode still cannot redeclare.
+assert.throws(SyntaxError, function() {
   eval(`"use strict";
   {
     function f() { }
     function f() { }
   }`);
-} catch (e) {
-  assert.sameValue(e instanceof SyntaxError, true);
-  log += 'e';
-}
+});
 
-try {
-  // Redeclaring an explicitly 'let'-declared binding doesn't work.
+// Redeclaring an explicitly 'let'-declared binding doesn't work.
+assert.throws(SyntaxError, function() {
   eval(`{
     let x = 42;
     function x() {}
   }`);
-} catch (e) {
-  assert.sameValue(e instanceof SyntaxError, true);
-  log += 'e';
-}
+});
 
-try {
-  // Redeclaring an explicitly 'const'-declared binding doesn't work.
+// Redeclaring an explicitly 'const'-declared binding doesn't work.
+assert.throws(SyntaxError, function() {
   eval(`{
     const x = 42;
     function x() {}
   }`);
-} catch (e) {
-  assert.sameValue(e instanceof SyntaxError, true);
-  log += 'e';
-}
-
-assert.sameValue(log, 'eee');
-
+});

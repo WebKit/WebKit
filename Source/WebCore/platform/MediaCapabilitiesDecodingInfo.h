@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "MediaCapabilitiesInfo.h"
-#include "MediaDecodingConfiguration.h"
+#include <WebCore/MediaCapabilitiesInfo.h>
+#include <WebCore/MediaDecodingConfiguration.h>
 
 namespace WebCore {
 

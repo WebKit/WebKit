@@ -1,6 +1,5 @@
-Blocked access to external URL http://www1.localhost:8800/content-security-policy/reporting/support/not-embeddable-frame.py?reportID=GENERATED_REPORT_ID&reportUriBase=http%3A%2F%2Flocalhost%3A8800
 
 
-FAIL Violation report status OK. undefined is not an object (evaluating 'data[0]["body"]')
-PASS Test report cookies.
+PASS Violation report status OK.
+FAIL Test report cookies. assert_equals: Report should not contain any cookies expected (string) "None" but got (object) object "[object Object]"
 

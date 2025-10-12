@@ -438,6 +438,11 @@ INSTANTIATE_TEST_SUITE_P(NEON_I8MM, AV1ConvolveXTest,
                          BuildLowbdParams(av1_convolve_x_sr_neon_i8mm));
 #endif
 
+#if HAVE_RVV
+INSTANTIATE_TEST_SUITE_P(RVV, AV1ConvolveXTest,
+                         BuildLowbdParams(av1_convolve_x_sr_rvv));
+#endif
+
 ////////////////////////////////////////////////////////////////
 // Single reference convolve-x IntraBC functions (low bit-depth)
 ////////////////////////////////////////////////////////////////
@@ -519,6 +524,11 @@ INSTANTIATE_TEST_SUITE_P(C, AV1ConvolveXIntraBCTest,
 #if HAVE_NEON
 INSTANTIATE_TEST_SUITE_P(NEON, AV1ConvolveXIntraBCTest,
                          BuildLowbdParams(av1_convolve_x_sr_intrabc_neon));
+#endif
+
+#if HAVE_RVV
+INSTANTIATE_TEST_SUITE_P(RVV, AV1ConvolveXIntraBCTest,
+                         BuildLowbdParams(av1_convolve_x_sr_intrabc_rvv));
 #endif
 
 #if CONFIG_AV1_HIGHBITDEPTH
@@ -640,6 +650,11 @@ INSTANTIATE_TEST_SUITE_P(SVE2, AV1ConvolveXHighbdTest,
                          BuildHighbdParams(av1_highbd_convolve_x_sr_sve2));
 #endif
 
+#if HAVE_RVV
+INSTANTIATE_TEST_SUITE_P(RVV, AV1ConvolveXHighbdTest,
+                         BuildHighbdParams(av1_highbd_convolve_x_sr_rvv));
+#endif
+
 /////////////////////////////////////////////////////////////////
 // Single reference convolve-x IntraBC functions (high bit-depth)
 /////////////////////////////////////////////////////////////////
@@ -726,6 +741,12 @@ INSTANTIATE_TEST_SUITE_P(C, AV1ConvolveXHighbdIntraBCTest,
 INSTANTIATE_TEST_SUITE_P(
     NEON, AV1ConvolveXHighbdIntraBCTest,
     BuildHighbdParams(av1_highbd_convolve_x_sr_intrabc_neon));
+#endif
+
+#if HAVE_RVV
+INSTANTIATE_TEST_SUITE_P(
+    RVV, AV1ConvolveXHighbdIntraBCTest,
+    BuildHighbdParams(av1_highbd_convolve_x_sr_intrabc_rvv));
 #endif
 
 #endif  // CONFIG_AV1_HIGHBITDEPTH
@@ -842,6 +863,11 @@ INSTANTIATE_TEST_SUITE_P(NEON_I8MM, AV1ConvolveYTest,
                          BuildLowbdParams(av1_convolve_y_sr_neon_i8mm));
 #endif
 
+#if HAVE_RVV
+INSTANTIATE_TEST_SUITE_P(RVV, AV1ConvolveYTest,
+                         BuildLowbdParams(av1_convolve_y_sr_rvv));
+#endif
+
 ////////////////////////////////////////////////////////////////
 // Single reference convolve-y IntraBC functions (low bit-depth)
 ////////////////////////////////////////////////////////////////
@@ -914,6 +940,11 @@ INSTANTIATE_TEST_SUITE_P(C, AV1ConvolveYIntraBCTest,
 #if HAVE_NEON
 INSTANTIATE_TEST_SUITE_P(NEON, AV1ConvolveYIntraBCTest,
                          BuildLowbdParams(av1_convolve_y_sr_intrabc_neon));
+#endif
+
+#if HAVE_RVV
+INSTANTIATE_TEST_SUITE_P(RVV, AV1ConvolveYIntraBCTest,
+                         BuildLowbdParams(av1_convolve_y_sr_intrabc_rvv));
 #endif
 
 #if CONFIG_AV1_HIGHBITDEPTH
@@ -1024,6 +1055,11 @@ INSTANTIATE_TEST_SUITE_P(SVE2, AV1ConvolveYHighbdTest,
                          BuildHighbdParams(av1_highbd_convolve_y_sr_sve2));
 #endif
 
+#if HAVE_RVV
+INSTANTIATE_TEST_SUITE_P(RVV, AV1ConvolveYHighbdTest,
+                         BuildHighbdParams(av1_highbd_convolve_y_sr_rvv));
+#endif
+
 /////////////////////////////////////////////////////////////////
 // Single reference convolve-y IntraBC functions (high bit-depth)
 /////////////////////////////////////////////////////////////////
@@ -1102,6 +1138,12 @@ INSTANTIATE_TEST_SUITE_P(C, AV1ConvolveYHighbdIntraBCTest,
 INSTANTIATE_TEST_SUITE_P(
     NEON, AV1ConvolveYHighbdIntraBCTest,
     BuildHighbdParams(av1_highbd_convolve_y_sr_intrabc_neon));
+#endif
+
+#if HAVE_RVV
+INSTANTIATE_TEST_SUITE_P(
+    RVV, AV1ConvolveYHighbdIntraBCTest,
+    BuildHighbdParams(av1_highbd_convolve_y_sr_intrabc_rvv));
 #endif
 
 #endif  // CONFIG_AV1_HIGHBITDEPTH
@@ -1338,6 +1380,11 @@ INSTANTIATE_TEST_SUITE_P(SVE2, AV1Convolve2DTest,
                          BuildLowbdParams(av1_convolve_2d_sr_sve2));
 #endif
 
+#if HAVE_RVV
+INSTANTIATE_TEST_SUITE_P(RVV, AV1Convolve2DTest,
+                         BuildLowbdParams(av1_convolve_2d_sr_rvv));
+#endif
+
 /////////////////////////////////////////////////////////////////
 // Single reference convolve-2D IntraBC functions (low bit-depth)
 /////////////////////////////////////////////////////////////////
@@ -1424,6 +1471,11 @@ INSTANTIATE_TEST_SUITE_P(C, AV1Convolve2DIntraBCTest,
 #if HAVE_NEON
 INSTANTIATE_TEST_SUITE_P(NEON, AV1Convolve2DIntraBCTest,
                          BuildLowbdParams(av1_convolve_2d_sr_intrabc_neon));
+#endif
+
+#if HAVE_RVV
+INSTANTIATE_TEST_SUITE_P(RVV, AV1Convolve2DIntraBCTest,
+                         BuildLowbdParams(av1_convolve_2d_sr_intrabc_rvv));
 #endif
 
 #if CONFIG_AV1_HIGHBITDEPTH
@@ -1561,6 +1613,11 @@ INSTANTIATE_TEST_SUITE_P(SVE2, AV1Convolve2DHighbdTest,
                          BuildHighbdParams(av1_highbd_convolve_2d_sr_sve2));
 #endif
 
+#if HAVE_RVV
+INSTANTIATE_TEST_SUITE_P(RVV, AV1Convolve2DHighbdTest,
+                         BuildHighbdParams(av1_highbd_convolve_2d_sr_rvv));
+#endif
+
 //////////////////////////////////////////////////////////////////
 // Single reference convolve-2d IntraBC functions (high bit-depth)
 //////////////////////////////////////////////////////////////////
@@ -1656,6 +1713,12 @@ INSTANTIATE_TEST_SUITE_P(
 INSTANTIATE_TEST_SUITE_P(
     NEON, AV1Convolve2DHighbdIntraBCTest,
     BuildHighbdParams(av1_highbd_convolve_2d_sr_intrabc_neon));
+#endif
+
+#if HAVE_RVV
+INSTANTIATE_TEST_SUITE_P(
+    RVV, AV1Convolve2DHighbdIntraBCTest,
+    BuildHighbdParams(av1_highbd_convolve_2d_sr_intrabc_rvv));
 #endif
 
 #endif  // CONFIG_AV1_HIGHBITDEPTH

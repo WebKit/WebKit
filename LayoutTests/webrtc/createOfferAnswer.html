@@ -34,6 +34,22 @@ promise_test((test) => {
     });
 }, "Ensuring that answer is a RTCSessionDescriptionInit");
 
+promise_test((test) => {
+    var pc3 = new RTCPeerConnection();
+    pc3.addTransceiver("video", {"direction": "recvonly"});
+
+    return pc3.createOffer().then((offer) => {
+        var lines = offer.sdp.split(/\r?\n/g);
+        var msidLine = "";
+        for (var i = 0; i < lines.length; i++) {
+            if (lines[i].match("a=msid:")) {
+                msidLine = lines[i];
+                break;
+            }
+        }
+        assert_true(msidLine === "");
+    });
+}, "SDP offer for recvonly transceiver should not contain a msid attribute");
         </script>
     </body>
 </html>

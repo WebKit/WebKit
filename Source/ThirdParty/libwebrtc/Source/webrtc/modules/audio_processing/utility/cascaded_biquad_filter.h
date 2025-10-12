@@ -13,7 +13,6 @@
 
 #include <stddef.h>
 
-#include <complex>
 #include <vector>
 
 #include "api/array_view.h"
@@ -24,18 +23,6 @@ namespace webrtc {
 // is direct form 1.
 class CascadedBiQuadFilter {
  public:
-  struct BiQuadParam {
-    BiQuadParam(std::complex<float> zero,
-                std::complex<float> pole,
-                float gain,
-                bool mirror_zero_along_i_axis = false);
-    explicit BiQuadParam(const BiQuadParam&);
-    std::complex<float> zero;
-    std::complex<float> pole;
-    float gain;
-    bool mirror_zero_along_i_axis;
-  };
-
   struct BiQuadCoefficients {
     float b[3];
     float a[2];
@@ -44,7 +31,6 @@ class CascadedBiQuadFilter {
   struct BiQuad {
     explicit BiQuad(const BiQuadCoefficients& coefficients)
         : coefficients(coefficients), x(), y() {}
-    explicit BiQuad(const CascadedBiQuadFilter::BiQuadParam& param);
     void Reset();
     BiQuadCoefficients coefficients;
     float x[2];
@@ -52,24 +38,21 @@ class CascadedBiQuadFilter {
   };
 
   CascadedBiQuadFilter(
-      const CascadedBiQuadFilter::BiQuadCoefficients& coefficients,
-      size_t num_biquads);
-  explicit CascadedBiQuadFilter(
-      const std::vector<CascadedBiQuadFilter::BiQuadParam>& biquad_params);
+      ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients> coefficients);
   ~CascadedBiQuadFilter();
   CascadedBiQuadFilter(const CascadedBiQuadFilter&) = delete;
   CascadedBiQuadFilter& operator=(const CascadedBiQuadFilter&) = delete;
 
   // Applies the biquads on the values in x in order to form the output in y.
-  void Process(rtc::ArrayView<const float> x, rtc::ArrayView<float> y);
+  void Process(ArrayView<const float> x, ArrayView<float> y);
   // Applies the biquads on the values in y in an in-place manner.
-  void Process(rtc::ArrayView<float> y);
+  void Process(ArrayView<float> y);
   // Resets the filter to its initial state.
   void Reset();
 
  private:
-  void ApplyBiQuad(rtc::ArrayView<const float> x,
-                   rtc::ArrayView<float> y,
+  void ApplyBiQuad(ArrayView<const float> x,
+                   ArrayView<float> y,
                    CascadedBiQuadFilter::BiQuad* biquad);
 
   std::vector<BiQuad> biquads_;

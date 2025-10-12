@@ -1,4 +1,4 @@
 
-FAIL createImageBitmap from a bitmap HTMLImageElement, and drawImage on the created ImageBitmap with colorSpaceConversion: none promise_test: Unhandled rejection with value: object "[object Event]"
-FAIL createImageBitmap from a Blob, and drawImage on the created ImageBitmap with colorSpaceConversion: none promise_test: Unhandled rejection with value: object "InvalidStateError: Cannot decode the data in the argument to createImageBitmap"
+FAIL createImageBitmap from a bitmap HTMLImageElement, and drawImage on the created ImageBitmap with colorSpaceConversion: none assert_approx_equals: Red channel of the pixel at (5, 5) expected 124 +/- 10 but got 255
+FAIL createImageBitmap from a Blob, and drawImage on the created ImageBitmap with colorSpaceConversion: none assert_approx_equals: Red channel of the pixel at (5, 5) expected 124 +/- 10 but got 255
 

@@ -33,8 +33,8 @@
 namespace WebKit {
 
 struct RemoteGraphicsContextGLInitializationState {
-    String availableExtensions;
-    String requestableExtensions;
+    CString availableExtensions;
+    CString requestableExtensions;
     GCGLenum externalImageTarget { 0 };
     GCGLenum externalImageBindingQuery { 0 };
 };

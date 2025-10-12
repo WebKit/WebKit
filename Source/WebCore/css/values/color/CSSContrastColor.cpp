@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,6 @@
 
 #include "CSSColor.h"
 #include "CSSContrastColorResolver.h"
-#include "CSSContrastColorSerialization.h"
 #include "CSSPlatformColorResolutionState.h"
 #include "ColorSerialization.h"
 
@@ -59,7 +58,9 @@ bool containsColorSchemeDependentColor(const ContrastColor& unresolved)
 
 void Serialize<ContrastColor>::operator()(StringBuilder& builder, const SerializationContext& context, const ContrastColor& value)
 {
-    serializationForCSSContrastColor(builder, context, value);
+    builder.append("contrast-color("_s);
+    serializationForCSS(builder, context, value.color);
+    builder.append(')');
 }
 
 void ComputedStyleDependenciesCollector<ContrastColor>::operator()(ComputedStyleDependencies& dependencies, const ContrastColor& value)

@@ -10,6 +10,9 @@
 
 #include "test/pc/e2e/analyzer/video/simulcast_dummy_buffer_helper.h"
 
+#include <cstring>
+
+#include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_frame_buffer.h"
@@ -22,10 +25,9 @@ constexpr char kIrrelatedSimulcastStreamFrameData[] = "Dummy!";
 
 }  // namespace
 
-rtc::scoped_refptr<webrtc::VideoFrameBuffer> CreateDummyFrameBuffer() {
+scoped_refptr<VideoFrameBuffer> CreateDummyFrameBuffer() {
   // Use i420 buffer here as default one and supported by all codecs.
-  rtc::scoped_refptr<webrtc::I420Buffer> buffer =
-      webrtc::I420Buffer::Create(2, 2);
+  scoped_refptr<I420Buffer> buffer = I420Buffer::Create(2, 2);
   memcpy(buffer->MutableDataY(), kIrrelatedSimulcastStreamFrameData, 2);
   memcpy(buffer->MutableDataY() + buffer->StrideY(),
          kIrrelatedSimulcastStreamFrameData + 2, 2);
@@ -34,11 +36,11 @@ rtc::scoped_refptr<webrtc::VideoFrameBuffer> CreateDummyFrameBuffer() {
   return buffer;
 }
 
-bool IsDummyFrame(const webrtc::VideoFrame& video_frame) {
+bool IsDummyFrame(const VideoFrame& video_frame) {
   if (video_frame.width() != 2 || video_frame.height() != 2) {
     return false;
   }
-  rtc::scoped_refptr<webrtc::I420BufferInterface> buffer =
+  scoped_refptr<I420BufferInterface> buffer =
       video_frame.video_frame_buffer()->ToI420();
   if (memcmp(buffer->DataY(), kIrrelatedSimulcastStreamFrameData, 2) != 0) {
     return false;

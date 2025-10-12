@@ -22,7 +22,6 @@
 #if CONFIG_VP9_DECODER
 #include "vpx/vp8dx.h"
 #endif
-#include "vp9/simple_encode.h"
 #include "vpx/vpx_codec.h"
 #include "vpx/vpx_encoder.h"
 #include "vpx/vpx_ext_ratectrl.h"
@@ -177,6 +176,7 @@ vpx_rc_status_t rc_test_get_encodeframe_decision(
       test_controller->CalculateFrameDecision(frame_gop_index);
   frame_decision->rdmult =
       frame_decision->q_index * frame_decision->q_index / 2;
+  frame_decision->delta_q_uv = 0;
   return VPX_RC_OK;
 }
 

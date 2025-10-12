@@ -85,11 +85,11 @@ private:
     }
 
     WebGPUIdentifier m_backing;
-    Ref<ConvertToBackingContext> m_convertToBackingContext;
-    Ref<RemoteGPUProxy> m_parent;
+    const Ref<ConvertToBackingContext> m_convertToBackingContext;
+    const Ref<RemoteGPUProxy> m_parent;
 
-    RefPtr<RemoteTextureProxy> m_currentTexture;
-    RefPtr<RemoteTextureProxy> m_currentDepthTexture;
+    const RefPtr<RemoteTextureProxy> m_currentTexture;
+    const RefPtr<RemoteTextureProxy> m_currentDepthTexture;
 };
 
 } // namespace WebKit::WebGPU

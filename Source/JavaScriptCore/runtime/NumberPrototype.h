@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "NumberObject.h"
+#include <JavaScriptCore/NumberObject.h>
 
 namespace JSC {
 

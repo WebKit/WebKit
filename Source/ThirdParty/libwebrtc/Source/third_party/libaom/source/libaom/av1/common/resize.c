@@ -273,7 +273,7 @@ static void interpolate_core(const uint8_t *const input, int in_length,
       sum = 0;
       for (k = 0; k < interp_taps; ++k) {
         const int pk = int_pel - interp_taps / 2 + 1 + k;
-        sum += filter[k] * input[AOMMAX(AOMMIN(pk, in_length - 1), 0)];
+        sum += filter[k] * input[clamp(pk, 0, in_length - 1)];
       }
       *optr++ = clip_pixel(ROUND_POWER_OF_TWO(sum, FILTER_BITS));
     }
@@ -720,7 +720,7 @@ static void highbd_interpolate_core(const uint16_t *const input, int in_length,
       sum = 0;
       for (k = 0; k < interp_taps; ++k) {
         const int pk = int_pel - interp_taps / 2 + 1 + k;
-        sum += filter[k] * input[AOMMAX(AOMMIN(pk, in_length - 1), 0)];
+        sum += filter[k] * input[clamp(pk, 0, in_length - 1)];
       }
       *optr++ = clip_pixel_highbd(ROUND_POWER_OF_TWO(sum, FILTER_BITS), bd);
     }
@@ -1258,6 +1258,11 @@ YV12_BUFFER_CONFIG *av1_realloc_and_scale_if_required(
                            "Failed to allocate buffers during resize");
     }
 #endif
+    if (unscaled->metadata &&
+        aom_copy_metadata_to_frame_buffer(scaled, unscaled->metadata)) {
+      aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
+                         "Failed to copy source metadata to scaled frame");
+    }
     return scaled;
   }
   return unscaled;

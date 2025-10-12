@@ -26,11 +26,11 @@
 
 #pragma once
 
-#include "CPU.h"
-#include "Error.h"
-#include "ExceptionHelpers.h"
-#include "JSObject.h"
-#include "MathCommon.h"
+#include <JavaScriptCore/CPU.h>
+#include <JavaScriptCore/Error.h>
+#include <JavaScriptCore/ExceptionHelpers.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/MathCommon.h>
 #include <wtf/CagedUniquePtr.h>
 #include <wtf/Int128.h>
 #include <wtf/text/StringBuilder.h>
@@ -734,7 +734,7 @@ ALWAYS_INLINE std::optional<double> JSBigInt::tryExtractDouble(JSValue value)
             integer |= (static_cast<uint64_t>(bigInt->digit(1)) << 32);
     }
 
-    if (integer <= static_cast<uint64_t>(maxSafeInteger()))
+    if (integer <= maxSafeIntegerAsUInt64())
         return (bigInt->sign()) ? -static_cast<double>(integer) : static_cast<double>(integer);
 
     return std::nullopt;

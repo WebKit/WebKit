@@ -33,6 +33,7 @@
 #include "pas_heap_config.h"
 #include "pas_log.h"
 #include "pas_page_base_config.h"
+#include "pas_zero_memory.h"
 
 void pas_free_granules_compute_and_mark_decommitted(pas_free_granules* free_granules,
                                                     pas_page_granule_use_count* use_counts,

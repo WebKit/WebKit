@@ -172,12 +172,23 @@ std::optional<MediaCapabilitiesInfo> validateAV1Parameters(const AV1CodecConfigu
     return info;
 }
 
+static std::optional<bool> s_av1HardwareDecoderAvailable = { };
+void setAV1HardwareDecoderAvailable(bool value)
+{
+    ASSERT(isMainThread());
+
+    ASSERT(!s_av1HardwareDecoderAvailable || *s_av1HardwareDecoderAvailable == value);
+    s_av1HardwareDecoderAvailable = value;
+}
+
 bool av1HardwareDecoderAvailable()
 {
-    if (canLoad_VideoToolbox_VTIsHardwareDecodeSupported())
-        return VTIsHardwareDecodeSupported('av01');
+    ASSERT(isMainThread() || !!s_av1HardwareDecoderAvailable);
 
-    return false;
+    if (!s_av1HardwareDecoderAvailable)
+        s_av1HardwareDecoderAvailable = canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported('av01');
+
+    return *s_av1HardwareDecoderAvailable;
 }
 
 }

@@ -1,0 +1,61 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, width=device-width, user-scalable=no">
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <style>
+    div[contenteditable] {
+        width: 200px;
+        height: 100px;
+        font-size: 24px;
+        border: 1px solid tomato;
+        margin: 10px;
+    }
+    </style>
+</head>
+<body>
+    <div contenteditable></div>
+    <pre id="description"></pre>
+    <pre id="console"></pre>
+    <script>
+    const stringToType = "foo@bar.com";
+    window.jsTestIsAsync = true;
+    description("This test verifies that dispatching untrusted TextEvents does not trigger system text replacements. Requires WebKitTestRunner");
+
+    addEventListener("load", async () => {
+        if (window.testRunner) {
+            await UIHelper.setContinuousSpellCheckingEnabled(true);
+            const textReplacementData = {
+                "replacement": "foo@bar.com",
+                "type": "replacement",
+                "from": 0,
+                "to": 4
+            };
+            await UIHelper.setSpellCheckerResults({
+                "foo@": [textReplacementData],
+                "foo@b": [textReplacementData]
+            });
+
+            internals.setAutomaticTextReplacementEnabled(true);
+            internals.setAutomaticSpellingCorrectionEnabled(true);
+        }
+
+        editor = document.querySelector("div[contenteditable]");
+        editor.focus();
+
+        for (let character of [...stringToType]) {
+            const event = document.createEvent("TextEvent");
+            event.initTextEvent("textInput", true, true, null, character);
+            editor.dispatchEvent(event);
+            await UIHelper.ensurePresentationUpdate();
+        }
+
+        shouldBeEqualToString("editor.textContent", "foo@bar.com");
+
+        editor.remove();
+        finishJSTest();
+    });
+    </script>
+</body>
+</html>

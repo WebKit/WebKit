@@ -10,9 +10,13 @@
 
 #include "modules/audio_coding/neteq/test/result_sink.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
 #include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/neteq/neteq.h"
 #include "rtc_base/message_digest.h"
 #include "rtc_base/string_encode.h"
 #include "test/gtest.h"
@@ -30,8 +34,8 @@
 namespace webrtc {
 
 #ifdef WEBRTC_NETEQ_UNITTEST_BITEXACT
-void Convert(const webrtc::NetEqNetworkStatistics& stats_raw,
-             webrtc::neteq_unittest::NetEqNetworkStatistics* stats) {
+void Convert(const NetEqNetworkStatistics& stats_raw,
+             neteq_unittest::NetEqNetworkStatistics* stats) {
   stats->set_current_buffer_size_ms(stats_raw.current_buffer_size_ms);
   stats->set_preferred_buffer_size_ms(stats_raw.preferred_buffer_size_ms);
   stats->set_jitter_peaks_found(stats_raw.jitter_peaks_found);
@@ -47,9 +51,7 @@ void Convert(const webrtc::NetEqNetworkStatistics& stats_raw,
   stats->set_max_waiting_time_ms(stats_raw.max_waiting_time_ms);
 }
 
-void AddMessage(FILE* file,
-                rtc::MessageDigest* digest,
-                absl::string_view message) {
+void AddMessage(FILE* file, MessageDigest* digest, absl::string_view message) {
   int32_t size = message.length();
   if (file)
     ASSERT_EQ(1u, fwrite(&size, sizeof(size), 1, file));
@@ -64,11 +66,10 @@ void AddMessage(FILE* file,
 #endif  // WEBRTC_NETEQ_UNITTEST_BITEXACT
 
 ResultSink::ResultSink(absl::string_view output_file)
-    : output_fp_(nullptr),
-      digest_(rtc::MessageDigestFactory::Create(rtc::DIGEST_SHA_1)) {
+    : output_fp_(nullptr), digest_(MessageDigestFactory::Create(DIGEST_SHA_1)) {
   if (!output_file.empty()) {
     output_fp_ = fopen(std::string(output_file).c_str(), "wb");
-    EXPECT_TRUE(output_fp_ != NULL);
+    EXPECT_TRUE(output_fp_ != nullptr);
   }
 }
 
@@ -94,7 +95,7 @@ void ResultSink::VerifyChecksum(absl::string_view checksum) {
   std::string buffer;
   buffer.resize(digest_->Size());
   digest_->Finish(buffer.data(), buffer.size());
-  const std::string result = rtc::hex_encode(buffer);
+  const std::string result = hex_encode(buffer);
   if (checksum.size() == result.size()) {
     EXPECT_EQ(checksum, result);
   } else {

@@ -55,11 +55,14 @@
                 checkTrackSettings(stream.getVideoTracks()[0]);
                 checkTrackSettings(stream.getAudioTracks()[0]);
 
+                stream.getTracks().forEach(track => track.stop());
+
                 debug('Validate sampleRate constraints appears correctly in track settings');
                 stream = await navigator.mediaDevices.getUserMedia({audio: { sampleRate : 48000 } });
                 listTrackSettings(stream.getAudioTracks()[0]);
 
                 finishJSTest();
+                stream.getTracks().forEach(track => track.stop());
             }
 
             window.jsTestIsAsync = true;

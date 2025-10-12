@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FrameWin.h"
 
-#include "Document.h"
+#include "DocumentView.h"
 #include "FloatRect.h"
 #include "FrameSelection.h"
 #include "LocalFrameInlines.h"

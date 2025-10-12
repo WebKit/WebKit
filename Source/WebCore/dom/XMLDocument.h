@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include "Document.h"
+#include <WebCore/DocumentSettingsValues.h>
+#include <WebCore/DocumentView.h>
 
 namespace WebCore {
 

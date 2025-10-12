@@ -10,13 +10,14 @@
 
 #include "modules/audio_coding/acm2/acm_remixing.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <vector>
 
 #include "api/audio/audio_frame.h"
-#include "system_wrappers/include/clock.h"
+#include "api/audio/audio_view.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-#include "test/testsupport/file_utils.h"
 
 using ::testing::AllOf;
 using ::testing::Each;

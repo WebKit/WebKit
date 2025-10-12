@@ -30,7 +30,7 @@
 
 #include "Timer.h"
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -55,7 +55,7 @@ protected:
     Vector<RefPtr<TimerEvent> > m_timerEvents;
 };
 
-class TimerEvent : public RefCounted<TimerEvent> {
+class TimerEvent : public RefCountedAndCanMakeWeakPtr<TimerEvent> {
 public:
     TimerEvent(TimerEventBasedMock* mock, Ref<MockNotifier>&& notifier)
         : m_mock(mock)
@@ -79,7 +79,7 @@ public:
 private:
     TimerEventBasedMock* m_mock;
     Timer m_timer;
-    Ref<MockNotifier> m_notifier;
+    const Ref<MockNotifier> m_notifier;
 };
 
 } // namespace WebCore

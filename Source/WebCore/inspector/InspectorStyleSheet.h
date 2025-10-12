@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -143,7 +143,7 @@ private:
     Vector<String> longhandProperties(const String& shorthandProperty) const;
 
     InspectorCSSId m_styleId;
-    Ref<CSSStyleDeclaration> m_style;
+    const Ref<CSSStyleDeclaration> m_style;
     InspectorStyleSheet* m_parentStyleSheet;
 };
 
@@ -258,7 +258,7 @@ private:
     const String& elementStyleText() const;
     Ref<CSSRuleSourceData> ruleSourceData() const;
 
-    Ref<StyledElement> m_element;
+    const Ref<StyledElement> m_element;
     RefPtr<CSSRuleSourceData> m_ruleSourceData;
     RefPtr<InspectorStyle> m_inspectorStyle;
 

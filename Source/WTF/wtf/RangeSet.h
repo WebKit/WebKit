@@ -28,6 +28,7 @@
 #include <wtf/ListDump.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -51,7 +52,7 @@ namespace WTF {
 
 template<typename RangeType>
 class RangeSet final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RangeSet);
 public:
     typedef RangeType Range;
     typedef typename Range::Type Type;
@@ -207,7 +208,7 @@ private:
     
     VectorType m_ranges;
     bool m_isCompact { true };
-};
+} SWIFT_ESCAPABLE;
 
 } // namespace WTF
 

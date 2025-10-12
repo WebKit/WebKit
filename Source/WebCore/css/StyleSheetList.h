@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -57,8 +57,6 @@ private:
     StyleSheetList(Document&);
     StyleSheetList(ShadowRoot&);
     const Vector<RefPtr<StyleSheet>>& styleSheets() const;
-    RefPtr<Document> protectedDocument() const;
-    RefPtr<ShadowRoot> protectedShadowRoot() const;
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     WeakPtr<ShadowRoot, WeakPtrImplWithEventTargetData> m_shadowRoot;

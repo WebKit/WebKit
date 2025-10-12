@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Cache API operation failed: Cross-Origin-Resource-Policy failure
-CONSOLE MESSAGE: Cache API operation failed: Cross-Origin-Resource-Policy failure
 
 
 PASS setting up

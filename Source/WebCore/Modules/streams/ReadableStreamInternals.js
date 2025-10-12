@@ -60,80 +60,29 @@ function createInternalReadableStreamFromUnderlyingSource(underlyingSource, stra
         return stream;
     }
 
-    const type = underlyingSource.type;
-    const typeString = @toString(type);
+    @assert(underlyingSource.type === @undefined);
+    let highWaterMark = strategy.highWaterMark;
+    if (highWaterMark !== @undefined)
+        highWaterMark = @toNumber(highWaterMark);
+    else
+        highWaterMark = 1;
+    const size = strategy.size;
+    if (size !== @undefined && !@isCallable(size))
+        @throwTypeError("size parameter must be a function");
 
-    if (typeString === "bytes") {
-        if (!@readableByteStreamAPIEnabled())
-            @throwTypeError("ReadableByteStreamController is not implemented");
+    const cancel = underlyingSource.cancel;
+    if (cancel !== @undefined && !@isCallable(cancel))
+        @throwTypeError("underlyingSource cancel must be a function");
+    const pull = underlyingSource.pull;
+    if (pull !== @undefined && !@isCallable(pull))
+        @throwTypeError("underlyingSource pull must be a function");
+    const start = underlyingSource.start;
+    if (start !== @undefined && !@isCallable(start))
+        @throwTypeError("underlyingSource start must be a function");
 
-        if (strategy.highWaterMark === @undefined)
-            strategy.highWaterMark = 0;
-        if (strategy.size !== @undefined)
-            @throwRangeError("Strategy for a ReadableByteStreamController cannot have a size");
-
-        let readableByteStreamControllerConstructor = @ReadableByteStreamController;
-        @putByIdDirectPrivate(stream, "readableStreamController", new @ReadableByteStreamController(stream, underlyingSource, strategy.highWaterMark, @isReadableStream));
-    } else if (type === @undefined) {
-        let highWaterMark = strategy.highWaterMark;
-        if (highWaterMark !== @undefined)
-            highWaterMark = @toNumber(highWaterMark);
-        else
-            highWaterMark = 1;
-        const size = strategy.size;
-        if (size !== @undefined && !@isCallable(size))
-            @throwTypeError("size parameter must be a function");
-
-        const cancel = underlyingSource.cancel;
-        if (cancel !== @undefined && !@isCallable(cancel))
-            @throwTypeError("underlyingSource cancel must be a function");
-        const pull = underlyingSource.pull;
-        if (pull !== @undefined && !@isCallable(pull))
-            @throwTypeError("underlyingSource pull must be a function");
-        const start = underlyingSource.start;
-        if (start !== @undefined && !@isCallable(start))
-            @throwTypeError("underlyingSource start must be a function");
-
-        @setupReadableStreamDefaultController(stream, underlyingSource, size, highWaterMark, start, pull, cancel);
-    } else
-        @throwTypeError("Invalid type for underlying source");
+    @setupReadableStreamDefaultController(stream, underlyingSource, size, highWaterMark, start, pull, cancel);
 
     return stream;
-}
-
-function readableStreamGetReaderForBindings(stream, options)
-{
-    "use strict";
-
-    @assert(@isReadableStream(stream));
-
-    const mode = @toDictionary(options, { }, "ReadableStream.getReader takes an object as first argument").mode;
-    const readableStreamGlobalObject = @getByIdDirectPrivate(stream, "globalObject");
-
-    if (mode === @undefined) {
-        const readableStreamDefaultReaderConstructor = @getByIdDirectPrivate(readableStreamGlobalObject, "ReadableStreamDefaultReader");
-        return new readableStreamDefaultReaderConstructor(stream);
-    }
-
-    // String conversion is required by spec, hence double equals.
-    if (mode == 'byob') {
-        const readableStreamBYOBReaderConstructor = @getByIdDirectPrivate(readableStreamGlobalObject, "ReadableStreamBYOBReader");
-        return new readableStreamBYOBReaderConstructor(stream);
-    }
-
-    @throwTypeError("Invalid mode is specified");
-}
-
-function readableStreamCancelForBindings(stream, reason)
-{
-    "use strict";
-
-    @assert(@isReadableStream(stream));
-
-    if (@isReadableStreamLocked(stream))
-        return @Promise.@reject(@makeTypeError("ReadableStream is locked"));
-
-    return @readableStreamCancel(stream, reason);
 }
 
 function readableStreamPipeThroughForBindings(thisStream, streams, options)
@@ -222,6 +171,80 @@ function readableStreamPipeToForBindings(stream, destination, options)
         return @Promise.@reject(@makeTypeError("WritableStream is locked"));
 
     return @readableStreamPipeToWritableStream(stream, internalDestination, preventClose, preventAbort, preventCancel, signal);
+}
+
+function createInternalReadableStreamDefaultReader(internalStream)
+{
+    "use strict";
+
+    const reader = { };
+
+    @assert(@isReadableStream(internalStream));
+
+    if (internalStream === @undefined)
+        @throwTypeError("ReadableStreamDefaultReader needs a ReadableStream");
+
+    if (@isReadableStreamLocked(internalStream))
+        @throwTypeError("ReadableStream is locked");
+
+    @readableStreamReaderGenericInitialize(reader, internalStream);
+    @putByIdDirectPrivate(reader, "readRequests", []);
+
+    return reader;
+}
+
+function readableStreamDefaultReaderClosedForBindings(reader)
+{
+    "use strict";
+
+    if (!@isReadableStreamDefaultReader(reader))
+        return @Promise.@reject(@makeGetterTypeError("ReadableStreamDefaultReader", "closed"));
+
+    return @getByIdDirectPrivate(reader, "closedPromiseCapability").promise;
+}
+
+function readableStreamDefaultReaderReadForBindings(reader)
+{
+    "use strict";
+
+    if (!@isReadableStreamDefaultReader(reader))
+        return @Promise.@reject(@makeThisTypeError("ReadableStreamDefaultReader", "read"));
+    if (!@getByIdDirectPrivate(reader, "ownerReadableStream"))
+        return @Promise.@reject(@makeTypeError("read() called on a reader owned by no readable stream"));
+
+    return @readableStreamDefaultReaderRead(reader);
+}
+
+function readableStreamDefaultReaderReleaseLockForBindings(reader)
+{
+    "use strict";
+
+    if (!@isReadableStreamDefaultReader(reader))
+        throw @makeThisTypeError("ReadableStreamDefaultReader", "releaseLock");
+
+    if (!@getByIdDirectPrivate(reader, "ownerReadableStream"))
+        return;
+
+    @readableStreamDefaultReaderRelease(reader);
+}
+
+function readableStreamDefaultReaderCancelForBindings(reader, reason)
+{
+    "use strict";
+
+    if (!@isReadableStreamDefaultReader(reader))
+        return @Promise.@reject(@makeThisTypeError("ReadableStreamDefaultReader", "cancel"));
+
+    if (!@getByIdDirectPrivate(reader, "ownerReadableStream"))
+        return @Promise.@reject(@makeTypeError("cancel() called on a reader owned by no readable stream"));
+
+    return @readableStreamReaderGenericCancel(reader, reason);
+}
+
+function readableStreamDefaultReaderClosedPromise(reader)
+{
+    @assert(@isReadableStreamDefaultReader(reader));
+    return @getByIdDirectPrivate(reader, "closedPromiseCapability").promise;
 }
 
 function readableStreamReaderGenericInitialize(reader, stream)
@@ -331,9 +354,7 @@ function readableStreamPipeTo(stream, sink)
 
 function acquireReadableStreamDefaultReader(stream)
 {
-    const readableStreamGlobalObject = @getByIdDirectPrivate(stream, "globalObject");
-    const readableStreamDefaultReaderConstructor = @getByIdDirectPrivate(readableStreamGlobalObject, "ReadableStreamDefaultReader");
-    return new readableStreamDefaultReaderConstructor(stream);
+    return @createInternalReadableStreamDefaultReader(stream);
 }
 
 // FIXME: Replace readableStreamPipeTo by below function.
@@ -763,20 +784,13 @@ function readableStreamError(stream, error)
         return;
 
     const reader = @getByIdDirectPrivate(stream, "reader");
+    @assert(@isReadableStreamDefaultReader(reader));
 
     @getByIdDirectPrivate(reader, "closedPromiseCapability").reject.@call(@undefined, error);
     const promise = @getByIdDirectPrivate(reader, "closedPromiseCapability").promise;
     @markPromiseAsHandled(promise);
 
-    if (@isReadableStreamDefaultReader(reader))
-        @readableStreamDefaultReaderErrorReadRequests(reader, error);
-    else {
-        @assert(@isReadableStreamBYOBReader(reader));
-        const requests = @getByIdDirectPrivate(reader, "readIntoRequests");
-        @putByIdDirectPrivate(reader, "readIntoRequests", []);
-        for (let index = 0, length = requests.length; index < length; ++index)
-            @rejectPromise(requests[index], error);
-    }
+    @readableStreamDefaultReaderErrorReadRequests(reader, error);
 }
 
 function readableStreamDefaultControllerShouldCallPull(controller)
@@ -1041,4 +1055,16 @@ function readableStreamDefaultControllerCanCloseOrEnqueue(controller)
     "use strict";
 
     return !@getByIdDirectPrivate(controller, "closeRequested") && @getByIdDirectPrivate(@getByIdDirectPrivate(controller, "controlledReadableStream"), "state") === @streamReadable;
+}
+
+function readableStreamState(stream)
+{
+    @assert(@isReadableStream(stream));
+    return @getByIdDirectPrivate(stream, "state");
+}
+
+function readableStreamStoredError(stream)
+{
+    @assert(@isReadableStream(stream));
+    return @getByIdDirectPrivate(stream, "storedError");
 }

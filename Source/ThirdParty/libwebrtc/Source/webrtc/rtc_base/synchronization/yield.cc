@@ -10,11 +10,12 @@
 
 #include "rtc_base/synchronization/yield.h"
 
+#include <time.h>
+
 #if defined(WEBRTC_WIN)
 #include <windows.h>
 #else
-#include <sched.h>
-#include <time.h>
+#include <ctime>
 #endif
 
 namespace webrtc {

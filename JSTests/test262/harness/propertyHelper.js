@@ -209,11 +209,15 @@ function isWritable(obj, name, verifyProp, value) {
 }
 
 /**
+ * Verify that there is a function of specified name, length, and containing
+ * descriptor associated with `obj[name]` and following the conventions for
+ * built-in objects.
+ *
  * @param {object} obj
  * @param {string|symbol} name
  * @param {string} [functionName] defaults to name for strings, `[${name.description}]` for symbols
  * @param {number} functionLength
- * @param {PropertyDescriptor} desc
+ * @param {PropertyDescriptor} [desc] defaults to data property conventions (writable, non-enumerable, configurable)
  * @param {object} [options]
  * @param {boolean} [options.restore] revert mutations from verifying writable/configurable
  */
@@ -223,7 +227,21 @@ function verifyCallableProperty(obj, name, functionName, functionLength, desc, o
   assert.sameValue(typeof value, "function",
     "obj['" + String(name) + "'] descriptor should be a function");
 
-  if (!__hasOwnProperty(desc, "value")) desc.value = value;
+  // Every other data property described in clauses 19 through 28 and in
+  // Annex B.2 has the attributes { [[Writable]]: true, [[Enumerable]]: false,
+  // [[Configurable]]: true } unless otherwise specified.
+  // https://tc39.es/ecma262/multipage/ecmascript-standard-built-in-objects.html
+  if (desc === undefined) {
+    desc = {
+      writable: true,
+      enumerable: false,
+      configurable: true,
+      value: value
+    };
+  } else if (!__hasOwnProperty(desc, "value") && !__hasOwnProperty(desc, "get")) {
+    desc.value = value;
+  }
+
   verifyProperty(obj, name, desc, options);
 
   if (functionName === undefined) {

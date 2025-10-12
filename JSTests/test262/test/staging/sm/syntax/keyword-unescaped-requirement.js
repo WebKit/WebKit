@@ -4,24 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Escape sequences aren't allowed in bolded grammar tokens (that is, in keywords, possibly contextual keywords)
+info: bugzilla.mozilla.org/show_bug.cgi?id=1204027
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 1204027;
-var summary =
-  "Escape sequences aren't allowed in bolded grammar tokens (that is, in " +
-  "keywords, possibly contextual keywords)";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 function memberVariants(code)
 {
@@ -66,8 +53,4 @@ var badScripts =
   ];
 
 for (var script of badScripts)
-  assertThrowsInstanceOf(() => Function(script), SyntaxError);
-
-/******************************************************************************/
-
-print("Tests complete");
+  assert.throws(SyntaxError, () => Function(script));

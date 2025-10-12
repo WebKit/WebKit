@@ -25,14 +25,16 @@
 
 #pragma once
 
-#include "ArgList.h"
-#include "CallLinkInfoBase.h"
-#include "ExceptionHelpers.h"
-#include "JSFunction.h"
-#include "Interpreter.h"
-#include "ProtoCallFrameInlines.h"
-#include "VMEntryScope.h"
-#include "VMInlines.h"
+#include <JavaScriptCore/ArgList.h>
+#include <JavaScriptCore/CallLinkInfoBase.h>
+#include <JavaScriptCore/ExceptionHelpers.h>
+#include <JavaScriptCore/Interpreter.h>
+#include <JavaScriptCore/JSFunction.h>
+#include <JavaScriptCore/JSFunctionInlines.h>
+#include <JavaScriptCore/ProtoCallFrameInlines.h>
+#include <JavaScriptCore/VMEntryScope.h>
+#include <JavaScriptCore/VMEntryScopeInlines.h>
+#include <JavaScriptCore/VMInlines.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Scope.h>
 
@@ -42,44 +44,7 @@ class CachedCall : public CallLinkInfoBase {
     WTF_MAKE_NONCOPYABLE(CachedCall);
     WTF_FORBID_HEAP_ALLOCATION;
 public:
-    CachedCall(JSGlobalObject* globalObject, JSFunction* function, int argumentCount)
-        : CallLinkInfoBase(CallSiteType::CachedCall)
-        , m_vm(globalObject->vm())
-        , m_entryScope(m_vm, function->scope()->globalObject())
-        , m_functionExecutable(function->jsExecutable())
-        , m_scope(function->scope())
-    {
-        VM& vm = m_vm;
-        auto scope = DECLARE_THROW_SCOPE(vm);
-#if ASSERT_ENABLED
-        auto updateValidStatus = makeScopeExit([&] {
-            m_valid = !scope.exception();
-        });
-#endif
-        ASSERT(!function->isHostFunctionNonInline());
-        if (!vm.isSafeToRecurseSoft()) [[unlikely]] {
-            throwStackOverflowError(globalObject, scope);
-            return;
-        }
-
-        if (vm.disallowVMEntryCount) [[unlikely]] {
-            Interpreter::checkVMEntryPermission();
-            throwStackOverflowError(globalObject, scope);
-            return;
-        }
-
-        m_arguments.ensureCapacity(argumentCount);
-        if (m_arguments.hasOverflowed()) [[unlikely]] {
-            throwOutOfMemoryError(globalObject, scope);
-            return;
-        }
-
-        auto* newCodeBlock = m_vm.interpreter.prepareForCachedCall(*this, function);
-        if (scope.exception()) [[unlikely]]
-            return;
-        m_numParameters = newCodeBlock->numParameters();
-        m_protoCallFrame.init(newCodeBlock, function->globalObject(), function, jsUndefined(), argumentCount + 1, const_cast<EncodedJSValue*>(m_arguments.data()));
-    }
+    JS_EXPORT_PRIVATE CachedCall(JSGlobalObject*, JSFunction*, int argumentCount);
 
     ~CachedCall()
     {
@@ -122,20 +87,25 @@ public:
         m_addressForCall = nullptr;
     }
 
-    void relink()
-    {
-        VM& vm = m_vm;
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        auto* codeBlock = m_vm.interpreter.prepareForCachedCall(*this, this->function());
-        RETURN_IF_EXCEPTION(scope, void());
-        m_protoCallFrame.setCodeBlock(codeBlock);
-    }
+    void relink();
 
-    template<typename... Args>
+    template<typename... Args> requires (std::is_convertible_v<Args, JSValue> && ...)
     ALWAYS_INLINE JSValue callWithArguments(JSGlobalObject* globalObject, JSValue thisValue, Args... args)
     {
         VM& vm = m_vm;
         auto scope = DECLARE_THROW_SCOPE(vm);
+
+        ASSERT_WITH_MESSAGE(!thisValue.isEmpty(), "Expected thisValue to be non-empty. Use jsUndefined() if you meant to use undefined.");
+#if ASSERT_ENABLED
+        if constexpr (sizeof...(args) > 0) {
+            size_t argIndex = 0;
+            auto checkArg = [&argIndex](JSValue arg) {
+                ASSERT_WITH_MESSAGE(!arg.isEmpty(), "arguments[%zu] is JSValue(). Use jsUndefined() if you meant to make it undefined.", argIndex);
+                ++argIndex;
+            };
+            (checkArg(args), ...);
+        }
+#endif
 
 #if CPU(ARM64) && CPU(ADDRESS64) && !ENABLE(C_LOOP)
         ASSERT(sizeof...(args) == static_cast<size_t>(m_protoCallFrame.argumentCount()));

@@ -28,11 +28,11 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSValuePool.h"
-#include "DocumentInlines.h"
 #include "DocumentLoader.h"
+#include "DocumentQuirks.h"
+#include "DocumentSecurityOrigin.h"
 #include "OriginAccessPatterns.h"
 #include "Page.h"
-#include "Quirks.h"
 #include "Settings.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -87,11 +87,12 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     , cssTransformStyleSeparatedEnabled { document.settings().cssTransformStyleSeparatedEnabled() }
 #endif
-    , masonryEnabled { document.settings().masonryEnabled() }
+    , itemPackCollapseDisplayGridEnabled { document.settings().itemPackCollapseDisplayGridEnabled() }
     , cssAppearanceBaseEnabled { document.settings().cssAppearanceBaseEnabled() }
     , cssPaintingAPIEnabled { document.settings().cssPaintingAPIEnabled() }
     , cssShapeFunctionEnabled { document.settings().cssShapeFunctionEnabled() }
     , cssTextUnderlinePositionLeftRightEnabled { document.settings().cssTextUnderlinePositionLeftRightEnabled() }
+    , cssTextDecorationLineErrorValues { document.settings().cssTextDecorationLineErrorValues() }
     , cssBackgroundClipBorderAreaEnabled  { document.settings().cssBackgroundClipBorderAreaEnabled() }
     , cssWordBreakAutoPhraseEnabled { document.settings().cssWordBreakAutoPhraseEnabled() }
     , popoverAttributeEnabled { document.settings().popoverAttributeEnabled() }
@@ -106,11 +107,10 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , targetTextPseudoElementEnabled { document.settings().targetTextPseudoElementEnabled() }
     , viewTransitionTypesEnabled { document.settings().viewTransitionsEnabled() && document.settings().viewTransitionTypesEnabled() }
     , cssProgressFunctionEnabled { document.settings().cssProgressFunctionEnabled() }
-    , cssMediaProgressFunctionEnabled { document.settings().cssMediaProgressFunctionEnabled() }
-    , cssContainerProgressFunctionEnabled { document.settings().cssContainerProgressFunctionEnabled() }
     , cssRandomFunctionEnabled { document.settings().cssRandomFunctionEnabled() }
     , cssTreeCountingFunctionsEnabled { document.settings().cssTreeCountingFunctionsEnabled() }
     , cssURLModifiersEnabled { document.settings().cssURLModifiersEnabled() }
+    , cssURLIntegrityModifierEnabled { document.settings().cssURLIntegrityModifierEnabled() }
     , cssAxisRelativePositionKeywordsEnabled { document.settings().cssAxisRelativePositionKeywordsEnabled() }
     , cssDynamicRangeLimitMixEnabled { document.settings().cssDynamicRangeLimitMixEnabled() }
     , cssConstrainedDynamicRangeLimitEnabled { document.settings().cssConstrainedDynamicRangeLimitEnabled() }
@@ -129,7 +129,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         | context.cssTransformStyleSeparatedEnabled         << 5
 #endif
-        | context.masonryEnabled                            << 6
+        | context.itemPackCollapseDisplayGridEnabled        << 6
         | context.cssAppearanceBaseEnabled                  << 7
         | context.cssPaintingAPIEnabled                     << 8
         | context.cssShapeFunctionEnabled                   << 9
@@ -148,14 +148,14 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.targetTextPseudoElementEnabled            << 20
         | context.viewTransitionTypesEnabled                << 21
         | context.cssProgressFunctionEnabled                << 22
-        | context.cssMediaProgressFunctionEnabled           << 23
-        | context.cssContainerProgressFunctionEnabled       << 24
-        | context.cssRandomFunctionEnabled                  << 25
-        | context.cssTreeCountingFunctionsEnabled           << 26
-        | context.cssURLModifiersEnabled                    << 27
-        | context.cssAxisRelativePositionKeywordsEnabled    << 28
-        | context.cssDynamicRangeLimitMixEnabled            << 29
-        | context.cssConstrainedDynamicRangeLimitEnabled    << 30;
+        | context.cssRandomFunctionEnabled                  << 23
+        | context.cssTreeCountingFunctionsEnabled           << 24
+        | context.cssURLModifiersEnabled                    << 25
+        | context.cssURLIntegrityModifierEnabled            << 26
+        | context.cssAxisRelativePositionKeywordsEnabled    << 27
+        | context.cssDynamicRangeLimitMixEnabled            << 28
+        | context.cssConstrainedDynamicRangeLimitEnabled    << 29
+        | context.cssTextDecorationLineErrorValues          << 30;
     add(hasher, context.baseURL, context.charset, context.propertySettings, context.mode, bits);
 }
 

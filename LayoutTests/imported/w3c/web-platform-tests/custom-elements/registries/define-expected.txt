@@ -16,6 +16,9 @@ PASS Element names: defining an element named a-.-_ should succeed
 PASS Element names: defining an element named a-0123456789 should succeed
 PASS Element names: defining an element named a-漢字 should succeed
 PASS Element names: defining an element named a-𠀋 should succeed
+FAIL Element names: defining an element named a-a× should succeed Custom element name contains a character that is not allowed
+FAIL Element names: defining an element named a-a　 should succeed Custom element name contains a character that is not allowed
+FAIL Element names: defining an element named a-a󰀀 should succeed Custom element name contains a character that is not allowed
 PASS Element names: defining an element named undefined should throw a SyntaxError
 PASS Element names: defining an element named null should throw a SyntaxError
 PASS Element names: defining an element named  should throw a SyntaxError
@@ -29,9 +32,6 @@ PASS Element names: defining an element named 0- should throw a SyntaxError
 PASS Element names: defining an element named a-A should throw a SyntaxError
 PASS Element names: defining an element named a-Z should throw a SyntaxError
 PASS Element names: defining an element named A-a should throw a SyntaxError
-PASS Element names: defining an element named a-a× should throw a SyntaxError
-PASS Element names: defining an element named a-a　 should throw a SyntaxError
-PASS Element names: defining an element named a-a󰀀 should throw a SyntaxError
 PASS Element names: defining an element named annotation-xml should throw a SyntaxError
 PASS Element names: defining an element named color-profile should throw a SyntaxError
 PASS Element names: defining an element named font-face should throw a SyntaxError

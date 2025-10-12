@@ -10,14 +10,20 @@
 
 #include "modules/desktop_capture/desktop_capturer_differ_wrapper.h"
 
-#include <stdint.h>
-#include <string.h>
-
+#include <cstdint>
+#include <cstring>
+#include <memory>
 #include <utility>
 
+#include "modules/desktop_capture/desktop_capture_metadata.h"
+#include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/desktop_capture/desktop_capturer.h"
+#include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/desktop_region.h"
 #include "modules/desktop_capture/differ_block.h"
+#include "modules/desktop_capture/shared_desktop_frame.h"
+#include "modules/desktop_capture/shared_memory.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/time_utils.h"
 
@@ -195,7 +201,7 @@ DesktopCaptureMetadata DesktopCapturerDifferWrapper::GetMetadata() {
 void DesktopCapturerDifferWrapper::OnCaptureResult(
     Result result,
     std::unique_ptr<DesktopFrame> input_frame) {
-  int64_t start_time_nanos = rtc::TimeNanos();
+  int64_t start_time_nanos = TimeNanos();
   if (!input_frame) {
     callback_->OnCaptureResult(result, nullptr);
     return;
@@ -224,8 +230,8 @@ void DesktopCapturerDifferWrapper::OnCaptureResult(
   last_frame_ = frame->Share();
 
   frame->set_capture_time_ms(frame->capture_time_ms() +
-                             (rtc::TimeNanos() - start_time_nanos) /
-                                 rtc::kNumNanosecsPerMillisec);
+                             (TimeNanos() - start_time_nanos) /
+                                 kNumNanosecsPerMillisec);
   callback_->OnCaptureResult(result, std::move(frame));
 }
 

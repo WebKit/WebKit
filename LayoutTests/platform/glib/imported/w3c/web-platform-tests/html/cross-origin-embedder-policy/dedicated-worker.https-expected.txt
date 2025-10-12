@@ -1,15 +1,3 @@
-CONSOLE MESSAGE: Refused to load 'https://web-platform.test:9443/html/cross-origin-embedder-policy/resources/dedicated-worker.js' worker because of Cross-Origin-Embedder-Policy.
-CONSOLE MESSAGE: Worker load was blocked by Cross-Origin-Embedder-Policy
-CONSOLE MESSAGE: Cannot load https://web-platform.test:9443/html/cross-origin-embedder-policy/resources/dedicated-worker.js due to access control checks.
-CONSOLE MESSAGE: Cancelled load to https://www1.web-platform.test:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Cancelled load to https://www1.web-platform.test:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Refused to load 'https://web-platform.test:9443/html/cross-origin-embedder-policy/resources/dedicated-worker.js' worker because of Cross-Origin-Embedder-Policy.
-CONSOLE MESSAGE: Worker load was blocked by Cross-Origin-Embedder-Policy
-CONSOLE MESSAGE: Cannot load https://web-platform.test:9443/html/cross-origin-embedder-policy/resources/dedicated-worker.js due to access control checks.
-CONSOLE MESSAGE: Cancelled load to https://www1.web-platform.test:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Cancelled load to https://www1.web-platform.test:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Cancelled load to https://www1.web-platform.test:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Cancelled load to https://www1.web-platform.test:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
 
 PASS COEP: none worker in COEP: none frame
 PASS COEP: none worker in COEP: require-corp frame

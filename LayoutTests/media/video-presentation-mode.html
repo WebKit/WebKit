@@ -43,6 +43,16 @@
                 consoleWrite("<br>** Received webkitpresentationmodechanged event");
                 await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
                 testExpected("video.webkitPresentationMode", "picture-in-picture");
+                consoleWrite("<br>** Try to return to fullscreen");
+                waitForEventOnce('webkitpresentationmodechanged', presentationModeChanged3);
+                runWithKeyDown("video.webkitSetPresentationMode('fullscreen')");
+            }
+
+            async function presentationModeChanged3()
+            {
+                consoleWrite("<br>** Received webkitpresentationmodechanged event");
+                await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+                testExpected("video.webkitPresentationMode", "fullscreen");
                 consoleWrite("<br>** Try to return to inline");
                 waitForEventOnce('webkitpresentationmodechanged', testCompleted);
                 runWithKeyDown("video.webkitSetPresentationMode('inline')");

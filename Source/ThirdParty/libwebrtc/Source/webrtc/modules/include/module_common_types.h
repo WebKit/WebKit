@@ -11,8 +11,7 @@
 #ifndef MODULES_INCLUDE_MODULE_COMMON_TYPES_H_
 #define MODULES_INCLUDE_MODULE_COMMON_TYPES_H_
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <vector>
 
 namespace webrtc {

@@ -1,0 +1,35 @@
+<script src="/js-test-resources/ui-helper.js"></script>
+
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.addEventListener("message", (event) => {
+	document.getElementById("result").innerText = event.data;
+	if (window.testRunner)
+		testRunner.notifyDone()
+})
+
+function startTest()
+{
+	if (!eventSender)
+		return
+		
+	UIHelper.keyDown("\t")
+	UIHelper.keyDown("\t")
+
+	window.frames[0].postMessage("RunTest", "http://localhost:8000")	
+}
+
+// With the bug, tabbing twice will choose the DIV from inside the cross origin iframe, but fail to *actually focus it*
+// because the iframe had never seen interaction.
+// After the fix, the fact that the focus is happening via `tab` key presses counts as user interaction, and the div
+// inside the frame *is* focused.
+
+</script>
+<div tabindex="1">DIV with tabindex 1</div><br>
+<iframe onload="startTest()" src="http://localhost:8000/dom/resources/focus-in-cross-origin-iframe-iframe.html"></iframe><br>
+<div id="result">FAILED</div>

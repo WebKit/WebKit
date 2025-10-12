@@ -51,7 +51,7 @@ OBJC_CLASS UIViewController;
 #include "WebAuthenticationFlags.h"
 #endif
 
-#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#if ENABLE(WEBXR)
 #include "PlatformXRSessionEnums.h"
 #include <WebCore/PlatformXR.h>
 #endif
@@ -66,6 +66,7 @@ enum class MediaProducerMediaState : uint32_t;
 struct FontAttributes;
 struct WindowFeatures;
 struct OrganizationStorageAccessPromptQuirk;
+struct XRCanvasConfiguration;
 using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
 }
 
@@ -101,6 +102,7 @@ public:
     virtual void createNewPage(WebKit::WebPageProxy&, Ref<API::PageConfiguration>&&, Ref<NavigationAction>&&, CompletionHandler<void(RefPtr<WebKit::WebPageProxy>&&)>&&);
     virtual void showPage(WebKit::WebPageProxy*) { }
     virtual void fullscreenMayReturnToInline(WebKit::WebPageProxy*) { }
+    virtual void willEnterFullscreen(WebKit::WebPageProxy*) { }
     virtual void didEnterFullscreen(WebKit::WebPageProxy*) { }
     virtual void didExitFullscreen(WebKit::WebPageProxy*) { }
     virtual void hasVideoInPictureInPictureDidChange(WebKit::WebPageProxy*, bool) { }
@@ -116,17 +118,20 @@ public:
     virtual void runJavaScriptPrompt(WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(const WTF::String&)>&& completionHandler) { completionHandler(WTF::String()); }
 
     virtual void setStatusText(WebKit::WebPageProxy*, const WTF::String&) { }
-    virtual void mouseDidMoveOverElement(WebKit::WebPageProxy&, const WebKit::WebHitTestResultData&, OptionSet<WebKit::WebEventModifier>, Object*) { }
+    virtual void mouseDidMoveOverElement(WebKit::WebPageProxy&, const WebKit::WebHitTestResultData&, OptionSet<WebKit::WebEventModifier>) { }
+    virtual void tooltipDidChange(WebKit::WebPageProxy&, const WTF::String&) { }
 
     virtual void didNotHandleKeyEvent(WebKit::WebPageProxy*, const WebKit::NativeWebKeyboardEvent&) { }
     virtual void didNotHandleWheelEvent(WebKit::WebPageProxy*, const WebKit::NativeWebWheelEvent&) { }
 
+#if !PLATFORM(COCOA)
     virtual void toolbarsAreVisible(WebKit::WebPageProxy&, Function<void(bool)>&& completionHandler) { completionHandler(true); }
     virtual void setToolbarsAreVisible(WebKit::WebPageProxy&, bool) { }
     virtual void menuBarIsVisible(WebKit::WebPageProxy&, Function<void(bool)>&& completionHandler) { completionHandler(true); }
     virtual void setMenuBarIsVisible(WebKit::WebPageProxy&, bool) { }
     virtual void statusBarIsVisible(WebKit::WebPageProxy&, Function<void(bool)>&& completionHandler) { completionHandler(true); }
     virtual void setStatusBarIsVisible(WebKit::WebPageProxy&, bool) { }
+#endif
     virtual void setIsResizable(WebKit::WebPageProxy&, bool) { }
 
     virtual void setWindowFrame(WebKit::WebPageProxy&, const WebCore::FloatRect&) { }
@@ -190,7 +195,7 @@ public:
 #endif
 
 #if ENABLE(POINTER_LOCK)
-    virtual void requestPointerLock(WebKit::WebPageProxy*) { }
+    virtual void requestPointerLock(WebKit::WebPageProxy*, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
     virtual void didLosePointerLock(WebKit::WebPageProxy*) { }
 #endif
 
@@ -230,13 +235,16 @@ public:
 
     virtual void queryPermission(const WTF::String& permissionName, SecurityOrigin& origin, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler) { completionHandler({ }); }
 
-#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#if ENABLE(WEBXR)
     virtual void requestPermissionOnXRSessionFeatures(WebKit::WebPageProxy&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, const PlatformXR::Device::FeatureList& /* requiredFeaturesRequested */, const PlatformXR::Device::FeatureList& /* optionalFeaturesRequested */, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&& completionHandler) { completionHandler(granted); }
     virtual void supportedXRSessionFeatures(PlatformXR::Device::FeatureList& vrFeatures, PlatformXR::Device::FeatureList& arFeatures) { }
 
 #if PLATFORM(IOS_FAMILY)
-    virtual void startXRSession(WebKit::WebPageProxy&, const PlatformXR::Device::FeatureList&, CompletionHandler<void(RetainPtr<id>, PlatformViewController *)>&& completionHandler) { completionHandler(nil, nil); }
+    virtual void startXRSession(WebKit::WebPageProxy&, const PlatformXR::Device::FeatureList&, std::optional<WebCore::XRCanvasConfiguration>&&, CompletionHandler<void(RetainPtr<id>, PlatformViewController *)>&& completionHandler) { completionHandler(nil, nil); }
     virtual void endXRSession(WebKit::WebPageProxy&, WebKit::PlatformXRSessionEndReason) { }
+#elif USE(OPENXR)
+    virtual void didStartXRSession(WebKit::WebPageProxy&) { }
+    virtual void didEndXRSession(WebKit::WebPageProxy&) { }
 #endif
 #endif
 
@@ -247,6 +255,11 @@ public:
 #if ENABLE(GAMEPAD)
     virtual void recentlyAccessedGamepadsForTesting(WebKit::WebPageProxy&) { }
     virtual void stoppedAccessingGamepadsForTesting(WebKit::WebPageProxy&) { }
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    virtual void didEnterStandby(WebKit::WebPageProxy&) { }
+    virtual void didExitStandby(WebKit::WebPageProxy&) { }
 #endif
 };
 

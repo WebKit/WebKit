@@ -1,7 +1,7 @@
 // GENERATED CONTENT - DO NOT EDIT
 // Content was automatically extracted by Reffy into webref
 // (https://github.com/w3c/webref)
-// Source: WebGL EXT_disjoint_timer_query Extension Specification (https://www.khronos.org/registry/webgl/extensions/EXT_disjoint_timer_query/)
+// Source: WebGL EXT_disjoint_timer_query Extension Specification (https://registry.khronos.org/webgl/extensions/EXT_disjoint_timer_query/)
 
 typedef unsigned long long GLuint64EXT;
 
@@ -19,7 +19,7 @@ interface EXT_disjoint_timer_query {
   const GLenum TIMESTAMP_EXT               = 0x8E28;
   const GLenum GPU_DISJOINT_EXT            = 0x8FBB;
 
-  WebGLTimerQueryEXT? createQueryEXT();
+  WebGLTimerQueryEXT createQueryEXT();
   undefined deleteQueryEXT(WebGLTimerQueryEXT? query);
   [WebGLHandlesContextLoss] boolean isQueryEXT(WebGLTimerQueryEXT? query);
   undefined beginQueryEXT(GLenum target, WebGLTimerQueryEXT query);

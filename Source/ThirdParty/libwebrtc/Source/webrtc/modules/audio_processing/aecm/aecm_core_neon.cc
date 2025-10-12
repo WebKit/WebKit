@@ -14,6 +14,10 @@
 #include "modules/audio_processing/aecm/aecm_core.h"
 #include "rtc_base/checks.h"
 
+extern "C" {
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+}
+
 namespace webrtc {
 
 namespace {

@@ -118,7 +118,7 @@ def parseArgs(parser=None):
     parser.add_argument("-f", "--format-json", dest="formatJSON", action="store_true", default=False, help="Format JSON with whitespace")
     parser.add_argument("-g", "--run-grouped-tests", dest="runGroupedTests", nargs="?", const=True, default=None, type=optStrToBool, metavar="true / false", help="Run grouped tests [default]")
     parser.add_argument("-j", "--run-jit", dest="runJITTests", nargs="?", const=True, default=None, type=optStrToBool, metavar="true / false", help="Run JIT tests [default]")
-    parser.add_argument("-l", "--lua", dest="runLuaTests", nargs="?", const=True, default=None, type=optStrToBool, metavar="true / false", help="Run Lua comparison tests [default]")
+    parser.add_argument("-l", "--lua", dest="runLuaTests", nargs="?", const=True, default=True, type=optStrToBool, metavar="true / false", help="Run Lua comparison tests [default]")
     parser.add_argument("-n", "--run-no-jit", dest="runNoJITTests", nargs="?", const=True, default=None, type=optStrToBool, metavar="true / false", help="Run no JIT tests [default]")
     parser.add_argument("-o", "--output", dest="jsonFilename", type=str, default=None, metavar="JSON-output-file", help="Path to JSON output")
     parser.add_argument("--diagnostics-dir", dest="diagnosticDir", type=str, default="/tmp/RAMification-diagnostics/", metavar="diagnostic-dir", help="Path to a directory to dump diagnostic output.")

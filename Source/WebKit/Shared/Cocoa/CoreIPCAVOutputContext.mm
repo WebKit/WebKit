@@ -57,7 +57,7 @@ RetainPtr<id> CoreIPCAVOutputContext::toID() const
     RetainPtr dict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:2]);
     [dict setObject:m_data.contextID.createNSString().get() forKey:@"contextID"];
     [dict setObject:m_data.contextType.createNSString().get() forKey:@"contextType"];
-    return adoptNS([[PAL::getAVOutputContextClass() alloc] _initWithWebKitPropertyListData:dict.get()]);
+    return adoptNS([[PAL::getAVOutputContextClassSingleton() alloc] _initWithWebKitPropertyListData:dict.get()]);
 }
 
 } // namespace WebKit

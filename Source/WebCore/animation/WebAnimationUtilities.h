@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "RenderStyleConstants.h"
-#include "WebAnimationTypes.h"
+#include <WebCore/RenderStyleConstants.h>
+#include <WebCore/WebAnimationTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
 #include <wtf/Seconds.h>

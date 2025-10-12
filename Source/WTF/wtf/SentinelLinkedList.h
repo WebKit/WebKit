@@ -47,7 +47,7 @@ enum SentinelTag { Sentinel };
 
 template<typename T, typename PassedPtrTraits = RawPtrTraits<T>>
 class BasicRawSentinelNode {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(BasicRawSentinelNode);
 public:
     using PtrTraits = typename PassedPtrTraits::template RebindTraits<BasicRawSentinelNode>;
 
@@ -84,7 +84,7 @@ template <typename T, typename RawNode = T> class SentinelLinkedList {
     WTF_MAKE_NONMOVABLE(SentinelLinkedList);
 public:
     template<typename RawNodeType, typename NodeType> class BaseIterator {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(BaseIterator);
     public:
         explicit BaseIterator(RawNodeType* node)
             : m_node(node)

@@ -30,7 +30,7 @@ OBJC_CLASS NSString;
 namespace WebKit {
 
 #if PLATFORM(MAC)
-NSString *formattedPhoneNumberString(NSString *originalPhoneNumber);
+RetainPtr<NSString> formattedPhoneNumberString(NSString *originalPhoneNumber);
 #endif
 
 }

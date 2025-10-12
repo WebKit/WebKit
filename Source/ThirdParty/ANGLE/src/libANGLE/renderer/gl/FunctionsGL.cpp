@@ -55,8 +55,11 @@ static std::vector<std::string> GetIndexedExtensions(PFNGLGETINTEGERVPROC getInt
 
     for (GLint i = 0; i < numExtensions; i++)
     {
-        if (const char* extensionString = reinterpret_cast<const char *>(getStringIFunction(GL_EXTENSIONS, i)))
+        if (const char *extensionString =
+                reinterpret_cast<const char *>(getStringIFunction(GL_EXTENSIONS, i)))
+        {
             result.push_back(extensionString);
+        }
     }
 
     return result;

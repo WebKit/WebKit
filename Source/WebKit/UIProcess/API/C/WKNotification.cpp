@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,7 +81,7 @@ WKStringRef WKNotificationCopyDir(WKNotificationRef notification)
 
 WKSecurityOriginRef WKNotificationGetSecurityOrigin(WKNotificationRef notification)
 {
-    return toAPI(toImpl(notification)->origin());
+    return toAPI(RefPtr { toProtectedImpl(notification)->origin() }.get());
 }
 
 uint64_t WKNotificationGetID(WKNotificationRef notification)

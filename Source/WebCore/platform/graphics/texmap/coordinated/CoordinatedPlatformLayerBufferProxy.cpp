@@ -93,7 +93,7 @@ void CoordinatedPlatformLayerBufferProxy::setDisplayBuffer(std::unique_ptr<Coord
 
     {
         Locker layerLocker { m_layer->lock() };
-        m_layer->setContentsBuffer(WTFMove(buffer), CoordinatedPlatformLayer::RequireComposition::No);
+        m_layer->setContentsBuffer(WTFMove(buffer), std::nullopt, CoordinatedPlatformLayer::RequireComposition::No);
     }
     m_layer->requestComposition();
 }

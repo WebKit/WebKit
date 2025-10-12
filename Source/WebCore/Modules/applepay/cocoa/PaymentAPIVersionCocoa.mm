@@ -49,8 +49,8 @@ unsigned PaymentAPIVersion::current()
 #elif HAVE(PASSKIT_NEW_BUTTON_TYPES)
         return 10;
 #elif HAVE(PASSKIT_INSTALLMENTS)
-        if (PAL::getPKPaymentInstallmentConfigurationClass()) {
-            if (PAL::getPKPaymentInstallmentItemClass())
+        if (PAL::getPKPaymentInstallmentConfigurationClassSingleton()) {
+            if (PAL::getPKPaymentInstallmentItemClassSingleton())
                 return 9;
             return 8;
         }

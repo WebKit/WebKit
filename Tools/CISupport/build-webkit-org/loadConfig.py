@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@ def pickLatestBuild(builder, requests):
     return max(requests, key=operator.attrgetter("submittedAt"))
 
 
-def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path=None):
+def loadBuilderConfig(c, is_test_mode_enabled=False, setup_main_schedulers=True, setup_force_schedulers=True, master_prefix_path=None):
     if not master_prefix_path:
         master_prefix_path = os.path.dirname(os.path.abspath(__file__))
     with open(os.path.join(master_prefix_path, 'config.json')) as config_json:
@@ -66,27 +66,29 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path=None):
     if is_test_mode_enabled:
         c['workers'].append(Worker('local-worker', 'password', max_builds=1))
 
-    c['schedulers'] = []
-    for scheduler in config['schedulers']:
-        if "change_filter" in scheduler:
-            scheduler["change_filter"] = globals()[scheduler["change_filter"]]
-        schedulerClassName = scheduler.pop('type')
-        schedulerClass = globals()[schedulerClassName]
-        c['schedulers'].append(schedulerClass(**scheduler))
+    if setup_main_schedulers is True:
+        c['schedulers'] = []
+        for scheduler in config['schedulers']:
+            if 'change_filter' in scheduler:
+                scheduler['change_filter'] = globals()[scheduler['change_filter']]
+            schedulerClassName = scheduler.pop('type')
+            schedulerClass = globals()[schedulerClassName]
+            c['schedulers'].append(schedulerClass(**scheduler))
 
-    # Setup force schedulers
-    builderNames = [str(builder['name']) for builder in config['builders']]
-    reason = StringParameter(name='reason', default='', size=40)
-    properties = [StringParameter(name='user_provided_git_hash', label='git hash to build (optional)', required=False),
-                  BooleanParameter(name='is_clean', label='Force Clean build')]
-    # Disable default enabled input fields: revision, repository, project and branch
-    codebases = [CodebaseParameter("",
-                 revision=FixedParameter(name="revision", default=""),
-                 repository=FixedParameter(name="repository", default=""),
-                 project=FixedParameter(name="project", default=""),
-                 branch=FixedParameter(name="branch", default=""))]
-    forceScheduler = ForceScheduler(name='force', builderNames=builderNames, reason=reason, codebases=codebases, properties=properties)
-    c['schedulers'].append(forceScheduler)
+    if setup_force_schedulers is True:
+        # Setup force schedulers
+        builderNames = [str(builder['name']) for builder in config['builders']]
+        reason = StringParameter(name='reason', default='', size=40)
+        properties = [StringParameter(name='user_provided_git_hash', label='git hash to build (optional)', required=False),
+                      BooleanParameter(name='is_clean', label='Force Clean build')]
+        # Disable default enabled input fields: revision, repository, project and branch
+        codebases = [CodebaseParameter('',
+                     revision=FixedParameter(name='revision', default=''),
+                     repository=FixedParameter(name='repository', default=''),
+                     project=FixedParameter(name='project', default=''),
+                     branch=FixedParameter(name='branch', default=''))]
+        forceScheduler = ForceScheduler(name='force', builderNames=builderNames, reason=reason, codebases=codebases, properties=properties)
+        c['schedulers'].append(forceScheduler)
 
     c['builders'] = []
     for builder in config['builders']:

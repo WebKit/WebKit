@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import <WebCore/Path.h>
 #import <WebCore/PathUtilities.h>
 #import <wtf/RetainPtr.h>
 

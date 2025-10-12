@@ -390,7 +390,7 @@ StorageAccessAPIPerPageScopeEnabled:
   type: bool
   defaultValue:
     WebCore:
-      default: true
+      default: false
 
 StorageBlockingPolicy:
   type: uint32_t

@@ -4,15 +4,15 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Link1 AXRole: AXLink
-Link1 AXTitle:
+Link1 AXTitle: Link1
 Link1 AXDescription: Link1
 
 Link2 AXRole: AXLink
-Link2 AXTitle:
+Link2 AXTitle: Link2
 Link2 AXDescription: Link2
 
 Link3 AXRole: AXLink
-Link3 AXTitle:
+Link3 AXTitle: Link3
 Link3 AXDescription: Link3
 
 

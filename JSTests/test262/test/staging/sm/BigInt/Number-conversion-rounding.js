@@ -2,13 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
 ---*/
+
 // Any copyright is dedicated to the Public Domain.
 // https://creativecommons.org/licenses/publicdomain/
 
@@ -250,4 +248,3 @@ assert.sameValue(BigInt(Number(2n**941n + 2n**940n + 2n**889n + 2n**12n)), 2n**9
 assert.sameValue(BigInt(Number(2n**941n + 2n**940n + 2n**889n + 2n**888n - 1n)), 2n**941n + 2n**940n + 2n**889n);
 assert.sameValue(BigInt(Number(2n**941n + 2n**940n + 2n**889n + 2n**888n)), 2n**941n + 2n**940n + 2n**890n);
 assert.sameValue(BigInt(Number(2n**941n + 2n**940n + 2n**889n + 2n**888n + 1n)), 2n**941n + 2n**940n + 2n**890n);
-

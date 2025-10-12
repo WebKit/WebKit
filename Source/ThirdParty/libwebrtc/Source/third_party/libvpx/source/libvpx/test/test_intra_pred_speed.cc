@@ -28,8 +28,8 @@
 
 namespace {
 
-typedef void (*VpxPredFunc)(uint8_t *dst, ptrdiff_t y_stride,
-                            const uint8_t *above, const uint8_t *left);
+using VpxPredFunc = void (*)(uint8_t *dst, ptrdiff_t y_stride,
+                             const uint8_t *above, const uint8_t *left);
 
 const int kBPS = 32;
 const int kTotalPixels = 32 * kBPS;
@@ -63,7 +63,7 @@ struct IntraPredTestMem {
   DECLARE_ALIGNED(16, Pixel, above_mem[2 * kBPS + 16]);
 };
 
-typedef IntraPredTestMem<uint8_t> Vp9IntraPredTestMem;
+using Vp9IntraPredTestMem = IntraPredTestMem<uint8_t>;
 
 void CheckMd5Signature(const char name[], const char *const signatures[],
                        const void *data, size_t data_size, int elapsed_time,
@@ -364,11 +364,11 @@ INTRA_PRED_TEST(LSX, TestIntraPred16, vpx_dc_predictor_16x16_lsx, nullptr,
 #if CONFIG_VP9_HIGHBITDEPTH
 namespace {
 
-typedef void (*VpxHighbdPredFunc)(uint16_t *dst, ptrdiff_t y_stride,
-                                  const uint16_t *above, const uint16_t *left,
-                                  int bd);
+using VpxHighbdPredFunc = void (*)(uint16_t *dst, ptrdiff_t y_stride,
+                                   const uint16_t *above, const uint16_t *left,
+                                   int bd);
 
-typedef IntraPredTestMem<uint16_t> Vp9HighbdIntraPredTestMem;
+using Vp9HighbdIntraPredTestMem = IntraPredTestMem<uint16_t>;
 
 void TestHighbdIntraPred(const char name[], VpxHighbdPredFunc const *pred_funcs,
                          const char *const signatures[], int block_size) {

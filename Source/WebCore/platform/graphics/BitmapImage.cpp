@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -96,17 +96,19 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
     auto scaleFactorForDrawing = context.scaleFactorForDrawing(destinationRect, adjustedSourceRect);
     auto sizeForDrawing = expandedIntSize(sourceSize * scaleFactorForDrawing);
     auto subsamplingLevel =  m_source->subsamplingLevelForScaleFactor(context, scaleFactorForDrawing, options.allowImageSubsampling());
+    auto shouldDecodeToHDR = m_source->hasHDRGainMap() && options.drawsHDRContent() == DrawsHDRContent::Yes && options.dynamicRangeLimit() != PlatformDynamicRangeLimit::standard() ? ShouldDecodeToHDR::Yes : ShouldDecodeToHDR::No;
 
-    auto nativeImage = m_source->currentNativeImageForDrawing(subsamplingLevel, { options.decodingMode(), m_source->shouldDecodeToHDR(), sizeForDrawing });
+    auto nativeImage = m_source->currentNativeImageForDrawing(subsamplingLevel, { options.decodingMode(), shouldDecodeToHDR, sizeForDrawing });
 
     if (!nativeImage) {
-        if (nativeImage.error() != DecodingStatus::Decoding)
-            return ImageDrawResult::DidNothing;
-
-        if (options.showDebugBackground() == ShowDebugBackground::Yes)
-            fillWithSolidColor(context, destinationRect, Color::yellow.colorWithAlphaByte(128), options.compositeOperator());
-
-        return ImageDrawResult::DidRequestDecoding;
+        // The decoder has not returned a frame. Fill the image rectangle with a debugging color to show what has happened.
+        if (options.showDebugBackground() == ShowDebugBackground::Yes) {
+            if (nativeImage.error() == DecodingStatus::Decoding)
+                fillWithSolidColor(context, destinationRect, Color::yellow.colorWithAlphaByte(128), options.compositeOperator());
+            else if (nativeImage.error() == DecodingStatus::Invalid)
+                fillWithSolidColor(context, destinationRect, Color::red.colorWithAlphaByte(128), options.compositeOperator());
+        }
+        return nativeImage.error() == DecodingStatus::Decoding ? ImageDrawResult::DidRequestDecoding : ImageDrawResult::DidNothing;
     }
 
     if (auto color = (*nativeImage)->singlePixelSolidColor())
@@ -121,15 +123,20 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
         if (orientation == ImageOrientation::Orientation::FromImage)
             orientation = currentFrameOrientation();
 
-        auto headroom = options.headroom();
+#if !HAVE(SUPPORT_HDR_DISPLAY_APIS)
         if (hasHDRContentForTesting() && options.dynamicRangeLimit() != PlatformDynamicRangeLimit::standard())
-            fillWithSolidColor(context, destinationRect, Color::gold, options.compositeOperator());
+            fillWithSolidColor(context, destinationRect, Color::green, options.compositeOperator());
         else {
+#endif
+            auto headroom = options.headroom();
+
             if (headroom == Headroom::FromImage)
-                headroom = currentFrameHeadroom();
+                headroom = currentFrameHeadroom(shouldDecodeToHDR);
 
             context.drawNativeImage(*nativeImage, destinationRect, adjustedSourceRect, { options, orientation, headroom });
+#if !HAVE(SUPPORT_HDR_DISPLAY_APIS)
         }
+#endif
     }
 
     if (auto observer = imageObserver())

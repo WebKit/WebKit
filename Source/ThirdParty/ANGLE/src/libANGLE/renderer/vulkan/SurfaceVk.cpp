@@ -7,6 +7,10 @@
 //    Implements the class methods for SurfaceVk.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/vulkan/SurfaceVk.h"
 
 #include "common/debug.h"
@@ -608,14 +612,9 @@ void SurfaceVk::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMe
     onStateChange(angle::SubjectMessage::SubjectChanged);
 }
 
-EGLint SurfaceVk::getWidth() const
+gl::Extents SurfaceVk::getSize() const
 {
-    return mWidth;
-}
-
-EGLint SurfaceVk::getHeight() const
-{
-    return mHeight;
+    return gl::Extents(mWidth, mHeight, 1);
 }
 
 OffscreenSurfaceVk::AttachmentImage::AttachmentImage(SurfaceVk *surfaceVk)
@@ -857,8 +856,8 @@ egl::Error OffscreenSurfaceVk::lockSurface(const egl::Display *display,
     ASSERT(image->valid());
 
     angle::Result result =
-        LockSurfaceImpl(vk::GetImpl(display), image, mLockBufferHelper, getWidth(), getHeight(),
-                        usageHint, preservePixels, bufferPtrOut, bufferPitchOut);
+        LockSurfaceImpl(vk::GetImpl(display), image, mLockBufferHelper, mWidth, mHeight, usageHint,
+                        preservePixels, bufferPtrOut, bufferPitchOut);
     return angle::ToEGL(result, EGL_BAD_ACCESS);
 }
 
@@ -868,8 +867,8 @@ egl::Error OffscreenSurfaceVk::unlockSurface(const egl::Display *display, bool p
     ASSERT(image->valid());
     ASSERT(mLockBufferHelper.valid());
 
-    return angle::ToEGL(UnlockSurfaceImpl(vk::GetImpl(display), image, mLockBufferHelper,
-                                          getWidth(), getHeight(), preservePixels),
+    return angle::ToEGL(UnlockSurfaceImpl(vk::GetImpl(display), image, mLockBufferHelper, mWidth,
+                                          mHeight, preservePixels),
                         EGL_BAD_ACCESS);
 }
 
@@ -1032,6 +1031,7 @@ WindowSurfaceVk::WindowSurfaceVk(const egl::SurfaceState &surfaceState, EGLNativ
       mDepthStencilImageBinding(this, kAnySurfaceImageSubjectIndex),
       mColorImageMSBinding(this, kAnySurfaceImageSubjectIndex),
       mFrameCount(1),
+      mPresentID(0),
       mBufferAgeQueryFrameNumber(0)
 {
     // Initialize the color render target with the multisampled targets.  If not multisampled, the
@@ -1374,15 +1374,17 @@ angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk, bool *anyMat
                    VK_ERROR_INITIALIZATION_FAILED);
 
     // Single buffer, if supported
-    if ((mState.attributes.getAsInt(EGL_RENDER_BUFFER, EGL_BACK_BUFFER) == EGL_SINGLE_BUFFER) &&
-        supportsPresentMode(vk::PresentMode::SharedDemandRefreshKHR))
+    if (mState.attributes.getAsInt(EGL_RENDER_BUFFER, EGL_BACK_BUFFER) == EGL_SINGLE_BUFFER)
     {
-        mSwapchainPresentMode = vk::PresentMode::SharedDemandRefreshKHR;
-        setDesiredSwapchainPresentMode(vk::PresentMode::SharedDemandRefreshKHR);
-    }
-    else
-    {
-        WARN() << "Shared presentation mode requested, but not supported";
+        if (supportsPresentMode(vk::PresentMode::SharedDemandRefreshKHR))
+        {
+            mSwapchainPresentMode = vk::PresentMode::SharedDemandRefreshKHR;
+            setDesiredSwapchainPresentMode(vk::PresentMode::SharedDemandRefreshKHR);
+        }
+        else
+        {
+            WARN() << "Shared presentation mode requested, but not supported";
+        }
     }
 
     mCompressionFlags    = VK_IMAGE_COMPRESSION_DISABLED_EXT;
@@ -2557,8 +2559,8 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
     std::vector<VkRectLayerKHR> vkRects;
     if (contextVk->getFeatures().supportsIncrementalPresent.enabled && (n_rects > 0))
     {
-        EGLint width  = getWidth();
-        EGLint height = getHeight();
+        EGLint width  = mWidth;
+        EGLint height = mHeight;
 
         const EGLint *eglRects       = rects;
         presentRegion.rectangleCount = n_rects;
@@ -2615,6 +2617,23 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
     ASSERT(!mSwapchainImages[mCurrentSwapchainImageIndex]
                 .image->getAcquireNextImageSemaphore()
                 .valid());
+
+    // EGL_ANDROID_presentation_time: set the desired presentation time for the frame.
+    VkPresentTimesInfoGOOGLE presentTimesInfo = {};
+    VkPresentTimeGOOGLE presentTime           = {};
+    if (mDesiredPresentTime.has_value())
+    {
+        ASSERT(contextVk->getFeatures().supportsTimestampSurfaceAttribute.enabled);
+        presentTime.presentID          = mPresentID++;
+        presentTime.desiredPresentTime = mDesiredPresentTime.value();
+        mDesiredPresentTime.reset();
+
+        presentTimesInfo.sType          = VK_STRUCTURE_TYPE_PRESENT_TIMES_INFO_GOOGLE;
+        presentTimesInfo.swapchainCount = 1;
+        presentTimesInfo.pTimes         = &presentTime;
+
+        vk::AddToPNextChain(&presentInfo, &presentTimesInfo);
+    }
 
     VkResult presentResult =
         renderer->queuePresent(contextVk, contextVk->getPriority(), presentInfo);
@@ -2831,6 +2850,12 @@ void WindowSurfaceVk::setTimestampsEnabled(bool enabled)
 {
     // The frontend has already cached the state, nothing to do.
     ASSERT(IsAndroid());
+}
+
+egl::Error WindowSurfaceVk::setPresentationTime(EGLnsecsANDROID time)
+{
+    mDesiredPresentTime = time;
+    return egl::NoError();
 }
 
 void WindowSurfaceVk::deferAcquireNextImage()
@@ -3130,33 +3155,42 @@ void WindowSurfaceVk::setSizeState(SurfaceSizeState sizeState)
     SetSizeState(&mSizeState, sizeState);
 }
 
-egl::Error WindowSurfaceVk::getUserWidth(const egl::Display *display, EGLint *value) const
+angle::Result WindowSurfaceVk::ensureSizeResolved(const gl::Context *context)
 {
     if (getSizeState() == SurfaceSizeState::Resolved)
     {
-        std::lock_guard<angle::SimpleMutex> lock(mSizeMutex);
-        // Surface size is resolved; use current size.
-        *value = getWidth();
-        return egl::NoError();
+        return angle::Result::Continue;
     }
+    ASSERT(mAcquireOperation.state == ImageAcquireState::Unacquired);
 
-    VkExtent2D extent;
-    angle::Result result = getUserExtentsImpl(vk::GetImpl(display), &extent);
-    if (result == angle::Result::Continue)
-    {
-        // The EGL spec states that value is not written if there is an error
-        *value = static_cast<EGLint>(extent.width);
-    }
-    return angle::ToEGL(result, EGL_BAD_SURFACE);
+    ANGLE_TRY(doDeferredAcquireNextImage(vk::GetImpl(context)));
+
+    ASSERT(mSizeState == SurfaceSizeState::Resolved);
+    return angle::Result::Continue;
 }
 
-egl::Error WindowSurfaceVk::getUserHeight(const egl::Display *display, EGLint *value) const
+gl::Extents WindowSurfaceVk::getSize() const
+{
+    ASSERT(mSizeState == SurfaceSizeState::Resolved);
+    return gl::Extents(mWidth, mHeight, 1);
+}
+
+egl::Error WindowSurfaceVk::getUserSize(const egl::Display *display,
+                                        EGLint *width,
+                                        EGLint *height) const
 {
     if (getSizeState() == SurfaceSizeState::Resolved)
     {
         std::lock_guard<angle::SimpleMutex> lock(mSizeMutex);
         // Surface size is resolved; use current size.
-        *value = getHeight();
+        if (width != nullptr)
+        {
+            *width = mWidth;
+        }
+        if (height != nullptr)
+        {
+            *height = mHeight;
+        }
         return egl::NoError();
     }
 
@@ -3165,8 +3199,17 @@ egl::Error WindowSurfaceVk::getUserHeight(const egl::Display *display, EGLint *v
     if (result == angle::Result::Continue)
     {
         // The EGL spec states that value is not written if there is an error
-        *value = static_cast<EGLint>(extent.height);
+        if (width != nullptr)
+        {
+            *width = static_cast<EGLint>(extent.width);
+        }
+        if (height != nullptr)
+        {
+            *height = static_cast<EGLint>(extent.height);
+        }
+        return egl::NoError();
     }
+
     return angle::ToEGL(result, EGL_BAD_SURFACE);
 }
 
@@ -3377,8 +3420,11 @@ angle::Result WindowSurfaceVk::drawOverlay(ContextVk *contextVk, SwapchainImage 
     const vk::ImageView *imageView = nullptr;
     ANGLE_TRY(image->imageViews.getLevelLayerDrawImageView(contextVk, *image->image,
                                                            vk::LevelIndex(0), 0, &imageView));
-    ANGLE_TRY(overlayVk->onPresent(contextVk, image->image.get(), imageView,
-                                   Is90DegreeRotation(getPreTransform())));
+    if (overlayVk)
+    {
+        ANGLE_TRY(overlayVk->onPresent(contextVk, image->image.get(), imageView,
+                                       Is90DegreeRotation(getPreTransform())));
+    }
 
     return angle::Result::Continue;
 }
@@ -3524,9 +3570,8 @@ egl::Error WindowSurfaceVk::lockSurface(const egl::Display *display,
     vk::ImageHelper *image = mSwapchainImages[mCurrentSwapchainImageIndex].image.get();
     ASSERT(image->valid());
 
-    angle::Result result =
-        LockSurfaceImpl(displayVk, image, mLockBufferHelper, getWidth(), getHeight(), usageHint,
-                        preservePixels, bufferPtrOut, bufferPitchOut);
+    angle::Result result = LockSurfaceImpl(displayVk, image, mLockBufferHelper, mWidth, mHeight,
+                                           usageHint, preservePixels, bufferPtrOut, bufferPitchOut);
     return angle::ToEGL(result, EGL_BAD_ACCESS);
 }
 
@@ -3538,8 +3583,8 @@ egl::Error WindowSurfaceVk::unlockSurface(const egl::Display *display, bool pres
     ASSERT(image->valid());
     ASSERT(mLockBufferHelper.valid());
 
-    return angle::ToEGL(UnlockSurfaceImpl(vk::GetImpl(display), image, mLockBufferHelper,
-                                          getWidth(), getHeight(), preservePixels),
+    return angle::ToEGL(UnlockSurfaceImpl(vk::GetImpl(display), image, mLockBufferHelper, mWidth,
+                                          mHeight, preservePixels),
                         EGL_BAD_ACCESS);
 }
 
@@ -3566,15 +3611,34 @@ egl::Error WindowSurfaceVk::detachFromFramebuffer(const gl::Context *context,
     return egl::NoError();
 }
 
-EGLint WindowSurfaceVk::getCompressionRate(const egl::Display *display) const
+egl::Error WindowSurfaceVk::getCompressionRate(const egl::Display *display,
+                                               const gl::Context *context,
+                                               EGLint *rate)
 {
+    ASSERT(mSwapchain != VK_NULL_HANDLE);
     ASSERT(!mSwapchainImages.empty());
 
     DisplayVk *displayVk   = vk::GetImpl(display);
+    ContextVk *contextVk   = vk::GetImpl(context);
     vk::Renderer *renderer = displayVk->getRenderer();
+
+    ANGLE_TRACE_EVENT0("gpu.angle", "getCompressionRate");
 
     ASSERT(renderer->getFeatures().supportsImageCompressionControl.enabled);
     ASSERT(renderer->getFeatures().supportsImageCompressionControlSwapchain.enabled);
+
+    // Image must be already acquired in the |prepareSwap| call.
+    ASSERT(mAcquireOperation.state != ImageAcquireState::Unacquired);
+
+    // If the result of vkAcquireNextImageKHR is not yet processed, do so now.
+    if (mAcquireOperation.state == ImageAcquireState::NeedToProcessResult)
+    {
+        egl::Error result = angle::ToEGL(doDeferredAcquireNextImage(contextVk), EGL_BAD_SURFACE);
+        if (result.isError())
+        {
+            return result;
+        }
+    }
 
     VkImageSubresource2EXT imageSubresource2      = {};
     imageSubresource2.sType                       = VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_EXT;
@@ -3592,7 +3656,10 @@ EGLint WindowSurfaceVk::getCompressionRate(const egl::Display *display) const
 
     std::vector<EGLint> eglFixedRates = vk_gl::ConvertCompressionFlagsToEGLFixedRate(
         compressionProperties.imageCompressionFixedRateFlags, 1);
-    return eglFixedRates.empty() ? EGL_SURFACE_COMPRESSION_FIXED_RATE_NONE_EXT : eglFixedRates[0];
+    *rate =
+        (eglFixedRates.empty() ? EGL_SURFACE_COMPRESSION_FIXED_RATE_NONE_EXT : eglFixedRates[0]);
+
+    return egl::NoError();
 }
 
 }  // namespace rx

@@ -10,12 +10,15 @@
 
 #include "modules/desktop_capture/win/dxgi_frame.h"
 
-#include <string.h>
-
+#include <cstring>
+#include <memory>
 #include <utility>
 
+#include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
-#include "modules/desktop_capture/win/dxgi_duplicator_controller.h"
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/shared_desktop_frame.h"
+#include "modules/desktop_capture/shared_memory.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
@@ -57,7 +60,6 @@ bool DxgiFrame::Prepare(DesktopSize size, DesktopCapturer::SourceId source_id) {
     } else {
       frame.reset(new BasicDesktopFrame(size));
     }
-
     frame_ = SharedDesktopFrame::Wrap(std::move(frame));
   }
 

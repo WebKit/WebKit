@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@
 #import "WebExtensionPermission.h"
 #import "WebExtensionUtilities.h"
 #import <CoreFoundation/CFBundle.h>
+#import <WebCore/DataURLDecoder.h>
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/FileSystem.h>
 #import <wtf/cf/TypeCastsCF.h>
@@ -192,7 +193,8 @@ bool WebExtension::validateResourceData(NSURL *resourceURL, NSData *resourceData
     if (!staticCode)
         return false;
 
-    NSURL *bundleSupportFilesURL = CFBridgingRelease(CFBundleCopySupportFilesDirectoryURL(m_bundle.get()._cfBundle));
+    RetainPtr<__CFBundle> bundle = m_bundle.get()._cfBundle;
+    NSURL *bundleSupportFilesURL = CFBridgingRelease(CFBundleCopySupportFilesDirectoryURL(bundle.get()));
     NSString *bundleSupportFilesURLString = bundleSupportFilesURL.absoluteString;
     NSString *resourceURLString = resourceURL.absoluteString;
     ASSERT([resourceURLString hasPrefix:bundleSupportFilesURLString]);
@@ -207,11 +209,9 @@ bool WebExtension::validateResourceData(NSURL *resourceURL, NSData *resourceData
 }
 #endif // PLATFORM(MAC)
 
-RefPtr<API::Data> WebExtension::resourceDataForPath(const String& originalPath, RefPtr<API::Error>& outError, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
+Expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForPath(const String& originalPath, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
 {
     ASSERT(originalPath);
-
-    outError = nullptr;
 
     String path = originalPath;
 
@@ -222,22 +222,15 @@ RefPtr<API::Data> WebExtension::resourceDataForPath(const String& originalPath, 
     auto *cocoaPath = path.createNSString().get();
 
     if ([cocoaPath hasPrefix:@"data:"]) {
-        if (auto base64Range = [cocoaPath rangeOfString:@";base64,"]; base64Range.location != NSNotFound) {
-            auto *base64String = [cocoaPath substringFromIndex:NSMaxRange(base64Range)];
-            auto *data = [[NSData alloc] initWithBase64EncodedString:base64String options:0];
-            return API::Data::createWithoutCopying(data);
-        }
-
-        if (auto commaRange = [cocoaPath rangeOfString:@","]; commaRange.location != NSNotFound) {
-            auto *urlEncodedString = [cocoaPath substringFromIndex:NSMaxRange(commaRange)];
-            auto *decodedString = [urlEncodedString stringByRemovingPercentEncoding];
-            auto *data = [decodedString dataUsingEncoding:NSUTF8StringEncoding];
-            return API::Data::createWithoutCopying(data);
-        }
+        if (auto decodedURL = WebCore::DataURLDecoder::decode(URL { path }))
+            return API::Data::create(decodedURL.value().data);
 
         ASSERT([cocoaPath isEqualToString:@"data:"]);
         return API::Data::create(std::span<const uint8_t> { });
     }
+
+    if ([cocoaPath hasPrefix:@"symbol:"])
+        return makeUnexpected(nullptr);
 
     // Remove leading slash to normalize the path for lookup/storage in the cache dictionary.
     if ([cocoaPath hasPrefix:@"/"])
@@ -259,23 +252,22 @@ RefPtr<API::Data> WebExtension::resourceDataForPath(const String& originalPath, 
     auto *resourceURL = resourceFileURLForPath(path).createNSURL().get();
     if (!resourceURL) {
         if (suppressErrors == SuppressNotFoundErrors::No)
-            outError = createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources. It is an invalid path.", "WKWebExtensionErrorResourceNotFound description with invalid file path", bridge_cast(cocoaPath)));
-        return nullptr;
+            return makeUnexpected(createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources. It is an invalid path.", "WKWebExtensionErrorResourceNotFound description with invalid file path", bridge_cast(cocoaPath))));
+        return makeUnexpected(nullptr);
     }
 
     NSError *fileReadError;
     NSData *resultData = [NSData dataWithContentsOfURL:resourceURL options:NSDataReadingMappedIfSafe error:&fileReadError];
     if (!resultData) {
         if (suppressErrors == SuppressNotFoundErrors::No)
-            outError = createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources.", "WKWebExtensionErrorResourceNotFound description with file name", bridge_cast(cocoaPath)), API::Error::create(fileReadError));
-        return nullptr;
+            return makeUnexpected(createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources.", "WKWebExtensionErrorResourceNotFound description with file name", bridge_cast(cocoaPath)), API::Error::create(fileReadError)));
+        return makeUnexpected(nullptr);
     }
 
 #if PLATFORM(MAC)
     NSError *validationError;
     if (!validateResourceData(resourceURL, resultData, &validationError)) {
-        outError = createError(Error::InvalidResourceCodeSignature, WEB_UI_FORMAT_CFSTRING("Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built.", "WKWebExtensionErrorInvalidResourceCodeSignature description with file name", bridge_cast(cocoaPath)), API::Error::create(validationError));
-        return nullptr;
+        return makeUnexpected(createError(Error::InvalidResourceCodeSignature, WEB_UI_FORMAT_CFSTRING("Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built.", "WKWebExtensionErrorInvalidResourceCodeSignature description with file name", bridge_cast(cocoaPath)), API::Error::create(validationError)));
     }
 #endif
 
@@ -300,14 +292,36 @@ void WebExtension::recordError(Ref<API::Error> error)
     [wrapper() didChangeValueForKey:@"errors"];
 }
 
-RefPtr<WebCore::Icon> WebExtension::iconForPath(const String& imagePath, RefPtr<API::Error>& outError, WebCore::FloatSize sizeForResizing, std::optional<double> idealDisplayScale)
+Expected<Ref<WebCore::Icon>, RefPtr<API::Error>> WebExtension::iconForPath(const String& imagePath, WebCore::FloatSize sizeForResizing, std::optional<double> idealDisplayScale)
 {
     ASSERT(!imagePath.isEmpty());
 
-    RefPtr data = resourceDataForPath(imagePath, outError);
-    if (!data || outError)
-        return nullptr;
+    constexpr auto symbolURLScheme = "symbol:"_s;
+    if (imagePath.startsWith(symbolURLScheme)) {
+        auto symbolName = imagePath.substring(symbolURLScheme.length());
 
+        // Strip off any query string (everything after '?') so we only use
+        // the raw symbol name. Query parameters may be handled in the future.
+        auto queryStringPosition = symbolName.find('?');
+        if (queryStringPosition != notFound)
+            symbolName = symbolName.left(queryStringPosition);
+
+#if USE(APPKIT)
+        auto *result = [NSImage imageWithSystemSymbolName:symbolName.createNSString().get() accessibilityDescription:nil];
+#else
+        auto *result = [UIImage systemImageNamed:symbolName.createNSString().get()];
+#endif
+
+        if (RefPtr iconResult = WebCore::Icon::create(result))
+            return iconResult.releaseNonNull();
+        return makeUnexpected(nullptr);
+    }
+
+    auto dataResult = resourceDataForPath(imagePath);
+    if (!dataResult)
+        return makeUnexpected(dataResult.error());
+
+    Ref data = dataResult.value();
     auto *imageData = static_cast<NSData *>(data->wrapper());
 
 #if USE(APPKIT)
@@ -318,31 +332,18 @@ RefPtr<WebCore::Icon> WebExtension::iconForPath(const String& imagePath, RefPtr<
 
     CocoaImage *result;
 
-#if !USE(NSIMAGE_FOR_SVG_SUPPORT)
+#if !USE(APPKIT)
     auto imageType = resourceMIMETypeForPath(imagePath);
     if (equalLettersIgnoringASCIICase(imageType, "image/svg+xml"_s)) {
-#if USE(APPKIT)
-        static Class svgImageRep = NSClassFromString(@"_NSSVGImageRep");
-        RELEASE_ASSERT(svgImageRep);
-
-        _NSSVGImageRep *imageRep = [[svgImageRep alloc] initWithData:imageData];
-        if (!imageRep)
-            return nullptr;
-
-        result = [[NSImage alloc] init];
-        [result addRepresentation:imageRep];
-        result.size = imageRep.size;
-#else
         CGSVGDocumentRef document = CGSVGDocumentCreateFromData(bridge_cast(imageData), nullptr);
         if (!document)
-            return nullptr;
+            return makeUnexpected(nullptr);
 
         // Since we need to rasterize, scale the image for the densest display, so it will have enough pixels to be sharp.
         result = [UIImage _imageWithCGSVGDocument:document scale:displayScale orientation:UIImageOrientationUp];
         CGSVGDocumentRelease(document);
-#endif // not USE(APPKIT)
     }
-#endif // !USE(NSIMAGE_FOR_SVG_SUPPORT)
+#endif // !USE(APPKIT)
 
 #if USE(APPKIT)
     if (!result)
@@ -358,7 +359,9 @@ RefPtr<WebCore::Icon> WebExtension::iconForPath(const String& imagePath, RefPtr<
         result.size = WebCore::FloatSize(originalSize.width * aspectRatio, originalSize.height * aspectRatio);
     }
 
-    return WebCore::Icon::create(result);
+    if (RefPtr iconResult = WebCore::Icon::create(result))
+        return iconResult.releaseNonNull();
+    return makeUnexpected(nullptr);
 #else
     if (!result)
         result = [[CocoaImage alloc] initWithData:imageData scale:displayScale];
@@ -370,7 +373,9 @@ RefPtr<WebCore::Icon> WebExtension::iconForPath(const String& imagePath, RefPtr<
     if (!sizeForResizing.isZero() && WebCore::FloatSize(result.size) != sizeForResizing)
         result = [result imageByPreparingThumbnailOfSize:sizeForResizing];
 
-    return WebCore::Icon::create(result);
+    if (RefPtr iconResult = WebCore::Icon::create(result))
+        return iconResult.releaseNonNull();
+    return makeUnexpected(nullptr);
 #endif // not USE(APPKIT)
 }
 
@@ -408,25 +413,25 @@ RefPtr<WebCore::Icon> WebExtension::bestIcon(RefPtr<JSON::Object> icons, WebCore
     RefPtr<WebCore::Icon> resultImage;
 
     for (NSString *iconPath in uniquePaths) {
-        RefPtr<API::Error> resourceError;
-        if (RefPtr image = iconForPath(iconPath, resourceError, idealSize)) {
+        auto imageValue = iconForPath(iconPath, idealSize);
+        if (imageValue) {
             if (!resultImage)
-                resultImage = image;
+                resultImage = imageValue.value().get();
             else
-                [resultImage->image() addRepresentations:image->image().get().representations];
-        } else if (reportError && resourceError)
-            reportError(*resourceError);
+                [resultImage->image() addRepresentations:imageValue.value()->image().get().representations];
+        } else if (reportError && !imageValue && imageValue.error())
+            reportError(imageValue.error().releaseNonNull());
     }
 
     return resultImage;
 #else
     auto *images = mapObjects<NSDictionary>(scalePaths, ^id(NSNumber *scale, NSString *path) {
-        RefPtr<API::Error> resourceError;
-        if (RefPtr image = iconForPath(path, resourceError, idealSize, scale.doubleValue))
-            return image->image().get();
+        auto imageValue = iconForPath(path, idealSize, scale.doubleValue);
+        if (imageValue)
+            return imageValue.value()->image().get();
 
-        if (reportError && resourceError)
-            reportError(*resourceError);
+        if (reportError && !imageValue && imageValue.error())
+            reportError(imageValue.error().releaseNonNull());
 
         return nullptr;
     });

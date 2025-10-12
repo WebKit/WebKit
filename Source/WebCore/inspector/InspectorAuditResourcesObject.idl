@@ -24,8 +24,7 @@
  */
 
 [
-    JSGenerateToJSObject,
-    LegacyNoInterfaceObject,
+    LegacyNoInterfaceObject
 ] interface InspectorAuditResourcesObject {
     [CallWith=CurrentDocument] sequence<Resource> getResources();
     [CallWith=CurrentDocument] ResourceContent getResourceContent(DOMString id);

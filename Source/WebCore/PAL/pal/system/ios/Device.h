@@ -33,6 +33,8 @@ namespace PAL {
 
 String deviceName(); // Thread-safe.
 
+PAL_EXPORT bool deviceClassIsDesktop();
+
 // Returns true only for iPhone, iPod, Apple Watch.
 // Few callers should be making any decisions based on device class.
 // If a check like this is needed, often currentUserInterfaceIdiomIsSmallScreen is preferred.

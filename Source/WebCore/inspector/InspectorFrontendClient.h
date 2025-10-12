@@ -31,12 +31,12 @@
 
 #pragma once
 
-#include "CertificateInfo.h"
-#include "Color.h"
-#include "DiagnosticLoggingClient.h"
-#include "FrameIdentifier.h"
-#include "InspectorDebuggableType.h"
-#include "UserInterfaceLayoutDirection.h"
+#include <WebCore/CertificateInfo.h>
+#include <WebCore/Color.h>
+#include <WebCore/DiagnosticLoggingClient.h>
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/InspectorDebuggableType.h>
+#include <WebCore/UserInterfaceLayoutDirection.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -149,6 +149,9 @@ public:
     virtual void showCertificate(const CertificateInfo&) = 0;
 
     virtual void setInspectorPageDeveloperExtrasEnabled(bool) = 0;
+
+    virtual void setPageAndTextZoomFactors(double /* pageZoomFactor */, double /* textZoomFactor */) { }
+    virtual double pageZoomFactor() const { return 1.0; }
 
 #if ENABLE(INSPECTOR_TELEMETRY)
     virtual bool supportsDiagnosticLogging() { return false; }

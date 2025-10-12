@@ -62,13 +62,13 @@ RTPW=./rtpw$EXE
 DEST_PORT=9999
 DURATION=3
 
-# First, we run "killall" to get rid of all existing rtpw processes.
+# First, we run "pkill" to get rid of all existing rtpw processes.
 # This step also enables this script to clean up after itself; if this
 # script is interrupted after the rtpw processes are started but before
 # they are killed, those processes will linger.  Re-running the script
 # will get rid of them.
 
-killall rtpw 2>/dev/null
+pkill -x rtpw 2>/dev/null
 
 if test -n $MESON_EXE_WRAPPER || test -x $RTPW; then
 

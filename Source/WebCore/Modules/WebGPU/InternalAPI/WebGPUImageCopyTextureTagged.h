@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPUImageCopyTexture.h"
-#include "WebGPUPredefinedColorSpace.h"
+#include <WebCore/WebGPUImageCopyTexture.h>
+#include <WebCore/WebGPUPredefinedColorSpace.h>
 
 namespace WebCore::WebGPU {
 

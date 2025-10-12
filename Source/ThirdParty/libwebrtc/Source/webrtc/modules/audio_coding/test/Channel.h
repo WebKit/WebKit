@@ -13,9 +13,11 @@
 
 #include <stdio.h>
 
+#include <cstdint>
+
 #include "api/neteq/neteq.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
-#include "modules/include/module_common_types.h"
+#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {

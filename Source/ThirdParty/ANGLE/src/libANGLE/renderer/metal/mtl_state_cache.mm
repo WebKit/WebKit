@@ -8,6 +8,10 @@
 //    C struct versions of Metal sampler, depth stencil, render pass, render pipeline descriptors.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/metal/mtl_state_cache.h"
 
 #include <sstream>

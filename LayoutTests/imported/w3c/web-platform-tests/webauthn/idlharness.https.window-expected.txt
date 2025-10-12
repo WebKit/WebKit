@@ -7,26 +7,54 @@ PASS Partial dictionary CredentialRequestOptions: original dictionary defined
 PASS Partial dictionary CredentialRequestOptions: member names are unique
 PASS Partial interface PublicKeyCredential: original interface defined
 PASS Partial interface PublicKeyCredential: member names are unique
+PASS Partial interface PublicKeyCredential[2]: original interface defined
+PASS Partial interface PublicKeyCredential[2]: member names are unique
+PASS Partial interface PublicKeyCredential[3]: original interface defined
+PASS Partial interface PublicKeyCredential[3]: member names are unique
+PASS Partial interface PublicKeyCredential[4]: original interface defined
+PASS Partial interface PublicKeyCredential[4]: member names are unique
+PASS Partial interface PublicKeyCredential[5]: original interface defined
+PASS Partial interface PublicKeyCredential[5]: member names are unique
 PASS Partial dictionary AuthenticationExtensionsClientInputs: original dictionary defined
 PASS Partial dictionary AuthenticationExtensionsClientInputs: member names are unique
+PASS Partial dictionary AuthenticationExtensionsClientInputsJSON: original dictionary defined
+PASS Partial dictionary AuthenticationExtensionsClientInputsJSON: member names are unique
 PASS Partial dictionary AuthenticationExtensionsClientOutputs: original dictionary defined
 PASS Partial dictionary AuthenticationExtensionsClientOutputs: member names are unique
+PASS Partial dictionary AuthenticationExtensionsClientOutputsJSON: original dictionary defined
+PASS Partial dictionary AuthenticationExtensionsClientOutputsJSON: member names are unique
 PASS Partial dictionary AuthenticationExtensionsClientInputs[2]: original dictionary defined
 PASS Partial dictionary AuthenticationExtensionsClientInputs[2]: member names are unique
+PASS Partial dictionary AuthenticationExtensionsClientInputsJSON[2]: original dictionary defined
+PASS Partial dictionary AuthenticationExtensionsClientInputsJSON[2]: member names are unique
 PASS Partial dictionary AuthenticationExtensionsClientOutputs[2]: original dictionary defined
 PASS Partial dictionary AuthenticationExtensionsClientOutputs[2]: member names are unique
+PASS Partial dictionary AuthenticationExtensionsClientOutputsJSON[2]: original dictionary defined
+PASS Partial dictionary AuthenticationExtensionsClientOutputsJSON[2]: member names are unique
 PASS Partial dictionary AuthenticationExtensionsClientInputs[3]: original dictionary defined
 PASS Partial dictionary AuthenticationExtensionsClientInputs[3]: member names are unique
+PASS Partial dictionary AuthenticationExtensionsClientInputsJSON[3]: original dictionary defined
+PASS Partial dictionary AuthenticationExtensionsClientInputsJSON[3]: member names are unique
 PASS Partial dictionary AuthenticationExtensionsClientOutputs[3]: original dictionary defined
 PASS Partial dictionary AuthenticationExtensionsClientOutputs[3]: member names are unique
+PASS Partial dictionary AuthenticationExtensionsClientOutputsJSON[3]: original dictionary defined
+PASS Partial dictionary AuthenticationExtensionsClientOutputsJSON[3]: member names are unique
 PASS Partial dictionary AuthenticationExtensionsClientInputs[4]: original dictionary defined
 PASS Partial dictionary AuthenticationExtensionsClientInputs[4]: member names are unique
+PASS Partial dictionary AuthenticationExtensionsClientInputsJSON[4]: original dictionary defined
+PASS Partial dictionary AuthenticationExtensionsClientInputsJSON[4]: member names are unique
 PASS Partial dictionary AuthenticationExtensionsClientOutputs[4]: original dictionary defined
 PASS Partial dictionary AuthenticationExtensionsClientOutputs[4]: member names are unique
+PASS Partial dictionary AuthenticationExtensionsClientOutputsJSON[4]: original dictionary defined
+PASS Partial dictionary AuthenticationExtensionsClientOutputsJSON[4]: member names are unique
 PASS Partial dictionary AuthenticationExtensionsClientInputs[5]: original dictionary defined
 PASS Partial dictionary AuthenticationExtensionsClientInputs[5]: member names are unique
+PASS Partial dictionary AuthenticationExtensionsClientInputsJSON[5]: original dictionary defined
+PASS Partial dictionary AuthenticationExtensionsClientInputsJSON[5]: member names are unique
 PASS Partial dictionary AuthenticationExtensionsClientOutputs[5]: original dictionary defined
 PASS Partial dictionary AuthenticationExtensionsClientOutputs[5]: member names are unique
+PASS Partial dictionary AuthenticationExtensionsClientOutputsJSON[5]: original dictionary defined
+PASS Partial dictionary AuthenticationExtensionsClientOutputsJSON[5]: member names are unique
 PASS Partial dictionary CredentialRequestOptions[2]: member names are unique
 PASS Partial dictionary CredentialCreationOptions[2]: member names are unique
 PASS Partial dictionary CredentialRequestOptions[3]: member names are unique
@@ -39,8 +67,17 @@ PASS PublicKeyCredential interface: existence and properties of interface protot
 PASS PublicKeyCredential interface: existence and properties of interface prototype object's @@unscopables property
 PASS PublicKeyCredential interface: attribute rawId
 PASS PublicKeyCredential interface: attribute response
+PASS PublicKeyCredential interface: attribute authenticatorAttachment
 PASS PublicKeyCredential interface: operation getClientExtensionResults()
+FAIL PublicKeyCredential interface: operation isConditionalMediationAvailable() assert_own_property: interface object missing static operation expected property "isConditionalMediationAvailable" missing
+PASS PublicKeyCredential interface: operation toJSON()
 PASS PublicKeyCredential interface: operation isUserVerifyingPlatformAuthenticatorAvailable()
+PASS PublicKeyCredential interface: operation getClientCapabilities()
+PASS PublicKeyCredential interface: operation parseCreationOptionsFromJSON(PublicKeyCredentialCreationOptionsJSON)
+PASS PublicKeyCredential interface: operation parseRequestOptionsFromJSON(PublicKeyCredentialRequestOptionsJSON)
+PASS PublicKeyCredential interface: operation signalUnknownCredential(UnknownCredentialOptions)
+PASS PublicKeyCredential interface: operation signalAllAcceptedCredentials(AllAcceptedCredentialsOptions)
+PASS PublicKeyCredential interface: operation signalCurrentUserDetails(CurrentUserDetailsOptions)
 PASS AuthenticatorResponse interface: existence and properties of interface object
 PASS AuthenticatorResponse interface object length
 PASS AuthenticatorResponse interface object name

@@ -1,8 +1,0 @@
-PASS colors.top is null
-PASS colors.left is null
-PASS colors.right is null
-PASS colors.bottom is "rgb(225, 225, 225)"
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

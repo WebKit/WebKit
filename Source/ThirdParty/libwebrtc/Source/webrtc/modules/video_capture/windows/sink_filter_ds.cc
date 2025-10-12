@@ -14,12 +14,24 @@
 #include <initguid.h>
 
 #include <algorithm>
+#include <atomic>
+#include <cstddef>
+#include <cstdlib>
+#include <cstring>
+#include <iterator>
 #include <list>
+#include <vector>
 
-#include "rtc_base/arraysize.h"
+#include "absl/strings/str_cat.h"
+#include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
+#include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "modules/video_capture/video_capture_defines.h"
+#include "modules/video_capture/video_capture_impl.h"
+#include "modules/video_capture/windows/help_functions_ds.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/platform_thread.h"
+#include "rtc_base/platform_thread_types.h"
 #include "rtc_base/string_utils.h"
 
 DEFINE_GUID(CLSID_SINKFILTER,
@@ -92,7 +104,7 @@ class EnumPins : public IEnumPins {
     return S_OK;
   }
 
-  rtc::scoped_refptr<IPin> pin_;
+  webrtc::scoped_refptr<IPin> pin_;
   int pos_ = 0;
 };
 
@@ -143,7 +155,7 @@ BYTE* AllocMediaTypeFormatBuffer(AM_MEDIA_TYPE* media_type, ULONG length) {
 }
 
 void GetSampleProperties(IMediaSample* sample, AM_SAMPLE2_PROPERTIES* props) {
-  rtc::scoped_refptr<IMediaSample2> sample2;
+  webrtc::scoped_refptr<IMediaSample2> sample2;
   if (SUCCEEDED(GetComInterface(sample, &sample2))) {
     sample2->GetProperties(sizeof(*props), reinterpret_cast<BYTE*>(props));
     return;
@@ -197,7 +209,7 @@ bool TranslateMediaTypeToVideoCaptureCapability(
 
   RTC_LOG(LS_INFO) << "TranslateMediaTypeToVideoCaptureCapability width:"
                    << bih->biWidth << " height:" << bih->biHeight
-                   << " Compression:0x" << rtc::ToHex(bih->biCompression);
+                   << " Compression:0x" << webrtc::ToHex(bih->biCompression);
 
   const GUID& sub_type = media_type->subtype;
   if (sub_type == MEDIASUBTYPE_MJPG &&
@@ -255,7 +267,7 @@ class MediaTypesEnum : public IEnumMediaTypes {
       }
     } else {
       RTC_LOG(LS_WARNING) << "Unsupported video type: "
-                          << rtc::ToString(
+                          << absl::StrCat(
                                  static_cast<int>(capability_.videoType))
                           << ", using default preference list.";
     }
@@ -745,7 +757,7 @@ CaptureInputPin::Receive(IMediaSample* media_sample) {
   if (!capture_thread_id_) {
     // Make sure we set the thread name only once.
     capture_thread_id_ = GetCurrentThreadId();
-    rtc::SetCurrentThreadName("webrtc_video_capture");
+    webrtc::SetCurrentThreadName("webrtc_video_capture");
   }
 
   AM_SAMPLE2_PROPERTIES sample_props = {};
@@ -900,14 +912,14 @@ CaptureSinkFilter::JoinFilterGraph(IFilterGraph* graph, LPCWSTR name) {
   if (info_.pGraph) {
     // make sure we don't hold on to the reference we may receive.
     // Note that this assumes the same object identity, but so be it.
-    rtc::scoped_refptr<IMediaEventSink> sink;
+    webrtc::scoped_refptr<IMediaEventSink> sink;
     GetComInterface(info_.pGraph, &sink);
     sink_ = sink.get();
   }
 
   info_.achName[0] = L'\0';
   if (name)
-    lstrcpynW(info_.achName, name, arraysize(info_.achName));
+    lstrcpynW(info_.achName, name, std::size(info_.achName));
 
   return S_OK;
 }

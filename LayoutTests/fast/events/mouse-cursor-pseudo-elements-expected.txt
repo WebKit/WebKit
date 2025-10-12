@@ -1,0 +1,29 @@
+Test that mouse cursors are applied correctly on pseudo-elements (bug 237892).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+TEST CASE: ::before
+Cursor info for ::before: type=WestResize hotSpot=0,0
+
+TEST CASE: ::after
+Cursor info for ::after: type=EastResize hotSpot=0,0
+
+TEST CASE: ::before & ::after
+Cursor info for ::before: type=WestResize hotSpot=0,0
+Cursor info for ::after: type=EastResize hotSpot=0,0
+
+TEST CASE: ::backdrop
+Cursor info for ::backdrop: type=Help hotSpot=0,0
+
+TEST CASE: View transition pseudo-elements
+Cursor info for ::view-transition: type=Grab hotSpot=0,0
+Cursor info for ::view-transition-group(test): type=Grabbing hotSpot=0,0
+Cursor info for ::view-transition-image-pair(test): type=Cross hotSpot=0,0
+Cursor info for ::view-transition-old(test): type=NotAllowed hotSpot=0,0
+Cursor info for ::view-transition-new(test): type=ZoomIn hotSpot=0,0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

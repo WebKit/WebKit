@@ -35,6 +35,8 @@
 #include "ScrollingTreeFrameScrollingNode.h"
 #include "ScrollingTreeOverflowScrollProxyNode.h"
 #include "ScrollingTreeOverflowScrollingNode.h"
+#include "ScrollingTreePositionedNode.h"
+#include "ScrollingTreeStickyNode.h"
 
 namespace WebCore {
 

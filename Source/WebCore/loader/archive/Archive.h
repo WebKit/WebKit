@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "ArchiveResource.h"
+#include <WebCore/ArchiveResource.h>
 #include <wtf/HashSet.h>
 
 namespace WebCore {

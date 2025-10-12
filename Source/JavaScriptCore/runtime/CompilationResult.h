@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-enum CompilationResult {
+enum class CompilationResult {
     // We tried to compile the code, but we couldn't compile it. This could be
     // because we ran out of memory, or because the compiler encountered an
     // internal error and decided to bail out gracefully. Either way, this implies

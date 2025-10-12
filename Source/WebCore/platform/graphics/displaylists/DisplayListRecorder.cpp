@@ -49,14 +49,11 @@ Recorder::Recorder(IsDeferred isDeferred, const GraphicsContextState& state, con
     : GraphicsContext(isDeferred, state)
     , m_colorSpace(colorSpace)
     , m_initialClip(initialClip)
+    , m_drawGlyphsMode(drawGlyphsMode)
 #if USE(CORE_TEXT)
     , m_initialScale(initialCTM.xScale())
-    , m_drawGlyphsMode(drawGlyphsMode)
 #endif
 {
-#if !USE(CORE_TEXT)
-    UNUSED_PARAM(drawGlyphsMode);
-#endif
     ASSERT(!state.changes());
     m_stateStack.append({ state, initialCTM, initialCTM.mapRect(initialClip) });
 }
@@ -64,6 +61,11 @@ Recorder::Recorder(IsDeferred isDeferred, const GraphicsContextState& state, con
 Recorder::~Recorder()
 {
     ASSERT(m_stateStack.size() == 1); // If this fires, it indicates mismatched save/restore.
+}
+
+void Recorder::appendDisplayList(const DisplayList& displayList)
+{
+    GraphicsContext::drawDisplayList(displayList, Ref { ControlFactory::singleton() });
 }
 
 const GraphicsContextState& Recorder::state() const
@@ -87,11 +89,9 @@ void Recorder::didUpdateSingleState(GraphicsContextState& state, GraphicsContext
 bool Recorder::decomposeDrawGlyphsIfNeeded(const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
 {
 #if USE(CORE_TEXT)
-    if (m_drawGlyphsMode == DrawGlyphsMode::Deconstruct || m_drawGlyphsMode == DrawGlyphsMode::DeconstructAndRetain) {
-        if (!m_drawGlyphsRecorder) {
-            auto shouldDrawDecomposedGlyphs = m_drawGlyphsMode == DrawGlyphsMode::DeconstructAndRetain ? DrawGlyphsRecorder::DrawDecomposedGlyphs::Yes : DrawGlyphsRecorder::DrawDecomposedGlyphs::No;
-            m_drawGlyphsRecorder = makeUnique<DrawGlyphsRecorder>(*this, m_initialScale, DrawGlyphsRecorder::DeriveFontFromContext::No, shouldDrawDecomposedGlyphs);
-        }
+    if (m_drawGlyphsMode == DrawGlyphsMode::Deconstruct) {
+        if (!m_drawGlyphsRecorder)
+            m_drawGlyphsRecorder = makeUnique<DrawGlyphsRecorder>(*this, m_initialScale, DrawGlyphsRecorder::DeriveFontFromContext::No);
         m_drawGlyphsRecorder->drawGlyphs(font, glyphs, advances, localAnchor, smoothingMode);
         return true;
     }
@@ -124,12 +124,12 @@ void Recorder::updateStateForSave(GraphicsContextState::Purpose purpose)
 
 bool Recorder::updateStateForRestore(GraphicsContextState::Purpose purpose)
 {
+    if (m_stateStack.size() <= 1)
+        return false;
+
     ASSERT(purpose == GraphicsContextState::Purpose::SaveRestore);
     appendStateChangeItemIfNecessary();
     GraphicsContext::restore(purpose);
-
-    if (!m_stateStack.size())
-        return false;
 
     m_stateStack.removeLast();
     return true;
@@ -194,12 +194,15 @@ void Recorder::updateStateForBeginTransparencyLayer(CompositeOperator compositeO
     m_stateStack.append(m_stateStack.last().cloneForTransparencyLayer());
 }
 
-void Recorder::updateStateForEndTransparencyLayer()
+bool Recorder::updateStateForEndTransparencyLayer()
 {
+    if (stateStack().size() <= 1)
+        return false;
     GraphicsContext::endTransparencyLayer();
     appendStateChangeItemIfNecessary();
     m_stateStack.removeLast();
     GraphicsContext::restore(GraphicsContextState::Purpose::TransparencyLayer);
+    return true;
 }
 
 void Recorder::updateStateForResetClip()

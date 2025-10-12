@@ -53,6 +53,8 @@ public:
 private:
     CSSRGB(RectifiedCSSColorRGBComp&&, RectifiedCSSColorRGBComp&&, RectifiedCSSColorRGBComp&&, RectifiedCSSColorPercent&&);
 
+    CSSStyleValueType styleValueType() const final { return CSSStyleValueType::CSSColorRGB; }
+
     RectifiedCSSColorRGBComp m_red;
     RectifiedCSSColorRGBComp m_green;
     RectifiedCSSColorRGBComp m_blue;
@@ -60,3 +62,7 @@ private:
 };
     
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSRGB)
+    static bool isType(const WebCore::CSSStyleValue& value) { return value.styleValueType() == WebCore::CSSStyleValueType::CSSColorRGB; }
+SPECIALIZE_TYPE_TRAITS_END()

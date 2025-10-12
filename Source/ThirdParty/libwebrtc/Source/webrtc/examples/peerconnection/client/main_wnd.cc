@@ -12,11 +12,22 @@
 
 #include <math.h>
 
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <iterator>
+#include <string>
+
+#include "api/media_stream_interface.h"
+#include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
-#include "examples/peerconnection/client/defaults.h"
-#include "rtc_base/arraysize.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_buffer.h"
+#include "api/video/video_rotation.h"
+#include "api/video/video_source_interface.h"
+#include "examples/peerconnection/client/peer_connection_client.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 #include "third_party/libyuv/include/libyuv/convert_argb.h"
 
 ATOM MainWnd::wnd_class_ = 0;
@@ -53,7 +64,7 @@ HFONT GetDefaultFont() {
 
 std::string GetWindowText(HWND wnd) {
   char text[MAX_PATH] = {0};
-  ::GetWindowTextA(wnd, &text[0], ARRAYSIZE(text));
+  ::GetWindowTextA(wnd, &text[0], std::size(text));
   return text;
 }
 
@@ -254,11 +265,10 @@ void MainWnd::OnPaint() {
       ::SetStretchBltMode(dc_mem, HALFTONE);
 
       // Set the map mode so that the ratio will be maintained for us.
-      HDC all_dc[] = {ps.hdc, dc_mem};
-      for (size_t i = 0; i < arraysize(all_dc); ++i) {
-        SetMapMode(all_dc[i], MM_ISOTROPIC);
-        SetWindowExtEx(all_dc[i], width, height, NULL);
-        SetViewportExtEx(all_dc[i], rc.right, rc.bottom, NULL);
+      for (HDC dc : {ps.hdc, dc_mem}) {
+        SetMapMode(dc, MM_ISOTROPIC);
+        SetWindowExtEx(dc, width, height, nullptr);
+        SetViewportExtEx(dc, rc.right, rc.bottom, nullptr);
       }
 
       HBITMAP bmp_mem = ::CreateCompatibleBitmap(ps.hdc, rc.right, rc.bottom);
@@ -279,15 +289,15 @@ void MainWnd::OnPaint() {
                     &bmi, DIB_RGB_COLORS, SRCCOPY);
 
       if ((rc.right - rc.left) > 200 && (rc.bottom - rc.top) > 200) {
-        const BITMAPINFO& bmi = local_renderer->bmi();
+        const BITMAPINFO& local_bmi = local_renderer->bmi();
         image = local_renderer->image();
-        int thumb_width = bmi.bmiHeader.biWidth / 4;
-        int thumb_height = abs(bmi.bmiHeader.biHeight) / 4;
+        int thumb_width = local_bmi.bmiHeader.biWidth / 4;
+        int thumb_height = abs(local_bmi.bmiHeader.biHeight) / 4;
         StretchDIBits(dc_mem, logical_area.x - thumb_width - 10,
                       logical_area.y - thumb_height - 10, thumb_width,
-                      thumb_height, 0, 0, bmi.bmiHeader.biWidth,
-                      -bmi.bmiHeader.biHeight, image, &bmi, DIB_RGB_COLORS,
-                      SRCCOPY);
+                      thumb_height, 0, 0, local_bmi.bmiHeader.biWidth,
+                      -local_bmi.bmiHeader.biHeight, image, &local_bmi,
+                      DIB_RGB_COLORS, SRCCOPY);
       }
 
       BitBlt(ps.hdc, 0, 0, logical_area.x, logical_area.y, dc_mem, 0, 0,
@@ -503,31 +513,31 @@ void MainWnd::LayoutConnectUI(bool show) {
 
   if (show) {
     const size_t kSeparator = 5;
-    size_t total_width = (ARRAYSIZE(windows) - 1) * kSeparator;
+    size_t total_width = (std::size(windows) - 1) * kSeparator;
 
-    for (size_t i = 0; i < ARRAYSIZE(windows); ++i) {
-      CalculateWindowSizeForText(windows[i].wnd, windows[i].text,
-                                 &windows[i].width, &windows[i].height);
-      total_width += windows[i].width;
+    for (Windows& window : windows) {
+      CalculateWindowSizeForText(window.wnd, window.text, &window.width,
+                                 &window.height);
+      total_width += window.width;
     }
 
     RECT rc;
     ::GetClientRect(wnd_, &rc);
     size_t x = (rc.right / 2) - (total_width / 2);
     size_t y = rc.bottom / 2;
-    for (size_t i = 0; i < ARRAYSIZE(windows); ++i) {
-      size_t top = y - (windows[i].height / 2);
-      ::MoveWindow(windows[i].wnd, static_cast<int>(x), static_cast<int>(top),
-                   static_cast<int>(windows[i].width),
-                   static_cast<int>(windows[i].height), TRUE);
-      x += kSeparator + windows[i].width;
-      if (windows[i].text[0] != 'X')
-        ::SetWindowTextW(windows[i].wnd, windows[i].text);
-      ::ShowWindow(windows[i].wnd, SW_SHOWNA);
+    for (Windows& window : windows) {
+      size_t top = y - (window.height / 2);
+      ::MoveWindow(window.wnd, static_cast<int>(x), static_cast<int>(top),
+                   static_cast<int>(window.width),
+                   static_cast<int>(window.height), TRUE);
+      x += kSeparator + window.width;
+      if (window.text[0] != 'X')
+        ::SetWindowTextW(window.wnd, window.text);
+      ::ShowWindow(window.wnd, SW_SHOWNA);
     }
   } else {
-    for (size_t i = 0; i < ARRAYSIZE(windows); ++i) {
-      ::ShowWindow(windows[i].wnd, SW_HIDE);
+    for (Windows& window : windows) {
+      ::ShowWindow(window.wnd, SW_HIDE);
     }
   }
 }
@@ -588,7 +598,7 @@ MainWnd::VideoRenderer::VideoRenderer(
   bmi_.bmiHeader.biHeight = -height;
   bmi_.bmiHeader.biSizeImage =
       width * height * (bmi_.bmiHeader.biBitCount >> 3);
-  rendered_track_->AddOrUpdateSink(this, rtc::VideoSinkWants());
+  rendered_track_->AddOrUpdateSink(this, webrtc::VideoSinkWants());
 }
 
 MainWnd::VideoRenderer::~VideoRenderer() {
@@ -614,7 +624,7 @@ void MainWnd::VideoRenderer::OnFrame(const webrtc::VideoFrame& video_frame) {
   {
     AutoLock<VideoRenderer> lock(this);
 
-    rtc::scoped_refptr<webrtc::I420BufferInterface> buffer(
+    webrtc::scoped_refptr<webrtc::I420BufferInterface> buffer(
         video_frame.video_frame_buffer()->ToI420());
     if (video_frame.rotation() != webrtc::kVideoRotation_0) {
       buffer = webrtc::I420Buffer::Rotate(*buffer, video_frame.rotation());

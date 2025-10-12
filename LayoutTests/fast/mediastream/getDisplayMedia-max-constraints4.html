@@ -12,6 +12,7 @@
         <script>
 promise_test(async (test) => {
     const stream = await callGetDisplayMedia({ video: { height: { max: 2000 }, width : { max : 3000 } } });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     video.srcObject = stream;
     await video.play();
 

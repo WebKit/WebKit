@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "Color.h"
-#include "LayerHostingContextIdentifier.h"
-#include "LayoutSize.h"
-#include "PlatformLayerIdentifier.h"
+#include <WebCore/Color.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/LayoutSize.h>
+#include <WebCore/PlatformLayerIdentifier.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

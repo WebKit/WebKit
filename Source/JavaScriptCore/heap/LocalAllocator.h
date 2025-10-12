@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "AllocationFailureMode.h"
-#include "FreeList.h"
-#include "MarkedBlock.h"
+#include <JavaScriptCore/AllocationFailureMode.h>
+#include <JavaScriptCore/FreeList.h>
+#include <JavaScriptCore/MarkedBlock.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {

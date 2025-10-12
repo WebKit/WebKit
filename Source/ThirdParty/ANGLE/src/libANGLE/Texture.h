@@ -176,6 +176,9 @@ class TextureState final : private angle::NonCopyable
     void setGenerateMipmapHint(GLenum hint);
     GLenum getGenerateMipmapHint() const;
 
+    bool setASTCDecodePrecision(GLenum astcDecodePrecision);
+    GLenum getASTCDecodePrecision() const;
+
     // Return the enabled mipmap level count.
     GLuint getEnabledLevelCount() const;
 
@@ -293,6 +296,10 @@ class TextureState final : private angle::NonCopyable
 
     // GL_EXT_texture_storage_compression
     GLenum mCompressionFixedRate;
+
+    // GL_EXT_texture_compression_astc_decode_mode
+    // GL_EXT_texture_compression_astc_decode_mode_rgb9e5
+    GLenum mAstcDecodePrecision;
 };
 
 bool operator==(const TextureState &a, const TextureState &b);
@@ -367,6 +374,9 @@ class Texture final : public RefCountObject<TextureID>,
 
     void setCompareFunc(const Context *context, GLenum compareFunc);
     GLenum getCompareFunc() const;
+
+    void setASTCDecodePrecision(const Context *context, GLenum astcDecodePrecision);
+    GLenum getASTCDecodePrecision() const;
 
     void setSRGBDecode(const Context *context, GLenum sRGBDecode);
     GLenum getSRGBDecode() const;
@@ -726,6 +736,7 @@ class Texture final : public RefCountObject<TextureID>,
         DIRTY_BIT_MAX_LEVEL,
         DIRTY_BIT_DEPTH_STENCIL_TEXTURE_MODE,
         DIRTY_BIT_RENDERABILITY_VALIDATION_ANGLE,
+        DIRTY_BIT_ASTC_DECODE_PRECISION,
 
         // Image state
         DIRTY_BIT_BOUND_AS_IMAGE,

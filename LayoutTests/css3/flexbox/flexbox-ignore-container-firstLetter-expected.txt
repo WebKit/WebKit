@@ -1,7 +1,7 @@
 
 PASS .container 1
 PASS .container 2
-This test flex item should ignore container's firstLetter pseudo element.
+Flexboxes do not generate a first formatted line. As a result, the container does not have a first formatted line.
 
 The first item.
 

@@ -46,7 +46,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
     if (auto page = WebProcessProxy::webPageWithActiveXRSession())
-        return page.get();
+        return page.unsafeGet();
 #endif
 
     return nullptr;

@@ -10,11 +10,14 @@
 
 #include "modules/audio_processing/test/conversational_speech/simulator.h"
 
-#include <math.h>
-
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <map>
 #include <memory>
 #include <set>
+#include <string>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -22,7 +25,9 @@
 #include "api/array_view.h"
 #include "common_audio/include/audio_util.h"
 #include "common_audio/wav_file.h"
+#include "modules/audio_processing/test/conversational_speech/multiend_call.h"
 #include "modules/audio_processing/test/conversational_speech/wavreader_interface.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/testsupport/file_utils.h"
@@ -129,7 +134,7 @@ std::unique_ptr<std::map<std::string, std::vector<int16_t>>> PreloadAudioTracks(
 // previously written samples in `wav_writer` is less than `interval_begin`, it
 // adds zeros as left padding. The padding corresponds to intervals during which
 // a speaker is not active.
-void PadLeftWriteChunk(rtc::ArrayView<const int16_t> source_samples,
+void PadLeftWriteChunk(ArrayView<const int16_t> source_samples,
                        size_t interval_begin,
                        WavWriter* wav_writer) {
   // Add left padding.
@@ -158,14 +163,14 @@ void PadRightWrite(WavWriter* wav_writer, size_t pad_samples) {
   }
 }
 
-void ScaleSignal(rtc::ArrayView<const int16_t> source_samples,
+void ScaleSignal(ArrayView<const int16_t> source_samples,
                  int gain,
-                 rtc::ArrayView<int16_t> output_samples) {
+                 ArrayView<int16_t> output_samples) {
   const float gain_linear = DbToRatio(gain);
   RTC_DCHECK_EQ(source_samples.size(), output_samples.size());
   std::transform(source_samples.begin(), source_samples.end(),
                  output_samples.begin(), [gain_linear](int16_t x) -> int16_t {
-                   return rtc::saturated_cast<int16_t>(x * gain_linear);
+                   return saturated_cast<int16_t>(x * gain_linear);
                  });
 }
 
@@ -186,13 +191,6 @@ std::unique_ptr<std::map<std::string, SpeakerOutputFilePaths>> Simulate(
   // Preload all the input audio tracks.
   const auto& audiotrack_readers = multiend_call.audiotrack_readers();
   auto audiotracks = PreloadAudioTracks(audiotrack_readers);
-
-  // TODO(alessiob): When speaker_names.size() == 2, near-end and far-end
-  // across the 2 speakers are symmetric; hence, the code below could be
-  // replaced by only creating the near-end or the far-end. However, this would
-  // require to split the unit tests and document the behavior in README.md.
-  // In practice, it should not be an issue since the files are not expected to
-  // be signinificant.
 
   // Write near-end and far-end output tracks.
   for (const auto& speaking_turn : multiend_call.speaking_turns()) {

@@ -10,6 +10,9 @@
 
 #include "modules/audio_processing/agc2/rnn_vad/auto_correlation.h"
 
+#include <algorithm>
+#include <array>
+
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
 #include "modules/audio_processing/agc2/rnn_vad/pitch_search_internal.h"
 #include "modules/audio_processing/agc2/rnn_vad/test_utils.h"

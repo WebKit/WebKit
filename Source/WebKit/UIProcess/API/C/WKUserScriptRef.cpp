@@ -37,16 +37,6 @@ WKTypeID WKUserScriptGetTypeID()
     return toAPI(API::UserScript::APIType);
 }
 
-WKUserScriptRef WKUserScriptCreate(WKStringRef sourceRef, WKURLRef url, WKArrayRef includeURLPatterns, WKArrayRef excludeURLPatterns, _WKUserScriptInjectionTime injectionTime, bool forMainFrameOnly)
-{
-    auto baseURLString = toWTFString(url);
-    RefPtr allowlist = toImpl(includeURLPatterns);
-    RefPtr blocklist = toImpl(excludeURLPatterns);
-
-    auto baseURL = baseURLString.isEmpty() ? aboutBlankURL() : URL(URL(), baseURLString);
-    return toAPILeakingRef(API::UserScript::create(WebCore::UserScript { toWTFString(sourceRef), WTFMove(baseURL), allowlist ? allowlist->toStringVector() : Vector<String>(), blocklist ? blocklist->toStringVector() : Vector<String>(), toUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames }, API::ContentWorld::pageContentWorldSingleton()));
-}
-
 WKUserScriptRef WKUserScriptCreateWithSource(WKStringRef sourceRef, _WKUserScriptInjectionTime injectionTime, bool forMainFrameOnly)
 {
     return toAPILeakingRef(API::UserScript::create(WebCore::UserScript { toWTFString(sourceRef), { }, { }, { }, toUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames }, API::ContentWorld::pageContentWorldSingleton()));

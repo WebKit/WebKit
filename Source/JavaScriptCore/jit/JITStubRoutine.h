@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "ExecutableAllocator.h"
-#include "MacroAssemblerCodeRef.h"
-#include "StructureID.h"
+#include <JavaScriptCore/ExecutableAllocator.h>
+#include <JavaScriptCore/MacroAssemblerCodeRef.h>
+#include <JavaScriptCore/StructureID.h>
 
 namespace JSC {
 
@@ -55,7 +55,7 @@ class AccessCase;
 // See GCAwareJITStubRoutine.h for the other stub routines.
 class JITStubRoutine {
     WTF_MAKE_NONCOPYABLE(JITStubRoutine);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(JITStubRoutine);
 public:
     enum class Type : uint8_t {
         JITStubRoutineType,

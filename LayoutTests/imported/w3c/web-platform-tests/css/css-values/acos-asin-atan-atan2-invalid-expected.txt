@@ -60,4 +60,6 @@ PASS e.style['transform'] = "rotate(atan2( 0 ,))" should not set the property va
 PASS e.style['transform'] = "rotate(atan2( () 30deg - 0.523599rad ))" should not set the property value
 PASS e.style['transform'] = "rotate(atan2(45deg ))" should not set the property value
 PASS e.style['transform'] = "rotate(atan2(30deg, + 0.261799rad))" should not set the property value
+PASS e.style['transform'] = "rotate(atan2(2, 1px))" should not set the property value
+PASS e.style['transform'] = "rotate(atan2(2, 1%))" should not set the property value
 

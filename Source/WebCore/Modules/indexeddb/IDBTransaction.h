@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,20 +25,20 @@
 
 #pragma once
 
-#include "EventTarget.h"
-#include "EventTargetInterfaces.h"
-#include "IDBActiveDOMObject.h"
-#include "IDBError.h"
-#include "IDBGetAllRecordsData.h"
-#include "IDBGetRecordData.h"
-#include "IDBIndexIdentifier.h"
-#include "IDBKeyRangeData.h"
-#include "IDBObjectStoreIdentifier.h"
-#include "IDBOpenDBRequest.h"
-#include "IDBTransactionInfo.h"
-#include "IDBTransactionMode.h"
-#include "IndexedDB.h"
-#include "Timer.h"
+#include <WebCore/EventTarget.h>
+#include <WebCore/EventTargetInterfaces.h>
+#include <WebCore/IDBActiveDOMObject.h>
+#include <WebCore/IDBError.h>
+#include <WebCore/IDBGetAllRecordsData.h>
+#include <WebCore/IDBGetRecordData.h>
+#include <WebCore/IDBIndexIdentifier.h>
+#include <WebCore/IDBKeyRangeData.h>
+#include <WebCore/IDBObjectStoreIdentifier.h>
+#include <WebCore/IDBOpenDBRequest.h>
+#include <WebCore/IDBTransactionInfo.h>
+#include <WebCore/IDBTransactionMode.h>
+#include <WebCore/IndexedDB.h>
+#include <WebCore/Timer.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -88,7 +88,8 @@ public:
     ExceptionOr<void> commit();
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::IDBTransaction; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final;
+    using ActiveDOMObject::protectedScriptExecutionContext;
     void refEventTarget() final { ThreadSafeRefCounted::ref(); }
     void derefEventTarget() final { ThreadSafeRefCounted::deref(); }
     using EventTarget::dispatchEvent;
@@ -97,7 +98,6 @@ public:
     const IDBTransactionInfo& info() const { return m_info; }
     IDBDatabase& database() { return m_database.get(); }
     const IDBDatabase& database() const { return m_database.get(); }
-    Ref<IDBDatabase> protectedDatabase() const;
     IDBDatabaseInfo* originalDatabaseInfo() const { return m_info.originalDatabaseInfo().get(); }
 
     void didStart(const IDBError&);
@@ -148,6 +148,7 @@ public:
     bool didDispatchAbortOrCommit() const { return m_didDispatchAbortOrCommit; }
 
     IDBClient::IDBConnectionProxy& connectionProxy();
+    Ref<IDBClient::IDBConnectionProxy> protectedConnectionProxy();
     void connectionClosedFromServer(const IDBError&);
     void generateIndexKeyForRecord(const IDBResourceIdentifier& requestIdentifier, const IDBIndexInfo&, const std::optional<IDBKeyPath>&, const IDBKeyData&, const IDBValue&, std::optional<int64_t> recordID);
 
@@ -240,7 +241,9 @@ private:
     void trySchedulePendingOperationTimer();
     void addCursorRequest(IDBRequest&);
 
-    Ref<IDBDatabase> m_database;
+    void assertCurrentThreadAccessThreadLocalData() const;
+
+    const Ref<IDBDatabase> m_database;
     IDBTransactionInfo m_info;
 
     IndexedDB::TransactionState m_state { IndexedDB::TransactionState::Inactive };
@@ -293,5 +296,25 @@ public:
 private:
     RefPtr<IDBTransaction> m_transaction;
 };
+
+#if !ASSERT_ENABLED
+ALWAYS_INLINE void IDBTransaction::assertCurrentThreadAccessThreadLocalData() const
+{
+}
+#endif
+
+inline bool IDBTransaction::isActive() const
+{
+    assertCurrentThreadAccessThreadLocalData();
+    return m_state == IndexedDB::TransactionState::Active;
+}
+
+inline bool IDBTransaction::isFinishedOrFinishing() const
+{
+    assertCurrentThreadAccessThreadLocalData();
+    return m_state == IndexedDB::TransactionState::Committing
+        || m_state == IndexedDB::TransactionState::Aborting
+        || m_state == IndexedDB::TransactionState::Finished;
+}
 
 } // namespace WebCore

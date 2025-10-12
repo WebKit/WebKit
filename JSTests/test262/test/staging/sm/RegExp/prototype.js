@@ -2,9 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-RegExp-shell.js, compareArray.js]
-flags:
-  - noStrict
+includes: [compareArray.js]
 description: |
   pending
 esid: pending
@@ -40,7 +38,7 @@ assert.sameValue(getter("unicode"), undefined);
 assert.sameValue(t.toString(), "/(?:)/");
 
 // The methods don't work with the prototype
-assertThrowsInstanceOf(() => t.compile("b", "i"), TypeError);
-assertThrowsInstanceOf(() => t.test("x"), TypeError);
-assertThrowsInstanceOf(() => t.exec("x"), TypeError);
+assert.throws(TypeError, () => t.compile("b", "i"));
+assert.throws(TypeError, () => t.test("x"));
+assert.throws(TypeError, () => t.exec("x"));
 

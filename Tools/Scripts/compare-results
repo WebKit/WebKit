@@ -49,7 +49,12 @@ except:
 
 def readJSONFile(path):
     with open(path, 'r') as contents:
-        result = json.loads(contents.read())
+        try:
+            result = json.loads(contents.read())
+        except:
+            print(f"Error: Unable parse JSON for {path}")
+            raise
+
         if 'debugOutput' in result:
             del result['debugOutput']
         return result

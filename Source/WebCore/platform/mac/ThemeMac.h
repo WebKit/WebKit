@@ -25,30 +25,17 @@
 
 #pragma once
 
-#include "ThemeCocoa.h"
-
+#include <wtf/Platform.h>
 #if PLATFORM(MAC)
+
+#include <WebCore/ThemeCocoa.h>
 
 namespace WebCore {
 
 class ThemeMac final : public ThemeCocoa {
-public:
-    static bool supportsLargeFormControls();
-    static void inflateControlPaintRect(StyleAppearance, FloatRect&, float, bool);
-
 private:
     friend NeverDestroyed<ThemeMac>;
     ThemeMac() = default;
-
-    std::optional<FontCascadeDescription> controlFont(StyleAppearance, const FontCascade&, float zoomFactor) const final;
-
-    LengthSize controlSize(StyleAppearance, const FontCascade&, const LengthSize&, float zoomFactor) const final;
-    LengthSize minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize&, float zoomFactor) const final;
-
-    LengthBox controlPadding(StyleAppearance, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const final;
-    LengthBox controlBorder(StyleAppearance, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const final;
-
-    bool controlRequiresPreWhiteSpace(StyleAppearance appearance) const final { return appearance == StyleAppearance::PushButton; }
 
     bool userPrefersContrast() const final;
     bool userPrefersDifferentiationWithoutColor() const final;

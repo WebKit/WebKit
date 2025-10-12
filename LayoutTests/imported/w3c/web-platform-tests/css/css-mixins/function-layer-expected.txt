@@ -1,0 +1,9 @@
+
+FAIL Single function within anonymous layer assert_equals: expected "1px" but got "--f()"
+FAIL Last anonymous layer wins assert_equals: expected "2px" but got "--f()"
+FAIL Unlayered styles win assert_equals: expected "3px" but got "--f()"
+FAIL Unlayered styles win, reverse assert_equals: expected "3px" but got "--f()"
+FAIL Single named layer assert_equals: expected "10px" but got "--f()"
+FAIL Named layers assert_equals: expected "20px" but got "--f()"
+FAIL Named layers, reordered assert_equals: expected "10px" but got "--f()"
+

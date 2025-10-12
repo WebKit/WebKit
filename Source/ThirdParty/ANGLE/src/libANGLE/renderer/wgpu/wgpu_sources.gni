@@ -57,6 +57,8 @@ wgpu_backend_sources = [
   "wgpu_helpers.h",
   "wgpu_pipeline_state.cpp",
   "wgpu_pipeline_state.h",
+  "wgpu_proc_utils.cpp",
+  "wgpu_proc_utils.h",
   "wgpu_utils.cpp",
   "wgpu_utils.h",
   "wgpu_wgsl_util.cpp",
@@ -70,7 +72,7 @@ if (is_win) {
   ]
 }
 
-if (is_mac) {
+if (is_mac || is_ios) {
   wgpu_backend_sources += [
     "mac/WindowSurfaceWgpuMetalLayer.h",
     "mac/WindowSurfaceWgpuMetalLayer.mm",

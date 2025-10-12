@@ -213,7 +213,9 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (NSString *)description
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [NSString stringWithFormat:@"<%@: %p; processPool = %@; preferences = %@>", NSStringFromClass(self.class), self, self.processPool, self.preferences];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 + (BOOL)supportsSecureCoding
@@ -223,7 +225,9 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [coder encodeObject:self.processPool forKey:@"processPool"];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     [coder encodeObject:self.preferences forKey:@"preferences"];
     [coder encodeObject:self.userContentController forKey:@"userContentController"];
     [coder encodeObject:self.websiteDataStore forKey:@"websiteDataStore"];
@@ -242,7 +246,9 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     [coder encodeBool:self.allowsInlineMediaPlayback forKey:@"allowsInlineMediaPlayback"];
     [coder encodeBool:self._allowsInlineMediaPlaybackAfterFullscreen forKey:@"allowsInlineMediaPlaybackAfterFullscreen"];
     [coder encodeBool:self.mediaTypesRequiringUserActionForPlayback forKey:@"mediaTypesRequiringUserActionForPlayback"];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [coder encodeInteger:self.selectionGranularity forKey:@"selectionGranularity"];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     [coder encodeBool:self.allowsPictureInPictureMediaPlayback forKey:@"allowsPictureInPictureMediaPlayback"];
     [coder encodeBool:self.ignoresViewportScaleLimits forKey:@"ignoresViewportScaleLimits"];
     [coder encodeInteger:self._dragLiftDelay forKey:@"dragLiftDelay"];
@@ -269,7 +275,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!(self = [self init]))
         return nil;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     self.processPool = [coder decodeObjectOfClass:[WKProcessPool class] forKey:@"processPool"];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     self.preferences = [coder decodeObjectOfClass:[WKPreferences class] forKey:@"preferences"];
     self.userContentController = [coder decodeObjectOfClass:[WKUserContentController class] forKey:@"userContentController"];
     self.websiteDataStore = [coder decodeObjectOfClass:[WKWebsiteDataStore class] forKey:@"websiteDataStore"];
@@ -289,9 +297,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     self.allowsInlineMediaPlayback = [coder decodeBoolForKey:@"allowsInlineMediaPlayback"];
     self._allowsInlineMediaPlaybackAfterFullscreen = [coder decodeBoolForKey:@"allowsInlineMediaPlaybackAfterFullscreen"];
     self.mediaTypesRequiringUserActionForPlayback = [coder decodeBoolForKey:@"mediaTypesRequiringUserActionForPlayback"];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto selectionGranularityCandidate = static_cast<WKSelectionGranularity>([coder decodeIntegerForKey:@"selectionGranularity"]);
     if (selectionGranularityCandidate == WKSelectionGranularityDynamic || selectionGranularityCandidate == WKSelectionGranularityCharacter)
         self.selectionGranularity = selectionGranularityCandidate;
+    ALLOW_DEPRECATED_DECLARATIONS_END
     self.allowsPictureInPictureMediaPlayback = [coder decodeBoolForKey:@"allowsPictureInPictureMediaPlayback"];
     self.ignoresViewportScaleLimits = [coder decodeBoolForKey:@"ignoresViewportScaleLimits"];
     self._dragLiftDelay = toDragLiftDelay([coder decodeIntegerForKey:@"dragLiftDelay"]);
@@ -655,6 +665,23 @@ static NSString *defaultApplicationNameForUserAgent()
         _pageConfiguration->setRelatedPage(nullptr);
 }
 
+- (void)_setAllowPostingLegacySynchronousMessages:(BOOL)allow
+{
+    RetainPtr bundleID = (__bridge NSString *)CFBundleGetIdentifier(CFBundleGetMainBundle());
+    RELEASE_ASSERT([bundleID isEqualToString:@"com.apple.WebKit.TestWebKitAPI"]
+#if PLATFORM(MAC)
+        || [bundleID isEqualToString:@"com.apple.TV"]
+        || [bundleID isEqualToString:@"com.apple.Music"]
+#endif
+    );
+    self._protectedPageConfiguration->setAllowPostingLegacySynchronousMessages(allow);
+}
+
+- (BOOL)_allowPostingLegacySynchronousMessages
+{
+    return self._protectedPageConfiguration->allowPostingLegacySynchronousMessages();
+}
+
 - (WKWebView *)_webViewToCloneSessionStorageFrom
 {
     if (RefPtr page = self._protectedPageConfiguration->pageToCloneSessionStorageFrom())
@@ -753,6 +780,26 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setShowsSystemScreenTimeBlockingView:(BOOL)shows
 {
     [self setShowsSystemScreenTimeBlockingView:shows];
+}
+
+- (void)_setOverrideReferrerForAllRequests:(NSString *)referrer
+{
+    _pageConfiguration->setOverrideReferrerForAllRequests(referrer);
+}
+
+- (NSString *)_overrideReferrerForAllRequests
+{
+    return _pageConfiguration->overrideReferrerForAllRequests().createNSString().autorelease();
+}
+
+- (void)_setShouldSendConsoleLogsToUIProcessForTesting:(BOOL)should
+{
+    _pageConfiguration->setShouldSendConsoleLogsToUIProcessForTesting(should);
+}
+
+- (BOOL)_shouldSendConsoleLogsToUIProcessForTesting
+{
+    return _pageConfiguration->shouldSendConsoleLogsToUIProcessForTesting();
 }
 
 - (BOOL)_allowTopNavigationToDataURLs
@@ -989,7 +1036,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (Class)_attachmentFileWrapperClass
 {
-    return _pageConfiguration->attachmentFileWrapperClass();
+    return _pageConfiguration->attachmentFileWrapperClassSingleton();
 }
 
 - (void)_setAttachmentFileWrapperClass:(Class)attachmentFileWrapperClass

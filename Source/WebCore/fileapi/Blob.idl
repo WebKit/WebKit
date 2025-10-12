@@ -33,7 +33,6 @@ typedef (BufferSource or Blob or USVString) BlobPart;
 
 [
     ActiveDOMObject,
-    CustomToJSObject,
     ExportToWrappedFunction,
     Exposed=(Window,Worker),
     GenerateIsReachable=Impl,

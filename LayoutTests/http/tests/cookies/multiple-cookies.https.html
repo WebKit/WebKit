@@ -1,0 +1,517 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ OptInPartitionedCookiesEnabled=true ] -->
+<html> <head>
+<link rel="stylesheet" href="resources/cookies-test-style.css">
+<script src="resources/cookies-test-pre.js"></script>
+<script src="resources/cookie-utilities.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description(
+"This test checks that multiple cookies are correctly set."
+);
+
+function clearCookiesFromSubTests() {
+    clearCookies();
+    invalidateCachedCookies();
+    debug("");
+}
+
+clearAllCookies();
+
+debug("Check setting several cookies without clearing.");
+
+debug("Tests 1: Set simple multiple cookies.");
+cookiesShouldBe("test1.1=foobar;", "test1.1=foobar");
+cookiesShouldBe("test1.2=foobar; Path=/", "test1.1=foobar; test1.2=foobar");
+cookiesShouldBe("test1.3=foobar;", "test1.1=foobar; test1.2=foobar; test1.3=foobar");
+shouldNotHaveDOMCookie("test1.1");
+shouldHaveDOMCookieWithValue("test1.2", "foobar");
+shouldNotHaveDOMCookie("test1.3");
+
+clearCookiesFromSubTests();
+
+debug("Tests 2: Set multiple cookies, mixing unpartitioned and partitioned.");
+cookiesShouldBe("test2.1=foobar; Secure;", "test2.1=foobar");
+cookiesShouldBe("test2.2=foobar; HttpOnly;", "test2.1=foobar; test2.2=foobar");
+// Requires Secure; SameSite=None / Default
+cookiesShouldBe("test2.3=foobar; Partitioned;", "test2.1=foobar; test2.2=foobar");
+cookiesShouldBe("test2.4=foobar; Secure; Partitioned;", "test2.1=foobar; test2.2=foobar; test2.4=foobar");
+cookiesShouldBe("test2.5=foobar; asdfasfasd", "test2.1=foobar; test2.2=foobar; test2.4=foobar; test2.5=foobar");
+cookiesShouldBe("test2.6=foobar; Secure; Path=/", "test2.1=foobar; test2.2=foobar; test2.4=foobar; test2.5=foobar; test2.6=foobar");
+cookiesShouldBe("test2.7=foobar; HttpOnly; Path=/;", "test2.1=foobar; test2.2=foobar; test2.4=foobar; test2.5=foobar; test2.6=foobar; test2.7=foobar");
+// Requires Secure; SameSite=None / Default
+cookiesShouldBe("test2.8=foobar; Partitioned; Path=/;", "test2.1=foobar; test2.2=foobar; test2.4=foobar; test2.5=foobar; test2.6=foobar; test2.7=foobar");
+cookiesShouldBe("test2.9=foobar; Secure; Partitioned; Path=/;", "test2.1=foobar; test2.2=foobar; test2.4=foobar; test2.5=foobar; test2.6=foobar; test2.7=foobar; test2.9=foobar");
+cookiesShouldBe("test2.10=foobar; asdfasfasd; Path=/", "test2.1=foobar; test2.2=foobar; test2.4=foobar; test2.5=foobar; test2.6=foobar; test2.7=foobar; test2.9=foobar; test2.10=foobar");
+shouldNotHaveDOMCookie("test2.1");
+shouldNotHaveDOMCookie("test2.2");
+shouldNotHaveDOMCookie("test2.3");
+shouldNotHaveDOMCookie("test2.4");
+shouldNotHaveDOMCookie("test2.5");
+shouldHaveDOMCookieWithValue("test2.6", "foobar");
+shouldNotHaveDOMCookie("test2.7");
+shouldNotHaveDOMCookie("test2.8");
+shouldHaveDOMCookieWithValue("test2.9", "foobar");
+shouldHaveDOMCookieWithValue("test2.10", "foobar");
+
+clearCookiesFromSubTests();
+
+debug("Tests 3: Set multiple partitioned cookies.");
+cookiesShouldBe("test3=foobar; Partitioned; Secure;", "test3=foobar");
+shouldNotHaveDOMCookie("test3.1");
+cookiesShouldBe("test3=foobar; Partitioned; Secure; Path=/", "test3=foobar; test3=foobar");
+shouldHaveDOMCookieWithValue("test3", "foobar");
+cookiesShouldBe("test3=foobar; Partitioned; Secure;", "test3=foobar; test3=foobar");
+shouldHaveDOMCookieWithValue("test3", "foobar");
+
+clearCookiesFromSubTests();
+
+debug("Tests 4: Set partitioned cookie with multiple partitioned attributes, unspecified samesite.");
+cookiesShouldBe("test4=foobar; Partitioned; Secure; Partitioned;", "test4=foobar");
+
+clearCookiesFromSubTests();
+
+debug("Tests 5: Set partitioned cookie with multiple partitioned attributes, explicit samesite=none.");
+cookiesShouldBe("test5=foobar; SameSite=None; Partitioned; Secure; Partitioned;", "test5=foobar");
+
+clearCookiesFromSubTests();
+
+debug("Tests 6: Set partitioned cookie with multiple partitioned attributes, explicit samesite={lax,strict}.");
+// Requires SameSite=None / Default
+cookiesShouldBe("test6.1=foobar; SameSite=Lax; Partitioned; Secure; Partitioned;", "");
+cookiesShouldBe("test6.2=foobar; SameSite=Strict; Partitioned; Secure; Partitioned;", "");
+
+clearCookiesFromSubTests();
+
+debug("Tests 7: Set partitioned cookie with multiple partitioned attributes, explicit samesite=none; different attribute order.");
+cookiesShouldBe("test7=foobar; Partitioned; Secure; Partitioned; SameSite=None", "test7=foobar");
+
+clearCookiesFromSubTests();
+
+debug("Tests 8: Set partitioned cookie with multiple partitioned attributes, explicit samesite=none; same name but different path.");
+cookiesShouldBe("test8=foobar; Partitioned; Secure; SameSite=None; Partitioned; SameSite=None; Path=/", "test8=foobar");
+shouldHaveDOMCookieWithValue("test8", "foobar");
+cookiesShouldBe("test8=foobar; Partitioned; Secure; SameSite=None; Partitioned; SameSite=None", "test8=foobar; test8=foobar");
+shouldHaveDOMCookieWithValue("test8", "foobar");
+
+clearCookiesFromSubTests();
+
+debug("Tests 9: Set partitioned and unpartitioned cookies with multiple partitioned attributes; mixed in with meaningless _Secure prefix.");
+cookiesShouldBe("test9.1=foobar; Partitioned; SameSite=None; Secure; SameSite=None; Partitioned", "test9.1=foobar");
+// _Secure is not a valid prefix. Requires Secure attribute
+cookiesShouldBe("_Secure-test9.2=foobar; Partitioned;", "test9.1=foobar");
+cookiesShouldBe("_Secure-test9.3=foobar", "test9.1=foobar; _Secure-test9.3=foobar");
+cookiesShouldBe("test9.4=foobar; Partitioned; SameSite=None; Secure; SameSite=None; Partitioned; Path=/", "test9.1=foobar; _Secure-test9.3=foobar; test9.4=foobar");
+// _Secure is not a valid prefix. Requires Secure attribute
+cookiesShouldBe("_Secure-test9.5=foobar; Partitioned; Path=/", "test9.1=foobar; _Secure-test9.3=foobar; test9.4=foobar");
+cookiesShouldBe("_Secure-test9.6=foobar; Path=/", "test9.1=foobar; _Secure-test9.3=foobar; test9.4=foobar; _Secure-test9.6=foobar");
+shouldNotHaveDOMCookie("test9.1");
+shouldNotHaveDOMCookie("_Secure-test9.2");
+shouldNotHaveDOMCookie("_Secure-test9.3");
+shouldHaveDOMCookieWithValue("test9.4", "foobar");
+shouldNotHaveDOMCookie("_Secure-test9.5");
+shouldHaveDOMCookieWithValue("_Secure-test9.6", "foobar");
+
+clearCookiesFromSubTests();
+
+debug("Tests 10: Set multiple cookies, mixing unpartitioned and partitioned; different samesite, multiple Partitioned attributes.");
+// Requires SameSite=None / Default
+cookiesShouldBe("test10.1=foobar; SameSite=Strict; Partitioned; Secure; Partitioned;", "");
+cookiesShouldBe("test10.2=foobar; Secure;", "test10.2=foobar");
+// Requires SameSite=None / Default
+cookiesShouldBe("test10.3=foobar; SameSite=Lax; Partitioned; Secure; Partitioned;", "test10.2=foobar");
+// Requires SameSite=None / Default
+cookiesShouldBe("test10.4=foobar; SameSite=Strict; Partitioned; Secure; Partitioned;", "test10.2=foobar");
+cookiesShouldBe("test10.5=foobar; SameSite=None; Partitioned; Secure; Partitioned;", "test10.2=foobar; test10.5=foobar");
+// Requires SameSite=None / Default
+cookiesShouldBe("test10.6=foobar; Path=/; SameSite=Strict; Partitioned; Secure; Partitioned;", "test10.2=foobar; test10.5=foobar");
+cookiesShouldBe("test10.7=foobar; Path=/; Secure;", "test10.2=foobar; test10.5=foobar; test10.7=foobar");
+// Requires SameSite=None / Default
+cookiesShouldBe("test10.8=foobar; Path=/; SameSite=Lax; Partitioned; Secure; Partitioned;", "test10.2=foobar; test10.5=foobar; test10.7=foobar");
+// Requires SameSite=None / Default
+cookiesShouldBe("test10.9=foobar; Path=/; SameSite=Strict; Partitioned; Secure; Partitioned;", "test10.2=foobar; test10.5=foobar; test10.7=foobar; test10.9=foobar");
+cookiesShouldBe("test10.10=foobar; Path=/; SameSite=None; Partitioned; Secure; Partitioned;", "test10.2=foobar; test10.5=foobar; test10.7=foobar; test10.9=foobar; test10.10=foobar");
+
+shouldNotHaveDOMCookie("test10.1");
+shouldNotHaveDOMCookie("test10.2");
+shouldNotHaveDOMCookie("test10.3");
+shouldNotHaveDOMCookie("test10.4");
+shouldNotHaveDOMCookie("test10.5");
+shouldNotHaveDOMCookie("test10.6");
+shouldHaveDOMCookieWithValue("test10.7", "foobar");
+shouldNotHaveDOMCookie("test10.8");
+shouldNotHaveDOMCookie("test10.9");
+shouldHaveDOMCookieWithValue("test10.10", "foobar");
+
+clearCookiesFromSubTests();
+
+debug("Tests 11: Set partitioned and unpartitioned cookies with multiple partitioned attributes; mixed in with meaningful __Secure prefix, later Secure attribute.");
+// Requires Secure; SameSite=None / Default
+cookiesShouldBe("__Secure-test11.1=foobar; SameSite=Strict; Partitioned; Partitioned;", "");
+// Requires Secure attribute
+cookiesShouldBe("__Secure-test11.2=foobar;", "");
+// Requires Secure; SameSite=None / Default
+cookiesShouldBe("__Secure-test11.3=foobar; SameSite=Lax; Partitioned; Partitioned;", "");
+// Requires Secure; SameSite=None / Default
+cookiesShouldBe("__Secure-test11.4=foobar; SameSite=Strict; Partitioned; Partitioned;", "");
+cookiesShouldBe("__Secure-test11.5=foobar; SameSite=None; Partitioned; Partitioned;", "");
+// Requires SameSite=None / Default
+cookiesShouldBe("__Secure-test11.6=foobar; SameSite=Strict; Partitioned; Secure; Partitioned;", "");
+cookiesShouldBe("__Secure-test11.7=foobar; Secure", "__Secure-test11.7=foobar");
+// Requires SameSite=None / Default
+cookiesShouldBe("__Secure-test11.8=foobar; SameSite=Lax; Partitioned; Secure; Partitioned;", "__Secure-test11.7=foobar");
+// Requires SameSite=None / Default
+cookiesShouldBe("__Secure-test11.9=foobar; SameSite=Strict; Partitioned; Secure; Partitioned;", "__Secure-test11.7=foobar");
+cookiesShouldBe("__Secure-test11.10=foobar; SameSite=None; Partitioned; Secure; Partitioned;", "__Secure-test11.7=foobar; __Secure-test11.10=foobar");
+cookiesShouldBe("__Secure-test11.10=foobar; SameSite=None; Secure;", "__Secure-test11.7=foobar; __Secure-test11.10=foobar; __Secure-test11.10=foobar");
+cookiesShouldBe("__Secure-test11.11=foobar; SameSite=None; Secure; HttpOnly", "__Secure-test11.7=foobar; __Secure-test11.10=foobar; __Secure-test11.10=foobar; __Secure-test11.11=foobar");
+cookiesShouldBe("__Secure-test11.12=foobar; SameSite=None; Partitioned; Secure; Partitioned; HttpOnly", "__Secure-test11.7=foobar; __Secure-test11.10=foobar; __Secure-test11.11=foobar; __Secure-test11.12=foobar");
+// Requires Secure; SameSite=None / Default
+cookiesShouldBe("__Secure-test11.13=foobar; SameSite=Strict; Path=/; Partitioned; Partitioned;", "__Secure-test11.7=foobar; __Secure-test11.10=foobar; __Secure-test11.11=foobar; __Secure-test11.12=foobar");
+// Requires Secure attribute
+cookiesShouldBe("__Secure-test11.14=foobar; Path=/;", "__Secure-test11.7=foobar; __Secure-test11.10=foobar; __Secure-test11.11=foobar; __Secure-test11.12=foobar");
+// Requires Secure; SameSite=None / Default
+cookiesShouldBe("__Secure-test11.15=foobar; SameSite=Lax; Path=/; Partitioned; Partitioned;", "__Secure-test11.7=foobar; __Secure-test11.10=foobar; __Secure-test11.11=foobar; __Secure-test11.12=foobar");
+// Requires Secure; SameSite=None / Default
+cookiesShouldBe("__Secure-test11.16=foobar; SameSite=Strict; Path=/; Partitioned; Partitioned;", "__Secure-test11.7=foobar; __Secure-test11.10=foobar; __Secure-test11.11=foobar; __Secure-test11.12=foobar");
+cookiesShouldBe("__Secure-test11.17=foobar; SameSite=None; Partitioned; Partitioned;", "__Secure-test11.7=foobar; __Secure-test11.10=foobar; __Secure-test11.11=foobar; __Secure-test11.12=foobar");
+// Requires SameSite=None / Default
+cookiesShouldBe("__Secure-test11.18=foobar; SameSite=Strict; Path=/; Partitioned; Secure; Partitioned;", "__Secure-test11.7=foobar; __Secure-test11.10=foobar; __Secure-test11.11=foobar; __Secure-test11.12=foobar");
+cookiesShouldBe("__Secure-test11.19=foobar; Secure; Path=/", "__Secure-test11.7=foobar; __Secure-test11.10=foobar; __Secure-test11.11=foobar; __Secure-test11.12=foobar; __Secure-test11.19=foobar");
+// Requires SameSite=None / Default
+cookiesShouldBe("__Secure-test11.20=foobar; SameSite=Lax; Path=/; Partitioned; Secure; Partitioned;", "__Secure-test11.7=foobar; __Secure-test11.10=foobar; __Secure-test11.11=foobar; __Secure-test11.12=foobar; __Secure-test11.19=foobar");
+// Requires SameSite=None / Default
+cookiesShouldBe("__Secure-test11.21=foobar; SameSite=Strict; Path=/; Partitioned; Secure; Partitioned;", "__Secure-test11.7=foobar; __Secure-test11.10=foobar; __Secure-test11.11=foobar; __Secure-test11.12=foobar; __Secure-test11.19=foobar");
+cookiesShouldBe("__Secure-test11.22=foobar; SameSite=None; Path=/; Partitioned; Secure; Partitioned;", "__Secure-test11.7=foobar; __Secure-test11.10=foobar; __Secure-test11.11=foobar; __Secure-test11.12=foobar; __Secure-test11.19=foobar; __Secure-test11.22=foobar");
+cookiesShouldBe("__Secure-test11.23=foobar; SameSite=None; Path=/; Secure;", "__Secure-test11.7=foobar; __Secure-test11.10=foobar; __Secure-test11.11=foobar; __Secure-test11.12=foobar; __Secure-test11.19=foobar; __Secure-test11.22=foobar; __Secure-test11.23=foobar");
+cookiesShouldBe("__Secure-test11.24=foobar; SameSite=None; Path=/; Secure; HttpOnly", "__Secure-test11.7=foobar; __Secure-test11.10=foobar; __Secure-test11.11=foobar; __Secure-test11.12=foobar; __Secure-test11.19=foobar; __Secure-test11.22=foobar; __Secure-test11.23=foobar; __Secure-test11.24=foobar");
+cookiesShouldBe("__Secure-test11.25=foobar; SameSite=None; Path=/; Partitioned; Secure; Partitioned; HttpOnly", "__Secure-test11.7=foobar; __Secure-test11.10=foobar; __Secure-test11.11=foobar; __Secure-test11.12=foobar; __Secure-test11.19=foobar; __Secure-test11.22=foobar; __Secure-test11.23=foobar; __Secure-test11.24=foobar; __Secure-test11.25=foobar");
+
+shouldNotHaveDOMCookie("__Secure-test11.1");
+shouldNotHaveDOMCookie("__Secure-test11.2");
+shouldNotHaveDOMCookie("__Secure-test11.3");
+shouldNotHaveDOMCookie("__Secure-test11.4");
+shouldNotHaveDOMCookie("__Secure-test11.5");
+shouldNotHaveDOMCookie("__Secure-test11.6");
+shouldNotHaveDOMCookie("__Secure-test11.7");
+shouldNotHaveDOMCookie("__Secure-test11.8");
+shouldNotHaveDOMCookie("__Secure-test11.9");
+shouldNotHaveDOMCookie("__Secure-test11.10");
+shouldNotHaveDOMCookie("__Secure-test11.11");
+shouldNotHaveDOMCookie("__Secure-test11.12");
+shouldNotHaveDOMCookie("__Secure-test11.13");
+shouldNotHaveDOMCookie("__Secure-test11.14");
+shouldNotHaveDOMCookie("__Secure-test11.15");
+shouldNotHaveDOMCookie("__Secure-test11.16");
+shouldNotHaveDOMCookie("__Secure-test11.17");
+shouldNotHaveDOMCookie("__Secure-test11.18");
+shouldNotHaveDOMCookie("__Secure-test11.20");
+shouldNotHaveDOMCookie("__Secure-test11.24");
+shouldNotHaveDOMCookie("__Secure-test11.25");
+shouldHaveDOMCookieWithValue("__Secure-test11.19", "foobar");
+shouldHaveDOMCookieWithValue("__Secure-test11.22", "foobar");
+shouldHaveDOMCookieWithValue("__Secure-test11.23", "foobar");
+
+clearCookiesFromSubTests();
+
+debug("Tests 12: Set partitioned and unpartitioned cookies with multiple partitioned attributes; mixed in with meaningful __Secure prefix, early Secure attribute.");
+// Requires SameSite=None / Default
+cookiesShouldBe("__Secure-test12.1=foobar; SameSite=Strict; Partitioned; Path=/; Secure; Partitioned;", "");
+cookiesShouldBe("__Secure-test12.2=foobar; Path=/; Secure;", "__Secure-test12.2=foobar");
+// Requires SameSite=None / Default
+cookiesShouldBe("__Secure-test12.3=foobar; SameSite=Lax; Partitioned; Path=/; Secure; Partitioned;", "__Secure-test12.2=foobar");
+// Requires SameSite=None / Default
+cookiesShouldBe("__Secure-test12.4=foobar; Partitioned; SameSite=Strict; Path=/; Secure; Partitioned;", "__Secure-test12.2=foobar");
+cookiesShouldBe("__Secure-test12.5=foobar; SameSite=None; Partitioned; Path=/; Secure; Partitioned;", "__Secure-test12.2=foobar; __Secure-test12.5=foobar");
+cookiesShouldBe("__Secure-test12.6=foobar; Path=/; Secure; Partitioned;", "__Secure-test12.2=foobar; __Secure-test12.5=foobar; __Secure-test12.6=foobar");
+// Requires Secure attribute
+cookiesShouldBe("__Secure-test12.7=foobar; Partitioned; Path=/;", "__Secure-test12.2=foobar; __Secure-test12.5=foobar; __Secure-test12.6=foobar");
+cookiesShouldBe("__Secure-test12.8=foobar; Partitioned; Path=/; Secure; Path=/", "__Secure-test12.2=foobar; __Secure-test12.5=foobar; __Secure-test12.6=foobar; __Secure-test12.8=foobar");
+cookiesShouldBe("__Secure-test12.9=foobar; SameSite=None; Path=/; Secure; HttpOnly", "__Secure-test12.2=foobar; __Secure-test12.5=foobar; __Secure-test12.6=foobar; __Secure-test12.8=foobar; __Secure-test12.9=foobar");
+cookiesShouldBe("__Secure-test12.10=foobar; SameSite=None; Partitioned; Path=/; Secure; Partitioned; HttpOnly", "__Secure-test12.2=foobar; __Secure-test12.5=foobar; __Secure-test12.6=foobar; __Secure-test12.8=foobar; __Secure-test12.9=foobar; __Secure-test12.10=foobar");
+cookiesShouldBe("__Secure-test12.10=foobar; Path=/; Secure; Partitioned; HttpOnly", "__Secure-test12.2=foobar; __Secure-test12.5=foobar; __Secure-test12.6=foobar; __Secure-test12.8=foobar; __Secure-test12.9=foobar; __Secure-test12.10=foobar");
+// Requires SameSite=None / Default
+cookiesShouldBe("__Secure-test12.11=foobar; SameSite=Strict; Partitioned; Secure; Partitioned;", "__Secure-test12.2=foobar; __Secure-test12.5=foobar; __Secure-test12.6=foobar; __Secure-test12.8=foobar; __Secure-test12.9=foobar; __Secure-test12.10=foobar; __Secure-test12.10=foobar");
+cookiesShouldBe("__Secure-test12.12=foobar; Secure;", "__Secure-test12.2=foobar; __Secure-test12.5=foobar; __Secure-test12.6=foobar; __Secure-test12.8=foobar; __Secure-test12.9=foobar; __Secure-test12.10=foobar; __Secure-test12.10=foobar; __Secure-test12.12=foobar");
+// Requires SameSite=None / Default
+cookiesShouldBe("__Secure-test12.13=foobar; SameSite=Lax; Partitioned; Secure; Partitioned;", "__Secure-test12.2=foobar; __Secure-test12.5=foobar; __Secure-test12.6=foobar; __Secure-test12.8=foobar; __Secure-test12.9=foobar; __Secure-test12.10=foobar; __Secure-test12.10=foobar; __Secure-test12.12=foobar");
+// Requires SameSite=None / Default
+cookiesShouldBe("__Secure-test12.14=foobar; Partitioned; SameSite=Strict; Secure; Partitioned;", "__Secure-test12.2=foobar; __Secure-test12.5=foobar; __Secure-test12.6=foobar; __Secure-test12.8=foobar; __Secure-test12.9=foobar; __Secure-test12.10=foobar; __Secure-test12.10=foobar; __Secure-test12.12=foobar");
+cookiesShouldBe("__Secure-test12.15=foobar; SameSite=None; Partitioned; Secure; Partitioned;", "__Secure-test12.2=foobar; __Secure-test12.5=foobar; __Secure-test12.6=foobar; __Secure-test12.8=foobar; __Secure-test12.9=foobar; __Secure-test12.10=foobar; __Secure-test12.10=foobar; __Secure-test12.12=foobar; __Secure-test12.15=foobar");
+cookiesShouldBe("__Secure-test12.16=foobar; Secure; Partitioned;", "__Secure-test12.2=foobar; __Secure-test12.5=foobar; __Secure-test12.6=foobar; __Secure-test12.8=foobar; __Secure-test12.9=foobar; __Secure-test12.10=foobar; __Secure-test12.10=foobar; __Secure-test12.12=foobar; __Secure-test12.15=foobar; __Secure-test12.16=foobar");
+// Requires Secure attribute
+cookiesShouldBe("__Secure-test12.17=foobar; Partitioned;", "__Secure-test12.2=foobar; __Secure-test12.5=foobar; __Secure-test12.6=foobar; __Secure-test12.8=foobar; __Secure-test12.9=foobar; __Secure-test12.10=foobar; __Secure-test12.10=foobar; __Secure-test12.12=foobar; __Secure-test12.15=foobar; __Secure-test12.16=foobar");
+cookiesShouldBe("__Secure-test12.18=foobar; Partitioned; Secure; Path=/", "__Secure-test12.2=foobar; __Secure-test12.5=foobar; __Secure-test12.6=foobar; __Secure-test12.8=foobar; __Secure-test12.9=foobar; __Secure-test12.10=foobar; __Secure-test12.10=foobar; __Secure-test12.12=foobar; __Secure-test12.15=foobar; __Secure-test12.16=foobar; __Secure-test12.18=foobar");
+cookiesShouldBe("__Secure-test12.19=foobar; SameSite=None; Secure; HttpOnly", "__Secure-test12.2=foobar; __Secure-test12.5=foobar; __Secure-test12.6=foobar; __Secure-test12.8=foobar; __Secure-test12.9=foobar; __Secure-test12.10=foobar; __Secure-test12.10=foobar; __Secure-test12.12=foobar; __Secure-test12.15=foobar; __Secure-test12.16=foobar; __Secure-test12.18=foobar; __Secure-test12.19=foobar");
+cookiesShouldBe("__Secure-test12.20=foobar; SameSite=None; Partitioned; Secure; Partitioned; HttpOnly", "__Secure-test12.2=foobar; __Secure-test12.5=foobar; __Secure-test12.6=foobar; __Secure-test12.8=foobar; __Secure-test12.9=foobar; __Secure-test12.10=foobar; __Secure-test12.10=foobar; __Secure-test12.12=foobar; __Secure-test12.15=foobar; __Secure-test12.16=foobar; __Secure-test12.18=foobar; __Secure-test12.19=foobar; __Secure-test12.20=foobar");
+cookiesShouldBe("__Secure-test12.20=foobar; Secure; Partitioned; HttpOnly", "__Secure-test12.2=foobar; __Secure-test12.5=foobar; __Secure-test12.6=foobar; __Secure-test12.8=foobar; __Secure-test12.9=foobar; __Secure-test12.10=foobar; __Secure-test12.10=foobar; __Secure-test12.12=foobar; __Secure-test12.15=foobar; __Secure-test12.16=foobar; __Secure-test12.18=foobar; __Secure-test12.19=foobar; __Secure-test12.20=foobar");
+
+shouldNotHaveDOMCookie("__Secure-test12.1");
+shouldNotHaveDOMCookie("__Secure-test12.3");
+shouldNotHaveDOMCookie("__Secure-test12.4");
+shouldNotHaveDOMCookie("__Secure-test12.7");
+shouldNotHaveDOMCookie("__Secure-test12.9");
+shouldNotHaveDOMCookie("__Secure-test12.10");
+shouldNotHaveDOMCookie("__Secure-test12.11");
+shouldNotHaveDOMCookie("__Secure-test12.12");
+shouldNotHaveDOMCookie("__Secure-test12.13");
+shouldNotHaveDOMCookie("__Secure-test12.14");
+shouldNotHaveDOMCookie("__Secure-test12.15");
+shouldNotHaveDOMCookie("__Secure-test12.16");
+shouldNotHaveDOMCookie("__Secure-test12.17");
+shouldNotHaveDOMCookie("__Secure-test12.20");
+shouldHaveDOMCookieWithValue("__Secure-test12.2", "foobar");
+shouldHaveDOMCookieWithValue("__Secure-test12.5", "foobar");
+shouldHaveDOMCookieWithValue("__Secure-test12.6", "foobar");
+shouldHaveDOMCookieWithValue("__Secure-test12.8", "foobar");
+shouldHaveDOMCookieWithValue("__Secure-test12.18", "foobar");
+
+clearCookiesFromSubTests();
+
+debug("Tests 13: Set partitioned and unpartitioned __Host- cookies with multiple partitioned attributes.");
+// Requires Secure; SameSite=None / Default; Path
+cookiesShouldBe("__Host-test13.1=foobar; SameSite=Strict; Partitioned; Partitioned;", "");
+// Requires Secure attribute; Path
+cookiesShouldBe("__Host-test13.2=foobar;", "");
+// Requires Secure; SameSite=None / Default; Path
+cookiesShouldBe("__Host-test13.3=foobar; SameSite=Lax; Partitioned; Partitioned;", "");
+// Requires Secure; SameSite=None / Default; Path
+cookiesShouldBe("__Host-test13.4=foobar; SameSite=None; Partitioned; Partitioned;", "");
+// Requires Path
+cookiesShouldBe("__Host-test13.5=foobar; Partitioned;", "");
+cookiesShouldBe("__Host-test13.6=foobar; Partitioned; Secure; Path=/", "__Host-test13.6=foobar");
+// Requires Secure; SameSite=None / Default
+cookiesShouldBe("__Host-test13.7=foobar; SameSite=Strict; Partitioned; Path=/; Partitioned;", "__Host-test13.6=foobar");
+// Requires Secure attribute
+cookiesShouldBe("__Host-test13.8=foobar; Path=/", "__Host-test13.6=foobar");
+// Requires Secure; SameSite=None / Default
+cookiesShouldBe("__Host-test13.9=foobar; SameSite=Lax; Partitioned; Partitioned;", "__Host-test13.6=foobar");
+// Requires Secure; SameSite=None / Default
+cookiesShouldBe("__Host-test13.10=foobar; SameSite=Strict; Partitioned; Partitioned;", "__Host-test13.6=foobar");
+// Requires Secure attribute
+cookiesShouldBe("__Host-test13.11=foobar; SameSite=None; Partitioned; Partitioned;", "__Host-test13.6=foobar");
+// Requires Secure attribute
+cookiesShouldBe("__Host-test13.12=foobar; Partitioned;", "__Host-test13.6=foobar");
+cookiesShouldBe("__Host-test13.13=foobar; Partitioned; Secure; Path=/", "__Host-test13.6=foobar; __Host-test13.13=foobar");
+cookiesShouldBe("__Host-test13.14=foobar; Partitioned; Secure; Path=/; SameSite=None", "__Host-test13.6=foobar; __Host-test13.13=foobar; __Host-test13.14=foobar");
+
+shouldNotHaveDOMCookie("__Host-test13.1");
+shouldNotHaveDOMCookie("__Host-test13.2");
+shouldNotHaveDOMCookie("__Host-test13.3");
+shouldNotHaveDOMCookie("__Host-test13.4");
+shouldNotHaveDOMCookie("__Host-test13.5");
+shouldNotHaveDOMCookie("__Host-test13.7");
+shouldNotHaveDOMCookie("__Host-test13.8");
+shouldNotHaveDOMCookie("__Host-test13.9");
+shouldNotHaveDOMCookie("__Host-test13.10");
+shouldNotHaveDOMCookie("__Host-test13.11");
+shouldNotHaveDOMCookie("__Host-test13.12");
+shouldHaveDOMCookieWithValue("__Host-test13.6", "foobar");
+shouldHaveDOMCookieWithValue("__Host-test13.13", "foobar");
+shouldHaveDOMCookieWithValue("__Host-test13.14", "foobar");
+
+clearCookiesFromSubTests();
+
+debug("Tests 14: Set partitioned and unpartitioned __Host- cookies with multiple partitioned attributes; different order, Path after Secure.");
+// Requires SameSite=None / Default; Path
+cookiesShouldBe("__Host-test14.1=foobar; SameSite=Strict; Partitioned; Secure; Partitioned;", "");
+// Requires Path
+cookiesShouldBe("__Host-test14.2=foobar; Secure;", "");
+// Requires SameSite=None / Default; Path
+cookiesShouldBe("__Host-test14.3=foobar; SameSite=Lax; Partitioned; Secure; Partitioned;", "");
+// Requires SameSite=None / Default; Path
+cookiesShouldBe("__Host-test14.4=foobar; SameSite=Strict; Partitioned; Secure; Partitioned;", "");
+// Requires Path
+cookiesShouldBe("__Host-test14.5=foobar; SameSite=None; Partitioned; Secure; Partitioned;", "");
+// Requires Path
+cookiesShouldBe("__Host-test14.6=foobar; Secure; Partitioned;", "");
+// Requires Secure; Path
+cookiesShouldBe("__Host-test14.7=foobar; Partitioned;", "");
+// Requires SameSite=None / Default
+cookiesShouldBe("__Host-test14.8=foobar; SameSite=Strict; Partitioned; Secure; Path=/; Partitioned;", "");
+cookiesShouldBe("__Host-test14.9=foobar; Secure; Path=/", "__Host-test14.9");
+// Requires SameSite=None / Default
+cookiesShouldBe("__Host-test14.10=foobar; SameSite=Lax; Partitioned; Secure; Path=/; Partitioned;", "__Host-test14.9");
+// Requires SameSite=None / Default;
+cookiesShouldBe("__Host-test14.11=foobar; SameSite=Strict; Path=/; Partitioned; Secure; Path=/; Partitioned;", "__Host-test14.9");
+cookiesShouldBe("__Host-test14.12=foobar; SameSite=None; Partitioned; Path=/; Secure; Path=/; Partitioned;", "__Host-test14.9; __Host-test14.12");
+cookiesShouldBe("__Host-test14.13=foobar; Secure; Path=/; Partitioned; Path=/;", "__Host-test14.9; __Host-test14.12; __Host-test14.13");
+// Requires Secure
+cookiesShouldBe("__Host-test14.14=foobar; Partitioned; Path=/", "__Host-test14.9; __Host-test14.12; __Host-test14.13");
+cookiesShouldBe("__Host-test14.15=foobar; HttpOnly; Secure; Path=/; Partitioned; Path=/;", "__Host-test14.9; __Host-test14.12; __Host-test14.13; __Host-test14.15");
+shouldNotHaveDOMCookie("__Host-test14.1");
+shouldNotHaveDOMCookie("__Host-test14.2");
+shouldNotHaveDOMCookie("__Host-test14.3");
+shouldNotHaveDOMCookie("__Host-test14.4");
+shouldNotHaveDOMCookie("__Host-test14.5");
+shouldNotHaveDOMCookie("__Host-test14.6");
+shouldNotHaveDOMCookie("__Host-test14.7");
+shouldNotHaveDOMCookie("__Host-test14.8");
+shouldNotHaveDOMCookie("__Host-test14.10");
+shouldNotHaveDOMCookie("__Host-test14.11");
+shouldNotHaveDOMCookie("__Host-test14.14");
+shouldNotHaveDOMCookie("__Host-test14.15");
+shouldHaveDOMCookieWithValue("__Host-test14.9", "foobar");
+shouldHaveDOMCookieWithValue("__Host-test14.12", "foobar");
+shouldHaveDOMCookieWithValue("__Host-test14.13", "foobar");
+
+clearCookiesFromSubTests();
+
+debug("Tests 15: Set partitioned and unpartitioned __Host- cookies with multiple partitioned attributes; different order, Path after Secure; from JavaScript.");
+
+// Requires SameSite=None / Default; Path
+setDOMCookie("__Host-test15.1", "foobar", { "SameSite": "Strict", "Partitioned": undefined, "Secure": undefined, " Partitioned": undefined });
+testCookies("");
+shouldNotHaveDOMCookie("__Host-test15.1");
+
+// Requires Path
+setDOMCookie("__Host-test15.2", "foobar", { "Secure": undefined });
+testCookies("");
+shouldNotHaveDOMCookie("__Host-test15.2");
+
+// Requires SameSite=None / Default; Path
+setDOMCookie("__Host-test15.3", "foobar", { "SameSite": "Lax", "Partitioned": undefined, "Secure": undefined, " Partitioned": undefined });
+testCookies("");
+shouldNotHaveDOMCookie("__Host-test15.3");
+
+// Requires SameSite=None / Default; Path
+setDOMCookie("__Host-test15.4", "foobar", { "SameSite": "Strict", "Partitioned": undefined, "Secure": undefined, " Partitioned": undefined });
+testCookies("");
+shouldNotHaveDOMCookie("__Host-test15.4");
+
+// Requires Path
+setDOMCookie("__Host-test15.5", "foobar", { "SameSite": "None", "Partitioned": undefined, "Secure": undefined, " Partitioned": undefined });
+testCookies("");
+shouldNotHaveDOMCookie("__Host-test15.5");
+
+// Requires Path
+setDOMCookie("__Host-test15.6", "foobar", { "Secure": undefined, "Partitioned": undefined });
+testCookies("");
+shouldNotHaveDOMCookie("__Host-test15.6");
+
+// Requires Secure; Path
+setDOMCookie("__Host-test15.7", "foobar", { "Partitioned": undefined });
+testCookies("");
+shouldNotHaveDOMCookie("__Host-test15.7");
+
+// Requires SameSite=None / Default;
+setDOMCookie("__Host-test15.8", "foobar", { "SameSite": "Strict", "Partitioned": undefined, "Secure": undefined, "Path": "/", " Partitioned": undefined });
+testCookies("");
+shouldNotHaveDOMCookie("__Host-test15.8");
+
+setDOMCookie("__Host-test15.9", "foobar", { "Secure": undefined, "Path": "/" });
+testCookies("__Host-test15.9");
+shouldHaveDOMCookieWithValue("__Host-test15.9", "foobar");
+
+// Requires SameSite=None / Default
+setDOMCookie("__Host-test15.10", "foobar", { "SameSite": "Lax", "Partitioned": undefined, "Secure": undefined, "Path": "/", " Partitioned": undefined });
+testCookies("__Host-test15.9");
+shouldNotHaveDOMCookie("__Host-test15.10");
+
+// Requires SameSite=None / Default
+setDOMCookie("__Host-test15.11", "foobar", { "SameSite": "Strict", "Partitioned": undefined, "Secure": undefined, "Path": "/", " Path": "/", " Partitioned": undefined });
+testCookies("__Host-test15.9");
+shouldNotHaveDOMCookie("__Host-test15.11");
+
+setDOMCookie("__Host-test15.12", "foobar", { "SameSite": "None", "Partitioned": undefined, "Secure": undefined, "Path": "/", " Path": "/", " Partitioned": undefined });
+testCookies("__Host-test15.9; __Host-test15.12");
+shouldHaveDOMCookieWithValue("__Host-test15.12", "foobar");
+
+setDOMCookie("__Host-test15.13", "foobar", { "Partitioned": undefined, "Secure": undefined, "Path": "/", " Path": "/", " Partitioned": undefined });
+testCookies("__Host-test15.9; __Host-test15.12; __Host-test15.13");
+shouldHaveDOMCookieWithValue("__Host-test15.13", "foobar");
+
+// Requires Secure
+setDOMCookie("__Host-test15.14", "foobar", { "Partitioned": undefined, "Path": "/" });
+testCookies("__Host-test15.9; __Host-test15.12; __Host-test15.13");
+shouldNotHaveDOMCookie("__Host-test15.14");
+
+// Can't set HttpOnly
+setDOMCookie("__Host-test15.15", "foobar", { "HttpOnly": undefined, "Secure": undefined, "Path": "/", "Partitioned": undefined, "Path": "/" });
+testCookies("__Host-test15.9; __Host-test15.12; __Host-test15.13");
+shouldNotHaveDOMCookie("__Host-test15.15");
+
+clearCookiesFromSubTests();
+
+debug("Tests 16: Set partitioned and unpartitioned cookies with multiple partitioned attributes; different order, Path after Secure; from JavaScript.");
+// Requires SameSite=None / Default
+setDOMCookie("test16.1", "foobar", { "SameSite": "Strict", "Partitioned": undefined, "Secure": undefined, " Partitioned": undefined });
+testCookies("");
+shouldNotHaveDOMCookie("test16.1");
+
+setDOMCookie("test16.2", "foobar", { "Secure": undefined });
+testCookies("test16.2");
+shouldHaveDOMCookieWithValue("test16.2", "foobar");
+
+// Requires SameSite=None / Default
+setDOMCookie("test16.3", "foobar", { "SameSite": "Lax", "Partitioned": undefined, "Secure": undefined, " Partitioned": undefined });
+testCookies("test16.2");
+shouldNotHaveDOMCookie("test16.3");
+
+// Requires SameSite=None / Default
+setDOMCookie("test16.4", "foobar", { "SameSite": "Strict", "Partitioned": undefined, "Secure": undefined, " Partitioned": undefined });
+testCookies("test16.2");
+shouldNotHaveDOMCookie("test16.4");
+
+setDOMCookie("test16.5", "foobar", { "SameSite": "None", "Partitioned": undefined, "Secure": undefined, " Partitioned": undefined });
+testCookies("test16.2; test16.5");
+shouldHaveDOMCookieWithValue("test16.5", "foobar");
+
+setDOMCookie("test16.6", "foobar", { "Secure": undefined, "Partitioned": undefined });
+testCookies("test16.2; test16.5; test16.6");
+shouldHaveDOMCookieWithValue("test16.6", "foobar");
+
+// Requires Secure
+setDOMCookie("test16.7", "foobar", { "Partitioned": undefined });
+testCookies("test16.2; test16.5; test16.6");
+shouldNotHaveDOMCookie("test16.7");
+
+// Requires SameSite=None / Default
+setDOMCookie("test16.8", "foobar", { "SameSite": "Strict", "Partitioned": undefined, "Secure": undefined, "Path": "/", " Partitioned": undefined });
+testCookies("test16.2; test16.5; test16.6");
+shouldNotHaveDOMCookie("test16.8");
+
+setDOMCookie("test16.9", "foobar", { "Secure": undefined, "Path": "/" });
+testCookies("test16.2; test16.5; test16.6; test16.9");
+shouldHaveDOMCookieWithValue("test16.9", "foobar");
+
+// Requires SameSite=None / Default
+setDOMCookie("test16.10", "foobar", { "SameSite": "Lax", "Partitioned": undefined, "Secure": undefined, "Path": "/", " Partitioned": undefined });
+testCookies("test16.2; test16.5; test16.6; test16.9");
+shouldNotHaveDOMCookie("test16.10");
+
+// Requires SameSite=None / Default
+setDOMCookie("test16.11", "foobar", { "SameSite": "Strict", "Partitioned": undefined, "Secure": undefined, "Path": "/", " Path": "/", " Partitioned": undefined });
+testCookies("test16.2; test16.5; test16.6; test16.9");
+shouldNotHaveDOMCookie("test16.11");
+
+setDOMCookie("test16.12", "foobar", { "SameSite": "None", "Partitioned": undefined, "Secure": undefined, "Path": "/", " Path": "/", " Partitioned": undefined });
+testCookies("test16.2; test16.5; test16.6; test16.9; test16.12");
+shouldHaveDOMCookieWithValue("test16.12", "foobar");
+
+setDOMCookie("test16.13", "foobar", { "Partitioned": undefined, "Secure": undefined, "Path": "/", " Path": "/", " Partitioned": undefined });
+testCookies("test16.2; test16.5; test16.6; test16.9; test16.12; test16.13");
+shouldHaveDOMCookieWithValue("test16.13", "foobar");
+
+// Requires Secure
+setDOMCookie("test16.14", "foobar", { "Partitioned": undefined, "Path": "/" });
+testCookies("test16.2; test16.5; test16.6; test16.9; test16.12; test16.13");
+shouldNotHaveDOMCookie("test16.14");
+
+// Can't set HttpOnly
+setDOMCookie("test16.15", "foobar", { "HttpOnly": undefined, "Secure": undefined, "Path": "/", "Partitioned": undefined, "Path": "/" });
+testCookies("test16.2; test16.5; test16.6; test16.9; test16.12; test16.13");
+shouldNotHaveDOMCookie("test16.15");
+
+clearCookiesFromSubTests();
+
+if (window === window.top)
+    testRunner?.notifyDone();
+else
+    window.top.postMessage("done", "https://127.0.0.1:8443");
+</script>
+<script src="resources/cookies-test-post.js"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -266,6 +266,11 @@ bool PlatformTimeRanges::contain(const MediaTime& time) const
     return find(time) != notFound;
 }
 
+bool PlatformTimeRanges::containWithEpsilon(const MediaTime& time, const MediaTime& epsilon) const
+{
+    return findWithEpsilon(time, epsilon) != notFound;
+}
+
 size_t PlatformTimeRanges::find(const MediaTime& time) const
 {
     bool ignoreInvalid;
@@ -276,11 +281,11 @@ size_t PlatformTimeRanges::find(const MediaTime& time) const
     return notFound;
 }
 
-size_t PlatformTimeRanges::findWithEpsilon(const MediaTime& time, const MediaTime& epsilon)
+size_t PlatformTimeRanges::findWithEpsilon(const MediaTime& time, const MediaTime& epsilon) const
 {
     bool ignoreInvalid;
     for (unsigned n = 0; n < length(); n++) {
-        if (time + epsilon >= start(n, ignoreInvalid) && time < end(n, ignoreInvalid))
+        if (time + epsilon >= start(n, ignoreInvalid) && time - epsilon <= end(n, ignoreInvalid))
             return n;
     }
     return notFound;

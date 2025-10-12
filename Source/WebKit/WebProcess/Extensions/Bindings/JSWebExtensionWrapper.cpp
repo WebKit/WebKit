@@ -81,14 +81,15 @@ JSValueRef JSWebExtensionWrapper::wrap(JSContextRef context, JSWebExtensionWrapp
     if (!object)
         return JSValueMakeNull(context);
 
-    auto wrappers = wrapperCacheMap(context);
+    // JSWeakObjectMapRef is an opaque type that isn't refcounted. Static analysis can see internal refcounting APIs via internal headers, but clients aren't supposed to use those internal APIs.
+    SUPPRESS_UNCOUNTED_LOCAL auto wrappers = wrapperCacheMap(context);
     if (auto result = getCachedWrapper(context, wrappers, object))
         return result;
 
-    auto objectClass = object->wrapperClass();
+    RefPtr objectClass = object->wrapperClass();
     ASSERT(objectClass);
 
-    auto wrapper = JSObjectMake(context, objectClass, object);
+    auto wrapper = JSObjectMake(context, objectClass.get(), object);
     ASSERT(wrapper);
 
     JSWeakObjectMapSet(context, wrappers, object, wrapper);
@@ -111,20 +112,19 @@ static JSWebExtensionWrappable* unwrapObject(JSObjectRef object)
 {
     ASSERT(object);
 
-    auto* wrappable = static_cast<JSWebExtensionWrappable*>(JSObjectGetPrivate(object));
-    ASSERT(wrappable);
-    return wrappable;
+    ASSERT(JSObjectGetPrivate(object));
+    return static_cast<JSWebExtensionWrappable*>(JSObjectGetPrivate(object));
 }
 
 void JSWebExtensionWrapper::initialize(JSContextRef, JSObjectRef object)
 {
-    if (auto* wrappable = unwrapObject(object))
+    if (RefPtr wrappable = unwrapObject(object))
         wrappable->ref();
 }
 
 void JSWebExtensionWrapper::finalize(JSObjectRef object)
 {
-    if (auto* wrappable = unwrapObject(object)) {
+    if (RefPtr wrappable = unwrapObject(object)) {
         JSObjectSetPrivate(object, nullptr);
         wrappable->deref();
     }

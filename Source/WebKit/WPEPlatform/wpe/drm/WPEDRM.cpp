@@ -71,6 +71,7 @@ Crtc::Crtc(drmModeCrtc* crtc, unsigned index, Properties&& properties)
     , m_y(crtc->y)
     , m_width(crtc->width)
     , m_height(crtc->height)
+    , m_bufferID(crtc->buffer_id)
     , m_properties(WTFMove(properties))
 {
     if (crtc->mode_valid)
@@ -83,6 +84,11 @@ bool Crtc::modeIsCurrent(drmModeModeInfo* mode) const
         return false;
 
     return !memcmp(&m_currentMode.value(), mode, sizeof(drmModeModeInfo));
+}
+
+void Crtc::setCurrentMode(drmModeModeInfo* mode)
+{
+    m_currentMode = *mode;
 }
 
 std::unique_ptr<Connector> Connector::create(int fd, drmModeConnector* connector)

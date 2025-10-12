@@ -45,6 +45,9 @@ TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
     case ColorSpace::ExtendedDisplayP3:
         ts << "Extended DisplayP3"_s;
         break;
+    case ColorSpace::ExtendedLinearDisplayP3:
+        ts << "Extended Linear DisplayP3"_s;
+        break;
     case ColorSpace::ExtendedLinearSRGB:
         ts << "Extended Linear sRGB"_s;
         break;
@@ -68,6 +71,9 @@ TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
         break;
     case ColorSpace::Lab:
         ts << "Lab"_s;
+        break;
+    case ColorSpace::LinearDisplayP3:
+        ts << "Linear DisplayP3"_s;
         break;
     case ColorSpace::LinearSRGB:
         ts << "Linear sRGB"_s;

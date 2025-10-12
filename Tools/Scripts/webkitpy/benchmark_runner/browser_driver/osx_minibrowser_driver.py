@@ -38,6 +38,7 @@ class OSXMiniDriver(OSXBrowserDriver):
             env['WEBKIT_SIGNPOSTS_ENABLED'] = '1'
             env['__XPC_WEBKIT_SIGNPOSTS_ENABLED'] = '1'
             env['__XPC_JSC_exposeProfilersOnGlobalObject'] = '1'
+            env['__XPC_WebKitPerformanceSignpostEnabled'] = '1'
         if browser_build_path or browser_path:
             self._launch_url_with_custom_path(url, options, browser_build_path, browser_path, env)
             return

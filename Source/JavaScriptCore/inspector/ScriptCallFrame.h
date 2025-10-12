@@ -31,9 +31,9 @@
 
 #pragma once
 
-#include "DebuggerPrimitives.h"
-#include "InspectorProtocolObjects.h"
-#include "LineColumn.h"
+#include <JavaScriptCore/DebuggerPrimitives.h>
+#include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <JavaScriptCore/LineColumn.h>
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 

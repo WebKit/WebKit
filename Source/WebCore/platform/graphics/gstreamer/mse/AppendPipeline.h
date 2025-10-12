@@ -89,8 +89,8 @@ private:
         GRefPtr<GstElement> parser;
         GRefPtr<GstElement> encoder;
         GRefPtr<GstElement> appsink;
+        GRefPtr<GstPad> demuxerSrcPad;
         GRefPtr<GstPad> entryPad; // Sink pad of the parser/GstIdentity.
-        GRefPtr<GstPad> encoderPad; // Sink pad of the encoder/GstIdentity.
         GRefPtr<GstPad> appsinkPad;
 
         RefPtr<WebCore::TrackPrivateBase> webKitTrack;
@@ -102,13 +102,13 @@ private:
         struct PadProbeInformation appsinkPadEventProbeInformation;
 #endif
 
-        void emplaceOptionalEncoderForFormat(GstBin*, const GRefPtr<GstCaps>&);
-        void emplaceOptionalParserForFormat(GstBin*, const GRefPtr<GstCaps>&);
+        void emplaceOptionalElementsForFormat(GstBin*, const GRefPtr<GstCaps>&);
         void initializeElements(AppendPipeline*, GstBin*);
         bool isLinked() const { return gst_pad_is_linked(entryPad.get()); }
     };
 
     void configureOptionalDemuxerFromAnyThread();
+    void removeParserForDemuxerPad(const GRefPtr<GstPad>&);
     void handleErrorSyncMessage(GstMessage*);
     void handleNeedContextSyncMessage(GstMessage*);
     // For debug purposes only:

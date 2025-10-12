@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018, 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,7 +100,6 @@ enum class NSType : uint8_t {
     Date,
     Error,
     Dictionary,
-    Font,
     Locale,
     Number,
     Null,
@@ -128,9 +127,7 @@ enum class CFType : uint8_t {
     CFString,
     CFURL,
     SecCertificate,
-#if HAVE(SEC_ACCESS_CONTROL)
     SecAccessControl,
-#endif
     SecTrust,
     CGColorSpace,
     CGColor,

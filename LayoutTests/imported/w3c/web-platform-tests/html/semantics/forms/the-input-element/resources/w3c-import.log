@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/resources/focus-utils.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/resources/image-submit-click.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/resources/loadresolver.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/resources/range-restore-events.html

@@ -28,6 +28,7 @@ if (rtc_include_tests) {
     sources = [ "unit_base_unittest.cc" ]
     deps = [
       ":unit_base",
+      "..:checks",
       "../../test:test_support",
     ]
   }

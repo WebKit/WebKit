@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "HTTPCookieAcceptPolicy.h"
+#include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <pal/spi/cf/CFNetworkSPI.h>
 
 namespace WebCore {

@@ -130,7 +130,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> CompressionStreamEncoder::compressZlib(std::s
 
         output.grow(allocateSize);
 
-        m_zstream.getPlatformStream().next_out = output.data();
+        m_zstream.getPlatformStream().next_out = output.mutableSpan().data();
         m_zstream.getPlatformStream().avail_out = output.size();
 
         result = deflate(&m_zstream.getPlatformStream(), m_didFinish ? Z_FINISH : Z_NO_FLUSH);

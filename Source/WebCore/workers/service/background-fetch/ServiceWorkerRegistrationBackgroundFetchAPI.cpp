@@ -57,14 +57,14 @@ RefPtr<BackgroundFetchManager> ServiceWorkerRegistrationBackgroundFetchAPI::back
 BackgroundFetchManager& ServiceWorkerRegistrationBackgroundFetchAPI::backgroundFetchManager()
 {
     if (!m_backgroundFetchManager)
-        m_backgroundFetchManager = BackgroundFetchManager::create(m_serviceWorkerRegistration);
+        lazyInitialize(m_backgroundFetchManager, BackgroundFetchManager::create(Ref { m_serviceWorkerRegistration.get() }));
 
     return *m_backgroundFetchManager;
 }
 
 ServiceWorkerRegistrationBackgroundFetchAPI& ServiceWorkerRegistrationBackgroundFetchAPI::from(ServiceWorkerRegistration& serviceWorkerRegistration)
 {
-    auto* supplement = static_cast<ServiceWorkerRegistrationBackgroundFetchAPI*>(Supplement<ServiceWorkerRegistration>::from(&serviceWorkerRegistration, supplementName()));
+    auto* supplement = downcast<ServiceWorkerRegistrationBackgroundFetchAPI>(Supplement<ServiceWorkerRegistration>::from(&serviceWorkerRegistration, supplementName()));
     if (!supplement) {
         auto newSupplement = makeUnique<ServiceWorkerRegistrationBackgroundFetchAPI>(serviceWorkerRegistration);
         supplement = newSupplement.get();

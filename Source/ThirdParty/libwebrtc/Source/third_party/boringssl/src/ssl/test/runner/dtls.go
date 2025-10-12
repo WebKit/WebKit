@@ -16,6 +16,7 @@ package runner
 
 import (
 	"bytes"
+	"cmp"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -60,6 +61,15 @@ func (m *DTLSMessage) Fragment(offset, length int) DTLSFragment {
 	}
 }
 
+// Split returns two fragments for the message.
+func (m *DTLSMessage) Split(offset int) (DTLSFragment, DTLSFragment) {
+	if m.IsChangeCipherSpec {
+		panic("tls: cannot split ChangeCipherSpec")
+	}
+
+	return m.Fragment(0, offset), m.Fragment(offset, len(m.Data)-offset)
+}
+
 // A DTLSFragment is a DTLS handshake fragment or ChangeCipherSpec, along with
 // the epoch that it is to be sent under.
 type DTLSFragment struct {
@@ -71,6 +81,9 @@ type DTLSFragment struct {
 	Sequence    uint16
 	Offset      int
 	Data        []byte
+	// ShouldDiscard, if true, indicates the shim is expected to discard this
+	// fragment. A record with such a fragment must not be ACKed by the shim.
+	ShouldDiscard bool
 }
 
 func (f *DTLSFragment) Bytes() []byte {
@@ -85,6 +98,40 @@ func (f *DTLSFragment) Bytes() []byte {
 	bb.AddUint24(uint32(f.Offset))
 	addUint24LengthPrefixedBytes(bb, f.Data)
 	return bb.BytesOrPanic()
+}
+
+func comparePair[T1 cmp.Ordered, T2 cmp.Ordered](a1 T1, a2 T2, b1 T1, b2 T2) int {
+	cmp1 := cmp.Compare(a1, b1)
+	if cmp1 != 0 {
+		return cmp1
+	}
+	return cmp.Compare(a2, b2)
+}
+
+type DTLSRecordNumber struct {
+	// Store the Epoch as a uint64, so that tests can send ACKs for epochs that
+	// the shim would never use.
+	Epoch    uint64
+	Sequence uint64
+}
+
+// A DTLSRecordNumberInfo contains information about a record received from the
+// shim, which we may attempt to ACK.
+type DTLSRecordNumberInfo struct {
+	DTLSRecordNumber
+	// The first byte covered by this record, inclusive. We only need to store
+	// one range because we require that the shim arrange fragments in order.
+	// Any gaps will have been previously-ACKed data, so there is no harm in
+	// double-ACKing.
+	MessageStartSequence uint16
+	MessageStartOffset   int
+	// The last byte covered by this record, exclusive.
+	MessageEndSequence uint16
+	MessageEndOffset   int
+}
+
+func (r *DTLSRecordNumberInfo) HasACKInformation() bool {
+	return comparePair(r.MessageStartSequence, r.MessageStartOffset, r.MessageEndSequence, r.MessageEndOffset) < 0
 }
 
 func (c *Conn) readDTLS13RecordHeader(epoch *epochState, b []byte) (headerLen int, recordLen int, recTyp recordType, err error) {
@@ -210,18 +257,6 @@ func (c *Conn) readDTLSRecordHeader(epoch *epochState, b []byte) (headerLen int,
 	return recordHeaderLen, recordLen, typ, nil
 }
 
-func (c *Conn) writeACKs(seqnums []uint64) {
-	recordNumbers := new(cryptobyte.Builder)
-	epoch := binary.BigEndian.Uint16(c.in.epoch.seq[:2])
-	recordNumbers.AddUint16LengthPrefixed(func(b *cryptobyte.Builder) {
-		for _, seq := range seqnums {
-			b.AddUint64(uint64(epoch))
-			b.AddUint64(seq)
-		}
-	})
-	c.writeRecord(recordTypeACK, recordNumbers.BytesOrPanic())
-}
-
 func (c *Conn) dtlsDoReadRecord(epoch *epochState, want recordType) (recordType, []byte, error) {
 	// Read a new packet only if the current one is empty.
 	var newPacket bool
@@ -258,16 +293,12 @@ func (c *Conn) dtlsDoReadRecord(epoch *epochState, want recordType) (recordType,
 	b := c.rawInput.Next(recordHeaderLen + n)
 
 	// Process message.
-	seq := slices.Clone(epoch.seq[:])
 	ok, encTyp, data, alertValue := c.in.decrypt(epoch, recordHeaderLen, b)
 	if !ok {
 		// A real DTLS implementation would silently ignore bad records,
 		// but we want to notice errors from the implementation under
 		// test.
 		return 0, nil, c.in.setErrorLocked(c.sendAlert(alertValue))
-	}
-	if c.config.Bugs.ACKEveryRecord {
-		c.writeACKs([]uint64{binary.BigEndian.Uint64(seq)})
 	}
 
 	if typ == 0 {
@@ -286,7 +317,9 @@ func (c *Conn) dtlsDoReadRecord(epoch *epochState, want recordType) (recordType,
 			if typ == recordTypeHandshake && c.lastRecordInFlight.typ == recordTypeHandshake && epoch.epoch == c.lastRecordInFlight.epoch {
 				// The previous record was compatible with this one. The shim
 				// should have fit more in this record before making a new one.
-				if c.lastRecordInFlight.bytesAvailable > handshakeBytesNeeded {
+				// TODO(crbug.com/374991962): Enforce this for plaintext records
+				// too.
+				if c.lastRecordInFlight.bytesAvailable > handshakeBytesNeeded && epoch.epoch > 0 {
 					return 0, nil, c.in.setErrorLocked(fmt.Errorf("dtls: previous handshake record had %d bytes available, but shim did not fit another fragment in it", c.lastRecordInFlight.bytesAvailable))
 				}
 			} else if newPacket {
@@ -377,17 +410,17 @@ func (c *Conn) dtlsWriteRecord(typ recordType, data []byte) (n int, err error) {
 	}
 
 	if typ == recordTypeApplicationData && len(data) > 1 && c.config.Bugs.SplitAndPackAppData {
-		_, err = c.dtlsPackRecord(epoch, typ, data[:len(data)/2], false)
+		_, _, err = c.dtlsPackRecord(epoch, typ, data[:len(data)/2], false)
 		if err != nil {
 			return
 		}
-		_, err = c.dtlsPackRecord(epoch, typ, data[len(data)/2:], true)
+		_, _, err = c.dtlsPackRecord(epoch, typ, data[len(data)/2:], true)
 		if err != nil {
 			return
 		}
 		n = len(data)
 	} else {
-		n, err = c.dtlsPackRecord(epoch, typ, data, false)
+		n, _, err = c.dtlsPackRecord(epoch, typ, data, false)
 		if err != nil {
 			return
 		}
@@ -406,12 +439,12 @@ func (c *Conn) dtlsWriteFlight() error {
 
 	// Avoid re-entrancy issues by updating the state immediately. The callback
 	// may try to write records.
-	prev, received, next := c.previousFlight, c.receivedFlight, c.nextFlight
-	c.previousFlight, c.receivedFlight, c.nextFlight = next, nil, nil
+	prev, received, next, records := c.previousFlight, c.receivedFlight, c.nextFlight, c.receivedFlightRecords
+	c.previousFlight, c.receivedFlight, c.nextFlight, c.receivedFlightRecords = next, nil, nil, nil
 
-	controller := DTLSController{conn: c, received: received}
+	controller := newDTLSController(c, received)
 	if c.config.Bugs.WriteFlightDTLS != nil {
-		c.config.Bugs.WriteFlightDTLS(&controller, prev, received, next)
+		c.config.Bugs.WriteFlightDTLS(&controller, prev, received, next, records)
 	} else {
 		controller.WriteFlight(next)
 	}
@@ -419,7 +452,15 @@ func (c *Conn) dtlsWriteFlight() error {
 		return err
 	}
 
-	return nil
+	if c.receivedFlight != nil || c.receivedFlightRecords != nil || c.nextFlight != nil {
+		panic("tls: flight state changed while writing flight")
+	}
+	if controller.mergeIntoNextFlight {
+		c.previousFlight, c.receivedFlight, c.nextFlight, c.receivedFlightRecords = prev, received, next, records
+	}
+
+	// Flush any ACKs, etc., we may have written.
+	return c.dtlsFlushPacket()
 }
 
 func (c *Conn) dtlsFlushHandshake() error {
@@ -444,20 +485,30 @@ func (c *Conn) dtlsACKHandshake() error {
 
 	// Avoid re-entrancy issues by updating the state immediately. The callback
 	// may try to write records.
-	prev, received := c.previousFlight, c.receivedFlight
-	c.previousFlight, c.receivedFlight = nil, nil
+	prev, received, records := c.previousFlight, c.receivedFlight, c.receivedFlightRecords
+	c.previousFlight, c.receivedFlight, c.receivedFlightRecords = nil, nil, nil
 
-	controller := DTLSController{conn: c, received: received}
+	controller := newDTLSController(c, received)
 	if c.config.Bugs.ACKFlightDTLS != nil {
-		c.config.Bugs.ACKFlightDTLS(&controller, prev, received)
+		c.config.Bugs.ACKFlightDTLS(&controller, prev, received, records)
 	} else {
-		// TODO(crbug.com/42290594): In DTLS 1.3, send an ACK by default.
+		if c.vers >= VersionTLS13 {
+			controller.WriteACK(controller.OutEpoch(), records)
+		}
 	}
 	if err := controller.Err(); err != nil {
 		return err
 	}
 
-	return nil
+	if c.previousFlight != nil || c.receivedFlight != nil || c.receivedFlightRecords != nil {
+		panic("tls: flight state changed while ACKing flight")
+	}
+	if controller.mergeIntoNextFlight {
+		c.previousFlight, c.receivedFlight, c.receivedFlightRecords = prev, received, records
+	}
+
+	// Flush any ACKs, etc., we may have written.
+	return c.dtlsFlushPacket()
 }
 
 // appendDTLS13RecordHeader appends to b the record header for a record of length
@@ -495,7 +546,7 @@ func (c *Conn) appendDTLS13RecordHeader(b, seq []byte, recordLen int) []byte {
 // dtlsPackRecord packs a single record to the pending packet, flushing it
 // if necessary. The caller should call dtlsFlushPacket to flush the current
 // pending packet afterwards.
-func (c *Conn) dtlsPackRecord(epoch *epochState, typ recordType, data []byte, mustPack bool) (n int, err error) {
+func (c *Conn) dtlsPackRecord(epoch *epochState, typ recordType, data []byte, mustPack bool) (n int, num DTLSRecordNumber, err error) {
 	maxLen := c.config.Bugs.MaxHandshakeRecordLength
 	if maxLen <= 0 {
 		maxLen = 1024
@@ -537,6 +588,7 @@ func (c *Conn) dtlsPackRecord(epoch *epochState, typ recordType, data []byte, mu
 	if err != nil {
 		return
 	}
+	num = c.out.lastRecordNumber(epoch, true /* isOut */)
 
 	// Encrypt the sequence number.
 	if useDTLS13RecordHeader && !c.config.Bugs.NullAllCiphers {
@@ -574,7 +626,9 @@ func (c *Conn) dtlsPackRecord(epoch *epochState, typ recordType, data []byte, mu
 }
 
 func (c *Conn) dtlsFlushPacket() error {
-	c.lastRecordInFlight = nil
+	if c.hand.Len() == 0 {
+		c.lastRecordInFlight = nil
+	}
 	if len(c.pendingPacket) == 0 {
 		return nil
 	}
@@ -604,6 +658,30 @@ func readDTLSFragment(s *cryptobyte.String) (DTLSFragment, error) {
 		return DTLSFragment{}, errors.New("dtls: fragment makes no progress")
 	}
 	return f, nil
+}
+
+func (c *Conn) makeDTLSRecordNumberInfo(epoch *epochState, data []byte) (DTLSRecordNumberInfo, error) {
+	info := DTLSRecordNumberInfo{DTLSRecordNumber: c.in.lastRecordNumber(epoch, false /* isOut */)}
+
+	s := cryptobyte.String(data)
+	first := true
+	for !s.Empty() {
+		f, err := readDTLSFragment(&s)
+		if err != nil {
+			return DTLSRecordNumberInfo{}, err
+		}
+		// This assumes the shim sent fragments in order. This isn't checked
+		// here, but the caller will check when processing the fragments.
+		if first {
+			info.MessageStartSequence = f.Sequence
+			info.MessageStartOffset = f.Offset
+			first = false
+		}
+		info.MessageEndSequence = f.Sequence
+		info.MessageEndOffset = f.Offset + len(f.Data)
+	}
+
+	return info, nil
 }
 
 func (c *Conn) dtlsDoReadHandshake() ([]byte, error) {
@@ -665,6 +743,10 @@ func (c *Conn) dtlsDoReadHandshake() ([]byte, error) {
 				return nil, fmt.Errorf("dtls: handshake fragment was truncated, but record could have fit %d more bytes", c.lastRecordInFlight.bytesAvailable)
 			}
 		}
+
+		// Sending part of the next flight implicitly ACKs the previous flight.
+		// Having triggered this, the shim is expected to clear its ACK buffer.
+		c.expectedACK = nil
 	}
 	c.recvHandshakeSeq++
 	ret := c.handMsg
@@ -676,6 +758,52 @@ func (c *Conn) dtlsDoReadHandshake() ([]byte, error) {
 		Data:     ret[4:],
 	})
 	return ret, nil
+}
+
+func (c *Conn) checkACK(data []byte) error {
+	s := cryptobyte.String(data)
+	var child cryptobyte.String
+	if !s.ReadUint16LengthPrefixed(&child) || !s.Empty() {
+		return fmt.Errorf("tls: could not parse ACK record")
+	}
+
+	var acks []DTLSRecordNumber
+	for !child.Empty() {
+		var num DTLSRecordNumber
+		if !child.ReadUint64(&num.Epoch) || !child.ReadUint64(&num.Sequence) {
+			return fmt.Errorf("tls: could not parse ACK record")
+		}
+		acks = append(acks, num)
+	}
+
+	// Determine the expected ACKs, if any.
+	expected := c.expectedACK
+	if len(expected) > shimConfig.MaxACKBuffer {
+		expected = expected[len(expected)-shimConfig.MaxACKBuffer:]
+	}
+
+	// If we've configured a tighter MTU, the shim might have needed to truncate
+	// the list. Tolerate this as long as the shim sent the more recent records
+	// and still sent a plausible minimum number of ACKs.
+	if c.maxPacketLen != 0 && len(acks) > 10 && len(acks) < len(expected) {
+		expected = expected[len(expected)-len(acks):]
+	}
+
+	// The shim is expected to sort the record numbers in the ACK.
+	expected = slices.Clone(expected)
+	slices.SortFunc(expected, func(a, b DTLSRecordNumber) int {
+		cmp1 := cmp.Compare(a.Epoch, b.Epoch)
+		if cmp1 != 0 {
+			return cmp1
+		}
+		return cmp.Compare(a.Sequence, b.Sequence)
+	})
+
+	if !slices.Equal(acks, expected) {
+		return fmt.Errorf("tls: got ACKs %+v, but expected %+v", acks, expected)
+	}
+
+	return nil
 }
 
 // DTLSServer returns a new DTLS server side connection
@@ -698,6 +826,9 @@ func DTLSClient(conn net.Conn, config *Config) *Conn {
 	return c
 }
 
+type WriteFlightFunc = func(c *DTLSController, prev, received, next []DTLSMessage, records []DTLSRecordNumberInfo)
+type ACKFlightFunc = func(c *DTLSController, prev, received []DTLSMessage, records []DTLSRecordNumberInfo)
+
 // A DTLSController is passed to a test callback and allows the callback to
 // customize how an individual flight is sent. This is used to test DTLS's
 // retransmission logic.
@@ -705,9 +836,7 @@ func DTLSClient(conn net.Conn, config *Config) *Conn {
 // Although DTLS runs over a lossy, reordered channel, runner assumes a
 // reliable, ordered channel. When simulating packet loss, runner processes the
 // shim's "lost" flight as usual. But, instead of responding, it calls a
-// test-provided function of the form:
-//
-//	func WriteFlight(c *DTLSController, prev, received, next []DTLSMessage)
+// test-provided function type WriteFlightFunc.
 //
 // WriteFlight will be called next as the flight for the runner to send. prev is
 // the previous flight sent by the runner, and received is the most recent
@@ -728,18 +857,17 @@ func DTLSClient(conn net.Conn, config *Config) *Conn {
 //
 // If unspecified, the default implementation of WriteFlight is:
 //
-//	func WriteFlight(c *DTLSController, prev, received, next []DTLSMessage) {
+//	func WriteFlight(c *DTLSController, prev, received, next []DTLSMessage, records []DTLSRecordNumberInfo) {
 //		c.WriteFlight(next)
 //	}
 //
 // When the shim speaks last in a handshake or post-handshake transaction, there
 // is no reply to implicitly acknowledge the flight. The runner will instead
-// call a second callback of the form:
-//
-//	func ACKFlight(c *DTLSController, prev, received []DTLSMessage)
+// call a second callback type ACKFlightFunc.
 //
 // Like WriteFlight, ACKFlight may simulate packet loss with the DTLSController.
-// It returns when it is ready to proceed.
+// It returns when it is ready to proceed. If not specified, it does nothing in
+// DTLS 1.2 and ACKs the final flight in DTLS 1.3.
 //
 // This test design implicitly assumes the shim will never start a
 // post-handshake transaction before the previous one is complete. Otherwise the
@@ -749,34 +877,54 @@ func DTLSClient(conn net.Conn, config *Config) *Conn {
 // encountered an error (e.g. an I/O error with the shim) and, if so, silently
 // makes all methods do nothing. The Err method may be used to query if it is in
 // this state, if it would otherwise cause an infinite loop.
-//
-// TODO(crbug.com/42290594): Add a way to send and expect application data, to
-// test that final flight retransmissions and post-handshake messages can
-// interleave with application data.
-//
-// TODO(crbug.com/42290594): ExpectRetransmit should return a sequence of record
-// numbers, which the test callback can use to send ACKs. Track outgoing ACKs in
-// the test framework, so calls to ExpectRetransmit implicitly check that the
-// shim only retransmits unACKed data. Have some way to account for the shim
-// forgetting packet numbers when its buffer is full, and the point before the
-// shim learns it's speaking DTLS 1.3.
-//
-// TODO(crbug.com/42290594): When we implement ACK-sending on the shim, add a
-// way for the test to specify which ACKs are expected, unless we can derive
-// that automatically?
-//
-// TODO(crbug.com/42290594): The default behavior for ACKFlight should be to
-// send an ACK. The callback also needs to take, as input, the list of record
-// numbers matching the initial flight.
 type DTLSController struct {
-	conn     *Conn
-	err      error
-	received []DTLSMessage
+	conn *Conn
+	err  error
+	// retransmitNeeded contains the list of fragments which the shim must
+	// retransmit.
+	retransmitNeeded    []DTLSFragment
+	mergeIntoNextFlight bool
+}
+
+func newDTLSController(conn *Conn, received []DTLSMessage) DTLSController {
+	var retransmitNeeded []DTLSFragment
+	for i := range received {
+		msg := &received[i]
+		retransmitNeeded = append(retransmitNeeded, msg.Fragment(0, len(msg.Data)))
+	}
+
+	return DTLSController{conn: conn, retransmitNeeded: retransmitNeeded}
+}
+
+func (c *DTLSController) getOutEpochOrPanic(epochValue uint16) *epochState {
+	epoch, ok := c.conn.out.getEpoch(epochValue)
+	if !ok {
+		panic(fmt.Sprintf("tls: could not find epoch %d", epochValue))
+	}
+	return epoch
+}
+
+func (c *DTLSController) getInEpochOrPanic(epochValue uint16) *epochState {
+	epoch, ok := c.conn.in.getEpoch(epochValue)
+	if !ok {
+		panic(fmt.Sprintf("tls: could not find epoch %d", epochValue))
+	}
+	return epoch
 }
 
 // Err returns whether the controller has stopped due to an error, or nil
 // otherwise. If it returns non-nil, other methods will silently do nothing.
 func (c *DTLSController) Err() error { return c.err }
+
+// OutEpoch returns the current outgoing epoch.
+func (c *DTLSController) OutEpoch() uint16 {
+	return c.conn.out.epoch.epoch
+}
+
+// InEpoch returns the current incoming epoch.
+func (c *DTLSController) InEpoch() uint16 {
+	return c.conn.in.epoch.epoch
+}
 
 // AdvanceClock advances the shim's clock by duration. It is a test failure if
 // the shim sends anything before picking up the command.
@@ -838,10 +986,6 @@ func (c *DTLSController) WriteFlight(msgs []DTLSMessage) {
 			continue
 		}
 
-		if msg.Epoch == 0 && config.Bugs.StrayChangeCipherSpec {
-			fragments = append(fragments, DTLSFragment{Epoch: msg.Epoch, IsChangeCipherSpec: true, Data: []byte{1}})
-		}
-
 		maxLen := config.Bugs.MaxHandshakeRecordLength
 		if maxLen <= 0 {
 			maxLen = 1024
@@ -859,13 +1003,6 @@ func (c *DTLSController) WriteFlight(msgs []DTLSMessage) {
 			fragLen := min(len(msg.Data)-fragOffset, maxLen)
 
 			fragment := msg.Fragment(fragOffset, fragLen)
-			if config.Bugs.FragmentMessageTypeMismatch && fragOffset > 0 {
-				fragment.Type++
-			}
-			if config.Bugs.FragmentMessageLengthMismatch && fragOffset > 0 {
-				fragment.TotalLength++
-			}
-
 			fragments = append(fragments, fragment)
 			if config.Bugs.ReorderHandshakeFragments {
 				// Don't duplicate Finished to avoid the peer
@@ -881,11 +1018,7 @@ func (c *DTLSController) WriteFlight(msgs []DTLSMessage) {
 			}
 			fragOffset += fragLen
 		}
-		shouldSendTwice := config.Bugs.MixCompleteMessageWithFragments
-		if msg.Type == typeFinished {
-			shouldSendTwice = config.Bugs.RetransmitFinished
-		}
-		if shouldSendTwice {
+		if config.Bugs.MixCompleteMessageWithFragments {
 			fragments = append(fragments, msg.Fragment(0, len(msg.Data)))
 		}
 	}
@@ -899,8 +1032,6 @@ func (c *DTLSController) WriteFlight(msgs []DTLSMessage) {
 		chunk := fragments[start:end]
 		if config.Bugs.ReorderHandshakeFragments {
 			rand.Shuffle(len(chunk), func(i, j int) { chunk[i], chunk[j] = chunk[j], chunk[i] })
-		} else if config.Bugs.ReverseHandshakeFragments {
-			slices.Reverse(chunk)
 		}
 		start = end
 	}
@@ -916,18 +1047,29 @@ func (c *DTLSController) WriteFragments(fragments []DTLSFragment) {
 	}
 
 	maxRecordLen := config.Bugs.PackHandshakeFragments
+	packRecord := func(epoch *epochState, typ recordType, data []byte, anyDiscard bool) error {
+		_, num, err := c.conn.dtlsPackRecord(epoch, typ, data, false)
+		if err != nil {
+			return err
+		}
+		if !anyDiscard && typ == recordTypeHandshake {
+			c.conn.expectedACK = append(c.conn.expectedACK, num)
+		}
+		return nil
+	}
 
 	// Pack handshake fragments into records.
 	var record []byte
 	var epoch *epochState
+	var anyDiscard bool
 	flush := func() error {
 		if len(record) > 0 {
-			_, err := c.conn.dtlsPackRecord(epoch, recordTypeHandshake, record, false)
-			if err != nil {
+			if err := packRecord(epoch, recordTypeHandshake, record, anyDiscard); err != nil {
 				return err
 			}
 		}
 		record = nil
+		anyDiscard = false
 		return nil
 	}
 
@@ -942,15 +1084,11 @@ func (c *DTLSController) WriteFragments(fragments []DTLSFragment) {
 		}
 
 		if epoch == nil {
-			var ok bool
-			epoch, ok = c.conn.out.getEpoch(f.Epoch)
-			if !ok {
-				panic(fmt.Sprintf("tls: could not find epoch %d", f.Epoch))
-			}
+			epoch = c.getOutEpochOrPanic(f.Epoch)
 		}
 
 		if f.IsChangeCipherSpec {
-			_, c.err = c.conn.dtlsPackRecord(epoch, recordTypeChangeCipherSpec, f.Bytes(), false)
+			c.err = packRecord(epoch, recordTypeChangeCipherSpec, f.Bytes(), false)
 			if c.err != nil {
 				return
 			}
@@ -960,16 +1098,16 @@ func (c *DTLSController) WriteFragments(fragments []DTLSFragment) {
 		fBytes := f.Bytes()
 		if n := config.Bugs.SplitFragments; n > 0 {
 			if len(fBytes) > n {
-				_, c.err = c.conn.dtlsPackRecord(epoch, recordTypeHandshake, fBytes[:n], false)
+				c.err = packRecord(epoch, recordTypeHandshake, fBytes[:n], f.ShouldDiscard)
 				if c.err != nil {
 					return
 				}
-				_, c.err = c.conn.dtlsPackRecord(epoch, recordTypeHandshake, fBytes[n:], false)
+				c.err = packRecord(epoch, recordTypeHandshake, fBytes[n:], f.ShouldDiscard)
 				if c.err != nil {
 					return
 				}
 			} else {
-				_, c.err = c.conn.dtlsPackRecord(epoch, recordTypeHandshake, fBytes, false)
+				c.err = packRecord(epoch, recordTypeHandshake, fBytes, f.ShouldDiscard)
 				if c.err != nil {
 					return
 				}
@@ -981,6 +1119,9 @@ func (c *DTLSController) WriteFragments(fragments []DTLSFragment) {
 					return
 				}
 			}
+			if f.ShouldDiscard {
+				anyDiscard = true
+			}
 			record = append(record, fBytes...)
 		}
 	}
@@ -988,30 +1129,96 @@ func (c *DTLSController) WriteFragments(fragments []DTLSFragment) {
 	c.err = flush()
 }
 
-// ReadRetransmit indicates the shim is expected to retransmit its current
-// flight and consumes the retransmission.
-func (c *DTLSController) ReadRetransmit() {
+// WriteACK writes the specified record numbers in an ACK record to the shim,
+// and updates shim expectations according to the specified byte ranges. To send
+// an ACK which the shim is expected to ignore (e.g. because it should have
+// forgotten a packet number), use a DTLSRecordNumberInfo with the
+// MessageStartSequence, etc., fields all set to zero.
+func (c *DTLSController) WriteACK(epoch uint16, records []DTLSRecordNumberInfo) {
 	if c.err != nil {
 		return
 	}
 
-	c.err = c.doReadRetransmit()
+	// Send the ACK.
+	ack := cryptobyte.NewBuilder(make([]byte, 0, 2+8*len(records)))
+	ack.AddUint16LengthPrefixed(func(recordNumbers *cryptobyte.Builder) {
+		for _, r := range records {
+			recordNumbers.AddUint64(r.Epoch)
+			recordNumbers.AddUint64(r.Sequence)
+		}
+	})
+	_, _, c.err = c.conn.dtlsPackRecord(c.getOutEpochOrPanic(epoch), recordTypeACK, ack.BytesOrPanic(), false)
+	if c.err != nil {
+		return
+	}
+
+	// Update the list of expectations. This is inefficient, but is fine for
+	// test code.
+	for _, r := range records {
+		if !r.HasACKInformation() {
+			continue
+		}
+		var update []DTLSFragment
+		for _, f := range c.retransmitNeeded {
+			endOffset := f.Offset + len(f.Data)
+			// Compute two, possibly empty, intersections: the fragment with
+			// [0, ackStart) and the fragment with [ackStart, infinity).
+
+			// First, the portion of the fragment that is before the ACK:
+			if comparePair(f.Sequence, f.Offset, r.MessageStartSequence, r.MessageStartOffset) < 0 {
+				// The fragment begins before the ACK.
+				if comparePair(f.Sequence, endOffset, r.MessageStartSequence, r.MessageStartOffset) <= 0 {
+					// The fragment ends before the ACK.
+					update = append(update, f)
+				} else {
+					// The ACK starts in the middle of the fragment. Retain a
+					// prefix of the fragment.
+					prefix := f
+					prefix.Data = f.Data[:r.MessageStartOffset-f.Offset]
+					update = append(update, prefix)
+				}
+			}
+
+			// Next, the portion of the fragment that is after the ACK:
+			if comparePair(r.MessageEndSequence, r.MessageEndOffset, f.Sequence, endOffset) < 0 {
+				// The fragment ends after the ACK.
+				if comparePair(r.MessageEndSequence, r.MessageEndOffset, f.Sequence, f.Offset) <= 0 {
+					// The fragment begins after the ACK.
+					update = append(update, f)
+				} else {
+					// The ACK ends in the middle of the fragment. Retain a
+					// suffix of the fragment.
+					suffix := f
+					suffix.Offset = r.MessageEndOffset
+					suffix.Data = f.Data[r.MessageEndOffset-f.Offset:]
+					update = append(update, suffix)
+				}
+			}
+		}
+		c.retransmitNeeded = update
+	}
 }
 
-func (c *DTLSController) doReadRetransmit() error {
+// ReadRetransmit indicates the shim is expected to retransmit its current
+// flight and consumes the retransmission. It returns the record numbers of the
+// retransmission, for the test to ACK if it chooses.
+func (c *DTLSController) ReadRetransmit() []DTLSRecordNumberInfo {
+	if c.err != nil {
+		return nil
+	}
+
+	var ret []DTLSRecordNumberInfo
+	ret, c.err = c.doReadRetransmit()
+	return ret
+}
+
+func (c *DTLSController) doReadRetransmit() ([]DTLSRecordNumberInfo, error) {
 	if err := c.conn.dtlsFlushPacket(); err != nil {
-		return err
+		return nil, err
 	}
 
-	// Determine what the shim should have retransmited. For now, we expect
-	// whole messages, but later some fragments will already have been ACKed in
-	// DTLS 1.3.
-	var expected []DTLSFragment
-	for i := range c.received {
-		msg := &c.received[i]
-		expected = append(expected, msg.Fragment(0, len(msg.Data)))
-	}
-
+	var records []DTLSRecordNumberInfo
+	expected := slices.Clone(c.retransmitNeeded)
 	for len(expected) > 0 {
 		// Read a record from the expected epoch. The peer should retransmit in
 		// order.
@@ -1019,10 +1226,7 @@ func (c *DTLSController) doReadRetransmit() error {
 		if expected[0].IsChangeCipherSpec {
 			wantTyp = recordTypeChangeCipherSpec
 		}
-		epoch, ok := c.conn.in.getEpoch(expected[0].Epoch)
-		if !ok {
-			panic(fmt.Sprintf("tls: could not find epoch %d", expected[0].Epoch))
-		}
+		epoch := c.getInEpochOrPanic(expected[0].Epoch)
 		// Retransmitted ClientHellos predate the shim learning the version.
 		// Ideally we would enforce the initial record-layer version, but
 		// post-HelloVerifyRequest ClientHellos and post-HelloRetryRequest
@@ -1031,14 +1235,14 @@ func (c *DTLSController) doReadRetransmit() error {
 		typ, data, err := c.conn.dtlsDoReadRecord(epoch, wantTyp)
 		c.conn.skipRecordVersionCheck = false
 		if err != nil {
-			return err
+			return nil, err
 		}
 		if typ != wantTyp {
-			return fmt.Errorf("tls: got record of type %d in retransmit, but expected %d", typ, wantTyp)
+			return nil, fmt.Errorf("tls: got record of type %d in retransmit, but expected %d", typ, wantTyp)
 		}
 		if typ == recordTypeChangeCipherSpec {
 			if len(data) != 1 || data[0] != 1 {
-				return errors.New("tls: got invalid ChangeCipherSpec")
+				return nil, errors.New("tls: got invalid ChangeCipherSpec")
 			}
 			expected = expected[1:]
 			continue
@@ -1047,24 +1251,24 @@ func (c *DTLSController) doReadRetransmit() error {
 		// Consume all the handshake fragments and match them to what we expect.
 		s := cryptobyte.String(data)
 		if s.Empty() {
-			return fmt.Errorf("tls: got empty record in retransmit")
+			return nil, fmt.Errorf("tls: got empty record in retransmit")
 		}
 		for !s.Empty() {
 			if len(expected) == 0 || expected[0].Epoch != epoch.epoch || expected[0].IsChangeCipherSpec {
-				return fmt.Errorf("tls: got excess data at epoch %d in retransmit", epoch.epoch)
+				return nil, fmt.Errorf("tls: got excess data at epoch %d in retransmit", epoch.epoch)
 			}
 
 			exp := &expected[0]
 			var f DTLSFragment
 			f, err = readDTLSFragment(&s)
 			if f.Type != exp.Type || f.TotalLength != exp.TotalLength || f.Sequence != exp.Sequence || f.Offset != exp.Offset {
-				return fmt.Errorf("tls: got offset %d of message %d (type %d, length %d), expected offset %d of message %d (type %d, length %d)", f.Offset, f.Sequence, f.Type, f.TotalLength, exp.Offset, exp.Sequence, exp.Type, exp.TotalLength)
+				return nil, fmt.Errorf("tls: got offset %d of message %d (type %d, length %d), expected offset %d of message %d (type %d, length %d)", f.Offset, f.Sequence, f.Type, f.TotalLength, exp.Offset, exp.Sequence, exp.Type, exp.TotalLength)
 			}
 			if len(f.Data) > len(exp.Data) {
-				return fmt.Errorf("tls: got %d bytes at offset %d of message %d but only %d bytes were missing", len(f.Data), f.Offset, f.Sequence, len(exp.Data))
+				return nil, fmt.Errorf("tls: got %d bytes at offset %d of message %d but only %d bytes were missing", len(f.Data), f.Offset, f.Sequence, len(exp.Data))
 			}
 			if !bytes.Equal(f.Data, exp.Data[:len(f.Data)]) {
-				return fmt.Errorf("tls: got %d bytes at offset %d of message %d but did not match original", len(f.Data), f.Offset, f.Sequence)
+				return nil, fmt.Errorf("tls: got %d bytes at offset %d of message %d but did not match original", len(f.Data), f.Offset, f.Sequence)
 			}
 			if len(f.Data) == len(exp.Data) {
 				expected = expected[1:]
@@ -1074,13 +1278,114 @@ func (c *DTLSController) doReadRetransmit() error {
 				exp.Data = exp.Data[len(f.Data):]
 				// Check that the peer could not have fit more into the record.
 				if !s.Empty() {
-					return errors.New("dtls: truncated handshake fragment was not last in the record")
+					return nil, errors.New("dtls: truncated handshake fragment was not last in the record")
 				}
 				if c.conn.lastRecordInFlight.bytesAvailable > 0 {
-					return fmt.Errorf("dtls: handshake fragment was truncated, but record could have fit %d more bytes", c.conn.lastRecordInFlight.bytesAvailable)
+					return nil, fmt.Errorf("dtls: handshake fragment was truncated, but record could have fit %d more bytes", c.conn.lastRecordInFlight.bytesAvailable)
 				}
 			}
 		}
+
+		record, err := c.conn.makeDTLSRecordNumberInfo(epoch, data)
+		if err != nil {
+			return nil, err
+		}
+		records = append(records, record)
 	}
-	return nil
+	return records, nil
+}
+
+// ReadACK indicates the shim is expected to send an ACK at the specified epoch.
+// The contents of the ACK are checked against the connection's internal
+// simulation of the shim's expected behavior.
+func (c *DTLSController) ReadACK(epoch uint16) {
+	if c.err != nil {
+		return
+	}
+
+	c.err = c.conn.dtlsFlushPacket()
+	if c.err != nil {
+		return
+	}
+
+	typ, data, err := c.conn.dtlsDoReadRecord(c.getInEpochOrPanic(epoch), recordTypeACK)
+	if err != nil {
+		c.err = err
+		return
+	}
+	if typ != recordTypeACK {
+		c.err = fmt.Errorf("tls: got record of type %d, but expected ACK", typ)
+		return
+	}
+
+	c.err = c.conn.checkACK(data)
+}
+
+// WriteAppData writes an application data record to the shim. This may be used
+// to test that post-handshake retransmits may interleave with application data.
+func (c *DTLSController) WriteAppData(epoch uint16, data []byte) {
+	if c.err != nil {
+		return
+	}
+
+	_, _, c.err = c.conn.dtlsPackRecord(c.getOutEpochOrPanic(epoch), recordTypeApplicationData, data, false)
+}
+
+// ReadAppData indicates the shim is expected to send the specified application
+// data record. This may be used to test that post-handshake retransmits may
+// interleave with application data.
+func (c *DTLSController) ReadAppData(epoch uint16, expected []byte) {
+	if c.err != nil {
+		return
+	}
+
+	if err := c.conn.dtlsFlushPacket(); err != nil {
+		c.err = err
+		return
+	}
+
+	typ, data, err := c.conn.dtlsDoReadRecord(c.getInEpochOrPanic(epoch), recordTypeApplicationData)
+	if err != nil {
+		c.err = err
+		return
+	}
+	if typ != recordTypeApplicationData {
+		c.err = fmt.Errorf("tls: got record of type %d, but expected application data", typ)
+		return
+	}
+	if !bytes.Equal(data, expected) {
+		c.err = fmt.Errorf("tls: got app data record containing %x, but expected %x", data, expected)
+		return
+	}
+}
+
+// ExpectNextTimeout indicates the shim's next timeout should be d from now.
+func (c *DTLSController) ExpectNextTimeout(d time.Duration) {
+	if c.err != nil {
+		return
+	}
+	if err := c.conn.dtlsFlushPacket(); err != nil {
+		c.err = err
+		return
+	}
+	c.err = c.conn.config.Bugs.PacketAdaptor.ExpectNextTimeout(d)
+}
+
+// ExpectNoNext indicates the shim should not have a next timeout.
+func (c *DTLSController) ExpectNoNextTimeout() {
+	if c.err != nil {
+		return
+	}
+	if err := c.conn.dtlsFlushPacket(); err != nil {
+		c.err = err
+		return
+	}
+	c.err = c.conn.config.Bugs.PacketAdaptor.ExpectNoNextTimeout()
+}
+
+// MergeIntoNextFlight indicates the state from this flight should be merged
+// into the next WriteFlight or ACKFlight call. This allows the test to control
+// two independent post-handshake messages as a single unit.
+func (c *DTLSController) MergeIntoNextFlight() {
+	c.mergeIntoNextFlight = true
 }

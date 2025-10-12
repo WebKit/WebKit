@@ -58,7 +58,7 @@ PASS <li> (in <dir>) - counter-set
 PASS <li> (in <dir>) - counter-reset
 PASS <li> (in <dir>) - counter-increment
 PASS <li> (in <dir>) - text-align
-FAIL <li> (in <dir>) - list-style-position assert_equals: expected "outside" but got "inside"
+PASS <li> (in <dir>) - list-style-position
 PASS <dt> - display
 PASS <dt> - margin-top
 PASS <dt> - margin-right
@@ -193,7 +193,7 @@ PASS <li> (in <menu>) - counter-set
 PASS <li> (in <menu>) - counter-reset
 PASS <li> (in <menu>) - counter-increment
 PASS <li> (in <menu>) - text-align
-FAIL <li> (in <menu>) - list-style-position assert_equals: expected "outside" but got "inside"
+PASS <li> (in <menu>) - list-style-position
 PASS <ol>
    <li> - display
 PASS <ol>

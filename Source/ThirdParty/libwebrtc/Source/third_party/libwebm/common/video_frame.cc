@@ -16,7 +16,7 @@ bool VideoFrame::Buffer::Init(std::size_t new_length) {
   length = 0;
   data.reset(new std::uint8_t[new_length]);
 
-  if (data.get() == nullptr) {
+  if (data == nullptr) {
     fprintf(stderr, "VideoFrame: Out of memory.");
     return false;
   }

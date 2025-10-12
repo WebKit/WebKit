@@ -104,7 +104,7 @@
 - (void)mouseDown:(NSEvent *)event
 {
     UNUSED_PARAM(event);
-    [_target cancelOperation:self];
+    [_target.get() cancelOperation:self];
 }
 
 @end

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -224,11 +224,8 @@ TargetListing RemoteInspector::listingForTarget(const RemoteControllableTarget& 
 
 void RemoteInspector::updateTargetListing(TargetID targetIdentifier)
 {
-    auto target = m_targetMap.get(targetIdentifier);
-    if (!target)
-        return;
-
-    updateTargetListing(*target);
+    if (RefPtr target = m_targetMap.get(targetIdentifier))
+        updateTargetListing(*target);
 }
 
 void RemoteInspector::updateTargetListing(const RemoteControllableTarget& target)

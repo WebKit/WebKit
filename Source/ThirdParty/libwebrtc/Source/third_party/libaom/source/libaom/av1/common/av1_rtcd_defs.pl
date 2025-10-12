@@ -350,6 +350,24 @@ if (aom_config("CONFIG_AV1_ENCODER") eq "yes") {
   add_proto qw/void av1_fwd_txfm2d_16x4/, "const int16_t *input, int32_t *output, int stride, TX_TYPE tx_type, int bd";
   specialize qw/av1_fwd_txfm2d_16x4 sse4_1 neon/;
 
+  if (aom_config("CONFIG_HIGHWAY") eq "yes") {
+    specialize qw/av1_lowbd_fwd_txfm avx512/;
+    specialize qw/av1_fwd_txfm2d_4x8 avx512/;
+    specialize qw/av1_fwd_txfm2d_8x4 avx512/;
+    specialize qw/av1_fwd_txfm2d_8x16 avx512/;
+    specialize qw/av1_fwd_txfm2d_16x8 avx512/;
+    specialize qw/av1_fwd_txfm2d_16x32 avx512/;
+    specialize qw/av1_fwd_txfm2d_32x16 avx512/;
+    specialize qw/av1_fwd_txfm2d_4x4 avx512/;
+    specialize qw/av1_fwd_txfm2d_8x8 avx512/;
+    specialize qw/av1_fwd_txfm2d_16x16 avx512/;
+    specialize qw/av1_fwd_txfm2d_32x32 avx512/;
+    specialize qw/av1_fwd_txfm2d_64x64 avx512/;
+    specialize qw/av1_fwd_txfm2d_32x64 avx512/;
+    specialize qw/av1_fwd_txfm2d_64x32 avx512/;
+    specialize qw/av1_fwd_txfm2d_16x4 avx512/;
+  }
+
   if (aom_config("CONFIG_REALTIME_ONLY") ne "yes") {
     add_proto qw/void av1_fwd_txfm2d_4x16/, "const int16_t *input, int32_t *output, int stride, TX_TYPE tx_type, int bd";
     specialize qw/av1_fwd_txfm2d_4x16 sse4_1 neon/;
@@ -361,6 +379,14 @@ if (aom_config("CONFIG_AV1_ENCODER") eq "yes") {
     specialize qw/av1_fwd_txfm2d_16x64 sse4_1 neon/;
     add_proto qw/void av1_fwd_txfm2d_64x16/, "const int16_t *input, int32_t *output, int stride, TX_TYPE tx_type, int bd";
     specialize qw/av1_fwd_txfm2d_64x16 sse4_1 neon/;
+
+    if (aom_config("CONFIG_HIGHWAY") eq "yes") {
+      specialize qw/av1_fwd_txfm2d_4x16 avx512/;
+      specialize qw/av1_fwd_txfm2d_8x32 avx512/;
+      specialize qw/av1_fwd_txfm2d_32x8 avx512/;
+      specialize qw/av1_fwd_txfm2d_16x64 avx512/;
+      specialize qw/av1_fwd_txfm2d_64x16 avx512/;
+    }
   }
   #
   # Motion search
@@ -415,7 +441,7 @@ if (aom_config("CONFIG_AV1_ENCODER") eq "yes") {
   specialize qw/av1_wedge_compute_delta_squares sse2 avx2 neon/;
 
   # hash
-  add_proto qw/uint32_t av1_get_crc32c_value/, "void *crc_calculator, uint8_t *p, size_t length";
+  add_proto qw/uint32_t av1_get_crc32c_value/, "void *crc_calculator, const uint8_t *p, size_t length";
   specialize qw/av1_get_crc32c_value sse4_2 arm_crc32/;
 
   if (aom_config("CONFIG_REALTIME_ONLY") ne "yes") {
@@ -495,22 +521,22 @@ if (aom_config("CONFIG_AV1_HIGHBITDEPTH") eq "yes") {
 # structs as arguments, which makes the v256 type of the intrinsics
 # hard to support, so optimizations for this target are disabled.
 if ($opts{config} !~ /libs-x86-win32-vs.*/) {
-  specialize qw/cdef_find_dir sse4_1 avx2 neon/, "$ssse3_x86";
+  specialize qw/cdef_find_dir sse4_1 avx2 neon rvv/, "$ssse3_x86";
   specialize qw/cdef_find_dir_dual sse4_1 avx2 neon/, "$ssse3_x86";
 
-  specialize qw/cdef_filter_8_0 sse4_1 avx2 neon/, "$ssse3_x86";
-  specialize qw/cdef_filter_8_1 sse4_1 avx2 neon/, "$ssse3_x86";
-  specialize qw/cdef_filter_8_2 sse4_1 avx2 neon/, "$ssse3_x86";
-  specialize qw/cdef_filter_8_3 sse4_1 avx2 neon/, "$ssse3_x86";
+  specialize qw/cdef_filter_8_0 sse4_1 avx2 neon rvv/, "$ssse3_x86";
+  specialize qw/cdef_filter_8_1 sse4_1 avx2 neon rvv/, "$ssse3_x86";
+  specialize qw/cdef_filter_8_2 sse4_1 avx2 neon rvv/, "$ssse3_x86";
+  specialize qw/cdef_filter_8_3 sse4_1 avx2 neon rvv/, "$ssse3_x86";
 
-  specialize qw/cdef_filter_16_0 sse4_1 avx2 neon/, "$ssse3_x86";
-  specialize qw/cdef_filter_16_1 sse4_1 avx2 neon/, "$ssse3_x86";
-  specialize qw/cdef_filter_16_2 sse4_1 avx2 neon/, "$ssse3_x86";
-  specialize qw/cdef_filter_16_3 sse4_1 avx2 neon/, "$ssse3_x86";
+  specialize qw/cdef_filter_16_0 sse4_1 avx2 neon rvv/, "$ssse3_x86";
+  specialize qw/cdef_filter_16_1 sse4_1 avx2 neon rvv/, "$ssse3_x86";
+  specialize qw/cdef_filter_16_2 sse4_1 avx2 neon rvv/, "$ssse3_x86";
+  specialize qw/cdef_filter_16_3 sse4_1 avx2 neon rvv/, "$ssse3_x86";
 
-  specialize qw/cdef_copy_rect8_8bit_to_16bit sse4_1 avx2 neon/, "$ssse3_x86";
+  specialize qw/cdef_copy_rect8_8bit_to_16bit sse4_1 avx2 neon rvv/, "$ssse3_x86";
   if (aom_config("CONFIG_AV1_HIGHBITDEPTH") eq "yes") {
-    specialize qw/cdef_copy_rect8_16bit_to_16bit sse4_1 avx2 neon/, "$ssse3_x86";
+    specialize qw/cdef_copy_rect8_16bit_to_16bit sse4_1 avx2 neon rvv/, "$ssse3_x86";
   }
 }
 
@@ -542,6 +568,11 @@ if ((aom_config("CONFIG_REALTIME_ONLY") ne "yes") || (aom_config("CONFIG_AV1_DEC
                                   int dgd_stride, int32_t *flt0, int32_t *flt1, int flt_stride,
                                   int sgr_params_idx, int bit_depth, int highbd";
   specialize qw/av1_selfguided_restoration sse4_1 avx2 neon/;
+
+  if (aom_config("CONFIG_HIGHWAY") eq "yes") {
+    specialize qw/av1_apply_selfguided_restoration avx512/;
+    specialize qw/av1_selfguided_restoration avx512/;
+  }
 }
 
 # CONVOLVE_ROUND/COMPOUND_ROUND functions
@@ -572,12 +603,12 @@ if(aom_config("CONFIG_AV1_HIGHBITDEPTH") eq "yes") {
 
   add_proto qw/void av1_convolve_2d_scale/, "const uint8_t *src, int src_stride, uint8_t *dst, int dst_stride, int w, int h, const InterpFilterParams *filter_params_x, const InterpFilterParams *filter_params_y, const int subpel_x_qn, const int x_step_qn, const int subpel_y_qn, const int y_step_qn, ConvolveParams *conv_params";
 
-  specialize qw/av1_convolve_2d_sr sse2 avx2 neon neon_dotprod neon_i8mm sve2/;
-  specialize qw/av1_convolve_2d_sr_intrabc neon/;
-  specialize qw/av1_convolve_x_sr sse2 avx2 neon neon_dotprod neon_i8mm/;
-  specialize qw/av1_convolve_x_sr_intrabc neon/;
-  specialize qw/av1_convolve_y_sr sse2 avx2 neon neon_dotprod neon_i8mm/;
-  specialize qw/av1_convolve_y_sr_intrabc neon/;
+  specialize qw/av1_convolve_2d_sr sse2 avx2 neon neon_dotprod neon_i8mm sve2 rvv/;
+  specialize qw/av1_convolve_2d_sr_intrabc neon rvv/;
+  specialize qw/av1_convolve_x_sr sse2 avx2 neon neon_dotprod neon_i8mm rvv/;
+  specialize qw/av1_convolve_x_sr_intrabc neon rvv/;
+  specialize qw/av1_convolve_y_sr sse2 avx2 neon neon_dotprod neon_i8mm rvv/;
+  specialize qw/av1_convolve_y_sr_intrabc neon rvv/;
   specialize qw/av1_convolve_2d_scale sse4_1 neon neon_dotprod neon_i8mm/;
   specialize qw/av1_dist_wtd_convolve_2d ssse3 avx2 neon neon_dotprod neon_i8mm/;
   specialize qw/av1_dist_wtd_convolve_2d_copy sse2 avx2 neon/;
@@ -588,12 +619,12 @@ if(aom_config("CONFIG_AV1_HIGHBITDEPTH") eq "yes") {
     specialize qw/av1_highbd_dist_wtd_convolve_x sse4_1 avx2 neon sve2/;
     specialize qw/av1_highbd_dist_wtd_convolve_y sse4_1 avx2 neon sve2/;
     specialize qw/av1_highbd_dist_wtd_convolve_2d_copy sse4_1 avx2 neon/;
-    specialize qw/av1_highbd_convolve_2d_sr ssse3 avx2 neon sve2/;
-    specialize qw/av1_highbd_convolve_2d_sr_intrabc neon/;
-    specialize qw/av1_highbd_convolve_x_sr ssse3 avx2 neon sve2/;
-    specialize qw/av1_highbd_convolve_x_sr_intrabc neon/;
-    specialize qw/av1_highbd_convolve_y_sr ssse3 avx2 neon sve2/;
-    specialize qw/av1_highbd_convolve_y_sr_intrabc neon/;
+    specialize qw/av1_highbd_convolve_2d_sr ssse3 avx2 neon sve2 rvv/;
+    specialize qw/av1_highbd_convolve_2d_sr_intrabc neon rvv/;
+    specialize qw/av1_highbd_convolve_x_sr ssse3 avx2 neon sve2 rvv/;
+    specialize qw/av1_highbd_convolve_x_sr_intrabc neon rvv/;
+    specialize qw/av1_highbd_convolve_y_sr ssse3 avx2 neon sve2 rvv/;
+    specialize qw/av1_highbd_convolve_y_sr_intrabc neon rvv/;
     specialize qw/av1_highbd_convolve_2d_scale sse4_1 neon/;
   }
 

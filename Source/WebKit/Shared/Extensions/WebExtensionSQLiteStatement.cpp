@@ -30,6 +30,7 @@
 #include "WebExtensionSQLiteDatabase.h"
 #include "WebExtensionSQLiteHelpers.h"
 #include "WebExtensionSQLiteRow.h"
+#include <WebCore/SQLiteExtras.h>
 #include <sqlite3.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -61,7 +62,7 @@ WebExtensionSQLiteStatement::~WebExtensionSQLiteStatement()
     if (!handle)
         return;
 
-    database()->queue()->dispatch([database = Ref { database() }, handle = WTFMove(handle)]() mutable {
+    database()->queue().dispatch([database = Ref { database() }, handle = WTFMove(handle)]() mutable {
         // The database might have closed already;
         if (!database->sqlite3Handle())
             return;
@@ -160,7 +161,7 @@ void WebExtensionSQLiteStatement::bind(const String& string, int parameterIndex)
     ASSERT(isValid());
     ASSERT_ARG(parameterIndex, parameterIndex > 0);
 
-    int result = sqlite3_bind_text(m_handle, parameterIndex, string.utf8().data(), -1, SQLITE_TRANSIENT);
+    int result = WebCore::sqliteBindText(m_handle, parameterIndex, string.utf8());
     if (result != SQLITE_OK)
         RELEASE_LOG_DEBUG(Extensions, "Could not bind string: %s (%d)", m_db->m_lastErrorMessage.data(), (int)result);
 }
@@ -204,7 +205,7 @@ void WebExtensionSQLiteStatement::bind(const RefPtr<API::Data>& data, int parame
     ASSERT(isValid());
     ASSERT_ARG(parameterIndex, parameterIndex > 0);
 
-    int result = sqlite3_bind_blob(m_handle, parameterIndex, data->span().data(), data->span().size(), SQLITE_TRANSIENT);
+    int result = WebCore::sqliteBindBlob(m_handle, parameterIndex, data->span());
     if (result != SQLITE_OK)
         RELEASE_LOG_DEBUG(Extensions, "Could not bind blob: %s (%d)", m_db->m_lastErrorMessage.data(), (int)result);
 }
@@ -231,12 +232,8 @@ HashMap<String, int> WebExtensionSQLiteStatement::columnNamesToIndicies()
     int columnCount = sqlite3_column_count(m_handle);
     m_columnNamesToIndicies.reserveInitialCapacity(columnCount);
 
-    for (int i = 0; i < columnCount; i++) {
-        const char* columnName = sqlite3_column_name(m_handle, i);
-        ASSERT(columnName);
-
-        m_columnNamesToIndicies.add(String::fromUTF8(columnName), i);
-    }
+    for (int i = 0; i < columnCount; ++i)
+        m_columnNamesToIndicies.add(WebCore::sqliteColumnName(m_handle, i), i);
 
     return m_columnNamesToIndicies;
 }
@@ -252,12 +249,8 @@ Vector<String> WebExtensionSQLiteStatement::columnNames()
     int columnCount = sqlite3_column_count(m_handle);
     m_columnNames.reserveInitialCapacity(columnCount);
 
-    for (int i = 0; i < columnCount; i++) {
-        const char* columnName = sqlite3_column_name(m_handle, i);
-        ASSERT(columnName);
-
-        m_columnNames.append(String::fromUTF8(columnName));
-    }
+    for (int i = 0; i < columnCount; ++i)
+        m_columnNames.append(WebCore::sqliteColumnName(m_handle, i));
 
     return m_columnNames;
 }

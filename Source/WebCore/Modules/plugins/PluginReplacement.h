@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "RenderPtr.h"
+#include <WebCore/RenderPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

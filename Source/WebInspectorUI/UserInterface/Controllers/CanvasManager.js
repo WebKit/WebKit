@@ -131,8 +131,10 @@ WI.CanvasManager = class CanvasManager extends WI.Object
     {
         console.assert(!isNaN(count) && count >= 0);
 
-        for (let target of WI.targets)
-            target.CanvasAgent.setRecordingAutoCaptureFrameCount(enabled ? count : 0);
+        for (let target of WI.targets) {
+            if (target.hasDomain("Canvas"))
+                target.CanvasAgent.setRecordingAutoCaptureFrameCount(enabled ? count : 0);
+        }
 
         WI.settings.canvasRecordingAutoCaptureEnabled.value = enabled && count;
         WI.settings.canvasRecordingAutoCaptureFrameCount.value = count;

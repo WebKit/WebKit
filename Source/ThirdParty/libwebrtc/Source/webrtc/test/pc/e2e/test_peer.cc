@@ -38,20 +38,20 @@ namespace webrtc_pc_e2e {
 namespace {
 
 class SetRemoteDescriptionCallback
-    : public webrtc::SetRemoteDescriptionObserverInterface {
+    : public SetRemoteDescriptionObserverInterface {
  public:
-  void OnSetRemoteDescriptionComplete(webrtc::RTCError error) override {
+  void OnSetRemoteDescriptionComplete(RTCError error) override {
     is_called_ = true;
     error_ = error;
   }
 
   bool is_called() const { return is_called_; }
 
-  webrtc::RTCError error() const { return error_; }
+  RTCError error() const { return error_; }
 
  private:
   bool is_called_ = false;
-  webrtc::RTCError error_;
+  RTCError error_;
 };
 
 }  // namespace
@@ -97,7 +97,7 @@ bool TestPeer::SetRemoteDescription(
     std::string* error_out) {
   RTC_CHECK(wrapper_) << "TestPeer is already closed";
 
-  auto observer = rtc::make_ref_counted<SetRemoteDescriptionCallback>();
+  auto observer = make_ref_counted<SetRemoteDescriptionCallback>();
   // We're assuming (and asserting) that the PeerConnection implementation of
   // SetRemoteDescription is synchronous when called on the signaling thread.
   pc()->SetRemoteDescription(std::move(desc), observer);
@@ -113,14 +113,12 @@ bool TestPeer::SetRemoteDescription(
 }
 
 bool TestPeer::AddIceCandidates(
-    std::vector<std::unique_ptr<IceCandidateInterface>> candidates) {
+    std::vector<std::unique_ptr<IceCandidate>> candidates) {
   RTC_CHECK(wrapper_) << "TestPeer is already closed";
   bool success = true;
   for (auto& candidate : candidates) {
     if (!pc()->AddIceCandidate(candidate.get())) {
-      std::string candidate_str;
-      bool res = candidate->ToString(&candidate_str);
-      RTC_CHECK(res);
+      std::string candidate_str = candidate->ToString();
       RTC_LOG(LS_ERROR) << "Failed to add ICE candidate, candidate_str="
                         << candidate_str;
       success = false;
@@ -140,14 +138,13 @@ void TestPeer::Close() {
   worker_thread_ = nullptr;
 }
 
-TestPeer::TestPeer(
-    rtc::scoped_refptr<PeerConnectionFactoryInterface> pc_factory,
-    rtc::scoped_refptr<PeerConnectionInterface> pc,
-    std::unique_ptr<MockPeerConnectionObserver> observer,
-    Params params,
-    ConfigurableParams configurable_params,
-    std::vector<PeerConfigurer::VideoSource> video_sources,
-    std::unique_ptr<rtc::Thread> worker_thread)
+TestPeer::TestPeer(scoped_refptr<PeerConnectionFactoryInterface> pc_factory,
+                   scoped_refptr<PeerConnectionInterface> pc,
+                   std::unique_ptr<MockPeerConnectionObserver> observer,
+                   Params params,
+                   ConfigurableParams configurable_params,
+                   std::vector<PeerConfigurer::VideoSource> video_sources,
+                   std::unique_ptr<Thread> worker_thread)
     : params_(std::move(params)),
       configurable_params_(std::move(configurable_params)),
       worker_thread_(std::move(worker_thread)),

@@ -142,14 +142,14 @@ PASS #140 Test that WebAssembly compilation fails
 PASS #141 Test that WebAssembly compilation fails
 PASS #142 Test that WebAssembly compilation fails
 PASS #143 Test that WebAssembly compilation fails
-FAIL #144 Test that WebAssembly compilation fails assert_true: module@http://localhost:8800/wasm/core/js/harness/async_index.js:146:24
-assert_invalid@http://localhost:8800/wasm/core/js/harness/async_index.js:174:9
-global_wast_js@http://localhost:8800/wasm/core/js/global.wast.js:232:15
-global code@http://localhost:8800/wasm/core/js/global.wast.js:333:3 expected true got false
-FAIL #145 Test that WebAssembly compilation fails assert_true: module@http://localhost:8800/wasm/core/js/harness/async_index.js:146:24
-assert_invalid@http://localhost:8800/wasm/core/js/harness/async_index.js:174:9
-global_wast_js@http://localhost:8800/wasm/core/js/global.wast.js:235:15
-global code@http://localhost:8800/wasm/core/js/global.wast.js:333:3 expected true got false
+FAIL #144 Test that WebAssembly compilation fails assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:146:24
+assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:174:9
+global_wast_js@http://web-platform.test:8800/wasm/core/js/global.wast.js:232:15
+global code@http://web-platform.test:8800/wasm/core/js/global.wast.js:333:3 expected true got false
+FAIL #145 Test that WebAssembly compilation fails assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:146:24
+assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:174:9
+global_wast_js@http://web-platform.test:8800/wasm/core/js/global.wast.js:235:15
+global code@http://web-platform.test:8800/wasm/core/js/global.wast.js:333:3 expected true got false
 PASS #146 Test that WebAssembly compilation fails
 PASS #147 Test that WebAssembly compilation fails
 PASS #148 Test that WebAssembly compilation fails

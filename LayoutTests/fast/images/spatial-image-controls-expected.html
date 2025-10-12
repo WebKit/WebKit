@@ -4,11 +4,25 @@
         width: 200px;
         height: 200px;
         position: absolute;
+        border-radius: inherit;
     }
     div.image-container {
         width: 200px;
         height: 200px;
         position: relative;
+    }
+    div.rounded {
+        border-radius: 20px;
+    }
+    div.spatial-image-controls {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        box-sizing: border-box;
+        padding: 20px;
+        border-radius: inherit;
     }
     button.spatial-image-controls-button {
         width: 45px;
@@ -67,6 +81,8 @@
         left: 0;
         height: 33%;
         width: 100%;
+        border-bottom-right-radius: inherit;
+        border-bottom-left-radius: inherit;
     }
 
     div.label {
@@ -75,7 +91,7 @@
         font-family: -apple-system;
         z-index: 1;
         margin-bottom: 8px;
-        margin-left: -7px;
+        margin-inline-start: -7px;
     }
 
     span.spatial-glyph {
@@ -86,13 +102,24 @@
         background-repeat: no-repeat;
         display: inline-block;
         margin-bottom: -8px;
-        margin-right: -8px;
+        margin-inline-end: -8px;
+    }
+    span.pano-glyph {
+        width: 30px;
+        height: 30px;
+        background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNDguNjI5IDEyMCI+PHBhdGggZD0iTTIwLjY1MiwxMDEuODYxYzkuMDUyLDAgMjIuODIsLTEwLjcxMiA1My42ODUsLTEwLjcxMmMzMC43NiwwIDQ0LjYwMSwxMC42NjEgNTMuNjMyLDEwLjY2MWM1LjM0OSwwIDguMTkyLC0zLjI4NiA4LjE5MiwtOC43NDJ2LTY2LjA5NWMwLC01LjQ0NSAtMi44NDMsLTguNzQxIC04LjE5MiwtOC43NDFjLTkuMDMxLDAgLTIyLjg3MiwxMC43MTIgLTUzLjYzMiwxMC43MTJjLTMwLjgxMiwwIC00NC42NTQsLTEwLjcyMyAtNTMuNjg1LC0xMC43MjNjLTUuMzM5LDAgLTguMTkxLDMuMjk2IC04LjE5MSw4Ljc0MXY2Ni4xNThjMCw1LjQ1NiAyLjg1Miw4Ljc0MSA4LjE5MSw4Ljc0MXpNMjEuNjY3LDkzLjcyOGMtMC44NjQsMCAtMS4zNTMsLTAuNDY4IC0xLjM1MywtMS40MjZ2LTY0LjUyMmMwLC0wLjk1OCAwLjQ4OSwtMS40MjYgMS4zNTMsLTEuNDI2YzQuNzg1LDAgMjEuNTk3LDEwLjAyOSA1Mi42NywxMC4wMjljMzEuMDIsMCA0OC44NjcsLTEwLjA3IDUyLjYxOCwtMTAuMDdjMC44NzQsMCAxLjM2MiwwLjQ2OCAxLjM2MiwxLjQyNnY2NC41NjNjMCwwLjk1OCAtMC40ODgsMS40MjYgLTEuMzYyLDEuNDI2Yy00Ljc4NiwwIC0yMS41OTgsLTEwLjAxOSAtNTIuNjE4LC0xMC4wMTljLTMxLjEzNiwwIC00OC44OTksMTAuMDE5IC01Mi42NywxMC4wMTl6IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjUiLz48L3N2Zz4=');
+        background-position: bottom;
+        background-repeat: no-repeat;
+        display: inline-block;
+        margin-bottom: -7px;
+        margin-inline-end: 5px;
+        margin-inline-start: 10px;
     }
 </style>
 <body>
     <div class="image-container">
         <img src="resources/spatial.heic">
-        <div class="spatial-image-controls" contenteditable="false" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-sizing: border-box; padding: 20px;">
+        <div class="spatial-image-controls" contenteditable="false">
             <button class="spatial-image-controls-button"></button>
             <div class="background-tint">
                 <div class="blur"></div>
@@ -105,7 +132,7 @@
     </div>
     <div class="image-container">
         <img src="resources/spatial.heic">
-            <div class="spatial-image-controls" contenteditable="false" style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-sizing: border-box; padding: 20px;">
+            <div class="spatial-image-controls" contenteditable="false">
                 <button class="spatial-image-controls-button"></button>
                 <div class="background-tint">
                     <div class="blur"></div>
@@ -115,6 +142,32 @@
                 <div class="label">
                     <span class="spatial-glyph"></span>SPATIAL</div>
             </div>
+    </div>
+    <div class="image-container rounded">
+        <img src="resources/spatial.heic">
+        <div class="spatial-image-controls" contenteditable="false">
+            <button class="spatial-image-controls-button"></button>
+            <div class="background-tint">
+                <div class="blur"></div>
+                <div class="tint"></div>
+            </div>
+            <div class="bottom-gradient"></div>
+            <div class="label">
+                <span class="spatial-glyph"></span>SPATIAL</div>
+        </div>
+    </div>
+    <div class="image-container">
+        <img src="resources/green-2000x800.heic">
+        <div class="spatial-image-controls" contenteditable="false">
+            <button class="spatial-image-controls-button"></button>
+            <div class="background-tint">
+                <div class="blur"></div>
+                <div class="tint"></div>
+            </div>
+            <div class="bottom-gradient"></div>
+            <div class="label">
+                <span class="pano-glyph"></span>PANORAMA</div>
+        </div>
     </div>
     <img src="resources/green.jpg">
 </body>

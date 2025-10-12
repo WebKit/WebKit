@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/Threading.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/darwin/XPCExtras.h>
 #import <wtf/spi/cf/CFBundleSPI.h>
 #import <wtf/text/CString.h>
@@ -63,13 +64,6 @@
 #import <BrowserEngineKit/BENetworkingProcess.h>
 #import <BrowserEngineKit/BERenderingProcess.h>
 #import <BrowserEngineKit/BEWebContentProcess.h>
-
-#if USE(LEGACY_EXTENSIONKIT_SPI)
-SOFT_LINK_FRAMEWORK_OPTIONAL(ServiceExtensions);
-SOFT_LINK_CLASS_OPTIONAL(ServiceExtensions, _SEServiceConfiguration);
-SOFT_LINK_CLASS_OPTIONAL(ServiceExtensions, _SEServiceManager);
-#endif // USE(LEGACY_EXTENSIONKIT_SPI)
-
 #endif // USE(EXTENSIONKIT)
 
 namespace WebKit {
@@ -81,12 +75,25 @@ static std::pair<ASCIILiteral, RetainPtr<NSString>> serviceNameAndIdentifier(Pro
     switch (processType) {
     case ProcessLauncher::ProcessType::Web: {
         bool useCaptivePortal = client && client->shouldEnableLockdownMode();
+        bool useEnhancedSecurity = client && client->shouldEnableEnhancedSecurity();
         if (!hasExtensionsInAppBundle) {
-            if (!useCaptivePortal)
+            if (!useCaptivePortal && !useEnhancedSecurity)
                 return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContent" };
+
+            if (useEnhancedSecurity)
+                return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContent.EnhancedSecurity" };
+
             return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContent.CaptivePortal" };
         }
-        NSString *webContentAppex = !useCaptivePortal ? @"WebContentExtension" : @"WebContentCaptivePortalExtension";
+        NSString *webContentAppex = nil;
+
+        if (useCaptivePortal)
+            webContentAppex = @"WebContentCaptivePortalExtension";
+        else if (useEnhancedSecurity)
+            webContentAppex = @"WebContentEnhancedSecurityExtension";
+        else
+            webContentAppex = @"WebContentExtension";
+
         return { "com.apple.WebKit.WebContent"_s, [NSString stringWithFormat:@"%@.%@", [[NSBundle mainBundle] bundleIdentifier], webContentAppex] };
     }
     case ProcessLauncher::ProcessType::Network:
@@ -101,40 +108,6 @@ static std::pair<ASCIILiteral, RetainPtr<NSString>> serviceNameAndIdentifier(Pro
 #endif
     }
 }
-
-#if USE(LEGACY_EXTENSIONKIT_SPI)
-static void launchWithExtensionKitFallback(ProcessLauncher& processLauncher, ProcessLauncher::ProcessType processType, ProcessLauncher::Client* client, WTF::Function<void(ThreadSafeWeakPtr<ProcessLauncher> weakProcessLauncher, ExtensionProcess&& process, ASCIILiteral name, NSError *error)>&& handler)
-{
-    auto [name, identifier] = serviceNameAndIdentifier(processType, client, processLauncher.isRetryingLaunch());
-
-    RetainPtr configuration = adoptNS([alloc_SEServiceConfigurationInstance() initWithServiceIdentifier:identifier.get()]);
-    _SEServiceManager* manager = [get_SEServiceManagerClass() performSelector:@selector(sharedInstance)];
-
-    switch (processType) {
-    case ProcessLauncher::ProcessType::Web: {
-        auto block = makeBlockPtr([handler = WTFMove(handler), weakProcessLauncher = ThreadSafeWeakPtr { processLauncher }, name = name](_SEExtensionProcess *_Nullable process, NSError *_Nullable error) {
-            handler(WTFMove(weakProcessLauncher), process, name, error);
-        });
-        [manager performSelector:@selector(contentProcessWithConfiguration:completion:) withObject:configuration.get() withObject:block.get()];
-        break;
-    }
-    case ProcessLauncher::ProcessType::Network: {
-        auto block = makeBlockPtr([handler = WTFMove(handler), weakProcessLauncher = ThreadSafeWeakPtr { processLauncher }, name = name](_SEExtensionProcess *_Nullable process, NSError *_Nullable error) {
-            handler(WTFMove(weakProcessLauncher), process, name, error);
-        });
-        [manager performSelector:@selector(networkProcessWithConfiguration:completion:) withObject:configuration.get() withObject:block.get()];
-        break;
-    }
-    case ProcessLauncher::ProcessType::GPU: {
-        auto block = makeBlockPtr([handler = WTFMove(handler), weakProcessLauncher = ThreadSafeWeakPtr { processLauncher }, name = name](_SEExtensionProcess *_Nullable process, NSError *_Nullable error) {
-            handler(WTFMove(weakProcessLauncher), process, name, error);
-        });
-        [manager performSelector:@selector(gpuProcessWithConfiguration:completion:) withObject:configuration.get() withObject:block.get()];
-        break;
-    }
-    }
-}
-#endif // USE(LEGACY_EXTENSIONKIT_SPI)
 
 bool ProcessLauncher::hasExtensionsInAppBundle()
 {
@@ -154,12 +127,6 @@ bool ProcessLauncher::hasExtensionsInAppBundle()
 
 static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLauncher::ProcessType processType, ProcessLauncher::Client* client, WTF::Function<void(ThreadSafeWeakPtr<ProcessLauncher> weakProcessLauncher, ExtensionProcess&& process, ASCIILiteral name, NSError *error)>&& handler)
 {
-#if USE(LEGACY_EXTENSIONKIT_SPI)
-    if (!ProcessLauncher::hasExtensionsInAppBundle()) {
-        launchWithExtensionKitFallback(processLauncher, processType, client, WTFMove(handler));
-        return;
-    }
-#endif
     auto [name, identifier] = serviceNameAndIdentifier(processType, client, processLauncher.isRetryingLaunch());
 
     switch (processType) {
@@ -193,6 +160,9 @@ static ASCIILiteral webContentServiceName(const ProcessLauncher::LaunchOptions& 
 {
     if (client && client->shouldEnableLockdownMode())
         return "com.apple.WebKit.WebContent.CaptivePortal"_s;
+
+    if (client && client->shouldEnableEnhancedSecurity())
+        return "com.apple.WebKit.WebContent.EnhancedSecurity"_s;
 
     return launchOptions.nonValidInjectedCodeAllowed ? "com.apple.WebKit.WebContent.Development"_s : "com.apple.WebKit.WebContent"_s;
 }
@@ -413,10 +383,10 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     xpc_dictionary_set_string(bootstrapMessage.get(), "service-name", name);
 
     if (m_launchOptions.processType == ProcessLauncher::ProcessType::Web) {
-#if ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
         bool disableLogging = true;
 #else
-        bool disableLogging = !client || client->shouldEnableLockdownMode();
+        bool disableLogging = false;
 #endif
         xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-logging", disableLogging);
     }
@@ -478,7 +448,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     Function<void(xpc_object_t)> eventHandler = [errorHandlerImpl = WTFMove(errorHandlerImpl), xpcEventHandler = client->xpcEventHandler()] (xpc_object_t event) mutable {
 
         if (!event || xpc_get_type(event) == XPC_TYPE_ERROR) {
-            RunLoop::protectedMain()->dispatch([errorHandlerImpl = std::exchange(errorHandlerImpl, nullptr), event = OSObjectPtr(event)] {
+            RunLoop::mainSingleton().dispatch([errorHandlerImpl = std::exchange(errorHandlerImpl, nullptr), event = OSObjectPtr(event)] {
                 if (errorHandlerImpl)
                     errorHandlerImpl(event.get());
                 else if (event.get() != XPC_ERROR_CONNECTION_INVALID)
@@ -488,7 +458,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
         }
 
         if (xpcEventHandler) {
-            RunLoop::protectedMain()->dispatch([xpcEventHandler = xpcEventHandler, event = OSObjectPtr(event)] {
+            RunLoop::mainSingleton().dispatch([xpcEventHandler = xpcEventHandler, event = OSObjectPtr(event)] {
                 xpcEventHandler->handleXPCEvent(event.get());
             });
         }
@@ -505,7 +475,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     }
 
     ref();
-    xpc_connection_send_message_with_reply(m_xpcConnection.get(), bootstrapMessage.get(), dispatch_get_main_queue(), ^(xpc_object_t reply) {
+    xpc_connection_send_message_with_reply(m_xpcConnection.get(), bootstrapMessage.get(), mainDispatchQueueSingleton(), ^(xpc_object_t reply) {
         // Errors are handled in the event handler.
         // It is possible for this block to be called after the error event handler, in which case we're no longer
         // launching and we already took care of cleaning things up.

@@ -11,6 +11,7 @@
 #include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_frames_comparator.h"
 
 #include <algorithm>
+#include <cstddef>
 #include <map>
 #include <optional>
 #include <string>
@@ -18,8 +19,12 @@
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/numerics/samples_stats_counter.h"
 #include "api/scoped_refptr.h"
-#include "api/video/i420_buffer.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_buffer.h"
 #include "api/video/video_frame_type.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "rtc_base/checks.h"
@@ -33,7 +38,7 @@
 namespace webrtc {
 namespace {
 
-using ::webrtc::webrtc_pc_e2e::SampleMetadataKey;
+using webrtc_pc_e2e::SampleMetadataKey;
 
 constexpr TimeDelta kFreezeThreshold = TimeDelta::Millis(150);
 constexpr int kMaxActiveComparisons = 10;
@@ -187,7 +192,7 @@ FrameComparison ValidateFrameComparison(FrameComparison comparison) {
 
 void DefaultVideoQualityAnalyzerFramesComparator::Start(int max_threads_count) {
   for (int i = 0; i < max_threads_count; i++) {
-    thread_pool_.push_back(rtc::PlatformThread::SpawnJoinable(
+    thread_pool_.push_back(PlatformThread::SpawnJoinable(
         [this] { ProcessComparisons(); },
         "DefaultVideoQualityAnalyzerFramesComparator-" + std::to_string(i)));
   }
@@ -302,7 +307,7 @@ void DefaultVideoQualityAnalyzerFramesComparator::EnsureStatsForStream(
 }
 
 void DefaultVideoQualityAnalyzerFramesComparator::RegisterParticipantInCall(
-    rtc::ArrayView<std::pair<InternalStatsKey, Timestamp>> stream_started_time,
+    ArrayView<std::pair<InternalStatsKey, Timestamp>> stream_started_time,
     Timestamp start_time) {
   MutexLock lock(&mutex_);
   RTC_CHECK_EQ(state_, State::kActive)
@@ -418,9 +423,9 @@ void DefaultVideoQualityAnalyzerFramesComparator::ProcessComparison(
   double ssim = -1.0;
   if ((options_.compute_psnr || options_.compute_ssim) &&
       comparison.captured.has_value() && comparison.rendered.has_value()) {
-    rtc::scoped_refptr<I420BufferInterface> reference_buffer =
+    scoped_refptr<I420BufferInterface> reference_buffer =
         comparison.captured->video_frame_buffer()->ToI420();
-    rtc::scoped_refptr<I420BufferInterface> test_buffer =
+    scoped_refptr<I420BufferInterface> test_buffer =
         comparison.rendered->video_frame_buffer()->ToI420();
     if (options_.adjust_cropping_before_comparing_frames) {
       test_buffer = ScaleVideoFrameBuffer(

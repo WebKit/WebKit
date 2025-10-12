@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,6 @@
 
 namespace WebCore {
 
-class CSSToLengthConversionData;
-class Document;
 class FilterOperation;
 class InvertLightnessFilterOperation;
 class RenderStyle;
@@ -38,8 +36,10 @@ struct AppleInvertLightness;
 
 namespace Style {
 
+class BuilderState;
+
 CSS::AppleInvertLightness toCSSAppleInvertLightness(Ref<InvertLightnessFilterOperation>, const RenderStyle&);
-Ref<FilterOperation> createFilterOperation(const CSS::AppleInvertLightness&, const Document&, RenderStyle&, const CSSToLengthConversionData&);
+Ref<FilterOperation> createFilterOperation(const CSS::AppleInvertLightness&, const BuilderState&);
 
 } // namespace Style
 } // namespace WebCore

@@ -24,34 +24,25 @@
 
 #pragma once
 
-#include "AccessibilityObject.h"
+#include <WebCore/AXCoreObject.h>
+#include <WebCore/AccessibilityObject.h>
+#include <WebCore/Position.h>
+#include <WebCore/VisiblePosition.h>
+#include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/WTFString.h>
 
-#define TEXT_MARKER_LOG(methodName) do { \
-    RELEASE_LOG(Accessibility, "[AX Thread Text Marker] hit assertion in %" PUBLIC_LOG_STRING, methodName); \
-} while (0)
-
-#define TEXT_MARKER_ASSERT(assertion, methodName) do { \
-    if (!(assertion)) \
-        TEXT_MARKER_LOG(methodName); \
+#define TEXT_MARKER_ASSERT(assertion) do { \
     std::string debugString = "Text marker origin: " + originToString(origin()).utf8().toStdString(); \
     ASSERT_WITH_MESSAGE(assertion, "%s", debugString.c_str()); \
 } while (0)
-#define TEXT_MARKER_ASSERT_SINGLE(assertion, methodName, marker) do { \
-    if (!(assertion)) \
-        TEXT_MARKER_LOG(methodName); \
+#define TEXT_MARKER_ASSERT_SINGLE(assertion, marker) do { \
     std::string debugString = "Text marker origin: " + originToString(marker.origin()).utf8().toStdString(); \
     ASSERT_WITH_MESSAGE(assertion, "%s", debugString.c_str()); \
 } while (0)
-#define TEXT_MARKER_ASSERT_DOUBLE(assertion, methodName, marker1, marker2) do { \
-    if (!(assertion)) \
-        TEXT_MARKER_LOG(methodName); \
+#define TEXT_MARKER_ASSERT_DOUBLE(assertion, marker1, marker2) do { \
     std::string debugString = "Text marker origins: " + originToString(marker1.origin()).utf8().toStdString() + ", " + originToString(marker2.origin()).utf8().data(); \
     ASSERT_WITH_MESSAGE(assertion, "%s", debugString.c_str()); \
-} while (0)
-#define TEXT_MARKER_ASSERT_NOT_REACHED(methodName) do { \
-    TEXT_MARKER_LOG(methodName); \
-    ASSERT_NOT_REACHED(); \
 } while (0)
 
 namespace WebCore {
@@ -103,6 +94,8 @@ enum class TextMarkerOrigin : uint16_t {
     StartTextMarkerForBounds,
     EndTextMarkerForBounds
 };
+
+static_assert(TextMarkerOrigin::Unknown == static_cast<TextMarkerOrigin>(0)); // Needed for AXObjectCache.h default parameters
 
 inline String originToString(TextMarkerOrigin origin)
 {
@@ -158,7 +151,9 @@ inline String originToString(TextMarkerOrigin origin)
 // Options for findMarker
 enum class CoalesceObjectBreaks : bool { No, Yes };
 enum class IgnoreBRs : bool { No, Yes };
-
+// This enum represents whether to force movement by singular offsets, vs. moving multiple offsets
+// when encountering multi-byte glyphs like emojis.
+enum class ForceSingleOffsetMovement : bool { No, Yes };
 enum class IncludeTrailingLineBreak : bool { No, Yes };
 
 struct TextMarkerData {
@@ -167,11 +162,11 @@ struct TextMarkerData {
 
     unsigned offset;
     Position::AnchorType anchorType;
-    Affinity affinity;
 
     unsigned characterStart;
     unsigned characterOffset;
     bool ignored;
+    Affinity affinity;
 
     TextMarkerOrigin origin;
 
@@ -225,7 +220,7 @@ using PlatformTextMarkerData = NSData *;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXTextMarker);
 class AXTextMarker {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AXTextMarker);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AXTextMarker, AXTextMarker);
     friend class AXTextMarkerRange;
     friend std::partial_ordering operator<=>(const AXTextMarker&, const AXTextMarker&);
 public:
@@ -288,7 +283,7 @@ public:
     void clampOffsetToLengthIfNeeded(unsigned) const;
 
     // Find the next or previous marker, optionally stopping at the given ID and returning an invalid marker.
-    AXTextMarker findMarker(AXDirection, CoalesceObjectBreaks = CoalesceObjectBreaks::Yes, IgnoreBRs = IgnoreBRs::No, std::optional<AXID> = std::nullopt) const;
+    AXTextMarker findMarker(AXDirection, CoalesceObjectBreaks = CoalesceObjectBreaks::Yes, IgnoreBRs = IgnoreBRs::No, std::optional<AXID> = std::nullopt, ForceSingleOffsetMovement = ForceSingleOffsetMovement::No) const;
 
     // Starting from this text marker, these functions find a position representing the given boundary (start / end) and text unit type (e.g. line, word, paragraph).
     AXTextMarker findWord(AXDirection direction, AXTextUnitBoundary boundary) const
@@ -337,7 +332,7 @@ public:
     // Returns a range pointing to the start and end positions that have the same text styles as `this`.
     AXTextMarkerRange rangeWithSameStyle() const;
     // Starting from this marker, return a text marker that is `offset` characters away.
-    AXTextMarker nextMarkerFromOffset(unsigned) const;
+    AXTextMarker nextMarkerFromOffset(unsigned, ForceSingleOffsetMovement = ForceSingleOffsetMovement::No, std::optional<AXID> stopAtID = std::nullopt) const;
     // Returns the number of intermediate text markers between this and the root.
     unsigned offsetFromRoot() const;
     // Starting from this marker, navigate to the last marker before the given AXID. Assumes `this`
@@ -422,7 +417,7 @@ public:
     bool isCollapsed() const { return m_start.isEqual(m_end); }
     bool isConfinedTo(std::optional<AXID>) const;
     bool isConfined() const;
-    String toString() const;
+    String toString(IncludeListMarkerText = IncludeListMarkerText::Yes) const;
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
     // Returns the bounds (frame) of the text in this range relative to the viewport.

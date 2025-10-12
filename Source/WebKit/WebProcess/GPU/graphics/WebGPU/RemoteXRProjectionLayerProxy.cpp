@@ -54,10 +54,19 @@ RemoteXRProjectionLayerProxy::~RemoteXRProjectionLayerProxy()
 }
 
 #if PLATFORM(COCOA)
-void RemoteXRProjectionLayerProxy::startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex)
+void RemoteXRProjectionLayerProxy::startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, PlatformXR::RateMapDescription&& rateMapDescription)
 {
-    auto sendResult = send(Messages::RemoteXRProjectionLayer::StartFrame(frameIndex, WTFMove(colorBuffer), WTFMove(depthBuffer), WTFMove(completionSyncEvent), reusableTextureIndex));
+#if PLATFORM(VISION)
+    auto sendResult = send(Messages::RemoteXRProjectionLayer::StartFrame(frameIndex, WTFMove(colorBuffer), WTFMove(depthBuffer), WTFMove(completionSyncEvent), reusableTextureIndex, WTFMove(rateMapDescription)));
     UNUSED_VARIABLE(sendResult);
+#else
+    UNUSED_VARIABLE(frameIndex);
+    UNUSED_VARIABLE(colorBuffer);
+    UNUSED_VARIABLE(depthBuffer);
+    UNUSED_VARIABLE(completionSyncEvent);
+    UNUSED_VARIABLE(reusableTextureIndex);
+    UNUSED_VARIABLE(rateMapDescription);
+#endif
 }
 #endif
 

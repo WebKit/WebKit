@@ -9,19 +9,21 @@
  */
 
 #include <jni.h>
-#undef JNIEXPORT
-#define JNIEXPORT __attribute__((visibility("default")))
+
+#include <cstdint>
 #include <string>
 
-#include "rtc_base/logging.h"
 #include "rtc_base/thread.h"
 #include "rtc_tools/network_tester/test_controller.h"
+
+#undef JNIEXPORT
+#define JNIEXPORT __attribute__((visibility("default")))
 
 extern "C" JNIEXPORT jlong JNICALL
 Java_com_google_media_networktester_NetworkTester_CreateTestController(
     JNIEnv* jni,
     jclass) {
-  rtc::ThreadManager::Instance()->WrapCurrentThread();
+  webrtc::ThreadManager::Instance()->WrapCurrentThread();
   return reinterpret_cast<intptr_t>(new webrtc::TestController(
       0, 0, "/mnt/sdcard/network_tester_client_config.dat",
       "/mnt/sdcard/network_tester_client_packet_log.dat"));
@@ -51,7 +53,7 @@ Java_com_google_media_networktester_NetworkTester_TestControllerRun(
     jclass,
     jlong native_pointer) {
   // 100 ms arbitrary chosen, but it works well.
-  rtc::Thread::Current()->ProcessMessages(/*cms=*/100);
+  webrtc::Thread::Current()->ProcessMessages(/*cms=*/100);
 }
 
 extern "C" JNIEXPORT void JNICALL
@@ -64,5 +66,5 @@ Java_com_google_media_networktester_NetworkTester_DestroyTestController(
   if (test_controller) {
     delete test_controller;
   }
-  rtc::ThreadManager::Instance()->UnwrapCurrentThread();
+  webrtc::ThreadManager::Instance()->UnwrapCurrentThread();
 }

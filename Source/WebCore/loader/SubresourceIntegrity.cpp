@@ -28,6 +28,7 @@
 
 #include "CachedResource.h"
 #include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "ResourceCryptographicDigest.h"
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
@@ -224,7 +225,7 @@ void reportHashesIfNeeded(const CachedResource& resource)
     if (!document)
         return;
 
-    auto csp = document->checkedContentSecurityPolicy();
+    CheckedRef csp = *document->contentSecurityPolicy();
     URL documentURL = document->url();
 
     auto& hashesToReport = csp->hashesToReport();

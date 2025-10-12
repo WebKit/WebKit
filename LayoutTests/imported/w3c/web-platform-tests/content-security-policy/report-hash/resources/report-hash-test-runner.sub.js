@@ -9,7 +9,7 @@ function find_server_timing(name) {
 }
 
 const ORIGIN = "https://{{host}}:{{ports[https][0]}}";
-const REMOTE_ORIGIN = "https://{{hosts[alt][]}}:{{ports[https][0]}}";
+const REMOTE_ORIGIN = "https://{{hosts[alt][www]}}:{{ports[https][0]}}";
 const endpoint = `${ORIGIN}/reporting/resources/report.py`;
 const id = find_server_timing("uuid");
 const id2 = find_server_timing("uuid2");
@@ -49,7 +49,6 @@ function report_hash_test(url, populate_script_attributes, expected_hash, expect
       script.src = unique_subresource_url;
       populate_script_attributes(script);
       script.addEventListener('load', resolve);
-      script.addEventListener('error', resolve);
       document.head.appendChild(script);
     });
 

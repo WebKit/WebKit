@@ -45,7 +45,7 @@ public:
     
     ~WebContextMenu();
 
-    void show();
+    bool show();
     void itemSelected(const WebContextMenuItemData&);
     Vector<WebContextMenuItemData> items() const;
 

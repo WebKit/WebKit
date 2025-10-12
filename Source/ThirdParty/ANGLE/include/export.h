@@ -18,12 +18,7 @@
 #            define ANGLE_EXPORT __declspec(dllimport)
 #        endif
 #    elif defined(__GNUC__)
-#        if defined(LIBGLESV2_IMPLEMENTATION) || defined(LIBANGLE_IMPLEMENTATION) || \
-            defined(LIBFEATURE_SUPPORT_IMPLEMENTATION) || defined(LIBCL_IMPLEMENTATION)
-#            define ANGLE_EXPORT __attribute__((visibility("default")))
-#        else
-#            define ANGLE_EXPORT
-#        endif
+#        define ANGLE_EXPORT __attribute__((visibility("default")))
 #    else
 #        define ANGLE_EXPORT
 #    endif

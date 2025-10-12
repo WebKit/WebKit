@@ -11,15 +11,15 @@
 #ifndef RTC_TOOLS_NETWORK_TESTER_TEST_CONTROLLER_H_
 #define RTC_TOOLS_NETWORK_TESTER_TEST_CONTROLLER_H_
 
-#include <stddef.h>
-#include <stdint.h>
-
 #include <array>
+#include <cstddef>
 #include <memory>
 #include <optional>
 #include <string>
 
+#include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
+#include "api/task_queue/pending_task_safety_flag.h"
 #include "p2p/base/basic_packet_socket_factory.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/network/received_packet.h"
@@ -64,12 +64,12 @@ class TestController {
   bool IsTestDone();
 
  private:
-  void OnReadPacket(rtc::AsyncPacketSocket* socket,
-                    const rtc::ReceivedPacket& received_packet);
+  void OnReadPacket(AsyncPacketSocket* socket,
+                    const ReceivedIpPacket& received_packet);
   RTC_NO_UNIQUE_ADDRESS SequenceChecker test_controller_thread_checker_;
-  std::unique_ptr<rtc::SocketServer> socket_server_;
-  std::unique_ptr<rtc::Thread> packet_sender_thread_;
-  rtc::BasicPacketSocketFactory socket_factory_
+  std::unique_ptr<SocketServer> socket_server_;
+  std::unique_ptr<Thread> packet_sender_thread_;
+  BasicPacketSocketFactory socket_factory_
       RTC_GUARDED_BY(packet_sender_thread_);
   const std::string config_file_path_;
   PacketLogger packet_logger_ RTC_GUARDED_BY(packet_sender_thread_);
@@ -78,12 +78,12 @@ class TestController {
   bool remote_test_done_ RTC_GUARDED_BY(test_done_lock_);
   std::array<char, kEthernetMtu> send_data_
       RTC_GUARDED_BY(packet_sender_thread_);
-  std::unique_ptr<rtc::AsyncPacketSocket> udp_socket_
+  std::unique_ptr<AsyncPacketSocket> udp_socket_
       RTC_GUARDED_BY(packet_sender_thread_);
-  rtc::SocketAddress remote_address_;
+  SocketAddress remote_address_;
   std::unique_ptr<PacketSender> packet_sender_
       RTC_GUARDED_BY(packet_sender_thread_);
-  rtc::scoped_refptr<webrtc::PendingTaskSafetyFlag> task_safety_flag_;
+  scoped_refptr<PendingTaskSafetyFlag> task_safety_flag_;
 };
 
 }  // namespace webrtc

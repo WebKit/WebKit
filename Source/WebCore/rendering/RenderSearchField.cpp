@@ -1,6 +1,6 @@
-/**
+/*
  * Copyright (C) 2006, 2007, 2010, 2015 Apple Inc. All rights reserved.
- *           (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/) 
+ *           (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
@@ -24,10 +24,12 @@
 #include "config.h"
 #include "RenderSearchField.h"
 
+#include "ContainerNodeInlines.h"
 #include "CSSFontSelector.h"
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
 #include "DocumentInlines.h"
+#include "DocumentView.h"
 #include "ElementInlines.h"
 #include "Font.h"
 #include "FrameSelection.h"
@@ -43,6 +45,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
+#include "RenderObjectInlines.h"
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -284,8 +287,18 @@ PopupMenuStyle RenderSearchField::itemStyle(unsigned) const
 
 PopupMenuStyle RenderSearchField::menuStyle() const
 {
-    return PopupMenuStyle(style().visitedDependentColorWithColorFilter(CSSPropertyColor), style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor), style().fontCascade(), style().usedVisibility() == Visibility::Visible,
-        style().display() == DisplayType::None, true, style().textIndent(), writingMode().bidiDirection(), isOverride(style().unicodeBidi()), PopupMenuStyle::CustomBackgroundColor);
+    return PopupMenuStyle(
+        style().visitedDependentColorWithColorFilter(CSSPropertyColor),
+        style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor),
+        style().fontCascade(),
+        nullString(),
+        style().usedVisibility() == Visibility::Visible,
+        style().display() == DisplayType::None,
+        true,
+        writingMode().bidiDirection(),
+        isOverride(style().unicodeBidi()),
+        PopupMenuStyle::CustomBackgroundColor
+    );
 }
 
 int RenderSearchField::clientInsetLeft() const

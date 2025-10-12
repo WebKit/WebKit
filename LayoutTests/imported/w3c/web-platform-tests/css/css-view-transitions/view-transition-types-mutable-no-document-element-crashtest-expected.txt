@@ -1,3 +1,2 @@
-CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'root.appendChild')
 FAIL: Timed out waiting for notifyDone to be called
 

@@ -248,6 +248,15 @@
             "issue": "http://anglebug.com/42262239"
         },
         {
+            "name": "uses_second_component_for_stencil_border_color",
+            "category": "Features",
+            "description": [
+                "Implementation utilizes second component of the INT custom border color ",
+                "for undefined format when sampling from a stencil texture."
+            ],
+            "issue": "http://issuetracker.google.com/390710636"
+        },
+        {
             "name": "supports_multi_draw_indirect",
             "category": "Features",
             "description": [
@@ -345,10 +354,18 @@
             "issue": "http://anglebug.com/42263049"
         },
         {
-            "name": "supports_external_memory_dma_buf_and_modifiers",
+            "name": "supports_external_memory_dma_buf",
             "category": "Features",
             "description": [
-                "VkDevice supports the VK_EXT_external_memory_dma_buf and VK_EXT_image_drm_format_modifier ",
+              "VkDevice supports the VK_EXT_external_memory_dma_buf",
+              "extensions"
+            ]
+        },
+        {
+            "name": "supports_image_drm_format_modifier",
+            "category": "Features",
+            "description": [
+              "VkDevice supports the VK_EXT_image_drm_format_modifier",
                 "extensions"
             ],
             "issue": "http://anglebug.com/42264767"
@@ -1034,6 +1051,14 @@
                 "VkDevice supports VK_KHR_fragment_shading_rate extension"
             ],
             "issue": "http://anglebug.com/42265647"
+        },
+        {
+            "name": "supports_primitive_fragment_shading_rate",
+            "category": "Features",
+            "description": [
+                "VkDevice supports primitiveFragmentShadingRate feature"
+            ],
+            "issue": "http://anglebug.com/397255625"
         },
         {
             "name": "supports_foveated_rendering",
@@ -1890,6 +1915,22 @@
             "issue": "https://anglebug.com/379186304"
         },
         {
+            "name": "supports_astc_decode_mode",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_astc_decode_mode extension"
+            ],
+            "issue": "https://anglebug.com/419403188"
+        },
+        {
+            "name": "supports_astc_decode_mode_rgb9e5",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_astc_decode_mode extension"
+            ],
+            "issue": "https://anglebug.com/419403188"
+        },
+        {
             "name": "supports_astc_hdr_3d_textures",
             "category": "Features",
             "description": [
@@ -1942,6 +1983,53 @@
                 "VkDevice supports VK_KHR_swapchain_mutable_format extension"
             ],
             "issue": "http://anglebug.com/386688871"
+        },
+        {
+            "name": "supports_clip_cull_distance_in_GS_and_TS",
+            "category": "Features",
+            "description": [
+                "Supports using clip/cull distance features in geometry and tessellation shaders"
+            ],
+            "issue": "http://anglebug.com/42264006"
+        },
+        {
+            "name": "supports_maintenance9",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_maintenance9 extension"
+            ],
+            "issue": "https://anglebug.com/429339330"
+        },
+        {
+            "name": "supports_shader_integer_dot_product",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_shader_integer_dot_product extension"
+            ]
+        },
+        {
+            "name": "convert_lowp_and_mediump_float_uniforms_to_16_bits",
+            "category": "Features",
+            "description": [
+                "transform lowp and mediump float uniforms into 16 bits"
+            ],
+            "issue": "http://anglebug.com/405795981"
+        },
+        {
+            "name": "supports_global_priority",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_global_priority"
+            ],
+            "issue": "https://anglebug.com/397474813"
+        },
+        {
+            "name": "supports_global_priority_query",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_global_priority_query"
+            ],
+            "issue": "https://anglebug.com/397474813"
         }
     ]
 }

@@ -102,7 +102,7 @@ void LinkBuffer::logJITCodeForJITDump(CodeRef<LinkBufferPtrTag>& codeRef, ASCIIL
     case Profile::WasmOMG:
     case Profile::WasmBBQ: {
         if (m_ownerUID)
-            out.print(makeString(static_cast<Wasm::Callee*>(m_ownerUID)->indexOrName()));
+            out.print(makeString(uncheckedDowncast<Wasm::Callee>(reinterpret_cast<NativeCallee*>(m_ownerUID))->indexOrName()));
         else
             dumpSimpleName(out, simpleName);
         break;
@@ -302,8 +302,10 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
 #endif
 
     uint8_t* codeOutData = m_code.dataLocation<uint8_t*>();
+// It is important not to spill this to the stack, so we don't make a local.
+#define shouldCopyDirectlyToJITRegion (!m_shouldPerformBranchCompaction || g_jscConfig.useFastJITPermissions)
 
-    BranchCompactionLinkBuffer outBuffer(m_size, g_jscConfig.useFastJITPermissions ? codeOutData : 0);
+    BranchCompactionLinkBuffer outBuffer(m_size, shouldCopyDirectlyToJITRegion ? codeOutData : 0);
     uint8_t* outData = outBuffer.data();
 
 #if CPU(ARM64)
@@ -411,20 +413,20 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
             target = std::bit_cast<uint8_t*>(to);
         else
             target = codeOutData + to - executableOffsetFor(to);
-        if (g_jscConfig.useFastJITPermissions)
-            MacroAssembler::link<MachineCodeCopyMode::Memcpy>(linkRecord, outData + linkRecord.from(), location, target);
+        if (shouldCopyDirectlyToJITRegion)
+            MacroAssembler::link<memcpyRepatch>(linkRecord, outData + linkRecord.from(), location, target);
         else
-            MacroAssembler::link<MachineCodeCopyMode::JITMemcpy>(linkRecord, outData + linkRecord.from(), location, target);
+            MacroAssembler::link<jitMemcpyRepatch>(linkRecord, outData + linkRecord.from(), location, target);
     }
 
     size_t compactSize = writePtr + initialSize - readPtr;
     if (!m_executableMemory) {
         size_t nopSizeInBytes = initialSize - compactSize;
 
-        if (g_jscConfig.useFastJITPermissions)
-            Assembler::fillNops<MachineCodeCopyMode::Memcpy>(outData + compactSize, nopSizeInBytes);
+        if (shouldCopyDirectlyToJITRegion)
+            Assembler::fillNops<memcpyRepatch>(outData + compactSize, nopSizeInBytes);
         else
-            Assembler::fillNops<MachineCodeCopyMode::JITMemcpy>(outData + compactSize, nopSizeInBytes);
+            Assembler::fillNops<jitMemcpyRepatch>(outData + compactSize, nopSizeInBytes);
     }
     if (g_jscConfig.useFastJITPermissions)
         threadSelfRestrict<MemoryRestriction::kRwxToRx>();
@@ -434,6 +436,8 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
         m_executableMemory->shrink(m_size);
     }
 
+#undef shouldCopyDirectlyToJITRegion
+
 #if ENABLE(JIT)
     if (g_jscConfig.useFastJITPermissions) {
         ASSERT(codeOutData == outData);
@@ -441,11 +445,11 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
             dumpJITMemory(outData, outData, m_size);
     } else {
         ASSERT(codeOutData != outData);
-        performJITMemcpy(codeOutData, outData, m_size);
+        performJITMemcpy<jitMemcpyRepatch>(codeOutData, outData, m_size);
     }
 #else
     ASSERT(codeOutData != outData);
-    performJITMemcpy(codeOutData, outData, m_size);
+    performJITMemcpy<jitMemcpyRepatch>(codeOutData, outData, m_size);
 #endif
 
 #if ENABLE(MPROTECT_RX_TO_RWX)
@@ -467,7 +471,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
 void LinkBuffer::linkCode(MacroAssembler& macroAssembler, JITCompilationEffort effort)
 {
     // Ensure that the end of the last invalidation point does not extend beyond the end of the buffer.
-    macroAssembler.padBeforePatch();
+    macroAssembler.label();
 
 #if ENABLE(JIT)
 #if !ENABLE(BRANCH_COMPACTION)
@@ -483,7 +487,7 @@ void LinkBuffer::linkCode(MacroAssembler& macroAssembler, JITCompilationEffort e
 #if CPU(ARM64)
     RELEASE_ASSERT(roundUpToMultipleOf<Assembler::instructionSize>(code) == code);
 #endif
-    performJITMemcpy(code, buffer.data(), buffer.codeSize());
+    performJITMemcpy<jitMemcpyRepatch>(code, buffer.data(), buffer.codeSize());
 #elif CPU(ARM_THUMB2)
     copyCompactAndLinkCode<uint16_t>(macroAssembler, effort);
 #elif CPU(ARM64)

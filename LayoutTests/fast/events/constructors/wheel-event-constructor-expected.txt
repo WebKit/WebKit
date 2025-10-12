@@ -65,9 +65,9 @@ PASS new WheelEvent('eventType', { screenX: 0 }).screenX is 0
 PASS new WheelEvent('eventType', { screenX: -1 }).screenX is -1
 PASS new WheelEvent('eventType', { screenX: 2147483647 }).screenX is 2147483647
 PASS new WheelEvent('eventType', { screenX: -2147483648 }).screenX is -2147483648
-PASS new WheelEvent('eventType', { screenX: 4294967295 }).screenX is -1
-PASS new WheelEvent('eventType', { screenX: 9007199254740991 }).screenX is -1
-PASS new WheelEvent('eventType', { screenX: 18446744073709551615 }).screenX is 0
+PASS new WheelEvent('eventType', { screenX: 4294967295 }).screenX is 4294967295
+PASS new WheelEvent('eventType', { screenX: 9007199254740991 }).screenX is 9007199254740991
+PASS new WheelEvent('eventType', { screenX: 18446744073709551615 }).screenX is 18446744073709552000
 PASS new WheelEvent('eventType', { screenX: 123.45 }).screenX is 123
 PASS new WheelEvent('eventType', { screenX: NaN }).screenX is 0
 PASS new WheelEvent('eventType', { screenX: undefined }).screenX is 0
@@ -86,9 +86,9 @@ PASS new WheelEvent('eventType', { screenY: 0 }).screenY is 0
 PASS new WheelEvent('eventType', { screenY: -1 }).screenY is -1
 PASS new WheelEvent('eventType', { screenY: 2147483647 }).screenY is 2147483647
 PASS new WheelEvent('eventType', { screenY: -2147483648 }).screenY is -2147483648
-PASS new WheelEvent('eventType', { screenY: 4294967295 }).screenY is -1
-PASS new WheelEvent('eventType', { screenY: 9007199254740991 }).screenY is -1
-PASS new WheelEvent('eventType', { screenY: 18446744073709551615 }).screenY is 0
+PASS new WheelEvent('eventType', { screenY: 4294967295 }).screenY is 4294967295
+PASS new WheelEvent('eventType', { screenY: 9007199254740991 }).screenY is 9007199254740991
+PASS new WheelEvent('eventType', { screenY: 18446744073709551615 }).screenY is 18446744073709552000
 PASS new WheelEvent('eventType', { screenY: 123.45 }).screenY is 123
 PASS new WheelEvent('eventType', { screenY: NaN }).screenY is 0
 PASS new WheelEvent('eventType', { screenY: undefined }).screenY is 0
@@ -105,11 +105,11 @@ PASS new WheelEvent('eventType', { screenY: {moemoe: 12345} }).screenY is 0
 PASS new WheelEvent('eventType', { screenY: {valueOf: function () { return 12345; }} }).screenY is 12345
 PASS new WheelEvent('eventType', { clientX: 0 }).clientX is 0
 PASS new WheelEvent('eventType', { clientX: -1 }).clientX is -1
-PASS new WheelEvent('eventType', { clientX: 2147483647 }).clientX is 33554431
-PASS new WheelEvent('eventType', { clientX: -2147483648 }).clientX is -33554432
-PASS new WheelEvent('eventType', { clientX: 4294967295 }).clientX is -1
-PASS new WheelEvent('eventType', { clientX: 9007199254740991 }).clientX is -1
-PASS new WheelEvent('eventType', { clientX: 18446744073709551615 }).clientX is 0
+PASS new WheelEvent('eventType', { clientX: 2147483647 }).clientX is 2147483647
+PASS new WheelEvent('eventType', { clientX: -2147483648 }).clientX is -2147483648
+PASS new WheelEvent('eventType', { clientX: 4294967295 }).clientX is 4294967295
+PASS new WheelEvent('eventType', { clientX: 9007199254740991 }).clientX is 9007199254740991
+PASS new WheelEvent('eventType', { clientX: 18446744073709551615 }).clientX is 18446744073709552000
 PASS new WheelEvent('eventType', { clientX: 123.45 }).clientX is 123
 PASS new WheelEvent('eventType', { clientX: NaN }).clientX is 0
 PASS new WheelEvent('eventType', { clientX: undefined }).clientX is 0
@@ -126,11 +126,11 @@ PASS new WheelEvent('eventType', { clientX: {moemoe: 12345} }).clientX is 0
 PASS new WheelEvent('eventType', { clientX: {valueOf: function () { return 12345; }} }).clientX is 12345
 PASS new WheelEvent('eventType', { clientY: 0 }).clientY is 0
 PASS new WheelEvent('eventType', { clientY: -1 }).clientY is -1
-PASS new WheelEvent('eventType', { clientY: 2147483647 }).clientY is 33554431
-PASS new WheelEvent('eventType', { clientY: -2147483648 }).clientY is -33554432
-PASS new WheelEvent('eventType', { clientY: 4294967295 }).clientY is -1
-PASS new WheelEvent('eventType', { clientY: 9007199254740991 }).clientY is -1
-PASS new WheelEvent('eventType', { clientY: 18446744073709551615 }).clientY is 0
+PASS new WheelEvent('eventType', { clientY: 2147483647 }).clientY is 2147483647
+PASS new WheelEvent('eventType', { clientY: -2147483648 }).clientY is -2147483648
+PASS new WheelEvent('eventType', { clientY: 4294967295 }).clientY is 4294967295
+PASS new WheelEvent('eventType', { clientY: 9007199254740991 }).clientY is 9007199254740991
+PASS new WheelEvent('eventType', { clientY: 18446744073709551615 }).clientY is 18446744073709552000
 PASS new WheelEvent('eventType', { clientY: 123.45 }).clientY is 123
 PASS new WheelEvent('eventType', { clientY: NaN }).clientY is 0
 PASS new WheelEvent('eventType', { clientY: undefined }).clientY is 0

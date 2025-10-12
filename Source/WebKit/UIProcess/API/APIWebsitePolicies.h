@@ -27,10 +27,12 @@
 
 #include "APIObject.h"
 #include "WebsitePoliciesData.h"
+#include <WebCore/ResourceRequest.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
 class LockdownModeObserver;
+class WebProcessProxy;
 class WebUserContentControllerProxy;
 class WebsiteDataStore;
 struct WebsitePoliciesData;
@@ -46,7 +48,7 @@ public:
 
     Ref<WebsitePolicies> copy() const;
 
-    WebKit::WebsitePoliciesData data();
+    WebKit::WebsitePoliciesData dataForProcess(WebKit::WebProcessProxy&) const;
 
     const WebCore::ContentExtensionEnablement& contentExtensionEnablement() const { return m_data.contentExtensionEnablement; }
     void setContentExtensionEnablement(WebCore::ContentExtensionEnablement&& enablement) { m_data.contentExtensionEnablement = WTFMove(enablement); }
@@ -111,6 +113,9 @@ public:
     WebCore::AllowsContentJavaScript allowsContentJavaScript() const { return m_data.allowsContentJavaScript; }
     void setAllowsContentJavaScript(WebCore::AllowsContentJavaScript allows) { m_data.allowsContentJavaScript = allows; }
 
+    bool enhancedSecurityEnabled() const { return m_enhancedSecurityEnabled; }
+    void setEnhancedSecurityEnabled(bool enabled) { m_enhancedSecurityEnabled = enabled; }
+
     bool lockdownModeEnabled() const;
     void setLockdownModeEnabled(std::optional<bool> enabled) { m_lockdownModeEnabled = enabled; }
     bool isLockdownModeExplicitlySet() const { return !!m_lockdownModeEnabled; }
@@ -151,11 +156,21 @@ public:
     WebKit::WebsiteInlineMediaPlaybackPolicy inlineMediaPlaybackPolicy() const { return m_data.inlineMediaPlaybackPolicy; }
     void setInlineMediaPlaybackPolicy(WebKit::WebsiteInlineMediaPlaybackPolicy policy) { m_data.inlineMediaPlaybackPolicy = policy; }
 
+    bool allowSharedProcess() const { return m_data.allowSharedProcess; }
+    void setAllowSharedProcess(bool allowSharedProcess) { m_data.allowSharedProcess = allowSharedProcess; }
+
+    const WebCore::ResourceRequest& alternateRequest() const;
+    void setAlternateRequest(WebCore::ResourceRequest&&);
+
+    bool allowsJSHandleCreationInPageWorld() const { return m_data.allowsJSHandleCreationInPageWorld; }
+    void setAllowsJSHandleCreationInPageWorld(bool allows) { m_data.allowsJSHandleCreationInPageWorld = allows; }
+
 private:
     WebKit::WebsitePoliciesData m_data;
     RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
     RefPtr<WebKit::WebUserContentControllerProxy> m_userContentController;
     std::optional<bool> m_lockdownModeEnabled;
+    bool m_enhancedSecurityEnabled { false };
 #if PLATFORM(COCOA)
     const std::unique_ptr<WebKit::LockdownModeObserver> m_lockdownModeObserver;
 #endif

@@ -81,10 +81,10 @@ static Expected<Ref<WebExtensionAction>, WebExtensionError> getOrCreateActionWit
     return Ref { context.defaultAction() };
 }
 
-bool WebExtensionContext::isActionMessageAllowed()
+bool WebExtensionContext::isActionMessageAllowed(IPC::Decoder& message)
 {
     Ref extension = *m_extension;
-    return isLoaded() && (extension->hasAction() || extension->hasBrowserAction() || extension->hasPageAction());
+    return isLoadedAndPrivilegedMessage(message) && (extension->hasAction() || extension->hasBrowserAction() || extension->hasPageAction());
 }
 
 void WebExtensionContext::actionGetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)

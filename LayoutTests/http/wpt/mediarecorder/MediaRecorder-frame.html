@@ -20,6 +20,7 @@ function withFrame(url)
 promise_test(async (t) => {
     const frame = await withFrame('/');
     const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+    t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     const Recorder = frame.contentWindow.MediaRecorder;
     let recorder1 = new Recorder(stream);
     let recorder2 = new Recorder(stream);

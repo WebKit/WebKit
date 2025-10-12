@@ -25,11 +25,12 @@
 
 #pragma once
 
-#include "WebGPUIntegralTypes.h"
-#include "WebGPUObjectDescriptorBase.h"
-#include "WebGPUTextureAspect.h"
-#include "WebGPUTextureFormat.h"
-#include "WebGPUTextureViewDimension.h"
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUObjectDescriptorBase.h>
+#include <WebCore/WebGPUTextureAspect.h>
+#include <WebCore/WebGPUTextureFormat.h>
+#include <WebCore/WebGPUTextureUsage.h>
+#include <WebCore/WebGPUTextureViewDimension.h>
 #include <optional>
 
 namespace WebCore::WebGPU {
@@ -37,6 +38,7 @@ namespace WebCore::WebGPU {
 struct TextureViewDescriptor : public ObjectDescriptorBase {
     std::optional<TextureFormat> format;
     std::optional<TextureViewDimension> dimension;
+    TextureUsageFlags usage;
     TextureAspect aspect { TextureAspect::All };
     IntegerCoordinate baseMipLevel { 0 };
     std::optional<IntegerCoordinate> mipLevelCount;

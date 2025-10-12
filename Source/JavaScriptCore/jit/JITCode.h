@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "ArityCheckMode.h"
-#include "CallFrame.h"
-#include "CodeOrigin.h"
-#include "JSCJSValue.h"
-#include "MacroAssemblerCodeRef.h"
-#include "RegisterAtOffsetList.h"
-#include "RegisterSet.h"
+#include <JavaScriptCore/ArityCheckMode.h>
+#include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/CodeOrigin.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/MacroAssemblerCodeRef.h>
+#include <JavaScriptCore/RegisterAtOffsetList.h>
+#include <JavaScriptCore/RegisterSet.h>
 
 
 namespace JSC {
@@ -333,7 +333,7 @@ protected:
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DirectJITCode);
 class DirectJITCode : public JITCodeWithCodeRef {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DirectJITCode);
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DirectJITCode, DirectJITCode);
 public:
     DirectJITCode(JITType);
     DirectJITCode(CodeRef<JSEntryPtrTag>, CodePtr<JSEntryPtrTag> withArityCheck, JITType, JITCode::ShareAttribute = JITCode::ShareAttribute::NotShared);

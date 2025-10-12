@@ -53,7 +53,7 @@ struct CallConfig {
   BitrateConstraints bitrate_config;
 
   // AudioState which is possibly shared between multiple calls.
-  rtc::scoped_refptr<AudioState> audio_state;
+  scoped_refptr<AudioState> audio_state;
 
   // Audio Processing Module to be used in this call.
   AudioProcessing* audio_processing = nullptr;

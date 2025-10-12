@@ -74,7 +74,7 @@ WebCore::LocalDOMWindow* core(DOMAbstractView *wrapper)
         return 0;
     if (!wrapper->_internal)
         return 0;
-    return reinterpret_cast<WebCore::LocalFrame*>(wrapper->_internal)->document()->domWindow();
+    return reinterpret_cast<WebCore::LocalFrame*>(wrapper->_internal)->document()->window();
 }
 
 DOMAbstractView *kit(WebCore::LocalDOMWindow* value)

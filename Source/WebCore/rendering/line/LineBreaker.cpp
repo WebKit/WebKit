@@ -26,6 +26,7 @@
 #include "LineBreaker.h"
 
 #include "BreakingContext.h"
+#include "RenderObjectStyle.h"
 
 namespace WebCore {
 
@@ -49,7 +50,7 @@ LegacyInlineIterator LineBreaker::nextLineBreak(InlineBidiResolver& resolver, Li
 
     bool appliedStartWidth = resolver.position().offset();
 
-    LineWidth width(m_block, lineInfo.isFirstLine());
+    LineWidth width(m_block);
 
     skipLeadingWhitespace(resolver, lineInfo);
 
@@ -68,7 +69,7 @@ LegacyInlineIterator LineBreaker::nextLineBreak(InlineBidiResolver& resolver, Li
                 return context.lineBreak();
             }
         } else if (context.currentObject()->isLineBreakOpportunity())
-            context.commitLineBreakAtCurrentWidth(*context.currentObject());
+            context.commitLineBreakAtCurrentWidth(*context.checkedCurrentObject());
         else
             ASSERT_NOT_REACHED();
 

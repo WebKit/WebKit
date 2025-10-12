@@ -36,7 +36,6 @@ AXDOMClassList:
 AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 1}
 AXElementBusy: 0
 
 ------------
@@ -68,7 +67,6 @@ AXDOMClassList:
 AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 1}
 AXElementBusy: 0
 
 ------------
@@ -100,7 +98,6 @@ AXDOMClassList:
 AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 1}
 AXElementBusy: 0
 
 ------------
@@ -132,7 +129,6 @@ AXDOMClassList:
 AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 1}
 AXElementBusy: 0
 
 ------------
@@ -164,7 +160,6 @@ AXDOMClassList:
 AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 1}
 AXElementBusy: 0
 
 ------------

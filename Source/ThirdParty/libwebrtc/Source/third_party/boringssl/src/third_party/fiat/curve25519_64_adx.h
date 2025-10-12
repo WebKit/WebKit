@@ -611,7 +611,10 @@ static inline void table_select_4(ge_precomp_4 *t, const int pos,
   uint8_t babs = b - ((bnegative & b) << 1);
 
   uint8_t t_bytes[3][32] = {
-      {constant_time_is_zero_w(b) & 1}, {constant_time_is_zero_w(b) & 1}, {0}};
+    {static_cast<uint8_t>(constant_time_is_zero_w(b) & 1)},
+    {static_cast<uint8_t>(constant_time_is_zero_w(b) & 1)},
+    {0},
+  };
 #if defined(__clang__)
   __asm__("" : "+m" (t_bytes) : /*no inputs*/);
 #endif

@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "PODInterval.h"
-#include "PODRedBlackTree.h"
+#include <WebCore/PODInterval.h>
+#include <WebCore/PODRedBlackTree.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 

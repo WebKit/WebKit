@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "WebGPUBlendState.h"
-#include "WebGPUColorWrite.h"
-#include "WebGPUTextureFormat.h"
+#include <WebCore/WebGPUBlendState.h>
+#include <WebCore/WebGPUColorWrite.h>
+#include <WebCore/WebGPUTextureFormat.h>
 #include <optional>
 
 namespace WebCore::WebGPU {

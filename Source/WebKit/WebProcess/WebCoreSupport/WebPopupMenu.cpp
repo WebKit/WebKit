@@ -85,7 +85,7 @@ Vector<WebPopupItem> WebPopupMenu::populateItems()
         // FIXME: Add support for styling the foreground and background colors.
         // FIXME: Find a way to customize text color when an item is highlighted.
         PopupMenuStyle itemStyle = popupClient->itemStyle(i);
-        return WebPopupItem(WebPopupItem::Type::Item, popupClient->itemText(i), itemStyle.textDirection(), itemStyle.hasTextDirectionOverride(), popupClient->itemToolTip(i), popupClient->itemAccessibilityText(i), popupClient->itemIsEnabled(i), popupClient->itemIsLabel(i), popupClient->itemIsSelected(i));
+        return WebPopupItem(WebPopupItem::Type::Item, popupClient->itemText(i), itemStyle.language(), itemStyle.textDirection(), itemStyle.hasTextDirectionOverride(), popupClient->itemToolTip(i), popupClient->itemAccessibilityText(i), popupClient->itemIsEnabled(i), popupClient->itemIsLabel(i), popupClient->itemIsSelected(i));
     });
 }
 

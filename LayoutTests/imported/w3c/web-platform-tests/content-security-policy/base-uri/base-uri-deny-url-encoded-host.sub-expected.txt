@@ -1,0 +1,4 @@
+
+PASS Check that baseURI fires a securitypolicyviolation event when it does not match the csp directive due to a url encoded host character.
+PASS Check that the baseURI is not set when it does not match the csp directive
+

@@ -142,7 +142,7 @@ struct macroblockd_plane {
   int *eob;
 };
 
-#define BLOCK_OFFSET(x, i) ((x) + (i)*16)
+#define BLOCK_OFFSET(x, i) ((x) + (i) * 16)
 
 typedef struct RefBuffer {
   // TODO(dkovalev): idx is not really required and should be removed, now it

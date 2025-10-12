@@ -32,6 +32,10 @@
 #include <WebCore/ImageBuffer.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if HAVE(IOSURFACE)
+#include <WebCore/ImageBufferIOSurfaceBackend.h>
+#endif
+
 #if ENABLE(GPU_PROCESS)
 
 namespace WebKit {
@@ -39,14 +43,33 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBufferShareableAllocator);
 
+#if HAVE(IOSURFACE)
+ImageBufferShareableAllocator::ImageBufferShareableAllocator(const ProcessIdentity& resourceOwner, IOSurfacePool* ioSurfacePool)
+    : m_resourceOwner(resourceOwner)
+    , m_ioSurfacePool(ioSurfacePool)
+{
+}
+#else
 ImageBufferShareableAllocator::ImageBufferShareableAllocator(const ProcessIdentity& resourceOwner)
     : m_resourceOwner(resourceOwner)
 {
 }
+#endif
 
-RefPtr<ImageBuffer> ImageBufferShareableAllocator::createImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, RenderingMode) const
+RefPtr<ImageBuffer> ImageBufferShareableAllocator::createImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, RenderingMode renderingMode) const
 {
-    RefPtr<ImageBuffer> imageBuffer = ImageBuffer::create<ImageBufferShareableBitmapBackend>(size, 1, colorSpace, ImageBufferPixelFormat::BGRA8, RenderingPurpose::Unspecified, { });
+#if HAVE(IOSURFACE)
+    if (renderingMode == RenderingMode::Accelerated) {
+        ImageBufferCreationContext creationContext;
+        creationContext.resourceOwner = m_resourceOwner;
+        if (m_ioSurfacePool)
+            creationContext.surfacePool = m_ioSurfacePool.get();
+
+        return ImageBuffer::create<ImageBufferIOSurfaceBackend>(size, 1, colorSpace, { PixelFormat::BGRA8 }, RenderingPurpose::Unspecified, creationContext);
+    }
+#endif
+
+    RefPtr<ImageBuffer> imageBuffer = ImageBuffer::create<ImageBufferShareableBitmapBackend>(size, 1, colorSpace, { PixelFormat::BGRA8 }, RenderingPurpose::Unspecified, { });
     if (!imageBuffer)
         return nullptr;
 

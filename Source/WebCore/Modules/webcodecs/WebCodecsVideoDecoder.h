@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if ENABLE(WEB_CODECS)
 
 #include "EventTargetInterfaces.h"
+#include "ExceptionOr.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include "VideoDecoder.h"
 #include "WebCodecsBase.h"
@@ -81,8 +82,8 @@ private:
     ExceptionOr<void> resetDecoder(const Exception&);
     void setInternalDecoder(Ref<VideoDecoder>&&);
 
-    Ref<WebCodecsVideoFrameOutputCallback> m_output;
-    Ref<WebCodecsErrorCallback> m_error;
+    const Ref<WebCodecsVideoFrameOutputCallback> m_output;
+    const Ref<WebCodecsErrorCallback> m_error;
     RefPtr<VideoDecoder> m_internalDecoder;
     Vector<Ref<DeferredPromise>> m_pendingFlushPromises;
     bool m_isKeyChunkRequired { false };

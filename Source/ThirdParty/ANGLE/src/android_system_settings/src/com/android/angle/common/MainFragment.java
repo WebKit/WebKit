@@ -30,10 +30,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Process;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.MarginLayoutParams;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragment;
+import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreference;
 
@@ -46,7 +54,7 @@ import java.util.Map;
 
 import com.android.angle.R;
 
-public class MainFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener
+public class MainFragment extends PreferenceFragmentCompat implements OnSharedPreferenceChangeListener
 {
 
     private final String TAG = this.getClass().getSimpleName();
@@ -114,6 +122,20 @@ public class MainFragment extends PreferenceFragment implements OnSharedPreferen
                 listener);
 
         super.onPause();
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState)
+    {
+        super.onViewCreated(view, savedInstanceState);
+
+        ViewCompat.setOnApplyWindowInsetsListener(view, (v, windowInsets) -> {
+          Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+          MarginLayoutParams mlp = (MarginLayoutParams) v.getLayoutParams();
+          mlp.topMargin = insets.top;
+          v.setLayoutParams(mlp);
+          return WindowInsetsCompat.CONSUMED;
+        });
     }
 
     @Override

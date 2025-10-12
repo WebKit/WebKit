@@ -10,6 +10,11 @@
 
 #include "modules/rtp_rtcp/include/report_block_data.h"
 
+#include <cstdint>
+
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

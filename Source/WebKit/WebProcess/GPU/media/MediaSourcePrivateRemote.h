@@ -98,7 +98,6 @@ public:
         MessageReceiver(MediaSourcePrivateRemote&);
         void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
         void proxyWaitForTarget(const WebCore::SeekTarget&, CompletionHandler<void(WebCore::MediaTimePromise::Result&&)>&&);
-        void proxySeekToTime(const MediaTime&, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&&);
 
         RefPtr<WebCore::MediaSourcePrivateClient> client() const;
         ThreadSafeWeakPtr<MediaSourcePrivateRemote> m_parent;
@@ -114,9 +113,9 @@ private:
     bool isGPURunning() const { return !m_shutdown; }
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
-    Ref<MessageReceiver> m_receiver;
+    const Ref<MessageReceiver> m_receiver;
     RemoteMediaSourceIdentifier m_identifier;
-    CheckedRef<RemoteMediaPlayerMIMETypeCache> m_mimeTypeCache;
+    const CheckedRef<RemoteMediaPlayerMIMETypeCache> m_mimeTypeCache;
     ThreadSafeWeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
     std::atomic<bool> m_shutdown { false };
     std::atomic<WebCore::MediaPlayer::ReadyState> m_mediaPlayerReadyState { WebCore::MediaPlayer::ReadyState::HaveNothing };
@@ -126,7 +125,7 @@ private:
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 
-    Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
     uint64_t m_nextSourceBufferID { 0 };
 #endif

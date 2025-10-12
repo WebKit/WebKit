@@ -248,7 +248,7 @@ angle::Result Buffer::bufferDataImpl(Context *context,
     // Notify when storage changes.
     if (wholeBuffer)
     {
-        onContentsChange();
+        onContentsChange(context);
     }
     else
     {
@@ -278,10 +278,10 @@ angle::Result Buffer::bufferExternalDataImpl(Context *context,
     }
 
     ANGLE_TRY(setDataWithUsageFlags(context, target, clientBuffer, nullptr, size,
-                                    BufferUsage::InvalidEnum, flags, BufferStorage::Immutable));
+                                    BufferUsage::DynamicDraw, flags, BufferStorage::Immutable));
 
     mIndexRangeCache.clear();
-    mState.mUsage                = BufferUsage::InvalidEnum;
+    mState.mUsage                = BufferUsage::DynamicDraw;
     mState.mSize                 = size;
     mState.mImmutable            = GL_TRUE;
     mState.mStorageExtUsageFlags = flags;
@@ -307,7 +307,7 @@ angle::Result Buffer::bufferSubData(const Context *context,
                                      static_cast<unsigned int>(size));
 
     // Notify when data changes.
-    onContentsChange();
+    onContentsChange(context);
 
     return angle::Result::Continue;
 }
@@ -327,7 +327,7 @@ angle::Result Buffer::copyBufferSubData(const Context *context,
                                      static_cast<unsigned int>(size));
 
     // Notify when data changes.
-    onContentsChange();
+    onContentsChange(context);
 
     return angle::Result::Continue;
 }
@@ -415,12 +415,12 @@ angle::Result Buffer::unmap(const Context *context, GLboolean *result)
     return angle::Result::Continue;
 }
 
-void Buffer::onDataChanged()
+void Buffer::onDataChanged(const Context *context)
 {
     mIndexRangeCache.clear();
 
     // Notify when data changes.
-    onContentsChange();
+    onContentsChange(context);
 
     mImpl->onDataChanged();
 }
@@ -549,24 +549,20 @@ void Buffer::onStateChange(const Context *context, angle::SubjectMessage message
 
     // Apply the change directly on current context's current vertex array. All other vertex arrays
     // requires a buffer rebind in order to pick up the change.
-    context->onBufferChanged(message,
+    context->onBufferChanged(this, message,
                              mVertexArrayBufferBindingMaskAndContext.getBufferBindingMask(context));
 }
 
-void Buffer::onContentsChange()
+void Buffer::onContentsChange(const Context *context)
 {
     for (const ContentsObserver &contentsObserver : mContentsObservers)
     {
-        if (contentsObserver.bufferIndex != ContentsObserver::kBufferTextureIndex)
-        {
-            static_cast<VertexArray *>(contentsObserver.observer)
-                ->onBufferContentsChange(contentsObserver.bufferIndex);
-        }
-        else
-        {
-            static_cast<Texture *>(contentsObserver.observer)->onBufferContentsChange();
-        }
+        ASSERT(contentsObserver.bufferIndex == ContentsObserver::kBufferTextureIndex);
+        static_cast<Texture *>(contentsObserver.observer)->onBufferContentsChange();
     }
+
+    context->onBufferChanged(this, angle::SubjectMessage::ContentsChanged,
+                             mVertexArrayBufferBindingMaskAndContext.getBufferBindingMask(context));
 }
 
 void Buffer::applyImplFeedback(const gl::Context *context, const rx::BufferFeedback &feedback)

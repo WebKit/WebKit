@@ -1,8 +1,11 @@
-//@ skip
-
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error('bad value: ' + actual);
+}
+
+function shouldBeOneOf(actual, expectedArray) {
+    if (!expectedArray.some((value) => value === actual))
+        throw new Error('bad value: ' + actual + ' expected values: ' + expectedArray);
 }
 
 function shouldThrow(func, errorMessage) {
@@ -44,7 +47,7 @@ function shouldThrow(func, errorMessage) {
     shouldBe(dn.of("gregory"), "Gregorian Calendar");
     shouldBe(dn.of("ethioaa"), "Ethiopic Amete Alem Calendar");
     shouldBe(dn.of("japanese"), "Japanese Calendar");
-    shouldBe(dn.of("dangi"), "Dangi Calendar");
+    shouldBeOneOf(dn.of("dangi"), ["Dangi Calendar", "Korean Calendar"]);
     shouldBe(dn.of("chinese"), "Chinese Calendar");
 }
 {
@@ -54,7 +57,7 @@ function shouldThrow(func, errorMessage) {
     shouldBe(dn.of("gregory"), "公历");
     shouldBe(dn.of("ethioaa"), "埃塞俄比亚阿米特阿莱姆日历");
     shouldBe(dn.of("japanese"), "和历");
-    shouldBe(dn.of("dangi"), "檀纪历");
+    shouldBeOneOf(dn.of("dangi"), ["檀纪历", "韩国历"]);
     shouldBe(dn.of("chinese"), "农历");
 }
 {
@@ -64,7 +67,7 @@ function shouldThrow(func, errorMessage) {
     shouldBe(dn.of("month"), "月");
     shouldBe(dn.of("quarter"), "季度");
     shouldBe(dn.of("weekOfYear"), "周");
-    shouldBe(dn.of("weekday"), "工作日");
+    shouldBeOneOf(dn.of("weekday"), ["工作日", "星期"]);
     shouldBe(dn.of("dayPeriod"), "上午/下午");
     shouldBe(dn.of("day"), "日");
     shouldBe(dn.of("hour"), "小时");

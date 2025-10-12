@@ -36,6 +36,7 @@
 #include "JSHTMLElementWrapperFactory.h"
 #include "JSNodeCustom.h"
 #include "LocalDOMWindow.h"
+#include "NodeDocument.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/InternalFunction.h>
 #include <JavaScriptCore/JSWithScope.h>
@@ -69,7 +70,7 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
 
     RefPtr registry = document->activeCustomElementRegistry();
     if (!registry) {
-        RefPtr window = document->domWindow();
+        RefPtr window = document->window();
         if (!window)
             return throwVMTypeError(lexicalGlobalObject, scope, "new.target is not a valid custom element constructor"_s);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,7 +100,7 @@ private:
     
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
     ScriptExecutionContextIdentifier m_loaderContextIdentifier;
-    RefPtr<WorkerInspectorProxy> m_inspectorProxy;
+    const Ref<WorkerInspectorProxy> m_inspectorProxy;
     RefPtr<WorkerUserGestureForwarder> m_userGestureForwarder;
     Worker* m_workerObject;
     bool m_mayBeDestroyed { false };

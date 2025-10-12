@@ -69,7 +69,7 @@ static void testRestoreSessionStorage(RetainPtr<WKWebsiteDataStore> websiteDataS
 
     // Fetch the session storage data.
     __block RetainPtr<NSData> sessionStorageData;
-    [webView fetchDataOfTypes:_WKWebViewDataTypeSessionStorage completionHandler:^(NSData *data, NSError *error) {
+    [webView fetchDataOfTypes:WKWebViewDataTypeSessionStorage completionHandler:^(NSData *data, NSError *error) {
         EXPECT_NOT_NULL(data);
         EXPECT_NULL(error);
         sessionStorageData = data;
@@ -206,7 +206,7 @@ static void testRestoreSessionStorageThirdPartyIFrame(RetainPtr<WKWebsiteDataSto
 
     // Fetch the session storage data.
     __block RetainPtr<NSData> sessionStorageData;
-    [webView fetchDataOfTypes:_WKWebViewDataTypeSessionStorage completionHandler:^(NSData *data, NSError *error) {
+    [webView fetchDataOfTypes:WKWebViewDataTypeSessionStorage completionHandler:^(NSData *data, NSError *error) {
         EXPECT_NOT_NULL(data);
         EXPECT_NULL(error);
         sessionStorageData = data;

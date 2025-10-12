@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/data.h"
 #include "net/dcsctp/public/types.h"
 

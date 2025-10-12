@@ -39,6 +39,7 @@
 #include "FileSystemDirectoryEntry.h"
 #include "FileSystemFileEntry.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptWrappableInlines.h"
 #include "StringCallback.h"
 #include <wtf/FileSystem.h>
 

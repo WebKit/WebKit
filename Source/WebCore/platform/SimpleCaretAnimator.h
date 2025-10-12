@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CaretAnimator.h"
+#include <WebCore/CaretAnimator.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

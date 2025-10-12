@@ -31,6 +31,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/WeakPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 @interface _WKAPSConnectionDelegate : NSObject<APSConnectionDelegate> {
     WeakPtr<WebPushD::ApplePushServiceConnection> _connection;
@@ -70,7 +71,7 @@ namespace WebPushD {
 
 ApplePushServiceConnection::ApplePushServiceConnection(const String& incomingPushServiceName)
 {
-    m_connection = adoptNS([[APSConnection alloc] initWithEnvironmentName:APSEnvironmentProduction namedDelegatePort:incomingPushServiceName.createNSString().get() queue:dispatch_get_main_queue()]);
+    m_connection = adoptNS([[APSConnection alloc] initWithEnvironmentName:APSEnvironmentProduction namedDelegatePort:incomingPushServiceName.createNSString().get() queue:mainDispatchQueueSingleton()]);
     m_delegate = adoptNS([[_WKAPSConnectionDelegate alloc] initWithConnection:this]);
     [m_connection setDelegate:m_delegate.get()];
 }

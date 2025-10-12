@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: EventSource's response has a charset ("windows-1252") that is not UTF-8. The response will be decoded as UTF-8.
 
 PASS EventSource always UTF-8
 

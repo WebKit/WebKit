@@ -93,5 +93,30 @@ public:
 private:
 };
 
+class ReceiveSemaphoreReply {
+public:
+    using Arguments = std::tuple<IPC::Semaphore>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphoreReply; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    explicit ReceiveSemaphoreReply(const IPC::Semaphore& r0)
+        : m_r0(r0)
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        encoder << m_r0;
+    }
+
+private:
+    const IPC::Semaphore& m_r0;
+};
+
 } // namespace TestWithSemaphore
 } // namespace Messages

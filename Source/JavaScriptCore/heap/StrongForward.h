@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "HandleForward.h"
+#include <JavaScriptCore/HandleForward.h>
 
 namespace JSC {
 

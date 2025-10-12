@@ -27,12 +27,12 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "BoxExtents.h"
-#include "EventTrackingRegions.h"
-#include "ScrollTypes.h"
-#include "ScrollbarThemeComposite.h"
-#include "ScrollingCoordinator.h"
-#include "ScrollingStateScrollingNode.h"
+#include <WebCore/BoxExtents.h>
+#include <WebCore/EventTrackingRegions.h>
+#include <WebCore/ScrollTypes.h>
+#include <WebCore/ScrollbarThemeComposite.h>
+#include <WebCore/ScrollingCoordinator.h>
+#include <WebCore/ScrollingStateScrollingNode.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -152,6 +152,7 @@ private:
         MouseLocationState&&,
         ScrollbarHoverState&&,
         ScrollbarEnabledState&&,
+        std::optional<ScrollbarColor>&&,
         UserInterfaceLayoutDirection,
         ScrollbarWidth,
         bool useDarkAppearanceForScrollbars,

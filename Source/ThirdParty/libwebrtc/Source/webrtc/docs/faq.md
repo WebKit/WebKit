@@ -164,7 +164,7 @@ stem from the GIPS acquisition.
 
 ### What codecs are supported in WebRTC?
 
-The currently supported voice codecs are G.711, G.722, iLBC, and iSAC, and VP8
+The currently supported voice codecs are G.711, G.722, and Opus, while VP8
 is the supported video codec. The list of supported codecs may change in the
 future.
 

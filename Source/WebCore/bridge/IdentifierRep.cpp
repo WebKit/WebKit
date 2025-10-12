@@ -38,7 +38,7 @@ using namespace JSC;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IdentifierRep);
 
-typedef UncheckedKeyHashSet<IdentifierRep*> IdentifierSet;
+using IdentifierSet = HashSet<IdentifierRep*>;
 
 static IdentifierSet& identifierSet()
 {

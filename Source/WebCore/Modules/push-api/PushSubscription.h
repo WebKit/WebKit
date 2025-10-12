@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "EpochTimeStamp.h"
-#include "JSDOMPromiseDeferredForward.h"
-#include "PushEncryptionKeyName.h"
-#include "PushSubscriptionData.h"
-#include "PushSubscriptionJSON.h"
+#include <WebCore/EpochTimeStamp.h>
+#include <WebCore/JSDOMPromiseDeferredForward.h>
+#include <WebCore/PushEncryptionKeyName.h>
+#include <WebCore/PushSubscriptionData.h>
+#include <WebCore/PushSubscriptionJSON.h>
 
 #include <optional>
 #include <wtf/RefCounted.h>

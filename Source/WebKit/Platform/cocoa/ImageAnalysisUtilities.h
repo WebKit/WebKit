@@ -32,6 +32,7 @@
 #import <wtf/RetainPtr.h>
 
 OBJC_CLASS NSData;
+OBJC_CLASS NSError;
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 using CocoaImageAnalysis = VKCImageAnalysis;
@@ -94,8 +95,9 @@ void prepareImageAnalysisForOverlayView(PlatformImageAnalysisObject *);
 
 #if HAVE(VISION)
 void requestPayloadForQRCode(CGImageRef, CompletionHandler<void(NSString *)>&&);
+void recognizeText(CGImageRef, CompletionHandler<void(NSString *, NSError *)>&&);
 #endif
 
-}
+} // namespace WebKit
 
 #endif // ENABLE(IMAGE_ANALYSIS) || HAVE(VISION)

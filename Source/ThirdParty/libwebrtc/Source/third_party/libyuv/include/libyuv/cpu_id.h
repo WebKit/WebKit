@@ -23,49 +23,51 @@ static const int kCpuInitialized = 0x1;
 
 // These flags are only valid on Arm processors.
 static const int kCpuHasARM = 0x2;
-static const int kCpuHasNEON = 0x4;
-// Leave a gap to avoid setting kCpuHasX86.
-static const int kCpuHasNeonDotProd = 0x10;
-static const int kCpuHasNeonI8MM = 0x20;
-static const int kCpuHasSVE = 0x40;
-static const int kCpuHasSVE2 = 0x80;
-static const int kCpuHasSME = 0x100;
+static const int kCpuHasNEON = 0x100;
+static const int kCpuHasNeonDotProd = 0x200;
+static const int kCpuHasNeonI8MM = 0x400;
+static const int kCpuHasSVE = 0x800;
+static const int kCpuHasSVE2 = 0x1000;
+static const int kCpuHasSME = 0x2000;
+static const int kCpuHasSME2 = 0x4000;
+
+// These flags are only valid on RISCV processors.
+static const int kCpuHasRISCV = 0x4;
+static const int kCpuHasRVV = 0x100;
+static const int kCpuHasRVVZVFH = 0x200;
 
 // These flags are only valid on x86 processors.
 static const int kCpuHasX86 = 0x8;
-static const int kCpuHasSSE2 = 0x10;
-static const int kCpuHasSSSE3 = 0x20;
-static const int kCpuHasSSE41 = 0x40;
-static const int kCpuHasSSE42 = 0x80;
-static const int kCpuHasAVX = 0x100;
-static const int kCpuHasAVX2 = 0x200;
-static const int kCpuHasERMS = 0x400;
-static const int kCpuHasFMA3 = 0x800;
-static const int kCpuHasF16C = 0x1000;
-static const int kCpuHasAVX512BW = 0x2000;
-static const int kCpuHasAVX512VL = 0x4000;
-static const int kCpuHasAVX512VNNI = 0x8000;
-static const int kCpuHasAVX512VBMI = 0x10000;
-static const int kCpuHasAVX512VBMI2 = 0x20000;
-static const int kCpuHasAVX512VBITALG = 0x40000;
-static const int kCpuHasAVX10 = 0x80000;
-static const int kCpuHasAVXVNNI = 0x100000;
-static const int kCpuHasAVXVNNIINT8 = 0x200000;
-static const int kCpuHasAMXINT8 = 0x400000;
+static const int kCpuHasSSE2 = 0x100;
+static const int kCpuHasSSSE3 = 0x200;
+static const int kCpuHasSSE41 = 0x400;
+static const int kCpuHasSSE42 = 0x800;
+static const int kCpuHasAVX = 0x1000;
+static const int kCpuHasAVX2 = 0x2000;
+static const int kCpuHasERMS = 0x4000;
+static const int kCpuHasFSMR = 0x8000;
+static const int kCpuHasFMA3 = 0x10000;
+static const int kCpuHasF16C = 0x20000;
+static const int kCpuHasAVX512BW = 0x40000;
+static const int kCpuHasAVX512VL = 0x80000;
+static const int kCpuHasAVX512VNNI = 0x100000;
+static const int kCpuHasAVX512VBMI = 0x200000;
+static const int kCpuHasAVX512VBMI2 = 0x400000;
+static const int kCpuHasAVX512VBITALG = 0x800000;
+static const int kCpuHasAVX10 = 0x1000000;
+static const int kCpuHasAVX10_2 = 0x2000000;
+static const int kCpuHasAVXVNNI = 0x4000000;
+static const int kCpuHasAVXVNNIINT8 = 0x8000000;
+static const int kCpuHasAMXINT8 = 0x10000000;
 
 // These flags are only valid on MIPS processors.
-static const int kCpuHasMIPS = 0x800000;
-static const int kCpuHasMSA = 0x1000000;
+static const int kCpuHasMIPS = 0x10;
+static const int kCpuHasMSA = 0x100;
 
 // These flags are only valid on LOONGARCH processors.
-static const int kCpuHasLOONGARCH = 0x2000000;
-static const int kCpuHasLSX = 0x4000000;
-static const int kCpuHasLASX = 0x8000000;
-
-// These flags are only valid on RISCV processors.
-static const int kCpuHasRISCV = 0x10000000;
-static const int kCpuHasRVV = 0x20000000;
-static const int kCpuHasRVVZVFH = 0x40000000;
+static const int kCpuHasLOONGARCH = 0x20;
+static const int kCpuHasLSX = 0x100;
+static const int kCpuHasLASX = 0x200;
 
 // Optional init function. TestCpuFlag does an auto-init.
 // Returns cpu_info flags.

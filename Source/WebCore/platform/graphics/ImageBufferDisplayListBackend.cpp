@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,13 +33,13 @@ namespace WebCore {
 
 std::unique_ptr<ImageBufferDisplayListBackend> ImageBufferDisplayListBackend::create(const Parameters& parameters, const ImageBufferCreationContext&)
 {
-    return std::unique_ptr<ImageBufferDisplayListBackend>(new ImageBufferDisplayListBackend(parameters, ControlFactory::shared()));
+    return std::unique_ptr<ImageBufferDisplayListBackend>(new ImageBufferDisplayListBackend(parameters, ControlFactory::singleton()));
 }
 
 
-std::unique_ptr<ImageBufferDisplayListBackend> ImageBufferDisplayListBackend::create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat, RenderingPurpose purpose, ControlFactory& controlFactory)
+std::unique_ptr<ImageBufferDisplayListBackend> ImageBufferDisplayListBackend::create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingPurpose purpose, ControlFactory& controlFactory)
 {
-    Parameters parameters { ImageBuffer::calculateBackendSize(size, resolutionScale), resolutionScale, colorSpace, pixelFormat, purpose };
+    Parameters parameters { ImageBuffer::calculateBackendSize(size, resolutionScale), resolutionScale, colorSpace, { pixelFormat }, purpose };
     return std::unique_ptr<ImageBufferDisplayListBackend>(new ImageBufferDisplayListBackend(parameters, controlFactory));
 }
 
@@ -57,7 +57,7 @@ GraphicsContext& ImageBufferDisplayListBackend::context()
 
 RefPtr<NativeImage> ImageBufferDisplayListBackend::copyNativeImage()
 {
-    RefPtr buffer = ImageBuffer::create(size(), RenderingMode::Unaccelerated, RenderingPurpose::Snapshot, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
+    RefPtr buffer = ImageBuffer::create(size(), RenderingMode::Unaccelerated, RenderingPurpose::Snapshot, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!buffer)
         return nullptr;
 
@@ -69,7 +69,7 @@ RefPtr<NativeImage> ImageBufferDisplayListBackend::copyNativeImage()
 
 RefPtr<SharedBuffer> ImageBufferDisplayListBackend::sinkIntoPDFDocument()
 {
-    RefPtr buffer = ImageBuffer::create(size(), RenderingMode::PDFDocument, RenderingPurpose::Snapshot, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
+    RefPtr buffer = ImageBuffer::create(size(), RenderingMode::PDFDocument, RenderingPurpose::Snapshot, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!buffer)
         return nullptr;
 

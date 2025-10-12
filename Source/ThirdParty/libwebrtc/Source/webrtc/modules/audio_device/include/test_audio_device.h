@@ -10,18 +10,15 @@
 #ifndef MODULES_AUDIO_DEVICE_INCLUDE_TEST_AUDIO_DEVICE_H_
 #define MODULES_AUDIO_DEVICE_INCLUDE_TEST_AUDIO_DEVICE_H_
 
-#include <stddef.h>
-#include <stdint.h>
-
+#include <cstddef>
+#include <cstdint>
 #include <memory>
-#include <string>
 
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "api/audio/audio_device.h"
-#include "api/audio/audio_device_defines.h"
+#include "api/environment/environment.h"
 #include "api/scoped_refptr.h"
-#include "api/task_queue/task_queue_factory.h"
 #include "rtc_base/buffer.h"
 
 namespace webrtc {
@@ -49,7 +46,7 @@ class TestAudioDeviceModule {
     // Replaces the contents of `buffer` with 10ms of captured audio data
     // (see TestAudioDeviceModule::SamplesPerFrame). Returns true if the
     // capturer can keep producing data, or false when the capture finishes.
-    virtual bool Capture(rtc::BufferT<int16_t>* buffer) = 0;
+    virtual bool Capture(BufferT<int16_t>* buffer) = 0;
   };
 
   class Renderer {
@@ -62,7 +59,7 @@ class TestAudioDeviceModule {
     virtual int NumChannels() const = 0;
     // Renders the passed audio data and returns true if the renderer wants
     // to keep receiving data, or false otherwise.
-    virtual bool Render(rtc::ArrayView<const int16_t> data) = 0;
+    virtual bool Render(ArrayView<const int16_t> data) = 0;
   };
 
   // A fake capturer that generates pulses with random samples between
@@ -81,8 +78,8 @@ class TestAudioDeviceModule {
   // `renderer` is an object that receives audio data that would have been
   // played out. Can be nullptr if this device is never used for playing.
   // Use one of the Create... functions to get these instances.
-  static rtc::scoped_refptr<AudioDeviceModule> Create(
-      TaskQueueFactory* task_queue_factory,
+  static scoped_refptr<AudioDeviceModule> Create(
+      const Environment& env,
       std::unique_ptr<Capturer> capturer,
       std::unique_ptr<Renderer> renderer,
       float speed = 1);

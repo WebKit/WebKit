@@ -25,19 +25,19 @@
 
 #pragma once
 
-#include "ActiveDOMObject.h"
-#include "AnimationFrameRate.h"
-#include "AnimationFrameRatePreset.h"
-#include "CSSKeywordValue.h"
-#include "CSSNumericValue.h"
-#include "ContextDestructionObserverInlines.h"
-#include "EventTarget.h"
-#include "EventTargetInterfaces.h"
-#include "ExceptionOr.h"
-#include "IDLTypes.h"
-#include "Styleable.h"
-#include "TimelineRange.h"
-#include "WebAnimationTypes.h"
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/AnimationFrameRate.h>
+#include <WebCore/AnimationFrameRatePreset.h>
+#include <WebCore/CSSKeywordValue.h>
+#include <WebCore/CSSNumericValue.h>
+#include <WebCore/EventTarget.h>
+#include <WebCore/EventTargetInterfaces.h>
+#include <WebCore/ExceptionOr.h>
+#include <WebCore/IDLTypes.h>
+#include <WebCore/StyleSingleAnimationRange.h>
+#include <WebCore/Styleable.h>
+#include <WebCore/TimelineRangeValue.h>
+#include <WebCore/WebAnimationTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
 #include <wtf/RefCounted.h>
@@ -69,7 +69,7 @@ public:
     static Ref<WebAnimation> create(Document&, AnimationEffect*, AnimationTimeline*);
     ~WebAnimation();
 
-    WEBCORE_EXPORT static UncheckedKeyHashSet<WebAnimation*>& instances();
+    WEBCORE_EXPORT static HashSet<WebAnimation*>& instances();
 
     virtual bool isStyleOriginatedAnimation() const { return false; }
     virtual bool isCSSAnimation() const { return false; }
@@ -90,7 +90,7 @@ public:
     AnimationTimeline* timeline() const { return m_timeline.get(); }
     virtual void setTimeline(RefPtr<AnimationTimeline>&&);
 
-    std::optional<WebAnimationTime> currentTime() const;
+    std::optional<WebAnimationTime> currentTime(UseCachedCurrentTime = UseCachedCurrentTime::Yes) const;
     ExceptionOr<void> setCurrentTime(std::optional<WebAnimationTime>);
 
     double playbackRate() const { return m_playbackRate + 0; }
@@ -144,18 +144,18 @@ public:
     virtual void setBindingsFrameRate(Variant<FramesPerSecond, AnimationFrameRatePreset>&&);
     std::optional<FramesPerSecond> frameRate() const { return m_effectiveFrameRate; }
 
-    TimelineRangeValue bindingsRangeStart() const { return m_timelineRange.start.serialize(); }
-    TimelineRangeValue bindingsRangeEnd() const { return m_timelineRange.end.serialize(); }
+    TimelineRangeValue bindingsRangeStart() const { return m_timelineRange.start.toTimelineRangeValue(); }
+    TimelineRangeValue bindingsRangeEnd() const { return m_timelineRange.end.toTimelineRangeValue(); }
     virtual void setBindingsRangeStart(TimelineRangeValue&&);
     virtual void setBindingsRangeEnd(TimelineRangeValue&&);
-    void setRangeStart(SingleTimelineRange);
-    void setRangeEnd(SingleTimelineRange);
-    const TimelineRange& range();
+    void setRangeStart(Style::SingleAnimationRangeStart&&);
+    void setRangeEnd(Style::SingleAnimationRangeEnd&&);
+    const Style::SingleAnimationRange& range();
 
     bool needsTick() const;
     virtual void tick();
     WEBCORE_EXPORT Seconds timeToNextTick() const;
-    virtual OptionSet<AnimationImpact> resolve(RenderStyle& targetStyle, const Style::ResolutionContext&);
+    virtual OptionSet<AnimationImpact> resolve(RenderStyle& targetStyle, const Style::ResolutionContext&, EndpointInclusiveActiveInterval = EndpointInclusiveActiveInterval::No);
     void effectTargetDidChange(const std::optional<const Styleable>& previousTarget, const std::optional<const Styleable>& newTarget);
     void acceleratedStateDidChange();
     void willChangeRenderer();
@@ -182,7 +182,8 @@ public:
     void progressBasedTimelineSourceDidChangeMetrics();
 
     // ContextDestructionObserver.
-    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final;
+    using ActiveDOMObject::protectedScriptExecutionContext;
     void contextDestroyed() final;
 
 protected:
@@ -205,7 +206,7 @@ private:
     WebAnimationTime effectEndTime() const;
     WebAnimation& readyPromiseResolve();
     WebAnimation& finishedPromiseResolve();
-    std::optional<WebAnimationTime> currentTime(RespectHoldTime) const;
+    std::optional<WebAnimationTime> currentTime(RespectHoldTime, UseCachedCurrentTime = UseCachedCurrentTime::Yes) const;
     ExceptionOr<void> silentlySetCurrentTime(std::optional<WebAnimationTime>);
     void finishNotificationSteps();
     bool hasPendingPauseTask() const { return m_timeToRunPendingPauseTask != TimeToRunPendingTask::NotScheduled; }
@@ -246,7 +247,7 @@ private:
     std::optional<WebAnimationTime> m_startTime;
     std::optional<WebAnimationTime> m_pendingStartTime;
     std::optional<WebAnimationTime> m_holdTime;
-    MarkableDouble m_pendingPlaybackRate;
+    Markable<double> m_pendingPlaybackRate;
     double m_playbackRate { 1 };
     Variant<FramesPerSecond, AnimationFrameRatePreset> m_bindingsFrameRate { AnimationFrameRatePreset::Auto };
     std::optional<FramesPerSecond> m_effectiveFrameRate;
@@ -264,7 +265,7 @@ private:
     TimeToRunPendingTask m_timeToRunPendingPauseTask { TimeToRunPendingTask::NotScheduled };
     ReplaceState m_replaceState { ReplaceState::Active };
     uint64_t m_globalPosition { 0 };
-    TimelineRange m_timelineRange;
+    Style::SingleAnimationRange m_timelineRange;
 };
 
 } // namespace WebCore

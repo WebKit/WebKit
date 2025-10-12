@@ -56,7 +56,7 @@ protected:
 
 private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    bool isPresentationMathML() const final { return true; }
+    bool isPresentationMathML() const override { return true; }
 
     static Length parseNumberAndUnit(StringView, bool acceptLegacyMathMLLengths);
     static Length parseNamedSpace(StringView);

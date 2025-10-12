@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CSSNumericBaseType.h"
+#include <WebCore/CSSNumericBaseType.h>
 #include <optional>
 #include <wtf/Markable.h>
 
@@ -45,7 +45,7 @@ public:
     BaseTypeStorage resolution;
     BaseTypeStorage flex;
     BaseTypeStorage percent;
-    Markable<CSSNumericBaseType, EnumMarkableTraits<CSSNumericBaseType>> percentHint;
+    Markable<CSSNumericBaseType> percentHint;
 
     static std::optional<CSSNumericType> create(CSSUnitType, int exponent = 1);
     friend bool operator==(const CSSNumericType&, const CSSNumericType&) = default;

@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_HISTOGRAM_H_
 #define MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_HISTOGRAM_H_
 
+#include <cstddef>
+
 #include "modules/audio_coding/neteq/histogram.h"
 #include "test/gmock.h"
 

@@ -14,14 +14,29 @@
 #include <spa/param/video/format-utils.h>
 #include <spa/pod/builder.h>
 #include <spa/utils/result.h>
+#include <sys/mman.h>
 
+#include <algorithm>
+#include <cerrno>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+#include <new>
 #include <vector>
 
+#include "api/sequence_checker.h"
+#include "api/video/video_rotation.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "modules/portal/pipewire_utils.h"
+#include "modules/video_capture/linux/pipewire_session.h"
+#include "modules/video_capture/video_capture_defines.h"
+#include "modules/video_capture/video_capture_impl.h"
+#include "modules/video_capture/video_capture_options.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/race_checker.h"
 #include "rtc_base/sanitizer.h"
-#include "rtc_base/string_to_number.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 namespace videocapturemodule {

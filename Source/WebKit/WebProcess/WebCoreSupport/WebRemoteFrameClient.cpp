@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +27,18 @@
 #include "WebRemoteFrameClient.h"
 
 #include "MessageSenderInlines.h"
+#include "RemoteDisplayListRecorderProxy.h"
+#include "WebFrameProxyMessages.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include <WebCore/FocusControllerTypes.h>
+#include <WebCore/FrameInlines.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameTree.h>
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/HitTestResult.h>
+#include <WebCore/NodeDocument.h>
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/RemoteFrame.h>
 
@@ -53,16 +60,29 @@ void WebRemoteFrameClient::frameDetached()
         return;
     }
 
+    RefPtr ownerElement = coreFrame->ownerElement();
+
     if (RefPtr parent = coreFrame->tree().parent()) {
         coreFrame->tree().detachFromParent();
         parent->tree().removeChild(*coreFrame);
     }
     m_frame->invalidate();
+
+    if (ownerElement)
+        ownerElement->protectedDocument()->checkCompleted();
 }
 
 void WebRemoteFrameClient::sizeDidChange(IntSize size)
 {
     m_frame->updateRemoteFrameSize(size);
+}
+
+void WebRemoteFrameClient::paintContents(GraphicsContext& context, const IntRect& rect)
+{
+    RefPtr page = m_frame->page();
+    if (!page)
+        return;
+    page->paintRemoteFrameContents(m_frame->frameID(), rect, context);
 }
 
 void WebRemoteFrameClient::postMessageToRemote(FrameIdentifier source, const String& sourceOrigin, FrameIdentifier target, std::optional<SecurityOriginData> targetOrigin, const MessageWithMessagePorts& message)
@@ -73,8 +93,7 @@ void WebRemoteFrameClient::postMessageToRemote(FrameIdentifier source, const Str
 
 void WebRemoteFrameClient::changeLocation(FrameLoadRequest&& request)
 {
-    // FIXME: FrameLoadRequest and NavigationAction can probably be refactored to share more. <rdar://116202911>
-    NavigationAction action(request.requester(), request.resourceRequest(), request.initiatedByMainFrame(), request.isRequestFromClientOrUserInput());
+    NavigationAction action(request);
     // FIXME: action.request and request are probably duplicate information. <rdar://116203126>
     // FIXME: Get more parameters correct and add tests for each one. <rdar://116203354>
     dispatchDecidePolicyForNavigationAction(action, action.originalRequest(), ResourceResponse(), nullptr, { }, { }, { }, { }, IsPerformingHTTPFallback::No, { }, PolicyDecisionMode::Asynchronous, [protectedFrame = Ref { m_frame }, request = WTFMove(request)] (PolicyAction policyAction) mutable {
@@ -88,7 +107,7 @@ String WebRemoteFrameClient::renderTreeAsText(size_t baseIndent, OptionSet<Rende
     RefPtr page = m_frame->page();
     if (!page)
         return "Test Error - Missing page"_s;
-    auto sendResult = page->sendSync(Messages::WebPageProxy::RenderTreeAsTextForTesting(m_frame->frameID(), baseIndent, behavior));
+    auto sendResult = page->sendSync(Messages::WebPageProxy::RenderTreeAsTextForTesting(m_frame->frameID(), baseIndent, behavior), IPC::Timeout::infinity(), IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
     if (!sendResult.succeeded())
         return "Test Error - sending WebPageProxy::RenderTreeAsTextForTesting failed"_s;
     auto [result] = sendResult.takeReply();
@@ -150,25 +169,25 @@ void WebRemoteFrameClient::bindRemoteAccessibilityFrames(int processIdentifier, 
 
 void WebRemoteFrameClient::closePage()
 {
-    if (auto* page = m_frame->page())
+    if (RefPtr page = m_frame->page())
         page->sendClose();
 }
 
 void WebRemoteFrameClient::focus()
 {
-    if (auto* page = m_frame->page())
+    if (RefPtr page = m_frame->page())
         page->send(Messages::WebPageProxy::FocusRemoteFrame(m_frame->frameID()));
 }
 
 void WebRemoteFrameClient::unfocus()
 {
-    if (auto* page = m_frame->page())
+    if (RefPtr page = m_frame->page())
         page->send(Messages::WebPageProxy::SetFocus(false));
 }
 
 void WebRemoteFrameClient::documentURLForConsoleLog(CompletionHandler<void(const URL&)>&& completionHandler)
 {
-    if (auto* page = m_frame->page())
+    if (RefPtr page = m_frame->page())
         page->sendWithAsyncReply(Messages::WebPageProxy::DocumentURLForConsoleLog(m_frame->frameID()), WTFMove(completionHandler));
     else
         completionHandler({ });
@@ -190,6 +209,11 @@ void WebRemoteFrameClient::updateOpener(const WebCore::Frame& newOpener)
     WebFrameLoaderClient::updateOpener(newOpener);
 }
 
+void WebRemoteFrameClient::setPrinting(bool printing, FloatSize pageSize, FloatSize originalPageSize, float maximumShrinkRatio, AdjustViewSize adjustViewSize)
+{
+    WebFrameLoaderClient::setPrinting(printing, pageSize, originalPageSize, maximumShrinkRatio, adjustViewSize);
+}
+
 void WebRemoteFrameClient::applyWebsitePolicies(WebsitePoliciesData&& websitePolicies)
 {
     RefPtr coreFrame = m_frame->coreRemoteFrame();
@@ -207,8 +231,19 @@ void WebRemoteFrameClient::applyWebsitePolicies(WebsitePoliciesData&& websitePol
 
 void WebRemoteFrameClient::updateScrollingMode(ScrollbarMode scrollingMode)
 {
-    if (auto* page = m_frame->page())
+    if (RefPtr page = m_frame->page())
         page->send(Messages::WebPageProxy::UpdateScrollingMode(m_frame->frameID(), scrollingMode));
+}
+
+void WebRemoteFrameClient::reportMixedContentViolation(bool blocked, const URL& target)
+{
+    if (RefPtr page = m_frame->page())
+        page->send(Messages::WebPageProxy::ReportMixedContentViolation(m_frame->frameID(), blocked, target));
+}
+
+void WebRemoteFrameClient::findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection direction, const WebCore::FocusEventData& focusEventData, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&& completionHandler)
+{
+    m_frame->sendWithAsyncReply(Messages::WebFrameProxy::FindFocusableElementDescendingIntoRemoteFrame(direction, focusEventData), WTFMove(completionHandler));
 }
 
 }

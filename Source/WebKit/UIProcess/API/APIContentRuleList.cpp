@@ -78,9 +78,9 @@ bool ContentRuleList::supportsRegularExpression(const WTF::String& regex)
     return false;
 }
 
-std::error_code ContentRuleList::parseRuleList(const WTF::String& ruleList)
+std::error_code ContentRuleList::parseRuleList(const WTF::String& ruleList, WebCore::ContentExtensions::CSSSelectorsAllowed cssSelectorsAllowed)
 {
-    auto result = WebCore::ContentExtensions::parseRuleList(ruleList);
+    auto result = WebCore::ContentExtensions::parseRuleList(ruleList, cssSelectorsAllowed);
     if (result.has_value())
         return { };
 

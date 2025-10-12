@@ -233,9 +233,8 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeToHex, (JSGlobalObject* globalObject
         return { };
     }
 
-    std::span<LChar> buffer;
+    std::span<Latin1Character> buffer;
     auto result = StringImpl::createUninitialized(length * 2, buffer);
-    LChar* bufferEnd = std::to_address(buffer.end());
     constexpr size_t stride = 8; // Because loading uint8x8_t.
     if (length >= stride) {
         auto encodeVector = [&](auto input) {
@@ -261,11 +260,10 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeToHex, (JSGlobalObject* globalObject
         };
 
         const auto* cursor = data;
-        auto* output = buffer.data();
-        for (; cursor + stride <= end; cursor += stride, output += stride * 2)
+        for (auto* output = byteCast<uint8_t>(buffer.data()); cursor + stride <= end; cursor += stride, output += stride * 2)
             simde_vst1q_u8(output, encodeVector(simde_vld1_u8(cursor)));
         if (cursor < end)
-            simde_vst1q_u8(bufferEnd - stride * 2, encodeVector(simde_vld1_u8(end - stride)));
+            simde_vst1q_u8(byteCast<uint8_t>(std::to_address(buffer.end())) - stride * 2, encodeVector(simde_vld1_u8(end - stride)));
     } else {
         const auto* cursor = data;
         auto* output = buffer.data();

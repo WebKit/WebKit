@@ -93,9 +93,10 @@ RefPtr<SWServer> SWServerWorker::protectedServer() const
 
 ServiceWorkerContextData SWServerWorker::contextData() const
 {
-    ASSERT(m_registration);
+    RefPtr registration = m_registration.get();
+    ASSERT(registration);
 
-    return { std::nullopt, m_registration->data(), m_data.identifier, m_script, m_certificateInfo, m_contentSecurityPolicy, m_crossOriginEmbedderPolicy, m_referrerPolicy, m_data.scriptURL, m_data.type, false, m_lastNavigationWasAppInitiated, m_scriptResourceMap, m_registration->serviceWorkerPageIdentifier(), m_registration->navigationPreloadState() };
+    return { std::nullopt, registration->data(), m_data.identifier, m_script, m_certificateInfo, m_contentSecurityPolicy, m_crossOriginEmbedderPolicy, m_referrerPolicy, m_data.scriptURL, m_data.type, false, m_lastNavigationWasAppInitiated, m_scriptResourceMap, registration->serviceWorkerPageIdentifier(), registration->navigationPreloadState() };
 }
 
 void SWServerWorker::updateAppInitiatedValue(LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
@@ -303,8 +304,8 @@ void SWServerWorker::skipWaiting()
     m_isSkipWaitingFlagSet = true;
 
     ASSERT(m_registration || isTerminating());
-    if (m_registration)
-        m_registration->tryActivate();
+    if (RefPtr registration = m_registration.get())
+        registration->tryActivate();
 }
 
 void SWServerWorker::setHasPendingEvents(bool hasPendingEvents)
@@ -349,11 +350,20 @@ void SWServerWorker::setState(ServiceWorkerState state)
 
     m_data.state = state;
 
+    HashSet<SWServerConnectionIdentifier> connectionIdentifiers;
+
     ASSERT(m_registration || state == ServiceWorkerState::Redundant);
     if (RefPtr registration = m_registration.get()) {
         registration->forEachConnection([&](auto& connection) {
-            connection.updateWorkerStateInClient(this->identifier(), state);
+            connectionIdentifiers.add(connection.identifier());
         });
+    }
+    for (auto connectionIdentifierWithServiceWorker : m_connectionsWithServiceWorker.values())
+        connectionIdentifiers.add(connectionIdentifierWithServiceWorker);
+
+    for (auto connectionIdentifier : connectionIdentifiers) {
+        if (RefPtr connection = protectedServer()->connection(connectionIdentifier))
+            connection->updateWorkerStateInClient(this->identifier(), state);
     }
 
     if (state == ServiceWorkerState::Activated || state == ServiceWorkerState::Redundant)
@@ -476,6 +486,16 @@ bool SWServerWorker::matchingImportedScripts(const Vector<std::pair<URL, ScriptB
             return false;
     }
     return true;
+}
+
+void SWServerWorker::registerServiceWorkerConnection(SWServerConnectionIdentifier connectionIdentifier)
+{
+    m_connectionsWithServiceWorker.add(connectionIdentifier);
+}
+
+void SWServerWorker::unregisterServiceWorkerConnection(SWServerConnectionIdentifier connectionIdentifier)
+{
+    m_connectionsWithServiceWorker.remove(connectionIdentifier);
 }
 
 std::optional<ExceptionData> SWServerWorker::addRoutes(Vector<ServiceWorkerRoute>&& routes)

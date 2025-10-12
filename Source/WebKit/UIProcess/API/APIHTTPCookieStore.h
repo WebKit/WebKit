@@ -85,6 +85,8 @@ public:
 
     void filterAppBoundCookies(Vector<WebCore::Cookie>&&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
 
+    bool isOptInCookiePartitioningEnabled() const;
+
 #if USE(SOUP)
     void replaceCookies(Vector<WebCore::Cookie>&&, CompletionHandler<void()>&&);
     void getAllCookies(CompletionHandler<void(const Vector<WebCore::Cookie>&)>&&);

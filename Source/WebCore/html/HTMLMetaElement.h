@@ -22,9 +22,9 @@
 
 #pragma once
 
-#include "Color.h"
-#include "HTMLElement.h"
-#include "MediaQuery.h"
+#include <WebCore/Color.h>
+#include <WebCore/HTMLElement.h>
+#include <WebCore/MediaQuery.h>
 
 namespace WebCore {
 

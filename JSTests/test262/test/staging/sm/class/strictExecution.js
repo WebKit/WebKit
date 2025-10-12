@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -13,9 +10,9 @@ esid: pending
 // expressions as well.
 
 class a { constructor() { Object.preventExtensions({}).prop = 0; } }
-assertThrowsInstanceOf(() => new a(), TypeError);
+assert.throws(TypeError, () => new a());
 var aExpr = class { constructor() { Object.preventExtensions().prop = 0; } };
-assertThrowsInstanceOf(() => new aExpr(), TypeError);
+assert.throws(TypeError, () => new aExpr());
 
 function shouldThrowCPN() {
     class b {
@@ -29,8 +26,8 @@ function shouldThrowCPNExpr() {
         constructor() { }
     };
 }
-assertThrowsInstanceOf(shouldThrowCPN, TypeError);
-assertThrowsInstanceOf(shouldThrowCPNExpr, TypeError);
+assert.throws(TypeError, shouldThrowCPN);
+assert.throws(TypeError, shouldThrowCPNExpr);
 
 function shouldThrowHeritage() {
     class b extends (Object.preventExtensions({}).prop = 4) {
@@ -42,6 +39,6 @@ function shouldThrowHeritageExpr() {
         constructor() { }
     };
 }
-assertThrowsInstanceOf(shouldThrowHeritage, TypeError);
-assertThrowsInstanceOf(shouldThrowHeritageExpr, TypeError);
+assert.throws(TypeError, shouldThrowHeritage);
+assert.throws(TypeError, shouldThrowHeritageExpr);
 

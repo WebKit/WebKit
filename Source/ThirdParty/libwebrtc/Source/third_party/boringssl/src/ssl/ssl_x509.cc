@@ -1,142 +1,18 @@
-/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
- * All rights reserved.
- *
- * This package is an SSL implementation written
- * by Eric Young (eay@cryptsoft.com).
- * The implementation was written so as to conform with Netscapes SSL.
- *
- * This library is free for commercial and non-commercial use as long as
- * the following conditions are aheared to.  The following conditions
- * apply to all code found in this distribution, be it the RC4, RSA,
- * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
- * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- *
- * Copyright remains Eric Young's, and as such any Copyright notices in
- * the code are not to be removed.
- * If this package is used in a product, Eric Young should be given attribution
- * as the author of the parts of the library used.
- * This can be in the form of a textual message at program startup or
- * in documentation (online or textual) provided with the package.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *    "This product includes cryptographic software written by
- *     Eric Young (eay@cryptsoft.com)"
- *    The word 'cryptographic' can be left out if the rouines from the library
- *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from
- *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- *
- * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * The licence and distribution terms for any publically available version or
- * derivative of this code cannot be changed.  i.e. this code cannot simply be
- * copied and put under another distribution licence
- * [including the GNU Public Licence.]
- */
-/* ====================================================================
- * Copyright (c) 1998-2007 The OpenSSL Project.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
- *
- * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission. For written permission, please contact
- *    openssl-core@openssl.org.
- *
- * 5. Products derived from this software may not be called "OpenSSL"
- *    nor may "OpenSSL" appear in their names without prior written
- *    permission of the OpenSSL Project.
- *
- * 6. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit (http://www.openssl.org/)"
- *
- * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
- *
- * This product includes cryptographic software written by Eric Young
- * (eay@cryptsoft.com).  This product includes software written by Tim
- * Hudson (tjh@cryptsoft.com).
- *
- */
-/* ====================================================================
- * Copyright 2002 Sun Microsystems, Inc. ALL RIGHTS RESERVED.
- * ECC cipher suite support in OpenSSL originally developed by
- * SUN MICROSYSTEMS, INC., and contributed to the OpenSSL project.
- */
-/* ====================================================================
- * Copyright 2005 Nokia. All rights reserved.
- *
- * The portions of the attached software ("Contribution") is developed by
- * Nokia Corporation and is licensed pursuant to the OpenSSL open source
- * license.
- *
- * The Contribution, originally written by Mika Kousa and Pasi Eronen of
- * Nokia Corporation, consists of the "PSK" (Pre-Shared Key) ciphersuites
- * support (see RFC 4279) to OpenSSL.
- *
- * No patent licenses or other rights except those expressly stated in
- * the OpenSSL open source license shall be deemed granted or received
- * expressly, by implication, estoppel, or otherwise.
- *
- * No assurances are provided by Nokia that the Contribution does not
- * infringe the patent or other intellectual property rights of any third
- * party or that the license provides you with all the necessary rights
- * to make use of the Contribution.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND. IN
- * ADDITION TO THE DISCLAIMERS INCLUDED IN THE LICENSE, NOKIA
- * SPECIFICALLY DISCLAIMS ANY LIABILITY FOR CLAIMS BROUGHT BY YOU OR ANY
- * OTHER ENTITY BASED ON INFRINGEMENT OF INTELLECTUAL PROPERTY RIGHTS OR
- * OTHERWISE. */
+// Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved.
+// Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved.
+// Copyright 2005 Nokia. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <openssl/ssl.h>
 
@@ -149,8 +25,8 @@
 #include <openssl/stack.h>
 #include <openssl/x509.h>
 
-#include "internal.h"
 #include "../crypto/internal.h"
+#include "internal.h"
 
 
 BSSL_NAMESPACE_BEGIN
@@ -342,20 +218,21 @@ static bool ssl_crypto_x509_session_verify_cert_chain(SSL_SESSION *session,
   size_t name_len;
   SSL_get0_ech_name_override(ssl, &name, &name_len);
   UniquePtr<X509_STORE_CTX> ctx(X509_STORE_CTX_new());
-  if (!ctx ||
-      !X509_STORE_CTX_init(ctx.get(), verify_store, leaf, cert_chain) ||
-      !X509_STORE_CTX_set_ex_data(ctx.get(),
-                                  SSL_get_ex_data_X509_STORE_CTX_idx(), ssl) ||
+  if (!ctx ||                                                             //
+      !X509_STORE_CTX_init(ctx.get(), verify_store, leaf, cert_chain) ||  //
+      !X509_STORE_CTX_set_ex_data(
+          ctx.get(), SSL_get_ex_data_X509_STORE_CTX_idx(), ssl) ||  //
       // We need to inherit the verify parameters. These can be determined by
       // the context: if its a server it will verify SSL client certificates or
       // vice versa.
-      !X509_STORE_CTX_set_default(ctx.get(),
-                                  ssl->server ? "ssl_client" : "ssl_server") ||
+      !X509_STORE_CTX_set_default(
+          ctx.get(),
+          ssl->server ? "ssl_client" : "ssl_server") ||  //
       // Anything non-default in "param" should overwrite anything in the ctx.
       !X509_VERIFY_PARAM_set1(X509_STORE_CTX_get0_param(ctx.get()),
-                              hs->config->param) ||
+                              hs->config->param) ||  //
       // ClientHelloOuter connections use a different name.
-      (name_len != 0 &&
+      (name_len != 0 &&  //
        !X509_VERIFY_PARAM_set1_host(X509_STORE_CTX_get0_param(ctx.get()), name,
                                     name_len))) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_X509_LIB);
@@ -467,24 +344,24 @@ static void ssl_crypto_x509_ssl_ctx_free(SSL_CTX *ctx) {
 }
 
 const SSL_X509_METHOD ssl_crypto_x509_method = {
-  ssl_crypto_x509_check_client_CA_list,
-  ssl_crypto_x509_cert_clear,
-  ssl_crypto_x509_cert_free,
-  ssl_crypto_x509_cert_dup,
-  ssl_crypto_x509_cert_flush_cached_chain,
-  ssl_crypto_x509_cert_flush_cached_leaf,
-  ssl_crypto_x509_session_cache_objects,
-  ssl_crypto_x509_session_dup,
-  ssl_crypto_x509_session_clear,
-  ssl_crypto_x509_session_verify_cert_chain,
-  ssl_crypto_x509_hs_flush_cached_ca_names,
-  ssl_crypto_x509_ssl_new,
-  ssl_crypto_x509_ssl_config_free,
-  ssl_crypto_x509_ssl_flush_cached_client_CA,
-  ssl_crypto_x509_ssl_auto_chain_if_needed,
-  ssl_crypto_x509_ssl_ctx_new,
-  ssl_crypto_x509_ssl_ctx_free,
-  ssl_crypto_x509_ssl_ctx_flush_cached_client_CA,
+    ssl_crypto_x509_check_client_CA_list,
+    ssl_crypto_x509_cert_clear,
+    ssl_crypto_x509_cert_free,
+    ssl_crypto_x509_cert_dup,
+    ssl_crypto_x509_cert_flush_cached_chain,
+    ssl_crypto_x509_cert_flush_cached_leaf,
+    ssl_crypto_x509_session_cache_objects,
+    ssl_crypto_x509_session_dup,
+    ssl_crypto_x509_session_clear,
+    ssl_crypto_x509_session_verify_cert_chain,
+    ssl_crypto_x509_hs_flush_cached_ca_names,
+    ssl_crypto_x509_ssl_new,
+    ssl_crypto_x509_ssl_config_free,
+    ssl_crypto_x509_ssl_flush_cached_client_CA,
+    ssl_crypto_x509_ssl_auto_chain_if_needed,
+    ssl_crypto_x509_ssl_ctx_new,
+    ssl_crypto_x509_ssl_ctx_free,
+    ssl_crypto_x509_ssl_ctx_flush_cached_client_CA,
 };
 
 BSSL_NAMESPACE_END
@@ -636,10 +513,8 @@ void SSL_set_verify_depth(SSL *ssl, int depth) {
   X509_VERIFY_PARAM_set_depth(ssl->config->param, depth);
 }
 
-void SSL_CTX_set_cert_verify_callback(SSL_CTX *ctx,
-                                      int (*cb)(X509_STORE_CTX *store_ctx,
-                                                void *arg),
-                                      void *arg) {
+void SSL_CTX_set_cert_verify_callback(
+    SSL_CTX *ctx, int (*cb)(X509_STORE_CTX *store_ctx, void *arg), void *arg) {
   check_ssl_ctx_x509_method(ctx);
   ctx->app_verify_callback = cb;
   ctx->app_verify_arg = arg;
@@ -735,7 +610,7 @@ static int ssl_cert_cache_leaf_cert(CERT *cert) {
 }
 
 static X509 *ssl_cert_get0_leaf(CERT *cert) {
-  if (cert->x509_leaf == NULL &&
+  if (cert->x509_leaf == NULL &&  //
       !ssl_cert_cache_leaf_cert(cert)) {
     return NULL;
   }
@@ -754,7 +629,7 @@ X509 *SSL_get_certificate(const SSL *ssl) {
 
 X509 *SSL_CTX_get0_certificate(const SSL_CTX *ctx) {
   check_ssl_ctx_x509_method(ctx);
-  MutexWriteLock lock(const_cast<CRYPTO_MUTEX*>(&ctx->lock));
+  MutexWriteLock lock(const_cast<CRYPTO_MUTEX *>(&ctx->lock));
   return ssl_cert_get0_leaf(ctx->cert.get());
 }
 
@@ -880,7 +755,7 @@ static int ssl_cert_cache_chain_certs(CERT *cert) {
   for (size_t i = 1; i < sk_CRYPTO_BUFFER_num(cred->chain.get()); i++) {
     CRYPTO_BUFFER *buffer = sk_CRYPTO_BUFFER_value(cred->chain.get(), i);
     UniquePtr<X509> x509(X509_parse_from_buffer(buffer));
-    if (!x509 ||
+    if (!x509 ||  //
         !PushToStack(chain.get(), std::move(x509))) {
       return 0;
     }
@@ -892,7 +767,7 @@ static int ssl_cert_cache_chain_certs(CERT *cert) {
 
 int SSL_CTX_get0_chain_certs(const SSL_CTX *ctx, STACK_OF(X509) **out_chain) {
   check_ssl_ctx_x509_method(ctx);
-  MutexWriteLock lock(const_cast<CRYPTO_MUTEX*>(&ctx->lock));
+  MutexWriteLock lock(const_cast<CRYPTO_MUTEX *>(&ctx->lock));
   if (!ssl_cert_cache_chain_certs(ctx->cert.get())) {
     *out_chain = NULL;
     return 0;
@@ -993,8 +868,7 @@ static void set_client_CA_list(UniquePtr<STACK_OF(CRYPTO_BUFFER)> *ca_list,
 
     UniquePtr<CRYPTO_BUFFER> buffer(CRYPTO_BUFFER_new(outp, len, pool));
     OPENSSL_free(outp);
-    if (!buffer ||
-        !PushToStack(buffers.get(), std::move(buffer))) {
+    if (!buffer || !PushToStack(buffers.get(), std::move(buffer))) {
       return;
     }
   }
@@ -1019,9 +893,8 @@ void SSL_CTX_set_client_CA_list(SSL_CTX *ctx, STACK_OF(X509_NAME) *name_list) {
   sk_X509_NAME_pop_free(name_list, X509_NAME_free);
 }
 
-static STACK_OF(X509_NAME) *
-    buffer_names_to_x509(const STACK_OF(CRYPTO_BUFFER) *names,
-                         STACK_OF(X509_NAME) **cached) {
+static STACK_OF(X509_NAME) *buffer_names_to_x509(
+    const STACK_OF(CRYPTO_BUFFER) *names, STACK_OF(X509_NAME) **cached) {
   if (names == NULL) {
     return NULL;
   }
@@ -1168,7 +1041,7 @@ static int do_client_cert_cb(SSL *ssl, void *arg) {
   UniquePtr<EVP_PKEY> free_pkey(pkey);
 
   if (ret != 0) {
-    if (!SSL_use_certificate(ssl, x509) ||
+    if (!SSL_use_certificate(ssl, x509) ||  //
         !SSL_use_PrivateKey(ssl, pkey)) {
       return 0;
     }
@@ -1177,9 +1050,9 @@ static int do_client_cert_cb(SSL *ssl, void *arg) {
   return 1;
 }
 
-void SSL_CTX_set_client_cert_cb(SSL_CTX *ctx, int (*cb)(SSL *ssl,
-                                                        X509 **out_x509,
-                                                        EVP_PKEY **out_pkey)) {
+void SSL_CTX_set_client_cert_cb(SSL_CTX *ctx,
+                                int (*cb)(SSL *ssl, X509 **out_x509,
+                                          EVP_PKEY **out_pkey)) {
   check_ssl_ctx_x509_method(ctx);
   // Emulate the old client certificate callback with the new one.
   SSL_CTX_set_cert_cb(ctx, do_client_cert_cb, NULL);

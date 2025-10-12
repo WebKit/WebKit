@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CSSNumericValue.h"
+#include <WebCore/CSSNumericValue.h>
 #include <wtf/Seconds.h>
 
 namespace WebCore {

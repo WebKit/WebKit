@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Google Inc.  All rights reserved.
+ * Copyright (C) 2011, 2012 Google Inc. All rights reserved.
  * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -350,7 +350,7 @@ void WorkerThreadableWebSocketChannel::Peer::didUpgradeURL()
 WorkerThreadableWebSocketChannel::Bridge::Bridge(Ref<ThreadableWebSocketChannelClientWrapper>&& workerClientWrapper, Ref<WorkerGlobalScope>&& workerGlobalScope, const String& taskMode, Ref<SocketProvider>&& socketProvider)
     : m_workerClientWrapper(WTFMove(workerClientWrapper))
     , m_workerGlobalScope(WTFMove(workerGlobalScope))
-    , m_loaderProxy(*m_workerGlobalScope->thread().workerLoaderProxy())
+    , m_loaderProxy(*m_workerGlobalScope->thread()->workerLoaderProxy())
     , m_taskMode(taskMode)
     , m_socketProvider(WTFMove(socketProvider))
 {
@@ -403,7 +403,7 @@ void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const Str
 
         auto& document = downcast<Document>(context);
         
-        if (RefPtr frame = document.frame(); frame && MixedContentChecker::shouldBlockRequestForRunnableContent(*frame, document.securityOrigin(), url, MixedContentChecker::ShouldLogWarning::No)) {
+        if (RefPtr frame = document.frame(); frame && MixedContentChecker::shouldBlockRequest(*frame, url)) {
             peer->fail(makeString("The page at "_s, document.url().stringCenterEllipsizedToLength(), " was blocked from connecting insecurely to "_s, url.stringCenterEllipsizedToLength(), " either because the protocol is insecure or the page is embedded from an insecure page."_s));
             return;
         }

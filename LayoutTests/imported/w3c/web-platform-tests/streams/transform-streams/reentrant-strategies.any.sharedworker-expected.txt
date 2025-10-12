@@ -9,5 +9,5 @@ PASS read() inside of size() should work
 PASS writer.write() inside size() should work
 PASS synchronous writer.write() inside size() should work
 PASS writer.close() inside size() should work
-PASS writer.abort() inside size() should work
+FAIL writer.abort() inside size() should work promise_test: Unhandled rejection with value: object "error1: error1"
 

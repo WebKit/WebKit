@@ -27,7 +27,6 @@ AXTopLevelUIElement: <AXWebArea>
 AXLanguage:
 AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
-AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
 AXElementBusy: 0
 AXLinkUIElements: <array of size 0>
 AXLoaded: 1

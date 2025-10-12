@@ -68,13 +68,20 @@ PAS_BEGIN_EXTERN_C;
     type* name ## _load_remote(pas_enumerator* enumerator, name* ptr, size_t size) \
     { \
         type* result; \
+        type** ptr_remote_ptr; \
+        \
         result = name ## _compact_tagged_atomic_ptr_load_remote(enumerator, &ptr->ptr); \
-        if ((uintptr_t)result & PAS_LENIENT_COMPACT_PTR_FULL_PTR_BIT) { \
-            return (type*)pas_enumerator_read( \
+        if (!((uintptr_t)result & PAS_LENIENT_COMPACT_PTR_FULL_PTR_BIT)) \
+            return result; \
+        \
+        ptr_remote_ptr = (type**)((uintptr_t)result & ~PAS_LENIENT_COMPACT_PTR_FULL_PTR_BIT); \
+        result = pas_enumerator_lenient_compact_ptr_buffer(enumerator, size); \
+        if (!pas_enumerator_copy_remote( \
                 enumerator, \
-                *(type**)((uintptr_t)result & ~PAS_LENIENT_COMPACT_PTR_FULL_PTR_BIT), \
-                size); \
-        } \
+                result, \
+                *ptr_remote_ptr, \
+                size)) \
+            return NULL; \
         return result; \
     } \
     \

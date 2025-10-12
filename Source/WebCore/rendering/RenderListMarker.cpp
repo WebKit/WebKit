@@ -29,7 +29,6 @@
 #include "Document.h"
 #include "FontCascade.h"
 #include "GraphicsContext.h"
-#include "ListStyleType.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderLayer.h"
@@ -38,7 +37,9 @@
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
+#include "StyleListStyleType.h"
 #include "StyleScope.h"
+#include "TextUtil.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -53,7 +54,7 @@ RenderListMarker::RenderListMarker(RenderListItem& listItem, RenderStyle&& style
     , m_listItem(listItem)
 {
     setInline(true);
-    setReplacedOrAtomicInline(true); // pretend to be replaced
+    setBlockLevelReplacedOrAtomicInline(true); // pretend to be replaced
     ASSERT(isRenderListMarker());
 }
 
@@ -87,10 +88,10 @@ void RenderListMarker::styleDidChange(StyleDifference diff, const RenderStyle* o
         diff = adjustedStyleDifference(diff, *oldStyle, style());
     RenderBox::styleDidChange(diff, oldStyle);
 
-    if (m_image != style().listStyleImage()) {
+    if (RefPtr newImage = style().listStyleImage().tryStyleImage(); m_image != newImage) {
         if (m_image)
             m_image->removeClient(*this);
-        m_image = style().listStyleImage();
+        m_image = WTFMove(newImage);
         if (m_image)
             m_image->addClient(*this);
     }
@@ -111,7 +112,7 @@ static String reversed(StringView string)
     auto length = string.length();
     if (length <= 1)
         return string.toString();
-    std::span<UChar> characters;
+    std::span<char16_t> characters;
     auto result = String::createUninitialized(length, characters);
     for (unsigned i = 0; i < length; ++i)
         characters[i] = string[length - i - 1];
@@ -176,7 +177,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     GraphicsContext& context = paintInfo.context();
 
     if (isImage()) {
-        if (RefPtr markerImage = m_image->image(this, markerRect.size()))
+        if (RefPtr markerImage = m_image->image(this, markerRect.size(), context))
             context.drawImage(*markerImage, markerRect);
         if (selectionState() != HighlightState::None) {
             LayoutRect selectionRect = localSelectionRect();
@@ -256,20 +257,20 @@ void RenderListMarker::layout()
         updateInlineMarginsAndContent();
         setWidth(m_image->imageSize(this, style().usedZoom()).width());
         setHeight(m_image->imageSize(this, style().usedZoom()).height());
+        m_layoutBounds = { height(), 0 };
     } else {
         setLogicalWidth(minPreferredLogicalWidth());
         setLogicalHeight(style().metricsOfPrimaryFont().intHeight());
+        m_layoutBounds = layoutBoundForTextContent(textWithSuffix());
     }
 
     setMarginStart(0);
     setMarginEnd(0);
 
-    Length startMargin = style().marginStart();
-    Length endMargin = style().marginEnd();
-    if (startMargin.isFixed())
-        setMarginStart(LayoutUnit(startMargin.value()));
-    if (endMargin.isFixed())
-        setMarginEnd(LayoutUnit(endMargin.value()));
+    if (auto fixedStartMargin = style().marginStart().tryFixed())
+        setMarginStart(LayoutUnit(fixedStartMargin->resolveZoom(Style::ZoomNeeded { })));
+    if (auto fixedEndMargin = style().marginEnd().tryFixed())
+        setMarginEnd(LayoutUnit(fixedEndMargin->resolveZoom(Style::ZoomNeeded { })));
 
     clearNeedsLayout();
 }
@@ -279,7 +280,7 @@ void RenderListMarker::imageChanged(WrappedImagePtr o, const IntRect* rect)
     if (parent()) {
         if (m_image && o == m_image->data()) {
             if (width() != m_image->imageSize(this, style().usedZoom()).width() || height() != m_image->imageSize(this, style().usedZoom()).height() || m_image->errorOccurred())
-                setNeedsLayoutAndPrefWidthsRecalc();
+                setNeedsLayoutAndPreferredWidthsUpdate();
             else
                 repaint();
         }
@@ -323,36 +324,33 @@ void RenderListMarker::updateContent()
         return TextDirection::RTL;
     };
 
-    auto styleType = style().listStyleType();
-    switch (styleType.type) {
-    case ListStyleType::Type::String: {
-        m_textContent = {
-            .textWithSuffix = styleType.identifier,
-            .textWithoutSuffixLength = styleType.identifier.length(),
-            .textDirection = contentTextDirection(StringView { styleType.identifier }),
-        };
-        break;
-    }
-    case ListStyleType::Type::CounterStyle: {
-        auto counter = counterStyle();
-        ASSERT(counter);
+    WTF::switchOn(style().listStyleType(),
+        [&](const CSS::Keyword::None&) {
+            m_textContent = {
+                .textWithSuffix = " "_s,
+                .textWithoutSuffixLength = 0,
+                .textDirection = TextDirection::LTR,
+            };
+        },
+        [&](const AtomString& identifier) {
+            m_textContent = {
+                .textWithSuffix = identifier,
+                .textWithoutSuffixLength = identifier.length(),
+                .textDirection = contentTextDirection(StringView { identifier }),
+            };
+        },
+        [&](const Style::CounterStyle&) {
+            auto counter = counterStyle();
+            ASSERT(counter);
 
-        auto text = makeString(counter->prefix().text, counter->text(m_listItem->value(), writingMode()));
-        m_textContent = {
-            .textWithSuffix = makeString(text, counter->suffix().text),
-            .textWithoutSuffixLength = text.length(),
-            .textDirection = contentTextDirection(text),
-        };
-        break;
-    }
-    case ListStyleType::Type::None:
-        m_textContent = {
-            .textWithSuffix = " "_s,
-            .textWithoutSuffixLength = 0,
-            .textDirection = TextDirection::LTR,
-        };
-        break;
-    }
+            auto text = makeString(counter->prefix().text, counter->text(m_listItem->value(), writingMode()));
+            m_textContent = {
+                .textWithSuffix = makeString(text, counter->suffix().text),
+                .textWithoutSuffixLength = text.length(),
+                .textDirection = contentTextDirection(text),
+            };
+        }
+    );
 }
 
 void RenderListMarker::computePreferredLogicalWidths()
@@ -410,29 +408,15 @@ void RenderListMarker::updateInlineMargins()
         if (m_textContent.isEmpty())
             return { };
 
-        if (style().listStyleType().type == ListStyleType::Type::String)
+        if (style().listStyleType().isString())
             return { -minPreferredLogicalWidth(), 0 };
 
         return { -minPreferredLogicalWidth() - offset / 2, offset / 2 };
     };
 
     auto [marginStart, marginEnd] = isInside() ? marginsForInsideMarker() : marginsForOutsideMarker();
-    mutableStyle().setMarginStart(Length(marginStart, LengthType::Fixed));
-    mutableStyle().setMarginEnd(Length(marginEnd, LengthType::Fixed));
-}
-
-LayoutUnit RenderListMarker::lineHeight(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
-{
-    if (!isImage())
-        return m_listItem->lineHeight(firstLine, direction, PositionOfInteriorLineBoxes);
-    return RenderBox::lineHeight(firstLine, direction, linePositionMode);
-}
-
-LayoutUnit RenderListMarker::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
-{
-    if (!isImage())
-        return m_listItem->baselinePosition(baselineType, firstLine, direction, PositionOfInteriorLineBoxes);
-    return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
+    mutableStyle().setMarginStart(Style::MarginEdge::Fixed { marginStart });
+    mutableStyle().setMarginEnd(Style::MarginEdge::Fixed { marginEnd });
 }
 
 bool RenderListMarker::isInside() const
@@ -481,13 +465,52 @@ LayoutRect RenderListMarker::selectionRectForRepaint(const RenderLayerModelObjec
 
 RefPtr<CSSCounterStyle> RenderListMarker::counterStyle() const
 {
-    return document().counterStyleRegistry().resolvedCounterStyle(style().listStyleType());
+    auto counterStyle = style().listStyleType().tryCounterStyle();
+    if (!counterStyle)
+        return nullptr;
+    return document().counterStyleRegistry().resolvedCounterStyle(*counterStyle);
 }
 
 bool RenderListMarker::widthUsesMetricsOfPrimaryFont() const
 {
-    auto listType = style().listStyleType();
+    auto& listType = style().listStyleType();
     return listType.isCircle() || listType.isDisc() || listType.isSquare();
+}
+
+std::pair<int, int> RenderListMarker::layoutBoundForTextContent(String text) const
+{
+    // FIXME: This should be part of InlineBoxBuilder (webkit.org/b/294342)
+    // This is essentially what we do in LineBoxBuilder::enclosingAscentDescentWithFallbackFonts.
+    auto ascentAndDescent = [&](auto& fontMetrics) {
+        float ascent = fontMetrics.intAscent();
+        float descent = fontMetrics.intDescent();
+        float halfLeading = (fontMetrics.intLineSpacing() - (ascent + descent)) / 2.f;
+        return std::pair<int, int> { floorf(ascent + halfLeading), ceilf(descent + halfLeading) };
+    };
+    auto& style = this->style();
+    auto& metricsOfPrimaryFont = style.metricsOfPrimaryFont();
+    auto primaryFontHeight = metricsOfPrimaryFont.intHeight();
+
+    if (style.lineHeight().isNormal()) {
+        auto maxAscentAndDescent = ascentAndDescent(metricsOfPrimaryFont);
+
+        for (Ref fallbackFont : Layout::TextUtil::fallbackFontsForText(text, style, Layout::TextUtil::IncludeHyphen::No)) {
+            auto& fontMetrics = fallbackFont->fontMetrics();
+            if (primaryFontHeight >= floorf(fontMetrics.height())) {
+                // FIXME: Figure out why certain symbols (e.g. disclosure-open) would initiate fallback fonts with just slightly different (subpixel) metrics.
+                // This is mainly about preserving legacy behavior.
+                continue;
+            }
+            auto ascentDescent = ascentAndDescent(fontMetrics);
+            maxAscentAndDescent.first = std::max(maxAscentAndDescent.first, ascentDescent.first);
+            maxAscentAndDescent.second = std::max(maxAscentAndDescent.second, ascentDescent.second);
+        }
+        return { maxAscentAndDescent.first, maxAscentAndDescent.second };
+    }
+
+    auto primaryFontAscentAndDescent = ascentAndDescent(metricsOfPrimaryFont);
+    auto halfLeading = (floorf(style.computedLineHeight()) - (primaryFontAscentAndDescent.first + primaryFontAscentAndDescent.second)) / 2.f;
+    return { floorf(primaryFontAscentAndDescent.first + halfLeading), ceilf(primaryFontAscentAndDescent.second + halfLeading) };
 }
 
 } // namespace WebCore

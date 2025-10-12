@@ -45,4 +45,6 @@
     Promise<RTCStatsReport> getStats();
 
     [Conditional=WEB_RTC, EnabledBySetting=WebRTCDTMFEnabled] readonly attribute RTCDTMFSender? dtmf;
+
+    [CallWith=CurrentScriptExecutionContext, EnabledByQuirk=shouldEnableRTCEncodedStreams] RTCEncodedStreams createEncodedStreams();
 };

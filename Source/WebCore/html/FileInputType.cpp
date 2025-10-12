@@ -185,7 +185,8 @@ bool FileInputType::allowsShowPickerAcrossFrames()
 RenderPtr<RenderElement> FileInputType::createInputRenderer(RenderStyle&& style)
 {
     ASSERT(element());
-    return createRenderer<RenderFileUploadControl>(*protectedElement(), WTFMove(style));
+    // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.
+    SUPPRESS_UNCOUNTED_ARG return createRenderer<RenderFileUploadControl>(*protectedElement(), WTFMove(style));
 }
 
 bool FileInputType::canSetStringValue() const
@@ -231,7 +232,7 @@ void FileInputType::createShadowSubtree()
     Ref button = HTMLInputElement::create(inputTag, element->protectedDocument(), nullptr, false);
     {
         ScriptDisallowedScope::EventAllowedScope eventAllowedScopeBeforeAppend { button };
-        button->setType(InputTypeNames::button());
+        button->setAttributeWithoutSynchronization(typeAttr, InputTypeNames::button());
         button->setUserAgentPart(UserAgentParts::fileSelectorButton());
         button->setValue(element->multiple() ? fileButtonChooseMultipleFilesLabel() : fileButtonChooseFileLabel());
     }
@@ -317,9 +318,10 @@ void FileInputType::applyFileChooserSettings()
 bool FileInputType::allowsDirectories() const
 {
     ASSERT(element());
-    if (!element()->document().settings().directoryUploadEnabled())
+    Ref element = *this->element();
+    if (!element->protectedDocument()->settings().directoryUploadEnabled())
         return false;
-    return element()->hasAttributeWithoutSynchronization(webkitdirectoryAttr);
+    return element->hasAttributeWithoutSynchronization(webkitdirectoryAttr);
 }
 
 bool FileInputType::dirAutoUsesValue() const
@@ -417,7 +419,7 @@ void FileInputType::filesChosen(const Vector<String>& paths, const Vector<String
     ASSERT(element());
     ASSERT(!paths.isEmpty());
 
-    size_t size = element()->hasAttributeWithoutSynchronization(multipleAttr) ? paths.size() : 1;
+    size_t size = protectedElement()->hasAttributeWithoutSynchronization(multipleAttr) ? paths.size() : 1;
 
     Vector<FileChooserFileInfo> files(size, [&](size_t i) {
         return FileChooserFileInfo { paths[i], i < replacementPaths.size() ? replacementPaths[i] : nullString(), { } };
@@ -488,7 +490,7 @@ bool FileInputType::receiveDroppedFilesWithImageTranscoding(const Vector<String>
         auto replacementPaths = transcodeImages(transcodingPaths, transcodingUTI, transcodingExtension);
         ASSERT(transcodingPaths.size() == replacementPaths.size());
 
-        RunLoop::protectedMain()->dispatch([callFilesChosen = WTFMove(callFilesChosen), replacementPaths = crossThreadCopy(WTFMove(replacementPaths))] {
+        RunLoop::mainSingleton().dispatch([callFilesChosen = WTFMove(callFilesChosen), replacementPaths = crossThreadCopy(WTFMove(replacementPaths))] {
             callFilesChosen(replacementPaths);
         });
     });

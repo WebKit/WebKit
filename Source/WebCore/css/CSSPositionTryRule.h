@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,11 +43,14 @@ public:
 
     AtomString name() const { return m_name; }
 
+    StyleProperties& properties() const { return m_properties; }
     Ref<StyleProperties> protectedProperties() const { return m_properties; }
-    Ref<MutableStyleProperties> protectedMutableProperties();
+    MutableStyleProperties& mutableProperties();
+    Ref<MutableStyleProperties> protectedMutableProperties() { return mutableProperties(); }
 
 private:
     explicit StyleRulePositionTry(AtomString&& name, Ref<StyleProperties>&&);
+    StyleRulePositionTry(const StyleRulePositionTry&);
 
     AtomString m_name;
     Ref<StyleProperties> m_properties;
@@ -79,4 +82,8 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRulePositionTry)
 static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isPositionTryRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSPositionTryRule)
+static bool isType(const WebCore::CSSRule& rule) { return rule.styleRuleType() == WebCore::StyleRuleType::PositionTry; }
 SPECIALIZE_TYPE_TRAITS_END()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,26 +37,10 @@ namespace WebKit {
 
 static void platformInvalidate(const PlatformGrant& platformGrant)
 {
-#if USE(LEGACY_EXTENSIONKIT_SPI)
-    bool isValid = WTF::switchOn(platformGrant, [&] (auto& grant) {
-        return [grant isValid];
-    });
-    if (!isValid)
-        return;
-
-    WTF::switchOn(platformGrant, [&] (const RetainPtr<BEProcessCapabilityGrant>& grant) {
-        if (![grant invalidate])
-            RELEASE_LOG_ERROR(ProcessCapabilities, "Invalidating grant %{public}@ failed", grant.get());
-    }, [&] (const RetainPtr<_SEGrant>& grant) {
-        if (![grant invalidateWithError:nil])
-            RELEASE_LOG_ERROR(ProcessCapabilities, "Invalidating grant %{public}@ failed", grant.get());
-    });
-#else
     if (![platformGrant isValid])
         return;
     if (![platformGrant invalidate])
         RELEASE_LOG_ERROR(ProcessCapabilities, "Invalidating grant %{public}@ failed", platformGrant.get());
-#endif
 }
 
 ExtensionCapabilityGrant::ExtensionCapabilityGrant(String environmentIdentifier)
@@ -85,24 +69,12 @@ ExtensionCapabilityGrant ExtensionCapabilityGrant::isolatedCopy() &&
 
 bool ExtensionCapabilityGrant::isEmpty() const
 {
-#if USE(LEGACY_EXTENSIONKIT_SPI)
-    return WTF::switchOn(m_platformGrant, [] (auto& grant) {
-        return !grant;
-    });
-#else
     return !m_platformGrant;
-#endif
 }
 
 bool ExtensionCapabilityGrant::isValid() const
 {
-#if USE(LEGACY_EXTENSIONKIT_SPI)
-    return WTF::switchOn(m_platformGrant, [] (auto& grant) {
-        return [grant isValid];
-    });
-#else
     return [m_platformGrant isValid];
-#endif
 }
 
 void ExtensionCapabilityGrant::setPlatformGrant(PlatformGrant&& platformGrant)

@@ -27,9 +27,9 @@
 
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
 
-#include "ApplePayInstallmentItem.h"
-#include "ApplePayInstallmentRetailChannel.h"
-#include "ApplePaySetupFeatureTypeWebCore.h"
+#include <WebCore/ApplePayInstallmentItem.h>
+#include <WebCore/ApplePayInstallmentRetailChannel.h>
+#include <WebCore/ApplePaySetupFeatureTypeWebCore.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

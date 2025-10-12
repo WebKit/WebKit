@@ -2,38 +2,25 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
 flags:
   - noStrict
 description: |
   pending
 esid: pending
 ---*/
-var log = "";
-try {
-  (function() {
-    {
-      let y = f();
-      function f() { y; }
-    }
-  })()
-} catch (e) {
-  log += e instanceof ReferenceError;
-}
 
-try {
-  function f() {
-    switch (1) {
-      case 0:
-        let x;
-      case 1:
-        (function() { x; })();
-    }
+assert.throws(ReferenceError, function() {
+  {
+    let y = f();
+    function f() { y; }
   }
-  f();
-} catch (e) {
-  log += e instanceof ReferenceError;
-}
+});
 
-assert.sameValue(log, "truetrue");
-
+assert.throws(ReferenceError, function() {
+  switch (1) {
+    case 0:
+      let x;
+    case 1:
+      (function() { x; })();
+  }
+});

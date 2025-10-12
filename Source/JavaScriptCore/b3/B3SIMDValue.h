@@ -57,6 +57,8 @@ public:
         case VectorAddSat:
         case VectorSubSat:
         case VectorMul:
+        case VectorMulHigh:
+        case VectorMulLow:
         case VectorDiv:
         case VectorMin:
         case VectorMax:

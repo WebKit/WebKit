@@ -1,6 +1,5 @@
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/image.py?redirection=no-redirect&action=purge&key=GENERATED_KEY&path=%2Fmixed-content
 
 PASS Mixed-Content: Expects allowed for img-tag to same-https origin and no-redirect redirection from https context.
 PASS Mixed-Content: Expects blocked for img-tag to cross-http origin and no-redirect redirection from https context.
-FAIL Mixed-Content: Expects blocked for img-tag to same-http origin and no-redirect redirection from https context. assert_equals: The resource request should be 'blocked'. expected "blocked" but got "allowed"
+PASS Mixed-Content: Expects blocked for img-tag to same-http origin and no-redirect redirection from https context.
 

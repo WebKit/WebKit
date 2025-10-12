@@ -101,6 +101,38 @@ const RegisterAtOffsetList& RegisterAtOffsetList::dfgCalleeSaveRegisters()
     return result.get();
 }
 
+#if ENABLE(WEBASSEMBLY)
+const RegisterAtOffsetList& RegisterAtOffsetList::wasmPinnedRegisters()
+{
+    static std::once_flag onceKey;
+    static LazyNeverDestroyed<RegisterAtOffsetList> result;
+    std::call_once(onceKey, [] {
+        result.construct(RegisterSetBuilder::wasmPinnedRegisters());
+    });
+    return result.get();
+}
+
+const RegisterAtOffsetList& RegisterAtOffsetList::ipintCalleeSaveRegisters()
+{
+    static std::once_flag onceKey;
+    static LazyNeverDestroyed<RegisterAtOffsetList> result;
+    std::call_once(onceKey, [] {
+        result.construct(RegisterSetBuilder::ipintCalleeSaveRegisters());
+    });
+    return result.get();
+}
+
+const RegisterAtOffsetList& RegisterAtOffsetList::bbqCalleeSaveRegisters()
+{
+    static std::once_flag onceKey;
+    static LazyNeverDestroyed<RegisterAtOffsetList> result;
+    std::call_once(onceKey, [] {
+        result.construct(RegisterSetBuilder::bbqCalleeSaveRegisters());
+    });
+    return result.get();
+}
+#endif
+
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER)

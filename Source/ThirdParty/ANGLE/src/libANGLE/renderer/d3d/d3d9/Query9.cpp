@@ -138,18 +138,6 @@ angle::Result Query9::testQuery(Context9 *context9)
                 break;
             }
 
-            case gl::QueryType::CommandsCompleted:
-            {
-                BOOL completed = FALSE;
-                result         = mQuery->GetData(&completed, sizeof(completed), D3DGETDATA_FLUSH);
-                if (result == S_OK)
-                {
-                    mQueryFinished = true;
-                    mResult        = (completed == TRUE) ? GL_TRUE : GL_FALSE;
-                }
-                break;
-            }
-
             default:
                 UNREACHABLE();
                 break;

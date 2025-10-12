@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "AnimationFrameRate.h"
+#include <WebCore/AnimationFrameRate.h>
 
 namespace WebCore {
 

@@ -31,6 +31,7 @@
 #include "WebFrameProxy.h"
 #include "WebPageInspectorController.h"
 #include "WebPageProxy.h"
+#include "WebsiteDataStore.h"
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
 

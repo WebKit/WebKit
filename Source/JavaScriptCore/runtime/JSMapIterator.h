@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "IterationKind.h"
-#include "JSInternalFieldObjectImpl.h"
-#include "JSMap.h"
+#include <JavaScriptCore/IterationKind.h>
+#include <JavaScriptCore/JSInternalFieldObjectImpl.h>
+#include <JavaScriptCore/JSMap.h>
 
 namespace JSC {
 
@@ -38,6 +38,8 @@ public:
     using Base = JSInternalFieldObjectImpl<JSMapIteratorNumberOFInternalFields>;
 
     DECLARE_EXPORT_INFO;
+
+    DECLARE_VISIT_CHILDREN;
 
     enum class Field : uint8_t {
         Entry = 0,
@@ -170,7 +172,6 @@ private:
 
     JS_EXPORT_PRIVATE void finishCreation(JSGlobalObject*, JSMap*, IterationKind);
     void finishCreation(VM&);
-    DECLARE_VISIT_CHILDREN;
 };
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSMapIterator);
 

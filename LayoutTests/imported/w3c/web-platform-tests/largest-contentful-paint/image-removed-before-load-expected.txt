@@ -1,0 +1,4 @@
+
+
+PASS Largest Contentful Paint: image removed before loaded does not produce entry.
+

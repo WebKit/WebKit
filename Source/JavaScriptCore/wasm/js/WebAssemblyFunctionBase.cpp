@@ -39,11 +39,10 @@ namespace JSC {
 
 const ClassInfo WebAssemblyFunctionBase::s_info = { "WebAssemblyFunctionBase"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyFunctionBase) };
 
-WebAssemblyFunctionBase::WebAssemblyFunctionBase(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, Wasm::WasmOrJSImportableFunction&& importableFunction, Wasm::WasmOrJSImportableFunctionCallLinkInfo* callLinkInfo)
+WebAssemblyFunctionBase::WebAssemblyFunctionBase(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, Wasm::WasmOrJSImportableFunction&& importableFunction, Wasm::WasmOrJSImportableFunctionCallLinkInfo* callLinkInfo)
     : Base(vm, executable, globalObject, structure)
     , m_importableFunction(WTFMove(importableFunction))
     , m_callLinkInfo(callLinkInfo)
-    , m_instance(instance, WriteBarrierEarlyInit)
 { }
 
 template<typename Visitor>
@@ -52,7 +51,7 @@ void WebAssemblyFunctionBase::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     WebAssemblyFunctionBase* thisObject = jsCast<WebAssemblyFunctionBase*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(thisObject->m_instance);
+    visitor.append(thisObject->m_importableFunction.targetInstance);
 }
 
 DEFINE_VISIT_CHILDREN(WebAssemblyFunctionBase);

@@ -1,4 +1,4 @@
-<!-- webkit-test-runner [ CanvasPixelFormatEnabled=true ] -->
+<!-- webkit-test-runner [ CanvasColorTypeEnabled=true ] -->
 <style>
     canvas {
         border: 1px solid black;
@@ -22,7 +22,7 @@
             internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
 
         let canvas1 = document.getElementById("canvas1");
-        let context1 = canvas1.getContext("2d", { pixelFormat: "float16" });
+        let context1 = canvas1.getContext("2d", { colorType: "float16" });
         context1.fillStyle = "green";
         context1.fillRect(0, 0, 100, 100);
 
@@ -32,7 +32,7 @@
         context2.fillRect(0, 0, 100, 100);
 
         let canvas3 = document.getElementById("canvas3");
-        let context3 = canvas3.getContext("2d", { pixelFormat: "float16" });
+        let context3 = canvas3.getContext("2d", { colorType: "float16" });
         context3.fillStyle = "green";
         context3.fillRect(0, 0, 100, 100);
 

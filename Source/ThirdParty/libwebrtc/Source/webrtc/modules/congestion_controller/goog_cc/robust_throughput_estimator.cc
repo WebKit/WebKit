@@ -10,9 +10,8 @@
 
 #include "modules/congestion_controller/goog_cc/robust_throughput_estimator.h"
 
-#include <stddef.h>
-
 #include <algorithm>
+#include <cstddef>
 #include <optional>
 #include <utility>
 #include <vector>

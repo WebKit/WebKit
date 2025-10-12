@@ -80,7 +80,7 @@ testSingleToggle("underline", selectSecondWord, '<u><strike>hello world</strike>
 testSingleToggle("underline", selectSecondWord, '<u>hello <em><code>world webkit</code></em> rocks</u>', '<u>hello</u> <em><code>world<u> webkit</u></code></em><u> rocks</u>');
 
 testSingleToggle("strikeThrough", selectAll, '<s style="color: blue;">hello world</strike>', '<span style="color: blue;">hello world</span>');
-testSingleToggle("strikeThrough", selectFirstWord, '<s style="color: blue;"><div>hello</div> <b>world</b> webkit</strike>', '<span style="color: blue;"><div>hello</div> <b style="text-decoration: line-through;">world</b><strike> webkit</strike></span>');
+testSingleToggle("strikeThrough", selectFirstWord, '<s style="color: blue;"><div>hello</div> <b>world</b> webkit</strike>', '<span style="color: blue;"><div>hello</div> <b style="text-decoration-line: line-through;">world</b><strike> webkit</strike></span>');
 
 document.body.removeChild(testContainer);
 

@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "Element.h"
+#include <WebCore/Element.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
@@ -86,11 +86,11 @@ private:
         unsigned count { 0 };
         Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>> orderedList;
 #if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
-        UncheckedKeyHashSet<WeakRef<Element, WeakPtrImplWithEventTargetData>> registeredElements;
+        HashSet<WeakRef<Element, WeakPtrImplWithEventTargetData>> registeredElements;
 #endif
     };
 
-    using Map = UncheckedKeyHashMap<AtomString, MapEntry>;
+    using Map = HashMap<AtomString, MapEntry>;
 
     mutable Map m_map;
 };

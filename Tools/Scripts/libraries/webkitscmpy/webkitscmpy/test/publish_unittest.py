@@ -113,3 +113,17 @@ class TestPublish(testing.PathTestCase):
             "'branch-b' has been explicitly excluded from publication\n"
             "No branches or tags to publish found\n",
         )
+
+    def test_git_exclude_startswith(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTerminal.input('n'):
+            self.assertEqual(1, program.main(
+                args=('publish', 'branch-b', '--exclude', 'branch'),
+                path=self.path,
+            ))
+
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            "'branch-b' has been explicitly excluded from publication\n"
+            "No branches or tags to publish found\n",
+        )

@@ -2,7 +2,8 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004, 2005, 2006, 2013 Apple Inc.
+ * Copyright (C) 2004, 2005, 2006, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -153,8 +154,7 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 void RenderFrameSet::GridAxis::resize(int size)
 {
     m_sizes.resize(size);
-    m_deltas.resize(size);
-    m_deltas.fill(0);
+    m_deltas.fill(0, size);
     
     // To track edges for resizability and borders, we need to be (size + 1). This is because a parent frameset
     // may ask us for information about our left/top/right/bottom edges in order to make its own decisions about
@@ -163,7 +163,7 @@ void RenderFrameSet::GridAxis::resize(int size)
     m_allowBorder.resize(size + 1);
 }
 
-void RenderFrameSet::layOutAxis(GridAxis& axis, std::span<const Length> grid, int availableLen)
+void RenderFrameSet::layOutAxis(GridAxis& axis, std::span<const HTMLDimensionsListValue> grid, int availableLen)
 {
     availableLen = std::max(availableLen, 0);
 
@@ -189,26 +189,26 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, std::span<const Length> grid, in
     for (int i = 0; i < gridLen; ++i) {
         // Count the total length of all of the fixed columns/rows -> totalFixed
         // Count the number of columns/rows which are fixed -> countFixed
-        if (grid[i].isFixed()) {
-            gridLayout[i] = std::max(grid[i].intValue(), 0);
+        if (grid[i].unit == HTMLDimensionsListValue::Unit::Absolute) {
+            gridLayout[i] = std::max<int>(grid[i].number, 0);
             totalFixed += gridLayout[i];
             countFixed++;
         }
         
         // Count the total percentage of all of the percentage columns/rows -> totalPercent
         // Count the number of columns/rows which are percentages -> countPercent
-        if (grid[i].isPercentOrCalculated()) {
-            gridLayout[i] = std::max(intValueForLength(grid[i], availableLen), 0);
+        if (grid[i].unit == HTMLDimensionsListValue::Unit::Percentage) {
+            gridLayout[i] = std::max<int>(availableLen * grid[i].number / 100.0, 0);
             totalPercent += gridLayout[i];
             countPercent++;
         }
 
         // Count the total relative of all the relative columns/rows -> totalRelative
         // Count the number of columns/rows which are relative -> countRelative
-        if (grid[i].isRelative()) {
-            totalRelative += std::max(grid[i].intValue(), 1);
+        if (grid[i].unit == HTMLDimensionsListValue::Unit::Relative) {
+            totalRelative += std::max<int>(grid[i].number, 1);
             countRelative++;
-        }            
+        }
     }
 
     int remainingLen = availableLen;
@@ -219,7 +219,7 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, std::span<const Length> grid, in
         int remainingFixed = remainingLen;
 
         for (int i = 0; i < gridLen; ++i) {
-            if (grid[i].isFixed()) {
+            if (grid[i].unit == HTMLDimensionsListValue::Unit::Absolute) {
                 gridLayout[i] = (gridLayout[i] * remainingFixed) / totalFixed;
                 remainingLen -= gridLayout[i];
             }
@@ -235,7 +235,7 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, std::span<const Length> grid, in
         int remainingPercent = remainingLen;
 
         for (int i = 0; i < gridLen; ++i) {
-            if (grid[i].isPercentOrCalculated()) {
+            if (grid[i].unit == HTMLDimensionsListValue::Unit::Percentage) {
                 gridLayout[i] = (gridLayout[i] * remainingPercent) / totalPercent;
                 remainingLen -= gridLayout[i];
             }
@@ -250,13 +250,13 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, std::span<const Length> grid, in
         int remainingRelative = remainingLen;
 
         for (int i = 0; i < gridLen; ++i) {
-            if (grid[i].isRelative()) {
-                gridLayout[i] = (std::max(grid[i].intValue(), 1) * remainingRelative) / totalRelative;
+            if (grid[i].unit == HTMLDimensionsListValue::Unit::Relative) {
+                gridLayout[i] = (std::max<int>(grid[i].number, 1) * remainingRelative) / totalRelative;
                 remainingLen -= gridLayout[i];
                 lastRelative = i;
             }
         }
-        
+
         // If we could not evenly distribute the available space of all of the relative  
         // columns/rows, the remainder will be added to the last column/row.
         // For example: if we have a space of 100px and three columns (*,*,*), the remainder will
@@ -279,7 +279,7 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, std::span<const Length> grid, in
             int changePercent = 0;
 
             for (int i = 0; i < gridLen; ++i) {
-                if (grid[i].isPercentOrCalculated()) {
+                if (grid[i].unit == HTMLDimensionsListValue::Unit::Percentage) {
                     changePercent = (remainingPercent * gridLayout[i]) / totalPercent;
                     gridLayout[i] += changePercent;
                     remainingLen -= changePercent;
@@ -293,7 +293,7 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, std::span<const Length> grid, in
             int changeFixed = 0;
 
             for (int i = 0; i < gridLen; ++i) {
-                if (grid[i].isFixed()) {
+                if (grid[i].unit == HTMLDimensionsListValue::Unit::Absolute) {
                     changeFixed = (remainingFixed * gridLayout[i]) / totalFixed;
                     gridLayout[i] += changeFixed;
                     remainingLen -= changeFixed;
@@ -301,7 +301,7 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, std::span<const Length> grid, in
             }
         }
     }
-    
+
     // If we still have some left over space we probably ended up with a remainder of
     // a division. We cannot spread it evenly anymore. If we have any percentage 
     // columns/rows simply spread the remainder equally over all available percentage columns, 
@@ -311,7 +311,7 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, std::span<const Length> grid, in
         int changePercent = 0;
 
         for (int i = 0; i < gridLen; ++i) {
-            if (grid[i].isPercentOrCalculated()) {
+            if (grid[i].unit == HTMLDimensionsListValue::Unit::Percentage) {
                 changePercent = remainingPercent / countPercent;
                 gridLayout[i] += changePercent;
                 remainingLen -= changePercent;
@@ -323,9 +323,9 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, std::span<const Length> grid, in
         // columns/rows.
         int remainingFixed = remainingLen;
         int changeFixed = 0;
-        
+
         for (int i = 0; i < gridLen; ++i) {
-            if (grid[i].isFixed()) {
+            if (grid[i].unit == HTMLDimensionsListValue::Unit::Absolute) {
                 changeFixed = remainingFixed / countFixed;
                 gridLayout[i] += changeFixed;
                 remainingLen -= changeFixed;
@@ -459,8 +459,8 @@ void RenderFrameSet::layout()
     }
 
     LayoutUnit borderThickness = frameSetElement().border();
-    layOutAxis(m_rows, frameSetElement().rowLengths(), height() - (rows - 1) * borderThickness);
-    layOutAxis(m_cols, frameSetElement().colLengths(), width() - (cols - 1) * borderThickness);
+    layOutAxis(m_rows, frameSetElement().rowDimensions(), height() - (rows - 1) * borderThickness);
+    layOutAxis(m_cols, frameSetElement().colDimensions(), width() - (cols - 1) * borderThickness);
 
     positionFrames();
 

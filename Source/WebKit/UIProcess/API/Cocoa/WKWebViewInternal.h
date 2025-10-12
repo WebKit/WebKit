@@ -24,17 +24,21 @@
  */
 
 #import <WebKit/WKWebView.h>
+#import <WebKit/_WKTextExtraction.h>
 
 #ifdef __cplusplus
+#if !__has_feature(modules)
 
 #import "PDFPluginIdentifier.h"
 #import <WebCore/CocoaView.h>
 #import <WebCore/CocoaWritingToolsTypes.h>
+#import <WebCore/ColorCocoa.h>
 #import <WebCore/FixedContainerEdges.h>
 #import <WebKit/WKShareSheet.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import "_WKAttachmentInternal.h"
+#import "_WKTextExtractionInternal.h"
 #import "_WKWebViewPrintFormatterInternal.h"
 #import <pal/spi/cocoa/WritingToolsSPI.h>
 #import <wtf/BlockPtr.h>
@@ -43,10 +47,12 @@
 #import <wtf/NakedPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Variant.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/spi/cocoa/NSObjCRuntimeSPI.h>
 
 #if ENABLE(SCREEN_TIME)
+#import <ScreenTime/STScreenTimeConfiguration.h>
 #import <ScreenTime/STWebpageController.h>
 #endif
 
@@ -57,9 +63,9 @@
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFullScreenWindowControllerIOS.h"
+#import <WebCore/BoxExtents.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/IntDegrees.h>
-#import <WebCore/LengthBox.h>
 #import <WebCore/PlatformLayerIdentifier.h>
 #import <WebCore/ViewportArguments.h>
 #endif
@@ -104,6 +110,7 @@ class Attachment;
 
 namespace WebCore {
 struct AppHighlight;
+struct ExceptionData;
 struct ExceptionDetails;
 struct TextAnimationData;
 enum class BoxSide : uint8_t;
@@ -115,11 +122,14 @@ enum class TextSuggestionState : uint8_t;
 
 #if HAVE(DIGITAL_CREDENTIALS_UI)
 struct DigitalCredentialsRequestData;
+struct DigitalCredentialsResponseData;
 struct MobileDocumentRequest;
 struct OpenID4VPRequest;
 #endif
 
-}
+struct NodeIdentifierType;
+using NodeIdentifier = ObjectIdentifier<NodeIdentifierType>;
+} // namespace WebCore
 
 namespace WebKit {
 enum class ContinueUnsafeLoad : bool;
@@ -138,18 +148,20 @@ class WebViewImpl;
 #if PLATFORM(IOS_FAMILY)
 class ViewGestureController;
 #endif
-enum class HideContentInsetFillReason : uint8_t {
-    FullScreen      = 1 << 0,
-    ScrolledToTop   = 1 << 1,
+enum class HideScrollPocketReason : uint8_t {
+    FullScreen          = 1 << 0,
+    ScrolledToTop       = 1 << 1,
+    SiteSpecificQuirk   = 1 << 2,
 };
 }
 
+@class NSScrollPocket;
 @class WKColorExtensionView;
 @class WKContentView;
 @class WKPasswordView;
 @class WKScrollGeometry;
 @class WKScrollView;
-@class WKTextExtractionItem;
+@class WKTextExtractionInteraction;
 @class WKWebViewContentProviderRegistry;
 @class _WKFrameHandle;
 @class _WKWarningView;
@@ -181,6 +193,9 @@ enum class HideContentInsetFillReason : uint8_t {
 @protocol _WKInputDelegate;
 @protocol _WKAppHighlightDelegate;
 
+enum class SimilarToOriginalTextTag : uint8_t { Value };
+using TextValidationMapValue = Variant<String, SimilarToOriginalTextTag>;
+
 #if PLATFORM(IOS_FAMILY)
 struct LiveResizeParameters {
     CGFloat viewWidth;
@@ -193,12 +208,6 @@ struct OverriddenLayoutParameters {
     CGSize maximumUnobscuredSize { CGSizeZero };
 };
 
-struct OverriddenZoomScaleParameters {
-    CGFloat minimumZoomScale { 1 };
-    CGFloat maximumZoomScale { 1 };
-    BOOL allowUserScaling { YES };
-};
-
 // This holds state that should be reset when the web process exits.
 struct PerWebProcessState {
     CGFloat viewportMetaTagWidth { WebCore::ViewportArguments::ValueAuto };
@@ -206,6 +215,8 @@ struct PerWebProcessState {
     BOOL hasCommittedLoadForMainFrame { NO };
 
     WebKit::DynamicViewportUpdateMode dynamicViewportUpdateMode { WebKit::DynamicViewportUpdateMode::NotResizing };
+
+    WebCore::InteractiveWidget viewportMetaTagInteractiveWidget { WebCore::InteractiveWidget::ResizesVisual };
 
     BOOL waitingForEndAnimatedResize { NO };
     BOOL waitingForCommitAfterAnimatedResize { NO };
@@ -236,6 +247,7 @@ struct PerWebProcessState {
 
     BOOL viewportMetaTagWidthWasExplicit { NO };
     BOOL viewportMetaTagCameFromImageDocument { NO };
+    BOOL lastTransactionWasInStableState { NO };
 
     std::optional<WebCore::FloatSize> lastSentViewLayoutSize;
     std::optional<WebCore::IntDegrees> lastSentDeviceOrientation;
@@ -254,6 +266,8 @@ struct PerWebProcessState {
     Markable<WebCore::PlatformLayerIdentifier> committedFindLayerID;
 
     std::optional<LiveResizeParameters> liveResizeParameters;
+
+    std::optional<WebKit::TransactionID> firstTransactionIDAfterObscuredInsetChange;
 };
 
 #endif // PLATFORM(IOS_FAMILY)
@@ -266,8 +280,8 @@ struct PerWebProcessState {
 
     const std::unique_ptr<WebKit::NavigationState> _navigationState;
     const std::unique_ptr<WebKit::UIDelegate> _uiDelegate;
-    std::unique_ptr<WebKit::IconLoadingDelegate> _iconLoadingDelegate;
-    std::unique_ptr<WebKit::ResourceLoadDelegate> _resourceLoadDelegate;
+    const std::unique_ptr<WebKit::IconLoadingDelegate> _iconLoadingDelegate;
+    const std::unique_ptr<WebKit::ResourceLoadDelegate> _resourceLoadDelegate;
 
     WeakObjCPtr<id <_WKTextManipulationDelegate>> _textManipulationDelegate;
     WeakObjCPtr<id <_WKInputDelegate>> _inputDelegate;
@@ -281,6 +295,12 @@ struct PerWebProcessState {
     _WKRenderingProgressEvents _observedRenderingProgressEvents;
     BOOL _usePlatformFindUI;
     BOOL _usesAutomaticContentInsetBackgroundFill;
+    BOOL _shouldSuppressTopColorExtensionView;
+#if PLATFORM(MAC)
+    BOOL _alwaysPrefersSolidColorHardPocket;
+    BOOL _isGettingAdjustedColorForTopContentInsetColorFromDelegate;
+    RetainPtr<NSColor> _overrideTopScrollEdgeEffectColor;
+#endif
 
     CocoaEdgeInsets _minimumViewportInset;
     CocoaEdgeInsets _maximumViewportInset;
@@ -297,6 +317,7 @@ struct PerWebProcessState {
 
 #if ENABLE(SCREEN_TIME)
     RetainPtr<STWebpageController> _screenTimeWebpageController;
+    RetainPtr<STScreenTimeConfigurationObserver> _screenTimeConfigurationObserver;
 #if PLATFORM(MAC)
     RetainPtr<NSVisualEffectView> _screenTimeBlurredSnapshot;
 #else
@@ -305,7 +326,7 @@ struct PerWebProcessState {
 #endif
 
 #if PLATFORM(MAC)
-    std::unique_ptr<WebKit::WebViewImpl> _impl;
+    const std::unique_ptr<WebKit::WebViewImpl> _impl;
     RetainPtr<WKTextFinderClient> _textFinderClient;
 #if HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
     BlockPtr<void()> _windowSnapshotReadinessHandler;
@@ -343,7 +364,10 @@ struct PerWebProcessState {
     PerWebProcessState _perProcessState;
 
     std::optional<OverriddenLayoutParameters> _overriddenLayoutParameters;
-    std::optional<OverriddenZoomScaleParameters> _overriddenZoomScaleParameters;
+#if PLATFORM(IOS_FAMILY)
+    BOOL _forcesInitialScaleFactor;
+    BOOL _automaticallyAdjustsViewLayoutSizesWithObscuredInset;
+#endif
     CGRect _inputViewBoundsInWindow;
 
     BOOL _fastClickingIsDisabled;
@@ -390,7 +414,7 @@ struct PerWebProcessState {
 
     RetainPtr<NSTimer> _enclosingScrollViewScrollTimer;
     BOOL _didScrollSinceLastTimerFire;
-
+    BOOL _needsScrollend;
 
     // This value tracks the current adjustment added to the bottom inset due to the keyboard sliding out from the bottom
     // when computing obscured content insets. This is used when updating the visible content rects where we should not
@@ -462,7 +486,13 @@ struct PerWebProcessState {
 
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
     WebCore::RectEdges<RetainPtr<WKColorExtensionView>> _fixedColorExtensionViews;
-    OptionSet<WebKit::HideContentInsetFillReason> _reasonsToHideTopContentInsetFill;
+    OptionSet<WebKit::HideScrollPocketReason> _reasonsToHideTopScrollPocket;
+    BOOL _needsTopScrollPocketDueToVisibleContentInset;
+    BOOL _shouldUpdateNeedsTopScrollPocketDueToVisibleContentInset;
+#endif
+
+#if ENABLE(TEXT_EXTRACTION_FILTER)
+    HashMap<unsigned /* string hash */, TextValidationMapValue> _textValidationCache;
 #endif
 }
 
@@ -533,10 +563,21 @@ struct PerWebProcessState {
 #endif
 
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+- (void)_updateFixedColorExtensionViews;
 - (void)_updateFixedColorExtensionViewFrames;
+- (void)_updatePrefersSolidColorHardPocket;
 - (BOOL)_hasVisibleColorExtensionView:(WebCore::BoxSide)side;
-- (void)_addReasonToHideTopContentInsetFill:(WebKit::HideContentInsetFillReason)reason;
-- (void)_removeReasonToHideTopContentInsetFill:(WebKit::HideContentInsetFillReason)reason;
+- (void)_addReasonToHideTopScrollPocket:(WebKit::HideScrollPocketReason)reason;
+- (void)_removeReasonToHideTopScrollPocket:(WebKit::HideScrollPocketReason)reason;
+- (void)_updateTopScrollPocketCaptureColor;
+- (void)_updateHiddenScrollPocketEdges;
+- (void)_doAfterAdjustingColorForTopContentInsetFromUIDelegate:(Function<void()>&&)callback;
+#endif
+
+#if PLATFORM(MAC) && ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+- (NSColor *)_adjustedColorForTopContentInsetColorFromUIDelegate:(NSColor *)proposedColor;
+@property (nonatomic, readonly) RetainPtr<NSScrollPocket> _copyTopScrollPocket;
+@property (nonatomic, setter=_setAlwaysPrefersSolidColorHardPocket:) BOOL _alwaysPrefersSolidColorHardPocket;
 #endif
 
 #if ENABLE(GAMEPAD)
@@ -578,6 +619,8 @@ struct PerWebProcessState {
 
 @property (nonatomic, setter=_setHasActiveNowPlayingSession:) BOOL _hasActiveNowPlayingSession;
 
+@property (nonatomic, readonly) RetainPtr<WKWebView> _horizontallyAttachedInspectorWebView;
+
 @end
 
 RetainPtr<NSError> nsErrorFromExceptionDetails(const std::optional<WebCore::ExceptionDetails>&);
@@ -597,6 +640,17 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const std::optional<WebCore::Exce
 @end
 #endif
 
+WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContainerEdges&, WebCore::BoxSide);
+
+#if ENABLE(TEXT_EXTRACTION_FILTER)
+
+@interface WKWebView (TextExtractionFilter)
+- (void)_clearTextExtractionFilterCache;
+@end
+
+#endif
+
+#endif // !__has_feature(modules)
 #endif // __cplusplus
 
 @interface WKWebView (NonCpp)
@@ -612,8 +666,13 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const std::optional<WebCore::Exce
 @property (nonatomic, setter=_setAllowsMagnification:) BOOL _allowsMagnification;
 #endif
 
+@property (nonatomic, readonly) NSString *_nameForVisualIdentificationOverlay;
+
+- (void)_setNeedsScrollGeometryUpdates:(BOOL)needsScrollGeometryUpdates;
+
 - (void)_scrollToEdge:(_WKRectEdge)edge animated:(BOOL)animated;
 
-- (void)_requestTextExtraction:(CGRect)rect completionHandler:(void(^)(WKTextExtractionItem *))completionHandler;
+- (void)_requestTextExtraction:(_WKTextExtractionConfiguration *)configuration completionHandler:(void (^)(WKTextExtractionResult *))completionHandler;
+- (void)_describeInteraction:(_WKTextExtractionInteraction *)interaction completionHandler:(void (^)(NSString *, NSError *))completionHandler;
 
 @end

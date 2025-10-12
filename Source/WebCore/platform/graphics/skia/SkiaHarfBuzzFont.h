@@ -59,6 +59,7 @@ private:
     SkTypefaceID m_uniqueID { 0 };
     HbUniquePtr<hb_font_t> m_font;
     SkFont m_scaledFont;
+    bool m_isColorBitmapFont { false };
 };
 
 } // namespace WebCore

@@ -6,11 +6,11 @@ package runner
 
 import (
 	"crypto"
+	"crypto/ecdh"
 	"crypto/ecdsa"
 	"crypto/ed25519"
-	"crypto/elliptic"
+	"crypto/mlkem"
 	"crypto/rsa"
-	"crypto/subtle"
 	"crypto/x509"
 	"errors"
 	"fmt"
@@ -18,9 +18,7 @@ import (
 	"math/big"
 	"slices"
 
-	"boringssl.googlesource.com/boringssl/ssl/test/runner/kyber"
-	"filippo.io/mlkem768"
-	"golang.org/x/crypto/curve25519"
+	"boringssl.googlesource.com/boringssl.git/ssl/test/runner/kyber"
 )
 
 type keyType int
@@ -51,7 +49,7 @@ func (ka *rsaKeyAgreement) generateServerKeyExchange(config *Config, cert *Crede
 
 	// Generate an ephemeral RSA key to use instead of the real
 	// one, as in RSA_EXPORT.
-	key, err := rsa.GenerateKey(config.rand(), 512)
+	key, err := rsa.GenerateKey(config.rand(), 1024)
 	if err != nil {
 		return nil, err
 	}
@@ -249,17 +247,43 @@ type kemImplementation interface {
 	decap(config *Config, ciphertext []byte) (secret []byte, err error)
 }
 
-// ecdhKEM implements kemImplementation with an elliptic.Curve.
-//
-// TODO(davidben): Move this to Go's crypto/ecdh.
+func applyBugsToECDHPublicKey(config *Config, publicKey []byte) []byte {
+	if config.Bugs.SendCompressedCoordinates {
+		l := (len(publicKey) - 1) / 2
+		tmp := make([]byte, 1+l)
+		// Extract the low-order bit of the y-coordinate.
+		tmp[0] = byte(2 | (publicKey[len(publicKey)-1] & 1))
+		copy(tmp[1:], publicKey[1:1+l])
+		publicKey = tmp
+	}
+	if config.Bugs.ECDHPointNotOnCurve {
+		// Flip a bit, so the point is no longer on the curve. This is
+		// guaranteed to be off the curve because we preserve x. That
+		// means the only other valid y is y' = p - y, but we've kept
+		// y's parity, so we cannot have accidentally reached y'.
+		publicKey[len(publicKey)-1] ^= 0x80
+	}
+	return publicKey
+}
+
+// ecdhKEM implements kemImplementation with crypto/ecdh.
 type ecdhKEM struct {
-	curve      elliptic.Curve
-	privateKey []byte
+	curve      ecdh.Curve
+	privateKey *ecdh.PrivateKey
 }
 
 func (e *ecdhKEM) encapsulationKeySize() int {
-	fieldBytes := (e.curve.Params().BitSize + 7) / 8
-	return 1 + 2*fieldBytes
+	switch e.curve {
+	case ecdh.P256():
+		return 1 + 2*32
+	case ecdh.P384():
+		return 1 + 2*48
+	case ecdh.P521():
+		return 1 + 2*66
+	case ecdh.X25519():
+		return 32
+	}
+	panic(fmt.Sprintf("unknown curve %q", e.curve))
 }
 
 func (e *ecdhKEM) ciphertextSize() int {
@@ -267,25 +291,21 @@ func (e *ecdhKEM) ciphertextSize() int {
 }
 
 func (e *ecdhKEM) generate(config *Config) (publicKey []byte, err error) {
-	var x, y *big.Int
-	e.privateKey, x, y, err = elliptic.GenerateKey(e.curve, config.rand())
+	if e.curve == ecdh.X25519() && config.Bugs.LowOrderX25519Point {
+		publicKey = []byte{0xe0, 0xeb, 0x7a, 0x7c, 0x3b, 0x41, 0xb8, 0xae, 0x16, 0x56, 0xe3, 0xfa, 0xf1, 0x9f, 0xc4, 0x6a, 0xda, 0x09, 0x8d, 0xeb, 0x9c, 0x32, 0xb1, 0xfd, 0x86, 0x62, 0x05, 0x16, 0x5f, 0x49, 0xb8, 0x00}
+		return
+	}
+	e.privateKey, err = e.curve.GenerateKey(config.rand())
 	if err != nil {
 		return nil, err
 	}
-	ret := elliptic.Marshal(e.curve, x, y)
-	if config.Bugs.SendCompressedCoordinates {
-		l := (len(ret) - 1) / 2
-		tmp := make([]byte, 1+l)
-		tmp[0] = byte(2 | y.Bit(0))
-		copy(tmp[1:], ret[1:1+l])
-		ret = tmp
-	}
-	if config.Bugs.ECDHPointNotOnCurve {
-		// Flip a bit, so the point is no longer on the curve. This is
-		// guaranteed to be off the curve because we preserve x. That
-		// means the only other valid y is y' = p - y, but we've kept
-		// y's parity, so we cannot have accidentally reached y'.
-		ret[len(ret)-1] ^= 0x80
+	ret := e.privateKey.PublicKey().Bytes()
+	if e.curve == ecdh.X25519() {
+		if config.Bugs.SetX25519HighBit {
+			ret[31] |= 0x80
+		}
+	} else {
+		ret = applyBugsToECDHPublicKey(config, ret)
 	}
 	return ret, nil
 }
@@ -303,80 +323,15 @@ func (e *ecdhKEM) encap(config *Config, peerKey []byte) (ciphertext []byte, secr
 }
 
 func (e *ecdhKEM) decap(config *Config, ciphertext []byte) (secret []byte, err error) {
-	x, y := elliptic.Unmarshal(e.curve, ciphertext)
-	if x == nil {
-		return nil, errors.New("tls: invalid peer key")
-	}
-	x, _ = e.curve.ScalarMult(x, y, e.privateKey)
-	secret = make([]byte, (e.curve.Params().BitSize+7)>>3)
-	xBytes := x.Bytes()
-	copy(secret[len(secret)-len(xBytes):], xBytes)
-	return secret, nil
-}
-
-// x25519KEM implements kemImplementation with X25519.
-type x25519KEM struct {
-	privateKey [32]byte
-}
-
-func (e *x25519KEM) encapsulationKeySize() int {
-	return curve25519.PointSize
-}
-
-func (e *x25519KEM) ciphertextSize() int {
-	return curve25519.PointSize
-}
-
-func (e *x25519KEM) generate(config *Config) (publicKey []byte, err error) {
-	if config.Bugs.LowOrderX25519Point {
-		publicKey = []byte{0xe0, 0xeb, 0x7a, 0x7c, 0x3b, 0x41, 0xb8, 0xae, 0x16, 0x56, 0xe3, 0xfa, 0xf1, 0x9f, 0xc4, 0x6a, 0xda, 0x09, 0x8d, 0xeb, 0x9c, 0x32, 0xb1, 0xfd, 0x86, 0x62, 0x05, 0x16, 0x5f, 0x49, 0xb8, 0x00}
-		return
-	}
-
-	_, err = io.ReadFull(config.rand(), e.privateKey[:])
-	if err != nil {
-		return
-	}
-	var out [32]byte
-	curve25519.ScalarBaseMult(&out, &e.privateKey)
-	if config.Bugs.SetX25519HighBit {
-		out[31] |= 0x80
-	}
-	return out[:], nil
-}
-
-func (e *x25519KEM) encap(config *Config, peerKey []byte) (ciphertext []byte, secret []byte, err error) {
-	ciphertext, err = e.generate(config)
-	if err != nil {
-		return nil, nil, err
-	}
-	secret, err = e.decap(config, peerKey)
-	if err != nil {
-		return nil, nil, err
-	}
-	return
-}
-
-func (e *x25519KEM) decap(config *Config, ciphertext []byte) (secret []byte, err error) {
-	if len(ciphertext) != 32 {
-		return nil, errors.New("tls: invalid peer key")
-	}
-
-	if config.Bugs.LowOrderX25519Point {
+	if e.curve == ecdh.X25519() && config.Bugs.LowOrderX25519Point {
 		secret = make([]byte, 32)
 		return
 	}
-
-	var out [32]byte
-	curve25519.ScalarMult(&out, &e.privateKey, (*[32]byte)(ciphertext))
-
-	// Per RFC 7748, reject the all-zero value in constant time.
-	var zeros [32]byte
-	if subtle.ConstantTimeCompare(zeros[:], out[:]) == 1 {
-		return nil, errors.New("tls: X25519 value with wrong order")
+	peerKey, err := e.curve.NewPublicKey(ciphertext)
+	if err != nil {
+		return nil, fmt.Errorf("tls: invalid peer ECDH key: %s", err)
 	}
-
-	return out[:], nil
+	return e.privateKey.ECDH(peerKey)
 }
 
 // kyberKEM implements Kyber-768
@@ -432,23 +387,23 @@ func (e *kyberKEM) decap(config *Config, ciphertext []byte) (secret []byte, err 
 
 // mlkem768KEM implements ML-KEM-768
 type mlkem768KEM struct {
-	decapKey *mlkem768.DecapsulationKey
+	decapKey *mlkem.DecapsulationKey768
 }
 
 func (e *mlkem768KEM) encapsulationKeySize() int {
-	return mlkem768.EncapsulationKeySize
+	return mlkem.EncapsulationKeySize768
 }
 
 func (e *mlkem768KEM) ciphertextSize() int {
-	return mlkem768.CiphertextSize
+	return mlkem.CiphertextSize768
 }
 
 func (m *mlkem768KEM) generate(config *Config) (publicKey []byte, err error) {
-	m.decapKey, err = mlkem768.GenerateKey()
+	m.decapKey, err = mlkem.GenerateKey768()
 	if err != nil {
 		return
 	}
-	publicKey = m.decapKey.EncapsulationKey()
+	publicKey = m.decapKey.EncapsulationKey().Bytes()
 	if config.Bugs.MLKEMEncapKeyNotReduced {
 		// Set the first 12 bits so that the first word is definitely
 		// not reduced.
@@ -459,11 +414,57 @@ func (m *mlkem768KEM) generate(config *Config) (publicKey []byte, err error) {
 }
 
 func (m *mlkem768KEM) encap(config *Config, peerKey []byte) (ciphertext []byte, secret []byte, err error) {
-	return mlkem768.Encapsulate(peerKey)
+	key, err := mlkem.NewEncapsulationKey768(peerKey)
+	if err != nil {
+		return nil, nil, err
+	}
+	secret, ciphertext = key.Encapsulate()
+	return
 }
 
 func (m *mlkem768KEM) decap(config *Config, ciphertext []byte) (secret []byte, err error) {
-	return mlkem768.Decapsulate(m.decapKey, ciphertext)
+	return m.decapKey.Decapsulate(ciphertext)
+}
+
+// mlkem1024KEM implements ML-KEM-1024
+type mlkem1024KEM struct {
+	decapKey *mlkem.DecapsulationKey1024
+}
+
+func (e *mlkem1024KEM) encapsulationKeySize() int {
+	return mlkem.EncapsulationKeySize1024
+}
+
+func (e *mlkem1024KEM) ciphertextSize() int {
+	return mlkem.CiphertextSize1024
+}
+
+func (m *mlkem1024KEM) generate(config *Config) (publicKey []byte, err error) {
+	m.decapKey, err = mlkem.GenerateKey1024()
+	if err != nil {
+		return
+	}
+	publicKey = m.decapKey.EncapsulationKey().Bytes()
+	if config.Bugs.MLKEMEncapKeyNotReduced {
+		// Set the first 12 bits so that the first word is definitely
+		// not reduced.
+		publicKey[0] |= 0xff
+		publicKey[1] |= 0xf
+	}
+	return
+}
+
+func (m *mlkem1024KEM) encap(config *Config, peerKey []byte) (ciphertext []byte, secret []byte, err error) {
+	key, err := mlkem.NewEncapsulationKey1024(peerKey)
+	if err != nil {
+		return nil, nil, err
+	}
+	secret, ciphertext = key.Encapsulate()
+	return
+}
+
+func (m *mlkem1024KEM) decap(config *Config, ciphertext []byte) (secret []byte, err error) {
+	return m.decapKey.Decapsulate(ciphertext)
 }
 
 // concatKEM concatenates two kemImplementations.
@@ -561,22 +562,23 @@ func (t *transformKEM) decap(config *Config, ciphertext []byte) (secret []byte, 
 func kemForCurveID(id CurveID, config *Config) (kemImplementation, bool) {
 	var kem kemImplementation
 	switch id {
-	case CurveP224:
-		kem = &ecdhKEM{curve: elliptic.P224()}
 	case CurveP256:
-		kem = &ecdhKEM{curve: elliptic.P256()}
+		kem = &ecdhKEM{curve: ecdh.P256()}
 	case CurveP384:
-		kem = &ecdhKEM{curve: elliptic.P384()}
+		kem = &ecdhKEM{curve: ecdh.P384()}
 	case CurveP521:
-		kem = &ecdhKEM{curve: elliptic.P521()}
+		kem = &ecdhKEM{curve: ecdh.P521()}
 	case CurveX25519:
-		kem = &x25519KEM{}
+		kem = &ecdhKEM{curve: ecdh.X25519()}
 	case CurveX25519Kyber768:
 		// draft-tls-westerbaan-xyber768d00-03
-		kem = &concatKEM{kem1: &x25519KEM{}, kem2: &kyberKEM{}}
+		kem = &concatKEM{kem1: &ecdhKEM{curve: ecdh.X25519()}, kem2: &kyberKEM{}}
 	case CurveX25519MLKEM768:
-		// draft-kwiatkowski-tls-ecdhe-mlkem-01
-		kem = &concatKEM{kem1: &mlkem768KEM{}, kem2: &x25519KEM{}}
+		// draft-ietf-tls-ecdhe-mlkem-00
+		kem = &concatKEM{kem1: &mlkem768KEM{}, kem2: &ecdhKEM{curve: ecdh.X25519()}}
+	case CurveMLKEM1024:
+		// draft-ietf-tls-mlkem-04
+		kem = &mlkem1024KEM{}
 	default:
 		return nil, false
 	}

@@ -42,6 +42,8 @@ class NavigationDestination final : public RefCounted<NavigationDestination>, pu
 public:
     static Ref<NavigationDestination> create(const URL& url, RefPtr<NavigationHistoryEntry>&& entry, bool isSameDocument) { return adoptRef(*new NavigationDestination(url, WTFMove(entry), isSameDocument)); };
 
+    ~NavigationDestination();
+
     const URL& url() const { return m_url; };
     String key() const { return m_entry ? m_entry->key() : String(); };
     String id() const { return m_entry ? m_entry->id() : String(); };

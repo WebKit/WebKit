@@ -27,8 +27,8 @@
 
 #import "AXObjectCache.h"
 #import "AccessibilityObject.h"
-#import "WebAccessibilityObjectWrapperBase.h"
 #import "WAKView.h"
+#import "WebAccessibilityObjectWrapperBase.h"
 
 namespace WebCore {
 class VisiblePosition;
@@ -43,9 +43,11 @@ static NSString * const UIAccessibilityTextualContextSourceCode = @"UIAccessibil
 - (BOOL)accessibilityIsIgnored;
 @end
 
+enum class IsAccessibilityElement : uint8_t { No, Yes, Unknown };
+
 @interface WebAccessibilityObjectWrapper : WebAccessibilityObjectWrapperBase {
     // Cached data to avoid frequent re-computation.
-    int m_isAccessibilityElement;
+    IsAccessibilityElement m_isAccessibilityElement;
     uint64_t m_accessibilityTraitsFromAncestor;
 }
 
@@ -71,6 +73,9 @@ static NSString * const UIAccessibilityTextualContextSourceCode = @"UIAccessibil
 
 // This is called by the Accessibility system to relay back to the chrome.
 - (void)handleNotificationRelayToChrome:(NSString *)notificationName notificationData:(NSData *)notificationData;
+
+// Private methods:
+- (void)_clearCachedIsAccessibilityElementState;
 
 @end
 

@@ -10,7 +10,10 @@
 
 #include "modules/desktop_capture/desktop_frame_rotation.h"
 
+#include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "rtc_base/checks.h"
+#include "third_party/libyuv/include/libyuv/rotate.h"
 #include "third_party/libyuv/include/libyuv/rotate_argb.h"
 
 namespace webrtc {

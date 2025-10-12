@@ -170,7 +170,7 @@ void RemoteLegacyCDMSessionProxy::sendMessage(Uint8Array* message, String destin
     if (!gpuConnectionToWebProcess)
         return;
 
-    gpuConnectionToWebProcess->protectedConnection()->send(Messages::RemoteLegacyCDMSession::SendMessage(convertToOptionalSharedBuffer(message), destinationURL), m_identifier);
+    gpuConnectionToWebProcess->connection().send(Messages::RemoteLegacyCDMSession::SendMessage(convertToOptionalSharedBuffer(message), destinationURL), m_identifier);
 }
 
 void RemoteLegacyCDMSessionProxy::sendError(MediaKeyErrorCode errorCode, uint32_t systemCode)
@@ -183,7 +183,7 @@ void RemoteLegacyCDMSessionProxy::sendError(MediaKeyErrorCode errorCode, uint32_
     if (!gpuConnectionToWebProcess)
         return;
 
-    gpuConnectionToWebProcess->protectedConnection()->send(Messages::RemoteLegacyCDMSession::SendError(errorCode, systemCode), m_identifier);
+    gpuConnectionToWebProcess->connection().send(Messages::RemoteLegacyCDMSession::SendError(errorCode, systemCode), m_identifier);
 }
 
 String RemoteLegacyCDMSessionProxy::mediaKeysStorageDirectory() const
@@ -211,7 +211,7 @@ std::optional<SharedPreferencesForWebProcess> RemoteLegacyCDMSessionProxy::share
     if (!m_factory)
         return std::nullopt;
 
-    return m_factory->sharedPreferencesForWebProcess();
+    return protectedFactory()->sharedPreferencesForWebProcess();
 }
 
 RefPtr<WebCore::LegacyCDMSession> RemoteLegacyCDMSessionProxy::protectedSession() const

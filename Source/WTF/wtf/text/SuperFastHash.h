@@ -25,20 +25,18 @@
 #include <wtf/Compiler.h>
 #include <wtf/text/StringHasher.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 // Paul Hsieh's SuperFastHash
 // http://www.azillionmonkeys.com/qed/hash.html
 
-// LChar data is interpreted as Latin-1-encoded (zero-extended to 16 bits).
+// Latin1Character data is interpreted as Latin-1-encoded (zero-extended to 16 bits).
 
 // NOTE: The hash computation here must stay in sync with the create_hash_table script in
 // JavaScriptCore and the CodeGeneratorJS.pm script in WebCore.
 
 class SuperFastHash {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SuperFastHash);
 public:
     static constexpr unsigned flagCount = StringHasher::flagCount;
     static constexpr unsigned maskHash = StringHasher::maskHash;
@@ -49,18 +47,18 @@ public:
     // The hasher hashes two characters at a time, and thus an "aligned" hasher is one
     // where an even number of characters have been added. Callers that always add
     // characters two at a time can use the "assuming aligned" functions.
-    void addCharactersAssumingAligned(UChar a, UChar b)
+    void addCharactersAssumingAligned(char16_t a, char16_t b)
     {
         ASSERT(!m_hasPendingCharacter);
         addCharactersAssumingAlignedImpl(a, b, m_hash);
     }
 
-    void addCharacter(UChar character)
+    void addCharacter(char16_t character)
     {
         addCharacterImpl(character, m_hasPendingCharacter, m_pendingCharacter, m_hash);
     }
 
-    void addCharacters(UChar a, UChar b)
+    void addCharacters(char16_t a, char16_t b)
     {
         if (m_hasPendingCharacter) {
 #if ASSERT_ENABLED
@@ -77,6 +75,7 @@ public:
         addCharactersAssumingAligned(a, b);
     }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     template<typename T, typename Converter = DefaultConverter>
     void addCharactersAssumingAligned(const T* data, unsigned length)
     {
@@ -121,6 +120,7 @@ public:
         }
         addCharactersAssumingAligned<T, Converter>(data, length);
     }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     template<typename T, typename Converter = DefaultConverter>
     void addCharacters(std::span<const T> data)
@@ -187,12 +187,12 @@ public:
 private:
     friend class StringHasher;
 
-    static void addCharactersAssumingAlignedImpl(UChar a, UChar b, unsigned& hash)
+    static void addCharactersAssumingAlignedImpl(char16_t a, char16_t b, unsigned& hash)
     {
         hash = calculateWithTwoCharacters(hash, a, b);
     }
 
-    static void addCharacterImpl(UChar character, bool& hasPendingCharacter, UChar& pendingCharacter, unsigned& hash)
+    static void addCharacterImpl(char16_t character, bool& hasPendingCharacter, char16_t& pendingCharacter, unsigned& hash)
     {
         if (hasPendingCharacter) {
             hasPendingCharacter = false;
@@ -237,6 +237,7 @@ private:
         return result;
     }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     template<typename T, typename Converter>
     static constexpr unsigned computeHashImpl(const T* characters)
     {
@@ -249,18 +250,19 @@ private:
         }
         return result;
     }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     unsigned processPendingCharacter() const
     {
         return processPendingCharacterImpl(m_hasPendingCharacter, m_pendingCharacter, m_hash);
     }
 
-    static unsigned hashWithTop8BitsMaskedImpl(const bool hasPendingCharacter, const UChar pendingCharacter, const unsigned hash)
+    static unsigned hashWithTop8BitsMaskedImpl(const bool hasPendingCharacter, const char16_t pendingCharacter, const unsigned hash)
     {
         return StringHasher::finalizeAndMaskTop8Bits(processPendingCharacterImpl(hasPendingCharacter, pendingCharacter, hash));
     }
 
-    static unsigned processPendingCharacterImpl(const bool hasPendingCharacter, const UChar pendingCharacter, const unsigned hash)
+    static unsigned processPendingCharacterImpl(const bool hasPendingCharacter, const char16_t pendingCharacter, const unsigned hash)
     {
         unsigned result = hash;
 
@@ -271,12 +273,10 @@ private:
     }
 
     unsigned m_hash { stringHashingStartValue };
-    UChar m_pendingCharacter { 0 };
+    char16_t m_pendingCharacter { 0 };
     bool m_hasPendingCharacter { false };
 };
 
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 using WTF::SuperFastHash;

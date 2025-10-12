@@ -65,12 +65,12 @@ void WebGLVertexArrayObject::deleteObjectImpl(const AbstractLocker& locker, Grap
         break;
     }
     
-    if (m_boundElementArrayBuffer)
-        m_boundElementArrayBuffer->onDetached(locker, context3d);
+    if (RefPtr boundElementArrayBuffer = m_boundElementArrayBuffer.get())
+        boundElementArrayBuffer->onDetached(locker, context3d);
     
     for (auto& state : m_vertexAttribState) {
-        if (state.bufferBinding)
-            state.bufferBinding->onDetached(locker, context3d);
+        if (RefPtr bufferBinding = state.bufferBinding.get())
+            bufferBinding->onDetached(locker, context3d);
     }
 }
 

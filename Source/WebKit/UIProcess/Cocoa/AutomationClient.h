@@ -41,7 +41,9 @@ namespace WebKit {
 class AutomationClient final : public API::AutomationClient, Inspector::RemoteInspector::Client {
     WTF_MAKE_TZONE_ALLOCATED(AutomationClient);
 public:
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     explicit AutomationClient(WKProcessPool *, id <_WKAutomationDelegate>);
+    ALLOW_DEPRECATED_DECLARATIONS_END
     virtual ~AutomationClient();
 
 private:
@@ -52,7 +54,9 @@ private:
     String browserName() const final;
     String browserVersion() const final;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WeakObjCPtr<WKProcessPool> m_processPool;
+    ALLOW_DEPRECATED_DECLARATIONS_END
     WeakObjCPtr<id <_WKAutomationDelegate>> m_delegate;
 
     struct {

@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/acquire-the-content.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/audiobuffer-copy-channel.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/audiobuffer-getChannelData.html

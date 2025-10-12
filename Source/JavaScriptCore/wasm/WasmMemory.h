@@ -27,15 +27,15 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "ArrayBuffer.h"
-#include "MemoryMode.h"
-#include "PageCount.h"
-#include "WeakGCSet.h"
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/MemoryMode.h>
+#include <JavaScriptCore/PageCount.h>
+#include <JavaScriptCore/WeakGCSet.h>
 
 #include <wtf/CagedPtr.h>
 #include <wtf/Expected.h>
 #include <wtf/Function.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -51,7 +51,7 @@ class LLIntOffsetsExtractor;
 
 namespace Wasm {
 
-class Memory final : public RefCounted<Memory> {
+class Memory final : public RefCountedAndCanMakeWeakPtr<Memory> {
     WTF_MAKE_NONCOPYABLE(Memory);
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(Memory, JS_EXPORT_PRIVATE);
     friend LLIntOffsetsExtractor;

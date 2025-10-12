@@ -129,6 +129,11 @@ void ImageSibling::setSourceEGLImageInitState(gl::InitState initState) const
     mTargetOf->setInitState(initState);
 }
 
+angle::Result ImageSibling::ensureSizeResolved(const gl::Context *context) const
+{
+    return angle::Result::Continue;
+}
+
 bool ImageSibling::isAttachmentSpecified(const gl::ImageIndex &imageIndex) const
 {
     return !getAttachmentSize(imageIndex).empty();

@@ -20,6 +20,8 @@
 #include "GLContext.h"
 
 #if USE(WPE_RENDERER)
+#include "GLDisplay.h"
+#include "Logging.h"
 #include "PlatformDisplayLibWPE.h"
 
 #if USE(LIBEPOXY)
@@ -40,12 +42,11 @@
 
 namespace WebCore {
 
-GLContext::GLContext(PlatformDisplay& display, EGLContext context, EGLSurface surface, EGLConfig config, struct wpe_renderer_backend_egl_offscreen_target* target)
+GLContext::GLContext(GLDisplay& display, EGLContext context, EGLSurface surface, EGLConfig config, struct wpe_renderer_backend_egl_offscreen_target* target)
     : m_display(display)
     , m_context(context)
     , m_surface(surface)
     , m_config(config)
-    , m_type(WindowSurface)
     , m_wpeTarget(target)
 {
 }
@@ -58,11 +59,12 @@ EGLSurface GLContext::createWindowSurfaceWPE(EGLDisplay display, EGLConfig confi
     return eglCreateWindowSurface(display, config, (EGLNativeWindowType) window, nullptr);
 }
 
-std::unique_ptr<GLContext> GLContext::createWPEContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
+std::unique_ptr<GLContext> GLContext::createWPEContext(GLDisplay& display, EGLContext sharingContext)
 {
+    EGLDisplay eglDisplay = display.eglDisplay();
     EGLConfig config;
-    if (!getEGLConfig(platformDisplay, &config, WindowSurface)) {
-        WTFLogAlways("Cannot obtain EGL WPE context configuration: %s\n", lastErrorString());
+    if (!getEGLConfig(eglDisplay, &config, EGL_WINDOW_BIT)) {
+        RELEASE_LOG_INFO(Compositing, "Cannot obtain EGL WPE context configuration: %s\n", lastErrorString());
         return nullptr;
     }
 
@@ -70,6 +72,7 @@ std::unique_ptr<GLContext> GLContext::createWPEContext(PlatformDisplay& platform
     if (!target)
         return nullptr;
 
+    auto& platformDisplay = PlatformDisplay::sharedDisplay();
     wpe_renderer_backend_egl_offscreen_target_initialize(target, downcast<PlatformDisplayLibWPE>(platformDisplay).backend());
     EGLNativeWindowType window = wpe_renderer_backend_egl_offscreen_target_get_native_window(target);
     if (!window) {
@@ -77,23 +80,22 @@ std::unique_ptr<GLContext> GLContext::createWPEContext(PlatformDisplay& platform
         return nullptr;
     }
 
-    EGLContext context = createContextForEGLVersion(platformDisplay, config, sharingContext);
+    EGLContext context = createContextForEGLVersion(eglDisplay, config, sharingContext);
     if (context == EGL_NO_CONTEXT) {
-        WTFLogAlways("Cannot create EGL WPE context: %s\n", lastErrorString());
+        RELEASE_LOG_INFO(Compositing, "Cannot create EGL WPE context: %s\n", lastErrorString());
         wpe_renderer_backend_egl_offscreen_target_destroy(target);
         return nullptr;
     }
 
-    EGLDisplay display = platformDisplay.eglDisplay();
-    EGLSurface surface = eglCreateWindowSurface(display, config, static_cast<EGLNativeWindowType>(window), nullptr);
+    EGLSurface surface = eglCreateWindowSurface(eglDisplay, config, static_cast<EGLNativeWindowType>(window), nullptr);
     if (surface == EGL_NO_SURFACE) {
         WTFLogAlways("Cannot create EGL WPE window surface: %s\n", lastErrorString());
-        eglDestroyContext(display, context);
+        eglDestroyContext(eglDisplay, context);
         wpe_renderer_backend_egl_offscreen_target_destroy(target);
         return nullptr;
     }
 
-    return makeUnique<GLContext>(platformDisplay, context, surface, config, target);
+    return makeUnique<GLContext>(display, context, surface, config, target);
 }
 
 void GLContext::destroyWPETarget()

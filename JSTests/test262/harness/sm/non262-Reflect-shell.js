@@ -1,6 +1,5 @@
 /*---
 defines: [SOME_PRIMITIVE_VALUES]
-allow_unused: True
 ---*/
 
 // List of a few values that are not objects.

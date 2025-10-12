@@ -8,6 +8,11 @@ program="$(dirname $(dirname $(dirname "${SRCROOT}")))/${WK_ADDITIONAL_SCRIPTS_D
 # the same basename as the timestamp output.
 depfile="${SCRIPT_OUTPUT_FILE_0/%.timestamp/.d}"
 
+eval allowlists=(${WK_AUDIT_SPI_ALLOWLISTS})
+
+# For compatibility with offline build environments.
+export DISABLE_WEBKITCOREPY_AUTOINSTALLER=1
+
 if [[ "${WK_AUDIT_SPI}" == YES && -f "${program}" ]]; then
     mkdir -p "${OBJROOT}/WebKitSDKDBs"
 
@@ -16,8 +21,11 @@ if [[ "${WK_AUDIT_SPI}" == YES && -f "${program}" ]]; then
     # greater. If all available directories are for newer SDKs, fall back to
     # the last one.
     for versioned_sdkdb_dir in $(printf '%s\n' ${WK_SDKDB_DIR}/${PLATFORM_NAME}* | sort -rV); do
-        if printf '%s\n' ${versioned_sdkdb_dir#${WK_SDKDB_DIR}/} ${SDK_NAME%.internal} | sort -CV; then
-            break
+        # Skip any empty directories that may have been left behind after being
+        # removed from the tree due to .DS_Store, etc.
+        if [ -n "$(ls "${versioned_sdkdb_dir}")" ] && \
+            printf '%s\n' ${versioned_sdkdb_dir#${WK_SDKDB_DIR}/} ${SDK_NAME%.internal} | sort -CV; then
+        break
         fi
     done
 
@@ -27,7 +35,12 @@ if [[ "${WK_AUDIT_SPI}" == YES && -f "${program}" ]]; then
          --sdkdb-cache "${OBJROOT}/WebKitSDKDBs/${SDK_NAME}.sqlite3" \
          --sdk-dir "${SDKROOT}" --arch-name "${arch}" \
          --depfile "${depfile}" \
-         --primary-file "${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}" $@)
+         -F "${BUILT_PRODUCTS_DIR}" \
+         -L "${BUILT_PRODUCTS_DIR}" \
+         ${allowlists[@]/#/--allowlist } \
+         ${WK_OTHER_AUDIT_SPI_FLAGS} \
+         @"${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}/platform-enabled-swift-args.${arch}.resp" \
+         $@)
      done
 else
     [ -f "${program}" ] || echo "audit-spi not available, skipping" >&2

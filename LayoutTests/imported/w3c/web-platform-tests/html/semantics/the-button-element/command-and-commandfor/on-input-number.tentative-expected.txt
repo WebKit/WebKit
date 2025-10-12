@@ -1,9 +1,0 @@
-
-
-FAIL invoking number input with step-up action increments value assert_equals: expected 1 but got 0
-FAIL invoking number input with step-up action (case-insensitive) increments value assert_equals: expected 1 but got 0
-PASS invoking number input with step-up action and preventDefault does not increment value
-FAIL invoking number input with step-down action decrements value assert_equals: expected -1 but got 0
-FAIL invoking number input with step-down action (case-insensitive) decrements value assert_equals: expected -1 but got 0
-PASS invoking number input with step-down action and preventDefault does not decrement value
-

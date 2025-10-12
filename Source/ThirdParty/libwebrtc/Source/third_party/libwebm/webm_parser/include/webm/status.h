@@ -56,6 +56,11 @@ struct Status {
      */
     kEndOfFile = -3,
 
+    /**
+     The reader was unable to seek to the requested location.
+     */
+    kSeekFailed = -4,
+
     // Parsing errors. Range: -1025 to -2048.
     /**
      An element's ID is malformed.

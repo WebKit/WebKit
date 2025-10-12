@@ -2,5 +2,5 @@
 PASS showDirectoryPicker() must be undefined for data URI iframes.
 PASS FileSystemDirectoryHandle must be undefined for data URI iframes.
 FAIL navigator.storage.getDirectory() and showDirectoryPicker() must reject in a sandboxed iframe. assert_equals: expected "showDirectoryPicker(): REJECTED: SecurityError" but got "showDirectoryPicker(): EXCEPTION: TypeError"
-FAIL navigator.storage.getDirectory() and showDirectoryPicker() must reject in a sandboxed opened window. assert_equals: expected "showDirectoryPicker(): REJECTED: SecurityError" but got "navigator.storage.getDirectory(): REJECTED: TypeError"
+FAIL navigator.storage.getDirectory() and showDirectoryPicker() must reject in a sandboxed opened window. assert_equals: expected "showDirectoryPicker(): REJECTED: SecurityError" but got "navigator.storage.getDirectory(): REJECTED: SecurityError"
 

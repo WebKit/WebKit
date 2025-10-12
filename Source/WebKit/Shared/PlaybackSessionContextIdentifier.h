@@ -26,9 +26,15 @@
 #pragma once
 
 #include <WebCore/HTMLMediaElementIdentifier.h>
+#include <WebCore/ProcessQualified.h>
 
 namespace WebKit {
 
-using PlaybackSessionContextIdentifier = WebCore::HTMLMediaElementIdentifier;
+using PlaybackSessionContextIdentifier = WebCore::ProcessQualified<WebCore::HTMLMediaElementIdentifier>;
+
+inline PlaybackSessionContextIdentifier processQualify(WebCore::HTMLMediaElementIdentifier identifier)
+{
+    return WebCore::ProcessQualified(identifier, WebCore::Process::identifier());
+}
 
 }

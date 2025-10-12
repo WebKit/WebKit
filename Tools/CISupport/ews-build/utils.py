@@ -1,4 +1,4 @@
-# Copyright (C) 2024 Apple Inc. All rights reserved.
+# Copyright (C) 2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -32,9 +32,9 @@ def load_password(name, default=None, master_prefix_path=os.path.dirname(os.path
         passwords = json.load(open(os.path.join(master_prefix_path, 'passwords.json')))
         return passwords.get(name, default)
     except FileNotFoundError as e:
-        print(f'ERROR: passwords.json missing: {e}, using default value for {name}\n')
+        print(f'Using default value for {name}, {e}')
     except Exception as e:
-        print(f'Error in finding {name} in passwords.json\n')
+        print(f'Error in finding {name} in passwords.json: {e}')
     return default
 
 

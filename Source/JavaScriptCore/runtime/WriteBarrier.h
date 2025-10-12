@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "GCAssertions.h"
-#include "HandleTypes.h"
-#include "StructureID.h"
+#include <JavaScriptCore/GCAssertions.h>
+#include <JavaScriptCore/HandleTypes.h>
+#include <JavaScriptCore/StructureID.h>
 #include <type_traits>
 #include <wtf/RawPtrTraits.h>
 #include <wtf/RawValueTraits.h>

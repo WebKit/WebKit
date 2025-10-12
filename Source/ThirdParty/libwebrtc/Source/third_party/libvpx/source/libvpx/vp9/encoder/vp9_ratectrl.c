@@ -1299,6 +1299,30 @@ static int rc_pick_q_and_bounds_one_pass_vbr(const VP9_COMP *cpi,
   } else {
     q = vp9_rc_regulate_q(cpi, rc->this_frame_target, active_best_quality,
                           active_worst_quality);
+
+    // For no lookahead: if buffer_level indicates overshoot, then avoid going
+    // to very low QP. This reduces overshoot observed in Issue: 376707227.
+    // Note the buffer_level is updated for every encoded frame as:
+    // buffer_level - starting_buffer_level += (avg_frame_bandwidth -
+    // encoded_frame_size). So normalizing this with framerate and #encoded
+    // frames (current_video_frame) gives the difference/error between target
+    // and encoding bitrate. The additional avg_frame_bandwidth term is to
+    // compensate for the pre-encoded buffer update (in
+    // vp9_rc_get_one_pass_vbr_params).
+    const int qp_thresh = 32;
+    const int64_t bitrate_err =
+        (int64_t)(cpi->framerate *
+                  (rc->buffer_level - rc->starting_buffer_level -
+                   rc->avg_frame_bandwidth) /
+                  (cm->current_video_frame + 1));
+    // Threshold may be tuned, but for now condition this on low QP.
+    if (cpi->oxcf.lag_in_frames == 0 && bitrate_err / 1000 < -10 &&
+        qp_thresh < rc->worst_quality &&
+        (q < qp_thresh || *top_index < qp_thresh)) {
+      q = qp_thresh;
+      *top_index = VPXMAX(*top_index, q);
+    }
+
     if (q > *top_index) {
       // Special case when we are targeting the max allowed rate
       if (rc->this_frame_target >= rc->max_frame_bandwidth)
@@ -1710,14 +1734,6 @@ void vp9_rc_set_frame_target(VP9_COMP *cpi, int target) {
                                   rate_thresh_mult[rc->frame_size_selector]);
   }
 
-#if CONFIG_RATE_CTRL
-  if (cpi->oxcf.use_simple_encode_api) {
-    if (cpi->encode_command.use_external_target_frame_bits) {
-      rc->this_frame_target = cpi->encode_command.target_frame_bits;
-    }
-  }
-#endif  // CONFIG_RATE_CTRL
-
   // Target rate per SB64 (including partial SB64s.
   const int64_t sb64_target_rate =
       ((int64_t)rc->this_frame_target * 64 * 64) / (cm->width * cm->height);
@@ -2126,6 +2142,7 @@ void vp9_rc_get_one_pass_vbr_params(VP9_COMP *cpi) {
   else
     target = vp9_calc_pframe_target_size_one_pass_vbr(cpi);
   vp9_rc_set_frame_target(cpi, target);
+  if (cm->show_frame) vp9_update_buffer_level_preencode(cpi);
   if (cpi->oxcf.aq_mode == CYCLIC_REFRESH_AQ && cpi->oxcf.pass == 0)
     vp9_cyclic_refresh_update_parameters(cpi);
 }
@@ -2587,13 +2604,6 @@ void vp9_rc_set_gf_interval_range(const VP9_COMP *const cpi,
     // Set Maximum gf/arf interval
     rc->max_gf_interval = oxcf->max_gf_interval;
     rc->min_gf_interval = oxcf->min_gf_interval;
-#if CONFIG_RATE_CTRL
-    if (oxcf->use_simple_encode_api) {
-      // In this experiment, we avoid framerate being changed dynamically during
-      // encoding.
-      framerate = oxcf->init_framerate;
-    }
-#endif  // CONFIG_RATE_CTRL
     if (rc->min_gf_interval == 0) {
       rc->min_gf_interval = vp9_rc_get_default_min_gf_interval(
           oxcf->width, oxcf->height, framerate);
@@ -3256,12 +3266,21 @@ int vp9_encodedframe_overshoot(VP9_COMP *cpi, int frame_size, int *q) {
     double rate_correction_factor =
         cpi->rc.rate_correction_factors[INTER_NORMAL];
     const int target_size = cpi->rc.avg_frame_bandwidth;
+    const uint64_t sad_thr = 64 * 64 * 32;
+    int force_maxqp = 1;
     double new_correction_factor;
     int target_bits_per_mb;
     double q2;
     int enumerator;
-    // Force a re-encode, and for now use max-QP.
-    *q = cpi->rc.worst_quality;
+    // Set a larger QP.
+    if (cpi->oxcf.content != VP9E_CONTENT_SCREEN &&
+        (rc->buffer_level > (3 * rc->optimal_buffer_level) >> 2) &&
+        (cpi->rc.avg_source_sad[0] < sad_thr)) {
+      *q = (*q + cpi->rc.worst_quality) >> 1;
+      force_maxqp = 0;
+    } else {
+      *q = cpi->rc.worst_quality;
+    }
     cpi->cyclic_refresh->counter_encode_maxq_scene_change = 0;
     cpi->rc.re_encode_maxq_scene_change = 1;
     // If the frame_size is much larger than the threshold (big content change)
@@ -3335,7 +3354,7 @@ int vp9_encodedframe_overshoot(VP9_COMP *cpi, int frame_size, int *q) {
           lrc->rc_1_frame = 0;
           lrc->rc_2_frame = 0;
           lrc->rate_correction_factors[INTER_NORMAL] = rate_correction_factor;
-          lrc->force_max_q = 1;
+          lrc->force_max_q = force_maxqp;
         }
       }
     }

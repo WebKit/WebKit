@@ -1,0 +1,97 @@
+# Copyright (C) 2025 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+[Nested] struct WebCore::SerializedNode::QualifiedName {
+    String prefix;
+    String localName;
+    String namespaceURI;
+}
+[Nested] struct WebCore::SerializedNode::ContainerNode {
+    Vector<WebCore::SerializedNode> children;
+};
+[Nested] struct WebCore::SerializedNode::Attr {
+    WebCore::SerializedNode::QualifiedName name;
+    String value;
+};
+[Nested] struct WebCore::SerializedNode::CharacterData {
+    String data;
+};
+[Nested] struct WebCore::SerializedNode::Document : WebCore::SerializedNode::ContainerNode {
+    WebCore::ClonedDocumentType type;
+    URL url;
+    URL baseURL;
+    URL baseURLOverride;
+    Variant<String, URL> documentURI;
+    String contentType;
+};
+[Nested] enum class WebCore::ClonedDocumentType : uint8_t {
+    XMLDocument,
+    XHTMLDocument,
+    HTMLDocument,
+    SVGDocument,
+    Document
+};
+[Nested] struct WebCore::SerializedNode::DocumentFragment : WebCore::SerializedNode::ContainerNode {
+};
+[Nested] struct WebCore::SerializedNode::DocumentType {
+    String name;
+    String publicId;
+    String systemId;
+};
+[Nested] struct WebCore::SerializedNode::Element::Attribute {
+    WebCore::SerializedNode::QualifiedName name;
+    String value;
+}
+[Nested] struct WebCore::SerializedNode::Element : WebCore::SerializedNode::ContainerNode {
+    WebCore::SerializedNode::QualifiedName name;
+    Vector<WebCore::SerializedNode::Element::Attribute> attributes;
+    std::optional<WebCore::SerializedNode::ShadowRoot> shadowRoot;
+};
+[Nested] struct WebCore::SerializedNode::Comment : WebCore::SerializedNode::CharacterData {
+};
+[Nested] struct WebCore::SerializedNode::Text : WebCore::SerializedNode::CharacterData {
+};
+[Nested] struct WebCore::SerializedNode::CDATASection : WebCore::SerializedNode::Text {
+};
+[Nested] struct WebCore::SerializedNode::ProcessingInstruction : WebCore::SerializedNode::CharacterData {
+    String target;
+};
+[Nested] struct WebCore::SerializedNode::ShadowRoot : WebCore::SerializedNode::DocumentFragment {
+    bool openMode;
+    WebCore::SlotAssignmentMode slotAssignmentMode;
+    WebCore::ShadowRootDelegatesFocus delegatesFocus;
+    WebCore::ShadowRootSerializable serializable;
+    WebCore::ShadowRootAvailableToElementInternals availableToElementInternals;
+    WebCore::ShadowRootScopedCustomElementRegistry hasScopedCustomElementRegistry;
+};
+[Nested] struct WebCore::SerializedNode::HTMLTemplateElement : WebCore::SerializedNode::Element {
+    std::optional<WebCore::SerializedNode::DocumentFragment> content;
+};
+[Nested] enum class WebCore::SlotAssignmentMode : bool
+[Nested] enum class WebCore::ShadowRootDelegatesFocus : bool
+[Nested] enum class WebCore::ShadowRootSerializable : bool
+[Nested] enum class WebCore::ShadowRootAvailableToElementInternals : bool
+[Nested] enum class WebCore::ShadowRootScopedCustomElementRegistry : bool
+
+struct WebCore::SerializedNode {
+    Variant<WebCore::SerializedNode::Attr, WebCore::SerializedNode::CDATASection, WebCore::SerializedNode::Comment, WebCore::SerializedNode::Document, WebCore::SerializedNode::DocumentFragment, WebCore::SerializedNode::DocumentType, WebCore::SerializedNode::Element, WebCore::SerializedNode::ProcessingInstruction, WebCore::SerializedNode::ShadowRoot, WebCore::SerializedNode::Text, WebCore::SerializedNode::HTMLTemplateElement> data;
+}

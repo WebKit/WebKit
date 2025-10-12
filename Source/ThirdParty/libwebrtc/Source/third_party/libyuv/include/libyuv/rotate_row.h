@@ -20,6 +20,7 @@ extern "C" {
 #endif
 
 // The following are available for Visual C 32 bit:
+// TODO - port to clangcl on rotate_win
 #if !defined(LIBYUV_DISABLE_X86) && defined(_M_IX86) && defined(_MSC_VER) && \
     !defined(__clang__)
 #define HAS_TRANSPOSEWX8_SSSE3
@@ -27,14 +28,17 @@ extern "C" {
 #endif
 
 // The following are available for GCC 32 or 64 bit:
-#if !defined(LIBYUV_DISABLE_X86) && (defined(__i386__) || defined(__x86_64__))
+#if !defined(LIBYUV_DISABLE_X86) &&               \
+    (defined(__i386__) || defined(__x86_64__)) && \
+    !defined(LIBYUV_ENABLE_ROWWIN)
 #define HAS_TRANSPOSEWX8_SSSE3
 #define HAS_TRANSPOSE4X4_32_SSE2
 #define HAS_TRANSPOSE4X4_32_AVX2
 #endif
 
 // The following are available for 64 bit GCC:
-#if !defined(LIBYUV_DISABLE_X86) && defined(__x86_64__)
+#if !defined(LIBYUV_DISABLE_X86) && defined(__x86_64__) && \
+    !defined(LIBYUV_ENABLE_ROWWIN)
 #define HAS_TRANSPOSEWX8_FAST_SSSE3
 #define HAS_TRANSPOSEUVWX8_SSE2
 #endif

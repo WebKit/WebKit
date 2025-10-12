@@ -25,23 +25,24 @@
 
 #pragma once
 
-#include "BoxExtents.h"
-#include "FloatRect.h"
-#include "IntRect.h"
-#include "LengthBox.h"
-#include "PlatformCALayer.h"
-#include "PlatformCALayerClient.h"
-#include "TiledBacking.h"
-#include "Timer.h"
-#include "VelocityData.h"
+#include <WebCore/BoxExtents.h>
+#include <WebCore/ContentsFormat.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/PlatformCALayer.h>
+#include <WebCore/PlatformCALayerClient.h>
+#include <WebCore/TiledBacking.h>
+#include <WebCore/Timer.h>
+#include <WebCore/VelocityData.h>
 #include <wtf/Deque.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-#include "DynamicContentScalingDisplayList.h"
+#include <WebCore/DynamicContentScalingDisplayList.h>
 #endif
 
 namespace WebCore {
@@ -79,6 +80,12 @@ public:
 
     WEBCORE_EXPORT void setContentsScale(float);
     WEBCORE_EXPORT float contentsScale() const;
+
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    WEBCORE_EXPORT bool setNeedsDisplayIfEDRHeadroomExceeds(float);
+    WEBCORE_EXPORT void setTonemappingEnabled(bool);
+    WEBCORE_EXPORT bool tonemappingEnabled() const;
+#endif
 
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }
     WEBCORE_EXPORT void setAcceleratesDrawing(bool);
@@ -225,6 +232,10 @@ private:
 
     PlatformCALayerClient* owningGraphicsLayer() const { return m_tileCacheLayer->owner(); }
 
+    void clearObscuredInsetsAdjustments() final { m_obscuredInsetsDelta = std::nullopt; }
+    void obscuredInsetsWillChange(FloatBoxExtent&& obscuredInsetsDelta) final { m_obscuredInsetsDelta = WTFMove(obscuredInsetsDelta); }
+    FloatRect adjustedTileClipRectForObscuredInsets(const FloatRect&) const;
+
     PlatformCALayer* m_tileCacheLayer;
 
     WeakPtr<TiledBackingClient> m_client;
@@ -270,6 +281,9 @@ private:
     bool m_tileSizeLocked { false };
     bool m_haveExternalVelocityData { false };
     bool m_isTileSizeUpdateDelayDisabledForTesting { false };
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    bool m_tonemappingEnabled { false };
+#endif
 
     ContentsFormat m_contentsFormat { ContentsFormat::RGBA8 };
 
@@ -279,6 +293,7 @@ private:
     float m_tileDebugBorderWidth { 0 };
     ScrollingModeIndication m_indicatorMode { SynchronousScrollingBecauseOfLackOfScrollingCoordinatorIndication };
     FloatBoxExtent m_obscuredContentInsets;
+    std::optional<FloatBoxExtent> m_obscuredInsetsDelta;
 };
 
 } // namespace WebCore

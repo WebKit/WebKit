@@ -4,6 +4,7 @@
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,9 +25,9 @@
 
 #pragma once
 
-#include "FillLayer.h"
-#include "OutlineValue.h"
-#include "StyleColor.h"
+#include <WebCore/OutlineValue.h>
+#include <WebCore/StyleBackgroundLayer.h>
+#include <WebCore/StyleColor.h>
 #include <wtf/DataRef.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
@@ -39,7 +40,7 @@ namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleBackgroundData);
 class StyleBackgroundData : public RefCounted<StyleBackgroundData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleBackgroundData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleBackgroundData, StyleBackgroundData);
 public:
     static Ref<StyleBackgroundData> create() { return adoptRef(*new StyleBackgroundData); }
     Ref<StyleBackgroundData> copy() const;
@@ -52,7 +53,7 @@ public:
 
     bool isEquivalentForPainting(const StyleBackgroundData&, bool currentColorDiffers) const;
 
-    DataRef<FillLayer> background;
+    Style::BackgroundLayers background;
     Style::Color color;
     OutlineValue outline;
 

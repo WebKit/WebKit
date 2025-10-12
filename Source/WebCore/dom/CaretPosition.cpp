@@ -28,6 +28,7 @@
 
 #include "DOMRect.h"
 #include "Range.h"
+#include "ScriptWrappableInlines.h"
 #include "SimpleRange.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -48,5 +49,7 @@ RefPtr<DOMRect> CaretPosition::getClientRect()
 
     return Range::boundingClientRect(SimpleRange { BoundaryPoint { *m_offsetNode, m_offset }, BoundaryPoint { *m_offsetNode, m_offset } });
 }
+
+CaretPosition::~CaretPosition() = default;
 
 } // namespace WebCore

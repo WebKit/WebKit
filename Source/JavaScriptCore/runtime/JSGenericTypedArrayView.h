@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "JSArrayBufferView.h"
-#include "ThrowScope.h"
-#include "ToNativeFromValue.h"
+#include <JavaScriptCore/JSArrayBufferView.h>
+#include <JavaScriptCore/ThrowScope.h>
+#include <JavaScriptCore/ToNativeFromValue.h>
 #include <wtf/CheckedArithmetic.h>
 
 namespace JSC {
@@ -109,7 +109,7 @@ public:
     std::span<const typename Adaptor::Type> typedSpan() const { return unsafeMakeSpan(typedVector(), length()); }
     std::span<typename Adaptor::Type> typedSpan() { return unsafeMakeSpan(typedVector(), length()); }
 
-    inline bool inBounds(size_t) const;
+    inline bool inBounds(uint64_t) const;
 
     // These methods are meant to match indexed access methods that JSObject
     // supports - hence the slight redundancy.
@@ -161,7 +161,9 @@ public:
 
     inline void copyFromInt32ShapeArray(size_t offset, JSArray*, size_t objectOffset, size_t length);
     inline void copyFromDoubleShapeArray(size_t offset, JSArray*, size_t objectOffset, size_t length);
-    
+
+    DECLARE_VISIT_CHILDREN;
+
 protected:
     friend struct TypedArrayClassInfos;
 
@@ -179,7 +181,6 @@ protected:
     static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode);
 
     static size_t estimatedSize(JSCell*, VM&);
-    DECLARE_VISIT_CHILDREN;
 
     // Returns true if successful, and false on error; it will throw on error.
     template<typename OtherAdaptor>

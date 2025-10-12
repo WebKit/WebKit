@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "DisabledAdaptations.h"
-#include "FloatSize.h"
-#include "IntSize.h"
-#include "ViewportArguments.h"
+#include <WebCore/DisabledAdaptations.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/IntSize.h>
+#include <WebCore/ViewportArguments.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OptionSet.h>
 #include <wtf/TZoneMalloc.h>

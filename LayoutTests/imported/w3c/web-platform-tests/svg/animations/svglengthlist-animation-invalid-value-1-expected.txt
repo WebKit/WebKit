@@ -1,0 +1,4 @@
+ABCD
+
+FAIL Test SVGLengthList animation with invalid values: String value in length list values for from and to attributes. assert_array_equals: expected property 0 to be 50 but got 55 (expected array [50, 70, 90, 110] got [55, 80, 105, 110])
+

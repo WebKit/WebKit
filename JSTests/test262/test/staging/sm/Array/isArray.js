@@ -4,15 +4,12 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
 ---*/
 var global = this;
-var otherGlobal = createNewGlobal();
+var otherGlobal = $262.createRealm().global;
 
 var thisGlobal = () => global;
 var alternateGlobals = (function(i) {
@@ -47,10 +44,10 @@ function performTests(pickGlobal)
 
     // Revoked proxy to (formerly) an array.
     revocable.revoke();
-    assertThrowsInstanceOf(() => Array.isArray(revocable.proxy), TypeError);
+    assert.throws(TypeError, () => Array.isArray(revocable.proxy));
 
     // Recursive proxy ultimately terminating in a revoked proxy to an array.
-    assertThrowsInstanceOf(() => Array.isArray(proxy), TypeError);
+    assert.throws(TypeError, () => Array.isArray(proxy));
 
 }
 

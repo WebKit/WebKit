@@ -153,7 +153,7 @@ typedef struct srtp_cipher_type_t {
     srtp_cipher_init_func_t init;
     srtp_cipher_set_aad_func_t set_aad;
     srtp_cipher_encrypt_func_t encrypt;
-    srtp_cipher_encrypt_func_t decrypt;
+    srtp_cipher_decrypt_func_t decrypt;
     srtp_cipher_set_iv_func_t set_iv;
     srtp_cipher_get_tag_func_t get_tag;
     const char *description;

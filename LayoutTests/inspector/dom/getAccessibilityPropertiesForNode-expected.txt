@@ -825,7 +825,6 @@ Total elements to be tested: 126.
     exists: true
     label:
     role: textbox
-    childNodeIds.length: 1
     focused: false
     invalid: true
     parentNodeId: exists
@@ -835,7 +834,6 @@ Total elements to be tested: 126.
     exists: true
     label:
     role: textbox
-    childNodeIds.length: 1
     focused: false
     invalid: spelling
     parentNodeId: exists
@@ -845,7 +843,6 @@ Total elements to be tested: 126.
     exists: true
     label:
     role: textbox
-    childNodeIds.length: 1
     focused: false
     parentNodeId: exists
     required: true

@@ -27,7 +27,7 @@
 
 #if ENABLE(JIT)
 
-#include "JSCPtrTag.h"
+#include <JavaScriptCore/JSCPtrTag.h>
 
 namespace JSC {
 class VM;

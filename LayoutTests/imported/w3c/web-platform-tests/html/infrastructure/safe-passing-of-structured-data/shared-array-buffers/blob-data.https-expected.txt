@@ -1,8 +1,4 @@
-CONSOLE MESSAGE: [blocked] The page at data:text/html,<!doctype html><script src=https://localhost:9443/resources/testharness.js?pipe=header(Cross-Origin-Resource-Policy,cross-origin)%3E%3C/script%3E%3Cscript%3E/*%20Cannot%20use%20httpWorkerIncrementerTest()%20here%20as%20the%20HTTP%20URL%20is%20not%20same%20origin.%20*/promise_test(t%20=%3E%20{%20%20const%20worker%20=%20new%20Worker(URL.createObjectURL(new%20Blob([`const%20view%20=%20new%20Uint8Array(new%20SharedArrayBuffer(1));self.onmessage%20=%20()%20=%3E%20{%20%20const%20succeeded%20=%20(v...0%20});},%20%22data%20frame:%20postMessaging%20to%20a%20dedicated%20blob%20sub-worker%20allows%20them%20to%20see%20each%20others'%20modifications%22);test(()%20=%3E%20{%20%20assert_equals(self.origin,%20self.location.origin);},%20%22data%20frame:%20self.origin%22);test(()%20=%3E%20{%20%20assert_equals(self.crossOriginIsolated,%20true);},%20%22data%20frame:%20self.crossOriginIsolated%22);test(()%20=%3E%20{%20%20assert_true(self.isSecureContext);},%20%22data%20frame:%20self.isSecureContext%22);%3C/script%3E was not allowed to display insecure content from blob:null/1456dd58-466d-45bf-8f7f-77cb5a8d4228.
 
-CONSOLE MESSAGE: Not allowed to request resource
-CONSOLE MESSAGE: Cannot load blob:null/1456dd58-466d-45bf-8f7f-77cb5a8d4228 due to access control checks.
-CONSOLE MESSAGE: Not allowed to load local resource: blob:null/e65a086d-58bf-43fa-ac8a-8cee5488867d
 
 Harness Error (TIMEOUT), message = null
 

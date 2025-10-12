@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,11 @@
 #import "VideoPresentationManager.h"
 #import "VideoPresentationManagerProxyMessages.h"
 #import "WebPage.h"
-#import <WebCore/DocumentInlines.h>
+#import <WebCore/DocumentPage.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCore/NativeImage.h>
-#import <WebCore/NodeInlines.h>
+#import <WebCore/NodeDocument.h>
 #import <WebCore/Page.h>
 
 namespace WebKit {
@@ -44,9 +44,8 @@ WebTextTrackRepresentationCocoa::WebTextTrackRepresentationCocoa(WebCore::TextTr
     : WebCore::TextTrackRepresentationCocoa(client)
     , m_mediaElement(WeakPtr { mediaElement })
 {
-    auto* page = mediaElement.document().page();
-    if (page)
-        m_page = WeakPtr { WebPage::fromCorePage(*page) };
+    if (RefPtr page = mediaElement.document().page())
+        m_page = WeakPtr { WebPage::fromCorePage(page.releaseNonNull()) };
 }
 
 void WebTextTrackRepresentationCocoa::update()

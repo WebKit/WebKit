@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,7 +77,7 @@ void ViewUpdateDispatcher::visibleContentRectUpdate(WebCore::PageIdentifier page
             iterator->value.get().visibleContentRectUpdateInfo = visibleContentRectUpdateInfo;
     }
     if (updateListWasEmpty) {
-        RunLoop::protectedMain()->dispatch([this, protectedThis = Ref { *this }] {
+        RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }] {
             dispatchVisibleContentRectUpdate();
         });
     }
@@ -92,7 +92,7 @@ void ViewUpdateDispatcher::dispatchVisibleContentRectUpdate()
     }
 
     for (auto& slot : update) {
-        if (WebPage* webPage = WebProcess::singleton().webPage(slot.key))
+        if (RefPtr webPage = WebProcess::singleton().webPage(slot.key))
             webPage->updateVisibleContentRects(slot.value.get().visibleContentRectUpdateInfo, slot.value.get().oldestTimestamp);
     }
 }

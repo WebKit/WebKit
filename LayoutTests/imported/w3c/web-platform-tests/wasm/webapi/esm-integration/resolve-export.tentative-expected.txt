@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Indirectly exported binding name 'f' is not found.
 
 PASS Re-export of missing Wasm export should result in SyntaxError.
 

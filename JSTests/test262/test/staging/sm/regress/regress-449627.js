@@ -4,9 +4,6 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -17,22 +14,19 @@ var summary = 'Crash with JIT in js_FillPropertyCache';
 var actual = 'No Crash';
 var expect = 'No Crash';
 
-printBugNumber(BUGNUMBER);
-printStatus (summary);
-
 
 /************************ BROWSER DETECT (http://www.quirksmode.org/js/detect.html) ************************/
 
 if (typeof navigator == 'undefined')
 {
-  navigator = {
+  var navigator = {
     userAgent: "Firefox",
     vendor: "Mozilla",
     platform: "Mac"
   };
 }
 
-global = this;
+var global = this;
 
 var BrowserDetect = {
     init: function _init()

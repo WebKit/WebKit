@@ -22,10 +22,10 @@
 
 #pragma once
 
-#include "CallFrame.h"
-#include "JSCJSValue.h"
-#include "JSCast.h"
-#include "Structure.h"
+#include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSCast.h>
+#include <JavaScriptCore/Structure.h>
 
 namespace JSC {
 

@@ -45,6 +45,16 @@ dictionary ScrollToOptions {
 dictionary TextExtractionOptions {
     boolean clipToBounds = false;
     boolean includeRects = false;
+    boolean mergeParagraphs = false;
+    boolean skipNearlyTransparentContent = false;
+};
+
+dictionary TextExtractionInteractionOptions {
+    DOMString nodeIdentifier;
+    DOMString text;
+    double x = -1;
+    double y = -1;
+    boolean replaceAll = false;
 };
 
 interface UIScriptController {
@@ -353,6 +363,7 @@ interface UIScriptController {
     readonly attribute object inputViewBounds;
 
     undefined setKeyboardInputModeIdentifier(DOMString identifier);
+    undefined setFocusStartsInputSessionPolicy(DOMString policy);
 
     undefined replaceTextAtRange(DOMString text, long location, long length);
 
@@ -428,6 +439,8 @@ interface UIScriptController {
     undefined acceptInlinePrediction();
 
     undefined requestTextExtraction(object callback, TextExtractionOptions options);
+    undefined requestDebugText(object callback);
+    undefined performTextExtractionInteraction(DOMString action, TextExtractionInteractionOptions options, object callback);
 
     undefined requestRenderedTextForFrontmostTarget(long x, long y, object callback);
     undefined adjustVisibilityForFrontmostTarget(long x, long y, object callback);

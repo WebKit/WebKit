@@ -8,16 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+#include <cstdint>
+
+#include "api/field_trials.h"
 #include "modules/audio_coding/codecs/opus/audio_decoder_opus.h"
-#include "test/explicit_key_value_config.h"
 #include "test/fuzzers/audio_decoder_fuzzer.h"
 
 namespace webrtc {
 void FuzzOneInput(const uint8_t* data, size_t size) {
   const size_t channels = (size % 2) + 1;  // 1 or 2 channels.
   const int kSampleRateHz = 48'000;
-  AudioDecoderOpusImpl dec(test::ExplicitKeyValueConfig(""), channels,
-                           kSampleRateHz);
+  AudioDecoderOpusImpl dec(FieldTrials(""), channels, kSampleRateHz);
   const size_t kAllocatedOuputSizeSamples = kSampleRateHz / 10;  // 100 ms.
   int16_t output[kAllocatedOuputSizeSamples];
   FuzzAudioDecoder(DecoderFunctionType::kRedundantDecode, data, size, &dec,

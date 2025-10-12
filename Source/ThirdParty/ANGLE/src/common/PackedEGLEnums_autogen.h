@@ -55,12 +55,13 @@ std::ostream &operator<<(std::ostream &os, CompositorTiming value);
 
 enum class ContextPriority : uint8_t
 {
-    Low    = 0,
-    Medium = 1,
-    High   = 2,
+    Low      = 0,
+    Medium   = 1,
+    High     = 2,
+    Realtime = 3,
 
-    InvalidEnum = 3,
-    EnumCount   = 3,
+    InvalidEnum = 4,
+    EnumCount   = 4,
 };
 
 template <>

@@ -10,13 +10,18 @@
 #ifndef NET_DCSCTP_TIMER_TASK_QUEUE_TIMEOUT_H_
 #define NET_DCSCTP_TIMER_TASK_QUEUE_TIMEOUT_H_
 
+#include <functional>
 #include <memory>
 #include <utility>
 
+#include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/timestamp.h"
 #include "net/dcsctp/public/timeout.h"
+#include "net/dcsctp/public/types.h"
+#include "rtc_base/system/no_unique_address.h"
 
 namespace dcsctp {
 
@@ -72,7 +77,8 @@ class TaskQueueTimeoutFactory {
     // expiration time _further away_ than what is now the expected expiration
     // time. In this scenario, a new delayed task has to be posted with a
     // shorter duration and the old task has to be forgotten.
-    rtc::scoped_refptr<webrtc::PendingTaskSafetyFlag> pending_task_safety_flag_;
+    webrtc::scoped_refptr<webrtc::PendingTaskSafetyFlag>
+        pending_task_safety_flag_;
     // The time when the posted delayed task is set to expire. Will be set to
     // the infinite future if there is no such task running.
     webrtc::Timestamp posted_task_expiration_ =

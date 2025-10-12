@@ -216,24 +216,6 @@ void SurfaceMtl::setFixedHeight(EGLint height)
     UNIMPLEMENTED();
 }
 
-EGLint SurfaceMtl::getWidth() const
-{
-    if (mColorTexture)
-    {
-        return static_cast<EGLint>(mColorTexture->widthAt0());
-    }
-    return 0;
-}
-
-EGLint SurfaceMtl::getHeight() const
-{
-    if (mColorTexture)
-    {
-        return static_cast<EGLint>(mColorTexture->heightAt0());
-    }
-    return 0;
-}
-
 EGLint SurfaceMtl::isPostSubBufferSupported() const
 {
     return EGL_FALSE;
@@ -512,15 +494,11 @@ void WindowSurfaceMtl::setSwapInterval(const egl::Display *display, EGLint inter
 #endif
 }
 
-// width and height can change with client window resizing
-EGLint WindowSurfaceMtl::getWidth() const
+// size can change with client window resizing
+gl::Extents WindowSurfaceMtl::getSize() const
 {
-    return static_cast<EGLint>(mCurrentKnownDrawableSize.width);
-}
-
-EGLint WindowSurfaceMtl::getHeight() const
-{
-    return static_cast<EGLint>(mCurrentKnownDrawableSize.height);
+    return gl::Extents(static_cast<EGLint>(mCurrentKnownDrawableSize.width),
+                       static_cast<EGLint>(mCurrentKnownDrawableSize.height), 1);
 }
 
 EGLint WindowSurfaceMtl::getSwapBehavior() const
@@ -694,7 +672,9 @@ angle::Result WindowSurfaceMtl::obtainNextDrawable(const gl::Context *context)
         }
         mColorTextureInitialized = false;
 
-        ANGLE_MTL_LOG("Current metal drawable size=%d,%d", mColorTexture->width(mtl::MipmapNativeLevel(0)),  mColorTexture->height(mtl::MipmapNativeLevel(0)));
+        ANGLE_MTL_LOG("Current metal drawable size=%d,%d",
+                      mColorTexture->width(mtl::MipmapNativeLevel(0)),
+                      mColorTexture->height(mtl::MipmapNativeLevel(0)));
 
         // Now we have to resize depth stencil buffers if required.
         ANGLE_TRY(ensureCompanionTexturesSizeCorrect(context));
@@ -749,14 +729,9 @@ void OffscreenSurfaceMtl::destroy(const egl::Display *display)
     SurfaceMtl::destroy(display);
 }
 
-EGLint OffscreenSurfaceMtl::getWidth() const
+gl::Extents OffscreenSurfaceMtl::getSize() const
 {
-    return mSize.width;
-}
-
-EGLint OffscreenSurfaceMtl::getHeight() const
-{
-    return mSize.height;
+    return mSize;
 }
 
 egl::Error OffscreenSurfaceMtl::swap(const gl::Context *context, SurfaceSwapFeedback *feedback)

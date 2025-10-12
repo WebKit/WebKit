@@ -26,13 +26,13 @@
 
 #pragma once
 
-#include "CSSPrimitiveNumericTypes+EvaluateCalc.h"
-#include "CSSPrimitiveNumericTypes+SymbolReplacement.h"
-#include "CSSPrimitiveNumericTypes.h"
-#include "CSSValueKeywords.h"
-#include "Color.h"
-#include "ColorTypes.h"
-#include "StylePrimitiveNumericTypes.h"
+#include <WebCore/CSSPrimitiveNumericTypes+EvaluateCalc.h>
+#include <WebCore/CSSPrimitiveNumericTypes+SymbolReplacement.h>
+#include <WebCore/CSSPrimitiveNumericTypes.h>
+#include <WebCore/CSSValueKeywords.h>
+#include <WebCore/Color.h>
+#include <WebCore/ColorTypes.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
 #include <optional>
 #include <wtf/Brigand.h>
 #include <wtf/OptionSet.h>

@@ -1,29 +1,21 @@
 EventTargetFactory.cpp
 HTMLNames.cpp
 MathMLNames.cpp
-Modules/WebGPU/GPUQueue.cpp
+Modules/Model/Implementation/ModelDowncastConvertToBackingContext.cpp
 Modules/WebGPU/Implementation/WebGPUBindGroupImpl.cpp
 Modules/WebGPU/Implementation/WebGPUDowncastConvertToBackingContext.cpp
 Modules/WebGPU/Implementation/WebGPUXRBindingImpl.cpp
-Modules/async-clipboard/NavigatorClipboard.cpp
 Modules/audiosession/NavigatorAudioSession.cpp
 Modules/beacon/NavigatorBeacon.cpp
-Modules/cache/WindowOrWorkerGlobalScopeCaches.cpp
 Modules/contact-picker/NavigatorContacts.cpp
-Modules/cookie-consent/NavigatorCookieConsent.cpp
 Modules/credentialmanagement/NavigatorCredentials.cpp
 Modules/encryptedmedia/MediaKeySystemController.cpp
-Modules/gamepad/NavigatorGamepad.cpp
-Modules/geolocation/GeolocationController.h
 Modules/geolocation/NavigatorGeolocation.cpp
-Modules/indexeddb/WindowOrWorkerGlobalScopeIndexedDatabase.cpp
 Modules/mediacapabilities/NavigatorMediaCapabilities.cpp
 Modules/mediacapabilities/WorkerNavigatorMediaCapabilities.cpp
 Modules/mediasession/NavigatorMediaSession.cpp
 Modules/mediastream/NavigatorMediaDevices.cpp
 Modules/mediastream/PeerConnectionBackend.cpp
-Modules/mediastream/UserMediaController.h
-Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp
 Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpTransformBackend.cpp
@@ -37,7 +29,6 @@ Modules/push-api/ServiceWorkerRegistrationPushAPI.cpp
 Modules/screen-wake-lock/NavigatorScreenWakeLock.cpp
 Modules/speech/LocalDOMWindowSpeechSynthesis.cpp
 Modules/speech/SpeechSynthesis.cpp
-Modules/webaudio/AudioWorkletGlobalScope.cpp
 Modules/webaudio/WaveShaperProcessor.cpp
 Modules/webdriver/NavigatorWebDriver.cpp
 SVGNames.cpp
@@ -87,34 +78,21 @@ domjit/JSNodeDOMJIT.cpp
 editing/TypingCommand.cpp
 html/InputType.cpp
 html/NavigatorUserActivation.cpp
-html/canvas/WebGL2RenderingContext.cpp
 html/track/TextTrackCueGeneric.cpp
 inspector/CommandLineAPIModule.cpp
 inspector/agents/InspectorCSSAgent.cpp
-inspector/agents/InspectorIndexedDBAgent.cpp
 layout/layouttree/LayoutIterator.h
 layout/layouttree/LayoutTreeBuilder.cpp
-loader/ThreadableLoader.cpp
-loader/cache/CachedCSSStyleSheet.cpp
-loader/cache/CachedImage.cpp
 loader/cache/CachedResourceClientWalker.h
-loader/cache/CachedResourceHandle.h
 mathml/MathMLRowElement.cpp
 page/NavigatorLoginStatus.cpp
-page/mac/EventHandlerMac.mm
-platform/ThreadGlobalData.cpp
-platform/ThreadGlobalData.h
+[ Mac ] page/mac/EventHandlerMac.mm
 platform/graphics/GraphicsLayer.cpp
 platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.h
 platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.mm
-platform/graphics/mac/controls/ControlFactoryMac.mm
-platform/graphics/mac/controls/ControlMac.mm
-platform/mac/PasteboardMac.mm
-platform/mac/ScrollbarsControllerMac.mm
-platform/mac/SerializedPlatformDataCueMac.mm
-platform/mac/WebCoreFullScreenWindow.mm
+[ Mac ] platform/graphics/mac/controls/ControlMac.mm
 rendering/BidiRun.cpp
 rendering/BidiRun.h
 rendering/RenderAncestorIterator.h
@@ -138,7 +116,9 @@ testing/InternalSettings.cpp
 testing/Internals.cpp
 testing/cocoa/WebArchiveDumpSupport.mm
 workers/WorkerGlobalScope.cpp
-workers/WorkerMessagingProxy.cpp
 workers/WorkerThread.cpp
-workers/service/background-fetch/ServiceWorkerRegistrationBackgroundFetchAPI.cpp
-xml/XPathStep.cpp
+[ iOS ] platform/cocoa/WebAVPlayerLayerView.mm
+[ iOS ] platform/ios/VideoPresentationInterfaceAVKitLegacy.mm
+[ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm
+[ iOS ] platform/ios/wak/WAKView.mm
+[ iOS ] platform/ios/wak/WAKWindow.mm

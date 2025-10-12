@@ -30,8 +30,8 @@
 
 #pragma once
 
-#include "CSSPropertyNames.h"
-#include "Element.h"
+#include <WebCore/CSSPropertyNames.h>
+#include <WebCore/Element.h>
 #include <optional>
 #include <wtf/Assertions.h>
 
@@ -49,12 +49,16 @@ class BuilderState;
 
 class CSSToLengthConversionData {
 public:
+    CSSToLengthConversionData();
+    CSSToLengthConversionData(const CSSToLengthConversionData&);
+    CSSToLengthConversionData(CSSToLengthConversionData&&);
+
     // This is used during style building. The 'zoom' property is taken into account.
     CSSToLengthConversionData(const RenderStyle&, Style::BuilderState&);
     // This constructor ignores the `zoom` property.
     CSSToLengthConversionData(const RenderStyle&, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView*, const Element* elementForContainerUnitResolution = nullptr);
 
-    CSSToLengthConversionData() = default;
+    WEBCORE_EXPORT ~CSSToLengthConversionData();
 
     const RenderStyle* style() const { return m_style; }
     const RenderStyle* rootStyle() const { return m_rootStyle; }
@@ -99,7 +103,8 @@ public:
 
     void setUsesContainerUnits() const;
 
-    Style::BuilderState* styleBuilderState() const { return m_styleBuilderState; }
+    Style::BuilderState* styleBuilderState() const { return m_styleBuilderState.get(); }
+    CheckedPtr<Style::BuilderState> protectedStyleBuilderState() const;
 
 private:
     const RenderStyle* m_style { nullptr };
@@ -109,8 +114,7 @@ private:
     RefPtr<const Element> m_elementForContainerUnitResolution;
     std::optional<float> m_zoom;
     std::optional<CSSPropertyID> m_propertyToCompute;
-
-    Style::BuilderState* m_styleBuilderState { nullptr };
+    CheckedPtr<Style::BuilderState> m_styleBuilderState;
 };
 
 } // namespace WebCore

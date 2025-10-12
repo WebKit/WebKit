@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2011 The Chromium Authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -173,7 +173,7 @@ void BackendDispatcher::dispatch(const String& message)
         }
 
         String domain = domainAndMethod[0];
-        SupplementalBackendDispatcher* domainDispatcher = m_dispatchers.get(domain);
+        RefPtr domainDispatcher = m_dispatchers.get(domain);
         if (!domainDispatcher) {
             reportProtocolError(MethodNotFound, makeString('\'', domain, "' domain was not found"_s));
             sendPendingErrors();

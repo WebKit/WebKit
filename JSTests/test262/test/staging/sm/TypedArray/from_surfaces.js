@@ -2,9 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-TypedArray-shell.js]
-flags:
-  - noStrict
+includes: [sm/non262-TypedArray-shell.js]
 description: |
   pending
 esid: pending
@@ -16,6 +14,6 @@ for (var constructor of anyTypedArrayConstructors) {
     assert.sameValue(desc.enumerable, false);
     assert.sameValue(desc.writable, true);
     assert.sameValue(constructor.from.length, 1);
-    assertThrowsInstanceOf(() => new constructor.from(), TypeError);  // not a constructor
+    assert.throws(TypeError, () => new constructor.from());  // not a constructor
 }
 

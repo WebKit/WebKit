@@ -220,14 +220,14 @@ $L$hash_ad_done:
 
 
 
-global	chacha20_poly1305_open_nohw
+global	chacha20_poly1305_open_sse41
 
 ALIGN	64
-chacha20_poly1305_open_nohw:
+chacha20_poly1305_open_sse41:
 	mov	QWORD[8+rsp],rdi	;WIN64 prologue
 	mov	QWORD[16+rsp],rsi
 	mov	rax,rsp
-$L$SEH_begin_chacha20_poly1305_open_nohw:
+$L$SEH_begin_chacha20_poly1305_open_sse41:
 	mov	rdi,rcx
 	mov	rsi,rdx
 	mov	rdx,r8
@@ -308,9 +308,9 @@ $L$open_sse_init_rounds:
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,4
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,12
+	palignr	xmm4,xmm4,4
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,12
 	paddd	xmm0,xmm4
 	pxor	xmm12,xmm0
 	pshufb	xmm12,XMMWORD[$L$rol16]
@@ -329,9 +329,9 @@ DB	102,69,15,58,15,228,12
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,12
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,4
+	palignr	xmm4,xmm4,12
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,4
 
 	dec	r10
 	jne	NEAR $L$open_sse_init_rounds
@@ -389,10 +389,10 @@ $L$open_sse_main_loop_rounds:
 	pxor	xmm14,xmm2
 	pxor	xmm13,xmm1
 	pxor	xmm12,xmm0
-DB	102,69,15,56,0,248
-DB	102,69,15,56,0,240
-DB	102,69,15,56,0,232
-DB	102,69,15,56,0,224
+	pshufb	xmm15,xmm8
+	pshufb	xmm14,xmm8
+	pshufb	xmm13,xmm8
+	pshufb	xmm12,xmm8
 	movdqa	xmm8,XMMWORD[((160+80))+rbp]
 	paddd	xmm11,xmm15
 	paddd	xmm10,xmm14
@@ -443,10 +443,10 @@ DB	102,69,15,56,0,224
 	pxor	xmm14,xmm2
 	pxor	xmm13,xmm1
 	pxor	xmm12,xmm0
-DB	102,69,15,56,0,248
-DB	102,69,15,56,0,240
-DB	102,69,15,56,0,232
-DB	102,69,15,56,0,224
+	pshufb	xmm15,xmm8
+	pshufb	xmm14,xmm8
+	pshufb	xmm13,xmm8
+	pshufb	xmm12,xmm8
 	movdqa	xmm8,XMMWORD[((160+80))+rbp]
 	paddd	xmm11,xmm15
 	paddd	xmm10,xmm14
@@ -487,18 +487,18 @@ DB	102,69,15,56,0,224
 	imul	r9,r12
 	add	r15,r10
 	adc	r9,rdx
-DB	102,15,58,15,255,4
-DB	102,69,15,58,15,219,8
-DB	102,69,15,58,15,255,12
-DB	102,15,58,15,246,4
-DB	102,69,15,58,15,210,8
-DB	102,69,15,58,15,246,12
-DB	102,15,58,15,237,4
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,12
-DB	102,15,58,15,228,4
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,12
+	palignr	xmm7,xmm7,4
+	palignr	xmm11,xmm11,8
+	palignr	xmm15,xmm15,12
+	palignr	xmm6,xmm6,4
+	palignr	xmm10,xmm10,8
+	palignr	xmm14,xmm14,12
+	palignr	xmm5,xmm5,4
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,12
+	palignr	xmm4,xmm4,4
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,12
 	movdqa	XMMWORD[(160+80)+rbp],xmm8
 	movdqa	xmm8,XMMWORD[$L$rol16]
 	paddd	xmm3,xmm7
@@ -523,10 +523,10 @@ DB	102,69,15,58,15,228,12
 	adc	r12,0
 	pxor	xmm13,xmm1
 	pxor	xmm12,xmm0
-DB	102,69,15,56,0,248
-DB	102,69,15,56,0,240
-DB	102,69,15,56,0,232
-DB	102,69,15,56,0,224
+	pshufb	xmm15,xmm8
+	pshufb	xmm14,xmm8
+	pshufb	xmm13,xmm8
+	pshufb	xmm12,xmm8
 	movdqa	xmm8,XMMWORD[((160+80))+rbp]
 	paddd	xmm11,xmm15
 	paddd	xmm10,xmm14
@@ -562,10 +562,10 @@ DB	102,69,15,56,0,224
 	pxor	xmm14,xmm2
 	pxor	xmm13,xmm1
 	pxor	xmm12,xmm0
-DB	102,69,15,56,0,248
-DB	102,69,15,56,0,240
-DB	102,69,15,56,0,232
-DB	102,69,15,56,0,224
+	pshufb	xmm15,xmm8
+	pshufb	xmm14,xmm8
+	pshufb	xmm13,xmm8
+	pshufb	xmm12,xmm8
 	movdqa	xmm8,XMMWORD[((160+80))+rbp]
 	paddd	xmm11,xmm15
 	paddd	xmm10,xmm14
@@ -593,18 +593,18 @@ DB	102,69,15,56,0,224
 	pslld	xmm4,32-25
 	pxor	xmm4,xmm8
 	movdqa	xmm8,XMMWORD[((160+80))+rbp]
-DB	102,15,58,15,255,12
-DB	102,69,15,58,15,219,8
-DB	102,69,15,58,15,255,4
-DB	102,15,58,15,246,12
-DB	102,69,15,58,15,210,8
-DB	102,69,15,58,15,246,4
-DB	102,15,58,15,237,12
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,4
-DB	102,15,58,15,228,12
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,4
+	palignr	xmm7,xmm7,12
+	palignr	xmm11,xmm11,8
+	palignr	xmm15,xmm15,4
+	palignr	xmm6,xmm6,12
+	palignr	xmm10,xmm10,8
+	palignr	xmm14,xmm14,4
+	palignr	xmm5,xmm5,12
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,4
+	palignr	xmm4,xmm4,12
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,4
 
 	dec	rcx
 	jge	NEAR $L$open_sse_main_loop_rounds
@@ -806,9 +806,9 @@ $L$open_sse_tail_64_rounds:
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,4
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,12
+	palignr	xmm4,xmm4,4
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,12
 	paddd	xmm0,xmm4
 	pxor	xmm12,xmm0
 	pshufb	xmm12,XMMWORD[$L$rol16]
@@ -827,9 +827,9 @@ DB	102,69,15,58,15,228,12
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,12
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,4
+	palignr	xmm4,xmm4,12
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,4
 
 	cmp	rcx,16
 	jae	NEAR $L$open_sse_tail_64_rounds_and_x1hash
@@ -921,9 +921,9 @@ $L$open_sse_tail_128_rounds:
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,4
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,12
+	palignr	xmm4,xmm4,4
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,12
 	paddd	xmm1,xmm5
 	pxor	xmm13,xmm1
 	pshufb	xmm13,XMMWORD[$L$rol16]
@@ -942,9 +942,9 @@ DB	102,69,15,58,15,228,12
 	pslld	xmm3,7
 	psrld	xmm5,25
 	pxor	xmm5,xmm3
-DB	102,15,58,15,237,4
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,12
+	palignr	xmm5,xmm5,4
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,12
 	paddd	xmm0,xmm4
 	pxor	xmm12,xmm0
 	pshufb	xmm12,XMMWORD[$L$rol16]
@@ -963,9 +963,9 @@ DB	102,69,15,58,15,237,12
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,12
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,4
+	palignr	xmm4,xmm4,12
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,4
 	paddd	xmm1,xmm5
 	pxor	xmm13,xmm1
 	pshufb	xmm13,XMMWORD[$L$rol16]
@@ -984,9 +984,9 @@ DB	102,69,15,58,15,228,4
 	pslld	xmm3,7
 	psrld	xmm5,25
 	pxor	xmm5,xmm3
-DB	102,15,58,15,237,12
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,4
+	palignr	xmm5,xmm5,12
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,4
 
 	cmp	r8,rcx
 	jb	NEAR $L$open_sse_tail_128_rounds_and_x1hash
@@ -1106,9 +1106,9 @@ $L$open_sse_tail_192_rounds:
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,4
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,12
+	palignr	xmm4,xmm4,4
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,12
 	paddd	xmm1,xmm5
 	pxor	xmm13,xmm1
 	pshufb	xmm13,XMMWORD[$L$rol16]
@@ -1127,9 +1127,9 @@ DB	102,69,15,58,15,228,12
 	pslld	xmm3,7
 	psrld	xmm5,25
 	pxor	xmm5,xmm3
-DB	102,15,58,15,237,4
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,12
+	palignr	xmm5,xmm5,4
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,12
 	paddd	xmm2,xmm6
 	pxor	xmm14,xmm2
 	pshufb	xmm14,XMMWORD[$L$rol16]
@@ -1148,9 +1148,9 @@ DB	102,69,15,58,15,237,12
 	pslld	xmm3,7
 	psrld	xmm6,25
 	pxor	xmm6,xmm3
-DB	102,15,58,15,246,4
-DB	102,69,15,58,15,210,8
-DB	102,69,15,58,15,246,12
+	palignr	xmm6,xmm6,4
+	palignr	xmm10,xmm10,8
+	palignr	xmm14,xmm14,12
 	paddd	xmm0,xmm4
 	pxor	xmm12,xmm0
 	pshufb	xmm12,XMMWORD[$L$rol16]
@@ -1169,9 +1169,9 @@ DB	102,69,15,58,15,246,12
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,12
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,4
+	palignr	xmm4,xmm4,12
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,4
 	paddd	xmm1,xmm5
 	pxor	xmm13,xmm1
 	pshufb	xmm13,XMMWORD[$L$rol16]
@@ -1190,9 +1190,9 @@ DB	102,69,15,58,15,228,4
 	pslld	xmm3,7
 	psrld	xmm5,25
 	pxor	xmm5,xmm3
-DB	102,15,58,15,237,12
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,4
+	palignr	xmm5,xmm5,12
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,4
 	paddd	xmm2,xmm6
 	pxor	xmm14,xmm2
 	pshufb	xmm14,XMMWORD[$L$rol16]
@@ -1211,9 +1211,9 @@ DB	102,69,15,58,15,237,4
 	pslld	xmm3,7
 	psrld	xmm6,25
 	pxor	xmm6,xmm3
-DB	102,15,58,15,246,12
-DB	102,69,15,58,15,210,8
-DB	102,69,15,58,15,246,4
+	palignr	xmm6,xmm6,12
+	palignr	xmm10,xmm10,8
+	palignr	xmm14,xmm14,4
 
 	cmp	r8,rcx
 	jb	NEAR $L$open_sse_tail_192_rounds_and_x1hash
@@ -1398,9 +1398,9 @@ $L$open_sse_tail_256_rounds_and_x1hash:
 	pslld	xmm11,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm11
-DB	102,15,58,15,228,4
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,12
+	palignr	xmm4,xmm4,4
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,12
 	paddd	xmm1,xmm5
 	pxor	xmm13,xmm1
 	pshufb	xmm13,XMMWORD[$L$rol16]
@@ -1419,9 +1419,9 @@ DB	102,69,15,58,15,228,12
 	pslld	xmm11,7
 	psrld	xmm5,25
 	pxor	xmm5,xmm11
-DB	102,15,58,15,237,4
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,12
+	palignr	xmm5,xmm5,4
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,12
 	paddd	xmm2,xmm6
 	pxor	xmm14,xmm2
 	pshufb	xmm14,XMMWORD[$L$rol16]
@@ -1440,9 +1440,9 @@ DB	102,69,15,58,15,237,12
 	pslld	xmm11,7
 	psrld	xmm6,25
 	pxor	xmm6,xmm11
-DB	102,15,58,15,246,4
-DB	102,69,15,58,15,210,8
-DB	102,69,15,58,15,246,12
+	palignr	xmm6,xmm6,4
+	palignr	xmm10,xmm10,8
+	palignr	xmm14,xmm14,12
 	movdqa	xmm11,XMMWORD[((160+80))+rbp]
 	mov	rax,QWORD[((0+160+0))+rbp]
 	mov	r15,rax
@@ -1473,9 +1473,9 @@ DB	102,69,15,58,15,246,12
 	pslld	xmm9,7
 	psrld	xmm7,25
 	pxor	xmm7,xmm9
-DB	102,15,58,15,255,4
-DB	102,69,15,58,15,219,8
-DB	102,69,15,58,15,255,12
+	palignr	xmm7,xmm7,4
+	palignr	xmm11,xmm11,8
+	palignr	xmm15,xmm15,12
 	movdqa	xmm9,XMMWORD[((160+80))+rbp]
 	mov	rax,QWORD[((8+160+0))+rbp]
 	mov	r9,rax
@@ -1506,9 +1506,9 @@ DB	102,69,15,58,15,255,12
 	pslld	xmm11,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm11
-DB	102,15,58,15,228,12
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,4
+	palignr	xmm4,xmm4,12
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,4
 	paddd	xmm1,xmm5
 	pxor	xmm13,xmm1
 	pshufb	xmm13,XMMWORD[$L$rol16]
@@ -1527,9 +1527,9 @@ DB	102,69,15,58,15,228,4
 	pslld	xmm11,7
 	psrld	xmm5,25
 	pxor	xmm5,xmm11
-DB	102,15,58,15,237,12
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,4
+	palignr	xmm5,xmm5,12
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,4
 	imul	r9,r12
 	add	r15,r10
 	adc	r9,rdx
@@ -1551,9 +1551,9 @@ DB	102,69,15,58,15,237,4
 	pslld	xmm11,7
 	psrld	xmm6,25
 	pxor	xmm6,xmm11
-DB	102,15,58,15,246,12
-DB	102,69,15,58,15,210,8
-DB	102,69,15,58,15,246,4
+	palignr	xmm6,xmm6,12
+	palignr	xmm10,xmm10,8
+	palignr	xmm14,xmm14,4
 	movdqa	xmm11,XMMWORD[((160+80))+rbp]
 	mov	r10,r13
 	mov	r11,r14
@@ -1588,9 +1588,9 @@ DB	102,69,15,58,15,246,4
 	pslld	xmm9,7
 	psrld	xmm7,25
 	pxor	xmm7,xmm9
-DB	102,15,58,15,255,12
-DB	102,69,15,58,15,219,8
-DB	102,69,15,58,15,255,4
+	palignr	xmm7,xmm7,12
+	palignr	xmm11,xmm11,8
+	palignr	xmm15,xmm15,4
 	movdqa	xmm9,XMMWORD[((160+80))+rbp]
 
 	add	r8,16
@@ -1737,7 +1737,7 @@ $L$open_sse_tail_16_compose:
 	sub	r8,1
 	jnz	NEAR $L$open_sse_tail_16_compose
 
-DB	102,73,15,126,221
+	movq	r13,xmm3
 	pextrq	r14,xmm3,1
 
 	pxor	xmm3,xmm1
@@ -1923,9 +1923,9 @@ $L$open_sse_128_rounds:
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,4
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,12
+	palignr	xmm4,xmm4,4
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,12
 	paddd	xmm1,xmm5
 	pxor	xmm13,xmm1
 	pshufb	xmm13,XMMWORD[$L$rol16]
@@ -1944,9 +1944,9 @@ DB	102,69,15,58,15,228,12
 	pslld	xmm3,7
 	psrld	xmm5,25
 	pxor	xmm5,xmm3
-DB	102,15,58,15,237,4
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,12
+	palignr	xmm5,xmm5,4
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,12
 	paddd	xmm2,xmm6
 	pxor	xmm14,xmm2
 	pshufb	xmm14,XMMWORD[$L$rol16]
@@ -1965,9 +1965,9 @@ DB	102,69,15,58,15,237,12
 	pslld	xmm3,7
 	psrld	xmm6,25
 	pxor	xmm6,xmm3
-DB	102,15,58,15,246,4
-DB	102,69,15,58,15,210,8
-DB	102,69,15,58,15,246,12
+	palignr	xmm6,xmm6,4
+	palignr	xmm10,xmm10,8
+	palignr	xmm14,xmm14,12
 	paddd	xmm0,xmm4
 	pxor	xmm12,xmm0
 	pshufb	xmm12,XMMWORD[$L$rol16]
@@ -1986,9 +1986,9 @@ DB	102,69,15,58,15,246,12
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,12
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,4
+	palignr	xmm4,xmm4,12
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,4
 	paddd	xmm1,xmm5
 	pxor	xmm13,xmm1
 	pshufb	xmm13,XMMWORD[$L$rol16]
@@ -2007,9 +2007,9 @@ DB	102,69,15,58,15,228,4
 	pslld	xmm3,7
 	psrld	xmm5,25
 	pxor	xmm5,xmm3
-DB	102,15,58,15,237,12
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,4
+	palignr	xmm5,xmm5,12
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,4
 	paddd	xmm2,xmm6
 	pxor	xmm14,xmm2
 	pshufb	xmm14,XMMWORD[$L$rol16]
@@ -2028,9 +2028,9 @@ DB	102,69,15,58,15,237,4
 	pslld	xmm3,7
 	psrld	xmm6,25
 	pxor	xmm6,xmm3
-DB	102,15,58,15,246,12
-DB	102,69,15,58,15,210,8
-DB	102,69,15,58,15,246,4
+	palignr	xmm6,xmm6,12
+	palignr	xmm10,xmm10,8
+	palignr	xmm14,xmm14,4
 
 	dec	r10
 	jnz	NEAR $L$open_sse_128_rounds
@@ -2113,7 +2113,7 @@ $L$open_sse_128_xor_hash:
 	movdqa	xmm6,xmm10
 	movdqa	xmm10,xmm14
 	jmp	NEAR $L$open_sse_128_xor_hash
-$L$SEH_end_chacha20_poly1305_open_nohw:
+$L$SEH_end_chacha20_poly1305_open_sse41:
 
 
 
@@ -2122,14 +2122,14 @@ $L$SEH_end_chacha20_poly1305_open_nohw:
 
 
 
-global	chacha20_poly1305_seal_nohw
+global	chacha20_poly1305_seal_sse41
 
 ALIGN	64
-chacha20_poly1305_seal_nohw:
+chacha20_poly1305_seal_sse41:
 	mov	QWORD[8+rsp],rdi	;WIN64 prologue
 	mov	QWORD[16+rsp],rsi
 	mov	rax,rsp
-$L$SEH_begin_chacha20_poly1305_seal_nohw:
+$L$SEH_begin_chacha20_poly1305_seal_sse41:
 	mov	rdi,rcx
 	mov	rsi,rdx
 	mov	rdx,r8
@@ -2220,10 +2220,10 @@ $L$seal_sse_init_rounds:
 	pxor	xmm14,xmm2
 	pxor	xmm13,xmm1
 	pxor	xmm12,xmm0
-DB	102,69,15,56,0,248
-DB	102,69,15,56,0,240
-DB	102,69,15,56,0,232
-DB	102,69,15,56,0,224
+	pshufb	xmm15,xmm8
+	pshufb	xmm14,xmm8
+	pshufb	xmm13,xmm8
+	pshufb	xmm12,xmm8
 	movdqa	xmm8,XMMWORD[((160+80))+rbp]
 	paddd	xmm11,xmm15
 	paddd	xmm10,xmm14
@@ -2259,10 +2259,10 @@ DB	102,69,15,56,0,224
 	pxor	xmm14,xmm2
 	pxor	xmm13,xmm1
 	pxor	xmm12,xmm0
-DB	102,69,15,56,0,248
-DB	102,69,15,56,0,240
-DB	102,69,15,56,0,232
-DB	102,69,15,56,0,224
+	pshufb	xmm15,xmm8
+	pshufb	xmm14,xmm8
+	pshufb	xmm13,xmm8
+	pshufb	xmm12,xmm8
 	movdqa	xmm8,XMMWORD[((160+80))+rbp]
 	paddd	xmm11,xmm15
 	paddd	xmm10,xmm14
@@ -2290,18 +2290,18 @@ DB	102,69,15,56,0,224
 	pslld	xmm4,32-25
 	pxor	xmm4,xmm8
 	movdqa	xmm8,XMMWORD[((160+80))+rbp]
-DB	102,15,58,15,255,4
-DB	102,69,15,58,15,219,8
-DB	102,69,15,58,15,255,12
-DB	102,15,58,15,246,4
-DB	102,69,15,58,15,210,8
-DB	102,69,15,58,15,246,12
-DB	102,15,58,15,237,4
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,12
-DB	102,15,58,15,228,4
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,12
+	palignr	xmm7,xmm7,4
+	palignr	xmm11,xmm11,8
+	palignr	xmm15,xmm15,12
+	palignr	xmm6,xmm6,4
+	palignr	xmm10,xmm10,8
+	palignr	xmm14,xmm14,12
+	palignr	xmm5,xmm5,4
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,12
+	palignr	xmm4,xmm4,4
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,12
 	movdqa	XMMWORD[(160+80)+rbp],xmm8
 	movdqa	xmm8,XMMWORD[$L$rol16]
 	paddd	xmm3,xmm7
@@ -2312,10 +2312,10 @@ DB	102,69,15,58,15,228,12
 	pxor	xmm14,xmm2
 	pxor	xmm13,xmm1
 	pxor	xmm12,xmm0
-DB	102,69,15,56,0,248
-DB	102,69,15,56,0,240
-DB	102,69,15,56,0,232
-DB	102,69,15,56,0,224
+	pshufb	xmm15,xmm8
+	pshufb	xmm14,xmm8
+	pshufb	xmm13,xmm8
+	pshufb	xmm12,xmm8
 	movdqa	xmm8,XMMWORD[((160+80))+rbp]
 	paddd	xmm11,xmm15
 	paddd	xmm10,xmm14
@@ -2351,10 +2351,10 @@ DB	102,69,15,56,0,224
 	pxor	xmm14,xmm2
 	pxor	xmm13,xmm1
 	pxor	xmm12,xmm0
-DB	102,69,15,56,0,248
-DB	102,69,15,56,0,240
-DB	102,69,15,56,0,232
-DB	102,69,15,56,0,224
+	pshufb	xmm15,xmm8
+	pshufb	xmm14,xmm8
+	pshufb	xmm13,xmm8
+	pshufb	xmm12,xmm8
 	movdqa	xmm8,XMMWORD[((160+80))+rbp]
 	paddd	xmm11,xmm15
 	paddd	xmm10,xmm14
@@ -2382,18 +2382,18 @@ DB	102,69,15,56,0,224
 	pslld	xmm4,32-25
 	pxor	xmm4,xmm8
 	movdqa	xmm8,XMMWORD[((160+80))+rbp]
-DB	102,15,58,15,255,12
-DB	102,69,15,58,15,219,8
-DB	102,69,15,58,15,255,4
-DB	102,15,58,15,246,12
-DB	102,69,15,58,15,210,8
-DB	102,69,15,58,15,246,4
-DB	102,15,58,15,237,12
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,4
-DB	102,15,58,15,228,12
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,4
+	palignr	xmm7,xmm7,12
+	palignr	xmm11,xmm11,8
+	palignr	xmm15,xmm15,4
+	palignr	xmm6,xmm6,12
+	palignr	xmm10,xmm10,8
+	palignr	xmm14,xmm14,4
+	palignr	xmm5,xmm5,12
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,4
+	palignr	xmm4,xmm4,12
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,4
 
 	dec	r10
 	jnz	NEAR $L$seal_sse_init_rounds
@@ -2516,10 +2516,10 @@ $L$seal_sse_main_rounds:
 	pxor	xmm14,xmm2
 	pxor	xmm13,xmm1
 	pxor	xmm12,xmm0
-DB	102,69,15,56,0,248
-DB	102,69,15,56,0,240
-DB	102,69,15,56,0,232
-DB	102,69,15,56,0,224
+	pshufb	xmm15,xmm8
+	pshufb	xmm14,xmm8
+	pshufb	xmm13,xmm8
+	pshufb	xmm12,xmm8
 	movdqa	xmm8,XMMWORD[((160+80))+rbp]
 	paddd	xmm11,xmm15
 	paddd	xmm10,xmm14
@@ -2568,10 +2568,10 @@ DB	102,69,15,56,0,224
 	pxor	xmm14,xmm2
 	pxor	xmm13,xmm1
 	pxor	xmm12,xmm0
-DB	102,69,15,56,0,248
-DB	102,69,15,56,0,240
-DB	102,69,15,56,0,232
-DB	102,69,15,56,0,224
+	pshufb	xmm15,xmm8
+	pshufb	xmm14,xmm8
+	pshufb	xmm13,xmm8
+	pshufb	xmm12,xmm8
 	movdqa	xmm8,XMMWORD[((160+80))+rbp]
 	paddd	xmm11,xmm15
 	paddd	xmm10,xmm14
@@ -2612,18 +2612,18 @@ DB	102,69,15,56,0,224
 	imul	r9,r12
 	add	r15,r10
 	adc	r9,rdx
-DB	102,15,58,15,255,4
-DB	102,69,15,58,15,219,8
-DB	102,69,15,58,15,255,12
-DB	102,15,58,15,246,4
-DB	102,69,15,58,15,210,8
-DB	102,69,15,58,15,246,12
-DB	102,15,58,15,237,4
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,12
-DB	102,15,58,15,228,4
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,12
+	palignr	xmm7,xmm7,4
+	palignr	xmm11,xmm11,8
+	palignr	xmm15,xmm15,12
+	palignr	xmm6,xmm6,4
+	palignr	xmm10,xmm10,8
+	palignr	xmm14,xmm14,12
+	palignr	xmm5,xmm5,4
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,12
+	palignr	xmm4,xmm4,4
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,12
 	movdqa	XMMWORD[(160+80)+rbp],xmm8
 	movdqa	xmm8,XMMWORD[$L$rol16]
 	paddd	xmm3,xmm7
@@ -2648,10 +2648,10 @@ DB	102,69,15,58,15,228,12
 	adc	r12,0
 	pxor	xmm13,xmm1
 	pxor	xmm12,xmm0
-DB	102,69,15,56,0,248
-DB	102,69,15,56,0,240
-DB	102,69,15,56,0,232
-DB	102,69,15,56,0,224
+	pshufb	xmm15,xmm8
+	pshufb	xmm14,xmm8
+	pshufb	xmm13,xmm8
+	pshufb	xmm12,xmm8
 	movdqa	xmm8,XMMWORD[((160+80))+rbp]
 	paddd	xmm11,xmm15
 	paddd	xmm10,xmm14
@@ -2687,10 +2687,10 @@ DB	102,69,15,56,0,224
 	pxor	xmm14,xmm2
 	pxor	xmm13,xmm1
 	pxor	xmm12,xmm0
-DB	102,69,15,56,0,248
-DB	102,69,15,56,0,240
-DB	102,69,15,56,0,232
-DB	102,69,15,56,0,224
+	pshufb	xmm15,xmm8
+	pshufb	xmm14,xmm8
+	pshufb	xmm13,xmm8
+	pshufb	xmm12,xmm8
 	movdqa	xmm8,XMMWORD[((160+80))+rbp]
 	paddd	xmm11,xmm15
 	paddd	xmm10,xmm14
@@ -2718,18 +2718,18 @@ DB	102,69,15,56,0,224
 	pslld	xmm4,32-25
 	pxor	xmm4,xmm8
 	movdqa	xmm8,XMMWORD[((160+80))+rbp]
-DB	102,15,58,15,255,12
-DB	102,69,15,58,15,219,8
-DB	102,69,15,58,15,255,4
-DB	102,15,58,15,246,12
-DB	102,69,15,58,15,210,8
-DB	102,69,15,58,15,246,4
-DB	102,15,58,15,237,12
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,4
-DB	102,15,58,15,228,12
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,4
+	palignr	xmm7,xmm7,12
+	palignr	xmm11,xmm11,8
+	palignr	xmm15,xmm15,4
+	palignr	xmm6,xmm6,12
+	palignr	xmm10,xmm10,8
+	palignr	xmm14,xmm14,4
+	palignr	xmm5,xmm5,12
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,4
+	palignr	xmm4,xmm4,12
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,4
 
 	lea	rdi,[16+rdi]
 	dec	r8
@@ -2942,9 +2942,9 @@ $L$seal_sse_tail_64_rounds_and_x1hash:
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,4
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,12
+	palignr	xmm4,xmm4,4
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,12
 	paddd	xmm0,xmm4
 	pxor	xmm12,xmm0
 	pshufb	xmm12,XMMWORD[$L$rol16]
@@ -2963,9 +2963,9 @@ DB	102,69,15,58,15,228,12
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,12
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,4
+	palignr	xmm4,xmm4,12
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,4
 	add	r10,QWORD[((0+0))+rdi]
 	adc	r11,QWORD[((8+0))+rdi]
 	adc	r12,1
@@ -3095,9 +3095,9 @@ $L$seal_sse_tail_128_rounds_and_x1hash:
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,4
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,12
+	palignr	xmm4,xmm4,4
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,12
 	paddd	xmm1,xmm5
 	pxor	xmm13,xmm1
 	pshufb	xmm13,XMMWORD[$L$rol16]
@@ -3116,9 +3116,9 @@ DB	102,69,15,58,15,228,12
 	pslld	xmm3,7
 	psrld	xmm5,25
 	pxor	xmm5,xmm3
-DB	102,15,58,15,237,4
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,12
+	palignr	xmm5,xmm5,4
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,12
 	add	r10,QWORD[((0+0))+rdi]
 	adc	r11,QWORD[((8+0))+rdi]
 	adc	r12,1
@@ -3177,9 +3177,9 @@ DB	102,69,15,58,15,237,12
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,12
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,4
+	palignr	xmm4,xmm4,12
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,4
 	paddd	xmm1,xmm5
 	pxor	xmm13,xmm1
 	pshufb	xmm13,XMMWORD[$L$rol16]
@@ -3198,9 +3198,9 @@ DB	102,69,15,58,15,228,4
 	pslld	xmm3,7
 	psrld	xmm5,25
 	pxor	xmm5,xmm3
-DB	102,15,58,15,237,12
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,4
+	palignr	xmm5,xmm5,12
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,4
 
 	lea	rdi,[16+rdi]
 	dec	rcx
@@ -3315,9 +3315,9 @@ $L$seal_sse_tail_192_rounds_and_x1hash:
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,4
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,12
+	palignr	xmm4,xmm4,4
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,12
 	paddd	xmm1,xmm5
 	pxor	xmm13,xmm1
 	pshufb	xmm13,XMMWORD[$L$rol16]
@@ -3336,9 +3336,9 @@ DB	102,69,15,58,15,228,12
 	pslld	xmm3,7
 	psrld	xmm5,25
 	pxor	xmm5,xmm3
-DB	102,15,58,15,237,4
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,12
+	palignr	xmm5,xmm5,4
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,12
 	paddd	xmm2,xmm6
 	pxor	xmm14,xmm2
 	pshufb	xmm14,XMMWORD[$L$rol16]
@@ -3357,9 +3357,9 @@ DB	102,69,15,58,15,237,12
 	pslld	xmm3,7
 	psrld	xmm6,25
 	pxor	xmm6,xmm3
-DB	102,15,58,15,246,4
-DB	102,69,15,58,15,210,8
-DB	102,69,15,58,15,246,12
+	palignr	xmm6,xmm6,4
+	palignr	xmm10,xmm10,8
+	palignr	xmm14,xmm14,12
 	add	r10,QWORD[((0+0))+rdi]
 	adc	r11,QWORD[((8+0))+rdi]
 	adc	r12,1
@@ -3418,9 +3418,9 @@ DB	102,69,15,58,15,246,12
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,12
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,4
+	palignr	xmm4,xmm4,12
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,4
 	paddd	xmm1,xmm5
 	pxor	xmm13,xmm1
 	pshufb	xmm13,XMMWORD[$L$rol16]
@@ -3439,9 +3439,9 @@ DB	102,69,15,58,15,228,4
 	pslld	xmm3,7
 	psrld	xmm5,25
 	pxor	xmm5,xmm3
-DB	102,15,58,15,237,12
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,4
+	palignr	xmm5,xmm5,12
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,4
 	paddd	xmm2,xmm6
 	pxor	xmm14,xmm2
 	pshufb	xmm14,XMMWORD[$L$rol16]
@@ -3460,9 +3460,9 @@ DB	102,69,15,58,15,237,4
 	pslld	xmm3,7
 	psrld	xmm6,25
 	pxor	xmm6,xmm3
-DB	102,15,58,15,246,12
-DB	102,69,15,58,15,210,8
-DB	102,69,15,58,15,246,4
+	palignr	xmm6,xmm6,12
+	palignr	xmm10,xmm10,8
+	palignr	xmm14,xmm14,4
 
 	lea	rdi,[16+rdi]
 	dec	rcx
@@ -3714,7 +3714,7 @@ $L$load_extra_shift_loop:
 
 
 
-DB	102,77,15,126,253
+	movq	r13,xmm15
 	pextrq	r14,xmm15,1
 	add	r10,r13
 	adc	r11,r14
@@ -3830,7 +3830,7 @@ $L$process_partial_block:
 	lea	r15,[$L$and_masks]
 	shl	rbx,4
 	pand	xmm15,XMMWORD[((-16))+rbx*1+r15]
-DB	102,77,15,126,253
+	movq	r13,xmm15
 	pextrq	r14,xmm15,1
 	add	r10,r13
 	adc	r11,r14
@@ -4005,9 +4005,9 @@ $L$seal_sse_128_rounds:
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,4
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,12
+	palignr	xmm4,xmm4,4
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,12
 	paddd	xmm1,xmm5
 	pxor	xmm13,xmm1
 	pshufb	xmm13,XMMWORD[$L$rol16]
@@ -4026,9 +4026,9 @@ DB	102,69,15,58,15,228,12
 	pslld	xmm3,7
 	psrld	xmm5,25
 	pxor	xmm5,xmm3
-DB	102,15,58,15,237,4
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,12
+	palignr	xmm5,xmm5,4
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,12
 	paddd	xmm2,xmm6
 	pxor	xmm14,xmm2
 	pshufb	xmm14,XMMWORD[$L$rol16]
@@ -4047,9 +4047,9 @@ DB	102,69,15,58,15,237,12
 	pslld	xmm3,7
 	psrld	xmm6,25
 	pxor	xmm6,xmm3
-DB	102,15,58,15,246,4
-DB	102,69,15,58,15,210,8
-DB	102,69,15,58,15,246,12
+	palignr	xmm6,xmm6,4
+	palignr	xmm10,xmm10,8
+	palignr	xmm14,xmm14,12
 	paddd	xmm0,xmm4
 	pxor	xmm12,xmm0
 	pshufb	xmm12,XMMWORD[$L$rol16]
@@ -4068,9 +4068,9 @@ DB	102,69,15,58,15,246,12
 	pslld	xmm3,7
 	psrld	xmm4,25
 	pxor	xmm4,xmm3
-DB	102,15,58,15,228,12
-DB	102,69,15,58,15,192,8
-DB	102,69,15,58,15,228,4
+	palignr	xmm4,xmm4,12
+	palignr	xmm8,xmm8,8
+	palignr	xmm12,xmm12,4
 	paddd	xmm1,xmm5
 	pxor	xmm13,xmm1
 	pshufb	xmm13,XMMWORD[$L$rol16]
@@ -4089,9 +4089,9 @@ DB	102,69,15,58,15,228,4
 	pslld	xmm3,7
 	psrld	xmm5,25
 	pxor	xmm5,xmm3
-DB	102,15,58,15,237,12
-DB	102,69,15,58,15,201,8
-DB	102,69,15,58,15,237,4
+	palignr	xmm5,xmm5,12
+	palignr	xmm9,xmm9,8
+	palignr	xmm13,xmm13,4
 	paddd	xmm2,xmm6
 	pxor	xmm14,xmm2
 	pshufb	xmm14,XMMWORD[$L$rol16]
@@ -4110,9 +4110,9 @@ DB	102,69,15,58,15,237,4
 	pslld	xmm3,7
 	psrld	xmm6,25
 	pxor	xmm6,xmm3
-DB	102,15,58,15,246,12
-DB	102,69,15,58,15,210,8
-DB	102,69,15,58,15,246,4
+	palignr	xmm6,xmm6,12
+	palignr	xmm10,xmm10,8
+	palignr	xmm14,xmm14,4
 
 	dec	r10
 	jnz	NEAR $L$seal_sse_128_rounds
@@ -4135,7 +4135,7 @@ DB	102,69,15,58,15,246,4
 	mov	r8,r8
 	call	poly_hash_ad_internal
 	jmp	NEAR $L$seal_sse_128_tail_xor
-$L$SEH_end_chacha20_poly1305_seal_nohw:
+$L$SEH_end_chacha20_poly1305_seal_sse41:
 
 
 

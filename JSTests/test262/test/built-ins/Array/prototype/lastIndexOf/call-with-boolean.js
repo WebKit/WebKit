@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-array.prototype.lastIndexOf
+esid: sec-array.prototype.lastindexof
 description: Array.prototype.lastIndexOf applied to boolean primitive
 ---*/
 

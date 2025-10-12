@@ -59,8 +59,14 @@ class FormattedNumber;
 class FormattedNumberRange;
 namespace impl {
 class UFormattedNumberRangeData;
+class DecimalQuantity;
+class DecNum;
 }
 }
+
+#ifndef U_HIDE_INTERNAL_API
+using icu::number::impl::DecimalQuantity;
+#endif  /* U_HIDE_INTERNAL_API */
 
 /**
  * Defines rules for mapping non-negative numeric values onto a small set of
@@ -241,12 +247,12 @@ public:
 
     /**
      * Creates a PluralRules from a description if it is parsable, otherwise
-     * returns NULL.
+     * returns nullptr.
      *
      * @param description rule description
      * @param status      Output param set to success/failure code on exit, which
      *                    must not indicate a failure before the function call.
-     * @return            new PluralRules pointer. NULL if there is an error.
+     * @return            new PluralRules pointer. nullptr if there is an error.
      * @stable ICU 4.0
      */
     static PluralRules* U_EXPORT2 createRules(const UnicodeString& description,
@@ -257,7 +263,7 @@ public:
      *
      * @param status  Output param set to success/failure code on exit, which
      *                must not indicate a failure before the function call.
-     * @return        new PluralRules pointer. NULL if there is an error.
+     * @return        new PluralRules pointer. nullptr if there is an error.
      * @stable ICU 4.0
      */
     static PluralRules* U_EXPORT2 createDefaultRules(UErrorCode& status);
@@ -305,14 +311,6 @@ public:
      * @internal
      */
     static StringEnumeration* U_EXPORT2 getAvailableLocales(UErrorCode &status);
-
-    /**
-     * Returns whether or not there are overrides.
-     * @param locale       the locale to check.
-     * @return
-     * @internal
-     */
-    static UBool hasOverride(const Locale &locale);
 
     /**
      * For ICU use only.
@@ -439,7 +437,7 @@ public:
      *
      * @param keyword      The keyword.
      * @param dest         Array into which to put the returned values.  May
-     *                     be NULL if destCapacity is 0.
+     *                     be nullptr if destCapacity is 0.
      * @param destCapacity The capacity of the array, must be at least 0.
      * @param status       The error code. Deprecated function, always sets U_UNSUPPORTED_ERROR.
      * @return             The count of values available, or -1.  This count
@@ -460,7 +458,7 @@ public:
      *
      * @param keyword      The keyword.
      * @param dest         Array into which to put the returned values.  May
-     *                     be NULL if destCapacity is 0.
+     *                     be nullptr if destCapacity is 0.
      * @param destCapacity The capacity of the array, must be at least 0.
      * @param status       The error code.
      * @return             The count of values written.
@@ -476,7 +474,7 @@ public:
 
 #ifndef U_HIDE_INTERNAL_API
     /**
-     * Internal-only function that returns FixedDecimals instead of doubles.
+     * Internal-only function that returns DecimalQuantitys instead of doubles.
      *
      * Returns sample values for which select() would return the keyword.  If
      * the keyword is unknown, returns no values, but this is not an error.
@@ -485,7 +483,7 @@ public:
      *
      * @param keyword      The keyword.
      * @param dest         Array into which to put the returned values.  May
-     *                     be NULL if destCapacity is 0.
+     *                     be nullptr if destCapacity is 0.
      * @param destCapacity The capacity of the array, must be at least 0.
      * @param status       The error code.
      * @return             The count of values written.
@@ -496,7 +494,7 @@ public:
      * @internal
      */
     int32_t getSamples(const UnicodeString &keyword,
-                       FixedDecimal *dest, int32_t destCapacity,
+                       DecimalQuantity *dest, int32_t destCapacity,
                        UErrorCode& status);
 #endif  /* U_HIDE_INTERNAL_API */
 
@@ -569,9 +567,7 @@ private:
     RuleChain  *mRules;
     StandardPluralRanges *mStandardPluralRanges;
 
-    PluralRules();   // default constructor not implemented
-    void            parseDescription(const UnicodeString& ruleData, UErrorCode &status);
-    int32_t         getNumberValue(const UnicodeString& token) const;
+    PluralRules() = delete;   // default constructor not implemented
     UnicodeString   getRuleFromResource(const Locale& locale, UPluralType type, UErrorCode& status);
     RuleChain      *rulesForKeyword(const UnicodeString &keyword) const;
     PluralRules    *clone(UErrorCode& status) const;

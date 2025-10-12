@@ -80,20 +80,26 @@ CALayer *VideoFullscreenCaptions::captionsLayer()
     return m_captionsLayer.get();
 }
 
+RetainPtr<CALayer> VideoFullscreenCaptions::protectedCaptionsLayer()
+{
+    return captionsLayer();
+}
+
 void VideoFullscreenCaptions::setCaptionsFrame(const CGRect& frame)
 {
-    [captionsLayer() setFrame:frame];
+    [protectedCaptionsLayer() setFrame:frame];
 }
 
 void VideoFullscreenCaptions::setupCaptionsLayer(CALayer *parent, const WebCore::FloatSize& initialSize)
 {
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
-    [captionsLayer() removeFromSuperlayer];
-    [parent addSublayer:captionsLayer()];
-    captionsLayer().zPosition = FLT_MAX;
-    [captionsLayer() setAnchorPoint:CGPointZero];
-    [captionsLayer() setBounds:CGRectMake(0, 0, initialSize.width(), initialSize.height())];
+    RetainPtr captionsLayer = this->captionsLayer();
+    [captionsLayer removeFromSuperlayer];
+    [parent addSublayer:captionsLayer.get()];
+    captionsLayer.get().zPosition = FLT_MAX;
+    [captionsLayer setAnchorPoint:CGPointZero];
+    [captionsLayer setBounds:CGRectMake(0, 0, initialSize.width(), initialSize.height())];
     [CATransaction commit];
 }
 

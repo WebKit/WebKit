@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CollectionTraversal.h"
-#include "ElementChildIteratorInlines.h"
-#include "HTMLOptionsCollectionInlines.h"
-#include "TypedElementDescendantIteratorInlines.h"
+#include <WebCore/CollectionTraversal.h>
+#include <WebCore/ElementChildIteratorInlines.h>
+#include <WebCore/HTMLOptionsCollectionInlines.h>
+#include <WebCore/TypedElementDescendantIteratorInlines.h>
 
 namespace WebCore {
 

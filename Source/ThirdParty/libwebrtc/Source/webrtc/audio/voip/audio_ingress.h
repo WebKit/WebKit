@@ -13,28 +13,30 @@
 
 #include <algorithm>
 #include <atomic>
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <optional>
-#include <utility>
 
 #include "api/array_view.h"
 #include "api/audio/audio_mixer.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/environment/environment.h"
 #include "api/neteq/neteq.h"
-#include "api/rtp_headers.h"
 #include "api/scoped_refptr.h"
 #include "api/voip/voip_statistics.h"
 #include "audio/audio_level.h"
 #include "modules/audio_coding/acm2/acm_resampler.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
+#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/rtp_rtcp/include/receive_statistics.h"
 #include "modules/rtp_rtcp/include/remote_ntp_time_estimator.h"
-#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/numerics/sequence_number_unwrapper.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
@@ -52,7 +54,7 @@ class AudioIngress : public AudioMixer::Source {
   AudioIngress(const Environment& env,
                RtpRtcpInterface* rtp_rtcp,
                ReceiveStatistics* receive_statistics,
-               rtc::scoped_refptr<AudioDecoderFactory> decoder_factory);
+               scoped_refptr<AudioDecoderFactory> decoder_factory);
   ~AudioIngress() override;
 
   // Start or stop receiving operation of AudioIngress.
@@ -70,8 +72,8 @@ class AudioIngress : public AudioMixer::Source {
   void SetReceiveCodecs(const std::map<int, SdpAudioFormat>& codecs);
 
   // APIs to handle received RTP/RTCP packets from caller.
-  void ReceivedRTPPacket(rtc::ArrayView<const uint8_t> rtp_packet);
-  void ReceivedRTCPPacket(rtc::ArrayView<const uint8_t> rtcp_packet);
+  void ReceivedRTPPacket(ArrayView<const uint8_t> rtp_packet);
+  void ReceivedRTCPPacket(ArrayView<const uint8_t> rtcp_packet);
 
   // See comments on LevelFullRange, TotalEnergy, TotalDuration from
   // audio/audio_level.h.
@@ -91,9 +93,7 @@ class AudioIngress : public AudioMixer::Source {
   AudioMixer::Source::AudioFrameInfo GetAudioFrameWithInfo(
       int sampling_rate,
       AudioFrame* audio_frame) override;
-  int Ssrc() const override {
-    return rtc::dchecked_cast<int>(remote_ssrc_.load());
-  }
+  int Ssrc() const override { return dchecked_cast<int>(remote_ssrc_.load()); }
   int PreferredSampleRate() const override {
     std::optional<NetEq::DecoderFormat> decoder =
         neteq_->GetCurrentDecoderFormat();

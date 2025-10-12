@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="contenteditable">
+wrods is misspelled aab lotsi nowadays. euep.
+</div>
+
+<script>
+var output = "This test ensures that the proper attributes are present when \"lazy\" spellchecking happens in a document with design mode turned on.\n\n";
+
+if (window.accessibilityController && window.textInputController) {
+    accessibilityController.setForceDeferredSpellChecking(true);
+    document.designMode = "on";
+
+    var contenteditable = accessibilityController.accessibleElementById("contenteditable");
+    var range = contenteditable.textMarkerRangeForElement(contenteditable);
+    output += `Attributed string with range: ${contenteditable.attributedStringForTextMarkerRangeWithDidSpellCheck(range)}\n`;
+    debug(output);
+}
+</script>
+</body>
+</html>

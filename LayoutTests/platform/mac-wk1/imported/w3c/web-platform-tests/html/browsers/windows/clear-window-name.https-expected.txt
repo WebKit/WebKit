@@ -1,4 +1,3 @@
-Blocked access to external URL https://www.localhost:9443/html/browsers/windows/resources/window-name.sub.html?set=198786cf-d727-411f-bc70-1e58e1985bd8%7CsetDomain=localhost:9443%7Csub%7Creport=198786cf-d727-411f-bc70-1e58e1985bd8%7Cclose
 
 Harness Error (TIMEOUT), message = null
 

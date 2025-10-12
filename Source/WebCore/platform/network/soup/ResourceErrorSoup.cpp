@@ -36,12 +36,6 @@
 
 namespace WebCore {
 
-#if USE(SOUP2)
-#define SOUP_HTTP_ERROR_DOMAIN SOUP_HTTP_ERROR
-#else
-#define SOUP_HTTP_ERROR_DOMAIN SOUP_SESSION_ERROR
-#endif
-
 ResourceError::ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, Type type, IsSanitized isSanitized)
     : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription, type, isSanitized)
 {
@@ -83,29 +77,20 @@ auto ResourceError::ipcData() const -> std::optional<IPCData>
 
 ResourceError ResourceError::transportError(const URL& failingURL, int statusCode, const String& reasonPhrase)
 {
-    return ResourceError(String::fromLatin1(g_quark_to_string(SOUP_HTTP_ERROR_DOMAIN)), statusCode, failingURL, reasonPhrase);
+    return ResourceError(String::fromLatin1(g_quark_to_string(SOUP_SESSION_ERROR)), statusCode, failingURL, reasonPhrase);
 }
 
 ResourceError ResourceError::httpError(SoupMessage* message, GError* error)
 {
     ASSERT(message);
-#if USE(SOUP2)
-    if (SOUP_STATUS_IS_TRANSPORT_ERROR(message->status_code))
-        return transportError(soupURIToURL(soup_message_get_uri(message)), message->status_code, String::fromUTF8(message->reason_phrase));
-#endif
     return genericGError(soupURIToURL(soup_message_get_uri(message)), error);
 }
 
 ResourceError ResourceError::authenticationError(SoupMessage* message)
 {
     ASSERT(message);
-#if USE(SOUP2)
-    return ResourceError(String::fromLatin1(g_quark_to_string(SOUP_HTTP_ERROR_DOMAIN)), message->status_code,
-        soupURIToURL(soup_message_get_uri(message)), String::fromUTF8(message->reason_phrase));
-#else
     return ResourceError(String::fromLatin1(g_quark_to_string(SOUP_SESSION_ERROR)), soup_message_get_status(message),
         soup_message_get_uri(message), String::fromUTF8(soup_message_get_reason_phrase(message)));
-#endif
 }
 
 ResourceError ResourceError::genericGError(const URL& failingURL, GError* error)

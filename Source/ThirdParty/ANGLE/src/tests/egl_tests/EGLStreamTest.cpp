@@ -7,6 +7,10 @@
 //   Tests pertaining to egl::Stream.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include <gtest/gtest.h>
 
 #include <d3d11.h>

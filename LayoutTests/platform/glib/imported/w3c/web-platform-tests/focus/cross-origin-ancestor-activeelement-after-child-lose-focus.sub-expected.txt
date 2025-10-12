@@ -1,0 +1,6 @@
+
+
+Harness Error (FAIL), message = Error: assert_equals: The activeElement of the outer iframe should be the inner iframe expected Element node <iframe src="http://www1.web-platform.test:8800/focus/sup... but got Element node <body><iframe src="http://www1.web-platform.test:8800/foc...
+
+PASS Ancestor's activeElement should be cleared when child loses focus
+

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +36,8 @@ class QualifiedName;
 
 template<typename CharacterType> bool isComma(CharacterType);
 template<typename CharacterType> bool isHTMLSpaceOrComma(CharacterType);
-bool isHTMLLineBreak(UChar);
-bool isHTMLSpaceButNotLineBreak(UChar);
+bool isHTMLLineBreak(char16_t);
+bool isHTMLSpaceButNotLineBreak(char16_t);
 
 // 2147483647 is 2^31 - 1.
 static const unsigned maxHTMLNonNegativeInteger = 2147483647;
@@ -92,9 +93,17 @@ struct HTMLDimension {
 std::optional<HTMLDimension> parseHTMLDimension(StringView);
 std::optional<HTMLDimension> parseHTMLMultiLength(StringView);
 
+// https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#lists-of-dimensions
+struct HTMLDimensionsListValue {
+    enum class Unit : uint8_t { Percentage, Relative, Absolute };
+    double number;
+    Unit unit;
+};
+WEBCORE_EXPORT FixedVector<HTMLDimensionsListValue> parseHTMLDimensionsList(StringView);
+
 // Inline implementations of some of the functions declared above.
 
-inline bool isHTMLLineBreak(UChar character)
+inline bool isHTMLLineBreak(char16_t character)
 {
     return character <= '\r' && (character == '\n' || character == '\r');
 }
@@ -102,8 +111,8 @@ inline bool isHTMLLineBreak(UChar character)
 ALWAYS_INLINE bool containsHTMLLineBreak(StringView view)
 {
     if (view.is8Bit())
-        return charactersContain<LChar, '\r', '\n'>(view.span8());
-    return charactersContain<UChar, '\r', '\n'>(view.span16());
+        return charactersContain<Latin1Character, '\r', '\n'>(view.span8());
+    return charactersContain<char16_t, '\r', '\n'>(view.span16());
 }
 
 template<typename CharacterType> inline bool isComma(CharacterType character)
@@ -116,7 +125,7 @@ template<typename CharacterType> inline bool isHTMLSpaceOrComma(CharacterType ch
     return isComma(character) || isASCIIWhitespace(character);
 }
 
-inline bool isHTMLSpaceButNotLineBreak(UChar character)
+inline bool isHTMLSpaceButNotLineBreak(char16_t character)
 {
     return isASCIIWhitespace(character) && !isHTMLLineBreak(character);
 }

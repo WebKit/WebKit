@@ -19,9 +19,11 @@ PASS CSSMediaRule interface: existence and properties of interface prototype obj
 PASS CSSMediaRule interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSMediaRule interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSMediaRule interface: attribute media
+FAIL CSSMediaRule interface: attribute matches assert_true: The prototype object must have a property "matches" expected true got false
 PASS CSSMediaRule must be primary interface of cssMediaRule
 PASS Stringification of cssMediaRule
 PASS CSSMediaRule interface: cssMediaRule must inherit property "media" with the proper type
+FAIL CSSMediaRule interface: cssMediaRule must inherit property "matches" with the proper type assert_inherits: property "matches" not found in prototype chain
 PASS CSSConditionRule interface: cssMediaRule must inherit property "conditionText" with the proper type
 PASS CSSRule interface: cssMediaRule must inherit property "SUPPORTS_RULE" with the proper type
 PASS CSSSupportsRule interface: existence and properties of interface object
@@ -30,8 +32,10 @@ PASS CSSSupportsRule interface object name
 PASS CSSSupportsRule interface: existence and properties of interface prototype object
 PASS CSSSupportsRule interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSSupportsRule interface: existence and properties of interface prototype object's @@unscopables property
+FAIL CSSSupportsRule interface: attribute matches assert_true: The prototype object must have a property "matches" expected true got false
 PASS CSSSupportsRule must be primary interface of cssSupportsRule
 PASS Stringification of cssSupportsRule
+FAIL CSSSupportsRule interface: cssSupportsRule must inherit property "matches" with the proper type assert_inherits: property "matches" not found in prototype chain
 PASS CSSConditionRule interface: cssSupportsRule must inherit property "conditionText" with the proper type
 PASS CSSRule interface: cssSupportsRule must inherit property "SUPPORTS_RULE" with the proper type
 PASS CSSRule interface: constant SUPPORTS_RULE on interface object

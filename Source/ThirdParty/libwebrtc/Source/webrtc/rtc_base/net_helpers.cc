@@ -10,7 +10,6 @@
 
 #include "rtc_base/net_helpers.h"
 
-#include <memory>
 #include <string>
 
 #include "absl/strings/string_view.h"
@@ -18,13 +17,12 @@
 #if defined(WEBRTC_WIN)
 #include <ws2spi.h>
 #include <ws2tcpip.h>
-
 #endif
-#if defined(WEBRTC_POSIX) && !defined(__native_client__)
+#if defined(WEBRTC_POSIX)
 #include <arpa/inet.h>
-#endif  // defined(WEBRTC_POSIX) && !defined(__native_client__)
+#endif  // defined(WEBRTC_POSIX)
 
-namespace rtc {
+namespace webrtc {
 
 const char* inet_ntop(int af, const void* src, char* dst, socklen_t size) {
 #if defined(WEBRTC_WIN)
@@ -42,4 +40,4 @@ int inet_pton(int af, absl::string_view src, void* dst) {
   return ::inet_pton(af, src_str.c_str(), dst);
 #endif
 }
-}  // namespace rtc
+}  // namespace webrtc

@@ -1,3 +1,0 @@
-
-PASS Expecting logs: ["xhr allowed","TEST COMPLETE"]
-

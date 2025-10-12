@@ -10,9 +10,12 @@
 
 #include "modules/audio_coding/codecs/opus/test/blocker.h"
 
+#include <cstddef>
+#include <cstring>
+#include <iterator>
 #include <memory>
 
-#include "rtc_base/arraysize.h"
+#include "common_audio/channel_buffer.h"
 #include "test/gtest.h"
 
 namespace {
@@ -268,7 +271,7 @@ TEST_F(BlockerTest, InitialDelaysAreMinimum) {
 
   CopyBlockerCallback callback;
 
-  for (size_t i = 0; i < arraysize(kChunkSize); ++i) {
+  for (size_t i = 0; i < std::size(kChunkSize); ++i) {
     std::unique_ptr<float[]> window(new float[kBlockSize[i]]);
     for (size_t j = 0; j < kBlockSize[i]; ++j) {
       window[j] = 1.f;

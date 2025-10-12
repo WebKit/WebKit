@@ -270,7 +270,7 @@ template<typename CodeUnit>
 bool decodeString(std::span<const CodeUnit> data, StringBuilder& output)
 {
     while (!data.empty()) {
-        UChar c = consume(data);
+        char16_t c = consume(data);
         if ('\\' != c) {
             output.append(c);
             continue;
@@ -531,13 +531,13 @@ RefPtr<Value> Value::parseJSON(StringView json)
     RefPtr<Value> result;
     if (json.is8Bit()) {
         auto data = json.span8();
-        std::span<const LChar> tokenEnd;
+        std::span<const Latin1Character> tokenEnd;
         result = buildValue(data, tokenEnd, 0);
         if (containsNonSpace(tokenEnd))
             return nullptr;
     } else {
         auto data = json.span16();
-        std::span<const UChar> tokenEnd;
+        std::span<const char16_t> tokenEnd;
         result = buildValue(data, tokenEnd, 0);
         if (containsNonSpace(tokenEnd))
             return nullptr;

@@ -3,6 +3,7 @@
 <head>
 <script src="../resources/accessibility-helper.js"></script>
 <script src="../resources/js-test.js"></script>
+<script src="../resources/ui-helper.js"></script>
 </head>
 <body>
 
@@ -19,31 +20,31 @@ TEST
 TEST
 
 <script>
-    var testOutput = "This tests that there's no crash if we hide menu list and then try to access accessibility information.\n\n";
+var testOutput = "This tests that there's no crash if we hide menu list and then try to access accessibility information.\n\n";
 
-    if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-        const menulist = document.getElementById("menulist");
-        menulist.selectedIndex = 1;
+    const menulist = document.getElementById("menulist");
+    menulist.selectedIndex = 1;
 
-        const axMenulist = accessibilityController.accessibleElementById("menulist");
-        const initialRole = axMenulist.role;
-        testOutput += `Role before removal: ${initialRole}\n`;
+    var axMenulist = accessibilityController.accessibleElementById("menulist");
+    const initialRole = axMenulist.role;
+    testOutput += `Role before removal: ${initialRole}\n`;
 
-        setTimeout(async function() {
-            menulist.style.display = "none";
-            gc();
+    setTimeout(async function() {
+        menulist.style.display = "none";
+        await UIHelper.renderingUpdate();
 
-            await waitFor(() => axMenulist.role !== initialRole);
+        await waitFor(() => axMenulist.isIgnored);
 
-            // Don't crash!
-            testOutput += `Role after removal: ${axMenulist.role}\n`;
+        // Don't crash!
+        testOutput += `Role after becoming ignored: ${axMenulist.role}\n`;
 
-            debug(testOutput);
-            finishJSTest();
-        }, 0);
-    }
+        debug(testOutput);
+        finishJSTest();
+    }, 0);
+}
 </script>
 </body>
 </html>

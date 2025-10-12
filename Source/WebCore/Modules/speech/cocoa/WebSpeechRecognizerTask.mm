@@ -134,10 +134,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)abort
 {
-    if (!_task || [_task state] == SFSpeechRecognitionTaskStateCanceling)
+    RetainPtr task = _task.get();
+    if (!task || [task state] == SFSpeechRecognitionTaskStateCanceling)
         return;
 
-    if ([_task state] == SFSpeechRecognitionTaskStateCompleted) {
+    if ([task state] == SFSpeechRecognitionTaskStateCompleted) {
         [self sendSpeechEndIfNeeded];
         [self sendEndIfNeeded];
         return;
@@ -145,15 +146,16 @@ NS_ASSUME_NONNULL_BEGIN
 
     [self sendSpeechEndIfNeeded];
     [_request endAudio];
-    [_task cancel];
+    [task cancel];
 }
 
 - (void)stop
 {
-    if (!_task || [_task state] == SFSpeechRecognitionTaskStateCanceling)
+    RetainPtr task = _task.get();
+    if (!task || [task state] == SFSpeechRecognitionTaskStateCanceling)
         return;
 
-    if ([_task state] == SFSpeechRecognitionTaskStateCompleted) {
+    if ([task state] == SFSpeechRecognitionTaskStateCompleted) {
         [self sendSpeechEndIfNeeded];
         [self sendEndIfNeeded];
         return;
@@ -161,7 +163,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     [self sendSpeechEndIfNeeded];
     [_request endAudio];
-    [_task finish];
+    [task finish];
 }
 
 - (void)sendSpeechStartIfNeeded

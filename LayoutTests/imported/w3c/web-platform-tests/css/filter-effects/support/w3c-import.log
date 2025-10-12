@@ -31,7 +31,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/div-with-filter.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/filter-external-002-filter.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/filter-from-external-url.css
-/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/filtersubregion00.png
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/hueRotate.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/import-green.css
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/import-red.css
@@ -43,6 +42,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/ruler-h-50px.png
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/ruler-v-100px.png
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/ruler-v-50px.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/simulate-backdrop-blur.js
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/square-purple.png
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/square-teal.png
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/square-white.png

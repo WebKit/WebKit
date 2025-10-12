@@ -6,6 +6,10 @@
 
 // VulkanHelper.cpp : Helper for allocating & managing vulkan external objects.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/VulkanHelper.h"
 
 #include <vector>

@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "Element.h"
-#include "ScriptWrappable.h"
+#include <WebCore/Element.h>
+#include <WebCore/ScriptWrappable.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {

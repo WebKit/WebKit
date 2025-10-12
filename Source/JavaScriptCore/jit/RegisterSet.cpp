@@ -425,6 +425,32 @@ RegisterSet RegisterSetBuilder::wasmPinnedRegisters()
         result.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
     return result;
 }
+
+RegisterSet RegisterSetBuilder::ipintCalleeSaveRegisters()
+{
+    RegisterSet registers;
+#if CPU(X86_64)
+    registers.add(GPRInfo::regCS1, IgnoreVectors); // MC (pointer to metadata)
+    registers.add(GPRInfo::regCS2, IgnoreVectors); // PB
+#elif CPU(ARM64) || CPU(RISCV64)
+    registers.add(GPRInfo::regCS6, IgnoreVectors); // MC
+    registers.add(GPRInfo::regCS7, IgnoreVectors); // PB
+#elif CPU(ARM)
+    registers.add(GPRInfo::regCS0, IgnoreVectors); // MC
+    registers.add(GPRInfo::regCS1, IgnoreVectors); // PB
+#else
+#error Unsupported architecture.
+#endif
+    return registers;
+}
+
+RegisterSet RegisterSetBuilder::bbqCalleeSaveRegisters()
+{
+    RegisterSet registers;
+    registers.add(GPRInfo::jitDataRegister, IgnoreVectors);
+    ASSERT(!wasmPinnedRegisters().contains(GPRInfo::jitDataRegister, IgnoreVectors));
+    return registers;
+}
 #endif
 
 } // namespace JSC

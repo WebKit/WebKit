@@ -15,7 +15,6 @@
 #include <vector>
 
 #include "api/array_view.h"
-#include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "common_video/generic_frame_descriptor/generic_frame_info.h"
 #include "modules/video_coding/chain_diff_calculator.h"
@@ -44,8 +43,7 @@ class ScalabilityStructureWrapper {
   // Returns false and ADD_FAILUREs for frames with invalid references.
   // In particular validates no frame frame reference to frame before frames[0].
   // In error messages frames are indexed starting with 0.
-  bool FrameReferencesAreValid(
-      rtc::ArrayView<const GenericFrameInfo> frames) const;
+  bool FrameReferencesAreValid(ArrayView<const GenericFrameInfo> frames) const;
 
  private:
   ScalableVideoController& structure_controller_;

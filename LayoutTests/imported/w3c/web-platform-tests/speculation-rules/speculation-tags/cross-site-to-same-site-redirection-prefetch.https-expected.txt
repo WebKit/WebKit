@@ -1,0 +1,3 @@
+
+PASS same-site redirection prefetch should have Sec-Speculation-Tags even if cross-site url in the redirection chain
+

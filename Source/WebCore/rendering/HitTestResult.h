@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Google Inc.
  * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
@@ -22,8 +22,9 @@
 
 #pragma once
 
-#include "HitTestLocation.h"
-#include "HitTestRequest.h"
+#include <WebCore/HitTestLocation.h>
+#include <WebCore/HitTestRequest.h>
+#include <WebCore/PseudoElementIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/TZoneMalloc.h>
@@ -31,6 +32,7 @@
 namespace WebCore {
 
 class Element;
+class Frame;
 class HTMLImageElement;
 class HTMLMediaElement;
 class Image;
@@ -72,6 +74,9 @@ public:
     bool isOverWidget() const { return m_isOverWidget; }
     void setIsOverWidget(bool isOverWidget) { m_isOverWidget = isOverWidget; }
 
+    std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier() const;
+    void setPseudoElementIdentifier(std::optional<Style::PseudoElementIdentifier>);
+
     WEBCORE_EXPORT String linkSuggestedFilename() const;
 
     // Forwarded from HitTestLocation
@@ -95,7 +100,7 @@ public:
     const HitTestLocation& hitTestLocation() const { return m_hitTestLocation; }
 
     WEBCORE_EXPORT LocalFrame* frame() const;
-    WEBCORE_EXPORT LocalFrame* targetFrame() const;
+    WEBCORE_EXPORT Frame* targetFrame() const;
     WEBCORE_EXPORT bool isSelected() const;
     WEBCORE_EXPORT bool allowsFollowingLink() const;
     WEBCORE_EXPORT bool allowsFollowingImageURL() const;
@@ -190,6 +195,7 @@ private:
     RefPtr<Element> m_innerURLElement;
     RefPtr<Scrollbar> m_scrollbar;
     bool m_isOverWidget { false }; // Returns true if we are over a widget (and not in the border/padding area of a RenderWidget for example).
+    std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier;
 
     mutable std::unique_ptr<NodeSet> m_listBasedTestResult;
 };

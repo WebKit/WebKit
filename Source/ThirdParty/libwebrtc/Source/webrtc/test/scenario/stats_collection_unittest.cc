@@ -9,8 +9,15 @@
  */
 #include "test/scenario/stats_collection.h"
 
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "call/audio_receive_stream.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 #include "test/gtest.h"
 #include "test/scenario/scenario.h"
+#include "test/scenario/scenario_config.h"
+#include "test/scenario/video_stream.h"
 
 namespace webrtc {
 namespace test {

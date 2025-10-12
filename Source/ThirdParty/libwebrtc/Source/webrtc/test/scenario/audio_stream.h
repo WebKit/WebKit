@@ -9,13 +9,18 @@
  */
 #ifndef TEST_SCENARIO_AUDIO_STREAM_H_
 #define TEST_SCENARIO_AUDIO_STREAM_H_
-#include <memory>
-#include <string>
+#include <cstdint>
 #include <vector>
 
+#include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/audio_codecs/audio_encoder_factory.h"
+#include "api/call/transport.h"
+#include "api/rtp_parameters.h"
+#include "api/scoped_refptr.h"
+#include "call/audio_receive_stream.h"
+#include "call/audio_send_stream.h"
 #include "test/scenario/call_client.h"
 #include "test/scenario/column_printer.h"
-#include "test/scenario/network_node.h"
 #include "test/scenario/scenario_config.h"
 
 namespace webrtc {
@@ -41,7 +46,7 @@ class SendAudioStream {
   friend class ReceiveAudioStream;
   SendAudioStream(CallClient* sender,
                   AudioStreamConfig config,
-                  rtc::scoped_refptr<AudioEncoderFactory> encoder_factory,
+                  scoped_refptr<AudioEncoderFactory> encoder_factory,
                   Transport* send_transport);
   AudioSendStream* send_stream_ = nullptr;
   CallClient* const sender_;
@@ -67,7 +72,7 @@ class ReceiveAudioStream {
   ReceiveAudioStream(CallClient* receiver,
                      AudioStreamConfig config,
                      SendAudioStream* send_stream,
-                     rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
+                     scoped_refptr<AudioDecoderFactory> decoder_factory,
                      Transport* feedback_transport);
   AudioReceiveStreamInterface* receive_stream_ = nullptr;
   CallClient* const receiver_;
@@ -90,9 +95,9 @@ class AudioStreamPair {
  private:
   friend class Scenario;
   AudioStreamPair(CallClient* sender,
-                  rtc::scoped_refptr<AudioEncoderFactory> encoder_factory,
+                  scoped_refptr<AudioEncoderFactory> encoder_factory,
                   CallClient* receiver,
-                  rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
+                  scoped_refptr<AudioDecoderFactory> decoder_factory,
                   AudioStreamConfig config);
 
  private:

@@ -1599,12 +1599,14 @@ function simpleGlobStringToRegExp(globString, regExpFlags)
         // Replace all unescaped asterisks with ".*".
         regexString = regexString.replace(unescapedAsteriskRegex, "$1.*");
 
-        // Match edge boundaries when there is an asterisk to better meet the expectations
-        // of the user. When someone types "*.js" they don't expect "foo.json" to match. They
-        // would only expect that if they type "*.js*". We use \b (instead of ^ and $) to allow
-        // matches inside paths or URLs, so "ba*.js" will match "foo/bar.js" but not "boo/bbar.js".
-        // When there isn't an asterisk the regexString is just a substring search.
-        regexString = "\\b" + regexString + "\\b";
+        if (WI.settings.experimentalUseStrictCheckForGlobMatching.value) {
+            // Match edge boundaries when there is an asterisk to better meet the expectations
+            // of the user. When someone types "*.js" they don't expect "foo.json" to match. They
+            // would only expect that if they type "*.js*". We use \b (instead of ^ and $) to allow
+            // matches inside paths or URLs, so "ba*.js" will match "foo/bar.js" but not "boo/bbar.js".
+            // When there isn't an asterisk the regexString is just a substring search.
+            regexString = "\\b" + regexString + "\\b";
+        }
     }
 
     return new RegExp(regexString, regExpFlags);

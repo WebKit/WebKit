@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -53,15 +50,15 @@ class X {
 
 var x = new X();
 
-assertThrowsInstanceOf(() => x.f1(), TypeError);
+assert.throws(TypeError, () => x.f1());
 assert.sameValue(x.prop1, 1);
 
-assertThrowsInstanceOf(() => x.f2(), TypeError);
+assert.throws(TypeError, () => x.f2());
 assert.sameValue(x.prop2, 15);
 
-assertThrowsInstanceOf(() => x.f3(), TypeError);
+assert.throws(TypeError, () => x.f3());
 assert.sameValue(x.prop3, undefined);
 
-assertThrowsInstanceOf(() => x.f4(), TypeError);
+assert.throws(TypeError, () => x.f4());
 assert.sameValue(x.prop4, 20);
 

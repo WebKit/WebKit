@@ -78,7 +78,7 @@
     if (!connection)
         return completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
     connection->sendWithAsyncReply(Messages::NetworkProcessProxy::DataTaskReceivedChallenge(*_identifier, challenge), [completionHandler = makeBlockPtr(completionHandler)](WebKit::AuthenticationChallengeDisposition disposition, WebCore::Credential&& credential) {
-        completionHandler(fromAuthenticationChallengeDisposition(disposition), credential.nsCredential());
+        completionHandler(fromAuthenticationChallengeDisposition(disposition), RetainPtr { credential.nsCredential() }.get());
     });
 }
 
@@ -120,8 +120,8 @@
     if (!connection)
         return;
     connection->send(Messages::NetworkProcessProxy::DataTaskDidCompleteWithError(*_identifier, error), 0);
-    if (_session)
-        _session->removeDataTask(*_identifier);
+    if (CheckedPtr session = _session.get())
+        session->removeDataTask(*_identifier);
 }
 
 @end

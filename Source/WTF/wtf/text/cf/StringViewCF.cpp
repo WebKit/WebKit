@@ -37,7 +37,7 @@ RetainPtr<CFStringRef> StringView::createCFString() const
 {
     if (is8Bit()) {
         auto characters = span8();
-        return adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, characters.data(), characters.size(), kCFStringEncodingISOLatin1, false));
+        return adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, byteCast<UInt8>(characters.data()), characters.size(), kCFStringEncodingISOLatin1, false));
     }
     auto characters = span16();
     return adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(characters.data()), characters.size()));
@@ -47,7 +47,7 @@ RetainPtr<CFStringRef> StringView::createCFStringWithoutCopying() const
 {
     if (is8Bit()) {
         auto characters = span8();
-        return adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, characters.data(), characters.size(), kCFStringEncodingISOLatin1, false, kCFAllocatorNull));
+        return adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, byteCast<UInt8>(characters.data()), characters.size(), kCFStringEncodingISOLatin1, false, kCFAllocatorNull));
     }
     auto characters = span16();
     return adoptCF(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(characters.data()), characters.size(), kCFAllocatorNull));

@@ -11,6 +11,8 @@
 #include "modules/audio_processing/echo_detector/circular_buffer.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <optional>
 
 #include "rtc_base/checks.h"
 

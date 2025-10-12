@@ -13,7 +13,10 @@ PASS IntersectionObserver interface: existence and properties of interface proto
 PASS IntersectionObserver interface: existence and properties of interface prototype object's @@unscopables property
 PASS IntersectionObserver interface: attribute root
 PASS IntersectionObserver interface: attribute rootMargin
+PASS IntersectionObserver interface: attribute scrollMargin
 PASS IntersectionObserver interface: attribute thresholds
+FAIL IntersectionObserver interface: attribute delay assert_true: The prototype object must have a property "delay" expected true got false
+FAIL IntersectionObserver interface: attribute trackVisibility assert_true: The prototype object must have a property "trackVisibility" expected true got false
 PASS IntersectionObserver interface: operation observe(Element)
 PASS IntersectionObserver interface: operation unobserve(Element)
 PASS IntersectionObserver interface: operation disconnect()
@@ -22,7 +25,10 @@ PASS IntersectionObserver must be primary interface of observer
 PASS Stringification of observer
 PASS IntersectionObserver interface: observer must inherit property "root" with the proper type
 PASS IntersectionObserver interface: observer must inherit property "rootMargin" with the proper type
+PASS IntersectionObserver interface: observer must inherit property "scrollMargin" with the proper type
 PASS IntersectionObserver interface: observer must inherit property "thresholds" with the proper type
+FAIL IntersectionObserver interface: observer must inherit property "delay" with the proper type assert_inherits: property "delay" not found in prototype chain
+FAIL IntersectionObserver interface: observer must inherit property "trackVisibility" with the proper type assert_inherits: property "trackVisibility" not found in prototype chain
 PASS IntersectionObserver interface: observer must inherit property "observe(Element)" with the proper type
 PASS IntersectionObserver interface: calling observe(Element) on observer with too few arguments must throw TypeError
 PASS IntersectionObserver interface: observer must inherit property "unobserve(Element)" with the proper type
@@ -40,6 +46,7 @@ PASS IntersectionObserverEntry interface: attribute rootBounds
 PASS IntersectionObserverEntry interface: attribute boundingClientRect
 PASS IntersectionObserverEntry interface: attribute intersectionRect
 PASS IntersectionObserverEntry interface: attribute isIntersecting
+FAIL IntersectionObserverEntry interface: attribute isVisible assert_true: The prototype object must have a property "isVisible" expected true got false
 PASS IntersectionObserverEntry interface: attribute intersectionRatio
 PASS IntersectionObserverEntry interface: attribute target
 

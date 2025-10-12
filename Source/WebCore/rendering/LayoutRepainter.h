@@ -3,7 +3,7 @@
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  *           (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "RenderElement.h"
+#include <WebCore/RenderElement.h>
 
 namespace WebCore {
 
@@ -42,7 +42,7 @@ public:
     bool repaintAfterLayout();
 
 private:
-    CheckedRef<RenderElement> m_renderer;
+    const CheckedRef<RenderElement> m_renderer;
     const RenderLayerModelObject* m_repaintContainer { nullptr };
     // We store these values as LayoutRects, but the final invalidations will be pixel snapped
     RenderObject::RepaintRects m_oldRects;

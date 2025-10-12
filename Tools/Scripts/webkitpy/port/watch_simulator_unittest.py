@@ -38,7 +38,7 @@ class WatchSimulatorTest(watch_testcase.WatchTest):
     port_name = 'watch-simulator'
     port_maker = WatchSimulatorPort
 
-    def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=Version(5), **kwargs):
+    def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=WatchSimulatorPort.CURRENT_VERSION, **kwargs):
         port = super(WatchSimulatorTest, self).make_port(host=host, port_name=port_name, options=options, os_name=os_name, os_version=os_version, kwargs=kwargs)
         port.set_option('child_processes', 1)
         return port

@@ -928,6 +928,8 @@ static FIAT_25519_FIAT_INLINE void fiat_25519_opp(fiat_25519_loose_field_element
   out1[9] = x10;
 }
 
+/* Not used in BoringSSL. */
+#if 0
 /*
  * The function fiat_25519_selectznz is a multi-limb conditional select.
  *
@@ -973,6 +975,7 @@ static FIAT_25519_FIAT_INLINE void fiat_25519_selectznz(uint32_t out1[10], fiat_
   out1[8] = x9;
   out1[9] = x10;
 }
+#endif
 
 /*
  * The function fiat_25519_to_bytes serializes a field element to bytes in little-endian order.
@@ -1410,6 +1413,8 @@ static FIAT_25519_FIAT_INLINE void fiat_25519_from_bytes(fiat_25519_tight_field_
   out1[9] = x78;
 }
 
+/* Not used in BoringSSL. */
+#if 0
 /*
  * The function fiat_25519_relax is the identity function converting from tight field elements to loose field elements.
  *
@@ -1449,6 +1454,7 @@ static FIAT_25519_FIAT_INLINE void fiat_25519_relax(fiat_25519_loose_field_eleme
   out1[8] = x9;
   out1[9] = x10;
 }
+#endif
 
 /*
  * The function fiat_25519_carry_scmul_121666 multiplies a field element by 121666 and reduces the result.

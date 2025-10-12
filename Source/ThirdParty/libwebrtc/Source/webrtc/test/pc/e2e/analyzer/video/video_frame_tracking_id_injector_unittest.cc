@@ -10,9 +10,13 @@
 
 #include "test/pc/e2e/analyzer/video/video_frame_tracking_id_injector.h"
 
+#include <cstddef>
+#include <cstdint>
+
+#include "api/scoped_refptr.h"
 #include "api/video/encoded_image.h"
-#include "rtc_base/buffer.h"
 #include "test/gtest.h"
+#include "test/pc/e2e/analyzer/video/encoded_image_data_injector.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
@@ -20,7 +24,7 @@ namespace {
 
 EncodedImage CreateEncodedImageOfSizeN(size_t n) {
   EncodedImage image;
-  rtc::scoped_refptr<EncodedImageBuffer> buffer = EncodedImageBuffer::Create(n);
+  scoped_refptr<EncodedImageBuffer> buffer = EncodedImageBuffer::Create(n);
   for (size_t i = 0; i < n; ++i) {
     buffer->data()[i] = static_cast<uint8_t>(i);
   }

@@ -13,7 +13,7 @@
 
 #include "rtc_base/socket.h"
 
-namespace rtc {
+namespace webrtc {
 
 class SocketFactory {
  public:
@@ -23,6 +23,7 @@ class SocketFactory {
   virtual Socket* CreateSocket(int family, int type) = 0;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_SOCKET_FACTORY_H_

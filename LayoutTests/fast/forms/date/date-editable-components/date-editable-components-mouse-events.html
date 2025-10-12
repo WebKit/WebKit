@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../resources/common.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 <script src="../../../../resources/ui-helper.js"></script>
 <style>
 input {
@@ -34,21 +35,23 @@ function mouseClickOn(x, y) {
 input.addEventListener("click", onClickEvent);
 const center = input.offsetHeight / 2;
 
+const shadowRoot = internals.shadowRoot(input);
+const monthField = getElementByPseudoId(shadowRoot, "-webkit-datetime-edit-month-field");
+const dayField = getElementByPseudoId(shadowRoot, "-webkit-datetime-edit-day-field");
+const yearField = getElementByPseudoId(shadowRoot, "-webkit-datetime-edit-year-field");
+
 debug("Enabled Input\n");
 
-// Click on month field.
-mouseClickOn(20, center);
+UIHelper.activateElement(monthField);
 UIHelper.keyDown("9");
 shouldBeEqualToString("input.value", "2020-09-26");
 
-// Click on day field.
-mouseClickOn(60, center);
+UIHelper.activateElement(dayField);
 UIHelper.keyDown("1");
 UIHelper.keyDown("2");
 shouldBeEqualToString("input.value", "2020-09-12");
 
-// Click on year field.
-mouseClickOn(120, center);
+UIHelper.activateElement(yearField);
 UIHelper.keyDown("3");
 UIHelper.keyDown("0");
 UIHelper.keyDown("3");
@@ -72,12 +75,9 @@ clickEventsFired = 0;
 input.disabled = true;
 input.readOnly = false;
 
-// Click on month field.
-mouseClickOn(20, center);
-// Click on day field.
-mouseClickOn(60, center);
-// Click on year field.
-mouseClickOn(120, center);
+UIHelper.activateElement(monthField);
+UIHelper.activateElement(dayField);
+UIHelper.activateElement(yearField);
 // Click on control, but not a specific field, defaults to first field.
 mouseClickOn(250, center);
 // Click outside control.
@@ -90,12 +90,9 @@ clickEventsFired = 0;
 input.disabled = false;
 input.readOnly = true;
 
-// Click on month field.
-mouseClickOn(20, center);
-// Click on day field.
-mouseClickOn(60, center);
-// Click on year field.
-mouseClickOn(120, center);
+UIHelper.activateElement(monthField);
+UIHelper.activateElement(dayField);
+UIHelper.activateElement(yearField);
 // Click on control, but not a specific field, defaults to first field.
 mouseClickOn(250, center);
 // Click outside control.
@@ -104,7 +101,5 @@ mouseClickOn(input.offsetWidth + 5, input.offsetHeight + 5);
 shouldBe("clickEventsFired", "4");
 
 </script>
-
-<script src="../../../../resources/js-test-post.js"></script>
 </body>
 </html>

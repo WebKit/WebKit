@@ -23,7 +23,7 @@
 
 #include "ActiveDOMObject.h"
 #include "ContextDestructionObserverInlines.h"
-#include "DocumentInlines.h"
+#include "DocumentSettingsValues.h"
 #include "ExtendedDOMClientIsoSubspaces.h"
 #include "ExtendedDOMIsoSubspaces.h"
 #include "JSDOMAttribute.h"
@@ -279,7 +279,7 @@ JSValue JSTestEnabledBySetting::getConstructor(VM& vm, const JSGlobalObject* glo
 
 void JSTestEnabledBySetting::destroy(JSC::JSCell* cell)
 {
-    JSTestEnabledBySetting* thisObject = static_cast<JSTestEnabledBySetting*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestEnabledBySetting* thisObject = static_cast<JSTestEnabledBySetting*>(cell);
     thisObject->JSTestEnabledBySetting::~JSTestEnabledBySetting();
 }
 
@@ -463,7 +463,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestEnabledBySettingPrototypeFunction_enabledBySettin
 
 JSC::GCClient::IsoSubspace* JSTestEnabledBySetting::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestEnabledBySetting, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestEnabledBySetting, UseCustomHeapCellType::No>(vm, "JSTestEnabledBySetting"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestEnabledBySetting.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestEnabledBySetting = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestEnabledBySetting.get(); },
@@ -490,7 +490,7 @@ bool JSTestEnabledBySettingOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Un
 
 void JSTestEnabledBySettingOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestEnabledBySetting = static_cast<JSTestEnabledBySetting*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestEnabledBySetting = static_cast<JSTestEnabledBySetting*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestEnabledBySetting->protectedWrapped().ptr(), jsTestEnabledBySetting);
 }
@@ -503,7 +503,9 @@ extern "C" { extern void (*const __identifier("??_7TestEnabledBySetting@WebCore@
 #else
 extern "C" { extern void* _ZTVN7WebCore20TestEnabledBySettingE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestEnabledBySetting>, void>> static inline void verifyVTable(TestEnabledBySetting* ptr) {
+template<std::same_as<TestEnabledBySetting> T>
+static inline void verifyVTable(TestEnabledBySetting* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -522,8 +524,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestEnabledBy
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestEnabledBySetting>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestEnabledBySetting>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestEnabledBySetting>(impl.ptr());
 #endif

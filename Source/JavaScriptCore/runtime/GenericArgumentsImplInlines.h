@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "GenericArgumentsImpl.h"
-#include "JSCInlines.h"
+#include <JavaScriptCore/GenericArgumentsImpl.h>
+#include <JavaScriptCore/JSCInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

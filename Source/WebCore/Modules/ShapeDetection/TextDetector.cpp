@@ -75,7 +75,8 @@ void TextDetector::detect(ScriptExecutionContext& scriptExecutionContext, ImageB
             return;
         }
 
-        auto imageBuffer = imageBitmap.releaseReturnValue()->takeImageBuffer();
+        // FIXME: This is a safer cpp false positive (rdar://160082559).
+        SUPPRESS_UNCOUNTED_ARG auto imageBuffer = imageBitmap.releaseReturnValue()->takeImageBuffer();
         if (!imageBuffer) {
             promise.resolve({ });
             return;

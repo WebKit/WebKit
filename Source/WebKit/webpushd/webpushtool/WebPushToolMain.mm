@@ -172,7 +172,7 @@ class WebPushToolVerb {
 public:
     virtual ~WebPushToolVerb() = default;
     virtual void run(WebPushTool::Connection&) = 0;
-    virtual void done() { CFRunLoopStop(CFRunLoopGetMain()); }
+    virtual void done() { CFRunLoopStop(retainPtr(CFRunLoopGetMain()).get()); }
 };
 
 class InjectPushMessageVerb : public WebPushToolVerb {

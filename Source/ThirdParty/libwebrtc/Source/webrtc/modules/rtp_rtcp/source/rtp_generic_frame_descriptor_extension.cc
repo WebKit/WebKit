@@ -10,6 +10,11 @@
 
 #include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor_extension.h"
 
+#include <cstddef>
+#include <cstdint>
+
+#include "api/array_view.h"
+#include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -58,7 +63,7 @@ constexpr uint8_t kFlageXtendedOffset = 0x02;
 //      +-+-+-+-+-+-+-+-+
 
 bool RtpGenericFrameDescriptorExtension00::Parse(
-    rtc::ArrayView<const uint8_t> data,
+    ArrayView<const uint8_t> data,
     RtpGenericFrameDescriptor* descriptor) {
   if (data.empty()) {
     return false;
@@ -126,7 +131,7 @@ size_t RtpGenericFrameDescriptorExtension00::ValueSize(
 }
 
 bool RtpGenericFrameDescriptorExtension00::Write(
-    rtc::ArrayView<uint8_t> data,
+    ArrayView<uint8_t> data,
     const RtpGenericFrameDescriptor& descriptor) {
   RTC_CHECK_EQ(data.size(), ValueSize(descriptor));
   uint8_t base_header =
@@ -147,7 +152,7 @@ bool RtpGenericFrameDescriptorExtension00::Write(
   uint16_t frame_id = descriptor.FrameId();
   data[2] = frame_id & 0xff;
   data[3] = frame_id >> 8;
-  rtc::ArrayView<const uint16_t> fdiffs = descriptor.FrameDependenciesDiffs();
+  ArrayView<const uint16_t> fdiffs = descriptor.FrameDependenciesDiffs();
   size_t offset = 4;
   if (descriptor.FirstPacketInSubFrame() && fdiffs.empty() &&
       descriptor.Width() > 0 && descriptor.Height() > 0) {

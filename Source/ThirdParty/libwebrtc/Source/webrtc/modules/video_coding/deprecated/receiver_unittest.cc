@@ -9,13 +9,16 @@
 
 #include "modules/video_coding/deprecated/receiver.h"
 
-#include <string.h>
-
 #include <cstdint>
+#include <cstring>
 #include <memory>
 #include <queue>
 #include <vector>
 
+#include "api/field_trials.h"
+#include "api/units/time_delta.h"
+#include "api/video/video_frame_type.h"
+#include "modules/video_coding/deprecated/event_wrapper.h"
 #include "modules/video_coding/deprecated/jitter_buffer_common.h"
 #include "modules/video_coding/deprecated/packet.h"
 #include "modules/video_coding/deprecated/stream_generator.h"
@@ -23,15 +26,16 @@
 #include "modules/video_coding/timing/timing.h"
 #include "rtc_base/checks.h"
 #include "system_wrappers/include/clock.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
-#include "test/scoped_key_value_config.h"
 
 namespace webrtc {
 
 class TestVCMReceiver : public ::testing::Test {
  protected:
   TestVCMReceiver()
-      : clock_(0),
+      : field_trials_(CreateTestFieldTrials()),
+        clock_(0),
         timing_(&clock_, field_trials_),
         receiver_(&timing_, &clock_, field_trials_),
         stream_generator_(0, clock_.TimeInMilliseconds()) {}
@@ -79,7 +83,7 @@ class TestVCMReceiver : public ::testing::Test {
     return true;
   }
 
-  test::ScopedKeyValueConfig field_trials_;
+  FieldTrials field_trials_;
   SimulatedClock clock_;
   VCMTiming timing_;
   VCMReceiver receiver_;
@@ -244,7 +248,7 @@ class SimulatedClockWithFrames : public SimulatedClock {
       : SimulatedClock(0),
         stream_generator_(stream_generator),
         receiver_(receiver) {}
-  virtual ~SimulatedClockWithFrames() {}
+  ~SimulatedClockWithFrames() override {}
 
   // If `stop_on_frame` is true and next frame arrives between now and
   // now+`milliseconds`, the clock will be advanced to the arrival time of next
@@ -365,7 +369,8 @@ class FrameInjectEvent : public EventWrapper {
 class VCMReceiverTimingTest : public ::testing::Test {
  protected:
   VCMReceiverTimingTest()
-      : clock_(&stream_generator_, &receiver_),
+      : field_trials_(CreateTestFieldTrials()),
+        clock_(&stream_generator_, &receiver_),
         stream_generator_(0, clock_.TimeInMilliseconds()),
         timing_(&clock_, field_trials_),
         receiver_(
@@ -375,9 +380,9 @@ class VCMReceiverTimingTest : public ::testing::Test {
             std::unique_ptr<EventWrapper>(new FrameInjectEvent(&clock_, true)),
             field_trials_) {}
 
-  virtual void SetUp() {}
+  void SetUp() override {}
 
-  test::ScopedKeyValueConfig field_trials_;
+  FieldTrials field_trials_;
   SimulatedClockWithFrames clock_;
   StreamGenerator stream_generator_;
   VCMTiming timing_;

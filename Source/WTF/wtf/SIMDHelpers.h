@@ -466,7 +466,7 @@ ALWAYS_INLINE std::optional<uint8_t> findFirstNonZeroIndex(simde_uint64x2_t valu
 #endif
 }
 
-template<LChar character, LChar... characters>
+template<Latin1Character character, Latin1Character... characters>
 ALWAYS_INLINE simde_uint8x16_t equal(simde_uint8x16_t input)
 {
     auto result = simde_vceqq_u8(input, simde_vmovq_n_u8(character));
@@ -476,7 +476,7 @@ ALWAYS_INLINE simde_uint8x16_t equal(simde_uint8x16_t input)
         return merge(result, equal<characters...>(input));
 }
 
-template<UChar character, UChar... characters>
+template<char16_t character, char16_t... characters>
 ALWAYS_INLINE simde_uint16x8_t equal(simde_uint16x8_t input)
 {
     auto result = simde_vceqq_u16(input, simde_vmovq_n_u16(character));
@@ -586,11 +586,31 @@ ALWAYS_INLINE simde_uint64x2_t greaterThanOrEqual(simde_uint64x2_t lhs, simde_ui
     return simde_vcgeq_u64(lhs, rhs);
 }
 
+template<size_t> struct SizedUnsignedTrait;
+template<>
+struct SizedUnsignedTrait<1> {
+    using Type = uint8_t;
+};
+template<>
+struct SizedUnsignedTrait<2> {
+    using Type = uint16_t;
+};
+template<>
+struct SizedUnsignedTrait<4> {
+    using Type = uint32_t;
+};
+template<>
+struct SizedUnsignedTrait<8> {
+    using Type = uint64_t;
+};
+template<typename T>
+using SameSizeUnsignedInteger = SizedUnsignedTrait<sizeof(T)>::Type;
+
 template<typename CharacterType, size_t threshold = SIMD::stride<CharacterType>>
 ALWAYS_INLINE const CharacterType* find(std::span<const CharacterType> span, const auto& vectorMatch, const auto& scalarMatch)
 {
     constexpr size_t stride = SIMD::stride<CharacterType>;
-    using UnsignedType = std::make_unsigned_t<CharacterType>;
+    using UnsignedType = SameSizeUnsignedInteger<CharacterType>;
     static_assert(threshold >= stride);
     const auto* cursor = span.data();
     const auto* end = span.data() + span.size();
@@ -647,7 +667,7 @@ ALWAYS_INLINE size_t count(std::span<const CharacterType> span, const auto& vect
 {
     constexpr size_t stride = SIMD::stride<CharacterType>;
     constexpr size_t bulkLoadCount = 4;
-    using UnsignedType = std::make_unsigned_t<CharacterType>;
+    using UnsignedType = SameSizeUnsignedInteger<CharacterType>;
     static_assert(threshold >= stride);
     const auto* cursor = span.data();
     const auto* end = span.data() + span.size();

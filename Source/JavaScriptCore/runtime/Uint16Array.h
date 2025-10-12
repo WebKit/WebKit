@@ -25,6 +25,6 @@
 
 #pragma once
 
-#include "TypedArrays.h"
+#include <JavaScriptCore/TypedArrays.h>
 
 using JSC::Uint16Array;

@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "BlockDirectory.h"
-#include "FreeListInlines.h"
-#include "VM.h"
+#include <JavaScriptCore/BlockDirectory.h>
+#include <JavaScriptCore/FreeListInlines.h>
+#include <JavaScriptCore/VM.h>
 
 namespace JSC {
 

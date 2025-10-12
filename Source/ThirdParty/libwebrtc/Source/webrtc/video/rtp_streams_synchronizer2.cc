@@ -10,14 +10,21 @@
 
 #include "video/rtp_streams_synchronizer2.h"
 
+#include <cstdint>
 #include <optional>
 
+#include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/units/time_delta.h"
 #include "call/syncable.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/rtp_to_ntp_estimator.h"
+#include "rtc_base/task_utils/repeating_task.h"
 #include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"
-#include "system_wrappers/include/rtp_to_ntp_estimator.h"
+#include "system_wrappers/include/ntp_time.h"
+#include "video/stream_synchronization.h"
 
 namespace webrtc {
 namespace internal {
@@ -42,7 +49,7 @@ RtpStreamsSynchronizer::RtpStreamsSynchronizer(TaskQueueBase* main_queue,
                                                Syncable* syncable_video)
     : task_queue_(main_queue),
       syncable_video_(syncable_video),
-      last_stats_log_ms_(rtc::TimeMillis()) {
+      last_stats_log_ms_(TimeMillis()) {
   RTC_DCHECK(syncable_video);
 }
 
@@ -87,7 +94,7 @@ void RtpStreamsSynchronizer::UpdateDelay() {
   RTC_DCHECK(sync_.get());
 
   bool log_stats = false;
-  const int64_t now_ms = rtc::TimeMillis();
+  const int64_t now_ms = TimeMillis();
   if (now_ms - last_stats_log_ms_ > kStatsLogIntervalMs) {
     last_stats_log_ms_ = now_ms;
     log_stats = true;
@@ -202,7 +209,7 @@ bool RtpStreamsSynchronizer::GetStreamSyncOffsetInMs(
   int64_t latest_video_ntp_ms = latest_video_ntp.ToMs();
 
   // Current audio ntp.
-  int64_t now_ms = rtc::TimeMillis();
+  int64_t now_ms = TimeMillis();
   latest_audio_ntp_ms += (now_ms - time_ms);
 
   // Remove video playout delay.

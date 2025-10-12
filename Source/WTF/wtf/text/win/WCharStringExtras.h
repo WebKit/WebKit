@@ -30,27 +30,27 @@
 
 namespace WTF {
 
-inline const UChar* ucharFrom(const wchar_t* characters)
+inline const char16_t* ucharFrom(const wchar_t* characters)
 {
-    static_assert(sizeof(wchar_t) == sizeof(UChar), "We assume wchar_t and UChar have the same size");
-    return reinterpret_cast<const UChar*>(characters);
+    static_assert(sizeof(wchar_t) == sizeof(char16_t), "We assume wchar_t and char16_t have the same size");
+    return reinterpret_cast<const char16_t*>(characters);
 }
 
-inline UChar* ucharFrom(wchar_t* characters)
+inline char16_t* ucharFrom(wchar_t* characters)
 {
-    static_assert(sizeof(wchar_t) == sizeof(UChar), "We assume wchar_t and UChar have the same size");
-    return reinterpret_cast<UChar*>(characters);
+    static_assert(sizeof(wchar_t) == sizeof(char16_t), "We assume wchar_t and char16_t have the same size");
+    return reinterpret_cast<char16_t*>(characters);
 }
 
-inline const wchar_t* wcharFrom(const UChar* characters)
+inline const wchar_t* wcharFrom(const char16_t* characters)
 {
-    static_assert(sizeof(wchar_t) == sizeof(UChar), "We assume wchar_t and UChar have the same size");
+    static_assert(sizeof(wchar_t) == sizeof(char16_t), "We assume wchar_t and char16_t have the same size");
     return reinterpret_cast<const wchar_t*>(characters);
 }
 
-inline wchar_t* wcharFrom(UChar* characters)
+inline wchar_t* wcharFrom(char16_t* characters)
 {
-    static_assert(sizeof(wchar_t) == sizeof(UChar), "We assume wchar_t and UChar have the same size");
+    static_assert(sizeof(wchar_t) == sizeof(char16_t), "We assume wchar_t and char16_t have the same size");
     return reinterpret_cast<wchar_t*>(characters);
 }
 

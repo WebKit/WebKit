@@ -63,7 +63,7 @@
         // Mock fullscreen is flaky (webkit.org/b/222573) so adapt to it for this test,
         // where we're more interested in the implication: fullscreen+mac -> don't suppress HDR.
         const isFullscreen = video.webkitDisplayingFullscreen;
-        const isMac = navigator.userAgent.includes('Macintosh');
+        const isMac = window.testRunner && window.testRunner.isMac;
         const shouldSuppressHDR = !(isFullscreen && isMac);
 
         testExpectedIfSupportsDynamicRangeLimit('internals.effectiveDynamicRangeLimitValue(video)', 1.0);

@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "CachedResource.h"
+#include <WebCore/CachedResource.h>
 
 namespace WebCore {
 

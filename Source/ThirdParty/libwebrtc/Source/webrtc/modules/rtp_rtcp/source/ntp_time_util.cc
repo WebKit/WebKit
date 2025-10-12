@@ -24,14 +24,13 @@ uint32_t SaturatedToCompactNtp(TimeDelta delta) {
   constexpr int kCompactNtpInSecond = 0x10000;
   if (delta <= TimeDelta::Zero())
     return 0;
-  if (delta.us() >=
-      kMaxCompactNtp * rtc::kNumMicrosecsPerSec / kCompactNtpInSecond)
+  if (delta.us() >= kMaxCompactNtp * kNumMicrosecsPerSec / kCompactNtpInSecond)
     return kMaxCompactNtp;
   // To convert to compact ntp need to divide by 1e6 to get seconds,
   // then multiply by 0x10000 to get the final result.
   // To avoid float operations, multiplication and division swapped.
   return DivideRoundToNearest(delta.us() * kCompactNtpInSecond,
-                              rtc::kNumMicrosecsPerSec);
+                              kNumMicrosecsPerSec);
 }
 
 TimeDelta CompactNtpIntervalToTimeDelta(uint32_t compact_ntp_interval) {
@@ -43,7 +42,7 @@ TimeDelta CompactNtpIntervalToTimeDelta(uint32_t compact_ntp_interval) {
   // To convert to TimeDelta need to divide by 2^16 to get seconds,
   // then multiply by 1'000'000 to get microseconds. To avoid float operations,
   // multiplication and division are swapped.
-  int64_t us = DivideRoundToNearest(value * rtc::kNumMicrosecsPerSec, 1 << 16);
+  int64_t us = DivideRoundToNearest(value * kNumMicrosecsPerSec, 1 << 16);
   return TimeDelta::Micros(us);
 }
 

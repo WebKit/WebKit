@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "FrameIdentifier.h"
+#include <WebCore/FrameIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>

@@ -353,13 +353,6 @@ void PageLoadState::didSameDocumentNavigation(const Transaction::Token& token, c
     m_uncommittedState.url = url;
 }
 
-void PageLoadState::didDisplayOrRunInsecureContent(const Transaction::Token& token)
-{
-    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
-
-    m_uncommittedState.hasInsecureContent = true;
-}
-
 void PageLoadState::setUnreachableURL(const Transaction::Token& token, const String& unreachableURL)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);

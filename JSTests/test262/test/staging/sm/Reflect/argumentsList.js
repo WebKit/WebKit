@@ -4,9 +4,7 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-Reflect-shell.js, deepEqual.js]
-flags:
-  - noStrict
+includes: [sm/assertThrowsValue.js, sm/non262-Reflect-shell.js, compareArray.js]
 description: |
   pending
 esid: pending
@@ -14,15 +12,11 @@ esid: pending
 // Tests for the argumentList argument to Reflect.apply and Reflect.construct.
 
 // Reflect.apply and Reflect.construct require an argumentList argument that must be an object.
-assertThrowsInstanceOf(() => Reflect.apply(Math.min, undefined),  // missing
-                       TypeError);
-assertThrowsInstanceOf(() => Reflect.construct(Object),  // missing
-                       TypeError);
+assert.throws(TypeError, () => Reflect.apply(Math.min, undefined));
+assert.throws(TypeError, () => Reflect.construct(Object));
 for (var primitive of SOME_PRIMITIVE_VALUES) {
-    assertThrowsInstanceOf(() => Reflect.apply(Math.min, undefined, primitive),
-                           TypeError);
-    assertThrowsInstanceOf(() => Reflect.construct(Object, primitive),
-                           TypeError);
+    assert.throws(TypeError, () => Reflect.apply(Math.min, undefined, primitive));
+    assert.throws(TypeError, () => Reflect.construct(Object, primitive));
 }
 
 // Array used by several tests below.
@@ -70,14 +64,10 @@ function getArgs(...args) {
     return args;
 }
 for (var method of BOTH) {
-    assert.deepEqual(method(getArgs, undefined, {length: 0}),
-                 []);
-    assert.deepEqual(method(getArgs, undefined, {length: 1, "0": "zero"}),
-                 ["zero"]);
-    assert.deepEqual(method(getArgs, undefined, {length: 2}),
-                 [undefined, undefined]);
-    assert.deepEqual(method(getArgs, undefined, function (a, b, c) {}),
-                 [undefined, undefined, undefined]);
+    assert.compareArray(method(getArgs, undefined, {length: 0}), []);
+    assert.compareArray(method(getArgs, undefined, {length: 1, "0": "zero"}), ["zero"]);
+    assert.compareArray(method(getArgs, undefined, {length: 2}), [undefined, undefined]);
+    assert.compareArray(method(getArgs, undefined, function (a, b, c) {}), [undefined, undefined, undefined]);
 }
 
 // The Iterable/Iterator interfaces are not used.
@@ -89,8 +79,7 @@ var funnyArgs = {
     next() { throw "FAIL 2"; }
 };
 for (var method of BOTH) {
-    assert.deepEqual(method(getArgs, undefined, funnyArgs),
-                 ["zero", "one"]);
+    assert.compareArray(method(getArgs, undefined, funnyArgs), ["zero", "one"]);
 }
 
 // If argumentList has no .length property, no arguments are passed.
@@ -112,8 +101,7 @@ args = {
 };
 for (var method of BOTH) {
     log = "";
-    assert.deepEqual(method(getArgs, undefined, args),
-                 ["zero"]);
+    assert.compareArray(method(getArgs, undefined, args), ["zero"]);
     assert.sameValue(log, "L0");
 }
 

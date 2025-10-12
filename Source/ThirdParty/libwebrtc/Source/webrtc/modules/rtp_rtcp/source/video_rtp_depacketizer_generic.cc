@@ -10,12 +10,13 @@
 
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer_generic.h"
 
-#include <stddef.h>
-#include <stdint.h>
-
+#include <cstddef>
+#include <cstdint>
 #include <optional>
 #include <utility>
 
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame_type.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer.h"
 #include "rtc_base/copy_on_write_buffer.h"
@@ -34,7 +35,7 @@ constexpr size_t kExtendedHeaderLength = 2;
 }  // namespace
 
 std::optional<VideoRtpDepacketizer::ParsedRtpPayload>
-VideoRtpDepacketizerGeneric::Parse(rtc::CopyOnWriteBuffer rtp_payload) {
+VideoRtpDepacketizerGeneric::Parse(CopyOnWriteBuffer rtp_payload) {
   if (rtp_payload.size() == 0) {
     RTC_LOG(LS_WARNING) << "Empty payload.";
     return std::nullopt;

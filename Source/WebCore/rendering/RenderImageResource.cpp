@@ -100,6 +100,14 @@ RefPtr<Image> RenderImageResource::image(const IntSize&) const
     return &Image::nullImage();
 }
 
+bool RenderImageResource::currentFrameIsComplete() const
+{
+    if (!m_cachedImage)
+        return false;
+
+    return m_cachedImage->currentFrameIsComplete(m_renderer.get());
+}
+
 void RenderImageResource::setContainerContext(const IntSize& imageContainerSize, const URL& imageURL)
 {
     if (!m_cachedImage || !m_renderer)

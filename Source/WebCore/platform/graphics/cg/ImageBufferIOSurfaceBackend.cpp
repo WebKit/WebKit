@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "IOSurface.h"
 #include "IOSurfacePool.h"
 #include "IntRect.h"
+#include "NativeImage.h"
 #include "PixelBuffer.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <pal/cg/CoreGraphicsSoftLink.h>
@@ -57,16 +58,16 @@ IntSize ImageBufferIOSurfaceBackend::calculateSafeBackendSize(const Parameters& 
     return backendSize;
 }
 
-unsigned ImageBufferIOSurfaceBackend::calculateBytesPerRow(const IntSize& backendSize)
+unsigned ImageBufferIOSurfaceBackend::calculateBytesPerRow(const IntSize& backendSize, PixelFormat imageBufferPixelFormat)
 {
-    unsigned bytesPerRow = ImageBufferCGBackend::calculateBytesPerRow(backendSize);
+    unsigned bytesPerRow = ImageBufferCGBackend::calculateBytesPerRow(backendSize, imageBufferPixelFormat);
     size_t alignmentMask = IOSurface::bytesPerRowAlignment() - 1;
     return (bytesPerRow + alignmentMask) & ~alignmentMask;
 }
 
 size_t ImageBufferIOSurfaceBackend::calculateMemoryCost(const Parameters& parameters)
 {
-    return ImageBufferBackend::calculateMemoryCost(parameters.backendSize, calculateBytesPerRow(parameters.backendSize));
+    return ImageBufferBackend::calculateMemoryCost(parameters.backendSize, calculateBytesPerRow(parameters.backendSize, parameters.bufferFormat.pixelFormat));
 }
 
 std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, const ImageBufferCreationContext& creationContext)
@@ -75,7 +76,7 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
     if (backendSize.isEmpty())
         return nullptr;
 
-    auto surface = IOSurface::create(RefPtr { creationContext.surfacePool }.get(), backendSize, parameters.colorSpace, IOSurface::Name::ImageBuffer, convertToIOSurfaceFormat(parameters.pixelFormat));
+    auto surface = IOSurface::create(RefPtr { creationContext.surfacePool }.get(), backendSize, parameters.colorSpace, IOSurface::Name::ImageBuffer, convertToIOSurfaceFormat(parameters.bufferFormat.pixelFormat), parameters.bufferFormat.useLosslessCompression);
     if (!surface)
         return nullptr;
 
@@ -242,8 +243,17 @@ SetNonVolatileResult ImageBufferIOSurfaceBackend::setNonVolatile()
 {
     if (m_volatilityState == VolatilityState::Volatile) {
         setVolatilityState(VolatilityState::NonVolatile);
-        return m_surface->setVolatile(false);
+
+        auto previousState = m_surface->setVolatile(false);
+        if (previousState == SetNonVolatileResult::Empty) {
+            RetainPtr context = ensurePlatformContext();
+            ASSERT(CGAffineTransformIsIdentity(CGContextGetCTM(context.get())));
+            CGContextClearRect(context.get(), FloatRect({ }, size()));
+        }
+
+        return previousState;
     }
+
     ASSERT(!m_surface->isVolatile());
     return SetNonVolatileResult::Valid;
 }

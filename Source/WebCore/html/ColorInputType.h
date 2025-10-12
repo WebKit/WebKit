@@ -68,8 +68,9 @@ private:
     void didChooseColor(const Color&) final;
     void didEndChooser() final;
     IntRect elementRectRelativeToRootView() const final;
+    std::optional<FrameIdentifier> rootFrameID() const final;
     bool isMouseFocusable() const final;
-    bool isKeyboardFocusable(KeyboardEvent*) const final;
+    bool isKeyboardFocusable(const FocusEventData&) const final;
     bool isPresentingAttachedView() const final;
     const AtomString& formControlType() const final;
     bool supportsRequired() const final;

@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // CLContextVk.cpp: Implements the class methods for CLContextVk.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
 
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "common/PackedEnums.h"

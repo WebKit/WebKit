@@ -22,12 +22,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/anonymous-iframe/embedding.tentative.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/anonymous-iframe/fenced-frame-bypass.tentative.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/anonymous-iframe/fenced-frame.tentative.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/anonymous-iframe/hasStorageAccess.tentative.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/anonymous-iframe/indexeddb.tentative.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/anonymous-iframe/initial-empty-document.tentative.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/anonymous-iframe/local-storage-initial-empty-document.tentative.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/anonymous-iframe/local-storage.tentative.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/anonymous-iframe/requestStorageAccess.tentative.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/anonymous-iframe/requestStorageAccessFor.tentative.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/anonymous-iframe/require-corp-embed-anonymous-iframe.tentative.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/anonymous-iframe/require-corp-embed-anonymous-iframe.tentative.https.window.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/anonymous-iframe/serviceworker-partitioning.tentative.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/anonymous-iframe/session-storage.tentative.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/anonymous-iframe/sharedworker-partitioning.tentative.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/anonymous-iframe/web-lock.tentative.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/anonymous-iframe/worker-cookies.tentative.https.window.js

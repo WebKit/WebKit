@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-array.prototype.toString
+esid: sec-array.prototype.tostring
 description: Array.prototype.toString applied to boolean primitive
 ---*/
 

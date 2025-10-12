@@ -88,9 +88,9 @@ function toggle(id)
     }
 }
 
-function getTracUrl(layoutTestPath)
+function getRepoUrl(layoutTestPath)
 {
-  return 'https://trac.webkit.org/browser/trunk/LayoutTests/' + layoutTestPath;
+  return 'https://github.com/WebKit/WebKit/blob/main/LayoutTests/' + layoutTestPath;
 }
 
 function getSortedKeys(obj)

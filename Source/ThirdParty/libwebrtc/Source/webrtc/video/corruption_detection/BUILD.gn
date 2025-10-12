@@ -32,6 +32,7 @@ rtc_library("frame_instrumentation_evaluation") {
     "../../api:array_view",
     "../../api:scoped_refptr",
     "../../api/video:video_frame",
+    "../../api/video:video_rtp_headers",
     "../../common_video:frame_instrumentation_data",
     "../../rtc_base:checks",
     "../../rtc_base:logging",
@@ -47,6 +48,7 @@ rtc_library("frame_instrumentation_generator") {
     ":generic_mapping_functions",
     ":halton_frame_sampler",
     "../../api:scoped_refptr",
+    "../../api/video:corruption_detection_filter_settings",
     "../../api/video:encoded_image",
     "../../api/video:video_frame",
     "../../api/video:video_frame_type",
@@ -56,8 +58,9 @@ rtc_library("frame_instrumentation_generator") {
     "../../modules/video_coding:video_coding_utility",
     "../../rtc_base:checks",
     "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base/synchronization:mutex",
     "//third_party/abseil-cpp/absl/algorithm:container",
-    "//third_party/abseil-cpp/absl/types:variant",
   ]
 }
 
@@ -72,6 +75,7 @@ rtc_library("frame_pair_corruption_score") {
     ":halton_frame_sampler",
     ":utils",
     "../../api:scoped_refptr",
+    "../../api/video:corruption_detection_filter_settings",
     "../../api/video:video_frame",
     "../../rtc_base:checks",
     "//third_party/abseil-cpp/absl/strings:string_view",
@@ -84,6 +88,7 @@ rtc_library("generic_mapping_functions") {
     "generic_mapping_functions.h",
   ]
   deps = [
+    "../../api/video:corruption_detection_filter_settings",
     "../../api/video:video_frame",
     "../../api/video_codecs:video_codecs_api",
     "../../rtc_base:checks",
@@ -97,10 +102,24 @@ rtc_library("halton_frame_sampler") {
   ]
   deps = [
     ":halton_sequence",
+    ":video_frame_sampler",
     "../../api:scoped_refptr",
     "../../api/video:video_frame",
     "../../rtc_base:checks",
     "../../rtc_base:logging",
+    "../../rtc_base:safe_minmax",
+  ]
+}
+
+rtc_library("video_frame_sampler") {
+  sources = [
+    "video_frame_sampler.cc",
+    "video_frame_sampler.h",
+  ]
+  deps = [
+    "../../api:scoped_refptr",
+    "../../api/video:video_frame",
+    "../../rtc_base:checks",
   ]
 }
 
@@ -120,8 +139,9 @@ rtc_library("utils") {
   deps = [
     "../../api:scoped_refptr",
     "../../api/video:video_frame",
+    "../../rtc_base:checks",
+    "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/strings:string_view",
-    "//third_party/abseil-cpp/absl/strings:strings",
   ]
 }
 
@@ -143,6 +163,7 @@ if (rtc_include_tests) {
       ":frame_instrumentation_evaluation",
       "../../api:scoped_refptr",
       "../../api/video:video_frame",
+      "../../api/video:video_rtp_headers",
       "../../common_video:frame_instrumentation_data",
       "../../test:test_support",
     ]
@@ -153,13 +174,15 @@ if (rtc_include_tests) {
     sources = [ "frame_instrumentation_generator_unittest.cc" ]
     deps = [
       ":frame_instrumentation_generator",
+      "../../api:make_ref_counted",
       "../../api:scoped_refptr",
+      "../../api/video:corruption_detection_filter_settings",
       "../../api/video:encoded_image",
       "../../api/video:video_frame",
       "../../api/video:video_frame_type",
       "../../common_video:frame_instrumentation_data",
+      "../../rtc_base:refcount",
       "../../test:test_support",
-      "//third_party/abseil-cpp/absl/types:variant",
     ]
   }
 
@@ -193,6 +216,19 @@ if (rtc_include_tests) {
     sources = [ "halton_frame_sampler_unittest.cc" ]
     deps = [
       ":halton_frame_sampler",
+      ":video_frame_sampler",
+      "../../api:array_view",
+      "../../api:scoped_refptr",
+      "../../api/video:video_frame",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_library("video_frame_sampler_unittest") {
+    testonly = true
+    sources = [ "video_frame_sampler_unittest.cc" ]
+    deps = [
+      ":video_frame_sampler",
       "../../api:scoped_refptr",
       "../../api/video:video_frame",
       "../../test:test_support",
@@ -230,6 +266,7 @@ if (rtc_include_tests) {
       ":halton_frame_sampler_unittest",
       ":halton_sequence_unittest",
       ":utils_unittest",
+      ":video_frame_sampler_unittest",
     ]
   }
 }

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
 <html>
 <head>
     <meta charset='utf-8'>
@@ -11,6 +11,7 @@
 
         promise_test(async (test) => {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 640 } });
+            test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
             const [track] = stream.getVideoTracks();
 
             assert_equals(track.readyState, 'live');
@@ -34,6 +35,7 @@
 
         promise_test(async (test) => {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 640 } });
+            test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
             const [track] = stream.getVideoTracks();
 
             assert_equals(track.readyState, 'live');
@@ -50,6 +52,7 @@
 
         promise_test(async (test) => {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 640 } });
+            test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
             const [track] = stream.getVideoTracks();
 
             const imageCapture = new ImageCapture(track);
@@ -67,6 +70,7 @@
 
         promise_test(async (test) => {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 320 } });
+            test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
             const [track] = stream.getVideoTracks();
             const { width: originalWidth, height: originalHeight } = track.getSettings();
 
@@ -93,6 +97,7 @@
 
         promise_test(async (test) => {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 320 } });
+            test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
             const [track] = stream.getVideoTracks();
             const imageCapture = new ImageCapture(track);
 
@@ -118,6 +123,7 @@
 
         promise_test(async (test) => {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 320 } });
+            test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
             const [track] = stream.getVideoTracks();
             const imageCapture = new ImageCapture(track);
 

@@ -116,7 +116,7 @@ int SystemSettingsManagerProxy::xftDPI() const
     // additional font scaling factor.
     if (auto* display = gdk_display_get_default()) {
         if (auto* screen = gdk_display_get_default_screen(display))
-            return gdk_screen_get_resolution(screen);
+            return gdk_screen_get_resolution(screen) * 1024;
     }
 #endif
     int dpiSetting;

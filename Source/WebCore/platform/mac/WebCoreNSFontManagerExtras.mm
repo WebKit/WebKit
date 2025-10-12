@@ -99,8 +99,8 @@ static FontChanges computedFontChanges(NSFontManager *fontManager, NSFont *origi
 
 FontChanges computedFontChanges(NSFontManager *fontManager)
 {
-    NSFont *originalFontA = firstFontConversionSpecimen(fontManager);
-    return computedFontChanges(fontManager, originalFontA, [fontManager convertFont:originalFontA], [fontManager convertFont:secondFontConversionSpecimen(fontManager)]);
+    RetainPtr originalFontA = firstFontConversionSpecimen(fontManager);
+    return computedFontChanges(fontManager, originalFontA.get(), [fontManager convertFont:originalFontA.get()], [fontManager convertFont:RetainPtr { secondFontConversionSpecimen(fontManager) }.get()]);
 }
 
 FontAttributeChanges computedFontAttributeChanges(NSFontManager *fontManager, id attributeConverter)
@@ -110,8 +110,8 @@ FontAttributeChanges computedFontAttributeChanges(NSFontManager *fontManager, id
     auto shadow = adoptNS([[NSShadow alloc] init]);
     [shadow setShadowOffset:NSMakeSize(1, 1)];
 
-    NSFont *originalFontA = firstFontConversionSpecimen(fontManager);
-    NSDictionary *originalAttributesA = @{ NSFontAttributeName : originalFontA };
+    RetainPtr originalFontA = firstFontConversionSpecimen(fontManager);
+    NSDictionary *originalAttributesA = @{ NSFontAttributeName : originalFontA.get() };
     NSDictionary *originalAttributesB = @{
         NSBackgroundColorAttributeName : NSColor.blackColor,
         NSFontAttributeName : secondFontConversionSpecimen(fontManager),
@@ -125,25 +125,25 @@ FontAttributeChanges computedFontAttributeChanges(NSFontManager *fontManager, id
     NSDictionary *convertedAttributesA = [attributeConverter convertAttributes:originalAttributesA];
     NSDictionary *convertedAttributesB = [attributeConverter convertAttributes:originalAttributesB];
 
-    NSColor *convertedBackgroundColorA = [convertedAttributesA objectForKey:NSBackgroundColorAttributeName];
-    if (convertedBackgroundColorA == [convertedAttributesB objectForKey:NSBackgroundColorAttributeName])
-        changes.setBackgroundColor(colorFromCocoaColor(convertedBackgroundColorA ?: NSColor.clearColor));
+    RetainPtr convertedBackgroundColorA = [convertedAttributesA objectForKey:RetainPtr { NSBackgroundColorAttributeName }.get()];
+    if (convertedBackgroundColorA == [convertedAttributesB objectForKey:RetainPtr { NSBackgroundColorAttributeName }.get()])
+        changes.setBackgroundColor(colorFromCocoaColor(convertedBackgroundColorA ? convertedBackgroundColorA.get() : RetainPtr { NSColor.clearColor }.get()));
 
-    changes.setFontChanges(computedFontChanges(fontManager, originalFontA, [convertedAttributesA objectForKey:NSFontAttributeName], [convertedAttributesB objectForKey:NSFontAttributeName]));
+    changes.setFontChanges(computedFontChanges(fontManager, originalFontA.get(), [convertedAttributesA objectForKey:RetainPtr { NSFontAttributeName }.get()], [convertedAttributesB objectForKey: RetainPtr { NSFontAttributeName }.get()]));
 
-    NSColor *convertedForegroundColorA = [convertedAttributesA objectForKey:NSForegroundColorAttributeName];
-    if (convertedForegroundColorA == [convertedAttributesB objectForKey:NSForegroundColorAttributeName])
-        changes.setForegroundColor(colorFromCocoaColor(convertedForegroundColorA ?: NSColor.blackColor));
+    RetainPtr convertedForegroundColorA = [convertedAttributesA objectForKey:RetainPtr { NSForegroundColorAttributeName }.get()];
+    if (convertedForegroundColorA == [convertedAttributesB objectForKey:RetainPtr { NSForegroundColorAttributeName }.get()])
+        changes.setForegroundColor(colorFromCocoaColor(convertedForegroundColorA ? convertedForegroundColorA.get() : RetainPtr { NSColor.blackColor }.get()));
 
-    NSShadow *convertedShadow = [convertedAttributesA objectForKey:NSShadowAttributeName];
+    RetainPtr<NSShadow> convertedShadow = [convertedAttributesA objectForKey:RetainPtr { NSShadowAttributeName }.get()];
     if (convertedShadow) {
-        FloatSize offset { LayoutUnit::fromFloatRound(static_cast<float>(convertedShadow.shadowOffset.width)).toFloat(), LayoutUnit::fromFloatRound(static_cast<float>(convertedShadow.shadowOffset.height)).toFloat() };
-        changes.setShadow({ colorFromCocoaColor(convertedShadow.shadowColor ?: NSColor.blackColor), offset, convertedShadow.shadowBlurRadius });
-    } else if (![convertedAttributesB objectForKey:NSShadowAttributeName])
+        FloatSize offset { LayoutUnit::fromFloatRound(static_cast<float>([convertedShadow shadowOffset].width)).toFloat(), LayoutUnit::fromFloatRound(static_cast<float>([convertedShadow shadowOffset].height)).toFloat() };
+        changes.setShadow({ colorFromCocoaColor(RetainPtr { [convertedShadow shadowColor] ?: NSColor.blackColor }.get()), offset, [convertedShadow shadowBlurRadius] });
+    } else if (![convertedAttributesB objectForKey:RetainPtr { NSShadowAttributeName }.get()])
         changes.setShadow({ });
 
-    int convertedSuperscriptA = [[convertedAttributesA objectForKey:NSSuperscriptAttributeName] intValue];
-    if (convertedSuperscriptA == [[convertedAttributesB objectForKey:NSSuperscriptAttributeName] intValue]) {
+    int convertedSuperscriptA = [[convertedAttributesA objectForKey:RetainPtr { NSSuperscriptAttributeName }.get()] intValue];
+    if (convertedSuperscriptA == [[convertedAttributesB objectForKey:RetainPtr { NSSuperscriptAttributeName }.get()] intValue]) {
         if (convertedSuperscriptA > 0)
             changes.setVerticalAlign(VerticalAlignChange::Superscript);
         else if (convertedSuperscriptA < 0)
@@ -152,12 +152,12 @@ FontAttributeChanges computedFontAttributeChanges(NSFontManager *fontManager, id
             changes.setVerticalAlign(VerticalAlignChange::Baseline);
     }
 
-    int convertedStrikeThroughA = [[convertedAttributesA objectForKey:NSStrikethroughStyleAttributeName] intValue];
-    if (convertedStrikeThroughA == [[convertedAttributesB objectForKey:NSStrikethroughStyleAttributeName] intValue])
+    int convertedStrikeThroughA = [[convertedAttributesA objectForKey:RetainPtr { NSStrikethroughStyleAttributeName }.get()] intValue];
+    if (convertedStrikeThroughA == [[convertedAttributesB objectForKey:RetainPtr { NSStrikethroughStyleAttributeName }.get()] intValue])
         changes.setStrikeThrough(convertedStrikeThroughA != NSUnderlineStyleNone);
 
-    int convertedUnderlineA = [[convertedAttributesA objectForKey:NSUnderlineStyleAttributeName] intValue];
-    if (convertedUnderlineA == [[convertedAttributesB objectForKey:NSUnderlineStyleAttributeName] intValue])
+    int convertedUnderlineA = [[convertedAttributesA objectForKey:RetainPtr { NSUnderlineStyleAttributeName }.get()] intValue];
+    if (convertedUnderlineA == [[convertedAttributesB objectForKey:RetainPtr { NSUnderlineStyleAttributeName }.get()] intValue])
         changes.setUnderline(convertedUnderlineA != NSUnderlineStyleNone);
 
     return changes;

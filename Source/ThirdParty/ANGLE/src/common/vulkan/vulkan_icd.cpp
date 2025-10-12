@@ -6,6 +6,10 @@
 
 // vulkan_icd.cpp : Helper for creating vulkan instances & selecting physical device.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "common/vulkan/vulkan_icd.h"
 
 #include <functional>

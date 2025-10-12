@@ -37,6 +37,7 @@
 #include "pas_large_free_heap_config.h"
 #include "pas_large_sharing_pool.h"
 #include "pas_large_map.h"
+#include "pas_mte.h"
 #include "pas_page_malloc.h"
 #include "pas_probabilistic_guard_malloc_allocator.h"
 #include <stdio.h>
@@ -209,6 +210,7 @@ bool pas_large_heap_try_deallocate(uintptr_t begin,
     }
 
     PAS_PROFILE(LARGE_MAP_TOOK_ENTRY, heap_config, map_entry.begin, map_entry.end);
+    PAS_MTE_HANDLE(LARGE_MAP_TOOK_ENTRY, heap_config, map_entry.begin, map_entry.end);
     PAS_ASSERT(pas_heap_config_kind_get_config(
                    pas_heap_for_large_heap(map_entry.heap)->config_kind)
                == heap_config);
@@ -252,6 +254,7 @@ bool pas_large_heap_try_shrink(uintptr_t begin,
         return false;
 
     PAS_PROFILE(LARGE_MAP_TOOK_ENTRY, heap_config, map_entry.begin, map_entry.end);
+    PAS_MTE_HANDLE(LARGE_MAP_TOOK_ENTRY, heap_config, map_entry.begin, map_entry.end);
     heap = map_entry.heap;
     type = pas_heap_for_large_heap(heap)->type;
 

@@ -147,7 +147,7 @@ void WebKitMediaKeys::setMediaElement(HTMLMediaElement* element)
     if (RefPtr player = m_mediaElement? m_mediaElement->player() : nullptr) {
         player->setCDM(m_cdm.ptr());
         if (!m_sessions.isEmpty())
-            player->setCDMSession(m_sessions.last()->session());
+            player->setCDMSession(RefPtr { m_sessions.last()->session() }.get());
     }
 }
 

@@ -17,9 +17,10 @@ PASS: text2.isPressActionSupported() === false
 When a click handler is on the parent, using role=text should expose AXPress.
 PASS: text2.isPressActionSupported() === true
 
-When a click handler is on a parent that has more than one descendant, do not expose press.
+When a click handler is on a parent that has more than one descendant, only expose press on the first.
 PASS: text3.isPressActionSupported() === false
-PASS: text3.isPressActionSupported() === false
+PASS: text3.isPressActionSupported() === true
+PASS: accessibilityController.accessibleElementById('group3').childAtIndex(2).isPressActionSupported() === false
 
 When a click handler is on a parent that has one direct descendant, but then sub-descendants below that, do not expose press.
 PASS: text4.isPressActionSupported() === false

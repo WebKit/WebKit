@@ -25,10 +25,10 @@
 
 // https://w3c.github.io/uievents/#idl-mouseeventinit
 dictionary MouseEventInit : EventModifierInit {
-    long screenX = 0;
-    long screenY = 0;
-    long clientX = 0;
-    long clientY = 0;
+    unrestricted double screenX = 0;
+    unrestricted double screenY = 0;
+    unrestricted double clientX = 0;
+    unrestricted double clientY = 0;
 
     double movementX = 0;
     double movementY = 0;

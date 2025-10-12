@@ -1,6 +1,7 @@
 
 FAIL getComputedStyle() for ::selection assert_equals: Background color is lime. expected "rgb(0, 255, 0)" but got "rgba(0, 0, 0, 0)"
 FAIL getComputedStyle() for ::target-text assert_equals: Background color is lime. expected "rgb(0, 255, 0)" but got "rgba(0, 0, 0, 0)"
+FAIL getComputedStyle() for ::search-text assert_equals: Background color is lime. expected "rgb(0, 255, 0)" but got ""
 FAIL getComputedStyle() for ::spelling-error assert_equals: Background color is lime. expected "rgb(0, 255, 0)" but got "rgba(0, 0, 0, 0)"
 FAIL getComputedStyle() for ::grammar-error assert_equals: Background color is lime. expected "rgb(0, 255, 0)" but got "rgba(0, 0, 0, 0)"
 FAIL getComputedStyle() for ::highlight(foo) assert_equals: Background color is lime. expected "rgb(0, 255, 0)" but got "rgba(0, 0, 0, 0)"

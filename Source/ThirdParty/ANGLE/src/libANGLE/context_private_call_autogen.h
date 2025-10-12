@@ -75,9 +75,15 @@ void ContextPrivateDepthRangef(PrivateState *privateState,
 void ContextPrivateDisable(PrivateState *privateState,
                            PrivateStateCache *privateStateCache,
                            GLenum cap);
+void ContextPrivateDisableVertexAttribArray(PrivateState *privateState,
+                                            PrivateStateCache *privateStateCache,
+                                            GLuint index);
 void ContextPrivateEnable(PrivateState *privateState,
                           PrivateStateCache *privateStateCache,
                           GLenum cap);
+void ContextPrivateEnableVertexAttribArray(PrivateState *privateState,
+                                           PrivateStateCache *privateStateCache,
+                                           GLuint index);
 void ContextPrivateFrontFace(PrivateState *privateState,
                              PrivateStateCache *privateStateCache,
                              GLenum mode);
@@ -182,6 +188,10 @@ void ContextPrivateViewport(PrivateState *privateState,
                             GLint y,
                             GLsizei width,
                             GLsizei height);
+void ContextPrivateVertexAttribDivisor(PrivateState *privateState,
+                                       PrivateStateCache *privateStateCache,
+                                       GLuint index,
+                                       GLuint divisor);
 void ContextPrivateVertexAttribI4i(PrivateState *privateState,
                                    PrivateStateCache *privateStateCache,
                                    GLuint index,
@@ -208,6 +218,27 @@ void ContextPrivateSampleMaski(PrivateState *privateState,
                                PrivateStateCache *privateStateCache,
                                GLuint maskNumber,
                                GLbitfield mask);
+void ContextPrivateVertexAttribBinding(PrivateState *privateState,
+                                       PrivateStateCache *privateStateCache,
+                                       GLuint attribindex,
+                                       GLuint bindingindex);
+void ContextPrivateVertexAttribFormat(PrivateState *privateState,
+                                      PrivateStateCache *privateStateCache,
+                                      GLuint attribindex,
+                                      GLint size,
+                                      VertexAttribType typePacked,
+                                      GLboolean normalized,
+                                      GLuint relativeoffset);
+void ContextPrivateVertexAttribIFormat(PrivateState *privateState,
+                                       PrivateStateCache *privateStateCache,
+                                       GLuint attribindex,
+                                       GLint size,
+                                       VertexAttribType typePacked,
+                                       GLuint relativeoffset);
+void ContextPrivateVertexBindingDivisor(PrivateState *privateState,
+                                        PrivateStateCache *privateStateCache,
+                                        GLuint bindingindex,
+                                        GLuint divisor);
 void ContextPrivateBlendEquationSeparatei(PrivateState *privateState,
                                           PrivateStateCache *privateStateCache,
                                           GLuint buf,
@@ -619,6 +650,13 @@ void ContextPrivateClipControl(PrivateState *privateState,
                                PrivateStateCache *privateStateCache,
                                ClipOrigin originPacked,
                                ClipDepthMode depthPacked);
+void ContextPrivateShadingRateEXT(PrivateState *privateState,
+                                  PrivateStateCache *privateStateCache,
+                                  ShadingRate ratePacked);
+void ContextPrivateShadingRateCombinerOps(PrivateState *privateState,
+                                          PrivateStateCache *privateStateCache,
+                                          CombinerOp combinerOp0Packed,
+                                          CombinerOp combinerOp1Packed);
 void ContextPrivatePolygonOffsetClamp(PrivateState *privateState,
                                       PrivateStateCache *privateStateCache,
                                       GLfloat factor,
@@ -628,9 +666,9 @@ void ContextPrivatePolygonModeNV(PrivateState *privateState,
                                  PrivateStateCache *privateStateCache,
                                  GLenum face,
                                  PolygonMode modePacked);
-void ContextPrivateShadingRate(PrivateState *privateState,
-                               PrivateStateCache *privateStateCache,
-                               GLenum rate);
+void ContextPrivateShadingRateQCOM(PrivateState *privateState,
+                                   PrivateStateCache *privateStateCache,
+                                   ShadingRate ratePacked);
 }  // namespace gl
 
 #endif  // LIBANGLE_CONTEXT_PRIVATE_CALL_AUTOGEN_H_

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,13 +27,13 @@
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
-#include "EventListener.h"
-#include "FloatRect.h"
-#include "HTMLMediaElement.h"
-#include "MediaPlayerEnums.h"
-#include "MediaPlayerIdentifier.h"
-#include "PlatformLayer.h"
-#include "VideoPresentationModel.h"
+#include <WebCore/EventListener.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/HTMLMediaElement.h>
+#include <WebCore/MediaPlayerEnums.h>
+#include <WebCore/MediaPlayerIdentifier.h>
+#include <WebCore/PlatformLayer.h>
+#include <WebCore/VideoPresentationModel.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -82,7 +82,7 @@ public:
     bool hasVideo() const final { return m_hasVideo; }
     bool isChildOfElementFullscreen() const final { return m_isChildOfElementFullscreen; }
 
-    WEBCORE_EXPORT void setVideoSizeFenced(const FloatSize&, WTF::MachSendRight&&);
+    WEBCORE_EXPORT void setVideoSizeFenced(const FloatSize&, WTF::MachSendRightAnnotated&&);
 
     WEBCORE_EXPORT void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&&) final;
     WEBCORE_EXPORT void setRequiresTextTrackRepresentation(bool) final;
@@ -137,12 +137,13 @@ private:
 
     // HTMLMediaElementClient
     void audioSessionCategoryChanged(AudioSessionCategory, AudioSessionMode, RouteSharingPolicy) final;
+    void routingContextUIDChanged(const String&) final;
 
-    Ref<VideoListener> m_videoListener;
+    const Ref<VideoListener> m_videoListener;
     RefPtr<HTMLVideoElement> m_videoElement;
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     bool m_isListening { false };
-    UncheckedKeyHashSet<CheckedPtr<VideoPresentationModelClient>> m_clients;
+    HashSet<CheckedPtr<VideoPresentationModelClient>> m_clients;
     bool m_hasVideo { false };
     bool m_documentIsVisible { true };
     bool m_isChildOfElementFullscreen { false };

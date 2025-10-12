@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: hello
 
 PASS Error handler outside the worker should not see the error value
 PASS Error handlers inside a worker should see the error value

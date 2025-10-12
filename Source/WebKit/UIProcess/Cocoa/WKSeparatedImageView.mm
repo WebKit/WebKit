@@ -40,6 +40,12 @@
     return [WKObservingLayer class];
 }
 
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    [self layoutCustomSubtree];
+}
+
 @end
 
 @implementation WKObservingLayer
@@ -82,6 +88,10 @@
 }
 
 - (void)setSurface:(nullable IOSurfaceRef)surface
+{
+}
+
+- (void)layoutCustomSubtree
 {
 }
 

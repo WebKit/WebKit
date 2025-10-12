@@ -116,6 +116,8 @@ public:
 private:
     SVGFETurbulenceElement(const QualifiedName&, Document&);
 
+    static constexpr int initialOctavesValue = 1;
+
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
@@ -124,7 +126,7 @@ private:
 
     Ref<SVGAnimatedNumber> m_baseFrequencyX { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedNumber> m_baseFrequencyY { SVGAnimatedNumber::create(this) };
-    Ref<SVGAnimatedInteger> m_numOctaves { SVGAnimatedInteger::create(this, 1) };
+    Ref<SVGAnimatedInteger> m_numOctaves { SVGAnimatedInteger::create(this, initialOctavesValue) };
     Ref<SVGAnimatedNumber> m_seed { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedEnumeration> m_stitchTiles { SVGAnimatedEnumeration::create(this, SVG_STITCHTYPE_NOSTITCH) };
     Ref<SVGAnimatedEnumeration> m_type { SVGAnimatedEnumeration::create(this, TurbulenceType::Turbulence) };

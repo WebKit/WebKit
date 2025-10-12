@@ -28,6 +28,7 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
+#include "PlatformXR.h"
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUDevice.h"
 #include "WebGPUTextureFormat.h"
@@ -97,9 +98,18 @@ void XRProjectionLayerImpl::setDeltaPose(WebXRRigidTransform* pose)
 }
 
 // WebXRLayer
-void XRProjectionLayerImpl::startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex)
+void XRProjectionLayerImpl::startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, PlatformXR::RateMapDescription&& rateMap)
 {
-    wgpuXRProjectionLayerStartFrame(m_backing.get(), frameIndex, WTFMove(colorBuffer), WTFMove(depthBuffer), WTFMove(completionSyncEvent), reusableTextureIndex);
+#if ENABLE(WEBXR)
+    wgpuXRProjectionLayerStartFrame(m_backing.get(), frameIndex, WTFMove(colorBuffer), WTFMove(depthBuffer), WTFMove(completionSyncEvent), reusableTextureIndex, rateMap.screenSize.width(), rateMap.screenSize.height(), WTFMove(rateMap.horizontalSamplesLeft), WTFMove(rateMap.horizontalSamplesRight), WTFMove(rateMap.verticalSamples));
+#else
+    UNUSED_PARAM(frameIndex);
+    UNUSED_PARAM(colorBuffer);
+    UNUSED_PARAM(depthBuffer);
+    UNUSED_PARAM(completionSyncEvent);
+    UNUSED_PARAM(reusableTextureIndex);
+    UNUSED_PARAM(rateMap);
+#endif
 }
 
 void XRProjectionLayerImpl::endFrame()

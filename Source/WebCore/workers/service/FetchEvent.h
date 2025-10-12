@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "ExtendableEvent.h"
-#include "FetchIdentifier.h"
-#include "JSDOMPromiseDeferredForward.h"
-#include "ResourceError.h"
+#include <WebCore/ExtendableEvent.h>
+#include <WebCore/FetchIdentifier.h>
+#include <WebCore/JSDOMPromiseDeferredForward.h>
+#include <WebCore/ResourceError.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 
@@ -89,6 +89,8 @@ private:
     void processResponse(Expected<Ref<FetchResponse>, std::optional<ResourceError>>&&);
     void respondWithError(ResourceError&&);
 
+    bool isFetchEvent() const final { return true; }
+
     const Ref<FetchRequest> m_request;
     String m_clientId;
     String m_resultingClientId;
@@ -112,3 +114,7 @@ inline void FetchEvent::setNavigationPreloadIdentifier(FetchIdentifier identifie
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::FetchEvent)
+    static bool isType(const WebCore::ExtendableEvent& event) { return event.isFetchEvent(); }
+SPECIALIZE_TYPE_TRAITS_END()

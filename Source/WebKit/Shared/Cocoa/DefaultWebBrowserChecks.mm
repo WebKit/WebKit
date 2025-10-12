@@ -127,7 +127,7 @@ static bool determineTrackingPreventionStateInternal(bool appWasLinkedOnOrAfter,
 
     TCCAccessPreflightResult result = kTCCAccessPreflightDenied;
 #if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(VISION)
-    result = TCCAccessPreflight(get_TCC_kTCCServiceWebKitIntelligentTrackingPrevention(), nullptr);
+    result = TCCAccessPreflight(get_TCC_kTCCServiceWebKitIntelligentTrackingPreventionSingleton(), nullptr);
 #endif
     return result != kTCCAccessPreflightDenied;
 }
@@ -150,7 +150,7 @@ void determineTrackingPreventionState()
     itpQueue() = queue.copyRef();
     queue->dispatch([appWasLinkedOnOrAfter, bundleIdentifier = applicationBundleIdentifier().isolatedCopy()] {
         currentTrackingPreventionState = determineTrackingPreventionStateInternal(appWasLinkedOnOrAfter, bundleIdentifier) ? TrackingPreventionState::Enabled : TrackingPreventionState::Disabled;
-        RunLoop::protectedMain()->dispatch([] {
+        RunLoop::mainSingleton().dispatch([] {
             itpQueue() = nullptr;
         });
     });
@@ -194,7 +194,7 @@ bool doesParentProcessHaveTrackingPreventionEnabled(AuxiliaryProcess& auxiliaryP
             RELEASE_LOG_ERROR(IPC, "Unable to get parent process audit token");
             return;
         }
-        result = TCCAccessPreflightWithAuditToken(get_TCC_kTCCServiceWebKitIntelligentTrackingPrevention(), auditToken.value(), nullptr);
+        result = TCCAccessPreflightWithAuditToken(get_TCC_kTCCServiceWebKitIntelligentTrackingPreventionSingleton(), auditToken.value(), nullptr);
 #endif
         trackingPreventionEnabled = result != kTCCAccessPreflightDenied;
     });
@@ -228,7 +228,7 @@ bool hasProhibitedUsageStrings()
     for (NSString *prohibitedString : prohibitedStrings) {
         if ([infoDictionary objectForKey:prohibitedString]) {
             String message = adoptNS([[NSString alloc] initWithFormat:@"[In-App Browser Privacy] %@ used prohibited usage string %@.", [[NSBundle mainBundle] bundleIdentifier], prohibitedString]).get();
-            WTFLogAlways(message.utf8().data());
+            WTFLogAlways("%s", message.utf8().data());
             hasProhibitedUsageStrings = true;
             break;
         }

@@ -42,20 +42,20 @@ void Highlight::repaintRange(const AbstractRange& range)
     if (is_gt(treeOrder<ComposedTree>(sortedRange.start, sortedRange.end)))
         std::swap(sortedRange.start, sortedRange.end);
     for (Ref node : intersectingNodes(sortedRange)) {
-        if (auto renderer = node->renderer())
+        if (CheckedPtr renderer = node->renderer())
             renderer->repaint();
     }
 }
 
-Ref<Highlight> Highlight::create(FixedVector<std::reference_wrapper<WebCore::AbstractRange>>&& initialRanges)
+Ref<Highlight> Highlight::create(FixedVector<std::reference_wrapper<AbstractRange>>&& initialRanges)
 {
     return adoptRef(*new Highlight(WTFMove(initialRanges)));
 }
 
-Highlight::Highlight(FixedVector<std::reference_wrapper<WebCore::AbstractRange>>&& initialRanges)
+Highlight::Highlight(FixedVector<std::reference_wrapper<AbstractRange>>&& initialRanges)
 {
-    m_highlightRanges = WTF::map(initialRanges, [&](auto&& range) {
-        repaintRange(range.get());
+    m_highlightRanges = WTF::map(initialRanges, [&](std::reference_wrapper<AbstractRange>& range) {
+        repaintRange(Ref { range.get() }.get());
         return HighlightRange::create(range.get());
     });
 }

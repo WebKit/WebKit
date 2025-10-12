@@ -187,9 +187,9 @@ std::optional<WebCore::ProcessIdentifier> WebSharedWorker::firstSharedWorkerObje
 
 WebSharedWorkerServerToContextConnection* WebSharedWorker::contextConnection() const
 {
-    if (!m_server)
-        return nullptr;
-    return m_server->contextConnectionForRegistrableDomain(topRegistrableDomain());
+    if (CheckedPtr server = m_server.get())
+        return server->contextConnectionForRegistrableDomain(topRegistrableDomain());
+    return nullptr;
 }
 
 } // namespace WebKit

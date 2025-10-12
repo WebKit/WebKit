@@ -180,7 +180,7 @@ JSValue JSTestCEReactions::getConstructor(VM& vm, const JSGlobalObject* globalOb
 
 void JSTestCEReactions::destroy(JSC::JSCell* cell)
 {
-    JSTestCEReactions* thisObject = static_cast<JSTestCEReactions*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestCEReactions* thisObject = static_cast<JSTestCEReactions*>(cell);
     thisObject->JSTestCEReactions::~JSTestCEReactions();
 }
 
@@ -438,7 +438,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestCEReactionsPrototypeFunction_methodWithCEReaction
 
 JSC::GCClient::IsoSubspace* JSTestCEReactions::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestCEReactions, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestCEReactions, UseCustomHeapCellType::No>(vm, "JSTestCEReactions"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestCEReactions.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestCEReactions = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestCEReactions.get(); },
@@ -465,7 +465,7 @@ bool JSTestCEReactionsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown
 
 void JSTestCEReactionsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestCEReactions = static_cast<JSTestCEReactions*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestCEReactions = static_cast<JSTestCEReactions*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestCEReactions->protectedWrapped().ptr(), jsTestCEReactions);
 }
@@ -478,7 +478,9 @@ extern "C" { extern void (*const __identifier("??_7TestCEReactions@WebCore@@6B@"
 #else
 extern "C" { extern void* _ZTVN7WebCore15TestCEReactionsE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestCEReactions>, void>> static inline void verifyVTable(TestCEReactions* ptr) {
+template<std::same_as<TestCEReactions> T>
+static inline void verifyVTable(TestCEReactions* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -497,8 +499,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestCEReactio
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestCEReactions>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestCEReactions>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestCEReactions>(impl.ptr());
 #endif

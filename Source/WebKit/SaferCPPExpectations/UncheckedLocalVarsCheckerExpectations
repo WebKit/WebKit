@@ -1,66 +1,17 @@
-NetworkProcess/BackgroundFetchLoad.cpp
-NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp
-NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
-NetworkProcess/Cookies/WebCookieManager.cpp
-NetworkProcess/Cookies/mac/WebCookieManagerMac.mm
-NetworkProcess/Downloads/DownloadManager.cpp
-NetworkProcess/Downloads/cocoa/DownloadCocoa.mm
-NetworkProcess/EarlyHintsResourceLoader.cpp
-NetworkProcess/NetworkCORSPreflightChecker.cpp
-NetworkProcess/NetworkConnectionToWebProcess.cpp
-NetworkProcess/NetworkDataTask.cpp
-NetworkProcess/NetworkDataTaskBlob.cpp
-NetworkProcess/NetworkProcess.cpp
-NetworkProcess/NetworkResourceLoader.cpp
-NetworkProcess/NetworkSession.cpp
-NetworkProcess/PingLoad.cpp
-NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementConnectionCocoa.mm
-NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.cpp
-NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp
-NetworkProcess/ServiceWorker/WebSWServerConnection.cpp
-NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp
-NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp
-NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp
-NetworkProcess/cocoa/NetworkDataTaskCocoa.mm
-NetworkProcess/cocoa/NetworkProcessCocoa.mm
-NetworkProcess/cocoa/NetworkSessionCocoa.mm
-NetworkProcess/cocoa/NetworkTaskCocoa.mm
-NetworkProcess/cocoa/WebSocketTaskCocoa.mm
-NetworkProcess/storage/NetworkStorageManager.cpp
-NetworkProcess/webrtc/NetworkRTCProvider.cpp
-Platform/IPC/ArgumentCoders.h
-Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm
-Shared/WebHitTestResultData.cpp
-UIProcess/API/Cocoa/WKWebViewTesting.mm
-UIProcess/Cocoa/VideoPresentationManagerProxy.mm
-UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm
-UIProcess/RemoteLayerTree/mac/RemoteLayerTreeDrawingAreaProxyMac.mm
-UIProcess/RemoteLayerTree/mac/RemoteLayerTreeEventDispatcher.mm
-UIProcess/RemoteLayerTree/mac/RemoteScrollingTreeMac.mm
-UIProcess/ViewGestureController.cpp
-UIProcess/WebPageProxy.cpp
-UIProcess/mac/WKTextAnimationManager.mm
-UIProcess/mac/WebViewImpl.mm
 WebProcess/FullScreen/WebFullScreenManager.cpp
-WebProcess/GPU/media/RemoteMediaPlayerManager.cpp
 WebProcess/InjectedBundle/API/c/WKBundlePage.cpp
 WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp
-WebProcess/Network/WebLoaderStrategy.cpp
-WebProcess/Plugins/PDF/UnifiedPDF/AsyncPDFRenderer.mm
-WebProcess/Plugins/PDF/UnifiedPDF/PDFDiscretePresentationController.mm
-WebProcess/Plugins/PDF/UnifiedPDF/PDFScrollingPresentationController.mm
-WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm
-WebProcess/Plugins/PDF/WKAccessibilityPDFDocumentObject.mm
-WebProcess/Plugins/PluginView.cpp
-WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp
-WebProcess/Storage/WebServiceWorkerProvider.cpp
-WebProcess/WebCoreSupport/WebChromeClient.cpp
-WebProcess/WebCoreSupport/mac/WebDragClientMac.mm
-WebProcess/WebPage/Cocoa/WebPageCocoa.mm
-WebProcess/WebPage/DrawingArea.cpp
-WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.mm
-WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm
-WebProcess/WebPage/WebFrame.cpp
-WebProcess/WebPage/WebPage.cpp
-WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm
-WebProcess/WebProcess.cpp
+[ iOS ] NetworkProcess/cocoa/NetworkSessionCocoa.mm
+[ iOS ] NetworkProcess/ios/NetworkConnectionToWebProcessIOS.mm
+[ iOS ] UIProcess/API/ios/WKWebViewIOS.mm
+[ iOS ] UIProcess/Cocoa/WebGeolocationManagerProxyCocoa.cpp
+[ iOS ] UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm
+[ iOS ] UIProcess/ios/ViewGestureControllerIOS.mm
+[ iOS ] UIProcess/ios/WKContentView.mm
+[ iOS ] UIProcess/ios/fullscreen/WKFullScreenViewController.mm
+[ iOS ] UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm
+[ iOS ] WebProcess/WebCoreSupport/WebLocalFrameLoaderClient.cpp
+[ iOS ] WebProcess/WebPage/Cocoa/WebPageCocoa.mm
+[ iOS ] WebProcess/WebPage/ViewGestureGeometryCollector.cpp
+[ iOS ] WebProcess/WebPage/WebPage.cpp
+[ iOS ] WebProcess/WebPage/ios/WebPageIOS.mm

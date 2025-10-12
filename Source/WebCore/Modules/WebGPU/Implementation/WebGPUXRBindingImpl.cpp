@@ -70,7 +70,7 @@ RefPtr<XRSubImage> XRBindingImpl::getViewSubImage(XRProjectionLayer& projectionL
 
 TextureFormat XRBindingImpl::getPreferredColorFormat()
 {
-    return TextureFormat::Bgra8unormSRGB;
+    return TextureFormat::Bgra8unorm;
 }
 
 } // namespace WebCore::WebGPU

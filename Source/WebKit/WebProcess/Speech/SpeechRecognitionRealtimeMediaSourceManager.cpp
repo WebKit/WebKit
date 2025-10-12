@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,12 +88,13 @@ public:
         m_source->stop();
     }
 
-private:
     // CheckedPtr interface
     uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
     uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
     void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
     void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+
+private:
 
     void sourceStopped() final
     {
@@ -133,16 +134,17 @@ private:
     void audioUnitWillStart() final
     {
 #if USE(AUDIO_SESSION)
-        auto bufferSize = AudioSession::sharedSession().sampleRate() / 50;
-        if (AudioSession::sharedSession().preferredBufferSize() > bufferSize)
-            AudioSession::sharedSession().setPreferredBufferSize(bufferSize);
-        AudioSession::sharedSession().setCategory(AudioSession::CategoryType::PlayAndRecord, AudioSession::Mode::Default, RouteSharingPolicy::Default);
+        auto& audioSessionSingleton = AudioSession::singleton();
+        auto bufferSize = audioSessionSingleton.sampleRate() / 50;
+        if (audioSessionSingleton.preferredBufferSize() > bufferSize)
+            audioSessionSingleton.setPreferredBufferSize(bufferSize);
+        audioSessionSingleton.setCategory(AudioSession::CategoryType::PlayAndRecord, AudioSession::Mode::Default, RouteSharingPolicy::Default);
 #endif
     }
 
     RealtimeMediaSourceIdentifier m_identifier;
-    Ref<RealtimeMediaSource> m_source;
-    Ref<IPC::Connection> m_connection;
+    const Ref<RealtimeMediaSource> m_source;
+    const Ref<IPC::Connection> m_connection;
 
 #if PLATFORM(COCOA)
     std::unique_ptr<ProducerSharedCARingBuffer> m_ringBuffer;
@@ -160,7 +162,7 @@ SpeechRecognitionRealtimeMediaSourceManager::SpeechRecognitionRealtimeMediaSourc
 
 SpeechRecognitionRealtimeMediaSourceManager::~SpeechRecognitionRealtimeMediaSourceManager()
 {
-    m_process->removeMessageReceiver(*this);
+    CheckedRef { m_process.get() }->removeMessageReceiver(*this);
 }
 
 IPC::Connection& SpeechRecognitionRealtimeMediaSourceManager::connection() const
@@ -203,13 +205,13 @@ void SpeechRecognitionRealtimeMediaSourceManager::deleteSource(RealtimeMediaSour
 
 void SpeechRecognitionRealtimeMediaSourceManager::start(RealtimeMediaSourceIdentifier identifier)
 {
-    if (auto source = m_sources.get(identifier))
+    if (CheckedPtr source = m_sources.get(identifier))
         source->start();
 }
 
 void SpeechRecognitionRealtimeMediaSourceManager::stop(RealtimeMediaSourceIdentifier identifier)
 {
-    if (auto source = m_sources.get(identifier))
+    if (CheckedPtr source = m_sources.get(identifier))
         source->stop();
 }
 

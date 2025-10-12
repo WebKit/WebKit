@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "XPathValue.h"
+#include <WebCore/XPathValue.h>
 
 namespace WebCore {
 

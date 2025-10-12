@@ -22,11 +22,11 @@
 
 #pragma once
 
-#include "HTMLPlugInImageElement.h"
+#include <WebCore/HTMLPlugInElement.h>
 
 namespace WebCore {
 
-class HTMLEmbedElement final : public HTMLPlugInImageElement {
+class HTMLEmbedElement final : public HTMLPlugInElement {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLEmbedElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLEmbedElement);
 public:

@@ -46,7 +46,7 @@ public:
         return vm.intlSegmentsSpace<mode>();
     }
 
-    static IntlSegments* create(VM&, Structure*, std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>&&, Box<Vector<UChar>>&&, JSString*, IntlSegmenter::Granularity);
+    static IntlSegments* create(VM&, Structure*, std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>&&, Box<Vector<char16_t>>&&, JSString*, IntlSegmenter::Granularity);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
@@ -57,12 +57,12 @@ public:
     DECLARE_VISIT_CHILDREN;
 
 private:
-    IntlSegments(VM&, Structure*, std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>&&, Box<Vector<UChar>>&&, IntlSegmenter::Granularity, JSString*);
+    IntlSegments(VM&, Structure*, std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>&&, Box<Vector<char16_t>>&&, IntlSegmenter::Granularity, JSString*);
 
     DECLARE_DEFAULT_FINISH_CREATION;
 
     std::unique_ptr<UBreakIterator, UBreakIteratorDeleter> m_segmenter;
-    Box<Vector<UChar>> m_buffer;
+    Box<Vector<char16_t>> m_buffer;
     WriteBarrier<JSString> m_string;
     IntlSegmenter::Granularity m_granularity;
 };

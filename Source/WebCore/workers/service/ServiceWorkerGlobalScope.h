@@ -58,6 +58,7 @@ struct ServiceWorkerClientData;
 
 class ServiceWorkerGlobalScope final : public WorkerGlobalScope {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ServiceWorkerGlobalScope);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ServiceWorkerGlobalScope);
 public:
     static Ref<ServiceWorkerGlobalScope> create(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, std::unique_ptr<WorkerClient>&&);
 
@@ -73,7 +74,7 @@ public:
 
     enum EventTargetInterfaceType eventTargetInterface() const final;
 
-    ServiceWorkerThread& thread();
+    Ref<ServiceWorkerThread> thread();
 
     void updateExtendedEventsSet(ExtendableEvent* newEvent = nullptr);
 

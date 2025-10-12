@@ -35,10 +35,10 @@ function arrayGetUninitializedLocal() {
       )`);
 
 
-    for (var p of [["arrayGetNull", "array.get"],
-                   ["arraySetNull", "array.set"],
-                   ["structGetNull", "struct.get"],
-                   ["structSetNull", "struct.set"],
+    for (var p of [["arrayGetNull", "access"],
+                   ["arraySetNull", "access"],
+                   ["structGetNull", "access"],
+                   ["structSetNull", "access"],
                    ["i31GetNull", "i31.get_<sx>"]]) {
         assert.throws(() => m.exports[p[0]](), WebAssembly.RuntimeError, p[1] + " to a null reference");
     }

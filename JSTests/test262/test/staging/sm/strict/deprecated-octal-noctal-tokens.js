@@ -4,13 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-strict-shell.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
 ---*/
+
 /**
  * These test cases check implementation-specific error messages for invalid
  * octal literals, octal escape sequences, and non-octal decimal escape
@@ -22,9 +20,9 @@ var JSMSG_DEPRECATED_OCTAL_ESCAPE = "octal escape sequences can't be used in unt
 var JSMSG_DEPRECATED_EIGHT_OR_NINE_ESCAPE = "the escapes \\8 and \\9 can't be used in untagged template literals or in strict mode code";
 
 function checkPrologue(val, msg) {
-  assertThrowsInstanceOfWithMessage(
-    () => eval('function invalid () { "' + val + '"; "use strict"; }'),
+  assert.throws(
     SyntaxError,
+    () => eval('function invalid () { "' + val + '"; "use strict"; }'),
     msg
   );
 }
@@ -34,9 +32,9 @@ checkPrologue('\\222', JSMSG_DEPRECATED_OCTAL_ESCAPE);
 checkPrologue('\\222\\8', JSMSG_DEPRECATED_EIGHT_OR_NINE_ESCAPE);
 
 function checkAfter(val, msg) {
-  assertThrowsInstanceOfWithMessage(
-    () => eval('function invalid () { "use strict" \n ' + val + ' }'),
+  assert.throws(
     SyntaxError,
+    () => eval('function invalid () { "use strict" \n ' + val + ' }'),
     msg
   );
 }

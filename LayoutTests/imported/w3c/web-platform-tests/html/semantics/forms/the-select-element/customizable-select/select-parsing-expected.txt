@@ -1,0 +1,22 @@
+
+
+keep this div after the last test case
+
+PASS <div>s, <button>s, and <datalist>s should be allowed in <select>
+PASS </select> should close <button>
+PASS </select> should close <datalist>
+PASS <select> in <button> in <select> should remove inner <select>
+PASS <select> in <select><button><div> should remove inner <select>
+PASS JS added nested <select> should be ignored
+PASS JS added nested <select>s should be ignored
+PASS Divs and imgs should be allowed as direct children of select and within options without a datalist
+PASS Input tags should not parse inside select instead of closing the select
+PASS textarea tags should parse inside select instead of closing the select
+FAIL Input tags should parse inside select if nested in another tag assert_equals: expected "<div><input></div>" but got "<div></div>"
+PASS Input tags should close select when directly inside an <option>
+PASS The last test should not leave any tags open after parsing
+PASS Nested selects should be retained 1
+PASS Nested selects should be retained 2
+PASS JS added nested select should be ignored
+PASS JS added nested selects should be ignored
+

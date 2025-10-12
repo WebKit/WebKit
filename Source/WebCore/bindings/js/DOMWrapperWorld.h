@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "JSDOMGlobalObject.h"
+#include <WebCore/JSDOMGlobalObject.h>
 #include <wtf/Compiler.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
@@ -30,7 +30,7 @@ namespace WebCore {
 
 class WindowProxy;
 
-typedef UncheckedKeyHashMap<void*, JSC::Weak<JSC::JSObject>> DOMObjectWrapperMap;
+typedef HashMap<void*, JSC::Weak<JSC::JSObject>> DOMObjectWrapperMap;
 
 class DOMWrapperWorld : public RefCounted<DOMWrapperWorld>, public CanMakeSingleThreadWeakPtr<DOMWrapperWorld> {
 public:
@@ -55,14 +55,31 @@ public:
     void setAllowAutofill() { m_allowAutofill = true; }
     bool allowAutofill() const { return m_allowAutofill; }
 
+    bool allowsJSHandleCreation() const { return m_allowsJSHandleCreation; }
+    void setAllowsJSHandleCreation() { m_allowsJSHandleCreation = true; }
+
+    void setAllowNodeSerialization() { m_allowNodeSerialization = true; }
+    bool allowNodeSerialization() const { return m_allowNodeSerialization; }
+
     void setAllowElementUserInfo() { m_allowElementUserInfo = true; }
     bool allowElementUserInfo() const { return m_allowElementUserInfo; }
+
+    bool canAccessAnyShadowRoot() const { return shadowRootIsAlwaysOpen() || closedShadowRootIsExposedForExtensions(); }
 
     void setShadowRootIsAlwaysOpen() { m_shadowRootIsAlwaysOpen = true; }
     bool shadowRootIsAlwaysOpen() const { return m_shadowRootIsAlwaysOpen; }
 
+    void setClosedShadowRootIsExposedForExtensions() { m_closedShadowRootIsExposedForExtensions = true; }
+    bool closedShadowRootIsExposedForExtensions() const { return m_closedShadowRootIsExposedForExtensions; }
+
     void disableLegacyOverrideBuiltInsBehavior() { m_shouldDisableLegacyOverrideBuiltInsBehavior = true; }
     bool shouldDisableLegacyOverrideBuiltInsBehavior() const { return m_shouldDisableLegacyOverrideBuiltInsBehavior; }
+
+    void setAllowPostLegacySynchronousMessage() { m_allowPostLegacySynchronousMessage = true; }
+    bool allowPostLegacySynchronousMessage() const { return m_allowPostLegacySynchronousMessage; }
+
+    void setIsMediaControls() { m_isMediaControls = true; }
+    bool isMediaControls() const { return m_isMediaControls; }
 
     DOMObjectWrapperMap& wrappers() { return m_wrappers; }
 
@@ -79,16 +96,21 @@ protected:
 
 private:
     JSC::VM& m_vm;
-    UncheckedKeyHashSet<WindowProxy*> m_jsWindowProxies;
+    HashSet<WindowProxy*> m_jsWindowProxies;
     DOMObjectWrapperMap m_wrappers;
 
     String m_name;
     Type m_type { Type::Internal };
 
-    bool m_allowAutofill { false };
-    bool m_allowElementUserInfo { false };
-    bool m_shadowRootIsAlwaysOpen { false };
-    bool m_shouldDisableLegacyOverrideBuiltInsBehavior { false };
+    bool m_allowAutofill : 1 { false };
+    bool m_allowElementUserInfo : 1 { false };
+    bool m_shadowRootIsAlwaysOpen : 1 { false };
+    bool m_closedShadowRootIsExposedForExtensions : 1 { false };
+    bool m_shouldDisableLegacyOverrideBuiltInsBehavior : 1 { false };
+    bool m_allowsJSHandleCreation : 1 { false };
+    bool m_allowNodeSerialization : 1 { false };
+    bool m_allowPostLegacySynchronousMessage : 1 { false };
+    bool m_isMediaControls : 1 { false };
 };
 
 DOMWrapperWorld& normalWorld(JSC::VM&);
@@ -100,6 +122,7 @@ inline DOMWrapperWorld& pluginWorldSingleton() { return mainThreadNormalWorldSin
 
 DOMWrapperWorld& currentWorld(JSC::JSGlobalObject&);
 DOMWrapperWorld& worldForDOMObject(JSC::JSObject&);
+Ref<DOMWrapperWorld> protectedWorldForDOMObject(JSC::JSObject&);
 
 // Helper function for code paths that must not share objects across isolated DOM worlds.
 bool isWorldCompatible(JSC::JSGlobalObject&, JSC::JSValue);
@@ -112,6 +135,11 @@ inline DOMWrapperWorld& currentWorld(JSC::JSGlobalObject& lexicalGlobalObject)
 inline DOMWrapperWorld& worldForDOMObject(JSC::JSObject& object)
 {
     return JSC::jsCast<JSDOMGlobalObject*>(object.globalObject())->world();
+}
+
+inline Ref<DOMWrapperWorld> protectedWorldForDOMObject(JSC::JSObject& object)
+{
+    return worldForDOMObject(object);
 }
 
 inline bool isWorldCompatible(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)

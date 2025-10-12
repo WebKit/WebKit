@@ -26,6 +26,9 @@
 #import "config.h"
 #import "_WKWebExtensionDeclarativeNetRequestRule.h"
 
+NSString * const sessionRulesetID = @"_session";
+NSString * const dynamicRulesetID = @"_dynamic";
+
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #if !__has_feature(objc_arc)
@@ -35,6 +38,7 @@
 #import "CocoaHelpers.h"
 #import "WKContentRuleListInternal.h"
 #import "WebExtensionUtilities.h"
+#import <WebCore/LocalizedStrings.h>
 
 // If any changes are made to the rule translation logic here, make sure to increment currentDeclarativeNetRequestRuleTranslatorVersion in WebExtensionContextCocoa.
 
@@ -112,7 +116,7 @@ using namespace WebKit;
 
 @implementation _WKWebExtensionDeclarativeNetRequestRule
 
-- (instancetype)initWithDictionary:(NSDictionary *)ruleDictionary errorString:(NSString **)outErrorString
+- (instancetype)initWithDictionary:(NSDictionary *)ruleDictionary rulesetID:(NSString *)rulesetID errorString:(NSString **)outErrorString
 {
     if (!(self = [super init]))
         return nil;
@@ -130,7 +134,6 @@ using namespace WebKit;
         declarativeNetRequestRuleConditionKey: NSDictionary.class,
     };
 
-    // FIXME: <rdar://72159785> Make sure every rule ID is unique.
     _ruleID = objectForKey<NSNumber>(ruleDictionary, declarativeNetRequestRuleIDKey).integerValue;
     if (!_ruleID) {
         if (outErrorString)
@@ -138,6 +141,8 @@ using namespace WebKit;
 
         return nil;
     }
+
+    _rulesetID = rulesetID;
 
     NSString *exceptionString;
     if (!validateDictionary(ruleDictionary, nil, requiredKeysInRuleDictionary, keyToExpectedValueTypeInRuleDictionary, &exceptionString)) {
@@ -775,8 +780,8 @@ static BOOL isArrayOfRequestMethodsValid(NSArray<NSString *> *requestMethods)
 - (NSArray<NSDictionary<NSString *, id> *> *)ruleInWebKitFormat
 {
     static NSDictionary *chromeActionTypesToWebKitActionTypes = @{
-        declarativeNetRequestRuleActionTypeAllow: @"ignore-previous-rules",
-        declarativeNetRequestRuleActionTypeAllowAllRequests: @"ignore-previous-rules",
+        declarativeNetRequestRuleActionTypeAllow: @"ignore-following-rules",
+        declarativeNetRequestRuleActionTypeAllowAllRequests: @"ignore-following-rules",
         declarativeNetRequestRuleActionTypeBlock: @"block",
         declarativeNetRequestRuleActionTypeModifyHeaders: @"modify-headers",
         declarativeNetRequestRuleActionTypeRedirect: @"redirect",
@@ -810,7 +815,23 @@ static BOOL isArrayOfRequestMethodsValid(NSArray<NSString *> *requestMethods)
     NSArray *requestMethods = _condition[declarativeNetRequestRuleConditionRequestMethodsKey];
     NSArray *excludedRequestMethods = _condition[declarativeNetRequestRuleConditionExcludedRequestMethodsKey];
 
-    // We have to create one rule per request domain (unless we have a regex filter), and we also have to create one rule per request method...
+    // We also have to create one ignore-following-rules rule per excluded request domain and excluded request method...
+    if (excludedRequestDomains) {
+        for (NSString *excludedRequestDomain in excludedRequestDomains) {
+            NSDictionary *modifiedConditionsForURLFilter = createModifiedConditionsForURLFilter(_condition, excludedRequestDomain);
+
+            if (excludedRequestMethods && !isRuleForAllowAllRequests) {
+                for (NSString *excludedRequestMethod in excludedRequestMethods)
+                    [convertedRules addObjectsFromArray:[self _convertRulesWithModifiedCondition:createModifiedConditionsForRequestMethod(modifiedConditionsForURLFilter, excludedRequestMethod) webKitActionType:@"ignore-following-rules" chromeActionType:chromeActionType includeIdentifier:NO]];
+            } else
+                [convertedRules addObjectsFromArray:[self _convertRulesWithModifiedCondition:modifiedConditionsForURLFilter webKitActionType:@"ignore-following-rules" chromeActionType:chromeActionType includeIdentifier:NO]];
+        }
+    } else if (excludedRequestMethods && !isRuleForAllowAllRequests) {
+        for (NSString *excludedRequestMethod in excludedRequestMethods)
+            [convertedRules addObjectsFromArray:[self _convertRulesWithModifiedCondition:createModifiedConditionsForRequestMethod(_condition, excludedRequestMethod) webKitActionType:@"ignore-following-rules" chromeActionType:chromeActionType includeIdentifier:NO]];
+    }
+
+    // ... and we also have to create one rule per request domain (unless we have a regex filter) and request method.
     if (requestDomains && !_condition[declarativeNetRequestRuleConditionRegexFilterKey]) {
         for (NSString *requestDomain in requestDomains) {
             NSString *combinedRequestDomainAndURLFilter = [self _combineRequestDomain:requestDomain withURLFilter:_condition[declarativeNetRequestRuleConditionURLFilterKey]];
@@ -818,77 +839,68 @@ static BOOL isArrayOfRequestMethodsValid(NSArray<NSString *> *requestMethods)
 
             if (requestMethods && !isRuleForAllowAllRequests) {
                 for (NSString *requestMethod in requestMethods)
-                    [convertedRules addObjectsFromArray:[self _convertRulesWithModifiedCondition:createModifiedConditionsForRequestMethod(modifiedConditionsForURLFilter, requestMethod) webKitActionType:webKitActionType chromeActionType:chromeActionType]];
+                    [convertedRules addObjectsFromArray:[self _convertRulesWithModifiedCondition:createModifiedConditionsForRequestMethod(modifiedConditionsForURLFilter, requestMethod) webKitActionType:webKitActionType chromeActionType:chromeActionType includeIdentifier:YES]];
             } else
-                [convertedRules addObjectsFromArray:[self _convertRulesWithModifiedCondition:modifiedConditionsForURLFilter webKitActionType:webKitActionType chromeActionType:chromeActionType]];
+                [convertedRules addObjectsFromArray:[self _convertRulesWithModifiedCondition:modifiedConditionsForURLFilter webKitActionType:webKitActionType chromeActionType:chromeActionType includeIdentifier:YES]];
         }
     } else if (requestMethods && !isRuleForAllowAllRequests) {
         for (NSString *requestMethod in requestMethods)
-            [convertedRules addObjectsFromArray:[self _convertRulesWithModifiedCondition:createModifiedConditionsForRequestMethod(_condition, requestMethod) webKitActionType:webKitActionType chromeActionType:chromeActionType]];
+            [convertedRules addObjectsFromArray:[self _convertRulesWithModifiedCondition:createModifiedConditionsForRequestMethod(_condition, requestMethod) webKitActionType:webKitActionType chromeActionType:chromeActionType includeIdentifier:YES]];
     } else
-        [convertedRules addObjectsFromArray:[self _convertRulesWithModifiedCondition:_condition webKitActionType:webKitActionType chromeActionType:chromeActionType]];
-
-    // ...and we also have to create one ignore-previous-rules rule per excluded request domain and excluded request method
-    if (excludedRequestDomains) {
-        for (NSString *excludedRequestDomain in excludedRequestDomains) {
-            NSDictionary *modifiedConditionsForURLFilter = createModifiedConditionsForURLFilter(_condition, excludedRequestDomain);
-
-            if (excludedRequestMethods && !isRuleForAllowAllRequests) {
-                for (NSString *excludedRequestMethod in excludedRequestMethods)
-                    [convertedRules addObjectsFromArray:[self _convertRulesWithModifiedCondition:createModifiedConditionsForRequestMethod(modifiedConditionsForURLFilter, excludedRequestMethod) webKitActionType:@"ignore-previous-rules" chromeActionType:chromeActionType]];
-            } else
-                [convertedRules addObjectsFromArray:[self _convertRulesWithModifiedCondition:modifiedConditionsForURLFilter webKitActionType:@"ignore-previous-rules" chromeActionType:chromeActionType]];
-        }
-    } else if (excludedRequestMethods && !isRuleForAllowAllRequests) {
-        for (NSString *excludedRequestMethod in excludedRequestMethods)
-            [convertedRules addObjectsFromArray:[self _convertRulesWithModifiedCondition:createModifiedConditionsForRequestMethod(_condition, excludedRequestMethod) webKitActionType:@"ignore-previous-rules" chromeActionType:chromeActionType]];
-    }
+        [convertedRules addObjectsFromArray:[self _convertRulesWithModifiedCondition:_condition webKitActionType:webKitActionType chromeActionType:chromeActionType includeIdentifier:YES]];
 
     return convertedRules;
 }
 
-- (NSArray<NSDictionary *> *)_convertRulesWithModifiedCondition:(NSDictionary *)condition webKitActionType:(NSString *)webKitActionType chromeActionType:(NSString *)chromeActionType
+- (NSArray<NSDictionary *> *)_convertRulesWithModifiedCondition:(NSDictionary *)condition webKitActionType:(NSString *)webKitActionType chromeActionType:(NSString *)chromeActionType includeIdentifier:(BOOL)includeIdentifier
 {
     NSMutableArray<NSDictionary<NSString *, id> *> *convertedRules = [NSMutableArray array];
 
-    if ([webKitActionType isEqualToString:@"make-https"])
-        [convertedRules addObject:[self _webKitRuleWithWebKitActionType:@"ignore-previous-rules" chromeActionType:chromeActionType condition:condition]];
-
-    [convertedRules addObject:[self _webKitRuleWithWebKitActionType:webKitActionType chromeActionType:chromeActionType condition:condition]];
-
     if ((condition[ruleConditionInitiatorDomainsKey] && condition[ruleConditionExcludedInitiatorDomainsKey]) && ![chromeActionType isEqualToString:declarativeNetRequestRuleActionTypeAllowAllRequests]) {
         // If a rule specifies both initiatorDomains and excludedInitiatorDomains, we need to turn that into two rules.
-        // The first rule will have the initiatorDomains implemented as normal (using if-frame-url). We then create a
-        // second rule as an ignore-previous-rules rule using if-frame-url instead of unless-frame-url.
+        // We create the first rule as an ignore-following-rules rule using if-frame-url instead of unless-frame-url.
+        // The second rule will have the initiatorDomains implemented as normal (using if-frame-url).
         NSMutableDictionary *modifiedCondition = [condition mutableCopy];
         modifiedCondition[ruleConditionInitiatorDomainsKey] = modifiedCondition[ruleConditionExcludedInitiatorDomainsKey];
         modifiedCondition[ruleConditionExcludedInitiatorDomainsKey] = nil;
-        [convertedRules addObject:[self _webKitRuleWithWebKitActionType:@"ignore-previous-rules" chromeActionType:chromeActionType condition:modifiedCondition]];
+        [convertedRules addObject:[self _webKitRuleWithWebKitActionType:@"ignore-following-rules" chromeActionType:chromeActionType condition:modifiedCondition includeIdentifier:NO]];
     }
+
+    [convertedRules addObject:[self _webKitRuleWithWebKitActionType:webKitActionType chromeActionType:chromeActionType condition:condition includeIdentifier:includeIdentifier]];
+
+    if ([webKitActionType isEqualToString:@"make-https"])
+        [convertedRules addObject:[self _webKitRuleWithWebKitActionType:@"ignore-following-rules" chromeActionType:chromeActionType condition:condition includeIdentifier:NO]];
 
     return [convertedRules copy];
 }
 
-- (NSDictionary *)_webKitRuleWithWebKitActionType:(NSString *)webKitActionType chromeActionType:(NSString *)chromeActionType condition:(NSDictionary *)condition
+- (NSDictionary *)_webKitRuleWithWebKitActionType:(NSString *)webKitActionType chromeActionType:(NSString *)chromeActionType condition:(NSDictionary *)condition includeIdentifier:(BOOL)includeIdentifier
 {
     NSMutableDictionary *actionDictionary = [@{ @"type": webKitActionType } mutableCopy];
     NSMutableDictionary *triggerDictionary = [NSMutableDictionary dictionary];
     NSNumber *isCaseSensitive = condition[declarativeNetRequestRuleConditionCaseSensitiveKey] ?: @NO;
-    NSDictionary<NSString *, id> *convertedRule = @{
+    NSMutableDictionary<NSString *, id> *convertedRule = [@{
         @"action": actionDictionary,
         @"trigger": triggerDictionary,
-    };
+    } mutableCopy];
+
+#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
+    if (includeIdentifier) {
+        convertedRule[@"_identifier"] = @(_ruleID);
+        convertedRule[@"_rulesetIdentifier"] = _rulesetID;
+    }
+#endif
 
     if ([chromeActionType isEqualToString:declarativeNetRequestRuleActionTypeAllowAllRequests]) {
         triggerDictionary[@"url-filter"] = @".*";
-        triggerDictionary[@"if-frame-url"] = @[ [self _regexURLFilterForChromeURLFilter:condition[declarativeNetRequestRuleConditionURLFilterKey]] ?: condition[declarativeNetRequestRuleConditionRegexFilterKey] ?: @".*" ];
 
-        NSMutableArray *loadContexts = [NSMutableArray array];
         if ([condition[declarativeNetRequestRuleConditionResourceTypeKey] containsObject:@"main_frame"])
-            [loadContexts addObject:@"top-frame"];
-        if ([condition[declarativeNetRequestRuleConditionResourceTypeKey] containsObject:@"sub_frame"])
-            [loadContexts addObject:@"child-frame"];
-        triggerDictionary[@"load-context"] = loadContexts;
+            triggerDictionary[@"if-top-url"] = @[ [self _regexURLFilterForChromeURLFilter:condition[declarativeNetRequestRuleConditionURLFilterKey]] ?: condition[declarativeNetRequestRuleConditionRegexFilterKey] ?: @".*" ];
+        else {
+            // FIXME: rdar://154124673 (dNR: fix sub_frame resourceType allowAllRequests rules)
+            triggerDictionary[@"if-frame-url"] = @[ [self _regexURLFilterForChromeURLFilter:condition[declarativeNetRequestRuleConditionURLFilterKey]] ?: condition[declarativeNetRequestRuleConditionRegexFilterKey] ?: @".*" ];
+            triggerDictionary[@"load-context"] = @[ @"child-frame" ];
+        }
 
         return [convertedRule copy];
     }
@@ -1202,9 +1214,9 @@ static BOOL isArrayOfRequestMethodsValid(NSArray<NSString *> *requestMethods)
         return NSOrderedAscending;
 
     if (priorityForRuleType(_action[declarativeNetRequestRuleActionTypeKey]) < priorityForRuleType(rule.action[declarativeNetRequestRuleActionTypeKey]))
-        return NSOrderedAscending;
-    if (priorityForRuleType(_action[declarativeNetRequestRuleActionTypeKey]) > priorityForRuleType(rule.action[declarativeNetRequestRuleActionTypeKey]))
         return NSOrderedDescending;
+    if (priorityForRuleType(_action[declarativeNetRequestRuleActionTypeKey]) > priorityForRuleType(rule.action[declarativeNetRequestRuleActionTypeKey]))
+        return NSOrderedAscending;
 
     return NSOrderedSame;
 }
@@ -1249,7 +1261,7 @@ static NSInteger priorityForRuleType(NSString *ruleType)
 
 @implementation _WKWebExtensionDeclarativeNetRequestRule
 
-- (instancetype)initWithDictionary:(NSDictionary *)ruleDictionary errorString:(NSString **)outErrorString
+- (instancetype)initWithDictionary:(NSDictionary *)ruleDictionary rulesetID:(NSString *)rulesetID errorString:(NSString **)outErrorString
 {
     return nil;
 }

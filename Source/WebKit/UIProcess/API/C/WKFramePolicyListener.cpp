@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,17 +43,17 @@ WKTypeID WKFramePolicyListenerGetTypeID()
 
 void WKFramePolicyListenerUse(WKFramePolicyListenerRef policyListenerRef)
 {
-    toImpl(policyListenerRef)->use();
+    toProtectedImpl(policyListenerRef)->use();
 }
 
 void WKFramePolicyListenerUseInNewProcess(WKFramePolicyListenerRef policyListenerRef)
 {
-    toImpl(policyListenerRef)->use(nullptr, ProcessSwapRequestedByClient::Yes);
+    toProtectedImpl(policyListenerRef)->use(nullptr, ProcessSwapRequestedByClient::Yes);
 }
 
 static void useWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies, ProcessSwapRequestedByClient processSwapRequestedByClient)
 {
-    toImpl(policyListenerRef)->use(toImpl(websitePolicies), processSwapRequestedByClient);
+    toProtectedImpl(policyListenerRef)->use(toProtectedImpl(websitePolicies).get(), processSwapRequestedByClient);
 }
 
 void WKFramePolicyListenerUseWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies)
@@ -68,10 +68,10 @@ void WKFramePolicyListenerUseInNewProcessWithPolicies(WKFramePolicyListenerRef p
 
 void WKFramePolicyListenerDownload(WKFramePolicyListenerRef policyListenerRef)
 {
-    toImpl(policyListenerRef)->download();
+    toProtectedImpl(policyListenerRef)->download();
 }
 
 void WKFramePolicyListenerIgnore(WKFramePolicyListenerRef policyListenerRef)
 {
-    toImpl(policyListenerRef)->ignore();
+    toProtectedImpl(policyListenerRef)->ignore();
 }

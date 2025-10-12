@@ -44,7 +44,7 @@ namespace WebCore {
         WEBCORE_EXPORT static void removeListener(HWND, WindowMessageListener*);
 
     private:
-        typedef UncheckedKeyHashSet<WindowMessageListener*> ListenerSet;
+        using ListenerSet = HashSet<WindowMessageListener*>;
 
         static LRESULT CALLBACK SubclassedWndProc(HWND, UINT, WPARAM, LPARAM);
 

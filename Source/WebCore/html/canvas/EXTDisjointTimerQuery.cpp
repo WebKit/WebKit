@@ -32,6 +32,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "EventLoop.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptExecutionContextInlines.h"
 #include "WebGLRenderingContext.h"
 #include "WebGLTimerQueryEXT.h"
 #include <wtf/Lock.h>

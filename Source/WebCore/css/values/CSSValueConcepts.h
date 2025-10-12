@@ -69,14 +69,35 @@ template<typename> inline constexpr auto TreatAsVariantLike = false;
 // The `VariantLike` concept can be used to filter to types that specialize `TreatAsVariantLike`.
 template<typename T> concept VariantLike = TreatAsVariantLike<T>;
 
+// Types can specialize this and set the value to true to be treated as "enum with
+// value representation" for CSS value type algorithms.
+// Requirements: Types must be an enum and specialize ValueRepresentation.
+// FIXME: This exists as a transitionary mechanism while not all enums specialize ValueRepresentation. Once they all do, this can be removed and std::is_enum_v<> can be used instead. All enums that still need to be converted can be found listed in StylePrimitiveKeyword+ValueRepresentationNeeded.h.
+template<typename> inline constexpr auto EnumHasValueRepresentation = true;
+
+// The `EnumWithValueRepresentation` concept can be used to filter to enums that specialize `EnumHasValueRepresentation`.
+template<typename T> concept EnumWithValueRepresentation = std::is_enum_v<T> && EnumHasValueRepresentation<T>;
+// The `EnumWithValueRepresentation` concept can be used to filter to enums that do NOT specialize `EnumHasValueRepresentation`.
+template<typename T> concept EnumWithoutValueRepresentation = std::is_enum_v<T> && !EnumHasValueRepresentation<T>;
+
 // The `HasIsZero` concept can be used to filter to types that have an `isZero` member function.
 template<typename T> concept HasIsZero = requires(T t) {
     { t.isZero() } -> std::convertible_to<bool>;
 };
 
+// The `HasIsKnownZero` concept can be used to filter to types that have an `isKnownZero` member function.
+template<typename T> concept HasIsKnownZero = requires(T t) {
+    { t.isKnownZero() } -> std::convertible_to<bool>;
+};
+
 // The `HasIsEmpty` concept can be used to filter to types that have an `isEmpty` member function.
 template<typename T> concept HasIsEmpty = requires(T t) {
     { t.isEmpty() } -> std::convertible_to<bool>;
+};
+
+// The `HasIsKnownEmpty` concept can be used to filter to types that have an `isKnownEmpty` member function.
+template<typename T> concept HasIsKnownEmpty = requires(T t) {
+    { t.isKnownEmpty() } -> std::convertible_to<bool>;
 };
 
 } // namespace WebCore

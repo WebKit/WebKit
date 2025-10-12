@@ -1,0 +1,75 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+            scrollbar-color: yellow blue;
+        }
+        .scroller {
+            margin: 10px;
+            width: 200px;
+            height: 200px;
+            border: 1px solid black;
+            overflow: auto;
+            scrollbar-color: yellow blue;
+        }
+        .contents {
+            width: 100%;
+            height: 200%;
+        }
+    </style>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    
+    <script>
+        jsTestIsAsync = true;
+
+        if (window.internals)
+            internals.setUsesOverlayScrollbars(true);
+
+        async function doTest()
+        {
+            description('Test scrollbar-color on overflow and that setting it on body does not propagate to the root');
+            if (!window.internals) {
+                finishJSTest();
+                return;
+            }
+            
+            const scroller = document.querySelector('.scroller');
+
+            debug('Overflow should have scrollbar-color');
+            await UIHelper.waitForConditionAsync(async () => {
+                let state = await UIHelper.verticalScrollbarState(scroller);
+                let scrollbarColor = state.indexOf('FFFF00') != -1 ;
+                if (scrollbarColor)
+                    testPassed('Scrollbar state: ' + state);
+                return scrollbarColor;
+            });
+
+            debug('Document should not have scrollbar-color');
+            
+            await UIHelper.ensurePresentationUpdate();
+            await UIHelper.waitForConditionAsync(async () => {
+                let state = await UIHelper.verticalScrollbarState();
+                let scrollbarColor = state.indexOf('FFFF00') == -1 ;
+                if (scrollbarColor)
+                    testPassed('Scrollbar state: ' + state);
+                return scrollbarColor;
+            });
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            doTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents"></div>
+    </div>
+    <div id="console"></div>
+</body>
+</html>

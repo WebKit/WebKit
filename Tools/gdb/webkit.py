@@ -72,7 +72,7 @@ def ustring_to_string(ptr, length=None):
 
 
 def lstring_to_string(ptr, length=None):
-    """Convert a pointer to LChar* data into a Python (non-Unicode) string.
+    """Convert a pointer to Latin1Character* data into a Python (non-Unicode) string.
 
     ptr and length are both gdb.Value objects.
     If length is unspecified, will guess at the length."""
@@ -94,14 +94,14 @@ class StringPrinter(object):
         return 'string'
 
 
-class UCharStringPrinter(StringPrinter):
-    "Print a UChar*; we must guess at the length"
+class UTF16StringPrinter(StringPrinter):
+    "Print a char16_t*; we must guess at the length"
     def to_string(self):
         return ustring_to_string(self.val)
 
 
-class LCharStringPrinter(StringPrinter):
-    "Print a LChar*; we must guess at the length"
+class Latin1StringPrinter(StringPrinter):
+    "Print a Latin1Character*; we must guess at the length"
     def to_string(self):
         return lstring_to_string(self.val)
 
@@ -323,10 +323,10 @@ def add_pretty_printers():
 
         if type.code == gdb.TYPE_CODE_PTR:
             name = str(type.target().unqualified())
-            if name == 'UChar':
-                return UCharStringPrinter(val)
-            if name == 'LChar':
-                return LCharStringPrinter(val)
+            if name == 'char16_t':
+                return UTF16StringPrinter(val)
+            if name == 'Latin1Character':
+                return Latin1StringPrinter(val)
         return None
 
     gdb.pretty_printers.append(lookup_function)

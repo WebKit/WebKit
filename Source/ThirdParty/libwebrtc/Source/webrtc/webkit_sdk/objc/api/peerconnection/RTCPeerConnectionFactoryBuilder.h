@@ -35,13 +35,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setVideoDecoderFactory:(std::unique_ptr<webrtc::VideoDecoderFactory>)videoDecoderFactory;
 
-- (void)setAudioEncoderFactory:(rtc::scoped_refptr<webrtc::AudioEncoderFactory>)audioEncoderFactory;
+- (void)setAudioEncoderFactory:(webrtc::scoped_refptr<webrtc::AudioEncoderFactory>)audioEncoderFactory;
 
-- (void)setAudioDecoderFactory:(rtc::scoped_refptr<webrtc::AudioDecoderFactory>)audioDecoderFactory;
+- (void)setAudioDecoderFactory:(webrtc::scoped_refptr<webrtc::AudioDecoderFactory>)audioDecoderFactory;
 
-- (void)setAudioDeviceModule:(rtc::scoped_refptr<webrtc::AudioDeviceModule>)audioDeviceModule;
+- (void)setAudioDeviceModule:(webrtc::scoped_refptr<webrtc::AudioDeviceModule>)audioDeviceModule;
 
-- (void)setAudioProcessingModule:(rtc::scoped_refptr<webrtc::AudioProcessing>)audioProcessingModule;
+- (void)setAudioProcessingModule:(webrtc::scoped_refptr<webrtc::AudioProcessing>)audioProcessingModule;
 
 @end
 

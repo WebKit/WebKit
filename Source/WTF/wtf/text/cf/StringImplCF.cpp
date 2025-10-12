@@ -121,7 +121,7 @@ RetainPtr<CFStringRef> StringImpl::createCFString()
     if (!m_length || !isMainThread()) {
         if (is8Bit()) {
             auto characters = span8();
-            return adoptCF(CFStringCreateWithBytes(nullptr, characters.data(), characters.size(), kCFStringEncodingISOLatin1, false));
+            return adoptCF(CFStringCreateWithBytes(nullptr, byteCast<UInt8>(characters.data()), characters.size(), kCFStringEncodingISOLatin1, false));
         }
         auto characters = span16();
         return adoptCF(CFStringCreateWithCharacters(nullptr, reinterpret_cast<const UniChar*>(characters.data()), characters.size()));
@@ -135,7 +135,7 @@ RetainPtr<CFStringRef> StringImpl::createCFString()
     RetainPtr<CFStringRef> string;
     if (is8Bit()) {
         auto characters = span8();
-        string = adoptCF(CFStringCreateWithBytesNoCopy(allocator, characters.data(), characters.size(), kCFStringEncodingISOLatin1, false, kCFAllocatorNull));
+        string = adoptCF(CFStringCreateWithBytesNoCopy(allocator, byteCast<UInt8>(characters.data()), characters.size(), kCFStringEncodingISOLatin1, false, kCFAllocatorNull));
     } else {
         auto characters = span16();
         string = adoptCF(CFStringCreateWithCharactersNoCopy(allocator, reinterpret_cast<const UniChar*>(characters.data()), characters.size(), kCFAllocatorNull));

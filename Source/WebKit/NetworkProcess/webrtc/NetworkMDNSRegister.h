@@ -28,6 +28,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "RTCNetwork.h"
+#include "SharedPreferencesForWebProcess.h"
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/CheckedRef.h>
@@ -78,6 +79,8 @@ public:
 #endif
 
     bool hasRegisteredName(const String&) const;
+
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
     void unregisterMDNSNames(WebCore::ScriptExecutionContextIdentifier);

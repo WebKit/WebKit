@@ -33,6 +33,7 @@
 #import "CommandEncoder.h"
 #import "ComputePassEncoder.h"
 #import "ComputePipeline.h"
+#import "DDMesh.h"
 #import "Device.h"
 #import "ExternalTexture.h"
 #import "Instance.h"
@@ -53,6 +54,7 @@
 #import "XRSubImage.h"
 #import "XRView.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/SwiftBridging.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebGPU {
@@ -202,6 +204,16 @@ inline XRView& fromAPI(WGPUXRView view)
 inline String fromAPI(const char* string)
 {
     return String::fromUTF8(string);
+}
+
+inline DDMesh& fromAPI(WGPUDDMesh mesh)
+{
+    return static_cast<DDMesh&>(*mesh);
+}
+
+inline Ref<DDMesh> protectedFromAPI(WGPUDDMesh mesh)
+{
+    return static_cast<DDMesh&>(*mesh);
 }
 
 inline Ref<Adapter> protectedFromAPI(WGPUAdapter adapter)

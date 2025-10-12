@@ -16,6 +16,7 @@
 #include "api/adaptation/resource.h"
 #include "api/scoped_refptr.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
@@ -35,39 +36,37 @@ namespace webrtc {
 // and DCHECK that a Resource's listener is never overwritten.
 class BroadcastResourceListener : public ResourceListener {
  public:
-  explicit BroadcastResourceListener(
-      rtc::scoped_refptr<Resource> source_resource);
+  explicit BroadcastResourceListener(scoped_refptr<Resource> source_resource);
   ~BroadcastResourceListener() override;
 
-  rtc::scoped_refptr<Resource> SourceResource() const;
+  scoped_refptr<Resource> SourceResource() const;
   void StartListening();
   void StopListening();
 
   // Creates a Resource that redirects any resource usage measurements that
   // BroadcastResourceListener receives to its listener.
-  rtc::scoped_refptr<Resource> CreateAdapterResource();
+  scoped_refptr<Resource> CreateAdapterResource();
 
   // Unregister the adapter from the BroadcastResourceListener; it will no
   // longer receive resource usage measurement and will no longer be referenced.
   // Use this to prevent memory leaks of old adapters.
-  void RemoveAdapterResource(rtc::scoped_refptr<Resource> resource);
-  std::vector<rtc::scoped_refptr<Resource>> GetAdapterResources();
+  void RemoveAdapterResource(scoped_refptr<Resource> resource);
+  std::vector<scoped_refptr<Resource>> GetAdapterResources();
 
   // ResourceListener implementation.
-  void OnResourceUsageStateMeasured(rtc::scoped_refptr<Resource> resource,
+  void OnResourceUsageStateMeasured(scoped_refptr<Resource> resource,
                                     ResourceUsageState usage_state) override;
 
  private:
   class AdapterResource;
   friend class AdapterResource;
 
-  const rtc::scoped_refptr<Resource> source_resource_;
+  const scoped_refptr<Resource> source_resource_;
   Mutex lock_;
   bool is_listening_ RTC_GUARDED_BY(lock_);
   // The AdapterResource unregisters itself prior to destruction, guaranteeing
   // that these pointers are safe to use.
-  std::vector<rtc::scoped_refptr<AdapterResource>> adapters_
-      RTC_GUARDED_BY(lock_);
+  std::vector<scoped_refptr<AdapterResource>> adapters_ RTC_GUARDED_BY(lock_);
 };
 
 }  // namespace webrtc

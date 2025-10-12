@@ -36,11 +36,19 @@ test_valid_value("display", "table-cell");
 test_valid_value("display", "table-caption");
 test_valid_value("display", "none");
 
+// https://drafts.csswg.org/css-flexbox-1/#flex-containers
+test_valid_value("display", "flex");
+test_valid_value("display", "inline-flex");
+
+test_valid_value("display", "contents");
+
 // https://drafts.csswg.org/css-display/#the-display-properties
 test_valid_value("display", "run-in");
 test_valid_value("display", "flow", "block");
 test_valid_value("display", "flow-root");
 test_valid_value("display", "ruby");
+test_valid_value("display", "ruby-base");
+test_valid_value("display", "ruby-text");
 
 test_valid_value("display", "flow list-item", "list-item");
 test_valid_value("display", "list-item flow", "list-item");

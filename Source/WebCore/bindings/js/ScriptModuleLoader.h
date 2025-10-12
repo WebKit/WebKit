@@ -77,7 +77,7 @@ private:
 
     WeakPtr<ScriptExecutionContext> m_context;
     MemoryCompactRobinHoodHashMap<String, URL> m_requestURLToResponseURLMap;
-    UncheckedKeyHashSet<Ref<ModuleScriptLoader>> m_loaders;
+    HashSet<Ref<ModuleScriptLoader>> m_loaders;
     OwnerType m_ownerType;
     JSC::JSGlobalObject* m_shadowRealmGlobal { nullptr };
 };

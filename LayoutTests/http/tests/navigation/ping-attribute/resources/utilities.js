@@ -21,6 +21,7 @@ function clearLastPingResultAndRunTest(callback)
 {
     function done()
     {
+        console.log("FAILED: delete ping failed!");
         if (window.testRunner)
             testRunner.notifyDone();
     }

@@ -52,7 +52,7 @@ public:
     ~InspectorIndexedDBAgent();
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void didCreateFrontendAndBackend();
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // IndexedDBBackendDispatcherHandler
@@ -64,8 +64,10 @@ public:
     void clearObjectStore(const String& securityOrigin, const String& databaseName, const String& objectStoreName, Ref<ClearObjectStoreCallback>&&);
 
 private:
+    Ref<Page> protectedInspectedPage() const;
+
     Inspector::InjectedScriptManager& m_injectedScriptManager;
-    RefPtr<Inspector::IndexedDBBackendDispatcher> m_backendDispatcher;
+    const Ref<Inspector::IndexedDBBackendDispatcher> m_backendDispatcher;
 
     WeakRef<Page> m_inspectedPage;
 };

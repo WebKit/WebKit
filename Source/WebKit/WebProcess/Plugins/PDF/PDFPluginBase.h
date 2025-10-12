@@ -137,6 +137,7 @@ public:
     virtual WebCore::PluginLayerHostingStrategy layerHostingStrategy() const = 0;
     virtual PlatformLayer* platformLayer() const { return nullptr; }
     virtual WebCore::GraphicsLayer* graphicsLayer() const { return nullptr; }
+    RefPtr<WebCore::GraphicsLayer> protectedGraphicsLayer() const;
 
     virtual void setView(PluginView&);
 
@@ -196,7 +197,7 @@ public:
     virtual WebCore::DictionaryPopupInfo dictionaryPopupInfoForSelection(PDFSelection *, WebCore::TextIndicatorPresentationTransition) = 0;
 
     virtual Vector<WebFoundTextRange::PDFData> findTextMatches(const String& target, WebCore::FindOptions) = 0;
-    virtual Vector<WebCore::FloatRect> rectsForTextMatch(const WebFoundTextRange::PDFData&) = 0;
+    virtual Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const Vector<WebFoundTextRange::PDFData>&, const WebCore::IntRect&) = 0;
     virtual RefPtr<WebCore::TextIndicator> textIndicatorForTextMatch(const WebFoundTextRange::PDFData&, WebCore::TextIndicatorPresentationTransition) { return { }; }
     virtual void scrollToRevealTextMatch(const WebFoundTextRange::PDFData&) { }
 
@@ -284,7 +285,7 @@ public:
     virtual void setActiveAnnotation(SetActiveAnnotationParams&&) = 0;
     void didMutatePDFDocument() { m_pdfDocumentWasMutated = true; }
 
-    virtual CGRect pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>&) const = 0;
+    virtual CGRect pluginBoundsForAnnotation(PDFAnnotation*) const = 0;
     virtual void focusNextAnnotation() = 0;
     virtual void focusPreviousAnnotation() = 0;
 
@@ -340,6 +341,8 @@ public:
 
     virtual void frameViewLayoutOrVisualViewportChanged(const WebCore::IntRect&) { }
 
+    virtual bool delegatesScrollingToMainFrame() const { return false; }
+
 protected:
     virtual double contentScaleFactor() const = 0;
     virtual bool platformPopulateEditorStateIfNeeded(EditorState&) const { return false; }
@@ -394,8 +397,8 @@ protected:
     WebCore::IntRect scrollCornerRect() const final;
     WebCore::ScrollableArea* enclosingScrollableArea() const final;
     bool scrollAnimatorEnabled() const final { return true; }
-#if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
-    bool vectorBasedControlsEnabled() const final;
+#if ENABLE(FORM_CONTROL_REFRESH)
+    bool formControlRefreshEnabled() const final;
 #endif
     bool isScrollableOrRubberbandable() final { return true; }
     bool hasScrollableOrRubberbandableAncestor() final { return true; }
@@ -467,6 +470,9 @@ protected:
 
     static WebCore::Color pluginBackgroundColor();
 
+    RefPtr<PluginView> protectedView() const;
+    RefPtr<WebFrame> protectedFrame() const;
+
     SingleThreadWeakPtr<PluginView> m_view;
     WeakPtr<WebFrame> m_frame;
     WeakPtr<WebCore::HTMLPlugInElement, WebCore::WeakPtrImplWithEventTargetData> m_element;
@@ -481,7 +487,7 @@ protected:
 
     RetainPtr<PDFDocument> m_pdfDocument;
 
-    RetainPtr<WKAccessibilityPDFDocumentObject> m_accessibilityDocumentObject;
+    const RetainPtr<WKAccessibilityPDFDocumentObject> m_accessibilityDocumentObject;
 
     String m_suggestedFilename;
 
@@ -518,6 +524,8 @@ protected:
     CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)> m_pendingSaveCompletionHandler;
     CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)> m_pendingOpenCompletionHandler;
 #endif
+
+    mutable std::optional<bool> m_cachedIsFullFramePlugin;
 };
 
 } // namespace WebKit

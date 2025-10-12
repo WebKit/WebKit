@@ -11,14 +11,12 @@
 #ifndef TEST_JITTER_DELAY_VARIATION_CALCULATOR_H_
 #define TEST_JITTER_DELAY_VARIATION_CALCULATOR_H_
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <map>
 #include <optional>
 #include <string>
 
 #include "api/numerics/samples_stats_counter.h"
-#include "api/test/metrics/metrics_logger.h"
 #include "api/units/data_size.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_frame_type.h"

@@ -75,6 +75,9 @@ WK_EXPORT void WKWebsitePoliciesSetPopUpPolicy(WKWebsitePoliciesRef, enum WKWebs
 WK_EXPORT WKWebsiteDataStoreRef WKWebsitePoliciesGetDataStore(WKWebsitePoliciesRef);
 WK_EXPORT void WKWebsitePoliciesSetDataStore(WKWebsitePoliciesRef, WKWebsiteDataStoreRef);
 
+WK_EXPORT bool WKWebsitePoliciesGetAllowsJSHandleCreationInPageWorld(WKWebsitePoliciesRef);
+WK_EXPORT void WKWebsitePoliciesSetAllowsJSHandleCreationInPageWorld(WKWebsitePoliciesRef, bool);
+
 #ifdef __cplusplus
 }
 #endif

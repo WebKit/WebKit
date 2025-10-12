@@ -7,7 +7,7 @@ WebArea AXLabel:
         Button AXLabel: Non-slotted button
         Paragraph AXLabel:
             StaticText AXLabel: Slotted paragraph text.
-        WebCoreLink AXLabel: Slotted link
+        Link AXLabel: Slotted link
             StaticText AXLabel: Slotted link
         TextField AXLabel:
             Generic AXLabel:

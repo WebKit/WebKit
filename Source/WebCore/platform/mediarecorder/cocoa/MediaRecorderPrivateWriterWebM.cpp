@@ -113,7 +113,7 @@ public:
         if (info.codecName == kAudioFormatOpus) {
             auto description = audioStreamDescriptionFromAudioInfo(info);
             auto opusHeader = createOpusPrivateData(description.streamDescription());
-            audioTrack->SetCodecPrivate(opusHeader.data(), opusHeader.size());
+            audioTrack->SetCodecPrivate(opusHeader.span().data(), opusHeader.size());
         }
         return trackIndex;
     }
@@ -190,8 +190,12 @@ void MediaRecorderPrivateWriterWebM::forceNewSegment(const MediaTime&)
     m_delegate->forceNewClusterOnNextFrame();
 }
 
-Ref<GenericPromise> MediaRecorderPrivateWriterWebM::close(const MediaTime&)
+Ref<GenericPromise> MediaRecorderPrivateWriterWebM::close(Deque<UniqueRef<MediaSamplesBlock>>&& samples, const MediaTime&)
 {
+    auto result = Result::Success;
+    while (!samples.isEmpty() && result == Result::Success)
+        result = writeFrame(samples.takeFirst().get());
+
     m_delegate->finalize();
     return GenericPromise::createAndResolve();
 }

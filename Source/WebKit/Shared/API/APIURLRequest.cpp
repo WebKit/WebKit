@@ -27,6 +27,7 @@
 #include "APIURLRequest.h"
 
 #include "WebProcessPool.h"
+#include "WebsiteDataStore.h"
 
 namespace API {
 using namespace WebCore;
@@ -47,8 +48,11 @@ void URLRequest::setDefaultTimeoutInterval(double timeoutInterval)
 {
     ResourceRequest::setDefaultTimeoutInterval(timeoutInterval);
 
-    for (auto& processPool : WebProcessPool::allProcessPools())
+    for (Ref processPool : WebProcessPool::allProcessPools())
         processPool->setDefaultRequestTimeoutInterval(timeoutInterval);
+
+    for (Ref networkProcess : NetworkProcessProxy::allNetworkProcesses())
+        networkProcess->setDefaultRequestTimeoutInterval(timeoutInterval);
 }
 
 } // namespace API

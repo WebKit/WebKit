@@ -30,6 +30,10 @@
 //     ]
 // }
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "gpu_info_util/SystemInfo.h"
 
 #include <gtest/gtest.h>

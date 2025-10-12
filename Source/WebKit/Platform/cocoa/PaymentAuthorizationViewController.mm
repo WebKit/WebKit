@@ -51,7 +51,7 @@
 
 - (void)_getPaymentServicesMerchantURL:(void(^)(NSURL *, NSError *))completion
 {
-    [PAL::getPKPaymentAuthorizationViewControllerClass() paymentServicesMerchantURLForAPIType:[_request APIType] completion:completion];
+    [PAL::getPKPaymentAuthorizationViewControllerClassSingleton() paymentServicesMerchantURLForAPIType:[_request APIType] completion:completion];
 }
 
 #pragma mark PKPaymentAuthorizationViewControllerDelegate

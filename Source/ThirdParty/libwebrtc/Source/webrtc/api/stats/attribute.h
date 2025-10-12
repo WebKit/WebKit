@@ -11,13 +11,13 @@
 #ifndef API_STATS_ATTRIBUTE_H_
 #define API_STATS_ATTRIBUTE_H_
 
+#include <cstdint>
 #include <map>
-#include <memory>
 #include <optional>
 #include <string>
+#include <variant>
 #include <vector>
 
-#include "absl/types/variant.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -28,22 +28,22 @@ namespace webrtc {
 class RTC_EXPORT Attribute {
  public:
   // All supported attribute types.
-  typedef absl::variant<const std::optional<bool>*,
-                        const std::optional<int32_t>*,
-                        const std::optional<uint32_t>*,
-                        const std::optional<int64_t>*,
-                        const std::optional<uint64_t>*,
-                        const std::optional<double>*,
-                        const std::optional<std::string>*,
-                        const std::optional<std::vector<bool>>*,
-                        const std::optional<std::vector<int32_t>>*,
-                        const std::optional<std::vector<uint32_t>>*,
-                        const std::optional<std::vector<int64_t>>*,
-                        const std::optional<std::vector<uint64_t>>*,
-                        const std::optional<std::vector<double>>*,
-                        const std::optional<std::vector<std::string>>*,
-                        const std::optional<std::map<std::string, uint64_t>>*,
-                        const std::optional<std::map<std::string, double>>*>
+  typedef std::variant<const std::optional<bool>*,
+                       const std::optional<int32_t>*,
+                       const std::optional<uint32_t>*,
+                       const std::optional<int64_t>*,
+                       const std::optional<uint64_t>*,
+                       const std::optional<double>*,
+                       const std::optional<std::string>*,
+                       const std::optional<std::vector<bool>>*,
+                       const std::optional<std::vector<int32_t>>*,
+                       const std::optional<std::vector<uint32_t>>*,
+                       const std::optional<std::vector<int64_t>>*,
+                       const std::optional<std::vector<uint64_t>>*,
+                       const std::optional<std::vector<double>>*,
+                       const std::optional<std::vector<std::string>>*,
+                       const std::optional<std::map<std::string, uint64_t>>*,
+                       const std::optional<std::map<std::string, double>>*>
       StatVariant;
 
   template <typename T>
@@ -56,18 +56,18 @@ class RTC_EXPORT Attribute {
   bool has_value() const;
   template <typename T>
   bool holds_alternative() const {
-    return absl::holds_alternative<const std::optional<T>*>(attribute_);
+    return std::holds_alternative<const std::optional<T>*>(attribute_);
   }
   template <typename T>
   const std::optional<T>& as_optional() const {
     RTC_CHECK(holds_alternative<T>());
-    return *absl::get<const std::optional<T>*>(attribute_);
+    return *std::get<const std::optional<T>*>(attribute_);
   }
   template <typename T>
   const T& get() const {
     RTC_CHECK(holds_alternative<T>());
     RTC_CHECK(has_value());
-    return absl::get<const std::optional<T>*>(attribute_)->value();
+    return std::get<const std::optional<T>*>(attribute_)->value();
   }
 
   bool is_sequence() const;

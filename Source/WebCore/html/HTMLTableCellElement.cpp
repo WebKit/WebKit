@@ -193,11 +193,6 @@ const AtomString& HTMLTableCellElement::scope() const
     return emptyAtom();
 }
 
-void HTMLTableCellElement::setScope(const AtomString& scope)
-{
-    setAttributeWithoutSynchronization(scopeAttr, scope);
-}
-
 void HTMLTableCellElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLTablePartElement::addSubresourceAttributeURLs(urls);

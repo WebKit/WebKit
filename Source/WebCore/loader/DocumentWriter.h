@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include "NavigationAction.h"
-#include "ScriptExecutionContextIdentifier.h"
+#include <WebCore/NavigationAction.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 

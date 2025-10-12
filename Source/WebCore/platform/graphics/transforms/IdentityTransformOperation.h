@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "TransformOperation.h"
+#include <WebCore/TransformOperation.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -41,21 +41,18 @@ public:
     }
 
 private:
-    bool isIdentity() const override { return true; }
-
     bool operator==(const TransformOperation& o) const override
     {
         return isSameType(o);
     }
 
-    bool apply(TransformationMatrix&, const FloatSize&) const override
+    void apply(TransformationMatrix&) const override
     {
-        return false;
     }
 
-    Ref<TransformOperation> blend(const TransformOperation*, const BlendingContext&, bool = false) override
+    Ref<TransformOperation> blend(const TransformOperation*, const BlendingContext&, bool = false) const override
     {
-        return *this;
+        return const_cast<IdentityTransformOperation&>(*this);
     }
 
     void dump(WTF::TextStream&) const final;

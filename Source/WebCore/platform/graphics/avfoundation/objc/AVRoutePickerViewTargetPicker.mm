@@ -63,7 +63,7 @@ bool AVRoutePickerViewTargetPicker::isAvailable()
     static bool available;
     static std::once_flag flag;
     std::call_once(flag, [] () {
-        if (!getAVRoutePickerViewClass())
+        if (!getAVRoutePickerViewClassSingleton())
             return;
 
         if (auto picker = adoptNS([allocAVRoutePickerViewInstance() init]))
@@ -88,7 +88,7 @@ AVRoutePickerViewTargetPicker::~AVRoutePickerViewTargetPicker()
 AVOutputContext * AVRoutePickerViewTargetPicker::outputContextInternal()
 {
     if (!m_outputContext) {
-        m_outputContext = [PAL::getAVOutputContextClass() iTunesAudioContext];
+        m_outputContext = [PAL::getAVOutputContextClassSingleton() iTunesAudioContext];
         ASSERT(m_outputContext);
         if (m_outputContext)
             [[NSNotificationCenter defaultCenter] addObserver:m_routePickerViewDelegate.get() selector:@selector(notificationHandler:) name:PAL::AVOutputContextOutputDevicesDidChangeNotification object:m_outputContext.get()];
@@ -202,7 +202,7 @@ bool AVRoutePickerViewTargetPicker::hasActiveRoute() const
     if (!m_outputContext)
         return false;
 
-    if ([m_outputContext respondsToSelector:@selector(supportsMultipleOutputDevices)] && [m_outputContext respondsToSelector:@selector(outputDevices)]&& [m_outputContext supportsMultipleOutputDevices]) {
+    if ([m_outputContext supportsMultipleOutputDevices]) {
         for (AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
             if (outputDevice.deviceFeatures & (AVOutputDeviceFeatureVideo | AVOutputDeviceFeatureAudio))
                 return true;
@@ -211,10 +211,8 @@ bool AVRoutePickerViewTargetPicker::hasActiveRoute() const
         return false;
     }
 
-    if ([m_outputContext respondsToSelector:@selector(outputDevice)]) {
-        if (auto *outputDevice = [m_outputContext outputDevice])
-            return outputDevice.deviceFeatures & (AVOutputDeviceFeatureVideo | AVOutputDeviceFeatureAudio);
-    }
+    if (auto *outputDevice = [m_outputContext outputDevice])
+        return outputDevice.deviceFeatures & (AVOutputDeviceFeatureVideo | AVOutputDeviceFeatureAudio);
 
     return [m_outputContext deviceName];
 }

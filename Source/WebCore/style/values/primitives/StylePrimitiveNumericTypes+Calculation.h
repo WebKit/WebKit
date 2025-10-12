@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "CalculationValue.h"
-#include "StylePrimitiveNumericTypes.h"
+#include <WebCore/CalculationValue.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -51,6 +51,11 @@ template<auto R, typename V> Calculation::Child copyCalculation(const Number<R, 
 template<auto R, typename V> Calculation::Child copyCalculation(const Percentage<R, V>& value)
 {
     return Calculation::percentage(value.value);
+}
+
+template<auto R, typename V> Calculation::Child copyCalculation(const Length<R, V>& value)
+{
+    return Calculation::dimension(value.unresolvedValue());
 }
 
 inline Calculation::Child copyCalculation(Numeric auto const& value)

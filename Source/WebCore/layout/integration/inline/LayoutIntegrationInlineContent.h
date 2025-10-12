@@ -26,7 +26,7 @@
 #pragma once
 
 
-#include "InlineDisplayContent.h"
+#include <WebCore/InlineDisplayContent.h>
 #include <wtf/HashMap.h>
 #include <wtf/IteratorRange.h>
 #include <wtf/Vector.h>
@@ -63,7 +63,7 @@ namespace LayoutIntegration {
 class LineLayout;
 
 class InlineContent : public CanMakeWeakPtr<InlineContent> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(InlineContent);
 public:
     InlineContent(const RenderBlockFlow& formattingContextRoot);
 
@@ -112,10 +112,10 @@ private:
     CheckedRef<const RenderBlockFlow> m_formattingContextRoot;
 
     InlineDisplay::Content m_displayContent;
-    using FirstBoxIndexCache = UncheckedKeyHashMap<CheckedRef<const Layout::Box>, size_t>;
+    using FirstBoxIndexCache = HashMap<CheckedRef<const Layout::Box>, size_t>;
     mutable std::unique_ptr<FirstBoxIndexCache> m_firstBoxIndexCache;
 
-    using InlineBoxIndexCache = UncheckedKeyHashMap<CheckedRef<const Layout::Box>, Vector<size_t>>;
+    using InlineBoxIndexCache = HashMap<CheckedRef<const Layout::Box>, Vector<size_t>>;
     mutable std::unique_ptr<InlineBoxIndexCache> m_inlineBoxIndexCache;
     FloatRect m_scrollableOverflow;
     FloatRect m_inkOverflow;

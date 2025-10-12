@@ -124,7 +124,6 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/mac/NSColorSPI.h
     spi/mac/NSColorWellSPI.h
     spi/mac/NSEventSPI.h
-    spi/mac/NSFontSPI.h
     spi/mac/NSGraphicsSPI.h
     spi/mac/NSImageSPI.h
     spi/mac/NSImmediateActionGestureRecognizerSPI.h
@@ -181,7 +180,6 @@ list(APPEND PAL_SOURCES
     cocoa/CryptoKitPrivateSoftLink.mm
     cocoa/DataDetectorsCoreSoftLink.mm
     cocoa/FileSizeFormatterCocoa.mm
-    cocoa/Gunzip.cpp
     cocoa/LinkPresentationSoftLink.mm
     cocoa/MediaToolboxSoftLink.cpp
     cocoa/NaturalLanguageSoftLink.mm

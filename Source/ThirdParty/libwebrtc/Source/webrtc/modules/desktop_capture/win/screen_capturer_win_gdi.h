@@ -13,11 +13,16 @@
 
 #include <windows.h>
 
+#include <cstddef>
 #include <memory>
+#include <optional>
+#include <string>
 
+#include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/screen_capture_frame_queue.h"
 #include "modules/desktop_capture/shared_desktop_frame.h"
+#include "modules/desktop_capture/shared_memory.h"
 #include "modules/desktop_capture/win/display_configuration_monitor.h"
 #include "modules/desktop_capture/win/scoped_thread_desktop.h"
 
@@ -61,7 +66,7 @@ class ScreenCapturerWinGdi : public DesktopCapturer {
   Callback* callback_ = nullptr;
   std::unique_ptr<SharedMemoryFactory> shared_memory_factory_;
   SourceId current_screen_id_ = kFullDesktopScreenId;
-  std::wstring current_device_key_;
+  std::optional<std::wstring> current_device_key_;
 
   ScopedThreadDesktop desktop_;
 

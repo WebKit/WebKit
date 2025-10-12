@@ -26,11 +26,11 @@
 #pragma once
 
 #if ENABLE(WEB_AUTHN)
-#include "AuthenticationExtensionsClientInputs.h"
-#include "AuthenticatorAttachment.h"
-#include "BufferSource.h"
-#include "PublicKeyCredentialDescriptor.h"
-#include "UserVerificationRequirement.h"
+#include <WebCore/AuthenticationExtensionsClientInputs.h>
+#include <WebCore/AuthenticatorAttachment.h>
+#include <WebCore/BufferSource.h>
+#include <WebCore/PublicKeyCredentialDescriptor.h>
+#include <WebCore/UserVerificationRequirement.h>
 #include <wtf/Forward.h>
 #endif // ENABLE(WEB_AUTHN)
 

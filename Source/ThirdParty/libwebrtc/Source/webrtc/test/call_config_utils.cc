@@ -13,6 +13,13 @@
 #include <string>
 #include <vector>
 
+#include "api/call/transport.h"
+#include "api/rtp_headers.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "call/video_receive_stream.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/strings/json.h"
+
 namespace webrtc {
 namespace test {
 
@@ -20,7 +27,7 @@ namespace test {
 // back into a valid object. This will not initialize the decoders or the
 // renderer.
 VideoReceiveStreamInterface::Config ParseVideoReceiveStreamJsonConfig(
-    webrtc::Transport* transport,
+    Transport* transport,
     const Json::Value& json) {
   auto receive_config = VideoReceiveStreamInterface::Config(transport);
   for (const auto& decoder_json : json["decoders"]) {

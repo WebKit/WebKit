@@ -29,7 +29,7 @@
 
 namespace WGSL::AST {
 
-class ArrayTypeExpression : public Expression {
+class ArrayTypeExpression final : public Expression {
     WGSL_AST_BUILDER_NODE(ArrayTypeExpression);
 
 public:

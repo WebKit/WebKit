@@ -1,19 +1,24 @@
-/*
- * Copyright 2013-2016 The OpenSSL Project Authors. All Rights Reserved.
- * Copyright (c) 2012, Intel Corporation. All Rights Reserved.
- *
- * Licensed under the OpenSSL license (the "License").  You may not use
- * this file except in compliance with the License.  You can obtain a copy
- * in the file LICENSE in the source distribution or at
- * https://www.openssl.org/source/license.html
- *
- * Originally written by Shay Gueron (1, 2), and Vlad Krasnov (1)
- * (1) Intel Corporation, Israel Development Center, Haifa, Israel
- * (2) University of Haifa, Israel
- */
+// Copyright 2013-2016 The OpenSSL Project Authors. All Rights Reserved.
+// Copyright (c) 2012, Intel Corporation. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Originally written by Shay Gueron (1, 2), and Vlad Krasnov (1)
+// (1) Intel Corporation, Israel Development Center, Haifa, Israel
+// (2) University of Haifa, Israel
 
-#ifndef OPENSSL_HEADER_BN_RSAZ_EXP_H
-#define OPENSSL_HEADER_BN_RSAZ_EXP_H
+#ifndef OPENSSL_HEADER_CRYPTO_FIPSMODULE_BN_RSAZ_EXP_H
+#define OPENSSL_HEADER_CRYPTO_FIPSMODULE_BN_RSAZ_EXP_H
 
 #include <openssl/bn.h>
 
@@ -39,11 +44,9 @@ void RSAZ_1024_mod_exp_avx2(BN_ULONG result[16], const BN_ULONG base_norm[16],
                             BN_ULONG k0,
                             BN_ULONG storage_words[MOD_EXP_CTIME_STORAGE_LEN]);
 
-OPENSSL_INLINE int rsaz_avx2_capable(void) {
-  return CRYPTO_is_AVX2_capable();
-}
+inline int rsaz_avx2_capable(void) { return CRYPTO_is_AVX2_capable(); }
 
-OPENSSL_INLINE int rsaz_avx2_preferred(void) {
+inline int rsaz_avx2_preferred(void) {
   if (CRYPTO_is_BMI1_capable() && CRYPTO_is_BMI2_capable() &&
       CRYPTO_is_ADX_capable()) {
     // If BMI1, BMI2, and ADX are available, x86_64-mont5.pl is faster. See the
@@ -105,4 +108,4 @@ void rsaz_1024_red2norm_avx2(BN_ULONG norm[16], const BN_ULONG red[40]);
 }  // extern "C"
 #endif
 
-#endif  // OPENSSL_HEADER_BN_RSAZ_EXP_H
+#endif  // OPENSSL_HEADER_CRYPTO_FIPSMODULE_BN_RSAZ_EXP_H

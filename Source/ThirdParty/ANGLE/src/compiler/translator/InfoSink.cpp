@@ -106,20 +106,40 @@ TInfoSinkBase &TInfoSinkBase::operator<<(const TSymbol &symbol)
 {
     switch (symbol.symbolType())
     {
-        case (SymbolType::BuiltIn):
+        case SymbolType::BuiltIn:
             *this << symbol.name();
             break;
-        case (SymbolType::Empty):
+        case SymbolType::Empty:
             *this << "''";
             break;
-        case (SymbolType::AngleInternal):
+        case SymbolType::AngleInternal:
             *this << '#' << symbol.name();
             break;
-        case (SymbolType::UserDefined):
+        case SymbolType::UserDefined:
             *this << '\'' << symbol.name() << '\'';
             break;
     }
     *this << " (symbol id " << symbol.uniqueId().get() << ")";
+    return *this;
+}
+
+TInfoSinkBase &TInfoSinkBase::operator<<(const TField &field)
+{
+    ASSERT(field.symbolType() != SymbolType::Empty);
+    switch (field.symbolType())
+    {
+        case SymbolType::BuiltIn:
+            *this << field.name();
+            break;
+        case SymbolType::AngleInternal:
+            *this << '#' << field.name();
+            break;
+        case SymbolType::UserDefined:
+            *this << '\'' << field.name() << '\'';
+            break;
+        default:
+            UNREACHABLE();
+    }
     return *this;
 }
 

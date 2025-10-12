@@ -10,9 +10,10 @@
 
 #include "modules/audio_processing/vad/pitch_based_vad.h"
 
-#include <string.h>
+#include <cstring>
 
 #include "modules/audio_processing/vad/common.h"
+#include "modules/audio_processing/vad/gmm.h"
 #include "modules/audio_processing/vad/noise_gmm_tables.h"
 #include "modules/audio_processing/vad/vad_circular_buffer.h"
 #include "modules/audio_processing/vad/voice_gmm_tables.h"

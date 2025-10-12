@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -96,14 +96,14 @@ SourceBufferPrivateRemote::SourceBufferPrivateRemote(GPUProcessConnection& gpuPr
 #endif
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    gpuProcessConnection.protectedConnection()->addWorkQueueMessageReceiver(Messages::SourceBufferPrivateRemoteMessageReceiver::messageReceiverName(), queueSingleton(), m_receiver, m_remoteSourceBufferIdentifier.toUInt64());
+    gpuProcessConnection.connection().addWorkQueueMessageReceiver(Messages::SourceBufferPrivateRemoteMessageReceiver::messageReceiverName(), queueSingleton(), m_receiver, m_remoteSourceBufferIdentifier.toUInt64());
 }
 
 SourceBufferPrivateRemote::~SourceBufferPrivateRemote()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     if (auto gpuProcessConnection = m_gpuProcessConnection.get())
-        gpuProcessConnection->protectedConnection()->removeWorkQueueMessageReceiver(Messages::SourceBufferPrivateRemoteMessageReceiver::messageReceiverName(), m_remoteSourceBufferIdentifier.toUInt64());
+        gpuProcessConnection->connection().removeWorkQueueMessageReceiver(Messages::SourceBufferPrivateRemoteMessageReceiver::messageReceiverName(), m_remoteSourceBufferIdentifier.toUInt64());
 }
 
 Ref<MediaPromise> SourceBufferPrivateRemote::append(Ref<SharedBuffer>&& data)
@@ -188,7 +188,7 @@ bool SourceBufferPrivateRemote::canSwitchToType(const ContentType& contentType)
         RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
         if (gpuProcessConnection && isGPURunning()) {
             ContentType contentType { contentTypeString };
-            auto sendResult = gpuProcessConnection->protectedConnection()->sendSync(Messages::RemoteSourceBufferProxy::CanSwitchToType(WTFMove(contentType)), m_remoteSourceBufferIdentifier);
+            auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::CanSwitchToType(WTFMove(contentType)), m_remoteSourceBufferIdentifier);
             std::tie(canSwitch) = sendResult.takeReplyOr(false);
         }
     });
@@ -238,7 +238,7 @@ bool SourceBufferPrivateRemote::evictCodedFrames(uint64_t newDataSize, const Med
         if (!gpuProcessConnection || !isGPURunning())
             return;
 
-        auto sendResult = gpuProcessConnection->protectedConnection()->sendSync(Messages::RemoteSourceBufferProxy::EvictCodedFrames(newDataSize, currentTime), m_remoteSourceBufferIdentifier);
+        auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::EvictCodedFrames(newDataSize, currentTime), m_remoteSourceBufferIdentifier);
         if (sendResult.succeeded()) {
             if (auto client = this->client()) {
                 Vector<PlatformTimeRanges> trackBufferRanges;
@@ -386,9 +386,7 @@ Ref<SourceBufferPrivate::ComputeSeekPromise> SourceBufferPrivateRemote::computeS
 
 void SourceBufferPrivateRemote::seekToTime(const MediaTime& time)
 {
-    ensureWeakOnDispatcher([time](auto& buffer) {
-        buffer.sendToProxy(Messages::RemoteSourceBufferProxy::SeekToTime(time));
-    });
+    ASSERT_NOT_REACHED();
 }
 
 void SourceBufferPrivateRemote::updateTrackIds(Vector<std::pair<TrackID, TrackID>>&& trackIDPairs)
@@ -583,7 +581,7 @@ MediaTime SourceBufferPrivateRemote::minimumUpcomingPresentationTimeForTrackID(T
         auto gpuProcessConnection = m_gpuProcessConnection.get();
         if (!gpuProcessConnection || !isGPURunning())
             return;
-        auto sendResult = gpuProcessConnection->protectedConnection()->sendSync(Messages::RemoteSourceBufferProxy::MinimumUpcomingPresentationTimeForTrackID(trackID), m_remoteSourceBufferIdentifier);
+        auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::MinimumUpcomingPresentationTimeForTrackID(trackID), m_remoteSourceBufferIdentifier);
 
         result = std::get<0>(sendResult.takeReplyOr(MediaTime::invalidTime()));
     });

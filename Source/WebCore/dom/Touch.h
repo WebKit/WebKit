@@ -29,8 +29,9 @@
 #include <WebKitAdditions/TouchIOS.h>
 #elif ENABLE(TOUCH_EVENTS)
 
-#include "EventTarget.h"
-#include "LayoutPoint.h"
+#include <WebCore/DoublePoint.h>
+#include <WebCore/EventTarget.h>
+#include <WebCore/LayoutPoint.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -41,52 +42,55 @@ class LocalFrame;
 class Touch : public RefCounted<Touch> {
 public:
     static Ref<Touch> create(LocalFrame* frame, EventTarget* target,
-            int identifier, int screenX, int screenY, int pageX, int pageY,
-            int radiusX, int radiusY, float rotationAngle, float force)
+        int identifier, const DoublePoint& screenPos, const DoublePoint& pagePos,
+        const DoubleSize& radius, float rotationAngle, float force, double twist = 0)
     {
-        return adoptRef(*new Touch(frame, target, identifier, screenX, 
-                screenY, pageX, pageY, radiusX, radiusY, rotationAngle, force));
+        return adoptRef(
+            *new Touch(frame, target, identifier, screenPos, pagePos, radius, rotationAngle, twist, force));
     }
 
     ~Touch();
 
     EventTarget* target() const { return m_target.get(); }
     int identifier() const { return m_identifier; }
-    int clientX() const { return m_clientX; }
-    int clientY() const { return m_clientY; }
-    int screenX() const { return m_screenX; }
-    int screenY() const { return m_screenY; }
-    int pageX() const { return m_pageX; }
-    int pageY() const { return m_pageY; }
-    int webkitRadiusX() const { return m_radiusX; }
-    int webkitRadiusY() const { return m_radiusY; }
+    double clientX() const { return m_clientPosition.x(); }
+    double clientY() const { return m_clientPosition.y(); }
+    double screenX() const { return m_screenPosition.x(); }
+    double screenY() const { return m_screenPosition.y(); }
+    double pageX() const { return m_pagePosition.x(); }
+    double pageY() const { return m_pagePosition.y(); }
+    double webkitRadiusX() const { return m_radius.width(); }
+    double webkitRadiusY() const { return m_radius.height(); }
     float webkitRotationAngle() const { return m_rotationAngle; }
+    double twist() const { return m_twist; }
     float webkitForce() const { return m_force; }
-    const LayoutPoint& absoluteLocation() const { return m_absoluteLocation; }
+    const DoublePoint& absoluteLocation() const { return m_absoluteLocation; }
     Ref<Touch> cloneWithNewTarget(EventTarget*) const;
 
 private:
     Touch(LocalFrame*, EventTarget*, int identifier,
-            int screenX, int screenY, int pageX, int pageY,
-            int radiusX, int radiusY, float rotationAngle, float force);
+        const DoublePoint& screenPosition, const DoublePoint& pagePosition,
+        const DoubleSize& radius, float rotationAngle, double twist, float force);
 
-    Touch(EventTarget*, int identifier, int clientX, int clientY,
-        int screenX, int screenY, int pageX, int pageY,
-        int radiusX, int radiusY, float rotationAngle, float force, LayoutPoint absoluteLocation);
+    Touch(EventTarget*, int identifier, const DoublePoint& clientPosition,
+        const DoublePoint& screenPosition, const DoublePoint& pagePosition,
+        const DoubleSize& radius, float rotationAngle, double twist, float force, DoublePoint absoluteLocation);
 
     RefPtr<EventTarget> m_target;
     int m_identifier;
-    int m_clientX;
-    int m_clientY;
-    int m_screenX;
-    int m_screenY;
-    int m_pageX;
-    int m_pageY;
-    int m_radiusX;
-    int m_radiusY;
+    // Position relative to the viewport in CSS px.
+    DoublePoint m_clientPosition;
+    // Position relative to the screen in DIPs.
+    DoublePoint m_screenPosition;
+    // Position relative to the page in CSS px.
+    DoublePoint m_pagePosition;
+    // Radius in CSS px.
+    DoubleSize m_radius;
     float m_rotationAngle;
+    // Twist is stored so that it can be exposed for pointer events.
+    double m_twist;
     float m_force;
-    LayoutPoint m_absoluteLocation;
+    DoublePoint m_absoluteLocation;
 };
 
 } // namespace WebCore

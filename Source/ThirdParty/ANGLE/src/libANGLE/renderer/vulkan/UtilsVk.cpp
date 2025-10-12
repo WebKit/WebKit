@@ -7,6 +7,10 @@
 //    Implements the UtilsVk class.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/vulkan/UtilsVk.h"
 
 #include "common/spirv/spirv_instruction_builder_autogen.h"
@@ -1594,7 +1598,7 @@ angle::Result UtilsVk::ensureImageCopyResourcesInitializedWithSampler(
 
     vk::SharedSamplerPtr sampler;
     ANGLE_TRY(
-        contextVk->getRenderer()->getSamplerCache().getSampler(contextVk, samplerDesc, &sampler));
+        contextVk->getShareGroup()->getSamplerCache().getSampler(contextVk, samplerDesc, &sampler));
 
     vk::DescriptorSetLayoutDesc descriptorSetDesc;
     descriptorSetDesc.addBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1,
@@ -3333,8 +3337,13 @@ angle::Result UtilsVk::copyImage(ContextVk *contextVk,
     vk::SamplerDesc samplerDesc;
     if (isYUV)
     {
-        samplerDesc = vk::SamplerDesc(contextVk, gl::SamplerState(), false,
-                                      &src->getYcbcrConversionDesc(), srcIntendedFormat.id);
+        // copyYuvWithoutColorConversion indicates whether we need to perform the copy
+        // with or without color conversion
+        const vk::YcbcrConversionDesc ycbcrConversionDesc = params.copyYuvWithoutColorConversion
+                                                                ? src->getY2YConversionDesc()
+                                                                : src->getYcbcrConversionDesc();
+        samplerDesc = vk::SamplerDesc(contextVk, gl::SamplerState(), false, &ycbcrConversionDesc,
+                                      srcIntendedFormat.id);
 
         ANGLE_TRY(ensureImageCopyResourcesInitializedWithSampler(contextVk, samplerDesc));
     }
@@ -3826,7 +3835,7 @@ angle::Result UtilsVk::copyImageToBuffer(ContextVk *contextVk,
     ANGLE_TRY(src->initReinterpretedLayerImageView(
         contextVk, textureType, src->getAspectFlags(), swizzle, &srcView.get(), params.srcMip, 1,
         textureType == gl::TextureType::_2D ? params.srcLayer : 0, 1, VK_IMAGE_USAGE_SAMPLED_BIT,
-        linearFormat));
+        linearFormat, GL_NONE));
 
     vk::CommandBufferAccess access;
     access.onImageComputeShaderRead(src->getAspectFlags(), src);
@@ -4060,7 +4069,7 @@ angle::Result UtilsVk::transCodeEtcToBc(ContextVk *contextVk,
         ANGLE_TRY(dstImage->initReinterpretedLayerImageView(
             contextVk, gl::TextureType::_2D, VK_IMAGE_ASPECT_COLOR_BIT, gl::SwizzleState(),
             &scopedImageView.get(), dstLevel, 1, copyRegion->imageSubresource.baseArrayLayer + i, 1,
-            VK_IMAGE_USAGE_STORAGE_BIT, GetCompactibleUINTFormat(intendedFormat)));
+            VK_IMAGE_USAGE_STORAGE_BIT, GetCompactibleUINTFormat(intendedFormat), GL_NONE));
         imageInfo.imageView = scopedImageView.get().getHandle();
 
         VkDescriptorSet descriptorSet;
@@ -4311,12 +4320,12 @@ angle::Result UtilsVk::generateMipmapWithDraw(ContextVk *contextVk,
             vk::ImageView srcImageView;
             ANGLE_TRY(image->initReinterpretedLayerImageView(
                 contextVk, textureType, image->getAspectFlags(), swizzle, &srcImageView, srcLevelVk,
-                1, currentLayer, 1, imageUsageFlags, actualFormatID));
+                1, currentLayer, 1, imageUsageFlags, actualFormatID, GL_NONE));
 
             vk::ImageView dstImageView;
             ANGLE_TRY(image->initReinterpretedLayerImageView(
                 contextVk, textureType, image->getAspectFlags(), swizzle, &dstImageView, dstLevelVk,
-                1, currentLayer, 1, imageUsageFlags, actualFormatID));
+                1, currentLayer, 1, imageUsageFlags, actualFormatID, GL_NONE));
 
             vk::RenderPassCommandBuffer *commandBuffer = nullptr;
             ANGLE_TRY(startRenderPass(contextVk, image, &dstImageView, renderPassDesc, renderArea,

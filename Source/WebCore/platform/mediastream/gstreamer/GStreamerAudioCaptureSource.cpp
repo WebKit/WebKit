@@ -47,6 +47,7 @@ class GStreamerAudioCaptureSourceFactory : public AudioCaptureFactory {
 public:
     CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier>) final
     {
+        ASSERT(!device.isSpeakerDevice());
         // Here, like in GStreamerVideoCaptureSource, we could rely on the DesktopPortal and
         // PipeWireCaptureDeviceManager, but there is no audio desktop portal yet. See
         // https://github.com/flatpak/xdg-desktop-portal/discussions/1142.

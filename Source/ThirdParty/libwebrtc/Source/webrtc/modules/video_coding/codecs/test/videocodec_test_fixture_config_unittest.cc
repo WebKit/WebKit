@@ -8,9 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stddef.h>
+#include <cstddef>
 
 #include "api/test/videocodec_test_fixture.h"
+#include "api/video/video_codec_type.h"
 #include "api/video_codecs/video_codec.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -24,7 +25,7 @@ namespace test {
 using Config = VideoCodecTestFixture::Config;
 
 namespace {
-const size_t kNumTemporalLayers = 2;
+constexpr size_t kNumTemporalLayers = 2;
 }  // namespace
 
 TEST(Config, NumberOfCoresWithUseSingleCore) {
@@ -41,20 +42,20 @@ TEST(Config, NumberOfCoresWithoutUseSingleCore) {
 
 TEST(Config, NumberOfTemporalLayersIsOne) {
   Config config;
-  webrtc::test::CodecSettings(kVideoCodecH264, &config.codec_settings);
+  test::CodecSettings(kVideoCodecH264, &config.codec_settings);
   EXPECT_EQ(1u, config.NumberOfTemporalLayers());
 }
 
 TEST(Config, NumberOfTemporalLayers_Vp8) {
   Config config;
-  webrtc::test::CodecSettings(kVideoCodecVP8, &config.codec_settings);
+  test::CodecSettings(kVideoCodecVP8, &config.codec_settings);
   config.codec_settings.VP8()->numberOfTemporalLayers = kNumTemporalLayers;
   EXPECT_EQ(kNumTemporalLayers, config.NumberOfTemporalLayers());
 }
 
 TEST(Config, NumberOfTemporalLayers_Vp9) {
   Config config;
-  webrtc::test::CodecSettings(kVideoCodecVP9, &config.codec_settings);
+  test::CodecSettings(kVideoCodecVP9, &config.codec_settings);
   config.codec_settings.VP9()->numberOfTemporalLayers = kNumTemporalLayers;
   EXPECT_EQ(kNumTemporalLayers, config.NumberOfTemporalLayers());
 }

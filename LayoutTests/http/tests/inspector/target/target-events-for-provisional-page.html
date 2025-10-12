@@ -18,13 +18,20 @@ function test()
             let reloadPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
 
             WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
-                newTarget = event.data.target;
+                let target = event.data.target;
+                if (!(target instanceof WI.PageTarget))
+                    return;
+
+                newTarget = target;
                 InspectorTest.pass(`Should receive TargetAdded event.`);
                 InspectorTest.expectTrue(newTarget.isProvisional, "Target should be provisional.");
             });
 
             WI.targetManager.addEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, (event) => {
                 let {previousTargetId, target} = event.data;
+                if (!(target instanceof WI.PageTarget))
+                    return;
+
                 InspectorTest.pass(`Should receive DidCommitProvisionalTarget event.`);
                 InspectorTest.expectEqual(previousTargetId, mainTargetId, "Previous target should be the current one.");
                 InspectorTest.expectEqual(target, newTarget, "Committed target should match provisional target.");
@@ -32,6 +39,9 @@ function test()
 
             WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, (event) =>{
                 let target = event.data.target;
+                if (!(target instanceof WI.PageTarget))
+                    return;
+
                 InspectorTest.pass(`Should receive TargetRemoved event.`);
                 InspectorTest.expectEqual(target.identifier, mainTargetId, "Destroyed target should be previous target.");
 

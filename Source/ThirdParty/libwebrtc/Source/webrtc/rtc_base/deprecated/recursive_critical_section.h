@@ -11,11 +11,10 @@
 #ifndef RTC_BASE_DEPRECATED_RECURSIVE_CRITICAL_SECTION_H_
 #define RTC_BASE_DEPRECATED_RECURSIVE_CRITICAL_SECTION_H_
 
-#include <atomic>
-
 #include "rtc_base/platform_thread_types.h"
 #include "rtc_base/thread_annotations.h"
 
+// IWYU pragma: begin_keep
 #if defined(WEBRTC_WIN)
 // clang-format off
 // clang formating would change include order.
@@ -39,10 +38,11 @@
 #if defined(WEBRTC_MAC) && !RTC_USE_NATIVE_MUTEX_ON_MAC
 #include <dispatch/dispatch.h>
 #endif
+// IWYU pragma: end_keep
 
-namespace rtc {
+namespace webrtc {
 
-// NOTE: This class is deprecated. Please use webrtc::Mutex instead!
+// NOTE: This class is deprecated. Please use Mutex instead!
 // Search using https://www.google.com/?q=recursive+lock+considered+harmful
 // to find the reasons.
 //
@@ -102,6 +102,7 @@ class RTC_SCOPED_LOCKABLE CritScope {
   const RecursiveCriticalSection* const cs_;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_DEPRECATED_RECURSIVE_CRITICAL_SECTION_H_

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FloatRect.h"
-#include "ScrollTypes.h"
+#include <WebCore/FloatRect.h>
+#include <WebCore/ScrollTypes.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -178,6 +178,10 @@ public:
     // stickyBoxRect() is in the scrolling ancestor's coordinate space.
     FloatRect stickyBoxRect() const { return m_stickyBoxRect; }
     void setStickyBoxRect(const FloatRect& rect) { m_stickyBoxRect = rect; }
+
+    // Sticky extent is the smallest rectangle, in the scrolling ancestor's coordinate space, that encloses
+    // the sticky box at every permissible position during its sticky travel.
+    FloatRect computeStickyExtent() const;
 
     friend bool operator==(const StickyPositionViewportConstraints&, const StickyPositionViewportConstraints&) = default;
 

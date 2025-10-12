@@ -1,0 +1,12 @@
+
+PASS SVGAnimatedInteger, initial values, SVGFEConvolveMatrixElement.prototype.orderX (remove)
+PASS SVGAnimatedInteger, initial values, SVGFEConvolveMatrixElement.prototype.orderX (invalid value)
+PASS SVGAnimatedInteger, initial values, SVGFEConvolveMatrixElement.prototype.orderY (remove)
+PASS SVGAnimatedInteger, initial values, SVGFEConvolveMatrixElement.prototype.orderY (invalid value)
+PASS SVGAnimatedInteger, initial values, SVGFEConvolveMatrixElement.prototype.targetX (remove)
+PASS SVGAnimatedInteger, initial values, SVGFEConvolveMatrixElement.prototype.targetX (invalid value)
+PASS SVGAnimatedInteger, initial values, SVGFEConvolveMatrixElement.prototype.targetY (remove)
+PASS SVGAnimatedInteger, initial values, SVGFEConvolveMatrixElement.prototype.targetY (invalid value)
+PASS SVGAnimatedInteger, initial values, SVGFETurbulenceElement.prototype.numOctaves (remove)
+PASS SVGAnimatedInteger, initial values, SVGFETurbulenceElement.prototype.numOctaves (invalid value)
+

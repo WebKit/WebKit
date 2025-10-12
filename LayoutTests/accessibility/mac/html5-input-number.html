@@ -42,7 +42,7 @@ if (window.accessibilityController) {
         // FIXME: This shouldn't be necessary, but we must re-get the spinbutton incrementor because we throw the old
         // one and it's children away every time the text field clears and re-adds children. This work is tracked by:
         // https://bugs.webkit.org/show_bug.cgi?id=262664
-        window.incrementor = textfield.childAtIndex(1);
+        window.incrementor = textfield.childAtIndex(0);
         output += expect("incrementor.childAtIndex(1).role", "'AXRole: AXIncrementorArrow'");
         output += expect("incrementor.childAtIndex(1).subrole", "'AXSubrole: AXDecrementArrow'");
         output += expect("incrementor.childAtIndex(1).width > 0", "true");

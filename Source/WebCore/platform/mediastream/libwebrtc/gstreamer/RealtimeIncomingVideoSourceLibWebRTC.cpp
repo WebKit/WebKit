@@ -36,19 +36,19 @@
 
 namespace WebCore {
 
-Ref<RealtimeIncomingVideoSource> RealtimeIncomingVideoSource::create(rtc::scoped_refptr<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)
+Ref<RealtimeIncomingVideoSource> RealtimeIncomingVideoSource::create(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)
 {
     auto source = RealtimeIncomingVideoSourceLibWebRTC::create(WTFMove(videoTrack), WTFMove(trackId));
     source->start();
     return source;
 }
 
-Ref<RealtimeIncomingVideoSourceLibWebRTC> RealtimeIncomingVideoSourceLibWebRTC::create(rtc::scoped_refptr<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)
+Ref<RealtimeIncomingVideoSourceLibWebRTC> RealtimeIncomingVideoSourceLibWebRTC::create(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)
 {
     return adoptRef(*new RealtimeIncomingVideoSourceLibWebRTC(WTFMove(videoTrack), WTFMove(trackId)));
 }
 
-RealtimeIncomingVideoSourceLibWebRTC::RealtimeIncomingVideoSourceLibWebRTC(rtc::scoped_refptr<webrtc::VideoTrackInterface>&& videoTrack, String&& videoTrackId)
+RealtimeIncomingVideoSourceLibWebRTC::RealtimeIncomingVideoSourceLibWebRTC(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& videoTrackId)
     : RealtimeIncomingVideoSource(WTFMove(videoTrack), WTFMove(videoTrackId))
 {
 }
@@ -64,8 +64,11 @@ void RealtimeIncomingVideoSourceLibWebRTC::OnFrame(const webrtc::VideoFrame& fra
         videoFrameAvailable(VideoFrameGStreamer::createWrappedSample(framebuffer->getSample(), presentationTime, static_cast<VideoFrame::Rotation>(frame.rotation())), { });
     } else {
         auto gstSample = convertLibWebRTCVideoFrameToGStreamerSample(frame);
-        auto metadata = std::make_optional(metadataFromVideoFrame(frame));
-        videoFrameAvailable(VideoFrameGStreamer::create(WTFMove(gstSample), std::nullopt, { }, presentationTime, static_cast<VideoFrame::Rotation>(frame.rotation()), false, WTFMove(metadata)), { });
+        VideoFrameGStreamer::CreateOptions options;
+        options.timeMetadata = std::make_optional(metadataFromVideoFrame(frame));
+        options.presentationTime = presentationTime;
+        options.rotation = static_cast<VideoFrame::Rotation>(frame.rotation());
+        videoFrameAvailable(VideoFrameGStreamer::create(WTFMove(gstSample), options), { });
     }
 }
 

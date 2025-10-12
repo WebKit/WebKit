@@ -389,27 +389,5 @@ RefPtr<TimingFunction> parseEasingFunctionDeprecated(const String& string, const
     return Style::createTimingFunctionDeprecated(*result);
 }
 
-RefPtr<TimingFunction> parseEasingFunction(const String& string, const CSSParserContext& context, const CSSToLengthConversionData& conversionData)
-{
-    auto tokenizer = CSSTokenizer(string);
-    auto range = tokenizer.tokenRange();
-
-    // Handle leading whitespace.
-    range.consumeWhitespace();
-
-    auto state = CSS::PropertyParserState { .context = context };
-    auto result = consumeUnresolvedEasingFunction(range, state);
-    if (!result)
-        return { };
-
-    // Handle trailing whitespace.
-    range.consumeWhitespace();
-
-    if (!range.atEnd())
-        return { };
-
-    return Style::createTimingFunction(*result, conversionData);
-}
-
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

@@ -43,6 +43,7 @@ pas_page_base* pas_page_header_table_add(pas_page_header_table* table,
 
     uintptr_t boundary_int = (uintptr_t)boundary;
     PAS_PROFILE(PAGE_HEADER_TABLE_ADD, boundary_int);
+    PAS_MTE_HANDLE(PAGE_HEADER_TABLE_ADD, boundary_int);
     boundary = (void*)boundary_int;
 
     if (verbose)

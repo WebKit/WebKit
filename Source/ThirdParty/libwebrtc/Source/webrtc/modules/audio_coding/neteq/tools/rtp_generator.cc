@@ -10,6 +10,12 @@
 
 #include "modules/audio_coding/neteq/tools/rtp_generator.h"
 
+#include <cstddef>
+#include <cstdint>
+
+#include "api/rtp_headers.h"
+#include "rtc_base/checks.h"
+
 namespace webrtc {
 namespace test {
 

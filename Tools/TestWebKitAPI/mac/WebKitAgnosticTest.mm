@@ -30,6 +30,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 @interface FrameLoadDelegate : NSObject <WebFrameLoadDelegate> {
     bool* _didFinishLoad;
@@ -148,7 +149,7 @@ void WebKitAgnosticTest::waitForNextPresentationUpdate(WebView *)
 {
     // FIXME: This isn't currently required anywhere. Just dispatch to the next runloop for now.
     __block bool done = false;
-    dispatch_async(dispatch_get_main_queue(), ^() {
+    dispatch_async(mainDispatchQueueSingleton(), ^() {
         done = true;
     });
     Util::run(&done);

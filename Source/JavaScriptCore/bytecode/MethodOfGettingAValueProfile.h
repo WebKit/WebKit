@@ -31,11 +31,11 @@
 // these #if's will disappear...
 #if ENABLE(DFG_JIT)
 
-#include "BytecodeIndex.h"
-#include "CodeOrigin.h"
-#include "GPRInfo.h"
-#include "Operands.h"
-#include "TagRegistersMode.h"
+#include <JavaScriptCore/BytecodeIndex.h>
+#include <JavaScriptCore/CodeOrigin.h>
+#include <JavaScriptCore/GPRInfo.h>
+#include <JavaScriptCore/Operands.h>
+#include <JavaScriptCore/TagRegistersMode.h>
 
 namespace JSC {
 

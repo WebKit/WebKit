@@ -37,7 +37,7 @@
 namespace IPC {
 
 class MachMessage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MachMessage);
 public:
     static std::unique_ptr<MachMessage> create(MessageName, size_t);
     ~MachMessage();

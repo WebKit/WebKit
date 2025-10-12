@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2023 Apple Inc.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -82,7 +82,7 @@ bool checkModuleSyntax(JSGlobalObject* globalObject, const SourceCode& source, P
     if (!moduleProgramNode)
         return false;
 
-    PrivateName privateName(PrivateName::Description, "EntryPointModule"_s);
+    PrivateName privateName(PrivateName::Description, "EntrypointModule"_s);
     ModuleAnalyzer moduleAnalyzer(globalObject, Identifier::fromUid(privateName), source, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables(), moduleProgramNode->features());
     return !!moduleAnalyzer.analyze(*moduleProgramNode);
 }
@@ -170,10 +170,10 @@ JSValue evaluateWithScopeExtension(JSGlobalObject* globalObject, const SourceCod
     return returnValue;
 }
 
-static Symbol* createSymbolForEntryPointModule(VM& vm)
+static Symbol* createSymbolForEntrypointModule(VM& vm)
 {
     // Generate the unique key for the source-provided module.
-    PrivateName privateName(PrivateName::Description, "EntryPointModule"_s);
+    PrivateName privateName(PrivateName::Description, "EntrypointModule"_s);
     return Symbol::create(vm, privateName.uid());
 }
 
@@ -212,7 +212,7 @@ JSInternalPromise* loadAndEvaluateModule(JSGlobalObject* globalObject, const Sou
     RELEASE_ASSERT(vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
-    Symbol* key = createSymbolForEntryPointModule(vm);
+    Symbol* key = createSymbolForEntrypointModule(vm);
 
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
     globalObject->moduleLoader()->provideFetch(globalObject, key, source);
@@ -238,7 +238,7 @@ JSInternalPromise* loadModule(JSGlobalObject* globalObject, const SourceCode& so
     RELEASE_ASSERT(vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
-    Symbol* key = createSymbolForEntryPointModule(vm);
+    Symbol* key = createSymbolForEntrypointModule(vm);
 
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
     // FIXME: Introduce JSSourceCode object to wrap around this source.

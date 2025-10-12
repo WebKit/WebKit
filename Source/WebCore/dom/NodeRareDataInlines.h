@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,7 @@ inline void NodeListsNodeData::adoptDocument(Document& oldDocument, Document& ne
 void NodeListsNodeData::removeCachedCollection(HTMLCollection* collection, const AtomString& name)
 {
     ASSERT(collection == m_cachedCollections.get(namedCollectionKey(collection->type(), name)));
-    if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(collection->protectedOwnerNode()))
+    if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(collection->ownerNode()))
         return;
     m_cachedCollections.remove(namedCollectionKey(collection->type(), name));
 }

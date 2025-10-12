@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "ContainerNode.h"
-#include "NodeInlines.h"
-#include "Text.h"
+#include <WebCore/ContainerNode.h>
+#include <WebCore/NodeInlines.h>
+#include <WebCore/Text.h>
 
 namespace WebCore {
 namespace NodeTraversal {

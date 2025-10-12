@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ScriptBuffer.h"
+#include <WebCore/ScriptBuffer.h>
 #include <wtf/URLHash.h>
 
 namespace WebCore {

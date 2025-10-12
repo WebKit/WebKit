@@ -120,11 +120,11 @@ RefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext& contex
         return dynamicDowncast<Document>(context);
     }();
 
-    if (auto* documentLoader = document ? document->loader() : nullptr)
+    if (RefPtr documentLoader = document ? document->loader() : nullptr)
         request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
     
     if (is<WorkerGlobalScope>(context) || (is<WorkletGlobalScope>(context) && downcast<WorkletGlobalScope>(context).workerOrWorkletThread()))
-        return WorkerThreadableLoader::create(static_cast<WorkerOrWorkletGlobalScope&>(context), client, WTFMove(taskMode), WTFMove(request), options, WTFMove(referrer));
+        return WorkerThreadableLoader::create(downcast<WorkerOrWorkletGlobalScope>(context), client, WTFMove(taskMode), WTFMove(request), options, WTFMove(referrer));
 
     return DocumentThreadableLoader::create(*document, client, WTFMove(request), options, WTFMove(referrer));
 }

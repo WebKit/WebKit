@@ -27,9 +27,12 @@
 #import "AXCoreObject.h"
 
 #import "AXObjectCache.h"
+#import "AXTreeStoreInlines.h"
+#import "AccessibilityObjectInlines.h"
 #import "ColorCocoa.h"
 #import "RenderObjectInlines.h"
 #import "WebAccessibilityObjectWrapperBase.h"
+#import "Widget.h"
 
 #if PLATFORM(IOS_FAMILY)
 #import <wtf/SoftLinking.h>
@@ -37,17 +40,17 @@
 SOFT_LINK_PRIVATE_FRAMEWORK(AXRuntime);
 
 SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenFontName, NSString *);
-#define AccessibilityTokenFontName getUIAccessibilityTokenFontName()
+#define AccessibilityTokenFontName getUIAccessibilityTokenFontNameSingleton()
 SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenFontFamily, NSString *);
-#define AccessibilityTokenFontFamily getUIAccessibilityTokenFontFamily()
+#define AccessibilityTokenFontFamily getUIAccessibilityTokenFontFamilySingleton()
 SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenFontSize, NSString *);
-#define AccessibilityTokenFontSize getUIAccessibilityTokenFontSize()
+#define AccessibilityTokenFontSize getUIAccessibilityTokenFontSizeSingleton()
 SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenBold, NSString *);
-#define AccessibilityTokenBold getUIAccessibilityTokenBold()
+#define AccessibilityTokenBold getUIAccessibilityTokenBoldSingleton()
 SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenItalic, NSString *);
-#define AccessibilityTokenItalic getUIAccessibilityTokenItalic()
+#define AccessibilityTokenItalic getUIAccessibilityTokenItalicSingleton()
 SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenAttachment, NSString *);
-#define AccessibilityTokenAttachment getUIAccessibilityTokenAttachment()
+#define AccessibilityTokenAttachment getUIAccessibilityTokenAttachmentSingleton()
 
 #endif // PLATFORM(IOS_FAMILY)
 
@@ -73,6 +76,17 @@ String AXCoreObject::speechHint() const
         builder.append(" no-punctuation"_s);
 
     return builder.toString();
+}
+
+// FIXME: We should create an AXCoreObjectInline.h file and move protectedWrapper() and protectedPlatformWidget() into it.
+RetainPtr<AccessibilityObjectWrapper> AXCoreObject::protectedWrapper() const
+{
+    return m_wrapper.get();
+}
+
+RetainPtr<PlatformWidget> AXCoreObject::protectedPlatformWidget() const
+{
+    return platformWidget();
 }
 
 // When modifying attributed strings, the range can come from a source which may provide faulty information (e.g. the spell checker).
@@ -230,7 +244,7 @@ RetainPtr<NSMutableAttributedString> AXCoreObject::createAttributedString(String
         if (ancestor->hasMarkTag())
             attributedStringSetNumber(string.get(), NSAccessibilityHighlightAttribute, @YES, range);
 
-        switch (ancestor->roleValue()) {
+        switch (ancestor->role()) {
         case AccessibilityRole::Insertion:
             attributedStringSetNumber(string.get(), NSAccessibilityIsSuggestedInsertionAttribute, @YES, range);
             break;
@@ -257,7 +271,7 @@ RetainPtr<NSMutableAttributedString> AXCoreObject::createAttributedString(String
             }
         }
 
-        if (ancestor->roleValue() == AccessibilityRole::Blockquote)
+        if (ancestor->role() == AccessibilityRole::Blockquote)
             ++blockquoteLevel;
     }
     if (blockquoteLevel)
@@ -323,7 +337,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (!ariaLandmarkRoleDescription.isEmpty())
             return ariaLandmarkRoleDescription;
 
-        switch (roleValue()) {
+        switch (role()) {
         case AccessibilityRole::Audio:
             return localizedMediaControlElementString("AudioElement"_s);
         case AccessibilityRole::Definition:
@@ -337,8 +351,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return AXDetailsText();
         case AccessibilityRole::Feed:
             return AXFeedText();
-        case AccessibilityRole::Footer:
+        case AccessibilityRole::SectionFooter:
             return AXFooterRoleDescriptionText();
+        case AccessibilityRole::SectionHeader:
+            return AXHeaderRoleDescriptionText();
         case AccessibilityRole::Mark:
             return AXMarkText();
         case AccessibilityRole::Video:
@@ -400,7 +416,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (isDescriptionList())
         return AXDescriptionListText();
 
-    if (roleValue() == AccessibilityRole::HorizontalRule)
+    if (role() == AccessibilityRole::HorizontalRule)
         return AXHorizontalRuleDescriptionText();
 
     // AppKit also returns AXTab for the role description for a tab item.
@@ -423,7 +439,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return [remoteFramePlatformElement().get() accessibilityAttributeValue:NSAccessibilityRoleAttribute];
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-    auto role = roleValue();
+    auto role = this->role();
     if (role == AccessibilityRole::Label) {
         // Labels that only contain static text should just be mapped to static text.
         if (containsOnlyStaticText())
@@ -436,8 +452,21 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     } else if (role == AccessibilityRole::Canvas && firstUnignoredChild() && !containsOnlyStaticText()) {
         // If this is a canvas with fallback content (one or more non-text thing), re-map to group.
         role = AccessibilityRole::Group;
-    } else if (isInvalidListBox())
-        role = AccessibilityRole::Group;
+    } else {
+        switch (listBoxInterpretation()) {
+        case ListBoxInterpretation::ActuallyListBox:
+            role = AccessibilityRole::ListBox;
+            break;
+        case ListBoxInterpretation::ActuallyStaticList:
+            role = AccessibilityRole::List;
+            break;
+        case ListBoxInterpretation::InvalidListBox:
+            role = AccessibilityRole::Group;
+            break;
+        case ListBoxInterpretation::NotListBox:
+            break;
+        }
+    }
 
     return Accessibility::roleToPlatformString(role);
 }
@@ -457,13 +486,13 @@ bool AXCoreObject::isEmptyGroup()
         && ![renderWidgetChildren(*this) count];
 }
 
-AXCoreObject::AccessibilityChildrenVector AXCoreObject::sortedDescendants(size_t limit, PreSortedObjectType type) const
+AXCoreObject::AccessibilityChildrenVector AXCoreObject::crossFrameSortedDescendants(size_t limit, PreSortedObjectType type) const
 {
     ASSERT(type == PreSortedObjectType::LiveRegion || type == PreSortedObjectType::WebArea);
     auto sortedObjects = type == PreSortedObjectType::LiveRegion ? allSortedLiveRegions() : allSortedNonRootWebAreas();
     AXCoreObject::AccessibilityChildrenVector results;
     for (const Ref<AXCoreObject>& object : sortedObjects) {
-        if (isAncestorOfObject(object)) {
+        if (crossFrameIsAncestorOfObject(object)) {
             results.append(object);
             if (results.size() >= limit)
                 break;
@@ -545,6 +574,8 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::LandmarkNavigation, NSAccessibilityGroupRole },
         { AccessibilityRole::LandmarkRegion, NSAccessibilityGroupRole },
         { AccessibilityRole::LandmarkSearch, NSAccessibilityGroupRole },
+        { AccessibilityRole::SectionFooter, NSAccessibilityGroupRole },
+        { AccessibilityRole::SectionHeader, NSAccessibilityGroupRole },
         { AccessibilityRole::ApplicationAlert, NSAccessibilityGroupRole },
         { AccessibilityRole::ApplicationAlertDialog, NSAccessibilityGroupRole },
         { AccessibilityRole::ApplicationDialog, NSAccessibilityGroupRole },
@@ -570,7 +601,6 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::Generic, NSAccessibilityGroupRole },
         { AccessibilityRole::SpinButton, NSAccessibilityIncrementorRole },
         { AccessibilityRole::SpinButtonPart, NSAccessibilityIncrementorArrowRole },
-        { AccessibilityRole::Footer, NSAccessibilityGroupRole },
         { AccessibilityRole::ToggleButton, NSAccessibilityCheckBoxRole },
         { AccessibilityRole::Canvas, NSAccessibilityImageRole },
         { AccessibilityRole::SVGRoot, NSAccessibilityGroupRole },
@@ -608,6 +638,8 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::Model, NSAccessibilityGroupRole },
         { AccessibilityRole::Suggestion, NSAccessibilityGroupRole },
         { AccessibilityRole::RemoteFrame, NSAccessibilityGroupRole },
+        { AccessibilityRole::LocalFrame, NSAccessibilityGroupRole },
+        { AccessibilityRole::FrameHost, NSAccessibilityGroupRole },
     };
     PlatformRoleMap roleMap;
     for (auto& role : roles)
@@ -615,8 +647,22 @@ PlatformRoleMap createPlatformRoleMap()
     return roleMap;
 }
 
-} // namespace Accessibility
+#if ENABLE(AX_THREAD_TEXT_APIS)
+std::optional<AXTextMarkerRange> markerRangeFrom(NSRange range, const AXCoreObject& object)
+{
+    std::optional stopAtID = object.idOfNextSiblingIncludingIgnoredOrParent();
+    auto markerToLocation = AXTextMarker { object, 0 }.nextMarkerFromOffset(range.location, ForceSingleOffsetMovement::Yes, stopAtID);
+    if (!markerToLocation.isValid())
+        return std::nullopt;
 
+    auto markerToRangeEnd = markerToLocation.nextMarkerFromOffset(range.length, ForceSingleOffsetMovement::Yes, stopAtID);
+    if (!markerToRangeEnd.isValid())
+        return std::nullopt;
+    return std::optional(AXTextMarkerRange { WTFMove(markerToLocation), WTFMove(markerToRangeEnd) });
+}
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
+
+} // namespace Accessibility
 
 #endif // PLATFORM(MAC)
 

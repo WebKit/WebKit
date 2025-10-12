@@ -2,6 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
  * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,6 +30,8 @@ namespace WebCore {
 class HTMLFrameSetElement;
 class MouseEvent;
 class RenderFrame;
+
+struct HTMLDimensionsListValue;
 
 enum FrameEdge { LeftFrameEdge, RightFrameEdge, TopFrameEdge, BottomFrameEdge };
 
@@ -98,7 +101,7 @@ private:
 
     void setIsResizing(bool);
 
-    void layOutAxis(GridAxis&, std::span<const Length>, int availableSpace);
+    void layOutAxis(GridAxis&, std::span<const HTMLDimensionsListValue>, int availableSpace);
     void computeEdgeInfo();
     void fillFromEdgeInfo(const FrameEdgeInfo& edgeInfo, int r, int c);
     void positionFrames();

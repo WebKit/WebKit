@@ -27,8 +27,8 @@
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
-#include "ImageOrientation.h"
-#include "VideoFrame.h"
+#include <WebCore/ImageOrientation.h>
+#include <WebCore/VideoFrame.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/RetainPtr.h>
 

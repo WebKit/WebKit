@@ -12,6 +12,54 @@ from webkitpy.benchmark_runner.http_server_driver.http_server_driver import HTTP
 _log = logging.getLogger(__name__)
 
 
+# get the listening ports by inspecting /proc files (works only on Linux)
+def linux_proc_get_listening_ports(pid):
+    import socket
+    import struct
+    results = []
+    inode_set = set()
+    fd_path = f"/proc/{pid}/fd"
+    try:
+        for fd in os.listdir(fd_path):
+            target = os.readlink(os.path.join(fd_path, fd))
+            if target.startswith("socket:["):
+                inode = target[8:-1]
+                inode_set.add(inode)
+    except (FileNotFoundError, PermissionError):
+        return results  # Process may have exited or be inaccessible
+
+    for tcp_listen_data_file in ["/proc/net/tcp", "/proc/net/tcp6"]:
+        try:
+            with open(tcp_listen_data_file, "r") as f:
+                next(f)  # skip header
+                for line in f:
+                    fields = line.strip().split()
+                    local_address = fields[1]
+                    state = fields[3]
+                    inode = fields[9]
+
+                    if state != "0A":  # only LISTEN
+                        continue
+                    if inode not in inode_set:
+                        continue
+
+                    ip_hex, port_hex = local_address.split(":")
+                    port = int(port_hex, 16)
+
+                    if tcp_listen_data_file.endswith('tcp6'):
+                        # IPv6 address is 32 hex digits
+                        ip_bytes = bytes.fromhex(ip_hex)
+                        ip = socket.inet_ntop(socket.AF_INET6, ip_bytes)
+                    else:
+                        ip_bytes = struct.pack("<L", int(ip_hex, 16))
+                        ip = socket.inet_ntop(socket.AF_INET, ip_bytes)
+
+                    results.append(f"{ip}:{port}")
+        except FileNotFoundError:
+            pass
+
+    return results
+
 class SimpleHTTPServerDriver(HTTPServerDriver):
 
     """This class depends on unix environment, need to be modified to achieve crossplatform compability
@@ -72,8 +120,14 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
             try:
                 # lsof on Linux is shipped on /usr/bin typically, but on Mac on /usr/sbin
                 lsof_path = shutil.which('lsof') or '/usr/sbin/lsof'
-                output = subprocess.check_output([lsof_path, '-a', '-P', '-iTCP', '-sTCP:LISTEN', '-p', str(self._server_process.pid)])
-                self._server_port = int(re.search(r'TCP .*:(\d+) \(LISTEN\)', str(output)).group(1))
+                if os.path.exists(lsof_path):
+                    output = subprocess.check_output([lsof_path, '-a', '-P', '-iTCP', '-sTCP:LISTEN', '-p', str(self._server_process.pid)])
+                    self._server_port = int(re.search(r'TCP .*:(\d+) \(LISTEN\)', str(output)).group(1))
+                elif sys.platform.startswith('linux'):
+                    listening_address_ports = linux_proc_get_listening_ports(self._server_process.pid)
+                    self._server_port = int(listening_address_ports[0].split(':')[-1])
+                else:
+                    raise NotImplementedError('There is no tool available to get the listening tcp ports of a given pid. Missing lsof or python-psutil')
             except Exception as error:
                 _log.info('Error: %s' % error)
 

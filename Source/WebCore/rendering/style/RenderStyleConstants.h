@@ -26,7 +26,10 @@
 #pragma once
 
 #include <initializer_list>
+#include <limits>
 #include <optional>
+#include <type_traits>
+#include <wtf/EnumTraits.h>
 
 namespace WTF {
 class TextStream;
@@ -50,9 +53,9 @@ enum class PrintColorAdjust : bool {
 // - StyleDifference::Repaint - The object just needs to be repainted.
 // - StyleDifference::RepaintIfText - The object needs to be repainted if it contains text.
 // - StyleDifference::RepaintLayer - The layer and its descendant layers needs to be repainted.
-// - StyleDifference::LayoutPositionedMovementOnly - Only the position of this positioned object has been updated
+// - StyleDifference::LayoutOutOfFlowMovementOnly - Only the position of this out-of-flow box has been updated
 // - StyleDifference::Overflow - Only overflow needs to be recomputed
-// - StyleDifference::OverflowAndPositionedMovement - Both positioned movement and overflow updates are required.
+// - StyleDifference::OverflowAndOutOfFlowMovement - Both out-of-flow movement and overflow updates are required.
 // - StyleDifference::Layout - A full layout is required.
 enum class StyleDifference : uint8_t {
     Equal,
@@ -60,9 +63,9 @@ enum class StyleDifference : uint8_t {
     Repaint,
     RepaintIfText,
     RepaintLayer,
-    LayoutPositionedMovementOnly,
+    LayoutOutOfFlowMovementOnly,
     Overflow,
-    OverflowAndPositionedMovement,
+    OverflowAndOutOfFlowMovement,
     Layout,
     NewStyle
 };
@@ -117,8 +120,9 @@ enum class PseudoId : uint32_t {
 
     FirstPublicPseudoId = FirstLine,
     FirstInternalPseudoId = WebKitScrollbarThumb,
-    PublicPseudoIdMask = ((1 << FirstInternalPseudoId) - 1) & ~((1 << FirstPublicPseudoId) - 1)
 };
+
+constexpr auto PublicPseudoIdMask = static_cast<std::underlying_type_t<PseudoId>>(((1U << enumToUnderlyingType(PseudoId::FirstInternalPseudoId)) - 1U) & ~((1U << enumToUnderlyingType(PseudoId::FirstPublicPseudoId)) - 1U));
 
 inline std::optional<PseudoId> parentPseudoElement(PseudoId pseudoId)
 {
@@ -242,6 +246,19 @@ enum class BorderPrecedence : uint8_t {
     Cell
 };
 
+enum class OutlineStyle : uint8_t {
+    Auto,
+    None,
+    Inset,
+    Groove,
+    Outset,
+    Ridge,
+    Dotted,
+    Dashed,
+    Solid,
+    Double
+};
+
 enum class PositionType : uint8_t {
     Static = 0,
     Relative = 1,
@@ -291,19 +308,6 @@ enum class Overflow : uint8_t {
     PagedY
 };
 
-enum class VerticalAlign : uint8_t {
-    Baseline,
-    Middle,
-    Sub,
-    Super,
-    TextTop,
-    TextBottom,
-    Top,
-    Bottom,
-    BaselineMiddle,
-    Length
-};
-
 enum class Clear : uint8_t {
     None,
     Left,
@@ -344,6 +348,19 @@ enum class FillBox : uint8_t {
     Text,
     NoClip
 };
+
+constexpr unsigned FillBoxBitWidth = 3;
+
+constexpr inline FillBox clipMax(FillBox clipA, FillBox clipB)
+{
+    if (clipA == FillBox::BorderBox || clipB == FillBox::BorderBox)
+        return FillBox::BorderBox;
+    if (clipA == FillBox::PaddingBox || clipB == FillBox::PaddingBox)
+        return FillBox::PaddingBox;
+    if (clipA == FillBox::ContentBox || clipB == FillBox::ContentBox)
+        return FillBox::ContentBox;
+    return FillBox::NoClip;
+}
 
 enum class FillRepeat : uint8_t {
     Repeat,
@@ -464,6 +481,7 @@ enum class ItemPosition : uint8_t {
     Left,
     Right,
     AnchorCenter,
+    Dialog
 };
 
 enum class OverflowAlignment : uint8_t {
@@ -603,7 +621,7 @@ enum class AnimationFillMode : uint8_t {
 };
 
 enum class AnimationPlayState : bool {
-    Playing,
+    Running,
     Paused
 };
 
@@ -651,14 +669,6 @@ enum class TextTransform : uint8_t {
     FullWidth     = 1 << 4,
 };
 constexpr auto maxTextTransformValue = TextTransform::FullWidth;
-
-enum class TextDecorationLine : uint8_t {
-    Underline     = 1 << 0,
-    Overline      = 1 << 1,
-    LineThrough   = 1 << 2,
-    Blink         = 1 << 3,
-};
-constexpr auto maxTextDecorationLineValue = TextDecorationLine::Blink;
 
 enum class TextDecorationStyle : uint8_t {
     Solid,
@@ -714,17 +724,19 @@ enum class MarginTrimType : uint8_t {
     InlineEnd = 1 << 3
 };
 
-enum class TextEdgeType : uint8_t {
-    // Note that TextEdgeType is shared between text-box-edge and line-fit-edge,
-    // where text-box-edge's default value is auto, and line-fit-edge has leading.
-    Auto,
-    Leading,
+enum class TextEdgeOver : uint8_t {
     Text,
-    CapHeight,
-    ExHeight,
+    Ideographic,
+    IdeographicInk,
+    Cap,
+    Ex
+};
+
+enum class TextEdgeUnder : uint8_t {
+    Text,
+    Ideographic,
+    IdeographicInk,
     Alphabetic,
-    CJKIdeographic,
-    CJKIdeographicInk
 };
 
 enum class TextZoom : bool {
@@ -903,11 +915,6 @@ enum class TransformBox : uint8_t {
     ViewBox
 };
 
-enum class LineClamp : bool {
-    LineCount,
-    Percentage
-};
-
 enum class OverflowContinue : bool {
     Auto,
     Discard
@@ -932,14 +939,11 @@ enum class TextEmphasisFill : bool {
 };
 
 enum class TextEmphasisMark : uint8_t {
-    None,
-    Auto,
     Dot,
     Circle,
     DoubleCircle,
     Triangle,
-    Sesame,
-    Custom
+    Sesame
 };
 
 enum class TextEmphasisPosition : uint8_t {
@@ -1064,16 +1068,6 @@ constexpr float maximumAllowedFontSize = std::numeric_limits<short>::max();
 constexpr float maximumAllowedFontSize = 1000000.0f;
 #endif
 
-enum class TextIndentLine : bool {
-    FirstLine,
-    EachLine
-};
-
-enum class TextIndentType : bool {
-    Normal,
-    Hanging
-};
-
 enum class Isolation : bool {
     Auto,
     Isolate
@@ -1091,8 +1085,7 @@ enum class CSSBoxType : uint8_t {
     ViewBox
 };
 
-enum class ScrollSnapStrictness : uint8_t {
-    None,
+enum class ScrollSnapStrictness : bool {
     Proximity,
     Mandatory
 };
@@ -1176,6 +1169,11 @@ enum class EventListenerRegionType : uint32_t {
     NonPassiveMouseMove    = 1 << 30,
 };
 
+enum class MathShift : bool {
+    Normal,
+    Compact,
+};
+
 enum class MathStyle : bool {
     Normal,
     Compact,
@@ -1238,10 +1236,108 @@ enum class PositionVisibility : uint8_t {
     NoOverflow     = 1 << 2
 };
 
+enum class NinePieceImageRule : uint8_t {
+    Stretch,
+    Round,
+    Space,
+    Repeat,
+};
+
+enum class AnimationDirection : uint8_t {
+    Normal,
+    Alternate,
+    Reverse,
+    AlternateReverse
+};
+
+enum class TransitionBehavior : bool {
+    Normal,
+    AllowDiscrete,
+};
+
+enum class Scroller : uint8_t {
+    Nearest,
+    Root,
+    Self
+};
+
+enum class TextAnchor : uint8_t {
+    Start,
+    Middle,
+    End
+};
+
+enum class ColorInterpolation : uint8_t {
+    Auto,
+    SRGB,
+    LinearRGB
+};
+
+enum class ShapeRendering : uint8_t {
+    Auto,
+    OptimizeSpeed,
+    CrispEdges,
+    GeometricPrecision
+};
+
+enum class GlyphOrientation : uint8_t {
+    Degrees0,
+    Degrees90,
+    Degrees180,
+    Degrees270,
+    Auto
+};
+
+enum class AlignmentBaseline : uint8_t {
+    Baseline,
+    BeforeEdge,
+    TextBeforeEdge,
+    Middle,
+    Central,
+    AfterEdge,
+    TextAfterEdge,
+    Ideographic,
+    Alphabetic,
+    Hanging,
+    Mathematical
+};
+
+enum class DominantBaseline : uint8_t {
+    Auto,
+    UseScript,
+    NoChange,
+    ResetSize,
+    Ideographic,
+    Alphabetic,
+    Hanging,
+    Mathematical,
+    Central,
+    Middle,
+    TextAfterEdge,
+    TextBeforeEdge
+};
+
+enum class VectorEffect : uint8_t {
+    None,
+    NonScalingStroke
+};
+
+enum class BufferedRendering : uint8_t {
+    Auto,
+    Dynamic,
+    Static
+};
+
+enum class MaskType : uint8_t {
+    Luminance,
+    Alpha
+};
+
 CSSBoxType transformBoxToCSSBoxType(TransformBox);
 
 constexpr float defaultMiterLimit = 4;
 
+WTF::TextStream& operator<<(WTF::TextStream&, AnimationDirection);
 WTF::TextStream& operator<<(WTF::TextStream&, AnimationFillMode);
 WTF::TextStream& operator<<(WTF::TextStream&, AnimationPlayState);
 WTF::TextStream& operator<<(WTF::TextStream&, AspectRatioType);
@@ -1308,8 +1404,10 @@ WTF::TextStream& operator<<(WTF::TextStream&, MarqueeBehavior);
 WTF::TextStream& operator<<(WTF::TextStream&, MarqueeDirection);
 WTF::TextStream& operator<<(WTF::TextStream&, MaskMode);
 WTF::TextStream& operator<<(WTF::TextStream&, NBSPMode);
+WTF::TextStream& operator<<(WTF::TextStream&, NinePieceImageRule);
 WTF::TextStream& operator<<(WTF::TextStream&, ObjectFit);
 WTF::TextStream& operator<<(WTF::TextStream&, Order);
+WTF::TextStream& operator<<(WTF::TextStream&, OutlineStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, WebCore::Overflow);
 WTF::TextStream& operator<<(WTF::TextStream&, OverflowAlignment);
 WTF::TextStream& operator<<(WTF::TextStream&, OverflowWrap);
@@ -1329,6 +1427,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapAxis);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapAxisAlignType);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapStop);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapStrictness);
+WTF::TextStream& operator<<(WTF::TextStream&, Scroller);
 WTF::TextStream& operator<<(WTF::TextStream&, SpeakAs);
 WTF::TextStream& operator<<(WTF::TextStream&, StyleDifference);
 WTF::TextStream& operator<<(WTF::TextStream&, StyleDifferenceContextSensitiveProperty);
@@ -1336,7 +1435,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, TableLayoutType);
 WTF::TextStream& operator<<(WTF::TextStream&, TextAlignMode);
 WTF::TextStream& operator<<(WTF::TextStream&, TextAlignLast);
 WTF::TextStream& operator<<(WTF::TextStream&, TextCombine);
-WTF::TextStream& operator<<(WTF::TextStream&, TextDecorationLine);
 WTF::TextStream& operator<<(WTF::TextStream&, TextDecorationSkipInk);
 WTF::TextStream& operator<<(WTF::TextStream&, TextDecorationStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, TextEmphasisFill);
@@ -1351,21 +1449,33 @@ WTF::TextStream& operator<<(WTF::TextStream&, TextUnderlinePosition);
 WTF::TextStream& operator<<(WTF::TextStream&, TextWrapMode);
 WTF::TextStream& operator<<(WTF::TextStream&, TextWrapStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, TextBoxTrim);
-WTF::TextStream& operator<<(WTF::TextStream&, TextEdgeType);
+WTF::TextStream& operator<<(WTF::TextStream&, TextEdgeOver);
+WTF::TextStream& operator<<(WTF::TextStream&, TextEdgeUnder);
 WTF::TextStream& operator<<(WTF::TextStream&, TextZoom);
 WTF::TextStream& operator<<(WTF::TextStream&, TransformBox);
 WTF::TextStream& operator<<(WTF::TextStream&, TransformStyle3D);
+WTF::TextStream& operator<<(WTF::TextStream&, TransitionBehavior);
 WTF::TextStream& operator<<(WTF::TextStream&, UserDrag);
 WTF::TextStream& operator<<(WTF::TextStream&, UserModify);
 WTF::TextStream& operator<<(WTF::TextStream&, UserSelect);
-WTF::TextStream& operator<<(WTF::TextStream&, VerticalAlign);
 WTF::TextStream& operator<<(WTF::TextStream&, Visibility);
 WTF::TextStream& operator<<(WTF::TextStream&, WhiteSpace);
 WTF::TextStream& operator<<(WTF::TextStream&, WhiteSpaceCollapse);
 WTF::TextStream& operator<<(WTF::TextStream&, WordBreak);
+WTF::TextStream& operator<<(WTF::TextStream&, MathShift);
 WTF::TextStream& operator<<(WTF::TextStream&, MathStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, ContainIntrinsicSizeType);
 WTF::TextStream& operator<<(WTF::TextStream&, FieldSizing);
 WTF::TextStream& operator<<(WTF::TextStream&, OverflowContinue);
+
+WTF::TextStream& operator<<(WTF::TextStream&, AlignmentBaseline);
+WTF::TextStream& operator<<(WTF::TextStream&, BufferedRendering);
+WTF::TextStream& operator<<(WTF::TextStream&, ColorInterpolation);
+WTF::TextStream& operator<<(WTF::TextStream&, DominantBaseline);
+WTF::TextStream& operator<<(WTF::TextStream&, GlyphOrientation);
+WTF::TextStream& operator<<(WTF::TextStream&, MaskType);
+WTF::TextStream& operator<<(WTF::TextStream&, ShapeRendering);
+WTF::TextStream& operator<<(WTF::TextStream&, TextAnchor);
+WTF::TextStream& operator<<(WTF::TextStream&, VectorEffect);
 
 } // namespace WebCore

@@ -115,8 +115,10 @@ void JSWebAssemblyArray::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     if (thisObject->elementsAreRefTypes()) {
         auto span = thisObject->refTypeSpan();
 #if ASSERT_ENABLED
-        for (uint64_t value : span)
-            validateWasmValue(value, thisObject->elementType().type.unpacked());
+        if (!thisObject->m_isUnpopulated) {
+            for (uint64_t value : span)
+                validateWasmValue(value, thisObject->elementType().type.unpacked());
+        }
 #endif
         visitor.appendValues(std::bit_cast<WriteBarrier<Unknown>*>(span.data()), span.size());
     }

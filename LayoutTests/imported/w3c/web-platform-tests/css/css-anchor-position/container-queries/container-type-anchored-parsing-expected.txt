@@ -1,0 +1,7 @@
+
+FAIL e.style['container-type'] = "anchored" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['container-type'] = "size anchored" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['container-type'] = "anchored inline-size" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['container-type'] = "anchored anchored" should not set the property value
+PASS e.style['container-type'] = "normal anchored" should not set the property value
+

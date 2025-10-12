@@ -58,10 +58,12 @@ private:
     // As an audio source, we will never propagate silence.
     bool propagatesSilence() const final { return false; }
 
-    Ref<MediaStreamAudioSource> m_source;
-    Ref<MediaStream> m_stream;
+    const Ref<MediaStreamAudioSource> m_source;
+    const Ref<MediaStream> m_stream;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_AUDIONODE(MediaStreamAudioDestinationNode, NodeTypeMediaStreamAudioDestination);
 
 #endif // ENABLE(WEB_AUDIO) && ENABLE(MEDIA_STREAM)

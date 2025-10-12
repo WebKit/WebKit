@@ -52,6 +52,8 @@ public:
     // Returns nullptr if data is not a valid audio file.
     static RefPtr<AudioBuffer> createFromAudioFileData(std::span<const uint8_t> data, bool mixToMono, float sampleRate);
 
+    ~AudioBuffer();
+
     // Format
     size_t originalLength() const { return m_originalLength; }
     double originalDuration() const { return originalLength() / static_cast<double>(sampleRate()); }

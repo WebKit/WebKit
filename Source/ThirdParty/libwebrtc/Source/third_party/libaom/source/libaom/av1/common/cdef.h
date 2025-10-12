@@ -61,9 +61,9 @@ static inline int sign(int i) { return i < 0 ? -1 : 1; }
 static inline int constrain(int diff, int threshold, int damping) {
   if (!threshold) return 0;
 
-  const int shift = AOMMAX(0, damping - get_msb(threshold));
-  return sign(diff) *
-         AOMMIN(abs(diff), AOMMAX(0, threshold - (abs(diff) >> shift)));
+  int shift = damping - get_msb(threshold);
+  shift = AOMMAX(0, shift);
+  return sign(diff) * clamp(threshold - (abs(diff) >> shift), 0, abs(diff));
 }
 
 #ifdef __cplusplus

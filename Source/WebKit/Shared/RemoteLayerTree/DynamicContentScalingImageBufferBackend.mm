@@ -75,7 +75,7 @@ size_t DynamicContentScalingImageBufferBackend::calculateMemoryCost(const Parame
 {
     // FIXME: This is fairly meaningless, because we don't actually have a bitmap, and
     // should really be based on the encoded data size.
-    return WebCore::ImageBufferBackend::calculateMemoryCost(parameters.backendSize, calculateBytesPerRow(parameters.backendSize));
+    return WebCore::ImageBufferBackend::calculateMemoryCost(parameters.backendSize, calculateBytesPerRow(parameters.backendSize, parameters.bufferFormat.pixelFormat));
 }
 
 std::unique_ptr<DynamicContentScalingImageBufferBackend> DynamicContentScalingImageBufferBackend::create(const Parameters& parameters, const WebCore::ImageBufferCreationContext& creationContext)
@@ -146,7 +146,7 @@ WebCore::GraphicsContext& DynamicContentScalingImageBufferBackend::context()
 
 unsigned DynamicContentScalingImageBufferBackend::bytesPerRow() const
 {
-    return calculateBytesPerRow(m_parameters.backendSize);
+    return calculateBytesPerRow(m_parameters.backendSize, m_parameters.bufferFormat.pixelFormat);
 }
 
 void DynamicContentScalingImageBufferBackend::releaseGraphicsContext()

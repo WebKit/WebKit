@@ -30,17 +30,17 @@
 #if ENABLE(VIDEO)
 
 #include "CachedRawResource.h"
-#include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CrossOriginAccessControl.h"
-#include "DocumentInlines.h"
+#include "DocumentQuirks.h"
+#include "DocumentResourceLoader.h"
+#include "DocumentSecurityOrigin.h"
 #include "Element.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTTPHeaderNames.h"
 #include "InspectorInstrumentation.h"
 #include "LocalFrameLoaderClient.h"
 #include "OriginAccessPatterns.h"
-#include "Quirks.h"
 #include "SecurityOrigin.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -90,14 +90,14 @@ void MediaResourceLoader::sendH2Ping(const URL& url, CompletionHandler<void(Expe
     if (!m_document || !m_document->frame())
         return completionHandler(makeUnexpected(internalError(url)));
 
-    m_document->protectedFrame()->protectedLoader()->client().sendH2Ping(url, WTFMove(completionHandler));
+    m_document->protectedFrame()->loader().client().sendH2Ping(url, WTFMove(completionHandler));
 }
 
 RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceRequest&& request, LoadOptions options)
 {
     assertIsMainThread();
 
-    RefPtr document = protectedDocument();
+    RefPtr document = this->document();
     if (!document)
         return nullptr;
 
@@ -241,11 +241,6 @@ MediaResource::MediaResource(MediaResourceLoader& loader, CachedResourceHandle<C
     protectedResource()->addClient(*this);
 }
 
-Ref<MediaResourceLoader> MediaResource::protectedLoader() const
-{
-    return m_loader;
-}
-
 CachedResourceHandle<CachedRawResource> MediaResource::protectedResource() const
 {
     return m_resource;
@@ -257,7 +252,7 @@ MediaResource::~MediaResource()
 
     if (m_resource)
         protectedResource()->removeClient(*this);
-    protectedLoader()->removeResource(*this);
+    m_loader->removeResource(*this);
 }
 
 void MediaResource::shutdown()
@@ -310,7 +305,7 @@ void MediaResource::responseReceived(const CachedResource& resource, const Resou
         });
     }
 
-    protectedLoader()->addResponseForTesting(response);
+    m_loader->addResponseForTesting(response);
 }
 
 bool MediaResource::shouldCacheResponse(CachedResource& resource, const ResourceResponse& response)

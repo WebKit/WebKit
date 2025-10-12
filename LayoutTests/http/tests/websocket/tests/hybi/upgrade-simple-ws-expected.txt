@@ -8,4 +8,7 @@ Connected; readyState 1
 Resolved URL: wss://127.0.0.1:9323/websocket/tests/hybi/simple
 Received: 'Hello from Simple WSH.'; readyState 1
 Closed; readyState 3.
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

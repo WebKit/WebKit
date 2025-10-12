@@ -10,11 +10,21 @@
 
 #include "audio/voip/voip_core.h"
 
+#include <memory>
+#include <utility>
+
+#include "api/audio/audio_processing.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/environment/environment_factory.h"
+#include "api/make_ref_counted.h"
+#include "api/scoped_refptr.h"
+#include "api/voip/voip_base.h"
+#include "api/voip/voip_dtmf.h"
 #include "modules/audio_device/include/mock_audio_device.h"
 #include "modules/audio_processing/include/mock_audio_processing.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
 #include "test/run_loop.h"
@@ -39,8 +49,8 @@ class VoipCoreTest : public ::testing::Test {
   void SetUp() override {
     auto encoder_factory = CreateBuiltinAudioEncoderFactory();
     auto decoder_factory = CreateBuiltinAudioDecoderFactory();
-    rtc::scoped_refptr<AudioProcessing> audio_processing =
-        rtc::make_ref_counted<NiceMock<test::MockAudioProcessing>>();
+    scoped_refptr<AudioProcessing> audio_processing =
+        make_ref_counted<NiceMock<test::MockAudioProcessing>>();
 
     voip_core_ = std::make_unique<VoipCore>(
         CreateEnvironment(), std::move(encoder_factory),
@@ -50,7 +60,7 @@ class VoipCoreTest : public ::testing::Test {
   test::RunLoop run_loop_;
   std::unique_ptr<VoipCore> voip_core_;
   NiceMock<MockTransport> transport_;
-  rtc::scoped_refptr<test::MockAudioDeviceModule> audio_device_;
+  scoped_refptr<test::MockAudioDeviceModule> audio_device_;
 };
 
 // Validate expected API calls that involves with VoipCore. Some verification is

@@ -27,13 +27,10 @@
 
 #pragma once
 
-#include "Document.h"
-#include "Editor.h"
-#include "EventHandler.h"
-#include "FrameLoader.h"
-#include "FrameSelection.h"
-#include "LocalFrame.h"
-#include "LocalFrameView.h"
+#include <WebCore/Document.h>
+#include <WebCore/Editor.h>
+#include <WebCore/FrameSelection.h>
+#include <WebCore/LocalFrame.h>
 
 namespace WebCore {
 
@@ -45,16 +42,6 @@ inline Document* LocalFrame::document() const
 inline RefPtr<Document> LocalFrame::protectedDocument() const
 {
     return document();
-}
-
-inline LocalFrameView* LocalFrame::view() const
-{
-    return m_view.get();
-}
-
-inline RefPtr<LocalFrameView> LocalFrame::protectedView() const
-{
-    return m_view;
 }
 
 inline Editor& LocalFrame::editor()
@@ -75,26 +62,6 @@ inline Ref<Editor> LocalFrame::protectedEditor()
 inline Ref<const Editor> LocalFrame::protectedEditor() const
 {
     return editor();
-}
-
-inline CheckedRef<EventHandler> LocalFrame::checkedEventHandler()
-{
-    return m_eventHandler.get();
-}
-
-inline CheckedRef<const EventHandler> LocalFrame::checkedEventHandler() const
-{
-    return m_eventHandler.get();
-}
-
-inline Ref<const FrameLoader> LocalFrame::protectedLoader() const
-{
-    return m_loader.get();
-}
-
-inline Ref<FrameLoader> LocalFrame::protectedLoader()
-{
-    return m_loader.get();
 }
 
 inline FrameSelection& LocalFrame::selection()

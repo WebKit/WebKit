@@ -11,10 +11,16 @@
 #include "modules/desktop_capture/win/dxgi_texture_staging.h"
 
 #include <comdef.h>
+#include <d3d11.h>
 #include <dxgi.h>
 #include <dxgi1_2.h>
 #include <unknwn.h>
+#include <winerror.h>
+#include <wrl/client.h>
 
+#include <cstring>
+
+#include "modules/desktop_capture/win/d3d_device.h"
 #include "modules/desktop_capture/win/desktop_capture_utils.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"

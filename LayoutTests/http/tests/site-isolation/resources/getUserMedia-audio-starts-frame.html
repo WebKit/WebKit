@@ -4,6 +4,8 @@ window.internals.withUserGesture(() => {
     streamPromise = navigator.mediaDevices.getUserMedia({ audio: true });
 });
 streamPromise
-    .then(() => { window.parent.postMessage('success', '*'); })
-    .catch(error => { window.parent.postMessage(`fail (${error})`, '*'); });
+    .then((stream) => {
+        window.parent.postMessage('success', '*');
+        stream.getTracks().forEach(t => t.stop());
+     }).catch(error => { window.parent.postMessage(`fail (${error})`, '*'); });
 </script>

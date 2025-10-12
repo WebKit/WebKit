@@ -160,7 +160,7 @@ private:
     SegmentedString m_originalSourceForTransform;
 
     RefPtr<XMLParserContext> m_context;
-    std::unique_ptr<PendingCallbacks> m_pendingCallbacks;
+    const UniqueRef<PendingCallbacks> m_pendingCallbacks;
     Vector<xmlChar> m_bufferedText;
 
     CheckedPtr<ContainerNode> m_currentNode;

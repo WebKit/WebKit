@@ -14,9 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/webidl/ecmascript-binding/es-exceptions/DOMException-constants.any.js
-/LayoutTests/imported/w3c/web-platform-tests/webidl/ecmascript-binding/es-exceptions/DOMException-constructor-and-prototype.any.js
-/LayoutTests/imported/w3c/web-platform-tests/webidl/ecmascript-binding/es-exceptions/DOMException-constructor-behavior.any.js
-/LayoutTests/imported/w3c/web-platform-tests/webidl/ecmascript-binding/es-exceptions/DOMException-custom-bindings.any.js
-/LayoutTests/imported/w3c/web-platform-tests/webidl/ecmascript-binding/es-exceptions/DOMException-is-error.any.js
-/LayoutTests/imported/w3c/web-platform-tests/webidl/ecmascript-binding/es-exceptions/exceptions.html
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constants.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constructor-and-prototype.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constructor-behavior.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-custom-bindings.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-is-error.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/exceptions.html

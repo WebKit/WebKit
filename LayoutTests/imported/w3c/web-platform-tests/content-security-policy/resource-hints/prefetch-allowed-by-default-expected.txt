@@ -1,0 +1,3 @@
+
+PASS Prefetch should succeed when allowed by default-src
+

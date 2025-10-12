@@ -29,7 +29,7 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-#include "GenericTypedArrayView.h"
-#include "TypedArrayAdaptors.h"
+#include <JavaScriptCore/GenericTypedArrayView.h>
+#include <JavaScriptCore/TypedArrayAdaptors.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

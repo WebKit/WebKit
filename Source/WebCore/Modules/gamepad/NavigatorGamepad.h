@@ -27,7 +27,8 @@
 
 #if ENABLE(GAMEPAD)
 
-#include "Supplementable.h"
+#include <WebCore/Navigator.h>
+#include <WebCore/Supplementable.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMalloc.h>
@@ -40,7 +41,6 @@ class NavigatorGamepad;
 namespace WebCore {
 
 class Gamepad;
-class Navigator;
 class Page;
 class PlatformGamepad;
 template<typename> class ExceptionOr;
@@ -53,7 +53,7 @@ public:
 
     static NavigatorGamepad& from(Navigator&);
 
-    Navigator& navigator() const;
+    Navigator& navigator() const { return m_navigator; }
 
     // The array of Gamepads might be sparse.
     // Null checking each entry is necessary.
@@ -70,7 +70,8 @@ public:
     RefPtr<Page> protectedPage() const;
 
 private:
-    static ASCIILiteral supplementName();
+    static ASCIILiteral supplementName() { return "NavigatorGamepad"_s; }
+    bool isNavigatorGamepad() const final { return true; }
 
     void gamepadsBecameVisible();
     void maybeNotifyRecentAccess();
@@ -82,5 +83,9 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::NavigatorGamepad)
+    static bool isType(const WebCore::SupplementBase& supplement) { return supplement.isNavigatorGamepad(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(GAMEPAD)

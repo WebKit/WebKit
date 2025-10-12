@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "CachedResourceClient.h"
+#include <WebCore/CachedResourceClient.h>
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {

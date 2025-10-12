@@ -119,7 +119,7 @@ void StringConstraint::merge(const StringConstraint& other)
     }
 }
 
-void MediaTrackConstraintSetMap::forEach(Function<void(MediaConstraintType, const MediaConstraint&)>&& callback) const
+void MediaTrackConstraintSetMap::forEach(NOESCAPE Function<void(MediaConstraintType, const MediaConstraint&)>&& callback) const
 {
     filter([callback = WTFMove(callback)] (auto type, auto& constraint) mutable {
         callback(type, constraint);

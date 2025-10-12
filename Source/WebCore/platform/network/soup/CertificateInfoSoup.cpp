@@ -118,7 +118,7 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
     if (subjectName)
         summaryInfo.subject = String::fromUTF8(subjectName.get());
     for (auto dnsName : span<GBytes*>(dnsNames))
-        summaryInfo.dnsNames.append(String(span(dnsName)));
+        summaryInfo.dnsNames.append(String(byteCast<Latin1Character>(span(dnsName))));
     for (auto address : span<GInetAddress*>(ipAddresses)) {
         GUniquePtr<char> ipAddress(g_inet_address_to_string(address));
         summaryInfo.ipAddresses.append(String::fromUTF8(ipAddress.get()));

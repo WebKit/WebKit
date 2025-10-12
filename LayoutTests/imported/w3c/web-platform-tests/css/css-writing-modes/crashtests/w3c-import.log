@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/crashtests/chrome-bug-1512988.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/crashtests/orthogonal-percent-height-multicol-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/crashtests/orthogonal-scroll-percent-height-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/crashtests/orthogonal-table-in-flex-crash.html

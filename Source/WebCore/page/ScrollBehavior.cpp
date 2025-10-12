@@ -28,6 +28,7 @@
 
 #include "ContainerNodeInlines.h"
 #include "Element.h"
+#include "NodeDocument.h"
 #include "RenderElement.h"
 #include "RenderStyleInlines.h"
 #include "Settings.h"
@@ -50,7 +51,7 @@ bool useSmoothScrolling(ScrollBehavior behavior, Element* associatedElement)
     // https://drafts.csswg.org/cssom-view/#scrolling
     switch (behavior) {
     case ScrollBehavior::Auto:
-        return associatedElement->renderer()->style().useSmoothScrolling();
+        return associatedElement->renderer()->style().scrollBehavior() == Style::ScrollBehavior::Smooth;
     case ScrollBehavior::Instant:
         return false;
     case ScrollBehavior::Smooth:

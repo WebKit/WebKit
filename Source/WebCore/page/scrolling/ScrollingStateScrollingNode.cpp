@@ -70,6 +70,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(
     MouseLocationState&& mouseLocationState,
     ScrollbarHoverState&& scrollbarHoverState,
     ScrollbarEnabledState&& scrollbarEnabledState,
+    std::optional<ScrollbarColor>&& scrollbarColor,
     UserInterfaceLayoutDirection scrollbarLayoutDirection,
     ScrollbarWidth scrollbarWidth,
     bool useDarkAppearanceForScrollbars,
@@ -90,6 +91,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(
     , m_scrollbarHoverState(WTFMove(scrollbarHoverState))
     , m_mouseLocationState(WTFMove(mouseLocationState))
     , m_scrollbarEnabledState(WTFMove(scrollbarEnabledState))
+    , m_scrollbarColor(WTFMove(scrollbarColor))
     , m_scrollableAreaParameters(WTFMove(scrollableAreaParameters))
     , m_requestedScrollData(WTFMove(requestedScrollData))
     , m_keyboardScrollData(WTFMove(keyboardScrollData))
@@ -119,6 +121,9 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_scrollbarEnabledState(stateNode.scrollbarEnabledState())
     , m_verticalScrollerImp(stateNode.verticalScrollerImp())
     , m_horizontalScrollerImp(stateNode.horizontalScrollerImp())
+#endif
+#if PLATFORM(COCOA)
+    , m_scrollbarColor(stateNode.scrollbarColor())
 #endif
     , m_scrollableAreaParameters(stateNode.scrollableAreaParameters())
     , m_requestedScrollData(stateNode.requestedScrollData())
@@ -383,6 +388,15 @@ void ScrollingStateScrollingNode::setScrollbarEnabledState(ScrollbarOrientation 
         m_scrollbarEnabledState.verticalScrollbarIsEnabled = enabled;
 
     setPropertyChanged(Property::ScrollbarEnabledState);
+}
+
+void ScrollingStateScrollingNode::setScrollbarColor(std::optional<ScrollbarColor> state)
+{
+    if (state == m_scrollbarColor)
+        return;
+
+    m_scrollbarColor = state;
+    setPropertyChanged(Property::ScrollbarColor);
 }
 
 void ScrollingStateScrollingNode::setScrollbarLayoutDirection(UserInterfaceLayoutDirection scrollbarLayoutDirection)

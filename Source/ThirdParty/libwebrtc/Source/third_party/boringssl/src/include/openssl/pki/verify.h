@@ -72,6 +72,9 @@ class OPENSSL_EXPORT CertificateVerifyOptions {
     CLIENT_AUTH_STRICT,
     SERVER_AUTH_STRICT_LEAF,
     CLIENT_AUTH_STRICT_LEAF,
+    RCS_MLS_CLIENT_AUTH,
+    C2PA_TIMESTAMPING,
+    C2PA_MANIFEST
   };
 
   CertificateVerifyOptions();

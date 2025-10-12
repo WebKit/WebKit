@@ -27,6 +27,7 @@
 #include "av1/decoder/decodemv.h"
 
 #include "aom_dsp/aom_dsp_common.h"
+#include "aom_ports/bitops.h"
 
 #define ACCT_STR __func__
 
@@ -496,7 +497,7 @@ static void read_palette_colors_y(MACROBLOCKD *const xd, int bit_depth,
         pmi->palette_colors[idx] = clamp(pmi->palette_colors[idx - 1] + delta,
                                          0, (1 << bit_depth) - 1);
         range -= (pmi->palette_colors[idx] - pmi->palette_colors[idx - 1]);
-        bits = AOMMIN(bits, av1_ceil_log2(range));
+        bits = AOMMIN(bits, aom_ceil_log2(range));
       }
     }
     merge_colors(pmi->palette_colors, cached_colors, n, n_cached_colors);
@@ -530,7 +531,7 @@ static void read_palette_colors_uv(MACROBLOCKD *const xd, int bit_depth,
         pmi->palette_colors[idx] = clamp(pmi->palette_colors[idx - 1] + delta,
                                          0, (1 << bit_depth) - 1);
         range -= (pmi->palette_colors[idx] - pmi->palette_colors[idx - 1]);
-        bits = AOMMIN(bits, av1_ceil_log2(range));
+        bits = AOMMIN(bits, aom_ceil_log2(range));
       }
     }
     merge_colors(pmi->palette_colors + PALETTE_MAX_SIZE, cached_colors, n,

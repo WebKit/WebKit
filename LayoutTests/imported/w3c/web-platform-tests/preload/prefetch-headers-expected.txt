@@ -1,5 +1,5 @@
 
-PASS Prefetch should include Sec-Purpose=prefetch and Sec-Fetch-Dest=empty headers
+FAIL Prefetch should include Sec-Purpose=prefetch and Sec-Fetch-Dest=empty headers assert_equals: expected (string) "empty" but got (undefined) undefined
 PASS Prefetch should not include proprietary headers (X-moz/Purpose)
 PASS Prefetch should respect CORS mode
 

@@ -12,6 +12,11 @@
 
 #include <windows.h>
 
+#include <utility>
+
+#include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/desktop_capture/desktop_capturer.h"
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/win/screen_capture_utils.h"
 #include "rtc_base/logging.h"
 

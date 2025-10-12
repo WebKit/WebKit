@@ -23,9 +23,6 @@
 #if ENABLE(GPU_PROCESS)
 
 struct WebKit::GPUProcessPreferences {
-#if USE(MODERN_AVCONTENTKEYSESSION)
-    std::optional<bool> shouldUseModernAVContentKeySession;
-#endif
 #if ENABLE(VP9)
     std::optional<bool> vp9DecoderEnabled;
     bool swVPDecodersAlwaysEnabled;

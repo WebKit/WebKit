@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -13,15 +10,7 @@ function base() { this.prop = 42; }
 
 class testInitialize extends base {
     constructor() {
-        // A poor man's assertThrowsInstanceOf, as arrow functions are currently
-        // disabled in this context
-        try {
-            this;
-            throw new Error();
-        } catch (e) {
-            if (!(e instanceof ReferenceError))
-                throw e;
-        }
+        assert.throws(ReferenceError, () => this);
         super();
         assert.sameValue(this.prop, 42);
     }
@@ -35,7 +24,7 @@ class willThrow extends base {
         super();
     }
 }
-assertThrowsInstanceOf(()=>new willThrow(), ReferenceError);
+assert.throws(ReferenceError, ()=>new willThrow());
 
 // This is determined at runtime, not the syntax level.
 class willStillThrow extends base {
@@ -45,7 +34,7 @@ class willStillThrow extends base {
         }
     }
 }
-assertThrowsInstanceOf(()=>new willStillThrow(), ReferenceError);
+assert.throws(ReferenceError, ()=>new willStillThrow());
 
 class canCatchThrow extends base {
     constructor() {

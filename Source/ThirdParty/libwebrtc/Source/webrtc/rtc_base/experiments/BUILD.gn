@@ -40,6 +40,7 @@ rtc_library("field_trial_parser") {
     "../../rtc_base:safe_conversions",
     "../../rtc_base:stringutils",
     "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/strings:string_view",
   ]
 }
@@ -62,10 +63,12 @@ rtc_library("quality_scaling_experiment") {
     "quality_scaling_experiment.h",
   ]
   deps = [
+    "..:checks",
     "..:logging",
     "../../api:field_trials_view",
-    "../../api/transport:field_trial_based_config",
+    "../../api/video:video_frame",
     "../../api/video_codecs:video_codecs_api",
+    "../../rtc_base/experiments:field_trial_parser",
     "//third_party/abseil-cpp/absl/strings",
   ]
 }
@@ -88,10 +91,11 @@ rtc_library("balanced_degradation_settings") {
   ]
   deps = [
     ":field_trial_parser",
+    "..:checks",
     "..:logging",
     "../../api:field_trials_view",
+    "../../api/video:video_frame",
     "../../api/video_codecs:video_codecs_api",
-    "../../system_wrappers:field_trial",
   ]
 }
 
@@ -104,6 +108,7 @@ rtc_library("encoder_info_settings") {
     ":field_trial_parser",
     "..:logging",
     "../../api:field_trials_view",
+    "../../api/video:video_frame",
     "../../api/video_codecs:video_codecs_api",
     "//third_party/abseil-cpp/absl/strings:string_view",
   ]
@@ -130,17 +135,6 @@ rtc_library("keyframe_interval_settings_experiment") {
   sources = [
     "keyframe_interval_settings.cc",
     "keyframe_interval_settings.h",
-  ]
-  deps = [
-    ":field_trial_parser",
-    "../../api:field_trials_view",
-  ]
-}
-
-rtc_library("stable_target_rate_experiment") {
-  sources = [
-    "stable_target_rate_experiment.cc",
-    "stable_target_rate_experiment.h",
   ]
   deps = [
     ":field_trial_parser",
@@ -179,7 +173,6 @@ if (rtc_include_tests && !build_with_chromium) {
       "quality_scaler_settings_unittest.cc",
       "quality_scaling_experiment_unittest.cc",
       "rate_control_settings_unittest.cc",
-      "stable_target_rate_experiment_unittest.cc",
       "struct_parameters_parser_unittest.cc",
     ]
     deps = [
@@ -192,17 +185,14 @@ if (rtc_include_tests && !build_with_chromium) {
       ":quality_scaler_settings",
       ":quality_scaling_experiment",
       ":rate_control_settings",
-      ":stable_target_rate_experiment",
       "..:gunit_helpers",
-      "../:rtc_base_tests_utils",
+      "../../api:field_trials",
+      "../../api:field_trials_view",
       "../../api/units:data_rate",
+      "../../api/units:data_size",
+      "../../api/units:time_delta",
       "../../api/video:video_frame",
       "../../api/video_codecs:video_codecs_api",
-      "../../system_wrappers:field_trial",
-      "../../test:explicit_key_value_config",
-      "../../test:field_trial",
-      "../../test:scoped_key_value_config",
-      "../../test:test_main",
       "../../test:test_support",
       "../../video/config:encoder_config",
       "//third_party/abseil-cpp/absl/strings:string_view",

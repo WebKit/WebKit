@@ -10,20 +10,22 @@
 
 #include "modules/video_coding/utility/frame_dropper.h"
 
+#include <cstddef>
+
 #include "test/gtest.h"
 
 namespace webrtc {
 
 namespace {
 
-const float kTargetBitRateKbps = 300;
-const float kIncomingFrameRate = 30;
-const size_t kFrameSizeBytes = 1250;
+constexpr float kTargetBitRateKbps = 300;
+constexpr float kIncomingFrameRate = 30;
+constexpr size_t kFrameSizeBytes = 1250;
 
-const size_t kLargeFrameSizeBytes = 25000;
+constexpr size_t kLargeFrameSizeBytes = 25000;
 
-const bool kIncludeKeyFrame = true;
-const bool kDoNotIncludeKeyFrame = false;
+constexpr bool kIncludeKeyFrame = true;
+constexpr bool kDoNotIncludeKeyFrame = false;
 
 }  // namespace
 

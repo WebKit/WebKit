@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkSocketChannel);
 
 RefPtr<NetworkSocketChannel> NetworkSocketChannel::create(NetworkConnectionToWebProcess& connection, PAL::SessionID sessionID, const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
 {
-    Ref result = adoptRef(*new NetworkSocketChannel(connection, connection.protectedNetworkProcess()->networkSession(sessionID), request, protocol, identifier, webPageProxyID, frameID, pageID, clientOrigin, hadMainFrameMainResourcePrivateRelayed, allowPrivacyProxy, advancedPrivacyProtections, storedCredentialsPolicy));
+    Ref result = adoptRef(*new NetworkSocketChannel(connection, connection.networkProcess().networkSession(sessionID), request, protocol, identifier, webPageProxyID, frameID, pageID, clientOrigin, hadMainFrameMainResourcePrivateRelayed, allowPrivacyProxy, advancedPrivacyProtections, storedCredentialsPolicy));
     if (!result->m_socket) {
         result->didClose(0, "Cannot create a web socket task"_s);
         return nullptr;
@@ -57,13 +57,13 @@ NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connec
     , m_webPageProxyID(webPageProxyID)
 {
     relaxAdoptionRequirement();
-    if (!m_session)
+    if (!session)
         return;
 
-    m_socket = m_session->createWebSocketTask(webPageProxyID, frameID, pageID, *this, request, protocol, clientOrigin, hadMainFrameMainResourcePrivateRelayed, allowPrivacyProxy, advancedPrivacyProtections, storedCredentialsPolicy);
-    if (CheckedPtr socket = m_socket.get()) {
+    m_socket = session->createWebSocketTask(webPageProxyID, frameID, pageID, *this, request, protocol, clientOrigin, hadMainFrameMainResourcePrivateRelayed, allowPrivacyProxy, advancedPrivacyProtections, storedCredentialsPolicy);
+    if (RefPtr socket = m_socket.get()) {
 #if PLATFORM(COCOA)
-        m_session->addWebSocketTask(webPageProxyID, *socket);
+        session->addWebSocketTask(webPageProxyID, *socket);
 #endif
         socket->resume();
     }
@@ -71,10 +71,10 @@ NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connec
 
 NetworkSocketChannel::~NetworkSocketChannel()
 {
-    if (CheckedPtr socket = m_socket.get()) {
+    if (RefPtr socket = m_socket.get()) {
 #if PLATFORM(COCOA)
         if (RefPtr sessionSet = m_session ? socket->sessionSet() : nullptr)
-            m_session->removeWebSocketTask(*sessionSet, *socket);
+            CheckedRef { *m_session }->removeWebSocketTask(*sessionSet, *socket);
 #endif
         socket->cancel();
     }
@@ -87,12 +87,12 @@ Ref<NetworkConnectionToWebProcess> NetworkSocketChannel::protectedConnectionToWe
 
 void NetworkSocketChannel::sendString(std::span<const uint8_t> message, CompletionHandler<void()>&& callback)
 {
-    checkedSocket()->sendString(message, WTFMove(callback));
+    protectedSocket()->sendString(message, WTFMove(callback));
 }
 
 void NetworkSocketChannel::sendData(std::span<const uint8_t> data, CompletionHandler<void()>&& callback)
 {
-    checkedSocket()->sendData(data, WTFMove(callback));
+    protectedSocket()->sendData(data, WTFMove(callback));
 }
 
 void NetworkSocketChannel::finishClosingIfPossible()
@@ -108,7 +108,7 @@ void NetworkSocketChannel::finishClosingIfPossible()
 
 void NetworkSocketChannel::close(int32_t code, const String& reason)
 {
-    checkedSocket()->close(code, reason);
+    protectedSocket()->close(code, reason);
     finishClosingIfPossible();
 }
 
@@ -173,9 +173,18 @@ NetworkSession* NetworkSocketChannel::session() const
     return m_session.get();
 }
 
-CheckedPtr<WebSocketTask> NetworkSocketChannel::checkedSocket()
+RefPtr<WebSocketTask> NetworkSocketChannel::protectedSocket()
 {
     return m_socket.get();
+}
+
+std::optional<SharedPreferencesForWebProcess> NetworkSocketChannel::sharedPreferencesForWebProcess() const
+{
+    RefPtr connectionToWebProcess = m_connectionToWebProcess.get();
+    if (!connectionToWebProcess)
+        return std::nullopt;
+
+    return connectionToWebProcess->sharedPreferencesForWebProcess();
 }
 
 } // namespace WebKit

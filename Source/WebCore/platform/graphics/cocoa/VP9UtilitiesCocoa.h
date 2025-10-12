@@ -25,9 +25,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(VP9) && PLATFORM(COCOA)
 
-#include "VP9Utilities.h"
+#include <WebCore/VP9Utilities.h>
 #include <webm/dom_types.h>
 
 namespace vp9_parser {
@@ -46,6 +47,8 @@ WEBCORE_EXPORT void registerWebKitVP9Decoder();
 WEBCORE_EXPORT void registerSupplementalVP9Decoder();
 bool isVP9DecoderAvailable();
 WEBCORE_EXPORT bool vp9HardwareDecoderAvailable();
+WEBCORE_EXPORT bool vp9HardwareDecoderAvailableInProcess();
+WEBCORE_EXPORT void setVP9HardwareDecoderAvailableInProcess(bool);
 bool isVP8DecoderAvailable();
 bool isVPCodecConfigurationRecordSupported(const VPCodecConfigurationRecord&);
 std::optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord&, const VideoConfiguration&);
@@ -70,31 +73,35 @@ struct VP8FrameHeader {
 std::optional<VP8FrameHeader> parseVP8FrameHeader(std::span<const uint8_t>);
 Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader&, const webm::Video&);
 
-class WEBCORE_EXPORT VP9TestingOverrides {
+class VP9TestingOverrides {
 public:
-    static VP9TestingOverrides& singleton();
+    static WEBCORE_EXPORT VP9TestingOverrides& singleton();
 
-    void setHardwareDecoderDisabled(std::optional<bool>&&);
+    WEBCORE_EXPORT void setHardwareDecoderDisabled(std::optional<bool>&&);
     std::optional<bool> hardwareDecoderDisabled() const { return m_hardwareDecoderDisabled; }
     
-    void setVP9DecoderDisabled(std::optional<bool>&&);
+    WEBCORE_EXPORT void setVP9HardwareDecoderEnabledOverride(std::optional<bool>&&);
+    std::optional<bool> vp9HardwareDecoderEnabledOverride() const { return m_vp9HardwareDecoderEnabledOverride; }
+
+    WEBCORE_EXPORT void setVP9DecoderDisabled(std::optional<bool>&&);
     std::optional<bool> vp9DecoderDisabled() const { return m_vp9DecoderDisabled; }
 
-    void setVP9ScreenSizeAndScale(std::optional<ScreenDataOverrides>&&);
+    WEBCORE_EXPORT void setVP9ScreenSizeAndScale(std::optional<ScreenDataOverrides>&&);
     std::optional<ScreenDataOverrides> vp9ScreenSizeAndScale() const { return m_screenSizeAndScale; }
 
-    void setConfigurationChangedCallback(std::function<void(bool)>&&);
-    void resetOverridesToDefaultValues();
+    WEBCORE_EXPORT void setConfigurationChangedCallback(std::function<void(bool)>&&);
+    WEBCORE_EXPORT void resetOverridesToDefaultValues();
 
-    void setSWVPDecodersAlwaysEnabled(bool);
+    WEBCORE_EXPORT void setSWVPDecodersAlwaysEnabled(bool);
     bool swVPDecodersAlwaysEnabled() const { return m_swVPDecodersAlwaysEnabled; }
 
-    void setShouldEnableVP9Decoder(bool);
-    bool shouldEnableVP9Decoder() const;
+    WEBCORE_EXPORT void setShouldEnableVP9Decoder(bool);
+    WEBCORE_EXPORT bool shouldEnableVP9Decoder() const;
 
 private:
     std::optional<bool> m_hardwareDecoderDisabled;
     std::optional<bool> m_vp9DecoderDisabled;
+    std::optional<bool> m_vp9HardwareDecoderEnabledOverride;
     std::optional<ScreenDataOverrides> m_screenSizeAndScale;
     Function<void(bool)> m_configurationChangedCallback;
     bool m_vp9DecoderEnabled { false };

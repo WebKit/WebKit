@@ -1,6 +1,0 @@
-
-FAIL Block Trusted Type policy creation by event listener. trustedTypes.addEventListener is not a function. (In 'trustedTypes.addEventListener('beforecreatepolicy', event_listener, {once:true})', 'trustedTypes.addEventListener' is undefined)
-FAIL Trusted Type policy creation. trustedTypes.addEventListener is not a function. (In 'trustedTypes.addEventListener('beforecreatepolicy', event_listener, {once:true})', 'trustedTypes.addEventListener' is undefined)
-FAIL Block only default Trusted Type policy creation. trustedTypes.addEventListener is not a function. (In 'trustedTypes.addEventListener('beforecreatepolicy', event_listener, {once:true})', 'trustedTypes.addEventListener' is undefined)
-FAIL Policy creation called before addEventListener function will not reached the listener. trustedTypes.addEventListener is not a function. (In 'trustedTypes.addEventListener('beforecreatepolicy', event_listener, {once:true})', 'trustedTypes.addEventListener' is undefined)
-

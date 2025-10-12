@@ -48,7 +48,7 @@ bool PreviewConverter::supportsMIMEType(const String& mimeType)
     if (equalLettersIgnoringASCIICase(mimeType, "text/html"_s) || equalLettersIgnoringASCIICase(mimeType, "text/plain"_s))
         return false;
 
-    static NeverDestroyed<UncheckedKeyHashSet<String, ASCIICaseInsensitiveHash>> supportedMIMETypes = platformSupportedMIMETypes();
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> supportedMIMETypes = platformSupportedMIMETypes();
     return supportedMIMETypes->contains(mimeType);
 }
 
@@ -67,7 +67,7 @@ const ResourceError& PreviewConverter::previewError() const
 
 const FragmentedSharedBuffer& PreviewConverter::previewData() const
 {
-    return *m_previewData.get();
+    return *m_previewData.get().unsafeGet();
 }
 
 void PreviewConverter::updateMainResource()

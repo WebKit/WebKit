@@ -13,7 +13,6 @@
 #include <algorithm>
 #include <limits>
 
-#include "modules/audio_processing/aec3/aec3_common.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {

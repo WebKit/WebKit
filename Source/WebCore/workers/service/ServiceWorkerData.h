@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "ServiceWorkerIdentifier.h"
-#include "ServiceWorkerTypes.h"
+#include <WebCore/ServiceWorkerIdentifier.h>
+#include <WebCore/ServiceWorkerTypes.h>
+#include <WebCore/WorkerType.h>
 #include <wtf/URL.h>
-#include "WorkerType.h"
 
 namespace WebCore {
 

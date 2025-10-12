@@ -41,11 +41,11 @@ test("overline", "overline", "overline");
 debug("Value 'line-through':");
 test("line-through", "line-through", "line-through");
 
-debug("Value 'blink' (valid but ignored):");
-test("blink", "blink", "none");
+debug("Value 'blink' (valid and computed but ignored for rendering):");
+test("blink", "blink", "blink");
 
 debug("Value 'underline overline line-through blink':");
-test("underline overline line-through blink", "underline overline line-through blink", "underline overline line-through");
+test("underline overline line-through blink", "underline overline line-through blink", "underline overline line-through blink");
 
 debug("Value '':");
 test("", "", "none");

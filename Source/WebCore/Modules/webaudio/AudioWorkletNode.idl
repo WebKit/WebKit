@@ -31,7 +31,6 @@
     Conditional=WEB_AUDIO,
     EnabledBySetting=WebAudioEnabled,
     Exposed=Window,
-    JSGenerateToJSObject,
     SecureContext
 ] interface AudioWorkletNode : AudioNode {
     [CallWith=CurrentGlobalObject] constructor (BaseAudioContext context, DOMString name, optional AudioWorkletNodeOptions options);

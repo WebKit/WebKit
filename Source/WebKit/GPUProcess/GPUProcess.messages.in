@@ -63,7 +63,11 @@ messages -> GPUProcess : AuxiliaryProcess {
     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
 #endif
 
+#if PLATFORM(COCOA)
+    SinkCompletedSnapshotToPDF(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FloatSize size, WebCore::FrameIdentifier rootFrameIdentifier) -> (RefPtr<WebCore::SharedBuffer> result)
 #endif
+    SinkCompletedSnapshotToBitmap(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FloatSize size, WebCore::FrameIdentifier rootFrameIdentifier) -> (std::optional<WebCore::ShareableBitmapHandle> image)
+    ReleaseSnapshot(WebKit::RemoteSnapshotIdentifier identifier)
 
 #if HAVE(SCREEN_CAPTURE_KIT)
     PromptForGetDisplayMedia(enum:uint8_t WebCore::DisplayCapturePromptType type) -> (std::optional<WebCore::CaptureDevice> device)
@@ -105,6 +109,11 @@ messages -> GPUProcess : AuxiliaryProcess {
     CreateMemoryAttributionIDForTask(WebCore::ProcessIdentity processIdentity) -> (std::optional<String> completionHandler)
     UnregisterMemoryAttributionID(String attributionID) -> ()
 #endif
+#endif
+
+#if PLATFORM(COCOA)
+    PostWillTakeSnapshotNotification() -> ()
+    RegisterFonts(Vector<WebKit::SandboxExtensionHandle> sandboxExtensions)
 #endif
 }
 

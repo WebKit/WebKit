@@ -1,6 +1,4 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'https://web-platform.test:9443/common/dispatcher/executor.html?pipe=|header(Cross-Origin-Opener-Policy,same-origin)&uuid=147c1b7d-b6cd-43ab-bff1-a72f6d430ffb' from frame with URL 'https://www1.web-platform.test:9443/common/dispatcher/executor.html?pipe=&uuid=61dd4021-5ab4-4dc7-849c-37fa5f3b5a58'. The frame attempting navigation of the top-level window is cross-origin or untrusted and the user has never interacted with the frame.
 
-CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'https://web-platform.test:9443/common/dispatcher/executor.html?pipe=|header(Cross-Origin-Opener-Policy,same-origin-allow-popups)&uuid=1c3f8344-ae32-4b6d-abd5-b28f62a54b97' from frame with URL 'https://www1.web-platform.test:9443/common/dispatcher/executor.html?pipe=&uuid=19e7a318-5b6d-4a78-8edf-566d8adba67e'. The frame attempting navigation of the top-level window is cross-origin or untrusted and the user has never interacted with the frame.
 
 Non-initial empty documents (about:blank) should inherit their cross-origin-opener-policy from the navigation's initiator top level document, if the initiator and its top level document are same-origin, or default (to unsafe-none) otherwise.
 

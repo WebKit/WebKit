@@ -40,7 +40,7 @@ bool CanvasActivityRecord::recordWrittenOrMeasuredText(const String& text)
 
 void CanvasActivityRecord::mergeWith(const CanvasActivityRecord& otherCanvasActivityRecord)
 {
-    textWritten.add(otherCanvasActivityRecord.textWritten.begin(), otherCanvasActivityRecord.textWritten.end());
+    textWritten.addAll(otherCanvasActivityRecord.textWritten);
     wasDataRead |= otherCanvasActivityRecord.wasDataRead;
 }
 } // namespace WebCore

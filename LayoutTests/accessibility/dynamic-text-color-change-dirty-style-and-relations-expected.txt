@@ -1,0 +1,8 @@
+This test ensures we don't crash when text color dynamically changes with dirty style and accessibility relations cache.
+
+PASS: No crash.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

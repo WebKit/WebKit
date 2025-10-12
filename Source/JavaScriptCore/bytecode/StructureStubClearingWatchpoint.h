@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,8 +65,9 @@ class StructureTransitionStructureStubClearingWatchpoint final : public Watchpoi
     WTF_MAKE_NONCOPYABLE(StructureTransitionStructureStubClearingWatchpoint);
     WTF_MAKE_TZONE_ALLOCATED(StructureTransitionStructureStubClearingWatchpoint);
 public:
-    StructureTransitionStructureStubClearingWatchpoint(const ObjectPropertyCondition& key, WatchpointSet& watchpointSet)
+    StructureTransitionStructureStubClearingWatchpoint(PolymorphicAccessJITStubRoutine* owner, const ObjectPropertyCondition& key, WatchpointSet& watchpointSet)
         : Watchpoint(Watchpoint::Type::StructureTransitionStructureStubClearing)
+        , m_owner(owner)
         , m_watchpointSet(watchpointSet)
         , m_key(key)
     {
@@ -75,7 +76,8 @@ public:
     void fireInternal(VM&, const FireDetail&);
 
 private:
-    Ref<WatchpointSet> m_watchpointSet;
+    PolymorphicAccessJITStubRoutine* m_owner;
+    const Ref<WatchpointSet> m_watchpointSet;
     ObjectPropertyCondition m_key;
 };
 
@@ -87,8 +89,9 @@ class AdaptiveValueStructureStubClearingWatchpoint final : public AdaptiveInferr
     void handleFire(VM&, const FireDetail&) final;
 
 public:
-    AdaptiveValueStructureStubClearingWatchpoint(const ObjectPropertyCondition& key, WatchpointSet& watchpointSet)
+    AdaptiveValueStructureStubClearingWatchpoint(PolymorphicAccessJITStubRoutine* owner, const ObjectPropertyCondition& key, WatchpointSet& watchpointSet)
         : Base(key)
+        , m_owner(owner)
         , m_watchpointSet(watchpointSet)
     {
         RELEASE_ASSERT(key.condition().kind() == PropertyCondition::Equivalence);
@@ -96,7 +99,8 @@ public:
 
 
 private:
-    Ref<WatchpointSet> m_watchpointSet;
+    PolymorphicAccessJITStubRoutine* m_owner;
+    const Ref<WatchpointSet> m_watchpointSet;
 };
 
 } // namespace JSC

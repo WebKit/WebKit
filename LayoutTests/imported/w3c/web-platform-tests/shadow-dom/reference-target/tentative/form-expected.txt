@@ -1,0 +1,8 @@
+
+
+FAIL Reference target works with form attribute. assert_equals: The .elements property should have 2 elements. expected 2 but got 1
+FAIL Reference target works with form attribute via options. assert_equals: The .elements property should have 2 elements. expected 2 but got 1
+PASS Reference target works with setAttribute('form')
+FAIL Reference target works with form-associated custom element. realForm.moveBefore is not a function. (In 'realForm.moveBefore(customElementInShadow, input)', 'realForm.moveBefore' is undefined)
+FAIL Reference target works with nested shadow trees. assert_equals: The .elements property should have 3 elements. expected 3 but got 2
+

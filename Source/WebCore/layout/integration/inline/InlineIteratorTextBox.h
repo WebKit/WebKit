@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "InlineIteratorBox.h"
-#include "RenderText.h"
+#include <WebCore/InlineIteratorBox.h>
+#include <WebCore/RenderText.h>
 
 namespace WebCore {
 

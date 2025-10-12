@@ -1,0 +1,54 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/at-container-scrollable-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/at-container-scrollable-serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/at-container-snapped-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/at-container-snapped-serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/at-container-stuck-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/at-container-stuck-serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/container-type-scroll-state-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/container-type-scroll-state-containment.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/container-type-scroll-state-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/multiple-scroll-state-containers-comma-separated-queries.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-initially-scrollable.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-initially-snapped.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-initially-stuck.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-query-with-var.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-axis.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-body-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-body-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-container-type-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-layout-change-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-layout-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-pseudo.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-root.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-wm.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-snapped-both.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-snapped-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-snapped-container-type-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-snapped-layout-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-snapped-none.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-snapped-pseudo.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-snapped-snap-changing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-snapped-wm.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-stuck-container-type-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-stuck-layout-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-stuck-pseudo.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-stuck-writing-direction.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-target-query-change.html

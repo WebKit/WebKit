@@ -189,7 +189,6 @@ void MutableStyleProperties::setProperty(CSSPropertyID propertyID, Ref<CSSValue>
         m_propertyVector.append(CSSProperty(longhand, value.copyRef(), important));
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 bool MutableStyleProperties::canUpdateInPlace(const CSSProperty& property, CSSProperty* toReplace) const
 {
     // If the property is in a logical property group, we can't just update the value in-place,
@@ -199,14 +198,13 @@ bool MutableStyleProperties::canUpdateInPlace(const CSSProperty& property, CSSPr
     if (CSSProperty::isInLogicalPropertyGroup(id)) {
         ASSERT(toReplace >= m_propertyVector.begin());
         ASSERT(toReplace < m_propertyVector.end());
-        for (CSSProperty* it = toReplace + 1; it != m_propertyVector.end(); ++it) {
-            if (CSSProperty::areInSameLogicalPropertyGroupWithDifferentMappingLogic(id, it->id()))
+        for (auto& property : m_propertyVector.subspan(toReplace - m_propertyVector.begin() + 1)) {
+            if (CSSProperty::areInSameLogicalPropertyGroupWithDifferentMappingLogic(id, property.id()))
                 return false;
         }
     }
     return true;
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 bool MutableStyleProperties::setProperty(const CSSProperty& property, CSSProperty* slot)
 {
@@ -290,8 +288,8 @@ bool MutableStyleProperties::removeProperties(std::span<const CSSPropertyID> pro
         return false;
 
     // FIXME: This is always used with static sets and in that case constructing the hash repeatedly is pretty pointless.
-    UncheckedKeyHashSet<CSSPropertyID> toRemove;
-    toRemove.add(properties.begin(), properties.end());
+    HashSet<CSSPropertyID> toRemove;
+    toRemove.addAll(properties);
 
     return m_propertyVector.removeAllMatching([&toRemove](const CSSProperty& property) {
         return toRemove.contains(property.id());

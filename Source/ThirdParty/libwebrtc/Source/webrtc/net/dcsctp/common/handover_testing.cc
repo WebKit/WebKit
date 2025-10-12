@@ -9,6 +9,8 @@
  */
 #include "net/dcsctp/common/handover_testing.h"
 
+#include "net/dcsctp/public/dcsctp_handover_state.h"
+
 namespace dcsctp {
 namespace {
 // Default transformer function does nothing - dcSCTP does not implement

@@ -146,5 +146,33 @@ private:
     const String& m_url;
 };
 
+class MessageWithReplyReply {
+public:
+    using Arguments = std::tuple<String, double>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithValidator_MessageWithReplyReply; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    MessageWithReplyReply(const String& reply, double value)
+        : m_reply(reply)
+        , m_value(value)
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        encoder << m_reply;
+        encoder << m_value;
+    }
+
+private:
+    const String& m_reply;
+    double m_value;
+};
+
 } // namespace TestWithValidator
 } // namespace Messages

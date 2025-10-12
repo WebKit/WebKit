@@ -29,6 +29,7 @@
 #include "Connection.h"
 
 #include "IPCUtilities.h"
+#include "Logging.h"
 #include "UnixMessage.h"
 #include <WebCore/SharedMemory.h>
 #include <sys/socket.h>
@@ -43,26 +44,17 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniStdExtras.h>
 
-#if USE(GLIB)
-#include <gio/gio.h>
-#include <wtf/glib/GUniquePtr.h>
-#endif
-
 #if OS(DARWIN)
 #define MSG_NOSIGNAL 0
 #endif
 
 // Although it's available on Darwin, SOCK_SEQPACKET seems to work differently
-// than in traditional Unix so fallback to STREAM on that platform.
+// than in traditional Unix so fallback to DGRAM on that platform.
 #if defined(SOCK_SEQPACKET) && !OS(DARWIN)
 #define SOCKET_TYPE SOCK_SEQPACKET
 #else
-#if USE(GLIB)
-#define SOCKET_TYPE SOCK_STREAM
-#else
 #define SOCKET_TYPE SOCK_DGRAM
 #endif
-#endif // SOCK_SEQPACKET
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Unix port
 
@@ -78,12 +70,12 @@ public:
     {
         // The entire AttachmentInfo is passed to write(), so we have to zero our
         // padding bytes to avoid writing uninitialized memory.
-        memset(static_cast<void*>(this), 0, sizeof(*this));
+        zeroBytes(*this);
     }
 
     AttachmentInfo(const AttachmentInfo& info)
+        : AttachmentInfo()
     {
-        memset(static_cast<void*>(this), 0, sizeof(*this));
         *this = info;
     }
 
@@ -102,49 +94,23 @@ static_assert(sizeof(MessageInfo) + sizeof(AttachmentInfo) * attachmentMaxAmount
 
 int Connection::socketDescriptor() const
 {
-#if USE(GLIB)
-    return g_socket_get_fd(m_socket.get());
-#else
     return m_socketDescriptor.value();
-#endif
 }
 
 void Connection::platformInitialize(Identifier&& identifier)
 {
-#if USE(GLIB)
-    GUniqueOutPtr<GError> error;
-    m_socket = adoptGRef(g_socket_new_from_fd(identifier.handle.release(), &error.outPtr()));
-    if (!m_socket) {
-        // Note: g_socket_new_from_fd() takes ownership of the fd only on success, so if this error
-        // were not fatal, we would need to close it here.
-        g_error("Failed to adopt IPC::Connection socket: %s", error->message);
-    }
-#else
     m_socketDescriptor = WTFMove(identifier.handle);
-#endif
     m_readBuffer.reserveInitialCapacity(messageMaxSize);
     m_fileDescriptors.reserveInitialCapacity(attachmentMaxAmount);
 }
 
 void Connection::platformInvalidate()
 {
-#if USE(GLIB)
-    GUniqueOutPtr<GError> error;
-    g_socket_close(m_socket.get(), &error.outPtr());
-    if (error)
-        g_warning("Failed to close WebKit IPC socket: %s", error->message);
-#else
     if (m_socketDescriptor.value() != -1)
         closeWithRetry(m_socketDescriptor.release());
-#endif
 
     if (!m_isConnected)
         return;
-
-#if USE(GLIB)
-    m_readSocketMonitor.stop();
-    m_writeSocketMonitor.stop();
-#endif
 
 #if PLATFORM(PLAYSTATION)
     if (m_socketMonitor) {
@@ -234,14 +200,14 @@ bool Connection::processMessage()
     processIncomingMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)));
 
     if (m_readBuffer.size() > messageLength) {
-        memmove(m_readBuffer.data(), m_readBuffer.data() + messageLength, m_readBuffer.size() - messageLength);
+        memmoveSpan(m_readBuffer.mutableSpan(), m_readBuffer.subspan(messageLength));
         m_readBuffer.shrink(m_readBuffer.size() - messageLength);
     } else
         m_readBuffer.shrink(0);
 
     if (attachmentFileDescriptorCount) {
         if (m_fileDescriptors.size() > attachmentFileDescriptorCount) {
-            memmove(m_fileDescriptors.data(), m_fileDescriptors.data() + attachmentFileDescriptorCount, (m_fileDescriptors.size() - attachmentFileDescriptorCount) * sizeof(int));
+            memmoveSpan(m_fileDescriptors.mutableSpan(), m_fileDescriptors.subspan(attachmentFileDescriptorCount));
             m_fileDescriptors.shrink(m_fileDescriptors.size() - attachmentFileDescriptorCount);
         } else
             m_fileDescriptors.shrink(0);
@@ -266,7 +232,7 @@ static ssize_t readBytesFromSocket(int socketDescriptor, Vector<uint8_t>& buffer
 
     size_t previousBufferSize = buffer.size();
     buffer.grow(buffer.capacity());
-    iov[0].iov_base = buffer.data() + previousBufferSize;
+    iov[0].iov_base = buffer.mutableSpan().data() + previousBufferSize;
     iov[0].iov_len = buffer.size() - previousBufferSize;
 
     message.msg_iov = iov;
@@ -299,7 +265,7 @@ static ssize_t readBytesFromSocket(int socketDescriptor, Vector<uint8_t>& buffer
                 size_t previousFileDescriptorsSize = fileDescriptors.size();
                 size_t fileDescriptorsCount = (controlMessage->cmsg_len - CMSG_LEN(0)) / sizeof(int);
                 fileDescriptors.grow(fileDescriptors.size() + fileDescriptorsCount);
-                memcpy(fileDescriptors.data() + previousFileDescriptorsSize, CMSG_DATA(controlMessage), sizeof(int) * fileDescriptorsCount);
+                memcpy(fileDescriptors.mutableSpan().subspan(previousFileDescriptorsSize).data(), CMSG_DATA(controlMessage), sizeof(int) * fileDescriptorsCount);
 
                 for (size_t i = 0; i < fileDescriptorsCount; ++i) {
                     if (!setCloseOnExec(fileDescriptors[previousFileDescriptorsSize + i])) {
@@ -365,22 +331,6 @@ void Connection::platformOpen()
 {
     RefPtr<Connection> protectedThis(this);
     m_isConnected = true;
-#if USE(GLIB)
-    m_readSocketMonitor.start(m_socket.get(), G_IO_IN, m_connectionQueue->runLoop(), [protectedThis] (GIOCondition condition) -> gboolean {
-        if (condition & G_IO_HUP || condition & G_IO_ERR || condition & G_IO_NVAL) {
-            protectedThis->connectionDidClose();
-            return G_SOURCE_REMOVE;
-        }
-
-        if (condition & G_IO_IN) {
-            protectedThis->readyReadHandler();
-            return G_SOURCE_CONTINUE;
-        }
-
-        ASSERT_NOT_REACHED();
-        return G_SOURCE_REMOVE;
-    });
-#endif
 
 #if PLATFORM(PLAYSTATION)
     m_socketMonitor = Thread::create("SocketMonitor"_s, [protectedThis] {
@@ -411,7 +361,7 @@ void Connection::platformOpen()
 
 bool Connection::platformCanSendOutgoingMessages() const
 {
-    return !m_pendingOutputMessage;
+    return true;
 }
 
 bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
@@ -426,28 +376,15 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 
     size_t messageSizeWithBodyInline = sizeof(MessageInfo) + (outputMessage.attachments().size() * sizeof(AttachmentInfo)) + outputMessage.bodySize();
     if (messageSizeWithBodyInline > messageMaxSize && outputMessage.bodySize()) {
-        RefPtr oolMessageBody = WebCore::SharedMemory::allocate(outputMessage.bodySize());
-        if (!oolMessageBody)
+        if (!outputMessage.setBodyOutOfLine())
             return false;
-
-        auto handle = oolMessageBody->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
-        if (!handle)
-            return false;
-
-        outputMessage.messageInfo().setBodyOutOfLine();
-
-        memcpySpan(oolMessageBody->mutableSpan(), outputMessage.body());
-
-        outputMessage.appendAttachment(handle->releaseHandle());
     }
 
-    return sendOutputMessage(outputMessage);
+    return sendOutputMessage(WTFMove(outputMessage));
 }
 
-bool Connection::sendOutputMessage(UnixMessage& outputMessage)
+bool Connection::sendOutputMessage(UnixMessage&& outputMessage)
 {
-    ASSERT(!m_pendingOutputMessage);
-
     auto& messageInfo = outputMessage.messageInfo();
     struct msghdr message;
     memset(&message, 0, sizeof(message));
@@ -497,7 +434,7 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
                 attachmentInfo[i].setNull();
         }
 
-        iov[iovLength].iov_base = attachmentInfo.data();
+        iov[iovLength].iov_base = attachmentInfo.mutableSpan().data();
         iov[iovLength].iov_len = sizeof(AttachmentInfo) * attachments.size();
         ++iovLength;
     }
@@ -514,25 +451,6 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
         if (errno == EINTR)
             continue;
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
-#if USE(GLIB)
-            m_pendingOutputMessage = makeUnique<UnixMessage>(WTFMove(outputMessage));
-            m_writeSocketMonitor.start(m_socket.get(), G_IO_OUT, m_connectionQueue->runLoop(), [this, protectedThis = Ref { *this }] (GIOCondition condition) -> gboolean {
-                if (condition & G_IO_OUT) {
-                    ASSERT(m_pendingOutputMessage);
-                    // We can't stop the monitor from this lambda, because stop destroys the lambda.
-                    m_connectionQueue->dispatch([this, protectedThis = Ref { *this }] {
-                        m_writeSocketMonitor.stop();
-                        auto message = WTFMove(m_pendingOutputMessage);
-                        if (m_isConnected) {
-                            sendOutputMessage(*message);
-                            sendOutgoingMessages();
-                        }
-                    });
-                }
-                return G_SOURCE_REMOVE;
-            });
-            return false;
-#else
             struct pollfd pollfd;
 
             pollfd.fd = socketDescriptor();
@@ -540,7 +458,6 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
             pollfd.revents = 0;
             poll(&pollfd, 1, -1);
             continue;
-#endif
         }
 
 #if OS(LINUX)
@@ -559,126 +476,97 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
         return false;
     }
 
+#if OS(ANDROID)
+    RELEASE_ASSERT(m_outgoingHardwareBuffers.isEmpty());
+    m_outgoingHardwareBuffers = WTFMove(hardwareBuffers);
+    return sendOutgoingHardwareBuffers();
+#else
+    return true;
+#endif
+}
+
+#if OS(ANDROID)
+bool Connection::sendOutgoingHardwareBuffers()
+{
+    while (!m_outgoingHardwareBuffers.isEmpty()) {
+        auto& buffer = m_outgoingHardwareBuffers.first();
+        RELEASE_ASSERT(buffer);
+
+        // There is no need to check for EINTR, it is handled internally.
+        int result = AHardwareBuffer_sendHandleToUnixSocket(buffer.get(), socketDescriptor());
+        if (!result) {
+            m_outgoingHardwareBuffers.removeAt(0);
+            continue;
+        }
+
+        if (result == -EAGAIN || result == -EWOULDBLOCK) {
+            m_writeSocketMonitor.start(m_socket.get(), G_IO_OUT, m_connectionQueue->runLoop(), [this, protectedThis = Ref { *this }] (GIOCondition condition) -> gboolean {
+                if (condition & G_IO_OUT) {
+                    RELEASE_ASSERT(!m_outgoingHardwareBuffers.isEmpty());
+                    // We can't stop the monitor from this lambda, because stop destroys the lambda.
+                    m_connectionQueue->dispatch([this, protectedThis = Ref { *this }] {
+                        m_writeSocketMonitor.stop();
+                        if (m_isConnected) {
+                            if (sendOutgoingHardwareBuffers())
+                                sendOutgoingMessages();
+                        }
+                    });
+                }
+                return G_SOURCE_REMOVE;
+            });
+            return false;
+        }
+
+        if (result == -EPIPE || result == -ECONNRESET) {
+            connectionDidClose();
+            return false;
+        }
+
+        if (m_isConnected) {
+            LOG_ERROR("Error sending AHardwareBuffer on socket %d in process %d: %s", socketDescriptor(), getpid(), safeStrerror(-result).data());
+            connectionDidClose();
+        }
+        return false;
+    }
+
+    RELEASE_ASSERT(m_outgoingHardwareBuffers.isEmpty());
     return true;
 }
 
-SocketPair createPlatformConnection(unsigned options)
+bool Connection::receiveIncomingHardwareBuffers()
 {
-    int sockets[2];
-
-#if USE(GLIB) && OS(LINUX)
-    auto setPasscredIfNeeded = [options, &sockets] {
-        if (options & SetPasscredOnServer) {
-            int enable = 1;
-            RELEASE_ASSERT(!setsockopt(sockets[1], SOL_SOCKET, SO_PASSCRED, &enable, sizeof(enable)));
+    while (m_pendingIncomingHardwareBufferCount) {
+        AHardwareBuffer* buffer { nullptr };
+        int result = AHardwareBuffer_recvHandleFromUnixSocket(socketDescriptor(), &buffer);
+        if (!result) {
+            m_pendingIncomingHardwareBufferCount--;
+            auto hardwareBuffer = adoptRef(buffer);
+            m_incomingHardwareBuffers.append(WTFMove(hardwareBuffer));
+            continue;
         }
-    };
-#else
-    auto setPasscredIfNeeded = [] { };
-#endif
 
-#if OS(LINUX)
-    if ((options & SetCloexecOnServer) || (options & SetCloexecOnClient)) {
-        RELEASE_ASSERT(socketpair(AF_UNIX, SOCKET_TYPE | SOCK_CLOEXEC, 0, sockets) != -1);
+        if (result == -EAGAIN || result == -EWOULDBLOCK)
+            return false;
 
-        if (!(options & SetCloexecOnServer))
-            RELEASE_ASSERT(unsetCloseOnExec(sockets[1]));
-        if (!(options & SetCloexecOnClient))
-            RELEASE_ASSERT(unsetCloseOnExec(sockets[0]));
+        if (result == -ECONNRESET)
+            connectionDidClose();
 
-        setPasscredIfNeeded();
-
-        return { { sockets[0], UnixFileDescriptor::Adopt }, { sockets[1], UnixFileDescriptor::Adopt } };
+        if (m_isConnected) {
+            LOG_ERROR("Error receiving AHardwareBuffer on socket %d in process %d: %s", socketDescriptor(), getpid(), safeStrerror(-result).data());
+            connectionDidClose();
+        }
+        return false;
     }
-#endif
 
-    RELEASE_ASSERT(socketpair(AF_UNIX, SOCKET_TYPE, 0, sockets) != -1);
-
-    if (options & SetCloexecOnServer)
-        RELEASE_ASSERT(setCloseOnExec(sockets[1]));
-    if (options & SetCloexecOnClient)
-        RELEASE_ASSERT(setCloseOnExec(sockets[0]));
-
-    setPasscredIfNeeded();
-
-    return { { sockets[0], UnixFileDescriptor::Adopt }, { sockets[1], UnixFileDescriptor::Adopt } };
+    return true;
 }
+#endif // OS(ANDROID)
 
 std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
 {
-    SocketPair socketPair = createPlatformConnection();
+    SocketPair socketPair = createPlatformConnection(SOCKET_TYPE);
     return { { Identifier { WTFMove(socketPair.server) }, ConnectionHandle { WTFMove(socketPair.client) } } };
 }
-
-#if USE(GLIB) && OS(LINUX)
-void sendPIDToPeer(int socket)
-{
-    char buffer[1] = { 0 };
-    struct msghdr message = { };
-    struct iovec iov = { buffer, sizeof(buffer) };
-
-    // Write one null byte. Credentials will be attached regardless of what we send.
-    message.msg_iov = &iov;
-    message.msg_iovlen = 1;
-
-    int ret;
-    do {
-        ret = sendmsg(socket, &message, 0);
-    } while (ret == -1 && errno == EINTR);
-
-    if (ret == -1) {
-        // Don't crash if the parent process merely closed its pid socket.
-        // That's equivalent to canceling the process launch.
-        if (errno == EPIPE)
-            exit(1);
-        g_error("sendPIDToPeer: Failed to send pid: %s", g_strerror(errno));
-    }
-}
-
-// The goal here is to receive the pid of the sandboxed child in the parent process's pid namespace.
-// It's impossible for the child to know this, but the kernel will translate it for us.
-//
-// Based on read_pid_from_socket() from bubblewrap's utils.c
-// SPDX-License-Identifier: LGPL-2.0-or-later
-pid_t readPIDFromPeer(int socket)
-{
-    char receiveBuffer[1] = { 0 };
-    struct msghdr message = { };
-    struct iovec iov = { receiveBuffer, sizeof(receiveBuffer) };
-    const ssize_t controlLength = CMSG_SPACE(sizeof(struct ucred));
-    union {
-        char buffer[controlLength];
-        cmsghdr forceAlignment;
-    } controlMessage;
-
-    message.msg_iov = &iov;
-    message.msg_iovlen = 1;
-    message.msg_control = controlMessage.buffer;
-    message.msg_controllen = controlLength;
-
-    int ret;
-    do {
-        ret = recvmsg(socket, &message, 0);
-    } while (ret == -1 && errno == EINTR);
-
-    if (ret == -1)
-        g_error("readPIDFromPeer: Failed to read pid from PID socket: %s", g_strerror(errno));
-
-    if (message.msg_controllen <= 0)
-        g_error("readPIDFromPeer: Unexpected short read from PID socket");
-
-    for (cmsghdr* header = CMSG_FIRSTHDR(&message); header; header = CMSG_NXTHDR(&message, header)) {
-        const unsigned payloadLength = header->cmsg_len - CMSG_LEN(0);
-        if (header->cmsg_level == SOL_SOCKET && header->cmsg_type == SCM_CREDENTIALS && payloadLength == sizeof(struct ucred)) {
-            struct ucred credentials;
-            memcpy(&credentials, CMSG_DATA(header), sizeof(struct ucred));
-            return credentials.pid;
-        }
-    }
-
-    g_error("readPIDFromPeer: No pid returned on PID socket");
-}
-#endif
 
 } // namespace IPC
 

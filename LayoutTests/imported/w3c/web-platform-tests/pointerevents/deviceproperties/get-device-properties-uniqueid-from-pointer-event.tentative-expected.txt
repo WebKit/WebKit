@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'event.deviceProperties.uniqueId')
-
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'event.deviceProperties.uniqueId')
-
-FAIL PointerEvent.deviceProperties.uniqueId assert_true: expected true got false
-

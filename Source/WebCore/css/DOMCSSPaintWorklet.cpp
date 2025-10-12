@@ -27,7 +27,6 @@
 #include "DOMCSSPaintWorklet.h"
 
 #include "DOMCSSNamespace.h"
-#include "DocumentInlines.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PaintWorkletGlobalScope.h"
 #include "WorkletGlobalScopeProxy.h"

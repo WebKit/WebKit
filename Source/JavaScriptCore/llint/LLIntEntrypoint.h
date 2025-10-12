@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSCPtrTag.h"
-#include "OpcodeSize.h"
+#include <JavaScriptCore/JSCPtrTag.h>
+#include <JavaScriptCore/OpcodeSize.h>
 #include <wtf/CodePtr.h>
 
 namespace JSC {

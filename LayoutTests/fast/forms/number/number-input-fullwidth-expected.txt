@@ -1,0 +1,42 @@
+Test for keyboard operations and normalization for input[type="number"] with full-width characters.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Inserting full-width digits "１２３４５６７８９０":
+PASS input.validity.badInput is false
+PASS input.value is "1234567890"
+Inserting Unicode full-width minus for macOS (U+2212) "−１２３":
+PASS input.validity.badInput is false
+PASS input.value is "-123"
+Inserting full-width HYPHEN-MINUS for Windows (U+FF0D) "－１２３":
+PASS input.validity.badInput is false
+PASS input.value is "-123"
+Inserting full-width long sound mark (U+30FC) "ー１２３":
+PASS input.validity.badInput is false
+PASS input.value is "-123"
+Inserting full-width dot "１２．３４":
+PASS input.validity.badInput is false
+PASS input.value is "12.34"
+Inserting mixed full-width and ASCII "１２3":
+PASS input.validity.badInput is false
+PASS input.value is "123"
+Assigning full-width digits directly via .value = "１２３４５６７８９０":
+PASS input.validity.badInput is false
+PASS input.value is ""
+Assigning Unicode full-width minus for macOS (U+2212) directly via .value = "−１２３":
+PASS input.validity.badInput is false
+PASS input.value is ""
+Assigning full-width HYPHEN-MINUS for Windows (U+FF0D) directly via .value = "－１２３":
+PASS input.validity.badInput is false
+PASS input.value is ""
+Assigning long sound mark (U+30FC) directly via .value = "ー１２３":
+PASS input.validity.badInput is false
+PASS input.value is ""
+Assigning full-width dot directly via .value = "12．3":
+PASS input.validity.badInput is false
+PASS input.value is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -35,6 +35,7 @@
 #include "WebPageTestingMessages.h"
 #include "WebProcess.h"
 #include <WebCore/BackForwardController.h>
+#include <WebCore/DocumentView.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/IntPoint.h>
@@ -89,8 +90,7 @@ void WebPageTesting::isEditingCommandEnabled(const String& commandName, Completi
     if (!page)
         return completionHandler(false);
 
-    RefPtr corePage = page->corePage();
-    RefPtr frame = corePage->checkedFocusController()->focusedOrMainFrame();
+    RefPtr frame = page->corePage()->focusController().focusedOrMainFrame();
     if (!frame)
         return completionHandler(false);
 

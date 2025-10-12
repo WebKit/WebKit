@@ -85,7 +85,8 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteNetworkConnectionIntegrityPolicy) {
     _WKWebsiteNetworkConnectionIntegrityPolicyEnhancedTelemetry WK_API_AVAILABLE(macos(14.0), ios(17.0)) = 1 << 6,
     _WKWebsiteNetworkConnectionIntegrityPolicyRequestValidation WK_API_AVAILABLE(macos(14.0), ios(17.0)) = 1 << 7,
     _WKWebsiteNetworkConnectionIntegrityPolicySanitizeLookalikeCharacters WK_API_AVAILABLE(macos(14.0), ios(17.0)) = 1 << 8,
-    _WKWebsiteNetworkConnectionIntegrityPolicyFailClosedForAllHosts WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) = 1 << 9,
+    _WKWebsiteNetworkConnectionIntegrityPolicyFailClosedForAllHosts WK_API_AVAILABLE(macos(26.0), ios(26.0), visionos(26.0)) = 1 << 9,
+    _WKWebsiteNetworkConnectionIntegrityPolicyStrictFailClosed WK_API_AVAILABLE(macos(26.0), ios(26.0), visionos(26.0)) = 1 << 10,
 } WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
 @class _WKCustomHeaderFields;
@@ -124,8 +125,16 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteNetworkConnectionIntegrityPolicy) {
 @property (nonatomic, copy, setter=_setVisibilityAdjustmentSelectorsIncludingShadowHosts:) NSArray<NSArray<NSSet<NSString *> *> *> *_visibilityAdjustmentSelectorsIncludingShadowHosts WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 @property (nonatomic, copy, setter=_setVisibilityAdjustmentSelectors:) NSSet<NSString *> *_visibilityAdjustmentSelectors WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
+@property (nonatomic, setter=_setAllowSharedProcess:) BOOL _allowSharedProcess WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 - (void)_setContentRuleListsEnabled:(BOOL)enabled exceptions:(NSSet<NSString *> *)exceptions WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
 @property (nonatomic, setter=_setPushAndNotificationAPIEnabled:) BOOL _pushAndNotificationAPIEnabled;
+
+@property (nonatomic, setter=_setAlternateRequest:) NSURLRequest *_alternateRequest WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+@property (nonatomic, setter=_setAllowsJSHandleCreationInPageWorld:) BOOL _allowsJSHandleCreationInPageWorld WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+@property (nonatomic, setter=_setEnhancedSecurityEnabled:) BOOL _enhancedSecurityEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @end

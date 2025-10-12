@@ -12,7 +12,9 @@ promise_test(() => {
 promise_test(() => {
     let promise;
     internals.withUserGesture(() => {
-        const promise1 = navigator.mediaDevices.getDisplayMedia({video : true});
+        const promise1 = navigator.mediaDevices.getDisplayMedia({video : true}).then(stream => {
+            stream.getTracks().forEach(track => track.stop());
+        });
         const promise2 = navigator.mediaDevices.getDisplayMedia({video : true}).then(() => {
             return Promise.reject("Second promise should reject");
         }, () => {

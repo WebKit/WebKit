@@ -42,7 +42,7 @@ public:
 private:
     TextEncoderStreamEncoder() = default;
 
-    std::optional<UChar> m_pendingLeadSurrogate;
+    std::optional<char16_t> m_pendingLeadSurrogate;
 };
 
 }

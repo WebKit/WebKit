@@ -484,6 +484,11 @@ PlacedFloats::Item FloatingContext::makeFloatItem(const Box& floatBox, const Box
     return { floatBox, position, absoluteBoxGeometry, borderBoxTopLeft, line };
 }
 
+const LayoutState& FloatingContext::containingBlockGeometries() const
+{
+    return m_layoutState;
+}
+
 void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAvoider, BoxGeometry::HorizontalEdges containingBlockContentBoxEdges) const
 {
     // A non-floating formatting root's initial vertical position is its static position.

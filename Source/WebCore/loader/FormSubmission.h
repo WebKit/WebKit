@@ -30,9 +30,9 @@
 
 #pragma once
 
-#include "FormState.h"
-#include "FrameLoaderTypes.h"
-#include "ReferrerPolicy.h"
+#include <WebCore/FormState.h>
+#include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/ReferrerPolicy.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
@@ -93,7 +93,6 @@ public:
     const String boundary() const { return m_boundary; }
     LockHistory lockHistory() const { return m_lockHistory; }
     Event* event() const { return m_event.get(); }
-    RefPtr<Event> protectedEvent() const;
     const String& referrer() const { return m_referrer; }
     const String& origin() const { return m_origin; }
 
@@ -127,10 +126,10 @@ private:
     AtomString m_target;
     String m_contentType;
     RefPtr<FormState> m_formState;
-    RefPtr<FormData> m_formData;
+    const RefPtr<FormData> m_formData;
     String m_boundary;
     LockHistory m_lockHistory;
-    RefPtr<Event> m_event;
+    const RefPtr<Event> m_event;
     String m_referrer;
     String m_origin;
 

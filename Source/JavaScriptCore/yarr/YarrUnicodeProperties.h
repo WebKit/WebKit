@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Yarr.h"
+#include <JavaScriptCore/Yarr.h>
 #include <optional>
 #include <wtf/Forward.h>
 

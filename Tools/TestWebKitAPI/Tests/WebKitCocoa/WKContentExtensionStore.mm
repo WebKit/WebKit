@@ -42,6 +42,7 @@
 #import <WebKit/_WKContentRuleListAction.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
@@ -372,8 +373,7 @@ TEST_F(WKContentRuleListStoreTest, CrossOriginCookieBlocking)
                     if (path == "/org"_s)
                         return HTTPResponse("<script>fetch('https://example.com/cookie-check', {credentials: 'include'})</script>"_s);
                     if (path == "/cookie-check"_s) {
-                        auto cookieHeader = "Cookie: testCookie=42";
-                        requestHadCookieResult = memmem(request.data(), request.size(), cookieHeader, strlen(cookieHeader));
+                        requestHadCookieResult = contains(request.span(), "Cookie: testCookie=42"_span);
                         return HTTPResponse("hi"_s);
                     }
                     RELEASE_ASSERT_NOT_REACHED();
@@ -1262,6 +1262,42 @@ TEST_F(WKContentRuleListStoreTest, MainResourceCrossOriginRedirect)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded replacement successfully: key=value");
 }
 
+TEST_F(WKContentRuleListStoreTest, MainResourceSameOriginRedirect)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/redirect?"_s, { "<script>addEventListener('pageshow', () => { alert('redirected successfully') });</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "redirect", "redirect": { "transform": { "query-transform": { "remove-parameters": [ "ved" ] } } } },
+            "trigger": { "url-filter": "redirect" }
+        } ]
+    )JSON");
+
+    auto configuration = server.httpsProxyConfiguration();
+    [configuration.userContentController addContentRuleList:list.get()];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences._activeContentRuleListActionPatterns = @{
+            @"testidentifier": [NSSet setWithObject:@"https://example.com/*"]
+        };
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+    [delegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = delegate.get();
+
+    auto originalURL = [NSURL URLWithString:@"https://example.com/redirect?ved=123"];
+    [webView loadRequest:[NSURLRequest requestWithURL:originalURL]];
+
+    // Verify that the parameters were removed from the URL and the page loads.
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "redirected successfully");
+}
+
 TEST_F(WKContentRuleListStoreTest, MainResourceCrossOriginRedirectFromLoadedPageWithoutActivePatterns)
 {
     using namespace TestWebKitAPI;
@@ -1411,4 +1447,63 @@ TEST_F(WKContentRuleListStoreTest, NonASCIIEscaped)
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+static RetainPtr<NSString> createMixedContentAutoUpgradeJsonRuleList()
+{
+    auto* mixedContentAutoupgrade = @{
+        @"trigger" : @{
+            @"url-filter" : @"http://.*",
+            @"if-top-url" : @[ @"https://.*" ],
+            @"resource-type" : @[
+                // Only upgrade image and media (i.e. audio and video) per
+                // https://www.w3.org/TR/mixed-content/#upgrade-algorithm
+                @"image", @"media"
+            ],
+        },
+        @"action" : @{
+            @"type" : @"make-https",
+        },
+    };
+
+    RetainPtr jsonData = [NSJSONSerialization dataWithJSONObject:@[ mixedContentAutoupgrade ] options:NSJSONWritingPrettyPrinted error:nil];
+    return adoptNS([[NSString alloc] initWithData:jsonData.get() encoding:NSUTF8StringEncoding]);
+}
+
+TEST_F(WKContentRuleListStoreTest, ConcurrentCompilationsSingleStore)
+{
+    RetainPtr string = createMixedContentAutoUpgradeJsonRuleList();
+    static constexpr unsigned totalRequests = 30;
+    __block unsigned finishedCount = 0;
+    for (unsigned i = 0; i < totalRequests; ++i) {
+        [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"test" encodedContentRuleList:string.get() completionHandler:^(WKContentRuleList *filter, NSError *error) {
+            EXPECT_NOT_NULL(filter);
+            EXPECT_NULL(error);
+            ++finishedCount;
+        }];
+    }
+    while (finishedCount < totalRequests)
+        TestWebKitAPI::Util::spinRunLoop();
+}
+
+TEST_F(WKContentRuleListStoreTest, ConcurrentCompilationsMultipleStores)
+{
+    static constexpr unsigned totalRequests = 30;
+
+    Vector<RetainPtr<WKContentRuleListStore>> stores;
+    RetainPtr tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentRuleListTest"] isDirectory:YES];
+    for (unsigned i = 0; i < totalRequests; ++i)
+        stores.append([WKContentRuleListStore storeWithURL:tempDir.get()]);
+
+    RetainPtr string = createMixedContentAutoUpgradeJsonRuleList();
+    __block unsigned finishedCount = 0;
+    for (unsigned i = 0; i < totalRequests; ++i) {
+        [stores[i] compileContentRuleListForIdentifier:@"test" encodedContentRuleList:string.get() completionHandler:^(WKContentRuleList *filter, NSError *error) {
+            EXPECT_NOT_NULL(filter);
+            EXPECT_NULL(error);
+            ++finishedCount;
+        }];
+    }
+    while (finishedCount < totalRequests)
+        TestWebKitAPI::Util::spinRunLoop();
 }

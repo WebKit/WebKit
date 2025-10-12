@@ -22,8 +22,8 @@
 
 #pragma once
 
-#include "ActiveDOMObject.h"
-#include "HTMLElement.h"
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/HTMLElement.h>
 
 namespace WebCore {
 

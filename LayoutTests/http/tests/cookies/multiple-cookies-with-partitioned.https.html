@@ -12,8 +12,8 @@ description(
 "This test checks that mulitple cookies are correctly set."
 );
 
-let expectedCookies = [ "test=foobarPartitioned", "test=foobarPartitioned; test=foobarPath", "test=foobarPartitioned; test=foobarPath; test=foobar" ];
-let testSetCookies = [ "test=foobarPartitioned;SameSite=None;Secure;Partitioned", "test=foobarPath;SameSite=None;Secure;Path=/", "test=foobar;SameSite=None;Secure" ];
+let expectedCookies = [ "", "test=foobarPartitioned", "test=foobarPartitioned; test=foobarPath", "test=foobarPartitioned; test=foobarPath; test=foobar" ];
+let testSetCookies = [ "test=foobarPartitioned;Secure;Partitioned", "test=foobarPartitioned;SameSite=None;Secure;Partitioned", "test=foobarPath;SameSite=None;Secure;Path=/", "test=foobar;SameSite=None;Secure" ];
 
 async function runTest() {
     clearAllCookies();
@@ -26,6 +26,9 @@ async function runTest() {
     shouldBe('document.cookie', 'expectedCookies[1]');
     document.cookie = testSetCookies[2]
     shouldBe('document.cookie', 'expectedCookies[2]');
+    document.cookie = testSetCookies[3]
+    shouldBe('document.cookie', 'expectedCookies[3]');
+
 
     await fetch(`/clear-site-data/resources/clear-site-data-cookies.py`);
 

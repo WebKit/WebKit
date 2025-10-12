@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,11 +14,22 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/visual-viewport/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/visual-viewport/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/visual-viewport/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/visual-viewport/helper-resize-event-on-load-overflowing-page.html
+/LayoutTests/imported/w3c/web-platform-tests/visual-viewport/page-and-offset-in-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/visual-viewport/resize-event-order.html
+/LayoutTests/imported/w3c/web-platform-tests/visual-viewport/scroll-event-order.html
+/LayoutTests/imported/w3c/web-platform-tests/visual-viewport/viewport-apply-initial-scale-after-navigation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/visual-viewport/viewport-apply-initial-scale-after-navigation-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/visual-viewport/viewport-apply-initial-scale-after-navigation.html
 /LayoutTests/imported/w3c/web-platform-tests/visual-viewport/viewport-no-resize-event-on-overflow-recalc.html
 /LayoutTests/imported/w3c/web-platform-tests/visual-viewport/viewport-read-size-causes-layout.html
 /LayoutTests/imported/w3c/web-platform-tests/visual-viewport/viewport-read-size-in-iframe-causes-layout.html
+/LayoutTests/imported/w3c/web-platform-tests/visual-viewport/viewport-resize-event-on-iframe-show.html
+/LayoutTests/imported/w3c/web-platform-tests/visual-viewport/viewport-resize-event-on-iframe-size-change.html
 /LayoutTests/imported/w3c/web-platform-tests/visual-viewport/viewport-resize-event-on-load-overflowing-page.html
+/LayoutTests/imported/w3c/web-platform-tests/visual-viewport/viewport-scrollbars-cause-resize-in-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/visual-viewport/viewport-scrollbars-cause-resize.html
 /LayoutTests/imported/w3c/web-platform-tests/visual-viewport/viewport-type.html
 /LayoutTests/imported/w3c/web-platform-tests/visual-viewport/viewport-unscaled-scale-iframe.html

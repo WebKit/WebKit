@@ -1,0 +1,6 @@
+Toggle the popover  Toggle the popover  Toggle the popover
+
+PASS Shadow root reference target works with commandfor attribute.
+PASS Shadow root reference target works with commandfor attribute via options.
+PASS Shadow root reference target works with .commandForElement property.
+

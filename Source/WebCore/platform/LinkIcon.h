@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "LinkIconType.h"
+#include <WebCore/LinkIconType.h>
 #include <wtf/HashMap.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>

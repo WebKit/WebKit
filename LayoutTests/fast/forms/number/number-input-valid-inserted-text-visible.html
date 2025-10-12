@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description('This test verifies that valid numeric characters inserted via execCommand are correctly shown in the shadow tree of an input[type="number"] element.');
+if (window.testRunner) {
+    (() => {
+        const input = document.createElement('input');
+        input.type = 'number';
+        document.body.appendChild(input);
+        input.focus();
+        const shadow = internals.shadowRoot(input);
+        const contentEditableDiv = shadow.querySelector('div[contenteditable]');
+
+        // Insert valid numeric characters ("123") using execCommand.
+        document.execCommand('InsertText', false, '123');
+        // Verify that the visible text matches the inserted valid numeric input.
+        if (contentEditableDiv.innerText === '123') {
+            testPassed('Valid numeric characters are rendered in the shadow tree.');
+        } else {
+            testFailed('Expected "123" in contenteditable, got "' + contentEditableDiv.innerText + '".');
+        }
+        input.remove();
+    })();
+    (() => {
+        const input = document.createElement('input');
+        input.type = 'number';
+        document.body.appendChild(input);
+        input.focus();
+        const shadow = internals.shadowRoot(input);
+        const contentEditableDiv = shadow.querySelector('div[contenteditable]');
+
+        // Here we use "ABC" as an example of invalid input for type="number".
+        document.execCommand('InsertText', false, 'ABC');
+        // Verify that no visible text was rendered for invalid input.
+        if (contentEditableDiv.innerText === '') {
+            testPassed('Invalid characters are not rendered in the shadow tree.');
+        } else {
+            testFailed('Expected empty content in contenteditable, got "' + contentEditableDiv.innerText + '".');
+        }
+        input.remove();
+    })();
+    (() => {
+        debug('Switching type=text to type=number for value="123"');
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = '123';
+        document.body.appendChild(input);
+        input.type = 'number';
+        input.focus();
+
+        const shadow = internals.shadowRoot(input);
+        const contentEditableDiv = shadow.querySelector('div[contenteditable]');
+
+        if (input.value === '123' && contentEditableDiv.innerText === '123') {
+            testPassed('Valid numeric value "123" was preserved and shown in the shadow tree.');
+        } else {
+            testFailed(`Expected "123" in both value and contenteditable, got value="${input.value}", innerText="${contentEditableDiv.innerText}"`);
+        }
+        input.remove();
+    })();
+    (() => {
+        debug('Switching type=text to type=number for value="123ABC"');
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = '123ABC';
+        document.body.appendChild(input);
+        input.type = 'number';
+        input.focus();
+
+        const shadow = internals.shadowRoot(input);
+        const contentEditableDiv = shadow.querySelector('div[contenteditable]');
+
+        if (input.value === '' && contentEditableDiv.innerText === '') {
+            testPassed('Invalid value "123ABC" was dropped and not shown in the shadow tree.');
+        } else {
+            testFailed(`Expected empty value and contenteditable, got value="${input.value}", innerText="${contentEditableDiv.innerText}"`);
+        }
+        input.remove();
+    })();
+}
+</script>
+</body>
+</html>

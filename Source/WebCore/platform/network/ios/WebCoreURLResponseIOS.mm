@@ -34,6 +34,7 @@
 #import "FrameLoaderTypes.h"
 #import "QuickLook.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #import <pal/ios/QuickLookSoftLink.h>
 
@@ -63,15 +64,15 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef response, IsMainResourceLoad isM
 #else
     // Ensure that the MIME type is correct so that QuickLook's web plug-in is called when needed.
     // The shouldUseQuickLookForMIMEType function filters out the common MIME types so we don't do unnecessary work in those cases.
-    if (isMainResourceLoad == IsMainResourceLoad::Yes && isNoSniffSet == IsNoSniffSet::No && shouldUseQuickLookForMIMEType((__bridge NSString *)type)) {
-        RetainPtr<CFStringRef> updatedType;
+    if (isMainResourceLoad == IsMainResourceLoad::Yes && isNoSniffSet == IsNoSniffSet::No && shouldUseQuickLookForMIMEType(bridge_cast(type))) {
+        RetainPtr<NSString> updatedType;
         auto suggestedFilename = adoptCF(CFURLResponseCopySuggestedFilename(response));
-        if (auto quickLookType = adoptNS(PAL::softLink_QuickLook_QLTypeCopyBestMimeTypeForFileNameAndMimeType((__bridge NSString *)suggestedFilename.get(), (__bridge NSString *)type)))
-            updatedType = (__bridge CFStringRef)quickLookType.get();
+        if (auto quickLookType = adoptNS(PAL::softLink_QuickLook_QLTypeCopyBestMimeTypeForFileNameAndMimeType(bridge_cast(suggestedFilename.get()), bridge_cast(type))))
+            updatedType = quickLookType.get();
         else if (auto extension = filePathExtension(response))
-            updatedType = preferredMIMETypeForFileExtensionFromUTType(extension.get());
-        if (updatedType && !shouldPreferTextPlainMIMEType(type, updatedType.get()) && (!type || CFStringCompare(type, updatedType.get(), kCFCompareCaseInsensitive) != kCFCompareEqualTo)) {
-            CFURLResponseSetMIMEType(response, updatedType.get());
+            updatedType = preferredMIMETypeForFileExtensionFromUTType(bridge_cast(extension.get()));
+        if (updatedType && !shouldPreferTextPlainMIMEType(type, updatedType.get()) && (!type || CFStringCompare(type, bridge_cast(updatedType.get()), kCFCompareCaseInsensitive) != kCFCompareEqualTo)) {
+            CFURLResponseSetMIMEType(response, bridge_cast(updatedType.get()));
             return;
         }
     }

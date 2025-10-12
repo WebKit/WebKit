@@ -3,6 +3,7 @@ specific_include_rules = {
     "+modules/rtp_rtcp/source/rtp_video_header.h",
     "+modules/video_coding/include/video_codec_interface.h",
     "+modules/video_coding/include/video_coding_defines.h",
+    "+common_video/frame_instrumentation_data.h",
   ],
   "encoded_image\.h" : [
     "+rtc_base/buffer.h",

@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "BytecodeIndex.h"
-#include "CalleeBits.h"
-#include "LineColumn.h"
-#include "SourceID.h"
-#include "WasmIndexOrName.h"
+#include <JavaScriptCore/BytecodeIndex.h>
+#include <JavaScriptCore/CalleeBits.h>
+#include <JavaScriptCore/LineColumn.h>
+#include <JavaScriptCore/SourceID.h>
+#include <JavaScriptCore/WasmIndexOrName.h>
 #include <wtf/Function.h>
 #include <wtf/Indenter.h>
 #include <wtf/IterationStatus.h>
@@ -41,6 +41,7 @@ struct EntryFrame;
 struct InlineCallFrame;
 
 class CallFrame;
+class CallSiteIndex;
 class CodeBlock;
 class CodeOrigin;
 class JSCell;
@@ -65,6 +66,7 @@ public:
         size_t index() const { return m_index; }
         size_t argumentCountIncludingThis() const { return m_argumentCountIncludingThis; }
         bool callerIsEntryFrame() const { return m_callerIsEntryFrame; }
+        bool isWasmFrame() const { return m_isWasmFrame; }
         CallFrame* callerFrame() const { return m_callerFrame; }
         EntryFrame* entryFrame() const { return m_entryFrame; }
         CalleeBits callee() const { return m_callee; }
@@ -87,6 +89,9 @@ public:
             ASSERT(isNativeCalleeFrame());
             return m_wasmFunctionIndexOrName;
         }
+        size_t wasmFunctionIndex() const;
+
+        CallSiteIndex wasmCallSiteIndex() const;
 
         JS_EXPORT_PRIVATE String functionName() const;
         JS_EXPORT_PRIVATE String sourceURL() const;
@@ -134,6 +139,8 @@ public:
         bool m_callerIsEntryFrame : 1 { false };
         bool m_isWasmFrame : 1 { false };
         Wasm::IndexOrName m_wasmFunctionIndexOrName { };
+        size_t m_wasmFunctionIndex { 0 };
+        uint32_t m_wasmCallSiteIndexBits { };
 
         friend class StackVisitor;
     };

@@ -1,4 +1,4 @@
 
 
-FAIL EventTiming: verify interactionCount for key interaction assert_implements: Event Timing is not supported undefined
+PASS EventTiming: verify interactionCount for key interaction
 

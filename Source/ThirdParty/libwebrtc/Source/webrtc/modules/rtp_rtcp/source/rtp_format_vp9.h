@@ -36,7 +36,7 @@ namespace webrtc {
 class RtpPacketizerVp9 : public RtpPacketizer {
  public:
   // The `payload` must be one encoded VP9 layer frame.
-  RtpPacketizerVp9(rtc::ArrayView<const uint8_t> payload,
+  RtpPacketizerVp9(ArrayView<const uint8_t> payload,
                    PayloadSizeLimits limits,
                    const RTPVideoHeaderVP9& hdr);
 
@@ -58,12 +58,12 @@ class RtpPacketizerVp9 : public RtpPacketizer {
   // the layer frame. Returns false on failure.
   bool WriteHeader(bool layer_begin,
                    bool layer_end,
-                   rtc::ArrayView<uint8_t> rtp_payload) const;
+                   ArrayView<uint8_t> rtp_payload) const;
 
   const RTPVideoHeaderVP9 hdr_;
   const int header_size_;
   const int first_packet_extra_header_size_;
-  rtc::ArrayView<const uint8_t> remaining_payload_;
+  ArrayView<const uint8_t> remaining_payload_;
   std::vector<int> payload_sizes_;
   std::vector<int>::const_iterator current_packet_;
 };

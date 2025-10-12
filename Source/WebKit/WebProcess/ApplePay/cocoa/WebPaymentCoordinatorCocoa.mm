@@ -40,7 +40,7 @@ WebPaymentCoordinator::AvailablePaymentNetworksSet WebPaymentCoordinator::platfo
 #endif
 
     WebPaymentCoordinator::AvailablePaymentNetworksSet availableNetworks;
-    for (PKPaymentNetwork network in [PAL::getPKPaymentRequestClass() availableNetworks])
+    for (PKPaymentNetwork network in [PAL::getPKPaymentRequestClassSingleton() availableNetworks])
         availableNetworks.add(network);
     return availableNetworks;
 }

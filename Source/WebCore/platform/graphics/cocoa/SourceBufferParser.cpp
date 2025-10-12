@@ -81,34 +81,6 @@ void SourceBufferParser::setMinimumAudioSampleDuration(float)
 {
 }
 
-SourceBufferParser::Segment::Segment(Ref<SharedBuffer>&& buffer)
-    : m_segment(WTFMove(buffer))
-{
-}
-
-size_t SourceBufferParser::Segment::size() const
-{
-    return m_segment->size();
-}
-
-auto SourceBufferParser::Segment::read(std::span<uint8_t> destination, size_t position) const -> ReadResult
-{
-    size_t segmentSize = size();
-    destination = destination.first(std::min(destination.size(), segmentSize - std::min(position, segmentSize)));
-    m_segment->copyTo(destination, position);
-    return destination.size();
-}
-
-Ref<SharedBuffer> SourceBufferParser::Segment::takeSharedBuffer()
-{
-    return std::exchange(m_segment, SharedBuffer::create());
-}
-
-Ref<SharedBuffer> SourceBufferParser::Segment::getData(size_t offet, size_t length) const
-{
-    return m_segment->getContiguousData(offet, length);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_SOURCE)

@@ -26,9 +26,22 @@
 #include "config.h"
 #include "PlatformStrategies.h"
 
+#include "BlobRegistry.h"
+#include "LoaderStrategy.h"
+#include "MediaStrategy.h"
+#include "PasteboardStrategy.h"
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+#include "PushStrategy.h"
+#endif
+
 namespace WebCore {
 
 static PlatformStrategies* s_platformStrategies;
+
+PlatformStrategies::PlatformStrategies() = default;
+
+PlatformStrategies::~PlatformStrategies() = default;
 
 bool hasPlatformStrategies()
 {
@@ -53,6 +66,44 @@ void setPlatformStrategies(PlatformStrategies* platformStrategies)
     // throw an exception here in release builds.
     ASSERT(platformStrategies == s_platformStrategies);
 }
+
+CheckedPtr<LoaderStrategy> PlatformStrategies::loaderStrategy()
+{
+    if (!m_loaderStrategy)
+        m_loaderStrategy = createLoaderStrategy();
+    return m_loaderStrategy;
+}
+
+CheckedPtr<PasteboardStrategy> PlatformStrategies::pasteboardStrategy()
+{
+    if (!m_pasteboardStrategy)
+        m_pasteboardStrategy = createPasteboardStrategy();
+    return m_pasteboardStrategy;
+}
+
+CheckedRef<MediaStrategy> PlatformStrategies::mediaStrategy()
+{
+    std::call_once(m_onceKeyForMediaStrategies, [&] {
+        m_mediaStrategy = createMediaStrategy();
+    });
+    return *m_mediaStrategy;
+}
+
+CheckedPtr<BlobRegistry> PlatformStrategies::blobRegistry()
+{
+    if (!m_blobRegistry)
+        m_blobRegistry = createBlobRegistry();
+    return m_blobRegistry;
+}
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+CheckedPtr<PushStrategy> PlatformStrategies::pushStrategy()
+{
+    if (!m_pushStrategy)
+        m_pushStrategy = createPushStrategy();
+    return m_pushStrategy;
+}
+#endif
 
 } // namespace WebCore
 

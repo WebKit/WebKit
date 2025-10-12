@@ -2,4 +2,5 @@
 
 
 FAIL x and y properties for image elements with css zoom assert_equals: image with css zoom in a no zoom container x expected 4 but got 8
+PASS x and y properties for image elements with css zoom 1
 

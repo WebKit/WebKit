@@ -60,7 +60,7 @@ extern "C" {
 #define VPX_CODEC_CAP_INPUT_FRAGMENTS 0x100000
 /*!\brief Can support frame-based multi-threading */
 #define VPX_CODEC_CAP_FRAME_THREADING 0x200000
-/*!brief Can support external frame buffers */
+/*!\brief Can support external frame buffers */
 #define VPX_CODEC_CAP_EXTERNAL_FRAME_BUFFER 0x400000
 
 /*! \brief Initialization-time Feature Enabling

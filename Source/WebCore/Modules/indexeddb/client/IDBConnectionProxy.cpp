@@ -26,6 +26,7 @@
 #include "config.h"
 #include "IDBConnectionProxy.h"
 
+#include "IDBActiveDOMObjectInlines.h"
 #include "IDBCursorInfo.h"
 #include "IDBDatabase.h"
 #include "IDBDatabaseNameAndVersion.h"
@@ -39,6 +40,7 @@
 #include "IDBResultData.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "TransactionOperation.h"
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -514,22 +516,21 @@ void IDBConnectionProxy::connectionToServerLost(const IDBError& error)
 void IDBConnectionProxy::scheduleMainThreadTasks()
 {
     Locker locker { m_mainThreadTaskLock };
-    if (m_mainThreadProtector)
+    if (m_hasScheduledMainThreadTasks)
         return;
 
-    m_mainThreadProtector = m_connectionToServer.ptr();
-    callOnMainThread([this] {
-        handleMainThreadTasks();
+    m_hasScheduledMainThreadTasks = true;
+    callOnMainThread([protectedThis = Ref { *this }] {
+        protectedThis->handleMainThreadTasks();
     });
 }
 
 void IDBConnectionProxy::handleMainThreadTasks()
 {
-    RefPtr<IDBConnectionToServer> protector;
     {
         Locker locker { m_mainThreadTaskLock };
-        ASSERT(m_mainThreadProtector);
-        protector = WTFMove(m_mainThreadProtector);
+        ASSERT(m_hasScheduledMainThreadTasks);
+        m_hasScheduledMainThreadTasks = false;
     }
 
     while (auto task = m_mainThreadQueue.tryGetMessage())
@@ -540,7 +541,7 @@ void IDBConnectionProxy::getAllDatabaseNamesAndVersions(ScriptExecutionContext& 
 {
     ClientOrigin origin { context.securityOrigin()->data(), context.topOrigin().data() };
 
-    IDBDatabaseNameAndVersionRequest* request;
+    RefPtr<IDBDatabaseNameAndVersionRequest> request;
     {
         Locker locker { m_databaseInfoMapLock };
         auto newRequest = IDBDatabaseNameAndVersionRequest::create(context, *this, WTFMove(callback));
@@ -602,8 +603,8 @@ void removeItemsMatchingCurrentThread(HashMap<KeyType, ValueType>& map, Function
 {
     // FIXME: Revisit when introducing WebThread aware thread comparison.
     // https://bugs.webkit.org/show_bug.cgi?id=204345
-    map.removeIf([currentThread = &Thread::currentSingleton(), cleanupFunction = WTFMove(cleanupFunction)](auto& entry) {
-        if (&entry.value->originThread() == currentThread) {
+    map.removeIf([currentThread = RefPtr { &Thread::currentSingleton() }, cleanupFunction = WTFMove(cleanupFunction)](auto& entry) {
+        if (&entry.value->originThread() == currentThread.get()) {
             cleanupFunction(entry.value);
             return true;
         }
@@ -621,12 +622,12 @@ void setMatchingItemsContextSuspended(ScriptExecutionContext& currentContext, Ha
         if (&iterator.value->originThread() != &currentThread)
             continue;
 
-        RefPtr context = iterator.value->scriptExecutionContext();
+        RefPtr context = Ref { *iterator.value }->scriptExecutionContext();
         if (!context)
             continue;
 
         if (context == &currentContext)
-            iterator.value->setIsContextSuspended(isContextSuspended);
+            Ref { *iterator.value }->setIsContextSuspended(isContextSuspended);
     }
 }
 

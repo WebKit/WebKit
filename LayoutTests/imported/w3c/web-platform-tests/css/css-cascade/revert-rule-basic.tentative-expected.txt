@@ -1,0 +1,6 @@
+
+FAIL The revert-rule keyword rolls back to the previous rule assert_true: expected true got false
+FAIL Cascade order determines the previous rule, not order of appearance assert_true: expected true got false
+FAIL Reverting from style attribute reverts to regular rules assert_true: expected true got false
+FAIL A chain of revert-rule works assert_true: expected true got false
+

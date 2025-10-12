@@ -1,0 +1,6 @@
+
+FAIL LNA Public to local with permission Can't find variable: resolveUrl
+FAIL LNA Public to local with permission denied Can't find variable: resolveUrl
+FAIL LNA Public to local http mixed content bypass Can't find variable: resolveUrl
+FAIL LNA Public to public http mixed content bypass failure Can't find variable: resolveUrl
+

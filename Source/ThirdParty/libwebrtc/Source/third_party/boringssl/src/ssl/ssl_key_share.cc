@@ -1,16 +1,16 @@
-/* Copyright (c) 2015, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2015 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <openssl/ssl.h>
 
@@ -24,8 +24,6 @@
 #include <openssl/curve25519.h>
 #include <openssl/ec.h>
 #include <openssl/err.h>
-#define OPENSSL_UNSTABLE_EXPERIMENTAL_KYBER
-#include <openssl/experimental/kyber.h>
 #include <openssl/hrss.h>
 #include <openssl/mem.h>
 #include <openssl/mlkem.h>
@@ -33,8 +31,9 @@
 #include <openssl/rand.h>
 #include <openssl/span.h>
 
-#include "internal.h"
 #include "../crypto/internal.h"
+#include "../crypto/kyber/internal.h"
+#include "internal.h"
 
 BSSL_NAMESPACE_BEGIN
 
@@ -282,7 +281,7 @@ class X25519Kyber768KeyShare : public SSLKeyShare {
   KYBER_private_key kyber_private_key_;
 };
 
-// draft-kwiatkowski-tls-ecdhe-mlkem-01
+// draft-ietf-tls-ecdhe-mlkem-00
 class X25519MLKEM768KeyShare : public SSLKeyShare {
  public:
   X25519MLKEM768KeyShare() {}
@@ -375,8 +374,67 @@ class X25519MLKEM768KeyShare : public SSLKeyShare {
   MLKEM768_private_key mlkem_private_key_;
 };
 
+// draft-ietf-tls-mlkem-04
+class MLKEM1024KeyShare : public SSLKeyShare {
+ public:
+  MLKEM1024KeyShare() = default;
+
+  uint16_t GroupID() const override { return SSL_GROUP_MLKEM1024; }
+
+  bool Generate(CBB *out_public_key) override {
+    uint8_t public_key[MLKEM1024_PUBLIC_KEY_BYTES];
+    MLKEM1024_generate_key(public_key, /*optional_out_seed=*/nullptr,
+                           &private_key_);
+    return CBB_add_bytes(out_public_key, public_key, sizeof(public_key));
+  }
+
+  bool Encap(CBB *out_ciphertext, Array<uint8_t> *out_secret,
+             uint8_t *out_alert, Span<const uint8_t> peer_key) override {
+    MLKEM1024_public_key peer_pub;
+    CBS peer_pub_cbs;
+    CBS_init(&peer_pub_cbs, peer_key.data(), peer_key.size());
+    if (!MLKEM1024_parse_public_key(&peer_pub, &peer_pub_cbs)) {
+      *out_alert = SSL_AD_ILLEGAL_PARAMETER;
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+      return false;
+    }
+
+    Array<uint8_t> secret;
+    if (!secret.InitForOverwrite(MLKEM_SHARED_SECRET_BYTES)) {
+      return false;
+    }
+    uint8_t ciphertext[MLKEM1024_CIPHERTEXT_BYTES];
+    MLKEM1024_encap(ciphertext, secret.data(), &peer_pub);
+    if (!CBB_add_bytes(out_ciphertext, ciphertext, sizeof(ciphertext))) {
+      return false;
+    }
+    *out_secret = std::move(secret);
+    return true;
+  }
+
+  bool Decap(Array<uint8_t> *out_secret, uint8_t *out_alert,
+             Span<const uint8_t> ciphertext) override {
+    Array<uint8_t> secret;
+    if (!secret.InitForOverwrite(MLKEM_SHARED_SECRET_BYTES)) {
+      *out_alert = SSL_AD_INTERNAL_ERROR;
+      return false;
+    }
+
+    if (!MLKEM1024_decap(secret.data(), ciphertext.data(), ciphertext.size(),
+                         &private_key_)) {
+      *out_alert = SSL_AD_ILLEGAL_PARAMETER;
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
+      return false;
+    }
+    *out_secret = std::move(secret);
+    return true;
+  }
+
+ private:
+  MLKEM1024_private_key private_key_;
+};
+
 constexpr NamedGroup kNamedGroups[] = {
-    {NID_secp224r1, SSL_GROUP_SECP224R1, "P-224", "secp224r1"},
     {NID_X9_62_prime256v1, SSL_GROUP_SECP256R1, "P-256", "prime256v1"},
     {NID_secp384r1, SSL_GROUP_SECP384R1, "P-384", "secp384r1"},
     {NID_secp521r1, SSL_GROUP_SECP521R1, "P-521", "secp521r1"},
@@ -384,18 +442,15 @@ constexpr NamedGroup kNamedGroups[] = {
     {NID_X25519Kyber768Draft00, SSL_GROUP_X25519_KYBER768_DRAFT00,
      "X25519Kyber768Draft00", ""},
     {NID_X25519MLKEM768, SSL_GROUP_X25519_MLKEM768, "X25519MLKEM768", ""},
+    {NID_MLKEM1024, SSL_GROUP_MLKEM1024, "MLKEM1024", ""},
 };
 
 }  // namespace
 
-Span<const NamedGroup> NamedGroups() {
-  return MakeConstSpan(kNamedGroups, OPENSSL_ARRAY_SIZE(kNamedGroups));
-}
+Span<const NamedGroup> NamedGroups() { return kNamedGroups; }
 
 UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
   switch (group_id) {
-    case SSL_GROUP_SECP224R1:
-      return MakeUnique<ECKeyShare>(EC_group_p224(), SSL_GROUP_SECP224R1);
     case SSL_GROUP_SECP256R1:
       return MakeUnique<ECKeyShare>(EC_group_p256(), SSL_GROUP_SECP256R1);
     case SSL_GROUP_SECP384R1:
@@ -408,6 +463,8 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
       return MakeUnique<X25519Kyber768KeyShare>();
     case SSL_GROUP_X25519_MLKEM768:
       return MakeUnique<X25519MLKEM768KeyShare>();
+    case SSL_GROUP_MLKEM1024:
+      return MakeUnique<MLKEM1024KeyShare>();
     default:
       return nullptr;
   }
@@ -423,9 +480,10 @@ bool ssl_nid_to_group_id(uint16_t *out_group_id, int nid) {
   return false;
 }
 
-bool ssl_name_to_group_id(uint16_t *out_group_id, const char *name, size_t len) {
+bool ssl_name_to_group_id(uint16_t *out_group_id, const char *name,
+                          size_t len) {
   for (const auto &group : kNamedGroups) {
-    if (len == strlen(group.name) &&
+    if (len == strlen(group.name) &&  //
         !strncmp(group.name, name, len)) {
       *out_group_id = group.group_id;
       return true;
@@ -452,7 +510,7 @@ BSSL_NAMESPACE_END
 
 using namespace bssl;
 
-const char* SSL_get_group_name(uint16_t group_id) {
+const char *SSL_get_group_name(uint16_t group_id) {
   for (const auto &group : kNamedGroups) {
     if (group.group_id == group_id) {
       return group.name;
@@ -463,5 +521,5 @@ const char* SSL_get_group_name(uint16_t group_id) {
 
 size_t SSL_get_all_group_names(const char **out, size_t max_out) {
   return GetAllNames(out, max_out, Span<const char *>(), &NamedGroup::name,
-                     MakeConstSpan(kNamedGroups));
+                     Span(kNamedGroups));
 }

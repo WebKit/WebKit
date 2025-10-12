@@ -10,7 +10,7 @@
 
 #include "modules/audio_coding/codecs/opus/test/blocker.h"
 
-#include <string.h>
+#include <cstring>
 
 #include "rtc_base/checks.h"
 

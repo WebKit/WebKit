@@ -37,6 +37,7 @@
 #import "WebExtensionContext.h"
 #import "WebExtensionMenuItem.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/StringBuilder.h>
 
 #if USE(APPKIT)
@@ -91,7 +92,7 @@ void WebExtensionCommand::dispatchChangedEventSoonIfNeeded()
 
     m_oldShortcut = shortcutString();
 
-    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
+    dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
         RefPtr context = extensionContext();
         if (!context)
             return;

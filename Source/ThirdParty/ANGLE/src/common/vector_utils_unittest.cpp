@@ -6,6 +6,10 @@
 // vector_utils_unittests.cpp: Unit tests for the vector utils.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "vector_utils.h"
 
 #include <gtest/gtest.h>

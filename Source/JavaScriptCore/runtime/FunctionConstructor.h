@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include "InternalFunction.h"
-#include "ParserModes.h"
+#include <JavaScriptCore/InternalFunction.h>
+#include <JavaScriptCore/ParserModes.h>
 
 namespace WTF {
 class TextPosition;

@@ -1,4 +1,5 @@
 
-Harness Error (TIMEOUT), message = null
-
+PASS `allow-storage-access-by-user-activation` sandbox attribute is supported
+PASS [sandboxed-iframe] document.requestStorageAccess() should reject with a NotAllowedError with no user gesture.
+PASS [sandboxed-iframe] document.requestStorageAccess() should reject with a NotAllowedError, even with a user gesture
 

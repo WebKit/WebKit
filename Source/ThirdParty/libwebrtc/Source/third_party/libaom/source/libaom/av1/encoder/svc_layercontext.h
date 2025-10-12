@@ -93,6 +93,7 @@ typedef struct SVC {
   int number_spatial_layers;
   int number_temporal_layers;
   int prev_number_spatial_layers;
+  int prev_number_temporal_layers;
   int use_flexible_mode;
   int ksvc_fixed_mode;
   /*!\endcond */

@@ -463,12 +463,11 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("animation-wrapper", allowed_types=[str]),
         Schema.Entry("animation-wrapper-acceleration", allowed_types=[str]),
         Schema.Entry("animation-wrapper-requires-additional-parameters", allowed_types=[list], default_value=[]),
-        Schema.Entry("animation-wrapper-requires-computed-getter", allowed_types=[bool], default_value=False),
+        Schema.Entry("animation-wrapper-requires-getter", allowed_types=[str]),
         Schema.Entry("animation-wrapper-requires-non-additive-or-cumulative-interpolation", allowed_types=[bool], default_value=False),
         Schema.Entry("animation-wrapper-requires-non-normalized-discrete-interpolation", allowed_types=[bool], default_value=False),
         Schema.Entry("animation-wrapper-requires-override-parameters", allowed_types=[list]),
-        Schema.Entry("animation-wrapper-requires-render-style", allowed_types=[bool], default_value=False),
-        Schema.Entry("auto-functions", allowed_types=[bool], default_value=False),
+        Schema.Entry("animation-wrapper-requires-setter", allowed_types=[str]),
         Schema.Entry("cascade-alias", allowed_types=[str]),
         Schema.Entry("color-property", allowed_types=[bool], default_value=False),
         Schema.Entry("disables-native-appearance", allowed_types=[bool], default_value=False),
@@ -478,6 +477,7 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("fill-layer-initial", allowed_types=[str]),
         Schema.Entry("fill-layer-name-for-methods", allowed_types=[str]),
         Schema.Entry("fill-layer-setter", allowed_types=[str]),
+        Schema.Entry("fill-layer-primary", allowed_types=[bool], default_value=False),
         Schema.Entry("fill-layer-property", allowed_types=[bool], default_value=False),
         Schema.Entry("font-description-getter", allowed_types=[str]),
         Schema.Entry("font-description-initial", allowed_types=[str]),
@@ -488,6 +488,7 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("internal-only", allowed_types=[bool], default_value=False),
         Schema.Entry("logical-property-group", allowed_types=[dict]),
         Schema.Entry("longhands", allowed_types=[list]),
+        Schema.Entry("medium-priority", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-exported", allowed_types=[bool]),
         Schema.Entry("parser-function", allowed_types=[str]),
         Schema.Entry("parser-function-allows-number-or-integer-input", allowed_types=[bool], default_value=False),
@@ -510,13 +511,11 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("skip-style-builder", allowed_types=[bool], default_value=False),
         Schema.Entry("skip-style-extractor", allowed_types=[bool], default_value=False),
         Schema.Entry("status", allowed_types=[str]),
-        Schema.Entry("style-builder-conditional-converter", allowed_types=[str]),
         Schema.Entry("style-builder-converter", allowed_types=[str]),
         Schema.Entry("style-builder-custom", allowed_types=[str]),
         Schema.Entry("style-converter", allowed_types=[str]),
         Schema.Entry("style-extractor-converter", allowed_types=[str]),
         Schema.Entry("style-extractor-custom", allowed_types=[bool], default_value=False),
-        Schema.Entry("svg", allowed_types=[bool], default_value=False),
         Schema.Entry("top-priority", allowed_types=[bool], default_value=False),
         Schema.Entry("top-priority-reason", allowed_types=[str]),
         Schema.Entry("url", allowed_types=[str]),
@@ -619,10 +618,18 @@ class StylePropertyCodeGenProperties:
                 raise Exception(f"{key_path} is a shorthand, but has top priority.")
             if json_value.get("high-priority", False):
                 raise Exception(f"{key_path} can't have conflicting top/high priority.")
+            if json_value.get("medium-priority", False):
+                raise Exception(f"{key_path} can't have conflicting top/medium priority.")
 
         if json_value.get("high-priority", False):
+            if json_value.get("medium-priority", False):
+                raise Exception(f"{key_path} can't have conflicting high/medium priority.")
             if json_value.get("longhands"):
                 raise Exception(f"{key_path} is a shorthand, but has high priority.")
+
+        if json_value.get("medium-priority", False):
+            if json_value.get("longhands"):
+                raise Exception(f"{key_path} is a shorthand, but has medium priority.")
 
         if json_value.get("sink-priority", False):
             if json_value.get("longhands") is not None:
@@ -867,6 +874,30 @@ class StyleProperty:
         raise Exception(f"Unrecognized animation or transition property name: '{self.name}")
 
     @property
+    def method_name_for_set_animations_or_transitions(self):
+        if "animation-" in self.name:
+            return "setAnimations"
+        if "transition-" in self.name:
+            return "setTransitions"
+        raise Exception(f"Unrecognized animation or transition property name: '{self.name}")
+
+    @property
+    def method_name_for_initial_animations_or_transitions(self):
+        if "animation-" in self.name:
+            return "initialAnimations"
+        if "transition-" in self.name:
+            return "initialTransitions"
+        raise Exception(f"Unrecognized animation or transition property name: '{self.name}")
+
+    @property
+    def type_name_for_animations_or_transitions(self):
+        if "animation-" in self.name:
+            return "Animations"
+        if "transition-" in self.name:
+            return "Transitions"
+        raise Exception(f"Unrecognized animation or transition property name: '{self.name}")
+
+    @property
     def method_name_for_ensure_layers(self):
         if "background-" in self.name:
             return "ensureBackgroundLayers"
@@ -883,11 +914,27 @@ class StyleProperty:
         raise Exception(f"Unrecognized FillLayer property name: '{self.name}")
 
     @property
-    def enum_name_for_layers_type(self):
+    def method_name_for_set_layers(self):
         if "background-" in self.name:
-            return "FillLayerType::Background"
+            return "setBackgroundLayers"
         if "mask-" in self.name:
-            return "FillLayerType::Mask"
+            return "setMaskLayers"
+        raise Exception(f"Unrecognized FillLayer property name: '{self.name}")
+
+    @property
+    def method_name_for_initial_layers(self):
+        if "background-" in self.name:
+            return "initialBackgroundLayers"
+        if "mask-" in self.name:
+            return "initialMaskLayers"
+        raise Exception(f"Unrecognized FillLayer property name: '{self.name}")
+
+    @property
+    def type_name_for_layers(self):
+        if "background-" in self.name:
+            return "BackgroundLayers"
+        if "mask-" in self.name:
+            return "MaskLayers"
         raise Exception(f"Unrecognized FillLayer property name: '{self.name}")
 
 
@@ -1009,6 +1056,14 @@ class StyleProperties:
         if not a_is_high_priority and b_is_high_priority:
             return 1
 
+        # Sort longhands with medium priority to the front
+        a_is_medium_priority = a.codegen_properties.medium_priority
+        b_is_medium_priority = b.codegen_properties.medium_priority
+        if a_is_medium_priority and not b_is_medium_priority:
+            return -1
+        if not a_is_medium_priority and b_is_medium_priority:
+            return 1
+
         # Sort logical longhands in a logical property group to the back, before shorthands.
         a_is_in_logical_property_group_logical = a.codegen_properties.logical_property_group and a.codegen_properties.logical_property_group.logic == 'logical'
         b_is_in_logical_property_group_logical = b.codegen_properties.logical_property_group and b.codegen_properties.logical_property_group.logic == 'logical'
@@ -1079,6 +1134,7 @@ class DescriptorCodeGenProperties:
         # By defining these to None, we can utilize the shared sorting method, StyleProperties._sort_by_descending_priority_and_name.
         self.top_priority = None
         self.high_priority = None
+        self.medium_priority = None
         self.sink_priority = None
         self.logical_property_group = None
 
@@ -2967,11 +3023,22 @@ class GenerateCSSPropertyNames:
             """)
 
     def _generate_gperf_keywords(self, *, to):
-        # Concatenates a list of unique 'property-name, property-id' strings with a second list of all 'property-alias, property-id' strings.
-        all_property_names_and_aliases_with_ids = itertools.chain(
-              [f'{property.name}, {property.id}'                        for property in self.properties_and_descriptors.all_unique],
-            *[[f'{alias}, {property.id}' for alias in property.aliases] for property in self.properties_and_descriptors.all_properties_and_descriptors]
-        )
+        # Use a set to automatically deduplicate entries that would cause gperf
+        # hash collisions. This handles cases where the same alias (like
+        # "font-stretch") is defined multiple times.
+        all_entries_set = set()
+
+        # Add unique property names.
+        for property in self.properties_and_descriptors.all_unique:
+            all_entries_set.add(f'{property.name}, {property.id}')
+
+        # Add aliases.
+        for property in self.properties_and_descriptors.all_properties_and_descriptors:
+            for alias in property.aliases:
+                all_entries_set.add(f'{alias}, {property.id}')
+
+        # Sort for consistent output.
+        all_property_names_and_aliases_with_ids = sorted(all_entries_set)
 
         to.write("%%")
         to.write_lines(all_property_names_and_aliases_with_ids)
@@ -3012,7 +3079,7 @@ class GenerateCSSPropertyNames:
 
             String nameForIDL(CSSPropertyID id)
             {
-                LChar characters[maxCSSPropertyNameLength];
+                Latin1Character characters[maxCSSPropertyNameLength];
                 const char* nameForCSS = nameLiteral(id);
                 if (!nameForCSS)
                     return emptyString();
@@ -3028,7 +3095,7 @@ class GenerateCSSPropertyNames:
                     }
                     *nextCharacter++ = character;
                 }
-                return std::span<const LChar> { characters, nextCharacter };
+                return std::span<const Latin1Character> { characters, nextCharacter };
             }
 
             """)
@@ -3398,7 +3465,7 @@ class GenerateCSSPropertyNames:
 
             self.generation_context.generate_property_id_switch_function(
                 to=writer,
-                signature="UChar CSSProperty::listValuedPropertySeparator(CSSPropertyID id)",
+                signature="char16_t CSSProperty::listValuedPropertySeparator(CSSPropertyID id)",
                 iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.separator),
                 mapping=lambda p: f"return '{ p.codegen_properties.separator[0] }';",
                 default="break;",
@@ -3523,6 +3590,8 @@ class GenerateCSSPropertyNames:
             last_top_priority_property = None
             first_high_priority_property = None
             last_high_priority_property = None
+            first_medium_priority_property = None
+            last_medium_priority_property = None
             first_low_priority_property = None
             last_low_priority_property = None
             first_logical_group_physical_property = None
@@ -3543,6 +3612,10 @@ class GenerateCSSPropertyNames:
                     if not first_high_priority_property:
                         first_high_priority_property = property
                     last_high_priority_property = property
+                elif property.codegen_properties.medium_priority:
+                    if not first_medium_priority_property:
+                        first_medium_priority_property = property
+                    last_medium_priority_property = property
                 elif not property.codegen_properties.logical_property_group:
                     if not first_low_priority_property:
                         first_low_priority_property = property
@@ -3585,6 +3658,8 @@ class GenerateCSSPropertyNames:
         to.write(f"constexpr auto lastTopPriorityProperty = {last_top_priority_property.id};")
         to.write(f"constexpr auto firstHighPriorityProperty = {first_high_priority_property.id};")
         to.write(f"constexpr auto lastHighPriorityProperty = {last_high_priority_property.id};")
+        to.write(f"constexpr auto firstMediumPriorityProperty = {first_medium_priority_property.id};")
+        to.write(f"constexpr auto lastMediumPriorityProperty = {last_medium_priority_property.id};")
         to.write(f"constexpr auto firstLowPriorityProperty = {first_low_priority_property.id};")
         to.write(f"constexpr auto lastLowPriorityProperty = {last_low_priority_property.id};")
         to.write(f"constexpr auto firstLogicalGroupPhysicalProperty = {first_logical_group_physical_property.id};")
@@ -3605,7 +3680,7 @@ class GenerateCSSPropertyNames:
 
         to.write(f"struct CSSPropertySettings {{")
         with to.indent():
-            to.write(f"WTF_MAKE_STRUCT_FAST_ALLOCATED;")
+            to.write(f"WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CSSPropertySettings);")
             to.newline()
 
             to.write_lines(settings_variable_declarations)
@@ -3919,82 +3994,62 @@ class GenerateStyleBuilderGenerated:
 
     # MARK: - Helper generator functions for StyleBuilderGenerated.cpp
 
+    def _converted_value(self, property, additional_parameters=[]):
+        parameters = ['builderState', 'value'] + additional_parameters
+        if property.codegen_properties.style_builder_converter:
+            return f"BuilderConverter::convert{property.codegen_properties.style_builder_converter}({', '.join(parameters)})"
+        elif property.codegen_properties.color_property:
+            if not property.codegen_properties.visited_link_color_support:
+                parameters = parameters + ['ForVisitedLink::No']
+            return f"BuilderConverter::convertStyleType<Color>({', '.join(parameters)})"
+        else:
+            return f"fromCSSValueDeducingType({', '.join(parameters)})"
+
     # Color property setters.
 
-    def _generate_color_property_initial_value_setter(self, to, property):
-        if property.codegen_properties.render_style_initial == "currentColor":
-            initial_function = "Style::Color::currentColor"
-        else:
-            initial_function = "RenderStyle::" + property.codegen_properties.render_style_initial
+    def _generate_visited_link_color_supporting_property_initial_value_setter(self, to, property):
+        initial_function = "RenderStyle::" + property.codegen_properties.render_style_initial
         to.write(f"if (builderState.applyPropertyToRegularStyle())")
         to.write(f"    builderState.style().{property.codegen_properties.render_style_setter}({initial_function}());")
         to.write(f"if (builderState.applyPropertyToVisitedLinkStyle())")
         to.write(f"    builderState.style().setVisitedLink{property.codegen_properties.render_style_name_for_methods}({initial_function}());")
 
-    def _generate_color_property_inherit_value_setter(self, to, property):
+    def _generate_visited_link_color_supporting_property_inherit_value_setter(self, to, property):
         to.write(f"if (builderState.applyPropertyToRegularStyle())")
-        to.write(f"    builderState.style().{property.codegen_properties.render_style_setter}(builderState.parentStyle().{property.codegen_properties.render_style_getter}());")
+        to.write(f"    builderState.style().{property.codegen_properties.render_style_setter}(forwardInheritedValue(builderState.parentStyle().{property.codegen_properties.render_style_getter}()));")
         to.write(f"if (builderState.applyPropertyToVisitedLinkStyle())")
-        to.write(f"    builderState.style().setVisitedLink{property.codegen_properties.render_style_name_for_methods}(builderState.parentStyle().{property.codegen_properties.render_style_getter}());")
+        to.write(f"    builderState.style().setVisitedLink{property.codegen_properties.render_style_name_for_methods}(forwardInheritedValue(builderState.parentStyle().{property.codegen_properties.render_style_getter}()));")
 
-    def _generate_color_property_value_setter(self, to, property, value):
+    def _generate_visited_link_color_supporting_property_value_setter(self, to, property):
         to.write(f"if (builderState.applyPropertyToRegularStyle())")
-        to.write(f"    builderState.style().{property.codegen_properties.render_style_setter}(builderState.createStyleColor({value}, ForVisitedLink::No));")
+        to.write(f"    builderState.style().{property.codegen_properties.render_style_setter}({self._converted_value(property, ['ForVisitedLink::No'])});")
         to.write(f"if (builderState.applyPropertyToVisitedLinkStyle())")
-        to.write(f"    builderState.style().setVisitedLink{property.codegen_properties.render_style_name_for_methods}(builderState.createStyleColor({value}, ForVisitedLink::Yes));")
+        to.write(f"    builderState.style().setVisitedLink{property.codegen_properties.render_style_name_for_methods}({self._converted_value(property, ['ForVisitedLink::Yes'])});")
 
     # Animation property setters.
 
     def _generate_animation_property_initial_value_setter(self, to, property):
-        to.write(f"auto& list = builderState.style().{property.method_name_for_ensure_animations_or_transitions}();")
-        to.write(f"if (list.isEmpty())")
-        to.write(f"    list.append(Animation::create());")
-        to.write(f"list.animation(0).{property.codegen_properties.animation_setter}(Animation::{property.codegen_properties.animation_initial}());")
-        to.write(f"for (auto& animation : list)")
-        to.write(f"    animation->clear{property.codegen_properties.animation_name_for_methods}();")
+        to.write(f"applyInitialAnimationOrTransitionProperty<&RenderStyle::{property.method_name_for_ensure_animations_or_transitions}, &{property.type_name_for_animations_or_transitions}::value_type::{property.codegen_properties.animation_setter}, &{property.type_name_for_animations_or_transitions}::value_type::{property.codegen_properties.animation_initial}, &{property.type_name_for_animations_or_transitions}::value_type::clear{property.codegen_properties.animation_name_for_methods}, {property.type_name_for_animations_or_transitions}>(builderState);")
 
     def _generate_animation_property_inherit_value_setter(self, to, property):
-        to.write(f"auto& list = builderState.style().{property.method_name_for_ensure_animations_or_transitions}();")
-        to.write(f"auto* parentList = builderState.parentStyle().{property.method_name_for_animations_or_transitions}();")
-        to.write(f"size_t i = 0, parentSize = parentList ? parentList->size() : 0;")
-        to.write(f"for ( ; i < parentSize && parentList->animation(i).is{property.codegen_properties.animation_name_for_methods}Set(); ++i) {{")
-        to.write(f"    if (list.size() <= i)")
-        to.write(f"        list.append(Animation::create());")
-        to.write(f"    list.animation(i).{property.codegen_properties.animation_setter}(parentList->animation(i).{property.codegen_properties.animation_getter}());")
-        to.write(f"}}")
-        to.write(f"// Reset any remaining animations to not have the property set.")
-        to.write(f"for ( ; i < list.size(); ++i)")
-        to.write(f"    list.animation(i).clear{property.codegen_properties.animation_name_for_methods}();")
+        to.write(f"applyInheritAnimationOrTransitionProperty<&RenderStyle::{property.method_name_for_ensure_animations_or_transitions}, &RenderStyle::{property.method_name_for_animations_or_transitions}, &{property.type_name_for_animations_or_transitions}::value_type::{property.codegen_properties.animation_getter}, &{property.type_name_for_animations_or_transitions}::value_type::{property.codegen_properties.animation_setter}, &{property.type_name_for_animations_or_transitions}::value_type::clear{property.codegen_properties.animation_name_for_methods}, &{property.type_name_for_animations_or_transitions}::value_type::is{property.codegen_properties.animation_name_for_methods}Set, {property.type_name_for_animations_or_transitions}>(builderState);")
 
     def _generate_animation_property_value_setter(self, to, property):
-        to.write(f"auto& list = builderState.style().{property.method_name_for_ensure_animations_or_transitions}();")
-        to.write(f"size_t childIndex = 0;")
-        to.write(f"if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {{")
-        to.write(f"    // Walk each value and put it into an animation, creating new animations as needed.")
-        to.write(f"    for (auto& currentValue : *valueList) {{")
-        to.write(f"        if (childIndex >= list.size())")
-        to.write(f"            list.append(Animation::create());")
-        to.write(f"        builderState.styleMap().mapAnimation{property.codegen_properties.animation_name_for_methods}(list.animation(childIndex), currentValue);")
-        to.write(f"        ++childIndex;")
-        to.write(f"    }}")
-        to.write(f"}} else {{")
-        to.write(f"    if (list.isEmpty())")
-        to.write(f"        list.append(Animation::create());")
-        to.write(f"    builderState.styleMap().mapAnimation{property.codegen_properties.animation_name_for_methods}(list.animation(childIndex), value);")
-        to.write(f"    childIndex = 1;")
-        to.write(f"}}")
-        to.write(f"for ( ; childIndex < list.size(); ++childIndex) {{")
-        to.write(f"    // Reset all remaining animations to not have the property set.")
-        to.write(f"    list.animation(childIndex).clear{property.codegen_properties.animation_name_for_methods}();")
-        to.write(f"}}")
+        def converter(property):
+            if property.codegen_properties.style_builder_converter:
+                return f"&BuilderConverter::convert{property.codegen_properties.style_builder_converter}"
+            else:
+                return "&fromCSSValueDeducingType"
+
+        to.write(f"applyValuePrimaryAnimationOrTransitionProperty<&RenderStyle::{property.method_name_for_ensure_animations_or_transitions}, &{property.type_name_for_animations_or_transitions}::value_type::{property.codegen_properties.animation_setter}, &{property.type_name_for_animations_or_transitions}::value_type::{property.codegen_properties.animation_initial}, &{property.type_name_for_animations_or_transitions}::value_type::clear{property.codegen_properties.animation_name_for_methods}, {converter(property)}, {property.type_name_for_animations_or_transitions}>(builderState, value);")
 
     # Font property setters.
 
     def _generate_font_property_initial_value_setter(self, to, property):
-        to.write(f"builderState.{property.codegen_properties.font_description_setter.replace('set', 'setFontDescription', 1)}(FontCascadeDescription::{property.codegen_properties.font_description_initial}());")
+        to.write(f"builderState.{property.codegen_properties.font_description_setter.replace('set', 'setFontDescription', 1)}(RenderStyle::{property.codegen_properties.render_style_initial}());")
 
     def _generate_font_property_inherit_value_setter(self, to, property):
-        to.write(f"auto inheritedValue = builderState.parentFontDescription().{property.codegen_properties.font_description_getter}();")
+        to.write(f"auto inheritedValue = builderState.parentStyle().{property.codegen_properties.render_style_getter}();")
         to.write(f"builderState.{property.codegen_properties.font_description_setter.replace('set', 'setFontDescription', 1)}(WTFMove(inheritedValue));")
 
     def _generate_font_property_value_setter(self, to, property, value):
@@ -4003,65 +4058,28 @@ class GenerateStyleBuilderGenerated:
     # Fill Layer property setters.
 
     def _generate_fill_layer_property_initial_value_setter(self, to, property):
-        initial = f"FillLayer::{property.codegen_properties.fill_layer_initial}({property.enum_name_for_layers_type})"
-        to.write(f"// Check for (single-layer) no-op before clearing anything.")
-        to.write(f"auto& layers = builderState.style().{property.method_name_for_layers}();")
-        to.write(f"if (!layers.next() && (!layers.is{property.codegen_properties.fill_layer_name_for_methods}Set() || layers.{property.codegen_properties.fill_layer_getter}() == {initial}))")
-        to.write(f"    return;")
-        to.write(f"auto* child = &builderState.style().{property.method_name_for_ensure_layers}();")
-        to.write(f"child->{property.codegen_properties.fill_layer_setter}({initial});")
-        to.write(f"for (child = child->next(); child; child = child->next())")
-        to.write(f"    child->clear{property.codegen_properties.fill_layer_name_for_methods}();")
+        if property.codegen_properties.fill_layer_primary:
+            to.write(f"applyInitialPrimaryFillLayerProperty<&RenderStyle::{property.method_name_for_set_layers}, &RenderStyle::{property.method_name_for_initial_layers}>(builderState);")
+        else:
+            to.write(f"applyInitialSecondaryFillLayerProperty<&RenderStyle::{property.method_name_for_ensure_layers}, &{property.type_name_for_layers}::Layer::{property.codegen_properties.fill_layer_setter}, &{property.type_name_for_layers}::Layer::{property.codegen_properties.fill_layer_initial}>(builderState);")
 
     def _generate_fill_layer_property_inherit_value_setter(self, to, property):
-        to.write(f"// Check for no-op before copying anything.")
-        to.write(f"if (builderState.parentStyle().{property.method_name_for_layers}() == builderState.style().{property.method_name_for_layers}())")
-        to.write(f"    return;")
-        to.write(f"auto* child = &builderState.style().{property.method_name_for_ensure_layers}();")
-        to.write(f"FillLayer* previousChild = nullptr;")
-        to.write(f"for (auto* parent = &builderState.parentStyle().{property.method_name_for_layers}(); parent && parent->is{property.codegen_properties.fill_layer_name_for_methods}Set(); parent = parent->next()) {{")
-        to.write(f"    if (!child) {{")
-        to.write(f"        previousChild->setNext(FillLayer::create({property.enum_name_for_layers_type}));")
-        to.write(f"        child = previousChild->next();")
-        to.write(f"    }}")
-        to.write(f"    child->{property.codegen_properties.fill_layer_setter}(parent->{property.codegen_properties.fill_layer_getter}());")
-        to.write(f"    previousChild = child;")
-        to.write(f"    child = previousChild->next();")
-        to.write(f"}}")
-        to.write(f"for (; child; child = child->next())")
-        to.write(f"    child->clear{property.codegen_properties.fill_layer_name_for_methods}();")
+        if property.codegen_properties.fill_layer_primary:
+            to.write(f"applyInheritPrimaryFillLayerProperty<&RenderStyle::{property.method_name_for_set_layers}, &RenderStyle::{property.method_name_for_layers}, &{property.type_name_for_layers}::Layer::{property.codegen_properties.fill_layer_getter}, {property.type_name_for_layers}>(builderState);")
+        else:
+            to.write(f"applyInheritSecondaryFillLayerProperty<&RenderStyle::{property.method_name_for_ensure_layers}, &RenderStyle::{property.method_name_for_layers}, &{property.type_name_for_layers}::Layer::{property.codegen_properties.fill_layer_setter}, &{property.type_name_for_layers}::Layer::{property.codegen_properties.fill_layer_getter}>(builderState);")
 
     def _generate_fill_layer_property_value_setter(self, to, property):
-        to.write(f"auto* child = &builderState.style().{property.method_name_for_ensure_layers}();")
-        to.write(f"FillLayer* previousChild = nullptr;")
-        to.write(f"if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {{")
-        to.write(f"    // Walk each value and put it into a layer, creating new layers as needed.")
-        to.write(f"    for (auto& item : *valueList) {{")
-        to.write(f"        if (!child) {{")
-        to.write(f"            previousChild->setNext(FillLayer::create({property.enum_name_for_layers_type}));")
-        to.write(f"            child = previousChild->next();")
-        to.write(f"        }}")
-        to.write(f"        builderState.styleMap().mapFill{property.codegen_properties.fill_layer_name_for_methods}(id, *child, item);")
-        to.write(f"        previousChild = child;")
-        to.write(f"        child = child->next();")
-        to.write(f"    }}")
-        to.write(f"}} else {{")
-        to.write(f"    builderState.styleMap().mapFill{property.codegen_properties.fill_layer_name_for_methods}(id, *child, value);")
-        to.write(f"    child = child->next();")
-        to.write(f"}}")
-        to.write(f"for (; child; child = child->next())")
-        to.write(f"    child->clear{property.codegen_properties.fill_layer_name_for_methods}();")
+        def converter(property):
+            if property.codegen_properties.style_builder_converter:
+                return f"&BuilderConverter::convert{property.codegen_properties.style_builder_converter}"
+            else:
+                return "&fromCSSValueDeducingType"
 
-    # SVG property setters.
-
-    def _generate_svg_property_initial_value_setter(self, to, property):
-        to.write(f"builderState.style().accessSVGStyle().{property.codegen_properties.render_style_setter}(SVGRenderStyle::{property.codegen_properties.render_style_initial}());")
-
-    def _generate_svg_property_inherit_value_setter(self, to, property):
-        to.write(f"builderState.style().accessSVGStyle().{property.codegen_properties.render_style_setter}(forwardInheritedValue(builderState.parentStyle().svgStyle().{property.codegen_properties.render_style_getter}()));")
-
-    def _generate_svg_property_value_setter(self, to, property, value):
-        to.write(f"builderState.style().accessSVGStyle().{property.codegen_properties.render_style_setter}({value});")
+        if property.codegen_properties.fill_layer_primary:
+            to.write(f"applyValuePrimaryFillLayerProperty<&RenderStyle::{property.method_name_for_set_layers}, {converter(property)}, {property.type_name_for_layers}>(builderState, value);")
+        else:
+            to.write(f"applyValueSecondaryFillLayerProperty<&RenderStyle::{property.method_name_for_ensure_layers}, &{property.type_name_for_layers}::Layer::{property.codegen_properties.fill_layer_setter}, &{property.type_name_for_layers}::Layer::{property.codegen_properties.fill_layer_getter}, &{property.type_name_for_layers}::Layer::{property.codegen_properties.fill_layer_initial}, {converter(property)}>(builderState, value);")
 
     # All other property setters.
 
@@ -4081,18 +4099,14 @@ class GenerateStyleBuilderGenerated:
         to.write(f"{{")
 
         with to.indent():
-            if property.codegen_properties.auto_functions:
-                to.write(f"builderState.style().setHasAuto{property.codegen_properties.render_style_name_for_methods}();")
-            elif property.codegen_properties.visited_link_color_support:
-                self._generate_color_property_initial_value_setter(to, property)
+            if property.codegen_properties.visited_link_color_support:
+                self._generate_visited_link_color_supporting_property_initial_value_setter(to, property)
             elif property.codegen_properties.animation_property:
                 self._generate_animation_property_initial_value_setter(to, property)
             elif property.codegen_properties.font_property:
                 self._generate_font_property_initial_value_setter(to, property)
             elif property.codegen_properties.fill_layer_property:
                 self._generate_fill_layer_property_initial_value_setter(to, property)
-            elif property.codegen_properties.svg:
-                self._generate_svg_property_initial_value_setter(to, property)
             else:
                 self._generate_property_initial_value_setter(to, property)
 
@@ -4106,27 +4120,14 @@ class GenerateStyleBuilderGenerated:
         to.write(f"{{")
 
         with to.indent():
-            if property.codegen_properties.auto_functions:
-                to.write(f"if (builderState.parentStyle().hasAuto{property.codegen_properties.render_style_name_for_methods}()) {{")
-                with to.indent():
-                    to.write(f"builderState.style().setHasAuto{property.codegen_properties.render_style_name_for_methods}();")
-                    to.write(f"return;")
-                to.write(f"}}")
-
-                if property.codegen_properties.svg:
-                    self._generate_svg_property_inherit_value_setter(to, property)
-                else:
-                    self._generate_property_inherit_value_setter(to, property)
-            elif property.codegen_properties.visited_link_color_support:
-                self._generate_color_property_inherit_value_setter(to, property)
+            if property.codegen_properties.visited_link_color_support:
+                self._generate_visited_link_color_supporting_property_inherit_value_setter(to, property)
             elif property.codegen_properties.animation_property:
                 self._generate_animation_property_inherit_value_setter(to, property)
             elif property.codegen_properties.font_property:
                 self._generate_font_property_inherit_value_setter(to, property)
             elif property.codegen_properties.fill_layer_property:
                 self._generate_fill_layer_property_inherit_value_setter(to, property)
-            elif property.codegen_properties.svg:
-                self._generate_svg_property_inherit_value_setter(to, property)
             else:
                 self._generate_property_inherit_value_setter(to, property)
 
@@ -4136,23 +4137,10 @@ class GenerateStyleBuilderGenerated:
         to.write(f"}}")
 
     def _generate_style_builder_generated_cpp_value_setter(self, to, property):
-        if property.codegen_properties.fill_layer_property:
-            to.write(f"static void applyValue{property.id_without_prefix}(CSSPropertyID id, BuilderState& builderState, CSSValue& value)")
-        else:
-            to.write(f"static void applyValue{property.id_without_prefix}(BuilderState& builderState, CSSValue& value)")
+        to.write(f"static void applyValue{property.id_without_prefix}(BuilderState& builderState, CSSValue& value)")
         to.write(f"{{")
 
         with to.indent():
-            def converted_value(property):
-                if property.codegen_properties.style_builder_converter:
-                    return f"BuilderConverter::convert{property.codegen_properties.style_builder_converter}(builderState, value)"
-                elif property.codegen_properties.style_builder_conditional_converter:
-                    return f"WTFMove(convertedValue.value())"
-                elif property.codegen_properties.color_property and not property.codegen_properties.visited_link_color_support:
-                    return f"builderState.createStyleColor(value, ForVisitedLink::No)"
-                else:
-                    return "fromCSSValueDeducingType(builderState, value)"
-
             if property in self.style_properties.all_by_name["font"].codegen_properties.longhands and "Initial" not in property.codegen_properties.style_builder_custom and not property.codegen_properties.style_builder_converter:
                 to.write(f"if (CSSPropertyParserHelpers::isSystemFontShorthand(value.valueID())) {{")
                 with to.indent():
@@ -4160,34 +4148,16 @@ class GenerateStyleBuilderGenerated:
                     to.write(f"return;")
                 to.write(f"}}")
 
-            if property.codegen_properties.auto_functions:
-                to.write(f"if (value.valueID() == CSSValueAuto) {{")
-                with to.indent():
-                    to.write(f"builderState.style().setHasAuto{property.codegen_properties.render_style_name_for_methods}();")
-                    to.write(f"return;")
-                to.write(f"}}")
-
             if property.codegen_properties.visited_link_color_support:
-                self._generate_color_property_value_setter(to, property, converted_value(property))
+                self._generate_visited_link_color_supporting_property_value_setter(to, property)
             elif property.codegen_properties.animation_property:
                 self._generate_animation_property_value_setter(to, property)
             elif property.codegen_properties.font_property:
-                self._generate_font_property_value_setter(to, property, converted_value(property))
+                self._generate_font_property_value_setter(to, property, self._converted_value(property))
             elif property.codegen_properties.fill_layer_property:
                 self._generate_fill_layer_property_value_setter(to, property)
-            elif property.codegen_properties.style_builder_conditional_converter:
-                to.write(f"auto convertedValue = BuilderConverter::convert{property.codegen_properties.style_builder_conditional_converter}(builderState, value);")
-                to.write(f"if (convertedValue)")
-                with to.indent():
-                    if property.codegen_properties.svg:
-                        self._generate_svg_property_value_setter(to, property, converted_value(property))
-                    else:
-                        self._generate_property_value_setter(to, property, converted_value(property))
             else:
-                if property.codegen_properties.svg:
-                    self._generate_svg_property_value_setter(to, property, converted_value(property))
-                else:
-                    self._generate_property_value_setter(to, property, converted_value(property))
+                self._generate_property_value_setter(to, property, self._converted_value(property))
 
             if property.codegen_properties.fast_path_inherited:
                 to.write(f"builderState.style().setDisallowsFastPathInheritance();")
@@ -4251,8 +4221,6 @@ class GenerateStyleBuilderGenerated:
                         apply_initial_arguments = ["builderState"]
                         apply_inherit_arguments = ["builderState"]
                         apply_value_arguments = ["builderState", "value"]
-                        if property.codegen_properties.fill_layer_property:
-                            apply_value_arguments.insert(0, "id")
 
                         to.write(f"switch (valueType) {{")
                         to.write(f"case ApplyValueType::Initial:")
@@ -4333,12 +4301,8 @@ class GenerateStyleExtractorGenerated:
     def wrap_in_converter(property, value):
         if property.codegen_properties.style_extractor_converter:
             return f"ExtractorConverter::convert{property.codegen_properties.style_extractor_converter}(extractorState, {value})"
-        elif property.codegen_properties.animation_property:
-            return f"ExtractorConverter::convertAnimation{property.codegen_properties.animation_name_for_methods}(extractorState, {value}, animation, animationList)"
-        elif property.codegen_properties.fill_layer_property:
-            return f"ExtractorConverter::convertFillLayer{property.codegen_properties.fill_layer_name_for_methods}(extractorState, {value})"
         elif property.codegen_properties.color_property:
-            return f"ExtractorConverter::convertColor(extractorState, {value})"
+            return f"ExtractorConverter::convertStyleType<Color>(extractorState, {value})"
         else:
             return f"ExtractorConverter::convert(extractorState, {value})"
 
@@ -4346,28 +4310,24 @@ class GenerateStyleExtractorGenerated:
     def wrap_in_serializer(property, value):
         if property.codegen_properties.style_extractor_converter:
             return f"ExtractorSerializer::serialize{property.codegen_properties.style_extractor_converter}(extractorState, builder, context, {value})"
-        elif property.codegen_properties.animation_property:
-            return f"ExtractorSerializer::serializeAnimation{property.codegen_properties.animation_name_for_methods}(extractorState, builder, context, {value}, animation, animationList)"
-        elif property.codegen_properties.fill_layer_property:
-            return f"ExtractorSerializer::serializeFillLayer{property.codegen_properties.fill_layer_name_for_methods}(extractorState, builder, context, {value})"
         elif property.codegen_properties.color_property:
-            return f"ExtractorSerializer::serializeColor(extractorState, builder, context, {value})"
+            return f"ExtractorSerializer::serializeStyleType<Color>(extractorState, builder, context, {value})"
         else:
             return f"ExtractorSerializer::serialize(extractorState, builder, context, {value})"
 
     # Color property getters.
 
-    def _generate_color_property_value_getter(self, to, property):
+    def _generate_visited_link_color_supporting_property_value_getter(self, to, property):
         to.write(f"if (extractorState.allowVisitedStyle) {{")
         with to.indent():
             to.write(f"return extractorState.pool.createColorValue(extractorState.style.visitedDependentColor({property.id}));")
         to.write(f"}}")
         self._generate_property_value_getter(to, property)
 
-    def _generate_color_property_value_serialization_getter(self, to, property):
+    def _generate_visited_link_color_supporting_property_value_serialization_getter(self, to, property):
         to.write(f"if (extractorState.allowVisitedStyle) {{")
         with to.indent():
-            to.write(f"builder.append(serializationForCSS(extractorState.style.visitedDependentColor({property.id})));")
+            to.write(f"builder.append(WebCore::serializationForCSS(extractorState.style.visitedDependentColor({property.id})));")
             to.write(f"return;")
         to.write(f"}}")
         self._generate_property_value_serialization_getter(to, property)
@@ -4375,11 +4335,11 @@ class GenerateStyleExtractorGenerated:
     # Animation property getters.
 
     def _generate_animation_property_value_getter(self, to, property):
-        to.write(f"auto mapper = [](auto& extractorState, const Animation* animation, const AnimationList* animationList) -> RefPtr<CSSValue> {{")
+        to.write(f"auto mapper = [](auto& extractorState, const std::optional<{property.type_name_for_animations_or_transitions}::value_type>& animation, const auto&) -> RefPtr<CSSValue> {{")
         with to.indent():
             to.write(f"if (!animation) {{")
             with to.indent():
-                to.write(f"return {GenerateStyleExtractorGenerated.wrap_in_converter(property, f'Animation::{property.codegen_properties.animation_initial}()')};")
+                to.write(f"return {GenerateStyleExtractorGenerated.wrap_in_converter(property, f'{property.type_name_for_animations_or_transitions}::value_type::{property.codegen_properties.animation_initial}()')};")
             to.write(f"}}")
             to.write(f"if (!animation->is{property.codegen_properties.animation_name_for_methods}Filled()) {{")
             with to.indent():
@@ -4390,14 +4350,14 @@ class GenerateStyleExtractorGenerated:
         to.write(f"return extractAnimationOrTransitionValue(extractorState, extractorState.style.{property.method_name_for_animations_or_transitions}(), mapper);")
 
     def _generate_animation_property_value_serialization_getter(self, to, property):
-        to.write(f"auto mapper = [](auto& extractorState, StringBuilder& builder, const CSS::SerializationContext& context, bool includeComma, const Animation* animation, const AnimationList* animationList) {{")
+        to.write(f"auto mapper = [](auto& extractorState, auto& builder, const auto& context, bool includeComma, const std::optional<{property.type_name_for_animations_or_transitions}::value_type>& animation, const auto&) {{")
         with to.indent():
             to.write(f"if (!animation) {{")
             with to.indent():
                 to.write(f"if (includeComma)")
                 with to.indent():
                     to.write(f"builder.append(\", \"_s);")
-                to.write(f"{GenerateStyleExtractorGenerated.wrap_in_serializer(property, f'Animation::{property.codegen_properties.animation_initial}()')};")
+                to.write(f"{GenerateStyleExtractorGenerated.wrap_in_serializer(property, f'{property.type_name_for_animations_or_transitions}::value_type::{property.codegen_properties.animation_initial}()')};")
                 to.write(f"return;")
             to.write(f"}}")
             to.write(f"if (!animation->is{property.codegen_properties.animation_name_for_methods}Filled()) {{")
@@ -4410,14 +4370,6 @@ class GenerateStyleExtractorGenerated:
             to.write(f"}}")
         to.write(f"}};")
         to.write(f"extractAnimationOrTransitionValueSerialization(extractorState, builder, context, extractorState.style.{property.method_name_for_animations_or_transitions}(), mapper);")
-
-    # Font property getters.
-
-    def _generate_font_property_value_getter(self, to, property):
-        to.write(f"return {GenerateStyleExtractorGenerated.wrap_in_converter(property, f'extractorState.style.fontDescription().{property.codegen_properties.font_description_getter}()')};")
-
-    def _generate_font_property_value_serialization_getter(self, to, property):
-        to.write(f"{GenerateStyleExtractorGenerated.wrap_in_serializer(property, f'extractorState.style.fontDescription().{property.codegen_properties.font_description_getter}()')};")
 
     # Fill Layer property getters.
 
@@ -4437,14 +4389,6 @@ class GenerateStyleExtractorGenerated:
             to.write(f"{GenerateStyleExtractorGenerated.wrap_in_serializer(property, f'layer.{property.codegen_properties.fill_layer_getter}()')};")
         to.write(f"}};")
         to.write(f"extractFillLayerValueSerialization(extractorState, builder, context, extractorState.style.{property.method_name_for_layers}(), mapper);")
-
-    # SVG property value/serialization getters.
-
-    def _generate_svg_property_value_getter(self, to, property):
-        to.write(f"return {GenerateStyleExtractorGenerated.wrap_in_converter(property, f'extractorState.style.svgStyle().{property.codegen_properties.render_style_getter}()')};")
-
-    def _generate_svg_property_value_serialization_getter(self, to, property):
-        to.write(f"{GenerateStyleExtractorGenerated.wrap_in_serializer(property, f'extractorState.style.svgStyle().{property.codegen_properties.render_style_getter}()')};")
 
     # All other property value getters.
 
@@ -4477,21 +4421,12 @@ class GenerateStyleExtractorGenerated:
         to.write(f"{{")
 
         with to.indent():
-            if property.codegen_properties.auto_functions:
-                to.write(f"if (extractorState.style.hasAuto{property.codegen_properties.render_style_name_for_methods}())")
-                with to.indent():
-                    to.write(f"return CSSPrimitiveValue::create(CSSValueAuto);")
-
             if property.codegen_properties.visited_link_color_support:
-                self._generate_color_property_value_getter(to, property)
+                self._generate_visited_link_color_supporting_property_value_getter(to, property)
             elif property.codegen_properties.animation_property:
                 self._generate_animation_property_value_getter(to, property)
-            elif property.codegen_properties.font_property:
-                self._generate_font_property_value_getter(to, property)
             elif property.codegen_properties.fill_layer_property:
                 self._generate_fill_layer_property_value_getter(to, property)
-            elif property.codegen_properties.svg:
-                self._generate_svg_property_value_getter(to, property)
             else:
                 self._generate_property_value_getter(to, property)
 
@@ -4502,23 +4437,12 @@ class GenerateStyleExtractorGenerated:
         to.write(f"{{")
 
         with to.indent():
-            if property.codegen_properties.auto_functions:
-                to.write(f"if (extractorState.style.hasAuto{property.codegen_properties.render_style_name_for_methods}()) {{")
-                with to.indent():
-                    to.write(f"builder.append(nameLiteralForSerialization(CSSValueAuto));")
-                    to.write(f"return;")
-                to.write(f"}}")
-
             if property.codegen_properties.visited_link_color_support:
-                self._generate_color_property_value_serialization_getter(to, property)
+                self._generate_visited_link_color_supporting_property_value_serialization_getter(to, property)
             elif property.codegen_properties.animation_property:
                 self._generate_animation_property_value_serialization_getter(to, property)
-            elif property.codegen_properties.font_property:
-                self._generate_font_property_value_serialization_getter(to, property)
             elif property.codegen_properties.fill_layer_property:
                 self._generate_fill_layer_property_value_serialization_getter(to, property)
-            elif property.codegen_properties.svg:
-                self._generate_svg_property_value_serialization_getter(to, property)
             else:
                 self._generate_property_value_serialization_getter(to, property)
 
@@ -4667,6 +4591,7 @@ class GenerateStyleExtractorGenerated:
                 headers=[
                     "CSSPrimitiveValueMappings.h",
                     "CSSProperty.h",
+                    "ColorSerialization.h",
                     "RenderStyle.h",
                     "StyleExtractorConverter.h",
                     "StyleExtractorCustom.h",
@@ -5294,12 +5219,7 @@ class GenerateStyleInterpolationWrapperMap:
         if property.codegen_properties.animation_wrapper is not None:
             property_wrapper_type = property.codegen_properties.animation_wrapper
         elif property.animation_type == 'discrete':
-            if property.codegen_properties.svg:
-                property_wrapper_type = 'DiscreteSVGWrapper'
-            elif property.codegen_properties.font_property:
-                property_wrapper_type = 'DiscreteFontDescriptionTypedWrapper'
-            else:
-                property_wrapper_type = 'DiscreteWrapper'
+            property_wrapper_type = 'DiscreteWrapper'
         else:
             raise Exception(f"'{property.name}' animation wrapper type is not defined")
 
@@ -5311,33 +5231,26 @@ class GenerateStyleInterpolationWrapperMap:
             property_wrapper_parameters = [property.id]
 
             # Compute style class.
-            if property.codegen_properties.svg and not property.codegen_properties.animation_wrapper_requires_render_style:
-                style_type = "SVGRenderStyle"
-                name_for_methods = property.codegen_properties.render_style_name_for_methods
-                getter = property.codegen_properties.render_style_getter
-                setter = property.codegen_properties.render_style_setter
-            elif property.codegen_properties.font_property and not property.codegen_properties.animation_wrapper_requires_render_style:
-                style_type = "FontCascadeDescription"
-                name_for_methods = property.codegen_properties.font_description_name_for_methods
-                getter = property.codegen_properties.font_description_getter
-                setter = property.codegen_properties.font_description_setter
-            else:
-                style_type = "RenderStyle"
-                name_for_methods = property.codegen_properties.render_style_name_for_methods
-                getter = property.codegen_properties.render_style_getter
-                setter = property.codegen_properties.render_style_setter
+            style_type = "RenderStyle"
+            name_for_methods = property.codegen_properties.render_style_name_for_methods
+            getter = property.codegen_properties.render_style_getter
+            setter = property.codegen_properties.render_style_setter
 
             if property.codegen_properties.fill_layer_property and property.codegen_properties.animation_wrapper is not None:
-                property_wrapper_parameters += [f"&{style_type}::{property.method_name_for_layers}", f"&{style_type}::{property.method_name_for_ensure_layers}"]
+                property_wrapper_parameters += [f"&{style_type}::{property.method_name_for_layers}", f"&{style_type}::{property.method_name_for_ensure_layers}", f"&{style_type}::{property.method_name_for_set_layers}", f"{property_wrapper_type}({property.id}, &{property.type_name_for_layers}::Layer::{property.codegen_properties.fill_layer_getter}, &{property.type_name_for_layers}::Layer::{property.codegen_properties.fill_layer_setter})"]
+                property_wrapper_type = "FillLayersWrapper"
             else:
                 # Add getter
-                if property.codegen_properties.animation_wrapper_requires_computed_getter:
-                    property_wrapper_parameters += [f"&{style_type}::computed{name_for_methods}"]
+                if property.codegen_properties.animation_wrapper_requires_getter is not None:
+                    property_wrapper_parameters += [f"&{style_type}::{property.codegen_properties.animation_wrapper_requires_getter}"]
                 else:
                     property_wrapper_parameters += [f"&{style_type}::{getter}"]
 
                 # Add setter
-                property_wrapper_parameters += [f"&{style_type}::{setter}"]
+                if property.codegen_properties.animation_wrapper_requires_setter is not None:
+                    property_wrapper_parameters += [f"&{style_type}::{property.codegen_properties.animation_wrapper_requires_setter}"]
+                else:
+                    property_wrapper_parameters += [f"&{style_type}::{setter}"]
 
                 # Add property type specific parameters
                 if property.codegen_properties.visited_link_color_support:

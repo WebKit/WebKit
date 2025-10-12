@@ -11,13 +11,16 @@
 #ifndef RTC_TOOLS_NETWORK_TESTER_PACKET_SENDER_H_
 #define RTC_TOOLS_NETWORK_TESTER_PACKET_SENDER_H_
 
-#include <memory>
+#include <cstddef>
+#include <cstdint>
 #include <string>
 
+#include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
-#include "api/task_queue/task_queue_factory.h"
+#include "api/task_queue/task_queue_base.h"
 #include "rtc_base/system/no_unique_address.h"
+#include "rtc_base/thread_annotations.h"
 
 #ifdef WEBRTC_NETWORK_TESTER_PROTO
 #include "rtc_tools/network_tester/network_tester_packet.pb.h"
@@ -32,11 +35,10 @@ class TestController;
 
 class PacketSender {
  public:
-  PacketSender(
-      TestController* test_controller,
-      webrtc::TaskQueueBase* worker_queue,
-      rtc::scoped_refptr<webrtc::PendingTaskSafetyFlag> task_safety_flag,
-      const std::string& config_file_path);
+  PacketSender(TestController* test_controller,
+               TaskQueueBase* worker_queue,
+               scoped_refptr<PendingTaskSafetyFlag> task_safety_flag,
+               const std::string& config_file_path);
   ~PacketSender();
 
   PacketSender(const PacketSender&) = delete;
@@ -59,8 +61,8 @@ class PacketSender {
   bool sending_ RTC_GUARDED_BY(worker_queue_checker_);
   const std::string config_file_path_;
   TestController* const test_controller_;
-  webrtc::TaskQueueBase* worker_queue_;
-  rtc::scoped_refptr<webrtc::PendingTaskSafetyFlag> task_safety_flag_;
+  TaskQueueBase* worker_queue_;
+  scoped_refptr<PendingTaskSafetyFlag> task_safety_flag_;
 };
 
 }  // namespace webrtc

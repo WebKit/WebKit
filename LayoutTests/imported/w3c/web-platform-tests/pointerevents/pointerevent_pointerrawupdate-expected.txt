@@ -1,11 +1,4 @@
-pointerrawupdate
 
-Test Description: This test checks that pointerrawupdate is not dispatched on non-SecureContext.
-
-Move your mouse within the black box.
-
-Press left button down and then press middle button while holding down left button. Then release the buttons
-
-
-PASS pointerrawupdate event not received
+PASS pointerrawupdate event is not fired
+PASS onpointerrawupdate is not exposed
 

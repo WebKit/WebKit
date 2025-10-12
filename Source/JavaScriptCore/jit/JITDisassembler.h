@@ -27,8 +27,8 @@
 
 #if ENABLE(JIT)
 
-#include "BytecodeIndex.h"
-#include "MacroAssembler.h"
+#include <JavaScriptCore/BytecodeIndex.h>
+#include <JavaScriptCore/MacroAssembler.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>

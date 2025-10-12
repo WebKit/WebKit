@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBGL)
 
 #ifndef EGL_EGLEXT_PROTOTYPES

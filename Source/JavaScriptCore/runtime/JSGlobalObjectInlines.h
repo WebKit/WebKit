@@ -25,21 +25,21 @@
 
 #pragma once
 
-#include "ArrayAllocationProfile.h"
-#include "ArrayConstructor.h"
-#include "ArrayPrototype.h"
-#include "JSClassRef.h"
-#include "JSCustomGetterFunction.h"
-#include "JSCustomSetterFunction.h"
-#include "JSFunction.h"
-#include "JSGlobalLexicalEnvironment.h"
-#include "JSGlobalObject.h"
-#include "JSWeakObjectMapRefInternal.h"
-#include "LinkTimeConstant.h"
-#include "ObjectPrototype.h"
-#include "ParserModes.h"
-#include "StrongInlines.h"
-#include "StructureInlines.h"
+#include <JavaScriptCore/ArrayAllocationProfile.h>
+#include <JavaScriptCore/ArrayConstructor.h>
+#include <JavaScriptCore/ArrayPrototype.h>
+#include <JavaScriptCore/JSClassRef.h>
+#include <JavaScriptCore/JSCustomGetterFunction.h>
+#include <JavaScriptCore/JSCustomSetterFunction.h>
+#include <JavaScriptCore/JSFunction.h>
+#include <JavaScriptCore/JSGlobalLexicalEnvironment.h>
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/JSWeakObjectMapRefInternal.h>
+#include <JavaScriptCore/LinkTimeConstant.h>
+#include <JavaScriptCore/ObjectPrototype.h>
+#include <JavaScriptCore/ParserModes.h>
+#include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/Hasher.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -47,7 +47,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace JSC {
 
 struct JSGlobalObject::RareData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(JSGlobalObject);
 
     unsigned profileGroup { 0 };
     UncheckedKeyHashMap<OpaqueJSClass*, std::unique_ptr<OpaqueJSClassContextData>> opaqueJSClassData;
@@ -111,7 +111,7 @@ ALWAYS_INLINE bool JSGlobalObject::stringPrototypeChainIsSane()
 
 inline void JSGlobalObject::setUnhandledRejectionCallback(VM& vm, JSObject* function)
 {
-    m_unhandledRejectionCallback.set(vm, function);
+    m_unhandledRejectionCallback.set(vm, this, function);
 }
 
 ALWAYS_INLINE bool JSGlobalObject::isArrayPrototypeIteratorProtocolFastAndNonObservable()
@@ -214,11 +214,10 @@ ALWAYS_INLINE Structure* JSGlobalObject::arrayStructureForIndexingTypeDuringAllo
 inline JSFunction* JSGlobalObject::evalFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::evalFunction)); }
 inline JSFunction* JSGlobalObject::throwTypeErrorFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::throwTypeErrorFunction)); }
 inline JSFunction* JSGlobalObject::iteratorProtocolFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performIteration)); }
-inline JSFunction* JSGlobalObject::newPromiseCapabilityFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::newPromiseCapability)); }
-inline JSFunction* JSGlobalObject::resolvePromiseFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::resolvePromise)); }
-inline JSFunction* JSGlobalObject::rejectPromiseFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::rejectPromise)); }
+inline JSFunction* JSGlobalObject::asyncGeneratorYieldOnRejectedFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::asyncGeneratorYieldOnRejected)); }
 inline JSFunction* JSGlobalObject::promiseProtoThenFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::defaultPromiseThen)); }
-inline JSFunction* JSGlobalObject::performPromiseThenFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performPromiseThen)); }
+inline JSFunction* JSGlobalObject::promiseEmptyOnFulfilledFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::promiseEmptyOnFulfilled)); }
+inline JSFunction* JSGlobalObject::promiseEmptyOnRejectedFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::promiseEmptyOnRejected)); }
 inline JSFunction* JSGlobalObject::regExpProtoExecFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::regExpBuiltinExec)); }
 inline JSFunction* JSGlobalObject::stringProtoSubstringFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::stringSubstring)); }
 inline JSFunction* JSGlobalObject::performProxyObjectHasFunction() const { return m_performProxyObjectHasFunction.get(); }
@@ -330,6 +329,9 @@ inline JSArray* constructArrayNegativeIndexed(JSGlobalObject* globalObject, Arra
 ALWAYS_INLINE JSArray* tryCreateContiguousArrayWithPattern(JSGlobalObject* globalObject, JSString* pattern, size_t initialLength)
 {
     if (initialLength >= MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)
+        return nullptr;
+
+    if (globalObject->isHavingABadTime()) [[unlikely]]
         return nullptr;
 
     VM& vm = globalObject->vm();
@@ -562,7 +564,7 @@ inline void JSGlobalObject::createGlobalVarBinding(const Identifier& ident)
 
     PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
     bool hasProperty = getOwnPropertySlot(this, this, ident, slot);
-    scope.assertNoExceptionExceptTermination();
+    RETURN_IF_EXCEPTION(scope, void());
     if (hasProperty) [[unlikely]]
         return;
 

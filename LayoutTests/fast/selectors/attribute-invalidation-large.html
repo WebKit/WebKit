@@ -1,0 +1,15 @@
+<style id=s></style>
+<div id=t>This test passes if it doesn't time out.</div>
+<script>
+window.testRunner?.dumpAsText();
+
+function makeStylesheet(count) {
+    let text = "";
+    for (let i = 0; i < count; ++i)
+        text += `[class *= v${i}] { color: rgb(${Math.round(i / count*25500)/100}, 0, 0) }\n`;
+    return text;
+}
+s.textContent = makeStylesheet(20000);
+t.offsetTop;
+t.classList.add("foo");
+</script>

@@ -27,22 +27,22 @@
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 
-#include "Animation.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ContainerNodeInlines.h"
 #include "DOMTimer.h"
-#include "Document.h"
 #include "DocumentFullscreen.h"
-#include "DocumentInlines.h"
+#include "DocumentQuirks.h"
 #include "EventNames.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "Logging.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
-#include "RenderDescendantIterator.h"
-#include "RenderStyleInlines.h"
 #include "Quirks.h"
+#include "RenderDescendantIterator.h"
+#include "RenderElementInlines.h"
+#include "RenderStyleInlines.h"
 #include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -58,7 +58,7 @@ static bool isHiddenBehindFullscreenElement(const Node& descendantCandidate)
 {
     // Fullscreen status is propagated on the ancestor document chain all the way to the top document.
     auto& document = descendantCandidate.document();
-    RefPtr mainFrameDocument = document.protectedMainFrameDocument();
+    RefPtr mainFrameDocument = document.mainFrameDocument();
     if (!mainFrameDocument) {
         LOG_ONCE(SiteIsolation, "Unable to properly calculate isHiddenBehindFullscreenElement() without access to the main frame document ");
         return false;
@@ -99,29 +99,28 @@ bool ContentChangeObserver::isVisuallyHidden(const Node& node)
     if (style.usedVisibility() == Visibility::Hidden)
         return true;
 
-    if (!style.opacity())
+    if (style.opacity().isTransparent())
         return true;
 
-    auto width = style.logicalWidth();
-    auto height = style.logicalHeight();
-    if ((width.isFixed() && !width.value()) || (height.isFixed() && !height.value()))
+    auto fixedWidth = style.logicalWidth().tryFixed();
+    auto fixedHeight = style.logicalHeight().tryFixed();
+    if ((fixedWidth && fixedWidth->isZero()) || (fixedHeight && fixedHeight->isZero()))
         return true;
 
-    auto top = style.logicalTop();
-    auto left = style.logicalLeft();
+    auto fixedTop = style.logicalTop().tryFixed();
+    auto fixedLeft = style.logicalLeft().tryFixed();
     // FIXME: This is trying to check if the element is outside of the viewport. This is incorrect for many reasons.
-    if (left.isFixed() && width.isFixed() && -left.value() >= width.value())
+    if (fixedLeft && fixedWidth && -fixedLeft->resolveZoom(Style::ZoomNeeded { }) >= fixedWidth->resolveZoom(Style::ZoomNeeded { }))
         return true;
-    if (top.isFixed() && height.isFixed() && -top.value() >= height.value())
+    if (fixedTop && fixedHeight && -fixedTop->resolveZoom(Style::ZoomNeeded { }) >= fixedHeight->resolveZoom(Style::ZoomNeeded { }))
         return true;
 
     // It's a common technique used to position content offscreen.
-    if (style.hasOutOfFlowPosition() && left.isFixed() && left.value() <= -999)
+    if (style.hasOutOfFlowPosition() && fixedLeft && fixedLeft->resolveZoom(Style::ZoomNeeded { }) <= -999)
         return true;
 
     // FIXME: Check for other cases like zero height with overflow hidden.
-    auto maxHeight = style.maxHeight();
-    if (maxHeight.isFixed() && !maxHeight.value())
+    if (auto fixedMaxHeight = style.maxHeight().tryFixed(); fixedMaxHeight && fixedMaxHeight->isZero())
         return true;
 
     // Special case opacity, because a descendant with non-zero opacity should still be considered hidden when one of its ancetors has opacity: 0;
@@ -129,7 +128,7 @@ bool ContentChangeObserver::isVisuallyHidden(const Node& node)
     constexpr static unsigned numberOfAncestorsToCheckForOpacity = 4;
     unsigned i = 0;
     for (auto* parent = node.parentNode(); parent && i < numberOfAncestorsToCheckForOpacity; parent = parent->parentNode(), ++i) {
-        if (!parent->renderStyle() || !parent->renderStyle()->opacity())
+        if (!parent->renderStyle() || parent->renderStyle()->opacity().isTransparent())
             return true;
     }
 
@@ -145,16 +144,13 @@ bool ContentChangeObserver::isConsideredVisible(const Node& node)
     if (isVisuallyHidden(node))
         return false;
 
-    auto& style = *node.renderStyle();
-    auto width = style.logicalWidth();
     // 1px width or height content is not considered visible.
-    if (width.isFixed() && width.value() <= 1)
-        return false;
+    auto& style = *node.renderStyle();
 
-    auto height = style.logicalHeight();
-    if (height.isFixed() && height.value() <= 1)
+    if (auto fixedWidth = style.logicalWidth().tryFixed(); fixedWidth && fixedWidth->resolveZoom(Style::ZoomNeeded { }) <= 1)
         return false;
-
+    if (auto fixedHeight = style.logicalHeight().tryFixed(); fixedHeight && fixedHeight->resolveZoom(Style::ZoomNeeded { }) <= 1)
+        return false;
     return true;
 }
 
@@ -199,7 +195,7 @@ ContentChangeObserver::ContentChangeObserver(Document& document)
 
 static void willNotProceedWithClick(LocalFrame& mainFrame)
 {
-    for (RefPtr<Frame> frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
+    for (RefPtr<Frame> frame = mainFrame; frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -252,34 +248,6 @@ static bool isObservedPropertyForTransition(AnimatableCSSProperty property)
             return false;
         }
     );
-}
-
-void ContentChangeObserver::didAddTransition(const Element& element, const Animation& transition)
-{
-    if (!isContentChangeObserverEnabled())
-        return;
-    if (hasVisibleChangeState())
-        return;
-    if (!isObservingContentChanges())
-        return;
-    if (!isObservingTransitions())
-        return;
-    if (!transition.isDurationSet() || !transition.isPropertySet())
-        return;
-    if (!isObservedPropertyForTransition(transition.property().animatableProperty))
-        return;
-    auto transitionEnd = Seconds { transition.duration().value_or(0) + std::max<double>(0, transition.isDelaySet() ? transition.delay() : 0) };
-    if (transitionEnd > maximumDelayForTransitions)
-        return;
-    if (!isVisuallyHidden(element))
-        return;
-    // In case of multiple transitions, the first tranistion wins (and it has to produce a visible content change in order to show up as hover).
-    if (m_elementsWithTransition.contains(element))
-        return;
-    LOG_WITH_STREAM(ContentObservation, stream << "didAddTransition: transition created on " << &element << " (" << transitionEnd.milliseconds() << "ms).");
-
-    m_elementsWithTransition.add(element);
-    adjustObservedState(Event::AddedTransition);
 }
 
 void ContentChangeObserver::didFinishTransition(const Element& element, CSSPropertyID propertyID)

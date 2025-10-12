@@ -9,13 +9,14 @@
  */
 #ifndef NET_DCSCTP_PACKET_CHUNK_FORWARD_TSN_COMMON_H_
 #define NET_DCSCTP_PACKET_CHUNK_FORWARD_TSN_COMMON_H_
-#include <stdint.h>
 
 #include <utility>
 #include <vector>
 
 #include "api/array_view.h"
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/chunk/chunk.h"
+#include "net/dcsctp/public/types.h"
 
 namespace dcsctp {
 
@@ -50,7 +51,7 @@ class AnyForwardTsnChunk : public Chunk {
 
   TSN new_cumulative_tsn() const { return new_cumulative_tsn_; }
 
-  rtc::ArrayView<const SkippedStream> skipped_streams() const {
+  webrtc::ArrayView<const SkippedStream> skipped_streams() const {
     return skipped_streams_;
   }
 

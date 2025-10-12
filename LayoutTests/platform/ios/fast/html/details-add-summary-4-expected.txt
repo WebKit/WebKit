@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DETAILS} at (0,0) size 784x20
-        RenderListItem {SUMMARY} at (0,0) size 784x20
-          RenderListMarker at (0,0) size 14x19: "\x{25B8}"
-          RenderText {#text} at (13,0) size 61x19
-            text run at (13,0) width 61: "summary"
+      RenderBlock {DETAILS} at (0,0) size 784x27
+        RenderListItem {SUMMARY} at (0,0) size 784x27
+          RenderListMarker at (0,5) size 25x19: "\x{25B6}"
+          RenderText {#text} at (25,5) size 60x19
+            text run at (25,5) width 60: "summary"

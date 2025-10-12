@@ -26,8 +26,8 @@
 #import <QuartzCore/QuartzCore.h>
 
 #ifdef __cplusplus
-#import "FloatPoint.h"
-#import "ScrollingNodeID.h"
+#import <WebCore/FloatPoint.h>
+#import <WebCore/ScrollingNodeID.h>
 #import <wtf/Vector.h>
 #endif
 

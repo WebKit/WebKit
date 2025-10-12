@@ -25,11 +25,12 @@
 
 #pragma once
 
-#include "CryptoKey.h"
-#include "CryptoKeyPair.h"
+#include <WebCore/CryptoKey.h>
+#include <WebCore/CryptoKeyPair.h>
 
+#include <wtf/Platform.h>
 #if OS(DARWIN) && !PLATFORM(GTK)
-#include "CommonCryptoUtilities.h"
+#include <WebCore/CommonCryptoUtilities.h>
 #if HAVE(SWIFT_CPP_INTEROP)
 namespace PAL {
 class ECKey;

@@ -43,6 +43,11 @@ std::optional<DestinationColorSpace> ShareableBitmapConfiguration::validateColor
     return colorSpace;
 }
 
+CheckedUint32 ShareableBitmapConfiguration::calculateBitsPerComponent(const DestinationColorSpace& colorSpace)
+{
+    return (calculateBytesPerPixel(colorSpace) / 4) * 8;
+}
+
 CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerPixel(const DestinationColorSpace&)
 {
     return 4;
@@ -79,6 +84,13 @@ void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const I
     ASSERT(context.hasPlatformContext());
     auto& state = context.state();
     Cairo::drawSurface(*context.platformContext(), surface.get(), destRect, srcRect, state.imageInterpolationQuality(), state.alpha(), Cairo::ShadowState(state));
+}
+
+PlatformImagePtr ShareableBitmap::createPlatformImage(BackingStoreCopy, ShouldInterpolate)
+{
+    // FIXME: Implement and remove createPersistentCairoSurface(), createCairoSurface().
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 RefPtr<cairo_surface_t> ShareableBitmap::createPersistentCairoSurface()

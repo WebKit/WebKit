@@ -4,22 +4,13 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
 flags:
   - noStrict
 description: |
-  pending
+  Attributes for properties of arguments objects
+info: bugzilla.mozilla.org/show_bug.cgi?id=516255
 esid: pending
 ---*/
-var gTestfile = 'arguments-property-attributes.js';
-var BUGNUMBER = 516255;
-var summary = "Attributes for properties of arguments objects";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 // normal
 
@@ -96,8 +87,3 @@ assert.sameValue(strictLengthDesc.value, 2);
 assert.sameValue(strictLengthDesc.writable, true);
 assert.sameValue(strictLengthDesc.enumerable, false);
 assert.sameValue(strictLengthDesc.configurable, true);
-
-
-/******************************************************************************/
-
-print("All tests passed!");

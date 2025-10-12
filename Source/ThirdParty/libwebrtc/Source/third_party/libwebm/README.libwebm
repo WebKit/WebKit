@@ -141,3 +141,8 @@ the MINGW_PREFIX variable:
 $ cmake -DCMAKE_TOOLCHAIN_FILE=path/to/libwebm/build/mingw-w64_toolchain.cmake \
   -DMINGW_PREFIX=x86_64-w64-mingw32 path/to/libwebm
 
+Bug reports
+
+Bug reports can be filed in the libwebm issue tracker:
+https://issues.webmproject.org/.
+For security reports, select 'Security report' from the Template dropdown.

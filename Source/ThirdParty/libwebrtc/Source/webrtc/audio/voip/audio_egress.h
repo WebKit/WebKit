@@ -11,24 +11,24 @@
 #ifndef AUDIO_VOIP_AUDIO_EGRESS_H_
 #define AUDIO_VOIP_AUDIO_EGRESS_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
-#include <string>
+#include <optional>
 
 #include "api/audio_codecs/audio_format.h"
 #include "api/environment/environment.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
-#include "api/task_queue/task_queue_factory.h"
 #include "audio/audio_level.h"
-#include "audio/utility/audio_frame_operations.h"
 #include "call/audio_sender.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
-#include "modules/rtp_rtcp/include/report_block_data.h"
+#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "modules/rtp_rtcp/source/rtp_sender_audio.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/no_unique_address.h"
-#include "rtc_base/time_utils.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 

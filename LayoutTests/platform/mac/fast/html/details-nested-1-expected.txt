@@ -6,14 +6,14 @@ layer at (0,0) size 800x600
       RenderBlock {DETAILS} at (0,0) size 784x136 [border: (8px solid #555599)]
         RenderListItem {SUMMARY} at (8,8) size 768x102 [border: (8px solid #9999CC)]
           RenderBlock (anonymous) at (8,8) size 752x18
-            RenderListMarker at (0,0) size 15x18: "\x{25BE}"
-            RenderText {#text} at (14,0) size 60x18
-              text run at (14,0) width 60: "summary"
+            RenderListMarker at (0,0) size 20x18: "\x{25BC}"
+            RenderText {#text} at (19,0) size 61x18
+              text run at (19,0) width 61: "summary"
           RenderBlock {DETAILS} at (8,26) size 752x68 [border: (8px solid #995555)]
             RenderListItem {SUMMARY} at (8,8) size 736x34 [border: (8px solid #CC9999)]
-              RenderListMarker at (8,8) size 15x18: "\x{25BE}"
-              RenderText {#text} at (22,8) size 287x18
-                text run at (22,8) width 287: "nested summary (summary-deails-summary)"
+              RenderListMarker at (8,8) size 20x18: "\x{25BC}"
+              RenderText {#text} at (27,8) size 287x18
+                text run at (27,8) width 287: "nested summary (summary-deails-summary)"
             RenderBlock {SLOT} at (8,42) size 736x18
               RenderText {#text} at (0,0) size 204x18
                 text run at (0,0) width 204: "nested details (summary-deails)"

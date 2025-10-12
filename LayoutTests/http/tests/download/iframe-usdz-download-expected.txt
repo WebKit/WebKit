@@ -1,0 +1,6 @@
+Download started.
+Downloading URL with suggested filename "1.usdz"
+Download completed.
+Tests that when you load a .usdz file as the main resource for a child frame, we download.
+
+

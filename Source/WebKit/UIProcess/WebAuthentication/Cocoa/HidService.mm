@@ -59,7 +59,7 @@ HidService::HidService(AuthenticatorTransportServiceObserver& observer)
     : FidoService(observer)
 {
 #if HAVE(SECURITY_KEY_API)
-    m_manager = adoptCF(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone));
+    lazyInitialize(m_manager, adoptCF(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone)));
     NSDictionary *matchingDictionary = @{
         @kIOHIDPrimaryUsagePageKey: @(kCtapHidUsagePage),
         @kIOHIDPrimaryUsageKey: @(kCtapHidUsage),
@@ -73,7 +73,7 @@ HidService::HidService(AuthenticatorTransportServiceObserver& observer)
 HidService::~HidService()
 {
 #if HAVE(SECURITY_KEY_API)
-    IOHIDManagerUnscheduleFromRunLoop(m_manager.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+    IOHIDManagerUnscheduleFromRunLoop(m_manager.get(), retainPtr(CFRunLoopGetCurrent()).get(), kCFRunLoopDefaultMode);
     IOHIDManagerClose(m_manager.get(), kIOHIDOptionsTypeNone);
 #endif
 }
@@ -86,7 +86,7 @@ void HidService::startDiscoveryInternal()
 void HidService::platformStartDiscovery()
 {
 #if HAVE(SECURITY_KEY_API)
-    IOHIDManagerScheduleWithRunLoop(m_manager.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+    IOHIDManagerScheduleWithRunLoop(m_manager.get(), retainPtr(CFRunLoopGetCurrent()).get(), kCFRunLoopDefaultMode);
     IOHIDManagerOpen(m_manager.get(), kIOHIDOptionsTypeNone);
 #endif
 }

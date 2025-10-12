@@ -29,27 +29,27 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-#include "AllocatorForMode.h"
-#include "AllocatorInlines.h"
-#include "CompleteSubspaceInlines.h"
-#include "CPU.h"
-#include "CallFrameInlines.h"
-#include "DeferGCInlines.h"
-#include "FreeListInlines.h"
-#include "Handle.h"
-#include "HeapInlines.h"
-#include "IsoSubspaceInlines.h"
-#include "JSBigInt.h"
-#include "JSCast.h"
-#include "JSDestructibleObject.h"
-#include "JSFunction.h"
-#include "JSObject.h"
-#include "JSString.h"
-#include "LocalAllocatorInlines.h"
-#include "MarkedBlock.h"
-#include "SlotVisitorInlines.h"
-#include "Structure.h"
-#include "Symbol.h"
+#include <JavaScriptCore/AllocatorForMode.h>
+#include <JavaScriptCore/AllocatorInlines.h>
+#include <JavaScriptCore/CPU.h>
+#include <JavaScriptCore/CallFrameInlines.h>
+#include <JavaScriptCore/CompleteSubspaceInlines.h>
+#include <JavaScriptCore/DeferGCInlines.h>
+#include <JavaScriptCore/FreeListInlines.h>
+#include <JavaScriptCore/Handle.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/IsoSubspaceInlines.h>
+#include <JavaScriptCore/JSBigInt.h>
+#include <JavaScriptCore/JSCast.h>
+#include <JavaScriptCore/JSDestructibleObject.h>
+#include <JavaScriptCore/JSFunction.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/JSString.h>
+#include <JavaScriptCore/LocalAllocatorInlines.h>
+#include <JavaScriptCore/MarkedBlock.h>
+#include <JavaScriptCore/SlotVisitorInlines.h>
+#include <JavaScriptCore/Structure.h>
+#include <JavaScriptCore/Symbol.h>
 #include <wtf/CompilationThread.h>
 
 namespace JSC {
@@ -82,13 +82,10 @@ inline JSCell::JSCell(VM&, Structure* structure)
 
 // This constructor should not be used directly. Exceptions are for quite few well-defined builtin objects, e.g. JSString, empty JSFinalObject etc.
 // Structure must be kept alive somehow (e.g. by JSGlobalObject, or ensureStillAliveHere).
-ALWAYS_INLINE JSCell::JSCell(CreatingWellDefinedBuiltinCellTag, StructureID structureID, int32_t blob)
+ALWAYS_INLINE JSCell::JSCell(CreatingWellDefinedBuiltinCellTag, StructureID structureID, uint32_t blob)
     : m_structureID(structureID)
 #if CPU(LITTLE_ENDIAN)
-    , m_indexingTypeAndMisc(static_cast<uint8_t>(blob >> 0))
-    , m_type(std::bit_cast<JSType>(static_cast<uint8_t>(blob >> 8)))
-    , m_flags(std::bit_cast<TypeInfo::InlineTypeFlags>(static_cast<uint8_t>(blob >> 16)))
-    , m_cellState(std::bit_cast<CellState>(static_cast<uint8_t>(blob >> 24)))
+    , m_blob(blob)
 #else
     , m_indexingTypeAndMisc(static_cast<uint8_t>(blob >> 24))
     , m_type(std::bit_cast<JSType>(static_cast<uint8_t>(blob >> 16)))

@@ -41,7 +41,7 @@ namespace TestWebKitAPI {
 // the test to decode those objects.
 
 struct EncoderDecoderTest {
-    static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(123); }
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCTester_EmptyMessage; }
 };
 
 struct EncoderTypeNames {
@@ -97,13 +97,13 @@ public:
 
     std::unique_ptr<IPC::Decoder> createDecoder() const
     {
-        auto decoder = makeUnique<IPC::Decoder>(std::span { m_impl->buffer.data(), m_impl->buffer.size() }, 0);
+        auto decoder = makeUnique<IPC::Decoder>(m_impl->buffer.span(), 0);
         return decoder;
     }
 
 private:
     struct Impl {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Impl);
 
         Impl()
             : buffer(1024, static_cast<uint8_t>(0))
@@ -118,7 +118,7 @@ private:
 
 
 struct EncodingCounter {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(EncodingCounter);
 
     struct CounterValues {
         CounterValues() = default;
@@ -334,7 +334,7 @@ TYPED_TEST_SUITE_P(ArgumentCoderDecodingMoveCounterTest);
 // move assignment operator increase the moved-in object's move counter.
 
 struct DecodingMoveCounter {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DecodingMoveCounter);
 
     DecodingMoveCounter() = default;
 

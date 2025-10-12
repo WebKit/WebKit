@@ -59,8 +59,6 @@ public:
     // https://bugs.webkit.org/show_bug.cgi?id=78617.
     virtual RenderMathMLOperator* unembellishedOperator() const { return nullptr; }
 
-    LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
-
 protected:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
@@ -103,7 +101,7 @@ private:
     bool canDropAnonymousBlockChild() const final { return false; }
     void layoutItems(RelayoutChildren);
 
-    Ref<MathMLStyle> m_mathMLStyle;
+    const Ref<MathMLStyle> m_mathMLStyle;
 };
 
 class RenderMathMLTable final : public RenderTable {
@@ -119,7 +117,7 @@ private:
     ASCIILiteral renderName() const final { return "RenderMathMLTable"_s; }
     std::optional<LayoutUnit> firstLineBaseline() const final;
 
-    Ref<MathMLStyle> m_mathMLStyle;
+    const Ref<MathMLStyle> m_mathMLStyle;
 };
 
 LayoutUnit toUserUnits(const MathMLElement::Length&, const RenderStyle&, const LayoutUnit& referenceValue);

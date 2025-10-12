@@ -47,7 +47,7 @@ template<typename> class ExceptionOr;
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FetchBodyOwner);
 
 class FetchBodyOwner : public RefCountedAndCanMakeWeakPtr<FetchBodyOwner>, public ActiveDOMObject {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FetchBodyOwner);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FetchBodyOwner, FetchBodyOwner);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
@@ -90,7 +90,7 @@ protected:
     const FetchBody& body() const { return *m_body; }
     bool isBodyNull() const { return !m_body; }
     bool isBodyNullOrOpaque() const { return !m_body || m_isBodyOpaque; }
-    void cloneBody(FetchBodyOwner&);
+    void cloneBody(JSDOMGlobalObject&, FetchBodyOwner&);
 
     ExceptionOr<void> extractBody(FetchBody::Init&&);
     void consumeOnceLoadingFinished(FetchBodyConsumer::Type, Ref<DeferredPromise>&&);
@@ -119,22 +119,25 @@ private:
     // ActiveDOMObject API
     bool virtualHasPendingActivity() const final;
 
-    struct BlobLoader final : FetchLoaderClient {
+    class BlobLoader final : public RefCounted<BlobLoader>, public FetchLoaderClient {
         WTF_MAKE_TZONE_ALLOCATED(BlobLoader);
-        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(BlobLoader);
     public:
-        BlobLoader(FetchBodyOwner&);
+        static Ref<BlobLoader> create(FetchBodyOwner&);
+        ~BlobLoader();
 
         // FetchLoaderClient API
         void didReceiveResponse(const ResourceResponse&) final;
-        void didReceiveData(const SharedBuffer& buffer) final { protectedOwner()->blobChunk(buffer); }
+        void didReceiveData(const SharedBuffer&) final;
         void didFail(const ResourceError&) final;
         void didSucceed(const NetworkLoadMetrics&) final;
+        void ref() const final { RefCounted::ref(); }
+        void deref() const final { RefCounted::deref(); }
 
-        Ref<FetchBodyOwner> protectedOwner() const { return owner.get(); }
+        RefPtr<FetchLoader> loader;
 
-        WeakRef<FetchBodyOwner> owner;
-        std::unique_ptr<FetchLoader> loader;
+    private:
+        explicit BlobLoader(FetchBodyOwner&);
+        WeakPtr<FetchBodyOwner> m_owner;
     };
 
 protected:
@@ -144,7 +147,7 @@ protected:
     const Ref<FetchHeaders> m_headers;
 
 private:
-    std::optional<BlobLoader> m_blobLoader;
+    RefPtr<BlobLoader> m_blobLoader;
     bool m_isBodyOpaque { false };
 
     Variant<std::nullptr_t, Exception, ResourceError> m_loadingError;

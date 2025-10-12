@@ -26,6 +26,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebGPU/WebGPU.h>
 #include <dispatch/dispatch.h>
+#include <wtf/darwin/DispatchExtras.h>
 
 #define UNUSED_PARAM(variable) (void)variable
 
@@ -38,7 +39,7 @@ int main()
         },
         ^(WGPUWorkItem workItem)
         {
-            dispatch_async(dispatch_get_main_queue(), workItem);
+            dispatch_async(mainDispatchQueueSingleton(), workItem);
         },
     };
     WGPUInstanceDescriptor instanceDescriptor = {

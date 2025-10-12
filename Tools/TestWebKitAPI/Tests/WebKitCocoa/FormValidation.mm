@@ -25,8 +25,14 @@
 
 #import "config.h"
 
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
-#include "Utilities.h"
+#import "Utilities.h"
+#import <WebKit/WKContentWorldPrivate.h>
+#import <WebKit/WebKit.h>
+#import <WebKit/_WKContentWorldConfiguration.h>
+
+namespace TestWebKitAPI {
 
 TEST(FormValidation, PresentingFormValidationUIWithoutViewControllerDoesNotCrash)
 {
@@ -54,9 +60,11 @@ TEST(FormValidation, FormValidationOnUnparentedWindowDoesNotCrash)
     [webView evaluateJavaScript:@"document.querySelector('input[type=submit]').click()" completionHandler:^(id result, NSError *error) {
         ranScript = true;
     }];
-    TestWebKitAPI::Util::runFor(10_ms);
+    Util::runFor(10_ms);
     // Remove the view from the window before it has a chance to display the form validation bubble.
     [webView removeFromTestWindow];
-    TestWebKitAPI::Util::run(&ranScript);
-    TestWebKitAPI::Util::runFor(100_ms);
+    Util::run(&ranScript);
+    Util::runFor(100_ms);
+}
+
 }

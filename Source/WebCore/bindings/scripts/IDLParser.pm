@@ -2405,6 +2405,10 @@ sub parseExtendedAttributeRest2
         my $name = $self->parseName();
         return $self->parseExtendedAttributeRest3($name);
     }
+    if ($next->type() == StringToken) {
+        my $token = $self->getToken();
+        return $token->value();
+    }
     if ($next->type() == IntegerToken) {
         my $token = $self->getToken();
         return $token->value();

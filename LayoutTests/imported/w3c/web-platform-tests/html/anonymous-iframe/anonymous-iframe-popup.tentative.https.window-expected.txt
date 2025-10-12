@@ -1,4 +1,4 @@
 
-FAIL Cross-origin popup from normal/anonymous iframes. assert_equals: Opener from anonymous iframe should be blocked. expected null but got object "[object Window]"
-FAIL Same-origin popup from normal/anonymous iframes. assert_equals: Opener from anonymous iframe should be blocked. expected null but got object "[object Window]"
+FAIL Cross-origin popup from normal/credentiallessiframes. assert_equals: Opener from credentialless iframe should be blocked. expected null but got object "[object Window]"
+FAIL Same-origin popup from normal/credentialless iframes. assert_equals: Opener from credentialless iframe should be blocked. expected null but got object "[object Window]"
 

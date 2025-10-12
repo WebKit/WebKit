@@ -36,6 +36,10 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
+#if USE(APPKIT)
+#import "AppKitSPI.h"
+#endif
+
 namespace TestWebKitAPI {
 
 static auto *menusManifest = @{
@@ -1178,7 +1182,81 @@ TEST(WKWebExtensionAPIMenus, ClearMenuItemIconVariantsWithEmpty)
     // Icon should be null after clearing.
     EXPECT_NULL(menuItem.image);
 }
+
+TEST(WKWebExtensionAPIMenus, MenuItemWithSymbolImageIconVariants)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertSafe(() => browser.menus.create({",
+        @"  id: 'menu-item-with-symbol-variants',",
+        @"  title: 'Menu Item with Symbol Variants',",
+        @"  icon_variants: [",
+        @"    { any: 'symbol:star' }",
+        @"  ],",
+        @"  contexts: [ 'action' ]",
+        @"}))",
+
+        @"browser.test.sendMessage('Menus Created')",
+    ]);
+
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
+
+    [manager runUntilTestMessage:@"Menus Created"];
+
+    auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
+    auto *menuItems = action.menuItems;
+
+    EXPECT_EQ(menuItems.count, 1lu);
+
+    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
+    EXPECT_NS_EQUAL(menuItem.title, @"Menu Item with Symbol Variants");
+
+#if PLATFORM(MAC)
+    EXPECT_TRUE([menuItem.image isKindOfClass:NSImage.class]);
+    EXPECT_TRUE(menuItem.image._isSymbolImage);
+#else
+    EXPECT_TRUE([menuItem.image isKindOfClass:UIImage.class]);
+    EXPECT_TRUE(menuItem.image.isSymbolImage);
+#endif
+}
 #endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+
+TEST(WKWebExtensionAPIMenus, MenuItemWithSymbolImageIcon)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertSafe(() => browser.menus.create({",
+        @"  id: 'menu-item-with-symbol-icon',",
+        @"  title: 'Menu Item with Symbol Icon',",
+        @"  icons: {",
+        @"    16: 'symbol:star'",
+        @"  },",
+        @"  contexts: [ 'action' ]",
+        @"}))",
+
+        @"browser.test.sendMessage('Menus Created')",
+    ]);
+
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
+
+    [manager runUntilTestMessage:@"Menus Created"];
+
+    auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
+    auto *menuItems = action.menuItems;
+
+    EXPECT_EQ(menuItems.count, 1lu);
+
+    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
+    EXPECT_NS_EQUAL(menuItem.title, @"Menu Item with Symbol Icon");
+
+#if PLATFORM(MAC)
+    EXPECT_TRUE([menuItem.image isKindOfClass:NSImage.class]);
+    EXPECT_TRUE(menuItem.image._isSymbolImage);
+#else
+    EXPECT_TRUE([menuItem.image isKindOfClass:UIImage.class]);
+    EXPECT_TRUE(menuItem.image.isSymbolImage);
+#endif
+}
 
 TEST(WKWebExtensionAPIMenus, ToggleCheckboxMenuItems)
 {

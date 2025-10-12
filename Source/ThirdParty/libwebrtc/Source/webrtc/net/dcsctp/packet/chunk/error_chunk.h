@@ -9,17 +9,17 @@
  */
 #ifndef NET_DCSCTP_PACKET_CHUNK_ERROR_CHUNK_H_
 #define NET_DCSCTP_PACKET_CHUNK_ERROR_CHUNK_H_
-#include <stddef.h>
-#include <stdint.h>
 
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "net/dcsctp/packet/chunk/chunk.h"
-#include "net/dcsctp/packet/error_cause/error_cause.h"
+#include "net/dcsctp/packet/parameter/parameter.h"
 #include "net/dcsctp/packet/tlv_trait.h"
 
 namespace dcsctp {
@@ -41,7 +41,7 @@ class ErrorChunk : public Chunk, public TLVTrait<ErrorChunkConfig> {
   ErrorChunk(ErrorChunk&& other) = default;
   ErrorChunk& operator=(ErrorChunk&& other) = default;
 
-  static std::optional<ErrorChunk> Parse(rtc::ArrayView<const uint8_t> data);
+  static std::optional<ErrorChunk> Parse(webrtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

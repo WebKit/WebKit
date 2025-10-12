@@ -1,0 +1,3 @@
+
+PASS WebLocks are properly released when page is suspended for back/forward cache
+

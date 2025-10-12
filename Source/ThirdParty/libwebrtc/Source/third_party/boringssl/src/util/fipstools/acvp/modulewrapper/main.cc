@@ -1,32 +1,29 @@
-/* Copyright (c) 2021, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2021 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <inttypes.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <string>
+#include <string_view>
 
 #include <openssl/crypto.h>
 #include <openssl/span.h>
 
 #include "modulewrapper.h"
 
-
-static bool EqString(bssl::Span<const uint8_t> cmd, const char *str) {
-  return cmd.size() == strlen(str) && memcmp(str, cmd.data(), cmd.size()) == 0;
-}
 
 int main(int argc, char **argv) {
   if (argc == 2 && strcmp(argv[1], "--version") == 0) {
@@ -95,7 +92,8 @@ int main(int argc, char **argv) {
       return 1;
     }
 
-    if (EqString(args[0], "flush")) {
+    auto name = bssl::BytesAsStringView(args[0]);
+    if (name == "flush") {
       if (!bssl::acvp::FlushBuffer(STDOUT_FILENO)) {
         abort();
       }
@@ -107,13 +105,10 @@ int main(int argc, char **argv) {
       return 2;
     }
 
-    auto &reply_callback =
-        EqString(args[0], "getConfig") ? write_reply : buffer_reply;
+    auto &reply_callback = name == "getConfig" ? write_reply : buffer_reply;
     if (!handler(args.subspan(1).data(), reply_callback)) {
-      const std::string name(reinterpret_cast<const char *>(args[0].data()),
-                             args[0].size());
-      fprintf(stderr, "\'%s\' operation failed.\n", name.c_str());
+      fprintf(stderr, "\'%s\' operation failed.\n", std::string(name).c_str());
       return 3;
     }
   }
-};
+}

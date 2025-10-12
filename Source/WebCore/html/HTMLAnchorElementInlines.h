@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ElementInlines.h"
-#include "HTMLAnchorElement.h"
+#include <WebCore/ElementInlines.h>
+#include <WebCore/HTMLAnchorElement.h>
 
 namespace WebCore {
 

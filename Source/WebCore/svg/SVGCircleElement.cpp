@@ -28,6 +28,8 @@
 #include "RenderSVGEllipse.h"
 #include "SVGElementInlines.h"
 #include "SVGParsingError.h"
+#include "SVGPropertyOwnerRegistry.h"
+#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

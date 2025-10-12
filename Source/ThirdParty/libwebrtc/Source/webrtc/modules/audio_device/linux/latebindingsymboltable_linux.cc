@@ -10,6 +10,8 @@
 
 #include "modules/audio_device/linux/latebindingsymboltable_linux.h"
 
+#include <string>
+
 #include "absl/strings/string_view.h"
 #include "rtc_base/logging.h"
 

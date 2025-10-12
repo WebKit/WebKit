@@ -6,6 +6,10 @@
 
 // MatrixBuiltinsTest.cpp: Tests basic usage of builtin matrix operations.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 

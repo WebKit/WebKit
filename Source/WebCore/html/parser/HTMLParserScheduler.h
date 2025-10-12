@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2010 Google, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 #include "NestingLevelIncrementer.h"
 #include "Timer.h"
 #include <wtf/CheckedPtr.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -63,7 +63,7 @@ public:
     bool didSeeScript { false };
 };
 
-class HTMLParserScheduler final : public RefCounted<HTMLParserScheduler> {
+class HTMLParserScheduler final : public RefCountedAndCanMakeWeakPtr<HTMLParserScheduler> {
     WTF_MAKE_TZONE_ALLOCATED(HTMLParserScheduler);
     WTF_MAKE_NONCOPYABLE(HTMLParserScheduler);
 public:

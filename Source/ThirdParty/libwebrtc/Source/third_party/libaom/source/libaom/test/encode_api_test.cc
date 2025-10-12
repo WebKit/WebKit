@@ -98,6 +98,81 @@ TEST(EncodeAPI, InvalidParams) {
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&enc));
 }
 
+TEST(EncodeAPI, InvalidSvcParams) {
+  uint8_t buf[6] = { 0 };
+  aom_image_t img;
+  aom_codec_ctx_t enc;
+  aom_codec_enc_cfg_t cfg;
+
+  EXPECT_EQ(&img, aom_img_wrap(&img, AOM_IMG_FMT_I420, 1, 1, 1, buf));
+
+  aom_codec_iface_t *iface = aom_codec_av1_cx();
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_enc_config_default(iface, &cfg, AOM_USAGE_REALTIME));
+  cfg.g_w = 1;
+  cfg.g_h = 1;
+  EXPECT_EQ(aom_codec_enc_init(&enc, iface, &cfg, 0), AOM_CODEC_OK);
+  EXPECT_EQ(aom_codec_encode(&enc, &img, 0, 1, 0), AOM_CODEC_OK);
+
+  EXPECT_EQ(aom_codec_control(&enc, AOME_SET_NUMBER_SPATIAL_LAYERS, -1),
+            AOM_CODEC_INVALID_PARAM);
+  EXPECT_EQ(aom_codec_control(&enc, AOME_SET_NUMBER_SPATIAL_LAYERS,
+                              AOM_MAX_SS_LAYERS + 1),
+            AOM_CODEC_INVALID_PARAM);
+
+  aom_svc_params_t svc_params = {};
+  svc_params.framerate_factor[0] = 2;
+  svc_params.framerate_factor[1] = 1;
+  svc_params.layer_target_bitrate[0] = 60 * cfg.rc_target_bitrate / 100;
+  svc_params.layer_target_bitrate[1] = cfg.rc_target_bitrate;
+  for (const bool use_flexible_mode : { false, true }) {
+    if (use_flexible_mode) {
+      aom_svc_ref_frame_config_t ref_frame_config = {};
+      ref_frame_config.refresh[0] = 1;
+      ASSERT_EQ(aom_codec_control(&enc, AV1E_SET_SVC_REF_FRAME_CONFIG,
+                                  &ref_frame_config),
+                AOM_CODEC_OK);
+    }
+
+    const int max_valid_num_spatial = use_flexible_mode ? AOM_MAX_SS_LAYERS : 3;
+    const int max_valid_num_temporal =
+        use_flexible_mode ? AOM_MAX_TS_LAYERS : 3;
+    for (int num_spatial = AOM_MAX_SS_LAYERS;
+         num_spatial <= AOM_MAX_SS_LAYERS + 1; ++num_spatial) {
+      for (int num_temporal = AOM_MAX_TS_LAYERS;
+           num_temporal <= AOM_MAX_TS_LAYERS + 1; ++num_temporal) {
+        svc_params.number_spatial_layers = num_spatial;
+        svc_params.number_temporal_layers = num_temporal;
+        if (num_spatial > 0 && num_spatial <= AOM_MAX_SS_LAYERS &&
+            num_temporal > 0 && num_temporal <= AOM_MAX_TS_LAYERS) {
+          EXPECT_EQ(aom_codec_control(&enc, AV1E_SET_SVC_PARAMS, &svc_params),
+                    AOM_CODEC_OK)
+              << "num_spatial: " << num_spatial
+              << " num_temporal: " << num_temporal
+              << " use_flexible_mode: " << use_flexible_mode;
+        } else {
+          EXPECT_EQ(aom_codec_control(&enc, AV1E_SET_SVC_PARAMS, &svc_params),
+                    AOM_CODEC_INVALID_PARAM)
+              << "num_spatial: " << num_spatial
+              << " num_temporal: " << num_temporal
+              << " use_flexible_mode: " << use_flexible_mode;
+        }
+        if (use_flexible_mode || (num_spatial <= max_valid_num_spatial &&
+                                  num_temporal <= max_valid_num_temporal)) {
+          EXPECT_EQ(aom_codec_encode(&enc, &img, 0, 1, 0), AOM_CODEC_OK);
+        } else {
+          EXPECT_EQ(aom_codec_encode(&enc, &img, 0, 1, 0),
+                    AOM_CODEC_INVALID_PARAM);
+        }
+      }
+    }
+  }
+
+  EXPECT_EQ(aom_codec_encode(&enc, &img, 0, 1, 0), AOM_CODEC_OK);
+  EXPECT_EQ(aom_codec_encode(&enc, nullptr, 0, 0, 0), AOM_CODEC_OK);
+  EXPECT_EQ(aom_codec_destroy(&enc), AOM_CODEC_OK);
+}
+
 TEST(EncodeAPI, InvalidControlId) {
   aom_codec_iface_t *iface = aom_codec_av1_cx();
   aom_codec_ctx_t enc;
@@ -109,7 +184,7 @@ TEST(EncodeAPI, InvalidControlId) {
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&enc));
 }
 
-TEST(EncodeAPI, TuneSsimulacra2NotAllIntra) {
+TEST(EncodeAPI, TuneIqNotAllIntra) {
   aom_codec_iface_t *iface = aom_codec_av1_cx();
   aom_codec_enc_cfg_t cfg;
   ASSERT_EQ(aom_codec_enc_config_default(iface, &cfg, AOM_USAGE_REALTIME),
@@ -861,6 +936,46 @@ TEST(EncodeAPI, AomediaIssue3509VbrMinSection101Percent) {
   ASSERT_EQ(aom_codec_destroy(&enc), AOM_CODEC_OK);
 }
 
+TEST(EncodeAPI, Buganizer392929025) {
+  // Initialize libaom encoder.
+  aom_codec_iface_t *const iface = aom_codec_av1_cx();
+  aom_codec_ctx_t enc;
+  aom_codec_enc_cfg_t cfg;
+
+  ASSERT_EQ(aom_codec_enc_config_default(iface, &cfg, AOM_USAGE_REALTIME),
+            AOM_CODEC_OK);
+
+  cfg.g_w = 16;
+  cfg.g_h = 16;
+
+  ASSERT_EQ(aom_codec_enc_init(&enc, iface, &cfg, 0), AOM_CODEC_OK);
+
+  ASSERT_EQ(aom_codec_control(&enc, AV1E_SET_MATRIX_COEFFICIENTS,
+                              AOM_CICP_MC_IDENTITY),
+            AOM_CODEC_OK);
+
+  // Create input image.
+  aom_image_t *const image =
+      CreateGrayImage(AOM_IMG_FMT_I420, cfg.g_w, cfg.g_h);
+  ASSERT_NE(image, nullptr);
+
+  // Encode frame.
+  // AOM_CICP_MC_IDENTITY requires subsampling to be 0.
+  EXPECT_EQ(
+      aom_codec_encode(&enc, image, /*pts=*/0, /*duration=*/1, /*flags=*/0),
+      AOM_CODEC_INVALID_PARAM);
+
+  // Attempt to reconfigure with non-zero subsampling.
+  EXPECT_EQ(aom_codec_control(&enc, AV1E_SET_CHROMA_SUBSAMPLING_X, 1),
+            AOM_CODEC_INVALID_PARAM);
+  EXPECT_EQ(aom_codec_control(&enc, AV1E_SET_CHROMA_SUBSAMPLING_Y, 1),
+            AOM_CODEC_INVALID_PARAM);
+
+  // Free resources.
+  aom_img_free(image);
+  ASSERT_EQ(aom_codec_destroy(&enc), AOM_CODEC_OK);
+}
+
 class EncodeAPIParameterized
     : public testing::TestWithParam<std::tuple<
           /*usage=*/unsigned int, /*speed=*/int, /*aq_mode=*/unsigned int>> {};
@@ -986,7 +1101,7 @@ TEST(EncodeAPI, AllIntraAndUsePsnr) {
   ASSERT_EQ(aom_codec_destroy(&enc), AOM_CODEC_OK);
 }
 
-TEST(EncodeAPI, AllIntraAndTuneSsimulacra2) {
+TEST(EncodeAPI, AllIntraAndTuneIq) {
   aom_codec_iface_t *iface = aom_codec_av1_cx();
   aom_codec_enc_cfg_t cfg;
   ASSERT_EQ(aom_codec_enc_config_default(iface, &cfg, AOM_USAGE_ALL_INTRA),
@@ -1035,6 +1150,134 @@ TEST(EncodeAPI, AllIntraAndNoRefLast) {
 
   ASSERT_EQ(aom_codec_encode(&enc, image, 0, 1, AOM_EFLAG_NO_REF_LAST),
             AOM_CODEC_OK);
+
+  aom_img_free(image);
+  ASSERT_EQ(aom_codec_destroy(&enc), AOM_CODEC_OK);
+}
+#endif  // !CONFIG_REALTIME_ONLY
+
+TEST(EncodeAPI, PerFramePsnr) {
+  aom_codec_iface_t *iface = aom_codec_av1_cx();
+  aom_codec_enc_cfg_t cfg;
+  ASSERT_EQ(aom_codec_enc_config_default(iface, &cfg, AOM_USAGE_REALTIME),
+            AOM_CODEC_OK);
+  ASSERT_EQ(cfg.g_lag_in_frames, 0);
+
+  aom_codec_ctx_t enc;
+  ASSERT_EQ(aom_codec_enc_init(&enc, iface, &cfg, 0), AOM_CODEC_OK);
+
+  aom_image_t *image = CreateGrayImage(AOM_IMG_FMT_I420, cfg.g_w, cfg.g_h);
+  ASSERT_NE(image, nullptr);
+
+  aom_enc_frame_flags_t psnr_flags = AOM_EFLAG_CALCULATE_PSNR;
+  ASSERT_EQ(
+      aom_codec_encode(&enc, image, /*pts=*/0, /*duration=*/1, psnr_flags),
+      AOM_CODEC_OK);
+
+  const aom_codec_cx_pkt_t *pkt;
+  aom_codec_iter_t iter = nullptr;
+  bool had_psnr = false;
+  while ((pkt = aom_codec_get_cx_data(&enc, &iter)) != nullptr) {
+    if (pkt->kind != AOM_CODEC_CX_FRAME_PKT) {
+      ASSERT_EQ(pkt->kind, AOM_CODEC_PSNR_PKT);
+      had_psnr = true;
+    }
+  }
+  EXPECT_TRUE(had_psnr);
+
+  aom_enc_frame_flags_t no_psnr_flags = 0;
+  ASSERT_EQ(
+      aom_codec_encode(&enc, image, /*pts=*/1, /*duration=*/1, no_psnr_flags),
+      AOM_CODEC_OK);
+
+  iter = nullptr;
+  had_psnr = false;
+  while ((pkt = aom_codec_get_cx_data(&enc, &iter)) != nullptr) {
+    if (pkt->kind != AOM_CODEC_CX_FRAME_PKT) {
+      ASSERT_EQ(pkt->kind, AOM_CODEC_PSNR_PKT);
+      had_psnr = true;
+    }
+  }
+#if CONFIG_INTERNAL_STATS
+  // CONFIG_INTERNAL_STATS unconditionally generates PSNR.
+  EXPECT_TRUE(had_psnr);
+#else
+  EXPECT_FALSE(had_psnr);
+#endif  // CONFIG_INTERNAL_STATS
+
+  aom_img_free(image);
+  ASSERT_EQ(aom_codec_destroy(&enc), AOM_CODEC_OK);
+}
+
+#if !CONFIG_REALTIME_ONLY
+TEST(EncodeAPI, PerFramePsnrGoodQualityZeroLagInFrames) {
+  aom_codec_iface_t *iface = aom_codec_av1_cx();
+  aom_codec_enc_cfg_t cfg;
+  ASSERT_EQ(aom_codec_enc_config_default(iface, &cfg, AOM_USAGE_GOOD_QUALITY),
+            AOM_CODEC_OK);
+  ASSERT_NE(cfg.g_lag_in_frames, 0);
+  cfg.g_lag_in_frames = 0;
+
+  aom_codec_ctx_t enc;
+  ASSERT_EQ(aom_codec_enc_init(&enc, iface, &cfg, 0), AOM_CODEC_OK);
+
+  aom_image_t *image = CreateGrayImage(AOM_IMG_FMT_I420, cfg.g_w, cfg.g_h);
+  ASSERT_NE(image, nullptr);
+
+  aom_enc_frame_flags_t psnr_flags = AOM_EFLAG_CALCULATE_PSNR;
+  ASSERT_EQ(
+      aom_codec_encode(&enc, image, /*pts=*/0, /*duration=*/1, psnr_flags),
+      AOM_CODEC_OK);
+  const aom_codec_cx_pkt_t *pkt;
+  aom_codec_iter_t iter = nullptr;
+  bool had_psnr = false;
+  while ((pkt = aom_codec_get_cx_data(&enc, &iter)) != nullptr) {
+    if (pkt->kind != AOM_CODEC_CX_FRAME_PKT) {
+      ASSERT_EQ(pkt->kind, AOM_CODEC_PSNR_PKT);
+      had_psnr = true;
+    }
+  }
+  EXPECT_TRUE(had_psnr);
+
+  aom_enc_frame_flags_t no_psnr_flags = 0;
+  ASSERT_EQ(
+      aom_codec_encode(&enc, image, /*pts=*/1, /*duration=*/1, no_psnr_flags),
+      AOM_CODEC_OK);
+  iter = nullptr;
+  had_psnr = false;
+  while ((pkt = aom_codec_get_cx_data(&enc, &iter)) != nullptr) {
+    if (pkt->kind != AOM_CODEC_CX_FRAME_PKT) {
+      ASSERT_EQ(pkt->kind, AOM_CODEC_PSNR_PKT);
+      had_psnr = true;
+    }
+  }
+#if CONFIG_INTERNAL_STATS
+  // CONFIG_INTERNAL_STATS unconditionally generates PSNR.
+  EXPECT_TRUE(had_psnr);
+#else
+  EXPECT_FALSE(had_psnr);
+#endif  // CONFIG_INTERNAL_STATS
+  aom_img_free(image);
+  ASSERT_EQ(aom_codec_destroy(&enc), AOM_CODEC_OK);
+}
+
+TEST(EncodeAPI, PerFramePsnrNotSupportedWithLagInFrames) {
+  aom_codec_iface_t *iface = aom_codec_av1_cx();
+  aom_codec_enc_cfg_t cfg;
+  ASSERT_EQ(aom_codec_enc_config_default(iface, &cfg, AOM_USAGE_GOOD_QUALITY),
+            AOM_CODEC_OK);
+  ASSERT_NE(cfg.g_lag_in_frames, 0);
+
+  aom_codec_ctx_t enc;
+  ASSERT_EQ(aom_codec_enc_init(&enc, iface, &cfg, 0), AOM_CODEC_OK);
+
+  aom_image_t *image = CreateGrayImage(AOM_IMG_FMT_I420, cfg.g_w, cfg.g_h);
+  ASSERT_NE(image, nullptr);
+
+  aom_enc_frame_flags_t psnr_flags = AOM_EFLAG_CALCULATE_PSNR;
+  ASSERT_EQ(
+      aom_codec_encode(&enc, image, /*pts=*/0, /*duration=*/1, psnr_flags),
+      AOM_CODEC_INCAPABLE);
 
   aom_img_free(image);
   ASSERT_EQ(aom_codec_destroy(&enc), AOM_CODEC_OK);

@@ -1,5 +1,0 @@
-
-PASS Tests requestSession accepts immersive-ar mode - webgl
-PASS Tests requestSession accepts immersive-ar mode - webgl2
-PASS Tests requestSession rejects immersive-ar mode when unsupported
-

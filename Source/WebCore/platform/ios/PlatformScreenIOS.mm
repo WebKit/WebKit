@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,6 +120,37 @@ bool screenSupportsHighDynamicRange(Widget*)
     return false;
 }
 
+bool screenSupportsHighDynamicRange(PlatformDisplayID)
+{
+    return screenSupportsHighDynamicRange(nullptr);
+}
+
+#if HAVE(SUPPORT_HDR_DISPLAY)
+float currentEDRHeadroomForDisplay(PlatformDisplayID)
+{
+    if (auto data = screenData(primaryScreenDisplayID()))
+        return data->currentEDRHeadroom;
+
+    return [[PAL::getUIScreenClassSingleton() mainScreen] currentEDRHeadroom];
+}
+
+float maxEDRHeadroomForDisplay(PlatformDisplayID)
+{
+    if (auto data = screenData(primaryScreenDisplayID()))
+        return data->maxEDRHeadroom;
+
+    return [[PAL::getUIScreenClassSingleton() mainScreen] potentialEDRHeadroom];
+}
+
+bool suppressEDRForDisplay(PlatformDisplayID)
+{
+    if (auto data = screenData(primaryScreenDisplayID()))
+        return data->suppressEDR;
+
+    return false;
+}
+#endif
+
 DestinationColorSpace screenColorSpace(Widget* widget)
 {
     UNUSED_PARAM(widget);
@@ -188,24 +219,24 @@ float screenPPIFactor()
 
 FloatSize screenSize()
 {
-    if (PAL::deviceHasIPadCapability() && [[PAL::getUIApplicationClass() sharedApplication] _isClassic])
+    if (PAL::deviceHasIPadCapability() && [[PAL::getUIApplicationClassSingleton() sharedApplication] _isClassic])
         return { 320, 480 };
 
     if (auto data = screenData(primaryScreenDisplayID()))
         return data->screenRect.size();
 
-    return FloatSize([[PAL::getUIScreenClass() mainScreen] _referenceBounds].size);
+    return FloatSize([[PAL::getUIScreenClassSingleton() mainScreen] _referenceBounds].size);
 }
 
 FloatSize availableScreenSize()
 {
-    if (PAL::deviceHasIPadCapability() && [[PAL::getUIApplicationClass() sharedApplication] _isClassic])
+    if (PAL::deviceHasIPadCapability() && [[PAL::getUIApplicationClassSingleton() sharedApplication] _isClassic])
         return { 320, 480 };
 
     if (auto data = screenData(primaryScreenDisplayID()))
         return data->screenAvailableRect.size();
 
-    return FloatSize([PAL::getUIScreenClass() mainScreen].bounds.size);
+    return FloatSize([PAL::getUIScreenClassSingleton() mainScreen].bounds.size);
 }
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PlatformScreenIOS.mm>)
@@ -224,7 +255,7 @@ FloatSize overrideAvailableScreenSize()
 float screenScaleFactor(UIScreen *screen)
 {
     if (!screen)
-        screen = [PAL::getUIScreenClass() mainScreen];
+        screen = [PAL::getUIScreenClassSingleton() mainScreen];
 
     return screen.scale;
 }
@@ -236,7 +267,7 @@ ScreenProperties collectScreenProperties()
     // FIXME: This displayID doesn't match the synthetic displayIDs we use in iOS WebKit (see WebPageProxy::generateDisplayIDFromPageID()).
     PlatformDisplayID displayID = 0;
 
-    for (UIScreen *screen in [PAL::getUIScreenClass() screens]) {
+    for (UIScreen *screen in [PAL::getUIScreenClassSingleton() screens]) {
         ScreenData screenData;
 
         auto screenAvailableRect = FloatRect { screen.bounds };
@@ -251,10 +282,14 @@ ScreenProperties collectScreenProperties()
         screenData.screenHasInvertedColors = WebCore::screenHasInvertedColors();
         screenData.screenSupportsHighDynamicRange = WebCore::screenSupportsHighDynamicRange(nullptr);
         screenData.scaleFactor = WebCore::screenPPIFactor();
+#if HAVE(SUPPORT_HDR_DISPLAY)
+        screenData.maxEDRHeadroom = [screen potentialEDRHeadroom];
+        screenData.currentEDRHeadroom = [screen currentEDRHeadroom];
+#endif
 
         screenProperties.screenDataMap.set(++displayID, WTFMove(screenData));
 
-        if (screen == [PAL::getUIScreenClass() mainScreen])
+        if (screen == [PAL::getUIScreenClassSingleton() mainScreen])
             screenProperties.primaryDisplayID = displayID;
     }
 

@@ -41,10 +41,10 @@ std::unique_ptr<PlatformDisplayDefault> PlatformDisplayDefault::create()
         CRASH();
     }
 
-    return std::unique_ptr<PlatformDisplayDefault>(new PlatformDisplayDefault(WTFMove(glDisplay)));
+    return std::unique_ptr<PlatformDisplayDefault>(new PlatformDisplayDefault(glDisplay.releaseNonNull()));
 }
 
-PlatformDisplayDefault::PlatformDisplayDefault(std::unique_ptr<GLDisplay>&& glDisplay)
+PlatformDisplayDefault::PlatformDisplayDefault(Ref<GLDisplay>&& glDisplay)
     : PlatformDisplay(WTFMove(glDisplay))
 {
 #if ENABLE(WEBGL)

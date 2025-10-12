@@ -30,9 +30,9 @@
 
 #pragma once
 
-#include "FloatSize.h"
-#include "IntSize.h"
-#include "LayoutUnit.h"
+#include <WebCore/FloatSize.h>
+#include <WebCore/IntSize.h>
+#include <WebCore/LayoutUnit.h>
 
 namespace WTF {
 class TextStream;
@@ -95,7 +95,7 @@ public:
     }
 
     LayoutSize constrainedBetween(const LayoutSize& min, const LayoutSize& max) const;
-    
+
     LayoutSize expandedTo(const LayoutSize& other) const
     {
         return LayoutSize(m_width > other.m_width ? m_width : other.m_width,
@@ -205,6 +205,14 @@ inline FloatSize roundSizeToDevicePixels(const LayoutSize& size, float pixelSnap
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const LayoutSize&);
+
+struct LayoutSizeLimits {
+    LayoutSize m_min;
+    LayoutSize m_max;
+    LayoutSize clamp(const LayoutSize& size) { return size.constrainedBetween(m_min, m_max); }
+    bool fits(const LayoutSize& size) { return size == clamp(size); }
+    LayoutSize distance(const LayoutSize& size) { return size - clamp(size); }
+};
 
 } // namespace WebCore
 

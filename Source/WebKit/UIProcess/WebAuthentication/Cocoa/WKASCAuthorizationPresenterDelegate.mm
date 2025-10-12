@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
         coordinator.setCredentialRequestHandler(WTFMove(requestHandler));
     }];
 
-    if ([loginChoice isKindOfClass:WebKit::getASCPlatformPublicKeyCredentialLoginChoiceClass()]) {
+    if ([loginChoice isKindOfClass:WebKit::getASCPlatformPublicKeyCredentialLoginChoiceClassSingleton()]) {
         auto *platformLoginChoice = (ASCPlatformPublicKeyCredentialLoginChoice *)loginChoice;
 
         if ([platformLoginChoice isRegistrationRequest]) {
@@ -75,7 +75,7 @@ NS_ASSUME_NONNULL_BEGIN
         return;
     }
 
-    if ([loginChoice isKindOfClass:WebKit::getASCSecurityKeyPublicKeyCredentialLoginChoiceClass()]) {
+    if ([loginChoice isKindOfClass:WebKit::getASCSecurityKeyPublicKeyCredentialLoginChoiceClassSingleton()]) {
         auto *securityKeyLoginChoice = (ASCSecurityKeyPublicKeyCredentialLoginChoice *)loginChoice;
 
         if ([securityKeyLoginChoice credentialKind] == ASCSecurityKeyPublicKeyCredentialKindAssertion) {
@@ -107,7 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)dispatchCoordinatorCallback:(Function<void(WebKit::AuthenticatorPresenterCoordinator&)>&&)callback
 {
     ASSERT(!RunLoop::isMain());
-    RunLoop::protectedMain()->dispatch([coordinator = _coordinator, callback = WTFMove(callback)] {
+    RunLoop::mainSingleton().dispatch([coordinator = _coordinator, callback = WTFMove(callback)] {
         if (!coordinator)
             return;
         callback(*coordinator);

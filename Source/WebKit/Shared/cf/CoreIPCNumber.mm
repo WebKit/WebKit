@@ -64,8 +64,8 @@ auto CoreIPCNumber::numberHolderForNumber(CFNumberRef cfNumber) -> NumberHolder
         return number.unsignedIntValue;
     case kCFNumberLongType:
         if (isNegative)
-            return number.longValue;
-        return number.unsignedLongValue;
+            return Long { number.longValue };
+        return UnsignedLong { number.unsignedLongValue };
     case kCFNumberLongLongType:
         if (isNegative)
             return number.longLongValue;
@@ -75,9 +75,9 @@ auto CoreIPCNumber::numberHolderForNumber(CFNumberRef cfNumber) -> NumberHolder
     case kCFNumberDoubleType:
         return number.doubleValue;
     case kCFNumberCFIndexType:
-        return number.longValue;
+        return Long { number.longValue };
     case kCFNumberNSIntegerType:
-        return number.longValue;
+        return Long { number.longValue };
     case kCFNumberCGFloatType:
         return number.doubleValue;
     }
@@ -108,10 +108,10 @@ RetainPtr<CFNumberRef> CoreIPCNumber::createCFNumber() const
             return adoptNS([[NSNumber alloc] initWithInt:n]);
         }, [] (const unsigned n) {
             return adoptNS([[NSNumber alloc] initWithUnsignedInt:n]);
-        }, [] (const long n) {
-            return adoptNS([[NSNumber alloc] initWithLong:n]);
-        }, [] (const unsigned long n) {
-            return adoptNS([[NSNumber alloc] initWithUnsignedLong:n]);
+        }, [] (const Long& n) {
+            return adoptNS([[NSNumber alloc] initWithLong:n.value]);
+        }, [] (const UnsignedLong& n) {
+            return adoptNS([[NSNumber alloc] initWithUnsignedLong:n.value]);
         }, [] (const long long n) {
             return adoptNS([[NSNumber alloc] initWithLongLong:n]);
         }, [] (const unsigned long long n) {

@@ -41,12 +41,12 @@ public:
 
     DECLARE_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
     const WebAssemblyGCStructure* gcStructure() const { return uncheckedDowncast<WebAssemblyGCStructure>(structure()); }
     Ref<const Wasm::RTT> rtt() const { return gcStructure()->rtt(); }
 
 protected:
-    DECLARE_VISIT_CHILDREN;
-
     WebAssemblyGCObjectBase(VM&, WebAssemblyGCStructure*);
 
     DECLARE_DEFAULT_FINISH_CREATION;

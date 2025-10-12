@@ -26,10 +26,15 @@
 #include "config.h"
 #include "WebKitNamespace.h"
 
+#include "Element.h"
+#include "ExceptionOr.h"
 #include "FrameLoader.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
 #include "Logging.h"
+#include "WebKitJSHandle.h"
+#include "WebKitSerializedNode.h"
+#include <JavaScriptCore/JSCellInlines.h>
 
 #define WEBKIT_NAMESPACE_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - WebKitNamespace::" fmt, this, ##__VA_ARGS__)
 
@@ -62,6 +67,18 @@ UserMessageHandlersNamespace* WebKitNamespace::messageHandlers()
 #endif
 
     return &m_messageHandlerNamespace.get();
+}
+
+Ref<WebKitJSHandle> WebKitNamespace::createJSHandle(JSC::JSGlobalObject& globalObject, JSC::Strong<JSC::JSObject> object)
+{
+    return WebKitJSHandle::create(globalObject, object.get());
+}
+
+ExceptionOr<Ref<WebKitSerializedNode>> WebKitNamespace::serializeNode(Node& node, SerializedNodeInit&& init)
+{
+    if (node.isShadowRoot()) [[unlikely]]
+        return Exception { ExceptionCode::NotSupportedError };
+    return WebKitSerializedNode::create(node, init.deep);
 }
 
 } // namespace WebCore

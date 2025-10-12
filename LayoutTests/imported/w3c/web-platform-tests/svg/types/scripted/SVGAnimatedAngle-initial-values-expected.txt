@@ -1,0 +1,4 @@
+
+PASS SVGAnimatedAngle, initial values, SVGMarkerElement.prototype.orientAngle (remove)
+PASS SVGAnimatedAngle, initial values, SVGMarkerElement.prototype.orientAngle (invalid value)
+

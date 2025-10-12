@@ -13,11 +13,13 @@
 promise_test(async (test) => {
     video.srcObject = await navigator.mediaDevices.getUserMedia({ audio: true });
     await video.play();
+    video.srcObject.getTracks().forEach(t => t.stop());
 }, "Play audio captured in GPU process");
 
 promise_test(async (test) => {
     video.srcObject = await navigator.mediaDevices.getUserMedia({ video: true });
     await video.play();
+    video.srcObject.getTracks().forEach(t => t.stop());
 }, "Play video captured in GPU process");
         </script>
     </body>

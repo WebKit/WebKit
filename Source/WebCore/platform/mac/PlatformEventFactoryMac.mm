@@ -46,7 +46,7 @@ namespace WebCore {
 
 NSPoint globalPoint(const NSPoint& windowPoint, NSWindow *window)
 {
-    return flipScreenPoint([window convertPointToScreen:windowPoint], screen(window));
+    return flipScreenPoint([window convertPointToScreen:windowPoint], protectedScreen(window).get());
 }
 
 NSPoint globalPointForEvent(NSEvent *event)
@@ -72,7 +72,7 @@ NSPoint globalPointForEvent(NSEvent *event)
     }
 }
 
-IntPoint pointForEvent(NSEvent *event, NSView *windowView)
+DoublePoint pointForEvent(NSEvent *event, NSView *windowView)
 {
     switch ([event type]) {
     case NSEventTypePressure:
@@ -94,10 +94,10 @@ IntPoint pointForEvent(NSEvent *event, NSView *windowView)
         NSPoint location = [event locationInWindow];
         if (windowView)
             location = [windowView convertPoint:location fromView:nil];
-        return IntPoint(location);
+        return location;
     }
     default:
-        return IntPoint();
+        return DoublePoint();
     }
 }
 
@@ -519,7 +519,7 @@ String keyIdentifierForKeyEvent(NSEvent* event)
     
     NSString *s = [event charactersIgnoringModifiers];
     if ([s length] != 1) {
-        LOG(Events, "received an unexpected number of characters in key event: %u", [s length]);
+        LOG(Events, "received an unexpected number of characters in key event: %zu", [s length]);
         return "Unidentified"_s;
     }
     return keyIdentifierForCharCode([s characterAtIndex:0]);
@@ -591,43 +591,6 @@ int windowsKeyCodeForKeyEvent(NSEvent* event)
     // Map Mac virtual key code directly to Windows one for any keys not handled above.
     // E.g. the key next to Caps Lock has the same Event.keyCode on U.S. keyboard ('A') and on Russian keyboard (CYRILLIC LETTER EF).
     return windowsKeyCodeForKeyCode([event keyCode]);
-}
-
-static CFAbsoluteTime systemStartupTime;
-
-static void updateSystemStartupTimeIntervalSince1970()
-{
-    // CFAbsoluteTimeGetCurrent() provides the absolute time in seconds since 2001.
-    // mach_absolute_time() provides a relative system time since startup minus the time the computer was suspended.
-    mach_timebase_info_data_t timebase_info;
-    mach_timebase_info(&timebase_info);
-    double elapsedTimeSinceStartup = static_cast<double>(mach_absolute_time()) * timebase_info.numer / timebase_info.denom / 1e9;
-    systemStartupTime = kCFAbsoluteTimeIntervalSince1970 + CFAbsoluteTimeGetCurrent() - elapsedTimeSinceStartup;
-}
-
-static CFTimeInterval cachedStartupTimeIntervalSince1970()
-{
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        void (^updateBlock)(NSNotification *) = Block_copy(^(NSNotification *){ updateSystemStartupTimeIntervalSince1970(); });
-        [[[NSWorkspace sharedWorkspace] notificationCenter] addObserverForName:NSWorkspaceDidWakeNotification
-                                                                        object:nil
-                                                                         queue:nil
-                                                                    usingBlock:updateBlock];
-        [[NSNotificationCenter defaultCenter] addObserverForName:NSSystemClockDidChangeNotification
-                                                          object:nil
-                                                           queue:nil
-                                                      usingBlock:updateBlock];
-        Block_release(updateBlock);
-
-        updateSystemStartupTimeIntervalSince1970();
-    });
-    return systemStartupTime;
-}
-
-WallTime eventTimeStampSince1970(NSTimeInterval timestamp)
-{
-    return WallTime::fromRawSeconds(static_cast<double>(cachedStartupTimeIntervalSince1970() + timestamp));
 }
 
 bool isKeyUpEvent(NSEvent *event)
@@ -723,12 +686,12 @@ UInt8 keyCharForEvent(NSEvent *event)
     return keyChar;
 }
 
-IntPoint unadjustedMovementForEvent(NSEvent *event)
+DoublePoint unadjustedMovementForEvent(NSEvent *event)
 {
-    CGEventRef cgEvent = [event CGEvent];
-    auto dx = CGEventGetIntegerValueField(cgEvent, kCGEventUnacceleratedPointerMovementX);
-    auto dy = CGEventGetIntegerValueField(cgEvent, kCGEventUnacceleratedPointerMovementY);
-    return IntPoint(dx, dy);
+    RetainPtr cgEvent = [event CGEvent];
+    auto dx = CGEventGetDoubleValueField(cgEvent.get(), kCGEventUnacceleratedPointerMovementX);
+    auto dy = CGEventGetDoubleValueField(cgEvent.get(), kCGEventUnacceleratedPointerMovementY);
+    return DoublePoint(dx, dy);
 }
 
 class PlatformMouseEventBuilder : public PlatformMouseEvent {
@@ -751,7 +714,7 @@ public:
         }
 
         m_modifiers = modifiersForEvent(event);
-        m_timestamp = eventTimeStampSince1970(event.timestamp);
+        m_timestamp = MonotonicTime::fromRawSeconds(event.timestamp);
 
         // PlatformMouseEvent
         m_position = pointForEvent(event, windowView);
@@ -759,7 +722,7 @@ public:
         m_button = mouseButtonForEvent(event);
         m_buttons = currentlyPressedMouseButtons();
         m_clickCount = clickCountForEvent(event);
-        m_movementDelta = IntPoint(event.deltaX, event.deltaY);
+        m_movementDelta = DoublePoint(event.deltaX, event.deltaY);
         m_unadjustedMovementDelta = unadjustedMovementForEvent(event);
 
         if (!isCoalesced)
@@ -790,10 +753,10 @@ public:
         // PlatformEvent
         m_type = PlatformEvent::Type::Wheel;
         m_modifiers = modifiersForEvent(event);
-        m_timestamp = eventTimeStampSince1970(event.timestamp);
+        m_timestamp = MonotonicTime::fromRawSeconds(event.timestamp);
 
         // PlatformWheelEvent
-        m_position = pointForEvent(event, windowView);
+        m_position = IntPoint(pointForEvent(event, windowView));
         m_globalPosition = IntPoint(globalPointForEvent(event));
         m_granularity = ScrollByPixelWheelEvent;
 
@@ -829,7 +792,7 @@ public:
         // PlatformEvent
         m_type = isKeyUpEvent(event) ? PlatformEvent::Type::KeyUp : PlatformEvent::Type::KeyDown;
         m_modifiers = modifiersForEvent(event);
-        m_timestamp = eventTimeStampSince1970(event.timestamp);
+        m_timestamp = MonotonicTime::fromRawSeconds(event.timestamp);
 
         // PlatformKeyboardEvent
         m_text = textFromEvent(event);

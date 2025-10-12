@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,10 +48,8 @@ private:
     void getNodesInCommand(NodeSet&) override;
 #endif
 
-    Ref<Node> protectedInsertChild() const { return m_insertChild; }
-
-    Ref<Node> m_insertChild;
-    Ref<Node> m_refChild;
+    const Ref<Node> m_insertChild;
+    const Ref<Node> m_refChild;
     ShouldAssumeContentIsAlwaysEditable m_shouldAssumeContentIsAlwaysEditable;
 };
 

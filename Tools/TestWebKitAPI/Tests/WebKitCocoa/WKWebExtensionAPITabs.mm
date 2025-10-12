@@ -28,7 +28,10 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "HTTPServer.h"
+#import "TestWKWebView.h"
 #import "WebExtensionUtilities.h"
+#import <JavaScriptCore/MathCommon.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 namespace TestWebKitAPI {
 
@@ -250,6 +253,68 @@ TEST(WKWebExtensionAPITabs, Create)
         EXPECT_FALSE(configuration.shouldBePinned);
         EXPECT_FALSE(configuration.shouldBeMuted);
         EXPECT_FALSE(configuration.shouldReaderModeBeActive);
+
+        originalOpenNewTab(configuration, context, completionHandler);
+    };
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITabs, CreateTabsOverflowIndex)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"var allWindows = await browser.windows.getAll({ populate: true })",
+        @"var initialTabsCount = allWindows[0].tabs.length",
+        @"var largeIndex = 13000000000000000000000000000000000",
+        @"var newTab = await browser.tabs.create({ index: largeIndex })",
+
+        @"var updatedWindows = await browser.windows.getAll({ populate: true })",
+        @"var updatedTabs = updatedWindows[0].tabs",
+        @"browser.test.assertEq(updatedTabs.length, initialTabsCount + 1, 'One new tab should have been added')",
+        @"browser.test.assertEq(newTab.index, initialTabsCount, 'The new tab should be posted at the end')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    auto *window = manager.get().defaultWindow;
+    auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
+
+    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(configuration.window, window);
+        EXPECT_EQ(configuration.index, JSC::maxSafeIntegerAsUInt64());
+
+        originalOpenNewTab(configuration, context, completionHandler);
+    };
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITabs, CreateTabsZeroIndex)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"var allWindows = await browser.windows.getAll({ populate: true })",
+        @"var initialTabsCount = allWindows[0].tabs.length",
+
+        @"var newTab = await browser.tabs.create({ index: 0 })",
+
+        @"var updatedWindows = await browser.windows.getAll({ populate: true })",
+        @"var updatedTabs = updatedWindows[0].tabs",
+        @"browser.test.assertEq(updatedTabs.length, initialTabsCount + 1, 'One new tab should have been added')",
+        @"browser.test.assertEq(newTab.index, initialTabsCount - 1, 'The new tab should be posted at the start')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    auto *window = manager.get().defaultWindow;
+    auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
+
+    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(configuration.window, window);
+        EXPECT_EQ(configuration.index, (NSUInteger)0);
 
         originalOpenNewTab(configuration, context, completionHandler);
     };
@@ -766,7 +831,7 @@ TEST(WKWebExtensionAPITabs, QueryWithAccessPrompt)
             EXPECT_TRUE([requestedURLs containsObject:loopbackURL]);
 
             // Only approve localhost for the first request.
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(mainDispatchQueueSingleton(), ^{
                 completionHandler([NSSet setWithObject:localhostURL], nil);
             });
 
@@ -777,7 +842,7 @@ TEST(WKWebExtensionAPITabs, QueryWithAccessPrompt)
             EXPECT_TRUE([requestedURLs containsObject:loopbackURL]);
 
             // Approve nothing for the second request.
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(mainDispatchQueueSingleton(), ^{
                 completionHandler(NSSet.set, nil);
             });
         }
@@ -849,7 +914,7 @@ TEST(WKWebExtensionAPITabs, QueryWithPermissionBypass)
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionTabs];
 
     manager.get().internalDelegate.promptForPermissionToAccessURLs = ^(id<WKWebExtensionTab>, NSSet<NSURL *> *requestedURLs, void (^completionHandler)(NSSet<NSURL *> *allowedURLs, NSDate *)) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             completionHandler(NSSet.set, nil);
         });
     };

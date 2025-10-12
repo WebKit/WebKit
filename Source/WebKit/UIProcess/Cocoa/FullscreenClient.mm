@@ -63,6 +63,9 @@ void FullscreenClient::setDelegate(id <_WKFullscreenDelegate> delegate)
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     m_delegateMethods.webViewDidFullscreenImageWithQuickLook = [delegate respondsToSelector:@selector(_webView:didFullscreenImageWithQuickLook:)];
 #endif
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    m_delegateMethods.webViewPreventDockingFromElementFullscreen = [delegate respondsToSelector:@selector(_webViewPreventDockingFromElementFullscreen:)];
+#endif
 }
 
 void FullscreenClient::willEnterFullscreen(WebPageProxy*)
@@ -79,7 +82,7 @@ void FullscreenClient::willEnterFullscreen(WebPageProxy*)
 #endif
 
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
-    [webView _addReasonToHideTopContentInsetFill:HideContentInsetFillReason::FullScreen];
+    [webView _addReasonToHideTopScrollPocket:HideScrollPocketReason::FullScreen];
 #endif
 }
 
@@ -119,7 +122,7 @@ void FullscreenClient::willExitFullscreen(WebPageProxy*)
 #endif
 
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
-    [webView _removeReasonToHideTopContentInsetFill:HideContentInsetFillReason::FullScreen];
+    [webView _removeReasonToHideTopScrollPocket:HideScrollPocketReason::FullScreen];
 #endif
 }
 
@@ -147,4 +150,14 @@ void FullscreenClient::requestPresentingViewController(CompletionHandler<void(UI
 }
 #endif
 
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+bool FullscreenClient::preventDocking(WebPageProxy*)
+{
+    RetainPtr webView = m_webView.get();
+    if (m_delegateMethods.webViewPreventDockingFromElementFullscreen)
+        return [m_delegate.get() _webViewPreventDockingFromElementFullscreen:webView.get()];
+
+    return false;
+}
+#endif
 } // namespace WebKit

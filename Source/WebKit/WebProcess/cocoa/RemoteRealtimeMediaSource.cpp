@@ -52,11 +52,6 @@ RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RemoteRealtimeMediaSourcePr
 
 RemoteRealtimeMediaSource::~RemoteRealtimeMediaSource() = default;
 
-UserMediaCaptureManager& RemoteRealtimeMediaSource::manager()
-{
-    return m_manager.get();
-}
-
 void RemoteRealtimeMediaSource::createRemoteMediaSource()
 {
     m_proxy.createRemoteMediaSource(deviceIDHashSalts(), *pageIdentifier(), [this, protectedThis = Ref { *this }](WebCore::CaptureSourceError&& error, WebCore::RealtimeMediaSourceSettings&& settings, WebCore::RealtimeMediaSourceCapabilities&& capabilities) {
@@ -71,7 +66,7 @@ void RemoteRealtimeMediaSource::createRemoteMediaSource()
 
         m_proxy.setAsReady();
         if (m_proxy.shouldCaptureInGPUProcess())
-            WebProcess::singleton().ensureGPUProcessConnection().addClient(*this);
+            WebProcess::singleton().ensureProtectedGPUProcessConnection()->addClient(*this);
     }, m_proxy.shouldCaptureInGPUProcess() && m_manager->shouldUseGPUProcessRemoteFrames());
 }
 
@@ -121,7 +116,7 @@ void RemoteRealtimeMediaSource::applyConstraintsSucceeded(WebCore::RealtimeMedia
 void RemoteRealtimeMediaSource::stopProducingData()
 {
     if (isAudio())
-        m_manager->remoteCaptureSampleManager().audioSourceWillBeStopped(identifier());
+        m_manager->protectedRemoteCaptureSampleManager()->audioSourceWillBeStopped(identifier());
     m_proxy.stopProducingData();
 }
 
@@ -132,7 +127,7 @@ void RemoteRealtimeMediaSource::didEnd()
 
     m_proxy.end();
     m_manager->removeSource(identifier());
-    m_manager->remoteCaptureSampleManager().removeSource(identifier());
+    m_manager->protectedRemoteCaptureSampleManager()->removeSource(identifier());
 }
 
 void RemoteRealtimeMediaSource::captureStopped(bool didFail)
@@ -158,7 +153,7 @@ void RemoteRealtimeMediaSource::gpuProcessConnectionDidClose(GPUProcessConnectio
         return;
 
     m_proxy.updateConnection();
-    m_manager->remoteCaptureSampleManager().didUpdateSourceConnection(Ref { m_proxy.connection() });
+    m_manager->protectedRemoteCaptureSampleManager()->didUpdateSourceConnection(Ref { m_proxy.connection() });
     m_proxy.resetReady();
     createRemoteMediaSource();
 

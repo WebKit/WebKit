@@ -1,21 +1,32 @@
 Outside
 
-FAIL closedby=any, Non-modal assert_true: Dialog should respond to ESC expected true got false
-FAIL closedby=any, Modal assert_true: Dialog should respond to ESC expected true got false
-FAIL closedby=closerequest, Non-modal assert_true: Dialog should respond to ESC expected true got false
-FAIL closedby=closerequest, Modal assert_true: Dialog should respond to ESC expected true got false
-FAIL closedby=none, Non-modal assert_false: Dialog should NOT respond to light dismiss expected false got true
-FAIL closedby=none, Modal assert_false: Dialog should NOT respond to light dismiss expected false got true
-FAIL closedby=AnY, Non-modal assert_true: Dialog should respond to ESC expected true got false
-FAIL closedby=AnY, Modal assert_true: Dialog should respond to ESC expected true got false
-FAIL closedby=ClOsErEqUeSt, Non-modal assert_true: Dialog should respond to ESC expected true got false
-FAIL closedby=ClOsErEqUeSt, Modal assert_true: Dialog should respond to ESC expected true got false
-FAIL closedby=NoNe, Non-modal assert_false: Dialog should NOT respond to light dismiss expected false got true
-FAIL closedby=NoNe, Modal assert_false: Dialog should NOT respond to light dismiss expected false got true
-FAIL closedby=invalid, Non-modal assert_true: Modal dialog in auto state should respond to ESC expected true got false
-FAIL closedby=invalid, Modal assert_true: Modal dialog in auto state should respond to ESC expected true got false
-FAIL closedby=, Non-modal assert_true: Modal dialog in auto state should respond to ESC expected true got false
-FAIL closedby=, Modal assert_true: Modal dialog in auto state should respond to ESC expected true got false
-FAIL closedby=null, Non-modal assert_true: Modal dialog in auto state should respond to ESC expected true got false
-FAIL closedby=null, Modal assert_true: Modal dialog in auto state should respond to ESC expected true got false
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT closedby=any, modeless Test timed out
+NOTRUN closedby=any, modal
+NOTRUN closedby=any, open
+NOTRUN closedby=closerequest, modeless
+NOTRUN closedby=closerequest, modal
+NOTRUN closedby=closerequest, open
+NOTRUN closedby=none, modeless
+NOTRUN closedby=none, modal
+NOTRUN closedby=none, open
+NOTRUN closedby=AnY, modeless
+NOTRUN closedby=AnY, modal
+NOTRUN closedby=AnY, open
+NOTRUN closedby=ClOsErEqUeSt, modeless
+NOTRUN closedby=ClOsErEqUeSt, modal
+NOTRUN closedby=ClOsErEqUeSt, open
+NOTRUN closedby=NoNe, modeless
+NOTRUN closedby=NoNe, modal
+NOTRUN closedby=NoNe, open
+NOTRUN closedby=invalid, modeless
+NOTRUN closedby=invalid, modal
+NOTRUN closedby=invalid, open
+NOTRUN closedby=, modeless
+NOTRUN closedby=, modal
+NOTRUN closedby=, open
+NOTRUN closedby=null, modeless
+NOTRUN closedby=null, modal
+NOTRUN closedby=null, open
 

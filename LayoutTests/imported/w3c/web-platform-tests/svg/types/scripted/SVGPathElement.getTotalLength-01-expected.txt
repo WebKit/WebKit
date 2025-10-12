@@ -1,0 +1,5 @@
+
+PASS SVGPathElement.getTotalLength: 'display:none', path with d attribute specified on element
+FAIL SVGPathElement.getTotalLength: 'display:none', path with d attribute specified as styles assert_equals: expected 100 but got 0
+FAIL SVGPathElement.getTotalLength: 'display:none', path with d attribute specified on element and as styles assert_equals: expected 100 but got 233.1370849609375
+

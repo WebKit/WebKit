@@ -10,7 +10,11 @@
 
 #include "system_wrappers/include/metrics.h"
 
+#include <map>
+#include <string>
+
 #include "absl/strings/string_view.h"
+#include "rtc_base/checks.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -21,7 +25,7 @@ using ::testing::Pair;
 #if RTC_METRICS_ENABLED
 namespace webrtc {
 namespace {
-const int kSample = 22;
+constexpr int kSample = 22;
 
 void AddSparseSample(absl::string_view name, int sample) {
   RTC_HISTOGRAM_COUNTS_SPARSE_100(name, sample);
@@ -63,11 +67,11 @@ TEST_F(MetricsTest, RtcHistogramEnumeration_AddSample) {
 
 TEST_F(MetricsTest, RtcHistogramBoolean_AddSample) {
   const std::string kName = "Boolean";
-  const int kSample = 0;
-  RTC_HISTOGRAM_BOOLEAN(kName, kSample);
+  const int kSampleZero = 0;
+  RTC_HISTOGRAM_BOOLEAN(kName, kSampleZero);
   EXPECT_EQ(1, metrics::NumSamples(kName));
-  EXPECT_EQ(1, metrics::NumEvents(kName, kSample));
-  EXPECT_THAT(metrics::Samples(kName), ElementsAre(Pair(kSample, 1)));
+  EXPECT_EQ(1, metrics::NumEvents(kName, kSampleZero));
+  EXPECT_THAT(metrics::Samples(kName), ElementsAre(Pair(kSampleZero, 1)));
 }
 
 TEST_F(MetricsTest, RtcHistogramCountsSparse_AddSample) {

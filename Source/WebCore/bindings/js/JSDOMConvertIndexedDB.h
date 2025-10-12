@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "IDBBindingUtilities.h"
-#include "IDLTypes.h"
-#include "JSDOMConvertBase.h"
+#include <WebCore/IDBBindingUtilities.h>
+#include <WebCore/IDLTypes.h>
+#include <WebCore/JSDOMConvertBase.h>
 
 namespace WebCore {
 

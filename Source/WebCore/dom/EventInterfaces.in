@@ -41,7 +41,6 @@ MutationEvent
 MutationEvents interfaceName=MutationEvent
 NavigateEvent
 NavigationCurrentEntryChangeEvent
-OverflowEvent
 PageRevealEvent
 PageSwapEvent
 PageTransitionEvent

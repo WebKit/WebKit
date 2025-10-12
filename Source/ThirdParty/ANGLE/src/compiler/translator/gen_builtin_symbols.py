@@ -590,7 +590,6 @@ basic_types_enumeration = [
     'SamplerBuffer',
     'SamplerCubeArray',
     'SamplerCubeArrayShadow',
-    'Sampler2DRectShadow',
     'ISampler2DRect',
     'ISamplerBuffer',
     'ISamplerCubeArray',

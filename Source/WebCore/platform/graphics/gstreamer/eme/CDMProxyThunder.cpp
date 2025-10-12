@@ -64,7 +64,7 @@ BoxPtr<OpenCDMSession> CDMProxyThunder::getDecryptionSession(DecryptionContext& 
     BoxPtr<OpenCDMSession> keyValue = std::get<BoxPtr<OpenCDMSession>>(keyData);
 
     if (!keyValue) {
-        keyValue = adoptInBoxPtr(opencdm_get_system_session(&static_cast<const CDMInstanceThunder*>(instance())->thunderSystem(), keyID.data(),
+        keyValue = adoptInBoxPtr(opencdm_get_system_session(&static_cast<const CDMInstanceThunder*>(instance())->thunderSystem(), keyID.span().data(),
             keyID.size(), s_licenseKeyResponseTimeout.millisecondsAs<uint32_t>()));
         ASSERT(keyValue);
         // takeValueIfDifferent takes and r-value ref of

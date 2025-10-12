@@ -29,15 +29,15 @@
 
 #pragma once
 
-#include "FloatRoundedRect.h"
-#include "LayoutShape.h"
-#include "RenderStyleConstants.h"
+#include <WebCore/FloatRoundedRect.h>
+#include <WebCore/LayoutShape.h>
+#include <WebCore/RenderStyleConstants.h>
 
 namespace WebCore {
 
 class RenderBox;
 
-RoundedRect computeRoundedRectForBoxShape(CSSBoxType, const RenderBox&);
+LayoutRoundedRect computeRoundedRectForBoxShape(CSSBoxType, const RenderBox&);
 
 class BoxLayoutShape final : public LayoutShape {
 public:

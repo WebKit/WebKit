@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-string.prototype.trimEnd
+esid: sec-string.prototype.trimend
 description: Behavoir when "this" value is a number.
 info: |
   Runtime Semantics: TrimString ( string, where )

@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2024 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@ PATCH_FOLDER = '/tmp/'
 if is_test_mode_enabled:
     BUILDBOT_SERVER_HOST = 'localhost'
 else:
-    BUILDBOT_SERVER_HOST = f'ews-build.webkit{custom_suffix}.org'
+    BUILDBOT_SERVER_HOST = util.load_password('BUILDBOT_SERVER_HOST', default=f'ews-build.webkit{custom_suffix}.org')
 
 BUILDBOT_TRY_HOST = util.load_password('BUILDBOT_TRY_HOST', default=BUILDBOT_SERVER_HOST)
 

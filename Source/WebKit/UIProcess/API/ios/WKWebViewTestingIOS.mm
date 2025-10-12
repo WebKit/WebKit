@@ -32,6 +32,7 @@
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "SystemPreviewController.h"
 #import "UIKitSPI.h"
+#import "WKColorExtensionView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFullScreenWindowController.h"
 #import "WKWebViewIOS.h"
@@ -261,6 +262,11 @@ static void dumpUIView(TextStream& ts, UIView *view)
         [overlaysAsStrings sortUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
         for (NSString *overlayAsString in overlaysAsStrings.get())
             ts.dumpProperty("overlay region"_s, overlayAsString);
+
+        auto& associatedLayers = [(WKBaseScrollView *)view overlayRegionAssociatedLayersForTesting];
+        auto associatedLayersCount = associatedLayers.size();
+        if (associatedLayersCount > 0)
+            ts.dumpProperty("associated layers"_s, associatedLayersCount);
     }
 #endif
 
@@ -324,10 +330,35 @@ static void dumpUIView(TextStream& ts, UIView *view)
         {
             TextStream::GroupScope scope(ts);
             ts << ([_scrollView showsHorizontalScrollIndicator] ? ""_s : "none"_s);
+#if HAVE(UIKIT_SCROLLBAR_COLOR_SPI)
+            if (isVertical)
+                ts << ([_scrollView _verticalScrollIndicatorColor] ? WebCore::colorFromCocoaColor([_scrollView _verticalScrollIndicatorColor]).debugDescription() :  ""_s);
+            else
+                ts << ([_scrollView _horizontalScrollIndicatorColor] ? WebCore::colorFromCocoaColor([_scrollView _horizontalScrollIndicatorColor]).debugDescription() :  ""_s);
+#endif
         }
         return ts.release().createNSString().autorelease();
     }
     return _page->scrollbarStateForScrollingNodeID(scrollingNodeID, isVertical).createNSString().autorelease();
+}
+
+- (UIView *)_colorExtensionViewForTesting:(UIRectEdge)edge
+{
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+    switch (edge) {
+    case UIRectEdgeTop:
+        return _fixedColorExtensionViews.at(WebCore::BoxSide::Top).get();
+    case UIRectEdgeLeft:
+        return _fixedColorExtensionViews.at(WebCore::BoxSide::Left).get();
+    case UIRectEdgeBottom:
+        return _fixedColorExtensionViews.at(WebCore::BoxSide::Bottom).get();
+    case UIRectEdgeRight:
+        return _fixedColorExtensionViews.at(WebCore::BoxSide::Right).get();
+    default:
+        break;
+    }
+#endif // ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+    return nil;
 }
 
 - (NSNumber *)_stableStateOverride

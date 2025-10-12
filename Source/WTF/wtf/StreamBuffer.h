@@ -37,7 +37,7 @@ namespace WTF {
 
 template <typename T, size_t BlockSize>
 class StreamBuffer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StreamBuffer);
 private:
     typedef Vector<T> Block;
 public:
@@ -94,7 +94,7 @@ public:
         if (!m_size)
             return 0;
         ASSERT(m_buffer.size() > 0);
-        return &m_buffer.first()->data()[m_readOffset];
+        return &m_buffer.first()->at(m_readOffset);
     }
 
     size_t firstBlockSize() const

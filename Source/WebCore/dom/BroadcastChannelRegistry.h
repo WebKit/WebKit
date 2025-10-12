@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "BroadcastChannelIdentifier.h"
+#include <WebCore/BroadcastChannelIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 

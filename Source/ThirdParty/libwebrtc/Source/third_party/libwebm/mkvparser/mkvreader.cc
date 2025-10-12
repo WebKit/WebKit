@@ -120,8 +120,14 @@ int MkvReader::Read(long long offset, long len, unsigned char* buffer) {
     return -1;  // error
 #elif defined(_WIN32)
   fseeko64(m_file, static_cast<off_t>(offset), SEEK_SET);
-#else
+#elif !(defined(__ANDROID__) && __ANDROID_API__ < 24 && !defined(__LP64__) && \
+        defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64)
+  // POSIX.1 has fseeko and ftello. fseeko and ftello are not available before
+  // Android API level 24. See
+  // https://android.googlesource.com/platform/bionic/+/main/docs/32-bit-abi.md
   fseeko(m_file, static_cast<off_t>(offset), SEEK_SET);
+#else
+  fseek(m_file, static_cast<long>(offset), SEEK_SET);
 #endif
 
   const size_t size = fread(buffer, 1, len, m_file);

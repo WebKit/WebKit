@@ -10,6 +10,8 @@
 
 #include "modules/desktop_capture/differ_vector_sse2.h"
 
+#include <cstdint>
+
 #if defined(_MSC_VER)
 #include <intrin.h>
 #else

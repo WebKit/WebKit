@@ -25,19 +25,19 @@
 
 #pragma once
 
-#include "CacheStorageConnection.h"
-#include "Document.h"
-#include "FetchIdentifier.h"
-#include "Page.h"
-#include "PushSubscriptionData.h"
-#include "ServiceWorkerDebuggable.h"
-#include "ServiceWorkerIdentifier.h"
-#include "ServiceWorkerInspectorProxy.h"
-#include "ServiceWorkerThread.h"
-#include "StorageBlockingPolicy.h"
-#include "WorkerBadgeProxy.h"
-#include "WorkerDebuggerProxy.h"
-#include "WorkerLoaderProxy.h"
+#include <WebCore/CacheStorageConnection.h>
+#include <WebCore/Document.h>
+#include <WebCore/FetchIdentifier.h>
+#include <WebCore/Page.h>
+#include <WebCore/PushSubscriptionData.h>
+#include <WebCore/ServiceWorkerDebuggable.h>
+#include <WebCore/ServiceWorkerIdentifier.h>
+#include <WebCore/ServiceWorkerInspectorProxy.h>
+#include <WebCore/ServiceWorkerThread.h>
+#include <WebCore/StorageBlockingPolicy.h>
+#include <WebCore/WorkerBadgeProxy.h>
+#include <WebCore/WorkerDebuggerProxy.h>
+#include <WebCore/WorkerLoaderProxy.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/URLHash.h>
@@ -56,7 +56,7 @@ struct ServiceWorkerContextData;
 enum class WorkerThreadMode : bool;
 
 class ServiceWorkerThreadProxy final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ServiceWorkerThreadProxy, WTF::DestructionThread::Main>, public WorkerLoaderProxy, public WorkerDebuggerProxy, public WorkerBadgeProxy, public CanMakeThreadSafeCheckedPtr<ServiceWorkerThreadProxy> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ServiceWorkerThreadProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ServiceWorkerThreadProxy);
 public:
     template<typename... Args> static Ref<ServiceWorkerThreadProxy> create(Args&&... args)
@@ -72,7 +72,7 @@ public:
     bool isTerminatingOrTerminated() const { return m_isTerminatingOrTerminated; }
     void setAsTerminatingOrTerminated() { m_isTerminatingOrTerminated = true; }
 
-    WEBCORE_EXPORT std::unique_ptr<FetchLoader> createBlobLoader(FetchLoaderClient&, const URL&);
+    WEBCORE_EXPORT RefPtr<FetchLoader> createBlobLoader(FetchLoaderClient&, const URL&);
 
     const URL& scriptURL() const { return m_document->url(); }
 

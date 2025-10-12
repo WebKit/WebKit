@@ -4,13 +4,19 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/wgpu/wgpu_wgsl_util.h"
 
 #include <sstream>
+#include <string>
 
 #include "common/PackedEnums.h"
 #include "common/PackedGLEnums_autogen.h"
 #include "common/log_utils.h"
+#include "common/utilities.h"
 #include "compiler/translator/wgsl/OutputUniformBlocks.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/ProgramExecutable.h"
@@ -41,12 +47,16 @@ void ReplaceFoundMarker(const std::string &shaderSource,
     // Extract name from something like `@location(@@@@@@) NAME : TYPE`.
     size_t startOfNamePos = nextMarker + strlen(marker);
     size_t endOfNamePos   = shaderSource.find(endOfName, startOfNamePos, strlen(endOfName));
-    std::string name(shaderSource.c_str() + startOfNamePos, endOfNamePos - startOfNamePos);
+    std::string name      = shaderSource.substr(startOfNamePos, endOfNamePos - startOfNamePos);
 
     // Use the shader variable's name to get the assigned location
     auto locationIter = varNameToLocation.find(name);
     if (locationIter == varNameToLocation.end())
     {
+        if (kOutputReplacements)
+        {
+            std::cout << "Didn't find " << name << ", so skipping to next semicolon" << std::endl;
+        }
         // This should be an ignored sampler, so just delete it.
         size_t endOfLine = shaderSource.find(";\n", nextMarker);
         currPos          = endOfLine + 2;
@@ -105,6 +115,40 @@ std::string WgslReplaceMarkers(const std::string &shaderSource,
     return newSource;
 }
 
+void AddShaderVarLocation(std::map<std::string, int> &varNameToLocation,
+                          std::string varName,
+                          int &startLoc,
+                          GLenum varType,
+                          unsigned int arraySize)
+{
+    ASSERT(!gl::IsSamplerType(varType));
+
+    if (!arraySize && !gl::IsMatrixType(varType))
+    {
+        ASSERT(varNameToLocation.find(varName) == varNameToLocation.end());
+        varNameToLocation[varName] = startLoc++;
+        return;
+    }
+
+    if (arraySize)
+    {
+        // TODO(anglebug.com/42267100): need to support arrays (of scalars, vectors, and matrices).
+        UNIMPLEMENTED();
+        return;
+    }
+
+    if (gl::IsMatrixType(varType))
+    {
+        // Split into column vectors.
+        for (int i = 0; i < gl::VariableColumnCount(varType); i++)
+        {
+            std::string fullVarName = varName + "_col" + std::to_string(i);
+            ASSERT(varNameToLocation.find(fullVarName) == varNameToLocation.end());
+            varNameToLocation[fullVarName] = startLoc++;
+        }
+    }
+}
+
 }  // namespace
 
 template <typename T>
@@ -121,7 +165,9 @@ std::string WgslAssignLocationsAndSamplerBindings(const gl::ProgramExecutable &e
         {
             continue;
         }
-        varNameToLocation[shaderVar.name] = shaderVar.getLocation();
+        int loc = shaderVar.getLocation();
+        AddShaderVarLocation(varNameToLocation, shaderVar.name, loc, shaderVar.getType(),
+                             shaderVar.isArray() ? shaderVar.getBasicTypeElementCount() : 0u);
     }
 
     int currLocMarker = 0;
@@ -146,8 +192,8 @@ std::string WgslAssignLocationsAndSamplerBindings(const gl::ProgramExecutable &e
             {
                 continue;
             }
-            ASSERT(varNameToLocation.find(shaderVar->name) == varNameToLocation.end());
-            varNameToLocation[shaderVar->name] = currLocMarker++;
+            AddShaderVarLocation(varNameToLocation, shaderVar->name, currLocMarker, shaderVar->type,
+                                 shaderVar->isArray() ? shaderVar->getBasicTypeElementCount() : 0u);
         }
         else
         {

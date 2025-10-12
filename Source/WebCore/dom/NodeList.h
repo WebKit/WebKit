@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include "ScriptWrappable.h"
+#include <WebCore/ScriptWrappable.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
@@ -36,7 +36,7 @@ class ScriptExecutionContext;
 class NodeList : public ScriptWrappable, public RefCounted<NodeList> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(NodeList, WEBCORE_EXPORT);
 public:
-    virtual ~NodeList() = default;
+    virtual ~NodeList();
 
     // DOM methods & attributes for NodeList
     virtual unsigned length() const = 0;
@@ -50,7 +50,7 @@ public:
 
     private:
         size_t m_index { 0 };
-        Ref<NodeList> m_list;
+        const Ref<NodeList> m_list;
     };
     Iterator createIterator(ScriptExecutionContext*) { return Iterator(*this); }
 

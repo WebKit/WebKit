@@ -47,6 +47,7 @@ public:
         PhaseEnded       = 1 << 3,
         PhaseCancelled   = 1 << 4,
         PhaseMayBegin    = 1 << 5,
+        PhaseWillBegin   = 1 << 6,
     };
 
     enum class MomentumEndType : uint8_t {
@@ -57,7 +58,7 @@ public:
 
     WebWheelEvent(WebEvent&&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity);
 #if PLATFORM(COCOA)
-    WebWheelEvent(WebEvent&&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, bool directionInvertedFromDevice, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, WallTime ioHIDEventTimestamp, std::optional<WebCore::FloatSize> rawPlatformDelta, MomentumEndType);
+    WebWheelEvent(WebEvent&&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, bool directionInvertedFromDevice, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, MonotonicTime ioHIDEventTimestamp, std::optional<WebCore::FloatSize> rawPlatformDelta, MomentumEndType);
 #elif PLATFORM(GTK) || USE(LIBWPE)
     WebWheelEvent(WebEvent&&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas);
 #endif
@@ -76,11 +77,13 @@ public:
     bool hasPreciseScrollingDeltas() const { return m_hasPreciseScrollingDeltas; }
 #endif
 #if PLATFORM(COCOA)
-    WallTime ioHIDEventTimestamp() const { return m_ioHIDEventTimestamp; }
+    MonotonicTime ioHIDEventTimestamp() const { return m_ioHIDEventTimestamp; }
     std::optional<WebCore::FloatSize> rawPlatformDelta() const { return m_rawPlatformDelta; }
     uint32_t scrollCount() const { return m_scrollCount; }
     const WebCore::FloatSize& unacceleratedScrollingDelta() const { return m_unacceleratedScrollingDelta; }
 #endif
+
+    bool isMomentumEvent() const { return momentumPhase() != Phase::PhaseNone && momentumPhase() != Phase::PhaseWillBegin; }
 
     static bool isWheelEventType(WebEventType);
 
@@ -99,7 +102,7 @@ private:
     bool m_hasPreciseScrollingDeltas { false };
 #endif
 #if PLATFORM(COCOA)
-    WallTime m_ioHIDEventTimestamp;
+    MonotonicTime m_ioHIDEventTimestamp;
     std::optional<WebCore::FloatSize> m_rawPlatformDelta;
     uint32_t m_scrollCount { 0 };
     WebCore::FloatSize m_unacceleratedScrollingDelta;

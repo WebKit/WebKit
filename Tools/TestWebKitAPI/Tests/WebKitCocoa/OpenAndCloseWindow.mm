@@ -42,6 +42,7 @@
 #import <WebKit/WKWindowFeaturesPrivate.h>
 #import <WebKit/_WKFrameTreeNode.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 @class OpenAndCloseWindowUIDelegate;
 @class OpenAndCloseWindowUIDelegateAsync;
@@ -125,14 +126,14 @@ TEST(WebKit, OpenAndCloseWindow)
 {
     if (_shouldCallback) {
         if (!_shouldCallbackWithNil) {
-            dispatch_async(dispatch_get_main_queue(), ^ {
+            dispatch_async(mainDispatchQueueSingleton(), ^{
                 openedWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
                 [openedWebView setUIDelegate:sharedUIDelegateAsync.get()];
                 self.expectedClosingView = openedWebView.get();
                 completionHandler(openedWebView.get());
             });
         } else {
-            dispatch_async(dispatch_get_main_queue(), ^ {
+            dispatch_async(mainDispatchQueueSingleton(), ^{
                 self.expectedClosingView = webView;
                 completionHandler(nil);
             });

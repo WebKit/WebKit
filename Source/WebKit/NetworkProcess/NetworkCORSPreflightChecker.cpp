@@ -82,7 +82,7 @@ void NetworkCORSPreflightChecker::startPreflight()
     loadParameters.webPageProxyID = m_parameters.webPageProxyID;
     loadParameters.allowPrivacyProxy = m_parameters.allowPrivacyProxy;
 
-    if (auto* networkSession = m_networkProcess->networkSession(m_parameters.sessionID)) {
+    if (CheckedPtr networkSession = m_networkProcess->networkSession(m_parameters.sessionID)) {
         Ref task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
         m_task = task.copyRef();
         task->resume();

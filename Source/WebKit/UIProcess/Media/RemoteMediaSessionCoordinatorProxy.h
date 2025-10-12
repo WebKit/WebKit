@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,7 +88,6 @@ private:
     void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) final;
     void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) final;
 
-    Ref<MediaSessionCoordinatorProxyPrivate> protectedPrivateCoordinator() { return m_privateCoordinator; }
     Ref<WebPageProxy> protectedWebPageProxy();
 
 #if !RELEASE_LOG_DISABLED
@@ -99,7 +98,7 @@ private:
 #endif
 
     WeakRef<WebPageProxy> m_webPageProxy;
-    Ref<MediaSessionCoordinatorProxyPrivate> m_privateCoordinator;
+    const Ref<MediaSessionCoordinatorProxyPrivate> m_privateCoordinator;
 #if !RELEASE_LOG_DISABLED
     Ref<const WTF::Logger> m_logger;
     const uint64_t m_logIdentifier;

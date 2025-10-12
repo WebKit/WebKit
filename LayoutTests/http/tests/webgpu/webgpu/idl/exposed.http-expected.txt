@@ -1,1 +1,5 @@
-(Populate me when we're ready to investigate this test)
+CONSOLE MESSAGE: Error: Item/interface should be exposed on secure context
+
+Harness Error (FAIL), message = Error: Item/interface should be exposed on secure context
+
+

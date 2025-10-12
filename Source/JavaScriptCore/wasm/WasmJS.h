@@ -27,8 +27,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmExceptionType.h"
-#include "WasmMemory.h"
+#include <JavaScriptCore/WasmExceptionType.h>
+#include <JavaScriptCore/WasmMemory.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 

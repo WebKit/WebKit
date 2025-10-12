@@ -45,30 +45,25 @@ ASCIILiteral UserMediaController::supplementName()
     return "UserMediaController"_s;
 }
 
-UserMediaController::UserMediaController(UserMediaClient* client)
-    : m_client(client)
+UserMediaController::UserMediaController(Ref<UserMediaClient>&& client)
+    : m_client(WTFMove(client))
 {
 }
 
-UserMediaController::~UserMediaController()
+void provideUserMediaTo(Page* page, Ref<UserMediaClient>&& client)
 {
-    m_client->pageDestroyed();
-}
-
-void provideUserMediaTo(Page* page, UserMediaClient* client)
-{
-    UserMediaController::provideTo(page, UserMediaController::supplementName(), makeUnique<UserMediaController>(client));
+    UserMediaController::provideTo(page, UserMediaController::supplementName(), makeUnique<UserMediaController>(WTFMove(client)));
 }
 
 void UserMediaController::logGetUserMediaDenial(Document& document)
 {
-    if (RefPtr window = document.domWindow())
+    if (RefPtr window = document.window())
         window->printErrorMessage("Not allowed to call getUserMedia."_s);
 }
 
 void UserMediaController::logGetDisplayMediaDenial(Document& document)
 {
-    if (RefPtr window = document.domWindow())
+    if (RefPtr window = document.window())
         window->printErrorMessage("Not allowed to call getDisplayMedia."_s);
 }
 
@@ -77,7 +72,7 @@ void UserMediaController::logEnumerateDevicesDenial(Document& document)
     // We redo the check to print to the console log.
     PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Camera, document);
     PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Microphone, document);
-    if (RefPtr window = document.domWindow())
+    if (RefPtr window = document.window())
         window->printErrorMessage("Not allowed to call enumerateDevices."_s);
 }
 
@@ -107,14 +102,16 @@ void UserMediaController::checkDocumentForVoiceActivity(const Document* document
         return;
 
     m_shouldListenToVoiceActivity = shouldListenToVoiceActivity;
-    m_client->setShouldListenToVoiceActivity(m_shouldListenToVoiceActivity);
+    if (RefPtr mediaClient = m_client)
+        mediaClient->setShouldListenToVoiceActivity(m_shouldListenToVoiceActivity);
 }
 
 void UserMediaController::voiceActivityDetected()
 {
 #if ENABLE(MEDIA_SESSION)
-    for (auto& document : m_voiceActivityDocuments)
-        Ref(document)->voiceActivityDetected();
+    for (RefPtr document : m_voiceActivityDocuments)
+        document->voiceActivityDetected();
+
 #endif
 }
 

@@ -365,7 +365,7 @@ CSSParserToken::CSSParserToken(unsigned nonNewlineWhitespaceCount)
 }
 
 // Just a helper used for Delimiter tokens.
-CSSParserToken::CSSParserToken(CSSParserTokenType type, UChar c)
+CSSParserToken::CSSParserToken(CSSParserTokenType type, char16_t c)
     : m_type(type)
     , m_blockType(NotBlock)
     , m_delimiter(c)
@@ -449,7 +449,7 @@ StringView CSSParserToken::unitString() const
     return value().substring(m_nonUnitPrefixLength);
 }
 
-UChar CSSParserToken::delimiter() const
+char16_t CSSParserToken::delimiter() const
 {
     ASSERT(m_type == DelimiterToken);
     return m_delimiter;
@@ -753,7 +753,7 @@ void CSSParserToken::serialize(StringBuilder& builder, const CSSParserToken* nex
         break;
     case NonNewlineWhitespaceToken: {
         auto count = mode == SerializationMode::CustomProperty ? m_whitespaceCount : 1;
-        for (auto i = 0u; i < count; ++i)
+        for (decltype(count) i = 0; i < count; ++i)
             builder.append(' ');
         break;
     }

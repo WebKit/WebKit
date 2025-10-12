@@ -12,12 +12,14 @@
 #include "include/core/SkSize.h"
 #include "include/core/SkSpan.h"
 #include "include/private/base/SkTArray.h"
+#include "src/gpu/BufferWriter.h"
 #include "src/gpu/graphite/ComputeTypes.h"
 #include "src/gpu/graphite/compute/ComputeStep.h"
 
 #include "third_party/vello/cpp/vello.h"
 
 #include <string_view>
+#include <tuple>
 
 namespace skgpu::graphite {
 
@@ -262,7 +264,7 @@ public:
         // directly to the DispatchGroupBuilder. The format must still be queried to describe the
         // ComputeStep's binding layout. This method could be improved to enable conditional
         // querying of optional/dynamic parameters.
-        return {{}, T};
+        return {SkISize{}, T};
     }
 
 protected:
@@ -280,11 +282,9 @@ public:
 
     void prepareStorageBuffer(int resourceIndex,
                               const ComputeStep::ResourceDesc&,
-                              void* buffer,
-                              size_t bufferSize) const override {
+                              BufferWriter&& writer) const override {
         SkASSERT(resourceIndex == 5);
-        SkASSERT(fMaskLut.size() == bufferSize);
-        memcpy(buffer, fMaskLut.data(), fMaskLut.size());
+        writer.write(fMaskLut.data(), fMaskLut.size());
     }
 
 protected:

@@ -30,20 +30,34 @@
 namespace WebCore {
 
 class DeferredPromise;
+class WebTransportSendStreamSink;
+class WebTransportSession;
 
 struct WebTransportSendStreamStats;
+struct WebTransportStreamIdentifierType;
+
+using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
 
 class WebTransportSendStream : public WritableStream {
 public:
-    static ExceptionOr<Ref<WebTransportSendStream>> create(JSDOMGlobalObject&, Ref<WritableStreamSink>&&);
+    static ExceptionOr<Ref<WebTransportSendStream>> create(WebTransportSession&, JSDOMGlobalObject&, Ref<WebTransportSendStreamSink>&&);
+    ~WebTransportSendStream();
 
-    void getStats(Ref<DeferredPromise>&&);
+    void getStats(ScriptExecutionContext&, Ref<DeferredPromise>&&);
     std::optional<int64_t> sendOrder() { return m_sendOrder; }
     void setSendOrder(std::optional<int64_t> order) { m_sendOrder = order; }
 private:
-    WebTransportSendStream(Ref<InternalWritableStream>&&);
+    WebTransportSendStream(WebTransportStreamIdentifier, WebTransportSession&, Ref<InternalWritableStream>&&);
 
+    virtual Type type() const { return Type::WebTransport; }
+
+    const WebTransportStreamIdentifier m_identifier;
+    const ThreadSafeWeakPtr<WebTransportSession> m_session;
     std::optional<int64_t> m_sendOrder;
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebTransportSendStream)
+static bool isType(const WebCore::WritableStream& stream) { return stream.type() == WebCore::WritableStream::Type::WebTransport; }
+SPECIALIZE_TYPE_TRAITS_END()

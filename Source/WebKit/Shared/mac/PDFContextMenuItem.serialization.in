@@ -40,7 +40,7 @@ enum class WebKit::ContextMenuItemIsSeparator : bool;
 struct WebKit::PDFContextMenu {
     WebCore::IntPoint point;
     Vector<WebKit::PDFContextMenuItem> items;
-    std::optional<int> openInPreviewTag;
+    std::optional<int> openInDefaultViewerTag;
 };
 
 #endif

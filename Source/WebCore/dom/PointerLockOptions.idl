@@ -22,9 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://github.com/w3c/pointerlock/pull/49/
+// https://w3c.github.io/pointerlock/#pointerlockoptions-dictionary
 [
-    Conditional=POINTER_LOCK
+    Conditional=POINTER_LOCK,
+    EnabledBySetting=PointerLockEnabled&PointerLockOptionsEnabled
 ] dictionary PointerLockOptions {
     boolean unadjustedMovement = false;
 };

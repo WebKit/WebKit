@@ -33,7 +33,7 @@ class GraphicsContext;
 class SVGMaskElement;
 
 struct MaskerData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(MaskerData);
     RefPtr<ImageBuffer> maskImage;
 };
 
@@ -68,7 +68,7 @@ private:
     void calculateMaskContentRepaintRect(RepaintRectCalculation);
 
     EnumeratedArray<RepaintRectCalculation, FloatRect, RepaintRectCalculation::Accurate> m_maskContentBoundaries;
-    UncheckedKeyHashMap<SingleThreadWeakRef<RenderObject>, std::unique_ptr<MaskerData>> m_masker;
+    HashMap<SingleThreadWeakRef<RenderObject>, std::unique_ptr<MaskerData>> m_masker;
 };
 
 } // namespace WebCore

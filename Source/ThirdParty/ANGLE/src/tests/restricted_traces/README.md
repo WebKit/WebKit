@@ -153,6 +153,16 @@ angle_enable_cl = true
     angle_extract_native_libs = true
 </details>
 
+## Capturing long traces
+
+The tracer will capture traces larger than the available physical memory on the
+target device. However, for very long traces there may be noticeable hitching
+during disk-writes once available memory is exhausted. If this becomes problematic a
+release build can be used, or to minimize hitching completely, disable binary data
+file compression. To do this ensure that the following property is set for capture:
+```
+adb shell setprop debug.angle.capture.compression 0
+```
 ## Determine the target app
 
 We first need to identify which application we want to trace.  That can generally be done by

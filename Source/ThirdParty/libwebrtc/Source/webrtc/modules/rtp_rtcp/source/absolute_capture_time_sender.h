@@ -11,6 +11,9 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_ABSOLUTE_CAPTURE_TIME_SENDER_H_
 #define MODULES_RTP_RTCP_SOURCE_ABSOLUTE_CAPTURE_TIME_SENDER_H_
 
+#include <cstdint>
+#include <optional>
+
 #include "api/array_view.h"
 #include "api/rtp_headers.h"
 #include "api/units/time_delta.h"
@@ -45,8 +48,7 @@ class AbsoluteCaptureTimeSender {
   explicit AbsoluteCaptureTimeSender(Clock* clock);
 
   // Returns the source (i.e. SSRC or CSRC) of the capture system.
-  static uint32_t GetSource(uint32_t ssrc,
-                            rtc::ArrayView<const uint32_t> csrcs);
+  static uint32_t GetSource(uint32_t ssrc, ArrayView<const uint32_t> csrcs);
 
   // Returns value to write into AbsoluteCaptureTime RTP header extension to be
   // sent, or `std::nullopt` if the header extension shouldn't be attached to

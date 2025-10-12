@@ -11,10 +11,11 @@ import {
   kDifferentBaseFormatRegularTextureFormats } from
 
 '../../../format_info.js';
-import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
+import * as ttu from '../../../texture_test_utils.js';
 import { TexelView } from '../../../util/texture/texel_view.js';
 
-export const g = makeTestGroup(TextureTestMixin(AllFeaturesMaxLimitsGPUTest));
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 const kColors = [
 { R: 1.0, G: 0.0, B: 0.0, A: 0.8 },
@@ -119,7 +120,7 @@ fn((t) => {
     const inputTexelView = makeInputTexelView(format);
 
     // Create the initial texture with the contents of the input texel view.
-    const texture = t.createTextureFromTexelView(inputTexelView, {
+    const texture = ttu.createTextureFromTexelView(t, inputTexelView, {
       size: [kTextureSize, kTextureSize],
       usage: GPUTextureUsage.TEXTURE_BINDING,
       viewFormats: [viewFormat]
@@ -181,7 +182,8 @@ fn((t) => {
     pass.end();
     t.device.queue.submit([commandEncoder.finish()]);
 
-    t.expectTexelViewComparisonIsOkInTexture(
+    ttu.expectTexelViewComparisonIsOkInTexture(
+      t,
       { texture: outputTexture },
       TexelView.fromTexelsAsColors('rgba8unorm', reinterpretedTexelView.color, {
         clampToFormatRange: true
@@ -245,7 +247,7 @@ fn((t) => {
     // Create the sample source with the contents of the input texel view.
     // We will sample this texture into |renderTexture|. It uses the same format to keep the same
     // number of bits of precision.
-    const sampleSource = t.createTextureFromTexelView(inputTexelView, {
+    const sampleSource = ttu.createTextureFromTexelView(t, inputTexelView, {
       size: [kTextureSize, kTextureSize],
       usage: GPUTextureUsage.TEXTURE_BINDING
     });
@@ -337,7 +339,8 @@ fn((t) => {
     const renderViewTexels = TexelView.fromTexelsAsColors(viewFormat, inputTexelView.color, {
       clampToFormatRange: true
     });
-    t.expectTexelViewComparisonIsOkInTexture(
+    ttu.expectTexelViewComparisonIsOkInTexture(
+      t,
       { texture: singleSampleRenderTexture },
       renderViewTexels,
       [kTextureSize, kTextureSize],
@@ -349,7 +352,8 @@ fn((t) => {
       const resolveView = TexelView.fromTexelsAsColors(viewFormat, renderViewTexels.color, {
         clampToFormatRange: true
       });
-      t.expectTexelViewComparisonIsOkInTexture(
+      ttu.expectTexelViewComparisonIsOkInTexture(
+        t,
         { texture: resolveTexture },
         resolveView,
         [kTextureSize, kTextureSize],

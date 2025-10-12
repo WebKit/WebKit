@@ -4,36 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-object-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Object.prototype.toLocaleString
+info: bugzilla.mozilla.org/show_bug.cgi?id=653789
 esid: pending
 ---*/
-var gTestfile = 'toLocaleString.js';
-var BUGNUMBER = 653789;
-var summary = "Object.prototype.toLocaleString";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
-
-function expectThrowTypeError(fun)
-{
-  try
-  {
-    var r = fun();
-    throw "didn't throw TypeError, returned " + r;
-  }
-  catch (e)
-  {
-    assert.sameValue(e instanceof TypeError, true,
-             "didn't throw TypeError, got: " + e);
-  }
-}
 
 var toLocaleString = Object.prototype.toLocaleString;
 
@@ -41,10 +16,10 @@ var toLocaleString = Object.prototype.toLocaleString;
  * 1. Let O be the result of calling ToObject passing the this value as the
  *    argument.
  */
-expectThrowTypeError(function() { toLocaleString.call(null); });
-expectThrowTypeError(function() { toLocaleString.call(undefined); });
-expectThrowTypeError(function() { toLocaleString.apply(null); });
-expectThrowTypeError(function() { toLocaleString.apply(undefined); });
+assert.throws(TypeError, function() { toLocaleString.call(null); });
+assert.throws(TypeError, function() { toLocaleString.call(undefined); });
+assert.throws(TypeError, function() { toLocaleString.apply(null); });
+assert.throws(TypeError, function() { toLocaleString.apply(undefined); });
 
 
 /*
@@ -63,27 +38,27 @@ catch (e)
 
 
 /* 3. If IsCallable(toString) is false, throw a TypeError exception. */
-expectThrowTypeError(function() { toLocaleString.call({ toString: 12 }); });
-expectThrowTypeError(function() { toLocaleString.call({ toString: 0.3423423452352e9 }); });
-expectThrowTypeError(function() { toLocaleString.call({ toString: undefined }); });
-expectThrowTypeError(function() { toLocaleString.call({ toString: false }); });
-expectThrowTypeError(function() { toLocaleString.call({ toString: [] }); });
-expectThrowTypeError(function() { toLocaleString.call({ toString: {} }); });
-expectThrowTypeError(function() { toLocaleString.call({ toString: new String }); });
-expectThrowTypeError(function() { toLocaleString.call({ toString: new Number(7.7) }); });
-expectThrowTypeError(function() { toLocaleString.call({ toString: new Boolean(true) }); });
-expectThrowTypeError(function() { toLocaleString.call({ toString: JSON }); });
+assert.throws(TypeError, function() { toLocaleString.call({ toString: 12 }); });
+assert.throws(TypeError, function() { toLocaleString.call({ toString: 0.3423423452352e9 }); });
+assert.throws(TypeError, function() { toLocaleString.call({ toString: undefined }); });
+assert.throws(TypeError, function() { toLocaleString.call({ toString: false }); });
+assert.throws(TypeError, function() { toLocaleString.call({ toString: [] }); });
+assert.throws(TypeError, function() { toLocaleString.call({ toString: {} }); });
+assert.throws(TypeError, function() { toLocaleString.call({ toString: new String }); });
+assert.throws(TypeError, function() { toLocaleString.call({ toString: new Number(7.7) }); });
+assert.throws(TypeError, function() { toLocaleString.call({ toString: new Boolean(true) }); });
+assert.throws(TypeError, function() { toLocaleString.call({ toString: JSON }); });
 
-expectThrowTypeError(function() { toLocaleString.call({ valueOf: 0, toString: 12 }); });
-expectThrowTypeError(function() { toLocaleString.call({ valueOf: 0, toString: 0.3423423452352e9 }); });
-expectThrowTypeError(function() { toLocaleString.call({ valueOf: 0, toString: undefined }); });
-expectThrowTypeError(function() { toLocaleString.call({ valueOf: 0, toString: false }); });
-expectThrowTypeError(function() { toLocaleString.call({ valueOf: 0, toString: [] }); });
-expectThrowTypeError(function() { toLocaleString.call({ valueOf: 0, toString: {} }); });
-expectThrowTypeError(function() { toLocaleString.call({ valueOf: 0, toString: new String }); });
-expectThrowTypeError(function() { toLocaleString.call({ valueOf: 0, toString: new Number(7.7) }); });
-expectThrowTypeError(function() { toLocaleString.call({ valueOf: 0, toString: new Boolean(true) }); });
-expectThrowTypeError(function() { toLocaleString.call({ valueOf: 0, toString: JSON }); });
+assert.throws(TypeError, function() { toLocaleString.call({ valueOf: 0, toString: 12 }); });
+assert.throws(TypeError, function() { toLocaleString.call({ valueOf: 0, toString: 0.3423423452352e9 }); });
+assert.throws(TypeError, function() { toLocaleString.call({ valueOf: 0, toString: undefined }); });
+assert.throws(TypeError, function() { toLocaleString.call({ valueOf: 0, toString: false }); });
+assert.throws(TypeError, function() { toLocaleString.call({ valueOf: 0, toString: [] }); });
+assert.throws(TypeError, function() { toLocaleString.call({ valueOf: 0, toString: {} }); });
+assert.throws(TypeError, function() { toLocaleString.call({ valueOf: 0, toString: new String }); });
+assert.throws(TypeError, function() { toLocaleString.call({ valueOf: 0, toString: new Number(7.7) }); });
+assert.throws(TypeError, function() { toLocaleString.call({ valueOf: 0, toString: new Boolean(true) }); });
+assert.throws(TypeError, function() { toLocaleString.call({ valueOf: 0, toString: JSON }); });
 
 
 /*
@@ -101,7 +76,3 @@ assert.sameValue(toLocaleString.call({ toString: function() { return obj; } }), 
 assert.sameValue(toLocaleString.call({ toString: function() { return obj; },
                                valueOf: function() { return "abc"; } }),
          obj);
-
-/******************************************************************************/
-
-print("All tests passed!");

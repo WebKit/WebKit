@@ -675,14 +675,13 @@ bool ExpressionInfo::Encoder::fits(T value)
     return caster.value == value;
 }
 
-MallocPtr<ExpressionInfo> ExpressionInfo::Encoder::createExpressionInfo()
+std::unique_ptr<ExpressionInfo> ExpressionInfo::Encoder::createExpressionInfo()
 {
     size_t numberOfChapters = m_expressionInfoChapters.size();
     size_t numberOfEncodedInfo = m_expressionInfoEncodedInfo.size() - m_numberOfEncodedInfoExtensions;
     size_t totalSize = ExpressionInfo::totalSizeInBytes(numberOfChapters, numberOfEncodedInfo, m_numberOfEncodedInfoExtensions);
-    auto info = MallocPtr<ExpressionInfo>::malloc(totalSize);
-    new (info.get()) ExpressionInfo(WTFMove(m_expressionInfoChapters), WTFMove(m_expressionInfoEncodedInfo), m_numberOfEncodedInfoExtensions);
-    return info;
+    void* allocation = FastMalloc::malloc(totalSize);
+    return std::unique_ptr<ExpressionInfo>(new (allocation) ExpressionInfo(WTFMove(m_expressionInfoChapters), WTFMove(m_expressionInfoEncodedInfo), m_numberOfEncodedInfoExtensions));
 }
 
 ExpressionInfo::Decoder::Decoder(const ExpressionInfo& expressionInfo)
@@ -888,12 +887,11 @@ IterationStatus ExpressionInfo::Decoder::decode(std::optional<ExpressionInfo::In
     return status;
 }
 
-MallocPtr<ExpressionInfo> ExpressionInfo::createUninitialized(unsigned numberOfChapters, unsigned numberOfEncodedInfo, unsigned numberOfEncodedInfoExtensions)
+std::unique_ptr<ExpressionInfo> ExpressionInfo::createUninitialized(unsigned numberOfChapters, unsigned numberOfEncodedInfo, unsigned numberOfEncodedInfoExtensions)
 {
     size_t totalSize = ExpressionInfo::totalSizeInBytes(numberOfChapters, numberOfEncodedInfo, numberOfEncodedInfoExtensions);
-    auto info = MallocPtr<ExpressionInfo>::malloc(totalSize);
-    new (info.get()) ExpressionInfo(numberOfChapters, numberOfEncodedInfo, numberOfEncodedInfoExtensions);
-    return info;
+    void* allocation = FastMalloc::malloc(totalSize);
+    return std::unique_ptr<ExpressionInfo>(new (allocation) ExpressionInfo(numberOfChapters, numberOfEncodedInfo, numberOfEncodedInfoExtensions));
 }
 
 ExpressionInfo::ExpressionInfo(unsigned numberOfChapters, unsigned numberOfEncodedInfo, unsigned numberOfEncodedInfoExtensions)

@@ -41,6 +41,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/darwin/XPCExtras.h>
 
 // FIXME: Add daemon plist to repository.
@@ -98,7 +99,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         }
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             NSLog(@"XPC activity happening");
             PCM::doDailyActivityInManager();
         });
@@ -137,9 +138,7 @@ int PCMDaemonMain(int argc, const char** argv)
 #if ENABLE(CFPREFS_DIRECT_MODE)
         _CFPrefsSetDirectModeEnabled(YES);
 #endif
-#if HAVE(CF_PREFS_SET_READ_ONLY)
         _CFPrefsSetReadOnly(YES);
-#endif
         enterSandbox();
         startListeningForMachServiceConnections(machServiceName, "com.apple.private.webkit.adattributiond"_s, connectionAdded, connectionRemoved, connectionEventHandler);
         if (startActivity)

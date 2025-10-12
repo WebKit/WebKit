@@ -23,7 +23,7 @@
 #if USE(CURL)
 
 [CreateUsing=fromIPCData] class WebCore::CurlProxySettings {
-    std::variant<WebCore::CurlProxySettings::DefaultData, WebCore::CurlProxySettings::NoProxyData, WebCore::CurlProxySettings::CustomData> toIPCData();
+    Variant<WebCore::CurlProxySettings::DefaultData, WebCore::CurlProxySettings::NoProxyData, WebCore::CurlProxySettings::CustomData> toIPCData();
 };
 
 [Nested] struct WebCore::CurlProxySettings::DefaultData {

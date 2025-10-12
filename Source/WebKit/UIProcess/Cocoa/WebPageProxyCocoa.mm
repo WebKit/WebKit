@@ -36,6 +36,7 @@
 #import "Connection.h"
 #import "CoreTelephonyUtilities.h"
 #import "DataDetectionResult.h"
+#import "ExtensionCapabilityGranter.h"
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
 #import "MessageSenderInlines.h"
@@ -66,6 +67,7 @@
 #import "WebScreenOrientationManagerProxy.h"
 #import "WebsiteDataStore.h"
 #import <Foundation/NSURLRequest.h>
+#import <WebCore/AXObjectCache.h>
 #import <WebCore/AppHighlight.h>
 #import <WebCore/ApplePayAMSUIRequest.h>
 #import <WebCore/DictationAlternative.h>
@@ -99,6 +101,7 @@
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cf/VectorCF.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if ENABLE(MEDIA_USAGE)
 #import "MediaUsageManagerCocoa.h"
@@ -173,6 +176,9 @@ void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction& layerTre
             stopMakingViewBlankDueToLackOfRenderingUpdateIfNecessary();
             internals().lastVisibleContentRectUpdate = { };
         }
+
+        if (std::exchange(internals().needsFixedContainerEdgesUpdateAfterNextCommit, false))
+            protectedLegacyMainFrameProcess()->send(Messages::WebPage::SetNeedsFixedContainerEdgesUpdate(), webPageIDInMainFrameProcess());
     }
 
     if (RefPtr pageClient = this->pageClient())
@@ -232,20 +238,20 @@ std::optional<IPC::AsyncReplyID> WebPageProxy::grantAccessToCurrentPasteboardDat
     return WebPasteboardProxy::singleton().grantAccessToCurrentData(m_legacyMainFrameProcess, pasteboardName, WTFMove(completionHandler));
 }
 
-void WebPageProxy::beginSafeBrowsingCheck(const URL& url, RefPtr<API::Navigation> navigation, WebFrameProxy& frame)
+void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navigation, bool forMainFrameNavigation)
 {
 #if HAVE(SAFE_BROWSING)
-    SSBLookupContext *context = [SSBLookupContext sharedLookupContext];
+    RetainPtr context = [SSBLookupContext sharedLookupContext];
     if (!url.isValid() || !context)
         return;
-    size_t redirectChainIndex = navigation->redirectChainIndex(url);
+    size_t redirectChainIndex = navigation.redirectChainIndex(url);
 
-    if (navigation)
-        navigation->setSafeBrowsingCheckOngoing(redirectChainIndex, true);
+    navigation.setSafeBrowsingCheckOngoing(redirectChainIndex, true);
 
-    auto completionHandler = makeBlockPtr([navigation = WTFMove(navigation), forMainFrameNavigation = frame.isMainFrame(), url, weakThis = WeakPtr { *this }, frame = Ref { frame }, redirectChainIndex] (SSBLookupResult *result, NSError *error) mutable {
-        RunLoop::protectedMain()->dispatch([frame = WTFMove(frame), navigation = WTFMove(navigation), result = retainPtr(result), error = retainPtr(error), forMainFrameNavigation, url = WTFMove(url), weakThis, redirectChainIndex] {
-            if (!navigation)
+    auto completionHandler = makeBlockPtr([weakThis = WeakPtr { *this }, navigation = Ref { navigation }, forMainFrameNavigation, url = url.isolatedCopy(), redirectChainIndex] (SSBLookupResult *result, NSError *error) mutable {
+        RunLoop::mainSingleton().dispatch([weakThis = WTFMove(weakThis), navigation = WTFMove(navigation), result = retainPtr(result), error = retainPtr(error), forMainFrameNavigation, url = WTFMove(url).isolatedCopy(), redirectChainIndex] {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
             navigation->setSafeBrowsingCheckOngoing(redirectChainIndex, false);
             if (error)
@@ -254,14 +260,16 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, RefPtr<API::Navigation
             for (SSBServiceLookupResult *lookupResult in [result serviceLookupResults]) {
                 if (lookupResult.isPhishing || lookupResult.isMalware || lookupResult.isUnwantedSoftware) {
                     navigation->setSafeBrowsingWarning(BrowsingWarning::create(url, forMainFrameNavigation, BrowsingWarning::SafeBrowsingWarningData { lookupResult }));
-                    return;
+                    break;
                 }
             }
+            if (!navigation->safeBrowsingCheckOngoing() && navigation->safeBrowsingWarning() && navigation->safeBrowsingCheckTimedOut())
+                protectedThis->showBrowsingWarning(navigation->safeBrowsingWarning());
         });
     });
 
     if ([context respondsToSelector:@selector(lookUpURL:isMainFrame:hasHighConfidenceOfSafety:completionHandler:)])
-        [context lookUpURL:url.createNSURL().get() isMainFrame:frame.isMainFrame() hasHighConfidenceOfSafety:NO completionHandler:completionHandler.get()];
+        [context lookUpURL:url.createNSURL().get() isMainFrame:forMainFrameNavigation hasHighConfidenceOfSafety:NO completionHandler:completionHandler.get()];
     else
         [context lookUpURL:url.createNSURL().get() completionHandler:completionHandler.get()];
 #endif
@@ -346,10 +354,10 @@ bool WebPageProxy::scrollingUpdatesDisabledForTesting()
 
 #if ENABLE(DRAG_SUPPORT)
 
-void WebPageProxy::startDrag(const DragItem& dragItem, ShareableBitmap::Handle&& dragImageHandle, const std::optional<ElementIdentifier>& elementID)
+void WebPageProxy::startDrag(const DragItem& dragItem, ShareableBitmap::Handle&& dragImageHandle, const std::optional<NodeIdentifier>& nodeID)
 {
     if (RefPtr pageClient = this->pageClient())
-        pageClient->startDrag(dragItem, WTFMove(dragImageHandle), elementID);
+        pageClient->startDrag(dragItem, WTFMove(dragImageHandle), nodeID);
 }
 
 #endif
@@ -365,7 +373,8 @@ void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment,
     if (!pageClient)
         return;
 
-    RetainPtr fileWrapper = adoptNS([pageClient->allocFileWrapperInstance() initRegularFileWithContents:bufferCopy.unsafeBuffer()->createNSData().get()]);
+    // FIXME: This is a safer cpp false positive.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr fileWrapper = adoptNS([pageClient->allocFileWrapperInstance() initRegularFileWithContents:bufferCopy.unsafeBuffer()->createNSData().get()]);
     [fileWrapper setPreferredFilename:preferredFileName.createNSString().get()];
     attachment->setFileWrapper(fileWrapper.get());
 }
@@ -379,7 +388,8 @@ void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment,
     if (!pageClient)
         return;
 
-    RetainPtr fileWrapper = adoptNS([pageClient->allocFileWrapperInstance() initWithURL:adoptNS([[NSURL alloc] initFileURLWithPath:filePath.createNSString().get()]).get() options:0 error:nil]);
+    // FIXME: This is a safer cpp false positive.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr fileWrapper = adoptNS([pageClient->allocFileWrapperInstance() initWithURL:adoptNS([[NSURL alloc] initFileURLWithPath:filePath.createNSString().get()]).get() options:0 error:nil]);
     attachment->setFileWrapper(fileWrapper.get());
 }
 
@@ -414,13 +424,13 @@ static RefPtr<WebCore::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage 
 RefPtr<WebCore::ShareableBitmap> WebPageProxy::iconForAttachment(const String& fileName, const String& contentType, const String& title, FloatSize& size)
 {
 #if PLATFORM(IOS_FAMILY)
-    auto imageAndSize = RenderThemeIOS::iconForAttachment(fileName, contentType, title);
-    auto image = imageAndSize.icon;
-    size = imageAndSize.size;
+    auto iconAndSize = RenderThemeIOS::iconForAttachment(fileName, contentType, title);
 #else
-    auto image = RenderThemeMac::iconForAttachment(fileName, contentType, title);
+    auto iconAndSize = RenderThemeMac::iconForAttachment(fileName, contentType, title);
 #endif
-    return convertPlatformImageToBitmap(image.get(), iconSize);
+    auto icon = iconAndSize.icon;
+    size = iconAndSize.size;
+    return convertPlatformImageToBitmap(icon.get(), iconSize);
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
@@ -788,7 +798,7 @@ void WebPageProxy::scheduleActivityStateUpdate()
             // We can't call dispatchActivityStateChange directly underneath this commit handler, because it has side-effects
             // that may result in other frameworks trying to install commit handlers for the same phase, which is not allowed.
             // So, dispatch_async here; we only care that the activity state change doesn't apply until after the active commit is complete.
-            WorkQueue::protectedMain()->dispatch([weakThis] {
+            WorkQueue::mainSingleton().dispatch([weakThis] {
                 RefPtr protectedThis { weakThis.get() };
                 if (!protectedThis)
                     return;
@@ -923,7 +933,7 @@ void WebPageProxy::startApplePayAMSUISession(URL&& originatingURL, ApplePayAMSUI
     RetainPtr amsRequest = adoptNS([allocAMSEngagementRequestInstance() initWithRequestDictionary:dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[request.engagementRequest.createNSString() dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil])]);
     [amsRequest setOriginatingURL:originatingURL.createNSURL().get()];
 
-    auto amsBag = retainPtr([getAMSUIEngagementTaskClass() createBagForSubProfile]);
+    auto amsBag = retainPtr([getAMSUIEngagementTaskClassSingleton() createBagForSubProfile]);
 
     m_applePayAMSUISession = adoptNS([allocAMSUIEngagementTaskInstance() initWithRequest:amsRequest.get() bag:amsBag.get() presentingViewController:presentingViewController.get()]);
     [m_applePayAMSUISession setRemotePresentation:YES];
@@ -1180,7 +1190,7 @@ void WebPageProxy::deactivateMediaCapability(MediaCapability& capability)
     WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "deactivateMediaCapability: deactivating (envID=%{public}s) for URL '%{sensitive}s'", capability.environmentIdentifier().utf8().data(), capability.webPageURL().string().utf8().data());
     Ref processPool { protectedLegacyMainFrameProcess()->protectedProcessPool() };
     processPool->extensionCapabilityGranter().setMediaCapabilityActive(capability, false);
-    processPool->extensionCapabilityGranter().revoke(capability);
+    processPool->extensionCapabilityGranter().revoke(capability, *this);
 }
 
 void WebPageProxy::resetMediaCapability()
@@ -1217,7 +1227,7 @@ void WebPageProxy::updateMediaCapability()
         processPool->extensionCapabilityGranter().setMediaCapabilityActive(*mediaCapability, true);
 
     if (mediaCapability->isActivatingOrActive())
-        processPool->extensionCapabilityGranter().grant(*mediaCapability);
+        processPool->extensionCapabilityGranter().grant(*mediaCapability, *this);
 }
 
 bool WebPageProxy::shouldActivateMediaCapability() const
@@ -1225,13 +1235,7 @@ bool WebPageProxy::shouldActivateMediaCapability() const
     if (!isViewVisible())
         return false;
 
-    if (internals().mediaState.contains(MediaProducerMediaState::IsPlayingAudio))
-        return true;
-
-    if (internals().mediaState.contains(MediaProducerMediaState::IsPlayingVideo))
-        return true;
-
-    return MediaProducer::isCapturing(internals().mediaState);
+    return MediaProducer::needsMediaCapability(internals().mediaState);
 }
 
 bool WebPageProxy::shouldDeactivateMediaCapability() const
@@ -1556,7 +1560,7 @@ void WebPageProxy::updateTextIndicatorFromFrame(FrameIdentifier frameID, const W
 void WebPageProxy::updateTextIndicator(const WebCore::TextIndicatorData& indicatorData)
 {
     if (m_textIndicator && m_textIndicatorLayer)
-        setTextIndicator(indicatorData, TextIndicatorLifetime::Temporary);
+        [m_textIndicatorLayer updateWithFrame:m_textIndicator->textBoundingRectInRootViewCoordinates() textIndicator:TextIndicator::create(indicatorData) margin:CGSizeZero offset:CGPointZero updatingIndicator:YES];
 }
 
 void WebPageProxy::clearTextIndicator()
@@ -1668,9 +1672,28 @@ void WebPageProxy::decodeImageData(Ref<WebCore::SharedBuffer>&& buffer, std::opt
 void WebPageProxy::getWebArchiveData(CompletionHandler<void(API::Data*)>&& completionHandler)
 {
     RefPtr mainFrame = m_mainFrame;
-    if (!mainFrame)
-        return completionHandler(nullptr);
+    if (!mainFrame) {
+        // Return blank page data for backforward compatibility; see rdar://127469660.
+        launchInitialProcessIfNecessary();
+        protectedLegacyMainFrameProcess()->sendWithAsyncReply(Messages::WebPage::GetWebArchiveData(), [completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
+            if (!result)
+                return completionHandler(nullptr);
 
+            completionHandler(API::Data::create(result->span()).ptr());
+        }, webPageIDInMainFrameProcess());
+        return;
+    }
+
+    getWebArchiveDataWithFrame(*mainFrame, WTFMove(completionHandler));
+}
+
+void WebPageProxy::getWebArchiveDataWithFrame(WebFrameProxy& frame, CompletionHandler<void(API::Data*)>&& completionHandler)
+{
+    return getWebArchiveDataWithSelectedFrames(frame, std::nullopt, WTFMove(completionHandler));
+}
+
+void WebPageProxy::getWebArchiveDataWithSelectedFrames(WebFrameProxy& rootFrame, const std::optional<HashSet<WebCore::FrameIdentifier>>& selectedFrameIdentifiers, CompletionHandler<void(API::Data*)>&& completionHandler)
+{
     class WebArchvieCallbackAggregator final : public ThreadSafeRefCounted<WebArchvieCallbackAggregator, WTF::DestructionThread::MainRunLoop> {
     public:
         using Callback = CompletionHandler<void(RefPtr<LegacyWebArchive>&&)>;
@@ -1717,7 +1740,10 @@ void WebPageProxy::getWebArchiveData(CompletionHandler<void(API::Data*)>&& compl
         HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>> m_frameArchives;
     };
 
-    auto callbackAggregator = WebArchvieCallbackAggregator::create(mainFrame->frameID(), [completionHandler = WTFMove(completionHandler)](auto webArchive) mutable {
+    if (selectedFrameIdentifiers && !selectedFrameIdentifiers->contains(rootFrame.frameID()))
+        return completionHandler(nullptr);
+
+    auto callbackAggregator = WebArchvieCallbackAggregator::create(rootFrame.frameID(), [completionHandler = WTFMove(completionHandler)](auto webArchive) mutable {
         if (!webArchive)
             return completionHandler(nullptr);
 
@@ -1726,11 +1752,26 @@ void WebPageProxy::getWebArchiveData(CompletionHandler<void(API::Data*)>&& compl
             return completionHandler(nullptr);
         completionHandler(API::Data::create(span(data.get())).ptr());
     });
-    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-        webProcess.sendWithAsyncReply(Messages::WebPage::GetWebArchives(), [callbackAggregator](auto&& result) {
+    HashMap<Ref<WebProcessProxy>, Vector<WebCore::FrameIdentifier>> processFrames;
+    RefPtr currentFrame = &rootFrame;
+    while (currentFrame) {
+        if (!selectedFrameIdentifiers || selectedFrameIdentifiers->contains(currentFrame->frameID())) {
+            processFrames.ensure(currentFrame->protectedProcess(), [&] {
+                return Vector<WebCore::FrameIdentifier> { };
+            }).iterator->value.append(currentFrame->frameID());
+        }
+
+        currentFrame = currentFrame->traverseNext().frame;
+    }
+
+    for (auto& [process, frameIDs] : processFrames) {
+        Ref { process }->sendWithAsyncReply(Messages::WebPage::GetWebArchivesForFrames(frameIDs), [frameIDs, callbackAggregator](auto&& result) {
+            if (result.size() > frameIDs.size())
+                return;
+
             callbackAggregator->addResult(WTFMove(result));
-        }, pageID);
-    });
+        }, webPageIDInProcess(process.get()));
+    }
 }
 
 String WebPageProxy::presentingApplicationBundleIdentifier() const
@@ -1751,17 +1792,36 @@ String WebPageProxy::presentingApplicationBundleIdentifier() const
     return { };
 }
 
-#if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
-void WebPageProxy::initializeAccessibility()
+#if PLATFORM(MAC)
+NSDictionary *WebPageProxy::getAccessibilityWebProcessDebugInfo()
 {
-    RELEASE_LOG(Process, "WebPageProxy::initializeAccessibility");
-    if (!hasRunningProcess())
-        return;
+    const Seconds messageTimeout(2);
+    auto sendResult = protectedLegacyMainFrameProcess()->sendSync(Messages::WebPage::GetAccessibilityWebProcessDebugInfo(), webPageIDInMainFrameProcess(), messageTimeout);
 
-    auto handleArray = SandboxExtension::createHandlesForMachLookup({ }, protectedLegacyMainFrameProcess()->auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
-    protectedLegacyMainFrameProcess()->send(Messages::WebPage::InitializeAccessibility(WTFMove(handleArray)), webPageIDInMainFrameProcess());
+    if (!sendResult.succeeded())
+        return @{ };
+
+    auto [result] = sendResult.takeReplyOr(WebCore::AXDebugInfo({ 0, 0 }));
+
+    return @{
+        @"axIsEnabled": [NSNumber numberWithBool:result.isAccessibilityEnabled],
+        @"axIsThreadInitialized": [NSNumber numberWithBool:result.isAccessibilityThreadInitialized],
+        @"axLiveTree": result.liveTree.createNSString().get(),
+        @"axIsolatedTree": result.isolatedTree.createNSString().get(),
+        @"axWebProcessRemoteHash": [NSNumber numberWithUnsignedInteger:result.remoteTokenHash],
+        @"axWebProcessLocalHash": [NSNumber numberWithUnsignedInteger:result.webProcessLocalTokenHash]
+    };
+}
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void WebPageProxy::clearAccessibilityIsolatedTree()
+{
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPage::ClearAccessibilityIsolatedTree(), pageID);
+    });
 }
 #endif
+#endif // PLATFORM(MAC)
 
 } // namespace WebKit
 

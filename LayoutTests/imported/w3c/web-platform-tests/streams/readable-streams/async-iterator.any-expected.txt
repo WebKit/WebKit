@@ -28,6 +28,8 @@ FAIL next() that succeeds; return() promise_test: Unhandled rejection with value
 FAIL next() that succeeds; return() [no awaiting] promise_test: Unhandled rejection with value: object "TypeError: s[Symbol.asyncIterator] is not a function. (In 's[Symbol.asyncIterator]()', 's[Symbol.asyncIterator]' is undefined)"
 FAIL return(); next() promise_test: Unhandled rejection with value: object "TypeError: rs.values is not a function. (In 'rs.values()', 'rs.values' is undefined)"
 FAIL return(); next() [no awaiting] promise_test: Unhandled rejection with value: object "TypeError: rs.values is not a function. (In 'rs.values()', 'rs.values' is undefined)"
+FAIL return(); next() with delayed cancel() promise_test: Unhandled rejection with value: object "TypeError: rs.values is not a function. (In 'rs.values()', 'rs.values' is undefined)"
+FAIL return(); next() with delayed cancel() [no awaiting] promise_test: Unhandled rejection with value: object "TypeError: rs.values is not a function. (In 'rs.values()', 'rs.values' is undefined)"
 FAIL return(); return() promise_test: Unhandled rejection with value: object "TypeError: rs.values is not a function. (In 'rs.values()', 'rs.values' is undefined)"
 FAIL return(); return() [no awaiting] promise_test: Unhandled rejection with value: object "TypeError: rs.values is not a function. (In 'rs.values()', 'rs.values' is undefined)"
 FAIL values() throws if there's already a lock s.values is not a function. (In 's.values()', 's.values' is undefined)

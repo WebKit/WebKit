@@ -52,7 +52,7 @@
 NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRef context, AccessibilityUIElement* startElement, bool isDirectionNext, unsigned resultsLimit, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
 {
     NSMutableDictionary *parameterizedAttribute = [NSMutableDictionary dictionary];
-    
+
     if (startElement && startElement->platformUIElement())
         [parameterizedAttribute setObject:startElement->platformUIElement() forKey:@"AXStartElement"];
 
@@ -88,7 +88,7 @@ NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRe
 
     [parameterizedAttribute setObject:@(visibleOnly) forKey:@"AXVisibleOnly"];
     [parameterizedAttribute setObject:@(immediateDescendantsOnly) forKey:@"AXImmediateDescendantsOnly"];
-    
+
     return parameterizedAttribute;
 }
 

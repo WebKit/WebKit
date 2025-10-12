@@ -64,7 +64,7 @@ namespace WTF {
 
 template<typename Type>
 class ParallelJobs {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ParallelJobs);
 public:
     typedef void (*WorkerFunction)(Type*);
 
@@ -87,7 +87,7 @@ public:
 
     void execute()
     {
-        m_parallelEnvironment.execute(reinterpret_cast<unsigned char*>(m_parameters.data()));
+        m_parallelEnvironment.execute(reinterpret_cast<unsigned char*>(m_parameters.mutableSpan().data()));
     }
 
 private:

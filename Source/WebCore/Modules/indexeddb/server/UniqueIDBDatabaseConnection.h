@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "IDBDatabaseConnectionIdentifier.h"
-#include "UniqueIDBDatabase.h"
+#include <WebCore/IDBDatabaseConnectionIdentifier.h>
+#include <WebCore/UniqueIDBDatabase.h>
 #include <wtf/HashMap.h>
 #include <wtf/Identified.h>
 #include <wtf/Ref.h>
@@ -53,6 +53,7 @@ public:
 
     const IDBResourceIdentifier& openRequestIdentifier() { return m_openRequestIdentifier; }
     UniqueIDBDatabase* database() { return m_database.get(); }
+    CheckedPtr<UniqueIDBDatabase> checkedDatabase();
     UniqueIDBDatabaseManager* manager();
     IDBConnectionToClient& connectionToClient() { return m_connectionToClient; }
     Ref<IDBConnectionToClient> protectedConnectionToClient();

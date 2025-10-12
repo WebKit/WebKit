@@ -44,6 +44,7 @@
             {
                 testPassed('onNegotiationNeeded3 was called when a track was added.');
                 finishJSTest();
+                stream.getTracks().forEach(track => track.stop());
             }
 
             async function gotStream(s)

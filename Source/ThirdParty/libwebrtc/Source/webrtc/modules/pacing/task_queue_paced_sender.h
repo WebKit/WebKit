@@ -174,7 +174,7 @@ class TaskQueuePacedSender : public RtpPacketPacer, public RtpPacketSender {
   bool is_shutdown_ RTC_GUARDED_BY(task_queue_);
 
   // Filtered size of enqueued packets, in bytes.
-  rtc::ExpFilter packet_size_ RTC_GUARDED_BY(task_queue_);
+  ExpFilter packet_size_ RTC_GUARDED_BY(task_queue_);
   bool include_overhead_ RTC_GUARDED_BY(task_queue_);
 
   Stats current_stats_ RTC_GUARDED_BY(task_queue_);

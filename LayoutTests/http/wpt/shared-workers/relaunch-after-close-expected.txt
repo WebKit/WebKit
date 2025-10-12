@@ -1,31 +1,3 @@
-CONSOLE MESSAGE: PAGE 2:     Attempting to boot the shared worker
-CONSOLE MESSAGE: PAGE 2:     Received message from worker: 'connected'
-CONSOLE MESSAGE: PAGE 2:     SharedWorker connected
-CONSOLE MESSAGE: PAGE 2:     Telling the SharedWorker to shutdown
-CONSOLE MESSAGE: PAGE 2:     Received message from worker: 'shutdown'
-CONSOLE MESSAGE: PAGE 2:     SharedWorker successfully shutdown
-CONSOLE MESSAGE: PAGE 2:     Attempting to boot the shared worker
-CONSOLE MESSAGE: PAGE 2:     Received message from worker: 'connected'
-CONSOLE MESSAGE: PAGE 2:     SharedWorker connected
-CONSOLE MESSAGE: PAGE 2:     Telling the SharedWorker to shutdown
-CONSOLE MESSAGE: PAGE 2:     Received message from worker: 'shutdown'
-CONSOLE MESSAGE: PAGE 2:     SharedWorker successfully shutdown
-CONSOLE MESSAGE: PAGE 2:     Attempting to boot the shared worker
-CONSOLE MESSAGE: PAGE 2:     Received message from worker: 'connected'
-CONSOLE MESSAGE: PAGE 2:     SharedWorker connected
-CONSOLE MESSAGE: PAGE 2:     Telling the SharedWorker to shutdown
-CONSOLE MESSAGE: PAGE 2:     Received message from worker: 'shutdown'
-CONSOLE MESSAGE: PAGE 2:     SharedWorker successfully shutdown
-CONSOLE MESSAGE: PAGE 2:     Attempting to boot the shared worker
-CONSOLE MESSAGE: PAGE 2:     Received message from worker: 'connected'
-CONSOLE MESSAGE: PAGE 2:     SharedWorker connected
-CONSOLE MESSAGE: PAGE 2:     Telling the SharedWorker to shutdown
-CONSOLE MESSAGE: PAGE 2:     Received message from worker: 'shutdown'
-CONSOLE MESSAGE: PAGE 2:     SharedWorker successfully shutdown
-CONSOLE MESSAGE: PAGE 2:     Attempting to boot the shared worker
-CONSOLE MESSAGE: PAGE 2:     Received message from worker: 'connected'
-CONSOLE MESSAGE: PAGE 2:     SharedWorker connected
-CONSOLE MESSAGE: PAGE 2: PASS: Successfully shutdown and reconstructed the SharedWorker many times
 
 PASS Shared worker should be able to relaunch after calling SharedWorkerGlobalScope.close()
 

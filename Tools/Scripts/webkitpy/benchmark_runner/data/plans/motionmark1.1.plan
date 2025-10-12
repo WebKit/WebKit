@@ -1,7 +1,8 @@
 {
     "timeout": 1800,
     "count": 1,
-    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/MotionMark/@r278436",
+    "local_git_archive": "PerformanceTests/MotionMark@1d7c87a8cc9a4238f3b522fa311192924d91d46a",
+    "github_source": "https://github.com/WebKit/WebKit/tree/1d7c87a8cc9a4238f3b522fa311192924d91d46a/PerformanceTests/MotionMark",
     "webserver_benchmark_patch": "data/patches/webserver/MotionMark.patch",
     "webdriver_benchmark_patch": "data/patches/webdriver/MotionMark.patch",
     "entry_point": "index.html",

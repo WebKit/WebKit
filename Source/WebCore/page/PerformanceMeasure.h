@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "PerformanceEntry.h"
 #include <wtf/text/WTFString.h>
 
@@ -37,6 +38,7 @@ namespace WebCore {
 
 class SerializedScriptValue;
 class ScriptExecutionContext;
+template<typename> class ExceptionOr;
 
 class PerformanceMeasure final : public PerformanceEntry {
 public:
@@ -51,7 +53,9 @@ private:
     Type performanceEntryType() const final { return Type::Measure; }
     ASCIILiteral entryType() const final { return "measure"_s; }
 
-    Ref<SerializedScriptValue> m_serializedDetail;
+    const Ref<SerializedScriptValue> m_serializedDetail;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_PERFORMANCE_ENTRY(PerformanceMeasure, Measure);

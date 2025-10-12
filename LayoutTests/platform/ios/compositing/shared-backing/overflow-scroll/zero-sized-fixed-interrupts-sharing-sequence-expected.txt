@@ -28,10 +28,15 @@ Hover here to see the bug
           )
         )
         (GraphicsLayer
-          (position 10.00 10.00)
-          (preserves3D 1)
+          (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
+              (position 10.00 10.00)
+              (preserves3D 1)
+              (children 1
+                (GraphicsLayer
+                )
+              )
             )
           )
         )

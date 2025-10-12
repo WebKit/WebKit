@@ -14,6 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-central-large-font-size-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-central-large-font-size-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-central-large-font-size.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-hanging-small-font-size-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-hanging-small-font-size.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/first-letter-expected.svg
@@ -65,6 +68,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-002-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-002-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-context-fill-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-context-fill-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-context-fill.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-display-contents-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-font-face-load-image-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-font-face-load-image-ref.html

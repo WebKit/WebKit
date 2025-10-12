@@ -1,0 +1,15 @@
+<html>
+<body>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    fetch("https://does-not-exist.com:0/").catch((e) => {
+        const t1 = performance.now();
+        testRunner.notifyDone(); 
+    });
+</script>
+<p>This attempts to measure performance based on the zero port.</p>
+</body>
+</html>

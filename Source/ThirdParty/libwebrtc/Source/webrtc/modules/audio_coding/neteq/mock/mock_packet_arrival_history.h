@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_PACKET_ARRIVAL_HISTORY_H_
 #define MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_PACKET_ARRIVAL_HISTORY_H_
 
+#include <cstdint>
+
 #include "api/neteq/tick_timer.h"
 #include "modules/audio_coding/neteq/packet_arrival_history.h"
 #include "test/gmock.h"

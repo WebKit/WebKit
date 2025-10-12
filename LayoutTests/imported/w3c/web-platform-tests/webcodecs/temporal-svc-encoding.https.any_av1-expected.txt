@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Error: assert_unreached: Decoder failure Reached unreachable code
-CONSOLE MESSAGE: Error: assert_unreached: Decoder failure Reached unreachable code
 
 Harness Error (FAIL), message = Error: assert_unreached: Decoder failure Reached unreachable code
 

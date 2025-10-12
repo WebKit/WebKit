@@ -28,7 +28,6 @@
 
 #if USE(CORE_IMAGE)
 
-#import "ImageBufferIOSurfaceBackend.h"
 #import <CoreImage/CIContext.h>
 #import <CoreImage/CoreImage.h>
 #import <wtf/NeverDestroyed.h>
@@ -61,7 +60,7 @@ ImageBuffer* FilterImage::imageBufferFromCIImage()
     if (m_imageBuffer)
         return m_imageBuffer.get();
 
-    RefPtr imageBuffer = ImageBuffer::create<ImageBufferIOSurfaceBackend>(m_absoluteImageRect.size(), 1, m_colorSpace, ImageBufferPixelFormat::BGRA8, RenderingPurpose::Unspecified, { });
+    RefPtr imageBuffer = m_allocator.createImageBuffer(m_absoluteImageRect.size(), m_colorSpace, RenderingMode::Accelerated);
     m_imageBuffer = imageBuffer;
     if (!imageBuffer)
         return nullptr;

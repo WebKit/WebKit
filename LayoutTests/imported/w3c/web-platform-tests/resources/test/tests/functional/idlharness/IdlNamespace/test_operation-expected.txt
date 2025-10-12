@@ -1,0 +1,30 @@
+Verify the series of sub-tests that are executed for namespace operations.
+
+
+PASS foo namespace: extended attributes
+PASS foo namespace: property descriptor
+PASS foo namespace: [[Extensible]] is true
+PASS foo namespace: [[Prototype]] is Object.prototype
+PASS foo namespace: typeof is "object"
+PASS foo namespace: has no length property
+PASS foo namespace: has no name property
+PASS foo namespace: operation Truth()
+FAIL foo namespace: operation Lies() assert_own_property: namespace object missing operation "Lies" expected property "Lies" missing
+PASS bar namespace: extended attributes
+PASS bar namespace: property descriptor
+PASS bar namespace: [[Extensible]] is true
+PASS bar namespace: [[Prototype]] is Object.prototype
+PASS bar namespace: typeof is "object"
+PASS bar namespace: has no length property
+PASS bar namespace: has no name property
+PASS bar namespace: operation Truth()
+PASS baz namespace: extended attributes
+PASS baz namespace: property descriptor
+PASS baz namespace: [[Extensible]] is true
+PASS baz namespace: [[Prototype]] is Object.prototype
+PASS baz namespace: typeof is "object"
+PASS baz namespace: has no length property
+PASS baz namespace: has no name property
+PASS baz namespace: operation LongStory(any, DOMString...)
+PASS baz namespace: operation ShortStory(DOMString...)
+

@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: [object Object]
-CONSOLE MESSAGE: SyntaxError: Importing binding name 'default' cannot be resolved by star export entries.
 
 PASS instantiation error has higher priority than evaluation error
 

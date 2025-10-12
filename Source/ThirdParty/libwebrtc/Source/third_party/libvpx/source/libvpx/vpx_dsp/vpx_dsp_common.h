@@ -47,13 +47,12 @@ typedef int16_t tran_low_t;
 
 typedef int16_t tran_coef_t;
 
-// Visual Studio 2022 (cl.exe) targeting AArch64 with optimizations enabled
-// produces invalid code for clip_pixel() when the return type is uint8_t.
-// See:
+// Visual Studio 2022 (cl.exe) < 17.7 targeting AArch64 with optimizations
+// enabled produces invalid code for clip_pixel() when the return type is
+// uint8_t. See:
 // https://developercommunity.visualstudio.com/t/Misoptimization-for-ARM64-in-VS-2022-17/10363361
-// TODO(jzern): check the compiler version after a fix for the issue is
-// released.
-#if defined(_MSC_VER) && defined(_M_ARM64) && !defined(__clang__)
+#if defined(_MSC_VER) && _MSC_VER < 1937 && defined(_M_ARM64) && \
+    !defined(__clang__)
 static INLINE int clip_pixel(int val) {
   return (val > 255) ? 255 : (val < 0) ? 0 : val;
 }

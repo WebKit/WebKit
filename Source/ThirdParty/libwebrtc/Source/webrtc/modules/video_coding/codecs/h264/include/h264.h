@@ -66,7 +66,7 @@ struct H264EncoderSettings {
   H264PacketizationMode packetization_mode =
       H264PacketizationMode::NonInterleaved;
 };
-absl::Nonnull<std::unique_ptr<VideoEncoder>> CreateH264Encoder(
+absl_nonnull std::unique_ptr<VideoEncoder> CreateH264Encoder(
     const Environment& env,
     H264EncoderSettings settings = {});
 

@@ -26,10 +26,7 @@ namespace WebCore {
 
 inline bool LegacyInlineIterator::atTextParagraphSeparator() const
 {
-    auto* textRenderer = dynamicDowncast<RenderText>(m_renderer);
-    return textRenderer
-        && m_renderer->preservesNewline()
-        && textRenderer->characterAt(m_pos) == '\n';
+    return false;
 }
 
 inline bool LegacyInlineIterator::atParagraphSeparator() const
@@ -64,24 +61,33 @@ template<> inline void InlineBidiResolver::appendRunInternal()
         int start = m_sor.offset();
         RenderObject* obj = m_sor.renderer();
         while (obj && obj != m_eor.renderer() && obj != endOfLine.renderer()) {
+            size_t objectLength = 1;
+            if (auto* renderText = dynamicDowncast<RenderText>(obj))
+                objectLength = renderText->length();
+
             if (isolateTracker.inIsolate())
-                isolateTracker.addFakeRunIfNecessary(*obj, start, obj->length(), *m_sor.root(), *this);
+                isolateTracker.addFakeRunIfNecessary(*obj, start, objectLength, *m_sor.root(), *this);
             else
-                LegacyLineLayout::appendRunsForObject(&m_runs, start, obj->length(), *obj, *this);
+                LegacyLineLayout::appendRunsForObject(&m_runs, start, objectLength, *obj, *this);
             // FIXME: start/obj should be an LegacyInlineIterator instead of two separate variables.
             start = 0;
             obj = nextInlineRendererSkippingEmpty(*m_sor.root(), obj, &isolateTracker);
         }
+
         if (obj) {
             unsigned pos = obj == m_eor.renderer() ? m_eor.offset() : UINT_MAX;
             if (obj == endOfLine.renderer() && endOfLine.offset() <= pos) {
                 m_reachedEndOfLine = true;
                 pos = endOfLine.offset();
             }
+            size_t objectLength = 1;
+            if (auto* renderText = dynamicDowncast<RenderText>(obj))
+                objectLength = renderText->length();
+
             // It's OK to add runs for zero-length RenderObjects, just don't make the run larger than it should be
-            int end = obj->length() ? pos + 1 : 0;
+            int end = objectLength ? pos + 1 : 0;
             if (isolateTracker.inIsolate())
-                isolateTracker.addFakeRunIfNecessary(*obj, start, obj->length(), *m_sor.root(), *this);
+                isolateTracker.addFakeRunIfNecessary(*obj, start, objectLength, *m_sor.root(), *this);
             else
                 LegacyLineLayout::appendRunsForObject(&m_runs, start, end, *obj, *this);
         }

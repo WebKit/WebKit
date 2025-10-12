@@ -7,6 +7,10 @@
 //   Base class for google test performance tests
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "ANGLEPerfTest.h"
 
 #if defined(ANGLE_PLATFORM_ANDROID)
@@ -773,6 +777,9 @@ std::string RenderTestParams::backend() const
             break;
         case EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE:
             strstr << "_metal";
+            break;
+        case EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE:
+            strstr << "_webgpu";
             break;
         default:
             assert(0);

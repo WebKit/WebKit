@@ -27,6 +27,8 @@
 #include "NetworkTransportStream.h"
 
 #include <WebCore/Exception.h>
+#include <WebCore/WebTransportReceiveStreamStats.h>
+#include <WebCore/WebTransportSendStreamStats.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -58,6 +60,17 @@ void NetworkTransportStream::cancelSend(std::optional<WebCore::WebTransportStrea
 void NetworkTransportStream::cancel(std::optional<WebCore::WebTransportStreamErrorCode>)
 {
 }
+
+WebCore::WebTransportSendStreamStats NetworkTransportStream::getSendStreamStats()
+{
+    return { };
+}
+
+WebCore::WebTransportReceiveStreamStats NetworkTransportStream::getReceiveStreamStats()
+{
+    return { };
+}
+
 #endif
 
 }

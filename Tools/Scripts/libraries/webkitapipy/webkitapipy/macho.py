@@ -20,6 +20,7 @@
 # OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+from __future__ import annotations
 
 import re
 import subprocess
@@ -27,6 +28,7 @@ import sys
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
+from typing import NamedTuple
 
 objc_fully_qualified_method = re.compile(r'[-+]\[(?P<class>\S+) (?P<selector>[^\]]+)\]')
 
@@ -37,9 +39,13 @@ class APIReport:
     arch: str
 
     exports: set[str] = field(default_factory=set)
-    methods: set[str] = field(default_factory=set)
+    methods: set[APIReport.Selector] = field(default_factory=set)
     imports: set[str] = field(default_factory=set)
     selrefs: set[str] = field(default_factory=set)
+
+    class Selector(NamedTuple):
+        name: str
+        class_: str
 
     @classmethod
     def from_binary(cls, binary_path: Path, *, arch: str, exports_only=False):
@@ -131,7 +137,8 @@ class APIReport:
                 # ```
                 m = objc_fully_qualified_method.search(line)
                 if m:
-                    self.methods.add(m.group('selector'))
+                    sel = self.Selector._make(m.group('selector', 'class'))
+                    self.methods.add(sel)
                 elif '@interface' not in line and \
                         '@protocol' not in line and '@end' not in line:
                     print(f'warning:{self.file} unrecognized '

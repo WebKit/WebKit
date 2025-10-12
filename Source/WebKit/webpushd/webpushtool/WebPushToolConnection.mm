@@ -41,6 +41,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 namespace WebPushTool {
 
@@ -78,7 +79,7 @@ Connection::Connection(PreferTestService preferTestService, String bundleIdentif
 void Connection::connectToService(WaitForServiceToExist waitForServiceToExist)
 {
 
-    m_connection = adoptNS(xpc_connection_create_mach_service(m_serviceName, dispatch_get_main_queue(), 0));
+    m_connection = adoptNS(xpc_connection_create_mach_service(m_serviceName, mainDispatchQueueSingleton(), 0));
 
     xpc_connection_set_event_handler(m_connection.get(), [](xpc_object_t event) {
         if (event == XPC_ERROR_CONNECTION_INVALID || event == XPC_ERROR_CONNECTION_INTERRUPTED) {
@@ -170,7 +171,7 @@ bool Connection::performSendWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& 
 bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Decoder*)>&& completionHandler) const
 {
     auto dictionary = messageDictionaryFromEncoder(WTFMove(encoder));
-    xpc_connection_send_message_with_reply(m_connection.get(), dictionary.get(), dispatch_get_main_queue(), makeBlockPtr([completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
+    xpc_connection_send_message_with_reply(m_connection.get(), dictionary.get(), mainDispatchQueueSingleton(), makeBlockPtr([completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
         if (xpc_get_type(reply) != XPC_TYPE_DICTIONARY) {
             ASSERT_NOT_REACHED();
             return completionHandler(nullptr);

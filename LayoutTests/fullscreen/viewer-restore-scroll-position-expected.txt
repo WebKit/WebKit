@@ -1,0 +1,8 @@
+This tests that page scroll is restored after viewer mode.
+
+
+EVENT(load)
+EVENT(fullscreenchange)
+EVENT(fullscreenchange)
+EXPECTED ((document.scrollingElement.scrollTop === originalScroll) == 'true') OK
+

@@ -10,8 +10,8 @@
 
 #include "rtc_base/experiments/normalize_simulcast_size_experiment.h"
 
-#include <stdio.h>
-
+#include <cstdio>
+#include <optional>
 #include <string>
 
 #include "api/field_trials_view.h"

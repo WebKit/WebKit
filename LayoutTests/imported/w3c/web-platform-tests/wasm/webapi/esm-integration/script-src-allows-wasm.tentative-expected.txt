@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: CompileError: Refused to create a WebAssembly object because 'unsafe-eval' or 'wasm-unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline'".
-
 
 FAIL Importing a WebAssembly module should be allowed by script-src CSP. assert_array_equals: lengths differ, expected array ["executed"] length 1, got [] length 0
 

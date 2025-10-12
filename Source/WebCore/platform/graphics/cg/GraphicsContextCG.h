@@ -27,8 +27,8 @@
 
 #if USE(CG)
 
-#include "ColorSpaceCG.h"
-#include "GraphicsContext.h"
+#include <WebCore/ColorSpaceCG.h>
+#include <WebCore/GraphicsContext.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -46,14 +46,15 @@ public:
 
     bool hasPlatformContext() const final;
 
-    // Returns the platform context for any purpose, including draws.
-    CGContextRef platformContext() const final;
+    // Returns the platform context for any purpose, including draws. Conservative estimate.
+    CGContextRef platformContext() const final { return const_cast<GraphicsContextCG*>(this)->contextForDraw(); }
 
     const DestinationColorSpace& colorSpace() const final;
 
     void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
     void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
 
+    void drawNativeImage(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { }) final;
     void drawRect(const FloatRect&, float borderThickness = 1) final;
     void drawLine(const FloatPoint&, const FloatPoint&) final;
     void drawEllipse(const FloatRect&) final;
@@ -122,7 +123,7 @@ public:
 
     void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) final;
 
-    void beginPage(const IntSize& pageSize) final;
+    void beginPage(const FloatRect& pageRect) final;
     void endPage() final;
 
     void setURLForRect(const URL&, const FloatRect&) final;
@@ -139,25 +140,38 @@ public:
     FloatRect roundToDevicePixels(const FloatRect&) const;
 
     // Returns the platform context for draws.
-    CGContextRef contextForDraw();
+    CGContextRef contextForDraw()
+    {
+        ASSERT(m_cgContext);
+        m_hasDrawn = true;
+        return m_cgContext.get();
+    }
 
     // Returns false if there has not been any potential draws since last call.
     // Returns true if there has been potential draws since last call.
     bool consumeHasDrawn();
 
-protected:
-    void setCGShadow(const std::optional<GraphicsDropShadow>&, bool shadowsIgnoreTransforms);
-    void setCGStyle(const std::optional<GraphicsStyle>&, bool shadowsIgnoreTransforms);
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    void setMaxEDRHeadroom(std::optional<float>) final;
+#endif
 
 private:
-    void drawNativeImageInternal(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { }) final;
+    void setCGDropShadow(const std::optional<GraphicsDropShadow>&, bool shadowsIgnoreTransforms);
+    void clearCGDropShadow();
+#if HAVE(CGSTYLE_COLORMATRIX_BLUR)
+    void setCGGaussianBlur(const GraphicsGaussianBlur&, bool shadowsIgnoreTransforms);
+    void setCGColorMatrix(const GraphicsColorMatrix&);
+#endif
+    void setCGStyle(const std::optional<GraphicsStyle>&, bool shadowsIgnoreTransforms);
 
-    void clearCGShadow();
     // Returns the platform context for purposes of context state change, not draws.
     CGContextRef contextForState() const;
 
     const RetainPtr<CGContextRef> m_cgContext;
     mutable std::optional<DestinationColorSpace> m_colorSpace;
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    std::optional<float> m_maxEDRHeadroom;
+#endif
     const RenderingMode m_renderingMode : 2; // NOLINT
     const bool m_isLayerCGContext : 1;
     mutable bool m_userToDeviceTransformKnownToBeIdentity : 1 { false };
@@ -169,6 +183,6 @@ CGAffineTransform getUserToBaseCTM(CGContextRef);
 
 } // namespace WebCore
 
-#include "CGContextStateSaver.h"
+#include <WebCore/CGContextStateSaver.h>
 
 #endif // USE(CG)

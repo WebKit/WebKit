@@ -1,4 +1,3 @@
-//@ skip unless $isWasmPlatform
 //@ skip if $platform == "watchos"
 //@ runDefault
 if ($vm.isWasmSupported()) {

@@ -12,7 +12,11 @@
 #include <stdint.h>
 
 #include <memory>
+#include <utility>
+#include <vector>
 
+#include "api/video_codecs/sdp_video_format.h"
+#include "call/video_receive_stream.h"
 #include "test/fuzzers/utils/rtp_replayer.h"
 
 namespace webrtc {

@@ -7,30 +7,27 @@ description: |
   Eagerly throw TypeError when `mapper` is not callable.
 features:
   - iterator-helpers
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 ---*/
 //
 
-assertThrowsInstanceOf(() => Iterator.prototype.map(undefined), TypeError);
-assertThrowsInstanceOf(() => [].values().map(undefined), TypeError);
+assert.throws(TypeError, () => Iterator.prototype.map(undefined));
+assert.throws(TypeError, () => [].values().map(undefined));
 
-assertThrowsInstanceOf(() => Iterator.prototype.map(null), TypeError);
-assertThrowsInstanceOf(() => [].values().map(null), TypeError);
+assert.throws(TypeError, () => Iterator.prototype.map(null));
+assert.throws(TypeError, () => [].values().map(null));
 
-assertThrowsInstanceOf(() => Iterator.prototype.map(0), TypeError);
-assertThrowsInstanceOf(() => [].values().map(0), TypeError);
+assert.throws(TypeError, () => Iterator.prototype.map(0));
+assert.throws(TypeError, () => [].values().map(0));
 
-assertThrowsInstanceOf(() => Iterator.prototype.map(false), TypeError);
-assertThrowsInstanceOf(() => [].values().map(false), TypeError);
+assert.throws(TypeError, () => Iterator.prototype.map(false));
+assert.throws(TypeError, () => [].values().map(false));
 
-assertThrowsInstanceOf(() => Iterator.prototype.map({}), TypeError);
-assertThrowsInstanceOf(() => [].values().map({}), TypeError);
+assert.throws(TypeError, () => Iterator.prototype.map({}));
+assert.throws(TypeError, () => [].values().map({}));
 
-assertThrowsInstanceOf(() => Iterator.prototype.map(''), TypeError);
-assertThrowsInstanceOf(() => [].values().map(''), TypeError);
+assert.throws(TypeError, () => Iterator.prototype.map(''));
+assert.throws(TypeError, () => [].values().map(''));
 
-assertThrowsInstanceOf(() => Iterator.prototype.map(Symbol('')), TypeError);
-assertThrowsInstanceOf(() => [].values().map(Symbol('')), TypeError);
+assert.throws(TypeError, () => Iterator.prototype.map(Symbol('')));
+assert.throws(TypeError, () => [].values().map(Symbol('')));
 

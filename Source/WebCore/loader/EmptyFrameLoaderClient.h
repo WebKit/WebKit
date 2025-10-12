@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include "LocalFrameLoaderClient.h"
+#include <WebCore/LocalFrameLoaderClient.h>
+#include <wtf/Platform.h>
 
 namespace WebCore {
 
@@ -55,7 +56,7 @@ private:
 
     void convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest&, const ResourceResponse&) final;
 
-    void assignIdentifierToInitialRequest(ResourceLoaderIdentifier, IsMainResourceLoad, DocumentLoader*, const ResourceRequest&) final;
+    void assignIdentifierToInitialRequest(ResourceLoaderIdentifier, DocumentLoader*, const ResourceRequest&) final;
     bool shouldUseCredentialStorage(DocumentLoader*, ResourceLoaderIdentifier) override;
     void dispatchWillSendRequest(DocumentLoader*, ResourceLoaderIdentifier, ResourceRequest&, const ResourceResponse&) final;
     void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, ResourceLoaderIdentifier, const AuthenticationChallenge&) final;
@@ -69,11 +70,11 @@ private:
 
     void dispatchDidReceiveResponse(DocumentLoader*, ResourceLoaderIdentifier, const ResourceResponse&) final;
     void dispatchDidReceiveContentLength(DocumentLoader*, ResourceLoaderIdentifier, int) final;
-    void dispatchDidFinishLoading(DocumentLoader*, IsMainResourceLoad, ResourceLoaderIdentifier) final;
+    void dispatchDidFinishLoading(DocumentLoader*, ResourceLoaderIdentifier) final;
 #if ENABLE(DATA_DETECTION)
     void dispatchDidFinishDataDetection(NSArray *) final;
 #endif
-    void dispatchDidFailLoading(DocumentLoader*, IsMainResourceLoad, ResourceLoaderIdentifier, const ResourceError&) final;
+    void dispatchDidFailLoading(DocumentLoader*, ResourceLoaderIdentifier, const ResourceError&) final;
     bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int) final;
 
     void dispatchDidDispatchOnloadEvents() final;
@@ -103,6 +104,7 @@ private:
     void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, const String&, std::optional<NavigationIdentifier>, std::optional<HitTestResult>&&, bool, IsPerformingHTTPFallback, SandboxFlags, PolicyDecisionMode, FramePolicyFunction&&) final;
     void updateSandboxFlags(SandboxFlags) final;
     void updateOpener(const Frame&) final;
+    void setPrinting(bool, FloatSize, FloatSize, float, AdjustViewSize) final;
     void cancelPolicyCheck() final;
 
     void dispatchUnableToImplementPolicy(const ResourceError&) final;
@@ -164,8 +166,6 @@ private:
 
     void saveViewStateToItem(HistoryItem&) final;
     bool canCachePage() const final;
-    void didDisplayInsecureContent() final;
-    void didRunInsecureContent(SecurityOrigin&) final;
     RefPtr<LocalFrame> createFrame(const AtomString&, HTMLFrameOwnerElement&) final;
     RefPtr<Widget> createPlugin(HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool) final;
 
@@ -195,6 +195,7 @@ private:
 #endif
 
     bool hasFrameSpecificStorageAccess() final;
+    void revokeFrameSpecificStorageAccess() final;
 
     void dispatchLoadEventToOwnerElementInAnotherProcess() final;
 

@@ -11,17 +11,19 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_FFT_DATA_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_FFT_DATA_H_
 
-// Defines WEBRTC_ARCH_X86_FAMILY, used below.
-#include "rtc_base/system/arch.h"
-
-#if defined(WEBRTC_ARCH_X86_FAMILY)
-#include <emmintrin.h>
-#endif
 #include <algorithm>
 #include <array>
+#include <cstddef>
 
 #include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
+#include "rtc_base/checks.h"
+
+// Defines WEBRTC_ARCH_X86_FAMILY, used below.
+#include "rtc_base/system/arch.h"
+#if defined(WEBRTC_ARCH_X86_FAMILY)
+#include <emmintrin.h>
+#endif
 
 namespace webrtc {
 
@@ -41,11 +43,11 @@ struct FftData {
   }
 
   // Computes the power spectrum of the data.
-  void SpectrumAVX2(rtc::ArrayView<float> power_spectrum) const;
+  void SpectrumAVX2(ArrayView<float> power_spectrum) const;
 
   // Computes the power spectrum of the data.
   void Spectrum(Aec3Optimization optimization,
-                rtc::ArrayView<float> power_spectrum) const {
+                ArrayView<float> power_spectrum) const {
     RTC_DCHECK_EQ(kFftLengthBy2Plus1, power_spectrum.size());
     switch (optimization) {
 #if defined(WEBRTC_ARCH_X86_FAMILY)

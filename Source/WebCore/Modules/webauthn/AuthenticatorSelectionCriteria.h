@@ -26,13 +26,13 @@
 #pragma once
 
 #if ENABLE(WEB_AUTHN)
-#include "AttestationConveyancePreference.h"
-#include "AuthenticationExtensionsClientInputs.h"
-#include "BufferSource.h"
-#include "PublicKeyCredentialDescriptor.h"
-#include "PublicKeyCredentialType.h"
-#include "ResidentKeyRequirement.h"
-#include "UserVerificationRequirement.h"
+#include <WebCore/AttestationConveyancePreference.h>
+#include <WebCore/AuthenticationExtensionsClientInputs.h>
+#include <WebCore/BufferSource.h>
+#include <WebCore/PublicKeyCredentialDescriptor.h>
+#include <WebCore/PublicKeyCredentialType.h>
+#include <WebCore/ResidentKeyRequirement.h>
+#include <WebCore/UserVerificationRequirement.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

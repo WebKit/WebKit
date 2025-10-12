@@ -28,11 +28,10 @@
 #include "CSSStyleSheet.h"
 #include "ContentType.h"
 #include "DeprecatedGlobalSettings.h"
-#include "DocumentInlines.h"
+#include "DocumentPage.h"
 #include "DocumentType.h"
 #include "Element.h"
 #include "FTPDirectoryDocument.h"
-#include "FrameInlines.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
 #include "HTMLHeadElement.h"
@@ -46,12 +45,12 @@
 #include "MediaPlayer.h"
 #include "MediaQueryParser.h"
 #include "PDFDocument.h"
-#include "Page.h"
 #include "ParserContentPolicy.h"
 #include "PluginData.h"
 #include "PluginDocument.h"
 #include "SVGDocument.h"
 #include "SVGNames.h"
+#include "ScriptWrappableInlines.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
 #include "Settings.h"
@@ -113,7 +112,7 @@ ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const AtomString
 
     RefPtr<Element> documentElement;
     if (!qualifiedName.isEmpty()) {
-        ASSERT(!document->domWindow()); // If domWindow is not null, createElementNS could find CustomElementRegistry and arbitrary scripts.
+        ASSERT(!document->window()); // If domWindow is not null, createElementNS could find CustomElementRegistry and arbitrary scripts.
         auto result = document->createElementNS(namespaceURI, qualifiedName);
         if (result.hasException())
             return result.releaseException();

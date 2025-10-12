@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "IDBCursorInfo.h"
-#include "IDBKeyData.h"
-#include "IndexValueEntry.h"
+#include <WebCore/IDBCursorInfo.h>
+#include <WebCore/IDBKeyData.h>
+#include <WebCore/IndexValueEntry.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>

@@ -1,0 +1,4 @@
+hello world
+Dragging to the left: FAIL - expected 0 but got 7
+Dragging to the left: FAIL - expected 11 but got 10
+

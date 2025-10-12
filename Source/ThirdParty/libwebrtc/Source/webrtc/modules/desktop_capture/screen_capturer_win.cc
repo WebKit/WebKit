@@ -16,6 +16,7 @@
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/fallback_desktop_capturer_wrapper.h"
 #include "modules/desktop_capture/rgba_color.h"
+#include "modules/desktop_capture/win/dxgi_duplicator_controller.h"
 #include "modules/desktop_capture/win/screen_capturer_win_directx.h"
 #include "modules/desktop_capture/win/screen_capturer_win_gdi.h"
 

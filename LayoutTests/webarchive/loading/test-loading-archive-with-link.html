@@ -1,0 +1,23 @@
+<html><!-- webkit-test-runner [ AlwaysAllowLocalWebarchive=true ] -->
+<script>
+    if (window.testRunner) {
+        testRunner.dumpResourceLoadCallbacks();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    if (window.internals)
+        internals.setAlwaysAllowLocalWebarchive(true);
+    function timedout() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+<body>
+    <a href="resources/quarantined_top.webarchive" target="_blank">Click me</a>
+    <script>
+    document.querySelector("a").click()
+    setTimeout(timedout, 100);
+    </script>
+    This tests that clicking a link to a webarchive is cancelled.
+</body>
+</html>

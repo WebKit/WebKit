@@ -215,4 +215,4 @@ aGlobal = false;
 shouldBeTrue("(function () {try { throw 1; } catch (e) { aGlobal = true; }})(); aGlobal;");
 
 // Make sure this doesn't crash!
-shouldBe('String(Object.getOwnPropertyDescriptor((function() { "use strict"; }).__proto__, "caller").get)', "'function get caller() {\\n    [native code]\\n}'");
+shouldBe('String(Object.getOwnPropertyDescriptor((function() { "use strict"; }).__proto__, "caller").get)', "'function caller() {\\n    [native code]\\n}'");

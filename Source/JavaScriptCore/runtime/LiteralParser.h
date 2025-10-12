@@ -117,13 +117,13 @@ template<typename CharacterType> struct LiteralParserToken {
     union {
         double numberToken; // Only used for TokNumber.
         const CharacterType* identifierStart;
-        const LChar* stringStart8;
-        const UChar* stringStart16;
+        const Latin1Character* stringStart8;
+        const char16_t* stringStart16;
     };
 
     std::span<const CharacterType> identifier() const { return { identifierStart, stringOrIdentifierLength }; }
-    std::span<const LChar> string8() const { return { stringStart8, stringOrIdentifierLength }; }
-    std::span<const UChar> string16() const { return { stringStart16, stringOrIdentifierLength }; }
+    std::span<const Latin1Character> string8() const { return { stringStart8, stringOrIdentifierLength }; }
+    std::span<const char16_t> string16() const { return { stringStart16, stringOrIdentifierLength }; }
 };
 
 template <typename CharType>

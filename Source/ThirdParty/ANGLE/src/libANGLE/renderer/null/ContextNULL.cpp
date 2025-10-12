@@ -464,9 +464,10 @@ BufferImpl *ContextNULL::createBuffer(const gl::BufferState &state)
     return new BufferNULL(state, mAllocationTracker);
 }
 
-VertexArrayImpl *ContextNULL::createVertexArray(const gl::VertexArrayState &data)
+VertexArrayImpl *ContextNULL::createVertexArray(const gl::VertexArrayState &data,
+                                                const gl::VertexArrayBuffers &vertexArrayBuffers)
 {
-    return new VertexArrayNULL(data);
+    return new VertexArrayNULL(data, vertexArrayBuffers);
 }
 
 QueryImpl *ContextNULL::createQuery(gl::QueryType type)

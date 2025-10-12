@@ -1,7 +1,4 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'report-to'.
 
-CONSOLE MESSAGE: Refused to load https://web-platform.test:9443/reporting/resources/fail.png because it does not appear in the img-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load https://web-platform.test:9443/reporting/resources/fail.png because it does not appear in the img-src directive of the Content Security Policy.
  This should be written into the document
 
 PASS Test that image does not load

@@ -4,36 +4,31 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-JSON-shell.js]
-flags:
-  - noStrict
+includes: [sm/non262-JSON-shell.js]
 description: |
   pending
 esid: pending
 ---*/
-testJSON('-', true);
-testJSON('+', true);
-testJSON('-f', true);
-testJSON('+f', true);
-testJSON('00', true);
-testJSON('01', true);
-testJSON('1.', true);
-testJSON('1.0e', true);
-testJSON('1.0e+', true);
-testJSON('1.0e-', true);
-testJSON('1.0e+z', true);
-testJSON('1.0e-z', true);
-testJSON('1.0ee', true);
-testJSON('1.e1', true);
-testJSON('1.e+1', true);
-testJSON('1.e-1', true);
-testJSON('.', true);
-testJSON('.1', true);
-testJSON('.1e', true);
-testJSON('.1e1', true);
-testJSON('.1e+1', true);
-testJSON('.1e-1', true);
 
-/******************************************************************************/
-
-print("Tests complete");
+testJSONSyntaxError('-');
+testJSONSyntaxError('+');
+testJSONSyntaxError('-f');
+testJSONSyntaxError('+f');
+testJSONSyntaxError('00');
+testJSONSyntaxError('01');
+testJSONSyntaxError('1.');
+testJSONSyntaxError('1.0e');
+testJSONSyntaxError('1.0e+');
+testJSONSyntaxError('1.0e-');
+testJSONSyntaxError('1.0e+z');
+testJSONSyntaxError('1.0e-z');
+testJSONSyntaxError('1.0ee');
+testJSONSyntaxError('1.e1');
+testJSONSyntaxError('1.e+1');
+testJSONSyntaxError('1.e-1');
+testJSONSyntaxError('.');
+testJSONSyntaxError('.1');
+testJSONSyntaxError('.1e');
+testJSONSyntaxError('.1e1');
+testJSONSyntaxError('.1e+1');
+testJSONSyntaxError('.1e-1');

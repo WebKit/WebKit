@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
-#include "PlatformSpeechSynthesisVoice.h"
+#include <WebCore/PlatformSpeechSynthesisVoice.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,12 +44,12 @@ public:
     bool localService() const { return m_platformVoice->localService(); }
     bool isDefault() const { return m_platformVoice->isDefault(); }
 
-    PlatformSpeechSynthesisVoice* platformVoice() { return m_platformVoice.ptr(); }
+    PlatformSpeechSynthesisVoice& platformVoice() { return m_platformVoice; }
 
 private:
     explicit SpeechSynthesisVoice(PlatformSpeechSynthesisVoice&);
 
-    Ref<PlatformSpeechSynthesisVoice> m_platformVoice;
+    const Ref<PlatformSpeechSynthesisVoice> m_platformVoice;
 };
 
 } // namespace WebCore

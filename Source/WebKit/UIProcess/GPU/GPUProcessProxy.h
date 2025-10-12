@@ -28,14 +28,16 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "AuxiliaryProcessProxy.h"
+#include "GPUProcessMediaCodecCapabilities.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
+#include "RemoteSnapshotIdentifier.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntDegrees.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ShareableBitmap.h>
-#include <WebCore/SnapshotIdentifier.h>
 #include <memory>
 #include <pal/SessionID.h>
 #include <wtf/TZoneMalloc.h>
@@ -121,10 +123,6 @@ public:
     void cancelGetDisplayMediaPrompt();
 #endif
 
-#if PLATFORM(COCOA)
-    void didDrawRemoteToPDF(WebCore::PageIdentifier, RefPtr<WebCore::SharedBuffer>&&, WebCore::SnapshotIdentifier);
-#endif
-
     void removeSession(PAL::SessionID);
 
 #if PLATFORM(MAC)
@@ -175,6 +173,14 @@ public:
     void unregisterMemoryAttributionID(const String&, CompletionHandler<void()>&&);
 #endif
 
+#if PLATFORM(COCOA)
+    void postWillTakeSnapshotNotification(CompletionHandler<void()>&&);
+
+    void sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier, const WebCore::FloatSize&, WebCore::FrameIdentifier root, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+#endif
+    void sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier, const WebCore::FloatSize&, WebCore::FrameIdentifier root, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
+    void releaseSnapshot(RemoteSnapshotIdentifier);
+
 private:
     explicit GPUProcessProxy();
 
@@ -202,7 +208,7 @@ private:
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didClose(IPC::Connection&) override;
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t indexOfObjectFailingDecoding) override;
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) override;
 
     // ResponsivenessTimer::Client
     void didBecomeUnresponsive() final;
@@ -214,12 +220,7 @@ private:
     void didCreateContextForVisibilityPropagation(WebPageProxyIdentifier, WebCore::PageIdentifier, LayerHostingContextID);
 #endif
 
-#if ENABLE(VP9)
-    void setHasVP9HardwareDecoder(bool hasVP9HardwareDecoder) { s_hasVP9HardwareDecoder = hasVP9HardwareDecoder; }
-#endif
-#if ENABLE(AV1)
-    void setHasAV1HardwareDecoder(bool hasAV1HardwareDecoder) { s_hasAV1HardwareDecoder = hasAV1HardwareDecoder; }
-#endif
+    void setMediaCodecCapabilities(GPUProcessMediaCodecCapabilities&& mediaCodecCapabilities) { s_gpuProcessMediaCodecCapabilities = WTFMove(mediaCodecCapabilities); }
 
 #if ENABLE(MEDIA_STREAM)
     void voiceActivityDetected();
@@ -258,12 +259,7 @@ private:
 #if HAVE(SCREEN_CAPTURE_KIT)
     bool m_hasEnabledScreenCaptureKit { false };
 #endif
-#if ENABLE(VP9)
-    static std::optional<bool> s_hasVP9HardwareDecoder;
-#endif
-#if ENABLE(AV1)
-    static std::optional<bool> s_hasAV1HardwareDecoder;
-#endif
+    static std::optional<GPUProcessMediaCodecCapabilities> s_gpuProcessMediaCodecCapabilities;
 #if PLATFORM(COCOA)
     static bool s_enableMetalDebugDeviceInNewGPUProcessesForTesting;
     static bool s_enableMetalShaderValidationInNewGPUProcessesForTesting;

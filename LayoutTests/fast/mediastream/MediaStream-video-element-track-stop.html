@@ -38,6 +38,7 @@
 
                 debug("");
                 finishJSTest();
+                mediaStream.getTracks().forEach(track => track.stop());
             }
 
             function recheckVideoElementAfterEnabledChange()

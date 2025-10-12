@@ -8,19 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "test/frame_generator.h"
-
 #include <stdio.h>
-#include <string.h>
 
 #include <cstdint>
+#include <cstdio>
+#include <cstring>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "api/scoped_refptr.h"
 #include "api/test/create_frame_generator.h"
 #include "api/test/frame_generator_interface.h"
 #include "api/video/video_frame_buffer.h"
+#include "rtc_base/checks.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
@@ -97,8 +98,7 @@ class FrameGeneratorTest : public ::testing::Test {
                            uint8_t u,
                            uint8_t v) {
     // Check that frame is valid, has the correct color and timestamp are clean.
-    rtc::scoped_refptr<I420BufferInterface> i420_buffer =
-        frame.buffer->ToI420();
+    scoped_refptr<I420BufferInterface> i420_buffer = frame.buffer->ToI420();
     const uint8_t* buffer;
     buffer = i420_buffer->DataY();
     for (int i = 0; i < y_size; ++i)
@@ -114,8 +114,7 @@ class FrameGeneratorTest : public ::testing::Test {
   uint64_t Hash(const FrameGeneratorInterface::VideoFrameData& frame) {
     // Generate a 64-bit hash from the frame's buffer.
     uint64_t hash = 19;
-    rtc::scoped_refptr<I420BufferInterface> i420_buffer =
-        frame.buffer->ToI420();
+    scoped_refptr<I420BufferInterface> i420_buffer = frame.buffer->ToI420();
     const uint8_t* buffer = i420_buffer->DataY();
     for (int i = 0; i < y_size; ++i) {
       hash = (37 * hash) + buffer[i];

@@ -33,7 +33,7 @@ BYPASS_PROXY_CONSTMETHOD0(AudioSourceInterface*, GetSource)
 PROXY_METHOD1(void, AddSink, AudioTrackSinkInterface*)
 PROXY_METHOD1(void, RemoveSink, AudioTrackSinkInterface*)
 PROXY_METHOD1(bool, GetSignalLevel, int*)
-PROXY_METHOD0(rtc::scoped_refptr<AudioProcessorInterface>, GetAudioProcessor)
+PROXY_METHOD0(scoped_refptr<AudioProcessorInterface>, GetAudioProcessor)
 PROXY_METHOD1(bool, set_enabled, bool)
 PROXY_METHOD1(void, RegisterObserver, ObserverInterface*)
 PROXY_METHOD1(void, UnregisterObserver, ObserverInterface*)
@@ -50,9 +50,9 @@ PROXY_CONSTMETHOD0(ContentHint, content_hint)
 PROXY_METHOD1(void, set_content_hint, ContentHint)
 PROXY_SECONDARY_METHOD2(void,
                         AddOrUpdateSink,
-                        rtc::VideoSinkInterface<VideoFrame>*,
-                        const rtc::VideoSinkWants&)
-PROXY_SECONDARY_METHOD1(void, RemoveSink, rtc::VideoSinkInterface<VideoFrame>*)
+                        VideoSinkInterface<VideoFrame>*,
+                        const VideoSinkWants&)
+PROXY_SECONDARY_METHOD1(void, RemoveSink, VideoSinkInterface<VideoFrame>*)
 PROXY_SECONDARY_METHOD0(void, RequestRefreshFrame)
 BYPASS_PROXY_CONSTMETHOD0(VideoTrackSourceInterface*, GetSource)
 

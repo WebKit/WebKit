@@ -328,7 +328,7 @@ PollingDescriptor preparePolling(PlatformSocketType socket)
 
 bool poll(Vector<PollingDescriptor>& pollDescriptors, int timeout)
 {
-    int ret = ::WSAPoll(pollDescriptors.data(), pollDescriptors.size(), timeout);
+    int ret = ::WSAPoll(pollDescriptors.mutableSpan().data(), pollDescriptors.size(), timeout);
     return ret > 0;
 }
 

@@ -69,8 +69,7 @@ RefPtr<Gradient> RenderSVGResourceRadialGradient::createGradient(const RenderSty
         { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied },
         platformSpreadMethodFromSVGType(m_attributes->spreadMethod()),
         stopsByApplyingColorFilter(m_attributes->stops(), style),
-        RenderingResourceIdentifier::generate()
-    );
+        false);
 }
 
 }

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "MacroAssemblerCodeRef.h"
+#include <JavaScriptCore/MacroAssemblerCodeRef.h>
 
 namespace JSC {
 

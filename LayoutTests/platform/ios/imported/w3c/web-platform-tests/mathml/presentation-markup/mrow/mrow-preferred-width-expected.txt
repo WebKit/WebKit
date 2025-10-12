@@ -1,6 +1,15 @@
 
 PASS Preferred width of mrow with mspace children
-PASS Preferred width of mrow with mn and mo children
+FAIL Preferred width of mrow with mn and mo children assert_approx_equals: mfenced expected 105.109375 +/- 1 but got 125.359375
+blah
+|
+2
+blah
+|
+2
+blah
+|
+2
 blah
 |
 2

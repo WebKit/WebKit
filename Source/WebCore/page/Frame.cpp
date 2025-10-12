@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "HTMLIFrameElement.h"
 #include "LocalDOMWindow.h"
 #include "NavigationScheduler.h"
+#include "NodeDocument.h"
 #include "OwnerPermissionsPolicyData.h"
 #include "Page.h"
 #include "RemoteFrame.h"
@@ -102,7 +103,7 @@ public:
         return it->value.first && it->value.first->isRootFrame();
     }
 private:
-    UncheckedKeyHashMap<FrameIdentifier, std::pair<WeakPtr<LocalFrame>, WeakPtr<RemoteFrame>>> m_map;
+    HashMap<FrameIdentifier, std::pair<WeakPtr<LocalFrame>, WeakPtr<RemoteFrame>>> m_map;
 };
 #endif
 
@@ -136,8 +137,8 @@ Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrame
 
 Frame::~Frame()
 {
-    m_windowProxy->detachFromFrame();
-    m_navigationScheduler->cancel();
+    protectedWindowProxy()->detachFromFrame();
+    protectedNavigationScheduler()->cancel();
 
 #if ASSERT_ENABLED
     FrameLifetimeVerifier::singleton().frameDestroyed(*this);
@@ -152,9 +153,9 @@ void Frame::resetWindowProxy()
 void Frame::detachFromPage()
 {
     if (isRootFrame()) {
-        if (m_page) {
-            m_page->removeRootFrame(downcast<LocalFrame>(*this));
-            if (RefPtr scrollingCoordinator = m_page->scrollingCoordinator())
+        if (RefPtr page = m_page.get()) {
+            page->removeRootFrame(downcast<LocalFrame>(*this));
+            if (RefPtr scrollingCoordinator = page->scrollingCoordinator())
                 scrollingCoordinator->rootFrameWasRemoved(frameID());
         }
     }
@@ -163,8 +164,8 @@ void Frame::detachFromPage()
 
 void Frame::disconnectOwnerElement()
 {
-    if (m_ownerElement) {
-        m_ownerElement->clearContentFrame();
+    if (RefPtr ownerElement = m_ownerElement.get()) {
+        ownerElement->clearContentFrame();
         m_ownerElement = nullptr;
     }
 
@@ -173,27 +174,34 @@ void Frame::disconnectOwnerElement()
 
 void Frame::takeWindowProxyAndOpenerFrom(Frame& frame)
 {
+    ASSERT(is<LocalDOMWindow>(window()) != is<LocalDOMWindow>(frame.window()) || page() != frame.page());
     ASSERT(m_windowProxy->frame() == this);
-    m_windowProxy->detachFromFrame();
+    protectedWindowProxy()->detachFromFrame();
     m_windowProxy = frame.windowProxy();
     frame.resetWindowProxy();
-    m_windowProxy->replaceFrame(*this);
+    protectedWindowProxy()->replaceFrame(*this);
 
     ASSERT(!m_opener);
     m_opener = frame.m_opener;
     if (m_opener)
         m_opener->m_openedFrames.add(*this);
 
-    for (auto& opened : frame.m_openedFrames) {
-        ASSERT(opened.m_opener.get() == &frame);
-        opened.m_opener = *this;
+    for (Ref opened : frame.m_openedFrames) {
+        ASSERT(opened->m_opener.get() == &frame);
+        opened->m_opener = *this;
         m_openedFrames.add(opened);
     }
+    frame.m_openedFrames.clear();
 }
 
 Ref<WindowProxy> Frame::protectedWindowProxy() const
 {
     return m_windowProxy;
+}
+
+RefPtr<DOMWindow> Frame::protectedWindow() const
+{
+    return window();
 }
 
 Ref<NavigationScheduler> Frame::protectedNavigationScheduler() const
@@ -259,8 +267,8 @@ void Frame::setOpenerForWebKitLegacy(Frame* frame)
 
 void Frame::detachFromAllOpenedFrames()
 {
-    for (auto& frame : std::exchange(m_openedFrames, { }))
-        frame.m_opener = nullptr;
+    for (Ref frame : std::exchange(m_openedFrames, { }))
+        frame->m_opener = nullptr;
 }
 
 bool Frame::hasOpenedFrames() const
@@ -292,8 +300,8 @@ std::optional<OwnerPermissionsPolicyData> Frame::ownerPermissionsPolicy() const
     if (!owner)
         return std::nullopt;
 
-    auto documentOrigin = owner->document().securityOrigin().data();
-    auto documentPolicy = owner->document().permissionsPolicy();
+    auto documentOrigin = owner->protectedDocument()->securityOrigin().data();
+    auto documentPolicy = owner->protectedDocument()->permissionsPolicy();
 
     RefPtr iframe = dynamicDowncast<HTMLIFrameElement>(owner);
     auto containerPolicy = iframe ? PermissionsPolicy::processPermissionsPolicyAttribute(*iframe) : PermissionsPolicy::PolicyDirective { };
@@ -309,7 +317,7 @@ void Frame::updateSandboxFlags(SandboxFlags flags, NotifyUIProcess notifyUIProce
 void Frame::stopForBackForwardCache()
 {
     if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*this))
-        localFrame->protectedLoader()->stopForBackForwardCache();
+        localFrame->loader().stopForBackForwardCache();
     else {
         for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling())
             child->stopForBackForwardCache();
@@ -326,6 +334,18 @@ bool Frame::frameCanCreatePaymentSession() const
     // Prefer the LocalFrame code path when site isolation is disabled.
     ASSERT(m_settings->siteIsolationEnabled());
     return m_frameTreeSyncData->frameCanCreatePaymentSession;
+}
+
+bool Frame::isPrinting() const
+{
+    return m_isPrinting;
+}
+
+void Frame::setPrinting(bool printing, FloatSize pageSize, FloatSize originalPageSize, float maximumShrinkRatio, AdjustViewSize shouldAdjustViewSize, NotifyUIProcess notifyUIProcess)
+{
+    m_isPrinting = printing;
+    if (notifyUIProcess == NotifyUIProcess::Yes && m_settings->siteIsolationEnabled())
+        loaderClient().setPrinting(printing, pageSize, originalPageSize, maximumShrinkRatio, shouldAdjustViewSize);
 }
 
 } // namespace WebCore

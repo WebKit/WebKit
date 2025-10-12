@@ -30,6 +30,10 @@
 #include "WPEWaylandCursor.h"
 #include "WPEWaylandSeat.h"
 
+#if USE(XDG_DECORATION_UNSTABLE_V1)
+#include "xdg-decoration-unstable-v1-client-protocol.h"
+#endif
+
 struct xdg_wm_base* wpeDisplayWaylandGetXDGWMBase(WPEDisplayWayland*);
 WPE::WaylandSeat* wpeDisplayWaylandGetSeat(WPEDisplayWayland*);
 WPE::WaylandCursor* wpeDisplayWaylandGetCursor(WPEDisplayWayland*);
@@ -41,3 +45,5 @@ struct zwp_text_input_v1* wpeDisplayWaylandGetTextInputV1(WPEDisplayWayland*);
 struct zwp_text_input_v3* wpeDisplayWaylandGetTextInputV3(WPEDisplayWayland*);
 struct zwp_pointer_constraints_v1* wpeDisplayWaylandGetPointerConstraints(WPEDisplayWayland*);
 struct zwp_relative_pointer_manager_v1* wpeDisplayWaylandGetRelativePointerManager(WPEDisplayWayland*);
+struct wp_presentation* wpeDisplayWaylandGetPresentation(WPEDisplayWayland*);
+struct zxdg_decoration_manager_v1* wpeDisplayWaylandGetXDGDecorationManager(WPEDisplayWayland*);

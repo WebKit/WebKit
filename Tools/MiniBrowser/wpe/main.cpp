@@ -237,6 +237,13 @@ static gboolean wpeViewEventCallback(WPEView* view, WPEEvent* event, WebKitWebVi
         }
     }
 
+    if (keyval == WPE_KEY_Escape) {
+        if (webkit_web_view_is_immersive_mode_enabled(webView)) {
+            webkit_web_view_leave_immersive_mode(webView);
+            return TRUE;
+        }
+    }
+
     return FALSE;
 }
 
@@ -259,6 +266,13 @@ static void webViewTitleChanged(WebKitWebView* webView, GParamSpec*, WPEView* vi
 static gboolean decidePermissionRequest(WebKitWebView *, WebKitPermissionRequest *request, gpointer)
 {
     g_print("Accepting %s request\n", G_OBJECT_TYPE_NAME(request));
+
+    if (WEBKIT_IS_XR_PERMISSION_REQUEST(request)) {
+        WebKitXRPermissionRequest* xrRequest = WEBKIT_XR_PERMISSION_REQUEST(request);
+        /* Grant all optional features */
+        webkit_xr_permission_request_set_granted_optional_features(xrRequest, webkit_xr_permission_request_get_consent_optional_features(xrRequest));
+    }
+
     webkit_permission_request_allow(request);
 
     return TRUE;

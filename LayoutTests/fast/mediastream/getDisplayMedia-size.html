@@ -11,14 +11,16 @@
         <video id="video1" autoplay></video>
         <video id="video2" autoplay></video>
         <script>
-promise_test(async () => {
+promise_test(async t => {
     const stream1 = await callGetDisplayMedia({ video: { width: 640, height:480 } });
+    t.add_cleanup(() => stream1.getTracks().forEach(track => track.stop()));
     video1.srcObject = stream1;
     await video1.play();
 
     assert_equals(video1.videoWidth, 640);
 
     const stream2 = stream1.clone();
+    t.add_cleanup(() => stream2.getTracks().forEach(track => track.stop()));
     await stream2.getVideoTracks()[0].applyConstraints({ width: 320, height: 240 });
     video2.srcObject = stream2;
     await video2.play();
@@ -34,8 +36,9 @@ promise_test(async () => {
     }, "original source should stay at a small size");
 }, "Ensure getDisplayMedia size can be reduced with applyConstraints");
 
-promise_test(async () => {
+promise_test(async t => {
     const stream1 = await callGetDisplayMedia({ video: { width: 640, height:480 } });
+    t.add_cleanup(() => stream1.getTracks().forEach(track => track.stop()));
     video1.srcObject = stream1;
     await video1.play();
 

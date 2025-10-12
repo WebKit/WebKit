@@ -26,8 +26,8 @@
 
 #if ENABLE(POINTER_LOCK)
 
-#include "ExceptionCode.h"
-#include "PointerLockOptions.h"
+#include <WebCore/ExceptionCode.h>
+#include <WebCore/PointerLockOptions.h>
 
 #include <optional>
 #include <wtf/Ref.h>
@@ -48,6 +48,12 @@ class PlatformWheelEvent;
 class VoidCallback;
 class WeakPtrImplWithEventTargetData;
 
+enum class PointerLockRequestResult : uint8_t {
+    Success,
+    Failure,
+    Unsupported
+};
+
 class PointerLockController {
     WTF_MAKE_NONCOPYABLE(PointerLockController);
     WTF_MAKE_TZONE_ALLOCATED(PointerLockController);
@@ -55,6 +61,9 @@ public:
     explicit PointerLockController(Page&);
     ~PointerLockController();
     void requestPointerLock(Element* target, std::optional<PointerLockOptions>&& = std::nullopt, RefPtr<DeferredPromise> = nullptr);
+
+    void ref() const;
+    void deref() const;
 
     void requestPointerUnlock();
     void requestPointerUnlockAndForceCursorVisible();
@@ -70,8 +79,6 @@ public:
     void dispatchLockedMouseEvent(const PlatformMouseEvent&, const AtomString& eventType);
     void dispatchLockedWheelEvent(const PlatformWheelEvent&);
 
-    static bool supportsUnadjustedMovement();
-
 private:
     void clearElement();
     void enqueueEvent(const AtomString& type, Element*);
@@ -79,6 +86,8 @@ private:
     void resolvePromises();
     void rejectPromises(ExceptionCode, const String&);
     void elementWasRemovedInternal();
+
+    bool supportsUnadjustedMovement() const;
 
     Page& m_page;
     bool m_lockPending { false };

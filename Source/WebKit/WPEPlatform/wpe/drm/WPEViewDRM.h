@@ -39,8 +39,6 @@ G_BEGIN_DECLS
 #define WPE_TYPE_VIEW_DRM (wpe_view_drm_get_type())
 WPE_API G_DECLARE_FINAL_TYPE (WPEViewDRM, wpe_view_drm, WPE, VIEW_DRM, WPEView)
 
-WPE_API WPEView *wpe_view_drm_new (WPEDisplayDRM *display);
-
 G_END_DECLS
 
 #endif /* WPEViewDRM_h */

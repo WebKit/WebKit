@@ -4,14 +4,11 @@
  */
 
 /*---
-flags:
-  - onlyStrict
-includes: [sm/non262.js, sm/non262-shell.js, deepEqual.js]
+includes: [deepEqual.js]
 description: |
   pending
 esid: pending
 ---*/
-"use strict";
 
 const x = Object.freeze([1, 2, 3]);
 
@@ -44,4 +41,3 @@ assert.deepEqual(x.concat(array), [1, 2, 3, [5, 4]]);
 // Explicitly spreadable
 array[Symbol.isConcatSpreadable] = true;
 assert.deepEqual(x.concat(array), [1, 2, 3, 5, 4]);
-

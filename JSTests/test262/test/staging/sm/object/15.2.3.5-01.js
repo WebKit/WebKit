@@ -4,22 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-object-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Object.create(O [, Properties])
+info: bugzilla.mozilla.org/show_bug.cgi?id=492840
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 492840;
-var summary = 'ES5 Object.create(O [, Properties])';
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 assert.sameValue("create" in Object, true);
 assert.sameValue(Object.create.length, 2);
@@ -52,15 +41,8 @@ assert.sameValue(Object.getOwnPropertyDescriptor(o, "baz"), undefined);
 assert.sameValue(o.baz, 12);
 assert.sameValue(o.hasOwnProperty("baz"), false);
 
-try {
-  var actual =
-    Object.create(Object.create({},
-                                { boom: { get: function() { return "base"; }}}),
-                  { boom: { get: function() { return "overridden"; }}}).boom
-} catch (e) {
-}
+var actual =
+  Object.create(Object.create({},
+                              { boom: { get: function() { return "base"; }}}),
+                { boom: { get: function() { return "overridden"; }}}).boom
 assert.sameValue(actual, "overridden");
-
-/******************************************************************************/
-
-print("All tests passed!");

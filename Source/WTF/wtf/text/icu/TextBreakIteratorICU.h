@@ -30,7 +30,7 @@
 namespace WTF {
 
 class TextBreakIteratorICU {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TextBreakIteratorICU);
 public:
     struct LineMode {
         enum class Behavior: uint8_t {
@@ -45,7 +45,7 @@ public:
     };
     using Mode = Variant<LineMode, CharacterMode>;
 
-    TextBreakIteratorICU(StringView string, std::span<const UChar> priorContext, Mode mode, const AtomString& locale)
+    TextBreakIteratorICU(StringView string, std::span<const char16_t> priorContext, Mode mode, const AtomString& locale)
     {
         auto type = switchOn(mode, [](LineMode) {
             return UBRK_LINE;
@@ -96,7 +96,7 @@ public:
             ubrk_close(m_iterator); // FIXME: Use an RAII wrapper for this
     }
 
-    void setText(StringView string, std::span<const UChar> priorContext)
+    void setText(StringView string, std::span<const char16_t> priorContext)
     {
         ASSERT(m_iterator);
 

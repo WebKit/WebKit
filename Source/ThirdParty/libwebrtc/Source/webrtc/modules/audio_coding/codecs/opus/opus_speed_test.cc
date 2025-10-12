@@ -8,8 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <ctime>
+#include <string>
+#include <tuple>
+
 #include "modules/audio_coding/codecs/opus/opus_interface.h"
 #include "modules/audio_coding/codecs/tools/audio_codec_speed_test.h"
+#include "test/gtest.h"
 
 using ::std::string;
 
@@ -38,8 +46,8 @@ OpusSpeedTest::OpusSpeedTest()
     : AudioCodecSpeedTest(kOpusBlockDurationMs,
                           kOpusSamplingKhz,
                           kOpusSamplingKhz),
-      opus_encoder_(NULL),
-      opus_decoder_(NULL) {}
+      opus_encoder_(nullptr),
+      opus_decoder_(nullptr) {}
 
 void OpusSpeedTest::SetUp() {
   AudioCodecSpeedTest::SetUp();

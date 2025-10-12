@@ -27,7 +27,7 @@
 #include "config.h"
 #include "SMILTimeContainer.h"
 
-#include "Document.h"
+#include "DocumentPage.h"
 #include "ElementIterator.h"
 #include "Page.h"
 #include "SVGElementTypeHelpers.h"

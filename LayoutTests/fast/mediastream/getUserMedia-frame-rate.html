@@ -9,11 +9,13 @@
         <video id=video1 autoplay playsInline width=100px></video>
         <video id=video2 autoplay playsInline width=100px></video>
         <script>
-promise_test(async () => {
+promise_test(async test => {
     const stream = await navigator.mediaDevices.getUserMedia({ video: { width:1280, height:720, frameRate : 30 } });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     assert_equals(stream.getVideoTracks()[0].getSettings().frameRate, 30);
 
     const stream2 = await navigator.mediaDevices.getUserMedia({ video: { width:640, height:480, frameRate : 1 } });
+    test.add_cleanup(() => stream2.getTracks().forEach(track => track.stop()));
     assert_equals(stream2.getVideoTracks()[0].getSettings().frameRate, 1);
 
     video1.srcObject = stream;
@@ -40,7 +42,7 @@ promise_test(async () => {
     }
 
     assert_true(internals.trackVideoSampleCount - currentCount > 2);
-}, "Ensure getDisplayMedia generate frames with valid frame rate and size in case of clones");
+}, "Ensure getUserMedia generate frames with valid frame rate and size in case of clones");
         </script>
     </body>
 </html>

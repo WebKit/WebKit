@@ -59,7 +59,8 @@ bool WebCoreObjCScheduleDeallocateOnMainThread(Class deallocMethodClass, id obje
     if (isMainThread())
         return false;
 
-    callOnMainThread([deallocMethodClass, object] {
+    // Class is immortal, no need to retain it.
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE callOnMainThread([deallocMethodClass, object] {
         auto deallocSelector = sel_registerName("dealloc");
         wtfCallIMP<void>(method_getImplementation(class_getInstanceMethod(deallocMethodClass, deallocSelector)), object, deallocSelector);
     });
@@ -74,7 +75,8 @@ bool WebCoreObjCScheduleDeallocateOnMainRunLoop(Class deallocMethodClass, id obj
     if (isMainRunLoop())
         return false;
 
-    callOnMainRunLoop([deallocMethodClass, object] {
+    // Class is immortal, no need to retain it.
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE callOnMainRunLoop([deallocMethodClass, object] {
         auto deallocSelector = sel_registerName("dealloc");
         wtfCallIMP<void>(method_getImplementation(class_getInstanceMethod(deallocMethodClass, deallocSelector)), object, deallocSelector);
     });

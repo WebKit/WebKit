@@ -21,14 +21,15 @@ is evaluated per-fragment or per-sample. With @interpolate(, sample) or usage of
 import { ErrorWithExtra, assert, range, unreachable } from '../../../../common/util/util.js';
 
 import { getBlockInfoForTextureFormat } from '../../../format_info.js';
-import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
 import { getProvokingVertexForFlatInterpolationEitherSampling } from '../../../inter_stage.js';
 import { getMultisampleFragmentOffsets } from '../../../multisample_info.js';
+import * as ttu from '../../../texture_test_utils.js';
 import { dotProduct, subtractVectors, align } from '../../../util/math.js';
 import { TexelView } from '../../../util/texture/texel_view.js';
 import { findFailedPixels } from '../../../util/texture/texture_ok.js';
 
-class FragmentBuiltinTest extends TextureTestMixin(AllFeaturesMaxLimitsGPUTest) {}
+class FragmentBuiltinTest extends AllFeaturesMaxLimitsGPUTest {}
 
 export const g = makeTestGroup(FragmentBuiltinTest);
 
@@ -1534,7 +1535,7 @@ fn vsMain(@builtin(vertex_index) index : u32) -> @builtin(position) vec4f {
     pass.end();
     t.queue.submit([encoder.finish()]);
 
-    const buffer = t.copyWholeTextureToNewBufferSimple(framebuffer, 0);
+    const buffer = ttu.copyWholeTextureToNewBufferSimple(t, framebuffer, 0);
     const readback = await t.readGPUBufferRangeTyped(buffer, {
       srcByteOffset: 0,
       type: Uint32Array,

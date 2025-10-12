@@ -10,8 +10,13 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/receiver_report.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <utility>
+#include <vector>
 
+#include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
+#include "rtc_base/buffer.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
@@ -24,21 +29,21 @@ using webrtc::rtcp::ReportBlock;
 
 namespace webrtc {
 namespace {
-const uint32_t kSenderSsrc = 0x12345678;
-const uint32_t kRemoteSsrc = 0x23456789;
-const uint8_t kFractionLost = 55;
-const int32_t kCumulativeLost = 0x111213;
-const uint32_t kExtHighestSeqNum = 0x22232425;
-const uint32_t kJitter = 0x33343536;
-const uint32_t kLastSr = 0x44454647;
-const uint32_t kDelayLastSr = 0x55565758;
+constexpr uint32_t kSenderSsrc = 0x12345678;
+constexpr uint32_t kRemoteSsrc = 0x23456789;
+constexpr uint8_t kFractionLost = 55;
+constexpr int32_t kCumulativeLost = 0x111213;
+constexpr uint32_t kExtHighestSeqNum = 0x22232425;
+constexpr uint32_t kJitter = 0x33343536;
+constexpr uint32_t kLastSr = 0x44454647;
+constexpr uint32_t kDelayLastSr = 0x55565758;
 // Manually created ReceiverReport with one ReportBlock matching constants
 // above.
 // Having this block allows to test Create and Parse separately.
-const uint8_t kPacket[] = {0x81, 201,  0x00, 0x07, 0x12, 0x34, 0x56, 0x78,
-                           0x23, 0x45, 0x67, 0x89, 55,   0x11, 0x12, 0x13,
-                           0x22, 0x23, 0x24, 0x25, 0x33, 0x34, 0x35, 0x36,
-                           0x44, 0x45, 0x46, 0x47, 0x55, 0x56, 0x57, 0x58};
+constexpr uint8_t kPacket[] = {0x81, 201,  0x00, 0x07, 0x12, 0x34, 0x56, 0x78,
+                               0x23, 0x45, 0x67, 0x89, 55,   0x11, 0x12, 0x13,
+                               0x22, 0x23, 0x24, 0x25, 0x33, 0x34, 0x35, 0x36,
+                               0x44, 0x45, 0x46, 0x47, 0x55, 0x56, 0x57, 0x58};
 }  // namespace
 
 TEST(RtcpPacketReceiverReportTest, ParseWithOneReportBlock) {
@@ -59,7 +64,7 @@ TEST(RtcpPacketReceiverReportTest, ParseWithOneReportBlock) {
 }
 
 TEST(RtcpPacketReceiverReportTest, ParseFailsOnIncorrectSize) {
-  rtc::Buffer damaged_packet(kPacket);
+  Buffer damaged_packet(kPacket);
   damaged_packet[0]++;  // Damage the packet: increase count field.
   ReceiverReport rr;
   EXPECT_FALSE(test::ParseSinglePacket(damaged_packet, &rr));
@@ -78,7 +83,7 @@ TEST(RtcpPacketReceiverReportTest, CreateWithOneReportBlock) {
   rb.SetDelayLastSr(kDelayLastSr);
   rr.AddReportBlock(rb);
 
-  rtc::Buffer raw = rr.Build();
+  Buffer raw = rr.Build();
 
   EXPECT_THAT(make_tuple(raw.data(), raw.size()), ElementsAreArray(kPacket));
 }
@@ -87,7 +92,7 @@ TEST(RtcpPacketReceiverReportTest, CreateAndParseWithoutReportBlocks) {
   ReceiverReport rr;
   rr.SetSenderSsrc(kSenderSsrc);
 
-  rtc::Buffer raw = rr.Build();
+  Buffer raw = rr.Build();
   ReceiverReport parsed;
   EXPECT_TRUE(test::ParseSinglePacket(raw, &parsed));
 
@@ -106,7 +111,7 @@ TEST(RtcpPacketReceiverReportTest, CreateAndParseWithTwoReportBlocks) {
   EXPECT_TRUE(rr.AddReportBlock(rb1));
   EXPECT_TRUE(rr.AddReportBlock(rb2));
 
-  rtc::Buffer raw = rr.Build();
+  Buffer raw = rr.Build();
   ReceiverReport parsed;
   EXPECT_TRUE(test::ParseSinglePacket(raw, &parsed));
 

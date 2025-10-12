@@ -9,11 +9,14 @@
  */
 #include "test/logging/memory_log_writer.h"
 
+#include <map>
 #include <memory>
+#include <string>
+#include <utility>
 
 #include "absl/strings/string_view.h"
-#include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
+#include "api/rtc_event_log_output.h"
+#include "test/logging/log_writer.h"
 
 namespace webrtc {
 namespace {

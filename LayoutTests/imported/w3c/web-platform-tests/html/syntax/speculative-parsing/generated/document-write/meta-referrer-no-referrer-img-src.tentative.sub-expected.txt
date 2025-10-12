@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_not_equals: non-speculative case did not fetch got disallowed value ""
 
     <!-- speculative case in document.write -->
     <meta name=referrer content=no-referrer><img src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=88bfc67a-e522-4cdd-88f2-7a17b4e1c7b4&amp;encodingcheck=&Gbreve;">

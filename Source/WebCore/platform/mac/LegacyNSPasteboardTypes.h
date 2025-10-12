@@ -25,68 +25,69 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(MAC)
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 namespace WebCore {
 
-inline NSString *legacyStringPasteboardType()
+inline NSString *legacyStringPasteboardTypeSingleton()
 {
     return NSStringPboardType;
 }
 
-inline NSString *legacyFilenamesPasteboardType()
+inline NSString *legacyFilenamesPasteboardTypeSingleton()
 {
     return NSFilenamesPboardType;
 }
 
-inline NSString *legacyTIFFPasteboardType()
+inline NSString *legacyTIFFPasteboardTypeSingleton()
 {
     return NSTIFFPboardType;
 }
 
-inline NSString *legacyRTFPasteboardType()
+inline NSString *legacyRTFPasteboardTypeSingleton()
 {
     return NSRTFPboardType;
 }
 
-inline NSString *legacyFontPasteboardType()
+inline NSString *legacyFontPasteboardTypeSingleton()
 {
     return NSFontPboardType;
 }
 
-inline NSString *legacyColorPasteboardType()
+inline NSString *legacyColorPasteboardTypeSingleton()
 {
     return NSColorPboardType;
 }
 
-inline NSString *legacyRTFDPasteboardType()
+inline NSString *legacyRTFDPasteboardTypeSingleton()
 {
     return NSRTFDPboardType;
 }
 
-inline NSString *legacyHTMLPasteboardType()
+inline NSString *legacyHTMLPasteboardTypeSingleton()
 {
     return NSHTMLPboardType;
 }
 
-inline NSString *legacyURLPasteboardType()
+inline NSString *legacyURLPasteboardTypeSingleton()
 {
     return NSURLPboardType;
 }
 
-inline NSString *legacyPDFPasteboardType()
+inline NSString *legacyPDFPasteboardTypeSingleton()
 {
     return NSPDFPboardType;
 }
 
-inline NSString *legacyFilesPromisePasteboardType()
+inline NSString *legacyFilesPromisePasteboardTypeSingleton()
 {
     return NSFilesPromisePboardType;
 }
 
-inline NSString *legacyPNGPasteboardType()
+inline NSString *legacyPNGPasteboardTypeSingleton()
 {
     return @"Apple PNG pasteboard type";
 }

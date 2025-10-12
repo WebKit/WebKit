@@ -12,4 +12,4 @@ shouldThrow(() => {
     // raise function touches the lexical variable in the module "2", so TDZ
     // error should be raised.
     raise();
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'value' before initialization.`);

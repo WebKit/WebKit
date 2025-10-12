@@ -29,8 +29,11 @@
 #include "Test.h"
 #include <wtf/text/MakeString.h>
 #include <wtf/threads/BinarySemaphore.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace TestWebKitAPI {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MockConnectionClient);
 
 void PrintTo(ConnectionTestDirection value, ::std::ostream* o)
 {
@@ -100,5 +103,21 @@ void ConnectionTestBase::ensureConnectionWorkQueueEmpty(IPC::Connection& connect
         semaphore.wait();
     }
 }
+
+void PrintTo(InvalidMessageTestType value, ::std::ostream* o)
+{
+    switch (value) {
+    case InvalidMessageTestType::DecodeError:
+        *o << "DecodeError";
+        return;
+    case InvalidMessageTestType::ValidationError:
+        *o << "ValidationError";
+        return;
+    default:
+        break;
+    }
+    *o << "Unknown";
+}
+
 
 }

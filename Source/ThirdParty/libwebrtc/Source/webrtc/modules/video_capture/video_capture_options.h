@@ -22,7 +22,7 @@ namespace webrtc {
 #if defined(WEBRTC_USE_PIPEWIRE)
 namespace videocapturemodule {
 class PipeWireSession;
-}
+}  // namespace videocapturemodule
 #endif
 
 // An object that stores initialization parameters for video capturers
@@ -64,7 +64,7 @@ class RTC_EXPORT VideoCaptureOptions {
   bool allow_pipewire() const { return allow_pipewire_; }
   void set_allow_pipewire(bool allow) { allow_pipewire_ = allow; }
   void set_pipewire_fd(int fd) { pipewire_fd_ = fd; }
-  rtc::scoped_refptr<videocapturemodule::PipeWireSession> pipewire_session();
+  scoped_refptr<videocapturemodule::PipeWireSession> pipewire_session();
 #endif
 
  private:
@@ -74,7 +74,7 @@ class RTC_EXPORT VideoCaptureOptions {
 #if defined(WEBRTC_USE_PIPEWIRE)
   bool allow_pipewire_ = false;
   int pipewire_fd_ = kInvalidPipeWireFd;
-  rtc::scoped_refptr<videocapturemodule::PipeWireSession> pipewire_session_;
+  scoped_refptr<videocapturemodule::PipeWireSession> pipewire_session_;
 #endif
 };
 

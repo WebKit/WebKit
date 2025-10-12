@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ActivityState.h"
+#include <WebCore/ActivityState.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

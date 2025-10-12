@@ -228,8 +228,8 @@ class Texture final : public Resource,
     TextureRef createCubeFaceView(uint32_t face);
     // Create a view of one slice at a level.
     TextureRef createSliceMipView(uint32_t slice, const MipmapNativeLevel &level);
-    // Same as createSliceMipView but the target format must be compatible, for example sRGB to linear. In this
-    // case texture doesn't need format view usage flag.
+    // Same as createSliceMipView but the target format must be compatible, for example sRGB to
+    // linear. In this case texture doesn't need format view usage flag.
     TextureRef createSliceMipViewWithCompatibleFormat(uint32_t slice,
                                                       const MipmapNativeLevel &level,
                                                       MTLPixelFormat format);

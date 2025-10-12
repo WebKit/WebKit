@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/backdrop-filter-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/backdrop-filter-parsing-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/backdrop-filter-parsing-valid.html

@@ -19,14 +19,13 @@
 
 #pragma once
 
-#include "RenderObjectInlines.h"
 #include "RenderStyleInlines.h"
 #include "RenderTableSection.h"
 
 namespace WebCore {
 
-inline const BorderValue& RenderTableSection::borderAdjoiningTableEnd() const { return style().borderEnd(table()->writingMode()); }
-inline const BorderValue& RenderTableSection::borderAdjoiningTableStart() const { return style().borderStart(table()->writingMode()); }
+inline const BorderValue& RenderTableSection::borderAdjoiningTableEnd() const { return checkedStyle()->borderEnd(table()->writingMode()); }
+inline const BorderValue& RenderTableSection::borderAdjoiningTableStart() const { return checkedStyle()->borderStart(table()->writingMode()); }
 
 inline LayoutUnit RenderTableSection::outerBorderBottom(const WritingMode writingMode) const
 {
@@ -54,11 +53,6 @@ inline LayoutUnit RenderTableSection::outerBorderTop(const WritingMode writingMo
     if (writingMode.isHorizontal())
         return writingMode.isBlockTopToBottom() ? outerBorderBefore() : outerBorderAfter();
     return writingMode.isInlineTopToBottom() ? outerBorderStart() : outerBorderEnd();
-}
-
-inline RenderPtr<RenderBox> RenderTableSection::createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const
-{
-    return RenderTableSection::createTableSectionWithStyle(renderer.protectedDocument(), renderer.checkedStyle().get());
 }
 
 } // namespace WebCore

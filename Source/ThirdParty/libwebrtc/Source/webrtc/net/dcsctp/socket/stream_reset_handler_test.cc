@@ -13,11 +13,12 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
-#include <type_traits>
+#include <utility>
 #include <vector>
 
 #include "api/array_view.h"
 #include "api/task_queue/task_queue_base.h"
+#include "api/units/time_delta.h"
 #include "net/dcsctp/common/handover_testing.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/chunk/forward_tsn_common.h"
@@ -26,7 +27,9 @@
 #include "net/dcsctp/packet/parameter/outgoing_ssn_reset_request_parameter.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
 #include "net/dcsctp/packet/parameter/reconfiguration_response_parameter.h"
-#include "net/dcsctp/public/dcsctp_message.h"
+#include "net/dcsctp/packet/sctp_packet.h"
+#include "net/dcsctp/public/dcsctp_handover_state.h"
+#include "net/dcsctp/public/dcsctp_options.h"
 #include "net/dcsctp/public/types.h"
 #include "net/dcsctp/rx/data_tracker.h"
 #include "net/dcsctp/rx/reassembly_queue.h"
@@ -37,13 +40,14 @@
 #include "net/dcsctp/timer/timer.h"
 #include "net/dcsctp/tx/mock_send_queue.h"
 #include "net/dcsctp/tx/retransmission_queue.h"
-#include "rtc_base/gunit.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace {
 using ::testing::IsEmpty;
 using ::testing::NiceMock;
+using ::testing::Optional;
 using ::testing::Property;
 using ::testing::Return;
 using ::testing::SizeIs;
@@ -114,7 +118,7 @@ class StreamResetHandlerTest : public testing::Test {
             kMyInitialTsn,
             kArwnd,
             producer_,
-            [](TimeDelta rtt) {},
+            [](TimeDelta /* rtt */) {},
             []() {},
             *t3_rtx_timer_,
             DcSctpOptions())),
@@ -202,8 +206,8 @@ class StreamResetHandlerTest : public testing::Test {
     reasm_ = std::make_unique<ReassemblyQueue>("log: ", kArwnd);
     reasm_->RestoreFromState(state);
     retransmission_queue_ = std::make_unique<RetransmissionQueue>(
-        "", &callbacks_, kMyInitialTsn, kArwnd, producer_, [](TimeDelta rtt) {},
-        []() {}, *t3_rtx_timer_, DcSctpOptions(),
+        "", &callbacks_, kMyInitialTsn, kArwnd, producer_,
+        [](TimeDelta /* rtt */) {}, []() {}, *t3_rtx_timer_, DcSctpOptions(),
         /*supports_partial_reliability=*/true,
         /*use_message_interleaving=*/false);
     retransmission_queue_->RestoreFromState(state);
@@ -252,14 +256,15 @@ TEST_F(StreamResetHandlerTest, FailToDeliverWithoutResettingStream) {
 
   data_tracker_->Observe(kPeerInitialTsn);
   data_tracker_->Observe(AddTo(kPeerInitialTsn, 1));
-  EXPECT_THAT(reasm_->FlushMessages(),
-              UnorderedElementsAre(
-                  SctpMessageIs(StreamID(1), PPID(53), kShortPayload),
-                  SctpMessageIs(StreamID(1), PPID(53), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(StreamID(1), PPID(53), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(StreamID(1), PPID(53), kShortPayload)));
+  EXPECT_FALSE(reasm_->HasMessages());
 
   gen_.ResetStream();
   reasm_->Add(AddTo(kPeerInitialTsn, 2), gen_.Ordered({1, 2, 3, 4}, "BE"));
-  EXPECT_THAT(reasm_->FlushMessages(), IsEmpty());
+  EXPECT_FALSE(reasm_->HasMessages());
 }
 
 TEST_F(StreamResetHandlerTest, ResetStreamsNotDeferred) {
@@ -268,10 +273,11 @@ TEST_F(StreamResetHandlerTest, ResetStreamsNotDeferred) {
 
   data_tracker_->Observe(kPeerInitialTsn);
   data_tracker_->Observe(AddTo(kPeerInitialTsn, 1));
-  EXPECT_THAT(reasm_->FlushMessages(),
-              UnorderedElementsAre(
-                  SctpMessageIs(StreamID(1), PPID(53), kShortPayload),
-                  SctpMessageIs(StreamID(1), PPID(53), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(StreamID(1), PPID(53), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(StreamID(1), PPID(53), kShortPayload)));
+  EXPECT_FALSE(reasm_->HasMessages());
 
   Parameters::Builder builder;
   builder.Add(OutgoingSSNResetRequestParameter(
@@ -285,9 +291,9 @@ TEST_F(StreamResetHandlerTest, ResetStreamsNotDeferred) {
 
   gen_.ResetStream();
   reasm_->Add(AddTo(kPeerInitialTsn, 2), gen_.Ordered({1, 2, 3, 4}, "BE"));
-  EXPECT_THAT(reasm_->FlushMessages(),
-              UnorderedElementsAre(
-                  SctpMessageIs(StreamID(1), PPID(53), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(StreamID(1), PPID(53), kShortPayload)));
+  EXPECT_FALSE(reasm_->HasMessages());
 }
 
 TEST_F(StreamResetHandlerTest, ResetStreamsDeferred) {
@@ -298,10 +304,11 @@ TEST_F(StreamResetHandlerTest, ResetStreamsDeferred) {
   data_tracker_->Observe(TSN(11));
   reasm_->Add(TSN(11), gen_.Ordered({1, 2, 3, 4}, "BE", {.mid = MID(1)}));
 
-  EXPECT_THAT(
-      reasm_->FlushMessages(),
-      UnorderedElementsAre(SctpMessageIs(kStreamId, PPID(53), kShortPayload),
-                           SctpMessageIs(kStreamId, PPID(53), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(kStreamId, PPID(53), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(kStreamId, PPID(53), kShortPayload)));
+  EXPECT_FALSE(reasm_->HasMessages());
 
   Parameters::Builder builder;
   builder.Add(OutgoingSSNResetRequestParameter(
@@ -332,12 +339,15 @@ TEST_F(StreamResetHandlerTest, ResetStreamsDeferred) {
               ElementsAre(Property(&ReconfigurationResponseParameter::result,
                                    ResponseResult::kSuccessPerformed)));
 
-  EXPECT_THAT(
-      reasm_->FlushMessages(),
-      UnorderedElementsAre(SctpMessageIs(kStreamId, PPID(2), kShortPayload),
-                           SctpMessageIs(kStreamId, PPID(3), kShortPayload),
-                           SctpMessageIs(kStreamId, PPID(4), kShortPayload),
-                           SctpMessageIs(kStreamId, PPID(5), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(kStreamId, PPID(2), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(kStreamId, PPID(3), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(kStreamId, PPID(4), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(kStreamId, PPID(5), kShortPayload)));
+  EXPECT_FALSE(reasm_->HasMessages());
 }
 
 TEST_F(StreamResetHandlerTest, ResetStreamsDeferredOnlySelectedStreams) {
@@ -396,12 +406,15 @@ TEST_F(StreamResetHandlerTest, ResetStreamsDeferredOnlySelectedStreams) {
                                      .mid = MID(1),
                                      .ppid = PPID(1006)}));
 
-  EXPECT_THAT(reasm_->FlushMessages(),
-              UnorderedElementsAre(
-                  SctpMessageIs(StreamID(1), PPID(1001), kShortPayload),
-                  SctpMessageIs(StreamID(2), PPID(1002), kShortPayload),
-                  SctpMessageIs(StreamID(3), PPID(1003), kShortPayload),
-                  SctpMessageIs(StreamID(3), PPID(1006), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(StreamID(1), PPID(1001), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(StreamID(2), PPID(1002), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(StreamID(3), PPID(1003), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(StreamID(3), PPID(1006), kShortPayload)));
+  EXPECT_FALSE(reasm_->HasMessages());
 
   builder.Add(OutgoingSSNResetRequestParameter(ReconfigRequestSN(11),
                                                ReconfigRequestSN(3), TSN(13),
@@ -410,10 +423,11 @@ TEST_F(StreamResetHandlerTest, ResetStreamsDeferredOnlySelectedStreams) {
               ElementsAre(Property(&ReconfigurationResponseParameter::result,
                                    ResponseResult::kSuccessPerformed)));
 
-  EXPECT_THAT(reasm_->FlushMessages(),
-              UnorderedElementsAre(
-                  SctpMessageIs(StreamID(1), PPID(1004), kShortPayload),
-                  SctpMessageIs(StreamID(2), PPID(1005), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(StreamID(1), PPID(1004), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(StreamID(2), PPID(1005), kShortPayload)));
+  EXPECT_FALSE(reasm_->HasMessages());
 }
 
 TEST_F(StreamResetHandlerTest, ResetStreamsDefersForwardTsn) {
@@ -469,9 +483,9 @@ TEST_F(StreamResetHandlerTest, ResetStreamsDefersForwardTsn) {
               ElementsAre(Property(&ReconfigurationResponseParameter::result,
                                    ResponseResult::kSuccessPerformed)));
 
-  EXPECT_THAT(reasm_->FlushMessages(),
-              UnorderedElementsAre(
-                  SctpMessageIs(kStreamId, PPID(1005), kShortPayload)));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(kStreamId, PPID(1005), kShortPayload)));
+  EXPECT_FALSE(reasm_->HasMessages());
 }
 
 TEST_F(StreamResetHandlerTest, SendOutgoingRequestDirectly) {

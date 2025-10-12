@@ -121,7 +121,7 @@ public:
     void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;
     void storeRecordOfKeyUsage(const String&) final;
 private:
-    RefPtr<CDMInstanceClearKey> protectedParentInstance() const;
+    CDMInstanceClearKey* parentInstance() const;
 
     String m_sessionID;
     KeyStore m_keyStore;

@@ -73,6 +73,8 @@ public:
     WebKitInputMethodContext* inputMethodContext() const;
     void setInputMethodState(std::optional<WebKit::InputMethodState>&&);
 
+    void themeColorDidChange();
+
 #if ENABLE(FULLSCREEN_API)
     bool isFullScreen() const;
     void willEnterFullScreen(CompletionHandler<void(bool)>&&);

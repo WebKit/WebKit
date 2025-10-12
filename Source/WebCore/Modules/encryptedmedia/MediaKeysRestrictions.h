@@ -27,7 +27,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "CDMRestrictions.h"
+#include <WebCore/CDMRestrictions.h>
 
 namespace WebCore {
 

@@ -10,6 +10,9 @@
 
 #include "common_video/h264/h264_bitstream_parser.h"
 
+#include <cstdint>
+#include <optional>
+
 #include "test/gtest.h"
 
 namespace webrtc {

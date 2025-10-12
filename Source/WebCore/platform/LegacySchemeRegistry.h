@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-// FIXME: Make UncheckedKeyHashSet<String>::contains(StringView) work and use StringViews here.
-using URLSchemesMap = UncheckedKeyHashSet<String, ASCIICaseInsensitiveHash>;
+// FIXME: Make HashSet<String>::contains(StringView) work and use StringViews here.
+using URLSchemesMap = HashSet<String, ASCIICaseInsensitiveHash>;
 
 class LegacySchemeRegistry {
 public:

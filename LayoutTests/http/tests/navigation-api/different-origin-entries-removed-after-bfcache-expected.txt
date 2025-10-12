@@ -1,0 +1,12 @@
+This tests that when page A is restored from the bfcache after a different origin page B is visited, navigation.entries contains only the entry for page A.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Visting Page 1 for the first time, navigating to page-that-goes-back
+Visiting Page 1 for the second time
+PASS window.navigation.entries().length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

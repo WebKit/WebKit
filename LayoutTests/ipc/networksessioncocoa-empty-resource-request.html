@@ -1,0 +1,65 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<p>This test passes if WebKit does not crash</p>
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+
+setTimeout(async () => {
+    if (!window.IPC)
+        return testRunner?.notifyDone();
+
+    const { CoreIPC } = await import('./coreipc.js');
+    CoreIPC.Networking.NetworkConnectionToWebProcess.CreateSocketChannel(
+      0, {
+      request: {
+        getRequestDataToSerialize: {
+          variantType: 'WebCore::ResourceRequestPlatformData',
+          variant: {
+            m_urlRequest: {},
+            m_isAppInitiated: {},
+            m_requester: {},
+            m_privacyProxyFailClosedForUnreachableNonMainHosts: true,
+            m_useAdvancedPrivacyProtections: false,
+            m_didFilterLinkDecoration: false,
+            m_isPrivateTokenUsageByThirdPartyAllowed: true,
+            m_wasSchemeOptimisticallyUpgraded: false
+          }
+        },
+        cachePartition: '',
+        hiddenFromInspector: false
+      },
+      protocol: '',
+      identifier: 393219,
+      webPageProxyID: IPC.webPageProxyID,
+      frameID: {},
+      pageID: {},
+      clientOrigin: {
+        topOrigin: {
+          data: {
+            variantType: 'WebCore::SecurityOriginData::Tuple',
+            variant: {
+              protocol: '',
+              host: '',
+              port: { optionalValue: 58660 }
+            }
+          }
+        },
+        clientOrigin: {
+          data: {
+            variantType: 'WebCore::SecurityOriginData::Tuple',
+            variant: { protocol: '', host: '', port: {} }
+          }
+        }
+      },
+      hadMainFrameMainResourcePrivateRelayed: false,
+      allowPrivacyProxy: true,
+      protections: 513,
+      storedCredentialsPolicy: 0
+    });
+}, 10);
+
+setTimeout(() => {
+    testRunner?.notifyDone();
+}, 2000);
+
+</script>

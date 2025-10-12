@@ -185,8 +185,8 @@ bool WebExtensionAPIPermissions::verifyRequestedPermissions(HashSet<String>& per
         }
     }
 
-    allowedPermissions.add(extension->optionalPermissions().begin(), extension->optionalPermissions().end());
-    allowedHostPermissions.add(extension->optionalPermissionMatchPatterns().begin(), extension->optionalPermissionMatchPatterns().end());
+    allowedPermissions.addAll(extension->optionalPermissions());
+    allowedHostPermissions.addAll(extension->optionalPermissionMatchPatterns());
 
     bool requestingPermissionsNotDeclaredInManifest = (permissions.size() && !permissions.isSubset(allowedPermissions)) || (matchPatterns.size() && !allowedHostPermissions.size());
     if (requestingPermissionsNotDeclaredInManifest) {

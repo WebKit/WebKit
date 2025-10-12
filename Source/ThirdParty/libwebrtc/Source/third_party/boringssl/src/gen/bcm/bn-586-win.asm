@@ -138,19 +138,28 @@ L$004mw_sse2_loop:
 	pop	ebx
 	pop	ebp
 	ret
-global	_bn_sqr_words
+global	_bn_sqr_add_words
 align	16
-_bn_sqr_words:
-L$_bn_sqr_words_begin:
+_bn_sqr_add_words:
+L$_bn_sqr_add_words_begin:
 	mov	eax,DWORD [4+esp]
 	mov	edx,DWORD [8+esp]
 	mov	ecx,DWORD [12+esp]
+	pxor	mm1,mm1
 align	16
 L$005sqr_sse2_loop:
 	movd	mm0,DWORD [edx]
+	movd	mm2,DWORD [eax]
+	movd	mm3,DWORD [4+eax]
 	pmuludq	mm0,mm0
 	lea	edx,[4+edx]
-	movq	[eax],mm0
+	paddq	mm1,mm0
+	paddq	mm1,mm2
+	movd	DWORD [eax],mm1
+	psrlq	mm1,32
+	paddq	mm1,mm3
+	movd	DWORD [4+eax],mm1
+	psrlq	mm1,32
 	sub	ecx,1
 	lea	eax,[8+eax]
 	jnz	NEAR L$005sqr_sse2_loop
@@ -160,15 +169,6 @@ L$005sqr_sse2_loop:
 	pop	esi
 	pop	ebx
 	pop	ebp
-	ret
-global	_bn_div_words
-align	16
-_bn_div_words:
-L$_bn_div_words_begin:
-	mov	edx,DWORD [4+esp]
-	mov	eax,DWORD [8+esp]
-	mov	ecx,DWORD [12+esp]
-	div	ecx
 	ret
 global	_bn_add_words
 align	16

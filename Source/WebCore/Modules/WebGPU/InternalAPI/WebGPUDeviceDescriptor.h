@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPUFeatureName.h"
-#include "WebGPUObjectDescriptorBase.h"
+#include <WebCore/WebGPUFeatureName.h>
+#include <WebCore/WebGPUObjectDescriptorBase.h>
 #include <cstdint>
 #include <wtf/HashMap.h>
 #include <wtf/KeyValuePair.h>

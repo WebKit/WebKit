@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009, 2010, 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011 Igalia S.L.
  * Copyright (C) 2011 Motorola Mobility. All rights reserved.
@@ -45,10 +45,9 @@
 #include "ContainerNodeInlines.h"
 #include "CustomElementRegistry.h"
 #include "DeprecatedGlobalSettings.h"
-#include "Document.h"
 #include "DocumentFragment.h"
-#include "DocumentInlines.h"
 #include "DocumentLoader.h"
+#include "DocumentQuirks.h"
 #include "DocumentType.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -73,18 +72,19 @@
 #include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
-#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "MarkupAccumulator.h"
 #include "MutableStyleProperties.h"
+#include "NodeInlines.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "PageConfiguration.h"
 #include "PasteboardItemInfo.h"
 #include "PositionInlines.h"
-#include "Quirks.h"
 #include "Range.h"
 #include "RenderBlock.h"
 #include "RenderElementInlines.h"
+#include "RenderObjectStyle.h"
 #include "ScriptWrappableInlines.h"
 #include "Settings.h"
 #include "SocketProvider.h"
@@ -155,7 +155,7 @@ static void completeURLs(DocumentFragment* fragment, const String& baseURL)
         change.apply();
 }
 
-void replaceSubresourceURLs(Ref<DocumentFragment>&& fragment, UncheckedKeyHashMap<AtomString, AtomString>&& replacementMap)
+void replaceSubresourceURLs(Ref<DocumentFragment>&& fragment, HashMap<AtomString, AtomString>&& replacementMap)
 {
     Vector<AttributeChange> changes;
     for (Ref element : descendantsOfType<Element>(fragment)) {
@@ -281,7 +281,7 @@ auto UserSelectNoneStateCache::computeState(Node& targetNode) -> State
     if (!Position::nodeIsUserSelectNone(&targetNode))
         return State::NotUserSelectNone;
     auto state = State::OnlyUserSelectNone;
-    RefPtr currentNode = &targetNode;
+    RefPtr currentNode = targetNode;
     bool foundMixed = false;
     while (currentNode) {
         if (!Position::nodeIsUserSelectNone(currentNode.get())) {
@@ -576,8 +576,8 @@ void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
         auto wrappingStyle = m_wrappingStyle->copy();
         // FIXME: <rdar://problem/5371536> Style rules that match pasted content can change it's appearance
         // Make sure spans are inline style in paste side e.g. span { display: block }.
-        wrappingStyle->forceInline();
-        // FIXME: Should this be included in forceInline?
+        wrappingStyle->forceDisplayInline();
+        // FIXME: Should this be included in forceDisplayInline?
         wrappingStyle->style()->setProperty(CSSPropertyFloat, CSSValueNone);
 
         appendStyleNodeOpenTag(out, wrappingStyle->style(), false, [&] -> std::optional<TextDirection> {
@@ -755,7 +755,7 @@ void StyledMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& 
                 newInlineStyle->mergeStyleFromRulesForSerialization(downcast<HTMLElement>(*const_cast<Element*>(&element)), m_standardFontFamilySerializationMode);
 
             if (addDisplayInline)
-                newInlineStyle->forceInline();
+                newInlineStyle->forceDisplayInline();
             
             if (m_needsPositionStyleConversion) {
                 m_needRelativeStyleWrapper |= newInlineStyle->convertPositionStyle();
@@ -850,19 +850,19 @@ RefPtr<Node> StyledMarkupAccumulator::traverseNodesForSerialization(Node& startN
             else
                 wrapWithNode(node);
         }
-        lastClosed = &node;
+        lastClosed = node;
     };
 
     RefPtr<Node> lastNode;
     RefPtr<Node> next;
-    for (RefPtr n = &startNode; n != pastEnd; lastNode = n, n = next) {
+    for (RefPtr n = startNode; n != pastEnd; lastNode = n, n = next) {
 
         Vector<RefPtr<Node>, 8> exitedAncestors;
         next = nullptr;
 
         auto advanceToAncestorSibling = [&]() {
-            if (auto* sibling = nextSibling(*n)) {
-                next = sibling;
+            if (RefPtr sibling = nextSibling(*n)) {
+                next = WTFMove(sibling);
                 return;
             }
             for (RefPtr ancestor = parentNode(*n); ancestor; ancestor = parentNode(*ancestor)) {
@@ -1046,7 +1046,7 @@ static RefPtr<Node> highestAncestorToWrapMarkup(const Position& start, const Pos
     if (!specialCommonAncestor && parentTabSpanNode(&commonAncestor))
         specialCommonAncestor = commonAncestor.parentNode();
     if (!specialCommonAncestor && tabSpanNode(&commonAncestor))
-        specialCommonAncestor = &commonAncestor;
+        specialCommonAncestor = commonAncestor;
 
     if (RefPtr enclosingAnchor = enclosingElementWithTag(firstPositionInNode(specialCommonAncestor ? specialCommonAncestor.get() : &commonAncestor), aTag))
         specialCommonAncestor = WTFMove(enclosingAnchor);
@@ -1120,8 +1120,12 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
                     // Reset the CSS properties to avoid an assertion error in addStyleMarkup().
                     // This assertion is caused at least when we select all text of a <body> element whose
                     // 'text-decoration' property is "inherit", and copy it.
-                    if (!propertyMissingOrEqualToNone(fullySelectedRootStyle->style(), CSSPropertyTextDecorationLine))
+                    if (!propertyMissingOrEqualToNone(fullySelectedRootStyle->style(), CSSPropertyTextDecorationLine)) {
                         fullySelectedRootStyle->style()->setProperty(CSSPropertyTextDecorationLine, CSSValueNone);
+                        fullySelectedRootStyle->style()->setProperty(CSSPropertyTextDecorationThickness, CSSValueAuto);
+                        fullySelectedRootStyle->style()->setProperty(CSSPropertyTextDecorationStyle, CSSValueSolid);
+                        fullySelectedRootStyle->style()->setProperty(CSSPropertyTextDecorationColor, CSSValueCurrentcolor);
+                    }
                     if (!propertyMissingOrEqualToNone(fullySelectedRootStyle->style(), CSSPropertyWebkitTextDecorationsInEffect))
                         fullySelectedRootStyle->style()->setProperty(CSSPropertyWebkitTextDecorationsInEffect, CSSValueNone);
                     accumulator.wrapWithStyleNode(fullySelectedRootStyle->style(), true);
@@ -1219,10 +1223,10 @@ static void restoreAttachmentElementsInFragment(DocumentFragment& fragment)
     RefPtr ownerDocument = fragment.ownerDocument();
     // When creating a fragment we must strip the webkit-attachment-path attribute after restoring the File object.
     Vector<Ref<HTMLAttachmentElement>> attachments;
-    for (auto& attachment : descendantsOfType<HTMLAttachmentElement>(fragment))
-        attachments.append(attachment);
+    for (Ref attachment : descendantsOfType<HTMLAttachmentElement>(fragment))
+        attachments.append(WTFMove(attachment));
 
-    for (auto& attachment : attachments) {
+    for (Ref attachment : attachments) {
         attachment->setUniqueIdentifier(attachment->attributeWithoutSynchronization(webkitattachmentidAttr));
 
         auto attachmentPath = attachment->attachmentPath();
@@ -1240,20 +1244,20 @@ static void restoreAttachmentElementsInFragment(DocumentFragment& fragment)
 
     Vector<Ref<AttachmentAssociatedElement>> attachmentAssociatedElements;
 
-    for (auto& image : descendantsOfType<HTMLImageElement>(fragment))
-        attachmentAssociatedElements.append(image);
+    for (Ref image : descendantsOfType<HTMLImageElement>(fragment))
+        attachmentAssociatedElements.append(WTFMove(image));
 
-    for (auto& source : descendantsOfType<HTMLSourceElement>(fragment))
-        attachmentAssociatedElements.append(source);
+    for (Ref source : descendantsOfType<HTMLSourceElement>(fragment))
+        attachmentAssociatedElements.append(WTFMove(source));
 
-    for (auto& attachmentAssociatedElement : attachmentAssociatedElements) {
+    for (Ref attachmentAssociatedElement : attachmentAssociatedElements) {
         Ref element = attachmentAssociatedElement->asHTMLElement();
 
         auto attachmentIdentifier = element->attributeWithoutSynchronization(webkitattachmentidAttr);
         if (attachmentIdentifier.isEmpty())
             continue;
 
-        auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, *ownerDocument);
+        Ref attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, *ownerDocument);
         attachment->setUniqueIdentifier(attachmentIdentifier);
         attachmentAssociatedElement->setAttachmentElement(WTFMove(attachment));
         element->removeAttribute(webkitattachmentidAttr);
@@ -1358,7 +1362,7 @@ bool isPlainTextMarkup(Node* node)
 
 static bool contextPreservesNewline(const SimpleRange& context)
 {
-    auto container = VisiblePosition(makeDeprecatedLegacyPosition(context.start)).deepEquivalent().protectedContainerNode();
+    RefPtr container = VisiblePosition(makeDeprecatedLegacyPosition(context.start)).deepEquivalent().containerNode();
     return container && container->renderer() && container->renderer()->style().preserveNewline();
 }
 
@@ -1585,7 +1589,7 @@ ExceptionOr<void> replaceChildrenWithFragment(ContainerNode& container, Ref<Docu
 
     // We don't Use RefPtr here because canUseSetDataOptimization() below relies on the
     // containerChild's ref count.
-    auto* containerChild = dynamicDowncast<Text>(containerNode->firstChild());
+    SUPPRESS_UNCOUNTED_LOCAL auto* containerChild = dynamicDowncast<Text>(containerNode->firstChild());
     if (containerChild && !containerChild->nextSibling()) {
         if (RefPtr fragmentChild = singleTextChild(fragment); fragmentChild && canUseSetDataOptimization(*containerChild, mutation)) {
             Ref { *containerChild }->setData(fragmentChild->data());

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPUError.h"
-#include "WebGPUUncapturedErrorEventInit.h"
+#include <WebCore/WebGPUError.h>
+#include <WebCore/WebGPUUncapturedErrorEventInit.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>

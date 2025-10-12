@@ -35,7 +35,7 @@
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameInlines.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/ResourceError.h>
@@ -415,7 +415,7 @@ void WebPrintOperationGtk::endPrint()
     }
     document->close();
 
-    printDone(WebCore::FragmentedSharedBuffer::create(memoryBuffer.detachAsData()), { });
+    printDone(WebCore::SharedBuffer::create(memoryBuffer.detachAsData()), { });
 
     m_pages.clear();
 }

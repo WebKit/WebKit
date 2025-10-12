@@ -94,6 +94,7 @@ public:
                 if (!block)
                     continue;
                 
+                dataLogLnIf(verbose, "Starting liveness for block: ", *block);
                 Operands<bool> live = liveAtTail[block];
                 for (unsigned nodeIndex = block->size(); nodeIndex--;) {
                     Node* node = block->at(nodeIndex);
@@ -222,6 +223,7 @@ public:
             for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
                 Operands<FlushFormat> deferred = deferredAtHead[block];
                 
+                dataLogLnIf(verbose, "Looking for deferred PutStacks in block: ", *block);
                 for (Node* node : *block) {
                     dataLogLnIf(verbose, "Deferred at ", node, ":", deferred);
                     

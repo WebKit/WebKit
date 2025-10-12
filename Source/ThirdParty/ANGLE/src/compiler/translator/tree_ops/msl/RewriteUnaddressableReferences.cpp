@@ -135,22 +135,37 @@ bool ReturnsReference(TOperator op)
         case TOperator::EOpBitwiseAndAssign:
         case TOperator::EOpBitwiseXorAssign:
         case TOperator::EOpBitwiseOrAssign:
-
-        case TOperator::EOpPostIncrement:
-        case TOperator::EOpPostDecrement:
-        case TOperator::EOpPreIncrement:
-        case TOperator::EOpPreDecrement:
-
         case TOperator::EOpIndexDirect:
         case TOperator::EOpIndexIndirect:
         case TOperator::EOpIndexDirectStruct:
         case TOperator::EOpIndexDirectInterfaceBlock:
-
             return true;
 
         default:
             return false;
     }
+}
+
+bool IsLValueUnaryOp(TOperator op)
+{
+    switch (op)
+    {
+        case EOpPostIncrement:
+        case EOpPostDecrement:
+        case EOpPreIncrement:
+        case EOpPreDecrement:
+            return true;
+        case EOpNegative:
+        case EOpPositive:
+        case EOpLogicalNot:
+        case EOpBitwiseNot:
+        case EOpArrayLength:
+            return false;
+        default:
+            break;
+    }
+    // At the time, we cannot use UNREACHABLE(); because builtin function calls might be unary ops.
+    return false;
 }
 
 TIntermTyped &DecomposeCompoundAssignment(TIntermBinary &node)
@@ -354,6 +369,21 @@ class Rewriter2 : public TIntermRebuild
         return {mSymbolEnv.callFunctionOverload(Name("elem_ref"), binaryNode.getType(),
                                                 *new TIntermSequence{&newLeft, &newRight}),
                 VisitBits::Neither};
+    }
+
+    PreResult visitUnaryPre(TIntermUnary &node) override
+    {
+        // Unary ++, -- operators for signed ints are implemented as functions. These take in a reference. Addressing is needed to
+        // support swizzles. This can be removed when a pass is added to replace the operators with builtin function calls.
+        bool childRequiresAddressing = IsLValueUnaryOp(node.getOp()) && node.getType().isSignedInt();
+        mRequiresAddressingStack.push_back(childRequiresAddressing);
+        return {node, VisitBits::Both};
+    }
+
+    PostResult visitUnaryPost(TIntermUnary &node) override
+    {
+        mRequiresAddressingStack.pop_back();
+        return {node};
     }
 };
 

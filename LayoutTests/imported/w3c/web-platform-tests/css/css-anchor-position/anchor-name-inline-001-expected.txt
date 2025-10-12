@@ -5,4 +5,6 @@ PASS .target 2
 PASS .target 3
 PASS .target 4
 PASS .target 5
+PASS .target 6
+PASS .target 7
 

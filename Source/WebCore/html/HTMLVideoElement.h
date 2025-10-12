@@ -25,11 +25,12 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(VIDEO)
 
-#include "HTMLMediaElement.h"
-#include "Supplementable.h"
-#include "VideoFrameRequestCallback.h"
+#include <WebCore/HTMLMediaElement.h>
+#include <WebCore/Supplementable.h>
+#include <WebCore/VideoFrameRequestCallback.h>
 #include <memory>
 
 namespace WebCore {
@@ -40,8 +41,8 @@ class ImageBuffer;
 class RenderVideo;
 class PictureInPictureObserver;
 class VideoFrameRequestCallback;
+struct ImageBufferFormat;
 
-enum class ImageBufferPixelFormat : uint8_t;
 enum class RenderingMode : uint8_t;
 
 class HTMLVideoElement final : public HTMLMediaElement, public Supplementable<HTMLVideoElement> {
@@ -65,7 +66,6 @@ public:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     bool webkitWirelessVideoPlaybackDisabled() const;
-    void setWebkitWirelessVideoPlaybackDisabled(bool);
 #endif
 
 #if ENABLE(MEDIA_STATISTICS)
@@ -77,7 +77,7 @@ public:
     void requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPromise>&&) override;
 #endif
 
-    RefPtr<ImageBuffer> createBufferForPainting(const FloatSize&, RenderingMode, const DestinationColorSpace&, ImageBufferPixelFormat) const;
+    RefPtr<ImageBuffer> createBufferForPainting(const FloatSize&, RenderingMode, const DestinationColorSpace&, ImageBufferFormat) const;
 
     // Used by render painting. Best effort, only paint if we already have an image generator or video output available.
     void paint(GraphicsContext&, const FloatRect&);
@@ -93,7 +93,7 @@ public:
 
     URL posterImageURL() const;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
-    bool isReplaced(const RenderStyle&) const final { return true; }
+    bool isReplaced(const RenderStyle* = nullptr) const final { return true; }
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     enum class VideoPresentationMode { Inline, Fullscreen, PictureInPicture, InWindow };
@@ -120,7 +120,7 @@ public:
     void exitToFullscreenModeWithoutAnimationIfPossible(HTMLMediaElementEnums::VideoFullscreenMode fromMode, HTMLMediaElementEnums::VideoFullscreenMode toMode);
 #endif
 
-    RenderVideo* renderer() const;
+    inline RenderVideo* renderer() const; // Defined in RenderVideo.h.
     void acceleratedRenderingStateChanged();
     bool supportsAcceleratedRendering() const;
 
@@ -196,7 +196,7 @@ private:
 #endif
 
     struct VideoFrameRequest {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(VideoFrameRequest);
         VideoFrameRequest(unsigned identifier, Ref<VideoFrameRequestCallback>&& callback)
             : identifier(identifier)
             , callback(WTFMove(callback))

@@ -37,6 +37,7 @@
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/WTFString.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(MediaRemote)
@@ -48,8 +49,8 @@ SOFT_LINK_CONSTANT(MediaRemote, kMRMediaRemoteNowPlayingApplicationPIDUserInfoKe
 #define MRMediaRemoteSetWantsNowPlayingNotifications softLinkMRMediaRemoteSetWantsNowPlayingNotifications
 #define MRMediaRemoteGetNowPlayingClient softLinkMRMediaRemoteGetNowPlayingClient
 #define MRNowPlayingClientGetProcessIdentifier softLinkMRNowPlayingClientGetProcessIdentifier
-#define kMRMediaRemoteNowPlayingApplicationDidChangeNotification getkMRMediaRemoteNowPlayingApplicationDidChangeNotification()
-#define kMRMediaRemoteNowPlayingApplicationPIDUserInfoKey getkMRMediaRemoteNowPlayingApplicationPIDUserInfoKey()
+#define kMRMediaRemoteNowPlayingApplicationDidChangeNotification getkMRMediaRemoteNowPlayingApplicationDidChangeNotificationSingleton()
+#define kMRMediaRemoteNowPlayingApplicationPIDUserInfoKey getkMRMediaRemoteNowPlayingApplicationPIDUserInfoKeySingleton()
 
 static bool userInfoHasNowPlayingApplicationPID(CFDictionaryRef userInfo, int32_t pid)
 {
@@ -68,7 +69,7 @@ static RetainPtr<MRNowPlayingClientRef> getNowPlayingClient()
 {
     bool gotNowPlaying = false;
     RetainPtr<MRNowPlayingClientRef> nowPlayingClient;
-    MRMediaRemoteGetNowPlayingClient(dispatch_get_main_queue(), [&] (MRNowPlayingClientRef player, CFErrorRef error) {
+    MRMediaRemoteGetNowPlayingClient(mainDispatchQueueSingleton(), [&] (MRNowPlayingClientRef player, CFErrorRef error) {
         if (!error && player)
             nowPlayingClient = player;
         gotNowPlaying = true;

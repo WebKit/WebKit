@@ -11,6 +11,8 @@
 #ifndef RTC_BASE_SOCKET_ADDRESS_H_
 #define RTC_BASE_SOCKET_ADDRESS_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <string>
 
 #include "absl/strings/string_view.h"
@@ -22,7 +24,7 @@
 struct sockaddr_in;
 struct sockaddr_storage;
 
-namespace rtc {
+namespace webrtc {
 
 // Records an IP address and port.
 class RTC_EXPORT SocketAddress {
@@ -148,6 +150,9 @@ class RTC_EXPORT SocketAddress {
   // Determines whether the hostname has been resolved to an IP.
   bool IsUnresolvedIP() const;
 
+  // Returns the IP Address type as an enum.
+  IPAddressType GetIPAddressType() const;
+
   // Determines whether this address is identical to the given one.
   bool operator==(const SocketAddress& addr) const;
   inline bool operator!=(const SocketAddress& addr) const {
@@ -194,6 +199,7 @@ RTC_EXPORT bool SocketAddressFromSockAddrStorage(const sockaddr_storage& saddr,
                                                  SocketAddress* out);
 SocketAddress EmptySocketAddressWithFamily(int family);
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_SOCKET_ADDRESS_H_

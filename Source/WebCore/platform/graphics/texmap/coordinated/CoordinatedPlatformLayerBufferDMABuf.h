@@ -48,7 +48,7 @@ private:
     std::unique_ptr<CoordinatedPlatformLayerBuffer> importDMABuf(TextureMapper&) const;
     std::unique_ptr<CoordinatedPlatformLayerBuffer> importYUV(TextureMapper&) const;
 
-    Ref<DMABufBuffer> m_dmabuf;
+    const Ref<DMABufBuffer> m_dmabuf;
     WTF::UnixFileDescriptor m_fenceFD;
 };
 

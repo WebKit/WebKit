@@ -57,21 +57,21 @@ a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id
 a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
 a=extmap:5 urn:ietf:params:rtp-hdrext:ntp-64
 a=extmap:6 urn:ietf:params:rtp-hdrext:ssrc-audio-level
-m=video 9 UDP/TLS/RTP/SAVPF 97 96
+m=video 9 UDP/TLS/RTP/SAVPF 99 96
 c=IN IP4 0.0.0.0
 a=ice-ufrag:{ice-ufrag:OK}
 a=ice-pwd:{ice-password:OK}
 a=rtcp-mux
 a=mid:{mid:OK}
 a=setup:active
-a=rtpmap:97 H264/90000
-a=rtcp-fb:97 nack
-a=rtcp-fb:97 nack pli
-a=rtcp-fb:97 ccm fir
-a=rtcp-fb:97 transport-cc
-a=fmtp:97 packetization-mode=1;level-asymmetry-allowed=1
+a=rtpmap:99 H264/90000
+a=rtcp-fb:99 nack
+a=rtcp-fb:99 nack pli
+a=rtcp-fb:99 ccm fir
+a=rtcp-fb:99 transport-cc
+a=fmtp:99 packetization-mode=1;level-asymmetry-allowed=1
 a=rtpmap:96 rtx/90000
-a=fmtp:96 apt=97
+a=fmtp:96 apt=99
 a=recvonly
 a=fingerprint:sha-256 {fingerprint:OK}
 a=extmap:1 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01

@@ -25,26 +25,28 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(MODEL_ELEMENT)
 
-#include "ActiveDOMObject.h"
-#include "CachedRawResource.h"
-#include "CachedRawResourceClient.h"
-#include "CachedResourceHandle.h"
-#include "EventLoop.h"
-#include "HTMLElement.h"
-#include "HTMLModelElementCamera.h"
-#include "IDLTypes.h"
-#include "LayerHostingContextIdentifier.h"
-#include "ModelPlayerClient.h"
-#include "PlatformLayer.h"
-#include "PlatformLayerIdentifier.h"
-#include "SharedBuffer.h"
-#include "VisibilityChangeClient.h"
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/CachedRawResource.h>
+#include <WebCore/CachedRawResourceClient.h>
+#include <WebCore/CachedResourceHandle.h>
+#include <WebCore/EventLoop.h>
+#include <WebCore/HTMLElement.h>
+#include <WebCore/HTMLModelElementCamera.h>
+#include <WebCore/IDLTypes.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/ModelPlayer.h>
+#include <WebCore/ModelPlayerClient.h>
+#include <WebCore/PlatformLayer.h>
+#include <WebCore/PlatformLayerIdentifier.h>
+#include <WebCore/SharedBuffer.h>
+#include <WebCore/VisibilityChangeClient.h>
 #include <wtf/UniqueRef.h>
 
 #if ENABLE(MODEL_PROCESS)
-#include "StageModeOperations.h"
+#include <WebCore/StageModeOperations.h>
 #endif
 
 namespace WebCore {
@@ -53,11 +55,11 @@ class CachedResourceRequest;
 class DOMMatrixReadOnly;
 class DOMPointReadOnly;
 class Event;
+class Exception;
 class GraphicsLayer;
 class LayoutPoint;
 class LayoutSize;
 class Model;
-class ModelPlayer;
 class ModelPlayerProvider;
 class MouseEvent;
 
@@ -65,7 +67,7 @@ template<typename IDLType> class DOMPromiseDeferred;
 template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 template<typename> class ExceptionOr;
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_PROCESS) || ENABLE(GPUP_MODEL)
 template<typename IDLType> class DOMPromiseProxy;
 class ModelContext;
 #endif
@@ -82,8 +84,6 @@ public:
     // ActiveDOMObject.
     void ref() const final { HTMLElement::ref(); }
     void deref() const final { HTMLElement::deref(); }
-    void suspend(ReasonForSuspension) final;
-    void resume() final;
 
     // VisibilityChangeClient.
     void visibilityStateChanged() final;
@@ -105,8 +105,11 @@ public:
     std::optional<LayerHostingContextIdentifier> layerHostingContextIdentifier() const;
 
     std::optional<PlatformLayerIdentifier> layerID() const;
+    WEBCORE_EXPORT const MachSendRight* displayBuffer() const;
+    GraphicsLayerContentsDisplayDelegate* contentsDisplayDelegate();
+    RefPtr<GraphicsLayer> graphicsLayer() const;
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_PROCESS) || ENABLE(GPUP_MODEL)
     RefPtr<ModelContext> modelContext() const;
 
     const DOMMatrixReadOnly& entityTransform() const;
@@ -114,7 +117,8 @@ public:
 
     const DOMPointReadOnly& boundingBoxCenter() const;
     const DOMPointReadOnly& boundingBoxExtents() const;
-
+#endif
+#if ENABLE(MODEL_PROCESS)
     using EnvironmentMapPromise = DOMPromiseProxy<IDLUndefined>;
     EnvironmentMapPromise& environmentMapReady() { return m_environmentMapReadyPromise.get(); }
 #endif
@@ -151,7 +155,7 @@ public:
 
     bool isInteractive() const;
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_PROCESS) || ENABLE(GPUP_MODEL)
     double playbackRate() const { return m_playbackRate; }
     void setPlaybackRate(double);
     double duration() const;
@@ -186,6 +190,11 @@ public:
     size_t externalMemoryCost() const;
 #endif
 
+    void viewportIntersectionChanged(bool isIntersecting);
+    bool isIntersectingViewport() const final { return m_isIntersectingViewport; }
+
+    WEBCORE_EXPORT String modelElementStateForTesting() const;
+
 private:
     HTMLModelElement(const QualifiedName&, Document&);
 
@@ -196,10 +205,8 @@ private:
     void deleteModelPlayer();
     void unloadModelPlayer(bool onSuspend);
     void reloadModelPlayer();
-    void startReloadModelTimer();
-    void reloadModelTimerFired();
-
-    RefPtr<GraphicsLayer> graphicsLayer() const;
+    void startLoadModelTimer();
+    void loadModelTimerFired();
 
     HTMLModelElement& readyPromiseResolve();
 
@@ -207,6 +214,9 @@ private:
 
     // ActiveDOMObject.
     bool virtualHasPendingActivity() const final;
+    void resume() final;
+    void suspend(ReasonForSuspension) final;
+    void stop() final;
 
     // DOM overrides.
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
@@ -219,7 +229,7 @@ private:
 
     // Rendering overrides.
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
-    bool isReplaced(const RenderStyle&) const final { return true; }
+    bool isReplaced(const RenderStyle* = nullptr) const final { return true; }
     void didAttachRenderers() final;
 
     // CachedRawResourceClient overrides.
@@ -230,7 +240,7 @@ private:
     void didUpdateLayerHostingContextIdentifier(ModelPlayer&, LayerHostingContextIdentifier) final;
     void didFinishLoading(ModelPlayer&) final;
     void didFailLoading(ModelPlayer&, const ResourceError&) final;
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_PROCESS) || ENABLE(GPUP_MODEL)
     void didUpdateEntityTransform(ModelPlayer&, const TransformationMatrix&) final;
     void didUpdateBoundingBox(ModelPlayer&, const FloatPoint3D&, const FloatPoint3D&) final;
     void didFinishEnvironmentMapLoading(bool succeeded) final;
@@ -256,7 +266,7 @@ private:
 
     void reportExtraMemoryCost();
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_PROCESS) || ENABLE(GPUP_MODEL)
     bool autoplay() const;
     void updateAutoplay();
     bool loop() const;
@@ -268,10 +278,22 @@ private:
     void environmentMapResourceFinished();
     bool hasPortal() const;
     void updateHasPortal();
+#endif
+#if ENABLE(MODEL_PROCESS)
     WebCore::StageModeOperation stageMode() const;
     void updateStageMode();
 #endif
     void modelResourceFinished();
+    void sourceRequestResource();
+    bool shouldDeferLoading() const;
+    bool isModelDeferred() const;
+    bool isModelLoading() const;
+    bool isModelLoaded() const;
+    bool isModelUnloading() const;
+    bool isModelUnloaded() const;
+#if ENABLE(GPUP_MODEL)
+    void didUpdateDisplayDelegate() const final;
+#endif
 
     URL m_sourceURL;
     CachedResourceHandle<CachedRawResource> m_resource;
@@ -284,10 +306,11 @@ private:
     bool m_dataComplete { false };
     bool m_isDragging { false };
     bool m_shouldCreateModelPlayerUponRendererAttachment { false };
+    bool m_isIntersectingViewport { false };
 
     RefPtr<ModelPlayer> m_modelPlayer;
-    EventLoopTimerHandle m_reloadModelTimer;
-#if ENABLE(MODEL_PROCESS)
+    EventLoopTimerHandle m_loadModelTimer;
+#if ENABLE(MODEL_PROCESS) || ENABLE(GPUP_MODEL)
     Ref<DOMMatrixReadOnly> m_entityTransform;
     Ref<DOMPointReadOnly> m_boundingBoxCenter;
     Ref<DOMPointReadOnly> m_boundingBoxExtents;
@@ -295,6 +318,8 @@ private:
     URL m_environmentMapURL;
     SharedBufferBuilder m_environmentMapData;
     mutable std::atomic<size_t> m_environmentMapDataMemoryCost { 0 };
+#endif
+#if ENABLE(MODEL_PROCESS)
     CachedResourceHandle<CachedRawResource> m_environmentMapResource;
     UniqueRef<EnvironmentMapPromise> m_environmentMapReadyPromise;
 #endif

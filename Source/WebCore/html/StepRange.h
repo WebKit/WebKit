@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "Decimal.h"
+#include <WebCore/Decimal.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 

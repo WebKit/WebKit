@@ -64,15 +64,15 @@ void MockGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
     m_invisibleGamepadsForClient.remove(client);
 }
 
-void MockGamepadProvider::setMockGamepadDetails(unsigned index, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble)
+void MockGamepadProvider::setMockGamepadDetails(unsigned index, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected)
 {
     if (index >= m_mockGamepadVector.size())
-        m_mockGamepadVector.resize(index + 1);
+        m_mockGamepadVector.grow(index + 1);
 
     if (m_mockGamepadVector[index])
-        m_mockGamepadVector[index]->updateDetails(gamepadID, mapping, axisCount, buttonCount, supportsDualRumble);
+        m_mockGamepadVector[index]->updateDetails(gamepadID, mapping, axisCount, buttonCount, supportsDualRumble, wasConnected);
     else
-        m_mockGamepadVector[index] = makeUnique<MockGamepad>(index, gamepadID, mapping, axisCount, buttonCount, supportsDualRumble);
+        m_mockGamepadVector[index] = makeUnique<MockGamepad>(index, gamepadID, mapping, axisCount, buttonCount, supportsDualRumble, wasConnected);
 }
 
 bool MockGamepadProvider::connectMockGamepad(unsigned index)
@@ -95,12 +95,14 @@ bool MockGamepadProvider::connectMockGamepad(unsigned index)
 
     m_connectedGamepadVector[index] = m_mockGamepadVector[index].get();
 
+    EventMakesGamepadsVisible eventMakesGamepadsVisible = m_mockGamepadVector[index]->wasConnected() ?
+        EventMakesGamepadsVisible::No : EventMakesGamepadsVisible::Yes;
     for (auto& client : m_clients) {
-        client.platformGamepadConnected(*m_connectedGamepadVector[index], EventMakesGamepadsVisible::Yes);
+        client.platformGamepadConnected(*m_connectedGamepadVector[index], eventMakesGamepadsVisible);
         auto gamepadsForClient = m_invisibleGamepadsForClient.find(client);
         if (gamepadsForClient != m_invisibleGamepadsForClient.end()) {
             for (auto& invisibleGamepad : gamepadsForClient->value)
-                client.platformGamepadConnected(invisibleGamepad, EventMakesGamepadsVisible::Yes);
+                client.platformGamepadConnected(invisibleGamepad, eventMakesGamepadsVisible);
             m_invisibleGamepadsForClient.remove(gamepadsForClient);
         }
     }

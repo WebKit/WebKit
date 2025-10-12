@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "FrameLoaderTypes.h"
+#include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>

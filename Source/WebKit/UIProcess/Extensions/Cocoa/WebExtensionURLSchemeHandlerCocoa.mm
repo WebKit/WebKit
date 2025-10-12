@@ -117,13 +117,14 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
             loadingExtensionMainFrame = true;
         }
 
-        RefPtr<API::Error> error;
-        RefPtr resourceData = extension->resourceDataForPath(requestURL.path().toString(), error);
-        if (!resourceData || error) {
-            extensionContext->recordErrorIfNeeded(wrapper(error));
+        auto resourceDataResult = extension->resourceDataForPath(requestURL.path().toString());
+        if (!resourceDataResult) {
+            extensionContext->recordErrorIfNeeded(resourceDataResult.error());
             task->didComplete([NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist userInfo:nil]);
             return;
         }
+
+        Ref resourceData = resourceDataResult.value();
 
         if (loadingExtensionMainFrame) {
             if (auto tab = extensionContext->getTab(page->identifier()))
@@ -131,7 +132,7 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
         }
 
         auto mimeType = extension->resourceMIMETypeForPath(requestURL.path().toString());
-        resourceData = extensionContext->localizedResourceData(resourceData, mimeType);
+        resourceData = extensionContext->localizedResourceData(WTFMove(resourceData), mimeType).releaseNonNull();
 
         auto *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:requestURL.createNSURL().get() statusCode:200 HTTPVersion:nil headerFields:@{
             @"Access-Control-Allow-Origin": @"*",

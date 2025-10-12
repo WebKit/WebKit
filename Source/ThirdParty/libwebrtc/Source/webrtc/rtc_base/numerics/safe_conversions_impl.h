@@ -13,9 +13,10 @@
 #ifndef RTC_BASE_NUMERICS_SAFE_CONVERSIONS_IMPL_H_
 #define RTC_BASE_NUMERICS_SAFE_CONVERSIONS_IMPL_H_
 
+#include <cstddef>
 #include <limits>
 
-namespace rtc {
+namespace webrtc {
 namespace internal {
 
 enum DstSign { DST_UNSIGNED, DST_SIGNED };
@@ -174,6 +175,6 @@ inline constexpr RangeCheckResult RangeCheck(Src value) {
 }
 
 }  // namespace internal
-}  // namespace rtc
+}  // namespace webrtc
 
 #endif  // RTC_BASE_NUMERICS_SAFE_CONVERSIONS_IMPL_H_

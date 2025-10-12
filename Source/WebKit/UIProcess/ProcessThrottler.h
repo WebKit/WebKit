@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -176,7 +176,7 @@ private:
 
     Ref<AuxiliaryProcessProxy> protectedProcess() const;
 
-    UniqueRef<ProcessAssertionCache> m_assertionCache;
+    const UniqueRef<ProcessAssertionCache> m_assertionCache;
     WeakRef<AuxiliaryProcessProxy> m_process;
     RefPtr<ProcessAssertion> m_assertion;
     RefPtr<ProcessAssertion> m_assertionToClearAfterPrepareToDropLastAssertion;

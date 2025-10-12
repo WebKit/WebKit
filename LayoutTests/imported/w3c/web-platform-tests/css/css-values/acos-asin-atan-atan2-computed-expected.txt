@@ -19,6 +19,9 @@ PASS calc(atan2(0,1)) should be used-value-equivalent to 0deg
 PASS calc(atan2(0,-1) / 4) should be used-value-equivalent to 45deg
 PASS calc(atan2(1,-1)) should be used-value-equivalent to 135deg
 PASS calc(atan2(-1,1)) should be used-value-equivalent to -45deg
+FAIL calc(asin(sin(180deg * sibling-index()))) should be used-value-equivalent to 0deg assert_approx_equals: calc(asin(sin(180deg * sibling-index()))) and 0deg 0.1 serialize to the same thing in used values. expected 0 +/- 0.1 but got -53.240312
+FAIL calc(acos(cos(180deg * sibling-index()))) should be used-value-equivalent to 180deg assert_approx_equals: calc(acos(cos(180deg * sibling-index()))) and 180deg 0.1 serialize to the same thing in used values. expected 180 +/- 0.1 but got 126.759688
+FAIL calc(atan(tan(180deg * sibling-index()))) should be used-value-equivalent to 0deg assert_approx_equals: calc(atan(tan(180deg * sibling-index()))) and 0deg 0.1 serialize to the same thing in used values. expected 0 +/- 0.1 but got 53.240312
 PASS calc(cos(sin(acos(cos(pi))))) should be used-value-equivalent to 1
 PASS atan2(1px, -1px) should be used-value-equivalent to 135deg
 PASS atan2(1cm, -1cm) should be used-value-equivalent to 135deg

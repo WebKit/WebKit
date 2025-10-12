@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Watchpoint.h"
+#include <JavaScriptCore/Watchpoint.h>
 
 namespace JSC {
 

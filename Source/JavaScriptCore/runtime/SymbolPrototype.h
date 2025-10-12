@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "JSObject.h"
-#include "Symbol.h"
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/Symbol.h>
 
 namespace JSC {
 

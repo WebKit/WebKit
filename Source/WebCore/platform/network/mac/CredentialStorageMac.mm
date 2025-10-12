@@ -34,8 +34,8 @@ namespace WebCore {
 
 Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace& protectionSpace)
 {
-    NSURLCredential *credential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:protectionSpace.nsSpace()];
-    return credential ? Credential(credential) : Credential();
+    RetainPtr credential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:protectionSpace.protectedNSSpace().get()];
+    return credential ? Credential(credential.get()) : Credential();
 }
 
 } // namespace WebCore

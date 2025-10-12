@@ -9,23 +9,27 @@
  */
 #include "net/dcsctp/rx/traditional_reassembly_streams.h"
 
-#include <stddef.h>
-
+#include <cstddef>
 #include <cstdint>
-#include <functional>
 #include <iterator>
 #include <map>
 #include <numeric>
 #include <optional>
+#include <tuple>
 #include <utility>
 #include <vector>
 
 #include "absl/algorithm/container.h"
+#include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/common/sequence_numbers.h"
 #include "net/dcsctp/packet/chunk/forward_tsn_common.h"
 #include "net/dcsctp/packet/data.h"
+#include "net/dcsctp/public/dcsctp_handover_state.h"
 #include "net/dcsctp/public/dcsctp_message.h"
+#include "net/dcsctp/public/types.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
 namespace dcsctp {
@@ -284,7 +288,8 @@ int TraditionalReassemblyStreams::Add(UnwrappedTSN tsn, Data data) {
 
 size_t TraditionalReassemblyStreams::HandleForwardTsn(
     UnwrappedTSN new_cumulative_ack_tsn,
-    rtc::ArrayView<const AnyForwardTsnChunk::SkippedStream> skipped_streams) {
+    webrtc::ArrayView<const AnyForwardTsnChunk::SkippedStream>
+        skipped_streams) {
   size_t bytes_removed = 0;
   // The `skipped_streams` only cover ordered messages - need to
   // iterate all unordered streams manually to remove those chunks.
@@ -302,7 +307,7 @@ size_t TraditionalReassemblyStreams::HandleForwardTsn(
 }
 
 void TraditionalReassemblyStreams::ResetStreams(
-    rtc::ArrayView<const StreamID> stream_ids) {
+    webrtc::ArrayView<const StreamID> stream_ids) {
   if (stream_ids.empty()) {
     for (auto& [stream_id, stream] : ordered_streams_) {
       RTC_DLOG(LS_VERBOSE) << log_prefix_

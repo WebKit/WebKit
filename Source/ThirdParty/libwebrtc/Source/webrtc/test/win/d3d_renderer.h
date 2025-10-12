@@ -43,11 +43,11 @@ class D3dRenderer : public VideoRenderer {
   size_t width_, height_;
 
   HWND hwnd_;
-  rtc::scoped_refptr<IDirect3D9> d3d_;
-  rtc::scoped_refptr<IDirect3DDevice9> d3d_device_;
+  webrtc::scoped_refptr<IDirect3D9> d3d_;
+  webrtc::scoped_refptr<IDirect3DDevice9> d3d_device_;
 
-  rtc::scoped_refptr<IDirect3DTexture9> texture_;
-  rtc::scoped_refptr<IDirect3DVertexBuffer9> vertex_buffer_;
+  webrtc::scoped_refptr<IDirect3DTexture9> texture_;
+  webrtc::scoped_refptr<IDirect3DVertexBuffer9> vertex_buffer_;
 };
 }  // namespace test
 }  // namespace webrtc

@@ -14,6 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/resources/iframe-contents.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/resources/iframe-postmessage-to-parent-parent.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/resources/iframe-with-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/resources/post-your-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/resources/post-your-protocol.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/resources/reload_post_1-1.py
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/resources/replace-or-assign-call-on-iframe.html

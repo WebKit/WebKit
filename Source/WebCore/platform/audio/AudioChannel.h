@@ -29,7 +29,7 @@
 #ifndef AudioChannel_h
 #define AudioChannel_h
 
-#include "AudioArray.h"
+#include <WebCore/AudioArray.h>
 #include <memory>
 #include <span>
 #include <wtf/Noncopyable.h>

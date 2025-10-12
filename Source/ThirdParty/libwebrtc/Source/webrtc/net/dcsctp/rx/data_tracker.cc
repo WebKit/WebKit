@@ -10,21 +10,22 @@
 #include "net/dcsctp/rx/data_tracker.h"
 
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
-#include <iterator>
-#include <optional>
 #include <set>
-#include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/string_view.h"
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/common/sequence_numbers.h"
+#include "net/dcsctp/packet/chunk/data_common.h"
 #include "net/dcsctp/packet/chunk/sack_chunk.h"
+#include "net/dcsctp/public/dcsctp_handover_state.h"
 #include "net/dcsctp/timer/timer.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/strings/string_builder.h"
 
 namespace dcsctp {
 

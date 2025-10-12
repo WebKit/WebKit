@@ -78,8 +78,8 @@ using namespace WebCore;
     ASSERT(!m_coordinator);
 
     UIStatusBarStyleOverrides overrides = UIStatusBarStyleOverrideWebRTCAudioCapture;
-    m_statusBarStyleOverride = [getSBSStatusBarStyleOverridesAssertionClass() assertionWithStatusBarStyleOverrides:overrides forPID:legacyPresentingApplicationPID() exclusive:YES showsWhenForeground:YES];
-    m_coordinator = adoptNS([[getSBSStatusBarStyleOverridesCoordinatorClass() alloc] init]);
+    m_statusBarStyleOverride = [getSBSStatusBarStyleOverridesAssertionClassSingleton() assertionWithStatusBarStyleOverrides:overrides forPID:legacyPresentingApplicationPID() exclusive:YES showsWhenForeground:YES];
+    m_coordinator = adoptNS([[getSBSStatusBarStyleOverridesCoordinatorClassSingleton() alloc] init]);
     m_coordinator.get().delegate = self;
 
     [m_coordinator setRegisteredStyleOverrides:overrides reply:^(NSError *error) {

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Unexpected end of script
 
 PASS window.onerror - compile error in setInterval
 PASS window.onerror - compile error in setInterval (column)

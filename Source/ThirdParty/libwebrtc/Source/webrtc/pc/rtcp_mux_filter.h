@@ -13,7 +13,7 @@
 
 #include "pc/session_description.h"
 
-namespace cricket {
+namespace webrtc {
 
 // RTCP Muxer, as defined in RFC 5761 (http://tools.ietf.org/html/rfc5761)
 class RtcpMuxFilter {
@@ -73,6 +73,7 @@ class RtcpMuxFilter {
   bool offer_enable_;
 };
 
-}  // namespace cricket
+}  //  namespace webrtc
+
 
 #endif  // PC_RTCP_MUX_FILTER_H_

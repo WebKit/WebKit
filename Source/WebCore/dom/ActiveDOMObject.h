@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "ContextDestructionObserver.h"
-#include "TaskSource.h"
+#include <WebCore/ContextDestructionObserver.h>
+#include <WebCore/TaskSource.h>
 #include <wtf/AbstractRefCounted.h>
 #include <wtf/Assertions.h>
 #include <wtf/CancellableTask.h>
@@ -162,7 +162,7 @@ private:
     uint64_t m_pendingActivityInstanceCount { 0 };
 #if ASSERT_ENABLED
     bool m_suspendIfNeededWasCalled { false };
-    Ref<Thread> m_creationThread { Thread::currentSingleton() };
+    const Ref<Thread> m_creationThread { Thread::currentSingleton() };
 #endif
 
     friend class ActiveDOMObjectEventDispatchTask;

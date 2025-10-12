@@ -18,7 +18,7 @@
 <script>
 test(function(t) {
     let fonts = document.fonts;
-    let font = fonts.keys().next().value;
+    let font = [...fonts.keys()][0];
     let font2 = new FontFace("WebFont2", "url('resources/GenR102.woff2') format('woff2')");
     assert_true(fonts.has(font));
     assert_false(fonts.has(font2));

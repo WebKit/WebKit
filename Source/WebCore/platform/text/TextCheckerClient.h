@@ -27,7 +27,7 @@
 
 #pragma once
 
-#include "TextChecking.h"
+#include <WebCore/TextChecking.h>
 
 namespace WebCore {
 

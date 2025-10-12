@@ -35,8 +35,8 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "CBORValue.h"
-#include "FidoConstants.h"
+#include <WebCore/CBORValue.h>
+#include <WebCore/FidoConstants.h>
 
 namespace WebCore {
 class CryptoKeyAES;

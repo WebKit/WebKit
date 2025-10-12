@@ -79,12 +79,8 @@ void ShaderModuleImpl::compilationInfo(CompletionHandler<void(Ref<CompilationInf
             return;
         }
 
-        for (size_t i = 0; i < compilationInfo->messageCount; ++i) {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-            auto& message = compilationInfo->messages[i];
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        for (auto& message : messagesSpan(*compilationInfo))
             messages.append(CompilationMessage::create(message.message, convertFromBacking(message.type), message.lineNum, message.linePos + 1, message.offset, message.length));
-        }
 
         callback(CompilationInfo::create(WTFMove(messages)));
     });

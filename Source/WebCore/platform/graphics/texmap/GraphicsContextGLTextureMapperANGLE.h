@@ -30,6 +30,10 @@
 #include "GLContextWrapper.h"
 #include "GraphicsContextGLANGLE.h"
 
+#if ENABLE(WEBXR) && USE(OPENXR)
+#include <wtf/unix/UnixFileDescriptor.h>
+#endif
+
 namespace WebCore {
 
 class TextureMapperGCGLPlatformLayer;
@@ -51,10 +55,18 @@ public:
 
     bool reshapeDrawingBuffer() override;
     void prepareForDisplay() override;
+
 #if ENABLE(WEBXR)
+    GCGLExternalSync createExternalSync(ExternalSyncSource&&) final;
+#if USE(OPENXR)
+    WTF::UnixFileDescriptor exportExternalSync(GCGLExternalSync) final;
+#endif
+
     bool addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) final;
     void enableFoveation(GCGLuint) final;
     void disableFoveation() final;
+
+    bool enableRequiredWebXRExtensions() override;
 #endif
 
 protected:
@@ -76,9 +88,11 @@ private:
     GLContextWrapper::Type type() const override;
     bool makeCurrentImpl() override;
     bool unmakeCurrentImpl() override;
+    unsigned glVersion() const override;
 
     GCGLuint m_compositorTexture { 0 };
     bool m_isCompositorTextureInitialized { false };
+    mutable unsigned m_version { 0 };
 
 #if USE(COORDINATED_GRAPHICS) && USE(LIBEPOXY)
     GCGLuint m_textureID { 0 };

@@ -12,7 +12,9 @@
     <script>
 promise_test(async (t) => {
     const stream1 = await navigator.mediaDevices.getUserMedia({ video: { width: 160, frameRate : 5 } });
+    t.add_cleanup(() => stream1.getTracks().forEach(track => track.stop()));
     const stream2 = await navigator.mediaDevices.getUserMedia({ video: { width: 720, frameRate : 30 } });
+    t.add_cleanup(() => stream2.getTracks().forEach(track => track.stop()));
 
     // We adapt frame rate after 1 second of samples.
     await new Promise(resolve => setTimeout(resolve, 1000));

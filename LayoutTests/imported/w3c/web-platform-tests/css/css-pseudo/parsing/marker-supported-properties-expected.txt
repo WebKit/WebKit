@@ -35,6 +35,10 @@ PASS Property animation-name value 'anim' in ::marker
 PASS Property animation-play-state value 'paused' in ::marker
 PASS Property animation-timing-function value 'linear' in ::marker
 PASS Property animation-composition value 'add' in ::marker
+PASS Property animation-range value 'contain 10px cover 20px' in ::marker
+PASS Property animation-range-start value 'contain 10px' in ::marker
+PASS Property animation-range-end value 'cover 20px' in ::marker
+PASS Property animation-timeline value 'scroll()' in ::marker
 PASS Property transition value 'display 1s linear 2s' in ::marker
 PASS Property transition-delay value '1s' in ::marker
 PASS Property transition-duration value '2s' in ::marker

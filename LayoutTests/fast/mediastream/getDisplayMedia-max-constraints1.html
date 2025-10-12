@@ -16,6 +16,7 @@ promise_test(async () => {
     let settings = stream.getVideoTracks()[0].getSettings();
     defaultWidth = settings.width;
     defaultHeight = settings.height;
+    stream.getTracks().forEach(track => track.stop());
 }, "setup");
 
 promise_test(async (test) => {
@@ -26,6 +27,7 @@ promise_test(async (test) => {
 
     const settings = stream.getVideoTracks()[0].getSettings()
     assert_equals(settings.width, 500);
+    stream.getTracks().forEach(track => track.stop());
 }, "Maximize the width if max height is too big");
         </script>
     </body>

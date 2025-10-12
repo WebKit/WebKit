@@ -1,11 +1,24 @@
 // Copyright 2015 The Chromium Authors
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include "parse_certificate.h"
 
 #include <gtest/gtest.h>
+
 #include <openssl/pool.h>
+#include <openssl/span.h>
+
 #include "cert_errors.h"
 #include "general_names.h"
 #include "input.h"
@@ -63,7 +76,7 @@ void RunCertificateTest(const std::string &file_name) {
   der::BitString signature_value;
   CertErrors errors;
   bool actual_result =
-      ParseCertificate(der::Input(data), &tbs_certificate_tlv,
+      ParseCertificate(StringAsBytes(data), &tbs_certificate_tlv,
                        &signature_algorithm_tlv, &signature_value, &errors);
 
   EXPECT_EQ(expected_result, actual_result);
@@ -72,10 +85,12 @@ void RunCertificateTest(const std::string &file_name) {
   // Ensure that the parsed certificate matches expectations.
   if (expected_result && actual_result) {
     EXPECT_EQ(0, signature_value.unused_bits());
-    EXPECT_EQ(der::Input(expected_signature), signature_value.bytes());
-    EXPECT_EQ(der::Input(expected_signature_algorithm),
+    EXPECT_EQ(der::Input(StringAsBytes(expected_signature)),
+              signature_value.bytes());
+    EXPECT_EQ(der::Input(StringAsBytes(expected_signature_algorithm)),
               signature_algorithm_tlv);
-    EXPECT_EQ(der::Input(expected_tbs_certificate), tbs_certificate_tlv);
+    EXPECT_EQ(der::Input(StringAsBytes(expected_tbs_certificate)),
+              tbs_certificate_tlv);
   }
 }
 
@@ -167,7 +182,7 @@ void RunTbsCertificateTestGivenVersion(const std::string &file_name,
   ParsedTbsCertificate parsed;
   CertErrors errors;
   bool actual_result =
-      ParseTbsCertificate(der::Input(data), {}, &parsed, &errors);
+      ParseTbsCertificate(StringAsBytes(data), {}, &parsed, &errors);
 
   EXPECT_EQ(expected_result, actual_result);
   VerifyCertErrors(expected_errors, errors, test_file_path);
@@ -179,36 +194,38 @@ void RunTbsCertificateTestGivenVersion(const std::string &file_name,
   // Ensure that the ParsedTbsCertificate matches expectations.
   EXPECT_EQ(expected_version, parsed.version);
 
-  EXPECT_EQ(der::Input(expected_serial_number), parsed.serial_number);
-  EXPECT_EQ(der::Input(expected_signature_algorithm),
+  EXPECT_EQ(der::Input(StringAsBytes(expected_serial_number)),
+            parsed.serial_number);
+  EXPECT_EQ(der::Input(StringAsBytes(expected_signature_algorithm)),
             parsed.signature_algorithm_tlv);
 
-  EXPECT_EQ(der::Input(expected_issuer), parsed.issuer_tlv);
+  EXPECT_EQ(der::Input(StringAsBytes(expected_issuer)), parsed.issuer_tlv);
 
   // In the test expectations PEM file, validity is described as a
   // textual string of the parsed value (rather than as DER).
   EXPECT_EQ(expected_validity_not_before, ToString(parsed.validity_not_before));
   EXPECT_EQ(expected_validity_not_after, ToString(parsed.validity_not_after));
 
-  EXPECT_EQ(der::Input(expected_subject), parsed.subject_tlv);
-  EXPECT_EQ(der::Input(expected_spki), parsed.spki_tlv);
+  EXPECT_EQ(der::Input(StringAsBytes(expected_subject)), parsed.subject_tlv);
+  EXPECT_EQ(der::Input(StringAsBytes(expected_spki)), parsed.spki_tlv);
 
   EXPECT_EQ(!expected_issuer_unique_id.empty(),
             parsed.issuer_unique_id.has_value());
   if (parsed.issuer_unique_id.has_value()) {
-    EXPECT_EQ(der::Input(expected_issuer_unique_id),
+    EXPECT_EQ(der::Input(StringAsBytes(expected_issuer_unique_id)),
               parsed.issuer_unique_id->bytes());
   }
   EXPECT_EQ(!expected_subject_unique_id.empty(),
             parsed.subject_unique_id.has_value());
   if (parsed.subject_unique_id.has_value()) {
-    EXPECT_EQ(der::Input(expected_subject_unique_id),
+    EXPECT_EQ(der::Input(StringAsBytes(expected_subject_unique_id)),
               parsed.subject_unique_id->bytes());
   }
 
   EXPECT_EQ(!expected_extensions.empty(), parsed.extensions_tlv.has_value());
   if (parsed.extensions_tlv) {
-    EXPECT_EQ(der::Input(expected_extensions), parsed.extensions_tlv.value());
+    EXPECT_EQ(der::Input(StringAsBytes(expected_extensions)),
+              parsed.extensions_tlv.value());
   }
 }
 
@@ -1008,7 +1025,7 @@ bool ParseAuthorityKeyIdentifierTestData(
       file_name;
   EXPECT_TRUE(ReadTestDataFromPemFile(test_file_path, mappings));
 
-  return ParseAuthorityKeyIdentifier(der::Input(*backing_bytes),
+  return ParseAuthorityKeyIdentifier(StringAsBytes(*backing_bytes),
                                      authority_key_identifier);
 }
 

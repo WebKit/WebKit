@@ -11,6 +11,7 @@
 #ifndef TEST_PC_E2E_ANALYZER_VIDEO_NAMES_COLLECTION_H_
 #define TEST_PC_E2E_ANALYZER_VIDEO_NAMES_COLLECTION_H_
 
+#include <cstddef>
 #include <map>
 #include <optional>
 #include <set>
@@ -39,7 +40,7 @@ class NamesCollection {
  public:
   NamesCollection() = default;
 
-  explicit NamesCollection(rtc::ArrayView<const std::string> names);
+  explicit NamesCollection(ArrayView<const std::string> names);
 
   // Returns amount of currently presented names in the collection.
   size_t size() const { return size_; }

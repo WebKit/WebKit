@@ -75,6 +75,8 @@ public:
     bool scroll(ScrollDirection, ScrollGranularity, unsigned stepCount = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint()) override;
     std::optional<FrameIdentifier> rootFrameID() const final;
 
+    void scrollDidEnd() final;
+
 private:
     bool isVisibleToHitTesting() const final;
 
@@ -97,7 +99,6 @@ private:
 
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     void computePreferredLogicalWidths() override;
-    LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
     LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
     void layout() override;
@@ -108,7 +109,6 @@ private:
     void autoscroll(const IntPoint&) override;
     void stopAutoscroll() override;
 
-    virtual bool shouldPanScroll() const { return true; }
     void panScroll(const IntPoint&) override;
 
     int verticalScrollbarWidth() const override;

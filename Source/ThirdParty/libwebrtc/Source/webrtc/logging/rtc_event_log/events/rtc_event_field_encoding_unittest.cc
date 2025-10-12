@@ -350,8 +350,8 @@ class RtcEventFieldTest : public ::testing::Test {
     size_t size_before = parser_.RemainingBytes();
     auto result = parser_.ParseOptionalNumericField(params);
     ASSERT_TRUE(result.ok()) << result.message().c_str();
-    rtc::ArrayView<uint64_t> values = result.value().values;
-    rtc::ArrayView<uint8_t> positions = result.value().positions;
+    ArrayView<uint64_t> values = result.value().values;
+    ArrayView<uint8_t> positions = result.value().positions;
     ASSERT_EQ(positions.size(), expected_values.size());
     auto value_it = values.begin();
     for (size_t i = 0; i < expected_values.size(); i++) {
@@ -380,8 +380,8 @@ class RtcEventFieldTest : public ::testing::Test {
     auto result =
         parser_.ParseOptionalNumericField(params, /*required_field=*/false);
     ASSERT_TRUE(result.ok()) << result.message().c_str();
-    rtc::ArrayView<uint64_t> values = result.value().values;
-    rtc::ArrayView<uint8_t> positions = result.value().positions;
+    ArrayView<uint64_t> values = result.value().values;
+    ArrayView<uint8_t> positions = result.value().positions;
     EXPECT_EQ(positions.size(), 0u);
     EXPECT_EQ(values.size(), 0u);
   }

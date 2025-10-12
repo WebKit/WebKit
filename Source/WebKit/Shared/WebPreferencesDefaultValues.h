@@ -52,24 +52,12 @@
 #define Supporthdrdisplay_feature_status Testable
 #endif
 
-#if defined(ENABLE_WEBXR_WEBGPU_BY_DEFAULT) && ENABLE_WEBXR_WEBGPU_BY_DEFAULT && PLATFORM(VISION)
-#define Webxr_layers_feature_status Stable
-#else
 #define Webxr_layers_feature_status Unstable
-#endif
 
-#if defined(ENABLE_WEBXR_WEBGPU_BY_DEFAULT) && ENABLE_WEBXR_WEBGPU_BY_DEFAULT && PLATFORM(VISION)
+#if defined(ENABLE_WEBXR_WEBGPU) && ENABLE_WEBXR_WEBGPU && PLATFORM(VISION)
 #define Webgpu_webxr_feature_status Stable
 #else
 #define Webgpu_webxr_feature_status Unstable
-#endif
-
-#if defined(ENABLE_UNIFIED_PDF_BY_DEFAULT) && ENABLE_UNIFIED_PDF_BY_DEFAULT && PLATFORM(MAC)
-#define Unifiedpdf_feature_status Mature
-#elif defined(ENABLE_UNIFIED_PDF_AS_PREVIEW) && ENABLE_UNIFIED_PDF_AS_PREVIEW
-#define Unifiedpdf_feature_status Preview
-#else
-#define Unifiedpdf_feature_status Internal
 #endif
 
 #if defined(ENABLE_UNPREFIXED_BACKDROP_FILTER) && ENABLE_UNPREFIXED_BACKDROP_FILTER
@@ -85,6 +73,11 @@
 #endif
 
 namespace WebKit {
+
+#if HAVE(LIQUID_GLASS)
+bool isLiquidGlassEnabled();
+void setLiquidGlassEnabled(bool);
+#endif
 
 #if PLATFORM(IOS_FAMILY)
 bool defaultPassiveTouchListenersAsDefaultOnDocument();
@@ -109,8 +102,8 @@ bool defaultAppleMailPaginationQuirkEnabled();
 
 #if ENABLE(MEDIA_STREAM)
 bool defaultCaptureAudioInGPUProcessEnabled();
-bool defaultCaptureAudioInUIProcessEnabled();
 bool defaultManageCaptureStatusBarInGPUProcessEnabled();
+double defaultInactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes();
 #endif
 
 #if ENABLE(MEDIA_SOURCE) && PLATFORM(IOS_FAMILY)
@@ -119,6 +112,7 @@ bool defaultMediaSourceEnabled();
 
 #if ENABLE(MEDIA_SOURCE)
 bool defaultManagedMediaSourceEnabled();
+bool defaultMediaSourcePrefersDecompressionSession();
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 bool defaultManagedMediaSourceNeedsAirPlay();
 #endif
@@ -177,17 +171,10 @@ bool defaultRequiresPageVisibilityForVideoToBeNowPlaying();
 bool defaultCookieStoreAPIEnabled();
 
 bool defaultContentInsetBackgroundFillEnabled();
+bool defaultTopContentInsetBackgroundCanChangeAfterScrolling();
 
 #if ENABLE(SCREEN_TIME)
 bool defaultScreenTimeEnabled();
-#endif
-
-#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
-bool defaultMacStyleControlsOnCatalyst();
-#endif
-
-#if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
-bool defaultVectorBasedControlsOnMacEnabled();
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -198,12 +185,20 @@ bool defaultIFrameResourceMonitoringEnabled();
 bool defaultPreferSpatialAudioExperience();
 #endif
 
+bool defaultMutationEventsEnabled();
+
+bool defaultTrustedTypesEnabled();
+
 #if HAVE(MATERIAL_HOSTING)
 bool defaultHostedBlurMaterialInMediaControlsEnabled();
 #endif
 
-bool defaultMutationEventsEnabled();
+bool defaultIOSurfaceLosslessCompressionEnabled();
 
-bool defaultTrustedTypesEnabled();
+#if ENABLE(UNIFIED_PDF)
+bool defaultUnifiedPDFEnabled();
+#endif
+
+bool defaultScrollbarColorEnabled();
 
 } // namespace WebKit

@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "FloatPoint.h"
-#include "ScrollTypes.h"
+#include <WebCore/FloatPoint.h>
+#include <WebCore/ScrollTypes.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMalloc.h>
 

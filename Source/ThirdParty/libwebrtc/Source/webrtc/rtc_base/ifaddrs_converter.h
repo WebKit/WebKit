@@ -11,15 +11,17 @@
 #ifndef RTC_BASE_IFADDRS_CONVERTER_H_
 #define RTC_BASE_IFADDRS_CONVERTER_H_
 
+// IWYU pragma: begin_exports
 #if defined(WEBRTC_ANDROID)
 #include "rtc_base/ifaddrs_android.h"
-#else
+#elif defined(WEBRTC_POSIX)
 #include <ifaddrs.h>
 #endif  // WEBRTC_ANDROID
+// IWYU pragma: end_exports
 
 #include "rtc_base/ip_address.h"
 
-namespace rtc {
+namespace webrtc {
 
 // This class converts native interface addresses to our internal IPAddress
 // class. Subclasses should override ConvertNativeToIPAttributes to implement
@@ -40,6 +42,7 @@ class IfAddrsConverter {
 
 IfAddrsConverter* CreateIfAddrsConverter();
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_IFADDRS_CONVERTER_H_

@@ -82,7 +82,7 @@ void Name::emitImpl(T &out) const
             ASSERT(!mRawName.empty());
             if (mRawName != "main")
             {
-                out << kUserDefinedNamePrefix << mRawName;
+                out << '_' << kUserDefinedNamePrefix << mRawName;
             }
             else
             {

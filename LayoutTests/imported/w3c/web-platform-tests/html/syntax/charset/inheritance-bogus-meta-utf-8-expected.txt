@@ -1,0 +1,5 @@
+
+PASS Child with bogus <meta charset>
+FAIL Child with bogus Content-Type charset assert_equals: expected "\ufffd\n" but got "¢\n"
+PASS Child with bogus Content-Type charset, but valid <meta charset>
+

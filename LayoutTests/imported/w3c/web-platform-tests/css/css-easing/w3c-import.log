@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-easing/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-easing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-easing/cubic-bezier-timing-functions-output.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-easing/linear-timing-functions-chrome-406926307-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-easing/linear-timing-functions-output.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-easing/linear-timing-functions-syntax.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-easing/step-timing-functions-output.html

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import <wtf/Platform.h>
 #if PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
 
 #import <pal/spi/cocoa/AVKitSPI.h>

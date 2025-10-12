@@ -6,54 +6,54 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x20
         RenderText {#text} at (0,0) size 229x19
           text run at (0,0) width 229: "These textfields should not overlap."
-      RenderTable {TABLE} at (0,20) size 784x26
-        RenderTableSection {TBODY} at (0,0) size 784x26
-          RenderTableRow {TR} at (0,1) size 784x24
-            RenderTableCell {TD} at (1,1) size 15x24 [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,1) size 13x22 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-                RenderFlexibleBox {DIV} at (6,3) size 0x15
+      RenderTable {TABLE} at (0,20) size 784x24
+        RenderTableSection {TBODY} at (0,0) size 784x24
+          RenderTableRow {TR} at (0,1) size 784x22
+            RenderTableCell {TD} at (1,1) size 14x22 [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,1) size 12x20 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
+                RenderFlexibleBox {DIV} at (6,3) size 0x14
                   RenderBlock {DIV} at (0,1) size 11x12
-                  RenderBlock {DIV} at (15,0) size 0x14
-                  RenderBlock {DIV} at (15,7) size 0x0
-            RenderTableCell {TD} at (17,1) size 15x24 [r=0 c=1 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,1) size 13x22 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-                RenderFlexibleBox {DIV} at (6,3) size 0x15
+                  RenderBlock {DIV} at (14,0) size 0x14
+                  RenderBlock {DIV} at (14,7) size 0x0
+            RenderTableCell {TD} at (16,1) size 14x22 [r=0 c=1 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,1) size 12x20 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
+                RenderFlexibleBox {DIV} at (6,3) size 0x14
                   RenderBlock {DIV} at (0,1) size 11x12
-                  RenderBlock {DIV} at (15,0) size 0x14
-                  RenderBlock {DIV} at (15,7) size 0x0
-            RenderTableCell {TD} at (33,1) size 15x24 [r=0 c=2 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,1) size 13x22 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-                RenderFlexibleBox {DIV} at (6,3) size 0x15
+                  RenderBlock {DIV} at (14,0) size 0x14
+                  RenderBlock {DIV} at (14,7) size 0x0
+            RenderTableCell {TD} at (31,1) size 14x22 [r=0 c=2 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,1) size 12x20 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
+                RenderFlexibleBox {DIV} at (6,3) size 0x14
                   RenderBlock {DIV} at (0,1) size 11x12
-                  RenderBlock {DIV} at (15,0) size 0x14
-                  RenderBlock {DIV} at (15,7) size 0x0
-            RenderTableCell {TD} at (49,1) size 734x23 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x20
+                  RenderBlock {DIV} at (14,0) size 0x14
+                  RenderBlock {DIV} at (14,7) size 0x0
+            RenderTableCell {TD} at (46,1) size 737x22 [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 4x19
                 text run at (1,1) width 4: " "
-      RenderBlock (anonymous) at (0,45) size 784x41
+      RenderBlock (anonymous) at (0,44) size 784x40
         RenderBR {BR} at (0,0) size 0x19
         RenderBR {BR} at (0,20) size 0x19
-      RenderTable {TABLE} at (0,85) size 784x26
-        RenderTableSection {TBODY} at (0,0) size 784x26
-          RenderTableRow {TR} at (0,1) size 784x24
-            RenderTableCell {TD} at (1,1) size 15x24 [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,1) size 13x22 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-                RenderFlexibleBox {DIV} at (6,3) size 0x15
+      RenderTable {TABLE} at (0,84) size 784x24
+        RenderTableSection {TBODY} at (0,0) size 784x24
+          RenderTableRow {TR} at (0,1) size 784x22
+            RenderTableCell {TD} at (1,1) size 14x22 [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,1) size 12x20 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
+                RenderFlexibleBox {DIV} at (6,3) size 0x14
                   RenderBlock {DIV} at (0,1) size 11x12
-                  RenderBlock {DIV} at (15,0) size 0x14
-                  RenderBlock {DIV} at (15,7) size 0x0
-            RenderTableCell {TD} at (17,1) size 15x24 [r=0 c=1 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,1) size 13x22 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-                RenderFlexibleBox {DIV} at (6,3) size 0x15
+                  RenderBlock {DIV} at (14,0) size 0x14
+                  RenderBlock {DIV} at (14,7) size 0x0
+            RenderTableCell {TD} at (16,1) size 14x22 [r=0 c=1 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,1) size 12x20 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
+                RenderFlexibleBox {DIV} at (6,3) size 0x14
                   RenderBlock {DIV} at (0,1) size 11x12
-                  RenderBlock {DIV} at (15,0) size 0x14
-                  RenderBlock {DIV} at (15,7) size 0x0
-            RenderTableCell {TD} at (33,1) size 15x24 [r=0 c=2 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,1) size 13x22 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-                RenderFlexibleBox {DIV} at (6,3) size 0x15
+                  RenderBlock {DIV} at (14,0) size 0x14
+                  RenderBlock {DIV} at (14,7) size 0x0
+            RenderTableCell {TD} at (31,1) size 14x22 [r=0 c=2 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,1) size 12x20 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
+                RenderFlexibleBox {DIV} at (6,3) size 0x14
                   RenderBlock {DIV} at (0,1) size 11x12
-                  RenderBlock {DIV} at (15,0) size 0x14
-                  RenderBlock {DIV} at (15,7) size 0x0
-            RenderTableCell {TD} at (49,1) size 734x23 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x20
+                  RenderBlock {DIV} at (14,0) size 0x14
+                  RenderBlock {DIV} at (14,7) size 0x0
+            RenderTableCell {TD} at (46,1) size 737x22 [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 4x19
                 text run at (1,1) width 4: " "

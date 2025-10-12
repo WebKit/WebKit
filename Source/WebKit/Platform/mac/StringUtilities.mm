@@ -27,6 +27,7 @@
 #import "StringUtilities.h"
 
 #import <wtf/SoftLinking.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/StringBuilder.h>
 
 namespace WebKit {
@@ -49,19 +50,19 @@ extern "C" CFStringRef CFPhoneNumberCopyUnformattedRepresentation(CFPhoneNumberR
 SOFT_LINK(PhoneNumbers, CFPhoneNumberCopyUnformattedRepresentation, CFStringRef, (CFPhoneNumberRef phoneNumber), (phoneNumber));
 
 
-NSString *formattedPhoneNumberString(NSString *originalPhoneNumber)
+RetainPtr<NSString> formattedPhoneNumberString(NSString *originalPhoneNumber)
 {
-    NSString *countryCode = [[[NSLocale currentLocale] objectForKey:NSLocaleCountryCode] lowercaseString];
+    RetainPtr countryCode = [[[NSLocale currentLocale] objectForKey:NSLocaleCountryCode] lowercaseString];
 
-    RetainPtr<CFPhoneNumberRef> phoneNumber = adoptCF(CFPhoneNumberCreate(kCFAllocatorDefault, (__bridge CFStringRef)originalPhoneNumber, (__bridge CFStringRef)countryCode));
+    RetainPtr<CFPhoneNumberRef> phoneNumber = adoptCF(CFPhoneNumberCreate(kCFAllocatorDefault, bridge_cast(originalPhoneNumber), bridge_cast(countryCode.get())));
     if (!phoneNumber)
         return originalPhoneNumber;
 
-    auto phoneNumberString = adoptCF(CFPhoneNumberCopyFormattedRepresentation(phoneNumber.get()));
+    RetainPtr phoneNumberString = adoptCF(CFPhoneNumberCopyFormattedRepresentation(phoneNumber.get()));
     if (!phoneNumberString)
         phoneNumberString = adoptCF(CFPhoneNumberCopyUnformattedRepresentation(phoneNumber.get()));
 
-    return phoneNumberString.bridgingAutorelease();
+    return bridge_cast(WTFMove(phoneNumberString));
 }
 
 #endif // ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)

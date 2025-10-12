@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            position: absolute;
+            will-change: transform;
+            border: 1px solid black;
+            padding: 10px;
+            top: 100px;
+        }
+    
+        .image-box {
+            display: block;
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.internals && window.testRunner) {
+            internals.clearMemoryCache();
+            internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        window.addEventListener('load', async () => {
+            await UIHelper.renderingUpdate();
+
+            const image = document.getElementsByTagName('img')[0];
+            const imageLoadPromise = new Promise((resolve) => {
+                image.onload = (() => {
+                    if (window.internals)
+                        internals.setHasHDRContentForTesting(image);
+                
+                    resolve();
+                });
+            });
+
+            image.src = "../../fast/images/resources/green-400x400.png";
+            await imageLoadPromise;
+
+            if (window.testRunner) {
+                document.getElementById("layers").textContent = internals.layerTreeAsText(document);
+                testRunner.notifyDone();
+            }
+        }, false);
+    </script>
+</head>
+<body>
+    <pre id="layers">Layer tree goes here in DRT</pre>
+    <div class="container"><img class="image-box"></div>
+</body>
+</html>

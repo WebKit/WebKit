@@ -26,55 +26,53 @@
 #import "config.h"
 #import "WKScriptMessageInternal.h"
 
-#import <WebKit/WKFrameInfo.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/WeakObjCPtr.h>
+#import "WKContentWorldInternal.h"
+#import "WKFrameInfoInternal.h"
+#import "WebPageProxy.h"
+#import <WebCore/WebCoreObjCExtras.h>
 
-@implementation WKScriptMessage {
-    RetainPtr<id> _body;
-    WeakObjCPtr<WKWebView> _webView;
-    RetainPtr<WKFrameInfo> _frameInfo;
-    RetainPtr<NSString> _name;
-    RetainPtr<WKContentWorld> _world;
-}
+@implementation WKScriptMessage
 
-- (instancetype)_initWithBody:(id)body webView:(WKWebView *)webView frameInfo:(WKFrameInfo *)frameInfo name:(NSString *)name world:(WKContentWorld *)world
+- (void)dealloc
 {
-    if (!(self = [super init]))
-        return nil;
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKScriptMessage.class, self))
+        return;
 
-    _body = adoptNS([body copy]);
-    _webView = webView;
-    _frameInfo = frameInfo;
-    _name = adoptNS([name copy]);
-    _world = world;
+    _scriptMessage->~ScriptMessage();
 
-    return self;
+    [super dealloc];
 }
 
 - (id)body
 {
-    return _body.get();
+    return _scriptMessage->body().get();
 }
 
 - (WKWebView *)webView
 {
-    return _webView.getAutoreleased();
+    if (RefPtr page = _scriptMessage->page())
+        return page->cocoaView().autorelease();
+    return nil;
 }
 
 - (WKFrameInfo *)frameInfo
 {
-    return _frameInfo.get();
+    return wrapper(_scriptMessage->frame());
 }
 
 - (NSString *)name
 {
-    return _name.get();
+    return _scriptMessage->cocoaName().get();
 }
 
 - (WKContentWorld *)world
 {
-    return _world.get();
+    return wrapper(_scriptMessage->world());
+}
+
+- (API::Object&)_apiObject
+{
+    return *_scriptMessage;
 }
 
 @end

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ProtectionSpaceBase.h"
+#include <WebCore/ProtectionSpaceBase.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSURLProtectionSpace;
@@ -46,10 +46,11 @@ public:
 
     static bool platformCompare(const ProtectionSpace& a, const ProtectionSpace& b);
 
-    bool encodingRequiresPlatformData() const { return m_nsSpace && encodingRequiresPlatformData(m_nsSpace.get()); }
+    bool encodingRequiresPlatformData() const;
 
     WEBCORE_EXPORT bool receivesCredentialSecurely() const;
     WEBCORE_EXPORT NSURLProtectionSpace *nsSpace() const;
+    WEBCORE_EXPORT RetainPtr<NSURLProtectionSpace> protectedNSSpace() const;
     
     WEBCORE_EXPORT std::optional<PlatformData> getPlatformDataToSerialize() const;
 

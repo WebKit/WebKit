@@ -1,16 +1,16 @@
-/* Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <gtest/gtest.h>
 
@@ -30,9 +30,9 @@
 #include <openssl/hmac.h>
 #include <openssl/md4.h>
 #include <openssl/md5.h>
-#include <openssl/rand.h> // TODO(bbe): only for RAND_bytes call below, replace with BCM call
+#include <openssl/rand.h>  // TODO(bbe): only for RAND_bytes call below, replace with BCM call
 #include <openssl/rsa.h>
-#include <openssl/service_indicator.h>
+#include <openssl/sha.h>
 
 #include "../../test/abi_test.h"
 #include "../../test/test_util.h"
@@ -40,9 +40,48 @@
 #include "../bn/internal.h"
 #include "../rand/internal.h"
 #include "../tls/internal.h"
+#include "internal.h"
 
 
-using bssl::FIPSStatus;
+namespace {
+
+// CALL_SERVICE_AND_CHECK_APPROVED runs |func| and sets |approved| to one of the
+// |FIPSStatus*| values, above, depending on whether |func| invoked an
+// approved service. The result of |func| becomes the result of this macro.
+#define CALL_SERVICE_AND_CHECK_APPROVED(approved, func)   \
+  [&] {                                                   \
+    FIPSIndicatorHelper fips_indicator_helper(&approved); \
+    return func;                                          \
+  }()
+
+enum class FIPSStatus {
+  NOT_APPROVED = 0,
+  APPROVED = 1,
+};
+
+// FIPSIndicatorHelper records whether the service indicator counter advanced
+// during its lifetime.
+class FIPSIndicatorHelper {
+ public:
+  FIPSIndicatorHelper(FIPSStatus *result)
+      : result_(result), before_(FIPS_service_indicator_before_call()) {
+    *result_ = FIPSStatus::NOT_APPROVED;
+  }
+
+  ~FIPSIndicatorHelper() {
+    uint64_t after = FIPS_service_indicator_after_call();
+    if (after != before_) {
+      *result_ = FIPSStatus::APPROVED;
+    }
+  }
+
+  FIPSIndicatorHelper(const FIPSIndicatorHelper &) = delete;
+  FIPSIndicatorHelper &operator=(const FIPSIndicatorHelper &) = delete;
+
+ private:
+  FIPSStatus *const result_;
+  const uint64_t before_;
+};
 
 static const uint8_t kAESKey[16] = {'A', 'W', 'S', '-', 'L', 'C', 'C', 'r',
                                     'y', 'p', 't', 'o', ' ', 'K', 'e', 'y'};
@@ -372,11 +411,13 @@ static const uint8_t kHMACOutput_sha512_256[SHA512_256_DIGEST_LENGTH] = {
     0x26, 0xba, 0x75, 0x90, 0xd0, 0xb9, 0xd4, 0x09, 0xf5, 0x22, 0xd6,
     0xb6, 0xab, 0xa8, 0xb9, 0xae, 0x01, 0x06, 0x37, 0x8f, 0xd1};
 
-static const uint8_t kDRBGEntropy[48] = {
-    'B', 'C', 'M', ' ', 'K', 'n', 'o', 'w', 'n', ' ', 'A', 'n',
-    's', 'w', 'e', 'r', ' ', 'T', 'e', 's', 't', ' ', 'D', 'B',
-    'R', 'G', ' ', 'I', 'n', 'i', 't', 'i', 'a', 'l', ' ', 'E',
-    'n', 't', 'r', 'o', 'p', 'y', ' ', ' ', ' ', ' ', ' ', ' '};
+static const uint8_t kDRBGEntropy[CTR_DRBG_MIN_ENTROPY_LEN] = {
+    'B', 'C', 'M', ' ', 'K', 'n', 'o', 'w', 'n', ' ', 'A',
+    'n', 's', 'w', 'e', 'r', ' ', 'T', 'e', 's', 't', ' ',
+    'D', 'B', 'R', 'G', ' ', 'I', 'n', 'i', 't', 'i'};
+static const uint8_t kDRBGNonce[CTR_DRBG_NONCE_LEN] = {
+    'a', 'l', ' ', 'E', 'n', 't', 'r', 'o',
+    'p', 'y', ' ', ' ', ' ', ' ', ' ', ' '};
 
 static const uint8_t kDRBGPersonalization[18] = {'B', 'C', 'M', 'P', 'e', 'r',
                                                  's', 'o', 'n', 'a', 'l', 'i',
@@ -386,12 +427,13 @@ static const uint8_t kDRBGAD[16] = {'B', 'C', 'M', ' ', 'D', 'R', 'B', 'G',
                                     ' ', 'K', 'A', 'T', ' ', 'A', 'D', ' '};
 
 const uint8_t kDRBGOutput[64] = {
-    0x1d, 0x63, 0xdf, 0x05, 0x51, 0x49, 0x22, 0x46, 0xcd, 0x9b, 0xc5,
-    0xbb, 0xf1, 0x5d, 0x44, 0xae, 0x13, 0x78, 0xb1, 0xe4, 0x7c, 0xf1,
-    0x96, 0x33, 0x3d, 0x60, 0xb6, 0x29, 0xd4, 0xbb, 0x6b, 0x44, 0xf9,
-    0xef, 0xd9, 0xf4, 0xa2, 0xba, 0x48, 0xea, 0x39, 0x75, 0x59, 0x32,
-    0xf7, 0x31, 0x2c, 0x98, 0x14, 0x2b, 0x49, 0xdf, 0x02, 0xb6, 0x5d,
-    0x71, 0x09, 0x50, 0xdb, 0x23, 0xdb, 0xe5, 0x22, 0x95};
+    0x34, 0xa6, 0xa1, 0x4a, 0xc2, 0x42, 0xb4, 0x9a, 0xac, 0x50, 0xf3,
+    0x2c, 0xfb, 0x2d, 0x93, 0x25, 0x85, 0x31, 0xc2, 0xe7, 0xd1, 0xa6,
+    0x2c, 0xe4, 0xa1, 0xd2, 0x13, 0xc0, 0x91, 0xf8, 0xdf, 0x59, 0x2a,
+    0x01, 0xaf, 0x3a, 0x5b, 0xd0, 0x95, 0xfe, 0x1e, 0xf6, 0xfa, 0x60,
+    0x03, 0xf4, 0x70, 0xf5, 0x52, 0x9b, 0x58, 0x11, 0xdb, 0xae, 0x22,
+    0xe2, 0x3b, 0x7d, 0x52, 0x40, 0xad, 0xda, 0x7e, 0x40,
+};
 
 static const uint8_t kDRBGEntropy2[48] = {
     'B', 'C', 'M', ' ', 'K', 'n', 'o', 'w', 'n', ' ', 'A', 'n',
@@ -400,12 +442,12 @@ static const uint8_t kDRBGEntropy2[48] = {
     't', 'r', 'o', 'p', 'y', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
 
 static const uint8_t kDRBGReseedOutput[64] = {
-    0xa4, 0x77, 0x05, 0xdb, 0x14, 0x11, 0x76, 0x71, 0x42, 0x5b, 0xd8,
-    0xd7, 0xa5, 0x4f, 0x8b, 0x39, 0xf2, 0x10, 0x4a, 0x50, 0x5b, 0xa2,
-    0xc8, 0xf0, 0xbb, 0x3e, 0xa1, 0xa5, 0x90, 0x7d, 0x54, 0xd9, 0xc6,
-    0xb0, 0x96, 0xc0, 0x2b, 0x7e, 0x9b, 0xc9, 0xa1, 0xdd, 0x78, 0x2e,
-    0xd5, 0xa8, 0x66, 0x16, 0xbd, 0x18, 0x3c, 0xf2, 0xaa, 0x7a, 0x2b,
-    0x37, 0xf9, 0xab, 0x35, 0x64, 0x15, 0x01, 0x3f, 0xc4,
+    0x1c, 0x8d, 0xc4, 0x6e, 0xb0, 0x2d, 0xb7, 0x9a, 0x7c, 0x75, 0xa6,
+    0x83, 0xd2, 0xf9, 0x9d, 0x1c, 0x78, 0x00, 0x64, 0x0f, 0x20, 0x68,
+    0x15, 0x89, 0x51, 0x73, 0xca, 0x74, 0x02, 0xb7, 0x23, 0x87, 0x1b,
+    0x9d, 0x86, 0x29, 0x1b, 0x38, 0x76, 0xfa, 0x6c, 0x81, 0xe2, 0xb7,
+    0xa0, 0xe0, 0xb9, 0x06, 0x67, 0x99, 0xf9, 0xf9, 0x47, 0x82, 0xb3,
+    0xe2, 0x15, 0x3c, 0xe7, 0xce, 0x54, 0x37, 0xda, 0x52,
 };
 
 static const uint8_t kTLSSecret[32] = {
@@ -1237,7 +1279,8 @@ TEST_P(RSAServiceIndicatorTest, RSASigGen) {
         approved, EVP_PKEY_CTX_set_rsa_padding(pctx, RSA_PKCS1_PSS_PADDING)));
     EXPECT_EQ(approved, FIPSStatus::NOT_APPROVED);
     ASSERT_TRUE(CALL_SERVICE_AND_CHECK_APPROVED(
-        approved, EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, -1)));
+        approved,
+        EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, RSA_PSS_SALTLEN_DIGEST)));
     EXPECT_EQ(approved, FIPSStatus::NOT_APPROVED);
   }
   ASSERT_TRUE(CALL_SERVICE_AND_CHECK_APPROVED(
@@ -1268,7 +1311,8 @@ TEST_P(RSAServiceIndicatorTest, RSASigGen) {
         approved, EVP_PKEY_CTX_set_rsa_padding(pctx, RSA_PKCS1_PSS_PADDING)));
     EXPECT_EQ(approved, FIPSStatus::NOT_APPROVED);
     ASSERT_TRUE(CALL_SERVICE_AND_CHECK_APPROVED(
-        approved, EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, -1)));
+        approved,
+        EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, RSA_PSS_SALTLEN_DIGEST)));
     EXPECT_EQ(approved, FIPSStatus::NOT_APPROVED);
   }
   ASSERT_TRUE(CALL_SERVICE_AND_CHECK_APPROVED(
@@ -1308,7 +1352,7 @@ TEST_P(RSAServiceIndicatorTest, RSASigVer) {
                                  pkey.get()));
   if (test.use_pss) {
     ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_padding(pctx, RSA_PKCS1_PSS_PADDING));
-    ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, -1));
+    ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, RSA_PSS_SALTLEN_DIGEST));
   }
   ASSERT_TRUE(EVP_DigestSign(md_ctx.get(), nullptr, &sig_len, nullptr, 0));
   signature.resize(sig_len);
@@ -1332,7 +1376,7 @@ TEST_P(RSAServiceIndicatorTest, RSASigVer) {
     ASSERT_TRUE(CALL_SERVICE_AND_CHECK_APPROVED(
         approved, EVP_PKEY_CTX_set_rsa_padding(pctx, RSA_PKCS1_PSS_PADDING)));
     EXPECT_EQ(approved, FIPSStatus::NOT_APPROVED);
-    ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, -1));
+    ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, RSA_PSS_SALTLEN_DIGEST));
   }
   ASSERT_TRUE(CALL_SERVICE_AND_CHECK_APPROVED(
       approved,
@@ -1353,7 +1397,7 @@ TEST_P(RSAServiceIndicatorTest, RSASigVer) {
     ASSERT_TRUE(CALL_SERVICE_AND_CHECK_APPROVED(
         approved, EVP_PKEY_CTX_set_rsa_padding(pctx, RSA_PKCS1_PSS_PADDING)));
     EXPECT_EQ(approved, FIPSStatus::NOT_APPROVED);
-    ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, -1));
+    ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, RSA_PSS_SALTLEN_DIGEST));
   }
   ASSERT_TRUE(CALL_SERVICE_AND_CHECK_APPROVED(
       approved,
@@ -2361,8 +2405,10 @@ TEST(ServiceIndicatorTest, DRBG) {
   // |CTR_DRBG_reseed| should not be approved, because the functions do not
   // indicate that a service has been fully completed yet.
   ASSERT_TRUE(CALL_SERVICE_AND_CHECK_APPROVED(
-      approved, CTR_DRBG_init(&drbg, kDRBGEntropy, kDRBGPersonalization,
-                              sizeof(kDRBGPersonalization))));
+      approved,
+      CTR_DRBG_init(&drbg, /*df=*/true, kDRBGEntropy, sizeof(kDRBGEntropy),
+                    kDRBGNonce, kDRBGPersonalization,
+                    sizeof(kDRBGPersonalization))));
   EXPECT_EQ(approved, FIPSStatus::NOT_APPROVED);
   ASSERT_TRUE(CALL_SERVICE_AND_CHECK_APPROVED(
       approved, CTR_DRBG_generate(&drbg, output, sizeof(kDRBGOutput), kDRBGAD,
@@ -2371,8 +2417,8 @@ TEST(ServiceIndicatorTest, DRBG) {
   EXPECT_EQ(Bytes(kDRBGOutput), Bytes(output));
 
   ASSERT_TRUE(CALL_SERVICE_AND_CHECK_APPROVED(
-      approved,
-      CTR_DRBG_reseed(&drbg, kDRBGEntropy2, kDRBGAD, sizeof(kDRBGAD))));
+      approved, CTR_DRBG_reseed_ex(&drbg, kDRBGEntropy2, sizeof(kDRBGEntropy2),
+                                   kDRBGAD, sizeof(kDRBGAD))));
   EXPECT_EQ(approved, FIPSStatus::NOT_APPROVED);
   ASSERT_TRUE(CALL_SERVICE_AND_CHECK_APPROVED(
       approved, CTR_DRBG_generate(&drbg, output, sizeof(kDRBGReseedOutput),
@@ -2424,3 +2470,5 @@ TEST(ServiceIndicatorTest, BasicTest) {
 }
 
 #endif  // BORINGSSL_FIPS
+
+}  // namespace

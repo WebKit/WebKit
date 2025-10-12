@@ -142,7 +142,7 @@ private:
     float m_smoothedValue;
     
     AudioParamTimeline m_timeline;
-    Ref<AudioBus> m_summingBus;
+    const Ref<AudioBus> m_summingBus;
 
 #if !RELEASE_LOG_DISABLED
     mutable Ref<const Logger> m_logger;

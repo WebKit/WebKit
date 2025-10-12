@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-array.prototype.toReversed
+esid: sec-array.prototype.toreversed
 description: >
   Array.prototype.toReversed returns a new array even if it has zero or one elements
 features: [change-array-by-copy]

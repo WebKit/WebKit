@@ -1,4 +1,4 @@
-//@ skip if !$isWasmPlatform
+//@ skip if $addressBits <= 32
 //@ runDefault("--maximumWasmDepthForInlining=10", "--maximumWasmCalleeSizeForInlining=10000000", "--maximumWasmCallerSizeForInlining=10000000", "--useBBQJIT=0")
 var wasm_code = read('simple-inline-stacktrace-with-catch.wasm', 'binary')
 var wasm_module = new WebAssembly.Module(wasm_code);
@@ -18,7 +18,7 @@ function verifyStack(stack, e) {
     let trace = str.split('\n')
     let expected = ["*"]
     for (let i of stack)
-        expected.push(`<?>.wasm-function[${i}]@[wasm code]`)
+        expected.push(`${i}@wasm-function[${i}]`)
     expected = expected.concat(["*"])
 
     if (trace.length != expected.length)

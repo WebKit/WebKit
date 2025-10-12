@@ -9,11 +9,15 @@
  */
 #include "test/logging/file_log_writer.h"
 
+#include <cerrno>
+#include <cstddef>
+#include <cstdio>
 #include <memory>
+#include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/rtc_event_log_output.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 #include "test/testsupport/file_utils.h"
 
 namespace webrtc {

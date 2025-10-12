@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "MarkedBlockInlines.h"
-#include "MarkedSpace.h"
+#include <JavaScriptCore/MarkedBlockInlines.h>
+#include <JavaScriptCore/MarkedSpace.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

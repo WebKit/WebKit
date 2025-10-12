@@ -103,3 +103,5 @@ template<> struct LogArgument<WebCore::OscillatorType> {
 };
 
 } // namespace WTF
+
+SPECIALIZE_TYPE_TRAITS_AUDIONODE(OscillatorNode, NodeTypeOscillator);

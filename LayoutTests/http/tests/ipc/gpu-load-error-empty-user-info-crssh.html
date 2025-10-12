@@ -1,0 +1,19 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+    if (window.IPC) {
+        import('./coreipc.js').then(({
+            CoreIPC
+        }) => {
+            CoreIPC.GPU.RemoteMediaResourceManager.LoadFailed(0, {identifier:262145, error:{ipcData:{optionalValue:{type:4, nsError:{optionalValue:{wrapper:{domain:location.href, code:523986010202, userInfo:{vector:{}},underlyingError:{optionalValue:{domain:'A', code:29, userInfo:{vector:{}}, underlyingError:{}}}}}}, isSanitized:false}}}});
+        });
+    }
+
+    function callDone() {
+        window.testRunner?.notifyDone();
+    }
+</script>
+<body onload="setTimeout(callDone, 200)">
+    <p>This test passes if Webkit does not crash</p>
+</body>

@@ -33,4 +33,5 @@ PASS CSS Fonts Module Level 4: parsing @font-palette-values 30
 PASS CSS Fonts Module Level 4: parsing @font-palette-values 31
 PASS CSS Fonts Module Level 4: parsing @font-palette-values 32
 FAIL CSS Fonts Module Level 4: parsing @font-palette-values 33 assert_equals: expected "0 color-mix(in lch, red, blue)" but got ""
+FAIL CSS Fonts Module Level 4: parsing @font-palette-values 34 assert_equals: expected "0 color-mix(in lch, color-mix(in lch, red, blue), color-mix(in lch, green, white))" but got ""
 

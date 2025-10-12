@@ -1,6 +1,6 @@
-NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
-NetworkProcess/cocoa/NetworkSessionCocoa.mm
-Platform/IPC/StreamClientConnection.h
-Shared/Cocoa/AuxiliaryProcessCocoa.mm
-UIProcess/WebProcessCache.cpp
-UIProcess/mac/PageClientImplMac.mm
+[ iOS ] UIProcess/API/ios/WKWebViewIOS.mm
+[ iOS ] UIProcess/ApplicationStateTracker.mm
+[ iOS ] UIProcess/ios/PageClientImplIOS.mm
+[ iOS ] UIProcess/ios/ViewGestureControllerIOS.mm
+[ iOS ] WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm
+[ iOS ] WebProcess/WebPage/ios/WebPageIOS.mm

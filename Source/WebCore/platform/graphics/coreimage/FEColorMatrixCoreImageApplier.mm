@@ -56,9 +56,9 @@ bool FEColorMatrixCoreImageApplier::supportsCoreImageRendering(const FEColorMatr
 bool FEColorMatrixCoreImageApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
     ASSERT(inputs.size() == 1);
-    Ref input = inputs[0];
+    auto& input = inputs[0].get();
 
-    auto inputImage = input->ciImage();
+    auto inputImage = input.ciImage();
     if (!inputImage)
         return false;
 

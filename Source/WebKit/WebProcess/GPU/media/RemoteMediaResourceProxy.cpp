@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,14 +53,14 @@ Ref<WebCore::PlatformMediaResource> RemoteMediaResourceProxy::protectedMediaReso
 
 void RemoteMediaResourceProxy::responseReceived(WebCore::PlatformMediaResource&, const WebCore::ResourceResponse& response, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&& completionHandler)
 {
-    protectedConnection()->sendWithAsyncReply(Messages::RemoteMediaResourceManager::ResponseReceived(m_id, response, protectedMediaResource()->didPassAccessControlCheck()), [completionHandler = WTFMove(completionHandler)](auto shouldContinue) mutable {
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceManager::ResponseReceived(m_id, response, protectedMediaResource()->didPassAccessControlCheck()), [completionHandler = WTFMove(completionHandler)](auto shouldContinue) mutable {
         completionHandler(shouldContinue);
     });
 }
 
 void RemoteMediaResourceProxy::redirectReceived(WebCore::PlatformMediaResource&, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse& response, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
-    protectedConnection()->sendWithAsyncReply(Messages::RemoteMediaResourceManager::RedirectReceived(m_id, WTFMove(request), response), [completionHandler = WTFMove(completionHandler)](WebCore::ResourceRequest&& request) mutable {
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceManager::RedirectReceived(m_id, WTFMove(request), response), [completionHandler = WTFMove(completionHandler)](WebCore::ResourceRequest&& request) mutable {
         completionHandler(WTFMove(request));
     });
 }
@@ -73,12 +73,12 @@ bool RemoteMediaResourceProxy::shouldCacheResponse(WebCore::PlatformMediaResourc
 
 void RemoteMediaResourceProxy::dataSent(WebCore::PlatformMediaResource&, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
-    protectedConnection()->send(Messages::RemoteMediaResourceManager::DataSent(m_id, bytesSent, totalBytesToBeSent), 0);
+    m_connection->send(Messages::RemoteMediaResourceManager::DataSent(m_id, bytesSent, totalBytesToBeSent), 0);
 }
 
 void RemoteMediaResourceProxy::dataReceived(WebCore::PlatformMediaResource&, const WebCore::SharedBuffer& buffer)
 {
-    protectedConnection()->sendWithAsyncReply(Messages::RemoteMediaResourceManager::DataReceived(m_id, IPC::SharedBufferReference { buffer }), [] (auto&& bufferHandle) {
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceManager::DataReceived(m_id, IPC::SharedBufferReference { buffer }), [] (auto&& bufferHandle) {
         // Take ownership of shared memory and mark it as media-related memory.
         if (bufferHandle)
             bufferHandle->takeOwnershipOfMemory(WebCore::MemoryLedger::Media);
@@ -87,17 +87,17 @@ void RemoteMediaResourceProxy::dataReceived(WebCore::PlatformMediaResource&, con
 
 void RemoteMediaResourceProxy::accessControlCheckFailed(WebCore::PlatformMediaResource&, const WebCore::ResourceError& error)
 {
-    protectedConnection()->send(Messages::RemoteMediaResourceManager::AccessControlCheckFailed(m_id, error), 0);
+    m_connection->send(Messages::RemoteMediaResourceManager::AccessControlCheckFailed(m_id, error), 0);
 }
 
 void RemoteMediaResourceProxy::loadFailed(WebCore::PlatformMediaResource&, const WebCore::ResourceError& error)
 {
-    protectedConnection()->send(Messages::RemoteMediaResourceManager::LoadFailed(m_id, error), 0);
+    m_connection->send(Messages::RemoteMediaResourceManager::LoadFailed(m_id, error), 0);
 }
 
 void RemoteMediaResourceProxy::loadFinished(WebCore::PlatformMediaResource&, const WebCore::NetworkLoadMetrics& metrics)
 {
-    protectedConnection()->send(Messages::RemoteMediaResourceManager::LoadFinished(m_id, metrics), 0);
+    m_connection->send(Messages::RemoteMediaResourceManager::LoadFinished(m_id, metrics), 0);
 }
 
 }

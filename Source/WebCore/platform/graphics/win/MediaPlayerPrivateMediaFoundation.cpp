@@ -30,7 +30,7 @@
 #if ENABLE(VIDEO) && USE(MEDIA_FOUNDATION)
 
 #include "CachedResourceLoader.h"
-#include "DocumentInlines.h"
+#include "DocumentView.h"
 #include "GraphicsContext.h"
 #include "HWndDC.h"
 #include "HostWindow.h"
@@ -370,7 +370,7 @@ bool MediaPlayerPrivateMediaFoundation::setAllChannelVolumes(float volume)
     ASSERT_UNUSED(hr, SUCCEEDED(hr));
 
     Vector<float> volumes(channelsCount, volume);
-    return SUCCEEDED(audioVolume->SetAllVolumes(channelsCount, volumes.data()));
+    return SUCCEEDED(audioVolume->SetAllVolumes(channelsCount, volumes.span().data()));
 }
 
 void MediaPlayerPrivateMediaFoundation::setVolume(float volume)
@@ -605,7 +605,7 @@ bool MediaPlayerPrivateMediaFoundation::startCreateMediaSource(const String& url
         });
     }));
 
-    if (FAILED(sourceResolver->BeginCreateObjectFromURL(urlSource.data(), MF_RESOLUTION_MEDIASOURCE, nullptr, &cancelCookie, callback.get(), nullptr)))
+    if (FAILED(sourceResolver->BeginCreateObjectFromURL(urlSource.span().data(), MF_RESOLUTION_MEDIASOURCE, nullptr, &cancelCookie, callback.get(), nullptr)))
         return false;
 
     return true;

@@ -32,14 +32,15 @@ class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpucommandsmixin
 class CommandsMixin {
-protected PUBLIC_IN_WEBGPU_SWIFT:
+public:
     enum class EncoderState : uint8_t {
         Open,
         Locked,
         Ended
     };
-    bool prepareTheEncoderState() const;
+
 protected:
+    bool prepareTheEncoderState() const;
     NSString* encoderStateName() const;
     static bool computedSizeOverflows(const Buffer&, uint64_t offset, uint64_t& size);
 

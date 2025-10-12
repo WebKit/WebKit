@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://web-platform.test:8800/html/semantics/document-metadata/the-link-element/resources/stylesheet-bad-mime-type.css' because non CSS MIME types are not allowed in strict mode.
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://web-platform.test:8800/html/semantics/document-metadata/the-link-element/resources/stylesheet-bad-mime-type-empty.css' because non CSS MIME types are not allowed in strict mode.
 
 PASS 'load' event does not fire at link@rel=stylesheet having non-empty resource with bad MIME type
 PASS 'load' event does not fire at link@rel=stylesheet having empty resource with bad MIME type

@@ -1862,6 +1862,14 @@ void INTERNAL_GL_APIENTRY glNamedFramebufferTextureLayerNULL(GLuint framebuffer,
                                                              GLint layer)
 {}
 
+void INTERNAL_GL_APIENTRY glNamedFramebufferTextureMultiviewOVRNULL(GLuint framebuffer,
+                                                                    GLenum attachment,
+                                                                    GLuint texture,
+                                                                    GLint level,
+                                                                    GLint baseViewIndex,
+                                                                    GLsizei numViews)
+{}
+
 void INTERNAL_GL_APIENTRY glNamedRenderbufferStorageNULL(GLuint renderbuffer,
                                                          GLenum internalformat,
                                                          GLsizei width,

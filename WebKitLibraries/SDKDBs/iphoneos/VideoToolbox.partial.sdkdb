@@ -1,0 +1,1141 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kVTCompressionSessionBeginFinalPass"}
+     ],
+     "introduced": "8",
+     "name": "VTCompressionSessionOptionFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kVTDecodeFrame_EnableAsynchronousDecompression"},
+      {"access": "public", "name": "kVTDecodeFrame_DoNotOutputFrame"},
+      {"access": "public", "name": "kVTDecodeFrame_1xRealTimePlayback"},
+      {"access": "public", "name": "kVTDecodeFrame_EnableTemporalProcessing"}
+     ],
+     "name": "VTDecodeFrameFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kVTDecodeInfo_Asynchronous"},
+      {"access": "public", "name": "kVTDecodeInfo_FrameDropped"},
+      {"access": "public", "name": "kVTDecodeInfo_ImageBufferModifiable"},
+      {"access": "public", "name": "kVTDecodeInfo_SkippedLeadingFrameDropped"},
+      {"access": "public", "name": "kVTDecodeInfo_FrameInterrupted"}
+     ],
+     "name": "VTDecodeInfoFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kVTEncodeInfo_Asynchronous"},
+      {"access": "public", "name": "kVTEncodeInfo_FrameDropped"}
+     ],
+     "name": "VTEncodeInfoFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "VTFrameProcessorUnknownError"},
+      {"access": "public", "name": "VTFrameProcessorUnsupportedResolution"},
+      {"access": "public", "name": "VTFrameProcessorSessionNotStarted"},
+      {"access": "public", "name": "VTFrameProcessorSessionAlreadyActive"},
+      {"access": "public", "name": "VTFrameProcessorFatalError"},
+      {"access": "public", "name": "VTFrameProcessorSessionLevelError"},
+      {"access": "public", "name": "VTFrameProcessorInitializationFailed"},
+      {"access": "public", "name": "VTFrameProcessorUnsupportedInput"},
+      {"access": "public", "name": "VTFrameProcessorMemoryAllocationFailure"},
+      {"access": "public", "name": "VTFrameProcessorRevisionNotSupported"},
+      {"access": "public", "name": "VTFrameProcessorProcessingError"},
+      {"access": "public", "name": "VTFrameProcessorInvalidParameterError"},
+      {"access": "public", "name": "VTFrameProcessorInvalidFrameTiming"},
+      {"access": "public", "name": "VTFrameProcessorAssetDownloadFailed"}
+     ],
+     "name": "VTFrameProcessorError"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "VTFrameRateConversionConfigurationQualityPrioritizationNormal"},
+      {"access": "public", "name": "VTFrameRateConversionConfigurationQualityPrioritizationQuality"}
+     ],
+     "name": "VTFrameRateConversionConfigurationQualityPrioritization"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "VTFrameRateConversionConfigurationRevision1"}
+     ],
+     "name": "VTFrameRateConversionConfigurationRevision"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "VTFrameRateConversionParametersSubmissionModeRandom"},
+      {"access": "public", "name": "VTFrameRateConversionParametersSubmissionModeSequential"},
+      {"access": "public", "name": "VTFrameRateConversionParametersSubmissionModeSequentialReferencesUnchanged"}
+     ],
+     "name": "VTFrameRateConversionParametersSubmissionMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "VTMotionBlurConfigurationQualityPrioritizationNormal"},
+      {"access": "public", "name": "VTMotionBlurConfigurationQualityPrioritizationQuality"}
+     ],
+     "name": "VTMotionBlurConfigurationQualityPrioritization"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "VTMotionBlurConfigurationRevision1"}
+     ],
+     "name": "VTMotionBlurConfigurationRevision"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "VTMotionBlurParametersSubmissionModeRandom"},
+      {"access": "public", "name": "VTMotionBlurParametersSubmissionModeSequential"}
+     ],
+     "name": "VTMotionBlurParametersSubmissionMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kVTMotionEstimationFrameFlags_CurrentBufferWillBeNextReferenceBuffer"}
+     ],
+     "name": "VTMotionEstimationFrameFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kVTMotionEstimationInfoFlags_Reserved0"}
+     ],
+     "name": "VTMotionEstimationInfoFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "VTOpticalFlowConfigurationQualityPrioritizationNormal"},
+      {"access": "public", "name": "VTOpticalFlowConfigurationQualityPrioritizationQuality"}
+     ],
+     "name": "VTOpticalFlowConfigurationQualityPrioritization"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "VTOpticalFlowConfigurationRevision1"}
+     ],
+     "name": "VTOpticalFlowConfigurationRevision"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "VTOpticalFlowParametersSubmissionModeRandom"},
+      {"access": "public", "name": "VTOpticalFlowParametersSubmissionModeSequential"}
+     ],
+     "name": "VTOpticalFlowParametersSubmissionMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "VTSuperResolutionScalerConfigurationInputTypeVideo"},
+      {"access": "public", "name": "VTSuperResolutionScalerConfigurationInputTypeImage"}
+     ],
+     "name": "VTSuperResolutionScalerConfigurationInputType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "VTSuperResolutionScalerConfigurationModelStatusDownloadRequired"},
+      {"access": "public", "name": "VTSuperResolutionScalerConfigurationModelStatusDownloading"},
+      {"access": "public", "name": "VTSuperResolutionScalerConfigurationModelStatusReady"}
+     ],
+     "name": "VTSuperResolutionScalerConfigurationModelStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "VTSuperResolutionScalerConfigurationQualityPrioritizationNormal"}
+     ],
+     "name": "VTSuperResolutionScalerConfigurationQualityPrioritization"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "VTSuperResolutionScalerConfigurationRevision1"}
+     ],
+     "name": "VTSuperResolutionScalerConfigurationRevision"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "VTSuperResolutionScalerParametersSubmissionModeRandom"},
+      {"access": "public", "name": "VTSuperResolutionScalerParametersSubmissionModeSequential"}
+     ],
+     "name": "VTSuperResolutionScalerParametersSubmissionMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kVTQPModulationLevel_Default"},
+      {"access": "public", "name": "kVTQPModulationLevel_Disable"}
+     ],
+     "name": "enum (unnamed at VTCompressionProperties.h:15411)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kVTUnlimitedFrameDelayCount"}
+     ],
+     "name": "enum (unnamed at VTCompressionProperties.h:5771)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kVTPropertyNotSupportedErr"},
+      {"access": "public", "name": "kVTPropertyReadOnlyErr"},
+      {"access": "public", "name": "kVTParameterErr"},
+      {"access": "public", "name": "kVTInvalidSessionErr"},
+      {"access": "public", "name": "kVTAllocationFailedErr"},
+      {"access": "public", "name": "kVTPixelTransferNotSupportedErr"},
+      {"access": "public", "name": "kVTCouldNotFindVideoDecoderErr"},
+      {"access": "public", "name": "kVTCouldNotCreateInstanceErr"},
+      {"access": "public", "name": "kVTCouldNotFindVideoEncoderErr"},
+      {"access": "public", "name": "kVTVideoDecoderBadDataErr"},
+      {"access": "public", "name": "kVTVideoDecoderUnsupportedDataFormatErr"},
+      {"access": "public", "name": "kVTVideoDecoderMalfunctionErr"},
+      {"access": "public", "name": "kVTVideoEncoderMalfunctionErr"},
+      {"access": "public", "name": "kVTVideoDecoderNotAvailableNowErr"},
+      {"access": "public", "name": "kVTImageRotationNotSupportedErr"},
+      {"access": "public", "name": "kVTPixelRotationNotSupportedErr"},
+      {"access": "public", "name": "kVTVideoEncoderNotAvailableNowErr"},
+      {"access": "public", "name": "kVTFormatDescriptionChangeNotSupportedErr"},
+      {"access": "public", "name": "kVTInsufficientSourceColorDataErr"},
+      {"access": "public", "name": "kVTCouldNotCreateColorCorrectionDataErr"},
+      {"access": "public", "name": "kVTColorSyncTransformConvertFailedErr"},
+      {"access": "public", "name": "kVTVideoDecoderAuthorizationErr"},
+      {"access": "public", "name": "kVTVideoEncoderAuthorizationErr"},
+      {"access": "public", "name": "kVTColorCorrectionPixelTransferFailedErr"},
+      {"access": "public", "name": "kVTMultiPassStorageIdentifierMismatchErr"},
+      {"access": "public", "name": "kVTMultiPassStorageInvalidErr"},
+      {"access": "public", "name": "kVTFrameSiloInvalidTimeStampErr"},
+      {"access": "public", "name": "kVTFrameSiloInvalidTimeRangeErr"},
+      {"access": "public", "name": "kVTCouldNotFindTemporalFilterErr"},
+      {"access": "public", "name": "kVTPixelTransferNotPermittedErr"},
+      {"access": "public", "name": "kVTColorCorrectionImageRotationFailedErr"},
+      {"access": "public", "name": "kVTVideoDecoderRemovedErr"},
+      {"access": "public", "name": "kVTSessionMalfunctionErr"},
+      {"access": "public", "name": "kVTVideoDecoderNeedsRosettaErr"},
+      {"access": "public", "name": "kVTVideoEncoderNeedsRosettaErr"},
+      {"access": "public", "name": "kVTVideoDecoderReferenceMissingErr"},
+      {"access": "public", "name": "kVTVideoDecoderCallbackMessagingErr"},
+      {"access": "public", "name": "kVTVideoDecoderUnknownErr"},
+      {"access": "public", "name": "kVTExtensionDisabledErr"},
+      {"access": "public", "name": "kVTVideoEncoderMVHEVCVideoLayerIDsMismatchErr"},
+      {"access": "public", "name": "kVTCouldNotOutputTaggedBufferGroupErr"},
+      {"access": "public", "name": "kVTCouldNotFindExtensionErr"},
+      {"access": "public", "name": "kVTExtensionConflictErr"},
+      {"access": "public", "name": "kVTVideoEncoderAutoWhiteBalanceNotLockedErr"}
+     ],
+     "name": "enum (unnamed at VTErrors.h:241)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTCompressionSessionBeginPass"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTCompressionSessionCompleteFrames"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTCompressionSessionCreate"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTCompressionSessionEncodeFrame"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_VTCompressionSessionEncodeFrameWithOutputHandler"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_VTCompressionSessionEncodeMultiImageFrame"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_VTCompressionSessionEncodeMultiImageFrameWithOutputHandler"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTCompressionSessionEndPass"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTCompressionSessionGetPixelBufferPool"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTCompressionSessionGetTimeRangesForNextPass"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTCompressionSessionGetTypeID"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTCompressionSessionInvalidate"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTCompressionSessionPrepareToEncodeFrames"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_VTCopyRAWProcessorExtensionProperties", "unavailable": true},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_VTCopySupportedPropertyDictionaryForEncoder"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_VTCopyVideoDecoderExtensionProperties", "unavailable": true},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTCopyVideoEncoderList"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_VTCreateCGImageFromCVPixelBuffer"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTDecompressionSessionCanAcceptFormatDescription"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTDecompressionSessionCopyBlackPixelBuffer"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTDecompressionSessionCreate"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTDecompressionSessionDecodeFrame"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_VTDecompressionSessionDecodeFrameWithMultiImageCapableOutputHandler"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_VTDecompressionSessionDecodeFrameWithOptions"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_VTDecompressionSessionDecodeFrameWithOptionsAndOutputHandler"},
+    {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_VTDecompressionSessionDecodeFrameWithOutputHandler"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTDecompressionSessionFinishDelayedFrames"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTDecompressionSessionGetTypeID"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTDecompressionSessionInvalidate"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_VTDecompressionSessionSetMultiImageCallback"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTDecompressionSessionWaitForAsynchronousFrames"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_VTFrameProcessorErrorDomain"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTFrameSiloAddSampleBuffer"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTFrameSiloCallBlockForEachSampleBuffer"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTFrameSiloCallFunctionForEachSampleBuffer"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTFrameSiloCreate"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTFrameSiloGetProgressOfCurrentPass"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTFrameSiloGetTypeID"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTFrameSiloSetTimeRangesForNextPass"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_VTHDRPerFrameMetadataGenerationSessionAttachMetadata"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_VTHDRPerFrameMetadataGenerationSessionCreate"},
+    {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_VTHDRPerFrameMetadataGenerationSessionGetTypeID"},
+    {"access": "public", "introduced": "11", "kind": "function", "linkage": "exported", "name": "_VTIsHardwareDecodeSupported"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_VTIsStereoMVHEVCDecodeSupported"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_VTIsStereoMVHEVCEncodeSupported"},
+    {"access": "public", "introduced": "26", "kind": "function", "linkage": "exported", "name": "_VTMotionEstimationSessionCompleteFrames"},
+    {"access": "public", "introduced": "26", "kind": "function", "linkage": "exported", "name": "_VTMotionEstimationSessionCopySourcePixelBufferAttributes"},
+    {"access": "public", "introduced": "26", "kind": "function", "linkage": "exported", "name": "_VTMotionEstimationSessionCreate"},
+    {"access": "public", "introduced": "26", "kind": "function", "linkage": "exported", "name": "_VTMotionEstimationSessionEstimateMotionVectors"},
+    {"access": "public", "introduced": "26", "kind": "function", "linkage": "exported", "name": "_VTMotionEstimationSessionGetTypeID"},
+    {"access": "public", "introduced": "26", "kind": "function", "linkage": "exported", "name": "_VTMotionEstimationSessionInvalidate"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTMultiPassStorageClose"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTMultiPassStorageCreate"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTMultiPassStorageGetTypeID"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_VTPixelRotationSessionCreate"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_VTPixelRotationSessionGetTypeID"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_VTPixelRotationSessionInvalidate"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_VTPixelRotationSessionRotateImage"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_VTPixelTransferSessionCreate"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_VTPixelTransferSessionGetTypeID"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_VTPixelTransferSessionInvalidate"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_VTPixelTransferSessionTransferImage"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_VTRegisterSupplementalVideoDecoderIfAvailable", "unavailable": true},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTSessionCopyProperty"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTSessionCopySerializableProperties"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTSessionCopySupportedPropertyDictionary"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTSessionSetProperties"},
+    {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTSessionSetProperty"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kVTAlphaChannelMode_PremultipliedAlpha"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kVTAlphaChannelMode_StraightAlpha"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCameraCalibrationExtrinsicOriginSource_StereoCameraSystemBaseline"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCameraCalibrationLensAlgorithmKind_ParametricLens"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCameraCalibrationLensDomain_Color"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCameraCalibrationLensRole_Left"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCameraCalibrationLensRole_Mono"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCameraCalibrationLensRole_Right"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPreset_Balanced"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPreset_HighQuality"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPreset_HighSpeed"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPreset_VideoConferencing"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyCameraCalibrationKey_ExtrinsicOrientationQuaternion"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyCameraCalibrationKey_ExtrinsicOriginSource"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyCameraCalibrationKey_IntrinsicMatrix"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyCameraCalibrationKey_IntrinsicMatrixProjectionOffset"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyCameraCalibrationKey_IntrinsicMatrixReferenceDimensions"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyCameraCalibrationKey_LensAlgorithmKind"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyCameraCalibrationKey_LensDistortions"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyCameraCalibrationKey_LensDomain"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyCameraCalibrationKey_LensFrameAdjustmentsPolynomialX"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyCameraCalibrationKey_LensFrameAdjustmentsPolynomialY"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyCameraCalibrationKey_LensIdentifier"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyCameraCalibrationKey_LensRole"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyCameraCalibrationKey_RadialAngleLimit"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_AllowFrameReordering"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_AllowOpenGOP"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_AllowTemporalCompression"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_AlphaChannelMode"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_AspectRatio16x9"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_AverageBitRate"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_BaseLayerBitRateFraction"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_BaseLayerFrameRate"},
+    {"access": "public", "introduced": "14.5", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_BaseLayerFrameRateFraction"},
+    {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_CalculateMeanSquaredError"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_CameraCalibrationDataLensCollection"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_CleanAperture"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_ColorPrimaries"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_ConstantBitRate"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_ContentLightLevelInfo"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_DataRateLimits"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_Depth"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_EnableLTR"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_EncoderID"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_EstimatedAverageBytesPerFrame"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_ExpectedDuration"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_ExpectedFrameRate"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_FieldCount"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_FieldDetail"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_GammaLevel"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_H264EntropyMode"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_HDRMetadataInsertionMode"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_HasLeftStereoEyeView"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_HasRightStereoEyeView"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_HeroEye"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_HorizontalDisparityAdjustment"},
+    {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_HorizontalFieldOfView"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_ICCProfile"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_MVHEVCLeftAndRightViewIDs"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_MVHEVCVideoLayerIDs"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_MVHEVCViewIDs"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_MasteringDisplayColorVolume"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_MaxAllowedFrameQP"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_MaxFrameDelayCount"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_MaxH264SliceBytes"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_MaxKeyFrameInterval"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_MaximizePowerEfficiency"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_MaximumRealTimeFrameRate"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_MinAllowedFrameQP"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_MoreFramesAfterEnd"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_MoreFramesBeforeStart"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_MultiPassStorage"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_NumberOfPendingFrames"},
+    {"access": "public", "introduced": "15.4", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_OutputBitDepth"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_PixelAspectRatio"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_PixelBufferPoolIsShared"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_PixelTransferProperties"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_PreserveAlphaChannel"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_PreserveDynamicHDRMetadata"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_PrioritizeEncodingSpeedOverQuality"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_ProfileLevel"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_ProgressiveScan"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_ProjectionKind"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_Quality"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_RealTime"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_RecommendedParallelizationLimit", "unavailable": true},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_RecommendedParallelizedSubdivisionMinimumDuration"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_RecommendedParallelizedSubdivisionMinimumFrameCount"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_ReferenceBufferCount"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_SourceFrameCount"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_SpatialAdaptiveQPLevel", "unavailable": true},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_StereoCameraBaseline"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_SuggestedLookAheadFrameCount", "unavailable": true},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_SupportedPresetDictionaries"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_SupportsBaseFrameQP"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_TargetQualityForAlpha"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_TransferFunction"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_UsingGPURegistryID"},
+    {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_VBVBufferDuration"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_VBVInitialDelayPercentage"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_VBVMaxBitRate"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_VariableBitRate"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_VideoEncoderPixelBufferAttributes"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_ViewPackingKind"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTCompressionPropertyKey_YCbCrMatrix"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTDecodeFrameOptionKey_ContentAnalyzerCropRectangle"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTDecodeFrameOptionKey_ContentAnalyzerRotation"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_AllowBitstreamToChangeFrameDimensions"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_ContentHasInterframeDependencies"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_DecoderProducesRAWOutput", "unavailable": true},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_DeinterlaceMode"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_FieldMode"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_GeneratePerFrameHDRDisplayMetadata"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_MaxOutputPresentationTimeStampOfFramesBeingDecoded"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_MaximizePowerEfficiency"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_MinOutputPresentationTimeStampOfFramesBeingDecoded"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_NumberOfFramesBeingDecoded"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_OnlyTheseFrames"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_OutputPoolRequestedMinimumBufferCount"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_PixelBufferPool"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_PixelBufferPoolIsShared"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_PixelFormatsWithReducedResolutionSupport"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_PixelTransferProperties"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_PropagatePerFrameHDRDisplayMetadata"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_RealTime"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_ReducedCoefficientDecode"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_ReducedFrameDelivery"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_ReducedResolutionDecode"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_RequestRAWOutput", "unavailable": true},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_RequestedMVHEVCVideoLayerIDs"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_SuggestedQualityOfServiceTiers"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_SupportedPixelFormatsOrderedByPerformance"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_SupportedPixelFormatsOrderedByQuality"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_ThreadCount"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_UsingGPURegistryID"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionPropertyKey_UsingHardwareAcceleratedVideoDecoder"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionProperty_DeinterlaceMode_Temporal"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionProperty_DeinterlaceMode_VerticalFilter"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionProperty_FieldMode_BothFields"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionProperty_FieldMode_BottomFieldOnly"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionProperty_FieldMode_DeinterlaceFields"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionProperty_FieldMode_SingleField"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionProperty_FieldMode_TopFieldOnly"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionProperty_OnlyTheseFrames_AllFrames"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionProperty_OnlyTheseFrames_IFrames"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionProperty_OnlyTheseFrames_KeyFrames"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionProperty_OnlyTheseFrames_NonDroppableFrames"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionProperty_TemporalLevelLimit"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionResolutionKey_Height"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTDecompressionResolutionKey_Width"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kVTDownsamplingMode_Average"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kVTDownsamplingMode_Decimate"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_kVTEncodeFrameOptionKey_AcknowledgedLTRTokens"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_kVTEncodeFrameOptionKey_BaseFrameQP"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTEncodeFrameOptionKey_ForceKeyFrame"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_kVTEncodeFrameOptionKey_ForceLTRRefresh"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kVTExtensionProperties_CodecNameKey", "unavailable": true},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kVTExtensionProperties_ContainingBundleNameKey", "unavailable": true},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kVTExtensionProperties_ContainingBundleURLKey", "unavailable": true},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kVTExtensionProperties_ExtensionIdentifierKey", "unavailable": true},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kVTExtensionProperties_ExtensionNameKey", "unavailable": true},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kVTExtensionProperties_ExtensionURLKey", "unavailable": true},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTH264EntropyMode_CABAC"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTH264EntropyMode_CAVLC"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_kVTHDRMetadataInsertionMode_Auto"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_kVTHDRMetadataInsertionMode_None"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTHDRMetadataInsertionMode_RequestSDRRangePreservation"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_kVTHDRPerFrameMetadataGenerationHDRFormatType_DolbyVision"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_kVTHDRPerFrameMetadataGenerationOptionsKey_HDRFormats"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTHeroEye_Left"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTHeroEye_Right"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kVTMotionEstimationSessionCreationOption_DetectTrueMotion", "unavailable": true},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTMotionEstimationSessionCreationOption_Label"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTMotionEstimationSessionCreationOption_MotionVectorSize"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTMotionEstimationSessionCreationOption_UseMultiPassSearch"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTMultiPassStorageCreationOption_DoNotDelete"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_kVTPixelRotationPropertyKey_FlipHorizontalOrientation"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_kVTPixelRotationPropertyKey_FlipVerticalOrientation"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_kVTPixelRotationPropertyKey_Rotation"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kVTPixelTransferPropertyKey_DestinationCleanAperture"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kVTPixelTransferPropertyKey_DestinationColorPrimaries"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kVTPixelTransferPropertyKey_DestinationICCProfile"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kVTPixelTransferPropertyKey_DestinationPixelAspectRatio"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kVTPixelTransferPropertyKey_DestinationTransferFunction"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kVTPixelTransferPropertyKey_DestinationYCbCrMatrix"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kVTPixelTransferPropertyKey_DownsamplingMode"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kVTPixelTransferPropertyKey_RealTime"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kVTPixelTransferPropertyKey_ScalingMode"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H263_Profile0_Level10"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H263_Profile0_Level45"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H263_Profile3_Level45"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Baseline_1_3"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Baseline_3_0"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Baseline_3_1"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Baseline_3_2"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Baseline_4_0"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Baseline_4_1"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Baseline_4_2"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Baseline_5_0"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Baseline_5_1"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Baseline_5_2"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Baseline_AutoLevel"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_ConstrainedBaseline_AutoLevel"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_ConstrainedHigh_AutoLevel"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Extended_5_0"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Extended_AutoLevel"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_High_3_0"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_High_3_1"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_High_3_2"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_High_4_0"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_High_4_1"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_High_4_2"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_High_5_0"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_High_5_1"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_High_5_2"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_High_AutoLevel"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Main_3_0"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Main_3_1"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Main_3_2"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Main_4_0"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Main_4_1"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Main_4_2"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Main_5_0"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Main_5_1"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Main_5_2"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_H264_Main_AutoLevel"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_HEVC_Main10_AutoLevel"},
+    {"access": "public", "introduced": "15.4", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_HEVC_Main42210_AutoLevel"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_HEVC_Main_AutoLevel"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_HEVC_Monochrome10_AutoLevel"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_HEVC_Monochrome_AutoLevel"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_MP4V_AdvancedSimple_L0"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_MP4V_AdvancedSimple_L1"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_MP4V_AdvancedSimple_L2"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_MP4V_AdvancedSimple_L3"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_MP4V_AdvancedSimple_L4"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_MP4V_Main_L2"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_MP4V_Main_L3"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_MP4V_Main_L4"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_MP4V_Simple_L0"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_MP4V_Simple_L1"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_MP4V_Simple_L2"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTProfileLevel_MP4V_Simple_L3"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTProjectionKind_Equirectangular"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTProjectionKind_HalfEquirectangular"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTProjectionKind_ParametricImmersive"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTProjectionKind_Rectilinear"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTPropertyDocumentationKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTPropertyReadWriteStatusKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTPropertyReadWriteStatus_ReadOnly"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTPropertyReadWriteStatus_ReadWrite"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTPropertyShouldBeSerializedKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTPropertySupportedValueListKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTPropertySupportedValueMaximumKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTPropertySupportedValueMinimumKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTPropertyTypeKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTPropertyType_Boolean"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTPropertyType_Enumeration"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTPropertyType_Number"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_kVTRotation_0"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_kVTRotation_180"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_kVTRotation_CCW90"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_kVTRotation_CW90"},
+    {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_kVTSampleAttachmentKey_QualityMetrics"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_kVTSampleAttachmentKey_RequireLTRAcknowledgementToken"},
+    {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_kVTSampleAttachmentQualityMetricsKey_ChromaBlueMeanSquaredError"},
+    {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_kVTSampleAttachmentQualityMetricsKey_ChromaRedMeanSquaredError"},
+    {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_kVTSampleAttachmentQualityMetricsKey_LumaMeanSquaredError"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kVTScalingMode_CropSourceToCleanAperture"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kVTScalingMode_Letterbox"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kVTScalingMode_Normal"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kVTScalingMode_Trim"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder"},
+    {"access": "public", "introduced": "11.3", "kind": "variable", "linkage": "exported", "name": "_kVTVideoDecoderSpecification_PreferredDecoderGPURegistryID"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_kVTVideoDecoderSpecification_RequireHardwareAcceleratedVideoDecoder"},
+    {"access": "public", "introduced": "11.3", "kind": "variable", "linkage": "exported", "name": "_kVTVideoDecoderSpecification_RequiredDecoderGPURegistryID"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderListOption_IncludeStandardDefinitionDVEncoders"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderList_CodecName"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderList_CodecType"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderList_DisplayName"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderList_EncoderID"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderList_EncoderName"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderList_GPURegistryID"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderList_InstanceLimit"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderList_IsHardwareAccelerated"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderList_PerformanceRating"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderList_QualityRating"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderList_SupportedSelectionProperties"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderList_SupportsFrameReordering"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderList_SupportsMultiPass", "unavailable": true},
+    {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder"},
+    {"access": "public", "introduced": "14.5", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderSpecification_EnableLowLatencyRateControl"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderSpecification_EncoderID"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderSpecification_PreferredEncoderGPURegistryID"},
+    {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_kVTVideoEncoderSpecification_RequiredEncoderGPURegistryID"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTViewPackingKind_OverUnder"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kVTViewPackingKind_SideBySide"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "startSessionWithConfiguration:error:"},
+      {"access": "public", "name": "processWithParameters:error:"},
+      {"access": "public", "name": "processWithParameters:completionHandler:"},
+      {"access": "public", "name": "processWithParameters:frameOutputHandler:"},
+      {"access": "public", "name": "processWithCommandBuffer:parameters:"},
+      {"access": "public", "name": "endSession"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "VTFrameProcessor",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithBuffer:presentationTimeStamp:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "VTFrameProcessorFrame",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "buffer", "name": "buffer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "presentationTimeStamp", "name": "presentationTimeStamp"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithForwardFlow:backwardFlow:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "VTFrameProcessorOpticalFlow",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "forwardFlow", "name": "forwardFlow"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "backwardFlow", "name": "backwardFlow"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithFrameWidth:frameHeight:usePrecomputedFlow:qualityPrioritization:revision:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "VTFrameRateConversionConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameWidth", "name": "frameWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameHeight", "name": "frameHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usePrecomputedFlow", "name": "usePrecomputedFlow"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "qualityPrioritization", "name": "qualityPrioritization"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "revision", "name": "revision"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportedRevisions", "name": "supportedRevisions"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "defaultRevision", "name": "defaultRevision"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameSupportedPixelFormats", "name": "frameSupportedPixelFormats"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourcePixelBufferAttributes", "name": "sourcePixelBufferAttributes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "destinationPixelBufferAttributes", "name": "destinationPixelBufferAttributes"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupported", "name": "supported"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "processorSupported", "name": "processorSupported", "unavailable": true}
+     ],
+     "protocols": [
+      "VTFrameProcessorConfiguration"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSourceFrame:nextFrame:opticalFlow:interpolationPhase:submissionMode:destinationFrames:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "VTFrameRateConversionParameters",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourceFrame", "name": "sourceFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "nextFrame", "name": "nextFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "opticalFlow", "name": "opticalFlow"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "interpolationPhase", "name": "interpolationPhase"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "submissionMode", "name": "submissionMode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "destinationFrames", "name": "destinationFrames"}
+     ],
+     "protocols": [
+      "VTFrameProcessorParameters"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithFrameWidth:frameHeight:numberOfInterpolatedFrames:"},
+      {"access": "public", "name": "initWithFrameWidth:frameHeight:spatialScaleFactor:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "VTLowLatencyFrameInterpolationConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameWidth", "name": "frameWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameHeight", "name": "frameHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "spatialScaleFactor", "name": "spatialScaleFactor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfInterpolatedFrames", "name": "numberOfInterpolatedFrames"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameSupportedPixelFormats", "name": "frameSupportedPixelFormats"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourcePixelBufferAttributes", "name": "sourcePixelBufferAttributes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "destinationPixelBufferAttributes", "name": "destinationPixelBufferAttributes"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupported", "name": "supported"}
+     ],
+     "protocols": [
+      "VTFrameProcessorConfiguration"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSourceFrame:previousFrame:interpolationPhase:destinationFrames:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "VTLowLatencyFrameInterpolationParameters",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourceFrame", "name": "sourceFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "previousFrame", "name": "previousFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "interpolationPhase", "name": "interpolationPhase"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "destinationFrames", "name": "destinationFrames"}
+     ],
+     "protocols": [
+      "VTFrameProcessorParameters"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "supportedScaleFactorsForFrameWidth:frameHeight:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithFrameWidth:frameHeight:scaleFactor:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "VTLowLatencySuperResolutionScalerConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameWidth", "name": "frameWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameHeight", "name": "frameHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameSupportedPixelFormats", "name": "frameSupportedPixelFormats"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourcePixelBufferAttributes", "name": "sourcePixelBufferAttributes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "destinationPixelBufferAttributes", "name": "destinationPixelBufferAttributes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scaleFactor", "name": "scaleFactor"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "maximumDimensions", "name": "maximumDimensions"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "minimumDimensions", "name": "minimumDimensions"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupported", "name": "supported"}
+     ],
+     "protocols": [
+      "VTFrameProcessorConfiguration"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSourceFrame:destinationFrame:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "VTLowLatencySuperResolutionScalerParameters",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourceFrame", "name": "sourceFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "destinationFrame", "name": "destinationFrame"}
+     ],
+     "protocols": [
+      "VTFrameProcessorParameters"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithFrameWidth:frameHeight:usePrecomputedFlow:qualityPrioritization:revision:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "VTMotionBlurConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameWidth", "name": "frameWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameHeight", "name": "frameHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usePrecomputedFlow", "name": "usePrecomputedFlow"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "qualityPrioritization", "name": "qualityPrioritization"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "revision", "name": "revision"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportedRevisions", "name": "supportedRevisions"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "defaultRevision", "name": "defaultRevision"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameSupportedPixelFormats", "name": "frameSupportedPixelFormats"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourcePixelBufferAttributes", "name": "sourcePixelBufferAttributes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "destinationPixelBufferAttributes", "name": "destinationPixelBufferAttributes"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupported", "name": "supported"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "processorSupported", "name": "processorSupported", "unavailable": true}
+     ],
+     "protocols": [
+      "VTFrameProcessorConfiguration"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSourceFrame:nextFrame:previousFrame:nextOpticalFlow:previousOpticalFlow:motionBlurStrength:submissionMode:destinationFrame:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "VTMotionBlurParameters",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourceFrame", "name": "sourceFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "nextFrame", "name": "nextFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "previousFrame", "name": "previousFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "nextOpticalFlow", "name": "nextOpticalFlow"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "previousOpticalFlow", "name": "previousOpticalFlow"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "motionBlurStrength", "name": "motionBlurStrength"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "submissionMode", "name": "submissionMode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "destinationFrame", "name": "destinationFrame"}
+     ],
+     "protocols": [
+      "VTFrameProcessorParameters"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithFrameWidth:frameHeight:qualityPrioritization:revision:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "VTOpticalFlowConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameWidth", "name": "frameWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameHeight", "name": "frameHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "qualityPrioritization", "name": "qualityPrioritization"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "revision", "name": "revision"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportedRevisions", "name": "supportedRevisions"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "defaultRevision", "name": "defaultRevision"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameSupportedPixelFormats", "name": "frameSupportedPixelFormats"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourcePixelBufferAttributes", "name": "sourcePixelBufferAttributes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "destinationPixelBufferAttributes", "name": "destinationPixelBufferAttributes"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupported", "name": "supported"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "processorSupported", "name": "processorSupported", "unavailable": true}
+     ],
+     "protocols": [
+      "VTFrameProcessorConfiguration"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSourceFrame:nextFrame:submissionMode:destinationOpticalFlow:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "VTOpticalFlowParameters",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourceFrame", "name": "sourceFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "nextFrame", "name": "nextFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "submissionMode", "name": "submissionMode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "destinationOpticalFlow", "name": "destinationOpticalFlow"}
+     ],
+     "protocols": [
+      "VTFrameProcessorParameters"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithFrameWidth:frameHeight:scaleFactor:inputType:usePrecomputedFlow:qualityPrioritization:revision:"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "downloadConfigurationModelWithCompletionHandler:"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "VTSuperResolutionScalerConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameWidth", "name": "frameWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameHeight", "name": "frameHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputType", "name": "inputType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usesPrecomputedFlow", "name": "precomputedFlow"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scaleFactor", "name": "scaleFactor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "qualityPrioritization", "name": "qualityPrioritization"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "revision", "name": "revision"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportedRevisions", "name": "supportedRevisions"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "defaultRevision", "name": "defaultRevision"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameSupportedPixelFormats", "name": "frameSupportedPixelFormats"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourcePixelBufferAttributes", "name": "sourcePixelBufferAttributes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "destinationPixelBufferAttributes", "name": "destinationPixelBufferAttributes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "configurationModelStatus", "name": "configurationModelStatus"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "configurationModelPercentageAvailable", "name": "configurationModelPercentageAvailable"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupported", "name": "supported"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportedScaleFactors", "name": "supportedScaleFactors"}
+     ],
+     "protocols": [
+      "VTFrameProcessorConfiguration"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSourceFrame:previousFrame:previousOutputFrame:opticalFlow:submissionMode:destinationFrame:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "VTSuperResolutionScalerParameters",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourceFrame", "name": "sourceFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "previousFrame", "name": "previousFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "previousOutputFrame", "name": "previousOutputFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "opticalFlow", "name": "opticalFlow"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "submissionMode", "name": "submissionMode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "destinationFrame", "name": "destinationFrame"}
+     ],
+     "protocols": [
+      "VTFrameProcessorParameters"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithFrameWidth:frameHeight:sourcePixelFormat:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "VTTemporalNoiseFilterConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameWidth", "name": "frameWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameHeight", "name": "frameHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameSupportedPixelFormats", "name": "frameSupportedPixelFormats"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourcePixelBufferAttributes", "name": "sourcePixelBufferAttributes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "destinationPixelBufferAttributes", "name": "destinationPixelBufferAttributes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "nextFrameCount", "name": "nextFrameCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "previousFrameCount", "name": "previousFrameCount"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportedSourcePixelFormats", "name": "supportedSourcePixelFormats"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "maximumDimensions", "name": "maximumDimensions"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "minimumDimensions", "name": "minimumDimensions"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupported", "name": "supported"}
+     ],
+     "protocols": [
+      "VTFrameProcessorConfiguration"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSourceFrame:nextFrames:previousFrames:destinationFrame:filterStrength:hasDiscontinuity:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "VTTemporalNoiseFilterParameters",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourceFrame", "name": "sourceFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "nextFrames", "name": "nextFrames"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "previousFrames", "name": "previousFrames"},
+      {"access": "public", "getter": "filterStrength", "name": "filterStrength", "setter": "setFilterStrength:"},
+      {"access": "public", "getter": "hasDiscontinuity", "name": "hasDiscontinuity", "setter": "setHasDiscontinuity:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "destinationFrame", "name": "destinationFrame"}
+     ],
+     "protocols": [
+      "VTFrameProcessorParameters"
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "introduced": "26",
+     "name": "VTFrameProcessorConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupported", "name": "supported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frameSupportedPixelFormats", "name": "frameSupportedPixelFormats"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourcePixelBufferAttributes", "name": "sourcePixelBufferAttributes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "destinationPixelBufferAttributes", "name": "destinationPixelBufferAttributes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "nextFrameCount", "name": "nextFrameCount", "optional": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "previousFrameCount", "name": "previousFrameCount", "optional": true},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "maximumDimensions", "name": "maximumDimensions", "optional": true},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "minimumDimensions", "name": "minimumDimensions", "optional": true}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "26",
+     "name": "VTFrameProcessorParameters",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourceFrame", "name": "sourceFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "destinationFrame", "name": "destinationFrame", "optional": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "destinationFrames", "name": "destinationFrames", "optional": true}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios26",
+   "typedefs": [
+    {"access": "public", "introduced": "8", "name": "VTCompressionOutputCallback"},
+    {"access": "public", "introduced": "9", "name": "VTCompressionOutputHandler"},
+    {"access": "public", "name": "VTCompressionSessionOptionFlags"},
+    {"access": "public", "name": "VTCompressionSessionRef"},
+    {"access": "public", "name": "VTDecodeFrameFlags"},
+    {"access": "public", "name": "VTDecodeInfoFlags"},
+    {"access": "public", "introduced": "17", "name": "VTDecompressionMultiImageCapableOutputHandler"},
+    {"access": "public", "introduced": "8", "name": "VTDecompressionOutputCallback"},
+    {"access": "public", "introduced": "8", "name": "VTDecompressionOutputCallbackRecord"},
+    {"access": "public", "introduced": "9", "name": "VTDecompressionOutputHandler"},
+    {"access": "public", "introduced": "17", "name": "VTDecompressionOutputMultiImageCallback"},
+    {"access": "public", "name": "VTDecompressionSessionRef"},
+    {"access": "public", "name": "VTEncodeInfoFlags"},
+    {"access": "public", "name": "VTExtensionPropertiesKey", "unavailable": true},
+    {"access": "public", "name": "VTFrameProcessorError"},
+    {"access": "public", "introduced": "26", "name": "VTFrameRateConversionConfigurationQualityPrioritization"},
+    {"access": "public", "introduced": "26", "name": "VTFrameRateConversionConfigurationRevision"},
+    {"access": "public", "introduced": "26", "name": "VTFrameRateConversionParametersSubmissionMode"},
+    {"access": "public", "name": "VTFrameSiloRef"},
+    {"access": "public", "introduced": "18", "name": "VTHDRPerFrameMetadataGenerationHDRFormatType"},
+    {"access": "public", "introduced": "18", "name": "VTHDRPerFrameMetadataGenerationSessionRef"},
+    {"access": "public", "name": "VTInt32Point"},
+    {"access": "public", "name": "VTInt32Size"},
+    {"access": "public", "introduced": "26", "name": "VTMotionBlurConfigurationQualityPrioritization"},
+    {"access": "public", "introduced": "26", "name": "VTMotionBlurConfigurationRevision"},
+    {"access": "public", "introduced": "26", "name": "VTMotionBlurParametersSubmissionMode"},
+    {"access": "public", "name": "VTMotionEstimationFrameFlags"},
+    {"access": "public", "name": "VTMotionEstimationInfoFlags"},
+    {"access": "public", "name": "VTMotionEstimationOutputHandler"},
+    {"access": "public", "introduced": "26", "name": "VTMotionEstimationSessionRef"},
+    {"access": "public", "name": "VTMultiPassStorageRef"},
+    {"access": "public", "introduced": "26", "name": "VTOpticalFlowConfigurationQualityPrioritization"},
+    {"access": "public", "introduced": "26", "name": "VTOpticalFlowConfigurationRevision"},
+    {"access": "public", "introduced": "26", "name": "VTOpticalFlowParametersSubmissionMode"},
+    {"access": "public", "introduced": "16", "name": "VTPixelRotationSessionRef"},
+    {"access": "public", "introduced": "16", "name": "VTPixelTransferSessionRef"},
+    {"access": "public", "name": "VTSessionRef"},
+    {"access": "public", "introduced": "26", "name": "VTSuperResolutionScalerConfigurationInputType"},
+    {"access": "public", "introduced": "26", "name": "VTSuperResolutionScalerConfigurationModelStatus"},
+    {"access": "public", "introduced": "26", "name": "VTSuperResolutionScalerConfigurationQualityPrioritization"},
+    {"access": "public", "introduced": "26", "name": "VTSuperResolutionScalerConfigurationRevision"},
+    {"access": "public", "introduced": "26", "name": "VTSuperResolutionScalerParametersSubmissionMode"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

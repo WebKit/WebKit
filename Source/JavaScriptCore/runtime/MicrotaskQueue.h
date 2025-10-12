@@ -25,11 +25,13 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
-#include "Microtask.h"
-#include "SlotVisitorMacros.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/Microtask.h>
+#include <JavaScriptCore/SlotVisitorMacros.h>
 #include <wtf/Deque.h>
 #include <wtf/SentinelLinkedList.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -44,7 +46,7 @@ class QueuedTask {
     friend class MicrotaskQueue;
     friend class MarkedMicrotaskDeque;
 public:
-    static constexpr unsigned maxArguments = 4;
+    static constexpr unsigned maxArguments = maxMicrotaskArguments;
 
     enum class Result : uint8_t {
         Executed,
@@ -52,18 +54,22 @@ public:
         Suspended,
     };
 
-    QueuedTask(RefPtr<MicrotaskDispatcher>&& dispatcher)
+    QueuedTask(Ref<MicrotaskDispatcher>&& dispatcher)
         : m_dispatcher(WTFMove(dispatcher))
         , m_identifier(MicrotaskIdentifier::generate())
+        , m_job(InternalMicrotask::Opaque)
+        , m_globalObject(nullptr)
     {
     }
 
-    QueuedTask(RefPtr<MicrotaskDispatcher>&& dispatcher, JSGlobalObject* globalObject, JSValue job, JSValue argument0, JSValue argument1, JSValue argument2, JSValue argument3)
+    template<typename... Args>
+    requires (sizeof...(Args) <= maxArguments) && (std::is_convertible_v<Args, JSValue> && ...)
+    QueuedTask(RefPtr<MicrotaskDispatcher>&& dispatcher, InternalMicrotask job, JSGlobalObject* globalObject, Args&&...args)
         : m_dispatcher(WTFMove(dispatcher))
         , m_identifier(MicrotaskIdentifier::generate())
-        , m_globalObject(globalObject)
         , m_job(job)
-        , m_arguments { argument0, argument1, argument2, argument3 }
+        , m_globalObject(globalObject)
+        , m_arguments { std::forward<Args>(args)... }
     {
     }
 
@@ -77,14 +83,14 @@ public:
     MicrotaskDispatcher* dispatcher() const { return m_dispatcher.get(); }
     MicrotaskIdentifier identifier() const { return m_identifier; }
     JSGlobalObject* globalObject() const { return m_globalObject; }
-    JSValue job() const { return m_job; }
-    std::span<const JSValue> arguments() const { return std::span { m_arguments }; }
+    InternalMicrotask job() const { return m_job; }
+    std::span<const JSValue, maxArguments> arguments() const { return std::span<const JSValue, maxArguments> { m_arguments, maxArguments }; }
 
 private:
     RefPtr<MicrotaskDispatcher> m_dispatcher;
     MicrotaskIdentifier m_identifier;
-    JSGlobalObject* m_globalObject { nullptr };
-    JSValue m_job { };
+    InternalMicrotask m_job;
+    JSGlobalObject* m_globalObject;
     JSValue m_arguments[maxArguments] { };
 };
 
@@ -206,3 +212,5 @@ private:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -14,7 +14,12 @@
 #include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/audio_codecs/audio_format.h"
+#include "api/environment/environment.h"
+#include "api/neteq/neteq.h"
+#include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/audio_coding/test/EncodeDecodeTest.h"
+#include "modules/audio_coding/test/RTPFile.h"
 
 namespace webrtc {
 

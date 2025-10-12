@@ -10,10 +10,10 @@
 
 #include "modules/audio_processing/utility/delay_estimator.h"
 
-#include <stdlib.h>
-#include <string.h>
-
 #include <algorithm>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
 
 #include "rtc_base/checks.h"
 
@@ -23,24 +23,24 @@ namespace {
 
 // Number of right shifts for scaling is linearly depending on number of bits in
 // the far-end binary spectrum.
-static const int kShiftsAtZero = 13;  // Right shifts at zero binary spectrum.
-static const int kShiftsLinearSlope = 3;
+const int kShiftsAtZero = 13;  // Right shifts at zero binary spectrum.
+const int kShiftsLinearSlope = 3;
 
-static const int32_t kProbabilityOffset = 1024;      // 2 in Q9.
-static const int32_t kProbabilityLowerLimit = 8704;  // 17 in Q9.
-static const int32_t kProbabilityMinSpread = 2816;   // 5.5 in Q9.
+const int32_t kProbabilityOffset = 1024;      // 2 in Q9.
+const int32_t kProbabilityLowerLimit = 8704;  // 17 in Q9.
+const int32_t kProbabilityMinSpread = 2816;   // 5.5 in Q9.
 
 // Robust validation settings
-static const float kHistogramMax = 3000.f;
-static const float kLastHistogramMax = 250.f;
-static const float kMinHistogramThreshold = 1.5f;
-static const int kMinRequiredHits = 10;
-static const int kMaxHitsWhenPossiblyNonCausal = 10;
-static const int kMaxHitsWhenPossiblyCausal = 1000;
-static const float kQ14Scaling = 1.f / (1 << 14);  // Scaling by 2^14 to get Q0.
-static const float kFractionSlope = 0.05f;
-static const float kMinFractionWhenPossiblyCausal = 0.5f;
-static const float kMinFractionWhenPossiblyNonCausal = 0.25f;
+const float kHistogramMax = 3000.f;
+const float kLastHistogramMax = 250.f;
+const float kMinHistogramThreshold = 1.5f;
+const int kMinRequiredHits = 10;
+const int kMaxHitsWhenPossiblyNonCausal = 10;
+const int kMaxHitsWhenPossiblyCausal = 1000;
+const float kQ14Scaling = 1.f / (1 << 14);  // Scaling by 2^14 to get Q0.
+const float kFractionSlope = 0.05f;
+const float kMinFractionWhenPossiblyCausal = 0.5f;
+const float kMinFractionWhenPossiblyNonCausal = 0.25f;
 
 }  // namespace
 
@@ -270,38 +270,38 @@ static int RobustValidation(const BinaryDelayEstimator* self,
 }
 
 void WebRtc_FreeBinaryDelayEstimatorFarend(BinaryDelayEstimatorFarend* self) {
-  if (self == NULL) {
+  if (self == nullptr) {
     return;
   }
 
   free(self->binary_far_history);
-  self->binary_far_history = NULL;
+  self->binary_far_history = nullptr;
 
   free(self->far_bit_counts);
-  self->far_bit_counts = NULL;
+  self->far_bit_counts = nullptr;
 
   free(self);
 }
 
 BinaryDelayEstimatorFarend* WebRtc_CreateBinaryDelayEstimatorFarend(
     int history_size) {
-  BinaryDelayEstimatorFarend* self = NULL;
+  BinaryDelayEstimatorFarend* self = nullptr;
 
   if (history_size > 1) {
     // Sanity conditions fulfilled.
     self = static_cast<BinaryDelayEstimatorFarend*>(
         malloc(sizeof(BinaryDelayEstimatorFarend)));
   }
-  if (self == NULL) {
-    return NULL;
+  if (self == nullptr) {
+    return nullptr;
   }
 
   self->history_size = 0;
-  self->binary_far_history = NULL;
-  self->far_bit_counts = NULL;
+  self->binary_far_history = nullptr;
+  self->far_bit_counts = nullptr;
   if (WebRtc_AllocateFarendBufferMemory(self, history_size) == 0) {
     WebRtc_FreeBinaryDelayEstimatorFarend(self);
-    self = NULL;
+    self = nullptr;
   }
   return self;
 }
@@ -315,7 +315,8 @@ int WebRtc_AllocateFarendBufferMemory(BinaryDelayEstimatorFarend* self,
               history_size * sizeof(*self->binary_far_history)));
   self->far_bit_counts = static_cast<int*>(realloc(
       self->far_bit_counts, history_size * sizeof(*self->far_bit_counts)));
-  if ((self->binary_far_history == NULL) || (self->far_bit_counts == NULL)) {
+  if ((self->binary_far_history == nullptr) ||
+      (self->far_bit_counts == nullptr)) {
     history_size = 0;
   }
   // Fill with zeros if we have expanded the buffers.
@@ -386,25 +387,25 @@ void WebRtc_AddBinaryFarSpectrum(BinaryDelayEstimatorFarend* handle,
 }
 
 void WebRtc_FreeBinaryDelayEstimator(BinaryDelayEstimator* self) {
-  if (self == NULL) {
+  if (self == nullptr) {
     return;
   }
 
   free(self->mean_bit_counts);
-  self->mean_bit_counts = NULL;
+  self->mean_bit_counts = nullptr;
 
   free(self->bit_counts);
-  self->bit_counts = NULL;
+  self->bit_counts = nullptr;
 
   free(self->binary_near_history);
-  self->binary_near_history = NULL;
+  self->binary_near_history = nullptr;
 
   free(self->histogram);
-  self->histogram = NULL;
+  self->histogram = nullptr;
 
   // BinaryDelayEstimator does not have ownership of `farend`, hence we do not
   // free the memory here. That should be handled separately by the user.
-  self->farend = NULL;
+  self->farend = nullptr;
 
   free(self);
 }
@@ -412,15 +413,15 @@ void WebRtc_FreeBinaryDelayEstimator(BinaryDelayEstimator* self) {
 BinaryDelayEstimator* WebRtc_CreateBinaryDelayEstimator(
     BinaryDelayEstimatorFarend* farend,
     int max_lookahead) {
-  BinaryDelayEstimator* self = NULL;
+  BinaryDelayEstimator* self = nullptr;
 
-  if ((farend != NULL) && (max_lookahead >= 0)) {
+  if ((farend != nullptr) && (max_lookahead >= 0)) {
     // Sanity conditions fulfilled.
     self = static_cast<BinaryDelayEstimator*>(
         malloc(sizeof(BinaryDelayEstimator)));
   }
-  if (self == NULL) {
-    return NULL;
+  if (self == nullptr) {
+    return nullptr;
   }
 
   self->farend = farend;
@@ -432,15 +433,15 @@ BinaryDelayEstimator* WebRtc_CreateBinaryDelayEstimator(
   self->lookahead = max_lookahead;
 
   // Allocate memory for spectrum and history buffers.
-  self->mean_bit_counts = NULL;
-  self->bit_counts = NULL;
-  self->histogram = NULL;
+  self->mean_bit_counts = nullptr;
+  self->bit_counts = nullptr;
+  self->histogram = nullptr;
   self->binary_near_history = static_cast<uint32_t*>(
       malloc((max_lookahead + 1) * sizeof(*self->binary_near_history)));
-  if (self->binary_near_history == NULL ||
+  if (self->binary_near_history == nullptr ||
       WebRtc_AllocateHistoryBufferMemory(self, farend->history_size) == 0) {
     WebRtc_FreeBinaryDelayEstimator(self);
-    self = NULL;
+    self = nullptr;
   }
 
   return self;
@@ -465,8 +466,8 @@ int WebRtc_AllocateHistoryBufferMemory(BinaryDelayEstimator* self,
   self->histogram = static_cast<float*>(
       realloc(self->histogram, (history_size + 1) * sizeof(*self->histogram)));
 
-  if ((self->mean_bit_counts == NULL) || (self->bit_counts == NULL) ||
-      (self->histogram == NULL)) {
+  if ((self->mean_bit_counts == nullptr) || (self->bit_counts == nullptr) ||
+      (self->histogram == nullptr)) {
     history_size = 0;
   }
   // Fill with zeros if we have expanded the buffers.

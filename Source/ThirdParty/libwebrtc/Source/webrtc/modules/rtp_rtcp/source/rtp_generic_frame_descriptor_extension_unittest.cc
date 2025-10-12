@@ -9,6 +9,9 @@
  */
 #include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor_extension.h"
 
+#include <cstdint>
+
+#include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 

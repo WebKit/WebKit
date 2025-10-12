@@ -61,7 +61,7 @@ std::unique_ptr<PlatformDisplayLibWPE> PlatformDisplayLibWPE::create(int hostFd)
 
     EGLNativeDisplayType eglNativeDisplay = wpe_renderer_backend_egl_get_native_display(backend);
 
-    std::unique_ptr<GLDisplay> glDisplay;
+    RefPtr<GLDisplay> glDisplay;
 #if WPE_CHECK_VERSION(1, 1, 0)
     uint32_t eglPlatform = wpe_renderer_backend_egl_get_platform(backend);
     if (eglPlatform) {
@@ -93,10 +93,10 @@ std::unique_ptr<PlatformDisplayLibWPE> PlatformDisplayLibWPE::create(int hostFd)
         CRASH();
     }
 
-    return std::unique_ptr<PlatformDisplayLibWPE>(new PlatformDisplayLibWPE(WTFMove(glDisplay), backend));
+    return std::unique_ptr<PlatformDisplayLibWPE>(new PlatformDisplayLibWPE(glDisplay.releaseNonNull(), backend));
 }
 
-PlatformDisplayLibWPE::PlatformDisplayLibWPE(std::unique_ptr<GLDisplay>&& glDisplay, struct wpe_renderer_backend_egl* backend)
+PlatformDisplayLibWPE::PlatformDisplayLibWPE(Ref<GLDisplay>&& glDisplay, struct wpe_renderer_backend_egl* backend)
     : PlatformDisplay(WTFMove(glDisplay))
     , m_backend(backend)
 {

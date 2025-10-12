@@ -13,7 +13,6 @@
 #include <map>
 #include <memory>
 #include <string>
-#include <vector>
 
 #include "test/logging/log_writer.h"
 

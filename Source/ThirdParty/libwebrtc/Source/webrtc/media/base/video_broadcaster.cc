@@ -28,16 +28,15 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/synchronization/mutex.h"
 
-namespace rtc {
+namespace webrtc {
 
 VideoBroadcaster::VideoBroadcaster() = default;
 VideoBroadcaster::~VideoBroadcaster() = default;
 
-void VideoBroadcaster::AddOrUpdateSink(
-    VideoSinkInterface<webrtc::VideoFrame>* sink,
-    const VideoSinkWants& wants) {
+void VideoBroadcaster::AddOrUpdateSink(VideoSinkInterface<VideoFrame>* sink,
+                                       const VideoSinkWants& wants) {
   RTC_DCHECK(sink != nullptr);
-  webrtc::MutexLock lock(&sinks_and_wants_lock_);
+  MutexLock lock(&sinks_and_wants_lock_);
   if (!FindSinkPair(sink)) {
     // `Sink` is a new sink, which didn't receive previous frame.
     previous_frame_sent_to_all_sinks_ = false;
@@ -53,30 +52,29 @@ void VideoBroadcaster::AddOrUpdateSink(
   UpdateWants();
 }
 
-void VideoBroadcaster::RemoveSink(
-    VideoSinkInterface<webrtc::VideoFrame>* sink) {
+void VideoBroadcaster::RemoveSink(VideoSinkInterface<VideoFrame>* sink) {
   RTC_DCHECK(sink != nullptr);
-  webrtc::MutexLock lock(&sinks_and_wants_lock_);
+  MutexLock lock(&sinks_and_wants_lock_);
   VideoSourceBase::RemoveSink(sink);
   UpdateWants();
 }
 
 bool VideoBroadcaster::frame_wanted() const {
-  webrtc::MutexLock lock(&sinks_and_wants_lock_);
+  MutexLock lock(&sinks_and_wants_lock_);
   return !sink_pairs().empty();
 }
 
 VideoSinkWants VideoBroadcaster::wants() const {
-  webrtc::MutexLock lock(&sinks_and_wants_lock_);
+  MutexLock lock(&sinks_and_wants_lock_);
   return current_wants_;
 }
 
-void VideoBroadcaster::OnFrame(const webrtc::VideoFrame& frame) {
-  webrtc::MutexLock lock(&sinks_and_wants_lock_);
+void VideoBroadcaster::OnFrame(const VideoFrame& frame) {
+  MutexLock lock(&sinks_and_wants_lock_);
   bool current_frame_was_discarded = false;
   for (auto& sink_pair : sink_pairs()) {
     if (sink_pair.wants.rotation_applied &&
-        frame.rotation() != webrtc::kVideoRotation_0) {
+        frame.rotation() != kVideoRotation_0) {
       // Calls to OnFrame are not synchronized with changes to the sink wants.
       // When rotation_applied is set to true, one or a few frames may get here
       // with rotation still pending. Protect sinks that don't expect any
@@ -87,19 +85,18 @@ void VideoBroadcaster::OnFrame(const webrtc::VideoFrame& frame) {
       continue;
     }
     if (sink_pair.wants.black_frames) {
-      webrtc::VideoFrame black_frame =
-          webrtc::VideoFrame::Builder()
-              .set_video_frame_buffer(
-                  GetBlackFrameBuffer(frame.width(), frame.height()))
-              .set_rotation(frame.rotation())
-              .set_timestamp_us(frame.timestamp_us())
-              .set_id(frame.id())
-              .build();
+      VideoFrame black_frame = VideoFrame::Builder()
+                                   .set_video_frame_buffer(GetBlackFrameBuffer(
+                                       frame.width(), frame.height()))
+                                   .set_rotation(frame.rotation())
+                                   .set_timestamp_us(frame.timestamp_us())
+                                   .set_id(frame.id())
+                                   .build();
       sink_pair.sink->OnFrame(black_frame);
     } else if (!previous_frame_sent_to_all_sinks_ && frame.has_update_rect()) {
       // Since last frame was not sent to some sinks, no reliable update
       // information is available, so we need to clear the update rect.
-      webrtc::VideoFrame copy = frame;
+      VideoFrame copy = frame;
       copy.clear_update_rect();
       sink_pair.sink->OnFrame(copy);
     } else {
@@ -110,15 +107,15 @@ void VideoBroadcaster::OnFrame(const webrtc::VideoFrame& frame) {
 }
 
 void VideoBroadcaster::OnDiscardedFrame() {
-  webrtc::MutexLock lock(&sinks_and_wants_lock_);
+  MutexLock lock(&sinks_and_wants_lock_);
   for (auto& sink_pair : sink_pairs()) {
     sink_pair.sink->OnDiscardedFrame();
   }
 }
 
 void VideoBroadcaster::ProcessConstraints(
-    const webrtc::VideoTrackSourceConstraints& constraints) {
-  webrtc::MutexLock lock(&sinks_and_wants_lock_);
+    const VideoTrackSourceConstraints& constraints) {
+  MutexLock lock(&sinks_and_wants_lock_);
   RTC_LOG(LS_INFO) << __func__ << " min_fps "
                    << constraints.min_fps.value_or(-1) << " max_fps "
                    << constraints.max_fps.value_or(-1) << " broadcasting to "
@@ -206,17 +203,17 @@ void VideoBroadcaster::UpdateWants() {
   current_wants_ = wants;
 }
 
-const rtc::scoped_refptr<webrtc::VideoFrameBuffer>&
-VideoBroadcaster::GetBlackFrameBuffer(int width, int height) {
+const scoped_refptr<VideoFrameBuffer>& VideoBroadcaster::GetBlackFrameBuffer(
+    int width,
+    int height) {
   if (!black_frame_buffer_ || black_frame_buffer_->width() != width ||
       black_frame_buffer_->height() != height) {
-    rtc::scoped_refptr<webrtc::I420Buffer> buffer =
-        webrtc::I420Buffer::Create(width, height);
-    webrtc::I420Buffer::SetBlack(buffer.get());
+    scoped_refptr<I420Buffer> buffer = I420Buffer::Create(width, height);
+    I420Buffer::SetBlack(buffer.get());
     black_frame_buffer_ = buffer;
   }
 
   return black_frame_buffer_;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

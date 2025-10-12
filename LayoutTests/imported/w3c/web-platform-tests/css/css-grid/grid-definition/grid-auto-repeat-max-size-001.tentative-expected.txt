@@ -14,10 +14,10 @@ PASS .grid 12
 PASS .grid 13
 PASS .grid 14
 PASS .grid 15
-PASS .grid 16
+PASS .grid 16: Percentage padding, min-content
 PASS .grid 17
 PASS .grid 18
-PASS .grid 19
+PASS .grid 19: Percentage padding, max-content
 PASS .grid 20
 x
 

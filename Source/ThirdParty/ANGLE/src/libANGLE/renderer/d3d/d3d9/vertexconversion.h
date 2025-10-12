@@ -10,6 +10,10 @@
 #ifndef LIBANGLE_RENDERER_D3D_D3D9_VERTEXCONVERSION_H_
 #define LIBANGLE_RENDERER_D3D_D3D9_VERTEXCONVERSION_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <cstddef>
 #include <cstdint>
 #include <limits>

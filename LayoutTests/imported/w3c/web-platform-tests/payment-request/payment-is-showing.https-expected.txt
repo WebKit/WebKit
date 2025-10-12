@@ -1,15 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: SecurityError: show() must be triggered by user activation.
-CONSOLE MESSAGE: Unhandled Promise Rejection: SecurityError: show() must be triggered by user activation.
-CONSOLE MESSAGE: Unhandled Promise Rejection: SecurityError: show() must be triggered by user activation.
-CONSOLE MESSAGE: Unhandled Promise Rejection: SecurityError: show() must be triggered by user activation.
-CONSOLE MESSAGE: Unhandled Promise Rejection: SecurityError: show() must be triggered by user activation.
-CONSOLE MESSAGE: Unhandled Promise Rejection: SecurityError: show() must be triggered by user activation.
-CONSOLE MESSAGE: Unhandled Promise Rejection: SecurityError: show() must be triggered by user activation.
-CONSOLE MESSAGE: Unhandled Promise Rejection: SecurityError: show() must be triggered by user activation.
-CONSOLE MESSAGE: Unhandled Promise Rejection: SecurityError: show() must be triggered by user activation.
-CONSOLE MESSAGE: Unhandled Promise Rejection: SecurityError: show() must be triggered by user activation.
-CONSOLE MESSAGE: Unhandled Promise Rejection: SecurityError: show() must be triggered by user activation.
-CONSOLE MESSAGE: Unhandled Promise Rejection: SecurityError: show() must be triggered by user activation.
 
 
 Harness Error (FAIL), message = Unhandled rejection: show() must be triggered by user activation.

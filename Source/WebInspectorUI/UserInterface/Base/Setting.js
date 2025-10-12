@@ -243,7 +243,7 @@ WI.settings = {
     experimentalShowCaseSensitiveAutocomplete: new WI.Setting("experimental-show-case-sensitive-auto-complete", false),
     experimentalLimitSourceCodeHighlighting: new WI.Setting("engineering-limit-source-code-highlighting", false),
     experimentalUseFuzzyMatchingForCSSCodeCompletion: new WI.Setting("experimental-use-fuzzy-matching-for-css-code-completion", true),
-    experimentalVirtualizeSourcesNavigationSidebarTreeOutline: new WI.Setting("experimental-virtualize-sources-navigation-sidebar-tree-outline", false),
+    experimentalUseStrictCheckForGlobMatching: new WI.Setting("experimental-use-strict-check-for-glob-matching", false),
 
     // Protocol
     protocolLogAsText: new WI.Setting("protocol-log-as-text", false),

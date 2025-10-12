@@ -27,8 +27,8 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "IDLTypes.h"
-#include "PublicKeyCredentialEntity.h"
+#include <WebCore/IDLTypes.h>
+#include <WebCore/PublicKeyCredentialEntity.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

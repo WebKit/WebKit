@@ -30,7 +30,7 @@
 namespace WebCore {
 
 // This class is needed to maintain compatibility with the historical CSSOM representation of the `filter` related properties.
-// It should be used only as an element in a DeprecatedCSSOMValueList created by CSSAppleColorFilterPropertyValue or CSSFilterPropertyValue.
+// It should be used only as an element in a DeprecatedCSSOMValueList created by CSSAppleColorFilterValue or CSSFilterValue.
 class DeprecatedCSSOMFilterFunctionValue final : public DeprecatedCSSOMValue {
 public:
     static Ref<DeprecatedCSSOMFilterFunctionValue> create(CSS::FilterFunction, CSSStyleDeclaration&);

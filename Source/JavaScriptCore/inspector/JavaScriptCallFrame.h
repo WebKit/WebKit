@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +57,7 @@ public:
 private:
     JavaScriptCallFrame(Ref<JSC::DebuggerCallFrame>&&);
 
-    Ref<JSC::DebuggerCallFrame> m_debuggerCallFrame;
+    const Ref<JSC::DebuggerCallFrame> m_debuggerCallFrame;
     RefPtr<JavaScriptCallFrame> m_caller;
 };
 

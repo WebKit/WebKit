@@ -56,7 +56,7 @@ static Ref<SupportedFeatures> supportedFeatures(WGPUAdapter adapter)
 {
     auto featureCount = wgpuAdapterEnumerateFeatures(adapter, nullptr);
     Vector<WGPUFeatureName> features(featureCount);
-    wgpuAdapterEnumerateFeatures(adapter, features.data());
+    wgpuAdapterEnumerateFeatures(adapter, features.mutableSpan().data());
 
     return supportedFeatures(features);
 }
@@ -64,7 +64,6 @@ static Ref<SupportedFeatures> supportedFeatures(WGPUAdapter adapter)
 static Ref<SupportedLimits> supportedLimits(WGPUAdapter adapter)
 {
     WGPUSupportedLimits limits;
-    limits.nextInChain = nullptr;
     auto result = wgpuAdapterGetLimits(adapter, &limits);
     ASSERT_UNUSED(result, result);
     return SupportedLimits::create(
@@ -175,6 +174,12 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         return convertToBackingContext.convertToBacking(featureName);
     });
 
+    if (features.contains(WGPUFeatureName_TextureFormatsTier1) && !features.contains(WGPUFeatureName_RG11B10UfloatRenderable))
+        features.append(WGPUFeatureName_RG11B10UfloatRenderable);
+
+    if (!features.contains(WGPUFeatureName_CoreFeaturesAndLimits))
+        features.append(WGPUFeatureName_CoreFeaturesAndLimits);
+
     auto limits = wgpuDefaultLimits();
 
     auto& supportedLimits = this->limits();
@@ -242,17 +247,15 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
 #undef SET_MAX_VALUE
     }
 
-    WGPURequiredLimits requiredLimits { nullptr, WTFMove(limits) };
+    WGPURequiredLimits requiredLimits { .limits = WTFMove(limits) };
 
     WGPUDeviceDescriptor backingDescriptor {
-        .nextInChain = nullptr,
         .label = label.data(),
         .requiredFeatureCount = features.size(),
-        .requiredFeatures = features.size() ? features.data() : nullptr,
+        .requiredFeatures = features.size() ? features.span().data() : nullptr,
         .requiredLimits = &requiredLimits,
         .defaultQueue = {
-            { },
-            "queue"
+            .label = "queue"
         },
         .deviceLostCallback = nullptr,
         .deviceLostUserdata = nullptr,

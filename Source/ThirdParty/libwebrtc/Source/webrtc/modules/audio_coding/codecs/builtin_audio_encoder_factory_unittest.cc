@@ -10,12 +10,21 @@
 
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <memory>
+#include <string>
 #include <vector>
 
+#include "api/array_view.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/audio_encoder_factory.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
+#include "api/scoped_refptr.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -23,8 +32,7 @@
 namespace webrtc {
 
 class AudioEncoderFactoryTest
-    : public ::testing::TestWithParam<rtc::scoped_refptr<AudioEncoderFactory>> {
-};
+    : public ::testing::TestWithParam<scoped_refptr<AudioEncoderFactory>> {};
 
 TEST_P(AudioEncoderFactoryTest, SupportsAtLeastOneFormat) {
   auto factory = GetParam();
@@ -71,11 +79,11 @@ TEST_P(AudioEncoderFactoryTest, CanRunAllSupportedEncoders) {
         factory->Create(env, spec.format, {.payload_type = kTestPayloadType});
     EXPECT_TRUE(encoder);
     encoder->Reset();
-    const int num_samples = rtc::checked_cast<int>(
-        encoder->SampleRateHz() * encoder->NumChannels() / 100);
-    rtc::Buffer out;
-    rtc::BufferT<int16_t> audio;
-    audio.SetData(num_samples, [](rtc::ArrayView<int16_t> audio) {
+    const int num_samples = checked_cast<int>(encoder->SampleRateHz() *
+                                              encoder->NumChannels() / 100);
+    Buffer out;
+    BufferT<int16_t> audio;
+    audio.SetData(num_samples, [](ArrayView<int16_t> audio) {
       for (size_t i = 0; i != audio.size(); ++i) {
         // Just put some numbers in there, ensure they're within range.
         audio[i] =
@@ -136,18 +144,17 @@ TEST(BuiltinAudioEncoderFactoryTest, SupportsTheExpectedFormats) {
 
   const std::vector<SdpAudioFormat> expected_formats = {
 #ifdef WEBRTC_CODEC_OPUS
-    {"opus", 48000, 2, {{"minptime", "10"}, {"useinbandfec", "1"}}},
+      {"opus", 48000, 2, {{"minptime", "10"}, {"useinbandfec", "1"}}},
 #endif
 #if defined(WEBRTC_CODEC_ISAC) || defined(WEBRTC_CODEC_ISACFX)
-    {"isac", 16000, 1},
+      {"isac", 16000, 1},
 #endif
 #ifdef WEBRTC_CODEC_ISAC
-    {"isac", 32000, 1},
+      {"isac", 32000, 1},
 #endif
-    {"G722", 8000, 1},
-    {"pcmu", 8000, 1},
-    {"pcma", 8000, 1}
-  };
+      {"G722", 8000, 1},
+      {"pcmu", 8000, 1},
+      {"pcma", 8000, 1}};
 
   ASSERT_THAT(supported_formats, ElementsAreArray(expected_formats));
 }
@@ -155,20 +162,15 @@ TEST(BuiltinAudioEncoderFactoryTest, SupportsTheExpectedFormats) {
 // Tests that using more channels than the maximum does not work.
 TEST(BuiltinAudioEncoderFactoryTest, MaxNrOfChannels) {
   const Environment env = CreateEnvironment();
-  rtc::scoped_refptr<AudioEncoderFactory> aef =
-      CreateBuiltinAudioEncoderFactory();
+  scoped_refptr<AudioEncoderFactory> aef = CreateBuiltinAudioEncoderFactory();
   std::vector<std::string> codecs = {
 #ifdef WEBRTC_CODEC_OPUS
-    "opus",
+      "opus",
 #endif
 #if defined(WEBRTC_CODEC_ISAC) || defined(WEBRTC_CODEC_ISACFX)
-    "isac",
+      "isac",
 #endif
-    "pcmu",
-    "pcma",
-    "l16",
-    "G722",
-    "G711",
+      "pcmu", "pcma", "l16", "G722", "G711",
   };
 
   for (auto codec : codecs) {

@@ -121,7 +121,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
         for (auto& entry : lexicalDeclarations) {
             if (hasGlobalLexicalDeclarations) {
                 bool hasProperty = globalLexicalEnvironment->hasProperty(globalObject, entry.key.get());
-                throwScope.assertNoExceptionExceptTermination();
+                RETURN_IF_EXCEPTION(throwScope, nullptr);
                 if (hasProperty) {
                     if (entry.value.isConst() && !vm.globalConstRedeclarationShouldThrow() && !isInStrictContext()) [[unlikely]] {
                         // We only allow "const" duplicate declarations under this setting.
@@ -159,7 +159,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
                 if (entry.value.isSloppyModeHoistedFunction())
                     continue;
                 bool hasProperty = globalLexicalEnvironment->hasProperty(globalObject, entry.key.get());
-                throwScope.assertNoExceptionExceptTermination();
+                RETURN_IF_EXCEPTION(throwScope, nullptr);
                 if (hasProperty)
                     return createErrorForDuplicateGlobalVariableDeclaration(globalObject, entry.key.get());
             }
@@ -169,12 +169,12 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
             UnlinkedFunctionExecutable* unlinkedFunctionExecutable = unlinkedCodeBlock->functionDecl(i);
             ASSERT(!unlinkedFunctionExecutable->name().isEmpty());
             bool canDeclare = globalObject->canDeclareGlobalFunction(unlinkedFunctionExecutable->name());
-            throwScope.assertNoExceptionExceptTermination();
+            RETURN_IF_EXCEPTION(throwScope, nullptr);
             if (!canDeclare) {
                 if (requiresCanDeclareGlobalFunctionQuirk()) {
                     VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
                     JSCell::deleteProperty(globalObject, globalObject, unlinkedFunctionExecutable->name());
-                    throwScope.assertNoExceptionExceptTermination();
+                    RETURN_IF_EXCEPTION(throwScope, nullptr);
                     continue;
                 }
                 return createErrorForInvalidGlobalFunctionDeclaration(globalObject, unlinkedFunctionExecutable->name());
@@ -188,7 +188,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
                 ASSERT(entry.value.isVar());
                 const Identifier& ident = Identifier::fromUid(vm, entry.key.get());
                 bool canDeclare = globalObject->canDeclareGlobalVar(ident);
-                throwScope.assertNoExceptionExceptTermination();
+                RETURN_IF_EXCEPTION(throwScope, nullptr);
                 if (!canDeclare)
                     return createErrorForInvalidGlobalVarDeclaration(globalObject, ident);
             }
@@ -209,18 +209,18 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
 
             if (hasGlobalLexicalDeclarations) {
                 bool hasProperty = globalLexicalEnvironment->hasProperty(globalObject, ident);
-                throwScope.assertNoExceptionExceptTermination();
+                RETURN_IF_EXCEPTION(throwScope, nullptr);
                 if (hasProperty)
                     continue;
             }
 
             bool canDeclare = globalObject->canDeclareGlobalVar(ident);
-            throwScope.assertNoExceptionExceptTermination();
+            RETURN_IF_EXCEPTION(throwScope, nullptr);
             if (!canDeclare)
                 continue;
 
             globalObject->createGlobalVarBinding<BindingCreationContext::Global>(ident);
-            throwScope.assertNoExceptionExceptTermination();
+            RETURN_IF_EXCEPTION(throwScope, nullptr);
         }
     }
 
@@ -228,7 +228,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
         UnlinkedFunctionExecutable* unlinkedFunctionExecutable = unlinkedCodeBlock->functionDecl(i);
         ASSERT(!unlinkedFunctionExecutable->name().isEmpty());
         globalObject->createGlobalFunctionBinding<BindingCreationContext::Global>(unlinkedFunctionExecutable->name());
-        throwScope.assertNoExceptionExceptTermination();
+        RETURN_IF_EXCEPTION(throwScope, nullptr);
         if (vm.typeProfiler() || vm.controlFlowProfiler()) {
             vm.functionHasExecutedCache()->insertUnexecutedRange(sourceID(), 
                 unlinkedFunctionExecutable->unlinkedFunctionStart(),
@@ -241,7 +241,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
             continue;
         ASSERT(entry.value.isVar());
         globalObject->createGlobalVarBinding<BindingCreationContext::Global>(Identifier::fromUid(vm, entry.key.get()));
-        throwScope.assertNoExceptionExceptTermination();
+        RETURN_IF_EXCEPTION(throwScope, nullptr);
     }
 
     {

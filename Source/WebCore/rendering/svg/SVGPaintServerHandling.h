@@ -21,7 +21,6 @@
 
 #include "RenderSVGResourceGradient.h"
 #include "RenderView.h"
-#include "SVGRenderStyle.h"
 #include "SVGRenderSupport.h"
 
 namespace WebCore {
@@ -82,20 +81,20 @@ public:
     {
         // When rendering the mask for a RenderSVGResourceClipper, always use the initial fill paint server.
         if (targetRenderer.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask))
-            return op == Operation::Fill ? SVGRenderStyle::initialFillPaintColor().resolvedColor() : SVGRenderStyle::initialStrokePaintColor().resolvedColor();
+            return op == Operation::Fill ? RenderStyle::initialFill().colorDisregardingType().resolvedColor() : RenderStyle::initialStroke().colorDisregardingType().resolvedColor();
 
-        auto paintType = op == Operation::Fill ? style.svgStyle().fillPaintType() : style.svgStyle().strokePaintType();
-        if (paintType == SVGPaintType::None)
+        auto& paint = op == Operation::Fill ? style.fill() : style.stroke();
+        if (paint.isNone())
             return { };
 
-        if (paintType >= SVGPaintType::URINone) {
+        if (!paint.isColor()) {
             if (allowPaintServerURIResolving == URIResolving::Disabled) {
                 // If we found no paint server, and no fallback is desired, stop here.
                 // We can only get here, if we previously requested a paint server, attempted to
                 // prepare a fill or stroke operation, which failed. It can fail if, for example,
                 // the paint sever is a gradient, gradientUnits are set to 'objectBoundingBox' and
                 // the target is an one-dimensional object without a defined 'objectBoundingBox' (<line>).
-                if (paintType == SVGPaintType::URI || paintType == SVGPaintType::URINone)
+                if (paint.isURL() || paint.isURLNone())
                     return { };
             } else {
                 auto paintServerForOperation = [&]() {
@@ -109,12 +108,12 @@ public:
                     return paintServer;
 
                 // If we found no paint server, and no fallback is desired, stop here.
-                if (paintType == SVGPaintType::URI || paintType == SVGPaintType::URINone)
+                if (paint.isURL() || paint.isURLNone())
                     return { };
             }
         }
 
-        // SVGPaintType::CurrentColor / SVGPaintType::RGBColor / SVGPaintType::URICurrentColor / SVGPaintType::URIRGBColor handling.
+        // Color and SVGPaint::URLColor handling.
         auto color = resolveColorFromStyle<op>(style);
         if (inheritColorFromParentStyleIfNeeded<op>(targetRenderer, color))
             return color;
@@ -124,13 +123,12 @@ public:
 private:
     inline void prepareFillOperation(const RenderLayerModelObject& renderer, const RenderStyle& style, const Color& fillColor) const
     {
-        Ref svgStyle = style.svgStyle();
         if (renderer.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask)) {
             m_context.setAlpha(1);
-            m_context.setFillRule(svgStyle->clipRule());
+            m_context.setFillRule(style.clipRule());
         } else {
-            m_context.setAlpha(svgStyle->fillOpacity());
-            m_context.setFillRule(svgStyle->fillRule());
+            m_context.setAlpha(style.fillOpacity().value.value);
+            m_context.setFillRule(style.fillRule());
         }
 
         m_context.setFillColor(style.colorByApplyingColorFilter(fillColor));
@@ -138,7 +136,7 @@ private:
 
     inline void prepareStrokeOperation(const RenderLayerModelObject& renderer, const RenderStyle& style, const Color& strokeColor) const
     {
-        m_context.setAlpha(style.svgStyle().strokeOpacity());
+        m_context.setAlpha(style.strokeOpacity().value.value);
         m_context.setStrokeColor(style.colorByApplyingColorFilter(strokeColor));
         SVGRenderSupport::applyStrokeStyleToContext(m_context, style, renderer);
     }
@@ -146,25 +144,23 @@ private:
     template<Operation op>
     static inline Color resolveColorFromStyle(const RenderStyle& style)
     {
-        Ref svgStyle = style.svgStyle();
         if (op == Operation::Fill)
-            return resolveColorFromStyle(style, svgStyle->fillPaintType(), svgStyle->fillPaintColor(), svgStyle->visitedLinkFillPaintType(), svgStyle->visitedLinkFillPaintColor());
-        return resolveColorFromStyle(style, svgStyle->strokePaintType(), svgStyle->strokePaintColor(), svgStyle->visitedLinkStrokePaintType(), svgStyle->visitedLinkStrokePaintColor());
+            return resolveColorFromStyle(style, style.fill(), style.visitedLinkFill());
+        return resolveColorFromStyle(style, style.stroke(), style.visitedLinkStroke());
     }
 
-    static inline Color resolveColorFromStyle(const RenderStyle& style, SVGPaintType paintType, const Style::Color& paintColor, SVGPaintType visitedLinkPaintType, const Style::Color& visitedLinkPaintColor)
+    static inline Color resolveColorFromStyle(const RenderStyle& style, const Style::SVGPaint& paint, const Style::SVGPaint& visitedLinkPaint)
     {
-        // All paint types except None / URI / URINone handle solid colors.
-        ASSERT_UNUSED(paintType, paintType != SVGPaintType::None);
-        ASSERT(paintType != SVGPaintType::URI);
-        ASSERT(paintType != SVGPaintType::URINone);
+        // All paint types except `none` / `url` / `url none` handle solid colors.
+        ASSERT(!paint.isNone());
+        ASSERT(!paint.isURL());
+        ASSERT(!paint.isURLNone());
 
-        auto color = style.colorResolvingCurrentColor(paintColor);
+        auto color = style.colorResolvingCurrentColor(paint.colorDisregardingType());
         if (style.insideLink() == InsideLink::InsideVisited) {
             // FIXME: This code doesn't support the uri component of the visited link paint, https://bugs.webkit.org/show_bug.cgi?id=70006
-            if (visitedLinkPaintType == SVGPaintType::RGBColor) {
-                const auto& visitedColor = style.colorResolvingCurrentColor(visitedLinkPaintColor);
-                if (visitedColor.isValid())
+            if (auto visitedLinkPaintColor = visitedLinkPaint.tryColor()) {
+                if (auto visitedColor = style.colorResolvingCurrentColor(*visitedLinkPaintColor); visitedColor.isValid())
                     color = visitedColor.colorWithAlpha(color.alphaAsFloat());
             }
         }
@@ -179,8 +175,8 @@ private:
             return true;
         if (!renderer.parent())
             return false;
-        Ref parentSVGStyle = renderer.parent()->style().svgStyle();
-        color = renderer.style().colorResolvingCurrentColor(op == Operation::Fill ? parentSVGStyle->fillPaintColor() : parentSVGStyle->strokePaintColor());
+        auto& parentStyle = renderer.parent()->style();
+        color = renderer.style().colorResolvingCurrentColor(op == Operation::Fill ? parentStyle.fill().colorDisregardingType() : parentStyle.stroke().colorDisregardingType());
         return true;
     }
 

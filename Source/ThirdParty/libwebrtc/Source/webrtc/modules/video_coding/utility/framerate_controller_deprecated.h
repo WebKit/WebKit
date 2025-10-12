@@ -19,7 +19,7 @@
 
 namespace webrtc {
 
-// Please use webrtc::FramerateController instead.
+// Please use FramerateController instead.
 class FramerateControllerDeprecated {
  public:
   explicit FramerateControllerDeprecated(float target_framerate_fps);

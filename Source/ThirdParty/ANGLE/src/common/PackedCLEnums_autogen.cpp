@@ -443,6 +443,16 @@ DeviceInfo FromCLenum<DeviceInfo>(CLenum from)
             return DeviceInfo::PipeSupport;
         case CL_DEVICE_LATEST_CONFORMANCE_VERSION_PASSED:
             return DeviceInfo::LatestConformanceVersionPassed;
+        case CL_DEVICE_INTEGER_DOT_PRODUCT_CAPABILITIES_KHR:
+            return DeviceInfo::IntegerDotProductCapabilities;
+        case CL_DEVICE_INTEGER_DOT_PRODUCT_ACCELERATION_PROPERTIES_8BIT_KHR:
+            return DeviceInfo::IntegerDotProductAccelerationProperties8bit;
+        case CL_DEVICE_INTEGER_DOT_PRODUCT_ACCELERATION_PROPERTIES_4x8BIT_PACKED_KHR:
+            return DeviceInfo::IntegerDotProductAccelerationProperties4x8bitPacked;
+        case CL_DEVICE_EXTERNAL_MEMORY_IMPORT_HANDLE_TYPES_KHR:
+            return DeviceInfo::ExternalMemoryImportHandleTypes;
+        case CL_DEVICE_EXTERNAL_MEMORY_IMPORT_ASSUME_LINEAR_IMAGES_HANDLE_TYPES_KHR:
+            return DeviceInfo::ExternalMemoryLinearImagesHandleTypes;
         default:
             return DeviceInfo::InvalidEnum;
     }
@@ -670,6 +680,16 @@ CLenum ToCLenum(DeviceInfo from)
             return CL_DEVICE_PIPE_SUPPORT;
         case DeviceInfo::LatestConformanceVersionPassed:
             return CL_DEVICE_LATEST_CONFORMANCE_VERSION_PASSED;
+        case DeviceInfo::IntegerDotProductCapabilities:
+            return CL_DEVICE_INTEGER_DOT_PRODUCT_CAPABILITIES_KHR;
+        case DeviceInfo::IntegerDotProductAccelerationProperties8bit:
+            return CL_DEVICE_INTEGER_DOT_PRODUCT_ACCELERATION_PROPERTIES_8BIT_KHR;
+        case DeviceInfo::IntegerDotProductAccelerationProperties4x8bitPacked:
+            return CL_DEVICE_INTEGER_DOT_PRODUCT_ACCELERATION_PROPERTIES_4x8BIT_PACKED_KHR;
+        case DeviceInfo::ExternalMemoryImportHandleTypes:
+            return CL_DEVICE_EXTERNAL_MEMORY_IMPORT_HANDLE_TYPES_KHR;
+        case DeviceInfo::ExternalMemoryLinearImagesHandleTypes:
+            return CL_DEVICE_EXTERNAL_MEMORY_IMPORT_ASSUME_LINEAR_IMAGES_HANDLE_TYPES_KHR;
         default:
             UNREACHABLE();
             return 0;
@@ -1007,6 +1027,21 @@ std::ostream &operator<<(std::ostream &os, DeviceInfo value)
         case DeviceInfo::LatestConformanceVersionPassed:
             os << "CL_DEVICE_LATEST_CONFORMANCE_VERSION_PASSED";
             break;
+        case DeviceInfo::IntegerDotProductCapabilities:
+            os << "CL_DEVICE_INTEGER_DOT_PRODUCT_CAPABILITIES_KHR";
+            break;
+        case DeviceInfo::IntegerDotProductAccelerationProperties8bit:
+            os << "CL_DEVICE_INTEGER_DOT_PRODUCT_ACCELERATION_PROPERTIES_8BIT_KHR";
+            break;
+        case DeviceInfo::IntegerDotProductAccelerationProperties4x8bitPacked:
+            os << "CL_DEVICE_INTEGER_DOT_PRODUCT_ACCELERATION_PROPERTIES_4x8BIT_PACKED_KHR";
+            break;
+        case DeviceInfo::ExternalMemoryImportHandleTypes:
+            os << "CL_DEVICE_EXTERNAL_MEMORY_IMPORT_HANDLE_TYPES_KHR";
+            break;
+        case DeviceInfo::ExternalMemoryLinearImagesHandleTypes:
+            os << "CL_DEVICE_EXTERNAL_MEMORY_IMPORT_ASSUME_LINEAR_IMAGES_HANDLE_TYPES_KHR";
+            break;
         default:
             os << "GL_INVALID_ENUM";
             break;
@@ -1131,6 +1166,93 @@ std::ostream &operator<<(std::ostream &os, ExecutionStatus value)
             break;
         case ExecutionStatus::Queued:
             os << "CL_QUEUED";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
+ExternalMemoryHandle FromCLenum<ExternalMemoryHandle>(CLenum from)
+{
+    switch (from)
+    {
+        case CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_FD_KHR:
+            return ExternalMemoryHandle::OpaqueFd;
+        case CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KHR:
+            return ExternalMemoryHandle::OpaqueWin32;
+        case CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KMT_KHR:
+            return ExternalMemoryHandle::OpaqueWin32Kmt;
+        case CL_EXTERNAL_MEMORY_HANDLE_D3D11_TEXTURE_KHR:
+            return ExternalMemoryHandle::D3D11Texture;
+        case CL_EXTERNAL_MEMORY_HANDLE_D3D11_TEXTURE_KMT_KHR:
+            return ExternalMemoryHandle::D3D11TextureKmt;
+        case CL_EXTERNAL_MEMORY_HANDLE_D3D12_HEAP_KHR:
+            return ExternalMemoryHandle::D3D12Heap;
+        case CL_EXTERNAL_MEMORY_HANDLE_D3D12_RESOURCE_KHR:
+            return ExternalMemoryHandle::D3D12Resource;
+        case CL_EXTERNAL_MEMORY_HANDLE_DMA_BUF_KHR:
+            return ExternalMemoryHandle::DmaBuf;
+        default:
+            return ExternalMemoryHandle::InvalidEnum;
+    }
+}
+
+CLenum ToCLenum(ExternalMemoryHandle from)
+{
+    switch (from)
+    {
+        case ExternalMemoryHandle::OpaqueFd:
+            return CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_FD_KHR;
+        case ExternalMemoryHandle::OpaqueWin32:
+            return CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KHR;
+        case ExternalMemoryHandle::OpaqueWin32Kmt:
+            return CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KMT_KHR;
+        case ExternalMemoryHandle::D3D11Texture:
+            return CL_EXTERNAL_MEMORY_HANDLE_D3D11_TEXTURE_KHR;
+        case ExternalMemoryHandle::D3D11TextureKmt:
+            return CL_EXTERNAL_MEMORY_HANDLE_D3D11_TEXTURE_KMT_KHR;
+        case ExternalMemoryHandle::D3D12Heap:
+            return CL_EXTERNAL_MEMORY_HANDLE_D3D12_HEAP_KHR;
+        case ExternalMemoryHandle::D3D12Resource:
+            return CL_EXTERNAL_MEMORY_HANDLE_D3D12_RESOURCE_KHR;
+        case ExternalMemoryHandle::DmaBuf:
+            return CL_EXTERNAL_MEMORY_HANDLE_DMA_BUF_KHR;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, ExternalMemoryHandle value)
+{
+    switch (value)
+    {
+        case ExternalMemoryHandle::OpaqueFd:
+            os << "CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_FD_KHR";
+            break;
+        case ExternalMemoryHandle::OpaqueWin32:
+            os << "CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KHR";
+            break;
+        case ExternalMemoryHandle::OpaqueWin32Kmt:
+            os << "CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KMT_KHR";
+            break;
+        case ExternalMemoryHandle::D3D11Texture:
+            os << "CL_EXTERNAL_MEMORY_HANDLE_D3D11_TEXTURE_KHR";
+            break;
+        case ExternalMemoryHandle::D3D11TextureKmt:
+            os << "CL_EXTERNAL_MEMORY_HANDLE_D3D11_TEXTURE_KMT_KHR";
+            break;
+        case ExternalMemoryHandle::D3D12Heap:
+            os << "CL_EXTERNAL_MEMORY_HANDLE_D3D12_HEAP_KHR";
+            break;
+        case ExternalMemoryHandle::D3D12Resource:
+            os << "CL_EXTERNAL_MEMORY_HANDLE_D3D12_RESOURCE_KHR";
+            break;
+        case ExternalMemoryHandle::DmaBuf:
+            os << "CL_EXTERNAL_MEMORY_HANDLE_DMA_BUF_KHR";
             break;
         default:
             os << "GL_INVALID_ENUM";
@@ -1811,6 +1933,51 @@ std::ostream &operator<<(std::ostream &os, MemObjectType value)
 }
 
 template <>
+MemProperties FromCLenum<MemProperties>(CLenum from)
+{
+    switch (from)
+    {
+        case CL_MEM_DEVICE_HANDLE_LIST_KHR:
+            return MemProperties::ExternalMemoryHandleListStart;
+        case CL_MEM_DEVICE_HANDLE_LIST_END_KHR:
+            return MemProperties::ExternalMemoryHandleListEnd;
+        default:
+            return MemProperties::InvalidEnum;
+    }
+}
+
+CLenum ToCLenum(MemProperties from)
+{
+    switch (from)
+    {
+        case MemProperties::ExternalMemoryHandleListStart:
+            return CL_MEM_DEVICE_HANDLE_LIST_KHR;
+        case MemProperties::ExternalMemoryHandleListEnd:
+            return CL_MEM_DEVICE_HANDLE_LIST_END_KHR;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, MemProperties value)
+{
+    switch (value)
+    {
+        case MemProperties::ExternalMemoryHandleListStart:
+            os << "CL_MEM_DEVICE_HANDLE_LIST_KHR";
+            break;
+        case MemProperties::ExternalMemoryHandleListEnd:
+            os << "CL_MEM_DEVICE_HANDLE_LIST_END_KHR";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
 PipeInfo FromCLenum<PipeInfo>(CLenum from)
 {
     switch (from)
@@ -1885,6 +2052,8 @@ PlatformInfo FromCLenum<PlatformInfo>(CLenum from)
             return PlatformInfo::ExtensionsWithVersion;
         case CL_PLATFORM_ICD_SUFFIX_KHR:
             return PlatformInfo::IcdSuffix;
+        case CL_PLATFORM_EXTERNAL_MEMORY_IMPORT_HANDLE_TYPES_KHR:
+            return PlatformInfo::ExternalMemory;
         default:
             return PlatformInfo::InvalidEnum;
     }
@@ -1912,6 +2081,8 @@ CLenum ToCLenum(PlatformInfo from)
             return CL_PLATFORM_EXTENSIONS_WITH_VERSION;
         case PlatformInfo::IcdSuffix:
             return CL_PLATFORM_ICD_SUFFIX_KHR;
+        case PlatformInfo::ExternalMemory:
+            return CL_PLATFORM_EXTERNAL_MEMORY_IMPORT_HANDLE_TYPES_KHR;
         default:
             UNREACHABLE();
             return 0;
@@ -1948,6 +2119,9 @@ std::ostream &operator<<(std::ostream &os, PlatformInfo value)
             break;
         case PlatformInfo::IcdSuffix:
             os << "CL_PLATFORM_ICD_SUFFIX_KHR";
+            break;
+        case PlatformInfo::ExternalMemory:
+            os << "CL_PLATFORM_EXTERNAL_MEMORY_IMPORT_HANDLE_TYPES_KHR";
             break;
         default:
             os << "GL_INVALID_ENUM";

@@ -1,28 +1,12 @@
 This tests that visibleCharacterRange returns expected visible ranges with various scrollTop values.
 
-
-Testing scrollTop values 0 to 2000.
-Range with view 200x500, scrollTop 0: NSRange: {0, 810}
-Range with view 200x500, scrollTop 100: NSRange: {179, 780}
-Range with view 200x500, scrollTop 200: NSRange: {329, 810}
-Range with view 200x500, scrollTop 300: NSRange: {509, 810}
-Range with view 200x500, scrollTop 400: NSRange: {659, 810}
-Range with view 200x500, scrollTop 500: NSRange: {839, 810}
-Range with view 200x500, scrollTop 600: NSRange: {989, 810}
-Range with view 200x500, scrollTop 700: NSRange: {1169, 810}
-Range with view 200x500, scrollTop 800: NSRange: {1319, 810}
-Range with view 200x500, scrollTop 900: NSRange: {1499, 810}
-Range with view 200x500, scrollTop 1000: NSRange: {1679, 780}
-Range with view 200x500, scrollTop 1100: NSRange: {1829, 810}
-Range with view 200x500, scrollTop 1200: NSRange: {2009, 810}
-Range with view 200x500, scrollTop 1300: NSRange: {2159, 810}
-Range with view 200x500, scrollTop 1400: NSRange: {2339, 810}
-Range with view 200x500, scrollTop 1500: NSRange: {2489, 810}
-Range with view 200x500, scrollTop 1600: NSRange: {2669, 810}
-Range with view 200x500, scrollTop 1700: NSRange: {2819, 810}
-Range with view 200x500, scrollTop 1800: NSRange: {2999, 810}
-Range with view 200x500, scrollTop 1900: NSRange: {3179, 780}
-Range with view 200x500, scrollTop 2000: NSRange: {3329, 810}
+Got expected visible-character-range for window width 200px, height 500px, scrollTop 0px
+Got expected visible-character-range for window width 200px, height 500px, scrollTop 100px
+Got expected visible-character-range for window width 200px, height 500px, scrollTop 400px
+Got expected visible-character-range for window width 200px, height 500px, scrollTop 550px
+Got expected visible-character-range for window width 200px, height 500px, scrollTop 880px
+Got expected visible-character-range for window width 200px, height 500px, scrollTop 1020px
+Got expected visible-character-range for window width 200px, height 500px, scrollTop 1240px
 
 PASS successfullyParsed is true
 

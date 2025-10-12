@@ -2,18 +2,12 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-String-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
 ---*/
 var BUGNUMBER = 1108382;
 var summary = 'Remove non-standard flag argument from String.prototype.{search,match,replace}.';
-
-printBugNumber(BUGNUMBER);
-printStatus (summary);
 
 var result = "bbbAa".match("a", "i");
 assert.sameValue(result.index, 4);

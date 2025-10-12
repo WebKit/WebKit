@@ -3,8 +3,8 @@ x
 x
 x
 
-FAIL el-footer assert_equals: <footer data-testname="el-footer" aria-label="x" data-expectedrole="sectionfooter" class="ex">x</footer> expected "sectionfooter" but got ""
-FAIL el-footer-ancestormain assert_equals: <footer data-testname="el-footer-ancestormain" data-expectedrole="sectionfooter" class="ex">x</footer> expected "sectionfooter" but got ""
-FAIL el-header assert_equals: <header data-testname="el-header" aria-label="x" data-expectedrole="sectionheader" class="ex">x</header> expected "sectionheader" but got "generic"
-FAIL el-header-ancestormain assert_equals: <header data-testname="el-header-ancestormain" data-expectedrole="sectionheader" class="ex">x</header> expected "sectionheader" but got "generic"
+PASS el-footer
+PASS el-footer-ancestormain
+PASS el-header
+PASS el-header-ancestormain
 

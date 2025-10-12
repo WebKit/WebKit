@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "HTMLFormControlElement.h"
-#include "HTMLOptionElement.h"
-#include "TypeAhead.h"
+#include <WebCore/HTMLFormControlElement.h>
+#include <WebCore/HTMLOptionElement.h>
+#include <WebCore/TypeAhead.h>
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
@@ -124,7 +124,7 @@ private:
     const AtomString& formControlType() const final;
 
     int defaultTabIndex() const final;
-    bool isKeyboardFocusable(KeyboardEvent*) const final;
+    bool isKeyboardFocusable(const FocusEventData&) const final;
     bool isMouseFocusable() const final;
 
     void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, const FocusOptions&) final;

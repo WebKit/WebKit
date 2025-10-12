@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Origin https://web-platform.test:9443 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: Origin https://web-platform.test:9443 is not allowed by Access-Control-Allow-Origin. Status code: 200
 
 PASS Importing a script resolves the given promise.
 PASS Importing scripts resolves all the given promises.

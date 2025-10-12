@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CAAudioStreamDescription.h"
-#include "PlatformRawAudioData.h"
+#include <WebCore/CAAudioStreamDescription.h>
+#include <WebCore/PlatformRawAudioData.h>
 #include <wtf/Forward.h>
 
 #if ENABLE(WEB_CODECS) && USE(AVFOUNDATION)

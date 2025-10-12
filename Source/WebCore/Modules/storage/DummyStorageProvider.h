@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "FileSystemStorageConnection.h"
-#include "StorageConnection.h"
-#include "StorageEstimate.h"
-#include "StorageProvider.h"
+#include <WebCore/FileSystemStorageConnection.h>
+#include <WebCore/StorageConnection.h>
+#include <WebCore/StorageEstimate.h>
+#include <WebCore/StorageProvider.h>
 
 namespace WebCore {
 

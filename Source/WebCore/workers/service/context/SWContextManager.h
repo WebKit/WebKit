@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "BackgroundFetchInformation.h"
-#include "PageIdentifier.h"
-#include "PushSubscriptionData.h"
-#include "ServiceWorkerClientData.h"
-#include "ServiceWorkerClientQueryOptions.h"
-#include "ServiceWorkerIdentifier.h"
-#include "ServiceWorkerThreadProxy.h"
+#include <WebCore/BackgroundFetchInformation.h>
+#include <WebCore/PageIdentifier.h>
+#include <WebCore/PushSubscriptionData.h>
+#include <WebCore/ServiceWorkerClientData.h>
+#include <WebCore/ServiceWorkerClientQueryOptions.h>
+#include <WebCore/ServiceWorkerIdentifier.h>
+#include <WebCore/ServiceWorkerThreadProxy.h>
 #include <wtf/AbstractRefCounted.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>

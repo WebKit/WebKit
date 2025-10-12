@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "VM.h"
-#include "Yarr.h"
-#include "YarrJIT.h"
+#include <JavaScriptCore/VM.h>
+#include <JavaScriptCore/Yarr.h>
+#include <JavaScriptCore/YarrJIT.h>
 
 namespace JSC {
 

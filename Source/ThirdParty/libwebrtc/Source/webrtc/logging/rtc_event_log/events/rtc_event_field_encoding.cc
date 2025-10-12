@@ -107,7 +107,7 @@ std::optional<FieldType> ConvertFieldType(uint64_t value) {
 
 std::string EncodeDeltasV3(FixedLengthEncodingParametersV3 params,
                            uint64_t base,
-                           rtc::ArrayView<const uint64_t> values) {
+                           ArrayView<const uint64_t> values) {
   size_t outputbound = (values.size() * params.delta_bit_width() + 7) / 8;
   BitWriter writer(outputbound);
 
@@ -142,7 +142,7 @@ std::string EncodeDeltasV3(FixedLengthEncodingParametersV3 params,
 }
 
 EventEncoder::EventEncoder(EventParameters params,
-                           rtc::ArrayView<const RtcEvent*> batch) {
+                           ArrayView<const RtcEvent*> batch) {
   batch_size_ = batch.size();
   if (!batch.empty()) {
     // Encode event type.
@@ -210,9 +210,9 @@ void EventEncoder::EncodeField(const FieldParameters& params,
   const bool values_optional = values.size() != batch_size_;
 
   // Compute delta parameters
-  rtc::ArrayView<const uint64_t> all_values(values);
+  ArrayView<const uint64_t> all_values(values);
   uint64_t base = values[0];
-  rtc::ArrayView<const uint64_t> remaining_values(all_values.subview(1));
+  ArrayView<const uint64_t> remaining_values(all_values.subview(1));
 
   FixedLengthEncodingParametersV3 delta_params =
       FixedLengthEncodingParametersV3::CalculateParameters(

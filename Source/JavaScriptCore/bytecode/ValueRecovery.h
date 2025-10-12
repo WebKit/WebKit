@@ -25,16 +25,16 @@
 
 #pragma once
 
-#include "DFGMinifiedID.h"
-#include "DataFormat.h"
+#include <JavaScriptCore/DFGMinifiedID.h>
+#include <JavaScriptCore/DataFormat.h>
 #if ENABLE(JIT)
-#include "GPRInfo.h"
-#include "FPRInfo.h"
-#include "Reg.h"
+#include <JavaScriptCore/FPRInfo.h>
+#include <JavaScriptCore/GPRInfo.h>
+#include <JavaScriptCore/Reg.h>
 #endif
-#include "JSCJSValue.h"
-#include "MacroAssembler.h"
-#include "VirtualRegister.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/MacroAssembler.h>
+#include <JavaScriptCore/VirtualRegister.h>
 
 namespace JSC {
 

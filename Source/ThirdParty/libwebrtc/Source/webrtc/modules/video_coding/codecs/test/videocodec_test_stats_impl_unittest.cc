@@ -10,6 +10,7 @@
 
 #include "modules/video_coding/codecs/test/videocodec_test_stats_impl.h"
 
+#include <cstddef>
 #include <vector>
 
 #include "test/gmock.h"
@@ -22,7 +23,7 @@ using FrameStatistics = VideoCodecTestStatsImpl::FrameStatistics;
 
 namespace {
 
-const size_t kTimestamp = 12345;
+constexpr size_t kTimestamp = 12345;
 
 using ::testing::AllOf;
 using ::testing::Contains;

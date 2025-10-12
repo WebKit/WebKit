@@ -70,7 +70,7 @@ InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index,
     ensureTextTrackDebugCategoryInitialized();
     installUpdateConfigurationHandlers();
 
-    GST_INFO("Track %d got stream start for stream %" PRIu64 ". GStreamer stream-id: %s", m_index, m_id, m_gstStreamId.string().utf8().data());
+    GST_INFO("Track %" PRIu64 " got stream start. GStreamer stream-id: %s", m_id, m_gstStreamId.string().utf8().data());
 
     GST_DEBUG("Stream %" GST_PTR_FORMAT, m_stream.get());
     auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
@@ -116,17 +116,17 @@ void InbandTextTrackPrivateGStreamer::notifyTrackOfSample()
     for (auto& sample : samples) {
         GstBuffer* buffer = gst_sample_get_buffer(sample.get());
         if (!buffer) {
-            GST_WARNING("Track %d got sample with no buffer.", m_index);
+            GST_WARNING("Track %" PRIu64 " got sample with no buffer.", m_id);
             continue;
         }
         GstMappedBuffer mappedBuffer(buffer, GST_MAP_READ);
         ASSERT(mappedBuffer);
         if (!mappedBuffer) {
-            GST_WARNING("Track %d unable to map buffer.", m_index);
+            GST_WARNING("Track %" PRIu64 " unable to map buffer.", m_id);
             continue;
         }
 
-        GST_INFO("Track %d parsing sample: %.*s", m_index, static_cast<int>(mappedBuffer.size()),
+        GST_INFO("Track %" PRIu64 " parsing sample: %.*s", m_id, static_cast<int>(mappedBuffer.size()),
             reinterpret_cast<char*>(mappedBuffer.data()));
         ASSERT(isMainThread());
         ASSERT(!hasClients() || hasOneClient());

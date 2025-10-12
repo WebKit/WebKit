@@ -43,6 +43,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-interrupted-within-onnavigate.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-interrupted.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-invalid-url.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-javascript-url.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-opaque-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-pagehide.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-preventDefault.html

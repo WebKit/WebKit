@@ -401,7 +401,7 @@ list(APPEND WebCore_SOURCES
 
     platform/network/cf/CertificateInfoCFNet.cpp
     platform/network/cf/DNSResolveQueueCFNet.cpp
-    platform/network/cf/FormDataStreamCFNet.cpp
+    platform/network/cf/FormDataStreamCFNet.mm
     platform/network/cf/NetworkStorageSessionCFNet.cpp
     platform/network/cf/ResourceRequestCFNet.cpp
 
@@ -631,6 +631,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/angle/ANGLEUtilities.h
 
     platform/graphics/avfoundation/AudioSourceProviderAVFObjC.h
+    platform/graphics/avfoundation/AudioVideoRendererAVFObjC.h
     platform/graphics/avfoundation/MediaPlaybackTargetCocoa.h
     platform/graphics/avfoundation/SampleBufferDisplayLayer.h
     platform/graphics/avfoundation/WebMediaSessionManagerMac.h

@@ -1,7 +1,7 @@
 // GENERATED CONTENT - DO NOT EDIT
 // Content was automatically extracted by Reffy into webref
 // (https://github.com/w3c/webref)
-// Source: WebGL Specification (https://www.khronos.org/registry/webgl/specs/latest/1.0/)
+// Source: WebGL Specification (https://registry.khronos.org/webgl/specs/latest/1.0/)
 
 typedef unsigned long  GLenum;
 typedef boolean        GLboolean;
@@ -37,6 +37,7 @@ dictionary WebGLContextAttributes {
 
 [Exposed=(Window,Worker)]
 interface WebGLObject {
+    attribute USVString label;
 };
 
 [Exposed=(Window,Worker)]
@@ -86,7 +87,8 @@ typedef (ImageBitmap or
          HTMLImageElement or
          HTMLCanvasElement or
          HTMLVideoElement or
-         OffscreenCanvas) TexImageSource;
+         OffscreenCanvas or
+         VideoFrame) TexImageSource;
 
 typedef ([AllowShared] Float32Array or sequence<GLfloat>) Float32List;
 typedef ([AllowShared] Int32Array or sequence<GLint>) Int32List;
@@ -466,6 +468,7 @@ interface mixin WebGLRenderingContextBase
 
     const GLenum RGBA4                          = 0x8056;
     const GLenum RGB5_A1                        = 0x8057;
+    const GLenum RGBA8                          = 0x8058;
     const GLenum RGB565                         = 0x8D62;
     const GLenum DEPTH_COMPONENT16              = 0x81A5;
     const GLenum STENCIL_INDEX8                 = 0x8D48;
@@ -512,16 +515,23 @@ interface mixin WebGLRenderingContextBase
     const GLenum UNPACK_COLORSPACE_CONVERSION_WEBGL = 0x9243;
     const GLenum BROWSER_DEFAULT_WEBGL          = 0x9244;
 
-    [Exposed=Window] readonly attribute (HTMLCanvasElement or OffscreenCanvas) canvas;
-    [Exposed=Worker] readonly attribute OffscreenCanvas canvas;
+    readonly attribute (HTMLCanvasElement or OffscreenCanvas) canvas;
     readonly attribute GLsizei drawingBufferWidth;
     readonly attribute GLsizei drawingBufferHeight;
+    readonly attribute GLenum drawingBufferFormat;
+
+    /* Upon context creation, drawingBufferColorSpace and unpackColorSpace both
+       default to the value "srgb". */
+    attribute PredefinedColorSpace drawingBufferColorSpace;
+    attribute PredefinedColorSpace unpackColorSpace;
 
     [WebGLHandlesContextLoss] WebGLContextAttributes? getContextAttributes();
     [WebGLHandlesContextLoss] boolean isContextLost();
 
     sequence<DOMString>? getSupportedExtensions();
     object? getExtension(DOMString name);
+
+    undefined drawingBufferStorage(GLenum sizedFormat, unsigned long width, unsigned long height);
 
     undefined activeTexture(GLenum texture);
     undefined attachShader(WebGLProgram program, WebGLShader shader);
@@ -551,12 +561,12 @@ interface mixin WebGLRenderingContextBase
     undefined copyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
                                 GLint x, GLint y, GLsizei width, GLsizei height);
 
-    WebGLBuffer? createBuffer();
-    WebGLFramebuffer? createFramebuffer();
-    WebGLProgram? createProgram();
-    WebGLRenderbuffer? createRenderbuffer();
+    WebGLBuffer createBuffer();
+    WebGLFramebuffer createFramebuffer();
+    WebGLProgram createProgram();
+    WebGLRenderbuffer createRenderbuffer();
     WebGLShader? createShader(GLenum type);
-    WebGLTexture? createTexture();
+    WebGLTexture createTexture();
 
     undefined cullFace(GLenum mode);
 
@@ -683,8 +693,8 @@ interface mixin WebGLRenderingContextBase
 interface mixin WebGLRenderingContextOverloads
 {
     undefined bufferData(GLenum target, GLsizeiptr size, GLenum usage);
-    undefined bufferData(GLenum target, [AllowShared] BufferSource? data, GLenum usage);
-    undefined bufferSubData(GLenum target, GLintptr offset, [AllowShared] BufferSource data);
+    undefined bufferData(GLenum target, AllowSharedBufferSource? data, GLenum usage);
+    undefined bufferSubData(GLenum target, GLintptr offset, AllowSharedBufferSource data);
 
     undefined compressedTexImage2D(GLenum target, GLint level, GLenum internalformat,
                                    GLsizei width, GLsizei height, GLint border,

@@ -26,33 +26,33 @@
 
 #pragma once
 
-#include "Blob.h"
-#include "DetachedRTCDataChannel.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/Strong.h>
+#include <WebCore/Blob.h>
+#include <WebCore/DetachedRTCDataChannel.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/Gigacage.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(MEDIA_STREAM)
-#include "MediaStreamTrackDataHolder.h"
+#include <WebCore/MediaStreamTrackDataHolder.h>
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
-#include "MediaSourceHandle.h"
+#include <WebCore/MediaSourceHandle.h>
 #endif
 
 #if ENABLE(WEB_CODECS)
-#include "WebCodecsAudioData.h"
-#include "WebCodecsAudioInternalData.h"
-#include "WebCodecsEncodedAudioChunk.h"
-#include "WebCodecsEncodedVideoChunk.h"
-#include "WebCodecsVideoFrame.h"
+#include <WebCore/WebCodecsAudioData.h>
+#include <WebCore/WebCodecsAudioInternalData.h>
+#include <WebCore/WebCodecsEncodedAudioChunk.h>
+#include <WebCore/WebCodecsEncodedVideoChunk.h>
+#include <WebCore/WebCodecsVideoFrame.h>
 #endif
 
 #if ENABLE(WEB_RTC)
-#include "RTCRtpTransformableFrame.h"
+#include <WebCore/RTCRtpTransformableFrame.h>
 #endif
 
 typedef const struct OpaqueJSContext* JSContextRef;
@@ -102,13 +102,14 @@ struct ErrorInformation {
     unsigned column { 0 };
     String sourceURL;
     String stack;
+    String cause;
 };
 
 std::optional<ErrorInformation> extractErrorInformationFromErrorInstance(JSC::JSGlobalObject*, JSC::ErrorInstance&);
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SerializedScriptValue);
 class SerializedScriptValue : public ThreadSafeRefCounted<SerializedScriptValue> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SerializedScriptValue);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SerializedScriptValue, SerializedScriptValue);
 public:
     WEBCORE_EXPORT static ExceptionOr<Ref<SerializedScriptValue>> create(JSC::JSGlobalObject&, JSC::JSValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer, Vector<Ref<MessagePort>>&, SerializationForStorage = SerializationForStorage::No, SerializationContext = SerializationContext::Default);
     WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(JSC::JSGlobalObject&, JSC::JSValue, SerializationForStorage = SerializationForStorage::No, SerializationErrorMode = SerializationErrorMode::Throwing, SerializationContext = SerializationContext::Default);
@@ -144,6 +145,9 @@ public:
     size_t memoryCost() const { return m_internals.memoryCost; }
 
     WEBCORE_EXPORT ~SerializedScriptValue();
+
+    enum class DeserializationBehavior : uint8_t { Fail, Succeed, LegacyMapToNull, LegacyMapToUndefined, LegacyMapToEmptyObject };
+    WEBCORE_EXPORT static DeserializationBehavior deserializationBehavior(JSC::JSObject&);
 
 private:
     friend struct IPC::ArgumentCoder<SerializedScriptValue, void>;
@@ -234,7 +238,7 @@ private:
         std::unique_ptr<WasmMemoryHandleArray> wasmMemoryHandlesArray { };
 #endif
         Vector<URLKeepingBlobAlive> blobHandles { };
-        size_t memoryCost { 0 };
+        uint64_t memoryCost { 0 };
     };
     friend struct IPC::ArgumentCoder<Internals, void>;
 

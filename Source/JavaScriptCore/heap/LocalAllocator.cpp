@@ -203,9 +203,6 @@ void* LocalAllocator::tryAllocateWithoutCollecting(size_t cellSize)
             
             block->sweep(nullptr);
             
-            // It's good that this clears canAllocateButNotEmpty as well as all other bits,
-            // because there is a remote chance that a block may have both canAllocateButNotEmpty
-            // and empty set at the same time.
             block->removeFromDirectory();
             m_directory->addBlock(block);
             return allocateIn(block, cellSize);
@@ -238,7 +235,7 @@ void* LocalAllocator::tryAllocateIn(MarkedBlock::Handle* block, size_t cellSize)
         block->unsweepWithNoNewlyAllocated();
         ASSERT(!block->isFreeListed());
         ASSERT(!m_directory->isEmpty(block));
-        ASSERT(!m_directory->isCanAllocateButNotEmpty(block));
+        ASSERT(!m_directory->isCanAllocate(block));
         return nullptr;
     }
     

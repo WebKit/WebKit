@@ -27,6 +27,7 @@
 #include "NavigationDestination.h"
 
 #include "JSDOMGlobalObject.h"
+#include "ScriptWrappableInlines.h"
 #include "SerializedScriptValue.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -49,5 +50,7 @@ JSC::JSValue NavigationDestination::getState(JSDOMGlobalObject& globalObject) co
 
     return m_stateObject->deserialize(globalObject, &globalObject, SerializationErrorMode::Throwing);
 }
+
+NavigationDestination::~NavigationDestination() = default;
 
 } // namespace WebCore

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
-#include "ProfilerOrigin.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/ProfilerOrigin.h>
 #include <wtf/PrintStream.h>
 #include <wtf/Vector.h>
 

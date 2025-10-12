@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "EnsureStillAliveHere.h"
+#include <JavaScriptCore/EnsureStillAliveHere.h>
 #include <wtf/text/StringView.h>
 
 namespace JSC {

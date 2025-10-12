@@ -141,13 +141,13 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
 @end
 
-static Class createWebAVPlayerControllerForwarderClass()
+static Class createWebAVPlayerControllerForwarderClassSingleton()
 {
     // Re-parent WebAVPlayerControllerForwarder methods under a subclass of AVPlayerController,
     // so that the resulting type can be safely cast to AVPlayerController via Swift's `as!`,
     // which strictly requires the castee to derive from the destination type.
 
-    Class superClass = getAVPlayerControllerClass();
+    Class superClass = getAVPlayerControllerClassSingleton();
     Class implClass = [WebAVPlayerControllerForwarder class];
     Class newClass = objc_allocateClassPair(superClass, "WebAVPlayerControllerForwarder_AVKitCompatible", 0);
     objc_registerClassPair(newClass);
@@ -174,15 +174,15 @@ static Class createWebAVPlayerControllerForwarderClass()
 
 RetainPtr<WebAVPlayerController> createWebAVPlayerController()
 {
-    return adoptNS((WebAVPlayerController *)[[webAVPlayerControllerClass() alloc] init]);
+    return adoptNS((WebAVPlayerController *)[[webAVPlayerControllerClassSingleton() alloc] init]);
 }
 
-Class webAVPlayerControllerClass()
+Class webAVPlayerControllerClassSingleton()
 {
     ASSERT(isMainThread());
     static Class webAVPlayerControllerForwarderClass;
     if (!webAVPlayerControllerForwarderClass)
-        webAVPlayerControllerForwarderClass = createWebAVPlayerControllerForwarderClass();
+        webAVPlayerControllerForwarderClass = createWebAVPlayerControllerForwarderClassSingleton();
     return webAVPlayerControllerForwarderClass;
 }
 
@@ -204,7 +204,7 @@ Class webAVPlayerControllerClass()
 
 - (instancetype)init
 {
-    if (!getAVPlayerControllerClass()) {
+    if (!getAVPlayerControllerClassSingleton()) {
         [self release];
         return nil;
     }
@@ -215,7 +215,7 @@ Class webAVPlayerControllerClass()
 #if PLATFORM(APPLETV)
     // FIXME (116592344): Create a phony AVPlayer to satisfy AVPlayerViewController's requirements on tvOS.
     // This can be removed once AVPlayerController API is available on tvOS.
-    AVAsset *asset = [PAL::getAVAssetClass() assetWithURL:[NSURL URLWithString:@"about:blank"]];
+    AVAsset *asset = [PAL::getAVAssetClassSingleton() assetWithURL:[NSURL URLWithString:@"about:blank"]];
     RetainPtr playerItem = adoptNS([PAL::allocAVPlayerItemInstance() initWithAsset:asset]);
     _player = adoptNS([PAL::allocAVPlayerInstance() initWithPlayerItem:playerItem.get()]);
 #endif
@@ -883,8 +883,8 @@ Class webAVPlayerControllerClass()
             }
 
             if (minTimingNeedsUpdate || maxTimingNeedsUpdate) {
-                newMinTiming = [getAVValueTimingClass() valueTimingWithAnchorValue:newMinTime anchorTimeStamp:[getAVValueTimingClass() currentTimeStamp] rate:newMinTimingRate];
-                newMaxTiming = [getAVValueTimingClass() valueTimingWithAnchorValue:newMaxTime anchorTimeStamp:[getAVValueTimingClass() currentTimeStamp] rate:1.0];
+                newMinTiming = [getAVValueTimingClassSingleton() valueTimingWithAnchorValue:newMinTime anchorTimeStamp:[getAVValueTimingClassSingleton() currentTimeStamp] rate:newMinTimingRate];
+                newMaxTiming = [getAVValueTimingClassSingleton() valueTimingWithAnchorValue:newMaxTime anchorTimeStamp:[getAVValueTimingClassSingleton() currentTimeStamp] rate:1.0];
             } else {
                 newMinTiming = [self minTiming];
                 newMaxTiming = [self maxTiming];
@@ -893,10 +893,10 @@ Class webAVPlayerControllerClass()
     }
 
     if (!newMinTiming)
-        newMinTiming = [getAVValueTimingClass() valueTimingWithAnchorValue:[self minTime] anchorTimeStamp:NAN rate:0.0];
+        newMinTiming = [getAVValueTimingClassSingleton() valueTimingWithAnchorValue:[self minTime] anchorTimeStamp:NAN rate:0.0];
 
     if (!newMaxTiming)
-        newMaxTiming = [getAVValueTimingClass() valueTimingWithAnchorValue:[self maxTime] anchorTimeStamp:NAN rate:0.0];
+        newMaxTiming = [getAVValueTimingClassSingleton() valueTimingWithAnchorValue:[self maxTime] anchorTimeStamp:NAN rate:0.0];
 
     [self setMinTiming:newMinTiming];
     [self setMaxTiming:newMaxTiming];
@@ -907,7 +907,7 @@ Class webAVPlayerControllerClass()
     BOOL hasSeekableLiveStreamingContent = NO;
 
     if ([self hasLiveStreamingContent] && [self minTiming] && [self maxTiming] && isfinite([self liveUpdateInterval]) && [self liveUpdateInterval] > WebAVPlayerControllerLiveStreamMinimumTargetDuration && ([self seekableTimeRangesLastModifiedTime] != 0.0)) {
-        NSTimeInterval timeStamp = [getAVValueTimingClass() currentTimeStamp];
+        NSTimeInterval timeStamp = [getAVValueTimingClassSingleton() currentTimeStamp];
         NSTimeInterval minTime = [[self minTiming] valueForTimeStamp:timeStamp];
         NSTimeInterval maxTime = [[self maxTiming] valueForTimeStamp:timeStamp];
         hasSeekableLiveStreamingContent = ((maxTime - minTime) > WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration);

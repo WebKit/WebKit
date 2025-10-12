@@ -11,12 +11,12 @@
 #ifndef SYSTEM_WRAPPERS_INCLUDE_CLOCK_H_
 #define SYSTEM_WRAPPERS_INCLUDE_CLOCK_H_
 
-#include <stdint.h>
-
 #include <atomic>
-#include <memory>
+#include <cstdint>
 
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "rtc_base/numerics/divide_round.h"
 #include "rtc_base/system/rtc_export.h"
 #include "system_wrappers/include/ntp_time.h"
 

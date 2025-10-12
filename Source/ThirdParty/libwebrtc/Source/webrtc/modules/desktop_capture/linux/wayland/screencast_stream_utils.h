@@ -13,10 +13,9 @@
 
 #include <stdint.h>
 
-#include <string>
 #include <vector>
 
-#include "rtc_base/string_encode.h"
+#include "absl/strings/string_view.h"
 
 struct spa_pod;
 struct spa_pod_builder;

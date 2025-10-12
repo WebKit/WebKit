@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ScriptFetcher.h"
+#include <JavaScriptCore/ScriptFetcher.h>
 #include <wtf/URL.h>
 
 namespace JSC {

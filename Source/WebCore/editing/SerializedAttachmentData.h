@@ -27,7 +27,7 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-#include "SharedBuffer.h"
+#include <WebCore/SharedBuffer.h>
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 

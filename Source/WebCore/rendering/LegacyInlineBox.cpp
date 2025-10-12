@@ -28,6 +28,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLineBreak.h"
+#include "RenderObjectInlines.h"
 #include "RenderStyleInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
@@ -83,6 +84,11 @@ void LegacyInlineBox::invalidateParentChildList()
 }
 
 #endif
+
+const RenderStyle& LegacyInlineBox::lineStyle() const
+{
+    return m_bitfields.firstLine() ? renderer().firstLineStyle() : renderer().style();
+}
 
 void LegacyInlineBox::removeFromParent()
 { 
@@ -144,16 +150,6 @@ float LegacyInlineBox::logicalHeight() const
     if (parent())
         result += flowObject->borderAndPaddingLogicalHeight();
     return result;
-}
-
-LayoutUnit LegacyInlineBox::baselinePosition(FontBaseline baselineType) const
-{
-    return boxModelObject()->baselinePosition(baselineType, m_bitfields.firstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
-}
-
-LayoutUnit LegacyInlineBox::lineHeight() const
-{
-    return boxModelObject()->lineHeight(m_bitfields.firstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
 
 int LegacyInlineBox::caretMinOffset() const

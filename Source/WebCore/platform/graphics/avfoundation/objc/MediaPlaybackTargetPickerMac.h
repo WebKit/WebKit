@@ -26,10 +26,11 @@
 #ifndef MediaPlaybackTargetPickerMac_h
 #define MediaPlaybackTargetPickerMac_h
 
+#include <wtf/Platform.h>
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #include "AVPlaybackTargetPicker.h"
-#include "MediaPlaybackTargetPicker.h"
+#include <WebCore/MediaPlaybackTargetPicker.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 

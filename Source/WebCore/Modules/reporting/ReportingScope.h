@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ContextDestructionObserver.h"
-#include "ViolationReportType.h"
+#include <WebCore/ContextDestructionObserver.h>
+#include <WebCore/ViolationReportType.h>
 #include <wtf/Deque.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>

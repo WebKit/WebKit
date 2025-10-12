@@ -1,0 +1,5 @@
+
+FAIL precommitHandler for a push navigation, reject before commit assert_unreached: committed must not fulfill Reached unreachable code
+PASS precommitHandler for a push navigation, reject after commit
+PASS precommitHandler for a push navigation, success
+

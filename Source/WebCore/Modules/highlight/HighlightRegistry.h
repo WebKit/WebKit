@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Highlight.h"
-#include "HighlightVisibility.h"
+#include <WebCore/Highlight.h>
+#include <WebCore/HighlightVisibility.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomStringHash.h>

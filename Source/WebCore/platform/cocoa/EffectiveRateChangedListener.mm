@@ -30,6 +30,7 @@
 #import <CoreMedia/CMTime.h>
 #import <pal/spi/cf/CFNotificationCenterSPI.h>
 #import <wtf/Function.h>
+#import <wtf/cf/NotificationCenterCF.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cocoa/NSObjCRuntimeSPI.h>
 
@@ -68,13 +69,13 @@ static void timebaseEffectiveRateChangedCallback(CFNotificationCenterRef, void* 
         protectedListener->effectiveRateChanged();
 }
 
-EffectiveRateChangedListener::EffectiveRateChangedListener(Function<void()>&& callback, CMTimebaseRef timebase)
+EffectiveRateChangedListener::EffectiveRateChangedListener(Function<void(double)>&& callback, CMTimebaseRef timebase)
     : m_callback(WTFMove(callback))
     , m_objcAdapter(adoptNS([[WebEffectiveRateChangedListenerObjCAdapter alloc] initWithEffectiveRateChangedListener:*this]))
     , m_timebase(timebase)
 {
     ASSERT(timebase);
-    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), m_objcAdapter.get(), timebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase, static_cast<CFNotificationSuspensionBehavior>(_CFNotificationObserverIsObjC));
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenterSingleton(), m_objcAdapter.get(), timebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase, static_cast<CFNotificationSuspensionBehavior>(_CFNotificationObserverIsObjC));
 }
 
 EffectiveRateChangedListener::~EffectiveRateChangedListener()
@@ -84,14 +85,14 @@ EffectiveRateChangedListener::~EffectiveRateChangedListener()
 
 void EffectiveRateChangedListener::effectiveRateChanged()
 {
-    m_callback();
+    m_callback(PAL::CMTimebaseGetRate(m_timebase.get()));
 }
 
 void EffectiveRateChangedListener::stop()
 {
     if (m_stopped.exchange(true))
         return;
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), m_objcAdapter.get(), kCMTimebaseNotification_EffectiveRateChanged, m_timebase.get());
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenterSingleton(), m_objcAdapter.get(), kCMTimebaseNotification_EffectiveRateChanged, m_timebase.get());
 }
 
 } // namespace WebCore

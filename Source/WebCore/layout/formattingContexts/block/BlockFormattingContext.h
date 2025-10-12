@@ -97,7 +97,7 @@ protected:
 
 private:
 #if ASSERT_ENABLED
-    UncheckedKeyHashMap<const ElementBox*, PrecomputedMarginBefore> m_precomputedMarginBeforeList;
+    HashMap<const ElementBox*, PrecomputedMarginBefore> m_precomputedMarginBeforeList;
 #endif
     BlockFormattingState& m_blockFormattingState;
     const BlockFormattingGeometry m_blockFormattingGeometry;

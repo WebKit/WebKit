@@ -25,9 +25,10 @@
 
 #pragma once
 
-#include "FrameLoaderTypes.h"
-#include "NavigationIdentifier.h"
-#include "SandboxFlags.h"
+#include <WebCore/FloatSize.h>
+#include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/NavigationIdentifier.h>
+#include <WebCore/SandboxFlags.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ class NavigationAction;
 class ResourceRequest;
 class ResourceResponse;
 
+enum class AdjustViewSize : bool;
 enum class PolicyDecisionMode;
 enum class SandboxFlag : uint16_t;
 
@@ -51,6 +53,7 @@ public:
     virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, const String& clientRedirectSourceForHistory, std::optional<NavigationIdentifier>, std::optional<HitTestResult>&&, bool hasOpener, IsPerformingHTTPFallback, SandboxFlags, PolicyDecisionMode, FramePolicyFunction&&) = 0;
     virtual void updateSandboxFlags(SandboxFlags) = 0;
     virtual void updateOpener(const Frame&) = 0;
+    virtual void setPrinting(bool printing, FloatSize pageSize, FloatSize originalPageSize, float maximumShrinkRatio, AdjustViewSize) = 0;
     virtual ~FrameLoaderClient() = default;
 };
 

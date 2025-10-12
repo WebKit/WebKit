@@ -51,7 +51,8 @@ class NullFactory : public GLImplFactory
     BufferImpl *createBuffer(const gl::BufferState &state) override { return nullptr; }
 
     // Vertex Array creation
-    VertexArrayImpl *createVertexArray(const gl::VertexArrayState &data) override
+    VertexArrayImpl *createVertexArray(const gl::VertexArrayState &data,
+                                       const gl::VertexArrayBuffers &vertexArrayBuffers) override
     {
         return nullptr;
     }
@@ -96,7 +97,8 @@ class MockGLFactory : public GLImplFactory
     MOCK_METHOD1(createTexture, TextureImpl *(const gl::TextureState &));
     MOCK_METHOD1(createRenderbuffer, RenderbufferImpl *(const gl::RenderbufferState &));
     MOCK_METHOD1(createBuffer, BufferImpl *(const gl::BufferState &));
-    MOCK_METHOD1(createVertexArray, VertexArrayImpl *(const gl::VertexArrayState &));
+    MOCK_METHOD2(createVertexArray,
+                 VertexArrayImpl *(const gl::VertexArrayState &, const gl::VertexArrayBuffers &));
     MOCK_METHOD1(createQuery, QueryImpl *(gl::QueryType type));
     MOCK_METHOD0(createFenceNV, FenceNVImpl *());
     MOCK_METHOD0(createSync, SyncImpl *());

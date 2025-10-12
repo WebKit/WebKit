@@ -22,10 +22,6 @@ const char *getBasicMetalString(const TType *t);
 
 const char *getBuiltInMetalTypeNameString(const TType *t);
 
-ImmutableString GetMetalTypeName(const TType &type,
-                                 ShHashFunction64 hashFunction,
-                                 NameMap *nameMap);
-
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_MSL_UTILSMSL_H_

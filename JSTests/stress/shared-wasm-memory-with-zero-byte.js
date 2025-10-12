@@ -1,4 +1,3 @@
-//@ skip unless $isWasmPlatform
 //@ $skipModes << :lockdown
 
 //Growing a shared memory requires signal handlers, which are not yet ported to ARMv7

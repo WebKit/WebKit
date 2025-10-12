@@ -349,15 +349,19 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     {
         ANGLE_VK_CHECK(displayVk, bufferFormatProperties.externalFormat != 0, VK_ERROR_UNKNOWN);
         externalFormat.externalFormat = bufferFormatProperties.externalFormat;
+        ASSERT(externalFormat.externalFormat != 0);
 
-        // VkImageCreateInfo struct: If the pNext chain includes a VkExternalFormatANDROID structure
-        // whose externalFormat member is not 0, usage must not include any usages except
-        // VK_IMAGE_USAGE_SAMPLED_BIT
-        if (externalFormat.externalFormat != 0 && !externalRenderTargetSupported)
-        {
-            // Clear all other bits except sampled
-            usage &= VK_IMAGE_USAGE_SAMPLED_BIT;
-        }
+        // VUID-VkImageCreateInfo-pNext-02397 states -
+        //     If the pNext chain includes a VkExternalFormatANDROID structure whose externalFormat
+        //     member is not 0, usage must not include any usages except
+        //     VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, or
+        //     VK_IMAGE_USAGE_SAMPLED_BIT
+        const VkImageUsageFlags allowedUsage =
+            VK_IMAGE_USAGE_SAMPLED_BIT |
+            (externalRenderTargetSupported ? VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT : 0);
+
+        // Clear all other usage bits
+        usage &= allowedUsage;
 
         // If the pNext chain includes a VkExternalFormatANDROID structure whose externalFormat
         // member is not 0, tiling must be VK_IMAGE_TILING_OPTIMAL
@@ -404,7 +408,7 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
 
     if (isExternal)
     {
-        if (externalRenderTargetSupported)
+        if ((usage & VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT) != 0)
         {
             angle::FormatID externalFormatID =
                 renderer->getExternalFormatTable()->getOrAllocExternalFormatID(

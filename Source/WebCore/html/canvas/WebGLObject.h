@@ -59,8 +59,8 @@ public:
         if (m_object == object)
             return *this;
         m_object = WTFMove(object);
-        if (m_object)
-            didBind(*m_object);
+        if (RefPtr object = m_object)
+            didBind(*object);
         return *this;
     }
     bool operator==(const T* a) const { return a == m_object; }
@@ -88,6 +88,7 @@ public:
     virtual ~WebGLObject();
 
     WebGLRenderingContextBase* context() const;
+    RefPtr<WebGLRenderingContextBase> protectedContext() const;
     GraphicsContextGL* graphicsContextGL() const;
 
     PlatformGLObject object() const { return m_object; }

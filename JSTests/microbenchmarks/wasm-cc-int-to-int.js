@@ -1,4 +1,3 @@
-//@ skip unless $isWasmPlatform
 //@ runDefaultWasm("--useWasm=1")
 
 var wasm_code;

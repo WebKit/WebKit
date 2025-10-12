@@ -42,6 +42,8 @@ public:
     {
     }
 
+    ~DatasetDOMStringMap();
+
     void ref();
     void deref();
 

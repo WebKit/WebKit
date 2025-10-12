@@ -64,6 +64,8 @@ public:
 
     ValueKey(Kind, Type, Value* a, Value* b, Value* c);
 
+    ValueKey(Kind, Type, Value*, int32_t value);
+
     ValueKey(Kind kind, Type type, int64_t value)
         : m_kind(kind)
         , m_type(type)

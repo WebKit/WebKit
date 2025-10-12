@@ -9,9 +9,16 @@
  */
 #include "test/peer_scenario/signaling_route.h"
 
+#include <cstddef>
+#include <functional>
 #include <memory>
+#include <string>
+#include <utility>
 
-#include "test/network/network_emulation_manager.h"
+#include "api/jsep.h"
+#include "api/test/network_emulation/cross_traffic.h"
+#include "rtc_base/checks.h"
+#include "test/peer_scenario/peer_scenario_client.h"
 
 namespace webrtc {
 namespace test {
@@ -21,14 +28,13 @@ constexpr size_t kSdpPacketSize = 1200;
 
 struct IceMessage {
   IceMessage() = default;
-  explicit IceMessage(const IceCandidateInterface* candidate)
+  explicit IceMessage(const IceCandidate* candidate)
       : sdp_mid(candidate->sdp_mid()),
-        sdp_mline_index(candidate->sdp_mline_index()) {
-    RTC_CHECK(candidate->ToString(&sdp_line));
-  }
-  std::unique_ptr<IceCandidateInterface> AsCandidate() const {
+        sdp_mline_index(candidate->sdp_mline_index()),
+        sdp_line(candidate->ToString()) {}
+  std::unique_ptr<IceCandidate> AsCandidate() const {
     SdpParseError err;
-    std::unique_ptr<IceCandidateInterface> candidate(
+    std::unique_ptr<IceCandidate> candidate(
         CreateIceCandidate(sdp_mid, sdp_mline_index, sdp_line, &err));
     RTC_CHECK(candidate) << "Failed to parse: \"" << err.line
                          << "\". Reason: " << err.description;
@@ -43,7 +49,7 @@ void StartIceSignalingForRoute(PeerScenarioClient* caller,
                                PeerScenarioClient* callee,
                                CrossTrafficRoute* send_route) {
   caller->handlers()->on_ice_candidate.push_back(
-      [=](const IceCandidateInterface* candidate) {
+      [=](const IceCandidate* candidate) {
         IceMessage msg(candidate);
         send_route->NetworkDelayedAction(kIcePacketSize, [callee, msg]() {
           callee->thread()->PostTask(
@@ -63,7 +69,8 @@ void StartSdpNegotiation(
     std::function<void(const SessionDescriptionInterface&)> exchange_finished) {
   caller->CreateAndSetSdp(munge_offer, [=](std::string sdp_offer) {
     if (modify_offer) {
-      auto offer = CreateSessionDescription(SdpType::kOffer, sdp_offer);
+      std::unique_ptr<SessionDescriptionInterface> offer =
+          CreateSessionDescription(SdpType::kOffer, sdp_offer);
       modify_offer(offer.get());
       RTC_CHECK(offer->ToString(&sdp_offer));
     }

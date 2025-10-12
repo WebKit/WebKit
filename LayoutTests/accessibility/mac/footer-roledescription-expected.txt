@@ -10,14 +10,8 @@ PASS contentinfo.role is 'AXRole: AXGroup'
 PASS contentinfo.subrole is 'AXSubrole: AXLandmarkContentInfo'
 PASS contentinfo.roleDescription is 'AXRoleDescription: content information'
 PASS footer2.role is 'AXRole: AXGroup'
-PASS footer2.subrole is 'AXSubrole: AXFooter'
-PASS footer2.roleDescription is 'AXRoleDescription: footer'
-PASS footer3.role is 'AXRole: AXGroup'
-PASS footer3.subrole is 'AXSubrole: AXFooter'
-PASS footer3.roleDescription is 'AXRoleDescription: footer'
-PASS footer4.role is 'AXRole: AXGroup'
-PASS footer4.subrole is 'AXSubrole: AXFooter'
-PASS footer4.roleDescription is 'AXRoleDescription: footer'
+PASS footer2.subrole is 'AXSubrole: AXSectionFooter'
+PASS footer2.roleDescription is 'AXRoleDescription: section footer'
 PASS successfullyParsed is true
 
 TEST COMPLETE

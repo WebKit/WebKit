@@ -43,7 +43,7 @@ TextBreakIteratorCache& TextBreakIteratorCache::singleton()
 
 #if !PLATFORM(COCOA)
 
-TextBreakIterator::Backing TextBreakIterator::mapModeToBackingIterator(StringView string, std::span<const UChar> priorContext, Mode mode, ContentAnalysis, const AtomString& locale)
+TextBreakIterator::Backing TextBreakIterator::mapModeToBackingIterator(StringView string, std::span<const char16_t> priorContext, Mode mode, ContentAnalysis, const AtomString& locale)
 {
     return switchOn(mode, [string, priorContext, &locale](TextBreakIterator::LineMode lineMode) -> TextBreakIterator::Backing {
         return TextBreakIteratorICU(string, priorContext, TextBreakIteratorICU::LineMode { lineMode.behavior }, locale);
@@ -56,7 +56,7 @@ TextBreakIterator::Backing TextBreakIterator::mapModeToBackingIterator(StringVie
     });
 }
 
-TextBreakIterator::TextBreakIterator(StringView string, std::span<const UChar> priorContext, Mode mode, ContentAnalysis contentAnalysis, const AtomString& locale)
+TextBreakIterator::TextBreakIterator(StringView string, std::span<const char16_t> priorContext, Mode mode, ContentAnalysis contentAnalysis, const AtomString& locale)
     : m_backing(mapModeToBackingIterator(string, priorContext, mode, contentAnalysis, locale))
     , m_mode(mode)
     , m_locale(locale)

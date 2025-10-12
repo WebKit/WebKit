@@ -1,7 +1,7 @@
 
 PASS JSON module should be loaded as utf-8 when charset=utf8 is specified
-FAIL JSON module should be loaded as utf-8 when charset=shift-jis is specified assert_equals: expected "śćążź" but got "ﾅ崙\ufffd\ufffdｼﾅｺ"
-FAIL JSON module should be loaded as utf-8 when charset=windows-1252 is specified assert_equals: expected "śćążź" but got "Å›Ä‡Ä…Å¼Åº"
+PASS JSON module should be loaded as utf-8 when charset=shift-jis is specified
+PASS JSON module should be loaded as utf-8 when charset=windows-1252 is specified
 PASS JSON module should be loaded as utf-8 when charset=utf-7 is specified
 PASS JSON module should be loaded as utf-8 even if it is encoded in windows-1250 and served with a windows-1250 charset response header
 

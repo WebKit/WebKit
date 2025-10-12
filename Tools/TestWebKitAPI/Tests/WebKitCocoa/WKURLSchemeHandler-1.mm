@@ -49,10 +49,12 @@
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/Threading.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/StringToIntegerConversion.h>
@@ -128,7 +130,7 @@
 {
     int64_t deferredWaitTime = 100 * NSEC_PER_MSEC;
     dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
-    dispatch_after(when, dispatch_get_main_queue(), ^{
+    dispatch_after(when, mainDispatchQueueSingleton(), ^{
         decisionHandler(WKNavigationActionPolicyAllow);
     });
 
@@ -138,7 +140,7 @@
 {
     int64_t deferredWaitTime = 100 * NSEC_PER_MSEC;
     dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
-    dispatch_after(when, dispatch_get_main_queue(), ^{
+    dispatch_after(when, mainDispatchQueueSingleton(), ^{
         decisionHandler(WKNavigationResponsePolicyAllow);
     });
 }
@@ -1206,7 +1208,7 @@ TEST(WebKit, OriginHeaderWithCORSDisablingPatternsInUnrelatedWebView)
                 auto html = "<head><link rel='modulepreload' href='https://webkit.org/module'></head>"_s;
                 connection.send(HTTPResponse(html).serialize());
             } else if (path == "/module"_s) {
-                EXPECT_TRUE(strnstr(requestBytes.data(), "Origin: https://example.com\r\n", requestBytes.size()));
+                EXPECT_TRUE(contains(requestBytes.span(), "Origin: https://example.com\r\n"_span));
                 done = true;
             }
         });

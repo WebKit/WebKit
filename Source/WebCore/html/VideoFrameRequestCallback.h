@@ -27,8 +27,8 @@
 
 #if ENABLE(VIDEO)
 
-#include "ActiveDOMCallback.h"
-#include "CallbackResult.h"
+#include <WebCore/ActiveDOMCallback.h>
+#include <WebCore/CallbackResult.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 

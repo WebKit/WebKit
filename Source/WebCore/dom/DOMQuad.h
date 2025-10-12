@@ -44,6 +44,8 @@ public:
     static Ref<DOMQuad> fromRect(const DOMRectInit& init) { return adoptRef(*new DOMQuad(init)); }
     static Ref<DOMQuad> fromQuad(const DOMQuadInit& init) { return create(init.p1, init.p2, init.p3, init.p4); }
 
+    ~DOMQuad();
+
     const DOMPoint& p1() const { return m_p1; }
     const DOMPoint& p2() const { return m_p2; }
     const DOMPoint& p3() const { return m_p3; }

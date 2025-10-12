@@ -22,7 +22,6 @@
 #include "common/vp9_level_stats.h"
 #include "common/webm_constants.h"
 #include "common/webm_endian.h"
-
 #include "mkvparser/mkvparser.h"
 #include "mkvparser/mkvreader.h"
 
@@ -1201,7 +1200,7 @@ int main(int argc, char* argv[]) {
 
   std::unique_ptr<mkvparser::MkvReader> reader(
       new (std::nothrow) mkvparser::MkvReader());  // NOLINT
-  if (reader->Open(input.c_str())) {
+  if (!reader || reader->Open(input.c_str())) {
     fprintf(stderr, "Error opening file:%s\n", input.c_str());
     return EXIT_FAILURE;
   }
@@ -1209,7 +1208,7 @@ int main(int argc, char* argv[]) {
   long long int pos = 0;
   std::unique_ptr<mkvparser::EBMLHeader> ebml_header(
       new (std::nothrow) mkvparser::EBMLHeader());  // NOLINT
-  if (ebml_header->Parse(reader.get(), pos) < 0) {
+  if (!ebml_header || ebml_header->Parse(reader.get(), pos) < 0) {
     fprintf(stderr, "Error parsing EBML header.\n");
     return EXIT_FAILURE;
   }

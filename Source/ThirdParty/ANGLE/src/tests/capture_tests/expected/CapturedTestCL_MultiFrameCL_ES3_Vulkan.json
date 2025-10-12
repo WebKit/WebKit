@@ -1,14 +1,21 @@
 {
     "TraceMetadata": {
-        "CaptureRevision": 24837,
+        "CaptureRevision": 25782,
         "FrameEnd": 5,
         "FrameStart": 2,
         "IsBinaryDataCompressed": false,
         "IsOpenCL": true
     },
+    "BinaryMetadata": {
+        "BlockCount": 1,
+        "BlockSize": "268435456",
+        "IndexOffset": "0",
+        "ResidentSize": "2147483648",
+        "Version": 1
+    },
     "TraceFiles": [
         "CapturedTestCL_MultiFrameCL_ES3_Vulkan.cpp",
         "CapturedTestCL_MultiFrameCL_ES3_Vulkan.h",
-        "CapturedTestCL_MultiFrameCL_ES3_Vulkan_001.cpp"
+        "CapturedTestCL_MultiFrameCL_ES3_Vulkan_0001.cpp"
     ]
 }

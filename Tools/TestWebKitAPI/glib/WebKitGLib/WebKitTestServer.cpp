@@ -62,14 +62,8 @@ void WebKitTestServer::run(SoupServerCallback serverCallback)
 
     GSList* uris = soup_server_get_uris(m_soupServer.get());
     g_assert_nonnull(uris);
-#if USE(SOUP2)
-    GUniquePtr<gchar> urlString(soup_uri_to_string(static_cast<SoupURI*>(uris->data), FALSE));
-    m_baseURL = URL({ }, String::fromUTF8(urlString.get()));
-    g_slist_free_full(uris, reinterpret_cast<GDestroyNotify>(soup_uri_free));
-#else
     m_baseURL = static_cast<GUri*>(uris->data);
     g_slist_free_full(uris, reinterpret_cast<GDestroyNotify>(g_uri_unref));
-#endif
 }
 
 void WebKitTestServer::addWebSocketHandler(SoupServerWebsocketCallback callback, gpointer userData)

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ContentType.h"
+#include <WebCore/ContentType.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,10 @@
 
 #pragma once
 
-#include "ContainerNode.h"
-#include "TreeScopeOrderedMap.h"
+#include <WebCore/ContainerNode.h>
+#include <WebCore/TreeScopeOrderedMap.h>
+#include <wtf/Lock.h>
+#include <wtf/Locker.h>
 
 namespace WebCore {
 
@@ -40,11 +42,6 @@ inline IdTargetObserverRegistry& TreeScope::idTargetObserverRegistry()
     if (m_idTargetObserverRegistry)
         return *m_idTargetObserverRegistry;
     return ensureIdTargetObserverRegistry();
-}
-
-inline Ref<ContainerNode> TreeScope::protectedRootNode() const
-{
-    return rootNode();
 }
 
 inline bool TreeScope::hasElementWithId(const AtomString& id) const
@@ -65,6 +62,18 @@ inline bool TreeScope::hasElementWithName(const AtomString& id) const
 inline bool TreeScope::containsMultipleElementsWithName(const AtomString& name) const
 {
     return m_elementsByName && !name.isEmpty() && m_elementsByName->containsMultiple(name);
+}
+
+inline void TreeScope::setDocumentScope(Document& document)
+{
+    Locker locker { treeScopeMutationLock() };
+    m_documentScope = document;
+}
+
+ALWAYS_INLINE Lock& TreeScope::treeScopeMutationLock()
+{
+    static Lock s_treeScopeMutationLock;
+    return s_treeScopeMutationLock;
 }
 
 } // namespace WebCore

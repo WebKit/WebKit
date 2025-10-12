@@ -22,9 +22,10 @@ Notes:
 >     - all possible {depth, stencil} store ops
 >     - depthReadOnly {t,f}, stencilReadOnly {t,f}
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
-import { AllFeaturesMaxLimitsValidationTest } from '../validation_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
+import * as vtu from '../validation_test_utils.js';
 
-export const g = makeTestGroup(AllFeaturesMaxLimitsValidationTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 g.test('color_attachments,device_mismatch').
 desc(
@@ -68,17 +69,17 @@ fn((t) => {
   const mismatched = view0Mismatched || target0Mismatched || view1Mismatched || target1Mismatched;
 
   const view0Texture = view0Mismatched ?
-  t.getDeviceMismatchedRenderTexture(4) :
-  t.getRenderTexture(4);
+  vtu.getDeviceMismatchedRenderTexture(t, 4) :
+  vtu.getRenderTexture(t, 4);
   const target0Texture = target0Mismatched ?
-  t.getDeviceMismatchedRenderTexture() :
-  t.getRenderTexture();
+  vtu.getDeviceMismatchedRenderTexture(t) :
+  vtu.getRenderTexture(t);
   const view1Texture = view1Mismatched ?
-  t.getDeviceMismatchedRenderTexture(4) :
-  t.getRenderTexture(4);
+  vtu.getDeviceMismatchedRenderTexture(t, 4) :
+  vtu.getRenderTexture(t, 4);
   const target1Texture = target1Mismatched ?
-  t.getDeviceMismatchedRenderTexture() :
-  t.getRenderTexture();
+  vtu.getDeviceMismatchedRenderTexture(t) :
+  vtu.getRenderTexture(t);
 
   const encoder = t.createEncoder('non-pass');
   const pass = encoder.encoder.beginRenderPass({
@@ -120,7 +121,7 @@ fn((t) => {
   };
 
   const depthStencilTexture = mismatched ?
-  t.getDeviceMismatchedTexture(descriptor) :
+  vtu.getDeviceMismatchedTexture(t, descriptor) :
   t.createTextureTracked(descriptor);
 
   const encoder = t.createEncoder('non-pass');

@@ -77,11 +77,8 @@ WK_EXPORT void WKPageLoadDataWithUserData(WKPageRef page, WKDataRef data, WKStri
 WK_EXPORT void WKPageLoadHTMLString(WKPageRef page, WKStringRef htmlString, WKURLRef baseURL);
 WK_EXPORT void WKPageLoadHTMLStringWithUserData(WKPageRef page, WKStringRef htmlString, WKURLRef baseURL, WKTypeRef userData);
 WK_EXPORT void WKPageLoadAlternateHTMLString(WKPageRef page, WKStringRef htmlString, WKURLRef baseURL, WKURLRef unreachableURL);
-WK_EXPORT void WKPageLoadAlternateHTMLStringWithUserData(WKPageRef page, WKStringRef htmlString, WKURLRef baseURL, WKURLRef unreachableURL, WKTypeRef userData);
 WK_EXPORT void WKPageLoadPlainTextString(WKPageRef page, WKStringRef plainTextString);
 WK_EXPORT void WKPageLoadPlainTextStringWithUserData(WKPageRef page, WKStringRef plainTextString, WKTypeRef userData);
-WK_EXPORT void WKPageLoadWebArchiveData(WKPageRef page, WKDataRef webArchiveData) WK_C_API_DEPRECATED;
-WK_EXPORT void WKPageLoadWebArchiveDataWithUserData(WKPageRef page, WKDataRef webArchiveData, WKTypeRef userData) WK_C_API_DEPRECATED;
 
 WK_EXPORT void WKPageStopLoading(WKPageRef page);
 WK_EXPORT void WKPageReload(WKPageRef page);
@@ -220,6 +217,7 @@ WK_EXPORT void WKPageCountStringMatches(WKPageRef page, WKStringRef string, WKFi
 WK_EXPORT void WKPageFindStringMatches(WKPageRef page, WKStringRef string, WKFindOptions findOptions, unsigned maxMatchCount);
 WK_EXPORT void WKPageGetImageForFindMatch(WKPageRef page, int32_t matchIndex);
 WK_EXPORT void WKPageSelectFindMatch(WKPageRef page, int32_t matchIndex);
+WK_EXPORT void WKPageIndicateFindMatch(WKPageRef page, uint32_t matchIndex);
 
 WK_EXPORT void WKPageSetPageContextMenuClient(WKPageRef page, const WKPageContextMenuClientBase* client);
 WK_EXPORT void WKPageSetPageDiagnosticLoggingClient(WKPageRef page, const WKPageDiagnosticLoggingClientBase* client);
@@ -241,6 +239,9 @@ WK_EXPORT void WKPageSetPageStateClient(WKPageRef page, WKPageStateClientBase* c
 
 typedef void (*WKPageEvaluateJavaScriptFunction)(WKTypeRef, WKErrorRef, void*);
 WK_EXPORT void WKPageEvaluateJavaScriptInMainFrame(WKPageRef page, WKStringRef script, void* context, WKPageEvaluateJavaScriptFunction function);
+WK_EXPORT void WKPageEvaluateJavaScriptInFrame(WKPageRef page, WKFrameInfoRef frame, WKStringRef script, void* context, WKPageEvaluateJavaScriptFunction function);
+WK_EXPORT void WKPageCallAsyncJavaScript(WKPageRef page, WKStringRef script, WKDictionaryRef arguments, WKFrameInfoRef frame, void* context, WKPageEvaluateJavaScriptFunction callback);
+WK_EXPORT void WKPageCallAsyncJavaScriptWithoutUserGesture(WKPageRef page, WKStringRef script, WKDictionaryRef arguments, WKFrameInfoRef frame, void* context, WKPageEvaluateJavaScriptFunction callback);
 
 typedef void (*WKPageGetSourceForFrameFunction)(WKStringRef, WKErrorRef, void*);
 WK_EXPORT void WKPageGetSourceForFrame(WKPageRef page, WKFrameRef frame, void* context, WKPageGetSourceForFrameFunction function);
@@ -252,7 +253,7 @@ typedef void (*WKPageGetContentsAsMHTMLDataFunction)(WKDataRef, WKErrorRef, void
 WK_EXPORT void WKPageGetContentsAsMHTMLData(WKPageRef page, void* context, WKPageGetContentsAsMHTMLDataFunction function);
 
 typedef void (*WKPageGetSelectionAsWebArchiveDataFunction)(WKDataRef, WKErrorRef, void*);
-WK_EXPORT void WKPageGetSelectionAsWebArchiveData(WKPageRef page, void* context, WKPageGetSelectionAsWebArchiveDataFunction function);
+WK_EXPORT void WKPageGetSelectionAsWebArchiveData(WKPageRef page, void* context, WKPageGetSelectionAsWebArchiveDataFunction function) WK_C_API_DEPRECATED;
 
 typedef void (*WKPageForceRepaintFunction)(WKErrorRef, void*);
 WK_EXPORT void WKPageForceRepaint(WKPageRef page, void* context, WKPageForceRepaintFunction function);
@@ -278,6 +279,8 @@ WK_EXPORT void WKPagePostMessageToInjectedBundle(WKPageRef page, WKStringRef mes
 WK_EXPORT void WKPageSelectContextMenuItem(WKPageRef page, WKContextMenuItemRef item, WKFrameInfoRef frameInfo);
 
 WK_EXPORT void WKPageClearNotificationPermissionState(WKPageRef page);
+
+WK_EXPORT void WKPageClearBackForwardCache(WKPageRef page);
 
 #ifdef __cplusplus
 }

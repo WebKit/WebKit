@@ -22,7 +22,10 @@
 #include "include/effects/SkCornerPathEffect.h"
 #include "include/effects/SkDashPathEffect.h"
 #include "include/effects/SkDiscretePathEffect.h"
+
+#if defined(SK_GANESH)
 #include "include/gpu/ganesh/GrDirectContext.h"
+#endif
 
 #include <initializer_list>
 
@@ -57,7 +60,7 @@ static void stroke_pe(SkPaint* paint) {
 static void dash_pe(SkPaint* paint) {
     SkScalar inter[] = { 20, 10, 10, 10 };
     paint->setStrokeWidth(12);
-    paint->setPathEffect(SkDashPathEffect::Make(inter, std::size(inter), 0));
+    paint->setPathEffect(SkDashPathEffect::Make(inter, 0));
     compose_pe(paint);
 }
 
@@ -140,7 +143,6 @@ protected:
         }
         canvas->restore();
 
-        path.reset();
         SkRect r = { 0, 0, 250, 120 };
         path = SkPathBuilder().addOval(r, SkPathDirection::kCW)
                               .addRect(r.makeInset(50, 50), SkPathDirection::kCCW)
@@ -189,7 +191,7 @@ public:
 
     bool onNeedsCTM() const final { return true; }
 
-    bool onFilterPath(SkPath* dst,
+    bool onFilterPath(SkPathBuilder* dst,
                       const SkPath& src,
                       SkStrokeRec* rec,
                       const SkRect* cullR,
@@ -248,20 +250,20 @@ protected:
 
     SkISize getISize() override { return SkISize::Make(800, 600); }
 
+#if defined(SK_GANESH)
     // CTM-aware path effects are not supported by Ganesh
     DrawResult onGpuSetup(SkCanvas* canvas, SkString*, GraphiteTestContext*) override {
         auto dctx = GrAsDirectContext(canvas->recordingContext());
         return dctx == nullptr ? DrawResult::kOk : DrawResult::kSkip;
     }
+#endif
 
     void onDraw(SkCanvas* canvas) override {
         const float strokeWidth = 16;
         const float pxInflate = 0.5f;
         sk_sp<SkPathEffect> pathEffect(new StrokeLineInflated(strokeWidth, pxInflate));
 
-        SkPath path;
-        path.moveTo(100, 100);
-        path.lineTo(200, 200);
+        SkPath path = SkPath::Line({100, 100}, {200, 200});
 
         // Draw the inflated path, and a scaled version, in blue.
         SkPaint paint;

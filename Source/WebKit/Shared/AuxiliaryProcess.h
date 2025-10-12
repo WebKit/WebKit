@@ -60,7 +60,7 @@ struct AuxiliaryProcessCreationParameters;
 
 class AuxiliaryProcess : public IPC::Connection::Client, public IPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcess);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AuxiliaryProcess);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AuxiliaryProcess);
 public:
     void initialize(AuxiliaryProcessInitializationParameters&&);
@@ -146,7 +146,7 @@ protected:
 #endif
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
     bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
@@ -178,6 +178,11 @@ protected:
     // IPC::Connection::Client.
     void didClose(IPC::Connection&) override;
 
+#if PLATFORM(COCOA)
+    void increaseFileDescriptorLimit();
+    static const WTF::String& increaseContrastPreferenceKey();
+#endif
+
 private:
 #if ENABLE(CFPREFS_DIRECT_MODE)
     void handleAXPreferenceChange(const String& domain, const String& key, id value);
@@ -190,7 +195,7 @@ private:
     uint64_t messageSenderDestinationID() const override;
 
     // IPC::Connection::Client.
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t indexOfObjectFailingDecoding) final;
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) final;
 
     void shutDown();
 

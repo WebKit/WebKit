@@ -10,9 +10,11 @@
 #include "rtc_base/experiments/field_trial_units.h"
 
 #include <optional>
-#include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "test/gtest.h"
 

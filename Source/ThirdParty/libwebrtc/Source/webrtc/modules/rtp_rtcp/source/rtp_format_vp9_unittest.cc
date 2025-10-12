@@ -10,13 +10,18 @@
 
 #include "modules/rtp_rtcp/source/rtp_format_vp9.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/video/video_codec_type.h"
+#include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer_vp9.h"
-#include "test/gmock.h"
+#include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -73,11 +78,11 @@ void ParseAndCheckPacket(const uint8_t* packet,
                          size_t expected_length) {
   RTPVideoHeader video_header;
   EXPECT_EQ(VideoRtpDepacketizerVp9::ParseRtpPayload(
-                rtc::MakeArrayView(packet, expected_length), &video_header),
+                MakeArrayView(packet, expected_length), &video_header),
             expected_hdr_length);
   EXPECT_EQ(kVideoCodecVP9, video_header.codec);
   auto& vp9_header =
-      absl::get<RTPVideoHeaderVP9>(video_header.video_type_header);
+      std::get<RTPVideoHeaderVP9>(video_header.video_type_header);
   VerifyHeader(expected, vp9_header);
 }
 
@@ -149,9 +154,8 @@ class RtpPacketizerVp9Test : public ::testing::Test {
     EXPECT_EQ(last, payload_pos_ == payload_.size());
   }
 
-  void CreateParseAndCheckPackets(
-      rtc::ArrayView<const size_t> expected_hdr_sizes,
-      rtc::ArrayView<const size_t> expected_sizes) {
+  void CreateParseAndCheckPackets(ArrayView<const size_t> expected_hdr_sizes,
+                                  ArrayView<const size_t> expected_sizes) {
     ASSERT_EQ(expected_hdr_sizes.size(), expected_sizes.size());
     ASSERT_TRUE(packetizer_ != nullptr);
     EXPECT_EQ(expected_sizes.size(), num_packets_);
@@ -179,7 +183,7 @@ class RtpPacketizerVp9Test : public ::testing::Test {
       VideoRtpDepacketizerVp9::ParseRtpPayload(packet_.payload(),
                                                &video_header);
       const auto& vp9_header =
-          absl::get<RTPVideoHeaderVP9>(video_header.video_type_header);
+          std::get<RTPVideoHeaderVP9>(video_header.video_type_header);
       EXPECT_EQ(vp9_header.spatial_idx, expected_layer);
       EXPECT_EQ(vp9_header.num_spatial_layers, num_spatial_layers);
     }

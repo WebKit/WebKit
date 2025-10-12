@@ -46,13 +46,13 @@ function createTransforms(worker, mediaType)
     return [senderTransform, receiverTransform];
 }
 
-let videoSenderTransform, videoReceiverTransform, audioSenderTransform, audioReceiverTransform;
+let localStream, videoSenderTransform, videoReceiverTransform, audioSenderTransform, audioReceiverTransform;
 promise_test(async (test) => {
     worker = new Worker('audio-video-transform.js');
     const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
     assert_equals(data, "registered");
 
-    const localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
+    localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
 
     [audioSenderTransform, audioReceiverTransform] = createTransforms(worker, 'audio');
     [videoSenderTransform, videoReceiverTransform] = createTransforms(worker, 'video');
@@ -160,6 +160,8 @@ promise_test(async (test) => {
     videoSenderTransform.port.postMessage("tryAccessingMetadata");
     metadata =await waitForMessage(videoSenderTransform.port);
     assert_array_equals(Object.keys(metadata), ["contributingSources", "dependencies", "frameId", "height", "mimeType", "payloadType", "rtpTimestamp", "spatialIndex", "synchronizationSource", "temporalIndex", "width"]);
+
+    test.add_cleanup(() => localStream.getTracks().forEach(t => t.stop()));
 }, "Check metadata getter");
         </script>
     </body>

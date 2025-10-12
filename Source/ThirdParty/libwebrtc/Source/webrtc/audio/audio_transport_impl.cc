@@ -11,15 +11,24 @@
 #include "audio/audio_transport_impl.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <utility>
+#include <vector>
 
+#include "api/audio/audio_frame.h"
+#include "api/audio/audio_mixer.h"
+#include "api/audio/audio_view.h"
 #include "audio/remix_resample.h"
 #include "audio/utility/audio_frame_operations.h"
 #include "call/audio_sender.h"
+#include "common_audio/resampler/include/push_resampler.h"
 #include "modules/async_audio_processing/async_audio_processing.h"
 #include "modules/audio_processing/include/audio_frame_proxies.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/trace_event.h"
 
 namespace webrtc {
@@ -67,10 +76,10 @@ void ProcessCaptureFrame(uint32_t delay_ms,
 
 // Resample audio in `frame` to given sample rate preserving the
 // channel count and place the result in `destination`.
-int Resample(const AudioFrame& frame,
-             const int destination_sample_rate,
-             PushResampler<int16_t>* resampler,
-             InterleavedView<int16_t> destination) {
+void Resample(const AudioFrame& frame,
+              const int destination_sample_rate,
+              PushResampler<int16_t>* resampler,
+              InterleavedView<int16_t> destination) {
   TRACE_EVENT2("webrtc", "Resample", "frame sample rate", frame.sample_rate_hz_,
                "destination_sample_rate", destination_sample_rate);
   const size_t target_number_of_samples_per_channel =
@@ -82,7 +91,7 @@ int Resample(const AudioFrame& frame,
                frame.num_channels_ * target_number_of_samples_per_channel);
 
   // TODO(yujo): Add special case handling of muted frames.
-  return resampler->Resample(frame.data_view(), destination);
+  resampler->Resample(frame.data_view(), destination);
 }
 }  // namespace
 
@@ -210,7 +219,7 @@ int32_t AudioTransportImpl::NeedMorePlayData(const size_t nSamples,
                                              size_t& nSamplesOut,
                                              int64_t* elapsed_time_ms,
                                              int64_t* ntp_time_ms) {
-  TRACE_EVENT0("webrtc", "AudioTransportImpl::SendProcessedData");
+  TRACE_EVENT0("webrtc", "AudioTransportImpl::NeedMorePlayData");
   RTC_DCHECK_EQ(sizeof(int16_t) * nChannels, nBytesPerSample);
   RTC_DCHECK_GE(nChannels, 1);
   RTC_DCHECK_LE(nChannels, 2);
@@ -233,11 +242,10 @@ int32_t AudioTransportImpl::NeedMorePlayData(const size_t nSamples,
     RTC_DCHECK_EQ(error, AudioProcessing::kNoError);
   }
 
-  nSamplesOut =
-      Resample(mixed_frame_, samplesPerSec, &render_resampler_,
-               InterleavedView<int16_t>(static_cast<int16_t*>(audioSamples),
-                                        nSamples, nChannels));
-  RTC_DCHECK_EQ(nSamplesOut, nChannels * nSamples);
+  InterleavedView<int16_t> resampled(static_cast<int16_t*>(audioSamples),
+                                     nSamples, nChannels);
+  Resample(mixed_frame_, samplesPerSec, &render_resampler_, resampled);
+  nSamplesOut = resampled.size();
   return 0;
 }
 
@@ -266,11 +274,9 @@ void AudioTransportImpl::PullRenderData(int bits_per_sample,
   *elapsed_time_ms = mixed_frame_.elapsed_time_ms_;
   *ntp_time_ms = mixed_frame_.ntp_time_ms_;
 
-  int output_samples =
-      Resample(mixed_frame_, sample_rate, &render_resampler_,
-               InterleavedView<int16_t>(static_cast<int16_t*>(audio_data),
-                                        number_of_frames, number_of_channels));
-  RTC_DCHECK_EQ(output_samples, number_of_channels * number_of_frames);
+  Resample(mixed_frame_, sample_rate, &render_resampler_,
+           InterleavedView<int16_t>(static_cast<int16_t*>(audio_data),
+                                    number_of_frames, number_of_channels));
 }
 
 void AudioTransportImpl::UpdateAudioSenders(std::vector<AudioSender*> senders,

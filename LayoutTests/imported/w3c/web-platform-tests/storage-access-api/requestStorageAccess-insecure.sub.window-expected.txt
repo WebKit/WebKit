@@ -1,15 +1,15 @@
-Blocked access to external URL http://www.localhost:8800/storage-access-api/resources/requestStorageAccess-iframe.html?testCase=cross-origin-frame
-Blocked access to external URL http://www.localhost:8800/storage-access-api/resources/requestStorageAccess-iframe.html?testCase=nested-cross-origin-frame
-
-Harness Error (TIMEOUT), message = null
 
 PASS [top-level-context] document.requestStorageAccess() should exist on the document interface
-FAIL [top-level-context] document.requestStorageAccess() should be rejected in insecure context assert_unreached: Should have rejected: document.requestStorageAccess() call without user gesture Reached unreachable code
+PASS [top-level-context] document.requestStorageAccess() should be rejected in insecure context
 PASS [non-fully-active] document.requestStorageAccess() should reject when run in a detached frame
 PASS [non-fully-active] document.requestStorageAccess() should reject when run in a detached DOMParser document
-TIMEOUT [top-level-context] document.requestStorageAccess() should be rejected when called with a user gesture in insecure context Test timed out
+PASS [top-level-context] document.requestStorageAccess() should be rejected when called with a user gesture in insecure context
 PASS [same-origin-frame] document.requestStorageAccess() should exist on the document interface
-FAIL [same-origin-frame] document.requestStorageAccess() should be rejected in insecure context assert_unreached: Should have rejected: document.requestStorageAccess() call without user gesture Reached unreachable code
+PASS [same-origin-frame] document.requestStorageAccess() should be rejected in insecure context
 PASS [nested-same-origin-frame] document.requestStorageAccess() should exist on the document interface
-FAIL [nested-same-origin-frame] document.requestStorageAccess() should be rejected in insecure context assert_unreached: Should have rejected: document.requestStorageAccess() call without user gesture Reached unreachable code
+PASS [nested-same-origin-frame] document.requestStorageAccess() should be rejected in insecure context
+PASS [cross-origin-frame] document.requestStorageAccess() should exist on the document interface
+PASS [cross-origin-frame] document.requestStorageAccess() should be rejected in insecure context
+PASS [nested-cross-origin-frame] document.requestStorageAccess() should exist on the document interface
+PASS [nested-cross-origin-frame] document.requestStorageAccess() should be rejected in insecure context
 

@@ -38,6 +38,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/text/MakeString.h>
 
 @interface ProxyDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
@@ -453,7 +454,7 @@ TEST(WebKit, RelaxThirdPartyCookieBlocking)
                 "</script>"_s;
                 switch (connectionCount) {
                 case 1: {
-                    EXPECT_TRUE(strnstr(request.data(), "GET http://www.webkit.org/path1 HTTP/1.1\r\n", request.size()));
+                    EXPECT_TRUE(contains(request.span(), "GET http://www.webkit.org/path1 HTTP/1.1\r\n"_span));
                     reply = makeString(
                         "HTTP/1.1 200 OK\r\n"
                         "Content-Length: "_s, strlen(body), "\r\n"
@@ -464,7 +465,7 @@ TEST(WebKit, RelaxThirdPartyCookieBlocking)
                     break;
                 }
                 case 3: {
-                    EXPECT_TRUE(strnstr(request.data(), "GET http://example.com/path2 HTTP/1.1\r\n", request.size()));
+                    EXPECT_TRUE(contains(request.span(), "GET http://example.com/path2 HTTP/1.1\r\n"_span));
                     reply = makeString(
                         "HTTP/1.1 200 OK\r\n"
                         "Content-Type: text/html\r\n"
@@ -477,10 +478,10 @@ TEST(WebKit, RelaxThirdPartyCookieBlocking)
                 case 2:
                 case 4:
                     if (connectionCount == 2 || shouldRelaxThirdPartyCookieBlocking)
-                        EXPECT_TRUE(strnstr(request.data(), "Cookie: a=b\r\n", request.size()));
+                        EXPECT_TRUE(contains(request.span(), "Cookie: a=b\r\n"_span));
                     else
-                        EXPECT_FALSE(strnstr(request.data(), "Cookie: a=b\r\n", request.size()));
-                    EXPECT_TRUE(strnstr(request.data(), "GET http://www.webkit.org/path3 HTTP/1.1\r\n", request.size()));
+                        EXPECT_FALSE(contains(request.span(), "Cookie: a=b\r\n"_span));
+                    EXPECT_TRUE(contains(request.span(), "GET http://www.webkit.org/path3 HTTP/1.1\r\n"_span));
                     reply =
                         "HTTP/1.1 200 OK\r\n"
                         "Content-Length: 0\r\n"

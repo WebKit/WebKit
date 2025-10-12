@@ -28,13 +28,14 @@
 #include "ActivityState.h"
 #include "Timer.h"
 #include <wtf/CPUTime.h>
+#include <wtf/CanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class Page;
 
-class PerformanceMonitor {
+class PerformanceMonitor : public CanMakeWeakPtr<PerformanceMonitor> {
     WTF_MAKE_TZONE_ALLOCATED(PerformanceMonitor);
 public:
     explicit PerformanceMonitor(Page&);

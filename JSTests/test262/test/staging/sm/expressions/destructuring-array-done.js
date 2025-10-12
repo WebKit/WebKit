@@ -2,17 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-expressions-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  iterator.next() should not be called when after iterator completes
+info: bugzilla.mozilla.org/show_bug.cgi?id=1184922
 esid: pending
 ---*/
-var BUGNUMBER = 1184922;
-var summary = "iterator.next() should not be called when after iterator completes";
-
-print(BUGNUMBER + ": " + summary);
 
 var log;
 function reset() {
@@ -26,6 +20,7 @@ var obj = new Proxy({}, {
         else
             v = JSON.stringify(value);
         log += "set:" + name + "=" + v + ",";
+        return true;
     }
 });
 function createIterable(n) {
@@ -325,4 +320,3 @@ assert.sameValue(log,
          "next," +
          "next," +
          "set:r=[4],");
-

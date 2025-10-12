@@ -4,24 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-JSON-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  JSON.stringify of \\b\\f\\n\\r\\t should use one-character escapes, not hex
+info: bugzilla.mozilla.org/show_bug.cgi?id=512266
 esid: pending
 ---*/
-var gTestfile = 'stringify-special-escapes.js';
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 512266;
-var summary =
-  "JSON.stringify of \\b\\f\\n\\r\\t should use one-character escapes, not hex";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 assert.sameValue(JSON.stringify("\u0000"), '"\\u0000"');
 assert.sameValue(JSON.stringify("\u0001"), '"\\u0001"');
@@ -278,7 +265,3 @@ assert.sameValue(JSON.stringify("\udddd\udc00"), '"\\udddd\\udc00"');
 assert.sameValue(JSON.stringify("\udeaf\udc00"), '"\\udeaf\\udc00"');
 assert.sameValue(JSON.stringify("\udfff\udc00"), '"\\udfff\\udc00"');
 assert.sameValue(JSON.stringify("\ue000\udc00"), '"\ue000\\udc00"');
-
-/******************************************************************************/
-
-print("Tests complete");

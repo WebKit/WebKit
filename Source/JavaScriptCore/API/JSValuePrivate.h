@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if JSC_OBJC_API_ENABLED
+#if JSC_OBJC_API_ENABLED && defined(__OBJC__)
 
 #import <JavaScriptCore/JavaScriptCore.h>
 
@@ -33,4 +33,4 @@
 
 @end
 
-#endif // JSC_OBJC_API_ENABLED
+#endif // JSC_OBJC_API_ENABLED && defined(__OBJC__)

@@ -10,6 +10,7 @@
 
 #include "modules/audio_processing/ns/suppression_params.h"
 
+#include "modules/audio_processing/ns/ns_config.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

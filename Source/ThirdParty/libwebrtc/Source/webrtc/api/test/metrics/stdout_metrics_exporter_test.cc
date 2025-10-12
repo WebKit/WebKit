@@ -13,10 +13,11 @@
 #include <string>
 #include <vector>
 
+#include "absl/flags/flag.h"
 #include "api/test/metrics/metric.h"
 #include "api/units/timestamp.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/test_flags.h"
 
 namespace webrtc {
 namespace test {
@@ -43,27 +44,51 @@ Metric PsnrForTestFoo(double mean, double stddev) {
                 .stats = Metric::Stats{.mean = mean, .stddev = stddev}};
 }
 
-TEST(StdoutMetricsExporterTest, ExportMetricFormatCorrect) {
-  Metric metric1{
-      .name = "test_metric1",
-      .unit = Unit::kMilliseconds,
-      .improvement_direction = ImprovementDirection::kBiggerIsBetter,
-      .test_case = "test_case_name1",
-      .metric_metadata = DefaultMetadata(),
-      .time_series =
-          Metric::TimeSeries{.samples = std::vector{Sample(10), Sample(20)}},
-      .stats =
-          Metric::Stats{.mean = 15.0, .stddev = 5.0, .min = 10.0, .max = 20.0}};
-  Metric metric2{
-      .name = "test_metric2",
-      .unit = Unit::kKilobitsPerSecond,
-      .improvement_direction = ImprovementDirection::kSmallerIsBetter,
-      .test_case = "test_case_name2",
-      .metric_metadata = DefaultMetadata(),
-      .time_series =
-          Metric::TimeSeries{.samples = std::vector{Sample(20), Sample(40)}},
-      .stats = Metric::Stats{
-          .mean = 30.0, .stddev = 10.0, .min = 20.0, .max = 40.0}};
+class StdoutMetricsExporterTest : public ::testing::Test {
+ public:
+  StdoutMetricsExporterTest() {
+    original_isolated_script_test_perf_output_ =
+        absl::GetFlag(FLAGS_isolated_script_test_perf_output);
+
+    metric1_ = {
+        .name = "test_metric1",
+        .unit = Unit::kMilliseconds,
+        .improvement_direction = ImprovementDirection::kBiggerIsBetter,
+        .test_case = "test_case_name1",
+        .metric_metadata =
+            std::map<std::string, std::string>{{"video_stream", "alice_stream"},
+                                               {"sender", "alice"},
+                                               {"receiver", "bob"}},
+        .time_series =
+            Metric::TimeSeries{.samples = std::vector{Sample(10), Sample(20)}},
+        .stats = Metric::Stats{
+            .mean = 15.0, .stddev = 5.0, .min = 10.0, .max = 20.0}};
+    metric2_ = {
+        .name = "test_metric2",
+        .unit = Unit::kKilobitsPerSecond,
+        .improvement_direction = ImprovementDirection::kSmallerIsBetter,
+        .test_case = "test_case_name2",
+        .metric_metadata =
+            std::map<std::string, std::string>{{"peer", "alice"}},
+        .time_series =
+            Metric::TimeSeries{.samples = std::vector{Sample(20), Sample(40)}},
+        .stats = Metric::Stats{
+            .mean = 30.0, .stddev = 10.0, .min = 20.0, .max = 40.0}};
+  }
+  ~StdoutMetricsExporterTest() {
+    absl::SetFlag(&FLAGS_isolated_script_test_perf_output,
+                  original_isolated_script_test_perf_output_);
+  }
+
+ protected:
+  std::string original_isolated_script_test_perf_output_;
+  Metric metric1_;
+  Metric metric2_;
+};
+
+TEST_F(StdoutMetricsExporterTest,
+       ExportMetricFormatCorrectWhenIsolatedScriptTestPerfOutputIsSet) {
+  absl::SetFlag(&FLAGS_isolated_script_test_perf_output, "/tmp/foo");
 
   testing::internal::CaptureStdout();
   StdoutMetricsExporter exporter;
@@ -74,7 +99,24 @@ TEST(StdoutMetricsExporterTest, ExportMetricFormatCorrect) {
       "RESULT: test_case_name2 / test_metric2= "
       "{mean=30, stddev=10} KilobitsPerSecond (SmallerIsBetter)\n";
 
-  EXPECT_TRUE(exporter.Export(std::vector<Metric>{metric1, metric2}));
+  EXPECT_TRUE(exporter.Export(std::vector<Metric>{metric1_, metric2_}));
+  EXPECT_EQ(expected, testing::internal::GetCapturedStdout());
+}
+
+TEST_F(StdoutMetricsExporterTest,
+       ExportMetricFormatCorrectWhenIsolatedScriptTestPerfOutputIsNotSet) {
+  absl::SetFlag(&FLAGS_isolated_script_test_perf_output, "");
+
+  testing::internal::CaptureStdout();
+  StdoutMetricsExporter exporter;
+
+  std::string expected =
+      "RESULT: test_case_name1/alice_stream_alice_bob / test_metric1= "
+      "{mean=15, stddev=5} Milliseconds (BiggerIsBetter)\n"
+      "RESULT: test_case_name2/alice / test_metric2= "
+      "{mean=30, stddev=10} KilobitsPerSecond (SmallerIsBetter)\n";
+
+  EXPECT_TRUE(exporter.Export(std::vector<Metric>{metric1_, metric2_}));
   EXPECT_EQ(expected, testing::internal::GetCapturedStdout());
 }
 

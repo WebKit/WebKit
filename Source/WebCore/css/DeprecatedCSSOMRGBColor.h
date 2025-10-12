@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include "Color.h"
-#include "DeprecatedCSSOMPrimitiveValue.h"
+#include <WebCore/Color.h>
+#include <WebCore/DeprecatedCSSOMPrimitiveValue.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -56,10 +56,10 @@ private:
     }
 
     ResolvedColorType<SRGBA<uint8_t>> m_color;
-    Ref<DeprecatedCSSOMPrimitiveValue> m_red;
-    Ref<DeprecatedCSSOMPrimitiveValue> m_green;
-    Ref<DeprecatedCSSOMPrimitiveValue> m_blue;
-    Ref<DeprecatedCSSOMPrimitiveValue> m_alpha;
+    const Ref<DeprecatedCSSOMPrimitiveValue> m_red;
+    const Ref<DeprecatedCSSOMPrimitiveValue> m_green;
+    const Ref<DeprecatedCSSOMPrimitiveValue> m_blue;
+    const Ref<DeprecatedCSSOMPrimitiveValue> m_alpha;
 };
 
 } // namespace WebCore

@@ -10,14 +10,14 @@
 
 #include "modules/audio_processing/aec3/render_delay_buffer.h"
 
+#include <cstddef>
 #include <memory>
 #include <string>
-#include <vector>
 
-#include "api/array_view.h"
+#include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
-#include "modules/audio_processing/logging/apm_data_dumper.h"
-#include "rtc_base/random.h"
+#include "modules/audio_processing/aec3/block.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
@@ -25,7 +25,7 @@ namespace webrtc {
 namespace {
 
 std::string ProduceDebugText(int sample_rate_hz) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Sample rate: " << sample_rate_hz;
   return ss.Release();
 }

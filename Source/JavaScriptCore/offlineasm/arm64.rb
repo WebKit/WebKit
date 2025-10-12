@@ -155,32 +155,32 @@ ARM64_EXTRA_FPRS = [SpecialRegister.new("q31")]
 class RegisterID
     def arm64Operand(kind)
         case @name
-        when 't0', 'a0', 'r0', 'wa0'
+        when 't0'
             arm64GPRName('x0', kind)
-        when 't1', 'a1', 'r1', 'wa1'
+        when 't1'
             arm64GPRName('x1', kind)
-        when 't2', 'a2', 'wa2'
+        when 't2'
             arm64GPRName('x2', kind)
-        when 't3', 'a3', 'wa3'
+        when 't3'
             arm64GPRName('x3', kind)
-        when 't4', 'a4', 'wa4'
+        when 't4'
             arm64GPRName('x4', kind)
-        when 't5', 'a5', 'wa5'
-          arm64GPRName('x5', kind)
-        when 't6', 'a6', 'wa6'
-          arm64GPRName('x6', kind)
-        when 't7', 'a7', 'wa7'
-          arm64GPRName('x7', kind)
+        when 't5'
+            arm64GPRName('x5', kind)
+        when 't6'
+            arm64GPRName('x6', kind)
+        when 't7'
+            arm64GPRName('x7', kind)
         when 't8'
-          arm64GPRName('x8', kind)
-        when 't9', 'ws0'
-          arm64GPRName('x9', kind)
-        when 't10', 'ws1'
-          arm64GPRName('x10', kind)
-        when 't11', 'ws2'
-          arm64GPRName('x11', kind)
-        when 't12', 'ws3'
-          arm64GPRName('x12', kind)
+            arm64GPRName('x8', kind)
+        when 't9'
+            arm64GPRName('x9', kind)
+        when 't10'
+            arm64GPRName('x10', kind)
+        when 't11'
+            arm64GPRName('x11', kind)
+        when 't12'
+            arm64GPRName('x12', kind)
         when 'cfr'
             arm64GPRName('x29', kind)
         when 'csr0'
@@ -216,21 +216,21 @@ end
 class FPRegisterID
     def arm64Operand(kind)
         case @name
-        when 'ft0', 'fr', 'fa0', 'wfa0'
+        when 'ft0'
             arm64FPRName('q0', kind)
-        when 'ft1', 'fa1', 'wfa1'
+        when 'ft1'
             arm64FPRName('q1', kind)
-        when 'ft2', 'fa2', 'wfa2'
+        when 'ft2'
             arm64FPRName('q2', kind)
-        when 'ft3', 'fa3', 'wfa3'
+        when 'ft3'
             arm64FPRName('q3', kind)
-        when 'ft4', 'wfa4'
+        when 'ft4'
             arm64FPRName('q4', kind)
-        when 'ft5', 'wfa5'
+        when 'ft5'
             arm64FPRName('q5', kind)
-        when 'wfa6'
+        when 'ft6'
             arm64FPRName('q6', kind)
-        when 'wfa7'
+        when 'ft7'
             arm64FPRName('q7', kind)
         when 'csfr0'
             arm64FPRName('q8', kind)
@@ -444,8 +444,22 @@ end
 def isMalformedArm64LoadStorePairAddress(opcode, operand)
     malformed = false
     if operand.is_a? Address
-        malformed ||= (not (-512..504).include? operand.offset.value)
-        malformed ||= (not (operand.offset.value % 8).zero?)
+        case opcode
+        when /pairi$/
+            alignment = 4
+        when /pairq$/, /paird$/
+            alignment = 8
+        when /pairv$/
+            alignment = 16
+        else
+            raise "Unknown pair instruction #{opcode}"
+        end
+
+        # ARM64 load/store pair offset range is 7-bit signed imm * alignment
+        min_offset = -64 * alignment
+        max_offset = 63 * alignment
+        malformed ||= (not (min_offset..max_offset).include? operand.offset.value)
+        malformed ||= (not (operand.offset.value % alignment).zero?)
     end
     malformed
 end
@@ -590,9 +604,12 @@ class Sequence
                 "jmp", "call", "leap", "leaq", "loadlinkacqq", "storecondrelq", /^atomic[a-z]+q$/, "loadv", "storev"
                 size = $currentSettings["ADDRESS64"] ? 8 : 4
             when "loadpairi", "storepairi"
+                size = 4
+                isLoadStorePairOp = true
+            when "loadpairq", "loadpairp", "storepairq", "storepairp", "loadpaird", "storepaird"
                 size = 8
                 isLoadStorePairOp = true
-            when "loadpairq", "storepairq", "loadpaird", "storepaird"
+            when "loadpairv", "storepairv"
                 size = 16
                 isLoadStorePairOp = true
             else
@@ -699,6 +716,19 @@ def arm64TACOperands(operands, kind)
     raise unless operands.size == 2
     
     return operands[1].arm64Operand(kind) + ", " + arm64FlippedOperands(operands, kind)
+end
+
+def emitARM64AddShift(opcode, operands, kind)
+    raise unless operands.size == 4
+    raise unless operands[0].register?
+    raise unless operands[1].register?
+    raise unless operands[3].register?
+    raise unless operands[2].immediate?
+
+    regs = [operands[3], operands[0], operands[1]]
+
+    $asm.puts "#{opcode} #{arm64Operands(regs, kind)}, lsl \##{operands[2].value}"
+
 end
 
 def emitARM64Add(opcode, operands, kind)
@@ -914,6 +944,8 @@ class Instruction
             emitARM64Add("adds", operands, :ptr)
         when 'addq'
             emitARM64Add("add", operands, :quad)
+        when 'addlshiftp'
+            emitARM64AddShift("add", operands, :quad)
         when "andi"
             emitARM64TAC("and", operands, :word)
         when "andp"
@@ -1159,7 +1191,7 @@ class Instruction
             emitARM64("sxtb", operands, [:word, :word])
         when "sxh2i"
             emitARM64("sxth", operands, [:word, :word])
-        when "sxb2q"
+        when "sxb2q", "sxb2p"
             emitARM64("sxtb", operands, [:word, :quad])
         when "sxh2q"
             emitARM64("sxth", operands, [:word, :quad])
@@ -1668,11 +1700,11 @@ class Instruction
             $asm.puts "ldar #{operands[1].arm64Operand(:word)}, #{operands[0].arm64SimpleAddressOperand(:word)}"
         when "atomicloadq"
             $asm.puts "ldar #{operands[1].arm64Operand(:quad)}, #{operands[0].arm64SimpleAddressOperand(:quad)}"
-        when "loadpairq"
+        when "loadpairq", "loadpairp"
             $asm.puts "ldp #{operands[1].arm64Operand(:quad)}, #{operands[2].arm64Operand(:quad)}, #{operands[0].arm64PairAddressOperand(:quad)}"
         when "loadpairi"
             $asm.puts "ldp #{operands[1].arm64Operand(:word)}, #{operands[2].arm64Operand(:word)}, #{operands[0].arm64PairAddressOperand(:quad)}"
-        when "storepairq"
+        when "storepairq", "storepairp"
             $asm.puts "stp #{operands[0].arm64Operand(:quad)}, #{operands[1].arm64Operand(:quad)}, #{operands[2].arm64PairAddressOperand(:quad)}"
         when "storepairi"
             $asm.puts "stp #{operands[0].arm64Operand(:word)}, #{operands[1].arm64Operand(:word)}, #{operands[2].arm64PairAddressOperand(:quad)}"
@@ -1680,6 +1712,10 @@ class Instruction
             $asm.puts "ldp #{operands[1].arm64Operand(:double)}, #{operands[2].arm64Operand(:double)}, #{operands[0].arm64PairAddressOperand(:double)}"
         when "storepaird"
             $asm.puts "stp #{operands[0].arm64Operand(:double)}, #{operands[1].arm64Operand(:double)}, #{operands[2].arm64PairAddressOperand(:double)}"
+        when "loadpairv"
+            $asm.puts "ldp #{operands[1].arm64Operand(:vector_with_interpretation)}, #{operands[2].arm64Operand(:vector_with_interpretation)}, #{operands[0].arm64PairAddressOperand(:vector_with_interpretation)}"
+        when "storepairv"
+            $asm.puts "stp #{operands[0].arm64Operand(:vector_with_interpretation)}, #{operands[1].arm64Operand(:vector_with_interpretation)}, #{operands[2].arm64PairAddressOperand(:vector_with_interpretation)}"
 
         ########
         # SIMD #

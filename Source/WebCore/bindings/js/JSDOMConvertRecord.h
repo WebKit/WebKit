@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "IDLTypes.h"
-#include "JSDOMConvertStrings.h"
-#include "JSDOMGlobalObject.h"
 #include <JavaScriptCore/ObjectConstructor.h>
+#include <WebCore/IDLTypes.h>
+#include <WebCore/JSDOMConvertStrings.h>
+#include <WebCore/JSDOMGlobalObject.h>
 
 namespace WebCore {
 
@@ -116,7 +116,7 @@ private:
         JSC::JSObject* object = JSC::asObject(value);
     
         ReturnType result;
-        UncheckedKeyHashMap<KeyType, size_t> resultMap;
+        HashMap<KeyType, size_t> resultMap;
     
         // 4. Let keys be ? O.[[OwnPropertyKeys]]().
         JSC::PropertyNameArray keys(vm, JSC::PropertyNameMode::StringsAndSymbols, JSC::PrivateSymbolMode::Exclude);

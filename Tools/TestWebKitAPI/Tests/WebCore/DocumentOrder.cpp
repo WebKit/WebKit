@@ -31,6 +31,7 @@
 #include <WebCore/HTMLDivElement.h>
 #include <WebCore/HTMLHtmlElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
+#include <WebCore/NodeInlines.h>
 #include <WebCore/Position.h>
 #include <WebCore/ProcessWarming.h>
 #include <WebCore/Settings.h>
@@ -271,7 +272,7 @@ TEST(DocumentOrder, Positions)
     TEST_ALL_POSITION_TYPES(g, 0, c, 1, less);
     TEST_ALL_POSITION_TYPES(g, 0, c, 2, less);
 
-    auto& h = *g->innerTextElement();
+    auto& h = *g->innerTextElement().unsafeGet();
     TEST_ALL_POSITION_TYPES(body, 1, h, 0, less);
     TEST_ALL_POSITION_TYPES(c, 0, h, 0, less);
     TEST_ALL_POSITION_TYPES(h, 0, c, 1, less);

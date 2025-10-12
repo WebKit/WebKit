@@ -41,7 +41,7 @@ ui.displayNameForBuilder = function(builderName)
 
 ui.urlForTest = function(testName)
 {
-    return 'https://trac.webkit.org/browser/trunk/LayoutTests/' + testName;
+    return 'https://github.com/WebKit/WebKit/blob/main/LayoutTests/' + testName;
 }
 
 ui.urlForFlakinessDashboard = function(opt_testNameList)

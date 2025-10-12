@@ -42,7 +42,7 @@ class StreamSink : public sigslot::has_slots<> {
   StreamSink();
   ~StreamSink() override;
 
-  void Monitor(rtc::Socket* socket) {
+  void Monitor(Socket* socket) {
     socket->SignalConnectEvent.connect(this, &StreamSink::OnConnectEvent);
     socket->SignalReadEvent.connect(this, &StreamSink::OnReadEvent);
     socket->SignalWriteEvent.connect(this, &StreamSink::OnWriteEvent);
@@ -50,28 +50,28 @@ class StreamSink : public sigslot::has_slots<> {
     // In case you forgot to unmonitor a previous object with this address
     events_.erase(socket);
   }
-  void Unmonitor(rtc::Socket* socket) {
+  void Unmonitor(Socket* socket) {
     socket->SignalConnectEvent.disconnect(this);
     socket->SignalReadEvent.disconnect(this);
     socket->SignalWriteEvent.disconnect(this);
     socket->SignalCloseEvent.disconnect(this);
     events_.erase(socket);
   }
-  bool Check(rtc::Socket* socket, StreamSinkEvent event, bool reset = true) {
+  bool Check(Socket* socket, StreamSinkEvent event, bool reset = true) {
     return DoCheck(socket, event, reset);
   }
 
  private:
-  typedef std::map<rtc::Socket*, int> EventMap;
+  typedef std::map<Socket*, int> EventMap;
 
-  void OnConnectEvent(rtc::Socket* socket) { AddEvents(socket, SSE_OPEN); }
-  void OnReadEvent(rtc::Socket* socket) { AddEvents(socket, SSE_READ); }
-  void OnWriteEvent(rtc::Socket* socket) { AddEvents(socket, SSE_WRITE); }
-  void OnCloseEvent(rtc::Socket* socket, int error) {
+  void OnConnectEvent(Socket* socket) { AddEvents(socket, SSE_OPEN); }
+  void OnReadEvent(Socket* socket) { AddEvents(socket, SSE_READ); }
+  void OnWriteEvent(Socket* socket) { AddEvents(socket, SSE_WRITE); }
+  void OnCloseEvent(Socket* socket, int error) {
     AddEvents(socket, (0 == error) ? SSE_CLOSE : SSE_ERROR);
   }
 
-  void AddEvents(rtc::Socket* obj, int events) {
+  void AddEvents(Socket* obj, int events) {
     EventMap::iterator it = events_.find(obj);
     if (events_.end() == it) {
       events_.insert(EventMap::value_type(obj, events));
@@ -79,7 +79,7 @@ class StreamSink : public sigslot::has_slots<> {
       it->second |= events;
     }
   }
-  bool DoCheck(rtc::Socket* obj, StreamSinkEvent event, bool reset) {
+  bool DoCheck(Socket* obj, StreamSinkEvent event, bool reset) {
     EventMap::iterator it = events_.find(obj);
     if ((events_.end() == it) || (0 == (it->second & event))) {
       return false;

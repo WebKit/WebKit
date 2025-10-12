@@ -1,0 +1,4 @@
+
+FAIL A repeated setPointerCapture call does not redispatch capture events assert_array_equals: events received lengths differ, expected array ["pointerdown@target", "gotpointercapture@other", "pointermove@other", "pointerup@other", "lostpointercapture@other"] length 5, got ["pointerdown@target", "gotpointercapture@other", "pointermove@target", "lostpointercapture@other", "gotpointercapture@target", "pointerup@target", "lostpointercapture@target"] length 7
+FAIL A failed setPointerCapture call does not affect existing capture assert_array_equals: events received lengths differ, expected array ["pointerdown@target", "gotpointercapture@other", "pointermove@other", "pointerup@other", "lostpointercapture@other"] length 5, got ["pointerdown@target", "gotpointercapture@other", "pointermove@target", "lostpointercapture@other", "gotpointercapture@target", "pointerup@target", "lostpointercapture@target"] length 7
+

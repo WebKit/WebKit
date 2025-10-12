@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +52,12 @@ void SourceProvider::unlockUnderlyingBuffer()
 {
     if (!--m_lockingCount)
         unlockUnderlyingBufferImpl();
+}
+
+CodeBlockHash SourceProvider::codeBlockHashConcurrently(int startOffset, int endOffset, CodeSpecializationKind kind)
+{
+    auto entireSourceCode = source();
+    return CodeBlockHash { entireSourceCode.substring(startOffset, endOffset - startOffset), entireSourceCode, kind };
 }
 
 void SourceProvider::lockUnderlyingBufferImpl() { }

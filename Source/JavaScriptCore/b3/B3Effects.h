@@ -32,9 +32,14 @@
 
 namespace JSC { namespace B3 {
 
+enum class Mutability : uint8_t {
+    Mutable,
+    Immutable,
+};
+
 struct Effects {
     // True if this cannot continue execution in the current block.
-    bool terminal { false };
+    bool terminal : 1 { false };
 
     // True if this value can cause execution to terminate abruptly, and that this abrupt termination is
     // observable. An example of how this gets used is to limit the hoisting of controlDependent values.
@@ -42,23 +47,29 @@ struct Effects {
     // after abrupt termination of this procedure, none of the heap will be read. That's usually false,
     // so make sure that reads corresponds to the set of things that are readable after this function
     // terminates abruptly.
-    bool exitsSideways { false };
+    bool exitsSideways : 1 { false };
 
     // True if the instruction may change semantics if hoisted above some control flow. For example,
     // loads are usually control-dependent because we must assume that any control construct (either
     // a terminal like Branch or anything that exits sideways, like Check) validates whether the
     // pointer is valid. Hoisting the load above control may cause the load to trap even though it
     // would not have otherwise trapped.
-    bool controlDependent { false };
+    bool controlDependent : 1 { false };
+
+    // Mutability::Immutable if the instruction is readings an immutable value. This read itself can
+    // be control dependent, but once it succeeds, the subsequent code must be producing the same value.
+    // CSE leverages this information and eliminate redundant loads when the target and preceding load
+    // are the same and Mutability::Immutable.
+    Mutability readsMutability : 1 { Mutability::Mutable };
 
     // True if this writes to the local state. Operations that write local state don't write to anything
     // in "memory" but they have a side-effect anyway. This is for modeling Upsilons, Sets, and Fences.
     // This is a way of saying: even though this operation is not a terminal, does not exit sideways,
     // and does not write to the heap, you still cannot kill this operation.
-    bool writesLocalState { false };
+    bool writesLocalState : 1 { false };
 
     // True if this reads from the local state. This is only used for Phi and Get.
-    bool readsLocalState { false };
+    bool readsLocalState : 1 { false };
 
     // B3 understands things about pinned registers. Therefore, it needs to know who reads them and
     // who writes them. We don't track this on a per-register basis because that would be harder and
@@ -69,19 +80,19 @@ struct Effects {
     // FIXME: Explore making these be RegisterSetBuilders. That's mainly hard because it would be awkward to
     // reconcile with StackmapValue's support for clobbered regs.
     // https://bugs.webkit.org/show_bug.cgi?id=163173
-    bool readsPinned { false };
-    bool writesPinned { false };
-    
+    bool readsPinned : 1 { false };
+    bool writesPinned : 1 { false };
+
     // Memory fences cannot be reordered around each other regardless of their effects. This is flagged
     // if the operation is a memory fence.
-    bool fence { false };
-    
+    bool fence : 1 { false };
+
     // WARNING: The B3::hoistLoopInvariantValues() phase thinks that it understands this exhaustively. If you
     // add any new kinds of things that can be read or written, you should check that phase.
 
     HeapRange writes;
     HeapRange reads;
-    
+
     static Effects none()
     {
         return Effects();

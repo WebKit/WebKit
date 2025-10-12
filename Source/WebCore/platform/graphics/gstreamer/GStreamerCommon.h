@@ -31,6 +31,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/CStringView.h>
 
 namespace WTF {
 class MediaTime;
@@ -48,6 +49,9 @@ using TrackID = uint64_t;
 
 template<typename MappedArg>
 using TrackIDHashMap = HashMap<TrackID, MappedArg, WTF::IntHash<TrackID>, WTF::UnsignedWithZeroKeyHashTraits<TrackID>>;
+
+#define GST_CHECK_VERSION_FULL(major, minor, micro, nano) \
+    (GST_CHECK_VERSION(major, minor, micro) && (GST_VERSION_NANO >= nano))
 
 inline bool webkitGstCheckVersion(guint major, guint minor, guint micro)
 {
@@ -74,13 +78,13 @@ inline bool webkitGstCheckVersion(guint major, guint minor, guint micro)
 #define GST_AUDIO_CAPS_TYPE_PREFIX  "audio/"_s
 #define GST_TEXT_CAPS_TYPE_PREFIX   "text/"_s
 
-WARN_UNUSED_RETURN GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate*, ASCIILiteral name, GstPad* target);
+WARN_UNUSED_RETURN GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate*, CStringView name, GstPad* target);
 #if ENABLE(VIDEO)
 bool getVideoSizeAndFormatFromCaps(const GstCaps*, WebCore::IntSize&, GstVideoFormat&, int& pixelAspectRatioNumerator, int& pixelAspectRatioDenominator, int& stride, double& frameRate, PlatformVideoColorSpace&);
 std::optional<FloatSize> getVideoResolutionFromCaps(const GstCaps*);
 bool getSampleVideoInfo(GstSample*, GstVideoInfo&);
 #endif
-StringView capsMediaType(const GstCaps*);
+CStringView capsMediaType(const GstCaps*);
 std::optional<TrackID> getStreamIdFromPad(const GRefPtr<GstPad>&);
 std::optional<TrackID> getStreamIdFromStream(const GRefPtr<GstStream>&);
 std::optional<TrackID> parseStreamId(StringView stringId);
@@ -259,7 +263,8 @@ private:
     bool m_isValid { false };
 };
 
-void connectSimpleBusMessageCallback(GstElement*, Function<void(GstMessage*)>&& = [](GstMessage*) { });
+enum class AsynchronousPipelineDumping : bool { No, Yes };
+void connectSimpleBusMessageCallback(GstElement*, Function<void(GstMessage*)>&& = [](GstMessage*) { }, AsynchronousPipelineDumping = AsynchronousPipelineDumping::No);
 void disconnectSimpleBusMessageCallback(GstElement*);
 
 enum class GstVideoDecoderPlatform { ImxVPU, Video4Linux, OpenMAX };
@@ -280,20 +285,17 @@ GstBuffer* gstBufferNewWrappedFast(void* data, size_t length);
 GstElement* makeGStreamerElement(ASCIILiteral factoryName, const String& name = emptyString());
 
 template<typename T>
-std::optional<T> gstStructureGet(const GstStructure*, ASCIILiteral key);
-template<typename T>
-std::optional<T> gstStructureGet(const GstStructure*, StringView key);
+std::optional<T> gstStructureGet(const GstStructure*, CStringView key);
 
-StringView gstStructureGetString(const GstStructure*, ASCIILiteral key);
-StringView gstStructureGetString(const GstStructure*, StringView key);
+CStringView gstStructureGetString(const GstStructure*, CStringView key);
 
-StringView gstStructureGetName(const GstStructure*);
+CStringView gstStructureGetName(const GstStructure*);
 
 template<typename T>
-Vector<T> gstStructureGetArray(const GstStructure*, ASCIILiteral key);
+Vector<T> gstStructureGetArray(const GstStructure*, CStringView key);
 
 template<typename T>
-Vector<T> gstStructureGetList(const GstStructure*, ASCIILiteral key);
+Vector<T> gstStructureGetList(const GstStructure*, CStringView key);
 
 String gstStructureToJSONString(const GstStructure*);
 
@@ -469,6 +471,11 @@ private:
 
 #if !GST_CHECK_VERSION(1, 20, 0)
 GstBuffer* gst_buffer_new_memdup(gconstpointer data, gsize size);
+#endif
+
+#if !GST_CHECK_VERSION_FULL(1, 27, 2, 1) && !GST_CHECK_VERSION(1, 27, 3) && !GST_CHECK_VERSION(1, 28, 0)
+void gst_pad_probe_info_set_buffer(GstPadProbeInfo*, GstBuffer*);
+void gst_pad_probe_info_set_event(GstPadProbeInfo*, GstEvent*);
 #endif
 
 #endif // USE(GSTREAMER)

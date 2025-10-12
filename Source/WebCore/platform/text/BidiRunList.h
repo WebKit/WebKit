@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003-2023 Apple Inc.  All right reserved.
- * Copyright (C) 2011-2014 Google, Inc.  All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All right reserved.
+ * Copyright (C) 2011-2014 Google, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public

@@ -10,8 +10,6 @@
 
 #include "modules/audio_processing/agc2/speech_probability_buffer.h"
 
-#include <algorithm>
-
 #include "rtc_base/checks.h"
 
 namespace webrtc {

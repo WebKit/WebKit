@@ -116,7 +116,7 @@ class Instruction
                 emitARM64Unflipped("blrab", operands, :ptr)
             end
         when "jmp"
-            if operands[0].label?
+            if operands.size == 1 or operands[0].label?
                 lowerARM64
             else
                 emitARM64Unflipped("brab", operands, :ptr)

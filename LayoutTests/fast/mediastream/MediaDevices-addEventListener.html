@@ -20,6 +20,7 @@
         testRunner.setUserMediaPermission(true);
 
         const stream = await navigator.mediaDevices.getUserMedia({ audio:true, video:true });
+        test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
         const captureFailurePromise = new Promise(resolve => stream.getAudioTracks()[0].onended = resolve);
 
         let devices = await navigator.mediaDevices.enumerateDevices();

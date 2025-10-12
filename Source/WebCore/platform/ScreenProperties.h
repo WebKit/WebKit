@@ -25,10 +25,11 @@
 
 #pragma once
 
-#include "DestinationColorSpace.h"
-#include "FloatRect.h"
-#include "PlatformScreen.h"
+#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/PlatformScreen.h>
 #include <wtf/HashMap.h>
+#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,6 +44,12 @@ struct ScreenData {
     bool screenSupportsExtendedColor { false };
     bool screenHasInvertedColors { false };
     bool screenSupportsHighDynamicRange { false };
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=297729 - Move EDR screen properties to their own container
+    bool suppressEDR { false };
+    float currentEDRHeadroom { 1 };
+    float maxEDRHeadroom { 1 };
+#endif
 #if PLATFORM(MAC)
     FloatSize screenSize; // In millimeters.
     bool screenIsMonochrome { false };
@@ -59,6 +66,8 @@ struct ScreenData {
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
     float scaleFactor { 1 };
 #endif
+
+    bool operator==(const ScreenData&) const = default;
 };
 
 using ScreenDataMap = HashMap<PlatformDisplayID, ScreenData>;
@@ -72,6 +81,8 @@ struct ScreenProperties {
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(GTK)
     bool screenHasTouchDevice { true };
 #endif
+
+    bool operator==(const ScreenProperties&) const = default;
 };
 
 } // namespace WebCore

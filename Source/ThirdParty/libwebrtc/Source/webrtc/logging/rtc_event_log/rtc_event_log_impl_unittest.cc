@@ -66,7 +66,7 @@ class FakeOutput : public RtcEventLogOutput {
  public:
   explicit FakeOutput(std::string& written_data)
       : written_data_(written_data) {}
-  bool IsActive() const { return is_active_; }
+  bool IsActive() const override { return is_active_; }
   bool Write(absl::string_view data) override {
     RTC_DCHECK(is_active_);
     if (fails_write_) {

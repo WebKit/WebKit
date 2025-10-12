@@ -48,6 +48,8 @@ class VersionNameMap(object):
             platform = SystemHost.get_default().platform
         self.mapping = {}
 
+        from webkitpy.port import darwin, ios, watch, visionos
+
         self.default_system_platform = platform.os_name
         self.mapping[PUBLIC_TABLE] = {
             'mac': {
@@ -67,11 +69,12 @@ class VersionNameMap(object):
                 'Ventura': Version(13, 0),
                 'Sonoma': Version(14, 0),
                 'Sequoia': Version(15, 0),
+                'Tahoe': Version(26, 0)
             },
-            'ios': self._automap_to_major_version('iOS', minimum=Version(10), maximum=Version(18)),
-            'tvos': self._automap_to_major_version('tvOS', minimum=Version(10), maximum=Version(18)),
-            'watchos': self._automap_to_major_version('watchOS', minimum=Version(1), maximum=Version(11)),
-            'visionos': self._automap_to_major_version('visionOS', minimum=Version(1), maximum=Version(2)),
+            'ios': self._automap_to_major_version('iOS', minimum=Version(10), maximum=ios.IOSPort.CURRENT_VERSION),
+            'tvos': self._automap_to_major_version('tvOS', minimum=Version(10), maximum=darwin.DarwinPort.CURRENT_VERSION),
+            'watchos': self._automap_to_major_version('watchOS', minimum=Version(1), maximum=watch.WatchPort.CURRENT_VERSION),
+            'visionos': self._automap_to_major_version('visionOS', minimum=Version(1), maximum=visionos.VisionOSPort.CURRENT_VERSION),
             'win': {
                 'Win10': Version(10),
                 '8.1': Version(6, 3),

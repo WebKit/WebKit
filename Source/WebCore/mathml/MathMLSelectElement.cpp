@@ -28,6 +28,7 @@
 
 #if ENABLE(MATHML)
 
+#include "ContainerNodeInlines.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -86,7 +87,7 @@ bool MathMLSelectElement::isHTMLEncoding(const AtomString& value)
 
 bool MathMLSelectElement::childShouldCreateRenderer(const Node& child) const
 {
-    return MathMLElement::childShouldCreateRenderer(child) && m_selectedChild == &child;
+    return MathMLElement::childShouldCreateRenderer(child) && (document().settings().coreMathMLEnabled() || m_selectedChild == &child);
 }
 
 void MathMLSelectElement::finishParsingChildren()
@@ -118,7 +119,7 @@ int MathMLSelectElement::getSelectedActionChildAndIndex(Element*& selectedChild)
     if (!selectedChild)
         return 1;
 
-    int selection = getIntegralAttribute(MathMLNames::selectionAttr);
+    int selection = integralAttribute(MathMLNames::selectionAttr);
     int i;
     for (i = 1; i < selection; i++) {
         auto* nextChild = selectedChild->nextElementSibling();
@@ -153,7 +154,7 @@ Element* MathMLSelectElement::getSelectedActionChild()
         child = selectedChild;
     }
 
-    return child.get();
+    return child.unsafeGet();
 }
 
 Element* MathMLSelectElement::getSelectedSemanticsChild()
@@ -169,7 +170,7 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
         child = child->nextElementSibling();
     } else if (!downcast<MathMLElement>(*child).isSemanticAnnotation()) {
         // The first child is a presentation MathML but not an annotation, so we can just display it.
-        return child.get();
+        return child.unsafeGet();
     }
     // Otherwise, the first child is an <annotation> or <annotation-xml> element. This is invalid, but some people use this syntax so we take care of this case too and start the search from this first child.
 
@@ -182,7 +183,7 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
             if (child->hasAttributeWithoutSynchronization(MathMLNames::srcAttr))
                 continue;
             // Otherwise, we assume it is a text annotation that can always be displayed and we stop here.
-            return child.get();
+            return child.unsafeGet();
         }
 
         if (child->hasTagName(MathMLNames::annotation_xmlTag)) {
@@ -192,7 +193,7 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
             // If the <annotation-xml> element has an encoding attribute describing presentation MathML, SVG or HTML we assume the content can be displayed and we stop here.
             auto& value = child->attributeWithoutSynchronization(MathMLNames::encodingAttr);
             if (isMathMLEncoding(value) || isSVGEncoding(value) || isHTMLEncoding(value))
-                return child.get();
+                return child.unsafeGet();
         }
     }
 
@@ -202,6 +203,9 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
 
 void MathMLSelectElement::updateSelectedChild()
 {
+    if (document().settings().coreMathMLEnabled())
+        return;
+
     auto* newSelectedChild = hasTagName(mactionTag) ? getSelectedActionChild() : getSelectedSemanticsChild();
 
     if (m_selectedChild == newSelectedChild)
@@ -216,7 +220,7 @@ void MathMLSelectElement::updateSelectedChild()
 
 void MathMLSelectElement::defaultEventHandler(Event& event)
 {
-    if (isAnyClick(event)) {
+    if (!document().settings().coreMathMLEnabled() && isAnyClick(event)) {
         if (attributeWithoutSynchronization(MathMLNames::actiontypeAttr) == "toggle"_s) {
             toggle();
             event.setDefaultHandled();
@@ -229,7 +233,7 @@ void MathMLSelectElement::defaultEventHandler(Event& event)
 
 bool MathMLSelectElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
-    return attributeWithoutSynchronization(MathMLNames::actiontypeAttr) == "toggle"_s || MathMLRowElement::willRespondToMouseClickEventsWithEditability(editability);
+    return (!document().settings().coreMathMLEnabled() && attributeWithoutSynchronization(MathMLNames::actiontypeAttr) == "toggle"_s) || MathMLRowElement::willRespondToMouseClickEventsWithEditability(editability);
 }
 
 void MathMLSelectElement::toggle()

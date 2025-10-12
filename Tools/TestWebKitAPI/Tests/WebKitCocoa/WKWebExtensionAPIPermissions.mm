@@ -37,6 +37,7 @@
 #import <WebKit/WKWebExtensionContextPrivate.h>
 #import <WebKit/WKWebExtensionControllerDelegate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 namespace TestWebKitAPI {
 
@@ -169,7 +170,7 @@ TEST(WKWebExtensionAPIPermissions, AcceptPermissionsRequest)
         EXPECT_EQ(requestedMatchPatterns.count, matchPatterns.count);
         EXPECT_TRUE([requestedMatchPatterns isEqualToSet:matchPatterns]);
 
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             callback(requestedMatchPatterns, nil);
             requestComplete = true;
         });
@@ -282,7 +283,7 @@ TEST(WKWebExtensionAPIPermissions, RequestPermissionsOnly)
 
     // Grant the requested permissions.
     requestDelegate.get().promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             requestComplete = true;
             callback(requestedPermissions, nil);
         });
@@ -328,7 +329,7 @@ TEST(WKWebExtensionAPIPermissions, RequestMatchPatternsOnly)
 
     // Grant the requested match patterns.
     requestDelegate.get().promptForPermissionMatchPatterns = ^(id<WKWebExtensionTab> tab, NSSet<WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<WKWebExtensionMatchPattern *> *, NSDate *)) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             requestComplete = true;
             callback(requestedMatchPatterns, [NSDate dateWithTimeIntervalSinceNow:10]);
         });
@@ -369,7 +370,7 @@ TEST(WKWebExtensionAPIPermissions, RequestAllURLsMatchPattern)
 
     // Grant the requested match patterns.
     requestDelegate.get().promptForPermissionMatchPatterns = ^(id<WKWebExtensionTab> tab, NSSet<WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<WKWebExtensionMatchPattern *> *, NSDate *)) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             requestComplete = true;
             callback(requestedMatchPatterns, [NSDate dateWithTimeIntervalSinceNow:10]);
         });
@@ -754,7 +755,7 @@ TEST(WKWebExtensionAPIPermissions, GrantOnlySomePermissions)
 
     // Grant the requested permissions.
     requestDelegate.get().promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             requestComplete = true;
             callback(requestedPermissions, nil);
         });

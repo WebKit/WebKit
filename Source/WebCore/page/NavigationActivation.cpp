@@ -27,6 +27,7 @@
 #include "NavigationActivation.h"
 
 #include "NavigationHistoryEntry.h"
+#include "ScriptWrappableInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -39,6 +40,8 @@ NavigationActivation::NavigationActivation(NavigationNavigationType type, Ref<Na
     , m_fromEntry(WTFMove(fromEntry))
 {
 }
+
+NavigationActivation::~NavigationActivation() = default;
 
 } // namespace WebCore
 

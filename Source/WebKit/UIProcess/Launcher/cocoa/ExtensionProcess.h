@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,27 +43,24 @@ OBJC_PROTOCOL(UIInteraction);
 
 namespace WebKit {
 
-#if USE(LEGACY_EXTENSIONKIT_SPI)
-using ExtensionProcessVariant = Variant<RetainPtr<BEWebContentProcess>, RetainPtr<BENetworkingProcess>, RetainPtr<BERenderingProcess>, RetainPtr<_SEExtensionProcess>>;
-#else
 using ExtensionProcessVariant = Variant<RetainPtr<BEWebContentProcess>, RetainPtr<BENetworkingProcess>, RetainPtr<BERenderingProcess>>;
-#endif
 
 class ExtensionProcess {
 public:
     ExtensionProcess(BEWebContentProcess *);
     ExtensionProcess(BENetworkingProcess *);
     ExtensionProcess(BERenderingProcess *);
-#if USE(LEGACY_EXTENSIONKIT_SPI)
-    ExtensionProcess(_SEExtensionProcess *);
-#endif
 
     void invalidate() const;
     OSObjectPtr<xpc_connection_t> makeLibXPCConnection() const;
     PlatformGrant grantCapability(const PlatformCapability&, BlockPtr<void()>&& invalidationHandler = ^{ }) const;
     RetainPtr<UIInteraction> createVisibilityPropagationInteraction() const;
 
+    ExtensionProcess isolatedCopy() &&;
+
 private:
+    explicit ExtensionProcess(ExtensionProcessVariant&&);
+
     ExtensionProcessVariant m_process;
 };
 

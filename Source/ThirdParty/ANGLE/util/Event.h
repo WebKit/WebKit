@@ -27,7 +27,7 @@ class Event
 
     struct KeyEvent
     {
-        Key Code;
+        angle::KeyType Code;
         bool Alt;
         bool Control;
         bool Shift;
@@ -42,7 +42,7 @@ class Event
 
     struct MouseButtonEvent
     {
-        MouseButton Button;
+        angle::MouseButtonType Button;
         int X;
         int Y;
     };

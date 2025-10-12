@@ -45,7 +45,7 @@ class PythonChecker(object):
     def check(self, lines):
         self._check_pycodestyle(lines)
         # FIXME: https://bugs.webkit.org/show_bug.cgi?id=204133
-        # Pylint can't live happily in python 2 and 3 world, we need to pick one
+        # Pylint disabled for now
         self._inclusive_language_checker.check(lines)
 
     def _check_pycodestyle(self, lines):

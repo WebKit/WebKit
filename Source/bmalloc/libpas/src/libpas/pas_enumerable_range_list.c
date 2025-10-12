@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,15 +99,14 @@ bool pas_enumerable_range_list_iterate_remote(
     pas_enumerable_range_list_iterate_remote_callback callback,
     void* arg)
 {
-    pas_enumerable_range_list* list;
+    pas_compact_atomic_enumerable_range_list_chunk_ptr list_head;
     pas_enumerable_range_list_chunk* chunk;
 
-    list = pas_enumerator_read(enumerator, remote_list, sizeof(pas_enumerable_range_list));
-    if (!list)
+    if (!pas_enumerator_copy_remote(enumerator, &list_head, &remote_list->head, sizeof(pas_compact_atomic_enumerable_range_list_chunk_ptr)))
         return false;
 
     for (chunk = pas_compact_atomic_enumerable_range_list_chunk_ptr_load_remote(enumerator,
-                                                                                &list->head);
+                                                                                &list_head);
          chunk;
          chunk = pas_compact_atomic_enumerable_range_list_chunk_ptr_load_remote(enumerator,
                                                                                 &chunk->next)) {

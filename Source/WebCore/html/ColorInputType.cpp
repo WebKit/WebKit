@@ -38,6 +38,8 @@
 #include "Color.h"
 #include "ColorSerialization.h"
 #include "ColorTypes.h"
+#include "ContainerNodeInlines.h"
+#include "DocumentView.h"
 #include "ElementRareData.h"
 #include "Event.h"
 #include "HTMLDataListElement.h"
@@ -88,7 +90,7 @@ static std::optional<Color> parseColorValue(StringView string, HTMLInputElement&
     if (context.colorSpace().isNull())
         return parseSimpleColorValue(string);
     using namespace CSSPropertyParserHelpers;
-    auto document = context.protectedDocument();
+    Ref document = context.document();
     auto parserContext = document->cssParserContext();
     parserContext.mode = HTMLStandardMode;
     auto colorString = string.toString();
@@ -141,7 +143,7 @@ bool ColorInputType::isMouseFocusable() const
     return protectedElement()->isTextFormControlFocusable();
 }
 
-bool ColorInputType::isKeyboardFocusable(KeyboardEvent*) const
+bool ColorInputType::isKeyboardFocusable(const FocusEventData&) const
 {
     ASSERT(element());
 #if PLATFORM(IOS_FAMILY)
@@ -354,6 +356,11 @@ IntRect ColorInputType::elementRectRelativeToRootView() const
     if (!renderer)
         return IntRect();
     return element->protectedDocument()->protectedView()->contentsToRootView(renderer->absoluteBoundingBoxRect());
+}
+
+std::optional<FrameIdentifier> ColorInputType::rootFrameID() const
+{
+    return element()->protectedDocument()->protectedView()->rootFrameID();
 }
 
 bool ColorInputType::supportsAlpha() const

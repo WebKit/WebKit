@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ExceptionScope.h"
+#include <JavaScriptCore/ExceptionScope.h>
 
 namespace JSC {
 

@@ -23,9 +23,9 @@
 
 #pragma once
 
-#include "EventModifierInit.h"
-#include "PlatformEvent.h"
-#include "UIEvent.h"
+#include <WebCore/EventModifierInit.h>
+#include <WebCore/PlatformEvent.h>
+#include <WebCore/UIEvent.h>
 
 namespace WebCore {
 

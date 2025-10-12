@@ -54,7 +54,7 @@ SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
 
 namespace WebCore {
 
-ContentFilterUnblockHandler::ContentFilterUnblockHandler(String unblockURLHost, UnblockRequesterFunction unblockRequester)
+ContentFilterUnblockHandler::ContentFilterUnblockHandler(String unblockURLHost, UnblockRequesterFunction&& unblockRequester)
     : m_unblockURLHost { WTFMove(unblockURLHost) }
     , m_unblockRequester { WTFMove(unblockRequester) }
 {
@@ -116,7 +116,7 @@ Vector<uint8_t> ContentFilterUnblockHandler::webFilterEvaluatorData() const
 static RetainPtr<WebFilterEvaluator> unpackWebFilterEvaluatorData(Vector<uint8_t>&& vector)
 {
     NSError *error { nil };
-    NSSet<Class> *classes = [NSSet setWithObjects:getWebFilterEvaluatorClass(), NSNumber.class, NSURL.class, NSString.class, NSMutableString.class, nil];
+    NSSet<Class> *classes = [NSSet setWithObjects:getWebFilterEvaluatorClassSingleton(), NSNumber.class, NSURL.class, NSString.class, NSMutableString.class, nil];
     RetainPtr data = toNSDataNoCopy(vector.span(), FreeWhenDone::No);
     return [NSKeyedUnarchiver _strictlyUnarchivedObjectOfClasses:classes fromData:data.get() error:&error];
 }
@@ -178,6 +178,17 @@ bool ContentFilterUnblockHandler::needsUIProcess() const
 #endif
 }
 
+#if HAVE(WEBCONTENTRESTRICTIONS)
+bool ContentFilterUnblockHandler::needsNetworkProcess() const
+{
+#if PLATFORM(MAC)
+    return !!m_evaluatedURL;
+#else
+    return false;
+#endif
+}
+#endif
+
 bool ContentFilterUnblockHandler::canHandleRequest(const ResourceRequest& request) const
 {
     if (!m_unblockRequester && !m_unblockedAfterRequest) {
@@ -206,7 +217,7 @@ bool ContentFilterUnblockHandler::canHandleRequest(const ResourceRequest& reques
     return isUnblockRequest;
 }
 
-void ContentFilterUnblockHandler::requestUnblockAsync(DecisionHandlerFunction decisionHandler)
+void ContentFilterUnblockHandler::requestUnblockAsync(DecisionHandlerFunction&& decisionHandler)
 {
 #if HAVE(WEBCONTENTRESTRICTIONS)
     if (m_evaluatedURL) {
@@ -217,7 +228,6 @@ void ContentFilterUnblockHandler::requestUnblockAsync(DecisionHandlerFunction de
 #endif
         filter.allowURL(*m_evaluatedURL, [decisionHandler = WTFMove(decisionHandler)](bool didAllow) {
             callOnMainThread([decisionHandler = WTFMove(decisionHandler), didAllow]() {
-                RELEASE_LOG(ContentFiltering, "ParentalControlsURLFilter %" PUBLIC_LOG_STRING " the unblock request.\n", didAllow ? "allowed" : "did not allow");
                 decisionHandler(didAllow);
             });
         });
@@ -226,8 +236,8 @@ void ContentFilterUnblockHandler::requestUnblockAsync(DecisionHandlerFunction de
 #endif
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     if (RetainPtr evaluator = webFilterEvaluator()) {
-        [evaluator unblockWithCompletion:[decisionHandler](BOOL unblocked, NSError *) {
-            callOnMainThread([decisionHandler, unblocked] {
+        [evaluator unblockWithCompletion:[decisionHandler = WTFMove(decisionHandler)](BOOL unblocked, NSError *) {
+            callOnMainThread([decisionHandler = WTFMove(decisionHandler), unblocked] {
                 LOG(ContentFiltering, "WebFilterEvaluator %s the unblock request.\n", unblocked ? "allowed" : "did not allow");
                 decisionHandler(unblocked);
             });
@@ -242,13 +252,13 @@ void ContentFilterUnblockHandler::requestUnblockAsync(DecisionHandlerFunction de
         };
     }
     if (unblockRequester) {
-        unblockRequester([decisionHandler](bool unblocked) {
-            callOnMainThread([decisionHandler, unblocked] {
+        unblockRequester([decisionHandler = WTFMove(decisionHandler)](bool unblocked) {
+            callOnMainThread([decisionHandler = WTFMove(decisionHandler), unblocked] {
                 decisionHandler(unblocked);
             });
         });
     } else {
-        callOnMainThread([decisionHandler] {
+        callOnMainThread([decisionHandler = WTFMove(decisionHandler)] {
             auto unblocked = false;
             decisionHandler(unblocked);
         });

@@ -109,8 +109,8 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
     static Class theClass = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        ASSERT(getAVPlayerViewClass());
-        Class aClass = objc_allocateClassPair(getAVPlayerViewClass(), "WebAVPlayerView", 0);
+        ASSERT(getAVPlayerViewClassSingleton());
+        Class aClass = objc_allocateClassPair(getAVPlayerViewClassSingleton(), "WebAVPlayerView", 0);
         theClass = aClass;
         class_addMethod(theClass, @selector(setWebDelegate:), (IMP)WebAVPlayerView_setWebDelegate, "v@:@");
         class_addMethod(theClass, @selector(webDelegate), (IMP)WebAVPlayerView_webDelegate, "@@:");

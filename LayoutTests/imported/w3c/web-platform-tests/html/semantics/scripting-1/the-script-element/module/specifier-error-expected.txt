@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: Module name, 'string-without-dot-slash-prefix' does not resolve to a valid URL.
 
 PASS Test that invalid module specifier leads to TypeError on window.
 

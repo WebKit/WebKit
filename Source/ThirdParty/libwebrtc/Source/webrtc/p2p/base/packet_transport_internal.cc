@@ -10,16 +10,24 @@
 
 #include "p2p/base/packet_transport_internal.h"
 
-#include "api/sequence_checker.h"
-#include "rtc_base/network/received_packet.h"
+#include <optional>
+#include <utility>
 
-namespace rtc {
+#include "absl/functional/any_invocable.h"
+#include "api/sequence_checker.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/network/received_packet.h"
+#include "rtc_base/network_route.h"
+#include "rtc_base/socket.h"
+
+namespace webrtc {
 
 PacketTransportInternal::PacketTransportInternal() = default;
 
 PacketTransportInternal::~PacketTransportInternal() = default;
 
-bool PacketTransportInternal::GetOption(rtc::Socket::Option opt, int* value) {
+bool PacketTransportInternal::GetOption(Socket::Option /* opt */,
+                                        int* /* value */) {
   return false;
 }
 
@@ -29,8 +37,8 @@ std::optional<NetworkRoute> PacketTransportInternal::network_route() const {
 
 void PacketTransportInternal::RegisterReceivedPacketCallback(
     void* id,
-    absl::AnyInvocable<void(PacketTransportInternal*,
-                            const rtc::ReceivedPacket&)> callback) {
+    absl::AnyInvocable<void(PacketTransportInternal*, const ReceivedIpPacket&)>
+        callback) {
   RTC_DCHECK_RUN_ON(&network_checker_);
   received_packet_callback_list_.AddReceiver(id, std::move(callback));
 }
@@ -48,7 +56,7 @@ void PacketTransportInternal::SetOnCloseCallback(
 }
 
 void PacketTransportInternal::NotifyPacketReceived(
-    const rtc::ReceivedPacket& packet) {
+    const ReceivedIpPacket& packet) {
   RTC_DCHECK_RUN_ON(&network_checker_);
   received_packet_callback_list_.Send(this, packet);
 }
@@ -61,4 +69,4 @@ void PacketTransportInternal::NotifyOnClose() {
   }
 }
 
-}  // namespace rtc
+}  // namespace webrtc

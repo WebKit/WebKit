@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebTransportDatagramDuplexStream.h"
 
+#include "ExceptionOr.h"
 #include "JSDOMPromise.h"
 #include "ReadableStream.h"
 #include "WritableStream.h"
@@ -44,41 +45,6 @@ WebTransportDatagramDuplexStream::WebTransportDatagramDuplexStream(Ref<ReadableS
 }
 
 WebTransportDatagramDuplexStream::~WebTransportDatagramDuplexStream() = default;
-
-ReadableStream& WebTransportDatagramDuplexStream::readable()
-{
-    return m_readable.get();
-}
-
-WritableStream& WebTransportDatagramDuplexStream::writable()
-{
-    return m_writable.get();
-}
-
-unsigned WebTransportDatagramDuplexStream::maxDatagramSize()
-{
-    return m_outgoingMaxDatagramSize;
-}
-
-double WebTransportDatagramDuplexStream::incomingMaxAge()
-{
-    return m_incomingDatagramsExpirationDuration;
-}
-
-double WebTransportDatagramDuplexStream::outgoingMaxAge()
-{
-    return m_outgoingDatagramsExpirationDuration;
-}
-
-double WebTransportDatagramDuplexStream::incomingHighWaterMark()
-{
-    return m_incomingDatagramsHighWaterMark;
-}
-
-double WebTransportDatagramDuplexStream::outgoingHighWaterMark()
-{
-    return m_outgoingDatagramsHighWaterMark;
-}
 
 ExceptionOr<void> WebTransportDatagramDuplexStream::setIncomingMaxAge(double maxAge)
 {

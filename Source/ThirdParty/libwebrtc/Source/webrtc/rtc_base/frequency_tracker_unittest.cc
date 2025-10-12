@@ -10,6 +10,7 @@
 
 #include "rtc_base/frequency_tracker.h"
 
+#include <cstdint>
 #include <cstdlib>
 #include <limits>
 #include <optional>

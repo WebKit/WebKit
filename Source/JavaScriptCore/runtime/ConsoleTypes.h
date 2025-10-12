@@ -35,7 +35,6 @@ enum class MessageSource : uint8_t {
     Network,
     ConsoleAPI,
     Storage,
-    AppCache,
     Rendering,
     CSS,
     Accessibility,

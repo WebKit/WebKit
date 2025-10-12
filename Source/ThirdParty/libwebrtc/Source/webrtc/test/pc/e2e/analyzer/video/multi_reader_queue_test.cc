@@ -10,6 +10,7 @@
 
 #include "test/pc/e2e/analyzer/video/multi_reader_queue.h"
 
+#include <cstddef>
 #include <optional>
 
 #include "test/gtest.h"

@@ -100,7 +100,7 @@ template<typename CharacterType> static bool isSourceListNone(StringParsingBuffe
 ContentSecurityPolicySourceList::ContentSecurityPolicySourceList(const ContentSecurityPolicy& policy, const String& directiveName)
     : m_policy(policy)
     , m_directiveName(directiveName)
-    , m_contentSecurityPolicyModeForExtension(m_policy.contentSecurityPolicyModeForExtension())
+    , m_contentSecurityPolicyModeForExtension(policy.contentSecurityPolicyModeForExtension())
 {
 }
 
@@ -118,11 +118,11 @@ void ContentSecurityPolicySourceList::parse(const String& value)
 
 bool ContentSecurityPolicySourceList::isProtocolAllowedByStar(const URL& url) const
 {
-    if (m_policy.allowContentSecurityPolicySourceStarToMatchAnyProtocol())
+    if (m_policy->allowContentSecurityPolicySourceStarToMatchAnyProtocol())
         return true;
 
     // This is counter to the CSP3 spec which only allows HTTPS but Chromium also allows it.
-    bool isAllowed = url.protocolIsInHTTPFamily() || url.protocolIs("ws"_s) || url.protocolIs("wss"_s) || url.protocolIs(m_policy.selfProtocol());
+    bool isAllowed = url.protocolIsInHTTPFamily() || url.protocolIs("ws"_s) || url.protocolIs("wss"_s) || url.protocolIs(m_policy->selfProtocol());
     // Also not allowed by the Content Security Policy Level 3 spec., we allow a data URL to match
     // "img-src *" and either a data URL or blob URL to match "media-src *" for web compatibility.
     if (equalIgnoringASCIICase(m_directiveName, ContentSecurityPolicyDirectiveNames::imgSrc))
@@ -137,7 +137,7 @@ bool ContentSecurityPolicySourceList::matches(const URL& url, bool didReceiveRed
     if (m_allowStar && isProtocolAllowedByStar(url))
         return true;
 
-    if (m_allowSelf && m_policy.urlMatchesSelf(url, equalIgnoringASCIICase(m_directiveName, ContentSecurityPolicyDirectiveNames::frameSrc)
+    if (m_allowSelf && m_policy->urlMatchesSelf(url, equalIgnoringASCIICase(m_directiveName, ContentSecurityPolicyDirectiveNames::frameSrc)
 ))
         return true;
 
@@ -264,11 +264,11 @@ template<typename CharacterType> void ContentSecurityPolicySourceList::parse(Str
             if (source->scheme.isEmpty() && source->host.value.isEmpty())
                 continue;
             if (isCSPDirectiveName(source->host.value))
-                m_policy.reportDirectiveAsSourceExpression(m_directiveName, source->host.value);
+                m_policy->reportDirectiveAsSourceExpression(m_directiveName, source->host.value);
             if (isValidSourceForExtensionMode(source.value()))
                 m_list.append(ContentSecurityPolicySource(m_policy, source->scheme.convertToASCIILowercase(), source->host.value.toString(), source->port.value, source->path, source->host.hasWildcard, source->port.hasWildcard, IsSelfSource::No));
         } else
-            m_policy.reportInvalidSourceExpression(m_directiveName, beginSource.first(buffer.position() - beginSource.data()));
+            m_policy->reportInvalidSourceExpression(m_directiveName, beginSource.first(buffer.position() - beginSource.data()));
 
         ASSERT(buffer.atEnd() || isUnicodeCompatibleASCIIWhitespace(*buffer));
     }
@@ -538,7 +538,7 @@ template<typename CharacterType> String ContentSecurityPolicySourceList::parsePa
     // path/to/file.js?query=string || path/to/file.js#anchor
     //                ^                               ^
     if (buffer.hasCharactersRemaining())
-        m_policy.reportInvalidPathCharacter(m_directiveName, begin, *buffer);
+        m_policy->reportInvalidPathCharacter(m_directiveName, begin, *buffer);
 
     ASSERT(buffer.position() <= buffer.end());
     ASSERT(buffer.atEnd() || (*buffer == '#' || *buffer == '?'));

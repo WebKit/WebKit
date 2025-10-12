@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "WebGPUCanvasAlphaMode.h"
-#include "WebGPUCanvasToneMappingMode.h"
-#include "WebGPUDevice.h"
-#include "WebGPUPredefinedColorSpace.h"
-#include "WebGPUTextureFormat.h"
-#include "WebGPUTextureUsage.h"
+#include <WebCore/WebGPUCanvasAlphaMode.h>
+#include <WebCore/WebGPUCanvasToneMappingMode.h>
+#include <WebCore/WebGPUDevice.h>
+#include <WebCore/WebGPUPredefinedColorSpace.h>
+#include <WebCore/WebGPUTextureFormat.h>
+#include <WebCore/WebGPUTextureUsage.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 

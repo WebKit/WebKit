@@ -2,17 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Anonymous function name should be set based on method definition
+info: bugzilla.mozilla.org/show_bug.cgi?id=883377
 esid: pending
 ---*/
-var BUGNUMBER = 883377;
-var summary = "Anonymous function name should be set based on method definition";
-
-print(BUGNUMBER + ": " + summary);
 
 var fooSymbol = Symbol("foo");
 var emptySymbol = Symbol("");
@@ -76,4 +70,3 @@ testMethod("static *", "class");
 testMethod("static async", "class");
 testMethod("static get", "class");
 testMethod("static set", "class");
-

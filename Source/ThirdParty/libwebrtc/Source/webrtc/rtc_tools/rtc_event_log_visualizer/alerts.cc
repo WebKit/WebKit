@@ -10,10 +10,9 @@
 
 #include "rtc_tools/rtc_event_log_visualizer/alerts.h"
 
-#include <stdio.h>
-
 #include <algorithm>
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
 #include <functional>
 #include <map>

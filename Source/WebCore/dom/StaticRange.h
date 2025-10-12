@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "AbstractRange.h"
-#include "SimpleRange.h"
+#include <WebCore/AbstractRange.h>
+#include <WebCore/SimpleRange.h>
 
 namespace JSC {
 

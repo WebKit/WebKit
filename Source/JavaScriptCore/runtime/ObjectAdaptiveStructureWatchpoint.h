@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "ObjectPropertyCondition.h"
-#include "PackedCellPtr.h"
-#include "Watchpoint.h"
+#include <JavaScriptCore/ObjectPropertyCondition.h>
+#include <JavaScriptCore/PackedCellPtr.h>
+#include <JavaScriptCore/Watchpoint.h>
 
 namespace JSC {
 

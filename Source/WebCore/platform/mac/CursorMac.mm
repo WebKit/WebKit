@@ -114,77 +114,78 @@ static NSInteger WKCoreCursor_coreCursorType(id self, SEL)
     return NSNotFound;
 }
 
-static Class createCoreCursorClass()
+static Class createCoreCursorClassSingleton()
 {
-    Class coreCursorClass = objc_allocateClassPair([NSCursor class], "WKCoreCursor", 0);
+    // Class is immortable so no need to ref here.
+    SUPPRESS_UNRETAINED_LOCAL Class coreCursorClass = objc_allocateClassPair([NSCursor class], "WKCoreCursor", 0);
     SEL coreCursorType = NSSelectorFromString(@"_coreCursorType");
     class_addMethod(coreCursorClass, coreCursorType, (IMP)WKCoreCursor_coreCursorType, method_getTypeEncoding(class_getInstanceMethod([NSCursor class], coreCursorType)));
     objc_registerClassPair(coreCursorClass);
     return coreCursorClass;
 }
 
-static Class coreCursorClass()
+static Class coreCursorClassSingleton()
 {
-    Class coreCursorClass = objc_lookUpClass("WKCoreCursor");
+    // Class is immortable so no need to ref here.
+    SUPPRESS_UNRETAINED_LOCAL Class coreCursorClass = objc_lookUpClass("WKCoreCursor");
     if (!coreCursorClass)
-        coreCursorClass = createCoreCursorClass();
+        coreCursorClass = createCoreCursorClassSingleton();
     return coreCursorClass;
 }
 
-static NSCursor *cursor(ASCIILiteral name)
+static RetainPtr<NSCursor> cursor(ASCIILiteral name)
 {
-    __strong NSCursor **slot = nullptr;
+    RetainPtr<NSCursor> slot;
     
     if (name == "BusyButClickable"_s)
-        slot = &busyButClickableNSCursor;
+        slot = busyButClickableNSCursor;
     else if (name == "MakeAlias"_s)
-        slot = &makeAliasNSCursor;
+        slot = makeAliasNSCursor;
     else if (name == "Move"_s)
-        slot = &moveNSCursor;
+        slot = moveNSCursor;
     else if (name == "ResizeEast"_s)
-        slot = &resizeEastNSCursor;
+        slot = resizeEastNSCursor;
     else if (name == "ResizeEastWest"_s)
-        slot = &resizeEastWestNSCursor;
+        slot = resizeEastWestNSCursor;
     else if (name == "ResizeNorth"_s)
-        slot = &resizeNorthNSCursor;
+        slot = resizeNorthNSCursor;
     else if (name == "ResizeNorthSouth"_s)
-        slot = &resizeNorthSouthNSCursor;
+        slot = resizeNorthSouthNSCursor;
     else if (name == "ResizeNortheast"_s)
-        slot = &resizeNortheastNSCursor;
+        slot = resizeNortheastNSCursor;
     else if (name == "ResizeNortheastSouthwest"_s)
-        slot = &resizeNortheastSouthwestNSCursor;
+        slot = resizeNortheastSouthwestNSCursor;
     else if (name == "ResizeNorthwest"_s)
-        slot = &resizeNorthwestNSCursor;
+        slot = resizeNorthwestNSCursor;
     else if (name == "ResizeNorthwestSoutheast"_s)
-        slot = &resizeNorthwestSoutheastNSCursor;
+        slot = resizeNorthwestSoutheastNSCursor;
     else if (name == "ResizeSouth"_s)
-        slot = &resizeSouthNSCursor;
+        slot = resizeSouthNSCursor;
     else if (name == "ResizeSoutheast"_s)
-        slot = &resizeSoutheastNSCursor;
+        slot = resizeSoutheastNSCursor;
     else if (name == "ResizeSouthwest"_s)
-        slot = &resizeSouthwestNSCursor;
+        slot = resizeSouthwestNSCursor;
     else if (name == "ResizeWest"_s)
-        slot = &resizeWestNSCursor;
+        slot = resizeWestNSCursor;
     else if (name == "Cell"_s)
-        slot = &cellNSCursor;
+        slot = cellNSCursor;
     else if (name == "Help"_s)
-        slot = &helpNSCursor;
+        slot = helpNSCursor;
     else if (name == "ZoomIn"_s)
-        slot = &zoomInNSCursor;
+        slot = zoomInNSCursor;
     else if (name == "ZoomOut"_s)
-        slot = &zoomOutNSCursor;
-    
-    if (!slot)
+        slot = zoomOutNSCursor;
+    else
         return nil;
     
-    if (!*slot)
-        *slot = [[coreCursorClass() alloc] init];
-    return *slot;
+    if (!slot)
+        return adoptNS([[coreCursorClassSingleton() alloc] init]);
+    return slot;
 }
 
 #else
 
-static NSCursor *cursor(ASCIILiteral)
+static RetainPtr<NSCursor> cursor(ASCIILiteral)
 {
     return [NSCursor arrowCursor];
 }
@@ -414,7 +415,7 @@ NSCursor *Cursor::platformCursor() const
 
 void Cursor::setAsPlatformCursor() const
 {
-    NSCursor *cursor = platformCursor();
+    RetainPtr cursor = platformCursor();
     if ([NSCursor currentCursor] == cursor)
         return;
     [cursor set];

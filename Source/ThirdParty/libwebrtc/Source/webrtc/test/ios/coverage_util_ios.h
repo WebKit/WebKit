@@ -11,7 +11,7 @@
 #ifndef TEST_IOS_COVERAGE_UTIL_IOS_H_
 #define TEST_IOS_COVERAGE_UTIL_IOS_H_
 
-namespace rtc {
+namespace webrtc {
 namespace test {
 
 // In debug builds, if IOS_ENABLE_COVERAGE is defined, sets the filename of the
@@ -19,6 +19,6 @@ namespace test {
 void ConfigureCoverageReportPath();
 
 }  // namespace test
-}  // namespace rtc
+}  // namespace webrtc
 
 #endif  // TEST_IOS_COVERAGE_UTIL_IOS_H_

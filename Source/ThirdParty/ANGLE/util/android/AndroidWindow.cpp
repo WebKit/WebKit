@@ -209,6 +209,12 @@ void android_main(struct android_app *app)
         if (source != nullptr)
         {
             source->process(app, source);
+
+            // Check if the app is being destroyed, so we don't block it forever.
+            if (sApp->destroyRequested)
+            {
+                break;
+            }
         }
     }
 }

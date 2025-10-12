@@ -9,7 +9,7 @@ nowrap nowrap nowrap nowrap
 The text decoration doesnâ€™t propagate into tables quirk
 decoration
 The collapsing table quirk
-Chrome Legacy/Edge/Safari ignore the quirk, FF does not. Proposal: depreciate the quirk
+Chrome Legacy/Edge/Safari ignore the quirk, FF does not. Proposal: deprecate the quirk
 The table cell width calculation quirk
 
 

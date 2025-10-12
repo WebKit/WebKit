@@ -1,0 +1,16 @@
+a
+b
+c
+d
+
+PASS .stretch 1
+PASS .stretch 2
+FAIL .stretch 3 assert_equals:
+<div class="container">
+  <div class="stretch" style="height: 75px; border-color: cyan" data-expected-width="156">c</div>
+  <div style="border-color: orange; width: 150px"></div>
+  <div class="stretch" style="height: 75px; border-color: magenta" data-expected-width="100">d</div>
+</div>
+width expected 156 but got 100
+PASS .stretch 4
+

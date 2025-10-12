@@ -32,3 +32,6 @@ for some clang related documentation from Chromium.
 Other compilers are not officially supported (which means there is no CI
 coverage for them) but patches to keep WebRTC working with them are welcomed by
 the WebRTC Team.
+
+For Microsofts Visual C++ compiler the minimum supported version is `_MSC_VER 1929`
+which means  Visual Studio 2019 version 16.11 or higher.

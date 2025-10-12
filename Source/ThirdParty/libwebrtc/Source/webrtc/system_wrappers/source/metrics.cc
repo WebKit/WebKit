@@ -10,8 +10,15 @@
 #include "system_wrappers/include/metrics.h"
 
 #include <algorithm>
+#include <atomic>
+#include <cstddef>
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
 
 #include "absl/strings/string_view.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/string_utils.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
@@ -138,9 +145,9 @@ class RtcHistogramMap {
     return reinterpret_cast<Histogram*>(hist);
   }
 
-  void GetAndReset(std::map<std::string,
-                            std::unique_ptr<SampleInfo>,
-                            rtc::AbslStringViewCmp>* histograms) {
+  void GetAndReset(
+      std::map<std::string, std::unique_ptr<SampleInfo>, AbslStringViewCmp>*
+          histograms) {
     MutexLock lock(&mutex_);
     for (const auto& kv : map_) {
       std::unique_ptr<SampleInfo> info = kv.second->GetAndReset();
@@ -182,15 +189,15 @@ class RtcHistogramMap {
 
  private:
   mutable Mutex mutex_;
-  std::map<std::string, std::unique_ptr<RtcHistogram>, rtc::AbslStringViewCmp>
-      map_ RTC_GUARDED_BY(mutex_);
+  std::map<std::string, std::unique_ptr<RtcHistogram>, AbslStringViewCmp> map_
+      RTC_GUARDED_BY(mutex_);
 };
 
 // RtcHistogramMap is allocated upon call to Enable().
 // The histogram getter functions, which return pointer values to the histograms
 // in the map, are cached in WebRTC. Therefore, this memory is not freed by the
 // application (the memory will be reclaimed by the OS).
-static std::atomic<RtcHistogramMap*> g_rtc_histogram_map(nullptr);
+std::atomic<RtcHistogramMap*> g_rtc_histogram_map(nullptr);
 
 void CreateMap() {
   RtcHistogramMap* map = g_rtc_histogram_map.load(std::memory_order_acquire);
@@ -204,7 +211,7 @@ void CreateMap() {
 // Set the first time we start using histograms. Used to make sure Enable() is
 // not called thereafter.
 #if RTC_DCHECK_IS_ON
-static std::atomic<int> g_rtc_histogram_called(0);
+std::atomic<int> g_rtc_histogram_called(0);
 #endif
 
 // Gets the map (or nullptr).
@@ -293,7 +300,7 @@ void Enable() {
 }
 
 void GetAndReset(
-    std::map<std::string, std::unique_ptr<SampleInfo>, rtc::AbslStringViewCmp>*
+    std::map<std::string, std::unique_ptr<SampleInfo>, AbslStringViewCmp>*
         histograms) {
   histograms->clear();
   RtcHistogramMap* map = GetMap();

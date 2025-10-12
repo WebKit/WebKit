@@ -48,13 +48,15 @@ static io_connect_t attachToAppleGraphicsControl()
     if (IOMainPort(MACH_PORT_NULL, &mainPort) != KERN_SUCCESS)
         return IO_OBJECT_NULL;
 
-    CFDictionaryRef classToMatch = IOServiceMatching("AppleGraphicsControl");
+    RetainPtr classToMatch = adoptCF(IOServiceMatching("AppleGraphicsControl"));
     if (!classToMatch)
         return IO_OBJECT_NULL;
 
     kern_return_t kernResult;
     io_iterator_t iterator;
-    if ((kernResult = IOServiceGetMatchingServices(mainPort, classToMatch, &iterator)) != KERN_SUCCESS)
+    // FIXME: This is a safer cpp false positive. IOServiceGetMatchingServices() will consume
+    // a reference for `classToMatch` but the analyser currently has no way to know.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT if ((kernResult = IOServiceGetMatchingServices(mainPort, classToMatch.leakRef(), &iterator)) != KERN_SUCCESS)
         return IO_OBJECT_NULL;
 
     io_service_t serviceObject = IOIteratorNext(iterator);

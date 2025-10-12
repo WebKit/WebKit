@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,7 +68,7 @@ void RemoteVideoFrameObjectHeapProxyProcessor::initialize()
         connection = m_connection;
     }
 
-    connection->addWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeapProxyProcessor::messageReceiverName(), protectedQueue(), *this);
+    connection->addWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeapProxyProcessor::messageReceiverName(), m_queue, *this);
 }
 
 void RemoteVideoFrameObjectHeapProxyProcessor::gpuProcessConnectionDidClose(GPUProcessConnection& connection)
@@ -78,7 +78,7 @@ void RemoteVideoFrameObjectHeapProxyProcessor::gpuProcessConnectionDidClose(GPUP
         Locker lock(m_connectionLock);
         m_connection = nullptr;
     }
-    connection.protectedConnection()->removeWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeapProxyProcessor::messageReceiverName());
+    connection.connection().removeWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeapProxyProcessor::messageReceiverName());
     clearCallbacks();
 }
 
@@ -90,7 +90,7 @@ void RemoteVideoFrameObjectHeapProxyProcessor::clearCallbacks()
         callbacks = std::exchange(m_callbacks, { });
     }
 
-    protectedQueue()->dispatch([queue = m_queue, callbacks = WTFMove(callbacks)]() mutable {
+    m_queue->dispatch([callbacks = WTFMove(callbacks)]() mutable {
         for (auto& callback : callbacks.values())
             callback({ });
     });

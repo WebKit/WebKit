@@ -72,7 +72,7 @@ def main(script_name, argv):
         sys.path.insert(0, filesystem.join(top_level_directory, 'Tools', 'jhbuild'))
         import jhbuildutils
 
-        if not flatpakutils.is_sandboxed() and not jhbuildutils.enter_jhbuild_environment_if_available(port.name()):
+        if not flatpakutils.is_sandboxed() and not jhbuildutils.enter_jhbuild_environment_if_available(port.name()) and os.environ.get('WEBKIT_BUILD_USE_SYSTEM_LIBRARIES') != '1':
             _log.warning('jhbuild environment not present. Run update-webkitgtk-libs before build-webkit to ensure proper testing.')
 
     # Create the Port-specific driver.
@@ -156,7 +156,9 @@ class WPTRunner(object):
             test_downloader = self._downloader_class(WPTPaths.checkout_directory(self._finder),
                 self._host, self._downloader_class.default_options())
             test_downloader.clone_tests()
-            self._options.wpt_checkout = WPTPaths.wpt_checkout_path(self._finder)
+            self._options.wpt_checkout = self._host.filesystem.join(
+                WPTPaths.checkout_directory(self._finder),
+                "web-platform-tests")
 
         if not self._options.wpt_checkout or not self._host.filesystem.exists(self._options.wpt_checkout):
             _log.error("Valid web-platform-tests directory required")

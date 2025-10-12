@@ -154,7 +154,7 @@ JSValue JSTestScheduledAction::getConstructor(VM& vm, const JSGlobalObject* glob
 
 void JSTestScheduledAction::destroy(JSC::JSCell* cell)
 {
-    JSTestScheduledAction* thisObject = static_cast<JSTestScheduledAction*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestScheduledAction* thisObject = static_cast<JSTestScheduledAction*>(cell);
     thisObject->JSTestScheduledAction::~JSTestScheduledAction();
 }
 
@@ -191,7 +191,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestScheduledActionPrototypeFunction_method, (JSGloba
 
 JSC::GCClient::IsoSubspace* JSTestScheduledAction::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestScheduledAction, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestScheduledAction, UseCustomHeapCellType::No>(vm, "JSTestScheduledAction"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestScheduledAction.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestScheduledAction = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestScheduledAction.get(); },
@@ -218,7 +218,7 @@ bool JSTestScheduledActionOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unk
 
 void JSTestScheduledActionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestScheduledAction = static_cast<JSTestScheduledAction*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestScheduledAction = static_cast<JSTestScheduledAction*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestScheduledAction->protectedWrapped().ptr(), jsTestScheduledAction);
 }
@@ -231,7 +231,9 @@ extern "C" { extern void (*const __identifier("??_7TestScheduledAction@WebCore@@
 #else
 extern "C" { extern void* _ZTVN7WebCore19TestScheduledActionE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestScheduledAction>, void>> static inline void verifyVTable(TestScheduledAction* ptr) {
+template<std::same_as<TestScheduledAction> T>
+static inline void verifyVTable(TestScheduledAction* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -250,8 +252,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestScheduled
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestScheduledAction>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestScheduledAction>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestScheduledAction>(impl.ptr());
 #endif

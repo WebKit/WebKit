@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/javascript-url-srcdoc-cross-origin-iframe-inheritance-helper.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/message-opener-and-navigate-back.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/message-top-and-navigate-back.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/message-top-and-navigate-back.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/navigate-parent-to-blob.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/navigate-self-to-blob.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/navigate-self-to-blob.html.sub.headers

@@ -27,11 +27,11 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
-#include "Exception.h"
-#include "MediaPositionState.h"
-#include "MediaSessionCoordinatorState.h"
-#include "MediaSessionPlaybackState.h"
-#include "MediaSessionReadyState.h"
+#include <WebCore/Exception.h>
+#include <WebCore/MediaPositionState.h>
+#include <WebCore/MediaSessionCoordinatorState.h>
+#include <WebCore/MediaSessionPlaybackState.h>
+#include <WebCore/MediaSessionReadyState.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/WeakPtr.h>
 

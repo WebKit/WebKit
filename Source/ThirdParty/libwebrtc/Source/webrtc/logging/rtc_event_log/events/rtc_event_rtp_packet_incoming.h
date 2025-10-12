@@ -44,8 +44,8 @@ class RtcEventRtpPacketIncoming final : public RtcEvent {
 
   size_t packet_length() const { return packet_.size(); }
 
-  rtc::ArrayView<const uint8_t> RawHeader() const {
-    return rtc::MakeArrayView(packet_.data(), header_length());
+  ArrayView<const uint8_t> RawHeader() const {
+    return MakeArrayView(packet_.data(), header_length());
   }
   uint32_t Ssrc() const { return packet_.Ssrc(); }
   uint32_t Timestamp() const { return packet_.Timestamp(); }
@@ -57,7 +57,7 @@ class RtcEventRtpPacketIncoming final : public RtcEvent {
     return packet_.GetExtension<ExtensionTrait>(std::forward<Args>(args)...);
   }
   template <typename ExtensionTrait>
-  rtc::ArrayView<const uint8_t> GetRawExtension() const {
+  ArrayView<const uint8_t> GetRawExtension() const {
     return packet_.GetRawExtension<ExtensionTrait>();
   }
   template <typename ExtensionTrait>
@@ -69,7 +69,7 @@ class RtcEventRtpPacketIncoming final : public RtcEvent {
   size_t header_length() const { return packet_.headers_size(); }
   size_t padding_length() const { return packet_.padding_size(); }
 
-  static std::string Encode(rtc::ArrayView<const RtcEvent*> /* batch */) {
+  static std::string Encode(ArrayView<const RtcEvent*> /* batch */) {
     // TODO(terelius): Implement
     return "";
   }

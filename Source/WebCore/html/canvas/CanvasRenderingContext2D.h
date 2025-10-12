@@ -59,7 +59,7 @@ private:
 
     const FontProxy* fontProxy() final;
 
-    std::optional<FilterOperations> setFilterStringWithoutUpdatingStyle(const String&) override;
+    std::optional<Style::Filter> setFilterStringWithoutUpdatingStyle(const String&) override;
     RefPtr<Filter> createFilter(const FloatRect& bounds) const override;
     IntOutsets calculateFilterOutsets(const FloatRect& bounds) const override;
 

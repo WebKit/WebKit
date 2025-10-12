@@ -66,7 +66,7 @@ static String urlForLoggingTrack(const URL& url)
 inline HTMLTrackElement::HTMLTrackElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
     , ActiveDOMObject(document)
-    , m_track(LoadableTextTrack::create(*this, attributeWithoutSynchronization(kindAttr).convertToASCIILowercase(), label(), srclang()))
+    , m_track(LoadableTextTrack::create(*this, nullAtom(), nullAtom(), nullAtom()))
 {
     m_track->addClient(*this);
     LOG(Media, "HTMLTrackElement::HTMLTrackElement - %p", this);
@@ -142,21 +142,6 @@ void HTMLTrackElement::attributeChanged(const QualifiedName& name, const AtomStr
 const AtomString& HTMLTrackElement::kind()
 {
     return track().kindKeyword();
-}
-
-void HTMLTrackElement::setKind(const AtomString& kind)
-{
-    setAttributeWithoutSynchronization(kindAttr, kind);
-}
-
-const AtomString& HTMLTrackElement::srclang() const
-{
-    return attributeWithoutSynchronization(srclangAttr);
-}
-
-const AtomString& HTMLTrackElement::label() const
-{
-    return attributeWithoutSynchronization(labelAttr);
 }
 
 bool HTMLTrackElement::isDefault() const

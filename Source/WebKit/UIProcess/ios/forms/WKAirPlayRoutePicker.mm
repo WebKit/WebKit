@@ -82,7 +82,7 @@ typedef NSInteger WKAirPlayRoutePickerRouteSharingPolicy;
     [routingController setDiscoveryMode:MPRouteDiscoveryModeDetailed];
 
     RetainPtr<MPMediaControlsConfiguration> configuration;
-    if ([getMPMediaControlsConfigurationClass() instancesRespondToSelector:@selector(setSortByIsVideoRoute:)]) {
+    if ([getMPMediaControlsConfigurationClassSingleton() instancesRespondToSelector:@selector(setSortByIsVideoRoute:)]) {
         configuration = adoptNS([allocMPMediaControlsConfigurationInstance() init]);
         configuration.get().sortByIsVideoRoute = hasVideo;
     }

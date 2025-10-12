@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,8 +48,8 @@ void VideoTrackList::append(Ref<VideoTrack>&& track)
     size_t index = track->inbandTrackIndex();
     size_t insertionIndex;
     for (insertionIndex = 0; insertionIndex < m_inbandTracks.size(); ++insertionIndex) {
-        auto& otherTrack = downcast<VideoTrack>(*m_inbandTracks[insertionIndex]);
-        if (otherTrack.inbandTrackIndex() > index)
+        Ref otherTrack = downcast<VideoTrack>(*m_inbandTracks[insertionIndex]);
+        if (otherTrack->inbandTrackIndex() > index)
             break;
     }
     m_inbandTracks.insert(insertionIndex, track.ptr());
@@ -70,9 +70,9 @@ VideoTrack* VideoTrackList::item(unsigned index) const
 VideoTrack* VideoTrackList::getTrackById(const AtomString& id) const
 {
     for (auto& inbandTracks : m_inbandTracks) {
-        auto& track = downcast<VideoTrack>(*inbandTracks);
-        if (track.id() == id)
-            return &track;
+        Ref track = downcast<VideoTrack>(*inbandTracks);
+        if (track->id() == id)
+            return track.ptr();
     }
     return nullptr;
 }

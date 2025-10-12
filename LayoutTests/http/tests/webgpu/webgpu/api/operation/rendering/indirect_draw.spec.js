@@ -7,7 +7,8 @@ import {
   kDrawIndirectParametersSize,
   kDrawIndexedIndirectParametersSize } from
 '../../../capability_info.js';
-import { AllFeaturesMaxLimitsGPUTest, TextureTestMixin } from '../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
+import * as ttu from '../../../texture_test_utils.js';
 
 const filled = new Uint8Array([0, 255, 0, 255]);
 const notFilled = new Uint8Array([0, 0, 0, 0]);
@@ -15,7 +16,7 @@ const notFilled = new Uint8Array([0, 0, 0, 0]);
 const kRenderTargetFormat = 'rgba8unorm';
 
 class F extends AllFeaturesMaxLimitsGPUTest {
-  MakeIndexBuffer() {
+  makeIndexBuffer() {
     return this.makeBufferWithContents(
       new Uint32Array([
       0, 1, 2, // The bottom left triangle
@@ -25,7 +26,7 @@ class F extends AllFeaturesMaxLimitsGPUTest {
     );
   }
 
-  MakeVertexBuffer(isIndexed) {
+  makeVertexBuffer(isIndexed) {
 
     const vertices = isIndexed ?
     [
@@ -48,7 +49,7 @@ class F extends AllFeaturesMaxLimitsGPUTest {
     return this.makeBufferWithContents(new Float32Array(vertices), GPUBufferUsage.VERTEX);
   }
 
-  MakeIndirectBuffer(isIndexed, indirectOffset) {
+  makeIndirectBuffer(isIndexed, indirectOffset) {
     const o = indirectOffset / Uint32Array.BYTES_PER_ELEMENT;
 
     const parametersSize = isIndexed ?
@@ -124,7 +125,7 @@ class F extends AllFeaturesMaxLimitsGPUTest {
   }
 }
 
-export const g = makeTestGroup(TextureTestMixin(F));
+export const g = makeTestGroup(F);
 
 g.test('basics').
 desc(
@@ -164,8 +165,8 @@ expand('indirectOffset', (p) => {
 fn((t) => {
   const { isIndexed, indirectOffset } = t.params;
 
-  const vertexBuffer = t.MakeVertexBuffer(isIndexed);
-  const indirectBuffer = t.MakeIndirectBuffer(isIndexed, indirectOffset);
+  const vertexBuffer = t.makeVertexBuffer(isIndexed);
+  const indirectBuffer = t.makeIndirectBuffer(isIndexed, indirectOffset);
 
   const pipeline = t.device.createRenderPipeline({
     layout: 'auto',
@@ -225,7 +226,7 @@ fn((t) => {
   renderPass.setVertexBuffer(0, vertexBuffer, 0);
 
   if (isIndexed) {
-    renderPass.setIndexBuffer(t.MakeIndexBuffer(), 'uint32', 0);
+    renderPass.setIndexBuffer(t.makeIndexBuffer(), 'uint32', 0);
     renderPass.drawIndexedIndirect(indirectBuffer, indirectOffset);
   } else {
     renderPass.drawIndirect(indirectBuffer, indirectOffset);
@@ -233,7 +234,7 @@ fn((t) => {
   renderPass.end();
   t.queue.submit([commandEncoder.finish()]);
 
-  t.expectSinglePixelComparisonsAreOkInTexture({ texture: renderTarget }, [
+  ttu.expectSinglePixelComparisonsAreOkInTexture(t, { texture: renderTarget }, [
   // The bottom left area is filled
   { coord: { x: 0, y: 1 }, exp: filled },
   // The top right area is not filled

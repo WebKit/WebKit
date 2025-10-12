@@ -55,27 +55,27 @@ static inline LayoutSize computeMarginBoxShapeRadius(const LayoutSize& radius, c
         adjustRadiusForMarginBoxShape(radius.height(), adjacentMargins.height()));
 }
 
-static inline RoundedRect::Radii computeMarginBoxShapeRadii(const RoundedRect::Radii& radii, const RenderBox& renderer)
+static inline LayoutRoundedRect::Radii computeMarginBoxShapeRadii(const LayoutRoundedRect::Radii& radii, const RenderBox& renderer)
 {
-    return RoundedRect::Radii(computeMarginBoxShapeRadius(radii.topLeft(), LayoutSize(renderer.marginLeft(), renderer.marginTop())),
+    return LayoutRoundedRect::Radii(computeMarginBoxShapeRadius(radii.topLeft(), LayoutSize(renderer.marginLeft(), renderer.marginTop())),
         computeMarginBoxShapeRadius(radii.topRight(), LayoutSize(renderer.marginRight(), renderer.marginTop())),
         computeMarginBoxShapeRadius(radii.bottomLeft(), LayoutSize(renderer.marginLeft(), renderer.marginBottom())),
         computeMarginBoxShapeRadius(radii.bottomRight(), LayoutSize(renderer.marginRight(), renderer.marginBottom())));
 }
 
-RoundedRect computeRoundedRectForBoxShape(CSSBoxType box, const RenderBox& renderer)
+LayoutRoundedRect computeRoundedRectForBoxShape(CSSBoxType box, const RenderBox& renderer)
 {
     const RenderStyle& style = renderer.style();
     switch (box) {
     case CSSBoxType::MarginBox: {
         if (!style.hasBorderRadius())
-            return RoundedRect(renderer.marginBoxRect(), RoundedRect::Radii());
+            return LayoutRoundedRect(renderer.marginBoxRect(), LayoutRoundedRect::Radii());
 
         auto marginBox = renderer.marginBoxRect();
         auto borderShape = BorderShape::shapeForBorderRect(style, renderer.borderBoxRect());
-        RoundedRect::Radii radii = computeMarginBoxShapeRadii(borderShape.radii(), renderer);
+        LayoutRoundedRect::Radii radii = computeMarginBoxShapeRadii(borderShape.radii(), renderer);
         radii.scale(calcBorderRadiiConstraintScaleFor(marginBox, radii));
-        return RoundedRect(marginBox, radii);
+        return LayoutRoundedRect(marginBox, radii);
     }
     case CSSBoxType::PaddingBox:
         return BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()).deprecatedInnerRoundedRect();

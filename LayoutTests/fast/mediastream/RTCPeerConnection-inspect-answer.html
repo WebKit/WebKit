@@ -70,6 +70,7 @@
                 printComparableSessionDescription(answer, mediaDescriptionVariables);
 
                 finishJSTest();
+                remoteStream.getTracks().forEach(track => track.stop());
             })
             .catch(function (error) {
                 testFailed("Error in promise chain: " + error);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,12 +46,12 @@ WKAuthenticationDecisionListenerRef WKAuthenticationChallengeGetDecisionListener
 
 WKProtectionSpaceRef WKAuthenticationChallengeGetProtectionSpace(WKAuthenticationChallengeRef challenge)
 {
-    return toAPI(toProtectedImpl(challenge)->protectionSpace());
+    return toAPI(toProtectedImpl(challenge)->protectedProtectionSpace().get());
 }
 
 WKCredentialRef WKAuthenticationChallengeGetProposedCredential(WKAuthenticationChallengeRef challenge)
 {
-    return toAPI(toProtectedImpl(challenge)->proposedCredential());
+    return toAPI(toProtectedImpl(challenge)->protectedProposedCredential().get());
 }
 
 int WKAuthenticationChallengeGetPreviousFailureCount(WKAuthenticationChallengeRef challenge)

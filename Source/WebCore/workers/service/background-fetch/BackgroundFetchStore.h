@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ServiceWorkerRegistrationKey.h"
+#include <WebCore/ServiceWorkerRegistrationKey.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>

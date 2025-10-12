@@ -29,6 +29,7 @@
 #include "config.h"
 #include "VisitedLinkState.h"
 
+#include "DocumentPage.h"
 #include "ElementIterator.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLAnchorElementInlines.h"

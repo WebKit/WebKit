@@ -11,13 +11,16 @@
 #ifndef MODULES_AUDIO_PROCESSING_TEST_PROTOBUF_UTILS_H_
 #define MODULES_AUDIO_PROCESSING_TEST_PROTOBUF_UTILS_H_
 
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
 #include <memory>
 #include <sstream>  // no-presubmit-check TODO(webrtc:8982)
 
 #include "rtc_base/protobuf_utils.h"
 
 // Generated at build-time by the protobuf compiler.
-#include "modules/audio_processing/debug.pb.h"
+#include "modules/audio_processing/debug.pb.h"  // IWYU pragma: export
 
 namespace webrtc {
 

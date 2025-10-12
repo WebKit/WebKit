@@ -4,24 +4,17 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-object-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Object.freeze() should return its argument with no conversion when the argument is a primitive value
+info: bugzilla.mozilla.org/show_bug.cgi?id=1076588
 esid: pending
+features: [Symbol]
 ---*/
-var BUGNUMBER = 1076588;
-var summary = "Object.freeze() should return its argument with no conversion when the argument is a primitive value";
 
-print(BUGNUMBER + ": " + summary);
 assert.sameValue(Object.freeze(), undefined);
 assert.sameValue(Object.freeze(undefined), undefined);
 assert.sameValue(Object.freeze(null), null);
 assert.sameValue(Object.freeze(1), 1);
 assert.sameValue(Object.freeze("foo"), "foo");
 assert.sameValue(Object.freeze(true), true);
-if (typeof Symbol === "function") {
-    assert.sameValue(Object.freeze(Symbol.for("foo")), Symbol.for("foo"));
-}
-
+assert.sameValue(Object.freeze(Symbol.for("foo")), Symbol.for("foo"));

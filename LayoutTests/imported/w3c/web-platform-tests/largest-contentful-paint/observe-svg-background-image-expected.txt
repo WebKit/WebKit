@@ -1,0 +1,3 @@
+
+PASS Same-origin SVG background image is observable.
+

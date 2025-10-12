@@ -5,24 +5,24 @@ line1line2
 line1line2
 line1line2
 
-FAIL no separator - move down assert_equals: Caret is in line 1 expected Text node "line1line2" but got null
-FAIL no separator - move up assert_equals: Caret is in line 2 expected Text node "line1line2" but got null
-FAIL no separator - move right assert_equals: Caret is in line 1 expected Text node "line1line2" but got null
-FAIL no separator - move left assert_equals: Caret is in line 2 expected Text node "line1line2" but got null
-FAIL <br> separator - move down assert_equals: Caret is in line 1 expected Text node "line1" but got null
-FAIL <br> separator - move up assert_equals: Caret is in line 2 expected Text node "line2" but got null
-FAIL <br> separator - move right assert_equals: Caret is in line 1 expected Text node "line1" but got Text node "line1line2"
-FAIL <br> separator - move left assert_equals: Caret is in line 2 expected Text node "line2" but got null
-FAIL <wbr> separator - move down assert_equals: Caret is in line 1 expected Text node "line1" but got null
-FAIL <wbr> separator - move up assert_equals: Caret is in line 2 expected Text node "line2" but got null
-FAIL <wbr> separator - move right assert_equals: Caret is in line 1 expected Text node "line1" but got Text node "line2"
-FAIL <wbr> separator - move left assert_equals: Caret is in line 2 expected Text node "line2" but got null
-FAIL <span> separator - move down assert_equals: Caret is in line 1 expected Text node "line1" but got null
-FAIL <span> separator - move up assert_equals: Caret is in line 2 expected Text node "line2" but got null
-FAIL <span> separator - move right assert_equals: Caret is in line 1 expected Text node "line1" but got Text node "line2"
-FAIL <span> separator - move left assert_equals: Caret is in line 2 expected Text node "line2" but got null
-FAIL two <span> separators - move down assert_equals: Caret is in line 1 expected Text node "line1" but got null
-FAIL two <span> separators - move up assert_equals: Caret is in line 2 expected Text node "line2" but got null
-FAIL two <span> separators - move right assert_equals: Caret is in line 1 expected Text node "line1" but got Text node "line2"
-FAIL two <span> separators - move left assert_equals: Caret is in line 2 expected Text node "line2" but got null
+PASS no separator - move down
+PASS no separator - move up
+PASS no separator - move right
+PASS no separator - move left
+PASS <br> separator - move down
+PASS <br> separator - move up
+PASS <br> separator - move right
+PASS <br> separator - move left
+FAIL <wbr> separator - move down assert_equals: Caret moved to line 2 expected Text node "line2" but got Text node "line1"
+FAIL <wbr> separator - move up assert_equals: Caret is in line 2 expected Text node "line2" but got Text node "line1"
+PASS <wbr> separator - move right
+FAIL <wbr> separator - move left assert_equals: Caret is in line 2 expected Text node "line2" but got Text node "line1"
+FAIL <span> separator - move down assert_equals: Caret moved to line 2 expected Text node "line2" but got Text node "line1"
+FAIL <span> separator - move up assert_equals: Caret is in line 2 expected Text node "line2" but got Text node "line1"
+PASS <span> separator - move right
+FAIL <span> separator - move left assert_equals: Caret is in line 2 expected Text node "line2" but got Text node "line1"
+FAIL two <span> separators - move down assert_equals: Caret moved to line 2 expected Text node "line2" but got Text node "line1"
+FAIL two <span> separators - move up assert_equals: Caret is in line 2 expected Text node "line2" but got Text node "line1"
+PASS two <span> separators - move right
+FAIL two <span> separators - move left assert_equals: Caret is in line 2 expected Text node "line2" but got Text node "line1"
 

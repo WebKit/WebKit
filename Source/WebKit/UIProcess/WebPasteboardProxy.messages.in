@@ -28,7 +28,7 @@
 messages -> WebPasteboardProxy {
 #if PLATFORM(IOS_FAMILY)
     WriteURLToPasteboard(struct WebCore::PasteboardURL url, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
-    WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)x
+    WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
     WriteImageToPasteboard(struct WebCore::PasteboardImage pasteboardImage, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
     WriteStringToPasteboard(String pasteboardType, String text, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
     UpdateSupportedTypeIdentifiers(Vector<String> identifiers, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
@@ -37,11 +37,11 @@ messages -> WebPasteboardProxy {
     WriteCustomData(Vector<WebCore::PasteboardCustomData> data, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
     TypesSafeForDOMToReadAndWrite(String pasteboardName, String origin, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (Vector<String> types) Synchronous
     AllPasteboardItemInfo(String pasteboardName, int64_t changeCount, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (std::optional<Vector<WebCore::PasteboardItemInfo>> allInfo) Synchronous
-    InformationForItemAtIndex(size_t index, String pasteboardName, int64_t changeCount, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (struct std::optional<WebCore::PasteboardItemInfo> info) Synchronous
+    InformationForItemAtIndex(uint64_t index, String pasteboardName, int64_t changeCount, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (struct std::optional<WebCore::PasteboardItemInfo> info) Synchronous
     GetPasteboardItemsCount(String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (uint64_t itemsCount) Synchronous
-    ReadStringFromPasteboard(size_t index, String pasteboardType, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (String string) Synchronous
-    ReadURLFromPasteboard(size_t index, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (String url, String title) Synchronous
-    ReadBufferFromPasteboard(std::optional<size_t> index, String pasteboardType, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (RefPtr<WebCore::SharedBuffer> buffer) Synchronous
+    ReadStringFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (String string) Synchronous
+    ReadURLFromPasteboard(uint64_t index, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (String url, String title) Synchronous
+    ReadBufferFromPasteboard(std::optional<uint64_t> index, String pasteboardType, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (RefPtr<WebCore::SharedBuffer> buffer) Synchronous
     ContainsStringSafeForDOMToReadForType(String type, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (bool result) Synchronous
 
 #if PLATFORM(COCOA)
@@ -61,6 +61,7 @@ messages -> WebPasteboardProxy {
     SetPasteboardColor(String pasteboardName, WebCore::Color color, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
     SetPasteboardStringForType(String pasteboardName, String pasteboardType, String string, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
     SetPasteboardBufferForType(String pasteboardName, String pasteboardType, RefPtr<WebCore::SharedBuffer> buffer, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
+    WriteWebArchiveToPasteBoard(String pasteboardName, WebCore::FrameIdentifier rootFrameIdentifier, HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>> localFrameArchives, Vector<WebCore::FrameIdentifier> remoteFrameIdentifiers) -> (int64_t changeCount) Synchronous
     ContainsURLStringSuitableForLoading(String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (bool result) Synchronous
     URLStringSuitableForLoading(String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (String url, String title) Synchronous
 

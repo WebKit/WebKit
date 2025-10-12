@@ -23,10 +23,12 @@
 #include "config.h"
 #include "SVGClipPathElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "ImageBuffer.h"
 #include "LegacyRenderSVGResourceClipper.h"
 #include "RenderElementInlines.h"
+#include "RenderObjectInlines.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGText.h"
 #include "RenderStyleInlines.h"
@@ -35,6 +37,7 @@
 #include "SVGLayerTransformComputation.h"
 #include "SVGNames.h"
 #include "SVGUseElement.h"
+#include "Settings.h"
 #include "StyleResolver.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -113,7 +116,7 @@ RenderPtr<RenderElement> SVGClipPathElement::createElementRenderer(RenderStyle&&
 RefPtr<SVGGraphicsElement> SVGClipPathElement::shouldApplyPathClipping() const
 {
     // If the current clip-path gets clipped itself, we have to fall back to masking.
-    if (renderer() && renderer()->style().clipPath())
+    if (renderer() && renderer()->style().hasClipPath())
         return nullptr;
 
     auto rendererRequiresMaskClipping = [](auto& renderer) -> bool {
@@ -124,7 +127,7 @@ RefPtr<SVGGraphicsElement> SVGClipPathElement::shouldApplyPathClipping() const
         if (style.display() == DisplayType::None || style.usedVisibility() != Visibility::Visible)
             return false;
         // Current shape in clip-path gets clipped too. Fall back to masking.
-        return style.clipPath();
+        return style.hasClipPath();
     };
 
     RefPtr<SVGGraphicsElement> useGraphicsElement;

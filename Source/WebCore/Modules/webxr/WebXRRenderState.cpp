@@ -39,7 +39,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRRenderState);
 Ref<WebXRRenderState> WebXRRenderState::create(XRSessionMode mode)
 {
     // https://immersive-web.github.io/webxr/#initialize-the-render-state
-    // depthNear, depthFar and baseLayer are initialized in the class definition
+    // depthNear, depthFar, passthroughFullyObscured and baseLayer are initialized in the class definition
     return adoptRef(*new WebXRRenderState(mode == XRSessionMode::Inline ? std::make_optional(piOverTwoDouble) : std::nullopt));
 }
 
@@ -57,6 +57,7 @@ Ref<WebXRRenderState> WebXRRenderState::clone() const
 
 WebXRRenderState::WebXRRenderState(const WebXRRenderState& other)
     : m_depth(other.m_depth)
+    , m_passthroughFullyObscured(other.m_passthroughFullyObscured)
     , m_inlineVerticalFieldOfView(other.m_inlineVerticalFieldOfView)
     , m_baseLayer(other.baseLayer())
 {

@@ -26,7 +26,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaSettingsRange.h"
+#include <WebCore/MediaSettingsRange.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

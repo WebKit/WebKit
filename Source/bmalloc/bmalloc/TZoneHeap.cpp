@@ -109,6 +109,18 @@ void tzoneFree(void* p)
     bmalloc_deallocate_inline(p);
 }
 
+#if BUSE_DYNAMIC_TZONE_COMPACTION
+
+bool shouldDynamicallyCompactImpl(const TZoneSpecification& spec)
+{
+    BASSERT(TZoneHeapManager::singleton().tzoneDynamicCompactModeEnabled());
+    uint64_t key = spec.dynamicCompactionKey;
+    uint64_t signature = __builtin_popcountll(key & TZoneHeapManager::singleton().dynamicCompactionSalt());
+    return signature & 0x1;
+}
+
+#endif
+
 #undef TO_PAS_HEAPREF
 
 } } // namespace bmalloc::api

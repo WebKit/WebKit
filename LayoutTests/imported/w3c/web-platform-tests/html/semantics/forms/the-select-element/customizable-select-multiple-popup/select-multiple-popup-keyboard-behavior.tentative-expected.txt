@@ -1,0 +1,4 @@
+
+
+FAIL Keyboard behavior for base appearance <select multiple size=1> assert_equals: appearance:base-select must be supported to run this test. expected "base-select" but got "auto"
+

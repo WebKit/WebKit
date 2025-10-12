@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      body {
+          overflow: hidden;
+      }
+      canvas {
+          border: 50px solid #000;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas width="2000" height="2000" />
+    <script>
+      var canvas = document.getElementsByTagName("canvas")[0];
+      var ctx = canvas.getContext("2d");
+
+      requestAnimationFrame(() => {
+          ctx.fillStyle = "red";
+          ctx.fillRect(0, 0, 5, 5);
+          canvas.style.borderColor = 'red';
+
+          requestAnimationFrame(() => {
+              ctx.fillStyle = "white";
+              ctx.fillRect(0, 0, 5, 5);
+              canvas.style.borderColor = 'blue';
+          });
+      });
+    </script>
+  </body>
+</html>

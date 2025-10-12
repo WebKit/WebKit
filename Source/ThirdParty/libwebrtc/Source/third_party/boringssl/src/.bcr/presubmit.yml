@@ -1,0 +1,61 @@
+build_targets: &build_targets
+  - "@boringssl//:crypto"
+  - "@boringssl//:ssl"
+
+matrix: &matrix
+  linux_platforms:
+    - debian11
+    - ubuntu2204
+  bazel: [7.x]
+tasks:
+  verify_targets_on_linux:
+    name: Verify build targets on Linux
+    platform: ${{ linux_platforms }}
+    bazel: ${{ bazel }}
+    build_targets: *build_targets
+    build_flags:
+      - '--cxxopt=-std=c++17'
+  verify_targets_on_windows:
+    name: Verify build targets on Windows
+    platform: windows
+    bazel: ${{ bazel }}
+    build_targets: *build_targets
+    build_flags:
+      - '--cxxopt=/std:c++17'
+  # Work around https://github.com/bazelbuild/bazel/issues/10472
+  verify_targets_on_macos:
+    name: Verify build targets on macOS
+    platform: macos
+    bazel: ${{ bazel }}
+    build_targets: *build_targets
+    build_flags: &macos_workaround
+      - '--cxxopt=-std=c++17'
+      - '--sandbox_block_path=/usr/local'
+bcr_test_module:
+  module_path: util/bazel-example
+  matrix: *matrix
+  tasks:
+    run_test_module_on_linux:
+      name: Run test module on Linux
+      platform: ${{ linux_platforms }}
+      bazel: ${{ bazel }}
+      build_targets:
+        - //...
+      build_flags:
+        - '--cxxopt=-std=c++17'
+    run_test_module_on_windows:
+      name: Run test module on Windows
+      platform: windows
+      bazel: ${{ bazel }}
+      build_targets:
+        - //...
+      build_flags:
+        - '--cxxopt=/std:c++17'
+    # Work around https://github.com/bazelbuild/bazel/issues/10472
+    run_test_module_on_macos:
+      name: Run test module on macOS
+      platform: macos
+      bazel: ${{ bazel }}
+      build_targets:
+        - //...
+      build_flags: *macos_workaround

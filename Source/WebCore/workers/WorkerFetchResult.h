@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "CertificateInfo.h"
-#include "ContentSecurityPolicyResponseHeaders.h"
-#include "CrossOriginEmbedderPolicy.h"
-#include "ResourceError.h"
-#include "ScriptBuffer.h"
+#include <WebCore/CertificateInfo.h>
+#include <WebCore/ContentSecurityPolicyResponseHeaders.h>
+#include <WebCore/CrossOriginEmbedderPolicy.h>
+#include <WebCore/ResourceError.h>
+#include <WebCore/ScriptBuffer.h>
 
 namespace WebCore {
 

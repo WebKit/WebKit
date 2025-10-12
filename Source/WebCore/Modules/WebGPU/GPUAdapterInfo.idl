@@ -35,4 +35,5 @@ interface GPUAdapterInfo {
     readonly attribute DOMString architecture;
     readonly attribute DOMString device;
     readonly attribute DOMString description;
+    readonly attribute boolean isFallbackAdapter;
 };

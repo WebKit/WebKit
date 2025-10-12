@@ -104,6 +104,7 @@ typedef void (*WKPageFocusCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageUnfocusCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageSetStatusTextCallback)(WKPageRef page, WKStringRef text, const void *clientInfo);
 typedef void (*WKPageMouseDidMoveOverElementCallback)(WKPageRef page, WKHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo);
+typedef void (*WKPageTooltipDidChangeCallback)(WKPageRef page, WKStringRef toolTip, const void *clientInfo);
 typedef void (*WKPageDidNotHandleKeyEventCallback)(WKPageRef page, WKNativeEventPtr event, const void *clientInfo);
 typedef void (*WKPageDidNotHandleWheelEventCallback)(WKPageRef page, WKNativeEventPtr event, const void *clientInfo);
 typedef bool (*WKPageGetToolbarsAreVisibleCallback)(WKPageRef page, const void *clientInfo);
@@ -136,7 +137,7 @@ typedef void (*WKCheckUserMediaPermissionCallback)(WKPageRef page, WKFrameRef fr
 typedef void (*WKPageDidClickAutoFillButtonCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKHandleAutoplayEventCallback)(WKPageRef page, WKAutoplayEvent event, WKAutoplayEventFlags flags, const void* clientInfo);
 typedef void (*WKFullscreenMayReturnToInlineCallback)(WKPageRef page, const void* clientInfo);
-typedef void (*WKRequestPointerLockCallback)(WKPageRef page, const void* clientInfo);
+typedef void (*WKRequestPointerLockCallback)(WKPageRef page, WKCompletionListenerRef listener, const void* clientInfo);
 typedef void (*WKDidLosePointerLockCallback)(WKPageRef page, const void* clientInfo);
 typedef void (*WKHasVideoInPictureInPictureDidChangeCallback)(WKPageRef page, bool hasVideoInPictureInPicture, const void* clientInfo);
 typedef void (*WKPageDidResignInputElementStrongPasswordAppearanceCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
@@ -1942,6 +1943,7 @@ typedef struct WKPageUIClientV19 {
     WKUnlockScreenOrientationCallback                                   unlockScreenOrientation;
 
     WKPageAddMessageToConsoleCallback addMessageToConsole;
+    WKPageTooltipDidChangeCallback tooltipDidChange;
 } WKPageUIClientV19;
 
 #ifdef __cplusplus

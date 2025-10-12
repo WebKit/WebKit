@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "SegmentedString.h"
+#include <WebCore/SegmentedString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

@@ -2,20 +2,17 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-object-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
 ---*/
 var obj = { method() { } };
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     new obj.method;
-}, TypeError);
+});
 
 obj = { constructor() { } };
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     new obj.constructor;
-}, TypeError);
+});
 

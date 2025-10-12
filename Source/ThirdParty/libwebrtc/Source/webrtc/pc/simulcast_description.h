@@ -18,7 +18,7 @@
 
 #include "absl/strings/string_view.h"
 
-namespace cricket {
+namespace webrtc {
 
 // Describes a Simulcast Layer.
 // Each simulcast layer has a rid as the identifier and a paused flag.
@@ -110,6 +110,7 @@ class SimulcastDescription final {
   SimulcastLayerList receive_layers_;
 };
 
-}  // namespace cricket
+}  //  namespace webrtc
+
 
 #endif  // PC_SIMULCAST_DESCRIPTION_H_

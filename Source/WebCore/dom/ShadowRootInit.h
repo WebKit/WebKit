@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CustomElementRegistry.h"
-#include "ShadowRootMode.h"
-#include "SlotAssignmentMode.h"
 #include <JavaScriptCore/JSCJSValue.h>
+#include <WebCore/CustomElementRegistry.h>
+#include <WebCore/ShadowRootMode.h>
+#include <WebCore/SlotAssignmentMode.h>
 
 namespace WebCore {
 

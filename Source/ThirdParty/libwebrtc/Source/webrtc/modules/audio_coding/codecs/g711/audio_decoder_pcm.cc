@@ -10,17 +10,23 @@
 
 #include "modules/audio_coding/codecs/g711/audio_decoder_pcm.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <utility>
+#include <vector>
 
+#include "api/audio_codecs/audio_decoder.h"
 #include "modules/audio_coding/codecs/g711/g711_interface.h"
 #include "modules/audio_coding/codecs/legacy_encoded_audio_frame.h"
+#include "rtc_base/buffer.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
 void AudioDecoderPcmU::Reset() {}
 
 std::vector<AudioDecoder::ParseResult> AudioDecoderPcmU::ParsePayload(
-    rtc::Buffer&& payload,
+    Buffer&& payload,
     uint32_t timestamp) {
   return LegacyEncodedAudioFrame::SplitBySamples(
       this, std::move(payload), timestamp, 8 * num_channels_, 8);
@@ -66,7 +72,7 @@ int AudioDecoderPcmU::PacketDurationRedundant(const uint8_t* encoded,
 void AudioDecoderPcmA::Reset() {}
 
 std::vector<AudioDecoder::ParseResult> AudioDecoderPcmA::ParsePayload(
-    rtc::Buffer&& payload,
+    Buffer&& payload,
     uint32_t timestamp) {
   return LegacyEncodedAudioFrame::SplitBySamples(
       this, std::move(payload), timestamp, 8 * num_channels_, 8);

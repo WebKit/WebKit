@@ -23,9 +23,9 @@
 
 #pragma once
 
-#include "CachedHTMLCollection.h"
-#include "HTMLOptionElement.h"
-#include "HTMLSelectElement.h"
+#include <WebCore/CachedHTMLCollection.h>
+#include <WebCore/HTMLOptionElement.h>
+#include <WebCore/HTMLSelectElement.h>
 
 namespace WebCore {
 

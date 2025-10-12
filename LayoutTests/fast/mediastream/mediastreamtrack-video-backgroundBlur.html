@@ -12,12 +12,14 @@
             assert_true(navigator.mediaDevices.getSupportedConstraints().backgroundBlur, "supported constraint");
 
             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode : "environment" } });
+            test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
             assert_array_equals(stream.getVideoTracks()[0].getCapabilities().backgroundBlur, [true], 'capabilities');
             assert_true(stream.getVideoTracks()[0].getSettings().backgroundBlur, 'settings');
         }, 'getUserMedia backgroundBlur on');
 
         promise_test(async (test) => {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode : "user" } });
+            test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
             assert_array_equals(stream.getVideoTracks()[0].getCapabilities().backgroundBlur, [false], 'capabilities');
             assert_false(stream.getVideoTracks()[0].getSettings().backgroundBlur, 'settings');
         }, 'getUserMedia backgroundBlur off');

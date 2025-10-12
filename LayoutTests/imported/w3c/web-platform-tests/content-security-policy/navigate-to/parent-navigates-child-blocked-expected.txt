@@ -1,5 +1,0 @@
-
-
-FAIL Test that the parent can't navigate the child because the relevant policy belongs to the navigation initiator (in this case the parent, which has the policy `navigate-to support/wait_for_navigation.html;`) assert_unreached: Should not have received a message as the navigation should not have been successful Reached unreachable code
-FAIL Violation report status OK. undefined is not an object (evaluating 'data[0]["body"]')
-

@@ -42,6 +42,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/UUID.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
@@ -179,7 +180,7 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
             return;
         }
 
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             [self.layer.context addFence:fenceHandle];
             [_preview setFrameWithinFencedTransaction:bounds];
             [fenceHandle invalidate];

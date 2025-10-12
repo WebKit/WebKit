@@ -65,10 +65,12 @@
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Scope.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
@@ -178,7 +180,7 @@ static bool navigationFailed = false;
 {
     int64_t deferredWaitTime = 100 * NSEC_PER_MSEC;
     dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
-    dispatch_after(when, dispatch_get_main_queue(), ^{
+    dispatch_after(when, mainDispatchQueueSingleton(), ^{
         decisionHandler(shouldAccept ? WKNavigationResponsePolicyAllow : WKNavigationResponsePolicyCancel);
     });
 }
@@ -1922,7 +1924,45 @@ TEST(ServiceWorkers, LoadAboutBlankBeforeNavigatingThroughInProcessServiceWorker
     EXPECT_EQ(2u, launchServiceWorkerProcess(useSeparateServiceWorkerProcess, firstLoadAboutBlank));
 }
 
-TEST(ServiceWorkers, LockdownModeInServiceWorkerProcess)
+
+static constexpr auto mainSharedWorkerBytes = R"SWRESOURCE(
+<script>
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
+var sharedWorker;
+
+try {
+    var sharedWorker = new SharedWorker("sharedWorker.js");
+    sharedWorker.port.start();
+    sharedWorker.port.postMessage("Hello from the web page");
+} catch(e) {
+    log("Exception: " + e);
+}
+
+sharedWorker.port.onmessage = e => {
+    log("Message from worker: " + e.data);
+};
+</script>
+)SWRESOURCE"_s;
+
+static constexpr auto sharedWorkerScriptWithEvalBytes = R"SWRESOURCE(
+onconnect = e => {
+    const port = e.ports[0];
+    port.onmessage = event => {
+        if (event.data == "Hello from the web page") {
+                port.postMessage("SharedWorker received: " + event.data);
+            return;
+        }
+        port.postMessage("Evaluation result: " + eval(event.data));
+    };
+    port.start();
+};
+)SWRESOURCE"_s;
+
+TEST(ServiceWorkers, LockdownModeInSharedWorkerProcess)
 {
     // Turn on lockdown mode globally.
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
@@ -1938,12 +1978,12 @@ TEST(ServiceWorkers, LockdownModeInServiceWorkerProcess)
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
-    RetainPtr messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"Message from worker: ServiceWorker received: Hello from the web page"]);
+    RetainPtr messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"Message from worker: SharedWorker received: Hello from the web page"]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
-        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, scriptWithEvalBytes } }
+        { "/"_s, { mainSharedWorkerBytes } },
+        { "/sharedWorker.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, sharedWorkerScriptWithEvalBytes } }
     });
 
     RetainPtr processPool = retainPtr(configuration.get().processPool);
@@ -1963,7 +2003,7 @@ TEST(ServiceWorkers, LockdownModeInServiceWorkerProcess)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [processPool _serviceWorkerProcessCount] == 1; }));
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [processPool _webProcessCount] == 2; }));
 
     // Check that JIT is disabled in the service worker process.
     done = false;
@@ -1976,7 +2016,7 @@ TEST(ServiceWorkers, LockdownModeInServiceWorkerProcess)
     auto runJSCheck = [&](const String& jsToEvalInWorker) {
         bool finishedRunningScript = false;
         done = false;
-        auto js = makeString("worker.postMessage('"_s, jsToEvalInWorker,"');"_s);
+        auto js = makeString("sharedWorker.port.postMessage('"_s, jsToEvalInWorker,"');"_s);
         [webView evaluateJavaScript:js.createNSString().get() completionHandler:[&] (id result, NSError *error) {
             EXPECT_NULL(error);
             finishedRunningScript = true;
@@ -2551,7 +2591,7 @@ TEST(ServiceWorkers, ContentRuleList)
                 connection.receiveHTTPRequest([=](Vector<char>&&) {
                     connection.send(HTTPResponse({ { "Content-Type"_s, "application/javascript"_s } }, contentRuleListWorkerScript).serialize(), [=] {
                         connection.receiveHTTPRequest([=](Vector<char>&& lastRequest) {
-                            EXPECT_TRUE(strnstr((const char*)lastRequest.data(), "allowedsubresource", lastRequest.size()));
+                            EXPECT_TRUE(contains(lastRequest.span(), "allowedsubresource"_span));
                             connection.send(HTTPResponse("successful fetch"_s).serialize());
                         });
                     });
@@ -3569,7 +3609,12 @@ void miniaturizeWebView(TestWKWebView* webView)
 }
 #endif // PLATFORM(MAC)
 
+// FIXME when rdar://158787776 is resolved
+#if PLATFORM(MAC)
+TEST(ServiceWorker, DISABLED_ServiceWorkerWindowClientFocus)
+#else
 TEST(ServiceWorker, ServiceWorkerWindowClientFocus)
+#endif
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
@@ -4877,7 +4922,7 @@ TEST(ServiceWorker, ServiceWorkerReadableStreamDownloadCancel)
     navigationDownloadDelegate.get().navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
         int64_t deferredWaitTime = 500 * NSEC_PER_MSEC;
         dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
-        dispatch_after(when, dispatch_get_main_queue(), ^{
+        dispatch_after(when, mainDispatchQueueSingleton(), ^{
             [download cancel:^(NSData*) { }];
         });
     };

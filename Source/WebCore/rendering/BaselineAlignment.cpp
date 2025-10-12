@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "BaselineAlignmentInlines.h"
 #include "RenderBox.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderStyleInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -36,16 +37,16 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BaselineGroup);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BaselineAlignmentState);
 
-BaselineGroup::BaselineGroup(FlowDirection blockFlow, ItemPosition childPreference)
-    : m_maxAscent(0), m_items()
+BaselineGroup::BaselineGroup(FlowDirection blockFlow, ItemPosition alignmentSubjectPreference)
+    : m_maxAscent(0), m_alignmentSubjects()
 {
     m_blockFlow = blockFlow;
-    m_preference = childPreference;
+    m_preference = alignmentSubjectPreference;
 }
 
-void BaselineGroup::update(const RenderBox& child, LayoutUnit ascent)
+void BaselineGroup::update(const RenderBox& alignmentSubject, LayoutUnit ascent)
 {
-    if (m_items.add(child).isNewEntry)
+    if (m_alignmentSubjects.add(alignmentSubject).isNewEntry)
         m_maxAscent = std::max(m_maxAscent, ascent);
 }
 
@@ -78,23 +79,26 @@ bool BaselineGroup::isOrthogonalBlockFlow(FlowDirection blockFlow) const
     }
 }
 
-bool BaselineGroup::isCompatible(FlowDirection childBlockFlow, ItemPosition childPreference) const
+bool BaselineGroup::isCompatible(FlowDirection alignmentSubjectBlockFlow, ItemPosition alignmentSubjectPreference) const
 {
-    ASSERT(isBaselinePosition(childPreference));
+    ASSERT(isBaselinePosition(alignmentSubjectPreference));
     ASSERT(computeSize() > 0);
-    return ((m_blockFlow == childBlockFlow || isOrthogonalBlockFlow(childBlockFlow)) && m_preference == childPreference) || (isOppositeBlockFlow(childBlockFlow) && m_preference != childPreference);
+    return ((m_blockFlow == alignmentSubjectBlockFlow || isOrthogonalBlockFlow(alignmentSubjectBlockFlow)) && m_preference == alignmentSubjectPreference)
+        || (isOppositeBlockFlow(alignmentSubjectBlockFlow) && m_preference != alignmentSubjectPreference);
 }
 
-BaselineAlignmentState::BaselineAlignmentState(const RenderBox& child, ItemPosition preference, LayoutUnit ascent)
+BaselineAlignmentState::BaselineAlignmentState(const RenderBox& alignmentSubject, ItemPosition preference, LayoutUnit ascent, LogicalBoxAxis alignmentContextAxis, WritingMode alignmentContainerWritingMode)
+    : m_alignmentContainerWritingMode(alignmentContainerWritingMode)
+    , m_alignmentContextAxis(alignmentContextAxis)
 {
     ASSERT(isBaselinePosition(preference));
-    updateSharedGroup(child, preference, ascent);
+    updateSharedGroup(alignmentSubject, preference, ascent);
 }
 
-const BaselineGroup& BaselineAlignmentState::sharedGroup(const RenderBox& child, ItemPosition preference) const
+const BaselineGroup& BaselineAlignmentState::sharedGroup(const RenderBox& alignmentSubject, ItemPosition preference) const
 {
     ASSERT(isBaselinePosition(preference));
-    return const_cast<BaselineAlignmentState*>(this)->findCompatibleSharedGroup(child, preference);
+    return const_cast<BaselineAlignmentState*>(this)->findCompatibleSharedGroup(alignmentSubject, preference);
 }
 
 Vector<BaselineGroup>& BaselineAlignmentState::sharedGroups()
@@ -102,18 +106,78 @@ Vector<BaselineGroup>& BaselineAlignmentState::sharedGroups()
     return m_sharedGroups;
 }
 
-void BaselineAlignmentState::updateSharedGroup(const RenderBox& child, ItemPosition preference, LayoutUnit ascent)
+void BaselineAlignmentState::updateSharedGroup(const RenderBox& alignmentSubject, ItemPosition preference, LayoutUnit ascent)
 {
     ASSERT(isBaselinePosition(preference));
-    BaselineGroup& group = findCompatibleSharedGroup(child, preference);
-    group.update(child, ascent);
+    BaselineGroup& group = findCompatibleSharedGroup(alignmentSubject, preference);
+    group.update(alignmentSubject, ascent);
 }
 
-// FIXME: Properly implement baseline-group compatibility.
-// See https://github.com/w3c/csswg-drafts/issues/721
-BaselineGroup& BaselineAlignmentState::findCompatibleSharedGroup(const RenderBox& child, ItemPosition preference)
+FontBaseline BaselineAlignmentState::dominantBaseline(WritingMode writingMode)
 {
-    auto blockFlowDirection = child.writingMode().blockDirection();
+    // https://drafts.csswg.org/css-inline-3/#alignment-baseline-property
+    // https://drafts.csswg.org/css-inline-3/#dominant-baseline-property
+    return writingMode.prefersCentralBaseline() ? FontBaseline::Central : FontBaseline::Alphabetic;
+}
+
+LayoutUnit BaselineAlignmentState::synthesizedBaseline(const RenderBox& box, FontBaseline baselineType, WritingMode writingModeForSynthesis, LineDirection lineDirection, BaselineSynthesisEdge edge)
+{
+    auto boxSize = lineDirection == LineDirection::Horizontal ? box.height() : box.width();
+    if (edge == BaselineSynthesisEdge::ContentBox)
+        boxSize -= lineDirection == LineDirection::Horizontal ? box.verticalBorderAndPaddingExtent() : box.horizontalBorderAndPaddingExtent();
+    else if (edge == BaselineSynthesisEdge::MarginBox)
+        boxSize += lineDirection == LineDirection::Horizontal ? box.verticalMarginExtent() : box.horizontalMarginExtent();
+
+    if (baselineType == FontBaseline::Alphabetic) {
+        // When synthesizing the alphabetic baseline for a box we are determining the distance
+        // to the line-under edge. For a box with vertical-lr writing mode the location
+        // of the line-under edge should be the same as the box's block-start edge. For
+        // vertical-rl writing mode we need the box's size since they are on opposiate sides.
+        auto shouldTreatAsHorizontal = lineDirection == LineDirection::Horizontal || writingModeForSynthesis.computedWritingMode() == StyleWritingMode::VerticalRl;
+        return shouldTreatAsHorizontal ? boxSize : LayoutUnit();
+    }
+    return boxSize / 2;
+}
+
+WritingMode BaselineAlignmentState::usedWritingModeForBaselineAlignment(LogicalBoxAxis alignmentContextAxis,
+    WritingMode alignmentContainerWritingMode, WritingMode aligmentSubjectWritingMode)
+{
+
+    auto isAlignmentSubjectBlockFlowParallelToAlignmentContextAxis = [&] {
+        if (alignmentContextAxis == LogicalBoxAxis::Block)
+            return !alignmentContainerWritingMode.isOrthogonal(aligmentSubjectWritingMode);
+        return alignmentContainerWritingMode.isOrthogonal(aligmentSubjectWritingMode);
+    };
+
+    // css-align-3: 9.1. Determining the Baselines of a Box
+    // In general, the writing mode of the box, shape, or other object being aligned is used to determine
+    // the line-under and line-over edges for synthesis...
+    if (!isAlignmentSubjectBlockFlowParallelToAlignmentContextAxis())
+        return aligmentSubjectWritingMode;
+
+    // ... However, when that writing mode’s block flow direction
+    // is parallel to the axis of the alignment context, an axis-compatible writing mode must be assumed:
+    //
+
+    // If the box establishing the alignment context has a block flow direction that is orthogonal to the
+    // axis of the alignment context, use its writing mode.
+    if (alignmentContextAxis == LogicalBoxAxis::Inline)
+        return alignmentContainerWritingMode;
+
+    // Otherwise:
+    // If the box’s own writing mode is vertical, assume horizontal-tb.
+    // If the box’s own writing mode is horizontal, assume vertical-lr if
+    // direction is ltr and vertical-rl if direction is rtl.
+    if (!aligmentSubjectWritingMode.isHorizontal())
+        return { };
+    auto styleWritingMode = alignmentContainerWritingMode.isBidiLTR() ? StyleWritingMode::VerticalLr : StyleWritingMode::VerticalRl;
+    return { styleWritingMode, TextDirection::LTR, TextOrientation::Mixed };
+}
+
+BaselineGroup& BaselineAlignmentState::findCompatibleSharedGroup(const RenderBox& alignmentSubject, ItemPosition preference)
+{
+    auto usedWritingModeForBaselineAlignment = this->usedWritingModeForBaselineAlignment(m_alignmentContextAxis, m_alignmentContainerWritingMode, alignmentSubject.writingMode());
+    auto blockFlowDirection = usedWritingModeForBaselineAlignment.blockDirection();
     for (auto& group : m_sharedGroups) {
         if (group.isCompatible(blockFlowDirection, preference))
             return group;

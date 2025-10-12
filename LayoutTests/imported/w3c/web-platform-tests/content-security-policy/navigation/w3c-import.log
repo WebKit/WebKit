@@ -14,9 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/navigation/javascript-url-navigation-inherits-csp.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/navigation/javascript-url-navigation-evaluated-to-string-inherits-csp.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/navigation/to-javascript-parent-initiated-check-csp-order.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/navigation/to-javascript-parent-initiated-child-csp.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/navigation/to-javascript-parent-initiated-parent-csp-disallow.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/navigation/to-javascript-parent-initiated-parent-csp.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/navigation/to-javascript-url-frame-src.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/navigation/to-javascript-url-script-src.html

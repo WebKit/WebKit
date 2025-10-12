@@ -19,11 +19,11 @@ After insertion:
 | <p>
 |   "Longhands: "
 |   <span>
-|     style="-webkit-text-decoration-line: overline; -webkit-text-decoration-style: dotted; -webkit-text-decoration-color: blue;"
+|     style="text-decoration-line: overline;"
 |     "overline dotted blue"
 | "\n            "
 | <p>
 |   "Shorthand: "
 |   <span>
-|     style="-webkit-text-decoration: underline dashed red;"
+|     style="text-decoration-line: underline;"
 |     "underline dashed red<#selection-caret>"

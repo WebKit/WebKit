@@ -427,6 +427,8 @@ guchar* webkit_web_resource_get_data_finish(WebKitWebResource* resource, GAsyncR
         return nullptr;
 
     auto* returnValue = g_malloc(data->webData->size());
+    IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
     memcpy(returnValue, bytes.data(), bytes.size());
+    IGNORE_CLANG_WARNINGS_END
     return static_cast<guchar*>(returnValue);
 }

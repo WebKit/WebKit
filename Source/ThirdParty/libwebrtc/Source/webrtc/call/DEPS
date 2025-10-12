@@ -70,5 +70,8 @@ specific_include_rules = {
   ],
   "call\.cc": [
     "+media/base/codec.h",
+  ],
+  "fake_payload_type_suggester": [
+    "+media/base/codec.h",
   ]
 }

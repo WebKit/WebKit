@@ -29,13 +29,14 @@ let senderTransform, receiverTransform;
 let stream;
 let worker;
 
-async function doSetup(senderPCCallback)
+async function doSetup(test, senderPCCallback)
 {
     worker = new Worker('video-rtpTimestamp-transform.js');
     const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
     assert_equals(data, "registered");
 
     const localStream = await navigator.mediaDevices.getUserMedia({video: true});
+    test.add_cleanup(() => localStream.getTracks().forEach(t => t.stop()));
 
     const senderChannel = new MessageChannel;
     const receiverChannel = new MessageChannel;
@@ -78,7 +79,7 @@ promise_test(async (test) => {
     const codecs = RTCRtpSender.getCapabilities("video").codecs;
     const vp8Codec = codecs.filter(codec => { return codec.mimeType === "video/VP8"; })[0];
 
-    const [pc1, pc2 ] = await doSetup(senderPc => senderPc.getTransceivers().forEach((transceiver) => { transceiver.setCodecPreferences([vp8Codec]); }));
+    const [pc1, pc2 ] = await doSetup(test, senderPc => senderPc.getTransceivers().forEach((transceiver) => { transceiver.setCodecPreferences([vp8Codec]); }));
 
     senderTransform.port.postMessage("validateRTPTimestamp");
     receiverTransform.port.postMessage("validateRTPTimestamp");
@@ -94,7 +95,7 @@ promise_test(async (test) => {
     const codecs = RTCRtpSender.getCapabilities("video").codecs;
     const h264Codec = codecs.filter(codec => { return codec.mimeType === "video/H264"; })[0];
 
-    const [pc1, pc2 ] = await doSetup(senderPc => senderPc.getTransceivers().forEach((transceiver) => { transceiver.setCodecPreferences([h264Codec]); }));
+    const [pc1, pc2 ] = await doSetup(test, senderPc => senderPc.getTransceivers().forEach((transceiver) => { transceiver.setCodecPreferences([h264Codec]); }));
 
     senderTransform.port.postMessage("validateRTPTimestamp");
     receiverTransform.port.postMessage("validateRTPTimestamp");

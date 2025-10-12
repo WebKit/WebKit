@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x98
+  RenderBlock {HTML} at (0,0) size 800x98
+    RenderBody {BODY} at (8,8) size 784x74
+      RenderTable {TABLE} at (0,0) size 59x40 [border: (1px outset #000000)]
+        RenderTableSection {TBODY} at (1,1) size 57x38
+          RenderTableRow {TR} at (0,2) size 57x34
+            RenderTableCell {TD} at (2,2) size 53x34 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderMenuList {SELECT} at (2,2) size 49x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 47x28
+                  RenderText at (5,5) size 21x17
+                    text run at (5,5) width 21: "test"
+      RenderBlock {P} at (0,56) size 784x18
+        RenderText {#text} at (0,0) size 447x17
+          text run at (0,0) width 447: "The select element in the table above must not spill outside of the table."

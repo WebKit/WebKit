@@ -11,19 +11,26 @@
 #ifndef API_TEST_PEER_NETWORK_DEPENDENCIES_H_
 #define API_TEST_PEER_NETWORK_DEPENDENCIES_H_
 
-#include "api/packet_socket_factory.h"
+#include <memory>
+
+#include "absl/base/nullability.h"
 #include "rtc_base/network.h"
+#include "rtc_base/socket_factory.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
 
-// The network dependencies needed when adding a peer to tests using
-// PeerConnectionE2EQualityTestFixture.
-struct PeerNetworkDependencies {
-  rtc::Thread* network_thread;
-  rtc::NetworkManager* network_manager;
-  rtc::PacketSocketFactory* packet_socket_factory;
+// Provides interface to obtain all required objects to inject network layer
+// into PeerConnectionFactory.
+class PeerNetworkDependencies {
+ public:
+  virtual ~PeerNetworkDependencies() = default;
+
+  virtual Thread* absl_nonnull network_thread() = 0;
+  virtual SocketFactory* absl_nonnull socket_factory() = 0;
+  virtual absl_nonnull std::unique_ptr<NetworkManager>
+  ReleaseNetworkManager() = 0;
 };
 
 }  // namespace webrtc_pc_e2e

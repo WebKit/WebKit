@@ -1,0 +1,18 @@
+
+FAIL "::picker-icon" should be a valid selector '::picker-icon' is not a valid selector.
+FAIL "*::picker-icon" should be a valid selector '*::picker-icon' is not a valid selector.
+FAIL "foo.bar[baz]::picker-icon" should be a valid selector 'foo.bar[baz]::picker-icon' is not a valid selector.
+PASS "::picker-icon *" should be an invalid selector
+PASS "::picker-icon::picker-icon" should be an invalid selector
+PASS "::before::picker-icon" should be an invalid selector
+PASS "::after::picker-icon" should be an invalid selector
+PASS "::marker::picker-icon" should be an invalid selector
+PASS "::placeholder::picker-icon" should be an invalid selector
+PASS "::picker-icon::before" should be an invalid selector
+PASS "::picker-icon::after" should be an invalid selector
+PASS "::picker-icon::marker" should be an invalid selector
+PASS "::picker-icon::placeholder" should be an invalid selector
+PASS "::slotted(*)::picker-icon::slotted(*)" should be an invalid selector
+FAIL "::slotted(*)::picker-icon" should be a valid selector '::slotted(*)::picker-icon' is not a valid selector.
+FAIL "::part(foo)::picker-icon" should be a valid selector '::part(foo)::picker-icon' is not a valid selector.
+

@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Origin https://web-platform.test:9443 is not allowed by Access-Control-Allow-Origin. Status code: 500
-CONSOLE MESSAGE: Origin https://web-platform.test:9443 is not allowed by Access-Control-Allow-Origin. Status code: 500
 
 PASS Importing a same-origin script from a page that has "no-referrer" referrer policy should not send referrer.
 PASS Importing a remote-origin script from a page that has "no-referrer" referrer policy should not send referrer.

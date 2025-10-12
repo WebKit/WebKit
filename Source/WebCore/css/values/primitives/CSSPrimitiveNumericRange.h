@@ -26,12 +26,13 @@
 
 #include <algorithm>
 #include <limits>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 namespace CSS {
 
 // Options to indicate how the range should be interpreted.
-enum class RangeOptions {
+enum class RangeClampOptions {
     // `Default` indicates that at parse time, out of range values invalidate the parse.
     // Out of range values at style building always clamp.
     Default,
@@ -52,6 +53,17 @@ enum class RangeOptions {
     ClampBoth
 };
 
+// Options to indicate how the primitive should consider its value with regards to zoom.
+// NOTE: This option is only meaningful for Style::Length`.
+// FIXME: These options are temporary while `zoom` is moving from style building time to use time.
+enum class RangeZoomOptions {
+    // `Default` indicates the value held in the primitive has had zoom applied to it.
+    Default,
+
+    // `Unzoomed` indicates the value held in the primitive has NOT had zoom applied to it.
+    Unzoomed
+};
+
 // Representation for `CSS bracketed range notation`. Represents a closed range between (and including) `min` and `max`.
 // https://drafts.csswg.org/css-values-4/#numeric-ranges
 struct Range {
@@ -60,12 +72,14 @@ struct Range {
 
     double min { -infinity };
     double max {  infinity };
-    RangeOptions options { RangeOptions::Default };
+    RangeClampOptions clampOptions { RangeClampOptions::Default };
+    RangeZoomOptions zoomOptions { RangeZoomOptions::Default };
 
-    constexpr Range(double min, double max, RangeOptions options = RangeOptions::Default)
+    constexpr Range(double min, double max, RangeClampOptions clampOptions = RangeClampOptions::Default, RangeZoomOptions zoomOptions = RangeZoomOptions::Default)
         : min { min }
         , max { max }
-        , options { options }
+        , clampOptions { clampOptions }
+        , zoomOptions { zoomOptions }
     {
     }
 
@@ -73,27 +87,145 @@ struct Range {
 };
 
 // Constant value for `[−∞,∞]`.
-inline constexpr auto All = Range { -Range::infinity, Range::infinity, RangeOptions::Default };
+inline constexpr auto All = Range { -Range::infinity, Range::infinity };
+inline constexpr auto AllUnzoomed = Range { -Range::infinity, Range::infinity, RangeClampOptions::Default, RangeZoomOptions::Unzoomed };
 
 // Constant value for `[0,∞]`.
-inline constexpr auto Nonnegative = Range { 0, Range::infinity, RangeOptions::Default };
+inline constexpr auto Nonnegative = Range { 0, Range::infinity };
+inline constexpr auto NonnegativeUnzoomed = Range { 0, Range::infinity, RangeClampOptions::Default, RangeZoomOptions::Unzoomed };
+
+// Constant value for `[1,∞]`.
+inline constexpr auto Positive = Range { 1, Range::infinity };
+inline constexpr auto PositiveUnzoomed = Range { 1, Range::infinity, RangeClampOptions::Default, RangeZoomOptions::Unzoomed };
 
 // Constant value for `[0,1]`.
 inline constexpr auto ClosedUnitRange = Range { 0, 1 };
+inline constexpr auto ClosedUnitRangeUnzoomed = Range { 0, 1, RangeClampOptions::Default, RangeZoomOptions::Unzoomed };
 
 // Constant value for `[0,1(clamp upper)]`.
-inline constexpr auto ClosedUnitRangeClampUpper = Range { 0, 1, RangeOptions::ClampUpper };
+inline constexpr auto ClosedUnitRangeClampUpper = Range { 0, 1, RangeClampOptions::ClampUpper };
+inline constexpr auto ClosedUnitRangeClampUpperUnzoomed = Range { 0, 1, RangeClampOptions::ClampUpper, RangeZoomOptions::Unzoomed };
+
+// Constant value for `[0,1(clamp both)]`.
+inline constexpr auto ClosedUnitRangeClampBoth = Range { 0, 1, RangeClampOptions::ClampBoth };
+inline constexpr auto ClosedUnitRangeClampBothUnzoomed = Range { 0, 1, RangeClampOptions::ClampBoth, RangeZoomOptions::Unzoomed };
 
 // Constant value for `[0,100]`.
 inline constexpr auto ClosedPercentageRange = Range { 0, 100 };
+inline constexpr auto ClosedPercentageRangeUnzoomed = Range { 0, 100, RangeClampOptions::Default, RangeZoomOptions::Unzoomed };
 
 // Constant value for `[0,100(clamp upper)]`.
-inline constexpr auto ClosedPercentageRangeClampUpper = Range { 0, 100, RangeOptions::ClampUpper };
+inline constexpr auto ClosedPercentageRangeClampUpper = Range { 0, 100, RangeClampOptions::ClampUpper };
+inline constexpr auto ClosedPercentageRangeClampUpperUnzoomed = Range { 0, 100, RangeClampOptions::ClampUpper, RangeZoomOptions::Unzoomed };
 
 // Clamps a floating point value to within `range`.
-template<Range range, std::floating_point T> constexpr T clampToRange(T value)
+template<Range range, std::floating_point T, typename U> constexpr T clampToRange(U value)
 {
-    return std::clamp<T>(value, range.min, range.max);
+    return clampTo<T>(
+        value,
+        std::max<T>(range.min, -std::numeric_limits<T>::max()),
+        std::min<T>(range.max,  std::numeric_limits<T>::max())
+    );
+}
+
+// Clamps a floating point value to within `range` and within additional provided range.
+template<Range range, std::floating_point T, typename U> constexpr T clampToRange(U value, T additionalMinimum, T additionalMaximum)
+{
+    return clampTo<T>(
+        value,
+        std::max<T>(std::max<T>(range.min, -std::numeric_limits<T>::max()), additionalMinimum),
+        std::min<T>(std::min<T>(range.max,  std::numeric_limits<T>::max()), additionalMaximum)
+    );
+}
+
+// Clamps an unsigned integral value to within `range`.
+template<Range range, std::unsigned_integral T, typename U> constexpr T clampToRange(U value)
+{
+    static_assert(range.min >= 0);
+
+    if constexpr (range.max == Range::infinity) {
+        return clampTo<T>(
+            value,
+            range.min,
+            std::numeric_limits<T>::max()
+        );
+    } else {
+        return clampTo<T>(
+            value,
+            range.min,
+            std::min<T>(range.max,  std::numeric_limits<T>::max())
+        );
+    }
+}
+
+// Clamps a signed integral value to within `range`.
+template<Range range, std::signed_integral T, typename U> constexpr T clampToRange(U value)
+{
+    if constexpr (range.min == -Range::infinity && range.max == Range::infinity) {
+        return clampTo<T>(
+            value,
+            std::numeric_limits<T>::min(),
+            std::numeric_limits<T>::max()
+        );
+    } else if constexpr (range.min == -Range::infinity) {
+        return clampTo<T>(
+            value,
+            std::numeric_limits<T>::min(),
+            std::min<T>(range.max, std::numeric_limits<T>::max())
+        );
+    } else if constexpr (range.max == Range::infinity) {
+        return clampTo<T>(
+            value,
+            std::max<T>(range.min, std::numeric_limits<T>::min()),
+            std::numeric_limits<T>::max()
+        );
+    } else {
+        return clampTo<T>(
+            value,
+            std::max<T>(range.min, std::numeric_limits<T>::min()),
+            std::min<T>(range.max, std::numeric_limits<T>::max())
+        );
+    }
+}
+
+// Checks if a floating point value is within `range`.
+template<Range range, std::floating_point T> constexpr bool isWithinRange(T value)
+{
+    return !std::isnan(value)
+        && value >= std::max<T>(range.min, -std::numeric_limits<T>::max())
+        && value <= std::min<T>(range.max,  std::numeric_limits<T>::max());
+}
+
+// Checks if a signed integral value is within `range`.
+template<Range range, std::signed_integral T> constexpr bool isWithinRange(T value)
+{
+    if constexpr (range.min == -Range::infinity && range.max == Range::infinity) {
+        return value >= std::numeric_limits<T>::min()
+            && value <= std::numeric_limits<T>::max();
+    } else if constexpr (range.min == -Range::infinity) {
+        return value >= std::numeric_limits<T>::min()
+            && value <= std::min<T>(range.max, std::numeric_limits<T>::max());
+    } else if constexpr (range.max == Range::infinity) {
+        return value >= std::max<T>(range.min, std::numeric_limits<T>::min())
+            && value <= std::numeric_limits<T>::max();
+    } else {
+        return value >= std::max<T>(range.min, std::numeric_limits<T>::min())
+            && value <= std::min<T>(range.max, std::numeric_limits<T>::max());
+    }
+}
+
+// Checks if an unsigned integral value is within `range`.
+template<Range range, std::unsigned_integral T> constexpr bool isWithinRange(T value)
+{
+    static_assert(range.min >= 0);
+
+    if constexpr (range.max == Range::infinity) {
+        return value >= std::max<T>(range.min, std::numeric_limits<T>::min())
+            && value <= std::numeric_limits<T>::max();
+    } else {
+        return value >= std::max<T>(range.min, std::numeric_limits<T>::min())
+            && value <= std::min<T>(range.max, std::numeric_limits<T>::max());
+    }
 }
 
 } // namespace CSS

@@ -31,12 +31,12 @@
 
 #pragma once
 
-#include "CachedResource.h"
-#include "CachedResourceClient.h"
-#include "CachedResourceHandle.h"
-#include "LinkLoaderClient.h"
-#include "LinkRelAttribute.h"
-#include "ReferrerPolicy.h"
+#include <WebCore/CachedResource.h>
+#include <WebCore/CachedResourceClient.h>
+#include <WebCore/CachedResourceHandle.h>
+#include <WebCore/LinkLoaderClient.h>
+#include <WebCore/LinkRelAttribute.h>
+#include <WebCore/ReferrerPolicy.h>
 
 namespace WebCore {
 class LinkLoader;

@@ -28,11 +28,11 @@
 
 #pragma once
 
-#include "RenderObject.h"
+#include <WebCore/LegacyInlineFlowBox.h>
+#include <WebCore/RenderObject.h>
 
 namespace WebCore {
 
-class LegacyInlineFlowBox;
 class RenderBlockFlow;
 
 class RenderLineBoxList {

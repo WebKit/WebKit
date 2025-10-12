@@ -182,18 +182,32 @@ void SourceBufferPrivateGStreamer::enqueueSample(Ref<MediaSample>&& sample, Trac
 {
     ASSERT(isMainThread());
 
-    GRefPtr<GstSample> gstSample = sample->platformSample().sample.gstSample;
+    GRefPtr<GstSample> gstSample = sample->platformSample().gstSample();
     ASSERT(gstSample);
-    ASSERT(gst_sample_get_buffer(gstSample.get()));
 
-    if (RefPtr player = this->player()) {
+#ifndef GST_DISABLE_GST_DEBUG
+    RefPtr player = this->player();
+    if (player) {
+        const auto& size = sample->presentationSize();
         GST_TRACE_OBJECT(player->pipeline(), "enqueing sample trackId=%" PRIu64 " presentationSize=%.0fx%.0f at PTS %" GST_TIME_FORMAT " duration: %" GST_TIME_FORMAT,
-            trackId, sample->presentationSize().width(), sample->presentationSize().height(),
-            GST_TIME_ARGS(WebCore::toGstClockTime(sample->presentationTime())),
-            GST_TIME_ARGS(WebCore::toGstClockTime(sample->duration())));
+            trackId, size.width(), size.height(),
+            GST_TIME_ARGS(toGstClockTime(sample->presentationTime())),
+            GST_TIME_ARGS(toGstClockTime(sample->duration())));
     }
+#endif
     ASSERT(m_tracks.contains(trackId));
     auto track = m_tracks[trackId];
+
+#ifndef GST_DISABLE_GST_DEBUG
+    if (player && track->type() == TrackPrivateBaseGStreamer::Text) {
+        GstMappedBuffer mappedBuffer(gst_sample_get_buffer(gstSample.get()), GST_MAP_READ);
+
+        if (mappedBuffer) [[likely]] {
+            auto message = makeString("Text sample (trackId="_s, trackId, ')');
+            GST_MEMDUMP_OBJECT(player->pipeline(), message.utf8().data(), mappedBuffer.data(), mappedBuffer.size());
+        }
+    }
+#endif
     track->enqueueObject(adoptGRef(GST_MINI_OBJECT(gstSample.leakRef())));
 }
 
@@ -204,7 +218,7 @@ bool SourceBufferPrivateGStreamer::isReadyForMoreSamples(TrackID trackId)
     auto track = m_tracks[trackId];
     bool ret = track->isReadyForMoreSamples();
     if (RefPtr player = this->player())
-        GST_TRACE_OBJECT(player->pipeline(), "isReadyForMoreSamples: %s", boolForPrinting(ret));
+        GST_TRACE_OBJECT(player->pipeline(), "track %" PRIu64 "isReadyForMoreSamples: %s", trackId, boolForPrinting(ret));
     return ret;
 }
 
@@ -214,7 +228,7 @@ void SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples(TrackID t
     ASSERT(m_tracks.contains(trackId));
     auto track = m_tracks[trackId];
     track->notifyWhenReadyForMoreSamples([weakPtr = WeakPtr { *this }, this, trackId]() mutable {
-        RunLoop::protectedMain()->dispatch([weakPtr = WTFMove(weakPtr), this, trackId]() {
+        RunLoop::mainSingleton().dispatch([weakPtr = WTFMove(weakPtr), this, trackId]() {
             if (!weakPtr)
                 return;
             if (!m_hasBeenRemovedFromMediaSource)
@@ -435,6 +449,24 @@ void SourceBufferPrivateGStreamer::detach()
 
     if (RefPtr mediaSource = m_mediaSource.get())
         downcast<MediaSourcePrivateGStreamer>(mediaSource)->detach();
+}
+
+void SourceBufferPrivateGStreamer::willSeek()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_seeking = true;
+}
+
+bool SourceBufferPrivateGStreamer::isSeeking() const
+{
+    return m_seeking;
+}
+
+void SourceBufferPrivateGStreamer::seekToTime(const MediaTime& time)
+{
+    m_seeking = false;
+    // WebKit now has the samples to complete the seek and is about to enqueue them.
+    SourceBufferPrivate::seekToTime(time);
 }
 
 #undef GST_CAT_DEFAULT

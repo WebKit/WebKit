@@ -12,17 +12,13 @@
 #define MODULES_PORTAL_XDG_DESKTOP_PORTAL_UTILS_H_
 
 #include <gio/gio.h>
-#include <stdint.h>
 
+#include <cstdint>
 #include <string>
-#include <vector>
 
 #include "absl/strings/string_view.h"
 #include "modules/portal/portal_request_response.h"
-#include "modules/portal/scoped_glib.h"
-#include "modules/portal/xdg_session_details.h"
-#include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 namespace xdg_portal {

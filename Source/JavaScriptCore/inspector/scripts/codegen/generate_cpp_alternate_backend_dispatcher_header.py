@@ -67,9 +67,9 @@ class CppAlternateBackendDispatcherHeaderGenerator(CppGenerator):
     def _generate_secondary_header_includes(self):
         target_framework_name = self.model().framework.name
         header_includes = [
-            ([target_framework_name], (target_framework_name, "%sProtocolObjects.h" % self.protocol_name())),
-            (["JavaScriptCore"], ("JavaScriptCore", "inspector/InspectorFrontendRouter.h")),
-            (["JavaScriptCore"], ("JavaScriptCore", "inspector/InspectorBackendDispatcher.h")),
+            ([target_framework_name], (target_framework_name, "%sProtocolObjects.h" % self.protocol_name(), True)),
+            (["JavaScriptCore"], ("JavaScriptCore", "inspector/InspectorFrontendRouter.h", True)),
+            (["JavaScriptCore"], ("JavaScriptCore", "inspector/InspectorBackendDispatcher.h", True)),
         ]
 
         return '\n'.join(self.generate_includes_from_entries(header_includes))

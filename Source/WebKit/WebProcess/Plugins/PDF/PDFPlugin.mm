@@ -143,7 +143,7 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
     if (!protectedSelf->_parent) {
         callOnMainRunLoopAndWait([&protectedSelf] {
             if (auto* axObjectCache = protectedSelf->_pdfPlugin->axObjectCache()) {
-                if (RefPtr pluginAxObject = axObjectCache->getOrCreate(RefPtr { protectedSelf->_pluginElement.get() }.get()))
+                if (RefPtr pluginAxObject = axObjectCache->exportedGetOrCreate(RefPtr { protectedSelf->_pluginElement.get() }.get()))
                     protectedSelf->_parent = pluginAxObject->wrapper();
             }
         });
@@ -286,7 +286,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (RefPtr activeAnnotation = _pdfPlugin->activeAnnotation()) {
         if (WebCore::AXObjectCache* existingCache = _pdfPlugin->axObjectCache()) {
-            if (RefPtr object = existingCache->getOrCreate(activeAnnotation->protectedElement().get()))
+            if (RefPtr object = existingCache->exportedGetOrCreate(activeAnnotation->protectedElement().get()))
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 return [object->wrapper() accessibilityAttributeValue:@"_AXAssociatedPluginParent"];
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -304,7 +304,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     id wrapper = nil;
     callOnMainRunLoopAndWait([activeAnnotation, protectedSelf = retainPtr(self), &wrapper] {
         if (auto* axObjectCache = protectedSelf->_pdfPlugin->axObjectCache()) {
-            if (RefPtr annotationElementAxObject = axObjectCache->getOrCreate(activeAnnotation->protectedElement().get()))
+            if (RefPtr annotationElementAxObject = axObjectCache->exportedGetOrCreate(activeAnnotation->protectedElement().get()))
                 wrapper = annotationElementAxObject->wrapper();
         }
     });
@@ -511,7 +511,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFPlugin);
 
 bool PDFPlugin::pdfKitLayerControllerIsAvailable()
 {
-    return getPDFLayerControllerClass();
+    return getPDFLayerControllerClassSingleton();
 }
 
 Ref<PDFPlugin> PDFPlugin::create(HTMLPlugInElement& pluginElement)
@@ -547,7 +547,7 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
     }
 
     RefPtr frame = m_frame.get();
-    m_accessibilityObject = adoptNS([[WKPDFPluginAccessibilityObject alloc] initWithPDFPlugin:this andElement:&element]);
+    lazyInitialize(m_accessibilityObject, adoptNS([[WKPDFPluginAccessibilityObject alloc] initWithPDFPlugin:this andElement:&element]));
     [m_accessibilityObject setPdfLayerController:m_pdfLayerController.get()];
     if (isFullFramePlugin() && frame->isMainFrame())
         [m_accessibilityObject setParent:frame->page()->accessibilityRemoteObject()];
@@ -558,8 +558,8 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
     if ([m_pdfLayerController respondsToSelector:@selector(setDeviceColorSpace:)])
         [m_pdfLayerController setDeviceColorSpace:screenColorSpace(frame->protectedCoreLocalFrame()->view()).platformColorSpace()];
     
-    if ([getPDFLayerControllerClass() respondsToSelector:@selector(setUseIOSurfaceForTiles:)])
-        [getPDFLayerControllerClass() setUseIOSurfaceForTiles:false];
+    if ([getPDFLayerControllerClassSingleton() respondsToSelector:@selector(setUseIOSurfaceForTiles:)])
+        [getPDFLayerControllerClassSingleton() setUseIOSurfaceForTiles:false];
 }
 
 PDFPlugin::~PDFPlugin() = default;
@@ -967,7 +967,7 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
     m_lastMouseEvent = event;
 
     PlatformMouseEvent platformEvent = platform(event);
-    IntPoint mousePosition = convertFromRootViewToPlugin(event.position());
+    IntPoint mousePosition = convertFromRootViewToPlugin(flooredIntPoint(event.position()));
 
     RefPtr<Scrollbar> targetScrollbar;
     RefPtr<Scrollbar> targetScrollbarForLastMousePosition;
@@ -1090,7 +1090,7 @@ bool PDFPlugin::showContextMenuAtPoint(const IntPoint& point)
     if (!frameView)
         return false;
     IntPoint contentsPoint = frameView->contentsToRootView(point);
-    WebMouseEvent event({ WebEventType::MouseDown, OptionSet<WebEventModifier> { }, WallTime::now() }, WebMouseEventButton::Right, 0, contentsPoint, contentsPoint, 0, 0, 0, 1, WebCore::ForceAtClick);
+    WebMouseEvent event({ WebEventType::MouseDown, OptionSet<WebEventModifier> { }, MonotonicTime::now() }, WebMouseEventButton::Right, 0, contentsPoint, contentsPoint, 0, 0, 0, 1, WebCore::ForceAtClick);
     return handleContextMenuEvent(event);
 }
 
@@ -1106,7 +1106,7 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
     if (!frameView)
         return false;
 
-    IntPoint point = frameView->contentsToScreen(IntRect(frameView->windowToContents(event.position()), IntSize())).location();
+    IntPoint point = frameView->contentsToScreen(IntRect(frameView->windowToContents(flooredIntPoint(event.position())), IntSize())).location();
 
     NSUserInterfaceLayoutDirection uiLayoutDirection = webPage->userInterfaceLayoutDirection() == UserInterfaceLayoutDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft;
     RetainPtr nsMenu = [m_pdfLayerController menuForEvent:nsEventForWebMouseEvent(event) withUserInterfaceLayoutDirection:uiLayoutDirection];
@@ -1430,10 +1430,10 @@ bool PDFPlugin::performDictionaryLookupAtLocation(const WebCore::FloatPoint& poi
     return true;
 }
 
-CGRect PDFPlugin::pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>& annotation) const
+CGRect PDFPlugin::pluginBoundsForAnnotation(PDFAnnotation *annotation) const
 {
     auto documentSize = contentSizeRespectingZoom();
-    auto annotationBounds = [m_pdfLayerController boundsForAnnotation:annotation.get()];
+    auto annotationBounds = [m_pdfLayerController boundsForAnnotation:annotation];
     annotationBounds.origin.y = documentSize.height - annotationBounds.origin.y - annotationBounds.size.height - m_scrollOffset.height();
     annotationBounds.origin.x -= m_scrollOffset.width();
     return annotationBounds;
@@ -1605,7 +1605,7 @@ bool PDFPlugin::handleWheelEvent(const WebWheelEvent& event)
     bool atScrollTop = !scrollPosition().y();
     bool atScrollBottom = scrollPosition().y() == maximumScrollPosition().y();
 
-    bool inMomentumScroll = event.momentumPhase() != WebWheelEvent::PhaseNone;
+    bool inMomentumScroll = event.isMomentumEvent();
 
     int scrollMagnitudeThresholdForPageFlip = defaultScrollMagnitudeThresholdForPageFlip;
 

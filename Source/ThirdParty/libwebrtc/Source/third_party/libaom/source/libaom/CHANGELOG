@@ -1,3 +1,188 @@
+2025-mm-dd next version
+  This release is ABI compatible with the last release.
+
+  The aom_roi_map_t struct, used only by the codec control
+  AOME_SET_ROI_MAP, was modified in this release. Since AOME_SET_ROI_MAP
+  was unimplemented, aom_roi_map_t was effectively an unused struct.
+  Therefore aom_roi_map_t is to be considered as a new struct added in
+  this release and this change does not break ABI compatibility.
+
+  - New Features
+    * New tuning mode AOM_TUNE_SSIMULACRA2 for the AOME_SET_TUNING codec
+      control (--tune=ssimulacra2) in all-intra mode. The feature detection
+      macro AOM_HAVE_TUNE_SSIMULACRA2, if defined, indicates that
+      AOM_TUNE_SSIMULACRA2 is available.
+      AOM_TUNE_SSIMULACRA2 was developed to maximize SSIMULACRA 2 scores.
+    * New codec control AV1E_SET_SCREEN_CONTENT_DETECTION_MODE
+      (--screen-detection-mode).
+      This codec control helps select between two screen detection modes:
+       - Mode 1: standard (default)
+       - Mode 2: anti-aliased text and graphics aware
+    * New codec control AV1E_SET_ENABLE_ADAPTIVE_SHARPNESS
+      (--enable-adaptive-sharpness). When enabled, it modulates sharpness
+      based on frame QP, which helps mitigate blocking artifacts in the
+      low to medium quality range.
+
+  - Compression Efficiency Improvements
+    * Variance Boost is now enabled for tuning modes AOM_TUNE_IQ and
+      AOM_TUNE_SSIMULACRA2 at speeds 8 and 9 (2-5% SSIMULACRA 2 BD-Rate
+      gains)
+    * Several quality/time tradeoff improvements and bug fixes for all
+      intra mode speeds 8 and 9.
+      * Up to 6.9% SSIMULACRA 2 BD-Rate gains for speed 8
+      * Up to 2.2% SSIMULACRA 2 BD-Rate gains for speed 9
+
+  - Speedups
+    * Optimize intraBC search for better speed/efficiency tradeoffs for
+      all intra mode speeds >= 1
+    * Optimize intraBC block hashing process
+
+  - Bug Fixes
+    * b:421196988: all intra speed 8: overuse of palette mode
+      unnecessarily inflating file sizes
+
+2025-04-11 v3.12.1
+  This release includes several bug fixes. This release is ABI
+  compatible with the last release. See
+  https://aomedia.googlesource.com/aom/+log/v3.12.0..v3.12.1 for all the
+  commits in this release.
+
+  - Bug Fixes
+    * b:396169342: Assertion
+      `av1_is_subpelmv_in_range(&ms_params.mv_limits, start_mv)' failed.
+    * b:401671154: typo in void init_src_params(...)
+    * Coverity defect 323670: Uninitialized scalar variable in
+      encode_with_and_without_superres()
+    * cmake: bump minimum version to 3.16
+    * cfl_ppc: fix subtract_average_vsx
+    * Fix an incorrect index in av1_highbd_pixel_proj_error_neon
+
+2025-02-10 v3.12.0
+  This release includes new codec interfaces, compression efficiency and
+  perceptual improvements, speedup and memory optimizations, and bug
+  fixes. This release is ABI compatible with the last release.
+
+  Five internal functions (aom_free, aom_malloc, aom_wb_bytes_written,
+  aom_wb_write_bit, aom_wb_write_literal) that were exported by mistake
+  are no longer exported from the libaom shared library. The removal of
+  these internal functions from the ABI is a bug fix and does not break
+  ABI compatibility.
+
+  Acknowledgments: The image quality optimizations in the new tuning
+  mode AOM_TUNE_IQ were originally developed for SVT-AV1-PSY by
+  Cole Ogaard, Gianni Rosato, Julio Barba, and Zakaria Djebrouni.
+
+  - New Features
+    * New tuning mode AOM_TUNE_IQ (image quality) for the
+      AOME_SET_TUNING codec control (--tune=iq) in all-intra mode. The
+      feature detection macro AOM_HAVE_TUNE_IQ, if defined, indicates
+      that AOM_TUNE_IQ is available. The image quality optimizations in
+      AOM_TUNE_IQ were developed by using the SSIMULACRA 2 metric for
+      guidance and validated with subjective visual quality checks.
+    * New value 6 for the AV1E_SET_DELTAQ_MODE codec control
+      (--deltaq-mode): use modulation for all intra using Variance
+      Boost. Variance Boost is a variance adaptive quantization
+      implementation that modulates qindex depending on the ratio of
+      low-variance to high-variance 8x8 subblocks within a 64x64
+      superblock, as well as the actual variance of the subblocks
+      themselves.
+    * New value 3 for the AV1E_SET_ENABLE_CDEF codec control
+      (--enable-cdef): Enable CDEF adaptively based on frame qindex.
+    * In all-intra mode, the AOME_SET_SHARPNESS codec control now also
+      sets the loop_filter_sharpness syntax element in the bitstream.
+      Larger values increasingly reduce how much the filtering can
+      change the sample values on block edges to favor perceived
+      sharpness.
+    * In all-intra mode, the default value of the AV1E_SET_QM_MIN codec
+      control is decreased to 4, and the default value of the
+      AV1E_SET_QM_MAX codec control is increased to 10. The default
+      values in good-quality and realtime modes remain unchanged (5 and
+      9, respectively).
+
+  - Compression Efficiency Improvements
+    * Tuning mode AOM_TUNE_IQ improves image compression efficiency on
+      the CLIC dataset by up to 12% for the same SSIMULACRA 2 score, up
+      to 14% for the same DSSIM score, and up to 17% for the same
+      Butteraugli score.
+    * ~3% BD-rate gains for speed 11 VGA camera mode.
+    * ~5% BD-rate gains for speed 11 on scroll clips screen mode.
+
+  - Perceptual Quality Improvements
+    * Adjust temporal filter strength for better visual quality.
+    * RTC screen: visual quality improvements for scrolling and for
+      scene/slide changes.
+    * RTC camera mode: visual quality improvements for speed 11 VGA.
+
+  - Speedup and Memory Optimizations
+    * Optimize the Arm Neon implementation of the loop filter functions
+      with an average uplift of 15 - 25% in microbenchmarks.
+    * Add the CDEF optimization for RISC-V.
+    * Help the compiler generate better vectorized code for variance
+      calculation and warped motion in generic CPU builds.
+    * Make several arrays const.
+
+  - Other Improvements
+    * Binary size reduction: 1 - 2% compared with last release, with
+      CONFIG_REALTIME_ONLY enabled, CONFIG_AV1_DECODER and
+      CONFIG_AV1_HIGHBITDEPTH disabled.
+    * Build: compile source files in parallel under MSVC.
+
+  - Bug Fixes
+    * Fix bug where metadata added with aom_img_add_metadata was lost
+      when frame scaling was used.
+    * Bug b:383306740: RTC: Fix to issues with scrolling for screen
+      content.
+    * Bug b:382465458: RTC: Fix to artifact for grayscale input.
+    * Bug b:380247338: RTC: Fix to encode_time spikes on scene/slide
+      changes.
+    * RTC: Fix to rate correction factor update for VBR screen mode.
+      https://groups.google.com/a/aomedia.org/g/av1-discuss/c/nJxECdg-7P8
+    * Bug b:378401081: RTC: Fix to cyclic refresh update for external RC
+      (rate control).
+
+2024-10-24 v3.11.0
+  This release includes perceptual quality improvements, binary size reduction
+  under certain configurations and many bug fixes. This release changes the
+  default encoder configuration for the AOM_USAGE_REALTIME mode. This release
+  is ABI compatible with the last release.
+
+  - Perceptual Quality Improvements
+    * Visual quality improvements for RTC screen content
+      * Higher quality on scene or slide changes
+      * Faster quality ramp-up for static content after scene change
+      * Quality improvements for screen content with active maps
+
+  - Speedup
+    * Added and improved Neon SIMD paths for dynamic frame scaling with ~1.5%
+      overall encoding speedup.
+
+  - Other Improvements
+    * Binary size reduction: 10% compared with last release, with
+      CONFIG_REALTIME_ONLY enabled, CONFIG_AV1_DECODER and
+      CONFIG_AV1_HIGHBITDEPTH disabled.
+    * Update default_extra_cfg for CONFIG_REALTIME_ONLY to provide proper RTC
+      defaults settings
+    * Change the default valuess of the following encoder config options in the
+      AOM_USAGE_REALTIME mode:
+      *  rc_overshoot_pct and rc_undershoot_pct are changed from 25 to 50
+      *  rc_buf_sz is changed from 6000 to 1000
+      *  rc_buf_initial_sz is changed from 4000 to 600
+      *  rc_buf_optimal_sz is changed from 5000 to 600
+
+  - Bug Fixes
+    * aomedia:363016123: rtc: Fix setting of intra-only frame for
+      set_ref_frame_config and add checks
+    * aomedia:42302583: rtc: Fix for artifacts for screen with active_maps
+    * b:365088425: rtc: Allow for lower-QP on scene/slide changes
+    * b:367285382: Fix to encoder quality max-out too early for screen
+    * b:362936830: rtc: Allow QP to decrease more aggressively for static
+      content
+    * b:361617762: Clamp the calculation of sb64_target_rate to INT_MAX
+    * chromium:362123224: rtc-svc: Reset ref_map_idx for references not used
+    * chromium:367892770: Fix to possible integer overflow in reset_rc
+    * webrtc:369633254: rtc-svc: Fix to reset ref_idx for svc
+    * Fix exit condition in rate correction update
+
 2024-08-27 v3.10.0
   This release includes new codec interfaces, compression efficiency and
   perceptual improvements, speedup and memory optimizations and many bug

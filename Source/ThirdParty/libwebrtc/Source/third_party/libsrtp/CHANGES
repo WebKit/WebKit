@@ -1,6 +1,118 @@
 Changelog
 
-2.4.0-pre (This version)
+2.6.0
+
+#667 - remove use of pointers to 32bit values
+
+#666 - Cleaning up cmake and enabled more warnings.
+
+#665 - start using const on internal arguments
+
+#662 - Some srtp_driver fixes
+
+#661 - remove travis reference from README.md
+
+#660 - meson.build: implement mbedtls support
+
+#649 - iv length is constant so set only once
+
+#507 - Add x86 SIMD optimizations to crypto datatypes
+
+#643 - Add a missing typedef for stream list ctx
+
+#641 - cmake: Rename TEST_APPS as LIBSRTP_TEST_APPS option
+
+#640 - cmake: Support configuring as subproject
+
+2.5.0
+
+#636 - Make mbedtls hmac less restrictive in line with RFC and library capabilities
+
+#612 - Allow overriding stream list implementation
+
+#629 - update min openssl version to 1.1.0
+
+#602 - Openssl 3 support for EVP MAC
+
+#628 - Add android build to CI
+
+#616 - add CIFuzz Github action to workflows
+
+#621 - Add policy_set_aes_cm_192_xxx symbols to def file
+
+#617 - Use current directions in stream update test
+
+#614 - Call `set_aad` and `get_tag` in AEAD performance tests
+
+#611 - Create alias for srtp2 as libSRTP::srtp2
+
+#593 - Remove compatibility code for legacy OpenSSL to fix LibreSSL build
+
+#573 - Export CMake Targets
+
+#586 - Avoid initializing local char table when converting nibble to hex
+
+#591 - EVP_CIPHER_CTX_cleanup() is deprecated in OpenSSL 1.1.0
+
+#589 - Correct null cipher key sizes and be more defensive
+
+#570 - Include directory should point to 'include' not to 'include/srtp2'
+
+#551 - Count blocks instead of bytes in AES-ICM limit computation
+
+#561 - Rtp decoder support ssrc and roc
+
+#559 - Use a full-length key even with null ciphers
+
+#558 - Fix set ROC functionality with gcm
+
+2.4.0
+
+Major changes
+
+#529 - Remove EKT files, this was never completed and the draft has since changed.
+
+#512 - Adds support for Mbedtls as a crypto backend.
+
+#503 - Support apple silicon build.
+
+#495 - Adds support for the Meson build system. This is an alternative to Cmake and auto tools.
+
+Other changes
+
+#546 - Improve OpenSSL KDF check.
+
+#542 - Add void to function declarations for EVP_EncryptInit check.
+
+#531 - Remove dead code.
+
+#524 - Support running against nss >= 3.52.
+
+#521 - Remove references to dtls from libsrtp.
+
+#520 - Use nss based hmac when nss enabled.
+
+#519 - Move selftest vectors form backends to common files.
+
+#515 - Extend cmake support.
+
+#514 - Fix gcc11 warning by defining output length.
+
+#502 - Remove visual studio build files.
+
+#501 - cmake: Set the VERSION property of the srtp2 library.
+
+#500 - Fixed issue #499 with buffer overflow.
+
+#498 - Feature/additional error checks.
+
+#496 - Rework check for OPENSSL_cleanse().
+
+#492 - Avoid non-existing compiler flag -O4.
+
+#491 - Fix two-byte RTP header extension encryption.
+
+#478 - Modify cmake to install crypto_types.h instead of cipher_types.h
 
 2.3.0
 
@@ -8,9 +120,11 @@ Major changes
 
 A fuzzer was added to the project based on libFuzzer. This is run as part of Google oss-fuzz, the current status can be found at https://oss-fuzz-build-logs.storage.googleapis.com/index.html#libsrtp . Details available in PR #442 and issue #393.
 
-CMake support was added as an alternative build system. This was primarily added to replace the Visual Studio project files currently checked in but has been extend to support building on all platforms. Initial PR #449 and #455 but has been support has been continuously improved. 
+CMake support was added as an alternative build system. This was primarily added to replace the Visual Studio project files currently checked in but has been extend to support building on all platforms. Initial PR #449 and #455 but has been support has been continuously improved.
 
 NSS support for crypto backend was added. This is can be used as an alternative to openssl. Initial PR #413 but there has been numerous improvements.
+
+Other changes
 
 PR #474 - Add flag to disable pcap dependency when build test apps.
 

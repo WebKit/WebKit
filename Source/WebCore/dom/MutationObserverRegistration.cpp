@@ -34,6 +34,7 @@
 
 #include "Document.h"
 #include "JSNodeCustom.h"
+#include "NodeDocument.h"
 #include "QualifiedName.h"
 #include "WebCoreOpaqueRootInlines.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -48,13 +49,13 @@ MutationObserverRegistration::MutationObserverRegistration(MutationObserver& obs
     , m_options(options)
     , m_attributeFilter(attributeFilter)
 {
-    protectedObserver()->observationStarted(*this);
+    m_observer->observationStarted(*this);
 }
 
 MutationObserverRegistration::~MutationObserverRegistration()
 {
     takeTransientRegistrations();
-    protectedObserver()->observationEnded(*this);
+    m_observer->observationEnded(*this);
 }
 
 void MutationObserverRegistration::resetObservation(MutationObserverOptions options, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter)
@@ -79,7 +80,7 @@ void MutationObserverRegistration::observedSubtreeNodeWillDetach(Node& node)
     m_transientRegistrationNodes.add(node);
 }
 
-UncheckedKeyHashSet<GCReachableRef<Node>> MutationObserverRegistration::takeTransientRegistrations()
+HashSet<GCReachableRef<Node>> MutationObserverRegistration::takeTransientRegistrations()
 {
     if (m_transientRegistrationNodes.isEmpty()) {
         ASSERT(!m_nodeKeptAlive);

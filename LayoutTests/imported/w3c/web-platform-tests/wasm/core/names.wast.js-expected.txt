@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: 42
-CONSOLE MESSAGE: 123
 
 PASS #1 Reinitialize the default imports
 PASS #2 Reinitialize the default imports

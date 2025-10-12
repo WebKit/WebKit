@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "RenderFrameBase.h"
+#include <WebCore/RenderFrameBase.h>
 
 namespace WebCore {
 
@@ -42,8 +42,6 @@ public:
 
 private:
     void frameOwnerElement() const = delete;
-
-    bool isNonReplacedAtomicInline() const override;
 
     void layout() override;
 

@@ -27,7 +27,7 @@
 
 #if ENABLE(YARR_JIT)
 
-#include "GPRInfo.h"
+#include <JavaScriptCore/GPRInfo.h>
 
 namespace JSC {
 

@@ -25,22 +25,27 @@ promise_test(async (test) => {
     internals.withUserGesture(() => {
         promise = navigator.mediaDevices.getUserMedia({audio:false, video:true});
     });
-    await promise;
+    const stream = await promise;
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
     // We still have audio denied.
     await navigator.mediaDevices.getUserMedia({audio:true, video:false}).then(assert_unreached, (e) => { });
     await navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(assert_unreached, (e) => { });
 
-    await navigator.mediaDevices.getUserMedia({audio:false, video:true});
+    const stream1 = await navigator.mediaDevices.getUserMedia({audio:false, video:true});
+    test.add_cleanup(() => stream1.getTracks().forEach(track => track.stop()));
 
     internals.withUserGesture(() => {
         promise = navigator.mediaDevices.getUserMedia({audio:true, video:false});
     });
-    await promise;
+    const stream2 = await promise;
+    test.add_cleanup(() => stream2.getTracks().forEach(track => track.stop()));
 
     // We should neither have audio nor video denied anymore.
-    await navigator.mediaDevices.getUserMedia({audio:true, video:false});
-    await navigator.mediaDevices.getUserMedia({audio:true, video:true});
+    const stream3 = await navigator.mediaDevices.getUserMedia({audio:true, video:false});
+    test.add_cleanup(() => stream3.getTracks().forEach(track => track.stop()));
+    const stream4 = await navigator.mediaDevices.getUserMedia({audio:true, video:true});
+    test.add_cleanup(() => stream4.getTracks().forEach(track => track.stop()));
 }, "Testing getUserMedia with and without user gesture after user denied access");
         </script>
     </body>

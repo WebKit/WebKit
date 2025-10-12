@@ -67,6 +67,9 @@ extern const CFStringRef kIOSurfacePlaneBytesPerRow;
 extern const CFStringRef kIOSurfacePlaneOffset;
 extern const CFStringRef kIOSurfacePlaneSize;
 extern const CFStringRef kIOSurfacePlaneInfo;
+#if HAVE(SUPPORT_HDR_DISPLAY)
+extern const CFStringRef kIOSurfaceContentHeadroom;
+#endif
 
 size_t IOSurfaceAlignProperty(CFStringRef property, size_t value);
 IOSurfaceRef IOSurfaceCreate(CFDictionaryRef properties);

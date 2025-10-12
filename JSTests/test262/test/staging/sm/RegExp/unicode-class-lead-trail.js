@@ -2,17 +2,12 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-RegExp-shell.js, compareArray.js]
-flags:
-  - noStrict
+includes: [compareArray.js]
 description: |
-  pending
+  Implement RegExp unicode flag -- lead and trail pattern in RegExpUnicodeEscapeSequence in CharacterClass.
+info: bugzilla.mozilla.org/show_bug.cgi?id=1135377
 esid: pending
 ---*/
-var BUGNUMBER = 1135377;
-var summary = "Implement RegExp unicode flag -- lead and trail pattern in RegExpUnicodeEscapeSequence in CharacterClass.";
-
-print(BUGNUMBER + ": " + summary);
 
 // ==== standalone ====
 
@@ -136,16 +131,15 @@ assert.compareArray(/[\uD83DA]*/u.exec("\uD83DAA\uD83D"),
 
 // ==== wrong patterns ====
 
-assertThrowsInstanceOf(() => eval(`/[\\u]/u`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`/[\\u0]/u`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`/[\\u00]/u`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`/[\\u000]/u`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`/[\\u000G]/u`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`/[\\u0.00]/u`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`/[\\uD83D\\u]/u`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`/[\\uD83D\\u0]/u`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`/[\\uD83D\\u00]/u`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`/[\\uD83D\\u000]/u`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`/[\\uD83D\\u000G]/u`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`/[\\uD83D\\u0.00]/u`), SyntaxError);
-
+assert.throws(SyntaxError, () => eval(`/[\\u]/u`));
+assert.throws(SyntaxError, () => eval(`/[\\u0]/u`));
+assert.throws(SyntaxError, () => eval(`/[\\u00]/u`));
+assert.throws(SyntaxError, () => eval(`/[\\u000]/u`));
+assert.throws(SyntaxError, () => eval(`/[\\u000G]/u`));
+assert.throws(SyntaxError, () => eval(`/[\\u0.00]/u`));
+assert.throws(SyntaxError, () => eval(`/[\\uD83D\\u]/u`));
+assert.throws(SyntaxError, () => eval(`/[\\uD83D\\u0]/u`));
+assert.throws(SyntaxError, () => eval(`/[\\uD83D\\u00]/u`));
+assert.throws(SyntaxError, () => eval(`/[\\uD83D\\u000]/u`));
+assert.throws(SyntaxError, () => eval(`/[\\uD83D\\u000G]/u`));
+assert.throws(SyntaxError, () => eval(`/[\\uD83D\\u0.00]/u`));

@@ -91,6 +91,7 @@ public:
 
 #if PLATFORM(COCOA)
     dispatch_data_t dispatchData() const { return m_dispatchData.get(); }
+    RetainPtr<dispatch_data_t> protectedDispatchData() const;
 #endif
 
 #if USE(GLIB)
@@ -113,7 +114,6 @@ private:
 
 Data concatenate(const Data&, const Data&);
 bool bytesEqual(const Data&, const Data&);
-Data adoptAndMapFile(FileSystem::FileHandle&&, size_t offset, size_t);
 Data mapFile(const String& path);
 
 using Salt = FileSystem::Salt;

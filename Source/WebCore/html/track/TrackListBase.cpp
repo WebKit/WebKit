@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #include "TrackListBase.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "EventNames.h"
 #include "ScriptExecutionContext.h"
 #include "TrackEvent.h"
@@ -45,6 +46,11 @@ TrackListBase::TrackListBase(ScriptExecutionContext* context, Type type)
 }
 
 TrackListBase::~TrackListBase() = default;
+
+ScriptExecutionContext* TrackListBase::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
+}
 
 void TrackListBase::didMoveToNewDocument(Document& newDocument)
 {
@@ -175,6 +181,8 @@ void TrackListBase::scheduleChangeEvent()
     // change at the VideoTrackList object.
     m_isChangeEventScheduled = true;
     queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [](auto& trackList) {
+        if (trackList.isContextStopped())
+            return;
         trackList.m_isChangeEventScheduled = false;
         trackList.dispatchEvent(Event::create(eventNames().changeEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });

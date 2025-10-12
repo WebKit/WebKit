@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,7 +55,7 @@ private:
     void setNeedsToUpdateChildren() final { };
 
     // FIXME: Nothing calls AXObjectCache::remove for m_popup.
-    Ref<AccessibilityMenuListPopup> m_popup;
+    const Ref<AccessibilityMenuListPopup> m_popup;
 };
 
 } // namespace WebCore

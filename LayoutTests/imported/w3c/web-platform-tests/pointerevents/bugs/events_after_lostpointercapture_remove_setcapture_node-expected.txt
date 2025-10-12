@@ -1,0 +1,4 @@
+
+
+FAIL setPointerCapture target removed by lostpointercapture assert_equals: expected "lostpointercapture@target0, pointerup@button, pointerup@button" but got "lostpointercapture@target0, lostpointercapture@target0, pointerup@target1, lostpointercapture@target1, lostpointercapture@target1, pointerup@button"
+

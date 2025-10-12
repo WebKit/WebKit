@@ -40,7 +40,7 @@ compareFormatToPartsSnapshot("0001-01-01T00:00Z", {
 
 var fromWithCases = {
   year2000: {
-    era: "coptic",
+    era: "am",
     eraYear: 1716,
     year: 1716,
     month: 4,
@@ -48,8 +48,8 @@ var fromWithCases = {
     day: 22,
   },
   year1: {
-    era: "coptic-inverse",
-    eraYear: 284,
+    era: "am",
+    eraYear: -283,
     year: -283,
     month: 5,
     monthCode: "M05",
@@ -124,7 +124,7 @@ var durationCases = {
     duration: { days: 280 },
     result: {
       eraYear: 2000,
-      era: "coptic",
+      era: "am",
       year: 2000,
       month: 10,
       monthCode: "M10",
@@ -140,7 +140,7 @@ var durationCases = {
     duration: { weeks: 40 },
     result: {
       eraYear: 2000,
-      era: "coptic",
+      era: "am",
       year: 2000,
       month: 10,
       monthCode: "M10",
@@ -155,7 +155,7 @@ var durationCases = {
   months: {
     duration: { months: 6 },
     result: {
-      era: "coptic",
+      era: "am",
       eraYear: 2001,
       year: 2001,
       month: 5,
@@ -175,7 +175,7 @@ var durationCases = {
       days: 17
     },
     result: {
-      era: "coptic",
+      era: "am",
       eraYear: 2001,
       year: 2001,
       month: 5,

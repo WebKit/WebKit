@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error: assert_equals: should scroll to fragment expected 800 but got 0
 
 Harness Error (TIMEOUT), message = null
 

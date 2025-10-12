@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'a' because it violates the following Content Security Policy directive: "trusted-types a b c"
-CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'd' because it violates the following Content Security Policy directive: "trusted-types a b c"
 
 PASS TrustedTypePolicyFactory and policy list in CSP.
 

@@ -30,8 +30,6 @@
 #include <string.h>
 #include <type_traits>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 template<size_t size>
@@ -39,7 +37,7 @@ using BitSetWordType = std::conditional_t<(size <= 32 && sizeof(UCPURegister) > 
 
 template<size_t bitSetSize, typename PassedWordType = BitSetWordType<bitSetSize>>
 class BitSet final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(BitSet);
     
 public:
     using WordType = PassedWordType;
@@ -88,7 +86,7 @@ public:
     constexpr size_t findBit(size_t startIndex, bool value) const;
 
     class iterator {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(iterator);
     public:
         constexpr iterator()
             : m_bitSet(nullptr)
@@ -209,7 +207,9 @@ ALWAYS_INLINE constexpr bool BitSet<bitSetSize, WordType>::concurrentTestAndSet(
 {
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     WordType* data = dependency.consume(bits.data()) + index;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     // transactionRelaxed() returns true if the bit was changed. If the bit was changed,
     // then the previous bit must have been false since we're trying to set it. Hence,
     // the result of transactionRelaxed() is the inverse of our expected result.
@@ -228,7 +228,9 @@ ALWAYS_INLINE constexpr bool BitSet<bitSetSize, WordType>::concurrentTestAndClea
 {
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     WordType* data = dependency.consume(bits.data()) + index;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     // transactionRelaxed() returns true if the bit was changed. If the bit was changed,
     // then the previous bit must have been true since we're trying to clear it. Hence,
     // the result of transactionRelaxed() matches our expected result.
@@ -251,7 +253,7 @@ inline constexpr void BitSet<bitSetSize, WordType>::clear(size_t n)
 template<size_t bitSetSize, typename WordType>
 inline constexpr void BitSet<bitSetSize, WordType>::clearAll()
 {
-    memset(bits.data(), 0, sizeof(bits));
+    zeroSpan(std::span { bits });
 }
 
 template<size_t bitSetSize, typename WordType>
@@ -267,7 +269,7 @@ inline void BitSet<bitSetSize, WordType>::cleanseLastWord()
 template<size_t bitSetSize, typename WordType>
 inline constexpr void BitSet<bitSetSize, WordType>::setAll()
 {
-    memset(bits.data(), 0xFF, sizeof(bits));
+    memsetSpan(std::span { bits }, 0xFF);
     cleanseLastWord();
 }
 
@@ -407,14 +409,14 @@ template<size_t bitSetSize, typename WordType>
 template<typename Func>
 ALWAYS_INLINE constexpr void BitSet<bitSetSize, WordType>::forEachSetBit(const Func& func) const
 {
-    WTF::forEachSetBit(std::span { bits.data(), bits.size() }, func);
+    WTF::forEachSetBit(std::span { bits }, func);
 }
 
 template<size_t bitSetSize, typename WordType>
 template<typename Func>
 ALWAYS_INLINE constexpr void BitSet<bitSetSize, WordType>::forEachSetBit(size_t startIndex, const Func& func) const
 {
-    WTF::forEachSetBit(std::span { bits.data(), bits.size() }, startIndex, func);
+    WTF::forEachSetBit(std::span { bits }, startIndex, func);
 }
 
 template<size_t bitSetSize, typename WordType>
@@ -534,5 +536,3 @@ inline void BitSet<bitSetSize, WordType>::dump(PrintStream& out) const
 } // namespace WTF
 
 // We can't do "using WTF::BitSet;" here because there is a function in the macOS SDK named BitSet() already.
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

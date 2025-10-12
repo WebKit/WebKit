@@ -10,6 +10,8 @@
 
 #include "modules/audio_processing/test/conversational_speech/config.h"
 
+#include <string>
+
 namespace webrtc {
 namespace test {
 namespace conversational_speech {

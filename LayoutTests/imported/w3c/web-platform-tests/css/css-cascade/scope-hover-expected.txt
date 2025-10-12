@@ -1,6 +1,6 @@
 
-FAIL :hover via :scope in subject assert_equals: expected "1" but got "auto"
+PASS :hover via :scope in subject
 PASS :hover via :scope in non-subject
-FAIL :hover in limit, :scope in subject assert_equals: expected "auto" but got "1"
+PASS :hover in limit, :scope in subject
 PASS :hover in intermediate limit, :scope in subject
 

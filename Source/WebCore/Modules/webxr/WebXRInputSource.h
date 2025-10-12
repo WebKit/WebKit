@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L. All rights reserved.
- * Copyright (C) 2021 Apple, Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,12 +91,12 @@ private:
 
     WeakPtr<WebXRSession> m_session;
     InputSource m_source;
-    Ref<WebXRInputSpace> m_targetRaySpace;
+    const Ref<WebXRInputSpace> m_targetRaySpace;
     RefPtr<WebXRInputSpace> m_gripSpace;
     double m_connectTime { 0 };
     bool m_connected { true };
 #if ENABLE(GAMEPAD)
-    Ref<Gamepad> m_gamepad;
+    const Ref<Gamepad> m_gamepad;
 #endif
 
 #if ENABLE(WEBXR_HANDS)

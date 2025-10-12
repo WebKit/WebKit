@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All Rights Reserved.
- * Copyright (C) 2014 Raspberry Pi Foundation. All Rights Reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Raspberry Pi Foundation. All rights reserved.
  * Copyright (C) 2018 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without

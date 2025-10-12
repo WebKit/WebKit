@@ -71,6 +71,7 @@
 
 #define DEFAULT_N_PAGES 63
 #define BUFFER_MAX_SIZE ((UINT32_MAX/2)-_sysprof_getpagesize())
+#define SHM_COLOUR 0x00400000
 
 enum {
   MODE_READER    = 1,
@@ -209,9 +210,16 @@ mapped_ring_buffer_new_reader (size_t buffer_size)
 
   page_size = _sysprof_getpagesize ();
 
-  /* Add 1 page for coordination header */
   if (buffer_size == 0)
     buffer_size = page_size * DEFAULT_N_PAGES;
+
+#ifdef __hppa__
+  /* Round buffer_size up to the shared memory colour boundary */
+  buffer_size += SHM_COLOUR - 1;
+  buffer_size &= ~(SHM_COLOUR - 1);
+#endif
+
+  /* Add 1 page for coordination header */
   buffer_size += page_size;
 
   /* Create our memfd (or tmpfs) for writing */

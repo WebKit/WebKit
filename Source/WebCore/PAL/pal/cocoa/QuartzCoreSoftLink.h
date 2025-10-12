@@ -33,3 +33,5 @@ SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, QuartzCore)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, QuartzCore, CAIOSurfaceCreate, CAIOSurfaceRef, (IOSurfaceRef surface), (surface))
 #define CAIOSurfaceCreate PAL::softLink_QuartzCore_CAIOSurfaceCreate
 
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, QuartzCore, CAIOSurfaceReloadColorAttributes, void, (CAIOSurfaceRef surface), (surface))
+#define CAIOSurfaceReloadColorAttributes PAL::softLink_QuartzCore_CAIOSurfaceReloadColorAttributes

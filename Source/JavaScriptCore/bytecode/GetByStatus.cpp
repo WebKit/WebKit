@@ -141,15 +141,13 @@ GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
             if (metadata.m_hasInstanceModeMetadata.mode != GetByIdMode::Default)
                 return GetByStatus(NoInformation, false);
             structureID = metadata.m_hasInstanceModeMetadata.defaultMode.structureID;
-            identifier = &vm.propertyNames->done;
+            identifier = &vm.propertyNames->hasInstanceSymbol;
             break;
         case OpInstanceof::getPrototype:
             if (metadata.m_prototypeModeMetadata.mode != GetByIdMode::Default)
                 return GetByStatus(NoInformation, false);
             structureID = metadata.m_prototypeModeMetadata.defaultMode.structureID;
-            identifier = &vm.propertyNames->value;
-            break;
-        case OpInstanceof::instanceof:
+            identifier = &vm.propertyNames->prototype;
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -480,7 +478,7 @@ GetByStatus GetByStatus::computeFor(
     return computeFor(profiledBlock, baselineMap, didExit, callExitSiteData, codeOrigin);
 }
 
-GetByStatus GetByStatus::computeFor(const StructureSet& set, UniquedStringImpl* uid)
+GetByStatus GetByStatus::computeFor(JSGlobalObject* globalObject, const StructureSet& set, CacheableIdentifier identifier)
 {
     // For now we only handle the super simple self access case. We could handle the
     // prototype case in the future.
@@ -488,13 +486,79 @@ GetByStatus GetByStatus::computeFor(const StructureSet& set, UniquedStringImpl* 
     // Note that this code is also used for GetByIdDirect since this function only looks
     // into direct properties. When supporting prototype chains, we should split this for
     // GetById and GetByIdDirect.
-    
+
     if (set.isEmpty())
         return GetByStatus();
 
-    if (parseIndex(*uid))
+    if (parseIndex(*identifier.uid()))
         return GetByStatus(LikelyTakesSlowPath);
-    
+
+    VM& vm = globalObject->vm();
+    auto attempToFold = [&]() -> std::optional<GetByStatus> {
+        Structure* structure = set.onlyStructure();
+        if (!structure)
+            return std::nullopt;
+
+        JSObject* prototype = nullptr;
+        auto* currentStructure = structure;
+        constexpr unsigned maxPrototypeWalkDepth = 8;
+        for (unsigned i = 0; i < maxPrototypeWalkDepth; ++i) {
+            if (currentStructure->typeInfo().overridesGetOwnPropertySlot())
+                return std::nullopt;
+
+            if (!currentStructure->propertyAccessesAreCacheable())
+                return std::nullopt;
+
+            unsigned attributes;
+            PropertyOffset offset = currentStructure->getConcurrently(identifier.uid(), attributes);
+            if (isValidOffset(offset)) {
+                if (!prototype)
+                    return std::nullopt; // We will handle it in the latter code.
+                if (attributes & PropertyAttribute::Accessor)
+                    return std::nullopt;
+                if (attributes & PropertyAttribute::CustomAccessorOrValue)
+                    return std::nullopt;
+
+                if (auto conditionSet = generateConditionsForPrototypePropertyHitConcurrently(vm, globalObject, structure, prototype, identifier.uid()); conditionSet.isValid()) {
+                    GetByStatus result;
+                    result.m_state = Simple;
+                    result.m_wasSeenInJIT = false;
+                    PropertyOffset offset = invalidOffset;
+                    PropertyCondition::Kind kind = PropertyCondition::Absence;
+                    for (auto& condition : conditionSet) {
+                        if (condition.hasOffset())
+                            offset = condition.offset();
+                        kind = condition.kind();
+                    }
+                    if (offset == invalidOffset)
+                        return std::nullopt;
+                    if (kind != PropertyCondition::Presence)
+                        return std::nullopt;
+                    GetByVariant variant(identifier, StructureSet(structure), /* viaGlobalProxy */ false, offset, conditionSet);
+                    if (!result.appendVariant(variant))
+                        return std::nullopt;
+                    return result;
+                }
+                return std::nullopt;
+            }
+
+            if (currentStructure->hasPolyProto())
+                return std::nullopt;
+
+            JSValue value = currentStructure->prototypeForLookup(globalObject);
+            if (!value)
+                return std::nullopt;
+            if (!value.isObject())
+                return std::nullopt;
+            prototype = asObject(value);
+            currentStructure = prototype->structure();
+        }
+        return std::nullopt;
+    };
+
+    if (auto result = attempToFold())
+        return result.value();
+
     GetByStatus result;
     result.m_state = Simple;
     result.m_wasSeenInJIT = false;
@@ -507,7 +571,7 @@ GetByStatus GetByStatus::computeFor(const StructureSet& set, UniquedStringImpl* 
             return GetByStatus(LikelyTakesSlowPath);
         
         unsigned attributes;
-        PropertyOffset offset = structure->getConcurrently(uid, attributes);
+        PropertyOffset offset = structure->getConcurrently(identifier.uid(), attributes);
         if (!isValidOffset(offset))
             return GetByStatus(LikelyTakesSlowPath); // It's probably a prototype lookup. Give up on life for now, even though we could totally be way smarter about it.
         if (attributes & PropertyAttribute::Accessor)
@@ -673,6 +737,24 @@ CacheableIdentifier GetByStatus::singleIdentifier() const
         return m_moduleNamespaceData->m_identifier;
 
     return singleIdentifierForICStatus(m_variants);
+}
+
+void GetByStatus::filterById(UniquedStringImpl* uid)
+{
+    if (m_state != Simple)
+        return;
+
+    if (m_variants.isEmpty())
+        return;
+
+    auto filtered = m_variants;
+    filtered.removeAllMatching(
+        [&] (auto& variant) -> bool {
+            return variant.identifier() != uid;
+        });
+    if (filtered.isEmpty())
+        return;
+    m_variants = WTFMove(filtered);
 }
 
 #if ENABLE(JIT)

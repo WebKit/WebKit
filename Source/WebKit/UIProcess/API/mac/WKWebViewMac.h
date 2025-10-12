@@ -39,6 +39,8 @@ std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScr
 - (void)_takeFindStringFromSelectionInternal:(id)sender;
 - (void)insertText:(id)string replacementRange:(NSRange)replacementRange;
 
+- (void)_resetSecureInputState;
+
 @end
 
 #endif // PLATFORM(MAC)

@@ -36,7 +36,7 @@ WebCore::FloatRect TextRun::rectInWebView() const
     if (!page)
         return { };
 
-    RefPtr client = page->protectedPageClient();
+    RefPtr client = page->pageClient();
     if (!client)
         return { };
 

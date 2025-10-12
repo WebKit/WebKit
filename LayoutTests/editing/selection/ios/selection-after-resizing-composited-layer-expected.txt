@@ -1,0 +1,12 @@
+Verifies that the caret rect is correct after resizing the layer containing the selection. The caret should still be visible after the box expands
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS caretRectBeforeResize.top is caretRectAfterResize.top
+PASS caretRectBeforeResize.left is caretRectAfterResize.left
+PASS caretRectBeforeResize.width is caretRectAfterResize.width
+PASS caretRectBeforeResize.height is caretRectAfterResize.height
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

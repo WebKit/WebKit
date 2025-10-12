@@ -59,7 +59,7 @@ public:
 private:
     TypeAheadDataSource* m_dataSource;
     MonotonicTime m_lastTypeTime;
-    UChar m_repeatingChar;
+    char16_t m_repeatingChar;
     StringBuilder m_buffer;
 };
 

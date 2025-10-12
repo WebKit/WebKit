@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: detected_pointertypes
 Pointer Events: effective touch-action is "none" when parent has "none" and target has "auto"
 
 Try to scroll DOWN then RIGHT from inside blue rectangle. Tap Complete button under the rectangle when done. Expectation: no panning

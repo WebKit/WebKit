@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPUBindGroupLayoutEntry.h"
-#include "WebGPUObjectDescriptorBase.h"
+#include <WebCore/WebGPUBindGroupLayoutEntry.h>
+#include <WebCore/WebGPUObjectDescriptorBase.h>
 #include <wtf/Vector.h>
 
 namespace WebCore::WebGPU {

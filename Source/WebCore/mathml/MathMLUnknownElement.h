@@ -27,11 +27,11 @@
 
 #if ENABLE(MATHML)
 
-#include "MathMLElement.h"
+#include "MathMLRowElement.h"
 
 namespace WebCore {
 
-class MathMLUnknownElement final : public MathMLElement {
+class MathMLUnknownElement final : public MathMLRowElement {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MathMLUnknownElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLUnknownElement);
 public:
@@ -42,11 +42,11 @@ public:
 
 private:
     MathMLUnknownElement(const QualifiedName& tagName, Document& document)
-        : MathMLElement(tagName, document, TypeFlag::IsUnknownElement)
+        : MathMLRowElement(tagName, document, TypeFlag::IsUnknownElement)
     {
     }
 
-    bool rendererIsNeeded(const RenderStyle&) final { return false; }
+    bool isPresentationMathML() const final { return false; }
 };
 
 } // namespace WebCore

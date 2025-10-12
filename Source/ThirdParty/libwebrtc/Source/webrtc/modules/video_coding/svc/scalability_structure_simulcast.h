@@ -10,6 +10,7 @@
 #ifndef MODULES_VIDEO_CODING_SVC_SCALABILITY_STRUCTURE_SIMULCAST_H_
 #define MODULES_VIDEO_CODING_SVC_SCALABILITY_STRUCTURE_SIMULCAST_H_
 
+#include <bitset>
 #include <vector>
 
 #include "api/transport/rtp/dependency_descriptor.h"

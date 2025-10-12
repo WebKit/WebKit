@@ -31,6 +31,7 @@
 #include "ClipboardItemBindingsDataSource.h"
 #include "ClipboardItemPasteboardDataSource.h"
 #include "CommonAtomStrings.h"
+#include "ContextDestructionObserverInlines.h"
 #include "ExceptionOr.h"
 #include "Navigator.h"
 #include "PasteboardCustomData.h"
@@ -65,7 +66,7 @@ static ClipboardItem::PresentationStyle clipboardItemPresentationStyle(const Pas
 // https://w3c.github.io/clipboard-apis/#optional-data-types
 // https://webkit.org/b/280664
 ClipboardItem::ClipboardItem(Vector<KeyValuePair<String, Ref<DOMPromise>>>&& items, const Options& options)
-    : m_dataSource(makeUnique<ClipboardItemBindingsDataSource>(*this, WTFMove(items)))
+    : m_dataSource(makeUniqueRef<ClipboardItemBindingsDataSource>(*this, WTFMove(items)))
     , m_presentationStyle(options.presentationStyle)
 {
 }
@@ -73,7 +74,7 @@ ClipboardItem::ClipboardItem(Vector<KeyValuePair<String, Ref<DOMPromise>>>&& ite
 ClipboardItem::ClipboardItem(Clipboard& clipboard, const PasteboardItemInfo& info)
     : m_clipboard(clipboard)
     , m_navigator(clipboard.navigator())
-    , m_dataSource(makeUnique<ClipboardItemPasteboardDataSource>(*this, info))
+    , m_dataSource(makeUniqueRef<ClipboardItemPasteboardDataSource>(*this, info))
     , m_presentationStyle(clipboardItemPresentationStyle(info))
 {
 }

@@ -115,7 +115,7 @@ void SpeechRecognitionPermissionManager::startNextRequest()
 
 void SpeechRecognitionPermissionManager::startProcessingRequest()
 {
-    auto page = protectedPage();
+    Ref page = *this->page();
     page->syncIfMockDevicesEnabledChanged();
     if (page->protectedPreferences()->mockCaptureDevicesEnabled()) {
         m_microphoneCheck = CheckResult::Granted;

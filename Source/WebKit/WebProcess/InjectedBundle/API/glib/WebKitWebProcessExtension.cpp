@@ -28,7 +28,7 @@
 #include "WebKitWebProcessExtensionPrivate.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
-#include <WebCore/GCController.h>
+#include <WebCore/GarbageCollectionController.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/HashMap.h>
 #include <wtf/glib/GRefPtr.h>
@@ -198,7 +198,7 @@ private:
         m_extension->priv->pages.remove(&page);
 #if ENABLE(DEVELOPER_MODE)
         if (m_extension->priv->garbageCollectOnPageDestroy)
-            WebCore::GCController::singleton().garbageCollectNow();
+            WebCore::GarbageCollectionController::singleton().garbageCollectNow();
 #endif
     }
 

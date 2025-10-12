@@ -111,8 +111,15 @@ def GetFunctionsFromFixture():
         for line in lines:
             line = re.sub('// .*\n', '', line.strip())
             if line.startswith(pattern):
-                func_name = line[len(pattern):line.find('(')]
-                func_args = line.count(',') + 1
+                func_name_end_index = line.find('(')
+                func_name = line[len(pattern):func_name_end_index]
+                args_start_index = func_name_end_index + 1
+                args_end_index = line.find(')', args_start_index)
+                args_str = line[args_start_index:args_end_index].strip()
+                if args_str:
+                    func_args = args_str.count(',') + 1
+                else:
+                    func_args = 0
                 funcs.append(func_name)
                 arg_counts.add(func_args)
         f.close()

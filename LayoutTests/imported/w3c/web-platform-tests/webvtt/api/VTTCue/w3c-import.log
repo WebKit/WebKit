@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/api/VTTCue/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/api/VTTCue/align.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/api/VTTCue/categories.json
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/api/VTTCue/common.js

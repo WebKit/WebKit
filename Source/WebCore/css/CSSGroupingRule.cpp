@@ -88,7 +88,8 @@ ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsi
     }();
     RefPtr newRule = CSSParser::parseRule(ruleString, parserContext(), styleSheet ? &styleSheet->contents() : nullptr, CSSParser::AllowedRules::ImportRules, nestedContextWithCurrentRule);
     if (!newRule) {
-        if (!hasStyleRuleAncestor())
+        // CSSNestedDeclarations parsing is allowed if there is an ancestor style rule or an ancestor scope rule.
+        if (!nestedContextWithCurrentRule)
             return Exception { ExceptionCode::SyntaxError };
         newRule = CSSParser::parseNestedDeclarations(parserContext(), ruleString);
         if (!newRule)

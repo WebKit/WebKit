@@ -86,12 +86,12 @@ private:
     bool virtualHasPendingActivity() const final;
 
     String m_name;
-    Ref<AudioParamMap> m_parameters;
-    Ref<MessagePort> m_port;
+    const Ref<AudioParamMap> m_parameters;
+    const Ref<MessagePort> m_port;
     Lock m_processLock;
     RefPtr<AudioWorkletProcessor> m_processor; // Should only be used on the rendering thread.
     MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>> m_paramValuesMap;
-    RefPtr<Thread> m_workletThread { nullptr };
+    RefPtr<Thread> m_workletThread;
 
     // Keeps the reference of AudioBus objects from AudioNodeInput and AudioNodeOutput in order
     // to pass them to AudioWorkletProcessor.
@@ -103,5 +103,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_AUDIONODE(AudioWorkletNode, NodeTypeWorklet);
 
 #endif // ENABLE(WEB_AUDIO)

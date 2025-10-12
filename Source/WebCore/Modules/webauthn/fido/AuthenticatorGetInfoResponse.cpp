@@ -134,7 +134,9 @@ Vector<uint8_t> encodeAsCBOR(const AuthenticatorGetInfoResponse& response)
     
     if (response.transports()) {
         auto transports = *response.transports();
-        deviceInfoMap.emplace(CBORValue(kCtapAuthenticatorGetInfoTransportsKey), toArrayValue(transports.map(WebCore::toString)));
+        deviceInfoMap.emplace(CBORValue(kCtapAuthenticatorGetInfoTransportsKey), toArrayValue(transports.map([](auto transport) {
+            return WebCore::toString(transport);
+        })));
     }
 
     if (response.remainingDiscoverableCredentials())

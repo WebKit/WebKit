@@ -427,6 +427,9 @@ def PrepareRestrictedTraces(traces):
         logging.info('Syncing %s trace (%d/%d)', trace, idx + 1, len(traces))
 
         path_from_root = 'src/tests/restricted_traces/' + trace + '/' + trace + '.angledata.gz'
+        # If compressed binary data file does not exist use correct uncompressed filename
+        if not os.path.exists('../../' + path_from_root):
+            path_from_root = 'src/tests/restricted_traces/' + trace + '/' + trace + '.angledata'
         _Push('../../' + path_from_root, path_from_root)
 
         if _Global.traces_outside_of_apk:
@@ -484,6 +487,8 @@ def _SetCaptureProps(env, device_out_dir):
         'ANGLE_CAPTURE_ENABLED': 'debug.angle.capture.enabled',
         'ANGLE_CAPTURE_FRAME_START': 'debug.angle.capture.frame_start',
         'ANGLE_CAPTURE_FRAME_END': 'debug.angle.capture.frame_end',
+        'ANGLE_CAPTURE_MAX_RESIDENT_BINARY_SIZE': 'debug.angle.capture.max_resident_binary_size',
+        'ANGLE_CAPTURE_BLOCK_SIZE': 'debug.angle.capture.block_size',
         'ANGLE_CAPTURE_TRIGGER': 'debug.angle.capture.trigger',
         'ANGLE_CAPTURE_END_CAPTURE': 'debug.angle.capture.end_capture',
         'ANGLE_CAPTURE_LABEL': 'debug.angle.capture.label',

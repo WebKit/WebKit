@@ -25,25 +25,17 @@
 
 #pragma once
 
-#include "CSSCalcType.h"
-#include "CSSPrimitiveNumeric.h"
-#include "CSSPrimitiveNumericRange.h"
-#include "CSSUnits.h"
-#include "CSSValueKeywords.h"
+#include <WebCore/CSSCalcType.h>
+#include <WebCore/CSSPrimitiveNumeric.h>
+#include <WebCore/CSSPrimitiveNumericRange.h>
+#include <WebCore/CSSUnits.h>
+#include <WebCore/CSSValueKeywords.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
-
-namespace CQ {
-struct ContainerProgressProviding;
-}
-
-namespace MQ {
-struct MediaProgressProviding;
-}
 
 namespace Style {
 enum class AnchorSizeDimension : uint8_t;
@@ -85,9 +77,6 @@ struct Abs;
 struct Sign;
 struct Random;
 struct Progress;
-
-struct MediaProgress;
-struct ContainerProgress;
 
 // CSS Anchor Positioning functions.
 struct Anchor;
@@ -191,14 +180,14 @@ template<typename Op> struct IndirectNode {
     UniqueRef<Op> op;
 
     // Forward * and -> to the operation for convenience.
-    const Op& operator*() const { return *op; }
-    Op& operator*() { return *op; }
+    const Op& operator*() const { return op.get(); }
+    Op& operator*() { return op.get(); }
     const Op* operator->() const { return op.ptr(); }
     Op* operator->() { return op.ptr(); }
-    operator const Op&() const { return *op; }
-    operator Op&() { return *op; }
+    operator const Op&() const { return op.get(); }
+    operator Op&() { return op.get(); }
 
-    bool operator==(const IndirectNode<Op>& other) const { return type == other.type && op.get() == other.op.get(); }
+    bool operator==(const IndirectNode<Op>& other) const { return type == other.type && arePointingToEqualData(op, other.op); }
 };
 
 using Node = Variant<
@@ -238,8 +227,6 @@ using Node = Variant<
     IndirectNode<Sign>,
     IndirectNode<Random>,
     IndirectNode<Progress>,
-    IndirectNode<MediaProgress>,
-    IndirectNode<ContainerProgress>,
     IndirectNode<Anchor>,
     IndirectNode<AnchorSize>
 >;
@@ -814,43 +801,6 @@ struct Progress {
     bool operator==(const Progress&) const = default;
 };
 
-struct MediaProgress {
-    WTF_MAKE_STRUCT_TZONE_ALLOCATED(MediaProgress);
-    static constexpr auto id = CSSValueMediaProgress;
-
-    // <media-progress()> = media-progress( <mf-name>, <calc-sum>, <calc-sum> )
-    //     - INPUT: "consistent" <number>, <dimension>, or <percentage>, dependent on type of <mf-name> feature.
-    //     - OUTPUT: <number>
-
-    // media-progress() is not a "math function", so its children do not inherit
-    // nor contribute to the type of the overall calculation tree.
-
-    const MQ::MediaProgressProviding* feature;
-    Child start;
-    Child end;
-
-    bool operator==(const MediaProgress&) const = default;
-};
-
-struct ContainerProgress {
-    WTF_MAKE_STRUCT_TZONE_ALLOCATED(ContainerProgress);
-    static constexpr auto id = CSSValueContainerProgress;
-
-    // <container-progress()> = container-progress( <mf-name> [ of <container-name> ]?, <calc-sum>, <calc-sum> )
-    //     - INPUT: "consistent" <number>, <dimension>, or <percentage>, dependent on type of <mf-name> feature.
-    //     - OUTPUT: <number>
-
-    // container-progress() is not a "math function", so its children do not inherit
-    // nor contribute to the type of the overall calculation tree.
-
-    const CQ::ContainerProgressProviding* feature;
-    AtomString container;
-    Child start;
-    Child end;
-
-    bool operator==(const ContainerProgress&) const = default;
-};
-
 // Anchor Positioning Related Functions - https://drafts.csswg.org/css-anchor-position-1/
 
 struct AnchorSide {
@@ -978,8 +928,6 @@ std::optional<Type> toType(const Abs&);
 std::optional<Type> toType(const Sign&);
 std::optional<Type> toType(const Random&);
 std::optional<Type> toType(const Progress&);
-std::optional<Type> toType(const MediaProgress&);
-std::optional<Type> toType(const ContainerProgress&);
 
 // MARK: CSSUnitType Evaluation
 
@@ -1271,28 +1219,6 @@ template<size_t I> const auto& get(const Progress& root)
         return root.end;
 }
 
-template<size_t I> const auto& get(const MediaProgress& root)
-{
-    if constexpr (!I)
-        return root.feature;
-    else if constexpr (I == 1)
-        return root.start;
-    else if constexpr (I == 2)
-        return root.end;
-}
-
-template<size_t I> const auto& get(const ContainerProgress& root)
-{
-    if constexpr (!I)
-        return root.feature;
-    else if constexpr (I == 1)
-        return root.container;
-    else if constexpr (I == 2)
-        return root.start;
-    else if constexpr (I == 3)
-        return root.end;
-}
-
 // MARK: Child Definition
 
 template<typename T>
@@ -1455,8 +1381,6 @@ OP_TUPLE_LIKE_CONFORMANCE(Exp, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Abs, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Sign, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Progress, 3);
-OP_TUPLE_LIKE_CONFORMANCE(MediaProgress, 3);
-OP_TUPLE_LIKE_CONFORMANCE(ContainerProgress, 4);
 OP_TUPLE_LIKE_CONFORMANCE(Random, 4);
 // FIXME (webkit.org/b/280798): make Anchor and AnchorSize tuple-like
 OP_TUPLE_LIKE_CONFORMANCE(Anchor, 0);

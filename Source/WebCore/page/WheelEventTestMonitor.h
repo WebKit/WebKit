@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include "PlatformWheelEvent.h"
-#include "ScrollingNodeID.h"
+#include <WebCore/PlatformWheelEvent.h>
+#include <WebCore/ScrollingNodeID.h>
 #include <functional>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
@@ -70,7 +70,7 @@ public:
     
     void checkShouldFireCallbacks();
 
-    using ScrollableAreaReasonMap = UncheckedKeyHashMap<ScrollingNodeID, OptionSet<DeferReason>>;
+    using ScrollableAreaReasonMap = HashMap<ScrollingNodeID, OptionSet<DeferReason>>;
 
 private:
     void scheduleCallbackCheck();
@@ -89,7 +89,7 @@ private:
 
 class WheelEventTestMonitorCompletionDeferrer {
     WTF_MAKE_NONCOPYABLE(WheelEventTestMonitorCompletionDeferrer);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WheelEventTestMonitorCompletionDeferrer);
 public:
     WheelEventTestMonitorCompletionDeferrer(WheelEventTestMonitor* monitor, ScrollingNodeID identifier, WheelEventTestMonitor::DeferReason reason)
         : m_monitor(monitor)

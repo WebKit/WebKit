@@ -22,10 +22,11 @@ function test() {
         });
     } else {
         window.localStorage.clear();
-        navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(() => {
+        navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(stream => {
             result.innerHTML = "PASS";
             if (window.testRunner)
                testRunner.notifyDone();
+            stream.getTracks().forEach(track => track.stop());
         }, () => {
             result.innerHTML = "FAIL";
             if (window.testRunner)

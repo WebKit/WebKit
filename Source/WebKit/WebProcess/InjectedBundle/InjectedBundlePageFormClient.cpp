@@ -160,13 +160,13 @@ void InjectedBundlePageFormClient::willSubmitForm(WebPage* page, HTMLFormElement
     userData = adoptRef(toImpl(userDataToPass));
 }
 
-void InjectedBundlePageFormClient::didAssociateFormControls(WebPage* page, const Vector<RefPtr<WebCore::Element>>& elements, WebFrame* frame)
+void InjectedBundlePageFormClient::didAssociateFormControls(WebPage* page, const Vector<Ref<WebCore::Element>>& elements, WebFrame* frame)
 {
     if (!m_client.didAssociateFormControls && !m_client.didAssociateFormControlsForFrame)
         return;
 
     auto elementHandles = elements.map([](auto& element) -> RefPtr<API::Object> {
-        return InjectedBundleNodeHandle::getOrCreate(element.get());
+        return InjectedBundleNodeHandle::getOrCreate(element.ptr());
     });
     if (!m_client.didAssociateFormControlsForFrame) {
         m_client.didAssociateFormControls(toAPI(page), toAPI(API::Array::create(WTFMove(elementHandles)).ptr()), m_client.base.clientInfo);

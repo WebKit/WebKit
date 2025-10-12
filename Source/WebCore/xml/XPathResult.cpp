@@ -28,6 +28,7 @@
 #include "XPathResult.h"
 
 #include "Document.h"
+#include "ExceptionOr.h"
 #include "XPathEvaluator.h"
 
 namespace WebCore {
@@ -49,7 +50,7 @@ XPathResult::XPathResult(Document& document, const XPath::Value& value)
         m_resultType = UNORDERED_NODE_ITERATOR_TYPE;
         m_nodeSetPosition = 0;
         m_nodeSet = m_value.toNodeSet();
-        m_document = &document;
+        m_document = document;
         m_domTreeVersion = document.domTreeVersion();
         return;
     }

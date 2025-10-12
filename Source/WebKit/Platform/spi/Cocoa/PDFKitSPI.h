@@ -34,10 +34,6 @@ DECLARE_SYSTEM_HEADER
 
 #if HAVE(PDFKIT)
 
-#if PLATFORM(IOS_FAMILY)
-#import <PDFKit/PDFHostViewController.h>
-#endif // PLATFORM(IOS_FAMILY)
-
 #import <PDFKit/PDFDocumentPriv.h>
 #import <PDFKit/PDFPagePriv.h>
 #import <PDFKit/PDFSelectionPriv.h>
@@ -52,46 +48,7 @@ DECLARE_SYSTEM_HEADER
 
 #if HAVE(PDFKIT)
 
-#if PLATFORM(IOS_FAMILY)
-#import "UIKitSPI.h"
-
-@interface _UIRemoteViewController : UIViewController
-@end
-
-@protocol PDFHostViewControllerDelegate<NSObject>
-@end
-
-@interface PDFHostViewController : _UIRemoteViewController<UIGestureRecognizerDelegate, UIDocumentPasswordViewDelegate>
-
-@property (nonatomic, class) bool useIOSurfaceForTiles;
-
-+ (void) createHostView:(void(^)(PDFHostViewController* hostViewController)) callback forExtensionIdentifier:(NSString*) extensionIdentifier;
-- (void) setDelegate:(id<PDFHostViewControllerDelegate>) delegate;
-- (void) setDocumentData:(NSData*) data withScrollView:(UIScrollView*) scrollView;
-
-- (void) findString:(NSString*) string withOptions:(NSStringCompareOptions) options;
-- (void) cancelFindString;
-- (void) cancelFindStringWithHighlightsCleared:(BOOL)cleared;
-- (void) focusOnSearchResultAtIndex:(NSUInteger) searchIndex;
-
-- (NSInteger) currentPageIndex;
-- (NSInteger) pageCount;
-- (UIView*) pageNumberIndicator;
-- (void) goToPageIndex:(NSInteger) pageIndex;
-- (void) updatePDFViewLayout;
-
-+ (UIColor *)backgroundColor;
-
-- (void) beginPDFViewRotation;
-- (void) endPDFViewRotation;
-
-- (void) snapshotViewRect: (CGRect) rect snapshotWidth: (NSNumber*) width afterScreenUpdates: (BOOL) afterScreenUpdates withResult: (void (^)(UIImage* image)) completion;
-
-@end
-#endif // PLATFORM(IOS_FAMILY)
-
 @interface PDFSelection (SPI)
-- (void)drawForPage:(PDFPage *)page withBox:(CGPDFBox)box active:(BOOL)active inContext:(CGContextRef)context;
 - (PDFPoint)firstCharCenter;
 - (/*nullable*/ NSString *)html;
 - (BOOL)isEmpty;

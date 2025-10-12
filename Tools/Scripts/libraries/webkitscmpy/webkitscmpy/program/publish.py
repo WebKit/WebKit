@@ -54,7 +54,7 @@ class Publish(Command):
         )
         parser.add_argument(
             '--exclude', action='append', type=str, default=[],
-            help='Exclude inferred branch or tag from publication',
+            help='Exclude inferred branch or tag from publication, if the name starts with the specified substring',
         )
 
     @classmethod
@@ -75,7 +75,7 @@ class Publish(Command):
                 remote, name = name.split('/', 1)
             else:
                 remote = None
-            if name in exclude:
+            if name.startswith(tuple(exclude)):
                 continue
             result[remote].add(name)
         return result
@@ -89,7 +89,7 @@ class Publish(Command):
             encoding='utf-8',
         )
         if not result.returncode:
-            return [tag for tag in result.stdout.splitlines() if tag not in exclude]
+            return [tag for tag in result.stdout.splitlines() if not tag.startswith(tuple(exclude))]
         sys.stderr.write(result.stderr)
         return []
 
@@ -140,7 +140,7 @@ class Publish(Command):
         tags_to_publish = set()
         for ref in args.arguments:
             try:
-                if ref in args.exclude:
+                if ref.startswith(tuple(args.exclude)):
                     sys.stderr.write("'{}' has been explicitly excluded from publication\n".format(ref))
                     continue
                 commit = repository.find(ref)
@@ -200,7 +200,7 @@ class Publish(Command):
         for commit in commits:
             tags_to_publish |= set(cls.tags_on(repository, commit.hash, exclude=args.exclude)) - existing_tags
             intersection = cls.parental_intersection(repository, commit)
-            if intersection and intersection.branch not in args.exclude:
+            if intersection and not any([intersection.branch.startswith(e) for e in args.exclude]):
                 cls._add_branch_ref_to(
                     mapping=branches_to_publish,
                     repository=repository,
@@ -210,7 +210,7 @@ class Publish(Command):
                 if remote is not None and remote not in repository.source_remotes():
                     continue
                 for branch in branches:
-                    if branch in args.exclude:
+                    if branch.startswith(tuple(args.exclude)):
                         continue
                     commit = repository.find('remotes/{}/{}'.format(remote, branch) if remote else branch)
                     if commit.branch == repository.default_branch:

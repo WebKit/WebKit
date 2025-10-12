@@ -10,7 +10,7 @@
 
 #include "modules/audio_processing/vad/vad_circular_buffer.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 
 namespace webrtc {
 
@@ -31,7 +31,7 @@ void VadCircularBuffer::Reset() {
 
 VadCircularBuffer* VadCircularBuffer::Create(int buffer_size) {
   if (buffer_size <= 0)
-    return NULL;
+    return nullptr;
   return new VadCircularBuffer(buffer_size);
 }
 

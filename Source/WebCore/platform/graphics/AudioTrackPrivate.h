@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "AudioTrackPrivateClient.h"
-#include "PlatformAudioTrackConfiguration.h"
-#include "TrackPrivateBase.h"
+#include <WebCore/AudioTrackPrivateClient.h>
+#include <WebCore/PlatformAudioTrackConfiguration.h>
+#include <WebCore/TrackPrivateBase.h>
 #include <wtf/Function.h>
 #include <wtf/TZoneMallocInlines.h>
 

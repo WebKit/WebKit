@@ -46,6 +46,7 @@
 #include "ApplePayShippingContactUpdate.h"
 #include "ApplePayShippingMethod.h"
 #include "ApplePayShippingMethodUpdate.h"
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "JSApplePayCouponCodeDetails.h"
@@ -94,7 +95,7 @@ static ExceptionOr<ApplePayRequest> convertAndValidateApplePayRequest(Document& 
         return Exception { ExceptionCode::ExistingExceptionError };
     auto applePayRequest = applePayRequestConversion.releaseReturnValue();
 
-    auto validatedRequest = convertAndValidate(document, applePayRequest.version, applePayRequest, paymentCoordinator(document));
+    auto validatedRequest = convertAndValidate(document, applePayRequest.version, applePayRequest, Ref { paymentCoordinator(document) }.get());
     if (validatedRequest.hasException())
         return validatedRequest.releaseException();
 
@@ -146,7 +147,17 @@ Document& ApplePayPaymentHandler::document() const
     return downcast<Document>(*scriptExecutionContext());
 }
 
+Ref<Document> ApplePayPaymentHandler::protectedDocument() const
+{
+    return document();
+}
+
 PaymentCoordinator& ApplePayPaymentHandler::paymentCoordinator() const
+{
+    return WebCore::paymentCoordinator(document());
+}
+
+Ref<PaymentCoordinator> ApplePayPaymentHandler::protectedPaymentCoordinator() const
 {
     return WebCore::paymentCoordinator(document());
 }
@@ -242,7 +253,8 @@ static void mergePaymentOptions(const PaymentOptions& options, ApplePaySessionPa
 
 ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
 {
-    auto validatedRequest = convertAndValidate(document, m_applePayRequest->version, *m_applePayRequest, paymentCoordinator());
+    Ref paymentCoordinator = this->paymentCoordinator();
+    auto validatedRequest = convertAndValidate(document, m_applePayRequest->version, *m_applePayRequest, paymentCoordinator.get());
     if (validatedRequest.hasException())
         return validatedRequest.releaseException();
 
@@ -319,7 +331,7 @@ ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
     if (exception.hasException())
         return exception.releaseException();
 
-    if (!paymentCoordinator().beginPaymentSession(document, *this, request))
+    if (!paymentCoordinator->beginPaymentSession(document, *this, request))
         return Exception { ExceptionCode::AbortError };
 
     return { };
@@ -327,12 +339,12 @@ ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
 
 void ApplePayPaymentHandler::hide()
 {
-    paymentCoordinator().abortPaymentSession();
+    protectedPaymentCoordinator()->abortPaymentSession();
 }
 
 void ApplePayPaymentHandler::canMakePayment(Document&, Function<void(bool)>&& completionHandler)
 {
-    completionHandler(paymentCoordinator().canMakePayments());
+    completionHandler(protectedPaymentCoordinator()->canMakePayments());
 }
 
 ExceptionOr<Vector<ApplePayShippingMethod>> ApplePayPaymentHandler::computeShippingMethods() const
@@ -436,7 +448,7 @@ Vector<Ref<ApplePayError>> ApplePayPaymentHandler::computeErrors(String&& error,
 
     computePayerErrors(WTFMove(payerErrors), errors);
 
-    auto scope = DECLARE_CATCH_SCOPE(scriptExecutionContext()->vm());
+    auto scope = DECLARE_CATCH_SCOPE(protectedScriptExecutionContext()->protectedVM().get());
     auto exception = computePaymentMethodErrors(paymentMethodErrors, errors);
     if (exception.hasException()) {
         ASSERT(scope.exception());
@@ -450,7 +462,7 @@ Vector<Ref<ApplePayError>> ApplePayPaymentHandler::computeErrors(JSC::JSObject* 
 {
     Vector<Ref<ApplePayError>> errors;
 
-    auto scope = DECLARE_CATCH_SCOPE(scriptExecutionContext()->vm());
+    auto scope = DECLARE_CATCH_SCOPE(protectedScriptExecutionContext()->protectedVM().get());
     auto exception = computePaymentMethodErrors(paymentMethodErrors, errors);
     if (exception.hasException()) {
         ASSERT(scope.exception());
@@ -495,10 +507,10 @@ ExceptionOr<void> ApplePayPaymentHandler::computePaymentMethodErrors(JSC::JSObje
     if (!paymentMethodErrors)
         return { };
 
-    auto& context = *scriptExecutionContext();
-    auto scope = DECLARE_THROW_SCOPE(context.vm());
+    Ref context = *scriptExecutionContext();
+    auto scope = DECLARE_THROW_SCOPE(context->vm());
 
-    auto applePayErrors = convert<IDLSequence<IDLInterface<ApplePayError>>>(*context.globalObject(), paymentMethodErrors);
+    auto applePayErrors = convert<IDLSequence<IDLInterface<ApplePayError>>>(*context->globalObject(), paymentMethodErrors);
     if (applePayErrors.hasException(scope)) [[unlikely]]
         return Exception { ExceptionCode::ExistingExceptionError };
 
@@ -582,7 +594,7 @@ ExceptionOr<std::optional<std::tuple<PaymentDetailsModifier, ApplePayModifier>>>
     if (!details.modifiers)
         return { std::nullopt };
 
-    auto& lexicalGlobalObject = *document().globalObject();
+    auto& lexicalGlobalObject = *protectedDocument()->globalObject();
 
     auto& serializedModifierData = m_paymentRequest->serializedModifierData();
     ASSERT(details.modifiers->size() == serializedModifierData.size());
@@ -655,23 +667,24 @@ ExceptionOr<void> ApplePayPaymentHandler::detailsUpdated(PaymentRequest::UpdateR
 
 ExceptionOr<void> ApplePayPaymentHandler::merchantValidationCompleted(JSC::JSValue&& merchantSessionValue)
 {
-    if (!paymentCoordinator().hasActiveSession())
+    Ref paymentCoordinator = this->paymentCoordinator();
+    if (!paymentCoordinator->hasActiveSession())
         return Exception { ExceptionCode::InvalidStateError };
 
     if (!merchantSessionValue.isObject())
         return Exception { ExceptionCode::TypeError };
 
     String errorMessage;
-    auto merchantSession = PaymentMerchantSession::fromJS(*document().globalObject(), asObject(merchantSessionValue), errorMessage);
+    auto merchantSession = PaymentMerchantSession::fromJS(*protectedDocument()->globalObject(), asObject(merchantSessionValue), errorMessage);
     if (!merchantSession)
         return Exception { ExceptionCode::TypeError, WTFMove(errorMessage) };
 
     // PaymentMerchantSession::fromJS() may run JS, which may abort the request so we need to
     // check again if there is an active session.
-    if (!paymentCoordinator().hasActiveSession())
+    if (!paymentCoordinator->hasActiveSession())
         return Exception { ExceptionCode::InvalidStateError };
 
-    paymentCoordinator().completeMerchantValidation(*merchantSession);
+    paymentCoordinator->completeMerchantValidation(*merchantSession);
     return { };
 }
 
@@ -720,7 +733,7 @@ ExceptionOr<void> ApplePayPaymentHandler::shippingAddressUpdated(Vector<Ref<Appl
 #endif
     }
 
-    paymentCoordinator().completeShippingContactSelection(WTFMove(update));
+    protectedPaymentCoordinator()->completeShippingContactSelection(WTFMove(update));
     return { };
 }
 
@@ -770,7 +783,7 @@ ExceptionOr<void> ApplePayPaymentHandler::shippingOptionUpdated()
 #endif
     }
 
-    paymentCoordinator().completeShippingMethodSelection(WTFMove(update));
+    protectedPaymentCoordinator()->completeShippingMethodSelection(WTFMove(update));
     return { };
 }
 
@@ -820,7 +833,7 @@ ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated(Vector<Ref<AppleP
 #endif
         }
 
-        paymentCoordinator().completeCouponCodeChange(WTFMove(update));
+        protectedPaymentCoordinator()->completeCouponCodeChange(WTFMove(update));
         return { };
     }
 #endif // ENABLE(APPLE_PAY_COUPON_CODE)
@@ -873,7 +886,7 @@ ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated(Vector<Ref<AppleP
 #endif
     }
 
-    paymentCoordinator().completePaymentMethodSelection(WTFMove(update));
+    protectedPaymentCoordinator()->completePaymentMethodSelection(WTFMove(update));
     return { };
 }
 
@@ -942,7 +955,7 @@ ExceptionOr<void> ApplePayPaymentHandler::complete(Document& document, std::opti
     }
 
     ASSERT(authorizationResult.isFinalState());
-    paymentCoordinator().completePaymentSession(WTFMove(authorizationResult));
+    protectedPaymentCoordinator()->completePaymentSession(WTFMove(authorizationResult));
     return { };
 }
 
@@ -959,7 +972,8 @@ ExceptionOr<void> ApplePayPaymentHandler::retry(PaymentValidationErrors&& valida
 
     // computePaymentMethodErrors() may run JS, which may abort the request so we need to
     // make sure we still have an active session.
-    if (!paymentCoordinator().hasActiveSession())
+    Ref paymentCoordinator = this->paymentCoordinator();
+    if (!paymentCoordinator->hasActiveSession())
         return Exception { ExceptionCode::AbortError };
 
     // Ensure there is always at least one error to avoid having a final result.
@@ -970,7 +984,7 @@ ExceptionOr<void> ApplePayPaymentHandler::retry(PaymentValidationErrors&& valida
     authorizationResult.status = ApplePayPaymentAuthorizationResult::Failure;
     authorizationResult.errors = WTFMove(errors);
     ASSERT(!authorizationResult.isFinalState());
-    paymentCoordinator().completePaymentSession(WTFMove(authorizationResult));
+    paymentCoordinator->completePaymentSession(WTFMove(authorizationResult));
     return { };
 }
 

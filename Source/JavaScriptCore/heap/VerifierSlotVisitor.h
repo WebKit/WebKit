@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "AbstractSlotVisitor.h"
-#include "JSCJSValue.h"
-#include "MarkedBlock.h"
-#include "VisitRaceKey.h"
-#include "Weak.h"
+#include <JavaScriptCore/AbstractSlotVisitor.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/MarkedBlock.h>
+#include <JavaScriptCore/VisitRaceKey.h>
+#include <JavaScriptCore/Weak.h>
 #include <memory>
 #include <wtf/BitSet.h>
 #include <wtf/Deque.h>

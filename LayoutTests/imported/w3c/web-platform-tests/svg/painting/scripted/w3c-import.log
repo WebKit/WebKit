@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/scripted/SVGMarkerElement-orientType-synchronization.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/scripted/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/scripted/marker-element-added-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/scripted/marker-element-added.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/scripted/paint-order-computed-value-01.svg

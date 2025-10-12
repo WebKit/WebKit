@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CodeOrigin.h"
-#include "SpeculatedType.h"
+#include <JavaScriptCore/CodeOrigin.h>
+#include <JavaScriptCore/SpeculatedType.h>
 
 namespace JSC {
 

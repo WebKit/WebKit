@@ -1,0 +1,10 @@
+Content underneath backdrop filter
+
+PASS colors.top is "multiple"
+PASS colors.left is null
+PASS colors.right is null
+PASS colors.bottom is "multiple"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

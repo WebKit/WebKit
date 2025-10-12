@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 't.done')
 link
 
 Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 't.done')

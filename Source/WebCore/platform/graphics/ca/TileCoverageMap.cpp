@@ -178,4 +178,9 @@ void TileCoverageMap::setDeviceScaleFactor(float deviceScaleFactor)
     m_layer.get().setContentsScale(deviceScaleFactor);
 }
 
+OptionSet<ContentsFormat> TileCoverageMap::screenContentsFormats() const
+{
+    return m_controller.rootLayer().owner()->screenContentsFormats();
+}
+
 }

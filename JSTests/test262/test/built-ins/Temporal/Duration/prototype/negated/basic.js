@@ -13,7 +13,7 @@ includes: [temporalHelpers.js]
 let d1 = new Temporal.Duration();
 TemporalHelpers.assertDuration(
   d1.negated(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  "zeros");
+  "blank");
 
 let d2 = new Temporal.Duration(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 TemporalHelpers.assertDuration(

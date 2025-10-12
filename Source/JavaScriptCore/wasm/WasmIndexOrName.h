@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WasmName.h"
-#include "WasmNameSection.h"
+#include <JavaScriptCore/WasmName.h>
+#include <JavaScriptCore/WasmNameSection.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
@@ -103,6 +103,15 @@ public:
     {
         ASSERT(isName());
         return m_indexName.name;
+    }
+
+    const std::span<const char8_t> moduleName() const
+    {
+        if (nameSection()->moduleName.size())
+            return nameSection()->moduleName.span();
+        if (nameSection()->moduleHash.size())
+            return nameSection()->moduleHash.span();
+        return std::span<const char8_t>();
     }
 
     NameSection* nameSection() const { return m_nameSection.get(); }

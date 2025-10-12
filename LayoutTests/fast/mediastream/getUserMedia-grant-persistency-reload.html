@@ -11,14 +11,16 @@ function test() {
         window.localStorage.setItem("gum-after-reload", "true")
         if (window.testRunner)
             testRunner.setUserMediaPermission(true);
-        navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(() => {
+        navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(stream => {
+            stream.getTracks().forEach(track => track.stop());
             internals.forceReload(true);
         });
     } else {
         window.localStorage.clear();
         if (window.testRunner)
             testRunner.setUserMediaPermission(false);
-        navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(() => {i
+        navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(stream => {
+            stream.getTracks().forEach(track => track.stop());
             result.innerHTML = "FAIL";
             if (window.testRunner)
                testRunner.notifyDone();

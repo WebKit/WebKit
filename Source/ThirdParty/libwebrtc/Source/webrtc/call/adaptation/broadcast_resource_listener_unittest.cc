@@ -10,6 +10,10 @@
 
 #include "call/adaptation/broadcast_resource_listener.h"
 
+#include <vector>
+
+#include "api/adaptation/resource.h"
+#include "api/scoped_refptr.h"
 #include "call/adaptation/test/fake_resource.h"
 #include "call/adaptation/test/mock_resource_listener.h"
 #include "test/gmock.h"
@@ -21,17 +25,17 @@ using ::testing::_;
 using ::testing::StrictMock;
 
 TEST(BroadcastResourceListenerTest, CreateAndRemoveAdapterResource) {
-  rtc::scoped_refptr<FakeResource> source_resource =
+  scoped_refptr<FakeResource> source_resource =
       FakeResource::Create("SourceResource");
   BroadcastResourceListener broadcast_resource_listener(source_resource);
   broadcast_resource_listener.StartListening();
 
   EXPECT_TRUE(broadcast_resource_listener.GetAdapterResources().empty());
-  rtc::scoped_refptr<Resource> adapter =
+  scoped_refptr<Resource> adapter =
       broadcast_resource_listener.CreateAdapterResource();
   StrictMock<MockResourceListener> listener;
   adapter->SetResourceListener(&listener);
-  EXPECT_EQ(std::vector<rtc::scoped_refptr<Resource>>{adapter},
+  EXPECT_EQ(std::vector<scoped_refptr<Resource>>{adapter},
             broadcast_resource_listener.GetAdapterResources());
 
   // The removed adapter is not referenced by the broadcaster.
@@ -46,12 +50,12 @@ TEST(BroadcastResourceListenerTest, CreateAndRemoveAdapterResource) {
 }
 
 TEST(BroadcastResourceListenerTest, AdapterNameIsBasedOnSourceResourceName) {
-  rtc::scoped_refptr<FakeResource> source_resource =
+  scoped_refptr<FakeResource> source_resource =
       FakeResource::Create("FooBarResource");
   BroadcastResourceListener broadcast_resource_listener(source_resource);
   broadcast_resource_listener.StartListening();
 
-  rtc::scoped_refptr<Resource> adapter =
+  scoped_refptr<Resource> adapter =
       broadcast_resource_listener.CreateAdapterResource();
   EXPECT_EQ("FooBarResourceAdapter", adapter->Name());
 
@@ -60,31 +64,31 @@ TEST(BroadcastResourceListenerTest, AdapterNameIsBasedOnSourceResourceName) {
 }
 
 TEST(BroadcastResourceListenerTest, AdaptersForwardsUsageMeasurements) {
-  rtc::scoped_refptr<FakeResource> source_resource =
+  scoped_refptr<FakeResource> source_resource =
       FakeResource::Create("SourceResource");
   BroadcastResourceListener broadcast_resource_listener(source_resource);
   broadcast_resource_listener.StartListening();
 
   StrictMock<MockResourceListener> destination_listener1;
   StrictMock<MockResourceListener> destination_listener2;
-  rtc::scoped_refptr<Resource> adapter1 =
+  scoped_refptr<Resource> adapter1 =
       broadcast_resource_listener.CreateAdapterResource();
   adapter1->SetResourceListener(&destination_listener1);
-  rtc::scoped_refptr<Resource> adapter2 =
+  scoped_refptr<Resource> adapter2 =
       broadcast_resource_listener.CreateAdapterResource();
   adapter2->SetResourceListener(&destination_listener2);
 
   // Expect kOveruse to be echoed.
   EXPECT_CALL(destination_listener1, OnResourceUsageStateMeasured(_, _))
       .Times(1)
-      .WillOnce([adapter1](rtc::scoped_refptr<Resource> resource,
+      .WillOnce([adapter1](scoped_refptr<Resource> resource,
                            ResourceUsageState usage_state) {
         EXPECT_EQ(adapter1, resource);
         EXPECT_EQ(ResourceUsageState::kOveruse, usage_state);
       });
   EXPECT_CALL(destination_listener2, OnResourceUsageStateMeasured(_, _))
       .Times(1)
-      .WillOnce([adapter2](rtc::scoped_refptr<Resource> resource,
+      .WillOnce([adapter2](scoped_refptr<Resource> resource,
                            ResourceUsageState usage_state) {
         EXPECT_EQ(adapter2, resource);
         EXPECT_EQ(ResourceUsageState::kOveruse, usage_state);
@@ -94,14 +98,14 @@ TEST(BroadcastResourceListenerTest, AdaptersForwardsUsageMeasurements) {
   // Expect kUnderuse to be echoed.
   EXPECT_CALL(destination_listener1, OnResourceUsageStateMeasured(_, _))
       .Times(1)
-      .WillOnce([adapter1](rtc::scoped_refptr<Resource> resource,
+      .WillOnce([adapter1](scoped_refptr<Resource> resource,
                            ResourceUsageState usage_state) {
         EXPECT_EQ(adapter1, resource);
         EXPECT_EQ(ResourceUsageState::kUnderuse, usage_state);
       });
   EXPECT_CALL(destination_listener2, OnResourceUsageStateMeasured(_, _))
       .Times(1)
-      .WillOnce([adapter2](rtc::scoped_refptr<Resource> resource,
+      .WillOnce([adapter2](scoped_refptr<Resource> resource,
                            ResourceUsageState usage_state) {
         EXPECT_EQ(adapter2, resource);
         EXPECT_EQ(ResourceUsageState::kUnderuse, usage_state);

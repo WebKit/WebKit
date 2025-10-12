@@ -79,6 +79,8 @@ PASS serialization round-trip - @font-feature-values bongo { @annotation { ok-1:
 PASS basic parse tests - @font-feature-values bongo { @stylistic { blah: 3; } }
 PASS serialization check - @font-feature-values bongo { @stylistic { blah: 3; } }
 PASS serialization round-trip - @font-feature-values bongo { @stylistic { blah: 3; } }
+PASS basic parse tests - @font-feature-values bongo { @stylistic { blah: sibling-index(); } }
+PASS no value definitions in serialization - @font-feature-values bongo { @stylistic { blah: sibling-index(); } }
 PASS basic parse tests - @font-feature-values bongo {
 @styleset
   { blah: 3; super-blah: 4 5;

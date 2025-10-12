@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error
 
 PASS Calling dispatchEvent(null).
 PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (BeforeUnloadEvent).

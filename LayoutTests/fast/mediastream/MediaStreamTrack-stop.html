@@ -45,6 +45,7 @@
                 shouldNotBe('track.enabled', 'enabled');
 
                 finishJSTest();
+                stream.getTracks().forEach(track => track.stop());
             }
 
             function start() {

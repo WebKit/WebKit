@@ -9,21 +9,30 @@
  */
 #ifndef TEST_SCENARIO_VIDEO_STREAM_H_
 #define TEST_SCENARIO_VIDEO_STREAM_H_
+#include <cstddef>
+#include <cstdint>
+#include <functional>
 #include <memory>
-#include <string>
 #include <vector>
 
+#include "api/call/transport.h"
+#include "api/rtp_parameters.h"
+#include "api/video/video_bitrate_allocator_factory.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
+#include "api/video_codecs/video_encoder_factory.h"
+#include "call/flexfec_receive_stream.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 #include "test/fake_encoder.h"
 #include "test/fake_videorenderer.h"
 #include "test/frame_generator_capturer.h"
-#include "test/logging/log_writer.h"
 #include "test/scenario/call_client.h"
 #include "test/scenario/column_printer.h"
-#include "test/scenario/network_node.h"
 #include "test/scenario/scenario_config.h"
 #include "test/scenario/video_frame_matcher.h"
-#include "test/test_video_capturer.h"
 
 namespace webrtc {
 namespace test {
@@ -96,8 +105,7 @@ class ReceiveVideoStream {
   std::vector<VideoReceiveStreamInterface*> receive_streams_;
   FlexfecReceiveStream* flecfec_stream_ = nullptr;
   FakeVideoRenderer fake_renderer_;
-  std::vector<std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>>>
-      render_taps_;
+  std::vector<std::unique_ptr<VideoSinkInterface<VideoFrame>>> render_taps_;
   CallClient* const receiver_;
   const VideoStreamConfig config_;
   std::unique_ptr<VideoDecoderFactory> decoder_factory_;

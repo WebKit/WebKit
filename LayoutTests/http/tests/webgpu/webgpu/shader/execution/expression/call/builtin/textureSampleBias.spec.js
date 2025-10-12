@@ -12,7 +12,7 @@ import {
   isTextureFormatPossiblyFilterableAsTextureF32,
   kAllTextureFormats } from
 '../../../../../format_info.js';
-import { TextureTestMixin } from '../../../../../gpu_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../../../gpu_test.js';
 
 import {
 
@@ -32,12 +32,10 @@ import {
   chooseTextureSize,
   isPotentiallyFilterableAndFillable,
   getTextureTypeForTextureViewDimension,
-  WGSLTextureSampleTest,
-  isSupportedViewFormatCombo,
   skipIfTextureFormatNotSupportedOrNeedsFilteringAndIsUnfilterable } from
 './texture_utils.js';
 
-export const g = makeTestGroup(TextureTestMixin(WGSLTextureSampleTest));
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 // See comment "Issues with textureSampleBias" in texture_utils.ts
 // 3 was chosen because it shows errors on M1 Mac
@@ -168,7 +166,6 @@ u.
 combine('format', kAllTextureFormats).
 filter((t) => isPotentiallyFilterableAndFillable(t.format)).
 combine('dim', ['3d', 'cube']).
-filter((t) => isSupportedViewFormatCombo(t.format, t.dim)).
 combine('filt', ['nearest', 'linear']).
 filter((t) => t.filt === 'nearest' || isTextureFormatPossiblyFilterableAsTextureF32(t.format)).
 combine('modeU', kShortAddressModes).
@@ -192,6 +189,7 @@ fn(async (t) => {
     offset
   } = t.params;
   skipIfTextureFormatNotSupportedOrNeedsFilteringAndIsUnfilterable(t, minFilter, format);
+  t.skipIfTextureFormatAndViewDimensionNotCompatible(format, viewDimension);
 
   const size = chooseTextureSize({ minSize: 8, minBlocks: 2, format, viewDimension });
   const descriptor = {

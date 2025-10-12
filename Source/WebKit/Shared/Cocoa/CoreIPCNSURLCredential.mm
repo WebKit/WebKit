@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -275,18 +275,6 @@ RetainPtr<id> CoreIPCNSURLCredential::toID() const
 
     return adoptNS([[NSURLCredential alloc] _initWithWebKitPropertyListData:dict.get()]);
 }
-#endif
-
-#if !HAVE(WK_SECURE_CODING_NSURLCREDENTIAL) && !HAVE(DICTIONARY_SERIALIZABLE_NSURLCREDENTIAL)
-
-CoreIPCNSURLCredential::CoreIPCNSURLCredential(NSURLCredential *credential)
-    : m_serializedBytes([NSKeyedArchiver archivedDataWithRootObject:credential requiringSecureCoding:YES error:nil]) { }
-
-RetainPtr<id> CoreIPCNSURLCredential::toID() const
-{
-    return [NSKeyedUnarchiver unarchivedObjectOfClass:NSURLCredential.class fromData:m_serializedBytes.get() error:nil];
-}
-
 #endif
 
 } // namespace WebKit

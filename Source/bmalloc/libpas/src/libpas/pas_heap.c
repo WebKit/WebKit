@@ -40,6 +40,7 @@
 #include "pas_primitive_heap_ref.h"
 #include "pas_probabilistic_guard_malloc_allocator.h"
 #include "pas_segregated_size_directory.h"
+#include "pas_zero_memory.h"
 
 pas_heap* pas_heap_create(pas_heap_ref* heap_ref,
                           pas_heap_ref_kind heap_ref_kind,

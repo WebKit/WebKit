@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         text run at (0,0) width 404: "This tests that text can not be inserted into a disabled text field."
       RenderBR {BR} at (403,0) size 1x19
       RenderText {#text} at (0,0) size 0x0
-layer at (8,28) size 153x21
-  RenderTextControl {INPUT} at (0,20) size 153x22 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-layer at (15,31) size 139x14
-  RenderBlock {DIV} at (6,3) size 141x15
+layer at (8,28) size 152x20
+  RenderTextControl {INPUT} at (0,20) size 152x20 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+layer at (14,31) size 140x14
+  RenderBlock {DIV} at (6,3) size 140x14
     RenderText {#text} at (0,0) size 63x14
       text run at (0,0) width 63: "Test Passed"

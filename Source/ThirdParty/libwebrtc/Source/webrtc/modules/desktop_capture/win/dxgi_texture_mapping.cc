@@ -11,8 +11,10 @@
 #include "modules/desktop_capture/win/dxgi_texture_mapping.h"
 
 #include <comdef.h>
+#include <d3d11.h>
 #include <dxgi.h>
 #include <dxgi1_2.h>
+#include <winerror.h>
 
 #include "modules/desktop_capture/win/desktop_capture_utils.h"
 #include "rtc_base/checks.h"

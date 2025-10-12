@@ -30,6 +30,7 @@ promise_test(async () => {
      myVideo1.muted = false;
      await new Promise(resolve => myVideo1.onplay = resolve);
      assert_false(myVideo1.paused, "test4");
+     myVideo1.srcObject.getTracks().forEach(t => t.stop());
 }, "Unmuting a video that was hidden-then-muted should restart playing it");
 
 promise_test(async () => {
@@ -49,6 +50,7 @@ promise_test(async () => {
     myVideo2.muted = false;
     await new Promise(resolve => myVideo2.onplay = resolve);
     assert_false(myVideo2.paused, "test4");
+    myVideo2.srcObject.getTracks().forEach(t => t.stop());
 }, "Muting a hidden video should pause and unmuting the hidden video should restart playing it");
 
         </script>

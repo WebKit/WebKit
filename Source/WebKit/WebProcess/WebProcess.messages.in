@@ -29,6 +29,7 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     SetWebsiteDataStoreParameters(struct WebKit::WebProcessDataStoreParameters parameters)
 
     CreateWebPage(WebCore::PageIdentifier newPageID, struct WebKit::WebPageCreationParameters pageCreationParameters)
+    CountWebPagesForTesting() -> (unsigned count)
 
     PrewarmWithDomainInformation(struct WebCore::PrewarmInformation prewarmInformation)
 
@@ -40,7 +41,9 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     RegisterURLSchemeAsBypassingContentSecurityPolicy(String scheme)
     SetDomainRelaxationForbiddenForURLScheme(String scheme)
     RegisterURLSchemeAsLocal(String scheme)
+#if ENABLE(ALL_LEGACY_REGISTERED_SPECIAL_URL_SCHEMES)
     RegisterURLSchemeAsNoAccess(String scheme)
+#endif
     RegisterURLSchemeAsDisplayIsolated(String scheme)
     RegisterURLSchemeAsCORSEnabled(String scheme)
     RegisterURLSchemeAsCachePartitioned(String scheme)
@@ -58,7 +61,7 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     UserPreferredLanguagesChanged(Vector<String> languages)
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
     UpdateStorageAccessUserAgentStringQuirks(HashMap<WebCore::RegistrableDomain, String> userAgentStringQuirks)
-#if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     SetOptInCookiePartitioningEnabled(bool enabled);
 #endif
 
@@ -143,6 +146,7 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 #endif
 
     IsJITEnabled() -> (bool enabled)
+    IsEnhancedSecurityEnabled() -> (bool enabled)
 
 #if PLATFORM(COCOA)
     SetMediaMIMETypes(Vector<String> types)
@@ -181,7 +185,7 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     SendResourceLoadStatisticsDataImmediately() -> ()
 
     UpdateDomainsWithStorageAccessQuirks(HashSet<WebCore::RegistrableDomain> domainsWithStorageAccessQuirks);
-    UpdateScriptTelemetryFilter(struct WebKit::ScriptTelemetryRules rules)
+    UpdateScriptTrackingPrivacyFilter(struct WebKit::ScriptTrackingPrivacyRules rules)
 
     GrantAccessToAssetServices(Vector<WebKit::SandboxExtensionHandle> assetServicesHandles)
     RevokeAccessToAssetServices()
@@ -229,6 +233,8 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
     ReleaseMemory() -> ()
 
+    JSHandleDestroyed(WebCore::JSHandleIdentifier identifier);
+
 #if ENABLE(NOTIFY_BLOCKING)
     [DeferSendingIfSuspendedWithCoalescingKeys=(message)] PostNotification(String message, std::optional<uint64_t> state)
     [DeferSendingIfSuspended] PostObserverNotification(String message)
@@ -242,5 +248,12 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
 #if PLATFORM(COCOA)
     RegisterAdditionalFonts(struct WebKit::AdditionalFonts fonts)
+    RegisterFontMap(HashMap<String, URL> fonts, HashMap<String, Vector<String>> fontFamilyMap, Vector<WebKit::SandboxExtensionHandle> sandboxExtensions)
 #endif
+
+#if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
+    InitializeAccessibility(Vector<WebKit::SandboxExtensionHandle> handles);
+#endif
+
+    ContentWorldDestroyed(WebKit::ContentWorldIdentifier identifier)
 }

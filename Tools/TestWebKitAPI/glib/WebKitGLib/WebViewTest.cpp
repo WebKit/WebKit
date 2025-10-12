@@ -524,3 +524,34 @@ GRefPtr<GDBusProxy> WebViewTest::extensionProxy()
     return adoptGRef(g_dbus_proxy_new_sync(connection, static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES | G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS),
         nullptr, nullptr, "/org/webkit/gtk/WebProcessExtensionTest", "org.webkit.gtk.WebProcessExtensionTest", nullptr, nullptr));
 }
+
+WebViewTest::NetworkPolicyGuard::NetworkPolicyGuard(WebViewTest* test, WebKitTLSErrorsPolicy policy)
+{
+#if ENABLE(2022_GLIB_API)
+    m_test = test;
+    m_originalPolicy = webkit_network_session_get_tls_errors_policy(test->m_networkSession.get());
+    webkit_network_session_set_tls_errors_policy(test->m_networkSession.get(), policy);
+#else
+    m_manager = webkit_web_context_get_website_data_manager(test->m_webContext.get());
+    m_originalPolicy = webkit_website_data_manager_get_tls_errors_policy(m_manager);
+    webkit_website_data_manager_set_tls_errors_policy(m_manager, policy);
+#endif
+}
+
+WebViewTest::NetworkPolicyGuard::~NetworkPolicyGuard()
+{
+#if ENABLE(2022_GLIB_API)
+    webkit_network_session_set_tls_errors_policy(m_test->m_networkSession.get(), m_originalPolicy);
+#else
+    webkit_website_data_manager_set_tls_errors_policy(m_manager, m_originalPolicy);
+#endif
+}
+
+void WebViewTest::NetworkPolicyGuard::setErrorPolicy(WebKitTLSErrorsPolicy policy)
+{
+#if ENABLE(2022_GLIB_API)
+    webkit_network_session_set_tls_errors_policy(m_test->m_networkSession.get(), policy);
+#else
+    webkit_website_data_manager_set_tls_errors_policy(m_manager, policy);
+#endif
+}

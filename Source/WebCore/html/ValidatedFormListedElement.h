@@ -29,10 +29,10 @@
 
 #pragma once
 
-#include "FormController.h"
-#include "FormListedElement.h"
-#include "HTMLElement.h"
-#include "ValidationMessage.h"
+#include <WebCore/FormController.h>
+#include <WebCore/FormListedElement.h>
+#include <WebCore/HTMLElement.h>
+#include <WebCore/ValidationMessage.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/TriState.h>
 
@@ -167,7 +167,7 @@ public:
     }
 
 private:
-    Ref<ValidatedFormListedElement> m_element;
+    const Ref<ValidatedFormListedElement> m_element;
 };
 
 } // namespace WebCore

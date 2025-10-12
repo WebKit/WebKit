@@ -1,3 +1,0 @@
-
-FAIL Tests that the scrolled element gets overscroll event after fully scrolling by touch. promise_test: Unhandled rejection with value: "Scroller did not receive overscroll event after horizontal scroll."
-

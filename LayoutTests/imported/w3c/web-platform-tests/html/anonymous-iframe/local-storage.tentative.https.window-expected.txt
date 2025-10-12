@@ -1,5 +1,3 @@
 
-PASS Setup
-FAIL same_origin anonymous iframe can't access the localStorage assert_equals: expected "" but got "same_origin"
-FAIL cross_origin anonymous iframe can't access the localStorage assert_equals: expected "" but got "cross_origin"
+FAIL Local storage is correctly partitioned with regards to credentialless iframe assert_equals: expected "not found" but got "value_1"
 

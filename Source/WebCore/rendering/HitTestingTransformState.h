@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,6 +57,8 @@ public:
     FloatQuad mappedQuad() const;
     FloatQuad mappedArea() const;
     LayoutRect boundsOfMappedArea() const;
+    LayoutRect boundsOfMappedQuad() const;
+
     void flatten();
 
     FloatPoint m_lastPlanarPoint;

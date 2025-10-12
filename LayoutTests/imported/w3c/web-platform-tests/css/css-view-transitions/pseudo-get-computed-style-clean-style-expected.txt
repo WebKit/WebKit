@@ -1,0 +1,3 @@
+
+PASS properties of pseudo elements in update callback
+

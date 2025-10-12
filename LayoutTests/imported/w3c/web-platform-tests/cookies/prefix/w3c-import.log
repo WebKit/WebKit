@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/cookies/prefix/__HostHttp.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/prefix/__Http.https.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/prefix/__host.document-cookie.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/prefix/__host.document-cookie.https.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/prefix/__host.header.html

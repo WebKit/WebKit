@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="container"></div>
+
+<script>
+var output = "This test ensures we don't crash when prepending a frame in response to an XHR event.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // Enable accessibility by walking the tree.
+    touchAccessibilityTree(accessibilityController.rootElement);
+
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener("load", function() {
+        var iframe = document.createElement("iframe");
+        iframe.srcdoc = "<!DOCTYPE html><html><body><input type='date'></body></html>";
+        document.getElementById("container").prepend(iframe);
+
+        // Wrap the #container in a new div so that AccessibilityScrollView::parentObject getOrCreate's a new object,
+        // causing recomputeIsIgnored() to run and trigger any queued side effects.
+        var newDiv = document.createElement("div");
+        document.body.appendChild(newDiv);
+        newDiv.prepend(document.getElementById("container"));
+        // Remove the iframes renderer.
+        iframe.setAttribute("style", "display:none")
+
+        setTimeout(function() {
+            // Asynchronously queue up a style change that will destroy the renderers associated with these elements.
+            document.getElementById("container").setAttribute("style", "display:contents")
+            newDiv.setAttribute("style", "display:contents")
+        }, 0);
+
+        setTimeout(async function() {
+            touchAccessibilityTree(accessibilityController.rootElement);
+            output += "Test completed without crashing.\n";
+
+            debug(output);
+            finishJSTest();
+        }, 32 /* 32ms to wait out 2 rendering frames (which are typically 16ms apart). */);
+    });
+
+    xhr.open("GET", "data:text/plain,test");
+    xhr.send();
+}
+</script>
+</body>
+</html>

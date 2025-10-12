@@ -24,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-input-text-relayout-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-input-text-relayout.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-input-text.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-select-contain-size.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-select.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-textarea-relayout-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-textarea-relayout-ref.html

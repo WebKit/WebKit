@@ -29,9 +29,9 @@
 
 #include "CaptionUserPreferences.h"
 #include "DeprecatedGlobalSettings.h"
-#include "Document.h"
+#include "DocumentView.h"
 #include "FontCache.h"
-#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
 #include "LocaleToScriptMapping.h"
 #include "Page.h"
@@ -65,10 +65,13 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if USE(AUDIO_SESSION)
     , m_shouldManageAudioSessionCategory(DeprecatedGlobalSettings::shouldManageAudioSessionCategory())
 #endif
-#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    , m_shouldDeactivateAudioSession(PlatformMediaSessionManager::shouldDeactivateAudioSession())
-#endif
 {
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    if (RefPtr page = settings.page().get()) {
+        if (RefPtr manager = page->mediaSessionManager())
+            m_shouldDeactivateAudioSession = manager->shouldDeactivateAudioSession();
+    }
+#endif
 }
 
 void InternalSettings::Backup::restoreTo(Settings& settings)
@@ -120,7 +123,10 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #endif
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    PlatformMediaSessionManager::setShouldDeactivateAudioSession(m_shouldDeactivateAudioSession);
+    if (RefPtr page = settings.page().get()) {
+        if (RefPtr manager = page->mediaSessionManager())
+            manager->setShouldDeactivateAudioSession(m_shouldDeactivateAudioSession);
+    }
 #endif
 
 #if ENABLE(WEB_AUDIO)
@@ -535,8 +541,12 @@ ExceptionOr<void>  InternalSettings::setShouldDeactivateAudioSession(bool should
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
+
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    PlatformMediaSessionManager::setShouldDeactivateAudioSession(should);
+    if (RefPtr page = m_page.get()) {
+        if (RefPtr manager = page->mediaSessionManager())
+            manager->setShouldDeactivateAudioSession(should);
+    }
 #else
     UNUSED_PARAM(should);
 #endif

@@ -150,71 +150,71 @@ TEST(WTF_DateMath, calculateLocalTimeOffset)
         GTEST_SKIP() << "Not in Pacific Time Zone";
 
     // DST Start: April 30, 1967 (02:00 am)
-    LocalTimeOffset dstStart1967 = calculateLocalTimeOffset(-84301200000, WTF::LocalTime);
+    LocalTimeOffset dstStart1967 = calculateLocalTimeOffset(-84301200000, TimeType::LocalTime);
     EXPECT_TRUE(dstStart1967.isDST);
     EXPECT_EQ(-25200000, dstStart1967.offset);
 
     // November 1, 1967 (02:00 am)
-    LocalTimeOffset dstAlmostEnd1967 = calculateLocalTimeOffset(-68317200000, WTF::LocalTime);
+    LocalTimeOffset dstAlmostEnd1967 = calculateLocalTimeOffset(-68317200000, TimeType::LocalTime);
     EXPECT_TRUE(dstAlmostEnd1967.isDST);
     EXPECT_EQ(-25200000, dstAlmostEnd1967.offset);
 
     // DST End: November 11, 1967 (02:00 am)
-    LocalTimeOffset dstEnd1967 = calculateLocalTimeOffset(-67536000000, WTF::LocalTime);
+    LocalTimeOffset dstEnd1967 = calculateLocalTimeOffset(-67536000000, TimeType::LocalTime);
     EXPECT_FALSE(dstEnd1967.isDST);
     EXPECT_EQ(-25200000, dstStart1967.offset);
 
     // DST Start: April 3, 1988 (02:00 am)
-    LocalTimeOffset dstStart1988 = calculateLocalTimeOffset(576054000000, WTF::LocalTime);
+    LocalTimeOffset dstStart1988 = calculateLocalTimeOffset(576054000000, TimeType::LocalTime);
     EXPECT_TRUE(dstStart1988.isDST);
     EXPECT_EQ(-25200000, dstStart1988.offset);
 
     // DST End: November 4, 2012 (02:00 am)
-    LocalTimeOffset dstEnd2012 = calculateLocalTimeOffset(1352012400000, WTF::LocalTime);
+    LocalTimeOffset dstEnd2012 = calculateLocalTimeOffset(1352012400000, TimeType::LocalTime);
     EXPECT_FALSE(dstEnd2012.isDST);
     EXPECT_EQ(-28800000, dstEnd2012.offset);
 
     // DST Begin: March 8, 2015
-    LocalTimeOffset dstBegin2015 = calculateLocalTimeOffset(1425801600000, WTF::LocalTime);
+    LocalTimeOffset dstBegin2015 = calculateLocalTimeOffset(1425801600000, TimeType::LocalTime);
     EXPECT_TRUE(dstBegin2015.isDST);
     EXPECT_EQ(-25200000, dstBegin2015.offset);
 
-    LocalTimeOffset dstBegin2015UTC = calculateLocalTimeOffset(1425801600000, WTF::UTCTime);
+    LocalTimeOffset dstBegin2015UTC = calculateLocalTimeOffset(1425801600000, TimeType::UTCTime);
     EXPECT_FALSE(dstBegin2015UTC.isDST);
     EXPECT_EQ(-28800000, dstBegin2015UTC.offset);
 
     // DST End: November 1, 2015
-    LocalTimeOffset dstEnd2015 = calculateLocalTimeOffset(1446361200000, WTF::LocalTime);
+    LocalTimeOffset dstEnd2015 = calculateLocalTimeOffset(1446361200000, TimeType::LocalTime);
     EXPECT_FALSE(dstEnd2015.isDST);
     EXPECT_EQ(-28800000, dstEnd2015.offset);
 
     // DST Begin: March 13, 2016
-    LocalTimeOffset dstBegin2016 = calculateLocalTimeOffset(1458111600000, WTF::LocalTime);
+    LocalTimeOffset dstBegin2016 = calculateLocalTimeOffset(1458111600000, TimeType::LocalTime);
     EXPECT_TRUE(dstBegin2016.isDST);
     EXPECT_EQ(-25200000, dstBegin2016.offset);
 
     // DST End: November 6, 2016
-    LocalTimeOffset dstEnd2016 = calculateLocalTimeOffset(1478415600000, WTF::LocalTime);
+    LocalTimeOffset dstEnd2016 = calculateLocalTimeOffset(1478415600000, TimeType::LocalTime);
     EXPECT_FALSE(dstEnd2016.isDST);
     EXPECT_EQ(-28800000, dstEnd2016.offset);
 
     // DST Begin: March 12, 2017
-    LocalTimeOffset dstBegin2017 = calculateLocalTimeOffset(1489305600000, WTF::LocalTime);
+    LocalTimeOffset dstBegin2017 = calculateLocalTimeOffset(1489305600000, TimeType::LocalTime);
     EXPECT_TRUE(dstBegin2017.isDST);
     EXPECT_EQ(-25200000, dstBegin2017.offset);
 
     // DST End: November 5, 2017
-    LocalTimeOffset dstEnd2017 = calculateLocalTimeOffset(1509865200000, WTF::LocalTime);
+    LocalTimeOffset dstEnd2017 = calculateLocalTimeOffset(1509865200000, TimeType::LocalTime);
     EXPECT_FALSE(dstEnd2017.isDST);
     EXPECT_EQ(-28800000, dstEnd2017.offset);
 
     // DST Begin: March 11, 2018
-    LocalTimeOffset dstBegin2018 = calculateLocalTimeOffset(1520755200000, WTF::LocalTime);
+    LocalTimeOffset dstBegin2018 = calculateLocalTimeOffset(1520755200000, TimeType::LocalTime);
     EXPECT_TRUE(dstBegin2018.isDST);
     EXPECT_EQ(-25200000, dstBegin2018.offset);
 
     // DST End: November 4, 2018
-    LocalTimeOffset dstEnd2018 = calculateLocalTimeOffset(1541314800000, WTF::LocalTime);
+    LocalTimeOffset dstEnd2018 = calculateLocalTimeOffset(1541314800000, TimeType::LocalTime);
     EXPECT_FALSE(dstEnd2018.isDST);
     EXPECT_EQ(-28800000, dstEnd2018.offset);
 }

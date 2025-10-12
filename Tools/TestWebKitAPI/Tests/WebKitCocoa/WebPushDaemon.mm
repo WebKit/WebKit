@@ -62,6 +62,7 @@
 #import <wtf/UUID.h>
 #import <wtf/UniqueRef.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/darwin/XPCExtras.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/MakeString.h>
@@ -281,8 +282,8 @@ template<> struct TestArgumentCoder<String> {
         if (!is8Bit)
             return std::nullopt;
         if (*is8Bit)
-            return decodeStringText<LChar>(decoder, *length);
-        return decodeStringText<UChar>(decoder, *length);
+            return decodeStringText<Latin1Character>(decoder, *length);
+        return decodeStringText<char16_t>(decoder, *length);
     }
 };
 
@@ -442,7 +443,7 @@ OSObjectPtr<xpc_object_t> WebPushXPCConnectionMessageSender::messageDictionaryFr
 
     __block auto blockBytes = encoder.takeBytes();
     auto buffer = blockBytes.span();
-    auto dispatchData = adoptNS(dispatch_data_create(buffer.data(), buffer.size(), dispatch_get_main_queue(), ^{
+    auto dispatchData = adoptNS(dispatch_data_create(buffer.data(), buffer.size(), mainDispatchQueueSingleton(), ^{
         blockBytes.clear();
     }));
     auto encoderData = adoptOSObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
@@ -469,7 +470,7 @@ void WebPushXPCConnectionMessageSender::sendWithAsyncReplyWithoutUsingIPCConnect
     encoder.encodeHeader<M>();
     message.encode(encoder);
     auto dictionary = messageDictionaryFromEncoder(WTFMove(encoder));
-    xpc_connection_send_message_with_reply(m_connection.get(), dictionary.get(), dispatch_get_main_queue(), makeBlockPtr([this, completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
+    xpc_connection_send_message_with_reply(m_connection.get(), dictionary.get(), mainDispatchQueueSingleton(), makeBlockPtr([this, completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
         if (xpc_get_type(reply) == XPC_TYPE_ERROR) {
             // We only expect an error if we were purposefully testing the wrong protocol version.
             RELEASE_ASSERT(m_shouldIncrementProtocolVersionForTesting);
@@ -509,7 +510,7 @@ static WebKit::WebPushD::WebPushDaemonConnectionConfiguration defaultWebPushDaem
 
 RetainPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* serviceName, std::optional<WebKit::WebPushD::WebPushDaemonConnectionConfiguration> configuration = std::nullopt)
 {
-    auto connection = adoptNS(xpc_connection_create_mach_service(serviceName, dispatch_get_main_queue(), 0));
+    auto connection = adoptNS(xpc_connection_create_mach_service(serviceName, mainDispatchQueueSingleton(), 0));
     xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t) { });
     xpc_connection_activate(connection.get());
     auto sender = WebPushXPCConnectionMessageSender { connection.get() };
@@ -525,7 +526,7 @@ TEST(WebPushD, BasicCommunication)
 {
     NSURL *tempDir = setUpTestWebPushD();
 
-    auto connection = adoptNS(xpc_connection_create_mach_service("org.webkit.webpushtestdaemon.service", dispatch_get_main_queue(), 0));
+    auto connection = adoptNS(xpc_connection_create_mach_service("org.webkit.webpushtestdaemon.service", mainDispatchQueueSingleton(), 0));
 
     __block bool done = false;
     __block bool interrupted = false;
@@ -893,7 +894,7 @@ static void enableFeatureForPreferences(NSString *featureName, WKPreferences *pr
 }
 
 class WebPushDTestWebView {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebPushDTestWebView);
 public:
     WebPushDTestWebView(const String& pushPartition, const std::optional<WTF::UUID>& dataStoreIdentifier, WKProcessPool *processPool, TestNotificationProvider& notificationProvider, ASCIILiteral html, InstallDataStoreDelegate installDataStoreDelegate, BuiltInNotificationsEnabled builtInNotificationsEnabled)
         : m_pushPartition(pushPartition)
@@ -1206,7 +1207,7 @@ public:
             @"userInfo": apsUserInfo
         };
 
-        String message { span([NSJSONSerialization dataWithJSONObject:obj options:0 error:nullptr]) };
+        String message { byteCast<Latin1Character>(span([NSJSONSerialization dataWithJSONObject:obj options:0 error:nullptr])) };
 
         auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
         auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
@@ -2437,9 +2438,9 @@ static constexpr ASCIILiteral json35 = R"JSONRESOURCE(
     "web_push": 8030,
     "notification": {
         "navigate": "https://example.com/",
-        "title": "Hello world!",
-        "mutable": 39
-    }
+        "title": "Hello world!"
+    },
+    "mutable": 39
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json36 = R"JSONRESOURCE(
@@ -2447,9 +2448,9 @@ static constexpr ASCIILiteral json36 = R"JSONRESOURCE(
     "web_push": 8030,
     "notification": {
         "navigate": "https://example.com/",
-        "title": "Hello world!",
-        "mutable": { }
-    }
+        "title": "Hello world!"
+    },
+    "mutable": { }
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json37 = R"JSONRESOURCE(
@@ -2457,9 +2458,9 @@ static constexpr ASCIILiteral json37 = R"JSONRESOURCE(
     "web_push": 8030,
     "notification": {
         "navigate": "https://example.com/",
-        "title": "Hello world!",
-        "mutable": "true"
-    }
+        "title": "Hello world!"
+    },
+    "mutable": "true"
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json38 = R"JSONRESOURCE(
@@ -2468,8 +2469,8 @@ static constexpr ASCIILiteral json38 = R"JSONRESOURCE(
     "notification": {
         "navigate": "https://example.com/",
         "title": "Hello world!",
-        "mutable": true
-    }
+    },
+    "mutable": true
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json39 = R"JSONRESOURCE(
@@ -2478,9 +2479,9 @@ static constexpr ASCIILiteral json39 = R"JSONRESOURCE(
     "app_badge": "12",
     "notification": {
         "navigate": "https://example.com/",
-        "title": "Hello world!",
-        "mutable": true
-    }
+        "title": "Hello world!"
+    },
+    "mutable": true
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json40 = R"JSONRESOURCE(
@@ -2490,9 +2491,9 @@ static constexpr ASCIILiteral json40 = R"JSONRESOURCE(
     "notification": {
         "navigate": "https://example.com/",
         "title": "Hello world!",
-        "mutable": true,
         "tag": "title Gotcha!"
-    }
+    },
+    "mutable": true
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json41 = R"JSONRESOURCE(
@@ -2502,9 +2503,9 @@ static constexpr ASCIILiteral json41 = R"JSONRESOURCE(
     "notification": {
         "navigate": "https://example.com/",
         "title": "Hello world!",
-        "mutable": true,
         "tag": "badge 1024"
-    }
+    },
+    "mutable": true
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json42 = R"JSONRESOURCE(
@@ -2514,9 +2515,9 @@ static constexpr ASCIILiteral json42 = R"JSONRESOURCE(
     "notification": {
         "navigate": "https://example.com/",
         "title": "Hello world!",
-        "mutable": true,
         "tag": "titleandbadge ThisRules 4096"
-    }
+    },
+    "mutable": true
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json43 = R"JSONRESOURCE(
@@ -2526,10 +2527,10 @@ static constexpr ASCIILiteral json43 = R"JSONRESOURCE(
     "notification": {
         "navigate": "https://example.com/",
         "title": "Test the data object",
-        "mutable": true,
         "tag": "datatotitle",
         "data": "Raw string"
-    }
+    },
+    "mutable": true
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json44 = R"JSONRESOURCE(
@@ -2539,10 +2540,10 @@ static constexpr ASCIILiteral json44 = R"JSONRESOURCE(
     "notification": {
         "navigate": "https://example.com/",
         "title": "Test the data object",
-        "mutable": true,
         "tag": "datatotitle",
         "data": { "key": "value" }
-    }
+    },
+    "mutable": true
 }
 )JSONRESOURCE"_s;
 static constexpr ASCIILiteral json45 = R"JSONRESOURCE(
@@ -2552,11 +2553,12 @@ static constexpr ASCIILiteral json45 = R"JSONRESOURCE(
     "notification": {
         "navigate": "https://example.com/",
         "title": "Test a default action URL override",
-        "mutable": true,
         "tag": "defaultactionurl https://webkit.org/"
-    }
+    },
+    "mutable": true
 }
 )JSONRESOURCE"_s;
+// Intentionally keep mutable as a child of notification here until we fix webkit.org/b/297389.
 static constexpr ASCIILiteral json46 = R"JSONRESOURCE(
 {
     "web_push": 8030,
@@ -3105,7 +3107,7 @@ TEST_F(WebPushDPushNotificationEventTest, Basic)
     runTest(json46);
     checkLastNotificationTitle(@"Test a missing default action URL override");
     checkLastNotificationDefaultActionURL(@"https://example.com/");
-    waitForMessageAndVerify(@"showNotification failed: TypeError: Call to showNotification() while handling a `pushnotification` event did not include NotificationOptions that specify a valid defaultAction url");
+    waitForMessageAndVerify(@"showNotification failed: TypeError: Call to showNotification() while handling a `push` event did not include NotificationOptions that specify a valid defaultAction url");
 
     // After the slew of above messages that were handled by service workers, silent push tracking should *not* have
     // kicked in, and therefore there should still be a push subscription.

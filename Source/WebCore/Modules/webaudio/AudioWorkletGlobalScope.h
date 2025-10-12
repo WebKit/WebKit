@@ -65,7 +65,7 @@ public:
 
     double currentTime() const { return m_sampleRate > 0.0 ? m_currentFrame / static_cast<double>(m_sampleRate) : 0.0; }
 
-    AudioWorkletThread& thread() const;
+    Ref<AudioWorkletThread> thread() const;
     void prepareForDestruction() final;
 
     std::unique_ptr<AudioWorkletProcessorConstructionData> takePendingProcessorConstructionData();

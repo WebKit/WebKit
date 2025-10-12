@@ -10,22 +10,38 @@
 
 #include "audio/voip/audio_ingress.h"
 
-#include <algorithm>
+#include <cstdint>
 #include <ctime>
+#include <map>
+#include <optional>
 #include <utility>
 #include <vector>
 
+#include "api/array_view.h"
+#include "api/audio/audio_mixer.h"
+#include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_format.h"
+#include "api/environment/environment.h"
 #include "api/neteq/default_neteq_factory.h"
+#include "api/neteq/neteq.h"
+#include "api/scoped_refptr.h"
+#include "api/units/time_delta.h"
+#include "api/voip/voip_statistics.h"
 #include "audio/utility/audio_frame_operations.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
+#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
+#include "modules/rtp_rtcp/include/receive_statistics.h"
+#include "modules/rtp_rtcp/include/report_block_data.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/receiver_report.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/numerics/safe_minmax.h"
-#include "rtc_base/time_utils.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 
@@ -39,11 +55,10 @@ NetEq::Config CreateNetEqConfig() {
 
 }  // namespace
 
-AudioIngress::AudioIngress(
-    const Environment& env,
-    RtpRtcpInterface* rtp_rtcp,
-    ReceiveStatistics* receive_statistics,
-    rtc::scoped_refptr<AudioDecoderFactory> decoder_factory)
+AudioIngress::AudioIngress(const Environment& env,
+                           RtpRtcpInterface* rtp_rtcp,
+                           ReceiveStatistics* receive_statistics,
+                           scoped_refptr<AudioDecoderFactory> decoder_factory)
     : env_(env),
       playing_(false),
       remote_ssrc_(0),
@@ -60,8 +75,6 @@ AudioIngress::~AudioIngress() = default;
 AudioMixer::Source::AudioFrameInfo AudioIngress::GetAudioFrameWithInfo(
     int sampling_rate,
     AudioFrame* audio_frame) {
-  audio_frame->sample_rate_hz_ = sampling_rate;
-
   // Get 10ms raw PCM data from the ACM.
   bool muted = false;
   {
@@ -144,7 +157,7 @@ void AudioIngress::SetReceiveCodecs(
   neteq_->SetCodecs(codecs);
 }
 
-void AudioIngress::ReceivedRTPPacket(rtc::ArrayView<const uint8_t> rtp_packet) {
+void AudioIngress::ReceivedRTPPacket(ArrayView<const uint8_t> rtp_packet) {
   RtpPacketReceived rtp_packet_received;
   rtp_packet_received.Parse(rtp_packet.data(), rtp_packet.size());
 
@@ -188,7 +201,7 @@ void AudioIngress::ReceivedRTPPacket(rtc::ArrayView<const uint8_t> rtp_packet) {
   const uint8_t* payload = rtp_packet_received.data() + header.headerLength;
   size_t payload_length = packet_length - header.headerLength;
   size_t payload_data_length = payload_length - header.paddingLength;
-  auto data_view = rtc::ArrayView<const uint8_t>(payload, payload_data_length);
+  auto data_view = ArrayView<const uint8_t>(payload, payload_data_length);
 
   // Push the incoming payload (parsed and ready for decoding) into the ACM.
   if (data_view.empty()) {
@@ -200,8 +213,7 @@ void AudioIngress::ReceivedRTPPacket(rtc::ArrayView<const uint8_t> rtp_packet) {
   }
 }
 
-void AudioIngress::ReceivedRTCPPacket(
-    rtc::ArrayView<const uint8_t> rtcp_packet) {
+void AudioIngress::ReceivedRTCPPacket(ArrayView<const uint8_t> rtcp_packet) {
   rtcp::CommonHeader rtcp_header;
   if (rtcp_header.Parse(rtcp_packet.data(), rtcp_packet.size()) &&
       (rtcp_header.type() == rtcp::SenderReport::kPacketType ||

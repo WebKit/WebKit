@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -222,3 +222,23 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegClosePath, ClosePath);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegLinetoHorizontalAbs, LineToHorizontalAbs);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegLinetoHorizontalRel, LineToHorizontalRel);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegLinetoVerticalAbs, LineToVerticalAbs);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegLinetoVerticalRel, LineToVerticalRel);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegMovetoAbs, MoveToAbs);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegMovetoRel, MoveToRel);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegLinetoAbs, LineToAbs);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegLinetoRel, LineToRel);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegCurvetoQuadraticAbs, CurveToQuadraticAbs);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegCurvetoQuadraticRel, CurveToQuadraticRel);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegCurvetoCubicAbs, CurveToCubicAbs);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegCurvetoCubicRel, CurveToCubicRel);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegArcAbs, ArcAbs);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegArcRel, ArcRel);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegCurvetoQuadraticSmoothAbs, CurveToQuadraticSmoothAbs);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegCurvetoQuadraticSmoothRel, CurveToQuadraticSmoothRel);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegCurvetoCubicSmoothAbs, CurveToCubicSmoothAbs);
+SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(SVGPathSegCurvetoCubicSmoothRel, CurveToCubicSmoothRel);

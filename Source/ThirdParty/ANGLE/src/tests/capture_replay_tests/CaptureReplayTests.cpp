@@ -7,6 +7,10 @@
 //   Application that runs replay for testing of capture replay
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "common/debug.h"
 #include "common/system_utils.h"
 #include "platform/PlatformMethods.h"

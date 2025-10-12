@@ -46,6 +46,7 @@ static void forEachLine(FILE* file, Functor functor)
     free(buffer);
 }
 
+IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 static size_t computeMemoryFootprint()
 {
     FILE* file = fopen("/proc/self/smaps", "r");
@@ -85,6 +86,7 @@ static size_t computeMemoryFootprint()
     fclose(file);
     return totalPrivateDirtyInKB * KB;
 }
+IGNORE_CLANG_WARNINGS_END
 
 size_t memoryFootprint()
 {

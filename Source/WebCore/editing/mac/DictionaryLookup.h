@@ -25,10 +25,11 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(COCOA)
 
-#include "CocoaView.h"
-#include "DictionaryPopupInfo.h"
+#include <WebCore/CocoaView.h>
+#include <WebCore/DictionaryPopupInfo.h>
 #include <wtf/Function.h>
 
 #if PLATFORM(MAC)

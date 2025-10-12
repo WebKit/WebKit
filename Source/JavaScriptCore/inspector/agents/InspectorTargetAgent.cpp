@@ -36,14 +36,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorTargetAgent);
 InspectorTargetAgent::InspectorTargetAgent(FrontendRouter& frontendRouter, BackendDispatcher& backendDispatcher)
     : InspectorAgentBase("Target"_s)
     , m_router(frontendRouter)
-    , m_frontendDispatcher(makeUnique<TargetFrontendDispatcher>(frontendRouter))
+    , m_frontendDispatcher(makeUniqueRef<TargetFrontendDispatcher>(frontendRouter))
     , m_backendDispatcher(TargetBackendDispatcher::create(backendDispatcher, this))
 {
 }
 
 InspectorTargetAgent::~InspectorTargetAgent() = default;
 
-void InspectorTargetAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
+void InspectorTargetAgent::didCreateFrontendAndBackend()
 {
     m_isConnected = true;
 
@@ -102,6 +102,8 @@ static Protocol::Target::TargetInfo::Type targetTypeToProtocolType(InspectorTarg
     switch (type) {
     case InspectorTargetType::Page:
         return Protocol::Target::TargetInfo::Type::Page;
+    case InspectorTargetType::Frame:
+        return Protocol::Target::TargetInfo::Type::Frame;
     case InspectorTargetType::DedicatedWorker:
         return Protocol::Target::TargetInfo::Type::Worker;
     case InspectorTargetType::ServiceWorker:
@@ -164,7 +166,7 @@ void InspectorTargetAgent::didCommitProvisionalTarget(const String& oldTargetID,
 
 FrontendChannel::ConnectionType InspectorTargetAgent::connectionType() const
 {
-    return m_router.hasLocalFrontend() ? Inspector::FrontendChannel::ConnectionType::Local : Inspector::FrontendChannel::ConnectionType::Remote;
+    return m_router->hasLocalFrontend() ? Inspector::FrontendChannel::ConnectionType::Local : Inspector::FrontendChannel::ConnectionType::Remote;
 }
 
 void InspectorTargetAgent::connectToTargets()

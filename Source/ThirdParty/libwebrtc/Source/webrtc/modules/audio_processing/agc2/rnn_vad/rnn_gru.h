@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_PROCESSING_AGC2_RNN_VAD_RNN_GRU_H_
 
 #include <array>
+#include <cstdint>
 #include <vector>
 
 #include "absl/strings/string_view.h"
@@ -32,9 +33,9 @@ class GatedRecurrentLayer {
   // Ctor. `output_size` cannot be greater than `kGruLayerMaxUnits`.
   GatedRecurrentLayer(int input_size,
                       int output_size,
-                      rtc::ArrayView<const int8_t> bias,
-                      rtc::ArrayView<const int8_t> weights,
-                      rtc::ArrayView<const int8_t> recurrent_weights,
+                      ArrayView<const int8_t> bias,
+                      ArrayView<const int8_t> weights,
+                      ArrayView<const int8_t> recurrent_weights,
                       const AvailableCpuFeatures& cpu_features,
                       absl::string_view layer_name);
   GatedRecurrentLayer(const GatedRecurrentLayer&) = delete;
@@ -51,7 +52,7 @@ class GatedRecurrentLayer {
   // Resets the GRU state.
   void Reset();
   // Computes the recurrent layer output and updates the status.
-  void ComputeOutput(rtc::ArrayView<const float> input);
+  void ComputeOutput(ArrayView<const float> input);
 
  private:
   const int input_size_;

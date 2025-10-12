@@ -16,7 +16,7 @@
 
 #include "logging/rtc_event_log/encoder/delta_encoding.h"
 #include "logging/rtc_event_log/encoder/optional_blob_encoding.h"
-#include "logging/rtc_event_log/rtc_event_log2_proto_include.h"
+#include "logging/rtc_event_log/rtc_event_log2_proto_include.h"  // IWYU pragma: keep
 #include "rtc_base/checks.h"
 #include "test/gmock.h"
 #include "test/gtest.h"

@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "CodeBlock.h"
-#include "CodeBlockHash.h"
-#include "CodeOrigin.h"
-#include "ValueRecovery.h"
-#include "WriteBarrier.h"
+#include <JavaScriptCore/CodeBlock.h>
+#include <JavaScriptCore/CodeBlockHash.h>
+#include <JavaScriptCore/CodeOrigin.h>
+#include <JavaScriptCore/ValueRecovery.h>
+#include <JavaScriptCore/WriteBarrier.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -43,7 +43,7 @@ class JSFunction;
 DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(InlineCallFrame);
 
 struct InlineCallFrame {
-    WTF_MAKE_STRUCT_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(InlineCallFrame);
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(InlineCallFrame, InlineCallFrame);
 
     enum Kind {
         Call,
@@ -128,10 +128,10 @@ struct InlineCallFrame {
         case ProxyObjectInCall:
         case BoundFunctionCall:
         case BoundFunctionTailCall:
-            return CodeForCall;
+            return CodeSpecializationKind::CodeForCall;
         case Construct:
         case ConstructVarargs:
-            return CodeForConstruct;
+            return CodeSpecializationKind::CodeForConstruct;
         }
         RELEASE_ASSERT_NOT_REACHED();
     }

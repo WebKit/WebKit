@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "IDBIndexIdentifier.h"
-#include "IDBObjectStoreIdentifier.h"
-#include "IDBObjectStoreInfo.h"
+#include <WebCore/IDBIndexIdentifier.h>
+#include <WebCore/IDBObjectStoreIdentifier.h>
+#include <WebCore/IDBObjectStoreInfo.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>

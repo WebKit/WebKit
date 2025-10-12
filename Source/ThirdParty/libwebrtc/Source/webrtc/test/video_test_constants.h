@@ -10,6 +10,7 @@
 #ifndef TEST_VIDEO_TEST_CONSTANTS_H_
 #define TEST_VIDEO_TEST_CONSTANTS_H_
 
+#include <cstddef>
 #include <cstdint>
 
 #include "api/units/time_delta.h"

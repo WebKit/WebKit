@@ -106,7 +106,7 @@ static gboolean extensionRead(GstRTPHeaderExtension* extension, GstRTPHeaderExte
 
     bool isMirrored = (firstByte >> 3) & 0x1;
     GST_TRACE_OBJECT(extension, "Read byte 0x%x to video rotation %u (flipped: %s)", firstByte, static_cast<unsigned>(rotation), boolForPrinting(isMirrored));
-    webkitGstBufferAddVideoFrameMetadata(buffer, { }, rotation, isMirrored);
+    webkitGstBufferAddVideoFrameMetadata(buffer, { }, rotation, isMirrored, VideoFrameContentHint::None);
     return TRUE;
 }
 

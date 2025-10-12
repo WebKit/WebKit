@@ -416,43 +416,37 @@ function checkExpectedValue(expected, index)
 
 function getPropertyValue(property, elementId, iframeId)
 {
-    var computedValue;
-    var element;
+    let elementDocument = document;
     if (iframeId)
-        element = document.getElementById(iframeId).contentDocument.getElementById(elementId);
-    else
-        element = document.getElementById(elementId);
-
-    if (property == "lineHeight")
-        computedValue = parseInt(window.getComputedStyle(element).lineHeight);
-    else if (property == "backgroundImage"
-               || property == "borderImageSource"
-               || property == "listStyleImage"
-               || property == "webkitMaskImage"
-               || property == "webkitMaskBoxImage"
-               || property == "filter"
-               || property == "-apple-color-filter"
-               || property == "webkitFilter"
-               || property == "webkitBackdropFilter"
-               || property == "webkitClipPath"
-               || property == "webkitShapeInside"
-               || property == "webkitShapeOutside"
-               || property == "font-variation-settings"
-               || property == "font-style"
-               || !property.indexOf("webkitTransform")
-               || !property.indexOf("transform")) {
-        computedValue = window.getComputedStyle(element)[property.split(".")[0]];
-    } else if (property == "font-stretch") {
-        var computedStyle = window.getComputedStyle(element).getPropertyCSSValue(property);
-        computedValue = computedStyle.getFloatValue(CSSPrimitiveValue.CSS_PERCENTAGE);
-    } else {
-        var computedStyle = window.getComputedStyle(element).getPropertyCSSValue(property);
-        if (property == "z-index" && computedStyle.cssText == "auto")
-            return "auto";
-        computedValue = computedStyle.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-    }
-
-    return computedValue;
+        elementDocument = document.getElementById(iframeId).contentDocument;
+    const element = elementDocument.getElementById(elementId);
+    const propertyPrefix = property.split(".")[0];
+    const value = getComputedStyle(element)[propertyPrefix];
+    if (value == "auto")
+        return "auto";
+    if (property == "font-stretch")
+        return parseFloat(value.replace(/%$/, ""));
+    const nonNumericPropertyNames = new Set([
+        "-apple-color-filter",
+        "backgroundImage",
+        "borderImageSource",
+        "filter",
+        "font-style",
+        "font-variation-settings",
+        "listStyleImage",
+        "transform",
+        "webkitBackdropFilter",
+        "webkitClipPath",
+        "webkitFilter",
+        "webkitMaskBoxImage",
+        "webkitMaskImage",
+        "webkitShapeInside",
+        "webkitShapeOutside",
+        "webkitTransform",
+    ]);
+    if (!nonNumericPropertyNames.has(propertyPrefix))
+        return parseFloat(value);
+    return value;
 }
 
 function comparePropertyValue(property, computedValue, expectedValue, tolerance)

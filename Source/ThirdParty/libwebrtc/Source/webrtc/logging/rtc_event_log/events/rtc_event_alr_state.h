@@ -53,7 +53,7 @@ class RtcEventAlrState final : public RtcEvent {
 
   bool in_alr() const { return in_alr_; }
 
-  static std::string Encode(rtc::ArrayView<const RtcEvent*> batch) {
+  static std::string Encode(ArrayView<const RtcEvent*> batch) {
     return RtcEventAlrState::definition_.EncodeBatch(batch);
   }
 

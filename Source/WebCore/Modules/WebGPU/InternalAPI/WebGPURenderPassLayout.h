@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "WebGPUIntegralTypes.h"
-#include "WebGPUObjectDescriptorBase.h"
-#include "WebGPUTextureFormat.h"
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUObjectDescriptorBase.h>
+#include <WebCore/WebGPUTextureFormat.h>
 #include <optional>
 #include <wtf/Vector.h>
 

@@ -40,6 +40,7 @@
 #import <wtf/FileSystem.h>
 #import <wtf/RunLoop.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
 
 using namespace WebKit;
@@ -94,7 +95,7 @@ using namespace WebKit;
 {
     dispatch_async(_databaseQueue, ^{
         NSString *deleteDatabaseErrorMessage = [self _deleteDatabase];
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             completionHandler(deleteDatabaseErrorMessage);
         });
     });
@@ -356,7 +357,7 @@ using namespace WebKit;
 
         NSString *errorMessage;
         if (![strongSelf _openDatabaseIfNecessaryReturningErrorMessage:&errorMessage]) {
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(mainDispatchQueueSingleton(), ^{
                 completionHandler(nil, errorMessage);
             });
 
@@ -372,7 +373,7 @@ using namespace WebKit;
             errorMessage = @"Failed to create savepoint.";
         }
 
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             completionHandler(!errorMessage.length ? savepointIdentifier : nil, errorMessage);
         });
     });
@@ -388,7 +389,7 @@ using namespace WebKit;
 
         NSString *errorMessage;
         if (![strongSelf _openDatabaseIfNecessaryReturningErrorMessage:&errorMessage]) {
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(mainDispatchQueueSingleton(), ^{
                 completionHandler(errorMessage);
             });
 
@@ -404,7 +405,7 @@ using namespace WebKit;
             errorMessage = @"Failed to release savepoint.";
         }
 
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             completionHandler(errorMessage);
         });
     });
@@ -420,7 +421,7 @@ using namespace WebKit;
 
         NSString *errorMessage;
         if (![strongSelf _openDatabaseIfNecessaryReturningErrorMessage:&errorMessage]) {
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(mainDispatchQueueSingleton(), ^{
                 completionHandler(errorMessage);
             });
 
@@ -436,7 +437,7 @@ using namespace WebKit;
             errorMessage = @"Failed to rollback to savepoint.";
         }
 
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             completionHandler(errorMessage);
         });
     });

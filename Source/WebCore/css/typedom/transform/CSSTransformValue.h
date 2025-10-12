@@ -54,7 +54,7 @@ public:
     
     ExceptionOr<Ref<DOMMatrix>> toMatrix();
     
-    CSSStyleValueType getType() const override { return CSSStyleValueType::CSSTransformValue; }
+    CSSStyleValueType styleValueType() const override { return CSSStyleValueType::CSSTransformValue; }
 
     RefPtr<CSSValue> toCSSValue() const final;
 
@@ -68,5 +68,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSTransformValue)
-    static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSTransformValue; }
+    static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.styleValueType() == WebCore::CSSStyleValueType::CSSTransformValue; }
 SPECIALIZE_TYPE_TRAITS_END()

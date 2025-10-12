@@ -180,22 +180,23 @@ testRegExp(/(?<=(?:\k<x>{0}(?<x>a)))b/, "ab", ["b", "a"], { x: "a" });
 testRegExp(/(?<=(?:\k<x>(?<x>c))|(?:\k<x>(?<x>a)))b/, "aab", ["b", undefined, "a"], { x: "a" });
 testRegExp(/(?<=(?:\k<x>(?<x>c))|(?:\k<x>))b/, "aab", ["b", undefined], { x: undefined });
 testRegExp(/(?<=(?:\k<x>(?<x>c))|(?:\k<y>(?<y>a)))b/, "aab", ["b", undefined, "a"], { x: undefined, y: "a" });
+testRegExp(/(?<!(x)\1{0})b/, "xb", null);
 
-// Test 17
+// Test 18
 testRegExp(/^(?:(?<a>x)|(?<a>y)|z)\k<a>$/, "z", ["z", undefined, undefined]);
 testRegExp(/^(?:(?<a>x)|(?<a>y)|z){2}\k<a>$/, "xz", ["xz", undefined, undefined]);
 testRegExp(/(?<a>x)|(?:zy\k<a>)/, "zy", ["zy", undefined]);
 testRegExpSyntaxError("(?<A>123)(?<A>456)", "", "SyntaxError: Invalid regular expression: duplicate group specifier name");
 testRegExpSyntaxError("(?<A>123)(?:(?<A>456)|(?<A>789))", "", "SyntaxError: Invalid regular expression: duplicate group specifier name");
 
-// Test 22
+// Test 23
 testRegExpSyntaxError("(?<=\\k<a>a)x", "u", "SyntaxError: Invalid regular expression: invalid \\k<> named backreference");
 testRegExp(/(?<b>.).\k<b>/u, "bab", ["bab", "b"]);
 testRegExp(/(?<b>.).\k<b>/u, "baa", null, null);
 testRegExp(/(?<a>\k<a>\w)../u, "bab", ["bab", "b"], { a: "b" });
 testRegExp(/(?:(?<x>a)|(?<y>a)(?<x>b))(?:(?<z>c)|(?<z>d))/, "abc", ["abc", undefined, "a", "b", "c", undefined], { x: "b", y: "a", z: "c" });
 
-// Test 27
+// Test 28
 testRegExp(/(?<=(?:\1|b)(aa))./, "aaaax", ["x", "aa"]);
 testRegExp(/(?<=(?:\2|b)(?<=\1(a))(aa))./, "aaaax", ["x", "a", "aa"]);
 testRegExp(/(?<=((?:\3|b))(?<=\2(a))(aa))./, "aaaax", ["x", "aa", "a", "aa"]);
@@ -203,14 +204,14 @@ testRegExpSyntaxError("((?:(?<f>\w))(?<f>.)(a*c)?)*", "", "SyntaxError: Invalid 
 //  &&&&  testRegExp(/((?:(?<f>\w))(?<f>.)(a*c)?)*/, "aabbbccc", ["aabbbcc","bcc","b","c","c"], { f: "c" });
 testRegExp(/(?<A>)|(?<A>)*\k<A>/, "", ["", "", undefined], { A: "" });
 
-// Test 32
+// Test 33
 testRegExp(/(?:(?<A>a)|(?<A>b)*)\k<A>/, "bb", ["bb",undefined,"b"], { A: "b" });
 testRegExp(/((?<A>A+)(?<B>B+)(?<C>C+)(?<D>D+))+|((?<B>B+)(?<C>C+)(?<D>D+))+|((?<A>A+)(?<C>C+)(?<D>D+))+|((?<C>C+)(?<D>D+))+|((?<B>B+)(?<D>D+))+|((?<A>A+)(?<D>D+))+|((?<D>D+))/, "AAD", ["AAD", undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, "AAD", "AA", "D", undefined, undefined], { A: "AA", B: undefined, C: undefined, D: "D" });
 testRegExpSyntaxError("(?<x>c)(?:(?<x>a)|(?<x>b))", "", "SyntaxError: Invalid regular expression: duplicate group specifier name");
 testRegExpSyntaxError("(?:(?<x>a)|(?<x>b))(?<x>c)", "", "SyntaxError: Invalid regular expression: duplicate group specifier name");
 testRegExpSyntaxError("(?:(?<x>c)x)(?:(?<x>a)|(?<x>b))", "", "SyntaxError: Invalid regular expression: duplicate group specifier name");
 
-// Test 37
+// Test 38
 testRegExpSyntaxError("(?:(?<x>a)|(?<x>b))(?:(?<x>c)x)", "", "SyntaxError: Invalid regular expression: duplicate group specifier name");
 testRegExpSyntaxError("(?:(?<x>c)x|(?<y>d))(?:(?<y>a)|(?<x>b))", "", "SyntaxError: Invalid regular expression: duplicate group specifier name");
 testRegExpSyntaxError("(?:(?<y>a)|(?<x>b))(?:(?<x>c)x|(?<y>d))", "", "SyntaxError: Invalid regular expression: duplicate group specifier name");

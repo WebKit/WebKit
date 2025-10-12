@@ -103,7 +103,7 @@ private:
 
 - (WKWebView *)webView
 {
-    RefPtr page = _inspector->protectedInspectedPage();
+    RefPtr page = _inspector->inspectedPage();
     return page ? page->cocoaView().autorelease() : nil;
 }
 

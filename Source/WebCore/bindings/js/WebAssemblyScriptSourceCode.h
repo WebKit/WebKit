@@ -58,7 +58,7 @@ public:
     const JSC::SourceCode& jsSourceCode() const { return m_code; }
 
 private:
-    Ref<JSC::SourceProvider> m_provider;
+    const Ref<JSC::SourceProvider> m_provider;
     JSC::SourceCode m_code;
     CachedResourceHandle<CachedScript> m_cachedScript;
 };

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPUProgrammableStage.h"
-#include "WebGPUVertexBufferLayout.h"
+#include <WebCore/WebGPUProgrammableStage.h>
+#include <WebCore/WebGPUVertexBufferLayout.h>
 #include <optional>
 #include <wtf/Vector.h>
 

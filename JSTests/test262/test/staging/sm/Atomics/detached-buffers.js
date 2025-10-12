@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -32,71 +29,71 @@ function badValue(ta) {
 for (let TA of intArrayConstructors) {
   let ta = new TA(1);
 
-  assertThrowsInstanceOf(() => Atomics.load(ta, badValue(ta)), TypeError);
+  assert.throws(TypeError, () => Atomics.load(ta, badValue(ta)));
 }
 
 // Atomics.store
 for (let TA of intArrayConstructors) {
   let ta = new TA(1);
 
-  assertThrowsInstanceOf(() => Atomics.store(ta, badValue(ta), 0), TypeError);
-  assertThrowsInstanceOf(() => Atomics.store(ta, 0, badValue(ta)), TypeError);
+  assert.throws(TypeError, () => Atomics.store(ta, badValue(ta), 0));
+  assert.throws(TypeError, () => Atomics.store(ta, 0, badValue(ta)));
 }
 
 // Atomics.compareExchange
 for (let TA of intArrayConstructors) {
   let ta = new TA(1);
 
-  assertThrowsInstanceOf(() => Atomics.compareExchange(ta, badValue(ta), 0, 0), TypeError);
-  assertThrowsInstanceOf(() => Atomics.compareExchange(ta, 0, badValue(ta), 0), TypeError);
-  assertThrowsInstanceOf(() => Atomics.compareExchange(ta, 0, 0, badValue(ta)), TypeError);
+  assert.throws(TypeError, () => Atomics.compareExchange(ta, badValue(ta), 0, 0));
+  assert.throws(TypeError, () => Atomics.compareExchange(ta, 0, badValue(ta), 0));
+  assert.throws(TypeError, () => Atomics.compareExchange(ta, 0, 0, badValue(ta)));
 }
 
 // Atomics.exchange
 for (let TA of intArrayConstructors) {
   let ta = new TA(1);
 
-  assertThrowsInstanceOf(() => Atomics.exchange(ta, badValue(ta), 0), TypeError);
-  assertThrowsInstanceOf(() => Atomics.exchange(ta, 0, badValue(ta)), TypeError);
+  assert.throws(TypeError, () => Atomics.exchange(ta, badValue(ta), 0));
+  assert.throws(TypeError, () => Atomics.exchange(ta, 0, badValue(ta)));
 }
 
 // Atomics.add
 for (let TA of intArrayConstructors) {
   let ta = new TA(1);
 
-  assertThrowsInstanceOf(() => Atomics.add(ta, badValue(ta), 0), TypeError);
-  assertThrowsInstanceOf(() => Atomics.add(ta, 0, badValue(ta)), TypeError);
+  assert.throws(TypeError, () => Atomics.add(ta, badValue(ta), 0));
+  assert.throws(TypeError, () => Atomics.add(ta, 0, badValue(ta)));
 }
 
 // Atomics.sub
 for (let TA of intArrayConstructors) {
   let ta = new TA(1);
 
-  assertThrowsInstanceOf(() => Atomics.sub(ta, badValue(ta), 0), TypeError);
-  assertThrowsInstanceOf(() => Atomics.sub(ta, 0, badValue(ta)), TypeError);
+  assert.throws(TypeError, () => Atomics.sub(ta, badValue(ta), 0));
+  assert.throws(TypeError, () => Atomics.sub(ta, 0, badValue(ta)));
 }
 
 // Atomics.and
 for (let TA of intArrayConstructors) {
   let ta = new TA(1);
 
-  assertThrowsInstanceOf(() => Atomics.and(ta, badValue(ta), 0), TypeError);
-  assertThrowsInstanceOf(() => Atomics.and(ta, 0, badValue(ta)), TypeError);
+  assert.throws(TypeError, () => Atomics.and(ta, badValue(ta), 0));
+  assert.throws(TypeError, () => Atomics.and(ta, 0, badValue(ta)));
 }
 
 // Atomics.or
 for (let TA of intArrayConstructors) {
   let ta = new TA(1);
 
-  assertThrowsInstanceOf(() => Atomics.or(ta, badValue(ta), 0), TypeError);
-  assertThrowsInstanceOf(() => Atomics.or(ta, 0, badValue(ta)), TypeError);
+  assert.throws(TypeError, () => Atomics.or(ta, badValue(ta), 0));
+  assert.throws(TypeError, () => Atomics.or(ta, 0, badValue(ta)));
 }
 
 // Atomics.xor
 for (let TA of intArrayConstructors) {
   let ta = new TA(1);
 
-  assertThrowsInstanceOf(() => Atomics.xor(ta, badValue(ta), 0), TypeError);
-  assertThrowsInstanceOf(() => Atomics.xor(ta, 0, badValue(ta)), TypeError);
+  assert.throws(TypeError, () => Atomics.xor(ta, badValue(ta), 0));
+  assert.throws(TypeError, () => Atomics.xor(ta, 0, badValue(ta)));
 }
 

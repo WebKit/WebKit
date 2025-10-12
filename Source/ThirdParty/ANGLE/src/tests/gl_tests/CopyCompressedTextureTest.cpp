@@ -7,6 +7,7 @@
 // CopyCompressedTextureTest.cpp: Tests of the GL_CHROMIUM_copy_compressed_texture extension
 
 #include "test_utils/ANGLETest.h"
+#include "test_utils/gl_raii.h"
 
 namespace angle
 {
@@ -66,12 +67,13 @@ class CopyCompressedTextureTest : public ANGLETest<>
             return false;
         }
 
+#if !defined(GL_GLEXT_PROTOTYPES) || !GL_GLEXT_PROTOTYPES
         EXPECT_NE(nullptr, glCompressedCopyTextureCHROMIUM);
         if (glCompressedCopyTextureCHROMIUM == nullptr)
         {
             return false;
         }
-
+#endif
         return true;
     }
 
@@ -370,8 +372,213 @@ TEST_P(CopyCompressedTextureTest, Immutable)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
+class CopyCompressedTextureTestES31 : public ANGLETest<>
+{
+  protected:
+    CopyCompressedTextureTestES31()
+    {
+        setWindowWidth(256);
+        setWindowHeight(256);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+};
+
+// Test that if the copy subregion depth is bigger than the depth range of either source texture
+// image or destination texture image, glCopyImageSubData() fails with GL_INVALID_VALUE
+TEST_P(CopyCompressedTextureTestES31, CopyRegionDepthOverflow)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
+    // Initialize texture data
+    std::vector<uint8_t> compressedSrcImgDataLevel0;
+    for (uint8_t i = 1; i < 32 + 1; ++i)
+    {
+        compressedSrcImgDataLevel0.push_back(i);
+    }
+
+    std::vector<uint8_t> compressedSrcImgDataLevel1;
+    for (uint8_t i = 1; i < 16 + 1; ++i)
+    {
+        compressedSrcImgDataLevel1.push_back(i);
+    }
+
+    // Allocate storage for compressedTexture2D, and fills each of 2 levels with the texture data
+    GLTexture compressedTexture2D;
+    glBindTexture(GL_TEXTURE_2D, compressedTexture2D);
+    glTexStorage2D(GL_TEXTURE_2D, 2, GL_COMPRESSED_RGBA_ASTC_6x6, 8, 4);
+    glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 8, 4, GL_COMPRESSED_RGBA_ASTC_6x6, 32,
+                              compressedSrcImgDataLevel0.data());
+    glCompressedTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, 4, 2, GL_COMPRESSED_RGBA_ASTC_6x6, 16,
+                              compressedSrcImgDataLevel1.data());
+
+    // Allocate storage for compressedTexture2DArray, and fills each of 2 levels with the texture
+    // data
+    GLTexture compressedTexture2DArray;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, compressedTexture2DArray);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 2, GL_COMPRESSED_RGBA_ASTC_6x6, 8, 4, 2);
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, 8, 4, 1, GL_COMPRESSED_RGBA_ASTC_6x6,
+                              32, compressedSrcImgDataLevel0.data());
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 1, 8, 4, 1, GL_COMPRESSED_RGBA_ASTC_6x6,
+                              32, compressedSrcImgDataLevel0.data());
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 1, 0, 0, 0, 4, 2, 1, GL_COMPRESSED_RGBA_ASTC_6x6,
+                              16, compressedSrcImgDataLevel1.data());
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 1, 0, 0, 1, 4, 2, 1, GL_COMPRESSED_RGBA_ASTC_6x6,
+                              16, compressedSrcImgDataLevel1.data());
+
+    // Perform a copy from compressedTexture2D mipmap 0 to compressedTexture2DArray mipmap 0, where
+    // the copy region depth is bigger than the depth of source texture mTexture2D mipmap 0. This
+    // should fail with GL_INVALID_VALUE.
+    glCopyImageSubDataEXT(compressedTexture2D, GL_TEXTURE_2D, 0, 0, 0, 0, compressedTexture2DArray,
+                          GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, 8, 4, 2);
+    EXPECT_GL_ERROR(GL_INVALID_VALUE);
+    // Perform a copy from compressedTexture2DArray mipmap 0 to compressedTexture2D mipmap 0, where
+    // the copy region depth is bigger than the depth of destination texture mTexture2D mipmap 0.
+    // This should fail with GL_INVALID_VALUE.
+    glCopyImageSubDataEXT(compressedTexture2DArray, GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0,
+                          compressedTexture2D, GL_TEXTURE_2D, 0, 0, 0, 0, 8, 4, 2);
+    EXPECT_GL_ERROR(GL_INVALID_VALUE);
+}
+
+// Test that if the copy subregion width and height equals to the texture level width and height,
+// even if width and height are not aligned with the compressed texture block size, the
+// glCopyImageSubData() should be allowed.
+TEST_P(CopyCompressedTextureTestES31, CopyRegionOccupiesEntireMipDoNotNeedAlignment)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
+    // Initialize texture data
+    std::vector<uint8_t> compressedSrcImgDataLevel0;
+    for (uint8_t i = 1; i < 32 + 1; ++i)
+    {
+        compressedSrcImgDataLevel0.push_back(i);
+    }
+
+    std::vector<uint8_t> compressedSrcImgDataLevel1;
+    for (uint8_t i = 1; i < 16 + 1; ++i)
+    {
+        compressedSrcImgDataLevel1.push_back(i);
+    }
+
+    // Allocate storage for compressedTexture2D, and fills each of 2 levels with the texture data
+    GLTexture compressedTexture2D;
+    glBindTexture(GL_TEXTURE_2D, compressedTexture2D);
+    glTexStorage2D(GL_TEXTURE_2D, 2, GL_COMPRESSED_RGBA_ASTC_6x6, 8, 4);
+    glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 8, 4, GL_COMPRESSED_RGBA_ASTC_6x6, 32,
+                              compressedSrcImgDataLevel0.data());
+    glCompressedTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, 4, 2, GL_COMPRESSED_RGBA_ASTC_6x6, 16,
+                              compressedSrcImgDataLevel1.data());
+
+    // Allocate storage for compressedTexture2DArray, and fills each of 2 levels with the texture
+    // data
+    GLTexture compressedTexture2DArray;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, compressedTexture2DArray);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 2, GL_COMPRESSED_RGBA_ASTC_6x6, 8, 4, 2);
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, 8, 4, 1, GL_COMPRESSED_RGBA_ASTC_6x6,
+                              32, compressedSrcImgDataLevel0.data());
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 1, 8, 4, 1, GL_COMPRESSED_RGBA_ASTC_6x6,
+                              32, compressedSrcImgDataLevel0.data());
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 1, 0, 0, 0, 4, 2, 1, GL_COMPRESSED_RGBA_ASTC_6x6,
+                              16, compressedSrcImgDataLevel1.data());
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 1, 0, 0, 1, 4, 2, 1, GL_COMPRESSED_RGBA_ASTC_6x6,
+                              16, compressedSrcImgDataLevel1.data());
+
+    // Perform a copy from compressedTexture2D mipmap 0 to compressedTexture2DArray mipmap 0.
+    // This should succeed. Even if the width and height are not multiple of 6, the region covers
+    // the entire mipmap 0 of source texture mTexture2D, and the region covers the entire slice 0 of
+    // mipmap 0 of destination texture mTexture2DArray
+    glCopyImageSubDataEXT(compressedTexture2D, GL_TEXTURE_2D, 0, 0, 0, 0, compressedTexture2DArray,
+                          GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, 8, 4, 1);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that if the copy region offsets are not aligned with the compressed texture block size,
+// glCopyImageSubData() should fail with a validation error.
+TEST_P(CopyCompressedTextureTestES31, CopyRegionoOffSetNotAlignedShouldGenerateGLError)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
+    // Initialize texture data
+    std::vector<uint8_t> compressedSrcImgDataLevel0;
+    for (uint8_t i = 1; i < 32 + 1; ++i)
+    {
+        compressedSrcImgDataLevel0.push_back(i);
+    }
+
+    std::vector<uint8_t> compressedSrcImgDataLevel1;
+    for (uint8_t i = 1; i < 16 + 1; ++i)
+    {
+        compressedSrcImgDataLevel1.push_back(i);
+    }
+
+    // Allocate storage for compressedTexture2D, and fills each of 2 levels with the texture data
+    GLTexture compressedTexture2D;
+    glBindTexture(GL_TEXTURE_2D, compressedTexture2D);
+    glTexStorage2D(GL_TEXTURE_2D, 2, GL_COMPRESSED_RGBA_ASTC_6x6, 8, 4);
+    glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 8, 4, GL_COMPRESSED_RGBA_ASTC_6x6, 32,
+                              compressedSrcImgDataLevel0.data());
+    glCompressedTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, 4, 2, GL_COMPRESSED_RGBA_ASTC_6x6, 16,
+                              compressedSrcImgDataLevel1.data());
+
+    // Allocate storage for compressedTexture2DArray, and fills each of 2 levels with the texture
+    // data
+    GLTexture compressedTexture2DArray;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, compressedTexture2DArray);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 2, GL_COMPRESSED_RGBA_ASTC_6x6, 8, 4, 2);
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, 8, 4, 1, GL_COMPRESSED_RGBA_ASTC_6x6,
+                              32, compressedSrcImgDataLevel0.data());
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 1, 8, 4, 1, GL_COMPRESSED_RGBA_ASTC_6x6,
+                              32, compressedSrcImgDataLevel0.data());
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 1, 0, 0, 0, 4, 2, 1, GL_COMPRESSED_RGBA_ASTC_6x6,
+                              16, compressedSrcImgDataLevel1.data());
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 1, 0, 0, 1, 4, 2, 1, GL_COMPRESSED_RGBA_ASTC_6x6,
+                              16, compressedSrcImgDataLevel1.data());
+
+    // Perform a copy from compressedTexture2D mipmap 0 to compressedTexture2DArray mipmap 0.
+    // The copy region offset srcX does not aligned at multiple of 6.
+    // This should fail with GL_INVALID_VALUE
+    glCopyImageSubDataEXT(compressedTexture2D, GL_TEXTURE_2D, 0, 2, 0, 0, compressedTexture2DArray,
+                          GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, 6, 4, 1);
+    EXPECT_GL_ERROR(GL_INVALID_VALUE);
+}
+
+// Test that copying from uncompressed texture to compressed texture works, if their internal
+// formats are compatible, and the transformed compressed texture copy subregion aligns with the
+// compressed texture block.
+TEST_P(CopyCompressedTextureTestES31, CopyFromUncompressedToCompressed)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
+
+    GLTexture uncompressedTexture2D;
+    glBindTexture(GL_TEXTURE_2D, uncompressedTexture2D);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32UI, 2, 1);
+    constexpr GLuint kTex2DData[] = {0, 0, 0, 0, 0, 0, 0, 0};
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 2, 1, GL_RGBA_INTEGER, GL_UNSIGNED_INT, kTex2DData);
+    ASSERT_GL_NO_ERROR();
+
+    // Initialize compressed texture data
+    std::vector<uint8_t> compressedSrcImgDataLevel0;
+    for (uint8_t i = 1; i < 32 + 1; ++i)
+    {
+        compressedSrcImgDataLevel0.push_back(i);
+    }
+
+    // Allocate storage for compressedTexture2D, and fills with texture data
+    GLTexture compressedTexture2D;
+    glBindTexture(GL_TEXTURE_2D, compressedTexture2D);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGBA_ASTC_6x6, 12, 6);
+    glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 12, 6, GL_COMPRESSED_RGBA_ASTC_6x6, 32,
+                              compressedSrcImgDataLevel0.data());
+
+    glCopyImageSubDataEXT(uncompressedTexture2D, GL_TEXTURE_2D, 0, 0, 0, 0, compressedTexture2D,
+                          GL_TEXTURE_2D, 0, 0, 0, 0, 2, 1, 1);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(CopyCompressedTextureTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyCompressedTextureTestES31);
+ANGLE_INSTANTIATE_TEST_ES31(CopyCompressedTextureTestES31);
 
 }  // namespace angle

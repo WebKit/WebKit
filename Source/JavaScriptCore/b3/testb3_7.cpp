@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "testb3.h"
+#include <wtf/WasmSIMD128.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -2046,7 +2047,7 @@ static void testFMaxMin()
         BasicBlock* root = proc.addBlock();
         Value* a;
         Value* b;
-        if (std::is_same_v<FloatType, float>) {
+        if constexpr (std::same_as<FloatType, float>) {
             a = root->appendNew<ConstFloatValue>(proc, Origin(), arg1);
             b = root->appendNew<ConstFloatValue>(proc, Origin(), arg2);
         } else {
@@ -2647,6 +2648,116 @@ void testVectorExtractLane0Double()
         double result = invoke<double>(*code, &vector0);
         checkDouble(result, operand0.value);
     }
+}
+
+void testVectorMulHigh()
+{
+    auto vectorMulHigh = [&](SIMDLane lane, SIMDSignMode signMode, v128_t lhs, v128_t rhs) {
+        auto simdeLHS = std::bit_cast<simde_v128_t>(lhs);
+        auto simdeRHS = std::bit_cast<simde_v128_t>(rhs);
+        switch (lane) {
+        case SIMDLane::i16x8:
+            if (signMode == SIMDSignMode::Unsigned)
+                return std::bit_cast<v128_t>(simde_wasm_u16x8_extmul_high_u8x16(simdeLHS, simdeRHS));
+            return std::bit_cast<v128_t>(simde_wasm_i16x8_extmul_high_i8x16(simdeLHS, simdeRHS));
+        case SIMDLane::i32x4:
+            if (signMode == SIMDSignMode::Unsigned)
+                return std::bit_cast<v128_t>(simde_wasm_u32x4_extmul_high_u16x8(simdeLHS, simdeRHS));
+            return std::bit_cast<v128_t>(simde_wasm_i32x4_extmul_high_i16x8(simdeLHS, simdeRHS));
+        case SIMDLane::i64x2:
+            if (signMode == SIMDSignMode::Unsigned)
+                return std::bit_cast<v128_t>(simde_wasm_u64x2_extmul_high_u32x4(simdeLHS, simdeRHS));
+            return std::bit_cast<v128_t>(simde_wasm_i64x2_extmul_high_i32x4(simdeLHS, simdeRHS));
+        default:
+            return v128_t { };
+        }
+    };
+
+    auto test = [&](SIMDLane lane, SIMDSignMode signMode) {
+        alignas(16) v128_t vectors[2];
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        auto arguments = cCallArgumentValues<void*>(proc, root);
+
+        Value* address = arguments[0];
+        Value* input0 = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address);
+        Value* input1 = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address, sizeof(v128_t));
+        Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorMulHigh, B3::V128, lane, signMode, input0, input1);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+        root->appendNewControlValue(proc, Return, Origin());
+
+        auto code = compileProc(proc);
+        for (auto& operand0 : v128Operands()) {
+            for (auto& operand1 : v128Operands()) {
+                vectors[0] = operand0.value;
+                vectors[1] = operand1.value;
+                invoke<void>(*code, vectors);
+                CHECK(bitEquals(vectors[0], vectorMulHigh(lane, signMode, operand0.value, operand1.value)));
+            }
+        }
+    };
+
+    test(SIMDLane::i16x8, SIMDSignMode::Signed);
+    test(SIMDLane::i16x8, SIMDSignMode::Unsigned);
+    test(SIMDLane::i32x4, SIMDSignMode::Signed);
+    test(SIMDLane::i32x4, SIMDSignMode::Unsigned);
+    test(SIMDLane::i64x2, SIMDSignMode::Signed);
+    test(SIMDLane::i64x2, SIMDSignMode::Unsigned);
+}
+
+void testVectorMulLow()
+{
+    auto vectorMulLow = [&](SIMDLane lane, SIMDSignMode signMode, v128_t lhs, v128_t rhs) {
+        auto simdeLHS = std::bit_cast<simde_v128_t>(lhs);
+        auto simdeRHS = std::bit_cast<simde_v128_t>(rhs);
+        switch (lane) {
+        case SIMDLane::i16x8:
+            if (signMode == SIMDSignMode::Unsigned)
+                return std::bit_cast<v128_t>(simde_wasm_u16x8_extmul_low_u8x16(simdeLHS, simdeRHS));
+            return std::bit_cast<v128_t>(simde_wasm_i16x8_extmul_low_i8x16(simdeLHS, simdeRHS));
+        case SIMDLane::i32x4:
+            if (signMode == SIMDSignMode::Unsigned)
+                return std::bit_cast<v128_t>(simde_wasm_u32x4_extmul_low_u16x8(simdeLHS, simdeRHS));
+            return std::bit_cast<v128_t>(simde_wasm_i32x4_extmul_low_i16x8(simdeLHS, simdeRHS));
+        case SIMDLane::i64x2:
+            if (signMode == SIMDSignMode::Unsigned)
+                return std::bit_cast<v128_t>(simde_wasm_u64x2_extmul_low_u32x4(simdeLHS, simdeRHS));
+            return std::bit_cast<v128_t>(simde_wasm_i64x2_extmul_low_i32x4(simdeLHS, simdeRHS));
+        default:
+            return v128_t { };
+        }
+    };
+
+    auto test = [&](SIMDLane lane, SIMDSignMode signMode) {
+        alignas(16) v128_t vectors[2];
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        auto arguments = cCallArgumentValues<void*>(proc, root);
+
+        Value* address = arguments[0];
+        Value* input0 = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address);
+        Value* input1 = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address, sizeof(v128_t));
+        Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorMulLow, B3::V128, lane, signMode, input0, input1);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+        root->appendNewControlValue(proc, Return, Origin());
+
+        auto code = compileProc(proc);
+        for (auto& operand0 : v128Operands()) {
+            for (auto& operand1 : v128Operands()) {
+                vectors[0] = operand0.value;
+                vectors[1] = operand1.value;
+                invoke<void>(*code, vectors);
+                CHECK(bitEquals(vectors[0], vectorMulLow(lane, signMode, operand0.value, operand1.value)));
+            }
+        }
+    };
+
+    test(SIMDLane::i16x8, SIMDSignMode::Signed);
+    test(SIMDLane::i16x8, SIMDSignMode::Unsigned);
+    test(SIMDLane::i32x4, SIMDSignMode::Signed);
+    test(SIMDLane::i32x4, SIMDSignMode::Unsigned);
+    test(SIMDLane::i64x2, SIMDSignMode::Signed);
+    test(SIMDLane::i64x2, SIMDSignMode::Unsigned);
 }
 
 void testInt52RoundTripUnary(int32_t constant)

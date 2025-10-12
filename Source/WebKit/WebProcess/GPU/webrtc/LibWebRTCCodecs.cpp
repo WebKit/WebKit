@@ -255,7 +255,7 @@ void LibWebRTCCodecs::ensureGPUProcessConnectionOnMainThreadWithLock()
     gpuConnection->addClient(*this);
     Ref connection = gpuConnection->connection();
     m_connection = connection.copyRef();
-    m_videoFrameObjectHeapProxy = &gpuConnection->videoFrameObjectHeapProxy();
+    m_videoFrameObjectHeapProxy = gpuConnection->videoFrameObjectHeapProxy();
     connection->addWorkQueueMessageReceiver(Messages::LibWebRTCCodecs::messageReceiverName(), m_queue, *this);
 
     if (m_loggingLevel)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,12 @@
 #include "config.h"
 #include "AccessibilityMenuListPopup.h"
 
-#include "AXObjectCache.h"
+#include "AXNotifications.h"
+#include "AXObjectCacheInlines.h"
 #include "AccessibilityMenuList.h"
 #include "AccessibilityMenuListOption.h"
+#include "AccessibilityObjectInlines.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
@@ -38,8 +41,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-AccessibilityMenuListPopup::AccessibilityMenuListPopup(AXID axID)
-    : AccessibilityMockObject(axID)
+AccessibilityMenuListPopup::AccessibilityMenuListPopup(AXID axID, AXObjectCache& cache)
+    : AccessibilityMockObject(axID, cache)
 {
 }
 
@@ -52,7 +55,7 @@ bool AccessibilityMenuListPopup::isOffScreen() const
 {
     if (!m_parent)
         return true;
-    
+
     return m_parent->isCollapsed();
 }
 
@@ -60,7 +63,7 @@ bool AccessibilityMenuListPopup::isEnabled() const
 {
     if (!m_parent)
         return false;
-    
+
     return m_parent->isEnabled();
 }
 
@@ -81,7 +84,7 @@ bool AccessibilityMenuListPopup::press()
 {
     if (!m_parent)
         return false;
-    
+
     m_parent->press();
     return true;
 }
@@ -98,7 +101,7 @@ void AccessibilityMenuListPopup::addChildren()
     m_childrenInitialized = true;
 
     for (const auto& listItem : select->listItems()) {
-        if (auto* menuListOptionObject = menuListOptionAccessibilityObject(listItem.get())) {
+        if (RefPtr menuListOptionObject = menuListOptionAccessibilityObject(listItem.get())) {
             menuListOptionObject->setParent(this);
             addChild(*menuListOptionObject, DescendIfIgnored::No);
         }
@@ -117,10 +120,10 @@ void AccessibilityMenuListPopup::handleChildrenChanged()
 
     const auto& children = unignoredChildren(/* updateChildrenIfNeeded */ false);
     for (size_t i = children.size(); i > 0; --i) {
-        auto& child = children[i - 1].get();
-        if (RefPtr actionElement = child.actionElement(); actionElement && !actionElement->inRenderedDocument()) {
-            child.detachFromParent();
-            cache->remove(child.objectID());
+        Ref child = children[i - 1];
+        if (RefPtr actionElement = child->actionElement(); actionElement && !actionElement->inRenderedDocument()) {
+            child->detachFromParent();
+            cache->remove(child->objectID());
         }
     }
 
@@ -139,9 +142,9 @@ void AccessibilityMenuListPopup::didUpdateActiveOption(int optionIndex)
     if (!cache)
         return;
 
-    auto& child = downcast<AccessibilityObject>(children[optionIndex].get());
-    cache->postNotification(&child, document(), AXNotification::FocusedUIElementChanged);
-    cache->postNotification(&child, document(), AXNotification::MenuListItemSelected);
+    Ref child = downcast<AccessibilityObject>(children[optionIndex].get());
+    cache->postNotification(child.ptr(), document(), AXNotification::FocusedUIElementChanged);
+    cache->postNotification(child.ptr(), document(), AXNotification::MenuListItemSelected);
 }
 
 } // namespace WebCore

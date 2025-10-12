@@ -34,4 +34,9 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const CustomIdentifier& value)
     return ts << value.value;
 }
 
+void add(Hasher& hasher, const CustomIdentifier& customIdentifier)
+{
+    add(hasher, customIdentifier.value);
+}
+
 } // namespace WebCore

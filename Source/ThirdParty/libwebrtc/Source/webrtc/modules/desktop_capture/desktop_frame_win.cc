@@ -10,8 +10,13 @@
 
 #include "modules/desktop_capture/desktop_frame_win.h"
 
+#include <cstdint>
+#include <memory>
 #include <utility>
 
+#include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/shared_memory.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {

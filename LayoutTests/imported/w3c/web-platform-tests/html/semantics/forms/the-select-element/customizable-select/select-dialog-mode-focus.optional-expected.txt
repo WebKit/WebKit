@@ -1,0 +1,5 @@
+
+
+FAIL In dialog mode the first focusable element should get focus. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL In dialog mode tab should not close the picker. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+

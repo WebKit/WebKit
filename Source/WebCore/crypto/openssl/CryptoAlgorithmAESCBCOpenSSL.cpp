@@ -66,15 +66,15 @@ static std::optional<Vector<uint8_t>> cryptEncrypt(const Vector<uint8_t>& key, c
     Vector<uint8_t> cipherText(cipherTextLen);
 
     // Initialize the encryption operation
-    if (1 != EVP_EncryptInit_ex(ctx.get(), algorithm, nullptr, key.data(), iv.data()))
+    if (1 != EVP_EncryptInit_ex(ctx.get(), algorithm, nullptr, key.span().data(), iv.span().data()))
         return std::nullopt;
 
     // Provide the message to be encrypted, and obtain the encrypted output
-    if (1 != EVP_EncryptUpdate(ctx.get(), cipherText.data(), &len, plainText.data(), plainSize))
+    if (1 != EVP_EncryptUpdate(ctx.get(), cipherText.mutableSpan().data(), &len, plainText.span().data(), plainSize))
         return std::nullopt;
 
     // Finalize the encryption. Further ciphertext bytes may be written at this stage
-    if (1 != EVP_EncryptFinal_ex(ctx.get(), cipherText.data() + len, &len))
+    if (1 != EVP_EncryptFinal_ex(ctx.get(), cipherText.mutableSpan().subspan(len).data(), &len))
         return std::nullopt;
 
     return cipherText;
@@ -98,16 +98,16 @@ static std::optional<Vector<uint8_t>> cryptDecrypt(const Vector<uint8_t>& key, c
         return std::nullopt;
 
     // Initialize the decryption operation
-    if (1 != EVP_DecryptInit_ex(ctx.get(), algorithm, nullptr, key.data(), iv.data()))
+    if (1 != EVP_DecryptInit_ex(ctx.get(), algorithm, nullptr, key.span().data(), iv.span().data()))
         return std::nullopt;
 
     // Provide the message to be decrypted, and obtain the plaintext output
-    if (1 != EVP_DecryptUpdate(ctx.get(), plainText.data(), &len, cipherText.data(), cipherSize))
+    if (1 != EVP_DecryptUpdate(ctx.get(), plainText.mutableSpan().data(), &len, cipherText.span().data(), cipherSize))
         return std::nullopt;
     plainTextLen = len;
 
     // Finalize the decryption. Further plaintext bytes may be written at this stage
-    if (1 != EVP_DecryptFinal_ex(ctx.get(), plainText.data() + len, &len))
+    if (1 != EVP_DecryptFinal_ex(ctx.get(), plainText.mutableSpan().subspan(len).data(), &len))
         return std::nullopt;
     plainTextLen += len;
 

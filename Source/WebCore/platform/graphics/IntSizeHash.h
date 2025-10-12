@@ -17,26 +17,25 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-#ifndef IntSizeHash_h
-#define IntSizeHash_h
 
-#include "IntSize.h"
+#pragma once
+
+#include <WebCore/IntSize.h>
 #include <wtf/HashTraits.h>
 
 namespace WTF {
 
-    template<> struct IntHash<WebCore::IntSize> {
-        static unsigned hash(const WebCore::IntSize& key) { return pairIntHash(key.width(), key.height()); }
-        static bool equal(const WebCore::IntSize& a, const WebCore::IntSize& b) { return a == b; }
-        static const bool safeToCompareToEmptyOrDeleted = true;
-    };
-    template<> struct DefaultHash<WebCore::IntSize> : IntHash<WebCore::IntSize> { };
-    
-    template<> struct HashTraits<WebCore::IntSize> : GenericHashTraits<WebCore::IntSize> {
-        static const bool emptyValueIsZero = true;
-        static void constructDeletedValue(WebCore::IntSize& slot) { new (NotNull, &slot) WebCore::IntSize(-1, -1); }
-        static bool isDeletedValue(const WebCore::IntSize& value) { return value.width() == -1 && value.height() == -1; }
-    };
-} // namespace WTF
+template<> struct IntHash<WebCore::IntSize> {
+    static unsigned hash(const WebCore::IntSize& key) { return pairIntHash(key.width(), key.height()); }
+    static bool equal(const WebCore::IntSize& a, const WebCore::IntSize& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+template<> struct DefaultHash<WebCore::IntSize> : IntHash<WebCore::IntSize> { };
 
-#endif
+template<> struct HashTraits<WebCore::IntSize> : GenericHashTraits<WebCore::IntSize> {
+    static const bool emptyValueIsZero = true;
+    static void constructDeletedValue(WebCore::IntSize& slot) { new (NotNull, &slot) WebCore::IntSize(-1, -1); }
+    static bool isDeletedValue(const WebCore::IntSize& value) { return value.width() == -1 && value.height() == -1; }
+};
+
+} // namespace WTF

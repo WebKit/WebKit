@@ -5,12 +5,16 @@
 </head>
 <body>
 <script>
-    const asyncNodeDeletionLimit = 100000;
-    const startingNodeCount = window.internals.numberOfLiveNodes();
+
+var asyncNodeDeletionLimit = 100000;
+var startingNodeCount = window.internals.numberOfLiveNodes();
+
+async function runTest() {
     let rootDiv = document.createElement("div");
     for (let i = 0; i < asyncNodeDeletionLimit + 1; ++i)
         rootDiv.appendChild(document.createElement('div'));
     rootDiv.innerHTML = "";
+    await timeout(0);
     gc();
     shouldBeTrue("window.internals.numberOfLiveNodes() < startingNodeCount + asyncNodeDeletionLimit");
 
@@ -26,8 +30,19 @@
     hostNode = null;
     rootDiv = null;
     nodeWithManyChildren = null;
+    await timeout(0);
     gc();
     shouldBeTrue("window.internals.numberOfLiveNodes() < startingNodeCount + asyncNodeDeletionLimit");
+    finishJSTest();
+}
+
+function timeout(miliseconds) {
+    return new Promise(resolve => setTimeout(resolve, miliseconds));
+}
+
+jsTestIsAsync = true;
+
+runTest();
 
 var successfullyParsed = true;
 </script>

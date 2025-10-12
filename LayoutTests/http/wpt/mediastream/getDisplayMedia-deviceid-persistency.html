@@ -40,6 +40,10 @@
 
                 assert_not_equals(stream1.getVideoTracks()[0].getSettings().deviceId, stream2.getVideoTracks()[0].getSettings().deviceId);
                 assert_equals(stream1.getVideoTracks()[0].getSettings().deviceId, stream3.getVideoTracks()[0].getSettings().deviceId);
+
+                stream1.getTracks().forEach(track => track.stop());
+                stream2.getTracks().forEach(track => track.stop());
+                stream3.getTracks().forEach(track => track.stop());
             }, "check deviceId persistency");
         </script>
     </body>

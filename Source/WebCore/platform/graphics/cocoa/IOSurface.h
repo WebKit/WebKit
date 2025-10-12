@@ -27,10 +27,11 @@
 
 #if HAVE(IOSURFACE)
 
-#include "DestinationColorSpace.h"
-#include "IntSize.h"
-#include "ProcessIdentity.h"
 #include <CoreGraphics/CoreGraphics.h>
+#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/IntSize.h>
+#include <WebCore/PixelFormat.h>
+#include <WebCore/ProcessIdentity.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 
@@ -82,6 +83,12 @@ public:
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
         RGBA16F,
 #endif
+    };
+
+    struct UsedFormat {
+        Format format;
+        UseLosslessCompression useLosslessCompression;
+        bool operator==(const UsedFormat&) const = default;
     };
 
     enum class AccessMode : uint32_t {
@@ -138,7 +145,7 @@ public:
         RetainPtr<IOSurfaceRef> m_surface;
     };
 
-    WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IOSurfacePool*, IntSize, const DestinationColorSpace&, Name = Name::Default, Format = Format::BGRA);
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IOSurfacePool*, IntSize, const DestinationColorSpace&, Name = Name::Default, Format = Format::BGRA, UseLosslessCompression = UseLosslessCompression::No);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromImage(IOSurfacePool*, CGImageRef);
 
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSendRight(const WTF::MachSendRight&&);
@@ -162,7 +169,7 @@ public:
     // Passed in context is the context through which the contents was drawn.
     WEBCORE_EXPORT RetainPtr<CGImageRef> createImage(CGContextRef);
     // Passed in context is the context through which the contents was drawn.
-    WEBCORE_EXPORT static RetainPtr<CGImageRef> sinkIntoImage(std::unique_ptr<IOSurface>, RetainPtr<CGContextRef>);
+    WEBCORE_EXPORT static RetainPtr<CGImageRef> sinkIntoImage(std::unique_ptr<IOSurface>, RetainPtr<CGContextRef> = nullptr);
 
     WEBCORE_EXPORT static Name nameForRenderingPurpose(RenderingPurpose);
     Name name() const { return m_name; }
@@ -173,8 +180,9 @@ public:
     WEBCORE_EXPORT RetainPtr<id> asCAIOSurfaceLayerContents() const;
 
     IOSurfaceRef surface() const { return m_surface.get(); }
+    RetainPtr<IOSurfaceRef> protectedSurface() const { return surface(); }
 
-    WEBCORE_EXPORT RetainPtr<CGContextRef> createPlatformContext(PlatformDisplayID = 0);
+    WEBCORE_EXPORT RetainPtr<CGContextRef> createPlatformContext(PlatformDisplayID = 0, std::optional<CGImageAlphaInfo> = std::nullopt);
 
     struct LockAndContext {
         IOSurface::Locker<AccessMode::ReadWrite> lock;
@@ -191,9 +199,29 @@ public:
 
     WEBCORE_EXPORT SetNonVolatileResult setVolatile(bool);
 
-    bool hasFormat(Format format) const { return m_format && *m_format == format; }
+    bool hasFormat(UsedFormat format) const { return m_format && *m_format == format; }
+    std::optional<Format> pixelFormat() const
+    {
+        if (m_format)
+            return m_format->format;
+        return std::nullopt;
+    }
+
+    std::optional<UseLosslessCompression> usesLosslessCompression() const
+    {
+        if (m_format)
+            return m_format->useLosslessCompression;
+        return std::nullopt;
+    }
+
     IntSize size() const { return m_size; }
     size_t totalBytes() const { return m_totalBytes; }
+
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    WEBCORE_EXPORT void setContentEDRHeadroom(float);
+    WEBCORE_EXPORT std::optional<float> contentEDRHeadroom() const;
+    WEBCORE_EXPORT void loadContentEDRHeadroom();
+#endif
 
     WEBCORE_EXPORT DestinationColorSpace colorSpace();
     WEBCORE_EXPORT IOSurfaceID surfaceID() const;
@@ -214,7 +242,7 @@ public:
     RetainPtr<CGContextRef> createCompatibleBitmap(unsigned width, unsigned height);
 
 private:
-    IOSurface(IntSize, const DestinationColorSpace&, Name, Format, bool& success);
+    IOSurface(IntSize, const DestinationColorSpace&, Name, Format, UseLosslessCompression, bool& success);
     IOSurface(IOSurfaceRef, std::optional<DestinationColorSpace>&&);
 
     void setColorSpaceProperty();
@@ -230,10 +258,13 @@ private:
 
     BitmapConfiguration bitmapConfiguration() const;
 
-    std::optional<Format> m_format;
+    std::optional<UsedFormat> m_format;
     std::optional<DestinationColorSpace> m_colorSpace;
     IntSize m_size;
     size_t m_totalBytes;
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    std::optional<float> m_contentEDRHeadroom;
+#endif
 
     ProcessIdentity m_resourceOwner;
 
@@ -252,6 +283,33 @@ std::optional<IOSurface::Locker<Mode>> IOSurface::lock()
     if (IOSurfaceLock(m_surface.get(), static_cast<uint32_t>(Mode), nullptr) != kIOReturnSuccess)
         return std::nullopt;
     return IOSurface::Locker<Mode>::adopt(m_surface);
+}
+
+constexpr IOSurface::Format convertToIOSurfaceFormat(PixelFormat format)
+{
+    switch (format) {
+    case PixelFormat::RGBA8:
+        return IOSurface::Format::RGBA;
+    case PixelFormat::BGRX8:
+        return IOSurface::Format::BGRX;
+    case PixelFormat::BGRA8:
+        return IOSurface::Format::BGRA;
+#if ENABLE(PIXEL_FORMAT_RGB10)
+    case PixelFormat::RGB10:
+        return IOSurface::Format::RGB10;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10A8)
+    case PixelFormat::RGB10A8:
+        return IOSurface::Format::RGB10A8;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    case PixelFormat::RGBA16F:
+        return IOSurface::Format::RGBA16F;
+#endif
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return IOSurface::Format::BGRA;
+    }
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WebCore::IOSurface::Format);

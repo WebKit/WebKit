@@ -11,6 +11,7 @@
 #include "common/PackedCLEnums_autogen.h"
 #include "common/SimpleMutex.h"
 
+#include "libANGLE/cl_types.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 
@@ -58,6 +59,7 @@ class CLMemoryVk : public CLMemoryImpl
     size_t getOffset() const { return mMemory.getOffset(); }
     cl::MemFlags getFlags() const { return mMemory.getFlags(); }
     cl::MemObjectType getType() const { return mMemory.getType(); }
+    void *getHostPtr() const { return mMemory.getHostPtr(); }
 
     angle::Result copyTo(void *ptr, size_t offset, size_t size);
     angle::Result copyTo(CLMemoryVk *dst, size_t srcOffset, size_t dstOffset, size_t size);
@@ -98,6 +100,9 @@ class CLBufferVk : public CLMemoryVk
     CLBufferVk *getParent() { return static_cast<CLBufferVk *>(mParent); }
     const cl::Buffer &getFrontendObject() { return reinterpret_cast<const cl::Buffer &>(mMemory); }
 
+    bool supportsZeroCopy() const;
+    bool isHostPtrAligned() const;
+
     angle::Result create(void *hostPtr);
     angle::Result createStagingBuffer(size_t size);
     angle::Result copyToWithPitch(void *hostPtr,
@@ -125,16 +130,26 @@ class CLBufferVk : public CLMemoryVk
     angle::Result getRect(const cl::BufferRect &srcRect,
                           const cl::BufferRect &outRect,
                           void *outData);
-    std::vector<VkBufferCopy> rectCopyRegions(const cl::BufferRect &bufferRect);
 
     bool isCurrentlyInUse() const override;
     size_t getSize() const override { return mMemory.getSize(); }
 
+    // syncHost routines for handling any needed host side updates
+    enum class SyncHostDirection
+    {
+        ToHost,
+        FromHost
+    };
+    angle::Result syncHost(CLBufferVk::SyncHostDirection direction, size_t offset, size_t size);
+    angle::Result syncHost(CLBufferVk::SyncHostDirection direction,
+                           cl::BufferRect bufferRect,
+                           cl::BufferRect hostRect);
+
   private:
     angle::Result mapImpl() override;
     void unmapImpl() override;
-
     angle::Result setDataImpl(const uint8_t *data, size_t size, size_t offset);
+    angle::Result createWithProperties();
 
     vk::BufferHelper mBuffer;
     VkBufferCreateInfo mDefaultBufferCreateInfo;

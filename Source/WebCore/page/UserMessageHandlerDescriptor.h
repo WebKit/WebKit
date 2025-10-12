@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,14 +48,13 @@ public:
     WEBCORE_EXPORT virtual ~UserMessageHandlerDescriptor();
 
     WEBCORE_EXPORT const AtomString& name() const;
-    WEBCORE_EXPORT DOMWrapperWorld& world();
     WEBCORE_EXPORT const DOMWrapperWorld& world() const;
 
-    virtual void didPostMessage(UserMessageHandler&, JSC::JSGlobalObject&, JSC::JSValue, Function<void(JSC::JSValue, const String&)>&&) = 0;
-
+    virtual void didPostMessage(UserMessageHandler&, JSC::JSGlobalObject&, JSC::JSValue, Function<void(JSC::JSValue, const String&)>&&) const = 0;
+    virtual JSC::JSValue didPostLegacySynchronousMessage(UserMessageHandler&, JSC::JSGlobalObject&, JSC::JSValue) const = 0;
 private:
-    AtomString m_name;
-    Ref<DOMWrapperWorld> m_world;
+    const AtomString m_name;
+    const Ref<DOMWrapperWorld> m_world;
 };
 
 } // namespace WebCore

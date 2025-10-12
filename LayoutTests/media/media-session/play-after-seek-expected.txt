@@ -2,7 +2,7 @@
 RUN(video.src = findMediaFile("video", "../content/test"))
 EVENT(loadeddata)
 Test that playback will resume following a seek through media session.
-RUN(video.play())
+RUN(handlePromise(video.play()))
 RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekto", seekTime: 1}))
 EXPECTED (video.currentTime == '1') OK
 EVENT(seeked)

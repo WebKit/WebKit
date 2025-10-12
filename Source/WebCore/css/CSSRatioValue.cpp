@@ -36,9 +36,20 @@ Ref<CSSRatioValue> CSSRatioValue::create(CSS::Ratio&& ratio)
     return adoptRef(*new CSSRatioValue(WTFMove(ratio)));
 }
 
+Ref<CSSRatioValue> CSSRatioValue::create(const CSS::Ratio& ratio)
+{
+    return adoptRef(*new CSSRatioValue(ratio));
+}
+
 CSSRatioValue::CSSRatioValue(CSS::Ratio&& ratio)
     : CSSValue(ClassType::Ratio)
     , m_ratio(WTFMove(ratio))
+{
+}
+
+CSSRatioValue::CSSRatioValue(const CSS::Ratio& ratio)
+    : CSSValue(ClassType::Ratio)
+    , m_ratio(ratio)
 {
 }
 

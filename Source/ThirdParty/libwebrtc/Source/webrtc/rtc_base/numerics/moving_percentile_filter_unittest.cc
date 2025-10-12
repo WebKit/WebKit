@@ -10,10 +10,9 @@
 
 #include "rtc_base/numerics/moving_percentile_filter.h"
 
-#include <stdint.h>
-
 #include <algorithm>
 #include <cstddef>
+#include <cstdint>
 
 #include "test/gtest.h"
 

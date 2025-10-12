@@ -11,7 +11,12 @@
 #include "modules/audio_processing/aec3/aec3_fft.h"
 
 #include <algorithm>
+#include <array>
+#include <cstddef>
 
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/fft_data.h"
+#include "rtc_base/checks.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 

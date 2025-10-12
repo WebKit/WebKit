@@ -30,7 +30,7 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString target;
 
     [CEReactions=NotNeeded, EnabledBySetting=DownloadAttributeEnabled, Reflect] attribute DOMString download;
-    [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings] attribute [AtomString] DOMString referrerPolicy;
+    [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings, ReflectSetter] attribute [AtomString] DOMString referrerPolicy;
 
     [PutForwards=value] readonly attribute DOMTokenList relList;
 };

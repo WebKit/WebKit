@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Blocked autofocusing on a form control in a cross-origin subframe.
 Autofocus shouldn't work in cross-origin iframe.
 
 

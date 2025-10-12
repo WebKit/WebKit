@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-typedef double DOMHighResTimeStamp;
-
 [
     EnabledBySetting=WebTransportEnabled,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] dictionary WebTransportDatagramStats {
-    DOMHighResTimeStamp timestamp;
-    unsigned long long expiredOutgoing;
     unsigned long long droppedIncoming;
+    unsigned long long expiredIncoming;
+    unsigned long long expiredOutgoing;
     unsigned long long lostOutgoing;
 };

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSCBuiltins.h"
+#include <JavaScriptCore/JSCBuiltins.h>
 
 namespace JSC {
 
@@ -55,12 +55,26 @@ class JSGlobalObject;
     v(setPrototypeDirectOrThrow, nullptr) \
     v(copyDataProperties, nullptr) \
     v(cloneObject, nullptr) \
-    v(enqueueJob, nullptr) \
+    v(resolvePromise, nullptr) \
+    v(rejectPromise, nullptr) \
+    v(fulfillPromise, nullptr) \
+    v(resolveWithoutPromise, nullptr) \
+    v(rejectWithoutPromise, nullptr) \
+    v(fulfillWithoutPromise, nullptr) \
+    v(resolvePromiseWithFirstResolvingFunctionCallCheck, nullptr) \
+    v(rejectPromiseWithFirstResolvingFunctionCallCheck, nullptr) \
+    v(fulfillPromiseWithFirstResolvingFunctionCallCheck, nullptr) \
+    v(resolveWithoutPromiseForAsyncAwait, nullptr) \
+    v(awaitValue, nullptr) \
+    v(newHandledRejectedPromise, nullptr) \
+    v(promiseOnRejectedWithContext, nullptr) \
+    v(promiseAllOnFulfilled, nullptr) \
+    v(promiseEmptyOnFulfilled, nullptr) \
+    v(promiseEmptyOnRejected, nullptr) \
+    v(performPromiseThen, nullptr) \
     v(makeTypeError, nullptr) \
     v(AggregateError, nullptr) \
     v(typedArrayLength, nullptr) \
-    v(typedArrayContentType, nullptr) \
-    v(typedArrayGetOriginalConstructor, nullptr) \
     v(toIntegerOrInfinity, nullptr) \
     v(toLength, nullptr) \
     v(isTypedArrayView, nullptr) \
@@ -84,7 +98,6 @@ class JSGlobalObject;
     v(isArray, nullptr) \
     v(isArraySlow, nullptr) \
     v(appendMemcpy, nullptr) \
-    v(hostPromiseRejectionTracker, nullptr) \
     v(Set, nullptr) \
     v(Map, nullptr) \
     v(importInRealm, nullptr) \
@@ -149,11 +162,14 @@ class JSGlobalObject;
     v(BigUint64Array, nullptr) \
     v(wrapForValidIteratorCreate, nullptr) \
     v(asyncFromSyncIteratorCreate, nullptr) \
+    v(promiseAllContextCreate, nullptr) \
+    v(promiseAllGlobalContextCreate, nullptr) \
     v(regExpStringIteratorCreate, nullptr) \
     v(iteratorHelperCreate, nullptr) \
     v(ReferenceError, nullptr) \
     v(SuppressedError, nullptr) \
     v(DisposableStack, nullptr) \
+    v(AsyncDisposableStack, nullptr) \
 
 
 #define DECLARE_LINK_TIME_CONSTANT(name, code) name,

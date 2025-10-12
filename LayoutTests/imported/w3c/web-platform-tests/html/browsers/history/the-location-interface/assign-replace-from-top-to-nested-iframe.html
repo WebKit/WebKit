@@ -16,7 +16,7 @@
           t.done();
         }
         window.addEventListener('message', t.step_func(on_message), false);
-        window.addEventListener('load', function () { 
+        window.addEventListener('load', function () {
             iframe.contentDocument.querySelector("iframe").contentWindow.location.replace("/resources/blank.html");
         }, false);
       }, "Browser sends Referer header in nested iframe request when location.replace is called on an iframe");
@@ -27,7 +27,7 @@
           t.done();
         }
         window.addEventListener('message', t.step_func(on_message), false);
-        window.addEventListener('load', function () { 
+        window.addEventListener('load', function () {
             iframe.contentDocument.querySelector("iframe").contentWindow.location.replace("/resources/blank.html");
         }, false);
       }, "Browser sends Referer header in nested iframe request when location.assign is called on an iframe");

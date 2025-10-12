@@ -53,6 +53,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-template.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-title-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-title.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/inheritance-bogus-meta-utf-8.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/inheritance-bogus-meta.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/meta-charset-double-quotes.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/meta-charset-no-quotes.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/meta-charset-single-quotes.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/meta-commented-out.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/meta-http-equiv-attribute-order.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/meta-http-equiv-double-quotes.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/meta-http-equiv-no-quotes.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/meta-http-equiv-single-quotes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/ncr-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/ncr.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/non-ascii-in-comment-before-expected.html

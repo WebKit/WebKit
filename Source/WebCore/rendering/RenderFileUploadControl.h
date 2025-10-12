@@ -55,7 +55,7 @@ private:
 
     int maxFilenameLogicalWidth() const;
 
-    VisiblePosition positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
+    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
     HTMLInputElement* uploadButton() const;
 

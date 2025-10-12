@@ -14,29 +14,33 @@
 #include <memory>
 #include <vector>
 
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "call/rtp_config.h"
+#include "call/video_send_stream.h"
+#include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/metrics.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
-const uint32_t kSsrc1 = 17;
-const uint32_t kSsrc2 = 42;
-const uint32_t kRtxSsrc1 = 18;
-const uint32_t kRtxSsrc2 = 43;
-const uint16_t kPacketId = 2345;
-const TimeDelta kMaxPacketDelay = TimeDelta::Seconds(11);
-const int kMinRequiredPeriodicSamples = 5;
-const int kProcessIntervalMs = 2000;
+constexpr uint32_t kSsrc1 = 17;
+constexpr uint32_t kSsrc2 = 42;
+constexpr uint32_t kRtxSsrc1 = 18;
+constexpr uint32_t kRtxSsrc2 = 43;
+constexpr uint16_t kPacketId = 2345;
+constexpr TimeDelta kMaxPacketDelay = TimeDelta::Seconds(11);
+constexpr int kMinRequiredPeriodicSamples = 5;
+constexpr int kProcessIntervalMs = 2000;
 }  // namespace
 
 class SendDelayStatsTest : public ::testing::Test {
  public:
   SendDelayStatsTest() : clock_(1234), config_(CreateConfig()) {}
-  virtual ~SendDelayStatsTest() {}
+  ~SendDelayStatsTest() override {}
 
  protected:
-  virtual void SetUp() {
+  void SetUp() override {
     stats_.reset(new SendDelayStats(&clock_));
     stats_->AddSsrcs(config_);
   }

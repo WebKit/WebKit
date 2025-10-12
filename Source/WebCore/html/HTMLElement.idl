@@ -33,7 +33,7 @@
     [CEReactions=Needed, Reflect] attribute DOMString title;
     [CEReactions=Needed, Reflect] attribute DOMString lang;
     [CEReactions=Needed] attribute boolean translate;
-    [CEReactions=Needed] attribute [AtomString] DOMString dir;
+    [CEReactions=Needed, ReflectSetter] attribute [AtomString] DOMString dir;
 
     // TextTrackCue related
     [CEReactions=Needed, Reflect] attribute boolean cue;
@@ -46,7 +46,7 @@
     readonly attribute DOMString accessKeyLabel;
     [CEReactions=Needed] attribute boolean draggable;
     [CEReactions=Needed] attribute boolean spellcheck;
-    [Conditional=AUTOCAPITALIZE, CEReactions=Needed] attribute [AtomString] DOMString autocapitalize;
+    [Conditional=AUTOCAPITALIZE, CEReactions=Needed, ReflectSetter] attribute [AtomString] DOMString autocapitalize;
 
     [CEReactions=Needed] attribute [LegacyNullToEmptyString] DOMString innerText;
 

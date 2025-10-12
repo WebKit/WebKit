@@ -1,16 +1,16 @@
-# Copyright (c) 2017, Google Inc.
+# Copyright 2017 The BoringSSL Authors
 #
-# Permission to use, copy, modify, and/or distribute this software for any
-# purpose with or without fee is hereby granted, provided that the above
-# copyright notice and this permission notice appear in all copies.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-# SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-# OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-# CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 # This is a rough parser for x86-64 and aarch64 assembly designed to work with
 # https://github.com/pointlander/peg. delocate.go has a go:generate line for
@@ -30,6 +30,7 @@ type Asm Peg {}
 AsmFile <- Statement* !.
 Statement <- WS? (Label / ((GlobalDirective /
                             LocationDirective /
+                            SymbolDefiningDirective /
                             LabelContainingDirective /
                             Instruction /
                             Directive /
@@ -41,11 +42,13 @@ LocationDirective <- FileDirective / LocDirective
 FileDirective <- ".file" WS [^#\n]+
 LocDirective <- ".loc" WS [^#/\n]+
 Args <- Arg ((WS? ',' WS?) Arg)*
-Arg <- QuotedArg / [[0-9a-z%+\-*_@.]]*
+Arg <- QuotedArg / [[0-9a-z%+\-*_@.$]]*
 QuotedArg <- '"' QuotedText '"'
 QuotedText <- (EscapedChar / [^"])*
+SymbolDefiningDirective <- SymbolDefiningDirectiveName WS (LocalSymbol / SymbolName) WS? ',' WS? SymbolArg
+SymbolDefiningDirectiveName <- ".equiv" / ".equ" / ".set"
 LabelContainingDirective <- LabelContainingDirectiveName WS SymbolArgs
-LabelContainingDirectiveName <- ".xword" / ".word" / ".hword" / ".long" / ".set" / ".byte" / ".8byte" / ".4byte" / ".quad" / ".tc" / ".localentry" / ".size" / ".type" / ".uleb128" / ".sleb128"
+LabelContainingDirectiveName <- ".xword" / ".word" / ".hword" / ".long" / ".byte" / ".8byte" / ".4byte" / ".quad" / ".tc" / ".localentry" / ".size" / ".type" / ".uleb128" / ".sleb128"
 SymbolArgs <- SymbolArg ((WS? ',' WS?) SymbolArg)*
 
 SymbolArg <- SymbolExpr
@@ -77,15 +80,17 @@ AVX512Token <- WS? '{' '%'? [0-9a-z]* '}'
 TOCRefHigh <- '.TOC.-' ('0b' / ('.L' [a-zA-Z_0-9]+)) "@ha"
 TOCRefLow <- '.TOC.-' ('0b' / ('.L' [a-zA-Z_0-9]+)) "@l"
 IndirectionIndicator <- '*'
+Float <- [0-9]+ '.' [0-9]*
 RegisterOrConstant <- (('%'[[A-Z]][[A-Z0-9]]*) /
                        ('$'? ((Offset Offset) / Offset)) /
+                       ('#' Float ) /
                        ('#' Offset ('*' [0-9]+ ('-' [0-9] [0-9]*)?)? ) /
                        ('#' '~'? '(' [0-9] WS? "<<" WS? [0-9] ')' ) /
                        ARMRegister)
                       ![fb:(+\-]
-ARMConstantTweak <- ((([us] "xt" [xwhb]) / "lsl" / "lsr" / "ror" / "asr") (WS '#' Offset)?) /
+ARMConstantTweak <- ((([us] "xt" [xwhb]) / "lsl" / "lsr" / "ror" / "asr" / "msl") (WS '#' Offset)?) /
                     "mul vl"  / # multiply offset by the hardware's vector length
-                    "mul #" [0-9]
+                    "mul #" [0-9][0-9]?
 ARMRegister <- "sp" /
                ([xwdqshb] [0-9] [0-9]?) /
                "xzr" / "wzr" / "NZCV" / SVE2PredicateRegister / ARMVectorRegister / SVE2SpecialValue /

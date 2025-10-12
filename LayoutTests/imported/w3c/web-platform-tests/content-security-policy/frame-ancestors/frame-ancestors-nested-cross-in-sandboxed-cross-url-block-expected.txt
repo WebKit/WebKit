@@ -1,4 +1,3 @@
-Blocked access to external URL http://www1.localhost:8801/content-security-policy/frame-ancestors/support/frame-in-frame.sub.html?policy=http://localhost:8800%20http://www1.localhost:8801&parent=cross&child=cross&expectation=blocked
 
 
 Harness Error (TIMEOUT), message = null

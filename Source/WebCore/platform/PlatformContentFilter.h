@@ -26,7 +26,7 @@
 #ifndef PlatformContentFilter_h
 #define PlatformContentFilter_h
 
-#include "SharedBuffer.h"
+#include <WebCore/SharedBuffer.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMallocInlines.h>

@@ -29,8 +29,8 @@
 
 #if ENABLE(VIDEO)
 
-#include "ScriptExecutionContextIdentifier.h"
-#include "TrackPrivateBaseClient.h"
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/TrackPrivateBaseClient.h>
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>

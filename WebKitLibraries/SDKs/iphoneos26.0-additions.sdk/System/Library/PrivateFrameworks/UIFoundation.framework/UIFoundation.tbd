@@ -1,0 +1,21 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-ios, arm64e-ios]
+install-name: /System/Library/PrivateFrameworks/UIFoundation.framework/UIFoundation
+current-version: 1014
+exports:
+-       targets: [arm64-ios, arm64e-ios]
+        symbols: [_NSAdaptiveImageGlyphAttributeName, _NSAttachmentAttributeName, _NSBackgroundColorAttributeName, _NSBaseURLDocumentOption,
+                _NSCharacterEncodingDocumentOption, _NSDocumentTypeDocumentAttribute, _NSDocumentTypeDocumentOption, _NSFontAttributeName,
+                _NSForegroundColorAttributeName, _NSHTMLTextDocumentType, _NSLinkAttributeName, _NSParagraphStyleAttributeName,
+                _NSRTFDTextDocumentType, _NSRTFTextDocumentType, _NSTextEncodingNameDocumentOption, _NSTextListMarkerCircle,
+                _NSTextListMarkerDecimal, _NSTextListMarkerDisc, _NSTextListMarkerLowercaseRoman, _NSTextSizeMultiplierDocumentOption,
+                _NSTimeoutDocumentOption, _NSUnderlineColorAttributeName, _NSUnderlineStyleAttributeName, _NSWebPreferencesDocumentOption,
+                _NSWebResourceLoadDelegateDocumentOption, _UIFontDescriptorFamilyAttribute, _UIFontDescriptorTextStyleAttribute,
+                _UIFontDescriptorTraitsAttribute, _UIFontWeightSemibold, _UIFontWeightTrait]
+        objc-classes: [NSAdaptiveImageGlyph, NSParagraphStyle, NSShadow, NSTextAlternatives, NSTextAttachment, NSTextList,
+                UIFont, UIFontDescriptor]
+reexports:
+-       targets: [arm64-ios, arm64e-ios]
+        objc-classes: [NSEmojiImageAsset, NSEmojiImageStrike]
+...

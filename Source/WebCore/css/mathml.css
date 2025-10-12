@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,6 +58,7 @@ math {
     font-style: normal;
     font-weight: normal;
     display: inline;
+    math-shift: normal;
     math-style: compact;
 
     /*
@@ -68,76 +69,16 @@ math {
     */
     -webkit-line-box-contain: glyphs replaced;
 
-    /* Fonts with appropriate Unicode coverage and OpenType features are required for good math
-    rendering. These requirements as well as the up-to-date list of known math fonts to fulfill
-    these requirements are listed on http://trac.webkit.org/wiki/MathML/Fonts.
+    /*
     Inheriting the font-family is likely to make MathML use text fonts that are not designed for
     math layout and thus would cause very poor mathematical rendering. Consequently, the default
-    font-family on the <math> tag is set to a list of recommended math fonts.
+    font-family on the <math> tag is set to the generic math font
+    (https://www.w3.org/TR/css-fonts-4/#valdef-font-family-math).
+    See `Source/WebCore/css/CSSFontSelector.cpp` for the fallback math font list.
     For best rendering, authors and readers are encouraged to use text and math fonts with consistent
     style (appearance, size...), see http://trac.webkit.org/wiki/MathML/Fonts#CustomizingMathFont
-    FIXME: Should we make math font properties configurable (http://webkit.org/b/156843)?
     */
-    font-family:
-       /*
-       This font has Computer Modern style and is provided with most TeX & Linux distributions.
-       We put it as the default because its style is familiar to TeX, Wikipedia and math people.
-       */
-       "Latin Modern Math",
-
-       /*
-       The following fonts have Times style and are provided with most TeX & Linux distributions.
-       We put XITS & STIX as a second option because they have very good unicode coverage.
-       STIX Two is a complete redesign of STIX that fixes serious bugs in version one so we put it in first position.
-       XITS is a fork of STIX with bug fixes and more Arabic/RTL features so we put it in second position.
-       */
-       "STIX Two Math",
-       "XITS Math",
-       "STIX Math",
-       "Libertinus Math",
-       "TeX Gyre Termes Math",
-
-       /*
-       These fonts respectively have style compatible with Bookman Old and Century Schoolbook.
-       They are provided with most TeX & Linux distributions.
-       */
-       "TeX Gyre Bonum Math",
-       "TeX Gyre Schola",
-
-       /*
-       DejaVu is pre-installed on many Linux distributions and is included in LibreOffice.
-       */
-       "DejaVu Math TeX Gyre",
-
-       /*
-       The following fonts have Palatino style and are provided with most TeX & Linux distributions.
-       Asana Math has some rendering issues (e.g. missing italic correction) so we put it after.
-       */
-       "TeX Gyre Pagella Math",
-       "Asana Math",
-
-       /*
-       The following fonts are proprietary and have not much been tested so we put them at the end.
-       Cambria Math it is pre-installed on Windows 7 and higher.
-       */
-       "Cambria Math",
-       "Lucida Bright Math",
-       "Minion Math",
-
-       /*
-       The following fonts do not satisfy the requirements for good mathematical rendering.
-       These are pre-installed on Mac and iOS so we list them to provide minimal unicode-based
-       mathematical rendering. For more explanation of fallback mechanisms and missing features see
-       http://trac.webkit.org/wiki/MathML/Fonts#ObsoleteFontsandFallbackMechanisms.
-       STIX fonts have best unicode coverage so we put them first. */
-       STIXGeneral,
-       STIXSizeOneSym,
-       Symbol,
-       "Times New Roman",
-
-       /* Mathematical fonts generally use "serif" style. Hence we append the generic "serif" family
-       as a fallback in order to increase our chance to find a mathematical font. */
-       serif;
+    font-family: math;
 }
 
 math[display="block" i] {
@@ -153,40 +94,22 @@ math[display="inline" i] {
     math-style: compact;
 }
 
-ms, mtext, mi, mn, mo, annotation, mtd {
-    white-space: nowrap !important;
-}
-
-/* Fractions */
-mfrac {
-    padding-inline: 1px;
-}
-
-mfrac > * {
-    math-style: compact;
-}
-
-msub > * + *, msup > * + *, msubsup > * + *, mmultiscripts > * + *, munder > * + *, mover > * + *, munderover > * + * {
-    font-size: 0.71em;
-    math-style: compact;
-}
-
-mroot > *:last-child {
-    font-size: 0.5041em; /* This 0.71^2 since the scriptlevel is incremented by 2 in the index. */
-    math-style: compact;
+/* <mrow>-like elements */
+merror {
+    border: 1px solid red;
+    background-color: lightYellow;
 }
 
 mphantom {
     visibility: hidden;
 }
 
-/* This is a special style for erroneous markup. */
-/* https://w3c.github.io/mathml-core/#error-message-merror */
-merror {
-    border: 1px solid red;
-    background-color: lightYellow;
+/* Token elements */
+ms, mtext, mi, mn, mo, annotation, mtd {
+    white-space: nowrap !important;
 }
 
+/* Tables */
 mtable {
     display: inline-table;
     text-align: center;
@@ -254,12 +177,52 @@ mtable[columnlines="dashed"] > mtr > mtd + mtd {
     border-left: dashed thin;
 }
 
+/* Fractions */
+mfrac {
+    padding-inline: 1px;
+}
+
+mfrac > * {
+    math-style: compact;
+}
+
+mfrac > :nth-child(2) {
+    math-shift: compact;
+}
+
 /* Other rules for scriptlevel, displaystyle and math-shift */
+mroot > *:last-child {
+    font-size: 0.5041em; /* This 0.71^2 since the scriptlevel is incremented by 2 in the index. */
+    math-style: compact;
+}
+
+mroot, msqrt {
+    math-shift: compact;
+}
+
+msub > * + *, msup > * + *, msubsup > * + *, mmultiscripts > * + *, munder > * + *, mover > * + *, munderover > * + * {
+    font-size: 0.71em;
+    math-style: compact;
+}
+
 munder[accentunder="true" i] > :nth-child(2),
 mover[accent="true" i] > :nth-child(2),
 munderover[accentunder="true" i] > :nth-child(2),
 munderover[accent="true" i] > :nth-child(3) {
   font-size: inherit;
+}
+
+msub > :nth-child(2),
+msubsup > :nth-child(2),
+mmultiscripts > :nth-child(even),
+mmultiscripts > mprescripts ~ :nth-child(odd),
+mover[accent="true" i] > :first-child,
+munderover[accent="true" i] > :first-child {
+  math-shift: compact;
+}
+
+mmultiscripts > mprescripts ~ :nth-child(even) {
+  math-shift: inherit;
 }
 
 #endif

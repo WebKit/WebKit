@@ -62,7 +62,7 @@ struct ConnectionInfo {
     ClientOrigin origin;
 };
 
-static ExceptionOr<ConnectionInfo> connectionInfo(NavigatorBase* navigator)
+static ExceptionOr<ConnectionInfo> connectionInfo(NavigatorBase* navigator, ExceptionCode exceptionCodeForNoAccess)
 {
     if (!navigator)
         return Exception { ExceptionCode::InvalidStateError, "Navigator does not exist"_s };
@@ -72,7 +72,7 @@ static ExceptionOr<ConnectionInfo> connectionInfo(NavigatorBase* navigator)
         return Exception { ExceptionCode::InvalidStateError, "Context is invalid"_s };
 
     if (context->canAccessResource(ScriptExecutionContext::ResourceType::StorageManager) == ScriptExecutionContext::HasResourceAccess::No)
-        return Exception { ExceptionCode::TypeError, "Context not access storage"_s };
+        return Exception { exceptionCodeForNoAccess, "Context not access storage"_s };
 
     RefPtr origin = context->securityOrigin();
     ASSERT(origin);
@@ -92,7 +92,7 @@ static ExceptionOr<ConnectionInfo> connectionInfo(NavigatorBase* navigator)
 
 void StorageManager::persisted(DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    auto connectionInfoOrException = connectionInfo(m_navigator.get());
+    auto connectionInfoOrException = connectionInfo(m_navigator.get(), ExceptionCode::TypeError);
     if (connectionInfoOrException.hasException())
         return promise.reject(connectionInfoOrException.releaseException());
 
@@ -104,7 +104,7 @@ void StorageManager::persisted(DOMPromiseDeferred<IDLBoolean>&& promise)
 
 void StorageManager::persist(DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    auto connectionInfoOrException = connectionInfo(m_navigator.get());
+    auto connectionInfoOrException = connectionInfo(m_navigator.get(), ExceptionCode::TypeError);
     if (connectionInfoOrException.hasException())
         return promise.reject(connectionInfoOrException.releaseException());
 
@@ -116,7 +116,7 @@ void StorageManager::persist(DOMPromiseDeferred<IDLBoolean>&& promise)
 
 void StorageManager::estimate(DOMPromiseDeferred<IDLDictionary<StorageEstimate>>&& promise)
 {
-    auto connectionInfoOrException = connectionInfo(m_navigator.get());
+    auto connectionInfoOrException = connectionInfo(m_navigator.get(), ExceptionCode::TypeError);
     if (connectionInfoOrException.hasException())
         return promise.reject(connectionInfoOrException.releaseException());
 
@@ -126,9 +126,9 @@ void StorageManager::estimate(DOMPromiseDeferred<IDLDictionary<StorageEstimate>>
     });
 }
 
-void StorageManager::fileSystemAccessGetDirectory(DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&& promise)
+void StorageManager::fileSystemGetDirectory(DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&& promise)
 {
-    auto connectionInfoOrException = connectionInfo(m_navigator.get());
+    auto connectionInfoOrException = connectionInfo(m_navigator.get(), ExceptionCode::SecurityError);
     if (connectionInfoOrException.hasException())
         return promise.reject(connectionInfoOrException.releaseException());
 

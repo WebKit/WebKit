@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "CSSValue.h"
+#include <WebCore/CSSValue.h>
 
 namespace WebCore {
 
@@ -30,10 +30,6 @@ public:
     const CSSValue& right() const { return m_right.get(); }
     const CSSValue& bottom() const { return m_bottom.get(); }
     const CSSValue& left() const { return m_left.get(); }
-    Ref<const CSSValue> protectedTop() const { return m_top; }
-    Ref<const CSSValue> protectedRight() const { return m_right; }
-    Ref<const CSSValue> protectedBottom() const { return m_bottom; }
-    Ref<const CSSValue> protectedLeft() const { return m_left; }
 
     bool equals(const RectBase& other) const
     {
@@ -59,10 +55,10 @@ protected:
     ~RectBase() = default;
 
 private:
-    Ref<const CSSValue> m_top;
-    Ref<const CSSValue> m_right;
-    Ref<const CSSValue> m_bottom;
-    Ref<const CSSValue> m_left;
+    const Ref<const CSSValue> m_top;
+    const Ref<const CSSValue> m_right;
+    const Ref<const CSSValue> m_bottom;
+    const Ref<const CSSValue> m_left;
 };
 
 } // namespace WebCore

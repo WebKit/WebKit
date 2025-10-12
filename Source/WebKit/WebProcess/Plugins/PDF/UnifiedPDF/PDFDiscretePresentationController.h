@@ -29,6 +29,7 @@
 
 #include "PDFPresentationController.h"
 #include <WebCore/GraphicsLayerClient.h>
+#include <WebCore/TiledBacking.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -75,7 +76,7 @@ private:
 
     void updateIsInWindow(bool isInWindow) override;
     void updateDebugBorders(bool showDebugBorders, bool showRepaintCounters) override;
-    void updateForCurrentScrollability(OptionSet<TiledBackingScrollability>) override;
+    void updateForCurrentScrollability(OptionSet<WebCore::TiledBackingScrollability>) override;
 
     Vector<LayerCoverage> layerCoveragesForRepaintPageCoverage(RepaintRequirements, const PDFPageCoverage&) override;
 

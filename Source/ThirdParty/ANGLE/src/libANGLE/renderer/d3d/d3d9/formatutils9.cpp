@@ -7,6 +7,10 @@
 // formatutils9.cpp: Queries for GL image formats and their translations to D3D9
 // formats.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d9/formatutils9.h"
 
 #include "image_util/copyimage.h"

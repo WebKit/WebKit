@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
@@ -111,7 +111,7 @@ PathImpl& Path::ensureImpl()
         return setImpl(PathStream::create(WTFMove(*segment)));
 
     if (auto impl = asImpl())
-        return *impl;
+        return *impl.unsafeGet();
     ASSERT_NOT_REACHED(); // Impl is never empty.
     return setImpl(PathStream::create());
 }
@@ -195,9 +195,21 @@ void Path::addRoundedRect(const FloatRect& rect, const FloatSize& roundingRadii,
         ensureProtectedImpl()->add(PathRoundedRect { calculateEvenRoundedRect(rect, roundingRadii), strategy });
 }
 
-void Path::addRoundedRect(const RoundedRect& rect)
+void Path::addRoundedRect(const LayoutRoundedRect& rect)
 {
     addRoundedRect(FloatRoundedRect(rect));
+}
+
+void Path::addContinuousRoundedRect(const FloatRect& rect, const float cornerRadius)
+{
+    if (rect.isEmpty())
+        return;
+
+    PathContinuousRoundedRect continuousRoundedRect { rect, cornerRadius, cornerRadius };
+    if (isEmpty())
+        m_data = PathSegment(continuousRoundedRect);
+    else
+        ensureProtectedImpl()->add(continuousRoundedRect);
 }
 
 void Path::addContinuousRoundedRect(const FloatRect& rect, const float cornerWidth, const float cornerHeight)
@@ -205,10 +217,11 @@ void Path::addContinuousRoundedRect(const FloatRect& rect, const float cornerWid
     if (rect.isEmpty())
         return;
 
+    PathContinuousRoundedRect continuousRoundedRect { rect, cornerWidth, cornerHeight };
     if (isEmpty())
-        m_data = PathSegment(PathContinuousRoundedRect { rect, cornerWidth, cornerHeight });
+        m_data = PathSegment(continuousRoundedRect);
     else
-        ensureProtectedImpl()->add(PathContinuousRoundedRect { rect, cornerWidth, cornerHeight });
+        ensureProtectedImpl()->add(continuousRoundedRect);
 }
 
 void Path::addPath(const Path& path, const AffineTransform& transform)

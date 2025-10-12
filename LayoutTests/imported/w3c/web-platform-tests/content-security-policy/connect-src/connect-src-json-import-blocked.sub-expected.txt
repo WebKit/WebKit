@@ -1,0 +1,3 @@
+
+FAIL connect-src-json-import-blocked assert_unreached: Should have rejected: undefined Reached unreachable code
+

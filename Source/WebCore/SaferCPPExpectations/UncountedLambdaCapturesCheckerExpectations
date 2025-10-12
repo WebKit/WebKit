@@ -1,25 +1,14 @@
 Modules/WebGPU/Implementation/WebGPUDeviceImpl.cpp
-Modules/WebGPU/Implementation/WebGPUImpl.cpp
 Modules/cache/DOMCache.cpp
 Modules/cache/DOMCacheStorage.cpp
-Modules/encryptedmedia/MediaKeySession.cpp
-Modules/encryptedmedia/NavigatorEME.cpp
-Modules/gamepad/GamepadHapticActuator.cpp
-Modules/indexeddb/client/IDBConnectionProxy.cpp
-Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp
 Modules/mediacontrols/MediaControlsHost.cpp
 Modules/mediasession/MediaMetadata.cpp
-Modules/mediasource/MediaSource.cpp
-Modules/mediasource/SourceBuffer.cpp
 Modules/mediastream/PeerConnectionBackend.cpp
 Modules/mediastream/RTCDataChannel.cpp
 Modules/mediastream/RTCPeerConnection.cpp
 Modules/mediastream/RTCRtpSender.cpp
-Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp
-Modules/notifications/Notification.cpp
 Modules/paymentrequest/PaymentRequest.cpp
 Modules/push-api/PushDatabase.cpp
-Modules/speech/SpeechRecognitionCaptureSourceImpl.cpp
 Modules/webaudio/AudioWorkletThread.cpp
 Modules/webaudio/OfflineAudioContext.cpp
 Modules/webaudio/OfflineAudioDestinationNode.cpp
@@ -29,16 +18,9 @@ Modules/webcodecs/WebCodecsBase.cpp
 Modules/webcodecs/WebCodecsVideoDecoder.cpp
 Modules/webcodecs/WebCodecsVideoEncoder.cpp
 Modules/webdatabase/DatabaseThread.cpp
-Modules/webdatabase/SQLCallbackWrapper.h
-accessibility/AXObjectCache.h
-accessibility/AccessibilityARIAGridRow.cpp
-accessibility/AccessibilityScrollView.cpp
-accessibility/AccessibilityTable.cpp
-accessibility/isolatedtree/AXIsolatedObject.cpp
-accessibility/isolatedtree/AXIsolatedObject.h
-accessibility/isolatedtree/AXIsolatedTree.cpp
-accessibility/isolatedtree/mac/AXIsolatedObjectMac.mm
-accessibility/mac/WebAccessibilityObjectWrapperMac.mm
+[ Mac ] accessibility/isolatedtree/AXIsolatedObject.cpp
+[ Mac ] accessibility/isolatedtree/AXIsolatedObject.h
+[ Mac ] accessibility/isolatedtree/mac/AXIsolatedObjectMac.mm
 animation/KeyframeEffect.cpp
 bindings/js/JSDOMPromiseDeferred.cpp
 contentextensions/ContentExtensionsBackend.cpp
@@ -47,13 +29,10 @@ css/CSSPendingSubstitutionValue.cpp
 css/CSSValue.cpp
 css/CSSVariableReferenceValue.cpp
 css/StyleRule.cpp
-dom/BroadcastChannel.cpp
 dom/ContentVisibilityDocumentState.cpp
 dom/CustomElementDefaultARIA.cpp
-dom/Document.cpp
 dom/RejectedPromiseTracker.cpp
-dom/Subscriber.cpp
-editing/Editor.cpp
+[ Mac ] editing/Editor.cpp
 html/FormAssociatedCustomElement.cpp
 html/track/TrackBase.cpp
 inspector/InspectorOverlay.cpp
@@ -65,11 +44,8 @@ page/IntelligenceTextEffectsSupport.cpp
 page/Navigator.cpp
 page/ShareDataReader.cpp
 page/cocoa/ResourceUsageOverlayCocoa.mm
-page/csp/ContentSecurityPolicy.cpp
 page/writing-tools/WritingToolsController.mm
-platform/RemoteCommandListener.cpp
 platform/ScrollableArea.cpp
-platform/Timer.h
 platform/cocoa/NetworkExtensionContentFilter.mm
 platform/encryptedmedia/CDMProxy.cpp
 platform/encryptedmedia/clearkey/CDMClearKey.cpp
@@ -79,24 +55,21 @@ platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm
 platform/graphics/avfoundation/objc/InbandChapterTrackPrivateAVFObjC.mm
 platform/graphics/cocoa/VideoMediaSampleRenderer.mm
 platform/graphics/filters/FilterOperation.cpp
-platform/mac/VideoPresentationInterfaceMac.mm
 platform/mediarecorder/MediaRecorderPrivateEncoder.cpp
-platform/mediastream/RealtimeMediaSource.cpp
-platform/mediastream/RealtimeMediaSourceCenter.cpp
 platform/mediastream/RealtimeVideoCaptureSource.cpp
 platform/mediastream/cocoa/IncomingAudioMediaStreamTrackRendererUnit.cpp
 platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm
 platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.cpp
-platform/mock/MediaPlaybackTargetPickerMock.cpp
-platform/network/cocoa/NetworkStorageSessionCocoa.mm
-platform/sql/SQLiteDatabase.cpp
 rendering/BackgroundPainter.cpp
 rendering/BorderPainter.cpp
+rendering/RenderBox.cpp
 rendering/RenderElement.cpp
+rendering/RenderFlexibleBox.cpp
 rendering/RenderGrid.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerCompositor.cpp
 rendering/RenderListBox.cpp
+rendering/RenderReplaced.cpp
 rendering/RenderText.cpp
 rendering/style/StyleCustomPropertyData.cpp
 rendering/svg/RenderSVGResourceGradient.cpp
@@ -104,15 +77,22 @@ rendering/svg/RenderSVGText.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceGradient.cpp
 rendering/svg/legacy/SVGResourcesCycleSolver.cpp
 rendering/updating/RenderTreeUpdater.cpp
+style/StyleCustomProperty.cpp
 style/Styleable.cpp
 style/values/StyleValueTypes.h
+style/values/backgrounds/StyleFillLayers.h
+style/values/fonts/StyleFontVariationSettings.cpp
 style/values/images/StyleGradient.cpp
-testing/MockMediaSessionCoordinator.cpp
+style/values/primitives/StylePrimitiveKeyword+CSSValueCreation.h
+style/values/primitives/StylePrimitiveKeyword+Serialization.h
+[ Mac ] testing/MockMediaSessionCoordinator.cpp
 workers/Worker.cpp
 workers/WorkerMessagingProxy.cpp
 workers/WorkerOrWorkletThread.cpp
-workers/WorkerScriptLoader.cpp
-workers/service/ExtendableEvent.cpp
-workers/service/ServiceWorkerContainer.cpp
-workers/service/ServiceWorkerGlobalScope.cpp
 workers/shared/SharedWorkerObjectConnection.cpp
+[ iOS ] page/ios/FrameIOS.mm
+[ iOS ] platform/PreviewConverter.cpp
+[ iOS ] platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm
+[ iOS ] platform/ios/DragImageIOS.mm
+[ iOS ] platform/mediastream/ios/ReplayKitCaptureSource.mm
+[ iOS ] platform/mediastream/mac/CoreAudioSharedUnit.cpp

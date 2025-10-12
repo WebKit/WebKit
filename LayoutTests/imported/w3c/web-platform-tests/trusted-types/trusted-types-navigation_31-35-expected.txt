@@ -1,0 +1,7 @@
+
+PASS Navigate a frame via form-submission with javascript:-urls in report-only mode.
+PASS Navigate a frame via form-submission with javascript:-urls w/ default policy in report-only mode.
+FAIL Navigate a window via form-submission with javascript:-urls w/ a default policy throwing an exception in enforcing mode. promise_test: Unhandled rejection with value: "Unexpected message received: \"Unexpected exception: Exception in createScript()\""
+FAIL Navigate a window via form-submission with javascript:-urls w/ a default policy throwing an exception in report-only mode. promise_test: Unhandled rejection with value: "Unexpected message received: \"Unexpected exception: Exception in createScript()\""
+FAIL Navigate a window via form-submission with javascript:-urls w/ a default policy making the URL invalid in enforcing mode. promise_test: Unhandled rejection with value: "Unexpected message received: \"No securitypolicyviolation reported!\""
+

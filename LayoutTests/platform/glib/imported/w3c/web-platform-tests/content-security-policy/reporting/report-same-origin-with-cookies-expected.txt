@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Refused to load http://web-platform.test:8800/content-security-policy/support/fail.png because it does not appear in the img-src directive of the Content Security Policy.
 
 
 PASS Image should not load

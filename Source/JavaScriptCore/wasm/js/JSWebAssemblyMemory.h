@@ -27,8 +27,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSObject.h"
-#include "WasmMemory.h"
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/WasmMemory.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 
@@ -55,9 +55,13 @@ public:
 
     DECLARE_EXPORT_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
     JS_EXPORT_PRIVATE void adopt(Ref<Wasm::Memory>&&);
     Wasm::Memory& memory() { return m_memory.get(); }
     JSArrayBuffer* buffer(JSGlobalObject*);
+    JSArrayBuffer* toFixedLengthBuffer(JSGlobalObject*);
+    JSArrayBuffer* toResizableBuffer(JSGlobalObject*);
     PageCount grow(VM&, JSGlobalObject*, uint32_t delta);
     JS_EXPORT_PRIVATE void growSuccessCallback(VM&, PageCount oldPageCount, PageCount newPageCount);
 
@@ -73,7 +77,9 @@ public:
 private:
     JSWebAssemblyMemory(VM&, Structure*);
     void finishCreation(VM&);
-    DECLARE_VISIT_CHILDREN;
+
+    void associateArrayBuffer(JSGlobalObject*, bool shouldBeFixedLength);
+    void disassociateArrayBuffer(VM&);
 
     Ref<Wasm::Memory> m_memory;
     WriteBarrier<JSArrayBuffer> m_bufferWrapper;

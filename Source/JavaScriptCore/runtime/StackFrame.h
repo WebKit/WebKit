@@ -25,30 +25,66 @@
 
 #pragma once
 
-#include "BytecodeIndex.h"
-#include "Heap.h"
-#include "LineColumn.h"
-#include "SlotVisitorMacros.h"
-#include "VM.h"
-#include "WasmIndexOrName.h"
-#include "WriteBarrier.h"
+#include <JavaScriptCore/BytecodeIndex.h>
+#include <JavaScriptCore/Heap.h>
+#include <JavaScriptCore/LineColumn.h>
+#include <JavaScriptCore/SlotVisitorMacros.h>
+#include <JavaScriptCore/VM.h>
+#include <JavaScriptCore/WasmIndexOrName.h>
+#include <JavaScriptCore/WriteBarrier.h>
 #include <limits.h>
+#include <wtf/Variant.h>
 
 namespace JSC {
 
 class CodeBlock;
 class JSObject;
 
+struct JSFrameData {
+    WriteBarrier<JSCell> callee;
+    WriteBarrier<CodeBlock> codeBlock;
+    BytecodeIndex bytecodeIndex;
+    bool m_isAsyncFrame { false };
+};
+
+struct WasmFrameData {
+    Wasm::IndexOrName functionIndexOrName;
+    size_t functionIndex { 0 };
+};
+
 class StackFrame {
 public:
+    using FrameData = Variant<JSFrameData, WasmFrameData>;
+
     StackFrame(VM&, JSCell* owner, JSCell* callee);
     StackFrame(VM&, JSCell* owner, JSCell* callee, CodeBlock*, BytecodeIndex);
+    StackFrame(VM&, JSCell* owner, JSCell* callee, CodeBlock*, BytecodeIndex, bool isAsyncFrame);
     StackFrame(VM&, JSCell* owner, CodeBlock*, BytecodeIndex);
+    StackFrame(VM&, JSCell* owner, JSCell* callee, bool isAsyncFrame);
     StackFrame(Wasm::IndexOrName);
+    StackFrame(Wasm::IndexOrName, size_t functionIndex);
     StackFrame() = default;
 
-    bool hasLineAndColumnInfo() const { return !!m_codeBlock; }
-    CodeBlock* codeBlock() const { return m_codeBlock.get(); }
+    bool hasLineAndColumnInfo() const
+    {
+        if (auto* jsFrame = std::get_if<JSFrameData>(&m_frameData))
+            return !!jsFrame->codeBlock;
+        return false;
+    }
+
+    CodeBlock* codeBlock() const
+    {
+        if (auto* jsFrame = std::get_if<JSFrameData>(&m_frameData))
+            return jsFrame->codeBlock.get();
+        return nullptr;
+    }
+
+    bool isAsyncFrameWithoutCodeBlock() const
+    {
+        if (auto* jsFrame = std::get_if<JSFrameData>(&m_frameData))
+            return jsFrame->m_isAsyncFrame && !codeBlock();
+        return false;
+    }
 
     LineColumn computeLineAndColumn() const;
     String functionName(VM&) const;
@@ -57,31 +93,16 @@ public:
     String sourceURLStripped(VM&) const;
     String toString(VM&) const;
 
-    bool hasBytecodeIndex() const { return m_bytecodeIndex && !m_isWasmFrame; }
-    BytecodeIndex bytecodeIndex()
-    {
-        ASSERT(hasBytecodeIndex());
-        return m_bytecodeIndex;
-    }
+    bool hasBytecodeIndex() const;
+    BytecodeIndex bytecodeIndex() const;
 
     template<typename Visitor>
-    void visitAggregate(Visitor& visitor)
-    {
-        if (m_callee)
-            visitor.append(m_callee);
-        if (m_codeBlock)
-            visitor.append(m_codeBlock);
-    }
+    void visitAggregate(Visitor&);
 
-    bool isMarked(VM& vm) const { return (!m_callee || vm.heap.isMarked(m_callee.get())) && (!m_codeBlock || vm.heap.isMarked(m_codeBlock.get())); }
+    bool isMarked(VM&) const;
 
 private:
-    WriteBarrier<JSCell> m_callee { };
-    WriteBarrier<CodeBlock> m_codeBlock { };
-    Wasm::IndexOrName m_wasmFunctionIndexOrName;
-    BytecodeIndex m_bytecodeIndex;
-    bool m_isWasmFrame { false };
+    FrameData m_frameData { JSFrameData { } };
 };
 
 } // namespace JSC
-

@@ -27,7 +27,7 @@
 
 #if ENABLE(DATA_DETECTION)
 
-#include "ImageOverlayDataDetectionResultIdentifier.h"
+#include <WebCore/ImageOverlayDataDetectionResultIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
@@ -57,7 +57,7 @@ public:
 
 private:
     RetainPtr<NSArray> m_documentLevelResults;
-    UncheckedKeyHashMap<ImageOverlayDataDetectionResultIdentifier, RetainPtr<DDScannerResult>> m_imageOverlayResults;
+    HashMap<ImageOverlayDataDetectionResultIdentifier, RetainPtr<DDScannerResult>> m_imageOverlayResults;
 };
 
 } // namespace WebCore

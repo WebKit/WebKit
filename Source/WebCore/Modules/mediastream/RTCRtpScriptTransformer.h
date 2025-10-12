@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,10 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "ActiveDOMObject.h"
-#include "JSDOMPromiseDeferredForward.h"
-#include "RTCRtpTransformBackend.h"
 #include <JavaScriptCore/JSCJSValue.h>
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/JSDOMPromiseDeferredForward.h>
+#include <WebCore/RTCRtpTransformBackend.h>
 #include <wtf/Deque.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/RefCounted.h>
@@ -65,7 +65,7 @@ public:
     static ExceptionOr<Ref<RTCRtpScriptTransformer>> create(ScriptExecutionContext&, MessageWithMessagePorts&&);
     ~RTCRtpScriptTransformer();
 
-    ReadableStream& readable();
+    ReadableStream& readable() { return m_readable; }
     ExceptionOr<Ref<WritableStream>> writable();
     JSC::JSValue options(JSC::JSGlobalObject&);
 
@@ -88,17 +88,19 @@ private:
 
     void enqueueFrame(ScriptExecutionContext&, Ref<RTCRtpTransformableFrame>&&);
 
-    Ref<SerializedScriptValue> m_options;
+    const Ref<SerializedScriptValue> m_options;
     Vector<Ref<MessagePort>> m_ports;
 
-    Ref<SimpleReadableStreamSource> m_readableSource;
-    Ref<ReadableStream> m_readable;
+    const Ref<SimpleReadableStreamSource> m_readableSource;
+    const Ref<ReadableStream> m_readable;
     RefPtr<WritableStream> m_writable;
 
     RefPtr<RTCRtpTransformBackend> m_backend;
     RefPtr<PendingActivity<RTCRtpScriptTransformer>> m_pendingActivity;
 
     Deque<Ref<DeferredPromise>> m_pendingKeyFramePromises;
+    bool m_isVideo { false };
+    bool m_isSender { false };
 
 #if !RELEASE_LOG_DISABLED
     bool m_enableAdditionalLogging { false };

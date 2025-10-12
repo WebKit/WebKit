@@ -1,0 +1,12 @@
+Verify the series of sub-tests that are executed for "partial" namespace objects.
+
+
+FAIL Partial namespace A: original namespace defined assert_true: Original namespace should be defined expected true got false
+PASS Partial namespace B: original namespace defined
+PASS Partial namespace B: valid exposure set
+PASS Partial namespace C: original namespace defined
+PASS Partial namespace C: valid exposure set
+PASS Partial namespace D: original namespace defined
+FAIL Partial namespace D: valid exposure set Partial D namespace is exposed to 'DedicatedWorker', the original namespace is not.
+FAIL Partial namespace E: original namespace defined assert_true: Original E definition should have type namespace expected true got false
+

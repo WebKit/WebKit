@@ -30,15 +30,14 @@ public:
                                                 Discardable) const override;
 
     TextureInfo getDefaultSampledTextureInfo(SkColorType,
-                                             Mipmapped mipmapped,
+                                             Mipmapped,
                                              Protected,
                                              Renderable) const override;
 
-    TextureInfo getTextureInfoForSampledCopy(const TextureInfo& textureInfo,
-                                             Mipmapped mipmapped) const override;
+    TextureInfo getTextureInfoForSampledCopy(const TextureInfo&, Mipmapped) const override;
 
     TextureInfo getDefaultCompressedTextureInfo(SkTextureCompressionType,
-                                                Mipmapped mipmapped,
+                                                Mipmapped,
                                                 Protected) const override;
 
     TextureInfo getDefaultStorageTextureInfo(SkColorType) const override;
@@ -56,8 +55,10 @@ public:
     // UniqueKeys (e.g. makeGraphicsPipelineKey).
     uint32_t getRenderPassDescKey(const RenderPassDesc&) const;
 
-    bool isMac() const { return fGPUFamily == GPUFamily::kMac; }
-    bool isApple() const { return fGPUFamily == GPUFamily::kApple; }
+    bool isMac() const   { return fGPUFamily == GPUFamily::kMac ||
+                                  fGPUFamily == GPUFamily::kMacIntel; }
+    bool isApple() const { return fGPUFamily == GPUFamily::kApple;    }
+    bool isIntel() const { return fGPUFamily == GPUFamily::kMacIntel; }
 
     bool isRenderable(const TextureInfo&) const override;
     bool isStorage(const TextureInfo&) const override;
@@ -75,10 +76,11 @@ private:
     void initFormatTable(const id<MTLDevice>);
 
     enum class GPUFamily {
-        kMac,
         kApple,
+        kMac,
+        kMacIntel,
     };
-    static bool GetGPUFamily(id<MTLDevice> device, GPUFamily* gpuFamily, int* group);
+    static bool GetGPUFamily(id<MTLDevice>, GPUFamily*, int* group);
 
     MTLPixelFormat getFormatFromColorType(SkColorType colorType) const {
         int idx = static_cast<int>(colorType);

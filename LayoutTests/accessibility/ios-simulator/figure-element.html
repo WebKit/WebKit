@@ -65,10 +65,11 @@
             var titleUIElement = figure.titleUIElement();
             if (k >= 5) {
                 var figureCaption = accessibilityController.accessibleElementById("figCaption" + k);
-                shouldBeTrue("titleUIElement.isEqual(figureCaption) || (isIgnored(titleUIElement) && isIgnored(figureCaption))");
-            } else
+                var titleEqualsCaption = titleUIElement && titleUIElement.isEqual(figureCaption);
+                shouldBeTrue("titleEqualsCaption || (isIgnored(titleUIElement) && isIgnored(figureCaption))");
+            }
+            else
                 shouldBeTrue("!titleUIElement");
-
             debug("");
         }
 

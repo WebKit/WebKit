@@ -65,7 +65,7 @@ void CoordinatedBackingStoreTile::processPendingUpdates(TextureMapper& textureMa
         FloatRect unscaledTileRect(update.tileRect);
         unscaledTileRect.scale(1. / m_scale);
 
-        OptionSet<BitmapTexture::Flags> flags { BitmapTexture::Flags::UseNearestTextureFilter };
+        OptionSet<BitmapTexture::Flags> flags { };
         if (update.buffer->supportsAlpha())
             flags.add(BitmapTexture::Flags::SupportsAlpha);
 

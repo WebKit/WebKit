@@ -28,12 +28,16 @@
 #endif
 (deny default)
 
+#ifndef NO_REPORT
+#define NO_REPORT (with no-report)
+#endif
+
 (deny nvram*)
 (deny system-privilege)
 (allow system-audit file-read-metadata)
 
 ;; Silence spurious logging due to rdar://20117923 and rdar://72366475
-(deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
+(deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) NO_REPORT)
 
 #if USE(SANDBOX_VERSION_3)
 #if PLATFORM(MACCATALYST) || PLATFORM(VISION)
@@ -72,12 +76,20 @@
     (apply-read-and-issue-extension allow path-filter)
     (apply-write-and-issue-extension allow path-filter))
 
-(define (webcontent-process-launched)
-    (state-flag "local:WebContentProcessLaunched"))
+(define (webcontent-process-launched) (state-flag "local:WebContentProcessLaunched"))
 
 (define (notify-blocking) (require-entitlement "com.apple.developer.web-browser-engine.restrict.notifyd"))
 
 (define (logd-blocking) (require-entitlement "com.apple.private.disable-log-mach-ports"))
+
+(define (debug-features-blocking) (state-flag "local:BlockDebuggingFeaturesInSandbox"))
+
+(define (log-streaming)
+    (with-filter
+        (require-any
+            (system-attribute apple-internal)
+            (require-not (process-attribute is-apple-signed-executable)))
+        (allow mach-lookup (global-name "com.apple.diagnosticd"))))
 
 #if ENABLE(GPU_PROCESS_IOKIT_RESTRICTIONS)
 #define GPU_PROCESS_IOKIT_DEFAULT_FILTER_OPERATION deny

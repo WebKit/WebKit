@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "MarkedBlock.h"
-#include "WeakSet.h"
+#include <JavaScriptCore/MarkedBlock.h>
+#include <JavaScriptCore/WeakSet.h>
 #include <wtf/StdLibExtras.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

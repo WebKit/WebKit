@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSRunLoopTimer.h"
-#include "WeakInlines.h"
+#include <JavaScriptCore/JSRunLoopTimer.h>
+#include <JavaScriptCore/WeakInlines.h>
 
 #include <wtf/Deque.h>
 #include <wtf/FixedVector.h>

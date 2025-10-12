@@ -24,8 +24,10 @@
 
 #pragma once
 
-#include "BorderData.h"
-#include "LengthBox.h"
+#include <WebCore/BorderData.h>
+#include <WebCore/StyleInset.h>
+#include <WebCore/StyleMargin.h>
+#include <WebCore/StylePadding.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -37,7 +39,7 @@ namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleSurroundData);
 class StyleSurroundData : public RefCounted<StyleSurroundData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleSurroundData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleSurroundData, StyleSurroundData);
 public:
     static Ref<StyleSurroundData> create() { return adoptRef(*new StyleSurroundData); }
     Ref<StyleSurroundData> copy() const;
@@ -59,11 +61,11 @@ public:
     bool hasExplicitlySetPaddingRight : 1;
     bool hasExplicitlySetPaddingTop : 1;
 
-    LengthBox offset;
-    LengthBox margin;
-    LengthBox padding;
+    Style::InsetBox inset;
+    Style::MarginBox margin;
+    Style::PaddingBox padding;
     BorderData border;
-    
+
 private:
     StyleSurroundData();
     StyleSurroundData(const StyleSurroundData&);    

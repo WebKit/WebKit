@@ -1,0 +1,5 @@
+Tests that moving a video element to a new document after calling `webkitShowPlaybackTargetPicker` doesn't crash.
+
+The test passes if it doesn't crash.
+
+

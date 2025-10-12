@@ -676,41 +676,42 @@ func markupParagraph(allDecls map[string]string, s string) template.HTML {
 }
 
 // markupPipeWords converts |s| into an HTML string, safe to be included outside
-// a tag, while also marking up words surrounded by |.
+// a tag, while also marking up words surrounded by | or `.
 func markupPipeWords(allDecls map[string]string, s string, linkDecls bool) template.HTML {
-	// It is safe to look for '|' in the HTML-escaped version of |s|
-	// below. The escaped version cannot include '|' instead tags because
+	// It is safe to look for '|' and '`' in the HTML-escaped version of |s|
+	// below. The escaped version cannot include '|' or '`' inside tags because
 	// there are no tags by construction.
 	s = template.HTMLEscapeString(s)
-	ret := ""
+	var ret strings.Builder
 
 	for {
-		i := strings.Index(s, "|")
+		i := strings.IndexAny(s, "|`")
 		if i == -1 {
-			ret += s
+			ret.WriteString(s)
 			break
 		}
-		ret += s[:i]
+		c := s[i]
+		ret.WriteString(s[:i])
 		s = s[i+1:]
 
-		i = strings.Index(s, "|")
+		i = strings.IndexByte(s, c)
 		j := strings.Index(s, " ")
 		if i > 0 && (j == -1 || j > i) {
-			ret += "<tt>"
+			ret.WriteString("<tt>")
 			anchor, isLink := allDecls[s[:i]]
 			if linkDecls && isLink {
-				ret += fmt.Sprintf("<a href=\"%s\">%s</a>", template.HTMLEscapeString(anchor), s[:i])
+				fmt.Fprintf(&ret, "<a href=\"%s\">%s</a>", template.HTMLEscapeString(anchor), s[:i])
 			} else {
-				ret += s[:i]
+				ret.WriteString(s[:i])
 			}
-			ret += "</tt>"
+			ret.WriteString("</tt>")
 			s = s[i+1:]
 		} else {
-			ret += "|"
+			ret.WriteByte(c)
 		}
 	}
 
-	return template.HTML(ret)
+	return template.HTML(ret.String())
 }
 
 func markupFirstWord(s template.HTML) template.HTML {

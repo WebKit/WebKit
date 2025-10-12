@@ -15,6 +15,7 @@
 #include "common/PackedCLEnums_autogen.h"
 #include "common/hash_containers.h"
 
+#include "libANGLE/CLBuffer.h"
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLEventVk.h"
 #include "libANGLE/renderer/vulkan/CLKernelVk.h"
@@ -56,32 +57,105 @@ class CLCommandQueueVk;
 
 namespace
 {
-
-struct HostTransferConfig
+template <typename T>
+class HostTransferConfig
 {
-    HostTransferConfig()
-        : srcRect(cl::Offset{}, cl::Extents{}, 0, 0, 0), dstRect(cl::Offset{}, cl::Extents{}, 0, 0)
-    {}
-    cl_command_type type{0};
-    size_t size            = 0;
-    size_t offset          = 0;
-    void *dstHostPtr       = nullptr;
+  public:
+    // HostTransferConfig is only relevant for certain commands that has host ptr involved, its
+    // state is only setup for those cases.
+    HostTransferConfig(cl_command_type type, size_t size, size_t offset, T *ptr)
+        : mType(type),
+          mSize(size),
+          mOffset(offset),
+          mHostPtr(ptr),
+          mBufferRect(cl::Offset{}, cl::Extents{}, 0, 0, 0),
+          mHostRect(cl::Offset{}, cl::Extents{}, 0, 0, 0)
+    {
+        ASSERT(type == CL_COMMAND_READ_BUFFER || type == CL_COMMAND_WRITE_BUFFER);
+    }
+    HostTransferConfig(cl_command_type type,
+                       size_t size,
+                       T *ptr,
+                       cl::BufferRect bufferRect,
+                       cl::BufferRect hostRect)
+        : mType(type), mSize(size), mHostPtr(ptr), mBufferRect(bufferRect), mHostRect(hostRect)
+    {
+        ASSERT(type == CL_COMMAND_READ_BUFFER_RECT || type == CL_COMMAND_WRITE_BUFFER_RECT);
+    }
+    HostTransferConfig(cl_command_type type,
+                       size_t size,
+                       size_t offset,
+                       T *pattern,
+                       size_t patternSize)
+        : mType(type),
+          mSize(size),
+          mOffset(offset),
+          mHostPtr(pattern),
+          mPatternSize(patternSize),
+          mBufferRect(cl::Offset{}, cl::Extents{}, 0, 0, 0),
+          mHostRect(cl::Offset{}, cl::Extents{}, 0, 0, 0)
+    {
+        ASSERT(type == CL_COMMAND_FILL_BUFFER);
+    }
+    HostTransferConfig(cl_command_type type,
+                       size_t size,
+                       void *ptr,
+                       size_t rowPitch,
+                       size_t slicePitch,
+                       size_t elementSize,
+                       cl::MemOffsets origin,
+                       cl::Coordinate region)
+        : mType(type),
+          mSize(size),
+          mHostPtr(ptr),
+          mRowPitch(rowPitch),
+          mSlicePitch(slicePitch),
+          mElementSize(elementSize),
+          mOrigin(origin),
+          mRegion(region),
+          mBufferRect(cl::Offset{}, cl::Extents{}, 0, 0, 0),
+          mHostRect(cl::Offset{}, cl::Extents{}, 0, 0, 0)
+    {
+        ASSERT(type == CL_COMMAND_READ_IMAGE);
+    }
 
-    // Source host pointer that can contain data/pattern/etc
-    const void *srcHostPtr = nullptr;
+    cl_command_type getType() const { return mType; }
+    size_t getSize() const { return mSize; }
+    size_t getOffset() const { return mOffset; }
+    T *getHostPtr() const { return mHostPtr; }
+    size_t getPatternSize() const { return mPatternSize; }
+    size_t getRowPitch() const { return mRowPitch; }
+    size_t getSlicePitch() const { return mSlicePitch; }
+    size_t getElementSize() const { return mElementSize; }
+    const cl::MemOffsets &getMemOffsets() const { return mOrigin; }
+    const cl::Coordinate &getRegion() const { return mRegion; }
+    const cl::BufferRect &getBufferRect() const { return mBufferRect; }
+    const cl::BufferRect &getHostRect() const { return mHostRect; }
 
-    size_t patternSize     = 0;
-    size_t rowPitch        = 0;
-    size_t slicePitch      = 0;
-    size_t elementSize     = 0;
-    cl::MemOffsets origin;
-    cl::Coordinate region;
-    cl::BufferRect srcRect;
-    cl::BufferRect dstRect;
+  private:
+    cl_command_type mType{0};
+    size_t mSize   = 0;
+    size_t mOffset = 0;
+
+    T *mHostPtr = nullptr;
+
+    size_t mPatternSize    = 0;
+    size_t mRowPitch       = 0;
+    size_t mSlicePitch     = 0;
+    size_t mElementSize    = 0;
+    cl::MemOffsets mOrigin = cl::kMemOffsetsZero;
+    cl::Coordinate mRegion = cl::kCoordinateZero;
+    cl::BufferRect mBufferRect;
+    cl::BufferRect mHostRect;
 };
+
+// We use HostTransferConfig for enqueueing a staged op for read/write operations to/from host
+// pointers. As such we set up two instances one as const void and other as void.
+using HostWriteTransferConfig = HostTransferConfig<const void>;
+using HostReadTransferConfig  = HostTransferConfig<void>;
 struct HostTransferEntry
 {
-    HostTransferConfig transferConfig;
+    std::variant<HostReadTransferConfig, HostWriteTransferConfig> transferConfig;
     cl::MemoryPtr transferBufferHandle;
 };
 using HostTransferEntries = std::vector<HostTransferEntry>;
@@ -322,6 +396,16 @@ class CLCommandQueueVk : public CLCommandQueueImpl
 
     angle::Result finish() override;
 
+    angle::Result enqueueAcquireExternalMemObjectsKHR(
+        const cl::MemoryPtrs &memObjects,
+        const cl::EventPtrs &waitEvents,
+        CLEventImpl::CreateFunc *eventCreateFunc) override;
+
+    angle::Result enqueueReleaseExternalMemObjectsKHR(
+        const cl::MemoryPtrs &memObjects,
+        const cl::EventPtrs &waitEvents,
+        CLEventImpl::CreateFunc *eventCreateFunc) override;
+
     CLPlatformVk *getPlatform() { return mContext->getPlatform(); }
     CLContextVk *getContext() { return mContext; }
 
@@ -359,7 +443,7 @@ class CLCommandQueueVk : public CLCommandQueueImpl
     // event status updates etc. This is a blocking call.
     angle::Result finishQueueSerialInternal(const QueueSerial queueSerial);
 
-    angle::Result syncHostBuffers(HostTransferEntries &hostTransferList);
+    angle::Result syncPendingHostTransfers(HostTransferEntries &hostTransferList);
     angle::Result flushComputePassCommands();
     angle::Result processWaitlist(const cl::EventPtrs &waitEvents);
     angle::Result createEvent(CLEventImpl::CreateFunc *createFunc,
@@ -385,7 +469,13 @@ class CLCommandQueueVk : public CLCommandQueueImpl
     bool hasUserEventDependency() const;
 
     angle::Result insertBarrier();
-    angle::Result addMemoryDependencies(cl::Memory *clMem);
+    angle::Result addMemoryDependencies(const CLKernelArgument *arg);
+    enum class MemoryHandleAccess
+    {
+        ReadOnly,
+        Writeable,
+    };
+    angle::Result addMemoryDependencies(cl::Memory *mem, MemoryHandleAccess access);
 
     angle::Result submitEmptyCommand();
 
@@ -407,7 +497,8 @@ class CLCommandQueueVk : public CLCommandQueueImpl
     cl::EventPtrs mExternalEvents;
 
     // Keep track of kernel resources on prior kernel enqueues
-    angle::HashSet<cl::Object *> mDependencyTracker;
+    angle::HashSet<cl::Object *> mWriteDependencyTracker;
+    angle::HashSet<cl::Object *> mReadDependencyTracker;
 
     CommandsStateMap mCommandsStateMap;
 
@@ -416,8 +507,10 @@ class CLCommandQueueVk : public CLCommandQueueImpl
     const angle::HashMap<uint32_t, ClspvPrintfInfo> *mPrintfInfos;
 
     // Host buffer transferring routines
-    angle::Result addToHostTransferList(CLBufferVk *srcBuffer, HostTransferConfig transferEntry);
-    angle::Result addToHostTransferList(CLImageVk *srcImage, HostTransferConfig transferEntry);
+    template <class T>
+    angle::Result addToHostTransferList(CLBufferVk *srcBuffer, HostTransferConfig<T> transferEntry);
+    template <class T>
+    angle::Result addToHostTransferList(CLImageVk *srcImage, HostTransferConfig<T> transferEntry);
 
     DispatchWorkThread mFinishHandler;
 };

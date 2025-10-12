@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "GPUIntegralTypes.h"
-#include "WebGPUTextureUsage.h"
+#include <WebCore/GPUIntegralTypes.h>
+#include <WebCore/WebGPUTextureUsage.h>
 #include <cstdint>
 #include <wtf/RefCounted.h>
 

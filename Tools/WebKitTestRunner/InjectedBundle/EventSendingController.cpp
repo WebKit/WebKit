@@ -34,6 +34,7 @@
 #include <WebKit/WKBundleFrame.h>
 #include <WebKit/WKBundlePagePrivate.h>
 #include <WebKit/WKBundlePrivate.h>
+#include <WebKit/WKCast.h>
 #include <WebKit/WKContextMenuItem.h>
 #include <WebKit/WKMutableDictionary.h>
 #include <WebKit/WKNumber.h>
@@ -189,9 +190,9 @@ static WKEventModifiers parseModifierArray(JSContextRef context, JSValueRef arra
     return modifiers;
 }
 
-Ref<EventSendingController> EventSendingController::create()
+Ref<EventSendingController> EventSendingController::create(uint64_t testIdentifier)
 {
-    return adoptRef(*new EventSendingController);
+    return adoptRef(*new EventSendingController(testIdentifier));
 }
 
 JSClassRef EventSendingController::wrapperClass()
@@ -199,12 +200,17 @@ JSClassRef EventSendingController::wrapperClass()
     return JSEventSendingController::eventSendingControllerClass();
 }
 
-enum MouseState { MouseUp, MouseDown };
-
-static WKRetainPtr<WKDictionaryRef> createMouseMessageBody(MouseState state, int button, WKEventModifiers modifiers, JSStringRef pointerType)
+WKRetainPtr<WKMutableDictionaryRef> EventSendingController::createEventSenderDictionary(const char* submessage)
 {
     auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", state == MouseUp ? "MouseUp" : "MouseDown");
+    setValue(body, "TestIdentifier", m_testIdentifier);
+    setValue(body, "SubMessage", submessage);
+    return body;
+}
+
+WKRetainPtr<WKDictionaryRef> EventSendingController::createMouseMessageBody(MouseState state, int button, WKEventModifiers modifiers, JSStringRef pointerType)
+{
+    auto body = createEventSenderDictionary(state == MouseUp ? "MouseUp" : "MouseDown");
     setValue(body, "Button", adoptWK(WKUInt64Create(button)));
     setValue(body, "Modifiers", adoptWK(WKUInt64Create(modifiers)));
     if (pointerType)
@@ -214,18 +220,26 @@ static WKRetainPtr<WKDictionaryRef> createMouseMessageBody(MouseState state, int
 
 void EventSendingController::mouseDown(JSContextRef context, int button, JSValueRef modifierArray, JSStringRef pointerType)
 {
+    if (m_isDisabled)
+        return;
+
     postSynchronousPageMessage("EventSender", createMouseMessageBody(MouseDown, button, parseModifierArray(context, modifierArray), pointerType));
 }
 
 void EventSendingController::mouseUp(JSContextRef context, int button, JSValueRef modifierArray, JSStringRef pointerType)
 {
+    if (m_isDisabled)
+        return;
+
     postSynchronousPageMessage("EventSender", createMouseMessageBody(MouseUp, button, parseModifierArray(context, modifierArray), pointerType));
 }
 
-void EventSendingController::mouseMoveTo(int x, int y, JSStringRef pointerType)
+void EventSendingController::mouseMoveTo(double x, double y, JSStringRef pointerType)
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "MouseMoveTo");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("MouseMoveTo");
     setValue(body, "X", adoptWK(WKDoubleCreate(x)));
     setValue(body, "Y", adoptWK(WKDoubleCreate(y)));
     if (pointerType)
@@ -234,107 +248,96 @@ void EventSendingController::mouseMoveTo(int x, int y, JSStringRef pointerType)
     postSynchronousPageMessage("EventSender", body);
 
     WKBundlePageFlushDeferredDidReceiveMouseEventForTesting(InjectedBundle::singleton().pageRef());
-    auto waitForDidReceiveEventBody = adoptWK(WKMutableDictionaryCreate());
-    setValue(waitForDidReceiveEventBody, "SubMessage", "WaitForDeferredMouseEvents");
+    auto waitForDidReceiveEventBody = createEventSenderDictionary("WaitForDeferredMouseEvents");
     postSynchronousPageMessage("EventSender", waitForDidReceiveEventBody);
-}
-
-void EventSendingController::asyncMouseDown(JSContextRef context, int button, JSValueRef modifierArray, JSStringRef pointerType, JSValueRef completionHandler)
-{
-    postMessageWithAsyncReply(context, "EventSender", createMouseMessageBody(MouseDown, button, parseModifierArray(context, modifierArray), pointerType), completionHandler);
-}
-
-void EventSendingController::asyncMouseUp(JSContextRef context, int button, JSValueRef modifierArray, JSStringRef pointerType, JSValueRef completionHandler)
-{
-    postMessageWithAsyncReply(context, "EventSender", createMouseMessageBody(MouseUp, button, parseModifierArray(context, modifierArray), pointerType), completionHandler);
-}
-
-void EventSendingController::asyncMouseMoveTo(JSContextRef context, int x, int y, JSStringRef pointerType, JSValueRef completionHandler)
-{
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "MouseMoveTo");
-    setValue(body, "X", adoptWK(WKDoubleCreate(x)));
-    setValue(body, "Y", adoptWK(WKDoubleCreate(y)));
-    if (pointerType)
-        setValue(body, "PointerType", pointerType);
-    m_position = WKPointMake(x, y);
-    postMessageWithAsyncReply(context, "EventSender", body, completionHandler);
 }
 
 void EventSendingController::mouseForceClick()
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "MouseForceClick");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("MouseForceClick");
     postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::startAndCancelMouseForceClick()
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "StartAndCancelMouseForceClick");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("StartAndCancelMouseForceClick");
     postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::mouseForceDown()
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "MouseForceDown");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("MouseForceDown");
     postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::mouseForceUp()
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "MouseForceUp");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("MouseForceUp");
     postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::mouseForceChanged(double force)
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "MouseForceChanged");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("MouseForceChanged");
     setValue(body, "Force", force);
     postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::leapForward(int milliseconds)
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "LeapForward");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("LeapForward");
     setValue(body, "TimeInMilliseconds", adoptWK(WKUInt64Create(milliseconds)));
     postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::scheduleAsynchronousClick()
 {
+    if (m_isDisabled)
+        return;
+
     postPageMessage("EventSender", createMouseMessageBody(MouseDown, 0, 0, nullptr));
     postPageMessage("EventSender", createMouseMessageBody(MouseUp, 0, 0, nullptr));
 }
 
-static WKRetainPtr<WKMutableDictionaryRef> createKeyDownMessageBody(JSStringRef key, WKEventModifiers modifiers, int location)
+WKRetainPtr<WKMutableDictionaryRef> EventSendingController::createKeyDownMessageBody(JSStringRef key, WKEventModifiers modifiers, int location)
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "KeyDown");
+    auto body = createEventSenderDictionary("KeyDown");
     setValue(body, "Key", key);
     setValue(body, "Modifiers", adoptWK(WKUInt64Create(modifiers)));
     setValue(body, "Location", adoptWK(WKUInt64Create(location)));
     return body;
 }
 
-static WKRetainPtr<WKMutableDictionaryRef> createRawKeyDownMessageBody(JSStringRef key, WKEventModifiers modifiers, int location)
+WKRetainPtr<WKMutableDictionaryRef> EventSendingController::createRawKeyDownMessageBody(JSStringRef key, WKEventModifiers modifiers, int location)
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "RawKeyDown");
+    auto body = createEventSenderDictionary("RawKeyDown");
     setValue(body, "Key", key);
     setValue(body, "Modifiers", adoptWK(WKUInt64Create(modifiers)));
     setValue(body, "Location", adoptWK(WKUInt64Create(location)));
     return body;
 }
 
-static WKRetainPtr<WKMutableDictionaryRef> createRawKeyUpMessageBody(JSStringRef key, WKEventModifiers modifiers, int location)
+WKRetainPtr<WKMutableDictionaryRef> EventSendingController::createRawKeyUpMessageBody(JSStringRef key, WKEventModifiers modifiers, int location)
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "RawKeyUp");
+    auto body = createEventSenderDictionary("RawKeyUp");
     setValue(body, "Key", key);
     setValue(body, "Modifiers", adoptWK(WKUInt64Create(modifiers)));
     setValue(body, "Location", adoptWK(WKUInt64Create(location)));
@@ -343,30 +346,44 @@ static WKRetainPtr<WKMutableDictionaryRef> createRawKeyUpMessageBody(JSStringRef
 
 void EventSendingController::keyDown(JSContextRef context, JSStringRef key, JSValueRef modifierArray, int location)
 {
+    if (m_isDisabled)
+        return;
+
     postSynchronousPageMessage("EventSender", createKeyDownMessageBody(key, parseModifierArray(context, modifierArray), location));
 }
 
 void EventSendingController::rawKeyDown(JSContextRef context, JSStringRef key, JSValueRef modifierArray, int location)
 {
+    if (m_isDisabled)
+        return;
+
     postSynchronousPageMessage("EventSender", createRawKeyDownMessageBody(key, parseModifierArray(context, modifierArray), location));
 }
 
 void EventSendingController::rawKeyUp(JSContextRef context, JSStringRef key, JSValueRef modifierArray, int location)
 {
+    if (m_isDisabled)
+        return;
+
     postSynchronousPageMessage("EventSender", createRawKeyUpMessageBody(key, parseModifierArray(context, modifierArray), location));
 }
 
 void EventSendingController::scheduleAsynchronousKeyDown(JSStringRef key)
 {
+    if (m_isDisabled)
+        return;
+
     postPageMessage("EventSender", createKeyDownMessageBody(key, 0, 0));
 }
 
 void EventSendingController::mouseScrollBy(int x, int y)
 {
+    if (m_isDisabled)
+        return;
+
     WKBundlePageForceRepaint(InjectedBundle::singleton().page()->page()); // Triggers a scrolling tree commit.
 
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "MouseScrollBy");
+    auto body = createEventSenderDictionary("MouseScrollBy");
     setValue(body, "X", adoptWK(WKDoubleCreate(x)));
     setValue(body, "Y", adoptWK(WKDoubleCreate(y)));
     postPageMessage("EventSender", body);
@@ -408,6 +425,9 @@ static uint64_t cgEventMomentumPhaseFromString(JSStringRef phaseStr)
 
 void EventSendingController::mouseScrollByWithWheelAndMomentumPhases(int x, int y, JSStringRef phaseStr, JSStringRef momentumStr)
 {
+    if (m_isDisabled)
+        return;
+
     uint64_t phase = cgEventPhaseFromString(phaseStr);
     uint64_t momentum = cgEventMomentumPhaseFromString(momentumStr);
 
@@ -418,8 +438,7 @@ void EventSendingController::mouseScrollByWithWheelAndMomentumPhases(int x, int 
 
     WKBundlePageForceRepaint(InjectedBundle::singleton().page()->page()); // Triggers a scrolling tree commit.
 
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "MouseScrollByWithWheelAndMomentumPhases");
+    auto body = createEventSenderDictionary("MouseScrollByWithWheelAndMomentumPhases");
     setValue(body, "X", adoptWK(WKDoubleCreate(x)));
     setValue(body, "Y", adoptWK(WKDoubleCreate(y)));
     setValue(body, "Phase", phase);
@@ -429,16 +448,20 @@ void EventSendingController::mouseScrollByWithWheelAndMomentumPhases(int x, int 
 
 void EventSendingController::setWheelHasPreciseDeltas(bool hasPreciseDeltas)
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "SetWheelHasPreciseDeltas");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("SetWheelHasPreciseDeltas");
     setValue(body, "HasPreciseDeltas", hasPreciseDeltas);
     postPageMessage("EventSender", body);
 }
 
 void EventSendingController::continuousMouseScrollBy(int x, int y, bool paged)
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "ContinuousMouseScrollBy");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("ContinuousMouseScrollBy");
     setValue(body, "X", adoptWK(WKDoubleCreate(x)));
     setValue(body, "Y", adoptWK(WKDoubleCreate(y)));
     setValue(body, "Paged", paged);
@@ -450,17 +473,18 @@ void EventSendingController::continuousMouseScrollBy(int x, int y, bool paged)
 JSValueRef EventSendingController::contextClick(JSContextRef context)
 {
 #if ENABLE(CONTEXT_MENUS)
+    auto array = JSObjectMakeArray(context, 0, 0, 0);
+    if (m_isDisabled)
+        return array;
+
     auto page = InjectedBundle::singleton().page()->page();
     auto menuEntries = adoptWK(WKBundlePageCopyContextMenuAtPointInWindow(page, m_position));
-    auto array = JSObjectMakeArray(context, 0, 0, 0);
     if (!menuEntries)
         return array;
 
     size_t entriesSize = WKArrayGetSize(menuEntries.get());
     for (size_t i = 0; i < entriesSize; ++i) {
-        ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(menuEntries.get(), i)) == WKContextMenuItemGetTypeID());
-
-        WKContextMenuItemRef item = static_cast<WKContextMenuItemRef>(WKArrayGetItemAtIndex(menuEntries.get(), i));
+        WKContextMenuItemRef item = dynamic_wk_cast<WKContextMenuItemRef>(WKArrayGetItemAtIndex(menuEntries.get(), i));
         MenuItemPrivateData* privateData = new MenuItemPrivateData(page, item);
         JSObjectSetPropertyAtIndex(context, array, i, JSObjectMake(context, getMenuItemClass(), privateData), 0);
     }
@@ -473,32 +497,40 @@ JSValueRef EventSendingController::contextClick(JSContextRef context)
 
 void EventSendingController::textZoomIn()
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "SetTextZoom");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("SetTextZoom");
     setValue(body, "ZoomIn", true);
     postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::textZoomOut()
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "SetTextZoom");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("SetTextZoom");
     setValue(body, "ZoomIn", false);
     postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::zoomPageIn()
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "SetPageZoom");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("SetPageZoom");
     setValue(body, "ZoomIn", true);
     postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::zoomPageOut()
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "SetPageZoom");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("SetPageZoom");
     setValue(body, "ZoomIn", false);
     postSynchronousPageMessage("EventSender", body);
 }
@@ -523,7 +555,7 @@ void EventSendingController::monitorWheelEvents(MonitorWheelEventsOptions* optio
 }
 
 struct ScrollCompletionCallbackData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ScrollCompletionCallbackData);
     JSContextRef m_context;
     JSObjectRef m_function;
 
@@ -570,8 +602,10 @@ void EventSendingController::callAfterScrollingCompletes(JSContextRef context, J
 
 void EventSendingController::addTouchPoint(int x, int y)
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "AddTouchPoint");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("AddTouchPoint");
     setValue(body, "X", static_cast<uint64_t>(x));
     setValue(body, "Y", static_cast<uint64_t>(y));
     postSynchronousPageMessage("EventSender", body);
@@ -579,8 +613,10 @@ void EventSendingController::addTouchPoint(int x, int y)
 
 void EventSendingController::updateTouchPoint(int index, int x, int y)
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "UpdateTouchPoint");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("UpdateTouchPoint");
     setValue(body, "Index", static_cast<uint64_t>(index));
     setValue(body, "X", static_cast<uint64_t>(x));
     setValue(body, "Y", static_cast<uint64_t>(y));
@@ -589,8 +625,10 @@ void EventSendingController::updateTouchPoint(int index, int x, int y)
 
 void EventSendingController::setTouchModifier(JSStringRef modifier, bool enable)
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "SetTouchModifier");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("SetTouchModifier");
     setValue(body, "Modifier", parseTouchModifier(modifier));
     setValue(body, "Enable", enable);
     postSynchronousPageMessage("EventSender", body);
@@ -598,8 +636,10 @@ void EventSendingController::setTouchModifier(JSStringRef modifier, bool enable)
 
 void EventSendingController::setTouchPointRadius(int radiusX, int radiusY)
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "SetTouchPointRadius");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("SetTouchPointRadius");
     setValue(body, "RadiusX", static_cast<uint64_t>(radiusX));
     setValue(body, "RadiusY", static_cast<uint64_t>(radiusY));
     postSynchronousPageMessage("EventSender", body);
@@ -607,51 +647,65 @@ void EventSendingController::setTouchPointRadius(int radiusX, int radiusY)
 
 void EventSendingController::touchStart()
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "TouchStart");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("TouchStart");
     postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::touchMove()
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "TouchMove");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("TouchMove");
     postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::touchEnd()
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "TouchEnd");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("TouchEnd");
     postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::touchCancel()
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "TouchCancel");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("TouchCancel");
     postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::clearTouchPoints()
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "ClearTouchPoints");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("ClearTouchPoints");
     postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::releaseTouchPoint(int index)
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "ReleaseTouchPoint");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("ReleaseTouchPoint");
     setValue(body, "Index", static_cast<uint64_t>(index));
     postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::cancelTouchPoint(int index)
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "CancelTouchPoint");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("CancelTouchPoint");
     setValue(body, "Index", static_cast<uint64_t>(index));
     postSynchronousPageMessage("EventSender", body);
 }
@@ -660,9 +714,11 @@ void EventSendingController::cancelTouchPoint(int index)
 
 void EventSendingController::smartMagnify()
 {
+    if (m_isDisabled)
+        return;
+
 #if PLATFORM(MAC)
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "SmartMagnify");
+    auto body = createEventSenderDictionary("SmartMagnify");
     postSynchronousPageMessage("EventSender", body);
 #endif
 }
@@ -671,24 +727,30 @@ void EventSendingController::smartMagnify()
 
 void EventSendingController::scaleGestureStart(double scale)
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "ScaleGestureStart");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("ScaleGestureStart");
     setValue(body, "Scale", scale);
     postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::scaleGestureChange(double scale)
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "ScaleGestureChange");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("ScaleGestureChange");
     setValue(body, "Scale", scale);
     postSynchronousPageMessage("EventSender", body);
 }
 
 void EventSendingController::scaleGestureEnd(double scale)
 {
-    auto body = adoptWK(WKMutableDictionaryCreate());
-    setValue(body, "SubMessage", "ScaleGestureEnd");
+    if (m_isDisabled)
+        return;
+
+    auto body = createEventSenderDictionary("ScaleGestureEnd");
     setValue(body, "Scale", scale);
     postSynchronousPageMessage("EventSender", body);
 }

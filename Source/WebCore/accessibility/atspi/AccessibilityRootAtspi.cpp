@@ -24,9 +24,9 @@
 #include "AXObjectCache.h"
 #include "AccessibilityAtspiEnums.h"
 #include "AccessibilityAtspiInterfaces.h"
-#include "Document.h"
+#include "DocumentView.h"
 #include "FocusController.h"
-#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
 #include "Page.h"
 #include <glib/gi18n-lib.h>

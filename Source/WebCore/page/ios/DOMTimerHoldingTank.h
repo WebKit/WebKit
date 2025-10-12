@@ -27,7 +27,8 @@
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 
-#include "Timer.h"
+#include <WebCore/DOMTimer.h>
+#include <WebCore/Timer.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>

@@ -28,11 +28,11 @@
 #include "CustomStateSet.h"
 
 #include "AXObjectCache.h"
-#include "DocumentInlines.h"
 #include "ElementInlines.h"
 #include "ElementRareData.h"
 #include "HTMLFormElement.h"
 #include "HTMLMaybeFormAssociatedCustomElement.h"
+#include "ScriptWrappableInlines.h"
 #include "ShadowRoot.h"
 #include <wtf/TZoneMallocInlines.h>
 

@@ -32,12 +32,16 @@ GraphiteDawnWindowContext::GraphiteDawnWindowContext(std::unique_ptr<const Displ
         : WindowContext(std::move(params)), fSurfaceFormat(surfaceFormat) {
     wgpu::InstanceDescriptor desc{};
     // need for WaitAny with timeout > 0
-    desc.capabilities.timedWaitAnyEnable = true;
+    static const auto kTimedWaitAny = wgpu::InstanceFeatureName::TimedWaitAny;
+    desc.requiredFeatureCount = 1;
+    desc.requiredFeatures = &kTimedWaitAny;
     fInstance = std::make_unique<dawn::native::Instance>(&desc);
 }
 
 void GraphiteDawnWindowContext::initializeContext(int width, int height) {
+#if defined(SK_GANESH)
     SkASSERT(!fContext);
+#endif
 
     fWidth = width;
     fHeight = height;
@@ -136,13 +140,9 @@ wgpu::Device GraphiteDawnWindowContext::createDevice(wgpu::BackendType type) {
             // Robustness impacts performance and is always disabled when running Graphite in
             // Chrome, so this keeps Skia's tests operating closer to real-use behavior.
             "disable_robustness",
-            // Must be last to correctly respond to `fUseTintIR` option.
-            "use_tint_ir",
     };
     wgpu::DawnTogglesDescriptor togglesDesc;
-    togglesDesc.enabledToggleCount =
-            std::size(kToggles) -
-            (fDisplayParams->graphiteTestOptions()->fTestOptions.fUseTintIR ? 0 : 1);
+    togglesDesc.enabledToggleCount  = std::size(kToggles);
     togglesDesc.enabledToggles      = kToggles;
 
     wgpu::RequestAdapterOptions adapterOptions;
@@ -204,6 +204,11 @@ wgpu::Device GraphiteDawnWindowContext::createDevice(wgpu::BackendType type) {
     wgpu::DeviceDescriptor deviceDescriptor;
     deviceDescriptor.requiredFeatures = features.data();
     deviceDescriptor.requiredFeatureCount = features.size();
+
+    wgpu::Limits limits = {};
+    adapter.GetLimits(&limits);
+    deviceDescriptor.requiredLimits = &limits;
+
     deviceDescriptor.nextInChain = &togglesDesc;
     deviceDescriptor.SetDeviceLostCallback(
             wgpu::CallbackMode::AllowSpontaneous,

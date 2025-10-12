@@ -29,7 +29,7 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-#include "VM.h"
+#include <JavaScriptCore/VM.h>
 #include <wtf/StackPointer.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

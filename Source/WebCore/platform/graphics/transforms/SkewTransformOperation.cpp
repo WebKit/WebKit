@@ -48,14 +48,14 @@ bool SkewTransformOperation::operator==(const TransformOperation& other) const
     return m_angleX == s.m_angleX && m_angleY == s.m_angleY;
 }
 
-Ref<TransformOperation> SkewTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
+Ref<TransformOperation> SkewTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity) const
 {
     if (blendToIdentity)
         return SkewTransformOperation::create(WebCore::blend(m_angleX, 0.0, context), WebCore::blend(m_angleY, 0.0, context), type());
 
     auto outputType = sharedPrimitiveType(from);
     if (!outputType)
-        return *this;
+        return const_cast<SkewTransformOperation&>(*this);
 
     const SkewTransformOperation* fromOp = downcast<SkewTransformOperation>(from);
     double fromAngleX = fromOp ? fromOp->m_angleX : 0;

@@ -21,11 +21,12 @@ import {
 
 '../../../../capability_info.js';
 import { GPUConst } from '../../../../constants.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../../gpu_test.js';
 import {
 
   kProgrammableEncoderTypes } from
 '../../../../util/command_buffer_maker.js';
-import { AllFeaturesMaxLimitsValidationTest } from '../../validation_test.js';
+import * as vtu from '../../validation_test_utils.js';
 
 const kComputeCmds = ['dispatch', 'dispatchIndirect'];
 
@@ -71,7 +72,7 @@ combine('encoderType', kProgrammableEncoderTypes).
 expand('call', (p) => getTestCmds(p.encoderType)).
 combine('callWithZero', [true, false]);
 
-class F extends AllFeaturesMaxLimitsValidationTest {
+class F extends AllFeaturesMaxLimitsGPUTest {
   getIndexBuffer() {
     return this.createBufferTracked({
       size: 8 * Uint32Array.BYTES_PER_ELEMENT,
@@ -164,7 +165,7 @@ class F extends AllFeaturesMaxLimitsValidationTest {
   createBindGroupWithLayout(bglEntries) {
     const bgEntries = [];
     for (const entry of bglEntries) {
-      const resource = this.getBindingResource(this.getBindingResourceType(entry));
+      const resource = vtu.getBindingResource(this, this.getBindingResourceType(entry));
       bgEntries.push({
         binding: entry.binding,
         resource
@@ -539,7 +540,7 @@ fn((t) => {
   );
 
   // Create fixed bindGroup
-  const uniformBuffer = t.getUniformBuffer();
+  const uniformBuffer = vtu.getUniformBuffer(t);
 
   const bindGroup = t.device.createBindGroup({
     entries: [

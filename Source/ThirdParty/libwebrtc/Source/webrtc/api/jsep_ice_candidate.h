@@ -8,83 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-// TODO(deadbeef): Move this out of api/; it's an implementation detail and
-// shouldn't be used externally.
-
 #ifndef API_JSEP_ICE_CANDIDATE_H_
 #define API_JSEP_ICE_CANDIDATE_H_
 
-#include <stddef.h>
-
-#include <memory>
-#include <string>
-#include <vector>
-
-#include "api/candidate.h"
-#include "api/jsep.h"
-#include "rtc_base/system/rtc_export.h"
-
-namespace webrtc {
-
-// Implementation of IceCandidateInterface.
-class RTC_EXPORT JsepIceCandidate : public IceCandidateInterface {
- public:
-  JsepIceCandidate(const std::string& sdp_mid, int sdp_mline_index);
-  JsepIceCandidate(const std::string& sdp_mid,
-                   int sdp_mline_index,
-                   const cricket::Candidate& candidate);
-  JsepIceCandidate(const JsepIceCandidate&) = delete;
-  JsepIceCandidate& operator=(const JsepIceCandidate&) = delete;
-  ~JsepIceCandidate() override;
-  // `err` may be null.
-  bool Initialize(const std::string& sdp, SdpParseError* err);
-  void SetCandidate(const cricket::Candidate& candidate) {
-    candidate_ = candidate;
-  }
-
-  std::string sdp_mid() const override;
-  int sdp_mline_index() const override;
-  const cricket::Candidate& candidate() const override;
-
-  std::string server_url() const override;
-
-  bool ToString(std::string* out) const override;
-
- private:
-  std::string sdp_mid_;
-  int sdp_mline_index_;
-  cricket::Candidate candidate_;
-};
-
-// Implementation of IceCandidateCollection which stores JsepIceCandidates.
-class JsepCandidateCollection : public IceCandidateCollection {
- public:
-  JsepCandidateCollection();
-  // Move constructor is defined so that a vector of JsepCandidateCollections
-  // can be resized.
-  JsepCandidateCollection(JsepCandidateCollection&& o);
-
-  JsepCandidateCollection(const JsepCandidateCollection&) = delete;
-  JsepCandidateCollection& operator=(const JsepCandidateCollection&) = delete;
-
-  // Returns a copy of the candidate collection.
-  JsepCandidateCollection Clone() const;
-  size_t count() const override;
-  bool HasCandidate(const IceCandidateInterface* candidate) const override;
-  // Adds and takes ownership of the JsepIceCandidate.
-  // TODO(deadbeef): Make this use an std::unique_ptr<>, so ownership logic is
-  // more clear.
-  virtual void add(JsepIceCandidate* candidate);
-  const IceCandidateInterface* at(size_t index) const override;
-  // Removes the candidate that has a matching address and protocol.
-  //
-  // Returns the number of candidates that were removed.
-  size_t remove(const cricket::Candidate& candidate);
-
- private:
-  std::vector<std::unique_ptr<JsepIceCandidate>> candidates_;
-};
-
-}  // namespace webrtc
+// TODO: webrtc:406795492 - Delete file once no longer #included.
+#include "api/jsep.h"  // IWYU pragma: keep
 
 #endif  // API_JSEP_ICE_CANDIDATE_H_

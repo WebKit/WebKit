@@ -74,7 +74,7 @@ void PersistentStore::postTask(Function<void()>&& task) const
 void PersistentStore::postTaskReply(WTF::Function<void()>&& reply) const
 {
     ASSERT(!RunLoop::isMain());
-    RunLoop::protectedMain()->dispatch(WTFMove(reply));
+    RunLoop::mainSingleton().dispatch(WTFMove(reply));
 }
 
 void PersistentStore::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&& attribution, PrivateClickMeasurementAttributionType attributionType, CompletionHandler<void()>&& completionHandler)

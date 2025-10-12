@@ -49,11 +49,14 @@
 #include "ChannelSplitterOptions.h"
 #include "ConstantSourceNode.h"
 #include "ConstantSourceOptions.h"
+#include "ContextDestructionObserverInlines.h"
 #include "ConvolverNode.h"
 #include "DelayNode.h"
 #include "DelayOptions.h"
-#include "DocumentInlines.h"
+#include "DocumentPage.h"
+#include "DocumentSecurityOrigin.h"
 #include "DynamicsCompressorNode.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "EventTargetInterfaces.h"
 #include "FFTFrame.h"
@@ -67,6 +70,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "LocalFrame.h"
 #include "Logging.h"
+#include "MediaSessionManagerInterface.h"
 #include "NetworkingContext.h"
 #include "OriginAccessPatterns.h"
 #include "OscillatorNode.h"
@@ -77,7 +81,7 @@
 #include "PlatformMediaSessionManager.h"
 #include "ScriptController.h"
 #include "ScriptProcessorNode.h"
-#include "ScriptTelemetryCategory.h"
+#include "ScriptTrackingPrivacyCategory.h"
 #include "StereoPannerNode.h"
 #include "StereoPannerOptions.h"
 #include "WaveShaperNode.h"
@@ -128,7 +132,7 @@ static OptionSet<NoiseInjectionPolicy> effectiveNoiseInjectionPolicies(Document&
     auto documentPolicies = document.noiseInjectionPolicies();
     if (documentPolicies.contains(NoiseInjectionPolicy::Minimal))
         policies.add(NoiseInjectionPolicy::Minimal);
-    if (documentPolicies.contains(NoiseInjectionPolicy::Enhanced) && document.requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Audio))
+    if (documentPolicies.contains(NoiseInjectionPolicy::Enhanced) && document.requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::Audio))
         policies.add(NoiseInjectionPolicy::Enhanced);
     return policies;
 }
@@ -244,7 +248,8 @@ void BaseAudioContext::setState(State state)
     if (m_state != state) {
         m_state = state;
         queueTaskToDispatchEvent(*this, TaskSource::MediaElement, Event::create(eventNames().statechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
-        PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary();
+        if (RefPtr manager = mediaSessionManager())
+            manager->updateNowPlayingInfoIfNecessary();
     }
 
     size_t stateIndex = static_cast<size_t>(state);
@@ -362,7 +367,7 @@ ExceptionOr<Ref<ScriptProcessorNode>> BaseAudioContext::createScriptProcessor(si
     case 0:
 #if USE(AUDIO_SESSION)
         // Pick a value between 256 (2^8) and 16384 (2^14), based on the buffer size of the current AudioSession:
-        bufferSize = 1 << std::max<size_t>(8, std::min<size_t>(14, std::log2(AudioSession::sharedSession().bufferSize())));
+        bufferSize = 1 << std::max<size_t>(8, std::min<size_t>(14, std::log2(AudioSession::singleton().bufferSize())));
 #else
         bufferSize = 2048;
 #endif
@@ -982,6 +987,20 @@ WTFLogChannel& BaseAudioContext::logChannel() const
     return LogMedia;
 }
 #endif
+
+RefPtr<MediaSessionManagerInterface> BaseAudioContext::mediaSessionManager() const
+{
+    RefPtr document = this->document();
+    if (!document)
+        return nullptr;
+
+    RefPtr page = document->page();
+    if (!page)
+        return nullptr;
+
+    return page->mediaSessionManager();
+}
+
 
 } // namespace WebCore
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,18 +25,18 @@
 
 #pragma once
 
-#include "ContentSecurityPolicyResponseHeaders.h"
-#include "CrossOriginEmbedderPolicy.h"
-#include "FetchRequestCredentials.h"
-#include "NotificationPermission.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include "ServiceWorkerRegistrationData.h"
-#include "Settings.h"
-#include "WorkerClient.h"
-#include "WorkerOrWorkletThread.h"
-#include "WorkerRunLoop.h"
-#include "WorkerType.h"
 #include <JavaScriptCore/RuntimeFlags.h>
+#include <WebCore/ContentSecurityPolicyResponseHeaders.h>
+#include <WebCore/CrossOriginEmbedderPolicy.h>
+#include <WebCore/FetchRequestCredentials.h>
+#include <WebCore/NotificationPermission.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/ServiceWorkerRegistrationData.h>
+#include <WebCore/Settings.h>
+#include <WebCore/WorkerClient.h>
+#include <WebCore/WorkerOrWorkletThread.h>
+#include <WebCore/WorkerRunLoop.h>
+#include <WebCore/WorkerType.h>
 #include <memory>
 #include <pal/SessionID.h>
 #include <wtf/CheckedPtr.h>
@@ -98,19 +98,14 @@ class WorkerThread : public WorkerOrWorkletThread {
 public:
     virtual ~WorkerThread();
 
-    WorkerBadgeProxy* workerBadgeProxy() const;
-    WorkerDebuggerProxy* workerDebuggerProxy() const final;
-    WorkerLoaderProxy* workerLoaderProxy() final;
-    WorkerReportingProxy* workerReportingProxy() const;
+    WorkerBadgeProxy* workerBadgeProxy() const { return m_workerBadgeProxy.get(); }
+    WorkerDebuggerProxy* workerDebuggerProxy() const final { return m_workerDebuggerProxy.get(); }
+    WorkerLoaderProxy* workerLoaderProxy() const final { return m_workerLoaderProxy.get(); }
+    WorkerReportingProxy* workerReportingProxy() const { return m_workerReportingProxy.get(); }
 
     // Number of active worker threads.
     WEBCORE_EXPORT static unsigned workerThreadCount();
 
-#if ENABLE(NOTIFICATIONS)
-    NotificationClient* getNotificationClient() { return m_notificationClient; }
-    void setNotificationClient(NotificationClient* client) { m_notificationClient = client; }
-#endif
-    
     JSC::RuntimeFlags runtimeFlags() const { return m_runtimeFlags; }
     bool isInStaticScriptEvaluation() const { return m_isInStaticScriptEvaluation; }
 
@@ -125,14 +120,15 @@ protected:
 
     WorkerGlobalScope* globalScope();
 
-    IDBClient::IDBConnectionProxy* idbConnectionProxy();
-    SocketProvider* socketProvider();
+    IDBClient::IDBConnectionProxy* idbConnectionProxy() { return m_idbConnectionProxy.get(); }
+    SocketProvider* socketProvider() { return m_socketProvider.get(); }
 
     std::unique_ptr<WorkerClient> m_workerClient;
 private:
     virtual ASCIILiteral threadName() const = 0;
 
     virtual void finishedEvaluatingScript() { }
+    bool isWorkerThread() const final { return true; }
 
     // WorkerOrWorkletThread.
     Ref<Thread> createThread() final;
@@ -148,13 +144,13 @@ private:
 
     std::unique_ptr<WorkerThreadStartupData> m_startupData;
 
-#if ENABLE(NOTIFICATIONS)
-    NotificationClient* m_notificationClient { nullptr };
-#endif
-
-    RefPtr<IDBClient::IDBConnectionProxy> m_idbConnectionProxy;
-    RefPtr<SocketProvider> m_socketProvider;
+    const RefPtr<IDBClient::IDBConnectionProxy> m_idbConnectionProxy;
+    const RefPtr<SocketProvider> m_socketProvider;
     bool m_isInStaticScriptEvaluation { false };
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WorkerThread)
+    static bool isType(const WebCore::WorkerOrWorkletThread& thread) { return thread.isWorkerThread(); }
+SPECIALIZE_TYPE_TRAITS_END()

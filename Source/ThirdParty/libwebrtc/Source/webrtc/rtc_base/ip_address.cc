@@ -8,27 +8,27 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "rtc_base/ip_address.h"
+
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <string>
+
+#include "absl/strings/string_view.h"
+#include "rtc_base/byte_order.h"
+#include "rtc_base/net_helpers.h"
+#include "rtc_base/string_utils.h"
+
 #if defined(WEBRTC_POSIX)
 #ifdef OPENBSD
 #include <netinet/in_systm.h>
 #endif
-#ifndef __native_client__
-#endif
 #include <netdb.h>
 #endif
 
-#include "absl/strings/string_view.h"
-#include "rtc_base/byte_order.h"
-#include "rtc_base/ip_address.h"
-#include "rtc_base/net_helpers.h"
-#include "rtc_base/string_utils.h"
-
-namespace rtc {
+namespace webrtc {
 
 // Prefixes used for categorizing IPv6 addresses.
 static const in6_addr kV4MappedPrefix = {
@@ -140,7 +140,7 @@ std::string IPAddress::ToString() const {
   if (family_ == AF_INET6) {
     src = &u_.ip6;
   }
-  if (!rtc::inet_ntop(family_, src, buf, sizeof(buf))) {
+  if (!inet_ntop(family_, src, buf, sizeof(buf))) {
     return std::string();
   }
   return std::string(buf);
@@ -212,7 +212,7 @@ std::string InterfaceAddress::ToString() const {
   std::string result = IPAddress::ToString();
 
   if (family() == AF_INET6)
-    result += "|flags:0x" + rtc::ToHex(ipv6_flags());
+    result += "|flags:0x" + ToHex(ipv6_flags());
 
   return result;
 }
@@ -279,9 +279,9 @@ bool IPFromString(absl::string_view str, IPAddress* out) {
     return false;
   }
   in_addr addr;
-  if (rtc::inet_pton(AF_INET, str, &addr) == 0) {
+  if (inet_pton(AF_INET, str, &addr) == 0) {
     in6_addr addr6;
-    if (rtc::inet_pton(AF_INET6, str, &addr6) == 0) {
+    if (inet_pton(AF_INET6, str, &addr6) == 0) {
       *out = IPAddress();
       return false;
     }
@@ -554,22 +554,22 @@ int IPAddressPrecedence(const IPAddress& ip) {
 
 IPAddress GetLoopbackIP(int family) {
   if (family == AF_INET) {
-    return rtc::IPAddress(INADDR_LOOPBACK);
+    return IPAddress(INADDR_LOOPBACK);
   }
   if (family == AF_INET6) {
-    return rtc::IPAddress(in6addr_loopback);
+    return IPAddress(in6addr_loopback);
   }
-  return rtc::IPAddress();
+  return IPAddress();
 }
 
 IPAddress GetAnyIP(int family) {
   if (family == AF_INET) {
-    return rtc::IPAddress(INADDR_ANY);
+    return IPAddress(INADDR_ANY);
   }
   if (family == AF_INET6) {
-    return rtc::IPAddress(in6addr_any);
+    return IPAddress(in6addr_any);
   }
-  return rtc::IPAddress();
+  return IPAddress();
 }
 
-}  // namespace rtc
+}  // namespace webrtc

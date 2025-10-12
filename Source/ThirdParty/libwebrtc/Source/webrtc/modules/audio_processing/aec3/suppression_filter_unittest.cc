@@ -10,18 +10,25 @@
 
 #include "modules/audio_processing/aec3/suppression_filter.h"
 
-#include <math.h>
-
 #include <algorithm>
+#include <array>
 #include <cmath>
+#include <cstddef>
+#include <numbers>
 #include <numeric>
+#include <vector>
 
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/aec3_fft.h"
+#include "modules/audio_processing/aec3/block.h"
+#include "modules/audio_processing/aec3/fft_data.h"
+#include "rtc_base/checks.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
 
-constexpr float kPi = 3.141592f;
+constexpr float kPi = std::numbers::pi_v<float>;
 
 void ProduceSinusoid(int sample_rate_hz,
                      float sinusoidal_frequency_hz,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,9 +29,9 @@
 
 #pragma once
 
-#include "Exception.h"
-#include "InjectedScript.h"
-#include "InspectorEnvironment.h"
+#include <JavaScriptCore/Exception.h>
+#include <JavaScriptCore/InjectedScript.h>
+#include <JavaScriptCore/InspectorEnvironment.h>
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -79,7 +79,7 @@ private:
     Expected<JSC::JSObject*, NakedPtr<JSC::Exception>> createInjectedScript(JSC::JSGlobalObject*, int id);
 
     InspectorEnvironment& m_environment;
-    Ref<InjectedScriptHost> m_injectedScriptHost;
+    const Ref<InjectedScriptHost> m_injectedScriptHost;
     int m_nextInjectedScriptId;
 };
 

@@ -56,8 +56,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "07A58BCC2D0400B300CAB4ED"
-               BuildableName = "SwiftBrowser"
+               BlueprintIdentifier = "07A58BD32D0400B300CAB4ED"
+               BuildableName = "SwiftBrowser.app"
                BlueprintName = "SwiftBrowser"
                ReferencedContainer = "container:Tools/SwiftBrowser/SwiftBrowser.xcodeproj">
             </BuildableReference>

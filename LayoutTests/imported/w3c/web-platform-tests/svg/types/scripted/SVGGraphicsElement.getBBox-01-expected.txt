@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-1"
-CONSOLE MESSAGE: Error: Problem parsing d="M3"
-CONSOLE MESSAGE: Error: Problem parsing points="47"
-CONSOLE MESSAGE: Error: Problem parsing points="47"
 
 PASS getBBox on detached element
 PASS getBBox on polygon with no points attribute

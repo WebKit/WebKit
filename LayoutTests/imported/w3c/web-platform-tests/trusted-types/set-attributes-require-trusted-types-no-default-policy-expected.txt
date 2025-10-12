@@ -1,123 +1,3 @@
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
 PASS Element.setAttribute throws for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=onclick with a plain string
 PASS Element.setAttribute throws for elementNS=http://www.w3.org/2000/svg, element=g,  attrName=ondblclick with a plain string
@@ -125,7 +5,7 @@ PASS Element.setAttribute throws for elementNS=http://www.w3.org/1998/Math/MathM
 PASS Element.setAttribute throws for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME,  attrName=srcdoc with a plain string
 PASS Element.setAttribute throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
 PASS Element.setAttribute throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
-FAIL Element.setAttribute works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string This assignment requires a TrustedScript
+PASS Element.setAttribute works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string
 PASS Element.setAttribute works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=ondoesnotexist with a plain string
 PASS Element.setAttribute works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=data-onclick with a plain string
 PASS Element.setAttribute works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=srcdoc with a plain string
@@ -144,7 +24,7 @@ PASS Element.setAttributeNS throws for elementNS=http://www.w3.org/1999/xhtml, e
 PASS Element.setAttributeNS throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
 PASS Element.setAttributeNS throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
 PASS Element.setAttributeNS throws for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink,  attrName=href with a plain string
-FAIL Element.setAttributeNS works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string This assignment requires a TrustedScript
+PASS Element.setAttributeNS works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string
 PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace,  attrName=onclick with a plain string
 PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=ondoesnotexist with a plain string
 PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=data-onclick with a plain string
@@ -167,7 +47,7 @@ PASS Element.setAttributeNode throws for elementNS=http://www.w3.org/1999/xhtml,
 PASS Element.setAttributeNode throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
 PASS Element.setAttributeNode throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
 PASS Element.setAttributeNode throws for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink,  attrName=href with a plain string
-FAIL Element.setAttributeNode works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string This assignment requires a TrustedScript
+PASS Element.setAttributeNode works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string
 PASS Element.setAttributeNode works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace,  attrName=onclick with a plain string
 PASS Element.setAttributeNode works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=ondoesnotexist with a plain string
 PASS Element.setAttributeNode works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=data-onclick with a plain string
@@ -190,7 +70,7 @@ PASS Element.setAttributeNodeNS throws for elementNS=http://www.w3.org/1999/xhtm
 PASS Element.setAttributeNodeNS throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
 PASS Element.setAttributeNodeNS throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
 PASS Element.setAttributeNodeNS throws for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink,  attrName=href with a plain string
-FAIL Element.setAttributeNodeNS works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string This assignment requires a TrustedScript
+PASS Element.setAttributeNodeNS works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string
 PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace,  attrName=onclick with a plain string
 PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=ondoesnotexist with a plain string
 PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=data-onclick with a plain string
@@ -213,7 +93,7 @@ PASS NamedNodeMap.setNamedItem throws for elementNS=http://www.w3.org/1999/xhtml
 PASS NamedNodeMap.setNamedItem throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
 PASS NamedNodeMap.setNamedItem throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
 PASS NamedNodeMap.setNamedItem throws for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink,  attrName=href with a plain string
-FAIL NamedNodeMap.setNamedItem works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string This assignment requires a TrustedScript
+PASS NamedNodeMap.setNamedItem works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string
 PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace,  attrName=onclick with a plain string
 PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=ondoesnotexist with a plain string
 PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=data-onclick with a plain string
@@ -236,7 +116,7 @@ PASS NamedNodeMap.setNamedItemNS throws for elementNS=http://www.w3.org/1999/xht
 PASS NamedNodeMap.setNamedItemNS throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
 PASS NamedNodeMap.setNamedItemNS throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
 PASS NamedNodeMap.setNamedItemNS throws for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink,  attrName=href with a plain string
-FAIL NamedNodeMap.setNamedItemNS works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string This assignment requires a TrustedScript
+PASS NamedNodeMap.setNamedItemNS works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string
 PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace,  attrName=onclick with a plain string
 PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=ondoesnotexist with a plain string
 PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=data-onclick with a plain string
@@ -259,7 +139,7 @@ PASS Attr.value throws for elementNS=http://www.w3.org/1999/xhtml, element=IFRAM
 PASS Attr.value throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
 PASS Attr.value throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
 PASS Attr.value throws for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink,  attrName=href with a plain string
-FAIL Attr.value works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string This assignment requires a TrustedScript
+PASS Attr.value works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string
 PASS Attr.value works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace,  attrName=onclick with a plain string
 PASS Attr.value works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=ondoesnotexist with a plain string
 PASS Attr.value works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=data-onclick with a plain string
@@ -282,7 +162,7 @@ PASS Node.nodeValue throws for elementNS=http://www.w3.org/1999/xhtml, element=I
 PASS Node.nodeValue throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
 PASS Node.nodeValue throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
 PASS Node.nodeValue throws for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink,  attrName=href with a plain string
-FAIL Node.nodeValue works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string This assignment requires a TrustedScript
+PASS Node.nodeValue works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string
 PASS Node.nodeValue works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace,  attrName=onclick with a plain string
 PASS Node.nodeValue works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=ondoesnotexist with a plain string
 PASS Node.nodeValue works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=data-onclick with a plain string
@@ -305,7 +185,7 @@ PASS Node.textContent throws for elementNS=http://www.w3.org/1999/xhtml, element
 PASS Node.textContent throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
 PASS Node.textContent throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
 PASS Node.textContent throws for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink,  attrName=href with a plain string
-FAIL Node.textContent works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string This assignment requires a TrustedScript
+PASS Node.textContent works for elementNS=https://example.com/namespace, element=foo,  attrName=onmouseup with a plain string
 PASS Node.textContent works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace,  attrName=onclick with a plain string
 PASS Node.textContent works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=ondoesnotexist with a plain string
 PASS Node.textContent works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=data-onclick with a plain string

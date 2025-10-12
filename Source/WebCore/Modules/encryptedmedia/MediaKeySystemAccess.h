@@ -60,7 +60,7 @@ private:
 
     String m_keySystem;
     std::unique_ptr<MediaKeySystemConfiguration> m_configuration;
-    Ref<CDM> m_implementation;
+    const Ref<CDM> m_implementation;
 };
 
 } // namespace WebCore

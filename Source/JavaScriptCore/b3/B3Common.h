@@ -27,10 +27,10 @@
 
 #if ENABLE(B3_JIT)
 
-#include "CPU.h"
-#include "GPRInfo.h"
-#include "JSExportMacros.h"
-#include "Options.h"
+#include <JavaScriptCore/CPU.h>
+#include <JavaScriptCore/GPRInfo.h>
+#include <JavaScriptCore/JSExportMacros.h>
+#include <JavaScriptCore/Options.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace B3 {

@@ -22,13 +22,9 @@ struct VideoBitrateAllocationParameters {
   VideoBitrateAllocationParameters(uint32_t total_bitrate_bps,
                                    uint32_t framerate);
   VideoBitrateAllocationParameters(DataRate total_bitrate, double framerate);
-  VideoBitrateAllocationParameters(DataRate total_bitrate,
-                                   DataRate stable_bitrate,
-                                   double framerate);
   ~VideoBitrateAllocationParameters();
 
   DataRate total_bitrate;
-  DataRate stable_bitrate;
   double framerate;
 };
 

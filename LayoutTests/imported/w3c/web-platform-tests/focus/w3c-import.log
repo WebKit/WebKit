@@ -1,0 +1,61 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/focus/activeelement-after-calling-window-focus.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/activeelement-after-focusing-different-site-iframe-contentwindow.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/activeelement-after-focusing-different-site-iframe-then-immediately-focusing-back.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/activeelement-after-focusing-different-site-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/activeelement-after-focusing-same-site-iframe-contentwindow.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/activeelement-after-focusing-same-site-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/activeelement-after-immediately-focusing-different-site-iframe-contentwindow.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/activeelement-after-immediately-focusing-different-site-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/activeelement-after-immediately-focusing-same-site-iframe-contentwindow.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/activeelement-after-immediately-focusing-same-site-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/activeelement-after-nested-loses-focus.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/ancestor-activeelement-after-child-lose-focus.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/cross-origin-ancestor-activeelement-after-child-lose-focus.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-already-focused-iframe-deep-different-site.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-already-focused-iframe-deep-same-site.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-already-focused-iframe-different-site.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-already-focused-iframe-same-site.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-centers-element.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-contenteditable-element-in-iframe-scroll-into-view.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-double-sync-calls.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-element-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-event-after-focusing-iframes.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-event-after-iframe-gets-focus.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-event-after-switching-iframes.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-large-element-in-overflow-hidden-container-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-large-element-in-overflow-hidden-container-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-large-element-in-overflow-hidden-container.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-restoration-in-different-site-iframes-window.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-restoration-in-different-site-iframes.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-restoration-in-same-site-iframes-window.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-sync-when-blur.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-visible-element-in-overflow-hidden-container-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-visible-element-in-overflow-hidden-container-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/focus-visible-element-in-overflow-hidden-container.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/hasfocus-different-site.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/hasfocus-same-site.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/iframe-activeelement-after-focusing-out-iframes.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/iframe-contentwindow-focus-with-different-site-intermediate-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/iframe-contentwindow-focus-with-same-as-top-intermediate-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/iframe-focus-with-different-site-intermediate-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/iframe-focus-with-same-as-top-intermediate-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/iframe-focuses-parent-different-site.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/iframe-focuses-parent-same-site.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/nested-focus-within-iframe-focus-event.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/scroll-matches-focus.html

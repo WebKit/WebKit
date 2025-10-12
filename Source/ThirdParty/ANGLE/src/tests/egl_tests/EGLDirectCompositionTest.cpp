@@ -7,6 +7,10 @@
 // EGLDirectCompositionTest.cpp:
 //   Tests pertaining to DirectComposition and WindowsUIComposition.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #ifdef ANGLE_ENABLE_D3D11_COMPOSITOR_NATIVE_WINDOW
 
 #    include <d3d11.h>
@@ -157,9 +161,9 @@ class EGLDirectCompositionTest : public ANGLETest<>
                 eglGetProcAddress("eglGetPlatformDisplay"));
         ASSERT_TRUE(eglGetPlatformDisplay != nullptr);
 
-        mEglDisplay = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
-                                            reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY),
-                                            defaultDisplayAttributes);
+        mEglDisplay =
+            eglGetPlatformDisplay(GetEglPlatform(), reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY),
+                                  defaultDisplayAttributes);
         ASSERT_TRUE(mEglDisplay != EGL_NO_DISPLAY);
 
         ASSERT_EGL_TRUE(eglInitialize(mEglDisplay, nullptr, nullptr));

@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 
 #include <d3d11.h>
@@ -49,8 +53,7 @@ class EGLPresentPathD3D11 : public ANGLETest<>
                                       usePresentPathFast ? EGL_EXPERIMENTAL_PRESENT_PATH_FAST_ANGLE
                                                          : EGL_EXPERIMENTAL_PRESENT_PATH_COPY_ANGLE,
                                       EGL_NONE};
-        mDisplay =
-            eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, displayAttribs);
+        mDisplay = eglGetPlatformDisplay(GetEglPlatform(), EGL_DEFAULT_DISPLAY, displayAttribs);
         ASSERT_TRUE(EGL_NO_DISPLAY != mDisplay);
         ASSERT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
 

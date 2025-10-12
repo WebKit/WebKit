@@ -1,0 +1,4 @@
+
+EVENT(loadedmetadata)
+EXPECTED (0 == '0') OK
+

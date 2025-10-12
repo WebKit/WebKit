@@ -1,0 +1,33 @@
+a
+b
+
+a
+b
+
+FAIL .stretch 1 assert_equals:
+<div class="container">
+  <div class="stretch" style="width: 75px; border-color: cyan" data-expected-height="26">a</div>
+  <div class="stretch" style="width: 75px; border-color: magenta" data-expected-height="26">b</div>
+</div>
+height expected 26 but got 578
+FAIL .stretch 2 assert_equals:
+<div class="container">
+  <div class="stretch" style="width: 75px; border-color: cyan" data-expected-height="26">a</div>
+  <div class="stretch" style="width: 75px; border-color: magenta" data-expected-height="26">b</div>
+</div>
+height expected 26 but got 578
+FAIL .stretch 3 assert_equals:
+<div class="container">
+  <div class="stretch" style="width: 75px; border-color: cyan" data-expected-height="156">a</div>
+  <div style="border-color: orange; height: 150px"></div>
+  <div class="stretch" style="width: 75px; border-color: magenta" data-expected-height="26">b</div>
+</div>
+height expected 156 but got 578
+FAIL .stretch 4 assert_equals:
+<div class="container">
+  <div class="stretch" style="width: 75px; border-color: cyan" data-expected-height="156">a</div>
+  <div style="border-color: orange; height: 150px"></div>
+  <div class="stretch" style="width: 75px; border-color: magenta" data-expected-height="26">b</div>
+</div>
+height expected 26 but got 578
+

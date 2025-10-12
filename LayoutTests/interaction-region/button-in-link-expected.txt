@@ -17,7 +17,8 @@ Some text but also a button and another that overflows
         (cornerRadius 6.00),
         (guard (180,37) width=98 height=38),
         (interaction (180,47) width=98 height=18)
-        (cornerRadius 10.00)])
+        (cornerRadius 10.00)
+        (useContinuousCorners 1)])
       )
     )
   )

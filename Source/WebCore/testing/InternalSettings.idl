@@ -34,7 +34,6 @@ enum UserInterfaceDirectionPolicy { "Content", "System" };
 
 [
     LegacyNoInterfaceObject,
-    JSGenerateToJSObject,
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] interface InternalSettings : InternalSettingsGenerated {
     // Settings

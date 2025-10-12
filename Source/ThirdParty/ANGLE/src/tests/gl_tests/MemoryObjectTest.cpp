@@ -6,6 +6,10 @@
 
 // MemoryObjectTest.cpp : Tests of the GL_EXT_memory_object extension.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 
 #include "test_utils/gl_raii.h"

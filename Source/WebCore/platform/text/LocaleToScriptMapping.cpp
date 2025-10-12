@@ -158,7 +158,7 @@ UScriptCode scriptNameToCode(StringView scriptName)
     return map.get(scriptName, USCRIPT_INVALID_CODE);
 }
 
-UScriptCode localeToScriptCodeForFontSelection(const String& locale)
+UScriptCode localeToScriptCode(const String& locale)
 {
     using LocaleName = PackedASCIILowerCodes<uint64_t>;
     static constexpr std::pair<LocaleName, UScriptCode> localeScriptList[] = {

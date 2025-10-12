@@ -27,7 +27,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "ScrollingTreeNode.h"
+#include <WebCore/ScrollingTreeNode.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -58,7 +58,7 @@ private:
     WEBCORE_EXPORT void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
     std::optional<LayerHostingContextIdentifier> m_hostingContext;
-    UncheckedKeyHashSet<RefPtr<ScrollingTreeNode>> m_hostedChildren;
+    HashSet<RefPtr<ScrollingTreeNode>> m_hostedChildren;
 };
 
 } // namespace WebCore

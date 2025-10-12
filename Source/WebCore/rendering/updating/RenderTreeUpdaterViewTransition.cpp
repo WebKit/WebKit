@@ -26,9 +26,11 @@
 #include "config.h"
 #include "RenderTreeUpdaterViewTransition.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "ElementRuleCollector.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElement.h"
+#include "RenderObjectInlines.h"
 #include "RenderStyleInlines.h"
 #include "RenderStyleSetters.h"
 #include "RenderTreeUpdater.h"
@@ -88,10 +90,10 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
         containingBlockStyle.setPointerEvents(PointerEvents::None);
 
         auto containingBlockRect = activeViewTransition->containingBlockRect();
-        containingBlockStyle.setLeft(Length(containingBlockRect.x(), LengthType::Fixed));
-        containingBlockStyle.setTop(Length(containingBlockRect.y(), LengthType::Fixed));
-        containingBlockStyle.setWidth(Length(containingBlockRect.width(), LengthType::Fixed));
-        containingBlockStyle.setHeight(Length(containingBlockRect.height(), LengthType::Fixed));
+        containingBlockStyle.setLeft(Style::InsetEdge::Fixed { containingBlockRect.x() });
+        containingBlockStyle.setTop(Style::InsetEdge::Fixed { containingBlockRect.y() });
+        containingBlockStyle.setWidth(Style::PreferredSize::Fixed { containingBlockRect.width() });
+        containingBlockStyle.setHeight(Style::PreferredSize::Fixed { containingBlockRect.height() });
 
         auto newViewTransitionContainingBlock = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, WTFMove(containingBlockStyle), RenderObject::BlockFlowFlag::IsViewTransitionContainingBlock);
         newViewTransitionContainingBlock->initializeStyle();

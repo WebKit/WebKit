@@ -110,10 +110,10 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(VM& vm, const F
     case op_instanceof: {
         auto& metadata = instruction->as<OpInstanceof>().metadata(m_owner.get());
         switch (m_bytecodeIndex.get().checkpoint()) {
-        case OpInstanceof::getPrototype:
+        case OpInstanceof::getHasInstance:
             clearLLIntGetByIdCache(metadata.m_hasInstanceModeMetadata);
             break;
-        case OpInstanceof::instanceof:
+        case OpInstanceof::getPrototype:
             clearLLIntGetByIdCache(metadata.m_prototypeModeMetadata);
             break;
         default:

@@ -31,6 +31,7 @@
 #include "CSSSelectorList.h"
 #include "CommonAtomStrings.h"
 #include "HTMLNames.h"
+#include "MutableCSSSelector.h"
 #include "SelectorPseudoTypeMap.h"
 #include <memory>
 #include <queue>
@@ -146,7 +147,7 @@ static SelectorSpecificity simpleSelectorSpecificity(const CSSSelector&, IgnoreP
 static SelectorSpecificity selectorSpecificity(const CSSSelector& firstSimpleSelector, IgnorePseudoElement ignorePseudoElement = IgnorePseudoElement::No)
 {
     SelectorSpecificity total;
-    for (const auto* selector = &firstSimpleSelector; selector; selector = selector->tagHistory())
+    for (const auto* selector = &firstSimpleSelector; selector; selector = selector->precedingInComplexSelector())
         total += simpleSelectorSpecificity(*selector, ignorePseudoElement);
     return total;
 }
@@ -251,7 +252,7 @@ unsigned CSSSelector::specificityForPage() const
     // See http://dev.w3.org/csswg/css3-page/#cascading-and-page-context
     unsigned s = 0;
 
-    for (const CSSSelector* component = this; component; component = component->tagHistory()) {
+    for (const CSSSelector* component = this; component; component = component->precedingInComplexSelector()) {
         switch (component->match()) {
         case Match::Tag:
             s += tagQName().localName() == starAtom() ? 0 : 4;
@@ -362,15 +363,33 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 const CSSSelector* CSSSelector::firstInCompound() const
 {
     auto* selector = this;
-    while (!selector->isFirstInTagHistory()) {
-        auto* previousSelector = selector - 1;
-        if (previousSelector->relation() != Relation::Subselector)
+    while (!selector->isFirstInComplexSelector()) {
+        if (selector->relation() != Relation::Subselector)
             break;
-        selector = previousSelector;
+        ++selector;
+    }
+    return selector;
+}
+
+const CSSSelector* CSSSelector::lastInCompound() const
+{
+    auto* selector = this;
+    while (!selector->isLastInComplexSelector()) {
+        auto* next = selector - 1;
+        if (next->relation() != Relation::Subselector)
+            break;
+        selector = next;
     }
     return selector;
 }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+const CSSSelector* CSSSelector::precedingInCompound() const
+{
+    if (relation() != Relation::Subselector)
+        return nullptr;
+    return precedingInComplexSelector();
+}
 
 static void appendPseudoClassFunctionTail(StringBuilder& builder, const CSSSelector* selector)
 {
@@ -645,9 +664,9 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             }
         }
 
-        if (selector->relation() != Relation::Subselector || !selector->tagHistory())
+        if (selector->relation() != Relation::Subselector || !selector->precedingInComplexSelector())
             break;
-        selector = selector->tagHistory();
+        selector = selector->precedingInComplexSelector();
     }
 
     builder.append(separator, rightSide);
@@ -665,7 +684,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
         }
     };
 
-    if (auto* previousSelector = selector->tagHistory()) {
+    if (auto* previousSelector = selector->precedingInComplexSelector()) {
         ASCIILiteral separator = ""_s;
         switch (selector->relation()) {
         case Relation::DescendantSpace:
@@ -690,7 +709,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
         }
         return previousSelector->selectorText(separator, builder);
     } else if (auto separatorText = separatorTextForNestingRelative(); !separatorText.isNull()) {
-        // We have a separator but no tag history which can happen with implicit relative nesting selector
+        // We have a separator but no preceding selector which can happen with implicit relative nesting selector
         return makeString(separatorText, builder.toString());
     }
 
@@ -800,8 +819,8 @@ CSSSelector::CSSSelector(const CSSSelector& other)
     , m_match(other.m_match)
     , m_pseudoType(other.m_pseudoType)
     , m_isLastInSelectorList(other.m_isLastInSelectorList)
-    , m_isFirstInTagHistory(other.m_isFirstInTagHistory)
-    , m_isLastInTagHistory(other.m_isLastInTagHistory)
+    , m_isFirstInComplexSelector(other.m_isFirstInComplexSelector)
+    , m_isLastInComplexSelector(other.m_isLastInComplexSelector)
     , m_hasRareData(other.m_hasRareData)
     , m_isForPage(other.m_isForPage)
     , m_tagIsForNamespaceRule(other.m_tagIsForNamespaceRule)
@@ -820,7 +839,16 @@ CSSSelector::CSSSelector(const CSSSelector& other)
     }
 }
 
-bool CSSSelector::visitAllSimpleSelectors(auto& apply) const
+CSSSelector::CSSSelector(const CSSSelector& other, MutableSelectorCopyTag)
+    : CSSSelector(other)
+{
+    // Restore the selector list bits to the initial state when copying to a MutableCSSSelector.
+    m_isLastInSelectorList = false;
+    m_isFirstInComplexSelector = true;
+    m_isLastInComplexSelector = true;
+}
+
+bool CSSSelector::visitSimpleSelectors(VisitFunctor&& functor, VisitFunctionalPseudoClasses visitFunctionalPseudoClasses, VisitOnlySubject visitOnlySubject) const
 {
     std::queue<const CSSSelector*> worklist;
     worklist.push(this);
@@ -829,60 +857,30 @@ bool CSSSelector::visitAllSimpleSelectors(auto& apply) const
         worklist.pop();
 
         // Effective C++ advices for this cast to deal with generic const/non-const member function.
-        if (apply(*const_cast<CSSSelector*>(current)))
+        if (functor(*const_cast<CSSSelector*>(current)))
             return true;
 
         // Visit the selector list member (if any) recursively (such as: :has(<list>), :is(<list>),...)
-        if (auto selectorList = current->selectorList()) {
-            auto next = selectorList->first();
-            while (next) {
-                worklist.push(next);
-                next = CSSSelectorList::next(next);
+        if (visitFunctionalPseudoClasses == VisitFunctionalPseudoClasses::Yes) {
+            if (auto selectorList = current->selectorList()) {
+                for (auto& selector : *selectorList)
+                    worklist.push(&selector);
             }
         }
 
         // Visit the next simple selector
-        if (auto next = current->tagHistory())
-            worklist.push(next);
+        if (auto next = current->precedingInComplexSelector()) {
+            // We stop visiting at the end of the compound selector (= when relation is anything else than subselector) if we are in subject only mode.
+            if (current->relation() != Relation::Subselector || visitOnlySubject != VisitOnlySubject::Yes)
+                worklist.push(next);
+        }
     }
     return false;
 }
 
-void CSSSelector::resolveNestingParentSelectors(const CSSSelectorList& parent)
-{
-    auto replaceParentSelector = [&parent] (CSSSelector& selector) {
-        if (selector.match() == CSSSelector::Match::NestingParent) {
-            // FIXME: Optimize cases where we can include the parent selector directly instead of wrapping it in a ":is" pseudo class.
-            selector.setMatch(Match::PseudoClass);
-            selector.setPseudoClass(PseudoClass::Is);
-            selector.setSelectorList(makeUnique<CSSSelectorList>(parent));
-        }
-        return false;
-    };
-
-    visitAllSimpleSelectors(replaceParentSelector);
-}
-
-void CSSSelector::replaceNestingParentByPseudoClassScope()
-{
-    auto replaceParentSelector = [] (CSSSelector& selector) {
-        if (selector.match() == Match::NestingParent) {
-            // Replace by :scope
-            selector.setMatch(Match::PseudoClass);
-            selector.setPseudoClass(PseudoClass::Scope);
-            // Top-level nesting parent selector acts like :scope with zero specificity.
-            // https://github.com/w3c/csswg-drafts/issues/10196#issuecomment-2161119978
-            selector.setImplicit();
-        }
-        return false;
-    };
-
-    visitAllSimpleSelectors(replaceParentSelector);
-}
-
 bool CSSSelector::hasExplicitNestingParent() const
 {
-    auto checkForExplicitParent = [] (const CSSSelector& selector) {
+    return visitSimpleSelectors([](const CSSSelector& selector) {
         if (selector.match() == Match::NestingParent)
             return true;
 
@@ -890,26 +888,80 @@ bool CSSSelector::hasExplicitNestingParent() const
             return true;
 
         return false;
-    };
-
-    return visitAllSimpleSelectors(checkForExplicitParent);
+    } , VisitFunctionalPseudoClasses::Yes);
 }
 
 bool CSSSelector::hasExplicitPseudoClassScope() const
 {
-    auto check = [] (const CSSSelector& selector) {
-        if (selector.match() == Match::PseudoClass && selector.pseudoClass() == PseudoClass::Scope)
+    return visitSimpleSelectors([] (const CSSSelector& selector) {
+        if (selector.isScopePseudoClass())
             return true;
-
         return false;
-    };
-
-    return visitAllSimpleSelectors(check);
+    }, VisitFunctionalPseudoClasses::Yes);
 }
 
 bool CSSSelector::isHostPseudoClass() const
 {
     return match() == Match::PseudoClass && pseudoClass() == PseudoClass::Host;
+}
+
+bool CSSSelector::isScopePseudoClass() const
+{
+    return match() == Match::PseudoClass && pseudoClass() == PseudoClass::Scope;
+}
+
+bool CSSSelector::hasScope() const
+{
+    return visitSimpleSelectors([] (auto& selector) {
+        if (selector.isScopePseudoClass())
+            return true;
+        return false;
+    });
+}
+
+bool complexSelectorCanMatchPseudoElement(const CSSSelector& complexSelector)
+{
+    const CSSSelector* selector = &complexSelector;
+    do {
+        if (selector->matchesPseudoElement())
+            return true;
+
+        // FIXME: This is probably unneeded as functional pseudo-classes can't contain valid pseudo elements.
+        if (const CSSSelectorList* selectorList = selector->selectorList()) {
+            for (auto& subSelector : *selectorList) {
+                if (complexSelectorCanMatchPseudoElement(subSelector))
+                    return true;
+            }
+        }
+
+        selector = selector->precedingInComplexSelector();
+    } while (selector);
+    return false;
+}
+
+bool complexSelectorMatchesElementBackedPseudoElement(const CSSSelector& complexSelector)
+{
+    auto isElementBacked = [](CSSSelector::PseudoElement pseudoElement) {
+        switch (pseudoElement) {
+        case CSSSelector::PseudoElement::Slotted:
+        case CSSSelector::PseudoElement::Part:
+        case CSSSelector::PseudoElement::UserAgentPart:
+        case CSSSelector::PseudoElement::UserAgentPartLegacyAlias:
+            return true;
+        default:
+            return false;
+        }
+    };
+
+    auto result = false;
+    for (auto* simpleSelector = &complexSelector; simpleSelector; simpleSelector = simpleSelector->precedingInCompound()) {
+        if (simpleSelector->matchesPseudoElement()) {
+            if (!isElementBacked(simpleSelector->pseudoElement()))
+                return false;
+            result = true;
+        }
+    }
+    return result;
 }
 
 } // namespace WebCore

@@ -10,14 +10,16 @@
 
 #include "modules/desktop_capture/desktop_frame.h"
 
-#include <string.h>
-
+#include <algorithm>
 #include <cmath>
+#include <cstdint>
+#include <cstring>
 #include <memory>
 #include <utility>
 
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/shared_memory.h"
 #include "rtc_base/checks.h"
 #include "third_party/libyuv/include/libyuv/planar_functions.h"
 
@@ -134,6 +136,7 @@ void DesktopFrame::CopyFrameInfoFrom(const DesktopFrame& other) {
   set_top_left(other.top_left());
   set_icc_profile(other.icc_profile());
   set_may_contain_cursor(other.may_contain_cursor());
+  set_device_scale_factor(other.device_scale_factor());
 }
 
 void DesktopFrame::MoveFrameInfoFrom(DesktopFrame* other) {
@@ -144,6 +147,7 @@ void DesktopFrame::MoveFrameInfoFrom(DesktopFrame* other) {
   set_top_left(other->top_left());
   set_icc_profile(other->icc_profile());
   set_may_contain_cursor(other->may_contain_cursor());
+  set_device_scale_factor(other->device_scale_factor());
 }
 
 bool DesktopFrame::FrameDataIsBlack() const {

@@ -1,0 +1,13 @@
+Test scrollbar-color on overflow and that setting it on body does not propagate to the root
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Overflow should have scrollbar-color
+PASS Scrollbar state: enabled,trackColor:#0000FF,knobColor:#FFFF00
+Document should not have scrollbar-color
+PASS Scrollbar state: enabled
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

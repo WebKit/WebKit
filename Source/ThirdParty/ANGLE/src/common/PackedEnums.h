@@ -9,6 +9,10 @@
 #ifndef COMMON_PACKEDGLENUMS_H_
 #define COMMON_PACKEDGLENUMS_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "common/PackedEGLEnums_autogen.h"
 #include "common/PackedGLEnums_autogen.h"
 

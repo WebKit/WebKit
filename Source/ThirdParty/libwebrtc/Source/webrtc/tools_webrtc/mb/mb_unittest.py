@@ -346,14 +346,14 @@ class UnitTest(unittest.TestCase):
             '--store-tombstones',
         ])
 
-    def test_gen_swarming_android_junit_test(self):
+    def test_gen_swarming_android_test(self):
         test_files = {
             '/tmp/swarming_targets':
             'foo_unittests\n',
             '/fake_src/testing/buildbot/gn_isolate_map.pyl':
             ("{'foo_unittests': {"
              "  'label': '//foo:foo_unittests',"
-             "  'type': 'junit_test',"
+             "  'type': 'console_test_launcher',"
              "}}\n"),
             '/fake_src/out/Default/foo_unittests.runtime_deps':
             ("foo_unittests\n"),
@@ -388,46 +388,6 @@ class UnitTest(unittest.TestCase):
             '--logcat-output-file',
             '${ISOLATED_OUTDIR}/logcats',
             '--store-tombstones',
-        ])
-
-    def test_gen_script(self):
-        test_files = {
-            '/tmp/swarming_targets':
-            'foo_unittests_script\n',
-            '/fake_src/testing/buildbot/gn_isolate_map.pyl':
-            ("{'foo_unittests_script': {"
-             "  'label': '//foo:foo_unittests',"
-             "  'type': 'script',"
-             "  'script': '//foo/foo_unittests_script.py',"
-             "}}\n"),
-            '/fake_src/out/Default/foo_unittests_script.runtime_deps':
-            ("foo_unittests\n"
-             "foo_unittests_script.py\n"),
-        }
-        mbw = self.check([
-            'gen', '-c', 'debug_goma', '//out/Default',
-            '--swarming-targets-file', '/tmp/swarming_targets',
-            '--isolate-map-file',
-            '/fake_src/testing/buildbot/gn_isolate_map.pyl'
-        ],
-                         files=test_files,
-                         ret=0)
-
-        isolate_file = (
-            mbw.files['/fake_src/out/Default/foo_unittests_script.isolate'])
-        isolate_file_contents = ast.literal_eval(isolate_file)
-        files = isolate_file_contents['variables']['files']
-        command = isolate_file_contents['variables']['command']
-
-        self.assertEqual(files, [
-            '../../.vpython3',
-            '../../testing/test_env.py',
-            'foo_unittests',
-            'foo_unittests_script.py',
-        ])
-        self.assertEqual(command, [
-            'vpython3',
-            '../../foo/foo_unittests_script.py',
         ])
 
     def test_gen_raw(self):

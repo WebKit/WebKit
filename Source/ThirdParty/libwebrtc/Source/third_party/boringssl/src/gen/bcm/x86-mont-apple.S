@@ -5,19 +5,16 @@
 
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86) && defined(__APPLE__)
 .text
-.globl	_bn_mul_mont
-.private_extern	_bn_mul_mont
+.globl	_bn_mul_mont_words
+.private_extern	_bn_mul_mont_words
 .align	4
-_bn_mul_mont:
-L_bn_mul_mont_begin:
+_bn_mul_mont_words:
+L_bn_mul_mont_words_begin:
 	pushl	%ebp
 	pushl	%ebx
 	pushl	%esi
 	pushl	%edi
-	xorl	%eax,%eax
 	movl	40(%esp),%edi
-	cmpl	$4,%edi
-	jl	L000just_leave
 	leal	20(%esp),%esi
 	leal	24(%esp),%edx
 	addl	$2,%edi
@@ -40,15 +37,15 @@ L_bn_mul_mont_begin:
 	leal	(%ebp,%eax,1),%esp
 	movl	(%esp),%eax
 	cmpl	%ebp,%esp
-	ja	L001page_walk
-	jmp	L002page_walk_done
+	ja	L000page_walk
+	jmp	L001page_walk_done
 .align	4,0x90
-L001page_walk:
+L000page_walk:
 	leal	-4096(%esp),%esp
 	movl	(%esp),%eax
 	cmpl	%ebp,%esp
-	ja	L001page_walk
-L002page_walk_done:
+	ja	L000page_walk
+L001page_walk_done:
 	movl	(%esi),%eax
 	movl	4(%esi),%ebx
 	movl	8(%esi),%ecx
@@ -85,7 +82,7 @@ L002page_walk_done:
 	psrlq	$32,%mm3
 	incl	%ecx
 .align	4,0x90
-L0031st:
+L0021st:
 	pmuludq	%mm4,%mm0
 	pmuludq	%mm5,%mm1
 	paddq	%mm0,%mm2
@@ -100,7 +97,7 @@ L0031st:
 	psrlq	$32,%mm3
 	leal	1(%ecx),%ecx
 	cmpl	%ebx,%ecx
-	jl	L0031st
+	jl	L0021st
 	pmuludq	%mm4,%mm0
 	pmuludq	%mm5,%mm1
 	paddq	%mm0,%mm2
@@ -114,7 +111,7 @@ L0031st:
 	paddq	%mm2,%mm3
 	movq	%mm3,32(%esp,%ebx,4)
 	incl	%edx
-L004outer:
+L003outer:
 	xorl	%ecx,%ecx
 	movd	(%edi,%edx,4),%mm4
 	movd	(%esi),%mm5
@@ -136,7 +133,7 @@ L004outer:
 	paddq	%mm6,%mm2
 	incl	%ecx
 	decl	%ebx
-L005inner:
+L004inner:
 	pmuludq	%mm4,%mm0
 	pmuludq	%mm5,%mm1
 	paddq	%mm0,%mm2
@@ -153,7 +150,7 @@ L005inner:
 	paddq	%mm6,%mm2
 	decl	%ebx
 	leal	1(%ecx),%ecx
-	jnz	L005inner
+	jnz	L004inner
 	movl	%ecx,%ebx
 	pmuludq	%mm4,%mm0
 	pmuludq	%mm5,%mm1
@@ -171,11 +168,11 @@ L005inner:
 	movq	%mm3,32(%esp,%ebx,4)
 	leal	1(%edx),%edx
 	cmpl	%ebx,%edx
-	jle	L004outer
+	jle	L003outer
 	emms
-	jmp	L006common_tail
+	jmp	L005common_tail
 .align	4,0x90
-L006common_tail:
+L005common_tail:
 	movl	16(%esp),%ebp
 	movl	4(%esp),%edi
 	leal	32(%esp),%esi
@@ -183,19 +180,19 @@ L006common_tail:
 	movl	%ebx,%ecx
 	xorl	%edx,%edx
 .align	4,0x90
-L007sub:
+L006sub:
 	sbbl	(%ebp,%edx,4),%eax
 	movl	%eax,(%edi,%edx,4)
 	decl	%ecx
 	movl	4(%esi,%edx,4),%eax
 	leal	1(%edx),%edx
-	jge	L007sub
+	jge	L006sub
 	sbbl	$0,%eax
 	movl	$-1,%edx
 	xorl	%eax,%edx
-	jmp	L008copy
+	jmp	L007copy
 .align	4,0x90
-L008copy:
+L007copy:
 	movl	32(%esp,%ebx,4),%esi
 	movl	(%edi,%ebx,4),%ebp
 	movl	%ecx,32(%esp,%ebx,4)
@@ -204,10 +201,8 @@ L008copy:
 	orl	%esi,%ebp
 	movl	%ebp,(%edi,%ebx,4)
 	decl	%ebx
-	jge	L008copy
+	jge	L007copy
 	movl	24(%esp),%esp
-	movl	$1,%eax
-L000just_leave:
 	popl	%edi
 	popl	%esi
 	popl	%ebx

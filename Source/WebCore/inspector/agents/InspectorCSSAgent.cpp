@@ -60,7 +60,7 @@
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "LocalDOMWindow.h"
-#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "Node.h"
 #include "NodeList.h"
 #include "PseudoElement.h"
@@ -284,7 +284,7 @@ private:
 
 InspectorCSSAgent::InspectorCSSAgent(PageAgentContext& context)
     : InspectorAgentBase("CSS"_s, context)
-    , m_frontendDispatcher(makeUnique<CSSFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUniqueRef<CSSFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(CSSBackendDispatcher::create(context.backendDispatcher, this))
     , m_inspectedPage(context.inspectedPage)
     , m_nodesWithPendingLayoutFlagsChangeDispatchTimer(*this, &InspectorCSSAgent::nodesWithPendingLayoutFlagsChangeDispatchTimerFired)
@@ -293,7 +293,7 @@ InspectorCSSAgent::InspectorCSSAgent(PageAgentContext& context)
 
 InspectorCSSAgent::~InspectorCSSAgent() = default;
 
-void InspectorCSSAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
+void InspectorCSSAgent::didCreateFrontendAndBackend()
 {
 }
 
@@ -1276,7 +1276,7 @@ InspectorStyleSheet* InspectorCSSAgent::bindStyleSheet(CSSStyleSheet* styleSheet
             inspectorStyleSheetsForDocument.append(inspectorStyleSheet);
         }
     }
-    return inspectorStyleSheet.get();
+    return inspectorStyleSheet.unsafeGet();
 }
 
 InspectorStyleSheet* InspectorCSSAgent::assertStyleSheetForId(Inspector::Protocol::ErrorString& errorString, const String& styleSheetId)
@@ -1358,8 +1358,8 @@ Ref<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> InspectorCSSAgent::build
         auto matchingSelectors = JSON::ArrayOf<int>::create();
         const CSSSelectorList& selectorList = matchedRule->selectorList();
         int index = 0;
-        for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
-            bool matched = selectorChecker.match(*selector, element, context);
+        for (auto& selector : selectorList) {
+            bool matched = selectorChecker.match(selector, element, context);
             if (matched)
                 matchingSelectors->addItem(index);
             ++index;

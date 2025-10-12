@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-from __future__ import print_function
-
 import argparse
 import collections
 import copy
@@ -323,7 +321,7 @@ def generate_test_source_files(spec_directory, test_helper_filenames,
     # Choose a debug/release template depending on the target.
     html_template = "test.%s.html.template" % target
 
-    artifact_order = test_expansion_schema.keys()
+    artifact_order = list(test_expansion_schema.keys())
     artifact_order.remove('expansion')
 
     excluded_selection_pattern = ''

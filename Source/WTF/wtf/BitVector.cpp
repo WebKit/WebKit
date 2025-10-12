@@ -33,8 +33,6 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SIMDHelpers.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(BitVector, WTF_INTERNAL);
@@ -276,5 +274,3 @@ void BitVector::dump(PrintStream& out) const
 }
 
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

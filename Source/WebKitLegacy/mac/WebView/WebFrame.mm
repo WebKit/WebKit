@@ -74,6 +74,8 @@
 #import <WebCore/DocumentInlines.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/DocumentMarkerController.h>
+#import <WebCore/DocumentMarkers.h>
+#import <WebCore/DocumentView.h>
 #import <WebCore/Editing.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
@@ -91,7 +93,7 @@
 #import <WebCore/JSDOMWindow.h>
 #import <WebCore/JSNode.h>
 #import <WebCore/LegacyWebArchive.h>
-#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameInlines.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MouseEventTypes.h>
@@ -104,12 +106,15 @@
 #import <WebCore/PluginData.h>
 #import <WebCore/PrintContext.h>
 #import <WebCore/Range.h>
+#import <WebCore/ReferrerPolicy.h>
 #import <WebCore/RemoteUserInputEventData.h>
 #import <WebCore/RenderElementInlines.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderLayerScrollableArea.h>
+#import <WebCore/RenderObjectStyle.h>
 #import <WebCore/RenderStyleInlines.h>
+#import <WebCore/RenderTextControl.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
 #import <WebCore/RenderedDocumentMarker.h>
@@ -316,10 +321,13 @@ WebView *getWebView(WebFrame *webFrame)
     auto effectiveSandboxFlags = ownerElement.sandboxFlags();
     if (RefPtr parentLocalFrame = ownerElement.document().frame())
         effectiveSandboxFlags.add(parentLocalFrame->effectiveSandboxFlags());
+    auto effectiveReferrerPolicy = ownerElement.referrerPolicy();
+    if (RefPtr localTopDocument = page.localTopDocument(); effectiveReferrerPolicy == WebCore::ReferrerPolicy::EmptyString && localTopDocument)
+        effectiveReferrerPolicy = localTopDocument->referrerPolicy();
 
     auto coreFrame = WebCore::LocalFrame::createSubframe(page, [frame] (auto&, auto& frameLoader) {
         return makeUniqueRefWithoutRefCountedCheck<WebFrameLoaderClient>(frameLoader, frame.get());
-    }, WebCore::generateFrameIdentifier(), effectiveSandboxFlags, ownerElement, WebCore::FrameTreeSyncData::create());
+    }, WebCore::generateFrameIdentifier(), effectiveSandboxFlags, effectiveReferrerPolicy, ownerElement, WebCore::FrameTreeSyncData::create());
     frame->_private->coreFrame = coreFrame.ptr();
 
     coreFrame.get().tree().setSpecifiedName(name);
@@ -464,9 +472,7 @@ static NSURL *createUniqueWebDataURL();
         if (auto* view = frame->view()) {
             view->setTransparent(!drawsBackground);
 #if !PLATFORM(IOS_FAMILY)
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            auto color = WebCore::colorFromCocoaColor([backgroundColor colorUsingColorSpaceName:NSDeviceRGBColorSpace]);
-ALLOW_DEPRECATED_DECLARATIONS_END
+            auto color = WebCore::colorFromCocoaColor([backgroundColor colorUsingColorSpace:NSColorSpace.deviceRGBColorSpace]);
 #else
             WebCore::Color color(WebCore::roundAndClampToSRGBALossy(backgroundColor));
 #endif
@@ -969,7 +975,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
     WebCore::PlatformMouseEvent event(WebCore::IntPoint(windowLoc), WebCore::IntPoint(WebCore::globalPoint(windowLoc, [view->platformWidget() window])),
-        WebCore::MouseButton::Left, WebCore::PlatformEvent::Type::MouseMoved, 0, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap);
+        WebCore::MouseButton::Left, WebCore::PlatformEvent::Type::MouseMoved, 0, { }, MonotonicTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap);
     _private->coreFrame->eventHandler().dragSourceEndedAt(event, coreDragOperationMask(dragOperationMask));
 }
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
@@ -1082,7 +1088,11 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
         return WebFrameLoadTypeSame;
     case FrameLoadType::RedirectWithLockedBackForwardList:
         return WebFrameLoadTypeInternal;
-    case FrameLoadType::Replace:
+    case FrameLoadType::NavigationAPIReplace:
+        // NOTE: WebKitLegacy does not support the Navigation API. This case is
+        // present just to ensure a successful build.
+        RELEASE_ASSERT_NOT_REACHED();
+    case FrameLoadType::MultipartReplace:
         return WebFrameLoadTypeReplace;
     case FrameLoadType::ReloadFromOrigin:
     case FrameLoadType::ReloadExpiredOnly:
@@ -1156,7 +1166,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (unsigned)_pendingFrameUnloadEventCount
 {
-    return _private->coreFrame->document()->domWindow()->pendingUnloadEventListeners();
+    return _private->coreFrame->document()->window()->pendingUnloadEventListeners();
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -1275,9 +1285,11 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 - (CGSize)renderedSizeOfNode:(DOMNode *)node constrainedToWidth:(float)width
 {
     WebCore::Node* n = core(node);
-    auto* renderer = n ? n->renderer() : nullptr;
-    float w = std::min((float)renderer->maxPreferredLogicalWidth(), width);
-    return is<WebCore::RenderBox>(renderer) ? CGSizeMake(w, downcast<WebCore::RenderBox>(*renderer).height()) : CGSizeMake(0, 0);
+    if (!n)
+        return CGSizeMake(0, 0);
+    if (auto* renderBox = dynamicDowncast<WebCore::RenderBox>(n->renderer()))
+        return CGSizeMake(std::min((float)renderBox->maxPreferredLogicalWidth(), width), renderBox->height());
+    return CGSizeMake(0, 0);
 }
 
 - (DOMNode *)deepestNodeAtViewportLocation:(CGPoint)aViewportLocation
@@ -1322,7 +1334,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 {
     WebCore::LocalFrame *frame = core(self);
     WebCore::RevealExtentOption revealExtentOption = revealExtent ? WebCore::RevealExtentOption::RevealExtent : WebCore::RevealExtentOption::DoNotRevealExtent;
-    frame->selection().revealSelection(WebCore::SelectionRevealMode::Reveal, WebCore::ScrollAlignment::alignToEdgeIfNeeded, revealExtentOption);
+    frame->selection().revealSelection({ WebCore::SelectionRevealMode::Reveal, WebCore::ScrollAlignment::alignToEdgeIfNeeded, revealExtentOption });
 }
 
 - (void)resetSelection
@@ -1354,7 +1366,9 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (!renderer)
         return 0;
 
-    return renderer->innerLineHeight();
+    if (auto* textControlRenderer = dynamicDowncast<WebCore::RenderTextControl>(*renderer))
+        return textControlRenderer->innerLineHeight();
+    return renderer->style().computedLineHeight();
 }
 
 - (void)updateLayout
@@ -1820,7 +1834,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     CTFontRef font = nil;
     if (_private->coreFrame) {
         if (auto coreFont = _private->coreFrame->editor().fontForSelection(multipleFonts))
-            font = coreFont->getCTFont();
+            font = coreFont->ctFont();
     }
     
     if (hasMultipleFonts)
@@ -2003,13 +2017,13 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
     bool addLeadingSpace = start.deepEquivalent().leadingWhitespacePosition(WebCore::VisiblePosition::defaultAffinity, true).isNull() && !isStartOfParagraph(start);
     if (addLeadingSpace) {
-        if (UChar previousCharacter = start.previous().characterAfter())
+        if (char16_t previousCharacter = start.previous().characterAfter())
             addLeadingSpace = !WebCore::isCharacterSmartReplaceExempt(previousCharacter, true);
     }
     
     bool addTrailingSpace = end.deepEquivalent().trailingWhitespacePosition(WebCore::VisiblePosition::defaultAffinity, true).isNull() && !isEndOfParagraph(end);
     if (addTrailingSpace) {
-        if (UChar followingCharacter = end.characterAfter())
+        if (char16_t followingCharacter = end.characterAfter())
             addTrailingSpace = !WebCore::isCharacterSmartReplaceExempt(followingCharacter, false);
     }
 
@@ -2049,8 +2063,8 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (frameLoader.subframeLoader().containsPlugins())
         [result setObject:@YES forKey:WebFrameHasPlugins];
     
-    if (auto* domWindow = _private->coreFrame->document()->domWindow()) {
-        if (domWindow->hasEventListeners(WebCore::eventNames().unloadEvent))
+    if (auto* window = _private->coreFrame->document()->window()) {
+        if (window->hasEventListeners(WebCore::eventNames().unloadEvent))
             [result setObject:@YES forKey:WebFrameHasUnloadListener];
     }
     

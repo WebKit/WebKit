@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "WasmWorklist.h"
-#include "WasmLLIntGenerator.h"
 
 #if ENABLE(WEBASSEMBLY)
 

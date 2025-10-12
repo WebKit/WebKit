@@ -12,9 +12,12 @@
 
 #include "modules/audio_coding/neteq/merge.h"
 
-#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
 #include <vector>
 
+#include "api/neteq/tick_timer.h"
 #include "modules/audio_coding/neteq/background_noise.h"
 #include "modules/audio_coding/neteq/expand.h"
 #include "modules/audio_coding/neteq/random_vector.h"
@@ -40,7 +43,7 @@ TEST(Merge, CreateAndDestroy) {
 
 namespace {
 // This is the same size that is given to the SyncBuffer object in NetEq.
-const size_t kNetEqSyncBufferLengthMs = 720;
+constexpr size_t kNetEqSyncBufferLengthMs = 720;
 }  // namespace
 
 class MergeTest : public testing::TestWithParam<size_t> {

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPUBuffer.h"
-#include "WebGPUIntegralTypes.h"
+#include <WebCore/WebGPUBuffer.h>
+#include <WebCore/WebGPUIntegralTypes.h>
 #include <optional>
 #include <wtf/Ref.h>
 #include <wtf/WeakRef.h>

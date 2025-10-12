@@ -43,9 +43,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceGraphicCoreImageApplier);
 
 bool SourceGraphicCoreImageApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
-    Ref input = inputs[0];
+    auto& input = inputs[0].get();
 
-    RefPtr sourceImage = input->imageBuffer();
+    RefPtr sourceImage = input.imageBuffer();
     if (!sourceImage)
         return false;
 

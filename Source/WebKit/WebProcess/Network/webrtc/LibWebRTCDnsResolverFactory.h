@@ -45,17 +45,17 @@ class LibWebRTCDnsResolverFactory final : public webrtc::AsyncDnsResolverFactory
 public:
     class Resolver : public webrtc::AsyncDnsResolverInterface {
     public:
-        virtual void start(const rtc::SocketAddress&, Function<void()>&&) = 0;
+        virtual void start(const webrtc::SocketAddress&, Function<void()>&&) = 0;
 
     private:
         // webrtc::AsyncDnsResolverInterface
-        void Start(const rtc::SocketAddress&, absl::AnyInvocable<void()>) final;
-        void Start(const rtc::SocketAddress&, int family, absl::AnyInvocable<void()>) final;
+        void Start(const webrtc::SocketAddress&, absl::AnyInvocable<void()>) final;
+        void Start(const webrtc::SocketAddress&, int family, absl::AnyInvocable<void()>) final;
     };
 
 private:
-    std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAndResolve(const rtc::SocketAddress&, absl::AnyInvocable<void()>) final;
-    std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAndResolve(const rtc::SocketAddress&, int family, absl::AnyInvocable<void()>) final;
+    std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAndResolve(const webrtc::SocketAddress&, absl::AnyInvocable<void()>) final;
+    std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAndResolve(const webrtc::SocketAddress&, int family, absl::AnyInvocable<void()>) final;
     std::unique_ptr<webrtc::AsyncDnsResolverInterface> Create() final;
 };
 

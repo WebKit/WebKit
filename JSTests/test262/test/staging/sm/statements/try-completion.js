@@ -2,17 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  try block should return try value if finally returned normally
+info: bugzilla.mozilla.org/show_bug.cgi?id=819125
 esid: pending
 ---*/
-var BUGNUMBER = 819125;
-var summary = "try block should return try value if finally returned normally";
-
-print(BUGNUMBER + ": " + summary);
 
 function expectTryValue(code, isUndefined) {
   assert.sameValue(eval(code), isUndefined ? undefined : 'try');
@@ -488,4 +482,3 @@ do {
   }
 } while (false);
 `, true);
-

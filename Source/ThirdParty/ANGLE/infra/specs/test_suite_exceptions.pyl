@@ -35,7 +35,7 @@
           '--max-processes=2',
         ],
         'swarming': {
-          'shards': 3,
+          'shards': 5,
         },
       },
       # anglebug.com/40644897 suspecting device lost caused by multiprocess
@@ -44,7 +44,7 @@
           '--max-processes=1',
         ],
         'swarming': {
-          'shards': 4,
+          'shards': 10,
         },
       },
     },
@@ -69,11 +69,19 @@
   },
   'angle_restricted_trace_gold_tests': {
     'modifications': {
-      # anglebug.com/42263955 flaky 4x8 pixel artifacts on Win Intel
+      'win10-x64-exp-intel': {
+        'swarming': {
+          'shards': 4,
+        },
+      },
       'win10-x64-intel': {
+        # anglebug.com/42263955 flaky 4x8 pixel artifacts on Win Intel
         'args': [
           '--flaky-retries=1',
         ],
+        'swarming': {
+          'shards': 5,
+        },
       },
     },
   },
@@ -100,6 +108,16 @@
           # Custom temp throttling for perf tests on pixel6 b/345514719
           '--custom-throttling-temp=38',
         ],
+      },
+      'win10-x64-exp-intel': {
+        'swarming': {
+          'shards': 4,
+        },
+      },
+      'win10-x64-intel': {
+        'swarming': {
+          'shards': 3,
+        },
       },
     },
   },

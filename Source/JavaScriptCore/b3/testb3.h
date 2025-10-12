@@ -1378,6 +1378,8 @@ void testVectorFmulByElementFloat();
 void testVectorFmulByElementDouble();
 void testVectorExtractLane0Float();
 void testVectorExtractLane0Double();
+void testVectorMulHigh();
+void testVectorMulLow();
 
 void testConstDoubleMove();
 void testConstFloatMove();
@@ -1392,5 +1394,12 @@ void testMulHigh32();
 void testMulHigh64();
 void testUMulHigh32();
 void testUMulHigh64();
+
+void testMemoryCopy();
+void testMemoryCopyConstant();
+void testMemoryFill();
+void testMemoryFillConstant();
+
+void testLoadImmutable();
 
 #endif // ENABLE(B3_JIT)

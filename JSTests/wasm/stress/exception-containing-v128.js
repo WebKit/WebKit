@@ -101,10 +101,13 @@ let wat = `
 
 async function test() {
     const instance = await instantiate(wat, {}, { exceptions: true, simd: true });
-    assert.eq(instance.exports.testCatchOwnV128(), 42);
-    assert.eq(instance.exports.testCatchCalleeV128(), 42);
-    assert.eq(instance.exports.testLotsOfInterleavedTypes(), 42);
-    assert.throws(() => instance.exports.testThrowV128ToJS(), WebAssembly.Exception);
+
+    for (let i = 0; i < wasmTestLoopCount; i++) {
+        assert.eq(instance.exports.testCatchOwnV128(), 42);
+        assert.eq(instance.exports.testCatchCalleeV128(), 42);
+        assert.eq(instance.exports.testLotsOfInterleavedTypes(), 42);
+        assert.throws(() => instance.exports.testThrowV128ToJS(), WebAssembly.Exception);
+    }
 }
 
 await assert.asyncTest(test());

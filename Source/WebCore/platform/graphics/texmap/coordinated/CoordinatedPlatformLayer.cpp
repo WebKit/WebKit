@@ -103,6 +103,8 @@ TextureMapperLayer& CoordinatedPlatformLayer::ensureTarget()
         m_target = makeUnique<TextureMapperLayer>();
 #if ENABLE(DAMAGE_TRACKING)
         m_target->setDamagePropagationEnabled(m_damagePropagationEnabled);
+        if (m_damagePropagationEnabled)
+            m_target->setDamageInGlobalCoordinateSpace(m_damageInGlobalCoordinateSpace);
 #endif
     }
     return *m_target;
@@ -472,7 +474,7 @@ void CoordinatedPlatformLayer::setContentsScale(float contentsScale)
     notifyCompositionRequired();
 }
 
-void CoordinatedPlatformLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer, RequireComposition requireComposition)
+void CoordinatedPlatformLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer, std::optional<Damage>&& dirtyRegion, RequireComposition requireComposition)
 {
     ASSERT(m_lock.isHeld());
     if (!buffer && !m_contentsBuffer.pending && !m_contentsBuffer.committed)
@@ -480,6 +482,12 @@ void CoordinatedPlatformLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlat
 
     m_contentsBuffer.pending = WTFMove(buffer);
     m_pendingChanges.add(Change::ContentsBuffer);
+#if ENABLE(DAMAGE_TRACKING)
+    if (dirtyRegion)
+        addDamage(WTFMove(*dirtyRegion));
+#else
+    UNUSED_PARAM(dirtyRegion);
+#endif
     if (requireComposition == RequireComposition::Yes)
         notifyCompositionRequired();
 }
@@ -553,25 +561,27 @@ void CoordinatedPlatformLayer::setContentsTilePhase(const FloatSize& contentsTil
 void CoordinatedPlatformLayer::setDirtyRegion(Damage&& damage)
 {
     ASSERT(m_lock.isHeld());
-    // FIXME: add a way to remove the empty rects from Damage class.
-    auto dirtyRegion = WTF::compactMap(damage.rects(), [](const auto& value) -> std::optional<IntRect> {
-        if (value.isEmpty())
-            return std::nullopt;
-        return value;
-    });
+    auto dirtyRegion = damage.rects();
     if (m_dirtyRegion != dirtyRegion) {
         m_dirtyRegion = WTFMove(dirtyRegion);
         notifyCompositionRequired();
     }
 
 #if ENABLE(DAMAGE_TRACKING)
+    addDamage(WTFMove(damage));
+#endif
+}
+
+#if ENABLE(DAMAGE_TRACKING)
+void CoordinatedPlatformLayer::addDamage(Damage&& damage)
+{
     if (!m_damage)
         m_damage = WTFMove(damage);
     else
         m_damage->add(damage);
     m_pendingChanges.add(Change::Damage);
-#endif
 }
+#endif
 
 void CoordinatedPlatformLayer::setFilters(const FilterOperations& filters)
 {

@@ -27,6 +27,7 @@
 #include "NetworkBroadcastChannelRegistry.h"
 
 #include "Logging.h"
+#include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
 #include "WebBroadcastChannelRegistryMessages.h"
@@ -129,6 +130,14 @@ void NetworkBroadcastChannelRegistry::removeConnection(IPC::Connection& connecti
     }
     for (auto& originToRemove : originsToRemove)
         m_broadcastChannels.remove(originToRemove);
+}
+
+std::optional<SharedPreferencesForWebProcess> NetworkBroadcastChannelRegistry::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
+{
+    RefPtr webProcessConnection = m_networkProcess->webProcessConnection(connection);
+    if (!webProcessConnection)
+        return std::nullopt;
+    return webProcessConnection->sharedPreferencesForWebProcess();
 }
 
 #undef MESSAGE_CHECK

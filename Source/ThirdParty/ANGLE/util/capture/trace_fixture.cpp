@@ -7,6 +7,10 @@
 //   Common code for the ANGLE trace replays.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "trace_fixture.h"
 
 #include "angle_trace_gl.h"
@@ -115,6 +119,7 @@ void UpdateCurrentProgram(GLuint program)
 }
 
 uint8_t *gBinaryData;
+angle::FrameCaptureBinaryData *gFrameCaptureBinaryData;
 uint8_t *gReadBuffer;
 uint8_t *gClientArrays[kMaxClientArrays];
 GLuint *gResourceIDBuffer;
@@ -164,6 +169,39 @@ T *AllocateZeroedValues(size_t count)
 GLuint *AllocateZeroedUints(size_t count)
 {
     return AllocateZeroedValues<GLuint>(count);
+}
+
+void InitializeReplay5(const char *binaryDataFileName,
+                       size_t maxClientArraySize,
+                       size_t readBufferSize,
+                       size_t resourceIDBufferSize,
+                       GLuint contextId,
+                       uint32_t maxBuffer,
+                       uint32_t maxContext,
+                       uint32_t maxFenceNV,
+                       uint32_t maxFramebuffer,
+                       uint32_t maxImage,
+                       uint32_t maxMemoryObject,
+                       uint32_t maxProgramPipeline,
+                       uint32_t maxQuery,
+                       uint32_t maxRenderbuffer,
+                       uint32_t maxSampler,
+                       uint32_t maxSemaphore,
+                       uint32_t maxShaderProgram,
+                       uint32_t maxSurface,
+                       uint32_t maxSync,
+                       uint32_t maxTexture,
+                       uint32_t maxTransformFeedback,
+                       uint32_t maxVertexArray,
+                       GLuint maxEGLSyncID)
+{
+    gFrameCaptureBinaryData = gTraceCallbacks->ConfigureBinaryDataLoader(binaryDataFileName);
+
+    InitializeReplay4(binaryDataFileName, maxClientArraySize, readBufferSize, resourceIDBufferSize,
+                      contextId, maxBuffer, maxContext, maxFenceNV, maxFramebuffer, maxImage,
+                      maxMemoryObject, maxProgramPipeline, maxQuery, maxRenderbuffer, maxSampler,
+                      maxSemaphore, maxShaderProgram, maxSurface, maxSync, maxTexture,
+                      maxTransformFeedback, maxVertexArray, maxEGLSyncID);
 }
 
 void InitializeReplay4(const char *binaryDataFileName,
@@ -293,7 +331,10 @@ void InitializeReplay(const char *binaryDataFileName,
                       uint32_t maxTransformFeedback,
                       uint32_t maxVertexArray)
 {
-    gBinaryData = gTraceCallbacks->LoadBinaryData(binaryDataFileName);
+    if (!gFrameCaptureBinaryData)
+    {
+        gBinaryData = gTraceCallbacks->LoadBinaryData(binaryDataFileName);
+    }
 
     for (uint8_t *&clientArray : gClientArrays)
     {
@@ -354,6 +395,13 @@ void FinishReplay()
         delete[] gFramebufferMapPerContext[i];
     }
     delete[] gFramebufferMapPerContext;
+
+    if (gFrameCaptureBinaryData)
+    {
+        gFrameCaptureBinaryData->closeBinaryDataLoader();
+        delete gFrameCaptureBinaryData;
+        gFrameCaptureBinaryData = nullptr;
+    }
 }
 
 void SetValidateSerializedStateCallback(ValidateSerializedStateCallback callback)
@@ -708,6 +756,16 @@ void CreateContext(GLuint contextID)
 void SetCurrentContextID(GLuint id)
 {
     gContextMap2[id] = eglGetCurrentContext();
+}
+
+const uint8_t *GetBinaryData(const size_t offset)
+{
+    return gFrameCaptureBinaryData->getData(offset);
+}
+
+void InitializeBinaryDataLoader()
+{
+    gFrameCaptureBinaryData->initializeBinaryDataLoader();
 }
 
 ANGLE_REPLAY_EXPORT PFNEGLCREATEIMAGEPROC r_eglCreateImage;

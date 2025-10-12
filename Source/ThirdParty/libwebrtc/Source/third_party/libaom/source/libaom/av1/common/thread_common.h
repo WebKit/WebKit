@@ -315,7 +315,7 @@ static inline void loop_filter_data_reset(LFWorkerData *lf_data,
   lf_data->cm = cm;
   lf_data->xd = xd;
   for (int i = 0; i < MAX_MB_PLANE; i++) {
-    memcpy(&lf_data->planes[i].dst, &pd[i].dst, sizeof(lf_data->planes[i].dst));
+    lf_data->planes[i].dst = pd[i].dst;
     lf_data->planes[i].subsampling_x = pd[i].subsampling_x;
     lf_data->planes[i].subsampling_y = pd[i].subsampling_y;
   }

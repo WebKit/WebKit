@@ -1,0 +1,4 @@
+Triceratops
+
+PASS first-line-computed-style
+

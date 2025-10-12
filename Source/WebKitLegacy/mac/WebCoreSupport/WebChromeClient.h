@@ -33,7 +33,11 @@
 #import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+class Frame;
 class HTMLImageElement;
+enum class BroadcastFocusedElement : bool;
+enum class PointerLockRequestResult : uint8_t;
+struct FocusOptions;
 }
 
 @class WebView;
@@ -62,7 +66,7 @@ private:
     bool canTakeFocus(WebCore::FocusDirection) const final;
     void takeFocus(WebCore::FocusDirection) override;
 
-    void focusedElementChanged(WebCore::Element*) override;
+    void focusedElementChanged(WebCore::Element*, WebCore::LocalFrame*, WebCore::FocusOptions, WebCore::BroadcastFocusedElement) override;
     void focusedFrameChanged(WebCore::Frame*) final;
 
     RefPtr<WebCore::Page> createWindow(WebCore::LocalFrame&, const String& openedMainFrameName, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
@@ -71,16 +75,16 @@ private:
     bool canRunModal() const final;
     void runModal() final;
 
-    void setToolbarsVisible(bool) final;
+    void setToolbarsVisible(bool);
     bool toolbarsVisible() const final;
 
-    void setStatusbarVisible(bool) final;
+    void setStatusbarVisible(bool);
     bool statusbarVisible() const final;
 
-    void setScrollbarsVisible(bool) final;
+    void setScrollbarsVisible(bool);
     bool scrollbarsVisible() const final;
 
-    void setMenubarVisible(bool) final;
+    void setMenubarVisible(bool);
     bool menubarVisible() const final;
 
     void setResizable(bool) final;
@@ -150,12 +154,13 @@ private:
     void updateTextIndicator(const WebCore::TextIndicatorData&) const final;
 
 #if ENABLE(POINTER_LOCK)
-    bool requestPointerLock() final;
-    void requestPointerUnlock() final;
+    void requestPointerLock(CompletionHandler<void(WebCore::PointerLockRequestResult)>&&) final;
+    void requestPointerUnlock(CompletionHandler<void(bool)>&&) final;
 #endif
 
     WebCore::KeyboardUIMode keyboardUIMode() final;
 
+    bool hasAccessoryMousePointingDevice() const override { return true; }
     bool hoverSupportedByPrimaryPointingDevice() const override { return true; }
     bool hoverSupportedByAnyAvailablePointingDevice() const override { return true; }
     std::optional<WebCore::PointerCharacteristics> pointerCharacteristicsOfPrimaryPointingDevice() const override { return WebCore::PointerCharacteristics::Fine; }
@@ -199,7 +204,7 @@ private:
 #endif
 
 #if ENABLE(VIDEO)
-    bool canEnterVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const final;
+    bool canEnterVideoFullscreen(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const final;
     bool supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) final;
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     void setMockVideoPresentationModeEnabled(bool) final;

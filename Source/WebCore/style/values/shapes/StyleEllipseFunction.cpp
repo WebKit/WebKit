@@ -29,8 +29,10 @@
 #include "GeometryUtilities.h"
 #include "Path.h"
 #include "StyleGradient.h"
+#include "StyleLengthWrapper+Blending.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include <WebCore/StylePosition.h>
 #include <wtf/TinyLRUCache.h>
 
 namespace WebCore {
@@ -63,7 +65,7 @@ static const WebCore::Path& cachedEllipsePath(const FloatRect& rect)
 
 FloatPoint resolvePosition(const Ellipse& value, FloatSize boundingBox)
 {
-    return value.position ? evaluate(*value.position, boundingBox) : FloatPoint { boundingBox.width() / 2, boundingBox.height() / 2 };
+    return value.position ? evaluate<FloatPoint>(*value.position, boundingBox, Style::ZoomNeeded { }) : FloatPoint { boundingBox.width() / 2, boundingBox.height() / 2 };
 }
 
 FloatSize resolveRadii(const Ellipse& value, FloatSize boxSize, FloatPoint center)
@@ -71,7 +73,7 @@ FloatSize resolveRadii(const Ellipse& value, FloatSize boxSize, FloatPoint cente
     auto sizeForAxis = [&](const Ellipse::RadialSize& radius, float centerValue, float dimensionSize) {
         return WTF::switchOn(radius,
             [&](const Ellipse::Length& length) -> float {
-                return evaluate(length, std::abs(dimensionSize));
+                return evaluate<float>(length, std::abs(dimensionSize), Style::ZoomNeeded { });
             },
             [&](const Ellipse::Extent& extent) -> float {
                 return WTF::switchOn(extent,

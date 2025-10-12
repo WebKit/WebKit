@@ -18,20 +18,21 @@
 #include "media/sctp/sctp_transport_internal.h"
 #include "rtc_base/thread.h"
 
-namespace cricket {
+namespace webrtc {
 
-class SctpTransportFactory : public webrtc::SctpTransportFactoryInterface {
+class SctpTransportFactory : public SctpTransportFactoryInterface {
  public:
-  explicit SctpTransportFactory(rtc::Thread* network_thread);
+  explicit SctpTransportFactory(Thread* network_thread);
 
   std::unique_ptr<SctpTransportInternal> CreateSctpTransport(
-      const webrtc::Environment& env,
-      rtc::PacketTransportInternal* transport) override;
+      const Environment& env,
+      DtlsTransportInternal* transport) override;
 
  private:
-  rtc::Thread* network_thread_;
+  Thread* network_thread_;
 };
 
-}  // namespace cricket
+}  //  namespace webrtc
+
 
 #endif  // MEDIA_SCTP_SCTP_TRANSPORT_FACTORY_H__

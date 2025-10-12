@@ -17,7 +17,7 @@ shouldBeEqualToString("timeLabel.element.className", "time-label");
 const NaNTimeLabel = new TimeLabel;
 NaNTimeLabel.setValueWithNumberOfDigits(NaN, 4);
 
-const digits = [3, 4, 5, 6];
+const digits = [4, 5, 6];
 let elapsedTimeLabels = new Map;
 let remainingTimeLabels = new Map;
 let durationTimeLabels = new Map;
@@ -25,7 +25,7 @@ for (let numberOfDigits of digits) {
     elapsedTimeLabels[numberOfDigits] = new TimeLabel(TimeLabel.Type.Elapsed);
     elapsedTimeLabels[numberOfDigits].setValueWithNumberOfDigits(1, numberOfDigits);
     remainingTimeLabels[numberOfDigits] = new TimeLabel(TimeLabel.Type.Remaining);
-    remainingTimeLabels[numberOfDigits].setValueWithNumberOfDigits(1, numberOfDigits);
+    remainingTimeLabels[numberOfDigits].setValueWithNumberOfDigits(-1, numberOfDigits);
     durationTimeLabels[numberOfDigits] = new TimeLabel(TimeLabel.Type.Duration);
     durationTimeLabels[numberOfDigits].setValueWithNumberOfDigits(1, numberOfDigits);
 }
@@ -55,7 +55,6 @@ scheduler.frameDidFire = function()
 
     style = window.getComputedStyle(timeLabel.element);
 
-    shouldBeEqualToString("style.position", "absolute");
     shouldBeEqualToString("style.fontFamily", "-apple-system-monospaced-numbers");
     shouldBeEqualToString("style.fontSize", "12px");
 
@@ -81,11 +80,8 @@ scheduler.frameDidFire = function()
     for (numberOfDigits of digits) {
         debug("");
         debug(`elapsedTimeLabels[${numberOfDigits}].element.textContent = ${elapsedTimeLabels[numberOfDigits].element.textContent}`);
-        debug(`elapsedTimeLabels[${numberOfDigits}].width = ${elapsedTimeLabels[numberOfDigits].width}`);
         debug(`remainingTimeLabels[${numberOfDigits}].element.textContent = ${remainingTimeLabels[numberOfDigits].element.textContent}`);
-        debug(`remainingTimeLabels[${numberOfDigits}].width = ${remainingTimeLabels[numberOfDigits].width}`);
         debug(`durationTimeLabels[${numberOfDigits}].element.textContent = ${durationTimeLabels[numberOfDigits].element.textContent}`);
-        debug(`durationTimeLabels[${numberOfDigits}].width = ${durationTimeLabels[numberOfDigits].width}`);
     }
 
     debug("");

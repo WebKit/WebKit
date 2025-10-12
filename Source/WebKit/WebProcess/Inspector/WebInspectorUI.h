@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +57,7 @@ class WebInspectorUI final
     : public RefCounted<WebInspectorUI>
     , private IPC::Connection::Client
     , public WebCore::InspectorFrontendClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebInspectorUI);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebInspectorUI);
 public:
     static Ref<WebInspectorUI> create(WebPage&);
@@ -71,7 +71,7 @@ public:
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) override { /* Do nothing, the inspected page process may have crashed and may be getting replaced. */ }
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t indexOfObjectFailingDecoding) override { closeWindow(); }
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) override { closeWindow(); }
 
     // Called by WebInspectorUI messages
     void establishConnection(WebPageProxyIdentifier inspectedPageIdentifier, const DebuggableInfoData&, bool underTest, unsigned inspectionLevel);
@@ -158,6 +158,9 @@ public:
 
     void setInspectorPageDeveloperExtrasEnabled(bool) override;
 
+    void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor) override;
+    double pageZoomFactor() const override;
+
 #if ENABLE(INSPECTOR_TELEMETRY)
     bool supportsDiagnosticLogging() override;
     bool diagnosticLoggingAvailable() override { return m_diagnosticLoggingAvailable; }
@@ -199,7 +202,7 @@ private:
     }
 
     WeakRef<WebPage> m_page;
-    Ref<WebCore::InspectorFrontendAPIDispatcher> m_frontendAPIDispatcher;
+    const Ref<WebCore::InspectorFrontendAPIDispatcher> m_frontendAPIDispatcher;
     RefPtr<WebCore::InspectorFrontendHost> m_frontendHost;
 
     // Keep a pointer to the frontend's inspector controller rather than going through
@@ -223,6 +226,7 @@ private:
 
     DockSide m_dockSide { DockSide::Undocked };
     unsigned m_inspectionLevel { 1 };
+    double m_pageZoomFactor { 1.0 };
 };
 
 } // namespace WebKit

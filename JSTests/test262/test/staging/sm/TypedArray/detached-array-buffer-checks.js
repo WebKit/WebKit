@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-TypedArray-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -30,87 +27,87 @@ var POISON = (function() {
 });
 
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.copyWithin(POISON);
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.entries();
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.fill(POISON);
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.filter(POISON);
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.find(POISON);
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.findIndex(POISON);
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.forEach(POISON);
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.indexOf(POISON);
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.includes(POISON);
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.join(POISON);
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.keys();
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.lastIndexOf(POISON);
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.map(POISON);
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.reduce(POISON);
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.reduceRight(POISON);
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.reverse();
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.slice(POISON, POISON);
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.some(POISON);
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.values();
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.every(POISON);
-}, TypeError);
+});
 
-assertThrowsInstanceOf(() => {
+assert.throws(TypeError, () => {
     array.sort(POISON);
-}, TypeError);
+});
 

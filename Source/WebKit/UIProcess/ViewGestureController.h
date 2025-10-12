@@ -96,6 +96,7 @@ typedef void* PlatformScrollEvent;
 namespace WebKit {
 
 class ViewSnapshot;
+class WebBackForwardList;
 class WebBackForwardListItem;
 class WebPageProxy;
 class WebProcessProxy;
@@ -179,6 +180,8 @@ public:
 
     bool canSwipeInDirection(SwipeDirection, DeferToConflictingGestures) const;
 
+    bool hasActiveSwipeGesture() const { return m_activeGestureType == ViewGestureType::Swipe; }
+
     WebCore::Color backgroundColorForCurrentSnapshot() const { return m_backgroundColorForCurrentSnapshot; }
 
     void didStartProvisionalLoadForMainFrame();
@@ -227,8 +230,12 @@ private:
 
     void didStartProvisionalOrSameDocumentLoadForMainFrame();
 
+#if PLATFORM(COCOA)
+    WebBackForwardList* backForwardListForNavigation() const;
+#endif
+
     class SnapshotRemovalTracker : public CanMakeCheckedPtr<SnapshotRemovalTracker> {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SnapshotRemovalTracker);
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SnapshotRemovalTracker);
     public:
         enum Event : uint8_t {
@@ -359,6 +366,10 @@ private:
 
 #if PLATFORM(GTK)
     GRefPtr<GtkStyleContext> createStyleContext(const char*);
+#endif
+
+#if PLATFORM(COCOA)
+    RefPtr<WebBackForwardListItem> itemForSwipeDirection(SwipeDirection) const;
 #endif
 
     WeakPtr<WebPageProxy> m_webPageProxy;

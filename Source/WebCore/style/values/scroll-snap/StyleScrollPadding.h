@@ -24,93 +24,39 @@
 
 #pragma once
 
-#include "BoxExtents.h"
-#include "CSSPrimitiveNumericUnits.h"
-#include "Length.h"
-#include "StyleValueTypes.h"
+#include <WebCore/BoxExtents.h>
+#include <WebCore/StyleLengthWrapper.h>
 
 namespace WebCore {
 
-class CSSValue;
 class LayoutRect;
-class LayoutUnit;
-class RenderStyle;
 
 namespace Style {
 
-class BuilderState;
-struct ExtractorState;
-
 // <'scroll-padding-*'> = auto | <length-percentage [0,∞]>
 // https://drafts.csswg.org/css-scroll-snap-1/#padding-longhands-physical
-struct ScrollPaddingEdge {
-    ScrollPaddingEdge(WebCore::Length&& value)
-        : m_value { WTFMove(value) }
-    {
-        RELEASE_ASSERT(m_value.isSpecified());
-    }
-
-    ScrollPaddingEdge(CSS::Keyword::Auto)
-        : m_value { WebCore::LengthType::Auto }
-    {
-    }
-
-    ScrollPaddingEdge(CSS::ValueLiteral<CSS::LengthUnit::Px> pixels)
-        : m_value { pixels.value, WebCore::LengthType::Fixed }
-    {
-    }
-
-    ScrollPaddingEdge(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> percentage)
-        : m_value { percentage.value, WebCore::LengthType::Percent }
-    {
-    }
-
-    LayoutUnit evaluate(LayoutUnit referenceLength) const;
-    float evaluate(float referenceLength) const;
-
-    Ref<CSSValue> toCSS(ExtractorState&) const;
-
-    bool isZero() const { return m_value.isZero(); }
-
-    bool operator==(const ScrollPaddingEdge&) const = default;
-
-private:
-    WebCore::Length m_value;
+struct ScrollPaddingEdge : LengthWrapperBase<LengthPercentage<CSS::Nonnegative>, CSS::Keyword::Auto> {
+    using Base::Base;
 };
 
 // <'scroll-padding'> = [ auto | <length-percentage [0,∞]> ]{1,4}
 // https://drafts.csswg.org/css-scroll-snap-1/#propdef-scroll-padding
-struct ScrollPadding : SpaceSeparatedRectEdges<ScrollPaddingEdge> {
-    using Wrapped = SpaceSeparatedRectEdges<ScrollPaddingEdge>;
-    using Wrapped::Wrapped;
-    using Wrapped::operator=;
-
-    template<size_t I> friend const auto& get(const ScrollPadding& self)
-    {
-        return get<I>(static_cast<const Wrapped&>(self));
-    }
-
-    bool operator==(const ScrollPadding&) const = default;
-};
-
-// MARK: - Conversion
-
-ScrollPaddingEdge scrollPaddingEdgeFromCSSValue(const CSSValue&, BuilderState&);
+using ScrollPaddingBox = MinimallySerializingSpaceSeparatedRectEdges<ScrollPaddingEdge>;
 
 // MARK: - Evaluation
 
-template<> struct Evaluation<ScrollPaddingEdge> {
-    template<typename T> auto operator()(const ScrollPaddingEdge& edge, T referenceLength) -> T
-    {
-        return edge.evaluate(referenceLength);
-    }
+template<> struct Evaluation<ScrollPaddingEdge, LayoutUnit> {
+    auto operator()(const ScrollPaddingEdge&, LayoutUnit referenceLength, ZoomNeeded) -> LayoutUnit;
+};
+template<> struct Evaluation<ScrollPaddingEdge, float> {
+    auto operator()(const ScrollPaddingEdge&, float referenceLength, ZoomNeeded) -> float;
 };
 
 // MARK: - Extent
 
-LayoutBoxExtent extentForRect(const ScrollPadding&, const LayoutRect&);
+LayoutBoxExtent extentForRect(const ScrollPaddingBox&, const LayoutRect&, ZoomNeeded);
 
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::ScrollPadding, 4)
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ScrollPaddingEdge)

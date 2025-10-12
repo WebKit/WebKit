@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class Page;
+class RegistrableDomain;
 
 class MainThreadPermissionObserver final : public PermissionObserver {
     WTF_MAKE_NONCOPYABLE(MainThreadPermissionObserver);
@@ -45,6 +46,9 @@ class MainThreadPermissionObserver final : public PermissionObserver {
 public:
     MainThreadPermissionObserver(ThreadSafeWeakPtr<PermissionStatus>&&, ScriptExecutionContextIdentifier, PermissionState, PermissionDescriptor, PermissionQuerySource, WeakPtr<Page>&&, ClientOrigin&&);
     ~MainThreadPermissionObserver();
+
+    void addChangeListener(const RegistrableDomain& topFrameDomain, const RegistrableDomain& subFrameDomain) final;
+    void removeChangeListener(const RegistrableDomain& topFrameDomain, const RegistrableDomain& subFrameDomain) final;
 
 private:
     // PermissionObserver

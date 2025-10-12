@@ -35,7 +35,7 @@
     [CEReactions=NotNeeded, Reflect] attribute unsigned long height;
     readonly attribute unsigned long videoWidth;
     readonly attribute unsigned long videoHeight;
-    [CEReactions=NotNeeded, Reflect, URL] attribute USVString poster;
+    [CEReactions=NotNeeded, ReflectURL] attribute USVString poster;
     [CEReactions=NotNeeded, Reflect] attribute boolean playsInline;
 
     // Non-standard
@@ -50,7 +50,7 @@
     [ImplementedAs=webkitEnterFullscreen] undefined webkitEnterFullScreen();
     [ImplementedAs=webkitExitFullscreen] undefined webkitExitFullScreen();
 
-    [Conditional=WIRELESS_PLAYBACK_TARGET] attribute boolean webkitWirelessVideoPlaybackDisabled;
+    [Conditional=WIRELESS_PLAYBACK_TARGET, ReflectSetter] attribute boolean webkitWirelessVideoPlaybackDisabled;
 
     // The number of frames that have been decoded and made available for playback.
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitDecodedFrameCount;

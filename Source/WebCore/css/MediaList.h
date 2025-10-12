@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include "MediaQuery.h"
-#include "MediaQueryParserContext.h"
+#include <WebCore/MediaQuery.h>
+#include <WebCore/MediaQueryParserContext.h>
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>

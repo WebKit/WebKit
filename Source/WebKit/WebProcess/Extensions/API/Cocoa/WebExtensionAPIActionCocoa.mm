@@ -390,8 +390,8 @@ bool WebExtensionAPIAction::isValidDimensionKey(NSString *dimension)
 
 NSString *WebExtensionAPIAction::parseIconPath(NSString *path, const URL& baseURL)
 {
-    // Resolve paths as relative against the base URL, unless it is a data URL.
-    if ([path hasPrefix:@"data:"])
+    // Resolve paths as relative against the base URL, unless it is a data or symbol URL.
+    if ([path hasPrefix:@"data:"] || [path hasPrefix:@"symbol:"])
         return path;
     return URL { baseURL, path }.path().createNSString().autorelease();
 }
@@ -672,7 +672,7 @@ void WebExtensionContextProxy::dispatchActionClickedEvent(const std::optional<We
     auto *tab = tabParameters ? toWebAPI(tabParameters.value()) : nil;
 
     enumerateFramesAndNamespaceObjects([&](auto& frame, auto& namespaceObject) {
-        RefPtr coreFrame = frame.protectedCoreLocalFrame();
+        RefPtr coreFrame = frame.coreLocalFrame();
         WebCore::UserGestureIndicator gestureIndicator(WebCore::IsProcessingUserGesture::Yes, coreFrame ? coreFrame->document() : nullptr);
         namespaceObject.action().onClicked().invokeListenersWithArgument(tab);
     });

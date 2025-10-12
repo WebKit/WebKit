@@ -112,7 +112,7 @@ WI.SourceCodeTreeElement = class SourceCodeTreeElement extends WI.FolderizedTree
                 findAndCombineFolderChains(treeElement.children[i], previousSingleTreeElement);
         }
 
-        for (let sourceMap of this.resource.sourceMaps) {
+        for (let sourceMap of this._sourceCode.sourceMaps) {
             for (let sourceMapResource of sourceMap.resources) {
                 var relativeSubpath = sourceMapResource.sourceMapDisplaySubpath;
                 var folderTreeElement = this.createFoldersAsNeededForSubpath(relativeSubpath);

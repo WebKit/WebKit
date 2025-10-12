@@ -210,6 +210,10 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
     void bindPipeline(VkPipelineBindPoint pipelineBindPoint, const Pipeline &pipeline);
 
     void bindIndexBuffer(const Buffer &buffer, VkDeviceSize offset, VkIndexType indexType);
+    void bindIndexBuffer2(const Buffer &buffer,
+                          VkDeviceSize offset,
+                          VkDeviceSize size,
+                          VkIndexType indexType);
     void bindVertexBuffers(uint32_t firstBinding,
                            uint32_t bindingCount,
                            const VkBuffer *buffers,
@@ -1035,6 +1039,15 @@ ANGLE_INLINE void CommandBuffer::bindIndexBuffer(const Buffer &buffer,
 {
     ASSERT(valid());
     vkCmdBindIndexBuffer(mHandle, buffer.getHandle(), offset, indexType);
+}
+
+ANGLE_INLINE void CommandBuffer::bindIndexBuffer2(const Buffer &buffer,
+                                                  VkDeviceSize offset,
+                                                  VkDeviceSize size,
+                                                  VkIndexType indexType)
+{
+    ASSERT(valid());
+    vkCmdBindIndexBuffer2KHR(mHandle, buffer.getHandle(), offset, size, indexType);
 }
 
 ANGLE_INLINE void CommandBuffer::bindDescriptorSets(const PipelineLayout &layout,

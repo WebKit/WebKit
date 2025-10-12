@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="timeout" content="long">
+    <meta charset="utf-8">
+    <title>Test writing long mp4 doesn't truncate</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+
+    function waitFor(duration)
+    {
+        return new Promise((resolve) => setTimeout(resolve, duration));
+    }
+
+    function deviceFromLabel(devices, label)
+    {
+        for (let device of devices) {
+            if (device.label === label)
+                return device;
+        }
+    }
+
+    promise_test(async (test) => {
+        const duration = 22; // recording duration in seconds
+
+        let stream = await navigator.mediaDevices.getUserMedia({ audio:true, video:false })
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        assert_true(devices.length > 2, "after getting permission, more than 1 camera and 1 microphone are exposed");
+        devices.forEach((device) => {
+            assert_not_equals(device.deviceId.length == 0 , "device.deviceId is empty before permission to capture");
+        });
+        stream.getAudioTracks()[0].stop();
+
+        const mic96KHz = deviceFromLabel(devices, "Mock audio device 3");
+        stream = await navigator.mediaDevices.getUserMedia({ audio: { deviceId:mic96KHz.deviceId, sampleRate:96000 } })
+        test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+
+        const recorder = new MediaRecorder(stream, { mimeType : "video/mp4" });
+
+        const dataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+        const startPromise = new Promise(resolve => recorder.onstart = resolve);
+        recorder.start();
+        await startPromise;
+
+        await waitFor(duration * 1000);
+        recorder.stop();
+        const blob = await dataPromise;
+
+        const url = URL.createObjectURL(blob);
+        const video = document.createElement("video");
+        video.src = url;
+        await new Promise((resolve) => video.addEventListener("loadedmetadata", resolve, { once: true }));
+        assert_greater_than(video.duration, duration - 1);
+        URL.revokeObjectURL(url);
+    }, "Recording a long audio, will not yield a truncated file");
+    </script>
+</head>
+<body>
+</body>
+</html>

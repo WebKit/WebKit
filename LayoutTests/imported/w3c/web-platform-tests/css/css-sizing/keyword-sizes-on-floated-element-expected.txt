@@ -1,0 +1,121 @@
+
+PASS .test 1
+PASS .test 2
+PASS .test 3
+PASS .test 4
+PASS .test 5
+PASS .test 6
+PASS .test 7
+PASS .test 8
+PASS .test 9
+PASS .test 10
+PASS .test 11
+PASS .test 12
+PASS .test 13
+PASS .test 14
+PASS .test 15
+PASS .test 16
+PASS .test 17
+PASS .test 18
+PASS .test 19
+PASS .test 20
+PASS .test 21
+PASS .test 22
+PASS .test 23
+PASS .test 24
+PASS .test 25
+PASS .test 26
+PASS .test 27
+PASS .test 28
+PASS .test 29
+PASS .test 30
+FAIL .test 31 assert_equals:
+<div class="test min-height" style="min-height: min-content" data-expected-height="30">X X</div>
+height expected 30 but got 10
+PASS .test 32
+FAIL .test 33 assert_equals:
+<div class="test min-height" style="min-height: max-content" data-expected-height="30">X X</div>
+height expected 30 but got 10
+PASS .test 34
+PASS .test 35
+PASS .test 36
+PASS .test 37
+PASS .test 38
+PASS .test 39
+PASS .test 40
+PASS .test 41
+PASS .test 42
+PASS .test 43
+PASS .test 44
+PASS .test 45
+FAIL .test 46 assert_equals:
+<div class="test height stretch" data-expected-height="90">X X</div>
+height expected 90 but got 100
+FAIL .test 47 assert_equals:
+<div class="test height stretch" data-expected-height="90">XXX XXX&lt;</div>
+height expected 90 but got 100
+FAIL .test 48 assert_equals:
+<div class="test height stretch" data-expected-height="90">XXXXX XXXXX</div>
+height expected 90 but got 100
+FAIL .test 49 assert_equals:
+<div class="test min-height stretch" data-expected-height="90">X X</div>
+height expected 90 but got 100
+FAIL .test 50 assert_equals:
+<div class="test min-height stretch" data-expected-height="90">XXX XXX</div>
+height expected 90 but got 100
+FAIL .test 51 assert_equals:
+<div class="test min-height stretch" data-expected-height="90">XXXXX XXXXX</div>
+height expected 90 but got 100
+FAIL .test 52 assert_equals:
+<div class="test max-height stretch" data-expected-height="90">X X</div>
+height expected 90 but got 100
+FAIL .test 53 assert_equals:
+<div class="test max-height stretch" data-expected-height="90">XXX XXX</div>
+height expected 90 but got 100
+FAIL .test 54 assert_equals:
+<div class="test max-height stretch" data-expected-height="90">XXXXX XXXXX</div>
+height expected 90 but got 100
+PASS .test 55
+FAIL .test 56 assert_equals:
+<div class="test height min-height max-height stretch" data-expected-height="10"></div>
+height expected 10 but got 0
+FAIL .test 57 assert_equals:
+<div class="test height stretch" data-expected-height="30">X X</div>
+height expected 30 but got 100
+FAIL .test 58 assert_equals:
+<div class="test height stretch" data-expected-height="50">XXX XXX</div>
+height expected 50 but got 100
+FAIL .test 59 assert_equals:
+<div class="test height stretch" data-expected-height="50">XXXXX XXXXX</div>
+height expected 50 but got 100
+FAIL .test 60 assert_equals:
+<div class="test min-height stretch" data-expected-height="10">X X</div>
+height expected 10 but got 100
+FAIL .test 61 assert_equals:
+<div class="test min-height stretch" data-expected-height="10">XXX XXX</div>
+height expected 10 but got 100
+FAIL .test 62 assert_equals:
+<div class="test min-height stretch" data-expected-height="10">XXXXX XXXXX</div>
+height expected 10 but got 100
+FAIL .test 63 assert_equals:
+<div class="test max-height stretch" data-expected-height="510">X X</div>
+height expected 510 but got 100
+FAIL .test 64 assert_equals:
+<div class="test max-height stretch" data-expected-height="510">XXX XXX</div>
+height expected 510 but got 100
+FAIL .test 65 assert_equals:
+<div class="test max-height stretch" data-expected-height="510">XXXXX XXXXX</div>
+height expected 510 but got 100
+PASS .test 66
+PASS .test 67
+PASS .test 68
+PASS .test 69
+PASS .test 70
+PASS .test 71
+PASS .test 72
+PASS .test 73
+PASS .test 74
+X XX XX XXXX XXXXXX XXXXXX XXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXX
+X X X X X X XXX XXX XXX XXX XXX XXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX
+X X X X X X XXX XXX XXX XXX XXX XXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX
+X X X X X X X X X X X X X X X X X X  X XXXX XXXXXXXX XXXXXX XXXX XXXXXXXX XXXXXX XXXX XXXXXXXX XXXXXX XXXX XXX<XXXXX XXXXXX XXXX XXXXXXXX XXXXXX XXXX XXXXXXXX XXXXX X XXXX XXXXXXXX XXXXXX XXXX XXXXXXXX XXXXXX XXXX XXXXXXXX XXXXX X XXXX XXXXXXXX XXXXXX XXXX XXXXXXXX XXXXXX XXXX XXXXXXXX XXXXX

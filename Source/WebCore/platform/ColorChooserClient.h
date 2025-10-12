@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include <WebCore/FrameIdentifier.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 
@@ -39,7 +40,7 @@ class Color;
 class IntRect;
 
 class ColorChooserClient : public AbstractRefCountedAndCanMakeWeakPtr<ColorChooserClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ColorChooserClient);
 public:
     virtual ~ColorChooserClient() = default;
 
@@ -48,6 +49,7 @@ public:
     virtual IntRect elementRectRelativeToRootView() const = 0;
     virtual bool supportsAlpha() const = 0;
     virtual Vector<Color> suggestedColors() const = 0;
+    virtual std::optional<FrameIdentifier> rootFrameID() const = 0;
 };
 
 } // namespace WebCore

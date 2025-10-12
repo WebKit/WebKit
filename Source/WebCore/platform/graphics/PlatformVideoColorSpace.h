@@ -25,16 +25,16 @@
 
 #pragma once
 
-#include "PlatformVideoColorPrimaries.h"
-#include "PlatformVideoMatrixCoefficients.h"
-#include "PlatformVideoTransferCharacteristics.h"
+#include <WebCore/PlatformVideoColorPrimaries.h>
+#include <WebCore/PlatformVideoMatrixCoefficients.h>
+#include <WebCore/PlatformVideoTransferCharacteristics.h>
 #include <optional>
 #include <wtf/FastMalloc.h>
 
 namespace WebCore {
 
 struct PlatformVideoColorSpace {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(PlatformVideoColorSpace);
     std::optional<PlatformVideoColorPrimaries> primaries;
     std::optional<PlatformVideoTransferCharacteristics> transfer;
     std::optional<PlatformVideoMatrixCoefficients> matrix;

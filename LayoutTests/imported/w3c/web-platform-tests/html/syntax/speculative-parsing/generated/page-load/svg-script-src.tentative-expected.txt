@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: */*\r\nReferer: http://localhost:8800/html/syntax/speculative-parsing/generated/p...
 
 
 FAIL Speculative parsing, page load: svg-script-src Unhandled rejection: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: */*\r\nReferer: http://localhost:8800/html/syntax/speculative-parsing/generated/page-load/resources/svg-script-src-framed.sub.html?uuid=6710aaf0-4791-4492-839b-3996f434dc17"

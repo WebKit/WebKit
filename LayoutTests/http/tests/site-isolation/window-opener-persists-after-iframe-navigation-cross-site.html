@@ -1,0 +1,20 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+
+description("Verifies window.opener persists after a cross-site iframe navigation");
+jsTestIsAsync = true;
+
+
+addEventListener("message", (event) => {
+    if (event.data === "success") {
+        testPassed("received message from iframe prompted by its pop-up, after a navigation");
+        finishJSTest();
+    }
+});
+
+</script>
+
+<body>
+<iframe src='http://127.0.0.1:8000/site-isolation/resources/window-opener-persists-after-iframe-navigation-cross-site-iframe.html'></iframe>
+</body>

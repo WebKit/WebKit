@@ -7,7 +7,7 @@ PASS MediaStreamTrackProcessor interface object name
 PASS MediaStreamTrackProcessor interface: existence and properties of interface prototype object
 PASS MediaStreamTrackProcessor interface: existence and properties of interface prototype object's "constructor" property
 PASS MediaStreamTrackProcessor interface: existence and properties of interface prototype object's @@unscopables property
-FAIL MediaStreamTrackProcessor interface: attribute readable assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS MediaStreamTrackProcessor interface: attribute readable
 FAIL MediaStreamTrackProcessor must be primary interface of new MediaStreamTrackProcessor({ track: new VideoTrackGenerator() }) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Type error"
 FAIL Stringification of new MediaStreamTrackProcessor({ track: new VideoTrackGenerator() }) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Type error"
 FAIL MediaStreamTrackProcessor interface: new MediaStreamTrackProcessor({ track: new VideoTrackGenerator() }) must inherit property "readable" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Type error"

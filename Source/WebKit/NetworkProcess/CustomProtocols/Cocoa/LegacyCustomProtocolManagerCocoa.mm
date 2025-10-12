@@ -61,19 +61,21 @@ void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkP
     };
 
     RELEASE_ASSERT(!firstNetworkProcess() || !hasRegisteredSchemes(RefPtr { protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>() }.get()));
-    firstNetworkProcess() = &networkProcess;
+    firstNetworkProcess() = networkProcess;
 }
 
+NS_REQUIRES_PROPERTY_DEFINITIONS
 @interface WKCustomProtocol : NSURLProtocol {
 @private
     Markable<LegacyCustomProtocolID> _customProtocolID;
-    RetainPtr<CFRunLoopRef> _initializationRunLoop;
 }
 @property (nonatomic, readonly) Markable<LegacyCustomProtocolID> customProtocolID;
 @property (nonatomic, readonly) CFRunLoopRef initializationRunLoop;
 @end
 
-@implementation WKCustomProtocol
+@implementation WKCustomProtocol {
+    RetainPtr<CFRunLoopRef> _initializationRunLoop;
+}
 
 @synthesize customProtocolID = _customProtocolID;
 

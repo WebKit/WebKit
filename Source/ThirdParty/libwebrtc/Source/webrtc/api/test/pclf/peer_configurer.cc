@@ -24,7 +24,7 @@
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_encoder_factory.h"
 #include "api/fec_controller.h"
-#include "api/field_trials_view.h"
+#include "api/field_trials.h"
 #include "api/ice_transport_interface.h"
 #include "api/neteq/neteq_factory.h"
 #include "api/peer_connection_interface.h"
@@ -39,21 +39,24 @@
 #include "api/transport/network_control.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_factory.h"
+#include "p2p/base/port_allocator.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/rtc_certificate_generator.h"
 #include "rtc_base/ssl_certificate.h"
+#include "test/create_test_field_trials.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
 
-PeerConfigurer::PeerConfigurer(
-    const PeerNetworkDependencies& network_dependencies)
+PeerConfigurer::PeerConfigurer(PeerNetworkDependencies& network)
     : components_(std::make_unique<InjectableComponents>(
-          network_dependencies.network_thread,
-          network_dependencies.network_manager,
-          network_dependencies.packet_socket_factory)),
+          network.network_thread(),
+          network.ReleaseNetworkManager(),
+          network.socket_factory())),
       params_(std::make_unique<Params>()),
-      configurable_params_(std::make_unique<ConfigurableParams>()) {}
+      configurable_params_(std::make_unique<ConfigurableParams>()) {
+  components_->pcf_dependencies->field_trials = CreateTestFieldTrialsPtr();
+}
 
 PeerConfigurer* PeerConfigurer::SetName(absl::string_view name) {
   params_->name = std::string(name);
@@ -92,29 +95,29 @@ PeerConfigurer* PeerConfigurer::SetVideoDecoderFactory(
   return this;
 }
 PeerConfigurer* PeerConfigurer::SetAudioEncoderFactory(
-    rtc::scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory) {
+    scoped_refptr<AudioEncoderFactory> audio_encoder_factory) {
   components_->pcf_dependencies->audio_encoder_factory = audio_encoder_factory;
   return this;
 }
 PeerConfigurer* PeerConfigurer::SetAudioDecoderFactory(
-    rtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory) {
+    scoped_refptr<AudioDecoderFactory> audio_decoder_factory) {
   components_->pcf_dependencies->audio_decoder_factory = audio_decoder_factory;
   return this;
 }
 PeerConfigurer* PeerConfigurer::SetAsyncDnsResolverFactory(
-    std::unique_ptr<webrtc::AsyncDnsResolverFactoryInterface>
+    std::unique_ptr<AsyncDnsResolverFactoryInterface>
         async_dns_resolver_factory) {
   components_->pc_dependencies->async_dns_resolver_factory =
       std::move(async_dns_resolver_factory);
   return this;
 }
 PeerConfigurer* PeerConfigurer::SetRTCCertificateGenerator(
-    std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator) {
+    std::unique_ptr<RTCCertificateGeneratorInterface> cert_generator) {
   components_->pc_dependencies->cert_generator = std::move(cert_generator);
   return this;
 }
 PeerConfigurer* PeerConfigurer::SetSSLCertificateVerifier(
-    std::unique_ptr<rtc::SSLCertificateVerifier> tls_cert_verifier) {
+    std::unique_ptr<SSLCertificateVerifier> tls_cert_verifier) {
   components_->pc_dependencies->tls_cert_verifier =
       std::move(tls_cert_verifier);
   return this;
@@ -169,6 +172,10 @@ PeerConfigurer* PeerConfigurer::SetUseUlpFEC(bool value) {
 }
 PeerConfigurer* PeerConfigurer::SetUseFlexFEC(bool value) {
   params_->use_flex_fec = value;
+  absl::string_view group = value ? "Enabled" : "Disabled";
+  FieldTrials& field_trials = GetFieldTrials();
+  field_trials.Set("WebRTC-FlexFEC-03-Advertised", group);
+  field_trials.Set("WebRTC-FlexFEC-03", group);
   return this;
 }
 PeerConfigurer* PeerConfigurer::SetVideoEncoderBitrateMultiplier(
@@ -182,12 +189,12 @@ PeerConfigurer* PeerConfigurer::SetNetEqFactory(
   return this;
 }
 PeerConfigurer* PeerConfigurer::SetAudioProcessing(
-    rtc::scoped_refptr<webrtc::AudioProcessing> audio_processing) {
-  components_->pcf_dependencies->audio_processing = audio_processing;
+    std::unique_ptr<AudioProcessingBuilderInterface> audio_processing) {
+  components_->pcf_dependencies->audio_processing = std::move(audio_processing);
   return this;
 }
 PeerConfigurer* PeerConfigurer::SetAudioMixer(
-    rtc::scoped_refptr<webrtc::AudioMixer> audio_mixer) {
+    scoped_refptr<AudioMixer> audio_mixer) {
   components_->pcf_dependencies->audio_mixer = audio_mixer;
   return this;
 }
@@ -232,17 +239,10 @@ PeerConfigurer* PeerConfigurer::SetIceTransportFactory(
   return this;
 }
 
-PeerConfigurer* PeerConfigurer::SetFieldTrials(
-    std::unique_ptr<FieldTrialsView> field_trials) {
-  components_->pcf_dependencies->trials = std::move(field_trials);
-  return this;
-}
-
 PeerConfigurer* PeerConfigurer::SetPortAllocatorExtraFlags(
     uint32_t extra_flags) {
-  params_->port_allocator_flags = cricket::kDefaultPortAllocatorFlags |
-                                  cricket::PORTALLOCATOR_DISABLE_TCP |
-                                  extra_flags;
+  params_->port_allocator_flags =
+      kDefaultPortAllocatorFlags | PORTALLOCATOR_DISABLE_TCP | extra_flags;
   return this;
 }
 

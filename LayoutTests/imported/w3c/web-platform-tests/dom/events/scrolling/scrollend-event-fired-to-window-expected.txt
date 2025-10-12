@@ -1,3 +1,3 @@
 
-FAIL testing, vertical promise_test: Unhandled rejection with value: "No scrollend event received for target [object HTMLDivElement]"
+PASS testing, vertical
 

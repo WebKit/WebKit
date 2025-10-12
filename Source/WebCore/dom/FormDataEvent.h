@@ -48,7 +48,7 @@ private:
     FormDataEvent(const AtomString&, Init&&);
     FormDataEvent(const AtomString&, CanBubble, IsCancelable, IsComposed, Ref<DOMFormData>&&);
 
-    Ref<DOMFormData> m_formData;
+    const Ref<DOMFormData> m_formData;
 };
 
 } // namespace WebCore

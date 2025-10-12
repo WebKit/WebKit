@@ -42,8 +42,11 @@ function runTest() {
 
     // Connecting the gamepad and changing axis values should *not* make it visible.
     // Only button presses should expose it.
-    testRunner.setMockGamepadDetails(0, "Test Joystick", "", 2, 2, false);
+    const gamepadWasConnected = true;
+    testRunner.setMockGamepadDetails(0, "Test Joystick", "", 2, 2, false, gamepadWasConnected);
+
     testRunner.connectMockGamepad(0);
+
     testRunner.setMockGamepadAxisValue(0, 0, 0.7);
     testRunner.setMockGamepadAxisValue(0, 1, -1.0);
 

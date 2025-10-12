@@ -33,7 +33,7 @@ SOFT_LINK_FRAMEWORK_FOR_HEADER(WebKit, AuthenticationServicesCore);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCWebKitSPISupport);
 
 SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, AuthenticationServicesCore, ASCAuthorizationErrorDomain, NSErrorDomain);
-#define ASCAuthorizationErrorDomain WebKit::get_AuthenticationServicesCore_ASCAuthorizationErrorDomain()
+#define ASCAuthorizationErrorDomain WebKit::get_AuthenticationServicesCore_ASCAuthorizationErrorDomainSingleton()
 
 #if HAVE(ASC_AUTH_UI) || HAVE(UNIFIED_ASC_AUTH_UI)
 

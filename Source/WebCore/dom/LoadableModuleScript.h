@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple, Inc. All Rights Reserved.
+ * Copyright (C) 2016-2025 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "LoadableScript.h"
-#include "LoadableScriptError.h"
+#include <WebCore/LoadableScript.h>
+#include <WebCore/LoadableScriptError.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -38,12 +38,14 @@ class LoadableModuleScript final : public LoadableScript {
 public:
     virtual ~LoadableModuleScript();
 
-    static Ref<LoadableModuleScript> create(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree);
+    enum class IsInline : bool { No, Yes };
+    static Ref<LoadableModuleScript> create(IsInline, const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree);
 
     bool isLoaded() const final;
     bool hasError() const final;
     std::optional<Error> takeError() final;
     bool wasCanceled() const final;
+    bool isInlineModule() const final { return m_isInline; }
 
     ScriptType scriptType() const final { return ScriptType::Module; }
 
@@ -59,13 +61,14 @@ public:
     ModuleFetchParameters& parameters() { return m_parameters.get(); }
 
 private:
-    LoadableModuleScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree);
+    LoadableModuleScript(IsInline, const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree);
 
-    Ref<ModuleFetchParameters> m_parameters;
+    const Ref<ModuleFetchParameters> m_parameters;
     RefPtr<UniquedStringImpl> m_moduleKey;
     std::optional<LoadableScript::Error> m_error;
     bool m_wasCanceled { false };
     bool m_isLoaded { false };
+    bool m_isInline { false };
 };
 
 }

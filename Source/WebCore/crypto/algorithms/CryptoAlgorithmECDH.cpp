@@ -29,6 +29,7 @@
 #include "CryptoAlgorithmEcKeyParams.h"
 #include "CryptoAlgorithmEcdhKeyDeriveParams.h"
 #include "CryptoKeyEC.h"
+#include "ExceptionOr.h"
 #include "ScriptExecutionContext.h"
 #if HAVE(SWIFT_CPP_INTEROP)
 #include <pal/PALSwift.h>

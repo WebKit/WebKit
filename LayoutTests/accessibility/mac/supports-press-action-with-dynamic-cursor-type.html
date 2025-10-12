@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="click-div" style="cursor:pointer" role="group">Text</div>
+
+<script>
+var output = "This test ensures whether an element supports press action is reported correctly after dynamic CSS cursor style changes.\n\n";
+
+document.getElementById("click-div").addEventListener("click", () => {
+    console.log("foo");
+});
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webarea = accessibilityController.rootElement.childAtIndex(0);
+    var text = webarea.childAtIndex(0).childAtIndex(0);
+    output += expect("text.role", "'AXRole: AXStaticText'");
+    setTimeout(async function() {
+        output += await expectAsync("text.isPressActionSupported()", "true");
+        document.getElementById("click-div").removeAttribute("style");
+        output += await expectAsync("text.isPressActionSupported()", "false");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

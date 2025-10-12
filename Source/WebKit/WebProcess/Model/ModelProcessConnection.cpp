@@ -44,22 +44,13 @@
 namespace WebKit {
 using namespace WebCore;
 
-static ModelProcessConnectionParameters getModelProcessConnectionParameters()
-{
-    ModelProcessConnectionParameters parameters;
-#if PLATFORM(COCOA)
-    parameters.webProcessIdentity = ProcessIdentity { ProcessIdentity::CurrentProcess };
-#endif
-    return parameters;
-}
-
 RefPtr<ModelProcessConnection> ModelProcessConnection::create(IPC::Connection& parentConnection)
 {
     auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
     if (!connectionIdentifiers)
         return nullptr;
 
-    parentConnection.send(Messages::WebProcessProxy::CreateModelProcessConnection(WTFMove(connectionIdentifiers->client), getModelProcessConnectionParameters()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    parentConnection.send(Messages::WebProcessProxy::CreateModelProcessConnection(WTFMove(connectionIdentifiers->client)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 
     auto instance = adoptRef(*new ModelProcessConnection(WTFMove(connectionIdentifiers->server)));
 #if ENABLE(IPC_TESTING_API)
@@ -107,7 +98,7 @@ void ModelProcessConnection::didClose(IPC::Connection&)
     m_clients.clear();
 }
 
-void ModelProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t)
+void ModelProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>&)
 {
 }
 

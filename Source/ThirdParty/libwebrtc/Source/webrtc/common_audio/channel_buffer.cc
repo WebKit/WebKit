@@ -10,6 +10,7 @@
 
 #include "common_audio/channel_buffer.h"
 
+#include <cstddef>
 #include <cstdint>
 
 #include "common_audio/include/audio_util.h"

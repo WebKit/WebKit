@@ -45,7 +45,7 @@ constexpr int secondsPerHour = 3600;
 constexpr int secondsPerMinute = 60;
 constexpr unsigned nptIdentifierLength = 4; // "npt:"
 
-static String collectDigits(std::span<const LChar> input, unsigned& position)
+static String collectDigits(std::span<const Latin1Character> input, unsigned& position)
 {
     StringBuilder digits;
 
@@ -56,7 +56,7 @@ static String collectDigits(std::span<const LChar> input, unsigned& position)
     return digits.toString();
 }
 
-static StringView collectFraction(std::span<const LChar> input, unsigned& position)
+static StringView collectFraction(std::span<const Latin1Character> input, unsigned& position)
 {
     // http://www.ietf.org/rfc/rfc2326.txt
     // [ "." *DIGIT ]
@@ -192,7 +192,7 @@ void MediaFragmentURIParser::parseTimeFragment()
     m_fragments.clear();
 }
 
-bool MediaFragmentURIParser::parseNPTFragment(std::span<const LChar> timeString, MediaTime& startTime, MediaTime& endTime)
+bool MediaFragmentURIParser::parseNPTFragment(std::span<const Latin1Character> timeString, MediaTime& startTime, MediaTime& endTime)
 {
     unsigned offset = 0;
     if (timeString.size() >= nptIdentifierLength && timeString[0] == 'n' && timeString[1] == 'p' && timeString[2] == 't' && timeString[3] == ':')
@@ -231,7 +231,7 @@ bool MediaFragmentURIParser::parseNPTFragment(std::span<const LChar> timeString,
     return true;
 }
 
-bool MediaFragmentURIParser::parseNPTTime(std::span<const LChar> timeString, unsigned& offset, MediaTime& time)
+bool MediaFragmentURIParser::parseNPTTime(std::span<const Latin1Character> timeString, unsigned& offset, MediaTime& time)
 {
     enum Mode { minutes, hours };
     Mode mode = minutes;

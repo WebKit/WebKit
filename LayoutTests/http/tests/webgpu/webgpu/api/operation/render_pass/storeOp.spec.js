@@ -28,14 +28,22 @@
       TODO: test that depth and stencil aspects are set separately
       TODO: depth slice set to {'0', slice > '0'} for 3D textures
       TODO: test with more interesting loadOp values`;import { makeTestGroup } from '../../../../common/framework/test_group.js';
+import { assert } from '../../../../common/util/util.js';
 import {
+
   isDepthTextureFormat,
+  isSintOrUintFormat,
   isStencilTextureFormat,
   kPossibleColorRenderableTextureFormats,
   kSizedDepthStencilFormats } from
 '../../../format_info.js';
 import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
+import * as ttu from '../../../texture_test_utils.js';
+import {
+  kTexelRepresentationInfo,
 
+  TexelComponent } from
+'../../../util/texture/texel_data.js';
 
 // Test with a zero and non-zero mip.
 const kMipLevel = [0, 1];
@@ -150,35 +158,66 @@ combine('mipLevel', kMipLevel).
 combine('arrayLayer', kArrayLayers)
 ).
 fn((t) => {
-  t.skipIfTextureFormatNotSupported(t.params.colorFormat);
-  t.skipIfTextureFormatNotUsableAsRenderAttachment(t.params.colorFormat);
+  const { colorFormat, storeOperation, mipLevel, arrayLayer } = t.params;
+  t.skipIfTextureFormatNotSupported(colorFormat);
+  t.skipIfTextureFormatNotUsableAsRenderAttachment(colorFormat);
 
   const colorAttachment = t.createTextureTracked({
-    format: t.params.colorFormat,
-    size: { width: kWidth, height: kHeight, depthOrArrayLayers: t.params.arrayLayer + 1 },
+    format: colorFormat,
+    size: { width: kWidth, height: kHeight, depthOrArrayLayers: arrayLayer + 1 },
     mipLevelCount: kMipLevelCount,
     usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT
   });
 
   const colorViewDesc = {
-    baseArrayLayer: t.params.arrayLayer,
-    baseMipLevel: t.params.mipLevel,
+    baseArrayLayer: arrayLayer,
+    baseMipLevel: mipLevel,
     mipLevelCount: 1,
     arrayLayerCount: 1
   };
 
   const colorAttachmentView = colorAttachment.createView(colorViewDesc);
 
-  // Color load operation will clear to {1.0, 0.0, 0.0, 1.0}.
+  const components = new Set(
+    kTexelRepresentationInfo[colorFormat]?.componentOrder ?? []
+  );
+  assert(components.size > 0);
+
+  // Note: for unorm/float values we specifically want values
+  // that will generate failure if srgb remapping is applied so
+  // we can't choose 0 or 1 for R, G, or B
+  const missingValue = { R: 0, G: 0, B: 0, A: 1 };
+  const [baseValue, maxDiff] = isSintOrUintFormat(colorFormat) ?
+  [{ R: 12, G: 34, B: 56, A: 3 }, 0] :
+  [{ R: 0.8, G: 0.75, B: 0.5, A: 1.0 }, 2 / 255];
+  const kRGBAComponents = [
+  TexelComponent.R,
+  TexelComponent.G,
+  TexelComponent.B,
+  TexelComponent.A];
+
+
+  const clearValueAsComponents = Object.fromEntries(
+    kRGBAComponents.map((component) => [
+    component,
+    components.has(component) ? baseValue[component] : missingValue[component]]
+    )
+  );
+  const clearValue = Object.fromEntries(
+    Object.entries(clearValueAsComponents).map(([k, v]) => [k.toLowerCase(), v])
+  );
+
+  t.debug(`clearValue: ${JSON.stringify(clearValue)}`);
+
   // Color store operation is determined by the test params.
   const encoder = t.device.createCommandEncoder();
   const pass = encoder.beginRenderPass({
     colorAttachments: [
     {
       view: colorAttachmentView,
-      clearValue: { r: 1.0, g: 0.0, b: 0.0, a: 1.0 },
+      clearValue,
       loadOp: 'clear',
-      storeOp: t.params.storeOperation
+      storeOp: storeOperation
     }]
 
   });
@@ -187,19 +226,20 @@ fn((t) => {
 
   // Check that the correct store operation occurred.
   let expectedValue = {};
-  if (t.params.storeOperation === 'discard') {
+  if (storeOperation === 'discard') {
     // If colorStoreOp was clear, the texture should now contain {0.0, 0.0, 0.0, 0.0}.
     expectedValue = { R: 0.0, G: 0.0, B: 0.0, A: 0.0 };
-  } else if (t.params.storeOperation === 'store') {
-    // If colorStoreOP was store, the texture should still contain {1.0, 0.0, 0.0, 1.0}.
-    expectedValue = { R: 1.0, G: 0.0, B: 0.0, A: 1.0 };
+  } else if (storeOperation === 'store') {
+    // If colorStoreOP was store, the texture should still contain
+    expectedValue = clearValueAsComponents;
   }
 
-  t.expectSingleColor(colorAttachment, t.params.colorFormat, {
+  ttu.expectSingleColorWithTolerance(t, colorAttachment, colorFormat, {
     size: [kHeight, kWidth, 1],
-    slice: t.params.arrayLayer,
+    slice: arrayLayer,
     exp: expectedValue,
-    layout: { mipLevel: t.params.mipLevel }
+    layout: { mipLevel },
+    maxFractionalDiff: maxDiff
   });
 });
 

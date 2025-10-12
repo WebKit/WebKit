@@ -59,6 +59,9 @@ void StructureStubInfoClearingWatchpoint::fireInternal(VM&, const FireDetail&)
 
 void StructureTransitionStructureStubClearingWatchpoint::fireInternal(VM& vm, const FireDetail&)
 {
+    if (m_owner->ownerIsDead())
+        return;
+
     if (!m_key || !m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
         StringFireDetail detail("IC has been invalidated");
         Ref { m_watchpointSet }->fireAll(vm, detail);
@@ -76,6 +79,9 @@ void StructureTransitionStructureStubClearingWatchpoint::fireInternal(VM& vm, co
 
 void AdaptiveValueStructureStubClearingWatchpoint::handleFire(VM& vm, const FireDetail&)
 {
+    if (m_owner->ownerIsDead())
+        return;
+
     StringFireDetail detail("IC has been invalidated");
     Ref { m_watchpointSet }->fireAll(vm, detail);
 }

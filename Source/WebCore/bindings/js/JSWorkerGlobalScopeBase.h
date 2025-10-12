@@ -43,6 +43,8 @@ public:
 
     DECLARE_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
     WorkerGlobalScope& wrapped() const { return *m_wrapped; }
     ScriptExecutionContext* scriptExecutionContext() const;
 
@@ -62,8 +64,6 @@ public:
 protected:
     JSWorkerGlobalScopeBase(JSC::VM&, JSC::Structure*, RefPtr<WorkerGlobalScope>&&);
     void finishCreation(JSC::VM&, JSC::JSGlobalProxy*);
-
-    DECLARE_VISIT_CHILDREN;
 
     static const JSC::GlobalObjectMethodTable* globalObjectMethodTable();
 

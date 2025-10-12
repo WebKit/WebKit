@@ -27,7 +27,6 @@ GoogCcNetworkControllerFactory::GoogCcNetworkControllerFactory(
 std::unique_ptr<NetworkControllerInterface>
 GoogCcNetworkControllerFactory::Create(NetworkControllerConfig config) {
   GoogCcConfig goog_cc_config;
-  goog_cc_config.feedback_only = factory_config_.feedback_only;
   if (factory_config_.network_state_estimator_factory) {
     goog_cc_config.network_state_estimator =
         factory_config_.network_state_estimator_factory->Create(

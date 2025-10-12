@@ -1,4 +1,0 @@
-
-
-PASS A 'frame-ancestors' CSP directive set from a serviceworker response with a value 'none' should block rendering.
-

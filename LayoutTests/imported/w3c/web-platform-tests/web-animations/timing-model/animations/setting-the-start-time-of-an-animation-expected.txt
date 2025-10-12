@@ -12,5 +12,4 @@ PASS Setting the start time of a play-pending animation applies a pending playba
 PASS Setting the start time of a playing animation applies a pending playback rate
 PASS Setting the start time on a running animation updates the play state
 PASS Setting the start time on a reverse running animation updates the play state
-PASS Checking the start time of animations started at various times between two page rendering updates
 

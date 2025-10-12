@@ -27,7 +27,7 @@
 #import "H264UtilitiesCocoa.h"
 
 #import "BitReader.h"
-#import "MediaSample.h"
+#import "TrackInfo.h"
 
 #import <pal/cf/CoreMediaSoftLink.h>
 
@@ -97,14 +97,14 @@ RefPtr<VideoInfo> createVideoInfoFromAVCC(std::span<const uint8_t> avcc)
     }
 
     Vector<const uint8_t*> paramSetPtrs { paramSets.size(), [&paramSets](auto index) {
-        return paramSets[index].data();
+        return paramSets[index].span().data();
     } };
     Vector<size_t> paramSetSizes { paramSets.size(), [&paramSets](auto index) {
         return paramSets[index].size();
     } };
 
     CMFormatDescriptionRef rawDescription = nullptr;
-    if (PAL::CMVideoFormatDescriptionCreateFromH264ParameterSets(kCFAllocatorDefault, paramSetPtrs.size(), paramSetPtrs.data(), paramSetSizes.data(), lengthSize, &rawDescription))
+    if (PAL::CMVideoFormatDescriptionCreateFromH264ParameterSets(kCFAllocatorDefault, paramSetPtrs.size(), paramSetPtrs.span().data(), paramSetSizes.span().data(), lengthSize, &rawDescription))
         return nullptr;
     RetainPtr description = adoptCF(rawDescription);
     auto dimensions = PAL::CMVideoFormatDescriptionGetDimensions(rawDescription);

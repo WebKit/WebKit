@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "EventTarget.h"
-#include "WebSocketFrame.h"
+#include <WebCore/EventTarget.h>
+#include <WebCore/WebSocketFrame.h>
 #include <wtf/Forward.h>
 #include <wtf/ObjectIdentifier.h>
 

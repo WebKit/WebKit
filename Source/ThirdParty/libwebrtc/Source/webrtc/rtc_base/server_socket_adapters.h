@@ -11,9 +11,14 @@
 #ifndef RTC_BASE_SERVER_SOCKET_ADAPTERS_H_
 #define RTC_BASE_SERVER_SOCKET_ADAPTERS_H_
 
-#include "rtc_base/socket_adapters.h"
+#include <cstddef>
 
-namespace rtc {
+#include "rtc_base/socket.h"
+#include "rtc_base/socket_adapters.h"
+#include "rtc_base/socket_address.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
+
+namespace webrtc {
 
 // Interface for implementing proxy server sockets.
 class AsyncProxyServerSocket : public BufferedReadAdapter {
@@ -38,6 +43,7 @@ class AsyncSSLServerSocket : public BufferedReadAdapter {
   void ProcessInput(char* data, size_t* len) override;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_SERVER_SOCKET_ADAPTERS_H_

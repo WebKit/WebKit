@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "MatchResult.h"
-#include "SlotVisitorMacros.h"
-#include "WriteBarrier.h"
+#include <JavaScriptCore/MatchResult.h>
+#include <JavaScriptCore/SlotVisitorMacros.h>
+#include <JavaScriptCore/WriteBarrier.h>
 
 namespace JSC {
 

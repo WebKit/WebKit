@@ -67,7 +67,7 @@ WI.Instrument = class Instrument
             return;
 
         for (let target of WI.targets) {
-            // COMPATIBILITY (iOS X.Y, macOS X.Y): `Timeline.start` did not exist yet for Worker targets.
+            // COMPATIBILITY (iOS 26.0, macOS 26.0): `Timeline.start` did not exist yet for Worker targets.
             if (target.hasDomain("Timeline"))
                 target.TimelineAgent.start();
         }
@@ -86,7 +86,7 @@ WI.Instrument = class Instrument
             return;
 
         for (let target of WI.targets) {
-            // COMPATIBILITY (iOS X.Y, macOS X.Y): `Timeline.stop` did not exist yet for Worker targets.
+            // COMPATIBILITY (iOS 26.0, macOS 26.0): `Timeline.stop` did not exist yet for Worker targets.
             if (target.hasDomain("Timeline"))
                 target.TimelineAgent.stop();
         }

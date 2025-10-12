@@ -27,9 +27,9 @@
 
 #pragma once
 
-#include "GPRInfo.h"
-#include "LLIntPCRanges.h"
-#include "MacroAssemblerCodeRef.h"
+#include <JavaScriptCore/GPRInfo.h>
+#include <JavaScriptCore/LLIntPCRanges.h>
+#include <JavaScriptCore/MacroAssemblerCodeRef.h>
 #include <wtf/PlatformRegisters.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/StdLibExtras.h>

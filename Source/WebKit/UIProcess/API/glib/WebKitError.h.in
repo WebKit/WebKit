@@ -36,7 +36,10 @@ G_BEGIN_DECLS
 #define WEBKIT_JAVASCRIPT_ERROR                  webkit_javascript_error_quark ()
 #define WEBKIT_SNAPSHOT_ERROR                    webkit_snapshot_error_quark ()
 #define WEBKIT_USER_CONTENT_FILTER_ERROR         webkit_user_content_filter_error_quark ()
-#define WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR webkit_web_extension_error_quark ()
+#if ENABLE(2022_GLIB_API)
+#define WEBKIT_WEB_EXTENSION_ERROR               webkit_web_extension_error_quark ()
+#endif
+#define WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR webkit_web_extension_match_pattern_error_quark ()
 
 #if PLATFORM(GTK)
 #define WEBKIT_PRINT_ERROR                       webkit_print_error_quark ()
@@ -158,6 +161,36 @@ typedef enum {
     WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE = 799
 } WebKitSnapshotError;
 
+#if ENABLE(2022_GLIB_API)
+/**
+ * WebKitWebExtensionError:
+ * @WEBKIT_WEB_EXTENSION_ERROR_UNKNOWN: An unknown error occured.
+ * @WEBKIT_WEB_EXTENSION_ERROR_RESOURCE_NOT_FOUND: A specified resource was not found on disk.
+ * @WEBKIT_WEB_EXTENSION_ERROR_INVALID_RESOURCE_CODE_SIGNATURE: A resource failed the bundle's code signature checks.
+ * @WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST: An invalid `manifest.json` was encountered.
+ * @WEBKIT_WEB_EXTENSION_ERROR_UNSUPPORTED_MANIFEST_VERSION: The manifest version is not supported.
+ * @WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY: An invalid manifest entry was encountered.
+ * @WEBKIT_WEB_EXTENSION_ERROR_INVALID_DECLARATIVE_NET_REQUEST_ENTRY: An invalid declarative net request entry was encountered.
+ * @WEBKIT_WEB_EXTENSION_ERROR_INVALID_BACKGROUND_PERSISTENCE: The extension specified background persistence that was not compatible with the platform or features requested.
+ * @WEBKIT_WEB_EXTENSION_ERROR_INVALID_ARCHIVE: The archive file is invalid or corrupt.
+ *
+ * Enum values used to denote errors happening when parsing a #WebKitWebExtension
+ * 
+ * Since: 2.52
+ */
+typedef enum {
+    WEBKIT_WEB_EXTENSION_ERROR_UNKNOWN = 899,
+    WEBKIT_WEB_EXTENSION_ERROR_RESOURCE_NOT_FOUND = 800,
+    WEBKIT_WEB_EXTENSION_ERROR_INVALID_RESOURCE_CODE_SIGNATURE = 801,
+    WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST = 802,
+    WEBKIT_WEB_EXTENSION_ERROR_UNSUPPORTED_MANIFEST_VERSION = 803,
+    WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY = 804,
+    WEBKIT_WEB_EXTENSION_ERROR_INVALID_DECLARATIVE_NET_REQUEST_ENTRY = 805,
+    WEBKIT_WEB_EXTENSION_ERROR_INVALID_BACKGROUND_PERSISTENCE = 806,
+    WEBKIT_WEB_EXTENSION_ERROR_INVALID_ARCHIVE = 807,
+} WebKitWebExtensionError;
+#endif
+
 /**
  * WebKitWebExtensionMatchPatternError:
  * @WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_UNKNOWN: An unknown error occured.
@@ -166,6 +199,8 @@ typedef enum {
  * @WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_INVALID_PATH: The path component was invalid.
  *
  * Enum values used to denote errors happening when creating a #WebKitWebExtensionMatchPattern
+ * 
+ * Since: 2.52
  */
 typedef enum {
     WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_UNKNOWN = 899,
@@ -226,6 +261,11 @@ webkit_javascript_error_quark                  (void);
 
 WEBKIT_API GQuark
 webkit_snapshot_error_quark                    (void);
+
+#if ENABLE(2022_GLIB_API)
+WEBKIT_API GQuark
+webkit_web_extension_error_quark               (void);
+#endif
 
 WEBKIT_API GQuark
 webkit_web_extension_match_pattern_error_quark (void);

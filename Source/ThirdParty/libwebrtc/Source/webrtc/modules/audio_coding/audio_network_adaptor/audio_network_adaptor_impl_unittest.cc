@@ -10,17 +10,22 @@
 
 #include "modules/audio_coding/audio_network_adaptor/audio_network_adaptor_impl.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
 #include <utility>
 #include <vector>
 
 #include "api/rtc_event_log/rtc_event.h"
+#include "api/units/time_delta.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_network_adaptation.h"
 #include "logging/rtc_event_log/mock/mock_rtc_event_log.h"
+#include "modules/audio_coding/audio_network_adaptor/controller.h"
 #include "modules/audio_coding/audio_network_adaptor/mock/mock_controller.h"
 #include "modules/audio_coding/audio_network_adaptor/mock/mock_controller_manager.h"
 #include "modules/audio_coding/audio_network_adaptor/mock/mock_debug_dump_writer.h"
 #include "rtc_base/fake_clock.h"
-#include "test/field_trial.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -174,9 +179,7 @@ TEST(AudioNetworkAdaptorImplTest,
 
 TEST(AudioNetworkAdaptorImplTest,
      DumpEncoderRuntimeConfigIsCalledOnGetEncoderRuntimeConfig) {
-  test::ScopedFieldTrials override_field_trials(
-      "WebRTC-Audio-FecAdaptation/Enabled/");
-  rtc::ScopedFakeClock fake_clock;
+  ScopedFakeClock fake_clock;
   fake_clock.AdvanceTime(TimeDelta::Millis(kClockInitialTimeMs));
   auto states = CreateAudioNetworkAdaptor();
   AudioEncoderRuntimeConfig config;
@@ -194,7 +197,7 @@ TEST(AudioNetworkAdaptorImplTest,
 
 TEST(AudioNetworkAdaptorImplTest,
      DumpNetworkMetricsIsCalledOnSetNetworkMetrics) {
-  rtc::ScopedFakeClock fake_clock;
+  ScopedFakeClock fake_clock;
   fake_clock.AdvanceTime(TimeDelta::Millis(kClockInitialTimeMs));
 
   auto states = CreateAudioNetworkAdaptor();
@@ -246,8 +249,6 @@ TEST(AudioNetworkAdaptorImplTest,
 }
 
 TEST(AudioNetworkAdaptorImplTest, LogRuntimeConfigOnGetEncoderRuntimeConfig) {
-  test::ScopedFieldTrials override_field_trials(
-      "WebRTC-Audio-FecAdaptation/Enabled/");
   auto states = CreateAudioNetworkAdaptor();
 
   AudioEncoderRuntimeConfig config;

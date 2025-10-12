@@ -130,7 +130,6 @@ static int fourcc_is_ivf(const char detect[4]) {
 
 static const int av1_arg_ctrl_map[] = { AOME_SET_CPUUSED,
                                         AOME_SET_ENABLEAUTOALTREF,
-                                        AOME_SET_SHARPNESS,
                                         AOME_SET_STATIC_THRESHOLD,
                                         AV1E_SET_ROW_MT,
                                         AV1E_SET_FP_MT,
@@ -242,6 +241,7 @@ static const int av1_arg_ctrl_map[] = { AOME_SET_CPUUSED,
                                         AV1E_SET_AUTO_INTRA_TOOLS_OFF,
                                         AV1E_ENABLE_RATE_GUIDE_DELTAQ,
                                         AV1E_SET_RATE_DISTRIBUTION_INFO,
+                                        AV1E_SET_ENABLE_LOW_COMPLEXITY_DECODE,
                                         0 };
 
 static const arg_def_t *const main_args[] = {
@@ -342,7 +342,6 @@ static const arg_def_t *const kf_args[] = {
 static const arg_def_t *const av1_ctrl_args[] = {
   &g_av1_codec_arg_defs.cpu_used_av1,
   &g_av1_codec_arg_defs.auto_altref,
-  &g_av1_codec_arg_defs.sharpness,
   &g_av1_codec_arg_defs.static_thresh,
   &g_av1_codec_arg_defs.rowmtarg,
   &g_av1_codec_arg_defs.fpmtarg,
@@ -454,6 +453,7 @@ static const arg_def_t *const av1_ctrl_args[] = {
   &g_av1_codec_arg_defs.auto_intra_tools_off,
   &g_av1_codec_arg_defs.enable_rate_guide_deltaq,
   &g_av1_codec_arg_defs.rate_distribution_info,
+  &g_av1_codec_arg_defs.enable_low_complexity_decode,
   NULL,
 };
 
@@ -467,6 +467,9 @@ static const arg_def_t *const av1_key_val_args[] = {
   &g_av1_codec_arg_defs.dist_metric,
   &g_av1_codec_arg_defs.kf_max_pyr_height,
   &g_av1_codec_arg_defs.auto_tiles,
+  &g_av1_codec_arg_defs.screen_detection_mode,
+  &g_av1_codec_arg_defs.sharpness,
+  &g_av1_codec_arg_defs.enable_adaptive_sharpness,
   NULL,
 };
 
@@ -554,6 +557,7 @@ struct stream_config {
   const char *two_pass_output;
   int two_pass_width;
   int two_pass_height;
+  unsigned int enable_low_complexity_decode;
 };
 
 struct stream_state {
@@ -811,7 +815,7 @@ static struct stream_state *new_stream(struct AvxEncoderConfig *global,
   }
 
   if (prev) {
-    memcpy(stream, prev, sizeof(*stream));
+    *stream = *prev;
     stream->index++;
     prev->next = stream;
   } else {
@@ -846,8 +850,7 @@ static struct stream_state *new_stream(struct AvxEncoderConfig *global,
 
     /* Allows removal of the application version from the EBML tags */
     stream->webm_ctx.debug = global->debug;
-    memcpy(&stream->config.cfg.encoder_cfg, &global->encoder_config,
-           sizeof(stream->config.cfg.encoder_cfg));
+    stream->config.cfg.encoder_cfg = global->encoder_config;
   }
 
   /* Output files must be specified for each stream */
@@ -1152,6 +1155,10 @@ static int parse_stream_params(struct AvxEncoderConfig *global,
     } else if (arg_match(&arg, &g_av1_codec_arg_defs.rate_distribution_info,
                          argi)) {
       config->rate_distribution_info = arg.val;
+    } else if (arg_match(&arg,
+                         &g_av1_codec_arg_defs.enable_low_complexity_decode,
+                         argi)) {
+      config->enable_low_complexity_decode = arg_parse_uint(&arg);
     } else if (arg_match(&arg, &g_av1_codec_arg_defs.use_fixed_qp_offsets,
                          argi)) {
       config->cfg.use_fixed_qp_offsets = arg_parse_uint(&arg);
@@ -1560,6 +1567,14 @@ static void initialize_encoder(struct stream_state *stream,
                                   AV1E_SET_RATE_DISTRIBUTION_INFO,
                                   stream->config.rate_distribution_info);
     ctx_exit_on_error(&stream->encoder, "Failed to set rate distribution info");
+  }
+
+  if (stream->config.enable_low_complexity_decode) {
+    AOM_CODEC_CONTROL_TYPECHECKED(&stream->encoder,
+                                  AV1E_SET_ENABLE_LOW_COMPLEXITY_DECODE,
+                                  stream->config.enable_low_complexity_decode);
+    ctx_exit_on_error(&stream->encoder,
+                      "Failed to enable low complexity decode");
   }
 
   if (stream->config.film_grain_filename) {
@@ -2318,8 +2333,9 @@ int main(int argc, const char **argv_) {
                 "match input format.\n",
                 stream->config.cfg.g_profile);
       }
-      if ((global.show_psnr == 2) && (stream->config.cfg.g_input_bit_depth ==
-                                      stream->config.cfg.g_bit_depth)) {
+      if (global.show_psnr == 2 &&
+          stream->config.cfg.g_input_bit_depth ==
+              (unsigned int)stream->config.cfg.g_bit_depth) {
         fprintf(stderr,
                 "Warning: --psnr==2 and --psnr==1 will provide same "
                 "results when input bit-depth == stream bit-depth, "

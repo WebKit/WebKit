@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "KeyedCoding.h"
+#include <WebCore/KeyedCoding.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -59,7 +59,7 @@ private:
     void endArrayElement() final;
     void endArray() final;
 
-    RetainPtr<CFMutableDictionaryRef> m_rootDictionary;
+    const RetainPtr<CFMutableDictionaryRef> m_rootDictionary;
 
     Vector<CFMutableDictionaryRef, 16> m_dictionaryStack;
     Vector<CFMutableArrayRef, 16> m_arrayStack;

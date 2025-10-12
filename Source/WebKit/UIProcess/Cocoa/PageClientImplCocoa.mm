@@ -28,7 +28,6 @@
 
 #import "APIUIClient.h"
 #import "RemoteLayerTreeTransaction.h"
-#import "WKTextAnimationType.h"
 #import "WKWebViewInternal.h"
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
@@ -59,94 +58,101 @@ PageClientImplCocoa::~PageClientImplCocoa() = default;
 
 void PageClientImplCocoa::obscuredContentInsetsDidChange()
 {
-    [m_webView _recalculateViewportSizesWithMinimumViewportInset:[m_webView minimumViewportInset] maximumViewportInset:[m_webView maximumViewportInset] throwOnInvalidInput:NO];
+    RetainPtr webView = m_webView.get();
+    [webView _recalculateViewportSizesWithMinimumViewportInset:[webView minimumViewportInset] maximumViewportInset:[webView maximumViewportInset] throwOnInvalidInput:NO];
 }
 
 void PageClientImplCocoa::themeColorWillChange()
 {
-    [m_webView willChangeValueForKey:@"themeColor"];
+    [webView() willChangeValueForKey:@"themeColor"];
 }
 
 void PageClientImplCocoa::themeColorDidChange()
 {
-    [m_webView didChangeValueForKey:@"themeColor"];
+    [webView() didChangeValueForKey:@"themeColor"];
 }
 
 void PageClientImplCocoa::underPageBackgroundColorWillChange()
 {
-    [m_webView willChangeValueForKey:@"underPageBackgroundColor"];
+    [webView() willChangeValueForKey:@"underPageBackgroundColor"];
 }
 
 void PageClientImplCocoa::underPageBackgroundColorDidChange()
 {
-    [m_webView didChangeValueForKey:@"underPageBackgroundColor"];
+    RetainPtr webView = this->webView();
+
+    [webView didChangeValueForKey:@"underPageBackgroundColor"];
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+    [webView _updateTopScrollPocketCaptureColor];
+#endif
 }
 
 void PageClientImplCocoa::sampledPageTopColorWillChange()
 {
-    [m_webView willChangeValueForKey:@"_sampledPageTopColor"];
+    [webView() willChangeValueForKey:@"_sampledPageTopColor"];
 }
 
 void PageClientImplCocoa::sampledPageTopColorDidChange()
 {
-    [m_webView didChangeValueForKey:@"_sampledPageTopColor"];
+    [webView() didChangeValueForKey:@"_sampledPageTopColor"];
 }
 
 #if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
 void PageClientImplCocoa::spatialBackdropSourceWillChange()
 {
-    [m_webView willChangeValueForKey:@"_spatialBackdropSource"];
+    [webView() willChangeValueForKey:@"_spatialBackdropSource"];
 }
 
 void PageClientImplCocoa::spatialBackdropSourceDidChange()
 {
-    [m_webView _spatialBackdropSourceDidChange];
-    [m_webView didChangeValueForKey:@"_spatialBackdropSource"];
+    RetainPtr webView = m_webView.get();
+    [webView _spatialBackdropSourceDidChange];
+    [webView didChangeValueForKey:@"_spatialBackdropSource"];
 }
 #endif
 
 void PageClientImplCocoa::isPlayingAudioWillChange()
 {
-    [m_webView willChangeValueForKey:NSStringFromSelector(@selector(_isPlayingAudio))];
+    [webView() willChangeValueForKey:RetainPtr { NSStringFromSelector(@selector(_isPlayingAudio)) }.get()];
 }
 
 void PageClientImplCocoa::isPlayingAudioDidChange()
 {
-    [m_webView didChangeValueForKey:NSStringFromSelector(@selector(_isPlayingAudio))];
+    [webView() didChangeValueForKey:RetainPtr { NSStringFromSelector(@selector(_isPlayingAudio)) }.get()];
 }
 
 bool PageClientImplCocoa::scrollingUpdatesDisabledForTesting()
 {
-    return [m_webView _scrollingUpdatesDisabledForTesting];
+    return [webView() _scrollingUpdatesDisabledForTesting];
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 void PageClientImplCocoa::didInsertAttachment(API::Attachment& attachment, const String& source)
 {
-    [m_webView _didInsertAttachment:attachment withSource:source.createNSString().get()];
+    [webView() _didInsertAttachment:attachment withSource:source.createNSString().get()];
 }
 
 void PageClientImplCocoa::didRemoveAttachment(API::Attachment& attachment)
 {
-    [m_webView _didRemoveAttachment:attachment];
+    [webView() _didRemoveAttachment:attachment];
 }
 
 void PageClientImplCocoa::didInvalidateDataForAttachment(API::Attachment& attachment)
 {
-    [m_webView _didInvalidateDataForAttachment:attachment];
+    [webView() _didInvalidateDataForAttachment:attachment];
 }
 
 NSFileWrapper *PageClientImplCocoa::allocFileWrapperInstance() const
 {
-    RetainPtr cls = [m_webView configuration]._attachmentFileWrapperClass ?: [NSFileWrapper class];
-    return [cls.get() alloc];
+    RetainPtr cls = [webView() configuration]._attachmentFileWrapperClass ?: [NSFileWrapper class];
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return [cls.get() alloc];
 }
 
 NSSet *PageClientImplCocoa::serializableFileWrapperClasses() const
 {
     RetainPtr<Class> defaultFileWrapperClass = NSFileWrapper.class;
-    RetainPtr<Class> configuredFileWrapperClass = [m_webView configuration]._attachmentFileWrapperClass;
+    RetainPtr<Class> configuredFileWrapperClass = [webView() configuration]._attachmentFileWrapperClass;
     if (configuredFileWrapperClass && configuredFileWrapperClass.get() != defaultFileWrapperClass.get())
         return [NSSet setWithObjects:configuredFileWrapperClass.get(), defaultFileWrapperClass.get(), nil];
     return [NSSet setWithObjects:defaultFileWrapperClass.get(), nil];
@@ -157,7 +163,7 @@ NSSet *PageClientImplCocoa::serializableFileWrapperClasses() const
 #if ENABLE(APP_HIGHLIGHTS)
 void PageClientImplCocoa::storeAppHighlight(const WebCore::AppHighlight &highlight)
 {
-    [m_webView _storeAppHighlight:highlight];
+    [webView() _storeAppHighlight:highlight];
 }
 #endif // ENABLE(APP_HIGHLIGHTS)
 
@@ -169,28 +175,32 @@ void PageClientImplCocoa::pageClosed()
 #if ENABLE(GPU_PROCESS)
 void PageClientImplCocoa::gpuProcessDidFinishLaunching()
 {
-    [m_webView willChangeValueForKey:@"_gpuProcessIdentifier"];
-    [m_webView didChangeValueForKey:@"_gpuProcessIdentifier"];
+    RetainPtr webView = m_webView.get();
+    [webView willChangeValueForKey:@"_gpuProcessIdentifier"];
+    [webView didChangeValueForKey:@"_gpuProcessIdentifier"];
 }
 
 void PageClientImplCocoa::gpuProcessDidExit()
 {
-    [m_webView willChangeValueForKey:@"_gpuProcessIdentifier"];
-    [m_webView didChangeValueForKey:@"_gpuProcessIdentifier"];
+    RetainPtr webView = m_webView.get();
+    [webView willChangeValueForKey:@"_gpuProcessIdentifier"];
+    [webView didChangeValueForKey:@"_gpuProcessIdentifier"];
 }
 #endif
 
 #if ENABLE(MODEL_PROCESS)
 void PageClientImplCocoa::modelProcessDidFinishLaunching()
 {
-    [m_webView willChangeValueForKey:@"_modelProcessIdentifier"];
-    [m_webView didChangeValueForKey:@"_modelProcessIdentifier"];
+    RetainPtr webView = m_webView.get();
+    [webView willChangeValueForKey:@"_modelProcessIdentifier"];
+    [webView didChangeValueForKey:@"_modelProcessIdentifier"];
 }
 
 void PageClientImplCocoa::modelProcessDidExit()
 {
-    [m_webView willChangeValueForKey:@"_modelProcessIdentifier"];
-    [m_webView didChangeValueForKey:@"_modelProcessIdentifier"];
+    RetainPtr webView = m_webView.get();
+    [webView willChangeValueForKey:@"_modelProcessIdentifier"];
+    [webView didChangeValueForKey:@"_modelProcessIdentifier"];
 }
 #endif
 
@@ -211,7 +221,7 @@ void PageClientImplCocoa::removeDictationAlternatives(WebCore::DictationContext 
 
 Vector<String> PageClientImplCocoa::dictationAlternatives(WebCore::DictationContext dictationContext)
 {
-    return makeVector<String>(platformDictationAlternatives(dictationContext).alternativeStrings);
+    return makeVector<String>(RetainPtr { platformDictationAlternatives(dictationContext) }.get().alternativeStrings);
 }
 
 PlatformTextAlternatives *PageClientImplCocoa::platformDictationAlternatives(WebCore::DictationContext dictationContext)
@@ -221,57 +231,57 @@ PlatformTextAlternatives *PageClientImplCocoa::platformDictationAlternatives(Web
 
 void PageClientImplCocoa::microphoneCaptureWillChange()
 {
-    [m_webView willChangeValueForKey:@"microphoneCaptureState"];
+    [webView() willChangeValueForKey:@"microphoneCaptureState"];
 }
 
 void PageClientImplCocoa::cameraCaptureWillChange()
 {
-    [m_webView willChangeValueForKey:@"cameraCaptureState"];
+    [webView() willChangeValueForKey:@"cameraCaptureState"];
 }
 
 void PageClientImplCocoa::displayCaptureWillChange()
 {
-    [m_webView willChangeValueForKey:@"_displayCaptureState"];
+    [webView() willChangeValueForKey:@"_displayCaptureState"];
 }
 
 void PageClientImplCocoa::displayCaptureSurfacesWillChange()
 {
-    [m_webView willChangeValueForKey:@"_displayCaptureSurfaces"];
+    [webView() willChangeValueForKey:@"_displayCaptureSurfaces"];
 }
 
 void PageClientImplCocoa::systemAudioCaptureWillChange()
 {
-    [m_webView willChangeValueForKey:@"_systemAudioCaptureState"];
+    [webView() willChangeValueForKey:@"_systemAudioCaptureState"];
 }
 
 void PageClientImplCocoa::microphoneCaptureChanged()
 {
-    [m_webView didChangeValueForKey:@"microphoneCaptureState"];
+    [webView() didChangeValueForKey:@"microphoneCaptureState"];
 }
 
 void PageClientImplCocoa::cameraCaptureChanged()
 {
-    [m_webView didChangeValueForKey:@"cameraCaptureState"];
+    [webView() didChangeValueForKey:@"cameraCaptureState"];
 }
 
 void PageClientImplCocoa::displayCaptureChanged()
 {
-    [m_webView didChangeValueForKey:@"_displayCaptureState"];
+    [webView() didChangeValueForKey:@"_displayCaptureState"];
 }
 
 void PageClientImplCocoa::displayCaptureSurfacesChanged()
 {
-    [m_webView didChangeValueForKey:@"_displayCaptureSurfaces"];
+    [webView() didChangeValueForKey:@"_displayCaptureSurfaces"];
 }
 
 void PageClientImplCocoa::systemAudioCaptureChanged()
 {
-    [m_webView didChangeValueForKey:@"_systemAudioCaptureState"];
+    [webView() didChangeValueForKey:@"_systemAudioCaptureState"];
 }
 
 WindowKind PageClientImplCocoa::windowKind()
 {
-    RetainPtr window = [m_webView window];
+    RetainPtr window = [webView() window];
     if (!window)
         return WindowKind::Unparented;
     if ([window isKindOfClass:NSClassFromString(@"_SCNSnapshotWindow")])
@@ -282,44 +292,48 @@ WindowKind PageClientImplCocoa::windowKind()
 #if ENABLE(WRITING_TOOLS)
 void PageClientImplCocoa::proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
 {
-    [m_webView _proofreadingSessionShowDetailsForSuggestionWithUUID:replacementID.createNSUUID().get() relativeToRect:selectionBoundsInRootView];
+    [webView() _proofreadingSessionShowDetailsForSuggestionWithUUID:replacementID.createNSUUID().get() relativeToRect:selectionBoundsInRootView];
 }
 
 void PageClientImplCocoa::proofreadingSessionUpdateStateForSuggestionWithID(WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion::ID& replacementID)
 {
-    [m_webView _proofreadingSessionUpdateState:state forSuggestionWithUUID:replacementID.createNSUUID().get()];
+    [webView() _proofreadingSessionUpdateState:state forSuggestionWithUUID:replacementID.createNSUUID().get()];
 }
 
-static NSString *writingToolsActiveKey = @"writingToolsActive";
+static NSString *writingToolsActiveKeySingleton()
+{
+    static NeverDestroyed<RetainPtr<NSString>> writingToolsActiveKey = retainPtr(@"writingToolsActive");
+    return writingToolsActiveKey.get().get();
+}
 
 void PageClientImplCocoa::writingToolsActiveWillChange()
 {
-    [m_webView willChangeValueForKey:writingToolsActiveKey];
+    [webView() willChangeValueForKey:writingToolsActiveKeySingleton()];
 }
 
 void PageClientImplCocoa::writingToolsActiveDidChange()
 {
-    [m_webView didChangeValueForKey:writingToolsActiveKey];
+    [webView() didChangeValueForKey:writingToolsActiveKeySingleton()];
 }
 
 void PageClientImplCocoa::didEndPartialIntelligenceTextAnimation()
 {
-    [m_webView _didEndPartialIntelligenceTextAnimation];
+    [webView() _didEndPartialIntelligenceTextAnimation];
 }
 
 bool PageClientImplCocoa::writingToolsTextReplacementsFinished()
 {
-    return [m_webView _writingToolsTextReplacementsFinished];
+    return [webView() _writingToolsTextReplacementsFinished];
 }
 
 void PageClientImplCocoa::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebCore::TextAnimationData& data)
 {
-    [m_webView _addTextAnimationForAnimationID:uuid.createNSUUID().get() withData:data];
+    [webView() _addTextAnimationForAnimationID:uuid.createNSUUID().get() withData:data];
 }
 
 void PageClientImplCocoa::removeTextAnimationForAnimationID(const WTF::UUID& uuid)
 {
-    [m_webView _removeTextAnimationForAnimationID:uuid.createNSUUID().get()];
+    [webView() _removeTextAnimationForAnimationID:uuid.createNSUUID().get()];
 }
 
 #endif
@@ -385,7 +399,7 @@ void PageClientImplCocoa::viewIsBecomingInvisible()
 #if ENABLE(GAMEPAD)
 void PageClientImplCocoa::setGamepadsRecentlyAccessed(GamepadsRecentlyAccessed gamepadsRecentlyAccessed)
 {
-    [m_webView _setGamepadsRecentlyAccessed:(gamepadsRecentlyAccessed == GamepadsRecentlyAccessed::No) ? NO : YES];
+    [webView() _setGamepadsRecentlyAccessed:(gamepadsRecentlyAccessed == GamepadsRecentlyAccessed::No) ? NO : YES];
 }
 
 #if PLATFORM(VISION)
@@ -398,32 +412,35 @@ void PageClientImplCocoa::gamepadsConnectedStateChanged()
 
 void PageClientImplCocoa::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSession)
 {
-    if ([m_webView _hasActiveNowPlayingSession] == hasActiveNowPlayingSession)
+    RetainPtr webView = m_webView.get();
+    if ([webView _hasActiveNowPlayingSession] == hasActiveNowPlayingSession)
         return;
 
-    RELEASE_LOG(ViewState, "%p PageClientImplCocoa::hasActiveNowPlayingSessionChanged %d", m_webView.get().get(), hasActiveNowPlayingSession);
+    RELEASE_LOG(ViewState, "%p PageClientImplCocoa::hasActiveNowPlayingSessionChanged %d", webView.get(), hasActiveNowPlayingSession);
 
-    [m_webView willChangeValueForKey:@"_hasActiveNowPlayingSession"];
-    [m_webView _setHasActiveNowPlayingSession:hasActiveNowPlayingSession];
-    [m_webView didChangeValueForKey:@"_hasActiveNowPlayingSession"];
+    [webView willChangeValueForKey:@"_hasActiveNowPlayingSession"];
+    [webView _setHasActiveNowPlayingSession:hasActiveNowPlayingSession];
+    [webView didChangeValueForKey:@"_hasActiveNowPlayingSession"];
 }
 
 void PageClientImplCocoa::videoControlsManagerDidChange()
 {
-    RELEASE_LOG(ViewState, "%p PageClientImplCocoa::videoControlsManagerDidChange %d", m_webView.get().get(), [m_webView _canEnterFullscreen]);
-    [m_webView willChangeValueForKey:@"_canEnterFullscreen"];
-    [m_webView didChangeValueForKey:@"_canEnterFullscreen"];
+    RetainPtr webView = m_webView.get();
+    RELEASE_LOG(ViewState, "%p PageClientImplCocoa::videoControlsManagerDidChange %d", webView.get(), [webView _canEnterFullscreen]);
+    [webView willChangeValueForKey:@"_canEnterFullscreen"];
+    [webView didChangeValueForKey:@"_canEnterFullscreen"];
 }
 
 CocoaWindow *PageClientImplCocoa::platformWindow() const
 {
-    return [m_webView window];
+    return [webView() window];
 }
 
 void PageClientImplCocoa::processDidUpdateThrottleState()
 {
-    [m_webView willChangeValueForKey:@"_webProcessState"];
-    [m_webView didChangeValueForKey:@"_webProcessState"];
+    RetainPtr webView = m_webView.get();
+    [webView willChangeValueForKey:@"_webProcessState"];
+    [webView didChangeValueForKey:@"_webProcessState"];
 }
 
 #if ENABLE(FULLSCREEN_API)
@@ -437,7 +454,7 @@ void PageClientImplCocoa::didCommitLayerTree(const RemoteLayerTreeTransaction& t
 {
     if (auto& edges = transaction.fixedContainerEdges())
         [webView() _updateFixedContainerEdges:*edges];
-    [webView() _updateScrollGeometryWithContentOffset:transaction.scrollPosition() contentSize:transaction.contentsSize()];
+    [webView() _updateScrollGeometryWithContentOffset:transaction.scrollPosition() contentSize:transaction.scrollGeometryContentSize()];
 }
 
 } // namespace WebKit

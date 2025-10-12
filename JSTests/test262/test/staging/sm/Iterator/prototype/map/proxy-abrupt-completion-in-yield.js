@@ -7,9 +7,6 @@ description: |
   %Iterator.prototype%.map calls return when yield throws.
 features:
   - iterator-helpers
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 ---*/
 class TestError extends Error {}
 

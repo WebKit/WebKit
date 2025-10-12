@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/BoxExtents.h>
 #include <WebCore/Color.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/SecurityOriginData.h>
@@ -72,6 +73,7 @@ public:
 
 #if HAVE(IOSURFACE)
     id asLayerContents();
+    RetainPtr<id> asProtectedLayerContents();
     RetainPtr<CGImageRef> asImageForTesting();
 #endif
 
@@ -83,6 +85,9 @@ public:
 
     void setViewScrollPosition(WebCore::IntPoint scrollPosition) { m_viewScrollPosition = scrollPosition; }
     WebCore::IntPoint viewScrollPosition() const { return m_viewScrollPosition; }
+
+    void setComputedObscuredInset(WebCore::FloatBoxExtent&& inset) { m_computedObscuredInset = WTFMove(inset); }
+    const WebCore::FloatBoxExtent computedObscuredInset() const { return m_computedObscuredInset; }
 
     void setDeviceScaleFactor(float deviceScaleFactor) { m_deviceScaleFactor = deviceScaleFactor; }
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
@@ -135,6 +140,7 @@ private:
     float m_deviceScaleFactor;
     WebCore::Color m_backgroundColor;
     WebCore::IntPoint m_viewScrollPosition; // Scroll position at snapshot time. Integral to make comparison reliable.
+    WebCore::FloatBoxExtent m_computedObscuredInset;
     WebCore::SecurityOriginData m_origin;
 };
 

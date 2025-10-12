@@ -28,15 +28,16 @@
 #include "modules/remote_bitrate_estimator/inter_arrival.h"
 #include "modules/remote_bitrate_estimator/overuse_detector.h"
 #include "modules/remote_bitrate_estimator/overuse_estimator.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/bitrate_tracker.h"
 
 namespace webrtc {
 
 class RemoteBitrateEstimatorSingleStream : public RemoteBitrateEstimator {
  public:
-  RemoteBitrateEstimatorSingleStream(
-      const Environment& env,
-      absl::Nonnull<RemoteBitrateObserver*> observer);
+  RemoteBitrateEstimatorSingleStream(const Environment& env,
+                                     RemoteBitrateObserver* absl_nonnull
+                                         observer);
 
   RemoteBitrateEstimatorSingleStream() = delete;
   RemoteBitrateEstimatorSingleStream(
@@ -68,7 +69,7 @@ class RemoteBitrateEstimatorSingleStream : public RemoteBitrateEstimator {
   std::vector<uint32_t> GetSsrcs() const;
 
   const Environment env_;
-  const absl::Nonnull<RemoteBitrateObserver*> observer_;
+  RemoteBitrateObserver* absl_nonnull const observer_;
   std::map<uint32_t, Detector> overuse_detectors_;
   BitrateTracker incoming_bitrate_;
   DataRate last_valid_incoming_bitrate_;

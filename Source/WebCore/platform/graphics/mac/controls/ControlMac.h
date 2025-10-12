@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 
 #if PLATFORM(MAC)
 
-#import "LengthBox.h"
+#import "BoxExtents.h"
 #import "PlatformControl.h"
 #import <wtf/CheckedRef.h>
 #import <wtf/TZoneMalloc.h>

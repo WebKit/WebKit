@@ -132,6 +132,7 @@ int vp9_lookahead_push(struct lookahead_ctx *ctx, YV12_BUFFER_CONFIG *src,
     vpx_free_frame_buffer(&buf->img);
     buf->img = new_img;
   } else if (new_dimensions) {
+    int aligned_width = ALIGN_POWER_OF_TWO(width, 3);
     buf->img.y_width = src->y_width;
     buf->img.y_height = src->y_height;
     buf->img.uv_width = src->uv_width;
@@ -142,6 +143,13 @@ int vp9_lookahead_push(struct lookahead_ctx *ctx, YV12_BUFFER_CONFIG *src,
     buf->img.uv_crop_height = src->uv_crop_height;
     buf->img.subsampling_x = src->subsampling_x;
     buf->img.subsampling_y = src->subsampling_y;
+    // Here the new width (src->y_crop_width) is <= the previous width
+    // (since otherwise it would enter the "larger_dimensions" code), so
+    // it is safe here to update the stride.
+    // The stride setting is taken from vpx_alloc_frame_buffer().
+    buf->img.y_stride =
+        ALIGN_POWER_OF_TWO((aligned_width + 2 * buf->img.border), 5);
+    buf->img.uv_stride = buf->img.y_stride >> subsampling_x;
   }
   vp9_copy_and_extend_frame(src, &buf->img);
 

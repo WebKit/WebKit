@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ArrayBufferView.h"
+#include <JavaScriptCore/ArrayBufferView.h>
 #include <wtf/FlipBytes.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

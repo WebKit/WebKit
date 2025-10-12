@@ -1,0 +1,4 @@
+
+
+PASS Element in child iframe is not observed, even if same-origin.
+

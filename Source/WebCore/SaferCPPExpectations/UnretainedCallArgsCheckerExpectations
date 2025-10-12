@@ -1,150 +1,76 @@
-Modules/ShapeDetection/Implementation/Cocoa/BarcodeDetectorImplementation.mm
-Modules/ShapeDetection/Implementation/Cocoa/FaceDetectorImplementation.mm
-Modules/ShapeDetection/Implementation/Cocoa/TextDetectorImplementation.mm
-Modules/ShapeDetection/Implementation/Cocoa/VisionUtilities.mm
 Modules/WebGPU/GPUQueue.cpp
-Modules/applepay/ApplePayLogoSystemImage.mm
-Modules/applepay/PaymentInstallmentConfiguration.mm
-Modules/applepay/cocoa/PaymentContactCocoa.mm
-Modules/applepay/cocoa/PaymentMerchantSessionCocoa.mm
-Modules/applepay/cocoa/PaymentSummaryItemsCocoa.mm
-Modules/model-element/scenekit/SceneKitModelLoader.mm
-Modules/model-element/scenekit/SceneKitModelLoaderUSD.mm
-Modules/model-element/scenekit/SceneKitModelPlayer.mm
-Modules/notifications/NotificationDataCocoa.mm
-Modules/speech/cocoa/WebSpeechRecognizerTask.mm
-PAL/pal/cocoa/AVFAudioSoftLink.h
-PAL/pal/cocoa/AVFoundationSoftLink.h
-PAL/pal/cocoa/AccessibilitySoftLink.h
-PAL/pal/cocoa/CoreMLSoftLink.h
-PAL/pal/cocoa/CoreMaterialSoftLink.h
-PAL/pal/cocoa/CryptoKitPrivateSoftLink.h
-PAL/pal/cocoa/DataDetectorsCoreSoftLink.h
-PAL/pal/cocoa/PassKitSoftLink.h
-PAL/pal/cocoa/RevealSoftLink.h
-PAL/pal/cocoa/SpeechSoftLink.h
-PAL/pal/cocoa/VisionKitCoreSoftLink.h
-PAL/pal/cocoa/VisionSoftLink.h
-PAL/pal/mac/DataDetectorsSoftLink.h
-PAL/pal/mac/ScreenCaptureKitSoftLink.h
-accessibility/cocoa/AXCoreObjectCocoa.mm
-accessibility/cocoa/AXTextMarkerCocoa.mm
-accessibility/cocoa/AccessibilityObjectCocoa.mm
-accessibility/isolatedtree/mac/AXIsolatedObjectMac.mm
-accessibility/mac/AXObjectCacheMac.mm
-accessibility/mac/AccessibilityObjectMac.mm
+[ Mac ] Modules/model-element/scenekit/SceneKitModelPlayer.mm
+[ Mac ] accessibility/cocoa/AXCoreObjectCocoa.mm
+[ Mac ] accessibility/cocoa/AXTextMarkerCocoa.mm
+[ Mac ] accessibility/cocoa/AccessibilityObjectCocoa.mm
+[ Mac ] accessibility/isolatedtree/mac/AXIsolatedObjectMac.mm
+[ Mac ] accessibility/mac/AXObjectCacheMac.mm
+[ Mac ] accessibility/mac/AccessibilityObjectMac.mm
 accessibility/mac/WebAccessibilityObjectWrapperBase.mm
-accessibility/mac/WebAccessibilityObjectWrapperMac.mm
+[ Mac ] accessibility/mac/WebAccessibilityObjectWrapperMac.mm
 bridge/objc/WebScriptObject.mm
-bridge/objc/objc_class.mm
 bridge/objc/objc_instance.mm
 bridge/objc/objc_runtime.mm
 bridge/objc/objc_utility.mm
 crypto/cocoa/SerializedCryptoKeyWrapMac.mm
 editing/SmartReplaceCF.cpp
-editing/cocoa/AttributedString.mm
 editing/cocoa/DataDetection.mm
-editing/cocoa/DictionaryLookup.mm
+[ Mac ] editing/cocoa/DictionaryLookup.mm
+editing/cocoa/EditingHTMLConverter.mm
 editing/cocoa/FontAttributeChangesCocoa.mm
 editing/cocoa/FontAttributesCocoa.mm
-editing/cocoa/HTMLConverter.mm
+editing/cocoa/NodeHTMLConverter.mm
 editing/cocoa/WebContentReaderCocoa.mm
-editing/mac/EditorMac.mm
-editing/mac/TextAlternativeWithRange.mm
-editing/mac/TextUndoInsertionMarkupMac.mm
+[ Mac ] editing/mac/EditorMac.mm
+[ Mac ] editing/mac/TextAlternativeWithRange.mm
+[ Mac ] editing/mac/TextUndoInsertionMarkupMac.mm
 inspector/agents/page/PageTimelineAgent.cpp
-inspector/mac/PageDebuggerMac.mm
-loader/cocoa/DiskCacheMonitorCocoa.mm
-loader/cocoa/PrivateClickMeasurementCocoa.mm
-page/CaptionUserPreferencesMediaAF.cpp
-page/cocoa/MemoryReleaseCocoa.mm
 page/cocoa/PageCocoa.mm
-page/cocoa/ResourceUsageOverlayCocoa.mm
 page/cocoa/WebTextIndicatorLayer.mm
-page/mac/EventHandlerMac.mm
-page/mac/ImageOverlayControllerMac.mm
-page/mac/ServicesOverlayController.mm
-page/mac/TextIndicatorWindow.mm
-page/scrolling/mac/ScrollerPairMac.mm
-page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm
-page/scrolling/mac/ScrollingTreePluginScrollingNodeMac.mm
-page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm
-platform/LocalizedStrings.cpp
-platform/MIMETypeRegistry.cpp
+[ Mac ] page/mac/EventHandlerMac.mm
+[ Mac ] page/mac/ImageOverlayControllerMac.mm
+[ Mac ] page/mac/ServicesOverlayController.mm
+[ Mac ] page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm
+[ Mac ]page/scrolling/mac/ScrollingTreePluginScrollingNodeMac.mm
+[ Mac ]page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm
 platform/audio/cocoa/AudioFileReaderCocoa.cpp
-platform/audio/cocoa/AudioSampleBufferConverter.mm
-platform/audio/cocoa/AudioSessionCocoa.mm
-platform/audio/cocoa/MediaSessionManagerCocoa.mm
 platform/audio/cocoa/PlatformRawAudioDataCocoa.cpp
-platform/audio/mac/AudioSessionMac.mm
-platform/audio/mac/SharedRoutingArbitrator.mm
 platform/cf/KeyedDecoderCF.cpp
 platform/cf/KeyedEncoderCF.cpp
 platform/cf/MainThreadSharedTimerCF.cpp
-platform/cocoa/CoreLocationGeolocationProvider.mm
-platform/cocoa/DragDataCocoa.mm
-platform/cocoa/DragImageCocoa.mm
-platform/cocoa/EffectiveRateChangedListener.mm
+[ Mac ] platform/cocoa/DragDataCocoa.mm
+[ Mac ] platform/cocoa/DragImageCocoa.mm
 platform/cocoa/FileMonitorCocoa.mm
 platform/cocoa/LocalizedStringsCocoa.mm
 platform/cocoa/NetworkExtensionContentFilter.mm
 platform/cocoa/ParentalControlsContentFilter.mm
 platform/cocoa/PlatformPasteboardCocoa.mm
-platform/cocoa/PlatformSpeechSynthesizerCocoa.mm
-platform/cocoa/PowerSourceNotifier.mm
 platform/cocoa/SearchPopupMenuCocoa.mm
-platform/cocoa/SystemBattery.mm
-platform/cocoa/TextRecognitionResultCocoa.mm
 platform/cocoa/UserAgentCocoa.mm
-platform/cocoa/VideoFullscreenCaptions.mm
 platform/cocoa/WebAVPlayerLayer.mm
-platform/gamepad/cocoa/CoreHapticsSoftLink.h
-platform/gamepad/cocoa/GameControllerGamepad.mm
-platform/gamepad/cocoa/GameControllerGamepadProvider.mm
-platform/gamepad/cocoa/GameControllerHapticEffect.mm
-platform/gamepad/cocoa/GameControllerHapticEngines.mm
-platform/gamepad/cocoa/GameControllerSoftLink.h
-platform/gamepad/mac/HIDGamepad.cpp
-platform/gamepad/mac/HIDGamepadElement.cpp
-platform/gamepad/mac/HIDGamepadProvider.mm
+[ Mac ] platform/gamepad/mac/HIDGamepadElement.cpp
 platform/graphics/BitmapImageDescriptor.cpp
-platform/graphics/DestinationColorSpace.cpp
 platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm
 platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm
 platform/graphics/avfoundation/FormatDescriptionUtilities.cpp
-platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
-platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm
-platform/graphics/avfoundation/WebAVSampleBufferListener.mm
-platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.mm
-platform/graphics/avfoundation/objc/AVOutputDeviceMenuControllerTargetPicker.mm
-platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm
-platform/graphics/avfoundation/objc/AVStreamDataParserMIMETypeCache.mm
+[ Mac ] platform/graphics/avfoundation/objc/AVOutputDeviceMenuControllerTargetPicker.mm
+[ Mac ] platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm
 platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm
 platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm
-platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm
-platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm
-platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm
-platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm
 platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm
-platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm
 platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm
-platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm
 platform/graphics/avfoundation/objc/QueuedVideoOutput.mm
 platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm
 platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm
-platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm
 platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm
 platform/graphics/avfoundation/objc/WebAVContentKeyGroup.mm
 platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/TileCoverageMap.cpp
 platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.mm
-platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm
+[ Mac ] platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm
 platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm
-platform/graphics/ca/cocoa/WebSystemBackdropLayer.mm
 platform/graphics/cg/CGSubimageCacheWithTimer.cpp
-platform/graphics/cg/ColorCG.cpp
-platform/graphics/cg/ColorSpaceCG.cpp
 platform/graphics/cg/GradientCG.cpp
 platform/graphics/cg/GradientRendererCG.cpp
 platform/graphics/cg/GraphicsContextCG.cpp
@@ -153,98 +79,73 @@ platform/graphics/cg/ImageBufferCGBitmapBackend.cpp
 platform/graphics/cg/ImageBufferCGPDFDocumentBackend.cpp
 platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp
 platform/graphics/cg/ImageBufferUtilitiesCG.cpp
-platform/graphics/cg/NativeImageCG.cpp
 platform/graphics/cg/PathCG.cpp
-platform/graphics/cg/ShareableBitmapCG.mm
 platform/graphics/cocoa/CMUtilities.mm
 platform/graphics/cocoa/FontCacheCoreText.cpp
 platform/graphics/cocoa/GraphicsContextCocoa.mm
-platform/graphics/cocoa/GraphicsContextGLCocoa.mm
-platform/graphics/cocoa/IOSurface.mm
-platform/graphics/cocoa/MediaPlayerEnumsCocoa.mm
 platform/graphics/cocoa/MediaPlayerPrivateWebM.mm
-platform/graphics/cocoa/SystemFontDatabaseCocoa.mm
 platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp
 platform/graphics/cocoa/TextTrackRepresentationCocoa.mm
 platform/graphics/cocoa/VideoMediaSampleRenderer.mm
 platform/graphics/cocoa/WebCoreCALayerExtras.mm
-platform/graphics/cocoa/WebCoreDecompressionSession.mm
-platform/graphics/cocoa/WebProcessGraphicsContextGLCocoa.mm
-platform/graphics/cocoa/controls/ApplePayButtonCocoa.mm
 platform/graphics/coreimage/FilterImageCoreImage.mm
 platform/graphics/coreimage/SourceGraphicCoreImageApplier.mm
-platform/graphics/coretext/ComplexTextControllerCoreText.mm
-platform/graphics/coretext/DrawGlyphsRecorder.cpp
-platform/graphics/coretext/FontCoreText.cpp
-platform/graphics/coretext/FontPlatformDataCoreText.cpp
-platform/graphics/coretext/GlyphPageCoreText.cpp
-platform/graphics/cv/CVUtilities.mm
-platform/graphics/cv/GraphicsContextGLCVCocoa.mm
-platform/graphics/cv/ImageRotationSessionVT.mm
-platform/graphics/cv/ImageTransferSessionVT.mm
-platform/graphics/cv/VideoFrameCV.mm
-platform/graphics/gpu/cocoa/GPUPrewarmingMetal.mm
-platform/graphics/mac/ColorMac.mm
-platform/graphics/mac/LegacyDisplayRefreshMonitorMac.cpp
-platform/graphics/mac/PDFDocumentImageMac.mm
-platform/graphics/mac/ScrollbarTrackCornerSystemImageMac.mm
-platform/graphics/mac/controls/InnerSpinButtonMac.mm
-platform/graphics/mac/controls/MeterMac.mm
-platform/graphics/mac/controls/ToggleButtonMac.mm
-platform/graphics/mac/controls/WebControlView.mm
-platform/ios/PlaybackSessionInterfaceAVKitLegacy.mm
+[ Mac ] platform/graphics/mac/ColorMac.mm
+[ Mac ] platform/graphics/mac/PDFDocumentImageMac.mm
+[ Mac ] platform/graphics/mac/ScrollbarTrackCornerSystemImageMac.mm
+[ Mac ] platform/graphics/mac/controls/InnerSpinButtonMac.mm
+[ Mac ] platform/graphics/mac/controls/ToggleButtonMac.mm
+[ Mac ] platform/graphics/mac/controls/WebControlView.mm
 platform/ios/WebAVPlayerController.mm
 platform/libwebrtc/LibWebRTCVPXVideoEncoder.cpp
-platform/mac/CursorMac.mm
-platform/mac/DataDetectorHighlight.mm
-platform/mac/HIDDevice.cpp
-platform/mac/PasteboardMac.mm
-platform/mac/PasteboardWriter.mm
-platform/mac/PlatformEventFactoryMac.mm
-platform/mac/PlatformPasteboardMac.mm
-platform/mac/PlatformScreenMac.mm
-platform/mac/PlaybackSessionInterfaceMac.mm
-platform/mac/PowerObserverMac.cpp
-platform/mac/RevealUtilities.mm
-platform/mac/ScrollViewMac.mm
-platform/mac/ScrollbarThemeMac.mm
-platform/mac/ScrollbarsControllerMac.mm
-platform/mac/ScrollingMomentumCalculatorMac.mm
-platform/mac/SerializedPlatformDataCueMac.mm
-platform/mac/VideoPresentationInterfaceMac.mm
-platform/mac/WebCoreFullScreenPlaceholderView.mm
-platform/mac/WebCoreFullScreenWarningView.mm
-platform/mac/WebCoreNSFontManagerExtras.mm
-platform/mac/WebPlaybackControlsManager.mm
-platform/mac/WidgetMac.mm
 platform/mediarecorder/MediaRecorderPrivateEncoder.cpp
-platform/mediarecorder/cocoa/MediaRecorderPrivateWriterAVFObjC.mm
-platform/mediastream/mac/AVCaptureDeviceManager.mm
 platform/mediastream/mac/AVVideoCaptureSource.mm
-platform/mediastream/mac/CoreAudioSharedUnit.mm
-platform/mediastream/mac/MockAudioSharedUnit.mm
-platform/mediastream/mac/ScreenCaptureKitCaptureSource.mm
-platform/mediastream/mac/ScreenCaptureKitSharingSessionManager.mm
+[ Mac ] platform/mediastream/mac/ScreenCaptureKitCaptureSource.mm
+[ Mac ] platform/mediastream/mac/ScreenCaptureKitSharingSessionManager.mm
 platform/network/cf/DNSResolveQueueCFNet.cpp
-platform/network/cf/FormDataStreamCFNet.cpp
-platform/network/cocoa/CookieCocoa.mm
-platform/network/cocoa/CredentialCocoa.mm
-platform/network/cocoa/NetworkStorageSessionCocoa.mm
-platform/network/cocoa/ProtectionSpaceCocoa.mm
-platform/network/cocoa/ResourceRequestCocoa.mm
-platform/network/cocoa/ResourceResponseCocoa.mm
-platform/network/cocoa/WebCoreNSURLSession.mm
-platform/network/mac/AuthenticationMac.mm
-platform/network/mac/CredentialStorageMac.mm
-platform/network/mac/NetworkStateNotifierMac.cpp
-platform/network/mac/ResourceErrorMac.mm
 platform/network/mac/ResourceHandleMac.mm
 platform/network/mac/SynchronousLoaderClient.mm
 platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm
 platform/text/cocoa/LocalizedDateCache.mm
 rendering/AttachmentLayout.mm
-rendering/mac/RenderThemeMac.mm
-testing/Internals.mm
-testing/ServiceWorkerInternals.mm
+[ Mac ] testing/ServiceWorkerInternals.mm
 testing/cocoa/WebArchiveDumpSupport.mm
-workers/WorkerRunLoop.cpp
+[ iOS ] Modules/notifications/NotificationDataCocoa.mm
+[ iOS ] Modules/system-preview/ARKitBadgeSystemImage.mm
+[ iOS ] accessibility/ios/AXObjectCacheIOS.mm
+[ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
+[ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
+[ iOS ] page/ios/EventHandlerIOS.mm
+[ iOS ] platform/audio/ios/MediaSessionHelperIOS.mm
+[ iOS ] platform/cocoa/WebAVPlayerLayerView.mm
+[ iOS ] platform/graphics/cg/PDFDocumentImage.cpp
+[ iOS ] platform/graphics/ios/DisplayRefreshMonitorIOS.mm
+[ iOS ] platform/ios/ColorIOS.mm
+[ iOS ] platform/ios/DeviceMotionClientIOS.mm
+[ iOS ] platform/ios/DeviceOrientationClientIOS.mm
+[ iOS ] platform/ios/LegacyTileCache.mm
+[ iOS ] platform/ios/LegacyTileGrid.mm
+[ iOS ] platform/ios/LegacyTileGridTile.mm
+[ iOS ] platform/ios/LocalCurrentTraitCollection.mm
+[ iOS ] platform/ios/PasteboardIOS.mm
+[ iOS ] platform/ios/PlatformPasteboardIOS.mm
+[ iOS ] platform/ios/PreviewConverterIOS.mm
+[ iOS ] platform/ios/QuickLook.mm
+[ iOS ] platform/ios/ScrollViewIOS.mm
+[ iOS ] platform/ios/ValidationBubbleIOS.mm
+[ iOS ] platform/ios/VideoPresentationInterfaceAVKitLegacy.mm
+[ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm
+[ iOS ] platform/ios/WebEvent.mm
+[ iOS ] platform/ios/WebItemProviderPasteboard.mm
+[ iOS ] platform/ios/WidgetIOS.mm
+[ iOS ] platform/ios/wak/WAKClipView.mm
+[ iOS ] platform/ios/wak/WAKScrollView.mm
+[ iOS ] platform/ios/wak/WAKView.mm
+[ iOS ] platform/ios/wak/WAKWindow.mm
+[ iOS ] platform/ios/wak/WKView.mm
+[ iOS ] platform/ios/wak/WebCoreThread.mm
+[ iOS ] platform/ios/wak/WebCoreThreadRun.cpp
+[ iOS ] platform/mediastream/ios/ReplayKitCaptureSource.mm
+[ iOS ] platform/network/mac/ResourceErrorMac.mm
+[ iOS ] platform/text/mac/TextBoundaries.mm
+[ iOS ] rendering/ios/RenderThemeIOS.mm

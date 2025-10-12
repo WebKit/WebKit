@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JITStubRoutine.h"
+#include <JavaScriptCore/JITStubRoutine.h>
 #include <wtf/HashMap.h>
 #include <wtf/Range.h>
 #include <wtf/TZoneMalloc.h>

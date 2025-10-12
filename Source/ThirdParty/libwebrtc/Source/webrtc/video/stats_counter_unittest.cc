@@ -10,13 +10,15 @@
 
 #include "video/stats_counter.h"
 
+#include <cstdint>
+
 #include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
-const int kDefaultProcessIntervalMs = 2000;
-const uint32_t kStreamId = 123456;
+constexpr int kDefaultProcessIntervalMs = 2000;
+constexpr uint32_t kStreamId = 123456;
 
 class StatsCounterObserverImpl : public StatsCounterObserver {
  public:

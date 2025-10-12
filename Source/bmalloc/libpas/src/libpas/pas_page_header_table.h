@@ -27,6 +27,7 @@
 #define PAS_PAGE_HEADER_TABLE_H
 
 #include "pas_lock_free_read_ptr_ptr_hashtable.h"
+#include "pas_mte.h"
 
 PAS_BEGIN_EXTERN_C;
 
@@ -96,6 +97,7 @@ pas_page_header_table_get_for_boundary(pas_page_header_table* table,
                        == begin);
 
     PAS_PROFILE(PAGE_HEADER_TABLE_GET, begin);
+    PAS_MTE_HANDLE(PAGE_HEADER_TABLE_GET, begin);
     boundary = (void*)begin;
     return (pas_page_base*)pas_lock_free_read_ptr_ptr_hashtable_find(
         &table->hashtable, pas_page_header_table_hash, (void*)page_size, boundary);

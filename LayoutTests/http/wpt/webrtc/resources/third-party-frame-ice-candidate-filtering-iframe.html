@@ -21,9 +21,16 @@ function isFilteringEnabled()
     });
 }
 
-async function doGetUserMedia() {
-    var result = await navigator.mediaDevices.getUserMedia({video:true});
+let stream;
+async function doGetUserMedia()
+{
+    stream = await navigator.mediaDevices.getUserMedia({video:true});
     return true;
+}
+
+function stopCapture()
+{
+    stream.getTracks().forEach(t => t.stop());
 }
 
 window.onmessage = async (event) => {
@@ -33,6 +40,10 @@ window.onmessage = async (event) => {
     }
     if (event.data === "capture") {
         event.source.postMessage(await doGetUserMedia(), event.origin);
+        return;
+    }
+    if (event.data === "stopCapture") {
+        event.source.postMessage(await stopCapture(), event.origin);
         return;
     }
     event.source.postMessage("unknown message", event.origin);

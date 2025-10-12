@@ -28,10 +28,10 @@
 
 #pragma once
 
+#include <WebCore/SecurityOrigin.h>
 #include <wtf/Hasher.h>
-#include <wtf/URL.h>
-#include "SecurityOrigin.h"
 #include <wtf/RefPtr.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 

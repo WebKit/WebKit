@@ -6,6 +6,10 @@
 
 // ProgramGL.cpp: Implements the class methods for ProgramGL.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/gl/ProgramGL.h"
 
 #include "common/WorkerThread.h"

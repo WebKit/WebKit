@@ -41,7 +41,7 @@ class CachedApplicationManifest;
 class DocumentLoader;
 
 class ApplicationManifestLoader final : private CachedRawResourceClient {
-WTF_MAKE_NONCOPYABLE(ApplicationManifestLoader); WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+WTF_MAKE_NONCOPYABLE(ApplicationManifestLoader); WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ApplicationManifestLoader, Loader);
 public:
     typedef Function<void (CachedResourceHandle<CachedApplicationManifest>)> CompletionHandlerType;
 

@@ -40,7 +40,7 @@ class RtpVideoSenderInterface : public EncodedImageCallback,
   virtual std::map<uint32_t, RtpState> GetRtpStates() const = 0;
   virtual std::map<uint32_t, RtpPayloadState> GetRtpPayloadStates() const = 0;
 
-  virtual void DeliverRtcp(const uint8_t* packet, size_t length) = 0;
+  virtual void DeliverRtcp(ArrayView<const uint8_t> packet) = 0;
 
   virtual void OnBitrateAllocationUpdated(
       const VideoBitrateAllocation& bitrate) = 0;
@@ -55,9 +55,10 @@ class RtpVideoSenderInterface : public EncodedImageCallback,
   virtual void SetEncodingData(size_t width,
                                size_t height,
                                size_t num_temporal_layers) = 0;
+  virtual void SetCsrcs(ArrayView<const uint32_t> csrcs) = 0;
   virtual std::vector<RtpSequenceNumberMap::Info> GetSentRtpPacketInfos(
       uint32_t ssrc,
-      rtc::ArrayView<const uint16_t> sequence_numbers) const = 0;
+      ArrayView<const uint16_t> sequence_numbers) const = 0;
 
   // Implements FecControllerOverride.
   void SetFecAllowed(bool fec_allowed) override = 0;

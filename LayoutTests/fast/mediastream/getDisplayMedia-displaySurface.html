@@ -10,10 +10,11 @@
     <body>
 
         <script>
-            promise_test(async () => {
+            promise_test(async test => {
                 assert_true(navigator.mediaDevices.getSupportedConstraints().displaySurface, "displaySurface constraint");
 
-                stream = await callGetDisplayMedia({ video: true });
+                const stream = await callGetDisplayMedia({ video: true });
+                test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
                 const settings = stream.getVideoTracks()[0].getSettings();
                 assert_equals(settings.displaySurface, "monitor", "displaySurface settings");

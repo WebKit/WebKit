@@ -11,15 +11,17 @@
 #ifndef TEST_PC_E2E_ECHO_ECHO_EMULATION_H_
 #define TEST_PC_E2E_ECHO_ECHO_EMULATION_H_
 
-#include <atomic>
-#include <deque>
+#include <cstdint>
 #include <memory>
 #include <vector>
 
+#include "api/array_view.h"
 #include "api/sequence_checker.h"
 #include "api/test/pclf/media_configuration.h"
 #include "modules/audio_device/include/test_audio_device.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/swap_queue.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
@@ -32,13 +34,13 @@ class EchoEmulatingCapturer : public TestAudioDeviceModule::Capturer {
       std::unique_ptr<TestAudioDeviceModule::Capturer> capturer,
       EchoEmulationConfig config);
 
-  void OnAudioRendered(rtc::ArrayView<const int16_t> data);
+  void OnAudioRendered(ArrayView<const int16_t> data);
 
   int SamplingFrequency() const override {
     return delegate_->SamplingFrequency();
   }
   int NumChannels() const override { return delegate_->NumChannels(); }
-  bool Capture(rtc::BufferT<int16_t>* buffer) override;
+  bool Capture(BufferT<int16_t>* buffer) override;
 
  private:
   std::unique_ptr<TestAudioDeviceModule::Capturer> delegate_;
@@ -67,7 +69,7 @@ class EchoEmulatingRenderer : public TestAudioDeviceModule::Renderer {
     return delegate_->SamplingFrequency();
   }
   int NumChannels() const override { return delegate_->NumChannels(); }
-  bool Render(rtc::ArrayView<const int16_t> data) override;
+  bool Render(ArrayView<const int16_t> data) override;
 
  private:
   std::unique_ptr<TestAudioDeviceModule::Renderer> delegate_;

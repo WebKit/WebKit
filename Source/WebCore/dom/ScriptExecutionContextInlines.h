@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "DOMTimer.h"
-#include "EventLoop.h"
-#include "ScriptExecutionContext.h"
-#include "ServiceWorkerIdentifier.h"
+#include <WebCore/DOMTimer.h>
+#include <WebCore/EventLoop.h>
+#include <WebCore/ScriptExecutionContext.h>
+#include <WebCore/ServiceWorkerIdentifier.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/NativePromise.h>

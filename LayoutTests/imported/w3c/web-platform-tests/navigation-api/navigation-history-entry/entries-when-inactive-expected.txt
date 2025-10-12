@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS A non-active entry in navigation.entries() should not be modified when a different entry is modified
 

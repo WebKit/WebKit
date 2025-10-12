@@ -62,7 +62,7 @@ AffineTransform SVGTextChunkBuilder::transformationForTextBox(InlineIterator::SV
     return it == m_textBoxTransformations.end() ? AffineTransform() : it->value;
 }
 
-void SVGTextChunkBuilder::buildTextChunks(const Vector<InlineIterator::SVGTextBoxIterator>& lineLayoutBoxes, const UncheckedKeyHashSet<InlineIterator::SVGTextBox::Key>& chunkStarts, SVGTextFragmentMap& fragmentMap)
+void SVGTextChunkBuilder::buildTextChunks(const Vector<InlineIterator::SVGTextBoxIterator>& lineLayoutBoxes, const HashSet<InlineIterator::SVGTextBox::Key>& chunkStarts, SVGTextFragmentMap& fragmentMap)
 {
     if (lineLayoutBoxes.isEmpty())
         return;
@@ -87,7 +87,7 @@ void SVGTextChunkBuilder::buildTextChunks(const Vector<InlineIterator::SVGTextBo
         m_textChunks.append(SVGTextChunk(lineLayoutBoxes, first, limit, fragmentMap));
 }
 
-void SVGTextChunkBuilder::layoutTextChunks(const Vector<InlineIterator::SVGTextBoxIterator>& lineLayoutBoxes, const UncheckedKeyHashSet<InlineIterator::SVGTextBox::Key>& chunkStarts, SVGTextFragmentMap& fragmentMap)
+void SVGTextChunkBuilder::layoutTextChunks(const Vector<InlineIterator::SVGTextBoxIterator>& lineLayoutBoxes, const HashSet<InlineIterator::SVGTextBox::Key>& chunkStarts, SVGTextFragmentMap& fragmentMap)
 {
     buildTextChunks(lineLayoutBoxes, chunkStarts, fragmentMap);
     if (m_textChunks.isEmpty())

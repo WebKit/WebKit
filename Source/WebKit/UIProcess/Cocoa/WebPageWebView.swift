@@ -26,9 +26,13 @@
 import Foundation
 internal import WebKit_Internal
 
+// SPI for the cross-import overlay.
+// swift-format-ignore: AllPublicDeclarationsHaveDocumentation
 @MainActor
 @_spi(CrossImportOverlay)
 public final class WebPageWebView: WKWebView {
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public weak var delegate: (any Delegate)? = nil
 
     #if os(iOS)
@@ -42,6 +46,7 @@ public final class WebPageWebView: WKWebView {
         delegate?.findInteraction(interaction, didEnd: session)
     }
 
+    #if USE_APPLE_INTERNAL_SDK
     override func supportsTextReplacement() -> Bool {
         guard let delegate else {
             return super.supportsTextReplacement()
@@ -49,6 +54,15 @@ public final class WebPageWebView: WKWebView {
 
         return super.supportsTextReplacement() && delegate.supportsTextReplacement()
     }
+    #else
+    override var supportsTextReplacement: Bool {
+        guard let delegate else {
+            return super.supportsTextReplacement
+        }
+
+        return super.supportsTextReplacement && delegate.supportsTextReplacement()
+    }
+    #endif // USE_APPLE_INTERNAL_SDK
     #endif
 
     func geometryDidChange(_ geometry: WKScrollGeometryAdapter) {
@@ -57,6 +71,8 @@ public final class WebPageWebView: WKWebView {
 }
 
 extension WebPageWebView {
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     @MainActor
     public protocol Delegate: AnyObject {
         #if os(iOS)
@@ -75,31 +91,44 @@ extension WebPageWebView {
     // MARK: Platform-agnostic scrolling capabilities
 
     #if canImport(UIKit)
+
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var alwaysBounceVertical: Bool {
         get { scrollView.alwaysBounceVertical }
         set { scrollView.alwaysBounceVertical = newValue }
     }
 
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var alwaysBounceHorizontal: Bool {
         get { scrollView.alwaysBounceHorizontal }
         set { scrollView.alwaysBounceHorizontal = newValue }
     }
 
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var bouncesVertically: Bool {
         get { scrollView.bouncesVertically }
         set { scrollView.bouncesVertically = newValue }
     }
 
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var bouncesHorizontally: Bool {
         get { scrollView.bouncesHorizontally }
         set { scrollView.bouncesHorizontally = newValue }
     }
 
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var allowsMagnification: Bool {
         get { self._allowsMagnification }
         set { self._allowsMagnification = newValue }
     }
 
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func setContentOffset(x: Double?, y: Double?, animated: Bool) {
         let currentOffset = scrollView.contentOffset
         let newOffset = CGPoint(x: x ?? currentOffset.x, y: y ?? currentOffset.y)
@@ -107,38 +136,70 @@ extension WebPageWebView {
         scrollView.setContentOffset(newOffset, animated: animated)
     }
 
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func scrollTo(edge: NSDirectionalRectEdge, animated: Bool) {
         self._scroll(to: _WKRectEdge(edge), animated: animated)
     }
+
     #else
+
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var alwaysBounceVertical: Bool {
         get { self._alwaysBounceVertical }
         set { self._alwaysBounceVertical = newValue }
     }
 
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var alwaysBounceHorizontal: Bool {
         get { self._alwaysBounceHorizontal }
         set { self._alwaysBounceHorizontal = newValue }
     }
 
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var bouncesVertically: Bool {
         get { self._rubberBandingEnabled.contains(.top) && self._rubberBandingEnabled.contains(.bottom) }
         set { self._rubberBandingEnabled.formUnion([.top, .bottom]) }
     }
 
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var bouncesHorizontally: Bool {
         get { self._rubberBandingEnabled.contains(.left) && self._rubberBandingEnabled.contains(.right) }
         set { self._rubberBandingEnabled.formUnion([.left, .right]) }
     }
 
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func setContentOffset(x: Double?, y: Double?, animated: Bool) {
         self._setContentOffset(x: x.map(NSNumber.init(value:)), y: y.map(NSNumber.init(value:)), animated: animated)
     }
 
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func scrollTo(edge: NSDirectionalRectEdge, animated: Bool) {
         self._scroll(to: _WKRectEdge(edge), animated: animated)
     }
+
     #endif
+}
+
+extension WebPageWebView {
+    // swift-format-ignore: NoLeadingUnderscores
+    override var _nameForVisualIdentificationOverlay: String {
+        "WebView (SwiftUI)"
+    }
+}
+
+extension WebPageWebView {
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    public func setNeedsScrollGeometryUpdates(_ value: Bool) {
+        self._setNeedsScrollGeometryUpdates(value)
+    }
 }
 
 #endif

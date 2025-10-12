@@ -10,27 +10,27 @@
 
 #include "modules/congestion_controller/goog_cc/robust_throughput_estimator.h"
 
-#include <stddef.h>
-#include <stdint.h>
-
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/field_trials.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator_interface.h"
-#include "test/explicit_key_value_config.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
 RobustThroughputEstimatorSettings CreateRobustThroughputEstimatorSettings(
     absl::string_view field_trial_string) {
-  test::ExplicitKeyValueConfig trials(field_trial_string);
+  FieldTrials trials = CreateTestFieldTrials(field_trial_string);
   RobustThroughputEstimatorSettings settings(&trials);
   return settings;
 }
@@ -375,14 +375,16 @@ TEST(RobustThroughputEstimatorTest, DeepReordering) {
   // Since the window is 500 ms, the delayed packet was sent ~500
   // ms before the second oldest packet. However, the send rate
   // should not drop.
-  delayed_packets.front().receive_time =
-      feedback_generator.CurrentReceiveClock();
-  throughput_estimator.IncomingPacketFeedbackVector(delayed_packets);
-  auto throughput = throughput_estimator.bitrate();
-  ASSERT_TRUE(throughput.has_value());
-  EXPECT_NEAR(throughput.value().bytes_per_sec<double>(),
-              send_rate.bytes_per_sec<double>(),
-              0.05 * send_rate.bytes_per_sec<double>());  // Allow 5% error
+  {
+    delayed_packets.front().receive_time =
+        feedback_generator.CurrentReceiveClock();
+    throughput_estimator.IncomingPacketFeedbackVector(delayed_packets);
+    auto throughput = throughput_estimator.bitrate();
+    ASSERT_TRUE(throughput.has_value());
+    EXPECT_NEAR(throughput.value().bytes_per_sec<double>(),
+                send_rate.bytes_per_sec<double>(),
+                0.05 * send_rate.bytes_per_sec<double>());  // Allow 5% error
+  }
 
   // Thoughput should stay stable.
   for (int i = 0; i < 10; i++) {

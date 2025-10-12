@@ -7,6 +7,7 @@ PASS Check if the default namespace is correctly reset.
 FAIL Check if there is no redundant empty namespace declaration. assert_equals: expected "<root xmlns=\"urn:bar\"><outer xmlns=\"\"><inner>value1</inner></outer></root>" but got "<root xmlns=\"urn:bar\"><outer xmlns=\"\"><inner xmlns=\"\">value1</inner></outer></root>"
 FAIL Check if redundant xmlns="..." is dropped. assert_equals: expected "<root><child/></root>" but got "<root><child xmlns=\"\"/></root>"
 FAIL Check if inconsistent xmlns="..." is dropped. assert_equals: expected "<root xmlns=\"uri1\"><child xmlns=\"\"/><child2 xmlns=\"uri2\"/><child3/><child4 xmlns=\"uri4\"/><child5 xmlns=\"\"/></root>" but got "<root xmlns=\"uri1\"><child xmlns=\"FAIL1\"/><child2 xmlns=\"FAIL2\"/><child3 xmlns=\"FAIL3\"/><child4 xmlns=\"uri4\"/><child5 xmlns=\"\"/></root>"
+FAIL Drop inconsistent xmlns="..." by matching on local name assert_equals: expected "<package><manifest/></package>" but got "<package xmlns=\"http://www.idpf.org/2007/opf\"><manifest xmlns=\"http://www.idpf.org/2007/opf\"/></package>"
 PASS Check if an attribute with namespace and no prefix is serialized with the nearest-declared prefix
 FAIL Check if an attribute with namespace and no prefix is serialized with the nearest-declared prefix even if the prefix is assigned to another namespace. assert_equals: expected "<el1 xmlns:p=\"u1\" xmlns:q=\"u1\"><el2 xmlns:q=\"u2\" q:name=\"v\"/></el1>" but got "<el1 xmlns:p=\"u1\" xmlns:q=\"u1\"><el2 xmlns:q=\"u2\" xmlns:q=\"u1\" q:name=\"v\"/></el1>"
 PASS Check if the prefix of an attribute is replaced with another existing prefix mapped to the same namespace URI.
@@ -25,4 +26,6 @@ FAIL Check if "ns1" is generated even if the element already has xmlns:ns1. asse
 PASS Check if no special handling for XLink namespace unlike HTML serializer.
 PASS Check if document fragment serializes.
 PASS Check children were included for void elements
+PASS Check if a prefix bound to an empty namespace URI ("no namespace") serialize
+PASS Attribute nodes are serialized as the empty string
 

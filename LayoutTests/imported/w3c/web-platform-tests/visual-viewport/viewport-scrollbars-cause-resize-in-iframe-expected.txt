@@ -1,0 +1,8 @@
+Viewport: Scrollbars Cause Resize In IFrame
+
+Test Description: This test checks that the appearance of classic scrollbars will cause a resize event to be fired at window.visualViewport in iframe.
+
+
+
+PASS the appearance of classic scrollbars will fire a resize eventat window.visualViewport in iframe
+

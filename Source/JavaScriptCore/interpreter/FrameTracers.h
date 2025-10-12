@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CatchScope.h"
-#include "StackAlignment.h"
-#include "VM.h"
+#include <JavaScriptCore/CatchScope.h>
+#include <JavaScriptCore/StackAlignment.h>
+#include <JavaScriptCore/VM.h>
 
 namespace JSC {
 
@@ -43,12 +43,12 @@ public:
         , m_savedLastException(vm.m_lastException, nullptr)
     {
         if (m_exceptionWasSet)
-            m_vm.traps().clearTrapBit(VMTraps::NeedExceptionHandling);
+            m_vm.traps().clearTrap(VMTraps::NeedExceptionHandling);
     }
     ~SuspendExceptionScope()
     {
         if (m_exceptionWasSet)
-            m_vm.traps().setTrapBit(VMTraps::NeedExceptionHandling);
+            m_vm.traps().fireTrap(VMTraps::NeedExceptionHandling);
     }
 private:
     VM& m_vm;
@@ -106,6 +106,18 @@ public:
         ASSERT(reinterpret_cast<void*>(callFrame) < reinterpret_cast<void*>(vm.topEntryFrame));
         assertStackPointerIsAligned();
         vm.topCallFrame = callFrame;
+    }
+};
+
+class WasmOperationPrologueCallFrameTracer {
+public:
+    ALWAYS_INLINE WasmOperationPrologueCallFrameTracer(VM& vm, CallFrame* callFrame, void* returnPC)
+    {
+        ASSERT(callFrame);
+        ASSERT(reinterpret_cast<void*>(callFrame) < reinterpret_cast<void*>(vm.topEntryFrame));
+        assertStackPointerIsAligned();
+        vm.topCallFrame = callFrame;
+        vm.maybeReturnPC = returnPC;
     }
 };
 

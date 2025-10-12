@@ -1,9 +1,3 @@
-CONSOLE MESSAGE: Invalid policy name in 'trusted-types' Content Security Policy directive: 'none'. Note that 'none' has no effect unless it is the only expression.
-
-CONSOLE MESSAGE: Invalid policy name in 'trusted-types' Content Security Policy directive: 'none'. Note that 'none' has no effect unless it is the only expression.
-
-CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'SomeName' because it violates the following Content Security Policy directive: "trusted-types 'none' 'none'"
-CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'default' because it violates the following Content Security Policy directive: "trusted-types 'none' 'none'"
 
 PASS Cannot create policy with name 'SomeName' - policy creation throws
 PASS Cannot create policy with name 'default' - policy creation throws

@@ -61,7 +61,7 @@
 - (void)setStart:(int)newStart
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setStartForBindings(newStart);
+    IMPL->setIntegralAttribute(WebCore::HTMLNames::startAttr, newStart);
 }
 
 - (BOOL)reversed

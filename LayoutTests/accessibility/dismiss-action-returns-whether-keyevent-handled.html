@@ -1,0 +1,41 @@
+<html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="alertDoesNotHandle">alert</div>
+<div id="alertDoesHandle">alert</div>
+
+<script>
+var output = "Tests that calling dismiss returns true only if the key event is handled.\n\n";
+
+function doNotHandleKeyDown(event) {
+    output += "Keycode received on alertDoesNotHandle: code: " + event.keyCode + " key name: " + event.key;
+}
+
+function handleKeyDown(event) {
+    output += "Keycode received on alertDoesHandle: code: " + event.keyCode + " key name: " + event.key;
+    event.preventDefault();
+    event.stopPropagation();
+}
+
+if (window.accessibilityController) {
+    jsTestIsAsync = true;
+
+    document.getElementById("alertDoesNotHandle").addEventListener('keydown', doNotHandleKeyDown);
+    document.getElementById("alertDoesHandle").addEventListener('keydown', handleKeyDown);
+
+    output += "Result from dismissing alertDoesNotHandle: " +
+        accessibilityController.accessibleElementById("alertDoesNotHandle").dismiss() + '\n';
+    output += "Result from dismissing alertDoesHandle: " +
+        accessibilityController.accessibleElementById("alertDoesHandle").dismiss() + '\n';
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+
+</body>
+</html>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #import <pal/ios/UIKitSoftLink.h>
 
@@ -53,13 +54,38 @@ typedef NSMutableDictionary<NSString *, NSURL *> TypeToFileURLMap;
 using WebCore::Pasteboard;
 using WebCore::PasteboardCustomData;
 
+static BOOL typeConformsToType(NSString *type, NSString *conformingType)
+{
+    // The deprecated UTTypeConformsTo function that WebKit based its logic on
+    // recognized identical type strings as conforming with an early return based
+    // on string equality. Several test cases using custom UTTypes (perhaps not
+    // registered to the system) depend on this behavior, so we reproduce it here:
+    if ([type isEqualToString:conformingType])
+        return YES;
+
+    if (RetainPtr loadedUTType = [UTType typeWithIdentifier:type]) {
+        if (RetainPtr conformingUTType = [UTType typeWithIdentifier:conformingType])
+            return [loadedUTType conformsToType:conformingUTType.get()];
+    }
+
+    return NO;
+}
+
 static BOOL typeConformsToTypes(NSString *type, NSArray *conformsToTypes)
 {
+    RetainPtr utType = [UTType typeWithIdentifier:type];
     for (NSString *conformsToType in conformsToTypes) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if (UTTypeConformsTo((__bridge CFStringRef)type, (__bridge CFStringRef)conformsToType))
+        // The deprecated UTTypeConformsTo function that WebKit based its logic on
+        // recognized identical type strings as conforming with an early return based
+        // on string equality. Several test cases using custom UTTypes (perhaps not
+        // registered to the system) depend on this behavior, so we reproduce it here:
+        if ([type isEqualToString:conformsToType])
             return YES;
-ALLOW_DEPRECATED_DECLARATIONS_END
+
+        if (RetainPtr conformsToUTType = [UTType typeWithIdentifier:conformsToType]) {
+            if ([utType conformsToType:conformsToUTType.get()])
+                return YES;
+        }
     }
     return NO;
 }
@@ -69,10 +95,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (BOOL)web_containsFileURLAndFileUploadContent
 {
     for (NSString *identifier in self.registeredTypeIdentifiers) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if (UTTypeConformsTo((__bridge CFStringRef)identifier, kUTTypeFileURL))
-            return self.web_fileUploadContentTypes.count;
-ALLOW_DEPRECATED_DECLARATIONS_END
+        if (RetainPtr utType = [UTType typeWithIdentifier:identifier]) {
+            if ([utType conformsToType:UTTypeFileURL])
+                return self.web_fileUploadContentTypes.count;
+        }
     }
     return NO;
 }
@@ -81,10 +107,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     auto types = adoptNS([NSMutableArray new]);
     for (NSString *identifier in self.registeredTypeIdentifiers) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if (UTTypeConformsTo((__bridge CFStringRef)identifier, kUTTypeURL))
-            continue;
-ALLOW_DEPRECATED_DECLARATIONS_END
+        if (RetainPtr utType = [UTType typeWithIdentifier:identifier]) {
+            if ([utType conformsToType:UTTypeURL])
+                continue;
+        }
 
         if ([identifier isEqualToString:@"com.apple.mapkit.map-item"]) {
             // This type conforms to "public.content", yet the corresponding data is only a serialization of MKMapItem and isn't suitable for file uploads.
@@ -562,10 +588,8 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
 
     WebItemProviderLoadResult *loadResult = _loadResults[index].get();
     for (NSString *loadedType in loadResult.loadedTypeIdentifiers) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if (!UTTypeConformsTo((CFStringRef)loadedType, (CFStringRef)typeIdentifier))
+        if (!typeConformsToType(loadedType, typeIdentifier))
             continue;
-ALLOW_DEPRECATED_DECLARATIONS_END
 
         // We've already loaded data relevant for this UTI type onto disk, so there's no need to ask the NSItemProvider for the same data again.
         if (NSData *result = [NSData dataWithContentsOfURL:[loadResult fileURLForType:loadedType] options:NSDataReadingMappedIfSafe error:nil])
@@ -599,7 +623,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 static NSArray<Class<NSItemProviderReading>> *allLoadableClasses()
 {
-    return @[ [PAL::getUIColorClass() class], [PAL::getUIImageClass() class], [NSURL class], [NSString class], [NSAttributedString class] ];
+    return @[ [PAL::getUIColorClassSingleton() class], [PAL::getUIImageClassSingleton() class], [NSURL class], [NSString class], [NSAttributedString class] ];
 }
 
 static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outTypeIdentifierToLoad)
@@ -614,13 +638,11 @@ static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outType
 
     // If we were unable to load any object, check if the given type identifier is still something
     // WebKit knows how to handle.
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if ([typeIdentifier isEqualToString:bridge_cast(kUTTypeHTML)]) {
-        // Load kUTTypeHTML as a plain text HTML string.
-        outTypeIdentifierToLoad = bridge_cast(kUTTypePlainText);
+    if ([typeIdentifier isEqualToString:UTTypeHTML.identifier]) {
+        // Load UTTypeHTML as a plain text HTML string.
+        outTypeIdentifierToLoad = UTTypePlainText.identifier;
         return [NSString class];
     }
-ALLOW_DEPRECATED_DECLARATIONS_END
 
     return nil;
 }
@@ -727,9 +749,8 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
         return nil;
 
     NSURL *destination = nil;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    BOOL isFolder = UTTypeConformsTo((CFStringRef)typeIdentifier, kUTTypeFolder);
-ALLOW_DEPRECATED_DECLARATIONS_END
+    RetainPtr utType = [UTType typeWithIdentifier:typeIdentifier];
+    BOOL isFolder = [utType conformsToType:UTTypeFolder];
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
     if (!suggestedName.length)
@@ -741,7 +762,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     auto urlExtension = url.pathExtension;
     if (!urlExtension.length)
-        urlExtension = [UTType typeWithIdentifier:typeIdentifier].preferredFilenameExtension;
+        urlExtension = [utType preferredFilenameExtension];
 
     if (urlExtension.length && [suggestedName.pathExtension caseInsensitiveCompare:urlExtension] != NSOrderedSame && !isFolder)
         suggestedName = [suggestedName stringByAppendingPathExtension:urlExtension];
@@ -757,17 +778,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSArray<NSString *> *)typeIdentifiersToLoad:(NSItemProvider *)itemProvider
 {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto typesToLoad = adoptNS([[NSMutableOrderedSet alloc] init]);
     NSString *highestFidelitySupportedType = nil;
     NSString *highestFidelityContentType = nil;
 
     NSArray<NSString *> *registeredTypeIdentifiers = itemProvider.registeredTypeIdentifiers;
     BOOL containsFile = itemProvider.web_containsFileURLAndFileUploadContent;
-    BOOL containsFlatRTFD = [registeredTypeIdentifiers containsObject:(__bridge NSString *)kUTTypeFlatRTFD];
+    BOOL containsFlatRTFD = [registeredTypeIdentifiers containsObject:UTTypeFlatRTFD.identifier];
     // First, search for the highest fidelity supported type or the highest fidelity generic content type.
     for (NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
-        if (containsFlatRTFD && [registeredTypeIdentifier isEqualToString:(__bridge NSString *)kUTTypeRTFD]) {
+        if (containsFlatRTFD && [registeredTypeIdentifier isEqualToString:UTTypeRTFD.identifier]) {
             // In the case where attachments are enabled and we're accepting all types of content using attachment
             // elements as a fallback representation, if the source writes attributed strings to the pasteboard with
             // com.apple.rtfd at a higher fidelity than com.apple.flat-rtfd, we'll end up loading only com.apple.rtfd
@@ -777,13 +797,14 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             continue;
         }
 
-        if (containsFile && UTTypeConformsTo((__bridge CFStringRef)registeredTypeIdentifier, kUTTypeURL))
+        RetainPtr utType = [UTType typeWithIdentifier:registeredTypeIdentifier];
+        if (containsFile && [utType conformsToType:UTTypeURL])
             continue;
 
         if (!highestFidelitySupportedType && typeConformsToTypes(registeredTypeIdentifier, _supportedTypeIdentifiers.get()))
             highestFidelitySupportedType = registeredTypeIdentifier;
 
-        if (!highestFidelityContentType && UTTypeConformsTo((CFStringRef)registeredTypeIdentifier, kUTTypeContent))
+        if (!highestFidelityContentType && [utType conformsToType:UTTypeContent])
             highestFidelityContentType = registeredTypeIdentifier;
     }
 
@@ -791,15 +812,15 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // fault in any data at all, we need to load up front any information that the page may ask for later down the line.
     NSString *customPasteboardDataUTI = @(PasteboardCustomData::cocoaType().characters());
     for (NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
+        RetainPtr utType = [UTType typeWithIdentifier:registeredTypeIdentifier];
         if ([registeredTypeIdentifier isEqualToString:highestFidelityContentType]
             || [registeredTypeIdentifier isEqualToString:highestFidelitySupportedType]
             || [registeredTypeIdentifier isEqualToString:customPasteboardDataUTI]
-            || (!containsFile && UTTypeConformsTo((__bridge CFStringRef)registeredTypeIdentifier, kUTTypeURL))
-            || UTTypeConformsTo((__bridge CFStringRef)registeredTypeIdentifier, kUTTypeHTML)
-            || UTTypeConformsTo((__bridge CFStringRef)registeredTypeIdentifier, kUTTypePlainText))
+            || (!containsFile && [utType conformsToType:UTTypeURL])
+            || [utType conformsToType:UTTypeHTML]
+            || [utType conformsToType:UTTypePlainText])
             [typesToLoad addObject:registeredTypeIdentifier];
     }
-ALLOW_DEPRECATED_DECLARATIONS_END
 
     return [typesToLoad array];
 }
@@ -867,7 +888,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
-    dispatch_group_notify(fileLoadingGroup.get(), dispatch_get_main_queue(), itemLoadCompletion);
+    dispatch_group_notify(fileLoadingGroup.get(), mainDispatchQueueSingleton(), itemLoadCompletion);
 }
 
 - (NSItemProvider *)itemProviderAtIndex:(NSUInteger)index

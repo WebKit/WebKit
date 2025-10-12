@@ -25,18 +25,22 @@
 #include "ArchiveResource.h"
 #include "BitmapImage.h"
 #include "CachedImage.h"
-#include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ContainerNodeInlines.h"
 #include "CookieJar.h"
 #include "CrossOriginAccessControl.h"
-#include "Document.h"
 #include "DocumentLoader.h"
+#include "DocumentPage.h"
+#include "DocumentResourceLoader.h"
+#include "DocumentSecurityOrigin.h"
+#include "DocumentView.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "EventSender.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
@@ -219,9 +223,9 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
     // Do not load any image if the 'src' attribute is missing or if it is
     // an empty string.
     CachedResourceHandle<CachedImage> newImage;
-    if (!attr.isNull() && !StringView(attr).containsOnly<isASCIIWhitespace<UChar>>()) {
+    if (!attr.isNull() && !StringView(attr).containsOnly<isASCIIWhitespace<char16_t>>()) {
         ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
-        options.contentSecurityPolicyImposition = element->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
+        options.contentSecurityPolicyImposition = (element->isInUserAgentShadowTree() || m_elementIsUserAgentShadowRootResource) ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
         options.loadedFromPluginElement = is<HTMLPlugInElement>(element) ? LoadedFromPluginElement::Yes : LoadedFromPluginElement::No;
         options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
         options.serviceWorkersMode = is<HTMLPlugInElement>(element) ? ServiceWorkersMode::None : ServiceWorkersMode::All;
@@ -290,7 +294,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         // Adaptive image glyphs need to load both the high fidelity HEIC and the
         // fallback PNG resource, as both resources are treated as an atomic unit.
         if (imageElement && imageElement->isMultiRepresentationHEIC()) {
-            auto fallbackURL = imageElement->src();
+            auto fallbackURL = imageElement->getURLAttribute(HTMLNames::srcAttr);
             if (!fallbackURL.isNull()) {
                 ResourceRequest resourceRequest(WTFMove(fallbackURL));
                 resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(*imageElement));
@@ -499,7 +503,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
         loadEventSender().dispatchEventSoon(*this, eventNames().loadEvent);
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
-        if (RefPtr page = element().document().protectedPage())
+        if (RefPtr page = element().document().page())
             page->chrome().client().updateImageSource(protectedElement().get());
 #endif
 
@@ -572,7 +576,7 @@ void ImageLoader::updatedHasPendingEvent()
         if (m_derefElementTimer.isActive())
             m_derefElementTimer.stop();
         else
-            m_protectedElement = &element();
+            m_protectedElement = element();
     } else {
         ASSERT(!m_derefElementTimer.isActive());
         m_derefElementTimer.startOneShot(0_s);
@@ -583,13 +587,13 @@ void ImageLoader::decode(Ref<DeferredPromise>&& promise)
 {
     m_decodingPromises.append(WTFMove(promise));
 
-    if (!element().document().domWindow()) {
+    if (!element().document().window()) {
         rejectDecodePromises("Inactive document."_s);
         return;
     }
 
     auto attr = protectedElement()->imageSourceURL();
-    if (StringView(attr).containsOnly<isASCIIWhitespace<UChar>>()) {
+    if (StringView(attr).containsOnly<isASCIIWhitespace<char16_t>>()) {
         rejectDecodePromises("Missing source URL."_s);
         return;
     }
@@ -602,7 +606,7 @@ void ImageLoader::decode()
 {
     ASSERT(hasPendingDecodePromises());
     
-    if (!element().document().domWindow()) {
+    if (!element().document().window()) {
         rejectDecodePromises("Inactive document."_s);
         return;
     }
@@ -752,7 +756,7 @@ bool ImageLoader::shouldIgnoreCandidateWhenLoadingFromArchive(const ImageCandida
     if (loader->archiveResourceForURL(candidateURL))
         return false;
 
-    RefPtr page = document->protectedPage();
+    RefPtr page = document->page();
     return !page || !page->allowsLoadFromURL(candidateURL, MainFrameMainResource::No);
 #else
     UNUSED_PARAM(candidate);

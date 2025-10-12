@@ -24,7 +24,7 @@ header: "SharedBufferReference.h"
 
 #if !USE(UNIX_DOMAIN_SOCKETS)
 [Nested, RValue] struct IPC::SharedBufferReference::SerializableBuffer {
-    size_t size;
+    uint64_t size;
     std::optional<WebCore::SharedMemory::Handle> handle;
 };
 #endif

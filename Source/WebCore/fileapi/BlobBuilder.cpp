@@ -65,8 +65,8 @@ void BlobBuilder::append(RefPtr<Blob>&& blob)
     if (!blob)
         return;
     if (!m_appendableData.isEmpty())
-        m_items.append(BlobPart(WTFMove(m_appendableData)));
-    m_items.append(BlobPart(blob->url()));
+        m_items.append(std::exchange(m_appendableData, { }));
+    m_items.append(blob->url());
 }
 
 void BlobBuilder::append(const String& text)
@@ -84,10 +84,20 @@ void BlobBuilder::append(const String& text)
     }
 }
 
+void BlobBuilder::append(Ref<FragmentedSharedBuffer>&& buffer)
+{
+    if (!m_appendableData.isEmpty())
+        m_items.append(std::exchange(m_appendableData, { }));
+
+    buffer->forEachSegmentAsSharedBuffer([&](Ref<SharedBuffer>&& sharedBuffer) {
+        m_items.append(WTFMove(sharedBuffer));
+    });
+}
+
 Vector<BlobPart> BlobBuilder::finalize()
 {
     if (!m_appendableData.isEmpty())
-        m_items.append(BlobPart(WTFMove(m_appendableData)));
+        m_items.append(std::exchange(m_appendableData, { }));
     return WTFMove(m_items);
 }
 

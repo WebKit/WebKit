@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<style>
+	input {
+		writing-mode: vertical-lr;
+	}
+
+	#mini-switch {
+		width: 5px;
+		height: 9px;
+	}
+</style>
+<body>
+	<input type="checkbox" switch id="default-switch">
+	<input type="checkbox" switch id="mini-switch">
+	<pre id=repaintRects></pre>
+</body>
+<script>
+	if (window.internals && window.testRunner) {
+		testRunner.dumpAsText();
+		testRunner.waitUntilDone();
+		window.internals.startTrackingRepaints();
+	}
+
+	document.getElementById("default-switch").checked = true;
+	document.getElementById("mini-switch").checked = true;
+
+	repaintRects.innerText = internals.repaintRectsAsText();
+	
+	if (window.internals && window.testRunner) {
+		internals.stopTrackingRepaints();
+		testRunner.notifyDone();
+	}
+</script>
+</html>

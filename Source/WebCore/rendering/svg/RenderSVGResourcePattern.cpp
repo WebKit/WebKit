@@ -23,6 +23,7 @@
 #include "ContainerNodeInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "ImageBuffer.h"
+#include "NativeImage.h"
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGModelObjectInlines.h"
@@ -30,7 +31,6 @@
 #include "RenderSVGShape.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFitToViewBox.h"
-#include "SVGRenderStyle.h"
 #include "SVGVisitedRendererTracking.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -52,7 +52,7 @@ void RenderSVGResourcePattern::collectPatternAttributesIfNeeded()
 
     auto attributes = PatternAttributes { };
 
-    RefPtr current = &patternElement();
+    RefPtr current = patternElement();
 
     current->synchronizeAllAttributes();
 
@@ -135,9 +135,8 @@ bool RenderSVGResourcePattern::prepareFillOperation(GraphicsContext& context, co
     if (!pattern)
         return false;
 
-    const auto& svgStyle = style.svgStyle();
-    context.setAlpha(svgStyle.fillOpacity());
-    context.setFillRule(svgStyle.fillRule());
+    context.setAlpha(style.fillOpacity().value.value);
+    context.setFillRule(style.fillRule());
     context.setFillPattern(*pattern);
     return true;
 }
@@ -148,11 +147,9 @@ bool RenderSVGResourcePattern::prepareStrokeOperation(GraphicsContext& context, 
     if (!pattern)
         return false;
 
-    const auto& svgStyle = style.svgStyle();
-
-    context.setAlpha(svgStyle.strokeOpacity());
+    context.setAlpha(style.strokeOpacity().value.value);
     SVGRenderSupport::applyStrokeStyleToContext(context, style, targetRenderer);
-    if (svgStyle.vectorEffect() == VectorEffect::NonScalingStroke) {
+    if (style.vectorEffect() == VectorEffect::NonScalingStroke) {
         if (CheckedPtr shape = dynamicDowncast<RenderSVGShape>(targetRenderer))
             pattern->setPatternSpaceTransform(shape->nonScalingStrokeTransform().multiply(m_transformMap.get(targetRenderer)));
     }

@@ -79,22 +79,22 @@ std::optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters
     if (!capabilities)
         return std::nullopt;
 
-    auto supportedProfiles = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(capabilities.get(), kVTHEVCDecoderCapability_SupportedProfiles));
+    RetainPtr supportedProfiles = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(capabilities.get(), kVTHEVCDecoderCapability_SupportedProfiles));
     if (!supportedProfiles)
         return std::nullopt;
 
     int16_t generalProfileIDC = parameters.generalProfileIDC;
     auto cfGeneralProfileIDC = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt16Type, &generalProfileIDC));
-    auto searchRange = CFRangeMake(0, CFArrayGetCount(supportedProfiles));
-    if (!CFArrayContainsValue(supportedProfiles, searchRange, cfGeneralProfileIDC.get()))
+    auto searchRange = CFRangeMake(0, CFArrayGetCount(supportedProfiles.get()));
+    if (!CFArrayContainsValue(supportedProfiles.get(), searchRange, cfGeneralProfileIDC.get()))
         return std::nullopt;
 
-    auto perProfileSupport = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(capabilities.get(), kVTHEVCDecoderCapability_PerProfileSupport));
+    RetainPtr perProfileSupport = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(capabilities.get(), kVTHEVCDecoderCapability_PerProfileSupport));
     if (!perProfileSupport)
         return std::nullopt;
 
     auto generalProfileIDCString = String::number(generalProfileIDC).createCFString();
-    auto profileSupport = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(perProfileSupport, generalProfileIDCString.get()));
+    RetainPtr profileSupport = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(perProfileSupport.get(), generalProfileIDCString.get()));
     if (!profileSupport)
         return std::nullopt;
 
@@ -102,20 +102,20 @@ std::optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters
 
     info.supported = true;
 
-    info.powerEfficient = CFDictionaryGetValue(profileSupport, kVTHEVCDecoderProfileCapability_IsHardwareAccelerated) == kCFBooleanTrue;
+    info.powerEfficient = CFDictionaryGetValue(profileSupport.get(), kVTHEVCDecoderProfileCapability_IsHardwareAccelerated) == kCFBooleanTrue;
 
-    if (auto cfMaxDecodeLevel = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(profileSupport, kVTHEVCDecoderProfileCapability_MaxDecodeLevel))) {
+    if (RetainPtr cfMaxDecodeLevel = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(profileSupport.get(), kVTHEVCDecoderProfileCapability_MaxDecodeLevel))) {
         int16_t maxDecodeLevel = 0;
-        if (!CFNumberGetValue(cfMaxDecodeLevel, kCFNumberSInt16Type, &maxDecodeLevel))
+        if (!CFNumberGetValue(cfMaxDecodeLevel.get(), kCFNumberSInt16Type, &maxDecodeLevel))
             return std::nullopt;
 
         if (parameters.generalLevelIDC > maxDecodeLevel)
             return std::nullopt;
     }
 
-    if (auto cfMaxPlaybackLevel = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(profileSupport, kVTHEVCDecoderProfileCapability_MaxPlaybackLevel))) {
+    if (RetainPtr cfMaxPlaybackLevel = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(profileSupport.get(), kVTHEVCDecoderProfileCapability_MaxPlaybackLevel))) {
         int16_t maxPlaybackLevel = 0;
-        if (!CFNumberGetValue(cfMaxPlaybackLevel, kCFNumberSInt16Type, &maxPlaybackLevel))
+        if (!CFNumberGetValue(cfMaxPlaybackLevel.get(), kCFNumberSInt16Type, &maxPlaybackLevel))
             return std::nullopt;
 
         info.smooth = parameters.generalLevelIDC <= maxPlaybackLevel;
@@ -138,11 +138,11 @@ static CMVideoCodecType codecType(DoViParameters::Codec codec)
 
 static std::optional<Vector<uint16_t>> parseStringArrayFromDictionaryToUInt16Vector(CFDictionaryRef dictionary, const void* key)
 {
-    auto array = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(dictionary, key));
+    RetainPtr array = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(dictionary, key));
     if (!array)
         return std::nullopt;
     bool parseFailed = false;
-    auto result = makeVector(bridge_cast(array), [&] (id value) {
+    auto result = makeVector(bridge_cast(array.get()), [&] (id value) {
         auto parseResult = parseInteger<uint16_t>(String(dynamic_objc_cast<NSString>(value)));
         parseFailed |= !parseResult;
         return parseResult;

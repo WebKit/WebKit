@@ -9,4 +9,5 @@ PASS ReadableStream cancellation: if the underlying source's cancel method retur
 PASS ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should fulfill when that one does (2)
 PASS ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should reject when that one does
 PASS ReadableStream cancellation: cancelling before start finishes should prevent pull() from being called
+PASS ReadableStream cancellation: underlyingSource.cancel() should called, even with pending pull
 

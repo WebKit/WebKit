@@ -18,7 +18,6 @@
 #include "modules/audio_processing/agc2/rnn_vad/test_utils.h"
 #include "modules/audio_processing/test/performance_timer.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/system/arch.h"
 #include "test/gtest.h"
 #include "third_party/rnnoise/src/rnn_vad_weights.h"
 
@@ -69,7 +68,7 @@ TEST_P(RnnFcParametrization, DISABLED_BenchmarkFullyConnectedLayer) {
                          /*layer_name=*/"FC");
 
   constexpr int kNumTests = 10000;
-  ::webrtc::test::PerformanceTimer perf_timer(kNumTests);
+  test::PerformanceTimer perf_timer(kNumTests);
   for (int k = 0; k < kNumTests; ++k) {
     perf_timer.StartTimer();
     fc.ComputeOutput(kFullyConnectedInputVector);

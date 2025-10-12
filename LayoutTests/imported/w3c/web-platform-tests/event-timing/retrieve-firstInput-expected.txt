@@ -1,4 +1,4 @@
 Generate a 'click' event
 
-FAIL Event Timing: check first-input after onload, observer, click, click. assert_implements: Event Timing is not supported. undefined
+PASS Event Timing: check first-input after onload, observer, click, click.
 

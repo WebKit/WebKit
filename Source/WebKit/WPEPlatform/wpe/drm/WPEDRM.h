@@ -56,10 +56,12 @@ public:
     uint32_t y() const { return m_y; }
     uint32_t width() const { return m_width; }
     uint32_t height() const { return m_height; }
+    uint32_t bufferID() const { return m_bufferID; }
     const std::optional<drmModeModeInfo>& currentMode() const { return m_currentMode; }
     const Properties& properties() const { return m_properties; }
 
     bool modeIsCurrent(drmModeModeInfo*) const;
+    void setCurrentMode(drmModeModeInfo*);
 
 private:
     uint32_t m_id { 0 };
@@ -68,6 +70,7 @@ private:
     uint32_t m_y { 0 };
     uint32_t m_width { 0 };
     uint32_t m_height { 0 };
+    uint32_t m_bufferID { 0 };
     std::optional<drmModeModeInfo> m_currentMode;
     Properties m_properties;
 };

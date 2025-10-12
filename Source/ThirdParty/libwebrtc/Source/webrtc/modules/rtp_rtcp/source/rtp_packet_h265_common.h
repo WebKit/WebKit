@@ -10,8 +10,8 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTP_PACKET_H265_COMMON_H_
 #define MODULES_RTP_RTCP_SOURCE_RTP_PACKET_H265_COMMON_H_
 
-#include <string>
-#include <vector>
+#include <cstddef>
+#include <cstdint>
 
 namespace webrtc {
 // The payload header consists of the same

@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "CSSPrimitiveNumericTypes.h"
-#include "CSSSymbol.h"
+#include <WebCore/CSSPrimitiveNumericTypes.h>
+#include <WebCore/CSSSymbol.h>
 #include <wtf/Brigand.h>
 #include <wtf/StdLibExtras.h>
 

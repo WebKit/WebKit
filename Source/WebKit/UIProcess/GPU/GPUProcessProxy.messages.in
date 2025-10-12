@@ -33,12 +33,8 @@ messages -> GPUProcessProxy {
     DidCreateContextForVisibilityPropagation(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID, WebKit::LayerHostingContextID contextID)
 #endif
 
-#if ENABLE(VP9)
-    SetHasVP9HardwareDecoder(bool hasVP9HardwareDecoder)
-#endif
-#if ENABLE(AV1)
-    SetHasAV1HardwareDecoder(bool hasAV1HardwareDecoder)
-#endif
+    SetMediaCodecCapabilities(struct WebKit::GPUProcessMediaCodecCapabilities mediaCodecCapabilities)
+
 #if ENABLE(MEDIA_STREAM)
     VoiceActivityDetected()
     StartMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageID, String devicePersistentId);
@@ -51,10 +47,6 @@ messages -> GPUProcessProxy {
 
     ProcessIsReadyToExit()
     TerminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
-
-#if PLATFORM(COCOA)
-    DidDrawRemoteToPDF(WebCore::PageIdentifier pageID, RefPtr<WebCore::SharedBuffer> data, WebCore::SnapshotIdentifier snapshotIdentifier)
-#endif
 }
 
 #endif // ENABLE(GPU_PROCESS)

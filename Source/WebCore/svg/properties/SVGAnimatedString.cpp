@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SVGAnimatedString.h"
 
+#include "NodeDocument.h"
+#include "NodeInlines.h"
 #include "SVGScriptElement.h"
 #include "ScriptExecutionContext.h"
 #include "TrustedType.h"

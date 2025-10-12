@@ -33,61 +33,61 @@ namespace TestWebKitAPI {
 
 TEST(AVFoundationSoftLink, Classes)
 {
-    EXPECT_NE(PAL::getAVPlayerClass(), nullptr);
-    EXPECT_NE(PAL::getAVPlayerItemClass(), nullptr);
-    EXPECT_NE(PAL::getAVPlayerItemVideoOutputClass(), nullptr);
-    EXPECT_NE(PAL::getAVPlayerLayerClass(), nullptr);
-    EXPECT_NE(PAL::getAVURLAssetClass(), nullptr);
-    EXPECT_NE(PAL::getAVAssetImageGeneratorClass(), nullptr);
-    EXPECT_NE(PAL::getAVMetadataItemClass(), nullptr);
-    EXPECT_NE(PAL::getAVAssetCacheClass(), nullptr);
-    EXPECT_NE(PAL::getAVPlayerItemLegibleOutputClass(), nullptr);
-    EXPECT_NE(PAL::getAVMediaSelectionGroupClass(), nullptr);
-    EXPECT_NE(PAL::getAVMediaSelectionOptionClass(), nullptr);
-    EXPECT_NE(PAL::getAVOutputContextClass(), nullptr);
-    EXPECT_NE(PAL::getAVAssetReaderClass(), nullptr);
-    EXPECT_NE(PAL::getAVAssetWriterClass(), nullptr);
-    EXPECT_NE(PAL::getAVAssetWriterInputClass(), nullptr);
-    EXPECT_NE(PAL::getAVMutableAudioMixClass(), nullptr);
-    EXPECT_NE(PAL::getAVMutableAudioMixInputParametersClass(), nullptr);
+    EXPECT_NE(PAL::getAVPlayerClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVPlayerItemClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVPlayerItemVideoOutputClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVPlayerLayerClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVURLAssetClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVAssetImageGeneratorClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVMetadataItemClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVAssetCacheClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVPlayerItemLegibleOutputClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVMediaSelectionGroupClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVMediaSelectionOptionClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVOutputContextClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVAssetReaderClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVAssetWriterClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVAssetWriterInputClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVMutableAudioMixClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVMutableAudioMixInputParametersClassSingleton(), nullptr);
 
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-    EXPECT_NE(PAL::getAVCaptureConnectionClass(), nullptr);
-    EXPECT_NE(PAL::getAVCaptureDeviceClass(), nullptr);
-    EXPECT_NE(PAL::getAVCaptureDeviceFormatClass(), nullptr);
-    EXPECT_NE(PAL::getAVCaptureDeviceInputClass(), nullptr);
-    EXPECT_NE(PAL::getAVCaptureOutputClass(), nullptr);
-    EXPECT_NE(PAL::getAVCaptureSessionClass(), nullptr);
-    EXPECT_NE(PAL::getAVCaptureVideoDataOutputClass(), nullptr);
-    EXPECT_NE(PAL::getAVFrameRateRangeClass(), nullptr);
+    EXPECT_NE(PAL::getAVCaptureConnectionClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVCaptureDeviceClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVCaptureDeviceFormatClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVCaptureDeviceInputClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVCaptureOutputClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVCaptureSessionClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVCaptureVideoDataOutputClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVFrameRateRangeClassSingleton(), nullptr);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    EXPECT_NE(PAL::getAVPersistableContentKeyRequestClass(), nullptr);
-    EXPECT_NE(PAL::getAVAudioSessionClass(), nullptr);
-    EXPECT_NE(PAL::getAVSpeechSynthesizerClass(), nullptr);
-    EXPECT_NE(PAL::getAVSpeechUtteranceClass(), nullptr);
-    EXPECT_NE(PAL::getAVSpeechSynthesisVoiceClass(), nullptr);
+    EXPECT_NE(PAL::getAVPersistableContentKeyRequestClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVAudioSessionClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVSpeechSynthesizerClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVSpeechUtteranceClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVSpeechSynthesisVoiceClassSingleton(), nullptr);
 #endif
 
 #if HAVE(AVAUDIO_ROUTING_ARBITER)
-    EXPECT_NE(PAL::getAVAudioRoutingArbiterClass(), nullptr);
+    EXPECT_NE(PAL::getAVAudioRoutingArbiterClassSingleton(), nullptr);
 #endif
 
 #if !PLATFORM(WATCHOS)
-    EXPECT_NE(PAL::getAVRouteDetectorClass(), nullptr);
+    EXPECT_NE(PAL::getAVRouteDetectorClassSingleton(), nullptr);
 #endif
 
-    EXPECT_NE(PAL::getAVContentKeyResponseClass(), nullptr);
-    EXPECT_NE(PAL::getAVContentKeySessionClass(), nullptr);
-    EXPECT_NE(PAL::getAVAssetResourceLoadingRequestClass(), nullptr);
-    EXPECT_NE(PAL::getAVAssetReaderSampleReferenceOutputClass(), nullptr);
+    EXPECT_NE(PAL::getAVContentKeyResponseClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVContentKeySessionClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVAssetResourceLoadingRequestClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVAssetReaderSampleReferenceOutputClassSingleton(), nullptr);
 #if !PLATFORM(WATCHOS)
-    EXPECT_NE(PAL::getAVVideoPerformanceMetricsClass(), nullptr);
+    EXPECT_NE(PAL::getAVVideoPerformanceMetricsClassSingleton(), nullptr);
 #endif
-    EXPECT_NE(PAL::getAVSampleBufferAudioRendererClass(), nullptr);
-    EXPECT_NE(PAL::getAVSampleBufferDisplayLayerClass(), nullptr);
-    EXPECT_NE(PAL::getAVSampleBufferRenderSynchronizerClass(), nullptr);
+    EXPECT_NE(PAL::getAVSampleBufferAudioRendererClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVSampleBufferDisplayLayerClassSingleton(), nullptr);
+    EXPECT_NE(PAL::getAVSampleBufferRenderSynchronizerClassSingleton(), nullptr);
 }
 
 
@@ -162,7 +162,7 @@ TEST(AVFoundationSoftLink, Constants)
 #endif
 
 #if PLATFORM(MAC)
-    EXPECT_TRUE([PAL::get_AVFoundation_AVStreamDataParserContentKeyRequestProtocolVersionsKey() isEqualToString:@"AVContentKeyRequestProtocolVersionsKey"]);
+    EXPECT_TRUE([PAL::get_AVFoundation_AVStreamDataParserContentKeyRequestProtocolVersionsKeySingleton() isEqualToString:@"AVContentKeyRequestProtocolVersionsKey"]);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

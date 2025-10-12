@@ -102,8 +102,8 @@ public:
 
     bool hasIntrinsicWidth() const;
     bool hasIntrinsicHeight() const;
-    Length intrinsicWidth() const;
-    Length intrinsicHeight() const;
+    float intrinsicWidth() const;
+    float intrinsicHeight() const;
 
     FloatSize currentViewportSizeExcludingZoom() const;
     FloatRect currentViewBoxRect() const;
@@ -134,7 +134,7 @@ private:
 
     bool rendererIsNeeded(const RenderStyle&) override;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    bool isReplaced(const RenderStyle&) const final;
+    bool isReplaced(const RenderStyle* = nullptr) const final;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
     void prepareForDocumentSuspension() override;

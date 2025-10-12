@@ -1,2 +1,2 @@
 
-PASS: slider value set to 72
+PASS: slider value set to 73

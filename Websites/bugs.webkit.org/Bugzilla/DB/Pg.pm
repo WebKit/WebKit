@@ -49,10 +49,6 @@ sub new {
     $dsn .= ";host=$host" if $host;
     $dsn .= ";port=$port" if $port;
 
-    # This stops Pg from printing out lots of "NOTICE" messages when
-    # creating tables.
-    $dsn .= ";options='-c client_min_messages=warning'";
-
     my $attrs = { pg_enable_utf8 => Bugzilla->params->{'utf8'} };
 
     my $self = $class->db_new({ dsn => $dsn, user => $user, 

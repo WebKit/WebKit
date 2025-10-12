@@ -1,0 +1,57 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ runSingly=true ] -->
+<html>
+<body style="margin: 0px;">
+<canvas id="c" width="2017" height="3333" style="image-rendering: pixelated"></canvas>
+<script>
+// Creates a lot of ImageBitmaps in order to test that GC collects them
+// before memory runs out. Tests that ImageBitmaps report their sizes to
+// GC, so that GC is run when many of the images are alive.
+function heapSize()
+{
+    if (window.internals)
+        return internals.memoryInfo().usedJSHeapSize;
+    return 0;
+}
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+async function runTest() {
+    $vm?.gc();
+    const rounds = 200;
+    const heapSizeBefore = heapSize();
+    let ctx = c.getContext("2d");
+    let imageBitmap;
+    for (let i = 0; i < rounds; ++i) {
+        ctx.fillStyle = (i % 2 == 1) ? "lime" : "red";
+        ctx.fillRect(8, 9, 200, 200);
+        imageBitmap = await createImageBitmap(c);
+    }
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    let succeeded = true;
+    if (window.internals) {
+        let heapUsed = heapSize() - heapSizeBefore;
+        if (heapUsed > 0 && heapUsed < 400000000) {
+            // If heapSize() can be used to detect effect of ImageBitmap, and GC was able to free memory
+            // during the loop, the ImageBitmap memory cost reporting is likely to be ok.
+            // The backing store takes 26mb, so test tests that at GC leaves at most 14 uncollected at the
+            // time of the check. Note, we don't want to force GC, as we test that GC decides to run by 
+            // itself.
+            succeeded = true;
+        } else {
+            succeeded = false;
+            $vm?.print(`heap used: ${heapUsed}`);
+        }
+    }
+    if (succeeded)
+        ctx.drawImage(imageBitmap, 0, 0); // Verify the bitmaps work.
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.onload = runTest;
+</script>
+</body>
+</html>

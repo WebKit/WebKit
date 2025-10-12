@@ -28,8 +28,7 @@ struct arg_enum_list {
   const char *name;
   int val;
 };
-#define ARG_ENUM_LIST_END \
-  { 0 }
+#define ARG_ENUM_LIST_END { 0 }
 
 typedef struct arg_def {
   const char *short_name;
@@ -38,12 +37,9 @@ typedef struct arg_def {
   const char *desc;
   const struct arg_enum_list *enums;
 } arg_def_t;
-#define ARG_DEF(s, l, v, d) \
-  { s, l, v, d, NULL }
-#define ARG_DEF_ENUM(s, l, v, d, e) \
-  { s, l, v, d, e }
-#define ARG_DEF_LIST_END \
-  { 0 }
+#define ARG_DEF(s, l, v, d) { s, l, v, d, NULL }
+#define ARG_DEF_ENUM(s, l, v, d, e) { s, l, v, d, e }
+#define ARG_DEF_LIST_END { 0 }
 
 int arg_match(struct arg *arg_, const struct arg_def *def, char **argv);
 const char *arg_next(struct arg *arg);

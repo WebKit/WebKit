@@ -22,18 +22,18 @@
 
 #pragma once
 
-#include "CacheValidation.h"
-#include "CachedResourceClient.h"
-#include "FrameLoaderTypes.h"
-#include "LoaderMalloc.h"
-#include "ResourceCryptographicDigest.h"
-#include "ResourceError.h"
-#include "ResourceLoadPriority.h"
-#include "ResourceLoaderIdentifier.h"
-#include "ResourceLoaderOptions.h"
-#include "ResourceRequest.h"
-#include "ResourceResponse.h"
-#include "Timer.h"
+#include <WebCore/CacheValidation.h>
+#include <WebCore/CachedResourceClient.h>
+#include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/LoaderMalloc.h>
+#include <WebCore/ResourceCryptographicDigest.h>
+#include <WebCore/ResourceError.h>
+#include <WebCore/ResourceLoadPriority.h>
+#include <WebCore/ResourceLoaderIdentifier.h>
+#include <WebCore/ResourceLoaderOptions.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
+#include <WebCore/Timer.h>
 #include <pal/SessionID.h>
 #include <time.h>
 #include <wtf/HashCountedSet.h>
@@ -79,13 +79,14 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CachedResource);
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CachedResourceResponseData);
 class CachedResource : public CanMakeWeakPtr<CachedResource> {
     WTF_MAKE_NONCOPYABLE(CachedResource);
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedResource);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedResource, CachedResource);
     friend class MemoryCache;
 
 public:
     enum class Type : uint8_t {
         MainResource,
         ImageResource,
+        JSON,
         CSSStyleSheet,
         Script,
         FontResource,
@@ -271,7 +272,7 @@ public:
     bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks; }
     DataBufferingPolicy dataBufferingPolicy() const { return m_options.dataBufferingPolicy; }
 
-    bool allowsCaching() const { return m_options.cachingPolicy == CachingPolicy::AllowCaching; }
+    bool allowsCaching() const { return m_options.cachingPolicy == CachingPolicy::AllowCaching || m_options.cachingPolicy == CachingPolicy::AllowCachingPrefetch; }
     const ResourceLoaderOptions& options() const { return m_options; }
 
     virtual void destroyDecodedData() { }
@@ -379,7 +380,7 @@ private:
 
     struct ResponseData {
         WTF_MAKE_NONCOPYABLE(ResponseData);
-        WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedResourceResponseData);
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ResponseData, CachedResourceResponseData);
 
     public:
         ResponseData(CachedResource&);
@@ -453,7 +454,7 @@ private:
 };
 
 class CachedResourceCallback {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedResourceCallback, Loader);
 public:
     CachedResourceCallback(CachedResource&, CachedResourceClient&);
     void cancel();

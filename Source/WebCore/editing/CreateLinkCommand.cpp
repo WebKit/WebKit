@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,10 +43,10 @@ void CreateLinkCommand::doApply()
     if (endingSelection().isNoneOrOrphaned())
         return;
 
-    auto document = protectedDocument();
-    auto anchorElement = HTMLAnchorElement::create(document);
-    anchorElement->setHref(AtomString { m_url });
-    
+    Ref document = this->document();
+    Ref anchorElement = HTMLAnchorElement::create(document);
+    anchorElement->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, AtomString { m_url });
+
     if (endingSelection().isRange())
         applyStyledElement(WTFMove(anchorElement));
     else {

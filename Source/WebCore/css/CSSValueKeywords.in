@@ -191,6 +191,7 @@ monospace
 -webkit-body
 -webkit-pictograph
 system-ui
+math
 //
 //
 // CSS_PROP_*_COLOR
@@ -723,6 +724,7 @@ space-evenly
 first-baseline
 last-baseline
 // stretch
+dialog
 
 // justify-content
 // start
@@ -1152,7 +1154,7 @@ manual
 
 // -webkit-overflow-scrolling
 // auto
-touch enable-if=ENABLE_OVERFLOW_SCROLLING_TOUCH
+touch enable-if=ENABLE_WEBKIT_OVERFLOW_SCROLLING_CSS_PROPERTY
 
 // writing-mode
 // SVG compatibility
@@ -1433,6 +1435,11 @@ apple-invert-lightness
 -apple-system-blur-material enable-if=HAVE_CORE_MATERIAL
 -apple-system-blur-material-thick enable-if=HAVE_CORE_MATERIAL
 -apple-system-blur-material-chrome enable-if=HAVE_CORE_MATERIAL
+-apple-system-glass-material enable-if=HAVE_MATERIAL_HOSTING
+-apple-system-glass-material-clear enable-if=HAVE_MATERIAL_HOSTING
+-apple-system-glass-material-subdued enable-if=HAVE_MATERIAL_HOSTING
+-apple-system-glass-material-media-controls enable-if=HAVE_MATERIAL_HOSTING
+-apple-system-glass-material-media-controls-subdued enable-if=HAVE_MATERIAL_HOSTING
 -apple-system-vibrancy-label enable-if=HAVE_CORE_MATERIAL
 -apple-system-vibrancy-secondary-label enable-if=HAVE_CORE_MATERIAL
 -apple-system-vibrancy-tertiary-label enable-if=HAVE_CORE_MATERIAL
@@ -1532,8 +1539,6 @@ rem
 to-zero
 // nearest
 // progress
-media-progress
-container-progress
 random
 element-shared
 // fixed
@@ -1631,6 +1636,7 @@ sRGB
 // color() function
 a98-rgb
 display-p3
+display-p3-linear
 prophoto-rgb
 // rec2020
 // sRGB
@@ -1710,6 +1716,10 @@ fullscreen enable-if=ENABLE_APPLICATION_MANIFEST
 standalone enable-if=ENABLE_APPLICATION_MANIFEST
 minimal-ui enable-if=ENABLE_APPLICATION_MANIFEST
 browser enable-if=ENABLE_APPLICATION_MANIFEST
+
+// text-decoration-line
+grammar-error
+spelling-error
 
 // text-decoration-thickness, text-underline-offset
 from-font
@@ -1871,20 +1881,20 @@ span-self-start
 span-start
 span-top
 span-x-end
-span-x-self-end
-span-x-self-start
+span-self-x-end
+span-self-x-start
 span-x-start
 span-y-end
-span-y-self-end
-span-y-self-start
+span-self-y-end
+span-self-y-start
 span-y-start
 x-end
-x-self-end
-x-self-start
+self-x-end
+self-x-start
 x-start
 y-end
-y-self-end
-y-self-start
+self-y-end
+self-y-start
 y-start
 span-inline-start
 span-inline-end
@@ -1905,11 +1915,11 @@ match-element
 // url
 
 // <url-modifier>
-crossorigin
+cross-origin
 anonymous
 use-credentials
 integrity
-referrerpolicy
+referrer-policy
 no-referrer
 no-referrer-when-downgrade
 same-origin

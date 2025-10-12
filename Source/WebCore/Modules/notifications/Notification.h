@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2009, 2011, 2012, 2016, 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,20 +33,19 @@
 
 #if ENABLE(NOTIFICATIONS)
 
-#include "ActiveDOMObject.h"
-#include "ContextDestructionObserverInlines.h"
-#include "EventTarget.h"
-#include "EventTargetInterfaces.h"
-#include "NotificationDirection.h"
-#include "NotificationPayload.h"
-#include "NotificationPermission.h"
-#include "NotificationResources.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include "SerializedScriptValue.h"
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/EventTarget.h>
+#include <WebCore/EventTargetInterfaces.h>
+#include <WebCore/NotificationDirection.h>
+#include <WebCore/NotificationPayload.h>
+#include <WebCore/NotificationPermission.h>
+#include <WebCore/NotificationResources.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/SerializedScriptValue.h>
+#include <WebCore/WritingMode.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/URL.h>
 #include <wtf/UUID.h>
-#include "WritingMode.h"
 
 namespace WebCore {
 
@@ -117,7 +116,8 @@ public:
     static Permission permission(ScriptExecutionContext&);
     static void requestPermission(Document&, RefPtr<NotificationPermissionCallback>&&, Ref<DeferredPromise>&&);
 
-    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final;
+    using ActiveDOMObject::protectedScriptExecutionContext;
 
     WEBCORE_EXPORT NotificationData data() const;
     RefPtr<NotificationResources> resources() const { return m_resources; }
@@ -161,7 +161,7 @@ private:
     String m_body;
     String m_tag;
     URL m_icon;
-    Ref<SerializedScriptValue> m_dataForBindings;
+    const Ref<SerializedScriptValue> m_dataForBindings;
     std::optional<bool> m_silent;
 
     enum State { Idle, Showing, Closed };

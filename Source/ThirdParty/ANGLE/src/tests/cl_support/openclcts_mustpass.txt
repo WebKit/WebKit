@@ -142,4 +142,4 @@ non_uniform_work_group.non_uniform_1d_basic
 non_uniform_work_group.non_uniform_2d_atomics
 non_uniform_work_group.non_uniform_3d_barriers
 non_uniform_work_group.non_uniform_other_basic
-bruteforce.-w4 log2 modf mad
+bruteforce.-w4 -d log2 modf mad

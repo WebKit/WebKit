@@ -68,6 +68,8 @@ public:
     void startDiscovery();
     void restartDiscovery();
 
+    virtual void validateExpectedCommandsCompleted() { }
+
 protected:
     explicit AuthenticatorTransportService(AuthenticatorTransportServiceObserver&);
 

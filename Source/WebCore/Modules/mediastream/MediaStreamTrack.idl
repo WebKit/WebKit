@@ -28,7 +28,6 @@ enum MediaStreamTrackState { "live", "ended" };
 [
     ActiveDOMObject,
     Conditional=MEDIA_STREAM,
-    CustomToJSObject,
     ExportToWrappedFunction,
     PrivateIdentifier,
     PublicIdentifier,

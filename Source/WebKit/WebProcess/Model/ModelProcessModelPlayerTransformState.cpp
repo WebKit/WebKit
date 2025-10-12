@@ -28,9 +28,8 @@
 
 #if ENABLE(MODEL_PROCESS)
 
+#include "Logging.h"
 #include <CoreRE/CoreRE.h>
-#include <WebCore/FloatPoint3D.h>
-#include <WebCore/TransformationMatrix.h>
 
 namespace WebKit {
 

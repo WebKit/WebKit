@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
 <html>
     <head>
         <video id="video" width=480px height=480px controls ></video>
@@ -38,8 +38,9 @@ function checkCanvas(canvas, stream)
     });
 }
 
-promise_test(async () => {
+promise_test(async test => {
     let stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    stream.getTracks().forEach(track => track.stop());
     stream = null;
 
     const devices = await navigator.mediaDevices.enumerateDevices();
@@ -48,6 +49,7 @@ promise_test(async () => {
     assert_true(cameraID !== undefined, "Found camera2");
     
     stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: cameraID } } });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     
     return checkCanvas(canvas, stream);
 

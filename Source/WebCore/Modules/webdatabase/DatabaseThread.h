@@ -61,7 +61,7 @@ public:
     void recordDatabaseClosed(Database&);
     Thread* getThread() { return m_thread.get(); }
 
-    SQLTransactionCoordinator* transactionCoordinator() { return m_transactionCoordinator.get(); }
+    SQLTransactionCoordinator& transactionCoordinator() { return m_transactionCoordinator; }
 
 private:
     DatabaseThread();
@@ -79,7 +79,7 @@ private:
     mutable Lock m_openDatabaseSetLock;
     DatabaseSet m_openDatabaseSet WTF_GUARDED_BY_LOCK(m_openDatabaseSetLock);
 
-    std::unique_ptr<SQLTransactionCoordinator> m_transactionCoordinator;
+    const UniqueRef<SQLTransactionCoordinator> m_transactionCoordinator;
     DatabaseTaskSynchronizer* m_cleanupSync { nullptr };
 };
 

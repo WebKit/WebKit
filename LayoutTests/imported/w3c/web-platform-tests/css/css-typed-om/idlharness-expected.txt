@@ -9,15 +9,14 @@ PASS Partial interface mixin ElementCSSInlineStyle: original interface mixin def
 PASS Partial interface mixin ElementCSSInlineStyle: member names are unique
 PASS Partial namespace CSS: original namespace defined
 PASS Partial namespace CSS: member names are unique
+PASS Partial interface Element[2]: member names are unique
 PASS HTMLElement includes ElementCSSInlineStyle: member names are unique
 PASS SVGElement includes ElementCSSInlineStyle: member names are unique
 PASS MathMLElement includes ElementCSSInlineStyle: member names are unique
 PASS SVGElement includes GlobalEventHandlers: member names are unique
-PASS SVGElement includes DocumentAndElementEventHandlers: member names are unique
 PASS SVGElement includes SVGElementInstance: member names are unique
 PASS SVGElement includes HTMLOrSVGElement: member names are unique
 PASS HTMLElement includes GlobalEventHandlers: member names are unique
-PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
 PASS HTMLElement includes ElementContentEditable: member names are unique
 PASS HTMLElement includes HTMLOrSVGElement: member names are unique
 PASS Element includes ParentNode: member names are unique
@@ -25,7 +24,6 @@ PASS Element includes NonDocumentTypeChildNode: member names are unique
 PASS Element includes ChildNode: member names are unique
 PASS Element includes Slottable: member names are unique
 PASS MathMLElement includes GlobalEventHandlers: member names are unique
-PASS MathMLElement includes DocumentAndElementEventHandlers: member names are unique
 PASS MathMLElement includes HTMLOrSVGElement: member names are unique
 PASS CSSStyleValue interface: existence and properties of interface object
 PASS CSSStyleValue interface object length
@@ -481,12 +479,17 @@ PASS CSSStyleRule interface: attribute styleMap
 PASS CSS namespace: operation escape(CSSOMString)
 PASS CSS namespace: operation number(double)
 PASS CSS namespace: operation percent(double)
+PASS CSS namespace: operation cap(double)
+PASS CSS namespace: operation ch(double)
 PASS CSS namespace: operation em(double)
 PASS CSS namespace: operation ex(double)
-PASS CSS namespace: operation ch(double)
 PASS CSS namespace: operation ic(double)
-PASS CSS namespace: operation rem(double)
 PASS CSS namespace: operation lh(double)
+PASS CSS namespace: operation rcap(double)
+PASS CSS namespace: operation rch(double)
+PASS CSS namespace: operation rem(double)
+PASS CSS namespace: operation rex(double)
+PASS CSS namespace: operation ric(double)
 PASS CSS namespace: operation rlh(double)
 PASS CSS namespace: operation vw(double)
 PASS CSS namespace: operation vh(double)

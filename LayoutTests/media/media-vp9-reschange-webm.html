@@ -1,0 +1,38 @@
+<html>
+<head>
+<title>webm file with vp9 going from 300 to 480px</title>
+<script src="../resources/testharness.js"></script>
+<script src=video-test.js></script>
+<script src=utilities.js></script>
+<script>
+    async function init()
+    {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        let v = document.getElementsByTagName('video')[0];
+        v.src = "content/300then400.webm";
+        await Promise.all([ waitFor(v, 'loadeddata', true), waitFor(v, 'resize', true)]);
+        testExpected(v.currentTime, 0);
+        testExpected(v.videoWidth, 400);
+        testExpected(v.videoHeight, 300);
+
+        v.currentTime = v.duration;
+        await Promise.all([ waitFor(v, 'seeked', true), waitFor(v, 'resize', true)]);
+        testExpected(v.videoWidth, 640);
+        testExpected(v.videoHeight, 480);
+
+        v.currentTime = 0;
+        await Promise.all([ waitFor(v, 'seeked', true), waitFor(v, 'resize', true)]);
+        testExpected(v.videoWidth, 400);
+        testExpected(v.videoHeight, 300);
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="init();">
+<video/>
+</body>
+</html>

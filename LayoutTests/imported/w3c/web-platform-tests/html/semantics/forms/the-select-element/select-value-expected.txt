@@ -1,6 +1,6 @@
 
 PASS options
 PASS optgroups
-PASS option is child of div
+FAIL option is child of div assert_equals: expected "1" but got ""
 PASS no options
 

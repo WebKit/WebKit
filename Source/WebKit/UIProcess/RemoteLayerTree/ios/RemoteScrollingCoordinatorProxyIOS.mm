@@ -129,15 +129,32 @@ HashSet<WebCore::PlatformLayerIdentifier> RemoteScrollingCoordinatorProxyIOS::fi
     return actuallyFixed;
 }
 
-Vector<WKBaseScrollView*> RemoteScrollingCoordinatorProxyIOS::overlayRegionScrollViewCandidates() const
+RemoteScrollingCoordinatorProxyIOS::OverlayRegionCandidatesMap RemoteScrollingCoordinatorProxyIOS::overlayRegionCandidates() const
 {
-    Vector<WKBaseScrollView*> candidates;
+    OverlayRegionCandidatesMap candidates;
+    auto& relatedNodesMap = scrollingTree().overflowRelatedNodes();
     for (auto scrollingNodeID : m_scrollingNodesByLayerID.values()) {
         auto* treeNode = scrollingTree().nodeForID(scrollingNodeID);
         if (auto* scrollingNode = dynamicDowncast<ScrollingTreeScrollingNode>(treeNode)) {
-            auto* scrollView = scrollViewForScrollingNodeID(scrollingNodeID);
-            if (scrollView && scrollingNode->snapOffsetsInfo().isEmpty())
-                candidates.append((WKBaseScrollView *)scrollView);
+            RetainPtr<WKBaseScrollView> scrollView = (WKBaseScrollView *)scrollViewForScrollingNodeID(scrollingNodeID);
+            if (scrollView && scrollingNode->snapOffsetsInfo().isEmpty()) {
+
+                HashSet<WebCore::PlatformLayerIdentifier> relatedLayers;
+                auto relatedIterator = relatedNodesMap.find(scrollingNodeID);
+                if (relatedIterator != relatedNodesMap.end()) {
+                    for (auto relatedNodeID : relatedIterator->value) {
+                        auto* treeNode = scrollingTree().nodeForID(relatedNodeID);
+                        if (RefPtr proxyNode = dynamicDowncast<ScrollingTreeOverflowScrollProxyNode>(treeNode)) {
+                            if (RetainPtr layer = proxyNode->layer()) {
+                                if (auto layerID = WebKit::RemoteLayerTreeNode::layerID(layer.get()))
+                                    relatedLayers.add(*layerID);
+                            }
+                        }
+                    }
+                }
+
+                candidates.add(scrollView, relatedLayers);
+            }
         }
     }
     return candidates;

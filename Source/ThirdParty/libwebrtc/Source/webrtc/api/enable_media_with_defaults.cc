@@ -18,24 +18,20 @@
 #include "api/enable_media.h"
 #include "api/peer_connection_interface.h"
 #include "api/scoped_refptr.h"
-#include "api/task_queue/default_task_queue_factory.h"
 #include "api/video_codecs/builtin_video_decoder_factory.h"
 #include "api/video_codecs/builtin_video_encoder_factory.h"
 
 namespace webrtc {
 
 void EnableMediaWithDefaults(PeerConnectionFactoryDependencies& deps) {
-  if (deps.task_queue_factory == nullptr) {
-    deps.task_queue_factory = CreateDefaultTaskQueueFactory();
-  }
   if (deps.audio_encoder_factory == nullptr) {
     deps.audio_encoder_factory = CreateBuiltinAudioEncoderFactory();
   }
   if (deps.audio_decoder_factory == nullptr) {
     deps.audio_decoder_factory = CreateBuiltinAudioDecoderFactory();
   }
-  if (deps.audio_processing == nullptr &&
-      deps.audio_processing_builder == nullptr) {
+
+  if (deps.audio_processing_builder == nullptr) {
     deps.audio_processing_builder =
         std::make_unique<BuiltinAudioProcessingBuilder>();
   }

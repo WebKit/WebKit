@@ -19,7 +19,6 @@
  */
 
 [
-    CustomToJSObject,
     ExportToWrappedFunction,
     GenerateIsReachable=ImplOwnerNodeRoot,
     LegacyUnenumerableNamedProperties,

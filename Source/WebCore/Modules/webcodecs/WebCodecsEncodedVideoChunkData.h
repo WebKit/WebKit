@@ -27,7 +27,7 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include "WebCodecsEncodedVideoChunkType.h"
+#include <WebCore/WebCodecsEncodedVideoChunkType.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

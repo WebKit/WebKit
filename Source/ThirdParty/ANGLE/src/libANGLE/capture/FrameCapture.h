@@ -10,11 +10,16 @@
 #ifndef LIBANGLE_FRAME_CAPTURE_H_
 #define LIBANGLE_FRAME_CAPTURE_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <fstream>
 #include "sys/stat.h"
 
 #include "common/PackedEnums.h"
 #include "common/SimpleMutex.h"
+#include "common/frame_capture_binary_data.h"
 #include "common/frame_capture_utils.h"
 #include "common/string_utils.h"
 #include "common/system_utils.h"
@@ -735,25 +740,6 @@ class CoherentBufferTracker final : angle::NonCopyable
     bool mShadowMemoryEnabled;
 };
 
-class FrameCaptureBinaryData
-{
-  public:
-    const std::vector<std::vector<uint8_t>> &data() const { return mData; }
-    size_t totalSize() const { return mTotalSize; }
-
-    size_t append(const void *data, size_t size);
-    void clear();
-
-  private:
-    // Chrome's allocator disallows creating one allocation that's bigger than 2GB, so the following
-    // is one large buffer that is split in multiple pieces in memory.  This is also more efficient
-    // when capturing large amounts of binary data as it avoids large copies during vector
-    // reallocations.
-    std::vector<std::vector<uint8_t>> mData;
-    // Total size of mData, used to write the offset of data in the captured output.
-    size_t mTotalSize = 0;
-};
-
 // Shared class for any items that need to be tracked by FrameCapture across shared contexts
 class FrameCaptureShared final : angle::NonCopyable
 {
@@ -767,7 +753,10 @@ class FrameCaptureShared final : angle::NonCopyable
     void onEndFrame(gl::Context *context);
     void onDestroyContext(const gl::Context *context);
     bool onEndCLCapture();
-    void onMakeCurrent(const gl::Context *context, const egl::Surface *drawSurface);
+    void onMakeCurrent(const gl::Context *context,
+                       const egl::Surface *drawSurface,
+                       EGLint surfaceWidth,
+                       EGLint surfaceHeight);
     bool enabled() const { return mEnabled; }
 
     bool isCapturing() const;
@@ -994,6 +983,8 @@ class FrameCaptureShared final : angle::NonCopyable
         INFO() << "Capture trigger detected, resetting capture start/end frame.";
     }
 
+    void initalizeTraceStorage();
+
   private:
     void writeJSON(const gl::Context *context);
     void writeJSONCL();
@@ -1057,6 +1048,7 @@ class FrameCaptureShared final : angle::NonCopyable
     // We save one large buffer of binary data for the whole CPP replay.
     // This simplifies a lot of file management.
     FrameCaptureBinaryData mBinaryData;
+    BinaryFileIndexInfo mIndexInfo;
 
     bool mEnabled;
     static bool mRuntimeEnabled;
@@ -1522,6 +1514,8 @@ constexpr char kEnabledVarName[]        = "ANGLE_CAPTURE_ENABLED";
 constexpr char kOutDirectoryVarName[]   = "ANGLE_CAPTURE_OUT_DIR";
 constexpr char kFrameStartVarName[]     = "ANGLE_CAPTURE_FRAME_START";
 constexpr char kFrameEndVarName[]       = "ANGLE_CAPTURE_FRAME_END";
+constexpr char kBinaryDataSizeVarName[] = "ANGLE_CAPTURE_MAX_RESIDENT_BINARY_SIZE";
+constexpr char kBlockSizeVarName[]      = "ANGLE_CAPTURE_BLOCK_SIZE";
 constexpr char kTriggerVarName[]        = "ANGLE_CAPTURE_TRIGGER";
 constexpr char kEndCaptureVarName[]     = "ANGLE_CAPTURE_END_CAPTURE";
 constexpr char kCaptureLabelVarName[]   = "ANGLE_CAPTURE_LABEL";
@@ -1533,7 +1527,6 @@ constexpr char kSourceExtVarName[]      = "ANGLE_CAPTURE_SOURCE_EXT";
 constexpr char kSourceSizeVarName[]     = "ANGLE_CAPTURE_SOURCE_SIZE";
 constexpr char kForceShadowVarName[]    = "ANGLE_CAPTURE_FORCE_SHADOW";
 
-constexpr size_t kBinaryAlignment   = 16;
 constexpr size_t kFunctionSizeLimit = 5000;
 
 // Limit based on MSVC Compiler Error C2026
@@ -1548,6 +1541,8 @@ constexpr char kAndroidEnabled[]        = "debug.angle.capture.enabled";
 constexpr char kAndroidOutDir[]         = "debug.angle.capture.out_dir";
 constexpr char kAndroidFrameStart[]     = "debug.angle.capture.frame_start";
 constexpr char kAndroidFrameEnd[]       = "debug.angle.capture.frame_end";
+constexpr char kAndroidBinaryDataSize[] = "debug.angle.capture.max_resident_binary_size";
+constexpr char kAndroidBlockSize[]      = "debug.angle.capture.block_size";
 constexpr char kAndroidTrigger[]        = "debug.angle.capture.trigger";
 constexpr char kAndroidEndCapture[]     = "debug.angle.capture.end_capture";
 constexpr char kAndroidCaptureLabel[]   = "debug.angle.capture.label";
@@ -1579,12 +1574,6 @@ void WriteBinaryParamReplay(ReplayWriter &replayWriter,
                             FrameCaptureBinaryData *binaryData);
 
 std::string GetBinaryDataFilePath(bool compression, const std::string &captureLabel);
-
-void SaveBinaryData(bool compression,
-                    const std::string &outDir,
-                    gl::ContextID contextId,
-                    const std::string &captureLabel,
-                    FrameCaptureBinaryData &binaryData);
 
 void WriteStringPointerParamReplay(ReplayWriter &replayWriter,
                                    std::ostream &out,

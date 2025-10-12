@@ -93,8 +93,8 @@ promise_test(async (t) => {
     const writer = generator.writable.getWriter();
     let settings = generator.track.getSettings();
     let capabilities = generator.track.getCapabilities();
-    assert_equals(settings.width, 0, "width 1");
-    assert_equals(settings.height, 0, "height 1");
+    assert_equals(settings.width, undefined, "width 1");
+    assert_equals(settings.height, undefined, "height 1");
     assert_equals(capabilities.width.min, 0, "min width 1");
     assert_equals(capabilities.width.max, 0, "max width 1");
     assert_equals(capabilities.height.min, 0, "min height 1");

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,11 @@ DECLARE_SYSTEM_HEADER
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <nw/private.h>
+
+#if PLATFORM(MAC) && defined(__OBJC__)
+// Only needed for running tests.
+#import <NetworkExtension/NEPolicySession.h>
+#endif
 
 #else
 
@@ -73,7 +78,57 @@ uint32_t nw_webtransport_metadata_get_session_error_code(nw_protocol_metadata_t)
 void nw_webtransport_metadata_set_session_error_code(nw_protocol_metadata_t, uint32_t);
 const char* nw_webtransport_metadata_get_session_error_message(nw_protocol_metadata_t);
 void nw_webtransport_metadata_set_session_error_message(nw_protocol_metadata_t, const char*);
+void nw_webtransport_options_set_allow_joining_before_ready(nw_protocol_options_t, bool);
 
 WTF_EXTERN_C_END
+
+// ------------------------------------------------------------
+// The following declarations are only needed for running tests.
+
+WTF_EXTERN_C_BEGIN
+
+typedef enum {
+    nw_resolver_protocol_dns53 = 0,
+} nw_resolver_protocol_t;
+
+typedef enum {
+    nw_resolver_class_designated_direct = 2,
+} nw_resolver_class_t;
+
+OS_OBJECT_RETURNS_RETAINED nw_resolver_config_t nw_resolver_config_create(void);
+void nw_resolver_config_set_protocol(nw_resolver_config_t, nw_resolver_protocol_t);
+void nw_resolver_config_set_class(nw_resolver_config_t, nw_resolver_class_t);
+void nw_resolver_config_add_match_domain(nw_resolver_config_t, const char *);
+void nw_resolver_config_add_name_server(nw_resolver_config_t, const char *name_server);
+void nw_resolver_config_set_identifier(nw_resolver_config_t, const uuid_t identifier);
+bool nw_resolver_config_publish(nw_resolver_config_t);
+void nw_resolver_config_unpublish(nw_resolver_config_t);
+
+WTF_EXTERN_C_END
+
+#if defined(__OBJC__)
+typedef NS_ENUM(NSInteger, NEPolicySessionPriority) {
+    NEPolicySessionPriorityHigh = 300,
+};
+
+@interface NEPolicyCondition : NSObject
++ (NEPolicyCondition *)domain:(NSString *)domain;
+@end
+
+@interface NEPolicyResult : NSObject
++ (NEPolicyResult *)netAgentUUID:(NSUUID *)agentUUID;
+@end
+
+@interface NEPolicy : NSObject
+- (instancetype)initWithOrder:(uint32_t)order result:(NEPolicyResult *)result conditions:(NSArray<NEPolicyCondition *> *)conditions;
+@end
+
+@interface NEPolicySession : NSObject
+@property NEPolicySessionPriority priority;
+- (NSUInteger)addPolicy:(NEPolicy *)policy;
+- (BOOL)apply;
+@end
+#endif // defined(__OBJC__)
+// ------------------------------------------------------------
 
 #endif // USE(APPLE_INTERNAL_SDK)

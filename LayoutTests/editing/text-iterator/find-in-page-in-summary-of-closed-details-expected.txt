@@ -1,0 +1,3 @@
+
+PASS find-in-page with summary of closed details element: summary-simple
+

@@ -9,13 +9,13 @@
  */
 #ifndef NET_DCSCTP_PACKET_PARAMETER_FORWARD_TSN_SUPPORTED_PARAMETER_H_
 #define NET_DCSCTP_PACKET_PARAMETER_FORWARD_TSN_SUPPORTED_PARAMETER_H_
-#include <stddef.h>
-#include <stdint.h>
 
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 #include <string>
 #include <vector>
 
-#include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
 #include "net/dcsctp/packet/tlv_trait.h"
@@ -38,7 +38,7 @@ class ForwardTsnSupportedParameter
   ForwardTsnSupportedParameter() {}
 
   static std::optional<ForwardTsnSupportedParameter> Parse(
-      rtc::ArrayView<const uint8_t> data);
+      webrtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

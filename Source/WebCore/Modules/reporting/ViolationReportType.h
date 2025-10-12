@@ -36,6 +36,7 @@ enum class ViolationReportType : uint8_t {
     Deprecation, // https://wicg.github.io/deprecation-reporting/
     StandardReportingAPIViolation, // https://www.w3.org/TR/reporting/#try-delivery
     Test, // https://www.w3.org/TR/reporting-1/#generate-test-report-command
+    IntegrityPolicy, // https://w3c.github.io/webappsec-subresource-integrity/#report-violations
     // More to come
 };
 

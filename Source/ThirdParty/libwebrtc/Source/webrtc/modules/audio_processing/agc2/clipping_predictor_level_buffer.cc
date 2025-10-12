@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <optional>
 
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"

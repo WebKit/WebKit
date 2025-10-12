@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,12 +44,18 @@
 #if PLATFORM(COCOA)
 #include "ClassMethodSwizzler.h"
 #include "InstanceMethodSwizzler.h"
-#endif
+#if !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
+#include <pal/spi/cocoa/NetworkSPI.h>
+#include <wtf/OSObjectPtr.h>
+#endif // !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
+#endif // PLATFORM(COCOA)
 
+OBJC_CLASS NEPolicySession;
 OBJC_CLASS NSColor;
 OBJC_CLASS NSString;
 OBJC_CLASS UIKeyboardInputMode;
 OBJC_CLASS UIPasteboardConsistencyEnforcer;
+OBJC_CLASS WKMouseDeviceObserver;
 OBJC_CLASS WKWebViewConfiguration;
 
 namespace WTR {
@@ -196,10 +202,11 @@ public:
 
     void dumpPolicyDelegateCallbacks() { m_dumpPolicyDelegateCallbacks = true; }
     void dumpFullScreenCallbacks() { m_dumpFullScreenCallbacks = true; }
+    void dumpFullScreenOrigin() { m_dumpFullScreenOrigin = true; }
     void waitBeforeFinishingFullscreenExit() { m_waitBeforeFinishingFullscreenExit = true; }
     void scrollDuringEnterFullscreen() { m_scrollDuringEnterFullscreen = true; }
     void finishFullscreenExit();
-    void requestExitFullscreenFromUIProcess(WKPageRef);
+    void requestExitFullscreenFromUIProcess();
 
     static void willEnterFullScreen(WKPageRef, WKCompletionListenerRef, const void*);
     void willEnterFullScreen(WKPageRef, WKCompletionListenerRef);
@@ -464,6 +471,10 @@ public:
     void setUseWorkQueue(bool useWorkQueue) { m_useWorkQueue = useWorkQueue; }
     bool useWorkQueue() const { return m_useWorkQueue; }
 
+    void setHasMouseDeviceForTesting(bool);
+
+    void uiScriptDidComplete(const String& result, unsigned scriptCallbackID);
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions&) const;
@@ -484,7 +495,6 @@ private:
     void platformInitialize(const Options&);
     void platformInitializeDataStore(WKPageConfigurationRef, const TestOptions&);
     void platformDestroy();
-    WKContextRef platformAdjustContext(WKContextRef, WKContextConfigurationRef);
     void platformInitializeContext();
     void platformEnsureGPUProcessConfiguredForOptions(const TestOptions&);
     void platformCreateWebView(WKPageConfigurationRef, const TestOptions&);
@@ -495,6 +505,9 @@ private:
 
 #if PLATFORM(COCOA)
     void cocoaPlatformInitialize(const Options&);
+#if ENABLE(DNS_SERVER_FOR_TESTING) && !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
+    void initializeDNS();
+#endif
     void cocoaResetStateToConsistentValues(const TestOptions&);
     void setApplicationBundleIdentifier(const std::string&);
     void clearApplicationBundleIdentifierTestingOverride();
@@ -503,9 +516,9 @@ private:
     void platformWillRunTest(const TestInvocation&);
     void platformRunUntil(bool& done, WTF::Seconds timeout);
     void platformDidCommitLoadForFrame(WKPageRef, WKFrameRef);
-    WKContextRef platformContext();
     void initializeInjectedBundlePath();
     void initializeTestPluginDirectory();
+    void installUserScript(const TestInvocation&);
 
     void ensureViewSupportsOptionsForTest(const TestInvocation&);
     TestOptions testOptionsForTest(const TestCommand&) const;
@@ -531,6 +544,9 @@ private:
     void restorePortraitOrientationIfNeeded();
 #endif
 
+    static void didReceiveScriptMessage(WKScriptMessageRef, WKCompletionListenerRef, const void *);
+    void didReceiveScriptMessage(WKScriptMessageRef, CompletionHandler<void(WKTypeRef)>&&);
+
     // WKContextInjectedBundleClient
     static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void*);
     static void didReceiveSynchronousMessageFromInjectedBundleWithListener(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef, const void*);
@@ -539,8 +555,6 @@ private:
     // WKPageInjectedBundleClient
     static void didReceivePageMessageFromInjectedBundle(WKPageRef, WKStringRef messageName, WKTypeRef messageBody, const void*);
     static void didReceiveSynchronousPageMessageFromInjectedBundleWithListener(WKPageRef, WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef, const void*);
-    static void didReceiveAsyncPageMessageFromInjectedBundleWithListener(WKPageRef, WKStringRef, WKTypeRef, WKMessageListenerRef, const void*);
-    void didReceiveAsyncMessageFromInjectedBundle(WKStringRef, WKTypeRef, WKMessageListenerRef);
 
     void didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
     void didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef);
@@ -634,6 +648,9 @@ private:
 
     static void didUpdateHistoryTitle(WKContextRef, WKPageRef, WKStringRef title, WKURLRef, WKFrameRef, const void*);
     void didUpdateHistoryTitle(WKStringRef title, WKURLRef, WKFrameRef);
+
+    static void tooltipDidChange(WKPageRef, WKStringRef tooltip, const void*);
+    void tooltipDidChange(WKStringRef tooltip);
 
     static WKPageRef createOtherPage(WKPageRef, WKPageConfigurationRef, WKNavigationActionRef, WKWindowFeaturesRef, const void*);
     WKPageRef createOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, WKNavigationActionRef, WKWindowFeaturesRef);
@@ -793,6 +810,22 @@ private:
     HashMap<String, AbandonedDocumentInfo> m_abandonedDocumentInfo;
     CompletionHandler<void()> m_finishExitFullscreenHandler;
 
+    class Callbacks {
+    public:
+        void append(WKJSHandleRef);
+        void clear() { m_callbacks.clear(); }
+        void notifyListeners(WKStringRef);
+        void notifyListeners();
+    private:
+        Vector<WKRetainPtr<WKJSHandleRef>> m_callbacks;
+    };
+    Callbacks m_tooltipCallbacks;
+    Callbacks m_beginSwipeCallbacks;
+    Callbacks m_willEndSwipeCallbacks;
+    Callbacks m_didEndSwipeCallbacks;
+    Callbacks m_didRemoveSwipeSnapshotCallbacks;
+    HashMap<unsigned, Callbacks> m_uiScriptCallbacks;
+
     uint64_t m_serverTrustEvaluationCallbackCallsCount { 0 };
     bool m_shouldDismissJavaScriptAlertsAsynchronously { false };
     bool m_allowsAnySSLCertificate { true };
@@ -801,7 +834,11 @@ private:
     
 #if PLATFORM(COCOA)
     bool m_hasSetApplicationBundleIdentifier { false };
-#endif
+#if !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
+    RetainPtr<NEPolicySession> m_policySession;
+    OSObjectPtr<nw_resolver_config_t> m_resolverConfig;
+#endif // !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
+#endif // PLATFORM(COCOA)
 
     bool m_isSpeechRecognitionPermissionGranted { false };
 
@@ -815,6 +852,7 @@ private:
     bool m_shouldDownloadContentDispositionAttachments { true };
     bool m_dumpPolicyDelegateCallbacks { false };
     bool m_dumpFullScreenCallbacks { false };
+    bool m_dumpFullScreenOrigin { false };
     bool m_waitBeforeFinishingFullscreenExit { false };
     bool m_scrollDuringEnterFullscreen { false };
     bool m_useWorkQueue { false };

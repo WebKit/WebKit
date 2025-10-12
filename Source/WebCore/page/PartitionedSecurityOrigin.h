@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "SecurityOrigin.h"
+#include <WebCore/SecurityOrigin.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Hasher.h>
 #include <wtf/Ref.h>

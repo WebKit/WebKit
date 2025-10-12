@@ -82,7 +82,7 @@ sub fetchRadarURLFromBugXMLData($$);
 sub findChangeLogs($$);
 sub generateFileList(\%$$$\%);
 sub generateFunctionLists($$$$$);
-sub generateNewChangeLogs($$$$$$$$$$$$$$$);
+sub generateNewChangeLogs($$$$$$$$$$$$$$$$);
 sub getLatestChangeLogs($);
 sub get_function_line_ranges($$);
 sub get_function_line_ranges_for_cpp($$);
@@ -141,6 +141,7 @@ sub main()
     my $spewDiff = $ENV{"PREPARE_CHANGELOG_DIFF"};
     my $updateChangeLogs = 1;
     my $onlyFiles = 0;
+    my $allowMentioningTests = 1;
     my $parseOptionsResult =
         GetOptions("diff|d!" => \$spewDiff,
                    "bug|b:i" => \$bugNumber,
@@ -157,25 +158,27 @@ sub main()
                    "open|o!" => \$openChangeLogs,
                    "write!" => \$writeChangeLogs,
                    "update!" => \$updateChangeLogs,
-                   "only-files" => \$onlyFiles);
+                   "only-files" => \$onlyFiles,
+                   "mention-tests!" => \$allowMentioningTests);
     if (!$parseOptionsResult || $showHelp) {
         print STDERR basename($0) . " [-b|--bug=<bugid>] [-d|--diff] [-h|--help] [-o|--open] [-g|--git-commit=<committish>] [--git-reviewer=<name>] [gitdir1 [gitdir2 ...]]\n";
-        print STDERR "  -b|--bug        Fill in the ChangeLog bug information from the given bug.\n";
-        print STDERR "  --description   One-line description that matches the bug title.\n";
-        print STDERR "  -d|--diff       Spew diff to stdout when running\n";
-        print STDERR "  --merge-base    Populate the ChangeLogs with the diff to this branch\n";
-        print STDERR "  -g|--git-commit Populate the ChangeLogs from the specified git commit\n";
-        print STDERR "  --git-index     Populate the ChangeLogs from the git index only\n";
-        print STDERR "  --git-reviewer  When populating the ChangeLogs from a git commit claim that the spcified name reviewed the change.\n";
-        print STDERR "                  This option is useful when the git commit lacks a Signed-Off-By: line\n";
-        print STDERR "  -h|--help       Show this help message\n";
-        print STDERR "  --[no-]style    Run check-webkit-style script when done (default: no-style)\n";
-        print STDERR "  -o|--open       Open ChangeLogs in an editor when done\n";
-        print STDERR "  --[no-]update   Update ChangeLogs from git before adding entry (default: update)\n";
-        print STDERR "  --[no-]write    Write ChangeLogs to disk (otherwise send new entries to stdout) (default: write)\n";
-        print STDERR "  --delimiters    When writing to stdout, label and print a \"~\" after each entry\n";
-        print STDERR "  --email=        Specify the email address to be used in the patch\n";
-        print STDERR "  --only-files    Exclude the standard changelog header and only include references to files.\n";
+        print STDERR "  -b|--bug             Fill in the ChangeLog bug information from the given bug.\n";
+        print STDERR "  --description        One-line description that matches the bug title.\n";
+        print STDERR "  -d|--diff            Spew diff to stdout when running\n";
+        print STDERR "  --merge-base         Populate the ChangeLogs with the diff to this branch\n";
+        print STDERR "  -g|--git-commit      Populate the ChangeLogs from the specified git commit\n";
+        print STDERR "  --git-index          Populate the ChangeLogs from the git index only\n";
+        print STDERR "  --git-reviewer       When populating the ChangeLogs from a git commit claim that the spcified name reviewed the change.\n";
+        print STDERR "                       This option is useful when the git commit lacks a Signed-Off-By: line\n";
+        print STDERR "  -h|--help            Show this help message\n";
+        print STDERR "  --[no-]style         Run check-webkit-style script when done (default: no-style)\n";
+        print STDERR "  -o|--open            Open ChangeLogs in an editor when done\n";
+        print STDERR "  --[no-]update        Update ChangeLogs from git before adding entry (default: update)\n";
+        print STDERR "  --[no-]write         Write ChangeLogs to disk (otherwise send new entries to stdout) (default: write)\n";
+        print STDERR "  --delimiters         When writing to stdout, label and print a \"~\" after each entry\n";
+        print STDERR "  --email=             Specify the email address to be used in the patch\n";
+        print STDERR "  --only-files         Exclude the standard changelog header and only include references to files.\n";
+        print STDERR "  --[no-]mention-tests Mention tests that are included, or OOPS if they are not; even for --only-files (default: true)\n";
         return 1;
     }
 
@@ -229,7 +232,7 @@ sub main()
     my ($filesInChangeLog, $prefixes) = findChangeLogs($functionLists, $writeChangeLogs);
     my $changeLogs = getLatestChangeLogs($prefixes);
 
-    generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $requiresTests, $functionLists, $bugURL, $bugDescription, $bugRadarURL, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters, $onlyFiles);
+    generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $requiresTests, $functionLists, $bugURL, $bugDescription, $bugRadarURL, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters, $onlyFiles, $allowMentioningTests);
 
     if ($writeChangeLogs) {
         print STDERR "-- Please remember to include a detailed description in your ChangeLog entry. --\n-- See <http://webkit.org/coding/contributing.html> for more info --\n";
@@ -593,14 +596,16 @@ sub resolveChangeLogsPath($@)
     return $command;
 }
 
-sub generateNewChangeLogs($$$$$$$$$$$$$$$)
+sub generateNewChangeLogs($$$$$$$$$$$$$$$$)
 {
-    my ($prefixes, $filesInChangeLog, $addedRegressionTests, $requiresTests, $functionLists, $bugURL, $bugDescription, $bugRadarURL, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters, $onlyFiles) = @_;
+    my ($prefixes, $filesInChangeLog, $addedRegressionTests, $requiresTests, $functionLists, $bugURL, $bugDescription, $bugRadarURL, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters, $onlyFiles, $allowMentioningTests) = @_;
 
-    my $hasWebCoreChange = 0;
-    foreach my $prefix (@$prefixes) {
-        if (unixPath($prefix) =~ m|/WebCore/$|) {
-            $hasWebCoreChange = 1;
+    my $hasSourceChange = 0;
+    while (my ($prefix, $files) = each(%$filesInChangeLog)) {
+        foreach my $file (@$files) {
+            if (unixPath($file) =~ m|Source/|) {
+                $hasSourceChange = 1;
+            }
         }
     }
 
@@ -654,9 +659,7 @@ sub generateNewChangeLogs($$$$$$$$$$$$$$$)
             print CHANGE_LOG normalizeLineEndings($description . "\n", $endl) if $description;
         }
 
-        my $shouldMentionTests = @$requiresTests;
-        $shouldMentionTests |= !$hasWebCoreChange && unixPath($prefix) =~ m|/WebKit/$|;
-        $shouldMentionTests |= unixPath($prefix) =~ m|/WebCore/$|;
+        my $shouldMentionTests = $allowMentioningTests && (@$requiresTests || $hasSourceChange);
 
         if ($shouldMentionTests) {
             if (@$addedRegressionTests) {
@@ -2160,10 +2163,15 @@ sub generateFileList(\%$$$\%)
                        && $file !~ /-expected(-mismatch)?\.html$/
                        && !scalar(grep(/^resources$/i, @components))
                        && !scalar(grep(/^script-tests$/i, @components));
+            } elsif ($components[0] eq "JSTests") {
+                push @addedRegressionTests, $file
+                    if isAddedStatus($status)
+                       && $file =~ /\.js$/
+                       && !scalar(grep(/^resources$/i, @components));
             } elsif (attributeCommand($attributeCache, $file, "test")) {
                 push @addedRegressionTests, $file;
             } elsif (attributeCommand($attributeCache, $file, "requiresTests")) {
-                push @requiresTests, $file
+                push @requiresTests, $file;
             }
             push @changedFiles, $file if $components[$#components] ne "ChangeLog";
         } elsif (isConflictStatus($status, $gitCommit, $gitIndex) || isConflictStatus($propertyStatus, $gitCommit, $gitIndex)) {

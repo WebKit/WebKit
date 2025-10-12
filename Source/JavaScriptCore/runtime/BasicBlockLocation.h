@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "CPU.h"
-#include "MacroAssembler.h"
+#include <JavaScriptCore/CPU.h>
+#include <JavaScriptCore/MacroAssembler.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 

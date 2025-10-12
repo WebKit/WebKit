@@ -5,7 +5,7 @@ PASS Element.setAttribute applies default policy for elementNS=http://www.w3.org
 PASS Element.setAttribute applies default policy for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=srcdoc
 PASS Element.setAttribute applies default policy for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src
 PASS Element.setAttribute applies default policy for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href
-FAIL Element.setAttribute does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup assert_equals: expected (undefined) undefined but got (string) "Element onmouseup"
+PASS Element.setAttribute does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup
 PASS Element.setAttribute does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist
 PASS Element.setAttribute does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick
 PASS Element.setAttribute does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=srcdoc
@@ -24,7 +24,7 @@ PASS Element.setAttributeNS applies default policy for elementNS=http://www.w3.o
 PASS Element.setAttributeNS applies default policy for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src
 PASS Element.setAttributeNS applies default policy for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href
 PASS Element.setAttributeNS applies default policy for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink, attrName=href
-FAIL Element.setAttributeNS does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup assert_equals: expected (undefined) undefined but got (string) "Element onmouseup"
+PASS Element.setAttributeNS does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup
 PASS Element.setAttributeNS does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace, attrName=onclick
 PASS Element.setAttributeNS does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist
 PASS Element.setAttributeNS does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick
@@ -47,7 +47,7 @@ PASS Element.setAttributeNode applies default policy for elementNS=http://www.w3
 PASS Element.setAttributeNode applies default policy for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src
 PASS Element.setAttributeNode applies default policy for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href
 PASS Element.setAttributeNode applies default policy for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink, attrName=href
-FAIL Element.setAttributeNode does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup assert_equals: expected (undefined) undefined but got (string) "Element onmouseup"
+PASS Element.setAttributeNode does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup
 PASS Element.setAttributeNode does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace, attrName=onclick
 PASS Element.setAttributeNode does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist
 PASS Element.setAttributeNode does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick
@@ -70,7 +70,7 @@ PASS Element.setAttributeNodeNS applies default policy for elementNS=http://www.
 PASS Element.setAttributeNodeNS applies default policy for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src
 PASS Element.setAttributeNodeNS applies default policy for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href
 PASS Element.setAttributeNodeNS applies default policy for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink, attrName=href
-FAIL Element.setAttributeNodeNS does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup assert_equals: expected (undefined) undefined but got (string) "Element onmouseup"
+PASS Element.setAttributeNodeNS does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup
 PASS Element.setAttributeNodeNS does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace, attrName=onclick
 PASS Element.setAttributeNodeNS does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist
 PASS Element.setAttributeNodeNS does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick
@@ -93,7 +93,7 @@ PASS NamedNodeMap.setNamedItem applies default policy for elementNS=http://www.w
 PASS NamedNodeMap.setNamedItem applies default policy for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src
 PASS NamedNodeMap.setNamedItem applies default policy for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href
 PASS NamedNodeMap.setNamedItem applies default policy for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink, attrName=href
-FAIL NamedNodeMap.setNamedItem does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup assert_equals: expected (undefined) undefined but got (string) "Element onmouseup"
+PASS NamedNodeMap.setNamedItem does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup
 PASS NamedNodeMap.setNamedItem does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace, attrName=onclick
 PASS NamedNodeMap.setNamedItem does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist
 PASS NamedNodeMap.setNamedItem does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick
@@ -116,7 +116,7 @@ PASS NamedNodeMap.setNamedItemNS applies default policy for elementNS=http://www
 PASS NamedNodeMap.setNamedItemNS applies default policy for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src
 PASS NamedNodeMap.setNamedItemNS applies default policy for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href
 PASS NamedNodeMap.setNamedItemNS applies default policy for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink, attrName=href
-FAIL NamedNodeMap.setNamedItemNS does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup assert_equals: expected (undefined) undefined but got (string) "Element onmouseup"
+PASS NamedNodeMap.setNamedItemNS does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup
 PASS NamedNodeMap.setNamedItemNS does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace, attrName=onclick
 PASS NamedNodeMap.setNamedItemNS does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist
 PASS NamedNodeMap.setNamedItemNS does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick
@@ -139,7 +139,7 @@ PASS Attr.value applies default policy for elementNS=http://www.w3.org/1999/xhtm
 PASS Attr.value applies default policy for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src
 PASS Attr.value applies default policy for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href
 PASS Attr.value applies default policy for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink, attrName=href
-FAIL Attr.value does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup assert_equals: expected "unsafe_input" but got ""
+PASS Attr.value does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup
 PASS Attr.value does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace, attrName=onclick
 PASS Attr.value does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist
 PASS Attr.value does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick
@@ -162,7 +162,7 @@ PASS Node.nodeValue applies default policy for elementNS=http://www.w3.org/1999/
 PASS Node.nodeValue applies default policy for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src
 PASS Node.nodeValue applies default policy for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href
 PASS Node.nodeValue applies default policy for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink, attrName=href
-FAIL Node.nodeValue does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup assert_equals: expected "unsafe_input" but got ""
+PASS Node.nodeValue does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup
 PASS Node.nodeValue does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace, attrName=onclick
 PASS Node.nodeValue does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist
 PASS Node.nodeValue does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick
@@ -185,7 +185,7 @@ PASS Node.textContent applies default policy for elementNS=http://www.w3.org/199
 PASS Node.textContent applies default policy for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src
 PASS Node.textContent applies default policy for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href
 PASS Node.textContent applies default policy for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink, attrName=href
-FAIL Node.textContent does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup assert_equals: expected "unsafe_input" but got ""
+PASS Node.textContent does not apply default policy for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup
 PASS Node.textContent does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace, attrName=onclick
 PASS Node.textContent does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist
 PASS Node.textContent does not apply default policy for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick

@@ -10,7 +10,9 @@
 
 #include "media/base/media_constants.h"
 
-namespace cricket {
+#include <cstddef>
+
+namespace webrtc {
 
 const int kVideoCodecClockrate = 90000;
 
@@ -45,7 +47,6 @@ const char kCodecParamNotInNameValueFormat[] = "";
 const char kOpusCodecName[] = "opus";
 const char kL16CodecName[] = "L16";
 const char kG722CodecName[] = "G722";
-const char kIlbcCodecName[] = "ILBC";
 const char kPcmuCodecName[] = "PCMU";
 const char kPcmaCodecName[] = "PCMA";
 const char kCnCodecName[] = "CN";
@@ -59,6 +60,7 @@ const char kCodecParamSPropStereo[] = "sprop-stereo";
 const char kCodecParamStereo[] = "stereo";
 const char kCodecParamUseInbandFec[] = "useinbandfec";
 const char kCodecParamUseDtx[] = "usedtx";
+const char kCodecParamCbr[] = "cbr";
 const char kCodecParamMaxAverageBitrate[] = "maxaveragebitrate";
 const char kCodecParamMaxPlaybackRate[] = "maxplaybackrate";
 
@@ -137,6 +139,7 @@ const int kDefaultVideoMaxFramerate = 60;
 // Max encode quantizer for VP8/9 and AV1 encoders assuming libvpx/libaom API
 // range [0, 63]
 const int kDefaultVideoMaxQpVpx = 56;
+const int kDefaultVideoMaxQpAv1 = 52;
 // Max encode quantizer for H264/5 assuming the bitstream range [0, 51].
 const int kDefaultVideoMaxQpH26x = 51;
 
@@ -147,4 +150,4 @@ const size_t kConferenceDefaultNumTemporalLayers = 3;
 // RFC 3556 and RFC 3890
 const char kApplicationSpecificBandwidth[] = "AS";
 const char kTransportSpecificBandwidth[] = "TIAS";
-}  // namespace cricket
+}  // namespace webrtc

@@ -1,16 +1,16 @@
-// Copyright (c) 2019, Google Inc.
+// Copyright 2019 The BoringSSL Authors
 //
-// Permission to use, copy, modify, and/or distribute this software for any
-// purpose with or without fee is hereby granted, provided that the above
-// copyright notice and this permission notice appear in all copies.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-// WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-// SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-// OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-// CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 // Package subprocess contains functionality to talk to a modulewrapper for
 // testing of various algorithm implementations.
@@ -110,6 +110,8 @@ func NewWithIO(cmd *exec.Cmd, in io.WriteCloser, out io.ReadCloser) *Subprocess 
 		"SHA3-512":          &hashPrimitive{"SHA3-512", 64},
 		"SHAKE-128":         &shake{"SHAKE-128", 16},
 		"SHAKE-256":         &shake{"SHAKE-256", 32},
+		"cSHAKE-128":        &cShake{"cSHAKE-128"},
+		"cSHAKE-256":        &cShake{"cSHAKE-256"},
 		"ACVP-AES-ECB":      &blockCipher{"AES", 16, 2, true, false, iterateAES},
 		"ACVP-AES-CBC":      &blockCipher{"AES-CBC", 16, 2, true, true, iterateAESCBC},
 		"ACVP-AES-CBC-CS3":  &blockCipher{"AES-CBC-CS3", 16, 1, false, true, iterateAESCBC},
@@ -134,9 +136,9 @@ func NewWithIO(cmd *exec.Cmd, in io.WriteCloser, out io.ReadCloser) *Subprocess 
 		"HMAC-SHA3-384":     &hmacPrimitive{"HMAC-SHA3-384", 48},
 		"HMAC-SHA3-512":     &hmacPrimitive{"HMAC-SHA3-512", 64},
 		"ctrDRBG":           &drbg{"ctrDRBG", map[string]bool{"AES-128": true, "AES-192": true, "AES-256": true}},
-		"hmacDRBG":          &drbg{"hmacDRBG", map[string]bool{"SHA-1": true, "SHA2-224": true, "SHA2-256": true, "SHA2-384": true, "SHA2-512": true}},
+		"hmacDRBG":          &drbg{"hmacDRBG", map[string]bool{"SHA-1": true, "SHA2-224": true, "SHA2-256": true, "SHA2-384": true, "SHA2-512": true, "SHA2-512/224": true, "SHA2-512/256": true, "SHA3-224": true, "SHA3-256": true, "SHA3-384": true, "SHA3-512": true}},
 		"KDF":               &kdfPrimitive{},
-		"KDA":               &hkdf{},
+		"KDA":               &multiModeKda{modes: map[string]primitive{"HKDF": &hkdf{}, "OneStepNoCounter": &oneStepNoCounter{}}},
 		"TLS-v1.2":          &tlsKDF{},
 		"TLS-v1.3":          &tls13{},
 		"CMAC-AES":          &keyedMACPrimitive{"CMAC-AES"},
@@ -144,8 +146,14 @@ func NewWithIO(cmd *exec.Cmd, in io.WriteCloser, out io.ReadCloser) *Subprocess 
 		"KAS-ECC-SSC":       &kas{},
 		"KAS-FFC-SSC":       &kasDH{},
 		"PBKDF":             &pbkdf{},
+		"ML-DSA":            &mldsa{},
+		"ML-KEM":            &mlkem{},
+		"SLH-DSA":           &slhdsa{},
+		"kdf-components":    &ssh{},
+		"KTS-IFC":           &kts{map[string]bool{"SHA-1": true, "SHA2-224": true, "SHA2-256": true, "SHA2-384": true, "SHA2-512": true, "SHA2-512/224": true, "SHA2-512/256": true, "SHA3-224": true, "SHA3-256": true, "SHA3-384": true, "SHA3-512": true}},
 	}
 	m.primitives["ECDSA"] = &ecdsa{"ECDSA", map[string]bool{"P-224": true, "P-256": true, "P-384": true, "P-521": true}, m.primitives}
+	m.primitives["DetECDSA"] = &ecdsa{"DetECDSA", map[string]bool{"P-224": true, "P-256": true, "P-384": true, "P-521": true}, m.primitives}
 	m.primitives["EDDSA"] = &eddsa{"EDDSA", map[string]bool{"ED-25519": true}}
 
 	go m.readerRoutine()
@@ -363,8 +371,6 @@ func (m *Subprocess) Config() ([]byte, error) {
 					m.supportsFlush = true
 				}
 			}
-		} else if _, ok := m.primitives[algo.Algorithm]; !ok {
-			return nil, fmt.Errorf("wrapper config advertises support for unknown algorithm %q", algo.Algorithm)
 		}
 	}
 

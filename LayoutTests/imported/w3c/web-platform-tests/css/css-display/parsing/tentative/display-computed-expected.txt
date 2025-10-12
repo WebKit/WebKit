@@ -1,0 +1,8 @@
+
+FAIL Property display value 'masonry' assert_true: 'masonry' is a supported value for display. expected true got false
+FAIL Property display value 'inline-masonry' assert_true: 'inline-masonry' is a supported value for display. expected true got false
+FAIL position absolute affects computed display assert_equals: inline-masonry -> masonry expected "masonry" but got "block"
+FAIL position fixed affects computed display assert_equals: inline-masonry -> masonry expected "masonry" but got "block"
+FAIL float left affects computed display assert_equals: inline-masonry -> masonry expected "masonry" but got "block"
+FAIL float right affects computed display assert_equals: inline-masonry -> masonry expected "masonry" but got "block"
+

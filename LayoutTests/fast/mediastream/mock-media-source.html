@@ -13,6 +13,7 @@
                         mediaStream = stream;
                         shouldBeType("mediaStream", "Object");
                         shouldBe("mediaStream.getTracks().length", "2");
+                        mediaStream.getTracks().forEach(track => track.stop());
 
                         if (nextTest)
                             nextTest();

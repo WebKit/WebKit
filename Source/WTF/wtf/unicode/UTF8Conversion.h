@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/text/LChar.h>
+#include <wtf/text/Latin1Character.h>
 
 namespace WTF {
 namespace Unicode {
@@ -44,14 +44,14 @@ template<typename CharacterType> struct ConversionResult {
 
 WTF_EXPORT_PRIVATE ConversionResult<char16_t> convert(std::span<const char8_t>, std::span<char16_t>);
 WTF_EXPORT_PRIVATE ConversionResult<char8_t> convert(std::span<const char16_t>, std::span<char8_t>);
-WTF_EXPORT_PRIVATE ConversionResult<char8_t> convert(std::span<const LChar>, std::span<char8_t>);
+WTF_EXPORT_PRIVATE ConversionResult<char8_t> convert(std::span<const Latin1Character>, std::span<char8_t>);
 
 // Invalid sequences are converted to the replacement character.
 WTF_EXPORT_PRIVATE ConversionResult<char16_t> convertReplacingInvalidSequences(std::span<const char8_t>, std::span<char16_t>);
 WTF_EXPORT_PRIVATE ConversionResult<char8_t> convertReplacingInvalidSequences(std::span<const char16_t>, std::span<char8_t>);
 
 WTF_EXPORT_PRIVATE bool equal(std::span<const char16_t>, std::span<const char8_t>);
-WTF_EXPORT_PRIVATE bool equal(std::span<const LChar>, std::span<const char8_t>);
+WTF_EXPORT_PRIVATE bool equal(std::span<const Latin1Character>, std::span<const char8_t>);
 
 // The checkUTF8 function checks the UTF-8 and returns a span of the valid complete
 // UTF-8 sequences at the start of the passed-in characters, along with the UTF-16

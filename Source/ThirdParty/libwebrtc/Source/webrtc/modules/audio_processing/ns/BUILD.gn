@@ -60,14 +60,13 @@ rtc_static_library("ns") {
     "../../../rtc_base:safe_minmax",
     "../../../rtc_base/system:arch",
     "../../../system_wrappers",
-    "../../../system_wrappers:field_trial",
     "../../../system_wrappers:metrics",
     "../utility:cascaded_biquad_filter",
   ]
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("ns_unittests") {
+  rtc_library("ns_unittests") {
     testonly = true
 
     configs += [ "..:apm_debug_dump" ]

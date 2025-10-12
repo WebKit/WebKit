@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Font.h"
+#include <WebCore/Font.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

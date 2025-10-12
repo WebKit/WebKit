@@ -10,6 +10,9 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
 
+#include <cstddef>
+#include <cstdint>
+
 #include "test/gtest.h"
 
 using webrtc::rtcp::CommonHeader;

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSCPtrTag.h"
+#include <JavaScriptCore/JSCPtrTag.h>
 
 namespace JSC {
 
@@ -36,8 +36,8 @@ extern "C" {
     void llintPCRangeStart();
     void llintPCRangeEnd();
 #if ENABLE(WEBASSEMBLY)
-    void wasmLLIntPCRangeStart();
-    void wasmLLIntPCRangeEnd();
+    void wasmIPIntPCRangeStart();
+    void wasmIPIntPCRangeEnd();
 #endif
 }
 
@@ -51,11 +51,11 @@ ALWAYS_INLINE bool isLLIntPC(void* pc)
 }
 
 #if ENABLE(WEBASSEMBLY)
-ALWAYS_INLINE bool isWasmLLIntPC(void* pc)
+ALWAYS_INLINE bool isWasmIPIntPC(void* pc)
 {
     uintptr_t pcAsInt = std::bit_cast<uintptr_t>(pc);
-    uintptr_t start = untagCodePtr<uintptr_t, CFunctionPtrTag>(wasmLLIntPCRangeStart);
-    uintptr_t end = untagCodePtr<uintptr_t, CFunctionPtrTag>(wasmLLIntPCRangeEnd);
+    uintptr_t start = untagCodePtr<uintptr_t, CFunctionPtrTag>(wasmIPIntPCRangeStart);
+    uintptr_t end = untagCodePtr<uintptr_t, CFunctionPtrTag>(wasmIPIntPCRangeEnd);
     RELEASE_ASSERT(start < end);
     return start <= pcAsInt && pcAsInt <= end;
 }

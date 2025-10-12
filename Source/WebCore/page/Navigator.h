@@ -19,11 +19,11 @@
 
 #pragma once
 
-#include "LocalDOMWindowProperty.h"
-#include "NavigatorBase.h"
-#include "ScriptWrappable.h"
-#include "ShareData.h"
-#include "Supplementable.h"
+#include <WebCore/LocalDOMWindowProperty.h>
+#include <WebCore/NavigatorBase.h>
+#include <WebCore/ScriptWrappable.h>
+#include <WebCore/ShareData.h>
+#include <WebCore/Supplementable.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -35,6 +35,7 @@ class DOMMimeTypeArray;
 class DOMPluginArray;
 class Page;
 class ShareDataReader;
+class NavigatorUAData;
 
 class Navigator final
     : public NavigatorBase
@@ -60,6 +61,7 @@ public:
     bool onLine() const final;
     bool canShare(Document&, const ShareData&);
     void share(Document&, const ShareData&, Ref<DeferredPromise>&&);
+    NavigatorUAData& userAgentData() const;
     
 #if ENABLE(NAVIGATOR_STANDALONE)
     bool standalone() const;
@@ -67,7 +69,7 @@ public:
 
     int maxTouchPoints() const;
 
-    GPU* gpu();
+    WEBCORE_EXPORT GPU* gpu();
 
     Page* page();
     RefPtr<Page> protectedPage();
@@ -92,6 +94,7 @@ private:
     mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;
     mutable String m_userAgent;
     mutable String m_platform;
+    mutable RefPtr<NavigatorUAData> m_navigatorUAData;
     RefPtr<GPU> m_gpuForWebGPU;
 };
 }

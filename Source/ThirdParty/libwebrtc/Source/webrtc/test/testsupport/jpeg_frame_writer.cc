@@ -8,10 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stdio.h>
+#include <cstdint>
+#include <cstdio>
+#include <memory>
+#include <string>
 
+#include "api/video/video_frame.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "test/testsupport/frame_writer.h"
 

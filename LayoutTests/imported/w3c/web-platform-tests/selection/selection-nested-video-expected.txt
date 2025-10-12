@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: Error: assert_equals: expected Element node <video id="b"></video> but got Element node <body><div id="a">A</div>
-<video>
-  <video id="b"></video...
 
 
 Harness Error (FAIL), message = Error: assert_equals: expected Element node <video id="b"></video> but got Element node <body><div id="a">A</div>

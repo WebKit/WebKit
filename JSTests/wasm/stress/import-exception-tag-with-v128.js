@@ -50,9 +50,12 @@ async function test() {
         vvtag: vvtag,
         vitag: vitag
     } }, { exceptions: true, simd: true });
-    assert.eq(instance.exports.testThrowV128(), 42);
-    assert.eq(instance.exports.testThrowV128Pair(), 42);
-    assert.eq(instance.exports.testThrowV128AndI32(), 42);
+
+    for (let i = 0; i < wasmTestLoopCount; i++) {
+        assert.eq(instance.exports.testThrowV128(), 42);
+        assert.eq(instance.exports.testThrowV128Pair(), 42);
+        assert.eq(instance.exports.testThrowV128AndI32(), 42);
+    }
 }
 
 await assert.asyncTest(test());

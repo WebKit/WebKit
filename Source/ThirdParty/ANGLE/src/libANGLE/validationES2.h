@@ -565,7 +565,9 @@ ANGLE_INLINE bool ValidateVertexAttribPointer(const Context *context,
                                               GLsizei stride,
                                               const void *ptr)
 {
-    if (!ValidateFloatVertexFormat(context, entryPoint, index, size, type))
+    if (!ValidateFloatVertexFormat(context->getPrivateState(), context->getPrivateStateCache(),
+                                   context->getMutableErrorSetForValidation(), entryPoint, index,
+                                   size, type))
     {
         return false;
     }

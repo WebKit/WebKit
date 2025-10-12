@@ -1,0 +1,8 @@
+
+
+
+FAIL The popover should be bottom left positioned assert_true: Expected 20 but got 0 expected true got false
+FAIL The popover should be top left positioned assert_true: Expected 381.3333435058594 but got 0 expected true got false
+FAIL The popover should be bottom right positioned assert_true: Expected 20 but got 0 expected true got false
+FAIL The popover should be top right positioned assert_true: Expected 130 but got 0 expected true got false
+

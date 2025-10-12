@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "HTMLInputElement.h"
+#include <WebCore/HTMLInputElement.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

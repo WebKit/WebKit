@@ -43,7 +43,7 @@ TEST(WTF_RunLoop, Deadlock)
 
     struct DispatchFromDestructorTester {
         ~DispatchFromDestructorTester() {
-            RunLoop::protectedMain()->dispatch([] {
+            RunLoop::mainSingleton().dispatch([] {
                 if (!(--count))
                     testFinished = true;
             });
@@ -52,7 +52,7 @@ TEST(WTF_RunLoop, Deadlock)
 
     for (int i = 0; i < count; ++i) {
         auto capture = std::make_shared<DispatchFromDestructorTester>();
-        RunLoop::protectedMain()->dispatch([capture] { });
+        RunLoop::mainSingleton().dispatch([capture] { });
     }
 
     Util::run(&testFinished);
@@ -65,15 +65,15 @@ TEST(WTF_RunLoop, NestedInOrder)
     bool done = false;
     bool didExecuteOuter = false;
 
-    RunLoop::protectedMain()->dispatch([&done, &didExecuteOuter] {
-        RunLoop::protectedMain()->dispatch([&done, &didExecuteOuter] {
+    RunLoop::mainSingleton().dispatch([&done, &didExecuteOuter] {
+        RunLoop::mainSingleton().dispatch([&done, &didExecuteOuter] {
             EXPECT_TRUE(didExecuteOuter);
             done = true;
         });
 
         Util::run(&done);
     });
-    RunLoop::protectedMain()->dispatch([&didExecuteOuter] {
+    RunLoop::mainSingleton().dispatch([&didExecuteOuter] {
         didExecuteOuter = true;
     });
 
@@ -86,16 +86,16 @@ TEST(WTF_RunLoop, DispatchCrossThreadWhileNested)
 
     bool done = false;
 
-    RunLoop::protectedMain()->dispatch([&done] {
+    RunLoop::mainSingleton().dispatch([&done] {
         Thread::create("DispatchCrossThread"_s, [&done] {
-            RunLoop::protectedMain()->dispatch([&done] {
+            RunLoop::mainSingleton().dispatch([&done] {
                 done = true;
             });
         });
 
         Util::run(&done);
     });
-    RunLoop::protectedMain()->dispatch([] { });
+    RunLoop::mainSingleton().dispatch([] { });
 
     Util::run(&done);
 }
@@ -121,11 +121,11 @@ TEST(WTF_RunLoop, CallOnMainCrossThreadWhileNested)
 }
 
 class DerivedOneShotTimer : public RunLoop::Timer, public CanMakeCheckedPtr<DerivedOneShotTimer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DerivedOneShotTimer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DerivedOneShotTimer);
 public:
     DerivedOneShotTimer(bool& testFinished)
-        : RunLoop::Timer(RunLoop::currentSingleton(), this, &DerivedOneShotTimer::fired)
+        : RunLoop::Timer(RunLoop::currentSingleton(), "DerivedOneShotTimer"_s, this, &DerivedOneShotTimer::fired)
         , m_testFinished(testFinished)
     {
     }
@@ -155,11 +155,11 @@ TEST(WTF_RunLoop, OneShotTimer)
 }
 
 class DerivedRepeatingTimer : public RunLoop::Timer, public CanMakeCheckedPtr<DerivedRepeatingTimer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DerivedRepeatingTimer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DerivedRepeatingTimer);
 public:
     DerivedRepeatingTimer(bool& testFinished)
-        : RunLoop::Timer(RunLoop::currentSingleton(), this, &DerivedRepeatingTimer::fired)
+        : RunLoop::Timer(RunLoop::currentSingleton(), "DerivedRepeatingTimer"_s, this, &DerivedRepeatingTimer::fired)
         , m_testFinished(testFinished)
     {
     }
@@ -243,9 +243,9 @@ TEST(WTF_RunLoop, CapabilityIsCurrentIsSupported)
 {
     WTF::initializeMainThread();
     struct {
-        int i WTF_GUARDED_BY_CAPABILITY(RunLoop::main()) { 77 };
+        int i WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton()) { 77 };
     } z;
-    assertIsCurrent(RunLoop::main());
+    assertIsCurrent(RunLoop::mainSingleton());
     bool result = z.i == 77;
     EXPECT_TRUE(result);
 }
@@ -256,7 +256,7 @@ TEST(WTF_RunLoopDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(CapabilityIsCurrentFa
     ASSERT_DEATH_IF_SUPPORTED({
         WTF::initializeMainThread();
         Thread::create("CapabilityIsCurrentNegative thread"_s, [&] {
-            assertIsCurrent(RunLoop::main()); // This should assert.
+            assertIsCurrent(RunLoop::mainSingleton()); // This should assert.
         })->waitForCompletion();
     }, "ASSERTION FAILED: runLoop.isCurrent\\(\\)");
 }

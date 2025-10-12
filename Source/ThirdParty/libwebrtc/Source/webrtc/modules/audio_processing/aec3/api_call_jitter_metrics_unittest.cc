@@ -10,6 +10,8 @@
 
 #include "modules/audio_processing/aec3/api_call_jitter_metrics.h"
 
+#include <cstddef>
+
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "test/gtest.h"
 

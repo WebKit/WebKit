@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ClientOrigin.h"
+#include <WebCore/ClientOrigin.h>
 
 namespace WebCore {
 

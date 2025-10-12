@@ -11,8 +11,8 @@ description("This test checks that the type, media and title properties on an SV
 
 var style = document.createElementNS("http://www.w3.org/2000/svg", "style");
 
-shouldBeEqualToString("style.type", "text/css");
-shouldBeEqualToString("style.media", "all");
+shouldBeEqualToString("style.type", "");
+shouldBeEqualToString("style.media", "");
 shouldBeEqualToString("style.title", "");
 
 style.type = "text/x-something-else";

@@ -63,12 +63,12 @@ String MediaPlaybackTargetContextCocoa::deviceName() const
 
 bool MediaPlaybackTargetContextCocoa::hasActiveRoute() const
 {
-    if ([m_outputContext respondsToSelector:@selector(supportsMultipleOutputDevices)] && [m_outputContext supportsMultipleOutputDevices] && [m_outputContext respondsToSelector:@selector(outputDevices)]) {
+    if ([m_outputContext supportsMultipleOutputDevices]) {
         for (AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
             if (outputDevice.deviceFeatures & (AVOutputDeviceFeatureVideo | AVOutputDeviceFeatureAudio))
                 return true;
         }
-    } else if ([m_outputContext respondsToSelector:@selector(outputDevice)]) {
+    } else {
         if (auto *outputDevice = [m_outputContext outputDevice])
             return outputDevice.deviceFeatures & (AVOutputDeviceFeatureVideo | AVOutputDeviceFeatureAudio);
     }
@@ -76,14 +76,6 @@ bool MediaPlaybackTargetContextCocoa::hasActiveRoute() const
 }
 bool MediaPlaybackTargetContextCocoa::supportsRemoteVideoPlayback() const
 {
-    if (![m_outputContext respondsToSelector:@selector(supportsMultipleOutputDevices)] || ![m_outputContext supportsMultipleOutputDevices] || ![m_outputContext respondsToSelector:@selector(outputDevices)]) {
-        if (auto *outputDevice = [m_outputContext outputDevice]) {
-            if (outputDevice.deviceFeatures & AVOutputDeviceFeatureVideo)
-                return true;
-        }
-        return false;
-    }
-
     for (AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
         if (outputDevice.deviceFeatures & AVOutputDeviceFeatureVideo)
             return true;
@@ -105,8 +97,8 @@ MediaPlaybackTargetCocoa::MediaPlaybackTargetCocoa(MediaPlaybackTargetContextCoc
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
 Ref<MediaPlaybackTargetCocoa> MediaPlaybackTargetCocoa::create()
 {
-    auto *routingContextUID = [[PAL::getAVAudioSessionClass() sharedInstance] routingContextUID];
-    return adoptRef(*new MediaPlaybackTargetCocoa(MediaPlaybackTargetContextCocoa([PAL::getAVOutputContextClass() outputContextForID:routingContextUID])));
+    auto *routingContextUID = [[PAL::getAVAudioSessionClassSingleton() sharedInstance] routingContextUID];
+    return adoptRef(*new MediaPlaybackTargetCocoa(MediaPlaybackTargetContextCocoa([PAL::getAVOutputContextClassSingleton() outputContextForID:routingContextUID])));
 }
 #endif
 

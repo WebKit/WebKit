@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2007, 2008, 2009 Rob Buis <buis@kde.org>
  * Copyright (C) 2009 Google, Inc.
@@ -38,7 +38,6 @@
 #include "RenderLayer.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImageElement.h"
-#include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
@@ -54,18 +53,13 @@ LegacyRenderSVGImage::LegacyRenderSVGImage(SVGImageElement& element, RenderStyle
     : LegacyRenderSVGModelObject(Type::LegacySVGImage, element, WTFMove(style), SVGModelObjectFlag::UsesBoundaryCaching)
     , m_needsBoundariesUpdate(true)
     , m_needsTransformUpdate(true)
-    , m_imageResource(makeUnique<RenderImageResource>())
+    , m_imageResource(makeUniqueRef<RenderImageResource>())
 {
     imageResource().initialize(*this);
     ASSERT(isLegacyRenderSVGImage());
 }
 
 LegacyRenderSVGImage::~LegacyRenderSVGImage() = default;
-
-CheckedRef<RenderImageResource> LegacyRenderSVGImage::checkedImageResource() const
-{
-    return *m_imageResource;
-}
 
 void LegacyRenderSVGImage::notifyFinished(CachedResource& newImage, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
@@ -98,8 +92,8 @@ FloatRect LegacyRenderSVGImage::calculateObjectBoundingBox() const
     Ref imageElement = this->imageElement();
     SVGLengthContext lengthContext(imageElement.ptr());
 
-    Length width = style().width();
-    Length height = style().height();
+    auto& width = style().width();
+    auto& height = style().height();
 
     float concreteWidth;
     if (!width.isAuto())
@@ -204,7 +198,7 @@ void LegacyRenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
         SVGRenderingContext renderingContext(*this, childPaintInfo);
 
         if (renderingContext.isRenderingPrepared()) {
-            if (style().svgStyle().bufferedRendering() == BufferedRendering::Static && renderingContext.bufferForeground(m_bufferedForeground))
+            if (style().bufferedRendering() == BufferedRendering::Static && renderingContext.bufferForeground(m_bufferedForeground))
                 return;
 
             paintForeground(childPaintInfo);
@@ -228,10 +222,17 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
 
     ImagePaintingOptions options = {
         imageOrientation(),
-        ImageQualityController::chooseInterpolationQualityForSVG(paintInfo.context(), *this, *image)
+        ImageQualityController::chooseInterpolationQualityForSVG(paintInfo.context(), *this, *image),
+        paintInfo.paintBehavior.contains(PaintBehavior::DrawsHDRContent) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
+        style().dynamicRangeLimit().toPlatformDynamicRangeLimit()
     };
 
-    paintInfo.context().drawImage(*image, destRect, srcRect, options);
+    auto& context = paintInfo.context();
+    context.drawImage(*image, destRect, srcRect, options);
+
+    auto* cachedImage = imageResource().cachedImage();
+    if (cachedImage && !context.paintingDisabled())
+        protectedDocument()->didPaintImage(imageElement(), cachedImage, destRect);
 }
 
 void LegacyRenderSVGImage::invalidateBufferedForeground()
@@ -292,6 +293,11 @@ void LegacyRenderSVGImage::imageChanged(WrappedImagePtr, const IntRect*)
     invalidateBufferedForeground();
 
     repaint();
+
+    if (auto* image = imageResource().cachedImage(); image && image->currentFrameIsComplete(this)) {
+        if (auto styleable = Styleable::fromRenderer(*this))
+            protectedDocument()->didLoadImage(styleable->protectedElement().get(), image);
+    }
 }
 
 void LegacyRenderSVGImage::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint&, const RenderLayerModelObject*) const

@@ -10,6 +10,9 @@
 
 #include "common_audio/signal_processing/dot_product_with_scale.h"
 
+#include <cstddef>
+#include <cstdint>
+
 #include "rtc_base/numerics/safe_conversions.h"
 
 int32_t WebRtcSpl_DotProductWithScale(const int16_t* vector1,
@@ -30,5 +33,5 @@ int32_t WebRtcSpl_DotProductWithScale(const int16_t* vector1,
     sum += (vector1[i] * vector2[i]) >> scaling;
   }
 
-  return rtc::saturated_cast<int32_t>(sum);
+  return webrtc::saturated_cast<int32_t>(sum);
 }

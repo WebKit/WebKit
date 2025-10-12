@@ -35,7 +35,7 @@ JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef)
 
 JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
 {
-    return JSStringCreateWithUTF8CString("");
+    return JSStringCreateWithUTF8CString("resource:///org/webkit/inspector/UserInterface/TestStub.html");
 }
 
 void TestRunner::platformInitialize()

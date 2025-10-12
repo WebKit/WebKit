@@ -122,7 +122,8 @@
 #include <@API_INCLUDE_PREFIX@/WebKitUserMessage.h>
 #include <@API_INCLUDE_PREFIX@/WebKitVersion.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWebContext.h>
-#if PLATFORM(GTK)
+#if ENABLE(2022_GLIB_API)
+#include <@API_INCLUDE_PREFIX@/WebKitWebExtension.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWebExtensionMatchPattern.h>
 #endif
 #if PLATFORM(GTK)
@@ -141,6 +142,7 @@
 #include <@API_INCLUDE_PREFIX@/WebKitWebsiteDataAccessPermissionRequest.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWebsiteDataManager.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWindowProperties.h>
+#include <@API_INCLUDE_PREFIX@/WebKitXRPermissionRequest.h>
 
 #include <@API_INCLUDE_PREFIX@/WebKitAutocleanups.h>
 

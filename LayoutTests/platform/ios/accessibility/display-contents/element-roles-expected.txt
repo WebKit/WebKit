@@ -1,7 +1,7 @@
 This test ensures elements with CSS display: contents have the correct role.
 
 <a href="https://apple.com" id="link" class="testcase"></a>
-    WebCoreLink
+    Link
 
 <article class="testcase" id="article"></article>
     DocumentArticle

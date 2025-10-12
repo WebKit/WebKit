@@ -11,9 +11,10 @@
         <video id=video-2 autoplay playsinline controls></video>
 
         <script>
-            const validateStream = async (video, message) => {
+            const validateStream = async (test, video, message) => {
 
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { aspectRatio: 1 }});
+                test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
 
                 const settings = stream.getVideoTracks()[0].getSettings();
                 assert_equals(settings.width, settings.height, `settings.width === setting.height for ${message}`);
@@ -30,13 +31,13 @@
             
             promise_test(async (test) => {
 
-                await validateStream(document.getElementById('video-1'), 'first stream');
+                await validateStream(test, document.getElementById('video-1'), 'first stream');
 
             }, 'First gUM stream');
 
             promise_test(async (test) => {
 
-                await validateStream(document.getElementById('video-2'), 'second stream');
+                await validateStream(test, document.getElementById('video-2'), 'second stream');
 
             }, 'Second gUM stream');
 

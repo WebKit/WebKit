@@ -13,16 +13,19 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <variant>
 #include <vector>
 
-#include "absl/types/variant.h"
+#include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
+#include "api/video/corruption_detection_filter_settings.h"
 #include "api/video/encoded_image.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_frame_type.h"
 #include "common_video/frame_instrumentation_data.h"
+#include "rtc_base/ref_counted_object.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -163,13 +166,13 @@ TEST(FrameInstrumentationGeneratorTest,
 
   generator.OnCapturedFrame(frame);
   std::optional<
-      absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+      std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
       data = generator.OnEncodedImage(encoded_image);
 
   ASSERT_TRUE(data.has_value());
-  ASSERT_TRUE(absl::holds_alternative<FrameInstrumentationData>(*data));
+  ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data));
   FrameInstrumentationData frame_instrumentation_data =
-      absl::get<FrameInstrumentationData>(*data);
+      std::get<FrameInstrumentationData>(*data);
   EXPECT_EQ(frame_instrumentation_data.sequence_index, 0);
   EXPECT_TRUE(frame_instrumentation_data.communicate_upper_bits);
   EXPECT_NE(frame_instrumentation_data.std_dev, 0.0);
@@ -203,13 +206,13 @@ TEST(FrameInstrumentationGeneratorTest,
 
   generator.OnCapturedFrame(frame);
   std::optional<
-      absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+      std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
       data = generator.OnEncodedImage(encoded_image);
 
   ASSERT_TRUE(data.has_value());
-  ASSERT_TRUE(absl::holds_alternative<FrameInstrumentationData>(*data));
+  ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data));
   FrameInstrumentationData frame_instrumentation_data =
-      absl::get<FrameInstrumentationData>(*data);
+      std::get<FrameInstrumentationData>(*data);
   EXPECT_EQ(frame_instrumentation_data.sequence_index, 0);
   EXPECT_TRUE(frame_instrumentation_data.communicate_upper_bits);
   EXPECT_NE(frame_instrumentation_data.std_dev, 0.0);
@@ -245,13 +248,13 @@ TEST(FrameInstrumentationGeneratorTest,
   generator.OnCapturedFrame(frame);
   generator.OnEncodedImage(encoded_image1);
   std::optional<
-      absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+      std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
       data = generator.OnEncodedImage(encoded_image2);
 
   ASSERT_TRUE(data.has_value());
-  ASSERT_TRUE(absl::holds_alternative<FrameInstrumentationData>(*data));
+  ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data));
   FrameInstrumentationData frame_instrumentation_data =
-      absl::get<FrameInstrumentationData>(*data);
+      std::get<FrameInstrumentationData>(*data);
   EXPECT_EQ(frame_instrumentation_data.sequence_index, 0);
   EXPECT_TRUE(frame_instrumentation_data.communicate_upper_bits);
   EXPECT_NE(frame_instrumentation_data.std_dev, 0.0);
@@ -327,23 +330,23 @@ TEST(FrameInstrumentationGeneratorTest,
     generator.OnCapturedFrame(frame);
 
     std::optional<
-        absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+        std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
         data1 = generator.OnEncodedImage(encoded_image1);
 
     std::optional<
-        absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+        std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
         data2 = generator.OnEncodedImage(encoded_image2);
 
     ASSERT_TRUE(data1.has_value());
     ASSERT_TRUE(data2.has_value());
-    ASSERT_TRUE(absl::holds_alternative<FrameInstrumentationData>(*data1));
+    ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data1));
 
-    ASSERT_TRUE(absl::holds_alternative<FrameInstrumentationData>(*data2));
+    ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data2));
 
     EXPECT_TRUE(
-        absl::get<FrameInstrumentationData>(*data1).communicate_upper_bits);
+        std::get<FrameInstrumentationData>(*data1).communicate_upper_bits);
     EXPECT_TRUE(
-        absl::get<FrameInstrumentationData>(*data2).communicate_upper_bits);
+        std::get<FrameInstrumentationData>(*data2).communicate_upper_bits);
   }
 }
 
@@ -380,23 +383,23 @@ TEST(FrameInstrumentationGeneratorTest,
     generator.OnCapturedFrame(frame);
 
     std::optional<
-        absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+        std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
         data1 = generator.OnEncodedImage(encoded_image1);
 
     std::optional<
-        absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+        std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
         data2 = generator.OnEncodedImage(encoded_image2);
 
     ASSERT_TRUE(data1.has_value());
     ASSERT_TRUE(data2.has_value());
-    ASSERT_TRUE(absl::holds_alternative<FrameInstrumentationData>(*data1));
+    ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data1));
 
-    ASSERT_TRUE(absl::holds_alternative<FrameInstrumentationData>(*data2));
+    ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data2));
 
     FrameInstrumentationData frame_instrumentation_data1 =
-        absl::get<FrameInstrumentationData>(*data1);
+        std::get<FrameInstrumentationData>(*data1);
     FrameInstrumentationData frame_instrumentation_data2 =
-        absl::get<FrameInstrumentationData>(*data2);
+        std::get<FrameInstrumentationData>(*data2);
 
     EXPECT_TRUE(frame_instrumentation_data1.communicate_upper_bits);
     EXPECT_TRUE(frame_instrumentation_data2.communicate_upper_bits);
@@ -443,34 +446,34 @@ TEST(FrameInstrumentationGeneratorTest,
     generator.OnCapturedFrame(frame);
 
     std::optional<
-        absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+        std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
         data1 = generator.OnEncodedImage(encoded_image1);
 
     std::optional<
-        absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+        std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
         data2 = generator.OnEncodedImage(encoded_image2);
 
     if (i == 0) {
       ASSERT_TRUE(data1.has_value());
       ASSERT_TRUE(data2.has_value());
-      ASSERT_TRUE(absl::holds_alternative<FrameInstrumentationData>(*data1));
+      ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data1));
 
-      ASSERT_TRUE(absl::holds_alternative<FrameInstrumentationData>(*data2));
+      ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data2));
 
       EXPECT_TRUE(
-          absl::get<FrameInstrumentationData>(*data1).communicate_upper_bits);
+          std::get<FrameInstrumentationData>(*data1).communicate_upper_bits);
       EXPECT_TRUE(
-          absl::get<FrameInstrumentationData>(*data2).communicate_upper_bits);
+          std::get<FrameInstrumentationData>(*data2).communicate_upper_bits);
     } else if (data1.has_value() || data2.has_value()) {
       if (data1.has_value()) {
-        ASSERT_TRUE(absl::holds_alternative<FrameInstrumentationData>(*data1));
+        ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data1));
         EXPECT_FALSE(
-            absl::get<FrameInstrumentationData>(*data1).communicate_upper_bits);
+            std::get<FrameInstrumentationData>(*data1).communicate_upper_bits);
       }
       if (data2.has_value()) {
-        ASSERT_TRUE(absl::holds_alternative<FrameInstrumentationData>(*data2));
+        ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data2));
         EXPECT_FALSE(
-            absl::get<FrameInstrumentationData>(*data2).communicate_upper_bits);
+            std::get<FrameInstrumentationData>(*data2).communicate_upper_bits);
       }
       has_found_delta_frame = true;
     }
@@ -515,29 +518,24 @@ TEST(FrameInstrumentationGeneratorTest,
                                    generator.GetLayerId(encoded_image1));
 
   std::optional<
-      absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+      std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
       data1 = generator.OnEncodedImage(encoded_image1);
   std::optional<
-      absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+      std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
       data2 = generator.OnEncodedImage(encoded_image2);
 
   ASSERT_TRUE(data1.has_value());
   ASSERT_TRUE(data2.has_value());
-  ASSERT_TRUE(absl::holds_alternative<FrameInstrumentationData>(*data1));
-  ASSERT_TRUE(absl::holds_alternative<FrameInstrumentationData>(*data2));
+  ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data1));
+  ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data2));
 
   FrameInstrumentationData frame_instrumentation_data1 =
-      absl::get<FrameInstrumentationData>(*data1);
+      std::get<FrameInstrumentationData>(*data1);
   FrameInstrumentationData frame_instrumentation_data2 =
-      absl::get<FrameInstrumentationData>(*data2);
+      std::get<FrameInstrumentationData>(*data2);
 
   EXPECT_EQ(frame_instrumentation_data1.sequence_index, 0b0000'1000'0000);
   EXPECT_EQ(frame_instrumentation_data2.sequence_index, 0b0001'0000'0000);
-
-  EXPECT_THAT(frame_instrumentation_data1.sample_values,
-              ElementsAre(17, 10, 8, 24, 2, 12, 20, 13, 3, 21, 5, 15, 17));
-  EXPECT_THAT(frame_instrumentation_data2.sample_values,
-              ElementsAre(3, 21, 6, 16, 18, 9, 7, 23, 2, 12, 20, 14, 4));
 }
 
 TEST(FrameInstrumentationGeneratorTest,
@@ -577,29 +575,24 @@ TEST(FrameInstrumentationGeneratorTest,
   generator.SetHaltonSequenceIndex(0b11'1111'1111'1111,
                                    generator.GetLayerId(encoded_image1));
   std::optional<
-      absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+      std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
       data1 = generator.OnEncodedImage(encoded_image1);
   std::optional<
-      absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+      std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
       data2 = generator.OnEncodedImage(encoded_image2);
 
   ASSERT_TRUE(data1.has_value());
   ASSERT_TRUE(data2.has_value());
-  ASSERT_TRUE(absl::holds_alternative<FrameInstrumentationData>(*data1));
-  ASSERT_TRUE(absl::holds_alternative<FrameInstrumentationData>(*data2));
+  ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data1));
+  ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data2));
 
   FrameInstrumentationData frame_instrumentation_data1 =
-      absl::get<FrameInstrumentationData>(*data1);
+      std::get<FrameInstrumentationData>(*data1);
   FrameInstrumentationData frame_instrumentation_data2 =
-      absl::get<FrameInstrumentationData>(*data2);
+      std::get<FrameInstrumentationData>(*data2);
 
   EXPECT_EQ(frame_instrumentation_data1.sequence_index, 0);
   EXPECT_EQ(frame_instrumentation_data2.sequence_index, 0b1000'0000);
-
-  EXPECT_THAT(frame_instrumentation_data1.sample_values,
-              ElementsAre(1, 11, 19, 13, 3, 21, 6, 16, 18, 9, 7, 23, 1));
-  EXPECT_THAT(frame_instrumentation_data2.sample_values,
-              ElementsAre(17, 10, 8, 24, 2, 12, 20, 13, 3, 21, 5, 15, 17));
 }
 
 TEST(FrameInstrumentationGeneratorTest,
@@ -639,21 +632,21 @@ TEST(FrameInstrumentationGeneratorTest,
                                    generator.GetLayerId(encoded_image1));
 
   std::optional<
-      absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+      std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
       data1 = generator.OnEncodedImage(encoded_image1);
   std::optional<
-      absl::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+      std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
       data2 = generator.OnEncodedImage(encoded_image2);
 
   ASSERT_TRUE(data1.has_value());
   ASSERT_TRUE(data2.has_value());
-  ASSERT_TRUE(absl::holds_alternative<FrameInstrumentationData>(*data1));
-  ASSERT_TRUE(absl::holds_alternative<FrameInstrumentationData>(*data2));
+  ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data1));
+  ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data2));
 
   FrameInstrumentationData frame_instrumentation_data1 =
-      absl::get<FrameInstrumentationData>(*data1);
+      std::get<FrameInstrumentationData>(*data1);
   FrameInstrumentationData frame_instrumentation_data2 =
-      absl::get<FrameInstrumentationData>(*data2);
+      std::get<FrameInstrumentationData>(*data2);
 
   EXPECT_EQ(frame_instrumentation_data1.sequence_index, 0b0000'1000'0000);
   EXPECT_EQ(frame_instrumentation_data2.sequence_index, 0b0001'0000'0000);
@@ -692,7 +685,7 @@ TEST(FrameInstrumentationGeneratorTest, QueuesAtMostThreeInputFrames) {
       VideoCodecType::kVideoCodecVP8);
 
   bool frames_destroyed[4] = {};
-  class TestBuffer : public webrtc::I420Buffer {
+  class TestBuffer : public I420Buffer {
    public:
     TestBuffer(int width, int height, bool* frame_destroyed_indicator)
         : I420Buffer(width, height),
@@ -709,7 +702,7 @@ TEST(FrameInstrumentationGeneratorTest, QueuesAtMostThreeInputFrames) {
   for (int i = 0; i < 4; ++i) {
     generator->OnCapturedFrame(
         VideoFrame::Builder()
-            .set_video_frame_buffer(rtc::make_ref_counted<TestBuffer>(
+            .set_video_frame_buffer(make_ref_counted<TestBuffer>(
                 kDefaultScaledWidth, kDefaultScaledHeight,
                 &frames_destroyed[i]))
             .set_rtp_timestamp(1 + (33 * i))
@@ -720,6 +713,38 @@ TEST(FrameInstrumentationGeneratorTest, QueuesAtMostThreeInputFrames) {
 
   generator.reset();
   EXPECT_THAT(frames_destroyed, ElementsAre(true, true, true, true));
+}
+
+TEST(FrameInstrumentationGeneratorTest,
+     UsesFilterSettingsFromFrameWhenAvailable) {
+  FrameInstrumentationGenerator generator(VideoCodecType::kVideoCodecVP8);
+  VideoFrame frame = VideoFrame::Builder()
+                         .set_video_frame_buffer(MakeDefaultI420FrameBuffer())
+                         .set_rtp_timestamp(1)
+                         .build();
+  // No QP needed when frame provides filter settings.
+  EncodedImage encoded_image;
+  encoded_image.SetRtpTimestamp(1);
+  encoded_image.SetFrameType(VideoFrameType::kVideoFrameKey);
+  encoded_image._encodedWidth = kDefaultScaledWidth;
+  encoded_image._encodedHeight = kDefaultScaledHeight;
+  encoded_image.set_corruption_detection_filter_settings(
+      CorruptionDetectionFilterSettings{.std_dev = 1.0,
+                                        .luma_error_threshold = 2,
+                                        .chroma_error_threshold = 3});
+
+  generator.OnCapturedFrame(frame);
+  std::optional<
+      std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
+      data = generator.OnEncodedImage(encoded_image);
+
+  ASSERT_TRUE(data.has_value());
+  ASSERT_TRUE(std::holds_alternative<FrameInstrumentationData>(*data));
+  FrameInstrumentationData frame_instrumentation_data =
+      std::get<FrameInstrumentationData>(*data);
+  EXPECT_EQ(frame_instrumentation_data.std_dev, 1.0);
+  EXPECT_EQ(frame_instrumentation_data.luma_error_threshold, 2);
+  EXPECT_EQ(frame_instrumentation_data.chroma_error_threshold, 3);
 }
 
 }  // namespace

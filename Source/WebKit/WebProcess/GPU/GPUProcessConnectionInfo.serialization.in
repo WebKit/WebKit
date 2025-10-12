@@ -28,13 +28,7 @@ struct WebKit::GPUProcessConnectionInfo {
     std::optional<WebKit::CoreIPCAuditToken> auditToken;
 #endif
 
-#if ENABLE(VP9)
-    bool hasVP9HardwareDecoder;
-#endif
-#if ENABLE(AV1)
-    bool hasAV1HardwareDecoder;
-#endif
-
+    WebKit::GPUProcessMediaCodecCapabilities mediaCodecCapabilities;
 }
 
 #endif

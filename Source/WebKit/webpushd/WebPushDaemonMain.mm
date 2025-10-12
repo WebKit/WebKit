@@ -120,8 +120,9 @@ static void applySandbox()
 
 static String getWebPushDirectoryPathWithMigrationIfNecessary()
 {
+    RetainPtr paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+    String libraryPath = paths.get()[0];
 #if PLATFORM(MAC) && !ENABLE(RELOCATABLE_WEBPUSHD)
-    String libraryPath = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)[0];
     String oldPath = FileSystem::pathByAppendingComponents(libraryPath, std::initializer_list<StringView>({ "WebKit"_s, "WebPush"_s }));
 
     RetainPtr containerURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:@"group.com.apple.webkit.webpushd"];
@@ -143,7 +144,6 @@ static String getWebPushDirectoryPathWithMigrationIfNecessary()
 
     return newPath;
 #else
-    String libraryPath = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)[0];
     return FileSystem::pathByAppendingComponents(libraryPath, std::initializer_list<StringView>({ "WebKit"_s, "WebPush"_s }));
 #endif
 }

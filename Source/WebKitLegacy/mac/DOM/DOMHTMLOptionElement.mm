@@ -69,7 +69,7 @@
 - (void)setLabel:(NSString *)newLabel
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setLabel(newLabel);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::labelAttr, newLabel);
 }
 
 - (BOOL)defaultSelected
@@ -105,7 +105,7 @@
 - (void)setValue:(NSString *)newValue
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setValue(newValue);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::valueAttr, newValue);
 }
 
 - (NSString *)text

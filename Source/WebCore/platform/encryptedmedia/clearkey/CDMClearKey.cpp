@@ -448,7 +448,7 @@ RefPtr<CDMInstanceSession> CDMInstanceClearKey::createSession()
 
 void CDMInstanceSessionClearKey::requestLicense(LicenseType, KeyGroupingStrategy, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
 {
-    if (RefPtr parentInstance = protectedParentInstance())
+    if (RefPtr parentInstance = this->parentInstance())
         m_sessionID = String::number(parentInstance->getNextSessionIdValue());
     else
         m_sessionID = emptyString();
@@ -493,7 +493,7 @@ void CDMInstanceSessionClearKey::updateLicense(const String& sessionId, LicenseT
         return;
     }
 
-    RefPtr parentInstance = protectedParentInstance();
+    RefPtr parentInstance = this->parentInstance();
     if (!parentInstance) {
         LOG(EME, "EME - ClearKey - session %s is in an invalid state", sessionId.utf8().data());
         dispatchCallback(false, std::nullopt, SuccessValue::Failed);
@@ -599,7 +599,7 @@ void CDMInstanceSessionClearKey::storeRecordOfKeyUsage(const String&)
 {
 }
 
-RefPtr<CDMInstanceClearKey> CDMInstanceSessionClearKey::protectedParentInstance() const
+CDMInstanceClearKey* CDMInstanceSessionClearKey::parentInstance() const
 {
     return dynamicDowncast<CDMInstanceClearKey>(cdmInstanceProxy().get());
 }

@@ -44,7 +44,7 @@ constexpr bool needsToGrowToProduceCString(UErrorCode);
 //
 // Example:
 //
-//    Vector<UChar, 32> buffer;
+//    Vector<char16_t, 32> buffer;
 //    auto status = callBufferProducingFunction(ucal_getDefaultTimeZone, buffer);
 //
 template<typename FunctionType, typename ...ArgumentTypes> UErrorCode callBufferProducingFunction(const FunctionType&, ArgumentTypes&&...);

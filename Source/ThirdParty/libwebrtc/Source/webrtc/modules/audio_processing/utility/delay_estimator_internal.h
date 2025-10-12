@@ -13,6 +13,8 @@
 #ifndef MODULES_AUDIO_PROCESSING_UTILITY_DELAY_ESTIMATOR_INTERNAL_H_
 #define MODULES_AUDIO_PROCESSING_UTILITY_DELAY_ESTIMATOR_INTERNAL_H_
 
+#include <cstdint>
+
 #include "modules/audio_processing/utility/delay_estimator.h"
 
 namespace webrtc {

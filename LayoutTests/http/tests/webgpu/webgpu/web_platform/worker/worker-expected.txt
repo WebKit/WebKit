@@ -1,13 +1,5 @@
 
 PASS :dedicated_worker:
-FAIL :shared_worker: assert_unreached:
-  - EXCEPTION: Error: should be no error from worker but was: TypeError: null is not an object (evaluating 'getGPU(null).requestAdapter')
-    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/worker/worker.spec.js:53:9
- Reached unreachable code
-FAIL :service_worker: assert_unreached:
-  - EXCEPTION: Error: should be no error from worker but was: TypeError: null is not an object (evaluating 'getGPU(null).requestAdapter')
-    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/worker/worker.spec.js:66:9
- Reached unreachable code
+PASS :shared_worker:
+PASS :service_worker:
 

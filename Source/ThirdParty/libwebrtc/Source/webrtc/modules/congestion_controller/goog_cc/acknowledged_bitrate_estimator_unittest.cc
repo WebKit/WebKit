@@ -17,12 +17,13 @@
 #include <utility>
 #include <vector>
 
-#include "api/transport/field_trial_based_config.h"
+#include "api/field_trials.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/timestamp.h"
 #include "modules/congestion_controller/goog_cc/bitrate_estimator.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -50,7 +51,7 @@ class MockBitrateEstimator : public BitrateEstimator {
 };
 
 struct AcknowledgedBitrateEstimatorTestStates {
-  FieldTrialBasedConfig field_trial_config;
+  FieldTrials field_trial_config = CreateTestFieldTrials();
   std::unique_ptr<AcknowledgedBitrateEstimator> acknowledged_bitrate_estimator;
   MockBitrateEstimator* mock_bitrate_estimator;
 };
@@ -139,4 +140,4 @@ TEST(TestAcknowledgedBitrateEstimator, ReturnBitrate) {
   EXPECT_EQ(return_value, states.acknowledged_bitrate_estimator->bitrate());
 }
 
-}  // namespace webrtc*/
+}  // namespace webrtc

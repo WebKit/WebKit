@@ -79,6 +79,7 @@ int main(int argc, char **argv) {
   if (!(simd_caps & HAS_SSE4_2)) append_negative_gtest_filter("SSE4_2");
   if (!(simd_caps & HAS_AVX)) append_negative_gtest_filter("AVX");
   if (!(simd_caps & HAS_AVX2)) append_negative_gtest_filter("AVX2");
+  if (!(simd_caps & HAS_AVX512)) append_negative_gtest_filter("AVX512");
 #endif  // AOM_ARCH_X86 || AOM_ARCH_X86_64
 
   // Shared library builds don't support whitebox tests that exercise internal

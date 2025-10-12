@@ -36,8 +36,8 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "FloatSize.h"
-#include "MediaStreamTrackPrivate.h"
+#include <WebCore/FloatSize.h>
+#include <WebCore/MediaStreamTrackPrivate.h>
 #include <wtf/Function.h>
 #include <wtf/MediaTime.h>
 #include <wtf/RefPtr.h>
@@ -145,7 +145,7 @@ private:
     MemoryCompactRobinHoodHashMap<String, Ref<MediaStreamTrackPrivate>> m_trackSet;
     bool m_isActive { false };
 #if !RELEASE_LOG_DISABLED
-    Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
 #endif
 };

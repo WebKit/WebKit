@@ -30,4 +30,10 @@ messages -> WebFrame {
     UpdateFrameSize(WebCore::IntSize newSize)
     CreateProvisionalFrame(struct WebKit::ProvisionalFrameCreationParameters creationParameters)
     DestroyProvisionalFrame();
+    FindFocusableElementDescendingIntoRemoteFrame(enum:uint8_t WebCore::FocusDirection direction, struct WebCore::FocusEventData focusEventData) -> (enum:bool WebCore::FoundElementInRemoteFrame foundElement)
+    TakeSnapshotOfNode(WebCore::JSHandleIdentifier identifier) -> (std::optional<WebCore::ShareableBitmapHandle> snapshot);
+
+    ConnectInspector(Inspector::FrontendChannel::ConnectionType connectionType)
+    DisconnectInspector()
+    SendMessageToInspectorTarget(String message)
 }

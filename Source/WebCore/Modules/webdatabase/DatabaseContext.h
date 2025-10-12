@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
- * Copyright (C) 2011 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,9 @@
 
 #pragma once
 
-#include "ActiveDOMObject.h"
-#include "Document.h"
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/Document.h>
+#include <wtf/Platform.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -65,7 +66,7 @@ public:
     bool allowDatabaseAccess() const;
     void databaseExceededQuota(const String& name, DatabaseDetails);
 
-    Document* document() const { return downcast<Document>(ActiveDOMObject::scriptExecutionContext()); }
+    Document* document() const;
     const SecurityOriginData& securityOrigin() const;
 
     bool isContextThread() const;

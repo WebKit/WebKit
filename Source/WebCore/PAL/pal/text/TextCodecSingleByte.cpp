@@ -53,8 +53,8 @@ enum class TextCodecSingleByte::Encoding : uint8_t {
     KOI8U,
 };
 
-using SingleByteDecodeTable = std::array<UChar, 128>;
-using SingleByteEncodeTableEntry = std::pair<UChar, uint8_t>;
+using SingleByteDecodeTable = std::array<char16_t, 128>;
+using SingleByteEncodeTableEntry = std::pair<char16_t, uint8_t>;
 using SingleByteEncodeTable = std::span<const SingleByteEncodeTableEntry>;
 
 // From https://encoding.spec.whatwg.org/index-iso-8859-3.txt with 0xFFFD filling the gaps
@@ -283,7 +283,7 @@ static String decode(const SingleByteDecodeTable& table, std::span<const uint8_t
             result.append(byte);
             return;
         }
-        UChar codePoint = table[byte - 0x80];
+        char16_t codePoint = table[byte - 0x80];
         if (codePoint == replacementCharacter)
             sawError = true;
         result.append(codePoint);

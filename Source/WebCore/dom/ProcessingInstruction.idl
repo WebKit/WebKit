@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  * Copyright (C) 2013 Samsung Electronics
  *
@@ -20,7 +20,6 @@
  */
 
 [
-    JSGenerateToJSObject,
     Exposed=Window
 ] interface ProcessingInstruction : CharacterData {
     readonly attribute DOMString target;

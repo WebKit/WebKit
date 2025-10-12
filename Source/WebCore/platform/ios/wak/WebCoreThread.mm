@@ -207,7 +207,7 @@ static inline void SendMessage(RetainPtr<NSInvocation>&& invocation)
     if (!WebThreadIsEnabled() || CFRunLoopGetMain() == CFRunLoopGetCurrent())
         return;
 
-    RunLoop::protectedMain()->dispatch([invocation = WTFMove(invocation)] { });
+    RunLoop::mainSingleton().dispatch([invocation = WTFMove(invocation)] { });
 }
 
 static void HandleDelegateSource(void*)
@@ -314,7 +314,7 @@ void WebThreadRunOnMainThread(void(^delegateBlock)())
     JSC::JSLock::DropAllLocks dropAllLocks(WebCore::commonVM());
     _WebThreadUnlock();
 
-    WorkQueue::protectedMain()->dispatchSync(makeBlockPtr(delegateBlock).get());
+    WorkQueue::mainSingleton().dispatchSync(makeBlockPtr(delegateBlock).get());
 
     _WebThreadLock();
 }
@@ -345,13 +345,13 @@ void WebCoreObjCDeallocOnWebThread(Class cls)
     // get the existing release method
     Method releaseMethod = class_getInstanceMethod(cls, releaseSEL);
     if (!releaseMethod) {
-        ASSERT_WITH_MESSAGE(releaseMethod, "WebCoreObjCDeallocOnWebThread() failed to find %s for %@", releaseSEL, NSStringFromClass(cls));
+        ASSERT_WITH_MESSAGE(releaseMethod, "WebCoreObjCDeallocOnWebThread() failed to find %s for %@", sel_getName(releaseSEL), NSStringFromClass(cls));
         return;
     }
 
     // add the implementation that ensures release WebThread release/deallocation
     if (!class_addMethod(cls, webThreadReleaseSEL, (IMP)WebCoreObjCDeallocOnWebThreadImpl, method_getTypeEncoding(releaseMethod))) {
-        ASSERT_WITH_MESSAGE(releaseMethod, "WebCoreObjCDeallocOnWebThread() failed to add %s for %@", webThreadReleaseSEL, NSStringFromClass(cls));
+        ASSERT_WITH_MESSAGE(releaseMethod, "WebCoreObjCDeallocOnWebThread() failed to add %s for %@", sel_getName(webThreadReleaseSEL), NSStringFromClass(cls));
         return;
     }
 
@@ -371,13 +371,13 @@ void WebCoreObjCDeallocWithWebThreadLock(Class cls)
     // get the existing release method
     Method releaseMethod = class_getInstanceMethod(cls, releaseSEL);
     if (!releaseMethod) {
-        ASSERT_WITH_MESSAGE(releaseMethod, "WebCoreObjCDeallocWithWebThreadLock() failed to find %s for %@", releaseSEL, NSStringFromClass(cls));
+        ASSERT_WITH_MESSAGE(releaseMethod, "WebCoreObjCDeallocWithWebThreadLock() failed to find %s for %@", sel_getName(releaseSEL), NSStringFromClass(cls));
         return;
     }
 
     // add the implementation that ensures release WebThreadLock release/deallocation
     if (!class_addMethod(cls, webThreadLockReleaseSEL, (IMP)WebCoreObjCDeallocWithWebThreadLockImpl, method_getTypeEncoding(releaseMethod))) {
-        ASSERT_WITH_MESSAGE(releaseMethod, "WebCoreObjCDeallocWithWebThreadLock() failed to add %s for %@", webThreadLockReleaseSEL, NSStringFromClass(cls));
+        ASSERT_WITH_MESSAGE(releaseMethod, "WebCoreObjCDeallocWithWebThreadLock() failed to add %s for %@", sel_getName(webThreadLockReleaseSEL), NSStringFromClass(cls));
         return;
     }
 
@@ -458,7 +458,7 @@ void WebThreadPostNotification(NSString* name, id object, id userInfo)
     if (pthread_main_np())
         [[NSNotificationCenter defaultCenter] postNotificationName:name object:object userInfo:userInfo];
     else {
-        RunLoop::protectedMain()->dispatch([name = retainPtr(name), object = retainPtr(object), userInfo = retainPtr(userInfo)] {
+        RunLoop::mainSingleton().dispatch([name = retainPtr(name), object = retainPtr(object), userInfo = retainPtr(userInfo)] {
             [[NSNotificationCenter defaultCenter] postNotificationName:name.get() object:object.get() userInfo:userInfo.get()];
         });
     }
@@ -648,7 +648,7 @@ static void* RunWebThread(void*)
     WebCore::populateJITOperations();
     
     // Make sure that the WebThread and the main thread share the same ThreadGlobalData objects.
-    WebCore::threadGlobalData().setWebCoreThreadData();
+    WebCore::threadGlobalDataSingleton().setWebCoreThreadData();
 
 #if HAVE(PTHREAD_SETNAME_NP)
     pthread_setname_np("WebThread");
@@ -696,7 +696,7 @@ static void StartWebThread()
 
     // Initialize ThreadGlobalData on the main UI thread so that the WebCore thread
     // can later set it's thread-specific data to point to the same objects.
-    WebCore::ThreadGlobalData& unused = WebCore::threadGlobalData();
+    WebCore::ThreadGlobalData& unused = WebCore::threadGlobalDataSingleton();
     UNUSED_PARAM(unused);
 
     // register class for WebThread deallocation
@@ -873,6 +873,12 @@ void _WebThreadUnlock()
 
 bool WebThreadIsLocked(void)
 {
+#if ENABLE(WEB_THREAD_DISABLEMENT)
+    // This is temporarily needed to avoid assertions in code assuming the web thread is used.
+    if (!WebThreadIsEnabled())
+        return true;
+#endif
+
     if (WebThreadIsCurrent())
         return webThreadLockCount;
 
@@ -948,7 +954,7 @@ WebThreadContext* WebThreadCurrentContext(void)
 void WebThreadEnable(void)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!WTF::IOSApplication::isWebProcess(), "The WebProcess should never run a Web Thread");
-    if (WTF::CocoaApplication::isAppleApplication() && !((rand() * 100) % 100))
+    if (WTF::CocoaApplication::shouldOSFaultLogForAppleApplicationUsingWebKit1())
         os_fault_with_payload(OS_REASON_WEBKIT, 0, nullptr, 0, "WebThread enabled", 0);
 
     static std::once_flag flag;

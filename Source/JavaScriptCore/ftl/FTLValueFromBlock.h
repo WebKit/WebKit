@@ -27,7 +27,7 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "FTLAbbreviatedTypes.h"
+#include <JavaScriptCore/FTLAbbreviatedTypes.h>
 
 namespace JSC { namespace FTL {
 

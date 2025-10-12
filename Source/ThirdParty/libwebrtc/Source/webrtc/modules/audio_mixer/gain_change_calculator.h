@@ -22,17 +22,17 @@ class GainChangeCalculator {
   // The 'out' signal is assumed to be produced from 'in' by applying
   // a smoothly varying gain. This method computes variations of the
   // gain and handles special cases when the samples are small.
-  float CalculateGainChange(rtc::ArrayView<const int16_t> in,
-                            rtc::ArrayView<const int16_t> out);
+  float CalculateGainChange(ArrayView<const int16_t> in,
+                            ArrayView<const int16_t> out);
 
   float LatestGain() const;
 
  private:
-  void CalculateGain(rtc::ArrayView<const int16_t> in,
-                     rtc::ArrayView<const int16_t> out,
-                     rtc::ArrayView<float> gain);
+  void CalculateGain(ArrayView<const int16_t> in,
+                     ArrayView<const int16_t> out,
+                     ArrayView<float> gain);
 
-  float CalculateDifferences(rtc::ArrayView<const float> values);
+  float CalculateDifferences(ArrayView<const float> values);
   float last_value_ = 0.f;
   float last_reliable_gain_ = 1.0f;
 };

@@ -25,16 +25,16 @@
 
 #pragma once
 
-#include "BoxExtents.h"
-#include "IntPoint.h"
-#include "PlatformLayerIdentifier.h"
-#include "TileGridIdentifier.h"
+#include <WebCore/BoxExtents.h>
+#include <WebCore/IntPoint.h>
+#include <WebCore/PlatformLayerIdentifier.h>
+#include <WebCore/TileGridIdentifier.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/WeakPtr.h>
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-#include "DynamicContentScalingDisplayList.h"
+#include <WebCore/DynamicContentScalingDisplayList.h>
 #endif
 
 namespace WebCore {
@@ -202,6 +202,10 @@ public:
 #if USE(CA)
     virtual PlatformCALayer* tiledScrollingIndicatorLayer() = 0;
 #endif
+
+    virtual void clearObscuredInsetsAdjustments() = 0;
+    virtual void obscuredInsetsWillChange(FloatBoxExtent&&) = 0;
+    virtual FloatRect adjustedTileClipRectForObscuredInsets(const FloatRect&) const = 0;
 };
 
 } // namespace WebCore

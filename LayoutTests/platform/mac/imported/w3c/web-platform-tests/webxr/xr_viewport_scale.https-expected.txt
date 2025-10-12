@@ -1,16 +1,3 @@
-CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
-CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
-CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
-CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
-CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
-CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
-CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
-CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
-CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
-CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
-CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
-CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
-CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
 
 PASS requestViewportScale valid viewport for inline session - webgl
 PASS requestViewportScale valid viewport for inline session - webgl2

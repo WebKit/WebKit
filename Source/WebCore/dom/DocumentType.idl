@@ -19,7 +19,6 @@
 
 [
     JSGenerateToNativeObject,
-    JSGenerateToJSObject,
     Exposed=Window
 ] interface DocumentType : Node {
     readonly attribute DOMString name;

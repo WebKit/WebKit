@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (c) 2011 Motorola Mobility, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -70,6 +70,7 @@ struct _WebKitSettingsPrivate {
         cursiveFontFamily = preferences->cursiveFontFamily().utf8();
         fantasyFontFamily = preferences->fantasyFontFamily().utf8();
         pictographFontFamily = preferences->pictographFontFamily().utf8();
+        mathFontFamily = preferences->mathFontFamily().utf8();
         defaultCharset = preferences->defaultTextEncodingName().utf8();
 #if ENABLE(WEB_RTC)
         webrtcUDPPortsRange = preferences->webRTCUDPPortRange().utf8();
@@ -84,6 +85,7 @@ struct _WebKitSettingsPrivate {
     CString cursiveFontFamily;
     CString fantasyFontFamily;
     CString pictographFontFamily;
+    CString mathFontFamily;
     CString defaultCharset;
     CString userAgent;
     CString mediaContentTypesRequiringHardwareSupport;
@@ -139,6 +141,7 @@ enum {
     PROP_CURSIVE_FONT_FAMILY,
     PROP_FANTASY_FONT_FAMILY,
     PROP_PICTOGRAPH_FONT_FAMILY,
+    PROP_MATH_FONT_FAMILY,
     PROP_DEFAULT_FONT_SIZE,
     PROP_DEFAULT_MONOSPACE_FONT_SIZE,
     PROP_MINIMUM_FONT_SIZE,
@@ -270,6 +273,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     case PROP_PICTOGRAPH_FONT_FAMILY:
         webkit_settings_set_pictograph_font_family(settings, g_value_get_string(value));
         break;
+    case PROP_MATH_FONT_FAMILY:
+        webkit_settings_set_math_font_family(settings, g_value_get_string(value));
+        break;
     case PROP_DEFAULT_FONT_SIZE:
         webkit_settings_set_default_font_size(settings, g_value_get_uint(value));
         break;
@@ -337,7 +343,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             webkit_settings_set_draw_compositing_indicators(settings, g_value_get_boolean(value));
         else {
             char* debugVisualsEnvironment = getenv("WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS");
+            IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
             bool showDebugVisuals = debugVisualsEnvironment && !strcmp(debugVisualsEnvironment, "1");
+            IGNORE_CLANG_WARNINGS_END
             webkit_settings_set_draw_compositing_indicators(settings, showDebugVisuals);
         }
         break;
@@ -490,6 +498,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         break;
     case PROP_PICTOGRAPH_FONT_FAMILY:
         g_value_set_string(value, webkit_settings_get_pictograph_font_family(settings));
+        break;
+    case PROP_MATH_FONT_FAMILY:
+        g_value_set_string(value, webkit_settings_get_math_font_family(settings));
         break;
     case PROP_DEFAULT_FONT_SIZE:
         g_value_set_uint(value, webkit_settings_get_default_font_size(settings));
@@ -925,6 +936,21 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             _("Pictograph font family"),
             _("The font family used as the default for content using pictograph font."),
             "serif",
+            readWriteConstructParamFlags);
+
+    /**
+     * WebKitSettings:math-font-family:
+     *
+     * The font family used as the default for content using a math font.
+     *
+     * Since: 2.52
+     */
+    sObjProperties[PROP_MATH_FONT_FAMILY] =
+        g_param_spec_string(
+            "math-font-family",
+            _("Math font family"),
+            _("The font family used as the default for content using math font."),
+            nullptr, // A null string falls back to the default math font list.
             readWriteConstructParamFlags);
 
     /**
@@ -2433,6 +2459,53 @@ void webkit_settings_set_pictograph_font_family(WebKitSettings* settings, const 
     priv->preferences->setPictographFontFamily(pictographFontFamilyString);
     priv->pictographFontFamily = pictographFontFamilyString.utf8();
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_PICTOGRAPH_FONT_FAMILY]);
+}
+
+/**
+ * webkit_settings_get_math_font_family:
+ * @settings: a #WebKitSettings
+ *
+ * Gets the #WebKitSettings:math-font-family property.
+ *
+ * Returns: (nullable): The default font family used to display content marked with math font.
+ *
+ * Since 2.52
+ */
+const gchar* webkit_settings_get_math_font_family(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), 0);
+
+    return settings->priv->mathFontFamily.data();
+}
+
+/**
+ * webkit_settings_set_math_font_family:
+ * @settings: a #WebKitSettings
+ * @math_font_family: (nullable): the new default math font family
+ *
+ * Set the #WebKitSettings:math-font-family property.
+ *
+ * Since 2.52
+ */
+void webkit_settings_set_math_font_family(WebKitSettings* settings, const gchar* mathFontFamily)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+    WebKitSettingsPrivate* priv = settings->priv;
+
+    if (!mathFontFamily) {
+        priv->preferences->deleteMathFontFamily();
+        priv->mathFontFamily = CString();
+        g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_MATH_FONT_FAMILY]);
+        return;
+    }
+
+    if (!g_strcmp0(priv->mathFontFamily.data(), mathFontFamily))
+        return;
+
+    auto mathFontFamilyString = String::fromUTF8(mathFontFamily);
+    priv->preferences->setMathFontFamily(mathFontFamilyString);
+    priv->mathFontFamily = mathFontFamilyString.utf8();
+    g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_MATH_FONT_FAMILY]);
 }
 
 /**

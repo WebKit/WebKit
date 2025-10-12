@@ -153,10 +153,8 @@ static const arg_def_t *main_args[] = { &limit_arg,
                                         &skip_non_transform_arg,
                                         &combined_arg,
                                         NULL };
-#define ENUM(name) \
-  { #name, name }
-#define LAST_ENUM \
-  { NULL, 0 }
+#define ENUM(name) { #name, name }
+#define LAST_ENUM { NULL, 0 }
 typedef struct map_entry {
   const char *name;
   int value;
@@ -624,7 +622,7 @@ static void inspect(void *pbi, void *data) {
   (void)data;
   // We allocate enough space and hope we don't write out of bounds. Totally
   // unsafe but this speeds things up, especially when compiled to Javascript.
-  char *buffer = aom_malloc(MAX_BUFFER);
+  char *buffer = malloc(MAX_BUFFER);
   if (!buffer) {
     fprintf(stderr, "Error allocating inspect info buffer\n");
     abort();
@@ -742,7 +740,7 @@ static void inspect(void *pbi, void *data) {
   buf += put_str(buf, "},\n");
   *(buf++) = 0;
   on_frame_decoded_dump(buffer);
-  aom_free(buffer);
+  free(buffer);
 }
 
 static void ifd_init_cb(void) {

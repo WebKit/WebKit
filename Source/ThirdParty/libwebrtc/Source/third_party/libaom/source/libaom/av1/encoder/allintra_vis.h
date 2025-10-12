@@ -33,14 +33,19 @@ void av1_calc_mb_wiener_var_row(AV1_COMP *const cpi, MACROBLOCK *x,
 
 void av1_set_mb_wiener_variance(AV1_COMP *cpi);
 
-int av1_get_sbq_perceptual_ai(AV1_COMP *const cpi, BLOCK_SIZE bsize, int mi_row,
-                              int mi_col);
+int av1_get_sbq_perceptual_ai(const AV1_COMP *const cpi, BLOCK_SIZE bsize,
+                              int mi_row, int mi_col);
 
 // User rating based mode
 void av1_init_mb_ur_var_buffer(AV1_COMP *cpi);
 
 void av1_set_mb_ur_variance(AV1_COMP *cpi);
 
-int av1_get_sbq_user_rating_based(AV1_COMP *const cpi, int mi_row, int mi_col);
+int av1_get_sbq_user_rating_based(const AV1_COMP *const cpi, int mi_row,
+                                  int mi_col);
+
+#if !CONFIG_REALTIME_ONLY
+int av1_get_sbq_variance_boost(const AV1_COMP *const cpi, const MACROBLOCK *x);
+#endif
 
 #endif  // AOM_AV1_ENCODER_ALLINTRA_VIS_H_

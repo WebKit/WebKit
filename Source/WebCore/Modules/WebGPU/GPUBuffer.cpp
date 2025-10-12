@@ -102,7 +102,7 @@ static auto makeArrayBuffer(Variant<std::span<const uint8_t>, size_t> source, si
     }), source);
 
     cachedArrayBuffers.append({ arrayBuffer.get(), offset });
-    cachedArrayBuffers.last().buffer->pin();
+    arrayBuffer->pin();
     if (device)
         device->addBufferToUnmap(buffer);
     return arrayBuffer;
@@ -194,8 +194,8 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(std::optional<GPUSi
 void GPUBuffer::unmap(ScriptExecutionContext& scriptExecutionContext)
 {
     internalUnmap(scriptExecutionContext);
-    if (m_device)
-        m_device->removeBufferToUnmap(*this);
+    if (RefPtr device = m_device.get())
+        device->removeBufferToUnmap(*this);
 }
 
 void GPUBuffer::internalUnmap(ScriptExecutionContext& scriptExecutionContext)

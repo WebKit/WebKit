@@ -61,7 +61,7 @@ static const double kRingBufferDuration = 1;
 class AudioSourceProviderAVFObjC::TapStorage : public ThreadSafeRefCounted<AudioSourceProviderAVFObjC::TapStorage> {
 public:
     TapStorage(AudioSourceProviderAVFObjC* _this) : _this(_this) { }
-    AudioSourceProviderAVFObjC* _this;
+    ThreadSafeWeakPtr<AudioSourceProviderAVFObjC> _this;
     Lock lock;
 };
 
@@ -273,8 +273,8 @@ void AudioSourceProviderAVFObjC::prepareCallback(MTAudioProcessingTapRef tap, CM
 
     Locker locker { tapStorage->lock };
 
-    if (tapStorage->_this)
-        tapStorage->_this->prepare(maxFrames, processingFormat);
+    if (RefPtr protectedThis = tapStorage->_this.get())
+        protectedThis->prepare(maxFrames, processingFormat);
 }
 
 void AudioSourceProviderAVFObjC::unprepareCallback(MTAudioProcessingTapRef tap)
@@ -284,8 +284,8 @@ void AudioSourceProviderAVFObjC::unprepareCallback(MTAudioProcessingTapRef tap)
 
     Locker locker { tapStorage->lock };
 
-    if (tapStorage->_this)
-        tapStorage->_this->unprepare();
+    if (RefPtr protectedThis = tapStorage->_this.get())
+        protectedThis->unprepare();
 }
 
 void AudioSourceProviderAVFObjC::processCallback(MTAudioProcessingTapRef tap, CMItemCount numberFrames, MTAudioProcessingTapFlags flags, AudioBufferList *bufferListInOut, CMItemCount *numberFramesOut, MTAudioProcessingTapFlags *flagsOut)
@@ -295,8 +295,8 @@ void AudioSourceProviderAVFObjC::processCallback(MTAudioProcessingTapRef tap, CM
 
     Locker locker { tapStorage->lock };
 
-    if (tapStorage->_this)
-        tapStorage->_this->process(tap, numberFrames, flags, bufferListInOut, numberFramesOut, flagsOut);
+    if (RefPtr protectedThis = tapStorage->_this.get())
+        protectedThis->process(tap, numberFrames, flags, bufferListInOut, numberFramesOut, flagsOut);
 }
 
 void AudioSourceProviderAVFObjC::prepare(CMItemCount maxFrames, const AudioStreamBasicDescription *processingFormat)

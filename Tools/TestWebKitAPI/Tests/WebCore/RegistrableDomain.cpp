@@ -52,6 +52,12 @@ TEST(RegistrableDomain, StringVsURL)
     auto fileDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString(emptyString());
     
     ASSERT_EQ(fileDomainFromURL, fileDomainFromString);
+
+    URL blobURL { "blob:http://example.com/ABCD"_str };
+    RegistrableDomain blobDomainFromURL { blobURL };
+    auto blobDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("example.com"_s);
+
+    ASSERT_EQ(blobDomainFromURL, blobDomainFromString);
 }
 
 TEST(RegistrableDomain, MatchesURLs)

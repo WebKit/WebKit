@@ -109,7 +109,7 @@ void CommandLineAPIHost::inspect(JSC::JSGlobalObject& lexicalGlobalObject, JSC::
 
 CommandLineAPIHost::EventListenersRecord CommandLineAPIHost::getEventListeners(JSGlobalObject& lexicalGlobalObject, EventTarget& target)
 {
-    auto* scriptExecutionContext = target.scriptExecutionContext();
+    RefPtr scriptExecutionContext = target.scriptExecutionContext();
     if (!scriptExecutionContext)
         return { };
 

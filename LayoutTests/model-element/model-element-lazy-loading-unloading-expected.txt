@@ -1,0 +1,8 @@
+
+PASS <model> main load/unload transitions
+PASS <model> jump back to deferred when quickly scrolled through
+PASS <model> invalid state if usdz does not exist
+PASS <model> invalid state for incorrect usdz file
+PASS <model> reload visible model after source change
+PASS <model> stage-mode orbit survives multiple unload-reload cycles
+

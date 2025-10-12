@@ -28,6 +28,7 @@
 
 #import "WKError.h"
 #import "WebCompiledContentRuleList.h"
+#import <WebCore/ContentExtensionParser.h>
 #import <WebCore/WebCoreObjCExtras.h>
 
 @implementation WKContentRuleList
@@ -74,7 +75,7 @@
 + (NSError *)_parseRuleList:(NSString *)ruleList
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    std::error_code error = API::ContentRuleList::parseRuleList(ruleList);
+    std::error_code error = API::ContentRuleList::parseRuleList(ruleList, WebCore::ContentExtensions::CSSSelectorsAllowed::Yes);
     if (!error)
         return nil;
 

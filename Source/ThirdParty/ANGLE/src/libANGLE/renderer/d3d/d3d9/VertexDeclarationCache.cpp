@@ -6,6 +6,10 @@
 
 // VertexDeclarationCache.cpp: Implements a helper class to construct and cache vertex declarations.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d9/VertexDeclarationCache.h"
 
 #include "libANGLE/Context.h"

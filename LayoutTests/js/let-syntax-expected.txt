@@ -404,7 +404,7 @@ PASS Does not have syntax error: 'var {let} = 40;'
 SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'let'.
 SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'let'.
 PASS Has syntax error: ''use strict'; var {let} = 40;'
-TypeError: undefined is not a function (near '...[let]...')
+TypeError: number is not iterable
 PASS Does not have syntax error: 'var [let] = 40;'
 SyntaxError: Cannot use 'let' as a variable name in strict mode.
 SyntaxError: Cannot use 'let' as a variable name in strict mode.

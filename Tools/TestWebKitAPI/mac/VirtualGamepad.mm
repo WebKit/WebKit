@@ -36,6 +36,7 @@
 #import <HID/HIDManager.h>
 #import <HID/HIDUserDevice.h>
 #import <IOKit/hid/IOHIDDeviceKeys.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 namespace TestWebKitAPI {
 
@@ -64,7 +65,7 @@ VirtualGamepad::VirtualGamepad(const GamepadMapping& gamepadMapping)
     [m_userDevice activate];
 
     m_device = adoptNS([[HIDDevice alloc] initWithService:m_userDevice.get().service]);
-    [m_device setDispatchQueue:dispatch_get_main_queue()];
+    [m_device setDispatchQueue:mainDispatchQueueSingleton()];
     [m_device open];
     [m_device activate];
 }

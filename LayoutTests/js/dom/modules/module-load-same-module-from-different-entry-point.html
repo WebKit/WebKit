@@ -23,15 +23,17 @@ function onLoad() {
 }
 </script>
 <script src="../../../resources/js-test-post.js"></script>
-<script type="module" onload="onLoad()">
+<script type="module">
 import "./resources/module-load-same-module-from-different-entry-point.js"
 debug('Executing the module.');
 window.firstModuleIsExecuted = true;
+onLoad();
 </script>
-<script type="module" onload="onLoad()">
+<script type="module">
 import "./resources/module-load-same-module-from-different-entry-point.js"
 debug('Executing the module.');
 window.secondModuleIsExecuted = true;
+onLoad();
 </script>
 </body>
 </html>

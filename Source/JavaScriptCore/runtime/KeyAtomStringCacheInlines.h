@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "Identifier.h"
-#include "KeyAtomStringCache.h"
-#include "SmallStrings.h"
-#include "VM.h"
+#include <JavaScriptCore/Identifier.h>
+#include <JavaScriptCore/KeyAtomStringCache.h>
+#include <JavaScriptCore/SmallStrings.h>
+#include <JavaScriptCore/VM.h>
 
 namespace JSC {
 

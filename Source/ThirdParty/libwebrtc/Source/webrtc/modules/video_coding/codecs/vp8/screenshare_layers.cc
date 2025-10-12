@@ -9,13 +9,22 @@
 
 #include "modules/video_coding/codecs/vp8/screenshare_layers.h"
 
-#include <stdlib.h>
-
 #include <algorithm>
+#include <cstdint>
+#include <cstdlib>
 #include <memory>
+#include <optional>
+#include <vector>
 
+#include "api/transport/rtp/dependency_descriptor.h"
+#include "api/video_codecs/video_encoder.h"
+#include "api/video_codecs/vp8_frame_buffer_controller.h"
+#include "api/video_codecs/vp8_frame_config.h"
+#include "api/video_codecs/vp8_temporal_layers.h"
+#include "common_video/generic_frame_descriptor/generic_frame_info.h"
+#include "modules/video_coding/codecs/interface/common_constants.h"
+#include "modules/video_coding/codecs/vp8/include/temporal_layers_checker.h"
 #include "modules/video_coding/include/video_codec_interface.h"
-#include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/time_utils.h"
@@ -118,7 +127,7 @@ Vp8FrameConfig ScreenshareLayers::NextFrameConfig(size_t stream_index,
     return dependency_info.frame_config;
   }
 
-  const int64_t now_ms = rtc::TimeMillis();
+  const int64_t now_ms = TimeMillis();
 
   int64_t unwrapped_timestamp = time_wrap_handler_.Unwrap(timestamp);
   int64_t ts_diff;
@@ -365,7 +374,7 @@ void ScreenshareLayers::OnEncodeDone(size_t stream_index,
       if (!is_keyframe && dependency_info->frame_config.References(
                               static_cast<Vp8FrameConfig::Buffer>(i))) {
         RTC_DCHECK_LT(vp8_info.referencedBuffersCount,
-                      arraysize(CodecSpecificInfoVP8::referencedBuffers));
+                      std::size(vp8_info.referencedBuffers));
         references = true;
         vp8_info.referencedBuffers[vp8_info.referencedBuffersCount++] = i;
       }
@@ -373,7 +382,7 @@ void ScreenshareLayers::OnEncodeDone(size_t stream_index,
       if (is_keyframe || dependency_info->frame_config.Updates(
                              static_cast<Vp8FrameConfig::Buffer>(i))) {
         RTC_DCHECK_LT(vp8_info.updatedBuffersCount,
-                      arraysize(CodecSpecificInfoVP8::updatedBuffers));
+                      std::size(vp8_info.updatedBuffers));
         updates = true;
         vp8_info.updatedBuffers[vp8_info.updatedBuffersCount++] = i;
       }
@@ -383,7 +392,7 @@ void ScreenshareLayers::OnEncodeDone(size_t stream_index,
     }
   }
 
-  encode_framerate_.Update(1, rtc::TimeMillis());
+  encode_framerate_.Update(1, TimeMillis());
 
   if (number_of_temporal_layers_ == 1)
     return;
@@ -410,18 +419,18 @@ void ScreenshareLayers::OnEncodeDone(size_t stream_index,
   }
 }
 
-void ScreenshareLayers::OnFrameDropped(size_t stream_index,
-                                       uint32_t rtp_timestamp) {
+void ScreenshareLayers::OnFrameDropped(size_t /* stream_index */,
+                                       uint32_t /* rtp_timestamp */) {
   layers_[active_layer_].state = TemporalLayer::State::kDropped;
   ++stats_.num_overshoots_;
 }
 
-void ScreenshareLayers::OnPacketLossRateUpdate(float packet_loss_rate) {}
+void ScreenshareLayers::OnPacketLossRateUpdate(float /* packet_loss_rate */) {}
 
-void ScreenshareLayers::OnRttUpdate(int64_t rtt_ms) {}
+void ScreenshareLayers::OnRttUpdate(int64_t /* rtt_ms */) {}
 
 void ScreenshareLayers::OnLossNotification(
-    const VideoEncoder::LossNotification& loss_notification) {}
+    const VideoEncoder::LossNotification& /* loss_notification */) {}
 
 FrameDependencyStructure ScreenshareLayers::GetTemplateStructure(
     int num_layers) const {
@@ -586,8 +595,8 @@ void ScreenshareLayers::UpdateHistograms() {
   if (stats_.first_frame_time_ms_ == -1)
     return;
   int64_t duration_sec =
-      (rtc::TimeMillis() - stats_.first_frame_time_ms_ + 500) / 1000;
-  if (duration_sec >= metrics::kMinRunTimeInSeconds) {
+      (TimeMillis() - stats_.first_frame_time_ms_ + 500) / 1000;
+  if (duration_sec >= metrics::kMinRunTime.seconds()) {
     RTC_HISTOGRAM_COUNTS_10000(
         "WebRTC.Video.Screenshare.Layer0.FrameRate",
         (stats_.num_tl0_frames_ + (duration_sec / 2)) / duration_sec);

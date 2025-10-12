@@ -31,8 +31,8 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "FidoConstants.h"
-#include "FidoHidPacket.h"
+#include <WebCore/FidoConstants.h>
+#include <WebCore/FidoHidPacket.h>
 #include <wtf/Deque.h>
 
 namespace fido {

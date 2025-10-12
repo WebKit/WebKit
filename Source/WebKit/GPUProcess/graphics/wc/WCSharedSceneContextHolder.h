@@ -44,7 +44,7 @@ public:
     WCSharedSceneContextHolder() = default;
 
     struct Holder : RefCounted<Holder> {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Holder);
         int64_t nativeWindow;
         // The following member is accessed in the OpenGL thread
         std::optional<WCSceneContext> context;

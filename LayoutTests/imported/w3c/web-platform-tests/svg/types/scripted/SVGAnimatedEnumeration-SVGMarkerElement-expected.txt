@@ -3,5 +3,5 @@ PASS Test SVGAnimatedEnumeration
 PASS Test SVGOrient
 PASS Test grad units
 PASS Test turn units
-FAIL Test auto-start-reverse Type error
+PASS Test auto-start-reverse
 

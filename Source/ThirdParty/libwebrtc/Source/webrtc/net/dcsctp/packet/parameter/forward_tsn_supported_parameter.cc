@@ -9,9 +9,9 @@
  */
 #include "net/dcsctp/packet/parameter/forward_tsn_supported_parameter.h"
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <optional>
+#include <string>
 #include <vector>
 
 #include "api/array_view.h"
@@ -27,7 +27,7 @@ namespace dcsctp {
 constexpr int ForwardTsnSupportedParameter::kType;
 
 std::optional<ForwardTsnSupportedParameter> ForwardTsnSupportedParameter::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   if (!ParseTLV(data).has_value()) {
     return std::nullopt;
   }

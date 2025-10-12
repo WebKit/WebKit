@@ -89,10 +89,11 @@ TEST(WKProcessPool, InitialWarmedProcessUsedForEphemeralSession)
     runInitialWarmedProcessUsedTest(ShouldUseEphemeralStore::Yes);
 }
 
-TEST(WKProcessPool, AutomaticProcessWarming)
+static void runAutomaticProcessWarmingTest(unsigned prewarmedProcessCountLimit)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
+    processPoolConfiguration.get().prewarmedProcessCountLimitForTesting = prewarmedProcessCountLimit;
     auto pool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     EXPECT_FALSE([pool _hasPrewarmedWebProcess]);
@@ -108,17 +109,37 @@ TEST(WKProcessPool, AutomaticProcessWarming)
     [webView1 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL]]];
     [webView1 _test_waitForDidFinishNavigation];
 
-    while (![pool _hasPrewarmedWebProcess])
-        TestWebKitAPI::Util::runFor(0.01_s);
-
-    EXPECT_TRUE([pool _hasPrewarmedWebProcess]);
-    EXPECT_EQ(2U, [pool _webPageContentProcessCount]);
+    RetainPtr<NSSet> prewarmedProcessIdentifiers;
+    TestWebKitAPI::Util::waitFor([&] {
+        prewarmedProcessIdentifiers = [pool _prewarmedProcessIdentifiersForTesting];
+        return [prewarmedProcessIdentifiers count] == prewarmedProcessCountLimit;
+    });
+    EXPECT_EQ(prewarmedProcessCountLimit, [prewarmedProcessIdentifiers count]);
+    EXPECT_EQ(1U + prewarmedProcessCountLimit, [pool _webPageContentProcessCount]);
 
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     [webView2 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL]]];
+    [webView2 _test_waitForDidFinishNavigation];
 
-    EXPECT_FALSE([pool _hasPrewarmedWebProcess]);
-    EXPECT_EQ(2U, [pool _webPageContentProcessCount]);
+    auto webView2ProcessIdentifier = [webView2 _webProcessIdentifier];
+    EXPECT_TRUE([prewarmedProcessIdentifiers containsObject:@(webView2ProcessIdentifier)]) << "Expected prewarmed process to be used.";
+
+    TestWebKitAPI::Util::waitFor([&] {
+        prewarmedProcessIdentifiers = [pool _prewarmedProcessIdentifiersForTesting];
+        return [prewarmedProcessIdentifiers count] == prewarmedProcessCountLimit;
+    });
+    EXPECT_EQ(prewarmedProcessCountLimit, [prewarmedProcessIdentifiers count]);
+    EXPECT_EQ(2U + prewarmedProcessCountLimit, [pool _webPageContentProcessCount]);
+}
+
+TEST(WKProcessPool, AutomaticProcessWarming)
+{
+    runAutomaticProcessWarmingTest(1);
+}
+
+TEST(WKProcessPool, AutomaticProcessWarmingWithMultipleProcesses)
+{
+    runAutomaticProcessWarmingTest(4);
 }
 
 TEST(WKProcessPool, PrewarmedProcessCrash)
@@ -132,17 +153,21 @@ TEST(WKProcessPool, PrewarmedProcessCrash)
     EXPECT_TRUE([pool _hasPrewarmedWebProcess]);
     EXPECT_EQ(1U, [pool _webPageContentProcessCount]);
 
-    // Wait for prewarmed process to finish launching.
-    while (![pool _prewarmedProcessIdentifier])
-        TestWebKitAPI::Util::runFor(0.01_s);
+    RetainPtr<NSSet> pids;
+    TestWebKitAPI::Util::waitFor([&] {
+        pids = [pool _prewarmedProcessIdentifiersForTesting];
+        return [pids count];
+    });
 
-    kill([pool _prewarmedProcessIdentifier], 9);
+    EXPECT_EQ(1U, [pids count]);
+    RetainPtr<NSNumber> pid = [pids anyObject];
+    kill([pid intValue], 9);
 
     while ([pool _hasPrewarmedWebProcess])
         TestWebKitAPI::Util::runFor(0.01_s);
 }
 
-TEST(WebKit, TryUsingPrewarmedProcessThatJustCrashed)
+TEST(WKProcessPool, TryUsingPrewarmedProcessThatJustCrashed)
 {
     auto pool = adoptNS([[WKProcessPool alloc] init]);
 
@@ -151,12 +176,15 @@ TEST(WebKit, TryUsingPrewarmedProcessThatJustCrashed)
     [pool _warmInitialProcess];
     EXPECT_TRUE([pool _hasPrewarmedWebProcess]);
 
-    // Wait for prewarmed process to finish launching.
-    while (![pool _prewarmedProcessIdentifier])
-        TestWebKitAPI::Util::runFor(0.01_s);
+    RetainPtr<NSSet> pids;
+    TestWebKitAPI::Util::waitFor([&] {
+        pids = [pool _prewarmedProcessIdentifiersForTesting];
+        return [pids count];
+    });
 
-    // Kill the prewarmed process.
-    kill([pool _prewarmedProcessIdentifier], 9);
+    EXPECT_EQ(1U, [pids count]);
+    RetainPtr<NSNumber> pid = [pids anyObject];
+    kill([pid intValue], 9);
 
     // Try using the prewarmed process right away.
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

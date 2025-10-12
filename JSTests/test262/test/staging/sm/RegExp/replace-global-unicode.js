@@ -2,17 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-RegExp-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  RegExp.prototype[@@replace] should not use optimized path if RegExp.prototype.unicode is modified.
+info: bugzilla.mozilla.org/show_bug.cgi?id=1287524
 esid: pending
 ---*/
-var BUGNUMBER = 1287524;
-var summary = 'RegExp.prototype[@@replace] should not use optimized path if RegExp.prototype.unicode is modified.';
-
-print(BUGNUMBER + ": " + summary);
 
 Object.defineProperty(RegExp.prototype, "unicode", {
   get() {
@@ -24,4 +18,3 @@ var rx = RegExp("a", "g");
 var s = "abba";
 var r = rx[Symbol.replace](s, "c");
 assert.sameValue(r, "abba");
-

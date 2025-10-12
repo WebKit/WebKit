@@ -35,6 +35,7 @@
 #import "WebCoreTextAttachment.h"
 #import <Foundation/Foundation.h>
 #import <pal/spi/cocoa/UIFoundationSPI.h>
+#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #if PLATFORM(MAC)
@@ -360,14 +361,14 @@ static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value, I
     }, [] (const TextAttachmentMissingImage& value) -> RetainPtr<id> {
         UNUSED_PARAM(value);
         RetainPtr<NSTextAttachment> attachment = adoptNS([[PlatformNSTextAttachment alloc] initWithData:nil ofType:nil]);
-        attachment.get().image = webCoreTextAttachmentMissingPlatformImage();
+        attachment.get().image = RetainPtr { webCoreTextAttachmentMissingPlatformImage() }.get();
         return attachment;
     }, [] (const TextAttachmentFileWrapper& value) -> RetainPtr<id> {
         RetainPtr<NSData> data = value.data ? bridge_cast((value.data).get()) : nil;
 
         RetainPtr fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data.get()]);
         if (!value.preferredFilename.isNull())
-            [fileWrapper setPreferredFilename:filenameByFixingIllegalCharacters(value.preferredFilename.createNSString().get())];
+            [fileWrapper setPreferredFilename:RetainPtr { filenameByFixingIllegalCharacters(value.preferredFilename.createNSString().get()) }.get()];
 
         auto textAttachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper.get()]);
         if (!value.accessibilityLabel.isNull())
@@ -382,8 +383,8 @@ static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value, I
         return value;
     }, [] (const RetainPtr<NSDate>& value) -> RetainPtr<id> {
         return value;
-    }, [] (const Ref<Font>& font) -> RetainPtr<id> {
-        return (__bridge PlatformFont *)(font->getCTFont());
+    }, [] (const AttributedString::FontWrapper& font) -> RetainPtr<id> {
+        return (__bridge PlatformFont *)font.font->ctFont();
     }, [] (const AttributedString::ColorFromPlatformColor& value) -> RetainPtr<id> {
         return cocoaColor(value.color);
     }, [] (const AttributedString::ColorFromCGColor& value) -> RetainPtr<id> {
@@ -443,8 +444,8 @@ static std::optional<AttributedString::AttributeValue> extractArray(NSArray *arr
         Vector<String> result;
         result.reserveInitialCapacity(arrayLength);
         for (id element in array) {
-            if (auto *string = dynamic_objc_cast<NSString>(element))
-                result.append(string);
+            if (RetainPtr string = dynamic_objc_cast<NSString>(element))
+                result.append(string.get());
             else
                 RELEASE_LOG_ERROR(Editing, "NSAttributedString extraction failed with array containing <%@>", NSStringFromClass([element class]));
         }
@@ -566,18 +567,18 @@ inline static ParagraphStyle extractParagraphStyle(NSParagraphStyle *style, Tabl
         if (![item isKindOfClass:PlatformNSTextTableBlock])
             return { };
 
-        auto tableBlock = static_cast<NSTextTableBlock *>(item);
-        if (!tableBlock.table)
+        RetainPtr tableBlock = static_cast<NSTextTableBlock *>(item);
+        if (![tableBlock table])
             return { };
 
-        auto tableBlockEnsureResult = tableBlockIDs.ensure(tableBlock, [&] {
+        auto tableBlockEnsureResult = tableBlockIDs.ensure(tableBlock.get(), [&] {
             return AttributedString::TextTableBlockID::generate();
         });
         auto tableBlockID = tableBlockEnsureResult.iterator->value;
 
         sentTextTableBlockIDs.append(tableBlockID);
 
-        auto nsTable = tableBlock.table;
+        auto nsTable = [tableBlock table];
         auto tableEnsureResults = tableIDs.ensure(nsTable, [&] {
             return AttributedString::TextTableID::generate();
         });
@@ -736,7 +737,7 @@ static std::optional<AttributedString::AttributeValue> extractValue(id value, Ta
         return { { textAttachment } };
     }
     if ([value isKindOfClass:PlatformFontClass])
-        return { { { Font::create(FontPlatformData((__bridge CTFontRef)value, [(PlatformFont *)value pointSize])) } } };
+        return { { AttributedString::FontWrapper { Font::create(FontPlatformData((__bridge CTFontRef)value, [(PlatformFont *)value pointSize])) } } };
     if ([value isKindOfClass:PlatformColorClass])
         return { { AttributedString::ColorFromPlatformColor { colorFromCocoaColor((PlatformColor *)value) } } };
     if (value) {
@@ -784,6 +785,61 @@ AttributedString AttributedString::fromNSAttributedStringAndDocumentAttributes(R
     if (dictionary)
         result.documentAttributes = extractDictionary(dictionary.get(), tableIDs, tableBlockIDs, listIDs);
     return { WTFMove(result) };
+}
+
+std::optional<AttributedString::FontWrapper> AttributedString::FontWrapper::createFromIPCData(const String& postScriptName, double pointSize, const CTFontDescriptorOptions& fontDescriptorOptions, const std::optional<WebCore::FontPlatformSerializedAttributes>& fontSerializedAttributes)
+{
+    RetainPtr font = [&] -> RetainPtr<CTFontRef> {
+        RetainPtr<CTFontDescriptorRef> fontDescriptor;
+        if (fontSerializedAttributes)
+            fontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributesAndOptions(fontSerializedAttributes->toCFDictionary().get(), fontDescriptorOptions));
+        else
+            fontDescriptor = adoptCF(CTFontDescriptorCreateWithNameAndSize(postScriptName.createCFString().get(), pointSize));
+
+        RetainPtr matched = adoptCF(CTFontDescriptorCreateMatchingFontDescriptorsWithOptions(fontDescriptor.get(), NULL, kCTFontDescriptorMatchingOptionIncludeHiddenFonts));
+        if (!matched || !CFArrayGetCount(matched.get()))
+            return { };
+
+        RetainPtr matchedDescriptor = dynamic_cf_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(matched.get(), 0));
+        RetainPtr matchedFont = adoptCF(CTFontCreateWithFontDescriptor(matchedDescriptor.get(), pointSize, NULL));
+
+        if (String(adoptCF(CTFontCopyPostScriptName(matchedFont.get())).get()) != postScriptName)
+            return { };
+
+        return matchedFont;
+    }();
+
+    if (!font)
+        font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, pointSize, nil));
+
+    return { { Font::create(FontPlatformData(font.get(), pointSize)) } };
+}
+
+String AttributedString::FontWrapper::postScriptName() const
+{
+    RetainPtr ctFont = font->ctFont();
+    return String(adoptCF(CTFontCopyPostScriptName(ctFont.get())).get());
+}
+
+double AttributedString::FontWrapper::pointSize() const
+{
+    RetainPtr ctFont = font->ctFont();
+    return CTFontGetSize(ctFont.get());
+}
+
+CTFontDescriptorOptions AttributedString::FontWrapper::fontDescriptorOptions() const
+{
+    RetainPtr ctFont = font->ctFont();
+    RetainPtr fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont.get()));
+    return CTFontDescriptorGetOptions(fontDescriptor.get());
+}
+
+std::optional<WebCore::FontPlatformSerializedAttributes> AttributedString::FontWrapper::fontSerializedAttributes() const
+{
+    RetainPtr ctFont = font->ctFont();
+    RetainPtr fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont.get()));
+    RetainPtr attributes = adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get()));
+    return FontPlatformSerializedAttributes::fromCF(attributes.get());
 }
 
 }

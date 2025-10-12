@@ -10,8 +10,13 @@
 
 #include "test/pc/e2e/analyzer_helper.h"
 
+#include <optional>
 #include <string>
 #include <utility>
+
+#include "absl/strings/string_view.h"
+#include "api/sequence_checker.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {

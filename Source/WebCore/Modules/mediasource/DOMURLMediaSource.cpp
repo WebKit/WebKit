@@ -34,6 +34,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "DOMURL.h"
+#include "Document.h"
 #include "MediaSource.h"
 #include <wtf/MainThread.h>
 

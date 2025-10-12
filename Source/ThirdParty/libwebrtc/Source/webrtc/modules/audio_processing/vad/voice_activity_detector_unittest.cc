@@ -11,19 +11,24 @@
 #include "modules/audio_processing/vad/voice_activity_detector.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
 #include <vector>
 
+#include "modules/audio_processing/vad/common.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 namespace {
 
-const int kStartTimeSec = 16;
-const float kMeanSpeechProbability = 0.3f;
-const float kMaxNoiseProbability = 0.1f;
-const size_t kNumChunks = 300u;
-const size_t kNumChunksPerIsacBlock = 3;
+constexpr int kStartTimeSec = 16;
+constexpr float kMeanSpeechProbability = 0.3f;
+constexpr float kMaxNoiseProbability = 0.1f;
+constexpr size_t kNumChunks = 300u;
+constexpr size_t kNumChunksPerIsacBlock = 3;
 
 void GenerateNoise(std::vector<int16_t>* data) {
   for (size_t i = 0; i < data->size(); ++i) {

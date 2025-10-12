@@ -66,6 +66,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/link-color-001.tentative-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/link-color-001.tentative-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/link-color-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/maction-click-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/maction-click-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/maction-click.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/required-extensions-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/required-extensions-2-ref.html

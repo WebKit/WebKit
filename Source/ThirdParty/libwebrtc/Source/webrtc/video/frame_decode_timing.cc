@@ -10,16 +10,19 @@
 
 #include "video/frame_decode_timing.h"
 
-#include <algorithm>
+#include <cstdint>
 #include <optional>
 
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "modules/video_coding/timing/timing.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
-FrameDecodeTiming::FrameDecodeTiming(Clock* clock,
-                                     webrtc::VCMTiming const* timing)
+FrameDecodeTiming::FrameDecodeTiming(Clock* clock, VCMTiming const* timing)
     : clock_(clock), timing_(timing) {
   RTC_DCHECK(clock_);
   RTC_DCHECK(timing_);

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Color.h"
-#include "RectEdges.h"
+#include <WebCore/Color.h>
+#include <WebCore/RectEdges.h>
 
 namespace WebCore {
 
@@ -58,6 +58,7 @@ public:
 
     WEBCORE_EXPORT bool hasFixedEdge(BoxSide) const;
     WEBCORE_EXPORT Color predominantColor(BoxSide) const;
+    WEBCORE_EXPORT BoxSideSet fixedEdges() const;
 
     bool operator==(const FixedContainerEdges&) const = default;
 };

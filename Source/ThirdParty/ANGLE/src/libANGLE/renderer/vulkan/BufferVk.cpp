@@ -7,6 +7,10 @@
 //    Implements the class methods for BufferVk.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/vulkan/BufferVk.h"
 
 #include "common/FixedVector.h"

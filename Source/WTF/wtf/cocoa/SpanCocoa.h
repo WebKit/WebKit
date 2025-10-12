@@ -27,6 +27,7 @@
 
 #import <dispatch/dispatch.h>
 #import <span>
+#import <wtf/RetainPtr.h>
 
 namespace WTF {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,7 +66,7 @@ private:
     void doUnapply() override
     {
         if (!m_hasBeenUndone) {
-            protectedDocument()->protectedEditor()->unappliedSpellCorrection(startingSelection(), m_corrected, m_correction);
+            document().protectedEditor()->unappliedSpellCorrection(startingSelection(), m_corrected, m_correction);
             m_hasBeenUndone = true;
         }
         
@@ -109,7 +109,7 @@ void SpellingCorrectionCommand::doApply()
     if (!m_corrected.length())
         return;
 
-    Ref document = protectedDocument();
+    Ref document = this->document();
     if (!document->selection().shouldChangeSelection(m_selectionToBeCorrected))
         return;
 

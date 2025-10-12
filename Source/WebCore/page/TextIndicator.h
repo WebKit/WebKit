@@ -25,8 +25,9 @@
 
 #pragma once
 
-#include "FloatRect.h"
-#include "Image.h"
+#include <WebCore/FloatRect.h>
+#include <WebCore/Image.h>
+#include <WebCore/PlatformLayerIdentifier.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Seconds.h>
@@ -140,6 +141,7 @@ struct TextIndicatorData {
     Color estimatedBackgroundColor;
     TextIndicatorPresentationTransition presentationTransition { TextIndicatorPresentationTransition::None };
     OptionSet<TextIndicatorOption> options;
+    std::optional<WebCore::PlatformLayerIdentifier> enclosingGraphicsLayerID;
 };
 
 class TextIndicator : public RefCounted<TextIndicator> {
@@ -162,6 +164,7 @@ public:
     const Vector<FloatRect>& textRectsInBoundingRectCoordinates() const { return m_data.textRectsInBoundingRectCoordinates; }
     float contentImageScaleFactor() const { return m_data.contentImageScaleFactor; }
     Image* contentImageWithHighlight() const { return m_data.contentImageWithHighlight.get(); }
+    Image* contentImageWithoutSelection() const { return m_data.contentImageWithoutSelection.get(); }
     Image* contentImage() const { return m_data.contentImage.get(); }
     RefPtr<Image> protectedContentImage() const { return contentImage(); }
 
@@ -170,6 +173,9 @@ public:
 
     WEBCORE_EXPORT bool wantsBounce() const;
     WEBCORE_EXPORT bool wantsManualAnimation() const;
+
+    Color estimatedBackgroundColor() const { return m_data.estimatedBackgroundColor; }
+    OptionSet<TextIndicatorOption> options() const { return m_data.options; }
 
     TextIndicatorData data() const { return m_data; }
 

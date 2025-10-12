@@ -1,6 +1,6 @@
 
 PASS animation.overallProgress reflects the progress of a scroll animation as a number between 0 and 1
-PASS animation.overallProgress reflects the overall progress of a scroll animation with multiple iterations.
-PASS animation.overallProgress reflects the overall progress of a scroll animation that uses a view-timeline.
-PASS overallProgresss of a view-timeline is bounded between 0 and 1.
+PASS animation.overallProgress reflects the overall progress of a scroll with multiple iterations.
+PASS animation.overallProgress reflects the overall progress of a scroll that uses a view-timeline.
+PASS overallProgress of a view-timeline is bounded between 0 and 1.
 

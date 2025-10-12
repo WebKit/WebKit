@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: Unable to expand the option list to length 4294967295 items. The maximum number of items allowed is 100000.
-CONSOLE MESSAGE: Unable to expand the option list to length 100001 items. The maximum number of items allowed is 100000.
-CONSOLE MESSAGE: Unable to expand the option list to length 4294967295 items. The maximum number of items allowed is 100000.
 
 
 PASS select options.length too large

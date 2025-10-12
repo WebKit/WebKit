@@ -22,10 +22,10 @@
 
 #pragma once
 
-#include "FloatingObjects.h"
-#include "LegacyLineLayout.h"
-#include "LineWidth.h"
-#include "RenderBlock.h"
+#include <WebCore/FloatingObjects.h>
+#include <WebCore/LegacyLineLayout.h>
+#include <WebCore/LineWidth.h>
+#include <WebCore/RenderBlock.h>
 #include <memory>
 #include <wtf/TZoneMalloc.h>
 
@@ -278,14 +278,13 @@ public:
     virtual bool requiresColumns(int) const;
 
     bool containsFloats() const override { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }
-    bool containsFloat(RenderBox&) const;
+    bool containsFloat(const RenderBox&) const;
     bool subtreeContainsFloats() const;
-    bool subtreeContainsFloat(RenderBox&) const;
+    bool subtreeContainsFloat(const RenderBox&) const;
 
-    void deleteLines() override;
     void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false) override;
     Position positionForPoint(const LayoutPoint&, HitTestSource) override;
-    VisiblePosition positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
+    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
     LayoutUnit lowestFloatLogicalBottom(FloatingObject::Type = FloatingObject::FloatLeftRight) const;
 
@@ -349,11 +348,11 @@ public:
     bool hasLines() const;
 
     enum InvalidationReason : uint8_t {
-        StyleChange,
-        InsertionOrRemoval, // renderer gets constructed/goes away
+        InternalMove,       // (anon) block is moved or collapsed
+        InsertionOrRemoval, // child renderer gets constructed/goes away
         ContentChange       // existing renderer gets changed (text content only atm)
     };
-    void invalidateLineLayoutPath(InvalidationReason);
+    void invalidateLineLayout(InvalidationReason);
     void computeAndSetLineLayoutPath();
 
     enum LineLayoutPath { UndeterminedPath = 0, InlinePath, SvgTextPath };
@@ -449,7 +448,6 @@ protected:
 
     std::optional<LayoutUnit> firstLineBaseline() const override;
     std::optional<LayoutUnit> lastLineBaseline() const override;
-    std::optional<LayoutUnit> inlineBlockBaseline(LineDirectionMode) const override;
 
     void setComputedColumnCountAndWidth(int, LayoutUnit);
 
@@ -464,7 +462,6 @@ protected:
     // Called to lay out the legend for a fieldset or the ruby text of a ruby run. Also used by multi-column layout to handle
     // the flow thread child.
     void layoutExcludedChildren(RelayoutChildren) override;
-    void addOverflowFromFloats();
 
 private:
     bool recomputeLogicalWidthAndColumnWidth();
@@ -502,7 +499,7 @@ private:
     bool hasOverhangingFloat(RenderBox&);
     void addIntrudingFloats(RenderBlockFlow* prev, RenderBlockFlow* container, LayoutUnit xoffset, LayoutUnit yoffset);
     inline bool hasOverhangingFloats() const;
-    LayoutUnit getClearDelta(RenderBox& child, LayoutUnit yPos);
+    LayoutUnit computedClearDeltaForChild(RenderBox& child, LayoutUnit yPos);
 
     void determineLogicalLeftPositionForChild(RenderBox& child, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
     
@@ -514,10 +511,9 @@ private:
     GapRects inlineSelectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
         LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo*) override;
     
-    VisiblePosition positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents, HitTestSource) override;
+    PositionWithAffinity positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents, HitTestSource) override;
     void addFocusRingRectsForInlineChildren(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*) const override;
 
-private:
     bool hasSvgTextLayout() const;
 
     bool hasInlineLayout() const;
@@ -532,6 +528,8 @@ private:
     void setTextBoxTrimForSubtree(const RenderBlockFlow* inlineFormattingContextRootForTextBoxTrimEnd = nullptr);
     void adjustTextBoxTrimAfterLayout();
     std::pair<float, float> inlineContentTopAndBottomIncludingInkOverflow() const;
+
+    void dirtyForLayoutFromPercentageHeightDescendants();
 
 #if ENABLE(TEXT_AUTOSIZING)
     int m_widthForTextAutosizing;

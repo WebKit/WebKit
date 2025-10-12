@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
 <!DOCTYPE html>
 <title>Digital Credential tests.</title>
 <link rel="help" href="https://wicg.github.io/digital-credentials/" />
@@ -231,4 +232,24 @@
       );
     }
   }, "Mediation is required to get a DigitalCredential.");
+
+promise_test(async t => {
+  const throwingValues = [
+    BigInt(123),
+    (() => { const o = {}; o.self = o; return o; })(),
+    Symbol("foo")
+  ];
+
+  for (const badValue of throwingValues) {
+    const options = makeGetOptions("openid4vp");
+    options.digital.requests[0].data = badValue;
+
+    await promise_rejects_js(
+      t,
+      TypeError,
+      navigator.credentials.get(options),
+      `Should throw for: ${String(badValue)}`
+    );
+  }
+}, "Throws TypeError when request data is not JSON stringifiable.");
 </script>

@@ -45,11 +45,6 @@ const AtomString& UserMessageHandlerDescriptor::name() const
     return m_name;
 }
 
-DOMWrapperWorld& UserMessageHandlerDescriptor::world()
-{
-    return m_world.get();
-}
-
 const DOMWrapperWorld& UserMessageHandlerDescriptor::world() const
 {
     return m_world.get();

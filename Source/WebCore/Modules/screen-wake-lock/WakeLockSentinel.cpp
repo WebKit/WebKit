@@ -26,7 +26,9 @@
 #include "config.h"
 #include "WakeLockSentinel.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
 #include "Exception.h"
@@ -70,6 +72,11 @@ void WakeLockSentinel::release(WakeLockManager& manager)
 bool WakeLockSentinel::virtualHasPendingActivity() const
 {
     return m_hasReleaseEventListener && !m_wasReleased;
+}
+
+ScriptExecutionContext* WakeLockSentinel::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 void WakeLockSentinel::eventListenersDidChange()

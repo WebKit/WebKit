@@ -1,0 +1,119 @@
+<!DOCTYPE html><!-- webkit-test-runner [ OptInPartitionedCookiesEnabled=true ] -->
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
+    <script src="resources/resetCookies.js"></script>
+</head>
+<body>
+    <script>
+        description("Tests the first-party-only cookie policy when third-party cookie blocking is enabled.");
+        jsTestIsAsync = true;
+
+        const iframeUrls = {
+            echoCookies : "http://localhost:8000/cookies/resources/echo-cookies.py",
+            resetCookies : "http://localhost:8000/cookies/resources/reset-cookies.html",
+            setCookie : "http://localhost:8000/cookies/resources/set-cookie-and-serve.py?cookie-name=test_cookie2&cookie-value=1234"
+        };
+
+        function injectThirdPartyIframe(url) {
+            let iframeElement = document.createElement("iframe");
+            iframeElement.src = url;
+            iframeElement.onload = runNextTestOrFinish;
+            document.body.appendChild(iframeElement);
+        }
+
+        function setCookieInRedirect(hashValue) {
+            document.location.href = "http://localhost:8000/cookies/resources/set-cookie-and-redirect-back.py?redirectBackTo=http://127.0.0.1:8000/resourceLoadStatistics/only-accept-first-party-cookies-with-third-party-cookie-blocking.html#" + hashValue;
+        }
+
+        function runNextTestOrFinish() {
+            if (!window.testRunner) {
+                testFailed("No testRunner.");
+                finishJSTest();
+            }
+
+            switch (document.location.hash) {
+                case "":
+                    testRunner.dumpChildFramesAsText();
+                    document.location.hash = "1";
+                    injectThirdPartyIframe(iframeUrls.resetCookies);
+                    break;
+                case "#1":
+                    setCookieInRedirect(2);
+                    break;
+                case "#2":
+                    document.location.hash = "3";
+                    // Should see one cookie.
+                    injectThirdPartyIframe(iframeUrls.echoCookies);
+                    break;
+                case "#3":
+                    document.location.hash = "4";
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(true, runNextTestOrFinish, false, true);
+                    break;
+                case "#4":
+                    document.location.hash = "5";
+                    // Should not see any cookies.
+                    injectThirdPartyIframe(iframeUrls.echoCookies);
+                    break;
+                case "#5":
+                    document.location.hash = "6";
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(false, runNextTestOrFinish, false, true);
+                    break;
+                case "#6":
+                    document.location.hash = "7";
+                    // Should see one cookie.
+                    injectThirdPartyIframe(iframeUrls.echoCookies);
+                    break;
+                case "#7":
+                    document.location.hash = "8";
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(true, runNextTestOrFinish, false, true);
+                    break;
+                case "#8":
+                    document.location.hash = "9";
+                    injectThirdPartyIframe(iframeUrls.setCookie);
+                    break;
+                case "#9":
+                    document.location.hash = "10";
+                    // Should not see any cookies.
+                    injectThirdPartyIframe(iframeUrls.echoCookies);
+                    break;
+                case "#10":
+                    document.location.hash = "11";
+                    // Should see one cookie.
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(false, runNextTestOrFinish, false, true);
+                    break;
+                case "#11":
+                    document.location.hash = "12";
+                    // Should see one cookie.
+                    injectThirdPartyIframe(iframeUrls.echoCookies);
+                    break;
+                case "#12":
+                    document.location.hash = "13";
+                    injectThirdPartyIframe(iframeUrls.resetCookies);
+                    break;
+                case "#13":
+                    setEnableFeature(false, function() {
+                        finishJSTest();
+                    });
+                    break;
+                default:
+                    testFailed("Unknown location hash value.");
+                    setEnableFeature(false, function() {
+                        finishJSTest();
+                    });
+            }
+        }
+
+        if (document.location.hash == "" && window.testRunner && window.internals) {
+            setEnableFeature(true, function() {
+                testRunner.dumpAsText();
+                runNextTestOrFinish();
+            });
+        } else {
+            runNextTestOrFinish();
+        }
+    </script>
+</body>
+</html>

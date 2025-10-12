@@ -350,7 +350,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (!makeDataVault())
             return false;
     } else {
-        WTFLogAlways("%s: Sandbox directory couldn't be created: ", getprogname(), safeStrerror(errno).data());
+        WTFLogAlways("%s: Sandbox directory couldn't be created: %s", getprogname(), safeStrerror(errno).data());
         return false;
     }
 #else
@@ -415,9 +415,7 @@ static SandboxProfilePtr compileAndCacheSandboxProfile(const SandboxInfo& info)
         CachedSandboxVersionNumber,
         static_cast<uint32_t>(libsandboxVersion),
         safeCast<uint32_t>(info.header.length()),
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        haveBuiltin ? safeCast<uint32_t>(strlen(sandboxProfile->builtin)) : std::numeric_limits<uint32_t>::max(),
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        haveBuiltin ? safeCast<uint32_t>(unsafeSpan(sandboxProfile->builtin).size()) : std::numeric_limits<uint32_t>::max(),
         safeCast<uint32_t>(sandboxProfile->size),
         { 0 },
         { 0 }
@@ -551,11 +549,12 @@ static bool compileAndApplySandboxSlowCase(const String& profileOrProfilePath, b
     uint64_t flags = isProfilePath ? SANDBOX_NAMED_EXTERNAL : 0;
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (sandbox_init_with_parameters(temp.data(), flags, parameters.namedParameterVector().data(), &errorBuf)) {
+    if (sandbox_init_with_parameters(temp.data(), flags, parameters.namedParameterVector().span().data(), &errorBuf)) {
 ALLOW_DEPRECATED_DECLARATIONS_END
         WTFLogAlways("%s: Could not initialize sandbox profile [%s], error '%s'\n", getprogname(), temp.data(), errorBuf);
-        for (size_t i = 0, count = parameters.count(); i != count; ++i)
-            WTFLogAlways("%s=%s\n", parameters.name(i), parameters.value(i));
+        for (size_t i = 0, count = parameters.count(); i != count; ++i) {
+            WTFLogAlways("%s=%s\n", parameters.name(i).characters(), parameters.value(i));
+        }
         return false;
     }
     return true;

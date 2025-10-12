@@ -56,7 +56,6 @@ enum class NodeKind : uint8_t {
 
     // Expression
     BinaryExpression,
-    BitcastExpression,
     CallExpression,
     FieldAccessExpression,
     IdentifierExpression,
@@ -96,7 +95,6 @@ enum class NodeKind : uint8_t {
     LoopStatement,
     PhonyAssignmentStatement,
     ReturnStatement,
-    StaticAssertStatement,
     SwitchStatement,
     VariableStatement,
     WhileStatement,

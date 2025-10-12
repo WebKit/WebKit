@@ -19,7 +19,7 @@ namespace webrtc {
 
 template <typename Range>
 std::string StrJoin(const Range& seq, absl::string_view delimiter) {
-  rtc::StringBuilder sb;
+  StringBuilder sb;
   int idx = 0;
 
   for (const typename Range::value_type& elem : seq) {
@@ -37,7 +37,7 @@ template <typename Range, typename Functor>
 std::string StrJoin(const Range& seq,
                     absl::string_view delimiter,
                     const Functor& fn) {
-  rtc::StringBuilder sb;
+  StringBuilder sb;
   int idx = 0;
 
   for (const typename Range::value_type& elem : seq) {

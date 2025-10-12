@@ -10,9 +10,7 @@
 
 #include "logging/rtc_event_log/events/rtc_event_neteq_set_minimum_delay.h"
 
-#include <stdint.h>
-
-
+#include <cstdint>
 
 namespace webrtc {
 

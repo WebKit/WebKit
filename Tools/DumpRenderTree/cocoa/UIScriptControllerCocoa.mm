@@ -31,6 +31,7 @@
 #import "DumpRenderTree.h"
 #import "UIScriptContext.h"
 #import <WebKit/WebViewPrivate.h>
+#import <wtf/WorkQueue.h>
 
 namespace WTR {
 
@@ -47,6 +48,17 @@ void UIScriptControllerCocoa::setContinuousSpellCheckingEnabled(bool enabled)
 void UIScriptControllerCocoa::paste()
 {
     [mainFrame.webView paste:nil];
+}
+
+void UIScriptControllerCocoa::doAsyncTask(JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    WorkQueue::mainSingleton().dispatch([this, protectedThis = Ref { *this }, callbackID] {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    });
 }
 
 } // namespace WTR

@@ -10,12 +10,16 @@
 
 #include "modules/video_coding/timing/timing.h"
 
+#include <cstdint>
+
+#include "api/field_trials.h"
 #include "api/units/frequency.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "system_wrappers/include/clock.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-#include "test/scoped_key_value_config.h"
 
 namespace webrtc {
 namespace {
@@ -78,7 +82,7 @@ MATCHER(HasConsistentVideoDelayTimings, "") {
 }  // namespace
 
 TEST(VCMTimingTest, JitterDelay) {
-  test::ScopedKeyValueConfig field_trials;
+  FieldTrials field_trials = CreateTestFieldTrials();
   SimulatedClock clock(0);
   VCMTiming timing(&clock, field_trials);
   timing.Reset();
@@ -174,7 +178,7 @@ TEST(VCMTimingTest, JitterDelay) {
 
 TEST(VCMTimingTest, TimestampWrapAround) {
   constexpr auto kStartTime = Timestamp::Millis(1337);
-  test::ScopedKeyValueConfig field_trials;
+  FieldTrials field_trials = CreateTestFieldTrials();
   SimulatedClock clock(kStartTime);
   VCMTiming timing(&clock, field_trials);
 
@@ -196,27 +200,26 @@ TEST(VCMTimingTest, TimestampWrapAround) {
 }
 
 TEST(VCMTimingTest, UseLowLatencyRenderer) {
-  test::ScopedKeyValueConfig field_trials;
+  FieldTrials field_trials = CreateTestFieldTrials();
   SimulatedClock clock(0);
   VCMTiming timing(&clock, field_trials);
   timing.Reset();
   // Default is false.
   EXPECT_FALSE(timing.RenderParameters().use_low_latency_rendering);
   // False if min playout delay > 0.
-  timing.set_min_playout_delay(TimeDelta::Millis(10));
-  timing.set_max_playout_delay(TimeDelta::Millis(20));
+  timing.set_playout_delay({TimeDelta::Millis(10), TimeDelta::Millis(20)});
   EXPECT_FALSE(timing.RenderParameters().use_low_latency_rendering);
   // True if min==0, max > 0.
-  timing.set_min_playout_delay(TimeDelta::Zero());
+  timing.set_playout_delay({TimeDelta::Zero(), TimeDelta::Millis(20)});
   EXPECT_TRUE(timing.RenderParameters().use_low_latency_rendering);
   // True if min==max==0.
-  timing.set_max_playout_delay(TimeDelta::Zero());
+  timing.set_playout_delay({TimeDelta::Zero(), TimeDelta::Zero()});
   EXPECT_TRUE(timing.RenderParameters().use_low_latency_rendering);
   // True also for max playout delay==500 ms.
-  timing.set_max_playout_delay(TimeDelta::Millis(500));
+  timing.set_playout_delay({TimeDelta::Zero(), TimeDelta::Millis(500)});
   EXPECT_TRUE(timing.RenderParameters().use_low_latency_rendering);
   // False if max playout delay > 500 ms.
-  timing.set_max_playout_delay(TimeDelta::Millis(501));
+  timing.set_playout_delay({TimeDelta::Zero(), TimeDelta::Millis(501)});
   EXPECT_FALSE(timing.RenderParameters().use_low_latency_rendering);
 
   EXPECT_THAT(timing.GetTimings(), HasConsistentVideoDelayTimings());
@@ -229,10 +232,10 @@ TEST(VCMTimingTest, MaxWaitingTimeIsZeroForZeroRenderTime) {
   constexpr TimeDelta kTimeDelta = 1 / Frequency::Hertz(60);
   constexpr Timestamp kZeroRenderTime = Timestamp::Zero();
   SimulatedClock clock(kStartTimeUs);
-  test::ScopedKeyValueConfig field_trials;
+  FieldTrials field_trials = CreateTestFieldTrials();
   VCMTiming timing(&clock, field_trials);
   timing.Reset();
-  timing.set_max_playout_delay(TimeDelta::Zero());
+  timing.set_playout_delay({TimeDelta::Zero(), TimeDelta::Zero()});
   for (int i = 0; i < 10; ++i) {
     clock.AdvanceTime(kTimeDelta);
     Timestamp now = clock.CurrentTime();
@@ -264,8 +267,8 @@ TEST(VCMTimingTest, MaxWaitingTimeZeroDelayPacingExperiment) {
   // The minimum pacing is enabled by a field trial and active if the RTP
   // playout delay header extension is set to min==0.
   constexpr TimeDelta kMinPacing = TimeDelta::Millis(3);
-  test::ScopedKeyValueConfig field_trials(
-      "WebRTC-ZeroPlayoutDelay/min_pacing:3ms/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-ZeroPlayoutDelay/min_pacing:3ms/");
   constexpr int64_t kStartTimeUs = 3.15e13;  // About one year in us.
   constexpr TimeDelta kTimeDelta = 1 / Frequency::Hertz(60);
   constexpr auto kZeroRenderTime = Timestamp::Zero();
@@ -315,8 +318,8 @@ TEST(VCMTimingTest, MaxWaitingTimeZeroDelayPacingExperiment) {
 TEST(VCMTimingTest, DefaultMaxWaitingTimeUnaffectedByPacingExperiment) {
   // The minimum pacing is enabled by a field trial but should not have any
   // effect if render_time_ms is greater than 0;
-  test::ScopedKeyValueConfig field_trials(
-      "WebRTC-ZeroPlayoutDelay/min_pacing:3ms/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-ZeroPlayoutDelay/min_pacing:3ms/");
   constexpr int64_t kStartTimeUs = 3.15e13;  // About one year in us.
   const TimeDelta kTimeDelta = TimeDelta::Millis(1000.0 / 60.0);
   SimulatedClock clock(kStartTimeUs);
@@ -348,8 +351,8 @@ TEST(VCMTimingTest, MaxWaitingTimeReturnsZeroIfTooManyFramesQueuedIsTrue) {
   // The minimum pacing is enabled by a field trial and active if the RTP
   // playout delay header extension is set to min==0.
   constexpr TimeDelta kMinPacing = TimeDelta::Millis(3);
-  test::ScopedKeyValueConfig field_trials(
-      "WebRTC-ZeroPlayoutDelay/min_pacing:3ms/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-ZeroPlayoutDelay/min_pacing:3ms/");
   constexpr int64_t kStartTimeUs = 3.15e13;  // About one year in us.
   const TimeDelta kTimeDelta = TimeDelta::Millis(1000.0 / 60.0);
   constexpr auto kZeroRenderTime = Timestamp::Zero();
@@ -384,7 +387,7 @@ TEST(VCMTimingTest, MaxWaitingTimeReturnsZeroIfTooManyFramesQueuedIsTrue) {
 }
 
 TEST(VCMTimingTest, UpdateCurrentDelayCapsWhenOffByMicroseconds) {
-  test::ScopedKeyValueConfig field_trials;
+  FieldTrials field_trials = CreateTestFieldTrials();
   SimulatedClock clock(0);
   VCMTiming timing(&clock, field_trials);
   timing.Reset();
@@ -407,7 +410,7 @@ TEST(VCMTimingTest, UpdateCurrentDelayCapsWhenOffByMicroseconds) {
 }
 
 TEST(VCMTimingTest, GetTimings) {
-  test::ScopedKeyValueConfig field_trials;
+  FieldTrials field_trials = CreateTestFieldTrials();
   SimulatedClock clock(33);
   VCMTiming timing(&clock, field_trials);
   timing.Reset();
@@ -416,9 +419,8 @@ TEST(VCMTimingTest, GetTimings) {
   TimeDelta render_delay = TimeDelta::Millis(11);
   timing.set_render_delay(render_delay);
   TimeDelta min_playout_delay = TimeDelta::Millis(50);
-  timing.set_min_playout_delay(min_playout_delay);
   TimeDelta max_playout_delay = TimeDelta::Millis(500);
-  timing.set_max_playout_delay(max_playout_delay);
+  timing.set_playout_delay({min_playout_delay, max_playout_delay});
 
   // On complete.
   timing.IncomingTimestamp(3000, clock.CurrentTime());
@@ -447,6 +449,47 @@ TEST(VCMTimingTest, GetTimings) {
   EXPECT_EQ(timings.target_delay, minimum_delay);
   EXPECT_EQ(timings.current_delay, minimum_delay);
   EXPECT_THAT(timings, HasConsistentVideoDelayTimings());
+}
+
+TEST(VCMTimingTest, GetTimingsBeforeAndAfterValidRtpTimestamp) {
+  SimulatedClock clock(33);
+  FieldTrials field_trials = CreateTestFieldTrials();
+  VCMTiming timing(&clock, field_trials);
+
+  // Setup.
+  TimeDelta min_playout_delay = TimeDelta::Millis(50);
+  timing.set_playout_delay({min_playout_delay, TimeDelta::Millis(500)});
+
+  // On decodable frames before valid rtp timestamp.
+  constexpr int decodeable_frame_cnt = 10;
+  constexpr uint32_t any_time_elapsed = 17;
+  constexpr uint32_t rtp_ts_base = 3000;
+  constexpr uint32_t rtp_ts_delta_10fps = 9000;
+  constexpr uint32_t frame_ts_delta_10fps = 100;
+  uint32_t rtp_ts = rtp_ts_base;
+
+  for (int i = 0; i < decodeable_frame_cnt; i++) {
+    clock.AdvanceTimeMilliseconds(any_time_elapsed);
+    rtp_ts += rtp_ts_delta_10fps;
+
+    Timestamp render_time = timing.RenderTime(rtp_ts, clock.CurrentTime());
+    // Render time should be CurrentTime, because timing.IncomingTimestamp has
+    // not been called yet.
+    EXPECT_EQ(render_time, clock.CurrentTime());
+  }
+
+  // On frame complete, which one not 'metadata.delayed_by_retransmission'
+  Timestamp valid_frame_ts = clock.CurrentTime();
+  timing.IncomingTimestamp(rtp_ts, valid_frame_ts);
+
+  clock.AdvanceTimeMilliseconds(any_time_elapsed);
+  rtp_ts += rtp_ts_delta_10fps;
+
+  Timestamp render_time = timing.RenderTime(rtp_ts, clock.CurrentTime());
+  // Render time should be relative to the latest valid frame timestamp.
+  EXPECT_EQ(render_time, valid_frame_ts +
+                             TimeDelta::Millis(frame_ts_delta_10fps) +
+                             min_playout_delay);
 }
 
 }  // namespace webrtc

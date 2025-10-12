@@ -2,11 +2,11 @@
 PASS Document position-try-fallbacks matches @position-try in document scope
 PASS Document position-try-fallbacks does not match @position-try in #outer_host scope
 PASS Document position-try-fallbacks does not match @position-try in #inner_host scope
-FAIL Outer position-try-fallbacks matches @position-try in document scope assert_equals: expected 100 but got 999999
+PASS Outer position-try-fallbacks matches @position-try in document scope
 PASS Outer position-try-fallbacks matches @position-try in #outer_host scope
 PASS Outer position-try-fallbacks does not match @position-try in #inner_host scope
-FAIL Inner position-try-fallbacks matches @position-try in document scope assert_equals: expected 100 but got 999999
-FAIL Inner position-try-fallbacks matches @position-try in #outer_host scope assert_equals: expected 200 but got 999999
+PASS Inner position-try-fallbacks matches @position-try in document scope
+PASS Inner position-try-fallbacks matches @position-try in #outer_host scope
 PASS Inner position-try-fallbacks matches @position-try in #inner_host scope
 PASS @position-try from same scope as :host rule
 PASS @position-try from same scope as ::slotted() rule

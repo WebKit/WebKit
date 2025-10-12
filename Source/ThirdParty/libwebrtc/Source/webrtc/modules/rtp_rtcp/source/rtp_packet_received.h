@@ -14,13 +14,12 @@
 
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/ref_counted_base.h"
 #include "api/rtp_headers.h"
 #include "api/scoped_refptr.h"
+#include "api/transport/ecn_marking.h"
 #include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
-#include "rtc_base/network/ecn_marking.h"
 
 namespace webrtc {
 // Class to hold rtp packet with metadata for receiver side.
@@ -31,7 +30,7 @@ class RtpPacketReceived : public RtpPacket {
   RtpPacketReceived();
   explicit RtpPacketReceived(
       const ExtensionManager* extensions,
-      webrtc::Timestamp arrival_time = webrtc::Timestamp::MinusInfinity());
+      webrtc::Timestamp arrival_time = Timestamp::MinusInfinity());
   RtpPacketReceived(const RtpPacketReceived& packet);
   RtpPacketReceived(RtpPacketReceived&& packet);
 
@@ -51,8 +50,8 @@ class RtpPacketReceived : public RtpPacket {
 
   // Explicit Congestion Notification (ECN), RFC-3168, Section 5.
   // Used by L4S: https://www.rfc-editor.org/rfc/rfc9331.html
-  rtc::EcnMarking ecn() const { return ecn_; }
-  void set_ecn(rtc::EcnMarking ecn) { ecn_ = ecn; }
+  EcnMarking ecn() const { return ecn_; }
+  void set_ecn(EcnMarking ecn) { ecn_ = ecn; }
 
   // Flag if packet was recovered via RTX or FEC.
   bool recovered() const { return recovered_; }
@@ -65,19 +64,19 @@ class RtpPacketReceived : public RtpPacket {
 
   // An application can attach arbitrary data to an RTP packet using
   // `additional_data`. The additional data does not affect WebRTC processing.
-  rtc::scoped_refptr<rtc::RefCountedBase> additional_data() const {
+  scoped_refptr<RefCountedBase> additional_data() const {
     return additional_data_;
   }
-  void set_additional_data(rtc::scoped_refptr<rtc::RefCountedBase> data) {
+  void set_additional_data(scoped_refptr<RefCountedBase> data) {
     additional_data_ = std::move(data);
   }
 
  private:
   webrtc::Timestamp arrival_time_ = Timestamp::MinusInfinity();
-  rtc::EcnMarking ecn_ = rtc::EcnMarking::kNotEct;
+  EcnMarking ecn_ = EcnMarking::kNotEct;
   int payload_type_frequency_ = 0;
   bool recovered_ = false;
-  rtc::scoped_refptr<rtc::RefCountedBase> additional_data_;
+  scoped_refptr<RefCountedBase> additional_data_;
 };
 
 }  // namespace webrtc

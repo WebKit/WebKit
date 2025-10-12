@@ -1,3 +1,4 @@
 
 PASS Range in shadow should stay in the shadow after the host is removed
+PASS Range in shadow should stay in the shadow after the host parent is removed
 

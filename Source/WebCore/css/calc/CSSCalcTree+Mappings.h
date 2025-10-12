@@ -60,8 +60,6 @@ template<> struct ToCalculationMapping<Abs> { using type = Calculation::Abs; };
 template<> struct ToCalculationMapping<Sign> { using type = Calculation::Sign; };
 template<> struct ToCalculationMapping<Random> { using type = Calculation::Random; };
 template<> struct ToCalculationMapping<Progress> { using type = Calculation::Progress; };
-template<> struct ToCalculationMapping<MediaProgress> { using type = Calculation::Progress; };
-template<> struct ToCalculationMapping<ContainerProgress> { using type = Calculation::Progress; };
 
 template<typename> struct ToCalcMapping;
 template<> struct ToCalcMapping<Calculation::Sum> { using type = Sum; };

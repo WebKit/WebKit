@@ -1,4 +1,4 @@
-; Copyright (C) 2010-2024 Apple Inc. All rights reserved.
+; Copyright (C) 2010-2025 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -24,8 +24,20 @@
 #include "Shared/Sandbox/macOS/common.sb"
 #include "Shared/Sandbox/preferences.sb"
 
+
+(define (enhanced-security)
+    (require-any
+        (require-all
+            (require-not (require-entitlement "com.apple.security.cs.allow-jit"))
+            (require-not (require-entitlement "com.apple.private.verified-jit"))
+            (require-not (require-entitlement "com.apple.security.cs.single-jit"))))
+        (require-entitlement "com.apple.private.webkit.enhanced-security")
+    )
+
 (define (lockdown-mode)
-    (require-not (require-entitlement "com.apple.security.cs.allow-jit")))
+    (require-all
+        (require-not (require-entitlement "com.apple.security.cs.allow-jit"))
+        (require-not (enhanced-security))))
 
 #define FALSE #f
 
@@ -40,6 +52,8 @@
 #if USE(SANDBOX_VERSION_3)
 (allow dynamic-code-generation)
 (with-filter (lockdown-mode)
+    (deny dynamic-code-generation))
+(with-filter (enhanced-security)
     (deny dynamic-code-generation))
 
 (with-filter (mac-policy-name "Sandbox")
@@ -168,26 +182,9 @@
         (deny (with message "IOAccelerator")
             iokit-async-external-method
             iokit-external-method)
-        (allow iokit-async-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
-            (iokit-method-number 0 47 48)
-#endif
-        )
-        (allow iokit-external-method
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
-            (iokit-method-number 0 1 2 3 4 5 6 7 8 9 10 11 12 13 15 16 17 18 22 23 24 28 29 30 31 40 41 42 43 46 48 49 256 257 258 259 260 261 262 263 264 265 266 267 268 269 512 513)
-#endif
-        )
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
-        (if (equal? (param "CPU") "arm64")
-            (allow iokit-external-method
-                (iokit-method-number 43 44 45 46 47)))
-#endif
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 140000
-        (deny iokit-external-trap)
-#else
+        (allow iokit-async-external-method)
+        (allow iokit-external-method)
         (allow iokit-external-trap)
-#endif
     ))
 
 (define (IOSurfaceRootUserClientMessageFilter)
@@ -195,21 +192,9 @@
         (deny (with message "IOSurfaceRootUserClient")
             iokit-async-external-method
             iokit-external-method)
-        (allow iokit-async-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
-            (iokit-method-number 17 40)
-#endif
-        )
-        (allow iokit-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
-            (iokit-method-number 0 1 2 3 9 10 11 12 13 14 15 20 23 27 31 32 34 35 36 38 39 43 44)
-#endif
-        )
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
-        (deny iokit-external-trap)
-#else
+        (allow iokit-async-external-method)
+        (allow iokit-external-method)
         (allow iokit-external-trap)
-#endif
     ))
 
 (define (AppleAVDUserClientMessageFilter)
@@ -893,6 +878,10 @@
 
     (home-subpath "/Library/Dictionaries"))
 
+;; rdar://156748194
+(with-filter (require-not (state-flag "BlockUserInstalledFonts"))
+    (allow file-read* (home-regex #".+\.(otf|ttf|ttc)$")))
+
 (allow file-read-data
     (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
     ;; Needed for AES3 support
@@ -1350,12 +1339,12 @@
     (xpc-service-name "com.apple.audio.toolbox.reporting.service")
 )
 
-(deny mach-lookup
+(deny mach-lookup (with no-report)
     (global-name "com.apple.audio.SystemSoundServer-OSX")
     (global-name "com.apple.containermanagerd")
     (global-name "com.apple.cookied")
     (global-name "com.apple.coreservices.launchservicesd")
-)
+    (global-name "com.apple.linkd.autoShortcut"))
 
 (with-filter (system-attribute apple-internal)
     (allow mach-lookup
@@ -1506,6 +1495,7 @@
         SYS_lseek
         SYS_lstat64
         SYS_madvise
+        SYS_mincore
         SYS_mkdir
         SYS_mmap
         SYS_mprotect
@@ -1584,7 +1574,6 @@
     SYS_kqueue ;; See <rdar://problem/88241768>. Remove after <rdar://56634240> is resolved.
     SYS_kqueue_workloop_ctl ;; <rdar://problem/50999499>
     SYS_listxattr
-    SYS_mincore
     SYS_psynch_rw_unlock
     SYS_psynch_rw_wrlock
     SYS_sigprocmask
@@ -1614,7 +1603,7 @@
         SYS_munlock
         SYS_openat_nocancel
         SYS_proc_rlimit_control
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
+#if !PLATFORM(MAC)
         ;; FIXME: SYS_setsockopt can be removed when contentfiltering has moved to the Network process
         SYS_setsockopt ;; <rdar://90249455>
 #endif
@@ -1748,6 +1737,7 @@
     task_get_special_port_from_user
     task_info_from_user
     task_policy_set
+    task_restartable_ranges_register
     task_restartable_ranges_synchronize
     thread_get_state_to_user
     thread_resume
@@ -1805,12 +1795,11 @@
     (with-filter (lockdown-mode)
         (deny syscall-mig (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode)))
     (allow syscall-mig (kernel-mig-routines-in-use))
-    (with-filter (require-not (webcontent-process-launched))
 #if HAVE(MACH_RANGE_CREATE)
+    (with-filter (require-not (webcontent-process-launched))
         (when (defined? 'mach_vm_range_create)
-            (allow syscall-mig (kernel-mig-routine mach_vm_range_create)))
+            (allow syscall-mig (kernel-mig-routine mach_vm_range_create))))
 #endif
-        (allow syscall-mig (kernel-mig-routine task_restartable_ranges_register)))
     (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
         (allow syscall-mig (kernel-mig-routines-downlevels))
         (allow syscall-mig (kernel-mig-routines-iokit))
@@ -1896,7 +1885,7 @@
 
 (define (syscall-mach-downlevels) (machtrap-number
     MSC__kernelrpc_mach_port_get_attributes_trap
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000
+#if PLATFORM(MAC)
     MSC_iokit_user_client_trap
 #endif
     MSC_pid_for_task))
@@ -2039,13 +2028,13 @@
 
 (deny file-read* (with no-report)
     (home-literal "/Library/Preferences/com.apple.CFNetwork.plist")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000
+#if PLATFORM(MAC)
     (home-literal "/Library/Preferences/com.apple.networkd.plist")
     (literal "/Library/Preferences/com.apple.networkd.plist")
 #endif
 )
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
 (with-filter (webcontent-process-launched)
     (deny mach-task-special-port-get (with telemetry))
     (deny mach-task-special-port-set (with telemetry)))

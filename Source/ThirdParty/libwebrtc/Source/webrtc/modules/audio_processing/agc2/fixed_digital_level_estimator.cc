@@ -11,10 +11,14 @@
 #include "modules/audio_processing/agc2/fixed_digital_level_estimator.h"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
+#include <cstddef>
 
 #include "api/array_view.h"
 #include "api/audio/audio_frame.h"
+#include "api/audio/audio_view.h"
+#include "modules/audio_processing/agc2/agc2_common.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
 
@@ -113,8 +117,7 @@ std::array<float, kSubFramesInFrame> FixedDigitalLevelEstimator::ComputeLevel(
 void FixedDigitalLevelEstimator::SetSamplesPerChannel(
     size_t samples_per_channel) {
   samples_in_frame_ = static_cast<int>(samples_per_channel);
-  samples_in_sub_frame_ =
-      rtc::CheckedDivExact(samples_in_frame_, kSubFramesInFrame);
+  samples_in_sub_frame_ = CheckedDivExact(samples_in_frame_, kSubFramesInFrame);
   CheckParameterCombination();
 }
 

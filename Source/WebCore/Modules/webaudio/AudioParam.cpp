@@ -32,6 +32,7 @@
 #include "AudioNode.h"
 #include "AudioNodeOutput.h"
 #include "AudioUtilities.h"
+#include "ExceptionOr.h"
 #include "FloatConversion.h"
 #include "Logging.h"
 #include "VectorMath.h"

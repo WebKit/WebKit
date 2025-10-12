@@ -291,6 +291,9 @@ static void bindPulse(Vector<CString>& args)
     bindIfExists(args, pulseHomeConfigDir.get());
     bindIfExists(args, asoundHomeConfigDir.get());
 
+    // Pulseaudio service ran as system daemon, allows multi-user setups
+    bindIfExists(args, "/run/pulse", BindFlags::ReadWrite);
+
     // This is the ultimate fallback to raw ALSA
     bindIfExists(args, "/dev/snd", BindFlags::Device);
 }
@@ -420,10 +423,15 @@ static void bindGStreamerData(Vector<CString>& args)
         bindIfExists(args, parentDir.utf8().data(), BindFlags::ReadWrite);
     }
 
-    // /usr/lib is already added so this is only requried for other dirs
+    // /usr/lib is already added so this is only required for other dirs.
     const char* scannerPath = environmentVariableValue("GST_PLUGIN_SCANNER", "/usr/libexec/gstreamer-1.0/gst-plugin-scanner");
     const char* installPluginsHelperPath = environmentVariableValue("GST_INSTALL_PLUGINS_HELPER", "/usr/libexec/gstreamer-1.0/gst-install-plugins-helper");
     const char* ptpHelperPath = environmentVariableValue("GST_PTP_HELPER", "/usr/libexec/gstreamer-1.0/gst-ptp-helper");
+
+    // Workaround for UsrMerge systems, where /lib64 on host is a symlink and bwrap doesn't handle this.
+    // See also https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/2877#note_2042004
+    bindIfExists(args, "/lib64/../libexec/gstreamer-1.0/gst-plugin-scanner");
+    bindIfExists(args, "/lib64/../libexec/gstreamer-1.0/gst-ptp-helper");
 
     bindIfExists(args, scannerPath);
     bindIfExists(args, installPluginsHelperPath);

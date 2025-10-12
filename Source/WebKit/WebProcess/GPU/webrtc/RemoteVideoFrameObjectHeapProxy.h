@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,10 +50,8 @@ public:
     ~RemoteVideoFrameObjectHeapProxy() = default;
 
 #if PLATFORM(COCOA)
-    Ref<RemoteVideoFrameObjectHeapProxyProcessor> protectedProcessor() { return m_processor; }
-
-    void getVideoFrameBuffer(const RemoteVideoFrameProxy& proxy, bool canUseIOSurface, RemoteVideoFrameObjectHeapProxyProcessor::Callback&& callback) { protectedProcessor()->getVideoFrameBuffer(proxy, canUseIOSurface, WTFMove(callback)); }
-    RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame& frame) { return protectedProcessor()->getNativeImage(frame); }
+    void getVideoFrameBuffer(const RemoteVideoFrameProxy& proxy, bool canUseIOSurface, RemoteVideoFrameObjectHeapProxyProcessor::Callback&& callback) { m_processor->getVideoFrameBuffer(proxy, canUseIOSurface, WTFMove(callback)); }
+    RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame& frame) { return m_processor->getNativeImage(frame); }
 #endif
 
 private:
@@ -64,7 +62,7 @@ private:
     {
     }
 #if PLATFORM(COCOA)
-    Ref<RemoteVideoFrameObjectHeapProxyProcessor> m_processor;
+    const Ref<RemoteVideoFrameObjectHeapProxyProcessor> m_processor;
 #endif
 };
 

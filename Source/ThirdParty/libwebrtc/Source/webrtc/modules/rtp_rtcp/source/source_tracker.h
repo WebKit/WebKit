@@ -11,6 +11,7 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_SOURCE_TRACKER_H_
 #define MODULES_RTP_RTCP_SOURCE_SOURCE_TRACKER_H_
 
+#include <cstddef>
 #include <cstdint>
 #include <list>
 #include <optional>
@@ -18,11 +19,11 @@
 #include <utility>
 #include <vector>
 
+#include "api/rtp_headers.h"
 #include "api/rtp_packet_infos.h"
 #include "api/transport/rtp/rtp_source.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {

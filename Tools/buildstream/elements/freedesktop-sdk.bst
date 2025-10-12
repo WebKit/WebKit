@@ -13,7 +13,7 @@ sources:
 - kind: patch
   path: patches/fdo-0004-gst-plugins-ugly-Enable-x264-encoder.patch
 - kind: patch
-  path: patches/fdo-0005-GStreamer-Bump-to-1.26.2.patch
+  path: patches/fdo-0005-GStreamer-Bump-to-1.26.4.patch
 - kind: patch
   path: patches/fdo-0006-gst-plugins-bad-Enable-soundtouch.patch
 - kind: patch
@@ -30,3 +30,4 @@ config:
     components/dav1d.bst: sdk/dav1d.bst
     components/pango.bst: sdk/pango.bst
     components/noopenh264.bst: sdk/libopenh264.bst
+    components/ccache.bst: sdk/ccache.bst

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/Timer.h>
+#include <wtf/CanMakeWeakPtr.h>
 #include <wtf/Deque.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
@@ -34,7 +35,7 @@ namespace WebKit {
 
 class Download;
 
-class DownloadMonitor {
+class DownloadMonitor : public CanMakeWeakPtr<DownloadMonitor> {
     WTF_MAKE_TZONE_ALLOCATED(DownloadMonitor);
     WTF_MAKE_NONCOPYABLE(DownloadMonitor);
 public:

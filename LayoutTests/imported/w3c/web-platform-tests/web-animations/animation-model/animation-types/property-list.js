@@ -25,6 +25,12 @@ const gCSSProperties1 = {
       { type: 'discrete', options: [ [ 'flex-start', 'flex-end' ] ] }
     ]
   },
+  'anchor-name': {
+    // https://drafts.csswg.org/css-anchor-position-1/#name
+    types: [
+      { type: 'discrete', options: [ [ 'none', '--anchor' ] ] }
+    ]
+  },
   'anchor-scope': {
     // https://drafts.csswg.org/css-anchor-position-1/#anchor-scope
     types: [
@@ -439,6 +445,12 @@ const gCSSProperties1 = {
       { type: 'discrete', options: [ [ 'auto', 'balance' ] ] }
     ]
   },
+  'column-wrap': {
+    // https://drafts.csswg.org/css-multicol-2/#cwr
+    types: [
+      { type: 'discrete', options: [ [ 'nowrap', 'wrap' ] ] }
+    ]
+  },
   'column-rule-style': {
     // https://drafts.csswg.org/css-multicol/#propdef-column-rule-style
     types: [
@@ -456,6 +468,12 @@ const gCSSProperties1 = {
   },
   'column-width': {
     // https://drafts.csswg.org/css-multicol/#propdef-column-width
+    types: [ 'length',
+      { type: 'discrete', options: [ [ 'auto', '1px' ] ] }
+    ]
+  },
+  'column-height': {
+    // https://drafts.csswg.org/css-multicol-2/#ch
     types: [ 'length',
       { type: 'discrete', options: [ [ 'auto', '1px' ] ] }
     ]
@@ -848,7 +866,7 @@ const gCSSProperties2 = {
   },
   'letter-spacing': {
     // https://drafts.csswg.org/css-text-3/#propdef-letter-spacing
-    types: [ 'length' ]
+    types: [ 'lengthPercentageOrCalc' ]
   },
   'lighting-color': {
     // https://drafts.fxtf.org/filters/#LightingColorProperty
@@ -1267,10 +1285,28 @@ const gCSSProperties2 = {
       { type: 'discrete', options: [ [ 'absolute', 'fixed' ] ] }
     ]
   },
+  'position-anchor': {
+    // https://drafts.csswg.org/css-anchor-position-1/#position-anchor
+    types: [
+      { type: 'discrete', options: [ [ 'auto', '--anchor' ] ] }
+    ]
+  },
   'position-visibility': {
     // https://drafts.csswg.org/css-anchor-position-1/#position-visibility
     types: [
-      { type: 'discrete', options: [ [ 'always', 'anchors-visible' ] ] }
+      { type: 'discrete', options: [ [ 'always', 'anchors-valid' ] ] }
+    ]
+  },
+  'position-try-fallbacks': {
+    // https://drafts.csswg.org/css-anchor-position-1/#position-try-fallbacks
+    types: [
+      { type: 'discrete', options: [ [ 'none', 'flip-block' ] ] }
+    ]
+  },
+  'position-try-order': {
+    // https://drafts.csswg.org/css-anchor-position-1/#position-try-order-property
+    types: [
+      { type: 'discrete', options: [ [ 'normal', 'most-width' ] ] }
     ]
   },
   'quotes': {

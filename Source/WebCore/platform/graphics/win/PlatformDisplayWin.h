@@ -38,7 +38,7 @@ public:
     virtual ~PlatformDisplayWin() = default;
 
 private:
-    explicit PlatformDisplayWin(std::unique_ptr<GLDisplay>&&);
+    explicit PlatformDisplayWin(Ref<GLDisplay>&&);
 
     Type type() const override { return PlatformDisplay::Type::Windows; }
 };

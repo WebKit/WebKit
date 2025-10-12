@@ -55,7 +55,7 @@ Finished: 0.1 s
 
 """
 
-    results = {'url': 'https://trac.webkit.org/browser/trunk/PerformanceTests/Bindings/event-target-wrapper.html',
+    results = {'url': 'https://github.com/WebKit/WebKit/blob/main/PerformanceTests/Bindings/event-target-wrapper.html',
         'metrics': {'Time': {'current': [[1486.0, 1471.0, 1510.0, 1505.0, 1478.0, 1490.0]] * 4}}}
 
 
@@ -70,7 +70,7 @@ Finished: 0.1 s
 
 """
 
-    results = {'url': 'https://trac.webkit.org/browser/trunk/PerformanceTests/Parser/some-parser.html',
+    results = {'url': 'https://github.com/WebKit/WebKit/blob/main/PerformanceTests/Parser/some-parser.html',
         'metrics': {'Time': {'current': [[1080.0, 1120.0, 1095.0, 1101.0, 1104.0]] * 4}}}
 
 
@@ -112,18 +112,18 @@ median= 1101.0 ms, stdev= 13.31402 ms, min= 1080.0 ms, max= 1120.0 ms
 Finished: 0.1 s
 """
 
-    results = {'url': 'https://trac.webkit.org/browser/trunk/PerformanceTests/Parser/test-with-subtests.html',
+    results = {'url': 'https://github.com/WebKit/WebKit/blob/main/PerformanceTests/Parser/test-with-subtests.html',
         'metrics': {'Time': {'current': [[1080.0, 1120.0, 1095.0, 1101.0, 1104.0]] * 4}},
         'tests': {
             'subtest': {
-                'url': 'https://trac.webkit.org/browser/trunk/PerformanceTests/Parser/test-with-subtests.html',
+                'url': 'https://github.com/WebKit/WebKit/blob/main/PerformanceTests/Parser/test-with-subtests.html',
                 'metrics': {'Time': {'current': [[1.0, 2.0, 3.0, 4.0, 5.0]] * 4}}},
             'total-test': {
-                'url': 'https://trac.webkit.org/browser/trunk/PerformanceTests/Parser/test-with-subtests.html',
+                'url': 'https://github.com/WebKit/WebKit/blob/main/PerformanceTests/Parser/test-with-subtests.html',
                 'metrics': {'Time': {'current': [[1.0, 2.0, 3.0, 4.0, 5.0]] * 4, "aggregators": ["Total"]}},
                 'tests': {
                     'subsubtest':
-                        {'url': 'https://trac.webkit.org/browser/trunk/PerformanceTests/Parser/test-with-subtests.html',
+                        {'url': 'https://github.com/WebKit/WebKit/blob/main/PerformanceTests/Parser/test-with-subtests.html',
                         'metrics': {'Time': {'current': [[1.0, 2.0, 3.0, 4.0, 5.0]] * 4}}}}}}}
 
 
@@ -309,10 +309,10 @@ class MainTest(unittest.TestCase):
 
     _event_target_wrapper_and_inspector_results = {
         "Bindings":
-            {"url": "https://trac.webkit.org/browser/trunk/PerformanceTests/Bindings",
+            {"url": "https://github.com/WebKit/WebKit/blob/main/PerformanceTests/Bindings",
             "tests": {"event-target-wrapper": EventTargetWrapperTestData.results}},
         "Parser":
-            {"url": "https://trac.webkit.org/browser/trunk/PerformanceTests/Parser",
+            {"url": "https://github.com/WebKit/WebKit/blob/main/PerformanceTests/Parser",
             "tests": {"some-parser": SomeParserTestData.results}}}
 
     def test_run_with_json_output(self):
@@ -508,10 +508,10 @@ class MainTest(unittest.TestCase):
         self.assertEqual(output['revisions'], {'WebKit': {'revision': '5678', 'timestamp': '2013-02-01 08:48:05 +0000'}})
         self.assertEqual(list(output['tests'].keys()), ['Bindings', 'Parser'])
         self.assertEqual(sorted(output['tests']['Bindings'].keys()), ['tests', 'url'])
-        self.assertEqual(output['tests']['Bindings']['url'], 'https://trac.webkit.org/browser/trunk/PerformanceTests/Bindings')
+        self.assertEqual(output['tests']['Bindings']['url'], 'https://github.com/WebKit/WebKit/blob/main/PerformanceTests/Bindings')
         self.assertEqual(list(output['tests']['Bindings']['tests'].keys()), ['event-target-wrapper'])
         self.assertEqual(output['tests']['Bindings']['tests']['event-target-wrapper'], {
-            'url': 'https://trac.webkit.org/browser/trunk/PerformanceTests/Bindings/event-target-wrapper.html',
+            'url': 'https://github.com/WebKit/WebKit/blob/main/PerformanceTests/Bindings/event-target-wrapper.html',
             'metrics': {'Time': {'current': [[1486.0, 1471.0, 1510.0, 1505.0, 1478.0, 1490.0]] * 4}}})
 
     def test_run_with_repeat(self):

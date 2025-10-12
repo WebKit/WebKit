@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "AbstractRange.h"
-#include "RangeBoundaryPoint.h"
+#include <WebCore/AbstractRange.h>
+#include <WebCore/RangeBoundaryPoint.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/WeakPtr.h>
 

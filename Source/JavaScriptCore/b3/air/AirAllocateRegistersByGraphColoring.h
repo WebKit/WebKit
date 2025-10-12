@@ -27,8 +27,8 @@
 
 #if ENABLE(B3_JIT)
 
-#include "CPU.h"
-#include "Options.h"
+#include <JavaScriptCore/CPU.h>
+#include <JavaScriptCore/Options.h>
 
 namespace JSC { namespace B3 { namespace Air {
 

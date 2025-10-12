@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CookieStore.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "Cookie.h"
 #include "CookieChangeEvent.h"
 #include "CookieChangeEventInit.h"
@@ -34,14 +35,13 @@
 #include "CookieListItem.h"
 #include "CookieStoreDeleteOptions.h"
 #include "CookieStoreGetOptions.h"
-#include "DocumentInlines.h"
+#include "DocumentPage.h"
 #include "EventNames.h"
 #include "EventTargetInterfaces.h"
 #include "EventTargetInlines.h"
 #include "ExceptionOr.h"
 #include "JSCookieListItem.h"
 #include "JSDOMPromiseDeferred.h"
-#include "Page.h"
 #include "PublicSuffixStore.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptExecutionContextIdentifier.h"
@@ -79,7 +79,7 @@ public:
 
     void get(CookieStoreGetOptions&&, URL&&, Function<void(CookieStore&, ExceptionOr<Vector<Cookie>>&&)>&&);
     void getAll(CookieStoreGetOptions&&, URL&&, Function<void(CookieStore&, ExceptionOr<Vector<Cookie>>&&)>&&);
-    void set(CookieInit&& options, Cookie&&, URL&&, Function<void(CookieStore&, std::optional<Exception>&&)>&&);
+    void set(Cookie&&, URL&&, Function<void(CookieStore&, std::optional<Exception>&&)>&&);
 
     void detach() { m_cookieStore = nullptr; }
 
@@ -114,7 +114,7 @@ void CookieStore::MainThreadBridge::ensureOnMainThread(Function<void(ScriptExecu
         return;
     }
 
-    downcast<WorkerGlobalScope>(*context).protectedThread()->workerLoaderProxy()->postTaskToLoader(WTFMove(task));
+    downcast<WorkerGlobalScope>(*context).thread()->checkedWorkerLoaderProxy()->postTaskToLoader(WTFMove(task));
 }
 
 void CookieStore::MainThreadBridge::ensureOnContextThread(Function<void(CookieStore&)>&& task)
@@ -185,11 +185,11 @@ void CookieStore::MainThreadBridge::getAll(CookieStoreGetOptions&& options, URL&
     ensureOnMainThread(WTFMove(getAllCookies));
 }
 
-void CookieStore::MainThreadBridge::set(CookieInit&& options, Cookie&& cookie, URL&& url, Function<void(CookieStore&, std::optional<Exception>&&)>&& completionHandler)
+void CookieStore::MainThreadBridge::set(Cookie&& cookie, URL&& url, Function<void(CookieStore&, std::optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(m_cookieStore);
 
-    auto setCookie = [this, protectedThis = Ref { *this }, options = crossThreadCopy(WTFMove(options)), cookie = crossThreadCopy(WTFMove(cookie)), url = crossThreadCopy(WTFMove(url)), completionHandler = WTFMove(completionHandler)](ScriptExecutionContext& context) mutable {
+    auto setCookie = [this, protectedThis = Ref { *this }, cookie = crossThreadCopy(WTFMove(cookie)), url = crossThreadCopy(WTFMove(url)), completionHandler = WTFMove(completionHandler)](ScriptExecutionContext& context) mutable {
         Ref document = downcast<Document>(context);
         WeakPtr page = document->page();
         if (!page) {
@@ -231,13 +231,20 @@ CookieStore::CookieStore(ScriptExecutionContext* context)
 
 CookieStore::~CookieStore()
 {
-    protectedMainThreadBridge()->detach();
+    m_mainThreadBridge->detach();
+}
+
+static String normalize(const String& string)
+{
+    if (string.contains(isTabOrSpace<char16_t>))
+        return string.trim(isTabOrSpace);
+    return string;
 }
 
 static bool containsInvalidCharacters(const String& string)
 {
     // The invalid characters are specified at https://wicg.github.io/cookie-store/#set-a-cookie.
-    return string.contains([](UChar character) {
+    return string.contains([](char16_t character) {
         return character == 0x003B || character == 0x007F || (character <= 0x001F && character != 0x0009);
     });
 }
@@ -287,6 +294,9 @@ void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& pr
         options.url = nullString();
     }
 
+    if (!options.name.isNull())
+        options.name = normalize(options.name);
+
     m_promises.add(++m_nextPromiseIdentifier, WTFMove(promise));
     auto completionHandler = [promiseIdentifier = m_nextPromiseIdentifier](CookieStore& cookieStore, ExceptionOr<Vector<Cookie>>&& result) {
         auto promise = cookieStore.takePromise(promiseIdentifier);
@@ -307,7 +317,7 @@ void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& pr
         promise->resolve<IDLDictionary<CookieListItem>>(CookieListItem(WTFMove(cookies[0])));
     };
 
-    protectedMainThreadBridge()->get(WTFMove(options), WTFMove(url), WTFMove(completionHandler));
+    m_mainThreadBridge->get(WTFMove(options), WTFMove(url), WTFMove(completionHandler));
 }
 
 void CookieStore::getAll(String&& name, Ref<DeferredPromise>&& promise)
@@ -350,6 +360,9 @@ void CookieStore::getAll(CookieStoreGetOptions&& options, Ref<DeferredPromise>&&
         options.url = nullString();
     }
 
+    if (!options.name.isNull())
+        options.name = normalize(options.name);
+
     m_promises.add(++m_nextPromiseIdentifier, WTFMove(promise));
     auto completionHandler = [promiseIdentifier = m_nextPromiseIdentifier](CookieStore& cookieStore, ExceptionOr<Vector<Cookie>>&& result) {
         auto promise = cookieStore.takePromise(promiseIdentifier);
@@ -367,7 +380,7 @@ void CookieStore::getAll(CookieStoreGetOptions&& options, Ref<DeferredPromise>&&
         }));
     };
 
-    protectedMainThreadBridge()->getAll(WTFMove(options), WTFMove(url), WTFMove(completionHandler));
+    m_mainThreadBridge->getAll(WTFMove(options), WTFMove(url), WTFMove(completionHandler));
 }
 
 void CookieStore::set(String&& name, String&& value, Ref<DeferredPromise>&& promise)
@@ -394,7 +407,9 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
         return;
     }
 
-    // The maximum attribute value size is specified at https://wicg.github.io/cookie-store/#cookie-maximum-attribute-value-size.
+    // https://cookiestore.spec.whatwg.org/#cookie-maximum-name-value-pair-size
+    static constexpr auto maximumNameValuePairSize = 4096;
+    // https://cookiestore.spec.whatwg.org/#cookie-maximum-attribute-value-size
     static constexpr auto maximumAttributeValueSize = 1024;
 
     auto url = context->cookieURL();
@@ -404,8 +419,8 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
     Cookie cookie;
     cookie.created = WallTime::now().secondsSinceEpoch().milliseconds();
 
-    cookie.name = WTFMove(options.name);
-    cookie.value = WTFMove(options.value);
+    cookie.name = normalize(options.name);
+    cookie.value = normalize(options.value);
 
     if (containsInvalidCharacters(cookie.name)) {
         promise->reject(Exception { ExceptionCode::TypeError, "The cookie name must not contain '\u003B', '\u007F', or any C0 control character except '\u0009'."_s });
@@ -427,20 +442,35 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
             promise->reject(Exception { ExceptionCode::TypeError, "The cookie name and value must not both be empty."_s });
             return;
         }
-    }
 
-    if (cookie.name.startsWithIgnoringASCIICase("__Host-"_s)) {
-        if (!options.domain.isNull()) {
-            promise->reject(Exception { ExceptionCode::TypeError, "If the cookie name begins with \"__Host-\", the domain must not be specified."_s });
-            return;
-        }
-
-        if (!options.path.isNull() && options.path != "/"_s)  {
-            promise->reject(Exception { ExceptionCode::TypeError, "If the cookie name begins with \"__Host-\", the path must either not be specified or be \"/\"."_s });
+        if (cookie.value.startsWithIgnoringASCIICase("__Host-"_s)
+            || cookie.value.startsWithIgnoringASCIICase("__Host-Http-"_s)
+            || cookie.value.startsWithIgnoringASCIICase("__Http-"_s)
+            || cookie.value.startsWithIgnoringASCIICase("__Secure-"_s)) {
+            promise->reject(Exception { ExceptionCode::TypeError, "If the cookie name is empty, the value must not begin with \"__Host-\", \"__Host-Http-\", \"__Http-\", or \"__Secure-\""_s });
             return;
         }
     }
 
+    if (cookie.name.startsWithIgnoringASCIICase("__Host-Http-"_s)
+        || cookie.name.startsWithIgnoringASCIICase("__Http-"_s)) {
+            promise->reject(Exception { ExceptionCode::TypeError, "The cookie name must not begin with \"__Host-Http-\" or \"__Http-\""_s });
+            return;
+    }
+
+    // FIXME: <rdar://85515842> Obtain the encoded length without allocating and encoding.
+    if (cookie.name.utf8().length() + cookie.value.utf8().length() > maximumNameValuePairSize) {
+        promise->reject(Exception { ExceptionCode::TypeError, makeString("The size of the cookie name and value must not be greater than "_s, maximumNameValuePairSize, " bytes"_s) });
+        return;
+    }
+
+    // FIXME: This should be further down.
+    if (!options.domain.isNull() && cookie.name.startsWithIgnoringASCIICase("__Host-"_s)) {
+        promise->reject(Exception { ExceptionCode::TypeError, "If the cookie name begins with \"__Host-\", the domain must not be specified."_s });
+        return;
+    }
+
+    // FIXME: The specification does not perform this initialization of domain.
     cookie.domain = options.domain.isNull() ? domain : options.domain;
     if (!cookie.domain.isNull()) {
         if (cookie.domain.startsWith('.')) {
@@ -472,20 +502,24 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
     }
 
     cookie.path = WTFMove(options.path);
-    if (!cookie.path.isNull()) {
-        if (!cookie.path.startsWith('/')) {
-            promise->reject(Exception { ExceptionCode::TypeError, "The path must begin with a '/'"_s });
-            return;
-        }
+    ASSERT(!cookie.path.isNull());
+    if (cookie.path.isEmpty())
+        cookie.path = CookieUtil::defaultPathForURL(url);
 
-        if (!cookie.path.endsWith('/'))
-            cookie.path = makeString(cookie.path, '/');
+    if (!cookie.path.startsWith('/')) {
+        promise->reject(Exception { ExceptionCode::TypeError, "The path must begin with a '/'"_s });
+        return;
+    }
 
-        // FIXME: <rdar://85515842> Obtain the encoded length without allocating and encoding.
-        if (cookie.path.utf8().length() > maximumAttributeValueSize) {
-            promise->reject(Exception { ExceptionCode::TypeError, makeString("The size of the path must not be greater than "_s, maximumAttributeValueSize, " bytes"_s) });
-            return;
-        }
+    if (cookie.path != "/"_s && cookie.name.startsWithIgnoringASCIICase("__Host-"_s)) {
+        promise->reject(Exception { ExceptionCode::TypeError, "If the cookie name begins with \"__Host-\", the path must be \"/\" or default to that."_s });
+        return;
+    }
+
+    // FIXME: <rdar://85515842> Obtain the encoded length without allocating and encoding.
+    if (cookie.path.utf8().length() > maximumAttributeValueSize) {
+        promise->reject(Exception { ExceptionCode::TypeError, makeString("The size of the path must not be greater than "_s, maximumAttributeValueSize, " bytes"_s) });
+        return;
     }
 
     if (options.expires) {
@@ -530,7 +564,7 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
             promise->resolve();
     };
 
-    protectedMainThreadBridge()->set(WTFMove(options), WTFMove(cookie), WTFMove(url), WTFMove(completionHandler));
+    m_mainThreadBridge->set(WTFMove(cookie), WTFMove(url), WTFMove(completionHandler));
 }
 
 void CookieStore::remove(String&& name, Ref<DeferredPromise>&& promise)
@@ -558,7 +592,7 @@ void CookieStore::remove(CookieStoreDeleteOptions&& options, Ref<DeferredPromise
     }
 
     CookieInit initOptions;
-    initOptions.name = WTFMove(options.name);
+    initOptions.name = normalize(options.name);
     initOptions.value = emptyString();
     initOptions.domain = WTFMove(options.domain);
     initOptions.path = WTFMove(options.path);
@@ -680,11 +714,6 @@ void CookieStore::eventListenersDidChange()
 RefPtr<DeferredPromise> CookieStore::takePromise(uint64_t promiseIdentifier)
 {
     return m_promises.take(promiseIdentifier);
-}
-
-Ref<CookieStore::MainThreadBridge> CookieStore::protectedMainThreadBridge() const
-{
-    return m_mainThreadBridge;
 }
 
 }

@@ -10,20 +10,16 @@
 #ifndef NET_DCSCTP_RX_DATA_TRACKER_H_
 #define NET_DCSCTP_RX_DATA_TRACKER_H_
 
-#include <stddef.h>
-#include <stdint.h>
-
+#include <cstddef>
 #include <cstdint>
 #include <set>
-#include <string>
-#include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/common/sequence_numbers.h"
 #include "net/dcsctp/packet/chunk/data_common.h"
 #include "net/dcsctp/packet/chunk/sack_chunk.h"
-#include "net/dcsctp/packet/data.h"
 #include "net/dcsctp/public/dcsctp_handover_state.h"
 #include "net/dcsctp/timer/timer.h"
 

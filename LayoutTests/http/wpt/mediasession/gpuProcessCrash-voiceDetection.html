@@ -45,6 +45,8 @@ function setMicrophoneActive(value)
 
 promise_test(async (test) => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+
     video.srcObject = stream;
     await video.play();
 

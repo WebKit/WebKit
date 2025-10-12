@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "GCDeferralContext.h"
-#include "Heap.h"
-#include "HeapCellInlines.h"
-#include "IndexingHeader.h"
-#include "JSCast.h"
-#include "Structure.h"
+#include <JavaScriptCore/GCDeferralContext.h>
+#include <JavaScriptCore/Heap.h>
+#include <JavaScriptCore/HeapCellInlines.h>
+#include <JavaScriptCore/IndexingHeader.h>
+#include <JavaScriptCore/JSCast.h>
+#include <JavaScriptCore/Structure.h>
 #include <type_traits>
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>

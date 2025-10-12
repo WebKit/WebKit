@@ -27,13 +27,14 @@
 #include "XSLTProcessor.h"
 
 #include "CachedResourceLoader.h"
-#include "DocumentInlines.h"
+#include "DocumentSecurityOrigin.h"
+#include "FrameConsoleClient.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "LocalFrame.h"
+#include "NodeDocument.h"
 #include "OriginAccessPatterns.h"
 #include "Page.h"
-#include "PageConsoleClient.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -67,7 +68,7 @@ void XSLTProcessor::parseErrorFunc(void* userData, const xmlError* error)
 void XSLTProcessor::parseErrorFunc(void* userData, xmlError* error)
 #endif
 {
-    PageConsoleClient* console = static_cast<PageConsoleClient*>(userData);
+    FrameConsoleClient* console = static_cast<FrameConsoleClient*>(userData);
     if (!console)
         return;
 
@@ -140,10 +141,9 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
         if (!data || !data->size())
             return nullptr;
 
-        PageConsoleClient* console = nullptr;
-        auto* frame = globalProcessor->xslStylesheet()->ownerDocument()->frame();
-        if (frame && frame->page())
-            console = &frame->page()->console();
+        FrameConsoleClient* console = nullptr;
+        if (RefPtr frame = globalProcessor->xslStylesheet()->ownerDocument()->frame())
+            console = &frame->console();
         XMLDocumentParserScope scope(cachedResourceLoader.get(), XSLTProcessor::genericErrorFunc, XSLTProcessor::parseErrorFunc, console);
 
         // We don't specify an encoding here. Neither Gecko nor WinIE respects

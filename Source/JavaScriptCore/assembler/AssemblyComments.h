@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Options.h"
+#include <JavaScriptCore/Options.h>
 
 #include <optional>
 #include <wtf/HashMap.h>

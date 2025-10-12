@@ -27,11 +27,11 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "SlotVisitorMacros.h"
-#include "WasmCallee.h"
-#include "WasmFormat.h"
-#include "WasmLimits.h"
-#include "WriteBarrier.h"
+#include <JavaScriptCore/SlotVisitorMacros.h>
+#include <JavaScriptCore/WasmCallee.h>
+#include <JavaScriptCore/WasmFormat.h>
+#include <JavaScriptCore/WasmLimits.h>
+#include <JavaScriptCore/WriteBarrier.h>
 #include <wtf/MallocPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
@@ -52,7 +52,7 @@ class Table : public ThreadSafeRefCounted<Table> {
     WTF_MAKE_NONCOPYABLE(Table);
     WTF_MAKE_TZONE_ALLOCATED(Table);
 public:
-    static RefPtr<Table> tryCreate(uint32_t initial, std::optional<uint32_t> maximum, TableElementType, Type);
+    static RefPtr<Table> tryCreate(VM&, uint32_t initial, std::optional<uint32_t> maximum, TableElementType, Type);
 
     JS_EXPORT_PRIVATE ~Table() = default;
 
@@ -128,23 +128,15 @@ class FuncRefTable final : public Table {
 public:
     friend class Table;
 
+    using JSWebAssemblyInstanceWeakCGSet = WeakGCSet<JSWebAssemblyInstance>;
+
+
     JS_EXPORT_PRIVATE ~FuncRefTable();
 
-    // call_indirect needs to do an Instance check to potentially context switch when calling a function to another instance. We can hold raw pointers to JSWebAssemblyInstance here because the js ensures that Table keeps all the instances alive.
     struct Function {
         WasmOrJSImportableFunction m_function;
-        WasmOrJSImportableFunctionCallLinkInfo* m_callLinkInfo { nullptr };
-        JSWebAssemblyInstance* m_instance { nullptr };
         WriteBarrier<Unknown> m_value { NullWriteBarrierTag };
-        // In the case when we do not JIT, we cannot use the WasmToJSCallee singleton.
-        // This callee gives the jitless wasm_to_js thunk the info it needs to call the imported
-        // function with the correct wasm type.
-        // Note that wasm to js calls will have m_function's boxedWasmCalleeLoadLocation already set.
-        RefPtr<WasmToJSCallee> m_protectedJSCallee;
-
         static constexpr ptrdiff_t offsetOfFunction() { return OBJECT_OFFSETOF(Function, m_function); }
-        static constexpr ptrdiff_t offsetOfCallLinkInfo() { return OBJECT_OFFSETOF(Function, m_callLinkInfo); }
-        static constexpr ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(Function, m_instance); }
         static constexpr ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(Function, m_value); }
     };
 
@@ -156,6 +148,13 @@ public:
     static constexpr ptrdiff_t offsetOfTail() { return WTF::roundUpToMultipleOf<alignof(Function)>(sizeof(FuncRefTable)); }
     static constexpr ptrdiff_t offsetOfFunctionsForFixedSizedTable() { return offsetOfTail(); }
 
+    Function* functions()
+    {
+        if (isFixedSized())
+            return std::bit_cast<Function*>(std::bit_cast<uint8_t*>(this) + offsetOfFunctionsForFixedSizedTable());
+        return m_importableFunctions.get();
+    }
+
     static size_t allocationSize(uint32_t size)
     {
         return offsetOfTail() + sizeof(Function) * size;
@@ -165,14 +164,17 @@ public:
     void set(uint32_t, JSValue);
     JSValue get(uint32_t index) const { return m_importableFunctions.get()[index].m_value.get(); }
 
+    void registerInstance(JSWebAssemblyInstance&);
+
 private:
-    FuncRefTable(uint32_t initial, std::optional<uint32_t> maximum, Type wasmType);
+    FuncRefTable(VM&, uint32_t initial, std::optional<uint32_t> maximum, Type wasmType);
 
     Function* tailPointer() { return std::bit_cast<Function*>(std::bit_cast<uint8_t*>(this) + offsetOfTail()); }
 
-    static Ref<FuncRefTable> createFixedSized(uint32_t size, Type wasmType);
+    static Ref<FuncRefTable> createFixedSized(VM&, uint32_t size, Type wasmType);
 
     MallocPtr<Function, VMMalloc> m_importableFunctions;
+    JSWebAssemblyInstanceWeakCGSet m_instances;
 };
 
 } } // namespace JSC::Wasm

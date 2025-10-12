@@ -50,17 +50,17 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SelectorQueryCache);
 #if ASSERT_ENABLED
 static bool isSingleTagNameSelector(const CSSSelector& selector)
 {
-    return selector.isLastInTagHistory() && selector.match() == CSSSelector::Match::Tag;
+    return selector.isFirstInComplexSelector() && selector.match() == CSSSelector::Match::Tag;
 }
 
 static bool isSingleClassNameSelector(const CSSSelector& selector)
 {
-    return selector.isLastInTagHistory() && selector.match() == CSSSelector::Match::Class;
+    return selector.isFirstInComplexSelector() && selector.match() == CSSSelector::Match::Class;
 }
 
 static bool isSingleAttributeExactSelector(const CSSSelector& selector)
 {
-    return selector.isLastInTagHistory() && selector.match() == CSSSelector::Match::Exact;
+    return selector.isFirstInComplexSelector() && selector.match() == CSSSelector::Match::Exact;
 }
 
 #endif // ASSERT_ENABLED
@@ -89,7 +89,7 @@ static bool canBeUsedForIdFastPath(const CSSSelector& selector)
 static IdMatchingType findIdMatchingType(const CSSSelector& firstSelector)
 {
     bool inRightmost = true;
-    for (const CSSSelector* selector = &firstSelector; selector; selector = selector->tagHistory()) {
+    for (const CSSSelector* selector = &firstSelector; selector; selector = selector->precedingInComplexSelector()) {
         if (canBeUsedForIdFastPath(*selector)) {
             if (inRightmost)
                 return IdMatchingType::Rightmost;
@@ -124,17 +124,15 @@ static bool canOptimizeSingleAttributeExactMatch(const CSSSelector& selector)
 
 SelectorDataList::SelectorDataList(const CSSSelectorList& selectorList)
 {
-    unsigned selectorCount = 0;
-    for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
-        selectorCount++;
+    unsigned selectorCount = std::ranges::distance(selectorList);
 
     m_selectors.reserveInitialCapacity(selectorCount);
-    for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
-        m_selectors.append({ selector });
+    for (auto& selector : selectorList)
+        m_selectors.append({ &selector });
 
     if (selectorCount == 1) {
         const CSSSelector& selector = *m_selectors.first().selector;
-        if (selector.isLastInTagHistory()) {
+        if (selector.isFirstInComplexSelector()) {
             switch (selector.match()) {
             case CSSSelector::Match::Tag:
                 m_matchType = TagNameMatch;
@@ -241,7 +239,7 @@ static const CSSSelector* selectorForIdLookup(const ContainerNode& rootNode, con
     if (rootNode.document().inQuirksMode())
         return nullptr;
 
-    for (const CSSSelector* selector = &firstSelector; selector; selector = selector->tagHistory()) {
+    for (const CSSSelector* selector = &firstSelector; selector; selector = selector->precedingInComplexSelector()) {
         if (canBeUsedForIdFastPath(*selector))
             return selector;
         if (selector->relation() != CSSSelector::Relation::Subselector)
@@ -293,11 +291,11 @@ static ContainerNode& filterRootById(ContainerNode& rootNode, const CSSSelector&
         ASSERT(!canBeUsedForIdFastPath(*selector));
         if (selector->relation() != CSSSelector::Relation::Subselector)
             break;
-        selector = selector->tagHistory();
+        selector = selector->precedingInComplexSelector();
     } while (selector);
 
     bool inAdjacentChain = false;
-    for (; selector; selector = selector->tagHistory()) {
+    for (; selector; selector = selector->precedingInComplexSelector()) {
         if (canBeUsedForIdFastPath(*selector)) {
             const AtomString& idToMatch = selector->value();
             if (RefPtr<ContainerNode> searchRoot = rootNode.treeScope().getElementById(idToMatch)) {
@@ -305,7 +303,7 @@ static ContainerNode& filterRootById(ContainerNode& rootNode, const CSSSelector&
                     if (inAdjacentChain)
                         searchRoot = searchRoot->parentNode();
                     if (searchRoot && (rootNode.isTreeScope() || searchRoot->isInclusiveDescendantOf(rootNode)))
-                        return *searchRoot;
+                        return *searchRoot.unsafeGet();
                 }
             }
         }

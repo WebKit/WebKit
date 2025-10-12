@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011 Google Inc. All Rights Reserved.
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
  *
@@ -34,7 +34,11 @@
 #include "CSSStyleSheetObservableArray.h"
 #include "ContainerNodeInlines.h"
 #include "CustomElementRegistry.h"
+#include "DocumentPage.h"
+#include "DocumentView.h"
 #include "FocusController.h"
+#include "FrameDestructionObserverInlines.h"
+#include "FrameInlines.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLImageElement.h"
@@ -77,7 +81,7 @@ using namespace HTMLNames;
 using WeakSVGElementSet = WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>;
 struct SVGResourcesMap {
     WTF_MAKE_NONCOPYABLE(SVGResourcesMap);
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SVGResourcesMap);
     SVGResourcesMap() = default;
 
     MemoryCompactRobinHoodHashMap<AtomString, WeakSVGElementSet> pendingResources;
@@ -145,7 +149,7 @@ void TreeScope::setParentTreeScope(TreeScope& newParentScope)
     setDocumentScope(newParentScope.documentScope());
 }
 
-void TreeScope::setCustomElementRegistry(Ref<CustomElementRegistry>&& registry)
+void TreeScope::setCustomElementRegistry(RefPtr<CustomElementRegistry>&& registry)
 {
     m_customElementRegistry = WTFMove(registry);
 }
@@ -408,7 +412,7 @@ static std::optional<LayoutPoint> absolutePointIfNotClipped(Document& document, 
 
 RefPtr<Node> TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint, HitTestSource source)
 {
-    Ref document = protectedDocumentScope();
+    Ref document = documentScope();
     auto absolutePoint = absolutePointIfNotClipped(document, clientPoint);
     if (!absolutePoint)
         return nullptr;
@@ -444,7 +448,7 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
 {
     Vector<RefPtr<Element>> elements;
 
-    Ref document = protectedDocumentScope();
+    Ref document = documentScope();
     if (!document->hasLivingRenderTree())
         return elements;
 
@@ -543,7 +547,7 @@ static Element* focusedFrameOwnerElement(Frame* focusedFrame, LocalFrame* curren
 
 Element* TreeScope::focusedElementInScope()
 {
-    Ref document = protectedDocumentScope();
+    Ref document = documentScope();
     RefPtr element = document->focusedElement();
 
     if (!element && document->page())

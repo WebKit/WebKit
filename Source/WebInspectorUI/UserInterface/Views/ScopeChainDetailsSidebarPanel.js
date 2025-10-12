@@ -293,14 +293,24 @@ WI.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends W
         if (!watchExpressions.length) {
             if (this._usedWatchExpressionsObjectGroup) {
                 this._usedWatchExpressionsObjectGroup = false;
-                for (let target of WI.targets)
+                for (let target of WI.targets) {
+                    // FIXME: <https://webkit.org/b/298910> Add Runtime support for FrameTarget.
+                    if (target instanceof WI.FrameTarget)
+                        continue;
+
                     target.RuntimeAgent.releaseObjectGroup(WI.ScopeChainDetailsSidebarPanel.WatchExpressionsObjectGroupName);
+                }
             }
             return Promise.resolve(null);
         }
 
-        for (let target of WI.targets)
+        for (let target of WI.targets) {
+            // FIXME: <https://webkit.org/b/298910> Add Runtime support for FrameTarget.
+            if (target instanceof WI.FrameTarget)
+                continue;
+
             target.RuntimeAgent.releaseObjectGroup(WI.ScopeChainDetailsSidebarPanel.WatchExpressionsObjectGroupName);
+        }
         this._usedWatchExpressionsObjectGroup = true;
 
         let watchExpressionsRemoteObject = WI.RemoteObject.createFakeRemoteObject();

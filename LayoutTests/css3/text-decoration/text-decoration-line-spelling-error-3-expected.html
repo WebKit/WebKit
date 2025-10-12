@@ -1,0 +1,39 @@
+<!DOCTYPE html><!-- webkit-test-runner [ spellCheckingDots=true ] -->
+<html lang="en">
+<meta charset="UTF-8">
+<style>
+div {
+  font-size: 300%;
+}
+#target {
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-color: green;
+}
+</style>
+
+<script>
+if (window.testRunner)
+  testRunner.waitUntilDone();
+
+if (window.internals)
+  internals.setContinuousSpellCheckingEnabled(true);
+
+function runTest()
+{
+  const target = document.getElementById("target");
+  const misspelledText = "A txet sample";
+  target.focus();
+  document.execCommand("insertText", false, misspelledText);
+  // Add a word separator so that spelling markers will appear.
+  document.execCommand("InsertText", false, " ");
+  document.execCommand("Delete", false);
+  target.blur();
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+</script>
+<body>
+<div contenteditable="true" id="target"></div>
+<script>runTest()</script>
+</body>

@@ -141,7 +141,7 @@ WI.DOMTreeElementPathComponent = class DOMTreeElementPathComponent extends WI.Hi
     {
         if (!this._domTreeElement.nextSibling)
             return null;
-        if (this._domTreeElement.nextSibling.isCloseTag())
+        if (this._domTreeElement.nextSibling.isElementCloseTag)
             return null;
         return new WI.DOMTreeElementPathComponent(this._domTreeElement.nextSibling);
     }

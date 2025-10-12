@@ -25,4 +25,5 @@
 
 partial interface Document {
     [EnabledBySetting=ViewTransitionsEnabled] ViewTransition startViewTransition(optional (ViewTransitionUpdateCallback or StartViewTransitionOptions) callbackOptions = {});
+    [EnabledBySetting=ViewTransitionsEnabled] readonly attribute ViewTransition? activeViewTransition;
 };

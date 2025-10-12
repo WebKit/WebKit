@@ -1,6 +1,6 @@
 This test ensures we do not hang when getting the visible character range for a multi-paragraph editable document.
 
-#body AXVisibleCharacterRange: NSRange: {569, 569}
+PASS: Didn't hang.
 
 PASS successfullyParsed is true
 

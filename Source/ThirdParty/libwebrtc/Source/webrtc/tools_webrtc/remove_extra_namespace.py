@@ -36,7 +36,8 @@ def remove_extra_namespace_from_file(namespace, filename):
             match = re.match(r'}\s+// namespace (\S+)$', line)
             if match is not None:
                 if match.group(1) != namespaces[0]:
-                    print('Namespace mismatch')
+                    print('Namespace mismatch:', match.group(1), "vs",
+                          namespaces[0])
                     raise RuntimeError('Namespace mismatch')
                 del namespaces[0]
                 newfile.write(line)

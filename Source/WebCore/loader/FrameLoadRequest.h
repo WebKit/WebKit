@@ -25,12 +25,13 @@
 
 #pragma once
 
-#include "AdvancedPrivacyProtections.h"
-#include "FrameLoaderTypes.h"
-#include "ReferrerPolicy.h"
-#include "ResourceRequest.h"
-#include "ShouldTreatAsContinuingLoad.h"
-#include "SubstituteData.h"
+#include <WebCore/AdvancedPrivacyProtections.h>
+#include <WebCore/Element.h>
+#include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/ReferrerPolicy.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/ShouldTreatAsContinuingLoad.h>
+#include <WebCore/SubstituteData.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -39,7 +40,71 @@ class Document;
 class LocalFrame;
 class SecurityOrigin;
 
-class FrameLoadRequest {
+class FrameLoadRequestBase {
+public:
+    LockHistory lockHistory() const { return m_lockHistory; }
+    void setLockHistory(LockHistory lockHistory) { m_lockHistory = lockHistory; }
+
+    LockBackForwardList lockBackForwardList() const { return m_lockBackForwardList; }
+    void setLockBackForwardList(LockBackForwardList lockBackForwardList) { m_lockBackForwardList = lockBackForwardList; }
+
+    NewFrameOpenerPolicy newFrameOpenerPolicy() const { return m_newFrameOpenerPolicy; }
+    void setNewFrameOpenerPolicy(NewFrameOpenerPolicy newFrameOpenerPolicy) { m_newFrameOpenerPolicy = newFrameOpenerPolicy; }
+
+    // The shouldReplaceDocumentIfJavaScriptURL parameter will go away when the FIXME to eliminate the
+    // corresponding parameter from ScriptController::executeIfJavaScriptURL() is addressed.
+    ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL() const { return m_shouldReplaceDocumentIfJavaScriptURL; }
+    void setShouldReplaceDocumentIfJavaScriptURL(ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL) { m_shouldReplaceDocumentIfJavaScriptURL = shouldReplaceDocumentIfJavaScriptURL; }
+
+    ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy() const { return m_shouldOpenExternalURLsPolicy; }
+    void setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy) { m_shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy; }
+
+    const AtomString& downloadAttribute() const { return m_downloadAttribute; }
+
+    Element* sourceElement() const { return m_sourceElement.get(); }
+    void setSourceElement(Element* sourceElement) { m_sourceElement = sourceElement; }
+
+    InitiatedByMainFrame initiatedByMainFrame() const { return m_initiatedByMainFrame; }
+
+    bool isRequestFromClientOrUserInput() const { return m_isRequestFromClientOrUserInput; }
+    void setIsRequestFromClientOrUserInput(bool isRequestFromClientOrUserInput) { m_isRequestFromClientOrUserInput = isRequestFromClientOrUserInput; }
+
+    bool isInitialFrameSrcLoad() const { return m_isInitialFrameSrcLoad; }
+    void setIsInitialFrameSrcLoad(bool isInitialFrameSrcLoad) { m_isInitialFrameSrcLoad = isInitialFrameSrcLoad; }
+
+    bool isContentRuleListRedirect() const { return m_isContentRuleListRedirect; }
+    void setIsContentRuleListRedirect(bool isContentRuleListRedirect) { m_isContentRuleListRedirect = isContentRuleListRedirect; }
+
+    bool isFromNavigationAPI() const { return m_isFromNavigationAPI; }
+    void setIsFromNavigationAPI(bool isFromNavigationAPI) { m_isFromNavigationAPI = isFromNavigationAPI; }
+
+protected:
+    FrameLoadRequestBase() = default;
+    FrameLoadRequestBase(const FrameLoadRequestBase&) = default;
+    FrameLoadRequestBase& operator=(const FrameLoadRequestBase&) = default;
+    FrameLoadRequestBase(FrameLoadRequestBase&&) = default;
+    FrameLoadRequestBase& operator=(FrameLoadRequestBase&&) = default;
+    ~FrameLoadRequestBase() = default;
+
+    void setDownloadAttribute(const AtomString& downloadAttribute) { m_downloadAttribute = downloadAttribute; }
+    void setInitiatedByMainFrame(InitiatedByMainFrame initiatedByMainFrame) { m_initiatedByMainFrame = initiatedByMainFrame; }
+
+private:
+    LockHistory m_lockHistory { LockHistory::No };
+    LockBackForwardList m_lockBackForwardList { LockBackForwardList::No };
+    NewFrameOpenerPolicy m_newFrameOpenerPolicy { NewFrameOpenerPolicy::Allow };
+    ShouldReplaceDocumentIfJavaScriptURL m_shouldReplaceDocumentIfJavaScriptURL { ReplaceDocumentIfJavaScriptURL };
+    ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
+    AtomString m_downloadAttribute;
+    RefPtr<Element> m_sourceElement;
+    InitiatedByMainFrame m_initiatedByMainFrame { InitiatedByMainFrame::Unknown };
+    bool m_isRequestFromClientOrUserInput { false };
+    bool m_isInitialFrameSrcLoad { false };
+    bool m_isContentRuleListRedirect { false };
+    bool m_isFromNavigationAPI { false };
+};
+
+class FrameLoadRequest : public FrameLoadRequestBase {
 public:
     WEBCORE_EXPORT FrameLoadRequest(Ref<Document>&&, SecurityOrigin&, ResourceRequest&&, const AtomString& frameName, InitiatedByMainFrame, const AtomString& downloadAttribute = { });
     WEBCORE_EXPORT FrameLoadRequest(LocalFrame&, ResourceRequest&&, SubstituteData&& = SubstituteData());
@@ -74,17 +139,6 @@ public:
     bool hasSubstituteData() { return m_substituteData.isValid(); }
     SubstituteData takeSubstituteData() { return std::exchange(m_substituteData, { }); }
 
-    LockHistory lockHistory() const { return m_lockHistory; }
-    void setLockHistory(LockHistory value) { m_lockHistory = value; }
-
-    LockBackForwardList lockBackForwardList() const { return m_lockBackForwardList; }
-    void setLockBackForwardList(LockBackForwardList value) { m_lockBackForwardList = value; }
-
-    bool isInitialFrameSrcLoad() const { return m_isInitialFrameSrcLoad; }
-    void setIsInitialFrameSrcLoad(bool isInitialFrameSrcLoad) { m_isInitialFrameSrcLoad = isInitialFrameSrcLoad; }
-
-    bool isContentExtensionRedirect() const { return m_isContentExtensionRedirect; }
-    void setIsContentExtensionRedirect(bool isContentExtensionRedirect) { m_isContentExtensionRedirect = isContentExtensionRedirect; }
 
     const String& clientRedirectSourceForHistory() const { return m_clientRedirectSourceForHistory; }
     void setClientRedirectSourceForHistory(String&& clientRedirectSourceForHistory) { m_clientRedirectSourceForHistory = WTFMove(clientRedirectSourceForHistory); }
@@ -95,23 +149,11 @@ public:
     AllowNavigationToInvalidURL allowNavigationToInvalidURL() const { return m_allowNavigationToInvalidURL; }
     void disableNavigationToInvalidURL() { m_allowNavigationToInvalidURL = AllowNavigationToInvalidURL::No; }
 
-    NewFrameOpenerPolicy newFrameOpenerPolicy() const { return m_newFrameOpenerPolicy; }
-    void setNewFrameOpenerPolicy(NewFrameOpenerPolicy newFrameOpenerPolicy) { m_newFrameOpenerPolicy = newFrameOpenerPolicy; }
-
     // The shouldReplaceDocumentIfJavaScriptURL parameter will go away when the FIXME to eliminate the
     // corresponding parameter from ScriptController::executeIfJavaScriptURL() is addressed.
-    ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL() const { return m_shouldReplaceDocumentIfJavaScriptURL; }
-    void disableShouldReplaceDocumentIfJavaScriptURL() { m_shouldReplaceDocumentIfJavaScriptURL = DoNotReplaceDocumentIfJavaScriptURL; }
+    void disableShouldReplaceDocumentIfJavaScriptURL() { setShouldReplaceDocumentIfJavaScriptURL(DoNotReplaceDocumentIfJavaScriptURL); }
 
-    void setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy policy) { m_shouldOpenExternalURLsPolicy = policy; }
-    ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy() const { return m_shouldOpenExternalURLsPolicy; }
-
-    const AtomString& downloadAttribute() const { return m_downloadAttribute; }
-
-    InitiatedByMainFrame initiatedByMainFrame() const { return m_initiatedByMainFrame; }
-
-    void setIsRequestFromClientOrUserInput() { m_isRequestFromClientOrUserInput = true; }
-    bool isRequestFromClientOrUserInput() const { return m_isRequestFromClientOrUserInput; }
+    void setIsRequestFromClientOrUserInput() { FrameLoadRequestBase::setIsRequestFromClientOrUserInput(true); }
 
     void setAdvancedPrivacyProtections(OptionSet<AdvancedPrivacyProtections> policy) { m_advancedPrivacyProtections = policy; }
     std::optional<OptionSet<AdvancedPrivacyProtections>> advancedPrivacyProtections() const { return m_advancedPrivacyProtections; }
@@ -119,11 +161,12 @@ public:
     NavigationHistoryBehavior navigationHistoryBehavior() const { return m_navigationHistoryBehavior; }
     void setNavigationHistoryBehavior(NavigationHistoryBehavior historyHandling) { m_navigationHistoryBehavior = historyHandling; }
 
-    bool isFromNavigationAPI() const { return m_isFromNavigationAPI; }
-    void setIsFromNavigationAPI(bool isFromNavigationAPI) { m_isFromNavigationAPI = isFromNavigationAPI; }
 
     bool isHandledByAboutSchemeHandler() const { return m_isHandledByAboutSchemeHandler; }
     void setIsHandledByAboutSchemeHandler(bool isHandledByAboutSchemeHandler) { m_isHandledByAboutSchemeHandler = isHandledByAboutSchemeHandler; }
+
+    bool skipNavigateEvent() const { return m_skipNavigateEvent; }
+    void setSkipNavigateEvent(bool value) { m_skipNavigateEvent = value; }
 
 private:
     Ref<Document> m_requester;
@@ -135,22 +178,12 @@ private:
 
     bool m_shouldCheckNewWindowPolicy { false };
     ShouldTreatAsContinuingLoad m_shouldTreatAsContinuingLoad { ShouldTreatAsContinuingLoad::No };
-    LockHistory m_lockHistory { LockHistory::No };
-    LockBackForwardList m_lockBackForwardList { LockBackForwardList::No };
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };
     AllowNavigationToInvalidURL m_allowNavigationToInvalidURL { AllowNavigationToInvalidURL::Yes };
-    NewFrameOpenerPolicy m_newFrameOpenerPolicy { NewFrameOpenerPolicy::Allow };
-    ShouldReplaceDocumentIfJavaScriptURL m_shouldReplaceDocumentIfJavaScriptURL { ReplaceDocumentIfJavaScriptURL };
-    ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
-    AtomString m_downloadAttribute;
-    InitiatedByMainFrame m_initiatedByMainFrame { InitiatedByMainFrame::Unknown };
-    bool m_isRequestFromClientOrUserInput { false };
-    bool m_isInitialFrameSrcLoad { false };
-    bool m_isContentExtensionRedirect { false };
     std::optional<OptionSet<AdvancedPrivacyProtections>> m_advancedPrivacyProtections;
     NavigationHistoryBehavior m_navigationHistoryBehavior { NavigationHistoryBehavior::Auto };
-    bool m_isFromNavigationAPI { false };
     bool m_isHandledByAboutSchemeHandler { false };
+    bool m_skipNavigateEvent { false };
 };
 
 } // namespace WebCore

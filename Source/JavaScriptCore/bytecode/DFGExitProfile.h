@@ -27,10 +27,10 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "ConcurrentJSLock.h"
-#include "ExitKind.h"
-#include "ExitingInlineKind.h"
-#include "ExitingJITType.h"
+#include <JavaScriptCore/ConcurrentJSLock.h>
+#include <JavaScriptCore/ExitKind.h>
+#include <JavaScriptCore/ExitingInlineKind.h>
+#include <JavaScriptCore/ExitingJITType.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 

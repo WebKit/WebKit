@@ -10,7 +10,9 @@
 #include "rtc_tools/network_tester/config_reader.h"
 
 #include <fstream>
+#include <ios>
 #include <iterator>
+#include <optional>
 #include <string>
 
 #include "rtc_base/checks.h"

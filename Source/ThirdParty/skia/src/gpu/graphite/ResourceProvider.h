@@ -38,6 +38,7 @@ class ComputePipeline;
 class ComputePipelineDesc;
 class GlobalCache;
 class GraphicsPipelineDesc;
+class GraphicsPipelineHandle;
 class GraphiteResourceKey;
 class ResourceCache;
 class RuntimeEffectDictionary;
@@ -51,13 +52,13 @@ class ResourceProvider {
 public:
     virtual ~ResourceProvider();
 
-    // The runtime effect dictionary provides a link between SkCodeSnippetIds referenced in the
-    // paint key and the current SkRuntimeEffect that provides the SkSL for that id.
-    sk_sp<GraphicsPipeline> findOrCreateGraphicsPipeline(
-            const RuntimeEffectDictionary*,
+    GraphicsPipelineHandle createGraphicsPipelineHandle(
             const GraphicsPipelineDesc&,
             const RenderPassDesc&,
-            SkEnumBitMask<PipelineCreationFlags> = PipelineCreationFlags::kNone);
+            SkEnumBitMask<PipelineCreationFlags>);
+    void startPipelineCreationTask(sk_sp<const RuntimeEffectDictionary>,
+                                   const GraphicsPipelineHandle&);
+    sk_sp<GraphicsPipeline> resolveHandle(const GraphicsPipelineHandle&);
 
     sk_sp<ComputePipeline> findOrCreateComputePipeline(const ComputePipelineDesc&);
 
@@ -76,10 +77,16 @@ public:
 
     sk_sp<Texture> createWrappedTexture(const BackendTexture&, std::string_view label);
 
-    sk_sp<Buffer> findOrCreateBuffer(size_t size,
-                                     BufferType type,
-                                     AccessPattern,
-                                     std::string_view label);
+    sk_sp<Buffer> findOrCreateNonShareableBuffer(size_t size,
+                                                 BufferType type,
+                                                 AccessPattern,
+                                                 std::string_view label);
+    sk_sp<Buffer> findOrCreateScratchBuffer(size_t size,
+                                            BufferType type,
+                                            AccessPattern,
+                                            std::string_view label,
+                                            const ResourceCache::ScratchResourceSet& unavailable);
+
 
     sk_sp<Sampler> findOrCreateCompatibleSampler(const SamplerDesc&);
 
@@ -110,6 +117,8 @@ public:
     const SharedContext* sharedContext() { return fSharedContext; }
 #endif
 
+    const Caps* caps() const;
+
 #ifdef SK_BUILD_FOR_ANDROID
     virtual BackendTexture createBackendTexture(AHardwareBuffer*,
                                                 bool isRenderable,
@@ -130,13 +139,6 @@ protected:
     sk_sp<ResourceCache> fResourceCache;
 
 private:
-    virtual sk_sp<GraphicsPipeline> createGraphicsPipeline(
-            const RuntimeEffectDictionary*,
-            const UniqueKey&,
-            const GraphicsPipelineDesc&,
-            const RenderPassDesc&,
-            SkEnumBitMask<PipelineCreationFlags>,
-            uint32_t compilationID) = 0;
     virtual sk_sp<ComputePipeline> createComputePipeline(const ComputePipelineDesc&) = 0;
     virtual sk_sp<Texture> createTexture(SkISize, const TextureInfo&) = 0;
     virtual sk_sp<Buffer> createBuffer(size_t size, BufferType type, AccessPattern) = 0;
@@ -148,6 +150,13 @@ private:
                                        Budgeted,
                                        Shareable,
                                        const ResourceCache::ScratchResourceSet* = nullptr);
+
+    sk_sp<Buffer> findOrCreateBuffer(size_t size,
+                                     BufferType type,
+                                     AccessPattern,
+                                     std::string_view label,
+                                     Shareable,
+                                     const ResourceCache::ScratchResourceSet* = nullptr);
 
     virtual sk_sp<Texture> onCreateWrappedTexture(const BackendTexture&) = 0;
 

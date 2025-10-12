@@ -10,24 +10,26 @@
 #ifndef NET_DCSCTP_TX_RR_SEND_QUEUE_H_
 #define NET_DCSCTP_TX_RR_SEND_QUEUE_H_
 
-#include <cstdint>
+#include <cstddef>
 #include <deque>
+#include <functional>
 #include <map>
 #include <memory>
 #include <optional>
-#include <string>
 #include <utility>
 #include <vector>
 
-#include "absl/algorithm/container.h"
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "api/units/timestamp.h"
 #include "net/dcsctp/common/internal_types.h"
+#include "net/dcsctp/public/dcsctp_handover_state.h"
 #include "net/dcsctp/public/dcsctp_message.h"
 #include "net/dcsctp/public/dcsctp_socket.h"
 #include "net/dcsctp/public/types.h"
 #include "net/dcsctp/tx/send_queue.h"
 #include "net/dcsctp/tx/stream_scheduler.h"
+#include "rtc_base/checks.h"
 
 namespace dcsctp {
 

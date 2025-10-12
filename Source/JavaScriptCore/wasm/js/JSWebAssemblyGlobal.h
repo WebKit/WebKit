@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +27,11 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSObject.h"
-#include "WasmGlobal.h"
-#include "WasmLimits.h"
-#include "WebAssemblyFunction.h"
-#include "WebAssemblyWrapperFunction.h"
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/WasmGlobal.h>
+#include <JavaScriptCore/WasmLimits.h>
+#include <JavaScriptCore/WebAssemblyFunction.h>
+#include <JavaScriptCore/WebAssemblyWrapperFunction.h>
 #include <wtf/Ref.h>
 
 namespace JSC {
@@ -53,15 +53,16 @@ public:
 
     DECLARE_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
     Wasm::Global* global() { return m_global.ptr(); }
     JSObject* type(JSGlobalObject*);
 
 private:
     JSWebAssemblyGlobal(VM&, Structure*, Ref<Wasm::Global>&&);
     DECLARE_DEFAULT_FINISH_CREATION;
-    DECLARE_VISIT_CHILDREN;
 
-    Ref<Wasm::Global> m_global;
+    const Ref<Wasm::Global> m_global;
 };
 
 } // namespace JSC

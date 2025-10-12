@@ -50,6 +50,7 @@
 
             return navigator.mediaDevices.getUserMedia({audio:{}, video:{}})
                 .then((stream) => {
+                    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
                     return navigator.mediaDevices.enumerateDevices()
                         .then((devices) => {
                             assert_equals(deviceCount, devices.length, "same devices revealed when authenticated as with persistent access");

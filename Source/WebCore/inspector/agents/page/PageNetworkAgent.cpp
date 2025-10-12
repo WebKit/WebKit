@@ -26,14 +26,14 @@
 #include "config.h"
 #include "PageNetworkAgent.h"
 
-#include "Document.h"
 #include "DocumentLoader.h"
+#include "FrameConsoleClient.h"
 #include "FrameDestructionObserverInlines.h"
-#include "InspectorClient.h"
+#include "InspectorBackendClient.h"
 #include "InstrumentingAgents.h"
-#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "Page.h"
-#include "PageConsoleClient.h"
+#include "Settings.h"
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocket.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -44,7 +44,7 @@ using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PageNetworkAgent);
 
-PageNetworkAgent::PageNetworkAgent(PageAgentContext& context, InspectorClient* client)
+PageNetworkAgent::PageNetworkAgent(PageAgentContext& context, InspectorBackendClient* client)
     : InspectorNetworkAgent(context, { context.inspectedPage->settings().inspectorMaximumResourcesContentSize(), context.inspectedPage->settings().inspectorSupportsShowingCertificate() })
     , m_inspectedPage(context.inspectedPage)
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
@@ -139,7 +139,10 @@ ScriptExecutionContext* PageNetworkAgent::scriptExecutionContext(Inspector::Prot
 
 void PageNetworkAgent::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&& message)
 {
-    m_inspectedPage->console().addMessage(WTFMove(message));
+    RefPtr localMainFrame = m_inspectedPage->localMainFrame();
+    if (!localMainFrame)
+        return;
+    localMainFrame->console().addMessage(WTFMove(message));
 }
 
 } // namespace WebCore

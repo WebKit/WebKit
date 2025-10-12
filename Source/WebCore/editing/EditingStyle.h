@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,10 +31,10 @@
 
 #pragma once
 
-#include "CSSProperty.h"
-#include "CSSPropertyNames.h"
-#include "CSSValueKeywords.h"
-#include "WritingDirection.h"
+#include <WebCore/CSSProperty.h>
+#include <WebCore/CSSPropertyNames.h>
+#include <WebCore/CSSValueKeywords.h>
+#include <WebCore/WritingDirection.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TriState.h>
 #include <wtf/text/WTFString.h>
@@ -57,7 +57,7 @@ class StyleProperties;
 class StyledElement;
 class VisibleSelection;
 
-enum class TextDecorationChange { None, Add, Remove };
+enum class TextDecorationChange : uint8_t { None, Add, Remove };
 
 // FIXME: "Keep" should be "Resolve" instead and resolve all generic font family names.
 enum class StandardFontFamilySerializationMode : uint8_t { Keep, Strip };
@@ -65,10 +65,10 @@ enum class StandardFontFamilySerializationMode : uint8_t { Keep, Strip };
 class EditingStyle : public RefCounted<EditingStyle> {
 public:
 
-    enum class PropertiesToInclude { AllProperties, OnlyEditingInheritableProperties, EditingPropertiesInEffect, PostLayoutProperties };
+    enum class PropertiesToInclude : uint8_t { AllProperties, OnlyEditingInheritableProperties, EditingPropertiesInEffect, PostLayoutProperties };
 
-    enum ShouldPreserveWritingDirection { PreserveWritingDirection, DoNotPreserveWritingDirection };
-    enum ShouldExtractMatchingStyle { ExtractMatchingStyle, DoNotExtractMatchingStyle };
+    enum class ShouldPreserveWritingDirection : bool { No, Yes };
+    enum class ShouldExtractMatchingStyle : bool { No, Yes };
     static float NoFontDelta;
 
     static Ref<EditingStyle> create()
@@ -108,7 +108,8 @@ public:
 
     WEBCORE_EXPORT ~EditingStyle();
 
-    MutableStyleProperties* style() { return m_mutableStyle.get(); }
+    MutableStyleProperties* style() const { return m_mutableStyle.get(); }
+    RefPtr<MutableStyleProperties> protectedStyle() const;
     RefPtr<MutableStyleProperties> protectedStyle();
     Ref<MutableStyleProperties> styleWithResolvedTextDecorations() const;
     std::optional<WritingDirection> textDirection() const;
@@ -125,7 +126,7 @@ public:
     void removeStyleConflictingWithStyleOfNode(Node&);
     template<typename T> void removeEquivalentProperties(T&);
     void collapseTextDecorationProperties();
-    enum ShouldIgnoreTextOnlyProperties { IgnoreTextOnlyProperties, DoNotIgnoreTextOnlyProperties };
+    enum class ShouldIgnoreTextOnlyProperties : bool { No, Yes };
     TriState triStateOfStyle(EditingStyle*) const;
     TriState triStateOfStyle(const VisibleSelection&) const;
     bool conflictsWithInlineStyleOfElement(StyledElement& element) const { return conflictsWithInlineStyleOfElement(element, nullptr, nullptr); }
@@ -133,23 +134,23 @@ public:
     {
         return conflictsWithInlineStyleOfElement(element, &newInlineStyle, extractedStyle);
     }
-    bool conflictsWithImplicitStyleOfElement(HTMLElement&, EditingStyle* extractedStyle = nullptr, ShouldExtractMatchingStyle = DoNotExtractMatchingStyle) const;
+    bool conflictsWithImplicitStyleOfElement(HTMLElement&, EditingStyle* extractedStyle = nullptr, ShouldExtractMatchingStyle = ShouldExtractMatchingStyle::No) const;
     bool conflictsWithImplicitStyleOfAttributes(HTMLElement&) const;
     bool extractConflictingImplicitStyleOfAttributes(HTMLElement&, ShouldPreserveWritingDirection, EditingStyle* extractedStyle, Vector<QualifiedName>& conflictingAttributes, ShouldExtractMatchingStyle) const;
     bool styleIsPresentInComputedStyleOfNode(Node&) const;
 
     static bool elementIsStyledSpanOrHTMLEquivalent(const HTMLElement&);
 
-    void prepareToApplyAt(const Position&, ShouldPreserveWritingDirection = DoNotPreserveWritingDirection);
+    void prepareToApplyAt(const Position&, ShouldPreserveWritingDirection = ShouldPreserveWritingDirection::No);
     void mergeTypingStyle(Document&);
-    enum CSSPropertyOverrideMode { OverrideValues, DoNotOverrideValues };
+    enum class CSSPropertyOverrideMode : bool { DoNotOverrideValues, OverrideValues };
     void mergeInlineStyleOfElement(StyledElement&, CSSPropertyOverrideMode, PropertiesToInclude = PropertiesToInclude::AllProperties);
     static Ref<EditingStyle> wrappingStyleForSerialization(Node& context, bool shouldAnnotate, StandardFontFamilySerializationMode);
     void mergeStyleFromRules(StyledElement&);
     void mergeStyleFromRulesForSerialization(StyledElement&, StandardFontFamilySerializationMode);
     void removeStyleFromRulesAndContext(StyledElement&, Node* context);
     void removePropertiesInElementDefaultStyle(Element&);
-    void forceInline();
+    void forceDisplayInline();
     void addDisplayContents();
     bool convertPositionStyle();
     bool isFloating();
@@ -184,6 +185,9 @@ private:
     EditingStyle(CSSPropertyID, CSSValueID);
     void init(Node*, PropertiesToInclude);
     void removeTextFillAndStrokeColorsIfNeeded(const RenderStyle*);
+    Ref<MutableStyleProperties> removeInlineStyleRedundantDueToMatchedRules(StyledElement&);
+    void removeStyleInContextNotOverridenByMatchedRules(StyledElement&, Node*, MutableStyleProperties&);
+    void removeDisplayPropertyFromSpanStyleIfRedundant(StyledElement&, MutableStyleProperties&);
     void setProperty(CSSPropertyID, const String& value, IsImportant = IsImportant::No);
     void extractFontSizeDelta();
     template<typename T> TriState triStateOfStyle(T& styleToCompare, ShouldIgnoreTextOnlyProperties) const;

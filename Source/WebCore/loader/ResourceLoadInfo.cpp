@@ -60,6 +60,7 @@ OptionSet<ResourceType> toResourceType(CachedResource::Type type, ResourceReques
 #endif
         return { ResourceType::StyleSheet };
 
+    case CachedResource::Type::JSON:
     case CachedResource::Type::Script:
         return { ResourceType::Script };
 
@@ -224,6 +225,39 @@ ASCIILiteral resourceTypeToString(OptionSet<ResourceType> resourceTypes)
         return "other"_s;
     default:
         return "raw"_s;
+    }
+}
+
+ASCIILiteral resourceTypeToStringForMatchedRule(OptionSet<ResourceType> resourceTypes)
+{
+    switch (*resourceTypes.begin()) {
+    case ResourceType::TopDocument:
+        return "main_frame"_s;
+    case ResourceType::ChildDocument:
+        return "sub_frame"_s;
+    case ResourceType::Image:
+        return "image"_s;
+    case ResourceType::StyleSheet:
+        return "stylesheet"_s;
+    case ResourceType::Script:
+        return "script"_s;
+    case ResourceType::Font:
+        return "font"_s;
+    case ResourceType::WebSocket:
+        return "websocket"_s;
+    case ResourceType::Fetch:
+        return "xmlhttprequest"_s;
+    case ResourceType::Media:
+        return "media"_s;
+    case ResourceType::Ping:
+        return "ping"_s;
+    case ResourceType::CSPReport:
+        return "csp_report"_s;
+    case ResourceType::SVGDocument:
+    case ResourceType::Popup:
+    case ResourceType::Other:
+    default:
+        return "other"_s;
     }
 }
 

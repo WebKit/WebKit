@@ -54,6 +54,10 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
 
     initializeTarget(target)
     {
+        // FIXME: <https://webkit.org/b/298910> Add Runtime support for FrameTarget.
+        if (target instanceof WI.FrameTarget)
+            return;
+
         target.RuntimeAgent.enable();
 
         if (WI.settings.showJavaScriptTypeInformation.value)

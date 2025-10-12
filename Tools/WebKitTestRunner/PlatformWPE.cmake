@@ -32,24 +32,16 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKitTestRunner_SYSTEM_INCLUDE_DIRECTORIES
-    ${GLIB_INCLUDE_DIRS}
     ${LIBXKBCOMMON_INCLUDE_DIRS}
 )
 
 list(APPEND WebKitTestRunner_PRIVATE_LIBRARIES
+    GLib::GLib
     WebKit::WPEToolingBackends
-    ${GLIB_LIBRARIES}
-    ${LIBXKBCOMMON_LIBRARIES}
 )
 
-if (ENABLE_WPE_PLATFORM)
-    list(APPEND WebKitTestRunner_LIBRARIES
-        WPEPlatform-${WPE_API_VERSION}
-    )
-endif ()
-
 list(APPEND TestRunnerInjectedBundle_LIBRARIES
-    ${GLIB_LIBRARIES}
+    GLib::GLib
 )
 
 list(APPEND TestRunnerInjectedBundle_SOURCES
@@ -65,7 +57,6 @@ list(APPEND TestRunnerInjectedBundle_SOURCES
 
 list(APPEND TestRunnerInjectedBundle_INCLUDE_DIRECTORIES
     ${CMAKE_SOURCE_DIR}/Source
-    ${GLIB_INCLUDE_DIRS}
     ${WebKitTestRunner_DIR}/InjectedBundle/atspi
     ${WebKitTestRunner_DIR}/InjectedBundle/glib
     ${WebKitTestRunner_DIR}/InjectedBundle/wpe

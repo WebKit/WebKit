@@ -56,6 +56,8 @@ def main(argv):
             with open('%s/%s.messages.in' % (base_dir, message_receiver)) as source_file:
                 receiver = webkit.parser.parse(source_file)
 
+        receiver.enforce_attribute_constraints()
+
         receivers.append(receiver)
         if receiver_name != receiver.name:
             sys.stderr.write("Error: %s defined in file %s/%s.messages.in instead of %s.messages.in\n" % (receiver.name, base_dir, message_receiver, receiver.name))

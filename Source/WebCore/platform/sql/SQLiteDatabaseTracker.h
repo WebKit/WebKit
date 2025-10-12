@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #ifndef SQLiteDatabaseTracker_h
 #define SQLiteDatabaseTracker_h
 
-#include "SQLiteDatabaseTrackerClient.h"
+#include <WebCore/SQLiteDatabaseTrackerClient.h>
 
 namespace WebCore {
 

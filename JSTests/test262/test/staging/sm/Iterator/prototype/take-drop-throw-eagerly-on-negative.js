@@ -9,9 +9,6 @@ info: |
   Iterator Helpers proposal 2.1.5.4 and 2.1.5.5
 features:
   - iterator-helpers
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 ---*/
 
 //
@@ -23,10 +20,10 @@ const methods = [
 ];
 
 for (const method of methods) {
-  assertThrowsInstanceOf(() => method(-1), RangeError);
-  assertThrowsInstanceOf(() => method(-Infinity), RangeError);
-  assertThrowsInstanceOf(() => method(NaN), RangeError);
-  assertThrowsInstanceOf(() => method(-NaN), RangeError);
+  assert.throws(RangeError, () => method(-1));
+  assert.throws(RangeError, () => method(-Infinity));
+  assert.throws(RangeError, () => method(NaN));
+  assert.throws(RangeError, () => method(-NaN));
 
   method(-0);
   method(-0.9);

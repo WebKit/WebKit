@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include <wtf/text/StringImpl.h>
 #include <wtf/text/StringView.h>
 
 namespace API {

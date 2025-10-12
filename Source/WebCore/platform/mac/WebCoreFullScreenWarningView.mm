@@ -66,8 +66,8 @@ static const CGFloat WarningViewShadowRadius = 5;
     NSFont* textFont = [NSFont boldSystemFontOfSize:WarningViewTextSize];
     NSColor* textColor = [NSColor colorWithCalibratedWhite:WarningViewTextWhite alpha:WarningViewTextAlpha];
     RetainPtr<NSDictionary> attributes = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:
-                                                  textFont, NSFontAttributeName,
-                                                  textColor, NSForegroundColorAttributeName,
+                                                  textFont, RetainPtr { NSFontAttributeName }.get(),
+                                                  textColor, RetainPtr { NSForegroundColorAttributeName }.get(),
                                                   nil]);
     RetainPtr<NSAttributedString> text = adoptNS([[NSAttributedString alloc] initWithString:title attributes:attributes.get()]);
     [_textField setAttributedStringValue:text.get()];

@@ -33,7 +33,6 @@ class RenderSVGInlineText;
 class RenderSVGTextPath;
 class SVGElement;
 class SVGInlineTextBox;
-class SVGRenderStyle;
 
 // SVGTextLayoutEngine performs the second layout phase for SVG text.
 //
@@ -83,10 +82,10 @@ private:
     Vector<InlineIterator::SVGTextBoxIterator> m_pathLayoutBoxes;
 
     // Output.
-    UncheckedKeyHashMap<InlineIterator::SVGTextBox::Key, Vector<SVGTextFragment>> m_fragmentMap;
+    HashMap<InlineIterator::SVGTextBox::Key, Vector<SVGTextFragment>> m_fragmentMap;
 
     SVGTextChunkBuilder m_chunkLayoutBuilder;
-    UncheckedKeyHashSet<InlineIterator::SVGTextBox::Key> m_lineLayoutChunkStarts;
+    HashSet<InlineIterator::SVGTextBox::Key> m_lineLayoutChunkStarts;
 
     SVGTextFragment m_currentTextFragment;
     unsigned m_layoutAttributesPosition { 0 };

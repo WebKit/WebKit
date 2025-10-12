@@ -23,8 +23,8 @@
 
 #pragma once
 
-#include "JSDOMCastThisValue.h"
-#include "JSDOMExceptionHandling.h"
+#include <WebCore/JSDOMCastThisValue.h>
+#include <WebCore/JSDOMExceptionHandling.h>
 
 namespace WebCore {
 

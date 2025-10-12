@@ -44,19 +44,25 @@ class StreamConnectionWorkQueue;
 namespace WebKit {
 
 // Interface to test various IPC stream related activities.
-class IPCStreamTester final : public IPC::StreamMessageReceiver {
+class IPCStreamTester final : public IPC::StreamServerConnection::Client {
+    WTF_MAKE_TZONE_ALLOCATED(IPCStreamTester);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IPCStreamTester);
 public:
     static RefPtr<IPCStreamTester> create(IPCStreamTesterIdentifier, IPC::StreamServerConnection::Handle&&, bool ignoreInvalidMessageForTesting);
     void stopListeningForIPC(Ref<IPCStreamTester>&& refFromConnection);
 
     // IPC::StreamMessageReceiver overrides.
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+
 private:
     IPCStreamTester(IPCStreamTesterIdentifier, IPC::StreamServerConnection::Handle&&, bool ignoreInvalidMessageForTesting);
     ~IPCStreamTester();
     void initialize();
     IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
     Ref<IPC::StreamConnectionWorkQueue> protectedWorkQueue() const { return m_workQueue; }
+
+    // IPC::StreamServerConnection::Client overrides.
+    void didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName, const Vector<uint32_t>&) final;
 
     // Messages.
     void syncMessage(uint32_t value, CompletionHandler<void(uint32_t)>&&);
@@ -68,10 +74,12 @@ private:
     void checkAutoreleasePool(CompletionHandler<void(int32_t)>&&);
     void asyncPing(uint32_t value, CompletionHandler<void(uint32_t)>&&);
     void emptyMessage();
+    void checkInvalidMessages(CompletionHandler<void(uint32_t)>&&);
 
     const Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     const IPCStreamTesterIdentifier m_identifier;
+    uint32_t m_invalidMessages { 0 };
     std::shared_ptr<bool> m_autoreleasePoolCheckValue;
 };
 

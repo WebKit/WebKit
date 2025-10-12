@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2025 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,7 +72,7 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
 
     bool isClassContext = executable->superBinding() == SuperBinding::Needed || executable->parseMode() == SourceParseMode::ClassFieldInitializerMode;
 
-    UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(vm, FunctionCode, ExecutableInfo(kind == CodeForConstruct, executable->privateBrandRequirement(), functionKind == UnlinkedBuiltinFunction, executable->constructorKind(), scriptMode, executable->superBinding(), parseMode, executable->derivedContextType(), executable->needsClassFieldInitializer(), false, isClassContext, EvalContextType::FunctionEvalContext), codeGenerationMode);
+    UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(vm, FunctionCode, ExecutableInfo(kind == CodeSpecializationKind::CodeForConstruct, executable->privateBrandRequirement(), functionKind == UnlinkedBuiltinFunction, executable->constructorKind(), scriptMode, executable->superBinding(), parseMode, executable->derivedContextType(), executable->needsClassFieldInitializer(), false, isClassContext, EvalContextType::FunctionEvalContext), codeGenerationMode);
 
     auto parentScopeTDZVariables = executable->parentScopeTDZVariables();
     const FixedVector<Identifier>* generatorOrAsyncWrapperFunctionParameterNames = executable->generatorOrAsyncWrapperFunctionParameterNames();
@@ -203,6 +203,9 @@ FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, ScriptExecutable* t
     if (overrideLineNumber)
         result->setOverrideLineNumber(*overrideLineNumber);
 
+    if (inlineAttribute() == InlineAttribute::Never)
+        result->setNeverInline(true);
+
     if (hasFunctionOverride) [[unlikely]]
         result->overrideInfo(overrideInfo);
 
@@ -237,11 +240,11 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
     if (m_isCached)
         decodeCachedCodeBlocks(vm);
     switch (specializationKind) {
-    case CodeForCall:
+    case CodeSpecializationKind::CodeForCall:
         if (UnlinkedFunctionCodeBlock* codeBlock = m_unlinkedCodeBlockForCall.get())
             return codeBlock;
         break;
-    case CodeForConstruct:
+    case CodeSpecializationKind::CodeForConstruct:
         if (UnlinkedFunctionCodeBlock* codeBlock = m_unlinkedCodeBlockForConstruct.get())
             return codeBlock;
         break;
@@ -256,10 +259,10 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
         return nullptr;
 
     switch (specializationKind) {
-    case CodeForCall:
+    case CodeSpecializationKind::CodeForCall:
         m_unlinkedCodeBlockForCall.set(vm, this, result);
         break;
-    case CodeForConstruct:
+    case CodeSpecializationKind::CodeForConstruct:
         m_unlinkedCodeBlockForConstruct.set(vm, this, result);
         break;
     }

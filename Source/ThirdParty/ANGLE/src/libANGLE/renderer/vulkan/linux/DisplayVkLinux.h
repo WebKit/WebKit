@@ -27,12 +27,7 @@ class DisplayVkLinux : public DisplayVk
                                                          EGLenum target,
                                                          EGLClientBuffer buffer,
                                                          const egl::AttributeMap &attribs) override;
-    std::vector<VkDrmFormatModifierPropertiesEXT> GetDrmModifiers(const DisplayVk *displayVk,
-                                                                  VkFormat vkFormat);
-    bool SupportsDrmModifiers(VkPhysicalDevice device, VkFormat vkFormat);
-    std::vector<VkFormat> GetVkFormatsWithDrmModifiers(const vk::Renderer *renderer);
-    std::vector<EGLint> GetDrmFormats(const vk::Renderer *renderer);
-    bool supportsDmaBufFormat(EGLint format) const override;
+    bool supportsDmaBufFormat(EGLint format) override;
     egl::Error queryDmaBufFormats(EGLint maxFormats, EGLint *formats, EGLint *numFormats) override;
     egl::Error queryDmaBufModifiers(EGLint format,
                                     EGLint maxModifiers,
@@ -41,10 +36,14 @@ class DisplayVkLinux : public DisplayVk
                                     EGLint *numModifiers) override;
 
   private:
-    // Supported DRM formats
-    std::vector<EGLint> mDrmFormats;
+    std::vector<VkDrmFormatModifierPropertiesEXT> getDrmModifiers(const DisplayVk *displayVk,
+                                                                  VkFormat vkFormat);
+    bool supportsDrmModifiers(VkPhysicalDevice device, VkFormat vkFormat);
+    std::vector<VkFormat> getVkFormatsWithDrmModifiers(const vk::Renderer *renderer);
+    std::unordered_set<EGLint> getDrmFormats(const vk::Renderer *renderer);
 
-    bool mDrmFormatsInitialized;
+    // Supported DRM formats
+    std::unordered_set<EGLint> mDrmFormats;
 };
 
 }  // namespace rx

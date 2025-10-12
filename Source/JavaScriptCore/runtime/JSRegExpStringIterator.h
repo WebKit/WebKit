@@ -37,6 +37,8 @@ public:
 
     DECLARE_EXPORT_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
     enum class Field : uint8_t {
         RegExp = 0,
         String,
@@ -82,8 +84,6 @@ private:
     }
 
     void finishCreation(VM&);
-    DECLARE_VISIT_CHILDREN;
-
 };
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSRegExpStringIterator);

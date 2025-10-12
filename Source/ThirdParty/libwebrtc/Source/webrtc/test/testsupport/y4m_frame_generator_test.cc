@@ -10,13 +10,15 @@
 
 #include "test/testsupport/y4m_frame_generator.h"
 
-#include <cstdint>
+#include <stdio.h>
+
 #include <cstdio>
 #include <cstring>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/test/frame_generator_interface.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
@@ -26,9 +28,9 @@ namespace test {
 class Y4mFrameGeneratorTest : public testing::Test {
  protected:
   Y4mFrameGeneratorTest() = default;
-  ~Y4mFrameGeneratorTest() = default;
+  ~Y4mFrameGeneratorTest() override = default;
 
-  void SetUp() {
+  void SetUp() override {
     input_filepath_ = TempFilename(OutputPath(), "2x2.y4m");
     FILE* y4m_file = fopen(input_filepath_.c_str(), "wb");
 
@@ -43,7 +45,7 @@ class Y4mFrameGeneratorTest : public testing::Test {
     fclose(y4m_file);
   }
 
-  void TearDown() { remove(input_filepath_.c_str()); }
+  void TearDown() override { remove(input_filepath_.c_str()); }
 
   std::string input_filepath_;
 };

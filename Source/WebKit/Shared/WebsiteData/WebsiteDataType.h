@@ -33,7 +33,7 @@ enum class WebsiteDataType : uint32_t {
     Cookies = 1 << 0,
     DiskCache = 1 << 1,
     MemoryCache = 1 << 2,
-    OfflineWebApplicationCache = 1 << 3,
+    LegacyOfflineWebApplicationCachePlaceholder = 1 << 3,
     SessionStorage = 1 << 4,
     LocalStorage = 1 << 5,
     WebSQLDatabases = 1 << 6,
@@ -66,7 +66,7 @@ inline ASCIILiteral toString(WebsiteDataType type)
         return "DiskCache"_s;
     case WebsiteDataType::MemoryCache:
         return "MemoryCache"_s;
-    case WebsiteDataType::OfflineWebApplicationCache:
+    case WebsiteDataType::LegacyOfflineWebApplicationCachePlaceholder:
         return "OfflineWebApplicationCache"_s;
     case WebsiteDataType::SessionStorage:
         return "SessionStorage"_s;
@@ -122,7 +122,7 @@ template<> struct EnumTraitsForPersistence<WebKit::WebsiteDataType> {
         WebKit::WebsiteDataType::Cookies,
         WebKit::WebsiteDataType::DiskCache,
         WebKit::WebsiteDataType::MemoryCache,
-        WebKit::WebsiteDataType::OfflineWebApplicationCache,
+        WebKit::WebsiteDataType::LegacyOfflineWebApplicationCachePlaceholder,
         WebKit::WebsiteDataType::SessionStorage,
         WebKit::WebsiteDataType::LocalStorage,
         WebKit::WebsiteDataType::WebSQLDatabases,

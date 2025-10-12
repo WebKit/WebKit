@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -101,6 +101,10 @@ struct pas_root {
     size_t num_baseline_allocators;
     pas_ptr_hash_map* pas_pgm_hash_map_instance;
     pas_ptr_hash_map_in_flux_stash* pas_pgm_hash_map_instance_in_flux_stash;
+#ifdef __APPLE__
+    unsigned pas_crash_report_version;
+#endif
+    bool* probabilistic_guard_malloc_has_been_used;
 };
 
 #define PAS_ROOT_MAGIC 0xbeeeeeeeefllu
@@ -146,4 +150,3 @@ PAS_API kern_return_t pas_root_visit_conservative_candidate_pointers_in_address_
 PAS_END_EXTERN_C;
 
 #endif /* PAS_ROOT_H */
-

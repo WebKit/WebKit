@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "IntPoint.h"
-#include "Timer.h"
+#include <WebCore/IntPoint.h>
+#include <WebCore/Timer.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WallTime.h>
 
 namespace WebCore {
 
@@ -66,7 +66,7 @@ public:
     void startAutoscrollForSelection(RenderObject*);
     void stopAutoscrollTimer(bool rendererIsBeingDestroyed = false);
     void updateAutoscrollRenderer();
-    void updateDragAndDrop(Node* targetNode, const IntPoint& eventPosition, WallTime eventTime);
+    void updateDragAndDrop(Node* targetNode, const IntPoint& eventPosition, MonotonicTime eventTime);
 #if ENABLE(PAN_SCROLLING)
     void didPanScrollStart();
     void didPanScrollStop();
@@ -86,7 +86,7 @@ private:
     SingleThreadWeakPtr<RenderBox> m_autoscrollRenderer;
     AutoscrollType m_autoscrollType { AutoscrollType::None };
     IntPoint m_dragAndDropAutoscrollReferencePosition;
-    WallTime m_dragAndDropAutoscrollStartTime;
+    MonotonicTime m_dragAndDropAutoscrollStartTime;
 #if ENABLE(PAN_SCROLLING)
     IntPoint m_panScrollStartPos;
 #endif

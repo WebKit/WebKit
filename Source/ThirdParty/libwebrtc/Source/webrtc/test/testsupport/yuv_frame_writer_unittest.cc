@@ -8,10 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stdint.h>
 #include <stdio.h>
-#include <string.h>
 
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
 #include <memory>
 #include <string>
 
@@ -23,9 +24,9 @@ namespace webrtc {
 namespace test {
 
 namespace {
-const size_t kFrameWidth = 50;
-const size_t kFrameHeight = 20;
-const size_t kFrameLength = 3 * kFrameWidth * kFrameHeight / 2;  // I420.
+constexpr size_t kFrameWidth = 50;
+constexpr size_t kFrameHeight = 20;
+constexpr size_t kFrameLength = 3 * kFrameWidth * kFrameHeight / 2;  // I420.
 }  // namespace
 
 class YuvFrameWriterTest : public ::testing::Test {
@@ -34,8 +35,8 @@ class YuvFrameWriterTest : public ::testing::Test {
   ~YuvFrameWriterTest() override = default;
 
   void SetUp() override {
-    temp_filename_ = webrtc::test::TempFilename(webrtc::test::OutputPath(),
-                                                "yuv_frame_writer_unittest");
+    temp_filename_ =
+        test::TempFilename(test::OutputPath(), "yuv_frame_writer_unittest");
     frame_writer_.reset(
         new YuvFrameWriterImpl(temp_filename_, kFrameWidth, kFrameHeight));
     ASSERT_TRUE(frame_writer_->Init());

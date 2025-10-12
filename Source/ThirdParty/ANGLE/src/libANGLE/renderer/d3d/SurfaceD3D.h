@@ -48,8 +48,7 @@ class SurfaceD3D : public SurfaceImpl
     void setFixedWidth(EGLint width) override;
     void setFixedHeight(EGLint height) override;
 
-    EGLint getWidth() const override;
-    EGLint getHeight() const override;
+    gl::Extents getSize() const override;
 
     EGLint isPostSubBufferSupported() const override;
     EGLint getSwapBehavior() const override;
@@ -70,7 +69,7 @@ class SurfaceD3D : public SurfaceImpl
                                      GLenum binding,
                                      const gl::ImageIndex &imageIndex) override;
 
-    const angle::Format *getD3DTextureColorFormat() const override;
+    const angle::Format *getClientBufferTextureColorFormat() const override;
 
     egl::Error attachToFramebuffer(const gl::Context *context,
                                    gl::Framebuffer *framebuffer) override;

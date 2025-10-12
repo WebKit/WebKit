@@ -90,6 +90,9 @@ protected:
     void selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&&, WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&&);
     void startDiscovery(const TransportSet&);
 
+protected:
+    const Vector<Ref<AuthenticatorTransportService>>& services() const { return m_services; }
+
 private:
     enum class Mode {
         Compatible,
@@ -113,7 +116,7 @@ private:
     // Overriden by MockAuthenticatorManager.
     virtual Ref<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&) const;
     // Overriden to return every exception for tests to confirm.
-    virtual void respondReceivedInternal(Respond&&) { }
+    virtual void respondReceivedInternal(Respond&&, bool shouldComplete);
     virtual void filterTransports(TransportSet&) const;
     virtual void runPresenterInternal(const TransportSet&);
 

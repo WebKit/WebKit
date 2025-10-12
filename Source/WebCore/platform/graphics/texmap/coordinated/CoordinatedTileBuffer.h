@@ -157,7 +157,7 @@ private:
     bool tryEnsureSurface() final;
     void completePainting() final;
 
-    Ref<BitmapTexture> m_texture;
+    const Ref<BitmapTexture> m_texture;
     std::unique_ptr<GLFence> m_fence;
 };
 #endif

@@ -26,6 +26,7 @@
 
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSSerializationContext.h"
+#include "CalculationValue.h"
 #include "StylePrimitiveNumericTypes.h"
 #include <wtf/text/TextStream.h>
 
@@ -34,37 +35,34 @@ namespace Style {
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, Calc auto const& value)
 {
-    return ts << value.get();
+    return ts << value.protectedCalculation().get();
+}
+
+template<auto R, typename V> WTF::TextStream& operator<<(WTF::TextStream& ts, const Length<R, V>& value)
+{
+    return ts << CSS::serializationForCSS(CSS::defaultSerializationContext(), CSS::SerializableNumber { static_cast<double>(value.unresolvedValue()), CSS::unitString(value.unit) });
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, Numeric auto const& value)
 {
-    return ts << CSS::serializationForCSS(CSS::defaultSerializationContext(), CSS::SerializableNumber { value.value, CSS::unitString(value.unit) });
+    return ts << CSS::serializationForCSS(CSS::defaultSerializationContext(), CSS::SerializableNumber { static_cast<double>(value.value), CSS::unitString(value.unit) });
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, DimensionPercentageNumeric auto const& value)
 {
-    return WTF::switchOn(value, [&](const auto& value) -> WTF::TextStream& { return ts << value; });
+    WTF::switchOn(value, [&](const auto& value) { ts << value; });
+    return ts;
 }
 
 template<auto nR, auto pR, typename V> WTF::TextStream& operator<<(WTF::TextStream& ts, const NumberOrPercentage<nR, pR, V>& value)
 {
-    return WTF::switchOn(value, [&](const auto& value) -> WTF::TextStream& { return ts << value; });
+    WTF::switchOn(value, [&](const auto& value) { ts << value; });
+    return ts;
 }
 
 template<auto nR, auto pR, typename V> WTF::TextStream& operator<<(WTF::TextStream& ts, const NumberOrPercentageResolvedToNumber<nR, pR, V>& value)
 {
     return ts << value.value;
-}
-
-template<typename T> WTF::TextStream& operator<<(WTF::TextStream& ts, const SpaceSeparatedPoint<T>& value)
-{
-    return ts << value.x() << ' ' << value.y();
-}
-
-template<typename T> WTF::TextStream& operator<<(WTF::TextStream& ts, const SpaceSeparatedSize<T>& value)
-{
-    return ts << value.width() << ' ' << value.height();
 }
 
 } // namespace Style

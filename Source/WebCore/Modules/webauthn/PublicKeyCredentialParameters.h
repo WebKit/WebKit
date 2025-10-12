@@ -27,7 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "PublicKeyCredentialType.h"
+#include <WebCore/PublicKeyCredentialType.h>
 
 namespace WebCore {
 

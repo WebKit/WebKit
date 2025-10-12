@@ -31,7 +31,6 @@
 
 #pragma once
 
-#include "Performance.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,7 +38,7 @@ namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PerformanceEntry);
 class PerformanceEntry : public RefCounted<PerformanceEntry> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(PerformanceEntry);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(PerformanceEntry, PerformanceEntry);
 public:
     virtual ~PerformanceEntry();
 
@@ -48,11 +47,14 @@ public:
     virtual double duration() const { return m_duration; }
 
     enum class Type : uint8_t {
-        Navigation  = 1 << 0,
-        Mark        = 1 << 1,
-        Measure     = 1 << 2,
-        Resource    = 1 << 3,
-        Paint       = 1 << 4
+        Navigation              = 1 << 0,
+        Mark                    = 1 << 1,
+        Measure                 = 1 << 2,
+        Resource                = 1 << 3,
+        Paint                   = 1 << 4,
+        Event                   = 1 << 5,
+        FirstInput              = 1 << 6,
+        LargestContentfulPaint  = 1 << 7,
     };
 
     virtual Type performanceEntryType() const = 0;
@@ -75,3 +77,8 @@ private:
 };
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_PERFORMANCE_ENTRY(ToValueTypeName, EntryTypeName) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+static bool isType(const WebCore::PerformanceEntry& entry) { return entry.performanceEntryType() == WebCore::PerformanceEntry::Type::EntryTypeName; } \
+SPECIALIZE_TYPE_TRAITS_END()

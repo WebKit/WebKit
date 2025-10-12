@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "GCIncomingRefCountedInlines.h"
-#include "GenericTypedArrayViewInlines.h"
-#include "JSArrayBufferViewInlines.h"
-#include "JSGenericTypedArrayViewInlines.h"
-#include "JSGenericTypedArrayViewPrototypeInlines.h"
+#include <JavaScriptCore/GCIncomingRefCountedInlines.h>
+#include <JavaScriptCore/GenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/JSArrayBufferViewInlines.h>
+#include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/JSGenericTypedArrayViewPrototypeInlines.h>

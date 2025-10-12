@@ -1,7 +1,17 @@
 Input 1 Input 2 A F Input 4
+fancy custom element inside label
+fancy input inside label
 
 PASS Label for attribute targets a custom element using shadowrootreferencetarget
 PASS Label for attribute targets a custom element using shadowrootreferencetarget inside multiple layers of shadow roots
 PASS Multiple labels targeting a custom element using shadowrootreferencetarget inside multiple layers of shadow roots
 PASS Setting .htmlFor property to target a custom element using shadowrootreferencetarget
+PASS Implicit <label> association should work with a custom element targeting 'button'
+PASS Implicit <label> association should work with a custom element targeting 'input'
+PASS Implicit <label> association should work with a custom element targeting 'meter'
+PASS Implicit <label> association should work with a custom element targeting 'output'
+PASS Implicit <label> association should work with a custom element targeting 'progress'
+PASS Implicit <label> association should work with a custom element targeting 'select'
+PASS Implicit <label> association should work with a custom element targeting 'textarea'
+PASS Implicit <label> association should apply to only the first labelable custom element
 

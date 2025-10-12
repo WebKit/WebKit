@@ -11,16 +11,20 @@
 #ifndef AUDIO_CHANNEL_RECEIVE_FRAME_TRANSFORMER_DELEGATE_H_
 #define AUDIO_CHANNEL_RECEIVE_FRAME_TRANSFORMER_DELEGATE_H_
 
+#include <cstdint>
+#include <functional>
 #include <memory>
 #include <string>
 
+#include "api/array_view.h"
 #include "api/frame_transformer_interface.h"
 #include "api/rtp_headers.h"
+#include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/system/no_unique_address.h"
-#include "rtc_base/thread.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
@@ -30,12 +34,12 @@ namespace webrtc {
 class ChannelReceiveFrameTransformerDelegate : public TransformedFrameCallback {
  public:
   using ReceiveFrameCallback =
-      std::function<void(rtc::ArrayView<const uint8_t> packet,
+      std::function<void(webrtc::ArrayView<const uint8_t> packet,
                          const RTPHeader& header,
                          Timestamp receive_time)>;
   ChannelReceiveFrameTransformerDelegate(
       ReceiveFrameCallback receive_frame_callback,
-      rtc::scoped_refptr<FrameTransformerInterface> frame_transformer,
+      scoped_refptr<FrameTransformerInterface> frame_transformer,
       TaskQueueBase* channel_receive_thread);
 
   // Registers `this` as callback for `frame_transformer_`, to get the
@@ -50,7 +54,7 @@ class ChannelReceiveFrameTransformerDelegate : public TransformedFrameCallback {
 
   // Delegates the call to FrameTransformerInterface::Transform, to transform
   // the frame asynchronously.
-  void Transform(rtc::ArrayView<const uint8_t> packet,
+  void Transform(ArrayView<const uint8_t> packet,
                  const RTPHeader& header,
                  uint32_t ssrc,
                  const std::string& codec_mime_type,
@@ -66,7 +70,7 @@ class ChannelReceiveFrameTransformerDelegate : public TransformedFrameCallback {
   // `channel_receive_thread_`, by calling `receive_frame_callback_`.
   void ReceiveFrame(std::unique_ptr<TransformableFrameInterface> frame) const;
 
-  rtc::scoped_refptr<FrameTransformerInterface> FrameTransformer();
+  scoped_refptr<FrameTransformerInterface> FrameTransformer();
 
  protected:
   ~ChannelReceiveFrameTransformerDelegate() override = default;
@@ -75,7 +79,7 @@ class ChannelReceiveFrameTransformerDelegate : public TransformedFrameCallback {
   RTC_NO_UNIQUE_ADDRESS SequenceChecker sequence_checker_;
   ReceiveFrameCallback receive_frame_callback_
       RTC_GUARDED_BY(sequence_checker_);
-  rtc::scoped_refptr<FrameTransformerInterface> frame_transformer_
+  scoped_refptr<FrameTransformerInterface> frame_transformer_
       RTC_GUARDED_BY(sequence_checker_);
   TaskQueueBase* const channel_receive_thread_;
   bool short_circuit_ RTC_GUARDED_BY(sequence_checker_) = false;

@@ -16,6 +16,7 @@
                 shouldBeEqualToString('mediaStream.getVideoTracks()[0].kind', 'video');
 
                 finishJSTest();
+                stream.getTracks().forEach(track => track.stop());
             }
 
             function start() {

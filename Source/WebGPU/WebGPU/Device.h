@@ -40,6 +40,10 @@
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
+#import <wtf/HashIterators.h>
+#import <wtf/HashMap.h>
+#import <wtf/HashTable.h>
+#import <wtf/KeyValuePair.h>
 #import <wtf/Ref.h>
 #import <wtf/RetainReleaseSwift.h>
 #import <wtf/TZoneMalloc.h>
@@ -218,6 +222,8 @@ public:
     };
     ExternalTextureData createExternalTextureFromPixelBuffer(CVPixelBufferRef, WGPUColorSpace) const;
     RefPtr<XRSubImage> getXRViewSubImage(XRProjectionLayer&);
+    RefPtr<XRSubImage> getXRViewSubImage() const;
+    id<MTLTexture> getXRViewSubImageDepthTexture() const;
     const std::optional<const MachSendRight> webProcessID() const;
 #if CPU(X86_64)
     bool isIntel() const { return [m_device.name localizedCaseInsensitiveContainsString:@"intel"]; }
@@ -258,6 +264,9 @@ public:
     }
     void removeBufferFromCache(uint64_t address) { m_bufferMap.remove(address); }
     uint32_t appleGPUFamily() const { return m_appleGPUFamily; }
+    id<MTLRasterizationRateMap> rasterizationMapForTexture(MTLResourceID, uint32_t) const;
+    void setRasterizationMapsForTexture(MTLResourceID, id<MTLRasterizationRateMap> left, id<MTLRasterizationRateMap> right);
+    static id<MTLFunction> nopVertexFunction(id<MTLDevice>);
 
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&&, Adapter&);
@@ -285,11 +294,6 @@ private:
         std::optional<Error> error;
         const WGPUErrorFilter filter;
     };
-#if ENABLE(WEBGPU_SWIFT)
-private PUBLIC_IN_WEBGPU_SWIFT:
-    id<MTLFunction> m_nopVertexFunction;
-#endif
-private:
     id<MTLDevice> m_device { nil };
     const Ref<Queue> m_defaultQueue;
 

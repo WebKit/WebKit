@@ -681,8 +681,7 @@ PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="f32"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="f16"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Cabstract-int%3E"
 FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cabstract-int%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: value=-9) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -696,14 +695,13 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cabstr
 
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleGrad.spec.js:321:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: value=-9) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: value=-9) INFO: subcase ran
+  - (in subcase: value=-8) INFO: subcase ran
+  - (in subcase: value=0) INFO: subcase ran
+  - (in subcase: value=7) INFO: subcase ran
+  - (in subcase: value=8) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -717,16 +715,9 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cabstr
 
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleGrad.spec.js:321:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
+  - (in subcase: value=8) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
+  - (in subcase: value=8) INFO: subcase ran
  Reached unreachable code
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Cabstract-float%3E"
@@ -741,8 +732,7 @@ PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Cf16%3
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="i32"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Ci32%3E"
 FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Ci32%3E" assert_unreached:
-  - VALIDATION FAILED: subcase: value=-9
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: value=-9) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -756,14 +746,13 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Ci32%3
 
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleGrad.spec.js:321:24
-  - INFO: subcase: value=-8
-    OK
-  - INFO: subcase: value=0
-    OK
-  - INFO: subcase: value=7
-    OK
-  - VALIDATION FAILED: subcase: value=8
-    Missing expected compilationInfo 'error' message.
+  - (in subcase: value=-9) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: value=-9) INFO: subcase ran
+  - (in subcase: value=-8) INFO: subcase ran
+  - (in subcase: value=0) INFO: subcase ran
+  - (in subcase: value=7) INFO: subcase ran
+  - (in subcase: value=8) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
@@ -777,16 +766,9 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Ci32%3
 
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleGrad.spec.js:321:24
-  - EXPECTATION FAILED: subcase: value=-9
-    Expected validation error
+  - (in subcase: value=8) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
-  - EXPECTATION FAILED: subcase: value=8
-    Expected validation error
-      at (elided: below max severity)
-  - INFO: subcase: value=-9
-    OK
-  - INFO: subcase: value=8
-    OK
+  - (in subcase: value=8) INFO: subcase ran
  Reached unreachable code
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Ci32%3E"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="u32"

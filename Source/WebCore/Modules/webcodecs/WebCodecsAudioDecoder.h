@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2023 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,8 @@ namespace WebCore {
 class WebCodecsEncodedAudioChunk;
 class WebCodecsErrorCallback;
 class WebCodecsAudioDataOutputCallback;
+template<typename> class ExceptionOr;
+class Exception;
 
 class WebCodecsAudioDecoder : public WebCodecsBase {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebCodecsAudioDecoder);
@@ -82,8 +84,8 @@ private:
     ExceptionOr<void> resetDecoder(const Exception&);
     void setInternalDecoder(Ref<AudioDecoder>&&);
 
-    Ref<WebCodecsAudioDataOutputCallback> m_output;
-    Ref<WebCodecsErrorCallback> m_error;
+    const Ref<WebCodecsAudioDataOutputCallback> m_output;
+    const Ref<WebCodecsErrorCallback> m_error;
     RefPtr<AudioDecoder> m_internalDecoder;
     Vector<Ref<DeferredPromise>> m_pendingFlushPromises;
     bool m_isKeyChunkRequired { false };

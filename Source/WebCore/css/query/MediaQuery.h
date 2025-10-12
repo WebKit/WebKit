@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "GenericMediaQueryTypes.h"
+#include <WebCore/GenericMediaQueryTypes.h>
 
 namespace WebCore {
 namespace MQ {

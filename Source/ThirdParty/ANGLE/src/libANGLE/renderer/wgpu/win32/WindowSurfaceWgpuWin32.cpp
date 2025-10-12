@@ -24,6 +24,7 @@ angle::Result WindowSurfaceWgpuWin32::createWgpuSurface(const egl::Display *disp
                                                         webgpu::SurfaceHandle *outSurface)
 {
     DisplayWgpu *displayWgpu = webgpu::GetImpl(display);
+    const DawnProcTable *wgpu       = displayWgpu->getProcs();
     webgpu::InstanceHandle instance = displayWgpu->getInstance();
 
     WGPUSurfaceSourceWindowsHWND hwndDesc = WGPU_SURFACE_SOURCE_WINDOWS_HWND_INIT;
@@ -33,8 +34,8 @@ angle::Result WindowSurfaceWgpuWin32::createWgpuSurface(const egl::Display *disp
     WGPUSurfaceDescriptor surfaceDesc = WGPU_SURFACE_DESCRIPTOR_INIT;
     surfaceDesc.nextInChain           = &hwndDesc.chain;
 
-    webgpu::SurfaceHandle surface =
-        webgpu::SurfaceHandle::Acquire(wgpuInstanceCreateSurface(instance.get(), &surfaceDesc));
+    webgpu::SurfaceHandle surface = webgpu::SurfaceHandle::Acquire(
+        wgpu, wgpu->instanceCreateSurface(instance.get(), &surfaceDesc));
     *outSurface           = surface;
 
     return angle::Result::Continue;

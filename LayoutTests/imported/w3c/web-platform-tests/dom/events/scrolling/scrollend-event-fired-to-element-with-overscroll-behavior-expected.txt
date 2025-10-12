@@ -1,3 +1,5 @@
 
-FAIL Tests that the scroll is not propagated beyond div with non-auto overscroll-behavior. promise_test: Unhandled rejection with value: "No scrollend event received for target [object HTMLDivElement]"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Tests that the scroll is not propagated beyond div with non-auto overscroll-behavior. Test timed out
 

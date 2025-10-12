@@ -55,8 +55,9 @@ typedef (FetchRequest or USVString) RequestInfo;
     // FIXME: Implement 'isHistoryNavigation'.
     // readonly attribute boolean isHistoryNavigation;
     readonly attribute AbortSignal signal;
+    [EnabledBySetting=LocalNetworkAccessEnabled] readonly attribute IPAddressSpace targetAddressSpace;
 
-    [NewObject] FetchRequest clone();
+    [CallWith=CurrentGlobalObject, NewObject] FetchRequest clone();
 };
 
 FetchRequest includes FetchBody;

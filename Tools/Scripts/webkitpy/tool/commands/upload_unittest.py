@@ -34,6 +34,7 @@ from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.upload import *
 from webkitpy.tool.mocktool import MockOptions, MockTool
+from webkitscmpy import mocks as wmocks
 
 
 class MockIssue(object):
@@ -43,6 +44,8 @@ class MockIssue(object):
 
 
 class UploadCommandsTest(CommandsTest):
+    path = '/mock-checkout'
+
     def test_post(self):
         options = MockOptions()
         options.cc = None
@@ -143,8 +146,10 @@ Obsoleting 2 old patches on bug 50000
 MOCK reassign_bug: bug_id=50000, assignee=None
 MOCK add_patch_to_bug: bug_id=50000, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False
 MOCK: user.open_url: http://example.com/50000
+Checking for WPT changes
 """
-        self.assert_execute_outputs(Upload(), [50000], options=options, expected_logs=expected_logs)
+        with wmocks.local.Git(self.path):
+            self.assert_execute_outputs(Upload(), [50000], options=options, expected_logs=expected_logs)
 
     def test_upload_fast_cq(self):
         options = MockOptions()
@@ -167,8 +172,10 @@ Obsoleting 2 old patches on bug 50000
 MOCK reassign_bug: bug_id=50000, assignee=None
 MOCK add_patch_to_bug: bug_id=50000, description=[fast-cq] MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False
 MOCK: user.open_url: http://example.com/50000
+Checking for WPT changes
 """
-        self.assert_execute_outputs(Upload(), [50000], options=options, expected_logs=expected_logs)
+        with wmocks.local.Git(self.path):
+            self.assert_execute_outputs(Upload(), [50000], options=options, expected_logs=expected_logs)
 
     def test_upload_with_no_review_and_ews(self):
         options = MockOptions()
@@ -192,8 +199,10 @@ MOCK reassign_bug: bug_id=50000, assignee=None
 MOCK add_patch_to_bug: bug_id=50000, description=MOCK description, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=False
 MOCK: user.open_url: http://example.com/50000
 MOCK: submit_to_ews: 10001
+Checking for WPT changes
 """
-        self.assert_execute_outputs(Upload(), [50000], options=options, expected_logs=expected_logs)
+        with wmocks.local.Git(self.path):
+            self.assert_execute_outputs(Upload(), [50000], options=options, expected_logs=expected_logs)
 
     def test_mark_bug_fixed(self):
         tool = MockTool()
@@ -219,7 +228,7 @@ Committed r9876 (5@main): <https://commits.webkit.org/5@main>
                 identifier='5@main',
                 revision=9876,
             )),
-        }):
+        }), wmocks.local.Git(self.path):
             self.assert_execute_outputs(MarkBugFixed(), [], expected_logs=expected_logs, tool=tool, options=options)
 
     def test_edit_changelog(self):
@@ -279,5 +288,7 @@ Obsoleting 2 old patches on bug 50000
 MOCK reassign_bug: bug_id=50000, assignee=None
 MOCK add_patch_to_bug: bug_id=50000, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False
 MOCK: user.open_url: http://example.com/50000
+Checking for WPT changes
 """
-        self.assert_execute_outputs(Upload(), [50000], options=options, expected_logs=expected_logs)
+        with wmocks.local.Git(self.path):
+            self.assert_execute_outputs(Upload(), [50000], options=options, expected_logs=expected_logs)

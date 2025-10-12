@@ -1,0 +1,8 @@
+PASS colors.top is null
+PASS colors.left is "rgb(238, 238, 238)"
+PASS colors.right is "rgb(238, 238, 238)"
+PASS colors.bottom is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world

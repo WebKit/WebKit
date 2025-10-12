@@ -10,7 +10,18 @@
 #include "test/time_controller/simulated_task_queue.h"
 
 #include <algorithm>
+#include <deque>
+#include <map>
 #include <utility>
+#include <vector>
+
+#include "absl/functional/any_invocable.h"
+#include "absl/strings/string_view.h"
+#include "api/location.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "test/time_controller/simulated_time_controller.h"
 
 namespace webrtc {
 
@@ -52,7 +63,7 @@ void SimulatedTaskQueue::RunReady(Timestamp at_time) {
   }
   CurrentTaskQueueSetter set_current(this);
   while (!ready_tasks_.empty()) {
-    absl::AnyInvocable<void()&&> ready = std::move(ready_tasks_.front());
+    absl::AnyInvocable<void() &&> ready = std::move(ready_tasks_.front());
     ready_tasks_.pop_front();
     lock_.Unlock();
     std::move(ready)();

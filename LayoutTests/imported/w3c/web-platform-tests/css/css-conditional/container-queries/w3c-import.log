@@ -49,6 +49,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-for-cue-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-for-cue.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-for-shadow-dom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-ident-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-inner-at-rules.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-inside-multicol-with-table.html
@@ -71,6 +72,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-type-layout-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-type-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-units-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-units-auto.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-units-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-units-computational-independence.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-units-content-box.html
@@ -88,6 +90,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-units-rule-cache-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-units-rule-cache-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-units-rule-cache.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-units-selection-pseudo-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-units-selection-pseudo-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-units-selection-pseudo.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-units-selection.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-units-shadow.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-units-sharing-via-rule-node-expected.html
@@ -120,6 +125,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/fieldset-legend-change-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/fieldset-legend-change-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/fieldset-legend-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/flex-basis-with-container-type-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/flex-basis-with-container-type.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/font-relative-calc-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/font-relative-units-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/font-relative-units.html
@@ -145,6 +152,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/multicol-container-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/multicol-inside-container-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/multicol-inside-container.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/multiple-size-containers-comma-separated-queries.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/multiple-style-containers-comma-separated-queries.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/nested-query-containers.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/nested-size-style-container-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/never-match-container.html
@@ -160,8 +169,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/no-layout-containment-fixedpos-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/no-layout-containment-fixedpos.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/no-layout-containment-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/no-layout-containment-subgrid-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/orthogonal-wm-container-query.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/percentage-padding-orthogonal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/position-sticky-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/pseudo-elements-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/pseudo-elements-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/pseudo-elements-002-ref.html
@@ -186,6 +197,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/pseudo-elements-012-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/pseudo-elements-012.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/pseudo-elements-013.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/query-container-name.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/query-content-box.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/query-evaluation-style.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/query-evaluation.html
@@ -201,16 +213,24 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scrollbar-container-units-inline-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/scrollbar-container-units-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/sibling-layout-dependency.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/size-container-auto-height.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/size-container-no-principal-box.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/size-container-with-quotes-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/size-container-with-quotes-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/size-container-with-quotes.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/size-container-writing-mode-change.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/size-feature-evaluation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/size-query-with-var.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-change-in-container.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-container-for-shadow-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-container-invalidation-inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-not-sharing-float.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-query-document-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-query-guaranteed-invalid.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-query-no-cycle.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-query-registered-custom-invalid.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-query-registered-custom-rem-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-query-unset-on-root.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-query-with-unknown-width.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/svg-foreignobject-child-container.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/svg-foreignobject-no-size-container-expected.html
@@ -233,6 +253,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/transition-style-change-event-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/transition-style-change-event.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/unsupported-axis.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/var-evaluation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/viewport-units-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/viewport-units.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/whitespace-update-after-removal-expected.html

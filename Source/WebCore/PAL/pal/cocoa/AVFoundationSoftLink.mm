@@ -306,9 +306,7 @@ SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVAudioSessionSpati
 
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureMaxAvailableTorchLevel, float, PAL_EXPORT)
 
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
-SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification, NSNotificationName, PAL_EXPORT)
-#endif
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification, NSNotificationName, PAL_EXPORT)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, AVFoundation, AVSampleBufferAttachContentKey, BOOL, (CMSampleBufferRef sbuf, AVContentKey *contentKey, NSError **outError), (sbuf, contentKey, outError))
 

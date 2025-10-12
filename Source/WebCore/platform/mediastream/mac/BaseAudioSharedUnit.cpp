@@ -41,7 +41,7 @@ namespace WebCore {
 constexpr Seconds voiceActivityThrottlingDuration = 5_s;
 
 BaseAudioSharedUnit::BaseAudioSharedUnit()
-    : m_sampleRate(AudioSession::protectedSharedSession()->sampleRate())
+    : m_sampleRate(AudioSession::singleton().sampleRate())
 {
     RealtimeMediaSourceCenter::singleton().addDevicesChangedObserver(*this);
 }
@@ -138,10 +138,10 @@ OSStatus BaseAudioSharedUnit::startUnit()
     forEachClient([](auto& client) {
         client.audioUnitWillStart();
     });
-    ASSERT(!DeprecatedGlobalSettings::shouldManageAudioSessionCategory() || AudioSession::sharedSession().category() == AudioSession::CategoryType::PlayAndRecord);
+    ASSERT(!DeprecatedGlobalSettings::shouldManageAudioSessionCategory() || AudioSession::singleton().category() == AudioSession::CategoryType::PlayAndRecord);
 
 #if PLATFORM(IOS_FAMILY)
-    if (AudioSession::sharedSession().category() != AudioSession::CategoryType::PlayAndRecord) {
+    if (AudioSession::singleton().category() != AudioSession::CategoryType::PlayAndRecord) {
         RELEASE_LOG_ERROR(WebRTC, "BaseAudioSharedUnit::startUnit cannot call startInternal if category is not set to PlayAndRecord");
         return lowPriorityError2;
     }

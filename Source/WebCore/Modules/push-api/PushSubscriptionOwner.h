@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSDOMPromiseDeferredForward.h"
-#include "PushSubscriptionIdentifier.h"
+#include <WebCore/JSDOMPromiseDeferredForward.h>
+#include <WebCore/PushSubscriptionIdentifier.h>
 #include <wtf/AbstractRefCounted.h>
 
 namespace WebCore {

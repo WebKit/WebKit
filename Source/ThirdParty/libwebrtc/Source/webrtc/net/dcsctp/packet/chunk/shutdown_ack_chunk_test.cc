@@ -9,12 +9,10 @@
  */
 #include "net/dcsctp/packet/chunk/shutdown_ack_chunk.h"
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <vector>
 
-#include "rtc_base/gunit.h"
-#include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace {

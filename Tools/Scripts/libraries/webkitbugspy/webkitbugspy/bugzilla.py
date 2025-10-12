@@ -741,7 +741,7 @@ class Tracker(GenericTracker):
                     return reference
             if not block or not did_modify_cc:
                 break
-            log.warning('Waiting until {} imports bug...'.format(self.radar_importer.name))
+            print('Waiting until {} imports bug...'.format(self.radar_importer.name))
             time.sleep(10)
             issue._comments = None
             issue._references = None

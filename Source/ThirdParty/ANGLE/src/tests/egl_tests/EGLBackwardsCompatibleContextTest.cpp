@@ -16,16 +16,6 @@
 namespace angle
 {
 
-namespace
-{
-std::pair<EGLint, EGLint> GetCurrentContextVersion()
-{
-    const char *versionString = reinterpret_cast<const char *>(glGetString(GL_VERSION));
-    EXPECT_TRUE(strstr(versionString, "OpenGL ES") != nullptr);
-    return {versionString[10] - '0', versionString[12] - '0'};
-}
-}  // anonymous namespace
-
 class EGLBackwardsCompatibleContextTest : public ANGLETest<>
 {
   public:
@@ -34,7 +24,7 @@ class EGLBackwardsCompatibleContextTest : public ANGLETest<>
     void testSetUp() override
     {
         EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
-        mDisplay              = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+        mDisplay              = eglGetPlatformDisplay(GetEglPlatform(),
                                                       reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
         ASSERT_TRUE(mDisplay != EGL_NO_DISPLAY);
 
@@ -95,6 +85,9 @@ class EGLBackwardsCompatibleContextTest : public ANGLETest<>
 // Test extension presence.  All backends should expose this extension
 TEST_P(EGLBackwardsCompatibleContextTest, PbufferDifferentConfig)
 {
+    // The system EGL may not expose ANGLE-specific extensions, which is not a failure.
+    ANGLE_SKIP_TEST_IF(isDriverSystemEgl());
+
     EXPECT_TRUE(
         IsEGLDisplayExtensionEnabled(mDisplay, "EGL_ANGLE_create_context_backwards_compatible"));
 }

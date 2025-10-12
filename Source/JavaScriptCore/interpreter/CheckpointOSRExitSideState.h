@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "BytecodeIndex.h"
-#include "Operands.h"
+#include <JavaScriptCore/BytecodeIndex.h>
+#include <JavaScriptCore/Operands.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC {

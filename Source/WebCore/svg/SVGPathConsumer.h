@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include "FloatPoint.h"
+#include <WebCore/FloatPoint.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/WeakPtr.h>
 

@@ -54,7 +54,7 @@ static void dataLogForCurrentThread(const Types&... values)
 }
 
 struct ThreadData : public ThreadSafeRefCounted<ThreadData> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ThreadData);
 public:
     
     ThreadData();
@@ -79,7 +79,7 @@ enum class DequeueResult {
 };
 
 struct Bucket {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Bucket);
 public:
     Bucket()
         : random(static_cast<unsigned>(std::bit_cast<intptr_t>(this))) // Cannot use default seed since that recurses into Lock.
@@ -217,7 +217,7 @@ Vector<Hashtable*>* hashtables;
 WordLock hashtablesLock;
 
 struct Hashtable {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Hashtable);
 
     Hashtable(unsigned size)
         : data(size)

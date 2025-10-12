@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #import "PasteboardUtilities.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -74,12 +75,12 @@ void writeRTFDToPasteboard(NSData *data)
 
 void writeRTFToPasteboard(NSData *data)
 {
-    [[UIPasteboard generalPasteboard] setItems:@[@{ (__bridge NSString *)kUTTypeRTF : data}]];
+    [[UIPasteboard generalPasteboard] setItems:@[@{ UTTypeRTF.identifier : data }]];
 }
 
 void writeRTFDToPasteboard(NSData *data)
 {
-    [[UIPasteboard generalPasteboard] setItems:@[@{ (__bridge NSString *)kUTTypeFlatRTFD : data}]];
+    [[UIPasteboard generalPasteboard] setItems:@[@{ UTTypeFlatRTFD.identifier : data }]];
 }
 #endif
 
@@ -143,7 +144,7 @@ TEST(PasteRTFD, ImageElementUsesBlobURL)
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
 
     auto *pngData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"sunset-in-cupertino-200px" ofType:@"png"]];
-    auto attachment = adoptNS([[NSTextAttachment alloc] initWithData:pngData ofType:(__bridge NSString *)kUTTypePNG]);
+    auto attachment = adoptNS([[NSTextAttachment alloc] initWithData:pngData ofType:UTTypePNG.identifier]);
     NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:attachment.get()];
     NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }];
 
@@ -161,7 +162,7 @@ TEST(PasteRTFD, ImageElementUsesBlobURLInHTML)
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
 
     auto *pngData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"sunset-in-cupertino-200px" ofType:@"png"]];
-    auto attachment = adoptNS([[NSTextAttachment alloc] initWithData:pngData ofType:(__bridge NSString *)kUTTypePNG]);
+    auto attachment = adoptNS([[NSTextAttachment alloc] initWithData:pngData ofType:UTTypePNG.identifier]);
     NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:attachment.get()];
     NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }];
 

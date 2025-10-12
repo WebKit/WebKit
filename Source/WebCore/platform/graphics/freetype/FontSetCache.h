@@ -76,7 +76,7 @@ public:
 
 private:
     struct FontSet {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(FontSet);
 
         explicit FontSet(RefPtr<FcPattern>&&);
 
@@ -85,7 +85,7 @@ private:
         Vector<std::pair<FcPattern*, FcCharSet*>> patterns;
     };
 
-    UncheckedKeyHashMap<FontSetCacheKey, std::unique_ptr<FontSet>, FontSetCacheKeyHash, SimpleClassHashTraits<FontSetCacheKey>> m_cache;
+    HashMap<FontSetCacheKey, std::unique_ptr<FontSet>, FontSetCacheKeyHash, SimpleClassHashTraits<FontSetCacheKey>> m_cache;
 };
 
 } // namespace WebCore

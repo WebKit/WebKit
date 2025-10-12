@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2025 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,15 +27,13 @@
 #include "IconLoader.h"
 
 #include "CachedRawResource.h"
-#include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiatorTypes.h"
-#include "Document.h"
-#include "DocumentInlines.h"
 #include "DocumentLoader.h"
+#include "DocumentResourceLoader.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
-#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameLoaderClient.h"
 #include "Logging.h"
 #include "ResourceRequest.h"
@@ -89,7 +87,7 @@ void IconLoader::startLoading()
 
     request.setInitiatorType(cachedResourceRequestInitiatorTypes().icon);
 
-    auto cachedResource = frame->document()->protectedCachedResourceLoader()->requestIcon(WTFMove(request));
+    auto cachedResource = frame->protectedDocument()->protectedCachedResourceLoader()->requestIcon(WTFMove(request));
     m_resource = cachedResource.value_or(nullptr);
     if (CachedResourceHandle resource = m_resource)
         resource->addClient(*this);
@@ -115,7 +113,7 @@ void IconLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetri
         data = nullptr;
 
     constexpr uint8_t pdfMagicNumber[] = { '%', 'P', 'D', 'F' };
-    if (data && data->startsWith(std::span(pdfMagicNumber, std::size(pdfMagicNumber)))) {
+    if (data && data->startsWith(unsafeMakeSpan(pdfMagicNumber, std::size(pdfMagicNumber)))) {
         LOG(IconDatabase, "IconLoader::finishLoading() - Ignoring icon at %s because it appears to be a PDF", m_resource->url().string().ascii().data());
         data = nullptr;
     }

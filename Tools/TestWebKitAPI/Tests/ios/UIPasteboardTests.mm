@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,9 +85,9 @@ static _UIDataOwner gLastKnownDataOwner = _UIDataOwnerUndefined;
 
 namespace TestWebKitAPI {
 
-NSData *dataForPasteboardType(CFStringRef type)
+NSData *dataForPasteboardType(NSString *type)
 {
-    return [[UIPasteboard generalPasteboard] dataForPasteboardType:(NSString *)type inItemSet:[NSIndexSet indexSetWithIndex:0]].firstObject;
+    return [[UIPasteboard generalPasteboard] dataForPasteboardType:type inItemSet:[NSIndexSet indexSetWithIndex:0]].firstObject;
 }
 
 RetainPtr<TestWKWebView> setUpWebViewForPasteboardTests(NSString *pageName)
@@ -96,8 +96,8 @@ RetainPtr<TestWKWebView> setUpWebViewForPasteboardTests(NSString *pageName)
     TestWebKitAPI::Util::instantiateUIApplicationIfNeeded();
 
     [UIPasteboard generalPasteboard].items = @[];
-    EXPECT_TRUE(!dataForPasteboardType(kUTTypeUTF8PlainText).length);
-    EXPECT_TRUE(!dataForPasteboardType(kUTTypeUTF16PlainText).length);
+    EXPECT_TRUE(!dataForPasteboardType(UTTypeUTF8PlainText.identifier).length);
+    EXPECT_TRUE(!dataForPasteboardType(UTTypeUTF16PlainText.identifier).length);
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     WKPreferences *preferences = [webView configuration].preferences;
@@ -113,7 +113,7 @@ TEST(UIPasteboardTests, CopyPlainTextWritesConcreteTypes)
     [webView stringByEvaluatingJavaScript:@"selectPlainText()"];
     [webView stringByEvaluatingJavaScript:@"document.execCommand('copy')"];
 
-    auto utf8Result = adoptNS([[NSString alloc] initWithData:dataForPasteboardType(kUTTypeUTF8PlainText) encoding:NSUTF8StringEncoding]);
+    auto utf8Result = adoptNS([[NSString alloc] initWithData:dataForPasteboardType(UTTypeUTF8PlainText.identifier) encoding:NSUTF8StringEncoding]);
     EXPECT_WK_STREQ("Hello world", [utf8Result UTF8String]);
 }
 
@@ -126,7 +126,7 @@ TEST(UIPasteboardTests, CopyPlainTextRetainsEscapeCharactersInURLRepresentation)
 
     EXPECT_FALSE(UIPasteboard.generalPasteboard.URL);
 
-    auto utf8Result = adoptNS([[NSString alloc] initWithData:dataForPasteboardType(kUTTypeUTF8PlainText) encoding:NSUTF8StringEncoding]);
+    auto utf8Result = adoptNS([[NSString alloc] initWithData:dataForPasteboardType(UTTypeUTF8PlainText.identifier) encoding:NSUTF8StringEncoding]);
     EXPECT_WK_STREQ("hello:<", [utf8Result UTF8String]);
 }
 
@@ -136,7 +136,7 @@ TEST(UIPasteboardTests, CopyRichTextWritesConcreteTypes)
     [webView stringByEvaluatingJavaScript:@"selectRichText()"];
     [webView stringByEvaluatingJavaScript:@"document.execCommand('copy')"];
 
-    auto utf8Result = adoptNS([[NSString alloc] initWithData:dataForPasteboardType(kUTTypeUTF8PlainText) encoding:NSUTF8StringEncoding]);
+    auto utf8Result = adoptNS([[NSString alloc] initWithData:dataForPasteboardType(UTTypeUTF8PlainText.identifier) encoding:NSUTF8StringEncoding]);
     EXPECT_WK_STREQ("Hello world", [utf8Result UTF8String]);
 }
 
@@ -239,7 +239,7 @@ TEST(UIPasteboardTests, DataTransferGetDataWhenPastingPlatformRepresentations)
     RetainPtr<NSString> testPlainTextString = @"WebKit";
     RetainPtr<NSString> testMarkupString = @"<a href=\"https://www.webkit.org/\">The WebKit Project</a>";
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
-    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
+    [itemProvider registerDataRepresentationForTypeIdentifier:UTTypeHTML.identifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
     {
         completionHandler([testMarkupString dataUsingEncoding:NSUTF8StringEncoding], nil);
         return nil;
@@ -264,11 +264,11 @@ TEST(UIPasteboardTests, DataTransferGetDataWhenPastingImageAndText)
     auto webView = setUpWebViewForPasteboardTests(@"DataTransfer");
     auto copiedText = retainPtr(@"Apple Inc.");
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
-    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
+    [itemProvider registerDataRepresentationForTypeIdentifier:UTTypePNG.identifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
         completionHandler([NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]], nil);
         return nil;
     }];
-    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeUTF8PlainText visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[copiedText] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
+    [itemProvider registerDataRepresentationForTypeIdentifier:UTTypeUTF8PlainText.identifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[copiedText] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
         completionHandler([copiedText dataUsingEncoding:NSUTF8StringEncoding], nil);
         return nil;
     }];
@@ -303,7 +303,7 @@ TEST(UIPasteboardTests, DataTransferSetDataCannotWritePlatformTypes)
     });
 
     // Most importantly, the system pasteboard should not contain the PDF UTI.
-    NSData *pdfData = [[UIPasteboard generalPasteboard] dataForPasteboardType:(__bridge NSString *)kUTTypePDF];
+    NSData *pdfData = [[UIPasteboard generalPasteboard] dataForPasteboardType:UTTypePDF.identifier];
     EXPECT_EQ(0UL, pdfData.length);
 
     // However, the system pasteboard should contain a plain text string.
@@ -314,7 +314,7 @@ TEST(UIPasteboardTests, DataTransferGetDataCannotReadArbitraryPlatformTypes)
 {
     auto webView = setUpWebViewForPasteboardTests(@"dump-datatransfer-types");
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
-    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeMP3 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
+    [itemProvider registerDataRepresentationForTypeIdentifier:UTTypeMP3.identifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
     {
         completionHandler([@"this is a test" dataUsingEncoding:NSUTF8StringEncoding], nil);
         return nil;
@@ -377,7 +377,7 @@ TEST(UIPasteboardTests, ValidPreferredPresentationSizeForImage)
     auto webView = setUpWebViewForPasteboardTests(@"autofocus-contenteditable");
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
     [itemProvider setPreferredPresentationSize:CGSizeMake(10, 20)];
-    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
+    [itemProvider registerDataRepresentationForTypeIdentifier:UTTypePNG.identifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
         completionHandler([NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]], nil);
         return nil;
     }];
@@ -393,7 +393,7 @@ TEST(UIPasteboardTests, InvalidPreferredPresentationSizeForImage)
     auto webView = setUpWebViewForPasteboardTests(@"autofocus-contenteditable");
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
     [itemProvider setPreferredPresentationSize:CGSizeMake(-10, -20)];
-    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
+    [itemProvider registerDataRepresentationForTypeIdentifier:UTTypePNG.identifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
         completionHandler([NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]], nil);
         return nil;
     }];
@@ -408,7 +408,7 @@ TEST(UIPasteboardTests, MissingPreferredPresentationSizeForImage)
 {
     auto webView = setUpWebViewForPasteboardTests(@"autofocus-contenteditable");
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
-    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
+    [itemProvider registerDataRepresentationForTypeIdentifier:UTTypePNG.identifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
         completionHandler([NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]], nil);
         return nil;
     }];
@@ -467,7 +467,7 @@ TEST(UIPasteboardTests, PerformAsDataOwnerWithManagedURL)
     };
 
     auto managedConfigurationSwizzler = InstanceMethodSwizzler {
-        PAL::getMCProfileConnectionClass(),
+        PAL::getMCProfileConnectionClassSingleton(),
         @selector(isURLManaged:),
         [TestMCProfileConnection instanceMethodForSelector:@selector(isURLManaged:)]
     };

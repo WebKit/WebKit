@@ -26,6 +26,7 @@
 #pragma once
 
 #include <optional>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -48,4 +49,6 @@ inline bool isRGBVideoPixelFormat(VideoPixelFormat format)
     return format == VideoPixelFormat::RGBA || format == VideoPixelFormat::RGBX || format == VideoPixelFormat::BGRA || format == VideoPixelFormat::BGRX;
 }
 
-}
+WEBCORE_EXPORT String convertVideoPixelFormatToString(VideoPixelFormat);
+
+} // namespace WebCore

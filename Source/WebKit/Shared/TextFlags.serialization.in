@@ -20,96 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-enum class WebCore::FontWidthVariant : uint8_t {
-    RegularWidth,
-    HalfWidth,
-    ThirdWidth,
-    QuarterWidth,
-};
-
-enum class WebCore::Kerning : uint8_t {
-    Auto,
-    Normal,
-    NoShift
-};
-
-enum class WebCore::FontOpticalSizing : bool;
-
-enum class WebCore::FontStyleAxis : uint8_t {
-    slnt,
-    ital
-};
-
-enum class WebCore::AllowUserInstalledFonts : bool;
-
-enum class WebCore::FontVariantEastAsianVariant : uint8_t {
-    Normal,
-    Jis78,
-    Jis83,
-    Jis90,
-    Jis04,
-    Simplified,
-    Traditional
-};
-
-enum class WebCore::FontVariantEastAsianWidth : uint8_t {
-    Normal,
-    Full,
-    Proportional
-};
-
-enum class WebCore::FontVariantEastAsianRuby : uint8_t {
-    Normal,
-    Yes
-};
-
-enum class WebCore::FontVariantLigatures : uint8_t {
-    Normal,
-    Yes,
-    No
-};
-
-enum class WebCore::FontVariantPosition : uint8_t {
-    Normal,
-    Subscript,
-    Superscript
-};
-
-enum class WebCore::FontVariantCaps : uint8_t {
-    Normal,
-    Small,
-    AllSmall,
-    Petite,
-    AllPetite,
-    Unicase,
-    Titling
-};
-
-enum class WebCore::FontVariantNumericFigure : uint8_t {
-    Normal,
-    LiningNumbers,
-    OldStyleNumbers
-};
-
-enum class WebCore::FontVariantNumericSpacing : uint8_t {
-    Normal,
-    ProportionalNumbers,
-    TabularNumbers
-};
-
-enum class WebCore::FontVariantNumericFraction : uint8_t {
-    Normal,
-    DiagonalFractions,
-    StackedFractions
-};
-
-enum class WebCore::TextRenderingMode : uint8_t {
-    AutoTextRendering,
-    OptimizeSpeed,
-    OptimizeLegibility,
-    GeometricPrecision
-};
-
 enum class WebCore::FontSmoothingMode : uint8_t {
     AutoSmoothing,
     NoSmoothing,
@@ -125,13 +35,8 @@ enum class WebCore::FontSmoothingMode : uint8_t {
     AutomaticSpellingCorrectionEnabled,
     AutomaticQuoteSubstitutionEnabled,
     AutomaticDashSubstitutionEnabled,
-    AutomaticLinkDetectionEnabled
+    AutomaticLinkDetectionEnabled,
+    SmartListsEnabled
 #endif
 };
 
-enum class WebCore::FontOrientation : bool
-enum class WebCore::NonCJKGlyphOrientation : bool
-enum class WebCore::FontVariantNumericOrdinal : bool
-enum class WebCore::FontVariantNumericSlashedZero : bool
-enum class WebCore::FontSynthesisLonghandValue : bool
-enum class WebCore::FontSmallCaps : bool

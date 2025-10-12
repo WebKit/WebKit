@@ -1,0 +1,198 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "BGContinuedProcessingTaskRequestResourcesDefault"},
+      {"access": "public", "name": "BGContinuedProcessingTaskRequestResourcesGPU"}
+     ],
+     "introduced": "26",
+     "name": "BGContinuedProcessingTaskRequestResources"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "BGContinuedProcessingTaskRequestSubmissionStrategyFail"},
+      {"access": "public", "name": "BGContinuedProcessingTaskRequestSubmissionStrategyQueue"}
+     ],
+     "introduced": "26",
+     "name": "BGContinuedProcessingTaskRequestSubmissionStrategy"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "BGTaskSchedulerErrorCodeUnavailable"},
+      {"access": "public", "name": "BGTaskSchedulerErrorCodeTooManyPendingTaskRequests"},
+      {"access": "public", "name": "BGTaskSchedulerErrorCodeNotPermitted"},
+      {"access": "public", "name": "BGTaskSchedulerErrorCodeImmediateRunIneligible"}
+     ],
+     "introduced": "13",
+     "name": "BGTaskSchedulerErrorCode"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_BGTaskSchedulerErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "BGAppRefreshTask",
+     "super": "BGTask"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithIdentifier:"}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "BGAppRefreshTaskRequest",
+     "super": "BGTaskRequest"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "updateTitle:subtitle:"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "BGContinuedProcessingTask",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subtitle", "name": "subtitle"}
+     ],
+     "protocols": [
+      "NSProgressReporting"
+     ],
+     "super": "BGTask"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithIdentifier:title:subtitle:"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "BGContinuedProcessingTaskRequest",
+     "properties": [
+      {"access": "public", "getter": "title", "name": "title", "setter": "setTitle:"},
+      {"access": "public", "getter": "subtitle", "name": "subtitle", "setter": "setSubtitle:"},
+      {"access": "public", "getter": "strategy", "name": "strategy", "setter": "setStrategy:"},
+      {"access": "public", "getter": "requiredResources", "name": "requiredResources", "setter": "setRequiredResources:"}
+     ],
+     "super": "BGTaskRequest"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "BGHealthResearchTask",
+     "super": "BGProcessingTask"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "BGHealthResearchTaskRequest",
+     "properties": [
+      {"access": "public", "getter": "protectionTypeOfRequiredData", "name": "protectionTypeOfRequiredData", "setter": "setProtectionTypeOfRequiredData:"}
+     ],
+     "super": "BGProcessingTaskRequest"
+    },
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "BGProcessingTask",
+     "super": "BGTask"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithIdentifier:"}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "BGProcessingTaskRequest",
+     "properties": [
+      {"access": "public", "getter": "requiresNetworkConnectivity", "name": "requiresNetworkConnectivity", "setter": "setRequiresNetworkConnectivity:"},
+      {"access": "public", "getter": "requiresExternalPower", "name": "requiresExternalPower", "setter": "setRequiresExternalPower:"}
+     ],
+     "super": "BGTaskRequest"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "setTaskCompletedWithSuccess:"}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "BGTask",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "getter": "expirationHandler", "name": "expirationHandler", "setter": "setExpirationHandler:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "BGTaskRequest",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "getter": "earliestBeginDate", "name": "earliestBeginDate", "setter": "setEarliestBeginDate:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "registerForTaskWithIdentifier:usingQueue:launchHandler:"},
+      {"access": "public", "name": "submitTaskRequest:error:"},
+      {"access": "public", "name": "cancelTaskRequestWithIdentifier:"},
+      {"access": "public", "name": "cancelAllTaskRequests"},
+      {"access": "public", "name": "getPendingTaskRequestsWithCompletionHandler:"}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "BGTaskScheduler",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sharedScheduler", "name": "sharedScheduler"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportedResources", "introduced": "26", "name": "supportedResources"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e-apple-ios26",
+   "typedefs": [
+    {"access": "public", "name": "BGContinuedProcessingTaskRequestResources"},
+    {"access": "public", "name": "BGContinuedProcessingTaskRequestSubmissionStrategy"},
+    {"access": "public", "name": "BGTaskSchedulerErrorCode"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

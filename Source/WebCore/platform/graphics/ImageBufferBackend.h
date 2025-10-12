@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,18 +25,18 @@
 
 #pragma once
 
-#include "CopyImageOptions.h"
-#include "DestinationColorSpace.h"
-#include "FloatRect.h"
-#include "GraphicsLayerContentsDisplayDelegate.h"
-#include "GraphicsTypesGL.h"
-#include "ImageBufferAllocator.h"
-#include "ImageBufferBackendParameters.h"
-#include "ImagePaintingOptions.h"
-#include "IntRect.h"
-#include "PixelBufferFormat.h"
-#include "PlatformLayer.h"
-#include "RenderingMode.h"
+#include <WebCore/CopyImageOptions.h>
+#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
+#include <WebCore/GraphicsTypesGL.h>
+#include <WebCore/ImageBufferAllocator.h>
+#include <WebCore/ImageBufferBackendParameters.h>
+#include <WebCore/ImagePaintingOptions.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/PixelBufferFormat.h>
+#include <WebCore/PlatformLayer.h>
+#include <WebCore/RenderingMode.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -47,7 +47,7 @@
 #endif
 
 #if HAVE(IOSURFACE)
-#include "IOSurface.h"
+#include <WebCore/IOSurface.h>
 #endif
 
 #if USE(SKIA)
@@ -182,7 +182,7 @@ protected:
     IntSize size() const { return m_parameters.backendSize; };
     float resolutionScale() const { return m_parameters.resolutionScale; }
     const DestinationColorSpace& colorSpace() const { return m_parameters.colorSpace; }
-    ImageBufferPixelFormat pixelFormat() const { return m_parameters.pixelFormat; }
+    PixelFormat pixelFormat() const { return m_parameters.bufferFormat.pixelFormat; }
 
     WEBCORE_EXPORT void getPixelBuffer(const IntRect& srcRect, std::span<const uint8_t> data, PixelBuffer& destination);
     WEBCORE_EXPORT void putPixelBuffer(const PixelBufferSourceView&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, std::span<uint8_t> destination);

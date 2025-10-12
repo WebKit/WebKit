@@ -1,63 +1,21 @@
-/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
- * All rights reserved.
- *
- * This package is an SSL implementation written
- * by Eric Young (eay@cryptsoft.com).
- * The implementation was written so as to conform with Netscapes SSL.
- *
- * This library is free for commercial and non-commercial use as long as
- * the following conditions are aheared to.  The following conditions
- * apply to all code found in this distribution, be it the RC4, RSA,
- * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
- * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- *
- * Copyright remains Eric Young's, and as such any Copyright notices in
- * the code are not to be removed.
- * If this package is used in a product, Eric Young should be given attribution
- * as the author of the parts of the library used.
- * This can be in the form of a textual message at program startup or
- * in documentation (online or textual) provided with the package.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *    "This product includes cryptographic software written by
- *     Eric Young (eay@cryptsoft.com)"
- *    The word 'cryptographic' can be left out if the rouines from the library
- *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from
- *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- *
- * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * The licence and distribution terms for any publically available version or
- * derivative of this code cannot be changed.  i.e. this code cannot simply be
- * copied and put under another distribution licence
- * [including the GNU Public Licence.] */
+// Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #ifndef OPENSSL_HEADER_BIO_H
 #define OPENSSL_HEADER_BIO_H
 
-#include <openssl/base.h>
+#include <openssl/base.h>   // IWYU pragma: export
 
 #include <stdio.h>  // For FILE
 
@@ -65,7 +23,6 @@
 #include <openssl/err.h>  // for ERR_print_errors_fp
 #include <openssl/ex_data.h>
 #include <openssl/stack.h>
-#include <openssl/thread.h>
 
 #if defined(__cplusplus)
 extern "C" {
@@ -165,6 +122,9 @@ OPENSSL_EXPORT int BIO_eof(BIO *bio);
 // BIO_set_flags ORs |flags| with |bio->flags|.
 OPENSSL_EXPORT void BIO_set_flags(BIO *bio, int flags);
 
+// BIO_clear_flags ANDs |bio->flags| with the bitwise-complement of |flags|.
+OPENSSL_EXPORT void BIO_clear_flags(BIO *bio, int flags);
+
 // BIO_test_flags returns |bio->flags| AND |flags|.
 OPENSSL_EXPORT int BIO_test_flags(const BIO *bio, int flags);
 
@@ -203,9 +163,6 @@ OPENSSL_EXPORT int BIO_get_retry_reason(const BIO *bio);
 // to |reason|, which should be one of the |BIO_RR_*| values.
 OPENSSL_EXPORT void BIO_set_retry_reason(BIO *bio, int reason);
 
-// BIO_clear_flags ANDs |bio->flags| with the bitwise-complement of |flags|.
-OPENSSL_EXPORT void BIO_clear_flags(BIO *bio, int flags);
-
 // BIO_set_retry_read sets the |BIO_FLAGS_READ| and |BIO_FLAGS_SHOULD_RETRY|
 // flags on |bio|.
 OPENSSL_EXPORT void BIO_set_retry_read(BIO *bio);
@@ -226,30 +183,12 @@ OPENSSL_EXPORT void BIO_clear_retry_flags(BIO *bio);
 // values.
 OPENSSL_EXPORT int BIO_method_type(const BIO *bio);
 
-// These are passed to the BIO callback
-#define BIO_CB_FREE 0x01
-#define BIO_CB_READ 0x02
-#define BIO_CB_WRITE 0x03
-#define BIO_CB_PUTS 0x04
-#define BIO_CB_GETS 0x05
-#define BIO_CB_CTRL 0x06
-
-// The callback is called before and after the underling operation,
-// The BIO_CB_RETURN flag indicates if it is after the call
-#define BIO_CB_RETURN 0x80
-
-// bio_info_cb is the type of a callback function that can be called for most
-// BIO operations. The |event| argument is one of |BIO_CB_*| and can be ORed
-// with |BIO_CB_RETURN| if the callback is being made after the operation in
-// question. In that case, |return_value| will contain the return value from
-// the operation.
-typedef long (*bio_info_cb)(BIO *bio, int event, const char *parg, int cmd,
-                            long larg, long return_value);
+typedef int BIO_info_cb(BIO *, int, int);
 
 // BIO_callback_ctrl allows the callback function to be manipulated. The |cmd|
 // arg will generally be |BIO_CTRL_SET_CALLBACK| but arbitrary command values
 // can be interpreted by the |BIO|.
-OPENSSL_EXPORT long BIO_callback_ctrl(BIO *bio, int cmd, bio_info_cb fp);
+OPENSSL_EXPORT long BIO_callback_ctrl(BIO *bio, int cmd, BIO_info_cb *fp);
 
 // BIO_pending returns the number of bytes pending to be read.
 OPENSSL_EXPORT size_t BIO_pending(const BIO *bio);
@@ -718,6 +657,11 @@ OPENSSL_EXPORT int BIO_meth_set_create(BIO_METHOD *method,
 
 // BIO_meth_set_destroy sets a function to release data associated with a |BIO|
 // and returns one. The function's return value is ignored.
+//
+// As the |BIO| is about to be destroyed, it is not necessary for |destroy_func|
+// to clear the BIO's state with |BIO_set_data| or |BIO_set_init|. There is no
+// harm in clearing them, but the |BIO| will not be passed to |BIO| operations,
+// unless |destroy_func| itself does so.
 OPENSSL_EXPORT int BIO_meth_set_destroy(BIO_METHOD *method,
                                         int (*destroy_func)(BIO *));
 
@@ -743,6 +687,11 @@ OPENSSL_EXPORT int BIO_meth_set_gets(BIO_METHOD *method,
 OPENSSL_EXPORT int BIO_meth_set_ctrl(BIO_METHOD *method,
                                      long (*ctrl_func)(BIO *, int, long,
                                                        void *));
+
+// BIO_meth_set_callback_ctrl sets the implementation of |BIO_callback_ctrl| for
+// |method| and returns one.
+OPENSSL_EXPORT int BIO_meth_set_callback_ctrl(
+    BIO_METHOD *method, long (*callback_ctrl_func)(BIO *, int, BIO_info_cb *));
 
 // BIO_set_data sets custom data on |bio|. It may be retried with
 // |BIO_get_data|.
@@ -829,6 +778,8 @@ OPENSSL_EXPORT void *BIO_get_ex_data(const BIO *bio, int idx);
 
 // Deprecated functions.
 
+typedef BIO_info_cb bio_info_cb;
+
 // BIO_f_base64 returns a filter |BIO| that base64-encodes data written into
 // it, and decodes data read from it. |BIO_gets| is not supported. Call
 // |BIO_flush| when done writing, to signal that no more data are to be
@@ -853,6 +804,48 @@ OPENSSL_EXPORT int BIO_get_shutdown(BIO *bio);
 // BoringSSL.
 OPENSSL_EXPORT int BIO_meth_set_puts(BIO_METHOD *method,
                                      int (*puts)(BIO *, const char *));
+
+#if !defined(OPENSSL_NO_SOCK)
+// The following functions return function pointers, possibly NULL, which are
+// compatible with the corresponding |BIO_meth_set_*| function. |method| must be
+// |BIO_s_socket| or the program will abort.
+//
+// Using these functions is inherently unsafe and fragile. It is not possible to
+// use them in a future-proof way. See
+// https://github.com/openssl/openssl/issues/26047 for details. BoringSSL
+// implements them solely for compatibility with Folly and older versions of
+// PostgreSQL. To work around the future-proofing problems, the return values
+// may diverge from the true implementation of |BIO_s_socket|.
+//
+// Caller should not use these functions. They are not necessary to define
+// custom |BIO_METHOD|s. Instead, callers should either:
+//
+// - Define a custom |BIO_METHOD| that owns a socket |BIO| somewhere in the
+//   custom data. See |BIO_set_data|.
+//
+// - Define a custom |BIO_METHOD| that wraps a socket |BIO| as a filter. See
+//   |BIO_push| and |BIO_next|.
+//
+// - Define a custom |BIO_METHOD| without |BIO_s_socket| at all. If not using
+//   the built-in read or write functions, |BIO_s_socket| only provides a no-op
+//   |BIO_CTRL_FLUSH| implementation. This can be implemented by the caller.
+OPENSSL_EXPORT int (*BIO_meth_get_write(const BIO_METHOD *method))(BIO *,
+                                                                   const char *,
+                                                                   int);
+OPENSSL_EXPORT int (*BIO_meth_get_read(const BIO_METHOD *method))(BIO *, char *,
+                                                                  int);
+OPENSSL_EXPORT int (*BIO_meth_get_gets(const BIO_METHOD *method))(BIO *, char *,
+                                                                  int);
+OPENSSL_EXPORT int (*BIO_meth_get_puts(const BIO_METHOD *method))(BIO *,
+                                                                  const char *);
+OPENSSL_EXPORT long (*BIO_meth_get_ctrl(const BIO_METHOD *method))(BIO *, int,
+                                                                   long,
+                                                                   void *);
+OPENSSL_EXPORT int (*BIO_meth_get_create(const BIO_METHOD *method))(BIO *);
+OPENSSL_EXPORT int (*BIO_meth_get_destroy(const BIO_METHOD *method))(BIO *);
+OPENSSL_EXPORT long (*BIO_meth_get_callback_ctrl(const BIO_METHOD *method))(
+    BIO *, int, BIO_info_cb *);
+#endif  // !OPENSSL_NO_SOCK
 
 
 // Private functions
@@ -901,44 +894,6 @@ OPENSSL_EXPORT int BIO_meth_set_puts(BIO_METHOD *method,
 // BIO_TYPE_START is the first user-allocated |BIO| type. No pre-defined type,
 // flag bits aside, may exceed this value.
 #define BIO_TYPE_START 128
-
-struct bio_method_st {
-  int type;
-  const char *name;
-  int (*bwrite)(BIO *, const char *, int);
-  int (*bread)(BIO *, char *, int);
-  // TODO(fork): remove bputs.
-  int (*bputs)(BIO *, const char *);
-  int (*bgets)(BIO *, char *, int);
-  long (*ctrl)(BIO *, int, long, void *);
-  int (*create)(BIO *);
-  int (*destroy)(BIO *);
-  long (*callback_ctrl)(BIO *, int, bio_info_cb);
-};
-
-struct bio_st {
-  const BIO_METHOD *method;
-  CRYPTO_EX_DATA ex_data;
-
-  // init is non-zero if this |BIO| has been initialised.
-  int init;
-  // shutdown is often used by specific |BIO_METHOD|s to determine whether
-  // they own some underlying resource. This flag can often by controlled by
-  // |BIO_set_close|. For example, whether an fd BIO closes the underlying fd
-  // when it, itself, is closed.
-  int shutdown;
-  int flags;
-  int retry_reason;
-  // num is a BIO-specific value. For example, in fd BIOs it's used to store a
-  // file descriptor.
-  int num;
-  CRYPTO_refcount_t references;
-  void *ptr;
-  // next_bio points to the next |BIO| in a chain. This |BIO| owns a reference
-  // to |next_bio|.
-  BIO *next_bio;  // used by filter BIOs
-  uint64_t num_read, num_write;
-};
 
 #define BIO_C_SET_CONNECT 100
 #define BIO_C_DO_STATE_MACHINE 101

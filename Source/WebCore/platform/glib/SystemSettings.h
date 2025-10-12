@@ -88,7 +88,7 @@ private:
     SystemSettings();
 
     State m_state;
-    UncheckedKeyHashMap<void*, Function<void(const State&)>> m_observers;
+    HashMap<void*, Function<void(const State&)>> m_observers;
 };
 
 } // namespace WebCore

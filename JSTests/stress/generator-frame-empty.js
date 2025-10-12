@@ -31,4 +31,4 @@ shouldThrow(function () {
     }
     for (let v of fib(true)) {
     }
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'c' before initialization.`);

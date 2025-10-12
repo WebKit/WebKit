@@ -59,6 +59,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-paragraph-background-image.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-paragraph-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-paragraph.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-element-overflow-hidden-and-border-radius-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-element-overflow-hidden-and-border-radius-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-element-overflow-hidden-and-border-radius-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-element-overflow-hidden-and-border-radius.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-element-overflow-scroll-blended-position-fixed-expected.html
@@ -95,6 +97,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-simple.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-stacking-context-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-stacking-context-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-stacking-context-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-stacking-context-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-stacking-context-creates-isolation-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-stacking-context-creates-isolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-svg-expected.html

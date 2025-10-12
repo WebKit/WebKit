@@ -289,8 +289,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._resourcesTreeOutline = this.contentTreeOutline;
         this._resourcesTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._handleTreeSelectionDidChange, this);
         this._resourcesTreeOutline.includeSourceMapResourceChildren = true;
-        if (WI.settings.experimentalVirtualizeSourcesNavigationSidebarTreeOutline.value)
-            this._resourcesTreeOutline.registerScrollVirtualizer(resourcesContainer, 20);
+        this._resourcesTreeOutline.registerScrollVirtualizer(resourcesContainer, 20);
         resourcesContainer.appendChild(this._resourcesTreeOutline.element);
 
         if (WI.NetworkManager.supportsOverridingResponses() || WI.NetworkManager.supportsBootstrapScript() || WI.CSSManager.supportsInspectorStyleSheet()) {

@@ -11,11 +11,15 @@
 #include "common_video/h265/h265_sps_parser.h"
 
 #include <algorithm>
-#include <memory>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 #include <vector>
 
+#include "api/array_view.h"
 #include "common_video/h265/h265_common.h"
-#include "rtc_base/bit_buffer.h"
+#include "rtc_base/bitstream_reader.h"
 #include "rtc_base/logging.h"
 
 #define IN_RANGE_OR_RETURN_NULL(val, min, max)                                \
@@ -110,7 +114,7 @@ size_t H265SpsParser::GetDpbMaxPicBuf(int general_profile_idc) {
 
 // Unpack RBSP and parse SPS state from the supplied buffer.
 std::optional<H265SpsParser::SpsState> H265SpsParser::ParseSps(
-    rtc::ArrayView<const uint8_t> data) {
+    ArrayView<const uint8_t> data) {
   return ParseSpsInternal(H265::ParseRbsp(data));
 }
 
@@ -397,7 +401,7 @@ H265SpsParser::ParseProfileTierLevel(bool profile_present,
 }
 
 std::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
-    rtc::ArrayView<const uint8_t> buffer) {
+    ArrayView<const uint8_t> buffer) {
   BitstreamReader reader(buffer);
 
   // Now, we need to use a bit buffer to parse through the actual H265 SPS
@@ -472,12 +476,12 @@ std::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
   uint32_t conf_win_right_offset = 0;
   uint32_t conf_win_top_offset = 0;
   uint32_t conf_win_bottom_offset = 0;
-  int sub_width_c =
+  const int sub_width_c =
       ((1 == sps.chroma_format_idc) || (2 == sps.chroma_format_idc)) &&
               (0 == sps.separate_colour_plane_flag)
           ? 2
           : 1;
-  int sub_height_c =
+  const int sub_height_c =
       (1 == sps.chroma_format_idc) && (0 == sps.separate_colour_plane_flag) ? 2
                                                                             : 1;
   if (conformance_window_flag) {
@@ -694,15 +698,6 @@ std::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
   sps.height = pic_height_in_luma_samples;
 
   if (conformance_window_flag) {
-    int sub_width_c =
-        ((1 == sps.chroma_format_idc) || (2 == sps.chroma_format_idc)) &&
-                (0 == sps.separate_colour_plane_flag)
-            ? 2
-            : 1;
-    int sub_height_c =
-        (1 == sps.chroma_format_idc) && (0 == sps.separate_colour_plane_flag)
-            ? 2
-            : 1;
     // the offset includes the pixel within conformance window. so don't need to
     // +1 as per spec
     sps.width -= sub_width_c * (conf_win_right_offset + conf_win_left_offset);

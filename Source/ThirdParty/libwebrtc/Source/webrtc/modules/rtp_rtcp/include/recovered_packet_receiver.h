@@ -11,7 +11,6 @@
 #define MODULES_RTP_RTCP_INCLUDE_RECOVERED_PACKET_RECEIVER_H_
 
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
-#include "rtc_base/checks.h"
 
 namespace webrtc {
 

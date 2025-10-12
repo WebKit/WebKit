@@ -37,7 +37,6 @@
 #include "ChromeClient.h"
 #include "Document.h"
 #include "DocumentFullscreen.h"
-#include "DocumentInlines.h"
 #include "ElementInlines.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLAttachmentElement.h"
@@ -81,6 +80,7 @@ StyleSheetContents* UserAgentStyle::defaultStyleSheet;
 StyleSheetContents* UserAgentStyle::quirksStyleSheet;
 StyleSheetContents* UserAgentStyle::svgStyleSheet;
 StyleSheetContents* UserAgentStyle::mathMLStyleSheet;
+StyleSheetContents* UserAgentStyle::mathMLCoreExtrasStyleSheet;
 StyleSheetContents* UserAgentStyle::mediaQueryStyleSheet;
 StyleSheetContents* UserAgentStyle::popoverStyleSheet;
 StyleSheetContents* UserAgentStyle::horizontalFormControlsStyleSheet;
@@ -95,9 +95,6 @@ StyleSheetContents* UserAgentStyle::imageControlsStyleSheet;
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
 StyleSheetContents* UserAgentStyle::attachmentStyleSheet;
-#endif
-#if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
-StyleSheetContents* UserAgentStyle::vectorControlsStyleSheet;
 #endif
 
 static const MQ::MediaQueryEvaluator& screenEval()
@@ -231,6 +228,10 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
             mathMLStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlUserAgentStyleSheet));
             addToDefaultStyle(*mathMLStyleSheet);
         }
+        if (!mathMLCoreExtrasStyleSheet && element.document().settings().coreMathMLEnabled()) {
+            mathMLCoreExtrasStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlCoreExtrasUserAgentStyleSheet));
+            addToDefaultStyle(*mathMLCoreExtrasStyleSheet);
+        }
     }
 #endif // ENABLE(MATHML)
 
@@ -246,17 +247,6 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
         addToDefaultStyle(*viewTransitionsStyleSheet);
         addUserAgentKeyframes(*viewTransitionsStyleSheet);
     }
-#if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
-#if PLATFORM(MAC)
-    auto needsVectorControlStyles = element.document().settings().vectorBasedControlsOnMacEnabled();
-#else
-    auto needsVectorControlStyles = element.document().settings().macStyleControlsOnCatalyst();
-#endif
-    if (needsVectorControlStyles && !vectorControlsStyleSheet) {
-        vectorControlsStyleSheet = parseUASheet(StringImpl::createWithoutCopying(vectorControlsUserAgentStyleSheet));
-        addToDefaultStyle(*vectorControlsStyleSheet);
-    }
-#endif
 
     ASSERT(defaultStyle->features().idsInRules.isEmpty());
 }

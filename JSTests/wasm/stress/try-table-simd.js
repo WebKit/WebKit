@@ -46,7 +46,7 @@ let wasmBytes = new Uint8Array([
 
 let result = await WebAssembly.instantiate(wasmBytes);
 
-for (let i = 0; i < 1e4; ++i) {
+for (let i = 0; i < wasmTestLoopCount; ++i) {
     assert.eq(result.instance.exports.simple_throw_catch_v128(0), 13);
     assert.eq(result.instance.exports.simple_throw_catch_v128(1), 42);
 }

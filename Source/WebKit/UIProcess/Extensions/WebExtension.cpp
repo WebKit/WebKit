@@ -305,14 +305,13 @@ RefPtr<const JSON::Object> WebExtension::manifestObject()
 
     m_parsedManifest = true;
 
-    RefPtr<API::Error> error;
-    auto manifestString = resourceStringForPath("manifest.json"_s, error);
-    if (error) {
-        recordErrorIfNeeded(error);
+    auto manifestStringResult = resourceStringForPath("manifest.json"_s);
+    if (!manifestStringResult) {
+        recordErrorIfNeeded(manifestStringResult.error());
         return nullptr;
     }
 
-    if (!parseManifest(manifestString))
+    if (!parseManifest(manifestStringResult.value()))
         return nullptr;
 
     return m_manifestJSON->asObject();
@@ -527,10 +526,15 @@ String WebExtension::resourceMIMETypeForPath(const String& path)
         return defaultMIMEType();
     }
 
+#if PLATFORM(COCOA)
+    if (path.startsWith("symbol:"_s))
+        return defaultMIMEType();
+#endif
+
     return MIMETypeRegistry::mimeTypeForPath(path);
 }
 
-String WebExtension::resourceStringForPath(const String& originalPath, RefPtr<API::Error>& outError, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
+Expected<String, RefPtr<API::Error>> WebExtension::resourceStringForPath(const String& originalPath, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
 {
     ASSERT(originalPath);
 
@@ -553,9 +557,11 @@ String WebExtension::resourceStringForPath(const String& originalPath, RefPtr<AP
             });
     }
 
-    RefPtr data = resourceDataForPath(path, outError, cacheResult, suppressErrors);
-    if (!data)
-        return nullString();
+    auto dataResult = resourceDataForPath(path, cacheResult, suppressErrors);
+    if (!dataResult)
+        return makeUnexpected(dataResult.error());
+
+    Ref data = dataResult.value();
 
     if (!data->size())
         return emptyString();
@@ -752,7 +758,7 @@ Ref<API::Error> WebExtension::createError(Error error, const String& customLocal
     if (!customLocalizedDescription.isEmpty())
         localizedDescription = customLocalizedDescription;
 
-    return API::Error::create({ "WKWebExtensionErrorDomain"_s, errorCode, { }, localizedDescription });
+    return API::Error::create({ "WKWebExtensionErrorDomain"_s, errorCode, { }, localizedDescription }, underlyingError);
 }
 
 Vector<Ref<API::Error>> WebExtension::errors()
@@ -1595,6 +1601,9 @@ const WebExtension::PermissionsSet& WebExtension::supportedPermissions()
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
         WebExtensionPermission::sidePanel(),
 #endif
+#if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
+        WebExtensionPermission::bookmarks(),
+#endif
     };
     return permissions;
 }
@@ -1830,11 +1839,10 @@ void WebExtension::populateActionPropertiesIfNeeded()
 
     // Look for the "default_icon" as a string, which is useful for SVG icons. Only supported by Firefox currently.
     if (auto defaultIconPath = actionObject->getString(defaultIconManifestKey); !defaultIconPath.isEmpty()) {
-        RefPtr<API::Error> resourceError;
-        m_defaultActionIcon = iconForPath(defaultIconPath, resourceError);
+        auto defaultIconResult = iconForPath(defaultIconPath);
 
-        if (!m_defaultActionIcon) {
-            recordErrorIfNeeded(resourceError);
+        if (!defaultIconResult) {
+            recordErrorIfNeeded(defaultIconResult.error());
 
             String localizedErrorDescription;
             if (supportsManifestVersion(3))
@@ -1844,6 +1852,8 @@ void WebExtension::populateActionPropertiesIfNeeded()
 
             recordError(createError(Error::InvalidActionIcon, localizedErrorDescription));
         }
+
+        m_defaultActionIcon = defaultIconResult.value().get();
     }
 
     m_displayActionLabel = actionObject->getString(defaultTitleManifestKey);
@@ -2376,24 +2386,21 @@ void WebExtension::populateCommandsIfNeeded()
     }
 }
 
-std::optional<WebExtension::DeclarativeNetRequestRulesetData> WebExtension::parseDeclarativeNetRequestRulesetObject(const JSON::Object& rulesetObject, RefPtr<API::Error>& error)
+Expected<WebExtension::DeclarativeNetRequestRulesetData, Ref<API::Error>> WebExtension::parseDeclarativeNetRequestRulesetObject(const JSON::Object& rulesetObject)
 {
     auto rulesetID = rulesetObject.getString(declarativeNetRequestRulesetIDManifestKey);
     if (rulesetID.isEmpty()) {
-        error = createError(Error::InvalidDeclarativeNetRequest, WEB_UI_STRING("Empty or invalid `id` in `declarative_net_request` manifest entry.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty or invalid id in declarative_net_request manifest entry"));
-        return { };
+        return makeUnexpected(createError(Error::InvalidDeclarativeNetRequest, WEB_UI_STRING("Empty or invalid `id` in `declarative_net_request` manifest entry.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty or invalid id in declarative_net_request manifest entry")));
     }
 
     auto jsonPath = rulesetObject.getString(declarativeNetRequestRulePathManifestKey);
     if (jsonPath.isEmpty()) {
-        error = createError(WebExtension::Error::InvalidDeclarativeNetRequest, WEB_UI_STRING("Empty or invalid `path` in `declarative_net_request` manifest entry.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty or invalid path in declarative_net_request manifest entry"));
-        return { };
+        return makeUnexpected(createError(WebExtension::Error::InvalidDeclarativeNetRequest, WEB_UI_STRING("Empty or invalid `path` in `declarative_net_request` manifest entry.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty or invalid path in declarative_net_request manifest entry")));
     }
 
     auto enabledBool = rulesetObject.getBoolean(declarativeNetRequestRuleEnabledManifestKey);
     if (!enabledBool) {
-        error = createError(WebExtension::Error::InvalidDeclarativeNetRequest, WEB_UI_STRING("Missing or invalid `enabled` boolean for the `declarative_net_request` manifest entry.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for missing enabled boolean"));
-        return { };
+        return makeUnexpected(createError(WebExtension::Error::InvalidDeclarativeNetRequest, WEB_UI_STRING("Missing or invalid `enabled` boolean for the `declarative_net_request` manifest entry.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for missing enabled boolean")));
     }
 
     DeclarativeNetRequestRulesetData rulesetData = {
@@ -2402,7 +2409,7 @@ std::optional<WebExtension::DeclarativeNetRequestRulesetData> WebExtension::pars
         jsonPath
     };
 
-    return std::optional { WTFMove(rulesetData) };
+    return rulesetData;
 }
 
 void WebExtension::populateDeclarativeNetRequestPropertiesIfNeeded()
@@ -2451,11 +2458,9 @@ void WebExtension::populateDeclarativeNetRequestPropertiesIfNeeded()
         if (!object)
             continue;
 
-        RefPtr<API::Error> error;
-        auto optionalRuleset = parseDeclarativeNetRequestRulesetObject(*object, error);
+        auto optionalRuleset = parseDeclarativeNetRequestRulesetObject(*object);
         if (!optionalRuleset) {
-            if (error)
-                recordError(createError(Error::InvalidDeclarativeNetRequest, { }, error));
+            recordError(createError(Error::InvalidDeclarativeNetRequest, { }, optionalRuleset.error().get()));
             continue;
         }
 

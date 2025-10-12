@@ -131,6 +131,11 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
         showSectionIfNotEmpty(this._flexNodesSection, this._flexNodesDetailsSectionRow, this._flexNodeSet);
     }
 
+    supportsDOMNode(nodeToInspect)
+    {
+        return nodeToInspect.nodeType() === Node.ELEMENT_NODE && super.supportsDOMNode(nodeToInspect);
+    }
+
     // Private
 
     _handleNodeInserted(event)

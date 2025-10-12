@@ -12,7 +12,7 @@ layer at (8,8) size 100x120
   RenderBlock (positioned) {DIV} at (0,0) size 100x120
     RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]
     RenderBlock (anonymous) at (0,100) size 100x20
-      RenderButton {BUTTON} at (0,0) size 59x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+      RenderButton {BUTTON} at (0,0) size 59x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
         RenderBlock (anonymous) at (12,3) size 35x14
           RenderText {#text} at (0,0) size 35x14
             text run at (0,0) width 35: "Button"

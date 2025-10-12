@@ -18,6 +18,7 @@ PASS Blob interface: operation slice(optional long long, optional long long, opt
 PASS Blob interface: operation stream()
 PASS Blob interface: operation text()
 PASS Blob interface: operation arrayBuffer()
+PASS Blob interface: operation bytes()
 PASS File interface: existence and properties of interface object
 PASS File interface object length
 PASS File interface object name

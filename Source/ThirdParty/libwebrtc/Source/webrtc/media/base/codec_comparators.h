@@ -19,13 +19,13 @@
 
 namespace webrtc {
 
-// Comparison used in the PayloadTypePicker
-bool MatchesForSdp(const cricket::Codec& codec_1,
-                   const cricket::Codec& codec_2);
-
 // Comparison used for the Codec::Matches function
-bool MatchesWithCodecRules(const cricket::Codec& left_codec,
-                           const cricket::Codec& codec);
+bool MatchesWithCodecRules(const Codec& left_codec, const Codec& codec);
+
+// Comparison that also checks on codecs referenced by PT in the
+// fmtp line, as used with RED and RTX "codecs".
+bool MatchesWithReferenceAttributes(const Codec& left_codec,
+                                    const Codec& right_codec);
 
 // Finds a codec in `codecs2` that matches `codec_to_match`, which is
 // a member of `codecs1`. If `codec_to_match` is an RED or RTX codec, both
@@ -34,15 +34,16 @@ bool MatchesWithCodecRules(const cricket::Codec& left_codec,
 // PT numbering spaces, and it is trying to find the codec in codecs2
 // that has the same functionality as `codec_to_match` so that its PT
 // can be used in place of the original.
-std::optional<cricket::Codec> FindMatchingCodec(
-    const std::vector<cricket::Codec>& codecs1,
-    const std::vector<cricket::Codec>& codecs2,
-    const cricket::Codec& codec_to_match);
+std::optional<Codec> FindMatchingCodec(const std::vector<Codec>& codecs1,
+                                       const std::vector<Codec>& codecs2,
+                                       const Codec& codec_to_match);
 
 // Similar to `Codec::MatchesRtpCodec` but not an exact match of parameters.
 // Unspecified parameters are treated as default.
-bool IsSameRtpCodec(const cricket::Codec& codec, const RtpCodec& rtp_codec);
+bool IsSameRtpCodec(const Codec& codec, const RtpCodec& rtp_codec);
 
+// Similar to `IsSameRtpCodec` but ignoring the level related parameter.
+bool IsSameRtpCodecIgnoringLevel(const Codec& codec, const RtpCodec& rtp_codec);
 }  // namespace webrtc
 
 #endif  // MEDIA_BASE_CODEC_COMPARATORS_H_

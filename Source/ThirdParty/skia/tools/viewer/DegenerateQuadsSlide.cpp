@@ -5,6 +5,9 @@
  * found in the LICENSE file.
  */
 
+#include "include/core/SkTypes.h"
+
+#if defined(SK_GANESH)
 #include "include/core/SkCanvas.h"
 #include "include/core/SkPaint.h"
 #include "include/core/SkPathEffect.h"
@@ -60,23 +63,25 @@ static SkScalar signed_distance(const SkPoint& p, const SkPoint& l0, const SkPoi
     return n.dot(p) + c;
 }
 
-static SkScalar get_area_coverage(const bool edgeAA[4], const SkPoint corners[4],
-                                  const SkPoint& point) {
+static SkScalar get_area_coverage(SkSpan<const bool> edgeAA, SkSpan<const SkPoint> corners, SkPoint point) {
+    SkASSERT(corners.size() == 4);
+    SkASSERT(edgeAA.size() == 4);
+
     SkPath shape;
-    shape.addPoly(corners, 4, true);
+    shape.addPoly(corners, true);
     SkPath pixel;
     pixel.addRect(SkRect::MakeXYWH(point.fX - 0.5f, point.fY - 0.5f, 1.f, 1.f));
 
-    SkPath intersection;
-    if (!Op(shape, pixel, kIntersect_SkPathOp, &intersection) || intersection.isEmpty()) {
+    auto intersection = Op(shape, pixel, kIntersect_SkPathOp);
+    if (!intersection.has_value() || intersection->isEmpty()) {
         return 0.f;
     }
 
     // Calculate area of the convex polygon
     SkScalar area = 0.f;
-    for (int i = 0; i < intersection.countPoints(); ++i) {
-        SkPoint p0 = intersection.getPoint(i);
-        SkPoint p1 = intersection.getPoint((i + 1) % intersection.countPoints());
+    for (int i = 0; i < intersection->countPoints(); ++i) {
+        SkPoint p0 = intersection->getPoint(i);
+        SkPoint p1 = intersection->getPoint((i + 1) % intersection->countPoints());
         SkScalar det = p0.fX * p1.fY - p1.fX * p0.fY;
         area += det;
     }
@@ -113,9 +118,15 @@ static SkScalar get_area_coverage(const bool edgeAA[4], const SkPoint corners[4]
 }
 
 // FIXME take into account max coverage properly,
-static SkScalar get_edge_dist_coverage(const bool edgeAA[4], const SkPoint corners[4],
-                                       const SkPoint outsetLines[8], const SkPoint insetLines[8],
-                                       const SkPoint& point) {
+static SkScalar get_edge_dist_coverage(SkSpan<const bool> edgeAA, SkSpan<const SkPoint> corners,
+                                       SkSpan<const SkPoint> outsetLines,
+                                       SkSpan<const SkPoint> insetLines,
+                                       SkPoint point) {
+    SkASSERT(edgeAA.size() == 4);
+    SkASSERT(corners.size() == 4);
+    SkASSERT(outsetLines.size() == 8);
+    SkASSERT(insetLines.size() == 8);
+
     bool flip = false;
     // If the quad has been inverted, the original corners will not all be on the negative side of
     // every outset line. When that happens, calculate coverage using the "inset" lines and flip
@@ -133,7 +144,7 @@ static SkScalar get_edge_dist_coverage(const bool edgeAA[4], const SkPoint corne
         }
     }
 
-    const SkPoint* lines = flip ? insetLines : outsetLines;
+    const SkPoint* lines = flip ? insetLines.data() : outsetLines.data();
 
     SkScalar minCoverage = 1.f;
     for (int i = 0; i < 4; ++i) {
@@ -242,7 +253,7 @@ public:
     DegenerateQuadSlide(const SkRect& rect)
             : fOuterRect(rect)
             , fCoverageMode(CoverageMode::kArea) {
-        fOuterRect.toQuad(fCorners);
+        fCorners = fOuterRect.toQuad();
         for (int i = 0; i < 4; ++i) {
             fEdgeAA[i] = true;
         }
@@ -251,9 +262,9 @@ public:
 
     void draw(SkCanvas* canvas) override {
         static const SkScalar kDotParams[2] = {1.f / kViewScale, 12.f / kViewScale};
-        sk_sp<SkPathEffect> dots = SkDashPathEffect::Make(kDotParams, 2, 0.f);
+        sk_sp<SkPathEffect> dots = SkDashPathEffect::Make(kDotParams, 0.f);
         static const SkScalar kDashParams[2] = {8.f / kViewScale, 12.f / kViewScale};
-        sk_sp<SkPathEffect> dashes = SkDashPathEffect::Make(kDashParams, 2, 0.f);
+        sk_sp<SkPathEffect> dashes = SkDashPathEffect::Make(kDashParams, 0.f);
 
         SkPaint circlePaint;
         circlePaint.setAntiAlias(true);
@@ -349,12 +360,12 @@ public:
             // What is tessellated using GrQuadPerEdgeAA
             if (fCoverageMode == CoverageMode::kGPUMesh) {
                 SkPath outsetPath;
-                outsetPath.addPoly(gpuOutset, 4, true);
+                outsetPath.addPoly({gpuOutset, 4}, true);
                 linePaint.setColor(SK_ColorBLUE);
                 canvas->drawPath(outsetPath, linePaint);
 
                 SkPath insetPath;
-                insetPath.addPoly(gpuInset, 4, true);
+                insetPath.addPoly({gpuInset, 4}, true);
                 linePaint.setColor(SK_ColorGREEN);
                 canvas->drawPath(insetPath, linePaint);
 
@@ -366,14 +377,12 @@ public:
             }
 
             // Draw the edges of the true quad as a solid line
-            SkPath path;
-            path.addPoly(fCorners, 4, true);
+            SkPath path = SkPath::Polygon(fCorners, true);
             linePaint.setColor(SK_ColorBLACK);
             canvas->drawPath(path, linePaint);
         } else {
             // Draw the edges of the true quad as a solid *red* line
-            SkPath path;
-            path.addPoly(fCorners, 4, true);
+            SkPath path = SkPath::Polygon(fCorners, true);
             linePaint.setColor(SK_ColorRED);
             linePaint.setPathEffect(nullptr);
             canvas->drawPath(path, linePaint);
@@ -401,14 +410,13 @@ private:
     };
 
     const SkRect fOuterRect;
-    SkPoint fCorners[4]; // TL, TR, BR, BL
+    std::array<SkPoint, 4> fCorners; // in toQuad() order TL, TR, BR, BL
     bool fEdgeAA[4]; // T, R, B, L
     CoverageMode fCoverageMode;
 
     bool isValid() const {
-        SkPath path;
-        path.addPoly(fCorners, 4, true);
-        return path.isConvex();
+        SkPath path = SkPath::Polygon(fCorners, true);
+        return path.isConvex(); // todo: should we expose this as a helper (sans Path object)
     }
 
     void getTessellatedPoints(SkPoint inset[4], SkScalar insetCoverage[4], SkPoint outset[4],
@@ -426,7 +434,7 @@ private:
         flags |= fEdgeAA[2] ? GrQuadAAFlags::kBottom : GrQuadAAFlags::kNone;
         flags |= fEdgeAA[3] ? GrQuadAAFlags::kLeft : GrQuadAAFlags::kNone;
 
-        GrQuad quad = GrQuad::MakeFromSkQuad(fCorners, SkMatrix::I());
+        GrQuad quad = GrQuad::MakeFromSkQuad(fCorners.data(), SkMatrix::I());
 
         float vertices[56]; // 2 quads, with x, y, coverage, and geometry domain (7 floats x 8 vert)
         skgpu::ganesh::QuadPerEdgeAA::Tessellator tessellator(kSpec, (char*)vertices);
@@ -463,7 +471,8 @@ public:
             : fOuterRect(clamp)
             , fIndex(index) {}
 
-    void doClick(SkPoint points[4]) {
+    void doClick(SkSpan<SkPoint> points) {
+        SkASSERT(points.size() == 4);
         if (fIndex >= 0) {
             this->drag(&points[fIndex]);
         } else {
@@ -530,3 +539,5 @@ bool DegenerateQuadSlide::onChar(SkUnichar code) {
 }
 
 DEF_SLIDE(return new DegenerateQuadSlide(SkRect::MakeWH(4.f, 4.f));)
+
+#endif  // SK_GANESH

@@ -25,8 +25,9 @@
 
 #pragma once
 
-#include "InlineItem.h"
-#include "LayoutInlineTextBox.h"
+#include <WebCore/InlineItem.h>
+#include <WebCore/LayoutInlineTextBox.h>
+#include <WebCore/WritingMode.h>
 
 namespace WebCore {
 namespace Layout {
@@ -53,6 +54,9 @@ public:
     std::optional<InlineLayoutUnit> width() const { return m_hasWidth ? std::make_optional(m_width) : std::optional<InlineLayoutUnit> { }; }
 
     const InlineTextBox& inlineTextBox() const { return downcast<InlineTextBox>(layoutBox()); }
+
+    String content() const { return inlineTextBox().content().substring(start(), length()); }
+    TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
 
     InlineTextItem left(unsigned length) const;
     InlineTextItem right(unsigned length, std::optional<InlineLayoutUnit> width) const;

@@ -33,7 +33,6 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CalculationValue.h"
 #include "ColorInterpolation.h"
-#include "StyleBuilderConverter.h"
 #include "StyleGradientImage.h"
 #include "StylePosition.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
@@ -138,9 +137,9 @@ static bool appendColorInterpolationMethod(StringBuilder& builder, CSS::Gradient
             return false;
         },
         [&]<typename MethodColorSpace>(const MethodColorSpace& methodColorSpace) {
-            builder.append(needsLeadingSpace ? " "_s : ""_s, "in "_s, serializationForCSS(methodColorSpace.interpolationColorSpace));
+            builder.append(needsLeadingSpace ? " "_s : ""_s, "in "_s, WebCore::serializationForCSS(methodColorSpace.interpolationColorSpace));
             if constexpr (hasHueInterpolationMethod<MethodColorSpace>)
-                serializationForCSS(builder, methodColorSpace.hueInterpolationMethod);
+                WebCore::serializationForCSS(builder, methodColorSpace.hueInterpolationMethod);
             return true;
         }
     );

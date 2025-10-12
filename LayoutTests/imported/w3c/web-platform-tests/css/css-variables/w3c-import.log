@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/css-variable-change-style-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/css-variable-change-style-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/css-vars-custom-property-case-sensitive-001-expected.xht
@@ -25,6 +26,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/revert-in-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/revert-layer-in-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/test_variable_legal_values.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/url-syntax-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/var-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-from-to.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-over-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe-shorthand.html
@@ -36,6 +39,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-to-only.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-created-document.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-created-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-css-wide-keywords.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-cssText.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-cycles.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-declaration-01-expected.html
@@ -184,9 +188,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-generated-content-dynamic-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-generated-content-dynamic-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-generated-content-dynamic-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-invalid-recovery-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-invalid-recovery.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-presentation-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-pseudo-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-recalc-with-initial.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-01-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-01.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-02-expected.html
@@ -426,6 +433,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-supports-67.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-transitions-transition-property-all-before-value.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-transitions-value-before-transition-property-all.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variables-animation-math-functions.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variables-substitute-guaranteed-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/vars-background-shorthand-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/vars-background-shorthand-001.html

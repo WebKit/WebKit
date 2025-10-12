@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 features:
   - iterator-helpers
 description: |
@@ -23,6 +20,6 @@ for (const method of methods) {
   const iterMethod = method(iter);
   let iterHelper;
   iterHelper = iterMethod.call(iter, x => iterHelper.next());
-  assertThrowsInstanceOf(() => iterHelper.next(), TypeError);
+  assert.throws(TypeError, () => iterHelper.next());
 }
 

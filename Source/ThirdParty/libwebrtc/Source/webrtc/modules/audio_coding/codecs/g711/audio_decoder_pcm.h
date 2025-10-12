@@ -26,13 +26,14 @@ class AudioDecoderPcmU final : public AudioDecoder {
  public:
   explicit AudioDecoderPcmU(size_t num_channels) : num_channels_(num_channels) {
     RTC_DCHECK_GE(num_channels, 1);
+    RTC_DCHECK_LE(num_channels, AudioDecoder::kMaxNumberOfChannels);
   }
 
   AudioDecoderPcmU(const AudioDecoderPcmU&) = delete;
   AudioDecoderPcmU& operator=(const AudioDecoderPcmU&) = delete;
 
   void Reset() override;
-  std::vector<ParseResult> ParsePayload(rtc::Buffer&& payload,
+  std::vector<ParseResult> ParsePayload(Buffer&& payload,
                                         uint32_t timestamp) override;
   int PacketDuration(const uint8_t* encoded, size_t encoded_len) const override;
   int PacketDurationRedundant(const uint8_t* encoded,
@@ -55,13 +56,14 @@ class AudioDecoderPcmA final : public AudioDecoder {
  public:
   explicit AudioDecoderPcmA(size_t num_channels) : num_channels_(num_channels) {
     RTC_DCHECK_GE(num_channels, 1);
+    RTC_DCHECK_LE(num_channels, AudioDecoder::kMaxNumberOfChannels);
   }
 
   AudioDecoderPcmA(const AudioDecoderPcmA&) = delete;
   AudioDecoderPcmA& operator=(const AudioDecoderPcmA&) = delete;
 
   void Reset() override;
-  std::vector<ParseResult> ParsePayload(rtc::Buffer&& payload,
+  std::vector<ParseResult> ParsePayload(Buffer&& payload,
                                         uint32_t timestamp) override;
   int PacketDuration(const uint8_t* encoded, size_t encoded_len) const override;
   int PacketDurationRedundant(const uint8_t* encoded,

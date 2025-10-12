@@ -70,7 +70,7 @@ void RemoteInspectorConnectionClient::didReceive(RemoteInspectorSocketEndpoint&,
     auto result = m_parsers.ensure(clientID, [this, clientID] {
         return MessageParser([this, clientID](Vector<uint8_t>&& data) {
             if (auto event = RemoteInspectorConnectionClient::extractEvent(clientID, WTFMove(data))) {
-                RunLoop::protectedMain()->dispatch([this, event = WTFMove(*event)] {
+                RunLoop::mainSingleton().dispatch([this, event = WTFMove(*event)] {
                     const auto& methodName = event.methodName;
                     auto& methods = dispatchMap();
                     if (methods.contains(methodName)) {

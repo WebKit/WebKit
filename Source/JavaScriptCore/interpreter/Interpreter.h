@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,16 +29,13 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
-#include "MacroAssemblerCodeRef.h"
-#include "NativeFunction.h"
-#include "Opcode.h"
+#include <JavaScriptCore/BytecodeIndex.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/MacroAssemblerCodeRef.h>
+#include <JavaScriptCore/NativeFunction.h>
+#include <JavaScriptCore/Opcode.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
-
-#if ENABLE(C_LOOP)
-#include "CLoopStack.h"
-#endif
 
 
 namespace JSC {
@@ -53,11 +50,9 @@ struct HandlerInfo;
 
 template<typename> struct BaseInstruction;
 struct JSOpcodeTraits;
-struct WasmOpcodeTraits;
 using JSInstruction = BaseInstruction<JSOpcodeTraits>;
-using WasmInstruction = BaseInstruction<WasmOpcodeTraits>;
 
-using JSOrWasmInstruction = Variant<const JSInstruction*, const WasmInstruction*, uintptr_t /* IPIntOffset */>;
+using JSOrWasmInstruction = Variant<const JSInstruction*, uintptr_t /* IPIntOffset */>;
 
     class ArgList;
     class CachedCall;
@@ -75,6 +70,7 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, const WasmInstruction*
     class ProgramExecutable;
     class ModuleProgramExecutable;
     class Register;
+    class JSGenerator;
     class JSObject;
     class JSScope;
     class SourceCode;
@@ -135,11 +131,6 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, const WasmInstruction*
         Interpreter();
         ~Interpreter();
 
-#if ENABLE(C_LOOP)
-        CLoopStack& cloopStack() { return m_cloopStack; }
-        const CLoopStack& cloopStack() const { return m_cloopStack; }
-#endif
-        
         static inline JSC::Opcode getOpcode(OpcodeID);
 
         static inline OpcodeID getOpcodeID(JSC::Opcode);
@@ -150,7 +141,7 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, const WasmInstruction*
 
         JSValue executeProgram(const SourceCode&, JSGlobalObject*, JSObject* thisObj);
         JSValue executeModuleProgram(JSModuleRecord*, ModuleProgramExecutable*, JSGlobalObject*, JSModuleEnvironment*, JSValue sentValue, JSValue resumeMode);
-        JSValue executeCall(JSObject* function, const CallData&, JSValue thisValue, const ArgList&);
+        JSValue executeCall(JSObject* function, const CallData&, JSValue thisValue, JSCell* context, const ArgList&);
         JSObject* executeConstruct(JSObject* function, const CallData&, const ArgList&, JSValue newTarget);
         JSValue executeEval(EvalExecutable*, JSValue thisValue, JSScope*);
 
@@ -166,23 +157,21 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, const WasmInstruction*
         static JSValue checkVMEntryPermission();
 
     private:
+        void getAsyncStackTrace(JSCell* owner, Vector<StackFrame>& results, JSGenerator* initialGenerator, size_t maxStackSize);
         enum ExecutionFlag { Normal, InitializeAndReturn };
         
         CodeBlock* prepareForCachedCall(CachedCall&, JSFunction*);
 
         JSValue executeCachedCall(CachedCall&);
-        JSValue executeBoundCall(VM&, JSBoundFunction*, const ArgList&);
-        JSValue executeCallImpl(VM&, JSObject*, const CallData&, JSValue, const ArgList&);
+        JSValue executeBoundCall(VM&, JSBoundFunction*, JSCell*, const ArgList&);
+        JSValue executeCallImpl(VM&, JSObject*, const CallData&, JSValue, JSCell*, const ArgList&);
 
 #if CPU(ARM64) && CPU(ADDRESS64) && !ENABLE(C_LOOP)
-        template<typename... Args>
+        template<typename... Args> requires (std::is_convertible_v<Args, JSValue> && ...)
         JSValue tryCallWithArguments(CachedCall&, JSValue, Args...);
 #endif
 
         inline VM& vm();
-#if ENABLE(C_LOOP)
-        CLoopStack m_cloopStack;
-#endif
         
 #if ENABLE(COMPUTED_GOTO_OPCODES)
 #if !ENABLE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
@@ -191,7 +180,7 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, const WasmInstruction*
 #endif // ENABLE(COMPUTED_GOTO_OPCODES)
     };
 
-    JSValue eval(CallFrame*, JSValue thisValue, JSScope*, LexicallyScopedFeatures);
+    JSValue eval(CallFrame*, JSValue thisValue, JSScope*, CodeBlock* callerBaselineCodeBlock, BytecodeIndex, LexicallyScopedFeatures);
 
     inline CallFrame* calleeFrameForVarargs(CallFrame*, unsigned numUsedStackSlots, unsigned argumentCountIncludingThis);
 

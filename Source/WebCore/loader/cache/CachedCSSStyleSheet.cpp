@@ -82,22 +82,25 @@ const String CachedCSSStyleSheet::sheetText(MIMETypeCheckHint mimeTypeCheckHint,
     // Ensure hasValidMIMEType and hasHTTPStatusOK always get set (even if m_data is null or empty) — which in turn
     // ensures that if the MIME type isn't text/css or the HTTP status isn't an OK status, we never load the resource.
     // https://html.spec.whatwg.org/#link-type-stylesheet:process-the-linked-resource
-    if (!canUseSheet(mimeTypeCheckHint, hasValidMIMEType, hasHTTPStatusOK) || !m_data || m_data->isEmpty())
+    if (!canUseSheet(mimeTypeCheckHint, hasValidMIMEType, hasHTTPStatusOK))
+        return String();
+    RefPtr data = m_data;
+    if (!data || data->isEmpty())
         return String();
 
     if (!m_decodedSheetText.isNull())
         return m_decodedSheetText;
 
     // Don't cache the decoded text, regenerating is cheap and it can use quite a bit of memory.
-    return protectedDecoder()->decodeAndFlush(m_data->makeContiguous()->span());
+    return protectedDecoder()->decodeAndFlush(data->makeContiguous()->span());
 }
 
 void CachedCSSStyleSheet::setBodyDataFrom(const CachedResource& resource)
 {
     ASSERT(resource.type() == type());
-    const CachedCSSStyleSheet& sheet = static_cast<const CachedCSSStyleSheet&>(resource);
+    const auto& sheet = downcast<const CachedCSSStyleSheet>(resource);
 
-    CachedResource::setBodyDataFrom(resource);
+    CachedResource::setBodyDataFrom(sheet);
 
     m_decoder = sheet.m_decoder;
     m_decodedSheetText = sheet.m_decodedSheetText;

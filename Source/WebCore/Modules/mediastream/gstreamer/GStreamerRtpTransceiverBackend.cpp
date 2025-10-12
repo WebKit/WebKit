@@ -66,11 +66,11 @@ std::unique_ptr<GStreamerRtpReceiverBackend> GStreamerRtpTransceiverBackend::cre
     return WTF::makeUnique<GStreamerRtpReceiverBackend>(GRefPtr(m_rtcTransceiver));
 }
 
-std::unique_ptr<GStreamerRtpSenderBackend> GStreamerRtpTransceiverBackend::createSenderBackend(GStreamerPeerConnectionBackend& backend, GStreamerRtpSenderBackend::Source&& source, GUniquePtr<GstStructure>&& initData)
+std::unique_ptr<GStreamerRtpSenderBackend> GStreamerRtpTransceiverBackend::createSenderBackend(WeakPtr<GStreamerPeerConnectionBackend>&& backend, GStreamerRtpSenderBackend::Source&& source, GUniquePtr<GstStructure>&& initData)
 {
     GRefPtr<GstWebRTCRTPSender> sender;
     g_object_get(m_rtcTransceiver.get(), "sender", &sender.outPtr(), nullptr);
-    return WTF::makeUnique<GStreamerRtpSenderBackend>(backend, WTFMove(sender), WTFMove(source), WTFMove(initData));
+    return WTF::makeUnique<GStreamerRtpSenderBackend>(WTFMove(backend), WTFMove(sender), WTFMove(source), WTFMove(initData));
 }
 
 RTCRtpTransceiverDirection GStreamerRtpTransceiverBackend::direction() const
@@ -85,7 +85,7 @@ std::optional<RTCRtpTransceiverDirection> GStreamerRtpTransceiverBackend::curren
     GstWebRTCRTPTransceiverDirection gstDirection;
     g_object_get(m_rtcTransceiver.get(), "current-direction", &gstDirection, nullptr);
     if (!gstDirection)
-        return std::nullopt;
+        return RTCRtpTransceiverDirection::Inactive;
     return toRTCRtpTransceiverDirection(gstDirection);
 }
 
@@ -157,7 +157,7 @@ ExceptionOr<void> GStreamerRtpTransceiverBackend::setCodecPreferences(const Vect
     GST_TRACE_OBJECT(m_rtcTransceiver.get(), "Current codec preferences: %" GST_PTR_FORMAT, currentCaps.get());
     String msid;
     HashMap<String, String> extensions;
-    if (gst_caps_get_size(currentCaps.get()) > 0) {
+    if (currentCaps && gst_caps_get_size(currentCaps.get()) > 0) {
         auto structure = gst_caps_get_structure(currentCaps.get(), 0);
         if (auto msIdValue = gstStructureGetString(structure, "a-msid"_s))
             msid = msIdValue.toString();

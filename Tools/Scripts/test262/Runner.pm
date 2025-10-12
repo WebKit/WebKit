@@ -319,8 +319,16 @@ sub processCLI {
     print "---\n\n";
 }
 
+sub setupEnvironment()
+{
+    if ($^O eq "linux") {
+        setupUnixWebKitEnvironment(productDir());
+    }
+}
+
 sub main {
     processCLI();
+    setupEnvironment();
 
     my @defaultHarnessFiles = (
         "$harnessDir/sta.js",
@@ -491,7 +499,7 @@ sub main {
             SetFailureForTest(\%failed, $test);
 
             # If an unexpected failure
-            if (!$expectedFailure || ($expectedFailure ne $test->{error})) {
+            if (!$expectedFailure || (rindex $test->{error}, $expectedFailure, 0)) {
                 $newfailcount++;
 
                 if ($verbose) {
@@ -824,7 +832,8 @@ sub runTest {
     my $defaultHarness = '';
     $defaultHarness = $deffile if $scenario ne 'raw';
 
-    my $prefix = !isWindows() && $DYLD_FRAMEWORK_PATH ? qq(DYLD_FRAMEWORK_PATH=$DYLD_FRAMEWORK_PATH) : "";
+    my $tz = $ENV{TZ} ? "TZ=$ENV{TZ}" : "TZ=PST";
+    my $prefix = !isWindows() && $DYLD_FRAMEWORK_PATH ? qq(DYLD_FRAMEWORK_PATH=$DYLD_FRAMEWORK_PATH $tz) : $tz;
     my $execTimeStart = time();
 
     my $result = qx($prefix $JSC $args $defaultHarness $asyncHarness $includesfile $prefixFile$filename 2>&1);
@@ -873,7 +882,7 @@ sub processResult {
         # expectation fail and (there is no expected failure OR the failure
         # has changed).
         my $isnewfailure = $exitSignalNumber || !$expect
-            || !$expectedfailure || $expectedfailure ne $currentfailure;
+            || !$expectedfailure || (rindex $currentfailure, $expectedfailure, 0) < 0;
 
         # Print the failure if we haven't loaded an expectation file
         # or the failure is new.

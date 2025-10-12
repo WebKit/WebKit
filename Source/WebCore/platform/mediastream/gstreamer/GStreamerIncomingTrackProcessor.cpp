@@ -66,14 +66,14 @@ void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMedia
     if (auto ssrc = gstStructureGet<unsigned>(structure, "ssrc"_s)) {
         m_data.ssrc = *ssrc;
         auto msIdAttributeName = makeString("ssrc-"_s, *ssrc, "-msid"_s);
-        if (auto msIdAttribute = gstStructureGetString(structure, msIdAttributeName)) {
-            auto components = msIdAttribute.toStringWithoutCopying().split(' ');
+        if (auto msIdAttribute = gstStructureGetString(structure, CStringView::unsafeFromUTF8(msIdAttributeName.utf8().data()))) {
+            auto components = msIdAttribute.toString().split(' ');
             if (components.size() == 2)
                 m_sdpMsIdAndTrackId = { components[0], components[1] };
         }
     }
 
-    if (auto mid = gstStructureGetString(structure, "a-mid"))
+    if (auto mid = gstStructureGetString(structure, "a-mid"_s))
         m_data.mid = mid.toString();
 
     m_data.mediaStreamBinName = makeString("incoming-"_s, typeName, "-track-"_s, m_data.ssrc, '-', unsafeSpan(GST_OBJECT_NAME(m_pad.get())));
@@ -81,11 +81,12 @@ void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMedia
 
     g_object_get(m_pad.get(), "transceiver", &m_data.transceiver.outPtr(), nullptr);
 
-    if (auto msIdAttribute = gstStructureGetString(structure, "a-msid"_s)) {
+    auto msIdAttribute = gstStructureGetString(structure, "a-msid"_s).toString();
+    if (!msIdAttribute.isEmpty()) {
         if (msIdAttribute.startsWith(' '))
-            m_sdpMsIdAndTrackId = { emptyString(), msIdAttribute.substring(1).toString() };
+            m_sdpMsIdAndTrackId = { emptyString(), msIdAttribute.substring(1) };
         else {
-            auto components = msIdAttribute.toStringWithoutCopying().split(' ');
+            auto components = msIdAttribute.split(' ');
             if (components.size() == 2)
                 m_sdpMsIdAndTrackId = { components[0], components[1] };
         }
@@ -194,7 +195,7 @@ GRefPtr<GstElement> GStreamerIncomingTrackProcessor::incomingTrackProcessor()
     if (!forceEarlyVideoDecoding) {
         auto structure = gst_caps_get_structure(m_data.caps.get(), 0);
         ASSERT(gst_structure_has_name(structure, "application/x-rtp"));
-        auto encodingName = gstStructureGetString(structure, "encoding-name"_s);
+        auto encodingName = gstStructureGetString(structure, "encoding-name"_s).toString();
         auto mediaType = makeString("video/x-"_s, encodingName.convertToASCIILowercase());
         auto codecCaps = adoptGRef(gst_caps_new_empty_simple(mediaType.ascii().data()));
 
@@ -318,8 +319,8 @@ void GStreamerIncomingTrackProcessor::installRtpBufferPadProbe(const GRefPtr<Gst
             videoFrameTimeMetadata.captureTime = Seconds::fromNanoseconds(gst_rtcp_ntp_to_unix(ntpTimestamp));
         }
 
-        auto modifiedBuffer = webkitGstBufferSetVideoFrameMetadata(GRefPtr(buffer), WTFMove(videoFrameTimeMetadata));
-        GST_PAD_PROBE_INFO_DATA(info) = modifiedBuffer.leakRef();
+        auto modifiedBuffer = webkitGstBufferSetVideoFrameMetadata(GRefPtr(buffer), videoFrameTimeMetadata);
+        gst_pad_probe_info_set_buffer(info, modifiedBuffer.leakRef());
         return GST_PAD_PROBE_OK;
     }, gst_caps_new_empty_simple("timestamp/x-ntp"), reinterpret_cast<GDestroyNotify>(gst_caps_unref));
 }

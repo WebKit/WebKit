@@ -1,0 +1,3 @@
+
+FAIL If the redirect needs to be rerequested and goes elsewhere, we cannot can use the prefetched final response. assert_equals: expected (undefined) undefined but got (string) "prefetch"
+

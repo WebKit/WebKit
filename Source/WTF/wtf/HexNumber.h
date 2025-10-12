@@ -30,30 +30,23 @@ enum HexConversionMode { Lowercase, Uppercase };
 
 namespace Internal {
 
-inline const std::array<LChar, 16>& hexDigitsForMode(HexConversionMode mode)
-{
-    static constexpr std::array<LChar, 16> lowercaseHexDigits { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
-    static constexpr std::array<LChar, 16> uppercaseHexDigits { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-    return mode == Lowercase ? lowercaseHexDigits : uppercaseHexDigits;
-}
-
-WTF_EXPORT_PRIVATE std::span<LChar> appendHex(std::span<LChar> buffer, std::uintmax_t number, unsigned minimumDigits, HexConversionMode);
+WTF_EXPORT_PRIVATE std::span<Latin1Character> appendHex(std::span<Latin1Character> buffer, std::uintmax_t number, unsigned minimumDigits, HexConversionMode);
 
 template<size_t arraySize, typename NumberType>
-inline std::span<LChar> appendHex(std::array<LChar, arraySize>& buffer, NumberType number, unsigned minimumDigits, HexConversionMode mode)
+inline std::span<Latin1Character> appendHex(std::array<Latin1Character, arraySize>& buffer, NumberType number, unsigned minimumDigits, HexConversionMode mode)
 {
-    return appendHex(std::span<LChar> { buffer }, unsignedCast(number), minimumDigits, mode);
+    return appendHex(std::span<Latin1Character> { buffer }, unsignedCast(number), minimumDigits, mode);
 }
 
 } // namespace Internal
 
 struct HexNumberBuffer {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(HexNumberBuffer);
 
-    std::array<LChar, 16> buffer;
+    std::array<Latin1Character, 16> buffer;
     unsigned length;
 
-    std::span<const LChar> span() const LIFETIME_BOUND { return std::span { buffer }.last(length); }
+    std::span<const Latin1Character> span() const LIFETIME_BOUND { return std::span { buffer }.last(length); }
 };
 
 template<typename NumberType> HexNumberBuffer hex(NumberType number, unsigned minimumDigits = 0, HexConversionMode mode = Uppercase)

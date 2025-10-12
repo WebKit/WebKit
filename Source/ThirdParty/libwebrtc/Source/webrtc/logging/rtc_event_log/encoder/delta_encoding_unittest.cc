@@ -21,9 +21,9 @@
 #include <tuple>
 #include <vector>
 
-#include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/random.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -32,6 +32,9 @@ void SetFixedLengthEncoderDeltaSignednessForTesting(bool signedness);
 void UnsetFixedLengthEncoderDeltaSignednessForTesting();
 
 namespace {
+
+using ::testing::Each;
+using ::testing::Eq;
 
 enum class DeltaSignedness { kNoOverride, kForceUnsigned, kForceSigned };
 
@@ -488,26 +491,24 @@ class DeltaEncodingCompressionQualityTest
 
 // If no wrap-around occurs in the stream, the width of the values does not
 // matter to compression performance; only the deltas matter.
-TEST_P(DeltaEncodingCompressionQualityTest,
-       BaseDoesNotAffectEfficiencyIfNoWrapAround) {
+TEST_P(DeltaEncodingCompressionQualityTest, BaseDoesNotAffectEfficiency) {
   // 1. Bases which will not produce a wrap-around.
   // 2. The last base - 0xffffffffffffffff - does cause a wrap-around, but
   //    that still works, because the width is 64 anyway, and does not
   //    need to be conveyed explicitly in the encoding header.
   const uint64_t bases[] = {0, 0x55, 0xffffffff,
                             std::numeric_limits<uint64_t>::max()};
-  const size_t kIntendedWrapAroundBaseIndex = arraysize(bases);
 
   std::vector<uint64_t> deltas(num_of_values_);
 
   // Allows us to make sure that the deltas do not produce a wrap-around.
-  uint64_t last_element[arraysize(bases)];
+  uint64_t last_element[std::size(bases)];
   memcpy(last_element, bases, sizeof(bases));
 
   // Avoid empty `deltas` due to first element causing wrap-around.
   deltas[0] = 1;
-  for (size_t i = 0; i < arraysize(last_element); ++i) {
-    last_element[i] += 1;
+  for (uint64_t& element : last_element) {
+    ++element;
   }
 
   Random prng(Seed());
@@ -516,11 +517,7 @@ TEST_P(DeltaEncodingCompressionQualityTest,
     const uint64_t delta = RandomWithMaxBitWidth(&prng, delta_max_bit_width_);
 
     bool wrap_around = false;
-    for (size_t j = 0; j < arraysize(last_element); ++j) {
-      if (j == kIntendedWrapAroundBaseIndex) {
-        continue;
-      }
-
+    for (size_t j = 0; j < std::size(last_element); ++j) {
       last_element[j] += delta;
       if (last_element[j] < bases[j]) {
         wrap_around = true;
@@ -536,9 +533,9 @@ TEST_P(DeltaEncodingCompressionQualityTest,
     deltas[i] = delta;
   }
 
-  std::string encodings[arraysize(bases)];
+  std::string encodings[std::size(bases)];
 
-  for (size_t i = 0; i < arraysize(bases); ++i) {
+  for (size_t i = 0; i < std::size(bases); ++i) {
     const auto values =
         CreateSequenceByDeltas(bases[i], deltas, num_of_values_);
     // Produce the encoding and write it to encodings[i].
@@ -552,9 +549,7 @@ TEST_P(DeltaEncodingCompressionQualityTest,
 
   // Test focus - all of the encodings should be the same, as they are based
   // on the same delta sequence, and do not contain a wrap-around.
-  for (size_t i = 1; i < arraysize(encodings); ++i) {
-    EXPECT_EQ(encodings[i], encodings[0]);
-  }
+  EXPECT_THAT(encodings, Each(Eq(encodings[0])));
 }
 
 INSTANTIATE_TEST_SUITE_P(

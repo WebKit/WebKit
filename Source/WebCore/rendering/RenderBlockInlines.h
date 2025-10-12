@@ -21,7 +21,6 @@
 
 #include "RenderBlock.h"
 #include "RenderBoxInlines.h"
-#include "RenderObjectInlines.h"
 #include "RenderStyleInlines.h"
 
 namespace WebCore {
@@ -41,16 +40,6 @@ inline LayoutUnit RenderBlock::startOffsetForLine(LayoutUnit position, LayoutUni
 {
     return writingMode().isLogicalLeftInlineStart() ? logicalLeftOffsetForLine(position, logicalHeight)
         : logicalWidth() - logicalRightOffsetForLine(position, logicalHeight);
-}
-
-inline RenderPtr<RenderBox> RenderBlock::createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const
-{
-    return createAnonymousBlockWithStyle(protectedDocument(), renderer.style());
-}
-
-inline RenderPtr<RenderBlock> RenderBlock::createAnonymousBlock() const
-{
-    return createAnonymousBlockWithStyle(protectedDocument(), style());
 }
 
 // Versions that can compute line offsets with the fragment and page offset passed in. Used for speed to avoid having to

@@ -59,6 +59,11 @@ RTCIceTransport::~RTCIceTransport()
     m_backend->unregisterClient();
 }
 
+ScriptExecutionContext* RTCIceTransport::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
 void RTCIceTransport::stop()
 {
     m_isStopped = true;

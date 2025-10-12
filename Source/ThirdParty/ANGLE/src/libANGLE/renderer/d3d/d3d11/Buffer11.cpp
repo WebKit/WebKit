@@ -4,7 +4,11 @@
 // found in the LICENSE file.
 //
 
-// Buffer11.cpp Defines the Buffer11 class.
+// Buffer11.cpp: Defines the Buffer11 class.
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/renderer/d3d/d3d11/Buffer11.h"
 

@@ -27,7 +27,7 @@
 #include "CompositeOperation.h"
 #include "KeyframeInterpolation.h"
 #include "RenderStyle.h"
-#include "TimelineRange.h"
+#include "StyleSingleAnimationRangeName.h"
 #include "WebAnimationTypes.h"
 #include <wtf/Vector.h>
 #include <wtf/HashSet.h>
@@ -47,16 +47,16 @@ class Resolver;
 class BlendingKeyframe final : public KeyframeInterpolation::Keyframe {
 public:
     struct Offset {
-        SingleTimelineRange::Name name;
+        Style::SingleAnimationRangeName name;
         double value;
 
         Offset(double value)
-            : name(SingleTimelineRange::Name::Omitted)
+            : name(Style::SingleAnimationRangeName::Omitted)
             , value(value)
         {
         }
 
-        Offset(SingleTimelineRange::Name name, double value)
+        Offset(Style::SingleAnimationRangeName name, double value)
             : name(name)
             , value(value)
         {
@@ -76,7 +76,7 @@ public:
     bool isBlendingKeyframe() const final { return true; }
 
     void addProperty(const AnimatableCSSProperty&);
-    const UncheckedKeyHashSet<AnimatableCSSProperty>& properties() const { return m_properties; }
+    const HashSet<AnimatableCSSProperty>& properties() const { return m_properties; }
 
     const Offset& specifiedOffset() const { return m_specifiedOffset; }
     void setComputedOffset(double offset) { m_computedOffset = offset; }
@@ -97,7 +97,7 @@ public:
 private:
     Offset m_specifiedOffset;
     double m_computedOffset { std::numeric_limits<double>::quiet_NaN() };
-    UncheckedKeyHashSet<AnimatableCSSProperty> m_properties; // The properties specified in this keyframe.
+    HashSet<AnimatableCSSProperty> m_properties; // The properties specified in this keyframe.
     std::unique_ptr<RenderStyle> m_style;
     RefPtr<TimingFunction> m_timingFunction;
     std::optional<CompositeOperation> m_compositeOperation;
@@ -127,7 +127,7 @@ public:
 
     void addProperty(const AnimatableCSSProperty&);
     bool containsProperty(const AnimatableCSSProperty&) const;
-    const UncheckedKeyHashSet<AnimatableCSSProperty>& properties() const { return m_properties; }
+    const HashSet<AnimatableCSSProperty>& properties() const { return m_properties; }
 
     bool containsAnimatableCSSProperty() const;
     bool containsDirectionAwareProperty() const;
@@ -150,7 +150,7 @@ public:
     bool hasCSSVariableReferences() const;
     bool hasColorSetToCurrentColor() const;
     bool hasPropertySetToCurrentColor() const;
-    const UncheckedKeyHashSet<AnimatableCSSProperty>& propertiesSetToInherit() const;
+    const HashSet<AnimatableCSSProperty>& propertiesSetToInherit() const;
 
     void updatePropertiesMetadata(const StyleProperties&);
 
@@ -171,11 +171,11 @@ private:
     KeyframesIdentifier m_identifier;
     mutable String m_acceleratedAnimationName;
     Vector<BlendingKeyframe> m_keyframes; // Kept sorted by key.
-    UncheckedKeyHashSet<AnimatableCSSProperty> m_properties; // The properties being animated.
-    UncheckedKeyHashSet<AnimatableCSSProperty> m_explicitToProperties; // The properties with an explicit value for the 100% keyframe.
-    UncheckedKeyHashSet<AnimatableCSSProperty> m_explicitFromProperties; // The properties with an explicit value for the 0% keyframe.
-    UncheckedKeyHashSet<AnimatableCSSProperty> m_propertiesSetToInherit;
-    UncheckedKeyHashSet<AnimatableCSSProperty> m_propertiesSetToCurrentColor;
+    HashSet<AnimatableCSSProperty> m_properties; // The properties being animated.
+    HashSet<AnimatableCSSProperty> m_explicitToProperties; // The properties with an explicit value for the 100% keyframe.
+    HashSet<AnimatableCSSProperty> m_explicitFromProperties; // The properties with an explicit value for the 0% keyframe.
+    HashSet<AnimatableCSSProperty> m_propertiesSetToInherit;
+    HashSet<AnimatableCSSProperty> m_propertiesSetToCurrentColor;
     bool m_usesRelativeFontWeight { false };
     bool m_containsCSSVariableReferences { false };
     bool m_usesAnchorFunctions { false };

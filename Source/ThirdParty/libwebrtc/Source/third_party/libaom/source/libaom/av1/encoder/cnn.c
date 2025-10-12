@@ -17,7 +17,7 @@
 #include "av1/common/av1_common_int.h"
 #include "av1/encoder/cnn.h"
 
-#define CLAMPINDEX(a, hi) ((a) < 0 ? 0 : ((a) >= (hi) ? ((hi)-1) : (a)))
+#define CLAMPINDEX(a, hi) ((a) < 0 ? 0 : ((a) >= (hi) ? ((hi) - 1) : (a)))
 
 typedef struct {
   const float **input;

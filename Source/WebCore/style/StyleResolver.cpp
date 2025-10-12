@@ -41,10 +41,10 @@
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSViewTransitionRule.h"
-#include "CachedResourceLoader.h"
 #include "CompositeOperation.h"
-#include "Document.h"
 #include "DocumentInlines.h"
+#include "DocumentResourceLoader.h"
+#include "DocumentView.h"
 #include "ElementRuleCollector.h"
 #include "FrameSelection.h"
 #include "InspectorInstrumentation.h"
@@ -67,6 +67,7 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGElement.h"
 #include "SVGFontFaceElement.h"
+#include "SVGSVGElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SharedStringHash.h"
@@ -79,6 +80,7 @@
 #include "StyleResolveForDocument.h"
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
+#include "StyleSingleAnimationRangeName.h"
 #include "TimingFunction.h"
 #include "UserAgentParts.h"
 #include "UserAgentStyle.h"
@@ -133,8 +135,12 @@ public:
         auto* documentElement = document.documentElement();
         if (!documentElement || documentElement == &element)
             m_rootElementStyle = document.initialContainingBlockStyle();
+        else if (documentElementStyle)
+            m_rootElementStyle = documentElementStyle;
+        else if (auto* documentElementRenderStyle = documentElement->renderStyle())
+            m_rootElementStyle = documentElementRenderStyle;
         else
-            m_rootElementStyle = documentElementStyle ? documentElementStyle : documentElement->renderStyle();
+            m_rootElementStyle = document.initialContainingBlockStyle();
     }
 
     const Element* element() const { return m_element; }
@@ -282,6 +288,10 @@ auto Resolver::initializeStateAndStyle(const Element& element, const ResolutionC
         state.setParentStyle(RenderStyle::clonePtr(*state.style()));
     }
 
+    // BuilderState::useSVGZoomRulesForLength equivalent
+    if (is<SVGElement>(element) && !(is<SVGSVGElement>(element) && element.parentNode()))
+        state.style()->setUseSVGZoomRulesForLength(true);
+
     if (element.isLink()) {
         auto& style = *state.style();
         style.setIsLink(true);
@@ -297,11 +307,11 @@ auto Resolver::initializeStateAndStyle(const Element& element, const ResolutionC
     return state;
 }
 
-BuilderContext Resolver::builderContext(State& state)
+BuilderContext Resolver::builderContext(State& state) const
 {
     return {
         document(),
-        *state.parentStyle(),
+        state.parentStyle(),
         state.rootElementStyle(),
         state.element(),
         state.treeResolutionState()
@@ -380,7 +390,7 @@ UnadjustedStyle Resolver::unadjustedStyleForCachedMatchResult(Element& element, 
     };
 }
 
-std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, const StyleRuleKeyframe& keyframe, BlendingKeyframe& blendingKeyframe)
+std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, const StyleRuleKeyframe& keyframe, BlendingKeyframe& blendingKeyframe) const
 {
     // Add all the animating properties to the keyframe.
     bool hasRevert = false;
@@ -412,7 +422,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(Element& element, const 
     ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);
 
     if (elementStyle.pseudoElementType() != PseudoId::None)
-        collector.setPseudoElementRequest(Style::PseudoElementIdentifier { elementStyle.pseudoElementType(), elementStyle.pseudoElementNameArgument() });
+        collector.setPseudoElementRequest(elementStyle.pseudoElementIdentifier());
 
     if (hasRevert) {
         // In the animation origin, 'revert' rolls back the cascaded value to the user level.
@@ -422,7 +432,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(Element& element, const 
         collector.matchUserRules();
     }
     collector.addAuthorKeyframeRules(keyframe);
-    Builder builder(*state.style(), builderContext(state), collector.matchResult(), CascadeLevel::Author);
+    Builder builder(*state.style(), builderContext(state), collector.matchResult());
     builder.state().setIsBuildingKeyframeStyle();
     builder.applyAllProperties();
 
@@ -432,7 +442,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(Element& element, const 
     return state.takeStyle();
 }
 
-bool Resolver::isAnimationNameValid(const String& name)
+bool Resolver::isAnimationNameValid(const String& name) const
 {
     return m_keyframesRuleMap.find(AtomString(name)) != m_keyframesRuleMap.end()
         || userAgentKeyframes().find(AtomString(name)) != userAgentKeyframes().end();
@@ -471,7 +481,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
         return &CubicBezierTimingFunction::defaultTimingFunction();
     };
 
-    UncheckedKeyHashSet<RefPtr<const TimingFunction>> timingFunctions;
+    HashSet<RefPtr<const TimingFunction>> timingFunctions;
     auto uniqueTimingFunctionForKeyframe = [&](Ref<StyleRuleKeyframe> keyframe) -> RefPtr<const TimingFunction> {
         auto timingFunction = timingFunctionForKeyframe(keyframe);
         for (auto existingTimingFunction : timingFunctions) {
@@ -487,7 +497,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
 
     using KeyframeUniqueKey = std::tuple<StyleRuleKeyframe::Key, RefPtr<const TimingFunction>, CompositeOperation>;
     auto hasDuplicateKeys = [&]() -> bool {
-        UncheckedKeyHashSet<KeyframeUniqueKey> uniqueKeyframeKeys;
+        HashSet<KeyframeUniqueKey> uniqueKeyframeKeys;
         for (auto& keyframe : *keyframes) {
             auto compositeOperation = compositeOperationForKeyframe(keyframe);
             auto timingFunction = uniqueTimingFunctionForKeyframe(keyframe);
@@ -505,7 +515,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     // Merge keyframes with a similar offset and timing function ensuring that merged keyframes
     // move to the end of the list if the offset is a timeline range.
     Vector<Ref<StyleRuleKeyframe>> deduplicatedKeyframes;
-    UncheckedKeyHashMap<KeyframeUniqueKey, Ref<StyleRuleKeyframe>> keyframesMap;
+    HashMap<KeyframeUniqueKey, Ref<StyleRuleKeyframe>> keyframesMap;
     for (auto& originalKeyframe : *keyframes) {
         auto compositeOperation = compositeOperationForKeyframe(originalKeyframe);
         auto timingFunction = uniqueTimingFunctionForKeyframe(originalKeyframe);
@@ -532,19 +542,19 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     return deduplicatedKeyframes;
 }
 
-void Resolver::keyframeStylesForAnimation(Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, BlendingKeyframes& list, const TimingFunction* defaultTimingFunction)
+bool Resolver::keyframeStylesForAnimation(Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, BlendingKeyframes& list, const TimingFunction* defaultTimingFunction) const
 {
     list.clear();
 
     auto keyframeRules = keyframeRulesForName(list.keyframesName(), defaultTimingFunction);
     if (keyframeRules.isEmpty())
-        return;
+        return false;
 
     // Construct and populate the style for each keyframe.
     for (auto& keyframeRule : keyframeRules) {
         // Add this keyframe style to all the indicated key times
         for (auto& key : keyframeRule->keys()) {
-            BlendingKeyframe blendingKeyframe({ SingleTimelineRange::timelineName(key.rangeName), key.offset }, { nullptr });
+            BlendingKeyframe blendingKeyframe({ Style::convertCSSValueIDToSingleAnimationRangeName(key.rangeName), key.offset }, { nullptr });
             blendingKeyframe.setStyle(styleForKeyframe(element, elementStyle, context, keyframeRule.get(), blendingKeyframe));
             if (auto timingFunctionCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationTimingFunction))
                 blendingKeyframe.setTimingFunction(createTimingFunctionDeprecated(*timingFunctionCSSValue));
@@ -556,11 +566,13 @@ void Resolver::keyframeStylesForAnimation(Element& element, const RenderStyle& e
             list.updatePropertiesMetadata(keyframeRule->properties());
         }
     }
+
+    return true;
 }
 
 std::optional<ResolvedStyle> Resolver::styleForPseudoElement(Element& element, const PseudoElementRequest& pseudoElementRequest, const ResolutionContext& context)
 {
-    auto state = State(element, context.parentStyle, context.documentElementStyle, nullptr);
+    auto state = State(element, context.parentStyle, context.documentElementStyle, context.treeResolutionState.get());
 
     if (state.parentStyle()) {
         state.setStyle(RenderStyle::createPtrWithRegisteredInitialValues(document().customPropertyRegistry()));
@@ -616,7 +628,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForPage(int pageIndex)
 
     auto& result = collector.matchResult();
 
-    Builder builder(*state.style(), builderContext(state), result, CascadeLevel::Author);
+    Builder builder(*state.style(), builderContext(state), result);
     builder.applyAllProperties();
 
     // Now return the style.
@@ -653,8 +665,7 @@ Vector<RefPtr<const StyleRule>> Resolver::pseudoStyleRulesForElement(const Eleme
 
     auto state = State(*element, nullptr, nullptr, nullptr);
 
-    ElementRuleCollector collector(*element, m_ruleSets, nullptr);
-    collector.setMode(SelectorChecker::Mode::CollectingRules);
+    ElementRuleCollector collector(*element, m_ruleSets, nullptr, SelectorChecker::Mode::CollectingRules);
     if (pseudoElementIdentifier)
         collector.setPseudoElementRequest(*pseudoElementIdentifier);
     collector.setMedium(m_mediaQueryEvaluator);
@@ -730,7 +741,7 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
             return;
     }
 
-    Builder builder(style, builderContext(state), matchResult, CascadeLevel::Author, WTFMove(includedProperties));
+    Builder builder(style, builderContext(state), matchResult, WTFMove(includedProperties));
 
     // Top priority properties may affect resolution of high priority ones.
     builder.applyTopPriorityProperties();
@@ -823,7 +834,7 @@ static CSSSelectorList viewTransitionSelector(CSSSelector::PseudoElement element
     groupSelector->setValue(selectorName);
     groupSelector->setArgumentList({ { name } });
 
-    selectorList.first()->appendTagHistory(CSSSelector::Relation::Subselector, WTFMove(groupSelector));
+    selectorList.first()->prependInComplexSelector(CSSSelector::Relation::Subselector, WTFMove(groupSelector));
 
     return CSSSelectorList(WTFMove(selectorList));
 }

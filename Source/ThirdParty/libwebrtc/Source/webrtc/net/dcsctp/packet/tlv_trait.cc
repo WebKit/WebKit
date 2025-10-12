@@ -9,6 +9,8 @@
  */
 #include "net/dcsctp/packet/tlv_trait.h"
 
+#include <cstddef>
+
 #include "rtc_base/logging.h"
 
 namespace dcsctp {

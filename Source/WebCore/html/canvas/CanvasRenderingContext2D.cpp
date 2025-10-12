@@ -33,13 +33,14 @@
 #include "config.h"
 #include "CanvasRenderingContext2D.h"
 
-#include "CSSFilter.h"
+#include "CSSFilterRenderer.h"
 #include "CSSFontSelector.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserConsumer+Filter.h"
 #include "CSSPropertyParserConsumer+Font.h"
 #include "ContainerNodeInlines.h"
 #include "DocumentInlines.h"
+#include "DocumentPage.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
@@ -87,7 +88,7 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(CanvasBase& canvas, CanvasRen
 
 CanvasRenderingContext2D::~CanvasRenderingContext2D() = default;
 
-std::optional<FilterOperations> CanvasRenderingContext2D::setFilterStringWithoutUpdatingStyle(const String& filterString)
+std::optional<Style::Filter> CanvasRenderingContext2D::setFilterStringWithoutUpdatingStyle(const String& filterString)
 {
     Ref canvas = this->canvas();
     Ref document = canvas->document();
@@ -122,7 +123,7 @@ RefPtr<Filter> CanvasRenderingContext2D::createFilter(const FloatRect& bounds) c
         return nullptr;
 
     auto preferredFilterRenderingModes = page->preferredFilterRenderingModes();
-    auto filter = CSSFilter::create(*renderer, state().filterOperations, preferredFilterRenderingModes, { 1, 1 }, bounds, *context);
+    auto filter = CSSFilterRenderer::create(*renderer, state().filter, preferredFilterRenderingModes, { 1, 1 }, bounds, *context);
     if (!filter)
         return nullptr;
 
@@ -134,14 +135,14 @@ RefPtr<Filter> CanvasRenderingContext2D::createFilter(const FloatRect& bounds) c
 
 IntOutsets CanvasRenderingContext2D::calculateFilterOutsets(const FloatRect& bounds) const
 {
-    if (state().filterOperations.isEmpty())
+    if (state().filter.isNone())
         return { };
 
     CheckedPtr renderer = canvas().renderer();
     if (!renderer)
         return { };
 
-    return CSSFilter::calculateOutsets(*renderer, state().filterOperations, bounds);
+    return CSSFilterRenderer::calculateOutsets(*renderer, state().filter, bounds);
 }
 
 void CanvasRenderingContext2D::drawFocusIfNeeded(Element& element)
@@ -158,7 +159,7 @@ void CanvasRenderingContext2D::drawFocusIfNeededInternal(const Path& path, Eleme
 {
     auto* context = effectiveDrawingContext();
     Ref canvas = this->canvas();
-    if (!element.focused() || !state().hasInvertibleTransform || path.isEmpty() || !element.isDescendantOf(canvas.get()) || !context)
+    if (!element.focused() || !hasInvertibleTransform() || path.isEmpty() || !element.isDescendantOf(canvas.get()) || !context)
         return;
     context->drawFocusRing(path, 1, RenderTheme::singleton().focusRingColor(element.protectedDocument()->styleColorOptions(canvas->computedStyle())));
     didDrawEntireCanvas();
@@ -270,8 +271,8 @@ Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     if (document->settings().webAPIStatisticsEnabled()) {
-        ResourceLoadObserver::shared().logCanvasWriteOrMeasure(document, text);
-        ResourceLoadObserver::shared().logCanvasRead(document);
+        ResourceLoadObserver::singleton().logCanvasWriteOrMeasure(document, text);
+        ResourceLoadObserver::singleton().logCanvasRead(document);
     }
 
     String normalizedText = normalizeSpaces(text);
@@ -303,7 +304,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, double x, do
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     if (document->settings().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logCanvasWriteOrMeasure(document, text);
+        ResourceLoadObserver::singleton().logCanvasWriteOrMeasure(document, text);
 
     if (!canDrawText(x, y, fill, maxWidth))
         return;

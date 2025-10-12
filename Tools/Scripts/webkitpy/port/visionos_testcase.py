@@ -20,16 +20,15 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitcorepy import Version
-
 from webkitpy.port import darwin_testcase
+from webkitpy.port.visionos import VisionOSPort
 from webkitpy.tool.mocktool import MockOptions
 
 
 class VisionOSTest(darwin_testcase.DarwinTest):
     disable_setup = True
 
-    def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=Version(5), **kwargs):
+    def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=VisionOSPort.CURRENT_VERSION, **kwargs):
         if options:
             options.architecture = 'arm64'
             options.webkit_test_runner = True

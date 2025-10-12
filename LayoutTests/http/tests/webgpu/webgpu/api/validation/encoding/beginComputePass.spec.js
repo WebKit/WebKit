@@ -4,9 +4,10 @@
 Tests for validation in beginComputePass and GPUComputePassDescriptor as its optional descriptor.
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { kQueryTypes } from '../../../capability_info.js';
-import { AllFeaturesMaxLimitsValidationTest } from '../validation_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
+import * as vtu from '../validation_test_utils.js';
 
-class F extends AllFeaturesMaxLimitsValidationTest {
+class F extends AllFeaturesMaxLimitsGPUTest {
   tryComputePass(success, descriptor) {
     const encoder = this.device.createCommandEncoder();
     const computePass = encoder.beginComputePass(descriptor);
@@ -57,7 +58,7 @@ fn((t) => {
   t.skipIfDeviceDoesNotSupportQueryType('timestamp');
   const { querySetState } = t.params;
 
-  const querySet = t.createQuerySetWithState(querySetState, {
+  const querySet = vtu.createQuerySetWithState(t, querySetState, {
     type: 'timestamp',
     count: 1
   });

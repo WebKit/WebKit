@@ -1,0 +1,13 @@
+
+FAIL Query condition should be valid: anchored(fallback) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: anchored(fallback: none) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: (anchored(fallback: inline-start block-end)) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: anchored(not ((fallback: --foo) or (fallback: --bar flip-inline))) assert_equals: expected "true" but got ""
+PASS Query condition should be valid but unknown: anchored(fallback < none)
+PASS Query condition should be valid but unknown: anchored((fallback = none))
+PASS Query condition should be valid but unknown: anchored(fallback: 0)
+PASS Query condition should be valid but unknown: anchored(fallback: 1)
+PASS Query condition should be valid but unknown: anchored(style(fallback: top left))
+PASS Query condition should be valid but unknown: style(anchored(fallback: --foo))
+PASS Query condition should be valid but unknown: anchored(fallback:)
+

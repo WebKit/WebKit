@@ -30,10 +30,10 @@
   const target = document.getElementById("target");
 
   // Busy-loop load parameters:
-  const load_initial_ms = 1;
+  const load_initial_ms = 5;
   const load_multiplier = 4;
-  const load_max_ms = 1024;
-  // Max total delay = 1 + 4 + 16 + ... + 1024 = 1365ms
+  const load_max_ms = 500;
+  // Max total delay = 5+20+80+320 = 425ms
 
   // https://w3c.github.io/pointerevents/#coalesced-events
   function checkCoalescedMoveEventAttributes(event) {
@@ -45,11 +45,20 @@
       let coalesced_event = coalesced_events[i];
 
       assert_equals(coalesced_event.isTrusted, true,
-          "coalesced_event.isTrusted is true");
+        "coalesced_event.isTrusted is true");
       assert_equals(coalesced_event.bubbles, false,
-          "coalesced_event.bubbles is false");
+        "coalesced_event.bubbles is false");
       assert_equals(coalesced_event.cancelable, false,
-          "coalesced_event.cancelable is false");
+        "coalesced_event.cancelable is false");
+
+      assert_equals(coalesced_event.pointerId, event.pointerId,
+        "coalesced_event.pointerId matches the same in the container event");
+      assert_equals(coalesced_event.pointerType, event.pointerType,
+        "coalesced_event.pointerType matches the same in the container event");
+      assert_equals(coalesced_event.isPrimary, event.isPrimary,
+        "coalesced_event.isPrimary matches the same in the container event");
+      assert_equals(coalesced_event.target, event.target,
+        "coalesced_event.target matches the same in the container event");
 
       if (i > 0) {
         assert_greater_than_equal(coalesced_event.timeStamp,
@@ -82,14 +91,14 @@
 
     // Repeatedly send a long action sequence until either a coalesced event is
     // encountered or the busyloop becomes too long.
-    while (!coalesced_event_received && current_busyloop_ms <= load_max_ms) {
+    while (!coalesced_event_received && current_busyloop_ms < load_max_ms) {
       let pointerup_promise = getEvent("pointerup", target);
 
       let actions = new test_driver.Actions()
           .addPointer("TestPointer", pointer_type)
           .pointerMove(0, 0, { origin: target })
           .pointerDown();
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 5; i++) {
         actions = actions.pointerMove(20, 20, { origin: target })
             .pointerMove(0, 0, { origin: target });
       }

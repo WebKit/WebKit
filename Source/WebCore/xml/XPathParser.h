@@ -75,7 +75,7 @@ private:
     Token nextTokenInternal();
 
     const String& m_data;
-    RefPtr<XPathNSResolver> m_resolver;
+    const RefPtr<XPathNSResolver> m_resolver;
 
     unsigned m_nextPos { 0 };
     int m_lastTokenType { 0 };

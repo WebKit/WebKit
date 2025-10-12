@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016, 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016, 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,8 +41,21 @@
 .slider.default > .appearance > .fill {
     position: relative;
     height: 100%;
-    border-radius: 4.5px;
-    overflow: hidden;
+    display: flex;
+}
+
+.slider.default > .appearance > .fill {
+    --fill-border-radius: 4.5px;
+}
+
+.slider.default > .appearance > .fill > :first-child {
+    border-top-left-radius: var(--fill-border-radius);
+    border-bottom-left-radius: var(--fill-border-radius);
+}
+
+.slider.default > .appearance > .fill > :last-child {
+    border-top-right-radius: var(--fill-border-radius);
+    border-bottom-right-radius: var(--fill-border-radius);
 }
 
 .slider.default.allows-relative-scrubbing > .appearance > .fill {
@@ -51,11 +64,10 @@
 }
 
 .slider.default.allows-relative-scrubbing > .appearance.changing > .fill {
-    border-radius: 7.5px;
+    --fill-border-radius: 7.5px;
 }
 
 .slider.default > .appearance > .fill > * {
-    position: absolute;
     top: 0;
     height: 100%;
     mix-blend-mode: plus-lighter;
@@ -66,7 +78,6 @@
 }
 
 .slider.default > .appearance > .fill > .primary {
-    left: 0;
     background-color: rgba(255, 255, 255, 0.45);
 }
 
@@ -75,7 +86,6 @@
 }
 
 .slider.default > .appearance > .fill > .track {
-    right: 0;
     background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -87,32 +97,30 @@
     background-color: rgba(255, 255, 255, 0.08);
 }
 
-.slider.default.allows-relative-scrubbing > .appearance > .fill > .secondary {
+.slider.default.allows-relative-scrubbing > .appearance > .fill > .track > .secondary {
     background-color: rgb(128, 128, 128);
 }
 
-.slider.default > .appearance > .knob {
-    position: absolute;
+.slider.default > .appearance > .fill > .knob {
+    align-self: center;
     background-color: white;
-    transform: translateX(-50%);
 }
 
-.slider.default > .appearance > .knob.circle {
-    top: -2px;
+.slider.default > .appearance > .fill > .knob.circle {
     width: 9px;
     height: 9px;
     border-radius: 50%;
+    margin: -4.5px;
 }
 
-.slider.default > .appearance > .knob.bar {
-    top: -6px;
+.slider.default > .appearance > .fill > .knob.bar {
     width: 4px;
     height: 17px;
     border-radius: 4px;
+    margin: 1px;
 }
 
-.slider.default > .appearance > .knob.none {
-    top: -2px;
+.slider.default > .appearance > .fill > .knob.none {
     width: 9px;
     height: 9px;
     border-radius: 50%;
@@ -121,7 +129,6 @@
 
 /* When disabled, we only want to show the track and turn off interaction. */
 
-.slider.default.disabled > .appearance > .fill > :is(.primary, .secondary),
-.slider.default.disabled > .appearance > .knob {
+.slider.default.disabled > .appearance > .fill > :is(.primary, .secondary) {
     display: none;
 }

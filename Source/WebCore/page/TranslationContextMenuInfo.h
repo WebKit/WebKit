@@ -27,8 +27,8 @@
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
-#include "IntPoint.h"
-#include "IntRect.h"
+#include <WebCore/IntPoint.h>
+#include <WebCore/IntRect.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

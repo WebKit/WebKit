@@ -30,6 +30,7 @@
 namespace WebDriver {
 
 enum class MouseButton { None, Left, Middle, Right };
+enum class MouseInteraction { Move, Down, Up, SingleClick, DoubleClick };
 enum class PointerType { Mouse, Pen, Touch };
 
 struct InputSource {

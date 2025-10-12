@@ -42,6 +42,7 @@ static NSString* const WebAutomaticSpellingCorrectionEnabled = @"WebAutomaticSpe
 static NSString* const WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckingEnabled";
 static NSString* const WebGrammarCheckingEnabled = @"WebGrammarCheckingEnabled";
 static NSString* const WebSmartInsertDeleteEnabled = @"WebSmartInsertDeleteEnabled";
+static NSString* const WebSmartListsEnabled = @"WebSmartListsEnabled";
 static NSString* const WebAutomaticQuoteSubstitutionEnabled = @"WebAutomaticQuoteSubstitutionEnabled";
 static NSString* const WebAutomaticDashSubstitutionEnabled = @"WebAutomaticDashSubstitutionEnabled";
 static NSString* const WebAutomaticLinkDetectionEnabled = @"WebAutomaticLinkDetectionEnabled";
@@ -95,6 +96,15 @@ static bool shouldGrammarCheckingBeEnabled()
     return [defaults boolForKey:WebGrammarCheckingEnabled];
 }
 
+static bool shouldSmartListsBeEnabled()
+{
+    RetainPtr defaults = [NSUserDefaults standardUserDefaults];
+    if (![defaults objectForKey:WebSmartListsEnabled])
+        return true; // The Smart Lists preference should be true by default.
+
+    return [defaults boolForKey:WebSmartListsEnabled];
+}
+
 static OptionSet<TextCheckerState>& mutableState()
 {
     static OptionSet<TextCheckerState> state;
@@ -120,6 +130,9 @@ static OptionSet<TextCheckerState>& mutableState()
 
         if ([[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticLinkDetectionEnabled])
             state.add(TextCheckerState::AutomaticLinkDetectionEnabled);
+
+        if (shouldSmartListsBeEnabled())
+            state.add(TextCheckerState::SmartListsEnabled);
     });
     return state;
 }
@@ -141,6 +154,7 @@ void TextChecker::setTestingMode(bool enabled)
         [[NSUserDefaults standardUserDefaults] setBool:state().contains(TextCheckerState::AutomaticDashSubstitutionEnabled) forKey:WebAutomaticDashSubstitutionEnabled];
         [[NSUserDefaults standardUserDefaults] setBool:state().contains(TextCheckerState::AutomaticLinkDetectionEnabled) forKey:WebAutomaticLinkDetectionEnabled];
         [[NSUserDefaults standardUserDefaults] setBool:state().contains(TextCheckerState::AutomaticTextReplacementEnabled) forKey:WebAutomaticTextReplacementEnabled];
+        [[NSUserDefaults standardUserDefaults] setBool:state().contains(TextCheckerState::SmartListsEnabled) forKey:WebSmartListsEnabled];
         [[NSUserDefaults standardUserDefaults] setBool:isSmartInsertDeleteEnabled() forKey:WebSmartInsertDeleteEnabled];
     }
     testingModeEnabled = enabled;
@@ -279,6 +293,16 @@ void TextChecker::setSmartInsertDeleteEnabled(bool flag)
         [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebSmartInsertDeleteEnabled];
 }
 
+void TextChecker::setSmartListsEnabled(bool smartListsEnabled)
+{
+    if (state().contains(TextCheckerState::SmartListsEnabled) == smartListsEnabled)
+        return;
+
+    mutableState().set(TextCheckerState::SmartListsEnabled, smartListsEnabled);
+    if (!testingModeEnabled)
+        [[NSUserDefaults standardUserDefaults] setBool:smartListsEnabled forKey:WebSmartListsEnabled];
+}
+
 void TextChecker::didChangeAutomaticTextReplacementEnabled()
 {
     mutableState().set(TextCheckerState::AutomaticTextReplacementEnabled, shouldAutomaticTextReplacementBeEnabled());
@@ -301,6 +325,11 @@ void TextChecker::didChangeAutomaticDashSubstitutionEnabled()
 {
     mutableState().set(TextCheckerState::AutomaticDashSubstitutionEnabled, shouldAutomaticDashSubstitutionBeEnabled());
     [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+
+void TextChecker::didChangeSmartListsEnabled()
+{
+    mutableState().set(TextCheckerState::SmartListsEnabled, shouldSmartListsBeEnabled());
 }
 
 bool TextChecker::substitutionsPanelIsShowing()

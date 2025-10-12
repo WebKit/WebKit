@@ -124,6 +124,8 @@ public:
 private:
     explicit InternalSettings(Page*);
 
+    bool isInternalSettings() const final { return true; }
+
     Settings& settings() const;
     static ASCIILiteral supplementName();
 
@@ -169,3 +171,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InternalSettings)
+    static bool isType(const WebCore::InternalSettingsGenerated& settings) { return settings.isInternalSettings(); }
+SPECIALIZE_TYPE_TRAITS_END()

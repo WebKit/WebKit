@@ -33,7 +33,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "RealtimeMediaSourceSupportedConstraints.h"
+#include <WebCore/RealtimeMediaSourceSupportedConstraints.h>
 #include <cstdlib>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Function.h>
@@ -613,7 +613,7 @@ public:
     {
     }
 
-    WEBCORE_EXPORT void forEach(Function<void(MediaConstraintType, const MediaConstraint&)>&&) const;
+    WEBCORE_EXPORT void forEach(NOESCAPE Function<void(MediaConstraintType, const MediaConstraint&)>&&) const;
     void filter(NOESCAPE const Function<bool(MediaConstraintType, const MediaConstraint&)>&) const;
     bool isEmpty() const;
     WEBCORE_EXPORT bool isValid() const;

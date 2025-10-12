@@ -44,19 +44,19 @@ NativeWebMouseEvent::NativeWebMouseEvent(GdkEvent* event, int eventClickCount, s
 {
 }
 
-NativeWebMouseEvent::NativeWebMouseEvent(GdkEvent* event, const WebCore::IntPoint& position, int eventClickCount, std::optional<WebCore::FloatSize> delta)
-    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, position, position, eventClickCount, delta))
+NativeWebMouseEvent::NativeWebMouseEvent(GdkEvent* event, const WebCore::DoublePoint& position, int eventClickCount, std::optional<WebCore::FloatSize> delta)
+    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, position, eventClickCount, delta))
     , m_nativeEvent(constructNativeEvent(event))
 {
 }
 
-NativeWebMouseEvent::NativeWebMouseEvent(const WebCore::IntPoint& position)
+NativeWebMouseEvent::NativeWebMouseEvent(const WebCore::DoublePoint& position)
     : WebMouseEvent(WebEventFactory::createWebMouseEvent(position))
 {
 }
 
-NativeWebMouseEvent::NativeWebMouseEvent(WebEventType type, WebMouseEventButton button, unsigned short buttons, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, int clickCount, OptionSet<WebEventModifier> modifiers, std::optional<WebCore::FloatSize> delta, WebCore::PointerID pointerId, const String& pointerType, WebCore::PlatformMouseEvent::IsTouch isTouchEvent)
-    : WebMouseEvent(WebEvent(type, modifiers, WallTime::now()), button, buttons, position, globalPosition, delta.value_or(WebCore::FloatSize()).width(), delta.value_or(WebCore::FloatSize()).height(), 0, clickCount, 0, WebMouseEventSyntheticClickType::NoTap, isTouchEvent, pointerId, pointerType)
+NativeWebMouseEvent::NativeWebMouseEvent(WebEventType type, WebMouseEventButton button, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, int clickCount, OptionSet<WebEventModifier> modifiers, std::optional<WebCore::FloatSize> delta, WebCore::PointerID pointerId, const String& pointerType, WebCore::PlatformMouseEvent::IsTouch isTouchEvent)
+    : WebMouseEvent(WebEvent(type, modifiers, MonotonicTime::now()), button, buttons, position, globalPosition, delta.value_or(WebCore::FloatSize()).width(), delta.value_or(WebCore::FloatSize()).height(), 0, clickCount, 0, WebMouseEventSyntheticClickType::NoTap, isTouchEvent, pointerId, pointerType)
 {
 }
 

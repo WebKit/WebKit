@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Tony Chang <idealisms@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without

@@ -9,9 +9,8 @@
  */
 #include "common_video/generic_frame_descriptor/generic_frame_info.h"
 
-#include <utility>
-
-#include "rtc_base/checks.h"
+#include "absl/strings/string_view.h"
+#include "api/transport/rtp/dependency_descriptor.h"
 
 namespace webrtc {
 

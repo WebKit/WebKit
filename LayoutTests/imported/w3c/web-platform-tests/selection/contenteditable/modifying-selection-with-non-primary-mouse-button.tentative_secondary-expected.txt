@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Error: assert_true: Selection should be collapsed before pointerup event expected true got false
-CONSOLE MESSAGE: Error: assert_true: Selection should be collapsed before mouseup event expected true got false
 first span.
 second span.
 link.

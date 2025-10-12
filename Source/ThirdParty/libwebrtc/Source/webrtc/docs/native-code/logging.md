@@ -6,7 +6,7 @@ To enable native logs for a native application, you can either:
   * Use a debug build of WebRTC (a build where `NDEBUG` is not defined),
     which will enable `INFO` logging by default.
 
-  * Call `rtc::LogMessage::LogToDebug(rtc::LS_INFO)` within your application.
+  * Call `webrtc::LogMessage::LogToDebug(webrtc::LS_INFO)` within your application.
     Or use `LS_VERBOSE` to enable `VERBOSE` logging.
 
 For the location of the log output on different platforms, see below.

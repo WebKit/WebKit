@@ -246,14 +246,13 @@ RefPtr<JSON::Object> WebExtensionLocalization::localizationJSONForWebExtension(W
 
     auto path = pathBuilder.toString();
 
-    RefPtr<API::Error> error;
-    auto jsonString = webExtension.resourceStringForPath(path, error, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes);
-    if (error) {
-        webExtension.recordErrorIfNeeded(error);
+    auto jsonStringResult = webExtension.resourceStringForPath(path, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes);
+    if (!jsonStringResult) {
+        webExtension.recordErrorIfNeeded(jsonStringResult.error());
         return nullptr;
     }
 
-    RefPtr json = JSON::Value::parseJSON(jsonString);
+    RefPtr json = JSON::Value::parseJSON(jsonStringResult.value());
     return json ? json->asObject() : nullptr;
 }
 
@@ -333,7 +332,7 @@ String WebExtensionLocalization::stringByReplacingPositionalPlaceholdersInString
         if (index < 0)
             break;
 
-        auto originalKey = localizedString.substring(index, matchLength).trim(isASCIIWhitespace<UChar>);
+        auto originalKey = localizedString.substring(index, matchLength).trim(isASCIIWhitespace<char16_t>);
         auto key = originalKey.substring(1, originalKey.length());
         auto keyInteger = parseInteger<size_t>(key);
 

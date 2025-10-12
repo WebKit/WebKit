@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JITCode.h"
+#include <JavaScriptCore/JITCode.h>
 
 namespace JSC {
 

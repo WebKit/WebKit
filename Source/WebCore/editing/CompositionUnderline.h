@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Color.h"
+#include <WebCore/Color.h>
 
 namespace WebCore {
 

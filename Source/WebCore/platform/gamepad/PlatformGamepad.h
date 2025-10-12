@@ -27,8 +27,8 @@
 
 #if ENABLE(GAMEPAD)
 
-#include "GamepadHapticEffectType.h"
-#include "SharedGamepadValue.h"
+#include <WebCore/GamepadHapticEffectType.h>
+#include <WebCore/SharedGamepadValue.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2012 Google Inc.  All rights reserved.
+ * Copyright (C) 2009, 2012 Google Inc. All rights reserved.
  * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,13 +33,12 @@
 #include "ThreadableWebSocketChannel.h"
 
 #include "ContentRuleListResults.h"
-#include "Document.h"
-#include "DocumentInlines.h"
 #include "DocumentLoader.h"
+#include "DocumentPage.h"
+#include "DocumentQuirks.h"
+#include "DocumentSecurityOrigin.h"
 #include "FrameLoader.h"
 #include "HTTPHeaderValues.h"
-#include "Page.h"
-#include "Quirks.h"
 #include "ScriptExecutionContext.h"
 #include "SocketProvider.h"
 #include "ThreadableWebSocketChannelClientWrapper.h"
@@ -61,8 +60,8 @@ RefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Document& 
 RefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecutionContext& context, WebSocketChannelClient& client, SocketProvider& provider)
 {
     if (RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(context)) {
-        WorkerRunLoop& runLoop = workerGlobalScope->thread().runLoop();
-        return WorkerThreadableWebSocketChannel::create(*workerGlobalScope, client, makeString("webSocketChannelMode"_s, runLoop.createUniqueId()), provider);
+        auto identifier = workerGlobalScope->thread()->runLoop().createUniqueId();
+        return WorkerThreadableWebSocketChannel::create(*workerGlobalScope, client, makeString("webSocketChannelMode"_s, identifier), provider);
     }
 
     return create(downcast<Document>(context), client, provider);
@@ -76,21 +75,28 @@ std::optional<ThreadableWebSocketChannel::ValidatedURL> ThreadableWebSocketChann
     if (RefPtr page = document.page()) {
         if (!page->allowsLoadFromURL(requestedURL, MainFrameMainResource::No))
             return { };
+
 #if ENABLE(CONTENT_EXTENSIONS)
-        if (RefPtr documentLoader = document.loader()) {
-            auto results = page->protectedUserContentProvider()->processContentRuleListsForLoad(*page, validatedURL.url, ContentExtensions::ResourceType::WebSocket, *documentLoader);
-            if (results.summary.blockedLoad)
+        RefPtr frame = document.frame();
+        RefPtr userContentProvider = frame ? frame->userContentProvider() : nullptr;
+        RefPtr documentLoader = document.loader();
+        if (userContentProvider && documentLoader) {
+            auto results = userContentProvider->processContentRuleListsForLoad(*page, validatedURL.url, ContentExtensions::ResourceType::WebSocket, *documentLoader);
+            if (results.shouldBlock())
                 return { };
+
             if (results.summary.madeHTTPS) {
                 ASSERT(validatedURL.url.protocolIs("ws"_s));
                 validatedURL.url.setProtocol("wss"_s);
             }
+
             validatedURL.areCookiesAllowed = !results.summary.blockedCookies;
         }
 #else
         UNUSED_PARAM(document);
 #endif
     }
+
     return validatedURL;
 }
 

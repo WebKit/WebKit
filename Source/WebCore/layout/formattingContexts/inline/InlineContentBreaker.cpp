@@ -326,7 +326,7 @@ static bool isBreakableRun(const InlineContentBreaker::ContinuousContent::Run& r
 static inline bool canBreakBefore(char32_t character, LineBreak lineBreak)
 {
     // FIXME: This should include all the cases from https://unicode.org/reports/tr14
-    // Use a breaking matrix similar to lineBreakTable in BreakLines.cpp
+    // Use a breaking matrix similar to lineBreakTable in BreakablePositions.cpp
     // Also see kBreakAllLineBreakClassTable in third_party/blink/renderer/platform/text/text_break_iterator.cc
     if (lineBreak != LineBreak::Loose) {
         // The following breaks are allowed for loose line breaking if the preceding character belongs to the Unicode
@@ -412,12 +412,12 @@ static std::optional<TextUtil::WordBreakLeft> midWordBreak(const InlineContentBr
 
 static size_t limitBeforeValue(const RenderStyle& style)
 {
-    return style.hyphenationLimitBefore() == RenderStyle::initialHyphenationLimitBefore() ? 0 : style.hyphenationLimitBefore();
+    return style.hyphenateLimitBefore().tryValue().value_or(0).value;
 }
 
 static size_t limitAfterValue(const RenderStyle& style)
 {
-    return style.hyphenationLimitAfter() == RenderStyle::initialHyphenationLimitAfter() ? 0 : style.hyphenationLimitAfter();
+    return style.hyphenateLimitAfter().tryValue().value_or(0).value;
 }
 
 static inline bool hasEnoughContentForHyphenation(size_t contentLength, const RenderStyle& style)
@@ -427,7 +427,7 @@ static inline bool hasEnoughContentForHyphenation(size_t contentLength, const Re
 
 static std::optional<size_t> firstHyphenPosition(StringView content, const RenderStyle& style)
 {
-    // FIXME: We may produce slighly incorrect (less fine-grained) hyphenation here as the incoming content may just be a partial word.
+    // FIXME: We may produce slightly incorrect (less fine-grained) hyphenation here as the incoming content may just be a partial word.
     // (same applies to hyphenPosition below)
     size_t contentLength = content.length();
     if (!hasEnoughContentForHyphenation(contentLength, style))
@@ -559,20 +559,19 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
 
     if (breakRules.contains(WordBreakRule::AtHyphenationOpportunities)) {
         auto tryBreakingAtHyphenationOpportunity = [&]() -> std::optional<PartialRun> {
-            auto content = inlineTextItem.inlineTextBox().content().substring(inlineTextItem.start(), inlineTextItem.length());
             auto hyphenWidth = TextUtil::hyphenWidth(style);
             auto hyphenLocation = [&] {
                 if (!candidateTextRun.isOverflowingRun)
-                    return lastHyphenPosition(content, style);
+                    return lastHyphenPosition(inlineTextItem.content(), style);
 
                 auto availableWidthExcludingHyphen = availableWidth - hyphenWidth;
                 auto hasSomeRoomForContent = availableWidthExcludingHyphen > 0 && enoughWidthForHyphenation(availableWidthExcludingHyphen, fontCascade.size());
                 if (hasSomeRoomForContent && candidateRun.spaceRequired()) {
                     auto leftSideLength = TextUtil::breakWord(inlineTextItem, fontCascade, candidateRun.spaceRequired(), availableWidthExcludingHyphen, candidateTextRun.logicalLeft).length;
-                    if (auto position = hyphenPositionBefore(content, style, leftSideLength))
+                    if (auto position = hyphenPositionBefore(inlineTextItem.content(), style, leftSideLength))
                         return position;
                 }
-                return !lineStatus.hasContent && *firstTextRunIndex(runs) == candidateTextRun.index ? firstHyphenPosition(content, style) : std::nullopt;
+                return !lineStatus.hasContent && *firstTextRunIndex(runs) == candidateTextRun.index ? firstHyphenPosition(inlineTextItem.content(), style) : std::nullopt;
             };
 
             if (auto position = hyphenLocation()) {
@@ -743,7 +742,7 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
             return { };
         if (inlineTextItem->isWhitespace())
             return { };
-        content.append(inlineTextItem->inlineTextBox().content().substring(inlineTextItem->start(), inlineTextItem->length()));
+        content.append(inlineTextItem->content());
         overflowingRunStartPosition += index < overflowingRunIndex ? inlineTextItem->length() : 0;
     }
     // Only non-whitespace text runs with same style.
@@ -947,7 +946,7 @@ void InlineContentBreaker::ContinuousContent::appendTextContent(const InlineText
         return { };
     }();
     if (!trimmableWidth) {
-        auto contentOffset = isAfterWordSeparator ? style.wordSpacing() : 0.f;
+        auto contentOffset = isAfterWordSeparator ? style.usedWordSpacing() : 0.f;
         appendToRunList(inlineTextItem, style, contentOffset, logicalWidth);
         if (contentOffset && isFullyTrimmable()) {
             // word-spacing offset gets trimmed together with the leading trimmable content.
@@ -960,7 +959,7 @@ void InlineContentBreaker::ContinuousContent::appendTextContent(const InlineText
     m_isFullyTrimmable = m_isFullyTrimmable || m_runs.isEmpty();
     ASSERT(*trimmableWidth <= logicalWidth);
     auto isLeadingTrimmable = trimmableWidth && (!this->logicalWidth() || isFullyTrimmable());
-    appendToRunList(inlineTextItem, style, isAfterWordSeparator ? style.wordSpacing() : 0.f, logicalWidth);
+    appendToRunList(inlineTextItem, style, isAfterWordSeparator ? style.usedWordSpacing() : 0.f, logicalWidth);
     if (isLeadingTrimmable) {
         ASSERT(!m_trailingTrimmableWidth);
         m_leadingTrimmableWidth += *trimmableWidth;
@@ -982,6 +981,7 @@ void InlineContentBreaker::ContinuousContent::reset()
     m_isFullyTrimmable = false;
     m_hasTrailingWordSeparator = false;
     m_hasTrailingSoftHyphen = false;
+    m_hasShapedContent = false;
 }
 
 }

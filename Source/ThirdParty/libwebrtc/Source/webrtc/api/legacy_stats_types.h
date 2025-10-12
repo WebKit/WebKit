@@ -244,7 +244,7 @@ class RTC_EXPORT StatsReport {
     kStatsValueNameLocalCandidateRelayProtocol,
   };
 
-  class RTC_EXPORT IdBase : public webrtc::RefCountInterface {
+  class RTC_EXPORT IdBase : public RefCountInterface {
    public:
     ~IdBase() override;
     StatsType type() const;
@@ -252,7 +252,7 @@ class RTC_EXPORT StatsReport {
     // Users of IdBase will be using the Id typedef, which is compatible with
     // this Equals() function.  It simply calls the protected (and overridden)
     // Equals() method.
-    bool Equals(const rtc::scoped_refptr<IdBase>& other) const {
+    bool Equals(const scoped_refptr<IdBase>& other) const {
       return Equals(*other.get());
     }
 
@@ -268,7 +268,7 @@ class RTC_EXPORT StatsReport {
     static const char kSeparator = '_';
   };
 
-  typedef rtc::scoped_refptr<IdBase> Id;
+  typedef scoped_refptr<IdBase> Id;
 
   struct RTC_EXPORT Value {
     enum Type {
@@ -356,7 +356,7 @@ class RTC_EXPORT StatsReport {
 #endif
 
    private:
-    webrtc::SequenceChecker thread_checker_{webrtc::SequenceChecker::kDetached};
+    SequenceChecker thread_checker_{SequenceChecker::kDetached};
     mutable int ref_count_ RTC_GUARDED_BY(thread_checker_) = 0;
 
     const Type type_;
@@ -372,7 +372,7 @@ class RTC_EXPORT StatsReport {
     } value_;
   };
 
-  typedef rtc::scoped_refptr<Value> ValuePtr;
+  typedef scoped_refptr<Value> ValuePtr;
   typedef std::map<StatsValueName, ValuePtr> Values;
 
   // Ownership of `id` is passed to `this`.
@@ -474,7 +474,7 @@ class StatsCollection {
 
  private:
   Container list_;
-  webrtc::SequenceChecker thread_checker_{SequenceChecker::kDetached};
+  SequenceChecker thread_checker_{SequenceChecker::kDetached};
 };
 
 }  // namespace webrtc

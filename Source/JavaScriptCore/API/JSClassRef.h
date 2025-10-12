@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,10 @@
 #ifndef JSClassRef_h
 #define JSClassRef_h
 
-#include "OpaqueJSString.h"
-#include "Protect.h"
-#include "Weak.h"
 #include <JavaScriptCore/JSObjectRef.h>
+#include <JavaScriptCore/OpaqueJSString.h>
+#include <JavaScriptCore/Protect.h>
+#include <JavaScriptCore/Weak.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -37,7 +37,7 @@
     WTF_VTBL_FUNCPTR_PTRAUTH_STR("StaticValueEntry." #method) method
 
 struct StaticValueEntry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StaticValueEntry);
 public:
     StaticValueEntry(JSObjectGetPropertyCallback _getProperty, JSObjectSetPropertyCallback _setProperty, JSPropertyAttributes _attributes, String& propertyName)
         : getProperty(_getProperty)
@@ -59,7 +59,7 @@ public:
     WTF_VTBL_FUNCPTR_PTRAUTH_STR("StaticFunctionEntry." #method) method
 
 struct StaticFunctionEntry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StaticFunctionEntry);
 public:
     StaticFunctionEntry(JSObjectCallAsFunctionCallback _callAsFunction, JSPropertyAttributes _attributes)
         : callAsFunction(_callAsFunction), attributes(_attributes)
@@ -80,7 +80,7 @@ struct OpaqueJSClass;
 // An OpaqueJSClass (JSClass) is created without a context, so it can be used with any context, even across context groups.
 // This structure holds data members that vary across context groups.
 struct OpaqueJSClassContextData {
-    WTF_MAKE_NONCOPYABLE(OpaqueJSClassContextData); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(OpaqueJSClassContextData); WTF_DEPRECATED_MAKE_FAST_ALLOCATED(OpaqueJSClassContextData);
 public:
     OpaqueJSClassContextData(JSC::VM&, OpaqueJSClass*);
 
@@ -92,8 +92,8 @@ public:
     // 4. When it is used, the old context data is found in VM and used.
     RefPtr<OpaqueJSClass> m_class;
 
-    std::unique_ptr<OpaqueJSClassStaticValuesTable> staticValues;
-    std::unique_ptr<OpaqueJSClassStaticFunctionsTable> staticFunctions;
+    OpaqueJSClassStaticValuesTable staticValues;
+    OpaqueJSClassStaticFunctionsTable staticFunctions;
     JSC::Weak<JSC::JSObject> cachedPrototype;
 };
 
@@ -136,8 +136,8 @@ private:
 
     // Strings in these data members should not be put into any AtomStringTable.
     String m_className;
-    std::unique_ptr<OpaqueJSClassStaticValuesTable> m_staticValues;
-    std::unique_ptr<OpaqueJSClassStaticFunctionsTable> m_staticFunctions;
+    OpaqueJSClassStaticValuesTable m_staticValues;
+    OpaqueJSClassStaticFunctionsTable m_staticFunctions;
 };
 
 #undef OPAQUE_JSCLASS_METHOD

@@ -57,9 +57,9 @@ String bytesAsString(CFURLRef url)
     auto bytesLength = CFURLGetBytes(url, nullptr, 0);
     RELEASE_ASSERT(bytesLength != -1);
     RELEASE_ASSERT(bytesLength <= static_cast<CFIndex>(String::MaxLength));
-    std::span<LChar> buffer;
+    std::span<Latin1Character> buffer;
     auto result = String::createUninitialized(bytesLength, buffer);
-    CFURLGetBytes(url, buffer.data(), buffer.size());
+    CFURLGetBytes(url, byteCast<UInt8>(buffer.data()), buffer.size());
     return result;
 }
 
@@ -93,7 +93,7 @@ bool isSameOrigin(CFURLRef a, const URL& b)
     auto aBytes = bytesAsVector(a);
     RELEASE_ASSERT(aBytes.size() <= String::MaxLength);
 
-    StringView aString { aBytes.span() };
+    StringView aString { byteCast<Latin1Character>(aBytes.span()) };
     StringView bString { b.string() };
 
     if (!b.hasPath())

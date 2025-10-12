@@ -4,9 +4,6 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-strict-shell.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -19,32 +16,15 @@ function strict() {
   function bar() {}
 }
 
-var exception;
-
 // Try 'undefined' as a |this| value.
-exception = null;
-try {
+assert.throws(TypeError, function() {
   strict.call(undefined);
-} catch (x) {
-  exception = x;
-}
-assert.sameValue(exception instanceof TypeError, true);
+});
 
 // Try 'null' as a |this| value.
-exception = null;
-try {
+assert.throws(TypeError, function() {
   strict.call(null);
-} catch (x) {
-  exception = x;
-}
-assert.sameValue(exception instanceof TypeError, true);
+});
 
 // An object as a |this| value should be fine.
-exception = null;
-try {
-  strict.call({});
-} catch (x) {
-  exception = x;
-}
-assert.sameValue(exception, null);
-
+strict.call({});

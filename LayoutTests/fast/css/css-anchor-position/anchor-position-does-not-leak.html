@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/document-leak-test.js"></script>
+<script>
+    description("Tests that anchor positioning functionality does not leak the document object");
+    onload = () => runDocumentLeakTest({ frameURL: "anchor-size-page-zoom.html", framesToCreate: 20 });
+</script>
+</body>
+</html>

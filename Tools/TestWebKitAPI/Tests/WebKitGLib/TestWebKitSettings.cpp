@@ -33,7 +33,6 @@
 #include "TestMain.h"
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
-#include <WebCore/SoupVersioning.h>
 #include <wtf/HashSet.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/MakeString.h>
@@ -133,6 +132,14 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_pictograph_font_family(settings, "sans-serif");
     g_assert_cmpstr(webkit_settings_get_pictograph_font_family(settings), ==, "sans-serif");
 
+    // Default math font family is nullptr.
+    g_assert_null(webkit_settings_get_math_font_family(settings));
+    webkit_settings_set_math_font_family(settings, "sans-serif");
+    g_assert_cmpstr(webkit_settings_get_math_font_family(settings), ==, "sans-serif");
+    // Can be reset to default by passing nullptr again.
+    webkit_settings_set_math_font_family(settings, nullptr);
+    g_assert_null(webkit_settings_get_math_font_family(settings));
+
     // Default font size is 16.
     g_assert_cmpuint(webkit_settings_get_default_font_size(settings), ==, 16);
     webkit_settings_set_default_font_size(settings, 14);
@@ -209,6 +216,16 @@ static void testWebKitSettings(Test*, gconstpointer)
     g_assert_true(webkit_settings_get_enable_tabs_to_links(settings));
     webkit_settings_set_enable_tabs_to_links(settings, FALSE);
     g_assert_false(webkit_settings_get_enable_tabs_to_links(settings));
+
+    // DNS prefetching is deprecated and always false.
+    // Make warnings non-fatal for this test to make it pass.
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    Test::removeLogFatalFlag(G_LOG_LEVEL_WARNING);
+    g_assert_false(webkit_settings_get_enable_dns_prefetching(settings));
+    webkit_settings_set_enable_dns_prefetching(settings, TRUE);
+    g_assert_false(webkit_settings_get_enable_dns_prefetching(settings));
+    Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     // Caret browsing is disabled by default.
     g_assert_false(webkit_settings_get_enable_caret_browsing(settings));
@@ -642,11 +659,7 @@ static void testWebKitSettingsJavaScriptMarkup(WebViewTest* test, gconstpointer)
     webkit_settings_set_enable_javascript_markup(webkit_web_view_get_settings(test->webView()), TRUE);
 }
 
-#if USE(SOUP2)
-static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
-#else
 static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
-#endif
 {
     if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
         soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);

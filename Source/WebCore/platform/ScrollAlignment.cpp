@@ -49,6 +49,7 @@
 
 namespace WebCore {
 
+const ScrollAlignment ScrollAlignment::noScroll = { Behavior::NoScroll, Behavior::NoScroll, Behavior::NoScroll };
 const ScrollAlignment ScrollAlignment::alignCenterIfNotVisible = { Behavior::NoScroll, Behavior::AlignCenter, Behavior::NoScroll };
 const ScrollAlignment ScrollAlignment::alignToEdgeIfNotVisible = { Behavior::NoScroll, Behavior::AlignToClosestEdge, Behavior::NoScroll };
 const ScrollAlignment ScrollAlignment::alignCenterIfNeeded = { Behavior::NoScroll, Behavior::AlignCenter, Behavior::AlignToClosestEdge };

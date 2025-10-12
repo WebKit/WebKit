@@ -32,6 +32,7 @@
 #include "pas_allocation_callbacks.h"
 #include "pas_compact_heap_reservation.h"
 #include "pas_heap_lock.h"
+#include "pas_mte.h"
 
 uintptr_t pas_immortal_heap_current;
 uintptr_t pas_immortal_heap_end;

@@ -2,13 +2,8 @@ Tests list and related roles.
 
 x
 x
-x
-x
-
 
 PASS first simple list
 PASS first simple listitem
 PASS last simple listitem
-FAIL orphan p with listitem role assert_equals: <p role="listitem" data-testname="orphan p with listitem role" data-expectedrole="paragraph" class="ex">x</p> expected "paragraph" but got "listitem"
-FAIL orphan div with listitem role assert_false: Computed Role: "listitem" does not match any of the acceptable role strings in ["generic", "", "none"]: <div role="listitem" data-testname="orphan div with listitem role" class="ex-generic">x</div> expected false got true
 

@@ -79,7 +79,7 @@ private:
     void addAuthenticatedEncryptionWarningIfNecessary(CryptoAlgorithmIdentifier);
     inline friend RefPtr<DeferredPromise> getPromise(DeferredPromise*, WeakPtr<SubtleCrypto>);
 
-    Ref<WorkQueue> m_workQueue;
+    const Ref<WorkQueue> m_workQueue;
     HashMap<DeferredPromise*, Ref<DeferredPromise>> m_pendingPromises;
 };
 

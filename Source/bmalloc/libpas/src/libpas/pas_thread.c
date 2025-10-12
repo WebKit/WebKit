@@ -186,8 +186,14 @@ int pthread_cond_wait(pthread_cond_t* cond, pthread_mutex_t* mutex)
 
 int pthread_cond_timedwait(pthread_cond_t* cond, pthread_mutex_t* mutex, const struct timespec* abstime)
 {
-    uint64_t wait_ms = abstime->tv_sec * 1000 + abstime->tv_nsec / 1000;
-    return SleepConditionVariableSRW(cond, mutex, wait_ms, 0);
+    LARGE_INTEGER frequency, counter;
+    QueryPerformanceFrequency(&frequency);
+    QueryPerformanceCounter(&counter);
+
+    uint64_t current_ms = (counter.QuadPart * 1000) / frequency.QuadPart;
+    uint64_t wait_until_ms = abstime->tv_sec * 1000 + abstime->tv_nsec / 1000000;
+
+    return SleepConditionVariableSRW(cond, mutex, wait_until_ms - current_ms, 0);
 }
 
 int pthread_mutex_lock(pthread_mutex_t* mutex)

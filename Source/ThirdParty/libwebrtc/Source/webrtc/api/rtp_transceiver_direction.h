@@ -22,6 +22,27 @@ enum class RtpTransceiverDirection {
   kStopped,
 };
 
+template <typename Sink>
+void AbslStringify(Sink& sink, RtpTransceiverDirection direction) {
+  switch (direction) {
+    case RtpTransceiverDirection::kSendRecv:
+      sink.Append("sendrecv");
+      break;
+    case RtpTransceiverDirection::kSendOnly:
+      sink.Append("send");
+      break;
+    case RtpTransceiverDirection::kRecvOnly:
+      sink.Append("recv");
+      break;
+    case RtpTransceiverDirection::kInactive:
+      sink.Append("inactive");
+      break;
+    case RtpTransceiverDirection::kStopped:
+      sink.Append("stopped");
+      break;
+  }
+}
+
 }  // namespace webrtc
 
 #endif  // API_RTP_TRANSCEIVER_DIRECTION_H_

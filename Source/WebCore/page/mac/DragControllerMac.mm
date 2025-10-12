@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,9 +38,11 @@
 #import "EditorClient.h"
 #import "Element.h"
 #import "File.h"
+#import "FrameDestructionObserverInlines.h"
 #import "HTMLAttachmentElement.h"
 #import "LocalFrame.h"
 #import "LocalFrameView.h"
+#import "NodeDocument.h"
 #import "Page.h"
 #import "Pasteboard.h"
 #import "PasteboardStrategy.h"

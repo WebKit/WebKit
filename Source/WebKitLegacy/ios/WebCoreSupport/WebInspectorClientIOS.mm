@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2008, 2010, 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2008, 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -106,7 +106,7 @@ void WebInspectorClient::showPaintRect(const FloatRect&)
 void WebInspectorClient::didSetSearchingForNode(bool enabled)
 {
     NSString *notificationName = enabled ? WebInspectorDidStartSearchingForNode : WebInspectorDidStopSearchingForNode;
-    RunLoop::protectedMain()->dispatch([notificationName = retainPtr(notificationName), inspector = retainPtr([m_inspectedWebView.get() inspector])] {
+    RunLoop::mainSingleton().dispatch([notificationName = retainPtr(notificationName), inspector = retainPtr([m_inspectedWebView.get() inspector])] {
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationName.get() object:inspector.get()];
     });
 }

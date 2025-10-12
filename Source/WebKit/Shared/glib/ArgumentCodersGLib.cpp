@@ -151,7 +151,8 @@ std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>:
     GType certificateType = g_tls_backend_get_certificate_type(g_tls_backend_get_default());
     GRefPtr<GTlsCertificate> certificate;
     GTlsCertificate* issuer = nullptr;
-    for (uint32_t i = 0; auto& certificateData : *certificatesData) {
+    uint32_t i = 0;
+    for (auto& certificateData : *certificatesData) {
         certificate = adoptGRef(G_TLS_CERTIFICATE(g_initable_new(
             certificateType, nullptr, nullptr,
             "certificate", certificateData.get(),
@@ -160,6 +161,7 @@ std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>:
             "private-key-pkcs11-uri", i == certificatesData->size() - 1 ? privateKeyPKCS11Uri->data() : nullptr,
             nullptr)));
         issuer = certificate.get();
+        i++;
     }
 
     return certificate;

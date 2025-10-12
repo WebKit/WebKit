@@ -85,4 +85,9 @@ PASS ReadableStream (two chunks enqueued, then closed) reader: draining the stre
 PASS ReadableStream (two chunks enqueued, then closed) reader: releasing the lock after the stream is closed should cause locked to become false
 PASS ReadableStream (two chunks enqueued, then closed) reader: releasing the lock should cause further read() calls to reject with a TypeError
 PASS ReadableStream (two chunks enqueued, then closed) reader: reader's closed property always returns the same promise
+PASS Running templatedRSThrowAfterCloseOrError with ReadableStream
+PASS ReadableStream: enqueue() throws after close()
+PASS ReadableStream: enqueue() throws after enqueue() and close()
+PASS ReadableStream: enqueue() throws after error()
+PASS ReadableStream: close() throws after error()
 

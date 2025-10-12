@@ -12,6 +12,8 @@
 #include "include/pathops/SkPathOps.h"
 #include "src/pathops/SkPathOpsCommon.h"
 
+#include <utility>
+
 const uint8_t MAX_OPS = 20;
 
 DEF_FUZZ(Pathop, fuzz) {
@@ -44,15 +46,7 @@ DEF_FUZZ(Pathop, fuzz) {
             FuzzEvilPath(fuzz, &path, SkPath::Verb::kDone_Verb);
             SkPathFillType ft;
             fuzz->nextRange(&ft, 0, (int)SkPathFillType::kInverseEvenOdd);
-            path.setFillType(ft);
-
-            SkPath result;
-            bool isSame;
-            fuzz->next(&isSame);
-            if (isSame) {
-                result = path;
-            }
-            Simplify(path, &result);
+            std::ignore = Simplify(path.makeFillType(ft));
             break;
         }
         case 2: {
@@ -78,7 +72,9 @@ DEF_FUZZ(Pathop, fuzz) {
             } else if (pickOutput == 2) {
                 result = path2;
             }
-            Op(path, path2, op, &result);
+            if (auto res = Op(path, path2, op)) {
+                result = *res;
+            }
             break;
         }
         case 3: {
@@ -94,7 +90,7 @@ DEF_FUZZ(Pathop, fuzz) {
             if (isSame) {
                 result = path;
             }
-            AsWinding(path, &result);
+            std::ignore = AsWinding(path);
             break;
         }
         case 4: {

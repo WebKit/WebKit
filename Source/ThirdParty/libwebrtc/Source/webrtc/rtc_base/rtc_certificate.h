@@ -16,17 +16,14 @@
 #include <memory>
 #include <string>
 
-#include "absl/base/attributes.h"
 #include "absl/strings/string_view.h"
 #include "api/ref_counted_base.h"
 #include "api/scoped_refptr.h"
+#include "rtc_base/ssl_certificate.h"
+#include "rtc_base/ssl_identity.h"
 #include "rtc_base/system/rtc_export.h"
 
-namespace rtc {
-
-class SSLCertChain;
-class SSLCertificate;
-class SSLIdentity;
+namespace webrtc {
 
 // This class contains PEM strings of an RTCCertificate's private key and
 // certificate and acts as a text representation of RTCCertificate. Certificates
@@ -92,6 +89,7 @@ class RTC_EXPORT RTCCertificate final
   const std::unique_ptr<SSLIdentity> identity_;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_RTC_CERTIFICATE_H_

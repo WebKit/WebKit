@@ -77,26 +77,26 @@ static std::optional<Vector<uint8_t>> cryptEncrypt(const Vector<uint8_t>& key, c
         return std::nullopt;
 
     // Initialize key and IV
-    if (1 != EVP_EncryptInit_ex(ctx.get(), nullptr, nullptr, key.data(), iv.data()))
+    if (1 != EVP_EncryptInit_ex(ctx.get(), nullptr, nullptr, key.span().data(), iv.span().data()))
         return std::nullopt;
 
     // Provide any AAD data
     if (additionalData.size() > 0) {
-        if (1 != EVP_EncryptUpdate(ctx.get(), nullptr, &len, additionalData.data(), additionalData.size()))
+        if (1 != EVP_EncryptUpdate(ctx.get(), nullptr, &len, additionalData.span().data(), additionalData.size()))
             return std::nullopt;
     }
 
     // Provide the message to be encrypted, and obtain the encrypted output
-    if (1 != EVP_EncryptUpdate(ctx.get(), cipherText.data(), &len, plainText.data(), plainText.size()))
+    if (1 != EVP_EncryptUpdate(ctx.get(), cipherText.mutableSpan().data(), &len, plainText.span().data(), plainText.size()))
         return std::nullopt;
 
     // Finalize the encryption. Normally ciphertext bytes may be written at
     // this stage, but this does not occur in GCM mode
-    if (1 != EVP_EncryptFinal_ex(ctx.get(), cipherText.data() + len, &len))
+    if (1 != EVP_EncryptFinal_ex(ctx.get(), cipherText.mutableSpan().subspan(len).data(), &len))
         return std::nullopt;
 
     // Get the tag
-    if (1 != EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_GET_TAG, tagLength, cipherText.data() + tagOffset))
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_GET_TAG, tagLength, cipherText.mutableSpan().subspan(tagOffset).data()))
         return std::nullopt;
 
     return cipherText;
@@ -133,26 +133,26 @@ static std::optional<Vector<uint8_t>> cryptDecrypt(const Vector<uint8_t>& key, c
         return std::nullopt;
 
     // Initialize key and IV
-    if (1 != EVP_DecryptInit_ex(ctx.get(), nullptr, nullptr, key.data(), iv.data()))
+    if (1 != EVP_DecryptInit_ex(ctx.get(), nullptr, nullptr, key.span().data(), iv.span().data()))
         return std::nullopt;
 
     // Provide any AAD data
     if (additionalData.size() > 0) {
-        if (1 != EVP_DecryptUpdate(ctx.get(), nullptr, &len, additionalData.data(), additionalData.size()))
+        if (1 != EVP_DecryptUpdate(ctx.get(), nullptr, &len, additionalData.span().data(), additionalData.size()))
             return std::nullopt;
     }
 
     // Set expected tag value
-    if (1 != EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_SET_TAG, tag.size(), tag.data()))
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_SET_TAG, tag.size(), tag.mutableSpan().data()))
         return std::nullopt;
 
     // Provide the message to be encrypted, and obtain the encrypted output
-    if (1 != EVP_DecryptUpdate(ctx.get(), plainText.data(), &len, cipherText.data(), cipherTextLen))
+    if (1 != EVP_DecryptUpdate(ctx.get(), plainText.mutableSpan().data(), &len, cipherText.span().data(), cipherTextLen))
         return std::nullopt;
     plainTextLen = len;
 
     // Finalize the decryption
-    if (1 != EVP_DecryptFinal_ex(ctx.get(), plainText.data() + len, &len))
+    if (1 != EVP_DecryptFinal_ex(ctx.get(), plainText.mutableSpan().subspan(len).data(), &len))
         return std::nullopt;
 
     plainTextLen += len;

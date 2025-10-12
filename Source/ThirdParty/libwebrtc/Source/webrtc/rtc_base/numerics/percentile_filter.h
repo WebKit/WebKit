@@ -110,7 +110,7 @@ void PercentileFilter<T>::UpdatePercentileIterator() {
 
 template <typename T>
 T PercentileFilter<T>::GetPercentileValue() const {
-  return set_.empty() ? 0 : *percentile_it_;
+  return set_.empty() ? T() : *percentile_it_;
 }
 
 template <typename T>

@@ -34,7 +34,7 @@ class ComfortNoiseDecoder {
 
   // Updates the CN state when a new SID packet arrives.
   // `sid` is a view of the SID packet without the headers.
-  void UpdateSid(rtc::ArrayView<const uint8_t> sid);
+  void UpdateSid(ArrayView<const uint8_t> sid);
 
   // Generates comfort noise.
   // `out_data` will be filled with samples - its size determines the number of
@@ -43,7 +43,7 @@ class ComfortNoiseDecoder {
   // currently 640 bytes (equalling 10ms at 64kHz).
   // TODO(ossu): Specify better limits for the size of out_data. Either let it
   //             be unbounded or limit to 10ms in the current sample rate.
-  bool Generate(rtc::ArrayView<int16_t> out_data, bool new_period);
+  bool Generate(ArrayView<int16_t> out_data, bool new_period);
 
  private:
   uint32_t dec_seed_;
@@ -79,9 +79,9 @@ class ComfortNoiseEncoder {
   // true, a SID frame is forced and the internal sid interval counter is reset.
   // Will fail if the input size is too large (> 640 samples, see
   // ComfortNoiseDecoder::Generate).
-  size_t Encode(rtc::ArrayView<const int16_t> speech,
+  size_t Encode(ArrayView<const int16_t> speech,
                 bool force_sid,
-                rtc::Buffer* output);
+                Buffer* output);
 
  private:
   size_t enc_nrOfCoefs_;

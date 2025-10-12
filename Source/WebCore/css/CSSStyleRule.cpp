@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-typedef UncheckedKeyHashMap<const CSSStyleRule*, String> SelectorTextCache;
+typedef HashMap<const CSSStyleRule*, String> SelectorTextCache;
 static SelectorTextCache& selectorTextCache()
 {
     static NeverDestroyed<SelectorTextCache> cache;

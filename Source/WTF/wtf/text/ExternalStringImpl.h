@@ -36,14 +36,14 @@ using ExternalStringImplFreeFunction = Function<void(ExternalStringImpl*, void*,
 
 class ExternalStringImpl final : public StringImpl {
 public:
-    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> create(std::span<const LChar> characters, ExternalStringImplFreeFunction&&);
-    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> create(std::span<const UChar> characters, ExternalStringImplFreeFunction&&);
+    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> create(std::span<const Latin1Character> characters, ExternalStringImplFreeFunction&&);
+    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> create(std::span<const char16_t> characters, ExternalStringImplFreeFunction&&);
 
 private:
     friend class StringImpl;
 
-    ExternalStringImpl(std::span<const LChar> characters, ExternalStringImplFreeFunction&&);
-    ExternalStringImpl(std::span<const UChar> characters, ExternalStringImplFreeFunction&&);
+    ExternalStringImpl(std::span<const Latin1Character> characters, ExternalStringImplFreeFunction&&);
+    ExternalStringImpl(std::span<const char16_t> characters, ExternalStringImplFreeFunction&&);
 
     inline void freeExternalBuffer(void* buffer, unsigned bufferSize);
 

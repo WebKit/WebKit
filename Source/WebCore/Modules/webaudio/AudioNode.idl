@@ -25,7 +25,6 @@
 [
     Conditional=WEB_AUDIO,
     EnabledBySetting=WebAudioEnabled,
-    CustomToJSObject,
     Exposed=Window
 ] interface AudioNode : EventTarget {
     readonly attribute BaseAudioContext context;

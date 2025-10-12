@@ -23,3 +23,4 @@ const zero = Temporal.Duration.from({
   nanoseconds: 0
 });
 assert.sameValue(zero.blank, true);
+assert(new Temporal.Duration().blank, "created via constructor");

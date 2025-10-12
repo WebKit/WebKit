@@ -371,7 +371,13 @@ class RewritePipelineVarOutputBuilder
                 continue;
             }
 
-            TIntermDeclaration *declNode = globalVars.find(shaderVar.name)->second;
+            auto globalVarIt = globalVars.find(shaderVar.name);
+            if (globalVarIt == globalVars.end())
+            {
+                ANGLE_LOG(ERR) << "Should have found " << shaderVar.name << " in global vars";
+                return false;
+            }
+            TIntermDeclaration *declNode = globalVarIt->second;
             const TVariable *astVar      = &ViewDeclaration(*declNode).symbol.variable();
 
             const ImmutableString &userVarName = astVar->name();
@@ -386,16 +392,95 @@ class RewritePipelineVarOutputBuilder
                 BuildConcatenatedImmutableString(userVarName, " : ", type.c_str(), ",");
             ioblock->angleGlobalMembers.push_back(globalStructVar);
 
-            // E.g. `@location(@@@@@@) _uuserVar : i32,`.
-            const char *locationAnnotationStr = "@location(@@@@@@) ";
-            ImmutableString annotatedStructVar =
-                BuildConcatenatedImmutableString(locationAnnotationStr, globalStructVar);
-            ioblock->angleAnnotatedMembers.push_back(annotatedStructVar);
+            if (astVar->getType().isArray())
+            {
+                // TODO(anglebug.com/42267100): need to support arrays (of scalars, vectors, and
+                // matrices, maybe structs).
+                ANGLE_LOG(ERR) << "Shader in/out variables of array type currently not supported.";
+                return false;
+            }
+            else if (astVar->getType().isMatrix())
+            {
+                // E.g.
+                // @location(@@@@@@) outMatArr_col0 : vec3<f32>,
+                // @location(@@@@@@) outMatArr_col1 : vec3<f32>,
+                // @location(@@@@@@) outMatArr_col2 : vec3<f32>,
 
-            // E.g. `ANGLE_input_global._uuserVar = ANGLE_input_annotated._uuserVar;`
-            ImmutableString conversion = BuildConcatenatedImmutableString(
-                toStruct, ".", userVarName, " = ", fromStruct, ".", userVarName, ";");
-            ioblock->angleConversionFuncs.push_back(conversion);
+                TStringStream colVarList;
+
+                // To the input/output struct, add one vector variable per matrix column.
+                uint8_t cols = astVar->getType().getCols();
+                for (uint8_t i = 0; i < cols; i++)
+                {
+                    const char *locationAnnotationStr = "@location(@@@@@@) ";
+
+                    TStringStream rowVecTypeStream;
+                    TType rowVecAstType = astVar->getType();
+                    rowVecAstType.toMatrixColumnType();
+                    WriteWgslType(rowVecTypeStream, rowVecAstType, {});
+                    TString rowVecType = rowVecTypeStream.str();
+
+                    ImmutableString colVarName =
+                        BuildConcatenatedImmutableString(userVarName, "_col", i);
+
+                    if (ioType == IOType::Input)
+                    {
+                        colVarList << fromStruct << "." << colVarName;
+                        if (i != cols - 1)
+                        {
+                            colVarList << ", ";
+                        }
+                    }
+
+                    // Add a column vec to the WGSL in/out block.
+                    ImmutableString annotatedStructVar = BuildConcatenatedImmutableString(
+                        locationAnnotationStr, colVarName, " : ", rowVecType.c_str(), ",");
+                    ioblock->angleAnnotatedMembers.push_back(annotatedStructVar);
+
+                    // When outputting matrices, they need to be split into column vectors which are
+                    // then placed in the WGSL in/out block.
+                    if (ioType == IOType::Output)
+                    {
+                        // e.g.
+                        // ANGLE_output_annotated.outMatArr_col0 = ANGLE_output_global.outMatArr[0];
+                        // ANGLE_output_annotated.outMatArr_col1 = ANGLE_output_global.outMatArr[1];
+                        // ANGLE_output_annotated.outMatArr_col2 = ANGLE_output_global.outMatArr[2];
+                        ImmutableString extractColVec = BuildConcatenatedImmutableString(
+                            toStruct, '.', colVarName, " = ", fromStruct, '.', userVarName, '[', i,
+                            "];");
+                        ioblock->angleConversionFuncs.push_back(extractColVec);
+                    }
+                }
+
+                // If input, construct the global matrix var from the column vectors in the WGSL
+                // input block.
+                if (ioType == IOType::Input)
+                {
+                    // e.g. ANGLE_input_global.inMat = mat3x3<f32>(ANGLE_input_annotated.inMat_col0,
+                    // ANGLE_input_annotated.inMat_col1, ANGLE_input_annotated.inMat_col2);
+                    ImmutableString conversion = BuildConcatenatedImmutableString(
+                        toStruct, ".", userVarName, " = ", type.c_str(), '(',
+                        colVarList.str().c_str(), ");");
+                    ioblock->angleConversionFuncs.push_back(conversion);
+                }
+            }
+            else
+            {
+                // The only two types supported natively by WGSL are scalars and vectors.
+                ASSERT((astVar->getType().isVector() || astVar->getType().isScalar()) &&
+                       !astVar->getType().isArray());
+
+                // E.g. `@location(@@@@@@) _uuserVar : i32,`.
+                const char *locationAnnotationStr = "@location(@@@@@@) ";
+                ImmutableString annotatedStructVar =
+                    BuildConcatenatedImmutableString(locationAnnotationStr, globalStructVar);
+                ioblock->angleAnnotatedMembers.push_back(annotatedStructVar);
+
+                // E.g. `ANGLE_input_global._uuserVar = ANGLE_input_annotated._uuserVar;`
+                ImmutableString conversion = BuildConcatenatedImmutableString(
+                    toStruct, ".", userVarName, " = ", fromStruct, ".", userVarName, ";");
+                ioblock->angleConversionFuncs.push_back(conversion);
+            }
         }
     }
 
@@ -549,7 +634,7 @@ bool RewritePipelineVarOutput::OutputMainFunction(TInfoSinkBase &output)
     {
         output << "  " << conversionFunc << "\n";
     }
-    output << "  " << kUserDefinedNamePrefix << "main()" << ";\n";
+    output << "  " << '_' << kUserDefinedNamePrefix << "main()" << ";\n";
 
     if (!mOutputBlock.angleGlobalMembers.empty())
     {

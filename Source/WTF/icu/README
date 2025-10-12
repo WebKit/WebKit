@@ -1,8 +1,8 @@
-The headers in this directory are for compiling on macOS 12.5 (Monterey) and newer.
+The headers in this directory are for compiling on macOS 14.6 (Sonoma) and newer.
 macOS releases include the ICU binary, but not ICU headers.
 
 For other platforms, installed ICU headers should be used rather than these.
 They are specific to the macOS platform.
 
-The headers here are from ICU version 70.1 downloaded from the ICU project.
-https://github.com/unicode-org/icu/releases/tag/release-70-1
+The headers here are from ICU version 74.2 downloaded from the ICU project.
+https://github.com/unicode-org/icu/releases/tag/release-74-2

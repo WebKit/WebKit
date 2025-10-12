@@ -28,20 +28,20 @@
 #include "CSSPropertyNames.h"
 #include "CommonAtomStrings.h"
 #include "DOMTokenList.h"
-#include "Document.h"
-#include "DocumentInlines.h"
+#include "DocumentQuirks.h"
+#include "DocumentView.h"
 #include "ElementInlines.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "LazyLoadFrameObserver.h"
 #include "LocalFrame.h"
 #include "NodeName.h"
-#include "Quirks.h"
 #include "RenderIFrame.h"
 #include "ScriptController.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include "TrustedType.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -133,7 +133,7 @@ void HTMLIFrameElement::attributeChanged(const QualifiedName& name, const AtomSt
         String invalidTokens;
         setSandboxFlags(newValue.isNull() ? SandboxFlags { } : SecurityContext::parseSandboxPolicy(newValue, invalidTokens));
         if (!invalidTokens.isNull())
-            document().addConsoleMessage(MessageSource::Other, MessageLevel::Error, makeString("Error while parsing the 'sandbox' attribute: "_s, invalidTokens));
+            protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Error, makeString("Error while parsing the 'sandbox' attribute: "_s, invalidTokens));
         break;
     }
     case AttributeNames::allowAttr:
@@ -167,11 +167,6 @@ RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(RenderStyle&& 
     return createRenderer<RenderIFrame>(*this, WTFMove(style));
 }
 
-void HTMLIFrameElement::setReferrerPolicyForBindings(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(referrerpolicyAttr, value);
-}
-
 String HTMLIFrameElement::referrerPolicyForBindings() const
 {
     return referrerPolicyToString(referrerPolicy());
@@ -184,16 +179,6 @@ ReferrerPolicy HTMLIFrameElement::referrerPolicy() const
     return referrerPolicyFromAttribute();
 }
 
-const AtomString& HTMLIFrameElement::loading() const
-{
-    return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::loadingAttr), "lazy"_s) ? lazyAtom() : eagerAtom();
-}
-
-void HTMLIFrameElement::setLoading(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(loadingAttr, value);
-}
-
 String HTMLIFrameElement::srcdoc() const
 {
     return attributeWithoutSynchronization(srcdocAttr);
@@ -201,7 +186,7 @@ String HTMLIFrameElement::srcdoc() const
 
 ExceptionOr<void> HTMLIFrameElement::setSrcdoc(Variant<RefPtr<TrustedHTML>, String>&& value, SubstituteData::SessionHistoryVisibility sessionHistoryVisibility)
 {
-    auto stringValueHolder = trustedTypeCompliantString(*document().scriptExecutionContext(), WTFMove(value), "HTMLIFrameElement srcdoc"_s);
+    auto stringValueHolder = trustedTypeCompliantString(*protectedDocument()->protectedScriptExecutionContext(), WTFMove(value), "HTMLIFrameElement srcdoc"_s);
 
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
@@ -221,7 +206,7 @@ static bool isFrameLazyLoadable(const Document& document, const URL& url, const 
     if (!url.isValid() || url.isAboutBlank())
         return false;
 
-    if (!document.frame() || !document.frame()->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
+    if (RefPtr frame = document.frame(); !frame || !frame->checkedScript()->canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
         return false;
 
     return equalLettersIgnoringASCIICase(loadingAttributeValue, "lazy"_s);
@@ -229,12 +214,13 @@ static bool isFrameLazyLoadable(const Document& document, const URL& url, const 
 
 bool HTMLIFrameElement::shouldLoadFrameLazily()
 {
-    if (!document().settings().lazyIframeLoadingEnabled() || document().quirks().shouldDisableLazyIframeLoadingQuirk())
+    Ref document = this->document();
+    if (!document->settings().lazyIframeLoadingEnabled() || document->quirks().shouldDisableLazyIframeLoadingQuirk())
         return false;
-    URL completeURL = document().completeURL(frameURL());
+    URL completeURL = document->completeURL(frameURL());
     auto referrerPolicy = referrerPolicyFromAttribute();
     if (!m_lazyLoadFrameObserver) {
-        if (isFrameLazyLoadable(document(), completeURL, attributeWithoutSynchronization(HTMLNames::loadingAttr))) {
+        if (isFrameLazyLoadable(document, completeURL, attributeWithoutSynchronization(HTMLNames::loadingAttr))) {
             lazyLoadFrameObserver().observe(AtomString { completeURL.string() }, referrerPolicy);
             return true;
         }

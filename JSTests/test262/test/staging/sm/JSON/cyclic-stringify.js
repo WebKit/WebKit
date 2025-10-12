@@ -4,24 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-JSON-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Properly detect cycles in JSON.stringify (throw TypeError, check for cycles rather than imprecisely rely on recursion limits)
+info: bugzilla.mozilla.org/show_bug.cgi?id=578273
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 578273;
-var summary =
-  "ES5: Properly detect cycles in JSON.stringify (throw TypeError, check for " +
-  "cycles rather than imprecisely rely on recursion limits)";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 // objects
 
@@ -34,33 +21,17 @@ var desc =
   };
 var obj = Object.defineProperty({ p1: 0 }, "p2", desc);
 
-try
-{
-  var str = JSON.stringify(obj);
-  assert.sameValue(false, true, "should have thrown, got " + str);
-}
-catch (e)
-{
-  assert.sameValue(e instanceof TypeError, true,
-           "wrong error type: " + e.constructor.name);
-  assert.sameValue(count, 1,
-           "cyclic data structures not detected immediately");
-}
+assert.throws(TypeError, function() {
+  JSON.stringify(obj);
+});
+assert.sameValue(count, 1, "cyclic data structures not detected immediately");
 
 count = 0;
 var obj2 = Object.defineProperty({}, "obj", desc);
-try
-{
-  var str = JSON.stringify(obj2);
-  assert.sameValue(false, true, "should have thrown, got " + str);
-}
-catch (e)
-{
-  assert.sameValue(e instanceof TypeError, true,
-           "wrong error type: " + e.constructor.name);
-  assert.sameValue(count, 2,
-           "cyclic data structures not detected immediately");
-}
+assert.throws(TypeError, function() {
+  JSON.stringify(obj2);
+});
+assert.sameValue(count, 2, "cyclic data structures not detected immediately");
 
 
 // arrays
@@ -74,34 +45,14 @@ var desc =
   };
 var arr = Object.defineProperty([], "0", desc);
 
-try
-{
-  var str = JSON.stringify(arr);
-  assert.sameValue(false, true, "should have thrown, got " + str);
-}
-catch (e)
-{
-  assert.sameValue(e instanceof TypeError, true,
-           "wrong error type: " + e.constructor.name);
-  assert.sameValue(count, 1,
-           "cyclic data structures not detected immediately");
-}
+assert.throws(TypeError, function() {
+  JSON.stringify(arr);
+});
+assert.sameValue(count, 1, "cyclic data structures not detected immediately");
 
 count = 0;
 var arr2 = Object.defineProperty([], "0", desc);
-try
-{
-  var str = JSON.stringify(arr2);
-  assert.sameValue(false, true, "should have thrown, got " + str);
-}
-catch (e)
-{
-  assert.sameValue(e instanceof TypeError, true,
-           "wrong error type: " + e.constructor.name);
-  assert.sameValue(count, 2,
-           "cyclic data structures not detected immediately");
-}
-
-/******************************************************************************/
-
-print("Tests complete");
+assert.throws(TypeError, function() {
+  JSON.stringify(arr2);
+});
+assert.sameValue(count, 2, "cyclic data structures not detected immediately");

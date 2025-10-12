@@ -13,7 +13,6 @@
 
 #include <stdint.h>
 
-#include <string>
 
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
@@ -30,9 +29,9 @@ class RtpHeaderExtensionMap {
 
   RtpHeaderExtensionMap();
   explicit RtpHeaderExtensionMap(bool extmap_allow_mixed);
-  explicit RtpHeaderExtensionMap(rtc::ArrayView<const RtpExtension> extensions);
+  explicit RtpHeaderExtensionMap(ArrayView<const RtpExtension> extensions);
 
-  void Reset(rtc::ArrayView<const RtpExtension> extensions);
+  void Reset(ArrayView<const RtpExtension> extensions);
 
   template <typename Extension>
   bool Register(int id) {

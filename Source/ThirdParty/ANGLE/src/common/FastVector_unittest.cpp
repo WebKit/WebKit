@@ -7,6 +7,10 @@
 //   Tests of the FastVector class
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <gtest/gtest.h>
 
 #include "common/FastVector.h"

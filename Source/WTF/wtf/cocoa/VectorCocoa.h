@@ -32,6 +32,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 #include <wtf/cocoa/SpanCocoa.h>
+#include <wtf/darwin/DispatchExtras.h>
 
 namespace WTF {
 
@@ -114,7 +115,7 @@ inline RetainPtr<dispatch_data_t> makeDispatchData(Vector<T>&& vector)
 {
     auto buffer = vector.releaseBuffer();
     auto span = buffer.span();
-    return adoptNS(dispatch_data_create(span.data(), span.size_bytes(), dispatch_get_main_queue(), makeBlockPtr([buffer = WTFMove(buffer)] { }).get()));
+    return adoptNS(dispatch_data_create(span.data(), span.size_bytes(), mainDispatchQueueSingleton(), makeBlockPtr([buffer = WTFMove(buffer)] { }).get()));
 }
 
 } // namespace WTF

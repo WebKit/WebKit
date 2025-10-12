@@ -4,37 +4,17 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Syntax errors at the end of |for| statement header parts shouldn't cause crashes
+info: bugzilla.mozilla.org/show_bug.cgi?id=672854
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 672854;
-var summary =
-  "Syntax errors at the end of |for| statement header parts shouldn't cause " +
-  "crashes";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 function checkSyntaxError(str)
 {
-  try
-  {
-    var f = Function("for(w in\\");
-    throw new Error("didn't throw, returned " + f);
-  }
-  catch (e)
-  {
-    assert.sameValue(e instanceof SyntaxError, true,
-             "expected SyntaxError, got " + e);
-  }
+  assert.throws(SyntaxError, function() {
+    Function(str);
+  });
 }
 
 checkSyntaxError("for(var w in \\");
@@ -51,7 +31,3 @@ checkSyntaxError("for(var w; w > 3; 5\\");
 checkSyntaxError("for(w; w > 3; 5\\");
 checkSyntaxError("for(var w; w > 3; 5foo");
 checkSyntaxError("for(w; w > 3; 5foo");
-
-/******************************************************************************/
-
-print("Tests complete!");

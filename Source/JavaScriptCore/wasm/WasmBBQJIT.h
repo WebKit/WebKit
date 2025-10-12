@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY_BBQJIT)
 
 #include "PCToCodeOriginMap.h"
+#include "SimpleRegisterAllocator.h"
 #include "WasmCallingConvention.h"
 #include "WasmCompilationContext.h"
 #include "WasmFunctionParser.h"
@@ -36,6 +37,10 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC { namespace Wasm {
+
+class IPIntCallee;
+class MergedProfile;
+class Module;
 
 namespace BBQJITImpl {
 
@@ -327,6 +332,15 @@ public:
             return val;
         }
 
+        ALWAYS_INLINE static Value fromPointer(void* pointer)
+        {
+#if USE(JSVALUE64)
+            return fromI64(std::bit_cast<uintptr_t>(pointer));
+#else
+            return fromI32(std::bit_cast<uintptr_t>(pointer));
+#endif
+        }
+
         ALWAYS_INLINE static Value fromRef(TypeKind refType, EncodedJSValue ref)
         {
             Value val;
@@ -444,16 +458,227 @@ public:
         unsigned m_index : LocalIndexBits { 0 };
     };
 
-    // Tables mapping from each register to the current value bound to it.
-    struct RegisterBindings {
-        RegisterBindings() = default;
-        void dump(PrintStream& out) const;
-        // FIXME: We should really compress this since it's copied by slow paths to know how to restore the correct state.
-        std::array<RegisterBinding, 32> m_gprBindings { RegisterBinding::none() }; // Tables mapping from each register to the current value bound to it.
-        std::array<RegisterBinding, 32> m_fprBindings { RegisterBinding::none() };
+    // Register bank definitions for SimpleRegisterAllocator
+    struct GPRBank {
+        using JITBackend = BBQJIT;
+        using Register = GPRReg;
+        static constexpr Register invalidRegister = InvalidGPRReg;
+        // FIXME: Make this more precise
+        static constexpr unsigned numberOfRegisters = 32;
+        static constexpr Width defaultWidth = widthForBytes(sizeof(CPURegister));
     };
 
-public:
+    struct FPRBank {
+        using JITBackend = BBQJIT;
+        using Register = FPRReg;
+        static constexpr Register invalidRegister = InvalidFPRReg;
+        // FIXME: Make this more precise
+        static constexpr unsigned numberOfRegisters = 32;
+        static constexpr Width defaultWidth = Width128;
+    };
+
+    using SpillHint = uint32_t;
+
+    void flush(GPRReg, const RegisterBinding&);
+    void flush(FPRReg, const RegisterBinding&);
+
+    using GPRAllocator = SimpleRegisterAllocator<GPRBank>;
+    using FPRAllocator = SimpleRegisterAllocator<FPRBank>;
+
+    // Tables mapping from each register to the current value bound to it. Used for slow paths.
+    struct RegisterBindings {
+        void dump(PrintStream& out) const;
+        // FIXME: We should really compress this since it's copied by slow paths to know how to restore the correct state.
+        GPRAllocator::RegisterBindings m_gprBindings { RegisterBinding::none() }; // Tables mapping from each register to the current value bound to it.
+        FPRAllocator::RegisterBindings m_fprBindings { RegisterBinding::none() };
+    };
+    RegisterBindings copyBindings() { return { m_gprAllocator.copyBindings(), m_fprAllocator.copyBindings() }; }
+
+    template<unsigned GPRs, unsigned FPRs>
+    class ScratchScope {
+        WTF_MAKE_NONCOPYABLE(ScratchScope);
+        WTF_FORBID_HEAP_ALLOCATION;
+    public:
+        template<typename... Args>
+        ScratchScope(BBQJIT& generator, Args... locationsToPreserve)
+            : m_generator(generator)
+        {
+            initializedPreservedSet(locationsToPreserve...);
+            for (JSC::Reg reg : m_preserved) {
+                if (reg.isGPR())
+                    preserveGPR(reg.gpr());
+                else
+                    preserveFPR(reg.fpr());
+            }
+
+            for (unsigned i = 0; i < GPRs; i ++) {
+                m_tempGPRs[i] = m_generator.m_gprAllocator.allocate(m_generator, RegisterBinding::scratch(), std::nullopt);
+                m_generator.m_gprAllocator.lock(m_tempGPRs[i]);
+            }
+            for (unsigned i = 0; i < FPRs; i ++) {
+                m_tempFPRs[i] = m_generator.m_fprAllocator.allocate(m_generator, RegisterBinding::scratch(), std::nullopt);
+                m_generator.m_fprAllocator.lock(m_tempFPRs[i]);
+            }
+        }
+
+        ~ScratchScope()
+        {
+            unbindEarly();
+        }
+
+        void unbindEarly()
+        {
+            unbindScratches();
+            unbindPreserved();
+        }
+
+        void unbindScratches()
+        {
+            if (m_unboundScratches)
+                return;
+
+            m_unboundScratches = true;
+            for (unsigned i = 0; i < GPRs; i ++)
+                unbindGPR(m_tempGPRs[i]);
+            for (unsigned i = 0; i < FPRs; i ++)
+                unbindFPR(m_tempFPRs[i]);
+        }
+
+        void unbindPreserved()
+        {
+            if (m_unboundPreserved)
+                return;
+
+            m_unboundPreserved = true;
+            for (JSC::Reg reg : m_preserved) {
+                if (reg.isGPR())
+                    unbindGPR(reg.gpr());
+                else
+                    unbindFPR(reg.fpr());
+            }
+        }
+
+        inline GPRReg gpr(unsigned i) const
+        {
+            ASSERT(i < GPRs);
+            ASSERT(!m_unboundScratches);
+            return m_tempGPRs[i];
+        }
+
+        inline FPRReg fpr(unsigned i) const
+        {
+            ASSERT(i < FPRs);
+            ASSERT(!m_unboundScratches);
+            return m_tempFPRs[i];
+        }
+
+    private:
+        GPRReg preserveGPR(GPRReg reg)
+        {
+            if (!m_generator.validGPRs().contains(reg, IgnoreVectors))
+                return reg;
+            const RegisterBinding& binding = m_generator.bindingFor(reg);
+            m_generator.m_gprAllocator.lock(reg);
+            if (m_preserved.contains(reg, IgnoreVectors) && !binding.isNone()) {
+                if (Options::verboseBBQJITAllocation()) [[unlikely]]
+                    dataLogLn("BBQ\tPreserving GPR ", MacroAssembler::gprName(reg), " currently bound to ", binding);
+                return reg; // If the register is already bound, we don't need to preserve it ourselves.
+            }
+            ASSERT(binding.isNone());
+            m_generator.m_gprAllocator.bind(reg, RegisterBinding::scratch(), 0);
+            if (Options::verboseBBQJITAllocation()) [[unlikely]]
+                dataLogLn("BBQ\tPreserving scratch GPR ", MacroAssembler::gprName(reg));
+            return reg;
+        }
+
+        FPRReg preserveFPR(FPRReg reg)
+        {
+            if (!m_generator.validFPRs().contains(reg, Width::Width128))
+                return reg;
+            const RegisterBinding& binding = m_generator.bindingFor(reg);
+            m_generator.m_fprAllocator.lock(reg);
+            if (m_preserved.contains(reg, Width::Width128) && !binding.isNone()) {
+                if (Options::verboseBBQJITAllocation()) [[unlikely]]
+                    dataLogLn("BBQ\tPreserving FPR ", MacroAssembler::fprName(reg), " currently bound to ", binding);
+                return reg; // If the register is already bound, we don't need to preserve it ourselves.
+            }
+            ASSERT(binding.isNone());
+            m_generator.m_fprAllocator.bind(reg, RegisterBinding::scratch(), 0);
+            if (Options::verboseBBQJITAllocation()) [[unlikely]]
+                dataLogLn("BBQ\tPreserving scratch FPR ", MacroAssembler::fprName(reg));
+            return reg;
+        }
+
+        void unbindGPR(GPRReg reg)
+        {
+            if (!m_generator.validGPRs().contains(reg, IgnoreVectors))
+                return;
+            const RegisterBinding& binding = m_generator.bindingFor(reg);
+            m_generator.m_gprAllocator.unlock(reg);
+            if (Options::verboseBBQJITAllocation()) [[unlikely]]
+                dataLogLn("BBQ\tReleasing GPR ", MacroAssembler::gprName(reg), " preserved? ", m_preserved.contains(reg, IgnoreVectors), " binding: ", binding);
+            if (m_preserved.contains(reg, IgnoreVectors) && !binding.isScratch())
+                return; // It's okay if the register isn't bound to a scratch if we meant to preserve it - maybe it was just already bound to something.
+            ASSERT(binding.isScratch());
+            m_generator.m_gprAllocator.unbind(reg);
+        }
+
+        void unbindFPR(FPRReg reg)
+        {
+            if (!m_generator.validFPRs().contains(reg, Width::Width128))
+                return;
+            const RegisterBinding& binding = m_generator.bindingFor(reg);
+            m_generator.m_fprAllocator.unlock(reg);
+            if (Options::verboseBBQJITAllocation()) [[unlikely]]
+                dataLogLn("BBQ\tReleasing FPR ", MacroAssembler::fprName(reg), " preserved? ", m_preserved.contains(reg, Width::Width128), " binding: ", binding);
+            if (m_preserved.contains(reg, Width::Width128) && !binding.isScratch())
+                return; // It's okay if the register isn't bound to a scratch if we meant to preserve it - maybe it was just already bound to something.
+            ASSERT(binding.isScratch());
+            m_generator.m_fprAllocator.unbind(reg);
+        }
+
+        template<typename... Args>
+        void initializedPreservedSet(Location location, Args... args)
+        {
+            if (location.isGPR())
+                m_preserved.add(location.asGPR(), IgnoreVectors);
+            else if (location.isFPR())
+                m_preserved.add(location.asFPR(), Width::Width128);
+            else if (location.isGPR2()) {
+                m_preserved.add(location.asGPRlo(), IgnoreVectors);
+                m_preserved.add(location.asGPRhi(), IgnoreVectors);
+            }
+            initializedPreservedSet(args...);
+        }
+
+        template<typename... Args>
+        void initializedPreservedSet(RegisterSet registers, Args... args)
+        {
+            for (JSC::Reg reg : registers)
+                initializedPreservedSet(reg);
+            initializedPreservedSet(args...);
+        }
+
+        template<typename... Args>
+        void initializedPreservedSet(JSC::Reg reg, Args... args)
+        {
+            if (reg.isGPR())
+                m_preserved.add(reg.gpr(), IgnoreVectors);
+            else
+                m_preserved.add(reg.fpr(), Width::Width128);
+            initializedPreservedSet(args...);
+        }
+
+        inline void initializedPreservedSet() { }
+
+        BBQJIT& m_generator;
+        GPRReg m_tempGPRs[GPRs];
+        FPRReg m_tempFPRs[FPRs];
+        RegisterSet m_preserved;
+        bool m_unboundScratches { false };
+        bool m_unboundPreserved { false };
+    };
+
     struct ControlData {
         static bool isIf(const ControlData& control) { return control.blockType() == BlockType::If; }
         static bool isTry(const ControlData& control) { return control.blockType() == BlockType::Try; }
@@ -702,12 +927,12 @@ public:
     using ControlType = ControlData;
     using CallType = CallLinkInfo::CallType;
     using ResultList = Vector<ExpressionType, 8>;
-    using ArgumentList = Vector<ExpressionType, 8>;
     using ControlEntry = typename FunctionParserTypes<ControlType, ExpressionType, CallType>::ControlEntry;
     using TypedExpression = typename FunctionParserTypes<ControlType, ExpressionType, CallType>::TypedExpression;
     using Stack = FunctionParser<BBQJIT>::Stack;
     using ControlStack = FunctionParser<BBQJIT>::ControlStack;
     using CatchHandler = FunctionParser<BBQJIT>::CatchHandler;
+    using ArgumentList = FunctionParser<BBQJIT>::ArgumentList;
 
     unsigned stackCheckSize() const { return alignedFrameSize(m_maxCalleeStackSize + m_frameSize); }
 
@@ -856,10 +1081,10 @@ public:
     // FIXME: Support fused branch compare on 32-bit platforms.
     static constexpr bool shouldFuseBranchCompare = is64Bit();
 
-    static constexpr bool tierSupportsSIMD = true;
+    static constexpr bool tierSupportsSIMD() { return true; }
     static constexpr bool validateFunctionBodySize = true;
 
-    BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, BBQCallee& callee, const FunctionData& function, FunctionCodeIndex functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry);
+    BBQJIT(CompilationContext&, const TypeDefinition& signature, Module&, CalleeGroup&, IPIntCallee& profiledCallee, BBQCallee& callee, const FunctionData& function, FunctionCodeIndex functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation);
 
     ALWAYS_INLINE static Value emptyExpression()
     {
@@ -944,7 +1169,7 @@ public:
             m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
             if (boundary)
                 m_jit.addPtr(TrustedImmPtr(boundary), wasmScratchGPR);
-            throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, wasmScratchGPR, wasmBoundsCheckingSizeRegister));
+            recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, wasmScratchGPR, wasmBoundsCheckingSizeRegister));
             break;
         }
 
@@ -964,7 +1189,7 @@ public:
                 m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
                 if (boundary)
                     m_jit.addPtr(TrustedImmPtr(boundary), wasmScratchGPR);
-                throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, wasmScratchGPR, TrustedImmPtr(static_cast<int64_t>(maximum))));
+                recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, wasmScratchGPR, TrustedImmPtr(static_cast<int64_t>(maximum))));
             }
             break;
         }
@@ -1156,7 +1381,6 @@ public:
     FloatingPointRange lookupTruncationRange(TruncationKind truncationKind);
 
     void truncInBounds(TruncationKind truncationKind, Location operandLocation, Location resultLocation, FPRReg scratch1FPR, FPRReg scratch2FPR);
-    void truncInBounds(TruncationKind truncationKind, Location operandLocation, Value& result, Location resultLocation);
 
     PartialResult WARN_UNUSED_RETURN truncTrapping(OpType truncationOp, Value operand, Value& result, Type returnType, Type operandType);
     PartialResult WARN_UNUSED_RETURN truncSaturated(Ext1OpType truncationOp, Value operand, Value& result, Type returnType, Type operandType);
@@ -1165,9 +1389,9 @@ public:
     // GC
     PartialResult WARN_UNUSED_RETURN addRefI31(ExpressionType value, ExpressionType& result);
 
-    PartialResult WARN_UNUSED_RETURN addI31GetS(ExpressionType value, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addI31GetS(TypedExpression value, ExpressionType& result);
 
-    PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType value, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addI31GetU(TypedExpression value, ExpressionType& result);
 
     const Ref<TypeDefinition> getTypeDefinition(uint32_t typeIndex);
 
@@ -1200,19 +1424,19 @@ public:
 
     void emitArrayGetPayload(StorageType, GPRReg arrayGPR, GPRReg payloadGPR);
 
-    PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, TypedExpression arrayref, ExpressionType index, ExpressionType& result);
 
-    PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
+    PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, TypedExpression arrayref, ExpressionType index, ExpressionType value);
 
-    PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayLen(TypedExpression arrayref, ExpressionType& result);
 
-    PartialResult WARN_UNUSED_RETURN addArrayFill(uint32_t typeIndex, ExpressionType arrayref, ExpressionType offset, ExpressionType value, ExpressionType size);
+    PartialResult WARN_UNUSED_RETURN addArrayFill(uint32_t typeIndex, TypedExpression arrayref, ExpressionType offset, ExpressionType value, ExpressionType size);
 
-    PartialResult WARN_UNUSED_RETURN addArrayCopy(uint32_t dstTypeIndex, ExpressionType dst, ExpressionType dstOffset, uint32_t srcTypeIndex, ExpressionType src, ExpressionType srcOffset, ExpressionType size);
+    PartialResult WARN_UNUSED_RETURN addArrayCopy(uint32_t dstTypeIndex, TypedExpression dst, ExpressionType dstOffset, uint32_t srcTypeIndex, TypedExpression src, ExpressionType srcOffset, ExpressionType size);
 
-    PartialResult WARN_UNUSED_RETURN addArrayInitElem(uint32_t dstTypeIndex, ExpressionType dst, ExpressionType dstOffset, uint32_t srcElementIndex, ExpressionType srcOffset, ExpressionType size);
+    PartialResult WARN_UNUSED_RETURN addArrayInitElem(uint32_t dstTypeIndex, TypedExpression dst, ExpressionType dstOffset, uint32_t srcElementIndex, ExpressionType srcOffset, ExpressionType size);
 
-    PartialResult WARN_UNUSED_RETURN addArrayInitData(uint32_t dstTypeIndex, ExpressionType dst, ExpressionType dstOffset, uint32_t srcDataIndex, ExpressionType srcOffset, ExpressionType size);
+    PartialResult WARN_UNUSED_RETURN addArrayInitData(uint32_t dstTypeIndex, TypedExpression dst, ExpressionType dstOffset, uint32_t srcDataIndex, ExpressionType srcOffset, ExpressionType size);
 
     // Returns true if a writeBarrier/mutatorFence is needed.
     bool WARN_UNUSED_RETURN emitStructSet(GPRReg structGPR, const StructType& structType, uint32_t fieldIndex, Value value);
@@ -1221,13 +1445,16 @@ public:
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t typeIndex, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t typeIndex, ArgumentList& args, Value& result);
 
-    PartialResult WARN_UNUSED_RETURN addStructGet(ExtGCOpType structGetKind, Value structValue, const StructType& structType, uint32_t fieldIndex, Value& result);
+    PartialResult WARN_UNUSED_RETURN addStructGet(ExtGCOpType structGetKind, TypedExpression structValue, const StructType& structType, uint32_t fieldIndex, Value& result);
 
-    PartialResult WARN_UNUSED_RETURN addStructSet(Value structValue, const StructType& structType, uint32_t fieldIndex, Value value);
+    PartialResult WARN_UNUSED_RETURN addStructSet(TypedExpression structValue, const StructType& structType, uint32_t fieldIndex, Value value);
 
-    PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, bool shouldNegate, ExpressionType& result);
+    enum class CastKind { Test, Cast };
+    void emitRefTestOrCast(CastKind, const TypedExpression&, GPRReg, bool allowNull, int32_t toHeapType, JumpList& failureCases);
 
-    PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addRefTest(TypedExpression reference, bool allowNull, int32_t heapType, bool shouldNegate, ExpressionType& result);
+
+    PartialResult WARN_UNUSED_RETURN addRefCast(TypedExpression reference, bool allowNull, int32_t heapType, ExpressionType& result);
 
     PartialResult WARN_UNUSED_RETURN addAnyConvertExtern(ExpressionType reference, ExpressionType& result);
 
@@ -1385,13 +1612,15 @@ public:
     PartialResult WARN_UNUSED_RETURN addF64Mul(Value lhs, Value rhs, Value& result);
 
     template<typename Func>
-    void addLatePath(Func func);
+    void addLatePath(WasmOrigin, Func&&);
 
     void emitThrowException(ExceptionType type);
 
-    void throwExceptionIf(ExceptionType type, Jump jump);
+    void recordJumpToThrowException(ExceptionType, Jump);
+    void recordJumpToThrowException(ExceptionType, const JumpList&);
 
     void emitThrowOnNullReference(ExceptionType type, Location ref);
+    void emitThrowOnNullReferenceBeforeAccess(Location ref, ptrdiff_t offset);
 
     template<typename IntType, bool IsMod>
     void emitModOrDiv(Value& lhs, Location lhsLocation, Value& rhs, Location rhsLocation, Value& result, Location resultLocation);
@@ -1799,8 +2028,8 @@ public:
 
     void flushRegisters();
 
-    template<size_t N>
-    void saveValuesAcrossCallAndPassArguments(const Vector<Value, N>& arguments, const CallInformation& callInfo, const TypeDefinition& signature);
+    template<typename Args>
+    void saveValuesAcrossCallAndPassArguments(const Args& arguments, const CallInformation& callInfo, const TypeDefinition& signature);
 
     void slowPathSpillBindings(const RegisterBindings& bindings);
     void slowPathRestoreBindings(const RegisterBindings&);
@@ -1815,17 +2044,15 @@ public:
     template<typename Func, size_t N>
     void emitCCall(Func function, const Vector<Value, N>& arguments, Value& result);
 
-    void emitTailCall(FunctionSpaceIndex functionIndex, const TypeDefinition& signature, ArgumentList& arguments);
-    PartialResult WARN_UNUSED_RETURN addCall(FunctionSpaceIndex functionIndex, const TypeDefinition& signature, ArgumentList& arguments, ResultList& results, CallType = CallType::Call);
+    void emitTailCall(FunctionSpaceIndex, const TypeDefinition& signature, ArgumentList& arguments);
+    PartialResult WARN_UNUSED_RETURN addCall(unsigned, FunctionSpaceIndex, const TypeDefinition& signature, ArgumentList& arguments, ResultList& results, CallType = CallType::Call);
 
-    void emitIndirectCall(const char* opcode, const Value& callee, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, ArgumentList& arguments, ResultList& results);
+    void emitIndirectCall(const char* opcode, unsigned callProfileIndex, const Value& callee, GPRReg boxedCallee, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, ArgumentList& arguments, ResultList& results);
     void emitIndirectTailCall(const char* opcode, const Value& callee, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, ArgumentList& arguments);
-    void addRTTSlowPathJump(TypeIndex, GPRReg);
-    void emitSlowPathRTTCheck(MacroAssembler::Label, TypeIndex, GPRReg);
 
-    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned, unsigned tableIndex, const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results, CallType = CallType::Call);
 
-    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCallRef(unsigned, const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results, CallType = CallType::Call);
 
     PartialResult WARN_UNUSED_RETURN addUnreachable();
 
@@ -1947,9 +2174,9 @@ private:
 
     ControlData& currentControlData();
 
-    void setLRUKey(Location location, LocalOrTempIndex key);
-
-    void increaseKey(Location location);
+    void setLRUKey(Location, LocalOrTempIndex key);
+    void increaseLRUKey(Location);
+    uint32_t nextLRUKey() { return ++m_lastUseTimestamp; }
 
     Location bind(Value value);
 
@@ -1964,15 +2191,9 @@ private:
     Location loadIfNecessary(Value value);
 
     // This should generally be avoided if possible but sometimes you just *need* a value in a register.
-    Location materializeToRegister(Value);
+    Location materializeToGPR(Value, std::optional<ScratchScope<1, 0>>&);
 
     void consume(Value value);
-
-    Location allocateRegister(TypeKind type);
-
-    Location allocateRegisterPair();
-
-    Location allocateRegister(Value value);
 
     Location bind(Value value, Location loc);
 
@@ -1980,270 +2201,14 @@ private:
 
     void unbindAllRegisters();
 
-    template<typename Register>
-    static Register fromJSCReg(Reg reg)
-    {
-        // This pattern avoids an explicit template specialization in class scope, which GCC does not support.
-        if constexpr (std::is_same_v<Register, GPRReg>) {
-            ASSERT(reg.isGPR());
-            return reg.gpr();
-        } else if constexpr (std::is_same_v<Register, FPRReg>) {
-            ASSERT(reg.isFPR());
-            return reg.fpr();
-        }
-        ASSERT_NOT_REACHED();
-    }
-
-    template<typename Register>
-    class LRU {
-    public:
-        ALWAYS_INLINE LRU(uint32_t numRegisters)
-            : m_keys(numRegisters, -1) // We use -1 to signify registers that can never be allocated or used.
-        { }
-
-        void add(RegisterSet registers)
-        {
-            registers.forEach([&] (JSC::Reg r) {
-                m_keys[fromJSCReg<Register>(r)] = 0;
-            });
-        }
-
-        Register findMin()
-        {
-            int32_t minIndex = -1;
-            int32_t minKey = -1;
-            for (unsigned i = 0; i < m_keys.size(); i ++) {
-                Register reg = static_cast<Register>(i);
-                if (m_locked.contains(reg, conservativeWidth(reg)))
-                    continue;
-                if (m_keys[i] < 0)
-                    continue;
-                if (minKey < 0 || m_keys[i] < minKey) {
-                    minKey = m_keys[i];
-                    minIndex = i;
-                }
-            }
-            ASSERT(minIndex >= 0, "No allocatable registers in LRU");
-            return static_cast<Register>(minIndex);
-        }
-
-        void increaseKey(Register reg, uint32_t newKey)
-        {
-            if (m_keys[reg] >= 0) // Leave untracked registers alone.
-                m_keys[reg] = newKey;
-        }
-
-        void lock(Register reg)
-        {
-            m_locked.add(reg, conservativeWidth(reg));
-        }
-
-        void unlock(Register reg)
-        {
-            m_locked.remove(reg);
-        }
-
-    private:
-        Vector<int32_t, 32> m_keys;
-        RegisterSet m_locked;
-    };
-
-    auto& gprBindings() { return m_bindings.m_gprBindings; }
-    auto& fprBindings() { return m_bindings.m_fprBindings; }
-
-    GPRReg nextGPR();
-    FPRReg nextFPR();
-
-    GPRReg evictGPR();
-    FPRReg evictFPR();
+    const RegisterBinding& bindingFor(JSC::Reg reg) { return reg.isGPR() ? m_gprAllocator.bindingFor(reg.gpr()) : m_fprAllocator.bindingFor(reg.fpr()); }
+    RegisterSet validGPRs() const { return m_gprAllocator.validRegisters(); }
+    RegisterSet validFPRs() const { return m_fprAllocator.validRegisters(); }
 
     // We use this to free up specific registers that might get clobbered by an instruction.
-    void clobber(GPRReg gpr);
-    void clobber(FPRReg fpr);
-    void clobber(JSC::Reg reg);
-
-    template<int GPRs, int FPRs>
-    class ScratchScope {
-        WTF_MAKE_NONCOPYABLE(ScratchScope);
-    public:
-        template<typename... Args>
-        ScratchScope(BBQJIT& generator, Args... locationsToPreserve)
-            : m_generator(generator)
-        {
-            initializedPreservedSet(locationsToPreserve...);
-            for (JSC::Reg reg : m_preserved) {
-                if (reg.isGPR())
-                    bindGPRToScratch(reg.gpr());
-                else
-                    bindFPRToScratch(reg.fpr());
-            }
-            for (int i = 0; i < GPRs; i ++)
-                m_tempGPRs[i] = bindGPRToScratch(m_generator.allocateRegister(is64Bit() ? TypeKind::I64 : TypeKind::I32).asGPR());
-            for (int i = 0; i < FPRs; i ++)
-                m_tempFPRs[i] = bindFPRToScratch(m_generator.allocateRegister(TypeKind::F64).asFPR());
-        }
-
-        ~ScratchScope()
-        {
-            unbindEarly();
-        }
-
-        void unbindEarly()
-        {
-            unbindScratches();
-            unbindPreserved();
-        }
-
-        void unbindScratches()
-        {
-            if (m_unboundScratches)
-                return;
-
-            m_unboundScratches = true;
-            for (int i = 0; i < GPRs; i ++)
-                unbindGPRFromScratch(m_tempGPRs[i]);
-            for (int i = 0; i < FPRs; i ++)
-                unbindFPRFromScratch(m_tempFPRs[i]);
-        }
-
-        void unbindPreserved()
-        {
-            if (m_unboundPreserved)
-                return;
-
-            m_unboundPreserved = true;
-            for (JSC::Reg reg : m_preserved) {
-                if (reg.isGPR())
-                    unbindGPRFromScratch(reg.gpr());
-                else
-                    unbindFPRFromScratch(reg.fpr());
-            }
-        }
-
-        inline GPRReg gpr(unsigned i) const
-        {
-            ASSERT(i < GPRs);
-            ASSERT(!m_unboundScratches);
-            return m_tempGPRs[i];
-        }
-
-        inline FPRReg fpr(unsigned i) const
-        {
-            ASSERT(i < FPRs);
-            ASSERT(!m_unboundScratches);
-            return m_tempFPRs[i];
-        }
-
-    private:
-        GPRReg bindGPRToScratch(GPRReg reg)
-        {
-            if (!m_generator.m_validGPRs.contains(reg, IgnoreVectors))
-                return reg;
-            RegisterBinding& binding = m_generator.gprBindings()[reg];
-            m_generator.m_gprLRU.lock(reg);
-            if (m_preserved.contains(reg, IgnoreVectors) && !binding.isNone()) {
-                if (Options::verboseBBQJITAllocation()) [[unlikely]]
-                    dataLogLn("BBQ\tPreserving GPR ", MacroAssembler::gprName(reg), " currently bound to ", binding);
-                return reg; // If the register is already bound, we don't need to preserve it ourselves.
-            }
-            ASSERT(binding.isNone());
-            binding = RegisterBinding::scratch();
-            m_generator.m_gprSet.remove(reg);
-            if (Options::verboseBBQJITAllocation()) [[unlikely]]
-                dataLogLn("BBQ\tReserving scratch GPR ", MacroAssembler::gprName(reg));
-            return reg;
-        }
-
-        FPRReg bindFPRToScratch(FPRReg reg)
-        {
-            if (!m_generator.m_validFPRs.contains(reg, Width::Width128))
-                return reg;
-            RegisterBinding& binding = m_generator.fprBindings()[reg];
-            m_generator.m_fprLRU.lock(reg);
-            if (m_preserved.contains(reg, Width::Width128) && !binding.isNone()) {
-                if (Options::verboseBBQJITAllocation()) [[unlikely]]
-                    dataLogLn("BBQ\tPreserving FPR ", MacroAssembler::fprName(reg), " currently bound to ", binding);
-                return reg; // If the register is already bound, we don't need to preserve it ourselves.
-            }
-            ASSERT(binding.isNone());
-            binding = RegisterBinding::scratch();
-            m_generator.m_fprSet.remove(reg);
-            if (Options::verboseBBQJITAllocation()) [[unlikely]]
-                dataLogLn("BBQ\tReserving scratch FPR ", MacroAssembler::fprName(reg));
-            return reg;
-        }
-
-        void unbindGPRFromScratch(GPRReg reg)
-        {
-            if (!m_generator.m_validGPRs.contains(reg, IgnoreVectors))
-                return;
-            RegisterBinding& binding = m_generator.gprBindings()[reg];
-            m_generator.m_gprLRU.unlock(reg);
-            if (Options::verboseBBQJITAllocation()) [[unlikely]]
-                dataLogLn("BBQ\tReleasing GPR ", MacroAssembler::gprName(reg), " preserved? ", m_preserved.contains(reg, IgnoreVectors), " binding: ", binding);
-            if (m_preserved.contains(reg, IgnoreVectors) && !binding.isScratch())
-                return; // It's okay if the register isn't bound to a scratch if we meant to preserve it - maybe it was just already bound to something.
-            ASSERT(binding.isScratch());
-            binding = RegisterBinding::none();
-            m_generator.m_gprSet.add(reg, IgnoreVectors);
-        }
-
-        void unbindFPRFromScratch(FPRReg reg)
-        {
-            if (!m_generator.m_validFPRs.contains(reg, Width::Width128))
-                return;
-            RegisterBinding& binding = m_generator.fprBindings()[reg];
-            m_generator.m_fprLRU.unlock(reg);
-            if (Options::verboseBBQJITAllocation()) [[unlikely]]
-                dataLogLn("BBQ\tReleasing FPR ", MacroAssembler::fprName(reg), " preserved? ", m_preserved.contains(reg, Width::Width128), " binding: ", binding);
-            if (m_preserved.contains(reg, Width::Width128) && !binding.isScratch())
-                return; // It's okay if the register isn't bound to a scratch if we meant to preserve it - maybe it was just already bound to something.
-            ASSERT(binding.isScratch());
-            binding = RegisterBinding::none();
-            m_generator.m_fprSet.add(reg, Width::Width128);
-        }
-
-        template<typename... Args>
-        void initializedPreservedSet(Location location, Args... args)
-        {
-            if (location.isGPR())
-                m_preserved.add(location.asGPR(), IgnoreVectors);
-            else if (location.isFPR())
-                m_preserved.add(location.asFPR(), Width::Width128);
-            else if (location.isGPR2()) {
-                m_preserved.add(location.asGPRlo(), IgnoreVectors);
-                m_preserved.add(location.asGPRhi(), IgnoreVectors);
-            }
-            initializedPreservedSet(args...);
-        }
-
-        template<typename... Args>
-        void initializedPreservedSet(RegisterSet registers, Args... args)
-        {
-            for (JSC::Reg reg : registers)
-                initializedPreservedSet(reg);
-            initializedPreservedSet(args...);
-        }
-
-        template<typename... Args>
-        void initializedPreservedSet(JSC::Reg reg, Args... args)
-        {
-            if (reg.isGPR())
-                m_preserved.add(reg.gpr(), IgnoreVectors);
-            else
-                m_preserved.add(reg.fpr(), Width::Width128);
-            initializedPreservedSet(args...);
-        }
-
-        inline void initializedPreservedSet() { }
-
-        BBQJIT& m_generator;
-        GPRReg m_tempGPRs[GPRs];
-        FPRReg m_tempFPRs[FPRs];
-        RegisterSet m_preserved;
-        bool m_unboundScratches { false };
-        bool m_unboundPreserved { false };
-    };
+    void clobber(GPRReg gpr) { m_gprAllocator.clobber(*this, gpr); }
+    void clobber(FPRReg fpr) { m_fprAllocator.clobber(*this, fpr); }
+    void clobber(JSC::Reg reg) { reg.isGPR() ? clobber(reg.gpr()) : clobber(reg.fpr()); }
 
     Location canonicalSlot(Value value);
 
@@ -2259,11 +2224,20 @@ private:
 
     void compareI64Helper(RelationalCondition condition, Location lhsLocation, Location rhsLocation, Location resultLocation);
 
-    void F64CopysignHelper(Location lhsLocation, Location rhsLocation, Location resultLocation);
-
     bool canTierUpToOMG() const;
 
+    void emitIncrementCallProfileCount(unsigned callProfileIndex);
+
+    void emitPushCalleeSaves();
+    void emitRestoreCalleeSaves();
+
+    WasmOrigin origin();
+
+    CompilationContext& m_context;
     CCallHelpers& m_jit;
+    Module& m_module;
+    CalleeGroup& m_calleeGroup;
+    IPIntCallee& m_profiledCallee;
     BBQCallee& m_callee;
     const FunctionData& m_function;
     const FunctionSignature* m_functionSignature;
@@ -2272,32 +2246,27 @@ private:
     MemoryMode m_mode;
     Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls;
     FixedBitVector m_directCallees;
-    std::optional<bool> m_hasExceptionHandlers;
     FunctionParser<BBQJIT>* m_parser;
     Vector<uint32_t, 4> m_arguments;
     ControlData m_topLevel;
-    unsigned m_loopIndexForOSREntry;
     Vector<unsigned> m_outerLoops;
     unsigned m_osrEntryScratchBufferSize { 1 };
 
-    RegisterBindings m_bindings;
-    RegisterSet m_gprSet, m_fprSet; // Sets tracking whether registers are bound or free.
-    RegisterSet m_validGPRs, m_validFPRs; // These contain the original register sets used in m_gprSet and m_fprSet.
     Vector<Location, 8> m_locals; // Vectors mapping local and temp indices to binding indices.
     Vector<Location, 8> m_temps;
     Vector<Location, 8> m_localSlots; // Persistent stack slots for local variables.
     Vector<TypeKind, 8> m_localTypes; // Types of all non-argument locals in this function.
-    LRU<GPRReg> m_gprLRU; // LRU cache tracking when general-purpose registers were last used.
-    LRU<FPRReg> m_fprLRU; // LRU cache tracking when floating-point registers were last used.
-    uint32_t m_lastUseTimestamp; // Monotonically increasing integer incrementing with each register use.
-    Vector<Function<void(BBQJIT&, CCallHelpers&)>, 8> m_latePaths; // Late paths to emit after the rest of the function body.
-    Vector<std::tuple<MacroAssembler::JumpList, MacroAssembler::Label, RegisterBindings, Function<void(BBQJIT&, CCallHelpers&)>>> m_slowPaths; // Like a late path but for when we need to make a CCall thus need to restore our state.
+    GPRAllocator m_gprAllocator; // SimpleRegisterAllocator for GPRs
+    FPRAllocator m_fprAllocator; // SimpleRegisterAllocator for FPRs
+    SpillHint m_lastUseTimestamp; // Monotonically increasing integer incrementing with each register use.
+    Vector<std::tuple<WasmOrigin, Function<void(BBQJIT&, CCallHelpers&)>>, 8> m_latePaths; // Late paths to emit after the rest of the function body.
+    Vector<std::tuple<WasmOrigin, MacroAssembler::JumpList, MacroAssembler::Label, RegisterBindings, Function<void(BBQJIT&, CCallHelpers&)>>> m_slowPaths; // Like a late path but for when we need to make a CCall thus need to restore our state.
 
     // FIXME: All uses of this are to restore sp, so we should emit these as a patchable sub instruction rather than move.
     Vector<DataLabelPtr, 1> m_frameSizeLabels;
     int m_frameSize { 0 };
     int m_maxCalleeStackSize { 0 };
-    int m_localStorage { 0 }; // Stack offset pointing to the local with the lowest address.
+    int m_localAndCalleeSaveStorage { 0 }; // Stack offset pointing to the local and callee save with the lowest address.
     bool m_usesSIMD { false }; // Whether the function we are compiling uses SIMD instructions or not.
     bool m_usesExceptions { false };
     Checked<unsigned> m_tryCatchDepth { 0 };
@@ -2315,6 +2284,7 @@ private:
 
     PCToCodeOriginMapBuilder m_pcToCodeOriginMapBuilder;
     std::unique_ptr<BBQDisassembler> m_disassembler;
+    std::unique_ptr<MergedProfile> m_profile;
 
 #if ASSERT_ENABLED
     Vector<Value, 8> m_justPoppedStack;
@@ -2336,10 +2306,8 @@ using MinOrMax = BBQJIT::MinOrMax;
 
 } // namespace JSC::Wasm::BBQJITImpl
 
-class BBQCallee;
-
 using BBQJIT = BBQJITImpl::BBQJIT;
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext&, BBQCallee&, const FunctionData&, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, unsigned);
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext&, IPIntCallee&, BBQCallee&, const FunctionData&, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>&, Module&, CalleeGroup&, const ModuleInformation&, MemoryMode, FunctionCodeIndex functionIndex);
 
 } } // namespace JSC::Wasm
 

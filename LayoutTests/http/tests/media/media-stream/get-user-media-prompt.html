@@ -12,6 +12,7 @@
                 return testRunner.userMediaPermissionRequestCount();
             }
 
+            let stream1, stream2;
             function gotStream3(s)
             {
                 stream = s;
@@ -21,10 +22,15 @@
 
                 debug("");
                 finishJSTest();
+                stream.getTracks().forEach(track => track.stop());
+                stream1.getTracks().forEach(track => track.stop());
+                stream2.getTracks().forEach(track => track.stop());
             }
 
             function gotStream2(s)
             {
+                stream2 = s;
+
                 stream = s;
                 shouldBe("numberOfTimesGetUserMediaPromptHasBeenCalled()", "2");
                 shouldBe("stream.getAudioTracks().length", "0");
@@ -36,6 +42,8 @@
 
             function gotStream1(s)
             {
+                stream1 = s;
+
                 stream = s;
                 shouldBe("numberOfTimesGetUserMediaPromptHasBeenCalled()", "1");
                 shouldBe("stream.getAudioTracks().length", "1");

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,7 +108,7 @@ private:
     void setErrorState();
 
     Ref<CSSFontFace> m_backing;
-    UniqueRef<LoadedPromise> m_loadedPromise;
+    const UniqueRef<LoadedPromise> m_loadedPromise;
     bool m_mayLoadedPromiseBeScriptObservable { false };
 };
 

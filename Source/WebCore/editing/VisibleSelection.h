@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "TextGranularity.h"
-#include "VisiblePosition.h"
+#include <WebCore/TextGranularity.h>
+#include <WebCore/VisiblePosition.h>
 
 namespace WebCore {
 
@@ -38,7 +38,7 @@ enum class Directionality : uint8_t { None, Strong };
 enum class SelectionDirection : uint8_t { Forward, Backward, Right, Left };
 
 class VisibleSelection {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(VisibleSelection);
 public:
     WEBCORE_EXPORT VisibleSelection();
     static const VisibleSelection& emptySelection();
@@ -117,6 +117,7 @@ public:
     WEBCORE_EXPORT std::optional<SimpleRange> toNormalizedRange() const;
 
     WEBCORE_EXPORT Element* rootEditableElement() const;
+    WEBCORE_EXPORT RefPtr<Element> protectedRootEditableElement() const;
     WEBCORE_EXPORT bool isContentEditable() const;
     WEBCORE_EXPORT bool hasEditableStyle() const;
     WEBCORE_EXPORT bool isContentRichlyEditable() const;

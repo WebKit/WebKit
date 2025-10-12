@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "ExceptionOr.h"
-#include "MediaRecorderPrivateOptions.h"
-#include "RealtimeMediaSource.h"
+#include <WebCore/ExceptionOr.h>
+#include <WebCore/MediaRecorderPrivateOptions.h>
+#include <WebCore/RealtimeMediaSource.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
@@ -106,8 +106,8 @@ private:
     virtual void resumeRecording(CompletionHandler<void()>&&) = 0;
 
 private:
-    bool m_shouldMuteAudio { false };
-    bool m_shouldMuteVideo { false };
+    std::atomic<bool> m_shouldMuteAudio { false };
+    std::atomic<bool> m_shouldMuteVideo { false };
     RefPtr<RealtimeMediaSource> m_audioSource;
     RefPtr<RealtimeMediaSource> m_videoSource;
     RefPtr<RealtimeMediaSource> m_pausedAudioSource;

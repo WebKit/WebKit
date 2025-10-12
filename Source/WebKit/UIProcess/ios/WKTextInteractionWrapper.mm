@@ -29,10 +29,12 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "EditorState.h"
 #import "RemoteLayerTreeNode.h"
 #import "RemoteLayerTreeViews.h"
 #import "UIKitUtilities.h"
 #import "WKContentViewInteraction.h"
+#import "WebPageProxy.h"
 #import <WebCore/TileController.h>
 #import <wtf/TZoneMallocInlines.h>
 
@@ -207,8 +209,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HideEditMenuScope);
         for (UIView *subview in newContainer.subviews)
             [viewsBeforeInstallingInteraction addObject:subview];
 
-        // Calling these delegate methods tells the display interaction to remove and reparent all internally
-        // managed views (e.g. selection highlight views, selection handles) in the new selection container.
+        // When the display interaction is in the activated state, calling these delegate methods tells it
+        // to remove and reparent all internally managed views (e.g. selection highlight views, selection
+        // handles) in the new selection container.
+        [self activateSelection];
         [displayInteraction willMoveToView:_view];
         [displayInteraction didMoveToView:_view];
 
@@ -244,15 +248,25 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HideEditMenuScope);
             [subviewsBeforeSelection addObject:parentBelowNewContainer.get()];
     }
 
+    RefPtr page = [_view page];
+    bool insertSelectionAfterCompositingViews = page && page->editorState().visualData->enclosingLayerUsesContentsLayer;
+
     // Ensure that the selection highlight is inserted after all `subviewsBeforeSelection`.
     __block std::optional<NSUInteger> indexOfHighlightView;
     __block std::optional<NSUInteger> indexToInsertManagedSelectionViews = 0;
     RetainPtr tileGridContainerName = WebCore::TileController::tileGridContainerLayerName().createNSString();
     [[newContainer subviews] enumerateObjectsUsingBlock:^(UIView *view, NSUInteger index, BOOL*) {
-        if ([view.layer.name isEqualToString:tileGridContainerName.get()] || [subviewsBeforeSelection containsObject:view])
-            indexToInsertManagedSelectionViews = index + 1;
-        else if (view == highlightView)
+        if (view == highlightView) {
             indexOfHighlightView = index;
+            return;
+        }
+
+        bool insertSelectionAfterView = [view.layer.name isEqualToString:tileGridContainerName.get()]
+            || [subviewsBeforeSelection containsObject:view]
+            || (insertSelectionAfterCompositingViews && [view conformsToProtocol:@protocol(WKContentControlled)]);
+
+        if (insertSelectionAfterView)
+            indexToInsertManagedSelectionViews = index + 1;
     }];
 
     if (indexToInsertManagedSelectionViews == indexOfHighlightView)

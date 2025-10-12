@@ -30,6 +30,7 @@
 #import "ModelIdentifier.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
+#import "WebProcess.h"
 #import <WebCore/ModelPlayer.h>
 #import <WebCore/ModelPlayerAnimationState.h>
 #import <WebCore/ModelPlayerClient.h>
@@ -55,6 +56,9 @@ public:
     void didUnload();
 
     void disableUnloadDelayForTesting();
+
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return WebProcess::singleton().sharedPreferencesForWebProcess(); }
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcessValue() const { return WebProcess::singleton().sharedPreferencesForWebProcessValue(); }
 
 private:
     explicit ModelProcessModelPlayer(WebCore::ModelPlayerIdentifier, WebPage&, WebCore::ModelPlayerClient&);
@@ -138,6 +142,7 @@ private:
     std::optional<Seconds> m_pendingCurrentTime;
     std::optional<MonotonicTime> m_clockTimestampOfLastCurrentTimeSet;
     WebCore::ModelPlayerAnimationState m_animationState;
+    SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
 };
 
 }

@@ -29,7 +29,7 @@
 
 template<typename Graph>
 class SpanningTree {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SpanningTree);
 public:
     SpanningTree(Graph& graph)
         : m_graph(graph)
@@ -76,7 +76,7 @@ public:
 
 private:
     struct Data {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Data);
         size_t pre;
         size_t post;
     };

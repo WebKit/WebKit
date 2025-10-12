@@ -2,12 +2,13 @@
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2010 Rob Buis <buis@kde.org>
     Copyright (C) Research In Motion Limited 2010. All rights reserved.
+    Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
 
     Based on khtml code by:
     Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
     Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
     Copyright (C) 2002-2003 Dirk Mueller (mueller@kde.org)
-    Copyright (C) 2002 Apple Inc.
+    Copyright (C) 2002 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -28,12 +29,14 @@
 #include "config.h"
 #include "SVGRenderStyle.h"
 
-#include "CSSPrimitiveValue.h"
-#include "CSSValueList.h"
 #include "IntRect.h"
 #include "NodeRenderStyle.h"
 #include "RenderStyleDifference.h"
+#include "RenderStyleInlines.h"
 #include "SVGElement.h"
+#include "StylePrimitiveKeyword+Logging.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
+#include "WebAnimationTypes.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/TextStream.h>
 
@@ -53,37 +56,37 @@ Ref<SVGRenderStyle> SVGRenderStyle::createDefaultStyle()
 }
 
 SVGRenderStyle::SVGRenderStyle()
-    : m_fillData(defaultSVGStyle().m_fillData)
-    , m_strokeData(defaultSVGStyle().m_strokeData)
-    , m_inheritedResourceData(defaultSVGStyle().m_inheritedResourceData)
-    , m_stopData(defaultSVGStyle().m_stopData)
-    , m_miscData(defaultSVGStyle().m_miscData)
-    , m_layoutData(defaultSVGStyle().m_layoutData)
+    : fillData(defaultSVGStyle().fillData)
+    , strokeData(defaultSVGStyle().strokeData)
+    , inheritedResourceData(defaultSVGStyle().inheritedResourceData)
+    , stopData(defaultSVGStyle().stopData)
+    , miscData(defaultSVGStyle().miscData)
+    , layoutData(defaultSVGStyle().layoutData)
 {
     setBitDefaults();
 }
 
 SVGRenderStyle::SVGRenderStyle(CreateDefaultType)
-    : m_fillData(StyleFillData::create())
-    , m_strokeData(StyleStrokeData::create())
-    , m_inheritedResourceData(StyleInheritedResourceData::create())
-    , m_stopData(StyleStopData::create())
-    , m_miscData(StyleMiscData::create())
-    , m_layoutData(StyleLayoutData::create())
+    : fillData(StyleFillData::create())
+    , strokeData(StyleStrokeData::create())
+    , inheritedResourceData(StyleInheritedResourceData::create())
+    , stopData(StyleStopData::create())
+    , miscData(StyleMiscData::create())
+    , layoutData(StyleLayoutData::create())
 {
     setBitDefaults();
 }
 
 inline SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle& other)
     : RefCounted<SVGRenderStyle>()
-    , m_inheritedFlags(other.m_inheritedFlags)
-    , m_nonInheritedFlags(other.m_nonInheritedFlags)
-    , m_fillData(other.m_fillData)
-    , m_strokeData(other.m_strokeData)
-    , m_inheritedResourceData(other.m_inheritedResourceData)
-    , m_stopData(other.m_stopData)
-    , m_miscData(other.m_miscData)
-    , m_layoutData(other.m_layoutData)
+    , inheritedFlags(other.inheritedFlags)
+    , nonInheritedFlags(other.nonInheritedFlags)
+    , fillData(other.fillData)
+    , strokeData(other.strokeData)
+    , inheritedResourceData(other.inheritedResourceData)
+    , stopData(other.stopData)
+    , miscData(other.miscData)
+    , layoutData(other.layoutData)
 {
     ASSERT(other == *this, "SVGRenderStyle should be properly copied.");
 }
@@ -100,37 +103,55 @@ bool SVGRenderStyle::operator==(const SVGRenderStyle& other) const
     return inheritedEqual(other) && nonInheritedEqual(other);
 }
 
+void SVGRenderStyle::setBitDefaults()
+{
+    inheritedFlags.clipRule = static_cast<unsigned>(RenderStyle::initialClipRule());
+    inheritedFlags.fillRule = static_cast<unsigned>(RenderStyle::initialFillRule());
+    inheritedFlags.shapeRendering = static_cast<unsigned>(RenderStyle::initialShapeRendering());
+    inheritedFlags.textAnchor = static_cast<unsigned>(RenderStyle::initialTextAnchor());
+    inheritedFlags.colorInterpolation = static_cast<unsigned>(RenderStyle::initialColorInterpolation());
+    inheritedFlags.colorInterpolationFilters = static_cast<unsigned>(RenderStyle::initialColorInterpolationFilters());
+    inheritedFlags.glyphOrientationHorizontal = static_cast<unsigned>(RenderStyle::initialGlyphOrientationHorizontal());
+    inheritedFlags.glyphOrientationVertical = static_cast<unsigned>(RenderStyle::initialGlyphOrientationVertical());
+
+    nonInheritedFlags.alignmentBaseline = static_cast<unsigned>(RenderStyle::initialAlignmentBaseline());
+    nonInheritedFlags.dominantBaseline = static_cast<unsigned>(RenderStyle::initialDominantBaseline());
+    nonInheritedFlags.vectorEffect = static_cast<unsigned>(RenderStyle::initialVectorEffect());
+    nonInheritedFlags.bufferedRendering = static_cast<unsigned>(RenderStyle::initialBufferedRendering());
+    nonInheritedFlags.maskType = static_cast<unsigned>(RenderStyle::initialMaskType());
+}
+
 bool SVGRenderStyle::inheritedEqual(const SVGRenderStyle& other) const
 {
-    return m_fillData == other.m_fillData
-        && m_strokeData == other.m_strokeData
-        && m_inheritedResourceData == other.m_inheritedResourceData
-        && m_inheritedFlags == other.m_inheritedFlags;
+    return fillData == other.fillData
+        && strokeData == other.strokeData
+        && inheritedResourceData == other.inheritedResourceData
+        && inheritedFlags == other.inheritedFlags;
 }
 
 bool SVGRenderStyle::nonInheritedEqual(const SVGRenderStyle& other) const
 {
-    return m_stopData == other.m_stopData
-        && m_miscData == other.m_miscData
-        && m_layoutData == other.m_layoutData
-        && m_nonInheritedFlags == other.m_nonInheritedFlags;
+    return stopData == other.stopData
+        && miscData == other.miscData
+        && layoutData == other.layoutData
+        && nonInheritedFlags == other.nonInheritedFlags;
 }
 
 void SVGRenderStyle::inheritFrom(const SVGRenderStyle& other)
 {
-    m_fillData = other.m_fillData;
-    m_strokeData = other.m_strokeData;
-    m_inheritedResourceData = other.m_inheritedResourceData;
+    fillData = other.fillData;
+    strokeData = other.strokeData;
+    inheritedResourceData = other.inheritedResourceData;
 
-    m_inheritedFlags = other.m_inheritedFlags;
+    inheritedFlags = other.inheritedFlags;
 }
 
 void SVGRenderStyle::copyNonInheritedFrom(const SVGRenderStyle& other)
 {
-    m_nonInheritedFlags = other.m_nonInheritedFlags;
-    m_stopData = other.m_stopData;
-    m_miscData = other.m_miscData;
-    m_layoutData = other.m_layoutData;
+    nonInheritedFlags = other.nonInheritedFlags;
+    stopData = other.stopData;
+    miscData = other.miscData;
+    layoutData = other.layoutData;
 }
 
 static bool colorChangeRequiresRepaint(const Style::Color& a, const Style::Color& b, bool currentColorDiffers)
@@ -149,37 +170,36 @@ static bool colorChangeRequiresRepaint(const Style::Color& a, const Style::Color
 bool SVGRenderStyle::changeRequiresLayout(const SVGRenderStyle& other) const
 {
     // If markers change, we need a relayout, as marker boundaries are cached in RenderSVGPath.
-    if (m_inheritedResourceData != other.m_inheritedResourceData)
+    if (inheritedResourceData != other.inheritedResourceData)
         return true;
 
     // All text related properties influence layout.
-    if (m_inheritedFlags.textAnchor != other.m_inheritedFlags.textAnchor
-        || m_inheritedFlags.glyphOrientationHorizontal != other.m_inheritedFlags.glyphOrientationHorizontal
-        || m_inheritedFlags.glyphOrientationVertical != other.m_inheritedFlags.glyphOrientationVertical
-        || m_nonInheritedFlags.flagBits.alignmentBaseline != other.m_nonInheritedFlags.flagBits.alignmentBaseline
-        || m_nonInheritedFlags.flagBits.dominantBaseline != other.m_nonInheritedFlags.flagBits.dominantBaseline
-        || m_nonInheritedFlags.flagBits.baselineShift != other.m_nonInheritedFlags.flagBits.baselineShift)
+    if (inheritedFlags.textAnchor != other.inheritedFlags.textAnchor
+        || inheritedFlags.glyphOrientationHorizontal != other.inheritedFlags.glyphOrientationHorizontal
+        || inheritedFlags.glyphOrientationVertical != other.inheritedFlags.glyphOrientationVertical
+        || nonInheritedFlags.alignmentBaseline != other.nonInheritedFlags.alignmentBaseline
+        || nonInheritedFlags.dominantBaseline != other.nonInheritedFlags.dominantBaseline)
         return true;
 
     // Text related properties influence layout.
-    if (m_miscData->baselineShiftValue != other.m_miscData->baselineShiftValue)
+    if (miscData->baselineShift != other.miscData->baselineShift)
         return true;
 
     // The x or y properties require relayout.
-    if (m_layoutData != other.m_layoutData)
+    if (layoutData != other.layoutData)
         return true; 
 
     // Some stroke properties, requires relayouts, as the cached stroke boundaries need to be recalculated.
-    if (m_strokeData->paintType != other.m_strokeData->paintType
-        || m_strokeData->paintUri != other.m_strokeData->paintUri
-        || m_strokeData->dashArray != other.m_strokeData->dashArray
-        || m_strokeData->dashOffset != other.m_strokeData->dashOffset
-        || m_strokeData->visitedLinkPaintUri != other.m_strokeData->visitedLinkPaintUri
-        || m_strokeData->visitedLinkPaintType != other.m_strokeData->visitedLinkPaintType)
+    if (!strokeData->paint.hasSameType(other.strokeData->paint)
+        || strokeData->paint.urlDisregardingType() != other.strokeData->paint.urlDisregardingType()
+        || strokeData->dashArray != other.strokeData->dashArray
+        || strokeData->dashOffset != other.strokeData->dashOffset
+        || !strokeData->visitedLinkPaint.hasSameType(other.strokeData->visitedLinkPaint)
+        || strokeData->visitedLinkPaint.urlDisregardingType() != other.strokeData->visitedLinkPaint.urlDisregardingType())
         return true;
 
     // vector-effect changes require a re-layout.
-    if (m_nonInheritedFlags.flagBits.vectorEffect != other.m_nonInheritedFlags.flagBits.vectorEffect)
+    if (nonInheritedFlags.vectorEffect != other.nonInheritedFlags.vectorEffect)
         return true;
 
     return false;
@@ -189,47 +209,47 @@ bool SVGRenderStyle::changeRequiresRepaint(const SVGRenderStyle& other, bool cur
 {
     if (this == &other) {
         ASSERT(currentColorDiffers);
-        return containsCurrentColor(m_strokeData->paintColor)
-            || containsCurrentColor(m_strokeData->visitedLinkPaintColor)
-            || containsCurrentColor(m_miscData->floodColor)
-            || containsCurrentColor(m_miscData->lightingColor)
-            || containsCurrentColor(m_fillData->paintColor);
+        return containsCurrentColor(strokeData->paint)
+            || containsCurrentColor(strokeData->visitedLinkPaint)
+            || containsCurrentColor(miscData->floodColor)
+            || containsCurrentColor(miscData->lightingColor)
+            || containsCurrentColor(fillData->paint); // FIXME: Should this be checking fillData->visitedLinkPaint.color as well?
     }
 
-    if (m_strokeData->opacity != other.m_strokeData->opacity
-        || colorChangeRequiresRepaint(m_strokeData->paintColor, other.m_strokeData->paintColor, currentColorDiffers)
-        || colorChangeRequiresRepaint(m_strokeData->visitedLinkPaintColor, other.m_strokeData->visitedLinkPaintColor, currentColorDiffers))
+    if (strokeData->opacity != other.strokeData->opacity
+        || colorChangeRequiresRepaint(strokeData->paint.colorDisregardingType(), other.strokeData->paint.colorDisregardingType(), currentColorDiffers)
+        || colorChangeRequiresRepaint(strokeData->visitedLinkPaint.colorDisregardingType(), other.strokeData->visitedLinkPaint.colorDisregardingType(), currentColorDiffers))
         return true;
 
     // Painting related properties only need repaints. 
-    if (colorChangeRequiresRepaint(m_miscData->floodColor, other.m_miscData->floodColor, currentColorDiffers)
-        || m_miscData->floodOpacity != other.m_miscData->floodOpacity
-        || colorChangeRequiresRepaint(m_miscData->lightingColor, other.m_miscData->lightingColor, currentColorDiffers))
+    if (colorChangeRequiresRepaint(miscData->floodColor, other.miscData->floodColor, currentColorDiffers)
+        || miscData->floodOpacity != other.miscData->floodOpacity
+        || colorChangeRequiresRepaint(miscData->lightingColor, other.miscData->lightingColor, currentColorDiffers))
         return true;
 
     // If fill data changes, we just need to repaint. Fill boundaries are not influenced by this, only by the Path, that RenderSVGPath contains.
-    if (m_fillData->paintType != other.m_fillData->paintType 
-        || colorChangeRequiresRepaint(m_fillData->paintColor, other.m_fillData->paintColor, currentColorDiffers)
-        || m_fillData->paintUri != other.m_fillData->paintUri 
-        || m_fillData->opacity != other.m_fillData->opacity)
+    if (!fillData->paint.hasSameType(other.fillData->paint)
+        || colorChangeRequiresRepaint(fillData->paint.colorDisregardingType(), other.fillData->paint.colorDisregardingType(), currentColorDiffers)
+        || fillData->paint.urlDisregardingType() != other.fillData->paint.urlDisregardingType()
+        || fillData->opacity != other.fillData->opacity)
         return true;
 
-    // If gradient stops change, we just need to repaint. Style updates are already handled through RenderSVGGradientSTop.
-    if (m_stopData != other.m_stopData)
+    // If gradient stops change, we just need to repaint. Style updates are already handled through RenderSVGGradientStop.
+    if (stopData != other.stopData)
         return true;
 
     // Changes of these flags only cause repaints.
-    if (m_inheritedFlags.shapeRendering != other.m_inheritedFlags.shapeRendering
-        || m_inheritedFlags.clipRule != other.m_inheritedFlags.clipRule
-        || m_inheritedFlags.fillRule != other.m_inheritedFlags.fillRule
-        || m_inheritedFlags.colorInterpolation != other.m_inheritedFlags.colorInterpolation
-        || m_inheritedFlags.colorInterpolationFilters != other.m_inheritedFlags.colorInterpolationFilters)
+    if (inheritedFlags.shapeRendering != other.inheritedFlags.shapeRendering
+        || inheritedFlags.clipRule != other.inheritedFlags.clipRule
+        || inheritedFlags.fillRule != other.inheritedFlags.fillRule
+        || inheritedFlags.colorInterpolation != other.inheritedFlags.colorInterpolation
+        || inheritedFlags.colorInterpolationFilters != other.inheritedFlags.colorInterpolationFilters)
         return true;
 
-    if (m_nonInheritedFlags.flagBits.bufferedRendering != other.m_nonInheritedFlags.flagBits.bufferedRendering)
+    if (nonInheritedFlags.bufferedRendering != other.nonInheritedFlags.bufferedRendering)
         return true;
 
-    if (m_nonInheritedFlags.flagBits.maskType != other.m_nonInheritedFlags.flagBits.maskType)
+    if (nonInheritedFlags.maskType != other.nonInheritedFlags.maskType)
         return true;
 
     return false;
@@ -242,12 +262,7 @@ void SVGRenderStyle::conservativelyCollectChangedAnimatableProperties(const SVGR
     auto conservativelyCollectChangedAnimatablePropertiesViaFillData = [&](auto& first, auto& second) {
         if (first.opacity != second.opacity)
             changingProperties.m_properties.set(CSSPropertyFillOpacity);
-        if (first.paintColor != second.paintColor
-            || first.visitedLinkPaintColor != second.visitedLinkPaintColor
-            || first.paintUri != second.paintUri
-            || first.visitedLinkPaintUri != second.visitedLinkPaintUri
-            || first.paintType != second.paintType
-            || first.visitedLinkPaintType != second.visitedLinkPaintType)
+        if (first.paint != second.paint || first.visitedLinkPaint != second.visitedLinkPaint)
             changingProperties.m_properties.set(CSSPropertyFill);
     };
 
@@ -258,12 +273,7 @@ void SVGRenderStyle::conservativelyCollectChangedAnimatableProperties(const SVGR
             changingProperties.m_properties.set(CSSPropertyStrokeDashoffset);
         if (first.dashArray != second.dashArray)
             changingProperties.m_properties.set(CSSPropertyStrokeDasharray);
-        if (first.paintColor != second.paintColor
-            || first.visitedLinkPaintColor != second.visitedLinkPaintColor
-            || first.paintUri != second.paintUri
-            || first.visitedLinkPaintUri != second.visitedLinkPaintUri
-            || first.paintType != second.paintType
-            || first.visitedLinkPaintType != second.visitedLinkPaintType)
+        if (first.paint != second.paint || first.visitedLinkPaint != second.visitedLinkPaint)
             changingProperties.m_properties.set(CSSPropertyStroke);
     };
 
@@ -281,7 +291,7 @@ void SVGRenderStyle::conservativelyCollectChangedAnimatableProperties(const SVGR
             changingProperties.m_properties.set(CSSPropertyFloodColor);
         if (first.lightingColor != second.lightingColor)
             changingProperties.m_properties.set(CSSPropertyLightingColor);
-        if (first.baselineShiftValue != second.baselineShiftValue)
+        if (first.baselineShift != second.baselineShift)
             changingProperties.m_properties.set(CSSPropertyBaselineShift);
     };
 
@@ -333,36 +343,34 @@ void SVGRenderStyle::conservativelyCollectChangedAnimatableProperties(const SVGR
     };
 
     auto conservativelyCollectChangedAnimatablePropertiesViaNonInheritedFlags = [&](auto& first, auto& second) {
-        if (first.flagBits.alignmentBaseline != second.flagBits.alignmentBaseline)
+        if (first.alignmentBaseline != second.alignmentBaseline)
             changingProperties.m_properties.set(CSSPropertyAlignmentBaseline);
-        if (first.flagBits.baselineShift != second.flagBits.baselineShift)
-            changingProperties.m_properties.set(CSSPropertyBaselineShift);
-        if (first.flagBits.bufferedRendering != second.flagBits.bufferedRendering)
+        if (first.bufferedRendering != second.bufferedRendering)
             changingProperties.m_properties.set(CSSPropertyBufferedRendering);
-        if (first.flagBits.dominantBaseline != second.flagBits.dominantBaseline)
+        if (first.dominantBaseline != second.dominantBaseline)
             changingProperties.m_properties.set(CSSPropertyDominantBaseline);
-        if (first.flagBits.maskType != second.flagBits.maskType)
+        if (first.maskType != second.maskType)
             changingProperties.m_properties.set(CSSPropertyMaskType);
-        if (first.flagBits.vectorEffect != second.flagBits.vectorEffect)
+        if (first.vectorEffect != second.vectorEffect)
             changingProperties.m_properties.set(CSSPropertyVectorEffect);
     };
 
-    if (m_fillData.ptr() != other.m_fillData.ptr())
-        conservativelyCollectChangedAnimatablePropertiesViaFillData(*m_fillData, *other.m_fillData);
-    if (m_strokeData != other.m_strokeData)
-        conservativelyCollectChangedAnimatablePropertiesViaStrokeData(*m_strokeData, *other.m_strokeData);
-    if (m_stopData != other.m_stopData)
-        conservativelyCollectChangedAnimatablePropertiesViaStopData(*m_stopData, *other.m_stopData);
-    if (m_miscData != other.m_miscData)
-        conservativelyCollectChangedAnimatablePropertiesViaMiscData(*m_miscData, *other.m_miscData);
-    if (m_layoutData != other.m_layoutData)
-        conservativelyCollectChangedAnimatablePropertiesViaLayoutData(*m_layoutData, *other.m_layoutData);
-    if (m_inheritedResourceData != other.m_inheritedResourceData)
-        conservativelyCollectChangedAnimatablePropertiesViaInheritedResourceData(*m_inheritedResourceData, *other.m_inheritedResourceData);
-    if (m_inheritedFlags != other.m_inheritedFlags)
-        conservativelyCollectChangedAnimatablePropertiesViaInheritedFlags(m_inheritedFlags, other.m_inheritedFlags);
-    if (m_nonInheritedFlags != other.m_nonInheritedFlags)
-        conservativelyCollectChangedAnimatablePropertiesViaNonInheritedFlags(m_nonInheritedFlags, other.m_nonInheritedFlags);
+    if (fillData.ptr() != other.fillData.ptr())
+        conservativelyCollectChangedAnimatablePropertiesViaFillData(*fillData, *other.fillData);
+    if (strokeData != other.strokeData)
+        conservativelyCollectChangedAnimatablePropertiesViaStrokeData(*strokeData, *other.strokeData);
+    if (stopData != other.stopData)
+        conservativelyCollectChangedAnimatablePropertiesViaStopData(*stopData, *other.stopData);
+    if (miscData != other.miscData)
+        conservativelyCollectChangedAnimatablePropertiesViaMiscData(*miscData, *other.miscData);
+    if (layoutData != other.layoutData)
+        conservativelyCollectChangedAnimatablePropertiesViaLayoutData(*layoutData, *other.layoutData);
+    if (inheritedResourceData != other.inheritedResourceData)
+        conservativelyCollectChangedAnimatablePropertiesViaInheritedResourceData(*inheritedResourceData, *other.inheritedResourceData);
+    if (inheritedFlags != other.inheritedFlags)
+        conservativelyCollectChangedAnimatablePropertiesViaInheritedFlags(inheritedFlags, other.inheritedFlags);
+    if (nonInheritedFlags != other.nonInheritedFlags)
+        conservativelyCollectChangedAnimatablePropertiesViaNonInheritedFlags(nonInheritedFlags, other.nonInheritedFlags);
 }
 
 #if !LOG_DISABLED
@@ -375,33 +383,32 @@ void SVGRenderStyle::InheritedFlags::dumpDifferences(TextStream& ts, const SVGRe
     LOG_IF_DIFFERENT_WITH_CAST(TextAnchor, textAnchor);
     LOG_IF_DIFFERENT_WITH_CAST(ColorInterpolation, colorInterpolation);
     LOG_IF_DIFFERENT_WITH_CAST(ColorInterpolation, colorInterpolationFilters);
-    LOG_IF_DIFFERENT_WITH_CAST(GlyphOrientation, glyphOrientationHorizontal);
-    LOG_IF_DIFFERENT_WITH_CAST(GlyphOrientation, glyphOrientationVertical);
+    LOG_IF_DIFFERENT_WITH_CAST(Style::SVGGlyphOrientationHorizontal, glyphOrientationHorizontal);
+    LOG_IF_DIFFERENT_WITH_CAST(Style::SVGGlyphOrientationVertical, glyphOrientationVertical);
 }
 
 void SVGRenderStyle::NonInheritedFlags::dumpDifferences(TextStream& ts, const SVGRenderStyle::NonInheritedFlags& other) const
 {
-    LOG_IF_DIFFERENT_WITH_CAST(AlignmentBaseline, flagBits.alignmentBaseline);
-    LOG_IF_DIFFERENT_WITH_CAST(DominantBaseline, flagBits.dominantBaseline);
-    LOG_IF_DIFFERENT_WITH_CAST(BaselineShift, flagBits.baselineShift);
-    LOG_IF_DIFFERENT_WITH_CAST(VectorEffect, flagBits.vectorEffect);
-    LOG_IF_DIFFERENT_WITH_CAST(BufferedRendering, flagBits.bufferedRendering);
-    LOG_IF_DIFFERENT_WITH_CAST(MaskType, flagBits.maskType);
+    LOG_IF_DIFFERENT_WITH_CAST(AlignmentBaseline, alignmentBaseline);
+    LOG_IF_DIFFERENT_WITH_CAST(DominantBaseline, dominantBaseline);
+    LOG_IF_DIFFERENT_WITH_CAST(VectorEffect, vectorEffect);
+    LOG_IF_DIFFERENT_WITH_CAST(BufferedRendering, bufferedRendering);
+    LOG_IF_DIFFERENT_WITH_CAST(MaskType, maskType);
 }
 
 void SVGRenderStyle::dumpDifferences(TextStream& ts, const SVGRenderStyle& other) const
 {
-    m_inheritedFlags.dumpDifferences(ts, other.m_inheritedFlags);
-    m_nonInheritedFlags.dumpDifferences(ts, other.m_nonInheritedFlags);
+    inheritedFlags.dumpDifferences(ts, other.inheritedFlags);
+    nonInheritedFlags.dumpDifferences(ts, other.nonInheritedFlags);
 
-    m_fillData->dumpDifferences(ts, other.m_fillData);
-    m_strokeData->dumpDifferences(ts, other.m_strokeData);
-    m_inheritedResourceData->dumpDifferences(ts, other.m_inheritedResourceData);
+    fillData->dumpDifferences(ts, other.fillData);
+    strokeData->dumpDifferences(ts, other.strokeData);
+    inheritedResourceData->dumpDifferences(ts, other.inheritedResourceData);
 
-    m_stopData->dumpDifferences(ts, other.m_stopData);
-    m_miscData->dumpDifferences(ts, other.m_miscData);
-    m_layoutData->dumpDifferences(ts, other.m_layoutData);
+    stopData->dumpDifferences(ts, other.stopData);
+    miscData->dumpDifferences(ts, other.miscData);
+    layoutData->dumpDifferences(ts, other.layoutData);
 }
 #endif
 
-}
+} // namespace WebCore

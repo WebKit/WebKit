@@ -1275,7 +1275,7 @@ static StructHandlers* createStructHandlerMap()
         char idType[3];
         // Check 2nd argument type is "@"
         {
-            auto secondType = adoptSystem<char[]>(method_copyArgumentType(method, 3));
+            auto secondType = adoptSystem(method_copyArgumentType(method, 3));
             if (strcmp(secondType.get(), "@") != 0)
                 return;
         }
@@ -1284,7 +1284,7 @@ static StructHandlers* createStructHandlerMap()
         if (strcmp(idType, "@") != 0)
             return;
         {
-            auto type = adoptSystem<char[]>(method_copyArgumentType(method, 2));
+            auto type = adoptSystem(method_copyArgumentType(method, 2));
             structHandlers->add(StringImpl::createFromCString(type.get()), (StructTagHandler) { selector, 0 });
         }
     });
@@ -1300,7 +1300,7 @@ static StructHandlers* createStructHandlerMap()
         if (method_getNumberOfArguments(method) != 2)
             return;
         // Try to find a matching valueWith<Foo>:context: method.
-        auto type = adoptSystem<char[]>(method_copyReturnType(method));
+        auto type = adoptSystem(method_copyReturnType(method));
         StructHandlers::iterator iter = structHandlers->find(String::fromLatin1(type.get()));
         if (iter == structHandlers->end())
             return;

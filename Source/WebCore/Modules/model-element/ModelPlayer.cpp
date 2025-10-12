@@ -31,6 +31,7 @@
 #include "ModelPlayerAnimationState.h"
 #include "ModelPlayerTransformState.h"
 #include "TransformationMatrix.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MODEL_PROCESS)
@@ -109,7 +110,7 @@ String ModelPlayer::inlinePreviewUUIDForTesting() const
     return emptyString();
 }
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_PROCESS) || ENABLE(GPUP_MODEL)
 void ModelPlayer::setAutoplay(bool)
 {
 }
@@ -156,9 +157,11 @@ void ModelPlayer::setHasPortal(bool)
 {
 }
 
+#if ENABLE(MODEL_PROCESS)
 void ModelPlayer::setStageMode(StageModeOperation)
 {
 }
+#endif
 
 void ModelPlayer::beginStageModeTransform(const TransformationMatrix&)
 {

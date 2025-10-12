@@ -7,6 +7,10 @@
 //   Tests for constant folding
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "tests/test_utils/ConstantFoldingTest.h"
 
 using namespace sh;

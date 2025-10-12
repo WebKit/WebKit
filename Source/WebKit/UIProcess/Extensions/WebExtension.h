@@ -73,6 +73,9 @@ public:
 #if PLATFORM(COCOA)
     explicit WebExtension(NSBundle *appExtensionBundle, NSURL *resourceURL, RefPtr<API::Error>&);
     explicit WebExtension(NSDictionary *manifest, Resources&& = { });
+#else
+    explicit WebExtension(GFile *resourcesFile, RefPtr<API::Error>&);
+    explicit WebExtension(const JSON::Value& manifest, Resources&& = { });
 #endif
 
     explicit WebExtension(Resources&& = { });
@@ -241,8 +244,8 @@ public:
 
     String resourceMIMETypeForPath(const String&);
 
-    String resourceStringForPath(const String&, RefPtr<API::Error>&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
-    RefPtr<API::Data> resourceDataForPath(const String&, RefPtr<API::Error>&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
+    Expected<String, RefPtr<API::Error>> resourceStringForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
+    Expected<Ref<API::Data>, RefPtr<API::Error>> resourceDataForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
 
     RefPtr<WebExtensionLocalization> localization();
 
@@ -277,7 +280,7 @@ public:
     const String& sidebarTitle();
 #endif
 
-    RefPtr<WebCore::Icon> iconForPath(const String&, RefPtr<API::Error>&, WebCore::FloatSize sizeForResizing = { }, std::optional<double> displayScale = std::nullopt);
+    Expected<Ref<WebCore::Icon>, RefPtr<API::Error>> iconForPath(const String&, WebCore::FloatSize sizeForResizing = { }, std::optional<double> displayScale = std::nullopt);
 
     size_t bestIconSize(const JSON::Object&, size_t idealPixelSize);
     String pathForBestImage(const JSON::Object&, size_t idealPixelSize);
@@ -381,7 +384,7 @@ private:
 
     URL resourceFileURLForPath(const String&);
 
-    std::optional<WebExtension::DeclarativeNetRequestRulesetData> parseDeclarativeNetRequestRulesetObject(const JSON::Object&, RefPtr<API::Error>&);
+    Expected<WebExtension::DeclarativeNetRequestRulesetData, Ref<API::Error>> parseDeclarativeNetRequestRulesetObject(const JSON::Object&);
 
     InjectedContentVector m_staticInjectedContents;
     WebAccessibleResourcesVector m_webAccessibleResources;

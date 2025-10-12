@@ -261,7 +261,10 @@ namespace Inspector {
 #pragma once
 
 #include "TestProtocolObjects.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/JSONValues.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Nonmovable.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -363,6 +366,7 @@ class OptionalParameterBundle;
 class ParameterBundle;
 class ObjectWithPropertyNameConflicts;
 class DummyObject;
+class ObjectWithNullableProperties;
 enum class MouseButton;
 } // Database
 
@@ -422,14 +426,14 @@ public:
         Builder<STATE | MessageSet>& setMessage(const String& in_message)
         {
             static_assert(!(STATE & MessageSet), "property message already set");
-            m_result->setString("message"_s, in_message);
+            Ref { *m_result }->setString("message"_s, in_message);
             return castState<MessageSet>();
         }
 
         Builder<STATE | CodeSet>& setCode(int in_code)
         {
             static_assert(!(STATE & CodeSet), "property code already set");
-            m_result->setInteger("code"_s, in_code);
+            Ref { *m_result }->setInteger("code"_s, in_code);
             return castState<CodeSet>();
         }
 
@@ -606,63 +610,63 @@ public:
         Builder<STATE | ColumnNamesSet>& setColumnNames(Ref<JSON::ArrayOf<String>>&& in_columnNames)
         {
             static_assert(!(STATE & ColumnNamesSet), "property columnNames already set");
-            m_result->setArray("columnNames"_s, WTFMove(in_columnNames));
+            Ref { *m_result }->setArray("columnNames"_s, WTFMove(in_columnNames));
             return castState<ColumnNamesSet>();
         }
 
         Builder<STATE | ButtonsSet>& setButtons(Ref<JSON::ArrayOf<Protocol::Database::MouseButton>>&& in_buttons)
         {
             static_assert(!(STATE & ButtonsSet), "property buttons already set");
-            m_result->setArray("buttons"_s, WTFMove(in_buttons));
+            Ref { *m_result }->setArray("buttons"_s, WTFMove(in_buttons));
             return castState<ButtonsSet>();
         }
 
         Builder<STATE | DirectionalitySet>& setDirectionality(Directionality in_directionality)
         {
             static_assert(!(STATE & DirectionalitySet), "property directionality already set");
-            m_result->setString("directionality"_s, Protocol::TestHelpers::getEnumConstantValue(in_directionality));
+            Ref { *m_result }->setString("directionality"_s, Protocol::TestHelpers::getEnumConstantValue(in_directionality));
             return castState<DirectionalitySet>();
         }
 
         Builder<STATE | NotesSet>& setNotes(const String& in_notes)
         {
             static_assert(!(STATE & NotesSet), "property notes already set");
-            m_result->setString("notes"_s, in_notes);
+            Ref { *m_result }->setString("notes"_s, in_notes);
             return castState<NotesSet>();
         }
 
         Builder<STATE | TimestampSet>& setTimestamp(double in_timestamp)
         {
             static_assert(!(STATE & TimestampSet), "property timestamp already set");
-            m_result->setDouble("timestamp"_s, in_timestamp);
+            Ref { *m_result }->setDouble("timestamp"_s, in_timestamp);
             return castState<TimestampSet>();
         }
 
         Builder<STATE | ValuesSet>& setValues(Ref<JSON::Object>&& in_values)
         {
             static_assert(!(STATE & ValuesSet), "property values already set");
-            m_result->setObject("values"_s, WTFMove(in_values));
+            Ref { *m_result }->setObject("values"_s, WTFMove(in_values));
             return castState<ValuesSet>();
         }
 
         Builder<STATE | PayloadSet>& setPayload(Ref<JSON::Value>&& in_payload)
         {
             static_assert(!(STATE & PayloadSet), "property payload already set");
-            m_result->setValue("payload"_s, WTFMove(in_payload));
+            Ref { *m_result }->setValue("payload"_s, WTFMove(in_payload));
             return castState<PayloadSet>();
         }
 
         Builder<STATE | ErrorSet>& setError(Ref<Protocol::Database::Error>&& in_error)
         {
             static_assert(!(STATE & ErrorSet), "property error already set");
-            m_result->setObject("error"_s, WTFMove(in_error));
+            Ref { *m_result }->setObject("error"_s, WTFMove(in_error));
             return castState<ErrorSet>();
         }
 
         Builder<STATE | ErrorListSet>& setErrorList(Ref<Protocol::Database::ErrorList>&& in_errorList)
         {
             static_assert(!(STATE & ErrorListSet), "property errorList already set");
-            m_result->setArray("errorList"_s, WTFMove(in_errorList));
+            Ref { *m_result }->setArray("errorList"_s, WTFMove(in_errorList));
             return castState<ErrorListSet>();
         }
 
@@ -731,35 +735,35 @@ public:
         Builder<STATE | IntegerSet>& setInteger(const String& in_integer)
         {
             static_assert(!(STATE & IntegerSet), "property integer already set");
-            m_result->setString("integer"_s, in_integer);
+            Ref { *m_result }->setString("integer"_s, in_integer);
             return castState<IntegerSet>();
         }
 
         Builder<STATE | ArraySet>& setArray(const String& in_array)
         {
             static_assert(!(STATE & ArraySet), "property array already set");
-            m_result->setString("array"_s, in_array);
+            Ref { *m_result }->setString("array"_s, in_array);
             return castState<ArraySet>();
         }
 
         Builder<STATE | StringSet>& setString(const String& in_string)
         {
             static_assert(!(STATE & StringSet), "property string already set");
-            m_result->setString("string"_s, in_string);
+            Ref { *m_result }->setString("string"_s, in_string);
             return castState<StringSet>();
         }
 
         Builder<STATE | ValueSet>& setValue(const String& in_value)
         {
             static_assert(!(STATE & ValueSet), "property value already set");
-            m_result->setString("value"_s, in_value);
+            Ref { *m_result }->setString("value"_s, in_value);
             return castState<ValueSet>();
         }
 
         Builder<STATE | ObjectSet>& setObject(const String& in_object)
         {
             static_assert(!(STATE & ObjectSet), "property object already set");
-            m_result->setString("object"_s, in_object);
+            Ref { *m_result }->setString("object"_s, in_object);
             return castState<ObjectSet>();
         }
 
@@ -838,6 +842,90 @@ public:
     }
 };
 
+/* An object with properties that can be null. */
+class ObjectWithNullableProperties final : public JSON::ObjectBase {
+public:
+    enum {
+        NoFieldsSet = 0,
+        NullableObjectSet = 1 << 0,
+        AllFieldsSet = (NullableObjectSet)
+    };
+
+    template<int STATE>
+    class Builder {
+    private:
+        RefPtr<JSON::Object> m_result;
+
+        template<int STEP> Builder<STATE | STEP>& castState()
+        {
+            return *reinterpret_cast<Builder<STATE | STEP>*>(this);
+        }
+
+        Builder(Ref</*ObjectWithNullableProperties*/JSON::Object>&& object)
+            : m_result(WTFMove(object))
+        {
+            static_assert(STATE == NoFieldsSet, "builder created in non init state");
+        }
+        friend class ObjectWithNullableProperties;
+    public:
+
+        Builder<STATE | NullableObjectSet>& setNullableObject(Ref<Protocol::Database::DummyObject>&& in_nullableObject)
+        {
+            static_assert(!(STATE & NullableObjectSet), "property nullableObject already set");
+            Ref { *m_result }->setObject("nullableObject"_s, WTFMove(in_nullableObject));
+            return castState<NullableObjectSet>();
+        }
+
+        Builder<STATE | NullableObjectSet>& setNullableObjectIsNull()
+        {
+            static_assert(!(STATE & NullableObjectSet), "property nullableObject already set");
+            Ref { *m_result }->setValue("nullableObject"_s, JSON::Value::null());
+            return castState<NullableObjectSet>();
+        }
+
+        Ref<ObjectWithNullableProperties> release()
+        {
+            static_assert(STATE == AllFieldsSet, "result is not ready");
+            static_assert(sizeof(ObjectWithNullableProperties) == sizeof(JSON::Object), "cannot cast");
+
+            Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
+            auto result = WTFMove(*reinterpret_cast<Ref<ObjectWithNullableProperties>*>(&jsonResult));
+            return result;
+        }
+    };
+
+    /*
+     * Synthetic constructor:
+     * Ref<ObjectWithNullableProperties> result = ObjectWithNullableProperties::create()
+     *     .setNullableObject(...)
+     *     .release();
+     */
+    static Builder<NoFieldsSet> create()
+    {
+        return Builder<NoFieldsSet>(JSON::Object::create());
+    }
+
+    void setNullableObject(Ref<Protocol::Database::DummyObject>&& in_opt_nullableObject)
+    {
+        JSON::ObjectBase::setObject("nullableObject"_s, WTFMove(in_opt_nullableObject));
+    }
+
+    void setNullableObjectIsNull()
+    {
+        JSON::ObjectBase::setValue("nullableObject"_s, JSON::Value::null());
+    }
+
+    void setNullableOptionalObject(Ref<Protocol::Database::DummyObject>&& in_opt_nullableOptionalObject)
+    {
+        JSON::ObjectBase::setObject("nullableOptionalObject"_s, WTFMove(in_opt_nullableOptionalObject));
+    }
+
+    void setNullableOptionalObjectIsNull()
+    {
+        JSON::ObjectBase::setValue("nullableOptionalObject"_s, JSON::Value::null());
+    }
+};
+
 } // Database
 
 namespace Test {
@@ -884,56 +972,56 @@ public:
         Builder<STATE | DirectionalitySet>& setDirectionality(Directionality in_directionality)
         {
             static_assert(!(STATE & DirectionalitySet), "property directionality already set");
-            m_result->setString("directionality"_s, Protocol::TestHelpers::getEnumConstantValue(in_directionality));
+            Ref { *m_result }->setString("directionality"_s, Protocol::TestHelpers::getEnumConstantValue(in_directionality));
             return castState<DirectionalitySet>();
         }
 
         Builder<STATE | ButtonsSet>& setButtons(Ref<JSON::ArrayOf<Protocol::Database::MouseButton>>&& in_buttons)
         {
             static_assert(!(STATE & ButtonsSet), "property buttons already set");
-            m_result->setArray("buttons"_s, WTFMove(in_buttons));
+            Ref { *m_result }->setArray("buttons"_s, WTFMove(in_buttons));
             return castState<ButtonsSet>();
         }
 
         Builder<STATE | ColumnNamesSet>& setColumnNames(Ref<JSON::ArrayOf<String>>&& in_columnNames)
         {
             static_assert(!(STATE & ColumnNamesSet), "property columnNames already set");
-            m_result->setArray("columnNames"_s, WTFMove(in_columnNames));
+            Ref { *m_result }->setArray("columnNames"_s, WTFMove(in_columnNames));
             return castState<ColumnNamesSet>();
         }
 
         Builder<STATE | NotesSet>& setNotes(const String& in_notes)
         {
             static_assert(!(STATE & NotesSet), "property notes already set");
-            m_result->setString("notes"_s, in_notes);
+            Ref { *m_result }->setString("notes"_s, in_notes);
             return castState<NotesSet>();
         }
 
         Builder<STATE | TimestampSet>& setTimestamp(double in_timestamp)
         {
             static_assert(!(STATE & TimestampSet), "property timestamp already set");
-            m_result->setDouble("timestamp"_s, in_timestamp);
+            Ref { *m_result }->setDouble("timestamp"_s, in_timestamp);
             return castState<TimestampSet>();
         }
 
         Builder<STATE | ValuesSet>& setValues(Ref<JSON::Object>&& in_values)
         {
             static_assert(!(STATE & ValuesSet), "property values already set");
-            m_result->setObject("values"_s, WTFMove(in_values));
+            Ref { *m_result }->setObject("values"_s, WTFMove(in_values));
             return castState<ValuesSet>();
         }
 
         Builder<STATE | PayloadSet>& setPayload(Ref<JSON::Value>&& in_payload)
         {
             static_assert(!(STATE & PayloadSet), "property payload already set");
-            m_result->setValue("payload"_s, WTFMove(in_payload));
+            Ref { *m_result }->setValue("payload"_s, WTFMove(in_payload));
             return castState<PayloadSet>();
         }
 
         Builder<STATE | ErrorSet>& setError(Ref<Protocol::Database::Error>&& in_error)
         {
             static_assert(!(STATE & ErrorSet), "property error already set");
-            m_result->setObject("error"_s, WTFMove(in_error));
+            Ref { *m_result }->setObject("error"_s, WTFMove(in_error));
             return castState<ErrorSet>();
         }
 
@@ -1390,6 +1478,7 @@ using namespace Inspector;
 @class TestProtocolDatabaseParameterBundle;
 @class TestProtocolDatabaseObjectWithPropertyNameConflicts;
 @class TestProtocolDatabaseDummyObject;
+@class TestProtocolDatabaseObjectWithNullableProperties;
 @class TestProtocolTestParameterBundle;
 
 typedef NS_ENUM(NSInteger, TestProtocolDatabaseMouseButton) {
@@ -1469,6 +1558,15 @@ __attribute__((visibility ("default")))
 @interface TestProtocolDatabaseDummyObject : RWIProtocolJSONObject
 - (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
 - (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;
+@end
+
+__attribute__((visibility ("default")))
+@interface TestProtocolDatabaseObjectWithNullableProperties : RWIProtocolJSONObject
+- (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;
+- (instancetype)initWithNullableObject:(TestProtocolDatabaseDummyObject *)nullableObject;
+/* required */ @property (nonatomic, retain) TestProtocolDatabaseDummyObject *nullableObject;
+/* optional */ @property (nonatomic, retain) TestProtocolDatabaseDummyObject *nullableOptionalObject;
 @end
 __attribute__((visibility ("default")))
 @interface TestProtocolTestParameterBundle : RWIProtocolJSONObject
@@ -1722,6 +1820,7 @@ using namespace Inspector;
 + (void)_parseParameterBundle:(TestProtocolDatabaseParameterBundle **)outValue fromPayload:(id)payload;
 + (void)_parseObjectWithPropertyNameConflicts:(TestProtocolDatabaseObjectWithPropertyNameConflicts **)outValue fromPayload:(id)payload;
 + (void)_parseDummyObject:(TestProtocolDatabaseDummyObject **)outValue fromPayload:(id)payload;
++ (void)_parseObjectWithNullableProperties:(TestProtocolDatabaseObjectWithNullableProperties **)outValue fromPayload:(id)payload;
 
 @end
 @interface TestProtocolTypeConversions (TestDomain)
@@ -1774,6 +1873,12 @@ using namespace Inspector;
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSDictionary class]);
     *outValue = [[TestProtocolDatabaseDummyObject alloc] initWithPayload:payload];
+}
+
++ (void)_parseObjectWithNullableProperties:(TestProtocolDatabaseObjectWithNullableProperties **)outValue fromPayload:(id)payload
+{
+    THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSDictionary class]);
+    *outValue = [[TestProtocolDatabaseObjectWithNullableProperties alloc] initWithPayload:payload];
 }
 
 @end
@@ -2319,6 +2424,68 @@ using namespace Inspector;
         return nil;
 
     return self;
+}
+
+@end
+
+@implementation TestProtocolDatabaseObjectWithNullableProperties
+
+- (instancetype)initWithPayload:(nonnull NSDictionary<NSString *, id> *)payload
+{
+    if (!(self = [super init]))
+        return nil;
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"nullableObject"], @"nullableObject");
+    self.nullableObject = [[TestProtocolDatabaseDummyObject alloc] initWithPayload:payload[@"nullableObject"]];
+
+    self.nullableOptionalObject = [[TestProtocolDatabaseDummyObject alloc] initWithPayload:payload[@"nullableOptionalObject"]];
+
+    return self;
+}
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)object
+{
+    if (!(self = [super initWithJSONObject:[object toJSONObject].get()]))
+        return nil;
+
+    return self;
+}
+
+- (instancetype)initWithNullableObject:(TestProtocolDatabaseDummyObject *)nullableObject
+{
+    if (!(self = [super init]))
+        return nil;
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(nullableObject, @"nullableObject");
+
+    self.nullableObject = nullableObject;
+
+    return self;
+}
+
+- (void)setNullableObject:(TestProtocolDatabaseDummyObject *)nullableObject
+{
+    [super setObject:nullableObject forKey:@"nullableObject"];
+}
+
+- (TestProtocolDatabaseDummyObject *)nullableObject
+{
+    RWIProtocolJSONObject *object = [super objectForKey:@"nullableObject"];
+    if (!object)
+        return nil;
+    return [[TestProtocolDatabaseDummyObject alloc] initWithJSONObject:[[super objectForKey:@"nullableObject"] toJSONObject].get()];
+}
+
+- (void)setNullableOptionalObject:(TestProtocolDatabaseDummyObject *)nullableOptionalObject
+{
+    [super setObject:nullableOptionalObject forKey:@"nullableOptionalObject"];
+}
+
+- (TestProtocolDatabaseDummyObject *)nullableOptionalObject
+{
+    RWIProtocolJSONObject *object = [super objectForKey:@"nullableOptionalObject"];
+    if (!object)
+        return nil;
+    return [[TestProtocolDatabaseDummyObject alloc] initWithJSONObject:[[super objectForKey:@"nullableOptionalObject"] toJSONObject].get()];
 }
 
 @end

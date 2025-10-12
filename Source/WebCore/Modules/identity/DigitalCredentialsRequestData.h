@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "DigitalCredentialsProtocols.h"
-#include "MobileDocumentRequest.h"
-#include "OpenID4VPRequest.h"
-#include "SecurityOriginData.h"
+#include <WebCore/DigitalCredentialsProtocols.h>
+#include <WebCore/MobileDocumentRequest.h>
+#include <WebCore/OpenID4VPRequest.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

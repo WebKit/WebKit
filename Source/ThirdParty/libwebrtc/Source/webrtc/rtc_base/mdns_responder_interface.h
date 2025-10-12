@@ -12,7 +12,6 @@
 #define RTC_BASE_MDNS_RESPONDER_INTERFACE_H_
 
 #include <functional>
-#include <string>
 
 #include "absl/strings/string_view.h"
 #include "rtc_base/ip_address.h"
@@ -24,7 +23,7 @@ namespace webrtc {
 class MdnsResponderInterface {
  public:
   using NameCreatedCallback =
-      std::function<void(const rtc::IPAddress&, absl::string_view)>;
+      std::function<void(const IPAddress&, absl::string_view)>;
   using NameRemovedCallback = std::function<void(bool)>;
 
   MdnsResponderInterface() = default;
@@ -34,7 +33,7 @@ class MdnsResponderInterface {
   // there is no name mapped to it by this responder, and initializes the
   // reference count of this name to one. Otherwise the existing name mapped to
   // `addr` is returned and its reference count is incremented by one.
-  virtual void CreateNameForAddress(const rtc::IPAddress& addr,
+  virtual void CreateNameForAddress(const IPAddress& addr,
                                     NameCreatedCallback callback) = 0;
   // Decrements the reference count of the mapped name of `addr`, if
   // there is a map created previously via CreateNameForAddress; asynchronously
@@ -42,7 +41,7 @@ class MdnsResponderInterface {
   // true via `callback` if the decremented reference count reaches zero.
   // Otherwise no operation is done and false is returned via `callback`
   // asynchronously.
-  virtual void RemoveNameForAddress(const rtc::IPAddress& addr,
+  virtual void RemoveNameForAddress(const IPAddress& addr,
                                     NameRemovedCallback callback) = 0;
 };
 

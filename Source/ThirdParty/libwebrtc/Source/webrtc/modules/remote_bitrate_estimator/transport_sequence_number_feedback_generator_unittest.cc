@@ -13,13 +13,15 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
-#include <utility>
+#include <vector>
 
-#include "api/transport/test/mock_network_control.h"
+#include "api/rtp_headers.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
@@ -79,9 +81,7 @@ std::vector<Timestamp> Timestamps(
 class TransportSequenceNumberFeedbackGeneneratorTest : public ::testing::Test {
  public:
   TransportSequenceNumberFeedbackGeneneratorTest()
-      : clock_(0),
-        feedback_generator_(feedback_sender_.AsStdFunction(),
-                            &network_state_estimator_) {}
+      : clock_(0), feedback_generator_(feedback_sender_.AsStdFunction()) {}
 
  protected:
   void IncomingPacket(uint16_t seq,
@@ -107,8 +107,7 @@ class TransportSequenceNumberFeedbackGeneneratorTest : public ::testing::Test {
     map.Register<TransportSequenceNumberV2>(1);
     RtpPacketReceived packet(&map, arrival_time);
     packet.SetSsrc(kMediaSsrc);
-    packet.SetExtension<webrtc::TransportSequenceNumberV2>(seq,
-                                                           feedback_request);
+    packet.SetExtension<TransportSequenceNumberV2>(seq, feedback_request);
     feedback_generator_.OnReceivedPacket(packet);
   }
 
@@ -120,7 +119,6 @@ class TransportSequenceNumberFeedbackGeneneratorTest : public ::testing::Test {
   SimulatedClock clock_;
   MockFunction<void(std::vector<std::unique_ptr<rtcp::RtcpPacket>>)>
       feedback_sender_;
-  ::testing::NiceMock<MockNetworkStateEstimator> network_state_estimator_;
   TransportSequenceNumberFeedbackGenenerator feedback_generator_;
 };
 
@@ -594,105 +592,6 @@ TEST_F(RemoteEstimatorProxyOnRequestTest,
       /*include_timestamps=*/true, /*sequence_count=*/5};
   IncomingPacketV2(kBaseSeq + i, kBaseTime + i * kMaxSmallDelta,
                    kFivePacketsFeedbackRequest);
-}
-
-TEST_F(TransportSequenceNumberFeedbackGeneneratorTest,
-       ReportsIncomingPacketToNetworkStateEstimator) {
-  const DataSize kPacketOverhead = DataSize::Bytes(38);
-  feedback_generator_.SetTransportOverhead(kPacketOverhead);
-
-  EXPECT_CALL(network_state_estimator_, OnReceivedPacket)
-      .WillOnce([&](const PacketResult& packet) {
-        EXPECT_EQ(packet.receive_time, kBaseTime);
-        EXPECT_GT(packet.sent_packet.size, kPacketOverhead);
-        // Expect first send time to be equal to the arrival time.
-        EXPECT_EQ(packet.sent_packet.send_time, kBaseTime);
-      });
-  IncomingPacket(kBaseSeq, kBaseTime, AbsoluteSendTime::To24Bits(kBaseTime));
-}
-
-TEST_F(TransportSequenceNumberFeedbackGeneneratorTest,
-       IncomingPacketHandlesWrapInAbsSendTime) {
-  // abs send time use 24bit precision.
-  const uint32_t kFirstAbsSendTime =
-      AbsoluteSendTime::To24Bits(Timestamp::Millis((1 << 24) - 30));
-  // Second abs send time has wrapped.
-  const uint32_t kSecondAbsSendTime =
-      AbsoluteSendTime::To24Bits(Timestamp::Millis(1 << 24));
-  const TimeDelta kExpectedAbsSendTimeDelta = TimeDelta::Millis(30);
-
-  Timestamp first_send_timestamp = Timestamp::Zero();
-  EXPECT_CALL(network_state_estimator_, OnReceivedPacket)
-      .WillOnce([&](const PacketResult& packet) {
-        EXPECT_EQ(packet.receive_time, kBaseTime);
-        first_send_timestamp = packet.sent_packet.send_time;
-      });
-  IncomingPacket(kBaseSeq, kBaseTime, kFirstAbsSendTime);
-
-  EXPECT_CALL(network_state_estimator_, OnReceivedPacket)
-      .WillOnce([&](const PacketResult& packet) {
-        EXPECT_EQ(packet.receive_time, kBaseTime + TimeDelta::Millis(123));
-        EXPECT_EQ(packet.sent_packet.send_time.ms(),
-                  (first_send_timestamp + kExpectedAbsSendTimeDelta).ms());
-      });
-  IncomingPacket(kBaseSeq + 1, kBaseTime + TimeDelta::Millis(123),
-                 kSecondAbsSendTime);
-}
-
-TEST_F(TransportSequenceNumberFeedbackGeneneratorTest,
-       IncomingPacketHandlesReorderedPackets) {
-  const uint32_t kFirstAbsSendTime =
-      AbsoluteSendTime::To24Bits(Timestamp::Millis((1 << 12)));
-  Timestamp first_send_timestamp = Timestamp::Zero();
-  EXPECT_CALL(network_state_estimator_, OnReceivedPacket)
-      .WillOnce([&](const PacketResult& packet) {
-        EXPECT_EQ(packet.receive_time, kBaseTime);
-        first_send_timestamp = packet.sent_packet.send_time;
-      });
-  IncomingPacket(kBaseSeq + 1, kBaseTime, kFirstAbsSendTime);
-
-  const TimeDelta kExpectedAbsSendTimeDelta = -TimeDelta::Millis(30);
-  const uint32_t kSecondAbsSendTime = AbsoluteSendTime::To24Bits(
-      Timestamp::Millis(1 << 12) + kExpectedAbsSendTimeDelta);
-  EXPECT_CALL(network_state_estimator_, OnReceivedPacket)
-      .WillOnce([&](const PacketResult& packet) {
-        EXPECT_EQ(packet.sent_packet.send_time.ms(),
-                  (first_send_timestamp + kExpectedAbsSendTimeDelta).ms());
-      });
-  IncomingPacket(kBaseSeq, kBaseTime + TimeDelta::Millis(123),
-                 kSecondAbsSendTime);
-}
-
-TEST_F(TransportSequenceNumberFeedbackGeneneratorTest,
-       IncomingPacketResetSendTimeToArrivalTimeAfterLargeArrivaltimeDelta) {
-  const uint32_t kFirstAbsSendTime =
-      AbsoluteSendTime::To24Bits(Timestamp::Millis((1 << 12)));
-  EXPECT_CALL(network_state_estimator_, OnReceivedPacket)
-      .WillOnce([&](const PacketResult& packet) {
-        EXPECT_EQ(packet.receive_time, kBaseTime);
-        EXPECT_EQ(packet.sent_packet.send_time, kBaseTime);
-      });
-  IncomingPacket(kBaseSeq + 1, kBaseTime, kFirstAbsSendTime);
-
-  EXPECT_CALL(network_state_estimator_, OnReceivedPacket)
-      .WillOnce([&](const PacketResult& packet) {
-        EXPECT_EQ(packet.receive_time, kBaseTime + TimeDelta::Seconds(20));
-        EXPECT_EQ(packet.sent_packet.send_time,
-                  kBaseTime + TimeDelta::Seconds(20));
-      });
-  IncomingPacket(kBaseSeq, kBaseTime + TimeDelta::Seconds(20),
-                 kFirstAbsSendTime + 123);
-}
-
-TEST_F(TransportSequenceNumberFeedbackGeneneratorTest,
-       SendTransportFeedbackAndNetworkStateUpdate) {
-  IncomingPacket(kBaseSeq, kBaseTime,
-                 AbsoluteSendTime::To24Bits(kBaseTime - TimeDelta::Millis(1)));
-
-  EXPECT_CALL(network_state_estimator_, GetCurrentEstimate())
-      .WillOnce(Return(NetworkStateEstimate()));
-  EXPECT_CALL(feedback_sender_, Call(SizeIs(2)));
-  Process();
 }
 
 }  // namespace

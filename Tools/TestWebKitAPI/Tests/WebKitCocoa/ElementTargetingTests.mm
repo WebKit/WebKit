@@ -648,6 +648,14 @@ TEST(ElementTargeting, RequestTargetedElementsBySearchableText)
     EXPECT_TRUE([targetFromSearchText isSameElement:[[webView targetedElementInfoWithText:searchableText] firstObject]]);
 }
 
+TEST(ElementTargeting, TargetedElementWithInvalidURLShouldNotCrash)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-13"];
+    RetainPtr targetFromHitTest = [[webView targetedElementInfoAt:CGPointMake(100, 100)] firstObject];
+    EXPECT_EQ([[targetFromHitTest mediaAndLinkURLs] count], 0U);
+}
+
 TEST(ElementTargeting, AdjustVisibilityAfterRecreatingElement)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);

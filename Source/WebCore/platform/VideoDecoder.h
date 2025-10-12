@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "PlatformVideoColorSpace.h"
-#include "ProcessIdentity.h"
+#include <WebCore/PlatformVideoColorSpace.h>
+#include <WebCore/ProcessIdentity.h>
 #include <span>
 #include <wtf/CompletionHandler.h>
 #include <wtf/NativePromise.h>

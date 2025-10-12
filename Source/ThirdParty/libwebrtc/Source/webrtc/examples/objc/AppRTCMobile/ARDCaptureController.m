@@ -22,7 +22,8 @@ const Float64 kFramerateLimit = 30.0;
   BOOL _usingFrontCamera;
 }
 
-- (instancetype)initWithCapturer:(RTC_OBJC_TYPE(RTCCameraVideoCapturer) *)capturer
+- (instancetype)initWithCapturer:
+                    (RTC_OBJC_TYPE(RTCCameraVideoCapturer) *)capturer
                         settings:(ARDSettingsModel *)settings {
   self = [super init];
   if (self) {
@@ -38,8 +39,9 @@ const Float64 kFramerateLimit = 30.0;
 }
 
 - (void)startCapture:(void (^)(NSError *))completion {
-  AVCaptureDevicePosition position =
-      _usingFrontCamera ? AVCaptureDevicePositionFront : AVCaptureDevicePositionBack;
+  AVCaptureDevicePosition position = _usingFrontCamera ?
+      AVCaptureDevicePositionFront :
+      AVCaptureDevicePositionBack;
   AVCaptureDevice *device = [self findDeviceForPosition:position];
   AVCaptureDeviceFormat *format = [self selectFormatForDevice:device];
 
@@ -52,7 +54,10 @@ const Float64 kFramerateLimit = 30.0;
 
   NSInteger fps = [self selectFpsForFormat:format];
 
-  [_capturer startCaptureWithDevice:device format:format fps:fps completionHandler:completion];
+  [_capturer startCaptureWithDevice:device
+                             format:format
+                                fps:fps
+                  completionHandler:completion];
 }
 
 - (void)stopCapture {
@@ -91,13 +96,17 @@ const Float64 kFramerateLimit = 30.0;
   int currentDiff = INT_MAX;
 
   for (AVCaptureDeviceFormat *format in formats) {
-    CMVideoDimensions dimension = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
-    FourCharCode pixelFormat = CMFormatDescriptionGetMediaSubType(format.formatDescription);
-    int diff = abs(targetWidth - dimension.width) + abs(targetHeight - dimension.height);
+    CMVideoDimensions dimension =
+        CMVideoFormatDescriptionGetDimensions(format.formatDescription);
+    FourCharCode pixelFormat =
+        CMFormatDescriptionGetMediaSubType(format.formatDescription);
+    int diff = abs(targetWidth - dimension.width) +
+        abs(targetHeight - dimension.height);
     if (diff < currentDiff) {
       selectedFormat = format;
       currentDiff = diff;
-    } else if (diff == currentDiff && pixelFormat == [_capturer preferredOutputPixelFormat]) {
+    } else if (diff == currentDiff &&
+               pixelFormat == [_capturer preferredOutputPixelFormat]) {
       selectedFormat = format;
     }
   }

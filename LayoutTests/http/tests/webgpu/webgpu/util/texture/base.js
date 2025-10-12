@@ -207,6 +207,7 @@ export function defaultViewDimensionsForTexture(textureDescriptor) {
  */
 export function reifyTextureDescriptor(
 desc)
+
 {
   return { dimension: '2d', mipLevelCount: 1, sampleCount: 1, ...desc };
 }

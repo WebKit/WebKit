@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,14 +26,15 @@
 #include "config.h"
 #include "StyleOriginatedAnimation.h"
 
-#include "Animation.h"
 #include "CSSAnimation.h"
 #include "CSSTransition.h"
 #include "DocumentTimeline.h"
 #include "Element.h"
 #include "EventNames.h"
+#include "EventTargetInlines.h"
 #include "KeyframeEffect.h"
 #include "Logging.h"
+#include "NodeDocument.h"
 #include "RenderStyle.h"
 #include "StyleOriginatedAnimationEvent.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -43,11 +44,10 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StyleOriginatedAnimation);
 
-StyleOriginatedAnimation::StyleOriginatedAnimation(const Styleable& styleable, const Animation& backingAnimation)
+StyleOriginatedAnimation::StyleOriginatedAnimation(const Styleable& styleable)
     : WebAnimation(styleable.element.document())
     , m_owningElement(styleable.element)
     , m_owningPseudoElementIdentifier(styleable.pseudoElementIdentifier)
-    , m_backingAnimation(const_cast<Animation&>(backingAnimation))
 {
 }
 
@@ -97,12 +97,6 @@ void StyleOriginatedAnimation::disassociateFromOwningElement()
     m_owningElement = nullptr;
 }
 
-void StyleOriginatedAnimation::setBackingAnimation(const Animation& backingAnimation)
-{
-    m_backingAnimation = const_cast<Animation&>(backingAnimation);
-    syncPropertiesWithBackingAnimation();
-}
-
 void StyleOriginatedAnimation::initialize(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext& resolutionContext)
 {
     WebAnimation::initialize();
@@ -119,7 +113,7 @@ void StyleOriginatedAnimation::initialize(const RenderStyle* oldStyle, const Ren
     setTimeline(&m_owningElement->document().timeline());
     effect->computeStyleOriginatedAnimationBlendingKeyframes(oldStyle, newStyle, resolutionContext);
     syncPropertiesWithBackingAnimation();
-    if (backingAnimation().playState() == AnimationPlayState::Playing)
+    if (backingAnimationPlayState() == AnimationPlayState::Running)
         play();
     else
         pause();
@@ -187,8 +181,8 @@ ExceptionOr<void> StyleOriginatedAnimation::bindingsPause()
 
 void StyleOriginatedAnimation::flushPendingStyleChanges() const
 {
-    if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(effect())) {
-        if (auto* target = keyframeEffect->target())
+    if (RefPtr keyframeEffect = dynamicDowncast<KeyframeEffect>(effect())) {
+        if (RefPtr target = keyframeEffect->target())
             target->document().updateStyleIfNeeded();
     }
 }
@@ -231,14 +225,14 @@ AnimationEffectPhase StyleOriginatedAnimation::phaseWithoutEffect() const
 
 WebAnimationTime StyleOriginatedAnimation::effectTimeAtStart() const
 {
-    if (auto* effect = this->effect())
+    if (RefPtr effect = this->effect())
         return effect->delay();
     return 0_s;
 }
 
 WebAnimationTime StyleOriginatedAnimation::effectTimeAtIteration(double iteration) const
 {
-    if (auto* effect = this->effect()) {
+    if (RefPtr effect = this->effect()) {
         auto iterationDuration = effect->iterationDuration();
         // We need not account for delay with progress-based animations as the
         // Web Animations spec does not specify how to account for them.
@@ -251,7 +245,7 @@ WebAnimationTime StyleOriginatedAnimation::effectTimeAtIteration(double iteratio
 
 WebAnimationTime StyleOriginatedAnimation::effectTimeAtEnd() const
 {
-    if (auto* effect = this->effect())
+    if (RefPtr effect = this->effect())
         return effect->endTime();
     return 0_s;
 }
@@ -261,7 +255,7 @@ template<typename F> void StyleOriginatedAnimation::invalidateDOMEvents(F&& call
     WebAnimationTime cancelationTime = 0_s;
 
     if (m_owningElement) {
-        if (auto* animationEffect = effect()) {
+        if (RefPtr animationEffect = effect()) {
             if (auto activeTime = animationEffect->getBasicTiming().activeTime)
                 cancelationTime = *activeTime;
         }
@@ -286,7 +280,7 @@ void StyleOriginatedAnimation::invalidateDOMEvents(WebAnimationTime cancelationT
     WebAnimationTime intervalStart;
     WebAnimationTime intervalEnd;
 
-    auto* animationEffect = effect();
+    RefPtr animationEffect = effect();
     if (animationEffect) {
         auto timing = animationEffect->getComputedTiming();
         if (auto computedIteration = timing.currentIteration)
@@ -385,7 +379,7 @@ void StyleOriginatedAnimation::enqueueDOMEvent(const AtomString& eventType, WebA
         return;
 
     auto scheduledTimelineTime = [&]() -> std::optional<Seconds> {
-        if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(timeline())) {
+        if (RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(timeline())) {
             ASSERT(scheduledEffectTime.time());
             if (auto scheduledAnimationTime = convertAnimationTimeToTimelineTime(*scheduledEffectTime.time()))
                 return documentTimeline->convertTimelineTimeToOriginRelativeTime(*scheduledAnimationTime);

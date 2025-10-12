@@ -14,7 +14,10 @@
         const promise = new Promise((resolve, reject) => {
             let count = 0;
             let blobs = [];
-            recorder.ondataavailable = (e) => resolve(e.data);
+            recorder.ondataavailable = (e) => {
+                stream.getTracks().forEach(track => track.stop());
+                resolve(e.data);
+            }
             setTimeout(() => reject("datavailable event timed out"), 15000);
         });
         recorder.start();

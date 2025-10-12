@@ -11,16 +11,13 @@
 #ifndef MODULES_AUDIO_PROCESSING_LOGGING_APM_DATA_DUMPER_H_
 #define MODULES_AUDIO_PROCESSING_LOGGING_APM_DATA_DUMPER_H_
 
-#include <stdint.h>
-#include <stdio.h>
-
+#include <cstdint>
+#include <cstdio>
 #if WEBRTC_APM_DEBUG_DUMP == 1
 #include <memory>
 #include <string>
 #include <unordered_map>
 #endif
-
-#include <optional>
 
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
@@ -93,7 +90,7 @@ class ApmDataDumper {
       [[maybe_unused]] absl::string_view output_dir) {
 #if WEBRTC_APM_DEBUG_DUMP == 1
     RTC_CHECK_LT(output_dir.size(), kOutputDirMaxLength);
-    rtc::strcpyn(output_dir_, kOutputDirMaxLength, output_dir);
+    strcpyn(output_dir_, kOutputDirMaxLength, output_dir);
 #endif
   }
 
@@ -137,7 +134,7 @@ class ApmDataDumper {
   }
 
   void DumpRaw([[maybe_unused]] absl::string_view name,
-               [[maybe_unused]] rtc::ArrayView<const double> v,
+               [[maybe_unused]] ArrayView<const double> v,
                [[maybe_unused]] int dump_set = kDefaultDumpSet) {
 #if WEBRTC_APM_DEBUG_DUMP == 1
     if (dump_set_to_use_ && *dump_set_to_use_ != dump_set)
@@ -179,7 +176,7 @@ class ApmDataDumper {
   }
 
   void DumpRaw([[maybe_unused]] absl::string_view name,
-               [[maybe_unused]] rtc::ArrayView<const float> v,
+               [[maybe_unused]] ArrayView<const float> v,
                [[maybe_unused]] int dump_set = kDefaultDumpSet) {
 #if WEBRTC_APM_DEBUG_DUMP == 1
     if (dump_set_to_use_ && *dump_set_to_use_ != dump_set)
@@ -223,7 +220,7 @@ class ApmDataDumper {
   }
 
   void DumpRaw([[maybe_unused]] absl::string_view name,
-               [[maybe_unused]] rtc::ArrayView<const bool> v,
+               [[maybe_unused]] ArrayView<const bool> v,
                [[maybe_unused]] int dump_set = kDefaultDumpSet) {
 #if WEBRTC_APM_DEBUG_DUMP == 1
     if (dump_set_to_use_ && *dump_set_to_use_ != dump_set)
@@ -265,7 +262,7 @@ class ApmDataDumper {
   }
 
   void DumpRaw([[maybe_unused]] absl::string_view name,
-               [[maybe_unused]] rtc::ArrayView<const int16_t> v,
+               [[maybe_unused]] ArrayView<const int16_t> v,
                [[maybe_unused]] int dump_set = kDefaultDumpSet) {
 #if WEBRTC_APM_DEBUG_DUMP == 1
     if (dump_set_to_use_ && *dump_set_to_use_ != dump_set)
@@ -336,7 +333,7 @@ class ApmDataDumper {
   }
 
   void DumpRaw([[maybe_unused]] absl::string_view name,
-               [[maybe_unused]] rtc::ArrayView<const int32_t> v,
+               [[maybe_unused]] ArrayView<const int32_t> v,
                [[maybe_unused]] int dump_set = kDefaultDumpSet) {
 #if WEBRTC_APM_DEBUG_DUMP == 1
     if (dump_set_to_use_ && *dump_set_to_use_ != dump_set)
@@ -348,9 +345,9 @@ class ApmDataDumper {
 #endif
   }
 
-  void DumpRaw(absl::string_view /* name */,
-               rtc::ArrayView<const size_t> /* v */,
-               int /* dump_set */ = kDefaultDumpSet) {
+  void DumpRaw(absl::string_view name,
+               ArrayView<const size_t> v,
+               int dump_set = kDefaultDumpSet) {
 #if WEBRTC_APM_DEBUG_DUMP == 1
     if (dump_set_to_use_ && *dump_set_to_use_ != dump_set)
       return;
@@ -378,7 +375,7 @@ class ApmDataDumper {
   }
 
   void DumpWav([[maybe_unused]] absl::string_view name,
-               [[maybe_unused]] rtc::ArrayView<const float> v,
+               [[maybe_unused]] ArrayView<const float> v,
                [[maybe_unused]] int sample_rate_hz,
                [[maybe_unused]] int num_channels,
                [[maybe_unused]] int dump_set = kDefaultDumpSet) {

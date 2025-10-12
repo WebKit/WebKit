@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/dangling-html-or-body.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/dangling-html-or-body.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/nonce-hiding-move-document.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/nonces.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/nonce-hiding/nonces.html.headers

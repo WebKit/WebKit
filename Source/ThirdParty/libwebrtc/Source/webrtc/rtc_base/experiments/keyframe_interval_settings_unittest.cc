@@ -10,26 +10,25 @@
 
 #include "rtc_base/experiments/keyframe_interval_settings.h"
 
-#include "test/explicit_key_value_config.h"
+#include "api/field_trials.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
 
-using test::ExplicitKeyValueConfig;
 
 TEST(KeyframeIntervalSettingsTest, ParsesMinKeyframeSendIntervalMs) {
-  EXPECT_FALSE(KeyframeIntervalSettings(ExplicitKeyValueConfig(""))
-                   .MinKeyframeSendIntervalMs());
+  EXPECT_FALSE(
+      KeyframeIntervalSettings(FieldTrials("")).MinKeyframeSendIntervalMs());
 
-  ExplicitKeyValueConfig field_trials(
+  FieldTrials field_trials(
       "WebRTC-KeyframeInterval/min_keyframe_send_interval_ms:100/");
   EXPECT_EQ(KeyframeIntervalSettings(field_trials).MinKeyframeSendIntervalMs(),
             100);
 }
 
 TEST(KeyframeIntervalSettingsTest, DoesNotParseIncorrectValues) {
-  ExplicitKeyValueConfig field_trials(
+  FieldTrials field_trials(
       "WebRTC-KeyframeInterval/min_keyframe_send_interval_ms:a/");
   EXPECT_FALSE(
       KeyframeIntervalSettings(field_trials).MinKeyframeSendIntervalMs());

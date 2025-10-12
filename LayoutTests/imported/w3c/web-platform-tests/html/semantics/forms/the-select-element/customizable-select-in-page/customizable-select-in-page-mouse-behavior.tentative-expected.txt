@@ -1,0 +1,7 @@
+
+
+FAIL mouse: input behavior for base appearance <select multiple> assert_equals: There should be two selected options after second click. expected 2 but got 1
+FAIL mouse: input behavior for base appearance <select size=4> assert_equals: There should be no selected options after third click. expected 0 but got 1
+FAIL touch: input behavior for base appearance <select multiple> assert_equals: There should be one selected option after first click. expected 1 but got 0
+FAIL touch: input behavior for base appearance <select size=4> assert_equals: There should be one selected option after first click. expected 1 but got 0
+

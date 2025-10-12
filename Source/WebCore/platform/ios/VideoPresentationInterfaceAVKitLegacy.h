@@ -25,9 +25,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
 
-#include "VideoPresentationInterfaceIOS.h"
+#include <WebCore/VideoPresentationInterfaceIOS.h>
 #include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS AVPlayerViewController;

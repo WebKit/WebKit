@@ -76,6 +76,11 @@ void RecorderImpl::save(GraphicsContextState::Purpose purpose)
 
 void RecorderImpl::restore(GraphicsContextState::Purpose purpose)
 {
+    if (stateStack().size() <= 1) {
+        LOG_ERROR("ERROR void RecorderImpl::restore() stack is empty");
+        return;
+    }
+
     if (!updateStateForRestore(purpose))
         return;
     m_items.append(Restore());
@@ -194,6 +199,14 @@ void RecorderImpl::drawGlyphs(const Font& font, std::span<const GlyphBufferGlyph
 {
     if (decomposeDrawGlyphsIfNeeded(font, glyphs, advances, localAnchor, smoothingMode))
         return;
+
+#if USE(SKIA)
+    if (drawGlyphsMode() == Recorder::DrawGlyphsMode::TextBlob) {
+        m_items.append(DrawTextBlob(Ref { font }, Vector(glyphs), Vector(advances), localAnchor, smoothingMode));
+        return;
+    }
+#endif
+
     drawGlyphsImmediate(font, glyphs, advances, localAnchor, smoothingMode);
 }
 
@@ -201,12 +214,6 @@ void RecorderImpl::drawGlyphsImmediate(const Font& font, std::span<const GlyphBu
 {
     appendStateChangeItemIfNecessary();
     m_items.append(DrawGlyphs(Ref { font }, Vector(glyphs), Vector(advances), localAnchor, smoothingMode));
-}
-
-void RecorderImpl::drawDecomposedGlyphs(const Font& font, const DecomposedGlyphs& decomposedGlyphs)
-{
-    appendStateChangeItemIfNecessary();
-    m_items.append(DrawDecomposedGlyphs(Ref { font }, Ref { decomposedGlyphs }));
 }
 
 void RecorderImpl::drawDisplayList(const DisplayList& displayList, ControlFactory&)
@@ -221,7 +228,7 @@ void RecorderImpl::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& de
     m_items.append(DrawImageBuffer(imageBuffer, destRect, srcRect, options));
 }
 
-void RecorderImpl::drawNativeImageInternal(NativeImage& image, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void RecorderImpl::drawNativeImage(NativeImage& image, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     appendStateChangeItemIfNecessary();
     m_items.append(DrawNativeImage(image, destRect, srcRect, options));
@@ -259,8 +266,8 @@ void RecorderImpl::beginTransparencyLayer(CompositeOperator compositeOperator, B
 
 void RecorderImpl::endTransparencyLayer()
 {
-    updateStateForEndTransparencyLayer();
-    m_items.append(EndTransparencyLayer());
+    if (updateStateForEndTransparencyLayer())
+        m_items.append(EndTransparencyLayer());
 }
 
 void RecorderImpl::drawRect(const FloatRect& rect, float lineWidth)
@@ -425,10 +432,10 @@ void RecorderImpl::applyDeviceScaleFactor(float scaleFactor)
     m_items.append(ApplyDeviceScaleFactor(scaleFactor));
 }
 
-void RecorderImpl::beginPage(const IntSize& pageSize)
+void RecorderImpl::beginPage(const FloatRect& pageRect)
 {
     appendStateChangeItemIfNecessary();
-    m_items.append(BeginPage({ pageSize }));
+    m_items.append(BeginPage({ pageRect }));
 }
 
 void RecorderImpl::endPage()
@@ -487,6 +494,11 @@ void RecorderImpl::appendStateChangeItemIfNecessary()
 
     state.didApplyChanges();
     currentState().lastDrawingState = state;
+}
+
+void RecorderImpl::drawPlaceholder(Function<void(GraphicsContext&)>&& function)
+{
+    m_items.append(DrawPlaceholder(WTFMove(function)));
 }
 
 } // namespace DisplayList

@@ -33,10 +33,6 @@ namespace WebKit {
 class JavaScriptEvaluationResult;
 }
 
-namespace API {
-class SerializedScriptValue;
-}
-
 namespace WebCore {
 struct ExceptionDetails;
 }

@@ -38,6 +38,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/requiredextensions-xhtml.tentative.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/svg-getIntersectionList-001-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/svg-getIntersectionList-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/sync-svg-attributes-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/sync-svg-attributes-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/sync-svg-attributes.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-a-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-a.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-adopted-with-external-resource.tentative-expected.svg
@@ -52,6 +55,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-data-url.tentative.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-encoding-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-encoding.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-event-handler-no-loss-of-events-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-event-handler-no-loss-of-events-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-event-handler-no-loss-of-events.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-html-resource-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-html-resource-with-content-type-svg-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-html-resource-with-content-type-svg.html
@@ -86,6 +92,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-svg-dimensions-override-001.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-svg-dimensions-override-002-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-svg-dimensions-override-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-svg-inline-css-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-svg-inline-css.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-switch-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-switch.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-symbol-dimensions-override-001-expected.svg
@@ -94,3 +102,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-symbol-dimensions-override-002.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-symbol-display-none-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-symbol-display-none.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-symbol-inline-css-001-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-symbol-inline-css-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-symbol-inline-css-002-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-symbol-inline-css-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-symbol-inline-css-003-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-symbol-inline-css-003.svg

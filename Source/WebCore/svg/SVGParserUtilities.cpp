@@ -150,12 +150,12 @@ template <typename CharacterType, typename FloatType = float> static std::option
     return number;
 }
 
-std::optional<float> parseNumber(StringParsingBuffer<LChar>& buffer, SuffixSkippingPolicy skip)
+std::optional<float> parseNumber(StringParsingBuffer<Latin1Character>& buffer, SuffixSkippingPolicy skip)
 {
     return genericParseNumber(buffer, skip);
 }
 
-std::optional<float> parseNumber(StringParsingBuffer<UChar>& buffer, SuffixSkippingPolicy skip)
+std::optional<float> parseNumber(StringParsingBuffer<char16_t>& buffer, SuffixSkippingPolicy skip)
 {
     return genericParseNumber(buffer, skip);
 }
@@ -193,12 +193,12 @@ template <typename CharacterType> std::optional<bool> genericParseArcFlag(String
     return flag;
 }
 
-std::optional<bool> parseArcFlag(StringParsingBuffer<LChar>& buffer)
+std::optional<bool> parseArcFlag(StringParsingBuffer<Latin1Character>& buffer)
 {
     return genericParseArcFlag(buffer);
 }
 
-std::optional<bool> parseArcFlag(StringParsingBuffer<UChar>& buffer)
+std::optional<bool> parseArcFlag(StringParsingBuffer<char16_t>& buffer)
 {
     return genericParseArcFlag(buffer);
 }
@@ -269,14 +269,14 @@ std::optional<FloatRect> parseRect(StringView string)
     });
 }
 
-std::optional<UncheckedKeyHashSet<String>> parseGlyphName(StringView string)
+std::optional<HashSet<String>> parseGlyphName(StringView string)
 {
     // FIXME: Parsing error detection is missing.
 
     return readCharactersForParsing(string, [](auto buffer) {
         skipOptionalSVGSpaces(buffer);
 
-        UncheckedKeyHashSet<String> values;
+        HashSet<String> values;
 
         while (buffer.hasCharactersRemaining()) {
             // Leading and trailing white space, and white space before and after separators, will be ignored.
@@ -372,13 +372,13 @@ template<typename CharacterType> static std::optional<UnicodeRange> parseUnicode
     return range;
 }
 
-std::optional<std::pair<UnicodeRanges, UncheckedKeyHashSet<String>>> parseKerningUnicodeString(StringView string)
+std::optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeString(StringView string)
 {
     // FIXME: Parsing error detection is missing.
 
-    return readCharactersForParsing(string, [](auto buffer) -> std::pair<UnicodeRanges, UncheckedKeyHashSet<String>> {
+    return readCharactersForParsing(string, [](auto buffer) -> std::pair<UnicodeRanges, HashSet<String>> {
         UnicodeRanges rangeList;
-        UncheckedKeyHashSet<String> stringList;
+        HashSet<String> stringList;
 
         while (1) {
             auto inputStart = buffer.position();
@@ -417,12 +417,12 @@ template <typename CharacterType> static std::optional<FloatPoint> genericParseF
     return FloatPoint { *x, *y };
 }
 
-std::optional<FloatPoint> parseFloatPoint(StringParsingBuffer<LChar>& buffer)
+std::optional<FloatPoint> parseFloatPoint(StringParsingBuffer<Latin1Character>& buffer)
 {
     return genericParseFloatPoint(buffer);
 }
 
-std::optional<FloatPoint> parseFloatPoint(StringParsingBuffer<UChar>& buffer)
+std::optional<FloatPoint> parseFloatPoint(StringParsingBuffer<char16_t>& buffer)
 {
     return genericParseFloatPoint(buffer);
 }

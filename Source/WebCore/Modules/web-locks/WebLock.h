@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "ProcessQualified.h"
-#include "WebLockIdentifier.h"
-#include "WebLockMode.h"
+#include <WebCore/ProcessQualified.h>
+#include <WebCore/WebLockIdentifier.h>
+#include <WebCore/WebLockMode.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

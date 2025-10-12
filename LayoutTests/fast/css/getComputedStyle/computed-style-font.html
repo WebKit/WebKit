@@ -10,78 +10,44 @@ description("This test exercises the 'font' shorthand property in CSS computed s
 var testDiv = document.createElement('div');
 document.body.appendChild(testDiv);
 
-function computedFont(fontString) {
+function computedFont(fontString)
+{
     testDiv.style.font = 'bold 600px serif';
     testDiv.style.font = fontString;
-    return window.getComputedStyle(testDiv).getPropertyValue('font');
+    return getComputedStyle(testDiv).getPropertyValue('font');
 }
 
-function computedFontCSSValue(fontString) {
-    testDiv.style.font = 'bold 600px serif';
-    testDiv.style.font = fontString;
-    var cssValue = window.getComputedStyle(testDiv).getPropertyCSSValue('font');
-    if (cssValue === null)
-        return null;
-    return cssValue.cssText;
+function testComputedFont(value, expected)
+{
+    shouldBeEqualToString("computedFont('" + value + "')", expected || value);
 }
 
-shouldBe("computedFont('10px sans-serif')", "'10px sans-serif'");
-shouldBe("computedFont('10px sans-serif')", "'10px sans-serif'");
-shouldBe("computedFont('10px SANS-SERIF')", "'10px sans-serif'");
-shouldBe("computedFont('12px sans-serif')", "'12px sans-serif'");
-shouldBe("computedFont('12px  sans-serif')", "'12px sans-serif'");
-shouldBe("computedFont('10px sans-serif, sans-serif')", "'10px sans-serif, sans-serif'");
-shouldBe("computedFont('10px sans-serif, serif')", "'10px sans-serif, serif'");
-shouldBe("computedFont('12px ahem')", "'12px ahem'");
-shouldBe("computedFont('12px unlikely-font-name')", "'12px unlikely-font-name'");
-shouldBe("computedFont('100 10px sans-serif')", "'100 10px sans-serif'");
-shouldBe("computedFont('200 10px sans-serif')", "'200 10px sans-serif'");
-shouldBe("computedFont('300 10px sans-serif')", "'300 10px sans-serif'");
-shouldBe("computedFont('400 10px sans-serif')", "'10px sans-serif'");
-shouldBe("computedFont('normal 10px sans-serif')", "'10px sans-serif'");
-shouldBe("computedFont('500 10px sans-serif')", "'500 10px sans-serif'");
-shouldBe("computedFont('600 10px sans-serif')", "'600 10px sans-serif'");
-shouldBe("computedFont('700 10px sans-serif')", "'700 10px sans-serif'");
-shouldBe("computedFont('bold 10px sans-serif')", "'700 10px sans-serif'");
-shouldBe("computedFont('800 10px sans-serif')", "'800 10px sans-serif'");
-shouldBe("computedFont('900 10px sans-serif')", "'900 10px sans-serif'");
-shouldBe("computedFont('italic 10px sans-serif')", "'italic 10px sans-serif'");
-shouldBe("computedFont('small-caps 10px sans-serif')", "'small-caps 10px sans-serif'");
-shouldBe("computedFont('italic small-caps 10px sans-serif')", "'italic small-caps 10px sans-serif'");
-shouldBe("computedFont('italic small-caps bold 10px sans-serif')", "'italic small-caps 700 10px sans-serif'");
-shouldBe("computedFont('10px/100% sans-serif')", "'10px / 10px sans-serif'");
-shouldBe("computedFont('10px/100px sans-serif')", "'10px / 100px sans-serif'");
-shouldBe("computedFont('10px/normal sans-serif')", "'10px sans-serif'");
-shouldBe("computedFont('10px/normal sans-serif')", "'10px sans-serif'");
-
-shouldBe("computedFontCSSValue('10px sans-serif')", "'10px sans-serif'");
-shouldBe("computedFontCSSValue('10px sans-serif')", "'10px sans-serif'");
-shouldBe("computedFontCSSValue('10px SANS-SERIF')", "'10px sans-serif'");
-shouldBe("computedFontCSSValue('12px sans-serif')", "'12px sans-serif'");
-shouldBe("computedFontCSSValue('12px  sans-serif')", "'12px sans-serif'");
-shouldBe("computedFontCSSValue('10px sans-serif, sans-serif')", "'10px sans-serif, sans-serif'");
-shouldBe("computedFontCSSValue('10px sans-serif, serif')", "'10px sans-serif, serif'");
-shouldBe("computedFontCSSValue('12px ahem')", "'12px ahem'");
-shouldBe("computedFontCSSValue('12px unlikely-font-name')", "'12px unlikely-font-name'");
-shouldBe("computedFontCSSValue('100 10px sans-serif')", "'100 10px sans-serif'");
-shouldBe("computedFontCSSValue('200 10px sans-serif')", "'200 10px sans-serif'");
-shouldBe("computedFontCSSValue('300 10px sans-serif')", "'300 10px sans-serif'");
-shouldBe("computedFontCSSValue('400 10px sans-serif')", "'10px sans-serif'");
-shouldBe("computedFontCSSValue('normal 10px sans-serif')", "'10px sans-serif'");
-shouldBe("computedFontCSSValue('500 10px sans-serif')", "'500 10px sans-serif'");
-shouldBe("computedFontCSSValue('600 10px sans-serif')", "'600 10px sans-serif'");
-shouldBe("computedFontCSSValue('700 10px sans-serif')", "'700 10px sans-serif'");
-shouldBe("computedFontCSSValue('bold 10px sans-serif')", "'700 10px sans-serif'");
-shouldBe("computedFontCSSValue('800 10px sans-serif')", "'800 10px sans-serif'");
-shouldBe("computedFontCSSValue('900 10px sans-serif')", "'900 10px sans-serif'");
-shouldBe("computedFontCSSValue('italic 10px sans-serif')", "'italic 10px sans-serif'");
-shouldBe("computedFontCSSValue('small-caps 10px sans-serif')", "'small-caps 10px sans-serif'");
-shouldBe("computedFontCSSValue('italic small-caps 10px sans-serif')", "'italic small-caps 10px sans-serif'");
-shouldBe("computedFontCSSValue('italic small-caps bold 10px sans-serif')", "'italic small-caps 700 10px sans-serif'");
-shouldBe("computedFontCSSValue('10px/100% sans-serif')", "'10px / 10px sans-serif'");
-shouldBe("computedFontCSSValue('10px/100px sans-serif')", "'10px / 100px sans-serif'");
-shouldBe("computedFontCSSValue('10px/normal sans-serif')", "'10px sans-serif'");
-shouldBe("computedFontCSSValue('10px/normal sans-serif')", "'10px sans-serif'");
+testComputedFont("10px sans-serif");
+testComputedFont("10px SANS-SERIF", "10px sans-serif");
+testComputedFont("12px sans-serif");
+testComputedFont("12px  sans-serif", "12px sans-serif");
+testComputedFont("10px sans-serif, sans-serif");
+testComputedFont("10px sans-serif, serif");
+testComputedFont("12px ahem");
+testComputedFont("12px unlikely-font-name");
+testComputedFont("100 10px sans-serif");
+testComputedFont("200 10px sans-serif");
+testComputedFont("300 10px sans-serif");
+testComputedFont("400 10px sans-serif", "10px sans-serif");
+testComputedFont("normal 10px sans-serif", "10px sans-serif");
+testComputedFont("500 10px sans-serif");
+testComputedFont("600 10px sans-serif");
+testComputedFont("700 10px sans-serif");
+testComputedFont("bold 10px sans-serif", "700 10px sans-serif");
+testComputedFont("800 10px sans-serif");
+testComputedFont("900 10px sans-serif");
+testComputedFont("italic 10px sans-serif");
+testComputedFont("small-caps 10px sans-serif");
+testComputedFont("italic small-caps 10px sans-serif");
+testComputedFont("italic small-caps bold 10px sans-serif", "italic small-caps 700 10px sans-serif");
+testComputedFont("10px/100% sans-serif", "10px / 10px sans-serif");
+testComputedFont("10px/100px sans-serif", "10px / 100px sans-serif");
+testComputedFont("10px/normal sans-serif", "10px sans-serif");
 </script>
 </body>
 </html>

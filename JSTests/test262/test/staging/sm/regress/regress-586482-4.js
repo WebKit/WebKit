@@ -4,20 +4,19 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
 flags:
   - noStrict
 description: |
   pending
 esid: pending
 ---*/
+
 var expect, actual;
 
 var obj = {
     f: function() {
         expect = this.g;
         actual = arguments.callee.caller;
-        print("Ok");
     }
 };
 

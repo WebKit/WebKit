@@ -1,0 +1,15 @@
+This test verifies that valid numeric characters inserted via execCommand are correctly shown in the shadow tree of an input[type="number"] element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Valid numeric characters are rendered in the shadow tree.
+PASS Invalid characters are not rendered in the shadow tree.
+Switching type=text to type=number for value="123"
+PASS Valid numeric value "123" was preserved and shown in the shadow tree.
+Switching type=text to type=number for value="123ABC"
+PASS Invalid value "123ABC" was dropped and not shown in the shadow tree.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

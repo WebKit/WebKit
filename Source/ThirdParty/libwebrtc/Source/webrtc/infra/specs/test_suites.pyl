@@ -35,6 +35,7 @@
         'mixins': ['shards-4'],
       },
       'rtc_media_unittests': {},
+      'rtc_p2p_unittests': {},
       'rtc_pc_unittests': {},
       'rtc_stats_unittests': {},
       'rtc_unittests': {
@@ -77,6 +78,7 @@
         'mixins': ['shards-4'],
       },
       'rtc_media_unittests': {},
+      'rtc_p2p_unittests': {},
       'rtc_pc_unittests': {},
       'rtc_stats_unittests': {},
       'rtc_unittests': {
@@ -117,6 +119,7 @@
       # TODO(bugs.webrtc.org/14705): Enable when NonGlobalFieldTrialsInstanceDoesNotModifyGlobalString is fixed.
       # TODO(bugs.webrtc.org/14700):  Enable when NetworkTest tests are fixed.
       # 'rtc_unittests': {},
+      'rtc_p2p_unittests': {},
       'rtc_pc_unittests': {},
       'svc_tests': {
         'mixins': ['shards-4'],
@@ -150,6 +153,7 @@
       'modules_unittests': {
         'mixins': ['shards-6'],
       },
+      'rtc_p2p_unittests': {},
       'rtc_pc_unittests': {},
       'rtc_stats_unittests': {},
       # TODO(bugs.webrtc.org/11362): Real XCTests fail to start on devices.
@@ -177,11 +181,13 @@
         'mixins': ['shards-6', 'cores-12'],
       },
       'rtc_media_unittests': {},
+      'rtc_p2p_unittests': {},
       'rtc_pc_unittests': {},
       'rtc_stats_unittests': {},
-      'rtc_unittests': {
-        'mixins': ['shards-6'],
-      },
+      # TODO: b/402029695 - Re-enable these tests.
+      # 'rtc_unittests': {
+      #   'mixins': ['shards-6'],
+      # },
       'sdk_framework_unittests': {
         'mixins': ['xcodebuild_sim_runner']
       },

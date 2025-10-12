@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,20 +40,20 @@ WKTypeID WKGeolocationManagerGetTypeID()
 
 void WKGeolocationManagerSetProvider(WKGeolocationManagerRef geolocationManagerRef, const WKGeolocationProviderBase* wkProvider)
 {
-    toImpl(geolocationManagerRef)->setProvider(makeUnique<WebGeolocationProvider>(wkProvider));
+    toProtectedImpl(geolocationManagerRef)->setProvider(makeUnique<WebGeolocationProvider>(wkProvider));
 }
 
 void WKGeolocationManagerProviderDidChangePosition(WKGeolocationManagerRef geolocationManagerRef, WKGeolocationPositionRef positionRef)
 {
-    toImpl(geolocationManagerRef)->providerDidChangePosition(toImpl(positionRef));
+    toProtectedImpl(geolocationManagerRef)->providerDidChangePosition(toProtectedImpl(positionRef).get());
 }
 
 void WKGeolocationManagerProviderDidFailToDeterminePosition(WKGeolocationManagerRef geolocationManagerRef)
 {
-    toImpl(geolocationManagerRef)->providerDidFailToDeterminePosition();
+    toProtectedImpl(geolocationManagerRef)->providerDidFailToDeterminePosition();
 }
 
 void WKGeolocationManagerProviderDidFailToDeterminePositionWithErrorMessage(WKGeolocationManagerRef geolocationManagerRef, WKStringRef errorMessage)
 {
-    toImpl(geolocationManagerRef)->providerDidFailToDeterminePosition(toWTFString(errorMessage));
+    toProtectedImpl(geolocationManagerRef)->providerDidFailToDeterminePosition(toWTFString(errorMessage));
 }

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebEventModifier.h"
 
+#include <WebCore/Document.h>
+#include <WebCore/LocalDOMWindow.h>
 #include <WebCore/NavigationAction.h>
 #include <WebCore/PlatformEvent.h>
 #include <wtf/OptionSet.h>
@@ -51,15 +53,29 @@ OptionSet<WebEventModifier> modifiersFromPlatformEventModifiers(OptionSet<WebCor
 OptionSet<WebEventModifier> modifiersForNavigationAction(const WebCore::NavigationAction& navigationAction)
 {
     OptionSet<WebEventModifier> modifiers;
-    auto keyStateEventData = navigationAction.keyStateEventData();
-    if (keyStateEventData && keyStateEventData->isTrusted) {
-        if (keyStateEventData->shiftKey)
+    if (auto keyStateEventData = navigationAction.keyStateEventData()) {
+        RefPtr document = navigationAction.requester() ? WebCore::Document::allDocumentsMap().get(navigationAction.requester()->documentIdentifier) : nullptr;
+        RefPtr domWindow = document ? document->window() : nullptr;
+        auto lastMouseClickEvent = domWindow ? domWindow->consumeLastUserClickEvent() : std::nullopt;
+        // For security reasons, we normally only set modifiers when the navigation comes from a trusted event.
+        // However, a common pattern on the web is to intercept the mouse click event, do some logic (e.g. link tracking),
+        // and then fire a "cloned" version of the event, which is no longer trusted. In such case, we want to carry forward
+        // the modifiers from the original event as this is what the user intended. This is particularly important when the
+        // user CMD + clicks a link and rightfully expects the link to open in a new tab.
+        auto shouldMaintainModifier = [isTrusted = keyStateEventData->isTrusted, lastMouseClickEvent](WebCore::PlatformEventModifier modifier) {
+            if (isTrusted)
+                return true;
+            if (!lastMouseClickEvent || (MonotonicTime::now() - lastMouseClickEvent->time) > WebCore::LocalDOMWindow::transientActivationDuration())
+                return false;
+            return lastMouseClickEvent->modifiers.contains(modifier);
+        };
+        if (keyStateEventData->shiftKey && shouldMaintainModifier(WebCore::PlatformEventModifier::ShiftKey))
             modifiers.add(WebEventModifier::ShiftKey);
-        if (keyStateEventData->ctrlKey)
+        if (keyStateEventData->ctrlKey && shouldMaintainModifier(WebCore::PlatformEventModifier::ControlKey))
             modifiers.add(WebEventModifier::ControlKey);
-        if (keyStateEventData->altKey)
+        if (keyStateEventData->altKey && shouldMaintainModifier(WebCore::PlatformEventModifier::AltKey))
             modifiers.add(WebEventModifier::AltKey);
-        if (keyStateEventData->metaKey)
+        if (keyStateEventData->metaKey && shouldMaintainModifier(WebCore::PlatformEventModifier::MetaKey))
             modifiers.add(WebEventModifier::MetaKey);
     }
     return modifiers;

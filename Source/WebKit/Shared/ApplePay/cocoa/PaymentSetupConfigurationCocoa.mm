@@ -45,7 +45,7 @@ namespace WebKit {
 static RetainPtr<PKPaymentSetupConfiguration> toPlatformConfiguration(const WebCore::ApplePaySetupConfiguration& coreConfiguration, const URL& url)
 {
 #if PLATFORM(MAC)
-    if (!PAL::getPKPaymentSetupConfigurationClass())
+    if (!PAL::getPKPaymentSetupConfigurationClassSingleton())
         return nil;
 #endif
 

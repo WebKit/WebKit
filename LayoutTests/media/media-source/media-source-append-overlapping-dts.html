@@ -41,15 +41,12 @@
 
         samples = concatenateSamples([
             makeASample(6, 4, 1, 1, 1, SAMPLE_FLAG.SYNC, 1),
-            makeASample(7, 5, 1, 1, 1, SAMPLE_FLAG.NONE, 1),
-            makeASample(4, 6, 1, 1, 1, SAMPLE_FLAG.NONE, 1),
-            makeASample(5, 7, 1, 1, 1, SAMPLE_FLAG.NONE, 1),
         ]);
         run('sourceBuffer.appendBuffer(samples)');
         await waitFor(sourceBuffer, 'updateend');
 
         bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
-        testExpected("bufferedSamples.length", 9);
+        testExpected("bufferedSamples.length", 6);
         bufferedSamples.forEach(consoleWrite);
         endTest();
 

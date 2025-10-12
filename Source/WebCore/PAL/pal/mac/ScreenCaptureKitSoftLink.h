@@ -44,17 +44,17 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, SCContentSharingPickerConfiguration)
 #endif
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoStatus, NSString *)
-#define SCStreamFrameInfoStatus PAL::get_ScreenCaptureKit_SCStreamFrameInfoStatus()
+#define SCStreamFrameInfoStatus PAL::get_ScreenCaptureKit_SCStreamFrameInfoStatusSingleton()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoScaleFactor, NSString *)
-#define SCStreamFrameInfoScaleFactor PAL::get_ScreenCaptureKit_SCStreamFrameInfoScaleFactor()
+#define SCStreamFrameInfoScaleFactor PAL::get_ScreenCaptureKit_SCStreamFrameInfoScaleFactorSingleton()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoContentScale, NSString *)
-#define SCStreamFrameInfoContentScale PAL::get_ScreenCaptureKit_SCStreamFrameInfoContentScale()
+#define SCStreamFrameInfoContentScale PAL::get_ScreenCaptureKit_SCStreamFrameInfoContentScaleSingleton()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoContentRect, NSString *)
-#define SCStreamFrameInfoContentRect PAL::get_ScreenCaptureKit_SCStreamFrameInfoContentRect()
+#define SCStreamFrameInfoContentRect PAL::get_ScreenCaptureKit_SCStreamFrameInfoContentRectSingleton()
 
 #if HAVE(SC_CONTENT_SHARING_PICKER)
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoPresenterOverlayContentRect, NSString *)
-#define SCStreamFrameInfoPresenterOverlayContentRect PAL::get_ScreenCaptureKit_SCStreamFrameInfoPresenterOverlayContentRect()
+#define SCStreamFrameInfoPresenterOverlayContentRect PAL::get_ScreenCaptureKit_SCStreamFrameInfoPresenterOverlayContentRectSingleton()
 #endif
 
 #endif // HAVE(SCREEN_CAPTURE_KIT)

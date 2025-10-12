@@ -27,7 +27,6 @@
 typedef USVString CSSOMString;
 
 [
-    JSGenerateToJSObject,
     JSGenerateToNativeObject,
     Exposed=Window,
 ] interface CSSPageDescriptors : CSSStyleDeclaration {

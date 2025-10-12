@@ -24,12 +24,12 @@
 #include "test/gmock.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 namespace {
 
 class MockAsyncSocket : public Socket {
  public:
-  virtual ~MockAsyncSocket() = default;
+  ~MockAsyncSocket() override = default;
   MOCK_METHOD(Socket*, Accept, (SocketAddress*), (override));
   MOCK_METHOD(SocketAddress, GetLocalAddress, (), (const, override));
   MOCK_METHOD(SocketAddress, GetRemoteAddress, (), (const, override));
@@ -56,7 +56,7 @@ class MockAsyncSocket : public Socket {
 
 class MockCertVerifier : public SSLCertificateVerifier {
  public:
-  virtual ~MockCertVerifier() = default;
+  ~MockCertVerifier() override = default;
   MOCK_METHOD(bool, Verify, (const SSLCertificate&), (override));
 };
 
@@ -89,7 +89,7 @@ TEST(OpenSSLAdapterTest, TestTransformAlpnProtocols) {
 // Verifies that SSLStart works when OpenSSLAdapter is started in standalone
 // mode.
 TEST(OpenSSLAdapterTest, TestBeginSSLBeforeConnection) {
-  rtc::AutoThread main_thread;
+  AutoThread main_thread;
   Socket* async_socket = new MockAsyncSocket();
   OpenSSLAdapter adapter(async_socket);
   EXPECT_EQ(adapter.StartSSL("webrtc.org"), 0);
@@ -97,7 +97,7 @@ TEST(OpenSSLAdapterTest, TestBeginSSLBeforeConnection) {
 
 // Verifies that the adapter factory can create new adapters.
 TEST(OpenSSLAdapterFactoryTest, CreateSingleOpenSSLAdapter) {
-  rtc::AutoThread main_thread;
+  AutoThread main_thread;
   OpenSSLAdapterFactory adapter_factory;
   Socket* async_socket = new MockAsyncSocket();
   auto simple_adapter = std::unique_ptr<OpenSSLAdapter>(
@@ -108,7 +108,7 @@ TEST(OpenSSLAdapterFactoryTest, CreateSingleOpenSSLAdapter) {
 // Verifies that setting a custom verifier still allows for adapters to be
 // created.
 TEST(OpenSSLAdapterFactoryTest, CreateWorksWithCustomVerifier) {
-  rtc::AutoThread main_thread;
+  AutoThread main_thread;
   MockCertVerifier* mock_verifier = new MockCertVerifier();
   EXPECT_CALL(*mock_verifier, Verify(_)).WillRepeatedly(Return(true));
   auto cert_verifier = std::unique_ptr<SSLCertificateVerifier>(mock_verifier);
@@ -121,4 +121,4 @@ TEST(OpenSSLAdapterFactoryTest, CreateWorksWithCustomVerifier) {
   EXPECT_NE(simple_adapter, nullptr);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

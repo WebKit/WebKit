@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "SourceCode.h"
+#include <JavaScriptCore/SourceCode.h>
 
 namespace JSC {
 namespace SourceProfiler {

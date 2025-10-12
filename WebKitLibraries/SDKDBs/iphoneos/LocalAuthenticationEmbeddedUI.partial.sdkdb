@@ -1,0 +1,26 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "authorizeWithLocalizedReason:inPresentationContext:completion:"}
+     ],
+     "interface": "LARight",
+     "introduced": "16",
+     "name": "UI"
+    }
+   ],
+   "target": "arm64e-apple-ios26",
+   "typedefs": [
+    {"access": "public", "name": "LAPresentationContext"}
+   ]
+  },
+  {
+   "target": "arm64e-apple-ios26.0"
+  }
+ ],
+ "version": "1.0"
+}

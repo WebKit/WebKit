@@ -1,9 +1,3 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'about:blank' from frame with URL 'http://www1.web-platform.test:8800/html/browsers/browsing-the-web/navigating-across-documents/resources/child-navigates-parent-cross-origin-inner.html'. The frame attempting navigation is neither same-origin with the target, nor is it the target's parent or opener.
-
-CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'about:blank' from frame with URL 'http://www1.web-platform.test:8800/html/browsers/browsing-the-web/navigating-across-documents/resources/child-navigates-parent-cross-origin-inner.html?property=href'. The frame attempting navigation is neither same-origin with the target, nor is it the target's parent or opener.
-
-CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'about:blank' from frame with URL 'http://www1.web-platform.test:8800/html/browsers/browsing-the-web/navigating-across-documents/resources/child-navigates-parent-cross-origin-inner.html?property=replace'. The frame attempting navigation is neither same-origin with the target, nor is it the target's parent or opener.
-
 
 PASS Child document attempts to navigate cross-origin parent via location
 PASS Child document attempts to navigate cross-origin parent via location.hash

@@ -31,9 +31,11 @@
 #include "B3AtomicValue.h"
 #include "B3BasicBlockInlines.h"
 #include "B3BlockInsertionSet.h"
+#include "B3BulkMemoryValue.h"
 #include "B3ComputeDivisionMagic.h"
 #include "B3EliminateDeadCode.h"
 #include "B3InsertionSetInlines.h"
+#include "B3MemoryValueInlines.h"
 #include "B3PhaseScope.h"
 #include "B3PhiChildren.h"
 #include "B3ProcedureInlines.h"
@@ -2310,6 +2312,147 @@ private:
             break;
         }
 
+#if !CPU(NEEDS_ALIGNED_ACCESS) && CPU(ADDRESS64)
+        case MemoryCopy: {
+            if (m_value->child(2)->hasInt()) {
+                auto* memoryCopy = m_value->as<BulkMemoryValue>();
+                uint64_t count = m_value->child(2)->asInt();
+                constexpr uint64_t threshold = 128;
+                if (count <= threshold) {
+                    int32_t offset = 0;
+                    Vector<MemoryValue*, 16> loads;
+
+                    if (count >= 16 && m_proc.usesSIMD()) {
+                        while (count >= 16) {
+                            MemoryValue* load = m_insertionSet.insert<MemoryValue>(m_index, Load, V128, m_value->origin(), m_value->child(1), offset);
+                            load->setRange(memoryCopy->readRange());
+                            loads.append(load);
+                            offset += 16;
+                            count -= 16;
+                        }
+                    }
+
+                    while (count >= 8) {
+                        MemoryValue* load = m_insertionSet.insert<MemoryValue>(m_index, Load, Int64, m_value->origin(), m_value->child(1), offset);
+                        load->setRange(memoryCopy->readRange());
+                        loads.append(load);
+                        offset += 8;
+                        count -= 8;
+                    }
+
+                    while (count >= 4) {
+                        MemoryValue* load = m_insertionSet.insert<MemoryValue>(m_index, Load, Int32, m_value->origin(), m_value->child(1), offset);
+                        load->setRange(memoryCopy->readRange());
+                        loads.append(load);
+                        offset += 4;
+                        count -= 4;
+                    }
+
+                    while (count >= 2) {
+                        MemoryValue* load = m_insertionSet.insert<MemoryValue>(m_index, Load16Z, Int32, m_value->origin(), m_value->child(1), offset);
+                        load->setRange(memoryCopy->readRange());
+                        loads.append(load);
+                        offset += 2;
+                        count -= 2;
+                    }
+
+                    while (count >= 1) {
+                        MemoryValue* load = m_insertionSet.insert<MemoryValue>(m_index, Load8Z, Int32, m_value->origin(), m_value->child(1), offset);
+                        load->setRange(memoryCopy->readRange());
+                        loads.append(load);
+                        offset += 1;
+                        count -= 1;
+                    }
+
+                    for (auto* load : loads) {
+                        switch (load->accessWidth()) {
+                        case Width128:
+                            m_insertionSet.insert<MemoryValue>(m_index, Store, m_value->origin(), load, m_value->child(0), load->offset(), memoryCopy->writeRange());
+                            break;
+                        case Width64:
+                            m_insertionSet.insert<MemoryValue>(m_index, Store, m_value->origin(), load, m_value->child(0), load->offset(), memoryCopy->writeRange());
+                            break;
+                        case Width32:
+                            m_insertionSet.insert<MemoryValue>(m_index, Store, m_value->origin(), load, m_value->child(0), load->offset(), memoryCopy->writeRange());
+                            break;
+                        case Width16:
+                            m_insertionSet.insert<MemoryValue>(m_index, Store16, m_value->origin(), load, m_value->child(0), load->offset(), memoryCopy->writeRange());
+                            break;
+                        case Width8:
+                            m_insertionSet.insert<MemoryValue>(m_index, Store8, m_value->origin(), load, m_value->child(0), load->offset(), memoryCopy->writeRange());
+                            break;
+                        }
+                    }
+
+                    m_value->replaceWithNop();
+                    m_changed = true;
+                    break;
+                }
+            }
+            break;
+        }
+
+        case MemoryFill: {
+            if (m_value->child(1)->hasInt() && m_value->child(2)->hasInt()) {
+                auto* memoryFill = m_value->as<BulkMemoryValue>();
+                uint64_t target = static_cast<uint8_t>(m_value->child(1)->asInt());
+                uint64_t count = m_value->child(2)->asInt();
+                constexpr uint64_t threshold = 128;
+                if (count <= threshold) {
+                    int32_t offset = 0;
+
+                    if (count >= 16 && m_proc.usesSIMD()) {
+                        uint64_t mask64 = target << 56 | target << 48 | target << 40 | target << 32 | target << 24 | target << 16 | target << 8 | target << 0;
+                        v128_t mask { mask64, mask64 };
+                        auto* maskValue = m_insertionSet.insert<Const128Value>(m_index, m_value->origin(), mask);
+                        while (count >= 16) {
+                            m_insertionSet.insert<MemoryValue>(m_index, Store, m_value->origin(), maskValue, m_value->child(0), offset, memoryFill->writeRange());
+                            offset += 16;
+                            count -= 16;
+                        }
+                    }
+
+                    if (count >= 8) {
+                        uint64_t mask = target << 56 | target << 48 | target << 40 | target << 32 | target << 24 | target << 16 | target << 8 | target << 0;
+                        auto* maskValue = m_insertionSet.insert<Const64Value>(m_index, m_value->origin(), mask);
+                        while (count >= 8) {
+                            m_insertionSet.insert<MemoryValue>(m_index, Store, m_value->origin(), maskValue, m_value->child(0), offset, memoryFill->writeRange());
+                            offset += 8;
+                            count -= 8;
+                        }
+                    }
+
+                    {
+                        uint32_t mask = target << 24 | target << 16 | target << 8 | target << 0;
+                        auto* maskValue = m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), mask);
+                        while (count >= 4) {
+                            m_insertionSet.insert<MemoryValue>(m_index, Store, m_value->origin(), maskValue, m_value->child(0), offset, memoryFill->writeRange());
+                            offset += 4;
+                            count -= 4;
+                        }
+
+                        while (count >= 2) {
+                            m_insertionSet.insert<MemoryValue>(m_index, Store16, m_value->origin(), maskValue, m_value->child(0), offset, memoryFill->writeRange());
+                            offset += 2;
+                            count -= 2;
+                        }
+
+                        while (count >= 1) {
+                            m_insertionSet.insert<MemoryValue>(m_index, Store8, m_value->origin(), maskValue, m_value->child(0), offset, memoryFill->writeRange());
+                            offset += 1;
+                            count -= 1;
+                        }
+                    }
+
+                    m_value->replaceWithNop();
+                    m_changed = true;
+                    break;
+                }
+            }
+            break;
+        }
+#endif
+
         case CCall: {
             // Turn this: Call(fmod, constant1, constant2)
             // Into this: fcall-constant(constant1, constant2)
@@ -2828,18 +2971,18 @@ private:
         case ConstFloat:
         case ConstDouble: {
             ValueKey key = m_value->key();
-            if (Value* constInRoot = m_valueForConstant.get(key)) {
+            auto addResult = m_valueForConstant.add(key, m_value);
+            if (!addResult.isNewEntry) {
+                Value* constInRoot = addResult.iterator->value;
                 if (constInRoot != m_value) {
                     m_value->replaceWithIdentity(constInRoot);
                     m_changed = true;
                 }
-            } else if (m_block == m_root)
-                m_valueForConstant.add(key, m_value);
-            else {
+            } else if (m_block != m_root) {
                 Value* constInRoot = m_proc.clone(m_value);
                 ASSERT(m_root && m_root->size() >= 1);
                 m_root->appendNonTerminal(constInRoot);
-                m_valueForConstant.add(key, constInRoot);
+                addResult.iterator->value = constInRoot;
                 m_value->replaceWithIdentity(constInRoot);
                 m_changed = true;
             }

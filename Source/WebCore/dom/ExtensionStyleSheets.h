@@ -27,7 +27,7 @@
 
 #pragma once
 
-#include "UserStyleSheet.h"
+#include <WebCore/UserStyleSheet.h>
 #include <memory>
 #include <wtf/CheckedRef.h>
 #include <wtf/RefPtr.h>
@@ -38,7 +38,7 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
-#include "ContentExtensionStyleSheet.h"
+#include <WebCore/ContentExtensionStyleSheet.h>
 #endif
 
 namespace WebCore {
@@ -94,7 +94,7 @@ private:
 
     mutable Vector<RefPtr<CSSStyleSheet>> m_injectedUserStyleSheets;
     mutable Vector<RefPtr<CSSStyleSheet>> m_injectedAuthorStyleSheets;
-    mutable UncheckedKeyHashMap<Ref<CSSStyleSheet>, String> m_injectedStyleSheetToSource;
+    mutable HashMap<Ref<CSSStyleSheet>, String> m_injectedStyleSheetToSource;
     mutable bool m_injectedStyleSheetCacheValid { false };
 
     Vector<RefPtr<CSSStyleSheet>> m_userStyleSheets;

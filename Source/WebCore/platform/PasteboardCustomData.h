@@ -27,6 +27,7 @@
 
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/Platform.h>
 #include <wtf/Vector.h>
 #include <wtf/persistence/PersistentCoders.h>
 #include <wtf/text/WTFString.h>
@@ -98,7 +99,7 @@ public:
     const Vector<Entry>& data() const { return m_data; }
 
 private:
-    UncheckedKeyHashMap<String, String> sameOriginCustomStringData() const;
+    HashMap<String, String> sameOriginCustomStringData() const;
     Entry& addOrMoveEntryToEnd(const String&);
 
     String m_origin;

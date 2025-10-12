@@ -48,7 +48,7 @@ class IntSize;
 
 class BitmapTexturePool {
     WTF_MAKE_NONCOPYABLE(BitmapTexturePool);
-    WTF_MAKE_FAST_ALLOCATED();
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED();
 public:
     BitmapTexturePool();
 
@@ -67,7 +67,7 @@ private:
         void markIsInUse() { m_lastUsedTime = MonotonicTime::now(); }
         bool canBeReleased (MonotonicTime minUsedTime) const { return m_lastUsedTime < minUsedTime && m_texture->refCount() == 1; }
 
-        Ref<BitmapTexture> m_texture;
+        const Ref<BitmapTexture> m_texture;
         MonotonicTime m_lastUsedTime;
     };
 

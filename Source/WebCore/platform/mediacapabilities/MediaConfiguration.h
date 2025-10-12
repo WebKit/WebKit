@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "AudioConfiguration.h"
-#include "VideoConfiguration.h"
+#include <WebCore/AudioConfiguration.h>
+#include <WebCore/VideoConfiguration.h>
 #include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {

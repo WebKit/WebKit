@@ -21,4 +21,6 @@ PASS 'min(1px, 1em)' as a specified value should serialize as 'min(1px, 1em)'.
 PASS 'min(1px, 1em)' as a computed value should serialize as '1px'.
 PASS 'calc(min(1px, 1in) + max(100px + 1em, 10px + 1in) + 1px)' as a specified value should serialize as 'calc(2px + max(1em + 100px, 106px))'.
 PASS 'calc(min(1px, 1in) + max(100px + 1em, 10px + 1in) + 1px)' as a computed value should serialize as '118px'.
+PASS 'calc(2 * (.2 * min(1em, 1px)) + 1px)' as a specified value should serialize as 'calc(1px + (0.4 * min(1em, 1px)))'.
+PASS 'calc(2 * (.2 * min(1em, 1px)) + 1px)' as a computed value should serialize as '1.4px'.
 

@@ -4,9 +4,7 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, deepEqual.js]
-flags:
-  - noStrict
+includes: [compareArray.js]
 description: |
   pending
 esid: pending
@@ -55,6 +53,5 @@ var h = {
     }
 };
 p = new Proxy({}, h);
-assert.deepEqual(Object.keys(p), ["a", "0"]);
-assert.deepEqual(log, ["ownKeys", "gopd", "a", "gopd", "0"]);
-
+assert.compareArray(Object.keys(p), ["a", "0"]);
+assert.compareArray(log, ["ownKeys", "gopd", "a", "gopd", "0"]);

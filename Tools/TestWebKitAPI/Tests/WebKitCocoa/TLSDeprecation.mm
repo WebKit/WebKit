@@ -439,48 +439,6 @@ TEST(TLSVersion, DidNegotiateModernTLS)
     EXPECT_EQ(url.port.unsignedShortValue, server.port());
 }
 
-TEST(TLSVersion, BackForwardHasOnlySecureContent)
-{
-    HTTPServer secureServer({
-        { "/"_s, { "hello"_s }}
-    }, HTTPServer::Protocol::Https);
-    HTTPServer insecureServer({
-        { "/"_s, { "hello"_s } }
-    });
-    HTTPServer mixedContentServer({
-        { "/"_s, { {{ "Content-Type"_s, "text/html"_s }}, makeString("<img src='http://127.0.0.1:"_s, insecureServer.port(), "/'></img>"_s) } },
-    }, HTTPServer::Protocol::Https);
-
-    auto configuration = adoptNS([WKWebViewConfiguration new]);
-    for (_WKFeature *feature in WKPreferences._features) {
-        NSString *key = feature.key;
-        if ([key isEqualToString:@"UpgradeMixedContentEnabled"])
-            [[configuration preferences] _setEnabled:NO forFeature:feature];
-    }
-    auto [webView, delegate] = webViewWithNavigationDelegate(configuration);
-    EXPECT_FALSE([webView hasOnlySecureContent]);
-
-    [webView loadRequest:secureServer.request()];
-    [delegate waitForDidFinishNavigation];
-    EXPECT_TRUE([webView hasOnlySecureContent]);
-
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://localhost:%d/", mixedContentServer.port()]]]];
-    [delegate waitForDidFinishNavigation];
-    while ([webView hasOnlySecureContent])
-        TestWebKitAPI::Util::spinRunLoop();
-    EXPECT_FALSE([webView hasOnlySecureContent]);
-
-    [webView goBack];
-    [delegate waitForDidFinishNavigation];
-    EXPECT_TRUE([webView hasOnlySecureContent]);
-
-    [webView goForward];
-    [delegate waitForDidFinishNavigation];
-    while ([webView hasOnlySecureContent])
-        TestWebKitAPI::Util::spinRunLoop();
-    EXPECT_FALSE([webView hasOnlySecureContent]);
-}
-
 #if HAVE(TLS_VERSION_DURING_CHALLENGE)
 
 TEST(TLSVersion, LegacySubresources)

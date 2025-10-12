@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-
-Harness Error (FAIL), message = Unhandled rejection
 
 PASS Focus should be reset before navigatesuccess
 PASS Focus should be reset before navigateerror

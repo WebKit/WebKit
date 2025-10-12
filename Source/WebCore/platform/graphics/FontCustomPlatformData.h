@@ -25,10 +25,11 @@
 
 #pragma once
 
-#include "FontPlatformData.h"
-#include "RenderingResourceIdentifier.h"
+#include <WebCore/FontPlatformData.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(WIN)
@@ -54,8 +55,8 @@ class FontDescription;
 class FontCreationContext;
 enum class FontTechnology : uint8_t;
 
-template <typename T> class FontTaggedSettings;
-typedef FontTaggedSettings<int> FontFeatureSettings;
+template<typename> class FontTaggedSettings;
+using FontFeatureSettings = FontTaggedSettings<int>;
 
 struct FontCustomPlatformSerializedData {
     Ref<SharedBuffer> fontFaceData;

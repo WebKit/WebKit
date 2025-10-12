@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FreeList.h"
-#include "MarkedBlock.h"
+#include <JavaScriptCore/FreeList.h>
+#include <JavaScriptCore/MarkedBlock.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

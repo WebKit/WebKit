@@ -21,8 +21,8 @@
 
 #pragma once
 
-#include "JSWrapperObject.h"
-#include "Symbol.h"
+#include <JavaScriptCore/JSWrapperObject.h>
+#include <JavaScriptCore/Symbol.h>
 
 namespace JSC {
 

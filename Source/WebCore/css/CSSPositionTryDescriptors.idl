@@ -28,7 +28,6 @@ typedef USVString CSSOMString;
 
 [
     EnabledBySetting=CSSAnchorPositioningEnabled,
-    JSGenerateToJSObject,
     JSGenerateToNativeObject,
     Exposed=Window,
 ] interface CSSPositionTryDescriptors : CSSStyleDeclaration {

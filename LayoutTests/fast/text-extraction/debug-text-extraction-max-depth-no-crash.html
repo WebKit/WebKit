@@ -1,0 +1,45 @@
+<!-- webkit-test-runner [ textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Super deep DOM structure</title>
+    <style>
+        body, html {
+            font-family: system-ui;
+            font-size: 16px;
+            white-space: pre-wrap;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        const container = document.getElementById("container");
+        let currentElement = container;
+
+        for (let depth = 1; depth <= 500; depth++) {
+            const section = document.createElement("section");
+            section.textContent = `Depth ${depth}`;
+            section.style.marginLeft = "2px";
+            section.style.borderLeft = "1px solid #ccc";
+
+            currentElement.appendChild(section);
+            currentElement = section;
+        }
+
+        extractedText = await UIHelper.requestDebugText();
+        document.body.innerHTML = "";
+
+        testPassed("Did not crash");
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+    <div id="container"></div>
+</body>
+</html>

@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static bool shouldFillWithVerticalGlyphs(std::span<const UChar> buffer, const Font& font)
+static bool shouldFillWithVerticalGlyphs(std::span<const char16_t> buffer, const Font& font)
 {
     if (!font.hasVerticalGlyphs())
         return false;
@@ -48,7 +48,7 @@ static bool shouldFillWithVerticalGlyphs(std::span<const UChar> buffer, const Fo
 }
 
 
-bool GlyphPage::fill(std::span<const UChar> buffer)
+bool GlyphPage::fill(std::span<const char16_t> buffer)
 {
     ASSERT(buffer.size() == GlyphPage::size || buffer.size() == 2 * GlyphPage::size);
 
@@ -57,9 +57,9 @@ bool GlyphPage::fill(std::span<const UChar> buffer)
     unsigned glyphStep = buffer.size() / GlyphPage::size;
 
     if (shouldFillWithVerticalGlyphs(buffer, font))
-        CTFontGetVerticalGlyphsForCharacters(font->platformData().ctFont(), reinterpret_cast<const UniChar*>(buffer.data()), glyphs.data(), buffer.size());
+        CTFontGetVerticalGlyphsForCharacters(font->platformData().protectedCTFont().get(), reinterpret_cast<const UniChar*>(buffer.data()), glyphs.mutableSpan().data(), buffer.size());
     else
-        CTFontGetGlyphsForCharacters(font->platformData().ctFont(), reinterpret_cast<const UniChar*>(buffer.data()), glyphs.data(), buffer.size());
+        CTFontGetGlyphsForCharacters(font->platformData().protectedCTFont().get(), reinterpret_cast<const UniChar*>(buffer.data()), glyphs.mutableSpan().data(), buffer.size());
 
     bool haveGlyphs = false;
     for (unsigned i = 0; i < GlyphPage::size; ++i) {

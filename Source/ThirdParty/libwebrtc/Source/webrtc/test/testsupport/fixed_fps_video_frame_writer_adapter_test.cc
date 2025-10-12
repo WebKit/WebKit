@@ -10,18 +10,21 @@
 
 #include "test/testsupport/fixed_fps_video_frame_writer_adapter.h"
 
+#include <cstdint>
 #include <memory>
 #include <utility>
 #include <vector>
 
+#include "api/test/time_controller.h"
+#include "api/test/video/video_frame_writer.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-#include "test/testsupport/video_frame_writer.h"
 #include "test/time_controller/simulated_time_controller.h"
 
 namespace webrtc {
@@ -36,7 +39,7 @@ class InMemoryVideoWriter : public VideoFrameWriter {
  public:
   ~InMemoryVideoWriter() override = default;
 
-  bool WriteFrame(const webrtc::VideoFrame& frame) override {
+  bool WriteFrame(const VideoFrame& frame) override {
     MutexLock lock(&mutex_);
     received_frames_.push_back(frame);
     return true;

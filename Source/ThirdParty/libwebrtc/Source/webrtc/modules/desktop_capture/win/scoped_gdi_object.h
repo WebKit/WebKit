@@ -13,6 +13,8 @@
 
 #include <windows.h>
 
+#include <cstddef>
+
 namespace webrtc {
 namespace win {
 

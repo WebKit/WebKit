@@ -51,7 +51,7 @@ std::optional<CaptureDevice> SpeechRecognitionCaptureSource::findCaptureDevice()
     std::optional<CaptureDevice> captureDevice;
     auto devices = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().audioCaptureDeviceManager().captureDevices();
     for (auto device : devices) {
-        if (!device.enabled())
+        if (!device.enabled() || device.isSpeakerDevice())
             continue;
 
         if (!captureDevice)
@@ -71,7 +71,7 @@ CaptureSourceOrError SpeechRecognitionCaptureSource::createRealtimeMediaSource(c
 }
 
 SpeechRecognitionCaptureSource::SpeechRecognitionCaptureSource(SpeechRecognitionConnectionClientIdentifier clientIdentifier, DataCallback&& dataCallback, StateUpdateCallback&& stateUpdateCallback, Ref<RealtimeMediaSource>&& source)
-    : m_impl(makeUnique<SpeechRecognitionCaptureSourceImpl>(clientIdentifier, WTFMove(dataCallback), WTFMove(stateUpdateCallback), WTFMove(source)))
+    : m_impl(makeUniqueRef<SpeechRecognitionCaptureSourceImpl>(clientIdentifier, WTFMove(dataCallback), WTFMove(stateUpdateCallback), WTFMove(source)))
 {
 }
 

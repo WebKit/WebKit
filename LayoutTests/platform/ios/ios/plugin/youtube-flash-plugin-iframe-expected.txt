@@ -1,8 +1,8 @@
-Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o
-Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o
-Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?version=3&hl=en_US
-Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?version=3&hl=en_US
-Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o
+CONSOLE MESSAGE: Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o
+CONSOLE MESSAGE: Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o
+CONSOLE MESSAGE: Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?version=3&hl=en_US
+CONSOLE MESSAGE: Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?version=3&hl=en_US
+CONSOLE MESSAGE: Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o
 Test transforming youtube flash plugin to youtube iFrame based player. < rdar://problem/11201356>
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

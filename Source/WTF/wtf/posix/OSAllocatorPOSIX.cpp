@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,7 +55,7 @@
 
 namespace WTF {
 
-void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage usage, void* address, bool writable, bool executable, bool jitCageEnabled, unsigned numGuardPagesToAddOnEachEnd)
 {
     // All POSIX reservations start out logically committed.
     int protection = PROT_READ;
@@ -72,6 +72,10 @@ void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage usage, bool writable,
         else
             flags |= MAP_EXECUTABLE_FOR_JIT;
     }
+#elif OS(LINUX) || OS(HAIKU)
+    UNUSED_PARAM(jitCageEnabled);
+    if (usage == OSAllocator::UncommittedPages)
+        flags |= MAP_NORESERVE;
 #else
     UNUSED_PARAM(jitCageEnabled);
 #endif
@@ -83,37 +87,41 @@ void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage usage, bool writable,
     int fd = -1;
 #endif
 
-    auto result = MallocSpan<uint8_t, Mmap>::mmap(bytes, protection, flags, fd);
-    if (result && includesGuardPages) {
+    size_t guardSize = 0;
+    if (numGuardPagesToAddOnEachEnd) {
+        guardSize = numGuardPagesToAddOnEachEnd * pageSize();
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        if (address)
+            address = reinterpret_cast<uint8_t*>(address) - guardSize;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        bytes = bytes + 2 * guardSize;
+    }
+    auto result = MallocSpan<uint8_t, Mmap>::mmap(address, bytes, protection, flags, fd);
+    if (!result)
+        return result.leakSpan().data();
+
+    if (numGuardPagesToAddOnEachEnd) {
         // We use mmap to remap the guardpages rather than using mprotect as
         // mprotect results in multiple references to the code region. This
         // breaks the madvise based mechanism we use to return physical memory
         // to the OS.
-        mmap(result.mutableSpan().data(), pageSize(), PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, fd, 0);
-        mmap(result.mutableSpan().last(pageSize()).data(), pageSize(), PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, fd, 0);
+        mmap(result.mutableSpan().first(guardSize).data(), guardSize, PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, fd, 0);
+        mmap(result.mutableSpan().last(guardSize).data(), guardSize, PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, fd, 0);
     }
-    return result.leakSpan().data();
+    // Since we're only interested in the starting address, we don't have to specify the actual end of the
+    // subspan to exclude the trailing guard pages.
+    return result.leakSpan().subspan(guardSize).data();
 }
 
-void* OSAllocator::tryReserveUncommitted(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+void* OSAllocator::tryReserveUncommitted(size_t bytes, Usage usage, void* address, bool writable, bool executable, bool jitCageEnabled, unsigned numGuardPagesToAddOnEachEnd)
 {
 #if OS(LINUX) || OS(HAIKU)
     UNUSED_PARAM(usage);
-    UNUSED_PARAM(jitCageEnabled);
-    UNUSED_PARAM(includesGuardPages);
-    int protection = PROT_READ;
-    if (writable)
-        protection |= PROT_WRITE;
-    if (executable)
-        protection |= PROT_EXEC;
-
-    void* result = mmap(0, bytes, protection, MAP_NORESERVE | MAP_PRIVATE | MAP_ANON, -1, 0);
-    if (result == MAP_FAILED)
-        result = nullptr;
+    void* result = tryReserveAndCommit(bytes, OSAllocator::UncommittedPages, address, writable, executable, jitCageEnabled, numGuardPagesToAddOnEachEnd);
     if (result)
         while (madvise(result, bytes, MADV_DONTNEED) == -1 && errno == EAGAIN) { }
-#else
-    void* result = tryReserveAndCommit(bytes, usage, writable, executable, jitCageEnabled, includesGuardPages);
+#else // not OS(LINUX) || OS(HAIKU)
+    void* result = tryReserveAndCommit(bytes, usage, address, writable, executable, jitCageEnabled, numGuardPagesToAddOnEachEnd);
 #if HAVE(MADV_FREE_REUSE)
     if (result) {
         // To support the "reserve then commit" model, we have to initially decommit.
@@ -121,25 +129,24 @@ void* OSAllocator::tryReserveUncommitted(size_t bytes, Usage usage, bool writabl
     }
 #endif
 
-#endif
-
+#endif // not OS(LINUX) || OS(HAIKU)
     return result;
 }
 
-void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, void* address, bool writable, bool executable, bool jitCageEnabled, unsigned numGuardPagesToAddOnEachEnd)
 {
-    void* result = tryReserveUncommitted(bytes, usage, writable, executable, jitCageEnabled, includesGuardPages);
+    void* result = tryReserveUncommitted(bytes, usage, address, writable, executable, jitCageEnabled, numGuardPagesToAddOnEachEnd);
     RELEASE_ASSERT(result);
     return result;
 }
 
-void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, Usage usage, void* address, bool writable, bool executable, bool jitCageEnabled, unsigned numGuardPagesToAddOnEachEnd)
 {
     ASSERT(hasOneBitSet(alignment) && alignment >= pageSize());
 
 #if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
     UNUSED_PARAM(usage); // Not supported for mach API.
-    ASSERT_UNUSED(includesGuardPages, !includesGuardPages);
+    ASSERT_UNUSED(numGuardPagesToAddOnEachEnd, !numGuardPagesToAddOnEachEnd);
     ASSERT_UNUSED(jitCageEnabled, !jitCageEnabled); // Not supported for mach API.
     vm_prot_t protections = VM_PROT_READ;
     if (writable)
@@ -151,7 +158,7 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, 
     const bool copy = false;
     const int flags = VM_FLAGS_ANYWHERE;
 
-    void* aligned = nullptr;
+    void* aligned = address;
     kern_return_t result = mach_vm_map(mach_task_self(), reinterpret_cast<mach_vm_address_t*>(&aligned), bytes, alignment - 1, flags, MEMORY_OBJECT_NULL, 0, copy, protections, protections, childProcessInheritance);
     ASSERT_UNUSED(result, result == KERN_SUCCESS || !aligned);
 #if HAVE(MADV_FREE_REUSE)
@@ -169,14 +176,14 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, 
 #endif
     UNUSED_PARAM(usage);
     UNUSED_PARAM(jitCageEnabled);
-    UNUSED_PARAM(includesGuardPages);
+    ASSERT_UNUSED(numGuardPagesToAddOnEachEnd, !numGuardPagesToAddOnEachEnd);
     int protection = PROT_READ;
     if (writable)
         protection |= PROT_WRITE;
     if (executable)
         protection |= PROT_EXEC;
 
-    void* result = mmap(0, bytes, protection, MAP_NORESERVE | MAP_PRIVATE | MAP_ANON | MAP_ALIGNED(getLSBSet(alignment)), -1, 0);
+    void* result = mmap(address, bytes, protection, MAP_NORESERVE | MAP_PRIVATE | MAP_ANON | MAP_ALIGNED(getLSBSet(alignment)), -1, 0);
     if (result == MAP_FAILED)
         return nullptr;
     if (result)
@@ -186,7 +193,7 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, 
 
     // Add the alignment so we can ensure enough mapped memory to get an aligned start.
     size_t mappedSize = bytes + alignment;
-    auto* rawMapped = reinterpret_cast<uint8_t*>(tryReserveUncommitted(mappedSize, usage, writable, executable, jitCageEnabled, includesGuardPages));
+    auto* rawMapped = reinterpret_cast<uint8_t*>(tryReserveUncommitted(mappedSize, usage, address, writable, executable, jitCageEnabled, numGuardPagesToAddOnEachEnd));
     if (!rawMapped)
         return nullptr;
     auto mappedSpan = unsafeMakeSpan(rawMapped, mappedSize);
@@ -195,19 +202,19 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, 
     auto alignedSpan = mappedSpan.subspan(rawAligned - mappedSpan.data(), bytes);
 
     if (size_t leftExtra = alignedSpan.data() - mappedSpan.data())
-        releaseDecommitted(mappedSpan.data(), leftExtra);
+        releaseDecommitted(mappedSpan.data(), leftExtra, 0);
 
     if (size_t rightExtra = std::to_address(mappedSpan.end()) - std::to_address(alignedSpan.end()))
-        releaseDecommitted(std::to_address(alignedSpan.end()), rightExtra);
+        releaseDecommitted(std::to_address(alignedSpan.end()), rightExtra, 0);
 
     return alignedSpan.data();
 #endif // HAVE(MAP_ALIGNED)
 #endif // PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 }
 
-void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, void* address, bool writable, bool executable, bool jitCageEnabled, unsigned numGuardPagesToAddOnEachEnd)
 {
-    void* result = tryReserveAndCommit(bytes, usage, writable, executable, jitCageEnabled, includesGuardPages);
+    void* result = tryReserveAndCommit(bytes, usage, address, writable, executable, jitCageEnabled, numGuardPagesToAddOnEachEnd);
     RELEASE_ASSERT(result);
     return result;
 }
@@ -257,9 +264,17 @@ void OSAllocator::hintMemoryNotNeededSoon(void* address, size_t bytes)
 #endif
 }
 
-void OSAllocator::releaseDecommitted(void* address, size_t bytes)
+void OSAllocator::releaseDecommitted(void* address, size_t bytes, unsigned numberOfGuardPagesOnEachEnd = 0)
 {
-    int result = munmap(address, bytes);
+    void* base = address;
+    size_t size = bytes;
+    if (numberOfGuardPagesOnEachEnd) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        base = reinterpret_cast<uint8_t*>(base) - numberOfGuardPagesOnEachEnd * pageSize();
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        size += 2 * numberOfGuardPagesOnEachEnd * pageSize();
+    }
+    int result = munmap(base, size);
     if (result == -1)
         CRASH();
 }

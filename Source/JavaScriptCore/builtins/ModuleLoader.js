@@ -43,7 +43,7 @@ function setStateToMax(entry, newState)
 }
 
 @linkTimeConstant
-function newRegistryEntry(key)
+function newRegistryEntry(key, type)
 {
     // https://whatwg.github.io/loader/#registry
     //
@@ -89,6 +89,7 @@ function newRegistryEntry(key)
 
     return {
         key: key,
+        type: type,
         state: @ModuleFetch,
         fetch: @undefined,
         instantiate: @undefined,
@@ -105,18 +106,28 @@ function newRegistryEntry(key)
 }
 
 @visibility=PrivateRecursive
-function ensureRegistered(key)
+function ensureRegistered(key, type)
 {
     // https://whatwg.github.io/loader/#ensure-registered
 
     "use strict";
 
-    var entry = this.registry.@get(key);
-    if (entry)
-        return entry;
+    if (type === @undefined)
+        type = 'js-wasm';
 
-    entry = @newRegistryEntry(key);
-    this.registry.@set(key, entry);
+    var entryMap = this.registry.@get(key);
+    var entry;
+    if (entryMap) {
+        entry = entryMap.@get(type);
+        if (entry)
+            return entry;
+    } else {
+        entryMap = new @Map;
+        this.registry.@set(key, entryMap);
+    }
+
+    entry = @newRegistryEntry(key, type);
+    entryMap.@set(type, entry);
 
     return entry;
 }
@@ -139,8 +150,10 @@ function fulfillFetch(entry, source)
 
     "use strict";
 
-    if (!entry.fetch)
-        entry.fetch = @newPromiseCapability(@InternalPromise).promise;
+    if (!entry.fetch) {
+        var promiseConstructor = @InternalPromise;
+        entry.fetch = @createPromise(promiseConstructor, /* isInternalPromise */ true);
+    }
     @forceFulfillPromise(entry.fetch, source);
     @setStateToMax(entry, @ModuleInstantiate);
 }
@@ -155,20 +168,12 @@ function requestFetch(entry, parameters, fetcher)
     "use strict";
 
     if (entry.fetch) {
-        var currentAttempt = entry.fetch;
-        if (entry.state !== @ModuleFetch)
-            return currentAttempt;
-
-        return currentAttempt.catch((error) => {
-            // Even if the existing fetching request failed, this attempt may succeed.
-            // For example, previous attempt used invalid integrity="" value. But this
-            // request could have the correct integrity="" value. In that case, we should
-            // retry fetching for this request.
-            // https://html.spec.whatwg.org/#fetch-a-single-module-script
-            if (currentAttempt === entry.fetch)
-                entry.fetch = @undefined;
-            return this.requestFetch(entry, parameters, fetcher);
-        });
+        var promiseConstructor = @InternalPromise;
+        var newPromise = @createPromise(promiseConstructor, /* isInternalPromise */ true);
+        entry.fetch.then(
+            (result) => @fulfillPromiseWithFirstResolvingFunctionCallCheck(newPromise, result),
+            (error) => @rejectPromiseWithFirstResolvingFunctionCallCheck(newPromise, this.createTypeErrorCopy(error)));
+        return newPromise;
     }
 
     // Hook point.
@@ -206,14 +211,16 @@ function requestInstantiate(entry, parameters, fetcher)
         entry.instantiate = instantiatePromise;
 
         var key = entry.key;
+        var type = entry.type;
         var moduleRecord = await this.parseModule(key, source);
         var dependenciesMap = moduleRecord.dependenciesMap;
         var requestedModules = this.requestedModules(moduleRecord);
         var dependencies = @newArrayWithSize(requestedModules.length);
         for (var i = 0, length = requestedModules.length; i < length; ++i) {
-            var depName = requestedModules[i];
+            var item = requestedModules[i];
+            var depName = item.key;
             var depKey = this.resolve(depName, key, fetcher);
-            var depEntry = this.ensureRegistered(depKey);
+            var depEntry = this.ensureRegistered(depKey, item.type);
             @putByValDirect(dependencies, i, depEntry);
             dependenciesMap.@set(depName, depEntry);
         }
@@ -545,16 +552,16 @@ async function loadModule(key, parameters, fetcher)
 {
     "use strict";
 
-    var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
+    var entry = await this.requestSatisfy(this.ensureRegistered(key, this.typeFromParameters(parameters)), parameters, fetcher, new @Set);
     return entry.key;
 }
 
 @visibility=PrivateRecursive
-function linkAndEvaluateModule(key, fetcher)
+function linkAndEvaluateModule(key, fetcher, type)
 {
     "use strict";
 
-    var entry = this.ensureRegistered(key);
+    var entry = this.ensureRegistered(key, type);
     this.link(entry, fetcher);
     return this.moduleEvaluation(entry, fetcher);
 }
@@ -565,8 +572,9 @@ async function loadAndEvaluateModule(moduleName, parameters, fetcher)
     "use strict";
 
     var key = this.resolve(moduleName, @undefined, fetcher);
+    var type = this.typeFromParameters(parameters);
     key = await this.loadModule(key, parameters, fetcher);
-    return await this.linkAndEvaluateModule(key, fetcher);
+    return await this.linkAndEvaluateModule(key, fetcher, type);
 }
 
 @visibility=PrivateRecursive
@@ -575,8 +583,9 @@ async function requestImportModule(moduleName, referrer, parameters, fetcher)
     "use strict";
 
     var key = this.resolve(moduleName, referrer, fetcher);
-    var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
-    await this.linkAndEvaluateModule(entry.key, fetcher);
+    var type = this.typeFromParameters(parameters);
+    var entry = await this.requestSatisfy(this.ensureRegistered(key, type), parameters, fetcher, new @Set);
+    await this.linkAndEvaluateModule(entry.key, fetcher, type);
     return this.getModuleNamespaceObject(entry.module);
 }
 
@@ -585,7 +594,10 @@ function dependencyKeysIfEvaluated(key)
 {
     "use strict";
 
-    var entry = this.registry.@get(key);
+    var entryMap = this.registry.@get(key);
+    if (!entryMap)
+        return null;
+    var entry = entryMap.@get('js-wasm');
     if (!entry || !entry.evaluated)
         return null;
 

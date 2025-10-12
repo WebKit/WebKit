@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc. All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,8 +34,12 @@
 #include "ReceiverMatcher.h"
 #include "SyncRequestID.h"
 #include "Timeout.h"
+#include <atomic>
+#include <new>
+#include <tuple>
 #include <wtf/Assertions.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
@@ -51,6 +55,8 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/OptionSet.h>
+#include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadAssertions.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -61,14 +67,26 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/CString.h>
 
+#if OS(ANDROID)
+#include <wtf/android/RefPtrAndroid.h>
+#endif
+
 #if OS(DARWIN)
 #include <mach/mach_port.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
+#if HAVE(XPC_API)
+#include <xpc/xpc.h>
 #endif
+#endif // OS(DARWIN)
 
 #if USE(GLIB)
 #include <wtf/glib/GSocketMonitor.h>
+#endif
+
+#if !USE(SYSTEM_MALLOC)
+#include <bmalloc/TZoneHeap.h>
+#include <bmalloc/bmalloc.h>
 #endif
 
 #if USE(UNIX_DOMAIN_SOCKETS)
@@ -139,7 +157,7 @@ extern ASCIILiteral errorAsString(Error);
 #define MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, connection, message) do { \
     if (!(assertion)) [[unlikely]] { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING ": " message, WTF_PRETTY_FUNCTION); \
-        IPC::Connection::markCurrentlyDispatchedMessageAsInvalid(connection); \
+        IPC::markCurrentlyDispatchedMessageAsInvalid(connection); \
         CRASH_IF_TESTING \
         return; \
     } \
@@ -151,7 +169,7 @@ extern ASCIILiteral errorAsString(Error);
 #define MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection) do { \
     if (!(assertion)) [[unlikely]] { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
-        IPC::Connection::markCurrentlyDispatchedMessageAsInvalid(connection); \
+        IPC::markCurrentlyDispatchedMessageAsInvalid(connection); \
         CRASH_IF_TESTING \
         return; \
     } \
@@ -160,7 +178,7 @@ extern ASCIILiteral errorAsString(Error);
 #define MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion) do { \
     if (!(assertion)) [[unlikely]] { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
-        IPC::Connection::markCurrentlyDispatchedMessageAsInvalid(connection); \
+        IPC::markCurrentlyDispatchedMessageAsInvalid(connection); \
         CRASH_IF_TESTING \
         { completion; } \
         return; \
@@ -170,7 +188,7 @@ extern ASCIILiteral errorAsString(Error);
 #define MESSAGE_CHECK_COMPLETION_BASE_COROUTINE(assertion, connection, completion) do { \
     if (!(assertion)) [[unlikely]] { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
-        IPC::Connection::markCurrentlyDispatchedMessageAsInvalid(connection); \
+        IPC::markCurrentlyDispatchedMessageAsInvalid(connection); \
         CRASH_IF_TESTING \
         { completion; } \
         co_return { }; \
@@ -180,7 +198,7 @@ extern ASCIILiteral errorAsString(Error);
 #define MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, connection, returnValue) do { \
     if (!(assertion)) [[unlikely]] { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
-        IPC::Connection::markCurrentlyDispatchedMessageAsInvalid(connection); \
+        IPC::markCurrentlyDispatchedMessageAsInvalid(connection); \
         CRASH_IF_TESTING \
         return (returnValue); \
     } \
@@ -243,6 +261,7 @@ private:
         UniqueRef<Decoder> decoder; // Owns the memory for reply.
         typename T::ReplyArguments reply;
     };
+
     Expected<ReplyData, Error> value;
 };
 
@@ -257,11 +276,11 @@ public:
     using AsyncReplyID = IPC::AsyncReplyID;
 
     class Client : public MessageReceiver, public CanMakeThreadSafeCheckedPtr<Client> {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Client);
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Client);
     public:
         virtual void didClose(Connection&) = 0;
-        virtual void didReceiveInvalidMessage(Connection&, MessageName, int32_t indexOfObjectFailingDecoding) = 0;
+        virtual void didReceiveInvalidMessage(Connection&, MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) = 0;
         virtual void requestRemoteProcessTermination() { }
 
     protected:
@@ -321,8 +340,14 @@ public:
 
 #if OS(DARWIN)
     xpc_connection_t xpcConnection() const { return m_xpcConnection.get(); }
+    OSObjectPtr<xpc_connection_t> protectedXPCConnection() const { return xpcConnection(); }
     std::optional<audit_token_t> getAuditToken();
     pid_t remoteProcessID() const;
+#endif
+
+#if USE(GLIB)
+    void sendCredentials() const;
+    static pid_t remoteProcessID(GSocket*);
 #endif
 
     static Ref<Connection> createServerConnection(Identifier&&, Thread::QOS = Thread::QOS::Default);
@@ -337,6 +362,7 @@ public:
     ~Connection();
 
     Client* client() const { return m_client.get(); }
+    RefPtr<Client> protectedClient() const { return m_client.get(); }
 
     enum UniqueIDType { };
     using UniqueID = AtomicObjectIdentifier<UniqueIDType>;
@@ -384,13 +410,6 @@ public:
     // Ensures that messages sent prior to the call are not affected by invalidate() or crash done after the call returns.
     Error flushSentMessages(Timeout);
     void invalidate();
-    static void markCurrentlyDispatchedMessageAsInvalid(Connection* connection)
-    {
-        if (connection)
-            markCurrentlyDispatchedMessageAsInvalid(*connection);
-    }
-    static void markCurrentlyDispatchedMessageAsInvalid(const RefPtr<Connection>& connection) { markCurrentlyDispatchedMessageAsInvalid(connection.get()); }
-    static void markCurrentlyDispatchedMessageAsInvalid(Connection& connection) { connection.markCurrentlyDispatchedMessageAsInvalid(); }
 
     template<typename PC, typename BasePromise>
     struct ConvertedPromise {
@@ -509,7 +528,7 @@ public:
 
     template<typename MessageReceiverType> void dispatchMessageReceiverMessage(MessageReceiverType&, UniqueRef<Decoder>&&);
     // Can be called from any thread.
-    void dispatchDidReceiveInvalidMessage(MessageName, int32_t indexOfObjectFailingDecoding);
+    void dispatchDidReceiveInvalidMessage(MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding);
     void dispatchDidCloseAndInvalidate();
 
     size_t pendingMessageCountForTesting() const;
@@ -522,8 +541,11 @@ public:
     template<typename T, typename C> static void callReply(Connection*, Decoder&, C&&);
     template<typename T, typename C> static void cancelReply(C&&);
 
+    void markCurrentlyDispatchedMessageAsInvalid();
+
 #if ENABLE(CORE_IPC_SIGNPOSTS)
-    static void* generateSignpostIdentifier();
+    static bool signpostsEnabled();
+    static void forceEnableSignposts();
 #endif
 
     static bool shouldCrashOnMessageCheckFailure();
@@ -553,7 +575,6 @@ private:
     template<typename T> static CompletionHandler<void(Decoder*)> makeAsyncReplyCompletionHandler(typename T::Promise::Producer&&, ThreadLikeAssertion);
 
     bool isIncomingMessagesThrottlingEnabled() const { return m_incomingMessagesThrottlingLevel.has_value(); }
-    inline void markCurrentlyDispatchedMessageAsInvalid();
 
     DecoderOrError waitForMessage(MessageName, uint64_t destinationID, Timeout, OptionSet<WaitForOption>);
 
@@ -611,6 +632,7 @@ private:
     struct SyncMessageStateRelease {
         void operator()(SyncMessageState*) const;
     };
+
     void addAsyncReplyHandler(AsyncReplyHandler&&);
     void addAsyncReplyHandlerWithDispatcher(AsyncReplyHandlerWithDispatcher&&);
     void cancelAsyncReplyHandlers();
@@ -662,7 +684,21 @@ private:
     Condition m_waitForMessageCondition;
     Lock m_waitForMessageLock;
 
-    struct WaitForMessageState;
+    struct WaitForMessageState {
+        WaitForMessageState(MessageName messageName, uint64_t destinationID, OptionSet<WaitForOption> waitForOptions)
+            : messageName(messageName)
+            , destinationID(destinationID)
+            , waitForOptions(waitForOptions)
+        {
+        }
+
+        MessageName messageName;
+        uint64_t destinationID;
+        OptionSet<WaitForOption> waitForOptions;
+        bool messageWaitingInterrupted = false;
+        std::unique_ptr<Decoder> decoder;
+    };
+
     WaitForMessageState* m_waitingForMessage WTF_GUARDED_BY_LOCK(m_waitForMessageLock) { nullptr }; // NOLINT
 
     Lock m_syncReplyStateLock;
@@ -689,18 +725,32 @@ private:
 #if USE(UNIX_DOMAIN_SOCKETS)
     // Called on the connection queue.
     void readyReadHandler();
-    bool processMessage();
-    bool sendOutputMessage(UnixMessage&);
-    int socketDescriptor() const;
+    bool sendOutputMessage(UnixMessage&&);
 
     Vector<uint8_t> m_readBuffer;
-    Vector<int> m_fileDescriptors;
-    std::unique_ptr<UnixMessage> m_pendingOutputMessage;
+
 #if USE(GLIB)
+    std::unique_ptr<Decoder> createMessageDecoder();
+
     GRefPtr<GSocket> m_socket;
+    GRefPtr<GCancellable> m_cancellable;
     GSocketMonitor m_readSocketMonitor;
     GSocketMonitor m_writeSocketMonitor;
+    Vector<UnixFileDescriptor> m_fileDescriptors;
+    bool m_hasPendingOutputMessage { false };
+#if OS(ANDROID)
+    bool sendOutgoingHardwareBuffers();
+    bool receiveIncomingHardwareBuffers();
+
+    size_t m_pendingIncomingHardwareBufferCount { 0 };
+    Vector<RefPtr<AHardwareBuffer>, 2> m_incomingHardwareBuffers;
+    Vector<RefPtr<AHardwareBuffer>, 2> m_outgoingHardwareBuffers;
+#endif
 #else
+    bool processMessage();
+    int socketDescriptor() const;
+
+    Vector<int> m_fileDescriptors;
     UnixFileDescriptor m_socketDescriptor;
 #endif
 #if PLATFORM(PLAYSTATION)
@@ -842,7 +892,7 @@ template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& mess
     if (decoder->messageName() == MessageName::CancelSyncMessageReply)
         return { Error::SyncMessageCancelled };
     std::optional<typename T::ReplyArguments> replyArguments;
-    *decoder >> replyArguments;
+    decoder.get() >> replyArguments;
     if (!replyArguments)
         return { Error::FailedToDecodeReplyArguments };
     return SendSyncResult<T> { WTFMove(decoder), WTFMove(*replyArguments) };
@@ -867,7 +917,7 @@ template<typename T> Error Connection::waitForAndDispatchImmediately(uint64_t de
         return Error::InvalidConnection;
 
     ASSERT(decoderOrError.value()->destinationID() == destinationID);
-    m_client->didReceiveMessage(*this, decoderOrError.value());
+    protectedClient()->didReceiveMessage(*this, decoderOrError.value());
     return Error::NoError;
 }
 
@@ -878,7 +928,7 @@ template<typename T> Error Connection::waitForAsyncReplyAndDispatchImmediately(A
     if (!decoderOrError.has_value())
         return decoderOrError.error();
 
-    ASSERT(decoderOrError.value()->messageReceiverName() == ReceiverName::AsyncReply);
+    ASSERT(decoderOrError.value()->isAsyncReplyMessage());
     ASSERT(decoderOrError.value()->destinationID() == replyID.toUInt64());
     ASSERT(!isAsyncReplyHandlerWithDispatcher(replyID), "Not supported with AsyncReplyHandlerWithDispatcher");
     auto handler = takeAsyncReplyHandler(AtomicObjectIdentifier<AsyncReplyIDType>(decoderOrError.value()->destinationID()));
@@ -1044,5 +1094,17 @@ public:
 private:
     static std::atomic<unsigned> unboundedSynchronousIPCCount;
 };
+
+inline void markCurrentlyDispatchedMessageAsInvalid(Connection& connection)
+{
+    connection.markCurrentlyDispatchedMessageAsInvalid();
+}
+
+inline void markCurrentlyDispatchedMessageAsInvalid(const RefPtr<Connection>& connection)
+{
+    if (connection)
+        connection->markCurrentlyDispatchedMessageAsInvalid();
+}
+
 
 } // namespace IPC

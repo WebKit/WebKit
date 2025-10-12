@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PageAuditAgent.h"
 
+#include "FrameConsoleClient.h"
 #include "InspectorAuditAccessibilityObject.h"
 #include "InspectorAuditDOMObject.h"
 #include "InspectorAuditResourcesObject.h"
@@ -33,8 +34,8 @@
 #include "JSInspectorAuditAccessibilityObject.h"
 #include "JSInspectorAuditDOMObject.h"
 #include "JSInspectorAuditResourcesObject.h"
+#include "LocalFrame.h"
 #include "Page.h"
-#include "PageConsoleClient.h"
 #include <JavaScriptCore/CallFrame.h>
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
@@ -106,12 +107,12 @@ void PageAuditAgent::populateAuditObject(JSC::JSGlobalObject* lexicalGlobalObjec
 void PageAuditAgent::muteConsole()
 {
     InspectorAuditAgent::muteConsole();
-    PageConsoleClient::mute();
+    FrameConsoleClient::mute();
 }
 
 void PageAuditAgent::unmuteConsole()
 {
-    PageConsoleClient::unmute();
+    FrameConsoleClient::unmute();
     InspectorAuditAgent::unmuteConsole();
 }
 

@@ -21,6 +21,10 @@ namespace cl
 struct IcdDispatch : public _cl_icd_dispatch
 {
     clIcdGetPlatformIDsKHR_fn clIcdGetPlatformIDsKHR;
+    // TODO: below extensions will be refactored to not to expose them publicly later
+    // http://anglebug.com/378017028
+    clEnqueueAcquireExternalMemObjectsKHR_fn clEnqueueAcquireExternalMemObjectsKHR;
+    clEnqueueReleaseExternalMemObjectsKHR_fn clEnqueueReleaseExternalMemObjectsKHR;
 };
 
 const IcdDispatch &GetDispatch();

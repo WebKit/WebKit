@@ -73,6 +73,7 @@ enum class SDKAlignedBehavior {
     ModernCompabilityModeByDefault,
     MutationEventsDisabledByDefault,
     NavigationActionSourceFrameNonNull,
+    AllowBackgroundAudioPlayback,
     NoClientCertificateLookup,
     NoExpandoIndexedPropertiesOnWindow,
     NoPokerBrosBuiltInTagQuirk,
@@ -94,7 +95,6 @@ enum class SDKAlignedBehavior {
     SnapshotAfterScreenUpdates,
     SupportsDeviceOrientationAndMotionPermissionAPI,
     SupportsInitConstructors,
-    SupportsiOSAppsOnMacOS,
     TimerThreadSafetyChecks,
     UIScrollViewDoesNotApplyKeyboardInsetsUnconditionally,
     UnprefixedPlaysInlineAttribute,
@@ -115,7 +115,6 @@ enum class SDKAlignedBehavior {
     ThrowIfCanDeclareGlobalFunctionFails,
     ThrowOnKVCInstanceVariableAccess,
     LaxCookieSameSiteAttribute,
-    BlockOptionallyBlockableMixedContent,
     UseCFNetworkNetworkLoader,
     AutoLayoutInWKWebView,
     BlockCrossOriginRedirectDownloads,
@@ -127,6 +126,7 @@ enum class SDKAlignedBehavior {
     BlobFileAccessEnforcement,
     SupportGameControllerEventInteractionAPI,
     DidFailProvisionalNavigationWithErrorForFileURLNavigation,
+    CrashWhenPreconnectingFromBackgroundThread,
 
     NumberOfBehaviors
 };
@@ -152,8 +152,10 @@ WTF_EXPORT_PRIVATE void clearApplicationBundleIdentifierTestingOverride();
 namespace CocoaApplication {
 
 WTF_EXPORT_PRIVATE bool isAppleApplication();
-WTF_EXPORT_PRIVATE bool isIBooks();
+WTF_EXPORT_PRIVATE bool isAppleBooks();
+WTF_EXPORT_PRIVATE bool isDumpRenderTree();
 WTF_EXPORT_PRIVATE bool isWebkitTestRunner();
+WTF_EXPORT_PRIVATE bool shouldOSFaultLogForAppleApplicationUsingWebKit1();
 
 }
 
@@ -182,35 +184,26 @@ namespace IOSApplication {
 
 WTF_EXPORT_PRIVATE bool isAmazon();
 WTF_EXPORT_PRIVATE bool isAppleWebApp();
-WTF_EXPORT_PRIVATE bool isCrunchyroll();
 WTF_EXPORT_PRIVATE bool isDataActivation();
-WTF_EXPORT_PRIVATE bool isDoubleDown();
-WTF_EXPORT_PRIVATE bool isDumpRenderTree();
-WTF_EXPORT_PRIVATE bool isESPNFantasySports();
 WTF_EXPORT_PRIVATE bool isEssentialSkeleton();
-WTF_EXPORT_PRIVATE bool isFIFACompanion();
 WTF_EXPORT_PRIVATE bool isFeedly();
 WTF_EXPORT_PRIVATE bool isHimalaya();
 WTF_EXPORT_PRIVATE bool isHoYoLAB();
-WTF_EXPORT_PRIVATE bool isJWLibrary();
 WTF_EXPORT_PRIVATE bool isMailCompositionService();
 WTF_EXPORT_PRIVATE bool isMiniBrowser();
 WTF_EXPORT_PRIVATE bool isMobileMail();
 WTF_EXPORT_PRIVATE bool isMobileSafari();
 WTF_EXPORT_PRIVATE bool isNews();
-WTF_EXPORT_PRIVATE bool isNoggin();
-WTF_EXPORT_PRIVATE bool isOKCupid();
-WTF_EXPORT_PRIVATE bool isPaperIO();
-WTF_EXPORT_PRIVATE bool isPocketCity();
 WTF_EXPORT_PRIVATE bool isSafariViewService();
 WTF_EXPORT_PRIVATE bool isStocks();
 WTF_EXPORT_PRIVATE bool isWebBookmarksD();
 WTF_EXPORT_PRIVATE bool isWebProcess();
-WTF_EXPORT_PRIVATE bool isIBooksStorytime();
 WTF_EXPORT_PRIVATE bool isMobileStore();
 WTF_EXPORT_PRIVATE bool isUNIQLOApp();
 WTF_EXPORT_PRIVATE bool isDOFUSTouch();
 WTF_EXPORT_PRIVATE bool isMyRideK12();
+WTF_EXPORT_PRIVATE bool isFirefox();
+WTF_EXPORT_PRIVATE bool isFirefoxFocus();
 
 } // IOSApplication
 

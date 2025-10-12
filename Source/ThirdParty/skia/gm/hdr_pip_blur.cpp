@@ -6,6 +6,7 @@
  */
 #include "gm/gm.h"
 
+#include "include/core/SkCPURecorder.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkColorFilter.h"
 #include "include/core/SkPaint.h"
@@ -15,15 +16,16 @@
 #include "include/core/SkSurface.h"
 #include "include/effects/SkColorMatrix.h"
 #include "include/effects/SkImageFilters.h"
-#include "include/gpu/ganesh/SkImageGanesh.h"
 #include "tools/DecodeUtils.h"
+
+#if defined(SK_GANESH)
+#include "include/gpu/ganesh/SkImageGanesh.h"
+#endif
 
 #if defined(SK_GRAPHITE)
 #include "include/gpu/graphite/Image.h"
 #include "include/gpu/graphite/Recorder.h"
 #endif
-
-
 
 // Emulates rendering operations and color space conversions on Android running in HDR mode,
 // mixing SDR background content, an HDR PiP "video", and an overall blur shade from a swipe.
@@ -71,8 +73,8 @@ protected:
             SkCanvas* c = content->getCanvas();
             c->clear(SkColors::kDkGray);
 
-            SkMatrix toScreenBounds = SkMatrix::RectToRect(SkRect::Make(kFullSize),
-                                                           SkRect::Make(screenBounds));
+            SkMatrix toScreenBounds = SkMatrix::RectToRectOrIdentity(SkRect::Make(kFullSize),
+                                                                     SkRect::Make(screenBounds));
             c->concat(toScreenBounds);
 
             // Now render everything to `c` as if it were a kFullSize image.
@@ -104,8 +106,8 @@ protected:
             // For viewer, the offscreen passes operate at full resolution, but we draw smaller to
             // fit into the window. This lets overall frame times match nanobench, but it looks like
             // what dm produces.
-            SkMatrix toViewBounds = SkMatrix::RectToRect(SkRect::Make(screenBounds),
-                                                         SkRect::Make(kNonBenchSize));
+            SkMatrix toViewBounds = SkMatrix::RectToRectOrIdentity(SkRect::Make(screenBounds),
+                                                                   SkRect::Make(kNonBenchSize));
             canvas->concat(toViewBounds);
         }
 
@@ -127,13 +129,16 @@ protected:
                                             &outSubset, &outOffset);
         } else
 #endif
+#if defined(SK_GANESH)
         if (canvas->recordingContext()) {
             blur = SkImages::MakeWithFilter(canvas->recordingContext(),
                                             input,
                                             fShadeBlur.get(),
                                             screenBounds, screenBounds,
                                             &outSubset, &outOffset);
-        } else {
+        } else
+#endif
+        {
             blur = SkImages::MakeWithFilter(input,
                                             fShadeBlur.get(),
                                             screenBounds, screenBounds,
@@ -161,16 +166,20 @@ protected:
         cm.setSaturation(1.5f);
         fPaint.setColorFilter(SkColorFilters::Matrix(cm));
 
+        auto recorder = skcpu::Recorder::TODO();
+
         // The background image is standard sRGB
         fBackgroundImage = ToolUtils::GetResourceAsImage("images/yellow_rose.png")
                                     ->makeRasterImage(nullptr)
-                                    ->makeColorSpace(nullptr, SkColorSpace::MakeSRGB());
+                                    ->makeColorSpace(recorder, SkColorSpace::MakeSRGB(),
+                                        {});
         // The pip will be PQ-ish HDR
         fPiPImage = ToolUtils::GetResourceAsImage("images/mandrill_512.png")
                              ->makeRasterImage(nullptr)
-                             ->makeColorSpace(nullptr,
+                             ->makeColorSpace(recorder,
                                               SkColorSpace::MakeRGB(SkNamedTransferFn::kPQ,
-                                                                    SkNamedGamut::kRec2020));
+                                                                    SkNamedGamut::kRec2020),
+                                              {});
 
         const float sigma = 32.f;
         const bool scaleSigma = this->getMode() == kGM_Mode;

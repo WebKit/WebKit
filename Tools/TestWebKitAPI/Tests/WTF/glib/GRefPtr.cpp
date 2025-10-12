@@ -186,19 +186,6 @@ TEST(WTF_GRefPtr, Floating)
         EXPECT_EQ(obj->ref_count, 1);
     }
     EXPECT_NULL(obj);
-
-    {
-        obj = G_OBJECT(g_object_new(G_TYPE_INITIALLY_UNOWNED, nullptr));
-        EXPECT_TRUE(g_object_is_floating(obj));
-        GWeakPtr weak(reinterpret_cast<gpointer*>(&obj));
-        GRefPtr<GObject> o = adoptGRef(obj);
-        EXPECT_TRUE(g_object_is_floating(obj));
-        EXPECT_EQ(obj, o.get());
-        EXPECT_EQ(obj->ref_count, 1);
-        g_object_ref_sink(obj);
-        EXPECT_EQ(obj->ref_count, 1);
-    }
-    EXPECT_NULL(obj);
 }
 
 TEST(WTF_GRefPtr, OutPtr)

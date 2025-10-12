@@ -64,9 +64,6 @@ size_t Adapter::enumerateFeatures(WGPUFeatureName* features)
 
 bool Adapter::getLimits(WGPUSupportedLimits& limits)
 {
-    if (limits.nextInChain != nullptr)
-        return false;
-
     limits.limits = m_capabilities.limits;
     return true;
 }
@@ -89,11 +86,6 @@ bool Adapter::hasFeature(WGPUFeatureName feature)
 
 void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHandler<void(WGPURequestDeviceStatus, Ref<Device>&&, String&&)>&& callback)
 {
-    if (descriptor.nextInChain) {
-        callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Unknown descriptor type"_s);
-        return;
-    }
-
     if (m_deviceRequested) {
         callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Adapter can only request one device"_s);
         makeInvalid();
@@ -103,10 +95,6 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
     WGPULimits limits { };
 
     if (descriptor.requiredLimits) {
-        if (descriptor.requiredLimits->nextInChain) {
-            callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Unknown descriptor type"_s);
-            return;
-        }
 
         if (!WebGPU::isValid(descriptor.requiredLimits->limits)) {
             callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Device does not support requested limits"_s);

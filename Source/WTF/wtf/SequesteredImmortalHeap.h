@@ -48,7 +48,7 @@
 #include <wtf/Threading.h>
 
 #if OS(DARWIN)
-#include <System/pthread_machdep.h>
+#include <pthread/tsd_private.h>
 #endif
 
 namespace WTF {

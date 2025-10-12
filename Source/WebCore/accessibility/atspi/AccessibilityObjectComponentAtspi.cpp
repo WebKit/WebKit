@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "LocalFrameView.h"
 #include "RenderLayer.h"
+#include "RenderObjectStyle.h"
 #include "RenderStyleInlines.h"
 
 namespace WebCore {
@@ -158,7 +159,7 @@ float AccessibilityObjectAtspi::opacity() const
         return 1;
 
     if (auto* renderer = m_coreObject->renderer())
-        return renderer->style().opacity();
+        return renderer->style().opacity().value.value;
 
     return 1;
 }

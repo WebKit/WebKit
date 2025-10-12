@@ -27,7 +27,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "ResourceMonitorChecker.h"
+#include <WebCore/ResourceMonitorChecker.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 

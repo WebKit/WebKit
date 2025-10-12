@@ -14,7 +14,7 @@ import {
   getPipelineTypeForBindingCombination,
   getPerStageWGSLForBindingCombination,
 
-  getStageVisibilityForBinidngCombination,
+  getStageVisibilityForBindingCombination,
   testMaxStorageXXXInYYYStageDeviceCreationWithDependentLimit } from
 './limit_utils.js';
 
@@ -170,7 +170,7 @@ fn(async (t) => {
         `can not test ${testValue} bindings in same group because maxBindingsPerBindGroup = ${device.limits.maxBindingsPerBindGroup}`
       );
 
-      const visibility = getStageVisibilityForBinidngCombination(bindingCombination);
+      const visibility = getStageVisibilityForBindingCombination(bindingCombination);
       t.skipIfNotEnoughStorageBuffersInStage(visibility, testValue);
 
       const code = getPerStageWGSLForBindingCombination(

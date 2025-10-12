@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "GPRInfo.h"
-#include "JSCJSValue.h"
-#include "ResultType.h"
-#include "TagRegistersMode.h"
+#include <JavaScriptCore/GPRInfo.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/ResultType.h>
+#include <JavaScriptCore/TagRegistersMode.h>
 
 namespace JSC {
 
@@ -180,6 +180,10 @@ protected:
 
     BitfieldType m_bits { 0 }; // We take care to update m_bits only in a single operation. We don't ever store an inconsistent bit representation to it.
 };
+
+#if ENABLE(JIT)
+extern template class ArithProfile<uint16_t>;
+#endif
 
 /* This class stores the following components in 16 bits:
  * - ObservedResults

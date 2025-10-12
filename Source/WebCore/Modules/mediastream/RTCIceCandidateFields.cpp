@@ -31,16 +31,18 @@
 #include "LibWebRTCUtils.h"
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
 
 #include <webrtc/pc/webrtc_sdp.h>
 
+IGNORE_CLANG_WARNINGS_END
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
 std::optional<RTCIceCandidateFields> parseIceCandidateSDP(const String& sdp)
 {
-    cricket::Candidate candidate;
+    webrtc::Candidate candidate;
     if (!webrtc::ParseCandidate(sdp.utf8().data(), &candidate, nullptr, true))
         return { };
 

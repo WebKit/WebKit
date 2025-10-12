@@ -11,11 +11,11 @@
 #ifndef RTC_BASE_TASK_UTILS_REPEATING_TASK_H_
 #define RTC_BASE_TASK_UTILS_REPEATING_TASK_H_
 
-#include <memory>
-#include <type_traits>
 #include <utility>
 
 #include "absl/functional/any_invocable.h"
+#include "api/location.h"
+#include "api/scoped_refptr.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
@@ -82,10 +82,9 @@ class RepeatingTaskHandle {
   bool Running() const;
 
  private:
-  explicit RepeatingTaskHandle(
-      rtc::scoped_refptr<PendingTaskSafetyFlag> alive_flag)
+  explicit RepeatingTaskHandle(scoped_refptr<PendingTaskSafetyFlag> alive_flag)
       : repeating_task_(std::move(alive_flag)) {}
-  rtc::scoped_refptr<PendingTaskSafetyFlag> repeating_task_;
+  scoped_refptr<PendingTaskSafetyFlag> repeating_task_;
 };
 
 }  // namespace webrtc

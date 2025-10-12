@@ -107,14 +107,18 @@ public:
     // The Air::GenerationContext gives you even more power.
     Air::GenerationContext& context() const { return m_context; };
 
+    JS_EXPORT_PRIVATE Origin origin() const;
+
     template<typename Functor>
     void addLatePath(const Functor& functor) const
     {
-        context().latePaths.append(
+        context().latePaths.append(std::tuple {
+            origin(),
             createSharedTask<Air::GenerationContext::LatePathFunction>(
                 [=] (CCallHelpers& jit, Air::GenerationContext&) {
                     functor(jit);
-                }));
+                })
+            });
     }
 
 private:

@@ -1,0 +1,3259 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "categories": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "10", "name": "defaultDeviceWithDeviceType:mediaType:position:"}
+     ],
+     "interface": "AVCaptureDevice",
+     "introduced": "10",
+     "name": "AVCaptureDefaultDevice"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "7", "name": "authorizationStatusForMediaType:"},
+      {"access": "public", "introduced": "7", "name": "requestAccessForMediaType:completionHandler:"}
+     ],
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceAuthorization"
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "18",
+     "name": "AVCaptureDeviceBackgroundReplacement",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isBackgroundReplacementEnabled", "introduced": "18", "name": "backgroundReplacementEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isBackgroundReplacementActive", "introduced": "18", "name": "backgroundReplacementActive"}
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "13", "name": "extrinsicMatrixFromDevice:toDevice:"}
+     ],
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceCalibration"
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceCenterStage",
+     "properties": [
+      {"access": "public", "attr": [ "class" ], "getter": "centerStageControlMode", "introduced": "14.5", "name": "centerStageControlMode", "setter": "setCenterStageControlMode:"},
+      {"access": "public", "attr": [ "class" ], "getter": "isCenterStageEnabled", "introduced": "14.5", "name": "centerStageEnabled", "setter": "setCenterStageEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCenterStageActive", "introduced": "14.5", "name": "centerStageActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCenterStageRectOfInterestSupported", "name": "centerStageRectOfInterestSupported", "unavailable": true},
+      {"access": "public", "getter": "centerStageRectOfInterest", "introduced": "16.4", "name": "centerStageRectOfInterest", "setter": "setCenterStageRectOfInterest:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "26",
+     "name": "AVCaptureDeviceCinematicVideoCapture",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "cinematicVideoCaptureSceneMonitoringStatuses", "name": "cinematicVideoCaptureSceneMonitoringStatuses"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceColorSpaceSupport",
+     "properties": [
+      {"access": "public", "getter": "activeColorSpace", "introduced": "10", "name": "activeColorSpace", "setter": "setActiveColorSpace:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "16",
+     "name": "AVCaptureDeviceContinuityCamera",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isContinuityCamera", "introduced": "16", "name": "continuityCamera"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceDepthSupport",
+     "properties": [
+      {"access": "public", "getter": "activeDepthDataFormat", "introduced": "11", "name": "activeDepthDataFormat", "setter": "setActiveDepthDataFormat:"},
+      {"access": "public", "getter": "activeDepthDataMinFrameDuration", "introduced": "12", "name": "activeDepthDataMinFrameDuration", "setter": "setActiveDepthDataMinFrameDuration:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minAvailableVideoZoomFactor", "introduced": "11", "name": "minAvailableVideoZoomFactor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxAvailableVideoZoomFactor", "introduced": "11", "name": "maxAvailableVideoZoomFactor"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "16",
+     "name": "AVCaptureDeviceDeskViewCamera",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "companionDeskViewCamera", "introduced": "16", "name": "companionDeskViewCamera"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "isExposureModeSupported:"},
+      {"access": "public", "introduced": "26", "name": "defaultRectForExposurePointOfInterest:"},
+      {"access": "public", "introduced": "8", "name": "setExposureModeCustomWithDuration:ISO:completionHandler:"},
+      {"access": "public", "introduced": "8", "name": "setExposureTargetBias:completionHandler:"}
+     ],
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceExposure",
+     "properties": [
+      {"access": "public", "getter": "exposureMode", "name": "exposureMode", "setter": "setExposureMode:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isExposurePointOfInterestSupported", "name": "exposurePointOfInterestSupported"},
+      {"access": "public", "getter": "exposurePointOfInterest", "name": "exposurePointOfInterest", "setter": "setExposurePointOfInterest:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isExposureRectOfInterestSupported", "introduced": "26", "name": "exposureRectOfInterestSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minExposureRectOfInterestSize", "introduced": "26", "name": "minExposureRectOfInterestSize"},
+      {"access": "public", "getter": "exposureRectOfInterest", "introduced": "26", "name": "exposureRectOfInterest", "setter": "setExposureRectOfInterest:"},
+      {"access": "public", "getter": "automaticallyAdjustsFaceDrivenAutoExposureEnabled", "introduced": "15.4", "name": "automaticallyAdjustsFaceDrivenAutoExposureEnabled", "setter": "setAutomaticallyAdjustsFaceDrivenAutoExposureEnabled:"},
+      {"access": "public", "getter": "isFaceDrivenAutoExposureEnabled", "introduced": "15.4", "name": "faceDrivenAutoExposureEnabled", "setter": "setFaceDrivenAutoExposureEnabled:"},
+      {"access": "public", "getter": "activeMaxExposureDuration", "introduced": "12", "name": "activeMaxExposureDuration", "setter": "setActiveMaxExposureDuration:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAdjustingExposure", "name": "adjustingExposure"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lensAperture", "introduced": "8", "name": "lensAperture"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "exposureDuration", "introduced": "8", "name": "exposureDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ISO", "introduced": "8", "name": "ISO"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "exposureTargetOffset", "introduced": "8", "name": "exposureTargetOffset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "exposureTargetBias", "introduced": "8", "name": "exposureTargetBias"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minExposureTargetBias", "introduced": "8", "name": "minExposureTargetBias"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxExposureTargetBias", "introduced": "8", "name": "maxExposureTargetBias"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "4", "name": "isFlashModeSupported:"}
+     ],
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceFlash",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasFlash", "name": "hasFlash"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFlashAvailable", "introduced": "5", "name": "flashAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFlashActive", "introduced": "5", "name": "flashActive"},
+      {"access": "public", "getter": "flashMode", "introduced": "4", "name": "flashMode", "setter": "setFlashMode:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "isFocusModeSupported:"},
+      {"access": "public", "introduced": "26", "name": "defaultRectForFocusPointOfInterest:"},
+      {"access": "public", "introduced": "8", "name": "setFocusModeLockedWithLensPosition:completionHandler:"},
+      {"access": "public", "introduced": "26", "name": "setCinematicVideoTrackingFocusWithDetectedObjectID:focusMode:"},
+      {"access": "public", "introduced": "26", "name": "setCinematicVideoTrackingFocusAtPoint:focusMode:"},
+      {"access": "public", "introduced": "26", "name": "setCinematicVideoFixedFocusAtPoint:focusMode:"}
+     ],
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceFocus",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isLockingFocusWithCustomLensPositionSupported", "introduced": "10", "name": "lockingFocusWithCustomLensPositionSupported"},
+      {"access": "public", "getter": "focusMode", "name": "focusMode", "setter": "setFocusMode:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFocusPointOfInterestSupported", "name": "focusPointOfInterestSupported"},
+      {"access": "public", "getter": "focusPointOfInterest", "name": "focusPointOfInterest", "setter": "setFocusPointOfInterest:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFocusRectOfInterestSupported", "introduced": "26", "name": "focusRectOfInterestSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minFocusRectOfInterestSize", "introduced": "26", "name": "minFocusRectOfInterestSize"},
+      {"access": "public", "getter": "focusRectOfInterest", "introduced": "26", "name": "focusRectOfInterest", "setter": "setFocusRectOfInterest:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAdjustingFocus", "name": "adjustingFocus"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAutoFocusRangeRestrictionSupported", "introduced": "7", "name": "autoFocusRangeRestrictionSupported"},
+      {"access": "public", "getter": "autoFocusRangeRestriction", "introduced": "7", "name": "autoFocusRangeRestriction", "setter": "setAutoFocusRangeRestriction:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSmoothAutoFocusSupported", "introduced": "7", "name": "smoothAutoFocusSupported"},
+      {"access": "public", "getter": "isSmoothAutoFocusEnabled", "introduced": "7", "name": "smoothAutoFocusEnabled", "setter": "setSmoothAutoFocusEnabled:"},
+      {"access": "public", "getter": "automaticallyAdjustsFaceDrivenAutoFocusEnabled", "introduced": "15.4", "name": "automaticallyAdjustsFaceDrivenAutoFocusEnabled", "setter": "setAutomaticallyAdjustsFaceDrivenAutoFocusEnabled:"},
+      {"access": "public", "getter": "isFaceDrivenAutoFocusEnabled", "introduced": "15.4", "name": "faceDrivenAutoFocusEnabled", "setter": "setFaceDrivenAutoFocusEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lensPosition", "introduced": "8", "name": "lensPosition"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minimumFocusDistance", "introduced": "15", "name": "minimumFocusDistance"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDeviceFormat",
+     "introduced": "18",
+     "name": "AVCaptureDeviceFormatBackgroundReplacement",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isBackgroundReplacementSupported", "introduced": "18", "name": "backgroundReplacementSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoFrameRateRangeForBackgroundReplacement", "introduced": "18", "name": "videoFrameRateRangeForBackgroundReplacement"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDeviceFormat",
+     "introduced": "7",
+     "name": "AVCaptureDeviceFormatCenterStage",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCenterStageSupported", "introduced": "14.5", "name": "centerStageSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoMinZoomFactorForCenterStage", "introduced": "14.5", "name": "videoMinZoomFactorForCenterStage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoMaxZoomFactorForCenterStage", "introduced": "14.5", "name": "videoMaxZoomFactorForCenterStage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoFrameRateRangeForCenterStage", "introduced": "14.5", "name": "videoFrameRateRangeForCenterStage"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDeviceFormat",
+     "introduced": "26",
+     "name": "AVCaptureDeviceFormatCinematicVideoSupport",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCinematicVideoCaptureSupported", "introduced": "26", "name": "cinematicVideoCaptureSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "defaultSimulatedAperture", "introduced": "26", "name": "defaultSimulatedAperture"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minSimulatedAperture", "introduced": "26", "name": "minSimulatedAperture"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxSimulatedAperture", "introduced": "26", "name": "maxSimulatedAperture"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoMinZoomFactorForCinematicVideo", "introduced": "26", "name": "videoMinZoomFactorForCinematicVideo"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoMaxZoomFactorForCinematicVideo", "introduced": "26", "name": "videoMaxZoomFactorForCinematicVideo"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoFrameRateRangeForCinematicVideo", "introduced": "26", "name": "videoFrameRateRangeForCinematicVideo"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDeviceFormat",
+     "introduced": "7",
+     "name": "AVCaptureDeviceFormatDepthDataAdditions",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPortraitEffectsMatteStillImageDeliverySupported", "introduced": "12", "name": "portraitEffectsMatteStillImageDeliverySupported"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDeviceFormat",
+     "introduced": "7",
+     "name": "AVCaptureDeviceFormatGeometricDistortionCorrection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "geometricDistortionCorrectedVideoFieldOfView", "introduced": "13", "name": "geometricDistortionCorrectedVideoFieldOfView"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDeviceFormat",
+     "introduced": "7",
+     "name": "AVCaptureDeviceFormatMultiCamAdditions",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMultiCamSupported", "introduced": "13", "name": "multiCamSupported"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDeviceFormat",
+     "introduced": "15",
+     "name": "AVCaptureDeviceFormatPortraitEffect",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPortraitEffectSupported", "introduced": "15", "name": "portraitEffectSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoFrameRateRangeForPortraitEffect", "introduced": "15", "name": "videoFrameRateRangeForPortraitEffect"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDeviceFormat",
+     "introduced": "17",
+     "name": "AVCaptureDeviceFormatReactionEffects",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "reactionEffectsSupported", "introduced": "17", "name": "reactionEffectsSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoFrameRateRangeForReactionEffectsInProgress", "introduced": "17", "name": "videoFrameRateRangeForReactionEffectsInProgress"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDeviceFormat",
+     "introduced": "26",
+     "name": "AVCaptureDeviceFormatSmartFraming",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSmartFramingSupported", "name": "smartFramingSupported"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDeviceFormat",
+     "introduced": "18",
+     "name": "AVCaptureDeviceFormatSpatialVideoCapture",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSpatialVideoCaptureSupported", "name": "spatialVideoCaptureSupported"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDeviceFormat",
+     "introduced": "16",
+     "name": "AVCaptureDeviceFormatStudioLight",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isStudioLightSupported", "introduced": "16", "name": "studioLightSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoFrameRateRangeForStudioLight", "introduced": "16", "name": "videoFrameRateRangeForStudioLight"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceGeometricDistortionCorrection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isGeometricDistortionCorrectionSupported", "introduced": "13", "name": "geometricDistortionCorrectionSupported"},
+      {"access": "public", "getter": "isGeometricDistortionCorrectionEnabled", "introduced": "13", "name": "geometricDistortionCorrectionEnabled", "setter": "setGeometricDistortionCorrectionEnabled:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceHighDynamicRangeSupport",
+     "properties": [
+      {"access": "public", "getter": "automaticallyAdjustsVideoHDREnabled", "introduced": "8", "name": "automaticallyAdjustsVideoHDREnabled", "setter": "setAutomaticallyAdjustsVideoHDREnabled:"},
+      {"access": "public", "getter": "isVideoHDREnabled", "introduced": "8", "name": "videoHDREnabled", "setter": "setVideoHDREnabled:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceLowLightBoost",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isLowLightBoostSupported", "introduced": "6", "name": "lowLightBoostSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isLowLightBoostEnabled", "introduced": "6", "name": "lowLightBoostEnabled"},
+      {"access": "public", "getter": "automaticallyEnablesLowLightBoostWhenAvailable", "introduced": "6", "name": "automaticallyEnablesLowLightBoostWhenAvailable", "setter": "setAutomaticallyEnablesLowLightBoostWhenAvailable:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "name": "AVCaptureDeviceNominalFocalLengthIn35mmFilm",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "nominalFocalLengthIn35mmFilm", "introduced": "26", "name": "nominalFocalLengthIn35mmFilm"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "15",
+     "name": "AVCaptureDevicePortraitEffect",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isPortraitEffectEnabled", "introduced": "15", "name": "portraitEffectEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPortraitEffectActive", "introduced": "15", "name": "portraitEffectActive"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDevicePosition",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "position", "name": "position"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "17",
+     "name": "AVCaptureDevicePreferredCamera",
+     "properties": [
+      {"access": "public", "attr": [ "class" ], "getter": "userPreferredCamera", "introduced": "17", "name": "userPreferredCamera", "setter": "setUserPreferredCamera:"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "systemPreferredCamera", "introduced": "17", "name": "systemPreferredCamera"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "17", "name": "performEffectForReaction:"}
+     ],
+     "interface": "AVCaptureDevice",
+     "introduced": "17",
+     "name": "AVCaptureDeviceReactionEffects",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "reactionEffectsEnabled", "introduced": "17", "name": "reactionEffectsEnabled"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "reactionEffectGesturesEnabled", "introduced": "17", "name": "reactionEffectGesturesEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canPerformReactionEffects", "introduced": "17", "name": "canPerformReactionEffects"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableReactionTypes", "introduced": "17", "name": "availableReactionTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "reactionEffectsInProgress", "introduced": "17", "name": "reactionEffectsInProgress"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "26",
+     "name": "AVCaptureDeviceSmartFraming",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "smartFramingMonitor", "name": "smartFramingMonitor"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "name": "AVCaptureDeviceSpatialCapture",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "spatialCaptureDiscomfortReasons", "introduced": "18", "name": "spatialCaptureDiscomfortReasons"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "16",
+     "name": "AVCaptureDeviceStudioLight",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isStudioLightEnabled", "introduced": "16", "name": "studioLightEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isStudioLightActive", "introduced": "16", "name": "studioLightActive"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceSubjectAreaChangeMonitoring",
+     "properties": [
+      {"access": "public", "getter": "isSubjectAreaChangeMonitoringEnabled", "introduced": "5", "name": "subjectAreaChangeMonitoringEnabled", "setter": "setSubjectAreaChangeMonitoringEnabled:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceSystemPressure",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "systemPressureState", "introduced": "11.1", "name": "systemPressureState"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceToneMapping",
+     "properties": [
+      {"access": "public", "getter": "isGlobalToneMappingEnabled", "introduced": "13", "name": "globalToneMappingEnabled", "setter": "setGlobalToneMappingEnabled:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "isTorchModeSupported:"},
+      {"access": "public", "introduced": "6", "name": "setTorchModeOnWithLevel:error:"}
+     ],
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceTorch",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasTorch", "name": "hasTorch"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isTorchAvailable", "introduced": "5", "name": "torchAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isTorchActive", "introduced": "6", "name": "torchActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "torchLevel", "introduced": "5", "name": "torchLevel"},
+      {"access": "public", "getter": "torchMode", "name": "torchMode", "setter": "setTorchMode:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setTransportControlsPlaybackMode:speed:", "unavailable": true}
+     ],
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceTransportControls",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "transportControlsSupported", "name": "transportControlsSupported", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "transportControlsPlaybackMode", "name": "transportControlsPlaybackMode", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "transportControlsSpeed", "name": "transportControlsSpeed", "unavailable": true}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceType",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceType", "introduced": "10", "name": "deviceType"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "rampToVideoZoomFactor:withRate:"},
+      {"access": "public", "introduced": "7", "name": "cancelVideoZoomRamp"}
+     ],
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceVideoZoom",
+     "properties": [
+      {"access": "public", "getter": "videoZoomFactor", "introduced": "7", "name": "videoZoomFactor", "setter": "setVideoZoomFactor:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isRampingVideoZoom", "introduced": "7", "name": "rampingVideoZoom"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dualCameraSwitchOverVideoZoomFactor", "introduced": "11", "name": "dualCameraSwitchOverVideoZoomFactor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayVideoZoomFactorMultiplier", "introduced": "18", "name": "displayVideoZoomFactorMultiplier"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "15", "name": "setPrimaryConstituentDeviceSwitchingBehavior:restrictedSwitchingBehaviorConditions:"}
+     ],
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceVirtual",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVirtualDevice", "introduced": "13", "name": "virtualDevice"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "constituentDevices", "introduced": "13", "name": "constituentDevices"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "virtualDeviceSwitchOverVideoZoomFactors", "introduced": "13", "name": "virtualDeviceSwitchOverVideoZoomFactors"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "primaryConstituentDeviceSwitchingBehavior", "introduced": "15", "name": "primaryConstituentDeviceSwitchingBehavior"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "primaryConstituentDeviceRestrictedSwitchingBehaviorConditions", "introduced": "15", "name": "primaryConstituentDeviceRestrictedSwitchingBehaviorConditions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "activePrimaryConstituentDeviceSwitchingBehavior", "introduced": "15", "name": "activePrimaryConstituentDeviceSwitchingBehavior"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "activePrimaryConstituentDeviceRestrictedSwitchingBehaviorConditions", "introduced": "15", "name": "activePrimaryConstituentDeviceRestrictedSwitchingBehaviorConditions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "activePrimaryConstituentDevice", "introduced": "15", "name": "activePrimaryConstituentDevice"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedFallbackPrimaryConstituentDevices", "introduced": "15", "name": "supportedFallbackPrimaryConstituentDevices"},
+      {"access": "public", "getter": "fallbackPrimaryConstituentDevices", "introduced": "15", "name": "fallbackPrimaryConstituentDevices", "setter": "setFallbackPrimaryConstituentDevices:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "isWhiteBalanceModeSupported:"},
+      {"access": "public", "introduced": "26", "name": "setWhiteBalanceModeLockedWithDeviceWhiteBalanceTemperatureAndTintValues:completionHandler:"},
+      {"access": "public", "introduced": "8", "name": "setWhiteBalanceModeLockedWithDeviceWhiteBalanceGains:completionHandler:"},
+      {"access": "public", "introduced": "8", "name": "chromaticityValuesForDeviceWhiteBalanceGains:"},
+      {"access": "public", "introduced": "8", "name": "deviceWhiteBalanceGainsForChromaticityValues:"},
+      {"access": "public", "introduced": "8", "name": "temperatureAndTintValuesForDeviceWhiteBalanceGains:"},
+      {"access": "public", "introduced": "8", "name": "deviceWhiteBalanceGainsForTemperatureAndTintValues:"}
+     ],
+     "interface": "AVCaptureDevice",
+     "introduced": "4",
+     "name": "AVCaptureDeviceWhiteBalance",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isLockingWhiteBalanceWithCustomDeviceGainsSupported", "introduced": "10", "name": "lockingWhiteBalanceWithCustomDeviceGainsSupported"},
+      {"access": "public", "getter": "whiteBalanceMode", "name": "whiteBalanceMode", "setter": "setWhiteBalanceMode:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAdjustingWhiteBalance", "name": "adjustingWhiteBalance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceWhiteBalanceGains", "introduced": "8", "name": "deviceWhiteBalanceGains"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "grayWorldDeviceWhiteBalanceGains", "introduced": "8", "name": "grayWorldDeviceWhiteBalanceGains"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxWhiteBalanceGain", "introduced": "8", "name": "maxWhiteBalanceGain"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "15",
+     "name": "AVCaptureMicrophoneMode",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "preferredMicrophoneMode", "introduced": "15", "name": "preferredMicrophoneMode"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "activeMicrophoneMode", "introduced": "15", "name": "activeMicrophoneMode"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCapturePhoto",
+     "introduced": "11",
+     "name": "AVCapturePhotoBracketedCapture",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bracketSettings", "introduced": "11", "name": "bracketSettings"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sequenceCount", "introduced": "11", "name": "sequenceCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lensStabilizationStatus", "introduced": "11", "name": "lensStabilizationStatus"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "11", "name": "fileDataRepresentation"},
+      {"access": "public", "introduced": "12", "name": "fileDataRepresentationWithCustomizer:"},
+      {"access": "public", "introduced": "11", "name": "fileDataRepresentationWithReplacementMetadata:replacementEmbeddedThumbnailPhotoFormat:replacementEmbeddedThumbnailPixelBuffer:replacementDepthData:"},
+      {"access": "public", "introduced": "11", "name": "CGImageRepresentation"},
+      {"access": "public", "introduced": "11", "name": "previewCGImageRepresentation"}
+     ],
+     "interface": "AVCapturePhoto",
+     "introduced": "11",
+     "name": "AVCapturePhotoConversions"
+    },
+    {
+     "access": "public",
+     "interface": "AVCapturePhotoOutput",
+     "introduced": "10",
+     "name": "AVCapturePhotoOutputDepthDataDeliverySupport",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isDepthDataDeliverySupported", "introduced": "11", "name": "depthDataDeliverySupported"},
+      {"access": "public", "getter": "isDepthDataDeliveryEnabled", "introduced": "11", "name": "depthDataDeliveryEnabled", "setter": "setDepthDataDeliveryEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPortraitEffectsMatteDeliverySupported", "introduced": "12", "name": "portraitEffectsMatteDeliverySupported"},
+      {"access": "public", "getter": "isPortraitEffectsMatteDeliveryEnabled", "introduced": "12", "name": "portraitEffectsMatteDeliveryEnabled", "setter": "setPortraitEffectsMatteDeliveryEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableSemanticSegmentationMatteTypes", "introduced": "13", "name": "availableSemanticSegmentationMatteTypes"},
+      {"access": "public", "getter": "enabledSemanticSegmentationMatteTypes", "introduced": "13", "name": "enabledSemanticSegmentationMatteTypes", "setter": "setEnabledSemanticSegmentationMatteTypes:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "prepareToCaptureStillImageBracketFromConnection:withSettingsArray:completionHandler:"},
+      {"access": "public", "introduced": "8", "name": "captureStillImageBracketAsynchronouslyFromConnection:withSettingsArray:completionHandler:"}
+     ],
+     "interface": "AVCaptureStillImageOutput",
+     "introduced": "4",
+     "name": "AVCaptureStillImageOutputBracketedCapture",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxBracketedCaptureStillImageCount", "introduced": "8", "name": "maxBracketedCaptureStillImageCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isLensStabilizationDuringBracketedCaptureSupported", "introduced": "9", "name": "lensStabilizationDuringBracketedCaptureSupported"},
+      {"access": "public", "getter": "isLensStabilizationDuringBracketedCaptureEnabled", "introduced": "9", "name": "lensStabilizationDuringBracketedCaptureEnabled", "setter": "setLensStabilizationDuringBracketedCaptureEnabled:"}
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "15", "name": "showSystemUserInterface:"}
+     ],
+     "interface": "AVCaptureDevice",
+     "introduced": "15",
+     "name": "AVCaptureSystemUserInterface"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "requestAccessWithCompletionHandler:"}
+     ],
+     "interface": "AVExternalStorageDevice",
+     "introduced": "17",
+     "name": "AVExternalStorageDeviceAuthorization",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "authorizationStatus", "name": "authorizationStatus"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVMetadataMachineReadableCodeObject",
+     "introduced": "7",
+     "name": "AVMetadataMachineReadableCodeDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "introduced": "11", "name": "descriptor"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVMetadataObject",
+     "introduced": "26",
+     "name": "AVMetadataObjectCinematicVideoSupport",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "cinematicVideoFocusMode", "introduced": "26", "name": "cinematicVideoFocusMode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFixedFocus", "introduced": "26", "name": "fixedFocus"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDeviceFormat",
+     "introduced": "26",
+     "name": "CameraLensSmudgeDetection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCameraLensSmudgeDetectionSupported", "introduced": "26", "name": "cameraLensSmudgeDetectionSupported"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "26", "name": "setCameraLensSmudgeDetectionEnabled:detectionInterval:"}
+     ],
+     "interface": "AVCaptureDevice",
+     "introduced": "26",
+     "name": "CameraLensSmudgeDetection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCameraLensSmudgeDetectionEnabled", "introduced": "26", "name": "cameraLensSmudgeDetectionEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "cameraLensSmudgeDetectionInterval", "introduced": "26", "name": "cameraLensSmudgeDetectionInterval"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "cameraLensSmudgeDetectionStatus", "introduced": "26", "name": "cameraLensSmudgeDetectionStatus"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setDynamicAspectRatio:completionHandler:"}
+     ],
+     "interface": "AVCaptureDevice",
+     "introduced": "26",
+     "name": "DynamicAspectRatio",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dynamicAspectRatio", "name": "dynamicAspectRatio"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dynamicDimensions", "name": "dynamicDimensions"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "videoFieldOfViewForAspectRatio:geometricDistortionCorrected:"}
+     ],
+     "interface": "AVCaptureDeviceFormat",
+     "introduced": "26",
+     "name": "DynamicAspectRatio",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedDynamicAspectRatios", "name": "supportedDynamicAspectRatios"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVAuthorizationStatusNotDetermined"},
+      {"access": "public", "name": "AVAuthorizationStatusRestricted"},
+      {"access": "public", "name": "AVAuthorizationStatusDenied"},
+      {"access": "public", "name": "AVAuthorizationStatusAuthorized"}
+     ],
+     "introduced": "7",
+     "name": "AVAuthorizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureAutoFocusRangeRestrictionNone"},
+      {"access": "public", "name": "AVCaptureAutoFocusRangeRestrictionNear"},
+      {"access": "public", "name": "AVCaptureAutoFocusRangeRestrictionFar"}
+     ],
+     "introduced": "7",
+     "name": "AVCaptureAutoFocusRangeRestriction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureAutoFocusSystemNone"},
+      {"access": "public", "name": "AVCaptureAutoFocusSystemContrastDetection"},
+      {"access": "public", "name": "AVCaptureAutoFocusSystemPhaseDetection"}
+     ],
+     "introduced": "8",
+     "name": "AVCaptureAutoFocusSystem"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureCameraLensSmudgeDetectionStatusDisabled"},
+      {"access": "public", "name": "AVCaptureCameraLensSmudgeDetectionStatusSmudgeNotDetected"},
+      {"access": "public", "name": "AVCaptureCameraLensSmudgeDetectionStatusSmudged"},
+      {"access": "public", "name": "AVCaptureCameraLensSmudgeDetectionStatusUnknown"}
+     ],
+     "introduced": "26",
+     "name": "AVCaptureCameraLensSmudgeDetectionStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureCenterStageControlModeUser"},
+      {"access": "public", "name": "AVCaptureCenterStageControlModeApp"},
+      {"access": "public", "name": "AVCaptureCenterStageControlModeCooperative"}
+     ],
+     "introduced": "14.5",
+     "name": "AVCaptureCenterStageControlMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureCinematicVideoFocusModeNone"},
+      {"access": "public", "name": "AVCaptureCinematicVideoFocusModeStrong"},
+      {"access": "public", "name": "AVCaptureCinematicVideoFocusModeWeak"}
+     ],
+     "introduced": "26",
+     "name": "AVCaptureCinematicVideoFocusMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureColorSpace_sRGB"},
+      {"access": "public", "name": "AVCaptureColorSpace_P3_D65"},
+      {"access": "public", "introduced": "14.1", "name": "AVCaptureColorSpace_HLG_BT2020"},
+      {"access": "public", "introduced": "17", "name": "AVCaptureColorSpace_AppleLog"},
+      {"access": "public", "introduced": "26", "name": "AVCaptureColorSpace_AppleLog2"}
+     ],
+     "introduced": "10",
+     "name": "AVCaptureColorSpace"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureDevicePositionUnspecified"},
+      {"access": "public", "name": "AVCaptureDevicePositionBack"},
+      {"access": "public", "name": "AVCaptureDevicePositionFront"}
+     ],
+     "introduced": "4",
+     "name": "AVCaptureDevicePosition"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureDeviceTransportControlsNotPlayingMode"},
+      {"access": "public", "name": "AVCaptureDeviceTransportControlsPlayingMode"}
+     ],
+     "name": "AVCaptureDeviceTransportControlsPlaybackMode",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureExposureModeLocked"},
+      {"access": "public", "name": "AVCaptureExposureModeAutoExpose"},
+      {"access": "public", "name": "AVCaptureExposureModeContinuousAutoExposure"},
+      {"access": "public", "introduced": "8", "name": "AVCaptureExposureModeCustom"}
+     ],
+     "introduced": "4",
+     "name": "AVCaptureExposureMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureFlashModeOff"},
+      {"access": "public", "name": "AVCaptureFlashModeOn"},
+      {"access": "public", "name": "AVCaptureFlashModeAuto"}
+     ],
+     "introduced": "4",
+     "name": "AVCaptureFlashMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureFocusModeLocked"},
+      {"access": "public", "name": "AVCaptureFocusModeAutoFocus"},
+      {"access": "public", "name": "AVCaptureFocusModeContinuousAutoFocus"}
+     ],
+     "introduced": "4",
+     "name": "AVCaptureFocusMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureLensStabilizationStatusUnsupported"},
+      {"access": "public", "name": "AVCaptureLensStabilizationStatusOff"},
+      {"access": "public", "name": "AVCaptureLensStabilizationStatusActive"},
+      {"access": "public", "name": "AVCaptureLensStabilizationStatusOutOfRange"},
+      {"access": "public", "name": "AVCaptureLensStabilizationStatusUnavailable"}
+     ],
+     "introduced": "11",
+     "name": "AVCaptureLensStabilizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureMicrophoneModeStandard"},
+      {"access": "public", "name": "AVCaptureMicrophoneModeWideSpectrum"},
+      {"access": "public", "name": "AVCaptureMicrophoneModeVoiceIsolation"}
+     ],
+     "introduced": "15",
+     "name": "AVCaptureMicrophoneMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureMultichannelAudioModeNone"},
+      {"access": "public", "name": "AVCaptureMultichannelAudioModeStereo"},
+      {"access": "public", "name": "AVCaptureMultichannelAudioModeFirstOrderAmbisonics"}
+     ],
+     "introduced": "18",
+     "name": "AVCaptureMultichannelAudioMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureOutputDataDroppedReasonNone"},
+      {"access": "public", "name": "AVCaptureOutputDataDroppedReasonLateData"},
+      {"access": "public", "name": "AVCaptureOutputDataDroppedReasonOutOfBuffers"},
+      {"access": "public", "name": "AVCaptureOutputDataDroppedReasonDiscontinuity"}
+     ],
+     "introduced": "11",
+     "name": "AVCaptureOutputDataDroppedReason"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCapturePhotoOutputCaptureReadinessSessionNotRunning"},
+      {"access": "public", "name": "AVCapturePhotoOutputCaptureReadinessReady"},
+      {"access": "public", "name": "AVCapturePhotoOutputCaptureReadinessNotReadyMomentarily"},
+      {"access": "public", "name": "AVCapturePhotoOutputCaptureReadinessNotReadyWaitingForCapture"},
+      {"access": "public", "name": "AVCapturePhotoOutputCaptureReadinessNotReadyWaitingForProcessing"}
+     ],
+     "introduced": "17",
+     "name": "AVCapturePhotoOutputCaptureReadiness"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCapturePhotoQualityPrioritizationSpeed"},
+      {"access": "public", "name": "AVCapturePhotoQualityPrioritizationBalanced"},
+      {"access": "public", "name": "AVCapturePhotoQualityPrioritizationQuality"}
+     ],
+     "introduced": "13",
+     "name": "AVCapturePhotoQualityPrioritization"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCapturePrimaryConstituentDeviceRestrictedSwitchingBehaviorConditionNone"},
+      {"access": "public", "name": "AVCapturePrimaryConstituentDeviceRestrictedSwitchingBehaviorConditionVideoZoomChanged"},
+      {"access": "public", "name": "AVCapturePrimaryConstituentDeviceRestrictedSwitchingBehaviorConditionFocusModeChanged"},
+      {"access": "public", "name": "AVCapturePrimaryConstituentDeviceRestrictedSwitchingBehaviorConditionExposureModeChanged"}
+     ],
+     "introduced": "15",
+     "name": "AVCapturePrimaryConstituentDeviceRestrictedSwitchingBehaviorConditions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCapturePrimaryConstituentDeviceSwitchingBehaviorUnsupported"},
+      {"access": "public", "name": "AVCapturePrimaryConstituentDeviceSwitchingBehaviorAuto"},
+      {"access": "public", "name": "AVCapturePrimaryConstituentDeviceSwitchingBehaviorRestricted"},
+      {"access": "public", "name": "AVCapturePrimaryConstituentDeviceSwitchingBehaviorLocked"}
+     ],
+     "introduced": "15",
+     "name": "AVCapturePrimaryConstituentDeviceSwitchingBehavior"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableInBackground"},
+      {"access": "public", "name": "AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient"},
+      {"access": "public", "name": "AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient"},
+      {"access": "public", "name": "AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableWithMultipleForegroundApps"},
+      {"access": "public", "introduced": "11.1", "name": "AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableDueToSystemPressure"},
+      {"access": "public", "introduced": "26", "name": "AVCaptureSessionInterruptionReasonSensitiveContentMitigationActivated"}
+     ],
+     "introduced": "9",
+     "name": "AVCaptureSessionInterruptionReason"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureSystemPressureFactorNone"},
+      {"access": "public", "name": "AVCaptureSystemPressureFactorSystemTemperature"},
+      {"access": "public", "name": "AVCaptureSystemPressureFactorPeakPower"},
+      {"access": "public", "name": "AVCaptureSystemPressureFactorDepthModuleTemperature"},
+      {"access": "public", "introduced": "17", "name": "AVCaptureSystemPressureFactorCameraTemperature"}
+     ],
+     "introduced": "11.1",
+     "name": "AVCaptureSystemPressureFactors"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureSystemUserInterfaceVideoEffects"},
+      {"access": "public", "name": "AVCaptureSystemUserInterfaceMicrophoneModes"}
+     ],
+     "introduced": "15",
+     "name": "AVCaptureSystemUserInterface"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureTimecodeGeneratorSynchronizationStatusUnknown"},
+      {"access": "public", "name": "AVCaptureTimecodeGeneratorSynchronizationStatusSourceSelected"},
+      {"access": "public", "name": "AVCaptureTimecodeGeneratorSynchronizationStatusSynchronizing"},
+      {"access": "public", "name": "AVCaptureTimecodeGeneratorSynchronizationStatusSynchronized"},
+      {"access": "public", "name": "AVCaptureTimecodeGeneratorSynchronizationStatusTimedOut"},
+      {"access": "public", "name": "AVCaptureTimecodeGeneratorSynchronizationStatusSourceUnavailable"},
+      {"access": "public", "name": "AVCaptureTimecodeGeneratorSynchronizationStatusSourceUnsupported"},
+      {"access": "public", "name": "AVCaptureTimecodeGeneratorSynchronizationStatusNotRequired"}
+     ],
+     "introduced": "26",
+     "name": "AVCaptureTimecodeGeneratorSynchronizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureTimecodeSourceTypeFrameCount"},
+      {"access": "public", "name": "AVCaptureTimecodeSourceTypeRealTimeClock"},
+      {"access": "public", "name": "AVCaptureTimecodeSourceTypeExternal"}
+     ],
+     "introduced": "26",
+     "name": "AVCaptureTimecodeSourceType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureTorchModeOff"},
+      {"access": "public", "name": "AVCaptureTorchModeOn"},
+      {"access": "public", "name": "AVCaptureTorchModeAuto"}
+     ],
+     "introduced": "4",
+     "name": "AVCaptureTorchMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureVideoOrientationPortrait"},
+      {"access": "public", "name": "AVCaptureVideoOrientationPortraitUpsideDown"},
+      {"access": "public", "name": "AVCaptureVideoOrientationLandscapeRight"},
+      {"access": "public", "name": "AVCaptureVideoOrientationLandscapeLeft"}
+     ],
+     "introduced": "4",
+     "name": "AVCaptureVideoOrientation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureVideoStabilizationModeOff"},
+      {"access": "public", "name": "AVCaptureVideoStabilizationModeStandard"},
+      {"access": "public", "name": "AVCaptureVideoStabilizationModeCinematic"},
+      {"access": "public", "introduced": "13", "name": "AVCaptureVideoStabilizationModeCinematicExtended"},
+      {"access": "public", "introduced": "17", "name": "AVCaptureVideoStabilizationModePreviewOptimized"},
+      {"access": "public", "introduced": "18", "name": "AVCaptureVideoStabilizationModeCinematicExtendedEnhanced"},
+      {"access": "public", "introduced": "26", "name": "AVCaptureVideoStabilizationModeLowLatency"},
+      {"access": "public", "name": "AVCaptureVideoStabilizationModeAuto"}
+     ],
+     "introduced": "8",
+     "name": "AVCaptureVideoStabilizationMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureWhiteBalanceModeLocked"},
+      {"access": "public", "name": "AVCaptureWhiteBalanceModeAutoWhiteBalance"},
+      {"access": "public", "name": "AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance"}
+     ],
+     "introduced": "4",
+     "name": "AVCaptureWhiteBalanceMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVDepthDataAccuracyRelative"},
+      {"access": "public", "name": "AVDepthDataAccuracyAbsolute"}
+     ],
+     "introduced": "11",
+     "name": "AVDepthDataAccuracy"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVDepthDataQualityLow"},
+      {"access": "public", "name": "AVDepthDataQualityHigh"}
+     ],
+     "introduced": "11",
+     "name": "AVDepthDataQuality"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVExternalSyncDeviceStatusUnavailable"},
+      {"access": "public", "name": "AVExternalSyncDeviceStatusReady"},
+      {"access": "public", "name": "AVExternalSyncDeviceStatusCalibrating"},
+      {"access": "public", "name": "AVExternalSyncDeviceStatusActiveSync"},
+      {"access": "public", "name": "AVExternalSyncDeviceStatusFreeRunSync"}
+     ],
+     "introduced": "26",
+     "name": "AVExternalSyncDeviceStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVVideoFieldModeBoth"},
+      {"access": "public", "name": "AVVideoFieldModeTopOnly"},
+      {"access": "public", "name": "AVVideoFieldModeBottomOnly"},
+      {"access": "public", "name": "AVVideoFieldModeDeinterlace"}
+     ],
+     "name": "AVVideoFieldMode",
+     "unavailable": true
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVCaptureAspectRatio16x9"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVCaptureAspectRatio1x1"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVCaptureAspectRatio3x4"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVCaptureAspectRatio4x3"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVCaptureAspectRatio9x16"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceSubjectAreaDidChangeNotification"},
+    {"access": "public", "introduced": "10.2", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInDualCamera"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInDualWideCamera"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInDuoCamera"},
+    {"access": "public", "introduced": "15.4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInLiDARDepthCamera"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInMicrophone"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInTelephotoCamera"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInTripleCamera"},
+    {"access": "public", "introduced": "11.1", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInTrueDepthCamera"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInUltraWideCamera"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInWideAngleCamera"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeContinuityCamera"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeDeskViewCamera", "unavailable": true},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeExternal"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeExternalUnknown", "unavailable": true},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeMicrophone"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceWasConnectedNotification"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceWasDisconnectedNotification"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_AVCaptureExposureDurationCurrent"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_AVCaptureExposureTargetBiasCurrent"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_AVCaptureISOCurrent"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureInputPortFormatDescriptionDidChangeNotification"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_AVCaptureLensPositionCurrent"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_AVCaptureMaxAvailableTorchLevel"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_AVCaptureReactionSystemImageNameForType"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_AVCaptureReactionTypeBalloons"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_AVCaptureReactionTypeConfetti"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_AVCaptureReactionTypeFireworks"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_AVCaptureReactionTypeHeart"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_AVCaptureReactionTypeLasers"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_AVCaptureReactionTypeRain"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_AVCaptureReactionTypeThumbsDown"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_AVCaptureReactionTypeThumbsUp"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSceneMonitoringStatusNotEnoughLight"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionDidStartRunningNotification"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionDidStopRunningNotification"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionErrorKey"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionInterruptionEndedNotification"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionInterruptionReasonKey"},
+    {"access": "public", "introduced": "11.1", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionInterruptionSystemPressureStateKey"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionPreset1280x720"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionPreset1920x1080"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionPreset320x240", "unavailable": true},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionPreset352x288"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionPreset3840x2160"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionPreset640x480"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionPreset960x540", "unavailable": true},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionPresetHigh"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionPresetInputPriority"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionPresetLow"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionPresetMedium"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionPresetPhoto"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionPresetiFrame1280x720"},
+    {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionPresetiFrame960x540"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionRuntimeErrorNotification"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSessionWasInterruptedNotification"},
+    {"access": "public", "introduced": "11.1", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSystemPressureLevelCritical"},
+    {"access": "public", "introduced": "11.1", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSystemPressureLevelFair"},
+    {"access": "public", "introduced": "11.1", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSystemPressureLevelNominal"},
+    {"access": "public", "introduced": "11.1", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSystemPressureLevelSerious"},
+    {"access": "public", "introduced": "11.1", "kind": "variable", "linkage": "exported", "name": "_AVCaptureSystemPressureLevelShutdown"},
+    {"access": "public", "introduced": "26", "kind": "function", "linkage": "exported", "name": "_AVCaptureTimecodeAdvancedByFrames"},
+    {"access": "public", "introduced": "26", "kind": "function", "linkage": "exported", "name": "_AVCaptureTimecodeCreateMetadataSampleBufferAssociatedWithPresentationTimeStamp"},
+    {"access": "public", "introduced": "26", "kind": "function", "linkage": "exported", "name": "_AVCaptureTimecodeCreateMetadataSampleBufferForDuration"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_AVCaptureWhiteBalanceGainsCurrent"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVCaptureWhiteBalanceTemperatureAndTintValuesCloudy"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVCaptureWhiteBalanceTemperatureAndTintValuesDaylight"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVCaptureWhiteBalanceTemperatureAndTintValuesFluorescent"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVCaptureWhiteBalanceTemperatureAndTintValuesShadow"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVCaptureWhiteBalanceTemperatureAndTintValuesTungsten"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeAztecCode"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeCatBody"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeCatHead"},
+    {"access": "public", "introduced": "15.4", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeCodabarCode"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeCode128Code"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeCode39Code"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeCode39Mod43Code"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeCode93Code"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeDataMatrixCode"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeDogBody"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeDogHead"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeEAN13Code"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeEAN8Code"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeFace"},
+    {"access": "public", "introduced": "15.4", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeGS1DataBarCode"},
+    {"access": "public", "introduced": "15.4", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeGS1DataBarExpandedCode"},
+    {"access": "public", "introduced": "15.4", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeGS1DataBarLimitedCode"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeHumanBody"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeHumanFullBody"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeITF14Code"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeInterleaved2of5Code"},
+    {"access": "public", "introduced": "15.4", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeMicroPDF417Code"},
+    {"access": "public", "introduced": "15.4", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeMicroQRCode"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypePDF417Code"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeQRCode"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeSalientObject"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_AVMetadataObjectTypeUPCECode"},
+    {"access": "public", "introduced": "14.1", "kind": "variable", "linkage": "exported", "name": "_AVSemanticSegmentationMatteTypeGlasses"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_AVSemanticSegmentationMatteTypeHair"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_AVSemanticSegmentationMatteTypeSkin"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_AVSemanticSegmentationMatteTypeTeeth"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_AVSpatialCaptureDiscomfortReasonNotEnoughLight"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_AVSpatialCaptureDiscomfortReasonSubjectTooClose"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCameraCalibrationData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "intrinsicMatrix", "name": "intrinsicMatrix"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "intrinsicMatrixReferenceDimensions", "name": "intrinsicMatrixReferenceDimensions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extrinsicMatrix", "name": "extrinsicMatrix"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelSize", "name": "pixelSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lensDistortionLookupTable", "name": "lensDistortionLookupTable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inverseLensDistortionLookupTable", "name": "inverseLensDistortionLookupTable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lensDistortionCenter", "name": "lensDistortionCenter"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureAudioChannel",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "averagePowerLevel", "name": "averagePowerLevel"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "peakHoldLevel", "name": "peakHoldLevel"},
+      {"access": "public", "getter": "volume", "name": "volume", "setter": "setVolume:", "unavailable": true},
+      {"access": "public", "getter": "isEnabled", "name": "enabled", "setter": "setEnabled:", "unavailable": true}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "setSampleBufferDelegate:queue:"},
+      {"access": "public", "introduced": "7", "name": "recommendedAudioSettingsForAssetWriterWithOutputFileType:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureAudioDataOutput",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "sampleBufferDelegate", "name": "sampleBufferDelegate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sampleBufferCallbackQueue", "name": "sampleBufferCallbackQueue"},
+      {"access": "public", "getter": "audioSettings", "name": "audioSettings", "setter": "setAudioSettings:", "unavailable": true},
+      {"access": "public", "getter": "spatialAudioChannelLayoutTag", "introduced": "26", "name": "spatialAudioChannelLayoutTag", "setter": "setSpatialAudioChannelLayoutTag:"}
+     ],
+     "super": "AVCaptureOutput"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new"},
+      {"access": "public", "name": "availableOutputFileTypes"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "startRecordingToOutputFileURL:outputFileType:recordingDelegate:"}
+     ],
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureAudioFileOutput",
+     "properties": [
+      {"access": "public", "getter": "metadata", "name": "metadata", "setter": "setMetadata:"},
+      {"access": "public", "getter": "audioSettings", "name": "audioSettings", "setter": "setAudioSettings:"}
+     ],
+     "super": "AVCaptureFileOutput",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureAudioPreviewOutput",
+     "properties": [
+      {"access": "public", "getter": "outputDeviceUniqueID", "name": "outputDeviceUniqueID", "setter": "setOutputDeviceUniqueID:"},
+      {"access": "public", "getter": "volume", "name": "volume", "setter": "setVolume:"}
+     ],
+     "super": "AVCaptureOutput",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "autoExposureSettingsWithExposureTargetBias:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "AVCaptureAutoExposureBracketedStillImageSettings",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "exposureTargetBias", "name": "exposureTargetBias"}
+     ],
+     "super": "AVCaptureBracketedStillImageSettings"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "AVCaptureBracketedStillImageSettings",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "introduced": "8", "name": "connectionWithInputPorts:output:"},
+      {"access": "public", "introduced": "8", "name": "connectionWithInputPort:videoPreviewLayer:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "8", "name": "initWithInputPorts:output:"},
+      {"access": "public", "introduced": "8", "name": "initWithInputPort:videoPreviewLayer:"},
+      {"access": "public", "name": "isVideoRotationAngleSupported:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureConnection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputPorts", "name": "inputPorts"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "output", "name": "output"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoPreviewLayer", "introduced": "6", "name": "videoPreviewLayer"},
+      {"access": "public", "getter": "isEnabled", "name": "enabled", "setter": "setEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isActive", "name": "active"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "audioChannels", "name": "audioChannels"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVideoMirroringSupported", "name": "supportsVideoMirroring"},
+      {"access": "public", "getter": "isVideoMirrored", "name": "videoMirrored", "setter": "setVideoMirrored:"},
+      {"access": "public", "getter": "automaticallyAdjustsVideoMirroring", "introduced": "6", "name": "automaticallyAdjustsVideoMirroring", "setter": "setAutomaticallyAdjustsVideoMirroring:"},
+      {"access": "public", "getter": "videoRotationAngle", "introduced": "17", "name": "videoRotationAngle", "setter": "setVideoRotationAngle:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVideoOrientationSupported", "introduced": "4", "name": "supportsVideoOrientation"},
+      {"access": "public", "getter": "videoOrientation", "introduced": "4", "name": "videoOrientation", "setter": "setVideoOrientation:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVideoFieldModeSupported", "name": "supportsVideoFieldMode", "unavailable": true},
+      {"access": "public", "getter": "videoFieldMode", "name": "videoFieldMode", "setter": "setVideoFieldMode:", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVideoMinFrameDurationSupported", "introduced": "5", "name": "supportsVideoMinFrameDuration"},
+      {"access": "public", "getter": "videoMinFrameDuration", "introduced": "5", "name": "videoMinFrameDuration", "setter": "setVideoMinFrameDuration:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVideoMaxFrameDurationSupported", "introduced": "5", "name": "supportsVideoMaxFrameDuration"},
+      {"access": "public", "getter": "videoMaxFrameDuration", "introduced": "5", "name": "videoMaxFrameDuration", "setter": "setVideoMaxFrameDuration:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoMaxScaleAndCropFactor", "introduced": "5", "name": "videoMaxScaleAndCropFactor"},
+      {"access": "public", "getter": "videoScaleAndCropFactor", "introduced": "5", "name": "videoScaleAndCropFactor", "setter": "setVideoScaleAndCropFactor:"},
+      {"access": "public", "getter": "preferredVideoStabilizationMode", "introduced": "8", "name": "preferredVideoStabilizationMode", "setter": "setPreferredVideoStabilizationMode:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "activeVideoStabilizationMode", "introduced": "8", "name": "activeVideoStabilizationMode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVideoStabilizationSupported", "introduced": "6", "name": "supportsVideoStabilization"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVideoStabilizationEnabled", "introduced": "6", "name": "videoStabilizationEnabled"},
+      {"access": "public", "getter": "enablesVideoStabilizationWhenAvailable", "introduced": "6", "name": "enablesVideoStabilizationWhenAvailable", "setter": "setEnablesVideoStabilizationWhenAvailable:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCameraIntrinsicMatrixDeliverySupported", "introduced": "11", "name": "cameraIntrinsicMatrixDeliverySupported"},
+      {"access": "public", "getter": "isCameraIntrinsicMatrixDeliveryEnabled", "introduced": "11", "name": "cameraIntrinsicMatrixDeliveryEnabled", "setter": "setCameraIntrinsicMatrixDeliveryEnabled:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "AVCaptureControl",
+     "properties": [
+      {"access": "public", "getter": "isEnabled", "name": "enabled", "setter": "setEnabled:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithDataOutputs:"},
+      {"access": "public", "name": "setDelegate:queue:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureDataOutputSynchronizer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dataOutputs", "name": "dataOutputs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "delegate", "name": "delegate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "delegateCallbackQueue", "name": "delegateCallbackQueue"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "AVCaptureDeferredPhotoProxy",
+     "super": "AVCapturePhoto"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "setDelegate:callbackQueue:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureDepthDataOutput",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "delegate", "name": "delegate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "delegateCallbackQueue", "name": "delegateCallbackQueue"},
+      {"access": "public", "getter": "alwaysDiscardsLateDepthData", "name": "alwaysDiscardsLateDepthData", "setter": "setAlwaysDiscardsLateDepthData:"},
+      {"access": "public", "getter": "isFilteringEnabled", "name": "filteringEnabled", "setter": "setFilteringEnabled:"}
+     ],
+     "super": "AVCaptureOutput"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "presentWithCompletionHandler:", "unavailable": true},
+      {"access": "public", "name": "presentWithLaunchConfiguration:completionHandler:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureDeskViewApplication",
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "AVCaptureDeskViewApplicationLaunchConfiguration",
+     "properties": [
+      {"access": "public", "getter": "mainWindowFrame", "name": "mainWindowFrame", "setter": "setMainWindowFrame:", "unavailable": true},
+      {"access": "public", "getter": "requiresSetUpModeCompletion", "name": "requiresSetUpModeCompletion", "setter": "setRequiresSetUpModeCompletion:", "unavailable": true}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "categories": [
+      "AVCaptureDevicePosition",
+      "AVCaptureDeviceType",
+      "AVCaptureDefaultDevice",
+      "AVCaptureDevicePreferredCamera",
+      "AVCaptureDeviceSystemPressure",
+      "AVCaptureDeviceVirtual",
+      "AVCaptureDeviceFlash",
+      "AVCaptureDeviceTorch",
+      "AVCaptureDeviceFocus",
+      "AVCaptureDeviceExposure",
+      "AVCaptureDeviceToneMapping",
+      "AVCaptureDeviceWhiteBalance",
+      "AVCaptureDeviceSubjectAreaChangeMonitoring",
+      "AVCaptureDeviceLowLightBoost",
+      "AVCaptureDeviceVideoZoom",
+      "AVCaptureDeviceAuthorization",
+      "AVCaptureDeviceTransportControls",
+      "AVCaptureDeviceHighDynamicRangeSupport",
+      "AVCaptureDeviceColorSpaceSupport",
+      "AVCaptureDeviceDepthSupport",
+      "AVCaptureDeviceGeometricDistortionCorrection",
+      "AVCaptureDeviceCalibration",
+      "AVCaptureDeviceCenterStage",
+      "AVCaptureDevicePortraitEffect",
+      "AVCaptureDeviceReactionEffects",
+      "AVCaptureDeviceBackgroundReplacement",
+      "AVCaptureDeviceContinuityCamera",
+      "AVCaptureDeviceDeskViewCamera",
+      "AVCaptureMicrophoneMode",
+      "AVCaptureSystemUserInterface",
+      "AVCaptureDeviceSpatialCapture",
+      "AVCaptureDeviceCinematicVideoCapture",
+      "DynamicAspectRatio",
+      "AVCaptureDeviceSmartFraming",
+      "AVCaptureDeviceNominalFocalLengthIn35mmFilm",
+      "AVCaptureDeviceStudioLight",
+      "CameraLensSmudgeDetection"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "introduced": "4", "name": "devices"},
+      {"access": "public", "introduced": "4", "name": "devicesWithMediaType:"},
+      {"access": "public", "name": "defaultDeviceWithMediaType:"},
+      {"access": "public", "name": "deviceWithUniqueID:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "hasMediaType:"},
+      {"access": "public", "name": "lockForConfiguration:"},
+      {"access": "public", "name": "unlockForConfiguration"},
+      {"access": "public", "name": "supportsAVCaptureSessionPreset:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureDevice",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "uniqueID", "name": "uniqueID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "modelID", "name": "modelID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedName", "name": "localizedName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "manufacturer", "introduced": "14", "name": "manufacturer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "transportType", "name": "transportType", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isConnected", "name": "connected"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isInUseByAnotherApplication", "name": "inUseByAnotherApplication", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSuspended", "introduced": "14", "name": "suspended"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "linkedDevices", "name": "linkedDevices", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "formats", "introduced": "7", "name": "formats"},
+      {"access": "public", "getter": "activeFormat", "introduced": "7", "name": "activeFormat", "setter": "setActiveFormat:"},
+      {"access": "public", "getter": "activeVideoMinFrameDuration", "introduced": "7", "name": "activeVideoMinFrameDuration", "setter": "setActiveVideoMinFrameDuration:"},
+      {"access": "public", "getter": "activeVideoMaxFrameDuration", "introduced": "7", "name": "activeVideoMaxFrameDuration", "setter": "setActiveVideoMaxFrameDuration:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVideoFrameDurationLocked", "introduced": "26", "name": "videoFrameDurationLocked"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minSupportedLockedVideoFrameDuration", "introduced": "26", "name": "minSupportedLockedVideoFrameDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFollowingExternalSyncDevice", "introduced": "26", "name": "followingExternalSyncDevice"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minSupportedExternalSyncFrameDuration", "introduced": "26", "name": "minSupportedExternalSyncFrameDuration"},
+      {"access": "public", "getter": "isAutoVideoFrameRateEnabled", "introduced": "18", "name": "autoVideoFrameRateEnabled", "setter": "setAutoVideoFrameRateEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputSources", "name": "inputSources", "unavailable": true},
+      {"access": "public", "getter": "activeInputSource", "name": "activeInputSource", "setter": "setActiveInputSource:", "unavailable": true}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "discoverySessionWithDeviceTypes:mediaType:position:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "AVCaptureDeviceDiscoverySession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "devices", "name": "devices"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedMultiCamDeviceSets", "introduced": "13", "name": "supportedMultiCamDeviceSets"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "AVCaptureDeviceFormatDepthDataAdditions",
+      "AVCaptureDeviceFormatMultiCamAdditions",
+      "AVCaptureDeviceFormatSpatialVideoCapture",
+      "AVCaptureDeviceFormatGeometricDistortionCorrection",
+      "AVCaptureDeviceFormatCenterStage",
+      "AVCaptureDeviceFormatPortraitEffect",
+      "AVCaptureDeviceFormatStudioLight",
+      "AVCaptureDeviceFormatReactionEffects",
+      "AVCaptureDeviceFormatBackgroundReplacement",
+      "AVCaptureDeviceFormatCinematicVideoSupport",
+      "DynamicAspectRatio",
+      "AVCaptureDeviceFormatSmartFraming",
+      "CameraLensSmudgeDetection"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "8", "name": "isVideoStabilizationModeSupported:"}
+     ],
+     "introduced": "7",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureDeviceFormat",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaType", "name": "mediaType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "formatDescription", "name": "formatDescription"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoSupportedFrameRateRanges", "name": "videoSupportedFrameRateRanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoFieldOfView", "name": "videoFieldOfView"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVideoBinned", "name": "videoBinned"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVideoStabilizationSupported", "introduced": "7", "name": "videoStabilizationSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoMaxZoomFactor", "name": "videoMaxZoomFactor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoZoomFactorUpscaleThreshold", "name": "videoZoomFactorUpscaleThreshold"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "systemRecommendedVideoZoomRange", "introduced": "18", "name": "systemRecommendedVideoZoomRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minExposureDuration", "introduced": "8", "name": "minExposureDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxExposureDuration", "introduced": "8", "name": "maxExposureDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "systemRecommendedExposureBiasRange", "introduced": "18", "name": "systemRecommendedExposureBiasRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minISO", "introduced": "8", "name": "minISO"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxISO", "introduced": "8", "name": "maxISO"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isGlobalToneMappingSupported", "introduced": "13", "name": "globalToneMappingSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVideoHDRSupported", "introduced": "8", "name": "videoHDRSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "highResolutionStillImageDimensions", "introduced": "8", "name": "highResolutionStillImageDimensions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isHighPhotoQualitySupported", "introduced": "15", "name": "highPhotoQualitySupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isHighestPhotoQualitySupported", "introduced": "13", "name": "highestPhotoQualitySupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "autoFocusSystem", "introduced": "8", "name": "autoFocusSystem"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedColorSpaces", "introduced": "10", "name": "supportedColorSpaces"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoMinZoomFactorForDepthDataDelivery", "introduced": "11", "name": "videoMinZoomFactorForDepthDataDelivery"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoMaxZoomFactorForDepthDataDelivery", "introduced": "11", "name": "videoMaxZoomFactorForDepthDataDelivery"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedVideoZoomFactorsForDepthDataDelivery", "introduced": "16", "name": "supportedVideoZoomFactorsForDepthDataDelivery"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedVideoZoomRangesForDepthDataDelivery", "introduced": "17.2", "name": "supportedVideoZoomRangesForDepthDataDelivery"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "zoomFactorsOutsideOfVideoZoomRangesForDepthDeliverySupported", "introduced": "17.2", "name": "zoomFactorsOutsideOfVideoZoomRangesForDepthDeliverySupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedDepthDataFormats", "introduced": "11", "name": "supportedDepthDataFormats"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "unsupportedCaptureOutputClasses", "introduced": "11", "name": "unsupportedCaptureOutputClasses"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedMaxPhotoDimensions", "introduced": "16", "name": "supportedMaxPhotoDimensions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "secondaryNativeResolutionZoomFactors", "introduced": "16", "name": "secondaryNativeResolutionZoomFactors"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAutoVideoFrameRateSupported", "introduced": "18", "name": "autoVideoFrameRateSupported"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "deviceInputWithDevice:error:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDevice:error:"},
+      {"access": "public", "introduced": "13", "name": "portsWithMediaType:sourceDeviceType:sourceDevicePosition:"},
+      {"access": "public", "introduced": "26", "name": "followExternalSyncDevice:videoFrameDuration:delegate:"},
+      {"access": "public", "introduced": "26", "name": "unfollowExternalSyncDevice"},
+      {"access": "public", "introduced": "18", "name": "isMultichannelAudioModeSupported:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureDeviceInput",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "device", "name": "device"},
+      {"access": "public", "getter": "unifiedAutoExposureDefaultsEnabled", "introduced": "12", "name": "unifiedAutoExposureDefaultsEnabled", "setter": "setUnifiedAutoExposureDefaultsEnabled:"},
+      {"access": "public", "getter": "videoMinFrameDurationOverride", "introduced": "13", "name": "videoMinFrameDurationOverride", "setter": "setVideoMinFrameDurationOverride:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isLockedVideoFrameDurationSupported", "introduced": "26", "name": "lockedVideoFrameDurationSupported"},
+      {"access": "public", "getter": "activeLockedVideoFrameDuration", "introduced": "26", "name": "activeLockedVideoFrameDuration", "setter": "setActiveLockedVideoFrameDuration:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isExternalSyncSupported", "introduced": "26", "name": "externalSyncSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "activeExternalSyncVideoFrameDuration", "introduced": "26", "name": "activeExternalSyncVideoFrameDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "externalSyncDevice", "introduced": "26", "name": "externalSyncDevice"},
+      {"access": "public", "getter": "multichannelAudioMode", "introduced": "18", "name": "multichannelAudioMode", "setter": "setMultichannelAudioMode:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isWindNoiseRemovalSupported", "introduced": "18", "name": "windNoiseRemovalSupported"},
+      {"access": "public", "getter": "isWindNoiseRemovalEnabled", "introduced": "18", "name": "windNoiseRemovalEnabled", "setter": "setWindNoiseRemovalEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCinematicVideoCaptureSupported", "introduced": "26", "name": "cinematicVideoCaptureSupported"},
+      {"access": "public", "getter": "isCinematicVideoCaptureEnabled", "introduced": "26", "name": "cinematicVideoCaptureEnabled", "setter": "setCinematicVideoCaptureEnabled:"},
+      {"access": "public", "getter": "simulatedAperture", "introduced": "26", "name": "simulatedAperture", "setter": "setSimulatedAperture:"}
+     ],
+     "super": "AVCaptureInput"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureDeviceInputSource",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputSourceID", "name": "inputSourceID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedName", "name": "localizedName"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithDevice:previewLayer:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "AVCaptureDeviceRotationCoordinator",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "device", "name": "device"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "previewLayer", "name": "previewLayer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoRotationAngleForHorizonLevelPreview", "name": "videoRotationAngleForHorizonLevelPreview"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoRotationAngleForHorizonLevelCapture", "name": "videoRotationAngleForHorizonLevelCapture"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "AVCaptureExternalDisplayConfiguration",
+     "properties": [
+      {"access": "public", "getter": "shouldMatchFrameRate", "name": "shouldMatchFrameRate", "setter": "setShouldMatchFrameRate:"},
+      {"access": "public", "getter": "bypassColorSpaceConversion", "name": "bypassColorSpaceConversion", "setter": "setBypassColorSpaceConversion:"},
+      {"access": "public", "getter": "preferredResolution", "name": "preferredResolution", "setter": "setPreferredResolution:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithDevice:previewLayer:configuration:"},
+      {"access": "public", "name": "stop"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "AVCaptureExternalDisplayConfigurator",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "device", "name": "device"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "previewLayer", "name": "previewLayer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isActive", "name": "active"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "activeExternalDisplayFrameRate", "name": "activeExternalDisplayFrameRate"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isMatchingFrameRateSupported", "name": "shouldMatchFrameRateSupported"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isBypassingColorSpaceConversionSupported", "name": "supportsBypassingColorSpaceConversion"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isPreferredResolutionSupported", "name": "supportsPreferredResolution"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "startRecordingToOutputFileURL:recordingDelegate:"},
+      {"access": "public", "name": "stopRecording"},
+      {"access": "public", "introduced": "18", "name": "pauseRecording"},
+      {"access": "public", "introduced": "18", "name": "resumeRecording"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_fileOutputInternal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureFileOutput",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "outputFileURL", "name": "outputFileURL"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isRecording", "name": "recording"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isRecordingPaused", "introduced": "18", "name": "recordingPaused"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordedDuration", "name": "recordedDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordedFileSize", "name": "recordedFileSize"},
+      {"access": "public", "getter": "maxRecordedDuration", "name": "maxRecordedDuration", "setter": "setMaxRecordedDuration:"},
+      {"access": "public", "getter": "maxRecordedFileSize", "name": "maxRecordedFileSize", "setter": "setMaxRecordedFileSize:"},
+      {"access": "public", "getter": "minFreeDiskSpaceLimit", "name": "minFreeDiskSpaceLimit", "setter": "setMinFreeDiskSpaceLimit:"}
+     ],
+     "super": "AVCaptureOutput"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "AVCaptureFraming",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "aspectRatio", "name": "aspectRatio"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "zoomFactor", "name": "zoomFactor"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLocalizedTitle:symbolName:numberOfIndexes:"},
+      {"access": "public", "name": "initWithLocalizedTitle:symbolName:numberOfIndexes:localizedTitleTransform:"},
+      {"access": "public", "name": "initWithLocalizedTitle:symbolName:localizedIndexTitles:"},
+      {"access": "public", "name": "setActionQueue:action:"}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "AVCaptureIndexPicker",
+     "properties": [
+      {"access": "public", "getter": "selectedIndex", "name": "selectedIndex", "setter": "setSelectedIndex:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedTitle", "name": "localizedTitle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "symbolName", "name": "symbolName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfIndexes", "name": "numberOfIndexes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedIndexTitles", "name": "localizedIndexTitles"},
+      {"access": "public", "getter": "accessibilityIdentifier", "name": "accessibilityIdentifier", "setter": "setAccessibilityIdentifier:"}
+     ],
+     "super": "AVCaptureControl"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_inputInternal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureInput",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "ports", "name": "ports"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureInputPort",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "input", "name": "input"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaType", "name": "mediaType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "formatDescription", "name": "formatDescription"},
+      {"access": "public", "getter": "isEnabled", "name": "enabled", "setter": "setEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "clock", "introduced": "7", "name": "clock"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourceDeviceType", "introduced": "13", "name": "sourceDeviceType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourceDevicePosition", "introduced": "13", "name": "sourceDevicePosition"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "manualExposureSettingsWithExposureDuration:ISO:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "AVCaptureManualExposureBracketedStillImageSettings",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "exposureDuration", "name": "exposureDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ISO", "name": "ISO"}
+     ],
+     "super": "AVCaptureBracketedStillImageSettings"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "metadataInputWithFormatDescription:clock:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithFormatDescription:clock:"},
+      {"access": "public", "name": "appendTimedMetadataGroup:error:"}
+     ],
+     "introduced": "9",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureMetadataInput",
+     "super": "AVCaptureInput"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "setMetadataObjectsDelegate:queue:"}
+     ],
+     "introduced": "6",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureMetadataOutput",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "metadataObjectsDelegate", "name": "metadataObjectsDelegate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "metadataObjectsCallbackQueue", "name": "metadataObjectsCallbackQueue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableMetadataObjectTypes", "name": "availableMetadataObjectTypes"},
+      {"access": "public", "getter": "metadataObjectTypes", "name": "metadataObjectTypes", "setter": "setMetadataObjectTypes:"},
+      {"access": "public", "getter": "rectOfInterest", "introduced": "7", "name": "rectOfInterest", "setter": "setRectOfInterest:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "requiredMetadataObjectTypesForCinematicVideoCapture", "introduced": "26", "name": "requiredMetadataObjectTypesForCinematicVideoCapture"}
+     ],
+     "super": "AVCaptureOutput"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "introduced": "12", "name": "supportedOutputSettingsKeysForConnection:"},
+      {"access": "public", "introduced": "10", "name": "outputSettingsForConnection:"},
+      {"access": "public", "introduced": "10", "name": "setOutputSettings:forConnection:"},
+      {"access": "public", "introduced": "9", "name": "recordsVideoOrientationAndMirroringChangesAsMetadataTrackForConnection:"},
+      {"access": "public", "introduced": "9", "name": "setRecordsVideoOrientationAndMirroringChanges:asMetadataTrackForConnection:"},
+      {"access": "public", "introduced": "15", "name": "setPrimaryConstituentDeviceSwitchingBehaviorForRecording:restrictedSwitchingBehaviorConditions:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureMovieFileOutput",
+     "properties": [
+      {"access": "public", "getter": "movieFragmentInterval", "name": "movieFragmentInterval", "setter": "setMovieFragmentInterval:"},
+      {"access": "public", "getter": "metadata", "name": "metadata", "setter": "setMetadata:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableVideoCodecTypes", "introduced": "10", "name": "availableVideoCodecTypes"},
+      {"access": "public", "getter": "isPrimaryConstituentDeviceSwitchingBehaviorForRecordingEnabled", "introduced": "15", "name": "primaryConstituentDeviceSwitchingBehaviorForRecordingEnabled", "setter": "setPrimaryConstituentDeviceSwitchingBehaviorForRecordingEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "primaryConstituentDeviceSwitchingBehaviorForRecording", "introduced": "15", "name": "primaryConstituentDeviceSwitchingBehaviorForRecording"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "primaryConstituentDeviceRestrictedSwitchingBehaviorConditionsForRecording", "introduced": "15", "name": "primaryConstituentDeviceRestrictedSwitchingBehaviorConditionsForRecording"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSpatialVideoCaptureSupported", "introduced": "18", "name": "spatialVideoCaptureSupported"},
+      {"access": "public", "getter": "isSpatialVideoCaptureEnabled", "introduced": "18", "name": "spatialVideoCaptureEnabled", "setter": "setSpatialVideoCaptureEnabled:"}
+     ],
+     "super": "AVCaptureFileOutput"
+    },
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "AVCaptureMultiCamSession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isMultiCamSupported", "name": "multiCamSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hardwareCost", "name": "hardwareCost"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "systemPressureCost", "name": "systemPressureCost"}
+     ],
+     "super": "AVCaptureSession"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "5", "name": "connectionWithMediaType:"},
+      {"access": "public", "introduced": "6", "name": "transformedMetadataObjectForMetadataObject:connection:"},
+      {"access": "public", "introduced": "7", "name": "metadataOutputRectOfInterestForRect:"},
+      {"access": "public", "introduced": "7", "name": "rectForMetadataOutputRectOfInterest:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_outputInternal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureOutput",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "connections", "name": "connections"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isDeferredStartSupported", "introduced": "26", "name": "deferredStartSupported"},
+      {"access": "public", "getter": "isDeferredStartEnabled", "introduced": "26", "name": "deferredStartEnabled", "setter": "setDeferredStartEnabled:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "AVCapturePhotoConversions",
+      "AVCapturePhotoBracketedCapture"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "13", "name": "semanticSegmentationMatteForType:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCapturePhoto",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "name": "timestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isRawPhoto", "name": "rawPhoto"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelBuffer", "name": "pixelBuffer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "previewPixelBuffer", "name": "previewPixelBuffer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "embeddedThumbnailPhotoFormat", "name": "embeddedThumbnailPhotoFormat"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "depthData", "name": "depthData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "portraitEffectsMatte", "introduced": "12", "name": "portraitEffectsMatte"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "metadata", "name": "metadata"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "cameraCalibrationData", "name": "cameraCalibrationData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "resolvedSettings", "name": "resolvedSettings"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "photoCount", "name": "photoCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourceDeviceType", "name": "sourceDeviceType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "constantColorConfidenceMap", "introduced": "18", "name": "constantColorConfidenceMap"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "constantColorCenterWeightedMeanConfidenceLevel", "introduced": "18", "name": "constantColorCenterWeightedMeanConfidenceLevel"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isConstantColorFallbackPhoto", "introduced": "18", "name": "constantColorFallbackPhoto"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "photoBracketSettingsWithRawPixelFormatType:processedFormat:bracketedSettings:"},
+      {"access": "public", "introduced": "11", "name": "photoBracketSettingsWithRawPixelFormatType:rawFileType:processedFormat:processedFileType:bracketedSettings:"}
+     ],
+     "introduced": "10",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_bracketSettingsInternal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCapturePhotoBracketSettings",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bracketedSettings", "name": "bracketedSettings"},
+      {"access": "public", "getter": "isLensStabilizationEnabled", "name": "lensStabilizationEnabled", "setter": "setLensStabilizationEnabled:"}
+     ],
+     "super": "AVCapturePhotoSettings"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "AVCapturePhotoOutputDepthDataDeliverySupport"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "new"},
+      {"access": "public", "introduced": "14.3", "name": "isBayerRAWPixelFormat:"},
+      {"access": "public", "introduced": "14.3", "name": "isAppleProRAWPixelFormat:"},
+      {"access": "public", "introduced": "10", "name": "JPEGPhotoDataRepresentationForJPEGSampleBuffer:previewPhotoSampleBuffer:"},
+      {"access": "public", "introduced": "10", "name": "DNGPhotoDataRepresentationForRawSampleBuffer:previewPhotoSampleBuffer:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "capturePhotoWithSettings:delegate:"},
+      {"access": "public", "name": "setPreparedPhotoSettingsArray:completionHandler:"},
+      {"access": "public", "introduced": "11", "name": "supportedPhotoPixelFormatTypesForFileType:"},
+      {"access": "public", "introduced": "11", "name": "supportedPhotoCodecTypesForFileType:"},
+      {"access": "public", "introduced": "18", "name": "supportedRawPhotoCodecTypesForRawPhotoPixelFormatType:fileType:"},
+      {"access": "public", "introduced": "11", "name": "supportedRawPhotoPixelFormatTypesForFileType:"}
+     ],
+     "introduced": "10",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCapturePhotoOutput",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "preparedPhotoSettingsArray", "name": "preparedPhotoSettingsArray"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availablePhotoPixelFormatTypes", "name": "availablePhotoPixelFormatTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availablePhotoCodecTypes", "name": "availablePhotoCodecTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableRawPhotoCodecTypes", "introduced": "18", "name": "availableRawPhotoCodecTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAppleProRAWSupported", "introduced": "14.3", "name": "appleProRAWSupported"},
+      {"access": "public", "getter": "isAppleProRAWEnabled", "introduced": "14.3", "name": "appleProRAWEnabled", "setter": "setAppleProRAWEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableRawPhotoPixelFormatTypes", "name": "availableRawPhotoPixelFormatTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availablePhotoFileTypes", "introduced": "11", "name": "availablePhotoFileTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableRawPhotoFileTypes", "introduced": "11", "name": "availableRawPhotoFileTypes"},
+      {"access": "public", "getter": "maxPhotoQualityPrioritization", "introduced": "13", "name": "maxPhotoQualityPrioritization", "setter": "setMaxPhotoQualityPrioritization:"},
+      {"access": "public", "getter": "isFastCapturePrioritizationSupported", "introduced": "17", "name": "fastCapturePrioritizationSupported", "setter": "setFastCapturePrioritizationSupported:"},
+      {"access": "public", "getter": "isFastCapturePrioritizationEnabled", "introduced": "17", "name": "fastCapturePrioritizationEnabled", "setter": "setFastCapturePrioritizationEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAutoDeferredPhotoDeliverySupported", "introduced": "17", "name": "autoDeferredPhotoDeliverySupported"},
+      {"access": "public", "getter": "isAutoDeferredPhotoDeliveryEnabled", "introduced": "17", "name": "autoDeferredPhotoDeliveryEnabled", "setter": "setAutoDeferredPhotoDeliveryEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isStillImageStabilizationSupported", "introduced": "10", "name": "stillImageStabilizationSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isStillImageStabilizationScene", "introduced": "10", "name": "isStillImageStabilizationScene"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVirtualDeviceFusionSupported", "introduced": "13", "name": "virtualDeviceFusionSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isDualCameraFusionSupported", "introduced": "10.2", "name": "dualCameraFusionSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVirtualDeviceConstituentPhotoDeliverySupported", "introduced": "13", "name": "virtualDeviceConstituentPhotoDeliverySupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isDualCameraDualPhotoDeliverySupported", "introduced": "11", "name": "dualCameraDualPhotoDeliverySupported"},
+      {"access": "public", "getter": "isVirtualDeviceConstituentPhotoDeliveryEnabled", "introduced": "13", "name": "virtualDeviceConstituentPhotoDeliveryEnabled", "setter": "setVirtualDeviceConstituentPhotoDeliveryEnabled:"},
+      {"access": "public", "getter": "isDualCameraDualPhotoDeliveryEnabled", "introduced": "11", "name": "dualCameraDualPhotoDeliveryEnabled", "setter": "setDualCameraDualPhotoDeliveryEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCameraCalibrationDataDeliverySupported", "introduced": "11", "name": "cameraCalibrationDataDeliverySupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedFlashModes", "name": "supportedFlashModes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAutoRedEyeReductionSupported", "introduced": "12", "name": "autoRedEyeReductionSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFlashScene", "name": "isFlashScene"},
+      {"access": "public", "getter": "photoSettingsForSceneMonitoring", "name": "photoSettingsForSceneMonitoring", "setter": "setPhotoSettingsForSceneMonitoring:"},
+      {"access": "public", "getter": "isHighResolutionCaptureEnabled", "introduced": "10", "name": "highResolutionCaptureEnabled", "setter": "setHighResolutionCaptureEnabled:"},
+      {"access": "public", "getter": "maxPhotoDimensions", "introduced": "16", "name": "maxPhotoDimensions", "setter": "setMaxPhotoDimensions:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxBracketedCapturePhotoCount", "name": "maxBracketedCapturePhotoCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isLensStabilizationDuringBracketedCaptureSupported", "name": "lensStabilizationDuringBracketedCaptureSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isLivePhotoCaptureSupported", "name": "livePhotoCaptureSupported"},
+      {"access": "public", "getter": "isLivePhotoCaptureEnabled", "name": "livePhotoCaptureEnabled", "setter": "setLivePhotoCaptureEnabled:"},
+      {"access": "public", "getter": "isLivePhotoCaptureSuspended", "name": "livePhotoCaptureSuspended", "setter": "setLivePhotoCaptureSuspended:"},
+      {"access": "public", "getter": "preservesLivePhotoCaptureSuspendedOnSessionStop", "introduced": "16", "name": "preservesLivePhotoCaptureSuspendedOnSessionStop", "setter": "setPreservesLivePhotoCaptureSuspendedOnSessionStop:"},
+      {"access": "public", "getter": "isLivePhotoAutoTrimmingEnabled", "name": "livePhotoAutoTrimmingEnabled", "setter": "setLivePhotoAutoTrimmingEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableLivePhotoVideoCodecTypes", "introduced": "11", "name": "availableLivePhotoVideoCodecTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isContentAwareDistortionCorrectionSupported", "introduced": "14.1", "name": "contentAwareDistortionCorrectionSupported"},
+      {"access": "public", "getter": "isContentAwareDistortionCorrectionEnabled", "introduced": "14.1", "name": "contentAwareDistortionCorrectionEnabled", "setter": "setContentAwareDistortionCorrectionEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isZeroShutterLagSupported", "introduced": "17", "name": "zeroShutterLagSupported"},
+      {"access": "public", "getter": "isZeroShutterLagEnabled", "introduced": "17", "name": "zeroShutterLagEnabled", "setter": "setZeroShutterLagEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isResponsiveCaptureSupported", "introduced": "17", "name": "responsiveCaptureSupported"},
+      {"access": "public", "getter": "isResponsiveCaptureEnabled", "introduced": "17", "name": "responsiveCaptureEnabled", "setter": "setResponsiveCaptureEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "captureReadiness", "introduced": "17", "name": "captureReadiness"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isConstantColorSupported", "introduced": "18", "name": "constantColorSupported"},
+      {"access": "public", "getter": "isConstantColorEnabled", "introduced": "18", "name": "constantColorEnabled", "setter": "setConstantColorEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isShutterSoundSuppressionSupported", "introduced": "18", "name": "shutterSoundSuppressionSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCameraSensorOrientationCompensationSupported", "introduced": "26", "name": "cameraSensorOrientationCompensationSupported"},
+      {"access": "public", "getter": "isCameraSensorOrientationCompensationEnabled", "introduced": "26", "name": "cameraSensorOrientationCompensationEnabled", "setter": "setCameraSensorOrientationCompensationEnabled:"}
+     ],
+     "super": "AVCaptureOutput"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithPhotoOutput:"},
+      {"access": "public", "name": "startTrackingCaptureRequestUsingPhotoSettings:"},
+      {"access": "public", "name": "stopTrackingCaptureRequestUsingPhotoSettingsUniqueID:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "AVCapturePhotoOutputReadinessCoordinator",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "captureReadiness", "name": "captureReadiness"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "photoSettings"},
+      {"access": "public", "name": "photoSettingsWithFormat:"},
+      {"access": "public", "name": "photoSettingsWithRawPixelFormatType:"},
+      {"access": "public", "name": "photoSettingsWithRawPixelFormatType:processedFormat:"},
+      {"access": "public", "introduced": "11", "name": "photoSettingsWithRawPixelFormatType:rawFileType:processedFormat:processedFileType:"},
+      {"access": "public", "name": "photoSettingsFromPhotoSettings:"}
+     ],
+     "introduced": "10",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCapturePhotoSettings",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "uniqueID", "name": "uniqueID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "format", "name": "format"},
+      {"access": "public", "getter": "rawFileFormat", "introduced": "18", "name": "rawFileFormat", "setter": "setRawFileFormat:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "processedFileType", "introduced": "11", "name": "processedFileType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rawPhotoPixelFormatType", "name": "rawPhotoPixelFormatType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rawFileType", "introduced": "11", "name": "rawFileType"},
+      {"access": "public", "getter": "flashMode", "name": "flashMode", "setter": "setFlashMode:"},
+      {"access": "public", "getter": "isAutoRedEyeReductionEnabled", "introduced": "12", "name": "autoRedEyeReductionEnabled", "setter": "setAutoRedEyeReductionEnabled:"},
+      {"access": "public", "getter": "photoQualityPrioritization", "introduced": "13", "name": "photoQualityPrioritization", "setter": "setPhotoQualityPrioritization:"},
+      {"access": "public", "getter": "isAutoStillImageStabilizationEnabled", "introduced": "10", "name": "autoStillImageStabilizationEnabled", "setter": "setAutoStillImageStabilizationEnabled:"},
+      {"access": "public", "getter": "isAutoVirtualDeviceFusionEnabled", "introduced": "13", "name": "autoVirtualDeviceFusionEnabled", "setter": "setAutoVirtualDeviceFusionEnabled:"},
+      {"access": "public", "getter": "isAutoDualCameraFusionEnabled", "introduced": "10.2", "name": "autoDualCameraFusionEnabled", "setter": "setAutoDualCameraFusionEnabled:"},
+      {"access": "public", "getter": "virtualDeviceConstituentPhotoDeliveryEnabledDevices", "introduced": "13", "name": "virtualDeviceConstituentPhotoDeliveryEnabledDevices", "setter": "setVirtualDeviceConstituentPhotoDeliveryEnabledDevices:"},
+      {"access": "public", "getter": "isDualCameraDualPhotoDeliveryEnabled", "introduced": "11", "name": "dualCameraDualPhotoDeliveryEnabled", "setter": "setDualCameraDualPhotoDeliveryEnabled:"},
+      {"access": "public", "getter": "isHighResolutionPhotoEnabled", "introduced": "10", "name": "highResolutionPhotoEnabled", "setter": "setHighResolutionPhotoEnabled:"},
+      {"access": "public", "getter": "maxPhotoDimensions", "introduced": "16", "name": "maxPhotoDimensions", "setter": "setMaxPhotoDimensions:"},
+      {"access": "public", "getter": "isDepthDataDeliveryEnabled", "introduced": "11", "name": "depthDataDeliveryEnabled", "setter": "setDepthDataDeliveryEnabled:"},
+      {"access": "public", "getter": "embedsDepthDataInPhoto", "introduced": "11", "name": "embedsDepthDataInPhoto", "setter": "setEmbedsDepthDataInPhoto:"},
+      {"access": "public", "getter": "isDepthDataFiltered", "introduced": "11", "name": "depthDataFiltered", "setter": "setDepthDataFiltered:"},
+      {"access": "public", "getter": "isCameraCalibrationDataDeliveryEnabled", "introduced": "11", "name": "cameraCalibrationDataDeliveryEnabled", "setter": "setCameraCalibrationDataDeliveryEnabled:"},
+      {"access": "public", "getter": "isPortraitEffectsMatteDeliveryEnabled", "introduced": "12", "name": "portraitEffectsMatteDeliveryEnabled", "setter": "setPortraitEffectsMatteDeliveryEnabled:"},
+      {"access": "public", "getter": "embedsPortraitEffectsMatteInPhoto", "introduced": "12", "name": "embedsPortraitEffectsMatteInPhoto", "setter": "setEmbedsPortraitEffectsMatteInPhoto:"},
+      {"access": "public", "getter": "enabledSemanticSegmentationMatteTypes", "introduced": "13", "name": "enabledSemanticSegmentationMatteTypes", "setter": "setEnabledSemanticSegmentationMatteTypes:"},
+      {"access": "public", "getter": "embedsSemanticSegmentationMattesInPhoto", "introduced": "13", "name": "embedsSemanticSegmentationMattesInPhoto", "setter": "setEmbedsSemanticSegmentationMattesInPhoto:"},
+      {"access": "public", "getter": "metadata", "introduced": "11", "name": "metadata", "setter": "setMetadata:"},
+      {"access": "public", "getter": "livePhotoMovieFileURL", "name": "livePhotoMovieFileURL", "setter": "setLivePhotoMovieFileURL:"},
+      {"access": "public", "getter": "livePhotoVideoCodecType", "introduced": "11", "name": "livePhotoVideoCodecType", "setter": "setLivePhotoVideoCodecType:"},
+      {"access": "public", "getter": "livePhotoMovieMetadata", "name": "livePhotoMovieMetadata", "setter": "setLivePhotoMovieMetadata:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availablePreviewPhotoPixelFormatTypes", "name": "availablePreviewPhotoPixelFormatTypes"},
+      {"access": "public", "getter": "previewPhotoFormat", "name": "previewPhotoFormat", "setter": "setPreviewPhotoFormat:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableEmbeddedThumbnailPhotoCodecTypes", "introduced": "11", "name": "availableEmbeddedThumbnailPhotoCodecTypes"},
+      {"access": "public", "getter": "embeddedThumbnailPhotoFormat", "introduced": "11", "name": "embeddedThumbnailPhotoFormat", "setter": "setEmbeddedThumbnailPhotoFormat:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableRawEmbeddedThumbnailPhotoCodecTypes", "introduced": "12", "name": "availableRawEmbeddedThumbnailPhotoCodecTypes"},
+      {"access": "public", "getter": "rawEmbeddedThumbnailPhotoFormat", "introduced": "12", "name": "rawEmbeddedThumbnailPhotoFormat", "setter": "setRawEmbeddedThumbnailPhotoFormat:"},
+      {"access": "public", "getter": "isAutoContentAwareDistortionCorrectionEnabled", "introduced": "14.1", "name": "autoContentAwareDistortionCorrectionEnabled", "setter": "setAutoContentAwareDistortionCorrectionEnabled:"},
+      {"access": "public", "getter": "isConstantColorEnabled", "introduced": "18", "name": "constantColorEnabled", "setter": "setConstantColorEnabled:"},
+      {"access": "public", "getter": "isConstantColorFallbackPhotoDeliveryEnabled", "introduced": "18", "name": "constantColorFallbackPhotoDeliveryEnabled", "setter": "setConstantColorFallbackPhotoDeliveryEnabled:"},
+      {"access": "public", "getter": "isShutterSoundSuppressionEnabled", "introduced": "18", "name": "shutterSoundSuppressionEnabled", "setter": "setShutterSoundSuppressionEnabled:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "AVCaptureReactionEffectState",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "reactionType", "introduced": "17", "name": "reactionType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startTime", "introduced": "17", "name": "startTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endTime", "introduced": "17", "name": "endTime"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "13", "name": "dimensionsForSemanticSegmentationMatteOfType:"}
+     ],
+     "introduced": "10",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureResolvedPhotoSettings",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "uniqueID", "name": "uniqueID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "photoDimensions", "name": "photoDimensions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rawPhotoDimensions", "name": "rawPhotoDimensions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "previewDimensions", "name": "previewDimensions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "embeddedThumbnailDimensions", "introduced": "11", "name": "embeddedThumbnailDimensions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rawEmbeddedThumbnailDimensions", "introduced": "12", "name": "rawEmbeddedThumbnailDimensions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "portraitEffectsMatteDimensions", "introduced": "12", "name": "portraitEffectsMatteDimensions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "livePhotoMovieDimensions", "name": "livePhotoMovieDimensions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFlashEnabled", "name": "flashEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isRedEyeReductionEnabled", "introduced": "12", "name": "redEyeReductionEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deferredPhotoProxyDimensions", "introduced": "17", "name": "deferredPhotoProxyDimensions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isStillImageStabilizationEnabled", "introduced": "10", "name": "stillImageStabilizationEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isVirtualDeviceFusionEnabled", "introduced": "13", "name": "virtualDeviceFusionEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isDualCameraFusionEnabled", "introduced": "10.2", "name": "dualCameraFusionEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "expectedPhotoCount", "introduced": "11", "name": "expectedPhotoCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "photoProcessingTimeRange", "introduced": "13", "name": "photoProcessingTimeRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isContentAwareDistortionCorrectionEnabled", "introduced": "14.1", "name": "contentAwareDistortionCorrectionEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isFastCapturePrioritizationEnabled", "introduced": "17", "name": "fastCapturePrioritizationEnabled"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureScreenInput",
+     "properties": [
+      {"access": "public", "getter": "minFrameDuration", "name": "minFrameDuration", "setter": "setMinFrameDuration:"},
+      {"access": "public", "getter": "cropRect", "name": "cropRect", "setter": "setCropRect:"},
+      {"access": "public", "getter": "scaleFactor", "name": "scaleFactor", "setter": "setScaleFactor:"},
+      {"access": "public", "getter": "capturesMouseClicks", "name": "capturesMouseClicks", "setter": "setCapturesMouseClicks:"},
+      {"access": "public", "getter": "capturesCursor", "name": "capturesCursor", "setter": "setCapturesCursor:"},
+      {"access": "public", "getter": "removesDuplicateFrames", "name": "removesDuplicateFrames", "setter": "setRemovesDuplicateFrames:"}
+     ],
+     "super": "AVCaptureInput",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "canSetSessionPreset:"},
+      {"access": "public", "name": "canAddInput:"},
+      {"access": "public", "name": "addInput:"},
+      {"access": "public", "name": "removeInput:"},
+      {"access": "public", "name": "canAddOutput:"},
+      {"access": "public", "name": "addOutput:"},
+      {"access": "public", "name": "removeOutput:"},
+      {"access": "public", "introduced": "8", "name": "addInputWithNoConnections:"},
+      {"access": "public", "introduced": "8", "name": "addOutputWithNoConnections:"},
+      {"access": "public", "introduced": "8", "name": "canAddConnection:"},
+      {"access": "public", "introduced": "8", "name": "addConnection:"},
+      {"access": "public", "introduced": "8", "name": "removeConnection:"},
+      {"access": "public", "introduced": "18", "name": "setControlsDelegate:queue:"},
+      {"access": "public", "introduced": "18", "name": "canAddControl:"},
+      {"access": "public", "introduced": "18", "name": "addControl:"},
+      {"access": "public", "introduced": "18", "name": "removeControl:"},
+      {"access": "public", "name": "beginConfiguration"},
+      {"access": "public", "name": "commitConfiguration"},
+      {"access": "public", "name": "startRunning"},
+      {"access": "public", "name": "stopRunning"},
+      {"access": "public", "introduced": "26", "name": "runDeferredStartWhenNeeded"},
+      {"access": "public", "introduced": "26", "name": "setDeferredStartDelegate:deferredStartDelegateCallbackQueue:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureSession",
+     "properties": [
+      {"access": "public", "getter": "sessionPreset", "name": "sessionPreset", "setter": "setSessionPreset:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputs", "name": "inputs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "outputs", "name": "outputs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "connections", "introduced": "13", "name": "connections"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportsControls", "introduced": "18", "name": "supportsControls"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxControlsCount", "introduced": "18", "name": "maxControlsCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "controlsDelegate", "introduced": "18", "name": "controlsDelegate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "controlsDelegateCallbackQueue", "introduced": "18", "name": "controlsDelegateCallbackQueue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "controls", "introduced": "18", "name": "controls"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isRunning", "name": "running"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isInterrupted", "introduced": "4", "name": "interrupted"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMultitaskingCameraAccessSupported", "introduced": "16", "name": "multitaskingCameraAccessSupported"},
+      {"access": "public", "getter": "isMultitaskingCameraAccessEnabled", "introduced": "16", "name": "multitaskingCameraAccessEnabled", "setter": "setMultitaskingCameraAccessEnabled:"},
+      {"access": "public", "getter": "usesApplicationAudioSession", "introduced": "7", "name": "usesApplicationAudioSession", "setter": "setUsesApplicationAudioSession:"},
+      {"access": "public", "getter": "automaticallyConfiguresApplicationAudioSession", "introduced": "7", "name": "automaticallyConfiguresApplicationAudioSession", "setter": "setAutomaticallyConfiguresApplicationAudioSession:"},
+      {"access": "public", "getter": "configuresApplicationAudioSessionToMixWithOthers", "introduced": "18", "name": "configuresApplicationAudioSessionToMixWithOthers", "setter": "setConfiguresApplicationAudioSessionToMixWithOthers:"},
+      {"access": "public", "getter": "configuresApplicationAudioSessionForBluetoothHighQualityRecording", "introduced": "26", "name": "configuresApplicationAudioSessionForBluetoothHighQualityRecording", "setter": "setConfiguresApplicationAudioSessionForBluetoothHighQualityRecording:"},
+      {"access": "public", "getter": "automaticallyConfiguresCaptureDeviceForWideColor", "introduced": "10", "name": "automaticallyConfiguresCaptureDeviceForWideColor", "setter": "setAutomaticallyConfiguresCaptureDeviceForWideColor:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "synchronizationClock", "introduced": "15.4", "name": "synchronizationClock"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "masterClock", "introduced": "7", "name": "masterClock"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hardwareCost", "introduced": "16", "name": "hardwareCost"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isManualDeferredStartSupported", "introduced": "26", "name": "manualDeferredStartSupported"},
+      {"access": "public", "getter": "automaticallyRunsDeferredStart", "introduced": "26", "name": "automaticallyRunsDeferredStart", "setter": "setAutomaticallyRunsDeferredStart:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deferredStartDelegate", "introduced": "26", "name": "deferredStartDelegate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deferredStartDelegateCallbackQueue", "introduced": "26", "name": "deferredStartDelegateCallbackQueue"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLocalizedTitle:symbolName:minValue:maxValue:"},
+      {"access": "public", "name": "initWithLocalizedTitle:symbolName:minValue:maxValue:step:"},
+      {"access": "public", "name": "initWithLocalizedTitle:symbolName:values:"},
+      {"access": "public", "name": "setActionQueue:action:"}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "AVCaptureSlider",
+     "properties": [
+      {"access": "public", "getter": "value", "name": "value", "setter": "setValue:"},
+      {"access": "public", "getter": "localizedValueFormat", "name": "localizedValueFormat", "setter": "setLocalizedValueFormat:"},
+      {"access": "public", "getter": "prominentValues", "name": "prominentValues", "setter": "setProminentValues:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedTitle", "name": "localizedTitle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "symbolName", "name": "symbolName"},
+      {"access": "public", "getter": "accessibilityIdentifier", "name": "accessibilityIdentifier", "setter": "setAccessibilityIdentifier:"}
+     ],
+     "super": "AVCaptureControl"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "startMonitoringWithError:"},
+      {"access": "public", "name": "stopMonitoring"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "AVCaptureSmartFramingMonitor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedFramings", "name": "supportedFramings"},
+      {"access": "public", "getter": "enabledFramings", "name": "enabledFramings", "setter": "setEnabledFramings:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recommendedFraming", "name": "recommendedFraming"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMonitoring", "name": "monitoring"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "analyzeAudioSample:"},
+      {"access": "public", "name": "newTimedMetadataSampleBufferAndResetAnalyzer"},
+      {"access": "public", "name": "resetAnalyzer"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "AVCaptureSpatialAudioMetadataSampleGenerator",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timedMetadataSampleBufferFormatDescription", "name": "timedMetadataSampleBufferFormatDescription"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "AVCaptureStillImageOutputBracketedCapture"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "new"},
+      {"access": "public", "name": "jpegStillImageNSDataRepresentation:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "captureStillImageAsynchronouslyFromConnection:completionHandler:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureStillImageOutput",
+     "properties": [
+      {"access": "public", "getter": "outputSettings", "name": "outputSettings", "setter": "setOutputSettings:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableImageDataCVPixelFormatTypes", "name": "availableImageDataCVPixelFormatTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableImageDataCodecTypes", "name": "availableImageDataCodecTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isStillImageStabilizationSupported", "introduced": "7", "name": "stillImageStabilizationSupported"},
+      {"access": "public", "getter": "automaticallyEnablesStillImageStabilizationWhenAvailable", "introduced": "7", "name": "automaticallyEnablesStillImageStabilizationWhenAvailable", "setter": "setAutomaticallyEnablesStillImageStabilizationWhenAvailable:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isStillImageStabilizationActive", "introduced": "7", "name": "stillImageStabilizationActive"},
+      {"access": "public", "getter": "isHighResolutionStillImageOutputEnabled", "introduced": "8", "name": "highResolutionStillImageOutputEnabled", "setter": "setHighResolutionStillImageOutputEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCameraSensorOrientationCompensationSupported", "introduced": "26", "name": "cameraSensorOrientationCompensationSupported"},
+      {"access": "public", "getter": "isCameraSensorOrientationCompensationEnabled", "introduced": "26", "name": "cameraSensorOrientationCompensationEnabled", "setter": "setCameraSensorOrientationCompensationEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCapturingStillImage", "introduced": "5", "name": "capturingStillImage"}
+     ],
+     "super": "AVCaptureOutput"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_synchronizedDataInternal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureSynchronizedData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "name": "timestamp"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "synchronizedDataForCaptureOutput:"},
+      {"access": "public", "name": "objectForKeyedSubscript:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureSynchronizedDataCollection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "name": "count"}
+     ],
+     "protocols": [
+      "NSFastEnumeration"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureSynchronizedDepthData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "depthData", "name": "depthData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "depthDataWasDropped", "name": "depthDataWasDropped"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "droppedReason", "name": "droppedReason"}
+     ],
+     "super": "AVCaptureSynchronizedData"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureSynchronizedMetadataObjectData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "metadataObjects", "name": "metadataObjects"}
+     ],
+     "super": "AVCaptureSynchronizedData"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureSynchronizedSampleBufferData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "sampleBuffer", "name": "sampleBuffer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sampleBufferWasDropped", "name": "sampleBufferWasDropped"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "droppedReason", "name": "droppedReason"}
+     ],
+     "super": "AVCaptureSynchronizedData"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDevice:"},
+      {"access": "public", "name": "initWithDevice:action:"}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "AVCaptureSystemExposureBiasSlider",
+     "super": "AVCaptureControl"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "11.1",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureSystemPressureState",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "level", "name": "level"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "factors", "name": "factors"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDevice:"},
+      {"access": "public", "name": "initWithDevice:action:"}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "AVCaptureSystemZoomSlider",
+     "super": "AVCaptureControl"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setDelegate:queue:"},
+      {"access": "public", "name": "startSynchronizationWithTimecodeSource:"},
+      {"access": "public", "name": "generateInitialTimecode"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "AVCaptureTimecodeGenerator",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableSources", "name": "availableSources"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentSource", "name": "currentSource"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "delegate", "name": "delegate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "delegateCallbackQueue", "name": "delegateCallbackQueue"},
+      {"access": "public", "getter": "synchronizationTimeout", "name": "synchronizationTimeout", "setter": "setSynchronizationTimeout:"},
+      {"access": "public", "getter": "timecodeAlignmentOffset", "name": "timecodeAlignmentOffset", "setter": "setTimecodeAlignmentOffset:"},
+      {"access": "public", "getter": "timecodeFrameDuration", "name": "timecodeFrameDuration", "setter": "setTimecodeFrameDuration:"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "frameCountSource", "name": "frameCountSource"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "realTimeClockSource", "name": "realTimeClockSource"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "AVCaptureTimecodeSource",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "name": "displayName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "uuid", "name": "uuid"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "setSampleBufferDelegate:queue:"},
+      {"access": "public", "introduced": "7", "name": "recommendedVideoSettingsForAssetWriterWithOutputFileType:"},
+      {"access": "public", "introduced": "11", "name": "availableVideoCodecTypesForAssetWriterWithOutputFileType:"},
+      {"access": "public", "introduced": "11", "name": "recommendedVideoSettingsForVideoCodecType:assetWriterOutputFileType:"},
+      {"access": "public", "introduced": "17", "name": "recommendedVideoSettingsForVideoCodecType:assetWriterOutputFileType:outputFileURL:"},
+      {"access": "public", "introduced": "26", "name": "recommendedMovieMetadataForVideoCodecType:assetWriterOutputFileType:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureVideoDataOutput",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "sampleBufferDelegate", "name": "sampleBufferDelegate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sampleBufferCallbackQueue", "name": "sampleBufferCallbackQueue"},
+      {"access": "public", "getter": "videoSettings", "name": "videoSettings", "setter": "setVideoSettings:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recommendedMediaTimeScaleForAssetWriter", "introduced": "26", "name": "recommendedMediaTimeScaleForAssetWriter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableVideoCVPixelFormatTypes", "introduced": "5", "name": "availableVideoCVPixelFormatTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableVideoCodecTypes", "introduced": "5", "name": "availableVideoCodecTypes"},
+      {"access": "public", "getter": "minFrameDuration", "introduced": "4", "name": "minFrameDuration", "setter": "setMinFrameDuration:"},
+      {"access": "public", "getter": "alwaysDiscardsLateVideoFrames", "name": "alwaysDiscardsLateVideoFrames", "setter": "setAlwaysDiscardsLateVideoFrames:"},
+      {"access": "public", "getter": "automaticallyConfiguresOutputBufferDimensions", "introduced": "13", "name": "automaticallyConfiguresOutputBufferDimensions", "setter": "setAutomaticallyConfiguresOutputBufferDimensions:"},
+      {"access": "public", "getter": "deliversPreviewSizedOutputBuffers", "introduced": "13", "name": "deliversPreviewSizedOutputBuffers", "setter": "setDeliversPreviewSizedOutputBuffers:"},
+      {"access": "public", "getter": "preparesCellularRadioForNetworkConnection", "introduced": "26", "name": "preparesCellularRadioForNetworkConnection", "setter": "setPreparesCellularRadioForNetworkConnection:"},
+      {"access": "public", "getter": "preservesDynamicHDRMetadata", "introduced": "26", "name": "preservesDynamicHDRMetadata", "setter": "setPreservesDynamicHDRMetadata:"}
+     ],
+     "super": "AVCaptureOutput"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithSession:"},
+      {"access": "public", "introduced": "8", "name": "layerWithSessionWithNoConnection:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSession:"},
+      {"access": "public", "introduced": "8", "name": "initWithSessionWithNoConnection:"},
+      {"access": "public", "introduced": "8", "name": "setSessionWithNoConnection:"},
+      {"access": "public", "introduced": "6", "name": "captureDevicePointOfInterestForPoint:"},
+      {"access": "public", "introduced": "6", "name": "pointForCaptureDevicePointOfInterest:"},
+      {"access": "public", "introduced": "7", "name": "metadataOutputRectOfInterestForRect:"},
+      {"access": "public", "introduced": "7", "name": "rectForMetadataOutputRectOfInterest:"},
+      {"access": "public", "introduced": "6", "name": "transformedMetadataObjectForMetadataObject:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVCaptureVideoPreviewLayer",
+     "properties": [
+      {"access": "public", "getter": "session", "name": "session", "setter": "setSession:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "connection", "introduced": "6", "name": "connection"},
+      {"access": "public", "getter": "videoGravity", "name": "videoGravity", "setter": "setVideoGravity:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPreviewing", "introduced": "13", "name": "previewing"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isOrientationSupported", "introduced": "4", "name": "orientationSupported"},
+      {"access": "public", "getter": "orientation", "introduced": "4", "name": "orientation", "setter": "setOrientation:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMirroringSupported", "introduced": "4", "name": "mirroringSupported"},
+      {"access": "public", "getter": "automaticallyAdjustsMirroring", "introduced": "4", "name": "automaticallyAdjustsMirroring", "setter": "setAutomaticallyAdjustsMirroring:"},
+      {"access": "public", "getter": "isMirrored", "introduced": "4", "name": "mirrored", "setter": "setMirrored:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isDeferredStartSupported", "introduced": "26", "name": "deferredStartSupported"},
+      {"access": "public", "getter": "isDeferredStartEnabled", "introduced": "26", "name": "deferredStartEnabled", "setter": "setDeferredStartEnabled:"}
+     ],
+     "super": "CALayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "AVContinuityDevice",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "connectionID", "name": "connectionID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isConnected", "name": "connected"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoDevices", "name": "videoDevices"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "audioSessionInputs", "name": "audioSessionInputs"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "depthDataFromDictionaryRepresentation:error:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "depthDataByConvertingToDepthDataType:"},
+      {"access": "public", "name": "depthDataByApplyingExifOrientation:"},
+      {"access": "public", "name": "depthDataByReplacingDepthDataMapWithPixelBuffer:error:"},
+      {"access": "public", "name": "dictionaryRepresentationForAuxiliaryDataType:"}
+     ],
+     "introduced": "11",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVDepthData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableDepthDataTypes", "name": "availableDepthDataTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "depthDataType", "name": "depthDataType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "depthDataMap", "name": "depthDataMap"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "depthDataQuality", "name": "depthDataQuality"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isDepthDataFiltered", "name": "depthDataFiltered"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "depthDataAccuracy", "name": "depthDataAccuracy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "cameraCalibrationData", "name": "cameraCalibrationData"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "containsExposureBias:"}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "AVExposureBiasRange",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "minExposureBias", "name": "minExposureBias"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxExposureBias", "name": "maxExposureBias"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "AVExternalStorageDeviceAuthorization"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "nextAvailableURLsWithPathExtensions:error:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "AVExternalStorageDevice",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "name": "displayName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "freeSize", "name": "freeSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalSize", "name": "totalSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isConnected", "name": "connected"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "uuid", "name": "uuid"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isNotRecommendedForCaptureUse", "name": "notRecommendedForCaptureUse"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "AVExternalStorageDeviceDiscoverySession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sharedSession", "name": "sharedSession"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "externalStorageDevices", "name": "externalStorageDevices"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupported", "name": "supported"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "AVExternalSyncDevice",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "status", "name": "status"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "clock", "name": "clock"},
+      {"access": "public", "getter": "signalCompensationDelay", "name": "signalCompensationDelay", "setter": "setSignalCompensationDelay:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "uuid", "name": "uuid"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "vendorID", "name": "vendorID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "productID", "name": "productID"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "AVExternalSyncDeviceDiscoverySession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sharedSession", "name": "sharedSession"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupported", "name": "supported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "devices", "name": "devices"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "7",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVFrameRateRange",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "minFrameRate", "name": "minFrameRate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxFrameRate", "name": "maxFrameRate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxFrameDuration", "name": "maxFrameDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minFrameDuration", "name": "minFrameDuration"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "AVMetadataBodyObject",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bodyID", "name": "bodyID"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "AVMetadataObject"
+    },
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "AVMetadataCatBodyObject",
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "AVMetadataBodyObject"
+    },
+    {
+     "access": "public",
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "AVMetadataCatHeadObject",
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "AVMetadataObject"
+    },
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "AVMetadataDogBodyObject",
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "AVMetadataBodyObject"
+    },
+    {
+     "access": "public",
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "AVMetadataDogHeadObject",
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "AVMetadataObject"
+    },
+    {
+     "access": "public",
+     "introduced": "6",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVMetadataFaceObject",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "faceID", "name": "faceID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasRollAngle", "name": "hasRollAngle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rollAngle", "name": "rollAngle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasYawAngle", "name": "hasYawAngle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "yawAngle", "name": "yawAngle"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "AVMetadataObject"
+    },
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "AVMetadataHumanBodyObject",
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "AVMetadataBodyObject"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "AVMetadataHumanFullBodyObject",
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "AVMetadataBodyObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "AVMetadataMachineReadableCodeDescriptor"
+     ],
+     "introduced": "7",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVMetadataMachineReadableCodeObject",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "corners", "name": "corners"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stringValue", "name": "stringValue"}
+     ],
+     "super": "AVMetadataObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "AVMetadataObjectCinematicVideoSupport"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "6",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_objectInternal"}
+     ],
+     "linkage": "exported",
+     "name": "AVMetadataObject",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "time", "name": "time"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "bounds", "name": "bounds"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "groupID", "introduced": "26", "name": "groupID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "objectID", "introduced": "26", "name": "objectID"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "AVMetadataSalientObject",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "objectID", "name": "objectID"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "AVMetadataObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "portraitEffectsMatteFromDictionaryRepresentation:error:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "portraitEffectsMatteByApplyingExifOrientation:"},
+      {"access": "public", "name": "portraitEffectsMatteByReplacingPortraitEffectsMatteWithPixelBuffer:error:"},
+      {"access": "public", "name": "dictionaryRepresentationForAuxiliaryDataType:"}
+     ],
+     "introduced": "12",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "AVPortraitEffectsMatte",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelFormatType", "name": "pixelFormatType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mattingImage", "name": "mattingImage"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "semanticSegmentationMatteFromImageSourceAuxiliaryDataType:dictionaryRepresentation:error:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "semanticSegmentationMatteByApplyingExifOrientation:"},
+      {"access": "public", "name": "semanticSegmentationMatteByReplacingSemanticSegmentationMatteWithPixelBuffer:error:"},
+      {"access": "public", "name": "dictionaryRepresentationForAuxiliaryDataType:"}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "AVSemanticSegmentationMatte",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "matteType", "name": "matteType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelFormatType", "name": "pixelFormatType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mattingImage", "name": "mattingImage"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "containsZoomFactor:"}
+     ],
+     "introduced": "17.2",
+     "linkage": "exported",
+     "name": "AVZoomRange",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "minZoomFactor", "name": "minZoomFactor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxZoomFactor", "name": "maxZoomFactor"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "captureOutput:didOutputSampleBuffer:fromConnection:", "optional": true}
+     ],
+     "introduced": "4",
+     "name": "AVCaptureAudioDataOutputSampleBufferDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "dataOutputSynchronizer:didOutputSynchronizedDataCollection:"}
+     ],
+     "introduced": "11",
+     "name": "AVCaptureDataOutputSynchronizerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "depthDataOutput:didOutputDepthData:timestamp:connection:", "optional": true},
+      {"access": "public", "name": "depthDataOutput:didDropDepthData:timestamp:connection:reason:", "optional": true}
+     ],
+     "introduced": "11",
+     "name": "AVCaptureDepthDataOutputDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "captureOutputShouldProvideSampleAccurateRecordingStart:", "unavailable": true},
+      {"access": "public", "name": "captureOutput:didOutputSampleBuffer:fromConnection:", "optional": true}
+     ],
+     "name": "AVCaptureFileOutputDelegate",
+     "protocols": [
+      "NSObject"
+     ],
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "captureOutput:didStartRecordingToOutputFileAtURL:fromConnections:", "optional": true},
+      {"access": "public", "introduced": "18.2", "name": "captureOutput:didStartRecordingToOutputFileAtURL:startPTS:fromConnections:", "optional": true},
+      {"access": "public", "introduced": "18", "name": "captureOutput:didPauseRecordingToOutputFileAtURL:fromConnections:", "optional": true},
+      {"access": "public", "introduced": "18", "name": "captureOutput:didResumeRecordingToOutputFileAtURL:fromConnections:", "optional": true},
+      {"access": "public", "name": "captureOutput:willFinishRecordingToOutputFileAtURL:fromConnections:error:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:"}
+     ],
+     "introduced": "4",
+     "name": "AVCaptureFileOutputRecordingDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "captureOutput:didOutputMetadataObjects:fromConnection:", "optional": true}
+     ],
+     "introduced": "6",
+     "name": "AVCaptureMetadataOutputObjectsDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "captureOutput:willBeginCaptureForResolvedSettings:", "optional": true},
+      {"access": "public", "name": "captureOutput:willCapturePhotoForResolvedSettings:", "optional": true},
+      {"access": "public", "name": "captureOutput:didCapturePhotoForResolvedSettings:", "optional": true},
+      {"access": "public", "introduced": "11", "name": "captureOutput:didFinishProcessingPhoto:error:", "optional": true},
+      {"access": "public", "introduced": "17", "name": "captureOutput:didFinishCapturingDeferredPhotoProxy:error:", "optional": true},
+      {"access": "public", "introduced": "10", "name": "captureOutput:didFinishProcessingPhotoSampleBuffer:previewPhotoSampleBuffer:resolvedSettings:bracketSettings:error:", "optional": true},
+      {"access": "public", "introduced": "10", "name": "captureOutput:didFinishProcessingRawPhotoSampleBuffer:previewPhotoSampleBuffer:resolvedSettings:bracketSettings:error:", "optional": true},
+      {"access": "public", "name": "captureOutput:didFinishRecordingLivePhotoMovieForEventualFileAtURL:resolvedSettings:", "optional": true},
+      {"access": "public", "name": "captureOutput:didFinishProcessingLivePhotoToMovieFileAtURL:duration:photoDisplayTime:resolvedSettings:error:", "optional": true},
+      {"access": "public", "name": "captureOutput:didFinishCaptureForResolvedSettings:error:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "AVCapturePhotoCaptureDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "replacementMetadataForPhoto:", "optional": true},
+      {"access": "public", "name": "replacementEmbeddedThumbnailPixelBufferWithPhotoFormat:forPhoto:", "optional": true},
+      {"access": "public", "name": "replacementDepthDataForPhoto:", "optional": true},
+      {"access": "public", "name": "replacementPortraitEffectsMatteForPhoto:", "optional": true},
+      {"access": "public", "introduced": "13", "name": "replacementSemanticSegmentationMatteOfType:forPhoto:", "optional": true},
+      {"access": "public", "introduced": "14.3", "name": "replacementAppleProRAWCompressionSettingsForPhoto:defaultSettings:maximumBitDepth:", "optional": true}
+     ],
+     "introduced": "12",
+     "name": "AVCapturePhotoFileDataRepresentationCustomizer",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "readinessCoordinator:captureReadinessDidChange:", "optional": true}
+     ],
+     "introduced": "17",
+     "name": "AVCapturePhotoOutputReadinessCoordinatorDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "sessionControlsDidBecomeActive:"},
+      {"access": "public", "name": "sessionControlsWillEnterFullscreenAppearance:"},
+      {"access": "public", "name": "sessionControlsWillExitFullscreenAppearance:"},
+      {"access": "public", "name": "sessionControlsDidBecomeInactive:"}
+     ],
+     "introduced": "18",
+     "name": "AVCaptureSessionControlsDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "sessionWillRunDeferredStart:"},
+      {"access": "public", "name": "sessionDidRunDeferredStart:"}
+     ],
+     "introduced": "26",
+     "name": "AVCaptureSessionDeferredStartDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "timecodeGenerator:didReceiveUpdate:fromSource:"},
+      {"access": "public", "name": "timecodeGenerator:transitionedToSynchronizationStatus:forSource:"},
+      {"access": "public", "name": "timecodeGenerator:didUpdateAvailableSources:"}
+     ],
+     "introduced": "26",
+     "name": "AVCaptureTimecodeGeneratorDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "captureOutput:didOutputSampleBuffer:fromConnection:", "optional": true},
+      {"access": "public", "introduced": "6", "name": "captureOutput:didDropSampleBuffer:fromConnection:", "optional": true}
+     ],
+     "introduced": "4",
+     "name": "AVCaptureVideoDataOutputSampleBufferDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "externalSyncDeviceStatusDidChange:", "optional": true},
+      {"access": "public", "name": "externalSyncDevice:failedWithError:", "optional": true}
+     ],
+     "introduced": "26",
+     "name": "AVExternalSyncDeviceDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios",
+   "typedefs": [
+    {"access": "public", "name": "AVAuthorizationStatus"},
+    {"access": "public", "introduced": "26", "name": "AVCaptureAspectRatio"},
+    {"access": "public", "name": "AVCaptureAutoFocusRangeRestriction"},
+    {"access": "public", "name": "AVCaptureAutoFocusSystem"},
+    {"access": "public", "name": "AVCaptureCameraLensSmudgeDetectionStatus"},
+    {"access": "public", "name": "AVCaptureCenterStageControlMode"},
+    {"access": "public", "name": "AVCaptureCinematicVideoFocusMode"},
+    {"access": "public", "name": "AVCaptureColorSpace"},
+    {"access": "public", "name": "AVCaptureDevicePosition"},
+    {"access": "public", "name": "AVCaptureDeviceTransportControlsPlaybackMode"},
+    {"access": "public", "name": "AVCaptureDeviceTransportControlsSpeed", "unavailable": true},
+    {"access": "public", "introduced": "10", "name": "AVCaptureDeviceType"},
+    {"access": "public", "name": "AVCaptureExposureMode"},
+    {"access": "public", "name": "AVCaptureFlashMode"},
+    {"access": "public", "name": "AVCaptureFocusMode"},
+    {"access": "public", "name": "AVCaptureLensStabilizationStatus"},
+    {"access": "public", "name": "AVCaptureMicrophoneMode"},
+    {"access": "public", "name": "AVCaptureMultichannelAudioMode"},
+    {"access": "public", "name": "AVCaptureOutputDataDroppedReason"},
+    {"access": "public", "name": "AVCapturePhotoOutputCaptureReadiness"},
+    {"access": "public", "name": "AVCapturePhotoQualityPrioritization"},
+    {"access": "public", "name": "AVCapturePrimaryConstituentDeviceRestrictedSwitchingBehaviorConditions"},
+    {"access": "public", "name": "AVCapturePrimaryConstituentDeviceSwitchingBehavior"},
+    {"access": "public", "introduced": "17", "name": "AVCaptureReactionType"},
+    {"access": "public", "introduced": "26", "name": "AVCaptureSceneMonitoringStatus"},
+    {"access": "public", "name": "AVCaptureSessionInterruptionReason"},
+    {"access": "public", "introduced": "4", "name": "AVCaptureSessionPreset"},
+    {"access": "public", "name": "AVCaptureSystemPressureFactors"},
+    {"access": "public", "introduced": "11.1", "name": "AVCaptureSystemPressureLevel"},
+    {"access": "public", "name": "AVCaptureSystemUserInterface"},
+    {"access": "public", "introduced": "26", "name": "AVCaptureTimecode"},
+    {"access": "public", "name": "AVCaptureTimecodeGeneratorSynchronizationStatus"},
+    {"access": "public", "name": "AVCaptureTimecodeSourceType"},
+    {"access": "public", "name": "AVCaptureTorchMode"},
+    {"access": "public", "name": "AVCaptureVideoOrientation"},
+    {"access": "public", "name": "AVCaptureVideoStabilizationMode"},
+    {"access": "public", "introduced": "8", "name": "AVCaptureWhiteBalanceChromaticityValues"},
+    {"access": "public", "introduced": "8", "name": "AVCaptureWhiteBalanceGains"},
+    {"access": "public", "name": "AVCaptureWhiteBalanceMode"},
+    {"access": "public", "introduced": "8", "name": "AVCaptureWhiteBalanceTemperatureAndTintValues"},
+    {"access": "public", "name": "AVDepthDataAccuracy"},
+    {"access": "public", "name": "AVDepthDataQuality"},
+    {"access": "public", "name": "AVExternalSyncDeviceStatus"},
+    {"access": "public", "introduced": "6", "name": "AVMetadataObjectType"},
+    {"access": "public", "name": "AVSemanticSegmentationMatteType"},
+    {"access": "public", "introduced": "18", "name": "AVSpatialCaptureDiscomfortReason"},
+    {"access": "public", "name": "AVVideoFieldMode"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

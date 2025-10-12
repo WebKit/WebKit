@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
 
-#include "CaptureDeviceManager.h"
+#include <WebCore/CaptureDeviceManager.h>
 #include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WorkQueue.h>
@@ -83,7 +84,7 @@ private:
     std::optional<Vector<AVAudioSessionCaptureDevice>> m_audioSessionCaptureDevices;
     RetainPtr<WebAVAudioSessionAvailableInputsListener> m_listener;
     RetainPtr<AVAudioSession> m_audioSession;
-    Ref<WorkQueue> m_dispatchQueue;
+    const Ref<WorkQueue> m_dispatchQueue;
     String m_preferredMicrophoneID;
     String m_preferredSpeakerID;
     bool m_isReceiverPreferredSpeaker { false };

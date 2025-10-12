@@ -25,9 +25,13 @@
 
 #pragma once
 
-#include "PlatformColorSpace.h"
+#include <WebCore/PlatformColorSpace.h>
+#include <WebCore/PlatformExportMacros.h>
 #include <optional>
+#include <wtf/Assertions.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -59,14 +63,16 @@ public:
 #else
     PlatformColorSpaceValue platformColorSpace() const { return m_platformColorSpace.get(); }
 #endif
+    PlatformColorSpace protectedPlatformColorSpace() const { return platformColorSpace(); }
 
     PlatformColorSpace serializableColorSpace() const { return m_platformColorSpace; }
 
     WEBCORE_EXPORT std::optional<DestinationColorSpace> asRGB() const;
+    WEBCORE_EXPORT std::optional<DestinationColorSpace> asExtended() const;
 
     WEBCORE_EXPORT bool supportsOutput() const;
 
-    bool usesExtendedRange() const;
+    WEBCORE_EXPORT bool usesExtendedRange() const;
     bool usesITUR_2100TF() const;
 
 private:

@@ -523,15 +523,21 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
     [self layoutText];
 }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction
-ALLOW_DEPRECATED_IMPLEMENTATIONS_END
-ALLOW_DEPRECATED_DECLARATIONS_END
+- (UIAction *)textView:(UITextView *)textView primaryActionForTextItem:(UITextItem *)textItem defaultAction:(UIAction *)defaultAction
 {
-    [self clickedOnLink:URL];
-    return NO;
+    if (textItem.contentType == UITextItemContentTypeLink)
+        [self clickedOnLink:textItem.link];
+    return nil;
 }
+
+#if !PLATFORM(WATCHOS)
+- (UITextItemMenuConfiguration *)textView:(UITextView *)textView menuConfigurationForTextItem:(UITextItem *)textItem defaultMenu:(UIMenu *)defaultMenu
+{
+    // We implement this delegate method because the text view requests a menu to be presented
+    // if a `nil` action is returned from `textView:primaryActionForTextItem:defaultAction:`.
+    return nil;
+}
+#endif
 
 - (void)didMoveToWindow
 {
@@ -565,10 +571,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_completionHandler)
         return;
 
-    if ([link isEqual:WebKit::BrowsingWarning::visitUnsafeWebsiteSentinel()])
+    if ([link isEqual:WebKit::BrowsingWarning::visitUnsafeWebsiteSentinel().get()])
         return _completionHandler(WebKit::ContinueUnsafeLoad::Yes);
 
-    if ([link isEqual:WebKit::BrowsingWarning::confirmMalwareSentinel()]) {
+    if ([link isEqual:WebKit::BrowsingWarning::confirmMalwareSentinel().get()]) {
 #if PLATFORM(MAC)
         auto alert = adoptNS([NSAlert new]);
         [alert setMessageText:WEB_UI_NSSTRING(@"Are you sure you wish to go to this site?", "Malware confirmation dialog title")];

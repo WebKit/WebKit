@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,7 +68,7 @@ private:
         : m_nodeList(nodeList)
     { }
 
-    Ref<NodeList>  m_nodeList;
+    const Ref<NodeList> m_nodeList;
 };
 
 class StaticElementList final : public NodeList {
@@ -87,7 +87,7 @@ private:
         : m_elements(WTFMove(elements))
     { }
 
-    Vector<Ref<Element>> m_elements;
+    const Vector<Ref<Element>> m_elements;
 };
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 
 PASS Cross-Origin audio should get upgraded even if CORS is set
 PASS Cross-Origin image should get upgraded even if CORS is set
-FAIL Cross-Origin video should get upgraded even if CORS is set assert_unreached: Video of other host should load successfully from http://127.0.0.1:9443/mixed-content/tentative/resources/test.ogv?pipe=header(Access-Control-Allow-Origin,*) Reached unreachable code
+FAIL Cross-Origin video should get upgraded even if CORS is set assert_unreached: Video of other host should load successfully from http://not-web-platform.test:9443/mixed-content/tentative/resources/test.ogv?pipe=header(Access-Control-Allow-Origin,*) Reached unreachable code
 

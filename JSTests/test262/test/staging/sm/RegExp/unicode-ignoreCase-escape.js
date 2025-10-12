@@ -2,22 +2,16 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-RegExp-shell.js, compareArray.js]
-flags:
-  - noStrict
+includes: [compareArray.js]
 description: |
-  pending
+  Implement RegExp unicode flag -- ignoreCase flag with character class escape.
+info: bugzilla.mozilla.org/show_bug.cgi?id=1135377
 esid: pending
 ---*/
-
-var BUGNUMBER = 1135377;
-var summary = "Implement RegExp unicode flag -- ignoreCase flag with character class escape.";
 
 // \W doesn't match S or K from the change in
 // https://github.com/tc39/ecma262/pull/525
 // (bug 1281739)
-
-print(BUGNUMBER + ": " + summary);
 
 // LATIN SMALL LETTER LONG S
 
@@ -78,4 +72,3 @@ assert.sameValue(/[^\w]/iu.exec("k"),
          null);
 assert.sameValue(/[^\w]/iu.exec("\u212A"),
          null);
-

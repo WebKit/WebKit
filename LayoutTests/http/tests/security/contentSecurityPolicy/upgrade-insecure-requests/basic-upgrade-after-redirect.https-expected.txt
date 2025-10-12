@@ -1,3 +1,0 @@
-
-PASS Verify that images are upgraded after a redirection.
-

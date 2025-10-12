@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'SomeOtherName' because it violates the following Content Security Policy directive: "trusted-types SomeName JustOneMoreName AnotherName"
-CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'AnotherName' because it violates the following Content Security Policy directive: "trusted-types SomeName JustOneMoreName AnotherName"
-CONSOLE MESSAGE: Refused to connect to ws://common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
 
 PASS Allowed-name policy creation works.
 PASS Another allowed-name policy creation works.

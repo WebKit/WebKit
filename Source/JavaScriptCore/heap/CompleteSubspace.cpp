@@ -185,7 +185,7 @@ void* CompleteSubspace::reallocatePreciseAllocationNonVirtual(VM& vm, HeapCell* 
 
     // If reallocation changes the address, we should update HashSet.
     if (oldAllocation != allocation) {
-        if (auto* set = m_space.preciseAllocationSet()) {
+        if (auto& set = m_space.preciseAllocationSet()) {
             set->remove(oldAllocation->cell());
             set->add(allocation->cell());
         }

@@ -146,10 +146,12 @@ struct ProgramOutput
 {
     ProgramOutput() = default;
     ProgramOutput(const sh::ShaderVariable &var);
+    GLenum getType() const { return pod.type; }
     bool isBuiltIn() const { return pod.isBuiltIn; }
     bool isArray() const { return pod.isArray; }
     int getLocation() const { return pod.location; }
     unsigned int getOutermostArraySize() const { return pod.outermostArraySize; }
+    unsigned int getBasicTypeElementCount() const { return pod.basicTypeElementCount; }
     void resetEffectiveLocation()
     {
         if (pod.hasImplicitLocation)
@@ -320,6 +322,16 @@ class ProgramExecutable final : public angle::Subject
     const ActiveTextureArray<TextureType> &getActiveSamplerTypes() const
     {
         return mActiveSamplerTypes;
+    }
+
+    const ProgramUniformBlockMask &getActiveUniformBufferBlocks() const
+    {
+        return mActiveUniformBufferBlocks;
+    }
+
+    const ProgramStorageBlockMask &getActiveStorageBufferBlocks() const
+    {
+        return mActiveStorageBufferBlocks;
     }
 
     void setActive(size_t textureUnit,
@@ -749,6 +761,9 @@ class ProgramExecutable final : public angle::Subject
 
     void waitForPostLinkTasks(const Context *context);
 
+    void updateActiveUniformBufferBlocks();
+    void updateActiveStorageBufferBlocks();
+
   private:
     friend class Program;
     friend class ProgramPipeline;
@@ -937,6 +952,10 @@ class ProgramExecutable final : public angle::Subject
     ActiveTextureMask mActiveImagesMask;
     ActiveTextureArray<ShaderBitSet> mActiveImageShaderBits;
 
+    // Cached mask of active uniform and storage buffer blocks
+    ProgramUniformBlockMask mActiveUniformBufferBlocks;
+    ProgramStorageBlockMask mActiveStorageBufferBlocks;
+
     // Names and mapped names of output variables that are arrays include [0] in the end, similarly
     // to uniforms.
     std::vector<ProgramOutput> mOutputVariables;
@@ -1022,6 +1041,8 @@ class ProgramExecutable final : public angle::Subject
     ShaderMap<SharedProgramExecutable> mPPOProgramExecutables;
     // Flag for an easy check for PPO without inspecting mPPOProgramExecutables
     bool mIsPPO;
+
+    bool mBinaryRetrieveableHint;
 
     // Cache for sampler validation
     mutable Optional<bool> mCachedValidateSamplersResult;

@@ -39,12 +39,12 @@ extern "C" {
 
 #define IMPLIES(a, b) (!(a) || (b))  //  Logical 'a implies b' (or 'a -> b')
 
-#define IS_POWER_OF_TWO(x) (((x) & ((x)-1)) == 0)
+#define IS_POWER_OF_TWO(x) (((x) & ((x) - 1)) == 0)
 
 /* Left shifting a negative value became undefined behavior in C99 (downgraded
    from merely implementation-defined in C89). This should still compile to the
    correct thing on any two's-complement machine, but avoid ubsan warnings.*/
-#define AOM_SIGNED_SHL(x, shift) ((x) * (((x)*0 + 1) << (shift)))
+#define AOM_SIGNED_SHL(x, shift) ((x) * (((x) * 0 + 1) << (shift)))
 
 // These can be used to give a hint about branch outcomes.
 // This can have an effect, even if your target processor has a

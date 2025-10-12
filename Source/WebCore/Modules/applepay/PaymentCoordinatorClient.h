@@ -27,8 +27,8 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePaySessionPaymentRequest.h"
-#include "ApplePaySetupFeatureWebCore.h"
+#include <WebCore/ApplePaySessionPaymentRequest.h>
+#include <WebCore/ApplePaySetupFeatureWebCore.h>
 #include <wtf/AbstractRefCounted.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>

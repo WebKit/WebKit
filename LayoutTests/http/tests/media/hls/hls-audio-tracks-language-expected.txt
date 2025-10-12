@@ -4,5 +4,8 @@ EXPECTED (video.audioTracks.length == '3') OK
 EXPECTED (video.audioTracks[0].language == 'en-US') OK
 EXPECTED (video.audioTracks[1].language == 'fr-FR') OK
 EXPECTED (video.audioTracks[2].language == 'es-US') OK
+EXPECTED (video.audioTracks[0].label == 'English Sound') OK
+EXPECTED (video.audioTracks[1].label == 'French Sound') OK
+EXPECTED (video.audioTracks[2].label == 'Spanish Sound') OK
 END OF TEST
 

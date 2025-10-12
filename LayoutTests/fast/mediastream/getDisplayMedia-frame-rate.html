@@ -11,24 +11,28 @@
         <video id=video1 autoplay playsInline width=100px></video>
         <video id=video2 autoplay playsInline width=100px></video>
         <script>
-promise_test(async () => {
+promise_test(async t => {
     if (!window.internals)
         return;
 
     const stream = await callGetDisplayMedia({ video: true });
+    t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     internals.observeMediaStreamTrack(stream.getVideoTracks()[0]);
     let currentCount = internals.trackVideoSampleCount;
     while (currentCount === internals.trackVideoSampleCount)
         await new Promise(resolve => setTimeout(resolve, 50));
+    stream.getTracks().forEach(track => track.stop());
 }, "Ensure getDisplayMedia generate frames");
 
-promise_test(async () => {
+promise_test(async t => {
     const stream = await callGetDisplayMedia({ video: { frameRate : 30 } });
+    t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     assert_equals(stream.getVideoTracks()[0].getSettings().frameRate, 30, "before cloning");
     assert_equals(stream.getVideoTracks()[0].getSettings().width, 1920, "before cloning");
     assert_equals(stream.getVideoTracks()[0].getSettings().height, 1080, "before cloning");
 
     const stream2 = stream.clone();
+    t.add_cleanup(() => stream2.getTracks().forEach(track => track.stop()));
     await stream2.getVideoTracks()[0].applyConstraints({ width:320, height:240, frameRate : 1 });
     assert_equals(stream2.getVideoTracks()[0].getSettings().frameRate, 1);
 
@@ -66,6 +70,9 @@ promise_test(async () => {
             return;
     };
     assert_not_equals(counter, 10);
+
+    stream.getTracks().forEach(track => track.stop());
+    stream2.getTracks().forEach(track => track.stop());
 }, "Ensure getDisplayMedia generate frames with valid frame rate and size in case of clones");
         </script>
     </body>

@@ -25,44 +25,43 @@
 
 #pragma once
 
-#include "CatchScope.h"
-#include "Debugger.h"
-#include "MicrotaskQueue.h"
+#include <JavaScriptCore/CatchScope.h>
+#include <JavaScriptCore/Debugger.h>
+#include <JavaScriptCore/MicrotaskQueue.h>
 
 namespace JSC {
 
 inline void MicrotaskQueue::performMicrotaskCheckpoint(VM& vm, NOESCAPE const Invocable<QueuedTask::Result(QueuedTask&)> auto& functor)
 {
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
-    while (!m_queue.isEmpty()) {
-        if (vm.executionForbidden()) [[unlikely]] {
-            clear();
-            break;
-        }
+    if (vm.executionForbidden()) [[unlikely]]
+        clear();
+    else {
+        while (!m_queue.isEmpty()) {
+            auto task = m_queue.dequeue();
+            auto result = functor(task);
+            if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
+                clear();
+                break;
+            }
 
-        auto task = m_queue.dequeue();
-        auto result = functor(task);
-        if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
-            clear();
-            break;
-        }
+            vm.callOnEachMicrotaskTick();
+            if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
+                clear();
+                break;
+            }
 
-        vm.callOnEachMicrotaskTick();
-        if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
-            clear();
-            break;
-        }
-
-        switch (result) {
-        case QueuedTask::Result::Executed:
-            break;
-        case QueuedTask::Result::Discard:
-            // Let this task go away.
-            break;
-        case QueuedTask::Result::Suspended: {
-            m_toKeep.enqueue(WTFMove(task));
-            break;
-        }
+            switch (result) {
+            case QueuedTask::Result::Executed:
+                break;
+            case QueuedTask::Result::Discard:
+                // Let this task go away.
+                break;
+            case QueuedTask::Result::Suspended: {
+                m_toKeep.enqueue(WTFMove(task));
+                break;
+            }
+            }
         }
     }
     m_queue.swap(m_toKeep);

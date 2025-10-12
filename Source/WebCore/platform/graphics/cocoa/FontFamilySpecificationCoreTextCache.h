@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FontCascadeCache.h"
 #include <CoreText/CoreText.h>
+#include <WebCore/FontCascadeCache.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -79,7 +79,7 @@ public:
     void clear();
 
 private:
-    UncheckedKeyHashMap<FontFamilySpecificationKey, std::unique_ptr<FontPlatformData>, FontFamilySpecificationKeyHash, SimpleClassHashTraits<FontFamilySpecificationKey>> m_fonts;
+    HashMap<FontFamilySpecificationKey, std::unique_ptr<FontPlatformData>, FontFamilySpecificationKeyHash, SimpleClassHashTraits<FontFamilySpecificationKey>> m_fonts;
 };
 
 template<typename Functor> FontPlatformData& FontFamilySpecificationCoreTextCache::ensure(FontFamilySpecificationKey&& key, Functor&& functor)

@@ -1,3 +1,38 @@
 
-FAIL idl_test setup promise_test: Unhandled rejection with value: object "Error fetching /interfaces/observable.tentative.idl."
+PASS idl_test setup
+PASS idl_test validation
+PASS Subscriber interface: existence and properties of interface object
+PASS Subscriber interface object length
+PASS Subscriber interface object name
+PASS Subscriber interface: existence and properties of interface prototype object
+PASS Subscriber interface: existence and properties of interface prototype object's "constructor" property
+PASS Subscriber interface: existence and properties of interface prototype object's @@unscopables property
+PASS Subscriber interface: operation next(any)
+PASS Subscriber interface: operation error(any)
+PASS Subscriber interface: operation complete()
+PASS Subscriber interface: operation addTeardown(VoidFunction)
+PASS Subscriber interface: attribute active
+PASS Subscriber interface: attribute signal
+PASS Subscriber must be primary interface of (() => { let s = null; new Observable(_s => s = _s).subscribe({}); return s })()
+PASS Stringification of (() => { let s = null; new Observable(_s => s = _s).subscribe({}); return s })()
+PASS Subscriber interface: (() => { let s = null; new Observable(_s => s = _s).subscribe({}); return s })() must inherit property "next(any)" with the proper type
+PASS Subscriber interface: calling next(any) on (() => { let s = null; new Observable(_s => s = _s).subscribe({}); return s })() with too few arguments must throw TypeError
+PASS Subscriber interface: (() => { let s = null; new Observable(_s => s = _s).subscribe({}); return s })() must inherit property "error(any)" with the proper type
+PASS Subscriber interface: calling error(any) on (() => { let s = null; new Observable(_s => s = _s).subscribe({}); return s })() with too few arguments must throw TypeError
+PASS Subscriber interface: (() => { let s = null; new Observable(_s => s = _s).subscribe({}); return s })() must inherit property "complete()" with the proper type
+PASS Subscriber interface: (() => { let s = null; new Observable(_s => s = _s).subscribe({}); return s })() must inherit property "addTeardown(VoidFunction)" with the proper type
+PASS Subscriber interface: calling addTeardown(VoidFunction) on (() => { let s = null; new Observable(_s => s = _s).subscribe({}); return s })() with too few arguments must throw TypeError
+PASS Subscriber interface: (() => { let s = null; new Observable(_s => s = _s).subscribe({}); return s })() must inherit property "active" with the proper type
+PASS Subscriber interface: (() => { let s = null; new Observable(_s => s = _s).subscribe({}); return s })() must inherit property "signal" with the proper type
+PASS Observable interface: existence and properties of interface object
+PASS Observable interface object length
+PASS Observable interface object name
+PASS Observable interface: existence and properties of interface prototype object
+PASS Observable interface: existence and properties of interface prototype object's "constructor" property
+PASS Observable interface: existence and properties of interface prototype object's @@unscopables property
+PASS Observable interface: operation subscribe(optional ObserverUnion, optional SubscribeOptions)
+PASS Observable must be primary interface of new Observable(() => {})
+PASS Stringification of new Observable(() => {})
+PASS Observable interface: new Observable(() => {}) must inherit property "subscribe(optional ObserverUnion, optional SubscribeOptions)" with the proper type
+PASS Observable interface: calling subscribe(optional ObserverUnion, optional SubscribeOptions) on new Observable(() => {}) with too few arguments must throw TypeError
 

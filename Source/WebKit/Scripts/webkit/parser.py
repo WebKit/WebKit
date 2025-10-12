@@ -48,6 +48,8 @@ def parse(file):
     receiver_enabled_by_conjunction = None
     receiver_dispatched_from = None
     receiver_dispatched_to = None
+    receiver_dispatched_from_exception = False
+    receiver_dispatched_to_exception = False
     receiver_attributes = None
     shared_preferences_needs_connection = False
     wants_send_cancel_reply = False
@@ -73,11 +75,18 @@ def parse(file):
                 if match.group('name') == 'DispatchedTo':
                     receiver_dispatched_to = parse_process_name_string(match.group('value'))
                     continue
+                raise Exception("ERROR: Unknown extended attribute  '%s'" % attribute)
             elif attribute == 'SharedPreferencesNeedsConnection':
                 shared_preferences_needs_connection = True
                 continue
             elif attribute == 'ExceptionForEnabledBy':
                 receiver_enabled_by_exception = True
+                continue
+            elif attribute == 'ExceptionForDispatchedFrom':
+                receiver_dispatched_from_exception = True
+                continue
+            elif attribute == 'ExceptionForDispatchedTo':
+                receiver_dispatched_to_exception = True
                 continue
             elif attribute == 'WantsSendCancelReply':
                 wants_send_cancel_reply = True
@@ -85,6 +94,7 @@ def parse(file):
             raise Exception("ERROR: Unknown extended attribute: '%s'" % attribute)
     if receiver_enabled_by and receiver_enabled_by_exception:
         raise Exception("ERROR: 'ExceptionForEnabledBy' cannot be used together with 'EnabledBy=%s'" % receiver_enabled_by)
+
     for line in file_contents:
         line = line.strip()
         match = re.search(r'messages -> (?P<namespace>[A-Za-z]+)::(?P<destination>[A-Za-z_0-9]+) \s*(?::\s*(?P<superclass>.*?) \s*)?(?:(?P<attributes>.*?)\s+)?{', line)
@@ -128,21 +138,35 @@ def parse(file):
             enabled_by_conjunction = None
             coalescing_key_indices = None
             if options_string:
-                match = re.search(r"(?:(?:, |^)+(?:Validator=(.*)))(?:, |$)?", options_string)
-                if match:
-                    validator = match.groups()[0]
-                match = re.search(r"(?:(?:, |^)+(?:EnabledBy=([\w \&\|]+)))(?:, |$)?", options_string)
-                if match:
-                    (enabled_by, enabled_by_conjunction) = parse_enabled_by_string(match.groups()[0])
-                match = re.search(r"(?:(?:, |^)+(?:ExceptionForEnabledBy))(?:, |$)?", options_string)
-                if match:
-                    enabled_by_exception = True
-                match = re.search(r"(?:(?:, |^)+(?:DeferSendingIfSuspended))(?:, |$)?", options_string)
-                if match:
-                    coalescing_key_indices = []
-                match = re.search(r"(?:(?:, |^)+(?:DeferSendingIfSuspendedWithCoalescingKeys=\((.*?)\)))(?:, |$)?", options_string)
-                if match:
-                    coalescing_key_indices = parse_coalescing_keys(match.group(1), [parameter.name for parameter in parameters])
+                # Split by comma, but not if inside parentheses (like interface level parsing)
+                # Use regex with negative lookahead to avoid splitting on commas inside parentheses
+                annotations = re.split(r',\s*(?![^()]*\))', options_string)
+
+                for annotation in annotations:
+                    annotation = annotation.strip()
+                    if not annotation:  # Skip empty annotations
+                        continue
+
+                    # Process each annotation type with inline validation (like interface level)
+                    match = re.match(r'Validator=(.+)', annotation)
+                    if match:
+                        validator = match.group(1)
+                        continue
+                    match = re.match(r'EnabledBy=([\w \&\|]+)', annotation)
+                    if match:
+                        (enabled_by, enabled_by_conjunction) = parse_enabled_by_string(match.group(1))
+                        continue
+                    if annotation == 'ExceptionForEnabledBy':
+                        enabled_by_exception = True
+                        continue
+                    if annotation == 'DeferSendingIfSuspended':
+                        coalescing_key_indices = []
+                        continue
+                    match = re.match(r'DeferSendingIfSuspendedWithCoalescingKeys=\((.+)\)', annotation)
+                    if match:
+                        coalescing_key_indices = parse_coalescing_keys(match.group(1), [parameter.name for parameter in parameters])
+                        continue
+                    raise Exception("ERROR: Unknown annotation '%s' in message '%s'" % (annotation, name))
 
             if enabled_by and enabled_by_exception:
                 raise Exception("ERROR: 'ExceptionForEnabledBy' cannot be used together with 'EnabledBy=%s'" % enabled_by)
@@ -162,7 +186,13 @@ def parse(file):
                 raise Exception(f"ERROR: DeferSendingIfSuspended not supported for message {name} since it contains reply parameters")
 
             messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions), validator, enabled_by, enabled_by_exception, enabled_by_conjunction, coalescing_key_indices))
-    return model.MessageReceiver(destination, superclass, receiver_attributes, receiver_enabled_by, receiver_enabled_by_exception, receiver_enabled_by_conjunction, receiver_dispatched_from, receiver_dispatched_to, shared_preferences_needs_connection, messages, combine_condition(master_condition), namespace, wants_send_cancel_reply)
+
+    if receiver_dispatched_from and receiver_dispatched_from_exception:
+        raise Exception("ERROR: 'ExceptionForDispatchedFrom' cannot be used together with 'DispatchedFrom=%s'" % receiver_dispatched_from)
+    if receiver_dispatched_to and receiver_dispatched_to_exception:
+        raise Exception("ERROR: 'ExceptionForDispatchedTo' cannot be used together with 'DispatchedTo=%s'" % receiver_dispatched_to)
+
+    return model.MessageReceiver(destination, superclass, receiver_attributes, receiver_enabled_by, receiver_enabled_by_exception, receiver_enabled_by_conjunction, receiver_dispatched_from, receiver_dispatched_from_exception, receiver_dispatched_to, receiver_dispatched_to_exception, shared_preferences_needs_connection, messages, combine_condition(master_condition), namespace, wants_send_cancel_reply)
 
 
 def parse_attributes_string(attributes_string):

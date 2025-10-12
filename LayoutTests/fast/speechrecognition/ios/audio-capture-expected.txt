@@ -7,7 +7,6 @@ PASS recognition = new webkitSpeechRecognition(); did not throw exception.
 PASS recognition.start() did not throw exception.
 Received start event
 Received audiostart event
-PASS internals.audioSessionCategory() is "PlayAndRecord"
 PASS successfullyParsed is true
 
 TEST COMPLETE

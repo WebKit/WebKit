@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CSSValueTypes.h"
-#include "Color.h"
-#include "ColorTypes.h"
+#include <WebCore/CSSValueTypes.h>
+#include <WebCore/Color.h>
+#include <WebCore/ColorTypes.h>
 
 namespace WebCore {
 namespace CSS {
@@ -35,7 +35,7 @@ namespace CSS {
 struct PlatformColorResolutionState;
 
 struct HexColor {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(HexColor);
 
     SRGBA<uint8_t> value;
 

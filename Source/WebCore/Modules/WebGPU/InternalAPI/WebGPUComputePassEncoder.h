@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUIntegralTypes.h"
+#include <WebCore/WebGPUIntegralTypes.h>
 #include <cstdint>
 #include <optional>
 #include <wtf/Ref.h>

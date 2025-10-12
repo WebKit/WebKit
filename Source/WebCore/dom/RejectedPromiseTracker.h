@@ -63,7 +63,7 @@ private:
     void reportUnhandledRejections(Vector<UnhandledPromise>&&);
     void reportRejectionHandled(Ref<DOMPromise>&&);
 
-    WeakRef<ScriptExecutionContext> m_context;
+    const CheckedRef<ScriptExecutionContext> m_context;
     Vector<UnhandledPromise> m_aboutToBeNotifiedRejectedPromises;
     JSC::WeakGCMap<JSC::JSPromise*, JSC::JSPromise> m_outstandingRejectedPromises;
 };

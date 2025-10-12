@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSType.h"
+#include <JavaScriptCore/JSType.h>
 #include <wtf/Float16.h>
 #include <wtf/PrintStream.h>
 

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "UserContentControllerIdentifier.h"
+#include "UserContentControllerParameters.h"
 #include <wtf/Forward.h>
 
 namespace WebKit {
@@ -33,10 +33,7 @@ namespace WebKit {
 class WebCompiledContentRuleListData;
 
 struct RemoteWorkerInitializationData {
-    UserContentControllerIdentifier userContentControllerIdentifier;
-#if ENABLE(CONTENT_EXTENSIONS)
-    Vector<std::pair<WebCompiledContentRuleListData, URL>> contentRuleLists;
-#endif
+    UserContentControllerParameters userContentControllerParameters;
 };
 
 } // namespace WebKit

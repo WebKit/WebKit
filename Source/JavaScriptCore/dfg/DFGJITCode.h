@@ -299,7 +299,7 @@ public:
     LinkerIR m_linkerIR;
 
 #if ENABLE(FTL_JIT)
-    // For osrEntryPoint that are in inner loop, this maps their bytecode to the bytecode
+    // For osrEntrypoint that are in inner loop, this maps their bytecode to the bytecode
     // of the outerloop entry points in order (from innermost to outermost).
     //
     // The key may not always be a target for OSR Entry but the list in the value is guaranteed

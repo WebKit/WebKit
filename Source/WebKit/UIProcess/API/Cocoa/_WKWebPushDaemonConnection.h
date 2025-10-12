@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,9 +44,9 @@ WK_EXTERN
 
 - (instancetype)init;
 @property (nonatomic, copy) NSString *machServiceName;
-@property (nonatomic, copy) NSString *partition;
+@property (nonatomic, copy, nullable) NSString *partition;
 @property (nonatomic, assign) audit_token_t hostApplicationAuditToken;
-@property (nonatomic, copy) NSString *bundleIdentifierOverrideForTesting;
+@property (nonatomic, copy, nullable) NSString *bundleIdentifierOverrideForTesting;
 @end
 
 WK_EXTERN
@@ -63,7 +63,7 @@ WK_EXTERN
 - (void)unsubscribeFromPushServiceForScope:(NSURL *)scopeURL completionHandler:(void (^)(BOOL unsubscribed, NSError *))completionHandler;
 - (void)getSubscriptionForScope:(NSURL *)scopeURL completionHandler:(void (^)(_WKWebPushSubscriptionData *, NSError *))completionHandler;
 - (void)getNextPendingPushMessage:(void (^)(_WKWebPushMessage *))completionHandler;
-- (void)showNotification:(_WKNotificationData *)notificationData completionHandler:(void (^)())completionHandler;
+- (void)showNotification:(_WKNotificationData *)notificationData completionHandler:(void (^)(void))completionHandler;
 - (void)getNotifications:(NSURL *)scopeURL tag:(NSString *)tag completionHandler:(void (^)(NSArray<_WKNotificationData *> *, NSError *))completionHandler;
 - (void)cancelNotification:(NSURL *)securityOriginURL uuid:(NSUUID *)notificationIdentifier;
 

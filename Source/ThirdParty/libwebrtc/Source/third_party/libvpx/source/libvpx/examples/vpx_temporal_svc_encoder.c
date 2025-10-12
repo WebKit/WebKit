@@ -607,19 +607,24 @@ static void set_temporal_layer_pattern(int layering_mode,
 }
 
 #if ROI_MAP
-static void read_mask(FILE *mask_file, int *seg_map) {
+static int read_mask(FILE *mask_file, int *seg_map, int allowed_mask_rows,
+                     int allowed_mask_cols) {
   int mask_rows, mask_cols, i, j;
   int *map_start = seg_map;
-  fscanf(mask_file, "%d %d\n", &mask_cols, &mask_rows);
+  if (fscanf(mask_file, "%d %d\n", &mask_cols, &mask_rows) != 2) return 0;
+  if (mask_rows != allowed_mask_rows || mask_cols != allowed_mask_cols) {
+    return 0;
+  }
   for (i = 0; i < mask_rows; i++) {
     for (j = 0; j < mask_cols; j++) {
-      fscanf(mask_file, "%d ", &seg_map[j]);
+      if (fscanf(mask_file, "%d ", &seg_map[j]) != 1) return 0;
       // reverse the bit
       seg_map[j] = 1 - seg_map[j];
     }
     seg_map += mask_cols;
   }
   seg_map = map_start;
+  return 1;
 }
 #endif
 
@@ -965,12 +970,16 @@ int main(int argc, char **argv) {
              argv[argc - 1], frame_cnt);
     mask_file = fopen(mask_file_name, "r");
     if (mask_file != NULL) {
-      read_mask(mask_file, mask_map);
+      int mask_is_valid = read_mask(mask_file, mask_map, mask_rows, mask_cols);
       fclose(mask_file);
-      // set_roi_map(encoder->name, &cfg, &roi);
-      set_roi_skip_map(&cfg, &roi, mask_map, prev_mask_map, frame_cnt);
-      if (vpx_codec_control(&codec, VP9E_SET_ROI_MAP, &roi))
-        die_codec(&codec, "Failed to set ROI map");
+      if (mask_is_valid) {
+        // set_roi_map(encoder->name, &cfg, &roi);
+        set_roi_skip_map(&cfg, &roi, mask_map, prev_mask_map, frame_cnt);
+        if (vpx_codec_control(&codec, VP9E_SET_ROI_MAP, &roi))
+          die_codec(&codec, "Failed to set ROI map");
+      } else {
+        die_codec(&codec, "Mask input is invalid for ROI map");
+      }
     }
 #endif
     frame_avail = read_frame(&input_ctx, &raw);

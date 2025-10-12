@@ -25,79 +25,13 @@
 
 #pragma once
 
-#include "APIObject.h"
-#include "WKRetainPtr.h"
 #include <JavaScriptCore/JSRetainPtr.h>
-#include <WebCore/SerializedScriptValue.h>
-#include <wtf/RefPtr.h>
-
-#if USE(GLIB)
-#include <wtf/glib/GRefPtr.h>
-
-typedef struct _GVariant GVariant;
-typedef struct _JSCContext JSCContext;
-typedef struct _JSCValue JSCValue;
-#endif
-
-typedef const void* WKTypeRef;
 
 namespace API {
 
-class SerializedScriptValue : public RefCounted<SerializedScriptValue> {
+struct SerializedScriptValue {
 public:
-#if !PLATFORM(COCOA)
-    static Ref<SerializedScriptValue> create(Ref<WebCore::SerializedScriptValue>&& serializedValue)
-    {
-        return adoptRef(*new SerializedScriptValue(WTFMove(serializedValue)));
-    }
-
-    static RefPtr<SerializedScriptValue> create(JSContextRef context, JSValueRef value, JSValueRef* exception)
-    {
-        RefPtr<WebCore::SerializedScriptValue> serializedValue = WebCore::SerializedScriptValue::create(context, value, exception);
-        if (!serializedValue)
-            return nullptr;
-        return adoptRef(*new SerializedScriptValue(serializedValue.releaseNonNull()));
-    }
-
-    static Ref<SerializedScriptValue> createFromWireBytes(std::span<const uint8_t> buffer)
-    {
-        return adoptRef(*new SerializedScriptValue(WebCore::SerializedScriptValue::createFromWireBytes(Vector<uint8_t>(buffer))));
-    }
-
-    JSValueRef deserialize(JSContextRef context, JSValueRef* exception)
-    {
-        return m_serializedScriptValue->deserialize(context, exception);
-    }
-
-    static WKRetainPtr<WKTypeRef> deserializeWK(WebCore::SerializedScriptValue&);
-#endif
-
-#if PLATFORM(COCOA)
     static JSRetainPtr<JSGlobalContextRef> deserializationContext();
-#endif
-
-#if USE(GLIB)
-    static JSCContext* sharedJSCContext();
-    static GRefPtr<JSCValue> deserialize(WebCore::SerializedScriptValue&);
-    static RefPtr<SerializedScriptValue> createFromGVariant(GVariant*);
-    static RefPtr<SerializedScriptValue> createFromJSCValue(JSCValue*);
-#endif
-
-#if !PLATFORM(COCOA)
-    std::span<const uint8_t> dataReference() const { return m_serializedScriptValue->wireBytes(); }
-
-    WebCore::SerializedScriptValue& internalRepresentation() { return m_serializedScriptValue.get(); }
-#endif
-
-private:
-#if !PLATFORM(COCOA)
-    explicit SerializedScriptValue(Ref<WebCore::SerializedScriptValue>&& serializedScriptValue)
-        : m_serializedScriptValue(WTFMove(serializedScriptValue))
-    {
-    }
-
-    const Ref<WebCore::SerializedScriptValue> m_serializedScriptValue;
-#endif
 };
     
 }

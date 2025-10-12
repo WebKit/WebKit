@@ -226,16 +226,26 @@ TEST(WTF_FixedVector, MoveAssignVector)
         EXPECT_EQ(index, vec2[index].value());
 }
 
+TEST(WTF_FixedVector, GeneratorConstructor)
+{
+    auto vec1 = FixedVector<MoveOnly>::createWithSizeFromGenerator(4, [](auto index) -> MoveOnly {
+        return MoveOnly(index);
+    });
+    EXPECT_EQ(4U, vec1.size());
+    for (unsigned index = 0; index < vec1.size(); ++index)
+        EXPECT_EQ(index, vec1[index].value());
+}
+
 TEST(WTF_FixedVector, FailableGeneratorConstructor)
 {
-    auto vec1 = FixedVector<MoveOnly>::createWithSizeFromGenerator(4, [](auto index) -> std::optional<MoveOnly> {
+    auto vec1 = FixedVector<MoveOnly>::createWithSizeFromFailableGenerator(4, [](auto index) -> std::optional<MoveOnly> {
         if (index == 0)
             return MoveOnly(0);
         return std::nullopt;
     });
     EXPECT_EQ(0U, vec1.size());
 
-    auto vec2 = FixedVector<MoveOnly>::createWithSizeFromGenerator(4, [](auto index) -> std::optional<MoveOnly> {
+    auto vec2 = FixedVector<MoveOnly>::createWithSizeFromFailableGenerator(4, [](auto index) -> std::optional<MoveOnly> {
         return MoveOnly(index);
     });
     EXPECT_EQ(4U, vec2.size());

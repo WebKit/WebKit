@@ -1,0 +1,3 @@
+
+FAIL e.style['contain-intrinsic-size'] = "from-element" should set the property value assert_not_equals: property should be set got disallowed value ""
+

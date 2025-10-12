@@ -10,8 +10,11 @@
 
 #include "pc/data_channel_utils.h"
 
+#include <cstddef>
+#include <memory>
 #include <utility>
 
+#include "api/data_channel_interface.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

@@ -10,20 +10,26 @@
 
 #include "modules/congestion_controller/pcc/monitor_interval.h"
 
-#include <stddef.h>
+#include <cstddef>
+#include <vector>
 
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace pcc {
 namespace test {
 namespace {
-const DataRate kTargetSendingRate = DataRate::KilobitsPerSec(300);
-const Timestamp kStartTime = Timestamp::Micros(0);
-const TimeDelta kPacketsDelta = TimeDelta::Millis(1);
-const TimeDelta kIntervalDuration = TimeDelta::Millis(100);
-const TimeDelta kDefaultDelay = TimeDelta::Millis(100);
-const DataSize kDefaultPacketSize = DataSize::Bytes(100);
+constexpr DataRate kTargetSendingRate = DataRate::KilobitsPerSec(300);
+constexpr Timestamp kStartTime = Timestamp::Micros(0);
+constexpr TimeDelta kPacketsDelta = TimeDelta::Millis(1);
+constexpr TimeDelta kIntervalDuration = TimeDelta::Millis(100);
+constexpr TimeDelta kDefaultDelay = TimeDelta::Millis(100);
+constexpr DataSize kDefaultPacketSize = DataSize::Bytes(100);
 constexpr double kDelayGradientThreshold = 0.01;
 
 std::vector<PacketResult> CreatePacketResults(

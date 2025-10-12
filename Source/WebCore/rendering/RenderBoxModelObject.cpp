@@ -48,6 +48,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentContainer.h"
 #include "RenderInline.h"
@@ -84,7 +85,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderBoxModelObject);
 
-// The UncheckedKeyHashMap for storing continuation pointers.
+// The HashMap for storing continuation pointers.
 // An inline can be split with blocks occuring in between the inline content.
 // When this occurs we need a pointer to the next object. We can basically be
 // split into a sequence of inlines and blocks. The continuation will either be
@@ -141,9 +142,9 @@ void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderSty
 {
     const RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
 
-    if (!style().anchorNames().isEmpty())
+    if (Style::AnchorPositionEvaluator::isAnchor(newStyle))
         view().registerAnchor(*this);
-    else if (oldStyle && !oldStyle->anchorNames().isEmpty())
+    else if (oldStyle && Style::AnchorPositionEvaluator::isAnchor(*oldStyle))
         view().unregisterAnchor(*this);
 
     RenderLayerModelObject::styleWillChange(diff, newStyle);
@@ -168,12 +169,12 @@ void RenderBoxModelObject::setSelectionState(HighlightState state)
         containingBlock->setSelectionState(state);
 }
 
-void RenderBoxModelObject::contentChanged(ContentChangeType changeType)
+void RenderBoxModelObject::contentChanged(ContentChangeType changeType, const std::optional<FloatRect>& dirtyRect)
 {
     if (!hasLayer())
         return;
 
-    layer()->contentChanged(changeType);
+    layer()->contentChanged(changeType, dirtyRect);
 }
 
 bool RenderBoxModelObject::hasAcceleratedCompositing() const
@@ -209,7 +210,7 @@ void RenderBoxModelObject::willBeDestroyed()
 
 bool RenderBoxModelObject::hasVisibleBoxDecorationStyle() const
 {
-    return hasBackground() || style().hasVisibleBorderDecoration() || style().hasUsedAppearance() || style().boxShadow();
+    return hasBackground() || style().hasVisibleBorderDecoration() || style().hasUsedAppearance() || style().hasBoxShadow();
 }
 
 void RenderBoxModelObject::updateFromStyle()
@@ -248,7 +249,7 @@ static inline bool isOutOfFlowPositionedWithImplicitHeight(const RenderBoxModelO
     return child.isOutOfFlowPositioned() && !child.style().logicalTop().isAuto() && !child.style().logicalBottom().isAuto();
 }
     
-RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(Length logicalHeight) const
+RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetectionGeneric(const auto& logicalHeight) const
 {
     // For percentage heights: The percentage is calculated with respect to the
     // height of the generated box's containing block. If the height of the
@@ -257,7 +258,7 @@ RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(Length 
     // calculated as if 'auto' was specified.
     if (!logicalHeight.isPercentOrCalculated() || isOutOfFlowPositioned())
         return nullptr;
-    
+
     // Anonymous block boxes are ignored when resolving percentage values that
     // would refer to it: the closest non-anonymous ancestor box is used instead.
     auto* cb = containingBlock();
@@ -272,26 +273,36 @@ RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(Length 
     // if the cell specified a height or not.
     if (cb->isRenderTableCell())
         return nullptr;
-    
+
     // Match RenderBox::availableLogicalHeightUsing by special casing the layout
     // view. The available height is taken from the frame.
     if (cb->isRenderView())
         return nullptr;
-    
+
     if (isOutOfFlowPositionedWithImplicitHeight(*cb))
         return nullptr;
-    
+
     return cb;
+}
+
+RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(const Style::PreferredSize& logicalHeight) const
+{
+    return containingBlockForAutoHeightDetectionGeneric(logicalHeight);
+}
+
+RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(const Style::MinimumSize& logicalHeight) const
+{
+    return containingBlockForAutoHeightDetectionGeneric(logicalHeight);
+}
+
+RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(const Style::MaximumSize& logicalHeight) const
+{
+    return containingBlockForAutoHeightDetectionGeneric(logicalHeight);
 }
 
 DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, const PaintInfo& paintInfo) const
 {
     // Some document types force synchronous decoding.
-#if PLATFORM(IOS_FAMILY)
-    if (WTF::IOSApplication::isIBooksStorytime())
-        return DecodingMode::Synchronous;
-#endif
-
     if (document().isImageDocument())
         return DecodingMode::Synchronous;
 
@@ -329,7 +340,7 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
         // <img decoding="async"> forces asynchronous decoding but make sure this
         // will not cause flickering.
         if (imgElement->decodingMode() == DecodingMode::Asynchronous) {
-            if (bitmapImage->isAsyncDecodingEnabledForTesting())
+            if (bitmapImage->isAsyncDecodingEnabledForTesting() || bitmapImage->isAnimated())
                 return DecodingMode::Asynchronous;
 
             // Choose a decodingMode such that the image does not flicker.
@@ -367,8 +378,10 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
     auto& bottom = style.bottom();
 
     auto offset = accumulateInFlowPositionOffsets(*this);
-    if (top.isFixed() && bottom.isAuto() && left.isFixed() && right.isAuto() && containingBlock->writingMode().isAnyLeftToRight()) {
-        offset.expand(left.value(), top.value());
+    auto topFixed = top.tryFixed();
+    auto leftFixed = left.tryFixed();
+    if (topFixed && leftFixed && bottom.isAuto() && right.isAuto() && containingBlock->writingMode().isAnyLeftToRight()) {
+        offset.expand(leftFixed->resolveZoom(Style::ZoomNeeded { }), topFixed->resolveZoom(Style::ZoomNeeded { }));
         return offset;
     }
 
@@ -391,11 +404,11 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
         };
         if (!left.isAuto()) {
             if (!right.isAuto() && !containingBlock->writingMode().isAnyLeftToRight())
-                offset.setWidth(-valueForLength(right, !right.isFixed() ? availableWidth() : 0_lu));
+                offset.setWidth(-Style::evaluate<LayoutUnit>(right, !right.isFixed() ? availableWidth() : 0_lu, Style::ZoomNeeded { }));
             else
-                offset.expand(valueForLength(left, !left.isFixed() ? availableWidth() : 0_lu), 0_lu);
+                offset.expand(Style::evaluate<LayoutUnit>(left, !left.isFixed() ? availableWidth() : 0_lu, Style::ZoomNeeded { }), 0_lu);
         } else if (!right.isAuto())
-            offset.expand(-valueForLength(right, !right.isFixed() ? availableWidth() : 0_lu), 0_lu);
+            offset.expand(-Style::evaluate<LayoutUnit>(right, !right.isFixed() ? availableWidth() : 0_lu, Style::ZoomNeeded { }), 0_lu);
     }
 
     // If the containing block of a relatively positioned element does not
@@ -426,10 +439,10 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
         // FIXME: The computation of the available height is repeated later for "bottom".
         // We could refactor this and move it to some common code for both ifs, however moving it outside of the ifs
         // is not possible as it'd cause performance regressions.
-        offset.expand(0_lu, valueForLength(top, !top.isFixed() ? availableHeight() : 0_lu));
+        offset.expand(0_lu, Style::evaluate<LayoutUnit>(top, !top.isFixed() ? availableHeight() : 0_lu, Style::ZoomNeeded { }));
     } else if (!bottom.isAuto() && (!bottom.isPercentOrCalculated() || containingBlockHasDefiniteHeight)) {
         // FIXME: Check comment above for "top", it applies here too.
-        offset.expand(0_lu, -valueForLength(bottom, !bottom.isFixed() ? availableHeight() : 0_lu));
+        offset.expand(0_lu, -Style::evaluate<LayoutUnit>(bottom, !bottom.isFixed() ? availableHeight() : 0_lu, Style::ZoomNeeded { }));
     }
     return offset;
 }
@@ -537,10 +550,12 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
 
     // Sticky positioned element ignore any override logical width on the containing block (as they don't call
     // containingBlockLogicalWidthForContent). It's unclear whether this is totally fine.
-    LayoutBoxExtent minMargin(minimumValueForLength(style().marginTop(), maxWidth),
-        minimumValueForLength(style().marginRight(), maxWidth),
-        minimumValueForLength(style().marginBottom(), maxWidth),
-        minimumValueForLength(style().marginLeft(), maxWidth));
+    LayoutBoxExtent minMargin(
+        Style::evaluateMinimum<LayoutUnit>(style().marginTop(), maxWidth, Style::ZoomNeeded { }),
+        Style::evaluateMinimum<LayoutUnit>(style().marginRight(), maxWidth, Style::ZoomNeeded { }),
+        Style::evaluateMinimum<LayoutUnit>(style().marginBottom(), maxWidth, Style::ZoomNeeded { }),
+        Style::evaluateMinimum<LayoutUnit>(style().marginLeft(), maxWidth, Style::ZoomNeeded { })
+    );
 
     // Compute the container-relative area within which the sticky element is allowed to move.
     containerContentRect.contract(minMargin);
@@ -589,22 +604,22 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     constraints.setStickyBoxRect(stickyBoxRelativeToScrollingAncestor);
 
     if (!style().left().isAuto()) {
-        constraints.setLeftOffset(valueForLength(style().left(), constrainingRect.width()));
+        constraints.setLeftOffset(Style::evaluate<float>(style().left(), constrainingRect.width(), Style::ZoomNeeded { }));
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeLeft);
     }
 
     if (!style().right().isAuto()) {
-        constraints.setRightOffset(valueForLength(style().right(), constrainingRect.width()));
+        constraints.setRightOffset(Style::evaluate<float>(style().right(), constrainingRect.width(), Style::ZoomNeeded { }));
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeRight);
     }
 
     if (!style().top().isAuto()) {
-        constraints.setTopOffset(valueForLength(style().top(), constrainingRect.height()));
+        constraints.setTopOffset(Style::evaluate<float>(style().top(), constrainingRect.height(), Style::ZoomNeeded { }));
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeTop);
     }
 
     if (!style().bottom().isAuto()) {
-        constraints.setBottomOffset(valueForLength(style().bottom(), constrainingRect.height()));
+        constraints.setBottomOffset(Style::evaluate<float>(style().bottom(), constrainingRect.height(), Style::ZoomNeeded { }));
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeBottom);
     }
 }
@@ -753,15 +768,12 @@ LayoutSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* i
     if (!image->imageHasNaturalDimensions())
         return LayoutSize(positioningAreaSize.width(), positioningAreaSize.height());
 
-    Length intrinsicWidth;
-    Length intrinsicHeight;
+    float intrinsicWidth = 0;
+    float intrinsicHeight = 0;
     FloatSize intrinsicRatio;
     image->computeIntrinsicDimensions(this, intrinsicWidth, intrinsicHeight, intrinsicRatio);
 
-    ASSERT(!intrinsicWidth.isPercentOrCalculated());
-    ASSERT(!intrinsicHeight.isPercentOrCalculated());
-
-    LayoutSize resolvedSize(intrinsicWidth.value(), intrinsicHeight.value());
+    LayoutSize resolvedSize(intrinsicWidth, intrinsicHeight);
     LayoutSize minimumSize(resolvedSize.width() > 0 ? 1 : 0, resolvedSize.height() > 0 ? 1 : 0);
 
     if (scaleByUsedZoom == ScaleByUsedZoom::Yes)
@@ -825,7 +837,7 @@ bool RenderBoxModelObject::borderObscuresBackground() const
         return false;
 
     // Bail if we have any border-image for now. We could look at the image alpha to improve this.
-    if (style().borderImage().image())
+    if (!style().borderImage().source().isNone())
         return false;
 
     auto edges = borderEdges(style(), document().deviceScaleFactor());
@@ -991,6 +1003,38 @@ void RenderBoxModelObject::applyTransform(TransformationMatrix&, const RenderSty
 bool RenderBoxModelObject::requiresLayer() const
 {
     return isDocumentElementRenderer() || isPositioned() || createsGroup() || hasTransformRelatedProperty() || hasHiddenBackface() || hasReflection() || requiresRenderingConsolidationForViewTransition() || isRenderViewTransitionCapture();
+}
+
+void RenderBoxModelObject::removeOutOfFlowBoxesIfNeededOnStyleChange(RenderBlock& delegateBlock, const RenderStyle& oldStyle, const RenderStyle& newStyle)
+{
+    auto wasContainingBlockForFixedContent = canContainFixedPositionObjects(&oldStyle);
+    auto wasContainingBlockForAbsoluteContent = canContainAbsolutelyPositionedObjects(&oldStyle);
+    auto isContainingBlockForFixedContent = canContainFixedPositionObjects(&newStyle);
+    auto isContainingBlockForAbsoluteContent = canContainAbsolutelyPositionedObjects(&newStyle);
+
+    // FIXME: If an inline becomes a containing block, but the delegate was already one (or vice-versa),
+    // then we don't really need to remove the out-of-flows from the delegate only for them to be re-added
+    // to the same spot. We would need to correctly mark for layout instead though.
+
+    if ((wasContainingBlockForFixedContent && !isContainingBlockForFixedContent) || (wasContainingBlockForAbsoluteContent && !isContainingBlockForAbsoluteContent)) {
+        // We are no longer the containing block for out-of-flow descendants.
+        delegateBlock.removeOutOfFlowBoxes({ }, RenderBlock::ContainingBlockState::NewContainingBlock);
+    }
+
+    if (!wasContainingBlockForFixedContent && isContainingBlockForFixedContent) {
+        // We are a new containing block for all out-of-flow boxes. Find first ancestor that has our fixed positioned boxes and remove them.
+        // They will be inserted into our positioned objects list during their static position layout.
+        if (CheckedPtr containingBlock = RenderObject::containingBlockForPositionType(PositionType::Fixed, *this))
+            containingBlock->removeOutOfFlowBoxes(&delegateBlock,  RenderBlock::ContainingBlockState::NewContainingBlock);
+    }
+
+    if (!wasContainingBlockForAbsoluteContent && isContainingBlockForAbsoluteContent) {
+        // We are a new containing block for absolute positioning.
+        // Remove our absolutely positioned descendants from their current containing block.
+        // They will be inserted into our positioned objects list during layout.
+        if (CheckedPtr containingBlock = RenderObject::containingBlockForPositionType(PositionType::Absolute, *this))
+            containingBlock->removeOutOfFlowBoxes(&delegateBlock,  RenderBlock::ContainingBlockState::NewContainingBlock);
+    }
 }
 
 } // namespace WebCore

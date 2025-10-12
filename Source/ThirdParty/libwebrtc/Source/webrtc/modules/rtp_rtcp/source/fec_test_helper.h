@@ -11,19 +11,17 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_FEC_TEST_HELPER_H_
 #define MODULES_RTP_RTCP_SOURCE_FEC_TEST_HELPER_H_
 
-#include <memory>
+#include <cstddef>
+#include <cstdint>
 
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
+#include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/random.h"
 
 namespace webrtc {
 namespace test {
 namespace fec {
-
-struct AugmentedPacket : public ForwardErrorCorrection::Packet {
-  RTPHeader header;
-};
 
 // TODO(brandtr): Consider merging MediaPacketGenerator and
 // AugmentedPacketGenerator into a single class, since their functionality is
@@ -69,16 +67,20 @@ class AugmentedPacketGenerator {
   uint16_t NextPacketSeqNum();
 
   // Return the next packet in the current frame.
-  std::unique_ptr<AugmentedPacket> NextPacket(size_t offset, size_t length);
+  template <typename T = RtpPacket>
+  T NextPacket(size_t offset, size_t length) {
+    T rtp_packet(/*extensions=*/nullptr);
+    NextPacket(offset, length, rtp_packet);
+    return rtp_packet;
+  }
 
  protected:
-  // Given `header`, writes the appropriate RTP header fields in `data`.
-  static void WriteRtpHeader(const RTPHeader& header, uint8_t* data);
-
   // Number of packets left to generate, in the current frame.
   size_t num_packets_;
 
  private:
+  void NextPacket(size_t offset, size_t length, RtpPacket& packet);
+
   uint32_t ssrc_;
   uint16_t seq_num_;
   uint32_t timestamp_;
@@ -91,7 +93,7 @@ class FlexfecPacketGenerator : public AugmentedPacketGenerator {
 
   // Creates a new AugmentedPacket (with RTP headers) from a
   // FlexFEC packet (without RTP headers).
-  std::unique_ptr<AugmentedPacket> BuildFlexfecPacket(
+  RtpPacketReceived BuildFlexfecPacket(
       const ForwardErrorCorrection::Packet& packet);
 
  private:
@@ -107,7 +109,7 @@ class UlpfecPacketGenerator : public AugmentedPacketGenerator {
   explicit UlpfecPacketGenerator(uint32_t ssrc);
 
   // Creates a new RtpPacket with the RED header added to the packet.
-  static RtpPacketReceived BuildMediaRedPacket(const AugmentedPacket& packet,
+  static RtpPacketReceived BuildMediaRedPacket(const RtpPacket& packet,
                                                bool is_recovered);
 
   // Creates a new RtpPacket with FEC payload and RED header. Does this by

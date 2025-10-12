@@ -271,7 +271,7 @@ int windowsKeyCodeForCharCode(unichar charCode)
     return 0;
 }
 
-static bool isFunctionKey(UChar charCode)
+static bool isFunctionKey(char16_t charCode)
 {
     switch (charCode) {
     // WebKit uses Unicode PUA codes in the OpenStep reserve range for some special keys.
@@ -307,7 +307,6 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
         m_unmodifiedText = String();
     } else {
         m_keyIdentifier = String();
-        m_windowsVirtualKeyCode = 0;
         if (m_text.length() == 1 && isFunctionKey(m_text[0U])) {
             m_text = String();
             m_unmodifiedText = String();

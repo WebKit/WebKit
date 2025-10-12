@@ -14,16 +14,17 @@
 #include "src/gpu/graphite/task/Task.h"
 
 #include <cstddef>
+#include <functional>
 
 namespace skgpu::graphite {
 
 class Buffer;
-class TextureProxy;
 class CommandBuffer;
 class Context;
 class ResourceProvider;
 class RuntimeEffectDictionary;
 class ScratchResourceManager;
+class TextureProxy;
 
 class CopyBufferToBufferTask final : public Task {
 public:
@@ -40,9 +41,20 @@ public:
 
     Status prepareResources(ResourceProvider*,
                             ScratchResourceManager*,
-                            const RuntimeEffectDictionary*) override;
+                            sk_sp<const RuntimeEffectDictionary>) override;
 
     Status addCommands(Context*, CommandBuffer*, ReplayTargetData) override;
+
+#if defined(SK_DUMP_TASKS)
+    void dump(int index, const char* prefix) const override {
+        if (index >= 0) {
+            SkDebugf("%s%d: Copy BtoB Task: Src=%p Dst=%p\n", prefix, index, fSrcBuffer,
+                fDstBuffer.get());
+        } else {
+            SkDebugf("%sCopy BtoB Task: Src=%p Dst=%p\n", prefix, fSrcBuffer, fDstBuffer.get());
+        }
+    }
+#endif
 
 private:
     CopyBufferToBufferTask(const Buffer* srcBuffer,
@@ -70,9 +82,25 @@ public:
 
     Status prepareResources(ResourceProvider*,
                             ScratchResourceManager*,
-                            const RuntimeEffectDictionary*) override;
+                            sk_sp<const RuntimeEffectDictionary>) override;
 
     Status addCommands(Context*, CommandBuffer*, ReplayTargetData) override;
+
+    bool visitProxies(const std::function<bool(const TextureProxy*)>& visitor) override {
+        return visitor(fTextureProxy.get());
+    }
+
+#if defined(SK_DUMP_TASKS)
+    void dump(int index, const char* prefix) const override {
+        if (index >= 0) {
+            SkDebugf("%s%d: Copy TtoB Task: Texture=%p Buffer=%p\n", prefix, index,
+                fTextureProxy.get(), fBuffer.get());
+        } else {
+            SkDebugf("%sCopy TtoB Task: Texture=%p Buffer=%p\n", prefix, fTextureProxy.get(),
+                fBuffer.get());
+        }
+    }
+#endif
 
 private:
     CopyTextureToBufferTask(sk_sp<TextureProxy>,
@@ -100,9 +128,24 @@ public:
 
     Status prepareResources(ResourceProvider*,
                             ScratchResourceManager*,
-                            const RuntimeEffectDictionary*) override;
+                            sk_sp<const RuntimeEffectDictionary>) override;
 
     Status addCommands(Context*, CommandBuffer*, ReplayTargetData) override;
+
+    bool visitProxies(const std::function<bool(const TextureProxy*)>& visitor) override {
+        return visitor(fSrcProxy.get()) && visitor(fDstProxy.get());
+    }
+
+#if defined(SK_DUMP_TASKS)
+    void dump(int index, const char* prefix) const override {
+        if (index >= 0) {
+            SkDebugf("%s%d: Copy TtoT Task: Src=%p Dst=%p\n", prefix, index, fSrcProxy.get(),
+                                                              fDstProxy.get());
+        } else {
+            SkDebugf("%sCopy TtoT Task: Src=%p Dst=%p\n", prefix, fSrcProxy.get(), fDstProxy.get());
+        }
+    }
+#endif
 
 private:
     CopyTextureToTextureTask(sk_sp<TextureProxy> srcProxy,

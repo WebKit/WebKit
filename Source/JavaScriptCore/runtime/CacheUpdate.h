@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CachePayload.h"
-#include "CachedTypes.h"
-#include "CodeSpecializationKind.h"
+#include <JavaScriptCore/CachePayload.h>
+#include <JavaScriptCore/CachedTypes.h>
+#include <JavaScriptCore/CodeSpecializationKind.h>
 
 namespace JSC {
 

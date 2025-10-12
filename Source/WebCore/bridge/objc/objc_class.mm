@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -110,7 +110,7 @@ Method* ObjcClass::methodNamed(PropertyName propertyName, Instance*) const
     CString jsName = name.ascii();
     JSNameConversionBuffer buffer;
     convertJSMethodNameToObjc(jsName, buffer);
-    RetainPtr<NSString> methodName = adoptNS([[NSString alloc] initWithCString:buffer.data() encoding:NSASCIIStringEncoding]);
+    RetainPtr<NSString> methodName = adoptNS([[NSString alloc] initWithCString:buffer.span().data() encoding:NSASCIIStringEncoding]);
 
     Method* methodPtr = 0;
     ClassStructPtr thisClass = _isa;
@@ -133,7 +133,7 @@ Method* ObjcClass::methodNamed(PropertyName propertyName, Instance*) const
             if ([thisClass respondsToSelector:@selector(webScriptNameForSelector:)])
                 mappedName = [thisClass webScriptNameForSelector:objcMethodSelector];
 
-            if ((mappedName && [mappedName isEqual:methodName.get()]) || equalSpans(objcMethodSelectorName, unsafeSpan(buffer.data()))) {
+            if ((mappedName && [mappedName isEqual:methodName.get()]) || equalSpans(objcMethodSelectorName, unsafeSpan(buffer.span().data()))) {
                 auto method = makeUnique<ObjcMethod>(thisClass, objcMethodSelector);
                 methodPtr = method.get();
                 m_methodCache.add(name.impl(), WTFMove(method));

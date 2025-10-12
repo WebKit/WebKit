@@ -10,7 +10,7 @@ features: [Temporal]
 
 const date1 = Temporal.PlainDate.from({
   calendar: "gregory",
-  era: "ce",
+  era: "ad",
   eraYear: 2024,
   year: 2024,
   month: 1,
@@ -19,13 +19,13 @@ const date1 = Temporal.PlainDate.from({
 TemporalHelpers.assertPlainDate(
   date1,
   2024, 1, "M01", 1,
-  "'ce' is accepted as alias for 'gregory'",
-  "gregory", 2024
+  "'ad' is accepted as alias for 'ce'",
+  "ce", 2024
 );
 
 const date2 = Temporal.PlainDate.from({
   calendar: "gregory",
-  era: "bce",
+  era: "bc",
   eraYear: 44,
   year: -43,
   month: 3,
@@ -34,6 +34,6 @@ const date2 = Temporal.PlainDate.from({
 TemporalHelpers.assertPlainDate(
   date2,
   -43, 3, "M03", 15,
-  "'bce' is accepted as alias for 'gregory-inverse'",
-  "gregory-inverse", 44
+  "'bc' is accepted as alias for 'bce'",
+  "bce", 44
 );

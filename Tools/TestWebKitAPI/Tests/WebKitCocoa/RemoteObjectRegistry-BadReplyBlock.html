@@ -1,0 +1,91 @@
+<html>
+<head>
+    <script src="coreipc-helpers.js"></script>
+    <script src="coreipc.js"></script>
+</head>
+<body>
+<script>
+    // Milliseconds between checks that we've received an initial replyID to use for our messages.
+    const replyIDCheckInterval = 500;
+
+    let firstReplyID;
+    let secondReplyID;
+
+    // Our replyID is passed from the sender. This could just begin at 1 if we are the first/only test
+    // to run, but other tests may have run before us and used these early IDs, so we need to intercept the
+    // first InvokeMethod and check what the initial replyID is that we should use.
+    let wiretap = new IPCWireTap('UI', 'Incoming');
+    wiretap.tapEvery(IPC.messages['RemoteObjectRegistry_InvokeMethod'].name, function(process, connectionID, messageName, typedResult, result){
+        if (firstReplyID === undefined) {
+            firstReplyID = parseInt(result.invocation.replyInfo.optionalValue.replyID);
+        } else if (secondReplyID === undefined) {
+            // This will just be the firstReplyID+1, but we use it as a gate to wait to fire off the replies to
+            // the UI process.
+            secondReplyID = parseInt(result.invocation.replyInfo.optionalValue.replyID);
+        }
+    });
+
+    window.webkit.messageHandlers.testHandler.postMessage("Expecting InvokeMethod...");
+
+    function sendReplyBlockMessages() {
+        if (secondReplyID === undefined) {
+            setTimeout(sendReplyBlockMessages, replyIDCheckInterval);
+            return;
+        }
+
+        // This is a reply, so the destination ID should be to the WebPage identifier in the UI process. Current
+        // generation has this as being generated immediately before the proxy identifier, so we can get away with
+        // -1 to retrieve it here.
+        //
+        // See: WebPageProxy::WebPageProxy initialization of m_identifier and m_webPageID.
+        const uiProcessWebPageID = IPC.webPageProxyID - 1n;
+
+        // The corresponding InvokeMethod message will have already been sent to us by the UI process. Here we'll
+        // reply with our own custom response, which tests that encoding the NSInvocation in the wrong way gets
+        // rejected by the other side.
+        CoreIPC.UI.RemoteObjectRegistry.CallReplyBlock(uiProcessWebPageID, {
+            replyID: firstReplyID,
+            blockInvocation: {
+                protectedObject:
+                new API_Dictionary([
+                    {
+                        key: "$objectStream",
+                        value: new API_Array([
+                            new NSNumber(0x1122334455667788n).encode(),
+                            new NSNumber(0x1122334455667788n).encode(),
+                        ]).encode()
+                    },
+                    {
+                        key: 'invocation',
+                        value: new NSInvocation("methodWithInteger:", "v@:Q", isReplyBlock=false).encode()
+                    }
+                ]).encode()
+            }
+        });
+
+        // We also perform a second InvokeMethod and reply to this one correctly, this ensures the CoreIPC sending
+        // is functioning correctly.
+        CoreIPC.UI.RemoteObjectRegistry.CallReplyBlock(uiProcessWebPageID, {
+            replyID: secondReplyID,
+            blockInvocation: {
+                protectedObject:
+                    new API_Dictionary([
+                    {
+                        key: "$objectStream",
+                        value: new API_Array([
+                            new NSString("hello").encode(),
+                            new NSString("world").encode(),
+                        ]).encode()
+                    },
+                    {
+                        key: 'invocation',
+                        value: new NSInvocation("methodWithCompletionHandler:", 'v@?@@"NSString"', isReplyBlock=true).encode()
+                    }
+                ]).encode()
+            }
+        });
+    }
+
+    setTimeout(sendReplyBlockMessages, replyIDCheckInterval);
+</script>
+</body>

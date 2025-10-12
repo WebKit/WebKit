@@ -84,7 +84,7 @@ public:
                    const SkImageInfo& srcInfo,
                    const SkPngEncoder::Options& options);
     bool setColorSpace(const SkImageInfo& info, const SkPngEncoder::Options& options);
-    bool setV0Gainmap(const SkPngEncoder::Options& options);
+    bool setHdrMetadata(const SkPngEncoder::Options& options);
     bool writeInfo(const SkImageInfo& srcInfo,const SkPngEncoderBase::TargetInfo& targetInfo);
 
     png_structp pngPtr() { return fPngPtr; }
@@ -150,6 +150,7 @@ bool SkPngEncoderMgr::setHeader(const SkPngEncoderBase::TargetInfo& targetInfo,
     }
 
     png_color_8 sigBit;
+    bool sigBitSet = true;
     switch (srcInfo.colorType()) {
         case kRGBA_F16Norm_SkColorType:
         case kRGBA_F16_SkColorType:
@@ -188,13 +189,15 @@ bool SkPngEncoderMgr::setHeader(const SkPngEncoderBase::TargetInfo& targetInfo,
             sigBit.alpha = 8;
             break;
         case kRGBA_1010102_SkColorType:
+        case kBGRA_1010102_SkColorType:
             sigBit.red = 10;
             sigBit.green = 10;
             sigBit.blue = 10;
             sigBit.alpha = 2;
             break;
         case kBGR_101010x_XR_SkColorType:
-            case kRGB_101010x_SkColorType:
+        case kRGB_101010x_SkColorType:
+        case kBGR_101010x_SkColorType:
             sigBit.red = 10;
             sigBit.green = 10;
             sigBit.blue = 10;
@@ -207,12 +210,14 @@ bool SkPngEncoderMgr::setHeader(const SkPngEncoderBase::TargetInfo& targetInfo,
             break;
         case kRGBA_8888_SkColorType:
         case kBGRA_8888_SkColorType:
-            default:
             sigBit.red = 8;
             sigBit.green = 8;
             sigBit.blue = 8;
             sigBit.alpha = 8;
             break;
+        default:
+            SkDEBUGFAIL("Unable to set sigBit for src colortype, unhandled value\n");
+            sigBitSet = false;
     }
 
     png_set_IHDR(fPngPtr,
@@ -224,7 +229,9 @@ bool SkPngEncoderMgr::setHeader(const SkPngEncoderBase::TargetInfo& targetInfo,
                  PNG_INTERLACE_NONE,
                  PNG_COMPRESSION_TYPE_BASE,
                  PNG_FILTER_TYPE_BASE);
-    png_set_sBIT(fPngPtr, fInfoPtr, &sigBit);
+    if (sigBitSet) {
+        png_set_sBIT(fPngPtr, fInfoPtr, &sigBit);
+    }
 
     int filters = (int)options.fFilterFlags & (int)SkPngEncoder::FilterFlag::kAll;
     SkASSERT(filters == (int)options.fFilterFlags);
@@ -268,12 +275,8 @@ bool SkPngEncoderMgr::setHeader(const SkPngEncoderBase::TargetInfo& targetInfo,
     return true;
 }
 
-static void set_icc(png_structp png_ptr,
-                    png_infop info_ptr,
-                    const SkImageInfo& info,
-                    const skcms_ICCProfile* profile,
-                    const char* profile_description) {
-    sk_sp<SkData> icc = icc_from_color_space(info, profile, profile_description);
+static void set_icc(png_structp png_ptr, png_infop info_ptr, const SkImageInfo& info) {
+    sk_sp<SkData> icc = icc_from_color_space(info);
     if (!icc) {
         return;
     }
@@ -297,26 +300,57 @@ bool SkPngEncoderMgr::setColorSpace(const SkImageInfo& info, const SkPngEncoder:
     if (info.colorSpace() && info.colorSpace()->isSRGB()) {
         png_set_sRGB(fPngPtr, fInfoPtr, PNG_sRGB_INTENT_PERCEPTUAL);
     } else {
-        set_icc(fPngPtr, fInfoPtr, info, options.fICCProfile, options.fICCProfileDescription);
+        set_icc(fPngPtr, fInfoPtr, info);
     }
 
     return true;
 }
 
-bool SkPngEncoderMgr::setV0Gainmap(const SkPngEncoder::Options& options) {
+bool SkPngEncoderMgr::setHdrMetadata(const SkPngEncoder::Options& options) {
 #ifdef PNG_STORE_UNKNOWN_CHUNKS_SUPPORTED
     if (setjmp(png_jmpbuf(fPngPtr))) {
         return false;
     }
 
-    // We require some gainmap information.
-    if (!options.fGainmapInfo) {
-        return false;
+    // List all chunks that might be included.
+    const char* hdrChunkNames = "gmAP\0"
+                                "gdAT\0"
+                                "mDCV\0"
+                                "cLLI\0";
+    constexpr int numHdrChunkNames = 4;
+    png_set_keep_unknown_chunks(fPngPtr, PNG_HANDLE_CHUNK_ALWAYS,
+                                (png_const_bytep)hdrChunkNames, numHdrChunkNames);
+
+    // In the below `png_unknown_chunk` structures, the `data` member is a non-const pointer,
+    // even though it will not be written to. In fact, `data` will be copied by the call to
+    // `png_set_unknown_chunks`, so it is safe for it to be deallocated immediately after
+    // the call.
+    skhdr::ContentLightLevelInformation clli;
+    if (options.fHdrMetadata.getContentLightLevelInformation(&clli)) {
+        auto data = clli.serializePngChunk();
+        png_unknown_chunk chunk = {
+            {'c', 'L', 'L', 'I', 0},
+            reinterpret_cast<png_byte*>(data->writable_data()),
+            data->size(),
+            PNG_HAVE_IHDR,
+        };
+        png_set_unknown_chunks(fPngPtr, fInfoPtr, &chunk, 1);
     }
 
-    if (options.fGainmap) {
+    skhdr::MasteringDisplayColorVolume mdcv;
+    if (options.fHdrMetadata.getMasteringDisplayColorVolume(&mdcv)) {
+        auto data = mdcv.serialize();
+        png_unknown_chunk chunk = {
+            {'m', 'D', 'C', 'V', 0},
+            reinterpret_cast<png_byte*>(data->writable_data()),
+            data->size(),
+            PNG_HAVE_IHDR,
+        };
+        png_set_unknown_chunks(fPngPtr, fInfoPtr, &chunk, 1);
+    }
+
+    if (options.fGainmapInfo && options.fGainmap) {
         sk_sp<SkData> gainmapVersion = SkGainmapInfo::SerializeVersion();
-        SkDynamicMemoryWStream gainmapStream;
 
         // When we encode the gainmap, we need to remove the gainmap from its
         // own encoding options, so that we don't recurse.
@@ -341,44 +375,40 @@ bool SkPngEncoderMgr::setV0Gainmap(const SkPngEncoder::Options& options) {
             modifiedOptions.fGainmapInfo = &gainmapInfo;
         }
 
-        bool result = SkPngEncoder::Encode(&gainmapStream, gainmapPixels, modifiedOptions);
-        if (!result) {
+        sk_sp<SkData> gainmapData = SkPngEncoder::Encode(gainmapPixels, modifiedOptions);
+        if (!gainmapData) {
             return false;
         }
-
-        sk_sp<SkData> gainmapData = gainmapStream.detachAsData();
 
         // The base image contains chunks for both the gainmap versioning (for possible
         // forward-compat, and as a cheap way to check a gainmap might exist) as
         // well as the gainmap data.
-        std::array<png_unknown_chunk, 2> chunks;
-        auto& gmapChunk = chunks.at(0);
-        std::strcpy(reinterpret_cast<char*>(gmapChunk.name), "gmAP\0");
-        gmapChunk.data = reinterpret_cast<png_byte*>(gainmapVersion->writable_data());
-        gmapChunk.size = gainmapVersion->size();
-        gmapChunk.location = PNG_HAVE_IHDR;
+        png_unknown_chunk gmapChunk = {
+            {'g', 'm', 'A', 'P', 0},
+            reinterpret_cast<png_byte*>(gainmapVersion->writable_data()),
+            gainmapVersion->size(),
+            PNG_HAVE_IHDR,
+        };
+        png_set_unknown_chunks(fPngPtr, fInfoPtr, &gmapChunk, 1);
 
-        auto& gdatChunk = chunks.at(1);
-        std::strcpy(reinterpret_cast<char*>(gdatChunk.name), "gdAT\0");
-        gdatChunk.data = reinterpret_cast<png_byte*>(gainmapData->writable_data());
-        gdatChunk.size = gainmapData->size();
-        gdatChunk.location = PNG_HAVE_IHDR;
-
-        png_set_keep_unknown_chunks(fPngPtr, PNG_HANDLE_CHUNK_ALWAYS,
-                                    (png_const_bytep)"gmAP\0gdAT\0", chunks.size());
-        png_set_unknown_chunks(fPngPtr, fInfoPtr, chunks.data(), chunks.size());
-    } else {
+        png_unknown_chunk gdatChunk = {
+            {'g', 'd', 'A', 'T', 0},
+            reinterpret_cast<png_byte*>(gainmapData->writable_data()),
+            gainmapData->size(),
+            PNG_HAVE_IHDR,
+        };
+        png_set_unknown_chunks(fPngPtr, fInfoPtr, &gdatChunk, 1);
+    } else if (options.fGainmapInfo) {
         // If there is no gainmap provided for encoding, but we have info, then
         // we're currently encoding the gainmap pixels, so we need to encode the
         // gainmap metadata to interpret those pixels.
         sk_sp<SkData> data = options.fGainmapInfo->serialize();
-        png_unknown_chunk chunk;
-        std::strcpy(reinterpret_cast<char*>(chunk.name), "gmAP\0");
-        chunk.data = reinterpret_cast<png_byte*>(data->writable_data());
-        chunk.size = data->size();
-        chunk.location = PNG_HAVE_IHDR;
-        png_set_keep_unknown_chunks(fPngPtr, PNG_HANDLE_CHUNK_ALWAYS,
-                                    (png_const_bytep)"gmAP\0", 1);
+        png_unknown_chunk chunk = {
+            {'g', 'm', 'A', 'P', 0},
+            reinterpret_cast<png_byte*>(data->writable_data()),
+            data->size(),
+            PNG_HAVE_IHDR,
+        };
         png_set_unknown_chunks(fPngPtr, fInfoPtr, &chunk, 1);
     }
 #endif
@@ -398,7 +428,7 @@ bool SkPngEncoderMgr::writeInfo(const SkImageInfo& srcInfo, const SkPngEncoderBa
   if (dstInfo.color() == SkEncodedInfo::kRGBA_Color) {
       SkASSERT(dstRowInfo);
       if (dstRowInfo->isOpaque()) {
-        png_set_filler(fPngPtr, 0, PNG_FILLER_AFTER);
+          png_set_filler(fPngPtr, 0, PNG_FILLER_AFTER);
       }
   }
   return true;
@@ -418,6 +448,13 @@ bool SkPngEncoderImpl::onEncodeRow(SkSpan<const uint8_t> row) {
 
     // `png_bytep` is `uint8_t*` rather than `const uint8_t*`.
     png_bytep rowPtr = const_cast<png_bytep>(row.data());
+
+    // Swap to big endian if we are storing more than a byte per color channel
+    // (SkColorTypes are little endian by default).
+    // By this point our data will either be 8888 or 16161616, so we only check that case.
+    if (png_get_bit_depth(fEncoderMgr->pngPtr(), fEncoderMgr->infoPtr()) == 16) {
+        png_set_swap(fEncoderMgr->pngPtr());
+    }
 
     png_write_rows(fEncoderMgr->pngPtr(), &rowPtr, 1);
     return true;
@@ -457,7 +494,7 @@ std::unique_ptr<SkEncoder> Make(SkWStream* dst, const SkPixmap& src, const Optio
         return nullptr;
     }
 
-    if (options.fGainmapInfo && !encoderMgr->setV0Gainmap(options)) {
+    if (!encoderMgr->setHdrMetadata(options)) {
         return nullptr;
     }
 
@@ -472,6 +509,11 @@ bool Encode(SkWStream* dst, const SkPixmap& src, const Options& options) {
     return encoder.get() && encoder->encodeRows(src.height());
 }
 
+sk_sp<SkData> Encode(const SkPixmap& src, const Options& options) {
+    SkDynamicMemoryWStream stream;
+    return Encode(&stream, src, options) ? stream.detachAsData() : nullptr;
+}
+
 sk_sp<SkData> Encode(GrDirectContext* ctx, const SkImage* img, const Options& options) {
     if (!img) {
         return nullptr;
@@ -480,11 +522,7 @@ sk_sp<SkData> Encode(GrDirectContext* ctx, const SkImage* img, const Options& op
     if (!as_IB(img)->getROPixels(ctx, &bm)) {
         return nullptr;
     }
-    SkDynamicMemoryWStream stream;
-    if (Encode(&stream, bm.pixmap(), options)) {
-        return stream.detachAsData();
-    }
-    return nullptr;
+    return Encode(bm.pixmap(), options);
 }
 
 }  // namespace SkPngEncoder

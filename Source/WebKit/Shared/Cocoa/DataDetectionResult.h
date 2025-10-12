@@ -35,7 +35,7 @@
 namespace WebKit {
 
 struct DataDetectionResult {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DataDetectionResult);
     RetainPtr<NSArray> results;
 };
 

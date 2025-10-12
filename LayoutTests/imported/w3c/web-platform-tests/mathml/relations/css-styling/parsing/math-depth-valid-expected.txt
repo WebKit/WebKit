@@ -1,0 +1,7 @@
+
+FAIL e.style['math-depth'] = "auto-add" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['math-depth'] = "add(0)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['math-depth'] = "add(1)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['math-depth'] = "0" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['math-depth'] = "1" should set the property value assert_not_equals: property should be set got disallowed value ""
+

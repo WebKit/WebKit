@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: undefined_variable
 
 PASS window.onerror - runtime error in <script src=...>
 PASS window.onerror - runtime error in <script src=...> (column)

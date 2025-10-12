@@ -41,6 +41,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/font_shorthand-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/font_shorthand-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/font_shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/fontsize_smaller_than_container-ref.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/fontsize_smaller_than_container.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/fontsize_smaller_than_container.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/inherit_values_from_media_element-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/inherit_values_from_media_element-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/inherit_values_from_media_element.html

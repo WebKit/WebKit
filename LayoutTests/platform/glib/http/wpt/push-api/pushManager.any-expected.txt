@@ -1,5 +1,5 @@
 
-FAIL subscribe should fail if there is no active service worker promise_rejects_dom: function "function() { throw e }" threw object "InvalidAccessError: applicationServerKey must contain a valid P-256 public key" that is not a DOMException InvalidStateError: property "code" is equal to 15, expected 11
+FAIL subscribe should fail if there is no active service worker promise_rejects_dom: function "function() { throw e; }" threw object "InvalidAccessError: applicationServerKey must contain a valid P-256 public key" that is not a DOMException InvalidStateError: property "code" is equal to 15, expected 11
 PASS wait for active service worker
 PASS aes128gcm should be supported
 PASS supportedContentEncodings should be frozen
@@ -9,7 +9,7 @@ PASS subscribe requires applicationServerKey
 PASS applicationServerKey string should be base64url-encoded
 PASS applicationServerKey buffer should be a valid point on the P-256 curve
 PASS applicationServerKey string should be a valid point on the P-256 curve
-FAIL can subscribe with valid applicationServerKey buffer promise_rejects_dom: function "function() { throw e }" threw object "InvalidAccessError: applicationServerKey must contain a valid P-256 public key" that is not a DOMException AbortError: property "code" is equal to 15, expected 20
-FAIL can subscribe with valid applicationServerKey string promise_rejects_dom: function "function() { throw e }" threw object "InvalidAccessError: applicationServerKey must contain a valid P-256 public key" that is not a DOMException AbortError: property "code" is equal to 15, expected 20
+FAIL can subscribe with valid applicationServerKey buffer promise_rejects_dom: function "function() { throw e; }" threw object "InvalidAccessError: applicationServerKey must contain a valid P-256 public key" that is not a DOMException AbortError: property "code" is equal to 15, expected 20
+FAIL can subscribe with valid applicationServerKey string promise_rejects_dom: function "function() { throw e; }" threw object "InvalidAccessError: applicationServerKey must contain a valid P-256 public key" that is not a DOMException AbortError: property "code" is equal to 15, expected 20
 PASS unregister service worker
 

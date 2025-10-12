@@ -25,7 +25,7 @@
 namespace JSC {
 
 class JSCGLibWrapperObject {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(JSCGLibWrapperObject);
 public:
     JSCGLibWrapperObject(gpointer object, GDestroyNotify destroyFunction)
         : m_object(object)

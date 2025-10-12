@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Not executing script because it moved between documents during fetching
 
 
 PASS Script elements (in-order) still block subsequent in-order scripts in the original Document after moved to another Document

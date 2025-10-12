@@ -8,7 +8,7 @@
         if (window.testRunner)
             testRunner.dumpAsText();
 
-        shouldBe("document.body.style.length", "2");
+        shouldBe("document.body.style.length", "5");
         shouldBeTrue("'0' in document.body.style");
         shouldBeTrue("'1' in document.body.style");
         shouldBeTrue("'textDecoration' in document.body.style");
@@ -23,7 +23,7 @@
         // Test invariants on the order of the enumerated properties. These are not in the spec, but we
         // currently expect them to hold.
         // - 6 groupings
-        //.  - 1st grouping [0, 1, cssText, length, parentRule, cssFloat]
+        //.  - 1st grouping [0, 1, 2, 3, 4, cssText, length, parentRule, cssFloat]
         //   - 2nd grouping, camel case, alphabetical, includes properties with "Webkit" and "Epub" 
         //     prefix with initial uppercase letter, no dashes anywhere in the name
         //   - 3nd grouping, webkit case, alphabetical, all properties prefixed with "webkit" with
@@ -59,7 +59,7 @@
         let group6 = properties.slice(initialIndexOfGroup6);
 
         // Group 1
-        shouldBe(`group1`, `["0", "1", "cssFloat"]`);
+        shouldBe(`group1`, `["0", "1", "2", "3", "4", "cssFloat"]`);
 
         // Group 2 - Camel Case
         let group2Clone = [...group2];

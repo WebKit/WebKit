@@ -48,7 +48,7 @@ static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const voi
 static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKFrameRef originatingFrame, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     WKRetainPtr<WKFramePolicyListenerRef> retainedListener(listener);
-    RunLoop::protectedMain()->dispatch([retainedListener = WTFMove(retainedListener)] {
+    RunLoop::mainSingleton().dispatch([retainedListener = WTFMove(retainedListener)] {
         WKFramePolicyListenerUse(retainedListener.get());
     });
 }
@@ -56,7 +56,7 @@ static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WK
 static void decidePolicyForNavigationActionIgnore(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKFrameRef originatingFrame, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     WKRetainPtr<WKFramePolicyListenerRef> retainedListener(listener);
-    RunLoop::protectedMain()->dispatch([retainedListener = WTFMove(retainedListener), page = WTFMove(page)] {
+    RunLoop::mainSingleton().dispatch([retainedListener = WTFMove(retainedListener), page = WTFMove(page)] {
         EXPECT_NOT_NULL(adoptWK(WKPageCopyPendingAPIRequestURL(page)));
         WKFramePolicyListenerIgnore(retainedListener.get());
         didDecideNavigationPolicy = true;
@@ -66,7 +66,7 @@ static void decidePolicyForNavigationActionIgnore(WKPageRef page, WKFrameRef fra
 static void decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, bool canShowMIMEType, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     WKRetainPtr<WKFramePolicyListenerRef> retainedListener(listener);
-    RunLoop::protectedMain()->dispatch([retainedListener = WTFMove(retainedListener)] {
+    RunLoop::mainSingleton().dispatch([retainedListener = WTFMove(retainedListener)] {
         WKFramePolicyListenerUse(retainedListener.get());
     });
 }

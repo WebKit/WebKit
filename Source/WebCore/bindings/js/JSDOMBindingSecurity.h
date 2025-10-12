@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include "ExceptionOr.h"
+#include <WebCore/ExceptionOr.h>
 #include <wtf/Forward.h>
 
 namespace JSC {

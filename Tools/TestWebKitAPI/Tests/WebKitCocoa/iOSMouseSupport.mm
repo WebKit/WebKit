@@ -52,7 +52,7 @@
 
 @interface WKMouseDeviceObserver
 + (WKMouseDeviceObserver *)sharedInstance;
-- (void)startWithCompletionHandler:(void (^)(void))completionHandler;
+- (void)start;
 - (void)_setHasMouseDeviceForTesting:(BOOL)hasMouseDevice;
 @end
 
@@ -134,6 +134,32 @@ public:
         TestWebKitAPI::Util::instantiateUIApplicationIfNeeded();
     }
 };
+
+static constexpr NSString *fractionalCoordinatesTestPage = @(R"(
+    <!DOCTYPE html>
+    <html>
+    <body style='margin: 0; padding: 0;'>
+        <iframe id='frame' style='width: 100px; height: 100px; position: absolute; border: none;'></iframe>
+    </body>
+    <script>
+        var clientX;
+        var clientY;
+        var pageX;
+        var pageY;
+
+        window.addEventListener('load', () => {
+            frame.srcdoc = `\<script\>
+                document.addEventListener('pointerdown', function(e) {
+                    parent.clientX = e.clientX;
+                    parent.clientY = e.clientY;
+                    parent.pageX = e.pageX;
+                    parent.pageY = e.pageY;
+                });
+            \</script\>`;
+        });
+    </script>
+    </html>
+    )");
 
 TEST_F(iOSMouseSupport, DoNotChangeSelectionWithRightClick)
 {
@@ -326,6 +352,72 @@ TEST_F(iOSMouseSupport, MouseDidMoveOverElement)
     EXPECT_NOT_NULL(hitTestResult);
 }
 
+TEST_F(iOSMouseSupport, FractionalCoordinatesInSimpleIFrame)
+{
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView synchronouslyLoadHTMLString:fractionalCoordinatesTestPage];
+
+    TestWebKitAPI::MouseEventTestHarness testHarness { webView.get() };
+    testHarness.mouseMove(0.5, 0.5);
+    testHarness.mouseDown();
+    testHarness.mouseUp();
+    [webView waitForPendingMouseEvents];
+
+    EXPECT_WK_STREQ("0.5", [webView stringByEvaluatingJavaScript:@"window.clientX"]);
+    EXPECT_WK_STREQ("0.5", [webView stringByEvaluatingJavaScript:@"window.clientY"]);
+    EXPECT_WK_STREQ("0.5", [webView stringByEvaluatingJavaScript:@"window.pageX"]);
+    EXPECT_WK_STREQ("0.5", [webView stringByEvaluatingJavaScript:@"window.pageY"]);
+}
+
+TEST_F(iOSMouseSupport, FractionalCoordinatesInRotatedIFrame)
+{
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    __block RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView synchronouslyLoadHTMLString:fractionalCoordinatesTestPage];
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"frame.style.rotate = \"180deg\";" completionHandler:^(id, NSError *) {
+        TestWebKitAPI::MouseEventTestHarness testHarness { webView.get() };
+        testHarness.mouseMove(1.5, 1.5);
+        testHarness.mouseDown();
+        testHarness.mouseUp();
+        [webView waitForPendingMouseEvents];
+
+        EXPECT_WK_STREQ("98.5", [webView stringByEvaluatingJavaScript:@"window.clientX"]);
+        EXPECT_WK_STREQ("98.5", [webView stringByEvaluatingJavaScript:@"window.clientY"]);
+        EXPECT_WK_STREQ("98.5", [webView stringByEvaluatingJavaScript:@"window.pageX"]);
+        EXPECT_WK_STREQ("98.5", [webView stringByEvaluatingJavaScript:@"window.pageY"]);
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST_F(iOSMouseSupport, FractionalCoordinatesInScaledIFrame)
+{
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    __block RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView synchronouslyLoadHTMLString:fractionalCoordinatesTestPage];
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"frame.style.transformOrigin = \"top left\"; frame.style.scale = \"2\";" completionHandler:^(id, NSError *) {
+        TestWebKitAPI::MouseEventTestHarness testHarness { webView.get() };
+        testHarness.mouseMove(0.5, 0.5);
+        testHarness.mouseDown();
+        testHarness.mouseUp();
+        [webView waitForPendingMouseEvents];
+
+        EXPECT_WK_STREQ("0.25", [webView stringByEvaluatingJavaScript:@"window.clientX"]);
+        EXPECT_WK_STREQ("0.25", [webView stringByEvaluatingJavaScript:@"window.clientY"]);
+        EXPECT_WK_STREQ("0.25", [webView stringByEvaluatingJavaScript:@"window.pageX"]);
+        EXPECT_WK_STREQ("0.25", [webView stringByEvaluatingJavaScript:@"window.pageY"]);
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+}
+
 static bool selectionUpdated = false;
 static void handleUpdatedSelection(id, SEL)
 {
@@ -509,12 +601,7 @@ TEST_F(iOSMouseSupport, MouseInitiallyDisconnected)
 {
     WKMouseDeviceObserver *mouseDeviceObserver = [NSClassFromString(@"WKMouseDeviceObserver") sharedInstance];
 
-    __block bool didStartMouseDeviceObserver = false;
-    [mouseDeviceObserver startWithCompletionHandler:^{
-        didStartMouseDeviceObserver = true;
-    }];
-    TestWebKitAPI::Util::run(&didStartMouseDeviceObserver);
-
+    [mouseDeviceObserver start];
     [mouseDeviceObserver _setHasMouseDeviceForTesting:NO];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
@@ -544,12 +631,7 @@ TEST_F(iOSMouseSupport, MouseInitiallyConnected)
 {
     WKMouseDeviceObserver *mouseDeviceObserver = [NSClassFromString(@"WKMouseDeviceObserver") sharedInstance];
 
-    __block bool didStartMouseDeviceObserver = false;
-    [mouseDeviceObserver startWithCompletionHandler:^{
-        didStartMouseDeviceObserver = true;
-    }];
-    TestWebKitAPI::Util::run(&didStartMouseDeviceObserver);
-
+    [mouseDeviceObserver start];
     [mouseDeviceObserver _setHasMouseDeviceForTesting:YES];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
@@ -579,12 +661,7 @@ TEST_F(iOSMouseSupport, MouseLaterDisconnected)
 {
     WKMouseDeviceObserver *mouseDeviceObserver = [NSClassFromString(@"WKMouseDeviceObserver") sharedInstance];
 
-    __block bool didStartMouseDeviceObserver = false;
-    [mouseDeviceObserver startWithCompletionHandler:^{
-        didStartMouseDeviceObserver = true;
-    }];
-    TestWebKitAPI::Util::run(&didStartMouseDeviceObserver);
-
+    [mouseDeviceObserver start];
     [mouseDeviceObserver _setHasMouseDeviceForTesting:YES];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
@@ -616,12 +693,7 @@ TEST_F(iOSMouseSupport, MouseLaterConnected)
 {
     WKMouseDeviceObserver *mouseDeviceObserver = [NSClassFromString(@"WKMouseDeviceObserver") sharedInstance];
 
-    __block bool didStartMouseDeviceObserver = false;
-    [mouseDeviceObserver startWithCompletionHandler:^{
-        didStartMouseDeviceObserver = true;
-    }];
-    TestWebKitAPI::Util::run(&didStartMouseDeviceObserver);
-
+    [mouseDeviceObserver start];
     [mouseDeviceObserver _setHasMouseDeviceForTesting:NO];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);

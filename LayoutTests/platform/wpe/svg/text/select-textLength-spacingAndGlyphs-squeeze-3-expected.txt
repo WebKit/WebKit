@@ -1,15 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,5) size 300x87
-    RenderSVGContainer {g} at (0,5) size 280x87
+  RenderSVGRoot {svg} at (50,5) size 250x57
+    RenderSVGContainer {g} at (160,5) size 67x56
       RenderSVGPath {svg:line} at (160,5) size 6x56 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=32.53] [y1=1.00] [x2=32.53] [y2=12.20]
       RenderSVGPath {svg:line} at (221,5) size 6x56 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=44.88] [y1=1.00] [x2=44.88] [y2=12.20]
       RenderSVGRect {svg:rect} at (162,5) size 63x56 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=32.53] [y=1.00] [width=12.35] [height=11.20]
-      RenderSVGText {svg:text} at (0,27) size 112x10 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 112x9
-          chunk 1 text run 1 at (0.00,35.00) startOffset 0 endOffset 38 width 112.00: "Expected 'to ' to be selected, got: ''"
     RenderSVGText {text} at (10,1) size 50x12 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 50x12
         chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 15 width 72.09: "Text to Squeeze"
-caret: position 5 of child 0 {#text} of child 5 {text} of child 0 {svg} of document
+selection start: position 5 of child 0 {#text} of child 5 {text} of child 0 {svg} of document
+selection end:   position 8 of child 0 {#text} of child 5 {text} of child 0 {svg} of document

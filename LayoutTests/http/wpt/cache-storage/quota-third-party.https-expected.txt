@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Cache API operation failed: Quota exceeded
-CONSOLE MESSAGE: Cache API operation failed: Quota exceeded
 
 
 PASS same origin iframe has regular quota

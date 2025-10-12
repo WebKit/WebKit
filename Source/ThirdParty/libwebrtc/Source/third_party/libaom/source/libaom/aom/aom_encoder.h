@@ -377,6 +377,8 @@ typedef struct cfg_options {
 typedef long aom_enc_frame_flags_t;
 /*!\brief Force this frame to be a keyframe */
 #define AOM_EFLAG_FORCE_KF (1 << 0)
+/*!\brief Calculate PSNR for this frame, requires g_lag_in_frames to be 0 */
+#define AOM_EFLAG_CALCULATE_PSNR (1 << 1)
 
 /*!\brief Encoder configuration structure
  *

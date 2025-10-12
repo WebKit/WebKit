@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #include "WrapContentsInDummySpanCommand.h"
 
 #include "ApplyStyleCommand.h"
+#include "NodeDocument.h"
 
 namespace WebCore {
 
@@ -39,20 +40,19 @@ WrapContentsInDummySpanCommand::WrapContentsInDummySpanCommand(Element& element)
 void WrapContentsInDummySpanCommand::executeApply()
 {
     Vector<Ref<Node>> children;
-    Ref element = protectedElement();
-    for (RefPtr child = element->firstChild(); child; child = child->nextSibling())
+    for (RefPtr child = m_element->firstChild(); child; child = child->nextSibling())
         children.append(*child);
 
-    auto dummySpan = protectedDummySpan();
+    RefPtr dummySpan = m_dummySpan;
     for (auto& child : children)
         dummySpan->appendChild(child);
 
-    element->appendChild(*dummySpan);
+    m_element->appendChild(*dummySpan);
 }
 
 void WrapContentsInDummySpanCommand::doApply()
 {
-    m_dummySpan = createStyleSpanElement(protectedDocument());
+    m_dummySpan = createStyleSpanElement(document());
     
     executeApply();
 }
@@ -62,24 +62,23 @@ void WrapContentsInDummySpanCommand::doUnapply()
     if (!m_dummySpan)
         return;
 
-    Ref element = protectedElement();
-    if (!element->hasEditableStyle())
+    if (!m_element->hasEditableStyle())
         return;
 
     Vector<Ref<Node>> children;
-    auto dummySpan = protectedDummySpan();
+    RefPtr dummySpan = m_dummySpan;
     for (RefPtr child = dummySpan->firstChild(); child; child = child->nextSibling())
         children.append(*child);
 
     for (auto& child : children)
-        element->appendChild(child);
+        m_element->appendChild(child);
 
     dummySpan->remove();
 }
 
 void WrapContentsInDummySpanCommand::doReapply()
 {
-    if (!m_dummySpan || !protectedElement()->hasEditableStyle())
+    if (!m_dummySpan || !m_element->hasEditableStyle())
         return;
 
     executeApply();
@@ -88,9 +87,9 @@ void WrapContentsInDummySpanCommand::doReapply()
 #ifndef NDEBUG
 void WrapContentsInDummySpanCommand::getNodesInCommand(NodeSet& nodes)
 {
-    addNodeAndDescendants(protectedElement().ptr(), nodes);
+    addNodeAndDescendants(m_element.ptr(), nodes);
     addNodeAndDescendants(protectedDummySpan().get(), nodes);
 }
 #endif
-    
+
 } // namespace WebCore

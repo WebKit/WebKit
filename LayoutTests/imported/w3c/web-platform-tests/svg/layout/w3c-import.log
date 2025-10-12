@@ -26,6 +26,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-intrinsic-size-min-size-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-intrinsic-size-min-size-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-intrinsic-size-min-size.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-use-symbol-animateMotion-print-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-use-symbol-animateMotion-print.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-use-symbol-animateTransform-print-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-use-symbol-animateTransform-print.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-use-symbol-opacity-print-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-use-symbol-opacity-print.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-use-symbol-path-print-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-use-symbol-path-print.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-use-symbol-width-2-print.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-use-symbol-width-print-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-use-symbol-width-print.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-with-precent-dimensions-relayout-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-with-precent-dimensions-relayout-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-with-precent-dimensions-relayout.html

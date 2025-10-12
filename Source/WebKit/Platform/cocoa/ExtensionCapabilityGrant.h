@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,11 +35,7 @@ OBJC_PROTOCOL(_SEGrant);
 
 namespace WebKit {
 
-#if USE(LEGACY_EXTENSIONKIT_SPI)
-using PlatformGrant = Variant<RetainPtr<BEProcessCapabilityGrant>, RetainPtr<_SEGrant>>;
-#else
 using PlatformGrant = RetainPtr<BEProcessCapabilityGrant>;
-#endif
 
 class ExtensionCapabilityGrant {
 public:

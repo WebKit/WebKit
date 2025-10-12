@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "InlineIteratorBoxLegacyPath.h"
-#include "LayoutIntegrationInlineContent.h"
-#include "LegacyRootInlineBox.h"
-#include "RenderBlockFlow.h"
+#include <WebCore/InlineIteratorBoxLegacyPath.h>
+#include <WebCore/LayoutIntegrationInlineContent.h>
+#include <WebCore/LegacyRootInlineBox.h>
+#include <WebCore/RenderBlockFlow.h>
 
 namespace WebCore {
 namespace InlineIterator {

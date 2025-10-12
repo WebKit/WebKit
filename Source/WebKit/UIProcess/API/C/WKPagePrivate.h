@@ -143,9 +143,6 @@ WK_EXPORT void WKPageClearUserMediaState(WKPageRef page);
 WK_EXPORT void WKPageSetMediaCaptureEnabled(WKPageRef page, bool enabled);
 WK_EXPORT bool WKPageGetMediaCaptureEnabled(WKPageRef page);
 
-WK_EXPORT void WKPageDidAllowPointerLock(WKPageRef page);
-WK_EXPORT void WKPageDidDenyPointerLock(WKPageRef page);
-
 enum {
     kWKMediaIsNotPlaying = 0,
     kWKMediaIsPlayingAudio = 1 << 0,

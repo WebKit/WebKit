@@ -50,6 +50,11 @@ void NavigationTransition::rejectPromise(Exception& exception, JSC::JSValue exce
     m_finished->reject(exception, RejectAsHandled::Yes, exceptionObject);
 }
 
+void NavigationTransition::rejectPromise(JSC::JSValue exceptionObject)
+{
+    m_finished->reject<IDLAny>(exceptionObject, RejectAsHandled::Yes);
+}
+
 DOMPromise* NavigationTransition::finished()
 {
     if (!m_finishedDOMPromise) {

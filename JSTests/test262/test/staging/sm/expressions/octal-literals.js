@@ -4,22 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-expressions-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Implement ES6 octal literals
+info: bugzilla.mozilla.org/show_bug.cgi?id=894026
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 894026;
-var summary = "Implement ES6 octal literals";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 var chars = ['o', 'O'];
 
@@ -29,17 +18,9 @@ for (var i = 0; i < 8; i++)
   {
     chars.forEach(function(v)
     {
-      try
-      {
+      assert.throws(SyntaxError, function() {
         eval('0' + v + i);
-        throw "didn't throw";
-      }
-      catch (e)
-      {
-        assert.sameValue(e instanceof SyntaxError, true,
-                 "no syntax error evaluating 0" + v + i + ", " +
-                 "got " + e);
-      }
+      }, "syntax error evaluating 0" + v + i);
     });
     continue;
   }
@@ -50,17 +31,9 @@ for (var i = 0; i < 8; i++)
     {
       chars.forEach(function(v)
       {
-        try
-        {
+        assert.throws(SyntaxError, function() {
           eval('0' + v + i + j);
-          throw "didn't throw";
-        }
-        catch (e)
-        {
-          assert.sameValue(e instanceof SyntaxError, true,
-                   "no syntax error evaluating 0" + v + i + j + ", " +
-                   "got " + e);
-        }
+        }, "syntax error evaluating 0" + v + i + j);
       });
       continue;
     }
@@ -71,17 +44,9 @@ for (var i = 0; i < 8; i++)
       {
         chars.forEach(function(v)
         {
-          try
-          {
+          assert.throws(SyntaxError, function() {
             eval('0' + v + i + j + k);
-            throw "didn't throw";
-          }
-          catch (e)
-          {
-            assert.sameValue(e instanceof SyntaxError, true,
-                     "no syntax error evaluating 0" + v + i + j + k + ", " +
-                     "got " + e);
-          }
+          }, "no syntax error evaluating 0" + v + i + j + k);
         });
         continue;
       }
@@ -104,7 +69,3 @@ function strict()
   return 0o755;
 }
 assert.sameValue(strict(), 7 * 64 + 5 * 8 + 5);
-
-/******************************************************************************/
-
-print("Tests complete");

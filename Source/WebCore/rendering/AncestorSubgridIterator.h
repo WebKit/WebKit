@@ -25,17 +25,18 @@
 
 #pragma once
 
-#include "GridPositionsResolver.h"
 #include "RenderGrid.h"
 
-class RenderGrid;
-
 namespace WebCore {
+
+namespace Style {
+enum class GridTrackSizingDirection : bool;
+}
 
 class AncestorSubgridIterator {
 public:
     AncestorSubgridIterator();
-    AncestorSubgridIterator(SingleThreadWeakPtr<RenderGrid> firstAncestorSubgrid, GridTrackSizingDirection);
+    AncestorSubgridIterator(SingleThreadWeakPtr<RenderGrid> firstAncestorSubgrid, Style::GridTrackSizingDirection);
 
     RenderGrid& operator*();
 
@@ -45,15 +46,15 @@ public:
     AncestorSubgridIterator begin();
     AncestorSubgridIterator end();
 private:
-    AncestorSubgridIterator(SingleThreadWeakPtr<RenderGrid> firstAncestorSubgrid, SingleThreadWeakPtr<RenderGrid> currentAncestor, GridTrackSizingDirection);
-    AncestorSubgridIterator(SingleThreadWeakPtr<RenderGrid> firstAncestorSubgrid, SingleThreadWeakPtr<RenderGrid> currentAncestor, std::optional<GridTrackSizingDirection>);
+    AncestorSubgridIterator(SingleThreadWeakPtr<RenderGrid> firstAncestorSubgrid, SingleThreadWeakPtr<RenderGrid> currentAncestor, Style::GridTrackSizingDirection);
+    AncestorSubgridIterator(SingleThreadWeakPtr<RenderGrid> firstAncestorSubgrid, SingleThreadWeakPtr<RenderGrid> currentAncestor, std::optional<Style::GridTrackSizingDirection>);
 
     const SingleThreadWeakPtr<const RenderGrid> m_firstAncestorSubgrid;
     SingleThreadWeakPtr<RenderGrid> m_currentAncestorSubgrid;
-    const std::optional<GridTrackSizingDirection> m_direction;
+    const std::optional<Style::GridTrackSizingDirection> m_direction;
 
 };
 
-AncestorSubgridIterator ancestorSubgridsOfGridItem(const RenderBox& gridItem, const GridTrackSizingDirection);
+AncestorSubgridIterator ancestorSubgridsOfGridItem(const RenderBox& gridItem, const Style::GridTrackSizingDirection);
 
 } // namespace WebCore

@@ -36,6 +36,8 @@ In some cases the process could drag out slightly.
 Ping OWNERs and keep writing patches!
 Even in the rare cases where a nomination fails, the objection is usually something easy to address like “more patches” or “not enough people are familiar with this person’s work.”
 
+Two-factor authentication with a security key is a requirement for adding your account as a committer. If you haven't done so already, you'll need to set up a security key on your account.
+
 ## Maintaining committer status
 
 You don't really need to do much to maintain committer status: just keep being awesome and helping the ANGLE project!

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,6 +64,7 @@
 #if PLATFORM(COCOA)
 #include "DefaultWebBrowserChecks.h"
 #include "NetworkSessionCocoa.h"
+#include "WebPrivacyHelpers.h"
 #endif
 #if USE(SOUP)
 #include "NetworkSessionSoup.h"
@@ -96,18 +97,17 @@ std::unique_ptr<NetworkSession> NetworkSession::create(NetworkProcess& networkPr
 #endif
 }
 
-Ref<NetworkProcess> NetworkSession::protectedNetworkProcess()
-{
-    return networkProcess();
-}
-
 NetworkStorageSession* NetworkSession::networkStorageSession() const
 {
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=194926 NetworkSession should own NetworkStorageSession
     // instead of having separate maps with the same key and different management.
-    auto* storageSession = m_networkProcess->storageSession(m_sessionID);
-    ASSERT(storageSession);
-    return storageSession;
+    ASSERT(m_networkProcess->storageSession(m_sessionID));
+    return m_networkProcess->storageSession(m_sessionID);
+}
+
+CheckedPtr<NetworkStorageSession> NetworkSession::checkedNetworkStorageSession() const
+{
+    return networkStorageSession();
 }
 
 static Ref<PCM::ManagerInterface> managerOrProxy(NetworkSession& networkSession, NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
@@ -168,6 +168,9 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_shouldRunServiceWorkersOnMainThreadForTesting(parameters.shouldRunServiceWorkersOnMainThreadForTesting)
     , m_overrideServiceWorkerRegistrationCountTestingValue(parameters.overrideServiceWorkerRegistrationCountTestingValue)
     , m_inspectionForServiceWorkersAllowed(parameters.inspectionForServiceWorkersAllowed)
+    , m_sharedWorkerServer([](NetworkSession& session, auto& ref) {
+        ref.set(makeUniqueRef<WebSharedWorkerServer>(session));
+    })
     , m_storageManager(createNetworkStorageManager(networkProcess, parameters))
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     , m_notificationManager(NetworkNotificationManager::create(parameters.sessionID.isEphemeral() ? String { } : parameters.webPushMachServiceName, configurationWithHostAuditToken(networkProcess, parameters.webPushDaemonConnectionConfiguration), networkProcess))
@@ -213,7 +216,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     setTrackingPreventionEnabled(parameters.resourceLoadStatisticsParameters.enabled);
 
     setShouldSendPrivateTokenIPCForTesting(parameters.shouldSendPrivateTokenIPCForTesting);
-#if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     setOptInCookiePartitioningEnabled(parameters.isOptInCookiePartitioningEnabled);
 #endif
 
@@ -240,10 +243,11 @@ NetworkSession::~NetworkSession()
 
 void NetworkSession::destroyResourceLoadStatistics(CompletionHandler<void()>&& completionHandler)
 {
-    if (!m_resourceLoadStatistics)
+    RefPtr resourceLoadStatistics = m_resourceLoadStatistics;
+    if (!resourceLoadStatistics)
         return completionHandler();
 
-    m_resourceLoadStatistics->didDestroyNetworkSession(WTFMove(completionHandler));
+    resourceLoadStatistics->didDestroyNetworkSession(WTFMove(completionHandler));
     m_resourceLoadStatistics = nullptr;
 }
 
@@ -252,8 +256,8 @@ void NetworkSession::invalidateAndCancel()
     m_dataTaskSet.forEach([] (auto& task) {
         task.invalidateAndCancel();
     });
-    if (m_resourceLoadStatistics)
-        m_resourceLoadStatistics->invalidateAndCancel();
+    if (RefPtr resourceLoadStatistics = m_resourceLoadStatistics)
+        resourceLoadStatistics->invalidateAndCancel();
 #if ASSERT_ENABLED
     m_isInvalidated = true;
 #endif
@@ -282,32 +286,34 @@ void NetworkSession::setTrackingPreventionEnabled(bool enabled)
 
     RELEASE_LOG(Storage, "%p - NetworkSession::setTrackingPreventionEnabled: sessionID=%" PRIu64 ", enabled=%d", this, m_sessionID.toUInt64(), enabled);
 
-    if (auto* storageSession = networkStorageSession())
+    if (CheckedPtr storageSession = networkStorageSession())
         storageSession->setTrackingPreventionEnabled(enabled);
     if (!enabled) {
         destroyResourceLoadStatistics([] { });
         return;
     }
 
-    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics, (m_sessionID.isEphemeral() ? ResourceLoadStatistics::IsEphemeral::Yes : ResourceLoadStatistics::IsEphemeral::No));
+    Ref resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics, (m_sessionID.isEphemeral() ? ResourceLoadStatistics::IsEphemeral::Yes : ResourceLoadStatistics::IsEphemeral::No));
+    m_resourceLoadStatistics = resourceLoadStatistics.copyRef();
     if (!m_sessionID.isEphemeral())
-        m_resourceLoadStatistics->populateMemoryStoreFromDisk([] { });
+        resourceLoadStatistics->populateMemoryStoreFromDisk([] { });
 
     if (m_enableResourceLoadStatisticsDebugMode == EnableResourceLoadStatisticsDebugMode::Yes)
-        m_resourceLoadStatistics->setResourceLoadStatisticsDebugMode(true, [] { });
+        resourceLoadStatistics->setResourceLoadStatisticsDebugMode(true, [] { });
     // This should always be forwarded since debug mode may be enabled at runtime.
     if (!m_resourceLoadStatisticsManualPrevalentResource.isEmpty())
-        m_resourceLoadStatistics->setPrevalentResourceForDebugMode(RegistrableDomain { m_resourceLoadStatisticsManualPrevalentResource }, [] { });
+        resourceLoadStatistics->setPrevalentResourceForDebugMode(RegistrableDomain { m_resourceLoadStatisticsManualPrevalentResource }, [] { });
     forwardResourceLoadStatisticsSettings();
 }
 
 void NetworkSession::forwardResourceLoadStatisticsSettings()
 {
-    m_resourceLoadStatistics->setThirdPartyCookieBlockingMode(m_thirdPartyCookieBlockingMode);
-    m_resourceLoadStatistics->setSameSiteStrictEnforcementEnabled(m_sameSiteStrictEnforcementEnabled);
-    m_resourceLoadStatistics->setFirstPartyWebsiteDataRemovalMode(m_firstPartyWebsiteDataRemovalMode, [] { });
-    m_resourceLoadStatistics->setStandaloneApplicationDomain(m_standaloneApplicationDomain, [] { });
-    m_resourceLoadStatistics->setPersistedDomains(m_persistedDomains);
+    Ref resourceLoadStatistics = *m_resourceLoadStatistics;
+    resourceLoadStatistics->setThirdPartyCookieBlockingMode(m_thirdPartyCookieBlockingMode);
+    resourceLoadStatistics->setSameSiteStrictEnforcementEnabled(m_sameSiteStrictEnforcementEnabled);
+    resourceLoadStatistics->setFirstPartyWebsiteDataRemovalMode(m_firstPartyWebsiteDataRemovalMode, [] { });
+    resourceLoadStatistics->setStandaloneApplicationDomain(m_standaloneApplicationDomain, [] { });
+    resourceLoadStatistics->setPersistedDomains(m_persistedDomains);
 }
 
 bool NetworkSession::isTrackingPreventionEnabled() const
@@ -315,9 +321,25 @@ bool NetworkSession::isTrackingPreventionEnabled() const
     return !!m_resourceLoadStatistics;
 }
 
+IsKnownCrossSiteTracker NetworkSession::isRequestToKnownCrossSiteTracker(const ResourceRequest& request)
+{
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    return WebKit::isRequestToKnownCrossSiteTracker(request);
+#else
+    return IsKnownCrossSiteTracker::No;
+#endif
+}
+
+IsKnownCrossSiteTracker NetworkSession::isResourceFromKnownCrossSiteTracker(const URL& firstParty, const URL& resource)
+{
+    ResourceRequest request { URL { resource } };
+    request.setFirstPartyForCookies(firstParty);
+    return isRequestToKnownCrossSiteTracker(request);
+}
+
 void NetworkSession::deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&& domains, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
 {
-    if (auto* storageSession = networkStorageSession()) {
+    if (CheckedPtr storageSession = networkStorageSession()) {
         for (auto& domain : domains.domainsToEnforceSameSiteStrictFor)
             storageSession->setAllCookiesToSameSiteStrict(domain, [] { });
     }
@@ -345,16 +367,16 @@ void NetworkSession::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMod
 {
     ASSERT(m_resourceLoadStatistics);
     m_thirdPartyCookieBlockingMode = blockingMode;
-    if (m_resourceLoadStatistics)
-        m_resourceLoadStatistics->setThirdPartyCookieBlockingMode(blockingMode);
+    if (RefPtr resourceLoadStatistics = m_resourceLoadStatistics)
+        resourceLoadStatistics->setThirdPartyCookieBlockingMode(blockingMode);
 }
 
 void NetworkSession::setShouldEnbleSameSiteStrictEnforcement(WebCore::SameSiteStrictEnforcementEnabled enabled)
 {
     ASSERT(m_resourceLoadStatistics);
     m_sameSiteStrictEnforcementEnabled = enabled;
-    if (m_resourceLoadStatistics)
-        m_resourceLoadStatistics->setSameSiteStrictEnforcementEnabled(enabled);
+    if (RefPtr resourceLoadStatistics = m_resourceLoadStatistics)
+        resourceLoadStatistics->setSameSiteStrictEnforcementEnabled(enabled);
 }
 
 void NetworkSession::setFirstPartyHostCNAMEDomain(String&& firstPartyHost, WebCore::RegistrableDomain&& cnameDomain)
@@ -538,7 +560,7 @@ void NetworkSession::setShouldSendPrivateTokenIPCForTesting(bool enabled)
     m_shouldSendPrivateTokenIPCForTesting = enabled;
 }
 
-#if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
 void NetworkSession::setOptInCookiePartitioningEnabled(bool enabled)
 {
     if (!m_resourceLoadStatistics)
@@ -600,7 +622,7 @@ RefPtr<NetworkResourceLoader> NetworkSession::CachedNetworkResourceLoader::takeL
 void NetworkSession::CachedNetworkResourceLoader::expirationTimerFired()
 {
     RefPtr loader = m_loader;
-    auto session = loader->protectedConnectionToWebProcess()->networkSession();
+    CheckedPtr session = loader->protectedConnectionToWebProcess()->networkSession();
     ASSERT(session);
     if (!session)
         return;
@@ -628,7 +650,7 @@ void NetworkSession::removeLoaderWaitingWebProcessTransfer(NetworkResourceLoadId
         cachedResourceLoader->takeLoader()->abort();
 }
 
-std::unique_ptr<WebSocketTask> NetworkSession::createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy)
+RefPtr<WebSocketTask> NetworkSession::createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy)
 {
     return nullptr;
 }
@@ -647,7 +669,7 @@ void NetworkSession::unregisterNetworkDataTask(NetworkDataTask& task)
 NetworkLoadScheduler& NetworkSession::networkLoadScheduler()
 {
     if (!m_networkLoadScheduler)
-        m_networkLoadScheduler = NetworkLoadScheduler::create();
+        lazyInitialize(m_networkLoadScheduler, NetworkLoadScheduler::create());
     return *m_networkLoadScheduler;
 }
 
@@ -742,20 +764,7 @@ void NetworkSession::requestBackgroundFetchPermission(const ClientOrigin& origin
     m_networkProcess->requestBackgroundFetchPermission(m_sessionID, origin, WTFMove(callback));
 }
 
-WebSharedWorkerServer& NetworkSession::ensureSharedWorkerServer()
-{
-    if (!m_sharedWorkerServer)
-        m_sharedWorkerServer = makeUnique<WebSharedWorkerServer>(*this);
-    return *m_sharedWorkerServer;
-}
-
-Ref<NetworkStorageManager> NetworkSession::protectedStorageManager()
-{
-    return m_storageManager.copyRef();
-}
-
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-
 void NetworkSession::setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit)
 {
     m_bytesPerSecondLimit = WTFMove(bytesPerSecondLimit);
@@ -764,7 +773,6 @@ void NetworkSession::setEmulatedConditions(std::optional<int64_t>&& bytesPerSeco
         task.setEmulatedConditions(m_bytesPerSecondLimit);
     });
 }
-
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
 static double connectionTimesMovingAverage(const Deque<Seconds, 25>& connectionTimes)
@@ -813,7 +821,7 @@ void NetworkSession::recordHTTPSConnectionTiming(const NetworkLoadMetrics& metri
 
 void NetworkSession::softUpdate(ServiceWorkerJobData&& jobData, bool shouldRefreshCache, WebCore::ResourceRequest&& request, CompletionHandler<void(WebCore::WorkerFetchResult&&)>&& completionHandler)
 {
-    m_softUpdateLoaders.add(makeUnique<ServiceWorkerSoftUpdateLoader>(*this, WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler)));
+    m_softUpdateLoaders.add(ServiceWorkerSoftUpdateLoader::create(*this, WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler)));
 }
 
 void NetworkSession::createContextConnection(const WebCore::Site& site, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
@@ -864,7 +872,7 @@ Ref<BackgroundFetchStore> NetworkSession::createBackgroundFetchStore()
 BackgroundFetchStoreImpl& NetworkSession::ensureBackgroundFetchStore()
 {
     if (!m_backgroundFetchStore)
-        m_backgroundFetchStore = BackgroundFetchStoreImpl::create(m_storageManager.get(), ensureSWServer());
+        lazyInitialize(m_backgroundFetchStore, BackgroundFetchStoreImpl::create(m_storageManager.get(), ensureSWServer()));
     return *m_backgroundFetchStore;
 }
 
@@ -918,8 +926,8 @@ void NetworkSession::setPersistedDomains(HashSet<WebCore::RegistrableDomain>&& d
 {
     m_persistedDomains = WTFMove(domains);
 
-    if (m_resourceLoadStatistics)
-        m_resourceLoadStatistics->setPersistedDomains(m_persistedDomains);
+    if (RefPtr resourceLoadStatistics = m_resourceLoadStatistics)
+        resourceLoadStatistics->setPersistedDomains(m_persistedDomains);
 }
 
 CheckedRef<PrefetchCache> NetworkSession::checkedPrefetchCache()
@@ -927,24 +935,12 @@ CheckedRef<PrefetchCache> NetworkSession::checkedPrefetchCache()
     return m_prefetchCache;
 }
 
-#if ENABLE(WEB_PUSH_NOTIFICATIONS)
-Ref<NetworkNotificationManager> NetworkSession::protectedNotificationManager()
-{
-    return m_notificationManager.get();
-}
-#endif
-
-Ref<NetworkBroadcastChannelRegistry> NetworkSession::protectedBroadcastChannelRegistry()
-{
-    return m_broadcastChannelRegistry;
-}
-
 #if ENABLE(CONTENT_EXTENSIONS)
 WebCore::ResourceMonitorThrottlerHolder& NetworkSession::resourceMonitorThrottler()
 {
     if (!m_resourceMonitorThrottler) {
         RELEASE_LOG(ResourceMonitoring, "NetworkSession::resourceMonitorThrottler sessionID=%" PRIu64 ", ResourceMonitorThrottler is created.", m_sessionID.toUInt64());
-        m_resourceMonitorThrottler = WebCore::ResourceMonitorThrottlerHolder::create(m_resourceMonitorThrottlerDirectory);
+        lazyInitialize(m_resourceMonitorThrottler, WebCore::ResourceMonitorThrottlerHolder::create(m_resourceMonitorThrottlerDirectory));
     }
 
     return *m_resourceMonitorThrottler;

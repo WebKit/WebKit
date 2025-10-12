@@ -27,12 +27,12 @@
 
 #if !ENABLE(C_LOOP)
 
-#include "FPRInfo.h"
-#include "GPRInfo.h"
-#include "MacroAssembler.h"
-#include "MemoryMode.h"
-#include "Reg.h"
-#include "Width.h"
+#include <JavaScriptCore/FPRInfo.h>
+#include <JavaScriptCore/GPRInfo.h>
+#include <JavaScriptCore/MacroAssembler.h>
+#include <JavaScriptCore/MemoryMode.h>
+#include <JavaScriptCore/Reg.h>
+#include <JavaScriptCore/Width.h>
 #include <wtf/BitSet.h>
 #include <wtf/CommaPrinter.h>
 
@@ -209,6 +209,8 @@ public:
     JS_EXPORT_PRIVATE static RegisterSet argumentFPRs();
 #if ENABLE(WEBASSEMBLY)
     JS_EXPORT_PRIVATE static RegisterSet wasmPinnedRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet ipintCalleeSaveRegisters(); // Registers saved and used by the IPInt.
+    JS_EXPORT_PRIVATE static RegisterSet bbqCalleeSaveRegisters(); // Registers saved and used by the BBQ JIT.
 #endif
     JS_EXPORT_PRIVATE static RegisterSetBuilder registersToSaveForJSCall(RegisterSetBuilder live);
     JS_EXPORT_PRIVATE static RegisterSetBuilder registersToSaveForCCall(RegisterSetBuilder live);

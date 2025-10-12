@@ -33,14 +33,14 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include "InbandTextTrackPrivate.h"
-#include "MediaDescription.h"
-#include "MediaPlayer.h"
-#include "MediaSample.h"
-#include "PlatformTimeRanges.h"
-#include "SampleMap.h"
-#include "SourceBufferPrivateClient.h"
-#include "TimeRanges.h"
+#include <WebCore/InbandTextTrackPrivate.h>
+#include <WebCore/MediaDescription.h>
+#include <WebCore/MediaPlayer.h>
+#include <WebCore/MediaSample.h>
+#include <WebCore/PlatformTimeRanges.h>
+#include <WebCore/SampleMap.h>
+#include <WebCore/SourceBufferPrivateClient.h>
+#include <WebCore/TimeRanges.h>
 #include <optional>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
@@ -59,6 +59,7 @@ namespace WebCore {
 class MediaSourcePrivate;
 class SharedBuffer;
 class TrackBuffer;
+struct TrackInfo;
 class TimeRanges;
 
 #if ENABLE(ENCRYPTED_MEDIA)

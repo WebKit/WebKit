@@ -1,0 +1,23 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "globals": [
+    {"access": "public", "linkage": "exported", "name": "_$sSo13CATransform3DV10QuartzCoreE19_bridgeToObjectiveCSo7NSValueCyF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo13CATransform3DV10QuartzCoreE26_forceBridgeFromObjectiveC_6resultySo7NSValueC_ABSgztFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo13CATransform3DV10QuartzCoreE34_conditionallyBridgeFromObjectiveC_6resultSbSo7NSValueC_ABSgztFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo13CATransform3DV10QuartzCoreE36_unconditionallyBridgeFromObjectiveCyABSo7NSValueCSgFZ"},
+    {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$sSo13CATransform3DVs21_ObjectiveCBridgeable10QuartzCoreMc"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo16CAFrameRateRangeV10QuartzCoreE2eeoiySbAB_ABtFZ"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo16CAFrameRateRangeV10QuartzCoreE7minimum7maximum9preferredABSf_S2fSgtcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo16CAFrameRateRangeV10QuartzCoreE9preferredSfSgvM"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo16CAFrameRateRangeV10QuartzCoreE9preferredSfSgvg"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo16CAFrameRateRangeV10QuartzCoreE9preferredSfSgvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo16CAFrameRateRangeV10QuartzCoreE9preferredSfSgvs"},
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo16CAFrameRateRangeVSQ10QuartzCoreMc"}
+   ],
+   "target": "arm64e-apple-ios26.0"
+  }
+ ],
+ "version": "1.0"
+}

@@ -10,18 +10,20 @@
 #include "net/dcsctp/tx/stream_scheduler.h"
 
 #include <algorithm>
+#include <cstddef>
 #include <optional>
+#include <set>
 
 #include "absl/algorithm/container.h"
-#include "api/array_view.h"
+#include "api/units/timestamp.h"
 #include "net/dcsctp/packet/data.h"
-#include "net/dcsctp/public/dcsctp_message.h"
-#include "net/dcsctp/public/dcsctp_socket.h"
 #include "net/dcsctp/public/types.h"
 #include "net/dcsctp/tx/send_queue.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/containers/flat_set.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/str_join.h"
+#include "rtc_base/strings/string_builder.h"
 
 namespace dcsctp {
 
@@ -44,7 +46,7 @@ std::optional<SendQueue::DataToSend> StreamScheduler::Produce(
                        << ", active="
                        << webrtc::StrJoin(
                               active_streams_, ", ",
-                              [&](rtc::StringBuilder& sb, const auto& p) {
+                              [&](webrtc::StringBuilder& sb, const auto& p) {
                                 sb << *p->stream_id() << "@"
                                    << *p->next_finish_time();
                               });

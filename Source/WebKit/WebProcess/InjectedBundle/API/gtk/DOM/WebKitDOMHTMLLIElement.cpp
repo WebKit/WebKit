@@ -192,7 +192,7 @@ glong webkit_dom_html_li_element_get_value(WebKitDOMHTMLLIElement* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_LI_ELEMENT(self), 0);
     WebCore::HTMLLIElement* item = WebKit::core(self);
-    glong result = item->getIntegralAttribute(WebCore::HTMLNames::valueAttr);
+    glong result = item->integralAttribute(WebCore::HTMLNames::valueAttr);
     return result;
 }
 

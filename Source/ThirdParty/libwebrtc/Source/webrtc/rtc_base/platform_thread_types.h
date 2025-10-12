@@ -11,6 +11,7 @@
 #ifndef RTC_BASE_PLATFORM_THREAD_TYPES_H_
 #define RTC_BASE_PLATFORM_THREAD_TYPES_H_
 
+// IWYU pragma: begin_exports
 // clang-format off
 // clang formating would change include order.
 #if defined(WEBRTC_WIN)
@@ -20,6 +21,7 @@
 #include <winsock2.h>
 #include <windows.h>
 #elif defined(WEBRTC_FUCHSIA)
+#include <pthread.h>
 #include <zircon/types.h>
 #include <zircon/process.h>
 #elif defined(WEBRTC_POSIX)
@@ -30,8 +32,13 @@
 #endif
 #endif
 // clang-format on
+// IWYU pragma: end_exports
 
-namespace rtc {
+#if !defined(WEBRTC_WIN)
+#include <sched.h>
+#endif
+
+namespace webrtc {
 #if defined(WEBRTC_WIN)
 typedef DWORD PlatformThreadId;
 typedef DWORD PlatformThreadRef;
@@ -57,6 +64,7 @@ bool IsThreadRefEqual(const PlatformThreadRef& a, const PlatformThreadRef& b);
 // Sets the current thread name.
 void SetCurrentThreadName(const char* name);
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_PLATFORM_THREAD_TYPES_H_

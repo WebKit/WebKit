@@ -1,0 +1,48 @@
+<style>
+div {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  font-size: 20px;
+  font-family: Ahem;
+}
+</style>
+PASS if they all say "PASS".
+<div id=container>
+  <div>F</div>
+  <div style="overflow: hidden;">F</div>
+  <div style="-webkit-box-orient: horizontal">F</div>
+  <div style="overflow: hidden; -webkit-line-clamp: 1">F</div>
+  <div style="overflow: hidden; -webkit-line-clamp: 2">F</div>
+</div>
+<pre id=repaints></pre>
+
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  if (window.internals)
+    internals.startTrackingRepaints();
+
+  for (const child of container.children)
+    child.innerText = "PASS";
+
+  await UIHelper.renderingUpdate();
+
+  if (window.internals) {
+    repaints.innerHTML = window.internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+  }
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

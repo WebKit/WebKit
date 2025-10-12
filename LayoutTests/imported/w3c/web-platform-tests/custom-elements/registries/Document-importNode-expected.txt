@@ -1,10 +1,11 @@
 
 PASS importNode should clone using the global regsitry by default
-PASS importNode should clone using the specified scoped regsitry
+PASS importNode should clone using target's registry if non-null
+PASS importNode should clone using the specified registry if target's registry is null
 PASS importNode should preserve null-ness of custom element registry
 PASS importNode should clone a shadow host with a declarative shadow DOM using the global registry by default
 PASS importNode should clone a shadow host with a declarative shadow DOM using a specified scoped registry
-PASS importNode should clone an element originating from a scoped registry using another scoped registry
+PASS importNode should clone using target's registry if non-null, including when it's not the global registry
 PASS importNode should clone a template content using the global registry by default
 PASS importNode should clone a template content using a specified scoped registry
 PASS importNode should clone a template content with a nested template element using a scoped registry

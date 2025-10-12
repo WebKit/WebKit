@@ -24,13 +24,13 @@
 #include "CSSFontFaceSrcValue.h"
 #include "CSSURL.h"
 #include "CachedFont.h"
-#include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
-#include "Document.h"
+#include "DocumentResourceLoader.h"
 #include "SVGElementInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include "XLinkNames.h"
 #include <wtf/TZoneMallocInlines.h>
 

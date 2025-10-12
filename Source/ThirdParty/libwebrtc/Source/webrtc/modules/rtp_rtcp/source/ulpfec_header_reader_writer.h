@@ -14,6 +14,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 
 namespace webrtc {
@@ -57,7 +58,7 @@ class UlpfecHeaderWriter : public FecHeaderWriter {
   size_t FecHeaderSize(size_t packet_mask_row_size) const override;
 
   void FinalizeFecHeader(
-      rtc::ArrayView<const ProtectedStream> protected_streams,
+      ArrayView<const ProtectedStream> protected_streams,
       ForwardErrorCorrection::Packet& fec_packet) const override;
 };
 

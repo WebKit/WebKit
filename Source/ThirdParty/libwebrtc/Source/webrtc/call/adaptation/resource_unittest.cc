@@ -10,7 +10,6 @@
 
 #include "api/adaptation/resource.h"
 
-#include <memory>
 
 #include "api/scoped_refptr.h"
 #include "call/adaptation/test/fake_resource.h"
@@ -28,7 +27,7 @@ class ResourceTest : public ::testing::Test {
   ResourceTest() : fake_resource_(FakeResource::Create("FakeResource")) {}
 
  protected:
-  rtc::scoped_refptr<FakeResource> fake_resource_;
+  scoped_refptr<FakeResource> fake_resource_;
 };
 
 TEST_F(ResourceTest, RegisteringListenerReceivesCallbacks) {
@@ -36,7 +35,7 @@ TEST_F(ResourceTest, RegisteringListenerReceivesCallbacks) {
   fake_resource_->SetResourceListener(&resource_listener);
   EXPECT_CALL(resource_listener, OnResourceUsageStateMeasured(_, _))
       .Times(1)
-      .WillOnce([](rtc::scoped_refptr<Resource> /* resource */,
+      .WillOnce([](scoped_refptr<Resource> /* resource */,
                    ResourceUsageState usage_state) {
         EXPECT_EQ(ResourceUsageState::kOveruse, usage_state);
       });

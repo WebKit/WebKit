@@ -299,7 +299,7 @@ def HandleFiles(variables):
   It provides a table in which each row is a file in the line directory,
   and a column for each subdir, with the cells representing how that clip
   compares to baseline for that subdir.   A graph is given for each which
-  compares filesize to that metric.  If you click on a point in the graph it
+  compares file size to that metric.  If you click on a point in the graph it
   zooms in on that point.
 
   a SAMPLE metrics file:

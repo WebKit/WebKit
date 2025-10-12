@@ -35,6 +35,8 @@ AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -75,6 +77,8 @@ AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -115,6 +119,8 @@ AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -156,6 +162,8 @@ AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -196,6 +204,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -236,6 +246,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -276,6 +288,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -316,6 +330,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -356,6 +372,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -396,6 +414,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -429,7 +449,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXColumn>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
 AXElementBusy: 0
 AXIndex: 0
 AXHeader: <AXColumn>
@@ -465,7 +484,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXColumn>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
 AXElementBusy: 0
 AXIndex: 1
 AXHeader: <AXColumn>
@@ -501,7 +519,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXColumn>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
 AXElementBusy: 0
 AXIndex: 2
 AXHeader: <AXColumn>
@@ -538,7 +555,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXRow>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 5}
 AXElementBusy: 0
 AXIndex: 0
 
@@ -571,7 +587,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXRow>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 5}
 AXElementBusy: 0
 AXIndex: 1
 
@@ -604,7 +619,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXRow>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 7}
 AXElementBusy: 0
 AXIndex: 2
 
@@ -637,7 +651,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXRow>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 5}
 AXElementBusy: 0
 AXIndex: 3
 
@@ -670,7 +683,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXRow>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 7}
 AXElementBusy: 0
 AXIndex: 4
 
@@ -703,7 +715,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXRow>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 5}
 AXElementBusy: 0
 AXIndex: 5
 
@@ -736,7 +747,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXRow>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 7}
 AXElementBusy: 0
 AXIndex: 6
 
@@ -769,7 +779,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXRow>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 5}
 AXElementBusy: 0
 AXIndex: 7
 
@@ -811,6 +820,8 @@ AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -851,6 +862,8 @@ AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -891,6 +904,8 @@ AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -931,6 +946,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -971,6 +988,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 ------------
@@ -1010,6 +1029,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 ------------
@@ -1049,6 +1070,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -1089,6 +1112,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 ------------
@@ -1128,6 +1153,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 ------------
@@ -1167,6 +1194,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -1207,6 +1236,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 ------------
@@ -1246,6 +1277,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 ------------
@@ -1285,6 +1318,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -1325,6 +1360,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 ------------
@@ -1364,6 +1401,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 ------------
@@ -1403,6 +1442,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -1443,6 +1484,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 ------------
@@ -1482,6 +1525,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 ------------
@@ -1521,6 +1566,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 AXSortDirection: AXUnknownSortDirection
 
@@ -1561,6 +1608,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 ------------
@@ -1600,6 +1649,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 ------------
@@ -1639,6 +1690,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 ------------
@@ -1678,6 +1731,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 ------------
@@ -1717,6 +1772,8 @@ AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 0>
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
+AXColumnIndexDescription: (null)
+AXRowIndexDescription: (null)
 AXRequired: 0
 
 ------------
@@ -1749,7 +1806,6 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
 AXElementBusy: 0
 
 ------------

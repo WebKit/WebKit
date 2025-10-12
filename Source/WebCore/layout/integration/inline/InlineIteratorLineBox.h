@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "FontBaseline.h"
-#include "InlineIteratorLineBoxLegacyPath.h"
-#include "InlineIteratorLineBoxModernPath.h"
-#include "RenderBlockFlow.h"
+#include <WebCore/FontBaseline.h>
+#include <WebCore/InlineIteratorLineBoxLegacyPath.h>
+#include <WebCore/InlineIteratorLineBoxModernPath.h>
+#include <WebCore/RenderBlockFlow.h>
 
 namespace WebCore {
 

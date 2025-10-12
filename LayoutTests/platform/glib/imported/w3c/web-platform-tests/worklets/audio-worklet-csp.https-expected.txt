@@ -1,13 +1,3 @@
-CONSOLE MESSAGE: Refused to load https://www1.web-platform.test:9443/worklets/resources/empty-worklet-script-with-cors-header.js because it does not appear in the script-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load https://www1.web-platform.test:9443/worklets/resources/import-empty-worklet-script-with-cors-header.js because it does not appear in the script-src directive of the Content Security Policy.
-CONSOLE MESSAGE: [blocked] The page at https://web-platform.test:9443/worklets/resources/addmodule-window.html requested insecure content from http://web-platform.test:8800/worklets/resources/empty-worklet-script-with-cors-header.js. This content was blocked and must be served over HTTPS.
-
-CONSOLE MESSAGE: [blocked] The page at https://web-platform.test:9443/worklets/resources/addmodule-window.html requested insecure content from http://web-platform.test:8800/worklets/resources/empty-worklet-script-with-cors-header.js. This content was blocked and must be served over HTTPS.
-
-CONSOLE MESSAGE: [blocked] The page at https://web-platform.test:9443/worklets/resources/addmodule-window.html requested insecure content from http://web-platform.test:9443/worklets/resources/empty-worklet-script-with-cors-header.js. This content was blocked and must be served over HTTPS.
-
-CONSOLE MESSAGE: [blocked] The page at https://web-platform.test:9443/worklets/resources/addmodule-window.html requested insecure content from http://web-platform.test:9443/worklets/resources/empty-worklet-script-with-cors-header.js. This content was blocked and must be served over HTTPS.
-
 
 PASS A remote-origin worklet should be blocked by the script-src 'self' directive.
 FAIL A same-origin worklet importing a remote-origin script should be blocked by the script-src 'self' directive. assert_equals: expected "REJECTED" but got "RESOLVED"

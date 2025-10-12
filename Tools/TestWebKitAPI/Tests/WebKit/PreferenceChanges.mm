@@ -34,8 +34,8 @@
 #import "TestWKWebView.h"
 #import <WebKit/PreferenceObserver.h>
 #import <WebKit/WKWebViewPrivate.h>
-
 #import <wtf/ObjCRuntimeExtras.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 static bool receivedPreferenceNotification = false;
 
@@ -70,7 +70,7 @@ static constexpr Seconds preferenceQuerySleepTime = 1_s;
 static void waitForPreferenceSynchronization()
 {
     __block bool didSynchronize = false;
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         didSynchronize = true;
     });
     TestWebKitAPI::Util::run(&didSynchronize);
@@ -190,6 +190,9 @@ TEST(WebKit, PreferenceChangesWithSuspendedProcess)
         return [webView stringByEvaluatingJavaScript:js].intValue;
     };
 
+    unsigned tries = 0;
+    while (preferenceValue() != 1 && ++tries < 50)
+        TestWebKitAPI::Util::runFor(100_ms);
     EXPECT_EQ(preferenceValue(), 1);
 
     CLEAR_DEFAULTS();

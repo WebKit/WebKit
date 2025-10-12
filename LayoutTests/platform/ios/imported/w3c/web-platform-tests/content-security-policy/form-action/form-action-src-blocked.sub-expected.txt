@@ -1,0 +1,7 @@
+
+
+Tests that blocking form actions works correctly.
+
+
+PASS Expecting logs: ["violated-directive=form-action","TEST COMPLETE"]
+

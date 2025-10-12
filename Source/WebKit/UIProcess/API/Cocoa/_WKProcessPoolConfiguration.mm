@@ -32,7 +32,9 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 @implementation _WKProcessPoolConfiguration
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (instancetype)init
 {
@@ -398,10 +400,10 @@
 
 - (void)setMemoryFootprintNotificationThresholds:(NSArray<NSNumber *> *)thresholds
 {
-    Vector<size_t> sizes;
+    Vector<uint64_t> sizes;
     sizes.reserveCapacity(thresholds.count);
     for (NSNumber *threshold in thresholds)
-        sizes.append(static_cast<size_t>(threshold.unsignedLongLongValue));
+        sizes.append(static_cast<uint64_t>(threshold.unsignedLongLongValue));
     _processPoolConfiguration->setMemoryFootprintNotificationThresholds(WTFMove(sizes));
 }
 
@@ -419,6 +421,16 @@
 #if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
     _processPoolConfiguration->setSuspendsWebProcessesAggressivelyOnMemoryPressure(enabled);
 #endif
+}
+
+- (unsigned)prewarmedProcessCountLimitForTesting
+{
+    return _processPoolConfiguration->prewarmedProcessCountLimitForTesting();
+}
+
+- (void)setPrewarmedProcessCountLimitForTesting:(unsigned)limit
+{
+    _processPoolConfiguration->setPrewarmedProcessCountLimitForTesting(limit);
 }
 
 #pragma mark WKObject protocol implementation

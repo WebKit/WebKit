@@ -23,7 +23,7 @@
 #ifndef FloatPoint3D_h
 #define FloatPoint3D_h
 
-#include "FloatPoint.h"
+#include <WebCore/FloatPoint.h>
 
 namespace WebCore {
 

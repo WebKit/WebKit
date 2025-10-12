@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,7 +73,7 @@ public:
             releaseOSObject(m_ptr);
     }
 
-    T get() const { return m_ptr; }
+    T get() const LIFETIME_BOUND { return m_ptr; }
 
     explicit operator bool() const { return m_ptr; }
     bool operator!() const { return !m_ptr; }
@@ -154,7 +154,15 @@ template<typename T> inline OSObjectPtr<T> adoptOSObject(T ptr)
     return OSObjectPtr<T> { typename OSObjectPtr<T>::AdoptOSObject { }, WTFMove(ptr) };
 }
 
+template<typename T, typename U>
+ALWAYS_INLINE void lazyInitialize(const OSObjectPtr<T>& ptr, OSObjectPtr<U>&& obj)
+{
+    RELEASE_ASSERT(!ptr);
+    const_cast<OSObjectPtr<T>&>(ptr) = std::move(obj);
+}
+
 } // namespace WTF
 
 using WTF::OSObjectPtr;
 using WTF::adoptOSObject;
+using WTF::lazyInitialize;

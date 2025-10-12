@@ -1,4 +1,3 @@
-//@ skip unless $isWasmPlatform
 //@ $skipModes << :lockdown
 //@ requireOptions("--useExecutableAllocationFuzz=false")
 // Source in wasm/stress/memcpy-wasm

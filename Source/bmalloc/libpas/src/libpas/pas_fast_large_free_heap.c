@@ -31,6 +31,7 @@
 
 #include "pas_generic_large_free_heap.h"
 #include "pas_utility_heap.h"
+#include "pas_zero_memory.h"
 
 /* It so happens that we can use this for both x (address) and y (size). */
 static PAS_ALWAYS_INLINE int key_compare_callback(void* raw_left,

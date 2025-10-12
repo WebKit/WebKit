@@ -11,8 +11,9 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_EXTENDED_REPORTS_H_
 #define MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_EXTENDED_REPORTS_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <optional>
-#include <vector>
 
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/dlrr.h"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@
 #include "JSCellInlines.h"
 #include "JSGlobalObject.h"
 #include "Options.h"
-#include "VMInspectorInlines.h"
+#include "VMManager.h"
 #include <wtf/DataLog.h>
 
 #if OS(DARWIN)
@@ -118,7 +118,7 @@ bool Random::reloadAndCheckShouldAuditSlow(VM& vm)
 void auditCellMinimallySlow(VM&, JSCell* cell)
 {
     if (Gigacage::contains(cell)) {
-        if (cell->type() != JSImmutableButterflyType) {
+        if (cell->type() != JSCellButterflyType) {
             if (IntegrityInternal::verbose)
                 dataLogLn("Integrity ERROR: Bad cell ", RawPointer(cell), " ", JSValue(cell));
             CRASH();
@@ -179,10 +179,10 @@ JSValue doAudit(JSValue value)
 
 bool Analyzer::analyzeVM(VM& vm, Analyzer::Action action)
 {
-    IA_ASSERT_WITH_ACTION(VMInspector::isValidVM(&vm), {
-        VMInspector::dumpVMs();
+    IA_ASSERT_WITH_ACTION(VMManager::isValidVM(&vm), {
+        VMManager::dumpVMs();
         if (action == Action::LogAndCrash)
-            RELEASE_ASSERT(VMInspector::isValidVM(&vm));
+            RELEASE_ASSERT(VMManager::isValidVM(&vm));
         else
             return false;
     }, "Invalid VM %p", &vm);
@@ -254,7 +254,7 @@ bool Analyzer::analyzeCell(VM& vm, JSCell* cell, Analyzer::Action action)
     }
 
     JSType cellType = cell->type();
-    if (cell->type() != JSImmutableButterflyType)
+    if (cell->type() != JSCellButterflyType)
         AUDIT_VERIFY(!Gigacage::contains(cell), "cell %p cell.type %d", cell, cellType);
 
     WeakSet& weakSet = cell->cellContainer().weakSet();

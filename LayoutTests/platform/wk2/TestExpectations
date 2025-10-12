@@ -237,7 +237,6 @@ webarchive/archive-empty-frame-source.html
 # WebKitTestRunner needs testRunner.setIconDatabaseEnabled
 webkit.org/b/115809 webarchive/test-link-rel-icon.html
 webkit.org/b/115809 http/tests/misc/favicon-loads-with-images-disabled.html
-webkit.org/b/115809 http/tests/misc/favicon-loads-with-icon-loading-override.html
 webkit.org/b/115809 http/tests/misc/link-rel-icon-beforeload.html
 webkit.org/b/115809 http/tests/security/contentSecurityPolicy/allow-favicon.html
 webkit.org/b/115809 http/tests/security/contentSecurityPolicy/block-favicon.html
@@ -313,7 +312,6 @@ http/tests/navigation/error404-subframeload.html
 http/tests/navigation/javascriptlink-subframeload.html
 http/tests/navigation/metaredirect-subframeload.html
 http/tests/navigation/redirect302-subframeload.html
-http/tests/navigation/response204.html
 http/tests/navigation/success200-subframeload.html
 http/tests/navigation/timerredirect-subframeload.html
 
@@ -812,10 +810,6 @@ webkit.org/b/287724 imported/w3c/web-platform-tests/feature-policy/reporting/pic
 
 webkit.org/b/288774 fast/dynamic/content-visibility-crash-with-continuation-and-table.html [ Pass Failure ]
 
-webkit.org/b/288847 imported/w3c/web-platform-tests/cookie-store/cookieStore_event_delete.https.window.html [ Pass Failure ]
-
 webkit.org/b/288851 imported/w3c/web-platform-tests/fetch/http-cache/invalidate.any.html [ Pass Failure ]
-
-webkit.org/b/289542 imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-handler-throws.html [ Pass Failure ]
 
 webkit.org/b/289550 imported/w3c/web-platform-tests/fetch/http-cache/invalidate.any.sharedworker.html [ Pass Failure ]

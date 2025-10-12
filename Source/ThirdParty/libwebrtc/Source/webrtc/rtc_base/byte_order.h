@@ -11,15 +11,16 @@
 #ifndef RTC_BASE_BYTE_ORDER_H_
 #define RTC_BASE_BYTE_ORDER_H_
 
-#include <stdint.h>
-
+#include <cstdint>
+#include <cstdlib>
 #include <cstring>
 
-#if defined(WEBRTC_POSIX) && !defined(__native_client__)
-#include <arpa/inet.h>
+#include "rtc_base/system/arch.h"  // IWYU pragma: keep
+
+#if defined(WEBRTC_POSIX)
+#include <arpa/inet.h>  // IWYU pragma: keep
 #endif
 
-#include "rtc_base/system/arch.h"
 
 #if defined(WEBRTC_MAC)
 #include <libkern/OSByteOrder.h>
@@ -38,14 +39,13 @@
 #define le32toh(v) OSSwapLittleToHostInt32(v)
 #define le64toh(v) OSSwapLittleToHostInt64(v)
 
-#elif defined(WEBRTC_WIN) || defined(__native_client__)
+#elif defined(WEBRTC_WIN)
 
 #if defined(WEBRTC_WIN)
-#include <stdlib.h>
 #include <winsock2.h>
 #else
 #include <netinet/in.h>  // no-presubmit-check
-#endif  // defined(WEBRTC_WIN)
+#endif                   // defined(WEBRTC_WIN)
 
 #if defined(WEBRTC_ARCH_LITTLE_ENDIAN)
 #define htobe16(v) htons(v)
@@ -62,10 +62,6 @@
 #define htobe64(v) _byteswap_uint64(v)
 #define be64toh(v) _byteswap_uint64(v)
 #endif  // defined(WEBRTC_WIN)
-#if defined(__native_client__)
-#define htobe64(v) __builtin_bswap64(v)
-#define be64toh(v) __builtin_bswap64(v)
-#endif  // defined(__native_client__)
 
 #elif defined(WEBRTC_ARCH_BIG_ENDIAN)
 #define htobe16(v) (v)
@@ -82,10 +78,6 @@
 #define htobe64(v) (v)
 #define be64toh(v) (v)
 #endif  // defined(WEBRTC_WIN)
-#if defined(__native_client__)
-#define htobe64(v) (v)
-#define be64toh(v) (v)
-#endif  // defined(__native_client__)
 #else
 #error WEBRTC_ARCH_BIG_ENDIAN or WEBRTC_ARCH_LITTLE_ENDIAN must be defined.
 #endif  // defined(WEBRTC_ARCH_LITTLE_ENDIAN)
@@ -96,7 +88,7 @@
 #error "Missing byte order functions for this arch."
 #endif  // defined(WEBRTC_MAC)
 
-namespace rtc {
+namespace webrtc {
 
 // Reading and writing of little and big-endian numbers from memory
 
@@ -207,6 +199,7 @@ inline uint64_t NetworkToHost64(uint64_t n) {
   return be64toh(n);
 }
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_BYTE_ORDER_H_

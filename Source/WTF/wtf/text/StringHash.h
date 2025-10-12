@@ -112,7 +112,7 @@ namespace WTF {
     struct ASCIICaseInsensitiveHash {
         struct FoldCase {
             template<typename T>
-            static inline UChar convert(T character)
+            static inline char16_t convert(T character)
             {
                 return toASCIILower(character);
             }

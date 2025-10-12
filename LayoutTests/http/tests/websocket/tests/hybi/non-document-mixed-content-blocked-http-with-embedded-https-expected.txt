@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: [blocked] The page at https://localhost:8443/websocket/tests/hybi/non-document-mixed-content-blocked.https.html requested insecure content from ws://127.0.0.1:8880/websocket/tests/hybi/simple. This content was blocked and must be served over HTTPS.
+CONSOLE MESSAGE: [blocked] The page at https://localhost:8443/websocket/tests/hybi/non-document-mixed-content-blocked-UpgradeMixedContent.https.html requested insecure content from ws://127.0.0.1:8880/websocket/tests/hybi/simple. This content was blocked and must be served over HTTPS.
 
-CONSOLE MESSAGE: WebSocket connection failed: The page at https://localhost:8443/websocket/tests/hybi/non-document-mixed-content-blocked.https.html was blocked from connecting insecurely to ws://127.0.0.1:8880/websocket/tests/hybi/simple either because the protocol is insecure or the page is embedded from an insecure page.
+CONSOLE MESSAGE: WebSocket connection failed: The page at https://localhost:8443/websocket/tests/hybi/non-document-mixed-content-blocked-UpgradeMixedContent.https.html was blocked from connecting insecurely to ws://127.0.0.1:8880/websocket/tests/hybi/simple either because the protocol is insecure or the page is embedded from an insecure page.
 
 Test topFrame http with embedded https blocks worker from iframe.
 

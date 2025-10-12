@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-string.prototype.trimStart
+esid: sec-string.prototype.trimstart
 description: TrimStart removes all line terminators from the start of a string.
 info: |
   Runtime Symantics: TrimString ( string, where )

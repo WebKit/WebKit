@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2007, 2009 Apple Inc.  All rights reserved.
- * Copyright (C) 2007 Collabora Ltd.  All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Collabora Ltd. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
  * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018, 2019, 2020, 2021 Igalia S.L
@@ -205,6 +205,23 @@ void MediaPlayerPrivateGStreamerMSE::setShouldDisableSleep(bool shouldDisableSle
 }
 #endif
 
+void MediaPlayerPrivateGStreamerMSE::mirrorEnabledVideoTrackIfNeeded(const VideoTrackPrivateGStreamer& originalVideoTrackPrivate)
+{
+    if (!isMediaSource())
+        return;
+
+    for (auto& pair : m_videoTracks) {
+        auto& track = pair.value.get();
+        if (track.id() == originalVideoTrackPrivate.id() && &track != &originalVideoTrackPrivate) {
+            GST_DEBUG_OBJECT(m_pipeline.get(), "Mirrored selected state (%s) from element track %p %" PRIu64
+                " to player track %p %" PRIu64, boolForPrinting(track.selected()), &originalVideoTrackPrivate,
+                originalVideoTrackPrivate.id(), &track, track.id());
+            track.setSelected(originalVideoTrackPrivate.selected());
+            break;
+        }
+    }
+}
+
 MediaTime MediaPlayerPrivateGStreamerMSE::duration() const
 {
     if (!m_pipeline || m_didErrorOccur) [[unlikely]]
@@ -263,6 +280,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate
     // This will also add support for fastSeek once done (see webkit.org/b/260607)
     if (!m_mediaSourcePrivate)
         return false;
+    m_mediaSourcePrivate->willSeek();
     m_mediaSourcePrivate->waitForTarget(target)->whenSettled(RunLoop::currentSingleton(), [this, weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
         RefPtr self = weakThis.get();
         if (!self || !result)
@@ -272,20 +290,41 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate
             m_mediaSourcePrivate->seekToTime(*result);
 
         auto player = m_player.get();
-        if (player && !player->isVideoPlayer() && m_audioSink) {
-            gboolean audioSinkPerformsAsyncStateChanges;
-            g_object_get(m_audioSink.get(), "async", &audioSinkPerformsAsyncStateChanges, nullptr);
+        if (player && !hasVideo() && m_audioSink) {
+            gboolean audioSinkPerformsAsyncStateChanges = true;
+
+            GRefPtr<GstElement> sink = m_audioSink;
+            while (GST_IS_BIN(sink.get())) {
+                GUniquePtr<GstIterator> iter(gst_bin_iterate_sinks(GST_BIN_CAST(sink.get())));
+                GValue value = G_VALUE_INIT;
+                auto result = gst_iterator_next(iter.get(), &value);
+                ASSERT_UNUSED(result, result == GST_ITERATOR_OK);
+                sink = GST_ELEMENT(g_value_get_object(&value));
+                g_value_unset(&value);
+            }
+            if (gstObjectHasProperty(sink.get(), "async"))
+                g_object_get(sink.get(), "async", &audioSinkPerformsAsyncStateChanges, nullptr);
             if (!audioSinkPerformsAsyncStateChanges) {
                 // If audio-only pipeline's sink is not performing async state changes
                 // we must simulate preroll right away as otherwise nothing will trigger it.
-                bool mustPreventPositionReset = m_isWaitingForPreroll && m_isSeeking;
-                if (mustPreventPositionReset)
-                    m_cachedPosition = currentTime();
-                didPreroll();
-                if (mustPreventPositionReset) {
-                    propagateReadyStateToPlayer();
-                    invalidateCachedPosition();
-                }
+
+                // Post this on HTML media element queue so it will be executed
+                // synchonously with media events (e.g. seeking). This will ensure
+                // that HTML element attributes (like HTMLmedia.seeking) are not reseted
+                // before app receives "seeking" event
+                player->queueTaskOnEventLoop([this, weakThis = ThreadSafeWeakPtr { *this }] {
+                    RefPtr self = weakThis.get();
+                    if (!self)
+                        return;
+                    bool mustPreventPositionReset = m_isWaitingForPreroll && m_isSeeking;
+                    if (mustPreventPositionReset)
+                        m_cachedPosition = currentTime();
+                    didPreroll();
+                    if (mustPreventPositionReset) {
+                        propagateReadyStateToPlayer();
+                        invalidateCachedPosition();
+                    }
+                });
             }
         }
     });
@@ -514,15 +553,25 @@ void MediaPlayerPrivateGStreamerMSE::setEosWithNoBuffers(bool eosWithNoBuffers)
     m_isEosWithNoBuffers = eosWithNoBuffers;
     // Parsebin will trigger an error, instruct MediaPlayerPrivateGStreamer to ignore it.
     if (eosWithNoBuffers) {
-        // On GStreamer 1.18.6, EOS with no buffers causes a parsebin error here:
+        // On GStreamer, EOS with no buffers causes a parsebin error here:
         // https://github.com/GStreamer/gst-plugins-base/blob/1.18.6/gst/playback/gstparsebin.c#L3495
-        // On GStreamer 1.24 (at least) that doesn't happen. Let's play safe and protect against the
-        // error in lower versions.
-        if (!webkitGstCheckVersion(1, 24, 0))
-            m_ignoreErrors = true;
+
+        m_ignoreErrors = true;
+
         GST_DEBUG_OBJECT(pipeline(), "EOS with no buffers, setting pipeline to READY state.");
         changePipelineState(GST_STATE_READY);
-        if (!webkitGstCheckVersion(1, 24, 0))
+
+        unsigned errorCount = m_queuedSyncErrors.loadFullyFenced();
+        if (errorCount) {
+            GST_WARNING_OBJECT(pipeline(), "%u errors pending to process happened while processing EOS with"
+                " no buffers and should be ignored, manually reporting EOS", errorCount);
+            didEnd();
+            // In the best case, m_ignoreErrors will be cleaned up (in the main thread) in MediaPlayerPrivateGStreamer::handleMessage()
+            // in the future, after the last pending error is processed on the main thread. In the worst case, didEnd() will trigger
+            // a pipeline teardown, which will trigger gst_bus_set_flushing() and the pending error message won't ever be processed
+            // by the main thread. That's not a problem, since the player itself will be destructed and nobody will care about the
+            // error count integrity anymore.
+        } else
             m_ignoreErrors = false;
     }
 }

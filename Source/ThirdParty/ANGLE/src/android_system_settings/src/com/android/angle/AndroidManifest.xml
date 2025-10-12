@@ -21,8 +21,8 @@
           package="com.android.angle">
 
    <uses-sdk
-        android:minSdkVersion="34"
-        android:targetSdkVersion="34" />
+        android:minSdkVersion="35"
+        android:targetSdkVersion="35" />
 
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -38,7 +38,7 @@
         <activity android:name="com.android.angle.MainActivity"
                   android:label="@string/angle_preferences"
                   android:description="@string/angle_preferences_summary"
-                  android:theme="@style/Theme.Settings"
+                  android:theme="@style/Theme.AppCompat.DayNight"
                   android:visibleToInstantApps="true"
                   android:launchMode="singleTask"
                   android:exported="true">

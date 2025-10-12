@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CagedBarrierPtr.h"
-#include "JSObject.h"
+#include <JavaScriptCore/CagedBarrierPtr.h>
+#include <JavaScriptCore/JSObject.h>
 
 namespace JSC {
 
@@ -38,13 +38,14 @@ public:
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnPropertyNames | OverridesPut | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
 
+    DECLARE_VISIT_CHILDREN;
+
 protected:
     GenericArgumentsImpl(VM& vm, Structure* structure)
         : Base(vm, structure)
     {
     }
 
-    DECLARE_VISIT_CHILDREN;
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned propertyName, PropertySlot&);
     static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode);

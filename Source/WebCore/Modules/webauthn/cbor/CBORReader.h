@@ -31,7 +31,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "CBORValue.h"
+#include <WebCore/CBORValue.h>
 #include <stddef.h>
 
 // Concise Binary Object Representation (CBOR) decoder as defined by

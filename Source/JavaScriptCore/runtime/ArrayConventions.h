@@ -20,9 +20,9 @@
 
 #pragma once
 
-#include "IndexingHeader.h"
-#include "PureNaN.h"
-#include "WriteBarrier.h"
+#include <JavaScriptCore/IndexingHeader.h>
+#include <JavaScriptCore/PureNaN.h>
+#include <JavaScriptCore/WriteBarrier.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

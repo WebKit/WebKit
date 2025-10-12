@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "DictationContext.h"
-#include "FloatRect.h"
-#include "FrameIdentifier.h"
+#include <WebCore/DictationContext.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/FrameIdentifier.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>

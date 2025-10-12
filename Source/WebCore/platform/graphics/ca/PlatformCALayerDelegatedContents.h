@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "RenderingResourceIdentifier.h"
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ObjectIdentifier.h>

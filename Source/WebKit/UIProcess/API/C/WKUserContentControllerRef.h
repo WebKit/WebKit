@@ -43,6 +43,10 @@ WK_EXPORT void WKUserContentControllerRemoveAllUserScripts(WKUserContentControll
 WK_EXPORT void WKUserContentControllerAddUserContentFilter(WKUserContentControllerRef userContentController, WKUserContentFilterRef userContentFilter);
 WK_EXPORT void WKUserContentControllerRemoveAllUserContentFilters(WKUserContentControllerRef userContentController);
 
+typedef void (*WKScriptMessageHandlerCallback)(WKScriptMessageRef message, WKCompletionListenerRef reply, const void *context);
+WK_EXPORT void WKUserContentControllerAddScriptMessageHandler(WKUserContentControllerRef userContentController, WKStringRef name, WKScriptMessageHandlerCallback callback, const void* context);
+WK_EXPORT void WKUserContentControllerRemoveAllUserMessageHandlers(WKUserContentControllerRef userContentController);
+
 #ifdef __cplusplus
 }
 #endif

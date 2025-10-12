@@ -10,18 +10,17 @@
 
 #include "modules/audio_coding/neteq/decision_logic.h"
 
-#include <stdio.h>
-
 #include <cstdint>
+#include <cstdio>
 #include <memory>
 #include <optional>
 #include <utility>
 
 #include "api/environment/environment.h"
+#include "api/neteq/delay_manager_interface.h"
 #include "api/neteq/neteq.h"
 #include "api/neteq/neteq_controller.h"
 #include "modules/audio_coding/neteq/buffer_level_filter.h"
-#include "modules/audio_coding/neteq/delay_manager.h"
 #include "modules/audio_coding/neteq/packet_arrival_history.h"
 #include "modules/audio_coding/neteq/packet_buffer.h"
 #include "rtc_base/checks.h"
@@ -38,14 +37,6 @@ constexpr int kTargetLevelWindowMs = 100;
 constexpr int kDelayAdjustmentGranularityMs = 20;
 constexpr int kPacketHistorySizeMs = 2000;
 constexpr size_t kCngTimeoutMs = 1000;
-
-std::unique_ptr<DelayManager> CreateDelayManager(
-    const Environment& env,
-    const NetEqController::Config& neteq_config) {
-  DelayManager::Config config(env.field_trials());
-  config.Log();
-  return std::make_unique<DelayManager>(config, neteq_config.tick_timer);
-}
 
 bool IsTimestretch(NetEq::Mode mode) {
   return mode == NetEq::Mode::kAccelerateSuccess ||
@@ -65,15 +56,17 @@ bool IsExpand(NetEq::Mode mode) {
 
 }  // namespace
 
-DecisionLogic::DecisionLogic(const Environment& env,
-                             NetEqController::Config config)
+DecisionLogic::DecisionLogic(
+    const Environment& env,
+    NetEqController::Config config,
+    std::unique_ptr<DelayManagerInterface> delay_manager)
     : DecisionLogic(config,
-                    CreateDelayManager(env, config),
+                    std::move(delay_manager),
                     std::make_unique<BufferLevelFilter>()) {}
 
 DecisionLogic::DecisionLogic(
     NetEqController::Config config,
-    std::unique_ptr<DelayManager> delay_manager,
+    std::unique_ptr<DelayManagerInterface> delay_manager,
     std::unique_ptr<BufferLevelFilter> buffer_level_filter,
     std::unique_ptr<PacketArrivalHistory> packet_arrival_history)
     : delay_manager_(std::move(delay_manager)),
@@ -197,7 +190,7 @@ std::optional<int> DecisionLogic::PacketArrived(int fs_hz,
       packet_arrival_history_->GetDelayMs(info.main_timestamp);
   bool reordered =
       !packet_arrival_history_->IsNewestRtpTimestamp(info.main_timestamp);
-  delay_manager_->Update(arrival_delay_ms, reordered);
+  delay_manager_->Update(arrival_delay_ms, reordered, info);
   return arrival_delay_ms;
 }
 
@@ -234,10 +227,10 @@ NetEq::Operation DecisionLogic::CngOperation(
     // The waiting time for this packet will be longer than 1.5
     // times the wanted buffer delay. Apply fast-forward to cut the
     // waiting time down to the optimal.
-    noise_fast_forward_ = rtc::saturated_cast<size_t>(noise_fast_forward_ +
-                                                      excess_waiting_time_samp);
+    noise_fast_forward_ =
+        saturated_cast<size_t>(noise_fast_forward_ + excess_waiting_time_samp);
     timestamp_diff =
-        rtc::saturated_cast<int32_t>(timestamp_diff + excess_waiting_time_samp);
+        saturated_cast<int32_t>(timestamp_diff + excess_waiting_time_samp);
   }
 
   if (timestamp_diff < 0 && status.last_mode == NetEq::Mode::kRfc3389Cng) {

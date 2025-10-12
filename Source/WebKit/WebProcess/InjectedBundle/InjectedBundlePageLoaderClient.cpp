@@ -185,26 +185,6 @@ void InjectedBundlePageLoaderClient::didRemoveFrameFromHierarchy(WebPage& page ,
     userData = adoptRef(toImpl(userDataToPass));
 }
 
-void InjectedBundlePageLoaderClient::didDisplayInsecureContentForFrame(WebPage& page, WebFrame& frame, RefPtr<API::Object>& userData)
-{
-    if (!m_client.didDisplayInsecureContentForFrame)
-        return;
-
-    WKTypeRef userDataToPass = nullptr;
-    m_client.didDisplayInsecureContentForFrame(toAPI(&page), toAPI(&frame), &userDataToPass, m_client.base.clientInfo);
-    userData = adoptRef(toImpl(userDataToPass));
-}
-
-void InjectedBundlePageLoaderClient::didRunInsecureContentForFrame(WebPage& page, WebFrame& frame, RefPtr<API::Object>& userData)
-{
-    if (!m_client.didRunInsecureContentForFrame)
-        return;
-
-    WKTypeRef userDataToPass = nullptr;
-    m_client.didRunInsecureContentForFrame(toAPI(&page), toAPI(&frame), &userDataToPass, m_client.base.clientInfo);
-    userData = adoptRef(toImpl(userDataToPass));
-}
-
 void InjectedBundlePageLoaderClient::didFirstLayoutForFrame(WebPage& page, WebFrame& frame, RefPtr<API::Object>& userData)
 {
     if (!m_client.didFirstLayoutForFrame)

@@ -697,6 +697,10 @@ ANGLE_TRACE_LOADER_EXPORT PFNGLMULTIDRAWELEMENTSBASEVERTEXEXTPROC
 ANGLE_TRACE_LOADER_EXPORT PFNGLDRAWARRAYSINSTANCEDEXTPROC t_glDrawArraysInstancedEXT;
 ANGLE_TRACE_LOADER_EXPORT PFNGLDRAWELEMENTSINSTANCEDEXTPROC t_glDrawElementsInstancedEXT;
 ANGLE_TRACE_LOADER_EXPORT PFNGLBUFFERSTORAGEEXTERNALEXTPROC t_glBufferStorageExternalEXT;
+ANGLE_TRACE_LOADER_EXPORT PFNGLFRAMEBUFFERSHADINGRATEEXTPROC t_glFramebufferShadingRateEXT;
+ANGLE_TRACE_LOADER_EXPORT PFNGLGETFRAGMENTSHADINGRATESEXTPROC t_glGetFragmentShadingRatesEXT;
+ANGLE_TRACE_LOADER_EXPORT PFNGLSHADINGRATECOMBINEROPSEXTPROC t_glShadingRateCombinerOpsEXT;
+ANGLE_TRACE_LOADER_EXPORT PFNGLSHADINGRATEEXTPROC t_glShadingRateEXT;
 ANGLE_TRACE_LOADER_EXPORT PFNGLFRAMEBUFFERTEXTUREEXTPROC t_glFramebufferTextureEXT;
 ANGLE_TRACE_LOADER_EXPORT PFNGLVERTEXATTRIBDIVISOREXTPROC t_glVertexAttribDivisorEXT;
 ANGLE_TRACE_LOADER_EXPORT PFNGLFLUSHMAPPEDBUFFERRANGEEXTPROC t_glFlushMappedBufferRangeEXT;
@@ -883,9 +887,9 @@ ANGLE_TRACE_LOADER_EXPORT PFNGLTEXTUREFOVEATIONPARAMETERSQCOMPROC
     t_glTextureFoveationParametersQCOM;
 ANGLE_TRACE_LOADER_EXPORT PFNGLENDTILINGQCOMPROC t_glEndTilingQCOM;
 ANGLE_TRACE_LOADER_EXPORT PFNGLSTARTTILINGQCOMPROC t_glStartTilingQCOM;
-ANGLE_TRACE_LOADER_EXPORT PFNGLBLENDEQUATIONOESPROC t_glBlendEquationOES;
 ANGLE_TRACE_LOADER_EXPORT PFNGLFRAMEBUFFERRESOLVERENDERBUFFERWEBKITPROC
     t_glFramebufferResolveRenderbufferWEBKIT;
+ANGLE_TRACE_LOADER_EXPORT PFNGLBLENDEQUATIONOESPROC t_glBlendEquationOES;
 ANGLE_TRACE_LOADER_EXPORT PFNGLDRAWTEXFOESPROC t_glDrawTexfOES;
 ANGLE_TRACE_LOADER_EXPORT PFNGLDRAWTEXFVOESPROC t_glDrawTexfvOES;
 ANGLE_TRACE_LOADER_EXPORT PFNGLDRAWTEXIOESPROC t_glDrawTexiOES;
@@ -1960,6 +1964,13 @@ void LoadTraceGLES(LoadProc loadProc)
         reinterpret_cast<PFNGLDRAWELEMENTSINSTANCEDEXTPROC>(loadProc("glDrawElementsInstancedEXT"));
     t_glBufferStorageExternalEXT =
         reinterpret_cast<PFNGLBUFFERSTORAGEEXTERNALEXTPROC>(loadProc("glBufferStorageExternalEXT"));
+    t_glFramebufferShadingRateEXT = reinterpret_cast<PFNGLFRAMEBUFFERSHADINGRATEEXTPROC>(
+        loadProc("glFramebufferShadingRateEXT"));
+    t_glGetFragmentShadingRatesEXT = reinterpret_cast<PFNGLGETFRAGMENTSHADINGRATESEXTPROC>(
+        loadProc("glGetFragmentShadingRatesEXT"));
+    t_glShadingRateCombinerOpsEXT = reinterpret_cast<PFNGLSHADINGRATECOMBINEROPSEXTPROC>(
+        loadProc("glShadingRateCombinerOpsEXT"));
+    t_glShadingRateEXT = reinterpret_cast<PFNGLSHADINGRATEEXTPROC>(loadProc("glShadingRateEXT"));
     t_glFramebufferTextureEXT =
         reinterpret_cast<PFNGLFRAMEBUFFERTEXTUREEXTPROC>(loadProc("glFramebufferTextureEXT"));
     t_glVertexAttribDivisorEXT =
@@ -2290,11 +2301,11 @@ void LoadTraceGLES(LoadProc loadProc)
         loadProc("glTextureFoveationParametersQCOM"));
     t_glEndTilingQCOM   = reinterpret_cast<PFNGLENDTILINGQCOMPROC>(loadProc("glEndTilingQCOM"));
     t_glStartTilingQCOM = reinterpret_cast<PFNGLSTARTTILINGQCOMPROC>(loadProc("glStartTilingQCOM"));
-    t_glBlendEquationOES =
-        reinterpret_cast<PFNGLBLENDEQUATIONOESPROC>(loadProc("glBlendEquationOES"));
     t_glFramebufferResolveRenderbufferWEBKIT =
         reinterpret_cast<PFNGLFRAMEBUFFERRESOLVERENDERBUFFERWEBKITPROC>(
             loadProc("glFramebufferResolveRenderbufferWEBKIT"));
+    t_glBlendEquationOES =
+        reinterpret_cast<PFNGLBLENDEQUATIONOESPROC>(loadProc("glBlendEquationOES"));
     t_glDrawTexfOES  = reinterpret_cast<PFNGLDRAWTEXFOESPROC>(loadProc("glDrawTexfOES"));
     t_glDrawTexfvOES = reinterpret_cast<PFNGLDRAWTEXFVOESPROC>(loadProc("glDrawTexfvOES"));
     t_glDrawTexiOES  = reinterpret_cast<PFNGLDRAWTEXIOESPROC>(loadProc("glDrawTexiOES"));

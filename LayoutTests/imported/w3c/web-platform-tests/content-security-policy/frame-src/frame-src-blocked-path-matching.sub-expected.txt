@@ -1,0 +1,6 @@
+
+
+PASS Cross-origin frame with allowed path loads
+PASS Cross-origin frame with other path is blocked
+PASS Cross-origin frame with other path is blocked even after replacing the already loaded URL
+

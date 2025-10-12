@@ -10,12 +10,17 @@
 
 #include <algorithm>
 #include <array>
-#include <cmath>
-#include <limits>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <utility>
 
+#include "api/array_view.h"
 #include "api/audio/audio_processing.h"
 #include "api/audio/builtin_audio_processing_builder.h"
 #include "api/environment/environment_factory.h"
+#include "api/scoped_refptr.h"
 #include "rtc_base/checks.h"
 #include "test/fuzzers/fuzz_data_helper.h"
 
@@ -80,7 +85,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   if (size > 100) {
     return;
   }
-  test::FuzzDataHelper fuzz_data(rtc::ArrayView<const uint8_t>(data, size));
+  test::FuzzDataHelper fuzz_data(webrtc::ArrayView<const uint8_t>(data, size));
 
   std::unique_ptr<CustomProcessing> capture_processor =
       fuzz_data.ReadOrDefaultValue(true)

@@ -58,7 +58,8 @@ void InitReplay(void)
     // clKernelsMapSize = 16
     // clSamplerMapSize = 0
     // clVoidMapSize = 0
-    InitializeReplayCL("CapturedTestCL_MultiFrameCL_ES3_Vulkan.angledata", 0, 512, 8, 8, 8, 8, 8, 0, 8, 16, 0, 0);
+    InitializeReplayCL2("CapturedTestCL_MultiFrameCL_ES3_Vulkan.angledata", 0, 512, 8, 8, 8, 8, 8, 0, 8, 16, 0, 0);
+    InitializeBinaryDataLoader();
 }
 
 // Public Functions
@@ -100,7 +101,7 @@ void SetupFirstFrame()
     clMemMap[0] = clCreateBuffer(clContextsMap[0], 1, 512, 0, NULL);
     clKernelsMap[0] = clCreateKernel(clProgramsMap[0], clCreateKernel_kernel_name_4, NULL);
     clSetKernelArg(clKernelsMap[0], 0, 8, (const void *)&clMemMap[0]);
-    clEnqueueWriteBuffer(clCommandQueuesMap[0], clMemMap[0], 1, 0, 512, (const GLubyte *)&gBinaryData[64], 0, NULL, NULL);
+    clEnqueueWriteBuffer(clCommandQueuesMap[0], clMemMap[0], 1, 0, 512, (const GLubyte *)GetBinaryData(64), 0, NULL, NULL);
 }
 
 void ResetReplay(void)

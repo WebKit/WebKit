@@ -28,10 +28,10 @@
 #if ENABLE(WEBGL)
 #include "EXTDisjointTimerQueryWebGL2.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "EventLoop.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptExecutionContextInlines.h"
-
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

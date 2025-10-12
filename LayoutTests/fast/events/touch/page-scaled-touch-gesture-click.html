@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
 <style type="text/css">
 #touchtarget {
   width: 100px;
@@ -10,14 +11,19 @@
 }
 </style>
 </head>
-<body onload="runTest();">
+<body>
 <div id="touchtarget">
+<div id="endTestDiv">
 
 <p id="description"></p>
 <div id="console"></div>
 
 <script>
-var clickEventsReceived = 0;
+window.jsTestIsAsync = true;
+window.addEventListener('load', async () => {
+    await runTest();
+});
+
 var expectedMouseEvents = 4;
 var mouseEventsReceived = 0;
 var eventTypes = [ 'mousemove', 'mousedown', 'mouseup', 'click' ];
@@ -46,13 +52,6 @@ function quitKeyToEndTest(event) {
     endTest();
 }
 
-// Log that we still got the touch events.
-function touchEventCallback(event) {
-    touchEventsReceived++;
-    debug('have received: ' + touchEventsReceived + ' touch events');
-    return true;
-}
-
 function endTest()
 {
     if (mouseEventsReceived < expectedMouseEvents) {
@@ -60,33 +59,25 @@ function endTest()
     }
     // Bail.
     isSuccessfullyParsed();
-    testRunner.notifyDone();
+    finishJSTest();
 }
 
 async function runTest() {
-    if (window.testRunner) {
-        await window.testRunner.setPageScaleFactor(0.5, 0, 0);
-    }
+    window.testRunner?.dumpAsText();
+    await window.testRunner?.setPageScaleFactor(0.5, 0, 0);
 
-    var div = document.getElementById('touchtarget');
-    div.addEventListener("mousedown", gestureEventCallback, false);
-    div.addEventListener("click", gestureEventCallback, false);
-    div.addEventListener("mouseup", gestureEventCallback, false);
-    div.addEventListener("mousemove", gestureEventCallback, false);
-    document.addEventListener("keydown", quitKeyToEndTest, false);
-
-    if (window.testRunner)
-        testRunner.waitUntilDone();
+    var tapTarget = document.getElementById('touchtarget');
+    tapTarget.addEventListener("mousedown", gestureEventCallback, false);
+    tapTarget.addEventListener("click", gestureEventCallback, false);
+    tapTarget.addEventListener("mouseup", gestureEventCallback, false);
+    tapTarget.addEventListener("mousemove", gestureEventCallback, false);
+    var endTarget = document.getElementById('endTestDiv');
+    endTarget.addEventListener("mousedown", () => { endTest() }, false);
 
     if (window.eventSender) {
         description("This tests basic single touch gesture generation.");
-        if (eventSender.clearTouchPoints) {
-            eventSender.gestureTap(10, 12);
-            eventSender.leapForward(10);
-            eventSender.keyDown(' ');
-        } else {
-            endTest();
-        }
+        await UIHelper.activateElement(tapTarget);
+        await UIHelper.activateElement(endTarget);
     } else {
         debug("This test requires DumpRenderTree.  Tap on the blue rect to log.")
     }

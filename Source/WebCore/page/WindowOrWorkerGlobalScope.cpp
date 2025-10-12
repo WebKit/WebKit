@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,11 @@ ExceptionOr<String> WindowOrWorkerGlobalScope::btoa(const String& stringToEncode
     if (!stringToEncode.containsOnlyLatin1())
         return Exception { ExceptionCode::InvalidCharacterError };
 
-    return base64EncodeToString(byteCast<uint8_t>(stringToEncode.latin1().span()));
+    String encodedString = base64EncodeToStringReturnNullIfOverflow(stringToEncode.latin1());
+    if (!encodedString)
+        return Exception { ExceptionCode::OutOfMemoryError };
+
+    return encodedString;
 }
 
 ExceptionOr<String> WindowOrWorkerGlobalScope::atob(const String& encodedString)
@@ -84,7 +88,7 @@ ExceptionOr<JSC::JSValue> WindowOrWorkerGlobalScope::structuredClone(JSDOMGlobal
         return disentangledPorts.releaseException();
 
     Vector<Ref<MessagePort>> entangledPorts;
-    if (auto* scriptExecutionContext = relevantGlobalObject.scriptExecutionContext())
+    if (RefPtr scriptExecutionContext = relevantGlobalObject.scriptExecutionContext())
         entangledPorts = MessagePort::entanglePorts(*scriptExecutionContext, disentangledPorts.releaseReturnValue());
 
     return messageData.returnValue()->deserialize(lexicalGlobalObject, &relevantGlobalObject, WTFMove(entangledPorts));

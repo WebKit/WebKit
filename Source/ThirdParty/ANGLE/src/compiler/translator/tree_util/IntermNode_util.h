@@ -65,15 +65,19 @@ std::pair<const TVariable *, const TVariable *> DeclareStructure(
     uint32_t arraySize,
     const ImmutableString &structTypeName,
     const ImmutableString *structInstanceName);
-const TVariable *DeclareInterfaceBlock(TIntermBlock *root,
-                                       TSymbolTable *symbolTable,
+TInterfaceBlock *DeclareInterfaceBlock(TSymbolTable *symbolTable,
                                        TFieldList *fieldList,
-                                       TQualifier qualifier,
                                        const TLayoutQualifier &layoutQualifier,
-                                       const TMemoryQualifier &memoryQualifier,
-                                       uint32_t arraySize,
-                                       const ImmutableString &blockTypeName,
-                                       const ImmutableString &blockVariableName);
+                                       const ImmutableString &blockTypeName);
+
+const TVariable *DeclareInterfaceBlockVariable(TIntermBlock *root,
+                                               TSymbolTable *symbolTable,
+                                               TQualifier qualifier,
+                                               const TInterfaceBlock *interfaceBlock,
+                                               const TLayoutQualifier &layoutQualifier,
+                                               const TMemoryQualifier &memoryQualifier,
+                                               uint32_t arraySize,
+                                               const ImmutableString &blockVariableName);
 
 // Creates a variable for a struct type.
 const TVariable &CreateStructTypeVariable(TSymbolTable &symbolTable, const TStructure &structure);
@@ -97,6 +101,12 @@ TIntermBinary &AccessField(TIntermTyped &object, const Name &field);
 // Accesses a field for the given node by its field index.
 // The node must be a struct instance.
 TIntermBinary &AccessFieldByIndex(TIntermTyped &object, int index);
+
+// Accesses `object` by index, returning a binary referencing the field of the named interface
+// block.
+// Note: nameless interface blocks' fields are represented by individual TVariables, and so this
+// helper cannot generate an access to them.
+TIntermBinary *AccessFieldOfNamedInterfaceBlock(const TVariable *object, int index);
 
 // If the input node is nullptr, return nullptr.
 // If the input node is a block node, return it.

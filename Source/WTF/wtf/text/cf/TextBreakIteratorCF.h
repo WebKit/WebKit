@@ -26,7 +26,7 @@
 namespace WTF {
 
 class TextBreakIteratorCF {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TextBreakIteratorCF);
 public:
     enum class Mode {
         ComposedCharacter,
@@ -49,7 +49,7 @@ public:
     TextBreakIteratorCF& operator=(const TextBreakIteratorCF&) = delete;
     TextBreakIteratorCF& operator=(TextBreakIteratorCF&&) = default;
 
-    void setText(StringView string, std::span<const UChar> priorContext)
+    void setText(StringView string, std::span<const char16_t> priorContext)
     {
         return switchOn(m_backing, [&](auto& iterator) {
             return iterator.setText(string, priorContext);

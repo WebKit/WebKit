@@ -27,7 +27,6 @@
 
 #include "DownloadID.h"
 #include "DownloadMap.h"
-#include "NetworkDataTask.h"
 #include "PendingDownload.h"
 #include "PolicyDecision.h"
 #include "SandboxExtension.h"
@@ -61,6 +60,7 @@ namespace WebKit {
 class AuthenticationManager;
 class Download;
 class NetworkConnectionToWebProcess;
+class NetworkDataTask;
 class NetworkLoad;
 class PendingDownload;
 
@@ -68,7 +68,7 @@ enum class CallDownloadDidStart : bool { No, Yes };
 
 class DownloadManager : public CanMakeCheckedPtr<DownloadManager> {
     WTF_MAKE_NONCOPYABLE(DownloadManager);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DownloadManager);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DownloadManager);
 public:
     class Client : public AbstractRefCounted {

@@ -20,8 +20,6 @@
 #if defined(OPENBSD)
 #include <netinet/in_systm.h>
 #endif
-#if !defined(__native_client__)
-#endif
 #endif
 
 #include "absl/strings/string_view.h"
@@ -31,7 +29,7 @@
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/strings/string_builder.h"
 
-namespace rtc {
+namespace webrtc {
 
 SocketAddress::SocketAddress() {
   Clear();
@@ -115,7 +113,7 @@ void SocketAddress::SetResolvedIP(const IPAddress& ip) {
 }
 
 void SocketAddress::SetPort(int port) {
-  port_ = rtc::dchecked_cast<uint16_t>(port);
+  port_ = dchecked_cast<uint16_t>(port);
 }
 
 uint32_t SocketAddress::ip() const {
@@ -160,14 +158,14 @@ std::string SocketAddress::PortAsString() const {
 
 std::string SocketAddress::ToString() const {
   char buf[1024];
-  rtc::SimpleStringBuilder sb(buf);
+  SimpleStringBuilder sb(buf);
   sb << HostAsURIString() << ":" << port();
   return sb.str();
 }
 
 std::string SocketAddress::ToSensitiveString() const {
   char buf[1024];
-  rtc::SimpleStringBuilder sb(buf);
+  SimpleStringBuilder sb(buf);
   sb << HostAsSensitiveURIString() << ":" << port();
   return sb.str();
 }
@@ -177,7 +175,7 @@ std::string SocketAddress::ToSensitiveNameAndAddressString() const {
     return ToSensitiveString();
   }
   char buf[1024];
-  rtc::SimpleStringBuilder sb(buf);
+  SimpleStringBuilder sb(buf);
   sb << HostAsSensitiveURIString() << ":" << port();
   sb << " (";
   if (ip_.family() == AF_INET6) {
@@ -228,6 +226,22 @@ bool SocketAddress::IsPrivateIP() const {
 
 bool SocketAddress::IsUnresolvedIP() const {
   return IPIsUnspec(ip_) && !literal_ && !hostname_.empty();
+}
+
+IPAddressType SocketAddress::GetIPAddressType() const {
+  if (IsUnresolvedIP()) {
+    return IPAddressType::kUnknown;
+  }
+  if (IsAnyIP()) {
+    return IPAddressType::kAny;
+  }
+  if (IsLoopbackIP()) {
+    return IPAddressType::kLoopback;
+  }
+  if (IsPrivateIP()) {
+    return IPAddressType::kPrivate;
+  }
+  return IPAddressType::kPublic;
 }
 
 bool SocketAddress::operator==(const SocketAddress& addr) const {
@@ -344,4 +358,4 @@ SocketAddress EmptySocketAddressWithFamily(int family) {
   return SocketAddress();
 }
 
-}  // namespace rtc
+}  // namespace webrtc

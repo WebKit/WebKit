@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSCell.h"
+#include <JavaScriptCore/JSCell.h>
 
 namespace JSC {
 
@@ -126,7 +126,7 @@ using JSResizableOrGrowableSharedBigUint64Array = JSGenericResizableOrGrowableSh
     macro(JSBigUint64Array, JSType::BigUint64ArrayType, JSType::BigUint64ArrayType) \
 
 #define FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD_FORWARD_DECLARED(macro) \
-    macro(JSImmutableButterfly, JSType::JSImmutableButterflyType, JSType::JSImmutableButterflyType) \
+    macro(JSCellButterfly, JSType::JSCellButterflyType, JSType::JSCellButterflyType) \
     macro(JSStringIterator, JSType::JSStringIteratorType, JSType::JSStringIteratorType) \
     macro(Structure, JSType::StructureType, JSType::StructureType) \
     macro(JSString, JSType::StringType, JSType::StringType) \
@@ -147,6 +147,9 @@ using JSResizableOrGrowableSharedBigUint64Array = JSGenericResizableOrGrowableSh
     macro(JSArrayBufferView, FirstTypedArrayType, LastTypedArrayType) \
     macro(JSIterator, JSType::JSIteratorType, JSType::JSIteratorType) \
     macro(JSPromise, JSType::JSPromiseType, JSType::JSPromiseType) \
+    macro(JSPromiseAllContext, JSType::JSPromiseAllContextType, JSType::JSPromiseAllContextType) \
+    macro(JSPromiseAllGlobalContext, JSType::JSPromiseAllGlobalContextType, JSType::JSPromiseAllGlobalContextType) \
+    macro(JSPromiseReaction, JSType::JSPromiseReactionType, JSType::JSPromiseReactionType) \
     macro(JSGlobalProxy, JSType::GlobalProxyType, JSType::GlobalProxyType) \
     macro(JSSet, JSType::JSSetType, JSType::JSSetType) \
     macro(JSMap, JSType::JSMapType, JSType::JSMapType) \
@@ -171,6 +174,7 @@ using JSResizableOrGrowableSharedBigUint64Array = JSGenericResizableOrGrowableSh
     macro(StringObject, JSType::StringObjectType, JSType::DerivedStringObjectType) \
     macro(ShadowRealmObject, JSType::ShadowRealmType, JSType::ShadowRealmType) \
     macro(JSDataView, JSType::DataViewType, JSType::DataViewType) \
+    macro(WebAssemblyGCObjectBase, JSType::WebAssemblyGCObjectType, JSType::WebAssemblyGCObjectType) \
 
 #define FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD(macro) \
     FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD_FORWARD_DECLARED(macro) \

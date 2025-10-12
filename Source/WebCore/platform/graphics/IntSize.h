@@ -25,21 +25,20 @@
 
 #pragma once
 
-#include "PlatformExportMacros.h"
+#include <WebCore/PlatformExportMacros.h>
 #include <algorithm>
+#include <cmath>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 
 #if USE(CG)
 typedef struct CGSize CGSize;
 #endif
 
 #if PLATFORM(MAC)
-#ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGSize NSSize;
-#else
-typedef struct _NSSize NSSize;
-#endif
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -170,11 +169,6 @@ public:
 #if USE(CG)
     WEBCORE_EXPORT explicit IntSize(const CGSize&); // don't do this implicitly since it's lossy
     WEBCORE_EXPORT operator CGSize() const;
-#endif
-
-#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
-    WEBCORE_EXPORT explicit IntSize(const NSSize &); // don't do this implicitly since it's lossy
-    WEBCORE_EXPORT operator NSSize() const;
 #endif
 
 #if PLATFORM(WIN)

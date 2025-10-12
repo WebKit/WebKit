@@ -29,7 +29,6 @@
 #if HAVE(REDESIGNED_TEXT_CURSOR)
 
 #include "FloatRoundedRect.h"
-#include "FrameInlines.h"
 #include "GraphicsContext.h"
 #include "VisibleSelection.h"
 #include <wtf/TZoneMallocInlines.h>

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DisplayListItems.h"
+#include <WebCore/DisplayListItems.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -56,10 +56,16 @@ public:
     WEBCORE_EXPORT String asText(OptionSet<AsTextFlag>) const;
     void dump(WTF::TextStream&) const;
 
+    void addObserver(WeakRef<RenderingResourceObserver>&& observer) const
+    {
+        m_observers.add(WTFMove(observer));
+    }
+
 private:
     WEBCORE_EXPORT DisplayList(Vector<Item>&& items);
 
     Vector<Item> m_items;
+    mutable WeakHashSet<RenderingResourceObserver> m_observers;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const DisplayList&);

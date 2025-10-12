@@ -10,7 +10,8 @@
 #ifndef TEST_FRAME_UTILS_H_
 #define TEST_FRAME_UTILS_H_
 
-#include <stdint.h>
+#include <cstdint>
+#include <cstdio>
 
 #include "api/scoped_refptr.h"
 #include "api/video/nv12_buffer.h"
@@ -38,12 +39,12 @@ static inline bool EqualPlane(const uint8_t* data1,
 
 bool FramesEqual(const webrtc::VideoFrame& f1, const webrtc::VideoFrame& f2);
 
-bool FrameBufsEqual(const rtc::scoped_refptr<webrtc::VideoFrameBuffer>& f1,
-                    const rtc::scoped_refptr<webrtc::VideoFrameBuffer>& f2);
+bool FrameBufsEqual(const scoped_refptr<webrtc::VideoFrameBuffer>& f1,
+                    const scoped_refptr<webrtc::VideoFrameBuffer>& f2);
 
-rtc::scoped_refptr<I420Buffer> ReadI420Buffer(int width, int height, FILE*);
+scoped_refptr<I420Buffer> ReadI420Buffer(int width, int height, FILE*);
 
-rtc::scoped_refptr<NV12Buffer> ReadNV12Buffer(int width, int height, FILE*);
+scoped_refptr<NV12Buffer> ReadNV12Buffer(int width, int height, FILE*);
 
 }  // namespace test
 }  // namespace webrtc

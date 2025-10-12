@@ -50,6 +50,21 @@ messages -> WebExtensionContext {
     [Validator=isAlarmsMessageAllowed] AlarmsGetAll() -> (Vector<WebKit::WebExtensionAlarmParameters> alarms)
     [Validator=isAlarmsMessageAllowed] AlarmsClearAll() -> ()
 
+    #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
+    // Bookmarks APIs
+    [Validator=isBookmarksMessageAllowed] BookmarksCreate(std::optional<String> parentId, std::optional<uint64_t> index, std::optional<String> url, std::optional<String> title) -> (Expected<WebKit::WebExtensionBookmarksParameters, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksGetTree() -> (Expected<Vector<WebKit::WebExtensionBookmarksParameters>, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksGetSubTree(String bookmarkId) -> (Expected<Vector<WebKit::WebExtensionBookmarksParameters>, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksGet(Vector<String> bookmarkId) -> (Expected<Vector<WebKit::WebExtensionBookmarksParameters>, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksGetChildren(String bookmarkId) -> (Expected<Vector<WebKit::WebExtensionBookmarksParameters>, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksGetRecent(uint64_t count) -> (Expected<Vector<WebKit::WebExtensionBookmarksParameters>, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksSearch(std::optional<String> query, std::optional<String> url, std::optional<String> title) -> (Expected<Vector<WebKit::WebExtensionBookmarksParameters>, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksUpdate(String bookmarkId,std::optional<String> url, std::optional<String> title) -> (Expected<WebKit::WebExtensionBookmarksParameters, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksMove(String bookmarkId, std::optional<String> parentId, std::optional<uint64_t> index) -> (Expected<WebKit::WebExtensionBookmarksParameters, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksRemove(String bookmarkId) -> (Expected<void, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksRemoveTree(String bookmarkId) -> (Expected<void, WebKit::WebExtensionError> result)
+#endif // ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
+
     // Commands APIs
     [Validator=isCommandsMessageAllowed] CommandsGetAll() -> (Vector<WebKit::WebExtensionCommandParameters> commands)
 
@@ -80,7 +95,7 @@ messages -> WebExtensionContext {
 
     // Event APIs
     [Validator=isLoaded] AddListener(WebCore::FrameIdentifier frameIdentifier, WebKit::WebExtensionEventListenerType listenerType, WebKit::WebExtensionContentWorldType contentWorldType)
-    [Validator=isLoaded] RemoveListener(WebCore::FrameIdentifier frameIdentifier, WebKit::WebExtensionEventListenerType listenerType, WebKit::WebExtensionContentWorldType contentWorldType, size_t removedCount)
+    [Validator=isLoaded] RemoveListener(WebCore::FrameIdentifier frameIdentifier, WebKit::WebExtensionEventListenerType listenerType, WebKit::WebExtensionContentWorldType contentWorldType, uint64_t removedCount)
 
     // Extensions APIs
     [Validator=isLoaded] ExtensionIsAllowedIncognitoAccess() -> (bool result)
@@ -139,45 +154,45 @@ messages -> WebExtensionContext {
     // Storage APIs
     [Validator=isStorageMessageAllowed] StorageGet(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, Vector<String> keys) -> (Expected<String, WebKit::WebExtensionError> result)
     [Validator=isStorageMessageAllowed] StorageGetKeys(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType) -> (Expected<Vector<String>, WebKit::WebExtensionError> result)
-    [Validator=isStorageMessageAllowed] StorageGetBytesInUse(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, Vector<String> keys) -> (Expected<size_t, WebKit::WebExtensionError> result)
+    [Validator=isStorageMessageAllowed] StorageGetBytesInUse(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, Vector<String> keys) -> (Expected<uint64_t, WebKit::WebExtensionError> result)
     [Validator=isStorageMessageAllowed] StorageSet(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, String dataJSON) -> (Expected<void, WebKit::WebExtensionError> result)
     [Validator=isStorageMessageAllowed] StorageRemove(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, Vector<String> keys) -> (Expected<void, WebKit::WebExtensionError> result)
     [Validator=isStorageMessageAllowed] StorageClear(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType) -> (Expected<void, WebKit::WebExtensionError> result)
     [Validator=isStorageMessageAllowed] StorageSetAccessLevel(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, WebKit::WebExtensionStorageAccessLevel accessLevel) -> (Expected<void, WebKit::WebExtensionError> result)
 
     // Tabs APIs
-    [Validator=isLoaded] TabsCreate(std::optional<WebKit::WebPageProxyIdentifier> webPageProxyIdentifier, WebKit::WebExtensionTabParameters creationParameters) -> (Expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsUpdate(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionTabParameters updateParameters) -> (Expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsDuplicate(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionTabParameters creationParameters) -> (Expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsGet(WebKit::WebExtensionTabIdentifier tabIdentifier) -> (Expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsGetCurrent(WebKit::WebPageProxyIdentifier webPageProxyIdentifier) -> (Expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsQuery(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionTabQueryParameters queryParameters) -> (Expected<Vector<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsReload(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, enum:bool WebKit::ReloadFromOrigin reloadFromOrigin) -> (Expected<void, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsGoBack(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (Expected<void, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsGoForward(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (Expected<void, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsDetectLanguage(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (Expected<String, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsToggleReaderMode(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (Expected<void, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsCaptureVisibleTab(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, enum:uint8_t WebKit::WebExtensionTabImageFormat imageFormat, uint8_t imageQuality) -> (Expected<URL, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsSendMessage(WebKit::WebExtensionTabIdentifier tabIdentifier, String messageJSON, struct WebKit::WebExtensionMessageTargetParameters targetParameters, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (Expected<String, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsConnect(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct WebKit::WebExtensionMessageTargetParameters targetParameters, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (Expected<void, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsGetZoom(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (Expected<double, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsSetZoom(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, double zoomFactor) -> (Expected<void, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsRemove(Vector<WebKit::WebExtensionTabIdentifier> tabIdentifiers) -> (Expected<void, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsExecuteScript(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionScriptInjectionParameters parameters) -> (Expected<Vector<WebKit::WebExtensionScriptInjectionResultParameters>, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsInsertCSS(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionScriptInjectionParameters parameters) -> (Expected<void, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] TabsRemoveCSS(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionScriptInjectionParameters parameters) -> (Expected<void, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsCreate(std::optional<WebKit::WebPageProxyIdentifier> webPageProxyIdentifier, WebKit::WebExtensionTabParameters creationParameters) -> (Expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsUpdate(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionTabParameters updateParameters) -> (Expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsDuplicate(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionTabParameters creationParameters) -> (Expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsGet(WebKit::WebExtensionTabIdentifier tabIdentifier) -> (Expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsGetCurrent(WebKit::WebPageProxyIdentifier webPageProxyIdentifier) -> (Expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsQuery(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionTabQueryParameters queryParameters) -> (Expected<Vector<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsReload(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, enum:bool WebKit::ReloadFromOrigin reloadFromOrigin) -> (Expected<void, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsGoBack(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (Expected<void, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsGoForward(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (Expected<void, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsDetectLanguage(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (Expected<String, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsToggleReaderMode(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (Expected<void, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsCaptureVisibleTab(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, enum:uint8_t WebKit::WebExtensionTabImageFormat imageFormat, uint8_t imageQuality) -> (Expected<URL, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsSendMessage(WebKit::WebExtensionTabIdentifier tabIdentifier, String messageJSON, struct WebKit::WebExtensionMessageTargetParameters targetParameters, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (Expected<String, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsConnect(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct WebKit::WebExtensionMessageTargetParameters targetParameters, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (Expected<void, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsGetZoom(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (Expected<double, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsSetZoom(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, double zoomFactor) -> (Expected<void, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsRemove(Vector<WebKit::WebExtensionTabIdentifier> tabIdentifiers) -> (Expected<void, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsExecuteScript(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionScriptInjectionParameters parameters) -> (Expected<Vector<WebKit::WebExtensionScriptInjectionResultParameters>, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsInsertCSS(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionScriptInjectionParameters parameters) -> (Expected<void, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsRemoveCSS(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionScriptInjectionParameters parameters) -> (Expected<void, WebKit::WebExtensionError> result)
 
     // WebNavigation APIs
     [Validator=isWebNavigationMessageAllowed] WebNavigationGetAllFrames(WebKit::WebExtensionTabIdentifier tabIdentifier) -> (Expected<Vector<WebKit::WebExtensionFrameParameters>, WebKit::WebExtensionError> result)
     [Validator=isWebNavigationMessageAllowed] WebNavigationGetFrame(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionFrameIdentifier frameIdentifier) -> (Expected<std::optional<WebKit::WebExtensionFrameParameters>, WebKit::WebExtensionError> result)
 
     // Windows APIs
-    [Validator=isLoaded] WindowsCreate(WebKit::WebExtensionWindowParameters creationParameters) -> (Expected<std::optional<WebKit::WebExtensionWindowParameters>, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] WindowsGet(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, OptionSet<WebKit::WebExtensionWindowTypeFilter> filter, WebKit::WebExtensionWindow::PopulateTabs populate) -> (Expected<WebKit::WebExtensionWindowParameters, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] WindowsGetLastFocused(OptionSet<WebKit::WebExtensionWindowTypeFilter> filter, WebKit::WebExtensionWindow::PopulateTabs populate) -> (Expected<WebKit::WebExtensionWindowParameters, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] WindowsGetAll(OptionSet<WebKit::WebExtensionWindowTypeFilter> filter, WebKit::WebExtensionWindow::PopulateTabs populate) -> (Expected<Vector<WebKit::WebExtensionWindowParameters>, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] WindowsUpdate(WebKit::WebExtensionWindowIdentifier windowIdentifier, WebKit::WebExtensionWindowParameters updateParameters) -> (Expected<WebKit::WebExtensionWindowParameters, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] WindowsRemove(WebKit::WebExtensionWindowIdentifier windowIdentifier) -> (Expected<void, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] WindowsCreate(WebKit::WebExtensionWindowParameters creationParameters) -> (Expected<std::optional<WebKit::WebExtensionWindowParameters>, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] WindowsGet(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, OptionSet<WebKit::WebExtensionWindowTypeFilter> filter, WebKit::WebExtensionWindow::PopulateTabs populate) -> (Expected<WebKit::WebExtensionWindowParameters, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] WindowsGetLastFocused(OptionSet<WebKit::WebExtensionWindowTypeFilter> filter, WebKit::WebExtensionWindow::PopulateTabs populate) -> (Expected<WebKit::WebExtensionWindowParameters, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] WindowsGetAll(OptionSet<WebKit::WebExtensionWindowTypeFilter> filter, WebKit::WebExtensionWindow::PopulateTabs populate) -> (Expected<Vector<WebKit::WebExtensionWindowParameters>, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] WindowsUpdate(WebKit::WebExtensionWindowIdentifier windowIdentifier, WebKit::WebExtensionWindowParameters updateParameters) -> (Expected<WebKit::WebExtensionWindowParameters, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] WindowsRemove(WebKit::WebExtensionWindowIdentifier windowIdentifier) -> (Expected<void, WebKit::WebExtensionError> result)
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

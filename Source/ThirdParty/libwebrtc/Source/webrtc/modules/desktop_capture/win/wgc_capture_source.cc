@@ -14,8 +14,11 @@
 #include <windows.graphics.capture.interop.h>
 #include <windows.h>
 
+#include <memory>
 #include <utility>
 
+#include "modules/desktop_capture/desktop_capturer.h"
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/win/screen_capture_utils.h"
 #include "modules/desktop_capture/win/window_capture_utils.h"
 #include "rtc_base/win/get_activation_factory.h"

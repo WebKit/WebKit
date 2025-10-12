@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Service Worker context closed
-CONSOLE MESSAGE: Cannot load .
 
 
 PASS Setup worker

@@ -200,7 +200,7 @@ static void invalidateGStateCallback(WKViewRef view)
     ASSERT(_viewRef);
     if (_viewRef->isa.classInfo == &WKViewClassInfo)
         return adoptNS([[WAKView alloc] _initWithViewRef:_viewRef]).autorelease();
-    WKError ("unable to create wrapper for %s\n", _viewRef->isa.classInfo->name);
+    WTFLogAlways("_wrapperForViewRef: unable to create wrapper for %s\n", _viewRef->isa.classInfo->name);
     return nil;
 }
 
@@ -510,7 +510,7 @@ static void _WAKCopyWrapper(const void *value, void *context)
 {
     CGContextRef context = WKGetCurrentGraphicsContext();
     if (!context) {
-        WKError ("unable to get context for view");
+        WTFLogAlways("displayRect: unable to get context for view");
         return;
     }
 
@@ -525,7 +525,7 @@ static void _WAKCopyWrapper(const void *value, void *context)
 - (void)displayRectIgnoringOpacity:(NSRect)rect inContext:(CGContextRef)context
 {
     if (!context) {
-        WKError ("invalid parameter: context must not be NULL");
+        WTFLogAlways("displayRectIgnoringOpacity: invalid parameter: context must not be NULL");
         return;
     }
 

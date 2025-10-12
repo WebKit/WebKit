@@ -29,7 +29,6 @@
     EnabledBySetting=WebXREnabled,
     SecureContext,
     Exposed=Window,
-    CustomToJSObject,
     JSGenerateToNativeObject,
     SkipVTableValidation,
     InterfaceName=XRReferenceSpace

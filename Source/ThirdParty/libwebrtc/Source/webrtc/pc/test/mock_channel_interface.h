@@ -11,21 +11,28 @@
 #ifndef PC_TEST_MOCK_CHANNEL_INTERFACE_H_
 #define PC_TEST_MOCK_CHANNEL_INTERFACE_H_
 
+#include <functional>
 #include <string>
 #include <vector>
 
+#include "absl/strings/string_view.h"
+#include "api/jsep.h"
+#include "api/media_types.h"
 #include "media/base/media_channel.h"
+#include "media/base/stream_params.h"
 #include "pc/channel_interface.h"
+#include "pc/rtp_transport_internal.h"
+#include "pc/session_description.h"
 #include "test/gmock.h"
 
-namespace cricket {
+namespace webrtc {
 
 // Mock class for BaseChannel.
-// Use this class in unit tests to avoid dependecy on a specific
+// Use this class in unit tests to avoid dependency on a specific
 // implementation of BaseChannel.
-class MockChannelInterface : public cricket::ChannelInterface {
+class MockChannelInterface : public ChannelInterface {
  public:
-  MOCK_METHOD(cricket::MediaType, media_type, (), (const, override));
+  MOCK_METHOD(MediaType, media_type, (), (const, override));
   MOCK_METHOD(VideoChannel*, AsVideoChannel, (), (override));
   MOCK_METHOD(VoiceChannel*, AsVoiceChannel, (), (override));
   MOCK_METHOD(MediaSendChannelInterface*, media_send_channel, (), (override));
@@ -62,15 +69,11 @@ class MockChannelInterface : public cricket::ChannelInterface {
               (override));
   MOCK_METHOD(bool,
               SetLocalContent,
-              (const cricket::MediaContentDescription*,
-               webrtc::SdpType,
-               std::string&),
+              (const webrtc::MediaContentDescription*, SdpType, std::string&),
               (override));
   MOCK_METHOD(bool,
               SetRemoteContent,
-              (const cricket::MediaContentDescription*,
-               webrtc::SdpType,
-               std::string&),
+              (const webrtc::MediaContentDescription*, SdpType, std::string&),
               (override));
   MOCK_METHOD(bool, SetPayloadTypeDemuxingEnabled, (bool), (override));
   MOCK_METHOD(const std::vector<StreamParams>&,
@@ -81,12 +84,10 @@ class MockChannelInterface : public cricket::ChannelInterface {
               remote_streams,
               (),
               (const, override));
-  MOCK_METHOD(bool,
-              SetRtpTransport,
-              (webrtc::RtpTransportInternal*),
-              (override));
+  MOCK_METHOD(bool, SetRtpTransport, (RtpTransportInternal*), (override));
 };
 
-}  // namespace cricket
+}  //  namespace webrtc
+
 
 #endif  // PC_TEST_MOCK_CHANNEL_INTERFACE_H_

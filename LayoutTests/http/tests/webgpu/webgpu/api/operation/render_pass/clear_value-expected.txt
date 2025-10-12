@@ -1,8 +1,5 @@
 
-PASS :stored:
 PASS :loaded:
-PASS :srgb:
-PASS :layout:
 PASS :stencil_clear_value:stencilFormat="stencil8";stencilClearValue=0;applyStencilClearValueAsStencilReferenceValue=true
 PASS :stencil_clear_value:stencilFormat="stencil8";stencilClearValue=0;applyStencilClearValueAsStencilReferenceValue=false
 PASS :stencil_clear_value:stencilFormat="stencil8";stencilClearValue=1;applyStencilClearValueAsStencilReferenceValue=true

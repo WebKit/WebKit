@@ -40,7 +40,7 @@
                 (GraphicsLayer
                   (scrollOffset (0,900))
                   (anchor 0.00 0.00)
-                  (bounds 625.00 3240.00)
+                  (bounds 585.00 3240.00)
                   (preserves3D 1)
                   (visible rect 0.00, 900.00 585.00 x 500.00)
                   (coverage rect 0.00, 900.00 585.00 x 500.00)

@@ -1,0 +1,73 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "globals": [
+    {"access": "public", "introduced": "18.4", "kind": "function", "linkage": "exported", "name": "_be_kevent"},
+    {"access": "public", "introduced": "18.4", "kind": "function", "linkage": "exported", "name": "_be_kevent64"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "internal", "name": "_be_memory_inline_jit_restrict_rwx_to_rw_with_witness"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "exported", "name": "_be_memory_inline_jit_restrict_rwx_to_rw_with_witness_impl"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "internal", "name": "_be_memory_inline_jit_restrict_rwx_to_rx_with_witness"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "exported", "name": "_be_memory_inline_jit_restrict_rwx_to_rx_with_witness_impl"},
+    {"access": "public", "introduced": "17.4", "kind": "function", "linkage": "exported", "name": "_be_memory_inline_jit_restrict_with_witness_supported"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithAudioSession:"},
+      {"access": "public", "name": "setPreferredOutput:error:"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "BEAudioSession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableOutputs", "name": "availableOutputs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "preferredOutput", "name": "preferredOutput"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e-apple-ios26"
+  },
+  {
+   "globals": [
+    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC05audioE0ACSo07AVAudioE0C_tcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC05audioE0ACSo07AVAudioE0C_tcfCTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC05audioE0ACSo07AVAudioE0C_tcfCTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC05audioE0ACSo07AVAudioE0C_tcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC15preferredOutputSo07AVAudioE15PortDescriptionCSgvgTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC15preferredOutputSo07AVAudioE15PortDescriptionCSgvgTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC15preferredOutputSo07AVAudioE15PortDescriptionCSgvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC16availableOutputsSaySo07AVAudioE15PortDescriptionCGvgTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC16availableOutputsSaySo07AVAudioE15PortDescriptionCGvgTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC16availableOutputsSaySo07AVAudioE15PortDescriptionCGvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC18setPreferredOutputyySo07AVAudioE15PortDescriptionCSgKFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC18setPreferredOutputyySo07AVAudioE15PortDescriptionCSgKFTq"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionCMa"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionCMn"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionCMo"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionCMu"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionCN"},
+    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionCfD"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithAudioSession:"},
+      {"access": "public", "name": "availableOutputs"},
+      {"access": "public", "name": "setPreferredOutput:error:"},
+      {"access": "public", "name": "preferredOutput"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "BEAudioSession",
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e-apple-ios26.0"
+  }
+ ],
+ "version": "1.0"
+}

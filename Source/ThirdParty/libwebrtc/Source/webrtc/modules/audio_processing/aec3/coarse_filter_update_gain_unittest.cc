@@ -11,16 +11,25 @@
 #include "modules/audio_processing/aec3/coarse_filter_update_gain.h"
 
 #include <algorithm>
+#include <array>
+#include <cstddef>
 #include <memory>
 #include <numeric>
 #include <string>
 #include <vector>
 
+#include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/adaptive_fir_filter.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/aec3_fft.h"
 #include "modules/audio_processing/aec3/aec_state.h"
+#include "modules/audio_processing/aec3/block.h"
+#include "modules/audio_processing/aec3/fft_buffer.h"
+#include "modules/audio_processing/aec3/fft_data.h"
 #include "modules/audio_processing/aec3/render_delay_buffer.h"
+#include "modules/audio_processing/aec3/render_signal_analyzer.h"
 #include "modules/audio_processing/test/echo_canceller_test_tools.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/random.h"
 #include "rtc_base/strings/string_builder.h"
@@ -100,7 +109,7 @@ void RunFilterUpdateTest(int num_blocks_to_process,
                    e_coarse.begin(),
                    [&](float a, float b) { return a - b * kScale; });
     std::for_each(e_coarse.begin(), e_coarse.end(),
-                  [](float& a) { a = rtc::SafeClamp(a, -32768.f, 32767.f); });
+                  [](float& a) { a = SafeClamp(a, -32768.f, 32767.f); });
     fft.ZeroPaddedFft(e_coarse, Aec3Fft::Window::kRectangular, &E_coarse);
 
     std::array<float, kFftLengthBy2Plus1> render_power;
@@ -118,13 +127,13 @@ void RunFilterUpdateTest(int num_blocks_to_process,
 }
 
 std::string ProduceDebugText(int filter_length_blocks) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Length: " << filter_length_blocks;
   return ss.Release();
 }
 
 std::string ProduceDebugText(size_t delay, int filter_length_blocks) {
-  rtc::StringBuilder ss;
+  StringBuilder ss;
   ss << "Delay: " << delay << ", ";
   ss << ProduceDebugText(filter_length_blocks);
   return ss.Release();
@@ -226,7 +235,7 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Values(1, 2, 4),
     [](const ::testing::TestParamInfo<
         CoarseFilterUpdateGainOneTwoFourRenderChannels::ParamType>& info) {
-      return (rtc::StringBuilder() << "Render" << info.param).str();
+      return (StringBuilder() << "Render" << info.param).str();
     });
 
 // Verifies that the magnitude of the gain on average decreases for a

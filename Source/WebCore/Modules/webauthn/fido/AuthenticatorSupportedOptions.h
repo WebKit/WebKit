@@ -31,7 +31,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "CBORValue.h"
+#include <WebCore/CBORValue.h>
 #include <wtf/Forward.h>
 
 namespace fido {

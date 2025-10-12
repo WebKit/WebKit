@@ -10,6 +10,11 @@
 
 #include "modules/desktop_capture/win/scoped_thread_desktop.h"
 
+#include <windows.h>
+
+#include <cstddef>
+#include <memory>
+
 #include "modules/desktop_capture/win/desktop.h"
 
 namespace webrtc {

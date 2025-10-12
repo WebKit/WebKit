@@ -23,6 +23,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/chrome-bug-1429955-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/chrome-bug-1505250-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/chrome-bug-346264227-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/chrome-bug-372358471-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/chrome-bug-385317081-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/chrome-bug-439886903-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/chrome-custom-highlight-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/chrome-layout-root-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/chrome-quotes-crash.html
@@ -58,6 +61,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/reversed-ol-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/size-change-during-transition-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/svg-layout-root-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/svg-resource-in-container-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/svg-text-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/table-in-columns-000-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/table-in-columns-001-crash.html

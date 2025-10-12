@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reseved.
+ *  Copyright (C) 2003-2025 Apple Inc. All rights reseved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -60,7 +60,7 @@ private:
     void execute(Document&);
     void execute(WorkerGlobalScope&);
 
-    Ref<DOMWrapperWorld> m_isolatedWorld;
+    const Ref<DOMWrapperWorld> m_isolatedWorld;
     JSC::Strong<JSC::JSObject> m_function;
     FixedVector<JSC::Strong<JSC::Unknown>> m_arguments;
     String m_code;

@@ -27,14 +27,14 @@
 
 #if ENABLE(SAMPLING_PROFILER)
 
-#include "CallFrame.h"
-#include "CodeBlockHash.h"
-#include "JITCode.h"
-#include "MachineStackMarker.h"
-#include "NativeCallee.h"
-#include "PCToCodeOriginMap.h"
-#include "WasmCompilationMode.h"
-#include "WasmIndexOrName.h"
+#include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/CodeBlockHash.h>
+#include <JavaScriptCore/JITCode.h>
+#include <JavaScriptCore/MachineStackMarker.h>
+#include <JavaScriptCore/NativeCallee.h>
+#include <JavaScriptCore/PCToCodeOriginMap.h>
+#include <JavaScriptCore/WasmCompilationMode.h>
+#include <JavaScriptCore/WasmIndexOrName.h>
 #include <wtf/Box.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>

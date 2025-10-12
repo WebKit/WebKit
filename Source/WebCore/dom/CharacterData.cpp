@@ -26,7 +26,9 @@
 #include "ChildChangeInvalidation.h"
 #include "ElementTraversal.h"
 #include "EventNames.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameSelection.h"
+#include "LocalFrameInlines.h"
 #include "HTMLStyleElement.h"
 #include "InspectorInstrumentation.h"
 #include "MutationEvent.h"
@@ -85,8 +87,8 @@ static ContainerNode::ChildChange makeChildChange(CharacterData& characterData, 
     return {
         ContainerNode::ChildChange::Type::TextChanged,
         nullptr,
-        RefPtr { ElementTraversal::previousSibling(characterData) }.get(),
-        RefPtr { ElementTraversal::nextSibling(characterData) }.get(),
+        RefPtr { ElementTraversal::previousSibling(characterData) }.unsafeGet(),
+        RefPtr { ElementTraversal::nextSibling(characterData) }.unsafeGet(),
         source,
         ContainerNode::ChildChange::AffectsElements::No
     };

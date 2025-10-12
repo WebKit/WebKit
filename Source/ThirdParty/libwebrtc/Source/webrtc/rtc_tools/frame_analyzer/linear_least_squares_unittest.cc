@@ -10,7 +10,7 @@
 
 #include "rtc_tools/frame_analyzer/linear_least_squares.h"
 
-#include <cstdint>
+#include <vector>
 
 #include "test/gtest.h"
 

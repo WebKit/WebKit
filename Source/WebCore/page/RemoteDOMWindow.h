@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "DOMWindow.h"
-#include "RemoteFrame.h"
-#include "WindowPostMessageOptions.h"
 #include <JavaScriptCore/Strong.h>
+#include <WebCore/DOMWindow.h>
+#include <WebCore/RemoteFrame.h>
+#include <WebCore/WindowPostMessageOptions.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 

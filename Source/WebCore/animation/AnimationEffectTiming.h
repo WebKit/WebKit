@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "AnimationEffectPhase.h"
-#include "BasicEffectTiming.h"
-#include "FillMode.h"
-#include "PlaybackDirection.h"
-#include "TimingFunction.h"
-#include "WebAnimationTypes.h"
+#include <WebCore/AnimationEffectPhase.h>
+#include <WebCore/BasicEffectTiming.h>
+#include <WebCore/FillMode.h>
+#include <WebCore/PlaybackDirection.h>
+#include <WebCore/TimingFunction.h>
+#include <WebCore/WebAnimationTypes.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Seconds.h>
 
@@ -39,10 +39,10 @@ namespace WebCore {
 class WebAnimation;
 
 struct ResolvedEffectTiming {
-    MarkableDouble currentIteration;
+    Markable<double> currentIteration;
     AnimationEffectPhase phase { AnimationEffectPhase::Idle };
-    MarkableDouble transformedProgress;
-    MarkableDouble simpleIterationProgress;
+    Markable<double> transformedProgress;
+    Markable<double> simpleIterationProgress;
     TimingFunction::Before before;
 };
 
@@ -67,6 +67,7 @@ struct AnimationEffectTiming {
         std::optional<WebAnimationTime> timelineDuration;
         std::optional<WebAnimationTime> startTime;
         std::optional<WebAnimationTime> localTime;
+        EndpointInclusiveActiveInterval endpointInclusiveActiveInterval { EndpointInclusiveActiveInterval::No };
         double playbackRate { 0 };
     };
 

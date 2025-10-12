@@ -28,6 +28,34 @@ function startCapture()
     });
 }
 
+function startAudioCapture()
+{
+    navigator.mediaDevices.getUserMedia({ audio:true }).then(stream => {
+        window.actionState = "";
+        video.srcObject = stream;
+
+        if (window.webkit)
+            window.webkit.messageHandlers.gum.postMessage("PASS");
+    }, (e) => {
+        if (window.webkit)
+            window.webkit.messageHandlers.gum.postMessage("FAIL: "  + e);
+    });
+}
+
+function startVideoCapture()
+{
+    navigator.mediaDevices.getUserMedia({ video:true }).then(stream => {
+        window.actionState = "";
+        video.srcObject = stream;
+
+        if (window.webkit)
+            window.webkit.messageHandlers.gum.postMessage("PASS");
+    }, (e) => {
+        if (window.webkit)
+            window.webkit.messageHandlers.gum.postMessage("FAIL: "  + e);
+    });
+}
+
 function startScreenshareCapture()
 {
     if (!window.internals) {

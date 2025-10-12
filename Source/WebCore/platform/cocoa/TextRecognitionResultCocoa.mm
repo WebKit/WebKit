@@ -56,7 +56,7 @@ RetainPtr<VKCImageAnalysis> TextRecognitionResult::decodeVKCImageAnalysis(Retain
     // be reached from outside the web content process to prevent sandbox escapes.
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isInWebProcess());
 
-    return [NSKeyedUnarchiver unarchivedObjectOfClass:PAL::getVKCImageAnalysisClass() fromData:data.get() error:nil];
+    return [NSKeyedUnarchiver unarchivedObjectOfClass:PAL::getVKCImageAnalysisClassSingleton() fromData:data.get() error:nil];
 }
 
 RetainPtr<NSAttributedString> stringForRange(const TextRecognitionResult& result, const CharacterRange& range)

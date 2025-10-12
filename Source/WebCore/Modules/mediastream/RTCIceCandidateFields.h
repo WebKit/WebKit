@@ -24,10 +24,10 @@
 
 #pragma once
 
-#include "RTCIceCandidateType.h"
-#include "RTCIceComponent.h"
-#include "RTCIceProtocol.h"
-#include "RTCIceTcpCandidateType.h"
+#include <WebCore/RTCIceCandidateType.h>
+#include <WebCore/RTCIceComponent.h>
+#include <WebCore/RTCIceProtocol.h>
+#include <WebCore/RTCIceTcpCandidateType.h>
 #include <optional>
 #include <wtf/text/WTFString.h>
 

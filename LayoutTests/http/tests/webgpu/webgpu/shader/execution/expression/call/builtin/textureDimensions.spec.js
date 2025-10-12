@@ -18,14 +18,18 @@ import {
   kDepthTextureFormats,
   kPossibleStorageTextureFormats,
   sampleTypeForFormatAndAspect,
-  textureDimensionAndFormatCompatible } from
+  textureFormatAndDimensionPossiblyCompatible } from
 '../../../../../format_info.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../../../gpu_test.js';
 import { align } from '../../../../../util/math.js';
 import { kShaderStages } from '../../../../validation/decl/util.js';
 
-import { WGSLTextureQueryTest } from './texture_utils.js';
+import {
+  executeTextureQueryAndExpectResult,
+  skipIfNoStorageTexturesInStage } from
+'./texture_utils.js';
 
-export const g = makeTestGroup(WGSLTextureQueryTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 /// The maximum number of texture mipmap levels to test.
 /// Keep this small to reduce memory and test permutations.
@@ -122,7 +126,10 @@ function viewDimensions(params)
   }
 
   return kAllViewDimensions.filter((dim) =>
-  textureDimensionAndFormatCompatible(textureDimensionsForViewDimensions(dim), params.format)
+  textureFormatAndDimensionPossiblyCompatible(
+    textureDimensionsForViewDimensions(dim),
+    params.format
+  )
   );
 }
 
@@ -243,7 +250,7 @@ fn getValue() -> ${outputType} {
   };
 }
 `;
-  t.executeAndExpectResult(stage, wgsl, texture, viewDescriptor, values.expected);
+  executeTextureQueryAndExpectResult(t, stage, wgsl, texture, viewDescriptor, values.expected);
 }
 
 /** @returns true if the GPUTextureViewDimension is valid for a storage texture */
@@ -301,6 +308,10 @@ expand('textureDimensionsLevel', textureDimensionsLevel)
 fn((t) => {
   t.skipIfTextureFormatNotSupported(t.params.format);
   t.skipIfTextureViewDimensionNotSupported(t.params.dimensions);
+  t.skipIfTextureFormatAndDimensionNotCompatible(
+    t.params.format,
+    textureDimensionsForViewDimensions(t.params.dimensions)
+  );
   if (t.params.samples > 1) {
     t.skipIfTextureFormatNotMultisampled(t.params.format);
   }
@@ -472,9 +483,9 @@ expand('textureMipCount', textureMipCount).
 expand('baseMipLevel', baseMipLevel)
 ).
 fn((t) => {
-  t.skipIfNoStorageTexturesInStage(t.params.stage);
+  skipIfNoStorageTexturesInStage(t, t.params.stage);
   t.skipIfTextureFormatNotSupported(t.params.format);
-  t.skipIfTextureFormatNotUsableAsStorageTexture(t.params.format);
+  t.skipIfTextureFormatNotUsableWithStorageAccessMode(t.params.access, t.params.format);
 
   const values = testValues(t.params);
   const texture = t.createTextureTracked({
@@ -513,19 +524,40 @@ params((u) =>
 u.
 beginSubcases().
 combine('stage', kShaderStages).
+combine('importExternalTexture', [false, true]).
 combine('width', [8, 16, 24]).
 combine('height', [8, 16, 24])
 ).
 fn((t) => {
-  const { stage, width, height } = t.params;
+  const { stage, importExternalTexture, width, height } = t.params;
+  const size = [width, height];
+
+  t.skipIf(typeof OffscreenCanvas === 'undefined', 'OffscreenCanvas is not supported');
   const canvas = new OffscreenCanvas(width, height);
-  // We have to make a context for VideoFrame to accept the canvas.
+
+  // We have to make a context so that VideoFrame and copyExternalImageToTexture accept the canvas.
   canvas.getContext('2d');
-  const videoFrame = new VideoFrame(canvas, { timestamp: 0 });
-  const texture = t.device.importExternalTexture({ source: videoFrame });
+  let texture;
+  let videoFrame;
+  if (importExternalTexture) {
+    t.skipIf(typeof VideoFrame === 'undefined', 'VideoFrames are not supported');
+
+    videoFrame = new VideoFrame(canvas, { timestamp: 0 });
+    texture = t.device.importExternalTexture({ source: videoFrame });
+  } else {
+    texture = t.createTextureTracked({
+      format: 'rgba8unorm',
+      size,
+      usage:
+      GPUTextureUsage.COPY_DST |
+      GPUTextureUsage.RENDER_ATTACHMENT |
+      GPUTextureUsage.TEXTURE_BINDING
+    });
+    t.queue.copyExternalImageToTexture({ source: canvas }, { texture }, size);
+  }
 
   run(t, stage, texture, undefined, 'texture_external', undefined, {
-    size: [width, height],
-    expected: [width, height]
+    size,
+    expected: size
   });
 });

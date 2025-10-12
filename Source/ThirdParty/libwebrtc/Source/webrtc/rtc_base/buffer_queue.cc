@@ -10,12 +10,14 @@
 
 #include "rtc_base/buffer_queue.h"
 
-#include <stdint.h>
-#include <string.h>
-
 #include <algorithm>
+#include <cstdint>
+#include <cstring>
 
-namespace rtc {
+#include "api/sequence_checker.h"
+#include "rtc_base/buffer.h"
+
+namespace webrtc {
 
 BufferQueue::BufferQueue(size_t capacity, size_t default_size)
     : capacity_(capacity), default_size_(default_size) {}
@@ -82,4 +84,4 @@ bool BufferQueue::WriteBack(const void* buffer,
   return true;
 }
 
-}  // namespace rtc
+}  // namespace webrtc

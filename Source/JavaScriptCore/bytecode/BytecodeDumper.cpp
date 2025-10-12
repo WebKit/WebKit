@@ -34,8 +34,6 @@
 #include "JSCJSValueInlines.h"
 #include "UnlinkedCodeBlockGenerator.h"
 #include "UnlinkedMetadataTableInlines.h"
-#include "WasmFunctionCodeBlockGenerator.h"
-#include "WasmGeneratorTraits.h"
 #include "WasmModuleInformation.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/text/MakeString.h>
@@ -69,10 +67,6 @@ void BytecodeDumperBase<InstructionStreamType>::dumpValue(GenericBoundLabel<Trai
 }
 
 template void BytecodeDumperBase<JSInstructionStream>::dumpValue(GenericBoundLabel<JSGeneratorTraits>);
-
-#if ENABLE(WEBASSEMBLY)
-template void BytecodeDumperBase<WasmInstructionStream>::dumpValue(GenericBoundLabel<Wasm::GeneratorTraits>);
-#endif // ENABLE(WEBASSEMBLY)
 
 template<class Block>
 CString BytecodeDumper<Block>::registerName(VirtualRegister r) const
@@ -190,10 +184,18 @@ void CodeBlockBytecodeDumper<Block>::dumpSwitchJumpTables()
             const auto& unlinkedTable = this->block()->unlinkedSwitchJumpTable(i);
             int entry = 0;
             auto end = unlinkedTable.m_branchOffsets.end();
-            for (auto iter = unlinkedTable.m_branchOffsets.begin(); iter != end; ++iter, ++entry) {
-                if (!*iter)
-                    continue;
-                this->m_out.printf("\t\t%4d => %04d\n", entry + unlinkedTable.m_min, *iter);
+            if (unlinkedTable.isList()) {
+                for (auto iter = unlinkedTable.m_branchOffsets.begin(); iter != end;) {
+                    int32_t value = *iter++;
+                    int32_t target = *iter++;
+                    this->m_out.printf("\t\t%4d => %04d\n", value, target);
+                }
+            } else {
+                for (auto iter = unlinkedTable.m_branchOffsets.begin(); iter != end; ++iter, ++entry) {
+                    if (!*iter)
+                        continue;
+                    this->m_out.printf("\t\t%4d => %04d\n", entry + unlinkedTable.m_min, *iter);
+                }
             }
             this->m_out.printf("\t\tdefault => %04d\n", unlinkedTable.m_defaultOffset);
             this->m_out.printf("      }\n");
@@ -332,139 +334,6 @@ template class BytecodeDumper<CodeBlock>;
 template class CodeBlockBytecodeDumper<UnlinkedCodeBlockGenerator>;
 template class CodeBlockBytecodeDumper<CodeBlock>;
 
-#if ENABLE(WEBASSEMBLY)
-
-template class BytecodeDumperBase<WasmInstructionStream>;
-
-namespace Wasm {
-
-void BytecodeDumper::dumpBlock(FunctionCodeBlockGenerator* block, const ModuleInformation& moduleInformation, PrintStream& out)
-{
-    size_t instructionCount = 0;
-    size_t wide16InstructionCount = 0;
-    size_t wide32InstructionCount = 0;
-
-    for (auto it = block->instructions().begin(); it != block->instructions().end(); it += it->size()) {
-        if (it->isWide16())
-            ++wide16InstructionCount;
-        else if (it->isWide32())
-            ++wide32InstructionCount;
-        ++instructionCount;
-    }
-
-    size_t functionIndexSpace = moduleInformation.importFunctionCount() + block->functionIndex();
-    out.print(makeString(IndexOrName(functionIndexSpace, moduleInformation.nameSection->get(functionIndexSpace))));
-
-    const auto& function = moduleInformation.functions[block->functionIndex()];
-    TypeIndex typeIndex = moduleInformation.internalFunctionTypeIndices[block->functionIndex()];
-    const auto& typeDefinition = TypeInformation::get(typeIndex);
-    out.print(" : ", typeDefinition, "\n");
-    out.print("wasm size: ", function.data.size(), " bytes\n");
-
-    out.printf(
-        "bytecode: %lu instructions (%lu 16-bit instructions, %lu 32-bit instructions); %lu bytes; %d parameter(s); %d local(s); %d callee register(s)\n",
-        static_cast<unsigned long>(instructionCount),
-        static_cast<unsigned long>(wide16InstructionCount),
-        static_cast<unsigned long>(wide32InstructionCount),
-        static_cast<unsigned long>(block->instructions().sizeInBytes()),
-        block->numArguments(),
-        block->numVars(),
-        block->numCalleeLocals());
-
-    BytecodeDumper dumper(block, out);
-    for (auto it = block->instructions().begin(); it != block->instructions().end(); it += it->size()) {
-        dumpWasm(&dumper, it.offset(), it.ptr());
-        out.print("\n");
-    }
-
-    dumper.dumpConstants();
-    dumper.dumpExceptionHandlers();
-
-    out.printf("\n");
-}
-
-void BytecodeDumper::dumpConstants()
-{
-    FunctionCodeBlockGenerator* block = this->block();
-    if (!block->constants().isEmpty()) {
-        this->m_out.printf("\nConstants:\n");
-        unsigned i = 0;
-        for (const auto& constant : block->constants()) {
-            Type type = block->constantTypes()[i];
-            this->m_out.print("   const", i, " : ", type.kind, " = ", formatConstant(type, constant), "\n");
-            ++i;
-        }
-    }
-}
-
-void BytecodeDumper::dumpExceptionHandlers()
-{
-    if (unsigned count = this->block()->numberOfExceptionHandlers()) {
-        this->m_out.printf("\nException Handlers:\n");
-        unsigned i = 0;
-        do {
-            const auto& handler = this->block()->exceptionHandler(i);
-            this->m_out.printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] tryDepth: [%4d] exceptionIndexOrDelegateTarget: [%4d] } %s\n", i + 1, handler.m_start, handler.m_end, handler.m_target, handler.m_tryDepth, handler.m_exceptionIndexOrDelegateTarget, handler.typeName().characters());
-            ++i;
-        } while (i < count);
-    }
-}
-
-CString BytecodeDumper::constantName(VirtualRegister index) const
-{
-    FunctionCodeBlockGenerator* block = this->block();
-    auto value = formatConstant(block->getConstantType(index), block->getConstant(index));
-    return toCString(value, "(", VirtualRegister(index), ")");
-}
-
-CString BytecodeDumper::formatConstant(Type type, uint64_t constant) const
-{
-    switch (type.kind) {
-    case TypeKind::I32:
-        return toCString(static_cast<int32_t>(constant));
-    case TypeKind::I64:
-        return toCString(constant);
-    case TypeKind::F32:
-        return toCString(std::bit_cast<float>(static_cast<int32_t>(constant)));
-        break;
-    case TypeKind::F64:
-        return toCString(std::bit_cast<double>(constant));
-        break;
-    case TypeKind::V128:
-        return toCString(constant);
-        break;
-    default: {
-        // This is necessary to handle all cases, since when typed function
-        // references are enabled, if type.isFuncref() is true, then
-        // isRefType(type) is false (likewise for externref)
-        if (isRefType(type) || type.isFuncref() || type.isExternref()) {
-            if (JSValue::decode(constant) == jsNull())
-                return "null"_s;
-            return toCString(RawHex(constant));
-        }
-
-        RELEASE_ASSERT_NOT_REACHED();
-        return "";
-    }
-    }
-}
-
-CString BytecodeDumper::registerName(VirtualRegister r) const
-{
-    if (r.isConstant())
-        return constantName(r);
-
-    return toCString(r);
-}
-
-int BytecodeDumper::outOfLineJumpOffset(WasmInstructionStream::Offset offset) const
-{
-    return m_block->outOfLineJumpOffset(offset);
-}
-
-} // namespace Wasm
-
-#endif // ENABLE(WEBASSEMBLY)
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

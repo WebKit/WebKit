@@ -21,9 +21,9 @@
 
 #include "GLContextWrapper.h"
 #include "IntSize.h"
-#include "PlatformDisplay.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 #if !PLATFORM(GTK) && !PLATFORM(WPE)
 #include <EGL/eglplatform.h>
@@ -47,6 +47,8 @@ typedef void* EGLDisplay;
 typedef void* EGLSurface;
 
 namespace WebCore {
+class GLDisplay;
+class PlatformDisplay;
 
 class GLContext final : public GLContextWrapper
 #if ENABLE(MEDIA_TELEMETRY)
@@ -56,7 +58,19 @@ class GLContext final : public GLContextWrapper
     WTF_MAKE_TZONE_ALLOCATED(GLContext);
     WTF_MAKE_NONCOPYABLE(GLContext);
 public:
-    WEBCORE_EXPORT static std::unique_ptr<GLContext> create(GLNativeWindowType, PlatformDisplay&);
+    enum class Target : uint8_t {
+        Default,
+        Surfaceless,
+#if USE(GBM)
+        GBM,
+#endif
+#if USE(WPE_RENDERER)
+        WPE,
+#endif
+    };
+    WEBCORE_EXPORT static std::unique_ptr<GLContext> create(GLDisplay&, Target, GLContext* = nullptr, GLNativeWindowType = 0);
+
+    WEBCORE_EXPORT static std::unique_ptr<GLContext> create(PlatformDisplay&, GLNativeWindowType);
     static std::unique_ptr<GLContext> createOffscreen(PlatformDisplay&);
     static std::unique_ptr<GLContext> createSharing(PlatformDisplay&);
 
@@ -67,15 +81,14 @@ public:
     static const char* errorString(int statusCode);
     static const char* lastErrorString();
 
-    enum EGLSurfaceType { PbufferSurface, WindowSurface, PixmapSurface, Surfaceless };
-    GLContext(PlatformDisplay&, EGLContext, EGLSurface, EGLConfig, EGLSurfaceType);
+    GLContext(GLDisplay&, EGLContext, EGLSurface, EGLConfig);
 #if USE(WPE_RENDERER)
-    GLContext(PlatformDisplay&, EGLContext, EGLSurface, EGLConfig, struct wpe_renderer_backend_egl_offscreen_target*);
+    GLContext(GLDisplay&, EGLContext, EGLSurface, EGLConfig, struct wpe_renderer_backend_egl_offscreen_target*);
 #endif
     WEBCORE_EXPORT ~GLContext();
 
-    PlatformDisplay& display() const { return m_display; }
-    unsigned version();
+    RefPtr<GLDisplay> display() const;
+    unsigned version() const;
     EGLConfig config() const { return m_config; }
 
     WEBCORE_EXPORT bool makeContextCurrent();
@@ -124,23 +137,26 @@ public:
     };
 
 private:
-    static EGLContext createContextForEGLVersion(PlatformDisplay&, EGLConfig, EGLContext);
+    static EGLContext createContextForEGLVersion(EGLDisplay, EGLConfig, EGLContext);
 
-    static std::unique_ptr<GLContext> createWindowContext(GLNativeWindowType, PlatformDisplay&, EGLContext sharingContext = nullptr);
-    static std::unique_ptr<GLContext> createPbufferContext(PlatformDisplay&, EGLContext sharingContext = nullptr);
-    static std::unique_ptr<GLContext> createSurfacelessContext(PlatformDisplay&, EGLContext sharingContext = nullptr);
+    static std::unique_ptr<GLContext> createWindowContext(GLDisplay&, Target, GLNativeWindowType, EGLContext sharingContext);
+    static std::unique_ptr<GLContext> createSurfacelessContext(GLDisplay&, Target, EGLContext sharingContext);
+    static std::unique_ptr<GLContext> createPbufferContext(GLDisplay&, EGLContext sharingContext);
+    static std::unique_ptr<GLContext> createOffscreenContext(GLDisplay&, Target, EGLContext sharingContext);
+
 #if USE(WPE_RENDERER)
-    static std::unique_ptr<GLContext> createWPEContext(PlatformDisplay&, EGLContext sharingContext = nullptr);
+    static std::unique_ptr<GLContext> createWPEContext(GLDisplay&, EGLContext sharingContext = nullptr);
     static EGLSurface createWindowSurfaceWPE(EGLDisplay, EGLConfig, GLNativeWindowType);
     void destroyWPETarget();
 #endif
 
-    static bool getEGLConfig(PlatformDisplay&, EGLConfig*, EGLSurfaceType);
+    static bool getEGLConfig(EGLDisplay, EGLConfig*, int);
 
     // GLContextWrapper
     GLContextWrapper::Type type() const override { return GLContextWrapper::Type::Native; }
     bool makeCurrentImpl() override;
     bool unmakeCurrentImpl() override;
+    unsigned glVersion() const override;
 
 #if ENABLE(MEDIA_TELEMETRY)
     EGLDisplay eglDisplay() const final;
@@ -151,12 +167,11 @@ private:
     unsigned windowHeight() const final;
 #endif
 
-    PlatformDisplay& m_display;
-    unsigned m_version { 0 };
+    ThreadSafeWeakPtr<GLDisplay> m_display;
+    mutable unsigned m_version { 0 };
     EGLContext m_context { nullptr };
     EGLSurface m_surface { nullptr };
     EGLConfig m_config { nullptr };
-    EGLSurfaceType m_type;
 #if USE(WPE_RENDERER)
     struct wpe_renderer_backend_egl_offscreen_target* m_wpeTarget { nullptr };
 #endif

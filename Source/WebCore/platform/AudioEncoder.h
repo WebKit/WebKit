@@ -26,13 +26,13 @@
 
 #pragma once
 
-#include "PlatformRawAudioData.h"
+#include <WebCore/PlatformRawAudioData.h>
 
 #if ENABLE(WEB_CODECS)
 
-#include "AudioEncoderActiveConfiguration.h"
+#include <WebCore/AudioEncoderActiveConfiguration.h>
 #include "BitrateMode.h"
-#include "WebCodecsAudioInternalData.h"
+#include <WebCore/WebCodecsAudioInternalData.h>
 #include <span>
 #include <wtf/NativePromise.h>
 #include <wtf/Vector.h>

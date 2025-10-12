@@ -29,6 +29,7 @@
 
 #include "InternalFunction.h"
 #include "JSObject.h"
+#include "WebAssemblyCompileOptions.h"
 
 #include <wtf/Vector.h>
 
@@ -47,7 +48,7 @@ public:
 
     DECLARE_INFO;
 
-    static JSWebAssemblyModule* createModule(JSGlobalObject*, CallFrame*, Vector<uint8_t>&& buffer);
+    static JSWebAssemblyModule* createModule(JSGlobalObject*, CallFrame*, Vector<uint8_t>&& buffer, std::optional<WebAssemblyCompileOptions>&);
 
 private:
     WebAssemblyModuleConstructor(VM&, Structure*);

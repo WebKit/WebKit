@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "HeapInlines.h"
-#include "LocalAllocator.h"
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/LocalAllocator.h>
 
 namespace JSC {
 

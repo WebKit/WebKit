@@ -42,7 +42,7 @@ class Node;
 class Range;
 class ShadowRoot;
 
-typedef UncheckedKeyHashMap<AtomString, AtomStringImpl*> Namespaces;
+typedef HashMap<AtomString, AtomStringImpl*> Namespaces;
 
 enum class EntityMask : uint8_t {
     Amp = 1 << 0,

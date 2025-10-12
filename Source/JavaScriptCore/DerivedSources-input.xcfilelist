@@ -39,6 +39,7 @@ $(PROJECT_DIR)/b3/air/opcode_generator.rb
 $(PROJECT_DIR)/builtins/ArrayConstructor.js
 $(PROJECT_DIR)/builtins/ArrayIteratorPrototype.js
 $(PROJECT_DIR)/builtins/ArrayPrototype.js
+$(PROJECT_DIR)/builtins/AsyncDisposableStackPrototype.js
 $(PROJECT_DIR)/builtins/AsyncFromSyncIteratorPrototype.js
 $(PROJECT_DIR)/builtins/AsyncFunctionPrototype.js
 $(PROJECT_DIR)/builtins/AsyncGeneratorPrototype.js
@@ -200,6 +201,8 @@ $(PROJECT_DIR)/runtime/TemporalPlainDateConstructor.cpp
 $(PROJECT_DIR)/runtime/TemporalPlainDatePrototype.cpp
 $(PROJECT_DIR)/runtime/TemporalPlainDateTimeConstructor.cpp
 $(PROJECT_DIR)/runtime/TemporalPlainDateTimePrototype.cpp
+$(PROJECT_DIR)/runtime/TemporalPlainMonthDayConstructor.cpp
+$(PROJECT_DIR)/runtime/TemporalPlainMonthDayPrototype.cpp
 $(PROJECT_DIR)/runtime/TemporalPlainTimeConstructor.cpp
 $(PROJECT_DIR)/runtime/TemporalPlainTimePrototype.cpp
 $(PROJECT_DIR)/runtime/TemporalTimeZoneConstructor.cpp

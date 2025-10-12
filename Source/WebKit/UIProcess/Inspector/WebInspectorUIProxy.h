@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
+ * Portions Copyright (c) 2011 Motorola Mobility, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,19 +30,21 @@
 #include "Connection.h"
 #include "DebuggableInfoData.h"
 #include "MessageReceiver.h"
+#include "WebInspectorBackendProxy.h"
 #include "WebInspectorUtilities.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyIdentifier.h"
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <WebCore/Color.h>
 #include <WebCore/FloatRect.h>
-#include <WebCore/InspectorClient.h>
+#include <WebCore/InspectorBackendClient.h>
 #include <WebCore/InspectorFrontendClient.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
+
 
 #if PLATFORM(MAC)
 #include "WKGeometry.h"
@@ -83,8 +85,9 @@ class WebPreferences;
 #if ENABLE(INSPECTOR_EXTENSIONS)
 class WebInspectorUIExtensionControllerProxy;
 #endif
+class WebInspectorBackendProxy;
 
-enum class AttachmentSide {
+enum class AttachmentSide : uint8_t {
     Bottom,
     Right,
     Left,
@@ -98,6 +101,7 @@ class WebInspectorUIProxy
     , public WebCore::WindowMessageListener
 #endif
 {
+    friend class WebInspectorBackendProxy;
 public:
     static Ref<WebInspectorUIProxy> create(WebPageProxy& inspectedPage)
     {
@@ -116,7 +120,9 @@ public:
     void setInspectorClient(std::unique_ptr<API::InspectorClient>&&);
 
     // Public APIs
+    WebPageProxy* inspectedPage() const { return m_inspectedPage.get(); }
     RefPtr<WebPageProxy> protectedInspectedPage() const { return m_inspectedPage.get(); }
+    WebPageProxy* inspectorPage() const { return m_inspectorPage.get(); }
     RefPtr<WebPageProxy> protectedInspectorPage() const { return m_inspectorPage.get(); }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -219,8 +225,12 @@ public:
     void evaluateInFrontendForTesting(const String&);
 
 private:
+    const RefPtr<WebInspectorBackendProxy> m_backend;
+
     void createFrontendPage();
     void closeFrontendPageAndWindow();
+
+    void dispatchDidChangeLocalInspectorAttachment();
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -264,7 +274,7 @@ private:
     bool platformCanAttach(bool webProcessCanAttach) { return webProcessCanAttach; }
 #endif
 
-    // Called by WebInspectorUIProxy messages
+    // Called by WebInspectorBackendProxy and WebInspectorUIProxy messages
     void requestOpenLocalInspectorFrontend();
     void setFrontendConnection(IPC::Connection::Handle&&);
 
@@ -280,10 +290,11 @@ private:
     void inspectedURLChanged(const String&);
     void showCertificate(const WebCore::CertificateInfo&);
     void setInspectorPageDeveloperExtrasEnabled(bool);
+    void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
     void elementSelectionChanged(bool);
     void timelineRecordingChanged(bool);
 
-    void setDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference, std::optional<bool>);
+    void setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference, std::optional<bool>);
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     void setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit);
 #endif
@@ -338,7 +349,7 @@ private:
     bool m_isOpening { false };
     bool m_closing { false };
 
-    AttachmentSide m_attachmentSide {AttachmentSide::Bottom};
+    AttachmentSide m_attachmentSide { AttachmentSide::Bottom };
 
 #if PLATFORM(MAC)
     RetainPtr<WKInspectorViewController> m_inspectorViewController;

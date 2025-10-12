@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 features:
   - iterator-helpers
 description: |
@@ -21,5 +18,5 @@ function mapper(x) {
 }
 iterator = [0].values().map(mapper);
 
-assertThrowsInstanceOf(iterator.next, TypeError);
+assert.throws(TypeError, iterator.next);
 

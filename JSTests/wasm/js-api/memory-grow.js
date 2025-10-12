@@ -1,5 +1,11 @@
+//@ $skipModes << "wasm-no-jit".to_sym if $buildType == "debug"
+
 import { eq as assertEq, throws as assertThrows } from "../assert.js";
 const pageSize = 64*1024;
+
+function assertTrue(expr) {
+    assertEq(expr, true);
+}
 
 let buffers = [];
 for (let i = 0; i < 100; i++) {
@@ -37,8 +43,10 @@ for (let buffer of buffers) {
 {
     const memory = new WebAssembly.Memory({initial: 1, maximum: 5});
     let buffer = memory.buffer;
+    assertTrue(buffer instanceof ArrayBuffer);
     assertEq(buffer.byteLength, 1*64*1024);
     memory.grow(1);
+    assertTrue(buffer.detached);
     assertEq(buffer.byteLength, 0);
 
     buffer = memory.buffer;
@@ -48,4 +56,23 @@ for (let buffer of buffers) {
     assertThrows(() => memory.grow(1000), RangeError, "WebAssembly.Memory.grow would exceed the memory's declared maximum size");
     assertEq(buffer.byteLength, 2*64*1024);
     assertEq(memory.buffer, buffer);
+}
+
+// Now the same for a shared memory/buffer
+{
+    const memory = new WebAssembly.Memory({initial: 1, maximum: 5, shared: true});
+    let buffer = memory.buffer;
+    assertTrue(buffer instanceof SharedArrayBuffer);
+    assertEq(buffer.byteLength, 1*64*1024);
+    memory.grow(1);
+    assertEq(buffer.byteLength, 1*64*1024);
+
+    let buffer2 = memory.buffer;
+    assertTrue(buffer !== buffer2);
+    assertEq(buffer2.byteLength, 2*64*1024);
+
+    // This shouldn't alter the buffer since it fails.
+    assertThrows(() => memory.grow(1000), RangeError, "WebAssembly.Memory.grow would exceed the memory's declared maximum size");
+    assertEq(buffer2.byteLength, 2*64*1024);
+    assertEq(memory.buffer, buffer2);
 }

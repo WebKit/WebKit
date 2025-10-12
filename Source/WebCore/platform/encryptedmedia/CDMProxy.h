@@ -30,9 +30,9 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "CDMInstance.h"
-#include "CDMInstanceSession.h"
-#include "SharedBuffer.h"
+#include <WebCore/CDMInstance.h>
+#include <WebCore/CDMInstanceSession.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/BoxPtr.h>
 #include <wtf/Condition.h>
 #include <wtf/HashMap.h>
@@ -190,7 +190,7 @@ public:
     auto end() const LIFETIME_BOUND { return m_keys.end(); }
 
 protected:
-    UncheckedKeyHashMap<KeyIDType, RefPtr<T>> m_keys;
+    HashMap<KeyIDType, RefPtr<T>> m_keys;
 
 private:
     KeyStoreIDType m_id;
@@ -231,7 +231,7 @@ private:
         m_references.remove(id);
     }
 
-    UncheckedKeyHashSet<KeyStoreIDType> m_references;
+    HashSet<KeyStoreIDType> m_references;
 };
 
 class ReferenceAwareKeyStore : public KeyStoreBase<ReferenceAwareKeyHandle> {

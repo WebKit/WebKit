@@ -49,7 +49,7 @@ static dispatch_queue_t kCaptureSessionQueue = nil;
 + (dispatch_queue_t)dispatchQueueForType:(RTCDispatcherQueueType)dispatchType {
   switch (dispatchType) {
     case RTCDispatcherTypeMain:
-      return dispatch_get_main_queue();
+      return mainDispatchQueueSingleton();
     case RTCDispatcherTypeCaptureSession:
       return kCaptureSessionQueue;
     case RTCDispatcherTypeAudioSession:

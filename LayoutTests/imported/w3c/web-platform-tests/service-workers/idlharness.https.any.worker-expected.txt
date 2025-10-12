@@ -7,6 +7,7 @@ PASS Partial interface WorkerNavigator: original interface defined
 PASS Partial interface WorkerNavigator: member names are unique
 PASS Partial interface mixin WindowOrWorkerGlobalScope: original interface mixin defined
 PASS Partial interface mixin WindowOrWorkerGlobalScope: member names are unique
+PASS Partial interface Navigator[2]: member names are unique
 PASS Partial interface mixin NavigatorID: member names are unique
 PASS Partial interface Window: member names are unique
 PASS ServiceWorker includes AbstractWorker: member names are unique
@@ -62,7 +63,7 @@ PASS ServiceWorkerContainer interface: existence and properties of interface pro
 PASS ServiceWorkerContainer interface: existence and properties of interface prototype object's @@unscopables property
 PASS ServiceWorkerContainer interface: attribute controller
 PASS ServiceWorkerContainer interface: attribute ready
-PASS ServiceWorkerContainer interface: operation register(USVString, optional RegistrationOptions)
+PASS ServiceWorkerContainer interface: operation register((TrustedScriptURL or USVString), optional RegistrationOptions)
 PASS ServiceWorkerContainer interface: operation getRegistration(optional USVString)
 PASS ServiceWorkerContainer interface: operation getRegistrations()
 PASS ServiceWorkerContainer interface: operation startMessages()
@@ -73,8 +74,8 @@ PASS ServiceWorkerContainer must be primary interface of navigator.serviceWorker
 PASS Stringification of navigator.serviceWorker
 PASS ServiceWorkerContainer interface: navigator.serviceWorker must inherit property "controller" with the proper type
 PASS ServiceWorkerContainer interface: navigator.serviceWorker must inherit property "ready" with the proper type
-PASS ServiceWorkerContainer interface: navigator.serviceWorker must inherit property "register(USVString, optional RegistrationOptions)" with the proper type
-PASS ServiceWorkerContainer interface: calling register(USVString, optional RegistrationOptions) on navigator.serviceWorker with too few arguments must throw TypeError
+PASS ServiceWorkerContainer interface: navigator.serviceWorker must inherit property "register((TrustedScriptURL or USVString), optional RegistrationOptions)" with the proper type
+PASS ServiceWorkerContainer interface: calling register((TrustedScriptURL or USVString), optional RegistrationOptions) on navigator.serviceWorker with too few arguments must throw TypeError
 PASS ServiceWorkerContainer interface: navigator.serviceWorker must inherit property "getRegistration(optional USVString)" with the proper type
 PASS ServiceWorkerContainer interface: calling getRegistration(optional USVString) on navigator.serviceWorker with too few arguments must throw TypeError
 PASS ServiceWorkerContainer interface: navigator.serviceWorker must inherit property "getRegistrations()" with the proper type

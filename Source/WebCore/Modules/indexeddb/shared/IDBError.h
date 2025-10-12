@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "DOMException.h"
-#include "ExceptionCode.h"
+#include <WebCore/DOMException.h>
+#include <WebCore/ExceptionCode.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

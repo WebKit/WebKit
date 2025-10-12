@@ -33,7 +33,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebPage::platformReinitialize()
+void WebPage::platformReinitializeAccessibilityToken()
 {
 }
 
@@ -44,7 +44,7 @@ bool WebPage::platformCanHandleRequest(const ResourceRequest&)
 }
 
 #if USE(GBM) && ENABLE(WPE_PLATFORM)
-void WebPage::preferredBufferFormatsDidChange(Vector<DMABufRendererBufferFormat>&& preferredBufferFormats)
+void WebPage::preferredBufferFormatsDidChange(Vector<RendererBufferFormat>&& preferredBufferFormats)
 {
     m_preferredBufferFormats = WTFMove(preferredBufferFormats);
     if (m_drawingArea)

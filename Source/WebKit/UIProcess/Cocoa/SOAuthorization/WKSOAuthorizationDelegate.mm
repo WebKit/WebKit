@@ -139,7 +139,7 @@
     ASSERT(RunLoop::isMain());
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithError: (authorization = %p, _session = %p)", authorization, _session.get());
     if (error.code)
-        LOG_ERROR("Could not complete AppSSO operation. Error: %d", error.code);
+        LOG_ERROR("Could not complete AppSSO operation. Error: %zd", error.code);
     RefPtr session = _session;
     if (!session) {
         WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithError: No session, so returning early.");

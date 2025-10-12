@@ -22,9 +22,9 @@
 
 #pragma once
 
-#include "CachedResourceHandle.h"
-#include "CachedStyleSheetClient.h"
-#include "CharacterData.h"
+#include <WebCore/CachedResourceHandle.h>
+#include <WebCore/CachedStyleSheetClient.h>
+#include <WebCore/CharacterData.h>
 
 namespace WebCore {
 
@@ -58,7 +58,8 @@ private:
     ProcessingInstruction(Document&, String&& target, String&& data);
 
     String nodeName() const override;
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) override;
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;
+    SerializedNode serializeNode(CloningOperation) const override;
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void didFinishInsertingNode() override;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,6 +99,7 @@ namespace WebKit {
 
 using LayerHostingContextID = uint32_t;
 class LayerHostingContext;
+class LayerHostingContextManager;
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 class MediaPlaybackTargetContextSerialized;
 #endif
@@ -145,7 +146,7 @@ public:
 #endif
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
     void getConfiguration(RemoteMediaPlayerConfiguration&);
 
@@ -187,7 +188,7 @@ public:
     void setPresentationSize(const WebCore::IntSize&);
 
 #if PLATFORM(COCOA)
-    void setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRight&&);
+    void setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRightAnnotated&&);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -371,16 +372,15 @@ private:
     void currentTimeChanged(const MediaTime&);
 
 #if PLATFORM(COCOA)
-    WebCore::FloatSize mediaPlayerVideoLayerSize() const final { return m_configuration.videoLayerSize; }
-    void setVideoLayerSizeIfPossible(const WebCore::FloatSize&);
+    WebCore::FloatSize mediaPlayerVideoLayerSize() const final;
     void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&&);
     void colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
 #endif
     void videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>&&, bool)>&&);
 
     void setShouldDisableHDR(bool);
-    using LayerHostingContextIDCallback = WebCore::MediaPlayer::LayerHostingContextIDCallback;
-    void requestHostingContextID(LayerHostingContextIDCallback&&);
+    using LayerHostingContextCallback = WebCore::MediaPlayer::LayerHostingContextCallback;
+    void requestHostingContext(LayerHostingContextCallback&&);
     void setShouldCheckHardwareSupport(bool);
 #if HAVE(SPATIAL_TRACKING_LABEL)
     void setDefaultSpatialTrackingLabel(const String&);
@@ -427,11 +427,6 @@ private:
     RefPtr<SandboxExtension> m_sandboxExtension;
     Ref<IPC::Connection> m_webProcessConnection;
     RefPtr<WebCore::MediaPlayer> m_player;
-    Vector<LayerHostingContextIDCallback> m_layerHostingContextIDRequests;
-    std::unique_ptr<LayerHostingContext> m_inlineLayerHostingContext;
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-    std::unique_ptr<LayerHostingContext> m_fullscreenLayerHostingContext;
-#endif
     WeakPtr<RemoteMediaPlayerManagerProxy> m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;
     Vector<WebCore::ContentType> m_typesRequiringHardwareSupport;
@@ -471,7 +466,10 @@ private:
     bool m_shouldCheckHardwareSupport { false };
     SoundStageSize m_soundStageSize { SoundStageSize::Auto };
 #if !RELEASE_LOG_DISABLED
-    Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
+#endif
+#if PLATFORM(COCOA)
+    const UniqueRef<LayerHostingContextManager> m_layerHostingContextManager;
 #endif
 };
 

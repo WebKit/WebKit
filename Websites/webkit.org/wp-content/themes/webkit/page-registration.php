@@ -5,7 +5,7 @@ if (class_exists('GitHubOAuthPlugin'))
 if (!class_exists('WebKit_Meeting_Registration'))
     return false;
 
-WebKit_Meeting_Registration::process();
+$processed = WebKit_Meeting_Registration::process();
 
 get_header();
 ?>
@@ -31,7 +31,11 @@ get_header();
             <div class="bodycopy">
                 <?php
                 $registration = WebKit_Meeting_Registration::full_registration();
-                if (!empty($registration)):
+                $error = WebKit_Meeting_Registration::registration_error($processed);
+                if (!empty($error)): ?>
+                    <div class="note"><?php echo $error; ?></div>
+                <?php
+                elseif (!empty($registration)):
                 ?>
                     <h3>You are registered!</h3>
                     <p>Please take a moment to verify your email address is updated in the <a href="https://github.com/WebKit/WebKit/blob/main/metadata/contributors.json"><code>contributors.json</code></a> file.</p>
@@ -49,6 +53,10 @@ get_header();
 
                         <?php if(!empty($registration->contributor_interests)): ?>
                             <tr><td>Interests</td><td><?php echo apply_filters('the_content', esc_html( $registration->contributor_interests)); ?></td></tr>
+                        <?php endif; ?>
+                        
+                        <?php if(!empty($registration->contributor_attendance)): ?>
+                            <tr><td>Attendance</td><td><?php echo apply_filters('the_content', esc_html( $registration->contributor_attendance)); ?></td></tr>
                         <?php endif; ?>
                     </table>
 

@@ -33,6 +33,7 @@
 #include "RenderInline.h"
 #include "RenderObjectInlines.h"
 #include "RenderTable.h"
+#include "RenderTreeBuilderBlock.h"
 #include "RenderTreeBuilderMultiColumn.h"
 #include "RenderTreeBuilderTable.h"
 #include <wtf/SetForScope.h>
@@ -55,7 +56,7 @@ static bool canUseAsParentForContinuation(const RenderObject* renderer)
 
 static RenderBoxModelObject* nextContinuation(const RenderBoxModelObject* renderer)
 {
-    if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(*renderer); renderInline && !renderInline->isReplacedOrAtomicInline())
+    if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(*renderer); renderInline && !renderInline->isBlockLevelReplacedOrAtomicInline())
         return renderInline->continuation();
     return renderer->inlineContinuation();
 }
@@ -211,7 +212,7 @@ void RenderTreeBuilder::Inline::attachIgnoringContinuation(RenderInline& parent,
 
     auto& childToAdd = *child;
     m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
-    childToAdd.setNeedsLayoutAndPrefWidthsRecalc();
+    childToAdd.setNeedsLayoutAndPreferredWidthsUpdate();
 }
 
 void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* beforeChild, RenderPtr<RenderBlock> newBlockBox, RenderPtr<RenderObject> child, RenderBoxModelObject* oldCont)
@@ -222,7 +223,8 @@ void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* be
     RenderBlock* block = parent.containingBlock();
 
     // Delete our line boxes before we do the inline split into continuations.
-    block->deleteLines();
+    if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(block))
+        blockFlow->invalidateLineLayout(RenderBlockFlow::InvalidationReason::InternalMove);
 
     RenderPtr<RenderBlock> createdPre;
     bool madeNewBeforeBlock = false;
@@ -245,12 +247,12 @@ void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* be
         block = block->containingBlock();
     } else {
         // No anonymous block available for use. Make one.
-        createdPre = block->createAnonymousBlock();
+        createdPre = Block::createAnonymousBlockWithStyle(block->protectedDocument(), block->style());
         pre = createdPre.get();
         madeNewBeforeBlock = true;
     }
 
-    auto createdPost = pre->createAnonymousBoxWithSameTypeAs(*block);
+    auto createdPost = createAnonymousBoxWithSameTypeAndWithStyle(*pre, block->style());
     auto& post = downcast<RenderBlock>(*createdPost);
 
     RenderObject* boxFirst = madeNewBeforeBlock ? block->firstChild() : pre->nextSibling();
@@ -268,7 +270,7 @@ void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* be
             o = no->nextSibling();
             auto childToMove = m_builder.detachFromRenderElement(*block, *no, WillBeDestroyed::No);
             m_builder.attachToRenderElementInternal(*pre, WTFMove(childToMove));
-            no->setNeedsLayoutAndPrefWidthsRecalc();
+            no->setNeedsLayoutAndPreferredWidthsUpdate();
         }
     }
 
@@ -286,9 +288,9 @@ void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* be
     // Always just do a full layout in order to ensure that line boxes (especially wrappers for images)
     // get deleted properly. Because objects moves from the pre block into the post block, we want to
     // make new line boxes instead of leaving the old line boxes around.
-    pre->setNeedsLayoutAndPrefWidthsRecalc();
-    block->setNeedsLayoutAndPrefWidthsRecalc();
-    post.setNeedsLayoutAndPrefWidthsRecalc();
+    pre->setNeedsLayoutAndPreferredWidthsUpdate();
+    block->setNeedsLayoutAndPreferredWidthsUpdate();
+    post.setNeedsLayoutAndPreferredWidthsUpdate();
 }
 
 void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* fromBlock, RenderBlock* toBlock, RenderBlock* middleBlock, RenderObject* beforeChild, RenderBoxModelObject* oldCont)
@@ -333,7 +335,7 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
         auto* newParent = rendererToMove->parent();
         if (CheckedPtr newParentBox = dynamicDowncast<RenderBox>(newParent))
             markBoxForRelayoutAfterSplit(*newParentBox);
-        rendererToMove->setNeedsLayoutAndPrefWidthsRecalc();
+        rendererToMove->setNeedsLayoutAndPreferredWidthsUpdate();
         rendererToMove = nextSibling;
     }
     // Hook |clone| up as the continuation of the middle block.
@@ -371,7 +373,7 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
                 auto* next = sibling->nextSibling();
                 auto childToMove = m_builder.detachFromRenderElement(*current, *sibling, WillBeDestroyed::No);
                 m_builder.attachIgnoringContinuation(*cloneInline, WTFMove(childToMove));
-                sibling->setNeedsLayoutAndPrefWidthsRecalc();
+                sibling->setNeedsLayoutAndPreferredWidthsUpdate();
                 sibling = next;
             }
         } else
@@ -409,7 +411,7 @@ bool RenderTreeBuilder::Inline::newChildIsInline(const RenderInline& parent, con
 void RenderTreeBuilder::Inline::childBecameNonInline(RenderInline& parent, RenderElement& child)
 {
     // We have to split the parent flow.
-    auto newBox = parent.containingBlock()->createAnonymousBlock();
+    auto newBox = Block::createAnonymousBlockWithStyle(parent.containingBlock()->protectedDocument(), parent.containingBlock()->style());
     newBox->setIsContinuation();
     auto* oldContinuation = parent.continuation();
     if (oldContinuation)

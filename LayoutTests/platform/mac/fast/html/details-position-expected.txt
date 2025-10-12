@@ -6,18 +6,18 @@ layer at (0,0) size 800x585
       RenderBlock {DETAILS} at (0,0) size 784x0
       RenderBlock {DETAILS} at (0,0) size 784x18
       RenderBlock {DETAILS} at (0,18) size 784x0
-layer at (50,150) size 44x18
-  RenderListItem {SUMMARY} at (50,150) size 45x18
-    RenderListMarker at (0,0) size 13x18: "\x{25B8}"
-    RenderText {#text} at (12,0) size 33x18
-      text run at (12,0) width 33: "fixed"
+layer at (50,150) size 50x18
+  RenderListItem {SUMMARY} at (50,150) size 51x18
+    RenderListMarker at (0,0) size 19x18: "\x{25B6}"
+    RenderText {#text} at (18,0) size 33x18
+      text run at (18,0) width 33: "fixed"
 layer at (158,158) size 784x18
   RenderListItem {SUMMARY} at (0,0) size 784x18
-    RenderListMarker at (0,0) size 13x18: "\x{25B8}"
-    RenderText {#text} at (12,0) size 49x18
-      text run at (12,0) width 49: "relative"
-layer at (250,150) size 66x18
-  RenderListItem {SUMMARY} at (250,150) size 66x18
-    RenderListMarker at (0,0) size 13x18: "\x{25B8}"
-    RenderText {#text} at (12,0) size 54x18
-      text run at (12,0) width 54: "absolute"
+    RenderListMarker at (0,0) size 19x18: "\x{25B6}"
+    RenderText {#text} at (18,0) size 49x18
+      text run at (18,0) width 49: "relative"
+layer at (250,150) size 71x18
+  RenderListItem {SUMMARY} at (250,150) size 72x18
+    RenderListMarker at (0,0) size 19x18: "\x{25B6}"
+    RenderText {#text} at (18,0) size 54x18
+      text run at (18,0) width 54: "absolute"

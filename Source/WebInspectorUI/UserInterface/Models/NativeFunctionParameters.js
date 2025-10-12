@@ -652,7 +652,6 @@ WI.NativePrototypeFunctionParameters = {
         createRadialGradient: "x0, y0, r0, x1, y1, r1",
         drawFocusIfNeeded: "element",
         drawImage: "image, x, y",
-        drawImageFromRect: "image, [sx], [sy], [sw], [sh], [dx], [dy], [dw], [dh], [compositeOperation]",
         ellipse: "x, y, radiusX, radiusY, rotation, startAngle, endAngle, [anticlockwise]",
         fill: "path, [winding]",
         fillRect: "x, y, width, height",

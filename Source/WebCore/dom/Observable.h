@@ -28,6 +28,7 @@
 #include "ScriptWrappable.h"
 #include "SubscriberCallback.h"
 #include "VoidCallback.h"
+#include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -55,6 +56,8 @@ public:
 
     explicit Observable(Ref<SubscriberCallback>);
 
+    ~Observable();
+
     void subscribe(ScriptExecutionContext&, std::optional<ObserverUnion>, SubscribeOptions);
     void subscribeInternal(ScriptExecutionContext&, Ref<InternalObserver>&&, const SubscribeOptions&);
 
@@ -75,7 +78,7 @@ public:
     void reduce(ScriptExecutionContext&, Ref<ReducerCallback>&&, JSC::JSValue, const SubscribeOptions&, Ref<DeferredPromise>&&);
 
 private:
-    Ref<SubscriberCallback> m_subscriberCallback;
+    const Ref<SubscriberCallback> m_subscriberCallback;
 };
 
 } // namespace WebCore

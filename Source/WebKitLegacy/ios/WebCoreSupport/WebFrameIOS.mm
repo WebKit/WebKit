@@ -38,6 +38,7 @@
 #import "WebViewPrivate.h"
 #import "WebVisiblePositionInternal.h"
 #import <WebCore/DocumentMarkerController.h>
+#import <WebCore/DocumentView.h>
 #import <WebCore/Editing.h>
 #import <WebCore/Editor.h>
 #import <WebCore/Element.h>

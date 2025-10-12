@@ -43,6 +43,7 @@ WK_API_AVAILABLE(macos(10.13), ios(11.3))
 
 - (void)_webView:(WKWebView *)webView didFullscreenImageWithQuickLook:(CGSize)imageDimensions;
 - (void)_webView:(WKWebView *)webView requestPresentingViewControllerWithCompletionHandler:(void (^)(UIViewController * _Nullable, NSError * _Nullable))completionHandler;
+- (BOOL)_webViewPreventDockingFromElementFullscreen:(WKWebView *)webView;
 #else
 - (void)_webViewWillEnterFullscreen:(NSView *)webView;
 - (void)_webViewDidEnterFullscreen:(NSView *)webView;

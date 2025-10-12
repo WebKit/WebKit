@@ -28,11 +28,14 @@
 #include "SpinButtonElement.h"
 
 #include "Chrome.h"
+#include "ContainerNodeInlines.h"
 #include "EventHandler.h"
 #include "EventNames.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLNames.h"
 #include "LocalFrame.h"
 #include "MouseEvent.h"
+#include "NodeDocument.h"
 #include "NodeInlines.h"
 #include "Page.h"
 #include "RenderBox.h"
@@ -87,7 +90,7 @@ void SpinButtonElement::defaultEventHandler(Event& event)
         return;
     }
 
-    RenderBox* box = renderBox();
+    CheckedPtr box = renderBox();
     if (!box) {
         if (!event.defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
@@ -135,7 +138,8 @@ void SpinButtonElement::defaultEventHandler(Event& event)
                 }
             }
             UpDownState oldUpDownState = m_upDownState;
-            switch (renderer()->theme().innerSpinButtonLayout(*renderer())) {
+            CheckedRef renderer = *this->renderer();
+            switch (renderer->theme().innerSpinButtonLayout(renderer.get())) {
             case RenderTheme::InnerSpinButtonLayout::Vertical:
                 m_upDownState = local.y() < box->height() / 2 ? Up : Down;
                 break;
@@ -147,7 +151,7 @@ void SpinButtonElement::defaultEventHandler(Event& event)
                 break;
             }
             if (m_upDownState != oldUpDownState)
-                renderer()->repaint();
+                renderer->repaint();
         } else {
             releaseCapture();
             m_upDownState = Indeterminate;

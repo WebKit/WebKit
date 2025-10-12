@@ -24,15 +24,15 @@
 #include "common_audio/third_party/ooura/fft_size_128/ooura_fft.h"
 
 #include "common_audio/third_party/ooura/fft_size_128/ooura_fft_tables_common.h"
+#include "rtc_base/cpu_info.h"
 #include "rtc_base/system/arch.h"
-#include "system_wrappers/include/cpu_features_wrapper.h"
 
 namespace webrtc {
 
 namespace {
 
 #if !(defined(MIPS_FPU_LE) || defined(WEBRTC_HAS_NEON))
-static void cft1st_128_C(float* a) {
+void cft1st_128_C(float* a) {
   const int n = 128;
   int j, k1, k2;
   float wk1r, wk1i, wk2r, wk2i, wk3r, wk3i;
@@ -139,7 +139,7 @@ static void cft1st_128_C(float* a) {
   }
 }
 
-static void cftmdl_128_C(float* a) {
+void cftmdl_128_C(float* a) {
   const int l = 8;
   const int n = 128;
   const int m = 32;
@@ -266,7 +266,7 @@ static void cftmdl_128_C(float* a) {
   }
 }
 
-static void rftfsub_128_C(float* a) {
+void rftfsub_128_C(float* a) {
   const float* c = rdft_w + 32;
   int j1, j2, k1, k2;
   float wkr, wki, xr, xi, yr, yi;
@@ -287,7 +287,7 @@ static void rftfsub_128_C(float* a) {
   }
 }
 
-static void rftbsub_128_C(float* a) {
+void rftbsub_128_C(float* a) {
   const float* c = rdft_w + 32;
   int j1, j2, k1, k2;
   float wkr, wki, xr, xi, yr, yi;
@@ -323,7 +323,7 @@ OouraFft::OouraFft([[maybe_unused]] bool sse2_available) {
 
 OouraFft::OouraFft() {
 #if defined(WEBRTC_ARCH_X86_FAMILY)
-  use_sse2_ = (GetCPUInfo(kSSE2) != 0);
+  use_sse2_ = cpu_info::Supports(cpu_info::ISA::kSSE2);
 #else
   use_sse2_ = false;
 #endif

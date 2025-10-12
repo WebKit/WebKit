@@ -92,6 +92,7 @@ NetworkLoadParameters NetworkResourceLoadParameters::networkLoadParameters() con
         hadMainFrameMainResourcePrivateRelayed,
         allowPrivacyProxy,
         advancedPrivacyProtections,
+        isInitiatedByDedicatedWorker,
         requiredCookiesVersion
     };
 }

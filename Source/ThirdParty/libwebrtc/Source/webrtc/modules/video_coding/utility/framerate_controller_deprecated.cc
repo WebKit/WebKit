@@ -10,9 +10,9 @@
 
 #include "modules/video_coding/utility/framerate_controller_deprecated.h"
 
-#include <stddef.h>
-
+#include <cstddef>
 #include <cstdint>
+#include <optional>
 
 namespace webrtc {
 

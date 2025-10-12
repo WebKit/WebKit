@@ -16,7 +16,13 @@ var rootDiv = document.createElement("div");
 document.body.appendChild(rootDiv);
 var testHtml = "<div id='div0-parent'><div id='div0'><div id='div0-child'></div></div><div id='div1-parent'><div id='div1'><div id='div1-child'></div></div><div id='div2-parent'><div id='div2'><div id='div2-child'></div></div></div></div></div>";
 
-testCases.forEach(function (test) {
+jsTestIsAsync = true;
+
+function perfomMicrotaskCheckpoint() {
+    window.dispatchEvent(new Event('custom'));
+}
+
+async function runTest(test) {
     var divX, divY, divZ, hostNode, shadowRoot;
     debug("=== Initial state ===");
     shadowRoot = setUpShadowTree(rootDiv, hostNode, testHtml)
@@ -24,9 +30,9 @@ testCases.forEach(function (test) {
     divX = shadowRoot.getElementById(test[0]);
     divY = shadowRoot.getElementById(test[1]);
     divZ = shadowRoot.getElementById(test[2]);
-    checkParentAndChildAlive(divX, test[0]);
-    checkParentAndChildAlive(divY, test[1]);
-    checkParentAndChildAlive(divZ, test[2]);
+    await checkParentAndChildAlive(divX, test[0]);
+    await checkParentAndChildAlive(divY, test[1]);
+    await checkParentAndChildAlive(divZ, test[2]);
 
     debug("=== After clearing innerHTML ===");
     shadowRoot = setUpShadowTree(rootDiv, hostNode, testHtml)
@@ -34,9 +40,9 @@ testCases.forEach(function (test) {
     divY = shadowRoot.getElementById(test[1]);
     divZ = shadowRoot.getElementById(test[2]);
     rootDiv.innerHTML = "";
-    checkParentAndChildAlive(divX, test[0]);
-    checkParentAndChildAlive(divY, test[1]);
-    checkParentAndChildAlive(divZ, test[2]);
+    await checkParentAndChildAlive(divX, test[0]);
+    await checkParentAndChildAlive(divY, test[1]);
+    await checkParentAndChildAlive(divZ, test[2]);
 
     debug("=== After clearing innerHTML and divX ===");
     shadowRoot = setUpShadowTree(rootDiv, hostNode, testHtml)
@@ -45,9 +51,10 @@ testCases.forEach(function (test) {
     divZ = shadowRoot.getElementById(test[2]);
     rootDiv.innerHTML = "";
     divX = null;
+    perfomMicrotaskCheckpoint()
     gc();
-    checkParentAndChildAlive(divY, test[1]);
-    checkParentAndChildAlive(divZ, test[2]);
+    await checkParentAndChildAlive(divY, test[1]);
+    await checkParentAndChildAlive(divZ, test[2]);
 
     debug("=== After clearing innerHTML, divX and divY ===");
     shadowRoot = setUpShadowTree(rootDiv, hostNode, testHtml)
@@ -57,8 +64,9 @@ testCases.forEach(function (test) {
     rootDiv.innerHTML = "";
     divX = null;
     divY = null;
+    perfomMicrotaskCheckpoint()
     gc();
-    checkParentAndChildAlive(divZ, test[2]);
+    await checkParentAndChildAlive(divZ, test[2]);
 
     debug("=== After clearing innerHTML, divX, divY and divZ ===");
     shadowRoot = setUpShadowTree(rootDiv, hostNode, testHtml)
@@ -71,6 +79,7 @@ testCases.forEach(function (test) {
     divX = null;
     divY = null;
     divZ = null;
+    perfomMicrotaskCheckpoint()
     gc();
     if (window.internals) {
         // DOM nodes can be destructed asynchronously during idle time. Force delete the nodes
@@ -78,19 +87,27 @@ testCases.forEach(function (test) {
         // If all the Node objects in testHtml are successfully destructed,
         // at least 9 <div>s objects will be removed.
         // (Actually, since testHtml rendering requires more than 9 Node objects.)
-        if (window.internals.numberOfLiveNodes() <= prevNodes - 9)
+        if (window.internals.numberOfLiveNodes() < prevNodes)
             testPassed("All <div> objects in a DOM tree are successfully destructed.");
         else
             testFailed("<div> objects in a DOM tree are not destructed.");
     }
-});
+}
 
-function checkParentAndChildAlive(div, name) {
+async function runAllTests() {
+    for (let test of testCases)
+        await runTest(test);
+    finishJSTest();
+}
+
+async function checkParentAndChildAlive(div, name) {
     globalDiv = div;
     shouldBeEqualToString('globalDiv.id', name);
     shouldBeEqualToString('globalDiv.parentNode.id', name + "-parent");
     shouldBeEqualToString('globalDiv.firstChild.id', name + "-child");
+    div = null;
     globalDiv = null;
+    await new Promise((resolve) => setTimeout(resolve, 0));
     gc();
 }
 
@@ -101,6 +118,8 @@ function setUpShadowTree(rootDiv, hostNode, testHtml) {
     rootDiv.appendChild(hostNode);
     return shadowRoot;
 }
+
+runAllTests();
 
 var successfullyParsed = true;
 </script>

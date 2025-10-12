@@ -36,6 +36,7 @@
 #import "WKWebViewPrivate.h"
 #import "WebExtensionFrameIdentifier.h"
 #import "WebExtensionFrameParameters.h"
+#import "WebExtensionPermission.h"
 #import "WebExtensionTab.h"
 #import "WebExtensionUtilities.h"
 #import "WebFrame.h"
@@ -58,9 +59,9 @@ static WebExtensionFrameParameters frameParametersForFrame(_WKFrameTreeNode *fra
     };
 }
 
-bool WebExtensionContext::isWebNavigationMessageAllowed()
+bool WebExtensionContext::isWebNavigationMessageAllowed(IPC::Decoder& message)
 {
-    return isLoaded() && hasPermission(WKWebExtensionPermissionWebNavigation);
+    return isLoadedAndPrivilegedMessage(message) && hasPermission(WebExtensionPermission::webNavigation());
 }
 
 void WebExtensionContext::webNavigationTraverseFrameTreeForFrame(_WKFrameTreeNode *frame, _WKFrameTreeNode *parentFrame, WebExtensionTab* tab, Vector<WebExtensionFrameParameters> &frames)

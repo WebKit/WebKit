@@ -11,17 +11,21 @@
 #ifndef RTC_BASE_UNIQUE_ID_GENERATOR_H_
 #define RTC_BASE_UNIQUE_ID_GENERATOR_H_
 
+#include <cstdint>
 #include <limits>
 #include <set>
 #include <string>
+#include <type_traits>
 
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "api/sequence_checker.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/no_unique_address.h"
+#include "rtc_base/thread_annotations.h"
 
-namespace rtc {
+namespace webrtc {
 
 // This class will generate numbers. A common use case is for identifiers.
 // The generated numbers will be unique, in the local scope of the generator.
@@ -53,8 +57,8 @@ class UniqueNumberGenerator {
   bool AddKnownId(TIntegral value);
 
  private:
-  RTC_NO_UNIQUE_ADDRESS webrtc::SequenceChecker sequence_checker_{
-      webrtc::SequenceChecker::kDetached};
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker sequence_checker_{
+      SequenceChecker::kDetached};
   static_assert(std::is_integral<TIntegral>::value, "Must be integral type.");
   TIntegral counter_ RTC_GUARDED_BY(sequence_checker_);
   std::set<TIntegral> known_ids_ RTC_GUARDED_BY(sequence_checker_);
@@ -88,7 +92,7 @@ class UniqueRandomIdGenerator {
  private:
   // TODO(bugs.webrtc.org/12666): This lock is needed due to an instance in
   // SdpOfferAnswerHandler being shared between threads.
-  webrtc::Mutex mutex_;
+  Mutex mutex_;
   std::set<uint32_t> known_ids_ RTC_GUARDED_BY(&mutex_);
 };
 
@@ -145,6 +149,7 @@ bool UniqueNumberGenerator<TIntegral>::AddKnownId(TIntegral value) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   return known_ids_.insert(value).second;
 }
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_UNIQUE_ID_GENERATOR_H_

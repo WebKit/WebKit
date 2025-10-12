@@ -10,9 +10,12 @@
 
 #include "rtc_tools/frame_analyzer/video_geometry_aligner.h"
 
+#include <cstdint>
 #include <vector>
 
+#include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/video_frame_buffer.h"
 #include "rtc_tools/frame_analyzer/video_quality_analysis.h"
 #include "rtc_tools/video_file_reader.h"
 #include "test/gtest.h"
@@ -23,7 +26,7 @@ namespace test {
 
 class VideoGeometryAlignerTest : public ::testing::Test {
  protected:
-  void SetUp() {
+  void SetUp() override {
     reference_video_ =
         OpenYuvFile(ResourcePath("foreman_128x96", "yuv"), 128, 96);
     ASSERT_TRUE(reference_video_);
@@ -38,8 +41,8 @@ class VideoGeometryAlignerTest : public ::testing::Test {
         /* stride_u= */ 2, data_v, /* stride_v= */ 2);
   }
 
-  rtc::scoped_refptr<Video> reference_video_;
-  rtc::scoped_refptr<I420BufferInterface> test_frame_;
+  scoped_refptr<Video> reference_video_;
+  scoped_refptr<I420BufferInterface> test_frame_;
 };
 
 // Teach gtest how to compare CropRegions.
@@ -49,7 +52,7 @@ bool operator==(const CropRegion& a, const CropRegion& b) {
 }
 
 TEST_F(VideoGeometryAlignerTest, CropAndZoomIdentity) {
-  const rtc::scoped_refptr<I420BufferInterface> frame =
+  const scoped_refptr<I420BufferInterface> frame =
       reference_video_->GetFrame(0);
 
   // Assume perfect match, i.e. SSIM == 1.
@@ -60,7 +63,7 @@ TEST_F(VideoGeometryAlignerTest, CropAndZoomIdentity) {
 TEST_F(VideoGeometryAlignerTest, CropAndZoomLeft) {
   CropRegion region;
   region.left = 2;
-  const rtc::scoped_refptr<I420BufferInterface> cropped_frame =
+  const scoped_refptr<I420BufferInterface> cropped_frame =
       CropAndZoom(region, test_frame_);
   EXPECT_EQ(std::vector<uint8_t>(
                 {2, 2, 3, 3, 6, 6, 7, 7, 10, 10, 11, 11, 14, 14, 15, 15}),
@@ -78,7 +81,7 @@ TEST_F(VideoGeometryAlignerTest, CropAndZoomLeft) {
 TEST_F(VideoGeometryAlignerTest, DISABLED_CropAndZoomTop) {
   CropRegion region;
   region.top = 2;
-  const rtc::scoped_refptr<I420BufferInterface> cropped_frame =
+  const scoped_refptr<I420BufferInterface> cropped_frame =
       CropAndZoom(region, test_frame_);
   EXPECT_EQ(std::vector<uint8_t>(
                 {8, 9, 10, 11, 10, 11, 12, 13, 12, 13, 14, 15, 12, 13, 14, 15}),
@@ -95,7 +98,7 @@ TEST_F(VideoGeometryAlignerTest, DISABLED_CropAndZoomTop) {
 TEST_F(VideoGeometryAlignerTest, CropAndZoomRight) {
   CropRegion region;
   region.right = 2;
-  const rtc::scoped_refptr<I420BufferInterface> cropped_frame =
+  const scoped_refptr<I420BufferInterface> cropped_frame =
       CropAndZoom(region, test_frame_);
   EXPECT_EQ(std::vector<uint8_t>(
                 {0, 0, 1, 1, 4, 4, 5, 5, 8, 8, 9, 9, 12, 12, 13, 13}),
@@ -113,7 +116,7 @@ TEST_F(VideoGeometryAlignerTest, CropAndZoomRight) {
 TEST_F(VideoGeometryAlignerTest, DISABLED_CropAndZoomBottom) {
   CropRegion region;
   region.bottom = 2;
-  const rtc::scoped_refptr<I420BufferInterface> cropped_frame =
+  const scoped_refptr<I420BufferInterface> cropped_frame =
       CropAndZoom(region, test_frame_);
   EXPECT_EQ(
       std::vector<uint8_t>({0, 1, 2, 3, 2, 3, 4, 5, 4, 5, 6, 7, 4, 5, 6, 7}),
@@ -128,7 +131,7 @@ TEST_F(VideoGeometryAlignerTest, DISABLED_CropAndZoomBottom) {
 }
 
 TEST_F(VideoGeometryAlignerTest, CalculateCropRegionIdentity) {
-  const rtc::scoped_refptr<I420BufferInterface> frame =
+  const scoped_refptr<I420BufferInterface> frame =
       reference_video_->GetFrame(0);
   CropRegion identity_region;
   EXPECT_EQ(identity_region, CalculateCropRegion(frame, frame));
@@ -142,7 +145,7 @@ TEST_F(VideoGeometryAlignerTest, CalculateCropRegionArbitrary) {
   crop_region.right = 5;
   crop_region.bottom = 3;
 
-  const rtc::scoped_refptr<I420BufferInterface> frame =
+  const scoped_refptr<I420BufferInterface> frame =
       reference_video_->GetFrame(0);
 
   EXPECT_EQ(crop_region,

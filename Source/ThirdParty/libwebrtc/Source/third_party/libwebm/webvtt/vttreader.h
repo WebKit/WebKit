@@ -10,6 +10,7 @@
 #define WEBVTT_VTTREADER_H_
 
 #include <cstdio>
+
 #include "./webvttparser.h"
 
 namespace libwebvtt {

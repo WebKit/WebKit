@@ -26,18 +26,18 @@
 
 #pragma once
 
-#include "CacheStorageConnection.h"
-#include "ClientOrigin.h"
-#include "ImageBitmap.h"
-#include "ReportingClient.h"
-#include "ScriptExecutionContext.h"
-#include "Settings.h"
-#include "Supplementable.h"
-#include "WindowOrWorkerGlobalScope.h"
-#include "WorkerOrWorkletGlobalScope.h"
-#include "WorkerOrWorkletScriptController.h"
-#include "WorkerType.h"
 #include <JavaScriptCore/ConsoleMessage.h>
+#include <WebCore/CacheStorageConnection.h>
+#include <WebCore/ClientOrigin.h>
+#include <WebCore/ImageBitmap.h>
+#include <WebCore/ReportingClient.h>
+#include <WebCore/ScriptExecutionContext.h>
+#include <WebCore/Settings.h>
+#include <WebCore/Supplementable.h>
+#include <WebCore/WindowOrWorkerGlobalScope.h>
+#include <WebCore/WorkerOrWorkletGlobalScope.h>
+#include <WebCore/WorkerOrWorkletScriptController.h>
+#include <WebCore/WorkerType.h>
 #include <memory>
 #include <wtf/FixedVector.h>
 #include <wtf/MemoryPressureHandler.h>
@@ -83,6 +83,7 @@ class IDBConnectionProxy;
 
 class WorkerGlobalScope : public Supplementable<WorkerGlobalScope>, public WindowOrWorkerGlobalScope, public WorkerOrWorkletGlobalScope, public ReportingClient {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WorkerGlobalScope);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerGlobalScope);
 public:
     virtual ~WorkerGlobalScope();
 
@@ -113,8 +114,7 @@ public:
     WorkerSWClientConnection& swClientConnection();
     void updateServiceWorkerClientData() final;
 
-    WorkerThread& thread() const;
-    Ref<WorkerThread> protectedThread() const;
+    Ref<WorkerThread> thread() const;
 
     using ScriptExecutionContext::hasPendingActivity;
 
@@ -205,6 +205,7 @@ private:
     EventTarget* errorEventTarget() final;
     String resourceRequestIdentifier() const final { return m_inspectorIdentifier; }
     SocketProvider* socketProvider() final;
+    RefPtr<SocketProvider> protectedSocketProvider();
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
 
     bool shouldBypassMainWorldContentSecurityPolicy() const final { return m_shouldBypassMainWorldContentSecurityPolicy; }
@@ -223,35 +224,35 @@ private:
     String m_inspectorIdentifier;
     String m_userAgent;
 
-    mutable RefPtr<WorkerLocation> m_location;
-    mutable RefPtr<WorkerNavigator> m_navigator;
+    const RefPtr<WorkerLocation> m_location;
+    const RefPtr<WorkerNavigator> m_navigator;
 
     bool m_isOnline;
     bool m_shouldBypassMainWorldContentSecurityPolicy;
 
-    Ref<SecurityOrigin> m_topOrigin;
+    const Ref<SecurityOrigin> m_topOrigin;
 
-    RefPtr<IDBClient::IDBConnectionProxy> m_connectionProxy;
+    const RefPtr<IDBClient::IDBConnectionProxy> m_connectionProxy;
 
-    RefPtr<SocketProvider> m_socketProvider;
+    const RefPtr<SocketProvider> m_socketProvider;
 
     RefPtr<Performance> m_performance;
-    Ref<ReportingScope> m_reportingScope;
+    const Ref<ReportingScope> m_reportingScope;
     mutable RefPtr<Crypto> m_crypto;
 
     WeakPtr<ScriptBufferSourceProvider> m_mainScriptSourceProvider;
     MemoryCompactRobinHoodHashMap<URL, WeakHashSet<ScriptBufferSourceProvider>> m_importedScriptsSourceProviders;
 
-    RefPtr<CacheStorageConnection> m_cacheStorageConnection;
-    std::unique_ptr<WorkerMessagePortChannelProvider> m_messagePortChannelProvider;
-    RefPtr<WorkerSWClientConnection> m_swClientConnection;
+    const RefPtr<CacheStorageConnection> m_cacheStorageConnection;
+    const std::unique_ptr<WorkerMessagePortChannelProvider> m_messagePortChannelProvider;
+    const RefPtr<WorkerSWClientConnection> m_swClientConnection;
     std::unique_ptr<CSSValuePool> m_cssValuePool;
     std::unique_ptr<WorkerClient> m_workerClient;
-    RefPtr<CSSFontSelector> m_cssFontSelector;
+    const RefPtr<CSSFontSelector> m_cssFontSelector;
     SettingsValues m_settingsValues;
     WorkerType m_workerType;
     FetchOptions::Credentials m_credentials;
-    RefPtr<WorkerStorageConnection> m_storageConnection;
+    const RefPtr<WorkerStorageConnection> m_storageConnection;
     RefPtr<WorkerFileSystemStorageConnection> m_fileSystemStorageConnection;
 };
 

@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "CSSValueTypes.h"
+#include <WebCore/CSSValueTypes.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 

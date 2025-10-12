@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,9 +64,9 @@ WebConsoleAgent::WebConsoleAgent(WebAgentContext& context)
 
 void WebConsoleAgent::frameWindowDiscarded(LocalDOMWindow& window)
 {
-    if (auto* document = window.document()) {
+    if (RefPtr document = window.document()) {
         for (auto& message : m_consoleMessages) {
-            if (executionContext(message->globalObject()) == document)
+            if (executionContext(message->globalObject()) == document.get())
                 message->clear();
         }
     }

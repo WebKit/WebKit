@@ -1,0 +1,32 @@
+PASS if no crash
+
+<script src='/js-test-resources/ui-helper.js'></script>
+
+<iframe id="iframe" srcdoc="<form method='post'><input type='submit' value='Submit'></form>"></iframe>
+
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+
+let clickCount = 0;
+
+iframe.onload = async () => {
+    let doc = iframe.contentDocument, button = doc.querySelector("input[type='submit']");
+
+    button.addEventListener('click', e => {
+        if (++clickCount === 10)
+            testRunner?.notifyDone();
+    });
+
+    let fr = iframe.getBoundingClientRect(), br = button.getBoundingClientRect();
+    let x = Math.round(fr.left + br.left + br.width / 2), y = Math.round(fr.top + br.top + br.height / 2);
+
+    if (testRunner.isIOSFamily && window.eventSender)
+        await UIHelper.activateAt(x, y);
+    else {
+        await eventSender?.asyncMouseMoveTo(x, y);
+        await eventSender?.asyncMouseDown();
+        await eventSender?.asyncMouseUp();
+    }
+};
+</script>

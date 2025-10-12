@@ -60,17 +60,17 @@ RefPtr<WebExtensionContextProxy> WebExtensionContextProxy::get(WebExtensionConte
 }
 
 WebExtensionContextProxy::WebExtensionContextProxy(const WebExtensionContextParameters& parameters)
-    : m_identifier(parameters.identifier)
+    : m_unprivilegedIdentifier(parameters.unprivilegedIdentifier)
 {
-    ASSERT(!get(m_identifier));
-    webExtensionContextProxies().add(m_identifier, *this);
+    ASSERT(!get(m_unprivilegedIdentifier));
+    webExtensionContextProxies().add(m_unprivilegedIdentifier, *this);
 
-    WebProcess::singleton().addMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier, *this);
+    WebProcess::singleton().addMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_unprivilegedIdentifier, *this);
 }
 
 WebExtensionContextProxy::~WebExtensionContextProxy()
 {
-    webExtensionContextProxies().remove(m_identifier);
+    webExtensionContextProxies().remove(m_unprivilegedIdentifier);
     WebProcess::singleton().removeMessageReceiver(*this);
 }
 
@@ -87,6 +87,9 @@ Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExt
         context.m_manifest = parseJSON(manifestJSON);
         context.m_manifestVersion = parameters.manifestVersion;
         context.m_isSessionStorageAllowedInContentScripts = parameters.isSessionStorageAllowedInContentScripts;
+
+        if (parameters.privilegedIdentifier)
+            context.m_privilegedIdentifier = parameters.privilegedIdentifier;
 
         if (parameters.backgroundPageIdentifier) {
             if (newPage && parameters.backgroundPageIdentifier.value() == newPage->identifier())
@@ -123,7 +126,7 @@ Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExt
         });
     };
 
-    if (RefPtr context = get(parameters.identifier)) {
+    if (RefPtr context = get(parameters.unprivilegedIdentifier)) {
         updateProperties(*context);
         return *context;
     }

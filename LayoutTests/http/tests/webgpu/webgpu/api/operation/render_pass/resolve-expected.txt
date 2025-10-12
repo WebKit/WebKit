@@ -1,4 +1,6 @@
 
-PASS :render_pass_resolve:storeOperation="discard"
-PASS :render_pass_resolve:storeOperation="store"
+PASS :render_pass_resolve:separateResolvePass=false;storeOperation="discard"
+PASS :render_pass_resolve:separateResolvePass=false;storeOperation="store"
+PASS :render_pass_resolve:separateResolvePass=true;storeOperation="discard"
+PASS :render_pass_resolve:separateResolvePass=true;storeOperation="store"
 

@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true obscuredInset.top=50 ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body, html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: system-ui;
+        }
+
+        .top {
+            position: fixed;
+            top: 0;
+            height: 60px;
+            left: 0;
+            right: 0;
+        }
+
+        .content {
+            width: 100%;
+            height: 100%;
+        }
+
+        .top > .content {
+            background: red;
+        }
+
+        .tall {
+            height: 500vh;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        await UIHelper.setObscuredInsets(50, 0, 0, 0);
+        await UIHelper.ensurePresentationUpdate();
+
+        colorBeforeHiding = (await UIHelper.fixedContainerEdgeColors()).top;
+        shouldBeEqualToString("colorBeforeHiding", "rgb(255, 0, 0)");
+
+        scrollBy(0, 500);
+        document.querySelector(".tall").style.visibility = "hidden";
+        await UIHelper.ensurePresentationUpdate();
+
+        colorAfterHiding = (await UIHelper.fixedContainerEdgeColors()).top;
+        shouldBeEqualToString("colorAfterHiding", "rgb(255, 0, 0)");
+
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+    <header class="top"><div class="content"></div></header>
+    <div class="tall"></div>
+</body>
+</html>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -107,6 +107,10 @@ typedef CF_ENUM(uint32_t, CTFontTextStylePlatform)
     kCTFontTextStylePlatformDefault = (CTFontTextStylePlatform)-1,
     kCTFontTextStylePlatformPhone = (CTFontTextStylePlatform)0,
     kCTFontTextStylePlatformVision = (CTFontTextStylePlatform)5,
+};
+
+typedef CF_OPTIONS(CFOptionFlags, CTFontDescriptorMatchingOptions) {
+    kCTFontDescriptorMatchingOptionIncludeHiddenFonts = 1 << 16,
 };
 
 #endif
@@ -240,11 +244,10 @@ bool CTFontIsAppleColorEmoji(CTFontRef);
 CTFontRef CTFontCreateForCharacters(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFIndex *coveredLength);
 CGFloat CTFontGetSbixImageSizeForGlyphAndContentsScale(CTFontRef, const CGGlyph, CGFloat contentsScale);
 
+CFArrayRef _Nullable CTFontDescriptorCreateMatchingFontDescriptorsWithOptions(CTFontDescriptorRef, CFSetRef _Nullable, CTFontDescriptorMatchingOptions);
 CTFontDescriptorOptions CTFontDescriptorGetOptions(CTFontDescriptorRef);
 
-#if HAVE(CTFONT_COPYCOLORGLYPHCOVERAGE)
 CFBitVectorRef CTFontCopyColorGlyphCoverage(CTFontRef);
-#endif
 
 #if HAVE(CTFONTMANAGER_CREATEMEMORYSAFEFONTDESCRIPTORFROMDATA)
 CTFontDescriptorRef CTFontManagerCreateMemorySafeFontDescriptorFromData(CFDataRef);

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "GCOwnedDataScope.h"
-#include "JSCJSValue.h"
+#include <JavaScriptCore/GCOwnedDataScope.h>
+#include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/text/SymbolImpl.h>
 
 namespace JSC {

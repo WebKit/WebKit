@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "AffineTransform.h"
-#include "FloatSize.h"
+#include <WebCore/AffineTransform.h>
+#include <WebCore/FloatSize.h>
 #include <wtf/TZoneMalloc.h>
 
 typedef struct OpaqueVTImageRotationSession* VTImageRotationSessionRef;

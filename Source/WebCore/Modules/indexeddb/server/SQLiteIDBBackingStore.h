@@ -25,16 +25,16 @@
 
 #pragma once
 
-#include "IDBBackingStore.h"
-#include "IDBDatabaseIdentifier.h"
-#include "IDBDatabaseInfo.h"
-#include "IDBDatabaseNameAndVersion.h"
-#include "IDBIndexIdentifier.h"
-#include "IDBObjectStoreIdentifier.h"
-#include "IDBResourceIdentifier.h"
-#include "SQLiteIDBTransaction.h"
-#include "SQLiteStatementAutoResetScope.h"
 #include <JavaScriptCore/Strong.h>
+#include <WebCore/IDBBackingStore.h>
+#include <WebCore/IDBDatabaseIdentifier.h>
+#include <WebCore/IDBDatabaseInfo.h>
+#include <WebCore/IDBDatabaseNameAndVersion.h>
+#include <WebCore/IDBIndexIdentifier.h>
+#include <WebCore/IDBObjectStoreIdentifier.h>
+#include <WebCore/IDBResourceIdentifier.h>
+#include <WebCore/SQLiteIDBTransaction.h>
+#include <WebCore/SQLiteStatementAutoResetScope.h>
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>

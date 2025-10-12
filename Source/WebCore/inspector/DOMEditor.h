@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

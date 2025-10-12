@@ -45,7 +45,6 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement
     EnabledBySetting=WebGLEnabled,
     GenerateIsReachable=ImplCanvasBase,
     JSCustomMarkFunction,
-    JSGenerateToJSObject,
     DoNotCheckConstants,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),

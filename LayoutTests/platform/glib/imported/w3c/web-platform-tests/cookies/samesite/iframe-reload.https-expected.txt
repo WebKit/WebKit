@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: [object MessageEvent]
-CONSOLE MESSAGE: [object MessageEvent]
-CONSOLE MESSAGE: [object MessageEvent]
 
 PASS Reloaded same-host fetches are strictly same-site
 PASS Reloaded subdomain fetches are strictly same-site

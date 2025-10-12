@@ -37,7 +37,8 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "AudioSession.h"
-#include "DocumentInlines.h"
+#include "ContextDestructionObserverInlines.h"
+#include "DocumentPage.h"
 #include "ExceptionCode.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaStream.h"
@@ -143,9 +144,6 @@ void UserMediaRequest::start()
         break;
     }
 
-    ASSERT(document.page());
-    if (RefPtr page = document.protectedPage())
-        PlatformMediaSessionManager::singleton().prepareToSendUserMediaPermissionRequestForPage(*page);
     controller->requestUserMediaAccess(*this);
 }
 
@@ -164,7 +162,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
     RELEASE_LOG(MediaStream, "UserMediaRequest::allow %s %s", audioDevice ? audioDevice.persistentId().utf8().data() : "", videoDevice ? videoDevice.persistentId().utf8().data() : "");
 
     Ref document = downcast<Document>(*scriptExecutionContext());
-    RefPtr localWindow = document->protectedWindow();
+    RefPtr localWindow = document->window();
     RefPtr mediaDevices = localWindow ? NavigatorMediaDevices::mediaDevices(localWindow->protectedNavigator()) : nullptr;
     if (mediaDevices)
         mediaDevices->willStartMediaCapture(!!audioDevice, !!videoDevice);
@@ -207,7 +205,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
 
             if (RefPtr audioTrack = stream->getFirstAudioTrack()) {
 #if USE(AUDIO_SESSION)
-                AudioSession::sharedSession().tryToSetActive(true);
+                AudioSession::singleton().tryToSetActive(true);
 #endif
                 if (std::holds_alternative<MediaTrackConstraints>(protectedThis->m_audioConstraints))
                     audioTrack->setConstraints(std::get<MediaTrackConstraints>(WTFMove(protectedThis->m_audioConstraints)));

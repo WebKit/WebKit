@@ -6,6 +6,7 @@
  */
 
 #include "include/core/SkPath.h"
+#include "include/core/SkPathBuilder.h"
 #include "include/core/SkPoint.h"
 #include "include/core/SkRect.h"
 #include "include/core/SkRefCnt.h"
@@ -62,34 +63,33 @@ private:
         const auto input_bounds = input.computeTightBounds();
         const SkPoint center{input_bounds.centerX(), input_bounds.centerY()};
 
-        SkPath path;
+        SkPathBuilder builder;
 
         SkPoint contour_start = {0, 0};
         std::vector<CubicInfo> cubics;
 
         auto commit_contour = [&]() {
-            path.moveTo(lerp(contour_start, center, fAmount));
+            builder.moveTo(lerp(contour_start, center, fAmount));
             for (const auto& c : cubics) {
-                path.cubicTo(lerp(c.ctrl0, center, -fAmount),
-                             lerp(c.ctrl1, center, -fAmount),
-                             lerp(c.pt   , center,  fAmount));
+                builder.cubicTo(lerp(c.ctrl0, center, -fAmount),
+                                lerp(c.ctrl1, center, -fAmount),
+                                lerp(c.pt   , center,  fAmount));
             }
-            path.close();
+            builder.close();
 
             cubics.clear();
         };
 
         // Normalize all verbs to cubic representation.
-        SkPoint pts[4];
-        SkPath::Verb verb;
         SkPath::Iter iter(input, true);
-        while ((verb = iter.next(pts)) != SkPath::kDone_Verb) {
-            switch (verb) {
-                case SkPath::kMove_Verb:
+        while (auto rec = iter.next()) {
+            SkSpan<const SkPoint> pts = rec->fPoints;
+            switch (rec->fVerb) {
+                case SkPathVerb::kMove:
                     commit_contour();
                     contour_start = pts[0];
                     break;
-                case SkPath::kLine_Verb: {
+                case SkPathVerb::kLine: {
                     // Empirically, straight lines are treated as cubics with control points
                     // located length/100 away from extremities.
                     static constexpr float kCtrlPosFraction = 1.f / 100;
@@ -101,13 +101,14 @@ private:
                             line_end
                     });
                 } break;
-                case SkPath::kQuad_Verb:
-                    SkConvertQuadToCubic(pts, pts);
-                    cubics.push_back({pts[1], pts[2], pts[3]});
-                    break;
-                case SkPath::kConic_Verb: {
+                case SkPathVerb::kQuad: {
+                    SkPoint quad[4];
+                    SkConvertQuadToCubic(pts.data(), quad);
+                    cubics.push_back({quad[1], quad[2], quad[3]});
+                } break;
+                case SkPathVerb::kConic: {
                     // We should only ever encounter conics from circles/ellipses.
-                    SkASSERT(SkScalarNearlyEqual(iter.conicWeight(), SK_ScalarRoot2Over2));
+                    SkASSERT(SkScalarNearlyEqual(rec->conicWeight(), SK_ScalarRoot2Over2));
 
                     // http://spencermortensen.com/articles/bezier-circle/
                     static constexpr float kCubicCircleCoeff = 1 - 0.551915024494f;
@@ -122,18 +123,16 @@ private:
                         conic_end
                     });
                 } break;
-                case SkPath::kCubic_Verb:
+                case SkPathVerb::kCubic:
                     cubics.push_back({pts[1], pts[2], pts[3]});
                     break;
-                case SkPath::kClose_Verb:
+                case SkPathVerb::kClose:
                     commit_contour();
-                    break;
-                default:
                     break;
             }
         }
 
-        return path;
+        return builder.detach();
     }
 
     float fAmount = 0;

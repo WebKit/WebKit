@@ -1,5 +1,3 @@
-//@ skip
-
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error(`expected ${expected} but got ${actual}`);
@@ -255,32 +253,32 @@ shouldBe(Intl.DateTimeFormat('en', { timeZone: 'AMERICA/LOS_ANGELES' }).resolved
 // Default time zone is a valid canonical time zone.
 shouldBe(Intl.DateTimeFormat('en', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }).resolvedOptions().timeZone, Intl.DateTimeFormat().resolvedOptions().timeZone);
 
-// Time zone is canonicalized for obsolete links in IANA tz backward file.
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Australia/ACT' }).resolvedOptions().timeZone, 'Australia/Sydney');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Australia/North' }).resolvedOptions().timeZone, 'Australia/Darwin');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Australia/South' }).resolvedOptions().timeZone, 'Australia/Adelaide');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Australia/West' }).resolvedOptions().timeZone, 'Australia/Perth');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Brazil/East' }).resolvedOptions().timeZone, 'America/Sao_Paulo');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Brazil/West' }).resolvedOptions().timeZone, 'America/Manaus');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Canada/Atlantic' }).resolvedOptions().timeZone, 'America/Halifax');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Canada/Central' }).resolvedOptions().timeZone, 'America/Winnipeg');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Canada/Eastern' }).resolvedOptions().timeZone, 'America/Toronto');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Canada/Mountain' }).resolvedOptions().timeZone, 'America/Edmonton');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Canada/Pacific' }).resolvedOptions().timeZone, 'America/Vancouver');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'GB' }).resolvedOptions().timeZone, 'Europe/London');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'GMT+0' }).resolvedOptions().timeZone, 'UTC');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'GMT-0' }).resolvedOptions().timeZone, 'UTC');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'GMT0' }).resolvedOptions().timeZone, 'UTC');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Greenwich' }).resolvedOptions().timeZone, 'UTC');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'UCT' }).resolvedOptions().timeZone, 'UTC');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'US/Central' }).resolvedOptions().timeZone, 'America/Chicago');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'US/Eastern' }).resolvedOptions().timeZone, 'America/New_York');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'US/Michigan' }).resolvedOptions().timeZone, 'America/Detroit');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'US/Mountain' }).resolvedOptions().timeZone, 'America/Denver');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'US/Pacific' }).resolvedOptions().timeZone, 'America/Los_Angeles');
+// Time zone should be preserved and not canonicalized.
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Australia/ACT' }).resolvedOptions().timeZone, 'Australia/ACT');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Australia/North' }).resolvedOptions().timeZone, 'Australia/North');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Australia/South' }).resolvedOptions().timeZone, 'Australia/South');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Australia/West' }).resolvedOptions().timeZone, 'Australia/West');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Brazil/East' }).resolvedOptions().timeZone, 'Brazil/East');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Brazil/West' }).resolvedOptions().timeZone, 'Brazil/West');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Canada/Atlantic' }).resolvedOptions().timeZone, 'Canada/Atlantic');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Canada/Central' }).resolvedOptions().timeZone, 'Canada/Central');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Canada/Eastern' }).resolvedOptions().timeZone, 'Canada/Eastern');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Canada/Mountain' }).resolvedOptions().timeZone, 'Canada/Mountain');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Canada/Pacific' }).resolvedOptions().timeZone, 'Canada/Pacific');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'GB' }).resolvedOptions().timeZone, 'GB');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'GMT+0' }).resolvedOptions().timeZone, 'GMT+0');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'GMT-0' }).resolvedOptions().timeZone, 'GMT-0');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'GMT0' }).resolvedOptions().timeZone, 'GMT0');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Greenwich' }).resolvedOptions().timeZone, 'Greenwich');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'UCT' }).resolvedOptions().timeZone, 'UCT');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'US/Central' }).resolvedOptions().timeZone, 'US/Central');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'US/Eastern' }).resolvedOptions().timeZone, 'US/Eastern');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'US/Michigan' }).resolvedOptions().timeZone, 'US/Michigan');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'US/Mountain' }).resolvedOptions().timeZone, 'US/Mountain');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'US/Pacific' }).resolvedOptions().timeZone, 'US/Pacific');
 shouldBe(Intl.DateTimeFormat('en', { timeZone: 'UTC' }).resolvedOptions().timeZone, 'UTC');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Universal' }).resolvedOptions().timeZone, 'UTC');
-shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Zulu' }).resolvedOptions().timeZone, 'UTC');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Universal' }).resolvedOptions().timeZone, 'Universal');
+shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Zulu' }).resolvedOptions().timeZone, 'Zulu');
 
 // Timezone-sensitive format().
 shouldBe(Intl.DateTimeFormat('en', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/2015');
@@ -318,9 +316,9 @@ shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-rgsa').resolvedOptions().calendar,
 
 // Calendar-sensitive format().
 shouldBe(Intl.DateTimeFormat('en-u-ca-buddhist', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/2558 BE');
-shouldBe(Intl.DateTimeFormat('en-u-ca-chinese', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '11/15/2015');
+shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-chinese', { timeZone: 'America/Los_Angeles' }).format(1451099872641), ['11/15/2015', '2015-11-15']);
 shouldBe(Intl.DateTimeFormat('en-u-ca-coptic', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/1732 ERA1');
-shouldBe(Intl.DateTimeFormat('en-u-ca-dangi', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '11/15/2015');
+shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-dangi', { timeZone: 'America/Los_Angeles' }).format(1451099872641), ['11/15/2015', '2015-11-15']);
 shouldBe(Intl.DateTimeFormat('en-u-ca-ethioaa', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/7508 ERA0');
 shouldBe(Intl.DateTimeFormat('en-u-ca-ethiopic', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/2008 ERA1');
 shouldBe(Intl.DateTimeFormat('en-u-ca-gregory', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/2015');
@@ -328,7 +326,7 @@ shouldBe(Intl.DateTimeFormat('en-u-ca-hebrew', { timeZone: 'America/Los_Angeles'
 shouldBe(Intl.DateTimeFormat('en-u-ca-indian', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '10/4/1937 Saka');
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamic', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/14/1437 AH');
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamicc', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/13/1437 AH');
-shouldBe(Intl.DateTimeFormat('en-u-ca-ISO8601', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/2015');
+shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-ISO8601', { timeZone: 'America/Los_Angeles' }).format(1451099872641), ['12/25/2015', '2015-12-25']);
 shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-japanese', { timeZone: 'America/Los_Angeles' }).format(1451099872641), [ '12/25/27 H', '12/25/H27' ]);
 shouldBe(Intl.DateTimeFormat('en-u-ca-persian', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '10/4/1394 AP');
 shouldBe(Intl.DateTimeFormat('en-u-ca-roc', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/104 Minguo');

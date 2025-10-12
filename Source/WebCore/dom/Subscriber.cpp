@@ -26,9 +26,11 @@
 #include "Subscriber.h"
 
 #include "AbortSignal.h"
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "InternalObserver.h"
 #include "JSDOMExceptionHandling.h"
+#include "ScriptWrappableInlines.h"
 #include "SubscriberCallback.h"
 #include "SubscriptionObserverCallback.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -46,7 +48,8 @@ Subscriber::Subscriber(ScriptExecutionContext& context, Ref<InternalObserver>&& 
     , m_observer(observer)
     , m_options(options)
 {
-    followSignal(protectedSignal());
+    relaxAdoptionRequirement();
+    followSignal(m_signal);
     if (RefPtr signal = options.signal)
         followSignal(*signal);
     suspendIfNeeded();
@@ -102,8 +105,9 @@ void Subscriber::followSignal(AbortSignal& signal)
     if (signal.aborted())
         close(signal.reason().getValue());
     else {
-        signal.addAlgorithm([this](JSC::JSValue reason) {
-            close(reason);
+        signal.addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue reason) {
+            if (RefPtr subscriber = weakThis.get())
+                subscriber->close(reason);
         });
     }
 }
@@ -115,7 +119,7 @@ void Subscriber::close(JSC::JSValue reason)
 
     m_active = false;
 
-    protectedSignal()->signalAbort(reason);
+    m_signal->signalAbort(reason);
 
     {
         Locker locker { m_teardownsLock };
@@ -137,7 +141,7 @@ bool Subscriber::isInactiveDocument() const
 
 void Subscriber::reportErrorObject(JSC::JSValue value)
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
@@ -171,6 +175,8 @@ void Subscriber::visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor)
 
     observerConcurrently()->visitAdditionalChildren(visitor);
 }
+
+Subscriber::~Subscriber() = default;
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Subscriber);
 

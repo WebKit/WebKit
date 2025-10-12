@@ -1,14 +1,14 @@
 
-FAIL Content Security Policy: Expects allowed for sharedworker-import to cross-http origin and keep-origin redirection from http context. promise_test: Unhandled rejection with value: object "[object Event]"
+PASS Content Security Policy: Expects allowed for sharedworker-import to cross-http origin and keep-origin redirection from http context.
 PASS Content Security Policy: Expects allowed for sharedworker-import to cross-http origin and keep-origin redirection from http context.: securitypolicyviolation
-FAIL Content Security Policy: Expects allowed for sharedworker-import to cross-http origin and no-redirect redirection from http context. promise_test: Unhandled rejection with value: object "[object Event]"
+PASS Content Security Policy: Expects allowed for sharedworker-import to cross-http origin and no-redirect redirection from http context.
 PASS Content Security Policy: Expects allowed for sharedworker-import to cross-http origin and no-redirect redirection from http context.: securitypolicyviolation
-FAIL Content Security Policy: Expects allowed for sharedworker-import to cross-http origin and swap-origin redirection from http context. promise_test: Unhandled rejection with value: object "[object Event]"
+PASS Content Security Policy: Expects allowed for sharedworker-import to cross-http origin and swap-origin redirection from http context.
 PASS Content Security Policy: Expects allowed for sharedworker-import to cross-http origin and swap-origin redirection from http context.: securitypolicyviolation
 PASS Content Security Policy: Expects allowed for sharedworker-import to same-http origin and keep-origin redirection from http context.
 PASS Content Security Policy: Expects allowed for sharedworker-import to same-http origin and keep-origin redirection from http context.: securitypolicyviolation
 PASS Content Security Policy: Expects allowed for sharedworker-import to same-http origin and no-redirect redirection from http context.
 PASS Content Security Policy: Expects allowed for sharedworker-import to same-http origin and no-redirect redirection from http context.: securitypolicyviolation
-FAIL Content Security Policy: Expects allowed for sharedworker-import to same-http origin and swap-origin redirection from http context. promise_test: Unhandled rejection with value: object "[object Event]"
+PASS Content Security Policy: Expects allowed for sharedworker-import to same-http origin and swap-origin redirection from http context.
 PASS Content Security Policy: Expects allowed for sharedworker-import to same-http origin and swap-origin redirection from http context.: securitypolicyviolation
 

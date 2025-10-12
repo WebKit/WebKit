@@ -89,7 +89,7 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
 
     for (auto& rule : ruleList) {
         auto& actionData = rule.action().data();
-        if (std::holds_alternative<IgnorePreviousRulesAction>(actionData)) {
+        if (std::holds_alternative<IgnorePreviousRulesAction>(actionData) || std::holds_alternative<IgnoreFollowingRulesAction>(actionData)) {
             resolvePendingDisplayNoneActions(actions, actionLocations, cssDisplayNoneActionsMap);
 
             blockLoadActionsMap.clear();
@@ -97,18 +97,27 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
             cssDisplayNoneActionsMap.clear();
             makeHTTPSActionsMap.clear();
             notifyActionsMap.clear();
-        } else
+        }
+
+        if (!std::holds_alternative<IgnorePreviousRulesAction>(actionData))
             ignorePreviousRuleActionsMap.clear();
 
         // Anything with condition is just pushed.
         // We could try to merge conditions but that case is not common in practice.
-        if (!rule.trigger().conditions.isEmpty()) {
+        //
+        // FIXME: <rdar://157880650> We can actually combine ignore-following-rules actions, order would still be maintained.
+        // If the rule is an ignore-following-rules rule, we shouldn't try to combine them so that we maintain the position
+        // of the rule when we process them later.
+        //
+        // If we're tracking rule identifiers, we also cannot combine actions since the identifiers are unique.
+        if (!rule.trigger().conditions.isEmpty() || std::holds_alternative<IgnoreFollowingRulesAction>(actionData) || std::holds_alternative<ReportIdentifierAction>(actionData)) {
             actionLocations.append(actions.size());
 
             actions.append(actionData.index());
             WTF::visit(WTF::makeVisitor([&](const auto& member) {
                 member.serialize(actions);
             }), actionData);
+
             continue;
         }
 
@@ -152,6 +161,9 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
             return std::numeric_limits<ActionLocation>::max();
         }, [&] (const IgnorePreviousRulesAction&) {
             return findOrMakeActionLocation(ignorePreviousRuleActionsMap);
+        }, [&] (const IgnoreFollowingRulesAction&) {
+            ASSERT_NOT_REACHED();
+            return static_cast<ActionLocation>(0);
         }, [&] (const BlockLoadAction&) {
             return findOrMakeActionLocation(blockLoadActionsMap);
         }, [&] (const BlockCookiesAction&) {
@@ -164,6 +176,9 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
             return findOrMakeOtherActionLocation(modifyHeadersActionMap, action);
         }, [&] (const RedirectAction& action) {
             return findOrMakeOtherActionLocation(redirectActionMap, action);
+        }, [&] (const ReportIdentifierAction&) {
+            ASSERT_NOT_REACHED();
+            return static_cast<ActionLocation>(0);
         }), actionData);
         actionLocations.append(actionLocation);
     }
@@ -272,14 +287,14 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
 {
 #if ASSERT_ENABLED
     callOnMainThread([ruleJSON = ruleJSON.isolatedCopy(), parsedRuleList = crossThreadCopy(parsedRuleList)] {
-        ASSERT(parseRuleList(ruleJSON).value() == parsedRuleList);
+        ASSERT(parseRuleList(ruleJSON, WebCore::ContentExtensions::CSSSelectorsAllowed::Yes).value() == parsedRuleList);
     });
 #endif
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime patternPartitioningStart = MonotonicTime::now();
 #endif
-    
+
     client.writeSource(std::exchange(ruleJSON, String()));
 
     Vector<SerializedActionByte> actions;

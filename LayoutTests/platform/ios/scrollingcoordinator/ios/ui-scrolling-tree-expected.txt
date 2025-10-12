@@ -16,5 +16,5 @@
     (fixed node
       (fixed constraints
         (viewport-rect-at-last-layout (0,0) width=390 height=797)
-        (layer-position-at-last-layout (12,10)))
-      (layer top left (12,10)))))
+        (layer-position-at-last-layout (0,0)))
+      (layer top left (0,0)))))

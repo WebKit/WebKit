@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,13 @@
 
 #pragma once
 
+#import <wtf/Platform.h>
+
 #if ENABLE(DATA_DETECTION) && PLATFORM(MAC)
 
-#import "GraphicsLayer.h"
-#import "GraphicsLayerClient.h"
-#import "SimpleRange.h"
-#import "Timer.h"
+#import <WebCore/GraphicsLayerClient.h>
+#import <WebCore/SimpleRange.h>
+#import <WebCore/Timer.h>
 #import <wtf/RefCountedAndCanMakeWeakPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -80,9 +81,9 @@ public:
     void invalidate();
 
     DDHighlightRef highlight() const { return m_highlight.get(); }
+    RetainPtr<DDHighlightRef> protectedHighlight() const { return m_highlight; }
     const SimpleRange& range() const;
     GraphicsLayer& layer() const { return m_graphicsLayer.get(); }
-    Ref<GraphicsLayer> protectedLayer() const { return layer(); }
 
     enum class Type : uint8_t {
         None = 0,
@@ -118,7 +119,7 @@ private:
     WeakPtr<DataDetectorHighlightClient> m_client;
     RetainPtr<DDHighlightRef> m_highlight;
     std::optional<SimpleRange> m_range;
-    Ref<GraphicsLayer> m_graphicsLayer;
+    const Ref<GraphicsLayer> m_graphicsLayer;
     Type m_type { Type::None };
 
     Timer m_fadeAnimationTimer;

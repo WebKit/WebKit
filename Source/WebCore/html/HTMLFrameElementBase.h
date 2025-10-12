@@ -23,8 +23,8 @@
 
 #pragma once
 
-#include "FrameLoaderTypes.h"
-#include "HTMLFrameOwnerElement.h"
+#include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/HTMLFrameOwnerElement.h>
 
 namespace JSC {
 class CallFrame;

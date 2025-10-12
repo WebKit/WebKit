@@ -70,7 +70,13 @@ void PaymentResponse::setDetailsFunction(DetailsFunction&& detailsFunction)
 
 void PaymentResponse::complete(Document& document, std::optional<PaymentComplete>&& result, std::optional<PaymentCompleteDetails>&& details, DOMPromiseDeferred<void>&& promise)
 {
-    if (m_state == State::Stopped || !m_request) {
+    if (m_state == State::Stopped) {
+        promise.reject(Exception { ExceptionCode::AbortError });
+        return;
+    }
+
+    RefPtr request = m_request.get();
+    if (!request) {
         promise.reject(Exception { ExceptionCode::AbortError });
         return;
     }
@@ -93,7 +99,7 @@ void PaymentResponse::complete(Document& document, std::optional<PaymentComplete
         }
     }
 
-    auto exception = m_request->complete(document, WTFMove(result), WTFMove(serializedData));
+    auto exception = request->complete(document, WTFMove(result), WTFMove(serializedData));
     if (!exception.hasException()) {
         ASSERT(hasPendingActivity());
         ASSERT(m_state == State::Created);
@@ -105,7 +111,13 @@ void PaymentResponse::complete(Document& document, std::optional<PaymentComplete
 
 void PaymentResponse::retry(PaymentValidationErrors&& errors, DOMPromiseDeferred<void>&& promise)
 {
-    if (m_state == State::Stopped || !m_request) {
+    if (m_state == State::Stopped) {
+        promise.reject(Exception { ExceptionCode::AbortError });
+        return;
+    }
+
+    RefPtr request = m_request.get();
+    if (!request) {
         promise.reject(Exception { ExceptionCode::AbortError });
         return;
     }
@@ -118,7 +130,7 @@ void PaymentResponse::retry(PaymentValidationErrors&& errors, DOMPromiseDeferred
     ASSERT(hasPendingActivity());
     ASSERT(m_state == State::Created);
 
-    auto exception = m_request->retry(WTFMove(errors));
+    auto exception = request->retry(WTFMove(errors));
     if (exception.hasException()) {
         promise.reject(exception.releaseException());
         return;
@@ -165,6 +177,11 @@ void PaymentResponse::suspend(ReasonForSuspension reason)
     }
 
     stop();
+}
+
+ScriptExecutionContext* PaymentResponse::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 } // namespace WebCore

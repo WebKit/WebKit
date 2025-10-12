@@ -24,10 +24,10 @@
 
 #pragma once
 
-#include "CSSCircleFunction.h"
-#include "StylePathComputation.h"
-#include "StylePosition.h"
-#include "StylePrimitiveNumericTypes.h"
+#include <WebCore/CSSCircleFunction.h>
+#include <WebCore/StylePathComputation.h>
+#include <WebCore/StylePosition.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
 
 namespace WebCore {
 namespace Style {

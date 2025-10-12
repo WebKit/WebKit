@@ -34,6 +34,7 @@
 #include "MutableStyleProperties.h"
 #include "NodeInlines.h"
 #include "ScopedEventQueue.h"
+#include "SerializedNode.h"
 #include "StyledElement.h"
 #include "TextNodeTraversal.h"
 #include "TreeScopeInlines.h"
@@ -113,9 +114,14 @@ ExceptionOr<void> Attr::setNodeValue(const String& value)
     return setValue(value.isNull() ? emptyAtom() : AtomString(value));
 }
 
-Ref<Node> Attr::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*)
+Ref<Node> Attr::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*) const
 {
     return adoptRef(*new Attr(document, qualifiedName(), value()));
+}
+
+SerializedNode Attr::serializeNode(CloningOperation) const
+{
+    return { SerializedNode::Attr { { m_name }, value() } };
 }
 
 CSSStyleProperties* Attr::style()
@@ -150,7 +156,7 @@ void Attr::detachFromElementWithValue(const AtomString& value)
 void Attr::attachToElement(Element& element)
 {
     ASSERT(!m_element);
-    m_element = &element;
+    m_element = element;
     m_standaloneValue = nullAtom();
     setTreeScopeRecursively(element.treeScope());
 }

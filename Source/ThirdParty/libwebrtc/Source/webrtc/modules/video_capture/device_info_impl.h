@@ -11,8 +11,7 @@
 #ifndef MODULES_VIDEO_CAPTURE_MAIN_SOURCE_DEVICE_INFO_IMPL_H_
 #define MODULES_VIDEO_CAPTURE_MAIN_SOURCE_DEVICE_INFO_IMPL_H_
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <vector>
 
 #include "api/video/video_rotation.h"

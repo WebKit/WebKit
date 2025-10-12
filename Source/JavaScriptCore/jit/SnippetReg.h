@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "Reg.h"
+#include <JavaScriptCore/Reg.h>
 
 #if ENABLE(JIT)
 

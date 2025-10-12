@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,9 @@
 #include "DataTransferItemList.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentFragment.h"
-#include "DocumentInlines.h"
+#include "DocumentPage.h"
+#include "DocumentQuirks.h"
+#include "DocumentView.h"
 #include "DragData.h"
 #include "Editor.h"
 #include "FileList.h"
@@ -43,10 +45,11 @@
 #include "HostWindow.h"
 #include "Image.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
+#include "NodeDocument.h"
 #include "Page.h"
 #include "PagePasteboardContext.h"
 #include "Pasteboard.h"
-#include "Quirks.h"
 #include "Settings.h"
 #include "StaticPasteboard.h"
 #include "WebContentReader.h"
@@ -436,7 +439,7 @@ struct PasteboardFileTypeReader final : PasteboardFileReader {
         types.add(type);
     }
 
-    UncheckedKeyHashSet<String, ASCIICaseInsensitiveHash> types;
+    HashSet<String, ASCIICaseInsensitiveHash> types;
 };
 
 bool DataTransfer::hasFileOfType(const String& type)
@@ -557,7 +560,7 @@ void DataTransfer::setDragImage(Ref<Element>&& element, int x, int y)
 
     m_dragLocation = IntPoint(x, y);
 
-    Ref document = element->protectedDocument();
+    Ref document = element->document();
     if (m_dragImageLoader && m_dragImage)
         m_dragImageLoader->stopLoading(m_dragImage);
     m_dragImage = image;

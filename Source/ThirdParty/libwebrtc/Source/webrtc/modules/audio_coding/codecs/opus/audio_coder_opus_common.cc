@@ -10,7 +10,14 @@
 
 #include "modules/audio_coding/codecs/opus/audio_coder_opus_common.h"
 
+#include <cstddef>
+#include <optional>
+#include <string>
+#include <vector>
+
 #include "absl/strings/string_view.h"
+#include "api/audio_codecs/audio_format.h"
+#include "rtc_base/string_to_number.h"
 
 namespace webrtc {
 
@@ -39,7 +46,7 @@ std::optional<std::vector<unsigned char>> GetFormatParameter(
                                               : (next_comma - pos);
     auto substring_with_number =
         comma_separated_list.substr(pos, distance_to_next_comma);
-    auto conv = rtc::StringToNumber<int>(substring_with_number);
+    auto conv = StringToNumber<int>(substring_with_number);
     if (!conv.has_value()) {
       return std::nullopt;
     }

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSObject.h"
+#include <JavaScriptCore/JSObject.h>
 #include <wtf/CompactPointerTuple.h>
 #include <wtf/HashMap.h>
 

@@ -28,7 +28,6 @@
 
 #include "CertificateInfo.h"
 #include <openssl/crypto.h>
-#include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
@@ -48,7 +47,7 @@ class CurlSSLHandle {
     friend NeverDestroyed<CurlSSLHandle>;
 
 public:
-    using CACertInfo = std::variant<std::monostate, String, CertificateInfo::Certificate>;
+    using CACertInfo = Variant<std::monostate, String, CertificateInfo::Certificate>;
 
     CurlSSLHandle();
 

@@ -9,11 +9,20 @@
  */
 #include "test/scenario/video_frame_matcher.h"
 
+#include <algorithm>
+#include <functional>
 #include <utility>
+#include <vector>
 
+#include "api/scoped_refptr.h"
+#include "api/units/timestamp.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
+#include "api/video/video_source_interface.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/event.h"
+#include "system_wrappers/include/clock.h"
+#include "test/scenario/performance_stats.h"
 
 namespace webrtc {
 namespace test {
@@ -62,7 +71,7 @@ void VideoFrameMatcher::OnDecodedFrame(const VideoFrame& frame,
                                        int layer_id,
                                        Timestamp render_time,
                                        Timestamp at_time) {
-  rtc::scoped_refptr<DecodedFrame> decoded(new DecodedFrame{});
+  scoped_refptr<DecodedFrame> decoded(new DecodedFrame{});
   decoded->decoded_time = at_time;
   decoded->render_time = render_time;
   decoded->frame = frame.video_frame_buffer();
@@ -143,7 +152,7 @@ void CapturedFrameTap::OnDiscardedFrame() {
 ForwardingCapturedFrameTap::ForwardingCapturedFrameTap(
     Clock* clock,
     VideoFrameMatcher* matcher,
-    rtc::VideoSourceInterface<VideoFrame>* source)
+    VideoSourceInterface<VideoFrame>* source)
     : clock_(clock), matcher_(matcher), source_(source) {}
 
 void ForwardingCapturedFrameTap::OnFrame(const VideoFrame& frame) {
@@ -159,7 +168,7 @@ void ForwardingCapturedFrameTap::OnDiscardedFrame() {
 
 void ForwardingCapturedFrameTap::AddOrUpdateSink(
     VideoSinkInterface<VideoFrame>* sink,
-    const rtc::VideoSinkWants& wants) {
+    const VideoSinkWants& wants) {
   if (!sink_)
     sink_ = sink;
   RTC_DCHECK_EQ(sink_, sink);

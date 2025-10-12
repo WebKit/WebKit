@@ -16,7 +16,7 @@ function verifyStack(stack, e) {
     let trace = str.split('\n')
     let expected = ["*"]
     for (let i of stack)
-        expected.push(`<?>.wasm-function[${i}]@[wasm code]`)
+        expected.push(`${i}@wasm-function[${i}]`)
     expected = expected.concat(["*"])
 
     if (trace.length != expected.length)

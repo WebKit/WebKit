@@ -43,4 +43,6 @@ Test passes if no red is visible.
 <script>
     if (window.internals)
         window.internals.setPageZoomFactor(2);
+    if (window.parent !== window)
+        window.parent.postMessage("testCompleted", "*");
 </script>

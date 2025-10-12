@@ -235,12 +235,6 @@ static int64_t pick_wedge(const AV1_COMP *const cpi, const MACROBLOCK *const x,
 
     model_rd_sse_fn[MODELRD_TYPE_MASKED_COMPOUND](cpi, x, bsize, 0, sse, N,
                                                   &rate, &dist);
-    // int rate2;
-    // int64_t dist2;
-    // model_rd_with_curvfit(cpi, x, bsize, 0, sse, N, &rate2, &dist2);
-    // printf("sse %"PRId64": leagacy: %d %"PRId64", curvfit %d %"PRId64"\n",
-    // sse, rate, dist, rate2, dist2); dist = dist2;
-    // rate = rate2;
 
     rate += x->mode_costs.wedge_idx_cost[bsize][wedge_index];
     rd = RDCOST(x->rdmult, rate, dist);
@@ -974,8 +968,7 @@ static inline void save_comp_rd_search_stat(
           &xd->global_motion[mbmi->ref_frame[i]];
       rd_stats->is_global[i] = is_global_mv_block(mbmi, wm->wmtype);
     }
-    memcpy(&rd_stats->interinter_comp, &mbmi->interinter_comp,
-           sizeof(rd_stats->interinter_comp));
+    rd_stats->interinter_comp = mbmi->interinter_comp;
     ++x->comp_rd_stats_idx;
   }
 }
@@ -1202,8 +1195,8 @@ static int64_t masked_compound_type_rd(
 
 // scaling values to be used for gating wedge/compound segment based on best
 // approximate rd
-static int comp_type_rd_threshold_mul[3] = { 1, 11, 12 };
-static int comp_type_rd_threshold_div[3] = { 3, 16, 16 };
+static const int comp_type_rd_threshold_mul[3] = { 1, 11, 12 };
+static const int comp_type_rd_threshold_div[3] = { 3, 16, 16 };
 
 int av1_compound_type_rd(const AV1_COMP *const cpi, MACROBLOCK *x,
                          HandleInterModeArgs *args, BLOCK_SIZE bsize,

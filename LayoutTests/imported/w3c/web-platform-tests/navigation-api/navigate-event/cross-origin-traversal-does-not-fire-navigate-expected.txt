@@ -1,3 +1,5 @@
 
-PASS A cross-origin traversal does not fire the navigate event
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT A cross-origin traversal does not fire the navigate event Test timed out
 

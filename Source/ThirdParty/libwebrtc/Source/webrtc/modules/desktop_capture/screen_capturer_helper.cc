@@ -10,6 +10,11 @@
 
 #include "modules/desktop_capture/screen_capturer_helper.h"
 
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/desktop_region.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/synchronization/mutex.h"
+
 namespace webrtc {
 
 void ScreenCapturerHelper::ClearInvalidRegion() {

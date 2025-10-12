@@ -11,9 +11,11 @@
 #include "test/testsupport/perf_test_histogram_writer.h"
 
 #include <memory>
-#include <string>
+#include <vector>
 
 #include "test/gtest.h"
+#include "test/testsupport/perf_test.h"
+#include "test/testsupport/perf_test_result_writer.h"
 #include "third_party/catapult/tracing/tracing/value/histogram.h"
 
 namespace webrtc {

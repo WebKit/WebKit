@@ -173,7 +173,7 @@ test(function() {
     try {
         foo(null, obj, [], {}, 20);
     } catch(e) {
-        assert(e.toString() === "ReferenceError: Cannot access uninitialized variable.");
+        assert(e.toString() === "ReferenceError: Cannot access 'e' before initialization.");
     }
 });
 

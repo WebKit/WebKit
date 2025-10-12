@@ -95,7 +95,9 @@
 
 - (void)_doAfterNextVisibleContentRectAndStablePresentationUpdate:(void (^)(void))updateBlock;
 
-- (NSString *)_scrollbarState:(unsigned long long)scrollingNodeID processID: (unsigned long long)processID isVertical:(bool)isVertical;
+- (NSString *)_scrollbarState:(unsigned long long)scrollingNodeID processID:(unsigned long long)processID isVertical:(bool)isVertical;
+
+- (UIView *)_colorExtensionViewForTesting:(UIRectEdge)edge;
 
 @end
 

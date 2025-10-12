@@ -26,6 +26,8 @@
 #include "config.h"
 #include "LoaderMalloc.h"
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Loader);
 }

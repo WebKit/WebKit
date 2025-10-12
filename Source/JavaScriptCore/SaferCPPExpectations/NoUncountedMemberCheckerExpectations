@@ -7,6 +7,7 @@ API/tests/testapi.cpp
 BytecodeStructs.h
 bytecode/InlineCacheCompiler.h
 bytecode/SharedJITStubSet.h
+bytecode/StructureStubClearingWatchpoint.h
 bytecompiler/BytecodeGenerator.h
 bytecompiler/Label.h
 debugger/Debugger.cpp
@@ -19,9 +20,7 @@ heap/Heap.h
 heap/HeapSnapshotBuilder.h
 heap/JITStubRoutineSet.h
 inspector/InspectorAgentBase.h
-inspector/InspectorFrontendDispatchers.h
 inspector/JSJavaScriptCallFrame.h
-inspector/agents/InspectorTargetAgent.h
 jit/JIT.h
 jit/JITPlan.h
 jit/JITSafepoint.h
@@ -42,7 +41,6 @@ wasm/WasmEntryPlan.cpp
 wasm/WasmFormat.h
 wasm/WasmFunctionParser.h
 wasm/WasmIPIntGenerator.cpp
-wasm/WasmLLIntGenerator.cpp
 wasm/WasmNameSectionParser.h
 wasm/WasmOMGIRGenerator.cpp
 wasm/WasmStreamingCompiler.h

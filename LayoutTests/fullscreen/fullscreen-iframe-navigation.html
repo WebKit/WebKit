@@ -11,7 +11,7 @@
 <body>
 <iframe id="iframe" srcdoc="<button onclick='document.documentElement.requestFullscreen().then(() => (window.location.href=`./resources/fullscreen-iframe-navigation-target.html`))'>Enter fullscreen and navigate</button>"></iframe>
 <script src="../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
-<script src="../imported/w3c/web-platform-tests/resources/testdriver-vendor.js"></script>
+<script src="../resources/testdriver-vendor.js"></script>
 <script>
     addEventListener("load", async () => {
         await test_driver.bless("fullscreen", null, iframe.contentWindow);

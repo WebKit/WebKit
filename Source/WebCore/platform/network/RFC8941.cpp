@@ -229,6 +229,28 @@ template<typename CharType> static std::optional<HashMap<String, std::pair<ItemO
     return dictionary;
 }
 
+// Parsing a list (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.1).
+template<typename CharType> static std::optional<Vector<std::pair<ItemOrInnerList, Parameters>>> parseList(StringParsingBuffer<CharType>& buffer)
+{
+    Vector<std::pair<ItemOrInnerList, Parameters>> list;
+    while (buffer.hasCharactersRemaining()) {
+        auto member = parseItemOrInnerList(buffer);
+        if (!member)
+            return std::nullopt;
+        list.append(WTFMove(*member));
+        skipWhile<isTabOrSpace>(buffer);
+        if (buffer.atEnd())
+            return list;
+        if (!skipExactly(buffer, ','))
+            return std::nullopt;
+        skipWhile<isTabOrSpace>(buffer);
+        if (buffer.atEnd())
+            return std::nullopt;
+    }
+    ASSERT(list.isEmpty());
+    return list;
+}
+
 // https://datatracker.ietf.org/doc/html/rfc8941#section-4.2 with type "item".
 std::optional<std::pair<BareItem, Parameters>> parseItemStructuredFieldValue(StringView header)
 {
@@ -247,6 +269,27 @@ std::optional<std::pair<BareItem, Parameters>> parseItemStructuredFieldValue(Str
         if (buffer.hasCharactersRemaining())
             return std::nullopt;
         return WTFMove(*item);
+    });
+}
+
+// https://datatracker.ietf.org/doc/html/rfc8941#section-4.2 with type "list".
+std::optional<Vector<std::pair<ItemOrInnerList, Parameters>>> parseListStructuredFieldValue(StringView header)
+{
+    if (header.isEmpty())
+        return std::nullopt;
+
+    return readCharactersForParsing(WTFMove(header), [](auto buffer) -> std::optional<Vector<std::pair<ItemOrInnerList, Parameters>>> {
+        skipWhile(buffer, ' ');
+
+        auto list = parseList(buffer);
+        if (!list)
+            return std::nullopt;
+
+        skipWhile(buffer, ' ');
+
+        if (buffer.hasCharactersRemaining())
+            return std::nullopt;
+        return WTFMove(*list);
     });
 }
 

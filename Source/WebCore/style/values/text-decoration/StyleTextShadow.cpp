@@ -25,11 +25,16 @@
 #include "config.h"
 #include "StyleTextShadow.h"
 
+#include "CSSTextShadowPropertyValue.h"
 #include "ColorBlending.h"
 #include "RenderStyle.h"
+#include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "StylePrimitiveNumericTypes+Serialization.h"
+#include "StyleShadowInterpolation.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 namespace Style {
@@ -54,12 +59,45 @@ auto ToStyle<CSS::TextShadow>::operator()(const CSS::TextShadow& value, const Bu
     };
 }
 
-// MARK: - Blending
-
-auto Blending<TextShadow>::canBlend(const TextShadow&, const TextShadow&, const RenderStyle&, const RenderStyle&) -> bool
+Ref<CSSValue> CSSValueCreation<TextShadowList>::operator()(CSSValuePool&, const RenderStyle& style, const TextShadowList& value)
 {
-    return true;
+    CSS::TextShadowProperty::List list;
+
+    for (const auto& shadow : makeReversedRange(value))
+        list.value.append(toCSS(shadow, style));
+
+    return CSSTextShadowPropertyValue::create(CSS::TextShadowProperty { WTFMove(list) });
 }
+
+auto CSSValueConversion<TextShadows>::operator()(BuilderState& state, const CSSValue& value) -> TextShadows
+{
+    if (value.valueID() == CSSValueNone)
+        return CSS::Keyword::None { };
+
+    RefPtr shadow = requiredDowncast<CSSTextShadowPropertyValue>(state, value);
+    if (!shadow)
+        return CSS::Keyword::None { };
+
+    return WTF::switchOn(shadow->shadow(),
+        [&](const CSS::Keyword::None&) -> TextShadows {
+            return CSS::Keyword::None { };
+        },
+        [&](const typename CSS::TextShadowProperty::List& list) -> TextShadows {
+            return TextShadows::List::map(makeReversedRange(list), [&](const CSS::TextShadow& element) {
+                return toStyle(element, state);
+            });
+        }
+    );
+}
+
+// MARK: - Serialization
+
+void Serialize<TextShadowList>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const TextShadowList& value)
+{
+    serializationForCSSOnRangeLike(builder, context, style, makeReversedRange(value), SerializationSeparatorString<TextShadowList>);
+}
+
+// MARK: - Blending
 
 auto Blending<TextShadow>::blend(const TextShadow& a, const TextShadow& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> TextShadow
 {
@@ -68,6 +106,30 @@ auto Blending<TextShadow>::blend(const TextShadow& a, const TextShadow& b, const
         .location = WebCore::Style::blend(a.location, b.location, context),
         .blur = WebCore::Style::blend(a.blur, b.blur, context),
     };
+}
+
+struct MatchingTextShadows {
+    static const TextShadow& shadowForInterpolation(const TextShadow&)
+    {
+        static NeverDestroyed<const TextShadow> defaultShadowData {
+            TextShadow {
+                .color = { WebCore::Color::transparentBlack },
+                .location = { { 0 }, { 0 } },
+                .blur = { 0 },
+            }
+        };
+        return defaultShadowData.get();
+    }
+};
+
+auto Blending<TextShadows>::canBlend(const TextShadows& from, const TextShadows& to, CompositeOperation compositeOperation) -> bool
+{
+    return ShadowInterpolation<TextShadows, MatchingTextShadows>::canInterpolate(from, to, compositeOperation);
+}
+
+auto Blending<TextShadows>::blend(const TextShadows& from, const TextShadows& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context) -> TextShadows
+{
+    return ShadowInterpolation<TextShadows, MatchingTextShadows>::interpolate(from, to, fromStyle, toStyle, context);
 }
 
 } // namespace Style

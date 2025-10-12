@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2024 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,8 +41,6 @@ video::-webkit-media-text-track-container {
     container-type: size;
 
     flex: 1 1 auto;
-
-    -webkit-line-box-contain: block inline-box replaced;
 }
 
 video[controls]::-webkit-media-text-track-container.visible-controls-bar {
@@ -65,7 +63,7 @@ video[controls]::-webkit-media-text-track-container.visible-controls-bar {
 [useragentpart="cue"] ruby > rt { display: ruby-text; }
 
 ::cue {
-    font: 5cqmin/1 sans-serif;
+    font: 5cqmin/normal sans-serif;
     color: rgba(255, 255, 255, 1);
     background: rgba(0, 0, 0, 0.8);
     white-space: pre-line;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,10 +44,6 @@
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 
-#if ENABLE(GPU_DRIVER_PREWARMING)
-#include "GPUPrewarming.h"
-#endif
-
 namespace WebCore {
 
 void ProcessWarming::initializeNames()
@@ -80,10 +76,6 @@ void ProcessWarming::prewarmGlobally()
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     TelephoneNumberDetector::prewarm();
-#endif
-
-#if ENABLE(GPU_DRIVER_PREWARMING)
-    prewarmGPU();
 #endif
 }
 

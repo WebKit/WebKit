@@ -9,8 +9,7 @@
  */
 #include "modules/congestion_controller/goog_cc/test/goog_cc_printer.h"
 
-#include <math.h>
-
+#include <cmath>
 #include <deque>
 #include <memory>
 #include <optional>
@@ -99,15 +98,10 @@ std::deque<FieldLogger*> GoogCcStatePrinter::CreateLoggers() {
   auto acknowledged_rate = [this] {
     return controller_->acknowledged_bitrate_estimator_->bitrate();
   };
-  auto loss_cont = [&] {
-    return &controller_->bandwidth_estimation_
-                ->loss_based_bandwidth_estimator_v1_;
-  };
   std::deque<FieldLogger*> loggers({
       Log("time", [this] { return target_.at_time; }),
       Log("rtt", [this] { return target_.network_estimate.round_trip_time; }),
       Log("target", [this] { return target_.target_rate; }),
-      Log("stable_target", [this] { return target_.stable_target_rate; }),
       Log("pacing", [this] { return pacing_.data_rate(); }),
       Log("padding", [this] { return pacing_.pad_rate(); }),
       Log("window", [this] { return congestion_window_; }),
@@ -127,17 +121,6 @@ std::deque<FieldLogger*> GoogCcStatePrinter::CreateLoggers() {
       Log("est_pre_buffer", [this] { return est_.pre_link_buffer_delay; }),
       Log("est_post_buffer", [this] { return est_.post_link_buffer_delay; }),
       Log("est_propagation", [this] { return est_.propagation_delay; }),
-      Log("loss_ratio", [=] { return loss_cont()->last_loss_ratio_; }),
-      Log("loss_average", [=] { return loss_cont()->average_loss_; }),
-      Log("loss_average_max", [=] { return loss_cont()->average_loss_max_; }),
-      Log("loss_thres_inc",
-          [=] { return loss_cont()->loss_increase_threshold(); }),
-      Log("loss_thres_dec",
-          [=] { return loss_cont()->loss_decrease_threshold(); }),
-      Log("loss_dec_rate", [=] { return loss_cont()->decreased_bitrate(); }),
-      Log("loss_based_rate", [=] { return loss_cont()->loss_based_bitrate_; }),
-      Log("loss_ack_rate",
-          [=] { return loss_cont()->acknowledged_bitrate_max_; }),
       Log("data_window", [this] { return controller_->current_data_window_; }),
       Log("pushback_target",
           [this] { return controller_->last_pushback_target_rate_; }),

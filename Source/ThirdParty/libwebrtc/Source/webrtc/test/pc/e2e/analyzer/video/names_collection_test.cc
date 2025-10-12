@@ -10,6 +10,7 @@
 
 #include "test/pc/e2e/analyzer/video/names_collection.h"
 
+#include <cstddef>
 #include <optional>
 #include <string>
 #include <vector>

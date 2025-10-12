@@ -41,8 +41,10 @@ class SurfaceEGL : public SurfaceGL
                             EGLint buffer) override;
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
     void setSwapInterval(const egl::Display *display, EGLint interval) override;
-    EGLint getWidth() const override;
-    EGLint getHeight() const override;
+    gl::Extents getSize() const override;  // finalized in ExternalSurfaceEGL
+    egl::Error getUserSize(const egl::Display *display,
+                           EGLint *width,
+                           EGLint *height) const override;  // finalized in ExternalSurfaceEGL
     EGLint isPostSubBufferSupported() const override;
     EGLint getSwapBehavior() const override;
 

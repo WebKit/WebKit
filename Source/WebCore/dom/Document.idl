@@ -30,7 +30,6 @@ typedef (
 typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
 
 [
-    CustomToJSObject,
     CustomHeapSnapshot,
     DOMJIT,
     ExportMacro=WEBCORE_EXPORT,

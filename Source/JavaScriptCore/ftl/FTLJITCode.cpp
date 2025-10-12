@@ -74,9 +74,9 @@ void JITCode::initializeAddressForArityCheck(CodePtr<JSEntryPtrTag> entrypoint)
 CodePtr<JSEntryPtrTag> JITCode::addressForCall(ArityCheckMode arityCheck)
 {
     switch (arityCheck) {
-    case ArityCheckNotRequired:
+    case ArityCheckMode::ArityCheckNotRequired:
         return m_addressForCall;
-    case MustCheckArity:
+    case ArityCheckMode::MustCheckArity:
         return m_addressForArityCheck;
     }
     RELEASE_ASSERT_NOT_REACHED();

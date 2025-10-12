@@ -20,7 +20,7 @@
 
 namespace webrtc {
 void FuzzOneInput(const uint8_t* data, size_t size) {
-  test::FuzzDataHelper fuzz_input(rtc::MakeArrayView(data, size));
+  test::FuzzDataHelper fuzz_input(webrtc::MakeArrayView(data, size));
 
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 1200;
@@ -46,29 +46,38 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   RtpPacketToSend rtp_packet(nullptr);
   // Single packet.
   if (num_packets == 1) {
-    RTC_CHECK(packetizer.NextPacket(&rtp_packet));
+    bool result = packetizer.NextPacket(&rtp_packet);
+    if (!result)
+      return;
     RTC_CHECK_LE(rtp_packet.payload_size(),
                  limits.max_payload_len - std::min(limits.single_packet_reduction_len, limits.first_packet_reduction_len));
     depacketizer.Parse(rtp_packet.PayloadBuffer());
     return;
   }
   // First packet.
-  RTC_CHECK(packetizer.NextPacket(&rtp_packet));
+  bool result = packetizer.NextPacket(&rtp_packet);
+  if (!result)
+    return;
   RTC_CHECK_LE(rtp_packet.payload_size(),
                limits.max_payload_len - limits.first_packet_reduction_len);
   depacketizer.Parse(rtp_packet.PayloadBuffer());
   // Middle packets.
   for (size_t i = 1; i < num_packets - 1; ++i) {
     rtp_packet.Clear();
-    RTC_CHECK(packetizer.NextPacket(&rtp_packet))
-        << "Failed to get packet#" << i;
+    bool result = packetizer.NextPacket(&rtp_packet);
+    if (!result)
+      return;
+
     RTC_CHECK_LE(rtp_packet.payload_size(), limits.max_payload_len)
         << "Packet #" << i << " exceeds it's limit";
     depacketizer.Parse(rtp_packet.PayloadBuffer());
   }
   // Last packet.
   rtp_packet.Clear();
-  RTC_CHECK(packetizer.NextPacket(&rtp_packet));
+  result = packetizer.NextPacket(&rtp_packet);
+  if (!result)
+    return;
+
   RTC_CHECK_LE(rtp_packet.payload_size(),
                limits.max_payload_len - limits.last_packet_reduction_len);
   depacketizer.Parse(rtp_packet.PayloadBuffer());

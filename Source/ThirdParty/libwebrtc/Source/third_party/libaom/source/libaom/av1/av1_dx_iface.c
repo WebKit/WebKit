@@ -361,7 +361,7 @@ static aom_codec_err_t decoder_peek_si(const uint8_t *data, size_t data_sz,
 
 static aom_codec_err_t decoder_get_si(aom_codec_alg_priv_t *ctx,
                                       aom_codec_stream_info_t *si) {
-  memcpy(si, &ctx->si, sizeof(*si));
+  *si = ctx->si;
 
   return AOM_CODEC_OK;
 }
@@ -1519,7 +1519,7 @@ static aom_codec_err_t ctrl_get_mi_info(aom_codec_alg_priv_t *ctx,
     return AOM_CODEC_INVALID_PARAM;
   }
 
-  memcpy(mi, cm->mi_params.mi_grid_base[offset], sizeof(*mi));
+  *mi = *cm->mi_params.mi_grid_base[offset];
 
   return AOM_CODEC_OK;
 }

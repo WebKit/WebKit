@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include "Node.h"
+#include <WebCore/Node.h>
 
 namespace WebCore {
 
@@ -46,7 +46,8 @@ private:
     DocumentType(Document&, const String& name, const String& publicId, const String& systemId);
 
     String nodeName() const override;
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) override;
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;
+    SerializedNode serializeNode(CloningOperation) const override;
 
     void parentOrShadowHostNode() const = delete; // Call parentNode() instead.
 

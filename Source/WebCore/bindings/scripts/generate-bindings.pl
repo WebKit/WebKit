@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# Copyright (C) 2005 Apple Inc.
+# Copyright (C) 2005 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
 # 
 # This file is part of WebKit

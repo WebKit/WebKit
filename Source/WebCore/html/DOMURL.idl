@@ -28,7 +28,6 @@
     ExportMacro=WEBCORE_EXPORT,
     Exposed=*,
     InterfaceName=URL,
-    JSGenerateToJSObject,
     JSGenerateToNativeObject,
     LegacyWindowAlias=webkitURL,
 ] interface DOMURL {

@@ -1,6 +1,6 @@
-# FIPS 140-2
+# FIPS 140-3
 
-BoringSSL as a whole is not FIPS validated. However, there is a core library (called BoringCrypto) that has been FIPS validated. This document contains some notes about the design of the FIPS module and some documentation on performing FIPS-related tasks. This is not a substitute for reading the offical Security Policy.
+BoringSSL as a whole is not FIPS validated. However, there is a core library (called BoringCrypto, abbreviated in the code as BCM for "BoringCrypto Module") that has been FIPS validated. This document contains some notes about the design of the FIPS module and some documentation on performing FIPS-related tasks. This is not a substitute for reading the official Security Policy.
 
 Please note that we cannot answer questions about FIPS, nor about using BoringSSL in a FIPS-compliant manner. Please consult with an [accredited CMVP lab](http://csrc.nist.gov/groups/STM/testing_labs/) on these subjects.
 
@@ -15,6 +15,37 @@ BoringCrypto has undergone the following validations:
 1. 2021-01-28: certificate [#4156](https://csrc.nist.gov/Projects/Cryptographic-Module-Validation-Program/Certificate/4156), [security policy](./policydocs/BoringCrypto-Android-Security-Policy-20210319.docx) (in docx format).
 1. 2021-04-29: certificate [#4407](https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4407).
 1. 2022-06-13: certificate [#4735](https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4735).
+1. 2023-04-28: certificate [#4953](https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4953).
+
+The following validations are active:
+
+| Version | Status | CAVP |
+| ------- | ------ | ---- |
+| 2024-04-07 | Review Pending at NIST    | [A5370](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=18027) |
+| 2024-08-05 | Review Pending at NIST    | [A6134](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=9831) |
+| 2025-01-07 | Review Pending at NIST    | [A6838](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19570) |
+| 2025-07-28 | Under review by NVLAP lab | [A7303](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=39913) |
+
+## Update stream
+
+On 2025-01-16, the FedRAMP Board published an [updated policy](https://www.fedramp.gov/rev5/fips/) on cryptographic modules. That policy suggests that module vendors should “promote the use of update streams over the use of validated module streams”. An _update stream_ “contains the latest patches and updates to be applied to software, regardless of the FIPS-validation status of the changed software”.
+
+BoringSSL's `main` branch is the update stream for the module. We intend to perform validations such that all major changes to the module are submitted to the CMVP within six months, as required by FRR7.
+
+The installation instructions, which are found in the security policy for the validated module stream, are as follows for the update stream:
+
+```sh
+printf "set(CMAKE_C_COMPILER \"clang\")\nset(CMAKE_CXX_COMPILER \"clang++\")\n" > ${HOME}/toolchain
+git clone https://boringssl.googlesource.com/boringssl
+cd boringssl
+mkdir build && cd build
+cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=${HOME}/toolchain -DFIPS=1 -DCMAKE_BUILD_TYPE=Release ..
+ninja && ninja run_tests
+```
+
+The latest stable versions of Clang, Go, Ninja, and CMake should be used.
+
+On the upstream stream, `FIPS_version` will return zero to indicate that it is not the validated module stream.
 
 ## Running ACVP tests
 

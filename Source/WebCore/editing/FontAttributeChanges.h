@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Color.h"
-#include "FontShadow.h"
+#include <WebCore/Color.h>
+#include <WebCore/FontShadow.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
 

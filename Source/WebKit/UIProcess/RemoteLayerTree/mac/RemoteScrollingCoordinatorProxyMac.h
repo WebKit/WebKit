@@ -83,7 +83,7 @@ private:
 #endif
 
 #if ENABLE(SCROLLING_THREAD)
-    RefPtr<RemoteLayerTreeEventDispatcher> m_eventDispatcher;
+    const Ref<RemoteLayerTreeEventDispatcher> m_eventDispatcher;
 #endif
 };
 

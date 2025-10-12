@@ -48,8 +48,10 @@ void TestWithMultiLineExtendedAttributes::didReceiveMessage(IPC::Connection& con
         return;
     }
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithMultiLineExtendedAttributes::AlwaysEnabled::name())
-        return IPC::handleMessage<Messages::TestWithMultiLineExtendedAttributes::AlwaysEnabled>(connection, decoder, this, &TestWithMultiLineExtendedAttributes::alwaysEnabled);
+    if (decoder.messageName() == Messages::TestWithMultiLineExtendedAttributes::AlwaysEnabled::name()) {
+        IPC::handleMessage<Messages::TestWithMultiLineExtendedAttributes::AlwaysEnabled>(connection, decoder, this, &TestWithMultiLineExtendedAttributes::alwaysEnabled);
+        return;
+    }
     UNUSED_PARAM(connection);
     RELEASE_LOG_ERROR(IPC, "Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
     decoder.markInvalid();

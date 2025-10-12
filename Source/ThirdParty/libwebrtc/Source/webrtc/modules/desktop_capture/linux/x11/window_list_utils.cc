@@ -10,12 +10,17 @@
 
 #include "modules/desktop_capture/linux/x11/window_list_utils.h"
 
+#include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <string.h>
 
 #include <algorithm>
+#include <cstdint>
+#include <cstring>
 
+#include "api/function_view.h"
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/linux/x11/x_atom_cache.h"
 #include "modules/desktop_capture/linux/x11/x_error_trap.h"
 #include "modules/desktop_capture/linux/x11/x_window_property.h"
 #include "rtc_base/checks.h"
@@ -120,8 +125,7 @@ int32_t GetWindowState(XAtomCache* cache, ::Window window) {
   return window_state.is_valid() ? *window_state.data() : WithdrawnState;
 }
 
-bool GetWindowList(XAtomCache* cache,
-                   rtc::FunctionView<bool(::Window)> on_window) {
+bool GetWindowList(XAtomCache* cache, FunctionView<bool(::Window)> on_window) {
   RTC_DCHECK(cache);
   RTC_DCHECK(on_window);
   ::Display* const display = cache->display();

@@ -183,17 +183,24 @@ void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(OtherEncoder& en
 
 std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subnamespace::StructName>::decode(Decoder& decoder)
 {
+    bool addedDecodingFailureIndex = false;
     auto firstMemberName = decoder.decode<FirstMemberType>();
-    if (!firstMemberName) [[unlikely]]
-        decoder.setIndexOfDecodingFailure(0);
+    if (!firstMemberName && !addedDecodingFailureIndex) [[unlikely]] {
+        decoder.addIndexOfDecodingFailure(0);
+        addedDecodingFailureIndex = true;
+    }
 #if ENABLE(SECOND_MEMBER)
     auto secondMemberName = decoder.decode<SecondMemberType>();
-    if (!secondMemberName) [[unlikely]]
-        decoder.setIndexOfDecodingFailure(1);
+    if (!secondMemberName && !addedDecodingFailureIndex) [[unlikely]] {
+        decoder.addIndexOfDecodingFailure(1);
+        addedDecodingFailureIndex = true;
+    }
 #endif
     auto nullableTestMember = decoder.decode<RetainPtr<CFTypeRef>>();
-    if (!nullableTestMember) [[unlikely]]
-        decoder.setIndexOfDecodingFailure(2);
+    if (!nullableTestMember && !addedDecodingFailureIndex) [[unlikely]] {
+        decoder.addIndexOfDecodingFailure(2);
+        addedDecodingFailureIndex = true;
+    }
     if (!decoder.isValid()) [[unlikely]]
         return std::nullopt;
     return {
@@ -234,7 +241,7 @@ std::optional<Namespace::OtherClass> ArgumentCoder<Namespace::OtherClass>::decod
 {
     auto a = decoder.decode<int>();
     auto b = decoder.decode<bool>();
-    auto dataDetectorResults = decoder.decodeWithAllowedClasses<NSArray>({ NSArray.class, PAL::getDDScannerResultClass() });
+    auto dataDetectorResults = decoder.decodeWithAllowedClasses<NSArray>({ NSArray.class, PAL::getDDScannerResultClassSingleton() });
     if (!decoder.isValid()) [[unlikely]]
         return std::nullopt;
     return {
@@ -264,7 +271,7 @@ std::optional<Namespace::ClassWithMemberPrecondition> ArgumentCoder<Namespace::C
 {
     if (!(PAL::isPassKitCoreFrameworkAvailable()))
         return std::nullopt;
-    auto m_pkPaymentMethod = decoder.decodeWithAllowedClasses<PKPaymentMethod>({ PAL::getPKPaymentMethodClass() });
+    auto m_pkPaymentMethod = decoder.decodeWithAllowedClasses<PKPaymentMethod>({ PAL::getPKPaymentMethodClassSingleton() });
     if (!decoder.isValid()) [[unlikely]]
         return std::nullopt;
     return {
@@ -621,8 +628,8 @@ void ArgumentCoder<SoftLinkedMember>::encode(Encoder& encoder, const SoftLinkedM
 
 std::optional<SoftLinkedMember> ArgumentCoder<SoftLinkedMember>::decode(Decoder& decoder)
 {
-    auto firstMember = decoder.decodeWithAllowedClasses<DDActionContext>({ PAL::getDDActionContextClass() });
-    auto secondMember = decoder.decodeWithAllowedClasses<DDActionContext>({ PAL::getDDActionContextClass() });
+    auto firstMember = decoder.decodeWithAllowedClasses<DDActionContext>({ PAL::getDDActionContextClassSingleton() });
+    auto secondMember = decoder.decodeWithAllowedClasses<DDActionContext>({ PAL::getDDActionContextClassSingleton() });
     if (!decoder.isValid()) [[unlikely]]
         return std::nullopt;
     return {
@@ -740,25 +747,31 @@ std::optional<Namespace::ConditionalCommonClass> ArgumentCoder<Namespace::Condit
 void ArgumentCoder<Namespace::CommonClass>::encode(Encoder& encoder, const Namespace::CommonClass& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value)>, int>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.nonRefMemberWithSubclasses)>, WebCore::TimingFunction>);
     struct ShouldBeSameSizeAsCommonClass : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<Namespace::CommonClass>, false> {
         int value;
+        WebCore::TimingFunction nonRefMemberWithSubclasses;
     };
     static_assert(sizeof(ShouldBeSameSizeAsCommonClass) == sizeof(Namespace::CommonClass));
     static_assert(MembersInCorrectOrder < 0
         , offsetof(Namespace::CommonClass, value)
+        , offsetof(Namespace::CommonClass, nonRefMemberWithSubclasses)
     >::value);
 
     encoder << instance.value;
+    encoder << instance.nonRefMemberWithSubclasses;
 }
 
 std::optional<Namespace::CommonClass> ArgumentCoder<Namespace::CommonClass>::decode(Decoder& decoder)
 {
     auto value = decoder.decode<int>();
+    auto nonRefMemberWithSubclasses = decoder.decode<Ref<WebCore::TimingFunction>>();
     if (!decoder.isValid()) [[unlikely]]
         return std::nullopt;
     return {
         Namespace::CommonClass {
-            WTFMove(*value)
+            WTFMove(*value),
+            WTFMove(*nonRefMemberWithSubclasses)
         }
     };
 }

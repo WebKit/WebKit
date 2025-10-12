@@ -64,6 +64,7 @@ using TransferredMessagePort = std::pair<WebCore::MessagePortIdentifier, WebCore
 
 class DedicatedWorkerGlobalScope final : public WorkerGlobalScope {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DedicatedWorkerGlobalScope);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DedicatedWorkerGlobalScope);
 public:
     static Ref<DedicatedWorkerGlobalScope> create(const WorkerParameters&, Ref<SecurityOrigin>&&, DedicatedWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<WorkerClient>&&);
     virtual ~DedicatedWorkerGlobalScope();
@@ -72,7 +73,7 @@ public:
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
 
-    DedicatedWorkerThread& thread();
+    Ref<DedicatedWorkerThread> thread();
 
 #if ENABLE(NOTIFICATIONS)
     NotificationClient* notificationClient() final;

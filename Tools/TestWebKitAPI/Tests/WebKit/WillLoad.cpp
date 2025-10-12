@@ -192,19 +192,6 @@ TEST_F(WebKit2WillLoadTest, WKPageLoadHTMLString)
     testWillLoadDataRequestReturnValues(baseURL.get(), Util::toWK("text/html").get(), Util::toWK("latin1").get(), 0, 0);
 }
 
-TEST_F(WebKit2WillLoadTest, WKPageLoadAlternateHTMLStringWithUserData)
-{
-    WKRetainPtr<WKStringRef> htmlString = Util::toWK("<body>Hello, World</body>");
-
-    WKRetainPtr<WKURLRef> baseURL = adoptWK(WKURLCreateWithUTF8CString("about:blank"));
-    WKRetainPtr<WKURLRef> unreachableURL = adoptWK(WKURLCreateWithUTF8CString("about:other"));
-    WKRetainPtr<WKStringRef> userData = Util::toWK("WKPageLoadAlternateHTMLStringWithUserData UserData");
-
-    WKPageLoadAlternateHTMLStringWithUserData(webView->page(), htmlString.get(), baseURL.get(), unreachableURL.get(), userData.get());
-
-    testWillLoadDataRequestReturnValues(baseURL.get(), Util::toWK("text/html").get(), Util::toWK("latin1").get(), unreachableURL.get(), userData.get());
-}
-
 TEST_F(WebKit2WillLoadTest, WKPageLoadAlternateHTMLString)
 {
     WKRetainPtr<WKStringRef> htmlString = Util::toWK("<body>Hello, World</body>");

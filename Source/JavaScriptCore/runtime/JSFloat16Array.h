@@ -25,4 +25,4 @@
 
 #pragma once
 
-#include "JSTypedArrays.h"
+#include <JavaScriptCore/JSTypedArrays.h>

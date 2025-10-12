@@ -32,15 +32,15 @@ namespace CSS {
 
 void applyModifiersToLoaderOptions(const URLModifiers& modifiers, ResourceLoaderOptions& loaderOptions)
 {
-    if (modifiers.crossorigin) {
-        // https://www.w3.org/TR/css-values-5/#typedef-request-url-modifier-crossorigin-modifier
+    if (modifiers.crossOrigin) {
+        // https://www.w3.org/TR/css-values-5/#typedef-request-url-modifier-cross-origin-modifier
         //
         // The URL request modifier steps for this modifier given request req are:
         // 1. Set request's mode to "cors".
         loaderOptions.mode = FetchOptions::Mode::Cors;
 
         // 2. If the given value is use-credentials, set request's credentials mode to "include"
-        if (std::holds_alternative<Keyword::UseCredentials>(modifiers.crossorigin->parameters))
+        if (std::holds_alternative<Keyword::UseCredentials>(modifiers.crossOrigin->parameters))
             loaderOptions.credentials = FetchOptions::Credentials::Include;
         else
             loaderOptions.credentials = FetchOptions::Credentials::SameOrigin;
@@ -54,12 +54,12 @@ void applyModifiersToLoaderOptions(const URLModifiers& modifiers, ResourceLoader
         loaderOptions.integrity = modifiers.integrity->parameters;
     }
 
-    if (modifiers.referrerpolicy) {
-        // https://www.w3.org/TR/css-values-5/#typedef-request-url-modifier-referrerpolicy-modifier
+    if (modifiers.referrerPolicy) {
+        // https://www.w3.org/TR/css-values-5/#typedef-request-url-modifier-referrer-policy-modifier
         //
         // The URL request modifier steps for this modifier given request req are to set
         // request's referrer policy to the ReferrerPolicy that matches the given value.
-        loaderOptions.referrerPolicy = WTF::switchOn(modifiers.referrerpolicy->parameters,
+        loaderOptions.referrerPolicy = WTF::switchOn(modifiers.referrerPolicy->parameters,
             [](Keyword::NoReferrer) {
                 return ReferrerPolicy::NoReferrer;
             },

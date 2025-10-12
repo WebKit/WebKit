@@ -49,7 +49,7 @@ class RefinedFilterUpdateGain {
   void Compute(const std::array<float, kFftLengthBy2Plus1>& render_power,
                const RenderSignalAnalyzer& render_signal_analyzer,
                const SubtractorOutput& subtractor_output,
-               rtc::ArrayView<const float> erl,
+               ArrayView<const float> erl,
                size_t size_partitions,
                bool saturated_capture_signal,
                bool disallow_leakage_diverged,

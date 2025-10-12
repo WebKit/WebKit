@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "pas_config.h"
@@ -31,7 +31,6 @@
 
 #include "pas_full_alloc_bits_inlines.h"
 #include "pas_segregated_exclusive_view.h"
-#include "pas_segregated_page_inlines.h"
 #include "pas_segregated_partial_view.h"
 #include "pas_segregated_shared_handle.h"
 #include "pas_segregated_shared_page_directory.h"
@@ -257,7 +256,7 @@ bool pas_segregated_view_is_primordial_partial(pas_segregated_view view)
 
     /* This requires no further locking because we assume that this is only ever called on partial
        views that were just made ineligible.
-    
+
        If this is true then the local_allocator takes a very delicate path for allocating, which
        doesn't involve things like did_start_allocating. */
     return !pas_compact_segregated_shared_view_ptr_load(
@@ -290,7 +289,7 @@ static bool for_each_live_object(
     void *arg)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
-    
+
     pas_segregated_page_config page_config;
     pas_full_alloc_bits full_alloc_bits;
     pas_segregated_page* page;
@@ -385,7 +384,7 @@ static bool for_each_live_object(
 
         if (verbose)
             pas_log("Considering object index %zu.\n", index);
-        
+
         if (!pas_bitvector_get(full_alloc_bits.bits, index)) {
             if (verbose)
                 pas_log("Doesn't belong in view.\n");
@@ -397,10 +396,10 @@ static bool for_each_live_object(
                 pas_log("Isn't allocated.\n");
             continue;
         }
-        
+
         if (verbose)
             pas_log("Got one!\n");
-        
+
         object = page_boundary +
             pas_page_base_object_offset_from_page_boundary_at_index(
                 (unsigned)index, page_config.base);
@@ -434,7 +433,7 @@ static pas_tri_state should_be_eligible(pas_segregated_view view,
                                         const pas_segregated_page_config* page_config)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
-    
+
     pas_full_alloc_bits full_alloc_bits;
     pas_segregated_page* page;
     size_t index;
@@ -462,7 +461,7 @@ static pas_tri_state should_be_eligible(pas_segregated_view view,
                     pas_segregated_page_config_payload_end_offset_for_role(
                         *page_config, pas_segregated_page_shared_role));
         }
-        
+
         PAS_ASSERT((unsigned)page_config->base.max_object_size == page_config->base.max_object_size);
 
         if (pas_segregated_shared_view_can_bump(
@@ -471,10 +470,10 @@ static pas_tri_state should_be_eligible(pas_segregated_view view,
 
         return pas_tri_state_maybe;
     }
-    
+
     if (!pas_segregated_view_is_owned(view))
         return pas_tri_state_yes;
-    
+
     page = pas_segregated_view_get_page(view);
 
     full_alloc_bits = pas_full_alloc_bits_create_for_view(view, *page_config);
@@ -508,7 +507,7 @@ static pas_tri_state should_be_eligible(pas_segregated_view view,
          ++index) {
         if (verbose)
             pas_log("Considering object index %zu.\n", index);
-        
+
         if (!pas_bitvector_get(full_alloc_bits.bits, index)) {
             if (verbose)
                 pas_log("Doesn't belong in view.\n");
@@ -529,7 +528,7 @@ pas_tri_state pas_segregated_view_should_be_eligible(pas_segregated_view view,
                                                      const pas_segregated_page_config* page_config)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
-    
+
     pas_tri_state result;
 
     if (verbose) {

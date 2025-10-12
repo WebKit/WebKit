@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "ScrollTypes.h"
+#import <WebCore/ScrollTypes.h>
 #import <wtf/Platform.h>
 #import <wtf/NakedPtr.h>
 

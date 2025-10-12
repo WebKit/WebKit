@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "HTTPServer.h"
+#import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "Utilities.h"
 #import <WebKit/WKNavigationActionPrivate.h>

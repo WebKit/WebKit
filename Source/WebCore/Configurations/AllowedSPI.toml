@@ -1,0 +1,75 @@
+# SPI used by WebCore on iOS.
+# More info: https://github.com/WebKit/WebKit/wiki/Using-SPI-on-Apple-platforms
+
+[[temporary-usage]]
+request = "rdar://141698311"
+cleanup = "rdar://157890302"
+classes = ["AXRemoteElement"]
+selectors = [
+    { name = "setOnClientSide:", class = "?" },
+    { name = "initWithUUID:andRemotePid:andContextId:", class = "?" },
+]
+
+[[not-web-essential]]
+request = "rdar://157890384"
+classes = ["MTMaterialLayer"]
+symbols = [
+    "MTCoreMaterialRecipeNone",
+    "MTCoreMaterialRecipePlatformChromeDark",
+    "MTCoreMaterialRecipePlatformChromeLight",
+    "MTCoreMaterialRecipePlatformContentDark",
+    "MTCoreMaterialRecipePlatformContentLight",
+    "MTCoreMaterialRecipePlatformContentThickDark",
+    "MTCoreMaterialRecipePlatformContentThickLight",
+    "MTCoreMaterialRecipePlatformContentThinDark",
+    "MTCoreMaterialRecipePlatformContentThinLight",
+    "MTCoreMaterialRecipePlatformContentUltraThinDark",
+    "MTCoreMaterialRecipePlatformContentUltraThinLight",
+    "MTCoreMaterialVisualStyleCategoryFill",
+    "MTCoreMaterialVisualStyleCategoryStroke",
+    "MTCoreMaterialVisualStyleNone",
+    "MTCoreMaterialVisualStylePrimary",
+    "MTCoreMaterialVisualStyleQuaternary",
+    "MTCoreMaterialVisualStyleSecondary",
+    "MTCoreMaterialVisualStyleSeparator",
+    "MTCoreMaterialVisualStyleTertiary",
+    "MTVisualStylingCreateDictionaryRepresentation",
+]
+
+[[not-web-essential]]
+request = "rdar://157890562"
+symbols = [
+    # Only used for benchmarking, see 293525@main.
+    "nw_parameters_set_source_application_by_bundle_id",
+]
+
+[[temporary-usage]]
+request = "rdar://157890014"
+cleanup = "rdar://157890142"
+symbols = [
+    "nw_path_create_evaluator_for_endpoint",
+    "nw_path_evaluator_copy_path",
+    "nw_resolver_create_with_path",
+]
+
+[[temporary-usage]]
+request = "rdar://159806937"
+cleanup = "rdar://159806845"
+symbols = [
+    "CGDataProviderCreateWithCopyOfData",
+]
+
+[[temporary-usage]]
+request = "rdar://159947920"
+cleanup = "rdar://159948141"
+selectors = [
+    { name = "_enumerateAllDeclaredTypesUsingBlock:", class = "UTType" },
+    { name = "_parentTypes", class = "UTType" },
+]
+
+[[temporary-usage]]
+request = "rdar://161241270"
+cleanup = "rdar://161241477"
+symbols = [
+    "CTFontDescriptorCreateMatchingFontDescriptorsWithOptions",
+]

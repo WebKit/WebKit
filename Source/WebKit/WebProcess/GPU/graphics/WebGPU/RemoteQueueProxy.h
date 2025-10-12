@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ public:
 
     virtual ~RemoteQueueProxy();
 
-    RemoteAdapterProxy& parent() { return m_parent; }
+    RemoteAdapterProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
     void submit(Vector<Ref<WebCore::WebGPU::CommandBuffer>>&&) final;
 
@@ -63,8 +63,6 @@ private:
 
     WebGPUIdentifier backing() const { return m_backing; }
 
-    Ref<ConvertToBackingContext> protectedConvertToBackingContext() const;
-    
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
@@ -116,8 +114,8 @@ private:
     RefPtr<WebCore::NativeImage> getNativeImage(WebCore::VideoFrame&) final;
 
     WebGPUIdentifier m_backing;
-    Ref<ConvertToBackingContext> m_convertToBackingContext;
-    Ref<RemoteAdapterProxy> m_parent;
+    const Ref<ConvertToBackingContext> m_convertToBackingContext;
+    const Ref<RemoteAdapterProxy> m_parent;
 #if ENABLE(VIDEO)
     RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 #endif

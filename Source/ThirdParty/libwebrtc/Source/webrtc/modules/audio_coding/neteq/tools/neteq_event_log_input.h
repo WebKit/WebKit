@@ -11,9 +11,10 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_EVENT_LOG_INPUT_H_
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_EVENT_LOG_INPUT_H_
 
+#include <cstdint>
+#include <memory>
 #include <optional>
 
-#include "absl/strings/string_view.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
 

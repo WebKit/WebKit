@@ -1,4 +1,3 @@
-//@ skip unless $isWasmPlatform
 //@ skip unless $isSIMDPlatform
 //@ $skipModes << :lockdown
 //@ requireOptions("--useWasmSIMD=1")

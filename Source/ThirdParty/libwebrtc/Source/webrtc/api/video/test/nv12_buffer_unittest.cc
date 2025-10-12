@@ -22,19 +22,19 @@
 namespace webrtc {
 
 namespace {
-int GetY(rtc::scoped_refptr<NV12BufferInterface> buf, int col, int row) {
+int GetY(scoped_refptr<NV12BufferInterface> buf, int col, int row) {
   return buf->DataY()[row * buf->StrideY() + col];
 }
 
-int GetU(rtc::scoped_refptr<NV12BufferInterface> buf, int col, int row) {
+int GetU(scoped_refptr<NV12BufferInterface> buf, int col, int row) {
   return buf->DataUV()[(row / 2) * buf->StrideUV() + (col / 2) * 2];
 }
 
-int GetV(rtc::scoped_refptr<NV12BufferInterface> buf, int col, int row) {
+int GetV(scoped_refptr<NV12BufferInterface> buf, int col, int row) {
   return buf->DataUV()[(row / 2) * buf->StrideUV() + (col / 2) * 2 + 1];
 }
 
-void FillNV12Buffer(rtc::scoped_refptr<NV12Buffer> buf) {
+void FillNV12Buffer(scoped_refptr<NV12Buffer> buf) {
   const uint8_t Y = 1;
   const uint8_t U = 2;
   const uint8_t V = 3;
@@ -61,7 +61,7 @@ TEST(NV12BufferTest, InitialData) {
   constexpr int width = 3;
   constexpr int height = 3;
 
-  rtc::scoped_refptr<NV12Buffer> nv12_buffer(NV12Buffer::Create(width, height));
+  scoped_refptr<NV12Buffer> nv12_buffer(NV12Buffer::Create(width, height));
   EXPECT_EQ(width, nv12_buffer->width());
   EXPECT_EQ(height, nv12_buffer->height());
   EXPECT_EQ(stride_y, nv12_buffer->StrideY());
@@ -74,7 +74,7 @@ TEST(NV12BufferTest, ReadPixels) {
   constexpr int width = 3;
   constexpr int height = 3;
 
-  rtc::scoped_refptr<NV12Buffer> nv12_buffer(NV12Buffer::Create(width, height));
+  scoped_refptr<NV12Buffer> nv12_buffer(NV12Buffer::Create(width, height));
   // Y = 1, U = 2, V = 3.
   FillNV12Buffer(nv12_buffer);
   for (int row = 0; row < height; row++) {
@@ -92,12 +92,12 @@ TEST(NV12BufferTest, ToI420) {
   constexpr int size_y = width * height;
   constexpr int size_u = (width + 1) / 2 * (height + 1) / 2;
   constexpr int size_v = (width + 1) / 2 * (height + 1) / 2;
-  rtc::scoped_refptr<I420Buffer> reference(I420Buffer::Create(width, height));
+  scoped_refptr<I420Buffer> reference(I420Buffer::Create(width, height));
   memset(reference->MutableDataY(), 8, size_y);
   memset(reference->MutableDataU(), 4, size_u);
   memset(reference->MutableDataV(), 2, size_v);
 
-  rtc::scoped_refptr<NV12Buffer> nv12_buffer(NV12Buffer::Create(width, height));
+  scoped_refptr<NV12Buffer> nv12_buffer(NV12Buffer::Create(width, height));
   // Convert the reference buffer to NV12.
   memset(nv12_buffer->MutableDataY(), 8, size_y);
   // Interleaving u/v values.
@@ -114,7 +114,7 @@ TEST(NV12BufferTest, ToI420) {
     }
   }
 
-  rtc::scoped_refptr<I420BufferInterface> i420_buffer(nv12_buffer->ToI420());
+  scoped_refptr<I420BufferInterface> i420_buffer(nv12_buffer->ToI420());
   EXPECT_EQ(height, i420_buffer->height());
   EXPECT_EQ(width, i420_buffer->width());
   EXPECT_TRUE(test::FrameBufsEqual(reference, i420_buffer));

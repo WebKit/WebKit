@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "RenderObject.h"
+#include <WebCore/RenderObject.h>
 
 namespace WebCore {
 

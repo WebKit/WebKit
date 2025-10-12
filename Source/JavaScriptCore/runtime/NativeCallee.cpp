@@ -43,7 +43,7 @@ void NativeCallee::dump(PrintStream& out) const
     switch (category()) {
     case Category::Wasm: {
 #if ENABLE(WEBASSEMBLY)
-        static_cast<const Wasm::Callee*>(this)->dump(out);
+        uncheckedDowncast<const Wasm::Callee>(this)->dump(out);
 #endif
         break;
     }
@@ -60,7 +60,7 @@ void NativeCallee::operator delete(NativeCallee* callee, std::destroying_delete_
     switch (callee->category()) {
     case Category::Wasm: {
 #if ENABLE(WEBASSEMBLY)
-        Wasm::Callee::destroy(static_cast<Wasm::Callee*>(callee));
+        Wasm::Callee::destroy(uncheckedDowncast<Wasm::Callee>(callee));
 #endif
         break;
     }

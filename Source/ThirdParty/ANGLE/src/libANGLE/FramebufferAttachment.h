@@ -120,6 +120,8 @@ class FramebufferAttachment final
     bool isRenderToTexture() const;
     GLsizei getRenderToTextureSamples() const;
 
+    // Explicitly resolves attachment size to use before state synchronization (e.g. validation).
+    angle::Result ensureSizeResolved(const Context *context) const;
     // The size of the underlying resource the attachment points to. The 'depth' value will
     // correspond to a 3D texture depth or the layer count of a 2D array texture. For Surfaces and
     // Renderbuffers, it will always be 1.
@@ -224,6 +226,7 @@ class FramebufferAttachmentObject : public angle::Subject, public angle::Observe
     FramebufferAttachmentObject();
     ~FramebufferAttachmentObject() override;
 
+    virtual angle::Result ensureSizeResolved(const Context *context) const                 = 0;
     virtual bool isAttachmentSpecified(const ImageIndex &imageIndex) const                 = 0;
     virtual Extents getAttachmentSize(const ImageIndex &imageIndex) const                  = 0;
     virtual Format getAttachmentFormat(GLenum binding, const ImageIndex &imageIndex) const = 0;
@@ -266,6 +269,12 @@ inline const ImageIndex &FramebufferAttachment::getTextureImageIndex() const
 {
     ASSERT(type() == GL_TEXTURE);
     return mTarget.textureIndex();
+}
+
+inline angle::Result FramebufferAttachment::ensureSizeResolved(const Context *context) const
+{
+    ASSERT(mResource);
+    return mResource->ensureSizeResolved(context);
 }
 
 inline bool FramebufferAttachment::isSpecified() const

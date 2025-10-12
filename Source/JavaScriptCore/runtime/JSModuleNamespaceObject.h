@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "AbstractModuleRecord.h"
-#include "JSDestructibleObject.h"
+#include <JavaScriptCore/AbstractModuleRecord.h>
+#include <JavaScriptCore/JSDestructibleObject.h>
 #include <wtf/FixedVector.h>
 
 namespace JSC {
@@ -64,6 +64,8 @@ public:
 
     DECLARE_EXPORT_INFO;
 
+    DECLARE_VISIT_CHILDREN;
+
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     AbstractModuleRecord* moduleRecord() { return m_moduleRecord.get(); }
@@ -71,7 +73,6 @@ public:
 private:
     JS_EXPORT_PRIVATE JSModuleNamespaceObject(VM&, Structure*);
     JS_EXPORT_PRIVATE void finishCreation(JSGlobalObject*, AbstractModuleRecord*, Vector<std::pair<Identifier, AbstractModuleRecord::Resolution>>&&);
-    DECLARE_VISIT_CHILDREN;
     bool getOwnPropertySlotCommon(JSGlobalObject*, PropertyName, PropertySlot&);
 
     struct ExportEntry {

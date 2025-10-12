@@ -103,7 +103,7 @@ public:
             }
         }
 
-        for (InlineCallFrameSet::iterator iter = m_graph.m_plan.inlineCallFrames()->begin(); !!iter; ++iter) {
+        for (InlineCallFrameSet::iterator iter = m_graph.m_plan.inlineCallFrames().unsafeGet()->begin(); !!iter; ++iter) {
             InlineCallFrame* inlineCallFrame = *iter;
             
             if (inlineCallFrame->isVarargs()) {

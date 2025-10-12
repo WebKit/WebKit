@@ -27,9 +27,9 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "AuthenticationExtensionsClientOutputs.h"
-#include "AuthenticatorTransport.h"
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <WebCore/AuthenticationExtensionsClientOutputs.h>
+#include <WebCore/AuthenticatorTransport.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

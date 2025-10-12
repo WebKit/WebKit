@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,7 @@ RemoteComputePassEncoderProxy::~RemoteComputePassEncoderProxy()
 
 void RemoteComputePassEncoderProxy::setPipeline(const WebCore::WebGPU::ComputePipeline& computePipeline)
 {
-    auto convertedComputePipeline = protectedConvertToBackingContext()->convertToBacking(computePipeline);
+    auto convertedComputePipeline = m_convertToBackingContext->convertToBacking(computePipeline);
 
     auto sendResult = send(Messages::RemoteComputePassEncoder::SetPipeline(convertedComputePipeline));
     UNUSED_VARIABLE(sendResult);
@@ -65,7 +65,7 @@ void RemoteComputePassEncoderProxy::dispatch(WebCore::WebGPU::Size32 workgroupCo
 
 void RemoteComputePassEncoderProxy::dispatchIndirect(const WebCore::WebGPU::Buffer& indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
 {
-    auto convertedIndirectBuffer = protectedConvertToBackingContext()->convertToBacking(indirectBuffer);
+    auto convertedIndirectBuffer = m_convertToBackingContext->convertToBacking(indirectBuffer);
 
     auto sendResult = send(Messages::RemoteComputePassEncoder::DispatchIndirect(convertedIndirectBuffer, indirectOffset));
     UNUSED_VARIABLE(sendResult);
@@ -82,7 +82,7 @@ void RemoteComputePassEncoderProxy::setBindGroup(WebCore::WebGPU::Index32 index,
 {
     std::optional<WebGPUIdentifier> convertedBindGroup;
     if (bindGroup)
-        convertedBindGroup = protectedConvertToBackingContext()->convertToBacking(*bindGroup);
+        convertedBindGroup = m_convertToBackingContext->convertToBacking(*bindGroup);
 
     auto sendResult = send(Messages::RemoteComputePassEncoder::SetBindGroup(index, convertedBindGroup, WTFMove(offsets)));
     UNUSED_VARIABLE(sendResult);
@@ -95,7 +95,7 @@ void RemoteComputePassEncoderProxy::setBindGroup(WebCore::WebGPU::Index32 index,
 {
     std::optional<WebGPUIdentifier> convertedBindGroup;
     if (bindGroup)
-        convertedBindGroup = protectedConvertToBackingContext()->convertToBacking(*bindGroup);
+        convertedBindGroup = m_convertToBackingContext->convertToBacking(*bindGroup);
 
     auto sendResult = send(Messages::RemoteComputePassEncoder::SetBindGroup(index, convertedBindGroup, Vector<WebCore::WebGPU::BufferDynamicOffset>(dynamicOffsetsArrayBuffer.subspan(dynamicOffsetsDataStart, dynamicOffsetsDataLength))));
     UNUSED_VARIABLE(sendResult);

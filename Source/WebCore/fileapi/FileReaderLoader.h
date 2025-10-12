@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc.  All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,10 +30,11 @@
 
 #pragma once
 
-#include "BlobResourceHandle.h"
-#include "ExceptionCode.h"
-#include "ThreadableLoaderClient.h"
-#include "URLKeepingBlobAlive.h"
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <WebCore/BlobResourceHandle.h>
+#include <WebCore/ExceptionCode.h>
+#include <WebCore/ThreadableLoaderClient.h>
+#include <WebCore/URLKeepingBlobAlive.h>
 #include <pal/text/TextEncoding.h>
 #include <wtf/Forward.h>
 #include <wtf/URL.h>
@@ -52,8 +53,9 @@ class ScriptExecutionContext;
 class TextResourceDecoder;
 class ThreadableLoader;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FileReaderLoader);
 class FileReaderLoader final : public ThreadableLoaderClient {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FileReaderLoader, FileReaderLoader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FileReaderLoader);
 public:
     enum ReadType {
@@ -102,6 +104,8 @@ private:
 
     static ExceptionCode httpStatusCodeToErrorCode(int);
     static ExceptionCode toErrorCode(BlobResourceHandle::Error);
+
+    RefPtr<JSC::ArrayBuffer> protectedRawData() const { return m_rawData; }
 
     ReadType m_readType;
     WeakPtr<FileReaderLoaderClient> m_client;

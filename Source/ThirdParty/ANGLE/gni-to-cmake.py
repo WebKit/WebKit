@@ -32,10 +32,10 @@ try:
     import ply.yacc as yacc
 except ImportError:
     import sys
-    sys.exit('Please run `pip3 install ply`');
-
+    sys.exit('Please run `pip3 install ply`')
 
 # --- Parse Tree
+
 
 class Comment(str):
     pass
@@ -46,6 +46,7 @@ class Variable(str):
 
 
 class Stmt:
+
     def __init__(self, type, children=None):
         self.type = type
         if children:
@@ -65,6 +66,7 @@ class Stmt:
 
 
 class Expr:
+
     def __init__(self, type, *children):
         self.type = type
         self.children = children
@@ -81,6 +83,7 @@ class Expr:
 
 
 # --- Parser
+
 
 class Parser:
     '''
@@ -106,13 +109,15 @@ class Parser:
     def parse(self, input):
         return yacc.parse(input)
 
-class GnParser(Parser):
-    reserved = { 'if': 'IF', 'else': 'ELSE', 'true': 'TRUE', 'false': 'FALSE' }
 
-    tokens = [ 'PLUS', 'PLUSEQ', 'MINUS', 'MINUSEQ', 'EQ', 'EQEQ', 'NOT', 'NOTEQ',
-               'GT', 'GTEQ', 'LT', 'LTEQ', 'ANDAND', 'OROR', 'DOT', 'COMMA',
-               'LBRACE', 'RBRACE', 'LBRACK', 'RBRACK', 'LPAREN', 'RPAREN',
-               'NAME', 'INTEGER', 'STRING', 'COMMENT' ] + list(reserved.values())
+class GnParser(Parser):
+    reserved = {'if': 'IF', 'else': 'ELSE', 'true': 'TRUE', 'false': 'FALSE'}
+
+    tokens = [
+        'PLUS', 'PLUSEQ', 'MINUS', 'MINUSEQ', 'EQ', 'EQEQ', 'NOT', 'NOTEQ', 'GT', 'GTEQ', 'LT',
+        'LTEQ', 'ANDAND', 'OROR', 'DOT', 'COMMA', 'LBRACE', 'RBRACE', 'LBRACK', 'RBRACK', 'LPAREN',
+        'RPAREN', 'NAME', 'INTEGER', 'STRING', 'COMMENT'
+    ] + list(reserved.values())
 
     # Ignored characters
     t_ignore = ' \r\t'
@@ -146,7 +151,7 @@ class GnParser(Parser):
 
     def t_NAME(self, t):
         r'[a-zA-Z_][a-zA-Z0-9_]*'
-        t.type = self.reserved.get(t.value, 'NAME') # Check for reserved words
+        t.type = self.reserved.get(t.value, 'NAME')  # Check for reserved words
         return t
 
     def t_INTEGER(self, t):
@@ -164,14 +169,9 @@ class GnParser(Parser):
         print(f'{t.lexer.lineno}: Illegal character {t.value[0]!r}')
         t.lexer.skip(1)
 
-    precedence = (
-        ('left', 'OROR'),
-        ('left', 'ANDAND'),
-        ('left', 'EQEQ', 'NOTEQ'),
-        ('left', 'GT', 'GTEQ', 'LT', 'LTEQ'),
-        ('left', 'PLUS', 'MINUS'),
-        ('right', 'NOT')
-    )
+    precedence = (('left', 'OROR'), ('left', 'ANDAND'), ('left', 'EQEQ', 'NOTEQ'),
+                  ('left', 'GT', 'GTEQ', 'LT', 'LTEQ'), ('left', 'PLUS', 'MINUS'), ('right',
+                                                                                    'NOT'))
 
     def p_file(self, p):
         '''file : statement_list'''
@@ -272,7 +272,7 @@ class GnParser(Parser):
 
     def p_primary_expr_sliteral(self, p):
         '''primary_expr : STRING'''
-        p[0] = p[1][1:-1] # Trim leading & trailing "
+        p[0] = p[1][1:-1]  # Trim leading & trailing "
 
     def p_primary_expr(self, p):
         '''primary_expr : INTEGER
@@ -311,7 +311,9 @@ class GnParser(Parser):
 
 # --- Process importing GNI files
 
+
 class ImportGni:
+
     def __init__(self, cwd, exclude):
         self.cwd = cwd
         if type(exclude) is list:
@@ -326,9 +328,9 @@ class ImportGni:
         return False
 
     def _import_gni(self, import_stmt):
-        assert(import_stmt.type == 'import')
+        assert (import_stmt.type == 'import')
         args = import_stmt[0]
-        assert(len(args) == 1)
+        assert (len(args) == 1)
         path = args[0]
         if self._is_excluded(path):
             return []
@@ -354,6 +356,7 @@ class ImportGni:
 
         return ast
 
+
 def import_gni(ast, cwd, exclude):
     '''
     Import any gni files referenced in the AST.
@@ -377,7 +380,9 @@ def load_gn(path, exclude):
 
 # --- Convert GN expression operators into CMake versions
 
+
 class CMakeExprOps:
+
     def fold(self, ast):
         if type(ast) is list:
             return [self.fold(child) for child in ast]
@@ -398,12 +403,13 @@ class CMakeExprOps:
             elif ast.type == '+':
                 #  var + [ list ] -> [ ${var} list ]
                 if isinstance(ast[0], Variable) and type(ast[1]) is list:
-                    ast = [ Variable(f'${{{ast[0]}}}') ] + ast[1]
+                    ast = [Variable(f'${{{ast[0]}}}')] + ast[1]
                 #  "" + var -> ${var}
                 elif len(ast[0]) == 0 and isinstance(ast[1], Variable):
                     ast = Variable(f'${{{ast[1]}}}')
 
         return ast
+
 
 def convert_to_cmake_ops(ast):
     visitor = CMakeExprOps()
@@ -412,7 +418,9 @@ def convert_to_cmake_ops(ast):
 
 # --- Exclude nodes
 
+
 class ExcludeStmts:
+
     def __init__(self, exclude):
         if type(exclude) is list:
             self.exclude = exclude
@@ -431,6 +439,7 @@ class ExcludeStmts:
             ast.children = self.fold(ast.children)
         return ast
 
+
 def exclude_stmts(ast, exclude):
     visitor = ExcludeStmts(exclude)
     return visitor.fold(ast)
@@ -438,14 +447,17 @@ def exclude_stmts(ast, exclude):
 
 # --- Write GN into CMake format
 
+
 class CMakeWriter:
+
     def __init__(self, path, prepend):
         if not isinstance(path, Path):
             path = Path(path)
         self.prepend = prepend
         self.output = path.open('w', encoding='utf-8')
         self.writef('# This file was generated with the command:\n')
-        self.writef('# %s\n\n', ' '.join(['"' + arg.replace('"', '\\"') + '"' for arg in sys.argv]))
+        self.writef('# %s\n\n',
+                    ' '.join(['"' + arg.replace('"', '\\"') + '"' for arg in sys.argv]))
 
     def __del__(self):
         self.output.close()
@@ -547,6 +559,7 @@ class CMakeWriter:
         else:
             raise RuntimeError
 
+
 def write_cmake(path, ast, prepend):
     writer = CMakeWriter(path, prepend)
     writer.visit(ast)
@@ -557,7 +570,9 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
 
     parser = ArgumentParser(
-        prog='gni-to-cmake', description='converts a .gn/.gni file to .cmake', usage='%(prog)s [options')
+        prog='gni-to-cmake',
+        description='converts a .gn/.gni file to .cmake',
+        usage='%(prog)s [options')
     parser.add_argument('gni', help='the .gn/gni file to parse')
     parser.add_argument('cmake', help='the .cmake file to output')
     parser.add_argument('--prepend', help='the path to prepend to each file name')
@@ -570,6 +585,7 @@ if __name__ == '__main__':
 
     # TODO:
     ast = load_gn(path, exclude=[r'.*/angle\.gni$', r'//build/.*'])
-    ast = exclude_stmts(ast, exclude=['assert', 'config', 'angle_source_set', 'pkg_config', 'declare_args'])
+    ast = exclude_stmts(
+        ast, exclude=['assert', 'config', 'angle_source_set', 'pkg_config', 'declare_args'])
     ast = convert_to_cmake_ops(ast)
     write_cmake(args.cmake, ast, prepend=args.prepend)

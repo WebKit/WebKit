@@ -62,14 +62,14 @@ void FreeMediaType(AM_MEDIA_TYPE* media_type);
 HRESULT CopyMediaType(AM_MEDIA_TYPE* target, const AM_MEDIA_TYPE* source);
 
 // Helper function to make using scoped_refptr with COM interface pointers
-// a little less awkward. rtc::scoped_refptr doesn't support the & operator
+// a little less awkward. webrtc::scoped_refptr doesn't support the & operator
 // or a way to receive values via an out ptr.
 // The function is intentionally not called QueryInterface to make things less
 // confusing for the compiler to figure out what the caller wants to do when
 // called from within the context of a class that also implements COM
 // interfaces.
 template <class T>
-HRESULT GetComInterface(IUnknown* object, rtc::scoped_refptr<T>* ptr) {
+HRESULT GetComInterface(IUnknown* object, webrtc::scoped_refptr<T>* ptr) {
   // This helper function is not meant to magically free ptr. If we do that
   // we add code bloat to most places where it's not needed and make the code
   // less readable since it's not clear at the call site that the pointer

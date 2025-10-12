@@ -320,16 +320,16 @@ TEST_FACTOR(3, 1, 3)
 
 #ifndef DISABLE_SLOW_TESTS
 // Test scale to a specified size with all 4 filters.
-#define TEST_SCALETO(name, width, height)         \
-  TEST_SCALETO1(, name, width, height, None, 0)   \
-  TEST_SCALETO1(, name, width, height, Linear, 3) \
+#define TEST_SCALETO(name, width, height)           \
+  TEST_SCALETO1(, name, width, height, None, 0)     \
+  TEST_SCALETO1(, name, width, height, Linear, 3)   \
   TEST_SCALETO1(, name, width, height, Bilinear, 3) \
   TEST_SCALETO1(, name, width, height, Box, 3)
 #else
 #if defined(ENABLE_FULL_TESTS)
-#define TEST_SCALETO(name, width, height)                  \
-  TEST_SCALETO1(DISABLED_, name, width, height, None, 0)   \
-  TEST_SCALETO1(DISABLED_, name, width, height, Linear, 3) \
+#define TEST_SCALETO(name, width, height)                    \
+  TEST_SCALETO1(DISABLED_, name, width, height, None, 0)     \
+  TEST_SCALETO1(DISABLED_, name, width, height, Linear, 3)   \
   TEST_SCALETO1(DISABLED_, name, width, height, Bilinear, 3) \
   TEST_SCALETO1(DISABLED_, name, width, height, Box, 3)
 #else

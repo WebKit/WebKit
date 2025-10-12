@@ -24,85 +24,98 @@
 
 #pragma once
 
-#include "CSSPosition.h"
-#include "FloatPoint.h"
-#include "StylePrimitiveNumericTypes.h"
+#include <WebCore/CSSPosition.h>
+#include <WebCore/FloatPoint.h>
+#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
 
 namespace WebCore {
-
-struct Length;
-struct LengthPoint;
-
 namespace Style {
 
-struct TwoComponentPositionHorizontal {
-    LengthPercentage<> offset;
+struct PositionX : LengthWrapperBase<LengthPercentage<>> {
+    using Base::Base;
+};
+struct PositionY : LengthWrapperBase<LengthPercentage<>> {
+    using Base::Base;
+};
 
+struct TwoComponentPositionHorizontal {
+    PositionX offset;
     bool operator==(const TwoComponentPositionHorizontal&) const = default;
 };
 DEFINE_TYPE_WRAPPER_GET(TwoComponentPositionHorizontal, offset);
 
 struct TwoComponentPositionVertical {
-    LengthPercentage<> offset;
-
+    PositionY offset;
     bool operator==(const TwoComponentPositionVertical&) const = default;
 };
 DEFINE_TYPE_WRAPPER_GET(TwoComponentPositionVertical, offset);
 
 struct Position {
+    using X = PositionX;
+    using Y = PositionY;
+
+    X x;
+    Y y;
+
+    Position(X&& x, Y&& y)
+        : x { WTFMove(x) }
+        , y { WTFMove(y) }
+    {
+    }
+
+    Position(const X& x, const Y& y)
+        : x { x }
+        , y { y }
+    {
+    }
+
     Position(TwoComponentPositionHorizontal&& x, TwoComponentPositionVertical&& y)
-        : value { WTFMove(x.offset), WTFMove(y.offset) }
+        : x { WTFMove(x.offset) }
+        , y { WTFMove(y.offset) }
     {
     }
 
-    Position(LengthPercentage<>&& x, LengthPercentage<>&& y)
-        : value { WTFMove(x), WTFMove(y) }
-    {
-    }
-
-    Position(SpaceSeparatedPoint<LengthPercentage<>>&& point)
-        : value { WTFMove(point) }
+    Position(const TwoComponentPositionHorizontal& x, const TwoComponentPositionVertical& y)
+        : x { x.offset }
+        , y { y.offset }
     {
     }
 
     Position(FloatPoint point)
-        : value { LengthPercentage<>::Dimension { point.x() }, LengthPercentage<>::Dimension { point.y() } }
+        : x { PositionX::Fixed { point.x() } }
+        , y { PositionY::Fixed { point.y() } }
+    {
+    }
+
+    Position(CSS::ValueLiteral<CSS::LengthUnit::Px> literalX, CSS::ValueLiteral<CSS::LengthUnit::Px> literalY)
+        : x { literalX }
+        , y { literalY }
+    {
+    }
+
+    Position(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literalX, CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literalY)
+        : x { literalX }
+        , y { literalY }
     {
     }
 
     bool operator==(const Position&) const = default;
-
-    LengthPercentage<> x() const { return value.x(); }
-    LengthPercentage<> y() const { return value.y(); }
-
-    SpaceSeparatedPoint<LengthPercentage<>> value;
 };
-
 template<size_t I> const auto& get(const Position& position)
 {
-    return get<I>(position.value);
+    if constexpr (!I)
+        return position.x;
+    else if constexpr (I == 1)
+        return position.y;
 }
-
-struct PositionX {
-    LengthPercentage<> value;
-
-    bool operator==(const PositionX&) const = default;
-};
-DEFINE_TYPE_WRAPPER_GET(PositionX, value);
-
-struct PositionY {
-    LengthPercentage<> value;
-
-    bool operator==(const PositionY&) const = default;
-};
-DEFINE_TYPE_WRAPPER_GET(PositionY, value);
 
 // MARK: - Conversion
 
-// Specialization is needed for ToStyle to implement resolution of keyword value to <length-percentage>.
-template<> struct ToCSSMapping<TwoComponentPositionHorizontal> { using type = CSS::TwoComponentPositionHorizontal; };
+template<> struct ToCSS<TwoComponentPositionHorizontal> { auto operator()(const TwoComponentPositionHorizontal&, const RenderStyle&) -> CSS::TwoComponentPositionHorizontal; };
 template<> struct ToStyle<CSS::TwoComponentPositionHorizontal> { auto operator()(const CSS::TwoComponentPositionHorizontal&, const BuilderState&) -> TwoComponentPositionHorizontal; };
-template<> struct ToCSSMapping<TwoComponentPositionVertical> { using type = CSS::TwoComponentPositionVertical; };
+
+template<> struct ToCSS<TwoComponentPositionVertical> { auto operator()(const TwoComponentPositionVertical&, const RenderStyle&) -> CSS::TwoComponentPositionVertical; };
 template<> struct ToStyle<CSS::TwoComponentPositionVertical> { auto operator()(const CSS::TwoComponentPositionVertical&, const BuilderState&) -> TwoComponentPositionVertical; };
 
 template<> struct ToCSS<Position> { auto operator()(const Position&, const RenderStyle&) -> CSS::Position; };
@@ -114,21 +127,21 @@ template<> struct ToStyle<CSS::PositionX> { auto operator()(const CSS::PositionX
 template<> struct ToCSS<PositionY> { auto operator()(const PositionY&, const RenderStyle&) -> CSS::PositionY; };
 template<> struct ToStyle<CSS::PositionY> { auto operator()(const CSS::PositionY&, const BuilderState&) -> PositionY; };
 
+template<> struct CSSValueConversion<Position> { auto operator()(BuilderState&, const CSSValue&) -> Position; };
+template<> struct CSSValueConversion<PositionX> { auto operator()(BuilderState&, const CSSValue&) -> PositionX; };
+template<> struct CSSValueConversion<PositionY> { auto operator()(BuilderState&, const CSSValue&) -> PositionY; };
+
 // MARK: - Evaluation
 
-template<> struct Evaluation<Position> { auto operator()(const Position&, FloatSize) -> FloatPoint; };
-
-// MARK: - Platform
-
-auto toPlatform(const Position&) -> WebCore::LengthPoint;
-auto toPlatform(const PositionX&) -> WebCore::Length;
-auto toPlatform(const PositionY&) -> WebCore::Length;
+template<> struct Evaluation<Position, FloatPoint> {
+    auto operator()(const Position&, FloatSize, ZoomNeeded) -> FloatPoint;
+};
 
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::TwoComponentPositionHorizontal, 1)
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::TwoComponentPositionVertical, 1)
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Position, 2)
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::PositionX, 1)
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::PositionY, 1)
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::PositionX)
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::PositionY)
+DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::TwoComponentPositionHorizontal)
+DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::TwoComponentPositionVertical)
+DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Position, 2)

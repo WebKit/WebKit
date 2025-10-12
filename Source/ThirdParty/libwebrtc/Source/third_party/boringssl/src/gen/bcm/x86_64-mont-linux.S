@@ -229,7 +229,7 @@ _CET_ENDBR
 
 	movq	8(%rsp,%r9,8),%rsi
 .cfi_def_cfa	%rsi,8
-	movq	$1,%rax
+
 	movq	-48(%rsi),%r15
 .cfi_restore	%r15
 	movq	-40(%rsi),%r14
@@ -632,7 +632,7 @@ _CET_ENDBR
 	sbbq	$0,%rax
 	movq	%rbp,24(%rdi,%r14,8)
 	pxor	%xmm0,%xmm0
-.byte	102,72,15,110,224
+	movq	%rax,%xmm4
 	pcmpeqd	%xmm5,%xmm5
 	pshufd	$0,%xmm4,%xmm4
 	movq	%r9,%r15
@@ -662,7 +662,7 @@ _CET_ENDBR
 	jnz	.Lcopy4x
 	movq	8(%rsp,%r9,8),%rsi
 .cfi_def_cfa	%rsi, 8
-	movq	$1,%rax
+
 	movq	-48(%rsi),%r15
 .cfi_restore	%r15
 	movq	-40(%rsi),%r14
@@ -766,10 +766,10 @@ _CET_ENDBR
 .cfi_escape	0x0f,0x05,0x77,0x28,0x06,0x23,0x08
 .Lsqr8x_body:
 
-.byte	102,72,15,110,209
+	movq	%rcx,%xmm2
 	pxor	%xmm0,%xmm0
-.byte	102,72,15,110,207
-.byte	102,73,15,110,218
+	movq	%rdi,%xmm1
+	movq	%r10,%xmm3
 	testq	%rdx,%rdx
 	jz	.Lsqr8x_nox
 
@@ -781,7 +781,7 @@ _CET_ENDBR
 	leaq	(%r8,%rcx,1),%rbx
 	movq	%rcx,%r9
 	movq	%rcx,%rdx
-.byte	102,72,15,126,207
+	movq	%xmm1,%rdi
 	sarq	$3+2,%rcx
 	jmp	.Lsqr8x_sub
 
@@ -795,7 +795,7 @@ _CET_ENDBR
 	leaq	(%rdi,%r9,1),%rbx
 	movq	%r9,%rcx
 	movq	%r9,%rdx
-.byte	102,72,15,126,207
+	movq	%xmm1,%rdi
 	sarq	$3+2,%rcx
 	jmp	.Lsqr8x_sub
 
@@ -823,7 +823,7 @@ _CET_ENDBR
 	leaq	(%rbx,%r9,1),%rbx
 	leaq	(%rdi,%r9,1),%rdi
 
-.byte	102,72,15,110,200
+	movq	%rax,%xmm1
 	pxor	%xmm0,%xmm0
 	pshufd	$0,%xmm1,%xmm1
 	movq	40(%rsp),%rsi
@@ -855,7 +855,7 @@ _CET_ENDBR
 	addq	$32,%r9
 	jnz	.Lsqr8x_cond_copy
 
-	movq	$1,%rax
+
 	movq	-48(%rsi),%r15
 .cfi_restore	%r15
 	movq	-40(%rsi),%r14
@@ -1181,7 +1181,7 @@ _CET_ENDBR
 	leaq	64(%rsp),%rbx
 	subq	%rdx,%rdi
 
-.byte	102,73,15,110,207
+	movq	%r15,%xmm1
 	pxor	%xmm0,%xmm0
 	pshufd	$0,%xmm1,%xmm1
 	movq	40(%rsp),%rsi
@@ -1213,7 +1213,7 @@ _CET_ENDBR
 
 	movq	%rdx,(%rbx)
 
-	movq	$1,%rax
+
 	movq	-48(%rsi),%r15
 .cfi_restore	%r15
 	movq	-40(%rsi),%r14

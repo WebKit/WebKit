@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CertificateInfo.h"
-#include "ISO18013PresentmentRequest.h"
+#include <WebCore/CertificateInfo.h>
+#include <WebCore/ISO18013PresentmentRequest.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

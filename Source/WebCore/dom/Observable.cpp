@@ -49,6 +49,7 @@
 #include "ObservableInspector.h"
 #include "PredicateCallback.h"
 #include "ReducerCallback.h"
+#include "ScriptWrappableInlines.h"
 #include "SubscribeOptions.h"
 #include "Subscriber.h"
 #include "SubscriberCallback.h"
@@ -180,5 +181,7 @@ Observable::Observable(Ref<SubscriberCallback> callback)
     : m_subscriberCallback(callback)
 {
 }
+
+Observable::~Observable() = default;
 
 } // namespace WebCore

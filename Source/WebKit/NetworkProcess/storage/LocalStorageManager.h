@@ -76,7 +76,7 @@ private:
     MemoryStorageArea& ensureTransientLocalStorageArea(const WebCore::ClientOrigin&);
 
     String m_path;
-    CheckedRef<StorageAreaRegistry> m_registry;
+    const CheckedRef<StorageAreaRegistry> m_registry;
     RefPtr<MemoryStorageArea> m_transientStorageArea;
     RefPtr<StorageAreaBase> m_localStorageArea;
 };

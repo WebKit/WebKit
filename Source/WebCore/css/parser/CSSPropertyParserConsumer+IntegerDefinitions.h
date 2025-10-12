@@ -53,7 +53,7 @@ template<typename Primitive, typename Validator> struct NumberConsumerForInteger
 
         auto rawValue = typename Primitive::Raw { CSS::IntegerUnit::Integer, range.peek().numericValue() };
 
-        if constexpr (rawValue.range.options != CSS::RangeOptions::Default)
+        if constexpr (rawValue.range.clampOptions != CSS::RangeClampOptions::Default)
             rawValue = performParseTimeClamp(rawValue);
 
         if (!Validator::isValid(rawValue, options))

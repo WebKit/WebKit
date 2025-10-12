@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,13 +44,13 @@ public:
     static Ref<WebTransportDatagramDuplexStream> create(Ref<ReadableStream>&&, Ref<WritableStream>&&);
     ~WebTransportDatagramDuplexStream();
 
-    ReadableStream& readable();
-    WritableStream& writable();
-    unsigned maxDatagramSize();
-    double incomingMaxAge();
-    double outgoingMaxAge();
-    double incomingHighWaterMark();
-    double outgoingHighWaterMark();
+    ReadableStream& readable() { return m_readable; }
+    WritableStream& writable() { return m_writable; }
+    unsigned maxDatagramSize() { return m_outgoingMaxDatagramSize; }
+    double incomingMaxAge() { return m_incomingDatagramsExpirationDuration; }
+    double outgoingMaxAge() { return m_outgoingDatagramsExpirationDuration; }
+    double incomingHighWaterMark() { return m_incomingDatagramsHighWaterMark; }
+    double outgoingHighWaterMark() { return m_outgoingDatagramsHighWaterMark; }
     ExceptionOr<void> setIncomingMaxAge(double);
     ExceptionOr<void> setOutgoingMaxAge(double);
     ExceptionOr<void> setIncomingHighWaterMark(double);
@@ -59,8 +59,8 @@ public:
 private:
     WebTransportDatagramDuplexStream(Ref<ReadableStream>&&, Ref<WritableStream>&&);
 
-    Ref<ReadableStream> m_readable;
-    Ref<WritableStream> m_writable;
+    const Ref<ReadableStream> m_readable;
+    const Ref<WritableStream> m_writable;
     Deque<std::pair<Vector<uint8_t>, MonotonicTime>> m_incomingDatagramsQueue;
     RefPtr<DOMPromise> m_incomingDatagramsPullPromise;
     double m_incomingDatagramsHighWaterMark { 1 };

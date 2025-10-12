@@ -79,10 +79,10 @@
 
 - (void)closePanelIfNecessary
 {
-    if (!PAL::isQuickLookUIFrameworkAvailable() || ![PAL::getQLPreviewPanelClass() sharedPreviewPanelExists])
+    if (!PAL::isQuickLookUIFrameworkAvailable() || ![PAL::getQLPreviewPanelClassSingleton() sharedPreviewPanelExists])
         return;
 
-    if (RetainPtr panel = [PAL::getQLPreviewPanelClass() sharedPreviewPanel]; [self isControlling:panel.get()])
+    if (RetainPtr panel = [PAL::getQLPreviewPanelClassSingleton() sharedPreviewPanel]; [self isControlling:panel.get()])
         [panel close];
 }
 

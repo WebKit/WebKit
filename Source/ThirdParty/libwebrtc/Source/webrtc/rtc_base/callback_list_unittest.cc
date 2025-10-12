@@ -9,10 +9,10 @@
  */
 #include "rtc_base/callback_list.h"
 
+#include <functional>
 #include <string>
-#include <type_traits>
 
-#include "api/function_view.h"
+#include "rtc_base/untyped_function.h"
 #include "test/gtest.h"
 
 namespace webrtc {

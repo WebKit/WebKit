@@ -9,9 +9,6 @@ info: |
   Iterator Helpers proposal 2.1.5
 features:
   - iterator-helpers
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 ---*/
 
 //
@@ -23,20 +20,20 @@ const methods = [
 ];
 
 for (const method of methods) {
-  assertThrowsInstanceOf(() => method(Iterator.prototype, 0), TypeError);
-  assertThrowsInstanceOf(() => method(Iterator.prototype, false), TypeError);
-  assertThrowsInstanceOf(() => method(Iterator.prototype, undefined), TypeError);
-  assertThrowsInstanceOf(() => method(Iterator.prototype, null), TypeError);
-  assertThrowsInstanceOf(() => method(Iterator.prototype, ''), TypeError);
-  assertThrowsInstanceOf(() => method(Iterator.prototype, Symbol('')), TypeError);
-  assertThrowsInstanceOf(() => method(Iterator.prototype, {}), TypeError);
+  assert.throws(TypeError, () => method(Iterator.prototype, 0));
+  assert.throws(TypeError, () => method(Iterator.prototype, false));
+  assert.throws(TypeError, () => method(Iterator.prototype, undefined));
+  assert.throws(TypeError, () => method(Iterator.prototype, null));
+  assert.throws(TypeError, () => method(Iterator.prototype, ''));
+  assert.throws(TypeError, () => method(Iterator.prototype, Symbol('')));
+  assert.throws(TypeError, () => method(Iterator.prototype, {}));
 
-  assertThrowsInstanceOf(() => method([].values(), 0), TypeError);
-  assertThrowsInstanceOf(() => method([].values(), false), TypeError);
-  assertThrowsInstanceOf(() => method([].values(), undefined), TypeError);
-  assertThrowsInstanceOf(() => method([].values(), null), TypeError);
-  assertThrowsInstanceOf(() => method([].values(), ''), TypeError);
-  assertThrowsInstanceOf(() => method([].values(), Symbol('')), TypeError);
-  assertThrowsInstanceOf(() => method([].values(), {}), TypeError);
+  assert.throws(TypeError, () => method([].values(), 0));
+  assert.throws(TypeError, () => method([].values(), false));
+  assert.throws(TypeError, () => method([].values(), undefined));
+  assert.throws(TypeError, () => method([].values(), null));
+  assert.throws(TypeError, () => method([].values(), ''));
+  assert.throws(TypeError, () => method([].values(), Symbol('')));
+  assert.throws(TypeError, () => method([].values(), {}));
 }
 

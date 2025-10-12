@@ -25,47 +25,49 @@
 
 #pragma once
 
+#import <wtf/Platform.h>
 #if ENABLE(GAMEPAD) && PLATFORM(COCOA)
 
-#import "GameControllerSPI.h"
+#import <WebCore/GameControllerSPI.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, GameController)
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, GCController)
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, GCControllerButtonInput)
 
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCInputButtonA, NSString *)
-#define GCInputButtonA WebCore::get_GameController_GCInputButtonA()
+#define GCInputButtonA WebCore::get_GameController_GCInputButtonASingleton()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCInputButtonB, NSString *)
-#define GCInputButtonB WebCore::get_GameController_GCInputButtonB()
+#define GCInputButtonB WebCore::get_GameController_GCInputButtonBSingleton()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCInputButtonX, NSString *)
-#define GCInputButtonX WebCore::get_GameController_GCInputButtonX()
+#define GCInputButtonX WebCore::get_GameController_GCInputButtonXSingleton()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCInputButtonY, NSString *)
-#define GCInputButtonY WebCore::get_GameController_GCInputButtonY()
+#define GCInputButtonY WebCore::get_GameController_GCInputButtonYSingleton()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCInputButtonHome, NSString *)
-#define GCInputButtonHome WebCore::get_GameController_GCInputButtonHome()
+#define GCInputButtonHome WebCore::get_GameController_GCInputButtonHomeSingleton()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCInputButtonMenu, NSString *)
-#define GCInputButtonMenu WebCore::get_GameController_GCInputButtonMenu()
+#define GCInputButtonMenu WebCore::get_GameController_GCInputButtonMenuSingleton()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCInputButtonOptions, NSString *)
-#define GCInputButtonOptions WebCore::get_GameController_GCInputButtonOptions()
+#define GCInputButtonOptions WebCore::get_GameController_GCInputButtonOptionsSingleton()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCInputDirectionPad, NSString *)
-#define GCInputDirectionPad WebCore::get_GameController_GCInputDirectionPad()
+#define GCInputDirectionPad WebCore::get_GameController_GCInputDirectionPadSingleton()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCInputLeftShoulder, NSString *)
-#define GCInputLeftShoulder WebCore::get_GameController_GCInputLeftShoulder()
+#define GCInputLeftShoulder WebCore::get_GameController_GCInputLeftShoulderSingleton()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCInputLeftTrigger, NSString *)
-#define GCInputLeftTrigger WebCore::get_GameController_GCInputLeftTrigger()
+#define GCInputLeftTrigger WebCore::get_GameController_GCInputLeftTriggerSingleton()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCInputLeftThumbstick, NSString *)
-#define GCInputLeftThumbstick WebCore::get_GameController_GCInputLeftThumbstick()
+#define GCInputLeftThumbstick WebCore::get_GameController_GCInputLeftThumbstickSingleton()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCInputLeftThumbstickButton, NSString *)
-#define GCInputLeftThumbstickButton WebCore::get_GameController_GCInputLeftThumbstickButton()
+#define GCInputLeftThumbstickButton WebCore::get_GameController_GCInputLeftThumbstickButtonSingleton()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCInputRightShoulder, NSString *)
-#define GCInputRightShoulder WebCore::get_GameController_GCInputRightShoulder()
+#define GCInputRightShoulder WebCore::get_GameController_GCInputRightShoulderSingleton()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCInputRightTrigger, NSString *)
-#define GCInputRightTrigger WebCore::get_GameController_GCInputRightTrigger()
+#define GCInputRightTrigger WebCore::get_GameController_GCInputRightTriggerSingleton()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCInputRightThumbstick, NSString *)
-#define GCInputRightThumbstick WebCore::get_GameController_GCInputRightThumbstick()
+#define GCInputRightThumbstick WebCore::get_GameController_GCInputRightThumbstickSingleton()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCInputRightThumbstickButton, NSString *)
-#define GCInputRightThumbstickButton WebCore::get_GameController_GCInputRightThumbstickButton()
+#define GCInputRightThumbstickButton WebCore::get_GameController_GCInputRightThumbstickButtonSingleton()
 
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCControllerDidConnectNotification, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCControllerDidDisconnectNotification, NSString *)
@@ -83,6 +85,13 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, GameController, ControllerClassForService
 #import <GameController/GCEventInteraction.h>
 
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, GCEventInteraction)
+#endif
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && ENABLE(POINTER_LOCK)
+SOFT_LINK_CLASS_FOR_HEADER(WebCore, GCMouse)
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, GameController, GCMouseDidStopBeingCurrentNotification, NSString *)
+
+SPECIALIZE_OBJC_TYPE_TRAITS(GCMouse, WebCore::getGCMouseClassSingleton())
 #endif
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/GameControllerSoftLinkAdditions.h>)

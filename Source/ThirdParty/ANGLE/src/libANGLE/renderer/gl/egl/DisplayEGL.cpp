@@ -6,6 +6,10 @@
 
 // DisplayEGL.cpp: Common across EGL parts of platform specific egl::Display implementations
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "libANGLE/renderer/gl/egl/DisplayEGL.h"
 
 #include "common/debug.h"
@@ -454,8 +458,19 @@ class ExternalSurfaceEGL : public SurfaceEGL
 
     egl::Error initialize(const egl::Display *display) override { return egl::NoError(); }
     EGLint getSwapBehavior() const override { return EGL_BUFFER_DESTROYED; }
-    EGLint getWidth() const override { return mWidth; }
-    EGLint getHeight() const override { return mHeight; }
+    gl::Extents getSize() const final { return gl::Extents(mWidth, mHeight, 1); }
+    egl::Error getUserSize(const egl::Display *display, EGLint *width, EGLint *height) const final
+    {
+        if (width != nullptr)
+        {
+            *width = mWidth;
+        }
+        if (height != nullptr)
+        {
+            *height = mHeight;
+        }
+        return egl::NoError();
+    }
     bool isExternal() const override { return true; }
 
   private:
@@ -1048,7 +1063,7 @@ DeviceImpl *DisplayEGL::createDevice()
     return new DeviceEGL(this);
 }
 
-bool DisplayEGL::supportsDmaBufFormat(EGLint format) const
+bool DisplayEGL::supportsDmaBufFormat(EGLint format)
 {
     return std::find(std::begin(mDrmFormats), std::end(mDrmFormats), format) !=
            std::end(mDrmFormats);

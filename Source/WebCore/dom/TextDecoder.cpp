@@ -25,6 +25,7 @@
 #include "config.h"
 #include "TextDecoder.h"
 
+#include "ExceptionOr.h"
 #include <pal/text/TextCodec.h>
 #include <pal/text/TextEncodingRegistry.h>
 #include <wtf/text/MakeString.h>
@@ -42,7 +43,7 @@ TextDecoder::~TextDecoder() = default;
 ExceptionOr<Ref<TextDecoder>> TextDecoder::create(const String& label, Options options)
 {
     auto trimmedLabel = label.trim(isASCIIWhitespace);
-    const UChar nullCharacter = '\0';
+    const char16_t nullCharacter = '\0';
     if (trimmedLabel.contains(nullCharacter))
         return Exception { ExceptionCode::RangeError };
     auto decoder = adoptRef(*new TextDecoder(trimmedLabel, options));

@@ -29,14 +29,6 @@ from webkitcorepy.decorators import hybridmethod
 
 class Editor(object):
     @classmethod
-    def atom(cls):
-        return cls(
-            name='Atom',
-            path='/Applications/Atom.app/Contents/Resources/app/atom.sh',
-            wait=['-w'],
-        )
-
-    @classmethod
     def sublime(cls):
         path = shutil.which('subl') or '/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl'
         return cls(
@@ -129,7 +121,6 @@ class Editor(object):
         for program in [
             Editor.sublime(),
             Editor.textmate(),
-            Editor.atom(),
             Editor.bbedit(),
             Editor.vscode(),
             Editor.xcode(),

@@ -38,6 +38,7 @@ namespace JSC {
 
 #define JSC_PROFILER_SUPPORT_CATEGORY(macro) \
     macro(JSGlobalObjectSignpost) \
+    macro(WebKitPerformanceSignpost) \
 
 class ProfilerSupport {
     WTF_MAKE_TZONE_ALLOCATED(ProfilerSupport);
@@ -54,9 +55,10 @@ public:
     static constexpr unsigned numberOfCategories = 0 JSC_PROFILER_SUPPORT_CATEGORY(JSC_COUNT_CATEGORY);
 #undef JSC_COUNT_CATEGORY
 
-    static void markStart(const void*, Category, CString&&);
-    static void markEnd(const void*, Category, CString&&);
-    static void mark(const void*, Category, CString&&);
+    JS_EXPORT_PRIVATE static void markStart(const void*, Category, CString&&);
+    JS_EXPORT_PRIVATE static void markEnd(const void*, Category, CString&&);
+    JS_EXPORT_PRIVATE static void mark(const void*, Category, CString&&);
+    JS_EXPORT_PRIVATE static void markInterval(const void*, Category, MonotonicTime, MonotonicTime, CString&&);
 
     WorkQueue& queue() { return m_queue.get(); }
 

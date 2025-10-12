@@ -10,6 +10,10 @@
 
 #include "modules/audio_processing/aec3/multi_channel_content_detector.h"
 
+#include <algorithm>
+#include <tuple>
+#include <vector>
+
 #include "system_wrappers/include/metrics.h"
 #include "test/gtest.h"
 

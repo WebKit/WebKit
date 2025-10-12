@@ -93,12 +93,12 @@ TEST(WebKitLegacy, WebGLPrepareDisplayOnWebThread)
     EXPECT_TRUE(!!jsContext.get());
 
     RetainPtr<JSVirtualMachine> jsVM = [jsContext virtualMachine];
-    EXPECT_TRUE([jsVM isWebThreadAware]);
+    EXPECT_TRUE(!WebThreadIsEnabled() || [jsVM isWebThreadAware]);
 
     // Release WebThread lock.
     Util::spinRunLoop(1);
 
-    EXPECT_FALSE(WebThreadIsLocked());
+    EXPECT_FALSE(WebThreadIsEnabled() && WebThreadIsLocked());
 
     [jsContext evaluateScript:@"loadColorIntoTexture(128, 128, 255, 255)"];
     [jsContext evaluateScript:@"draw()"];

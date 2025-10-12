@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "NotificationPermission.h"
+#include <WebCore/NotificationPermission.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

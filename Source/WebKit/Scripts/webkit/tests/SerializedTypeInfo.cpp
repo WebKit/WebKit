@@ -71,18 +71,14 @@
 #include <WebCore/ScrollingStateFrameHostingNode.h>
 #include <WebCore/ScrollingStateFrameHostingNodeWithStuffAfterTuple.h>
 #include <WebCore/TimingFunction.h>
-#include <wtf/CreateUsingClass.h>
-#include <wtf/EnumTraits.h>
-#include <wtf/Seconds.h>
-#include <wtf/StdLibExtras.h>
-
 #if USE(AVFOUNDATION)
 #include <pal/cocoa/AVFoundationSoftLink.h>
 #endif
-
 #if ENABLE(DATA_DETECTION)
 #include <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #endif
+#include <wtf/CreateUsingClass.h>
+#include <wtf/Seconds.h>
 
 static_assert(std::is_same_v<WebCore::SharedStringHash,
     uint32_t
@@ -119,7 +115,7 @@ namespace WebKit {
 
 template<typename E> uint64_t enumValueForIPCTestAPI(E e)
 {
-    return unsignedCast(e);
+    return static_cast<std::make_unsigned_t<std::underlying_type_t<E>>>(e);
 }
 
 Vector<SerializedTypeInfo> allSerializedTypes()
@@ -299,6 +295,10 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             {
                 "int"_s,
                 "value"_s
+            },
+            {
+                "WebCore::TimingFunction"_s,
+                "nonRefMemberWithSubclasses"_s
             },
         } },
         { "Namespace::AnotherCommonClass"_s, {

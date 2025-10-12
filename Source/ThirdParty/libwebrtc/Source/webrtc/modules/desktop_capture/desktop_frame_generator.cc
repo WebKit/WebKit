@@ -10,12 +10,15 @@
 
 #include "modules/desktop_capture/desktop_frame_generator.h"
 
-#include <stdint.h>
-#include <string.h>
-
+#include <cstdint>
+#include <cstring>
 #include <memory>
 
+#include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/desktop_region.h"
 #include "modules/desktop_capture/rgba_color.h"
+#include "modules/desktop_capture/shared_memory.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/random.h"
 #include "rtc_base/time_utils.h"
@@ -35,7 +38,7 @@ void SetUpdatedRegion(DesktopFrame* frame,
                       int enlarge_range,
                       bool add_random_updated_region) {
   const DesktopRect screen_rect = DesktopRect::MakeSize(frame->size());
-  Random random(rtc::TimeMicros());
+  Random random(TimeMicros());
   frame->mutable_updated_region()->Clear();
   for (DesktopRegion::Iterator it(updated_region); !it.IsAtEnd();
        it.Advance()) {

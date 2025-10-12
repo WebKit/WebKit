@@ -62,7 +62,6 @@ const CFStringRef WebCoreCGImagePropertyFrameInfoArray = CFSTR("FrameInfo");
 const CFStringRef WebCoreCGImagePropertyUnclampedDelayTime = CFSTR("UnclampedDelayTime");
 const CFStringRef WebCoreCGImagePropertyDelayTime = CFSTR("DelayTime");
 const CFStringRef WebCoreCGImagePropertyLoopCount = CFSTR("LoopCount");
-const CFStringRef WebCoreCGImagePropertyHeadroom = CFSTR("Headroom");
 
 const CFStringRef kCGImageSourceEnableRestrictedDecoding = CFSTR("kCGImageSourceEnableRestrictedDecoding");
 
@@ -233,18 +232,6 @@ static ImageOrientation orientationFromProperties(CFDictionaryRef imagePropertie
     int exifValue;
     CFNumberGetValue(orientationProperty, kCFNumberIntType, &exifValue);
     return ImageOrientation::fromEXIFValue(exifValue);
-}
-
-static Headroom headroomFromProperties(CFDictionaryRef imageProperties)
-{
-    ASSERT(imageProperties);
-    CFNumberRef headroomProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, WebCoreCGImagePropertyHeadroom);
-    if (!headroomProperty)
-        return Headroom::None;
-
-    float headroomValue;
-    CFNumberGetValue(headroomProperty, kCFNumberFloatType, &headroomValue);
-    return headroomValue;
 }
 
 static bool mayHaveDensityCorrectedSize(CFDictionaryRef imageProperties)
@@ -478,16 +465,7 @@ RepetitionCount ImageDecoderCG::repetitionCount() const
     if (!loopCount)
         return RepetitionCountInfinite;
 
-#if HAVE(CGIMAGESOURCE_WITH_ACCURATE_LOOP_COUNT)
     return loopCount;
-#else
-    if (!isGIFImageType(uti()))
-        return loopCount;
-
-    // For GIF and loopCount > 0, the specs is not clear about it. But it looks the meaning
-    // is: play once + loop loopCount which is equivalent to play loopCount + 1.
-    return loopCount + 1;
-#endif
 }
 
 std::optional<IntPoint> ImageDecoderCG::hotSpot() const
@@ -607,11 +585,6 @@ bool ImageDecoderCG::frameHasAlphaAtIndex(size_t index) const
     return !frameIsCompleteAtIndex(index) || hasAlpha();
 }
 
-unsigned ImageDecoderCG::frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
-{
-    return frameSizeAtIndex(index, subsamplingLevel).area() * 4;
-}
-
 bool ImageDecoderCG::fetchFrameMetaDataAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options, ImageFrame& frame) const
 {
     auto properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions(subsamplingLevel).get()));
@@ -619,8 +592,8 @@ bool ImageDecoderCG::fetchFrameMetaDataAtIndex(size_t index, SubsamplingLevel su
         return false;
 
     if (options.hasSizeForDrawing()) {
-        ASSERT(frame.hasNativeImage());
-        frame.m_size = frame.nativeImage()->size();
+        ASSERT(frame.hasNativeImage(options.shouldDecodeToHDR()));
+        frame.m_size = frame.nativeImage(options.shouldDecodeToHDR())->size();
     } else
         frame.m_size = frameSizeFromProperties(properties.get());
 
@@ -631,16 +604,11 @@ bool ImageDecoderCG::fetchFrameMetaDataAtIndex(size_t index, SubsamplingLevel su
     else
         frame.m_densityCorrectedSize = std::nullopt;
 
-    if (frame.hasNativeImage())
-        frame.m_headroom = frame.nativeImage()->headroom();
-
     bool frameIsComplete = frameIsCompleteAtIndex(index);
 
     frame.m_subsamplingLevel = subsamplingLevel;
-    frame.m_decodingOptions = options;
     frame.m_hasAlpha = !frameIsComplete || hasAlpha();
     frame.m_orientation = orientationFromProperties(properties.get());
-    frame.m_headroom = headroomFromProperties(properties.get());
     frame.m_decodingStatus = frameIsComplete ? DecodingStatus::Complete : DecodingStatus::Partial;
     return true;
 }

@@ -28,27 +28,43 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteImageBufferGraphicsContext.h"
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPURenderPassDepthStencilAttachment.h>
+#include <WebCore/WebGPUTexture.h>
 #include <WebCore/WebGPUTextureView.h>
 
 namespace WebKit::WebGPU {
 
+static WebGPUIdentifier getIdentifier(ConvertToBackingContext& convertToBacking, const WebCore::WebGPU::RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
+{
+    if (RefPtr view = renderPassDepthStencilAttachment.protectedView().get())
+        return convertToBacking.convertToBacking(*view);
+
+    return convertToBacking.convertToBacking(*renderPassDepthStencilAttachment.protectedTexture().get());
+}
 std::optional<RenderPassDepthStencilAttachment> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
 {
-    auto view = convertToBacking(renderPassDepthStencilAttachment.protectedView().get());
+    auto identifier = getIdentifier(*this, renderPassDepthStencilAttachment);
 
-    return { { view, renderPassDepthStencilAttachment.depthClearValue, renderPassDepthStencilAttachment.depthLoadOp, renderPassDepthStencilAttachment.depthStoreOp, renderPassDepthStencilAttachment.depthReadOnly, renderPassDepthStencilAttachment.stencilClearValue, renderPassDepthStencilAttachment.stencilLoadOp, renderPassDepthStencilAttachment.stencilStoreOp, renderPassDepthStencilAttachment.stencilReadOnly } };
+    return { { identifier, renderPassDepthStencilAttachment.depthClearValue, renderPassDepthStencilAttachment.depthLoadOp, renderPassDepthStencilAttachment.depthStoreOp, renderPassDepthStencilAttachment.depthReadOnly, renderPassDepthStencilAttachment.stencilClearValue, renderPassDepthStencilAttachment.stencilLoadOp, renderPassDepthStencilAttachment.stencilStoreOp, renderPassDepthStencilAttachment.stencilReadOnly } };
 }
 
 std::optional<WebCore::WebGPU::RenderPassDepthStencilAttachment> ConvertFromBackingContext::convertFromBacking(const RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
 {
     WeakPtr view = convertTextureViewFromBacking(renderPassDepthStencilAttachment.view);
-    if (!view)
+    WeakPtr texture = view ? nullptr : convertTextureFromBacking(renderPassDepthStencilAttachment.view);
+    if (!view && !texture)
         return std::nullopt;
 
-    return { { *view, renderPassDepthStencilAttachment.depthClearValue, renderPassDepthStencilAttachment.depthLoadOp, renderPassDepthStencilAttachment.depthStoreOp, renderPassDepthStencilAttachment.depthReadOnly, renderPassDepthStencilAttachment.stencilClearValue, renderPassDepthStencilAttachment.stencilLoadOp, renderPassDepthStencilAttachment.stencilStoreOp, renderPassDepthStencilAttachment.stencilReadOnly } };
+    WebCore::WebGPU::RenderPassDepthAttachmentView viewTextureVariant = [&] -> WebCore::WebGPU::RenderPassDepthAttachmentView {
+        if (view)
+            return *view;
+
+        return *texture;
+    }();
+    return { { viewTextureVariant, renderPassDepthStencilAttachment.depthClearValue, renderPassDepthStencilAttachment.depthLoadOp, renderPassDepthStencilAttachment.depthStoreOp, renderPassDepthStencilAttachment.depthReadOnly, renderPassDepthStencilAttachment.stencilClearValue, renderPassDepthStencilAttachment.stencilLoadOp, renderPassDepthStencilAttachment.stencilStoreOp, renderPassDepthStencilAttachment.stencilReadOnly } };
 }
 
 } // namespace WebKit

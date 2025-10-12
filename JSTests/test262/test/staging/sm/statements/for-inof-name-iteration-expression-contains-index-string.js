@@ -4,25 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Don't assert parsing a for-in/of loop whose target is a name, where the expression being iterated over contains a string containing an index
+info: bugzilla.mozilla.org/show_bug.cgi?id=1235640
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var gTestfile = "for-inof-name-iteration-expression-contains-index-string.js";
-var BUGNUMBER = 1235640;
-var summary =
-  "Don't assert parsing a for-in/of loop whose target is a name, where the " +
-  "expression being iterated over contains a string containing an index";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 function f()
 {
@@ -44,7 +30,3 @@ function g()
 }
 
 g();
-
-/******************************************************************************/
-
-print("Tests complete");

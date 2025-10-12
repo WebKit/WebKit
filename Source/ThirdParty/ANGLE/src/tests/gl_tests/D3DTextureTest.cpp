@@ -6,6 +6,10 @@
 // D3DTextureTest:
 //   Tests of the EGL_ANGLE_d3d_texture_client_buffer extension
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 

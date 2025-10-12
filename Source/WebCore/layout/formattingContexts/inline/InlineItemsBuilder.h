@@ -35,6 +35,8 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class Document;
+
 namespace Layout {
 class InlineTextBox;
 

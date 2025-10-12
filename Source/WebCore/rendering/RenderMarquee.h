@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Inc.
+ * Copyright (C) 2003 Apple Inc. All rights reserved.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -43,7 +43,6 @@
 
 #pragma once
 
-#include "Length.h"
 #include "RenderStyleConstants.h"
 #include "Timer.h"
 #include <wtf/CheckedPtr.h>
@@ -72,7 +71,6 @@ public:
     void updateMarqueePosition();
 
 private:
-
     int speed() const { return m_speed; }
     int marqueeSpeed() const;
 
@@ -84,14 +82,13 @@ private:
 
     void timerFired();
 
-    RenderLayer* m_layer;
+    const CheckedPtr<RenderLayer> m_layer;
     Timer m_timer;
     int m_currentLoop { 0 };
     int m_totalLoops { 0 };
     int m_start { 0 };
     int m_end { 0 };
     int m_speed { 0 };
-    Length m_height;
     MarqueeDirection m_direction { MarqueeDirection::Auto };
     bool m_reset { false };
     bool m_suspended { false };

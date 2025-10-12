@@ -10,6 +10,7 @@
 
 #include "modules/video_coding/h264_sprop_parameter_sets.h"
 
+#include <cstdint>
 #include <vector>
 
 #include "test/gtest.h"

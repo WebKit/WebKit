@@ -1,0 +1,11 @@
+This test ensures we properly consider content inside iframes accessible or non-accessible from searches
+done via AXUIElementsForSearchPredicate with the AXVisibleOnly search key, particularly after a scroll has been performed.
+
+PASS: traversalOutput.includes('#outside-iframe-button') === true
+PASS: traversalOutput.includes('#inside-iframe-button') === true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Outside iframe

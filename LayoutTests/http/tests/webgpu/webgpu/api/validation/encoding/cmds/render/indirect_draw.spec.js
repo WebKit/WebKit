@@ -4,14 +4,14 @@
 Validation tests for drawIndirect/drawIndexedIndirect on render pass and render bundle.
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import { GPUConst } from '../../../../../constants.js';
-import { kResourceStates } from '../../../../../gpu_test.js';
-import { AllFeaturesMaxLimitsValidationTest } from '../../../validation_test.js';
+import { kResourceStates, AllFeaturesMaxLimitsGPUTest } from '../../../../../gpu_test.js';
+import * as vtu from '../../../validation_test_utils.js';
 
 import { kRenderEncodeTypeParams } from './render.js';
 
 const kIndirectDrawTestParams = kRenderEncodeTypeParams.combine('indexed', [true, false]);
 
-class F extends AllFeaturesMaxLimitsValidationTest {
+class F extends AllFeaturesMaxLimitsGPUTest {
   makeIndexBuffer() {
     return this.createBufferTracked({
       size: 16,
@@ -31,8 +31,8 @@ Tests indirect buffer must be valid.
 paramsSubcasesOnly(kIndirectDrawTestParams.combine('state', kResourceStates)).
 fn((t) => {
   const { encoderType, indexed, state } = t.params;
-  const pipeline = t.createNoOpRenderPipeline();
-  const indirectBuffer = t.createBufferWithState(state, {
+  const pipeline = vtu.createNoOpRenderPipeline(t);
+  const indirectBuffer = vtu.createBufferWithState(t, state, {
     size: 256,
     usage: GPUBufferUsage.INDIRECT
   });
@@ -69,7 +69,7 @@ fn((t) => {
   );
 
   const { encoder, validateFinish } = t.createEncoder(encoderType);
-  encoder.setPipeline(t.createNoOpRenderPipeline());
+  encoder.setPipeline(vtu.createNoOpRenderPipeline(t));
 
   if (indexed) {
     encoder.setIndexBuffer(t.makeIndexBuffer(), 'uint32');
@@ -101,7 +101,7 @@ fn((t) => {
   });
 
   const { encoder, validateFinish } = t.createEncoder(encoderType);
-  encoder.setPipeline(t.createNoOpRenderPipeline());
+  encoder.setPipeline(vtu.createNoOpRenderPipeline(t));
   if (indexed) {
     const indexBuffer = t.makeIndexBuffer();
     encoder.setIndexBuffer(indexBuffer, 'uint32');
@@ -121,7 +121,7 @@ Tests indirect offset must be a multiple of 4.
 paramsSubcasesOnly(kIndirectDrawTestParams.combine('indirectOffset', [0, 2, 4])).
 fn((t) => {
   const { encoderType, indexed, indirectOffset } = t.params;
-  const pipeline = t.createNoOpRenderPipeline();
+  const pipeline = vtu.createNoOpRenderPipeline(t);
   const indirectBuffer = t.createBufferTracked({
     size: 256,
     usage: GPUBufferUsage.INDIRECT
@@ -181,7 +181,7 @@ paramsSubcasesOnly(
 ).
 fn((t) => {
   const { encoderType, indexed, indirectOffset, bufferSize, _valid } = t.params;
-  const pipeline = t.createNoOpRenderPipeline();
+  const pipeline = vtu.createNoOpRenderPipeline(t);
   const indirectBuffer = t.createBufferTracked({
     size: bufferSize,
     usage: GPUBufferUsage.INDIRECT

@@ -16,7 +16,7 @@
 
 #include "rtc_base/system/rtc_export.h"
 
-namespace cricket {
+namespace webrtc {
 
 // Options that can be applied to a VoiceMediaChannel or a VoiceMediaEngine.
 // Used to be flags, but that makes it hard to selectively apply options.
@@ -68,6 +68,7 @@ struct RTC_EXPORT AudioOptions {
   std::optional<bool> init_recording_on_send;
 };
 
-}  // namespace cricket
+}  //  namespace webrtc
+
 
 #endif  // API_AUDIO_OPTIONS_H_

@@ -14,9 +14,10 @@ if (rtc_include_tests) {
     visibility = [ "*" ]
     sources = [ "mock_task_queue.h" ]
     deps = [
-      "../../../api/task_queue:task_queue",
+      "../../../api/task_queue",
       "../../../api/task_queue/test:mock_task_queue_base",
       "../../../test:test_support",
+      "//third_party/abseil-cpp/absl/strings:string_view",
     ]
   }
 
@@ -26,10 +27,15 @@ if (rtc_include_tests) {
       sources = [ "voip_core_unittest.cc" ]
       deps = [
         "..:voip_core",
+        "../../../api:make_ref_counted",
+        "../../../api:scoped_refptr",
+        "../../../api/audio:audio_processing",
+        "../../../api/audio_codecs:audio_codecs_api",
         "../../../api/audio_codecs:builtin_audio_decoder_factory",
         "../../../api/audio_codecs:builtin_audio_encoder_factory",
         "../../../api/environment:environment_factory",
         "../../../api/task_queue:default_task_queue_factory",
+        "../../../api/voip:voip_api",
         "../../../modules/audio_device:mock_audio_device",
         "../../../modules/audio_processing:mocks",
         "../../../test:audio_codec_mocks",
@@ -46,17 +52,25 @@ if (rtc_include_tests) {
     deps = [
       ":mock_task_queue",
       "..:audio_channel",
+      "../../../api:array_view",
+      "../../../api:make_ref_counted",
+      "../../../api:scoped_refptr",
       "../../../api:transport_api",
+      "../../../api/audio:audio_frame_api",
+      "../../../api/audio:audio_mixer_api",
+      "../../../api/audio_codecs:audio_codecs_api",
       "../../../api/audio_codecs:builtin_audio_decoder_factory",
       "../../../api/audio_codecs:builtin_audio_encoder_factory",
       "../../../api/environment",
       "../../../api/environment:environment_factory",
-      "../../../api/task_queue:task_queue",
+      "../../../api/task_queue",
+      "../../../api/voip:voip_api",
       "../../../modules/audio_mixer:audio_mixer_impl",
       "../../../modules/audio_mixer:audio_mixer_test_utils",
-      "../../../modules/rtp_rtcp:rtp_rtcp",
+      "../../../modules/rtp_rtcp",
       "../../../modules/rtp_rtcp:rtp_rtcp_format",
       "../../../rtc_base:logging",
+      "../../../system_wrappers",
       "../../../test:mock_transport",
       "../../../test:test_support",
       "//third_party/abseil-cpp/absl/functional:any_invocable",
@@ -69,7 +83,13 @@ if (rtc_include_tests) {
     deps = [
       "..:audio_egress",
       "..:audio_ingress",
+      "../../../api:array_view",
+      "../../../api:rtp_headers",
+      "../../../api:scoped_refptr",
       "../../../api:transport_api",
+      "../../../api/audio:audio_frame_api",
+      "../../../api/audio:audio_mixer_api",
+      "../../../api/audio_codecs:audio_codecs_api",
       "../../../api/audio_codecs:builtin_audio_decoder_factory",
       "../../../api/audio_codecs:builtin_audio_encoder_factory",
       "../../../api/environment",
@@ -78,13 +98,13 @@ if (rtc_include_tests) {
       "../../../api/units:time_delta",
       "../../../api/units:timestamp",
       "../../../modules/audio_mixer:audio_mixer_test_utils",
-      "../../../modules/rtp_rtcp:rtp_rtcp",
+      "../../../modules/rtp_rtcp",
       "../../../rtc_base:logging",
       "../../../rtc_base:rtc_event",
       "../../../test:mock_transport",
       "../../../test:run_loop",
       "../../../test:test_support",
-      "../../../test/time_controller:time_controller",
+      "../../../test/time_controller",
     ]
   }
 
@@ -93,7 +113,12 @@ if (rtc_include_tests) {
     sources = [ "audio_egress_unittest.cc" ]
     deps = [
       "..:audio_egress",
+      "../../../api:array_view",
+      "../../../api:rtp_headers",
+      "../../../api:scoped_refptr",
       "../../../api:transport_api",
+      "../../../api/audio:audio_frame_api",
+      "../../../api/audio_codecs:audio_codecs_api",
       "../../../api/audio_codecs:builtin_audio_encoder_factory",
       "../../../api/environment",
       "../../../api/environment:environment_factory",
@@ -101,14 +126,14 @@ if (rtc_include_tests) {
       "../../../api/units:time_delta",
       "../../../api/units:timestamp",
       "../../../modules/audio_mixer:audio_mixer_test_utils",
-      "../../../modules/rtp_rtcp:rtp_rtcp",
+      "../../../modules/rtp_rtcp",
       "../../../modules/rtp_rtcp:rtp_rtcp_format",
       "../../../rtc_base:logging",
       "../../../rtc_base:rtc_event",
       "../../../test:mock_transport",
       "../../../test:run_loop",
       "../../../test:test_support",
-      "../../../test/time_controller:time_controller",
+      "../../../test/time_controller",
     ]
   }
 }

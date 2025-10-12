@@ -47,7 +47,7 @@ void ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources()
 #if !USE(GRAPHICS_LAYER_WC)
     if (didScheduleFreeWebGLRenderingResources)
         return;
-    RunLoop::protectedMain()->dispatchAfter(freeWebGLRenderingResourcesTimeout, freeWebGLRenderingResources);
+    RunLoop::mainSingleton().dispatchAfter(freeWebGLRenderingResourcesTimeout, freeWebGLRenderingResources);
     didScheduleFreeWebGLRenderingResources = true;
 #endif
 }

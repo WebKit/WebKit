@@ -25,6 +25,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/gradient-external-reference-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/gradient-external-reference.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/green-100x100.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/marker-context-fill-transform-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/marker-context-fill-transform-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/marker-context-fill-transform.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/marker-external-reference-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/marker-external-reference.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/marker-implicit-subpaths-expected.html
@@ -118,9 +121,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/paint-order-003-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/paint-order-003-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/paint-order-003.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/paintorder-text-decorations-expected.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/paintorder-text-decorations-ref.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/paintorder-text-decorations.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/paint-order-text-decorations-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/paint-order-text-decorations-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/paint-order-text-decorations.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/pattern-external-reference-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/pattern-external-reference.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/percentage-attribute-expected.svg
@@ -133,3 +136,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/small-nested-viewbox.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/symbol-in-mask-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/symbol-in-mask.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/text-shadow-01-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/text-shadow-01.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/text-shadow-02-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/text-shadow-02.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/text-shadow-03-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/text-shadow-03.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/text-shadow-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/zero-scale-svg-transform-inside-g-tag-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/zero-scale-svg-transform-inside-g-tag.html

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,18 +31,19 @@
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <WebCore/BoundaryPointInlines.h>
-#include <WebCore/Document.h>
+#include <WebCore/DocumentPage.h>
+#include <WebCore/DocumentView.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameInlines.h>
 #include <WebCore/FrameSelection.h>
 #include <WebCore/GeometryUtilities.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/JSRange.h>
-#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/NodeInlines.h>
-#include <WebCore/Page.h>
 #include <WebCore/Range.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/ShareableBitmap.h>
@@ -95,16 +96,6 @@ InjectedBundleRangeHandle::InjectedBundleRangeHandle(WebCore::Range& range)
 InjectedBundleRangeHandle::~InjectedBundleRangeHandle()
 {
     domRangeHandleCache().remove(m_range.get());
-}
-
-WebCore::Range& InjectedBundleRangeHandle::coreRange() const
-{
-    return m_range.get();
-}
-
-Ref<WebCore::Range> InjectedBundleRangeHandle::protectedCoreRange() const
-{
-    return coreRange();
 }
 
 Ref<InjectedBundleNodeHandle> InjectedBundleRangeHandle::document()

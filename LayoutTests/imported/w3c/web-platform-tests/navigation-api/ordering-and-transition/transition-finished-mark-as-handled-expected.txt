@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-FAIL navigation.transition.finished must not trigger unhandled rejections null is not an object (evaluating 'navigation.transition.finished')
+PASS navigation.transition.finished must not trigger unhandled rejections
 

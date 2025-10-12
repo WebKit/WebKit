@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x420
+  RenderBlock {HTML} at (0,0) size 800x420
+    RenderBody {BODY} at (8,8) size 784x404
+layer at (8,8) size 404x304 clip at (10,10) size 385x285 scrollHeight 1760
+  RenderBlock {DIV} at (0,0) size 404x304 [border: (2px solid #000000)]
+    RenderBlock {DIV} at (12,12) size 365x400 [bgcolor=#C0C0C0]
+    RenderBlock {DIV} at (12,422) size 365x400 [bgcolor=#C0C0C0]
+    RenderBlock {DIV} at (12,942) size 365x400 [bgcolor=#C0C0C0]
+    RenderBlock {DIV} at (12,1352) size 365x400 [bgcolor=#C0C0C0]
+layer at (10,185) size 100x100
+  RenderBlock (sticky positioned) {DIV} at (2,832) size 100x100 [bgcolor=#0000FF]
+layer at (8,312) size 100x100
+  RenderBlock (sticky positioned) {DIV} at (0,304) size 100x100 [bgcolor=#0000FF]

@@ -1,0 +1,12 @@
+button before multiple   button before size=4   button after size=4    button after select disabled
+
+FAIL Keyboard behavior for base appearance <select multiple> assert_equals: The first option should get focus when keyboard focusing into a select. expected Element node <option class="one">one</option> but got Element node <select multiple="">
+  <option class="one">one</option>
+ ...
+FAIL Keyboard behavior for base appearance <select size=4> assert_equals: The first option should get focus when keyboard focusing into a select. expected Element node <option class="one">one</option> but got Element node <select size="4">
+  <option class="one">one</option>
+  <o...
+FAIL Base appearance in-page selects should not be focusable. assert_not_equals: <select multiple> got disallowed value Element node <select multiple="">
+  <option class="one">one</option>
+ ...
+

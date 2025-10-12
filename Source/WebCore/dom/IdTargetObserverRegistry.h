@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All Rights Reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,15 +55,15 @@ private:
     void notifyObserversInternal(Element&, const AtomString& id);
 
     struct ObserverSet final : public CanMakeCheckedPtr<ObserverSet> {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ObserverSet);
         WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(ObserverSet);
 
         ObserverSet();
         ~ObserverSet();
-        UncheckedKeyHashSet<CheckedRef<IdTargetObserver>> observers;
+        HashSet<CheckedRef<IdTargetObserver>> observers;
     };
 
-    using IdToObserverSetMap = UncheckedKeyHashMap<AtomString, std::unique_ptr<ObserverSet>>;
+    using IdToObserverSetMap = HashMap<AtomString, std::unique_ptr<ObserverSet>>;
     IdToObserverSetMap m_registry;
     CheckedPtr<ObserverSet> m_notifyingObserversInSet;
 };

@@ -31,6 +31,10 @@ namespace JSC {
     macro(month, Month) \
     macro(day, Day) \
 
+#define JSC_TEMPORAL_PLAIN_MONTH_DAY_UNITS(macro) \
+    macro(month, Month) \
+    macro(day, Day)
+
 
 #define JSC_TEMPORAL_PLAIN_TIME_UNITS(macro) \
     macro(hour, Hour) \
@@ -58,6 +62,7 @@ enum class TemporalUnit : uint8_t {
 static constexpr unsigned numberOfTemporalUnits = 0 JSC_TEMPORAL_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 static constexpr unsigned numberOfTemporalPlainDateUnits = 0 JSC_TEMPORAL_PLAIN_DATE_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 static constexpr unsigned numberOfTemporalPlainTimeUnits = 0 JSC_TEMPORAL_PLAIN_TIME_UNITS(JSC_COUNT_TEMPORAL_UNITS);
+static constexpr unsigned numberOfTemporalPlainMonthDayUnits = 0 JSC_TEMPORAL_PLAIN_MONTH_DAY_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 #undef JSC_COUNT_TEMPORAL_UNITS
 
 extern const TemporalUnit temporalUnitsInTableOrder[numberOfTemporalUnits];
@@ -96,6 +101,14 @@ enum class RoundingMode : uint8_t {
     HalfEven
 };
 
+enum class UnsignedRoundingMode : uint8_t {
+    Infinity,
+    Zero,
+    HalfInfinity,
+    HalfZero,
+    HalfEven
+};
+
 enum class Precision : uint8_t {
     Minute,
     Fixed,
@@ -112,6 +125,21 @@ enum class UnitGroup : uint8_t {
     DateTime,
     Date,
     Time,
+};
+
+enum class Inclusivity : bool {
+    Inclusive,
+    Exclusive
+};
+
+enum class DifferenceOperation : bool {
+    Since,
+    Until
+};
+
+enum class AddOrSubtract : bool {
+    Add,
+    Subtract
 };
 
 double nonNegativeModulo(double x, double y);
@@ -131,8 +159,60 @@ void formatSecondsStringPart(StringBuilder&, unsigned second, unsigned fraction,
 std::optional<double> maximumRoundingIncrement(TemporalUnit);
 double temporalRoundingIncrement(JSGlobalObject*, JSObject* options, std::optional<double> dividend, bool inclusive);
 double roundNumberToIncrement(double, double increment, RoundingMode);
-Int128 roundNumberToIncrement(Int128, Int128 increment, RoundingMode);
+double roundNumberToIncrementDouble(double, double increment, RoundingMode);
+Int128 roundNumberToIncrementInt128(Int128, Int128, RoundingMode);
+Int128 roundNumberToIncrementAsIfPositive(Int128, Int128, RoundingMode);
+double applyUnsignedRoundingMode(double, double, double, UnsignedRoundingMode);
 void rejectObjectWithCalendarOrTimeZone(JSGlobalObject*, JSObject*);
+
+
+constexpr Int128 lengthInNanoseconds(TemporalUnit unit)
+{
+    switch (unit) {
+    case TemporalUnit::Nanosecond:
+        return 1;
+    case TemporalUnit::Microsecond:
+        return 1000;
+    case TemporalUnit::Millisecond:
+        return 1000 * lengthInNanoseconds(TemporalUnit::Microsecond);
+    case TemporalUnit::Second:
+        return 1000 * lengthInNanoseconds(TemporalUnit::Millisecond);
+    case TemporalUnit::Minute:
+        return 60 * lengthInNanoseconds(TemporalUnit::Second);
+    case TemporalUnit::Hour:
+        return 60 * lengthInNanoseconds(TemporalUnit::Minute);
+    case TemporalUnit::Day:
+        return 24 * lengthInNanoseconds(TemporalUnit::Hour);
+    default:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+// https://tc39.es/proposal-temporal/#sec-getunsignedroundingmode
+constexpr UnsignedRoundingMode getUnsignedRoundingMode(RoundingMode roundingMode, bool isNegative)
+{
+    switch (roundingMode) {
+    case RoundingMode::Ceil:
+        return isNegative ? UnsignedRoundingMode::Zero : UnsignedRoundingMode::Infinity;
+    case RoundingMode::Floor:
+        return isNegative ? UnsignedRoundingMode::Infinity : UnsignedRoundingMode::Zero;
+    case RoundingMode::Expand:
+        return UnsignedRoundingMode::Infinity;
+    case RoundingMode::Trunc:
+        return UnsignedRoundingMode::Zero;
+    case RoundingMode::HalfCeil:
+        return isNegative ? UnsignedRoundingMode::HalfZero : UnsignedRoundingMode::HalfInfinity;
+    case RoundingMode::HalfFloor:
+        return isNegative ? UnsignedRoundingMode::HalfInfinity : UnsignedRoundingMode::HalfZero;
+    case RoundingMode::HalfExpand:
+        return UnsignedRoundingMode::HalfInfinity;
+    case RoundingMode::HalfTrunc:
+        return UnsignedRoundingMode::HalfZero;
+    default:
+        return UnsignedRoundingMode::HalfEven;
+    }
+}
 
 enum class TemporalOverflow : bool {
     Constrain,
@@ -140,5 +220,14 @@ enum class TemporalOverflow : bool {
 };
 
 TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSObject*);
+TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSValue);
+String toTemporalCalendarName(JSGlobalObject*, JSObject*);
+
+enum class TemporalDisambiguation : uint8_t {
+    Compatible,
+    Earlier,
+    Later,
+    Reject,
+};
 
 } // namespace JSC

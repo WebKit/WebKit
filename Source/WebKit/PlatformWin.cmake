@@ -72,8 +72,6 @@ list(APPEND WebKit_SOURCES
 
     WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp
 
-    WebProcess/WebPage/AcceleratedSurface.cpp
-
     WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 
     WebProcess/WebPage/win/WebPageWin.cpp

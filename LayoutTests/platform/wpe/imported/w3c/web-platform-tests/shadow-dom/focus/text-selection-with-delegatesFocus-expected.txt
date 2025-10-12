@@ -1,5 +1,0 @@
-
-
-FAIL shadow root has selectable text when focus is not delegated assert_greater_than: expected a number greater than 0 but got 0
-FAIL shadow root has selectable text when focus is delegated assert_greater_than: expected a number greater than 0 but got 0
-

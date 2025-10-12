@@ -58,7 +58,7 @@ static void setFunctionEntrypoint(CodeBlock* codeBlock)
     
 #if ENABLE(JIT)
     if (Options::useJIT()) {
-        if (kind == CodeForCall) {
+        if (kind == CodeSpecializationKind::CodeForCall) {
             static DirectJITCode* jitCode;
             static std::once_flag onceKey;
             std::call_once(onceKey, [&] {
@@ -70,7 +70,7 @@ static void setFunctionEntrypoint(CodeBlock* codeBlock)
             codeBlock->setJITCode(*jitCode);
             return;
         }
-        ASSERT(kind == CodeForConstruct);
+        ASSERT(kind == CodeSpecializationKind::CodeForConstruct);
 
         static DirectJITCode* jitCode;
         static std::once_flag onceKey;
@@ -85,7 +85,7 @@ static void setFunctionEntrypoint(CodeBlock* codeBlock)
     }
 #endif // ENABLE(JIT)
 
-    if (kind == CodeForCall) {
+    if (kind == CodeSpecializationKind::CodeForCall) {
         static DirectJITCode* jitCode;
         static std::once_flag onceKey;
         std::call_once(onceKey, [&] {

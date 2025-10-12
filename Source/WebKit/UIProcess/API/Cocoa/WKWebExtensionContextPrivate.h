@@ -45,6 +45,20 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  */
 - (void)_sendTestMessage:(NSString *)message withArgument:(nullable id)argument;
 
+/*!
+ @abstract Sends data to the JavaScript `browser.test.onTestStarted` API.
+ @discussion Allows code to trigger a `browser.test.onTestStarted` event during testing.
+ @param argument The optional JSON-serializable argument to include with the message. Must be JSON-serializable according to \c NSJSONSerialization.
+ */
+- (void)_sendTestStartedWithArgument:(nullable id)argument;
+
+/*!
+ @abstract Sends data to the JavaScript `browser.test.onTestFinished` API.
+ @discussion Allows code to trigger a `browser.test.onTestFinished` event during testing.
+ @param argument The optional JSON-serializable argument to include with the message. Must be JSON-serializable according to \c NSJSONSerialization.
+ */
+- (void)_sendTestFinishedWithArgument:(nullable id)argument;
+
 /*! @abstract Resets the commands back to the state provided by the manifest. */
 - (void)_resetCommands;
 

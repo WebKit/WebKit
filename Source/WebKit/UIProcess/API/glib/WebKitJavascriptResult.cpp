@@ -23,6 +23,7 @@
 #if !ENABLE(2022_GLIB_API)
 
 #include "APISerializedScriptValue.h"
+#include "JavaScriptEvaluationResult.h"
 #include "WebKitJavascriptResultPrivate.h"
 #include <jsc/JSCContextPrivate.h>
 #include <jsc/JSCValuePrivate.h>
@@ -34,9 +35,9 @@
  */
 
 struct _WebKitJavascriptResult {
-    explicit _WebKitJavascriptResult(WebCore::SerializedScriptValue& serializedScriptValue)
+    explicit _WebKitJavascriptResult(WebKit::JavaScriptEvaluationResult&& result)
     {
-        jsValue = API::SerializedScriptValue::deserialize(serializedScriptValue);
+        jsValue = result.toJSC();
     }
 
     GRefPtr<JSCValue> jsValue;
@@ -46,10 +47,10 @@ struct _WebKitJavascriptResult {
 
 G_DEFINE_BOXED_TYPE(WebKitJavascriptResult, webkit_javascript_result, webkit_javascript_result_ref, webkit_javascript_result_unref)
 
-WebKitJavascriptResult* webkitJavascriptResultCreate(WebCore::SerializedScriptValue& serializedScriptValue)
+WebKitJavascriptResult* webkitJavascriptResultCreate(WebKit::JavaScriptEvaluationResult&& scriptResult)
 {
     WebKitJavascriptResult* result = static_cast<WebKitJavascriptResult*>(fastMalloc(sizeof(WebKitJavascriptResult)));
-    new (result) WebKitJavascriptResult(serializedScriptValue);
+    new (result) WebKitJavascriptResult(WTFMove(scriptResult));
     return result;
 }
 

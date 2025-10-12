@@ -31,7 +31,8 @@
 #include "WebImage.h"
 #include "WebLocalFrameLoaderClient.h"
 #include <JavaScriptCore/APICast.h>
-#include <WebCore/Document.h>
+#include <WebCore/DocumentPage.h>
+#include <WebCore/DocumentView.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameInlines.h>
 #include <WebCore/FrameLoader.h>
@@ -47,8 +48,7 @@
 #include <WebCore/JSNode.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
-#include <WebCore/Node.h>
-#include <WebCore/Page.h>
+#include <WebCore/NodeDocument.h>
 #include <WebCore/PositionInlines.h>
 #include <WebCore/Range.h>
 #include <WebCore/RenderElement.h>

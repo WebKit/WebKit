@@ -129,6 +129,9 @@
     [self _web_clearDynamicContentScalingDisplayListIfNeeded];
 #endif
 
+#if HAVE(SUPPORT_HDR_DISPLAY_APIS)
+    self.contentsHeadroom = 0;
+#endif
 }
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)

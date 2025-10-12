@@ -59,15 +59,14 @@ struct NotAdvertised {
 
 }  // namespace
 
-rtc::scoped_refptr<AudioEncoderFactory> CreateBuiltinAudioEncoderFactory() {
+scoped_refptr<AudioEncoderFactory> CreateBuiltinAudioEncoderFactory() {
   return CreateAudioEncoderFactory<
 
 #if WEBRTC_USE_BUILTIN_OPUS
       AudioEncoderOpus, NotAdvertised<AudioEncoderMultiChannelOpus>,
 #endif
 
-      AudioEncoderG722,
-      AudioEncoderG711, NotAdvertised<AudioEncoderL16>>();
+      AudioEncoderG722, AudioEncoderG711, NotAdvertised<AudioEncoderL16>>();
 }
 
 }  // namespace webrtc

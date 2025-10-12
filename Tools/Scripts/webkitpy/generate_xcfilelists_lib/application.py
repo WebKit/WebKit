@@ -31,8 +31,6 @@
 # reports the results, and handles the catching and reporting of any
 # exceptions/errors.
 
-from __future__ import print_function
-
 import argparse
 import itertools
 import os

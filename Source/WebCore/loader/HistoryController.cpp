@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
@@ -36,6 +36,9 @@
 #include "CachedPage.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
+#include "DocumentPage.h"
+#include "DocumentView.h"
+#include "DocumentWindow.h"
 #include "FrameLoader.h"
 #include "FrameLoaderStateMachine.h"
 #include "FrameTree.h"
@@ -50,6 +53,7 @@
 #include "ProcessSwapDisposition.h"
 #include "ScrollingCoordinator.h"
 #include "SerializedScriptValue.h"
+#include "Settings.h"
 #include "SharedStringHash.h"
 #include "ShouldTreatAsContinuingLoad.h"
 #include "VisitedLinkStore.h"
@@ -126,7 +130,7 @@ void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
     }
 
     // FIXME: It would be great to work out a way to put this code in WebCore instead of calling through to the client.
-    frame->protectedLoader()->protectedClient()->saveViewStateToItem(*item);
+    frame->loader().protectedClient()->saveViewStateToItem(*item);
 
     // Notify clients that the HistoryItem has changed.
     item->notifyChanged();
@@ -172,7 +176,7 @@ void HistoryController::restoreScrollPositionAndViewState()
 
     // FIXME: It would be great to work out a way to put this code in WebCore instead of calling
     // through to the client.
-    frame->protectedLoader()->protectedClient()->restoreViewState();
+    frame->loader().protectedClient()->restoreViewState();
 
 #if !PLATFORM(IOS_FAMILY)
     // Don't restore scroll point on iOS as LocalFrameLoaderClient::restoreViewState() does that.
@@ -192,7 +196,7 @@ void HistoryController::restoreScrollPositionAndViewState()
         if (frame->isMainFrame()) {
             auto adjustedDesiredScrollPosition = view->adjustScrollPositionWithinRange(desiredScrollPosition);
             if (desiredScrollPosition == adjustedDesiredScrollPosition)
-                frame->protectedLoader()->protectedClient()->didRestoreScrollPosition();
+                frame->loader().protectedClient()->didRestoreScrollPosition();
         }
 
     }
@@ -259,7 +263,7 @@ void HistoryController::restoreDocumentState()
     case FrameLoadType::ReloadFromOrigin:
     case FrameLoadType::ReloadExpiredOnly:
     case FrameLoadType::Same:
-    case FrameLoadType::Replace:
+    case FrameLoadType::MultipartReplace:
         // Not restoring the document state.
         return;
     case FrameLoadType::Back:
@@ -267,6 +271,7 @@ void HistoryController::restoreDocumentState()
     case FrameLoadType::IndexedBackForward:
     case FrameLoadType::RedirectWithLockedBackForwardList:
     case FrameLoadType::Standard:
+    case FrameLoadType::NavigationAPIReplace:
         break;
     }
 
@@ -426,7 +431,7 @@ void HistoryController::goToItemForNavigationAPI(HistoryItem& targetItem, FrameL
 
         for (auto& frameToNavigate : framesToNavigate) {
             Ref abortHandler = frameToNavigate.frame->protectedWindow()->protectedNavigation()->registerAbortHandler();
-            frameToNavigate.frame->protectedLoader()->loadItem(frameToNavigate.toItem, frameToNavigate.fromItem.get(), frameLoadType, ShouldTreatAsContinuingLoad::No);
+            frameToNavigate.frame->loader().loadItem(frameToNavigate.toItem, frameToNavigate.fromItem.get(), frameLoadType, ShouldTreatAsContinuingLoad::No);
             // If the navigation was aborted (by the JS called preventDefault() on the navigate event), then
             // do not do any further navigations.
             if (abortHandler->wasAborted()) {
@@ -441,7 +446,7 @@ void HistoryController::goToItemForNavigationAPI(HistoryItem& targetItem, FrameL
 
 void HistoryController::goToItemShared(HistoryItem& targetItem, CompletionHandler<void(ShouldGoToHistoryItem)>&& completionHandler, ProcessSwapDisposition processSwapDisposition)
 {
-    m_policyItem = &targetItem;
+    m_policyItem = targetItem;
 
     // Same document navigations must continue synchronously from here,
     // therefore their policy checks must go down the synchronous path.
@@ -451,14 +456,14 @@ void HistoryController::goToItemShared(HistoryItem& targetItem, CompletionHandle
     Ref frame = m_frame.get();
     // FIXME <rdar://148849772>: Remove processSwapDisposition check once we have a better solution for passing context to newly spawned processes regarding COOP headers,
     // and go back to asynchronous path.
-    if (sameDocumentNavigation || !frame->protectedLoader()->protectedClient()->supportsAsyncShouldGoToHistoryItem() || processSwapDisposition == ProcessSwapDisposition::COOP) {
+    if (sameDocumentNavigation || !frame->loader().protectedClient()->supportsAsyncShouldGoToHistoryItem() || processSwapDisposition == ProcessSwapDisposition::COOP) {
         auto isSameDocumentNavigation = sameDocumentNavigation ? IsSameDocumentNavigation::Yes : IsSameDocumentNavigation::No;
-        auto result = frame->protectedLoader()->protectedClient()->shouldGoToHistoryItem(targetItem, isSameDocumentNavigation, processSwapDisposition);
+        auto result = frame->loader().protectedClient()->shouldGoToHistoryItem(targetItem, isSameDocumentNavigation, processSwapDisposition);
         completionHandler(result);
         return;
     }
 
-    frame->protectedLoader()->protectedClient()->shouldGoToHistoryItemAsync(targetItem, WTFMove(completionHandler));
+    frame->loader().protectedClient()->shouldGoToHistoryItemAsync(targetItem, WTFMove(completionHandler));
 }
 
 void HistoryController::clearPolicyItem()
@@ -519,9 +524,9 @@ void HistoryController::updateForBackForwardNavigation()
     updateCurrentItem();
 }
 
-void HistoryController::updateForReload()
+void HistoryController::updateForReloadOrReplace()
 {
-    LOG(History, "HistoryController %p updateForReload: Updating History for reload in frame %p (main frame %d) %s", this, m_frame.ptr(), m_frame->isMainFrame(), m_frame->loader().documentLoader() ? m_frame->loader().documentLoader()->url().string().utf8().data() : "");
+    LOG(History, "HistoryController %p updateForReloadOrReplace: Updating History for reload or replace in frame %p (main frame %d) %s", this, m_frame.ptr(), m_frame->isMainFrame(), m_frame->loader().documentLoader() ? m_frame->loader().documentLoader()->url().string().utf8().data() : "");
 
     if (RefPtr currentItem = m_currentItem) {
         BackForwardCache::singleton().remove(*currentItem);
@@ -620,7 +625,7 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
             addVisitedLink(*page, historyURL);
 
         if (!documentLoader->didCreateGlobalHistoryEntry() && documentLoader->unreachableURL().isEmpty())
-            frame->protectedLoader()->protectedClient()->updateGlobalHistoryRedirectLinks();
+            frame->loader().protectedClient()->updateGlobalHistoryRedirectLinks();
     }
 }
 
@@ -651,7 +656,7 @@ void HistoryController::updateForCommit()
 
     FrameLoadType type = frameLoader->loadType();
     if (isBackForwardLoadType(type)
-        || isReplaceLoadTypeWithProvisionalItem(type)
+        || isMultipartReplaceLoadTypeWithProvisionalItem(type)
         || (isReloadTypeWithProvisionalItem(type) && !frameLoader->provisionalDocumentLoader()->unreachableURL().isEmpty())) {
         // Once committed, we want to use current item for saving DocState, and
         // the provisional item for restoring state.
@@ -672,17 +677,17 @@ void HistoryController::updateForCommit()
         // restore their scroll position.  We'll avoid this frame (which has already
         // committed) and its children (which will be replaced).
         if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_frame->mainFrame())) {
-            if (localFrame->loader().protectedHistory()->isFrameLoadComplete())
-                localFrame->loader().protectedHistory()->recursiveUpdateForCommit();
+            if (localFrame->loader().history().isFrameLoadComplete())
+                localFrame->loader().history().recursiveUpdateForCommit();
         }
     }
 }
 
-bool HistoryController::isReplaceLoadTypeWithProvisionalItem(FrameLoadType type)
+bool HistoryController::isMultipartReplaceLoadTypeWithProvisionalItem(FrameLoadType type)
 {
-    // Going back to an error page in a subframe can trigger a FrameLoadType::Replace
+    // Going back to an error page in a subframe can trigger a FrameLoadType::MultipartReplace
     // while m_provisionalItem is set, so we need to commit it.
-    return type == FrameLoadType::Replace && m_provisionalItem;
+    return type == FrameLoadType::MultipartReplace && m_provisionalItem;
 }
 
 bool HistoryController::isReloadTypeWithProvisionalItem(FrameLoadType type)
@@ -724,7 +729,7 @@ void HistoryController::recursiveUpdateForCommit()
     // Iterate over the rest of the tree
     for (RefPtr child = m_frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         if (auto* localChild = dynamicDowncast<LocalFrame>(child.get()))
-            localChild->loader().protectedHistory()->recursiveUpdateForCommit();
+            localChild->loader().history().recursiveUpdateForCommit();
     }
 }
 
@@ -745,12 +750,12 @@ void HistoryController::updateForSameDocumentNavigation()
         addVisitedLink(*page, frame->document()->url());
 
     if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame()))
-        localFrame->loader().protectedHistory()->recursiveUpdateForSameDocumentNavigation();
+        localFrame->loader().history().recursiveUpdateForSameDocumentNavigation();
 
     if (RefPtr currentItem = m_currentItem) {
         currentItem->setURL(frame->document()->url());
         if (canRecordHistory)
-            frame->protectedLoader()->protectedClient()->updateGlobalHistory();
+            frame->loader().protectedClient()->updateGlobalHistory();
     }
 }
 
@@ -759,11 +764,6 @@ void HistoryController::recursiveUpdateForSameDocumentNavigation()
     // The frame that navigated will now have a null provisional item.
     // Ignore it and its children.
     if (!m_provisionalItem)
-        return;
-
-    // The provisional item may represent a different pending navigation.
-    // Don't commit it if it isn't a same document navigation.
-    if (m_currentItem && !protectedCurrentItem()->shouldDoSameDocumentNavigationTo(*protectedProvisionalItem()))
         return;
 
     // Commit the provisional item.
@@ -775,7 +775,7 @@ void HistoryController::recursiveUpdateForSameDocumentNavigation()
     // Iterate over the rest of the tree.
     for (RefPtr child = m_frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         if (auto* localChild = dynamicDowncast<LocalFrame>(child.get()))
-            localChild->loader().protectedHistory()->recursiveUpdateForSameDocumentNavigation();
+            localChild->loader().history().recursiveUpdateForSameDocumentNavigation();
     }
 }
 
@@ -815,7 +815,7 @@ void HistoryController::clearPreviousItem()
     m_previousItem = nullptr;
     for (RefPtr child = m_frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         if (auto* localChild = dynamicDowncast<LocalFrame>(child.get()))
-            localChild->loader().protectedHistory()->clearPreviousItem();
+            localChild->loader().history().clearPreviousItem();
     }
 }
 
@@ -917,7 +917,7 @@ Ref<HistoryItem> HistoryController::createItemTree(HistoryItemClient& client, Lo
         }
 
         for (RefPtr child = m_frame->tree().firstLocalDescendant(); child; child = child->tree().nextLocalSibling())
-            item->addChildItem(child->loader().protectedHistory()->createItemTree(client, targetFrame, clipAtTarget, itemID));
+            item->addChildItem(child->loader().history().createItemTree(client, targetFrame, clipAtTarget, itemID));
     }
 
     // FIXME: Eliminate the isTargetItem flag in favor of itemSequenceNumber.
@@ -937,7 +937,7 @@ void HistoryController::recursiveSetProvisionalItem(HistoryItem& item, HistoryIt
             return;
     } else {
         // Set provisional item, which will be committed in recursiveUpdateForCommit.
-        m_provisionalItem = &item;
+        m_provisionalItem = item;
     }
 
     for (Ref childItem : item.children()) {
@@ -950,7 +950,7 @@ void HistoryController::recursiveSetProvisionalItem(HistoryItem& item, HistoryIt
             continue;
 
         if (RefPtr childFrame = dynamicDowncast<LocalFrame>(m_frame->tree().descendantByFrameID(*frameID)))
-            childFrame->loader().protectedHistory()->recursiveSetProvisionalItem(childItem, fromChildItem.get());
+            childFrame->loader().history().recursiveSetProvisionalItem(childItem, fromChildItem.get());
     }
 }
 
@@ -972,7 +972,7 @@ void HistoryController::recursiveGoToItem(HistoryItem& item, HistoryItem* fromIt
             continue;
 
         if (RefPtr childFrame = dynamicDowncast<LocalFrame>(m_frame->tree().descendantByFrameID(*frameID)))
-            childFrame->loader().protectedHistory()->recursiveGoToItem(childItem, fromChildItem.get(), type, shouldTreatAsContinuingLoad);
+            childFrame->loader().history().recursiveGoToItem(childItem, fromChildItem.get(), type, shouldTreatAsContinuingLoad);
     }
 }
 
@@ -1005,7 +1005,7 @@ void HistoryController::updateBackForwardListClippedAtTarget(bool doClip)
     if (frame->loader().protectedDocumentLoader()->urlForHistory().isEmpty())
         return;
 
-    RefPtr item = frame->protectedLoader()->protectedClient()->createHistoryItemTree(doClip, BackForwardItemIdentifier::generate());
+    RefPtr item = frame->loader().protectedClient()->createHistoryItemTree(doClip, BackForwardItemIdentifier::generate());
     if (!item)
         return;
     LOG(History, "HistoryController %p updateBackForwardListClippedAtTarget: Adding backforward item %p in frame %p (main frame %d) %s", this, item.get(), m_frame.ptr(), m_frame->isMainFrame(), m_frame->loader().documentLoader()->url().string().utf8().data());
@@ -1057,7 +1057,7 @@ void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, c
     bool shouldRestoreScrollPosition = currentItem->shouldRestoreScrollPosition();
 
     // Get a HistoryItem tree for the current frame tree.
-    Ref topItem = frame->rootFrame().loader().protectedHistory()->createItemTree(page->historyItemClient(), frame, false, BackForwardItemIdentifier::generate());
+    Ref topItem = frame->rootFrame().loader().history().createItemTree(page->historyItemClient(), frame, false, BackForwardItemIdentifier::generate());
 
     RefPtr document = frame->document();
     if (document && !document->hasRecentUserInteractionForNavigationFromJS())
@@ -1078,7 +1078,7 @@ void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, c
         return;
 
     addVisitedLink(*page, URL({ }, urlString));
-    frame->protectedLoader()->protectedClient()->updateGlobalHistory();
+    frame->loader().protectedClient()->updateGlobalHistory();
 
     if (document && document->settings().navigationAPIEnabled())
         document->protectedWindow()->protectedNavigation()->updateForNavigation(*currentItem, NavigationNavigationType::Push);
@@ -1106,7 +1106,7 @@ void HistoryController::replaceState(RefPtr<SerializedScriptValue>&& stateObject
         return;
 
     addVisitedLink(*page, URL({ }, urlString));
-    frame->protectedLoader()->protectedClient()->updateGlobalHistory();
+    frame->loader().protectedClient()->updateGlobalHistory();
 
     if (RefPtr document = frame->document(); document && document->settings().navigationAPIEnabled()) {
         currentItem->setNavigationAPIStateObject(nullptr);

@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "PopupMenu.h"
+#include <WebCore/PopupMenu.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>

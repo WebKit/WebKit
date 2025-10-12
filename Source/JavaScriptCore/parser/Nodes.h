@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
@@ -94,7 +94,7 @@ namespace JSC {
     }
 
     struct SwitchInfo {
-        enum SwitchType : uint8_t { SwitchNone, SwitchImmediate, SwitchCharacter, SwitchString };
+        enum class SwitchType : uint8_t { None, Immediate, Character, ImmediateList, CharacterList, String };
         uint32_t bytecodeOffset;
         SwitchType switchType;
     };
@@ -135,7 +135,7 @@ namespace JSC {
 
     DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ParserArenaRoot);
     class ParserArenaRoot {
-        WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ParserArenaRoot);
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ParserArenaRoot, ParserArenaRoot);
     protected:
         ParserArenaRoot(ParserArena&);
 
@@ -1184,9 +1184,9 @@ namespace JSC {
         ExpressionNode* m_expr;
     };
 
-    class TypeOfResolveNode final : public ExpressionNode {
+    class TypeOfResolveNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
-        TypeOfResolveNode(const JSTokenLocation&, const Identifier&);
+        TypeOfResolveNode(const JSTokenLocation&, const Identifier&, const JSTextPosition&, const JSTextPosition&, const JSTextPosition&);
 
         const Identifier& identifier() const { return m_ident; }
 
@@ -2063,7 +2063,7 @@ namespace JSC {
         unsigned m_startColumn;
         unsigned m_endColumn;
         bool m_usesAwait;
-        Ref<ModuleScopeData> m_moduleScopeData;
+        const Ref<ModuleScopeData> m_moduleScopeData;
     };
 
     class ModuleNameNode final : public Node {

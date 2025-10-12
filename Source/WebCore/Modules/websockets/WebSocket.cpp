@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
- * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -35,6 +35,7 @@
 #include "Blob.h"
 #include "CloseEvent.h"
 #include "ContentSecurityPolicy.h"
+#include "ContextDestructionObserverInlines.h"
 #include "DNS.h"
 #include "Document.h"
 #include "Event.h"
@@ -85,12 +86,12 @@ Lock WebSocket::s_allActiveWebSocketsLock;
 
 const size_t maxReasonSizeInBytes = 123;
 
-static inline bool isValidProtocolCharacter(UChar character)
+static inline bool isValidProtocolCharacter(char16_t character)
 {
     // Hybi-10 says "(Subprotocol string must consist of) characters in the range U+0021 to U+007E not including
     // separator characters as defined in [RFC2616]."
-    const UChar minimumProtocolCharacter = '!'; // U+0021.
-    const UChar maximumProtocolCharacter = '~'; // U+007E.
+    const char16_t minimumProtocolCharacter = '!'; // U+0021.
+    const char16_t maximumProtocolCharacter = '~'; // U+007E.
     return character >= minimumProtocolCharacter && character <= maximumProtocolCharacter
         && character != '"' && character != '(' && character != ')' && character != ',' && character != '/'
         && !(character >= ':' && character <= '@') // U+003A - U+0040 (':', ';', '<', '=', '>', '?', '@').
@@ -230,11 +231,10 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
     LOG(Network, "WebSocket %p connect() url='%s'", this, url.utf8().data());
     m_url = URL { url };
 
-    ASSERT(scriptExecutionContext());
-    auto& context = *scriptExecutionContext();
+    Ref context = *scriptExecutionContext();
 
     if (!m_url.isValid()) {
-        context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Invalid url for WebSocket "_s, m_url.stringCenterEllipsizedToLength()));
+        context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Invalid url for WebSocket "_s, m_url.stringCenterEllipsizedToLength()));
         m_state = CLOSED;
         return Exception { ExceptionCode::SyntaxError };
     }
@@ -245,18 +245,18 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         m_url.setProtocol("wss"_s);
 
     if (!m_url.protocolIs("ws"_s) && !m_url.protocolIs("wss"_s)) {
-        context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Wrong url scheme for WebSocket "_s, m_url.stringCenterEllipsizedToLength()));
+        context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Wrong url scheme for WebSocket "_s, m_url.stringCenterEllipsizedToLength()));
         m_state = CLOSED;
         return Exception { ExceptionCode::SyntaxError };
     }
     if (m_url.hasFragmentIdentifier()) {
-        context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("URL has fragment component "_s, m_url.stringCenterEllipsizedToLength()));
+        context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("URL has fragment component "_s, m_url.stringCenterEllipsizedToLength()));
         m_state = CLOSED;
         return Exception { ExceptionCode::SyntaxError };
     }
 
-    ASSERT(context.contentSecurityPolicy());
-    CheckedRef contentSecurityPolicy = *context.contentSecurityPolicy();
+    ASSERT(context->contentSecurityPolicy());
+    CheckedRef contentSecurityPolicy = *context->contentSecurityPolicy();
 
     contentSecurityPolicy->upgradeInsecureRequestIfNeeded(m_url, ContentSecurityPolicy::InsecureRequestType::Load);
 
@@ -268,21 +268,21 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
             message = makeString("WebSocket port "_s, m_url.port().value(), " blocked"_s);
         else
             message = "WebSocket without port blocked"_s;
-        context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, message);
+        context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, message);
         failAsynchronously();
         return { };
     }
 
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
-    if (!context.shouldBypassMainWorldContentSecurityPolicy() && !contentSecurityPolicy->allowConnectToSource(m_url)) {
+    if (!context->shouldBypassMainWorldContentSecurityPolicy() && !contentSecurityPolicy->allowConnectToSource(m_url)) {
         m_state = CLOSED;
 
         // FIXME: Should this be throwing an exception?
         return Exception { ExceptionCode::SecurityError };
     }
 
-    if (RefPtr provider = context.socketProvider())
-        m_channel = ThreadableWebSocketChannel::create(*scriptExecutionContext(), *this, *provider);
+    if (RefPtr provider = context->socketProvider())
+        m_channel = ThreadableWebSocketChannel::create(context.get(), *this, *provider);
 
     // Every ScriptExecutionContext should have a SocketProvider.
     RELEASE_ASSERT(m_channel);
@@ -296,7 +296,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
     // comply with WebSocket API specification, but it seems to be the only reasonable way to handle this conflict.
     for (auto& protocol : protocols) {
         if (!isValidProtocolString(protocol)) {
-            context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Wrong protocol for WebSocket '"_s, encodeProtocolString(protocol), '\''));
+            context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Wrong protocol for WebSocket '"_s, encodeProtocolString(protocol), '\''));
             m_state = CLOSED;
             return Exception { ExceptionCode::SyntaxError };
         }
@@ -304,21 +304,21 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
     HashSet<String> visited;
     for (auto& protocol : protocols) {
         if (!visited.add(protocol).isNewEntry) {
-            context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("WebSocket protocols contain duplicates: '"_s, encodeProtocolString(protocol), '\''));
+            context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("WebSocket protocols contain duplicates: '"_s, encodeProtocolString(protocol), '\''));
             m_state = CLOSED;
             return Exception { ExceptionCode::SyntaxError };
         }
     }
 
-    RunLoop::protectedMain()->dispatch([targetURL = m_url.isolatedCopy(), mainFrameURL = context.url().isolatedCopy()]() {
-        ResourceLoadObserver::shared().logWebSocketLoading(targetURL, mainFrameURL);
+    RunLoop::mainSingleton().dispatch([targetURL = m_url.isolatedCopy(), mainFrameURL = context->url().isolatedCopy()]() {
+        ResourceLoadObserver::singleton().logWebSocketLoading(targetURL, mainFrameURL);
     });
 
     if (RefPtr document = dynamicDowncast<Document>(context)) {
         RefPtr frame = document->frame();
         // FIXME: make the mixed content check equivalent to the non-document mixed content check currently in WorkerThreadableWebSocketChannel::Bridge::connect()
         // In particular we need to match the error messaging in the console and the inspector instrumentation. See WebSocketChannel::fail.
-        if (!frame || MixedContentChecker::shouldBlockRequestForRunnableContent(*frame, document->securityOrigin(), m_url)) {
+        if (!frame || MixedContentChecker::shouldBlockRequest(*frame, m_url)) {
             failAsynchronously();
             return { };
         }
@@ -338,8 +338,8 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
             frame->loader().client().didLoadFromRegistrableDomain(WTFMove(domain));
     };
     if (is<Document>(context))
-        reportRegistrableDomain(context);
-    else if (auto* workerLoaderProxy = downcast<WorkerGlobalScope>(context).thread().workerLoaderProxy())
+        reportRegistrableDomain(context.get());
+    else if (auto* workerLoaderProxy = downcast<WorkerGlobalScope>(context)->thread()->workerLoaderProxy())
         workerLoaderProxy->postTaskToLoader(WTFMove(reportRegistrableDomain));
 
     m_pendingActivity = makePendingActivity(*this);
@@ -430,7 +430,7 @@ ExceptionOr<void> WebSocket::close(std::optional<unsigned short> optionalCode, c
             return Exception { ExceptionCode::InvalidAccessError };
         CString utf8 = reason.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
         if (utf8.length() > maxReasonSizeInBytes) {
-            scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "WebSocket close message is too long."_s);
+            protectedScriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "WebSocket close message is too long."_s);
             return Exception { ExceptionCode::SyntaxError };
         }
     }

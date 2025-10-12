@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Allowlist.h"
+#include <WebCore/Allowlist.h>
 #include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
 #include <wtf/TZoneMalloc.h>
@@ -70,6 +70,7 @@ public:
         XRSpatialTracking,
 #endif
         PrivateToken,
+        StorageAccess,
         Invalid
     };
     enum class ShouldReportViolation : bool { No, Yes };

@@ -182,7 +182,7 @@ TEST(MouseEventTests, TerminateWebContentProcessDuringMouseEventHandling)
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:@""];
 
-    RunLoop::protectedMain()->dispatchAfter(5_ms, [&] {
+    RunLoop::mainSingleton().dispatchAfter(5_ms, [&] {
         [webView _killWebContentProcessAndResetState];
     });
     for (unsigned i = 0; i < 10; ++i) {
@@ -259,6 +259,84 @@ TEST(MouseEventTests, ShouldDelayWindowOrderingForEvent)
     [webView evaluateJavaScript:@"while (1);" completionHandler:nil];
 
     EXPECT_FALSE([webView shouldDelayWindowOrderingForEvent:makeMouseEventAt(16, 500)]);
+}
+
+static void runModifierIsKeptWhenJSInterceptsClickTest(NSEventModifierFlags modifiers)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html>"
+        "<head>"
+        "<style>"
+        "body, html, div { margin: 0; width: 100%; height: 100%; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<a href='https://www.apple.com' id='testLink'><div>Link</div></a>"
+        "<script>"
+        "function handleClickEvent(e) {"
+        "    e.stopPropagation();"
+        "    e.stopImmediatePropagation();"
+        "    e.preventDefault();"
+        "    testLink.removeEventListener('click', handleClickEvent);"
+        "    let newMouseEvent1 = document.createEvent('MouseEvents');"
+        "    newMouseEvent1.initMouseEvent('click', e.bubbles, e.cancelable, e.view, e.detail, e.screenX, e.screenY, e.clientX, e.clientY, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, e.button, e.relatedTarget);"
+        "    let newMouseEvent2 = document.createEvent('MouseEvents');"
+        "    newMouseEvent2.initMouseEvent('click', e.bubbles, e.cancelable, e.view, e.detail, e.screenX, e.screenY, e.clientX, e.clientY, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, e.button, e.relatedTarget);"
+        "    setTimeout(() => {"
+        "        testLink.dispatchEvent(newMouseEvent1);"
+        "    }, 0);"
+        "    setTimeout(() => {"
+        "        testLink.dispatchEvent(newMouseEvent2);"
+        "    }, 0);"
+        "}"
+        "testLink.addEventListener('click', handleClickEvent);"
+        "</script>"
+        "</body>"
+        "</html>"];
+
+    __block unsigned navigationCount = 0;
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if (!navigationCount) {
+            // Modifiers should be kept the first time.
+            EXPECT_EQ(action.modifierFlags, modifiers);
+        } else {
+            // Any further attempts to simulate events with the same modifiers should lose
+            // the modifiers since the user click was consumed the first time around.
+            EXPECT_EQ(action.modifierFlags, 0U);
+        }
+        ++navigationCount;
+        completionHandler(WKNavigationActionPolicyCancel);
+    };
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView mouseEnterAtPoint:NSMakePoint(100, 300)];
+    [webView mouseDownAtPoint:NSMakePoint(300, 300) simulatePressure:NO withFlags:modifiers eventType:NSEventTypeLeftMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(300, 300) withFlags:modifiers eventType:NSEventTypeLeftMouseUp];
+
+    while (navigationCount != 2)
+        Util::spinRunLoop(10);
+}
+
+TEST(MouseEventTests, CmdModifierIsKeptWhenJSInterceptsClick)
+{
+    runModifierIsKeptWhenJSInterceptsClickTest(NSEventModifierFlagCommand);
+}
+
+TEST(MouseEventTests, ShiftModifierIsKeptWhenJSInterceptsClick)
+{
+    runModifierIsKeptWhenJSInterceptsClickTest(NSEventModifierFlagShift);
+}
+
+TEST(MouseEventTests, AltModifierIsKeptWhenJSInterceptsClick)
+{
+    runModifierIsKeptWhenJSInterceptsClickTest(NSEventModifierFlagOption);
+}
+
+TEST(MouseEventTests, CmdShiftModifierIsKeptWhenJSInterceptsClick)
+{
+    runModifierIsKeptWhenJSInterceptsClickTest(NSEventModifierFlagCommand | NSEventModifierFlagShift);
 }
 
 } // namespace TestWebKitAPI

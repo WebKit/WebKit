@@ -61,7 +61,7 @@ public:
 
     // IPC::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 private:
     IPCTester();
 
@@ -80,7 +80,8 @@ private:
     void syncPing(IPC::Connection&, uint32_t value, CompletionHandler<void(uint32_t)>&&);
     void syncPingEmptyReply(IPC::Connection&, uint32_t value, CompletionHandler<void()>&&);
     void asyncOptionalExceptionData(IPC::Connection&, bool sendEngaged, CompletionHandler<void(std::optional<WebCore::ExceptionData>, String)>&&);
-
+    void emptyMessage() { }
+    void emptyMessageWithReply(CompletionHandler<void(uint64_t)>&&);
     void stopIfNeeded();
 
     RefPtr<WorkQueue> m_testQueue;

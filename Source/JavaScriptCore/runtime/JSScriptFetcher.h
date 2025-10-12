@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "JSObject.h"
-#include "ScriptFetcher.h"
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/ScriptFetcher.h>
 #include <wtf/RefPtr.h>
 
 namespace JSC {

@@ -39,7 +39,7 @@
  * Polynomial is 0x1EDC6F41.
  */
 
-uint32_t av1_get_crc32c_value_arm_crc32(void *crc_calculator, uint8_t *p,
+uint32_t av1_get_crc32c_value_arm_crc32(void *crc_calculator, const uint8_t *p,
                                         size_t len) {
   (void)crc_calculator;
   const uint8_t *buf = p;

@@ -15,8 +15,7 @@ Alignment Natural
     TailIndent: 0
     FirstLineHeadIndent: 0
     LineHeight: 0/0
-    LineHeightMultiple: 0
-    LineBreakMode: WordWrapping
+    LineHeightMultiple: 0 LineBreakMode WordWrapping
     Tabs: ()
     DefaultTabInterval: 36
     Blocks: (

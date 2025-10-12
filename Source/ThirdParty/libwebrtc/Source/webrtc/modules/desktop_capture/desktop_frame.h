@@ -14,6 +14,7 @@
 #include <stdint.h>
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "modules/desktop_capture/desktop_geometry.h"
@@ -74,6 +75,12 @@ class RTC_EXPORT DesktopFrame {
   const DesktopVector& dpi() const { return dpi_; }
   void set_dpi(const DesktopVector& dpi) { dpi_ = dpi; }
 
+  std::optional<float> device_scale_factor() const {
+    return device_scale_factor_;
+  }
+  void set_device_scale_factor(std::optional<float> device_scale_factor) {
+    device_scale_factor_ = device_scale_factor;
+  }
   // Indicates if this frame may have the mouse cursor in it. Capturers that
   // support cursor capture may set this to true. If the cursor was
   // outside of the captured area, this may be true even though the cursor is
@@ -172,6 +179,10 @@ class RTC_EXPORT DesktopFrame {
   int64_t capture_time_ms_;
   uint32_t capturer_id_;
   std::vector<uint8_t> icc_profile_;
+  // Currently only used on Windows. It stores the device scale factor of the
+  // captured surface and has distinct values possible in the range of
+  // [1,5].
+  std::optional<float> device_scale_factor_;
 };
 
 // A DesktopFrame that stores data in the heap.

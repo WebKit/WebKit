@@ -45,6 +45,7 @@
 #import "WebExtensionUtilities.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/CallbackAggregator.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 namespace WebKit {
 
@@ -271,7 +272,7 @@ void WebExtensionContext::sendNativeMessage(const String& applicationID, id mess
         nativeExtension.requestCancellationBlock = makeBlockPtr([callbackAggregator](id<NSCopying> requestIdentifier, NSError *error) {
             RELEASE_LOG_ERROR(Extensions, "NSExtension request with identifier %{public}@ was canceled: %{public}@", requestIdentifier, privacyPreservingDescription(error));
 
-            dispatch_async(dispatch_get_main_queue(), makeBlockPtr([callbackAggregator] {
+            dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([callbackAggregator] {
                 --activeRequestCount;
 
                 callbackAggregator.get()(toWebExtensionError(apiName, nullString(), @"the native extension canceled the request or encountered an error"));
@@ -281,7 +282,7 @@ void WebExtensionContext::sendNativeMessage(const String& applicationID, id mess
         nativeExtension.requestInterruptionBlock = makeBlockPtr([callbackAggregator, nativeExtension = WeakObjCPtr { nativeExtension }](id<NSCopying> requestIdentifier) {
             RELEASE_LOG_ERROR(Extensions, "NSExtension request with identifier %{public}@ was interrupted", requestIdentifier);
 
-            dispatch_async(dispatch_get_main_queue(), makeBlockPtr([callbackAggregator] {
+            dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([callbackAggregator] {
                 --activeRequestCount;
 
                 callbackAggregator.get()(toWebExtensionError(apiName, nullString(), @"the native extension was interrupted or crashed"));
@@ -294,7 +295,7 @@ void WebExtensionContext::sendNativeMessage(const String& applicationID, id mess
         nativeExtension.requestCompletionBlock = ^(id<NSCopying> requestIdentifier, NSArray<NSExtensionItem *> *items) {
             id replyMessage = items.firstObject.userInfo[messageKey];
 
-            dispatch_async(dispatch_get_main_queue(), makeBlockPtr([callbackAggregator, replyMessage = RetainPtr { replyMessage }] {
+            dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([callbackAggregator, replyMessage = RetainPtr { replyMessage }] {
                 --activeRequestCount;
 
                 callbackAggregator.get()({ replyMessage.get() });
@@ -312,7 +313,7 @@ void WebExtensionContext::sendNativeMessage(const String& applicationID, id mess
 
             RELEASE_LOG_ERROR(Extensions, "NSExtension request with identifier %{public}@ failed: %{public}@", requestIdentifier, privacyPreservingDescription(error));
 
-            dispatch_async(dispatch_get_main_queue(), makeBlockPtr([callbackAggregator, nativeExtension, requestIdentifier = RetainPtr { requestIdentifier }] {
+            dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([callbackAggregator, nativeExtension, requestIdentifier = RetainPtr { requestIdentifier }] {
                 --activeRequestCount;
 
                 callbackAggregator.get()(toWebExtensionError(apiName, nullString(), @"the native extension encountered an unknown error"));

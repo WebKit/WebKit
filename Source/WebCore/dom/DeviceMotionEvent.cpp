@@ -139,7 +139,7 @@ void DeviceMotionEvent::initDeviceMotionEvent(const AtomString& type, bool bubbl
 #if ENABLE(DEVICE_ORIENTATION)
 void DeviceMotionEvent::requestPermission(Document& document, PermissionPromise&& promise)
 {
-    RefPtr window = document.domWindow();
+    RefPtr window = document.window();
     if (!window || !document.page())
         return promise.reject(Exception { ExceptionCode::InvalidStateError, "No browsing context"_s });
 

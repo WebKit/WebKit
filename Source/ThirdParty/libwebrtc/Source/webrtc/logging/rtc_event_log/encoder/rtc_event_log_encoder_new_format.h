@@ -75,74 +75,73 @@ class RtcEventLogEncoderNewFormat final : public RtcEventLogEncoder {
 
  private:
   // Encoding entry-point for the various RtcEvent subclasses.
-  void EncodeAlrState(rtc::ArrayView<const RtcEventAlrState*> batch,
+  void EncodeAlrState(ArrayView<const RtcEventAlrState*> batch,
                       rtclog2::EventStream* event_stream);
   void EncodeAudioNetworkAdaptation(
-      rtc::ArrayView<const RtcEventAudioNetworkAdaptation*> batch,
+      ArrayView<const RtcEventAudioNetworkAdaptation*> batch,
       rtclog2::EventStream* event_stream);
-  void EncodeAudioPlayout(rtc::ArrayView<const RtcEventAudioPlayout*> batch,
+  void EncodeAudioPlayout(ArrayView<const RtcEventAudioPlayout*> batch,
                           rtclog2::EventStream* event_stream);
   void EncodeAudioRecvStreamConfig(
-      rtc::ArrayView<const RtcEventAudioReceiveStreamConfig*> batch,
+      ArrayView<const RtcEventAudioReceiveStreamConfig*> batch,
       rtclog2::EventStream* event_stream);
   void EncodeAudioSendStreamConfig(
-      rtc::ArrayView<const RtcEventAudioSendStreamConfig*> batch,
+      ArrayView<const RtcEventAudioSendStreamConfig*> batch,
       rtclog2::EventStream* event_stream);
   void EncodeBweUpdateDelayBased(
-      rtc::ArrayView<const RtcEventBweUpdateDelayBased*> batch,
+      ArrayView<const RtcEventBweUpdateDelayBased*> batch,
       rtclog2::EventStream* event_stream);
   void EncodeBweUpdateLossBased(
-      rtc::ArrayView<const RtcEventBweUpdateLossBased*> batch,
+      ArrayView<const RtcEventBweUpdateLossBased*> batch,
       rtclog2::EventStream* event_stream);
   void EncodeDtlsTransportState(
-      rtc::ArrayView<const RtcEventDtlsTransportState*> batch,
+      ArrayView<const RtcEventDtlsTransportState*> batch,
       rtclog2::EventStream* event_stream);
   void EncodeDtlsWritableState(
-      rtc::ArrayView<const RtcEventDtlsWritableState*> batch,
+      ArrayView<const RtcEventDtlsWritableState*> batch,
       rtclog2::EventStream* event_stream);
-  void EncodeFramesDecoded(
-      rtc::ArrayView<const RtcEventFrameDecoded* const> batch,
-      rtclog2::EventStream* event_stream);
+  void EncodeFramesDecoded(ArrayView<const RtcEventFrameDecoded* const> batch,
+                           rtclog2::EventStream* event_stream);
   void EncodeGenericAcksReceived(
-      rtc::ArrayView<const RtcEventGenericAckReceived*> batch,
+      ArrayView<const RtcEventGenericAckReceived*> batch,
       rtclog2::EventStream* event_stream);
   void EncodeGenericPacketsReceived(
-      rtc::ArrayView<const RtcEventGenericPacketReceived*> batch,
+      ArrayView<const RtcEventGenericPacketReceived*> batch,
       rtclog2::EventStream* event_stream);
   void EncodeGenericPacketsSent(
-      rtc::ArrayView<const RtcEventGenericPacketSent*> batch,
+      ArrayView<const RtcEventGenericPacketSent*> batch,
       rtclog2::EventStream* event_stream);
   void EncodeIceCandidatePairConfig(
-      rtc::ArrayView<const RtcEventIceCandidatePairConfig*> batch,
+      ArrayView<const RtcEventIceCandidatePairConfig*> batch,
       rtclog2::EventStream* event_stream);
   void EncodeIceCandidatePairEvent(
-      rtc::ArrayView<const RtcEventIceCandidatePair*> batch,
+      ArrayView<const RtcEventIceCandidatePair*> batch,
       rtclog2::EventStream* event_stream);
-  void EncodeLoggingStarted(rtc::ArrayView<const RtcEventLoggingStarted*> batch,
+  void EncodeLoggingStarted(ArrayView<const RtcEventLoggingStarted*> batch,
                             rtclog2::EventStream* event_stream);
-  void EncodeLoggingStopped(rtc::ArrayView<const RtcEventLoggingStopped*> batch,
+  void EncodeLoggingStopped(ArrayView<const RtcEventLoggingStopped*> batch,
                             rtclog2::EventStream* event_stream);
   void EncodeNetEqSetMinimumDelay(
-      rtc::ArrayView<const RtcEventNetEqSetMinimumDelay*> batch,
+      ArrayView<const RtcEventNetEqSetMinimumDelay*> batch,
       rtclog2::EventStream* event_stream);
   void EncodeProbeClusterCreated(
-      rtc::ArrayView<const RtcEventProbeClusterCreated*> batch,
+      ArrayView<const RtcEventProbeClusterCreated*> batch,
       rtclog2::EventStream* event_stream);
   void EncodeProbeResultFailure(
-      rtc::ArrayView<const RtcEventProbeResultFailure*> batch,
+      ArrayView<const RtcEventProbeResultFailure*> batch,
       rtclog2::EventStream* event_stream);
   void EncodeProbeResultSuccess(
-      rtc::ArrayView<const RtcEventProbeResultSuccess*> batch,
+      ArrayView<const RtcEventProbeResultSuccess*> batch,
       rtclog2::EventStream* event_stream);
-  void EncodeRouteChange(rtc::ArrayView<const RtcEventRouteChange*> batch,
+  void EncodeRouteChange(ArrayView<const RtcEventRouteChange*> batch,
                          rtclog2::EventStream* event_stream);
-  void EncodeRemoteEstimate(rtc::ArrayView<const RtcEventRemoteEstimate*> batch,
+  void EncodeRemoteEstimate(ArrayView<const RtcEventRemoteEstimate*> batch,
                             rtclog2::EventStream* event_stream);
   void EncodeRtcpPacketIncoming(
-      rtc::ArrayView<const RtcEventRtcpPacketIncoming*> batch,
+      ArrayView<const RtcEventRtcpPacketIncoming*> batch,
       rtclog2::EventStream* event_stream);
   void EncodeRtcpPacketOutgoing(
-      rtc::ArrayView<const RtcEventRtcpPacketOutgoing*> batch,
+      ArrayView<const RtcEventRtcpPacketOutgoing*> batch,
       rtclog2::EventStream* event_stream);
   void EncodeRtpPacketIncoming(
       const std::map<uint32_t, std::vector<const RtcEventRtpPacketIncoming*>>&
@@ -153,10 +152,10 @@ class RtcEventLogEncoderNewFormat final : public RtcEventLogEncoder {
           batch,
       rtclog2::EventStream* event_stream);
   void EncodeVideoRecvStreamConfig(
-      rtc::ArrayView<const RtcEventVideoReceiveStreamConfig*> batch,
+      ArrayView<const RtcEventVideoReceiveStreamConfig*> batch,
       rtclog2::EventStream* event_stream);
   void EncodeVideoSendStreamConfig(
-      rtc::ArrayView<const RtcEventVideoSendStreamConfig*> batch,
+      ArrayView<const RtcEventVideoSendStreamConfig*> batch,
       rtclog2::EventStream* event_stream);
   template <typename Batch, typename ProtoType>
   void EncodeRtpPacket(const Batch& batch, ProtoType* proto_batch);

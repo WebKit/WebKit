@@ -47,7 +47,7 @@
                 if (++eventCount != 6)
                     return;
 
-                await navigator.mediaDevices.getUserMedia({video: true, audio: true });
+                const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: true });
                 let devices = await navigator.mediaDevices.enumerateDevices();
                 devices.forEach(device => checkID(self.origin, device));
 
@@ -55,6 +55,8 @@
                 if (internals)
                     internals.setTrackingPreventionEnabled(true);
                 finishJSTest();
+
+                stream.getTracks().forEach(t => t.stop());
             }
 
             addEventListener("message", handler, false);

@@ -1,0 +1,3 @@
+
+FAIL test www-authenticate basic does not forward credentials to cross-origin pages. assert_equals: expected (undefined) undefined but got (string) "user"
+

@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "IDLTypes.h"
-#include "JSDOMConvertAny.h"
-#include "JSDOMConvertInterface.h"
-#include "JSDOMConvertNumbers.h"
-#include "JSDOMConvertStrings.h"
+#include <WebCore/IDLTypes.h>
+#include <WebCore/JSDOMConvertAny.h>
+#include <WebCore/JSDOMConvertInterface.h>
+#include <WebCore/JSDOMConvertNumbers.h>
+#include <WebCore/JSDOMConvertStrings.h>
 
 namespace WebCore {
 

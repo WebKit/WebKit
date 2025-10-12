@@ -25,7 +25,9 @@
 
 #pragma once
 
-#include "GraphicsLayer.h"
+#include <WebCore/GraphicsLayerEnums.h>
+#include <WebCore/PlatformLayerIdentifier.h>
+#include <wtf/MonotonicTime.h>
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 #include  "DynamicContentScalingDisplayList.h"
@@ -36,6 +38,9 @@ namespace WebCore {
 class FloatRect;
 class GraphicsContext;
 class PlatformCALayer;
+
+enum class ContentsFormat : uint8_t;
+enum class GraphicsLayerPaintBehavior : uint8_t;
 
 class PlatformCALayerClient {
 public:
@@ -48,7 +53,7 @@ public:
 
     virtual void platformCALayerAnimationStarted(const String& /*animationKey*/, MonotonicTime) { }
     virtual void platformCALayerAnimationEnded(const String& /*animationKey*/) { }
-    virtual GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return GraphicsLayer::CompositingCoordinatesOrientation::TopDown; }
+    virtual GraphicsLayerCompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return GraphicsLayerCompositingCoordinatesOrientation::TopDown; }
     virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& inClip, OptionSet<GraphicsLayerPaintBehavior>) = 0;
     virtual bool platformCALayerShowDebugBorders() const { return false; }
     virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const { return false; }
@@ -80,6 +85,8 @@ public:
 #if HAVE(SUPPORT_HDR_DISPLAY)
     virtual bool drawsHDRContent() const { return false; }
 #endif
+
+    virtual OptionSet<ContentsFormat> screenContentsFormats() const = 0;
 
     virtual void platformCALayerLogFilledVisibleFreshTile(unsigned /* blankPixelCount */) { }
 

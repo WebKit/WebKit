@@ -37,7 +37,7 @@ namespace WebCore::WebGPU {
 class ConvertToBackingContext;
 
 class XRSubImageImpl final : public XRSubImage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(XRSubImageImpl);
 public:
     static Ref<XRSubImageImpl> create(WebGPUPtr<WGPUXRSubImage>&& backing, ConvertToBackingContext& convertToBackingContext)
     {
@@ -62,7 +62,7 @@ private:
     WGPUXRSubImage backing() const { return m_backing.get(); }
 
     WebGPUPtr<WGPUXRSubImage> m_backing;
-    Ref<ConvertToBackingContext> m_convertToBackingContext;
+    const Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 
 } // namespace WebCore::WebGPU

@@ -10,10 +10,14 @@
 
 #include "modules/desktop_capture/fake_desktop_capturer.h"
 
+#include <memory>
 #include <utility>
 
 #include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_frame_generator.h"
+#include "modules/desktop_capture/shared_memory.h"
 
 namespace webrtc {
 

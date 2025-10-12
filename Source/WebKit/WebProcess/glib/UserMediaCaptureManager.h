@@ -76,7 +76,7 @@ private:
     using GetMediaStreamDevicesCallback = CompletionHandler<void(Vector<WebCore::CaptureDeviceWithCapabilities>&&)>;
     void getMediaStreamDevices(bool revealIdsAndLabels, GetMediaStreamDevicesCallback&&);
 
-    CheckedRef<WebProcess> m_process;
+    const CheckedRef<WebProcess> m_process;
 };
 
 } // namespace WebKit

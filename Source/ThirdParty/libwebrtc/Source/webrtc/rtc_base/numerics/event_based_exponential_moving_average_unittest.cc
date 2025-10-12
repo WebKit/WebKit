@@ -23,7 +23,7 @@ constexpr double kError = 0.1;
 
 }  // namespace
 
-namespace rtc {
+namespace webrtc {
 
 TEST(EventBasedExponentialMovingAverageTest, NoValue) {
   EventBasedExponentialMovingAverage average(kHalfTime);
@@ -226,4 +226,4 @@ TEST(EventBasedExponentialMovingAverageTest, SimultaneousSamples) {
   average.AddSample(time, value);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

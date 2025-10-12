@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -130,14 +130,14 @@ void* prepareOSREntry(
     }
     
     int stackFrameSize = entryCode->common.requiredRegisterCountForExecutionAndExit();
-    if (!vm.ensureStackCapacityFor(&callFrame->registers()[virtualRegisterForLocal(stackFrameSize - 1).offset()])) [[unlikely]] {
+    if (!vm.ensureJSStackCapacityFor(&callFrame->registers()[virtualRegisterForLocal(stackFrameSize - 1).offset()])) [[unlikely]] {
         dataLogLnIf(Options::verboseOSR(), "    OSR failed because stack growth failed.");
         return nullptr;
     }
     
     callFrame->setCodeBlock(entryCodeBlock);
     
-    void* result = entryCode->addressForCall(ArityCheckNotRequired).taggedPtr();
+    void* result = entryCode->addressForCall(ArityCheckMode::ArityCheckNotRequired).taggedPtr();
     dataLogLnIf(Options::verboseOSR(), "    Entry will succeed, going to address ", RawPointer(result));
 
     // At this point, we're committed to triggering an OSR entry immediately after we return. Hence, it is safe to modify stack here.

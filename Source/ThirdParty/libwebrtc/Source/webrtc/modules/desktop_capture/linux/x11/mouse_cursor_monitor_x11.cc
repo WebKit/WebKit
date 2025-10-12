@@ -10,13 +10,14 @@
 
 #include "modules/desktop_capture/linux/x11/mouse_cursor_monitor_x11.h"
 
+#include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xfixes.h>
 #include <X11/extensions/xfixeswire.h>
-#include <stddef.h>
-#include <stdint.h>
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 
 #include "modules/desktop_capture/desktop_capture_options.h"
@@ -69,7 +70,7 @@ MouseCursorMonitorX11::MouseCursorMonitorX11(
     const DesktopCaptureOptions& options,
     Window window)
     : x_display_(options.x_display()),
-      callback_(NULL),
+      callback_(nullptr),
       mode_(SHAPE_AND_POSITION),
       window_(window),
       have_xfixes_(false),
@@ -132,7 +133,7 @@ void MouseCursorMonitorX11::Capture() {
   x_display_->ProcessPendingXEvents();
 
   // cursor_shape_| is set only if we were notified of a cursor shape change.
-  if (cursor_shape_.get())
+  if (cursor_shape_)
     callback_->OnMouseCursor(cursor_shape_.release());
 
   // Get cursor position if necessary.
@@ -231,10 +232,10 @@ MouseCursorMonitor* MouseCursorMonitorX11::CreateForWindow(
     const DesktopCaptureOptions& options,
     WindowId window) {
   if (!options.x_display())
-    return NULL;
+    return nullptr;
   window = GetTopLevelWindow(options.x_display()->display(), window);
   if (window == None)
-    return NULL;
+    return nullptr;
   return new MouseCursorMonitorX11(options, window);
 }
 
@@ -242,7 +243,7 @@ MouseCursorMonitor* MouseCursorMonitorX11::CreateForScreen(
     const DesktopCaptureOptions& options,
     ScreenId screen) {
   if (!options.x_display())
-    return NULL;
+    return nullptr;
   return new MouseCursorMonitorX11(
       options, DefaultRootWindow(options.x_display()->display()));
 }

@@ -28,7 +28,6 @@
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
-#include "SoupVersioning.h"
 #include "URLSoup.h"
 #include <unicode/uset.h>
 #include <wtf/text/CString.h>
@@ -47,11 +46,9 @@ ResourceResponse::ResourceResponse(SoupMessage* soupMessage, const CString& snif
     case SOUP_HTTP_1_1:
         m_httpVersion = "HTTP/1.1"_s;
         break;
-#if SOUP_CHECK_VERSION(2, 99, 3)
     case SOUP_HTTP_2_0:
         m_httpVersion = "HTTP/2"_s;
         break;
-#endif
     }
 
     m_httpStatusCode = soup_message_get_status(soupMessage);
@@ -104,7 +101,7 @@ static String sanitizeFilename(const String& filename)
         return filename;
 
     // Trim leading/trailing whitespaces, path separators and dots
-    auto result = filename.trim([](UChar character) -> bool {
+    auto result = filename.trim([](char16_t character) -> bool {
         return deprecatedIsSpaceOrNewline(character) || character == '/' || character == '\\' || character == '.';
     });
 
@@ -120,7 +117,7 @@ static String sanitizeFilename(const String& filename)
         ASSERT(U_SUCCESS(errorCode));
     }
 
-    UncheckedKeyHashSet<uint16_t> illegalCharactersInFilename;
+    HashSet<uint16_t> illegalCharactersInFilename;
     for (unsigned i = 0; i < result.length(); ++i) {
         auto character = result[i];
         if (uset_contains(illegalCharacterSet, character))

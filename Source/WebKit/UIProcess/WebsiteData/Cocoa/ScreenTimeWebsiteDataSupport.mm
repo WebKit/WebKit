@@ -30,6 +30,7 @@
 
 #import "WebsiteDataStoreConfiguration.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/HashSet.h>
 #import <wtf/URL.h>
 #import <wtf/URLHash.h>
@@ -38,30 +39,17 @@
 
 #import <pal/cocoa/ScreenTimeSoftLink.h>
 
-@interface STWebHistory (Staging_140439004)
-- (void)fetchAllHistoryWithCompletionHandler:(void (^)(NSSet<NSURL *> *urls, NSError *error))completionHandler;
-@end
-
 namespace WebKit::ScreenTimeWebsiteDataSupport {
 
 void getScreenTimeURLs(std::optional<WTF::UUID> identifier, CompletionHandler<void(HashSet<URL>&&)>&& completionHandler)
 {
-    if (![PAL::getSTWebHistoryClass() instancesRespondToSelector:@selector(fetchAllHistoryWithCompletionHandler:)])
-        return completionHandler({ });
-
     RetainPtr<NSString> profileIdentifier;
     if (identifier)
-        profileIdentifier = identifier->toString().createNSString();
+        profileIdentifier = [identifier->createNSUUID() UUIDString];
 
     RetainPtr webHistory = adoptNS([PAL::allocSTWebHistoryInstance() initWithProfileIdentifier:profileIdentifier.get()]);
 
-    // STWebHistory.fetchAllHistoryWithCompletionHandler sometimes deallocates its block instead of calling it.
-    // FIXME: Remove this once rdar://145889845 is widely available.
-    auto completionHandlerWithFinalizer = CompletionHandlerWithFinalizer<void(HashSet<URL>&&)>(WTFMove(completionHandler), [](auto& completionHandler) {
-        completionHandler({ });
-    });
-
-    [webHistory fetchAllHistoryWithCompletionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandlerWithFinalizer)](NSSet<NSURL *> *urls, NSError *error) mutable {
+    [webHistory fetchAllHistoryWithCompletionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSSet<NSURL *> *urls, NSError *error) mutable {
         ensureOnMainRunLoop([completionHandler = WTFMove(completionHandler), urls = retainPtr(urls), error = retainPtr(error)] mutable {
             if (error) {
                 completionHandler({ });
@@ -84,19 +72,33 @@ void removeScreenTimeData(const HashSet<URL>& websitesToRemove, const WebsiteDat
 {
     RetainPtr<NSString> profileIdentifier;
     if (configuration.identifier())
-        profileIdentifier = configuration.identifier()->toString().createNSString();
+        profileIdentifier = [configuration.identifier()->createNSUUID() UUIDString];
 
     RetainPtr webHistory = adoptNS([PAL::allocSTWebHistoryInstance() initWithProfileIdentifier:profileIdentifier.get()]);
 
+    RetainPtr<NSMutableSet<NSString *>> websitesToRemoveDomains = [NSMutableSet set];
     for (auto& url : websitesToRemove)
-        [webHistory deleteHistoryForURL:url.createNSURL().get()];
+        if (RetainPtr host = url.host().createNSString())
+            [websitesToRemoveDomains addObject:host.get()];
+
+    [webHistory fetchAllHistoryWithCompletionHandler:^(NSSet<NSURL *> *urls, NSError *error) {
+        if (error)
+            return;
+
+        for (NSURL *url in urls) {
+            for (NSString *domainString in websitesToRemoveDomains.get()) {
+                if ([[url host] hasSuffix:domainString])
+                    [webHistory deleteHistoryForURL:url];
+            }
+        }
+    }];
 }
 
 void removeScreenTimeDataWithInterval(WallTime modifiedSince, const WebsiteDataStoreConfiguration& configuration)
 {
     RetainPtr<NSString> profileIdentifier;
     if (configuration.identifier())
-        profileIdentifier = configuration.identifier()->toString().createNSString();
+        profileIdentifier = [configuration.identifier()->createNSUUID() UUIDString];
 
     RetainPtr webHistory = adoptNS([PAL::allocSTWebHistoryInstance() initWithProfileIdentifier:profileIdentifier.get()]);
 

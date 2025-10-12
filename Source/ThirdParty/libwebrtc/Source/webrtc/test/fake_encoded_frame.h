@@ -11,12 +11,17 @@
 #ifndef TEST_FAKE_ENCODED_FRAME_H_
 #define TEST_FAKE_ENCODED_FRAME_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "api/rtp_packet_infos.h"
+#include "api/units/timestamp.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/video_rotation.h"
+#include "api/video/video_timing.h"
 #include "test/gmock.h"
 
 namespace webrtc {

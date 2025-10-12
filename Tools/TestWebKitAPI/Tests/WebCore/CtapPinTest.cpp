@@ -40,6 +40,7 @@
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/FidoConstants.h>
 #include <WebCore/Pin.h>
+#include <WebCore/ScriptWrappableInlines.h>
 #include <WebCore/WebAuthenticationConstants.h>
 #include <WebCore/WebAuthenticationUtils.h>
 #include <pal/crypto/CryptoDigest.h>

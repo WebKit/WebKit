@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "../unit_test/unit_test.h"
 #include "libyuv/basic_types.h"
 #include "libyuv/compare.h"
 #include "libyuv/convert.h"
@@ -19,7 +20,6 @@
 #include "libyuv/convert_from.h"
 #include "libyuv/convert_from_argb.h"
 #include "libyuv/cpu_id.h"
-#include "../unit_test/unit_test.h"
 #include "libyuv/planar_functions.h"
 #include "libyuv/rotate.h"
 #include "libyuv/video_common.h"
@@ -2720,6 +2720,148 @@ TEST_F(LibYUVConvertTest, TestUYVYToARGB) {
   uint32_t checksum = HashDjb2(&dest_argb[0][0], sizeof(dest_argb), 5381);
   EXPECT_EQ(3486643515u, checksum);
 }
+
+#ifdef ENABLE_ROW_TESTS
+TEST_F(LibYUVConvertTest, TestARGBToUVRow) {
+  SIMD_ALIGNED(uint8_t orig_argb_pixels[256]);
+  SIMD_ALIGNED(uint8_t dest_u[32]);
+  SIMD_ALIGNED(uint8_t dest_v[32]);
+
+  for (int i = 0; i < 256; ++i) {
+    orig_argb_pixels[i] = i * 43;
+  }
+
+  orig_argb_pixels[0] = 0xff;  // blue
+  orig_argb_pixels[1] = 0x0;
+  orig_argb_pixels[2] = 0x0;
+  orig_argb_pixels[3] = 0xff;
+  orig_argb_pixels[4] = 0xff;  // blue
+  orig_argb_pixels[5] = 0x0;
+  orig_argb_pixels[6] = 0x0;
+  orig_argb_pixels[7] = 0xff;
+
+  orig_argb_pixels[8] = 0x0;
+  orig_argb_pixels[9] = 0xff;  // green
+  orig_argb_pixels[10] = 0x0;
+  orig_argb_pixels[11] = 0xff;
+  orig_argb_pixels[12] = 0x0;
+  orig_argb_pixels[13] = 0xff;  // green
+  orig_argb_pixels[14] = 0x0;
+  orig_argb_pixels[15] = 0xff;
+
+  orig_argb_pixels[16] = 0x0;
+  orig_argb_pixels[17] = 0x0;
+  orig_argb_pixels[18] = 0xff;  // red
+  orig_argb_pixels[19] = 0xff;
+  orig_argb_pixels[20] = 0x0;
+  orig_argb_pixels[21] = 0x0;
+  orig_argb_pixels[22] = 0xff;  // red
+  orig_argb_pixels[23] = 0xff;
+
+  orig_argb_pixels[24] = 0xff;
+  orig_argb_pixels[25] = 0xff;
+  orig_argb_pixels[26] = 0xff;  // white
+  orig_argb_pixels[27] = 0xff;
+  orig_argb_pixels[28] = 0xff;
+  orig_argb_pixels[29] = 0xff;
+  orig_argb_pixels[30] = 0xff;  // white
+  orig_argb_pixels[31] = 0xff;
+
+  int benchmark_iterations =
+      benchmark_width_ * benchmark_height_ * benchmark_iterations_ / 32;
+
+  for (int i = 0; i < benchmark_iterations; ++i) {
+#if defined(HAS_ARGBTOUVROW_SSSE3)
+    int has_ssse3 = TestCpuFlag(kCpuHasSSSE3);
+    if (has_ssse3) {
+      ARGBToUVRow_SSSE3(&orig_argb_pixels[0], 0, &dest_u[0], &dest_v[0], 64);
+    } else {
+      ARGBToUVRow_C(&orig_argb_pixels[0], 0, &dest_u[0], &dest_v[0], 64);
+    }
+#elif defined(HAS_ARGBTOUVROW_NEON)
+    ARGBToUVRow_NEON(&orig_argb_pixels[0], 0, &dest_u[0], &dest_v[0], 64);
+#else
+    ARGBToUVRow_C(&orig_argb_pixels[0], 0, &dest_u[0], &dest_v[0], 64);
+#endif
+  }
+  printf("u: ");
+  for (int i = 0; i < 32; ++i) {
+    printf("%3d ", (int)dest_u[i]);
+  }
+  printf("\nv: ");
+  for (int i = 0; i < 32; ++i) {
+    printf("%3d ", (int)dest_v[i]);
+  }
+  printf("\n");
+
+  uint32_t checksum_u = HashDjb2(&dest_u[0], sizeof(dest_u), 5381);
+  EXPECT_EQ(192508756u, checksum_u);
+  uint32_t checksum_v = HashDjb2(&dest_v[0], sizeof(dest_v), 5381);
+  EXPECT_EQ(2590663990u, checksum_v);
+}
+#endif
+
+#if !defined(DISABLE_SLOW_TESTS) && \
+    (defined(__x86_64__) || defined(_M_X64) || defined(__aarch64__))
+// TODO(fbarchard): Consider _set_new_mode(0) to make malloc return NULL
+
+TEST_F(LibYUVConvertTest, TestI400LargeSize) {
+  // The width and height are chosen as follows:
+  // - kWidth * kHeight is not a multiple of 8: This lets us to use the Any
+  //   variant of the conversion function.
+  const int kWidth = 1073741823;
+  const int kHeight = 2;
+
+#if defined(__aarch64__)
+  // Infer malloc can accept a large size for cpu with dot product (a76/a55)
+  int has_large_malloc = TestCpuFlag(kCpuHasNeonDotProd);
+#else
+  int has_large_malloc = 1;
+#endif
+  if (!has_large_malloc) {
+    printf("WARNING: Skipped.  Large allocation may assert for %zd\n",
+           (size_t)kWidth * kHeight);
+    return;
+  }
+
+  // Allocate one extra column so that the coalesce optimizations do not trigger
+  // in convert_argb.cc (they are triggered only when stride is equal to width).
+  const size_t kStride = kWidth + 1;
+
+  printf("WARNING: attempting to allocate I400 image of %zd bytes\n",
+         (size_t)kWidth * kHeight);
+  fflush(stdout);
+  align_buffer_page_end(orig_i400, (size_t)kWidth * kHeight);
+  if (!orig_i400) {
+    printf("WARNING: unable to allocate I400 image of %zd bytes\n",
+           (size_t)kWidth * kHeight);
+    fflush(stdout);
+    return;
+  }
+  printf("INFO: allocate I400 image returned %p\n", orig_i400);
+  fflush(stdout);
+  align_buffer_page_end(dest_argb, (size_t)kWidth * kHeight * 4);
+  if (!dest_argb) {
+    printf("WARNING: unable to allocate ARGB image of %zd bytes\n",
+           (size_t)kWidth * kHeight * 4);
+    fflush(stdout);
+    free_aligned_buffer_page_end(orig_i400);
+    return;
+  }
+  printf("INFO: allocate ARGB image returned %p\n", dest_argb);
+  fflush(stdout);
+  for (int i = 0; i < kWidth * kHeight; ++i) {
+    orig_i400[i] = i % 256;
+  }
+  EXPECT_EQ(I400ToARGBMatrix(orig_i400, kStride, dest_argb, kWidth,
+                             &kYuvJPEGConstants, kWidth, kHeight),
+            0);
+  free_aligned_buffer_page_end(dest_argb);
+  free_aligned_buffer_page_end(orig_i400);
+}
+#endif  // !defined(DISABLE_SLOW_TESTS) && \
+        // (defined(__x86_64__) || defined(_M_X64) || defined(__aarch64__))
+
 #endif  // !defined(LEAN_TESTS)
 
 }  // namespace libyuv

@@ -10,6 +10,9 @@
 
 {
   'WATCHLIST_DEFINITIONS': {
+    'angle-features': {
+      'filepath': 'util/autogen/angle_features_autogen.h',
+    },
     'vulkan': {
       'filepath': 'src/libANGLE/renderer/vulkan/',
     },
@@ -19,6 +22,10 @@
   # Please keep alphabetical
   ##############################################################################
   'WATCHLISTS': {
+    'angle-features': [
+      'kaiyili+angleWatchAngleFeatures@google.com',
+      'battlestar-gfx@google.com'
+    ],
     'vulkan': ['cclao+angleWatchVk@google.com'],
   },
 }

@@ -6,6 +6,10 @@
 
 // X11Window.cpp: Implementation of OSWindow for X11
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "util/linux/x11/X11Window.h"
 
 #include "common/debug.h"
@@ -24,7 +28,7 @@ Bool WaitForMapNotify(Display *dpy, XEvent *event, XPointer window)
     return event->type == MapNotify && event->xmap.window == reinterpret_cast<Window>(window);
 }
 
-static Key X11CodeToKey(Display *display, unsigned int scancode)
+static angle::KeyType X11CodeToKey(Display *display, unsigned int scancode)
 {
     int temp;
     KeySym *keySymbols;
@@ -36,214 +40,214 @@ static Key X11CodeToKey(Display *display, unsigned int scancode)
     switch (keySymbol)
     {
         case XK_Shift_L:
-            return KEY_LSHIFT;
+            return angle::KeyType::LSHIFT;
         case XK_Shift_R:
-            return KEY_RSHIFT;
+            return angle::KeyType::RSHIFT;
         case XK_Alt_L:
-            return KEY_LALT;
+            return angle::KeyType::LALT;
         case XK_Alt_R:
-            return KEY_RALT;
+            return angle::KeyType::RALT;
         case XK_Control_L:
-            return KEY_LCONTROL;
+            return angle::KeyType::LCONTROL;
         case XK_Control_R:
-            return KEY_RCONTROL;
+            return angle::KeyType::RCONTROL;
         case XK_Super_L:
-            return KEY_LSYSTEM;
+            return angle::KeyType::LSYSTEM;
         case XK_Super_R:
-            return KEY_RSYSTEM;
+            return angle::KeyType::RSYSTEM;
         case XK_Menu:
-            return KEY_MENU;
+            return angle::KeyType::MENU;
 
         case XK_semicolon:
-            return KEY_SEMICOLON;
+            return angle::KeyType::SEMICOLON;
         case XK_slash:
-            return KEY_SLASH;
+            return angle::KeyType::SLASH;
         case XK_equal:
-            return KEY_EQUAL;
+            return angle::KeyType::EQUAL;
         case XK_minus:
-            return KEY_DASH;
+            return angle::KeyType::DASH;
         case XK_bracketleft:
-            return KEY_LBRACKET;
+            return angle::KeyType::LBRACKET;
         case XK_bracketright:
-            return KEY_RBRACKET;
+            return angle::KeyType::RBRACKET;
         case XK_comma:
-            return KEY_COMMA;
+            return angle::KeyType::COMMA;
         case XK_period:
-            return KEY_PERIOD;
+            return angle::KeyType::PERIOD;
         case XK_backslash:
-            return KEY_BACKSLASH;
+            return angle::KeyType::BACKSLASH;
         case XK_asciitilde:
-            return KEY_TILDE;
+            return angle::KeyType::TILDE;
         case XK_Escape:
-            return KEY_ESCAPE;
+            return angle::KeyType::ESCAPE;
         case XK_space:
-            return KEY_SPACE;
+            return angle::KeyType::SPACE;
         case XK_Return:
-            return KEY_RETURN;
+            return angle::KeyType::RETURN;
         case XK_BackSpace:
-            return KEY_BACK;
+            return angle::KeyType::BACK;
         case XK_Tab:
-            return KEY_TAB;
+            return angle::KeyType::TAB;
         case XK_Page_Up:
-            return KEY_PAGEUP;
+            return angle::KeyType::PAGEUP;
         case XK_Page_Down:
-            return KEY_PAGEDOWN;
+            return angle::KeyType::PAGEDOWN;
         case XK_End:
-            return KEY_END;
+            return angle::KeyType::END;
         case XK_Home:
-            return KEY_HOME;
+            return angle::KeyType::HOME;
         case XK_Insert:
-            return KEY_INSERT;
+            return angle::KeyType::INSERT;
         case XK_Delete:
-            return KEY_DELETE;
+            return angle::KeyType::DEL;
         case XK_KP_Add:
-            return KEY_ADD;
+            return angle::KeyType::ADD;
         case XK_KP_Subtract:
-            return KEY_SUBTRACT;
+            return angle::KeyType::SUBTRACT;
         case XK_KP_Multiply:
-            return KEY_MULTIPLY;
+            return angle::KeyType::MULTIPLY;
         case XK_KP_Divide:
-            return KEY_DIVIDE;
+            return angle::KeyType::DIVIDE;
         case XK_Pause:
-            return KEY_PAUSE;
+            return angle::KeyType::PAUSE;
 
         case XK_F1:
-            return KEY_F1;
+            return angle::KeyType::F1;
         case XK_F2:
-            return KEY_F2;
+            return angle::KeyType::F2;
         case XK_F3:
-            return KEY_F3;
+            return angle::KeyType::F3;
         case XK_F4:
-            return KEY_F4;
+            return angle::KeyType::F4;
         case XK_F5:
-            return KEY_F5;
+            return angle::KeyType::F5;
         case XK_F6:
-            return KEY_F6;
+            return angle::KeyType::F6;
         case XK_F7:
-            return KEY_F7;
+            return angle::KeyType::F7;
         case XK_F8:
-            return KEY_F8;
+            return angle::KeyType::F8;
         case XK_F9:
-            return KEY_F9;
+            return angle::KeyType::F9;
         case XK_F10:
-            return KEY_F10;
+            return angle::KeyType::F10;
         case XK_F11:
-            return KEY_F11;
+            return angle::KeyType::F11;
         case XK_F12:
-            return KEY_F12;
+            return angle::KeyType::F12;
         case XK_F13:
-            return KEY_F13;
+            return angle::KeyType::F13;
         case XK_F14:
-            return KEY_F14;
+            return angle::KeyType::F14;
         case XK_F15:
-            return KEY_F15;
+            return angle::KeyType::F15;
 
         case XK_Left:
-            return KEY_LEFT;
+            return angle::KeyType::LEFT;
         case XK_Right:
-            return KEY_RIGHT;
+            return angle::KeyType::RIGHT;
         case XK_Down:
-            return KEY_DOWN;
+            return angle::KeyType::DOWN;
         case XK_Up:
-            return KEY_UP;
+            return angle::KeyType::UP;
 
         case XK_KP_Insert:
-            return KEY_NUMPAD0;
+            return angle::KeyType::NUMPAD0;
         case XK_KP_End:
-            return KEY_NUMPAD1;
+            return angle::KeyType::NUMPAD1;
         case XK_KP_Down:
-            return KEY_NUMPAD2;
+            return angle::KeyType::NUMPAD2;
         case XK_KP_Page_Down:
-            return KEY_NUMPAD3;
+            return angle::KeyType::NUMPAD3;
         case XK_KP_Left:
-            return KEY_NUMPAD4;
+            return angle::KeyType::NUMPAD4;
         case XK_KP_5:
-            return KEY_NUMPAD5;
+            return angle::KeyType::NUMPAD5;
         case XK_KP_Right:
-            return KEY_NUMPAD6;
+            return angle::KeyType::NUMPAD6;
         case XK_KP_Home:
-            return KEY_NUMPAD7;
+            return angle::KeyType::NUMPAD7;
         case XK_KP_Up:
-            return KEY_NUMPAD8;
+            return angle::KeyType::NUMPAD8;
         case XK_KP_Page_Up:
-            return KEY_NUMPAD9;
+            return angle::KeyType::NUMPAD9;
 
         case XK_a:
-            return KEY_A;
+            return angle::KeyType::A;
         case XK_b:
-            return KEY_B;
+            return angle::KeyType::B;
         case XK_c:
-            return KEY_C;
+            return angle::KeyType::C;
         case XK_d:
-            return KEY_D;
+            return angle::KeyType::D;
         case XK_e:
-            return KEY_E;
+            return angle::KeyType::E;
         case XK_f:
-            return KEY_F;
+            return angle::KeyType::F;
         case XK_g:
-            return KEY_G;
+            return angle::KeyType::G;
         case XK_h:
-            return KEY_H;
+            return angle::KeyType::H;
         case XK_i:
-            return KEY_I;
+            return angle::KeyType::I;
         case XK_j:
-            return KEY_J;
+            return angle::KeyType::J;
         case XK_k:
-            return KEY_K;
+            return angle::KeyType::K;
         case XK_l:
-            return KEY_L;
+            return angle::KeyType::L;
         case XK_m:
-            return KEY_M;
+            return angle::KeyType::M;
         case XK_n:
-            return KEY_N;
+            return angle::KeyType::N;
         case XK_o:
-            return KEY_O;
+            return angle::KeyType::O;
         case XK_p:
-            return KEY_P;
+            return angle::KeyType::P;
         case XK_q:
-            return KEY_Q;
+            return angle::KeyType::Q;
         case XK_r:
-            return KEY_R;
+            return angle::KeyType::R;
         case XK_s:
-            return KEY_S;
+            return angle::KeyType::S;
         case XK_t:
-            return KEY_T;
+            return angle::KeyType::T;
         case XK_u:
-            return KEY_U;
+            return angle::KeyType::U;
         case XK_v:
-            return KEY_V;
+            return angle::KeyType::V;
         case XK_w:
-            return KEY_W;
+            return angle::KeyType::W;
         case XK_x:
-            return KEY_X;
+            return angle::KeyType::X;
         case XK_y:
-            return KEY_Y;
+            return angle::KeyType::Y;
         case XK_z:
-            return KEY_Z;
+            return angle::KeyType::Z;
 
         case XK_1:
-            return KEY_NUM1;
+            return angle::KeyType::NUM1;
         case XK_2:
-            return KEY_NUM2;
+            return angle::KeyType::NUM2;
         case XK_3:
-            return KEY_NUM3;
+            return angle::KeyType::NUM3;
         case XK_4:
-            return KEY_NUM4;
+            return angle::KeyType::NUM4;
         case XK_5:
-            return KEY_NUM5;
+            return angle::KeyType::NUM5;
         case XK_6:
-            return KEY_NUM6;
+            return angle::KeyType::NUM6;
         case XK_7:
-            return KEY_NUM7;
+            return angle::KeyType::NUM7;
         case XK_8:
-            return KEY_NUM8;
+            return angle::KeyType::NUM8;
         case XK_9:
-            return KEY_NUM9;
+            return angle::KeyType::NUM9;
         case XK_0:
-            return KEY_NUM0;
+            return angle::KeyType::NUM0;
     }
 
-    return Key(0);
+    return angle::KeyType(0);
 }
 
 static void AddX11KeyStateToEvent(Event *event, unsigned int state)
@@ -591,8 +595,8 @@ void X11Window::processEvent(const XEvent &xEvent)
         case ButtonPress:
         {
             Event event;
-            MouseButton button = MOUSEBUTTON_UNKNOWN;
-            int wheelY         = 0;
+            angle::MouseButtonType button = angle::MouseButtonType::UNKNOWN;
+            int wheelY                    = 0;
 
             // The mouse wheel updates are sent via button events.
             switch (xEvent.xbutton.button)
@@ -609,19 +613,19 @@ void X11Window::processEvent(const XEvent &xEvent)
                     break;
 
                 case Button1:
-                    button = MOUSEBUTTON_LEFT;
+                    button = angle::MouseButtonType::LEFT;
                     break;
                 case Button2:
-                    button = MOUSEBUTTON_MIDDLE;
+                    button = angle::MouseButtonType::MIDDLE;
                     break;
                 case Button3:
-                    button = MOUSEBUTTON_RIGHT;
+                    button = angle::MouseButtonType::RIGHT;
                     break;
                 case 8:
-                    button = MOUSEBUTTON_BUTTON4;
+                    button = angle::MouseButtonType::BUTTON4;
                     break;
                 case 9:
-                    button = MOUSEBUTTON_BUTTON5;
+                    button = angle::MouseButtonType::BUTTON5;
                     break;
 
                 default:
@@ -635,7 +639,7 @@ void X11Window::processEvent(const XEvent &xEvent)
                 pushEvent(event);
             }
 
-            if (button != MOUSEBUTTON_UNKNOWN)
+            if (button != angle::MouseButtonType::UNKNOWN)
             {
                 event.Type               = Event::EVENT_MOUSE_BUTTON_RELEASED;
                 event.MouseButton.Button = button;
@@ -649,31 +653,31 @@ void X11Window::processEvent(const XEvent &xEvent)
         case ButtonRelease:
         {
             Event event;
-            MouseButton button = MOUSEBUTTON_UNKNOWN;
+            angle::MouseButtonType button = angle::MouseButtonType::UNKNOWN;
 
             switch (xEvent.xbutton.button)
             {
                 case Button1:
-                    button = MOUSEBUTTON_LEFT;
+                    button = angle::MouseButtonType::LEFT;
                     break;
                 case Button2:
-                    button = MOUSEBUTTON_MIDDLE;
+                    button = angle::MouseButtonType::MIDDLE;
                     break;
                 case Button3:
-                    button = MOUSEBUTTON_RIGHT;
+                    button = angle::MouseButtonType::RIGHT;
                     break;
                 case 8:
-                    button = MOUSEBUTTON_BUTTON4;
+                    button = angle::MouseButtonType::BUTTON4;
                     break;
                 case 9:
-                    button = MOUSEBUTTON_BUTTON5;
+                    button = angle::MouseButtonType::BUTTON5;
                     break;
 
                 default:
                     break;
             }
 
-            if (button != MOUSEBUTTON_UNKNOWN)
+            if (button != angle::MouseButtonType::UNKNOWN)
             {
                 event.Type               = Event::EVENT_MOUSE_BUTTON_RELEASED;
                 event.MouseButton.Button = button;

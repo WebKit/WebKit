@@ -26,8 +26,8 @@
 #pragma once
 
 #if ENABLE(WEB_AUTHN)
-#include "AuthenticationExtensionsClientInputsJSON.h"
-#include "PublicKeyCredentialDescriptorJSON.h"
+#include <WebCore/AuthenticationExtensionsClientInputsJSON.h>
+#include <WebCore/PublicKeyCredentialDescriptorJSON.h>
 
 namespace WebCore {
 

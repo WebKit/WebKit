@@ -929,7 +929,7 @@ void WriteGroupNonUniformBroadcast(Blob *blob,
                                    IdResult idResult2,
                                    IdScope execution,
                                    IdRef value,
-                                   IdRef id);
+                                   IdRef invocationId);
 void WriteGroupNonUniformBroadcastFirst(Blob *blob,
                                         IdResultType idResultType1,
                                         IdResult idResult2,
@@ -972,7 +972,7 @@ void WriteGroupNonUniformShuffle(Blob *blob,
                                  IdResult idResult2,
                                  IdScope execution,
                                  IdRef value,
-                                 IdRef id);
+                                 IdRef invocationId);
 void WriteGroupNonUniformShuffleXor(Blob *blob,
                                     IdResultType idResultType1,
                                     IdResult idResult2,

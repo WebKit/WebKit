@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "ContextDestructionObserverInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "WebCodecsControlMessage.h"
@@ -44,6 +45,11 @@ WebCodecsBase::WebCodecsBase(ScriptExecutionContext& context)
 }
 
 WebCodecsBase::~WebCodecsBase() = default;
+
+ScriptExecutionContext* WebCodecsBase::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
 
 void WebCodecsBase::queueControlMessageAndProcess(WebCodecsControlMessage&& message)
 {

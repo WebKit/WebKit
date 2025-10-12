@@ -41,6 +41,7 @@ struct WKTouchPoint {
     unsigned identifier { 0 };
     UITouchPhase phase { UITouchPhaseBegan };
     CGFloat majorRadiusInWindowCoordinates { 0 };
+    CGFloat twist { 0 };
     CGFloat force { 0 };
     CGFloat altitudeAngle { 0 };
     CGFloat azimuthAngle { 0 };

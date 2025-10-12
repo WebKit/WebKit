@@ -19,13 +19,13 @@ shouldThrow(() => {
     }
 
     C();
-}, `TypeError: Cannot call a class constructor without |new|`);
+}, `TypeError: Cannot call a class constructor C without |new|`);
 
 shouldThrow(() => {
     Promise();
-}, `TypeError: Cannot call a constructor without |new|`);
+}, `TypeError: Cannot call a constructor Promise without |new|`);
 
 shouldThrow(() => {
     class DerivedPromise extends Promise { }
     DerivedPromise();
-}, `TypeError: Cannot call a class constructor without |new|`);
+}, `TypeError: Cannot call a class constructor DerivedPromise without |new|`);

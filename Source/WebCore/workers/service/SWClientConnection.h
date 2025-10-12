@@ -25,15 +25,15 @@
 
 #pragma once
 
-#include "BackgroundFetchRecordIdentifier.h"
-#include "ExceptionData.h"
-#include "NavigationPreloadState.h"
-#include "NotificationData.h"
-#include "PushPermissionState.h"
-#include "PushSubscriptionData.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include "ServiceWorkerJob.h"
-#include "ServiceWorkerTypes.h"
+#include <WebCore/BackgroundFetchRecordIdentifier.h>
+#include <WebCore/ExceptionData.h>
+#include <WebCore/NavigationPreloadState.h>
+#include <WebCore/NotificationData.h>
+#include <WebCore/PushPermissionState.h>
+#include <WebCore/PushSubscriptionData.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/ServiceWorkerJob.h>
+#include <WebCore/ServiceWorkerTypes.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -89,6 +89,9 @@ public:
     virtual void addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier) = 0;
     virtual void removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier) = 0;
     virtual void scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier, ServiceWorkerOrClientIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>&&) = 0;
+
+    virtual void registerServiceWorkerInServer(ServiceWorkerIdentifier) = 0;
+    virtual void unregisterServiceWorkerInServer(ServiceWorkerIdentifier) = 0;
 
     WEBCORE_EXPORT virtual void scheduleJob(ServiceWorkerOrClientIdentifier, const ServiceWorkerJobData&);
 
@@ -172,7 +175,7 @@ protected:
     WEBCORE_EXPORT void updateBackgroundFetchRegistration(const BackgroundFetchInformation&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    WEBCORE_EXPORT void reportNetworkUsageToWorkerClient(ScriptExecutionContextIdentifier, size_t bytesTransferredOverNetwork);
+    WEBCORE_EXPORT void reportNetworkUsageToWorkerClient(ScriptExecutionContextIdentifier, uint64_t bytesTransferredOverNetwork);
 #endif
 
     WEBCORE_EXPORT void clearPendingJobs();

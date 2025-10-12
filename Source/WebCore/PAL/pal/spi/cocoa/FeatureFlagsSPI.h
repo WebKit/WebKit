@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,6 @@
 
 DECLARE_SYSTEM_HEADER
 
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-
 #if USE(APPLE_INTERNAL_SDK)
 
 #include <os/feature_private.h>
@@ -38,5 +36,3 @@ DECLARE_SYSTEM_HEADER
 #define os_feature_enabled(d, f) _os_feature_enabled_impl(#d, #f)
 extern "C" bool _os_feature_enabled_impl(const char *domain, const char *feature);
 #endif
-
-#endif // HAVE(SYSTEM_FEATURE_FLAGS)

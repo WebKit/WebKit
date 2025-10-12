@@ -51,22 +51,27 @@ public:
 
     WEBCORE_EXPORT String headerValue() const;
 
-    struct MarkableTraits {
-        static bool isEmptyValue(const ParsedContentRange& range)
-        {
-            return !range.isValid();
-        }
-
-        static ParsedContentRange emptyValue()
-        {
-            return ParsedContentRange::invalidValue();
-        }
-    };
-
 private:
     int64_t m_firstBytePosition { 0 };
     int64_t m_lastBytePosition { 0 };
     int64_t m_instanceLength { invalidLength };
+};
+
+} // namespace WebCore
+
+namespace WTF {
+
+template<>
+struct MarkableTraits<WebCore::ParsedContentRange> {
+    static bool isEmptyValue(const WebCore::ParsedContentRange& range)
+    {
+        return !range.isValid();
+    }
+
+    static WebCore::ParsedContentRange emptyValue()
+    {
+        return WebCore::ParsedContentRange::invalidValue();
+    }
 };
 
 }

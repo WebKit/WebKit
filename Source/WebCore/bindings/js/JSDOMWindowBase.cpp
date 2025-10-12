@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2006 Jon Shier (jshier@iastate.edu)
- *  Copyright (C) 2003-2021 Apple Inc. All rights reseved.
+ *  Copyright (C) 2003-2025 Apple Inc. All rights reseved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *  Copyright (c) 2015 Canon Inc. All rights reserved.
  *
@@ -27,8 +27,9 @@
 #include "Chrome.h"
 #include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
-#include "Document.h"
-#include "DocumentInlines.h"
+#include "DocumentPage.h"
+#include "DocumentQuirks.h"
+#include "DocumentSettingsValues.h"
 #include "Element.h"
 #include "Event.h"
 #include "EventLoop.h"
@@ -46,13 +47,11 @@
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "Microtasks.h"
-#include "Page.h"
-#include "Quirks.h"
+#include "NodeDocument.h"
 #include "RejectedPromiseTracker.h"
 #include "ScriptController.h"
 #include "ScriptModuleLoader.h"
 #include "SecurityOrigin.h"
-#include "Settings.h"
 #include "TrustedType.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/CodeBlock.h>
@@ -277,7 +276,7 @@ public:
     }
 
 private:
-    Ref<UserGestureToken> m_userGestureToken;
+    const Ref<UserGestureToken> m_userGestureToken;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(UserGestureInitiatedMicrotaskDispatcher);
@@ -290,7 +289,7 @@ void JSDOMWindowBase::queueMicrotaskToEventLoop(JSGlobalObject& object, QueuedTa
     auto* objectScriptExecutionContext = thisObject.scriptExecutionContext();
     auto& eventLoop = objectScriptExecutionContext->eventLoop();
     // Propagating media only user gesture for Fetch API's promise chain.
-    auto userGestureToken = UserGestureIndicator::currentUserGesture();
+    auto userGestureToken = UserGestureIndicator::currentUserGestureForMainThread();
     if (userGestureToken && (!userGestureToken->shouldPropagateToMicroTask() || !objectScriptExecutionContext->settingsValues().userGesturePromisePropagationEnabled))
         userGestureToken = nullptr;
 

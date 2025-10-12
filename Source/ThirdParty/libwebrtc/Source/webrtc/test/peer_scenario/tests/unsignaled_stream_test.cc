@@ -8,13 +8,30 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <atomic>
+#include <cstddef>
+#include <cstdint>
+#include <optional>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "api/jsep.h"
+#include "api/rtp_parameters.h"
+#include "api/test/network_emulation/network_emulation_interfaces.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
 #include "media/base/stream_params.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "modules/rtp_rtcp/source/rtp_util.h"
 #include "pc/session_description.h"
+#include "rtc_base/copy_on_write_buffer.h"
 #include "test/gtest.h"
 #include "test/peer_scenario/peer_scenario.h"
+#include "test/peer_scenario/peer_scenario_client.h"
 
 namespace webrtc {
 namespace test {
@@ -45,7 +62,7 @@ std::string TestParametersMidTestConfigurationToString(
   }
 }
 
-class FrameObserver : public rtc::VideoSinkInterface<VideoFrame> {
+class FrameObserver : public VideoSinkInterface<VideoFrame> {
  public:
   FrameObserver() : frame_observed_(false) {}
   void OnFrame(const VideoFrame&) override { frame_observed_ = true; }
@@ -64,10 +81,10 @@ uint32_t get_ssrc(SessionDescriptionInterface* offer, size_t track_index) {
 
 void set_ssrc(SessionDescriptionInterface* offer, size_t index, uint32_t ssrc) {
   EXPECT_LT(index, offer->description()->contents().size());
-  cricket::StreamParams& new_stream_params = offer->description()
-                                                 ->contents()[index]
-                                                 .media_description()
-                                                 ->mutable_streams()[0];
+  StreamParams& new_stream_params = offer->description()
+                                        ->contents()[index]
+                                        .media_description()
+                                        ->mutable_streams()[0];
   new_stream_params.ssrcs[0] = ssrc;
   new_stream_params.ssrc_groups[0].ssrcs[0] = ssrc;
 }
@@ -151,8 +168,7 @@ TEST_P(UnsignaledStreamTest, ReplacesUnsignaledStreamOnCompletedSignaling) {
         // Obtain the MID header extension ID and if we want the
         // MidTestConfiguration::kMidNotNegotiated setup then we remove the MID
         // header extension through SDP munging (otherwise SDP is not modified).
-        for (cricket::ContentInfo& content_info :
-             offer->description()->contents()) {
+        for (ContentInfo& content_info : offer->description()->contents()) {
           std::vector<RtpExtension> header_extensions =
               content_info.media_description()->rtp_header_extensions();
           for (auto it = header_extensions.begin();
@@ -216,7 +232,7 @@ TEST_P(UnsignaledStreamTest, ReplacesUnsignaledStreamOnCompletedSignaling) {
                 break;
             }
             // Inject the modified packet.
-            rtc::CopyOnWriteBuffer updated_buffer = parsed_packet.Buffer();
+            CopyOnWriteBuffer updated_buffer = parsed_packet.Buffer();
             EmulatedIpPacket updated_packet(
                 packet.from, packet.to, updated_buffer, packet.arrival_time);
             send_node->OnPacketReceived(std::move(updated_packet));

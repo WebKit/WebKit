@@ -12,9 +12,10 @@
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_PACKET_SOURCE_H_
 
 #include <bitset>
+#include <cstdint>
 #include <memory>
 
-#include "modules/audio_coding/neteq/tools/packet.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 
 namespace webrtc {
 namespace test {
@@ -30,7 +31,7 @@ class PacketSource {
 
   // Returns next packet. Returns nullptr if the source is depleted, or if an
   // error occurred.
-  virtual std::unique_ptr<Packet> NextPacket() = 0;
+  virtual std::unique_ptr<RtpPacketReceived> NextPacket() = 0;
 
   virtual void FilterOutPayloadType(uint8_t payload_type);
 

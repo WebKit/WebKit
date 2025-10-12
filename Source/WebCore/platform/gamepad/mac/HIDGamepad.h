@@ -25,12 +25,13 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
-#include "HIDDevice.h"
-#include "HIDGamepadElement.h"
-#include "PlatformGamepad.h"
 #include <IOKit/hid/IOHIDDevice.h>
+#include <WebCore/HIDDevice.h>
+#include <WebCore/HIDGamepadElement.h>
+#include <WebCore/PlatformGamepad.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {

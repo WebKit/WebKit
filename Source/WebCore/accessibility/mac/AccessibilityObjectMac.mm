@@ -24,12 +24,11 @@
  */
 
 #import "config.h"
-#import "AccessibilityObject.h"
+#import "AccessibilityObjectInlines.h"
 
-#import "AXObjectCache.h"
+#import "AXObjectCacheInlines.h"
 #import "AXRemoteFrame.h"
-#import "AccessibilityLabel.h"
-#import "AccessibilityList.h"
+#import "BufferSource.h"
 #import "ColorCocoa.h"
 #import "CompositionHighlight.h"
 #import "CompositionUnderline.h"
@@ -68,21 +67,21 @@ void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType)
 
 void AccessibilityObject::detachFromParent()
 {
-    if (isAttachment())
-        overrideAttachmentParent(nullptr);
+    overrideAttachmentParent(nullptr);
 }
 
 void AccessibilityObject::overrideAttachmentParent(AccessibilityObject* parent)
 {
-    if (!isAttachment())
+    if (!isAttachment()) [[likely]]
         return;
-    
+
+    RefPtr axParent = parent;
     id parentWrapper = nil;
-    if (parent) {
-        if (parent->isIgnored())
-            parent = parent->parentObjectUnignored();
-        parentWrapper = parent->wrapper();
-    }
+    if (axParent && axParent->isIgnored())
+        axParent = axParent->parentObjectUnignored();
+
+    if (axParent)
+        parentWrapper = axParent->wrapper();
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[wrapper() attachmentView] accessibilitySetOverrideValue:parentWrapper forAttribute:NSAccessibilityParentAttribute];
@@ -97,7 +96,7 @@ FloatRect AccessibilityObject::primaryScreenRect() const
 FloatRect AccessibilityObject::convertRectToPlatformSpace(const FloatRect& rect, AccessibilityConversionSpace space) const
 {
     // WebKit1 code path... platformWidget() exists.
-    auto* frameView = documentFrameView();
+    RefPtr frameView = documentFrameView();
     if (frameView && frameView->platformWidget()) {
         CGPoint point = CGPointMake(rect.x(), rect.y());
         CGSize size = CGSizeMake(rect.size().width(), rect.size().height());
@@ -105,19 +104,15 @@ FloatRect AccessibilityObject::convertRectToPlatformSpace(const FloatRect& rect,
 
         NSRect nsRect = NSRectFromCGRect(cgRect);
         NSView *view = frameView->documentView();
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         nsRect = [[view window] convertRectToScreen:[view convertRect:nsRect toView:nil]];
-ALLOW_DEPRECATED_DECLARATIONS_END
+        ALLOW_DEPRECATED_DECLARATIONS_END
+
         return NSRectToCGRect(nsRect);
     }
 
     return convertFrameToSpace(rect, space);
-}
-
-// On iOS, we don't have to return the value in the title. We can return the actual title, given the API.
-bool AccessibilityObject::fileUploadButtonReturnsValueInTitle() const
-{
-    return true;
 }
 
 bool AccessibilityObject::accessibilityIgnoreAttachment() const
@@ -143,38 +138,38 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (isMenuListPopup() || isMenuListOption())
         return AccessibilityObjectInclusion::IgnoreObject;
 
-    if (roleValue() == AccessibilityRole::Mark)
+    if (role() == AccessibilityRole::Mark)
         return AccessibilityObjectInclusion::IncludeObject;
 
     // Never expose an unknown object on the Mac. Clients of the AX API will not know what to do with it.
     // Special case is when the unknown object is actually an attachment.
-    if (roleValue() == AccessibilityRole::Unknown && !isAttachment())
+    if (role() == AccessibilityRole::Unknown && !isAttachment())
         return AccessibilityObjectInclusion::IgnoreObject;
-    
-    if (roleValue() == AccessibilityRole::Inline && !isStyleFormatGroup())
+
+    if (role() == AccessibilityRole::Inline && !isStyleFormatGroup())
         return AccessibilityObjectInclusion::IgnoreObject;
 
     if (RenderObject* renderer = this->renderer()) {
         // The legend element is ignored if it lives inside of a fieldset element that uses it to generate alternative text.
         if (renderer->isLegend()) {
-            Element* element = this->element();
+            RefPtr element = this->element();
             if (element && ancestorsOfType<HTMLFieldSetElement>(*element).first())
                 return AccessibilityObjectInclusion::IgnoreObject;
         }
     }
-    
+
     return AccessibilityObjectInclusion::DefaultBehavior;
 }
-    
+
 bool AccessibilityObject::caretBrowsingEnabled() const
 {
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     return frame && frame->settings().caretBrowsingEnabled();
 }
 
 void AccessibilityObject::setCaretBrowsingEnabled(bool on)
 {
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     if (!frame)
         return;
     frame->settings().setCaretBrowsingEnabled(on);
@@ -205,10 +200,11 @@ String AccessibilityObject::subrolePlatformString() const
 
     if (isAttachment()) {
         NSView* attachView = [wrapper() attachmentView];
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([[attachView accessibilityAttributeNames] containsObject:NSAccessibilitySubroleAttribute])
             return [attachView accessibilityAttributeValue:NSAccessibilitySubroleAttribute];
-ALLOW_DEPRECATED_DECLARATIONS_END
+        ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     if (isMeter())
@@ -219,13 +215,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return "AXModel"_s;
 #endif
 
-    AccessibilityRole role = roleValue();
+    auto role = this->role();
     if (role == AccessibilityRole::HorizontalRule)
         return "AXContentSeparator"_s;
     if (role == AccessibilityRole::ToggleButton)
         return NSAccessibilityToggleSubrole;
-    if (role == AccessibilityRole::Footer)
-        return "AXFooter"_s;
+    if (role == AccessibilityRole::SectionFooter)
+        return "AXSectionFooter"_s;
+    if (role == AccessibilityRole::SectionHeader)
+        return "AXSectionHeader"_s;
     if (role == AccessibilityRole::SpinButtonPart) {
         if (isIncrementor())
             return NSAccessibilityIncrementArrowSubrole;
@@ -248,6 +246,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return "AXDescriptionList"_s;
     }
 
+    if (listBoxInterpretation() == ListBoxInterpretation::ActuallyStaticList)
+        return "AXContentList"_s;
+
     // ARIA content subroles.
     switch (role) {
     case AccessibilityRole::Form:
@@ -267,6 +268,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return "AXLandmarkRegion"_s;
     case AccessibilityRole::LandmarkSearch:
         return "AXLandmarkSearch"_s;
+    case AccessibilityRole::SectionFooter:
+        return "AXSectionFooter"_s;
+    case AccessibilityRole::SectionHeader:
+        return "AXSectionHeader"_s;
     case AccessibilityRole::ApplicationAlert:
         return "AXApplicationAlert"_s;
     case AccessibilityRole::ApplicationAlertDialog:
@@ -415,14 +420,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 static void attributedStringSetCompositionAttributes(NSMutableAttributedString *attrString, Node& node, const SimpleRange& textSimpleRange)
 {
 #if HAVE(INLINE_PREDICTIONS)
-    auto& editor = node.document().editor();
-    if (&node != editor.compositionNode())
+    Ref editor = node.document().editor();
+    if (&node != editor->compositionNode())
         return;
 
     auto scope = makeRangeSelectingNodeContents(node);
     auto textRange = characterRange(scope, textSimpleRange);
 
-    auto& annotations = editor.customCompositionAnnotations();
+    auto& annotations = editor->customCompositionAnnotations();
     if (auto it = annotations.find(NSTextCompletionAttributeName); it != annotations.end()) {
         for (auto& annotationRange : it->value) {
             auto intersectionRange = NSIntersectionRange(textRange, annotationRange);
@@ -492,7 +497,7 @@ RetainPtr<NSAttributedString> attributedStringCreate(Node& node, StringView text
         return nil;
 
     auto* cache = renderer->document().axObjectCache();
-    RefPtr object = cache ? cache->getOrCreate(*renderer) : nullptr;
+    RefPtr object = cache ? cache->getOrCreate(node) : nullptr;
     if (!object)
         return nil;
 
@@ -505,7 +510,7 @@ RetainPtr<NSAttributedString> attributedStringCreate(Node& node, StringView text
 
 Vector<uint8_t> AXRemoteFrame::generateRemoteToken() const
 {
-    if (auto* parent = parentObject()) {
+    if (RefPtr parent = parentObject()) {
         // We use the parent's wrapper so that the remote frame acts as a pass through for the remote token bridge.
         return makeVector([NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:parent->wrapper()]);
     }
@@ -524,6 +529,6 @@ void AXRemoteFrame::initializePlatformElementWithRemoteToken(std::span<const uin
         cache->onRemoteFrameInitialized(*this);
 }
 
-} // WebCore
+} // namespace WebCore
 
 #endif // PLATFORM(MAC)

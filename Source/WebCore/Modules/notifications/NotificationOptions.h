@@ -24,7 +24,7 @@
  */
 #pragma once
 
-#include "Notification.h"
+#include <WebCore/Notification.h>
 
 #if ENABLE(NOTIFICATIONS)
 

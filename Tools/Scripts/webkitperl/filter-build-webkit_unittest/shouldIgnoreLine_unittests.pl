@@ -33,8 +33,8 @@ use FindBin;
 use Test::More;
 use lib File::Spec->catdir($FindBin::Bin, "..");
 
-if ($^O eq 'MSWin32') {
-    plan skip_all => 'filter-build-webkit fails to load on Windows.';
+unless ($^O eq 'darwin') {
+    plan skip_all => 'filter-build-webkit is only for macOS';
     exit 0;    
 }
 
@@ -205,7 +205,6 @@ my @libtoolSameMemberLines = split(/$INPUT_RECORD_SEPARATOR/, <<'END');
 Libtool /Users/u/Build/Debug/libWTF.a normal (in target 'WTF' from project 'WTF')
     cd /Users/u/WebKit/OpenSource/Source/WTF
     /Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Toolchains/OSX13.0.xctoolchain/usr/bin/libtool -static -arch_only arm64e -D -syslibroot /Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.Internal.sdk -L/Users/u/Build/Debug -L/Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.Internal.sdk/usr/local/lib -filelist /Users/u/Build/WTF.build/Debug/WTF.build/Objects-normal/arm64e/WTF.LinkFileList -lbmalloc -dependency_info /Users/u/Build/WTF.build/Debug/WTF.build/Objects-normal/arm64e/WTF_libtool_dependency_info.dat -o /Users/u/Build/Debug/libWTF.a
-/Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Toolchains/OSX13.0.xctoolchain/usr/bin/libtool: warning same member name (DebugHeap.o) in output file used for input files: /Users/u/Build/WTF.build/Debug/WTF.build/Objects-normal/arm64e/DebugHeap.o and: /Users/u/Build/Debug/libbmalloc.a(DebugHeap.o) due to use of basename, truncation and blank padding
 /Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Toolchains/OSX13.0.xctoolchain/usr/bin/libtool: warning same member name (Gigacage.o) in output file used for input files: /Users/u/Build/WTF.build/Debug/WTF.build/Objects-normal/arm64e/Gigacage.o and: /Users/u/Build/Debug/libbmalloc.a(Gigacage.o) due to use of basename, truncation and blank padding
 /Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Toolchains/OSX13.0.xctoolchain/usr/bin/libtool: warning same member name (Logging.o) in output file used for input files: /Users/u/Build/WTF.build/Debug/WTF.build/Objects-normal/arm64e/Logging.o and: /Users/u/Build/Debug/libbmalloc.a(Logging.o) due to use of basename, truncation and blank padding
 

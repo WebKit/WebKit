@@ -115,7 +115,7 @@ Ref<SceneKitModelLoader> loadSceneKitModel(Model& modelSource, SceneKitModelLoad
         NSURLErrorFailingURLErrorKey: modelSource.url().createNSURL().get()
     }]);
 
-    dispatch_async(dispatch_get_main_queue(), [weakClient = WeakPtr { client }, loader] {
+    dispatch_async(mainDispatchQueueSingleton(), [weakClient = WeakPtr { client }, loader] {
         auto strongClient = weakClient.get();
         if (!strongClient)
             return;

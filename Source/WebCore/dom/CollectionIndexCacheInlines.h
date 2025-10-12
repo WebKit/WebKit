@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CachedHTMLCollectionInlines.h"
-#include "CollectionIndexCache.h"
+#include <WebCore/CachedHTMLCollectionInlines.h>
+#include <WebCore/CollectionIndexCache.h>
 
 namespace WebCore {
 

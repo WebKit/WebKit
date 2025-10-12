@@ -3,9 +3,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// IndexDataManagerPerfTest:
-//   Performance test for index buffer management.
+// BitSetIteratorPerf.cpp:
+//   Performance test for bitset iterators.
 //
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "ANGLEPerfTest.h"
 

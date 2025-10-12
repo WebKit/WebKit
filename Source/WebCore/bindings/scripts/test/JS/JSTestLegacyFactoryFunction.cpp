@@ -209,7 +209,7 @@ JSValue JSTestLegacyFactoryFunction::getLegacyFactoryFunction(VM& vm, JSGlobalOb
 
 void JSTestLegacyFactoryFunction::destroy(JSC::JSCell* cell)
 {
-    JSTestLegacyFactoryFunction* thisObject = static_cast<JSTestLegacyFactoryFunction*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestLegacyFactoryFunction* thisObject = static_cast<JSTestLegacyFactoryFunction*>(cell);
     thisObject->JSTestLegacyFactoryFunction::~JSTestLegacyFactoryFunction();
 }
 
@@ -225,7 +225,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestLegacyFactoryFunctionConstructor, (JSGlobalObject
 
 JSC::GCClient::IsoSubspace* JSTestLegacyFactoryFunction::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestLegacyFactoryFunction, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestLegacyFactoryFunction, UseCustomHeapCellType::No>(vm, "JSTestLegacyFactoryFunction"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestLegacyFactoryFunction.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestLegacyFactoryFunction = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestLegacyFactoryFunction.get(); },
@@ -258,7 +258,7 @@ bool JSTestLegacyFactoryFunctionOwner::isReachableFromOpaqueRoots(JSC::Handle<JS
 
 void JSTestLegacyFactoryFunctionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestLegacyFactoryFunction = static_cast<JSTestLegacyFactoryFunction*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestLegacyFactoryFunction = static_cast<JSTestLegacyFactoryFunction*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestLegacyFactoryFunction->protectedWrapped().ptr(), jsTestLegacyFactoryFunction);
 }
@@ -271,7 +271,9 @@ extern "C" { extern void (*const __identifier("??_7TestLegacyFactoryFunction@Web
 #else
 extern "C" { extern void* _ZTVN7WebCore25TestLegacyFactoryFunctionE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestLegacyFactoryFunction>, void>> static inline void verifyVTable(TestLegacyFactoryFunction* ptr) {
+template<std::same_as<TestLegacyFactoryFunction> T>
+static inline void verifyVTable(TestLegacyFactoryFunction* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -290,8 +292,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestLegacyFac
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestLegacyFactoryFunction>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestLegacyFactoryFunction>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestLegacyFactoryFunction>(impl.ptr());
 #endif

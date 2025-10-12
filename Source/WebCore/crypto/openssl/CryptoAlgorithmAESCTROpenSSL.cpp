@@ -81,7 +81,7 @@ static std::optional<Vector<uint8_t>> crypt(int operation, const Vector<uint8_t>
     // First part
     {
         // Initialize the encryption(decryption) operation
-        if (1 != EVP_CipherInit_ex(ctx.get(), algorithm, nullptr, key.data(), counter.data(), operation))
+        if (1 != EVP_CipherInit_ex(ctx.get(), algorithm, nullptr, key.span().data(), counter.span().data(), operation))
             return std::nullopt;
 
         // Disable padding
@@ -89,11 +89,11 @@ static std::optional<Vector<uint8_t>> crypt(int operation, const Vector<uint8_t>
             return std::nullopt;
 
         // Provide the message to be encrypted(decrypted), and obtain the encrypted(decrypted) output
-        if (1 != EVP_CipherUpdate(ctx.get(), outputText.data(), &len, inputText.data(), headSize))
+        if (1 != EVP_CipherUpdate(ctx.get(), outputText.mutableSpan().data(), &len, inputText.span().data(), headSize))
             return std::nullopt;
 
         // Finalize the encryption(decryption)
-        if (1 != EVP_CipherFinal_ex(ctx.get(), outputText.data() + len, &len))
+        if (1 != EVP_CipherFinal_ex(ctx.get(), outputText.mutableSpan().subspan(len).data(), &len))
             return std::nullopt;
     }
 
@@ -104,7 +104,7 @@ static std::optional<Vector<uint8_t>> crypt(int operation, const Vector<uint8_t>
         Vector<uint8_t> remainingCounter = counterBlockHelper.counterVectorAfterOverflow();
 
         // Initialize the encryption(decryption) operation
-        if (1 != EVP_CipherInit_ex(ctx.get(), algorithm, nullptr, key.data(), remainingCounter.data(), operation))
+        if (1 != EVP_CipherInit_ex(ctx.get(), algorithm, nullptr, key.span().data(), remainingCounter.span().data(), operation))
             return std::nullopt;
 
         // Disable padding
@@ -112,11 +112,11 @@ static std::optional<Vector<uint8_t>> crypt(int operation, const Vector<uint8_t>
             return std::nullopt;
 
         // Provide the message to be encrypted(decrypted), and obtain the encrypted(decrypted) output
-        if (1 != EVP_CipherUpdate(ctx.get(), outputText.data() + headSize, &len, inputText.data() + headSize, tailSize))
+        if (1 != EVP_CipherUpdate(ctx.get(), outputText.mutableSpan().subspan(headSize).data(), &len, inputText.subspan(headSize).data(), tailSize))
             return std::nullopt;
 
         // Finalize the encryption(decryption)
-        if (1 != EVP_CipherFinal_ex(ctx.get(), outputText.data() + headSize + len, &len))
+        if (1 != EVP_CipherFinal_ex(ctx.get(), outputText.mutableSpan().subspan(headSize + len).data(), &len))
             return std::nullopt;
     }
 

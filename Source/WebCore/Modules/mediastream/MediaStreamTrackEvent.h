@@ -26,7 +26,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "Event.h"
+#include <WebCore/Event.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {

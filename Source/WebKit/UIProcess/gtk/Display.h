@@ -64,7 +64,7 @@ private:
 #endif
 
     GRefPtr<GdkDisplay> m_gdkDisplay;
-    mutable std::unique_ptr<WebCore::GLDisplay> m_glDisplay;
+    mutable RefPtr<WebCore::GLDisplay> m_glDisplay;
     mutable bool m_glInitialized { false };
     mutable bool m_glDisplayOwned { false };
 };

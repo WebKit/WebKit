@@ -36,6 +36,7 @@
 
 namespace WebKit {
 
+class BrowsingContextGroup;
 class SuspendedPageProxy;
 class WebBackForwardCache;
 class WebBackForwardCacheEntry;
@@ -43,7 +44,7 @@ class WebBackForwardListFrameItem;
 
 class WebBackForwardListItem : public API::ObjectImpl<API::Object::Type::BackForwardListItem>, public CanMakeWeakPtr<WebBackForwardListItem> {
 public:
-    static Ref<WebBackForwardListItem> create(Ref<FrameState>&&, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>);
+    static Ref<WebBackForwardListItem> create(Ref<FrameState>&&, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, BrowsingContextGroup* = nullptr);
     virtual ~WebBackForwardListItem();
 
     static WebBackForwardListItem* itemForID(WebCore::BackForwardItemIdentifier);
@@ -54,6 +55,8 @@ public:
 
     WebCore::ProcessIdentifier lastProcessIdentifier() const { return m_lastProcessIdentifier; }
     void setLastProcessIdentifier(const WebCore::ProcessIdentifier& identifier) { m_lastProcessIdentifier = identifier; }
+
+    BrowsingContextGroup* browsingContextGroup() const { return m_browsingContextGroup.get(); }
 
     Ref<FrameState> navigatedFrameState() const;
     Ref<FrameState> mainFrameState() const;
@@ -101,7 +104,7 @@ public:
 #endif
 
 private:
-    WebBackForwardListItem(Ref<FrameState>&&, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>);
+    WebBackForwardListItem(Ref<FrameState>&&, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, BrowsingContextGroup*);
 
     void removeFromBackForwardCache();
 
@@ -117,6 +120,7 @@ private:
     const WebPageProxyIdentifier m_pageID;
     WebCore::ProcessIdentifier m_lastProcessIdentifier;
     RefPtr<WebBackForwardCacheEntry> m_backForwardCacheEntry;
+    const RefPtr<BrowsingContextGroup> m_browsingContextGroup;
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     RefPtr<ViewSnapshot> m_snapshot;
 #endif

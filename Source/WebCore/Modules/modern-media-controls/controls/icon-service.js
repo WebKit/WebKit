@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,16 +74,6 @@ const iconService = new class IconService {
     }
 
     // Public
-    get shadowRoot()
-    {
-        return this.shadowRootWeakRef ? this.shadowRootWeakRef.deref() : null;
-    }
-
-    set shadowRoot(shadowRoot)
-    {
-        this.shadowRootWeakRef = new WeakRef(shadowRoot);
-    }
-
     imageForIconAndLayoutTraits(icon, layoutTraits)
     {
         const [fileName, resourceDirectory] = this._fileNameAndResourceDirectoryForIconAndLayoutTraits(icon, layoutTraits);
@@ -93,21 +83,12 @@ const iconService = new class IconService {
         if (image)
             return image;
 
-        image = this.images[path] = new Image;
-
-        // Prevent this image from being shown if it's ever attached to the DOM.
-        image.style.display = "none";
-
-        // Must attach the `<img>` to the UA shadow root before setting `src` so that `isInUserAgentShadowTree` is correct.
-        this.shadowRoot?.appendChild(image);
-
-        if (this.mediaControlsHost)
-            image.src = `data:${MimeTypes[icon.type]};base64,${this.mediaControlsHost.base64StringForIconNameAndType(fileName, icon.type)}`;
-        else
+        if (utils?.createImageForIconNameAndType)
+            image = this.images[path] = utils.createImageForIconNameAndType(fileName, icon.type);
+        else {
+            image = this.images[path] = new Image;
             image.src = `${this.directoryPath}/${path}`;
-
-        // Remove the `<img>` from the shadow root once the `src` has been set as `isInUserAgentShadowTree` has already been checked by this point.
-        image.remove();
+        }
 
         return image;
     }

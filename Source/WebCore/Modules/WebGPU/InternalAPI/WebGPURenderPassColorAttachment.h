@@ -25,30 +25,71 @@
 
 #pragma once
 
-#include "WebGPUColor.h"
-#include "WebGPUIntegralTypes.h"
-#include "WebGPULoadOp.h"
-#include "WebGPUStoreOp.h"
-#include "WebGPUTextureView.h"
+#include <WebCore/WebGPUColor.h>
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPULoadOp.h>
+#include <WebCore/WebGPUStoreOp.h>
+#include <WebCore/WebGPUTexture.h>
+#include <WebCore/WebGPUTextureView.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore::WebGPU {
 
+class Texture;
 class TextureView;
 
+using RenderPassColorAttachmentView = Variant<const WeakRef<Texture>, const WeakRef<TextureView>>;
+using RenderPassResolveAttachmentView = Variant<WeakPtr<Texture>, WeakPtr<TextureView>>;
+
 struct RenderPassColorAttachment {
-    WeakRef<TextureView> view;
+    RenderPassColorAttachmentView view;
     std::optional<IntegerCoordinate> depthSlice;
-    WeakPtr<TextureView> resolveTarget;
+    std::optional<RenderPassResolveAttachmentView> resolveTarget;
 
     std::optional<Color> clearValue;
     LoadOp loadOp { LoadOp::Load };
     StoreOp storeOp { StoreOp::Store };
 
-    Ref<TextureView> protectedView() const { return view.get(); }
-    RefPtr<TextureView> protectedResolveTarget() const { return resolveTarget.get(); }
+    const RefPtr<Texture> protectedTexture() const
+    {
+        return WTF::switchOn(view, [&](const WeakRef<Texture>& texture) -> const RefPtr<Texture> {
+            return texture.ptr();
+        }, [&](const WeakRef<TextureView>&) -> const RefPtr<Texture> {
+            return nullptr;
+        });
+    }
+    const RefPtr<TextureView> protectedView() const
+    {
+        return WTF::switchOn(view, [&](const WeakRef<Texture>&) -> const RefPtr<TextureView> {
+            return nullptr;
+        }, [&](const WeakRef<TextureView>& view) -> const RefPtr<TextureView> {
+            return view.ptr();
+        });
+    }
+    RefPtr<Texture> protectedResolveTexture() const
+    {
+        if (!resolveTarget)
+            return nullptr;
+
+        return WTF::switchOn(*resolveTarget, [&](const WeakPtr<Texture>& texture) -> const RefPtr<Texture> {
+            return texture.get();
+        }, [&](const WeakPtr<TextureView>&) -> const RefPtr<Texture> {
+            return nullptr;
+        });
+    }
+    RefPtr<TextureView> protectedResolveTarget() const
+    {
+        if (!resolveTarget)
+            return nullptr;
+
+        return WTF::switchOn(*resolveTarget, [&](const WeakPtr<Texture>&) -> const RefPtr<TextureView> {
+            return nullptr;
+        }, [&](const WeakPtr<TextureView>& view) -> const RefPtr<TextureView> {
+            return view.get();
+        });
+    }
 };
 
 } // namespace WebCore::WebGPU

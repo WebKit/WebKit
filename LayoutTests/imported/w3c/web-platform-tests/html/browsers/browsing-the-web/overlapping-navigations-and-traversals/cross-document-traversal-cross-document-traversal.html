@@ -36,16 +36,16 @@ promise_test(async t => {
   // be a replace navigation.
   iframe.contentWindow.location.search = "?1";
   await waitForLoad(iframe);
-  await delay(t, 0);
+  await delay(t, 5);
   iframe.contentWindow.location.search = "?2";
   await waitForLoad(iframe);
-  await delay(t, 0);
+  await delay(t, 5);
   iframe.contentWindow.location.search = "?3";
   await waitForLoad(iframe);
-  await delay(t, 0);
+  await delay(t, 5);
   iframe.contentWindow.history.back();
   await waitForLoad(iframe);
-  await delay(t, 0);
+  await delay(t, 5);
   assert_equals(iframe.contentWindow.location.search, "?2", "we made our way to ?2 for setup");
 
   iframe.contentWindow.history.back();
@@ -69,10 +69,10 @@ promise_test(async t => {
   // be a replace navigation.
   iframe.contentWindow.location.search = "?1";
   await waitForLoad(iframe);
-  await delay(t, 0);
+  await delay(t, 5);
   iframe.contentWindow.location.search = "?2";
   await waitForLoad(iframe);
-  await delay(t, 0);
+  await delay(t, 5);
 
   iframe.contentWindow.history.back();
   assert_equals(iframe.contentWindow.location.search, "?2", "must not go back synchronously");
@@ -95,13 +95,13 @@ promise_test(async t => {
   // be a replace navigation.
   iframe.contentWindow.location.search = "?1";
   await waitForLoad(iframe);
-  await delay(t, 0);
+  await delay(t, 5);
   iframe.contentWindow.location.search = "?2";
   await waitForLoad(iframe);
-  await delay(t, 0);
+  await delay(t, 5);
   iframe.contentWindow.location.search = "?3";
   await waitForLoad(iframe);
-  await delay(t, 0);
+  await delay(t, 5);
 
   iframe.contentWindow.history.back();
   assert_equals(iframe.contentWindow.location.search, "?3", "must not go back synchronously (1)");
@@ -127,20 +127,20 @@ promise_test(async t => {
   // be a replace navigation.
   iframe.contentWindow.location.search = "?1";
   await waitForLoad(iframe);
-  await delay(t, 0);
+  await delay(t, 5);
   iframe.contentWindow.location.search = "?2";
   await waitForLoad(iframe);
-  await delay(t, 0);
+  await delay(t, 5);
   iframe.contentWindow.location.search = "?3";
   await waitForLoad(iframe);
-  await delay(t, 0);
+  await delay(t, 5);
   iframe.contentWindow.history.back();
   await waitForLoad(iframe);
-  await delay(t, 0);
+  await delay(t, 5);
   assert_equals(iframe.contentWindow.location.search, "?2", "we made our way to ?2 for setup");
   iframe.contentWindow.history.back();
   await waitForLoad(iframe);
-  await delay(t, 0);
+  await delay(t, 5);
   assert_equals(iframe.contentWindow.location.search, "?1", "we made our way to ?1 for setup");
 
   iframe.contentWindow.history.forward();

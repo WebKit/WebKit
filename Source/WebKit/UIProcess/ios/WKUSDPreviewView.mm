@@ -106,7 +106,10 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
     [self addSubview:_thumbnailView.get()];
     [self _layoutThumbnailView];
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: <rdar://155548417> ([ Build-Failure ] [ iOS26+ ] error: 'mainScreen' is deprecated: first deprecated in iOS 26.0)
     auto screenBounds = UIScreen.mainScreen.bounds;
+ALLOW_DEPRECATED_DECLARATIONS_END
     CGFloat maxDimension = CGFloatMin(screenBounds.size.width, screenBounds.size.height);
     [_thumbnailView setMaxThumbnailSize:CGSizeMake(maxDimension, maxDimension)];
 
@@ -148,11 +151,6 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
 - (UIView *)web_contentView
 {
     return self;
-}
-
-+ (BOOL)web_requiresCustomSnapshotting
-{
-    return false;
 }
 
 - (void)web_setMinimumSize:(CGSize)size

@@ -53,13 +53,18 @@ CommandResult::CommandResult(RefPtr<JSON::Value>&& result, std::optional<ErrorCo
     if (!errorObject)
         return;
 
-    auto error = errorObject->getInteger("code"_s);
-    if (!error)
-        return;
-
     auto errorMessage = errorObject->getString("message"_s);
     if (!errorMessage)
         return;
+
+    auto error = errorObject->getInteger("code"_s);
+    if (!error) {
+        // Locally generated error bodies don't have the error code set,
+        // which comes from the InspectorProtocol used to talk to the browser.
+        if (m_errorCode == ErrorCode::UnknownError)
+            m_errorMessage = errorMessage;
+        return;
+    }
 
     switch (*error) {
     case ProtocolErrorCode::ParseError:
@@ -175,7 +180,7 @@ unsigned CommandResult::errorCodeToHTTPStatusCode(ErrorCode errorCode)
 String CommandResult::errorString() const
 {
     ASSERT(isError());
-    return errorCodeToString(m_errorCode.value());
+    return errorCodeToString(m_errorCode.value_or(ErrorCode::UnknownError));
 }
 
 String CommandResult::errorCodeToString(ErrorCode errorCode)

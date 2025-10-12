@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CSSSelector.h"
+#include <WebCore/CSSSelector.h>
 #include <iterator>
 #include <memory>
 #include <wtf/TZoneMalloc.h>
@@ -49,19 +49,19 @@ public:
     static CSSSelectorList makeCopyingSimpleSelector(const CSSSelector&);
     static CSSSelectorList makeCopyingComplexSelector(const CSSSelector&);
     static CSSSelectorList makeJoining(const CSSSelectorList&, const CSSSelectorList&);
+    static CSSSelectorList makeJoining(const Vector<const CSSSelectorList*>&);
 
     bool isEmpty() const { return !m_selectorArray; }
     const CSSSelector* first() const { return m_selectorArray.get(); }
-    static const CSSSelector* next(const CSSSelector*);
     const CSSSelector* selectorAt(size_t index) const { return &m_selectorArray[index]; }
 
     size_t indexOfNextSelectorAfter(size_t index) const
     {
-        const CSSSelector* current = selectorAt(index);
-        current = next(current);
-        if (!current)
+        const_iterator current = selectorAt(index);
+        ++current;
+        if (current == end())
             return notFound;
-        return current - m_selectorArray.get();
+        return &*current - m_selectorArray.get();
     }
 
     struct const_iterator {
@@ -75,12 +75,28 @@ public:
         pointer operator->() const { return m_ptr; }
         bool operator==(const const_iterator&) const = default;
         const_iterator() = default;
-        const_iterator(pointer ptr) : m_ptr(ptr) { };
+        const_iterator(pointer ptr)
+            : m_ptr(ptr)
+        { }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         const_iterator& operator++()
         {
-            m_ptr = CSSSelectorList::next(m_ptr);
+            // Skip subparts of compound selectors.
+            while (!m_ptr->isFirstInComplexSelector())
+                ++m_ptr;
+            m_ptr = m_ptr->isLastInSelectorList() ? nullptr : m_ptr + 1;
             return *this;
         }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+        const_iterator operator++(int)
+        {
+            const_iterator temp = *this;
+            ++*this;
+            return temp;
+        }
+
     private:
         pointer m_ptr = nullptr;
     };
@@ -99,19 +115,9 @@ public:
     CSSSelectorList& operator=(CSSSelectorList&&) = default;
 
 private:
-    // End of a multipart selector is indicated by m_isLastInTagHistory bit in the last item.
+    // End of a multipart selector is indicated by m_isLastInComplexSelector bit in the last item.
     // End of the array is indicated by m_isLastInSelectorList bit in the last item.
     UniqueArray<CSSSelector> m_selectorArray;
 };
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-inline const CSSSelector* CSSSelectorList::next(const CSSSelector* current)
-{
-    // Skip subparts of compound selectors.
-    while (!current->isLastInTagHistory())
-        current++;
-    return current->isLastInSelectorList() ? 0 : current + 1;
-}
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 } // namespace WebCore

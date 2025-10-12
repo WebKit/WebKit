@@ -38,7 +38,7 @@ namespace FTL {
 
 class LazySlowPath;
 
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObject*, ExitTimeObjectMaterialization*, EncodedJSValue*));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (JSGlobalObject*, ExitTimeObjectMaterialization*, EncodedJSValue*));
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalObject*, ExitTimeObjectMaterialization*, EncodedJSValue*, EncodedJSValue*));
 

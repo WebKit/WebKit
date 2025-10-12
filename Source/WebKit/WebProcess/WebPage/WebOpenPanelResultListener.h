@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,7 @@ private:
     WebOpenPanelResultListener(WebPage&, Ref<WebCore::FileChooser>&&);
 
     WeakPtr<WebPage> m_page;
-    Ref<WebCore::FileChooser> m_fileChooser;
+    const Ref<WebCore::FileChooser> m_fileChooser;
 };
 
 } // namespace WebKit

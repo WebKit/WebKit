@@ -29,9 +29,10 @@
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
 
 #import "Logging.h"
+#import <wtf/CheckedPtr.h>
 #import <wtf/LoggerHelper.h>
 #import <wtf/NeverDestroyed.h>
-#include <wtf/TZoneMallocInlines.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -75,8 +76,9 @@ void SharedRoutingArbitrator::beginRoutingArbitrationForToken(const SharedRoutin
     if (m_setupArbitrationOngoing) {
         ALWAYS_LOG_IF(m_logger, identifier, "enqueing callback, arbitration ongoing");
         m_enqueuedCallbacks.append([this, weakToken = WeakPtr { token }, callback = WTFMove(callback), identifier = WTFMove(identifier)] (RoutingArbitrationError error, DefaultRouteChanged routeChanged) mutable {
-            if (error == RoutingArbitrationError::None && weakToken)
-                m_tokens.add(*weakToken);
+            CheckedPtr token = weakToken.get();
+            if (error == RoutingArbitrationError::None && token)
+                m_tokens.add(*token);
 
             ALWAYS_LOG_IF(m_logger, identifier, "pending arbitration finished, error = ", error, ", routeChanged = ", routeChanged);
             callback(error, routeChanged);
@@ -94,7 +96,7 @@ void SharedRoutingArbitrator::beginRoutingArbitrationForToken(const SharedRoutin
         }
 
         ALWAYS_LOG_IF(m_logger, identifier, "leaving current arbitration");
-        [[PAL::getAVAudioRoutingArbiterClass() sharedRoutingArbiter] leaveArbitration];
+        [[PAL::getAVAudioRoutingArbiterClassSingleton() sharedRoutingArbiter] leaveArbitration];
     }
 
     m_currentCategory = requestedCategory;
@@ -116,13 +118,14 @@ void SharedRoutingArbitrator::beginRoutingArbitrationForToken(const SharedRoutin
 
     m_setupArbitrationOngoing = true;
     m_enqueuedCallbacks.append([this, weakToken = WeakPtr { token }, callback = WTFMove(callback)] (RoutingArbitrationError error, DefaultRouteChanged routeChanged) mutable {
-        if (error == RoutingArbitrationError::None && weakToken)
-            m_tokens.add(*weakToken);
+        CheckedPtr token = weakToken.get();
+        if (error == RoutingArbitrationError::None && token)
+            m_tokens.add(*token);
 
         callback(error, routeChanged);
     });
 
-    [[PAL::getAVAudioRoutingArbiterClass() sharedRoutingArbiter] beginArbitrationWithCategory:arbitrationCategory completionHandler:[this, identifier = WTFMove(identifier)](BOOL defaultDeviceChanged, NSError * _Nullable error) mutable {
+    [[PAL::getAVAudioRoutingArbiterClassSingleton() sharedRoutingArbiter] beginArbitrationWithCategory:arbitrationCategory completionHandler:[this, identifier = WTFMove(identifier)](BOOL defaultDeviceChanged, NSError * _Nullable error) mutable {
         callOnMainRunLoop([this, defaultDeviceChanged, error = retainPtr(error), identifier = WTFMove(identifier)] {
             if (error)
                 ERROR_LOG(identifier, error.get(), ", routeChanged = ", !!defaultDeviceChanged);
@@ -154,13 +157,13 @@ void SharedRoutingArbitrator::endRoutingArbitrationForToken(const SharedRoutingA
 
     m_enqueuedCallbacks.clear();
     m_currentCategory.reset();
-    [[PAL::getAVAudioRoutingArbiterClass() sharedRoutingArbiter] leaveArbitration];
+    [[PAL::getAVAudioRoutingArbiterClassSingleton() sharedRoutingArbiter] leaveArbitration];
 }
 
 void SharedRoutingArbitrator::setLogger(const Logger& logger)
 {
     if (!m_logger)
-        m_logger = &logger;
+        m_logger = logger;
 }
 
 const Logger& SharedRoutingArbitrator::logger()

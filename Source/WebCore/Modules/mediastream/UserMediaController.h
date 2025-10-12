@@ -27,9 +27,9 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "Exception.h"
-#include "Page.h"
-#include "UserMediaClient.h"
+#include <WebCore/Exception.h>
+#include <WebCore/Page.h>
+#include <WebCore/UserMediaClient.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
@@ -41,10 +41,9 @@ class UserMediaRequest;
 class UserMediaController : public Supplement<Page> {
     WTF_MAKE_TZONE_ALLOCATED(UserMediaController);
 public:
-    explicit UserMediaController(UserMediaClient*);
-    ~UserMediaController();
+    explicit UserMediaController(Ref<UserMediaClient>&&);
 
-    UserMediaClient* client() const { return m_client; }
+    UserMediaClient* client() const { return m_client.get(); }
 
     void requestUserMediaAccess(UserMediaRequest&);
     void cancelUserMediaAccessRequest(UserMediaRequest&);
@@ -65,10 +64,12 @@ public:
     void voiceActivityDetected();
 
     WEBCORE_EXPORT static ASCIILiteral supplementName();
-    static UserMediaController* from(Page* page) { return static_cast<UserMediaController*>(Supplement<Page>::from(page, supplementName())); }
+    static UserMediaController* from(Page* page) { return downcast<UserMediaController>(Supplement<Page>::from(page, supplementName())); }
 
 private:
-    UserMediaClient* m_client;
+    bool isUserMediaController() const final { return true; }
+
+    RefPtr<UserMediaClient> m_client;
 
     WeakHashSet<Document, WeakPtrImplWithEventTargetData> m_voiceActivityDocuments;
     bool m_shouldListenToVoiceActivity { false };
@@ -76,35 +77,45 @@ private:
 
 inline void UserMediaController::requestUserMediaAccess(UserMediaRequest& request)
 {
-    m_client->requestUserMediaAccess(request);
+    if (RefPtr mediaClient = m_client)
+        mediaClient->requestUserMediaAccess(request);
 }
 
 inline void UserMediaController::cancelUserMediaAccessRequest(UserMediaRequest& request)
 {
-    m_client->cancelUserMediaAccessRequest(request);
+    if (RefPtr mediaClient = m_client)
+        mediaClient->cancelUserMediaAccessRequest(request);
 }
 
 inline void UserMediaController::enumerateMediaDevices(Document& document, UserMediaClient::EnumerateDevicesCallback&& completionHandler)
 {
-    m_client->enumerateMediaDevices(document, WTFMove(completionHandler));
+    if (RefPtr mediaClient = m_client)
+        mediaClient->enumerateMediaDevices(document, WTFMove(completionHandler));
 }
-
 
 inline UserMediaClient::DeviceChangeObserverToken UserMediaController::addDeviceChangeObserver(Function<void()>&& observer)
 {
-    return m_client->addDeviceChangeObserver(WTFMove(observer));
+    if (RefPtr mediaClient = m_client)
+        return mediaClient->addDeviceChangeObserver(WTFMove(observer));
+    return UserMediaClient::DeviceChangeObserverToken { 0 };
 }
 
 inline void UserMediaController::removeDeviceChangeObserver(UserMediaClient::DeviceChangeObserverToken token)
 {
-    m_client->removeDeviceChangeObserver(token);
+    if (RefPtr mediaClient = m_client)
+        mediaClient->removeDeviceChangeObserver(token);
 }
 
 inline void UserMediaController::updateCaptureState(const Document& document, bool isActive, MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
-    m_client->updateCaptureState(document, isActive, kind, WTFMove(completionHandler));
+    if (RefPtr mediaClient = m_client)
+        mediaClient->updateCaptureState(document, isActive, kind, WTFMove(completionHandler));
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::UserMediaController)
+    static bool isType(const WebCore::SupplementBase& supplement) { return supplement.isUserMediaController(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(MEDIA_STREAM)

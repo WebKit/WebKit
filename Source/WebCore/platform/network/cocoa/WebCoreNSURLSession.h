@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "RangeResponseGenerator.h"
-#import "SecurityOrigin.h"
 #import <Foundation/NSURLSession.h>
+#import <WebCore/RangeResponseGenerator.h>
+#import <WebCore/SecurityOrigin.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/HashSet.h>
 #import <wtf/Lock.h>
@@ -77,9 +77,10 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     WeakObjCPtr<id<NSURLSessionDelegate>> _delegate;
     RetainPtr<NSOperationQueue> _queue;
     RetainPtr<NSString> _sessionDescription;
+    RetainPtr<NSURLSessionConfiguration> _configuration;
     Lock _dataTasksLock;
-    UncheckedKeyHashSet<RetainPtr<WebCoreNSURLSessionDataTask>> _dataTasks WTF_GUARDED_BY_LOCK(_dataTasksLock);
-    UncheckedKeyHashSet<RefPtr<WebCore::SecurityOrigin>> _origins WTF_GUARDED_BY_LOCK(_dataTasksLock);
+    HashSet<RetainPtr<WebCoreNSURLSessionDataTask>> _dataTasks WTF_GUARDED_BY_LOCK(_dataTasksLock);
+    HashSet<RefPtr<WebCore::SecurityOrigin>> _origins WTF_GUARDED_BY_LOCK(_dataTasksLock);
     BOOL _invalidated; // Access on multiple thread, must be accessed via ObjC property.
     NSUInteger _nextTaskIdentifier;
     RefPtr<WTF::WorkQueue> _internalQueue;
@@ -87,10 +88,13 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     RefPtr<WebCore::RangeResponseGenerator> _rangeResponseGenerator; // Only created/accessed on _targetQueue
 }
 - (id)initWithResourceLoader:(WebCore::PlatformMediaResourceLoader&)loader delegate:(id<NSURLSessionTaskDelegate>)delegate delegateQueue:(NSOperationQueue*)queue;
-@property (readonly, retain) NSOperationQueue *delegateQueue;
+/* FIXME: This is a safer cpp false positive (rdar://161063702). */
+@property (readonly, retain) NSOperationQueue *delegateQueue SUPPRESS_UNRETAINED_MEMBER;
 @property (nullable, readonly) id <NSURLSessionDelegate> delegate;
-@property (readonly, copy) NSURLSessionConfiguration *configuration;
-@property (copy) NSString *sessionDescription;
+/* FIXME: This is a safer cpp false positive (rdar://161063702). */
+@property (readonly, copy) NSURLSessionConfiguration *configuration SUPPRESS_UNRETAINED_MEMBER;
+/* FIXME: This is a safer cpp false positive (rdar://161063702). */
+@property (copy) NSString *sessionDescription SUPPRESS_UNRETAINED_MEMBER;
 @property (readonly) BOOL didPassCORSAccessChecks;
 @property (assign, atomic) WebCoreNSURLSessionCORSAccessCheckResults corsResults;
 @property (assign, atomic) BOOL invalidated;
@@ -150,16 +154,21 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 }
 
 @property NSUInteger taskIdentifier;
-@property (nullable, readonly, copy) NSURLRequest *originalRequest;
-@property (nullable, readonly, copy) NSURLRequest *currentRequest;
-@property (nullable, readonly, copy) NSURLResponse *response;
+/* FIXME: This is a safer cpp false positive (rdar://161063702). */
+@property (nullable, readonly, copy) NSURLRequest *originalRequest SUPPRESS_UNRETAINED_MEMBER;
+/* FIXME: This is a safer cpp false positive (rdar://161063702). */
+@property (nullable, readonly, copy) NSURLRequest *currentRequest SUPPRESS_UNRETAINED_MEMBER;
+/* FIXME: This is a safer cpp false positive (rdar://161063702). */
+@property (nullable, readonly, copy) NSURLResponse *response SUPPRESS_UNRETAINED_MEMBER;
 @property (assign, atomic) int64_t countOfBytesReceived;
 @property int64_t countOfBytesSent;
 @property int64_t countOfBytesExpectedToSend;
 @property int64_t countOfBytesExpectedToReceive;
 @property (readonly) NSURLSessionTaskState state;
-@property (nullable, readonly, copy) NSError *error;
-@property (nullable, copy) NSString *taskDescription;
+/* FIXME: This is a safer cpp false positive (rdar://161063702). */
+@property (nullable, readonly, copy) NSError *error SUPPRESS_UNRETAINED_MEMBER;
+/* FIXME: This is a safer cpp false positive (rdar://161063702). */
+@property (nullable, copy) NSString *taskDescription SUPPRESS_UNRETAINED_MEMBER;
 @property float priority;
 - (void)cancel;
 - (void)suspend;

@@ -39,8 +39,8 @@ static const Seconds responsivenessTimeout { 90_s };
 BackgroundProcessResponsivenessTimer::BackgroundProcessResponsivenessTimer(WebProcessProxy& webProcessProxy)
     : m_webProcessProxy(webProcessProxy)
     , m_checkingInterval(initialCheckingInterval)
-    , m_responsivenessCheckTimer(RunLoop::main(), this, &BackgroundProcessResponsivenessTimer::responsivenessCheckTimerFired)
-    , m_timeoutTimer(RunLoop::main(), this, &BackgroundProcessResponsivenessTimer::timeoutTimerFired)
+    , m_responsivenessCheckTimer(RunLoop::mainSingleton(), "BackgroundProcessResponsivenessTimer::ResponsivenessCheckTimer"_s, this, &BackgroundProcessResponsivenessTimer::responsivenessCheckTimerFired)
+    , m_timeoutTimer(RunLoop::mainSingleton(), "BackgroundProcessResponsivenessTimer:TimeoutTimer"_s, this, &BackgroundProcessResponsivenessTimer::timeoutTimerFired)
 {
 }
 
@@ -144,7 +144,7 @@ void BackgroundProcessResponsivenessTimer::setResponsive(bool isResponsive)
 bool BackgroundProcessResponsivenessTimer::shouldBeActive() const
 {
 #if !USE(RUNNINGBOARD)
-    auto webProcess = protectedWebProcessProxy();
+    Ref webProcess = m_webProcessProxy.get();
     if (webProcess->visiblePageCount())
         return false;
     if (webProcess->throttler().isSuspended())

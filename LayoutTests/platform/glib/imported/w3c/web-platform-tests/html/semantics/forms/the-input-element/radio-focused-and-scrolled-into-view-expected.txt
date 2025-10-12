@@ -1,0 +1,6 @@
+Radio buttons should scroll into view when focused (if off-screen)
+
+
+
+PASS Focusing offscreen radio via keyboard should scroll it into view
+

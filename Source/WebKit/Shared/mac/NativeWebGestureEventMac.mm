@@ -68,7 +68,7 @@ std::optional<NativeWebGestureEvent> NativeWebGestureEvent::create(NSEvent *even
 
 NativeWebGestureEvent::NativeWebGestureEvent(WebEventType type, NSEvent *event, NSView *view)
     : WebGestureEvent(
-        { type, OptionSet<WebEventModifier> { }, WebCore::eventTimeStampSince1970(event.timestamp) },
+        { type, OptionSet<WebEventModifier> { }, MonotonicTime::fromRawSeconds(event.timestamp) },
         WebCore::IntPoint(pointForEvent(event, view)),
         event.type == NSEventTypeMagnify ? event.magnification : 0,
         event.type == NSEventTypeRotate ? event.rotation : 0)

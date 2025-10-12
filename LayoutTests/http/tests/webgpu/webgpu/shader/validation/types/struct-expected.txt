@@ -33,19 +33,7 @@ PASS :structures:case="array_u32"
 PASS :structures:case="array_u32_not_last"
 PASS :structures:case="array_u32_override"
 PASS :structures:case="structure"
-FAIL :structures:case="structure_structure_rta" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-        struct S { x : array<u32> }
-        struct T { x : S }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/struct.spec.js:292:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
+PASS :structures:case="structure_structure_rta"
 PASS :structures:case="pointer"
 PASS :structures:case="texture"
 PASS :structures:case="sampler"

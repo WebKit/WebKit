@@ -9,16 +9,19 @@
  */
 #include "modules/remote_bitrate_estimator/aimd_rate_control.h"
 
+#include <optional>
+
+#include "api/field_trials.h"
+#include "api/transport/bandwidth_usage.h"
+#include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "test/explicit_key_value_config.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
-
-using ::webrtc::test::ExplicitKeyValueConfig;
 
 constexpr Timestamp kInitialTime = Timestamp::Millis(123'456);
 
@@ -32,26 +35,26 @@ constexpr double kFractionAfterOveruse = 0.85;
 }  // namespace
 
 TEST(AimdRateControlTest, MinNearMaxIncreaseRateOnLowBandwith) {
-  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""));
+  AimdRateControl aimd_rate_control(CreateTestFieldTrials());
   aimd_rate_control.SetEstimate(DataRate::BitsPerSec(30'000), kInitialTime);
   EXPECT_EQ(aimd_rate_control.GetNearMaxIncreaseRateBpsPerSecond(), 4'000);
 }
 
 TEST(AimdRateControlTest, NearMaxIncreaseRateIs5kbpsOn90kbpsAnd200msRtt) {
-  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""));
+  AimdRateControl aimd_rate_control(CreateTestFieldTrials());
   aimd_rate_control.SetEstimate(DataRate::BitsPerSec(90'000), kInitialTime);
   EXPECT_EQ(aimd_rate_control.GetNearMaxIncreaseRateBpsPerSecond(), 5'000);
 }
 
 TEST(AimdRateControlTest, NearMaxIncreaseRateIs5kbpsOn60kbpsAnd100msRtt) {
-  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""));
+  AimdRateControl aimd_rate_control(CreateTestFieldTrials());
   aimd_rate_control.SetEstimate(DataRate::BitsPerSec(60'000), kInitialTime);
   aimd_rate_control.SetRtt(TimeDelta::Millis(100));
   EXPECT_EQ(aimd_rate_control.GetNearMaxIncreaseRateBpsPerSecond(), 5'000);
 }
 
 TEST(AimdRateControlTest, GetIncreaseRateAndBandwidthPeriod) {
-  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""));
+  AimdRateControl aimd_rate_control(CreateTestFieldTrials());
   constexpr DataRate kBitrate = DataRate::BitsPerSec(300'000);
   aimd_rate_control.SetEstimate(kBitrate, kInitialTime);
   aimd_rate_control.Update({BandwidthUsage::kBwOverusing, kBitrate},
@@ -62,7 +65,7 @@ TEST(AimdRateControlTest, GetIncreaseRateAndBandwidthPeriod) {
 }
 
 TEST(AimdRateControlTest, BweLimitedByAckedBitrate) {
-  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""));
+  AimdRateControl aimd_rate_control(CreateTestFieldTrials());
   constexpr DataRate kAckedBitrate = DataRate::BitsPerSec(10'000);
   Timestamp now = kInitialTime;
   aimd_rate_control.SetEstimate(kAckedBitrate, now);
@@ -76,7 +79,7 @@ TEST(AimdRateControlTest, BweLimitedByAckedBitrate) {
 }
 
 TEST(AimdRateControlTest, BweNotLimitedByDecreasingAckedBitrate) {
-  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""));
+  AimdRateControl aimd_rate_control(CreateTestFieldTrials());
   constexpr DataRate kAckedBitrate = DataRate::BitsPerSec(10'000);
   Timestamp now = kInitialTime;
   aimd_rate_control.SetEstimate(kAckedBitrate, now);
@@ -97,7 +100,7 @@ TEST(AimdRateControlTest, BweNotLimitedByDecreasingAckedBitrate) {
 }
 
 TEST(AimdRateControlTest, DefaultPeriodUntilFirstOveruse) {
-  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""));
+  AimdRateControl aimd_rate_control(CreateTestFieldTrials());
   aimd_rate_control.SetStartBitrate(DataRate::KilobitsPerSec(300));
   EXPECT_EQ(aimd_rate_control.GetExpectedBandwidthPeriod(), kDefaultPeriod);
   aimd_rate_control.Update(
@@ -107,7 +110,7 @@ TEST(AimdRateControlTest, DefaultPeriodUntilFirstOveruse) {
 }
 
 TEST(AimdRateControlTest, ExpectedPeriodAfterTypicalDrop) {
-  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""));
+  AimdRateControl aimd_rate_control(CreateTestFieldTrials());
   // The rate increase at 216 kbps should be 12 kbps. If we drop from
   // 216 + 4*12 = 264 kbps, it should take 4 seconds to recover. Since we
   // back off to 0.85*acked_rate-5kbps, the acked bitrate needs to be 260
@@ -127,7 +130,7 @@ TEST(AimdRateControlTest, ExpectedPeriodAfterTypicalDrop) {
 }
 
 TEST(AimdRateControlTest, BandwidthPeriodIsNotBelowMin) {
-  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""));
+  AimdRateControl aimd_rate_control(CreateTestFieldTrials());
   constexpr DataRate kInitialBitrate = DataRate::BitsPerSec(10'000);
   Timestamp now = kInitialTime;
   aimd_rate_control.SetEstimate(kInitialBitrate, now);
@@ -140,7 +143,7 @@ TEST(AimdRateControlTest, BandwidthPeriodIsNotBelowMin) {
 }
 
 TEST(AimdRateControlTest, BandwidthPeriodIsNotAboveMaxNoSmoothingExp) {
-  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""));
+  AimdRateControl aimd_rate_control(CreateTestFieldTrials());
   constexpr DataRate kInitialBitrate = DataRate::BitsPerSec(10'010'000);
   Timestamp now = kInitialTime;
   aimd_rate_control.SetEstimate(kInitialBitrate, now);
@@ -153,7 +156,7 @@ TEST(AimdRateControlTest, BandwidthPeriodIsNotAboveMaxNoSmoothingExp) {
 }
 
 TEST(AimdRateControlTest, SendingRateBoundedWhenThroughputNotEstimated) {
-  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""));
+  AimdRateControl aimd_rate_control(CreateTestFieldTrials());
   constexpr DataRate kInitialBitrate = DataRate::BitsPerSec(123'000);
   Timestamp now = kInitialTime;
   aimd_rate_control.Update({BandwidthUsage::kBwNormal, kInitialBitrate}, now);
@@ -176,8 +179,8 @@ TEST(AimdRateControlTest, EstimateDoesNotIncreaseInAlr) {
   // When alr is detected, the delay based estimator is not allowed to increase
   // bwe since there will be no feedback from the network if the new estimate
   // is correct.
-  ExplicitKeyValueConfig field_trials(
-      "WebRTC-DontIncreaseDelayBasedBweInAlr/Enabled/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-DontIncreaseDelayBasedBweInAlr/Enabled/");
   AimdRateControl aimd_rate_control(field_trials, /*send_side=*/true);
   Timestamp now = kInitialTime;
   constexpr DataRate kInitialBitrate = DataRate::BitsPerSec(123'000);
@@ -194,8 +197,8 @@ TEST(AimdRateControlTest, EstimateDoesNotIncreaseInAlr) {
 }
 
 TEST(AimdRateControlTest, SetEstimateIncreaseBweInAlr) {
-  ExplicitKeyValueConfig field_trials(
-      "WebRTC-DontIncreaseDelayBasedBweInAlr/Enabled/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-DontIncreaseDelayBasedBweInAlr/Enabled/");
   AimdRateControl aimd_rate_control(field_trials, /*send_side=*/true);
   constexpr DataRate kInitialBitrate = DataRate::BitsPerSec(123'000);
   aimd_rate_control.SetEstimate(kInitialBitrate, kInitialTime);
@@ -206,7 +209,7 @@ TEST(AimdRateControlTest, SetEstimateIncreaseBweInAlr) {
 }
 
 TEST(AimdRateControlTest, SetEstimateUpperLimitedByNetworkEstimate) {
-  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""),
+  AimdRateControl aimd_rate_control(CreateTestFieldTrials(),
                                     /*send_side=*/true);
   aimd_rate_control.SetEstimate(DataRate::BitsPerSec(300'000), kInitialTime);
   NetworkStateEstimate network_estimate;
@@ -219,7 +222,7 @@ TEST(AimdRateControlTest, SetEstimateUpperLimitedByNetworkEstimate) {
 
 TEST(AimdRateControlTest,
      SetEstimateDefaultUpperLimitedByCurrentBitrateIfNetworkEstimateIsLow) {
-  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""),
+  AimdRateControl aimd_rate_control(CreateTestFieldTrials(),
                                     /*send_side=*/true);
   aimd_rate_control.SetEstimate(DataRate::BitsPerSec(500'000), kInitialTime);
   ASSERT_EQ(aimd_rate_control.LatestEstimate(), DataRate::BitsPerSec(500'000));
@@ -234,7 +237,7 @@ TEST(AimdRateControlTest,
 TEST(AimdRateControlTest,
      SetEstimateNotUpperLimitedByCurrentBitrateIfNetworkEstimateIsLowIf) {
   AimdRateControl aimd_rate_control(
-      ExplicitKeyValueConfig(
+      CreateTestFieldTrials(
           "WebRTC-Bwe-EstimateBoundedIncrease/c_upper:false/"),
       /*send_side=*/true);
 
@@ -249,7 +252,7 @@ TEST(AimdRateControlTest,
 }
 
 TEST(AimdRateControlTest, SetEstimateLowerLimitedByNetworkEstimate) {
-  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""),
+  AimdRateControl aimd_rate_control(CreateTestFieldTrials(),
                                     /*send_side=*/true);
   NetworkStateEstimate network_estimate;
   network_estimate.link_capacity_lower = DataRate::BitsPerSec(400'000);
@@ -262,7 +265,7 @@ TEST(AimdRateControlTest, SetEstimateLowerLimitedByNetworkEstimate) {
 
 TEST(AimdRateControlTest,
      SetEstimateIgnoredIfLowerThanNetworkEstimateAndCurrent) {
-  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""),
+  AimdRateControl aimd_rate_control(CreateTestFieldTrials(),
                                     /*send_side=*/true);
   aimd_rate_control.SetEstimate(DataRate::KilobitsPerSec(200), kInitialTime);
   ASSERT_EQ(aimd_rate_control.LatestEstimate().kbps(), 200);
@@ -278,8 +281,8 @@ TEST(AimdRateControlTest,
 TEST(AimdRateControlTest, EstimateIncreaseWhileNotInAlr) {
   // Allow the estimate to increase as long as alr is not detected to ensure
   // tha BWE can not get stuck at a certain bitrate.
-  ExplicitKeyValueConfig field_trials(
-      "WebRTC-DontIncreaseDelayBasedBweInAlr/Enabled/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-DontIncreaseDelayBasedBweInAlr/Enabled/");
   AimdRateControl aimd_rate_control(field_trials, /*send_side=*/true);
   Timestamp now = kInitialTime;
   constexpr DataRate kInitialBitrate = DataRate::BitsPerSec(123'000);
@@ -294,8 +297,8 @@ TEST(AimdRateControlTest, EstimateIncreaseWhileNotInAlr) {
 }
 
 TEST(AimdRateControlTest, EstimateNotLimitedByNetworkEstimateIfDisabled) {
-  ExplicitKeyValueConfig field_trials(
-      "WebRTC-Bwe-EstimateBoundedIncrease/Disabled/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-Bwe-EstimateBoundedIncrease/Disabled/");
   AimdRateControl aimd_rate_control(field_trials, /*send_side=*/true);
   Timestamp now = kInitialTime;
   constexpr DataRate kInitialBitrate = DataRate::BitsPerSec(123'000);

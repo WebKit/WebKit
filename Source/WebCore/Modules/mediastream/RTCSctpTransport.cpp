@@ -60,6 +60,11 @@ RTCSctpTransport::~RTCSctpTransport()
     m_backend->unregisterClient();
 }
 
+ScriptExecutionContext* RTCSctpTransport::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
 void RTCSctpTransport::stop()
 {
     m_state = RTCSctpTransportState::Closed;

@@ -61,16 +61,18 @@
     
     sendTouchStart(100, 100);
     window.removeEventListener("touchstart", base, false);
+
+    var floatPrecision = 0.00001;
     
     // Just zoomed.
     function justZoomed(e)
     {
         event = e;
         debug("\nJust zoomed");
-        shouldBe("event.touches[0].clientX", "83");
-        shouldBe("event.touches[0].clientY", "83");
-        shouldBe("event.touches[0].pageX", "83");
-        shouldBe("event.touches[0].pageY", "83");
+        shouldBeCloseTo("event.touches[0].clientX", 83.33333, floatPrecision);
+        shouldBeCloseTo("event.touches[0].clientY", 83.33333, floatPrecision);
+        shouldBeCloseTo("event.touches[0].pageX", 83.33333, floatPrecision);
+        shouldBeCloseTo("event.touches[0].pageY", 83.33333, floatPrecision);
     }
     window.addEventListener("touchstart", justZoomed, false);
     zoomPageIn();
@@ -99,10 +101,10 @@
     {
         event = e;
         debug("\nZoomed and scrolled");
-        shouldBe("event.touches[0].clientX", "84");
-        shouldBe("event.touches[0].clientY", "84");
-        shouldBe("event.touches[0].pageX", "133");
-        shouldBe("event.touches[0].pageY", "133");
+        shouldBeCloseTo("event.touches[0].clientX", 83.33333, floatPrecision);
+        shouldBeCloseTo("event.touches[0].clientY", 83.33333, floatPrecision);
+        shouldBeCloseTo("event.touches[0].pageX", 133.33333, floatPrecision);
+        shouldBeCloseTo("event.touches[0].pageY", 133.33333, floatPrecision);
     }
     window.addEventListener("touchstart", zoomedAndScrolled, false);
     zoomPageIn();

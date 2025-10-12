@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2016 Canon Inc.
  * Copyright (C) 2015 Igalia S.L.
+ * Copyright (C) 2025 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -28,16 +29,14 @@
  */
 
 [
+    EnabledBySetting=ReadableByteStreamAPIEnabled,
+    JSCustomMarkFunction,
     Exposed=*,
-    JSBuiltin,
-    PrivateIdentifier
 ] interface ReadableByteStreamController {
-    constructor(ReadableStream stream, any underlyingByteSource, unsigned long highWaterMark);
+    [ImplementedAs=byobRequestForBindings] readonly attribute ReadableStreamBYOBRequest? byobRequest;
+    readonly attribute unrestricted double? desiredSize;
 
-    [NotEnumerable] undefined enqueue(optional any chunk);
-    [NotEnumerable] undefined close();
-    [NotEnumerable] undefined error(optional any error);
-
-    [NotEnumerable] readonly attribute ReadableStreamBYOBRequest byobRequest;
-    [NotEnumerable] readonly attribute double desiredSize;
+    [ImplementedAs=closeForBindings, CallWith=CurrentGlobalObject] undefined close();
+    [CallWith=CurrentGlobalObject, ImplementedAs=enqueueForBindings] undefined enqueue(ArrayBufferView chunk);
+    [CallWith=CurrentGlobalObject, ImplementedAs=errorForBindings] undefined error(optional any error);
 };

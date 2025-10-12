@@ -31,6 +31,7 @@
 #include "AudioSampleBufferConverter.h"
 #include "AudioSampleFormat.h"
 #include "CAAudioStreamDescription.h"
+#include "Logging.h"
 #include "MediaSampleAVFObjC.h"
 #include "MediaUtilities.h"
 #include "PlatformRawAudioData.h"
@@ -99,7 +100,7 @@ private:
     bool m_isClosed WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
     Vector<uint8_t> m_codecDescription WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     std::optional<CAAudioStreamDescription> m_inputDescription WTF_GUARDED_BY_CAPABILITY(queueSingleton());
-    RetainPtr<CMFormatDescriptionRef> m_inputFormatDescription WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    const RetainPtr<CMFormatDescriptionRef> m_inputFormatDescription WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     std::optional<CAAudioStreamDescription> m_outputDescription WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     bool mIsAAC WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false }; // indicate if we need to strip the ADTS header.
 };
@@ -272,7 +273,7 @@ String InternalAudioDecoderCocoa::initialize(const String& codecName, const Audi
         bool succeeded = false;
         if (config.description.size()) {
             UInt32 size = sizeof(asbd);
-            succeeded = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, config.description.size(), config.description.data(), &size, &asbd) == noErr;
+            succeeded = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, config.description.size(), config.description.span().data(), &size, &asbd) == noErr;
             if (codec == kAudioFormatOpus) {
                 if (auto cookie = parseOpusPrivateData(config.description, { }))
                     preSkip = cookie->preSkip;
@@ -288,7 +289,7 @@ String InternalAudioDecoderCocoa::initialize(const String& codecName, const Audi
     } else
         m_inputDescription = CAAudioStreamDescription { double(config.sampleRate), uint32_t(config.numberOfChannels), *format, CAAudioStreamDescription::IsInterleaved::Yes };
 
-    m_inputFormatDescription = createAudioFormatDescription(*m_inputDescription, m_codecDescription.span());
+    lazyInitialize(m_inputFormatDescription, createAudioFormatDescription(*m_inputDescription, m_codecDescription.span()));
 
     // FIXME: we choose to create interleaved AudioData as tests incorrectly requires it (planar is more compatible with WebAudio)
     // https://github.com/w3c/webcodecs/issues/859

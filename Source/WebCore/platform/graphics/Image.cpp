@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2004-2025 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,6 @@
 #include "GraphicsContext.h"
 #include "ImageAdapter.h"
 #include "ImageObserver.h"
-#include "Length.h"
 #include "MIMETypeRegistry.h"
 #include "NativeImage.h"
 #include "SVGImage.h"
@@ -399,11 +398,11 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect
     return ImageDrawResult::DidDraw;
 }
 
-void Image::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
+void Image::computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
 {
     intrinsicRatio = size();
-    intrinsicWidth = Length(intrinsicRatio.width(), LengthType::Fixed);
-    intrinsicHeight = Length(intrinsicRatio.height(), LengthType::Fixed);
+    intrinsicWidth = intrinsicRatio.width();
+    intrinsicHeight = intrinsicRatio.height();
 }
 
 FloatSize Image::sourceSize(ImageOrientation orientation) const

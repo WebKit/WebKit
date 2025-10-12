@@ -1,6 +1,5 @@
 /*---
 defines: [assertNear]
-allow_unused: True
 ---*/
 
 // The nearest representable values to +1.0.
@@ -51,10 +50,10 @@ const ONE_MINUS_EPSILON = 1 - Math.pow(2, -53);  // 1.0000000000000002
     ENDIAN = 0;  // try little-endian first
     if (diff(2, 4) === 0x100000)  // exact wrong answer we'll get on a big-endian platform
         ENDIAN = 1;
-    assertEq(diff(2,4), 0x10000000000000);
-    assertEq(diff(0, Number.MIN_VALUE), 1);
-    assertEq(diff(1, ONE_PLUS_EPSILON), 1);
-    assertEq(diff(1, ONE_MINUS_EPSILON), 1);
+    assert.sameValue(diff(2,4), 0x10000000000000);
+    assert.sameValue(diff(0, Number.MIN_VALUE), 1);
+    assert.sameValue(diff(1, ONE_PLUS_EPSILON), 1);
+    assert.sameValue(diff(1, ONE_MINUS_EPSILON), 1);
 
     var assertNear = function assertNear(a, b, tolerance=1) {
         if (!Number.isFinite(b)) {

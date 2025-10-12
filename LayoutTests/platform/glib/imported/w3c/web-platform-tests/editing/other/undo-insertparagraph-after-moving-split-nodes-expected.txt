@@ -1,7 +1,0 @@
-abcdef
-
-FAIL Undo insertParagraph after moving right node to different paragraph promise_test: Unhandled rejection with value: object "TypeError: Argument 1 ('node') to Node.appendChild must be an instance of Node"
-PASS Undo insertParagraph after moving left node to different paragraph
-FAIL Undo insertParagraph after moving right node into the left node promise_test: Unhandled rejection with value: object "TypeError: Argument 1 ('node') to Node.insertBefore must be an instance of Node"
-FAIL Undo insertParagraph after moving left node into the right node promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'right.appendChild')"
-

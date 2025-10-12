@@ -3,40 +3,43 @@
 <head>
 <script src="../resources/accessibility-helper.js"></script>
 <script src="../resources/js-test.js"></script>
+<script src="../resources/ui-helper.js"></script>
 </head>
 <body>
 
 <input type="range" id="slider" min="0" max="11">
 
 <script>
-    var testOutput = "This test ensures that adding a child to a slider that has lost its renderer dynamically doesn't crash.\n\n";
+var output = "This test ensures that adding a child to a slider that has lost its renderer dynamically doesn't crash.\n\n";
 
-    if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-        const slider = accessibilityController.accessibleElementById("slider");
-        testOutput += `Initial #slider role: ${slider.role}\n`;
-        testOutput += `Initial #slider children count: ${slider.childrenCount}\n`;
+    var slider = accessibilityController.accessibleElementById("slider");
+    output += `Initial #slider role: ${slider.role}\n`;
+    output += `Initial #slider children count: ${slider.childrenCount}\n`;
 
-        setTimeout(async function() {
-            // At the time of writing, WebKit handles "children changed for object" events
-            // on a deferred timer. So add a child to the slider to queue up a change.
-            document.getElementById("slider").appendChild(document.createTextNode("foo"));
-            // Force the slider to lose its renderer by changing it to display:contents.
-            document.getElementById("slider").style.display = "contents";
+    setTimeout(async function() {
+        // At the time of writing, WebKit handles "children changed for object" events
+        // on a deferred timer. So add a child to the slider to queue up a change.
+        document.getElementById("slider").appendChild(document.createTextNode("foo"));
+        // Force the slider to lose its renderer by changing it to display:contents.
+        document.getElementById("slider").style.display = "contents";
+        // Force layout and wait for rendering to complete.
+        document.getElementById("slider").offsetHeight;
+        await UIHelper.renderingUpdate();
 
-            await waitFor(() => {
-                return (!slider.role || !slider.role.includes("Slider")) && slider.childrenCount === 0;
-            });
+        // An input with no renderer should be ignored, so wait for that to happen.
+        output += await expectAsync("slider.isIgnored", "true");
 
-            // Accessing the slider again should not cause a crash after those changes.
-            testOutput += `\nFinal #slider role: ${slider.role}\n`;
-            testOutput += `Final #slider children count: ${slider.childrenCount}\n`;
+        // Accessing the slider again should not cause a crash after those changes.
+        output += `\nFinal #slider role: ${slider.role}\n`;
+        output += `Final #slider children count: ${slider.childrenCount}\n`;
 
-            debug(testOutput);
-            finishJSTest();
-        }, 0);
-    }
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
 </body>
 </html>

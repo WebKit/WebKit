@@ -1,3 +1,5 @@
 
-PASS navigation.back() cross-document cannot be cancelled with the navigate event
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT navigation.back() cross-document cannot be cancelled with the navigate event Test timed out
 

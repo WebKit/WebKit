@@ -26,10 +26,10 @@
 
 #pragma once
 
-#include "Element.h"
-#include "SimpleRange.h"
-#include "TextChecking.h"
-#include "Timer.h"
+#include <WebCore/Element.h>
+#include <WebCore/SimpleRange.h>
+#include <WebCore/TextChecking.h>
+#include <WebCore/Timer.h>
 #include <wtf/Deque.h>
 #include <wtf/Markable.h>
 #include <wtf/TZoneMalloc.h>

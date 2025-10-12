@@ -18,15 +18,15 @@ PASS target5 --varB
 PASS target5 --varC
 PASS target6 --varA
 PASS target6 --varB
-PASS target6 --varC
+FAIL target6 --varC assert_equals: expected "13px" but got ""
 PASS target7 --varA
 PASS target7 --varB
-PASS target7 --varC
+FAIL target7 --varC assert_equals: expected "13px" but got ""
 PASS target8 --varA
 PASS target8 --varB
 PASS target9 --varA
-PASS target9 --varB
-PASS target9 --varC
+FAIL target9 --varB assert_equals: expected "very good" but got ""
+FAIL target9 --varC assert_equals: expected "very good" but got ""
 PASS target10 --varA
 PASS target10 --varB
 PASS target10 --varC

@@ -64,6 +64,7 @@
                 doLog('** test finished');
                 if (window.testRunner)
                     testRunner.notifyDone();
+                myVideo.srcObject.getTracks().forEach(t => t.stop());
             }
             start();
         </script>

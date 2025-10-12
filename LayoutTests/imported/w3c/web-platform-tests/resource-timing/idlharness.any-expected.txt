@@ -11,6 +11,7 @@ PASS PerformanceResourceTiming interface: existence and properties of interface 
 PASS PerformanceResourceTiming interface: existence and properties of interface prototype object's "constructor" property
 PASS PerformanceResourceTiming interface: existence and properties of interface prototype object's @@unscopables property
 PASS PerformanceResourceTiming interface: attribute initiatorType
+FAIL PerformanceResourceTiming interface: attribute deliveryType assert_true: The prototype object must have a property "deliveryType" expected true got false
 PASS PerformanceResourceTiming interface: attribute nextHopProtocol
 PASS PerformanceResourceTiming interface: attribute workerStart
 PASS PerformanceResourceTiming interface: attribute redirectStart
@@ -22,15 +23,22 @@ PASS PerformanceResourceTiming interface: attribute connectStart
 PASS PerformanceResourceTiming interface: attribute connectEnd
 PASS PerformanceResourceTiming interface: attribute secureConnectionStart
 PASS PerformanceResourceTiming interface: attribute requestStart
+FAIL PerformanceResourceTiming interface: attribute finalResponseHeadersStart assert_true: The prototype object must have a property "finalResponseHeadersStart" expected true got false
+FAIL PerformanceResourceTiming interface: attribute firstInterimResponseStart assert_true: The prototype object must have a property "firstInterimResponseStart" expected true got false
 PASS PerformanceResourceTiming interface: attribute responseStart
 PASS PerformanceResourceTiming interface: attribute responseEnd
 PASS PerformanceResourceTiming interface: attribute transferSize
 PASS PerformanceResourceTiming interface: attribute encodedBodySize
 PASS PerformanceResourceTiming interface: attribute decodedBodySize
+FAIL PerformanceResourceTiming interface: attribute responseStatus assert_true: The prototype object must have a property "responseStatus" expected true got false
+FAIL PerformanceResourceTiming interface: attribute renderBlockingStatus assert_true: The prototype object must have a property "renderBlockingStatus" expected true got false
+FAIL PerformanceResourceTiming interface: attribute contentType assert_true: The prototype object must have a property "contentType" expected true got false
+FAIL PerformanceResourceTiming interface: attribute contentEncoding assert_true: The prototype object must have a property "contentEncoding" expected true got false
 PASS PerformanceResourceTiming interface: operation toJSON()
 PASS PerformanceResourceTiming must be primary interface of resource
 PASS Stringification of resource
 PASS PerformanceResourceTiming interface: resource must inherit property "initiatorType" with the proper type
+FAIL PerformanceResourceTiming interface: resource must inherit property "deliveryType" with the proper type assert_inherits: property "deliveryType" not found in prototype chain
 PASS PerformanceResourceTiming interface: resource must inherit property "nextHopProtocol" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "workerStart" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "redirectStart" with the proper type
@@ -42,13 +50,19 @@ PASS PerformanceResourceTiming interface: resource must inherit property "connec
 PASS PerformanceResourceTiming interface: resource must inherit property "connectEnd" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "secureConnectionStart" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "requestStart" with the proper type
+FAIL PerformanceResourceTiming interface: resource must inherit property "finalResponseHeadersStart" with the proper type assert_inherits: property "finalResponseHeadersStart" not found in prototype chain
+FAIL PerformanceResourceTiming interface: resource must inherit property "firstInterimResponseStart" with the proper type assert_inherits: property "firstInterimResponseStart" not found in prototype chain
 PASS PerformanceResourceTiming interface: resource must inherit property "responseStart" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "responseEnd" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "transferSize" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "encodedBodySize" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "decodedBodySize" with the proper type
+FAIL PerformanceResourceTiming interface: resource must inherit property "responseStatus" with the proper type assert_inherits: property "responseStatus" not found in prototype chain
+FAIL PerformanceResourceTiming interface: resource must inherit property "renderBlockingStatus" with the proper type assert_inherits: property "renderBlockingStatus" not found in prototype chain
+FAIL PerformanceResourceTiming interface: resource must inherit property "contentType" with the proper type assert_inherits: property "contentType" not found in prototype chain
+FAIL PerformanceResourceTiming interface: resource must inherit property "contentEncoding" with the proper type assert_inherits: property "contentEncoding" not found in prototype chain
 PASS PerformanceResourceTiming interface: resource must inherit property "toJSON()" with the proper type
-PASS PerformanceResourceTiming interface: default toJSON operation on resource
+FAIL PerformanceResourceTiming interface: default toJSON operation on resource assert_true: property "id" should be present in the output of PerformanceResourceTiming.prototype.toJSON() expected true got false
 PASS Performance interface: operation clearResourceTimings()
 PASS Performance interface: operation setResourceTimingBufferSize(unsigned long)
 PASS Performance interface: attribute onresourcetimingbufferfull

@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -31,16 +28,16 @@ class foo extends base {
 }
 
 // Populate the arrow function saves. Since we never invoke super(), we throw
-assertThrowsInstanceOf(()=>new foo(), ReferenceError);
+assert.throws(ReferenceError, ()=>new foo());
 
 // No |this| binding in the closure, yet
-assertThrowsInstanceOf(thisArrow, ReferenceError);
+assert.throws(ReferenceError, thisArrow);
 
 // call super()
 superArrow();
 
 // Can't call it twice
-assertThrowsInstanceOf(superArrow, ReferenceError);
+assert.throws(ReferenceError, superArrow);
 
 // Oh look, |this| is populated, now.
 assert.sameValue(thisArrow(), thisStash);

@@ -126,7 +126,7 @@ ALWAYS_INLINE JSValue Interpreter::executeCachedCall(CachedCall& cachedCall)
 }
 
 #if CPU(ARM64) && CPU(ADDRESS64) && !ENABLE(C_LOOP)
-template<typename... Args>
+template<typename... Args> requires (std::is_convertible_v<Args, JSValue> && ...)
 ALWAYS_INLINE JSValue Interpreter::tryCallWithArguments(CachedCall& cachedCall, JSValue thisValue, Args... args)
 {
     VM& vm = this->vm();

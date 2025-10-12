@@ -36,6 +36,8 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #import "NearFieldSoftLink.h"
 
@@ -89,9 +91,9 @@ uint8_t tagID2[] = { 0x02 };
 
 - (void)dealloc
 {
-    [_AppData release];
+    SUPPRESS_UNRETAINED_ARG [_AppData release];
     _AppData = nil;
-    [_UID release];
+    SUPPRESS_UNRETAINED_ARG [_UID release];
     _UID = nil;
 
     [super dealloc];
@@ -134,6 +136,10 @@ using Mock = WebCore::MockWebAuthenticationConfiguration;
 namespace {
 
 static id<NFReaderSessionDelegate> globalNFReaderSessionDelegate;
+static RetainPtr<id<NFReaderSessionDelegate>> protectedGlobalNFReaderSessionDelegate()
+{
+    return globalNFReaderSessionDelegate;
+}
 
 static WeakPtr<MockNfcService>& weakGlobalNfcService()
 {
@@ -213,7 +219,7 @@ void MockNfcService::receiveStopPolling()
 
 void MockNfcService::receiveStartPolling()
 {
-    RunLoop::protectedMain()->dispatch([weakThis = WeakPtr { *this }] {
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         weakThis->detectTags();
@@ -226,22 +232,22 @@ void MockNfcService::platformStartDiscovery()
     if (!!m_configuration.nfc) {
         weakGlobalNfcService() = *this;
 
-        Method methodToSwizzle1 = class_getInstanceMethod(getNFReaderSessionClass(), @selector(setDelegate:));
+        Method methodToSwizzle1 = class_getInstanceMethod(getNFReaderSessionClassSingleton(), @selector(setDelegate:));
         method_setImplementation(methodToSwizzle1, (IMP)NFReaderSessionSetDelegate);
 
-        Method methodToSwizzle2 = class_getInstanceMethod(getNFReaderSessionClass(), @selector(connectTag:));
+        Method methodToSwizzle2 = class_getInstanceMethod(getNFReaderSessionClassSingleton(), @selector(connectTag:));
         if (m_configuration.nfc->error == Mock::NfcError::NoConnections)
             method_setImplementation(methodToSwizzle2, (IMP)NFReaderSessionConnectTagFail);
         else
             method_setImplementation(methodToSwizzle2, (IMP)NFReaderSessionConnectTag);
 
-        Method methodToSwizzle3 = class_getInstanceMethod(getNFReaderSessionClass(), @selector(transceive:));
+        Method methodToSwizzle3 = class_getInstanceMethod(getNFReaderSessionClassSingleton(), @selector(transceive:));
         method_setImplementation(methodToSwizzle3, (IMP)NFReaderSessionTransceive);
 
-        Method methodToSwizzle4 = class_getInstanceMethod(getNFReaderSessionClass(), @selector(stopPolling));
+        Method methodToSwizzle4 = class_getInstanceMethod(getNFReaderSessionClassSingleton(), @selector(stopPolling));
         method_setImplementation(methodToSwizzle4, (IMP)NFReaderSessionStopPolling);
 
-        Method methodToSwizzle5 = class_getInstanceMethod(getNFReaderSessionClass(), @selector(startPollingWithError:));
+        Method methodToSwizzle5 = class_getInstanceMethod(getNFReaderSessionClassSingleton(), @selector(startPollingWithError:));
         method_setImplementation(methodToSwizzle5, (IMP)NFReaderSessionStartPollingWithError);
 
         auto readerSession = adoptNS([allocNFReaderSessionInstance() initWithUIType:NFReaderSessionUINone]);
@@ -271,9 +277,9 @@ void MockNfcService::detectTags() const
             [tags addObject:adoptNS([[WKMockNFTag alloc] initWithType:NFTagTypeGeneric4A tagID:toNSDataNoCopy(std::span { tagID2 }, FreeWhenDone::No).get()]).get()];
 
         auto readerSession = adoptNS([allocNFReaderSessionInstance() initWithUIType:NFReaderSessionUINone]);
-        [globalNFReaderSessionDelegate readerSession:readerSession.get() didDetectTags:tags.get()];
+        [protectedGlobalNFReaderSessionDelegate() readerSession:readerSession.get() didDetectTags:tags.get()];
     });
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), callback.get());
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), callback.get());
 #endif // HAVE(NEAR_FIELD)
 }
 

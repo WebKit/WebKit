@@ -57,11 +57,18 @@ class PopenBase(object):
 
         self.returncode = None
 
-        self.stdin = string_utils.BytesIO() if stdin is None or stdin == -1 else stdin
-        self.stdout = string_utils.BytesIO() if stdout == -1 else stdout
-        self._stdout_type = bytes if stdout == -1 else str
-        self.stderr = string_utils.BytesIO() if stderr == -1 else stderr
-        self._stderr_type = bytes if stderr == -1 else str
+        self.stdin = string_utils.BytesIO() if stdin is None or stdin == subprocess.PIPE else stdin
+        self.stdout = string_utils.BytesIO() if stdout == subprocess.PIPE else stdout
+        self._stdout_type = bytes if stdout == subprocess.PIPE else str
+        if stderr == subprocess.STDOUT:
+            self.stderr = self.stdout
+            self._stderr_type = self._stdout_type
+        elif stderr == subprocess.PIPE:
+            self.stderr = string_utils.BytesIO()
+            self._stderr_type = bytes
+        else:
+            self.stderr = stderr
+            self._stderr_type = str
 
         Subprocess.completion_generator_for(args[0])
 

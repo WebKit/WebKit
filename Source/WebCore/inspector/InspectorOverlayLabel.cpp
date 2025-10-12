@@ -210,7 +210,7 @@ struct ComputedContentRun {
 
 Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidth)
 {
-    constexpr UChar ellipsis = 0x2026;
+    constexpr char16_t ellipsis = 0x2026;
 
     auto font = systemFont();
     float lineHeight = font.metricsOfPrimaryFont().height();

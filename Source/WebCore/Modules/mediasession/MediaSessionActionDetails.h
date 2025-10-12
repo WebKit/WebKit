@@ -27,7 +27,7 @@
 
 #if ENABLE(MEDIA_SESSION)
 
-#include "MediaSessionAction.h"
+#include <WebCore/MediaSessionAction.h>
 
 namespace WebCore {
 

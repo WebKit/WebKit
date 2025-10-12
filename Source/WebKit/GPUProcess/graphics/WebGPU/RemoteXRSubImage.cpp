@@ -38,7 +38,7 @@
 #include <WebCore/WebGPUXRSubImage.h>
 #include <wtf/TZoneMalloc.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_streamConnection)
 
 namespace WebKit {
 
@@ -70,14 +70,6 @@ Ref<WebCore::WebGPU::XRSubImage> RemoteXRSubImage::protectedBacking()
 Ref<RemoteGPU> RemoteXRSubImage::protectedGPU() const
 {
     return m_gpu.get();
-}
-
-RefPtr<IPC::Connection> RemoteXRSubImage::connection() const
-{
-    RefPtr connection = protectedGPU()->gpuConnectionToWebProcess();
-    if (!connection)
-        return nullptr;
-    return &connection->connection();
 }
 
 void RemoteXRSubImage::destruct()

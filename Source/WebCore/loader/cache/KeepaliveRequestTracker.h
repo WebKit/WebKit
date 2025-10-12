@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CachedRawResourceClient.h"
-#include "CachedResource.h"
-#include "CachedResourceHandle.h"
+#include <WebCore/CachedRawResourceClient.h>
+#include <WebCore/CachedResource.h>
+#include <WebCore/CachedResourceHandle.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

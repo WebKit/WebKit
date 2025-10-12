@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="text-input" type="text" value="fooooooooooooooooooooooooooooooooooo"/>
+
+<script>
+var output = "This test ensures that hit testing a text input yields the text input, not any element within it (e.g. those rendered in the user-agent shadow tree created by the text input).\n\n";
+// This behavior is important because ATs like HoverText won't highlight the text inside the input if we return the wrong
+// element (e.g. a div inside the UA shadow tree created by <input type="text">).
+
+if (window.accessibilityController) {
+    const rect = document.getElementById("text-input").getBoundingClientRect();
+    const horizontalMidpoint = rect.left + rect.width / 2;
+    const verticalMidpoint = rect.top + rect.height / 2;
+
+    var hitTestResult = accessibilityController.elementAtPoint(horizontalMidpoint, verticalMidpoint);
+    output += expect("hitTestResult.role.toLowerCase().includes('textfield')", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

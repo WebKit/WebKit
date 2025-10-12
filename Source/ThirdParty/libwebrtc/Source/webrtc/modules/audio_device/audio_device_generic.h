@@ -11,7 +11,7 @@
 #ifndef AUDIO_DEVICE_AUDIO_DEVICE_GENERIC_H_
 #define AUDIO_DEVICE_AUDIO_DEVICE_GENERIC_H_
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "api/audio/audio_device.h"
 #include "api/audio/audio_device_defines.h"

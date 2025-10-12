@@ -27,7 +27,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "ScrollingTreePositionedNode.h"
+#include <WebCore/ScrollingTreePositionedNode.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 

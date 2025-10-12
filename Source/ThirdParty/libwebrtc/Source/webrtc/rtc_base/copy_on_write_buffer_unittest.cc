@@ -10,18 +10,22 @@
 
 #include "rtc_base/copy_on_write_buffer.h"
 
+#include <cstddef>
 #include <cstdint>
+#include <cstring>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
+#include "api/array_view.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace {
 
-// clang-format off
-const uint8_t kTestData[] = {0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
-                             0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf};
-// clang-format on
+constexpr uint8_t kTestData[] = {0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
+                                 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf};
 
 }  // namespace
 
@@ -370,8 +374,8 @@ TEST(CopyOnWriteBufferTest, SlicesAreIndependent) {
 TEST(CopyOnWriteBufferTest, AcceptsVectorLikeTypes) {
   std::vector<uint8_t> a = {1, 2};
   std::vector<int8_t> b = {3, 4};
-  rtc::ArrayView<uint8_t> c(a);
-  rtc::ArrayView<const int8_t> d(b);
+  ArrayView<uint8_t> c(a);
+  ArrayView<const int8_t> d(b);
 
   CopyOnWriteBuffer a_buf(a);
   CopyOnWriteBuffer b_buf(b);
@@ -387,4 +391,4 @@ TEST(CopyOnWriteBufferTest, AcceptsVectorLikeTypes) {
   EXPECT_EQ(all.size(), 8U);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

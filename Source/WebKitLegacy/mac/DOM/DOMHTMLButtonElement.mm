@@ -83,7 +83,7 @@
 - (void)setType:(NSString *)newType
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setType(newType);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, newType);
 }
 
 - (NSString *)name

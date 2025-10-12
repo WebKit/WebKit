@@ -77,7 +77,7 @@ void BoundsCheckVisitor::visit(AST::IndexAccessExpression& access)
                 SourceSpan::empty(),
                 AST::Identifier::make("u32"_s)
             );
-            u32Target.m_inferredType = m_shaderModule.types().bottomType();
+            u32Target.m_inferredType = m_shaderModule.types().u32Type();
 
             auto& u32Call = m_shaderModule.astBuilder().construct<AST::CallExpression>(
                 SourceSpan::empty(),
@@ -93,7 +93,7 @@ void BoundsCheckVisitor::visit(AST::IndexAccessExpression& access)
             SourceSpan::empty(),
             AST::Identifier::make("__wgslMin"_s)
         );
-        minTarget.m_inferredType = m_shaderModule.types().bottomType();
+        minTarget.m_inferredType = m_shaderModule.types().u32Type();
 
         auto& one =  m_shaderModule.astBuilder().construct<AST::Unsigned32Literal>(
             SourceSpan::empty(),
@@ -158,7 +158,7 @@ void BoundsCheckVisitor::visit(AST::IndexAccessExpression& access)
                 SourceSpan::empty(),
                 AST::Identifier::make("arrayLength"_s)
             );
-            target.m_inferredType = m_shaderModule.types().bottomType();
+            target.m_inferredType = m_shaderModule.types().u32Type();
 
 
             auto* argument = &access.base();

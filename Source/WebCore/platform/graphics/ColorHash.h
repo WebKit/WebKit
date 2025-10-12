@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Color.h"
+#include <WebCore/Color.h>
 #include <wtf/HashTraits.h>
 
 namespace WTF {

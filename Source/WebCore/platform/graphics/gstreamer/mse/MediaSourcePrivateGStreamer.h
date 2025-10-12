@@ -82,7 +82,7 @@ public:
     enum StreamType { Audio, Video, Text, Unknown, Invalid };
 
     struct RegisteredTrack {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED(RegisteredTrack);
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RegisteredTrack);
     public:
 
         RegisteredTrack()
@@ -105,6 +105,8 @@ public:
     RegisteredTrack registerTrack(TrackID, StreamType);
     void unregisterTrack(TrackID);
 
+    void willSeek();
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
     ASCIILiteral logClassName() const override { return "MediaSourcePrivateGStreamer"_s; }
@@ -121,7 +123,7 @@ private:
     ThreadSafeWeakPtr<MediaPlayerPrivateGStreamerMSE> m_playerPrivate;
     bool m_hasAllTracks { false };
 #if !RELEASE_LOG_DISABLED
-    Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
 #endif
 
@@ -138,7 +140,7 @@ private:
     //    - how {Audio,Video,Text}TrackList stores its tracks
     //    - prevents a potential out-of-bounds crash in TextTrackList
     //    Just like for IDs, we store known indices here to enforce uniqueness by player.
-    UncheckedKeyHashMap<TrackID, RegisteredTrack, WTF::IntHash<TrackID>, WTF::UnsignedWithZeroKeyHashTraits<TrackID>> m_trackRegistry;
+    HashMap<TrackID, RegisteredTrack, WTF::IntHash<TrackID>, WTF::UnsignedWithZeroKeyHashTraits<TrackID>> m_trackRegistry;
 };
 
 } // namespace WebCore

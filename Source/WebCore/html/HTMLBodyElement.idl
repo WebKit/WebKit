@@ -29,6 +29,7 @@
     [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString text;
     [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString vLink;
 
+    // https://html.spec.whatwg.org/multipage/webappapis.html#window-reflecting-body-element-event-handler-set
     [WindowEventHandler] attribute EventHandler onblur;
     [WindowEventHandler] attribute OnErrorEventHandler onerror;
     [WindowEventHandler] attribute EventHandler onfocus;

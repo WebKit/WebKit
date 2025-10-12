@@ -14,6 +14,10 @@
 #ifndef MODULES_VIDEO_CAPTURE_RAW_VIDEO_SINK_INTERFACE_H_
 #define MODULES_VIDEO_CAPTURE_RAW_VIDEO_SINK_INTERFACE_H_
 
+#include <cstddef>
+#include <cstdint>
+
+#include "api/video/video_rotation.h"
 #include "modules/video_capture/video_capture_defines.h"
 
 namespace webrtc {
@@ -24,7 +28,7 @@ class RawVideoSinkInterface {
 
   virtual int32_t OnRawFrame(uint8_t* videoFrame,
                              size_t videoFrameLength,
-                             const webrtc::VideoCaptureCapability& frameInfo,
+                             const VideoCaptureCapability& frameInfo,
                              VideoRotation rotation,
                              int64_t captureTime) = 0;
 };

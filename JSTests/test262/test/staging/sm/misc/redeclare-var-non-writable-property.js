@@ -4,27 +4,10 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  |var| statements for existing, read-only/permanent properties should not be errors
+info: bugzilla.mozilla.org/show_bug.cgi?id=539488
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 539488;
-var summary =
-  '|var| statements for existing, read-only/permanent properties should not ' +
-  'be errors';
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 var undefined;
-
-/******************************************************************************/
-
-print("All tests passed!");

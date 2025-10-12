@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Collabora Ltd. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2014 Cable Television Laboratories, Inc.
@@ -184,7 +184,7 @@ public:
     unsigned decodedFrameCount() const final;
     unsigned droppedFrameCount() const final;
     void acceleratedRenderingStateChanged() final;
-    bool performTaskAtTime(Function<void()>&&, const MediaTime&) override;
+    bool performTaskAtTime(Function<void(const MediaTime&)>&&, const MediaTime&) override;
     void isLoopingChanged() final;
     void audioOutputDeviceChanged() final;
 
@@ -206,6 +206,9 @@ public:
 
     RefPtr<VideoFrame> videoFrameForCurrentTime() override;
 
+    virtual void mirrorEnabledVideoTrackIfNeeded(const VideoTrackPrivateGStreamer&) { }
+
+    // Used for the non-MSE case.
     void updateEnabledVideoTrack();
     void updateEnabledAudioTrack();
     void playbin3SendSelectStreamsIfAppropriate();
@@ -217,6 +220,7 @@ public:
     bool handleNeedContextMessage(GstMessage*);
 
     void handleStreamCollectionMessage(GstMessage*);
+    void handleSyncErrorMessage(GstMessage*);
     void handleMessage(GstMessage*);
 
     void triggerRepaint(GRefPtr<GstSample>&&);
@@ -259,6 +263,8 @@ public:
 
     bool requiresVideoSinkCapsNotifications() const;
     void videoSinkCapsChanged(GstPad*);
+
+    void elementIdChanged(const String&) const final;
 
 protected:
     enum MainThreadNotification {
@@ -358,6 +364,8 @@ protected:
     bool isPipelineWaitingPreroll(GstState current, GstState pending, GstStateChangeReturn) const;
     bool isPipelineWaitingPreroll() const;
 
+    void didEnd();
+
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     ThreadSafeWeakPtr<MediaPlayer> m_player;
     String m_referrer;
@@ -440,6 +448,15 @@ protected:
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
     GstSeekFlags m_seekFlags;
     bool m_ignoreErrors { false };
+    Atomic<unsigned> m_queuedSyncErrors { 0 };
+
+    TrackIDHashMap<Ref<AudioTrackPrivateGStreamer>> m_audioTracks;
+    TrackIDHashMap<Ref<VideoTrackPrivateGStreamer>> m_videoTracks;
+    TrackIDHashMap<Ref<InbandTextTrackPrivateGStreamer>> m_textTracks;
+    RefPtr<InbandMetadataTextTrackPrivateGStreamer> m_chaptersTrack;
+#if USE(GSTREAMER_MPEGTS)
+    TrackIDHashMap<RefPtr<InbandMetadataTextTrackPrivateGStreamer>> m_metadataTracks;
+#endif
 
     String errorMessage() const override { return m_errorMessage; }
 
@@ -484,7 +501,6 @@ private:
     bool isMuted() const;
     void commitLoad();
     void fillTimerFired();
-    void didEnd();
     void setPlaybackFlags(bool isMediaStream);
     void recalculateDurationIfNeeded() const; // It's called from other const methods.
 
@@ -624,13 +640,6 @@ private:
 #endif
     GRefPtr<GstElement> m_downloadBuffer;
 
-    TrackIDHashMap<Ref<AudioTrackPrivateGStreamer>> m_audioTracks;
-    TrackIDHashMap<Ref<VideoTrackPrivateGStreamer>> m_videoTracks;
-    TrackIDHashMap<Ref<InbandTextTrackPrivateGStreamer>> m_textTracks;
-    RefPtr<InbandMetadataTextTrackPrivateGStreamer> m_chaptersTrack;
-#if USE(GSTREAMER_MPEGTS)
-    TrackIDHashMap<RefPtr<InbandMetadataTextTrackPrivateGStreamer>> m_metadataTracks;
-#endif
     virtual bool isMediaSource() const { return false; }
 
     uint64_t m_httpResponseTotalSize { 0 };
@@ -645,11 +654,13 @@ private:
 
 private:
     std::optional<VideoFrameMetadata> videoFrameMetadata() final;
+    bool applyAudioSinkDevice(GstElement* audioSink, GstDevice*);
+
     uint64_t m_sampleCount { 0 };
     uint64_t m_lastVideoFrameMetadataSampleCount { 0 };
     mutable PlatformTimeRanges m_buffered;
 #if !RELEASE_LOG_DISABLED
-    Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
 #endif
 
@@ -677,7 +688,7 @@ private:
     Ref<PlatformMediaResourceLoader> m_loader;
 
     RefPtr<GStreamerQuirksManager> m_quirksManagerForTesting;
-    UncheckedKeyHashMap<const GStreamerQuirk*, std::unique_ptr<GStreamerQuirkBase::GStreamerQuirkState>> m_quirkStates;
+    HashMap<const GStreamerQuirk*, std::unique_ptr<GStreamerQuirkBase::GStreamerQuirkState>> m_quirkStates;
 
     MediaTime m_estimatedVideoFrameDuration { MediaTime::zeroTime() };
 

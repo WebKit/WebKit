@@ -212,11 +212,11 @@ poly_hash_ad_internal:
 .cfi_endproc	
 .size	poly_hash_ad_internal, .-poly_hash_ad_internal
 
-.globl	chacha20_poly1305_open_nohw
-.hidden chacha20_poly1305_open_nohw
-.type	chacha20_poly1305_open_nohw,@function
+.globl	chacha20_poly1305_open_sse41
+.hidden chacha20_poly1305_open_sse41
+.type	chacha20_poly1305_open_sse41,@function
 .align	64
-chacha20_poly1305_open_nohw:
+chacha20_poly1305_open_sse41:
 .cfi_startproc	
 _CET_ENDBR
 	pushq	%rbp
@@ -285,9 +285,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,4
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,12
+	palignr	$4,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$12,%xmm12,%xmm12
 	paddd	%xmm4,%xmm0
 	pxor	%xmm0,%xmm12
 	pshufb	.Lrol16(%rip),%xmm12
@@ -306,9 +306,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,12
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,4
+	palignr	$12,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$4,%xmm12,%xmm12
 
 	decq	%r10
 	jne	.Lopen_sse_init_rounds
@@ -366,10 +366,10 @@ _CET_ENDBR
 	pxor	%xmm2,%xmm14
 	pxor	%xmm1,%xmm13
 	pxor	%xmm0,%xmm12
-.byte	102,69,15,56,0,248
-.byte	102,69,15,56,0,240
-.byte	102,69,15,56,0,232
-.byte	102,69,15,56,0,224
+	pshufb	%xmm8,%xmm15
+	pshufb	%xmm8,%xmm14
+	pshufb	%xmm8,%xmm13
+	pshufb	%xmm8,%xmm12
 	movdqa	0+80(%rbp),%xmm8
 	paddd	%xmm15,%xmm11
 	paddd	%xmm14,%xmm10
@@ -420,10 +420,10 @@ _CET_ENDBR
 	pxor	%xmm2,%xmm14
 	pxor	%xmm1,%xmm13
 	pxor	%xmm0,%xmm12
-.byte	102,69,15,56,0,248
-.byte	102,69,15,56,0,240
-.byte	102,69,15,56,0,232
-.byte	102,69,15,56,0,224
+	pshufb	%xmm8,%xmm15
+	pshufb	%xmm8,%xmm14
+	pshufb	%xmm8,%xmm13
+	pshufb	%xmm8,%xmm12
 	movdqa	0+80(%rbp),%xmm8
 	paddd	%xmm15,%xmm11
 	paddd	%xmm14,%xmm10
@@ -464,18 +464,18 @@ _CET_ENDBR
 	imulq	%r12,%r9
 	addq	%r10,%r15
 	adcq	%rdx,%r9
-.byte	102,15,58,15,255,4
-.byte	102,69,15,58,15,219,8
-.byte	102,69,15,58,15,255,12
-.byte	102,15,58,15,246,4
-.byte	102,69,15,58,15,210,8
-.byte	102,69,15,58,15,246,12
-.byte	102,15,58,15,237,4
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,12
-.byte	102,15,58,15,228,4
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,12
+	palignr	$4,%xmm7,%xmm7
+	palignr	$8,%xmm11,%xmm11
+	palignr	$12,%xmm15,%xmm15
+	palignr	$4,%xmm6,%xmm6
+	palignr	$8,%xmm10,%xmm10
+	palignr	$12,%xmm14,%xmm14
+	palignr	$4,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$12,%xmm13,%xmm13
+	palignr	$4,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$12,%xmm12,%xmm12
 	movdqa	%xmm8,0+80(%rbp)
 	movdqa	.Lrol16(%rip),%xmm8
 	paddd	%xmm7,%xmm3
@@ -500,10 +500,10 @@ _CET_ENDBR
 	adcq	$0,%r12
 	pxor	%xmm1,%xmm13
 	pxor	%xmm0,%xmm12
-.byte	102,69,15,56,0,248
-.byte	102,69,15,56,0,240
-.byte	102,69,15,56,0,232
-.byte	102,69,15,56,0,224
+	pshufb	%xmm8,%xmm15
+	pshufb	%xmm8,%xmm14
+	pshufb	%xmm8,%xmm13
+	pshufb	%xmm8,%xmm12
 	movdqa	0+80(%rbp),%xmm8
 	paddd	%xmm15,%xmm11
 	paddd	%xmm14,%xmm10
@@ -539,10 +539,10 @@ _CET_ENDBR
 	pxor	%xmm2,%xmm14
 	pxor	%xmm1,%xmm13
 	pxor	%xmm0,%xmm12
-.byte	102,69,15,56,0,248
-.byte	102,69,15,56,0,240
-.byte	102,69,15,56,0,232
-.byte	102,69,15,56,0,224
+	pshufb	%xmm8,%xmm15
+	pshufb	%xmm8,%xmm14
+	pshufb	%xmm8,%xmm13
+	pshufb	%xmm8,%xmm12
 	movdqa	0+80(%rbp),%xmm8
 	paddd	%xmm15,%xmm11
 	paddd	%xmm14,%xmm10
@@ -570,18 +570,18 @@ _CET_ENDBR
 	pslld	$32-25,%xmm4
 	pxor	%xmm8,%xmm4
 	movdqa	0+80(%rbp),%xmm8
-.byte	102,15,58,15,255,12
-.byte	102,69,15,58,15,219,8
-.byte	102,69,15,58,15,255,4
-.byte	102,15,58,15,246,12
-.byte	102,69,15,58,15,210,8
-.byte	102,69,15,58,15,246,4
-.byte	102,15,58,15,237,12
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,4
-.byte	102,15,58,15,228,12
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,4
+	palignr	$12,%xmm7,%xmm7
+	palignr	$8,%xmm11,%xmm11
+	palignr	$4,%xmm15,%xmm15
+	palignr	$12,%xmm6,%xmm6
+	palignr	$8,%xmm10,%xmm10
+	palignr	$4,%xmm14,%xmm14
+	palignr	$12,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$4,%xmm13,%xmm13
+	palignr	$12,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$4,%xmm12,%xmm12
 
 	decq	%rcx
 	jge	.Lopen_sse_main_loop_rounds
@@ -783,9 +783,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,4
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,12
+	palignr	$4,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$12,%xmm12,%xmm12
 	paddd	%xmm4,%xmm0
 	pxor	%xmm0,%xmm12
 	pshufb	.Lrol16(%rip),%xmm12
@@ -804,9 +804,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,12
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,4
+	palignr	$12,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$4,%xmm12,%xmm12
 
 	cmpq	$16,%rcx
 	jae	.Lopen_sse_tail_64_rounds_and_x1hash
@@ -898,9 +898,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,4
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,12
+	palignr	$4,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$12,%xmm12,%xmm12
 	paddd	%xmm5,%xmm1
 	pxor	%xmm1,%xmm13
 	pshufb	.Lrol16(%rip),%xmm13
@@ -919,9 +919,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm5
 	pxor	%xmm3,%xmm5
-.byte	102,15,58,15,237,4
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,12
+	palignr	$4,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$12,%xmm13,%xmm13
 	paddd	%xmm4,%xmm0
 	pxor	%xmm0,%xmm12
 	pshufb	.Lrol16(%rip),%xmm12
@@ -940,9 +940,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,12
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,4
+	palignr	$12,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$4,%xmm12,%xmm12
 	paddd	%xmm5,%xmm1
 	pxor	%xmm1,%xmm13
 	pshufb	.Lrol16(%rip),%xmm13
@@ -961,9 +961,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm5
 	pxor	%xmm3,%xmm5
-.byte	102,15,58,15,237,12
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,4
+	palignr	$12,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$4,%xmm13,%xmm13
 
 	cmpq	%rcx,%r8
 	jb	.Lopen_sse_tail_128_rounds_and_x1hash
@@ -1083,9 +1083,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,4
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,12
+	palignr	$4,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$12,%xmm12,%xmm12
 	paddd	%xmm5,%xmm1
 	pxor	%xmm1,%xmm13
 	pshufb	.Lrol16(%rip),%xmm13
@@ -1104,9 +1104,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm5
 	pxor	%xmm3,%xmm5
-.byte	102,15,58,15,237,4
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,12
+	palignr	$4,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$12,%xmm13,%xmm13
 	paddd	%xmm6,%xmm2
 	pxor	%xmm2,%xmm14
 	pshufb	.Lrol16(%rip),%xmm14
@@ -1125,9 +1125,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm6
 	pxor	%xmm3,%xmm6
-.byte	102,15,58,15,246,4
-.byte	102,69,15,58,15,210,8
-.byte	102,69,15,58,15,246,12
+	palignr	$4,%xmm6,%xmm6
+	palignr	$8,%xmm10,%xmm10
+	palignr	$12,%xmm14,%xmm14
 	paddd	%xmm4,%xmm0
 	pxor	%xmm0,%xmm12
 	pshufb	.Lrol16(%rip),%xmm12
@@ -1146,9 +1146,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,12
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,4
+	palignr	$12,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$4,%xmm12,%xmm12
 	paddd	%xmm5,%xmm1
 	pxor	%xmm1,%xmm13
 	pshufb	.Lrol16(%rip),%xmm13
@@ -1167,9 +1167,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm5
 	pxor	%xmm3,%xmm5
-.byte	102,15,58,15,237,12
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,4
+	palignr	$12,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$4,%xmm13,%xmm13
 	paddd	%xmm6,%xmm2
 	pxor	%xmm2,%xmm14
 	pshufb	.Lrol16(%rip),%xmm14
@@ -1188,9 +1188,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm6
 	pxor	%xmm3,%xmm6
-.byte	102,15,58,15,246,12
-.byte	102,69,15,58,15,210,8
-.byte	102,69,15,58,15,246,4
+	palignr	$12,%xmm6,%xmm6
+	palignr	$8,%xmm10,%xmm10
+	palignr	$4,%xmm14,%xmm14
 
 	cmpq	%rcx,%r8
 	jb	.Lopen_sse_tail_192_rounds_and_x1hash
@@ -1375,9 +1375,9 @@ _CET_ENDBR
 	pslld	$7,%xmm11
 	psrld	$25,%xmm4
 	pxor	%xmm11,%xmm4
-.byte	102,15,58,15,228,4
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,12
+	palignr	$4,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$12,%xmm12,%xmm12
 	paddd	%xmm5,%xmm1
 	pxor	%xmm1,%xmm13
 	pshufb	.Lrol16(%rip),%xmm13
@@ -1396,9 +1396,9 @@ _CET_ENDBR
 	pslld	$7,%xmm11
 	psrld	$25,%xmm5
 	pxor	%xmm11,%xmm5
-.byte	102,15,58,15,237,4
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,12
+	palignr	$4,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$12,%xmm13,%xmm13
 	paddd	%xmm6,%xmm2
 	pxor	%xmm2,%xmm14
 	pshufb	.Lrol16(%rip),%xmm14
@@ -1417,9 +1417,9 @@ _CET_ENDBR
 	pslld	$7,%xmm11
 	psrld	$25,%xmm6
 	pxor	%xmm11,%xmm6
-.byte	102,15,58,15,246,4
-.byte	102,69,15,58,15,210,8
-.byte	102,69,15,58,15,246,12
+	palignr	$4,%xmm6,%xmm6
+	palignr	$8,%xmm10,%xmm10
+	palignr	$12,%xmm14,%xmm14
 	movdqa	0+80(%rbp),%xmm11
 	movq	0+0+0(%rbp),%rax
 	movq	%rax,%r15
@@ -1450,9 +1450,9 @@ _CET_ENDBR
 	pslld	$7,%xmm9
 	psrld	$25,%xmm7
 	pxor	%xmm9,%xmm7
-.byte	102,15,58,15,255,4
-.byte	102,69,15,58,15,219,8
-.byte	102,69,15,58,15,255,12
+	palignr	$4,%xmm7,%xmm7
+	palignr	$8,%xmm11,%xmm11
+	palignr	$12,%xmm15,%xmm15
 	movdqa	0+80(%rbp),%xmm9
 	movq	8+0+0(%rbp),%rax
 	movq	%rax,%r9
@@ -1483,9 +1483,9 @@ _CET_ENDBR
 	pslld	$7,%xmm11
 	psrld	$25,%xmm4
 	pxor	%xmm11,%xmm4
-.byte	102,15,58,15,228,12
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,4
+	palignr	$12,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$4,%xmm12,%xmm12
 	paddd	%xmm5,%xmm1
 	pxor	%xmm1,%xmm13
 	pshufb	.Lrol16(%rip),%xmm13
@@ -1504,9 +1504,9 @@ _CET_ENDBR
 	pslld	$7,%xmm11
 	psrld	$25,%xmm5
 	pxor	%xmm11,%xmm5
-.byte	102,15,58,15,237,12
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,4
+	palignr	$12,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$4,%xmm13,%xmm13
 	imulq	%r12,%r9
 	addq	%r10,%r15
 	adcq	%rdx,%r9
@@ -1528,9 +1528,9 @@ _CET_ENDBR
 	pslld	$7,%xmm11
 	psrld	$25,%xmm6
 	pxor	%xmm11,%xmm6
-.byte	102,15,58,15,246,12
-.byte	102,69,15,58,15,210,8
-.byte	102,69,15,58,15,246,4
+	palignr	$12,%xmm6,%xmm6
+	palignr	$8,%xmm10,%xmm10
+	palignr	$4,%xmm14,%xmm14
 	movdqa	0+80(%rbp),%xmm11
 	movq	%r13,%r10
 	movq	%r14,%r11
@@ -1565,9 +1565,9 @@ _CET_ENDBR
 	pslld	$7,%xmm9
 	psrld	$25,%xmm7
 	pxor	%xmm9,%xmm7
-.byte	102,15,58,15,255,12
-.byte	102,69,15,58,15,219,8
-.byte	102,69,15,58,15,255,4
+	palignr	$12,%xmm7,%xmm7
+	palignr	$8,%xmm11,%xmm11
+	palignr	$4,%xmm15,%xmm15
 	movdqa	0+80(%rbp),%xmm9
 
 	addq	$16,%r8
@@ -1714,7 +1714,7 @@ _CET_ENDBR
 	subq	$1,%r8
 	jnz	.Lopen_sse_tail_16_compose
 
-.byte	102,73,15,126,221
+	movq	%xmm3,%r13
 	pextrq	$1,%xmm3,%r14
 
 	pxor	%xmm1,%xmm3
@@ -1894,9 +1894,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,4
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,12
+	palignr	$4,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$12,%xmm12,%xmm12
 	paddd	%xmm5,%xmm1
 	pxor	%xmm1,%xmm13
 	pshufb	.Lrol16(%rip),%xmm13
@@ -1915,9 +1915,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm5
 	pxor	%xmm3,%xmm5
-.byte	102,15,58,15,237,4
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,12
+	palignr	$4,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$12,%xmm13,%xmm13
 	paddd	%xmm6,%xmm2
 	pxor	%xmm2,%xmm14
 	pshufb	.Lrol16(%rip),%xmm14
@@ -1936,9 +1936,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm6
 	pxor	%xmm3,%xmm6
-.byte	102,15,58,15,246,4
-.byte	102,69,15,58,15,210,8
-.byte	102,69,15,58,15,246,12
+	palignr	$4,%xmm6,%xmm6
+	palignr	$8,%xmm10,%xmm10
+	palignr	$12,%xmm14,%xmm14
 	paddd	%xmm4,%xmm0
 	pxor	%xmm0,%xmm12
 	pshufb	.Lrol16(%rip),%xmm12
@@ -1957,9 +1957,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,12
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,4
+	palignr	$12,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$4,%xmm12,%xmm12
 	paddd	%xmm5,%xmm1
 	pxor	%xmm1,%xmm13
 	pshufb	.Lrol16(%rip),%xmm13
@@ -1978,9 +1978,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm5
 	pxor	%xmm3,%xmm5
-.byte	102,15,58,15,237,12
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,4
+	palignr	$12,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$4,%xmm13,%xmm13
 	paddd	%xmm6,%xmm2
 	pxor	%xmm2,%xmm14
 	pshufb	.Lrol16(%rip),%xmm14
@@ -1999,9 +1999,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm6
 	pxor	%xmm3,%xmm6
-.byte	102,15,58,15,246,12
-.byte	102,69,15,58,15,210,8
-.byte	102,69,15,58,15,246,4
+	palignr	$12,%xmm6,%xmm6
+	palignr	$8,%xmm10,%xmm10
+	palignr	$4,%xmm14,%xmm14
 
 	decq	%r10
 	jnz	.Lopen_sse_128_rounds
@@ -2084,7 +2084,7 @@ _CET_ENDBR
 	movdqa	%xmm10,%xmm6
 	movdqa	%xmm14,%xmm10
 	jmp	.Lopen_sse_128_xor_hash
-.size	chacha20_poly1305_open_nohw, .-chacha20_poly1305_open_nohw
+.size	chacha20_poly1305_open_sse41, .-chacha20_poly1305_open_sse41
 .cfi_endproc	
 
 
@@ -2093,11 +2093,11 @@ _CET_ENDBR
 
 
 
-.globl	chacha20_poly1305_seal_nohw
-.hidden chacha20_poly1305_seal_nohw
-.type	chacha20_poly1305_seal_nohw,@function
+.globl	chacha20_poly1305_seal_sse41
+.hidden chacha20_poly1305_seal_sse41
+.type	chacha20_poly1305_seal_sse41,@function
 .align	64
-chacha20_poly1305_seal_nohw:
+chacha20_poly1305_seal_sse41:
 .cfi_startproc	
 _CET_ENDBR
 	pushq	%rbp
@@ -2176,10 +2176,10 @@ _CET_ENDBR
 	pxor	%xmm2,%xmm14
 	pxor	%xmm1,%xmm13
 	pxor	%xmm0,%xmm12
-.byte	102,69,15,56,0,248
-.byte	102,69,15,56,0,240
-.byte	102,69,15,56,0,232
-.byte	102,69,15,56,0,224
+	pshufb	%xmm8,%xmm15
+	pshufb	%xmm8,%xmm14
+	pshufb	%xmm8,%xmm13
+	pshufb	%xmm8,%xmm12
 	movdqa	0+80(%rbp),%xmm8
 	paddd	%xmm15,%xmm11
 	paddd	%xmm14,%xmm10
@@ -2215,10 +2215,10 @@ _CET_ENDBR
 	pxor	%xmm2,%xmm14
 	pxor	%xmm1,%xmm13
 	pxor	%xmm0,%xmm12
-.byte	102,69,15,56,0,248
-.byte	102,69,15,56,0,240
-.byte	102,69,15,56,0,232
-.byte	102,69,15,56,0,224
+	pshufb	%xmm8,%xmm15
+	pshufb	%xmm8,%xmm14
+	pshufb	%xmm8,%xmm13
+	pshufb	%xmm8,%xmm12
 	movdqa	0+80(%rbp),%xmm8
 	paddd	%xmm15,%xmm11
 	paddd	%xmm14,%xmm10
@@ -2246,18 +2246,18 @@ _CET_ENDBR
 	pslld	$32-25,%xmm4
 	pxor	%xmm8,%xmm4
 	movdqa	0+80(%rbp),%xmm8
-.byte	102,15,58,15,255,4
-.byte	102,69,15,58,15,219,8
-.byte	102,69,15,58,15,255,12
-.byte	102,15,58,15,246,4
-.byte	102,69,15,58,15,210,8
-.byte	102,69,15,58,15,246,12
-.byte	102,15,58,15,237,4
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,12
-.byte	102,15,58,15,228,4
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,12
+	palignr	$4,%xmm7,%xmm7
+	palignr	$8,%xmm11,%xmm11
+	palignr	$12,%xmm15,%xmm15
+	palignr	$4,%xmm6,%xmm6
+	palignr	$8,%xmm10,%xmm10
+	palignr	$12,%xmm14,%xmm14
+	palignr	$4,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$12,%xmm13,%xmm13
+	palignr	$4,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$12,%xmm12,%xmm12
 	movdqa	%xmm8,0+80(%rbp)
 	movdqa	.Lrol16(%rip),%xmm8
 	paddd	%xmm7,%xmm3
@@ -2268,10 +2268,10 @@ _CET_ENDBR
 	pxor	%xmm2,%xmm14
 	pxor	%xmm1,%xmm13
 	pxor	%xmm0,%xmm12
-.byte	102,69,15,56,0,248
-.byte	102,69,15,56,0,240
-.byte	102,69,15,56,0,232
-.byte	102,69,15,56,0,224
+	pshufb	%xmm8,%xmm15
+	pshufb	%xmm8,%xmm14
+	pshufb	%xmm8,%xmm13
+	pshufb	%xmm8,%xmm12
 	movdqa	0+80(%rbp),%xmm8
 	paddd	%xmm15,%xmm11
 	paddd	%xmm14,%xmm10
@@ -2307,10 +2307,10 @@ _CET_ENDBR
 	pxor	%xmm2,%xmm14
 	pxor	%xmm1,%xmm13
 	pxor	%xmm0,%xmm12
-.byte	102,69,15,56,0,248
-.byte	102,69,15,56,0,240
-.byte	102,69,15,56,0,232
-.byte	102,69,15,56,0,224
+	pshufb	%xmm8,%xmm15
+	pshufb	%xmm8,%xmm14
+	pshufb	%xmm8,%xmm13
+	pshufb	%xmm8,%xmm12
 	movdqa	0+80(%rbp),%xmm8
 	paddd	%xmm15,%xmm11
 	paddd	%xmm14,%xmm10
@@ -2338,18 +2338,18 @@ _CET_ENDBR
 	pslld	$32-25,%xmm4
 	pxor	%xmm8,%xmm4
 	movdqa	0+80(%rbp),%xmm8
-.byte	102,15,58,15,255,12
-.byte	102,69,15,58,15,219,8
-.byte	102,69,15,58,15,255,4
-.byte	102,15,58,15,246,12
-.byte	102,69,15,58,15,210,8
-.byte	102,69,15,58,15,246,4
-.byte	102,15,58,15,237,12
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,4
-.byte	102,15,58,15,228,12
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,4
+	palignr	$12,%xmm7,%xmm7
+	palignr	$8,%xmm11,%xmm11
+	palignr	$4,%xmm15,%xmm15
+	palignr	$12,%xmm6,%xmm6
+	palignr	$8,%xmm10,%xmm10
+	palignr	$4,%xmm14,%xmm14
+	palignr	$12,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$4,%xmm13,%xmm13
+	palignr	$12,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$4,%xmm12,%xmm12
 
 	decq	%r10
 	jnz	.Lseal_sse_init_rounds
@@ -2472,10 +2472,10 @@ _CET_ENDBR
 	pxor	%xmm2,%xmm14
 	pxor	%xmm1,%xmm13
 	pxor	%xmm0,%xmm12
-.byte	102,69,15,56,0,248
-.byte	102,69,15,56,0,240
-.byte	102,69,15,56,0,232
-.byte	102,69,15,56,0,224
+	pshufb	%xmm8,%xmm15
+	pshufb	%xmm8,%xmm14
+	pshufb	%xmm8,%xmm13
+	pshufb	%xmm8,%xmm12
 	movdqa	0+80(%rbp),%xmm8
 	paddd	%xmm15,%xmm11
 	paddd	%xmm14,%xmm10
@@ -2524,10 +2524,10 @@ _CET_ENDBR
 	pxor	%xmm2,%xmm14
 	pxor	%xmm1,%xmm13
 	pxor	%xmm0,%xmm12
-.byte	102,69,15,56,0,248
-.byte	102,69,15,56,0,240
-.byte	102,69,15,56,0,232
-.byte	102,69,15,56,0,224
+	pshufb	%xmm8,%xmm15
+	pshufb	%xmm8,%xmm14
+	pshufb	%xmm8,%xmm13
+	pshufb	%xmm8,%xmm12
 	movdqa	0+80(%rbp),%xmm8
 	paddd	%xmm15,%xmm11
 	paddd	%xmm14,%xmm10
@@ -2568,18 +2568,18 @@ _CET_ENDBR
 	imulq	%r12,%r9
 	addq	%r10,%r15
 	adcq	%rdx,%r9
-.byte	102,15,58,15,255,4
-.byte	102,69,15,58,15,219,8
-.byte	102,69,15,58,15,255,12
-.byte	102,15,58,15,246,4
-.byte	102,69,15,58,15,210,8
-.byte	102,69,15,58,15,246,12
-.byte	102,15,58,15,237,4
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,12
-.byte	102,15,58,15,228,4
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,12
+	palignr	$4,%xmm7,%xmm7
+	palignr	$8,%xmm11,%xmm11
+	palignr	$12,%xmm15,%xmm15
+	palignr	$4,%xmm6,%xmm6
+	palignr	$8,%xmm10,%xmm10
+	palignr	$12,%xmm14,%xmm14
+	palignr	$4,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$12,%xmm13,%xmm13
+	palignr	$4,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$12,%xmm12,%xmm12
 	movdqa	%xmm8,0+80(%rbp)
 	movdqa	.Lrol16(%rip),%xmm8
 	paddd	%xmm7,%xmm3
@@ -2604,10 +2604,10 @@ _CET_ENDBR
 	adcq	$0,%r12
 	pxor	%xmm1,%xmm13
 	pxor	%xmm0,%xmm12
-.byte	102,69,15,56,0,248
-.byte	102,69,15,56,0,240
-.byte	102,69,15,56,0,232
-.byte	102,69,15,56,0,224
+	pshufb	%xmm8,%xmm15
+	pshufb	%xmm8,%xmm14
+	pshufb	%xmm8,%xmm13
+	pshufb	%xmm8,%xmm12
 	movdqa	0+80(%rbp),%xmm8
 	paddd	%xmm15,%xmm11
 	paddd	%xmm14,%xmm10
@@ -2643,10 +2643,10 @@ _CET_ENDBR
 	pxor	%xmm2,%xmm14
 	pxor	%xmm1,%xmm13
 	pxor	%xmm0,%xmm12
-.byte	102,69,15,56,0,248
-.byte	102,69,15,56,0,240
-.byte	102,69,15,56,0,232
-.byte	102,69,15,56,0,224
+	pshufb	%xmm8,%xmm15
+	pshufb	%xmm8,%xmm14
+	pshufb	%xmm8,%xmm13
+	pshufb	%xmm8,%xmm12
 	movdqa	0+80(%rbp),%xmm8
 	paddd	%xmm15,%xmm11
 	paddd	%xmm14,%xmm10
@@ -2674,18 +2674,18 @@ _CET_ENDBR
 	pslld	$32-25,%xmm4
 	pxor	%xmm8,%xmm4
 	movdqa	0+80(%rbp),%xmm8
-.byte	102,15,58,15,255,12
-.byte	102,69,15,58,15,219,8
-.byte	102,69,15,58,15,255,4
-.byte	102,15,58,15,246,12
-.byte	102,69,15,58,15,210,8
-.byte	102,69,15,58,15,246,4
-.byte	102,15,58,15,237,12
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,4
-.byte	102,15,58,15,228,12
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,4
+	palignr	$12,%xmm7,%xmm7
+	palignr	$8,%xmm11,%xmm11
+	palignr	$4,%xmm15,%xmm15
+	palignr	$12,%xmm6,%xmm6
+	palignr	$8,%xmm10,%xmm10
+	palignr	$4,%xmm14,%xmm14
+	palignr	$12,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$4,%xmm13,%xmm13
+	palignr	$12,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$4,%xmm12,%xmm12
 
 	leaq	16(%rdi),%rdi
 	decq	%r8
@@ -2898,9 +2898,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,4
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,12
+	palignr	$4,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$12,%xmm12,%xmm12
 	paddd	%xmm4,%xmm0
 	pxor	%xmm0,%xmm12
 	pshufb	.Lrol16(%rip),%xmm12
@@ -2919,9 +2919,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,12
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,4
+	palignr	$12,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$4,%xmm12,%xmm12
 	addq	0+0(%rdi),%r10
 	adcq	8+0(%rdi),%r11
 	adcq	$1,%r12
@@ -3051,9 +3051,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,4
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,12
+	palignr	$4,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$12,%xmm12,%xmm12
 	paddd	%xmm5,%xmm1
 	pxor	%xmm1,%xmm13
 	pshufb	.Lrol16(%rip),%xmm13
@@ -3072,9 +3072,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm5
 	pxor	%xmm3,%xmm5
-.byte	102,15,58,15,237,4
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,12
+	palignr	$4,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$12,%xmm13,%xmm13
 	addq	0+0(%rdi),%r10
 	adcq	8+0(%rdi),%r11
 	adcq	$1,%r12
@@ -3133,9 +3133,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,12
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,4
+	palignr	$12,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$4,%xmm12,%xmm12
 	paddd	%xmm5,%xmm1
 	pxor	%xmm1,%xmm13
 	pshufb	.Lrol16(%rip),%xmm13
@@ -3154,9 +3154,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm5
 	pxor	%xmm3,%xmm5
-.byte	102,15,58,15,237,12
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,4
+	palignr	$12,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$4,%xmm13,%xmm13
 
 	leaq	16(%rdi),%rdi
 	decq	%rcx
@@ -3271,9 +3271,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,4
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,12
+	palignr	$4,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$12,%xmm12,%xmm12
 	paddd	%xmm5,%xmm1
 	pxor	%xmm1,%xmm13
 	pshufb	.Lrol16(%rip),%xmm13
@@ -3292,9 +3292,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm5
 	pxor	%xmm3,%xmm5
-.byte	102,15,58,15,237,4
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,12
+	palignr	$4,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$12,%xmm13,%xmm13
 	paddd	%xmm6,%xmm2
 	pxor	%xmm2,%xmm14
 	pshufb	.Lrol16(%rip),%xmm14
@@ -3313,9 +3313,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm6
 	pxor	%xmm3,%xmm6
-.byte	102,15,58,15,246,4
-.byte	102,69,15,58,15,210,8
-.byte	102,69,15,58,15,246,12
+	palignr	$4,%xmm6,%xmm6
+	palignr	$8,%xmm10,%xmm10
+	palignr	$12,%xmm14,%xmm14
 	addq	0+0(%rdi),%r10
 	adcq	8+0(%rdi),%r11
 	adcq	$1,%r12
@@ -3374,9 +3374,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,12
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,4
+	palignr	$12,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$4,%xmm12,%xmm12
 	paddd	%xmm5,%xmm1
 	pxor	%xmm1,%xmm13
 	pshufb	.Lrol16(%rip),%xmm13
@@ -3395,9 +3395,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm5
 	pxor	%xmm3,%xmm5
-.byte	102,15,58,15,237,12
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,4
+	palignr	$12,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$4,%xmm13,%xmm13
 	paddd	%xmm6,%xmm2
 	pxor	%xmm2,%xmm14
 	pshufb	.Lrol16(%rip),%xmm14
@@ -3416,9 +3416,9 @@ _CET_ENDBR
 	pslld	$7,%xmm3
 	psrld	$25,%xmm6
 	pxor	%xmm3,%xmm6
-.byte	102,15,58,15,246,12
-.byte	102,69,15,58,15,210,8
-.byte	102,69,15,58,15,246,4
+	palignr	$12,%xmm6,%xmm6
+	palignr	$8,%xmm10,%xmm10
+	palignr	$4,%xmm14,%xmm14
 
 	leaq	16(%rdi),%rdi
 	decq	%rcx
@@ -3670,7 +3670,7 @@ _CET_ENDBR
 
 
 
-.byte	102,77,15,126,253
+	movq	%xmm15,%r13
 	pextrq	$1,%xmm15,%r14
 	addq	%r13,%r10
 	adcq	%r14,%r11
@@ -3786,7 +3786,7 @@ process_extra_in_trailer:
 	leaq	.Land_masks(%rip),%r15
 	shlq	$4,%rbx
 	pand	-16(%r15,%rbx,1),%xmm15
-.byte	102,77,15,126,253
+	movq	%xmm15,%r13
 	pextrq	$1,%xmm15,%r14
 	addq	%r13,%r10
 	adcq	%r14,%r11
@@ -3955,9 +3955,9 @@ process_extra_in_trailer:
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,4
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,12
+	palignr	$4,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$12,%xmm12,%xmm12
 	paddd	%xmm5,%xmm1
 	pxor	%xmm1,%xmm13
 	pshufb	.Lrol16(%rip),%xmm13
@@ -3976,9 +3976,9 @@ process_extra_in_trailer:
 	pslld	$7,%xmm3
 	psrld	$25,%xmm5
 	pxor	%xmm3,%xmm5
-.byte	102,15,58,15,237,4
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,12
+	palignr	$4,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$12,%xmm13,%xmm13
 	paddd	%xmm6,%xmm2
 	pxor	%xmm2,%xmm14
 	pshufb	.Lrol16(%rip),%xmm14
@@ -3997,9 +3997,9 @@ process_extra_in_trailer:
 	pslld	$7,%xmm3
 	psrld	$25,%xmm6
 	pxor	%xmm3,%xmm6
-.byte	102,15,58,15,246,4
-.byte	102,69,15,58,15,210,8
-.byte	102,69,15,58,15,246,12
+	palignr	$4,%xmm6,%xmm6
+	palignr	$8,%xmm10,%xmm10
+	palignr	$12,%xmm14,%xmm14
 	paddd	%xmm4,%xmm0
 	pxor	%xmm0,%xmm12
 	pshufb	.Lrol16(%rip),%xmm12
@@ -4018,9 +4018,9 @@ process_extra_in_trailer:
 	pslld	$7,%xmm3
 	psrld	$25,%xmm4
 	pxor	%xmm3,%xmm4
-.byte	102,15,58,15,228,12
-.byte	102,69,15,58,15,192,8
-.byte	102,69,15,58,15,228,4
+	palignr	$12,%xmm4,%xmm4
+	palignr	$8,%xmm8,%xmm8
+	palignr	$4,%xmm12,%xmm12
 	paddd	%xmm5,%xmm1
 	pxor	%xmm1,%xmm13
 	pshufb	.Lrol16(%rip),%xmm13
@@ -4039,9 +4039,9 @@ process_extra_in_trailer:
 	pslld	$7,%xmm3
 	psrld	$25,%xmm5
 	pxor	%xmm3,%xmm5
-.byte	102,15,58,15,237,12
-.byte	102,69,15,58,15,201,8
-.byte	102,69,15,58,15,237,4
+	palignr	$12,%xmm5,%xmm5
+	palignr	$8,%xmm9,%xmm9
+	palignr	$4,%xmm13,%xmm13
 	paddd	%xmm6,%xmm2
 	pxor	%xmm2,%xmm14
 	pshufb	.Lrol16(%rip),%xmm14
@@ -4060,9 +4060,9 @@ process_extra_in_trailer:
 	pslld	$7,%xmm3
 	psrld	$25,%xmm6
 	pxor	%xmm3,%xmm6
-.byte	102,15,58,15,246,12
-.byte	102,69,15,58,15,210,8
-.byte	102,69,15,58,15,246,4
+	palignr	$12,%xmm6,%xmm6
+	palignr	$8,%xmm10,%xmm10
+	palignr	$4,%xmm14,%xmm14
 
 	decq	%r10
 	jnz	.Lseal_sse_128_rounds
@@ -4085,7 +4085,7 @@ process_extra_in_trailer:
 	movq	%r8,%r8
 	call	poly_hash_ad_internal
 	jmp	.Lseal_sse_128_tail_xor
-.size	chacha20_poly1305_seal_nohw, .-chacha20_poly1305_seal_nohw
+.size	chacha20_poly1305_seal_sse41, .-chacha20_poly1305_seal_sse41
 .cfi_endproc	
 
 

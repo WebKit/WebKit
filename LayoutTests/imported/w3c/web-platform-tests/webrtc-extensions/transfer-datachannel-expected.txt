@@ -1,6 +1,0 @@
-
-PASS offerer data channel in workers
-PASS answerer data channel in workers
-PASS data channel close event in worker
-PASS Failing to transfer a data channel
-

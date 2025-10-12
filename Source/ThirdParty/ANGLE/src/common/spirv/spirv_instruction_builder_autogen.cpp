@@ -3212,7 +3212,7 @@ void WriteGroupNonUniformBroadcast(Blob *blob,
                                    IdResult idResult2,
                                    IdScope execution,
                                    IdRef value,
-                                   IdRef id)
+                                   IdRef invocationId)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
@@ -3220,7 +3220,7 @@ void WriteGroupNonUniformBroadcast(Blob *blob,
     blob->push_back(idResult2);
     blob->push_back(execution);
     blob->push_back(value);
-    blob->push_back(id);
+    blob->push_back(invocationId);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformBroadcast);
 }
 void WriteGroupNonUniformBroadcastFirst(Blob *blob,
@@ -3336,7 +3336,7 @@ void WriteGroupNonUniformShuffle(Blob *blob,
                                  IdResult idResult2,
                                  IdScope execution,
                                  IdRef value,
-                                 IdRef id)
+                                 IdRef invocationId)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
@@ -3344,7 +3344,7 @@ void WriteGroupNonUniformShuffle(Blob *blob,
     blob->push_back(idResult2);
     blob->push_back(execution);
     blob->push_back(value);
-    blob->push_back(id);
+    blob->push_back(invocationId);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformShuffle);
 }
 void WriteGroupNonUniformShuffleXor(Blob *blob,

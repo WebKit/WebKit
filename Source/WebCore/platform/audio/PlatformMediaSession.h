@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,15 +25,12 @@
 
 #pragma once
 
-#include "PlatformMediaSessionInterface.h"
+#include <WebCore/PlatformMediaSessionInterface.h>
 
 namespace WebCore {
 
-class PlatformMediaSession
-    : public PlatformMediaSessionInterface
-{
+class PlatformMediaSession : public PlatformMediaSessionInterface {
     WTF_MAKE_TZONE_ALLOCATED(PlatformMediaSession);
-
 public:
     static Ref<PlatformMediaSession> create(PlatformMediaSessionClient& client)
     {

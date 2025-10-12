@@ -75,6 +75,8 @@ if(NOT AOM_TARGET_CPU)
     set(AOM_TARGET_CPU "arm64")
   elseif(cpu_lowercase MATCHES "^ppc")
     set(AOM_TARGET_CPU "ppc")
+  elseif(cpu_lowercase MATCHES "^riscv")
+    set(AOM_TARGET_CPU "riscv")
   else()
     message(WARNING "The architecture ${CMAKE_SYSTEM_PROCESSOR} is not "
                     "supported, falling back to the generic target")
@@ -237,6 +239,7 @@ if(AOM_TARGET_SYSTEM MATCHES "Darwin\|Linux\|Windows\|Android")
   set(CONFIG_OS_SUPPORT 1)
 endif()
 
+# Define macros that affect Windows headers.
 if(AOM_TARGET_SYSTEM STREQUAL "Windows")
   # The default _WIN32_WINNT value in MinGW is 0x0502 (Windows XP with SP2). Set
   # it to 0x0601 (Windows 7).
@@ -298,9 +301,8 @@ endif()
 
 # Test compiler flags.
 if(MSVC)
-  # It isn't possible to specify C99 conformance for MSVC. MSVC doesn't support
-  # C++ standards modes earlier than C++14.
-  add_cxx_flag_if_supported("/std:c++14")
+  # It isn't possible to specify C99 conformance for MSVC.
+  add_cxx_flag_if_supported("/std:c++17")
   add_compiler_flag_if_supported("/W3")
 
   # Disable MSVC warnings that suggest making code non-portable.
@@ -308,21 +310,17 @@ if(MSVC)
   if(ENABLE_WERROR)
     add_compiler_flag_if_supported("/WX")
   endif()
+
+  # Compile source files in parallel
+  add_compiler_flag_if_supported("/MP")
 else()
   require_c_flag("-std=c99" YES)
-  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
-     AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "GNU"
-     AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC")
-    # Microsoft's C++ Standard Library requires C++14 as it's MSVC's default and
-    # minimum supported C++ version. If Clang is using this Standard Library
-    # implementation, it cannot target C++11.
-    require_cxx_flag_nomsvc("-std=c++14" YES)
-  elseif(CYGWIN AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    # The GNU C++ compiler in Cygwin needs the -std=gnu++11 flag to make the
+  if(CYGWIN AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # The GNU C++ compiler in Cygwin needs the -std=gnu++* flag to make the
     # POSIX function declarations visible in the Standard C Library headers.
-    require_cxx_flag_nomsvc("-std=gnu++11" YES)
+    require_cxx_flag_nomsvc("-std=gnu++17" YES)
   else()
-    require_cxx_flag_nomsvc("-std=c++11" YES)
+    require_cxx_flag_nomsvc("-std=c++17" YES)
   endif()
   add_compiler_flag_if_supported("-Wall")
   add_compiler_flag_if_supported("-Wdisabled-optimization")
@@ -360,9 +358,8 @@ else()
   add_compiler_flag_if_supported("-Wunreachable-code-aggressive")
   add_compiler_flag_if_supported("-Wunused")
   add_compiler_flag_if_supported("-Wvla")
-  add_cxx_flag_if_supported("-Wc++14-extensions")
-  add_cxx_flag_if_supported("-Wc++17-extensions")
   add_cxx_flag_if_supported("-Wc++20-extensions")
+  add_cxx_flag_if_supported("-Wc++23-extensions")
 
   if(CMAKE_C_COMPILER_ID MATCHES "GNU" AND SANITIZE MATCHES "address|undefined")
 

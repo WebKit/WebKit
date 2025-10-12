@@ -1,6 +1,6 @@
 
-FAIL :focus via :scope in subject assert_equals: expected "1" but got "auto"
+PASS :focus via :scope in subject
 PASS :focus via :scope in non-subject
-FAIL :focus in limit, :scope in subject assert_equals: expected "auto" but got "1"
+PASS :focus in limit, :scope in subject
 PASS :focus in intermediate limit, :scope in subject
 

@@ -41,6 +41,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
@@ -63,10 +64,10 @@ SOFT_LINK(MediaRemote, MRNowPlayingClientGetProcessIdentifier, pid_t, (MRNowPlay
 #define MRNowPlayingClientGetProcessIdentifier softLinkMRNowPlayingClientGetProcessIdentifier
 
 SOFT_LINK_CONSTANT(MediaRemote, kMRMediaRemoteOptionSkipInterval, CFStringRef)
-#define kMRMediaRemoteOptionSkipInterval getkMRMediaRemoteOptionSkipInterval()
+#define kMRMediaRemoteOptionSkipInterval getkMRMediaRemoteOptionSkipIntervalSingleton()
 
 SOFT_LINK_CONSTANT(MediaRemote, kMRMediaRemoteOptionPlaybackPosition, CFStringRef)
-#define kMRMediaRemoteOptionPlaybackPosition getkMRMediaRemoteOptionPlaybackPosition()
+#define kMRMediaRemoteOptionPlaybackPosition getkMRMediaRemoteOptionPlaybackPositionSingleton()
 
 #if !USE(APPLE_INTERNAL_SDK)
 @interface MRCommandInfo : NSObject
@@ -106,7 +107,7 @@ public:
     {
         bool gotNowPlaying = false;
         RetainPtr<MRNowPlayingClientRef> nowPlayingClient;
-        MRMediaRemoteGetNowPlayingClient(dispatch_get_main_queue(), [&] (MRNowPlayingClientRef player, CFErrorRef error) {
+        MRMediaRemoteGetNowPlayingClient(mainDispatchQueueSingleton(), [&] (MRNowPlayingClientRef player, CFErrorRef error) {
             if (!error && player)
                 nowPlayingClient = player;
             gotNowPlaying = true;
@@ -248,7 +249,7 @@ public:
         bool completed = false;
         RetainPtr<NSArray> result;
 
-        MRMediaRemoteGetSupportedCommandsForOrigin(MRMediaRemoteGetLocalOrigin(), dispatch_get_main_queue(), [&] (CFArrayRef commands) {
+        MRMediaRemoteGetSupportedCommandsForOrigin(MRMediaRemoteGetLocalOrigin(), mainDispatchQueueSingleton(), [&] (CFArrayRef commands) {
             result = (__bridge NSArray *)commands;
             completed = true;
         });

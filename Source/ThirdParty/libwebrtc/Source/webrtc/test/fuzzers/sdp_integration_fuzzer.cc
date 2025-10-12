@@ -14,11 +14,23 @@
 #include <stdlib.h>
 #endif
 
+#include <memory>
+#include <string>
+#include <utility>
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnullability-completeness"
 #include "absl/strings/string_view.h"
-#ifdef WEBRTC_WEBKIT_BUILD
 #include "api/jsep.h"
-#endif
+#include "api/make_ref_counted.h"
+#include "api/peer_connection_interface.h"
+#include "api/test/rtc_error_matchers.h"
 #include "pc/test/integration_test_helpers.h"
+#include "pc/test/mock_peer_connection_observers.h"
+#include "rtc_base/checks.h"
+#include "test/gmock.h"
+#include "test/wait_until.h"
+#pragma clang diagnostic pop
 
 namespace webrtc {
 
@@ -37,7 +49,7 @@ class FuzzerTest : public PeerConnectionIntegrationBaseTest {
     // generated are discarded.
 
     auto srd_observer =
-        rtc::make_ref_counted<FakeSetRemoteDescriptionObserver>();
+        webrtc::make_ref_counted<FakeSetRemoteDescriptionObserver>();
 
 #ifdef WEBRTC_WEBKIT_BUILD
     std::unique_ptr<SessionDescriptionInterface> sdp(
@@ -50,14 +62,18 @@ class FuzzerTest : public PeerConnectionIntegrationBaseTest {
     caller()->pc()->SetRemoteDescription(std::move(sdp), srd_observer);
     // Wait a short time for observer to be called. Timeout is short
     // because the fuzzer should be trying many branches.
-    EXPECT_TRUE_WAIT(srd_observer->called(), 100);
+    EXPECT_THAT(
+        WaitUntil([&] { return srd_observer->called(); }, ::testing::IsTrue()),
+        IsRtcOk());
 
     // If set-remote-description was successful, try to answer.
     auto sld_observer =
-        rtc::make_ref_counted<FakeSetLocalDescriptionObserver>();
+        webrtc::make_ref_counted<FakeSetLocalDescriptionObserver>();
     if (srd_observer->error().ok()) {
       caller()->pc()->SetLocalDescription(sld_observer);
-      EXPECT_TRUE_WAIT(sld_observer->called(), 100);
+      EXPECT_THAT(WaitUntil([&] { return sld_observer->called(); },
+                            ::testing::IsTrue()),
+                  IsRtcOk());
     }
 #if !defined(WEBRTC_WEBKIT_BUILD)
     // If there is an EXPECT failure, die here.

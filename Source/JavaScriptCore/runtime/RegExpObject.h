@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2023 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -20,10 +20,10 @@
 
 #pragma once
 
-#include "JSObject.h"
-#include "RegExp.h"
-#include "ThrowScope.h"
-#include "TypeError.h"
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/RegExp.h>
+#include <JavaScriptCore/ThrowScope.h>
+#include <JavaScriptCore/TypeError.h>
 
 namespace JSC {
     
@@ -99,6 +99,11 @@ public:
         return m_lastIndex.get();
     }
 
+    bool lastIndexIsWritable() const
+    {
+        return !(m_regExpAndFlags & lastIndexIsNotWritableFlag);
+    }
+
     bool test(JSGlobalObject* globalObject, JSString* string) { return !!match(globalObject, string); }
     bool testInline(JSGlobalObject* globalObject, JSString* string) { return !!matchInline(globalObject, string); }
     JS_EXPORT_PRIVATE JSValue exec(JSGlobalObject*, JSString*);
@@ -110,6 +115,8 @@ public:
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
 
     DECLARE_EXPORT_INFO;
+
+    DECLARE_VISIT_CHILDREN;
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
@@ -136,13 +143,6 @@ private:
 #if ASSERT_ENABLED
     JS_EXPORT_PRIVATE void finishCreation(VM&);
 #endif
-
-    DECLARE_VISIT_CHILDREN;
-
-    bool lastIndexIsWritable() const
-    {
-        return !(m_regExpAndFlags & lastIndexIsNotWritableFlag);
-    }
 
     void setLastIndexIsNotWritable()
     {

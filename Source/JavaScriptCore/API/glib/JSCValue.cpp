@@ -878,12 +878,12 @@ static JSValueRef jsObjectCall(JSGlobalContextRef jsContext, JSObjectRef functio
 {
     switch (functionType) {
     case JSC::JSCCallbackFunction::Type::Constructor:
-        return JSObjectCallAsConstructor(jsContext, function, arguments.size(), arguments.data(), exception);
+        return JSObjectCallAsConstructor(jsContext, function, arguments.size(), arguments.span().data(), exception);
     case JSC::JSCCallbackFunction::Type::Method:
         ASSERT(thisObject);
         [[fallthrough]];
     case JSC::JSCCallbackFunction::Type::Function:
-        return JSObjectCallAsFunction(jsContext, function, thisObject, arguments.size(), arguments.data(), exception);
+        return JSObjectCallAsFunction(jsContext, function, thisObject, arguments.size(), arguments.span().data(), exception);
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -1142,7 +1142,7 @@ static void jscValueObjectDefinePropertyAccessor(JSCValue* value, const char* pr
  * @destroy_notify: (nullable): destroy notifier for @user_data
  *
  * Define or modify a property with @property_name in object referenced by @value. When the
- * property value needs to be getted or set, @getter and @setter callbacks will be called.
+ * property value is read or set, @getter and @setter callbacks will be called.
  * When the property is cleared in the #JSCClass context, @destroy_notify is called with
  * @user_data as parameter. This is equivalent to JavaScript <function>Object.defineProperty()</function>
  * when used with an accessor descriptor.
@@ -2093,12 +2093,12 @@ JSCValue* jsc_value_new_from_json(JSCContext* context, const char* json)
     JSC::JSValue jsValue;
     String jsonString = String::fromUTF8(json);
     if (jsonString.is8Bit()) {
-        JSC::LiteralParser<LChar, JSC::JSONReviverMode::Disabled> jsonParser(globalObject, jsonString.span8(), JSC::StrictJSON);
+        JSC::LiteralParser<Latin1Character, JSC::JSONReviverMode::Disabled> jsonParser(globalObject, jsonString.span8(), JSC::StrictJSON);
         jsValue = jsonParser.tryLiteralParse();
         if (!jsValue)
             exception = toRef(JSC::createSyntaxError(globalObject, jsonParser.getErrorMessage()));
     } else {
-        JSC::LiteralParser<UChar, JSC::JSONReviverMode::Disabled> jsonParser(globalObject, jsonString.span16(), JSC::StrictJSON);
+        JSC::LiteralParser<char16_t, JSC::JSONReviverMode::Disabled> jsonParser(globalObject, jsonString.span16(), JSC::StrictJSON);
         jsValue = jsonParser.tryLiteralParse();
         if (!jsValue)
             exception = toRef(JSC::createSyntaxError(globalObject, jsonParser.getErrorMessage()));

@@ -96,7 +96,7 @@ private:
 
     void createPrepareStatement(ASCIILiteral);
     SQLiteStatement& preparedStatement(const String&);
-    bool executeSQLStatement(Expected<SQLiteStatement, int>&&);
+    bool executeSQLStatement(std::unique_ptr<SQLiteStatement>&&);
 
     bool deleteCookieInternal(const String& name, const String& domain, const String& path);
     bool hasHttpOnlyCookie(const String& name, const String& domain, const String& path);

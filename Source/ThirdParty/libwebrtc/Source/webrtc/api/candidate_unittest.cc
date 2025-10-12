@@ -18,7 +18,7 @@
 
 using webrtc::IceCandidateType;
 
-namespace cricket {
+namespace webrtc {
 
 TEST(CandidateTest, Id) {
   Candidate c;
@@ -62,7 +62,7 @@ TEST(CandidateTest, Foundation) {
   c.set_protocol("udp");
   c.set_relay_protocol("udp");
 
-  rtc::SocketAddress address("99.99.98.1", 1024);
+  SocketAddress address("99.99.98.1", 1024);
   c.set_address(address);
   c.ComputeFoundation(c.address(), 1);
   std::string foundation1 = c.foundation();
@@ -100,4 +100,4 @@ TEST(CandidateTest, Foundation) {
   EXPECT_NE(foundation1, c.foundation());
 }
 
-}  // namespace cricket
+}  // namespace webrtc

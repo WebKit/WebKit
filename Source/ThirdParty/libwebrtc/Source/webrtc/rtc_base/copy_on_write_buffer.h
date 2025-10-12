@@ -15,7 +15,6 @@
 
 #include <algorithm>
 #include <cstring>
-#include <string>
 #include <type_traits>
 #include <utility>
 
@@ -27,7 +26,7 @@
 #include "rtc_base/system/rtc_export.h"
 #include "rtc_base/type_traits.h"
 
-namespace rtc {
+namespace webrtc {
 
 class RTC_EXPORT CopyOnWriteBuffer {
  public:
@@ -307,7 +306,7 @@ class RTC_EXPORT CopyOnWriteBuffer {
     }
   }
 
-  // buffer_ is either null, or points to an rtc::Buffer with capacity > 0.
+  // buffer_ is either null, or points to an Buffer with capacity > 0.
   scoped_refptr<RefCountedBuffer> buffer_;
   // This buffer may represent a slice of a original data.
   size_t offset_;  // Offset of a current slice in the original data in buffer_.
@@ -316,6 +315,7 @@ class RTC_EXPORT CopyOnWriteBuffer {
                    // Should be 0 if the buffer_ is empty.
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_COPY_ON_WRITE_BUFFER_H_

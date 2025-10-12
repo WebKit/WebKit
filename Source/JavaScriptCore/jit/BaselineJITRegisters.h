@@ -27,8 +27,8 @@
 
 #if ENABLE(JIT)
 
-#include "GPRInfo.h"
-#include "JITOperations.h"
+#include <JavaScriptCore/GPRInfo.h>
+#include <JavaScriptCore/JITOperations.h>
 
 namespace JSC {
 
@@ -47,10 +47,15 @@ namespace CallDirectEval {
 #if USE(JSVALUE64)
         static constexpr GPRReg scopeGPR { GPRInfo::regT1 };
         static constexpr JSValueRegs thisValueJSR { GPRInfo::regT2 };
+        static constexpr GPRReg codeBlockGPR { GPRInfo::regT3 };
+        static constexpr GPRReg bytecodeIndexGPR { GPRInfo::regT4 };
 #else
         static constexpr GPRReg scopeGPR { GPRInfo::regT1 };
         static constexpr JSValueRegs thisValueJSR { JSRInfo::jsRegT32 };
+        static constexpr GPRReg codeBlockGPR { GPRInfo::regT4 };
+        static constexpr GPRReg bytecodeIndexGPR { GPRInfo::regT5 };
 #endif
+        static_assert(noOverlap(calleeFrameGPR, scopeGPR, thisValueJSR, codeBlockGPR, bytecodeIndexGPR), "Required for call to slow operation");
     }
 }
 

@@ -111,6 +111,7 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h264CapsFromCodecString(con
     return { inputCaps, outputCaps };
 }
 
+IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 const char* GStreamerCodecUtilities::parseHEVCProfile(const String& codec)
 {
     ensureDebugCategoryInitialized();
@@ -144,6 +145,7 @@ const char* GStreamerCodecUtilities::parseHEVCProfile(const String& codec)
 
     return gst_codec_utils_h265_get_profile(profileTierLevel.data(), profileTierLevel.size());
 }
+IGNORE_CLANG_WARNINGS_END
 
 static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h265CapsFromCodecString(const String& codecString)
 {

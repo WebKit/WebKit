@@ -31,6 +31,8 @@
 #include <WebCore/GamepadProviderClient.h>
 #include <WebCore/NotImplemented.h>
 #include <wpe/wpe-platform.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -44,7 +46,7 @@ GamepadProviderWPE& GamepadProviderWPE::singleton()
 }
 
 GamepadProviderWPE::GamepadProviderWPE()
-    : m_inputNotificationTimer(RunLoop::currentSingleton(), this, &GamepadProviderWPE::inputNotificationTimerFired)
+    : m_inputNotificationTimer(RunLoop::currentSingleton(), "GamepadProviderWPE::InputNotificationTimer"_s, this, &GamepadProviderWPE::inputNotificationTimerFired)
 {
 }
 
@@ -111,8 +113,10 @@ void GamepadProviderWPE::startMonitoringGamepads(GamepadProviderClient& client)
     m_isMonitoringInput = true;
     gsize deviceCount;
     GUniquePtr<WPEGamepad*> gamepads(wpe_gamepad_manager_list_devices(m_manager.get(), &deviceCount));
+    IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage")
     for (size_t i = 0; i < deviceCount; ++i)
         gamepadConnected(gamepads.get()[i], IsInitialDevice::Yes);
+    IGNORE_CLANG_WARNINGS_END
 }
 
 void GamepadProviderWPE::stopMonitoringGamepads(GamepadProviderClient& client)

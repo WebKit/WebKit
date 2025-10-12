@@ -5,10 +5,11 @@ Execution tests for the 'textureNumLevels' builtin function
 
 Returns the number of mip levels of a texture.
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../../../gpu_test.js';
 import { getTextureDimensionFromView } from '../../../../../util/texture/base.js';
 import { kShaderStages } from '../../../../validation/decl/util.js';
 
-import { kSampleTypeInfo, WGSLTextureQueryTest } from './texture_utils.js';
+import { executeTextureQueryAndExpectResult, kSampleTypeInfo } from './texture_utils.js';
 
 function getLevelSettingsAndExpected(viewType, mipLevelCount) {
   return viewType === 'partial' ?
@@ -37,7 +38,7 @@ const kTextureTypeToViewDimension = {
   texture_depth_cube_array: 'cube-array'
 };
 
-export const g = makeTestGroup(WGSLTextureQueryTest);
+export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 
 g.test('sampled').
 specURL('https://www.w3.org/TR/WGSL/#texturenumlevels').
@@ -116,7 +117,7 @@ fn getValue() -> u32 {
     mipLevelCount
   };
 
-  t.executeAndExpectResult(stage, code, texture, viewDescription, expected);
+  executeTextureQueryAndExpectResult(t, stage, code, texture, viewDescription, expected);
 });
 
 g.test('depth').
@@ -186,5 +187,5 @@ fn getValue() -> u32 {
     mipLevelCount
   };
 
-  t.executeAndExpectResult(stage, code, texture, viewDescription, expected);
+  executeTextureQueryAndExpectResult(t, stage, code, texture, viewDescription, expected);
 });

@@ -29,6 +29,7 @@
 #include "RenderImageResourceStyleImage.h"
 
 #include "CachedImage.h"
+#include "NullGraphicsContext.h"
 #include "RenderElement.h"
 #include "RenderStyleInlines.h"
 #include "StyleCachedImage.h"
@@ -61,7 +62,7 @@ RefPtr<Image> RenderImageResourceStyleImage::image(const IntSize& size) const
     // Generated content may trigger calls to image() while we're still pending, don't assert but gracefully exit.
     if (m_styleImage->isPending())
         return &Image::nullImage();
-    if (auto image = m_styleImage->image(renderer(), size))
+    if (auto image = m_styleImage->image(renderer(), size, NullGraphicsContext()))
         return image;
     return &Image::nullImage();
 }

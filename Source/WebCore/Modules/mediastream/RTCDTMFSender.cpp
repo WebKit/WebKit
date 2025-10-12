@@ -33,6 +33,7 @@
 #include "RTCDTMFToneChangeEvent.h"
 #include "RTCRtpSender.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptWrappableInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -82,7 +83,7 @@ String RTCDTMFSender::toneBuffer() const
     return m_tones;
 }
 
-static inline bool isToneCharacterInvalid(UChar character)
+static inline bool isToneCharacterInvalid(char16_t character)
 {
     if (character >= '0' && character <= '9')
         return false;
@@ -108,10 +109,15 @@ ExceptionOr<void> RTCDTMFSender::insertDTMF(const String& tones, size_t duration
         return { };
 
     m_isPendingPlayoutTask = true;
-    scriptExecutionContext()->postTask([protectedThis = Ref { *this }](auto&) {
+    protectedScriptExecutionContext()->postTask([protectedThis = Ref { *this }](auto&) {
         protectedThis->playNextTone();
     });
     return { };
+}
+
+ScriptExecutionContext* RTCDTMFSender::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 void RTCDTMFSender::playNextTone()

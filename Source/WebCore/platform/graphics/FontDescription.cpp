@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Nicholas Shanks <contact@nickshanks.com>
  * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,9 +38,9 @@
 namespace WebCore {
 
 FontDescription::FontDescription()
-    : m_variantAlternates(FontCascadeDescription::initialVariantAlternates())
+    : m_variantAlternates(FontVariantAlternates::Normal())
     , m_fontPalette({ FontPalette::Type::Normal, nullAtom() })
-    , m_fontSelectionRequest { FontCascadeDescription::initialWeight(), FontCascadeDescription::initialWidth(), FontCascadeDescription::initialItalic() }
+    , m_fontSelectionRequest { normalWeightValue(), normalWidthValue(), std::nullopt }
     , m_orientation(enumToUnderlyingType(FontOrientation::Horizontal))
     , m_nonCJKGlyphOrientation(enumToUnderlyingType(NonCJKGlyphOrientation::Mixed))
     , m_widthVariant(enumToUnderlyingType(FontWidthVariant::RegularWidth))
@@ -64,7 +65,7 @@ FontDescription::FontDescription()
     , m_variantEastAsianRuby(enumToUnderlyingType(FontVariantEastAsianRuby::Normal))
     , m_variantEmoji(enumToUnderlyingType(FontVariantEmoji::Normal))
     , m_opticalSizing(enumToUnderlyingType(FontOpticalSizing::Enabled))
-    , m_fontStyleAxis(FontCascadeDescription::initialFontStyleAxis() == FontStyleAxis::ital)
+    , m_fontStyleAxis(enumToUnderlyingType(FontStyleAxis::slnt))
     , m_shouldAllowUserInstalledFonts(enumToUnderlyingType(AllowUserInstalledFonts::No))
     , m_shouldDisableLigaturesForSpacing(false)
 {
@@ -107,7 +108,7 @@ void FontDescription::setSpecifiedLocale(const AtomString& locale)
 {
     ASSERT(isMainThread());
     m_specifiedLocale = locale;
-    m_script = localeToScriptCodeForFontSelection(m_specifiedLocale);
+    m_script = localeToScriptCode(m_specifiedLocale);
     m_locale = m_script == USCRIPT_HAN ? specializedChineseLocale() : m_specifiedLocale;
 }
 
@@ -122,6 +123,82 @@ float FontDescription::adjustedSizeForFontFace(float fontFaceSizeAdjust) const
 {
     // It is not worth modifying the used size with @font-face size-adjust if we are to re-adjust it later with font-size-adjust. This is because font-size-adjust will overrule this change, since size-adjust also modifies the font's metric values and thus, keeps the aspect-value unchanged.
     return fontSizeAdjust().value ? computedSize() : fontFaceSizeAdjust * computedSize();
-
 }
+
+FontVariantEastAsianValues FontDescription::variantEastAsian() const
+{
+    return {
+        variantEastAsianVariant(),
+        variantEastAsianWidth(),
+        variantEastAsianRuby(),
+    };
+}
+
+FontVariantNumericValues FontDescription::variantNumeric() const
+{
+    return {
+        variantNumericFigure(),
+        variantNumericSpacing(),
+        variantNumericFraction(),
+        variantNumericOrdinal(),
+        variantNumericSlashedZero(),
+    };
+}
+
+FontVariantLigaturesValues FontDescription::variantLigatures() const
+{
+    return {
+        variantCommonLigatures(),
+        variantDiscretionaryLigatures(),
+        variantHistoricalLigatures(),
+        variantContextualAlternates(),
+    };
+}
+
+FontVariantSettings FontDescription::variantSettings() const
+{
+    return {
+        variantCommonLigatures(),
+        variantDiscretionaryLigatures(),
+        variantHistoricalLigatures(),
+        variantContextualAlternates(),
+        variantPosition(),
+        variantCaps(),
+        variantNumericFigure(),
+        variantNumericSpacing(),
+        variantNumericFraction(),
+        variantNumericOrdinal(),
+        variantNumericSlashedZero(),
+        variantAlternates(),
+        variantEastAsianVariant(),
+        variantEastAsianWidth(),
+        variantEastAsianRuby(),
+        variantEmoji()
+    };
+}
+
+void FontDescription::setVariantEastAsian(FontVariantEastAsianValues values)
+{
+    setVariantEastAsianVariant(values.variant);
+    setVariantEastAsianWidth(values.width);
+    setVariantEastAsianRuby(values.ruby);
+}
+
+void FontDescription::setVariantNumeric(FontVariantNumericValues values)
+{
+    setVariantNumericFigure(values.figure);
+    setVariantNumericSpacing(values.spacing);
+    setVariantNumericFraction(values.fraction);
+    setVariantNumericOrdinal(values.ordinal);
+    setVariantNumericSlashedZero(values.slashedZero);
+}
+
+void FontDescription::setVariantLigatures(FontVariantLigaturesValues values)
+{
+    setVariantCommonLigatures(values.common);
+    setVariantDiscretionaryLigatures(values.discretionary);
+    setVariantHistoricalLigatures(values.historical);
+    setVariantContextualAlternates(values.contextual);
+}
+
 } // namespace WebCore

@@ -76,10 +76,24 @@ PASS html5lib_innerHTML_tests_innerHTML_1.html a23b70f1f246ba08d13b570319391b4a5
 PASS html5lib_innerHTML_tests_innerHTML_1.html 9d5e0c25bfe921df9ea2897c027f42bc88950e69
 PASS html5lib_innerHTML_tests_innerHTML_1.html 9210d577d6deecf5ab3505af86c501c5befa0b50
 PASS html5lib_innerHTML_tests_innerHTML_1.html c34af491c0a339db6ba63fcc478108533347319b
-PASS html5lib_innerHTML_tests_innerHTML_1.html 2c4284e6b2bb480daa50bca43bcbe29cfcdeeab4
+FAIL html5lib_innerHTML_tests_innerHTML_1.html 2c4284e6b2bb480daa50bca43bcbe29cfcdeeab4 assert_equals: expected "#document\n| <input>\n| <option>" but got "#document\n| <option>"
 PASS html5lib_innerHTML_tests_innerHTML_1.html d75277b65d0118463afeb66b478509d4e27565ab
 PASS html5lib_innerHTML_tests_innerHTML_1.html b354df69dbe9b3ef0c42177648e3aace114cf8ea
 PASS html5lib_innerHTML_tests_innerHTML_1.html fd3be386292ea1f411cea8e86e29595deb177d28
 PASS html5lib_innerHTML_tests_innerHTML_1.html 1cfb3baf2ad29109ddd5581daa3a009029c71491
 PASS html5lib_innerHTML_tests_innerHTML_1.html 2555d238e04f3d2853cfbc5f6dd366f82cf0e868
+2c4284e6b2bb480daa50bca43bcbe29cfcdeeab4
+
+Input
+
+undefined
+Expected
+
+#document
+| <input>
+| <option>
+Actual
+
+|<select>
+| <option>
 

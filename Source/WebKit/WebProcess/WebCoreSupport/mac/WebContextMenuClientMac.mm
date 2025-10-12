@@ -45,12 +45,12 @@ using namespace WebCore;
 
 void WebContextMenuClient::lookUpInDictionary(LocalFrame* frame)
 {
-    m_page->performDictionaryLookupForSelection(*frame, frame->selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
+    protectedPage()->performDictionaryLookupForSelection(*frame, frame->selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
 }
 
 bool WebContextMenuClient::isSpeaking() const
 {
-    return m_page->isSpeaking();
+    return protectedPage()->isSpeaking();
 }
 
 void WebContextMenuClient::speak(const String&)
@@ -63,15 +63,15 @@ void WebContextMenuClient::stopSpeaking()
 
 void WebContextMenuClient::searchWithGoogle(const LocalFrame* frame)
 {
-    auto searchString = frame->editor().selectedText().trim(deprecatedIsSpaceOrNewline);
-    m_page->send(Messages::WebPageProxy::SearchTheWeb(searchString));
+    auto searchString = frame->protectedEditor()->selectedText().trim(deprecatedIsSpaceOrNewline);
+    protectedPage()->send(Messages::WebPageProxy::SearchTheWeb(searchString));
 }
 
 #if HAVE(TRANSLATION_UI_SERVICES)
 
 void WebContextMenuClient::handleTranslation(const WebCore::TranslationContextMenuInfo& info)
 {
-    m_page->send(Messages::WebPageProxy::HandleContextMenuTranslation(info));
+    protectedPage()->send(Messages::WebPageProxy::HandleContextMenuTranslation(info));
 }
 
 #endif // HAVE(TRANSLATION_UI_SERVICES)

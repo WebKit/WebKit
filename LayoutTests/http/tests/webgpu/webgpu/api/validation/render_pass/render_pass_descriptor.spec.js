@@ -12,19 +12,19 @@ import { GPUConst } from '../../../constants.js';
 import {
   computeBytesPerSampleFromFormats,
   kDepthStencilFormats,
-  kPossiblyRenderableColorTextureFormats,
+  kPossibleColorRenderableTextureFormats,
   isTextureFormatColorRenderable,
   isDepthTextureFormat,
   isStencilTextureFormat,
   isTextureFormatResolvable } from
 '../../../format_info.js';
-import { AllFeaturesMaxLimitsValidationTest } from '../validation_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
 
 // MAINTENANCE_TODO: This should be changed to kMaxColorAttachmentsToTest
 // when this is made a MaxLimitTest (see above).
 const kMaxColorAttachments = getDefaultLimits('core').maxColorAttachments.default;
 
-class F extends AllFeaturesMaxLimitsValidationTest {
+class F extends AllFeaturesMaxLimitsGPUTest {
   createTestTexture(
   options =
 
@@ -60,9 +60,13 @@ class F extends AllFeaturesMaxLimitsValidationTest {
 
   getColorAttachment(
   texture,
-  textureViewDescriptor)
+  options =
+
+
+  {})
   {
-    const view = texture.createView(textureViewDescriptor);
+    const { textureViewDescriptor, bindTextureResource = false } = options;
+    const view = bindTextureResource ? texture : texture.createView(textureViewDescriptor);
 
     return {
       view,
@@ -74,9 +78,13 @@ class F extends AllFeaturesMaxLimitsValidationTest {
 
   getDepthStencilAttachment(
   texture,
-  textureViewDescriptor)
+  options =
+
+
+  {})
   {
-    const view = texture.createView(textureViewDescriptor);
+    const { textureViewDescriptor, bindTextureResource = false } = options;
+    const view = bindTextureResource ? texture : texture.createView(textureViewDescriptor);
 
     return {
       view,
@@ -105,6 +113,7 @@ const kArrayLayerCount = 10;
 
 g.test('attachments,one_color_attachment').
 desc(`Test that a render pass works with only one color attachment.`).
+paramsSubcasesOnly((u) => u.combine('bindTextureResource', [false, true])).
 fn((t) => {
   const colorTexture = t.createTestTexture({ format: 'rgba8unorm' });
   const descriptor = {
@@ -116,6 +125,7 @@ fn((t) => {
 
 g.test('attachments,one_depth_stencil_attachment').
 desc(`Test that a render pass works with only one depthStencil attachment.`).
+paramsSubcasesOnly((u) => u.combine('bindTextureResource', [false, true])).
 fn((t) => {
   const depthStencilTexture = t.createTestTexture({ format: 'depth24plus-stencil8' });
   const descriptor = {
@@ -205,7 +215,7 @@ desc(
 ).
 params((u) =>
 u.
-combine('format', kPossiblyRenderableColorTextureFormats).
+combine('format', kPossibleColorRenderableTextureFormats).
 beginSubcases().
 combine(
   'attachmentCount',
@@ -350,14 +360,14 @@ fn((t) => {
     mipLevelCount: mipLevel + 1
   });
 
-  const viewDescriptor = {
+  const textureViewDescriptor = {
     baseMipLevel: mipLevel,
     mipLevelCount: 1,
     baseArrayLayer: 0,
     arrayLayerCount: 1
   };
 
-  const colorAttachment = t.getColorAttachment(texture, viewDescriptor);
+  const colorAttachment = t.getColorAttachment(texture, { textureViewDescriptor });
   colorAttachment.depthSlice = depthSlice;
 
   const passDescriptor = {
@@ -442,7 +452,7 @@ fn((t) => {
   };
   const texture = t.createTestTexture(texDescriptor);
 
-  const viewDescriptor = {
+  const textureViewDescriptor = {
     baseMipLevel: 0,
     mipLevelCount: 1,
     baseArrayLayer: 0,
@@ -452,9 +462,9 @@ fn((t) => {
   const colorAttachments = [];
   for (let i = 0; i < mipLevelCount; i++) {
     if (!sameMipLevel) {
-      viewDescriptor.baseMipLevel = i;
+      textureViewDescriptor.baseMipLevel = i;
     }
-    const colorAttachment = t.getColorAttachment(texture, viewDescriptor);
+    const colorAttachment = t.getColorAttachment(texture, { textureViewDescriptor });
     colorAttachment.depthSlice = 0;
     colorAttachments.push(colorAttachment);
   }
@@ -605,7 +615,7 @@ fn((t) => {
     };
 
     const descriptor = {
-      colorAttachments: [t.getColorAttachment(colorTexture, textureViewDescriptor)]
+      colorAttachments: [t.getColorAttachment(colorTexture, { textureViewDescriptor })]
     };
 
     t.tryRenderPass(_success, descriptor);
@@ -619,10 +629,9 @@ fn((t) => {
 
     const descriptor = {
       colorAttachments: [],
-      depthStencilAttachment: t.getDepthStencilAttachment(
-        depthStencilTexture,
+      depthStencilAttachment: t.getDepthStencilAttachment(depthStencilTexture, {
         textureViewDescriptor
-      )
+      })
     };
 
     t.tryRenderPass(_success, descriptor);
@@ -682,7 +691,7 @@ fn((t) => {
     };
 
     const descriptor = {
-      colorAttachments: [t.getColorAttachment(colorTexture, textureViewDescriptor)]
+      colorAttachments: [t.getColorAttachment(colorTexture, { textureViewDescriptor })]
     };
 
     t.tryRenderPass(_success, descriptor);
@@ -696,10 +705,9 @@ fn((t) => {
 
     const descriptor = {
       colorAttachments: [],
-      depthStencilAttachment: t.getDepthStencilAttachment(
-        depthStencilTexture,
+      depthStencilAttachment: t.getDepthStencilAttachment(depthStencilTexture, {
         textureViewDescriptor
-      )
+      })
     };
 
     t.tryRenderPass(_success, descriptor);
@@ -1160,7 +1168,7 @@ desc(
   if and only if they support 'resolve'.
   `
 ).
-params((u) => u.combine('format', kPossiblyRenderableColorTextureFormats)).
+params((u) => u.combine('format', kPossibleColorRenderableTextureFormats)).
 fn((t) => {
   const { format } = t.params;
   t.skipIfTextureFormatNotSupported(format);

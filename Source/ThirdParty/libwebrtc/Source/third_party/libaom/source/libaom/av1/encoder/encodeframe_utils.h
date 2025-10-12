@@ -317,7 +317,8 @@ static inline int set_rdmult(const AV1_COMP *const cpi,
 
   return av1_compute_rd_mult(
       qindex, bit_depth, update_type, layer_depth, boost_index, frame_type,
-      cpi->oxcf.q_cfg.use_fixed_qp_offsets, is_stat_consumption_stage(cpi));
+      cpi->oxcf.q_cfg.use_fixed_qp_offsets, is_stat_consumption_stage(cpi),
+      cpi->oxcf.tune_cfg.tuning);
 }
 
 static inline int do_split_check(BLOCK_SIZE bsize) {

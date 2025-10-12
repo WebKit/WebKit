@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "AlphaPremultiplication.h"
-#include "DestinationColorSpace.h"
-#include "PixelFormat.h"
+#include <WebCore/AlphaPremultiplication.h>
+#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/PixelFormat.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

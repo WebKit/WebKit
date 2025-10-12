@@ -27,7 +27,7 @@
 
 #if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION) && HAVE(VISION)
 
-#include "BarcodeDetectorInterface.h"
+#include <WebCore/BarcodeDetectorInterface.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>

@@ -29,7 +29,7 @@
 #include "DOMFormData.h"
 #include "DOMTokenList.h"
 #include "DiagnosticLoggingClient.h"
-#include "Document.h"
+#include "DocumentView.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -468,12 +468,6 @@ void HTMLFormElement::attributeChanged(const QualifiedName& name, const AtomStri
     switch (name.nodeName()) {
     case AttributeNames::actionAttr:
         m_attributes.parseAction(newValue);
-        if (!m_attributes.action().isEmpty()) {
-            if (RefPtr f = document().frame()) {
-                if (auto* topFrame = dynamicDowncast<LocalFrame>(f->tree().top()))
-                    MixedContentChecker::checkFormForMixedContent(*topFrame, document().completeURL(m_attributes.action()));
-            }
-        }
         break;
     case AttributeNames::targetAttr:
         m_attributes.setTarget(newValue);
@@ -695,24 +689,9 @@ String HTMLFormElement::action() const
     return document().completeURL(value).string();
 }
 
-void HTMLFormElement::setAction(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(actionAttr, value);
-}
-
-void HTMLFormElement::setEnctype(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(enctypeAttr, value);
-}
-
 String HTMLFormElement::method() const
 {
     return FormSubmission::Attributes::methodString(m_attributes.method());
-}
-
-void HTMLFormElement::setMethod(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(methodAttr, value);
 }
 
 DOMTokenList& HTMLFormElement::relList()
@@ -967,11 +946,6 @@ Vector<Ref<ValidatedFormListedElement>> HTMLFormElement::copyValidatedListedElem
 HTMLFormElement* HTMLFormElement::findClosestFormAncestor(const Element& startElement)
 {
     return const_cast<HTMLFormElement*>(ancestorsOfType<HTMLFormElement>(startElement).first());
-}
-
-void HTMLFormElement::setAutocomplete(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(autocompleteAttr, value);
 }
 
 const AtomString& HTMLFormElement::autocomplete() const

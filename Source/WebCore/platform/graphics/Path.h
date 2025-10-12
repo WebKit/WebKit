@@ -27,19 +27,20 @@
 
 #pragma once
 
-#include "PathElement.h"
-#include "PathImpl.h"
-#include "PathSegment.h"
-#include "PlatformPath.h"
-#include "WindRule.h"
+#include <WebCore/PathElement.h>
+#include <WebCore/PathImpl.h>
+#include <WebCore/PathSegment.h>
+#include <WebCore/PlatformPath.h>
+#include <WebCore/WindRule.h>
+#include <variant>
 #include <wtf/DataRef.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class GraphicsContext;
+class LayoutRoundedRect;
 class PathTraversalState;
-class RoundedRect;
 
 class Path {
     WTF_MAKE_TZONE_ALLOCATED(Path);
@@ -68,8 +69,9 @@ public:
     void addRect(const FloatRect&);
     WEBCORE_EXPORT void addRoundedRect(const FloatRoundedRect&, PathRoundedRect::Strategy = PathRoundedRect::Strategy::PreferNative);
     void addRoundedRect(const FloatRect&, const FloatSize& roundingRadii, PathRoundedRect::Strategy = PathRoundedRect::Strategy::PreferNative);
+    void addContinuousRoundedRect(const FloatRect&, float cornerRadius);
     void addContinuousRoundedRect(const FloatRect&, float cornerWidth, float cornerHeight);
-    void addRoundedRect(const RoundedRect&);
+    void addRoundedRect(const LayoutRoundedRect&);
     void closeSubpath();
 
     WEBCORE_EXPORT void addPath(const Path&, const AffineTransform&);

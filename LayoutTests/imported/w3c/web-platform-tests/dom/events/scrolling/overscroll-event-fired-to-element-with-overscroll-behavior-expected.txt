@@ -1,3 +1,0 @@
-
-FAIL Tests that the last element in the cut scroll chain gets overscroll event when no element scrolls by touch. promise_test: Unhandled rejection with value: "Expected element did not receive overscroll event after scroll up on target."
-

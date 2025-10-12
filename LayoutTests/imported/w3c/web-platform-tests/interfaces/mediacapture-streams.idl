@@ -61,6 +61,7 @@ dictionary MediaTrackSupportedConstraints {
   boolean channelCount = true;
   boolean deviceId = true;
   boolean groupId = true;
+  boolean backgroundBlur = true;
 };
 
 dictionary MediaTrackCapabilities {
@@ -72,13 +73,14 @@ dictionary MediaTrackCapabilities {
   sequence<DOMString> resizeMode;
   ULongRange sampleRate;
   ULongRange sampleSize;
-  sequence<boolean> echoCancellation;
+  sequence<(boolean or DOMString)> echoCancellation;
   sequence<boolean> autoGainControl;
   sequence<boolean> noiseSuppression;
   DoubleRange latency;
   ULongRange channelCount;
   DOMString deviceId;
   DOMString groupId;
+  sequence<boolean> backgroundBlur;
 };
 
 dictionary MediaTrackConstraints : MediaTrackConstraintSet {
@@ -94,31 +96,33 @@ dictionary MediaTrackConstraintSet {
   ConstrainDOMString resizeMode;
   ConstrainULong sampleRate;
   ConstrainULong sampleSize;
-  ConstrainBoolean echoCancellation;
+  ConstrainBooleanOrDOMString echoCancellation;
   ConstrainBoolean autoGainControl;
   ConstrainBoolean noiseSuppression;
   ConstrainDouble latency;
   ConstrainULong channelCount;
   ConstrainDOMString deviceId;
   ConstrainDOMString groupId;
+  ConstrainBoolean backgroundBlur;
 };
 
 dictionary MediaTrackSettings {
-  long width;
-  long height;
+  unsigned long width;
+  unsigned long height;
   double aspectRatio;
   double frameRate;
   DOMString facingMode;
   DOMString resizeMode;
-  long sampleRate;
-  long sampleSize;
-  boolean echoCancellation;
+  unsigned long sampleRate;
+  unsigned long sampleSize;
+  (boolean or DOMString) echoCancellation;
   boolean autoGainControl;
   boolean noiseSuppression;
   double latency;
-  long channelCount;
+  unsigned long channelCount;
   DOMString deviceId;
   DOMString groupId;
+  boolean backgroundBlur;
 };
 
 enum VideoFacingModeEnum {
@@ -131,6 +135,11 @@ enum VideoFacingModeEnum {
 enum VideoResizeModeEnum {
   "none",
   "crop-and-scale"
+};
+
+enum EchoCancellationModeEnum {
+  "all",
+  "remote-only"
 };
 
 [Exposed=Window]
@@ -174,15 +183,20 @@ enum MediaDeviceKind {
   "videoinput"
 };
 
-[Exposed=Window]
+[Exposed=Window, SecureContext]
 interface InputDeviceInfo : MediaDeviceInfo {
   MediaTrackCapabilities getCapabilities();
 };
 
-partial interface Navigator {
-  [SecureContext] undefined getUserMedia(MediaStreamConstraints constraints,
-                                    NavigatorUserMediaSuccessCallback successCallback,
-                                    NavigatorUserMediaErrorCallback errorCallback);
+[Exposed=Window]
+interface DeviceChangeEvent : Event {
+  constructor(DOMString type, optional DeviceChangeEventInit eventInitDict = {});
+  [SameObject] readonly attribute FrozenArray<MediaDeviceInfo> devices;
+  [SameObject] readonly attribute FrozenArray<MediaDeviceInfo> userInsertedDevices;
+};
+
+dictionary DeviceChangeEventInit : EventInit {
+  sequence<MediaDeviceInfo> devices = [];
 };
 
 partial interface MediaDevices {
@@ -194,10 +208,6 @@ dictionary MediaStreamConstraints {
   (boolean or MediaTrackConstraints) video = false;
   (boolean or MediaTrackConstraints) audio = false;
 };
-
-callback NavigatorUserMediaSuccessCallback = undefined (MediaStream stream);
-
-callback NavigatorUserMediaErrorCallback = undefined (DOMException error);
 
 dictionary DoubleRange {
   double max;
@@ -229,6 +239,11 @@ dictionary ConstrainDOMStringParameters {
   (DOMString or sequence<DOMString>) ideal;
 };
 
+dictionary ConstrainBooleanOrDOMStringParameters {
+  (boolean or DOMString) exact;
+  (boolean or DOMString) ideal;
+};
+
 typedef ([Clamp] unsigned long or ConstrainULongRange) ConstrainULong;
 
 typedef (double or ConstrainDoubleRange) ConstrainDouble;
@@ -238,3 +253,9 @@ typedef (boolean or ConstrainBooleanParameters) ConstrainBoolean;
 typedef (DOMString or
 sequence<DOMString> or
 ConstrainDOMStringParameters) ConstrainDOMString;
+
+typedef (boolean or DOMString or ConstrainBooleanOrDOMStringParameters) ConstrainBooleanOrDOMString;
+
+dictionary CameraDevicePermissionDescriptor : PermissionDescriptor {
+  boolean panTiltZoom = false;
+};

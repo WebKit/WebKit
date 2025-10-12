@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ArrayBuffer.h"
-#include "InternalFunction.h"
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/InternalFunction.h>
 
 namespace JSC {
 

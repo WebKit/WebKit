@@ -4,19 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-String-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Be more careful with string math to avoid wrong results
+info: bugzilla.mozilla.org/show_bug.cgi?id=805121
 esid: pending
 ---*/
-var BUGNUMBER = 805121;
-var summary = "Be more careful with string math to avoid wrong results";
-
-print(BUGNUMBER + ": " + summary);
-
-/******************************************************************************/
 
 function puff(x, n)
 {
@@ -37,7 +29,3 @@ catch (e)
 {
   // OOM also acceptable
 }
-
-/******************************************************************************/
-
-print("Tests complete");

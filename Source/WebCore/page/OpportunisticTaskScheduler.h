@@ -84,7 +84,7 @@ public:
         FullGCActivityCallback(JSC::Heap&);
 
         JSC::VM& m_vm;
-        std::unique_ptr<RunLoopObserver> m_runLoopObserver;
+        const UniqueRef<RunLoopObserver> m_runLoopObserver;
         JSC::HeapVersion m_version { 0 };
         unsigned m_deferCount { 0 };
     };
@@ -104,7 +104,7 @@ public:
         EdenGCActivityCallback(JSC::Heap&);
 
         JSC::VM& m_vm;
-        std::unique_ptr<RunLoopObserver> m_runLoopObserver;
+        const UniqueRef<RunLoopObserver> m_runLoopObserver;
         JSC::HeapVersion m_version { 0 };
         unsigned m_deferCount { 0 };
     };
@@ -123,7 +123,7 @@ private:
     uint64_t m_imminentlyScheduledWorkCount { 0 };
     uint64_t m_runloopCountAfterBeingScheduled { 0 };
     MonotonicTime m_currentDeadline;
-    std::unique_ptr<RunLoopObserver> m_runLoopObserver;
+    const UniqueRef<RunLoopObserver> m_runLoopObserver;
 };
 
 } // namespace WebCore

@@ -68,9 +68,9 @@ static RetainPtr<NSURL> currentExecutableLocation()
     _NSGetExecutablePath(nullptr, &size);
     Vector<char> buffer;
     buffer.resize(size + 1);
-    _NSGetExecutablePath(buffer.data(), &size);
+    _NSGetExecutablePath(buffer.mutableSpan().data(), &size);
     buffer[size] = '\0';
-    auto pathString = adoptNS([[NSString alloc] initWithUTF8String:buffer.data()]);
+    auto pathString = adoptNS([[NSString alloc] initWithUTF8String:buffer.span().data()]);
     return adoptNS([[NSURL alloc] initFileURLWithPath:pathString.get() isDirectory:NO]);
 }
 

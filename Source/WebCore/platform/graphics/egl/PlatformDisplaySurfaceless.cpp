@@ -37,7 +37,7 @@ std::unique_ptr<PlatformDisplaySurfaceless> PlatformDisplaySurfaceless::create()
     if (!GLContext::isExtensionSupported(extensions, "EGL_MESA_platform_surfaceless"))
         return nullptr;
 
-    std::unique_ptr<GLDisplay> glDisplay;
+    RefPtr<GLDisplay> glDisplay;
     if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
         glDisplay = GLDisplay::create(eglGetPlatformDisplayEXT(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY, nullptr));
     else if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
@@ -48,10 +48,10 @@ std::unique_ptr<PlatformDisplaySurfaceless> PlatformDisplaySurfaceless::create()
         CRASH();
     }
 
-    return std::unique_ptr<PlatformDisplaySurfaceless>(new PlatformDisplaySurfaceless(WTFMove(glDisplay)));
+    return std::unique_ptr<PlatformDisplaySurfaceless>(new PlatformDisplaySurfaceless(glDisplay.releaseNonNull()));
 }
 
-PlatformDisplaySurfaceless::PlatformDisplaySurfaceless(std::unique_ptr<GLDisplay>&& glDisplay)
+PlatformDisplaySurfaceless::PlatformDisplaySurfaceless(Ref<GLDisplay>&& glDisplay)
     : PlatformDisplay(WTFMove(glDisplay))
 {
 #if ENABLE(WEBGL)

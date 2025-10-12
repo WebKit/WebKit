@@ -141,6 +141,8 @@ async function testUserMediaToCanvas(t, subcase) {
         setMockCameraImageOrientation(0);
         await waitForVideoSize(video, realVideoSize[0], realVideoSize[1]);
         debuge.removeChild(video);
+        if (video.srcObject)
+            video.srcObject.getTracks().forEach(t => t.stop());
         video.srcObject = null;
     });
 

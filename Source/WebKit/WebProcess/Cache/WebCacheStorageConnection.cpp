@@ -55,7 +55,7 @@ Ref<IPC::Connection> WebCacheStorageConnection::connection()
 
     RefPtr<IPC::Connection> connection;
     callOnMainRunLoopAndWait([this, &connection]() mutable {
-        connection = &WebProcess::singleton().ensureNetworkProcessConnection().connection();
+        connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
         {
             Locker lock(m_connectionLock);
             m_connection = connection;
@@ -106,28 +106,28 @@ void WebCacheStorageConnection::reference(WebCore::DOMCacheIdentifier cacheIdent
 {
     Locker connectionLocker { m_connectionLock };
     if (m_connectedIdentifierCounters.add(cacheIdentifier).isNewEntry && m_connection)
-        m_connection->send(Messages::NetworkStorageManager::CacheStorageReference(cacheIdentifier), 0);
+        RefPtr { m_connection }->send(Messages::NetworkStorageManager::CacheStorageReference(cacheIdentifier), 0);
 }
 
 void WebCacheStorageConnection::dereference(WebCore::DOMCacheIdentifier cacheIdentifier)
 {
     Locker connectionLocker { m_connectionLock };
     if (m_connectedIdentifierCounters.remove(cacheIdentifier) && m_connection)
-        m_connection->send(Messages::NetworkStorageManager::CacheStorageDereference(cacheIdentifier), 0);
+        RefPtr { m_connection }->send(Messages::NetworkStorageManager::CacheStorageDereference(cacheIdentifier), 0);
 }
 
 void WebCacheStorageConnection::lockStorage(const WebCore::ClientOrigin& origin)
 {
     Locker connectionLocker { m_connectionLock };
     if (m_clientOriginLockRequestCounters.add(origin).isNewEntry && m_connection)
-        m_connection->send(Messages::NetworkStorageManager::LockCacheStorage { origin }, 0);
+        RefPtr { m_connection }->send(Messages::NetworkStorageManager::LockCacheStorage { origin }, 0);
 }
 
 void WebCacheStorageConnection::unlockStorage(const WebCore::ClientOrigin& origin)
 {
     Locker connectionLocker { m_connectionLock };
     if (m_clientOriginLockRequestCounters.remove(origin) && m_connection)
-        m_connection->send(Messages::NetworkStorageManager::UnlockCacheStorage { origin }, 0);
+        RefPtr { m_connection }->send(Messages::NetworkStorageManager::UnlockCacheStorage { origin }, 0);
 }
 
 auto WebCacheStorageConnection::clearMemoryRepresentation(const WebCore::ClientOrigin& origin) -> Ref<CompletionPromise>

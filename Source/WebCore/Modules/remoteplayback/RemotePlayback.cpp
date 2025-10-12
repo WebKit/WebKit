@@ -28,6 +28,7 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
+#include "ContextDestructionObserverInlines.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -364,6 +365,11 @@ void RemotePlayback::disconnect()
         //     specific to user agent.
         // NOTE: Handled by the MediaPlayer
     });
+}
+
+ScriptExecutionContext* RemotePlayback::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 void RemotePlayback::stop()

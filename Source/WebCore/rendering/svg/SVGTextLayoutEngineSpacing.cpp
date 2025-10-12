@@ -34,20 +34,14 @@ SVGTextLayoutEngineSpacing::SVGTextLayoutEngineSpacing(const FontCascade& font)
 {
 }
 
-float SVGTextLayoutEngineSpacing::calculateCSSSpacing(const UChar* currentCharacter)
+float SVGTextLayoutEngineSpacing::calculateCSSSpacing(char16_t currentCharacter)
 {
-    const UChar* lastCharacter = m_lastCharacter;
+    float spacing = m_font->letterSpacing();
+
+    if (m_font->wordSpacing() && FontCascade::treatAsSpace(currentCharacter) && !FontCascade::treatAsSpace(m_lastCharacter))
+        spacing += m_font->wordSpacing();
+
     m_lastCharacter = currentCharacter;
-
-    if (!m_font.letterSpacing() && !m_font.wordSpacing())
-        return 0;
-
-    float spacing = m_font.letterSpacing();
-    if (currentCharacter && lastCharacter && m_font.wordSpacing()) {
-        if (FontCascade::treatAsSpace(*currentCharacter) && !FontCascade::treatAsSpace(*lastCharacter))
-            spacing += m_font.wordSpacing();
-    }
-
     return spacing;
 }
 

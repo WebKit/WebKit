@@ -4,7 +4,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2,1 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -47,10 +47,10 @@ static std::optional<Vector<uint8_t>> deriveBitsCoreCrypto(const Vector<uint8_t>
     ccec25519pubkey derivedKey;
     static_assert(sizeof(derivedKey) == ed25519KeySize);
 #if HAVE(CORE_CRYPTO_SIGNATURES_INT_RETURN_VALUE)
-    if (cccurve25519(derivedKey, baseKey.data(), publicKey.data()))
+    if (cccurve25519(derivedKey, baseKey.span().data(), publicKey.span().data()))
         return std::nullopt;
 #else
-    cccurve25519(derivedKey, baseKey.data(), publicKey.data());
+    cccurve25519(derivedKey, baseKey.span().data(), publicKey.span().data());
 #endif
     return Vector<uint8_t>(std::span { derivedKey });
 }

@@ -57,21 +57,9 @@ JSInternalPromise::JSInternalPromise(VM& vm, Structure* structure)
 
 JSInternalPromise* JSInternalPromise::then(JSGlobalObject* globalObject, JSFunction* onFulfilled, JSFunction* onRejected)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSObject* function = getAs<JSObject*>(globalObject, vm.propertyNames->builtinNames().thenPublicName());
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    auto callData = JSC::getCallData(function);
-    ASSERT(callData.type != CallData::Type::None);
-
-    MarkedArgumentBuffer arguments;
-    arguments.append(onFulfilled ? onFulfilled : jsUndefined());
-    arguments.append(onRejected ? onRejected : jsUndefined());
-    ASSERT(!arguments.hasOverflowed());
-    JSValue result = call(globalObject, function, callData, this, arguments);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    return jsCast<JSInternalPromise*>(result);
+    ASSERT(onFulfilled);
+    ASSERT(onRejected);
+    return jsDynamicCast<JSInternalPromise*>(JSPromise::then(globalObject, onFulfilled, onRejected));
 }
 
 JSInternalPromise* JSInternalPromise::rejectWithCaughtException(JSGlobalObject* globalObject, ThrowScope& scope)

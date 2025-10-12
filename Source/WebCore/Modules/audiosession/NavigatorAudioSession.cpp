@@ -28,6 +28,7 @@
 
 #if ENABLE(DOM_AUDIO_SESSION)
 
+#include "ContextDestructionObserverInlines.h"
 #include "DOMAudioSession.h"
 #include "Navigator.h"
 #include <wtf/TZoneMallocInlines.h>

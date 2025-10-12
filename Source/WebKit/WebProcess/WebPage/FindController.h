@@ -32,6 +32,7 @@
 #include <WebCore/PageOverlay.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/SimpleRange.h>
+#include <WebCore/VisibleSelection.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -69,7 +70,6 @@ public:
     void findStringIncludingImages(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
 #endif
     void findStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(Vector<Vector<WebCore::IntRect>>, int32_t)>&&);
-    void findRectsForStringMatches(const String&, OptionSet<WebKit::FindOptions>, unsigned maxMatchCount, CompletionHandler<void(Vector<WebCore::FloatRect>&&)>&&);
     void getImageForFindMatch(uint32_t matchIndex);
     void selectFindMatch(uint32_t matchIndex);
     void indicateFindMatch(uint32_t matchIndex);
@@ -127,6 +127,10 @@ private:
     Vector<WebCore::SimpleRange> m_findMatches;
     // Index value is -1 if not found or if number of matches exceeds provided maximum.
     int m_foundStringMatchIndex { -1 };
+
+    // For instances where the normalized selection range is collapsed.
+    std::optional<WebCore::SimpleRange> m_lastFoundRange;
+    std::optional<WebCore::VisibleSelection> m_lastSelection;
 
 #if PLATFORM(IOS_FAMILY)
     RefPtr<WebCore::PageOverlay> m_findIndicatorOverlay;

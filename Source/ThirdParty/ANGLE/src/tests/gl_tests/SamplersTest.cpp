@@ -6,12 +6,15 @@
 
 // SamplerTest.cpp : Tests for samplers.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "gtest/gtest.h"
 #include "test_utils/ANGLETest.h"
 
 #include "test_utils/angle_test_configs.h"
 #include "test_utils/gl_raii.h"
-#include "util/gles_loader_autogen.h"
 #include "util/shader_utils.h"
 
 namespace angle

@@ -186,8 +186,7 @@ typedef const struct aom_codec_ctrl_fn_map {
   aom_codec_control_fn_t fn;
 } aom_codec_ctrl_fn_map_t;
 
-#define CTRL_MAP_END \
-  { 0, NULL }
+#define CTRL_MAP_END { 0, NULL }
 
 static inline int at_ctrl_map_end(aom_codec_ctrl_fn_map_t *e) {
   return e->ctrl_id == 0 && e->fn == NULL;

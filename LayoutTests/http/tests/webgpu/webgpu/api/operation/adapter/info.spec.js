@@ -138,13 +138,6 @@ fn(async (t) => {
   }
 });
 
-// This can be removed once 'subgroups' lands.
-// See https://github.com/gpuweb/gpuweb/pull/4963
-
-
-
-
-
 const kSubgroupMinSizeBound = 4;
 const kSubgroupMaxSizeBound = 128;
 

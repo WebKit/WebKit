@@ -17,4 +17,4 @@ new Promise((resolve) => {
     resolve(42);
 });
 drainMicrotasks();
-shouldThrow(() => Promise(function () { }), `TypeError: Cannot call a constructor without |new|`)
+shouldThrow(() => Promise(function () { }), `TypeError: Cannot call a constructor Promise without |new|`)

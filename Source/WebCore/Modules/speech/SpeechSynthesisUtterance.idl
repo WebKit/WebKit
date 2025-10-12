@@ -29,7 +29,6 @@
     EnabledBySetting=SpeechSynthesisAPIEnabled,
     Conditional=SPEECH_SYNTHESIS,
     ExportMacro=WEBCORE_EXPORT,
-    JSGenerateToJSObject,
     Exposed=Window
 ] interface SpeechSynthesisUtterance : EventTarget {
     [CallWith=CurrentScriptExecutionContext] constructor(optional DOMString text);

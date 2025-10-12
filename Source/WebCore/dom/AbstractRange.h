@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include <WebCore/PlatformExportMacros.h>
 #include <optional>
+#include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 

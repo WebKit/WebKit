@@ -11,14 +11,16 @@
 #ifndef AUDIO_AUDIO_STATE_H_
 #define AUDIO_AUDIO_STATE_H_
 
+#include <cstddef>
 #include <map>
-#include <memory>
 
+#include "api/audio/audio_device.h"
+#include "api/audio/audio_processing.h"
 #include "api/sequence_checker.h"
 #include "audio/audio_transport_impl.h"
 #include "call/audio_state.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/containers/flat_set.h"
-#include "rtc_base/ref_count.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "rtc_base/thread_annotations.h"
 

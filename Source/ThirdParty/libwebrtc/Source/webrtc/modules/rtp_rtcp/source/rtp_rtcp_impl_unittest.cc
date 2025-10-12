@@ -21,6 +21,7 @@
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
+#include "api/field_trials.h"
 #include "api/rtp_headers.h"
 #include "api/units/time_delta.h"
 #include "api/video/video_codec_type.h"
@@ -40,7 +41,7 @@
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/ntp_time.h"
-#include "test/explicit_key_value_config.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
@@ -54,15 +55,15 @@ using ::testing::Optional;
 
 namespace webrtc {
 namespace {
-const uint32_t kSenderSsrc = 0x12345;
-const uint32_t kReceiverSsrc = 0x23456;
+constexpr uint32_t kSenderSsrc = 0x12345;
+constexpr uint32_t kReceiverSsrc = 0x23456;
 constexpr TimeDelta kOneWayNetworkDelay = TimeDelta::Millis(100);
-const uint8_t kBaseLayerTid = 0;
-const uint8_t kHigherLayerTid = 1;
-const uint16_t kSequenceNumber = 100;
-const uint8_t kPayloadType = 100;
-const int kWidth = 320;
-const int kHeight = 100;
+constexpr uint8_t kBaseLayerTid = 0;
+constexpr uint8_t kHigherLayerTid = 1;
+constexpr uint16_t kSequenceNumber = 100;
+constexpr uint8_t kPayloadType = 100;
+constexpr int kWidth = 320;
+constexpr int kHeight = 100;
 
 MATCHER_P2(Near, value, margin, "") {
   return value - margin <= arg && arg <= value + margin;
@@ -95,15 +96,16 @@ class SendTransport : public Transport {
     clock_ = clock;
     delay_ms_ = delay_ms;
   }
-  bool SendRtp(rtc::ArrayView<const uint8_t> data,
-               const PacketOptions& options) override {
+  bool SendRtp(ArrayView<const uint8_t> data,
+               const PacketOptions& /* options */) override {
     RtpPacket packet;
     EXPECT_TRUE(packet.Parse(data));
     ++rtp_packets_sent_;
     last_rtp_sequence_number_ = packet.SequenceNumber();
     return true;
   }
-  bool SendRtcp(rtc::ArrayView<const uint8_t> data) override {
+  bool SendRtcp(ArrayView<const uint8_t> data,
+                const PacketOptions& /* options */) override {
     test::RtcpPacketParser parser;
     parser.Parse(data);
     last_nack_list_ = parser.nack()->packet_ids();
@@ -209,7 +211,7 @@ class RtpRtcpImplTest : public ::testing::Test {
     sender_.impl_->SetSequenceNumber(kSequenceNumber);
     sender_.impl_->SetStorePacketsStatus(true, 100);
 
-    test::ExplicitKeyValueConfig field_trials("");
+    FieldTrials field_trials = CreateTestFieldTrials();
     RTPSenderVideo::Config video_config;
     video_config.clock = &clock_;
     video_config.rtp_sender = sender_.impl_->RtpSender();

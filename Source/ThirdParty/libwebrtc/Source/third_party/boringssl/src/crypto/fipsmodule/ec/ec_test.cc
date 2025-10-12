@@ -1,16 +1,16 @@
-/* Copyright (c) 2014, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2014 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,20 +30,23 @@
 #include <openssl/obj.h>
 #include <openssl/span.h>
 
-#include "../../ec_extra/internal.h"
+#include "../../ec/internal.h"
 #include "../../test/file_test.h"
 #include "../../test/test_util.h"
 #include "../bn/internal.h"
 #include "internal.h"
 
 
+namespace {
+
 // kECKeyWithoutPublic is an ECPrivateKey with the optional publicKey field
 // omitted.
 static const uint8_t kECKeyWithoutPublic[] = {
-  0x30, 0x31, 0x02, 0x01, 0x01, 0x04, 0x20, 0xc6, 0xc1, 0xaa, 0xda, 0x15, 0xb0,
-  0x76, 0x61, 0xf8, 0x14, 0x2c, 0x6c, 0xaf, 0x0f, 0xdb, 0x24, 0x1a, 0xff, 0x2e,
-  0xfe, 0x46, 0xc0, 0x93, 0x8b, 0x74, 0xf2, 0xbc, 0xc5, 0x30, 0x52, 0xb0, 0x77,
-  0xa0, 0x0a, 0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07,
+    0x30, 0x31, 0x02, 0x01, 0x01, 0x04, 0x20, 0xc6, 0xc1, 0xaa, 0xda,
+    0x15, 0xb0, 0x76, 0x61, 0xf8, 0x14, 0x2c, 0x6c, 0xaf, 0x0f, 0xdb,
+    0x24, 0x1a, 0xff, 0x2e, 0xfe, 0x46, 0xc0, 0x93, 0x8b, 0x74, 0xf2,
+    0xbc, 0xc5, 0x30, 0x52, 0xb0, 0x77, 0xa0, 0x0a, 0x06, 0x08, 0x2a,
+    0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07,
 };
 
 // kECKeySpecifiedCurve is the above key with P-256's parameters explicitly
@@ -80,29 +83,31 @@ static const uint8_t kECKeySpecifiedCurve[] = {
 // the private key is one. The private key is incorrectly encoded without zero
 // padding.
 static const uint8_t kECKeyMissingZeros[] = {
-  0x30, 0x58, 0x02, 0x01, 0x01, 0x04, 0x01, 0x01, 0xa0, 0x0a, 0x06, 0x08, 0x2a,
-  0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07, 0xa1, 0x44, 0x03, 0x42, 0x00, 0x04,
-  0x6b, 0x17, 0xd1, 0xf2, 0xe1, 0x2c, 0x42, 0x47, 0xf8, 0xbc, 0xe6, 0xe5, 0x63,
-  0xa4, 0x40, 0xf2, 0x77, 0x03, 0x7d, 0x81, 0x2d, 0xeb, 0x33, 0xa0, 0xf4, 0xa1,
-  0x39, 0x45, 0xd8, 0x98, 0xc2, 0x96, 0x4f, 0xe3, 0x42, 0xe2, 0xfe, 0x1a, 0x7f,
-  0x9b, 0x8e, 0xe7, 0xeb, 0x4a, 0x7c, 0x0f, 0x9e, 0x16, 0x2b, 0xce, 0x33, 0x57,
-  0x6b, 0x31, 0x5e, 0xce, 0xcb, 0xb6, 0x40, 0x68, 0x37, 0xbf, 0x51, 0xf5,
+    0x30, 0x58, 0x02, 0x01, 0x01, 0x04, 0x01, 0x01, 0xa0, 0x0a, 0x06, 0x08,
+    0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07, 0xa1, 0x44, 0x03, 0x42,
+    0x00, 0x04, 0x6b, 0x17, 0xd1, 0xf2, 0xe1, 0x2c, 0x42, 0x47, 0xf8, 0xbc,
+    0xe6, 0xe5, 0x63, 0xa4, 0x40, 0xf2, 0x77, 0x03, 0x7d, 0x81, 0x2d, 0xeb,
+    0x33, 0xa0, 0xf4, 0xa1, 0x39, 0x45, 0xd8, 0x98, 0xc2, 0x96, 0x4f, 0xe3,
+    0x42, 0xe2, 0xfe, 0x1a, 0x7f, 0x9b, 0x8e, 0xe7, 0xeb, 0x4a, 0x7c, 0x0f,
+    0x9e, 0x16, 0x2b, 0xce, 0x33, 0x57, 0x6b, 0x31, 0x5e, 0xce, 0xcb, 0xb6,
+    0x40, 0x68, 0x37, 0xbf, 0x51, 0xf5,
 };
 
 // kECKeyMissingZeros is an ECPrivateKey containing a degenerate P-256 key where
 // the private key is one. The private key is encoded with the required zero
 // padding.
 static const uint8_t kECKeyWithZeros[] = {
-  0x30, 0x77, 0x02, 0x01, 0x01, 0x04, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
-  0xa0, 0x0a, 0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07, 0xa1,
-  0x44, 0x03, 0x42, 0x00, 0x04, 0x6b, 0x17, 0xd1, 0xf2, 0xe1, 0x2c, 0x42, 0x47,
-  0xf8, 0xbc, 0xe6, 0xe5, 0x63, 0xa4, 0x40, 0xf2, 0x77, 0x03, 0x7d, 0x81, 0x2d,
-  0xeb, 0x33, 0xa0, 0xf4, 0xa1, 0x39, 0x45, 0xd8, 0x98, 0xc2, 0x96, 0x4f, 0xe3,
-  0x42, 0xe2, 0xfe, 0x1a, 0x7f, 0x9b, 0x8e, 0xe7, 0xeb, 0x4a, 0x7c, 0x0f, 0x9e,
-  0x16, 0x2b, 0xce, 0x33, 0x57, 0x6b, 0x31, 0x5e, 0xce, 0xcb, 0xb6, 0x40, 0x68,
-  0x37, 0xbf, 0x51, 0xf5,
+    0x30, 0x77, 0x02, 0x01, 0x01, 0x04, 0x20, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xa0, 0x0a, 0x06, 0x08, 0x2a,
+    0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07, 0xa1, 0x44, 0x03, 0x42,
+    0x00, 0x04, 0x6b, 0x17, 0xd1, 0xf2, 0xe1, 0x2c, 0x42, 0x47, 0xf8,
+    0xbc, 0xe6, 0xe5, 0x63, 0xa4, 0x40, 0xf2, 0x77, 0x03, 0x7d, 0x81,
+    0x2d, 0xeb, 0x33, 0xa0, 0xf4, 0xa1, 0x39, 0x45, 0xd8, 0x98, 0xc2,
+    0x96, 0x4f, 0xe3, 0x42, 0xe2, 0xfe, 0x1a, 0x7f, 0x9b, 0x8e, 0xe7,
+    0xeb, 0x4a, 0x7c, 0x0f, 0x9e, 0x16, 0x2b, 0xce, 0x33, 0x57, 0x6b,
+    0x31, 0x5e, 0xce, 0xcb, 0xb6, 0x40, 0x68, 0x37, 0xbf, 0x51, 0xf5,
 };
 
 static const uint8_t kECKeyWithZerosPublic[] = {
@@ -466,12 +471,6 @@ TEST(ECTest, EmptyKey) {
   EXPECT_FALSE(EC_KEY_get0_group(key.get()));
   EXPECT_FALSE(EC_KEY_get0_public_key(key.get()));
   EXPECT_FALSE(EC_KEY_get0_private_key(key.get()));
-}
-
-static bssl::UniquePtr<BIGNUM> HexToBIGNUM(const char *hex) {
-  BIGNUM *bn = nullptr;
-  BN_hex2bn(&bn, hex);
-  return bssl::UniquePtr<BIGNUM>(bn);
 }
 
 // Test that point arithmetic works with custom curves using an arbitrary |a|,
@@ -976,7 +975,7 @@ static std::vector<int> AllCurves() {
   std::vector<EC_builtin_curve> curves(num_curves);
   EC_get_builtin_curves(curves.data(), num_curves);
   std::vector<int> nids;
-  for (const auto& curve : curves) {
+  for (const auto &curve : curves) {
     nids.push_back(curve.nid);
   }
   return nids;
@@ -1026,44 +1025,45 @@ TEST(ECTest, ScalarBaseMultVectors) {
   bssl::UniquePtr<BN_CTX> ctx(BN_CTX_new());
   ASSERT_TRUE(ctx);
 
-  FileTestGTest("crypto/fipsmodule/ec/ec_scalar_base_mult_tests.txt",
-                [&](FileTest *t) {
-    const EC_GROUP *group = GetCurve(t, "Curve");
-    ASSERT_TRUE(group);
-    bssl::UniquePtr<BIGNUM> n = GetBIGNUM(t, "N");
-    ASSERT_TRUE(n);
-    bssl::UniquePtr<BIGNUM> x = GetBIGNUM(t, "X");
-    ASSERT_TRUE(x);
-    bssl::UniquePtr<BIGNUM> y = GetBIGNUM(t, "Y");
-    ASSERT_TRUE(y);
-    bool is_infinity = BN_is_zero(x.get()) && BN_is_zero(y.get());
+  FileTestGTest(
+      "crypto/fipsmodule/ec/ec_scalar_base_mult_tests.txt", [&](FileTest *t) {
+        const EC_GROUP *group = GetCurve(t, "Curve");
+        ASSERT_TRUE(group);
+        bssl::UniquePtr<BIGNUM> n = GetBIGNUM(t, "N");
+        ASSERT_TRUE(n);
+        bssl::UniquePtr<BIGNUM> x = GetBIGNUM(t, "X");
+        ASSERT_TRUE(x);
+        bssl::UniquePtr<BIGNUM> y = GetBIGNUM(t, "Y");
+        ASSERT_TRUE(y);
+        bool is_infinity = BN_is_zero(x.get()) && BN_is_zero(y.get());
 
-    bssl::UniquePtr<BIGNUM> px(BN_new());
-    ASSERT_TRUE(px);
-    bssl::UniquePtr<BIGNUM> py(BN_new());
-    ASSERT_TRUE(py);
-    auto check_point = [&](const EC_POINT *p) {
-      if (is_infinity) {
-        EXPECT_TRUE(EC_POINT_is_at_infinity(group, p));
-      } else {
-        ASSERT_TRUE(EC_POINT_get_affine_coordinates_GFp(
-            group, p, px.get(), py.get(), ctx.get()));
-        EXPECT_EQ(0, BN_cmp(x.get(), px.get()));
-        EXPECT_EQ(0, BN_cmp(y.get(), py.get()));
-      }
-    };
+        bssl::UniquePtr<BIGNUM> px(BN_new());
+        ASSERT_TRUE(px);
+        bssl::UniquePtr<BIGNUM> py(BN_new());
+        ASSERT_TRUE(py);
+        auto check_point = [&](const EC_POINT *p) {
+          if (is_infinity) {
+            EXPECT_TRUE(EC_POINT_is_at_infinity(group, p));
+          } else {
+            ASSERT_TRUE(EC_POINT_get_affine_coordinates_GFp(
+                group, p, px.get(), py.get(), ctx.get()));
+            EXPECT_EQ(0, BN_cmp(x.get(), px.get()));
+            EXPECT_EQ(0, BN_cmp(y.get(), py.get()));
+          }
+        };
 
-    const EC_POINT *g = EC_GROUP_get0_generator(group);
-    bssl::UniquePtr<EC_POINT> p(EC_POINT_new(group));
-    ASSERT_TRUE(p);
-    // Test single-point multiplication.
-    ASSERT_TRUE(EC_POINT_mul(group, p.get(), n.get(), nullptr, nullptr,
-                             ctx.get()));
-    check_point(p.get());
+        const EC_POINT *g = EC_GROUP_get0_generator(group);
+        bssl::UniquePtr<EC_POINT> p(EC_POINT_new(group));
+        ASSERT_TRUE(p);
+        // Test single-point multiplication.
+        ASSERT_TRUE(
+            EC_POINT_mul(group, p.get(), n.get(), nullptr, nullptr, ctx.get()));
+        check_point(p.get());
 
-    ASSERT_TRUE(EC_POINT_mul(group, p.get(), nullptr, g, n.get(), ctx.get()));
-    check_point(p.get());
-  });
+        ASSERT_TRUE(
+            EC_POINT_mul(group, p.get(), nullptr, g, n.get(), ctx.get()));
+        check_point(p.get());
+      });
 }
 
 // These tests take a very long time, but are worth running when we make
@@ -1072,61 +1072,62 @@ TEST(ECTest, DISABLED_ScalarBaseMultVectorsTwoPoint) {
   bssl::UniquePtr<BN_CTX> ctx(BN_CTX_new());
   ASSERT_TRUE(ctx);
 
-  FileTestGTest("crypto/fipsmodule/ec/ec_scalar_base_mult_tests.txt",
-                [&](FileTest *t) {
-    const EC_GROUP *group = GetCurve(t, "Curve");
-    ASSERT_TRUE(group);
-    bssl::UniquePtr<BIGNUM> n = GetBIGNUM(t, "N");
-    ASSERT_TRUE(n);
-    bssl::UniquePtr<BIGNUM> x = GetBIGNUM(t, "X");
-    ASSERT_TRUE(x);
-    bssl::UniquePtr<BIGNUM> y = GetBIGNUM(t, "Y");
-    ASSERT_TRUE(y);
-    bool is_infinity = BN_is_zero(x.get()) && BN_is_zero(y.get());
+  FileTestGTest(
+      "crypto/fipsmodule/ec/ec_scalar_base_mult_tests.txt", [&](FileTest *t) {
+        const EC_GROUP *group = GetCurve(t, "Curve");
+        ASSERT_TRUE(group);
+        bssl::UniquePtr<BIGNUM> n = GetBIGNUM(t, "N");
+        ASSERT_TRUE(n);
+        bssl::UniquePtr<BIGNUM> x = GetBIGNUM(t, "X");
+        ASSERT_TRUE(x);
+        bssl::UniquePtr<BIGNUM> y = GetBIGNUM(t, "Y");
+        ASSERT_TRUE(y);
+        bool is_infinity = BN_is_zero(x.get()) && BN_is_zero(y.get());
 
-    bssl::UniquePtr<BIGNUM> px(BN_new());
-    ASSERT_TRUE(px);
-    bssl::UniquePtr<BIGNUM> py(BN_new());
-    ASSERT_TRUE(py);
-    auto check_point = [&](const EC_POINT *p) {
-      if (is_infinity) {
-        EXPECT_TRUE(EC_POINT_is_at_infinity(group, p));
-      } else {
-        ASSERT_TRUE(EC_POINT_get_affine_coordinates_GFp(
-            group, p, px.get(), py.get(), ctx.get()));
-        EXPECT_EQ(0, BN_cmp(x.get(), px.get()));
-        EXPECT_EQ(0, BN_cmp(y.get(), py.get()));
-      }
-    };
+        bssl::UniquePtr<BIGNUM> px(BN_new());
+        ASSERT_TRUE(px);
+        bssl::UniquePtr<BIGNUM> py(BN_new());
+        ASSERT_TRUE(py);
+        auto check_point = [&](const EC_POINT *p) {
+          if (is_infinity) {
+            EXPECT_TRUE(EC_POINT_is_at_infinity(group, p));
+          } else {
+            ASSERT_TRUE(EC_POINT_get_affine_coordinates_GFp(
+                group, p, px.get(), py.get(), ctx.get()));
+            EXPECT_EQ(0, BN_cmp(x.get(), px.get()));
+            EXPECT_EQ(0, BN_cmp(y.get(), py.get()));
+          }
+        };
 
-    const EC_POINT *g = EC_GROUP_get0_generator(group);
-    bssl::UniquePtr<EC_POINT> p(EC_POINT_new(group));
-    ASSERT_TRUE(p);
-    bssl::UniquePtr<BIGNUM> a(BN_new()), b(BN_new());
-    for (int i = -64; i < 64; i++) {
-      SCOPED_TRACE(i);
-      ASSERT_TRUE(BN_set_word(a.get(), abs(i)));
-      if (i < 0) {
-        ASSERT_TRUE(BN_sub(a.get(), EC_GROUP_get0_order(group), a.get()));
-      }
+        const EC_POINT *g = EC_GROUP_get0_generator(group);
+        bssl::UniquePtr<EC_POINT> p(EC_POINT_new(group));
+        ASSERT_TRUE(p);
+        bssl::UniquePtr<BIGNUM> a(BN_new()), b(BN_new());
+        for (int i = -64; i < 64; i++) {
+          SCOPED_TRACE(i);
+          ASSERT_TRUE(BN_set_word(a.get(), abs(i)));
+          if (i < 0) {
+            ASSERT_TRUE(BN_sub(a.get(), EC_GROUP_get0_order(group), a.get()));
+          }
 
-      ASSERT_TRUE(BN_copy(b.get(), n.get()));
-      ASSERT_TRUE(BN_sub(b.get(), b.get(), a.get()));
-      if (BN_is_negative(b.get())) {
-        ASSERT_TRUE(BN_add(b.get(), b.get(), EC_GROUP_get0_order(group)));
-      }
+          ASSERT_TRUE(BN_copy(b.get(), n.get()));
+          ASSERT_TRUE(BN_sub(b.get(), b.get(), a.get()));
+          if (BN_is_negative(b.get())) {
+            ASSERT_TRUE(BN_add(b.get(), b.get(), EC_GROUP_get0_order(group)));
+          }
 
-      ASSERT_TRUE(EC_POINT_mul(group, p.get(), a.get(), g, b.get(), ctx.get()));
-      check_point(p.get());
+          ASSERT_TRUE(
+              EC_POINT_mul(group, p.get(), a.get(), g, b.get(), ctx.get()));
+          check_point(p.get());
 
-      EC_SCALAR a_scalar, b_scalar;
-      ASSERT_TRUE(ec_bignum_to_scalar(group, &a_scalar, a.get()));
-      ASSERT_TRUE(ec_bignum_to_scalar(group, &b_scalar, b.get()));
-      ASSERT_TRUE(ec_point_mul_scalar_public(group, &p->raw, &a_scalar, &g->raw,
-                                             &b_scalar));
-      check_point(p.get());
-    }
-  });
+          EC_SCALAR a_scalar, b_scalar;
+          ASSERT_TRUE(ec_bignum_to_scalar(group, &a_scalar, a.get()));
+          ASSERT_TRUE(ec_bignum_to_scalar(group, &b_scalar, b.get()));
+          ASSERT_TRUE(ec_point_mul_scalar_public(group, &p->raw, &a_scalar,
+                                                 &g->raw, &b_scalar));
+          check_point(p.get());
+        }
+      });
 }
 
 static std::vector<uint8_t> HexToBytes(const char *str) {
@@ -1320,10 +1321,9 @@ TEST(ECTest, HashToCurve) {
     ASSERT_TRUE(EncodeECPoint(&buf, test.group, p.get(),
                               POINT_CONVERSION_UNCOMPRESSED));
     size_t field_len = (buf.size() - 1) / 2;
-    EXPECT_EQ(test.x_hex,
-              EncodeHex(bssl::MakeConstSpan(buf).subspan(1, field_len)));
-    EXPECT_EQ(test.y_hex, EncodeHex(bssl::MakeConstSpan(buf).subspan(
-                              1 + field_len, field_len)));
+    EXPECT_EQ(test.x_hex, EncodeHex(bssl::Span(buf).subspan(1, field_len)));
+    EXPECT_EQ(test.y_hex,
+              EncodeHex(bssl::Span(buf).subspan(1 + field_len, field_len)));
   }
 
   // hash-to-curve functions should check for the wrong group.
@@ -1398,7 +1398,7 @@ TEST(ECTest, HashToScalar) {
     uint8_t buf[EC_MAX_BYTES];
     size_t len;
     ec_scalar_to_bytes(test.group, buf, &len, &scalar);
-    EXPECT_EQ(test.result_hex, EncodeHex(bssl::MakeConstSpan(buf, len)));
+    EXPECT_EQ(test.result_hex, EncodeHex(bssl::Span(buf, len)));
   }
 
   // hash-to-scalar functions should check for the wrong group.
@@ -1409,3 +1409,5 @@ TEST(ECTest, HashToScalar) {
       EC_group_p224(), &scalar, kDST, sizeof(kDST), kMessage,
       sizeof(kMessage)));
 }
+
+}  // namespace

@@ -24,10 +24,9 @@
 #include "SVGFEImageElement.h"
 
 #include "CachedImage.h"
-#include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "ContainerNodeInlines.h"
-#include "Document.h"
+#include "DocumentResourceLoader.h"
 #include "FEImage.h"
 #include "Image.h"
 #include "LegacyRenderSVGResource.h"
@@ -38,6 +37,7 @@
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatioValue.h"
 #include "SVGRenderingContext.h"
+#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

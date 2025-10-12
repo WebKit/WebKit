@@ -44,7 +44,7 @@ public:
     void transformDocumentToTreeView();
 
 private:
-    CheckedRef<Document> m_document;
+    const CheckedRef<Document> m_document;
 };
 
 } // namespace WebCore

@@ -9,13 +9,17 @@
  */
 #include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_internal_shared_objects.h"
 
+#include <optional>
+#include <string>
+#include <utility>
+
 #include "api/video/video_frame.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
 
 std::string InternalStatsKey::ToString() const {
-  rtc::StringBuilder out;
+  StringBuilder out;
   out << "stream=" << stream << "_sender=" << sender
       << "_receiver=" << receiver;
   return out.str();

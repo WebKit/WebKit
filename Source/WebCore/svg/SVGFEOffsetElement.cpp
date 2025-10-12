@@ -24,8 +24,9 @@
 
 #include "FEOffset.h"
 #include "NodeName.h"
-#include "SVGFilter.h"
+#include "SVGFilterRenderer.h"
 #include "SVGNames.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -109,7 +110,7 @@ bool SVGFEOffsetElement::isIdentity() const
 
 IntOutsets SVGFEOffsetElement::outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const
 {
-    auto offset = SVGFilter::calculateResolvedSize({ dx(), dy() }, targetBoundingBox, primitiveUnits);
+    auto offset = SVGFilterRenderer::calculateResolvedSize({ dx(), dy() }, targetBoundingBox, primitiveUnits);
     return FEOffset::calculateOutsets(offset);
 }
 

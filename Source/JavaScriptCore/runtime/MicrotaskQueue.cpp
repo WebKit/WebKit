@@ -100,7 +100,6 @@ void MarkedMicrotaskDeque::visitAggregateImpl(Visitor& visitor)
     for (auto iterator = m_queue.begin() + m_markedBefore, end = m_queue.end(); iterator != end; ++iterator) {
         auto& task = *iterator;
         visitor.appendUnbarriered(task.m_globalObject);
-        visitor.appendUnbarriered(task.m_job);
         visitor.appendUnbarriered(task.m_arguments, QueuedTask::maxArguments);
     }
     m_markedBefore = m_queue.size();

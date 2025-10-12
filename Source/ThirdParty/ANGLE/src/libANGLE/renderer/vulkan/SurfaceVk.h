@@ -10,6 +10,7 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_SURFACEVK_H_
 #define LIBANGLE_RENDERER_VULKAN_SURFACEVK_H_
 
+#include <optional>
 #include "common/CircularBuffer.h"
 #include "common/SimpleMutex.h"
 #include "common/vulkan/vk_headers.h"
@@ -36,9 +37,8 @@ class SurfaceVk : public SurfaceImpl, public angle::ObserverInterface, public vk
     // We monitor the staging buffer for changes. This handles staged data from outside this class.
     void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
 
-    // width and height can change with client window resizing
-    EGLint getWidth() const override;
-    EGLint getHeight() const override;
+    // size can change with client window resizing
+    gl::Extents getSize() const override;
 
     EGLint mWidth;
     EGLint mHeight;
@@ -305,9 +305,12 @@ class WindowSurfaceVk : public SurfaceVk
     egl::Error getMscRate(EGLint *numerator, EGLint *denominator) override;
     void setSwapInterval(const egl::Display *display, EGLint interval) override;
 
-    // Sizes that Surface will have after render target is first accessed (e.g. after draw).
-    egl::Error getUserWidth(const egl::Display *display, EGLint *value) const final;
-    egl::Error getUserHeight(const egl::Display *display, EGLint *value) const final;
+    // Explicitly resolves surface size to use before state synchronization (e.g. validation).
+    angle::Result ensureSizeResolved(const gl::Context *context) final;
+    gl::Extents getSize() const final;
+
+    // Unresolved Surface size until render target is first accessed (e.g. after draw).
+    egl::Error getUserSize(const egl::Display *display, EGLint *width, EGLint *height) const final;
 
     EGLint isPostSubBufferSupported() const override;
     EGLint getSwapBehavior() const override;
@@ -364,8 +367,11 @@ class WindowSurfaceVk : public SurfaceVk
     bool hasStagedUpdates() const;
 
     void setTimestampsEnabled(bool enabled) override;
+    egl::Error setPresentationTime(EGLnsecsANDROID time) override;
 
-    EGLint getCompressionRate(const egl::Display *display) const override;
+    egl::Error getCompressionRate(const egl::Display *display,
+                                  const gl::Context *context,
+                                  EGLint *rate) override;
 
   protected:
     angle::Result swapImpl(ContextVk *contextVk,
@@ -477,7 +483,7 @@ class WindowSurfaceVk : public SurfaceVk
 
     // Atomic is to allow update state without necessarily locking the mSizeMutex.
     std::atomic<impl::SurfaceSizeState> mSizeState;
-    // Protects mWidth and mHeight against getUserWidth()/getUserHeight() calls.
+    // Protects mWidth and mHeight against getUserSize() call.
     mutable angle::SimpleMutex mSizeMutex;
 
     std::vector<vk::PresentMode> mPresentModes;
@@ -543,6 +549,10 @@ class WindowSurfaceVk : public SurfaceVk
 
     // EGL_EXT_buffer_age: Track frame count.
     uint64_t mFrameCount;
+    // EGL_ANDROID_presentation_time: Next frame's id and presentation time
+    // used for VK_GOOGLE_display_timing.
+    uint32_t mPresentID;
+    std::optional<EGLnsecsANDROID> mDesiredPresentTime;
 
     // EGL_KHR_lock_surface3
     vk::BufferHelper mLockBufferHelper;

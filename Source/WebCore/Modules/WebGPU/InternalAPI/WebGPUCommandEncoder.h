@@ -25,16 +25,16 @@
 
 #pragma once
 
-#include "WebGPUCommandBuffer.h"
-#include "WebGPUCommandBufferDescriptor.h"
-#include "WebGPUComputePassDescriptor.h"
-#include "WebGPUComputePassEncoder.h"
-#include "WebGPUExtent3D.h"
-#include "WebGPUImageCopyBuffer.h"
-#include "WebGPUImageCopyTexture.h"
-#include "WebGPUIntegralTypes.h"
-#include "WebGPURenderPassDescriptor.h"
-#include "WebGPURenderPassEncoder.h"
+#include <WebCore/WebGPUCommandBuffer.h>
+#include <WebCore/WebGPUCommandBufferDescriptor.h>
+#include <WebCore/WebGPUComputePassDescriptor.h>
+#include <WebCore/WebGPUComputePassEncoder.h>
+#include <WebCore/WebGPUExtent3D.h>
+#include <WebCore/WebGPUImageCopyBuffer.h>
+#include <WebCore/WebGPUImageCopyTexture.h>
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPURenderPassDescriptor.h>
+#include <WebCore/WebGPURenderPassEncoder.h>
 #include <optional>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>

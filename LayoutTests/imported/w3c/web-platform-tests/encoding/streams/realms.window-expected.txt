@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
 
 PASS a TextEncoderStream object should be associated with the realm the constructor came from
 PASS TextEncoderStream's readable and writable attributes should come from the same realm as the constructor definition

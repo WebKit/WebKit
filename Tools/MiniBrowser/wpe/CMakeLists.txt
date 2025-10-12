@@ -10,11 +10,6 @@ set(MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES
     ${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
 )
 
-set(MiniBrowser_SYSTEM_INCLUDE_DIRECTORIES
-    ${GLIB_INCLUDE_DIRS}
-    ${LIBSOUP_INCLUDE_DIRS}
-)
-
 set(MiniBrowser_PRIVATE_LIBRARIES
     ${JavaScriptCore_LIBRARY_NAME}
     WebKit::WPEToolingBackends
@@ -35,10 +30,6 @@ if (ENABLE_WPE_PLATFORM)
     list(APPEND MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES
         ${WPEPlatform_DERIVED_SOURCES_DIR}
         ${WEBKIT_DIR}/WPEPlatform
-    )
-
-    list(APPEND MiniBrowser_PRIVATE_LIBRARIES
-        WPEPlatform-${WPE_API_VERSION}
     )
 endif ()
 

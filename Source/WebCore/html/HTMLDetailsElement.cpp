@@ -24,7 +24,7 @@
 
 #include "AXObjectCache.h"
 #include "ContainerNodeInlines.h"
-#include "DocumentInlines.h"
+#include "DocumentView.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "EventLoop.h"
@@ -71,6 +71,11 @@ void DetailsSlotAssignment::hostChildElementDidChange(const Element& childElemen
         // Don't check whether this is the first summary element
         // since we don't know the answer when this function is called inside Element::removedFrom.
         didChangeSlot(summarySlotName(), shadowRoot);
+
+        if (RefPtr associatedDetails = dynamicDowncast<HTMLDetailsElement>(shadowRoot.host())) {
+            if (CheckedPtr cache = associatedDetails->protectedDocument()->existingAXObjectCache())
+                cache->onDetailsSummarySlotChange(*associatedDetails);
+        }
     } else
         didChangeSlot(NamedSlotAssignment::defaultSlotName(), shadowRoot);
 }
@@ -118,7 +123,7 @@ void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 
     Ref defaultSlot = HTMLSlotElement::create(slotTag, document);
     defaultSlot->setUserAgentPart(UserAgentParts::detailsContent());
-    ASSERT(!hasAttribute(openAttr));
+    ASSERT(!hasAttributeWithoutSynchronization(openAttr));
     defaultSlot->setInlineStyleProperty(CSSPropertyContentVisibility, CSSValueHidden);
     defaultSlot->setInlineStyleProperty(CSSPropertyDisplay, CSSValueBlock);
     root.appendChild(defaultSlot);
@@ -202,15 +207,20 @@ Vector<RefPtr<HTMLDetailsElement>> HTMLDetailsElement::otherElementsInNameGroup(
 
 void HTMLDetailsElement::ensureDetailsExclusivityAfterMutation()
 {
-    if (hasAttribute(openAttr) && !attributeWithoutSynchronization(nameAttr).isEmpty()) {
+    if (hasAttributeWithoutSynchronization(openAttr) && !attributeWithoutSynchronization(nameAttr).isEmpty()) {
         ShouldNotFireMutationEventsScope scope(document());
         for (auto& otherDetailsElement : otherElementsInNameGroup()) {
-            if (otherDetailsElement->hasAttribute(openAttr)) {
+            if (otherDetailsElement->hasAttributeWithoutSynchronization(openAttr)) {
                 toggleOpen();
                 break;
             }
         }
     }
+}
+
+void HTMLDetailsElement::toggleOpen()
+{
+    setBooleanAttribute(HTMLNames::openAttr, !hasAttributeWithoutSynchronization(HTMLNames::openAttr));
 }
 
 } // namespace WebCore

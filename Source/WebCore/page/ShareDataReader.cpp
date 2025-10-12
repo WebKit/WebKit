@@ -28,6 +28,7 @@
 
 #include "BlobLoader.h"
 #include "Document.h"
+#include "ExceptionOr.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
@@ -50,10 +51,11 @@ void ShareDataReader::start(Document* document, ShareDataWithParsedURL&& shareDa
     int count = 0;
     m_pendingFileLoads.reserveInitialCapacity(m_shareData.shareData.files.size());
     for (auto& blob : m_shareData.shareData.files) {
-        m_pendingFileLoads.append(makeUniqueRef<BlobLoader>([this, count, fileName = blob->name()](BlobLoader&) {
+        Ref blobLoader = BlobLoader::create([this, count, fileName = blob->name()](BlobLoader&) {
             this->didFinishLoading(count, fileName);
-        }));
-        m_pendingFileLoads.last()->start(blob, document, FileReaderLoader::ReadAsArrayBuffer);
+        });
+        m_pendingFileLoads.append(blobLoader.copyRef());
+        blobLoader->start(blob, document, FileReaderLoader::ReadAsArrayBuffer);
         if (m_pendingFileLoads.isEmpty()) {
             // The previous load failed synchronously and cancel() was called. We should not attempt to do any further loads.
             break;
@@ -76,7 +78,7 @@ void ShareDataReader::didFinishLoading(int loadIndex, const String& fileName)
         return;
     }
 
-    auto arrayBuffer = m_pendingFileLoads[loadIndex]->arrayBufferResult();
+    auto arrayBuffer = Ref { m_pendingFileLoads[loadIndex] }->arrayBufferResult();
 
     RawFile file;
     file.fileName = fileName;

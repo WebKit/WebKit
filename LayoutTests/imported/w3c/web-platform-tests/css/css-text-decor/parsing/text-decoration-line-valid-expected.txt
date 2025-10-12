@@ -64,6 +64,6 @@ PASS e.style['text-decoration-line'] = "blink overline underline line-through" s
 PASS e.style['text-decoration-line'] = "blink overline line-through underline" should set the property value
 PASS e.style['text-decoration-line'] = "blink line-through underline overline" should set the property value
 PASS e.style['text-decoration-line'] = "blink line-through overline underline" should set the property value
-FAIL e.style['text-decoration-line'] = "spelling-error" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['text-decoration-line'] = "grammar-error" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['text-decoration-line'] = "spelling-error" should set the property value
+PASS e.style['text-decoration-line'] = "grammar-error" should set the property value
 

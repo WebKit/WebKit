@@ -27,17 +27,17 @@
 
 #if ENABLE(B3_JIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 
-#include "FPRInfo.h"
-#include "GPRInfo.h"
-#include "JSCJSValue.h"
-#include "Reg.h"
-#include "RegisterSet.h"
-#include "ValueRecovery.h"
+#include <JavaScriptCore/FPRInfo.h>
+#include <JavaScriptCore/GPRInfo.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/Reg.h>
+#include <JavaScriptCore/RegisterSet.h>
+#include <JavaScriptCore/ValueRecovery.h>
 #include <wtf/PrintStream.h>
 #include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 #if ENABLE(WEBASSEMBLY)
-#include "WasmValueLocation.h"
+#include <JavaScriptCore/WasmValueLocation.h>
 #endif
 
 namespace JSC {

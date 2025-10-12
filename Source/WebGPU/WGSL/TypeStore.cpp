@@ -126,7 +126,6 @@ void TypeCache::insert(const Key& key, const Type* type)
 
 TypeStore::TypeStore()
 {
-    m_bottom = allocateType<Bottom>();
     m_abstractInt = allocateType<Primitive>(Primitive::AbstractInt);
     m_abstractFloat = allocateType<Primitive>(Primitive::AbstractFloat);
     m_void = allocateType<Primitive>(Primitive::Void);
@@ -245,7 +244,7 @@ const Type* TypeStore::atomicType(const Type* type)
     return m_atomicU32;
 }
 
-const Type* TypeStore::typeConstructorType(ASCIILiteral name, std::function<const Type*(AST::ElaboratedTypeExpression&)>&& constructor)
+const Type* TypeStore::typeConstructorType(ASCIILiteral name, std::function<Result<const Type*>(AST::ElaboratedTypeExpression&)>&& constructor)
 {
     return allocateType<TypeConstructor>(name, WTFMove(constructor));
 }

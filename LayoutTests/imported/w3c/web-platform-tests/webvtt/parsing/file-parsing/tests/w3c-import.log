@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/arrows.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/categories.json
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/tests/comment-in-cue-text.html

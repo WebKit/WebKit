@@ -399,7 +399,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
 
 - (WKDOMDocument *)mainFrameDocument
 {
-    auto* webCoreMainFrame = dynamicDowncast<WebCore::LocalFrame>(_page->mainFrame());
+    RefPtr webCoreMainFrame = dynamicDowncast<WebCore::LocalFrame>(_page->mainFrame());
     if (!webCoreMainFrame)
         return nil;
 
@@ -554,7 +554,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
             return [formDelegate _webProcessPlugInBrowserContextControllerShouldNotifyOnFormChanges:controller.get()];
         }
 
-        void didAssociateFormControls(WebKit::WebPage*, const Vector<RefPtr<WebCore::Element>>& elements, WebKit::WebFrame*) final
+        void didAssociateFormControls(WebKit::WebPage*, const Vector<Ref<WebCore::Element>>& elements, WebKit::WebFrame*) final
         {
             auto controller = m_controller.get();
             if (!controller)
@@ -564,7 +564,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
             if (![formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:didAssociateFormControls:)])
                 return;
             return [formDelegate _webProcessPlugInBrowserContextController:controller.get() didAssociateFormControls:createNSArray(elements, [] (auto& element) {
-                return wrapper(*WebKit::InjectedBundleNodeHandle::getOrCreate(element.get()));
+                return wrapper(*WebKit::InjectedBundleNodeHandle::getOrCreate(element.ptr()));
             }).get()];
         }
 

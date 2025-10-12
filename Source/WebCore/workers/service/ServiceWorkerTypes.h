@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "ProcessIdentifier.h"
-#include "ProcessQualified.h"
-#include "ScriptBuffer.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include "ServiceWorkerIdentifier.h"
+#include <WebCore/ProcessIdentifier.h>
+#include <WebCore/ProcessQualified.h>
+#include <WebCore/ScriptBuffer.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/ServiceWorkerIdentifier.h>
 #include <wtf/HashIterators.h>
 #include <wtf/KeyValuePair.h>
 #include <wtf/ObjectIdentifier.h>

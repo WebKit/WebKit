@@ -116,7 +116,7 @@
 
 id <_WKObservablePageState> WKPageCreateObservableState(WKPageRef pageRef)
 {
-    return [[WKObservablePageState alloc] initWithPage:WebKit::toImpl(pageRef)];
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return [[WKObservablePageState alloc] initWithPage:WebKit::toImpl(pageRef)];
 }
 
 _WKRemoteObjectRegistry *WKPageGetObjectRegistry(WKPageRef pageRef)
@@ -172,3 +172,18 @@ id <_WKFullscreenDelegate> WKPageGetFullscreenDelegate(WKPageRef page)
 #endif
 }
 
+NSDictionary *WKPageGetAccessibilityWebProcessDebugInfo(WKPageRef pageRef)
+{
+#if PLATFORM(MAC)
+    return WebKit::toImpl(pageRef)->getAccessibilityWebProcessDebugInfo();
+#else
+    return nil;
+#endif
+}
+
+void WKPageAccessibilityClearIsolatedTree(WKPageRef pageRef)
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    WebKit::toImpl(pageRef)->clearAccessibilityIsolatedTree();
+#endif
+}

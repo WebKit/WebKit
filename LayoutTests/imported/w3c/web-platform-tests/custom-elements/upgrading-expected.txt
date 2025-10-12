@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: NotSupportedError: Failed to upgrade an element with shadow root: the custom element definition disallows shadow roots.
 
 PASS Creating an element in the document of the template elements must not enqueue a custom element upgrade reaction because the document does not have a browsing context
 PASS Creating an element in the document of the template elements and inserting into the document must not enqueue a custom element upgrade reaction

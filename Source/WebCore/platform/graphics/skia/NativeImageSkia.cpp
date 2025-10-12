@@ -36,12 +36,12 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-IntSize PlatformImageNativeImageBackend::size() const
+IntSize NativeImage::size() const
 {
     return m_platformImage ? IntSize(m_platformImage->width(), m_platformImage->height()) : IntSize();
 }
 
-bool PlatformImageNativeImageBackend::hasAlpha() const
+bool NativeImage::hasAlpha() const
 {
     switch (m_platformImage->imageInfo().alphaType()) {
     case kUnknown_SkAlphaType:
@@ -54,7 +54,7 @@ bool PlatformImageNativeImageBackend::hasAlpha() const
     return false;
 }
 
-DestinationColorSpace PlatformImageNativeImageBackend::colorSpace() const
+DestinationColorSpace NativeImage::colorSpace() const
 {
     if (auto colorSpace = platformImage()->refColorSpace())
         return DestinationColorSpace(colorSpace);
@@ -62,7 +62,7 @@ DestinationColorSpace PlatformImageNativeImageBackend::colorSpace() const
     return DestinationColorSpace::SRGB();
 }
 
-Headroom PlatformImageNativeImageBackend::headroom() const
+Headroom NativeImage::headroom() const
 {
     return Headroom::None;
 }
@@ -92,11 +92,6 @@ std::optional<Color> NativeImage::singlePixelSolidColor() const
         return std::nullopt;
 
     return pixmap.getColor(0, 0);
-}
-
-void NativeImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
-{
-    context.drawNativeImageInternal(*this, destinationRect, sourceRect, options);
 }
 
 void NativeImage::clearSubimages()

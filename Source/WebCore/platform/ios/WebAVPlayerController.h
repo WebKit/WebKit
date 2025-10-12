@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <wtf/Platform.h>
+
 #if PLATFORM(COCOA) && HAVE(AVKIT)
 
 #import <pal/spi/cocoa/AVKitSPI.h>
@@ -139,7 +141,7 @@ class PlaybackSessionInterfaceIOS;
 
 @end
 
-Class webAVPlayerControllerClass();
+Class webAVPlayerControllerClassSingleton();
 RetainPtr<WebAVPlayerController> createWebAVPlayerController();
 
 NS_ASSUME_NONNULL_END

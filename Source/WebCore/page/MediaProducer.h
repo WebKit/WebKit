@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/OptionSet.h>
+#include <wtf/Platform.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -132,6 +133,19 @@ public:
     static constexpr MediaStateFlags IsCapturingVideoMask = { VideoCaptureMask | DisplayCaptureMask };
 
     static bool isCapturing(MediaStateFlags state) { return state.containsAny(ActiveCaptureMask) || state.containsAny(MutedCaptureMask); }
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+    static bool needsMediaCapability(MediaStateFlags state)
+    {
+        if (state.contains(MediaProducerMediaState::IsPlayingAudio))
+            return true;
+
+        if (state.contains(MediaProducerMediaState::IsPlayingVideo))
+            return true;
+
+        return MediaProducer::isCapturing(state);
+    }
+#endif
 
     virtual MediaStateFlags mediaState() const = 0;
 

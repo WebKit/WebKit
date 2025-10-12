@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSInternalFieldObjectImpl.h"
+#include <JavaScriptCore/JSInternalFieldObjectImpl.h>
 
 namespace JSC {
 
@@ -72,22 +72,49 @@ public:
     const WriteBarrier<Unknown>& internalField(Field field) const { return Base::internalField(static_cast<uint32_t>(field)); }
     WriteBarrier<Unknown>& internalField(Field field) { return Base::internalField(static_cast<uint32_t>(field)); }
 
-    JS_EXPORT_PRIVATE Status status(VM&) const;
-    JS_EXPORT_PRIVATE JSValue result(VM&) const;
-    JS_EXPORT_PRIVATE bool isHandled(VM&) const;
+    inline Status status() const
+    {
+        JSValue value = internalField(Field::Flags).get();
+        uint32_t flags = value.asUInt32AsAnyInt();
+        return static_cast<Status>(flags & stateMask);
+    }
+
+    inline bool isHandled() const
+    {
+        return flags() & isHandledFlag;
+    }
+
+    inline JSValue result() const
+    {
+        Status status = this->status();
+        if (status == Status::Pending)
+            return jsUndefined();
+        return internalField(Field::ReactionsOrResult).get();
+    }
+
 
     JS_EXPORT_PRIVATE static JSPromise* resolvedPromise(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE static JSPromise* rejectedPromise(JSGlobalObject*, JSValue);
 
     JS_EXPORT_PRIVATE void resolve(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE void reject(JSGlobalObject*, JSValue);
+    void fulfill(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE void rejectAsHandled(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE void reject(JSGlobalObject*, Exception*);
     JS_EXPORT_PRIVATE void rejectAsHandled(JSGlobalObject*, Exception*);
-    JS_EXPORT_PRIVATE void markAsHandled(JSGlobalObject*);
-    JS_EXPORT_PRIVATE void performPromiseThen(JSGlobalObject*, JSFunction*, JSFunction*, JSValue);
+    JS_EXPORT_PRIVATE void performPromiseThenExported(JSGlobalObject*, JSValue onFulfilled, JSValue onRejected, JSValue, JSValue = jsUndefined());
 
     JS_EXPORT_PRIVATE JSPromise* rejectWithCaughtException(JSGlobalObject*, ThrowScope&);
+
+    JSValue reactionsOrResult() const { return internalField(Field::ReactionsOrResult).get(); };
+    void setReactionsOrResult(VM& vm, JSValue value) { internalField(Field::ReactionsOrResult).set(vm, this, value); };
+
+    // https://webidl.spec.whatwg.org/#mark-a-promise-as-handled
+    void markAsHandled()
+    {
+        uint32_t flags = this->flags();
+        internalField(Field::Flags).setWithoutWriteBarrier(jsNumber(flags | isHandledFlag));
+    }
 
     struct DeferredData {
         WTF_FORBID_HEAP_ALLOCATION;
@@ -97,16 +124,58 @@ public:
         JSFunction* reject { nullptr };
     };
     static DeferredData createDeferredData(JSGlobalObject*, JSPromiseConstructor*);
-    JS_EXPORT_PRIVATE static JSValue createNewPromiseCapability(JSGlobalObject*, JSPromiseConstructor*);
-    JS_EXPORT_PRIVATE static DeferredData convertCapabilityToDeferredData(JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE static JSValue createNewPromiseCapability(JSGlobalObject*, JSValue constructor);
 
     DECLARE_VISIT_CHILDREN;
+
+    // This is abstract operations defined in the spec.
+    void performPromiseThen(JSGlobalObject*, JSValue onFulfilled, JSValue onRejected, JSValue, JSValue = jsUndefined());
+    void rejectPromise(JSGlobalObject*, JSValue);
+    void fulfillPromise(JSGlobalObject*, JSValue);
+    void resolvePromise(JSGlobalObject*, JSValue);
+
+    static void resolveWithoutPromiseForAsyncAwait(JSGlobalObject*, JSValue resolution, JSValue onFulfilled, JSValue onRejected, JSValue context);
+    static void resolveWithoutPromise(JSGlobalObject*, JSValue resolution, JSValue onFulfilled, JSValue onRejected, JSValue context);
+    static void rejectWithoutPromise(JSGlobalObject*, JSValue argument, JSValue onFulfilled, JSValue onRejected, JSValue context);
+    static void fulfillWithoutPromise(JSGlobalObject*, JSValue argument, JSValue onFulfilled, JSValue onRejected, JSValue context);
+
+    bool isThenFastAndNonObservable();
+
+    std::tuple<JSFunction*, JSFunction*> createResolvingFunctions(VM&, JSGlobalObject*);
+    std::tuple<JSFunction*, JSFunction*> createFirstResolvingFunctions(VM&, JSGlobalObject*);
+    static std::tuple<JSFunction*, JSFunction*> createResolvingFunctionsWithoutPromise(VM&, JSGlobalObject*, JSValue onFulfilled, JSValue onRejected, JSValue context);
+    static std::tuple<JSObject*, JSObject*, JSObject*> newPromiseCapability(JSGlobalObject*, JSValue constructor);
+    static JSValue createPromiseCapability(VM&, JSGlobalObject*, JSObject* promise, JSObject* resolve, JSObject* reject);
+    static JSValue promiseResolve(JSGlobalObject*, JSValue constructor, JSValue);
+
+    JSValue then(JSGlobalObject*, JSValue onFulfilled, JSValue onRejected);
 
 protected:
     JSPromise(VM&, Structure*);
     void finishCreation(VM&);
 
-    uint32_t flags() const;
+    static void triggerPromiseReactions(JSGlobalObject*, JSPromise::Status, JSPromiseReaction* head, JSValue argument);
+
+    inline uint32_t flags() const
+    {
+        JSValue value = internalField(Field::Flags).get();
+        return value.asUInt32AsAnyInt();
+    }
 };
+
+static constexpr PropertyOffset promiseCapabilityResolvePropertyOffset = 0;
+static constexpr PropertyOffset promiseCapabilityRejectPropertyOffset = 1;
+static constexpr PropertyOffset promiseCapabilityPromisePropertyOffset = 2;
+
+JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionResolve);
+JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionReject);
+JSC_DECLARE_HOST_FUNCTION(promiseFirstResolvingFunctionResolve);
+JSC_DECLARE_HOST_FUNCTION(promiseFirstResolvingFunctionReject);
+JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionResolveWithoutPromise);
+JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionRejectWithoutPromise);
+JSC_DECLARE_HOST_FUNCTION(promiseCapabilityExecutor);
+
+JSObject* promiseSpeciesConstructor(JSGlobalObject*, JSObject*);
+Structure* createPromiseCapabilityObjectStructure(VM&, JSGlobalObject&);
 
 } // namespace JSC

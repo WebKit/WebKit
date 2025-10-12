@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -24,16 +24,20 @@
 
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
-#include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CachedXSLStyleSheet.h"
 #include "CommonAtomStrings.h"
 #include "DocumentInlines.h"
+#include "DocumentResourceLoader.h"
+#include "DocumentView.h"
 #include "FrameLoader.h"
 #include "LocalFrame.h"
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
+#include "NodeDocument.h"
 #include "NodeInlines.h"
+#include "SerializedNode.h"
+#include "Settings.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
 #include "XMLDocumentParser.h"
@@ -65,7 +69,7 @@ ProcessingInstruction::~ProcessingInstruction()
         cachedSheet->removeClient(*this);
 
     if (isConnected())
-        document().checkedStyleScope()->removeStyleSheetCandidateNode(*this);
+        document().styleScope().removeStyleSheetCandidateNode(*this);
 }
 
 String ProcessingInstruction::nodeName() const
@@ -73,11 +77,16 @@ String ProcessingInstruction::nodeName() const
     return m_target;
 }
 
-Ref<Node> ProcessingInstruction::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*)
+Ref<Node> ProcessingInstruction::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*) const
 {
     // FIXME: Is it a problem that this does not copy m_localHref?
     // What about other data members?
     return create(document, String { m_target }, String { data() });
+}
+
+SerializedNode ProcessingInstruction::serializeNode(CloningOperation) const
+{
+    return { SerializedNode::ProcessingInstruction { { data() }, m_target } };
 }
 
 void ProcessingInstruction::checkStyleSheet()
@@ -94,7 +103,8 @@ void ProcessingInstruction::checkStyleSheet()
 
         m_isCSS = type.isEmpty() || type == cssContentTypeAtom();
 #if ENABLE(XSLT)
-        m_isXSL = type == "text/xml"_s || type == "text/xsl"_s || type == "application/xml"_s || type == "application/xhtml+xml"_s || type == "application/rss+xml"_s || type == "application/atom+xml"_s;
+        bool isXSLTSupported = document->settings().isXSLTEnabled();
+        m_isXSL = isXSLTSupported && (type == "text/xml"_s || type == "text/xsl"_s || type == "application/xml"_s || type == "application/xhtml+xml"_s || type == "application/rss+xml"_s || type == "application/atom+xml"_s);
         if (!m_isCSS && !m_isXSL)
 #else
         if (!m_isCSS)
@@ -128,7 +138,7 @@ void ProcessingInstruction::checkStyleSheet()
             
             if (!m_loading) {
                 m_loading = true;
-                document->checkedStyleScope()->addPendingSheet(*this);
+                document->styleScope().addPendingSheet(*this);
             }
 
             ASSERT_WITH_SECURITY_IMPLICATION(!m_cachedSheet);
@@ -151,7 +161,7 @@ void ProcessingInstruction::checkStyleSheet()
             else {
                 // The request may have been denied if (for example) the stylesheet is local and the document is remote.
                 m_loading = false;
-                document->checkedStyleScope()->removePendingSheet(*this);
+                document->styleScope().removePendingSheet(*this);
 #if ENABLE(XSLT)
                 if (m_isXSL)
                     document->scheduleToApplyXSLTransforms();
@@ -260,7 +270,7 @@ Node::InsertedIntoAncestorResult ProcessingInstruction::insertedIntoAncestor(Ins
     CharacterData::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (!insertionType.connectedToDocument)
         return InsertedIntoAncestorResult::Done;
-    protectedDocument()->checkedStyleScope()->addStyleSheetCandidateNode(*this, m_createdByParser);
+    protectedDocument()->styleScope().addStyleSheetCandidateNode(*this, m_createdByParser);
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 

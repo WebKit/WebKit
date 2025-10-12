@@ -28,10 +28,10 @@
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
 
-#include "ActiveDOMObject.h"
-#include "EventTarget.h"
-#include "EventTargetInterfaces.h"
-#include "IntSize.h"
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/EventTarget.h>
+#include <WebCore/EventTargetInterfaces.h>
+#include <WebCore/IntSize.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -60,7 +60,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
     enum EventTargetInterfaceType eventTargetInterface() const override { return EventTargetInterfaceType::PictureInPictureWindow; };
-    ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); };
+    ScriptExecutionContext* scriptExecutionContext() const override;
 
     IntSize m_size;
 };

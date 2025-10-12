@@ -36,6 +36,7 @@
 #include "PerformanceLogging.h"
 #include "RegistrableDomain.h"
 #include "Settings.h"
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -297,7 +298,7 @@ void PerformanceMonitor::measureCPUUsageInActivityState(ActivityStateForCPUSampl
 
 #if !RELEASE_LOG_DISABLED
     double cpuUsage = cpuTime.value().percentageCPUUsageSince(*m_perActivityStateCPUTime);
-    PERFMONITOR_RELEASE_LOG(PERFORMANCEMONITOR_MEASURE_CPUUSAGE_IN_ACTIVITYSTATE, cpuUsage, stringForCPUSamplingActivityState(activityState).characters());
+    PERFMONITOR_RELEASE_LOG(PERFORMANCEMONITOR_MEASURE_CPUUSAGE_IN_ACTIVITYSTATE, cpuUsage, stringForCPUSamplingActivityState(activityState));
 #endif
     page->chrome().client().reportProcessCPUTime((cpuTime.value().systemTime + cpuTime.value().userTime) - (m_perActivityStateCPUTime.value().systemTime + m_perActivityStateCPUTime.value().userTime), activityState);
 

@@ -26,6 +26,9 @@
 #include "config.h"
 #include "TrustedTypePolicy.h"
 
+#include "ExceptionCode.h"
+#include "ExceptionOr.h"
+#include "ScriptWrappableInlines.h"
 #include "TrustedHTML.h"
 #include "TrustedScript.h"
 #include "TrustedScriptURL.h"
@@ -56,7 +59,11 @@ ExceptionOr<Ref<TrustedHTML>> TrustedTypePolicy::createHTML(const String& input,
     if (policyValue.hasException())
         return policyValue.releaseException();
 
-    return TrustedHTML::create(policyValue.releaseReturnValue());
+    auto dataString = policyValue.releaseReturnValue();
+    if (dataString.isNull())
+        dataString = emptyString();
+
+    return TrustedHTML::create(dataString);
 }
 
 ExceptionOr<Ref<TrustedScript>> TrustedTypePolicy::createScript(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
@@ -66,7 +73,11 @@ ExceptionOr<Ref<TrustedScript>> TrustedTypePolicy::createScript(const String& in
     if (policyValue.hasException())
         return policyValue.releaseException();
 
-    return TrustedScript::create(policyValue.releaseReturnValue());
+    auto dataString = policyValue.releaseReturnValue();
+    if (dataString.isNull())
+        dataString = emptyString();
+
+    return TrustedScript::create(dataString);
 }
 
 ExceptionOr<Ref<TrustedScriptURL>> TrustedTypePolicy::createScriptURL(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
@@ -76,7 +87,11 @@ ExceptionOr<Ref<TrustedScriptURL>> TrustedTypePolicy::createScriptURL(const Stri
     if (policyValue.hasException())
         return policyValue.releaseException();
 
-    return TrustedScriptURL::create(policyValue.releaseReturnValue());
+    auto dataString = policyValue.releaseReturnValue();
+    if (dataString.isNull())
+        dataString = emptyString();
+
+    return TrustedScriptURL::create(dataString);
 }
 
 // https://w3c.github.io/trusted-types/dist/spec/#get-trusted-type-policy-value-algorithm
@@ -132,5 +147,7 @@ WebCoreOpaqueRoot root(TrustedTypePolicy* policy)
 {
     return WebCoreOpaqueRoot { policy };
 }
+
+TrustedTypePolicy::~TrustedTypePolicy() = default;
 
 } // namespace WebCore

@@ -97,7 +97,7 @@ unsigned MultiGamepadProvider::indexForNewlyConnectedDevice()
     ASSERT(index <= m_gamepadVector.size());
 
     if (index == m_gamepadVector.size())
-        m_gamepadVector.resize(index + 1);
+        m_gamepadVector.grow(index + 1);
 
     return index;
 }
@@ -106,7 +106,7 @@ void MultiGamepadProvider::platformGamepadConnected(PlatformGamepad& gamepad, Ev
 {
     auto index = indexForNewlyConnectedDevice();
 
-    LOG(Gamepad, "MultiGamepadProvider adding new platform gamepad to index %i from a %s source", index, gamepad.source());
+    LOG(Gamepad, "MultiGamepadProvider adding new platform gamepad to index %i from a %s source", index, gamepad.source().characters());
 
     ASSERT(m_gamepadVector.size() > index);
 
@@ -120,7 +120,7 @@ void MultiGamepadProvider::platformGamepadConnected(PlatformGamepad& gamepad, Ev
 
 void MultiGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)
 {
-    LOG(Gamepad, "MultiGamepadProvider disconnecting gamepad from a %s source", gamepad.source());
+    LOG(Gamepad, "MultiGamepadProvider disconnecting gamepad from a %s source", gamepad.source().characters());
 
     auto gamepadWrapper = m_gamepadMap.take(gamepad);
 

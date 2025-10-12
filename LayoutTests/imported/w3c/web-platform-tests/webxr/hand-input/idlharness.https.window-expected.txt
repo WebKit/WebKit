@@ -1,0 +1,35 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface XRInputSource: original interface defined
+PASS Partial interface XRInputSource: member names are unique
+PASS Partial interface XRFrame: original interface defined
+PASS Partial interface XRFrame: member names are unique
+PASS XRHand interface: existence and properties of interface object
+PASS XRHand interface object length
+PASS XRHand interface object name
+PASS XRHand interface: existence and properties of interface prototype object
+PASS XRHand interface: existence and properties of interface prototype object's "constructor" property
+PASS XRHand interface: existence and properties of interface prototype object's @@unscopables property
+PASS XRHand interface: iterable<XRHandJoint, XRJointSpace>
+PASS XRHand interface: attribute size
+PASS XRHand interface: operation get(XRHandJoint)
+PASS XRJointSpace interface: existence and properties of interface object
+PASS XRJointSpace interface object length
+PASS XRJointSpace interface object name
+PASS XRJointSpace interface: existence and properties of interface prototype object
+PASS XRJointSpace interface: existence and properties of interface prototype object's "constructor" property
+PASS XRJointSpace interface: existence and properties of interface prototype object's @@unscopables property
+PASS XRJointSpace interface: attribute jointName
+PASS XRJointPose interface: existence and properties of interface object
+PASS XRJointPose interface object length
+PASS XRJointPose interface object name
+PASS XRJointPose interface: existence and properties of interface prototype object
+PASS XRJointPose interface: existence and properties of interface prototype object's "constructor" property
+PASS XRJointPose interface: existence and properties of interface prototype object's @@unscopables property
+PASS XRJointPose interface: attribute radius
+PASS XRFrame interface: operation getJointPose(XRJointSpace, XRSpace)
+PASS XRFrame interface: operation fillJointRadii(sequence<XRJointSpace>, Float32Array)
+PASS XRFrame interface: operation fillPoses(sequence<XRSpace>, XRSpace, Float32Array)
+PASS XRInputSource interface: attribute hand
+

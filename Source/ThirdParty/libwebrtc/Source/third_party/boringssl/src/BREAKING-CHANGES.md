@@ -36,7 +36,7 @@ In most cases, this is straightforward:
 
 The removal should still include an `Update-Note` tag, in case some were missed.
 
-In some cases, this kind of staged approach is not feasible: perhaps the same code cannot simultaneously work before and after the change, or perhaps there are too many different versions in play. For instance, [Conscrypt](https://github.com/google/conscrypt) feeds into three different repositories. The GitHub repository consumes BoringSSL's `master` branch directly. It is pushed into Android, where it consumes Android's `external/boringssl`. Yet another copy is pushed into the internal repository, where it consumes that copy of BoringSSL. As each of these Conscrypts are updated independently from their corresponding BoringSSLs, Conscrypt upstream cannot rely on a new BoringSSL API until it is present in all copies of BoringSSL its downstreams rely on.
+In some cases, this kind of staged approach is not feasible: perhaps the same code cannot simultaneously work before and after the change, or perhaps there are too many different versions in play. For instance, [Conscrypt](https://github.com/google/conscrypt) feeds into three different repositories. The GitHub repository consumes BoringSSL's `main` branch directly. It is pushed into Android, where it consumes Android's `external/boringssl`. Yet another copy is pushed into the internal repository, where it consumes that copy of BoringSSL. As each of these Conscrypts are updated independently from their corresponding BoringSSLs, Conscrypt upstream cannot rely on a new BoringSSL API until it is present in all copies of BoringSSL its downstreams rely on.
 
 In that case, a multi-sided change may be more appropriate:
 

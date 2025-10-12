@@ -10,12 +10,13 @@
 
 #include "audio/utility/audio_frame_operations.h"
 
-#include <string.h>
-
 #include <algorithm>
 #include <cstdint>
+#include <cstring>
 #include <utility>
 
+#include "api/audio/audio_frame.h"
+#include "api/audio/audio_view.h"
 #include "common_audio/include/audio_util.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -209,7 +210,7 @@ int AudioFrameOperations::ScaleWithSat(float scale, AudioFrame* frame) {
   int16_t* frame_data = frame->mutable_data();
   for (size_t i = 0; i < frame->samples_per_channel_ * frame->num_channels_;
        i++) {
-    frame_data[i] = rtc::saturated_cast<int16_t>(scale * frame_data[i]);
+    frame_data[i] = saturated_cast<int16_t>(scale * frame_data[i]);
   }
   return 0;
 }

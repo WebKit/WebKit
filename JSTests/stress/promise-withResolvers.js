@@ -22,11 +22,11 @@ shouldBe(Promise.withResolvers.length, 0);
     shouldBe(promise instanceof Promise, true);
 
     shouldBe(resolve instanceof Function, true);
-    shouldBe(resolve.name, "resolve");
+    shouldBe(resolve.name, "");
     shouldBe(resolve.length, 1);
 
     shouldBe(reject instanceof Function, true);
-    shouldBe(reject.name, "reject");
+    shouldBe(reject.name, "");
     shouldBe(reject.length, 1);
 }
 

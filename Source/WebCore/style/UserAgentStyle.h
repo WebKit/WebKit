@@ -42,6 +42,7 @@ public:
     static StyleSheetContents* quirksStyleSheet;
     static StyleSheetContents* svgStyleSheet;
     static StyleSheetContents* mathMLStyleSheet;
+    static StyleSheetContents* mathMLCoreExtrasStyleSheet;
     static StyleSheetContents* mediaQueryStyleSheet;
     static StyleSheetContents* horizontalFormControlsStyleSheet;
     static StyleSheetContents* htmlSwitchControlStyleSheet;
@@ -56,9 +57,6 @@ public:
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
     static StyleSheetContents* attachmentStyleSheet;
-#endif
-#if ENABLE(VECTOR_BASED_CONTROLS_ON_MAC)
-    static StyleSheetContents* vectorControlsStyleSheet;
 #endif
 
     static void initDefaultStyleSheet();

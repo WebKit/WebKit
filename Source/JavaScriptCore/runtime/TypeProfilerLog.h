@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
-#include "Structure.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/Structure.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC {
@@ -41,7 +41,7 @@ class TypeProfilerLog {
     WTF_MAKE_TZONE_ALLOCATED(TypeProfilerLog);
 public:
     struct LogEntry {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LogEntry);
     public:
         friend class LLIntOffsetsExtractor;
 

@@ -41,35 +41,23 @@ namespace WebKit {
 
 class ExtensionCapability;
 class ExtensionCapabilityGrant;
-class ExtensionCapabilityGranter;
-class GPUProcessProxy;
 class MediaCapability;
 class WebPageProxy;
-class WebProcessProxy;
-
-struct ExtensionCapabilityGranterClient : public AbstractRefCountedAndCanMakeWeakPtr<ExtensionCapabilityGranterClient> {
-    virtual ~ExtensionCapabilityGranterClient() = default;
-
-    virtual RefPtr<GPUProcessProxy> gpuProcessForCapabilityGranter(const ExtensionCapabilityGranter&) = 0;
-    virtual RefPtr<WebProcessProxy> webProcessForCapabilityGranter(const ExtensionCapabilityGranter&, const String& environmentIdentifier) = 0;
-};
 
 class ExtensionCapabilityGranter : public RefCountedAndCanMakeWeakPtr<ExtensionCapabilityGranter> {
     WTF_MAKE_TZONE_ALLOCATED(ExtensionCapabilityGranter);
     WTF_MAKE_NONCOPYABLE(ExtensionCapabilityGranter);
 public:
-    static RefPtr<ExtensionCapabilityGranter> create(ExtensionCapabilityGranterClient&);
+    static RefPtr<ExtensionCapabilityGranter> create();
 
-    void grant(const ExtensionCapability&);
-    void revoke(const ExtensionCapability&);
+    void grant(const ExtensionCapability&, WebPageProxy&);
+    void revoke(const ExtensionCapability&, WebPageProxy&);
 
     void setMediaCapabilityActive(MediaCapability&, bool);
-    void invalidateGrants(Vector<ExtensionCapabilityGrant>&&);
+    static void invalidateGrants(Vector<ExtensionCapabilityGrant>&&);
 
 private:
-    explicit ExtensionCapabilityGranter(ExtensionCapabilityGranterClient&);
-
-    WeakRef<ExtensionCapabilityGranterClient> m_client;
+    explicit ExtensionCapabilityGranter() = default;
 };
 
 } // namespace WebKit

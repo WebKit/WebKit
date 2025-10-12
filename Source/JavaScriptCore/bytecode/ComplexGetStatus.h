@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ObjectPropertyConditionSet.h"
-#include "PropertyOffset.h"
+#include <JavaScriptCore/ObjectPropertyConditionSet.h>
+#include <JavaScriptCore/PropertyOffset.h>
 
 namespace JSC {
 

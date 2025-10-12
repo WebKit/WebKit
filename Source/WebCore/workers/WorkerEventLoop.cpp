@@ -60,7 +60,7 @@ void WorkerEventLoop::scheduleToRun()
 
 bool WorkerEventLoop::isContextThread() const
 {
-    return scriptExecutionContext()->isContextThread();
+    return protectedScriptExecutionContext()->isContextThread();
 }
 
 MicrotaskQueue& WorkerEventLoop::microtaskQueue()

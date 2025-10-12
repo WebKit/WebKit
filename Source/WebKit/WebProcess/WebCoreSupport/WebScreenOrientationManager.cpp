@@ -31,6 +31,8 @@
 #include "WebProcess.h"
 #include "WebScreenOrientationManagerMessages.h"
 #include "WebScreenOrientationManagerProxyMessages.h"
+#include <WebCore/Exception.h>
+#include <WebCore/NodeDocument.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -78,8 +80,8 @@ WebCore::ScreenOrientationType WebScreenOrientationManager::currentOrientation()
 void WebScreenOrientationManager::orientationDidChange(WebCore::ScreenOrientationType orientation)
 {
     m_currentOrientation = orientation;
-    for (auto& observer : m_observers)
-        observer.screenOrientationDidChange(orientation);
+    for (Ref observer : m_observers)
+        observer->screenOrientationDidChange(orientation);
 }
 
 void WebScreenOrientationManager::lock(WebCore::ScreenOrientationLockType lockType, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)

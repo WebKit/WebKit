@@ -6,6 +6,10 @@
 // vk_format_utils:
 //   Helper for Vulkan format code.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/vulkan/vk_format_utils.h"
 
 #include "image_util/loadimage.h"
@@ -48,19 +52,43 @@ void FillTextureFormatCaps(vk::Renderer *renderer,
 
     if (outTextureCaps->renderbuffer)
     {
+        VkPhysicalDeviceImageFormatInfo2 imageFormatInfo = {};
+        imageFormatInfo.sType  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2;
+        imageFormatInfo.format = GetVkFormatFromFormatID(renderer, formatID);
+        imageFormatInfo.type   = VK_IMAGE_TYPE_2D;
+        imageFormatInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+        imageFormatInfo.usage  = VK_IMAGE_USAGE_SAMPLED_BIT;
         if (hasColorAttachmentFeatureBit)
         {
-            vk_gl::AddSampleCounts(physicalDeviceLimits.framebufferColorSampleCounts,
-                                   &outTextureCaps->sampleCounts);
+            imageFormatInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
         }
         if (hasDepthAttachmentFeatureBit)
         {
-            // Some drivers report different depth and stencil sample counts.  We'll AND those
-            // counts together, limiting all depth and/or stencil formats to the lower number of
-            // sample counts.
-            vk_gl::AddSampleCounts((physicalDeviceLimits.framebufferDepthSampleCounts &
-                                    physicalDeviceLimits.framebufferStencilSampleCounts),
-                                   &outTextureCaps->sampleCounts);
+            imageFormatInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+        }
+
+        VkImageFormatProperties2 imageFormatProperties2 = {};
+        imageFormatProperties2.sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2;
+        VkResult result              = vkGetPhysicalDeviceImageFormatProperties2(
+            renderer->getPhysicalDevice(), &imageFormatInfo, &imageFormatProperties2);
+        if (result == VK_SUCCESS)
+        {
+            if (hasColorAttachmentFeatureBit)
+            {
+                vk_gl::AddSampleCounts(imageFormatProperties2.imageFormatProperties.sampleCounts &
+                                           physicalDeviceLimits.framebufferColorSampleCounts,
+                                       &outTextureCaps->sampleCounts);
+            }
+            if (hasDepthAttachmentFeatureBit)
+            {
+                // Some drivers report different depth and stencil sample counts.  We'll AND those
+                // counts together, limiting all depth and/or stencil formats to the lower number of
+                // sample counts.
+                vk_gl::AddSampleCounts((imageFormatProperties2.imageFormatProperties.sampleCounts &
+                                        physicalDeviceLimits.framebufferDepthSampleCounts &
+                                        physicalDeviceLimits.framebufferStencilSampleCounts),
+                                       &outTextureCaps->sampleCounts);
+            }
         }
     }
 }
@@ -317,8 +345,9 @@ angle::FormatID ExternalFormatTable::getOrAllocExternalFormatID(uint64_t externa
 
     if (mExternalYuvFormats.size() >= kMaxExternalFormatCountSupported)
     {
-        ERR() << "ANGLE only suports maximum " << kMaxExternalFormatCountSupported
+        ERR() << "ANGLE only supports maximum " << kMaxExternalFormatCountSupported
               << " external renderable formats";
+        ASSERT(false);
         return angle::FormatID::NONE;
     }
 
@@ -467,7 +496,12 @@ bool HasFullTextureFormatSupport(vk::Renderer *renderer, angle::FormatID formatI
         case angle::FormatID::R32G32B32A32_FLOAT:
             break;
         default:
-            kBitsColorFull |= VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT;
+            const angle::Format &format = angle::Format::Get(formatID);
+            if (!format.isYUV)
+            {
+                // EXT_yuv_target does not support blend anyway, so no need to ask for blend bit.
+                kBitsColorFull |= VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT;
+            }
             break;
     }
 

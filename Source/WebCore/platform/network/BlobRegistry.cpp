@@ -28,10 +28,13 @@
 
 #include "PlatformStrategies.h"
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-BlobRegistry& blobRegistry()
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(BlobRegistry);
+
+CheckedRef<BlobRegistry> blobRegistry()
 {
     ASSERT(isMainThread());
     return *platformStrategies()->blobRegistry();

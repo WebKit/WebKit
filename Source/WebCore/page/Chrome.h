@@ -21,15 +21,15 @@
 
 #pragma once
 
-#include "AXObjectCache.h"
-#include "Cursor.h"
-#include "DisabledAdaptations.h"
-#include "FocusDirection.h"
-#include "HostWindow.h"
-#include "ImageBufferPixelFormat.h"
+#include <WebCore/Cursor.h>
+#include <WebCore/DisabledAdaptations.h>
+#include <WebCore/FocusDirection.h>
+#include <WebCore/HostWindow.h>
+#include <WebCore/ImageBufferFormat.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
+#include <wtf/Platform.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
@@ -54,6 +54,7 @@ namespace WebGPU {
 class GPU;
 }
 
+enum class BroadcastFocusedElement : bool;
 enum class PlatformEventModifier : uint8_t;
 enum class TextDirection : bool;
 
@@ -85,6 +86,7 @@ class WorkerClient;
 struct AppHighlight;
 struct ContactInfo;
 struct ContactsRequestData;
+struct FocusOptions;
 struct ShareDataWithParsedURL;
 struct ViewportArguments;
 struct WindowFeatures;
@@ -125,7 +127,7 @@ public:
     void setCursor(const Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
 
-    RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, ImageBufferPixelFormat) const override;
+    RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, ImageBufferFormat) const override;
     RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>) override;
 
 #if ENABLE(WEBGL)
@@ -163,7 +165,7 @@ public:
     bool canTakeFocus(FocusDirection) const;
     void takeFocus(FocusDirection);
 
-    void focusedElementChanged(Element*);
+    void focusedElementChanged(Element*, LocalFrame*, FocusOptions, BroadcastFocusedElement);
     void focusedFrameChanged(Frame*);
 
     WEBCORE_EXPORT RefPtr<Page> createWindow(LocalFrame&, const String& openedMainFrameName, const WindowFeatures&, const NavigationAction&);
@@ -172,16 +174,9 @@ public:
     bool canRunModal() const;
     void runModal();
 
-    void setToolbarsVisible(bool);
     bool toolbarsVisible() const;
-
-    void setStatusbarVisible(bool);
     bool statusbarVisible() const;
-
-    void setScrollbarsVisible(bool);
     bool scrollbarsVisible() const;
-
-    void setMenubarVisible(bool);
     bool menubarVisible() const;
 
     void setResizable(bool);
@@ -252,7 +247,7 @@ private:
     Ref<Page> protectedPage() const;
 
     WeakRef<Page> m_page;
-    UniqueRef<ChromeClient> m_client;
+    const UniqueRef<ChromeClient> m_client;
     Vector<WeakPtr<PopupOpeningObserver>> m_popupOpeningObservers;
 #if PLATFORM(IOS_FAMILY)
     bool m_isDispatchViewportDataDidChangeSuppressed { false };

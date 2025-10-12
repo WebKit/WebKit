@@ -10,9 +10,12 @@
 #include "net/dcsctp/packet/chunk_validators.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <utility>
 #include <vector>
 
+#include "absl/algorithm/container.h"
 #include "net/dcsctp/packet/chunk/sack_chunk.h"
 #include "rtc_base/logging.h"
 

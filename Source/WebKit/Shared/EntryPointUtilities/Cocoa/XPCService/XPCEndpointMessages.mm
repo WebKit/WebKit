@@ -30,7 +30,7 @@
 #import "GPUProcess.h"
 #import "LaunchServicesDatabaseManager.h"
 #import "LaunchServicesDatabaseXPCConstants.h"
-#import "RemoteMediaPlayerManagerProxy.h"
+#import "VideoReceiverEndpointManager.h"
 #import "VideoReceiverEndpointMessage.h"
 #import "XPCEndpoint.h"
 #import <wtf/RunLoop.h>
@@ -61,7 +61,7 @@ static void handleVideoReceiverEndpointMessage(xpc_object_t message)
         return;
 
     if (RefPtr webProcessConnection = GPUProcess::singleton().webProcessConnection(*endpointMessage.processIdentifier()))
-        webProcessConnection->remoteMediaPlayerManagerProxy().handleVideoReceiverEndpointMessage(endpointMessage);
+        webProcessConnection->videoReceiverEndpointManager().handleVideoReceiverEndpointMessage(endpointMessage);
 }
 
 static void handleVideoReceiverSwapEndpointsMessage(xpc_object_t message)
@@ -74,7 +74,7 @@ static void handleVideoReceiverSwapEndpointsMessage(xpc_object_t message)
         return;
 
     if (RefPtr webProcessConnection = GPUProcess::singleton().webProcessConnection(*endpointMessage.processIdentifier()))
-        webProcessConnection->remoteMediaPlayerManagerProxy().handleVideoReceiverSwapEndpointsMessage(endpointMessage);
+        webProcessConnection->videoReceiverEndpointManager().handleVideoReceiverSwapEndpointsMessage(endpointMessage);
 }
 #endif
 
@@ -92,14 +92,14 @@ void handleXPCEndpointMessage(xpc_object_t message, const String& messageName)
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     if (messageName == VideoReceiverEndpointMessage::messageName()) {
-        RunLoop::protectedMain()->dispatch([message = OSObjectPtr(message)] {
+        RunLoop::mainSingleton().dispatch([message = OSObjectPtr(message)] {
             handleVideoReceiverEndpointMessage(message.get());
         });
         return;
     }
 
     if (messageName == VideoReceiverSwapEndpointsMessage::messageName()) {
-        RunLoop::main().dispatch([message = OSObjectPtr(message)] {
+        RunLoop::mainSingleton().dispatch([message = OSObjectPtr(message)] {
             handleVideoReceiverSwapEndpointsMessage(message.get());
         });
         return;

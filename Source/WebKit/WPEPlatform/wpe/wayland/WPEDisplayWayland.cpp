@@ -27,6 +27,7 @@
 #include "WPEDisplayWayland.h"
 
 #include "WPEClipboardWaylandPrivate.h"
+#include "WPEDRMDevicePrivate.h"
 #include "WPEDisplayWaylandPrivate.h"
 #include "WPEEGLError.h"
 #include "WPEExtensions.h"
@@ -40,12 +41,16 @@
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
 #include "linux-explicit-synchronization-unstable-v1-client-protocol.h"
 #include "pointer-constraints-unstable-v1-client-protocol.h"
+#if USE(SYSPROF_CAPTURE)
+#include "presentation-time-client-protocol.h"
+#endif
 #include "relative-pointer-unstable-v1-client-protocol.h"
 #include "text-input-unstable-v1-client-protocol.h"
 #include "text-input-unstable-v3-client-protocol.h"
 #include "xdg-shell-client-protocol.h"
 #include <gio/gio.h>
 #include <wtf/HashSet.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -86,11 +91,16 @@ struct _WPEDisplayWaylandPrivate {
     struct zwp_text_input_v3* textInputV3;
     struct zwp_pointer_constraints_v1* pointerConstraints;
     struct zwp_relative_pointer_manager_v1* relativePointerManager;
+#if USE(SYSPROF_CAPTURE)
+    struct wp_presentation* presentation;
+#endif
+#if USE(XDG_DECORATION_UNSTABLE_V1)
+    struct zxdg_decoration_manager_v1* xdgDecorationManager;
+#endif
     Vector<std::pair<uint32_t, uint64_t>> linuxDMABufFormats;
     std::unique_ptr<WPE::WaylandSeat> wlSeat;
     std::unique_ptr<WPE::WaylandCursor> wlCursor;
-    CString drmDevice;
-    CString drmRenderNode;
+    GRefPtr<WPEDRMDevice> drmDevice;
     Vector<GRefPtr<WPEScreen>, 1> screens;
     GRefPtr<WPEClipboard> clipboard;
     GRefPtr<GSource> eventSource;
@@ -207,6 +217,12 @@ static void wpeDisplayWaylandDispose(GObject* object)
     }
     g_clear_pointer(&priv->pointerConstraints, zwp_pointer_constraints_v1_destroy);
     g_clear_pointer(&priv->relativePointerManager, zwp_relative_pointer_manager_v1_destroy);
+#if USE(SYSPROF_CAPTURE)
+    g_clear_pointer(&priv->presentation, wp_presentation_destroy);
+#endif
+#if USE(XDG_DECORATION_UNSTABLE_V1)
+    g_clear_pointer(&priv->xdgDecorationManager, zxdg_decoration_manager_v1_destroy);
+#endif
 #if USE(LIBDRM)
     g_clear_pointer(&priv->dmabufFeedback, zwp_linux_dmabuf_feedback_v1_destroy);
 #endif
@@ -253,13 +269,20 @@ const struct wl_registry_listener registryListener = {
         else if (interfaceName == "zwp_text_input_manager_v1"_s) {
             priv->textInputManagerV1 = static_cast<struct zwp_text_input_manager_v1*>(wl_registry_bind(registry, name, &zwp_text_input_manager_v1_interface, 1));
             priv->textInputV1 = zwp_text_input_manager_v1_create_text_input(priv->textInputManagerV1);
-        } else if (interfaceName == "zwp_text_input_manager_v3"_s) {
+        } else if (interfaceName == "zwp_text_input_manager_v3"_s)
             priv->textInputManagerV3 = static_cast<struct zwp_text_input_manager_v3*>(wl_registry_bind(registry, name, &zwp_text_input_manager_v3_interface, 1));
-        } else if (interfaceName == "zwp_pointer_constraints_v1"_s) {
+        else if (interfaceName == "zwp_pointer_constraints_v1"_s)
             priv->pointerConstraints = static_cast<struct zwp_pointer_constraints_v1*>(wl_registry_bind(registry, name, &zwp_pointer_constraints_v1_interface, 1));
-        } else if (interfaceName == "zwp_relative_pointer_manager_v1"_s) {
+        else if (interfaceName == "zwp_relative_pointer_manager_v1"_s)
             priv->relativePointerManager = static_cast<struct zwp_relative_pointer_manager_v1*>(wl_registry_bind(registry, name, &zwp_relative_pointer_manager_v1_interface, 1));
-        }
+#if USE(SYSPROF_CAPTURE)
+        else if (interfaceName == "wp_presentation"_s)
+            priv->presentation = static_cast<struct wp_presentation*>(wl_registry_bind(registry, name, &wp_presentation_interface, 1));
+#endif
+#if USE(XDG_DECORATION_UNSTABLE_V1)
+        else if (interfaceName == "zxdg_decoration_manager_v1"_s)
+            priv->xdgDecorationManager = static_cast<struct zxdg_decoration_manager_v1*>(wl_registry_bind(registry, name, &zxdg_decoration_manager_v1_interface, 1));
+#endif
     },
     // global_remove
     [](void* data, struct wl_registry*, uint32_t name)
@@ -306,10 +329,10 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
             return;
 
         auto* priv = WPE_DISPLAY_WAYLAND(data)->priv;
-        if (drmDevice->available_nodes & (1 << DRM_NODE_PRIMARY))
-            priv->drmDevice = drmDevice->nodes[DRM_NODE_PRIMARY];
-        if (drmDevice->available_nodes & (1 << DRM_NODE_RENDER))
-            priv->drmRenderNode = drmDevice->nodes[DRM_NODE_RENDER];
+        if (drmDevice->available_nodes & (1 << DRM_NODE_PRIMARY)) {
+            priv->drmDevice = adoptGRef(wpe_drm_device_new(drmDevice->nodes[DRM_NODE_PRIMARY],
+                drmDevice->available_nodes & (1 << DRM_NODE_RENDER) ? drmDevice->nodes[DRM_NODE_RENDER] : nullptr));
+        }
         drmFreeDevice(&drmDevice);
     },
     // tranche_done
@@ -354,18 +377,27 @@ static void wpeDisplayWaylandInitializeDRMDeviceFromEGL(WPEDisplayWayland* displ
     if (!eglInitialize(eglDisplay, nullptr, nullptr))
         return;
 
-    if (!epoxy_has_egl_extension(eglDisplay, "EGL_EXT_device_query"))
+    if (!epoxy_has_egl_extension(eglDisplay, "EGL_EXT_device_query")) {
+        g_debug("Driver does not support EGL_EXT_device_query");
         return;
+    }
 
     EGLDeviceEXT eglDevice;
     if (!eglQueryDisplayAttribEXT(eglDisplay, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&eglDevice)))
         return;
 
     const char* extensions = eglQueryDeviceStringEXT(eglDevice, EGL_EXTENSIONS);
-    if (epoxy_extension_in_string(extensions, "EGL_EXT_device_drm"))
-        priv->drmDevice = eglQueryDeviceStringEXT(eglDevice, EGL_DRM_DEVICE_FILE_EXT);
+    if (!epoxy_extension_in_string(extensions, "EGL_EXT_device_drm"))
+        return;
+
+    const char* drmDevice = eglQueryDeviceStringEXT(eglDevice, EGL_DRM_DEVICE_FILE_EXT);
+    if (!drmDevice)
+        return;
+
+    const char* drmRenderNode = nullptr;
     if (epoxy_extension_in_string(extensions, "EGL_EXT_device_drm_render_node"))
-        priv->drmRenderNode = eglQueryDeviceStringEXT(eglDevice, EGL_DRM_RENDER_NODE_FILE_EXT);
+        drmRenderNode = eglQueryDeviceStringEXT(eglDevice, EGL_DRM_RENDER_NODE_FILE_EXT);
+    priv->drmDevice = adoptGRef(wpe_drm_device_new(drmDevice, drmRenderNode));
 }
 
 static gboolean wpeDisplayWaylandSetup(WPEDisplayWayland* display, GError** error)
@@ -411,14 +443,19 @@ static gboolean wpeDisplayWaylandSetup(WPEDisplayWayland* display, GError** erro
         if (zwp_linux_dmabuf_v1_get_version(priv->linuxDMABuf) >= ZWP_LINUX_DMABUF_V1_GET_DEFAULT_FEEDBACK_SINCE_VERSION) {
             priv->dmabufFeedback = zwp_linux_dmabuf_v1_get_default_feedback(priv->linuxDMABuf);
             zwp_linux_dmabuf_feedback_v1_add_listener(priv->dmabufFeedback, &linuxDMABufFeedbackListener, display);
-        }
+        } else
+            g_debug("Compositor does not support zwp_linux_dmabuf_v1_get_default_feedback");
 #endif
         zwp_linux_dmabuf_v1_add_listener(priv->linuxDMABuf, &linuxDMABufListener, display);
-        wl_display_roundtrip(priv->wlDisplay);
     }
 
-    if (priv->drmDevice.isNull())
+    if (priv->wlSeat || priv->linuxDMABuf || !priv->screens.isEmpty())
+        wl_display_roundtrip(priv->wlDisplay);
+
+    if (!priv->drmDevice)
         wpeDisplayWaylandInitializeDRMDeviceFromEGL(display);
+    if (!priv->drmDevice)
+        priv->drmDevice = wpeDRMDeviceCreateForDevice(nullptr);
 
     return TRUE;
 }
@@ -443,11 +480,10 @@ static gboolean wpeDisplayWaylandConnect(WPEDisplay* display, GError** error)
 
 static WPEView* wpeDisplayWaylandCreateView(WPEDisplay* display)
 {
-    auto* displayWayland = WPE_DISPLAY_WAYLAND(display);
-    auto* view = wpe_view_wayland_new(displayWayland);
+    auto* view = WPE_VIEW(g_object_new(WPE_TYPE_VIEW_WAYLAND, "display", display, nullptr));
 
     if (wpe_settings_get_boolean(wpe_display_get_settings(display), WPE_SETTING_CREATE_VIEWS_WITH_A_TOPLEVEL, nullptr)) {
-        GRefPtr<WPEToplevel> toplevel = adoptGRef(wpe_toplevel_wayland_new(displayWayland, 1));
+        GRefPtr<WPEToplevel> toplevel = adoptGRef(wpe_toplevel_wayland_new(WPE_DISPLAY_WAYLAND(display), 1));
         wpe_view_set_toplevel(view, toplevel.get());
     }
 
@@ -501,7 +537,7 @@ static WPEBufferDMABufFormats* wpeDisplayWaylandGetPreferredDMABufFormats(WPEDis
     if (!priv->linuxDMABuf)
         return nullptr;
 
-    auto* builder = wpe_buffer_dma_buf_formats_builder_new(priv->drmDevice.data());
+    auto* builder = wpe_buffer_dma_buf_formats_builder_new(priv->drmDevice.get());
     wpe_buffer_dma_buf_formats_builder_append_group(builder, nullptr, WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING);
     for (const auto& format : priv->linuxDMABufFormats)
         wpe_buffer_dma_buf_formats_builder_append_format(builder, format.first, format.second);
@@ -523,17 +559,9 @@ static WPEScreen* wpeDisplayWaylandGetScreen(WPEDisplay* display, guint index)
     return priv->screens[index].get();
 }
 
-static const char* wpeDisplayWaylandGetDRMDevice(WPEDisplay* display)
+static WPEDRMDevice* wpeDisplayWaylandGetDRMDevice(WPEDisplay* display)
 {
-    return WPE_DISPLAY_WAYLAND(display)->priv->drmDevice.data();
-}
-
-static const char* wpeDisplayWaylandGetDRMRenderNode(WPEDisplay* display)
-{
-    auto* priv = WPE_DISPLAY_WAYLAND(display)->priv;
-    if (!priv->drmRenderNode.isNull())
-        return priv->drmRenderNode.data();
-    return priv->drmDevice.data();
+    return WPE_DISPLAY_WAYLAND(display)->priv->drmDevice.get();
 }
 
 static gboolean wpeDisplayWaylandUseExplicitSync(WPEDisplay* display)
@@ -596,6 +624,20 @@ struct zwp_relative_pointer_manager_v1* wpeDisplayWaylandGetRelativePointerManag
     return display->priv->relativePointerManager;
 }
 
+#if USE(SYSPROF_CAPTURE)
+struct wp_presentation* wpeDisplayWaylandGetPresentation(WPEDisplayWayland* display)
+{
+    return display->priv->presentation;
+}
+#endif
+
+#if USE(XDG_DECORATION_UNSTABLE_V1)
+struct zxdg_decoration_manager_v1* wpeDisplayWaylandGetXDGDecorationManager(WPEDisplayWayland* display)
+{
+    return display->priv->xdgDecorationManager;
+}
+#endif // USE(XDG_DECORATION_UNSTABLE_V1)
+
 struct zwp_linux_explicit_synchronization_v1* wpeDisplayWaylandGetLinuxExplicitSync(WPEDisplayWayland* display)
 {
     return display->priv->linuxExplicitSync;
@@ -617,7 +659,6 @@ static void wpe_display_wayland_class_init(WPEDisplayWaylandClass* displayWaylan
     displayClass->get_n_screens = wpeDisplayWaylandGetNScreens;
     displayClass->get_screen = wpeDisplayWaylandGetScreen;
     displayClass->get_drm_device = wpeDisplayWaylandGetDRMDevice;
-    displayClass->get_drm_render_node = wpeDisplayWaylandGetDRMRenderNode;
     displayClass->use_explicit_sync = wpeDisplayWaylandUseExplicitSync;
 }
 

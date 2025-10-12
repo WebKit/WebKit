@@ -38,10 +38,10 @@
 namespace WTF {
 
 class TextStream {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TextStream);
 public:
     struct FormatNumberRespectingIntegers {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(FormatNumberRespectingIntegers);
         FormatNumberRespectingIntegers(double number)
             : value(number) { }
 
@@ -136,7 +136,7 @@ public:
     }
 
     struct Repeat {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Repeat);
         Repeat(unsigned inWidth, char inCharacter)
             : width(inWidth), character(inCharacter)
         { }
@@ -236,6 +236,13 @@ TextStream& operator<<(TextStream& ts, const Markable<T, Traits>& item)
     return ts << "unset"_s;
 }
 
+template<typename... Ts>
+TextStream& operator<<(TextStream& ts, const Variant<Ts...>& variant)
+{
+    WTF::switchOn(variant, [&](const auto& alternative) { ts << alternative; });
+    return ts;
+}
+
 template<typename SizedContainer>
 TextStream& streamSizedContainer(TextStream& ts, const SizedContainer& sizedContainer)
 {
@@ -325,8 +332,8 @@ TextStream& operator<<(TextStream& ts, const CheckedPtr<T>& item)
     return ts << "null"_s;
 }
 
-template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
-TextStream& operator<<(TextStream& ts, const UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>& map)
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg, ShouldValidateKey shouldValidateKey, typename Malloc>
+TextStream& operator<<(TextStream& ts, const HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg, shouldValidateKey, Malloc>& map)
 {
     ts << '{';
 
@@ -374,17 +381,23 @@ struct supports_text_stream_insertion<T, std::void_t<decltype(std::declval<TextS
 template<typename ItemType, size_t inlineCapacity>
 struct supports_text_stream_insertion<Vector<ItemType, inlineCapacity>> : supports_text_stream_insertion<ItemType> { };
 
+template<typename ItemType>
+struct supports_text_stream_insertion<FixedVector<ItemType>> : supports_text_stream_insertion<ItemType> { };
+
 template<typename ValueArg, typename HashArg, typename TraitsArg>
 struct supports_text_stream_insertion<HashSet<ValueArg, HashArg, TraitsArg>> : supports_text_stream_insertion<ValueArg> { };
 
-template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
-struct supports_text_stream_insertion<UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>> : std::conjunction<supports_text_stream_insertion<KeyArg>, supports_text_stream_insertion<MappedArg>> { };
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg, ShouldValidateKey shouldValidateKey, typename Malloc>
+struct supports_text_stream_insertion<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg, shouldValidateKey, Malloc>> : std::conjunction<supports_text_stream_insertion<KeyArg>, supports_text_stream_insertion<MappedArg>> { };
 
 template<typename T, typename Traits>
 struct supports_text_stream_insertion<Markable<T, Traits>> : supports_text_stream_insertion<T> { };
 
 template<typename T>
 struct supports_text_stream_insertion<OptionSet<T>> : supports_text_stream_insertion<T> { };
+
+template<typename... Ts>
+struct supports_text_stream_insertion<Variant<Ts...>> : std::conjunction<supports_text_stream_insertion<Ts>...> { };
 
 template<typename T>
 struct supports_text_stream_insertion<std::optional<T>> : supports_text_stream_insertion<T> { };
@@ -406,6 +419,9 @@ struct supports_text_stream_insertion<std::array<T, size>> : supports_text_strea
 
 template<typename T, typename U>
 struct supports_text_stream_insertion<std::pair<T, U>> : std::conjunction<supports_text_stream_insertion<T>, supports_text_stream_insertion<U>> { };
+
+template<typename... Ts>
+struct supports_text_stream_insertion<std::tuple<Ts...>> : std::conjunction<supports_text_stream_insertion<Ts>...> { };
 
 template<typename T>
 struct ValueOrEllipsis {

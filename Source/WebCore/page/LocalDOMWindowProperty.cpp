@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011 Google, Inc. All Rights Reserved.
- * Copyright (C) 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011 Google, Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,12 @@ LocalDOMWindowProperty::LocalDOMWindowProperty(LocalDOMWindow* window)
 
 LocalFrame* LocalDOMWindowProperty::frame() const
 {
-    return m_window ? m_window->localFrame() : nullptr;
+    return m_window ? protectedWindow()->localFrame() : nullptr;
+}
+
+RefPtr<LocalFrame> LocalDOMWindowProperty::protectedFrame() const
+{
+    return frame();
 }
 
 LocalDOMWindow* LocalDOMWindowProperty::window() const

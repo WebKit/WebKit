@@ -10,6 +10,7 @@
 
 #include "modules/video_coding/timing/inter_frame_delay_variation_calculator.h"
 
+#include <cstdint>
 #include <limits>
 #include <optional>
 

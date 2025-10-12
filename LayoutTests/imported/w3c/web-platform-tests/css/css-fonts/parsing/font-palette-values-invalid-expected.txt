@@ -24,4 +24,6 @@ PASS CSS Fonts Module Level 4: parsing @font-palette-values 21
 PASS CSS Fonts Module Level 4: parsing @font-palette-values 22
 PASS CSS Fonts Module Level 4: parsing @font-palette-values 23
 PASS CSS Fonts Module Level 4: parsing @font-palette-values 24
+PASS CSS Fonts Module Level 4: parsing @font-palette-values 25
+PASS sibling-index() is invalid in base-palette descriptor
 

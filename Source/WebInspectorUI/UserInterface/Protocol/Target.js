@@ -56,9 +56,12 @@ WI.Target = class Target extends WI.Object
         this._connection.target = this;
 
         // Agents we always expect in every target.
-        console.assert(this.hasDomain("Target") || this.hasDomain("Runtime"));
-        console.assert(this.hasDomain("Target") || this.hasDomain("Debugger"));
-        console.assert(this.hasDomain("Target") || this.hasDomain("Console"));
+        if (!(this instanceof WI.FrameTarget)) {
+            // FIXME: <https://webkit.org/b/298909, https://webkit.org/b/298910, https://webkit.org/b/298911> Add support for Runtime, Debugger, and Console domains for FrameTarget.
+            console.assert(this.hasDomain("Target") || this.hasDomain("Runtime"));
+            console.assert(this.hasDomain("Target") || this.hasDomain("Debugger"));
+            console.assert(this.hasDomain("Target") || this.hasDomain("Console"));
+        }
     }
 
     // Target
@@ -83,7 +86,10 @@ WI.Target = class Target extends WI.Object
         // previous initialization messages will have their responses arrive before a stream
         // of console message added events come in after enabling Console.
         // See WI.ConsoleManager.prototype.initializeTarget.
-        this.ConsoleAgent.enable();
+        if (!(this instanceof WI.FrameTarget)) {
+            // FIXME: <https://webkit.org/b/298911> Add Console support for FrameTarget.
+            this.ConsoleAgent.enable();
+        }
 
         setTimeout(() => {
             // Use this opportunity to run any one time frontend initialization

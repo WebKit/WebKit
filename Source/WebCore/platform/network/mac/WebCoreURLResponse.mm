@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SortedArrayMap.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebCore {
 
@@ -46,7 +47,7 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef response, IsMainResourceLoad, Is
     if (CFURLResponseGetMIMEType(response))
         return;
 
-    RetainPtr<CFStringRef> type;
+    RetainPtr<NSString> type;
 
     if (auto extension = filePathExtension(response); extension && isNoSniffSet == IsNoSniffSet::No) {
         // <rdar://problem/7007389> CoreTypes UTI map is missing 100+ file extensions that GateKeeper knew about
@@ -174,15 +175,20 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef response, IsMainResourceLoad, Is
             { "z"_s, @"application/x-compress" },
         };
         static constexpr SortedArrayMap extensionMap { extensionPairs };
-        type = (__bridge CFStringRef)extensionMap.get(String { extension.get() });
+        type = extensionMap.get(String { extension.get() });
         if (!type)
-            type = preferredMIMETypeForFileExtensionFromUTType(extension.get());
+            type = preferredMIMETypeForFileExtensionFromUTType(bridge_cast(extension.get()));
     }
 
-    CFURLResponseSetMIMEType(response, type ? type.get() : CFSTR("application/octet-stream"));
+    CFURLResponseSetMIMEType(response, type ? bridge_cast(type.get()) : CFSTR("application/octet-stream"));
 }
 
 #endif
+
+RetainPtr<NSString> preferredMIMETypeForFileExtensionFromUTType(NSString *extension)
+{
+    return mimeTypeFromUTITree([UTType typeWithTag:extension tagClass:UTTagClassFilenameExtension conformingToType:nil]);
+}
 
 NSURLResponse *synthesizeRedirectResponseIfNecessary(NSURLRequest *currentRequest, NSURLRequest *newRequest, NSURLResponse *redirectResponse)
 {
@@ -197,17 +203,10 @@ NSURLResponse *synthesizeRedirectResponseIfNecessary(NSURLRequest *currentReques
 
 RetainPtr<CFStringRef> filePathExtension(CFURLResponseRef response)
 {
-    auto responseURL = CFURLResponseGetURL(response);
-    if (![(__bridge NSURL *)responseURL isFileURL])
+    RetainPtr responseURL = CFURLResponseGetURL(response);
+    if (![bridge_cast(responseURL.get()) isFileURL])
         return nullptr;
-    return adoptCF(CFURLCopyPathExtension(responseURL));
-}
-
-RetainPtr<CFStringRef> preferredMIMETypeForFileExtensionFromUTType(CFStringRef extension)
-{
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return mimeTypeFromUTITree(adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, extension, nullptr)).get());
-ALLOW_DEPRECATED_DECLARATIONS_END
+    return adoptCF(CFURLCopyPathExtension(responseURL.get()));
 }
 
 }

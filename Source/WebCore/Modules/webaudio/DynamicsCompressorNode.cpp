@@ -34,6 +34,7 @@
 #include "AudioNodeOutput.h"
 #include "AudioUtilities.h"
 #include "DynamicsCompressor.h"
+#include "ExceptionOr.h"
 #include <wtf/TZoneMallocInlines.h>
 
 // Set output to stereo by default.

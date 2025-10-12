@@ -34,7 +34,7 @@ extern "C" {
 #include <windows.h>  // NOLINT
 typedef HANDLE pthread_t;
 typedef int pthread_attr_t;
-typedef CRITICAL_SECTION pthread_mutex_t;
+typedef SRWLOCK pthread_mutex_t;
 
 #if _WIN32_WINNT < 0x0600
 #error _WIN32_WINNT must target Windows Vista / Server 2008 or newer.
@@ -109,8 +109,7 @@ static inline int pthread_create(pthread_t *const thread,
 
 static inline int pthread_join(pthread_t thread, void **value_ptr) {
   (void)value_ptr;
-  return (WaitForSingleObjectEx(thread, INFINITE, FALSE /*bAlertable*/) !=
-              WAIT_OBJECT_0 ||
+  return (WaitForSingleObject(thread, INFINITE) != WAIT_OBJECT_0 ||
           CloseHandle(thread) == 0);
 }
 
@@ -118,26 +117,22 @@ static inline int pthread_join(pthread_t thread, void **value_ptr) {
 static inline int pthread_mutex_init(pthread_mutex_t *const mutex,
                                      void *mutexattr) {
   (void)mutexattr;
-  InitializeCriticalSectionEx(mutex, 0 /*dwSpinCount*/, 0 /*Flags*/);
+  InitializeSRWLock(mutex);
   return 0;
 }
 
-static inline int pthread_mutex_trylock(pthread_mutex_t *const mutex) {
-  return TryEnterCriticalSection(mutex) ? 0 : EBUSY;
-}
-
 static inline int pthread_mutex_lock(pthread_mutex_t *const mutex) {
-  EnterCriticalSection(mutex);
+  AcquireSRWLockExclusive(mutex);
   return 0;
 }
 
 static inline int pthread_mutex_unlock(pthread_mutex_t *const mutex) {
-  LeaveCriticalSection(mutex);
+  ReleaseSRWLockExclusive(mutex);
   return 0;
 }
 
 static inline int pthread_mutex_destroy(pthread_mutex_t *const mutex) {
-  DeleteCriticalSection(mutex);
+  (void)mutex;
   return 0;
 }
 
@@ -166,8 +161,7 @@ static inline int pthread_cond_broadcast(pthread_cond_t *const condition) {
 
 static inline int pthread_cond_wait(pthread_cond_t *const condition,
                                     pthread_mutex_t *const mutex) {
-  int ok;
-  ok = SleepConditionVariableCS(condition, mutex, INFINITE);
+  const int ok = SleepConditionVariableSRW(condition, mutex, INFINITE, 0);
   return !ok;
 }
 #else                 // _WIN32

@@ -235,9 +235,10 @@ static int raw_read_frame(struct AvxInputContext *input_ctx, uint8_t **buffer,
       return 1;
     }
     *bytes_read = frame_size;
+    return 0;
   }
 
-  return 0;
+  return 1;
 }
 
 static int read_frame(struct AvxDecInputContext *input, uint8_t **buf,

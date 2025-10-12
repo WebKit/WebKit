@@ -24,6 +24,51 @@ window.addEventListener("pageshow", function(event) {
 
 function tryCache()
 {
+    caches.open("foo").then(() => {
+        setTimeout(tryCache2, 0);
+    }, (e) => {
+        setTimeout(tryCache, 0);
+    });
+}
+
+function tryCache2()
+{
+    caches.keys().then(() => {
+        setTimeout(tryCache3, 0);
+    }, (e) => {
+        setTimeout(tryCache2, 0);
+    });
+}
+
+function tryCache3()
+{
+    caches.delete("notfound").then(() => {
+        setTimeout(tryCache4, 0);
+    }, (e) => {
+        setTimeout(tryCache3, 0);
+    });
+}
+
+function tryCache4()
+{
+    caches.has("paage-cache-test").then(() => {
+        setTimeout(tryCache5, 0);
+    }, (e) => {
+        setTimeout(tryCache4, 0);
+    });
+}
+
+function tryCache5()
+{
+    caches.match("x").then((response) => {
+        setTimeout(tryCache6, 0);
+    }, (e) => {
+        setTimeout(tryCache5, 0);
+    });
+}
+
+function tryCache6()
+{
     cache.add('../navigation/resources/blank.txt').then(() => {
         if (!restoredFromPageCache) {
             setTimeout(tryCache, 0);
@@ -33,7 +78,7 @@ function tryCache()
         clearTimeout(handle2);
         finishJSTest();
     }, (e) => {
-        setTimeout(tryCache, 0);
+        setTimeout(tryCache6, 0);
     });
 }
 

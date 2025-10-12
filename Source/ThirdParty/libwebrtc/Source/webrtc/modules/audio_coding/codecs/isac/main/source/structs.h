@@ -18,6 +18,8 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_STRUCTS_H_
 #define MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_STRUCTS_H_
 
+#include <stdint.h>
+
 #include "modules/audio_coding/codecs/isac/bandwidth_info.h"
 #include "modules/audio_coding/codecs/isac/main/source/settings.h"
 #include "modules/third_party/fft/fft.h"

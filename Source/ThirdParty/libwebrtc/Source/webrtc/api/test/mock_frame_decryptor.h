@@ -26,16 +26,16 @@ class MockFrameDecryptor : public FrameDecryptorInterface {
  public:
   MOCK_METHOD(Result,
               Decrypt,
-              (cricket::MediaType,
+              (MediaType,
                const std::vector<uint32_t>&,
-               rtc::ArrayView<const uint8_t>,
-               rtc::ArrayView<const uint8_t>,
-               rtc::ArrayView<uint8_t>),
+               ArrayView<const uint8_t>,
+               ArrayView<const uint8_t>,
+               ArrayView<uint8_t>),
               (override));
 
   MOCK_METHOD(size_t,
               GetMaxPlaintextByteSize,
-              (cricket::MediaType, size_t encrypted_frame_size),
+              (MediaType, size_t encrypted_frame_size),
               (override));
 };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #import "config.h"
 #import "PasteboardTypes.h"
 
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <wtf/RetainPtr.h>
 
@@ -38,85 +39,81 @@ NSString * const PasteboardTypes::WebURLsWithTitlesPboardType = @"WebURLsWithTit
 NSString * const PasteboardTypes::WebURLPboardType = @"public.url";
 NSString * const PasteboardTypes::WebURLNamePboardType = @"public.url-name";
 NSString * const PasteboardTypes::WebDummyPboardType = @"Apple WebKit dummy pasteboard type";
-    
-NSArray* PasteboardTypes::forEditing()
+
+NSArray* PasteboardTypes::forEditingSingleton()
 {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN 
     static NeverDestroyed<RetainPtr<NSArray>> types = @[
         WebArchivePboardType,
-        (__bridge NSString *)kUTTypeWebArchive,
-        WebCore::legacyHTMLPasteboardType(),
-        WebCore::legacyFilenamesPasteboardType(),
-        WebCore::legacyTIFFPasteboardType(),
-        WebCore::legacyPDFPasteboardType(),
-        WebCore::legacyURLPasteboardType(),
-        WebCore::legacyRTFDPasteboardType(),
-        WebCore::legacyRTFPasteboardType(),
-        WebCore::legacyStringPasteboardType(),
-        WebCore::legacyColorPasteboardType(),
-        (__bridge NSString *)kUTTypePNG
-    ];
-ALLOW_DEPRECATED_DECLARATIONS_END
-    return types.get().get();
-}
-
-NSArray* PasteboardTypes::forURL()
-{
-    static NeverDestroyed<RetainPtr<NSArray>> types = @[
-        WebURLsWithTitlesPboardType,
-        WebCore::legacyURLPasteboardType(),
-        WebURLPboardType,
-        WebURLNamePboardType,
-        WebCore::legacyStringPasteboardType(),
-        WebCore::legacyFilenamesPasteboardType(),
-        WebCore::legacyFilesPromisePasteboardType()
+        UTTypeWebArchive.identifier,
+        WebCore::legacyHTMLPasteboardTypeSingleton(),
+        WebCore::legacyFilenamesPasteboardTypeSingleton(),
+        WebCore::legacyTIFFPasteboardTypeSingleton(),
+        WebCore::legacyPDFPasteboardTypeSingleton(),
+        WebCore::legacyURLPasteboardTypeSingleton(),
+        WebCore::legacyRTFDPasteboardTypeSingleton(),
+        WebCore::legacyRTFPasteboardTypeSingleton(),
+        WebCore::legacyStringPasteboardTypeSingleton(),
+        WebCore::legacyColorPasteboardTypeSingleton(),
+        UTTypePNG.identifier
     ];
     return types.get().get();
 }
 
-NSArray* PasteboardTypes::forImages()
+NSArray* PasteboardTypes::forURLSingleton()
 {
     static NeverDestroyed<RetainPtr<NSArray>> types = @[
-        WebCore::legacyTIFFPasteboardType(),
         WebURLsWithTitlesPboardType,
-        WebCore::legacyURLPasteboardType(),
+        WebCore::legacyURLPasteboardTypeSingleton(),
         WebURLPboardType,
         WebURLNamePboardType,
-        WebCore::legacyStringPasteboardType()
+        WebCore::legacyStringPasteboardTypeSingleton(),
+        WebCore::legacyFilenamesPasteboardTypeSingleton(),
+        WebCore::legacyFilesPromisePasteboardTypeSingleton()
     ];
     return types.get().get();
 }
 
-NSArray* PasteboardTypes::forImagesWithArchive()
+NSArray* PasteboardTypes::forImagesSingleton()
 {
     static NeverDestroyed<RetainPtr<NSArray>> types = @[
-        WebCore::legacyTIFFPasteboardType(),
+        WebCore::legacyTIFFPasteboardTypeSingleton(),
         WebURLsWithTitlesPboardType,
-        WebCore::legacyURLPasteboardType(),
+        WebCore::legacyURLPasteboardTypeSingleton(),
         WebURLPboardType,
         WebURLNamePboardType,
-        WebCore::legacyStringPasteboardType(),
-        WebCore::legacyRTFDPasteboardType(),
+        WebCore::legacyStringPasteboardTypeSingleton()
+    ];
+    return types.get().get();
+}
+
+NSArray* PasteboardTypes::forImagesWithArchiveSingleton()
+{
+    static NeverDestroyed<RetainPtr<NSArray>> types = @[
+        WebCore::legacyTIFFPasteboardTypeSingleton(),
+        WebURLsWithTitlesPboardType,
+        WebCore::legacyURLPasteboardTypeSingleton(),
+        WebURLPboardType,
+        WebURLNamePboardType,
+        WebCore::legacyStringPasteboardTypeSingleton(),
+        WebCore::legacyRTFDPasteboardTypeSingleton(),
         WebArchivePboardType
     ];
     return types.get().get();
 }
 
-NSArray* PasteboardTypes::forSelection()
+NSArray* PasteboardTypes::forSelectionSingleton()
 {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN 
     static NeverDestroyed<RetainPtr<NSArray>> types = @[
         WebArchivePboardType,
-        (__bridge NSString *)kUTTypeWebArchive,
+        UTTypeWebArchive.identifier,
         NSPasteboardTypeRTF,
-        WebCore::legacyRTFDPasteboardType(),
-        WebCore::legacyRTFPasteboardType(),
-        WebCore::legacyStringPasteboardType()
+        WebCore::legacyRTFDPasteboardTypeSingleton(),
+        WebCore::legacyRTFPasteboardTypeSingleton(),
+        WebCore::legacyStringPasteboardTypeSingleton()
     ];
-ALLOW_DEPRECATED_DECLARATIONS_END
     return types.get().get();
 }
-    
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

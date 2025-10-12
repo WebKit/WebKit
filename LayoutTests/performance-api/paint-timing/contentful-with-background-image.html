@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="./resources/paint-api-utils.js"></script>
+<style>
+    .box {
+        width: 600px;
+        height: 500px;
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9YGARc5KB0XV+IAAAAddEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIFRoZSBHSU1Q72QlbgAAAF1JREFUGNO9zL0NglAAxPEfdLTs4BZM4DIO4C7OwQg2JoQ9LE1exdlYvBBeZ7jqch9//q1uH4TLzw4d6+ErXMMcXuHWxId3KOETnnXXV6MJpcq2MLaI97CER3N0vr4MkhoXe0rZigAAAABJRU5ErkJggg==);
+    }
+</style>
+</head>
+<body>
+<div class="box"></div>
+<div id="console"></div>
+<script>
+window.jsTestIsAsync = true;
+
+(async () => {
+    window.didReceiveFirstContentfulPaint = false;
+    window.startTime = performance.now();
+    await waitForFCP();
+    await new Promise(resolve => {
+        const observer = new PerformanceObserver(entryList => {
+            window.entryList = entryList;
+            shouldBe('entryList.getEntries().length', "1");
+            shouldBe('entryList.getEntriesByName("first-contentful-paint").length', "1");
+            shouldBe('entryList.getEntriesByType("paint").length', "1");
+            window.fcpEntry = entryList.getEntries()[0];
+            shouldBeFalse('didReceiveFirstContentfulPaint');
+            shouldBe('fcpEntry.name', '"first-contentful-paint"');
+            shouldBe('fcpEntry.entryType', '"paint"');
+            didReceiveFirstContentfulPaint = true;
+            resolve();
+        });
+
+        observer.observe({ entryTypes: ['paint'] });
+    })
+    await waitForFCP();
+    shouldBeTrue('didReceiveFirstContentfulPaint');
+    shouldBe('performance.getEntries().length', "2");
+    shouldBe('performance.getEntriesByName("first-contentful-paint").length', "1");
+    shouldBe('performance.getEntriesByName("first-contentful-paint", "paint").length', "1");
+    shouldBe('performance.getEntriesByType("paint").length', "1");
+    testPassed("PerformanceObserver first-contentful-paint callback wasn't fired again ");
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

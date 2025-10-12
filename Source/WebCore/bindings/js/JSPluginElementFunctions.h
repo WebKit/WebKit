@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "JSDOMBinding.h"
+#include <WebCore/JSDOMBinding.h>
 
 namespace JSC {
 namespace Bindings {

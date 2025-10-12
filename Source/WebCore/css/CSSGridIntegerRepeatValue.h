@@ -30,8 +30,8 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
-#include "CSSValueList.h"
+#include <WebCore/CSSPrimitiveValue.h>
+#include <WebCore/CSSValueList.h>
 
 namespace WebCore {
 
@@ -64,7 +64,7 @@ public:
 private:
     CSSGridIntegerRepeatValue(Ref<CSSPrimitiveValue>&& repetitions, CSSValueListBuilder);
 
-    Ref<CSSPrimitiveValue> m_repetitions;
+    const Ref<CSSPrimitiveValue> m_repetitions;
 };
 
 } // namespace WebCore

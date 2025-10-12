@@ -57,7 +57,7 @@ private:
     RenderMathMLOperator* unembellishedOperator() const final;
     bool isMathContentCentered() const final { return true; }
 
-    MathMLFractionElement& element() const { return static_cast<MathMLFractionElement&>(nodeForNonAnonymous()); }
+    MathMLFractionElement& element() const;
 
     bool isValid() const;
     RenderBox& numerator() const;

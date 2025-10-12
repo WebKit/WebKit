@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,10 +49,10 @@ class InspectorWorkerAgent : public InspectorAgentBase, public Inspector::Worker
 public:
     ~InspectorWorkerAgent();
 
-    Inspector::WorkerFrontendDispatcher& frontendDispatcher() { return *m_frontendDispatcher; }
+    Inspector::WorkerFrontendDispatcher& frontendDispatcher() { return m_frontendDispatcher; }
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void didCreateFrontendAndBackend();
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // WorkerBackendDispatcherHandler
@@ -99,8 +99,8 @@ private:
 
     const Ref<PageChannel> m_pageChannel;
 
-    UniqueRef<Inspector::WorkerFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::WorkerBackendDispatcher> m_backendDispatcher;
+    const UniqueRef<Inspector::WorkerFrontendDispatcher> m_frontendDispatcher;
+    const Ref<Inspector::WorkerBackendDispatcher> m_backendDispatcher;
 
     MemoryCompactRobinHoodHashMap<String, WeakPtr<WorkerInspectorProxy>> m_connectedProxies;
     bool m_enabled { false };

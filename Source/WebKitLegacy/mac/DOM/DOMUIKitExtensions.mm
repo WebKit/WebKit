@@ -51,6 +51,7 @@
 #import <WebCore/HTMLSelectElement.h>
 #import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/Image.h>
+#import <WebCore/LayoutRoundedRect.h>
 #import <WebCore/NodeTraversal.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderBlock.h>
@@ -59,7 +60,6 @@
 #import <WebCore/RenderObjectInlines.h>
 #import <WebCore/RenderStyleConstants.h>
 #import <WebCore/RenderText.h>
-#import <WebCore/RoundedRect.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SimpleRange.h>
 #import <WebCore/VisiblePosition.h>
@@ -193,7 +193,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
     RenderObject* renderer = core(self)->renderer();
     
     if (is<RenderBox>(renderer)) {
-        WebCore::RoundedRect::Radii radii = downcast<RenderBox>(*renderer).borderRadii();
+        WebCore::LayoutRoundedRect::Radii radii = downcast<RenderBox>(*renderer).borderRadii();
         return @[[NSValue valueWithSize:(WebCore::FloatSize)radii.topLeft()],
             [NSValue valueWithSize:(WebCore::FloatSize)radii.topRight()],
             [NSValue valueWithSize:(WebCore::FloatSize)radii.bottomLeft()],

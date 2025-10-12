@@ -36,6 +36,8 @@
     _acceptInsecureCertificates = NO;
     _allowsInsecureMediaCapture = YES;
     _suppressesICECandidateFiltering = NO;
+    _alwaysAllowAutoplay = NO;
+    _siteIsolationEnabled = NO;
 
     return self;
 }
@@ -47,6 +49,8 @@
     configuration.acceptInsecureCertificates = self.acceptInsecureCertificates;
     configuration.allowsInsecureMediaCapture = self.allowsInsecureMediaCapture;
     configuration.suppressesICECandidateFiltering = self.suppressesICECandidateFiltering;
+    configuration.alwaysAllowAutoplay = self.alwaysAllowAutoplay;
+    configuration.siteIsolationEnabled = self.siteIsolationEnabled;
 
     return configuration;
 }

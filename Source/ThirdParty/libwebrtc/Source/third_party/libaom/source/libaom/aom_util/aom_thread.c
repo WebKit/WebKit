@@ -151,9 +151,9 @@ static int reset(AVxWorker *const worker) {
     }
     pthread_attr_t attr;
     if (pthread_attr_init(&attr)) goto Error2;
-      // Debug ASan builds require at least ~1MiB of stack; prevents
-      // failures on macOS arm64 where the default is 512KiB.
-      // See: https://crbug.com/aomedia/3379
+    // Debug ASan builds require at least ~1MiB of stack; prevents
+    // failures on macOS arm64 where the default is 512KiB.
+    // See: https://crbug.com/aomedia/3379
 #if defined(AOM_ADDRESS_SANITIZER) && defined(__APPLE__) && AOM_ARCH_ARM && \
     !defined(NDEBUG)
     const size_t kMinStackSize = 1024 * 1024;

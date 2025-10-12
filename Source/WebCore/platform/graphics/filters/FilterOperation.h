@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "Color.h"
-#include "LayoutSize.h"
-#include "LengthBox.h"
+#include <WebCore/BoxExtents.h>
+#include <WebCore/Color.h>
+#include <WebCore/IntPoint.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
@@ -37,6 +37,7 @@ namespace WebCore {
 // CSS Filters
 
 struct BlendingContext;
+using IntOutsets = IntBoxExtent;
 
 class FilterOperation : public ThreadSafeRefCounted<FilterOperation> {
 public:
@@ -272,7 +273,7 @@ private:
 
 class WEBCORE_EXPORT BlurFilterOperation : public FilterOperation {
 public:
-    static Ref<BlurFilterOperation> create(Length stdDeviation)
+    static Ref<BlurFilterOperation> create(float stdDeviation)
     {
         return adoptRef(*new BlurFilterOperation(WTFMove(stdDeviation)));
     }
@@ -282,7 +283,7 @@ public:
         return adoptRef(*new BlurFilterOperation(stdDeviation()));
     }
 
-    const Length& stdDeviation() const { return m_stdDeviation; }
+    float stdDeviation() const { return m_stdDeviation; }
 
     bool affectsOpacity() const override { return true; }
     bool movesPixels() const override { return true; }
@@ -292,16 +293,16 @@ public:
 private:
     bool operator==(const FilterOperation&) const override;
 
-    BlurFilterOperation(Length stdDeviation)
+    BlurFilterOperation(float stdDeviation)
         : FilterOperation(Type::Blur)
-        , m_stdDeviation(WTFMove(stdDeviation))
+        , m_stdDeviation(stdDeviation)
     {
     }
 
     bool isIdentity() const override;
     IntOutsets outsets() const override;
 
-    Length m_stdDeviation;
+    float m_stdDeviation;
 };
 
 class WEBCORE_EXPORT DropShadowFilterOperationBase : public FilterOperation {
@@ -329,8 +330,8 @@ protected:
     bool isIdentity() const override;
     IntOutsets outsets() const override;
 
-    IntPoint m_location; // FIXME: should location be in Lengths?
-    int m_stdDeviation;
+    IntPoint m_location; // FIXME: Should m_location be a FloatPoint?
+    int m_stdDeviation; // FIXME: Should m_stdDeviation be a float?
 };
 
 class WEBCORE_EXPORT DropShadowFilterOperation : public DropShadowFilterOperationBase {

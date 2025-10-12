@@ -10,7 +10,7 @@
 
 #include "modules/audio_processing/vad/pitch_internal.h"
 
-#include <math.h>
+#include <cmath>
 
 #include "test/gtest.h"
 

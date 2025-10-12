@@ -37,13 +37,16 @@ enum class MatchBasedOnRuleHash : unsigned {
     ClassC
 };
 
-enum class IsStartingStyle : bool { No, Yes };
+enum class UsedRuleType : uint8_t {
+    StartingStyle = 1 << 0,
+    BaseAppearance = 1 << 1
+};
 
 class RuleData {
 public:
     static const unsigned maximumSelectorComponentCount = 8192;
 
-    RuleData(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex, unsigned position, IsStartingStyle);
+    RuleData(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex, unsigned position, OptionSet<UsedRuleType>);
 
     unsigned position() const { return m_position; }
 
@@ -64,8 +67,9 @@ public:
     bool canMatchPseudoElement() const { return m_canMatchPseudoElement; }
     MatchBasedOnRuleHash matchBasedOnRuleHash() const { return static_cast<MatchBasedOnRuleHash>(m_matchBasedOnRuleHash); }
     unsigned linkMatchType() const { return m_linkMatchType; }
+    void setLinkMatchType(unsigned value) { m_linkMatchType = value; }
     PropertyAllowlist propertyAllowlist() const { return static_cast<PropertyAllowlist>(m_propertyAllowlist); }
-    IsStartingStyle isStartingStyle() const { return static_cast<IsStartingStyle>(m_isStartingStyle); }
+    OptionSet<UsedRuleType> usedRuleTypes() const { return OptionSet<UsedRuleType>::fromRaw(m_usedRuleTypes); }
     bool isEnabled() const { return m_isEnabled; }
     void setEnabled(bool value) { m_isEnabled = value; }
 
@@ -77,14 +81,14 @@ private:
     // Keep in sync with RuleFeature's selectorIndex and selectorListIndex size.
     CompactRefPtrTuple<const StyleRule, uint16_t> m_styleRuleWithSelectorIndex;
     unsigned m_selectorListIndex : 16;
-    // If we have more rules than 2^bitcount here we'll get confused about rule order.
-    unsigned m_position : 21;
     unsigned m_matchBasedOnRuleHash : 3;
     unsigned m_canMatchPseudoElement : 1;
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
     unsigned m_propertyAllowlist : 2;
-    unsigned m_isStartingStyle : 1;
+    unsigned m_usedRuleTypes : 2;
     unsigned m_isEnabled : 1;
+    // If we have more rules than 2^bitcount here we'll get confused about rule order.
+    unsigned m_position : 21;
     SelectorFilter::Hashes m_descendantSelectorIdentifierHashes;
 };
 

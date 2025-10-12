@@ -23,7 +23,8 @@ aomdec_verify_environment() {
     if [ ! -e "${AV1_IVF_FILE}" ] || \
        [ ! -e "${AV1_OBU_ANNEXB_FILE}" ] || \
        [ ! -e "${AV1_OBU_SEC5_FILE}" ] || \
-       [ ! -e "${AV1_WEBM_FILE}" ]; then
+       [ ! -e "${AV1_WEBM_FILE}" ] || \
+       [ ! -e "${AV1_RAW_FILE}" ]; then
       elog "Libaom test data must exist before running this test script when " \
            " encoding is disabled. "
       return 1
@@ -195,11 +196,27 @@ aomdec_av1_monochrome_yuv_10bit() {
   aomdec_av1_monochrome_yuv "${AV1_MONOCHROME_B10}"
 }
 
+# Ensures aomdec does not hang on a corrupted raw file
+aomdec_av1_rawfile() {
+  if [ "$(aomdec_can_decode_av1)" = "yes"]; then
+    local readonly decoder="$(aom_tool_path aomdec)"
+    [ -x /usr/bin/timeout ] && local readonly TIMEOUT="/usr/bin/timeout 30s"
+    ${TIMEOUT} ${AOM_TEST_PREFIX} "${decoder}" "${AV1_RAW_FILE}" -o /dev/null
+    local readonly exit_status=$?
+    # 124 exit status means aomdec timed out
+    if [ "$exit_status" -eq 124 ]; then
+      return 1
+    fi
+    return 0
+  fi
+}
+
 aomdec_tests="aomdec_av1_ivf
               aomdec_av1_ivf_multithread
               aomdec_av1_ivf_multithread_row_mt
               aomdec_aom_ivf_pipe_input
-              aomdec_av1_monochrome_yuv_8bit"
+              aomdec_av1_monochrome_yuv_8bit
+              aomdec_av1_rawfile"
 
 if [ ! "$(realtime_only_build)" = "yes" ]; then
   aomdec_tests="${aomdec_tests}

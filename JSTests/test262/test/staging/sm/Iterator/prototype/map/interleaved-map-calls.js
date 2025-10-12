@@ -7,9 +7,6 @@ description: |
   Interleaved %Iterator.prototype%.map calls on the same iterator.
 features:
   - iterator-helpers
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 ---*/
 //
 

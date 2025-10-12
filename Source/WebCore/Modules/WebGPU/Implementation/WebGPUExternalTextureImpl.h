@@ -69,7 +69,7 @@ private:
     void updateExternalTexture(CVPixelBufferRef) final;
 #endif
 
-    Ref<ConvertToBackingContext> m_convertToBackingContext;
+    const Ref<ConvertToBackingContext> m_convertToBackingContext;
 
     WebGPUPtr<WGPUExternalTexture> m_backing;
     PredefinedColorSpace m_colorSpace;

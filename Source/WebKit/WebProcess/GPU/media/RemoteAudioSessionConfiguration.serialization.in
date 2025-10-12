@@ -25,11 +25,11 @@
 struct WebKit::RemoteAudioSessionConfiguration {
     String routingContextUID;
     float sampleRate;
-    size_t bufferSize;
-    size_t numberOfOutputChannels;
-    size_t maximumNumberOfOutputChannels;
-    size_t preferredBufferSize;
-    size_t outputLatency;
+    uint64_t bufferSize;
+    uint64_t numberOfOutputChannels;
+    uint64_t maximumNumberOfOutputChannels;
+    uint64_t preferredBufferSize;
+    uint64_t outputLatency;
     bool isMuted;
     bool isActive;
     String sceneIdentifier;

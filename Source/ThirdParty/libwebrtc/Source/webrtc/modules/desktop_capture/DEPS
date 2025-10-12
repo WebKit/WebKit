@@ -17,6 +17,7 @@ specific_include_rules = {
     "+sdk/objc",
   ],
   "screen_capturer_sck\.mm": [
+    "+absl/strings/str_format.h",
     "+sdk/objc",
   ],
 }

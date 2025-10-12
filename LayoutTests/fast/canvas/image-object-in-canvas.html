@@ -19,7 +19,7 @@ function imageLoaded() {
     c1.drawImage(i, 0, 0, i.width * 2, i.height * 2)
     
     var c2 = getContext('canvas2');
-    c2.drawImageFromRect(i, 0, 0, i.width, i.height, 0, 0, i.width, i.height, 'over')
+    c2.drawImage(i, 0, 0, i.width, i.height, 0, 0, i.width, i.height)
     
     var c3 = getContext('canvas3');
     var pattern = c3.createPattern(i, 'repeat');
@@ -56,7 +56,7 @@ function runTests() {
 <body onload="runTests();">
 <p>This tests that the Image JavaScript object works as expected when used in a canvas. If the test is successful, the Apple logo should appear scaled, normal and finally tiled in a circle.</p>
 <div><canvas id="canvas1" width="150" height="150"></canvas>Using drawImage.</div>
-<div><canvas id="canvas2" width="150" height="150"></canvas>Using drawImageFromRect.</div>
+<div><canvas id="canvas2" width="150" height="150"></canvas>Using drawImage with source rectangle.</div>
 <div><canvas id="canvas3" width="150" height="150"></canvas>Using ImagePattern.</div>
 <div><canvas id="canvas4" width="150" height="150"></canvas>Using ImagePattern and rotation.</div>
 

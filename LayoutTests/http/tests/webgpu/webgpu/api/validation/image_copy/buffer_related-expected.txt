@@ -53,6 +53,12 @@ PASS :bytes_per_row_alignment:method="WriteTexture";format="bgra8unorm";dimensio
 PASS :bytes_per_row_alignment:method="WriteTexture";format="bgra8unorm-srgb";dimension="1d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="bgra8unorm-srgb";dimension="2d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="bgra8unorm-srgb";dimension="3d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="r16unorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="r16unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="r16unorm";dimension="3d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="r16snorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="r16snorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="r16snorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="r16uint";dimension="1d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="r16uint";dimension="2d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="r16uint";dimension="3d"
@@ -62,6 +68,12 @@ PASS :bytes_per_row_alignment:method="WriteTexture";format="r16sint";dimension="
 PASS :bytes_per_row_alignment:method="WriteTexture";format="r16float";dimension="1d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="r16float";dimension="2d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="r16float";dimension="3d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="rg16unorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="rg16unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="rg16unorm";dimension="3d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="rg16snorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="rg16snorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="rg16snorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="rg16uint";dimension="1d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="rg16uint";dimension="2d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="rg16uint";dimension="3d"
@@ -71,6 +83,12 @@ PASS :bytes_per_row_alignment:method="WriteTexture";format="rg16sint";dimension=
 PASS :bytes_per_row_alignment:method="WriteTexture";format="rg16float";dimension="1d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="rg16float";dimension="2d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="rg16float";dimension="3d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="rgba16unorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="rgba16unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="rgba16unorm";dimension="3d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="rgba16snorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="rgba16snorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="rgba16snorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="rgba16uint";dimension="1d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="rgba16uint";dimension="2d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="rgba16uint";dimension="3d"
@@ -122,19 +140,33 @@ PASS :bytes_per_row_alignment:method="WriteTexture";format="rgb9e5ufloat";dimens
 PASS :bytes_per_row_alignment:method="WriteTexture";format="stencil8";dimension="2d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="depth16unorm";dimension="2d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="bc1-rgba-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="bc1-rgba-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="bc1-rgba-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="bc1-rgba-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="bc2-rgba-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="bc2-rgba-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="bc2-rgba-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="bc2-rgba-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="bc3-rgba-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="bc3-rgba-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="bc3-rgba-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="bc3-rgba-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="bc4-r-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="bc4-r-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="bc4-r-snorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="bc4-r-snorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="bc5-rg-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="bc5-rg-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="bc5-rg-snorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="bc5-rg-snorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="bc6h-rgb-ufloat";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="bc6h-rgb-ufloat";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="bc6h-rgb-float";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="bc6h-rgb-float";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="bc7-rgba-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="bc7-rgba-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="bc7-rgba-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="bc7-rgba-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="etc2-rgb8unorm";dimension="2d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="etc2-rgb8unorm-srgb";dimension="2d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="etc2-rgb8a1unorm";dimension="2d"
@@ -146,33 +178,61 @@ PASS :bytes_per_row_alignment:method="WriteTexture";format="eac-r11snorm";dimens
 PASS :bytes_per_row_alignment:method="WriteTexture";format="eac-rg11unorm";dimension="2d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="eac-rg11snorm";dimension="2d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-4x4-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-4x4-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-4x4-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-4x4-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-5x4-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-5x4-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-5x4-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-5x4-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-5x5-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-5x5-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-5x5-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-5x5-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-6x5-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-6x5-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-6x5-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-6x5-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-6x6-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-6x6-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-6x6-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-6x6-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-8x5-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-8x5-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-8x5-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-8x5-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-8x6-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-8x6-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-8x6-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-8x6-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-8x8-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-8x8-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-8x8-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-8x8-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-10x5-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-10x5-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-10x5-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-10x5-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-10x6-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-10x6-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-10x6-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-10x6-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-10x8-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-10x8-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-10x8-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-10x8-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-10x10-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-10x10-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-10x10-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-10x10-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-12x10-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-12x10-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-12x10-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-12x10-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-12x12-unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-12x12-unorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-12x12-unorm-srgb";dimension="2d"
+PASS :bytes_per_row_alignment:method="WriteTexture";format="astc-12x12-unorm-srgb";dimension="3d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="r8unorm";dimension="1d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="r8unorm";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="r8unorm";dimension="3d"
@@ -218,6 +278,12 @@ PASS :bytes_per_row_alignment:method="CopyB2T";format="bgra8unorm";dimension="3d
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bgra8unorm-srgb";dimension="1d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bgra8unorm-srgb";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bgra8unorm-srgb";dimension="3d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="r16unorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="r16unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="r16unorm";dimension="3d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="r16snorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="r16snorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="r16snorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="r16uint";dimension="1d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="r16uint";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="r16uint";dimension="3d"
@@ -227,6 +293,12 @@ PASS :bytes_per_row_alignment:method="CopyB2T";format="r16sint";dimension="3d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="r16float";dimension="1d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="r16float";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="r16float";dimension="3d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="rg16unorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="rg16unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="rg16unorm";dimension="3d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="rg16snorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="rg16snorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="rg16snorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="rg16uint";dimension="1d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="rg16uint";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="rg16uint";dimension="3d"
@@ -236,6 +308,12 @@ PASS :bytes_per_row_alignment:method="CopyB2T";format="rg16sint";dimension="3d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="rg16float";dimension="1d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="rg16float";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="rg16float";dimension="3d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="rgba16unorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="rgba16unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="rgba16unorm";dimension="3d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="rgba16snorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="rgba16snorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="CopyB2T";format="rgba16snorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="rgba16uint";dimension="1d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="rgba16uint";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="rgba16uint";dimension="3d"
@@ -287,19 +365,327 @@ PASS :bytes_per_row_alignment:method="CopyB2T";format="rgb9e5ufloat";dimension="
 PASS :bytes_per_row_alignment:method="CopyB2T";format="stencil8";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="depth16unorm";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc1-rgba-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc1-rgba-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc1-rgba-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc1-rgba-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc2-rgba-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc2-rgba-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc2-rgba-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc2-rgba-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc3-rgba-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc3-rgba-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc3-rgba-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc3-rgba-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc4-r-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc4-r-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc4-r-snorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc4-r-snorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc5-rg-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc5-rg-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc5-rg-snorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc5-rg-snorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc6h-rgb-ufloat";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc6h-rgb-ufloat";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc6h-rgb-float";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc6h-rgb-float";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc7-rgba-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc7-rgba-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc7-rgba-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc7-rgba-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="etc2-rgb8unorm";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="etc2-rgb8unorm-srgb";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="etc2-rgb8a1unorm";dimension="2d"
@@ -311,33 +697,649 @@ PASS :bytes_per_row_alignment:method="CopyB2T";format="eac-r11snorm";dimension="
 PASS :bytes_per_row_alignment:method="CopyB2T";format="eac-rg11unorm";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="eac-rg11snorm";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-4x4-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-4x4-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-4x4-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-4x4-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-5x4-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-5x4-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-5x4-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-5x4-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-5x5-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-5x5-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(5)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-5x5-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-5x5-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(5)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-6x5-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-6x5-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(5)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-6x5-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-6x5-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(5)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-6x6-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-6x6-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(6)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-6x6-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-6x6-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(6)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-8x5-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x5-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(5)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-8x5-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x5-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(5)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-8x6-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x6-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(6)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-8x6-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x6-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(6)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-8x8-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x8-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(8)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-8x8-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x8-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(8)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-10x5-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x5-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(5)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-10x5-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x5-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(5)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-10x6-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x6-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(6)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-10x6-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x6-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(6)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-10x8-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x8-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(8)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-10x8-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x8-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(8)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-10x10-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x10-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(10)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-10x10-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x10-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(10)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-12x10-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-12x10-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(10)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-12x10-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-12x10-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(10)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-12x12-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-12x12-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(12)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-12x12-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-12x12-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(12)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="r8unorm";dimension="1d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="r8unorm";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="r8unorm";dimension="3d"
@@ -383,6 +1385,12 @@ PASS :bytes_per_row_alignment:method="CopyT2B";format="bgra8unorm";dimension="3d
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bgra8unorm-srgb";dimension="1d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bgra8unorm-srgb";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bgra8unorm-srgb";dimension="3d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="r16unorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="r16unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="r16unorm";dimension="3d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="r16snorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="r16snorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="r16snorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="r16uint";dimension="1d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="r16uint";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="r16uint";dimension="3d"
@@ -392,6 +1400,12 @@ PASS :bytes_per_row_alignment:method="CopyT2B";format="r16sint";dimension="3d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="r16float";dimension="1d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="r16float";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="r16float";dimension="3d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="rg16unorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="rg16unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="rg16unorm";dimension="3d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="rg16snorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="rg16snorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="rg16snorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="rg16uint";dimension="1d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="rg16uint";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="rg16uint";dimension="3d"
@@ -401,6 +1415,12 @@ PASS :bytes_per_row_alignment:method="CopyT2B";format="rg16sint";dimension="3d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="rg16float";dimension="1d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="rg16float";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="rg16float";dimension="3d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="rgba16unorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="rgba16unorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="rgba16unorm";dimension="3d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="rgba16snorm";dimension="1d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="rgba16snorm";dimension="2d"
+PASS :bytes_per_row_alignment:method="CopyT2B";format="rgba16snorm";dimension="3d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="rgba16uint";dimension="1d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="rgba16uint";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="rgba16uint";dimension="3d"
@@ -453,19 +1473,327 @@ PASS :bytes_per_row_alignment:method="CopyT2B";format="stencil8";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="depth16unorm";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="depth32float";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc1-rgba-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc1-rgba-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc1-rgba-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc1-rgba-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc2-rgba-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc2-rgba-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc2-rgba-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc2-rgba-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc3-rgba-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc3-rgba-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc3-rgba-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc3-rgba-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc4-r-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc4-r-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc4-r-snorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc4-r-snorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc5-rg-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc5-rg-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc5-rg-snorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc5-rg-snorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc6h-rgb-ufloat";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc6h-rgb-ufloat";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc6h-rgb-float";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc6h-rgb-float";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc7-rgba-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc7-rgba-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc7-rgba-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc7-rgba-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="etc2-rgb8unorm";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="etc2-rgb8unorm-srgb";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="etc2-rgb8a1unorm";dimension="2d"
@@ -477,31 +1805,647 @@ PASS :bytes_per_row_alignment:method="CopyT2B";format="eac-r11snorm";dimension="
 PASS :bytes_per_row_alignment:method="CopyT2B";format="eac-rg11unorm";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="eac-rg11snorm";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-4x4-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-4x4-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-4x4-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-4x4-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-5x4-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-5x4-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-5x4-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-5x4-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-5x5-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-5x5-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(5)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-5x5-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-5x5-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(5)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-6x5-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-6x5-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(5)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-6x5-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-6x5-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(5)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-6x6-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-6x6-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(6)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-6x6-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-6x6-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(6)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-8x5-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x5-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(5)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-8x5-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x5-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(5)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-8x6-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x6-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(6)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-8x6-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x6-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(6)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-8x8-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x8-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(8)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-8x8-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x8-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(8)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-10x5-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x5-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(5)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-10x5-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x5-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(5)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-10x6-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x6-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(6)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-10x6-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x6-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(6)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-10x8-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x8-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(8)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-10x8-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x8-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(8)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-10x10-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x10-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(10)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-10x10-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x10-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(10)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-12x10-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-12x10-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(10)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-12x10-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-12x10-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(10)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-12x12-unorm";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-12x12-unorm";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(12)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-12x12-unorm-srgb";dimension="2d"
+FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-12x12-unorm-srgb";dimension="3d" assert_unreached:
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow="_undef_";copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=255;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=256;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=257;copyHeightInBlocks=3) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=0) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=1) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
+  - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(12)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+ Reached unreachable code
 

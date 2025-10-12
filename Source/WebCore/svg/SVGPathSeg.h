@@ -88,3 +88,8 @@ protected:
 };
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(ToValueTypeName, PathSegTypeName) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+static bool isType(const WebCore::SVGPathSeg& object) { return object.pathSegType() == WebCore::SVGPathSegType::PathSegTypeName; } \
+SPECIALIZE_TYPE_TRAITS_END()

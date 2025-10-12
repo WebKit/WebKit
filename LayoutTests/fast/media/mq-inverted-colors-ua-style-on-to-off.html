@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Tests that @media(inverted-colors) in user-agent shadow DOM is false when "Invert colors" setting toggles from on to off</title>
+</head>
+
+<body>
+    <style>
+        @media (inverted-colors) {
+            #inverted-colors-value::before {
+                content: "true" !important;
+            }
+        }
+
+        #inverted-colors-value::before {
+            content: "false";
+        }
+    </style>
+    <p>@media(inverted-colors) in main document: <span id="inverted-colors-value"></span></p>
+
+    <template id="template">
+        <style>
+            @media (inverted-colors) {
+                #inverted-colors-value::before {
+                    content: "true" !important;
+                }
+            }
+
+            #inverted-colors-value::before {
+                content: "false";
+            }
+        </style>
+
+        <p>@media(inverted-colors) in user-agent shadow DOM: <span id="inverted-colors-value"></span></p>
+    </template>
+    <div id="shadow-host"></div>
+
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        const host = document.getElementById("shadow-host");
+        // Use internal method to create a user-agent shadow DOM
+        // Bug won't reproduce with open/closed shadow DOM, created using .attachShadow
+        const shadow = window.internals.ensureUserAgentShadowRoot(host);
+
+        const template = document.getElementById("template");
+        shadow.appendChild(template.content);
+
+        const uiScript =
+            `(function() {
+                uiController.simulateAccessibilitySettingsChangeNotification(function() {
+                    uiController.uiScriptComplete();
+                });
+            })();`;
+
+        // Bug only reproduces when inverted colors goes from off to on, then off.
+
+        window.internals.settings.forcedColorsAreInvertedAccessibilityValue = "on";
+
+        testRunner.runUIScript(uiScript, () => {
+            window.internals.settings.forcedColorsAreInvertedAccessibilityValue = "off";
+            testRunner.runUIScript(uiScript, () => testRunner.notifyDone());
+        });
+    </script>
+</body>
+
+</html>

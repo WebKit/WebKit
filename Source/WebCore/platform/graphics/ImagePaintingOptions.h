@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "DecodingOptions.h"
-#include "GraphicsTypes.h"
-#include "ImageOrientation.h"
-#include "ImageTypes.h"
-#include "PlatformDynamicRangeLimit.h"
+#include <WebCore/DecodingOptions.h>
+#include <WebCore/GraphicsTypes.h>
+#include <WebCore/ImageOrientation.h>
+#include <WebCore/ImageTypes.h>
+#include <WebCore/PlatformDynamicRangeLimit.h>
 #include <initializer_list>
 #include <wtf/Forward.h>
 
@@ -48,25 +48,30 @@ struct ImagePaintingOptions {
         || std::is_same_v<Type, StrictImageClamping>
 #endif
         || std::is_same_v<Type, ShowDebugBackground>
+        || std::is_same_v<Type, DrawsHDRContent>
         || std::is_same_v<Type, Headroom>
         || std::is_same_v<Type, PlatformDynamicRangeLimit>;
 
     // This is a single-argument initializer to support pattern of
     // ImageDrawResult drawImage(..., ImagePaintingOptions = { ImageOrientation::Orientation::FromImage });
     // Should be removed once the pattern is not so prevalent.
-    template<typename T, typename = std::enable_if_t<isOptionType<std::decay_t<T>>>>
+    template<typename T>
+        requires isOptionType<std::decay_t<T>>
     ImagePaintingOptions(std::initializer_list<T> options)
     {
         for (auto& option : options)
             setOption(option);
     }
-    template<typename T, typename = std::enable_if_t<isOptionType<std::decay_t<T>>>>
+
+    template<typename T>
+        requires isOptionType<std::decay_t<T>>
     explicit ImagePaintingOptions(T option)
     {
         setOption(option);
     }
 
-    template<typename T, typename U, typename... Rest, typename = std::enable_if_t<isOptionType<std::decay_t<T>>>>
+    template<typename T, typename U, typename... Rest>
+        requires isOptionType<std::decay_t<T>>
     ImagePaintingOptions(T first, U second, Rest... rest)
     {
         setOption(first);
@@ -97,6 +102,7 @@ struct ImagePaintingOptions {
     StrictImageClamping strictImageClamping() const { return m_strictImageClamping; }
 #endif
     ShowDebugBackground showDebugBackground() const { return m_showDebugBackground; }
+    DrawsHDRContent drawsHDRContent() const { return m_drawsHDRContent; }
     Headroom headroom() const { return m_headroom; }
     PlatformDynamicRangeLimit dynamicRangeLimit() const { return m_dynamicRangeLimit; }
 
@@ -112,6 +118,7 @@ private:
     void setOption(StrictImageClamping strictImageClamping) { m_strictImageClamping = strictImageClamping; }
 #endif
     void setOption(ShowDebugBackground showDebugBackground) { m_showDebugBackground = showDebugBackground; }
+    void setOption(DrawsHDRContent drawsHDRContent) { m_drawsHDRContent = drawsHDRContent; }
     void setOption(Headroom headroom) { m_headroom = headroom; }
     void setOption(PlatformDynamicRangeLimit dynamicRangeLimit) { m_dynamicRangeLimit = dynamicRangeLimit; }
 
@@ -125,6 +132,7 @@ private:
     StrictImageClamping m_strictImageClamping: 1 { StrictImageClamping::Yes };
 #endif
     ShowDebugBackground m_showDebugBackground : 1 { ShowDebugBackground::No };
+    DrawsHDRContent m_drawsHDRContent : 1 { DrawsHDRContent::No };
     Headroom m_headroom { Headroom::FromImage };
     PlatformDynamicRangeLimit m_dynamicRangeLimit { PlatformDynamicRangeLimit::initialValue() };
 };

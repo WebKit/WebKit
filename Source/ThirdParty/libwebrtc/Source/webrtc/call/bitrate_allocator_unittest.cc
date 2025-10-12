@@ -18,12 +18,13 @@
 
 #include "absl/strings/string_view.h"
 #include "api/call/bitrate_allocation.h"
+#include "api/field_trials.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/numerics/safe_conversions.h"
-#include "test/explicit_key_value_config.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -78,7 +79,7 @@ class TestBitrateObserver : public BitrateAllocatorObserver {
   uint32_t OnBitrateUpdated(BitrateAllocationUpdate update) override {
     last_bitrate_bps_ = update.target_bitrate.bps();
     last_fraction_loss_ =
-        rtc::dchecked_cast<uint8_t>(update.packet_loss_ratio * 256);
+        dchecked_cast<uint8_t>(update.packet_loss_ratio * 256);
     last_rtt_ms_ = update.round_trip_time.ms();
     last_probing_interval_ms_ = update.bwe_period.ms();
     return update.target_bitrate.bps() * protection_ratio_;
@@ -99,7 +100,7 @@ class TestContributingBitrateObserver : public TestBitrateObserver {
 };
 
 constexpr int64_t kDefaultProbingIntervalMs = 3000;
-const double kDefaultBitratePriority = 1.0;
+constexpr double kDefaultBitratePriority = 1.0;
 
 TargetTransferRate CreateTargetRateMessage(uint32_t target_bitrate_bps,
                                            uint8_t fraction_loss,
@@ -110,7 +111,6 @@ TargetTransferRate CreateTargetRateMessage(uint32_t target_bitrate_bps,
   // messages in the test.
   msg.at_time = Timestamp::Seconds(10000);
   msg.target_rate = DataRate::BitsPerSec(target_bitrate_bps);
-  msg.stable_target_rate = msg.target_rate;
   msg.network_estimate.bandwidth = msg.target_rate;
   msg.network_estimate.loss_rate_ratio = fraction_loss / 255.0;
   msg.network_estimate.round_trip_time = TimeDelta::Millis(rtt_ms);
@@ -126,7 +126,7 @@ class BitrateAllocatorTest : public ::testing::Test {
     allocator_->OnNetworkEstimateChanged(
         CreateTargetRateMessage(300000u, 0, 0, kDefaultProbingIntervalMs));
   }
-  ~BitrateAllocatorTest() {}
+  ~BitrateAllocatorTest() override {}
   void AddObserver(
       BitrateAllocatorObserver* observer,
       uint32_t min_bitrate_bps,
@@ -326,7 +326,7 @@ class BitrateAllocatorTestNoEnforceMin : public ::testing::Test {
     allocator_->OnNetworkEstimateChanged(
         CreateTargetRateMessage(300000u, 0, 0, kDefaultProbingIntervalMs));
   }
-  ~BitrateAllocatorTestNoEnforceMin() {}
+  ~BitrateAllocatorTestNoEnforceMin() override {}
   void AddObserver(BitrateAllocatorObserver* observer,
                    uint32_t min_bitrate_bps,
                    uint32_t max_bitrate_bps,
@@ -1060,7 +1060,7 @@ TEST_F(BitrateAllocatorTest, PriorityRateThreeObserversTwoAllocatedToMax) {
 }
 
 TEST_F(BitrateAllocatorTest, ElasticRateAllocationCanBorrowUnsedRate) {
-  test::ExplicitKeyValueConfig field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-ElasticBitrateAllocation/upper_limit:200bps/");
   ReconfigureAllocator(
       GetElasticRateAllocationFieldTrialParameter(field_trials));
@@ -1085,9 +1085,8 @@ TEST_F(BitrateAllocatorTest, ElasticRateAllocationCanBorrowUnsedRate) {
 }
 
 TEST_F(BitrateAllocatorTest, ElasticRateAllocationDefaultsInactive) {
-  test::ExplicitKeyValueConfig field_trials("");
   ReconfigureAllocator(
-      GetElasticRateAllocationFieldTrialParameter(field_trials));
+      GetElasticRateAllocationFieldTrialParameter(CreateTestFieldTrials()));
   TestBitrateObserver observer_consume;
   TestContributingBitrateObserver observer_contribute;
   AddObserver(&observer_consume, 10, 100, 0, false, 1.0,
@@ -1107,7 +1106,7 @@ TEST_F(BitrateAllocatorTest, ElasticRateAllocationDefaultsInactive) {
 }
 
 TEST_F(BitrateAllocatorTest, ElasticRateAllocationDontExceedMaxBitrate) {
-  test::ExplicitKeyValueConfig field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-ElasticBitrateAllocation/upper_limit:200bps/");
   ReconfigureAllocator(
       GetElasticRateAllocationFieldTrialParameter(field_trials));
@@ -1134,9 +1133,9 @@ TEST_F(BitrateAllocatorTest, ElasticRateAllocationDontExceedMaxBitrate) {
 
 TEST_F(BitrateAllocatorTest, ElasticRateAllocationStayWithinUpperLimit) {
   uint32_t upper_limit = 70;
-  test::ExplicitKeyValueConfig field_trials(
-      "WebRTC-ElasticBitrateAllocation/upper_limit:" +
-      std::to_string(upper_limit) + "bps/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-ElasticBitrateAllocation/upper_limit:" +
+                            std::to_string(upper_limit) + "bps/");
   ReconfigureAllocator(
       GetElasticRateAllocationFieldTrialParameter(field_trials));
   TestBitrateObserver observer_consume;
@@ -1161,9 +1160,9 @@ TEST_F(BitrateAllocatorTest, ElasticRateAllocationStayWithinUpperLimit) {
 
 TEST_F(BitrateAllocatorTest, ElasticRateAllocationDontReduceAllocation) {
   uint32_t upper_limit = 70;
-  test::ExplicitKeyValueConfig field_trials(
-      "WebRTC-ElasticBitrateAllocation/upper_limit:" +
-      std::to_string(upper_limit) + "bps/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-ElasticBitrateAllocation/upper_limit:" +
+                            std::to_string(upper_limit) + "bps/");
   ReconfigureAllocator(
       GetElasticRateAllocationFieldTrialParameter(field_trials));
   TestBitrateObserver observer_consume;

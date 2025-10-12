@@ -62,7 +62,7 @@ WI.Animation = class Animation extends WI.Object
             stackTrace: WI.StackTrace.fromPayload(WI.assumingMainTarget(), payload.stackTrace),
         });
 
-        // COMPATIBILITY (iOS 18.X, macOS 15.X): `Animation` removed the `effect` property in favor of `Animation.requestEffect`.
+        // COMPATIBILITY (iOS 26.0, macOS 26.0): `Animation` removed the `effect` property in favor of `Animation.requestEffect`.
         if (payload.effect)
             animation.effectChanged(payload.effect);
 
@@ -284,7 +284,7 @@ WI.Animation = class Animation extends WI.Object
     {
         this._effect = null;
 
-        // COMPATIBILITY (iOS 18.X, macOS 15.X): `Animation.effectChanged` removed the `effect` parameter in favor of `Animation.requestEffect`.
+        // COMPATIBILITY (iOS 26.0, macOS 26.0): `Animation.effectChanged` removed the `effect` parameter in favor of `Animation.requestEffect`.
         if (!InspectorBackend.hasCommand("Animation.requestEffect"))
             this._updateEffect(effect);
 

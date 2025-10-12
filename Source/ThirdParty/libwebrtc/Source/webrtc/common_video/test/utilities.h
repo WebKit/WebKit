@@ -11,10 +11,11 @@
 #ifndef COMMON_VIDEO_TEST_UTILITIES_H_
 #define COMMON_VIDEO_TEST_UTILITIES_H_
 
-#include <initializer_list>
+#include <cstddef>
 
 #include "api/rtp_packet_infos.h"
 #include "api/video/color_space.h"
+#include "api/video/hdr_metadata.h"
 
 namespace webrtc {
 

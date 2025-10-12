@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 
-namespace rtc {
+namespace webrtc {
 
 // Returns total CPU time of a current process in nanoseconds.
 // Time base is unknown, therefore use only to calculate deltas.
@@ -23,6 +23,7 @@ int64_t GetProcessCpuTimeNanos();
 // Time base is unknown, therefore use only to calculate deltas.
 int64_t GetThreadCpuTimeNanos();
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_CPU_TIME_H_

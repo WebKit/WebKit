@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,15 +26,19 @@
 #include "config.h"
 #include "AccessibilityMenuList.h"
 
+#include "AXNotifications.h"
+#include "AccessibilityObjectInlines.h"
 #include "AXObjectCache.h"
 #include "AccessibilityMenuListPopup.h"
+#include "FrameDestructionObserverInlines.h"
 #include "RenderMenuList.h"
+#include "RenderObjectDocument.h"
 #include <wtf/Scope.h>
 
 namespace WebCore {
 
 AccessibilityMenuList::AccessibilityMenuList(AXID axID, RenderMenuList& renderer, AXObjectCache& cache)
-    : AccessibilityRenderObject(axID, renderer)
+    : AccessibilityRenderObject(axID, renderer, cache)
     , m_popup(downcast<AccessibilityMenuListPopup>(*cache.create(AccessibilityRole::MenuListPopup)))
 {
 }

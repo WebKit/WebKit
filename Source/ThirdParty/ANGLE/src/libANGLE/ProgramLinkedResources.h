@@ -357,6 +357,13 @@ using InterfaceBlockMap    = std::map<std::string, ShaderInterfaceBlock>;
 bool LinkValidateProgramGlobalNames(InfoLog &infoLog,
                                     const ProgramExecutable &executable,
                                     const LinkingVariables &linkingVariables);
+bool LinkValidateInOutNumberMatching(const std::vector<sh::ShaderVariable> &outputVaryings,
+                                     const std::vector<sh::ShaderVariable> &inputVaryings,
+                                     ShaderType frontShaderType,
+                                     ShaderType backShaderType,
+                                     int frontShaderVersion,
+                                     int backShaderVersion,
+                                     InfoLog &infoLog);
 bool LinkValidateShaderInterfaceMatching(const std::vector<sh::ShaderVariable> &outputVaryings,
                                          const std::vector<sh::ShaderVariable> &inputVaryings,
                                          ShaderType frontShaderType,

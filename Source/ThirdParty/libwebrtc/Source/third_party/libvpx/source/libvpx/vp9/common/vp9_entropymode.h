@@ -24,7 +24,7 @@ extern "C" {
 
 #define TX_SIZE_CONTEXTS 2
 
-#define INTER_OFFSET(mode) ((mode)-NEARESTMV)
+#define INTER_OFFSET(mode) ((mode) - NEARESTMV)
 
 struct VP9Common;
 

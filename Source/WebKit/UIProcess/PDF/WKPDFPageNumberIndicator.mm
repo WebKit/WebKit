@@ -34,6 +34,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PlatformCAFilters.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Seconds.h>
@@ -41,7 +42,6 @@
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 static constexpr CGFloat indicatorFontSize = 16;
-static constexpr CGFloat indicatorLabelOpacity = 0.4;
 static constexpr CGFloat indicatorCornerRadius = 7;
 static constexpr CGFloat indicatorMargin = 20;
 static constexpr CGFloat indicatorVerticalPadding = 6;
@@ -54,7 +54,7 @@ static constexpr Seconds indicatorMoveDuration { 0.3_s };
 
 @implementation WKPDFPageNumberIndicator {
     RetainPtr<UILabel> _label;
-    RetainPtr<UIView> _backdropView;
+    RetainPtr<UIVisualEffectView> _backdropView;
     RetainPtr<NSTimer> _timer;
     WeakObjCPtr<WKWebView> _webView;
 }
@@ -72,16 +72,22 @@ static constexpr Seconds indicatorMoveDuration { 0.3_s };
     self.layer.allowsGroupOpacity = NO;
     self.layer.allowsGroupBlending = NO;
 
-    bool shouldUseVisualEffectViewForBackdrop = true;
-    if ([self respondsToSelector:@selector(canUseVisualEffectViewForBackdrop)])
-        shouldUseVisualEffectViewForBackdrop = self.canUseVisualEffectViewForBackdrop;
+#if HAVE(UI_GLASS_EFFECT)
+    bool shouldUseBlurEffectForBackdrop = PAL::currentUserInterfaceIdiomIsVision();
+#else
+    bool shouldUseBlurEffectForBackdrop = true;
+#endif
 
-    if (shouldUseVisualEffectViewForBackdrop)
-        _backdropView = adoptNS([[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleLight]]);
+    RetainPtr<UIVisualEffect> visualEffect;
+    if (shouldUseBlurEffectForBackdrop)
+        visualEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
     else {
-        _backdropView = adoptNS([[UIView alloc] init]);
-        [self configureBackgroundForBackdropViewIfNeeded];
+#if HAVE(UI_GLASS_EFFECT)
+        visualEffect = adoptNS([[UIGlassEffect alloc] init]);
+#endif
     }
+
+    _backdropView =  adoptNS([[UIVisualEffectView alloc] initWithEffect:visualEffect.get()]);
     [_backdropView setFrame:self.bounds];
     [_backdropView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
     [[_backdropView layer] setCornerRadius:indicatorCornerRadius];
@@ -93,16 +99,12 @@ static constexpr Seconds indicatorMoveDuration { 0.3_s };
     [_label setBackgroundColor:nil];
     [_label setTextAlignment:NSTextAlignmentCenter];
     [_label setFont:[UIFont boldSystemFontOfSize:indicatorFontSize]];
-    if (shouldUseVisualEffectViewForBackdrop)
+    if (shouldUseBlurEffectForBackdrop)
         [_label setTextColor:[UIColor blackColor]];
-    [_label setAlpha:indicatorLabelOpacity];
     [_label setAdjustsFontSizeToFitWidth:YES];
     [_label setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
     WebCore::PlatformCAFilters::setBlendingFiltersOnLayer([_label layer], WebCore::BlendMode::PlusDarker);
-    if (RetainPtr visualEffectBackdropView = dynamic_objc_cast<UIVisualEffectView>(_backdropView))
-        [[visualEffectBackdropView contentView] addSubview:_label.get()];
-    else
-        [_backdropView addSubview:_label.get()];
+    [[_backdropView contentView] addSubview:_label.get()];
 
     [self updatePosition:self.frame];
     [self setPageCount:pageCount];
@@ -163,9 +165,15 @@ static constexpr Seconds indicatorMoveDuration { 0.3_s };
 
 - (void)hide:(NSTimer *)timer
 {
-    [UIView animateWithDuration:indicatorFadeOutDuration.seconds() animations:[view = retainPtr(self)] {
+    auto animations = [view = retainPtr(self)] {
         [view setAlpha:0];
-    }];
+    };
+#if HAVE(UI_VIEW_ANIMATION_OPTION_FLUSH_UPDATES)
+    static constexpr auto animationOptions = UIViewAnimationOptionFlushUpdates;
+#else
+    static constexpr auto animationOptions = 0;
+#endif
+    [UIView animateWithDuration:indicatorFadeOutDuration.seconds() delay:0 options:animationOptions animations:animations completion:nil];
 
     [std::exchange(_timer, nil) invalidate];
 }
@@ -214,11 +222,6 @@ static constexpr Seconds indicatorMoveDuration { 0.3_s };
         return;
 
     [self show];
-}
-
-- (UIView *)backdropView
-{
-    return _backdropView.get();
 }
 
 @end

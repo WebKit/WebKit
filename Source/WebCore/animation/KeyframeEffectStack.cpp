@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,10 @@
 #include "ScaleTransformOperation.h"
 #include "Settings.h"
 #include "StyleInterpolation.h"
+#include "StyleRotate.h"
+#include "StyleScale.h"
+#include "StyleTransform.h"
+#include "StyleTranslate.h"
 #include "TransformOperations.h"
 #include "TranslateTransformOperation.h"
 #include "WebAnimation.h"
@@ -139,23 +143,23 @@ void KeyframeEffectStack::ensureEffectsAreSorted()
     m_isSorted = true;
 }
 
-void KeyframeEffectStack::setCSSAnimationList(RefPtr<const AnimationList>&& cssAnimationList)
+void KeyframeEffectStack::setCSSAnimationList(std::optional<Style::Animations>&& cssAnimationList)
 {
     m_cssAnimationList = WTFMove(cssAnimationList);
     // Since the list of animation names has changed, the sorting order of the animation effects may have changed as well.
     m_isSorted = false;
 }
 
-OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle& targetStyle, UncheckedKeyHashSet<AnimatableCSSProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext)
+OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle& targetStyle, HashSet<AnimatableCSSProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext)
 {
     OptionSet<AnimationImpact> impact;
 
     auto& previousStyle = previousLastStyleChangeEventStyle ? *previousLastStyleChangeEventStyle : RenderStyle::defaultStyleSingleton();
 
     auto transformRelatedPropertyChanged = [&]() -> bool {
-        return !arePointingToEqualData(targetStyle.translate(), previousStyle.translate())
-            || !arePointingToEqualData(targetStyle.scale(), previousStyle.scale())
-            || !arePointingToEqualData(targetStyle.rotate(), previousStyle.rotate())
+        return targetStyle.translate() != previousStyle.translate()
+            || targetStyle.scale() != previousStyle.scale()
+            || targetStyle.rotate() != previousStyle.rotate()
             || targetStyle.transform() != previousStyle.transform();
     }();
 
@@ -164,8 +168,7 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
     for (const auto& effect : sortedEffects()) {
         auto keyframeRecomputationReason = effect->recomputeKeyframesIfNecessary(previousLastStyleChangeEventStyle, unanimatedStyle, resolutionContext);
 
-        ASSERT(effect->animation());
-        auto* animation = effect->animation();
+        Ref animation = *effect->animation();
         impact.add(animation->resolve(targetStyle, resolutionContext));
 
         if (effect->isRunningAccelerated() || effect->isAboutToRunAccelerated())
@@ -180,10 +183,10 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
         // If one of the effect's resolved property changed it could affect whether that effect's animation is removed.
         if (keyframeRecomputationReason && *keyframeRecomputationReason == KeyframeEffect::RecomputationReason::LogicalPropertyChange) {
             if (RefPtr timeline = animation->timeline())
-                timeline->animationTimingDidChange(*animation);
+                timeline->animationTimingDidChange(animation.get());
         }
 
-        affectedProperties.formUnion(effect->animatedProperties());
+        affectedProperties.addAll(effect->animatedProperties());
     }
 
     return impact;
@@ -229,7 +232,7 @@ bool KeyframeEffectStack::allowsAcceleration() const
     // stack is unable to be accelerated, or if we have more than one effect animating
     // an accelerated property with an implicit keyframe.
 
-    UncheckedKeyHashSet<AnimatableCSSProperty> allAcceleratedProperties;
+    HashSet<AnimatableCSSProperty> allAcceleratedProperties;
 
     for (auto& effect : m_effects) {
         if (effect->preventsAcceleration())
@@ -242,7 +245,7 @@ bool KeyframeEffectStack::allowsAcceleration() const
                 return false;
             }
         }
-        allAcceleratedProperties.add(acceleratedProperties.begin(), acceleratedProperties.end());
+        allAcceleratedProperties.addAll(acceleratedProperties);
     }
 
     return true;
@@ -269,9 +272,9 @@ void KeyframeEffectStack::lastStyleChangeEventStyleDidChange(const RenderStyle* 
         effect->lastStyleChangeEventStyleDidChange(previousStyle, currentStyle);
 }
 
-void KeyframeEffectStack::cascadeDidOverrideProperties(const UncheckedKeyHashSet<AnimatableCSSProperty>& overriddenProperties, const Document& document)
+void KeyframeEffectStack::cascadeDidOverrideProperties(const HashSet<AnimatableCSSProperty>& overriddenProperties, const Document& document)
 {
-    UncheckedKeyHashSet<AnimatableCSSProperty> acceleratedPropertiesOverriddenByCascade;
+    HashSet<AnimatableCSSProperty> acceleratedPropertiesOverriddenByCascade;
     for (auto animatedProperty : overriddenProperties) {
         if (Style::Interpolation::isAccelerated(animatedProperty, document.settings()))
             acceleratedPropertiesOverriddenByCascade.add(animatedProperty);

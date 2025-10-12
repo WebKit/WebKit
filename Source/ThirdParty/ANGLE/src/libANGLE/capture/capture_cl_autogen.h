@@ -815,6 +815,24 @@ angle::CallCapture CaptureCreateImageWithProperties(bool isCallValid,
                                                     cl_int *errcode_ret,
                                                     cl_mem returnValue);
 
+// cl_khr_external_memory
+angle::CallCapture CaptureEnqueueAcquireExternalMemObjectsKHR(bool isCallValid,
+                                                              cl_command_queue command_queue,
+                                                              cl_uint num_mem_objects,
+                                                              const cl_mem *mem_objects,
+                                                              cl_uint num_events_in_wait_list,
+                                                              const cl_event *event_wait_list,
+                                                              cl_event *event,
+                                                              cl_int returnValue);
+angle::CallCapture CaptureEnqueueReleaseExternalMemObjectsKHR(bool isCallValid,
+                                                              cl_command_queue command_queue,
+                                                              cl_uint num_mem_objects,
+                                                              const cl_mem *mem_objects,
+                                                              cl_uint num_events_in_wait_list,
+                                                              const cl_event *event_wait_list,
+                                                              cl_event *event,
+                                                              cl_int returnValue);
+
 // cl_khr_icd
 angle::CallCapture CaptureIcdGetPlatformIDsKHR(bool isCallValid,
                                                cl_uint num_entries,
@@ -3211,6 +3229,56 @@ void CaptureCreateImageWithProperties_errcode_ret(bool isCallValid,
                                                   void *host_ptr,
                                                   cl_int *errcode_ret,
                                                   angle::ParamCapture *paramCapture);
+
+// cl_khr_external_memory
+void CaptureEnqueueAcquireExternalMemObjectsKHR_mem_objects(bool isCallValid,
+                                                            cl_command_queue command_queue,
+                                                            cl_uint num_mem_objects,
+                                                            const cl_mem *mem_objects,
+                                                            cl_uint num_events_in_wait_list,
+                                                            const cl_event *event_wait_list,
+                                                            cl_event *event,
+                                                            angle::ParamCapture *paramCapture);
+void CaptureEnqueueAcquireExternalMemObjectsKHR_event_wait_list(bool isCallValid,
+                                                                cl_command_queue command_queue,
+                                                                cl_uint num_mem_objects,
+                                                                const cl_mem *mem_objects,
+                                                                cl_uint num_events_in_wait_list,
+                                                                const cl_event *event_wait_list,
+                                                                cl_event *event,
+                                                                angle::ParamCapture *paramCapture);
+void CaptureEnqueueAcquireExternalMemObjectsKHR_event(bool isCallValid,
+                                                      cl_command_queue command_queue,
+                                                      cl_uint num_mem_objects,
+                                                      const cl_mem *mem_objects,
+                                                      cl_uint num_events_in_wait_list,
+                                                      const cl_event *event_wait_list,
+                                                      cl_event *event,
+                                                      angle::ParamCapture *paramCapture);
+void CaptureEnqueueReleaseExternalMemObjectsKHR_mem_objects(bool isCallValid,
+                                                            cl_command_queue command_queue,
+                                                            cl_uint num_mem_objects,
+                                                            const cl_mem *mem_objects,
+                                                            cl_uint num_events_in_wait_list,
+                                                            const cl_event *event_wait_list,
+                                                            cl_event *event,
+                                                            angle::ParamCapture *paramCapture);
+void CaptureEnqueueReleaseExternalMemObjectsKHR_event_wait_list(bool isCallValid,
+                                                                cl_command_queue command_queue,
+                                                                cl_uint num_mem_objects,
+                                                                const cl_mem *mem_objects,
+                                                                cl_uint num_events_in_wait_list,
+                                                                const cl_event *event_wait_list,
+                                                                cl_event *event,
+                                                                angle::ParamCapture *paramCapture);
+void CaptureEnqueueReleaseExternalMemObjectsKHR_event(bool isCallValid,
+                                                      cl_command_queue command_queue,
+                                                      cl_uint num_mem_objects,
+                                                      const cl_mem *mem_objects,
+                                                      cl_uint num_events_in_wait_list,
+                                                      const cl_event *event_wait_list,
+                                                      cl_event *event,
+                                                      angle::ParamCapture *paramCapture);
 
 // cl_khr_icd
 void CaptureIcdGetPlatformIDsKHR_platforms(bool isCallValid,

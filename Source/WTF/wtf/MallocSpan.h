@@ -109,9 +109,9 @@ public:
     }
 
 #if HAVE(MMAP)
-    static MallocSpan mmap(size_t sizeInBytes, int pageProtection, int options, int fileDescriptor)
+    static MallocSpan mmap(void* addr, size_t sizeInBytes, int pageProtection, int options, int fileDescriptor)
     {
-        return MallocSpan { static_cast<T*>(Malloc::mmap(sizeInBytes, pageProtection, options, fileDescriptor)), sizeInBytes };
+        return MallocSpan { static_cast<T*>(Malloc::mmap(addr, sizeInBytes, pageProtection, options, fileDescriptor)), sizeInBytes };
     }
 #endif
 

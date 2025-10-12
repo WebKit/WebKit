@@ -10,11 +10,11 @@
 
 #include "video/adaptation/quality_scaler_resource.h"
 
-#include <memory>
-#include <optional>
-
+#include "api/adaptation/resource.h"
+#include "api/rtp_parameters.h"
+#include "api/scoped_refptr.h"
 #include "api/task_queue/task_queue_base.h"
-#include "api/video_codecs/video_encoder.h"
+#include "call/adaptation/degradation_preference_provider.h"
 #include "call/adaptation/test/mock_resource_listener.h"
 #include "rtc_base/thread.h"
 #include "test/gmock.h"
@@ -53,10 +53,10 @@ class QualityScalerResourceTest : public ::testing::Test {
   }
 
  protected:
-  rtc::AutoThread main_thread_;
+  AutoThread main_thread_;
   StrictMock<MockResourceListener> fake_resource_listener_;
   FakeDegradationPreferenceProvider degradation_preference_provider_;
-  rtc::scoped_refptr<QualityScalerResource> quality_scaler_resource_;
+  scoped_refptr<QualityScalerResource> quality_scaler_resource_;
 };
 
 TEST_F(QualityScalerResourceTest, ReportQpHigh) {

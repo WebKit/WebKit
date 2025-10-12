@@ -33,7 +33,7 @@
 #include "config.h"
 #include "EventListenerMap.h"
 
-#include "AddEventListenerOptions.h"
+#include "AddEventListenerOptionsInlines.h"
 #include "Event.h"
 #include "EventTarget.h"
 #include "JSEventListener.h"

@@ -1,0 +1,5 @@
+Should be green
+
+PASS Initially, 1rem * 10 evaluates to 160px
+FAIL Changing the :root font-size to 10px makes 1rem * 10 evaluate to 100px assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

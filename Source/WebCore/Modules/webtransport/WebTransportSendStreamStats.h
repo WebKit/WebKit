@@ -28,10 +28,18 @@
 namespace WebCore {
 
 struct WebTransportSendStreamStats {
-    double timestamp { 0 };
     uint64_t bytesWritten { 0 };
     uint64_t bytesSent { 0 };
     uint64_t bytesAcknowledged { 0 };
+
+    WebTransportSendStreamStats isolatedCopy() const
+    {
+        return {
+            bytesWritten,
+            bytesSent,
+            bytesAcknowledged
+        };
+    }
 };
 
 }

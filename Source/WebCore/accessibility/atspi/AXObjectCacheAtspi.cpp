@@ -21,11 +21,13 @@
 #include "AXObjectCache.h"
 
 #if USE(ATSPI)
+#include "AXNotifications.h"
 #include "AXTextStateChangeIntent.h"
 #include "AccessibilityObject.h"
 #include "AccessibilityObjectAtspi.h"
 #include "AccessibilityRenderObject.h"
-#include "Document.h"
+#include "DocumentPage.h"
+#include "DocumentView.h"
 #include "Element.h"
 #include "HTMLSelectElement.h"
 #include "Range.h"
@@ -240,7 +242,7 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* c
     if (!coreObject)
         return;
 
-    if (coreObject->roleValue() != AccessibilityRole::WebArea)
+    if (coreObject->role() != AccessibilityRole::WebArea)
         return;
 
     auto* wrapper = coreObject->wrapper();

@@ -19,8 +19,15 @@
 
 #include "modules/audio_processing/agc/legacy/analog_agc.h"
 
-#include <stdlib.h>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
 
+#include "common_audio/signal_processing/dot_product_with_scale.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/signal_processing/include/spl_inl.h"
+#include "modules/audio_processing/agc/legacy/digital_agc.h"
+#include "modules/audio_processing/agc/legacy/gain_control.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -34,23 +41,22 @@ namespace {
 #define AGC_BAD_PARAMETER_ERROR 18004
 
 /* The slope of in Q13*/
-static const int16_t kSlope1[8] = {21793, 12517, 7189, 4129,
-                                   2372,  1362,  472,  78};
+const int16_t kSlope1[8] = {21793, 12517, 7189, 4129, 2372, 1362, 472, 78};
 
 /* The offset in Q14 */
-static const int16_t kOffset1[8] = {25395, 23911, 22206, 20737,
-                                    19612, 18805, 17951, 17367};
+const int16_t kOffset1[8] = {25395, 23911, 22206, 20737,
+                             19612, 18805, 17951, 17367};
 
 /* The slope of in Q13*/
-static const int16_t kSlope2[8] = {2063, 1731, 1452, 1218, 1021, 857, 597, 337};
+const int16_t kSlope2[8] = {2063, 1731, 1452, 1218, 1021, 857, 597, 337};
 
 /* The offset in Q14 */
-static const int16_t kOffset2[8] = {18432, 18379, 18290, 18177,
-                                    18052, 17920, 17670, 17286};
+const int16_t kOffset2[8] = {18432, 18379, 18290, 18177,
+                             18052, 17920, 17670, 17286};
 
-static const int16_t kMuteGuardTimeMs = 8000;
-static const int16_t kInitCheck = 42;
-static const size_t kNumSubframes = 10;
+const int16_t kMuteGuardTimeMs = 8000;
+const int16_t kInitCheck = 42;
+const size_t kNumSubframes = 10;
 
 /* Default settings if config is not used */
 #define AGC_DEFAULT_TARGET_LEVEL 3
@@ -85,13 +91,13 @@ static const size_t kNumSubframes = 10;
  * fprintf(1, '\t%i, %i, %i, %i,\n', round(10.^(linspace(0,10,32)/20) * 2^12));
  */
 /* Q12 */
-static const uint16_t kGainTableAnalog[GAIN_TBL_LEN] = {
+const uint16_t kGainTableAnalog[GAIN_TBL_LEN] = {
     4096, 4251, 4412, 4579,  4752,  4932,  5118,  5312,  5513,  5722, 5938,
     6163, 6396, 6638, 6889,  7150,  7420,  7701,  7992,  8295,  8609, 8934,
     9273, 9623, 9987, 10365, 10758, 11165, 11587, 12025, 12480, 12953};
 
 /* Gain/Suppression tables for virtual Mic (in Q10) */
-static const uint16_t kGainTableVirtualMic[128] = {
+const uint16_t kGainTableVirtualMic[128] = {
     1052,  1081,  1110,  1141,  1172,  1204,  1237,  1271,  1305,  1341,  1378,
     1416,  1454,  1494,  1535,  1577,  1620,  1664,  1710,  1757,  1805,  1854,
     1905,  1957,  2010,  2065,  2122,  2180,  2239,  2301,  2364,  2428,  2495,
@@ -104,7 +110,7 @@ static const uint16_t kGainTableVirtualMic[128] = {
     15212, 15628, 16055, 16494, 16945, 17409, 17885, 18374, 18877, 19393, 19923,
     20468, 21028, 21603, 22194, 22801, 23425, 24065, 24724, 25400, 26095, 26808,
     27541, 28295, 29069, 29864, 30681, 31520, 32382};
-static const uint16_t kSuppressionTableVirtualMic[128] = {
+const uint16_t kSuppressionTableVirtualMic[128] = {
     1024, 1006, 988, 970, 952, 935, 918, 902, 886, 870, 854, 839, 824, 809, 794,
     780,  766,  752, 739, 726, 713, 700, 687, 675, 663, 651, 639, 628, 616, 605,
     594,  584,  573, 563, 553, 543, 533, 524, 514, 505, 496, 487, 478, 470, 461,
@@ -120,7 +126,7 @@ static const uint16_t kSuppressionTableVirtualMic[128] = {
  * targetLevelTable = fprintf('%d,\t%d,\t%d,\t%d,\n',
  * round((32767*10.^(-(0:63)'/20)).^2*16/2^7) */
 
-static const int32_t kTargetLevelTable[64] = {
+const int32_t kTargetLevelTable[64] = {
     134209536, 106606424, 84680493, 67264106, 53429779, 42440782, 33711911,
     26778323,  21270778,  16895980, 13420954, 10660642, 8468049,  6726411,
     5342978,   4244078,   3371191,  2677832,  2127078,  1689598,  1342095,
@@ -265,7 +271,7 @@ int WebRtcAgc_GetAddFarendError(void* state, size_t samples) {
   LegacyAgc* stt;
   stt = reinterpret_cast<LegacyAgc*>(state);
 
-  if (stt == NULL)
+  if (stt == nullptr)
     return -1;
 
   if (stt->fs == 8000) {
@@ -943,7 +949,7 @@ int WebRtcAgc_Analyze(void* agcInst,
                       int32_t gains[11]) {
   LegacyAgc* stt = reinterpret_cast<LegacyAgc*>(agcInst);
 
-  if (stt == NULL) {
+  if (stt == nullptr) {
     return -1;
   }
 
@@ -1005,7 +1011,7 @@ int WebRtcAgc_set_config(void* agcInst, WebRtcAgcConfig agcConfig) {
   LegacyAgc* stt;
   stt = reinterpret_cast<LegacyAgc*>(agcInst);
 
-  if (stt == NULL) {
+  if (stt == nullptr) {
     return -1;
   }
 
@@ -1053,11 +1059,11 @@ int WebRtcAgc_get_config(void* agcInst, WebRtcAgcConfig* config) {
   LegacyAgc* stt;
   stt = reinterpret_cast<LegacyAgc*>(agcInst);
 
-  if (stt == NULL) {
+  if (stt == nullptr) {
     return -1;
   }
 
-  if (config == NULL) {
+  if (config == nullptr) {
     stt->lastError = AGC_NULL_POINTER_ERROR;
     return -1;
   }

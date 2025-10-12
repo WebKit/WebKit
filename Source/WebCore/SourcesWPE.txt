@@ -48,6 +48,8 @@ editing/glib/WebContentReaderGLib.cpp
 
 loader/soup/ResourceLoaderSoup.cpp
 
+page/glib/DragControllerGLib.cpp
+
 page/linux/ResourceUsageOverlayLinux.cpp
 page/linux/ResourceUsageThreadLinux.cpp
 
@@ -56,11 +58,20 @@ platform/gamepad/libwpe/GamepadProviderLibWPE.cpp
 
 platform/generic/ScrollbarsControllerGeneric.cpp
 
+platform/glib/DragDataGLib.cpp
+platform/glib/PasteboardGLib.cpp
+platform/glib/RunLoopObserverGLib.cpp
+
 platform/graphics/PlatformDisplay.cpp @no-unify
 
 platform/graphics/angle/PlatformDisplayANGLE.cpp @no-unify
 
+platform/graphics/glib/ImageAdapterGLib.cpp
+
 platform/graphics/wpe/SystemFontDatabaseWPE.cpp
+
+platform/graphics/android/GraphicsContextGLTextureMapperAndroid.h @no-unify
+platform/graphics/android/GraphicsContextGLTextureMapperAndroid.cpp @no-unify
 
 platform/graphics/egl/GLContext.cpp @no-unify
 platform/graphics/egl/GLContextLibWPE.cpp @no-unify
@@ -73,7 +84,7 @@ platform/graphics/egl/PlatformDisplaySurfaceless.cpp @no-unify
 
 platform/graphics/gbm/DMABufBuffer.cpp
 platform/graphics/gbm/DRMDeviceManager.cpp
-platform/graphics/gbm/DRMDeviceNode.cpp
+platform/graphics/gbm/GBMDevice.cpp
 platform/graphics/gbm/GraphicsContextGLTextureMapperGBM.cpp @no-unify
 platform/graphics/gbm/MemoryMappedGPUBuffer.cpp
 platform/graphics/gbm/PlatformDisplayGBM.cpp @no-unify
@@ -97,3 +108,5 @@ platform/wpe/PasteboardWPE.cpp
 platform/wpe/PlatformScreenWPE.cpp
 
 platform/xdg/MIMETypeRegistryXdg.cpp
+
+platform/xr/openxr/PlatformXROpenXR.cpp

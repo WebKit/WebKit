@@ -396,8 +396,8 @@ static void optimize_mb(MACROBLOCK *x) {
   ENTROPY_CONTEXT *ta;
   ENTROPY_CONTEXT *tl;
 
-  memcpy(&t_above, x->e_mbd.above_context, sizeof(ENTROPY_CONTEXT_PLANES));
-  memcpy(&t_left, x->e_mbd.left_context, sizeof(ENTROPY_CONTEXT_PLANES));
+  t_above = *x->e_mbd.above_context;
+  t_left = *x->e_mbd.left_context;
 
   ta = (ENTROPY_CONTEXT *)&t_above;
   tl = (ENTROPY_CONTEXT *)&t_left;
@@ -437,8 +437,8 @@ void vp8_optimize_mby(MACROBLOCK *x) {
 
   if (!x->e_mbd.left_context) return;
 
-  memcpy(&t_above, x->e_mbd.above_context, sizeof(ENTROPY_CONTEXT_PLANES));
-  memcpy(&t_left, x->e_mbd.left_context, sizeof(ENTROPY_CONTEXT_PLANES));
+  t_above = *x->e_mbd.above_context;
+  t_left = *x->e_mbd.left_context;
 
   ta = (ENTROPY_CONTEXT *)&t_above;
   tl = (ENTROPY_CONTEXT *)&t_left;
@@ -470,8 +470,8 @@ void vp8_optimize_mbuv(MACROBLOCK *x) {
 
   if (!x->e_mbd.left_context) return;
 
-  memcpy(&t_above, x->e_mbd.above_context, sizeof(ENTROPY_CONTEXT_PLANES));
-  memcpy(&t_left, x->e_mbd.left_context, sizeof(ENTROPY_CONTEXT_PLANES));
+  t_above = *x->e_mbd.above_context;
+  t_left = *x->e_mbd.left_context;
 
   ta = (ENTROPY_CONTEXT *)&t_above;
   tl = (ENTROPY_CONTEXT *)&t_left;

@@ -29,7 +29,7 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
 
 #import "Logging.h"
-#import "RealityKitBridging.h"
+#import "WKRKEntity.h"
 #import <CoreRE/CoreRE.h>
 #import <UIKit/UIKit.h>
 #import <WebKitAdditions/REPtr.h>

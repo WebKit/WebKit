@@ -32,7 +32,7 @@ namespace WebCore {
 struct OpenID4VPRequest;
 struct MobileDocumentRequest;
 
-using UnvalidatedDigitalCredentialRequest = std::variant<MobileDocumentRequest, OpenID4VPRequest>;
+using UnvalidatedDigitalCredentialRequest = Variant<MobileDocumentRequest, OpenID4VPRequest>;
 
 } // namespace WebCore
 

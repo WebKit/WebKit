@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "CSSRule.h"
+#include <WebCore/CSSRule.h>
 
 namespace WebCore {
 

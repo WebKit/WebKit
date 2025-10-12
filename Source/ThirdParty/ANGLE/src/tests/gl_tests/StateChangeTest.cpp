@@ -8,6 +8,10 @@
 //   ANGLE's dirty bits systems don't get confused by certain sequences of state changes.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 #include "util/random_utils.h"
@@ -5587,6 +5591,153 @@ TEST_P(ValidationStateChangeTest, MapBufferAndDraw)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
 }
 
+// Test mapBuffer while attribute disabled should succeed. If attribute is then enabled it should
+// fail with GL_INVALID_OPERATION
+TEST_P(ValidationStateChangeTest, MapBufferWithAttribDisabledThenEnableAndDraw)
+{
+    // Initialize program and set up state.
+    ANGLE_GL_PROGRAM(program, kColorVS, kColorFS);
+
+    glUseProgram(program);
+    GLint positionLoc = glGetAttribLocation(program, "position");
+    ASSERT_NE(-1, positionLoc);
+    GLint colorLoc = glGetAttribLocation(program, "color");
+    ASSERT_NE(-1, colorLoc);
+
+    const std::array<Vector3, 6> &quadVertices = GetQuadVertices();
+    const size_t posBufferSize                 = quadVertices.size() * sizeof(Vector3);
+
+    // Start with position enabled and posBuffer unmapped.
+    GLBuffer posBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
+    glBufferData(GL_ARRAY_BUFFER, posBufferSize, quadVertices.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLoc);
+
+    // Color disabled and color buffer mapped.
+    std::vector<GLColor> colorVertices(6, GLColor::blue);
+    const size_t colorBufferSize = sizeof(GLColor) * 6;
+    GLBuffer colorBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+    glBufferData(GL_ARRAY_BUFFER, colorBufferSize, colorVertices.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(colorLoc, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, nullptr);
+    glDisableVertexAttribArray(colorLoc);
+    glMapBufferRange(GL_ARRAY_BUFFER, 0, colorBufferSize, GL_MAP_READ_BIT);
+    ASSERT_GL_NO_ERROR();
+
+    // Draw with colorBuffer mapped but disabled. Should succeed.
+    glVertexAttrib4f(colorLoc, 0, 1, 0, 1);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // Now enable color attribute and draw. Should produce GL_INVALID_OPERATION.
+    glEnableVertexAttribArray(colorLoc);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // Unmap then draw. Should succeed.
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+}
+
+// Test glBindBuffer picks up buffer changes in another shared context.
+TEST_P(ValidationStateChangeTest, RebindBufferShouldPickupBufferChange)
+{
+    EGLWindow *window   = getEGLWindow();
+    EGLDisplay display  = window->getDisplay();
+    EGLConfig config    = window->getConfig();
+    EGLContext context1 = window->getContext();
+    EGLSurface surface1 = window->getSurface();
+
+    // Initialize program and set up state.
+    ANGLE_GL_PROGRAM(program, kColorVS, kColorFS);
+
+    glUseProgram(program);
+    GLint positionLoc = glGetAttribLocation(program, "position");
+    ASSERT_NE(-1, positionLoc);
+    GLint colorLoc = glGetAttribLocation(program, "color");
+    ASSERT_NE(-1, colorLoc);
+
+    const std::array<Vector3, 6> &quadVertices = GetQuadVertices();
+    const size_t posBufferSize                 = quadVertices.size() * sizeof(Vector3);
+
+    // Start with context 1, with position and color enabled and unmapped. Draw should success.
+    GLBuffer posBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
+    glBufferData(GL_ARRAY_BUFFER, posBufferSize, quadVertices.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLoc);
+    std::vector<GLColor> colorVertices(6, GLColor::blue);
+    const size_t colorBufferSize = sizeof(GLColor) * 6;
+    GLBuffer colorBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+    glBufferData(GL_ARRAY_BUFFER, colorBufferSize, colorVertices.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(colorLoc, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, nullptr);
+    glEnableVertexAttribArray(colorLoc);
+    glVertexAttrib4f(colorLoc, 0, 1, 0, 1);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    // Created shared context2, and switch to context2 and draw. Should success.
+    EGLint pbufferAttributes[] = {EGL_WIDTH,         getWindowWidth(), EGL_HEIGHT,
+                                  getWindowHeight(), EGL_NONE,         EGL_NONE};
+    EGLSurface surface2        = eglCreatePbufferSurface(display, config, pbufferAttributes);
+    EGLContext context2        = window->createContext(context1, nullptr);
+    EXPECT_EGL_SUCCESS();
+    ASSERT_NE(context2, EGL_NO_CONTEXT);
+    eglMakeCurrent(display, surface2, surface2, context2);
+    EXPECT_EGL_SUCCESS();
+    glUseProgram(program);
+    glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLoc);
+    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+    glVertexAttribPointer(colorLoc, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, nullptr);
+    glEnableVertexAttribArray(colorLoc);
+    glVertexAttrib4f(colorLoc, 0, 1, 0, 1);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    // In context2, map color buffer again and draw, should produce produce GL_INVALID_OPERATION
+    GLColor *bufferPtr = static_cast<GLColor *>(
+        glMapBufferRange(GL_ARRAY_BUFFER, 0, colorBufferSize, GL_MAP_WRITE_BIT));
+    for (size_t i = 0; i < 6; i++)
+    {
+        bufferPtr[i] = GLColor::red;
+    }
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // Now switch back to context1 and draw. Since buffer is modified (map) in context2, we need to
+    // rebind the buffer. Rebind should pick up the buffer change and produce GL_INVALID_OPERATION.
+    eglMakeCurrent(display, surface1, surface1, context1);
+    EXPECT_EGL_SUCCESS();
+    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // Back to context2 and unmap the color buffer without draw
+    eglMakeCurrent(display, surface2, surface2, context2);
+    EXPECT_EGL_SUCCESS();
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    // Switch back to context1 and rebind and draw. Rebind should pick up the buffer change and draw
+    // should succeed.
+    eglMakeCurrent(display, surface1, surface1, context1);
+    EXPECT_EGL_SUCCESS();
+    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Clean up and destroy context2
+    eglMakeCurrent(display, surface1, surface1, context1);
+    eglDestroyContext(display, context2);
+}
+
 // Tests that mapping an immutable and persistent buffer after calling glVertexAttribPointer()
 // allows rendering to succeed.
 TEST_P(ValidationStateChangeTest, MapImmutablePersistentBufferAndDraw)
@@ -5800,6 +5951,116 @@ TEST_P(ValidationStateChangeTestES31, MapBufferAndDrawWithDivisor)
     glDrawArrays(GL_TRIANGLES, 0, 6);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test glBindVertexBuffer picks up buffer changes in another shared context.
+TEST_P(ValidationStateChangeTestES31, RebindVertexBufferShouldPickupBufferChange)
+{
+    EGLWindow *window   = getEGLWindow();
+    EGLDisplay display  = window->getDisplay();
+    EGLConfig config    = window->getConfig();
+    EGLContext context1 = window->getContext();
+    EGLSurface surface1 = window->getSurface();
+
+    // Initialize program and set up state.
+    ANGLE_GL_PROGRAM(program, kColorVS, kColorFS);
+
+    glUseProgram(program);
+    GLint positionLoc = glGetAttribLocation(program, "position");
+    ASSERT_NE(-1, positionLoc);
+    GLint colorLoc = glGetAttribLocation(program, "color");
+    ASSERT_NE(-1, colorLoc);
+
+    const std::array<Vector3, 6> &quadVertices = GetQuadVertices();
+    const size_t posBufferSize                 = quadVertices.size() * sizeof(Vector3);
+
+    // Start with context 1, with position and color enabled and unmapped. Draw should success.
+    GLVertexArray vao1;
+    glBindVertexArray(vao1);
+    GLBuffer posBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
+    glBufferData(GL_ARRAY_BUFFER, posBufferSize, quadVertices.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLoc);
+    std::vector<GLColor> colorVertices(6, GLColor::blue);
+    const size_t colorBufferSize = sizeof(GLColor) * 6;
+    GLBuffer colorBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+    glBufferData(GL_ARRAY_BUFFER, colorBufferSize, colorVertices.data(), GL_STATIC_DRAW);
+    glVertexAttribFormat(colorLoc, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0);
+    constexpr GLint kBufferBinding1 = 3;
+    ASSERT_NE(colorLoc, kBufferBinding1);
+    ASSERT_NE(positionLoc, kBufferBinding1);
+    glVertexAttribBinding(colorLoc, kBufferBinding1);
+    glBindVertexBuffer(kBufferBinding1, colorBuffer, /*offset*/ 0, /*stride*/ sizeof(GLColor));
+    glEnableVertexAttribArray(colorLoc);
+    glVertexAttrib4f(colorLoc, 0, 1, 0, 1);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    // Created shared context2, and switch to context2 and draw. Should success.
+    EGLint pbufferAttributes[] = {EGL_WIDTH,         getWindowWidth(), EGL_HEIGHT,
+                                  getWindowHeight(), EGL_NONE,         EGL_NONE};
+    EGLSurface surface2        = eglCreatePbufferSurface(display, config, pbufferAttributes);
+    EGLContext context2        = window->createContext(context1, nullptr);
+    EXPECT_EGL_SUCCESS();
+    ASSERT_NE(context2, EGL_NO_CONTEXT);
+    eglMakeCurrent(display, surface2, surface2, context2);
+    EXPECT_EGL_SUCCESS();
+    glUseProgram(program);
+    GLVertexArray vao2;
+    glBindVertexArray(vao2);
+    glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLoc);
+    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+    glVertexAttribFormat(colorLoc, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0);
+    constexpr GLint kBufferBinding2 = 4;
+    ASSERT_NE(colorLoc, kBufferBinding2);
+    ASSERT_NE(positionLoc, kBufferBinding2);
+    glVertexAttribBinding(colorLoc, kBufferBinding2);
+    glBindVertexBuffer(kBufferBinding2, colorBuffer, /*offset*/ 0, /*stride*/ sizeof(GLColor));
+    glEnableVertexAttribArray(colorLoc);
+    glVertexAttrib4f(colorLoc, 0, 1, 0, 1);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    // In context2, map color buffer again and draw, should produce produce GL_INVALID_OPERATION
+    GLColor *bufferPtr = static_cast<GLColor *>(
+        glMapBufferRange(GL_ARRAY_BUFFER, 0, colorBufferSize, GL_MAP_WRITE_BIT));
+    for (size_t i = 0; i < 6; i++)
+    {
+        bufferPtr[i] = GLColor::red;
+    }
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // Now switch back to context1 and draw. Since buffer is modified (map) in context2, we need to
+    // rebind the buffer. Rebind should pick up the buffer change and produce GL_INVALID_OPERATION.
+    eglMakeCurrent(display, surface1, surface1, context1);
+    EXPECT_EGL_SUCCESS();
+    glBindVertexBuffer(kBufferBinding1, colorBuffer, /*offset*/ 0, /*stride*/ sizeof(GLColor));
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // Back to context2 and unmap the color buffer without draw
+    eglMakeCurrent(display, surface2, surface2, context2);
+    EXPECT_EGL_SUCCESS();
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    // Switch back to context1 and rebind and draw. Rebind should pick up the buffer change and draw
+    // should succeed.
+    eglMakeCurrent(display, surface1, surface1, context1);
+    EXPECT_EGL_SUCCESS();
+    glBindVertexBuffer(kBufferBinding1, colorBuffer, /*offset*/ 0, /*stride*/ sizeof(GLColor));
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Clean up and destroy context2
+    eglMakeCurrent(display, surface1, surface1, context1);
+    eglDestroyContext(display, context2);
 }
 
 // Tests that changing a vertex binding with glVertexAttribDivisor updates the buffer size check.

@@ -25,8 +25,10 @@
 #pragma once
 
 #include <array>
+#include <concepts>
+#include <type_traits>
 #include <wtf/Assertions.h>
-#include <wtf/text/LChar.h>
+#include <wtf/text/Latin1Character.h>
 
 // The behavior of many of the functions in the <ctype.h> header is dependent
 // on the current locale. But in the WebKit project, all uses of those functions
@@ -40,56 +42,60 @@
 
 namespace WTF {
 
-template<typename CharacterType> constexpr bool isASCII(CharacterType);
-template<typename CharacterType> constexpr bool isASCIIAlpha(CharacterType);
-template<typename CharacterType> constexpr bool isASCIIAlphanumeric(CharacterType);
-template<typename CharacterType> constexpr bool isASCIIBinaryDigit(CharacterType);
-template<typename CharacterType> constexpr bool isASCIIDigit(CharacterType);
-template<typename CharacterType> constexpr bool isASCIIDigitOrPunctuation(CharacterType);
-template<typename CharacterType> constexpr bool isASCIIHexDigit(CharacterType);
-template<typename CharacterType> constexpr bool isASCIILower(CharacterType);
-template<typename CharacterType> constexpr bool isASCIIOctalDigit(CharacterType);
-template<typename CharacterType> constexpr bool isASCIIPrintable(CharacterType);
-template<typename CharacterType> constexpr bool isTabOrSpace(CharacterType);
-template<typename CharacterType> constexpr bool isASCIIWhitespace(CharacterType);
-template<typename CharacterType> constexpr bool isUnicodeCompatibleASCIIWhitespace(CharacterType);
-template<typename CharacterType> constexpr bool isASCIIUpper(CharacterType);
+template<typename T>
+concept Character = std::convertible_to<std::remove_cv_t<T>, char>;
+
+template<Character CharacterType> constexpr bool isASCII(CharacterType);
+template<Character CharacterType> constexpr bool isASCIIAlpha(CharacterType);
+template<Character CharacterType> constexpr bool isASCIIAlphanumeric(CharacterType);
+template<Character CharacterType> constexpr bool isASCIIBinaryDigit(CharacterType);
+template<Character CharacterType> constexpr bool isASCIIDigit(CharacterType);
+template<Character CharacterType> constexpr bool isASCIIDigitOrPunctuation(CharacterType);
+template<Character CharacterType> constexpr bool isASCIIHexDigit(CharacterType);
+template<Character CharacterType> constexpr bool isASCIILower(CharacterType);
+template<Character CharacterType> constexpr bool isASCIIOctalDigit(CharacterType);
+template<Character CharacterType> constexpr bool isASCIIPrintable(CharacterType);
+template<Character CharacterType> constexpr bool isASCIIGraphic(CharacterType);
+template<Character CharacterType> constexpr bool isTabOrSpace(CharacterType);
+template<Character CharacterType> constexpr bool isASCIIWhitespace(CharacterType);
+template<Character CharacterType> constexpr bool isUnicodeCompatibleASCIIWhitespace(CharacterType);
+template<Character CharacterType> constexpr bool isASCIIUpper(CharacterType);
 
 // Inverse of isASCIIWhitespace for predicates
-template<typename CharacterType> constexpr bool isNotASCIIWhitespace(CharacterType);
+template<Character CharacterType> constexpr bool isNotASCIIWhitespace(CharacterType);
 
-template<typename CharacterType> CharacterType toASCIILower(CharacterType);
-template<typename CharacterType> CharacterType toASCIIUpper(CharacterType);
+template<Character CharacterType> CharacterType toASCIILower(CharacterType);
+template<Character CharacterType> CharacterType toASCIIUpper(CharacterType);
 
-template<typename CharacterType> uint8_t toASCIIHexValue(CharacterType);
-template<typename CharacterType> uint8_t toASCIIHexValue(CharacterType firstCharacter, CharacterType secondCharacter);
+template<Character CharacterType> uint8_t toASCIIHexValue(CharacterType);
+template<Character CharacterType> uint8_t toASCIIHexValue(CharacterType firstCharacter, CharacterType secondCharacter);
 
 constexpr char lowerNibbleToASCIIHexDigit(uint8_t);
 constexpr char upperNibbleToASCIIHexDigit(uint8_t);
 constexpr char lowerNibbleToLowercaseASCIIHexDigit(uint8_t);
 constexpr char upperNibbleToLowercaseASCIIHexDigit(uint8_t);
 
-template<typename CharacterType> constexpr bool isASCIIAlphaCaselessEqual(CharacterType, char expectedASCIILowercaseLetter);
+template<Character CharacterType> constexpr bool isASCIIAlphaCaselessEqual(CharacterType, char expectedASCIILowercaseLetter);
 
 // The toASCIILowerUnchecked function can be used for comparing any input character
 // to a lowercase English character. The isASCIIAlphaCaselessEqual function should
 // be used for regular comparison of ASCII alpha characters, but switch statements
 // in the CSS tokenizer, for example, instead make direct use toASCIILowerUnchecked.
-template<typename CharacterType> constexpr CharacterType toASCIILowerUnchecked(CharacterType);
+template<Character CharacterType> constexpr CharacterType toASCIILowerUnchecked(CharacterType);
 
 extern WTF_EXPORT_PRIVATE const std::array<uint8_t, 256> asciiCaseFoldTable;
 
-template<typename CharacterType> constexpr bool isASCII(CharacterType character)
+template<Character CharacterType> constexpr bool isASCII(CharacterType character)
 {
     return !(character & ~0x7F);
 }
 
-template<typename CharacterType> constexpr bool isASCIILower(CharacterType character)
+template<Character CharacterType> constexpr bool isASCIILower(CharacterType character)
 {
     return character >= 'a' && character <= 'z';
 }
 
-template<typename CharacterType> constexpr CharacterType toASCIILowerUnchecked(CharacterType character)
+template<Character CharacterType> constexpr CharacterType toASCIILowerUnchecked(CharacterType character)
 {
     // This function can be used for comparing any input character
     // to a lowercase English character. The isASCIIAlphaCaselessEqual
@@ -99,53 +105,58 @@ template<typename CharacterType> constexpr CharacterType toASCIILowerUnchecked(C
     return character | 0x20;
 }
 
-template<typename CharacterType> constexpr bool isASCIIAlpha(CharacterType character)
+template<Character CharacterType> constexpr bool isASCIIAlpha(CharacterType character)
 {
     return isASCIILower(toASCIILowerUnchecked(character));
 }
 
-template<typename CharacterType> constexpr bool isASCIIDigit(CharacterType character)
+template<Character CharacterType> constexpr bool isASCIIDigit(CharacterType character)
 {
     return character >= '0' && character <= '9';
 }
 
-template<typename CharacterType> constexpr bool isASCIIAlphanumeric(CharacterType character)
+template<Character CharacterType> constexpr bool isASCIIAlphanumeric(CharacterType character)
 {
     return isASCIIDigit(character) || isASCIIAlpha(character);
 }
 
-template<typename CharacterType> constexpr bool isASCIIHexDigit(CharacterType character)
+template<Character CharacterType> constexpr bool isASCIIHexDigit(CharacterType character)
 {
     return isASCIIDigit(character) || (toASCIILowerUnchecked(character) >= 'a' && toASCIILowerUnchecked(character) <= 'f');
 }
 
-template<typename CharacterType> constexpr bool isASCIIBinaryDigit(CharacterType character)
+template<Character CharacterType> constexpr bool isASCIIBinaryDigit(CharacterType character)
 {
     return character == '0' || character == '1';
 }
 
-template<typename CharacterType> constexpr bool isASCIIOctalDigit(CharacterType character)
+template<Character CharacterType> constexpr bool isASCIIOctalDigit(CharacterType character)
 {
     return character >= '0' && character <= '7';
 }
 
-template<typename CharacterType> constexpr bool isASCIIPrintable(CharacterType character)
+template<Character CharacterType> constexpr bool isASCIIPrintable(CharacterType character)
 {
     return character >= ' ' && character <= '~';
 }
 
-template<typename CharacterType> constexpr bool isTabOrSpace(CharacterType character)
+template<Character CharacterType> constexpr bool isASCIIGraphic(CharacterType character)
+{
+    return character >= '!' && character <= '~';
+}
+
+template<Character CharacterType> constexpr bool isTabOrSpace(CharacterType character)
 {
     return character == ' ' || character == '\t';
 }
 
 // Infra's "ASCII whitespace" <https://infra.spec.whatwg.org/#ascii-whitespace>
-template<typename CharacterType> constexpr bool isASCIIWhitespace(CharacterType character)
+template<Character CharacterType> constexpr bool isASCIIWhitespace(CharacterType character)
 {
     return character == ' ' || character == '\n' || character == '\t' || character == '\r' || character == '\f';
 }
 
-template<typename CharacterType> constexpr bool isASCIIWhitespaceWithoutFF(CharacterType character)
+template<Character CharacterType> constexpr bool isASCIIWhitespaceWithoutFF(CharacterType character)
 {
     // This is different from isASCIIWhitespace: JSON/HTTP/XML do not accept \f as a whitespace.
     // ECMA-404 specifies the following:
@@ -160,22 +171,22 @@ template<typename CharacterType> constexpr bool isASCIIWhitespaceWithoutFF(Chara
     return character == ' ' || character == '\n' || character == '\t' || character == '\r';
 }
 
-template<typename CharacterType> constexpr bool isUnicodeCompatibleASCIIWhitespace(CharacterType character)
+template<Character CharacterType> constexpr bool isUnicodeCompatibleASCIIWhitespace(CharacterType character)
 {
     return isASCIIWhitespace(character) || character == '\v';
 }
 
-template<typename CharacterType> constexpr bool isASCIIUpper(CharacterType character)
+template<Character CharacterType> constexpr bool isASCIIUpper(CharacterType character)
 {
     return character >= 'A' && character <= 'Z';
 }
 
-template<typename CharacterType> constexpr bool isNotASCIIWhitespace(CharacterType character)
+template<Character CharacterType> constexpr bool isNotASCIIWhitespace(CharacterType character)
 {
     return !isASCIIWhitespace(character);
 }
 
-template<typename CharacterType> inline CharacterType toASCIILower(CharacterType character)
+template<Character CharacterType> inline CharacterType toASCIILower(CharacterType character)
 {
     return character | (isASCIIUpper(character) << 5);
 }
@@ -185,23 +196,23 @@ template<> inline char toASCIILower(char character)
     return static_cast<char>(asciiCaseFoldTable[static_cast<uint8_t>(character)]);
 }
 
-template<> inline LChar toASCIILower(LChar character)
+template<> inline Latin1Character toASCIILower(Latin1Character character)
 {
     return asciiCaseFoldTable[character];
 }
 
-template<typename CharacterType> inline CharacterType toASCIIUpper(CharacterType character)
+template<Character CharacterType> inline CharacterType toASCIIUpper(CharacterType character)
 {
     return character & ~(isASCIILower(character) << 5);
 }
 
-template<typename CharacterType> inline uint8_t toASCIIHexValue(CharacterType character)
+template<Character CharacterType> inline uint8_t toASCIIHexValue(CharacterType character)
 {
     ASSERT(isASCIIHexDigit(character));
     return character < 'A' ? character - '0' : (character - 'A' + 10) & 0xF;
 }
 
-template<typename CharacterType> inline uint8_t toASCIIHexValue(CharacterType firstCharacter, CharacterType secondCharacter)
+template<Character CharacterType> inline uint8_t toASCIIHexValue(CharacterType firstCharacter, CharacterType secondCharacter)
 {
     return toASCIIHexValue(firstCharacter) << 4 | toASCIIHexValue(secondCharacter);
 }
@@ -230,7 +241,7 @@ constexpr char upperNibbleToLowercaseASCIIHexDigit(uint8_t value)
     return nibble + (nibble < 10 ? '0' : 'a' - 10);
 }
 
-template<typename CharacterType> constexpr bool isASCIIAlphaCaselessEqual(CharacterType inputCharacter, char expectedASCIILowercaseLetter)
+template<Character CharacterType> constexpr bool isASCIIAlphaCaselessEqual(CharacterType inputCharacter, char expectedASCIILowercaseLetter)
 {
     // Name of this argument says this must be a lowercase letter, but it can actually be:
     //   - a lowercase letter
@@ -249,7 +260,7 @@ template<typename CharacterType> constexpr bool isASCIIAlphaCaselessEqual(Charac
     return false;
 }
 
-template<typename CharacterType> constexpr bool isASCIIDigitOrPunctuation(CharacterType character)
+template<Character CharacterType> constexpr bool isASCIIDigitOrPunctuation(CharacterType character)
 {
     return (character >= '!' && character <= '@') || (character >= '[' && character <= '`') || (character >= '{' && character <= '~');
 }
@@ -267,12 +278,12 @@ using WTF::isASCIIHexDigit;
 using WTF::isASCIILower;
 using WTF::isASCIIOctalDigit;
 using WTF::isASCIIPrintable;
-using WTF::isTabOrSpace;
+using WTF::isASCIIUpper;
 using WTF::isASCIIWhitespace;
 using WTF::isASCIIWhitespaceWithoutFF;
-using WTF::isUnicodeCompatibleASCIIWhitespace;
-using WTF::isASCIIUpper;
 using WTF::isNotASCIIWhitespace;
+using WTF::isTabOrSpace;
+using WTF::isUnicodeCompatibleASCIIWhitespace;
 using WTF::lowerNibbleToASCIIHexDigit;
 using WTF::lowerNibbleToLowercaseASCIIHexDigit;
 using WTF::toASCIIHexValue;

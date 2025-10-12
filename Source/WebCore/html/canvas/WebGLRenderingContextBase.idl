@@ -53,7 +53,6 @@ typedef (HTMLCanvasElement) WebGLCanvas;
 [
     Conditional=WEBGL,
     CustomIsReachable,
-    CustomToJSObject,
     JSCustomMarkFunction,
     ExportMacro=WEBCORE_EXPORT,
 ] interface mixin WebGLRenderingContextBase {

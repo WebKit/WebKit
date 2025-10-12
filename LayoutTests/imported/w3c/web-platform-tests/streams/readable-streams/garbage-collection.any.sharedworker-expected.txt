@@ -3,4 +3,5 @@ PASS ReadableStreamController methods should continue working properly when scri
 PASS ReadableStream closed promise should fulfill even if the stream and reader JS references are lost
 PASS ReadableStream closed promise should reject even if stream and reader JS references are lost
 PASS Garbage-collecting a ReadableStreamDefaultReader should not unlock its stream
+PASS A ReadableStream and its reader should not be garbage collected while there is a read promise pending
 

@@ -9,6 +9,10 @@
 #ifndef LIBANGLE_FORMATUTILS_H_
 #define LIBANGLE_FORMATUTILS_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <stdint.h>
 #include <cstddef>
 #include <ostream>
@@ -351,9 +355,6 @@ ANGLE_INLINE int GetNativeVisualID(const InternalFormat &internalFormat)
 #if defined(ANGLE_PLATFORM_ANDROID)
     nativeVisualId =
         angle::android::GLInternalFormatToNativePixelFormat(internalFormat.internalFormat);
-#endif
-#if defined(ANGLE_PLATFORM_LINUX) && defined(ANGLE_USES_GBM)
-    nativeVisualId = angle::GLInternalFormatToGbmFourCCFormat(internalFormat.internalFormat);
 #endif
 
     return nativeVisualId;

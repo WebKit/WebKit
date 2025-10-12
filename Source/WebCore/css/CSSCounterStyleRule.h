@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CSSCounterStyle.h"
-#include "CSSRule.h"
-#include "StyleProperties.h"
-#include "StyleRule.h"
+#include <WebCore/CSSCounterStyle.h>
+#include <WebCore/CSSRule.h>
+#include <WebCore/StyleProperties.h>
+#include <WebCore/StyleRule.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {

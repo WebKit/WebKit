@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // MulithreadingTest.cpp : Tests of multithreaded rendering
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "test_utils/ANGLETest.h"
 #include "test_utils/MultiThreadSteps.h"
@@ -483,6 +488,55 @@ TEST_P(MultithreadingTest, MultiContextCreateAndDeleteResources)
     runMultithreadedGLTest(testBody, 32);
 }
 
+// Test that changing sampler parameters of textures in unrelated share groups is thread-safe.
+// Regression test for a bug in the Vulkan backend where the VkSampler cache was not thread-safe.
+TEST_P(MultithreadingTestES3, MultiContextTextureSampleParameters)
+{
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
+
+    constexpr size_t kThreadCount = 16;
+    std::atomic<uint32_t> barrier(0);
+
+    auto testBody = [this, &barrier](EGLSurface surface, size_t thread) {
+        constexpr size_t kIterationsPerThread = 32;
+
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+        glUseProgram(program);
+        glUseProgram(program);
+        GLint textureUniformLocation =
+            glGetUniformLocation(program, angle::essl1_shaders::Texture2DUniform());
+        ASSERT_NE(textureUniformLocation, -1);
+        glUniform1i(textureUniformLocation, 0);
+        glActiveTexture(GL_TEXTURE0);
+
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+
+        barrier++;
+        while (barrier < kThreadCount)
+        {
+        }
+
+        for (size_t iteration = 0; iteration < kIterationsPerThread; iteration++)
+        {
+            // Change the sampling parameters of the texture.
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                            iteration % 2 == 0 ? GL_LINEAR : GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                            iteration % 3 == 0 ? GL_LINEAR : GL_NEAREST);
+
+            // Make sure the texture is synced.
+            drawQuad(program, essl1_shaders::PositionAttrib(), 0);
+            EXPECT_GL_NO_ERROR();
+        }
+        glFinish();
+    };
+
+    runMultithreadedGLTest(testBody, 16);
+}
+
+// Test that multiple threads can create contexts at the same time.
 TEST_P(MultithreadingTest, MultiCreateContext)
 {
     // Supported by CGL, GLX, and WGL (https://anglebug.com/42263324)
@@ -4213,6 +4267,7 @@ void main()
 
     ASSERT_NE(currentStep, Step::Abort);
 }
+
 ANGLE_INSTANTIATE_TEST(
     MultithreadingTest,
     ES2_METAL(),

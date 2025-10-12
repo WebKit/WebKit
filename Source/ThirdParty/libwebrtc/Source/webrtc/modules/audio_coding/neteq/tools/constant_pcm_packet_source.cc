@@ -10,10 +10,13 @@
 
 #include "modules/audio_coding/neteq/tools/constant_pcm_packet_source.h"
 
-#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
 
+#include "api/units/timestamp.h"
 #include "modules/audio_coding/codecs/pcm16b/pcm16b.h"
-#include "modules/audio_coding/neteq/tools/packet.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -35,36 +38,27 @@ ConstantPcmPacketSource::ConstantPcmPacketSource(size_t payload_len_samples,
   RTC_CHECK_EQ(2U, encoded_len);
 }
 
-std::unique_ptr<Packet> ConstantPcmPacketSource::NextPacket() {
+std::unique_ptr<RtpPacketReceived> ConstantPcmPacketSource::NextPacket() {
   RTC_CHECK_GT(packet_len_bytes_, kHeaderLenBytes);
-  rtc::CopyOnWriteBuffer packet_buffer(packet_len_bytes_);
-  uint8_t* packet_memory = packet_buffer.MutableData();
-  // Fill the payload part of the packet memory with the pre-encoded value.
-  for (unsigned i = 0; i < 2 * payload_len_samples_; ++i)
-    packet_memory[kHeaderLenBytes + i] = encoded_sample_[i % 2];
-  WriteHeader(packet_memory);
-  // `packet` assumes ownership of `packet_memory`.
-  auto packet =
-      std::make_unique<Packet>(std::move(packet_buffer), next_arrival_time_ms_);
-  next_arrival_time_ms_ += payload_len_samples_ / samples_per_ms_;
-  return packet;
-}
-
-void ConstantPcmPacketSource::WriteHeader(uint8_t* packet_memory) {
-  packet_memory[0] = 0x80;
-  packet_memory[1] = static_cast<uint8_t>(payload_type_);
-  packet_memory[2] = seq_number_ >> 8;
-  packet_memory[3] = seq_number_ & 0xFF;
-  packet_memory[4] = timestamp_ >> 24;
-  packet_memory[5] = (timestamp_ >> 16) & 0xFF;
-  packet_memory[6] = (timestamp_ >> 8) & 0xFF;
-  packet_memory[7] = timestamp_ & 0xFF;
-  packet_memory[8] = payload_ssrc_ >> 24;
-  packet_memory[9] = (payload_ssrc_ >> 16) & 0xFF;
-  packet_memory[10] = (payload_ssrc_ >> 8) & 0xFF;
-  packet_memory[11] = payload_ssrc_ & 0xFF;
+  auto rtp_packet = std::make_unique<RtpPacketReceived>();
+  rtp_packet->SetPayloadType(payload_type_);
+  rtp_packet->SetSequenceNumber(seq_number_);
+  rtp_packet->SetTimestamp(timestamp_);
+  rtp_packet->SetSsrc(payload_ssrc_);
   ++seq_number_;
   timestamp_ += static_cast<uint32_t>(payload_len_samples_);
+
+  uint8_t* packet_memory =
+      rtp_packet->AllocatePayload(2 * payload_len_samples_);
+  // Fill the payload part of the packet memory with the pre-encoded value.
+  for (size_t i = 0; i < 2 * payload_len_samples_; ++i) {
+    packet_memory[i] = encoded_sample_[i % 2];
+  }
+
+  rtp_packet->set_arrival_time(Timestamp::Millis(next_arrival_time_ms_));
+  next_arrival_time_ms_ += payload_len_samples_ / samples_per_ms_;
+
+  return rtp_packet;
 }
 
 }  // namespace test

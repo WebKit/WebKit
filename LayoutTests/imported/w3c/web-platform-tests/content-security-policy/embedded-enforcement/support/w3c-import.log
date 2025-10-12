@@ -18,5 +18,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/support/echo-policy-multiple.py
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/support/echo-required-csp.py
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/support/embed-img-and-message-top.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/support/embed-img-and-message-top.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/support/executor.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/support/testharness-helper.sub.js

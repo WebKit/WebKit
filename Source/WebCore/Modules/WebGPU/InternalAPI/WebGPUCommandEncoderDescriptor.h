@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUObjectDescriptorBase.h"
+#include <WebCore/WebGPUObjectDescriptorBase.h>
 
 namespace WebCore::WebGPU {
 

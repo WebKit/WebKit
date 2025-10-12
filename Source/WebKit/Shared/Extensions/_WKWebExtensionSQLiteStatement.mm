@@ -34,6 +34,7 @@
 #import "_WKWebExtensionSQLiteDatabase.h"
 #import "_WKWebExtensionSQLiteHelpers.h"
 #import "_WKWebExtensionSQLiteRow.h"
+#import <WebCore/SQLiteExtras.h>
 #import <sqlite3.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -185,7 +186,7 @@ using namespace WebKit;
     ASSERT(self._isValid);
     ASSERT_ARG(index, index > 0);
 
-    _WKSQLiteErrorCode result = sqlite3_bind_text(_handle, index, string.UTF8String, -1, SQLITE_TRANSIENT);
+    _WKSQLiteErrorCode result = WebCore::sqliteBindText(_handle, index, String(string).utf8());
     if (result != SQLITE_OK)
         RELEASE_LOG_DEBUG(Extensions, "Could not bind string: %@ (%d)", _database.lastErrorMessage, (int)result);
 }
@@ -229,7 +230,7 @@ using namespace WebKit;
     ASSERT(self._isValid);
     ASSERT_ARG(index, index > 0);
 
-    _WKSQLiteErrorCode result = sqlite3_bind_blob(_handle, index, data.bytes, data.length, SQLITE_TRANSIENT);
+    _WKSQLiteErrorCode result = WebCore::sqliteBindBlob(_handle, index, span(data));
     if (result != SQLITE_OK)
         RELEASE_LOG_DEBUG(Extensions, "Could not bind blob: %@ (%d)", _database.lastErrorMessage, (int)result);
 }
@@ -255,10 +256,8 @@ using namespace WebKit;
     int columnCount = sqlite3_column_count(_handle);
     NSMutableDictionary *columnNamesToIndexes = [[NSMutableDictionary alloc] initWithCapacity:columnCount];
     for (int i = 0; i < columnCount; ++i) {
-        const char* columnName = sqlite3_column_name(_handle, i);
-        ASSERT(columnName);
-
-        columnNamesToIndexes[@(columnName)] = @(i);
+        String columnName = WebCore::sqliteColumnName(_handle, i);
+        columnNamesToIndexes[columnName.createNSString().get()] = @(i);
     }
 
     _columnNamesToIndexes = columnNamesToIndexes;
@@ -274,10 +273,8 @@ using namespace WebKit;
 
     int columnCount = sqlite3_column_count(_handle);
     NSMutableArray *columnNames = [[NSMutableArray alloc] initWithCapacity:columnCount];
-    for (int i = 0; i < columnCount; ++i) {
-        const char* columnName = sqlite3_column_name(_handle, i);
-        [columnNames addObject:@(columnName)];
-    }
+    for (int i = 0; i < columnCount; ++i)
+        [columnNames addObject:WebCore::sqliteColumnName(_handle, i).createNSString().get()];
 
     _columnNames = columnNames;
     return _columnNames;

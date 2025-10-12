@@ -52,6 +52,7 @@
 #import "WebProcessProxy.h"
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
@@ -461,7 +462,10 @@ static void* kvoContext = &kvoContext;
         [_popupWebView _clearOverrideLayoutParameters];
 
         if (UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            // FIXME: <rdar://155548417> ([ Build-Failure ] [ iOS26+ ] error: 'mainScreen' is deprecated: first deprecated in iOS 26.0)
             CGFloat widthOfDeviceInPortrait = CGRectGetWidth(UIScreen.mainScreen._referenceBounds);
+ALLOW_DEPRECATED_DECLARATIONS_END
 
             CGSize contentSize = self.preferredContentSize;
             contentSize.width = std::max(contentSize.width, widthOfDeviceInPortrait);
@@ -654,7 +658,7 @@ void WebExtensionAction::propertiesDidChange()
 
     m_updatePending = true;
 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, updateThrottleDuration.nanosecondsAs<int64_t>()), dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, updateThrottleDuration.nanosecondsAs<int64_t>()), mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
         m_updatePending = false;
 
         RefPtr extensionContext = m_extensionContext.get();
@@ -747,13 +751,13 @@ RefPtr<WebCore::Icon> WebExtensionAction::icon(WebCore::FloatSize idealSize)
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
         if (m_customIconVariants) {
             result = extensionContext->protectedExtension()->bestIconVariant(m_customIconVariants, WebCore::FloatSize(idealSize), [&](Ref<API::Error> error) {
-                extensionContext->recordError(::WebKit::wrapper(error));
+                extensionContext->recordError(error);
             });
         } else
 #endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
         if (m_customIcons) {
             result = extensionContext->protectedExtension()->bestIcon(m_customIcons, WebCore::FloatSize(idealSize), [&](Ref<API::Error> error) {
-                extensionContext->recordError(::WebKit::wrapper(error));
+                extensionContext->recordError(error);
             });
         }
 
@@ -1058,7 +1062,7 @@ void WebExtensionAction::popupDidFinishDocumentLoad()
         return;
 
     // Delay showing the popup until a minimum size or a timeout is reached.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, popoverShowTimeout.nanosecondsAs<int64_t>()), dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }] {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, popoverShowTimeout.nanosecondsAs<int64_t>()), mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }] {
         if (popupPresented() || !hasPopupWebView() || !presentsPopupWhenReady() || !extensionContext())
             return;
 
@@ -1088,7 +1092,7 @@ void WebExtensionAction::readyToPresentPopup()
     if (RefPtr extensionController = extensionContext()->extensionController())
         extensionController->setShowingActionPopup(true);
 
-    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
+    dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
         if (!extensionContext() || !popupPresented())
             return;
 

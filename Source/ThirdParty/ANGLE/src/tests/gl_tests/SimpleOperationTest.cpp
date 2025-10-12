@@ -5,6 +5,11 @@
 //
 // SimpleOperationTest:
 //   Basic GL commands such as linking a program, initializing a buffer, etc.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "test_utils/ANGLETest.h"
 
@@ -1650,6 +1655,35 @@ TEST_P(SimpleOperationTest, GetRenderbufferParameter)
     // Call with invalid target with invalid target
     glGetRenderbufferParameteriv(GL_INVALID_VALUE, GL_RENDERBUFFER_WIDTH, &value);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
+}
+
+// Test that passing NULL to the shader parameter in the glGetAttachedShaders function
+// should return GL_INVALID_VALUE.
+TEST_P(SimpleOperationTest, NullParameterInGetAttachedShaders)
+{
+    GLsizei length;
+    GLuint attachedShaders[2] = {0u};
+    GLuint program            = glCreateProgram();
+    ASSERT_GL_NO_ERROR();
+
+    glGetAttachedShaders(program, 0, &length, NULL);
+    EXPECT_GL_ERROR(GL_INVALID_VALUE);
+
+    glGetAttachedShaders(program, 0, NULL, attachedShaders);
+    EXPECT_GL_ERROR(GL_NO_ERROR);
+}
+
+// Test that passing NULL separately to the range and precision parameters
+// in the glGetShaderPrecisionFormat function should return GL_INVALID_VALUE.
+TEST_P(SimpleOperationTest, NullParameterInGetShaderPrecisionFormat)
+{
+    GLint range[2], precision;
+
+    glGetShaderPrecisionFormat(GL_VERTEX_SHADER, GL_LOW_FLOAT, range, NULL);
+    EXPECT_GL_ERROR(GL_INVALID_VALUE);
+
+    glGetShaderPrecisionFormat(GL_VERTEX_SHADER, GL_LOW_FLOAT, NULL, &precision);
+    EXPECT_GL_ERROR(GL_INVALID_VALUE);
 }
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these

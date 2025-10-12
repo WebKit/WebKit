@@ -58,20 +58,14 @@ public:
         if (!m_buffer)
             return nullptr;
 
-        ASSERT(m_buffer->isContiguous());
-        return downcast<SharedBuffer>(*m_buffer).span().data();
+        return m_buffer->span().data();
     }
 
     void lockUnderlyingBufferImpl() final
     {
         ASSERT(!m_buffer);
-        m_buffer = m_scriptBuffer.buffer();
-
-        if (!m_buffer)
-            return;
-
-        if (!m_buffer->isContiguous())
-            m_buffer = m_buffer->makeContiguous();
+        if (RefPtr<const FragmentedSharedBuffer> buffer = m_scriptBuffer.buffer().get())
+            m_buffer = buffer->makeContiguous();
     }
 
     void unlockUnderlyingBufferImpl() final
@@ -100,7 +94,7 @@ private:
     }
 
     ScriptBuffer m_scriptBuffer;
-    RefPtr<const FragmentedSharedBuffer> m_buffer;
+    RefPtr<const SharedBuffer> m_buffer;
     String m_source;
 };
 

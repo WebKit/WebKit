@@ -36,17 +36,15 @@ public:
     CoreIPCDateComponents(NSDateComponents *);
     RetainPtr<id> toID() const;
 
-    static bool hasCorrectNumberOfComponentValues(const Vector<NSInteger>&);
+    static constexpr size_t numberOfComponentIndexes = 14;
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCDateComponents, void>;
-    CoreIPCDateComponents()
-    {
-    };
+    CoreIPCDateComponents() = default;
 
     String m_calendarIdentifier;
     String m_timeZoneName;
-    Vector<NSInteger> m_componentValues;
+    std::array<int64_t, numberOfComponentIndexes> m_componentValues;
 };
 
 } // namespace WebKit

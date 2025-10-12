@@ -1,0 +1,5 @@
+To avoid potential UAF in multi-threaded context, this test verifies that SetLogIdentifier requires an integer parameter and rejects strings at serialization.
+
+PASS: SetLogIdentifier accepts integer
+
+PASS: SetLogIdentifier correctly rejects strings with SerializationError

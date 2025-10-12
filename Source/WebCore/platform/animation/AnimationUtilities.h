@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "Color.h"
-#include "CompositeOperation.h"
-#include "IntPoint.h"
-#include "IterationCompositeOperation.h"
-#include "LayoutPoint.h"
+#include <WebCore/Color.h>
+#include <WebCore/CompositeOperation.h>
+#include <WebCore/IntPoint.h>
+#include <WebCore/IterationCompositeOperation.h>
+#include <WebCore/LayoutPoint.h>
 
 namespace WebCore {
 
@@ -129,14 +129,17 @@ inline LayoutUnit blend(LayoutUnit from, LayoutUnit to, const BlendingContext& c
 
 inline IntPoint blend(const IntPoint& from, const IntPoint& to, const BlendingContext& context)
 {
-    return IntPoint(blend(from.x(), to.x(), context),
-        blend(from.y(), to.y(), context));
+    return IntPoint(blend(from.x(), to.x(), context), blend(from.y(), to.y(), context));
+}
+
+inline FloatPoint blend(const FloatPoint& from, const FloatPoint& to, const BlendingContext& context)
+{
+    return FloatPoint(blend(from.x(), to.x(), context), blend(from.y(), to.y(), context));
 }
 
 inline LayoutPoint blend(const LayoutPoint& from, const LayoutPoint& to, const BlendingContext& context)
 {
-    return LayoutPoint(blend(from.x(), to.x(), context),
-        blend(from.y(), to.y(), context));
+    return LayoutPoint(blend(from.x(), to.x(), context), blend(from.y(), to.y(), context));
 }
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,42 +37,17 @@
 
 namespace WebCore {
 
-IntSize PlatformImageNativeImageBackend::size() const
-{
-    return IntSize(CGImageGetWidth(m_platformImage.get()), CGImageGetHeight(m_platformImage.get()));
-}
 
-bool PlatformImageNativeImageBackend::hasAlpha() const
-{
-    CGImageAlphaInfo info = CGImageGetAlphaInfo(m_platformImage.get());
-    return (info >= kCGImageAlphaPremultipliedLast) && (info <= kCGImageAlphaFirst);
-}
-
-DestinationColorSpace PlatformImageNativeImageBackend::colorSpace() const
-{
-    return DestinationColorSpace(CGImageGetColorSpace(m_platformImage.get()));
-}
-
-Headroom PlatformImageNativeImageBackend::headroom() const
-{
-#if HAVE(SUPPORT_HDR_DISPLAY)
-    return CGImageGetContentHeadroom(m_platformImage.get());
-#else
-    return Headroom::None;
-#endif
-}
-
-RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& image, RenderingResourceIdentifier renderingResourceIdentifier)
+RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& image)
 {
     if (!image)
         return nullptr;
     if (CGImageGetWidth(image.get()) > std::numeric_limits<int>::max() || CGImageGetHeight(image.get()) > std::numeric_limits<int>::max())
         return nullptr;
-    UniqueRef<PlatformImageNativeImageBackend> backend { *new PlatformImageNativeImageBackend(WTFMove(image)) };
-    return adoptRef(*new NativeImage(WTFMove(backend), renderingResourceIdentifier));
+    return adoptRef(*new NativeImage(WTFMove(image)));
 }
 
-RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image, RenderingResourceIdentifier identifier)
+RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image)
 {
     if (!image)
         return nullptr;
@@ -84,7 +59,33 @@ RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image, Rende
         return nullptr;
     image = nullptr;
     CGImageSetCachingFlags(transientImage.get(), kCGImageCachingTransient);
-    return create(WTFMove(transientImage), identifier);
+    return create(WTFMove(transientImage));
+}
+
+IntSize NativeImage::size() const
+{
+    return IntSize(CGImageGetWidth(m_platformImage.get()), CGImageGetHeight(m_platformImage.get()));
+}
+
+bool NativeImage::hasAlpha() const
+{
+    CGImageAlphaInfo info = CGImageGetAlphaInfo(m_platformImage.get());
+    return (info >= kCGImageAlphaPremultipliedLast) && (info <= kCGImageAlphaFirst);
+}
+
+DestinationColorSpace NativeImage::colorSpace() const
+{
+    return DestinationColorSpace(CGImageGetColorSpace(m_platformImage.get()));
+}
+
+Headroom NativeImage::headroom() const
+{
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    float headroom = CGImageGetContentHeadroom(m_platformImage.get());
+    return Headroom(std::max<float>(headroom, Headroom::None));
+#else
+    return Headroom::None;
+#endif
 }
 
 std::optional<Color> NativeImage::singlePixelSolidColor() const
@@ -93,7 +94,7 @@ std::optional<Color> NativeImage::singlePixelSolidColor() const
         return std::nullopt;
 
     std::array<uint8_t, 4> pixel; // RGBA
-    auto bitmapContext = adoptCF(CGBitmapContextCreate(pixel.data(), 1, 1, 8, pixel.size(), sRGBColorSpaceRef(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
+    auto bitmapContext = adoptCF(CGBitmapContextCreate(pixel.data(), 1, 1, 8, pixel.size(), sRGBColorSpaceSingleton(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
 
     if (!bitmapContext)
         return std::nullopt;
@@ -107,36 +108,13 @@ std::optional<Color> NativeImage::singlePixelSolidColor() const
     return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
 }
 
-void NativeImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
-{
-    if (sourceRect.isEmpty() || !hasHDRContent()) {
-        context.drawNativeImageInternal(*this, destinationRect, sourceRect, options);
-        return;
-    }
-
-#if !HAVE(FIX_FOR_RADAR_93560567)
-    if (!context.colorSpace().usesITUR_2100TF()) {
-        drawWithToneMapping(context, destinationRect, sourceRect, options);
-        return;
-    }
-#endif
-
-#if !HAVE(FIX_FOR_RADAR_147007029)
-    if (options.dynamicRangeLimit() == PlatformDynamicRangeLimit::standard()) {
-        drawWithToneMapping(context, destinationRect, sourceRect, options);
-        return;
-    }
-#endif
-
-    context.drawNativeImageInternal(*this, destinationRect, sourceRect, options);
-}
-
 void NativeImage::clearSubimages()
 {
 #if CACHE_SUBIMAGES
     CGSubimageCacheWithTimer::clearImage(platformImage().get());
 #endif
 }
+
 
 } // namespace WebCore
 

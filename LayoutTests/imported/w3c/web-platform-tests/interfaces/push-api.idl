@@ -3,10 +3,16 @@
 // (https://github.com/w3c/webref)
 // Source: Push API (https://w3c.github.io/push-api/)
 
+dictionary PushPermissionDescriptor : PermissionDescriptor {
+  boolean userVisibleOnly = false;
+};
+
 [SecureContext]
-partial interface ServiceWorkerRegistration {
+interface mixin PushManagerAttribute {
   readonly attribute PushManager pushManager;
 };
+Window includes PushManagerAttribute;
+ServiceWorkerRegistration includes PushManagerAttribute;
 
 [Exposed=(Window,Worker), SecureContext]
 interface PushManager {
@@ -14,7 +20,7 @@ interface PushManager {
 
   Promise<PushSubscription> subscribe(optional PushSubscriptionOptionsInit options = {});
   Promise<PushSubscription?> getSubscription();
-  Promise<PushPermissionState> permissionState(optional PushSubscriptionOptionsInit options = {});
+  Promise<PermissionState> permissionState(optional PushSubscriptionOptionsInit options = {});
 };
 
 [Exposed=(Window,Worker), SecureContext]
@@ -31,7 +37,7 @@ dictionary PushSubscriptionOptionsInit {
 [Exposed=(Window,Worker), SecureContext]
 interface PushSubscription {
   readonly attribute USVString endpoint;
-  readonly attribute DOMTimeStamp? expirationTime;
+  readonly attribute EpochTimeStamp? expirationTime;
   [SameObject] readonly attribute PushSubscriptionOptions options;
   ArrayBuffer? getKey(PushEncryptionKeyName name);
   Promise<boolean> unsubscribe();
@@ -41,7 +47,7 @@ interface PushSubscription {
 
 dictionary PushSubscriptionJSON {
   USVString endpoint;
-  DOMTimeStamp? expirationTime;
+  EpochTimeStamp? expirationTime = null;
   record<DOMString, USVString> keys;
 };
 
@@ -54,6 +60,7 @@ enum PushEncryptionKeyName {
 interface PushMessageData {
   ArrayBuffer arrayBuffer();
   Blob blob();
+  Uint8Array bytes();
   any json();
   USVString text();
 };
@@ -68,13 +75,15 @@ partial interface ServiceWorkerGlobalScope {
 interface PushEvent : ExtendableEvent {
   constructor(DOMString type, optional PushEventInit eventInitDict = {});
   readonly attribute PushMessageData? data;
+  readonly attribute Notification? notification;
+};
+
+dictionary PushEventInit : ExtendableEventInit {
+  PushMessageDataInit? data = null;
+  Notification? notification = null;
 };
 
 typedef (BufferSource or USVString) PushMessageDataInit;
-
-dictionary PushEventInit : ExtendableEventInit {
-  PushMessageDataInit data;
-};
 
 [Exposed=ServiceWorker, SecureContext]
 interface PushSubscriptionChangeEvent : ExtendableEvent {
@@ -86,10 +95,4 @@ interface PushSubscriptionChangeEvent : ExtendableEvent {
 dictionary PushSubscriptionChangeEventInit : ExtendableEventInit {
   PushSubscription newSubscription = null;
   PushSubscription oldSubscription = null;
-};
-
-enum PushPermissionState {
-  "denied",
-  "granted",
-  "prompt",
 };

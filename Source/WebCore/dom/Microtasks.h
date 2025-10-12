@@ -21,8 +21,8 @@
 
 #pragma once
 
-#include "EventLoop.h"
 #include <JavaScriptCore/MicrotaskQueue.h>
+#include <WebCore/EventLoop.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -67,6 +67,7 @@ public:
 
     bool isEmpty() const { return m_microtaskQueue.isEmpty(); }
     bool hasMicrotasksForFullyActiveDocument() const;
+    bool isPerformingCheckpoint() const { return m_performingMicrotaskCheckpoint; }
 
     static void runJSMicrotask(JSC::JSGlobalObject*, JSC::VM&, JSC::QueuedTask&);
 
@@ -75,7 +76,7 @@ private:
 
     bool m_performingMicrotaskCheckpoint { false };
     // For the main thread the VM lives forever. For workers it's lifetime is tied to our owning WorkerGlobalScope. Regardless, we retain the VM here to be safe.
-    Ref<JSC::VM> m_vm;
+    const Ref<JSC::VM> m_vm;
     WeakPtr<EventLoop> m_eventLoop;
     JSC::MicrotaskQueue m_microtaskQueue;
 

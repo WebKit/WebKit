@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "SVGPropertyTraits.h"
+#include <WebCore/SVGPropertyTraits.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

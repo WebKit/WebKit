@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+ window.testRunner?.dumpAsText();
+ window.testRunner?.waitUntilDone();
+ if (window.IPC) {
+     import('./coreipc.js').then(({ CoreIPC }) => {
+         CoreIPC.Networking.NetworkStorageManager.OpenDatabase(0, {
+             requestData : {
+                 m_serverConnectionIdentifier : { alias : 393216 },
+                 m_requestIdentifier : {
+                     m_idbConnectionIdentifier : {},
+                     m_resourceNumber : { optionalValue : 393217 }
+                 },
+                 m_databaseIdentifier : {
+                     m_databaseName : 'db4',
+                     m_origin : {
+                         topOrigin : {
+                             data : {
+                                 variantType : 'WebCore::OpaqueOriginIdentifierProcessQualified',
+                                 variant : { object : 1, processIdentifier : 1234 }
+                             }
+                         },
+                         clientOrigin : {
+                             data : {
+                                 variantType : 'WebCore::OpaqueOriginIdentifierProcessQualified',
+                                 variant : { object : 1, processIdentifier : 1234 }
+                             }
+                         }
+                     },
+                     m_isTransient : false
+                 },
+                 m_requestedVersion : 1,
+                 m_requestType : 0
+             }
+         });
+     });
+ }
+ function callDone() {
+     window.testRunner?.notifyDone();
+ }
+</script>
+<body onload="setTimeout(callDone, 200)">
+    <p>This test passes if it doesn't crash.</p>
+</body>

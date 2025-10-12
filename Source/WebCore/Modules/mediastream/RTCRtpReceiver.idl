@@ -42,4 +42,6 @@
     sequence<RTCRtpContributingSource> getContributingSources();
     sequence<RTCRtpSynchronizationSource> getSynchronizationSources();
     Promise<RTCStatsReport> getStats();
+
+    [CallWith=CurrentScriptExecutionContext, EnabledByQuirk=shouldEnableRTCEncodedStreams] RTCEncodedStreams createEncodedStreams();
 };

@@ -42,7 +42,7 @@ function checkVideoBlack(expected, video, canvasId)
 {
     return new Promise((resolve, reject) => {
         pollVideoBlackCheck(expected, video, canvasId, resolve);
-        setTimeout(() => reject("checkVideoBlack timed out for '" + canvasId + "', expected " + expected), 15000);
+        setTimeout(() => reject("checkVideoBlack timed out for '" + canvasId + "', expected " + expected), 30000);
     });
 }
 

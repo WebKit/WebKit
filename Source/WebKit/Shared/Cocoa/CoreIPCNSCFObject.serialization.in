@@ -37,7 +37,6 @@ using WebKit::ObjectValue = Variant<
     WebKit::CoreIPCDate,
     WebKit::CoreIPCDictionary,
     WebKit::CoreIPCError,
-    WebKit::CoreIPCFont,
     WebKit::CoreIPCLocale,
     WebKit::CoreIPCNSShadow,
     WebKit::CoreIPCNSValue,

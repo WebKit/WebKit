@@ -46,7 +46,7 @@ template<typename... ValueTypes> constexpr auto char16Array(ValueTypes... values
 
 template<typename... ValueTypes> constexpr auto latin1Array(ValueTypes... values)
 {
-    return std::array<LChar, sizeof...(values)> { static_cast<LChar>(values)... };
+    return std::array<Latin1Character, sizeof...(values)> { static_cast<Latin1Character>(values)... };
 }
 
 template<typename CharacterType> const char* serialize(const WTF::Unicode::ConversionResult<CharacterType>& result)

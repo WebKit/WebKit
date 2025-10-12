@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +29,8 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamTrackHintValue.h"
-#include "RealtimeMediaSource.h"
+#include <WebCore/MediaStreamTrackHintValue.h>
+#include <WebCore/RealtimeMediaSource.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakHashSet.h>
@@ -193,7 +193,7 @@ private:
 #endif
 
     WeakHashSet<MediaStreamTrackPrivateObserver> m_observers;
-    Ref<MediaStreamTrackPrivateSourceObserver> m_sourceObserver;
+    const Ref<MediaStreamTrackPrivateSourceObserver> m_sourceObserver;
 
     String m_id;
     String m_label;
@@ -206,7 +206,7 @@ private:
     bool m_captureDidFail { false };
     bool m_hasStartedProducingData { false };
     MediaStreamTrackHintValue m_contentHint { MediaStreamTrackHintValue::Empty };
-    Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
 #if !RELEASE_LOG_DISABLED
     const uint64_t m_logIdentifier;
 #endif

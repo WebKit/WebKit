@@ -27,4 +27,5 @@ PASS invoking (as hIdE-pOpOvEr) from within open popover closes
 PASS invoking (as hIdE-pOpOvEr) from within open popover with preventDefault does not close
 PASS invoking (as show-popover) open popover is noop
 PASS invoking (as hide-popover) closed popover is noop
+PASS invoking (as show-popover) should create an implicit anchor reference for anchor positioning.
 

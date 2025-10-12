@@ -2,9 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, compareArray.js]
-flags:
-  - noStrict
+includes: [compareArray.js]
 description: |
   pending
 esid: pending
@@ -26,7 +24,7 @@ esid: pending
         }
     }
 
-    assertThrowsInstanceOf(() => Array.prototype.splice.call(array, 0, 1), TypeError);
+    assert.throws(TypeError, () => Array.prototype.splice.call(array, 0, 1));
 
     assert.sameValue(array.length, 6);
     assert.compareArray(array, [1, 2, /* hole */, 3, 4, 5]);
@@ -49,7 +47,7 @@ esid: pending
         }
     }
 
-    assertThrowsInstanceOf(() => Array.prototype.splice.call(array, 0, 0, 123), TypeError);
+    assert.throws(TypeError, () => Array.prototype.splice.call(array, 0, 0, 123));
 
     assert.sameValue(array.length, 6);
     assert.compareArray(array, [123, 0, 1, 2, 4, 5]);

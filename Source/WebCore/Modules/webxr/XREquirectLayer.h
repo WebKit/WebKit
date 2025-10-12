@@ -37,6 +37,8 @@ class WebXRSpace;
 // https://immersive-web.github.io/layers/#xrequirectlayertype
 class XREquirectLayer : public XRCompositionLayer {
 public:
+    virtual ~XREquirectLayer();
+
     const WebXRSpace& space() const { RELEASE_ASSERT_NOT_REACHED(); }
     [[noreturn]] void setSpace(WebXRSpace&) { RELEASE_ASSERT_NOT_REACHED(); }
     const WebXRRigidTransform& transform() const { RELEASE_ASSERT_NOT_REACHED(); }
@@ -50,8 +52,19 @@ public:
     [[noreturn]] void setUpperVerticalAngle(float) { RELEASE_ASSERT_NOT_REACHED(); }
     float lowerVerticalAngle() const { RELEASE_ASSERT_NOT_REACHED(); }
     [[noreturn]] void setLowerVerticalAngle(float) { RELEASE_ASSERT_NOT_REACHED(); }
+
+private:
+    bool isXREquirectLayer() const final { return true; }
+
+    // WebXRLayer.
+    [[noreturn]] void startFrame(PlatformXR::FrameData&) final { RELEASE_ASSERT_NOT_REACHED(); }
+    [[noreturn]] PlatformXR::Device::Layer endFrame() final { RELEASE_ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::XREquirectLayer)
+    static bool isType(const WebCore::WebXRLayer& layer) { return layer.isXREquirectLayer(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEBXR_LAYERS)

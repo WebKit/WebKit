@@ -28,6 +28,8 @@
 
 #include "BuiltinNames.h"
 #include "JSCInlines.h"
+#include "JSInternalPromise.h"
+#include "JSPromise.h"
 
 namespace JSC {
 
@@ -76,6 +78,50 @@ void JSPromisePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 void JSPromisePrototype::addOwnInternalSlots(VM& vm, JSGlobalObject* globalObject)
 {
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().thenPrivateName(), globalObject->promiseProtoThenFunction(), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+}
+
+bool promiseSpeciesWatchpointIsValid(VM& vm, JSPromise* thisObject)
+{
+    auto* structure = thisObject->structure();
+    JSGlobalObject* globalObject = structure->globalObject();
+    if (globalObject->promiseSpeciesWatchpointSet().state() != IsWatched) [[unlikely]] {
+        if (structure->classInfoForCells() == JSInternalPromise::info())
+            return true;
+        return false;
+    }
+
+    if (structure == globalObject->promiseStructure())
+        return true;
+
+    if (structure->classInfoForCells() == JSInternalPromise::info())
+        return true;
+
+    ASSERT(globalObject->promiseSpeciesWatchpointSet().state() != ClearWatchpoint);
+    auto* promisePrototype = globalObject->promisePrototype();
+    if (promisePrototype != structure->storedPrototype(thisObject))
+        return false;
+
+    if (!thisObject->hasCustomProperties())
+        return true;
+
+    return thisObject->getDirectOffset(vm, vm.propertyNames->constructor) == invalidOffset;
+}
+
+JSC_DEFINE_HOST_FUNCTION(promiseProtoFuncThen, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
+
+    JSValue onFulfilled = callFrame->argument(0);
+    JSValue onRejected = callFrame->argument(1);
+
+    auto* promise = jsDynamicCast<JSPromise*>(thisValue);
+    if (!promise) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "|this| is not a Promise");
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(promise->then(globalObject, onFulfilled, onRejected)));
 }
 
 } // namespace JSC

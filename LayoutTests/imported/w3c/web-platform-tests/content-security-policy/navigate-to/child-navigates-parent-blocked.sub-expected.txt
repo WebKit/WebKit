@@ -1,5 +1,0 @@
-
-
-FAIL Test that the child can't navigate the parent because the relevant policy belongs to the navigation initiator (in this case the child which has the policy `navigate-to 'none'`) assert_equals: expected "fail" but got "success"
-FAIL Violation report status OK. undefined is not an object (evaluating 'data[0]["body"]')
-

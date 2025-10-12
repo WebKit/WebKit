@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Igalia, S.L. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,9 +71,9 @@ protected:
     virtual URL databaseURL() = 0;
 
     DatabaseResult setDatabaseSchemaVersion(SchemaVersion newVersion);
-    SchemaVersion migrateToCurrentSchemaVersionIfNeeded();
+    virtual SchemaVersion migrateToCurrentSchemaVersionIfNeeded();
 
-    Ref<WorkQueue> queue() { return m_queue; };
+    WorkQueue& queue() { return m_queue; };
     RefPtr<WebExtensionSQLiteDatabase> database() { return m_database; };
     String uniqueIdentifier() { return m_uniqueIdentifier; };
     CString lastErrorMessage() { return m_database->m_lastErrorMessage; };
@@ -92,8 +93,9 @@ private:
     String m_uniqueIdentifier;
     URL m_directory;
     RefPtr<WebExtensionSQLiteDatabase> m_database;
-    Ref<WorkQueue> m_queue;
+    const Ref<WorkQueue> m_queue;
     bool m_useInMemoryDatabase;
+    bool m_savepointsAreValid { true };
 };
 
 } // namespace WebKit

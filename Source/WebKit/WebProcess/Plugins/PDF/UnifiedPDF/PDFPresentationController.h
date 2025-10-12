@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,6 @@
 #include "PDFDocumentLayout.h"
 #include "PDFPageCoverage.h"
 #include "UnifiedPDFPlugin.h"
-#include <WebCore/GraphicsLayer.h>
 #include <WebCore/PlatformLayerIdentifier.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
@@ -41,7 +40,9 @@
 OBJC_CLASS PDFDocument;
 
 namespace WebCore {
+enum class GraphicsLayerType : uint8_t;
 enum class TiledBackingScrollability : uint8_t;
+class GraphicsLayer;
 class GraphicsLayerClient;
 };
 
@@ -123,7 +124,7 @@ public:
     virtual void setSelectionLayerEnabled(bool) { }
 
 protected:
-    RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String&, WebCore::GraphicsLayer::Type);
+    RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String&, WebCore::GraphicsLayerType);
     RefPtr<WebCore::GraphicsLayer> makePageContainerLayer(PDFDocumentLayout::PageIndex);
     struct LayerCoverage {
         Ref<WebCore::GraphicsLayer> layer;
@@ -141,7 +142,7 @@ protected:
     bool shouldUseInProcessBackingStore() const;
     bool shouldAddPageBackgroundLayerShadow() const;
 
-    Ref<UnifiedPDFPlugin> m_plugin;
+    const Ref<UnifiedPDFPlugin> m_plugin;
     RefPtr<AsyncPDFRenderer> m_asyncRenderer;
 };
 

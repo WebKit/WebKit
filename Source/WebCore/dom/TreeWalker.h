@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "NodeFilter.h"
-#include "ScriptWrappable.h"
-#include "Traversal.h"
+#include <WebCore/NodeFilter.h>
+#include <WebCore/ScriptWrappable.h>
+#include <WebCore/Traversal.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 

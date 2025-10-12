@@ -133,7 +133,7 @@ pas_segregated_shared_view_compute_minimum_size_for_bump_with_aligned_padding(
     unsigned trailing_padding_size,
     unsigned trailing_padding_alignment)
 {
-    return pas_round_up_to_power_of_2(allocation_size, trailing_padding_alignment)
+    return (unsigned)pas_round_up_to_power_of_2(allocation_size, trailing_padding_alignment)
         + trailing_padding_size;
 }
 

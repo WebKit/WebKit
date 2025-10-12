@@ -61,7 +61,7 @@ SVGFontFaceElement* CSSFontFaceSrcLocalValue::svgFontFaceElement() const
 
 void CSSFontFaceSrcLocalValue::setSVGFontFaceElement(SVGFontFaceElement& element)
 {
-    m_element = &element;
+    m_element = element;
 }
 
 String CSSFontFaceSrcLocalValue::customCSSText(const CSS::SerializationContext&) const

@@ -10,17 +10,21 @@
 
 #include "modules/audio_coding/acm2/acm_receive_test.h"
 
-#include <stdio.h>
-
+#include <cstdio>
 #include <memory>
+#include <ostream>
+#include <utility>
 
+#include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/environment/environment_factory.h"
 #include "api/neteq/default_neteq_factory.h"
+#include "api/neteq/neteq.h"
+#include "api/scoped_refptr.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
-#include "modules/audio_coding/neteq/tools/packet.h"
 #include "modules/audio_coding/neteq/tools/packet_source.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -31,7 +35,7 @@ AcmReceiveTestOldApi::AcmReceiveTestOldApi(
     AudioSink* audio_sink,
     int output_freq_hz,
     NumOutputChannels exptected_output_channels,
-    rtc::scoped_refptr<AudioDecoderFactory> decoder_factory)
+    scoped_refptr<AudioDecoderFactory> decoder_factory)
     : clock_(0),
       neteq_(DefaultNetEqFactory().Create(CreateEnvironment(&clock_),
                                           NetEq::Config(),
@@ -56,7 +60,6 @@ void AcmReceiveTestOldApi::RegisterDefaultCodecs() {
                      {110, {"PCMU", 8000, 2}},
                      {8, {"PCMA", 8000, 1}},
                      {118, {"PCMA", 8000, 2}},
-                     {102, {"ILBC", 8000, 1}},
                      {9, {"G722", 8000, 1}},
                      {119, {"G722", 8000, 2}},
                      {120, {"OPUS", 48000, 2, {{"stereo", "1"}}}},
@@ -84,10 +87,10 @@ void AcmReceiveTestOldApi::RegisterNetEqTestCodecs() {
 }
 
 void AcmReceiveTestOldApi::Run() {
-  for (std::unique_ptr<Packet> packet(packet_source_->NextPacket()); packet;
-       packet = packet_source_->NextPacket()) {
+  for (std::unique_ptr<RtpPacketReceived> packet = packet_source_->NextPacket();
+       packet != nullptr; packet = packet_source_->NextPacket()) {
     // Pull audio until time to insert packet.
-    while (clock_.TimeInMilliseconds() < packet->time_ms()) {
+    while (clock_.CurrentTime() < packet->arrival_time()) {
       AudioFrame output_frame;
       bool muted;
       EXPECT_EQ(NetEq::kOK, neteq_->GetAudio(&output_frame, &muted));
@@ -99,7 +102,7 @@ void AcmReceiveTestOldApi::Run() {
           static_cast<size_t>(output_freq_hz_ * 10 / 1000);
       EXPECT_EQ(samples_per_block, output_frame.samples_per_channel_);
       if (exptected_output_channels_ != kArbitraryChannels) {
-        if (output_frame.speech_type_ == webrtc::AudioFrame::kPLC) {
+        if (output_frame.speech_type_ == AudioFrame::kPLC) {
           // Don't check number of channels for PLC output, since each test run
           // usually starts with a short period of mono PLC before decoding the
           // first packet.
@@ -112,16 +115,14 @@ void AcmReceiveTestOldApi::Run() {
       AfterGetAudio();
     }
 
-    EXPECT_EQ(0, neteq_->InsertPacket(
-                     packet->header(),
-                     rtc::ArrayView<const uint8_t>(
-                         packet->payload(), packet->payload_length_bytes()),
-                     clock_.CurrentTime()))
+    RTPHeader rtp_header;
+    packet->GetHeader(&rtp_header);
+    EXPECT_EQ(0, neteq_->InsertPacket(rtp_header, packet->payload(),
+                                      clock_.CurrentTime()))
         << "Failure when inserting packet:" << std::endl
-        << "  PT = " << static_cast<int>(packet->header().payloadType)
-        << std::endl
-        << "  TS = " << packet->header().timestamp << std::endl
-        << "  SN = " << packet->header().sequenceNumber;
+        << "  PT = " << static_cast<int>(packet->PayloadType()) << std::endl
+        << "  TS = " << packet->Timestamp() << std::endl
+        << "  SN = " << packet->SequenceNumber();
   }
 }
 

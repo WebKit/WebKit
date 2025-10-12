@@ -11,7 +11,8 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_OUTPUT_WAV_FILE_H_
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_OUTPUT_WAV_FILE_H_
 
-#include <string>
+#include <cstddef>
+#include <cstdint>
 
 #include "absl/strings/string_view.h"
 #include "common_audio/wav_file.h"

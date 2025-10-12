@@ -7,14 +7,14 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 221x19
           text run at (0,0) width 221: "This tests for a drag select crasher."
-      RenderBlock {DIV} at (0,36) size 784x23
+      RenderBlock {DIV} at (0,36) size 784x21
         RenderInline {SPAN} at (0,0) size 66x19
           RenderText {#text} at (0,0) size 66x19
             text run at (0,0) width 66: "Start here."
         RenderText {#text} at (65,0) size 5x19
           text run at (65,0) width 5: " "
-        RenderTextControl {INPUT} at (69,1) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-      RenderBlock {UL} at (0,74) size 784x0
-layer at (84,48) size 141x14
-  RenderBlock {DIV} at (6,3) size 143x15
+        RenderTextControl {INPUT} at (69,1) size 155x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+      RenderBlock {UL} at (0,73) size 784x0
+layer at (84,48) size 142x14
+  RenderBlock {DIV} at (6,3) size 142x14
 caret: position 0 of child 0 {#text} of child 0 {SPAN} of child 2 {DIV} of body

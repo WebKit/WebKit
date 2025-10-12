@@ -49,7 +49,7 @@ public:
 private:
     Type processorType() const final { return Type::Delay; }
 
-    Ref<AudioParam> m_delayTime;
+    const Ref<AudioParam> m_delayTime;
 };
 
 } // namespace WebCore

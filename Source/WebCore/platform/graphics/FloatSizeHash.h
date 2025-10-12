@@ -26,7 +26,7 @@
 #ifndef FloatSizeHash_h
 #define FloatSizeHash_h
 
-#include "FloatSize.h"
+#include <WebCore/FloatSize.h>
 #include <wtf/HashSet.h>
 
 namespace WTF {

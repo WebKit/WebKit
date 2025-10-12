@@ -1,4 +1,17 @@
+ a a2
 
-
-PASS Should not have executed the javascript url
+PASS Should not have executed the javascript url for
+      iframe.contentWindow.location.href
+PASS Should not have executed the javascript url for
+      iframe.src
+PASS Should not have executed the javascript url for
+      otherTab.location.href
+PASS Should not have executed the javascript url for
+      area[target=iframe].href
+PASS Should not have executed the javascript url for
+      area[target=otherTab].href
+PASS Should not have executed the javascript url for
+      a[target=otherTab].href
+PASS Should not have executed the javascript url for
+      a[target=iframe].href
 

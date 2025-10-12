@@ -11,11 +11,19 @@
 #include "video/call_stats2.h"
 
 #include <algorithm>
-#include <memory>
+#include <cstdint>
+#include <list>
 #include <utility>
 
 #include "absl/algorithm/container.h"
+#include "api/sequence_checker.h"
+#include "api/task_queue/pending_task_safety_flag.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/units/time_delta.h"
+#include "modules/include/module_common_types.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/task_utils/repeating_task.h"
+#include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -157,7 +165,7 @@ void CallStats::UpdateHistograms() {
 
   int64_t elapsed_sec =
       (clock_->TimeInMilliseconds() - time_of_first_rtt_ms_) / 1000;
-  if (elapsed_sec >= metrics::kMinRunTimeInSeconds) {
+  if (elapsed_sec >= metrics::kMinRunTime.seconds()) {
     int64_t avg_rtt_ms = (sum_avg_rtt_ms_ + num_avg_rtt_ / 2) / num_avg_rtt_;
     RTC_HISTOGRAM_COUNTS_10000(
         "WebRTC.Video.AverageRoundTripTimeInMilliseconds", avg_rtt_ms);

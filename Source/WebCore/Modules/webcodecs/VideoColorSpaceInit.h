@@ -27,7 +27,7 @@
 
 #if ENABLE(VIDEO)
 
-#include "PlatformVideoColorSpace.h"
+#include <WebCore/PlatformVideoColorSpace.h>
 
 namespace WebCore {
 

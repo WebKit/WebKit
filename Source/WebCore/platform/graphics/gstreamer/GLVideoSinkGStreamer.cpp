@@ -31,6 +31,7 @@
 
 #if USE(GBM)
 #include "DRMDeviceManager.h"
+#include "GBMDevice.h"
 #endif
 
 // gstglapi.h may include eglplatform.h and it includes X.h, which
@@ -73,7 +74,7 @@ static void initializeDMABufAvailability()
 
         auto value = unsafeSpan(g_getenv("WEBKIT_GST_DMABUF_SINK_DISABLED"));
         s_isDMABufDisabled = value.data() && (equalLettersIgnoringASCIICase(value, "true"_s) || equalLettersIgnoringASCIICase(value, "1"_s));
-        if (!s_isDMABufDisabled && !DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render))
+        if (!s_isDMABufDisabled && !DRMDeviceManager::singleton().mainGBMDevice(DRMDeviceManager::NodeType::Render))
             s_isDMABufDisabled = true;
     });
 }

@@ -26,14 +26,14 @@
 
 #pragma once
 
+#include <JavaScriptCore/AssemblerCommon.h>
 #include <wtf/Platform.h>
 
 #if ENABLE(ASSEMBLER) && CPU(ARM_THUMB2)
 
+#include <JavaScriptCore/ARMv7Assembler.h>
+#include <JavaScriptCore/AbstractMacroAssembler.h>
 #include <initializer_list>
-
-#include "ARMv7Assembler.h"
-#include "AbstractMacroAssembler.h"
 
 namespace JSC {
 
@@ -119,8 +119,8 @@ public:
     static JumpLinkType computeJumpType(LinkRecord& record, const uint8_t* from, const uint8_t* to) { return ARMv7Assembler::computeJumpType(record, from, to); }
     static int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return ARMv7Assembler::jumpSizeDelta(jumpType, jumpLinkType); }
 
-    template<MachineCodeCopyMode copy>
-    ALWAYS_INLINE static void link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction, uint8_t* to) { return ARMv7Assembler::link<copy>(record, from, fromInstruction, to); }
+    template<RepatchingInfo repatch>
+    ALWAYS_INLINE static void link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction, uint8_t* to) { return ARMv7Assembler::link<repatch>(record, from, fromInstruction, to); }
 
     struct ArmAddress {
         enum AddressType {
@@ -1324,26 +1324,11 @@ public:
 
     void storePair32(TrustedImm32 imm1, TrustedImm32 imm2, Address address)
     {
-        // We cannot re-use the two register version of `storePair32` defined
-        // below here because we can only use the `addressTempRegister` as a
-        // scratch register if the `strd` case is taken.
         int32_t absOffset = address.offset;
         if (absOffset < 0)
             absOffset = -absOffset;
-        if (!(absOffset & ~0x3fc)) {
-            RegisterID src1 = getCachedAddressTempRegisterIDAndInvalidate();
-            move(imm1, src1);
-            RegisterID src2 = src1;
-            if (imm1.m_value != imm2.m_value) {
-                src2 = getCachedDataTempRegisterIDAndInvalidate();
-                move(imm2, src2);
-            }
-            ASSERT(src1 != address.base && src2 != address.base);
-            m_assembler.strd(src1, src2, address.base, address.offset, /* index: */ true, /* wback: */ false);
-        } else {
-            store32(imm1, address);
-            store32(imm2, address.withOffset(4));
-        }
+        store32(imm1, address);
+        store32(imm2, address.withOffset(4));
     }
 
     void storePair32(RegisterID src1, RegisterID src2, RegisterID dest)
@@ -1361,12 +1346,9 @@ public:
         int32_t absOffset = address.offset;
         if (absOffset < 0)
             absOffset = -absOffset;
-        if (!(absOffset & ~0x3fc))
-            m_assembler.strd(src1, src2, address.base, address.offset, /* index: */ true, /* wback: */ false);
-        else {
-            store32(src1, address);
-            store32(src2, address.withOffset(4));
-        }
+        // strd does not support unaligned accesses on some chips, so we avoid it.
+        store32(src1, address);
+        store32(src2, address.withOffset(4));
     }
 
     void storePair32(RegisterID src1, RegisterID src2, BaseIndex address)
@@ -2017,7 +1999,7 @@ public:
     {
         m_assembler.vcvtds(dst, ARMRegisters::asSingle(src));
     }
-    
+
     void convertDoubleToFloat(FPRegisterID src, FPRegisterID dst)
     {
         m_assembler.vcvtsd(ARMRegisters::asSingle(dst), src);
@@ -2096,10 +2078,8 @@ public:
 
     Jump branchFloatWithZero(DoubleCondition cond, FPRegisterID left)
     {
-        UNUSED_PARAM(cond);
-        UNUSED_PARAM(left);
-        UNREACHABLE_FOR_PLATFORM();
-        return { };
+        m_assembler.vcmpz(asSingle(left));
+        return makeFPBranch(cond);
     }
 
     Jump branchDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
@@ -2110,10 +2090,8 @@ public:
 
     Jump branchDoubleWithZero(DoubleCondition cond, FPRegisterID left)
     {
-        UNUSED_PARAM(cond);
-        UNUSED_PARAM(left);
-        UNREACHABLE_FOR_PLATFORM();
-        return { };
+        m_assembler.vcmpz(left);
+        return makeFPBranch(cond);
     }
 
     enum BranchTruncateType { BranchIfTruncateFailed, BranchIfTruncateSuccessful };
@@ -2166,7 +2144,7 @@ public:
         m_assembler.vcvt_floatingPointToUnsigned(fpTempRegisterAsSingle(), asSingle(src));
         m_assembler.vmov(dest, fpTempRegisterAsSingle());
     }
-    
+
     // Convert 'src' to an integer, and places the resulting 'dest'.
     // If the result is not representable as a 32 bit value, branch.
     // May also branch for some values that are representable in 32 bits
@@ -2212,6 +2190,84 @@ public:
         notEqual.link(this);
         return result;
     }
+private:
+    void convertDoubleToUint64(FPRegisterID src, RegisterID destLo, RegisterID destHi, FPRegisterID scratch1, FPRegisterID scratch2)
+    {
+        // We override src on the vmla, so we require a temp fp register here
+        ASSERT(src == fpTempRegister);
+
+        // Constant materialization
+        move(TrustedImm32(0x00000000), destLo);
+        move(TrustedImm32(0x3DF00000), destHi);
+        move64ToDouble(destHi, destLo, scratch1);
+        move(TrustedImm32(0x00000000), destLo);
+        move(TrustedImm32(0xC1F00000), destHi);
+        move64ToDouble(destHi, destLo, scratch2);
+
+        m_assembler.vmul(scratch1, src, scratch1);
+
+        m_assembler.vcvt_floatingPointToUnsigned(ARMRegisters::asSingle(scratch1), scratch1);
+        m_assembler.vmov(destHi, ARMRegisters::asSingle(scratch1));
+
+        m_assembler.vcvt_unsignedToFloatingPoint(scratch1, ARMRegisters::asSingle(scratch1));
+
+        m_assembler.vmla(src, scratch1, scratch2);
+
+        m_assembler.vcvt_floatingPointToUnsigned(ARMRegisters::asSingle(src), src);
+        m_assembler.vmov(destLo, ARMRegisters::asSingle(src));
+    }
+
+public:
+    void truncateDoubleToUint64(FPRegisterID src, RegisterID destLo, RegisterID destHi, FPRegisterID scratch1, FPRegisterID scratch2)
+    {
+        Jump notPositive = branchDoubleWithZero(DoubleLessThanOrEqualOrUnordered, src);
+
+        moveDouble(src, fpTempRegister);
+        convertDoubleToUint64(fpTempRegister, destLo, destHi, scratch1, scratch2);
+
+        Jump done = jump();
+
+        notPositive.link(this);
+        move(TrustedImm32(0), destLo);
+        move(TrustedImm32(0), destHi);
+
+        done.link(this);
+    }
+
+    void truncateDoubleToInt64(FPRegisterID src, RegisterID destLo, RegisterID destHi, FPRegisterID scratch1, FPRegisterID scratch2)
+    {
+        RegisterID signFlag = getCachedAddressTempRegisterIDAndInvalidate();
+        moveDouble(src, fpTempRegister);
+
+        Jump isNegative = branchDoubleWithZero(DoubleLessThanAndOrdered, fpTempRegister);
+        move(TrustedImm32(0), signFlag);
+        Jump join = jump();
+
+        isNegative.link(this);
+        m_assembler.vneg(fpTempRegister, fpTempRegister);
+        move(TrustedImm32(1), signFlag);
+
+        join.link(this);
+        convertDoubleToUint64(fpTempRegister, destLo, destHi, scratch1, scratch2);
+
+        Jump wasNonNegative = branch32(Equal, signFlag, TrustedImm32(0));
+        m_assembler.sub_S(destLo, ARMThumbImmediate::makeUInt12OrEncodedImm(0), destLo);
+        m_assembler.mvn(destHi, destHi);
+        m_assembler.adc(destHi, destHi, ARMThumbImmediate::makeEncodedImm(0));
+        wasNonNegative.link(this);
+    }
+
+    void truncateFloatToUint64(FPRegisterID src, RegisterID destLo, RegisterID destHi, FPRegisterID scratch1, FPRegisterID scratch2)
+    {
+        convertFloatToDouble(src, fpTempRegister);
+        truncateDoubleToUint64(fpTempRegister, destLo, destHi, scratch1, scratch2);
+    }
+
+    void truncateFloatToInt64(FPRegisterID src, RegisterID destLo, RegisterID destHi, FPRegisterID scratch1, FPRegisterID scratch2)
+    {
+        convertFloatToDouble(src, fpTempRegister);
+        truncateDoubleToInt64(fpTempRegister, destLo, destHi, scratch1, scratch2);
+    }
 
     // Stack manipulation operations:
     //
@@ -2220,7 +2276,7 @@ public:
     // operations add and remove a single register sized unit of data
     // to or from the stack.  Peek and poke operations read or write
     // values on the stack, without moving the current stack position.
-    
+
     void pop(RegisterID dest)
     {
         m_assembler.pop(dest);
@@ -3028,11 +3084,16 @@ public:
         return Call(m_assembler.b(), Call::LinkableNearTail);
     }
 
+    ALWAYS_INLINE void padBeforePatch()
+    {
+        (void)label();
+        m_assembler.alignWithNop(sizeof(uint64_t));
+    }
+
     ALWAYS_INLINE Call threadSafePatchableNearCall()
     {
         invalidateAllTempRegisters();
         padBeforePatch();
-        m_assembler.alignWithNop(sizeof(int));
         m_assembler.bl();
         return Call(m_assembler.labelIgnoringWatchpoints(), Call::LinkableNear);
     }
@@ -3041,7 +3102,6 @@ public:
     {
         invalidateAllTempRegisters();
         padBeforePatch();
-        m_assembler.alignWithNop(sizeof(int));
         return Call(m_assembler.b(), Call::LinkableNearTail);
     }
 

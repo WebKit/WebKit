@@ -46,17 +46,21 @@ Object.defineProperty(brokenPromise, 'constructor', {
   }
 });
 
-it.next();
-it.return(brokenPromise)
-  .then(
-    () => {
-      throw new Test262Error("Expected rejection");
-    },
-    err => {
-      assert(unblocked, false, 'return should be rejected before generator is resumed');
-      assert.sameValue(err.message, 'broken promise');
-    }
-  )
-  .then($DONE, $DONE);
+it.next().then(function(result) {
+  assert.sameValue(result.value, undefined);
+  assert.sameValue(result.done, true);
+
+  it.return(brokenPromise)
+    .then(
+      () => {
+        throw new Test262Error("Expected rejection");
+      },
+      err => {
+        assert(unblocked, 'return should be rejected when the generator is completed');
+        assert.sameValue(err.message, 'broken promise');
+      }
+    )
+    .then($DONE, $DONE);
+});
 
 unblock();

@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-bool GlyphPage::fill(std::span<const UChar> buffer)
+bool GlyphPage::fill(std::span<const char16_t> buffer)
 {
     ASSERT(buffer.size() == GlyphPage::size || buffer.size() == 2 * GlyphPage::size);
 

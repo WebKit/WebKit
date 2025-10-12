@@ -1,0 +1,312 @@
+; Copyright (C) 2025 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+; notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+; notice, this list of conditions and the following disclaimer in the
+; documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "Shared/Sandbox/iOS/common.sb"
+#include "Shared/Sandbox/iOS/webcontent-defines.sb"
+
+(allow-for-development-rules)
+
+(allow dynamic-code-generation)
+
+(with-filter (mac-policy-name "Sandbox")
+    (allow system-mac-syscall (mac-syscall-number 5 65)))
+
+(allow file-read-metadata
+    (vnode-type DIRECTORY))
+
+(rules-with-elevated-precedence)
+
+(allow file-read*
+    required-etc-files
+    (literal "/"))
+
+(allow file-read*
+    (subpath "/private/var/MobileAsset/PreinstalledAssetsV2/InstallWithOs"))
+
+;; FIXME: Remove when rdar://141156558 has been fixed.
+#if ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
+(allow file-read*
+    (subpath "/private/var/MobileAsset/AssetsV2/com_apple_MobileAsset_Font7")
+    (subpath "/private/var/MobileAsset/AssetsV2/com_apple_MobileAsset_Font8"))
+#endif
+
+(device-access)
+
+(allow file-issue-extension
+    (require-all
+        (extension-class "com.apple.app-sandbox.read-write" "com.apple.app-sandbox.read")
+        (extension "com.apple.fileprovider.read-write")))
+
+;; <rdar://problem/12413942>
+(allow file-read*
+   (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"))
+
+(allow system-sched
+    (require-entitlement "com.apple.private.kernel.override-cpumon"))
+
+#if ENABLE(NOTIFY_BLOCKING)
+(with-filter (require-not (notify-blocking))
+    (allow-notifyd))
+#else
+(allow-notifyd)
+#endif
+
+(managed-configuration-read-public)
+
+(allow file-read*
+    (subpath "/private/var/db/datadetectors/sys"))
+
+(allow-well-known-system-group-container-subpath-read
+    "/systemgroup.com.apple.icloud.findmydevice.managed/Library")
+
+(allow mach-task-name (target self))
+
+;;; process-info* defaults to allow; deny it and then allow operations we actually need.
+(allow process-info-pidinfo (target self))
+(allow process-info-pidfdinfo (target self))
+(allow process-info-pidfileportinfo (target self))
+(allow process-info-setcontrol (target self))
+(allow process-info-dirtycontrol (target self))
+(allow process-info-rusage (target self))
+
+;; Any app can play audio & movies.
+(play-media)
+
+;; Access to media controls
+(media-remote)
+
+(url-translation)
+
+(speech-synthesis-and-voiceover)
+
+;; Permit reading assets via MobileAsset framework.
+(asset-access 'with-media-playback)
+
+;; allow 3rd party applications to access nsurlstoraged's top level domain data cache
+(allow-well-known-system-group-container-literal-read
+    "/systemgroup.com.apple.nsurlstoragedresources/Library/dafsaData.bin")
+
+;; Access the keyboards
+(allow file-read*
+    (home-subpath "/Library/Caches/com.apple.keyboards"))
+
+(mobile-preferences-read-allowed)
+
+;; <rdar://problem/12985925> Need read access to /var/mobile/Library/Fonts to all apps
+(allow file-read*
+    (home-subpath "/Library/Fonts"))
+
+;; <rdar://problem/7344719&26323449> LaunchServices app icons
+(allow file-read*
+    (well-known-system-group-container-subpath "/systemgroup.com.apple.lsd.iconscache"))
+
+(allow-preferences-common)
+
+;; Home Button
+(with-filter (iokit-registry-entry-class "IOPlatformDevice")
+    (allow iokit-get-properties
+        (iokit-property "home-button-type")))
+
+(uikit-requirements)
+
+(dictionary-support)
+
+; <rdar://problem/8440231>
+(allow file-read*
+    (home-literal "/Library/Caches/DateFormats.plist"))
+
+(framebuffer-access)
+
+; <rdar://problem/7595408> , <rdar://problem/7643881>
+(opengl)
+
+(allow sysctl-read
+    (sysctl-read-allowed)
+    (sysctl-read-prefix-allowed))
+
+(with-filter (require-not (webcontent-process-launched))
+    (allow sysctl-read (sysctl-name "vm.malloc_ranges"))) ;; <rdar://problem/105161083>
+
+(allow iokit-get-properties
+    (iokit-get-property-allowed))
+
+; IOPlatformExpertDevice
+(with-filter (iokit-registry-entry-class "IOPlatformExpertDevice")
+    (allow iokit-get-properties
+        (iokit-property
+            "platform-name" ;; <rdar://problem/79334360>
+            "region-info" ;; <rdar://problem/52903475>
+            "regulatory-model-number"))) ;; <rdar://problem/52903475>
+
+;; Sandbox extensions
+(read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
+(define (read-write-extension-with-telemetry) (with report) (with telemetry) (extension "com.apple.app-sandbox.read-write"))
+(read-write-and-issue-extensions (read-write-extension-with-telemetry))
+
+;; Access to client's cache folder & re-vending to CFNetwork.
+(allow file-issue-extension (require-all
+    (extension "com.apple.app-sandbox.read-write")
+    (extension-class "com.apple.nsurlstorage.extension-cache")))
+
+(accessibility-support)
+
+(media-accessibility-support)
+
+;; Allow loading injected bundles.
+(with-filter (require-not (webcontent-process-launched))
+    (allow file-map-executable))
+
+(allow file-read-data
+    (literal "/usr/local/lib/log")) ; <rdar://problem/36629495>
+
+(disable-syscall-inference)
+
+(allow syscall-unix
+    (syscall-unix-in-use-after-launch)
+    (syscall-unix-in-use-after-launch-blocked-in-lockdown-mode))
+
+(with-filter (require-not (webcontent-process-launched))
+    (allow syscall-unix (syscall-unix-only-in-use-during-launch)))
+
+(with-filter (system-attribute developer-mode)
+    (allow syscall-unix (syscall-unix-developer-mode)))
+
+(allow syscall-unix
+    (syscall-unix-rarely-in-use)
+    (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)
+    (syscall-quicklook))
+
+(when (defined? 'SYS_map_with_linking_np)
+    (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
+
+(allow system-fcntl (system-fcntl-allowed))
+
+;; csops/csops_audittoken
+(allow-for-development process-codesigning*)
+(allow process-codesigning-identity-get (target self)) ;; codeSigningIdentifierForCurrentProcess
+(allow process-codesigning-entitlements-blob-get) ;; WK reading entitlments via SecTaskCopyValueForEntitlement and _getSelfParsedEntitlements (accessibility)
+(allow process-codesigning-status-get) ;; _xpc_get_entitlements
+(allow process-codesigning-status-set (target self))
+
+(allow mach-bootstrap
+    (apply-message-filter
+        (allow-for-development mach-message-send)
+#if PLATFORM(IOS) || PLATFORM(VISION)
+        (with-filter (extension "com.apple.webkit.mach-bootstrap")
+            (allow mach-message-send (mach-bootstrap-message-numbers-post-launch)))
+#else
+        (allow mach-message-send (mach-bootstrap-message-numbers-post-launch))
+#endif
+        (with-filter (require-not (webcontent-process-launched))
+            (allow mach-message-send (mach-bootstrap-message-numbers)))))
+
+(allow syscall-mach
+    (syscall-mach-blocked-in-lockdown-mode)
+    (syscall-mach-only-in-use-during-launch)
+    (syscall-mach-in-use-after-launch))
+
+(when (defined? 'MSC_mach_msg2_trap)
+    (allow syscall-mach (machtrap-number MSC_mach_msg2_trap)))
+
+(with-filter (require-not (webcontent-process-launched))
+    (allow syscall-mach
+        (syscall-mach-only-in-use-during-launch)))
+
+(allow syscall-mig (with telemetry-backtrace)
+    (kernel-mig-routine-rarely-used-need-backtrace)
+    (kernel-mig-routine-rarely-used-need-backtrace-blocked-in-lockdown-mode))
+
+(allow syscall-mig (with telemetry)
+    (kernel-mig-routine-rarely-used))
+
+(allow syscall-mig
+    (kernel-mig-routine-blocked-in-lockdown-mode)
+    (kernel-mig-routine-in-use))
+
+#if PLATFORM(WATCHOS)
+(allow syscall-mig
+    (kernel-mig-routine-in-use-watchos))
+#endif
+
+(with-filter (require-not (webcontent-process-launched))
+    (allow syscall-mig
+        (kernel-mig-routine-only-in-use-during-launch)))
+#if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
+(with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+    (allow syscall-mig (kernel-mig-routines-iokit-service)))
+#endif
+
+#if HAVE(HARDENED_MACH_EXCEPTIONS)
+(with-filter (require-not (lockdown-mode))
+    (allow syscall-mig (kernel-mig-routine thread_adopt_exception_handler))
+    (with-filter (require-not (webcontent-process-launched))
+        (allow syscall-mig (kernel-mig-routine task_register_hardened_exception_handler))))
+#else
+(with-filter (require-not (lockdown-mode))
+    (allow syscall-mig (kernel-mig-routine thread_set_exception_ports)))
+#endif ;; HAVE(HARDENED_MACH_EXCEPTIONS)
+
+(when (defined? 'mach_port_is_connection_for_service)
+    (allow syscall-mig (kernel-mig-routine mach_port_is_connection_for_service)))
+
+(allow darwin-notification-post
+    (notification-name
+#if ENABLE(NOTIFY_BLOCKING)
+#define WK_NOTIFICATION_COMMENT(...)
+#define WK_NOTIFICATION(name) name
+#include "Resources/cocoa/NotificationAllowList/ForwardedNotifications.def"
+#include "Resources/cocoa/NotificationAllowList/EmbeddedForwardedNotifications.def"
+#include "Resources/cocoa/NotificationAllowList/NonForwardedNotifications.def"
+#undef WK_NOTIFICATION
+#undef WK_NOTIFICATION_COMMENT
+#endif
+        (darwin-notification-post-allowed)))
+
+(allow-for-development mach-task-special-port-get)
+(allow-for-development mach-task-special-port-set)
+(with-filter (require-not (webcontent-process-launched))
+    (allow mach-task-special-port-get)
+    (allow mach-task-special-port-set))
+
+#if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
+#include <WebKitAdditions/SystemContentSandbox-ios.defs>
+
+(allow file-read* file-test-existence
+    (apply subpath file-read-existence-secondary-paths))
+
+(allow file-map-executable
+    (apply subpath secondary-framework-and-dylib-paths))
+
+(allow-read-and-issue-generic-extensions
+    (apply subpath issue-extension-secondary-paths))
+    
+(allow file-issue-extension
+    (require-all
+        (extension-class "com.apple.mediaserverd.read")
+        (require-any
+            (apply subpath issue-extension-secondary-paths))))
+#endif
+
+#if __has_include(<WebKitAdditions/WebContentSandbox-ios.defs>)
+#include <WebKitAdditions/WebContentSandbox-ios.defs>
+#endif

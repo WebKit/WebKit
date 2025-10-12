@@ -28,6 +28,7 @@
 #if ENABLE(NETWORK_ISSUE_REPORTING)
 
 #import <wtf/Forward.h>
+#import <wtf/SystemFree.h>
 #import <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSURLSessionTaskMetrics;
@@ -48,7 +49,7 @@ public:
 
 private:
     HashSet<String> m_reportedHosts;
-    void* m_stackTrace { nullptr };
+    std::unique_ptr<void, WTF::SystemFree<void>> m_stackTrace;
     size_t m_stackTraceSize { 0 };
 };
 

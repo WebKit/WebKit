@@ -17,6 +17,7 @@
 #include <list>
 #include <vector>
 
+#include "api/video/video_frame_type.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "modules/video_coding/deprecated/packet.h"
@@ -52,7 +53,7 @@ class VCMSessionInfo {
   int NumPackets() const;
   bool HaveFirstPacket() const;
   bool HaveLastPacket() const;
-  webrtc::VideoFrameType FrameType() const { return frame_type_; }
+  VideoFrameType FrameType() const { return frame_type_; }
   int LowSequenceNumber() const;
 
   // Returns highest sequence number, media or empty.
@@ -101,7 +102,7 @@ class VCMSessionInfo {
   void UpdateCompleteSession();
 
   bool complete_;
-  webrtc::VideoFrameType frame_type_;
+  VideoFrameType frame_type_;
   // Packets in this frame.
   PacketList packets_;
   int empty_seq_num_low_;

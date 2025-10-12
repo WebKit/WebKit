@@ -10,10 +10,12 @@
 #ifndef TEST_FAKE_TEXTURE_FRAME_H_
 #define TEST_FAKE_TEXTURE_FRAME_H_
 
-#include "api/video/i420_buffer.h"
+#include <cstdint>
+
+#include "api/scoped_refptr.h"
 #include "api/video/video_frame.h"
-#include "common_video/include/video_frame_buffer.h"
-#include "rtc_base/checks.h"
+#include "api/video/video_frame_buffer.h"
+#include "api/video/video_rotation.h"
 
 namespace webrtc {
 namespace test {
@@ -33,7 +35,7 @@ class FakeNativeBuffer : public VideoFrameBuffer {
   int height() const override;
 
  private:
-  rtc::scoped_refptr<I420BufferInterface> ToI420() override;
+  scoped_refptr<I420BufferInterface> ToI420() override;
 
   const int width_;
   const int height_;

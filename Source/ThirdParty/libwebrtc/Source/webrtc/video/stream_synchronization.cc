@@ -10,11 +10,12 @@
 
 #include "video/stream_synchronization.h"
 
-#include <stdlib.h>
-
 #include <algorithm>
+#include <cstdint>
+#include <cstdlib>
 
 #include "rtc_base/logging.h"
+#include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
 

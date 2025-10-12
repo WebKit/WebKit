@@ -4,17 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Implement Array.prototype.includes
+info: bugzilla.mozilla.org/show_bug.cgi?id=1069063
 esid: pending
 ---*/
-var BUGNUMBER = 1069063;
-var summary = "Implement Array.prototype.includes";
-
-print(BUGNUMBER + ": " + summary);
 
 assert.sameValue(typeof [].includes, "function");
 assert.sameValue([].includes.length, 1);
@@ -44,12 +38,12 @@ assertFalse(staticIncludes({length: 3, 1: 2}, 2, 2));
 assertFalse(staticIncludes({length: 3, get 0(){delete this[1]}, 1: 2}, 2));
 assertFalse(staticIncludes({length: -100, 0: 1}, 1));
 
-assertThrowsInstanceOf(() => staticIncludes(), TypeError);
-assertThrowsInstanceOf(() => staticIncludes(null), TypeError);
-assertThrowsInstanceOf(() => staticIncludes({get length(){throw TypeError()}}), TypeError);
-assertThrowsInstanceOf(() => staticIncludes({length: 3, get 1() {throw TypeError()}}, 2), TypeError);
-assertThrowsInstanceOf(() => staticIncludes({__proto__: {get 1() {throw TypeError()}}, length: 3}, 2), TypeError);
-assertThrowsInstanceOf(() => staticIncludes(new Proxy([1], {get(){throw TypeError()}})), TypeError);
+assert.throws(TypeError, () => staticIncludes());
+assert.throws(TypeError, () => staticIncludes(null));
+assert.throws(TypeError, () => staticIncludes({get length(){throw TypeError()}}));
+assert.throws(TypeError, () => staticIncludes({length: 3, get 1() {throw TypeError()}}, 2));
+assert.throws(TypeError, () => staticIncludes({__proto__: {get 1() {throw TypeError()}}, length: 3}, 2));
+assert.throws(TypeError, () => staticIncludes(new Proxy([1], {get(){throw TypeError()}})));
 
 function assertTrue(v) {
     assert.sameValue(v, true);
@@ -62,4 +56,3 @@ function assertFalse(v) {
 function staticIncludes(o, v, f) {
     return [].includes.call(o, v, f);
 }
-

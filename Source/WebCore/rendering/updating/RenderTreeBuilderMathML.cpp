@@ -30,6 +30,7 @@
 
 #include "RenderMathMLFenced.h"
 #include "RenderMathMLFencedOperator.h"
+#include "RenderObjectDocument.h"
 #include "RenderStyleSetters.h"
 #include "RenderTreeBuilderBlock.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -86,7 +87,7 @@ void RenderTreeBuilder::MathML::attach(RenderMathMLFenced& parent, RenderPtr<Ren
         // |count| is now the number of element children that will be before our new separator, i.e. it's the 1-based index of the separator.
 
         if (count > 0) {
-            UChar separator;
+            char16_t separator;
 
             // Use the last separator if we've run out of specified separators.
             if (count > separators->length())

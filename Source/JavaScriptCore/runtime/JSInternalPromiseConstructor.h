@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSPromiseConstructor.h"
+#include <JavaScriptCore/JSPromiseConstructor.h>
 
 namespace JSC {
 

@@ -2,30 +2,17 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-TypedArray-shell.js]
-flags:
-  - noStrict
+includes: [sm/non262-TypedArray-shell.js]
 description: |
-  pending
+  Typed array prototypes/constructors should be largely empty, inheriting most functionality from %TypedArray% and %TypedArray%.prototype
+info: bugzilla.mozilla.org/show_bug.cgi?id=896116
 esid: pending
 ---*/
+
 /*
  * Any copyright is dedicated to the Public Domain.
  * http://creativecommons.org/publicdomain/zero/1.0/
  */
-
-var gTestfile = 'prototype-constructor-identity.js';
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 896116;
-var summary =
-  "Typed array prototypes/constructors should be largely empty, inheriting "
-  "most functionality from %TypedArray% and %TypedArray%.prototype";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 var TypedArray = Object.getPrototypeOf(Int8Array);
 
@@ -62,7 +49,3 @@ anyTypedArrayConstructors.forEach(function(ctor) {
   assert.sameValue(Object.getPrototypeOf(proto), TypedArray.prototype,
            "prototype should inherit from %TypedArray%.prototype");
 });
-
-/******************************************************************************/
-
-print("Tests complete");

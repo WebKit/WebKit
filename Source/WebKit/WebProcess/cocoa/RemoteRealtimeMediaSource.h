@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,7 +69,7 @@ protected:
     void createRemoteMediaSource();
 
     RemoteRealtimeMediaSourceProxy& proxy() { return m_proxy; }
-    UserMediaCaptureManager& manager();
+    inline UserMediaCaptureManager& manager(); // Defined in RemoteRealtimeMediaSourceInlines.h.
 
     void setCapabilities(WebCore::RealtimeMediaSourceCapabilities&&);
 
@@ -99,7 +99,7 @@ private:
 #endif
 
     RemoteRealtimeMediaSourceProxy m_proxy;
-    CheckedRef<UserMediaCaptureManager> m_manager;
+    const CheckedRef<UserMediaCaptureManager> m_manager;
     std::optional<WebCore::MediaConstraints> m_constraints;
     WebCore::RealtimeMediaSourceCapabilities m_capabilities;
     std::optional<WebCore::PhotoCapabilities> m_photoCapabilities;

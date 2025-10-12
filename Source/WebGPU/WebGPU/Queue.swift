@@ -27,36 +27,40 @@ import WebGPU_Internal
 
 private let largeBufferSize = 32 * 1024 * 1024
 
-public func writeBuffer(
-    queue: WebGPU.Queue, buffer: WebGPU.Buffer, bufferOffset: UInt64, data: SpanUInt8
-) {
-    queue.writeBuffer(buffer, bufferOffset: bufferOffset, data: data)
+@_expose(Cxx)
+public func Queue_writeBuffer_thunk(queue: WebGPU.Queue, buffer: MTLBuffer, bufferOffset: UInt64, data: SpanUInt8) {
+    queue.writeBuffer(buffer: buffer, bufferOffset: bufferOffset, data: unsafe MutableSpan<UInt8>(_unsafeCxxSpan: data)) // FIXME (rdar://161269480): We should be able to declare 'data' as MutableSpan<UInt8>, which will remove this use of 'unsafe'.
 }
 
 extension WebGPU.Queue {
-    public func writeBuffer(_ buffer: WebGPU.Buffer, bufferOffset: UInt64, data: SpanUInt8) {
-        let device = self.device()
+    public func writeBuffer(buffer: MTLBuffer, bufferOffset: UInt64, data: consuming MutableSpan<UInt8>) {
+        guard let _ = self.metalDevice() else {
+            return
+        }
+
         guard let blitCommandEncoder = ensureBlitCommandEncoder() else {
             return
         }
-        let noCopy = data.size() >= largeBufferSize
-        guard device.device() != nil else {
+
+        let count = data.count
+        let noCopy = data.count >= largeBufferSize
+        let bufferWithOffset = unsafe newTemporaryBufferWithBytes(SpanUInt8(data), noCopy) // FIXME: 'bufferWithOffset' may extend the lifetime of 'data', but we drop that information here
+        let temporaryBuffer = unsafe bufferWithOffset.first
+        let temporaryBufferOffset = unsafe bufferWithOffset.second
+
+        guard let temporaryBuffer = temporaryBuffer else {
+            assertionFailure("temporaryBuffer should not be nil")
             return
         }
-        guard
-            let tempBuffer =
-                noCopy
-                ? device.newBufferWithBytesNoCopy(
-                    data.__dataUnsafe(), data.size(), MTLResourceOptions.storageModeShared)
-                : device.newBufferWithBytes(
-                    data.__dataUnsafe(), data.size(), MTLResourceOptions.storageModeShared)
-        else {
-            return
-        }
+
         blitCommandEncoder.copy(
-            from: tempBuffer, sourceOffset: 0, to: buffer.buffer(),
+            from: temporaryBuffer,
+            sourceOffset: Int(temporaryBufferOffset),
+            to: buffer,
             destinationOffset: Int(bufferOffset),
-            size: data.size())
+            size: count
+        )
+
         if noCopy {
             finalizeBlitCommandEncoder()
         }

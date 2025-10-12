@@ -287,10 +287,10 @@ void BackgroundFetch::Record::complete(const CreateLoaderCallback& createLoaderC
 
 void BackgroundFetch::Record::pause()
 {
-    if (!m_loader)
-        return;
-    m_loader->abort();
-    m_loader = nullptr;
+    if (RefPtr loader = m_loader) {
+        loader->abort();
+        m_loader = nullptr;
+    }
 }
 
 void BackgroundFetch::Record::abort()
@@ -308,16 +308,16 @@ void BackgroundFetch::Record::abort()
     for (auto& callback : bodyCallbacks)
         callback(makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, { }, "Background fetch was aborted"_s, ResourceError::Type::Cancellation }));
 
-    if (!m_loader)
-        return;
-    m_loader->abort();
-    m_loader = nullptr;
+    if (RefPtr loader = m_loader) {
+        loader->abort();
+        m_loader = nullptr;
+    }
 }
 
 void BackgroundFetch::Record::didSendData(uint64_t size)
 {
-    if (m_fetch)
-        m_fetch->didSendData(size);
+    if (RefPtr fetch = m_fetch.get())
+        fetch->didSendData(size);
 }
 
 // https://wicg.github.io/background-fetch/#extract-content-range-values
@@ -371,15 +371,15 @@ void BackgroundFetch::Record::didReceiveResponse(ResourceResponse&& response)
     auto callbacks = std::exchange(m_responseCallbacks, { });
     for (auto& callback : callbacks)
         callback(ResourceResponse { m_response });
-    if (m_fetch)
-        m_fetch->storeResponse(m_index, shouldClearResponseBody, WTFMove(response));
+    if (RefPtr fetch = m_fetch.get())
+        fetch->storeResponse(m_index, shouldClearResponseBody, WTFMove(response));
 }
 
 void BackgroundFetch::Record::didReceiveResponseBodyChunk(const SharedBuffer& data)
 {
     m_responseDataSize += data.size();
-    if (m_fetch)
-        m_fetch->storeResponseBodyChunk(m_index, data);
+    if (RefPtr fetch = m_fetch.get())
+        fetch->storeResponseBodyChunk(m_index, data);
 
     if (!m_responseBodyCallbacks.isEmpty()) {
         RefPtr buffer = SharedBuffer::create(data.span());
@@ -404,8 +404,8 @@ void BackgroundFetch::Record::didFinish(const ResourceError& error)
             callback(RefPtr<SharedBuffer> { });
     }
 
-    if (m_fetch)
-        m_fetch->didFinishRecord(error);
+    if (RefPtr fetch = m_fetch.get())
+        fetch->didFinishRecord(error);
 }
 
 void BackgroundFetch::Record::retrieveResponse(BackgroundFetchStore&, RetrieveRecordResponseCallback&& callback)
@@ -513,7 +513,7 @@ RefPtr<BackgroundFetch> BackgroundFetch::createFromStore(std::span<const uint8_t
     if (!registrationKeyScope)
         return nullptr;
 
-    auto* registration = server.getRegistration({ WTFMove(*registrationKeyOrigin), WTFMove(*registrationKeyScope) });
+    RefPtr registration = server.getRegistration({ WTFMove(*registrationKeyOrigin), WTFMove(*registrationKeyScope) });
     if (!registration) {
         RELEASE_LOG_ERROR(ServiceWorker, "BackgroundFetch::createFromStore missing registration");
         return nullptr;

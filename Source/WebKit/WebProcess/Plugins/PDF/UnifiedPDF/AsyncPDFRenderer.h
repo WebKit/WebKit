@@ -30,7 +30,6 @@
 #include "PDFDocumentLayout.h"
 #include "PDFPageCoverage.h"
 #include <WebCore/FloatRect.h>
-#include <WebCore/GraphicsLayer.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/TiledBacking.h>
 #include <limits>
@@ -47,6 +46,10 @@
 #endif
 
 OBJC_CLASS PDFDocument;
+
+namespace WebCore {
+class GraphicsLayer;
+}
 
 namespace WebKit {
 
@@ -239,7 +242,7 @@ private:
     void didCompleteTileRender(const TileForGrid& renderKey, PDFTileRenderIdentifier, RenderedPDFTile);
 
     struct RevalidationStateForGrid {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RevalidationStateForGrid);
         bool inFullTileRevalidation { false };
         bool inScaleChangeRepaint { false };
         HashSet<PDFTileRenderIdentifier> renderIdentifiersForCurrentRevalidation;

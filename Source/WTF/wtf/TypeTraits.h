@@ -97,6 +97,9 @@ struct RemoveSmartPointerHelper<T, Ref<Pointee>> {
 template<typename T>
 struct RemoveSmartPointer : detail::RemoveSmartPointerHelper<T, std::remove_cv_t<T>> { };
 
+template<typename T>
+using RemoveCVSmartPointer = std::remove_cvref_t<typename RemoveSmartPointer<T>::type>;
+
 // HasRefPtrMemberFunctions implementation
 namespace detail {
 
@@ -112,6 +115,32 @@ static auto HasRefPtrMemberFunctionsTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_
 
 template<class T>
 struct HasRefPtrMemberFunctions : decltype(detail::HasRefPtrMemberFunctionsTest<T>(SFINAE_OVERLOAD)) { };
+
+// HasWeakPtrFunctions implementation
+namespace detail {
+
+template<class T>
+static auto HasWeakPtrFunctionsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(static_cast<std::remove_cv_t<T>*>(nullptr)->weakImpl(), static_cast<std::remove_cv_t<T>*>(nullptr)->weakCount())>;
+template<class>
+static auto HasWeakPtrFunctionsTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
+
+}
+
+template<class T>
+struct HasWeakPtrFunctions : decltype(detail::HasWeakPtrFunctionsTest<T>(SFINAE_OVERLOAD)) { };
+
+// HasThreadSafeWeakPtrFunctions implementation
+namespace detail {
+
+template<class T>
+static auto HasThreadSafeWeakPtrFunctionsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(static_cast<std::remove_cv_t<T>*>(nullptr)->weakRefCount())>;
+template<class>
+static auto HasThreadSafeWeakPtrFunctionsTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
+
+}
+
+template<class T>
+struct HasThreadSafeWeakPtrFunctions : decltype(detail::HasThreadSafeWeakPtrFunctionsTest<T>(SFINAE_OVERLOAD)) { };
 
 // HasCheckedPtrMemberFunctions implementation
 namespace detail {

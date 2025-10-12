@@ -35,21 +35,18 @@ ignore_elf32_limitations = true
 
 # Use bundled hermetic Xcode installation maintained by Chromium,
 # except for local iOS builds where it is unsupported.
-if (host_os == "mac") {
+# Allow for mac cross compile on linux machines.
+if (host_os == "mac" || host_os == "linux") {
   _result = exec_script("//build/mac/should_use_hermetic_xcode.py",
                         [ target_os ],
                         "value")
   assert(_result != 2,
-         "Do not allow building targets with the default" +
+         "Do not allow building targets with the default " +
              "hermetic toolchain if the minimum OS version is not met.")
   use_system_xcode = _result == 0
 }
 
 declare_args() {
-  # Tracing support requires //third_party/perfetto.
-  enable_base_tracing = false
-  use_perfetto_client_library = false
-
   # Limits the defined //third_party/android_deps targets to only "buildCompile"
   # and "buildCompileNoDeps" targets. This is useful for third-party
   # repositories which do not use JUnit tests. For instance,

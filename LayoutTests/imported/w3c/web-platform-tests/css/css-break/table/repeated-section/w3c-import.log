@@ -70,6 +70,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/special-elements-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/tall-monolithic-after-repeated-header.tentative-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/tall-monolithic-after-repeated-header.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/text-in-nested-multicol-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/text-in-nested-multicol-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/text-in-nested-multicol.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/variable-fragmentainer-size-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/variable-fragmentainer-size-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/variable-fragmentainer-size-001.html

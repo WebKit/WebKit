@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CodeBlockHash.h"
-#include "JSCJSValue.h"
-#include "ProfilerBytecodeSequence.h"
+#include <JavaScriptCore/CodeBlockHash.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/ProfilerBytecodeSequence.h>
 #include <wtf/PrintStream.h>
 #include <wtf/text/WTFString.h>
 

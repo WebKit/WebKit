@@ -106,7 +106,7 @@ void SkSLSlide::unload() {
 bool SkSLSlide::rebuild() {
     // Some of the standard shadertoy inputs:
     SkString sksl;
-    // TODO(skia:11209): This interferes with user-authored #version directives
+    // TODO(skbug.com/40042585): This interferes with user-authored #version directives
     if (fShadertoyUniforms) {
         sksl = "uniform float3 iResolution;\n"
                "uniform float  iTime;\n"
@@ -129,7 +129,9 @@ bool SkSLSlide::rebuild() {
     }
 
     if (!effect) {
+#if defined(SK_GANESH)
         Viewer::ShaderErrorHandler()->compileError(sksl.c_str(), errorText.c_str());
+#endif
         return false;
     }
 

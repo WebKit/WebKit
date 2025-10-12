@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebTransportCongestionControl.h"
-#include "WebTransportHash.h"
+#include <WebCore/WebTransportCongestionControl.h>
+#include <WebCore/WebTransportHash.h>
 
 namespace WebCore {
 

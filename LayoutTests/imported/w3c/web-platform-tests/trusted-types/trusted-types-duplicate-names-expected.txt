@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'default' because it violates the following Content Security Policy directive: "trusted-types 'allow-duplicates' duplicatename default"
 
 PASS policy - duplicate names
 

@@ -74,7 +74,7 @@ std::optional<ReferrerPolicy> parseReferrerPolicy(StringView policyString, Refer
         // Implementing https://www.w3.org/TR/2017/CR-referrer-policy-20170126/#parse-referrer-policy-from-header.
         std::optional<ReferrerPolicy> result;
         for (auto tokenView : policyString.split(',')) {
-            auto token = parseReferrerPolicyToken(tokenView.trim(isASCIIWhitespaceWithoutFF<UChar>), ShouldParseLegacyKeywords::No);
+            auto token = parseReferrerPolicyToken(tokenView.trim(isASCIIWhitespaceWithoutFF<char16_t>), ShouldParseLegacyKeywords::No);
             if (token && token.value() != ReferrerPolicy::EmptyString)
                 result = token.value();
         }
@@ -83,6 +83,7 @@ std::optional<ReferrerPolicy> parseReferrerPolicy(StringView policyString, Refer
     case ReferrerPolicySource::MetaTag:
         return parseReferrerPolicyToken(policyString, ShouldParseLegacyKeywords::Yes);
     case ReferrerPolicySource::ReferrerPolicyAttribute:
+    case ReferrerPolicySource::SpeculationRules:
         return parseReferrerPolicyToken(policyString, ShouldParseLegacyKeywords::No);
     }
     ASSERT_NOT_REACHED();

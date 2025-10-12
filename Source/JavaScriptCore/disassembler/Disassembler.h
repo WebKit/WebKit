@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSCPtrTag.h"
-#include "JSExportMacros.h"
+#include <JavaScriptCore/JSCPtrTag.h>
+#include <JavaScriptCore/JSExportMacros.h>
 #include <functional>
 #include <wtf/CodePtr.h>
 #include <wtf/PrintStream.h>
@@ -53,13 +53,6 @@ inline bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& code, size_t size
 // Prints either the disassembly, or a line of text indicating that disassembly failed and
 // the range of machine code addresses.
 void disassemble(const CodePtr<DisassemblyPtrTag>&, size_t, void* codeStart, void* codeEnd, const char* prefix, PrintStream& out);
-
-// Asynchronous disassembly. This happens on another thread, and calls the provided
-// callback when the disassembly is done.
-void disassembleAsynchronously(
-    const CString& header, const MacroAssemblerCodeRef<DisassemblyPtrTag>&, size_t, void* codeStart, void* codeEnd, const char* prefix);
-
-JS_EXPORT_PRIVATE void waitForAsynchronousDisassembly();
 
 void registerLabel(void* thunkAddress, CString&& label);
 void registerLabel(void* thunkAddress, const char* label);

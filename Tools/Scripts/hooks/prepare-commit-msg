@@ -11,7 +11,7 @@ LOCATION = os.path.join(TOPLEVEL, r'{{ location }}')
 SPACING = 8
 IDENT = 4
 SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))
-PREPARE_CHANGELOG_CMD = [{{ perl }}, os.path.join(SCRIPTS, 'prepare-ChangeLog'), '--no-write', '--only-files', '--delimiters', '--git-index']
+PREPARE_CHANGELOG_CMD = [{{ perl }}, os.path.join(SCRIPTS, 'prepare-ChangeLog'), '--no-write', '--only-files', '--git-index']
 CHERRY_PICKING_RE = re.compile(r'^# You are currently cherry-picking commit (?P<hash>[a-f0-9A-F]+)\.$')
 CHERRY_PICK_COMMIT_RE = re.compile(r'^(?P<a>\S+)( \((?P<b>\S+)\))?$')
 REFNAME_RE = re.compile(r'^refs/remotes/(?P<remote>[^/ ]+)/(?P<branch>\S+)$')
@@ -105,27 +105,20 @@ def parseChanges(command, commit_message):
             capture_output=True,
             check=True
         ).stdout.splitlines():
-            if line == '~':
-                dirname = None
-                continue
-            if line.startswith(' ' * SPACING):
-                if dirname:
-                    line = line.replace('* ', '* {}/'.format(dirname))
-                commit_message.append(line[SPACING:])
-                changes.append(line[SPACING:])
-                continue
-            if line.endswith(':'):
-                dirname = line.split(':')[0]
-                continue
+            commit_message.append(line[SPACING:])
+            changes.append(line[SPACING:])
     except subprocess.CalledProcessError:
         commit_message.append('')
         return
     return changes
 
-def message(source=None, sha=None):
+def message(source=None, sha=None, mention_tests=True):
     commit_message = []
     amend_changes = None
     command = PREPARE_CHANGELOG_CMD
+
+    if not mention_tests:
+        command = command + ["--no-mention-tests"]
 
     if sha:
         commit_message.append('Amend changes:')
@@ -142,7 +135,7 @@ def message(source=None, sha=None):
         return '''{title}\n{revert}'''.format(
             title=os.environ.get('COMMIT_MESSAGE_TITLE', ''),
             revert=revert_msg,
-        )
+        ), combined_changes, amend_changes
     else:
         bugs_string = get_bugs_string()
         return '''{title}
@@ -340,7 +333,7 @@ def amended_message(full_message, combined_changes, amend_changes, update_change
         updated_changelog_lines = commit_message_parser.apply_comments_to_modified_files_lines(combined_changes)
         reviewed_by_lines = (commit_message_parser.reviewed_by_lines or ['Reviewed by NOBODY (OOPS!).'])
         description_lines = (commit_message_parser.description_lines or ['Explanation of why this fixes the bug (OOPS!).'])
-        tests_lines = [commit_message_parser.tests_lines, ''] if commit_message_parser.tests_lines else []
+        tests_lines = commit_message_parser.tests_lines + [''] if commit_message_parser.tests_lines else []
         amended_message = commit_message_parser.title_lines + [''] + reviewed_by_lines + [''] + description_lines + [''] + tests_lines + updated_changelog_lines
         removed_changelog_lines = commit_message_parser.apply_comments_to_modified_files_lines(annotate_deleted_lines(amend_changes, combined_changes), return_deleted=True)
         return '''{message_body}
@@ -404,13 +397,14 @@ def main(file_name=None, source=None, sha=None):
                 capture_output=True,
                 check=True
             ).stdout.strip()
+            update_changelog = True if update_changelog == 'true' else False
         except subprocess.CalledProcessError as error:
             if error.returncode != 1:
                 sys.stderr.write(error.stderr)
 
     with open(file_name, 'w') as commit_message_file:
-        generated_msg, combined_changes, amend_changes = message(source=source, sha=sha)
         if sha:
+            generated_msg, combined_changes, amend_changes = message(source=source, sha=sha, mention_tests=False)
             git_log_msg = subprocess.run(
                 ['git', 'log', sha, '-1', '--pretty=format:%B'],
                 encoding='utf-8',
@@ -419,6 +413,7 @@ def main(file_name=None, source=None, sha=None):
             ).stdout
             commit_message_file.write(amended_message(git_log_msg, combined_changes, amend_changes, update_changelog))
         else:
+            generated_msg, combined_changes, amend_changes = message(source=source, sha=sha)
             commit_message_file.write(generated_msg)
 
         commit_message_file.write('''

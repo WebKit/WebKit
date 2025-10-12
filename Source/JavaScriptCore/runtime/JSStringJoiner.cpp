@@ -27,6 +27,7 @@
 #include "JSStringJoiner.h"
 
 #include "JSCJSValueInlines.h"
+#include <charconv>
 #include <wtf/text/ParsingUtilities.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -38,7 +39,7 @@ JSStringJoiner::~JSStringJoiner() = default;
 template<typename CharacterType>
 static inline void appendStringToData(std::span<CharacterType>& data, StringView string)
 {
-    if constexpr (std::is_same_v<CharacterType, LChar>) {
+    if constexpr (std::is_same_v<CharacterType, Latin1Character>) {
         ASSERT(string.is8Bit());
         string.getCharacters8(data);
     } else
@@ -54,15 +55,29 @@ static inline void appendStringToData(std::span<OutputCharacterType>& data, std:
 }
 
 template<typename CharacterType>
-static inline void appendStringToDataWithOneCharacterSeparatorRepeatedly(std::span<CharacterType>& data, UChar separatorCharacter, StringView string, unsigned count)
+static inline void appendStringToData(std::span<CharacterType>& data, int32_t value)
+{
+    if constexpr (std::is_same_v<CharacterType, Latin1Character>) {
+        auto result = std::to_chars(std::bit_cast<char*>(data.data()), std::bit_cast<char*>(data.data() + data.size()), value);
+        ASSERT(result.ec != std::errc::value_too_large);
+        skip(data, result.ptr - std::bit_cast<char*>(data.data()));
+    } else {
+        WTF::StringTypeAdapter<int32_t> adapter { value };
+        adapter.writeTo(data);
+        skip(data, adapter.length());
+    }
+}
+
+template<typename CharacterType>
+static inline void appendStringToDataWithOneCharacterSeparatorRepeatedly(std::span<CharacterType>& data, char16_t separatorCharacter, StringView string, unsigned count)
 {
 #if OS(DARWIN)
-    if constexpr (std::is_same_v<CharacterType, LChar>) {
+    if constexpr (std::is_same_v<CharacterType, Latin1Character>) {
         ASSERT(string.is8Bit());
         if (count > 4) {
             switch (string.length() + 1) {
             case 16: {
-                alignas(16) LChar pattern[16];
+                alignas(16) Latin1Character pattern[16];
                 pattern[0] = separatorCharacter;
                 string.getCharacters8(std::span { pattern }.subspan(1));
                 size_t fillLength = count * 16;
@@ -71,7 +86,7 @@ static inline void appendStringToDataWithOneCharacterSeparatorRepeatedly(std::sp
                 return;
             }
             case 8: {
-                alignas(8) LChar pattern[8];
+                alignas(8) Latin1Character pattern[8];
                 pattern[0] = separatorCharacter;
                 string.getCharacters8(std::span { pattern }.subspan(1));
                 size_t fillLength = count * 8;
@@ -80,7 +95,7 @@ static inline void appendStringToDataWithOneCharacterSeparatorRepeatedly(std::sp
                 return;
             }
             case 4: {
-                alignas(4) LChar pattern[4];
+                alignas(4) Latin1Character pattern[4];
                 pattern[0] = separatorCharacter;
                 string.getCharacters8(std::span { pattern }.subspan(1));
                 size_t fillLength = count * 4;
@@ -185,27 +200,40 @@ static inline String joinStrings(JSGlobalObject* globalObject, const WriteBarrie
     case 0: {
         for (unsigned i = 0; i < size; ++i) {
             JSValue value = strings[i].get();
-            auto view = asString(value)->view(globalObject);
-            RETURN_IF_EXCEPTION(scope, String());
-
-            appendStringToData(data, view);
+            if (value.isString()) {
+                auto view = asString(value)->view(globalObject);
+                RETURN_IF_EXCEPTION(scope, String());
+                appendStringToData(data, view);
+            } else {
+                ASSERT(value.isInt32());
+                appendStringToData(data, value.asInt32());
+            }
         }
         break;
     }
     default: {
         JSValue value = strings[0].get();
-        auto view = asString(value)->view(globalObject);
-        RETURN_IF_EXCEPTION(scope, String());
-
-        appendStringToData(data, view);
+        if (value.isString()) {
+            auto view = asString(value)->view(globalObject);
+            RETURN_IF_EXCEPTION(scope, String());
+            appendStringToData(data, view);
+        } else {
+            ASSERT(value.isInt32());
+            appendStringToData(data, value.asInt32());
+        }
 
         for (unsigned i = 1; i < size; ++i) {
             JSValue value = strings[i].get();
-            auto view = asString(value)->view(globalObject);
-            RETURN_IF_EXCEPTION(scope, String());
-
-            appendStringToData(data, separator);
-            appendStringToData(data, view);
+            if (value.isString()) {
+                auto view = asString(value)->view(globalObject);
+                RETURN_IF_EXCEPTION(scope, String());
+                appendStringToData(data, separator);
+                appendStringToData(data, view);
+            } else {
+                ASSERT(value.isInt32());
+                appendStringToData(data, separator);
+                appendStringToData(data, value.asInt32());
+            }
         }
         break;
     }
@@ -233,7 +261,7 @@ inline unsigned JSStringJoiner::joinedLength(JSGlobalObject* globalObject) const
     return totalLength;
 }
 
-JSValue JSStringJoiner::joinImpl(JSGlobalObject* globalObject)
+JSString* JSStringJoiner::joinImpl(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -252,12 +280,12 @@ JSValue JSStringJoiner::joinImpl(JSGlobalObject* globalObject)
 
     String result;
     if (m_isAll8Bit)
-        result = joinStrings<LChar>(m_strings, m_separator.span8(), length);
+        result = joinStrings<Latin1Character>(m_strings, m_separator.span8(), length);
     else {
         if (m_separator.is8Bit())
-            result = joinStrings<UChar>(m_strings, m_separator.span8(), length);
+            result = joinStrings<char16_t>(m_strings, m_separator.span8(), length);
         else
-            result = joinStrings<UChar>(m_strings, m_separator.span16(), length);
+            result = joinStrings<char16_t>(m_strings, m_separator.span16(), length);
     }
 
     if (result.isNull()) [[unlikely]] {
@@ -268,7 +296,7 @@ JSValue JSStringJoiner::joinImpl(JSGlobalObject* globalObject)
     return jsString(vm, WTFMove(result));
 }
 
-JSValue JSOnlyStringsJoiner::joinImpl(JSGlobalObject* globalObject, const WriteBarrier<Unknown>* data, unsigned length)
+JSString* JSOnlyStringsAndInt32sJoiner::joinImpl(JSGlobalObject* globalObject, const WriteBarrier<Unknown>* data, unsigned length)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -286,12 +314,12 @@ JSValue JSOnlyStringsJoiner::joinImpl(JSGlobalObject* globalObject, const WriteB
 
     String result;
     if (m_isAll8Bit)
-        result = joinStrings<LChar>(globalObject, data, length, m_separator.span8(), totalLength);
+        result = joinStrings<Latin1Character>(globalObject, data, length, m_separator.span8(), totalLength);
     else {
         if (m_separator.is8Bit())
-            result = joinStrings<UChar>(globalObject, data, length, m_separator.span8(), totalLength);
+            result = joinStrings<char16_t>(globalObject, data, length, m_separator.span8(), totalLength);
         else
-            result = joinStrings<UChar>(globalObject, data, length, m_separator.span16(), totalLength);
+            result = joinStrings<char16_t>(globalObject, data, length, m_separator.span16(), totalLength);
     }
 
     RETURN_IF_EXCEPTION(scope, { });

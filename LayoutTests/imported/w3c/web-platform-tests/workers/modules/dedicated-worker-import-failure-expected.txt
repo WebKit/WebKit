@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Importing a module script failed.
 
 PASS importScripts() on module worker should throw an exception.
 PASS Worker construction for non-existent script should dispatch an ErrorEvent.

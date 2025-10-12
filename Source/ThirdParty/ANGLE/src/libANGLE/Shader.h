@@ -199,9 +199,6 @@ class Shader final : angle::NonCopyable, public LabeledObject
 
   private:
     ~Shader() override;
-    static std::string joinShaderSources(GLsizei count,
-                                         const char *const *string,
-                                         const GLint *length);
     static void GetSourceImpl(const std::string &source,
                               GLsizei bufSize,
                               GLsizei *length,

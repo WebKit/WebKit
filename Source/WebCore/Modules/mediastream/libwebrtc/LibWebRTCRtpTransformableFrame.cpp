@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 Apple Inc.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -154,7 +154,7 @@ void LibWebRTCRtpTransformableFrame::setOptions(const RTCEncodedVideoFrameMetada
     if (newMetadata.frameId)
         rtcMetadata.SetFrameId(*newMetadata.frameId);
     if (newMetadata.dependencies)
-        rtcMetadata.SetFrameDependencies({ newMetadata.dependencies->data(), newMetadata.dependencies->size() });
+        rtcMetadata.SetFrameDependencies({ newMetadata.dependencies->span().data(), newMetadata.dependencies->size() });
     if (newMetadata.width)
         rtcMetadata.SetWidth(*newMetadata.width);
     if (newMetadata.height)

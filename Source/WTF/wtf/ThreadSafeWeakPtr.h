@@ -29,6 +29,7 @@
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/TaggedPtr.h>
 
 namespace WTF {
@@ -39,7 +40,7 @@ template<typename, DestructionThread> class ThreadSafeRefCountedAndCanMakeThread
 
 class ThreadSafeWeakPtrControlBlock {
     WTF_MAKE_NONCOPYABLE(ThreadSafeWeakPtrControlBlock);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ThreadSafeWeakPtrControlBlock);
 public:
     ThreadSafeWeakPtrControlBlock* weakRef()
     {
@@ -202,7 +203,7 @@ using ControlBlockRefPtr = RefPtr<ThreadSafeWeakPtrControlBlock, RawPtrTraits<Th
 template<typename T, DestructionThread destructionThread = DestructionThread::Any>
 class ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr {
     WTF_MAKE_NONCOPYABLE(ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr);
 public:
     static_assert(alignof(ThreadSafeWeakPtrControlBlock) >= 2);
     static constexpr uintptr_t strongOnlyFlag = 1;
@@ -275,6 +276,11 @@ public:
     }
 
     bool hasOneRef() const { return refCount() == 1; }
+
+    // Ideally this would have been private but AbstractRefCounted subclasses need to be able to access this function
+    // to provide its result to ThreadSafeWeakHashSet.
+    size_t weakRefCount() const { return !isStrongOnly(m_bits.loadRelaxed()) ? controlBlock().weakRefCount() : 0; }
+
 protected:
     ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr() = default;
     ThreadSafeWeakPtrControlBlock& controlBlock() const
@@ -308,10 +314,6 @@ protected:
         delete controlBlock;
         return *std::bit_cast<ThreadSafeWeakPtrControlBlock*>(m_bits.loadRelaxed());
     }
-
-    // Ideally this would have been private but AbstractRefCounted subclasses need to be able to access this function
-    // to provide its result to ThreadSafeWeakHashSet.
-    size_t weakRefCount() const { return !isStrongOnly(m_bits.loadRelaxed()) ? controlBlock().weakRefCount() : 0; }
 
 private:
     static bool isStrongOnly(uintptr_t bits) { return bits & strongOnlyFlag; }
@@ -443,7 +445,7 @@ private:
     // from ThreadSafeWeakPtrControlBlock::m_object and don't support structs larger than 65535.
     // https://bugs.webkit.org/show_bug.cgi?id=283929
     ControlBlockRefPtr m_controlBlock;
-};
+} SWIFT_ESCAPABLE;
 
 template<class T> ThreadSafeWeakPtr(const T&) -> ThreadSafeWeakPtr<T>;
 template<class T> ThreadSafeWeakPtr(const T*) -> ThreadSafeWeakPtr<T>;
@@ -462,7 +464,6 @@ public:
     bool isStrong() const { return !isWeak(); }
 
     RefPtr<T> get() const { return isWeak() ? m_weak.get() : m_strong; }
-    T* ptr() const { ASSERT(isStrong()); return m_strong.get(); }
 
     // NB. This function is not atomic so it's not safe to call get() while this transition is happening.
     RefPtr<T> convertToWeak()
@@ -482,7 +483,8 @@ public:
         m_weak.setTag(Status::Strong);
         m_weak = nullptr;
         m_strong = WTFMove(strong);
-        return ptr();
+        ASSERT(isStrong());
+        return m_strong.get();
     }
 
     ThreadSafeWeakOrStrongPtr& operator=(const ThreadSafeWeakOrStrongPtr& other)

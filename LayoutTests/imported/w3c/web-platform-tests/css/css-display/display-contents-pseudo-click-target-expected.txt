@@ -1,0 +1,3 @@
+
+PASS Clicking a display: contents pseudo-element targets that element
+

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
 
 PASS <crossorigin="anonymous"> Same-origin with correct sha256 hash.
 PASS <crossorigin="anonymous"> Same-origin with correct sha384 hash.

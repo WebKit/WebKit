@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "PlatformLayer.h"
+#include <WebCore/PlatformLayer.h>
 
 namespace WebCore {
 

@@ -4,38 +4,28 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-extensions-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Do not assert: pobj_ == obj2
+info: bugzilla.mozilla.org/show_bug.cgi?id=480579
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 480579;
-var summary = 'Do not assert: pobj_ == obj2';
+
 var actual = '';
 var expect = '';
 
-
-//-----------------------------------------------------------------------------
 test();
-//-----------------------------------------------------------------------------
 
 function test()
 {
-  printBugNumber(BUGNUMBER);
-  printStatus (summary);
-
   expect = '12';
 
-  a = {x: 1};
-  b = {__proto__: a};
-  c = {__proto__: b};
-  for (i = 0; i < 2; i++) {
-    print(actual += c.x);
+  var a = {x: 1};
+  var b = {__proto__: a};
+  var c = {__proto__: b};
+  for (var i = 0; i < 2; i++) {
+    actual += c.x;
     b.x = 2;
   }
 
-  assert.sameValue(expect, actual, summary);
+  assert.sameValue(expect, actual);
 }

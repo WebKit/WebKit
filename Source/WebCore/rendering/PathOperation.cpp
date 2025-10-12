@@ -32,6 +32,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGPathData.h"
 #include "SVGPathElement.h"
+#include "StyleLengthWrapper+Blending.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
@@ -121,9 +122,14 @@ std::optional<Path> BoxPathOperation::getPath(const TransformOperationData& data
 
 // MARK: - RayPathOperation
 
-Ref<RayPathOperation> RayPathOperation::create(Style::RayFunction ray, CSSBoxType referenceBox)
+Ref<RayPathOperation> RayPathOperation::create(Style::RayFunction&& ray, CSSBoxType referenceBox)
 {
     return adoptRef(*new RayPathOperation(WTFMove(ray), referenceBox));
+}
+
+Ref<RayPathOperation> RayPathOperation::create(const Style::RayFunction& ray, CSSBoxType referenceBox)
+{
+    return adoptRef(*new RayPathOperation(ray, referenceBox));
 }
 
 Ref<PathOperation> RayPathOperation::clone() const

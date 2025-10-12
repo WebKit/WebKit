@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -50,7 +47,7 @@ let dummy = class {
   set ["setter"](x) {}
 };
 
-dum = new dummy();
+let dum = new dummy();
 
 assert.sameValue(dum.func.name, "func");
 assert.sameValue(dum.genFunc.name, "genFunc");

@@ -210,7 +210,8 @@ t.skipIfLanguageFeatureNotSupported('readonly_and_readwrite_storage_textures')
 ).
 fn((t) => {
   const { textureType, coordType, format, value } = t.params;
-  t.skipIfTextureFormatNotUsableAsStorageTexture(format);
+  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotUsableWithStorageAccessMode('read-only', format);
 
   const coordArgType = kValuesTypes[coordType];
   const { coordsArgTypes, hasArrayIndexArg } =
@@ -308,7 +309,8 @@ t.skipIfLanguageFeatureNotSupported('readonly_and_readwrite_storage_textures')
 ).
 fn((t) => {
   const { textureType, arrayIndexType, format, value } = t.params;
-  t.skipIfTextureFormatNotUsableAsStorageTexture(format);
+  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotUsableWithStorageAccessMode('read-only', format);
 
   const arrayIndexArgType = kValuesTypes[arrayIndexType];
   const args = [arrayIndexArgType.create(value)];

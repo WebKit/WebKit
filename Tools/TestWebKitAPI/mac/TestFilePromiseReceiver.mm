@@ -31,6 +31,7 @@
 #import "DragAndDropSimulator.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 @implementation TestFilePromiseReceiver {
     RetainPtr<NSString> _promisedTypeIdentifier;
@@ -121,7 +122,7 @@ static NSURL *copyFile(NSURL *sourceURL, NSURL *destinationDirectory, NSError **
         else
             destination = writeToWebLoc(_promisedFileURL.get(), destinationDirectory, &error);
         if (destination) {
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(mainDispatchQueueSingleton(), ^{
                 _destinationURL = destination;
             });
         }

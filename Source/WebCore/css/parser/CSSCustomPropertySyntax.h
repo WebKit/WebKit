@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+class CSSParserTokenRange;
+
 struct CSSCustomPropertySyntax {
     enum class Type : uint8_t {
         Length,
@@ -68,7 +70,12 @@ struct CSSCustomPropertySyntax {
     bool isUniversal() const { return definition.isEmpty(); }
 
     static std::optional<CSSCustomPropertySyntax> parse(StringView);
+    static std::optional<CSSCustomPropertySyntax> consumeType(CSSParserTokenRange&);
+
+
     static CSSCustomPropertySyntax universal() { return { }; }
+
+    bool containsUnknownType() const;
 
 private:
     template<typename CharacterType> static std::optional<Component> parseComponent(std::span<const CharacterType>);

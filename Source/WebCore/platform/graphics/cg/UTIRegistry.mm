@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
-#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
+#if ENABLE(LOCKDOWN_MODE_API)
 #import <pal/cocoa/LockdownModeCocoa.h>
 #endif
 
@@ -54,10 +54,10 @@ static MemoryCompactLookupOnlyRobinHoodHashSet<String> filterSupportedImageTypes
     auto systemSupportedCFImageTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());
     CFIndex count = CFArrayGetCount(systemSupportedCFImageTypes.get());
 
-    UncheckedKeyHashSet<String> systemSupportedImageTypes;
+    HashSet<String> systemSupportedImageTypes;
     CFArrayApplyFunction(systemSupportedCFImageTypes.get(), CFRangeMake(0, count), [](const void *value, void *context) {
         String imageType = static_cast<CFStringRef>(value);
-        static_cast<UncheckedKeyHashSet<String>*>(context)->add(imageType);
+        static_cast<HashSet<String>*>(context)->add(imageType);
     }, &systemSupportedImageTypes);
 
     MemoryCompactLookupOnlyRobinHoodHashSet<String> filtered;
@@ -108,7 +108,7 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedIm
     return defaultSupportedImageTypes;
 }
 
-#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
+#if ENABLE(LOCKDOWN_MODE_API)
 static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& lockdownSupportedImageTypes()
 {
     static NeverDestroyed lockdownSupportedImageTypes = [] {
@@ -129,7 +129,7 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& lockdownSupportedI
 
 const MemoryCompactLookupOnlyRobinHoodHashSet<String>& supportedImageTypes()
 {
-#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
+#if ENABLE(LOCKDOWN_MODE_API)
     if (PAL::isLockdownModeEnabledForCurrentProcess())
         return lockdownSupportedImageTypes();
 #endif
@@ -144,15 +144,14 @@ MemoryCompactRobinHoodHashSet<String>& additionalSupportedImageTypes()
 
 void setAdditionalSupportedImageTypes(const Vector<String>& imageTypes)
 {
-#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
+#if ENABLE(LOCKDOWN_MODE_API)
     if (PAL::isLockdownModeEnabledForCurrentProcess())
         return;
 #endif
     MIMETypeRegistry::additionalSupportedImageMIMETypes().clear();
     for (const auto& imageType : imageTypes) {
         additionalSupportedImageTypes().add(imageType);
-        auto mimeTypes = RequiredMIMETypesFromUTI(imageType);
-        MIMETypeRegistry::additionalSupportedImageMIMETypes().add(mimeTypes.begin(), mimeTypes.end());
+        MIMETypeRegistry::additionalSupportedImageMIMETypes().addAll(RequiredMIMETypesFromUTI(imageType));
     }
 }
 
@@ -198,7 +197,7 @@ static Vector<String> allowableDefaultSupportedImageTypes()
     return allowableDefaultSupportedImageTypes;
 }
 
-#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
+#if ENABLE(LOCKDOWN_MODE_API)
 static Vector<String> allowableLockdownSupportedImageTypes()
 {
     return copyToVector(lockdownSupportedImageTypes());
@@ -207,7 +206,7 @@ static Vector<String> allowableLockdownSupportedImageTypes()
 
 static Vector<String> allowableSupportedImageTypes()
 {
-#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
+#if ENABLE(LOCKDOWN_MODE_API)
     if (PAL::isLockdownModeEnabledForCurrentProcess())
         return allowableLockdownSupportedImageTypes();
 #endif

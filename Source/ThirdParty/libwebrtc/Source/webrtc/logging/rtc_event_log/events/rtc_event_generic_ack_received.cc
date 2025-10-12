@@ -26,7 +26,7 @@ RtcEventGenericAckReceived::CreateLogs(
     int64_t packet_number,
     const std::vector<AckedPacket>& acked_packets) {
   std::vector<std::unique_ptr<RtcEventGenericAckReceived>> result;
-  int64_t time_us = rtc::TimeMicros();
+  int64_t time_us = TimeMicros();
   result.reserve(acked_packets.size());
   for (const AckedPacket& packet : acked_packets) {
     result.emplace_back(new RtcEventGenericAckReceived(

@@ -44,7 +44,7 @@ extern "C" {
 #define MAX_TX_TYPE_PROB 1024
 
 //! Compute color sensitivity index for given plane
-#define COLOR_SENS_IDX(plane) ((plane)-1)
+#define COLOR_SENS_IDX(plane) ((plane) - 1)
 
 //! Enable timer statistics of mode search in non-rd
 #define COLLECT_NONRD_PICK_MODE_STAT 0
@@ -1352,6 +1352,10 @@ typedef struct macroblock {
   //! Flag to indicate to test the superblock MV for the coding block in the
   // nonrd_pickmode.
   int sb_me_block;
+  //! Flag to indicate superblock selected column scroll.
+  int sb_col_scroll;
+  //! Flag to indicate superblock selected row scroll.
+  int sb_row_scroll;
   //! Motion vector from superblock MV derived from int_pro_motion() in
   // the variance_partitioning.
   int_mv sb_me_mv;

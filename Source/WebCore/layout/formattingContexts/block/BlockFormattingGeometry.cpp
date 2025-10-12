@@ -327,17 +327,17 @@ IntrinsicWidthConstraints BlockFormattingGeometry::intrinsicWidthConstraints(con
     auto fixedMarginBorderAndPadding = [&](auto& layoutBox) {
         auto& style = layoutBox.style();
         return fixedValue(style.marginStart()).value_or(0)
-            + LayoutUnit { style.borderLeftWidth() }
+            + Style::evaluate<LayoutUnit>(style.borderLeftWidth(), Style::ZoomNeeded { })
             + fixedValue(style.paddingLeft()).value_or(0)
             + fixedValue(style.paddingRight()).value_or(0)
-            + LayoutUnit { style.borderRightWidth() }
+            + Style::evaluate<LayoutUnit>(style.borderRightWidth(), Style::ZoomNeeded { })
             + fixedValue(style.marginEnd()).value_or(0);
     };
 
     auto computedIntrinsicWidthConstraints = [&]() -> IntrinsicWidthConstraints {
         auto logicalWidth = layoutBox.style().logicalWidth();
         // Minimum/maximum width can't be depending on the containing block's width.
-        auto needsResolvedContainingBlockWidth = logicalWidth.isCalculated() || logicalWidth.isPercent() || logicalWidth.isRelative();
+        auto needsResolvedContainingBlockWidth = logicalWidth.isPercentOrCalculated();
         if (needsResolvedContainingBlockWidth)
             return { };
 

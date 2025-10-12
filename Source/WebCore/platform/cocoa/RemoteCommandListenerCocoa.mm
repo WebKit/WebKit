@@ -123,7 +123,7 @@ void RemoteCommandListenerCocoa::updateSupportedCommands()
         MRMediaRemoteCommandInfoSetCommand(commandInfo.get(), command.value());
         MRMediaRemoteCommandInfoSetEnabled(commandInfo.get(), true);
         if (platformCommand == PlatformMediaSession::RemoteControlCommandType::SkipForwardCommand || platformCommand == PlatformMediaSession::RemoteControlCommandType::SkipBackwardCommand)
-            MRMediaRemoteCommandInfoSetOptions(commandInfo.get(), (__bridge CFDictionaryRef)(@{(__bridge NSString *)kMRMediaRemoteCommandInfoPreferredIntervalsKey : @[@(15.0)]}));
+            MRMediaRemoteCommandInfoSetOptions(commandInfo.get(), (__bridge CFDictionaryRef)(@{ (__bridge NSString *)kMRMediaRemoteOptionSkipInterval : @[@(15.0)] }));
         CFArrayAppendValue(commandInfoArray.get(), commandInfo.get());
     }
 

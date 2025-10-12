@@ -14,86 +14,8 @@ PASS :object_has_descriptor_label:name="createRenderPipelineAsync"
 PASS :object_has_descriptor_label:name="createCommandEncoder"
 PASS :object_has_descriptor_label:name="createRenderBundleEncoder"
 PASS :object_has_descriptor_label:name="createQuerySet"
-FAIL :object_has_descriptor_label:name="beginRenderPass" assert_unreached:
-  - EXPECTATION FAILED: subcase: label="label"
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
-    beginRenderPass@http://127.0.0.1:8000/webgpu/webgpu/api/operation/labels.spec.js:206:13
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/labels.spec.js:263:38
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/labels.spec.js:261:11
-  - EXPECTATION FAILED: subcase: label="label"
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
-    beginRenderPass@http://127.0.0.1:8000/webgpu/webgpu/api/operation/labels.spec.js:208:13
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/labels.spec.js:263:38
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/labels.spec.js:261:11
-  - EXPECTATION FAILED: subcase: label="\u0000"
-
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: label="\u0000"
-
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: label="null\u0000in\u0000label"
-
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: label="null\u0000in\u0000label"
-
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: label="🌞👆"
-
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: label="🌞👆"
-
-      at (elided: only 2 shown)
-  - INFO: subcase: label="label"
-    OK
-  - INFO: subcase: label="\u0000"
-    OK
-  - INFO: subcase: label="null\u0000in\u0000label"
-    OK
-  - INFO: subcase: label="🌞👆"
-    OK
- Reached unreachable code
-FAIL :object_has_descriptor_label:name="beginComputePass" assert_unreached:
-  - EXPECTATION FAILED: subcase: label="label"
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
-    beginComputePass@http://127.0.0.1:8000/webgpu/webgpu/api/operation/labels.spec.js:220:13
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/labels.spec.js:263:38
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/labels.spec.js:261:11
-  - EXPECTATION FAILED: subcase: label="label"
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
-    beginComputePass@http://127.0.0.1:8000/webgpu/webgpu/api/operation/labels.spec.js:222:13
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/labels.spec.js:263:38
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/labels.spec.js:261:11
-  - EXPECTATION FAILED: subcase: label="\u0000"
-
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: label="\u0000"
-
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: label="null\u0000in\u0000label"
-
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: label="null\u0000in\u0000label"
-
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: label="🌞👆"
-
-      at (elided: only 2 shown)
-  - EXPECTATION FAILED: subcase: label="🌞👆"
-
-      at (elided: only 2 shown)
-  - INFO: subcase: label="label"
-    OK
-  - INFO: subcase: label="\u0000"
-    OK
-  - INFO: subcase: label="null\u0000in\u0000label"
-    OK
-  - INFO: subcase: label="🌞👆"
-    OK
- Reached unreachable code
+PASS :object_has_descriptor_label:name="beginRenderPass"
+PASS :object_has_descriptor_label:name="beginComputePass"
 PASS :object_has_descriptor_label:name="finish"
 PASS :object_has_descriptor_label:name="createView"
 PASS :wrappers_do_not_share_labels:

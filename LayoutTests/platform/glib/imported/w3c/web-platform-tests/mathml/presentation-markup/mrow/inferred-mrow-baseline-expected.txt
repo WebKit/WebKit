@@ -11,6 +11,11 @@ PASS baseline alignment inside Unknown
 PASS baseline alignment inside Mtd
 PASS baseline alignment inside None
 PASS baseline alignment inside Mprescripts
+PASS baseline alignment inside Mfenced
+PASS baseline alignment inside A
+
+
+
 
 
 

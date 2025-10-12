@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Document-createElement.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Document-createElementNS.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Document-customElementRegistry.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Document-importNode-cross-document.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Document-importNode.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Element-customElementRegistry-exceptions.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Element-customElementRegistry.html
@@ -29,13 +30,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/ShadowRoot-init-customElementRegistry.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/ShadowRoot-innerHTML.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/adoption.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/constructor-reentry-with-different-definition.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/define-customized-builtins.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/define.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/global.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/initial-about-blank.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/per-global.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/pseudo-class-defined.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-define-upgrade-criteria.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-define-upgrade-order.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-initialize.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-registry-define-get-etc.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/template.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/upgrade.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/valid-custom-element-names.html

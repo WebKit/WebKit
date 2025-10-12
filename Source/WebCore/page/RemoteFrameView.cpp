@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RemoteFrameView.h"
 
+#include "GraphicsContext.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameClient.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -73,8 +74,9 @@ IntRect RemoteFrameView::windowClipRect() const
     return { };
 }
 
-void RemoteFrameView::paintContents(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy, RegionContext*)
+void RemoteFrameView::paintContents(GraphicsContext& context, const IntRect& rect, SecurityOriginPaintPolicy, RegionContext*)
 {
+    m_frame->client().paintContents(context, rect);
 }
 
 void RemoteFrameView::addedOrRemovedScrollbar()

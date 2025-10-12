@@ -14,7 +14,6 @@
 #include <map>
 #include <memory>
 #include <string>
-#include <utility>
 
 #include "absl/strings/string_view.h"
 #include "modules/audio_processing/test/conversational_speech/multiend_call.h"

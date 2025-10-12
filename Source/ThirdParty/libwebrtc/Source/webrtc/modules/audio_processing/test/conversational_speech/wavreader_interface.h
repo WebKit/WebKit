@@ -11,7 +11,8 @@
 #ifndef MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_WAVREADER_INTERFACE_H_
 #define MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_WAVREADER_INTERFACE_H_
 
-#include <stddef.h>
+#include <cstddef>
+#include <cstdint>
 
 #include "api/array_view.h"
 
@@ -24,8 +25,8 @@ class WavReaderInterface {
   virtual ~WavReaderInterface() = default;
 
   // Returns the number of samples read.
-  virtual size_t ReadFloatSamples(rtc::ArrayView<float> samples) = 0;
-  virtual size_t ReadInt16Samples(rtc::ArrayView<int16_t> samples) = 0;
+  virtual size_t ReadFloatSamples(ArrayView<float> samples) = 0;
+  virtual size_t ReadInt16Samples(ArrayView<int16_t> samples) = 0;
 
   // Getters.
   virtual int SampleRate() const = 0;

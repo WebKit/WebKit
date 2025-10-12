@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error: assert_equals: expected "true_value" but got "if(supports(width: 30): true_value; else: false_value;)"
 test
 
 FAIL CSS Values and Units Test: CSS inline if() function supports() in quirks mode Error: assert_equals: expected "true_value" but got "if(supports(width: 30): true_value; else: false_value;)"

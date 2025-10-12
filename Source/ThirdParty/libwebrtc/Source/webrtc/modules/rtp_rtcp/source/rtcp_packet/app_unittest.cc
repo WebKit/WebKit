@@ -10,6 +10,9 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/app.h"
 
+#include <cstdint>
+
+#include "rtc_base/buffer.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
@@ -17,9 +20,9 @@
 namespace webrtc {
 namespace {
 
+using rtcp::App;
 using ::testing::ElementsAreArray;
 using ::testing::make_tuple;
-using ::webrtc::rtcp::App;
 
 constexpr uint32_t kName = ((uint32_t)'n' << 24) | ((uint32_t)'a' << 16) |
                            ((uint32_t)'m' << 8) | (uint32_t)'e';
@@ -57,7 +60,7 @@ TEST(RtcpPacketAppTest, CreateWithoutData) {
   app.SetSubType(kSubtype);
   app.SetName(kName);
 
-  rtc::Buffer raw = app.Build();
+  Buffer raw = app.Build();
 
   EXPECT_THAT(make_tuple(raw.data(), raw.size()),
               ElementsAreArray(kPacketWithoutData));
@@ -80,7 +83,7 @@ TEST(RtcpPacketAppTest, CreateWithData) {
   app.SetName(kName);
   app.SetData(kData, sizeof(kData));
 
-  rtc::Buffer raw = app.Build();
+  Buffer raw = app.Build();
 
   EXPECT_THAT(make_tuple(raw.data(), raw.size()),
               ElementsAreArray(kPacketWithData));

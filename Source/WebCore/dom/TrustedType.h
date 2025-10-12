@@ -25,9 +25,10 @@
 
 #pragma once
 
-#include "TrustedHTML.h"
-#include "TrustedScript.h"
-#include "TrustedScriptURL.h"
+#include <WebCore/TrustedHTML.h>
+#include <WebCore/TrustedScript.h>
+#include <WebCore/TrustedScriptURL.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 

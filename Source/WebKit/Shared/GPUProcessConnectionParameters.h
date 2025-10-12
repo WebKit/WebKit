@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GPUProcessMediaCodecCapabilities.h"
 #include "SharedPreferencesForWebProcess.h"
 #include <WebCore/ProcessIdentity.h>
 #include <wtf/MachSendRight.h>
@@ -51,12 +52,7 @@ struct GPUProcessConnectionParameters {
 #if PLATFORM(COCOA)
     String applicationBundleIdentifier;
 #endif
-#if ENABLE(VP9)
-    std::optional<bool> hasVP9HardwareDecoder;
-#endif
-#if ENABLE(AV1)
-    std::optional<bool> hasAV1HardwareDecoder;
-#endif
+    std::optional<GPUProcessMediaCodecCapabilities> mediaCodecCapabilities;
 };
 
 }; // namespace WebKit

@@ -27,8 +27,8 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-#include "HTMLAttachmentElement.h"
-#include "RenderReplaced.h"
+#include <WebCore/HTMLAttachmentElement.h>
+#include <WebCore/RenderReplaced.h>
 
 namespace WebCore {
 
@@ -63,8 +63,6 @@ private:
     void paintReplaced(PaintInfo&, const LayoutPoint& offset) final;
 
     void layout() override;
-
-    LayoutUnit baselinePosition(FontBaseline, bool, LineDirectionMode, LinePositionMode) const override;
 
     LayoutUnit m_minimumIntrinsicWidth;
     bool m_shouldDrawBorder { true };

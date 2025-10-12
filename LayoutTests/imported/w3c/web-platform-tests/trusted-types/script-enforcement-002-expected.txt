@@ -1,0 +1,35 @@
+
+PASS Default policy's calls when setting script source via HTMLScriptElement.innerText.
+PASS Verify when the default policy is called for script source via HTMLElement.innerText.
+PASS Default policy's calls when setting script source via HTMLScriptElement.textContent.
+PASS Verify when the default policy is called for script source set via Node.textContent.
+PASS Default policy's calls when setting script source via HTMLScriptElement.text.
+PASS Default policy's calls when setting script source via Element.innerHTML.
+PASS Default policy's calls when setting script source via Element.setHTMLUnsafe().
+PASS Default policy when splitting script source via Text.splitText().
+PASS Default policy when normalizing script source via Element.normalize().
+PASS Default policy's calls when setting script source via Node.nodeValue.
+PASS Default policy's calls when setting script source via CharacterData.data.
+PASS Default policy's calls when setting script source via CharacterData.appendData().
+PASS Default policy's calls when setting script source via CharacterData.insertData().
+PASS Default policy's calls when setting script source via CharacterData.replaceData().
+PASS Default policy's calls when setting script source via CharacterData.deleteData().
+PASS Default policy's calls when setting script source via CharacterData.before().
+PASS Default policy's calls when setting script source via CharacterData.after().
+PASS Default policy's calls when setting script source via CharacterData.remove().
+PASS Default policy's calls when setting script source via CharacterData.replaceWith().
+PASS Default policy's calls when setting script source via Node.appendChild().
+PASS Default policy's calls when setting script source via Node.insertBefore().
+PASS Default policy's calls when setting script source via Node.replaceChild().
+PASS Default policy's calls when setting script source via Node.removeChild().
+PASS Default policy's calls when setting script source via Element.prepend().
+PASS Default policy's calls when setting script source via Element.append().
+PASS Default policy's calls when setting script source via Element.replaceChildren().
+FAIL Default policy's calls when setting script source via Element.moveBefore(). promise_test: Unhandled rejection with value: object "TypeError: script.moveBefore is not a function. (In 'script.moveBefore(text, script.firstChild)', 'script.moveBefore' is undefined)"
+PASS Default policy's calls when setting script source via Node.insertAdjacentText().
+PASS Default policy's calls when setting script source via Node.insertAdjacentHTML().
+PASS Default policy's calls when setting source via Range.insertNode().
+PASS Default policy's calls when setting script source via Range.deleteContents().
+PASS Default policy's calls when cloning a script via Node.cloneNode().
+PASS Default policy's calls when cloning a script via Range.cloneContents().
+

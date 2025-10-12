@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,8 @@ namespace WebCore {
 ShareableBitmapConfiguration::ShareableBitmapConfiguration(NativeImage& image)
     : m_size(image.size())
     , m_colorSpace(image.colorSpace())
+    , m_headroom(image.headroom())
+    , m_bitsPerComponent(CGImageGetBitsPerComponent(image.platformImage().get()))
     , m_bytesPerPixel(CGImageGetBitsPerPixel(image.platformImage().get()) / 8)
     , m_bytesPerRow(CGImageGetBytesPerRow(image.platformImage().get()))
     , m_bitmapInfo(CGImageGetBitmapInfo(image.platformImage().get()))
@@ -58,11 +60,12 @@ std::optional<DestinationColorSpace> ShareableBitmapConfiguration::validateColor
     if (auto colorSpaceAsRGB = colorSpace->asRGB())
         return colorSpaceAsRGB;
 
-#if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
     return DestinationColorSpace::ExtendedSRGB();
-#else
-    return DestinationColorSpace::SRGB();
-#endif
+}
+
+CheckedUint32 ShareableBitmapConfiguration::calculateBitsPerComponent(const DestinationColorSpace& colorSpace)
+{
+    return (calculateBytesPerPixel(colorSpace) / 4) * 8;
 }
 
 CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerPixel(const DestinationColorSpace& colorSpace)
@@ -108,14 +111,18 @@ CGBitmapInfo ShareableBitmapConfiguration::calculateBitmapInfo(const Destination
 RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& image)
 {
     auto colorSpace = image.colorSpace();
-    if (colorSpace != DestinationColorSpace::SRGB())
+    if (CGColorSpaceGetModel(colorSpace.protectedPlatformColorSpace().get()) != kCGColorSpaceModelRGB)
+        return nullptr;
+
+    RetainPtr sourceProvider = CGImageGetDataProvider(image.platformImage().get());
+    if (!sourceProvider)
         return nullptr;
 
     auto configuration = ShareableBitmapConfiguration(image);
 
     RetainPtr<CFDataRef> pixels;
     @try {
-        pixels = adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(image.platformImage().get())));
+        pixels = adoptCF(CGDataProviderCopyData(sourceProvider.get()));
     } @catch (id exception) {
         LOG_WITH_STREAM(Images, stream
             << "ShareableBitmap::createFromImagePixels() failed CGDataProviderCopyData "
@@ -153,13 +160,13 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& imag
 
 std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
-    unsigned bitsPerComponent = m_configuration.bytesPerPixel() * 8 / 4;
+    unsigned bitsPerComponent = m_configuration.bitsPerComponent();
     unsigned bytesPerRow = m_configuration.bytesPerRow();
 
     ref(); // Balanced by deref in releaseBitmapContextData.
 
     m_releaseBitmapContextDataCalled = false;
-    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(mutableSpan().data(), size().width(), size().height(), bitsPerComponent, bytesPerRow, m_configuration.platformColorSpace(), m_configuration.bitmapInfo(), releaseBitmapContextData, this));
+    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(mutableSpan().data(), size().width(), size().height(), bitsPerComponent, bytesPerRow, m_configuration.protectedPlatformColorSpace().get(), m_configuration.bitmapInfo(), releaseBitmapContextData, this));
     if (!bitmapContext) {
         // When CGBitmapContextCreateWithData fails and returns null, it will only
         // call the release callback in some circumstances <rdar://82228446>. We
@@ -185,66 +192,55 @@ void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& destinatio
 
 void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const IntPoint& destination, const IntRect& source)
 {
-    CGContextRef cgContext = context.platformContext();
-    CGContextSaveGState(cgContext);
+    RetainPtr cgContext = context.platformContext();
+    CGContextSaveGState(cgContext.get());
 
-    CGContextClipToRect(cgContext, CGRectMake(destination.x(), destination.y(), source.width(), source.height()));
-    CGContextScaleCTM(cgContext, 1, -1);
+    CGContextClipToRect(cgContext.get(), CGRectMake(destination.x(), destination.y(), source.width(), source.height()));
+    CGContextScaleCTM(cgContext.get(), 1, -1);
 
-    auto image = makeCGImageCopy();
+    RetainPtr image = createPlatformImage();
     CGFloat imageHeight = CGImageGetHeight(image.get()) / scaleFactor;
     CGFloat imageWidth = CGImageGetWidth(image.get()) / scaleFactor;
 
     CGFloat destX = destination.x() - source.x();
     CGFloat destY = -imageHeight - destination.y() + source.y();
 
-    CGContextDrawImage(cgContext, CGRectMake(destX, destY, imageWidth, imageHeight), image.get());
+    CGContextDrawImage(cgContext.get(), CGRectMake(destX, destY, imageWidth, imageHeight), image.get());
 
-    CGContextRestoreGState(cgContext);
-}
-
-RetainPtr<CGImageRef> ShareableBitmap::makeCGImageCopy()
-{
-    auto graphicsContext = createGraphicsContext();
-    if (!graphicsContext)
-        return nullptr;
-
-    return adoptCF(CGBitmapContextCreateImage(graphicsContext->platformContext()));
-}
-
-RetainPtr<CGImageRef> ShareableBitmap::makeCGImage(ShouldInterpolate shouldInterpolate)
-{
-    verifyImageBufferIsBigEnough(span());
-
-    auto dataProvider = adoptCF(CGDataProviderCreateWithData(this, mutableSpan().data(), sizeInBytes(), [](void* typelessBitmap, const void* typelessData, size_t) {
-        auto* bitmap = static_cast<ShareableBitmap*>(typelessBitmap);
-        ASSERT_UNUSED(typelessData, bitmap->span().data() == typelessData);
-        bitmap->deref();
-    }));
-
-    if (!dataProvider)
-        return nullptr;
-
-    ref(); // Balanced by deref above.
-
-    return createCGImage(dataProvider.get(), shouldInterpolate);
+    CGContextRestoreGState(cgContext.get());
 }
 
 PlatformImagePtr ShareableBitmap::createPlatformImage(BackingStoreCopy copyBehavior, ShouldInterpolate shouldInterpolate)
 {
-    if (copyBehavior == CopyBackingStore)
-        return makeCGImageCopy();
-    return makeCGImage(shouldInterpolate);
-}
+    verifyImageBufferIsBigEnough(span());
 
-RetainPtr<CGImageRef> ShareableBitmap::createCGImage(CGDataProviderRef dataProvider, ShouldInterpolate shouldInterpolate) const
-{
-    ASSERT_ARG(dataProvider, dataProvider);
+    RetainPtr<CGDataProvider> dataProvider;
+    if (copyBehavior == CopyBackingStore) {
+        auto data = span();
+        dataProvider = adoptCF(CGDataProviderCreateWithCopyOfData(data.data(), data.size()));
+        if (!dataProvider)
+            return nullptr;
+    } else {
+        dataProvider = adoptCF(CGDataProviderCreateWithData(this, mutableSpan().data(), sizeInBytes(), [](void* typelessBitmap, const void* typelessData, size_t) {
+            auto* bitmap = static_cast<ShareableBitmap*>(typelessBitmap);
+            ASSERT_UNUSED(typelessData, bitmap->span().data() == typelessData);
+            bitmap->deref();
+        }));
+        if (!dataProvider)
+            return nullptr;
+        ref(); // Balanced by deref above.
+    }
 
+    unsigned bitsPerComponent = m_configuration.bitsPerComponent();
     unsigned bitsPerPixel = m_configuration.bytesPerPixel() * 8;
     unsigned bytesPerRow = m_configuration.bytesPerRow();
 
-    return adoptCF(CGImageCreate(size().width(), size().height(), bitsPerPixel / 4, bitsPerPixel, bytesPerRow, m_configuration.platformColorSpace(), m_configuration.bitmapInfo(), dataProvider, 0, shouldInterpolate == ShouldInterpolate::Yes, kCGRenderingIntentDefault));
+#if HAVE(SUPPORT_HDR_DISPLAY_APIS)
+    if (m_configuration.headroom() > Headroom::None)
+        return adoptCF(CGImageCreateWithContentHeadroom(m_configuration.headroom(), size().width(), size().height(), bitsPerComponent, bitsPerPixel, bytesPerRow, m_configuration.protectedPlatformColorSpace().get(), m_configuration.bitmapInfo(), dataProvider.get(), 0, shouldInterpolate == ShouldInterpolate::Yes, kCGRenderingIntentDefault));
+#endif
+    return adoptCF(CGImageCreate(size().width(), size().height(), bitsPerComponent, bitsPerPixel, bytesPerRow, m_configuration.protectedPlatformColorSpace().get(), m_configuration.bitmapInfo(), dataProvider.get(), 0, shouldInterpolate == ShouldInterpolate::Yes, kCGRenderingIntentDefault));
+
 }
 
 void ShareableBitmap::releaseBitmapContextData(void* typelessBitmap, void* typelessData)
@@ -257,7 +253,7 @@ void ShareableBitmap::releaseBitmapContextData(void* typelessBitmap, void* typel
 
 RefPtr<Image> ShareableBitmap::createImage()
 {
-    if (auto platformImage = makeCGImage())
+    if (RetainPtr platformImage = createPlatformImage(DontCopyBackingStore))
         return BitmapImage::create(WTFMove(platformImage));
     return nullptr;
 }

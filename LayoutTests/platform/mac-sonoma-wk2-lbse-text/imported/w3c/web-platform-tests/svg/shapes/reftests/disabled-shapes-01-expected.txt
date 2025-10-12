@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-10"
-CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute height="-10"
-CONSOLE MESSAGE: Error: Invalid negative value for <circle> attribute r="-10"
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

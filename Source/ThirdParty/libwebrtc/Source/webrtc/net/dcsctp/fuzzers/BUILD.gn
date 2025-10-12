@@ -12,16 +12,21 @@ rtc_library("dcsctp_fuzzers") {
   testonly = true
   deps = [
     "../../../api:array_view",
-    "../../../api/task_queue:task_queue",
+    "../../../api/task_queue",
+    "../../../api/units:timestamp",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
+    "../common:internal_types",
     "../common:math",
     "../packet:chunk",
+    "../packet:data",
     "../packet:error_cause",
     "../packet:parameter",
+    "../packet:sctp_packet",
     "../public:socket",
     "../public:types",
     "../socket:dcsctp_socket",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
   sources = [
     "dcsctp_fuzzers.cc",
@@ -42,6 +47,7 @@ if (rtc_include_tests) {
       "../../../test:test_support",
       "../packet:sctp_packet",
       "../public:socket",
+      "../public:types",
       "../socket:dcsctp_socket",
       "../testing:testing_macros",
     ]

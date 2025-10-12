@@ -30,7 +30,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "CDMEncryptionScheme.h"
+#include <WebCore/CDMEncryptionScheme.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

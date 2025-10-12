@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: Pointerlock not supported
+

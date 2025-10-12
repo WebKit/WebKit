@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "SharedTimer.h"
+#include <WebCore/SharedTimer.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 

@@ -23,9 +23,9 @@
 
 #pragma once
 
-#include "JSDOMCastThisValue.h"
-#include "JSDOMExceptionHandling.h"
 #include <JavaScriptCore/Error.h>
+#include <WebCore/JSDOMCastThisValue.h>
+#include <WebCore/JSDOMExceptionHandling.h>
 
 namespace WebCore {
 

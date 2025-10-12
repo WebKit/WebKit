@@ -53,24 +53,15 @@
 
 #include "datatypes.h"
 
-static const int8_t octet_weight[256] = {
-    0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3, 4,
-    2, 3, 3, 4, 3, 4, 4, 5, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
-    2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 1, 2, 2, 3, 2, 3, 3, 4,
-    2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-    2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6,
-    4, 5, 5, 6, 5, 6, 6, 7, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
-    2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5,
-    3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
-    2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6,
-    4, 5, 5, 6, 5, 6, 6, 7, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
-    4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8
-};
+#if defined(__SSE2__)
+#include <tmmintrin.h>
+#endif
 
-int octet_get_weight(uint8_t octet)
-{
-    return (int)octet_weight[octet];
-}
+#if defined(_MSC_VER)
+#define ALIGNMENT(N) __declspec(align(N))
+#else
+#define ALIGNMENT(N) __attribute__((aligned(N)))
+#endif
 
 /*
  * bit_string is a buffer that is used to hold output strings, e.g.
@@ -81,10 +72,10 @@ int octet_get_weight(uint8_t octet)
 /* include space for null terminator */
 static char bit_string[MAX_PRINT_STRING_LEN + 1];
 
-uint8_t srtp_nibble_to_hex_char(uint8_t nibble)
+static uint8_t srtp_nibble_to_hex_char(uint8_t nibble)
 {
-    char buf[16] = { '0', '1', '2', '3', '4', '5', '6', '7',
-                     '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+    static const char buf[16] = { '0', '1', '2', '3', '4', '5', '6', '7',
+                                  '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
     return buf[nibble & 0xF];
 }
 
@@ -142,6 +133,9 @@ char *v128_bit_string(v128_t *x)
 
 void v128_copy_octet_string(v128_t *x, const uint8_t s[16])
 {
+#if defined(__SSE2__)
+    _mm_storeu_si128((__m128i *)(x), _mm_loadu_si128((const __m128i *)(s)));
+#else
 #ifdef ALIGNMENT_32BIT_REQUIRED
     if ((((uint32_t)&s[0]) & 0x3) != 0)
 #endif
@@ -170,105 +164,66 @@ void v128_copy_octet_string(v128_t *x, const uint8_t s[16])
         v128_copy(x, v);
     }
 #endif
+#endif /* defined(__SSE2__) */
 }
 
-#ifndef DATATYPES_USE_MACROS /* little functions are not macros */
+#if defined(__SSSE3__)
 
-void v128_set_to_zero(v128_t *x)
+/* clang-format off */
+
+ALIGNMENT(16)
+static const uint8_t right_shift_masks[5][16] = {
+    { 0u, 1u, 2u, 3u,  4u, 5u, 6u, 7u,
+      8u, 9u, 10u, 11u,  12u, 13u, 14u, 15u },
+    { 0x80, 0x80, 0x80, 0x80,  0u, 1u, 2u, 3u,
+      4u, 5u, 6u, 7u,  8u, 9u, 10u, 11u },
+    { 0x80, 0x80, 0x80, 0x80,  0x80, 0x80, 0x80, 0x80,
+      0u, 1u, 2u, 3u,  4u, 5u, 6u, 7u },
+    { 0x80, 0x80, 0x80, 0x80,  0x80, 0x80, 0x80, 0x80,
+      0x80, 0x80, 0x80, 0x80,  0u, 1u, 2u, 3u },
+    /* needed for bitvector_left_shift */
+    { 0x80, 0x80, 0x80, 0x80,  0x80, 0x80, 0x80, 0x80,
+      0x80, 0x80, 0x80, 0x80,  0x80, 0x80, 0x80, 0x80 }
+};
+
+ALIGNMENT(16)
+static const uint8_t left_shift_masks[4][16] = {
+    { 0u, 1u, 2u, 3u,  4u, 5u, 6u, 7u,
+      8u, 9u, 10u, 11u,  12u, 13u, 14u, 15u },
+    { 4u, 5u, 6u, 7u,  8u, 9u, 10u, 11u,
+      12u, 13u, 14u, 15u,  0x80, 0x80, 0x80, 0x80 },
+    { 8u, 9u, 10u, 11u,  12u, 13u, 14u, 15u,
+      0x80, 0x80, 0x80, 0x80,  0x80, 0x80, 0x80, 0x80 },
+    { 12u, 13u, 14u, 15u,  0x80, 0x80, 0x80, 0x80,
+      0x80, 0x80, 0x80, 0x80,  0x80, 0x80, 0x80, 0x80 }
+};
+
+/* clang-format on */
+
+void v128_left_shift(v128_t *x, int shift)
 {
-    _v128_set_to_zero(x);
-}
-
-void v128_copy(v128_t *x, const v128_t *y)
-{
-    _v128_copy(x, y);
-}
-
-void v128_xor(v128_t *z, v128_t *x, v128_t *y)
-{
-    _v128_xor(z, x, y);
-}
-
-void v128_and(v128_t *z, v128_t *x, v128_t *y)
-{
-    _v128_and(z, x, y);
-}
-
-void v128_or(v128_t *z, v128_t *x, v128_t *y)
-{
-    _v128_or(z, x, y);
-}
-
-void v128_complement(v128_t *x)
-{
-    _v128_complement(x);
-}
-
-int v128_is_eq(const v128_t *x, const v128_t *y)
-{
-    return _v128_is_eq(x, y);
-}
-
-int v128_xor_eq(v128_t *x, const v128_t *y)
-{
-    return _v128_xor_eq(x, y);
-}
-
-int v128_get_bit(const v128_t *x, int i)
-{
-    return _v128_get_bit(x, i);
-}
-
-void v128_set_bit(v128_t *x, int i)
-{
-    _v128_set_bit(x, i);
-}
-
-void v128_clear_bit(v128_t *x, int i)
-{
-    _v128_clear_bit(x, i);
-}
-
-void v128_set_bit_to(v128_t *x, int i, int y)
-{
-    _v128_set_bit_to(x, i, y);
-}
-
-#endif /* DATATYPES_USE_MACROS */
-
-void v128_right_shift(v128_t *x, int shift)
-{
-    const int base_index = shift >> 5;
-    const int bit_index = shift & 31;
-    int i, from;
-    uint32_t b;
-
     if (shift > 127) {
         v128_set_to_zero(x);
         return;
     }
 
-    if (bit_index == 0) {
-        /* copy each word from left size to right side */
-        x->v32[4 - 1] = x->v32[4 - 1 - base_index];
-        for (i = 4 - 1; i > base_index; i--)
-            x->v32[i - 1] = x->v32[i - 1 - base_index];
+    const int base_index = shift >> 5;
+    const int bit_index = shift & 31;
 
-    } else {
-        /* set each word to the "or" of the two bit-shifted words */
-        for (i = 4; i > base_index; i--) {
-            from = i - 1 - base_index;
-            b = x->v32[from] << bit_index;
-            if (from > 0)
-                b |= x->v32[from - 1] >> (32 - bit_index);
-            x->v32[i - 1] = b;
-        }
-    }
+    __m128i mm = _mm_loadu_si128((const __m128i *)x);
+    __m128i mm_shift_right = _mm_cvtsi32_si128(bit_index);
+    __m128i mm_shift_left = _mm_cvtsi32_si128(32 - bit_index);
+    mm = _mm_shuffle_epi8(mm, ((const __m128i *)left_shift_masks)[base_index]);
 
-    /* now wrap up the final portion */
-    for (i = 0; i < base_index; i++)
-        x->v32[i] = 0;
+    __m128i mm1 = _mm_srl_epi32(mm, mm_shift_right);
+    __m128i mm2 = _mm_sll_epi32(mm, mm_shift_left);
+    mm2 = _mm_srli_si128(mm2, 4);
+    mm1 = _mm_or_si128(mm1, mm2);
+
+    _mm_storeu_si128((__m128i *)x, mm1);
 }
+
+#else /* defined(__SSSE3__) */
 
 void v128_left_shift(v128_t *x, int shift)
 {
@@ -296,26 +251,9 @@ void v128_left_shift(v128_t *x, int shift)
         x->v32[i] = 0;
 }
 
+#endif /* defined(__SSSE3__) */
+
 /* functions manipulating bitvector_t */
-
-#ifndef DATATYPES_USE_MACROS /* little functions are not macros */
-
-int bitvector_get_bit(const bitvector_t *v, int bit_index)
-{
-    return _bitvector_get_bit(v, bit_index);
-}
-
-void bitvector_set_bit(bitvector_t *v, int bit_index)
-{
-    _bitvector_set_bit(v, bit_index);
-}
-
-void bitvector_clear_bit(bitvector_t *v, int bit_index)
-{
-    _bitvector_clear_bit(v, bit_index);
-}
-
-#endif /* DATATYPES_USE_MACROS */
 
 int bitvector_alloc(bitvector_t *v, unsigned long length)
 {
@@ -326,6 +264,7 @@ int bitvector_alloc(bitvector_t *v, unsigned long length)
         (length + bits_per_word - 1) & ~(unsigned long)((bits_per_word - 1));
 
     l = length / bits_per_word * bytes_per_word;
+    l = (l + 15ul) & ~15ul;
 
     /* allocate memory, then set parameters */
     if (l == 0) {
@@ -361,26 +300,72 @@ void bitvector_set_to_zero(bitvector_t *x)
     memset(x->word, 0, x->length >> 3);
 }
 
-char *bitvector_bit_string(bitvector_t *x, char *buf, int len)
+#if defined(__SSSE3__)
+
+void bitvector_left_shift(bitvector_t *x, int shift)
 {
-    int j, i;
-    uint32_t mask;
-
-    for (j = i = 0; j < (int)(x->length >> 5) && i < len - 1; j++) {
-        for (mask = 0x80000000; mask > 0; mask >>= 1) {
-            if (x->word[j] & mask)
-                buf[i] = '1';
-            else
-                buf[i] = '0';
-            ++i;
-            if (i >= len - 1)
-                break;
-        }
+    if ((uint32_t)shift >= x->length) {
+        bitvector_set_to_zero(x);
+        return;
     }
-    buf[i] = 0; /* null terminate string */
 
-    return buf;
+    const int base_index = shift >> 5;
+    const int bit_index = shift & 31;
+    const int vec_length = (x->length + 127u) >> 7;
+    const __m128i *from = ((const __m128i *)x->word) + (base_index >> 2);
+    __m128i *to = (__m128i *)x->word;
+    __m128i *const end = to + vec_length;
+
+    __m128i mm_right_shift_mask =
+        ((const __m128i *)right_shift_masks)[4u - (base_index & 3u)];
+    __m128i mm_left_shift_mask =
+        ((const __m128i *)left_shift_masks)[base_index & 3u];
+    __m128i mm_shift_right = _mm_cvtsi32_si128(bit_index);
+    __m128i mm_shift_left = _mm_cvtsi32_si128(32 - bit_index);
+
+    __m128i mm_current = _mm_loadu_si128(from);
+    __m128i mm_current_r = _mm_srl_epi32(mm_current, mm_shift_right);
+    __m128i mm_current_l = _mm_sll_epi32(mm_current, mm_shift_left);
+
+    while ((end - from) >= 2) {
+        ++from;
+        __m128i mm_next = _mm_loadu_si128(from);
+
+        __m128i mm_next_r = _mm_srl_epi32(mm_next, mm_shift_right);
+        __m128i mm_next_l = _mm_sll_epi32(mm_next, mm_shift_left);
+        mm_current_l = _mm_alignr_epi8(mm_next_l, mm_current_l, 4);
+        mm_current = _mm_or_si128(mm_current_r, mm_current_l);
+
+        mm_current = _mm_shuffle_epi8(mm_current, mm_left_shift_mask);
+
+        __m128i mm_temp_next = _mm_srli_si128(mm_next_l, 4);
+        mm_temp_next = _mm_or_si128(mm_next_r, mm_temp_next);
+
+        mm_temp_next = _mm_shuffle_epi8(mm_temp_next, mm_right_shift_mask);
+        mm_current = _mm_or_si128(mm_temp_next, mm_current);
+
+        _mm_storeu_si128(to, mm_current);
+        ++to;
+
+        mm_current_r = mm_next_r;
+        mm_current_l = mm_next_l;
+    }
+
+    mm_current_l = _mm_srli_si128(mm_current_l, 4);
+    mm_current = _mm_or_si128(mm_current_r, mm_current_l);
+
+    mm_current = _mm_shuffle_epi8(mm_current, mm_left_shift_mask);
+
+    _mm_storeu_si128(to, mm_current);
+    ++to;
+
+    while (to < end) {
+        _mm_storeu_si128(to, _mm_setzero_si128());
+        ++to;
+    }
 }
+
+#else /* defined(__SSSE3__) */
 
 void bitvector_left_shift(bitvector_t *x, int shift)
 {
@@ -410,16 +395,82 @@ void bitvector_left_shift(bitvector_t *x, int shift)
         x->word[i] = 0;
 }
 
-int srtp_octet_string_is_eq(uint8_t *a, uint8_t *b, int len)
-{
-    uint8_t *end = b + len;
-    uint8_t accumulator = 0;
+#endif /* defined(__SSSE3__) */
 
+int srtp_octet_string_is_eq(const uint8_t *a, const uint8_t *b, int len)
+{
     /*
      * We use this somewhat obscure implementation to try to ensure the running
      * time only depends on len, even accounting for compiler optimizations.
      * The accumulator ends up zero iff the strings are equal.
      */
+    const uint8_t *end = b + len;
+    uint32_t accumulator = 0;
+
+#if defined(__SSE2__)
+    __m128i mm_accumulator1 = _mm_setzero_si128();
+    __m128i mm_accumulator2 = _mm_setzero_si128();
+    for (int i = 0, n = len >> 5; i < n; ++i, a += 32, b += 32) {
+        __m128i mm_a1 = _mm_loadu_si128((const __m128i *)a);
+        __m128i mm_b1 = _mm_loadu_si128((const __m128i *)b);
+        __m128i mm_a2 = _mm_loadu_si128((const __m128i *)(a + 16));
+        __m128i mm_b2 = _mm_loadu_si128((const __m128i *)(b + 16));
+        mm_a1 = _mm_xor_si128(mm_a1, mm_b1);
+        mm_a2 = _mm_xor_si128(mm_a2, mm_b2);
+        mm_accumulator1 = _mm_or_si128(mm_accumulator1, mm_a1);
+        mm_accumulator2 = _mm_or_si128(mm_accumulator2, mm_a2);
+    }
+
+    mm_accumulator1 = _mm_or_si128(mm_accumulator1, mm_accumulator2);
+
+    if ((end - b) >= 16) {
+        __m128i mm_a1 = _mm_loadu_si128((const __m128i *)a);
+        __m128i mm_b1 = _mm_loadu_si128((const __m128i *)b);
+        mm_a1 = _mm_xor_si128(mm_a1, mm_b1);
+        mm_accumulator1 = _mm_or_si128(mm_accumulator1, mm_a1);
+        a += 16;
+        b += 16;
+    }
+
+    if ((end - b) >= 8) {
+        __m128i mm_a1 = _mm_loadl_epi64((const __m128i *)a);
+        __m128i mm_b1 = _mm_loadl_epi64((const __m128i *)b);
+        mm_a1 = _mm_xor_si128(mm_a1, mm_b1);
+        mm_accumulator1 = _mm_or_si128(mm_accumulator1, mm_a1);
+        a += 8;
+        b += 8;
+    }
+
+    mm_accumulator1 = _mm_or_si128(
+        mm_accumulator1, _mm_unpackhi_epi64(mm_accumulator1, mm_accumulator1));
+    mm_accumulator1 =
+        _mm_or_si128(mm_accumulator1, _mm_srli_si128(mm_accumulator1, 4));
+    accumulator = _mm_cvtsi128_si32(mm_accumulator1);
+#else
+    uint32_t accumulator2 = 0;
+    for (int i = 0, n = len >> 3; i < n; ++i, a += 8, b += 8) {
+        uint32_t a_val1, b_val1;
+        uint32_t a_val2, b_val2;
+        memcpy(&a_val1, a, sizeof(a_val1));
+        memcpy(&b_val1, b, sizeof(b_val1));
+        memcpy(&a_val2, a + 4, sizeof(a_val2));
+        memcpy(&b_val2, b + 4, sizeof(b_val2));
+        accumulator |= a_val1 ^ b_val1;
+        accumulator2 |= a_val2 ^ b_val2;
+    }
+
+    accumulator |= accumulator2;
+
+    if ((end - b) >= 4) {
+        uint32_t a_val, b_val;
+        memcpy(&a_val, a, sizeof(a_val));
+        memcpy(&b_val, b, sizeof(b_val));
+        accumulator |= a_val ^ b_val;
+        a += 4;
+        b += 4;
+    }
+#endif
+
     while (b < end)
         accumulator |= (*a++ ^ *b++);
 
@@ -429,62 +480,21 @@ int srtp_octet_string_is_eq(uint8_t *a, uint8_t *b, int len)
 
 void srtp_cleanse(void *s, size_t len)
 {
+#if defined(__GNUC__)
+    memset(s, 0, len);
+    __asm__ __volatile__("" : : "r"(s) : "memory");
+#else
     volatile unsigned char *p = (volatile unsigned char *)s;
     while (len--)
         *p++ = 0;
+#endif
 }
 
 void octet_string_set_to_zero(void *s, size_t len)
 {
-#if defined(OPENSSL) && !defined(OPENSSL_CLEANSE_BROKEN)
+#if defined(OPENSSL)
     OPENSSL_cleanse(s, len);
 #else
     srtp_cleanse(s, len);
 #endif
 }
-
-#ifdef TESTAPP_SOURCE
-
-static const char b64chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                               "abcdefghijklmnopqrstuvwxyz0123456789+/";
-
-static int base64_block_to_octet_triple(char *out, char *in)
-{
-    unsigned char sextets[4] = { 0 };
-    int j = 0;
-    int i;
-
-    for (i = 0; i < 4; i++) {
-        char *p = strchr(b64chars, in[i]);
-        if (p != NULL)
-            sextets[i] = p - b64chars;
-        else
-            j++;
-    }
-
-    out[0] = (sextets[0] << 2) | (sextets[1] >> 4);
-    if (j < 2)
-        out[1] = (sextets[1] << 4) | (sextets[2] >> 2);
-    if (j < 1)
-        out[2] = (sextets[2] << 6) | sextets[3];
-    return j;
-}
-
-int base64_string_to_octet_string(char *out, int *pad, char *in, int len)
-{
-    int k = 0;
-    int i = 0;
-    int j = 0;
-    if (len % 4 != 0)
-        return 0;
-
-    while (i < len && j == 0) {
-        j = base64_block_to_octet_triple(out + k, in + i);
-        k += 3;
-        i += 4;
-    }
-    *pad = j;
-    return i;
-}
-
-#endif

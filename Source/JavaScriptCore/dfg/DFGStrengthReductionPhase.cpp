@@ -118,6 +118,7 @@ private:
         case NumberIsNaN:
         case GlobalIsFinite:
         case NumberIsFinite:
+        case NumberIsSafeInteger:
         case ParseInt:
         case ToIntegerOrInfinity:
         case ToLength:
@@ -490,31 +491,71 @@ private:
         case MakeRope:
         case MakeAtomString:
         case StrCat: {
-            String leftString = m_node->child1()->tryGetString(m_graph);
-            if (!leftString)
+            // Constant folding.
+            String string0 = m_node->child1()->tryGetString(m_graph);
+            if (!string0) {
+                if (m_node->child2() && m_node->child3()) {
+                    String string1 = m_node->child2()->tryGetString(m_graph);
+                    if (!string1)
+                        break;
+                    String string2 = m_node->child3()->tryGetString(m_graph);
+                    if (!string2)
+                        break;
+
+                    StringBuilder builder;
+                    builder.append(string1);
+                    builder.append(string2);
+                    if (!builder.hasOverflowed()) {
+                        LazyJSValue value = LazyJSValue::newString(m_graph, builder.toString());
+                        auto* constant = m_insertionSet.insertNode(m_nodeIndex, SpecNone, LazyJSConstant, m_node->origin, OpInfo(m_graph.m_lazyJSValues.add(value)));
+                        m_node->child2().setNode(constant);
+                        m_node->child3() = Edge();
+                        m_changed = true;
+                    }
+                }
                 break;
+            }
+
             if (!m_node->child2()) {
                 ASSERT(!m_node->child3());
+                convertToLazyJSValue(m_node, LazyJSValue::newString(m_graph, string0));
+                m_changed = true;
                 break;
             }
-            String rightString = m_node->child2()->tryGetString(m_graph);
-            if (!rightString)
+
+            String string1 = m_node->child2()->tryGetString(m_graph);
+            if (!string1)
                 break;
-            String extraString;
-            if (m_node->child3()) {
-                extraString = m_node->child3()->tryGetString(m_graph);
-                if (!extraString)
-                    break;
-            }
 
             StringBuilder builder;
-            builder.append(leftString);
-            builder.append(rightString);
-            if (!!extraString)
-                builder.append(extraString);
+            builder.append(string0);
+            builder.append(string1);
+            if (!m_node->child3()) {
+                if (!builder.hasOverflowed()) {
+                    convertToLazyJSValue(m_node, LazyJSValue::newString(m_graph, builder.toString()));
+                    m_changed = true;
+                }
+                break;
+            }
 
-            convertToLazyJSValue(m_node, LazyJSValue::newString(m_graph, builder.toString()));
-            m_changed = true;
+            String string2 = m_node->child3()->tryGetString(m_graph);
+            if (!string2) {
+                if (!builder.hasOverflowed()) {
+                    LazyJSValue value = LazyJSValue::newString(m_graph, builder.toString());
+                    auto* constant = m_insertionSet.insertNode(m_nodeIndex, SpecNone, LazyJSConstant, m_node->origin, OpInfo(m_graph.m_lazyJSValues.add(value)));
+                    m_node->child1().setNode(constant);
+                    m_node->child2() = m_node->child3();
+                    m_node->child3() = Edge();
+                    m_changed = true;
+                }
+                break;
+            }
+
+            builder.append(string2);
+            if (!builder.hasOverflowed()) {
+                convertToLazyJSValue(m_node, LazyJSValue::newString(m_graph, builder.toString()));
+                m_changed = true;
+            }
             break;
         }
 
@@ -601,6 +642,15 @@ private:
                     break;
                 }
             }
+            if (m_node->arrayMode().type() == Array::String) {
+                bool changed = false;
+                while (m_node->child1()->op() == ResolveRope) {
+                    m_node->child1() = m_node->child1()->child1();
+                    changed = true;
+                }
+                m_changed = changed;
+                break;
+            }
             break;
         }
 
@@ -638,6 +688,7 @@ private:
             break;
         }
 
+        case RegExpSearch:
         case RegExpExec:
         case RegExpTest:
         case RegExpMatchFast:
@@ -661,7 +712,7 @@ private:
             Node* regExpObjectNode = nullptr;
             RegExp* regExp = nullptr;
             bool regExpObjectNodeIsConstant = false;
-            if (m_node->op() == RegExpExec || m_node->op() == RegExpTest || m_node->op() == RegExpMatchFast) {
+            if (m_node->op() == RegExpExec || m_node->op() == RegExpTest || m_node->op() == RegExpMatchFast || m_node->op() == RegExpSearch) {
                 regExpObjectNode = m_node->child2().node();
                 if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>()) {
                     JSGlobalObject* globalObject = regExpObject->globalObject();
@@ -833,6 +884,9 @@ private:
 
                 FrozenValue* globalObjectFrozenValue = m_graph.freeze(globalObject);
 
+                if (regExpObjectNode && regExpObjectNode->op() == NewRegExp && regExpObjectNode->child1()->isInt32Constant())
+                    lastIndex = regExpObjectNode->child1()->asUInt32();
+
                 MatchResult result;
                 Vector<int> ovector;
                 // We have to call the kind of match function that the main thread would have called.
@@ -952,8 +1006,13 @@ private:
                         m_node->convertToIdentityOn(resultNode);
                     } else
                         m_graph.convertToConstant(m_node, jsNull());
-                } else
+                } else if (m_node->op() == RegExpTest)
                     m_graph.convertToConstant(m_node, jsBoolean(!!result));
+                else {
+                    ASSERT(m_node->op() == RegExpSearch);
+                    int32_t searchResult = result ? result.start : -1;
+                    m_graph.convertToConstant(m_node, jsNumber(searchResult));
+                }
 
                 // Whether it's Exec or Test, we need to tell the globalObject and RegExpObject what's up.
                 // Because SetRegExpObjectLastIndex may exit and it clobbers exit state, we do that
@@ -1459,7 +1518,7 @@ private:
             // DirectCall to wasm function has suboptimal implementation. We avoid using DirectCall if we know that function is a wasm function.
             // https://bugs.webkit.org/show_bug.cgi?id=220339
             if (executable->intrinsic() == WasmFunctionIntrinsic && !Options::forceICFailure()) {
-                if (m_node->op() != Call) // FIXME: We should support tail-call.
+                if (m_node->op() != Call && m_node->op() != TailCallInlinedCaller) // FIXME: We should support tail-call.
                     break;
                 if (!function)
                     break;

@@ -65,9 +65,6 @@ class SurfaceMtl : public SurfaceImpl
     void setFixedWidth(EGLint width) override;
     void setFixedHeight(EGLint height) override;
 
-    EGLint getWidth() const override;
-    EGLint getHeight() const override;
-
     EGLint isPostSubBufferSupported() const override;
     EGLint getSwapBehavior() const override;
 
@@ -148,9 +145,8 @@ class WindowSurfaceMtl : public SurfaceMtl
                                      GLenum binding,
                                      const gl::ImageIndex &imageIndex) override;
 
-    // width and height can change with client window resizing
-    EGLint getWidth() const override;
-    EGLint getHeight() const override;
+    // size can change with client window resizing
+    gl::Extents getSize() const override;
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
                                             const gl::ImageIndex &imageIndex,
@@ -200,8 +196,7 @@ class OffscreenSurfaceMtl : public SurfaceMtl
 
     void destroy(const egl::Display *display) override;
 
-    EGLint getWidth() const override;
-    EGLint getHeight() const override;
+    gl::Extents getSize() const override;
 
     egl::Error swap(const gl::Context *context, SurfaceSwapFeedback *feedback) override;
 

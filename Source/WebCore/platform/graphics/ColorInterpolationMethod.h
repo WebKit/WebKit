@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "AlphaPremultiplication.h"
-#include "ColorTypes.h"
+#include <WebCore/AlphaPremultiplication.h>
+#include <WebCore/ColorTypes.h>
 #include <optional>
 #include <wtf/Hasher.h>
 
@@ -53,6 +53,7 @@ enum class ColorInterpolationColorSpace : uint8_t {
     SRGB,
     SRGBLinear,
     DisplayP3,
+    DisplayP3Linear,
     A98RGB,
     ProPhotoRGB,
     Rec2020,
@@ -75,80 +76,85 @@ struct ColorInterpolationMethod {
         using ColorType = WebCore::HSLA<float>;
         HueInterpolationMethod hueInterpolationMethod = HueInterpolationMethod::Shorter;
 
-        friend constexpr bool operator==(const HSL&, const HSL&) = default;
+        constexpr bool operator==(const HSL&) const = default;
     };
     struct HWB {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::HWB;
         using ColorType = WebCore::HWBA<float>;
         HueInterpolationMethod hueInterpolationMethod = HueInterpolationMethod::Shorter;
 
-        friend constexpr bool operator==(const HWB&, const HWB&) = default;
+        constexpr bool operator==(const HWB&) const = default;
     };
     struct LCH {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::LCH;
         using ColorType = WebCore::LCHA<float>;
         HueInterpolationMethod hueInterpolationMethod = HueInterpolationMethod::Shorter;
 
-        friend constexpr bool operator==(const LCH&, const LCH&) = default;
+        constexpr bool operator==(const LCH&) const = default;
     };
     struct Lab {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::Lab;
         using ColorType = WebCore::Lab<float>;
-        friend constexpr bool operator==(const Lab&, const Lab&) = default;
+        constexpr bool operator==(const Lab&) const = default;
     };
     struct OKLCH {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::OKLCH;
         using ColorType = WebCore::OKLCHA<float>;
         HueInterpolationMethod hueInterpolationMethod = HueInterpolationMethod::Shorter;
-        friend constexpr bool operator==(const OKLCH&, const OKLCH&) = default;
+        constexpr bool operator==(const OKLCH&) const = default;
     };
     struct OKLab {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::OKLab;
         using ColorType = WebCore::OKLab<float>;
-        friend constexpr bool operator==(const OKLab&, const OKLab&) = default;
+        constexpr bool operator==(const OKLab&) const = default;
     };
     struct SRGB {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::SRGB;
         using ColorType = WebCore::ExtendedSRGBA<float>;
-        friend constexpr bool operator==(const SRGB&, const SRGB&) = default;
+        constexpr bool operator==(const SRGB&) const = default;
     };
     struct SRGBLinear {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::SRGBLinear;
         using ColorType = WebCore::ExtendedLinearSRGBA<float>;
-        friend constexpr bool operator==(const SRGBLinear&, const SRGBLinear&) = default;
+        constexpr bool operator==(const SRGBLinear&) const = default;
     };
     struct DisplayP3 {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::DisplayP3;
         using ColorType = WebCore::ExtendedDisplayP3<float>;
-        friend constexpr bool operator==(const DisplayP3&, const DisplayP3&) = default;
+        constexpr bool operator==(const DisplayP3&) const = default;
+    };
+    struct DisplayP3Linear {
+        static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::DisplayP3Linear;
+        using ColorType = WebCore::ExtendedLinearDisplayP3<float>;
+        constexpr bool operator==(const DisplayP3Linear&) const = default;
     };
     struct A98RGB {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::A98RGB;
         using ColorType = WebCore::ExtendedA98RGB<float>;
-        friend constexpr bool operator==(const A98RGB&, const A98RGB&) = default;
+        constexpr bool operator==(const A98RGB&) const = default;
     };
     struct ProPhotoRGB {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::ProPhotoRGB;
         using ColorType = WebCore::ExtendedProPhotoRGB<float>;
-        friend constexpr bool operator==(const ProPhotoRGB&, const ProPhotoRGB&) = default;
+        constexpr bool operator==(const ProPhotoRGB&) const = default;
     };
     struct Rec2020 {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::Rec2020;
         using ColorType = WebCore::ExtendedRec2020<float>;
-        friend constexpr bool operator==(const Rec2020&, const Rec2020&) = default;
+        constexpr bool operator==(const Rec2020&) const = default;
     };
     struct XYZD50 {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::XYZD50;
         using ColorType = WebCore::XYZA<float, WhitePoint::D50>;
-        friend constexpr bool operator==(const XYZD50&, const XYZD50&) = default;
+        constexpr bool operator==(const XYZD50&) const = default;
     };
     struct XYZD65 {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::XYZD65;
         using ColorType = WebCore::XYZA<float, WhitePoint::D65>;
-        friend constexpr bool operator==(const XYZD65&, const XYZD65&) = default;
+        constexpr bool operator==(const XYZD65&) const = default;
     };
 
-    friend constexpr bool operator==(const ColorInterpolationMethod&, const ColorInterpolationMethod&) = default;
+    constexpr bool operator==(const ColorInterpolationMethod&) const = default;
 
     Variant<
         HSL,
@@ -160,6 +166,7 @@ struct ColorInterpolationMethod {
         SRGB,
         SRGBLinear,
         DisplayP3,
+        DisplayP3Linear,
         A98RGB,
         ProPhotoRGB,
         Rec2020,
@@ -203,6 +210,8 @@ static constexpr ASCIILiteral serializationForCSS(ColorInterpolationColorSpace i
         return "srgb-linear"_s;
     case ColorInterpolationColorSpace::DisplayP3:
         return "display-p3"_s;
+    case ColorInterpolationColorSpace::DisplayP3Linear:
+        return "display-p3-linear"_s;
     case ColorInterpolationColorSpace::A98RGB:
         return "a98-rgb"_s;
     case ColorInterpolationColorSpace::ProPhotoRGB:

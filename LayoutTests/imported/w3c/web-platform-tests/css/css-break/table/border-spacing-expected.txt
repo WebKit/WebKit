@@ -6,5 +6,5 @@ No red should be seen below.
 4
 5
 
-PASS Table with border spacing
+FAIL Table with border spacing assert_equals: expected 110 but got 10
 

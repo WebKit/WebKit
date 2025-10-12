@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "ElementIdentifier.h"
-#include "FloatRect.h"
-#include "Path.h"
-#include "Region.h"
+#include <WebCore/FloatRect.h>
+#include <WebCore/NodeIdentifier.h>
+#include <WebCore/Path.h>
+#include <WebCore/Region.h>
 
 namespace IPC {
 class Decoder;
@@ -56,12 +56,13 @@ struct InteractionRegion {
     enum class ContentHint : bool { Default, Photo };
 
     Type type;
-    ElementIdentifier elementIdentifier;
+    NodeIdentifier nodeIdentifier;
     FloatRect rectInLayerCoordinates;
     float cornerRadius { 0 };
     OptionSet<CornerMask> maskedCorners { };
     ContentHint contentHint { ContentHint::Default };
     std::optional<Path> clipPath { std::nullopt };
+    bool useContinuousCorners { false };
 #if ENABLE(INTERACTION_REGION_TEXT_CONTENT)
     String text { };
 #endif
@@ -74,7 +75,7 @@ struct InteractionRegion {
 inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
 {
     return a.type == b.type
-        && a.elementIdentifier == b.elementIdentifier
+        && a.nodeIdentifier == b.nodeIdentifier
         && a.contentHint == b.contentHint
         && a.rectInLayerCoordinates == b.rectInLayerCoordinates
         && a.cornerRadius == b.cornerRadius
@@ -86,7 +87,7 @@ inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
         && (!a.clipPath || &a.clipPath.value() == &b.clipPath.value());
 }
 
-WEBCORE_EXPORT std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject&, const FloatRect&, const FloatSize&, const std::optional<AffineTransform>&);
+WEBCORE_EXPORT std::optional<InteractionRegion> interactionRegionForRenderedRegion(const RenderObject&, const FloatRect&, const FloatSize&, const std::optional<AffineTransform>&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const InteractionRegion&);
 

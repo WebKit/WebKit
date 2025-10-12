@@ -45,7 +45,7 @@ class WebsiteDataStore;
 
 class BidiUserContext {
     WTF_MAKE_NONCOPYABLE(BidiUserContext);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(BidiUserContext);
 public:
 #if USE(GLIB)
     BidiUserContext(WebsiteDataStore&, WebProcessPool&, GRefPtr<WebKitWebContext>&&);

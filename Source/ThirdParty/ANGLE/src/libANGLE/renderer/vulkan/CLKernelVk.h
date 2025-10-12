@@ -8,13 +8,14 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLKERNELVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLKERNELVK_H_
 
+#include "libANGLE/renderer/vulkan/CLMemoryVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
-#include "libANGLE/CLMemory.h"
 #include "libANGLE/renderer/CLKernelImpl.h"
+
 #include "vulkan/vulkan_core.h"
 
 namespace rx
@@ -38,14 +39,14 @@ struct CLKernelArgument
         uint32_t op3;
         uint32_t descriptorSet;
         uint32_t pushConstOffset;
-        uint32_t workgroupSpecId;
+        uint32_t workgroupBufferSpecId;
     };
     union
     {
         uint32_t op4;
         uint32_t descriptorBinding;
         uint32_t pushConstantSize;
-        uint32_t workgroupSize;
+        uint32_t workgroupBufferElemSize;
     };
     union
     {
@@ -64,6 +65,8 @@ struct CLKernelArgument
 };
 using CLKernelArguments = std::vector<CLKernelArgument>;
 using CLKernelArgsMap   = angle::HashMap<std::string, CLKernelArguments>;
+bool IsCLKernelArgumentReadonly(const CLKernelArgument &kernelArgument);
+cl::Memory *GetCLKernelArgumentMemoryHandle(const CLKernelArgument &kernelArgument);
 
 class CLKernelVk : public CLKernelImpl
 {
@@ -155,7 +158,6 @@ class CLKernelVk : public CLKernelImpl
 
     vk::ShaderProgramHelper mShaderProgramHelper;
     ComputePipelineCache mComputePipelineCache;
-    KernelSpecConstants mSpecConstants;
 
     // Pipeline and DescriptorSetLayout Shared pointers
     vk::PipelineLayoutPtr mPipelineLayout;

@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-TypedArray-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -26,7 +23,7 @@ const NON_INLINE_STORAGE = 1024;
 // Non-empty typed arrays cannot be sealed.
 for (let length of [INLINE_STORAGE, NON_INLINE_STORAGE]) {
     let ta = new Int32Array(length);
-    assertThrowsInstanceOf(() => Object.seal(ta), TypeError);
+    assert.throws(TypeError, () => Object.seal(ta));
 
     assert.sameValue(Object.isExtensible(ta), false);
     assert.sameValue(Object.isSealed(ta), false);
@@ -46,7 +43,7 @@ for (let length of [INLINE_STORAGE, NON_INLINE_STORAGE]) {
 // Non-empty typed arrays cannot be frozen.
 for (let length of [INLINE_STORAGE, NON_INLINE_STORAGE]) {
     let ta = new Int32Array(length);
-    assertThrowsInstanceOf(() => Object.freeze(ta), TypeError);
+    assert.throws(TypeError, () => Object.freeze(ta));
 
     assert.sameValue(Object.isExtensible(ta), false);
     assert.sameValue(Object.isSealed(ta), false);

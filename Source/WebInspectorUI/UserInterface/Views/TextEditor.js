@@ -622,16 +622,6 @@ WI.TextEditor = class TextEditor extends WI.View
         return this._codeMirror.removeLineClass(lineHandle, "wrap", styleClassName);
     }
 
-    toggleStyleClassForLine(lineNumber, styleClassName)
-    {
-        var lineHandle = this._codeMirror.getLineHandle(lineNumber);
-        console.assert(lineHandle);
-        if (!lineHandle)
-            return false;
-
-        return this._codeMirror.toggleLineClass(lineHandle, "wrap", styleClassName);
-    }
-
     createWidgetForLine(lineNumber)
     {
         var lineHandle = this._codeMirror.getLineHandle(lineNumber);

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSObject.h"
-#include "PropertyCondition.h"
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/PropertyCondition.h>
 #include <wtf/HashMap.h>
 
 namespace JSC {

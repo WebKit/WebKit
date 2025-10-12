@@ -22,10 +22,10 @@
 
 #pragma once
 
-#include "Concurrency.h"
-#include "ECMAMode.h"
-#include "JSExportMacros.h"
-#include "PureNaN.h"
+#include <JavaScriptCore/Concurrency.h>
+#include <JavaScriptCore/ECMAMode.h>
+#include <JavaScriptCore/JSExportMacros.h>
+#include <JavaScriptCore/PureNaN.h>
 #include <functional>
 #include <math.h>
 #include <stddef.h>
@@ -321,7 +321,7 @@ public:
     double toIntegerOrInfinity(JSGlobalObject*) const;
     int32_t toInt32(JSGlobalObject*) const;
     uint32_t toUInt32(JSGlobalObject*) const;
-    uint32_t toIndex(JSGlobalObject*, ASCIILiteral errorName) const;
+    uint64_t toIndex(JSGlobalObject*, ASCIILiteral errorName) const;
     size_t toTypedArrayIndex(JSGlobalObject*, ASCIILiteral) const;
     uint64_t toLength(JSGlobalObject*) const;
 

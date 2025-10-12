@@ -238,6 +238,10 @@ class ANGLERenderTest : public ANGLEPerfTest
     void startTest() override;
     void finishTest() override;
 
+    // non-const, so tests (e.g., TracePerfTest,
+    // ProgramPipelineObjectBenchmark) can set the values they need.
+    ConfigParameters &getConfigParams() { return mConfigParams; }
+
   private:
     void SetUp() override;
     void TearDown() override;

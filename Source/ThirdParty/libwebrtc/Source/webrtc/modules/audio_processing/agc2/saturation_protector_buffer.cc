@@ -10,6 +10,8 @@
 
 #include "modules/audio_processing/agc2/saturation_protector_buffer.h"
 
+#include <optional>
+
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_compare.h"
 
@@ -54,10 +56,10 @@ void SaturationProtectorBuffer::PushBack(float v) {
   RTC_DCHECK_LT(next_, buffer_.size());
   RTC_DCHECK_LE(size_, buffer_.size());
   buffer_[next_++] = v;
-  if (rtc::SafeEq(next_, buffer_.size())) {
+  if (SafeEq(next_, buffer_.size())) {
     next_ = 0;
   }
-  if (rtc::SafeLt(size_, buffer_.size())) {
+  if (SafeLt(size_, buffer_.size())) {
     size_++;
   }
 }
@@ -71,7 +73,7 @@ std::optional<float> SaturationProtectorBuffer::Front() const {
 }
 
 int SaturationProtectorBuffer::FrontIndex() const {
-  return rtc::SafeEq(size_, buffer_.size()) ? next_ : 0;
+  return SafeEq(size_, buffer_.size()) ? next_ : 0;
 }
 
 }  // namespace webrtc

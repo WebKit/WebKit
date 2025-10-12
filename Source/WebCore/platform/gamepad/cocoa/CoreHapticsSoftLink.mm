@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(GAMEPAD) && PLATFORM(COCOA)
+#if ENABLE(GAMEPAD) && HAVE(WIDE_GAMECONTROLLER_SUPPORT)
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebCore, CoreHaptics)
@@ -45,4 +45,4 @@ SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreHaptics, CHHapticPatternKeyPattern, N
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreHaptics, CHHapticPatternKeyParameterID, NSString *)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreHaptics, CHHapticPatternKeyParameterValue, NSString *)
 
-#endif // ENABLE(GAMEPAD) && PLATFORM(COCOA)
+#endif // ENABLE(GAMEPAD) && HAVE(WIDE_GAMECONTROLLER_SUPPORT)

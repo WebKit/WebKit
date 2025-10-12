@@ -37,7 +37,9 @@
     Vector<String> urlSchemesRegisteredAsBypassingContentSecurityPolicy;
     Vector<String> urlSchemesForWhichDomainRelaxationIsForbidden;
     Vector<String> urlSchemesRegisteredAsLocal;
+#if ENABLE(ALL_LEGACY_REGISTERED_SPECIAL_URL_SCHEMES)
     Vector<String> urlSchemesRegisteredAsNoAccess;
+#endif
     Vector<String> urlSchemesRegisteredAsDisplayIsolated;
     Vector<String> urlSchemesRegisteredAsCORSEnabled;
     Vector<String> urlSchemesRegisteredAsAlwaysRevalidated;
@@ -56,7 +58,7 @@
 
     WebKit::CacheModel cacheModel;
 
-    double defaultRequestTimeoutInterval;
+    Markable<double> defaultRequestTimeoutInterval;
     unsigned backForwardCacheCapacity;
 
     bool shouldAlwaysUseComplexTextCodePath;
@@ -167,7 +169,7 @@
 #endif
 
 #if USE(GBM)
-    String renderDeviceFile;
+    WebCore::DRMDevice drmDevice;
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -188,7 +190,7 @@
 
 #if HAVE(IOSURFACE)
     WebCore::IntSize maximumIOSurfaceSize;
-    size_t bytesPerRowIOSurfaceAlignment;
+    uint64_t bytesPerRowIOSurfaceAlignment;
 #endif
     
     WebKit::AccessibilityPreferences accessibilityPreferences;
@@ -213,12 +215,24 @@
 
     HashMap<WebCore::RegistrableDomain, String> storageAccessUserAgentStringQuirksData;
     HashSet<WebCore::RegistrableDomain> storageAccessPromptQuirksDomains;
-    WebKit::ScriptTelemetryRules scriptTelemetryRules;
+    WebKit::ScriptTrackingPrivacyRules scriptTrackingPrivacyRules;
 
     Seconds memoryFootprintPollIntervalForTesting;
-    Vector<size_t> memoryFootprintNotificationThresholds;
+    Vector<uint64_t> memoryFootprintNotificationThresholds;
 
 #if ENABLE(NOTIFY_BLOCKING)
     Vector<std::pair<String, uint64_t>> notifyState;
+#endif
+
+#if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
+    bool shouldInitializeAccessibility;
+#endif
+
+#if HAVE(LIQUID_GLASS)
+    bool isLiquidGlassEnabled;
+#endif
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    bool isDebugLoggingEnabled;
 #endif
 };

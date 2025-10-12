@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "ResourceLoaderOptions.h"
+#include <WebCore/ResourceLoaderOptions.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/AtomString.h>

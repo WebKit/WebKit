@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Image.h"
+#include <WebCore/Image.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {

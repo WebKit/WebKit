@@ -23,17 +23,17 @@ following classes interact.
 ## webrtc::DtlsTransport
 
 The [`webrtc::DtlsTransport`][1] class is a wrapper around the
-`cricket::DtlsTransportInternal` and allows registering observers implementing
+`webrtc::DtlsTransportInternal` and allows registering observers implementing
 the `webrtc::DtlsTransportObserverInterface`. The
 [`webrtc::DtlsTransportObserverInterface`][2] will provide updates to the
 observers, passing around a snapshot of the transports state such as the
 connection state, the remote certificate(s) and the SRTP ciphers as
 [`DtlsTransportInformation`][3].
 
-## cricket::DtlsTransportInternal
+## webrtc::DtlsTransportInternal
 
-The [`cricket::DtlsTransportInternal`][4] class is an interface. Its
-implementation is [`cricket::DtlsTransport`][5]. The `cricket::DtlsTransport`
+The [`webrtc::DtlsTransportInternal`][4] class is an interface. Its
+implementation is [`webrtc::DtlsTransportInternalImpl`][5]. The `webrtc::DtlsTransportInternalImpl`
 sends and receives network packets via an ICE transport. It also demultiplexes
 DTLS packets and SRTP packets according to the scheme described in
 [RFC 5764](https://tools.ietf.org/html/rfc5764#section-5.1.2).
@@ -42,7 +42,7 @@ DTLS packets and SRTP packets according to the scheme described in
 
 The [`webrtc::DtlsSrtpTransport`][6] class is responsіble for extracting the
 SRTP keys after the DTLS handshake as well as protection and unprotection of
-SRTP packets via its [`cricket::SrtpSession`][7].
+SRTP packets via its [`webrtc::SrtpSession`][7].
 
 [1]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/pc/dtls_transport.h;l=32;drc=6a55e7307b78edb50f94a1ff1ef8393d58218369
 [2]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/api/dtls_transport_interface.h;l=76;drc=34437d5660a80393d631657329ef74c6538be25a

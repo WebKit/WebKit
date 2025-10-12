@@ -59,9 +59,10 @@ bool systemHasBattery()
             if (!powerSourcesList)
                 return false;
             for (CFIndex i = 0, count = CFArrayGetCount(powerSourcesList.get()); i < count; ++i) {
-                CFDictionaryRef description = IOPSGetPowerSourceDescription(powerSourcesInfo.get(), CFArrayGetValueAtIndex(powerSourcesList.get(), i));
-                CFTypeRef value = CFDictionaryGetValue(description, CFSTR(kIOPSTypeKey));
-                if (!value || CFEqual(value, CFSTR(kIOPSInternalBatteryType)))
+                RetainPtr valueAtIndex =  CFArrayGetValueAtIndex(powerSourcesList.get(), i);
+                RetainPtr description = IOPSGetPowerSourceDescription(powerSourcesInfo.get(), valueAtIndex.get());
+                RetainPtr value = CFDictionaryGetValue(description.get(), CFSTR(kIOPSTypeKey));
+                if (!value || CFEqual(value.get(), CFSTR(kIOPSInternalBatteryType)))
                     return true;
             }
             return false;
@@ -99,11 +100,12 @@ bool systemHasAC()
             if (!powerSourcesList)
                 return false;
             for (CFIndex i = 0, count = CFArrayGetCount(powerSourcesList.get()); i < count; ++i) {
-                CFDictionaryRef description = IOPSGetPowerSourceDescription(powerSourcesInfo.get(), CFArrayGetValueAtIndex(powerSourcesList.get(), i));
+                RetainPtr valueAtIndex = CFArrayGetValueAtIndex(powerSourcesList.get(), i);
+                RetainPtr description = IOPSGetPowerSourceDescription(powerSourcesInfo.get(), valueAtIndex.get());
                 if (!description)
                     continue;
-                CFTypeRef value = CFDictionaryGetValue(description, CFSTR(kIOPSPowerSourceStateKey));
-                if (value && CFEqual(value, CFSTR(kIOPSACPowerValue)))
+                RetainPtr value = CFDictionaryGetValue(description.get(), CFSTR(kIOPSPowerSourceStateKey));
+                if (value && CFEqual(value.get(), CFSTR(kIOPSACPowerValue)))
                     return true;
             }
             return false;

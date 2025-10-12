@@ -33,8 +33,8 @@ namespace webrtc {
 class EventParser {
  public:
   struct ValueAndPostionView {
-    rtc::ArrayView<uint64_t> values;
-    rtc::ArrayView<uint8_t> positions;
+    ArrayView<uint64_t> values;
+    ArrayView<uint8_t> positions;
   };
 
   EventParser() = default;
@@ -48,10 +48,10 @@ class EventParser {
   // other fields that may occur before it. If 'required_field == true',
   // then failing to find the field is an error, otherwise the functions
   // return success, but with an empty view of values.
-  RtcEventLogParseStatusOr<rtc::ArrayView<absl::string_view>> ParseStringField(
+  RtcEventLogParseStatusOr<ArrayView<absl::string_view>> ParseStringField(
       const FieldParameters& params,
       bool required_field = true);
-  RtcEventLogParseStatusOr<rtc::ArrayView<uint64_t>> ParseNumericField(
+  RtcEventLogParseStatusOr<ArrayView<uint64_t>> ParseNumericField(
       const FieldParameters& params,
       bool required_field = true);
   RtcEventLogParseStatusOr<ValueAndPostionView> ParseOptionalNumericField(
@@ -90,9 +90,9 @@ class EventParser {
   void SetError() { error_ = true; }
   bool Ok() const { return !error_; }
 
-  rtc::ArrayView<uint64_t> GetValues() { return values_; }
-  rtc::ArrayView<uint8_t> GetPositions() { return positions_; }
-  rtc::ArrayView<absl::string_view> GetStrings() { return strings_; }
+  ArrayView<uint64_t> GetValues() { return values_; }
+  ArrayView<uint8_t> GetPositions() { return positions_; }
+  ArrayView<absl::string_view> GetStrings() { return strings_; }
 
   void ClearTemporaries() {
     positions_.clear();
@@ -122,9 +122,9 @@ template <typename T,
           typename E,
           std::enable_if_t<std::is_integral<T>::value, bool> = true>
 ABSL_MUST_USE_RESULT RtcEventLogParseStatus
-PopulateRtcEventMember(const rtc::ArrayView<uint64_t> values,
-                       T E::*member,
-                       rtc::ArrayView<E> output) {
+PopulateRtcEventMember(const ArrayView<uint64_t> values,
+                       T E::* member,
+                       ArrayView<E> output) {
   size_t batch_size = values.size();
   RTC_CHECK_EQ(output.size(), batch_size);
   for (size_t i = 0; i < batch_size; ++i) {
@@ -138,10 +138,10 @@ template <typename T,
           typename E,
           std::enable_if_t<std::is_integral<T>::value, bool> = true>
 ABSL_MUST_USE_RESULT RtcEventLogParseStatus
-PopulateRtcEventMember(const rtc::ArrayView<uint8_t> positions,
-                       const rtc::ArrayView<uint64_t> values,
-                       std::optional<T> E::*member,
-                       rtc::ArrayView<E> output) {
+PopulateRtcEventMember(const ArrayView<uint8_t> positions,
+                       const ArrayView<uint64_t> values,
+                       std::optional<T> E::* member,
+                       ArrayView<E> output) {
   size_t batch_size = positions.size();
   RTC_CHECK_EQ(output.size(), batch_size);
   RTC_CHECK_LE(values.size(), batch_size);
@@ -164,9 +164,9 @@ template <typename T,
           typename E,
           std::enable_if_t<std::is_enum<T>::value, bool> = true>
 ABSL_MUST_USE_RESULT RtcEventLogParseStatus
-PopulateRtcEventMember(const rtc::ArrayView<uint64_t> values,
-                       T E::*member,
-                       rtc::ArrayView<E> output) {
+PopulateRtcEventMember(const ArrayView<uint64_t> values,
+                       T E::* member,
+                       ArrayView<E> output) {
   size_t batch_size = values.size();
   RTC_CHECK_EQ(output.size(), batch_size);
   for (size_t i = 0; i < batch_size; ++i) {
@@ -182,9 +182,9 @@ PopulateRtcEventMember(const rtc::ArrayView<uint64_t> values,
 // Same as above, but for string fields.
 template <typename E>
 ABSL_MUST_USE_RESULT RtcEventLogParseStatus
-PopulateRtcEventMember(const rtc::ArrayView<absl::string_view> values,
-                       std::string E::*member,
-                       rtc::ArrayView<E> output) {
+PopulateRtcEventMember(const ArrayView<absl::string_view> values,
+                       std::string E::* member,
+                       ArrayView<E> output) {
   size_t batch_size = values.size();
   RTC_CHECK_EQ(output.size(), batch_size);
   for (size_t i = 0; i < batch_size; ++i) {
@@ -197,9 +197,9 @@ PopulateRtcEventMember(const rtc::ArrayView<absl::string_view> values,
 // N.B. Assumes that the encoded value uses millisecond precision.
 template <typename E>
 ABSL_MUST_USE_RESULT RtcEventLogParseStatus
-PopulateRtcEventTimestamp(const rtc::ArrayView<uint64_t>& values,
-                          Timestamp E::*timestamp,
-                          rtc::ArrayView<E> output) {
+PopulateRtcEventTimestamp(const ArrayView<uint64_t>& values,
+                          Timestamp E::* timestamp,
+                          ArrayView<E> output) {
   size_t batch_size = values.size();
   RTC_CHECK_EQ(batch_size, output.size());
   for (size_t i = 0; i < batch_size; ++i) {
@@ -210,11 +210,10 @@ PopulateRtcEventTimestamp(const rtc::ArrayView<uint64_t>& values,
 }
 
 template <typename E>
-rtc::ArrayView<E> ExtendLoggedBatch(std::vector<E>& output,
-                                    size_t new_elements) {
+ArrayView<E> ExtendLoggedBatch(std::vector<E>& output, size_t new_elements) {
   size_t old_size = output.size();
   output.insert(output.end(), old_size + new_elements, E());
-  rtc::ArrayView<E> output_batch = output;
+  ArrayView<E> output_batch = output;
   output_batch.subview(old_size);
   RTC_DCHECK_EQ(output_batch.size(), new_elements);
   return output_batch;

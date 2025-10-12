@@ -5,6 +5,10 @@
 //
 // Decompress_unittest.cpp: Unit tests for the |(Compress/Decompress)*Blob| functions.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <gtest/gtest.h>
 
 #include "libANGLE/angletypes.h"

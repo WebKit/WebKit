@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,24 +26,31 @@
 #import "config.h"
 #import "LockdownModeCocoa.h"
 
-#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
+#if ENABLE(LOCKDOWN_MODE_API)
 
-#import <LockdownMode/LockdownMode.h>
 #import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/SoftLinking.h>
 
+#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
+#import <LockdownMode/LockdownMode.h>
+#import <wtf/SoftLinking.h>
+#endif
+
+#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
 OBJC_CLASS LockdownModeManager;
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(LockdownMode)
 SOFT_LINK_CLASS_OPTIONAL(LockdownMode, LockdownModeManager)
+#endif
 
 namespace PAL {
 
 bool isLockdownModeEnabled()
 {
+#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
     if (LockdownModeLibrary())
-        return [(LockdownModeManager *)[getLockdownModeManagerClass() shared] enabled];
+        return [(LockdownModeManager *)[getLockdownModeManagerClassSingleton() shared] enabled];
+#endif
 
     // FIXME(<rdar://108208100>): Remove this fallback once recoveryOS includes the framework.
     uint64_t ldmState = 0;

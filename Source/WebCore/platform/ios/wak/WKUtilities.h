@@ -67,9 +67,6 @@ void WAKRelease(const void *object);
 const void *WKCollectionRetain (CFAllocatorRef allocator, const void *value);
 void WKCollectionRelease (CFAllocatorRef allocator, const void *value);
 
-void WKReportError(const char *file, int line, const char *function, const char *format, ...);
-#define WKError(formatAndArgs...) WKReportError(__FILE__, __LINE__, __PRETTY_FUNCTION__, formatAndArgs)
-
 CFIndex WKArrayIndexOfValue (CFArrayRef array, const void *value);
 
 WKClassInfo *WKGetClassInfo(WAKObjectRef);

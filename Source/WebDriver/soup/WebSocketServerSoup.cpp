@@ -41,8 +41,6 @@
 
 namespace WebDriver {
 
-#if !USE(SOUP2)
-
 static bool soupServerListen(SoupServer* server, const String& host, unsigned port, GError** error)
 {
     static const auto options = static_cast<SoupServerListenOptions>(0);
@@ -136,17 +134,9 @@ static void handleWebSocketConnection(SoupServer*, SoupServerMessage*, const cha
 
     g_signal_connect(connection, "message", G_CALLBACK(handleWebSocketMessage), webSocketServer);
 }
-#endif // !USE(SOUP2)
 
 std::optional<String> WebSocketServer::listen(const String& host, unsigned port)
 {
-#if USE(SOUP2)
-    UNUSED_PARAM(host);
-    UNUSED_PARAM(port);
-    RELEASE_LOG(WebDriverBiDi, "WebSockets support not implemented yet with libsoup2");
-    return std::nullopt;
-#else
-
     m_soupServer = adoptGRef(soup_server_new("server-header", "WebKitWebDriver-WSS", nullptr));
     GUniqueOutPtr<GError> error;
     if (!soupServerListen(m_soupServer.get(), host, port, &error.outPtr())) {
@@ -168,28 +158,18 @@ std::optional<String> WebSocketServer::listen(const String& host, unsigned port)
         { "/session"_s }
     );
     return getWebSocketURL(m_listener, nullString());
-#endif
 }
 
 void WebSocketServer::sendMessage(WebSocketMessageHandler::Connection connection, const String& message)
 {
-#if USE(SOUP2)
-    UNUSED_PARAM(connection);
-    UNUSED_PARAM(message);
-    RELEASE_LOG(WebDriverBiDi, "WebSockets support not implemented yet with libsoup2");
-#else
     ASSERT(connection);
     RELEASE_LOG(WebDriverBiDi, "Sending message: %s", message.utf8().data());
     GRefPtr<GBytes> rawMessage = adoptGRef(g_bytes_new(message.utf8().data(), message.utf8().length()));
     soup_websocket_connection_send_message(connection.get(), SOUP_WEBSOCKET_DATA_TEXT, rawMessage.get());
-#endif
 }
 
 void WebSocketServer::disconnect()
 {
-#if USE(SOUP2)
-    RELEASE_LOG(WebDriverBiDi, "WebSockets support not implemented yet with libsoup2");
-#else
     if (!m_soupServer)
         return;
 
@@ -201,22 +181,16 @@ void WebSocketServer::disconnect()
 
     soup_server_disconnect(m_soupServer.get());
     m_soupServer = nullptr;
-#endif
 }
 
 void WebSocketServer::disconnectSession(const String& sessionId)
 {
-#if USE(SOUP2)
-    UNUSED_PARAM(sessionId);
-    RELEASE_LOG(WebDriverBiDi, "WebSockets support not implemented yet with libsoup2");
-#else
     auto connection = this->connection(sessionId);
     if (!connection || !connection->get())
         return;
 
     soup_websocket_connection_close(connection->get(), SOUP_WEBSOCKET_CLOSE_NORMAL, nullptr);
     g_signal_handlers_disconnect_by_data(connection->get(), this);
-#endif
 }
 
 } // namespace WebDriver

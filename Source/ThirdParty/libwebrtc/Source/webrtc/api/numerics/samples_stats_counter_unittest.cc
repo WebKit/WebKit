@@ -10,8 +10,7 @@
 
 #include "api/numerics/samples_stats_counter.h"
 
-#include <math.h>
-
+#include <cmath>
 #include <random>
 #include <vector>
 

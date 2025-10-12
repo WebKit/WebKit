@@ -31,7 +31,6 @@
 ]
 messages -> MediaSourcePrivateRemoteMessageReceiver {
     ProxyWaitForTarget(struct WebCore::SeekTarget target) -> (Expected<MediaTime, WebCore::PlatformMediaError> seekedTime);
-    ProxySeekToTime(MediaTime time) -> (Expected<void, WebCore::PlatformMediaError> result);
 }
 
 #endif

@@ -26,6 +26,7 @@
 namespace WebCore {
 
 class SVGGeometryElement;
+class SVGLengthValue;
 class SVGTextPathElement;
 
 class RenderSVGTextPath final : public RenderSVGInline {
@@ -45,8 +46,6 @@ private:
     void graphicsElement() const = delete;
 
     ASCIILiteral renderName() const override { return "RenderSVGTextPath"_s; }
-
-    Path m_layoutPath;
 };
 
 } // namespace WebCore

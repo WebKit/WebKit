@@ -10,5 +10,5 @@ if (platformSupportsSamplingProfiler() && $vm.isWasmSupported()) {
     var wasmEntry = function() {
         return instance.exports.loop(10000000);
     };
-    runTest(wasmEntry, ["<?>.wasm-function[0]", "wasm-stub", "wasmEntry"]);
+    runTest(wasmEntry, [".wasm-function[0]", "wasm-stub", "wasmEntry"]);
 }

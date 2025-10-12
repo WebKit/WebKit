@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -33,6 +33,7 @@
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "NodeTraversal.h"
+#include "Settings.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -103,12 +104,12 @@ void RadioInputType::willUpdateCheckedness(bool nowChecked, WasSetByJavaScript)
 {
     if (!nowChecked)
         return;
-    RefPtr element = protectedElement();
+    Ref element = *this->element();
     if (element->radioButtonGroups()) {
         // Buttons in RadioButtonGroups are handled in HTMLInputElement::setChecked().
         return;
     }
-    if (auto input = element->checkedRadioButtonForGroup())
+    if (RefPtr input = element->checkedRadioButtonForGroup())
         input->setChecked(false);
 }
 
@@ -158,6 +159,8 @@ auto RadioInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
             break;
         if (inputElement->isRadioButton() && inputElement->name() == element->name() && inputElement->isFocusable()) {
             inputElement->protectedDocument()->setFocusedElement(inputElement.get());
+            // If the focused radio button is not visible (e.g., during arrow key navigation), scroll it into view.
+            inputElement->scrollIntoViewIfNotVisible(false);
             inputElement->dispatchSimulatedClick(&event, SendNoEvents, DoNotShowPressedLook);
             event.setDefaultHandled();
             return ShouldCallBaseEventHandler::Yes;
@@ -185,9 +188,9 @@ void RadioInputType::handleKeyupEvent(KeyboardEvent& event)
     dispatchSimulatedClickIfActive(event);
 }
 
-bool RadioInputType::isKeyboardFocusable(KeyboardEvent* event) const
+bool RadioInputType::isKeyboardFocusable(const FocusEventData& focusEventData) const
 {
-    if (!InputType::isKeyboardFocusable(event))
+    if (!InputType::isKeyboardFocusable(focusEventData))
         return false;
 
     RefPtr element = this->element();

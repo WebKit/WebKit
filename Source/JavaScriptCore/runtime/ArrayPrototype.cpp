@@ -34,7 +34,7 @@
 #include "JSArrayIterator.h"
 #include "JSCBuiltins.h"
 #include "JSCInlines.h"
-#include "JSImmutableButterfly.h"
+#include "JSCellButterfly.h"
 #include "JSStringJoiner.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototypeInlines.h"
@@ -228,170 +228,18 @@ static inline int64_t argumentUnclampedIndexFromStartOrEnd(JSGlobalObject* globa
     return static_cast<int64_t>(indexDouble);
 }
 
-inline bool canUseFastJoin(const JSObject* thisObject)
-{
-    switch (thisObject->indexingType()) {
-    case ALL_CONTIGUOUS_INDEXING_TYPES:
-    case ALL_INT32_INDEXING_TYPES:
-    case ALL_DOUBLE_INDEXING_TYPES:
-    case ALL_UNDECIDED_INDEXING_TYPES:
-        return true;
-    default:
-        break;
-    }
-    return false;
-}
-
-inline bool holesMustForwardToPrototype(JSObject* object)
-{
-    return object->structure()->holesMustForwardToPrototype(object);
-}
-
-inline JSValue fastJoin(JSGlobalObject* globalObject, JSObject* thisObject, StringView separator, unsigned length, bool& sawHoles, bool& genericCase)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSStringJoiner joiner(separator);
-
-    unsigned i = 0;
-    switch (thisObject->indexingType()) {
-    case ALL_INT32_INDEXING_TYPES: {
-        auto& butterfly = *thisObject->butterfly();
-        if (length > butterfly.publicLength()) [[unlikely]]
-            break;
-        joiner.reserveCapacity(globalObject, length);
-        RETURN_IF_EXCEPTION(scope, { });
-        auto data = butterfly.contiguous().data();
-        bool holesKnownToBeOK = false;
-        for (; i < length; ++i) {
-            JSValue value = data[i].get();
-            if (value) [[likely]]
-                joiner.appendNumber(vm, value.asInt32());
-            else {
-                sawHoles = true;
-                if (!holesKnownToBeOK) {
-                    if (holesMustForwardToPrototype(thisObject))
-                        goto generalCase;
-                    holesKnownToBeOK = true;
-                }
-                joiner.appendEmptyString();
-            }
-        }
-        RELEASE_AND_RETURN(scope, joiner.join(globalObject));
-    }
-    case ALL_CONTIGUOUS_INDEXING_TYPES: {
-        auto& butterfly = *thisObject->butterfly();
-        if (length > butterfly.publicLength()) [[unlikely]]
-            break;
-        auto data = butterfly.contiguous().data();
-        bool holesKnownToBeOK = false;
-
-        JSOnlyStringsJoiner onlyStringsJoiner(separator);
-        if (auto joined = onlyStringsJoiner.tryJoin(globalObject, data, length))
-            RELEASE_AND_RETURN(scope, joined);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        for (; i < length; ++i) {
-            if (JSValue value = data[i].get()) {
-                if (!joiner.appendWithoutSideEffects(globalObject, value))
-                    goto generalCase;
-                RETURN_IF_EXCEPTION(scope, { });
-            } else {
-                sawHoles = true;
-                if (!holesKnownToBeOK) {
-                    if (holesMustForwardToPrototype(thisObject))
-                        goto generalCase;
-                    holesKnownToBeOK = true;
-                }
-                joiner.appendEmptyString();
-            }
-        }
-        RELEASE_AND_RETURN(scope, joiner.join(globalObject));
-    }
-    case ALL_DOUBLE_INDEXING_TYPES: {
-        auto& butterfly = *thisObject->butterfly();
-        if (length > butterfly.publicLength()) [[unlikely]]
-            break;
-        joiner.reserveCapacity(globalObject, length);
-        RETURN_IF_EXCEPTION(scope, { });
-        auto data = butterfly.contiguousDouble().data();
-        bool holesKnownToBeOK = false;
-        for (; i < length; ++i) {
-            double value = data[i];
-            if (!isHole(value)) [[likely]]
-                joiner.appendNumber(vm, value);
-            else {
-                sawHoles = true;
-                if (!holesKnownToBeOK) {
-                    if (holesMustForwardToPrototype(thisObject))
-                        goto generalCase;
-                    holesKnownToBeOK = true;
-                }
-                joiner.appendEmptyString();
-            }
-        }
-        RELEASE_AND_RETURN(scope, joiner.join(globalObject));
-    }
-    case ALL_UNDECIDED_INDEXING_TYPES: {
-        if (length && holesMustForwardToPrototype(thisObject))
-            goto generalCase;
-        switch (separator.length()) {
-        case 0:
-            RELEASE_AND_RETURN(scope, jsEmptyString(vm));
-        case 1: {
-            if (length <= 1)
-                RELEASE_AND_RETURN(scope, jsEmptyString(vm));
-            if (separator.is8Bit())
-                RELEASE_AND_RETURN(scope, repeatCharacter(globalObject, separator.span8().front(), length - 1));
-            RELEASE_AND_RETURN(scope, repeatCharacter(globalObject, separator.span16().front(), length - 1));
-        default:
-            JSString* result = jsEmptyString(vm);
-            if (length <= 1)
-                return result;
-
-            JSString* operand = jsString(vm, separator);
-            RETURN_IF_EXCEPTION(scope, { });
-            unsigned count = length - 1;
-            for (;;) {
-                if (count & 1) {
-                    result = jsString(globalObject, result, operand);
-                    RETURN_IF_EXCEPTION(scope, { });
-                }
-                count >>= 1;
-                if (!count)
-                    return result;
-                operand = jsString(globalObject, operand, operand);
-                RETURN_IF_EXCEPTION(scope, { });
-            }
-        }
-        }
-    }
-    }
-
-generalCase:
-    genericCase = true;
-    for (; i < length; ++i) {
-        JSValue element = thisObject->getIndex(globalObject, i);
-        RETURN_IF_EXCEPTION(scope, { });
-        joiner.append(globalObject, element);
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-    RELEASE_AND_RETURN(scope, joiner.join(globalObject));
-}
-
-ALWAYS_INLINE JSValue fastJoin(JSGlobalObject* globalObject, JSObject* thisObject, StringView separator, unsigned length)
+ALWAYS_INLINE JSString* fastArrayJoin(JSGlobalObject* globalObject, JSObject* thisObject, StringView separator, unsigned length)
 {
     bool sawHoles = false;
     bool genericCase = false;
-    return fastJoin(globalObject, thisObject, separator, length, sawHoles, genericCase);
+    return fastArrayJoin(globalObject, thisObject, separator, length, sawHoles, genericCase);
 }
 
 inline bool canUseDefaultArrayJoinForToString(JSObject* thisObject)
 {
     JSGlobalObject* globalObject = thisObject->globalObject();
 
-    if (globalObject->arrayJoinWatchpointSet().state() != IsWatched)
+    if (!globalObject->arrayJoinWatchpointSet().isStillValid())
         return false;
 
     Structure* structure = thisObject->structure();
@@ -410,13 +258,13 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToString, (JSGlobalObject* globalObject, 
 
     // 1. Let array be the result of calling ToObject on the this value.
     JSObject* thisObject = thisValue.toObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     Integrity::auditStructureID(thisObject->structureID());
     if (!canUseDefaultArrayJoinForToString(thisObject)) [[unlikely]] {
         // 2. Let func be the result of calling the [[Get]] internal method of array with argument "join".
         JSValue function = thisObject->get(globalObject, vm.propertyNames->join);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        RETURN_IF_EXCEPTION(scope, { });
 
         // 3. If IsCallable(func) is false, then let func be the standard built-in method Object.prototype.toString (15.2.4.2).
         auto callData = JSC::getCallData(function);
@@ -429,52 +277,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToString, (JSGlobalObject* globalObject, 
     }
 
     ASSERT(isJSArray(thisValue));
-    JSArray* thisArray = asArray(thisValue);
-
-    unsigned length = thisArray->length();
-
-    StringRecursionChecker checker(globalObject, thisArray);
-    EXCEPTION_ASSERT(!scope.exception() || checker.earlyReturnValue());
-    if (JSValue earlyReturnValue = checker.earlyReturnValue())
-        return JSValue::encode(earlyReturnValue);
-
-    if (canUseFastJoin(thisArray)) [[likely]] {
-        const LChar comma = ',';
-
-        bool isCoW = isCopyOnWrite(thisArray->indexingMode());
-        JSImmutableButterfly* immutableButterfly = nullptr;
-        if (isCoW) {
-            immutableButterfly = JSImmutableButterfly::fromButterfly(thisArray->butterfly());
-            auto iter = vm.heap.immutableButterflyToStringCache.find(immutableButterfly);
-            if (iter != vm.heap.immutableButterflyToStringCache.end())
-                return JSValue::encode(iter->value);
-        }
-
-        bool sawHoles = false;
-        bool genericCase = false;
-        JSValue result = fastJoin(globalObject, thisArray, span(comma), length, sawHoles, genericCase);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        if (!sawHoles && !genericCase && result && isJSString(result) && isCoW) {
-            ASSERT(JSImmutableButterfly::fromButterfly(thisArray->butterfly()) == immutableButterfly);
-            vm.heap.immutableButterflyToStringCache.add(immutableButterfly, jsCast<JSString*>(result));
-        }
-
-        return JSValue::encode(result);
-    }
-
-    JSStringJoiner joiner(","_s);
-    for (unsigned i = 0; i < length; ++i) {
-        JSValue element = thisArray->tryGetIndexQuickly(i);
-        if (!element) {
-            element = thisArray->get(globalObject, i);
-            RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        }
-        joiner.append(globalObject, element);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    }
-
-    RELEASE_AND_RETURN(scope, JSValue::encode(joiner.join(globalObject)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(asArray(thisValue)->fastToString(globalObject)));
 }
 
 static JSString* toLocaleString(JSGlobalObject* globalObject, JSValue value, JSValue locales, JSValue options)
@@ -527,7 +330,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToLocaleString, (JSGlobalObject* globalOb
 
     // 3. Let separator be the String value for the list-separator String appropriate for
     // the host environment's current locale (this is derived in an implementation-defined way).
-    const LChar comma = ',';
+    const Latin1Character comma = ',';
     JSString* separator = jsSingleCharacterString(vm, comma);
 
     // 4. Let R be the empty String.
@@ -649,9 +452,9 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncJoin, (JSGlobalObject* globalObject, Call
     // 3. If separator is undefined, let separator be the single-element String ",".
     JSValue separatorValue = callFrame->argument(0);
     if (separatorValue.isUndefined()) {
-        const LChar comma = ',';
+        const Latin1Character comma = ',';
 
-        if (length > std::numeric_limits<unsigned>::max() || !canUseFastJoin(thisObject)) [[unlikely]] {
+        if (length > std::numeric_limits<unsigned>::max() || !canUseFastArrayJoin(thisObject)) [[unlikely]] {
             JSString* jsSeparator = jsSingleCharacterString(vm, comma);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
@@ -661,20 +464,20 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncJoin, (JSGlobalObject* globalObject, Call
         unsigned unsignedLength = static_cast<unsigned>(length);
         ASSERT(static_cast<double>(unsignedLength) == length);
 
-        RELEASE_AND_RETURN(scope, JSValue::encode(fastJoin(globalObject, thisObject, span(comma), unsignedLength)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(fastArrayJoin(globalObject, thisObject, span(comma), unsignedLength)));
     }
 
     // 4. Let sep be ? ToString(separator).
     JSString* jsSeparator = separatorValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    if (length > std::numeric_limits<unsigned>::max() || !canUseFastJoin(thisObject)) [[unlikely]]
+    if (length > std::numeric_limits<unsigned>::max() || !canUseFastArrayJoin(thisObject)) [[unlikely]]
         RELEASE_AND_RETURN(scope, JSValue::encode(slowJoin(globalObject, thisObject, jsSeparator, length)));
 
     auto view = jsSeparator->view(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(fastJoin(globalObject, thisObject, view, length)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(fastArrayJoin(globalObject, thisObject, view, length)));
 }
 
 inline EncodedJSValue createArrayIteratorObject(JSGlobalObject* globalObject, CallFrame* callFrame, IterationKind kind)
@@ -766,7 +569,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncPush, (JSGlobalObject* globalObject, Call
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     unsigned argCount = callFrame->argumentCount();
 
-    if (length + argCount > static_cast<uint64_t>(maxSafeInteger())) [[unlikely]]
+    if (length + argCount > maxSafeIntegerAsUInt64()) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "push cannot produce an array of length larger than (2 ** 53) - 1"_s);
 
     for (unsigned n = 0; n < argCount; n++) {
@@ -1078,14 +881,14 @@ static unsigned sortBucketSort(std::span<EncodedJSValue> sorted, unsigned dst, S
         return dst;
     }
 
-    StdMap<UChar, SortEntryVector> buckets;
+    StdMap<char16_t, SortEntryVector> buckets;
     for (const auto& entry : bucket) {
         if (std::get<1>(entry).length() == depth) {
             sorted[dst++] = JSValue::encode(std::get<0>(entry));
             continue;
         }
 
-        UChar character = std::get<1>(entry).characterAt(depth);
+        char16_t character = std::get<1>(entry).characterAt(depth);
         buckets.insert(std::pair { character, SortEntryVector { } }).first->second.append(entry);
     }
 
@@ -1297,7 +1100,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSplice, (JSGlobalObject* globalObject, Ca
     }
     ASSERT(callFrame->argumentCount() || (!itemCount && !actualDeleteCount));
 
-    if (length - actualDeleteCount + itemCount > static_cast<uint64_t>(maxSafeInteger())) [[unlikely]]
+    if (length - actualDeleteCount + itemCount > maxSafeIntegerAsUInt64()) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Splice cannot produce an array of length larger than (2 ** 53) - 1"_s);
 
     std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(globalObject, thisObj, actualDeleteCount);
@@ -1369,7 +1172,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncUnShift, (JSGlobalObject* globalObject, C
 
     unsigned nrArgs = callFrame->argumentCount();
     if (nrArgs) {
-        if (length + nrArgs > static_cast<uint64_t>(maxSafeInteger())) [[unlikely]]
+        if (length + nrArgs > maxSafeIntegerAsUInt64()) [[unlikely]]
             return throwVMTypeError(globalObject, scope, "unshift cannot produce an array of length larger than (2 ** 53) - 1"_s);
         unshift(globalObject, thisObj, 0, 0, nrArgs, length);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -1518,7 +1321,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncIndexOf, (JSGlobalObject* globalObject, C
     if (isJSArray(thisObject)) [[likely]] {
         JSArray* array = asArray(thisObject);
         Butterfly* butterfly = array->butterfly();
-        if (isCopyOnWrite(array->indexingMode()) && JSImmutableButterfly::isOnlyAtomStringsStructure(vm, butterfly) && searchElement.isString()) {
+        if (isCopyOnWrite(array->indexingMode()) && JSCellButterfly::isOnlyAtomStringsStructure(vm, butterfly) && searchElement.isString()) {
             auto search = asString(searchElement)->toAtomString(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
 
@@ -1770,7 +1573,7 @@ static JSArray* concatAppendArray(JSGlobalObject* globalObject, VM& vm, JSArray*
         copyArrayElements<ArrayFillMode::Empty, NeedsGCSafeOps::No>(buffer, firstArraySize, secondButterfly->contiguous().data(), 0, secondArraySize, secondType);
     }
 
-    Butterfly::clearOptimalVectorLengthGap(type, butterfly, vectorLength, resultSize);
+    Butterfly::clearRange(type, butterfly, resultSize, vectorLength);
     return JSArray::createWithButterfly(vm, nullptr, resultStructure, butterfly);
 }
 
@@ -2326,7 +2129,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToSpliced, (JSGlobalObject* globalObject,
 
     uint64_t newLen = length + insertCount - deleteCount;
 
-    if (newLen >= static_cast<uint64_t>(maxSafeInteger())) [[unlikely]] {
+    if (newLen >= maxSafeIntegerAsUInt64()) [[unlikely]] {
         throwTypeError(globalObject, scope, "Array length exceeds 2**53 - 1"_s);
         return { };
     }

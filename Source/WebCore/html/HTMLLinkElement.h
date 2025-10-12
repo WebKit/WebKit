@@ -23,14 +23,14 @@
 
 #pragma once
 
-#include "CSSStyleSheet.h"
-#include "CachedStyleSheetClient.h"
-#include "CachedResourceHandle.h"
-#include "DOMTokenList.h"
-#include "HTMLElement.h"
-#include "LinkLoader.h"
-#include "LinkLoaderClient.h"
-#include "LinkRelAttribute.h"
+#include <WebCore/CSSStyleSheet.h>
+#include <WebCore/CachedResourceHandle.h>
+#include <WebCore/CachedStyleSheetClient.h>
+#include <WebCore/DOMTokenList.h>
+#include <WebCore/HTMLElement.h>
+#include <WebCore/LinkLoader.h>
+#include <WebCore/LinkLoaderClient.h>
+#include <WebCore/LinkRelAttribute.h>
 
 namespace WebCore {
 
@@ -78,9 +78,7 @@ public:
 
     WEBCORE_EXPORT bool mediaAttributeMatches() const;
 
-    WEBCORE_EXPORT void setCrossOrigin(const AtomString&);
     WEBCORE_EXPORT String crossOrigin() const;
-    WEBCORE_EXPORT void setAs(const AtomString&);
     WEBCORE_EXPORT String as() const;
 
     void dispatchPendingEvent(LinkEventSender*, const AtomString& eventType);
@@ -95,11 +93,9 @@ public:
 
     void allowPrefetchLoadAndErrorForTesting() { m_allowPrefetchLoadAndErrorForTesting = true; }
 
-    void setReferrerPolicyForBindings(const AtomString&);
     String referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const;
 
-    void setFetchPriorityForBindings(const AtomString&);
     String fetchPriorityForBindings() const;
     RequestPriority fetchPriority() const;
 

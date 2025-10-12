@@ -1,6 +1,6 @@
 [object Math]
-ReferenceError: Cannot access uninitialized variable.
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'Math' before initialization.
+ReferenceError: Cannot access 'Math' before initialization.
 [object Math]
 3.141592653589793
 undefined
@@ -8,8 +8,8 @@ undefined
 undefined
 delicious
 [object JSON]
-ReferenceError: Cannot access uninitialized variable.
-ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access 'JSON' before initialization.
+ReferenceError: Cannot access 'JSON' before initialization.
 [object JSON]
 function stringify() {
     [native code]

@@ -39,6 +39,8 @@
                 checkTracks(mediaStream.getVideoTracks()[0], newMediaStream.getVideoTracks()[0]);
 
                 finishJSTest();
+                mediaStream.getTracks().forEach(track => track.stop());
+                newMediaStream.getTracks().forEach(track => track.stop());
             }
 
             function start() {

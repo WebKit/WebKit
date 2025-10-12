@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2021 Sony Interactive Entertainment Inc.
- * Copyright (C) 2021-2023 Apple Inc.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,10 @@
 
 namespace JSC {
 namespace ISO8601 {
+
+static constexpr int32_t maxYear = 275760;
+static constexpr int32_t minYear = -271821;
+static constexpr int32_t outOfRangeYear = minYear - 1;
 
 class Duration {
     WTF_MAKE_TZONE_ALLOCATED(Duration);
@@ -85,6 +89,8 @@ public:
 private:
     std::array<double, numberOfTemporalUnits> m_data { };
 };
+
+class InternalDuration;
 
 class ExactTime {
     WTF_MAKE_TZONE_ALLOCATED(ExactTime);
@@ -152,8 +158,8 @@ public:
     friend constexpr auto operator<=>(const ExactTime&, const ExactTime&) = default;
 
     std::optional<ExactTime> add(Duration) const;
-    Int128 difference(ExactTime other, unsigned increment, TemporalUnit, RoundingMode) const;
-    ExactTime round(unsigned increment, TemporalUnit, RoundingMode) const;
+    InternalDuration difference(JSGlobalObject*, ExactTime, unsigned, TemporalUnit, RoundingMode) const;
+    ExactTime round(JSGlobalObject*, unsigned, TemporalUnit, RoundingMode) const;
 
     static ExactTime now();
 
@@ -162,10 +168,8 @@ private:
     {
         if (value > 9)
             asStringImpl(builder, value / 10);
-        builder.append(static_cast<LChar>(static_cast<unsigned>(value % 10) + '0'));
+        builder.append(static_cast<Latin1Character>(static_cast<unsigned>(value % 10) + '0'));
     }
-
-    static Int128 round(Int128 quantity, unsigned increment, TemporalUnit, RoundingMode);
 
     Int128 m_epochNanoseconds { };
 };
@@ -243,6 +247,8 @@ private:
 };
 static_assert(sizeof(PlainTime) <= sizeof(uint64_t));
 
+bool isYearWithinLimits(double year);
+
 // Note that PlainDate does not include week unit.
 // year can be negative. And month and day starts with 1.
 class PlainDate {
@@ -260,6 +266,7 @@ public:
         , m_month(month)
         , m_day(day)
     {
+        ASSERT(isYearWithinLimits(year) || year == outOfRangeYear);
     }
 
     friend bool operator==(const PlainDate&, const PlainDate&) = default;
@@ -269,7 +276,15 @@ public:
     uint8_t day() const { return m_day; }
 
 private:
-    int32_t m_year : 21; // ECMAScript max / min date's year can be represented <= 20 bits.
+    // ECMAScript max / min date's year can be represented <= 20 bits.
+    // However, PlainDate must be able to represent out-of-range years,
+    // since the validity checking is separate from date parsing.
+    // For example, see the test262 test
+    // Temporal/PlainDate/prototype/until/throws-if-rounded-date-outside-valid-iso-range.js
+    // The solution to this is to use a sentinel value (outOfRangeYear) to represent
+    // all out-of-range years. The PlainDate constructor checks the invariant
+    // that either the year is within limits, or it's equal to this sentinel value.
+    int32_t m_year : 21;
     int32_t m_month : 5; // Starts with 1.
     int32_t m_day : 6; // Starts with 1.
 };
@@ -277,19 +292,60 @@ static_assert(sizeof(PlainDate) == sizeof(int32_t));
 
 using TimeZone = Variant<TimeZoneID, int64_t>;
 
+class PlainYearMonth final {
+public:
+    // Out-of-range years represented by outOfRangeYear, as with PlainDate
+    int32_t year : 21;
+    int32_t month : 5;
+    PlainYearMonth(int32_t y, int32_t m)
+        : year(y), month(m)
+    {
+        ASSERT(isYearWithinLimits(year) || year == outOfRangeYear);
+    }
+};
+static_assert(sizeof(PlainYearMonth) <= sizeof(int32_t));
+
+class PlainMonthDay {
+    WTF_MAKE_TZONE_ALLOCATED(PlainMonthDay);
+public:
+    constexpr PlainMonthDay()
+        : m_isoPlainDate(0, 1, 1)
+    {
+    }
+
+    constexpr PlainMonthDay(unsigned month, int32_t day)
+        : m_isoPlainDate(2, month, day)
+    {
+    }
+
+    constexpr PlainMonthDay(PlainDate&& d)
+        : m_isoPlainDate(d)
+    {
+    }
+
+    friend bool operator==(const PlainMonthDay&, const PlainMonthDay&) = default;
+
+    uint8_t month() const { return m_isoPlainDate.month(); }
+    uint32_t day() const { return m_isoPlainDate.day(); }
+
+    const PlainDate& isoPlainDate() const { return m_isoPlainDate; }
+private:
+    PlainDate m_isoPlainDate;
+};
+
 // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimezonestring
 // Record { [[Z]], [[OffsetString]], [[Name]] }
 struct TimeZoneRecord {
     bool m_z { false };
     std::optional<int64_t> m_offset;
-    Variant<Vector<LChar>, int64_t> m_nameOrOffset;
+    Variant<Vector<Latin1Character>, int64_t> m_nameOrOffset;
 };
 
 static constexpr unsigned minCalendarLength = 3;
 static constexpr unsigned maxCalendarLength = 8;
 enum class RFC9557Flag : bool { None, Critical }; // "Critical" = "!" flag
 enum class RFC9557Key : bool { Calendar, Other };
-using RFC9557Value = Vector<LChar, maxCalendarLength>;
+using RFC9557Value = Vector<Latin1Character, maxCalendarLength>;
 struct RFC9557Annotation {
     RFC9557Flag m_flag;
     RFC9557Key m_key;
@@ -317,15 +373,24 @@ String formatTimeZoneOffsetString(int64_t);
 String temporalTimeToString(PlainTime, std::tuple<Precision, unsigned>);
 String temporalDateToString(PlainDate);
 String temporalDateTimeToString(PlainDate, PlainTime, std::tuple<Precision, unsigned>);
+String temporalMonthDayToString(PlainMonthDay, StringView);
 String monthCode(uint32_t);
 uint8_t monthFromCode(StringView);
 
 bool isValidDuration(const Duration&);
+bool isValidISODate(double, double, double);
+PlainDate createISODateRecord(double, double, double);
 
 std::optional<ExactTime> parseInstant(StringView);
 
 bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond);
-bool isYearWithinLimits(double year);
+
+Int128 roundTimeDuration(JSGlobalObject*, Int128, unsigned, TemporalUnit, RoundingMode);
 
 } // namespace ISO8601
+
+using CheckedInt128 = Checked<Int128, RecordOverflow>;
+
+CheckedInt128 checkedCastDoubleToInt128(double n);
+
 } // namespace JSC

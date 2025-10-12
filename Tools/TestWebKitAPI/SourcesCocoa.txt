@@ -21,380 +21,387 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-DeprecatedGlobalValues.mm
-EditingTestHarness.mm
-NetworkConnection.mm
-WKWebViewConfigurationExtras.mm
+DeprecatedGlobalValues.mm @nonARC
+EditingTestHarness.mm @nonARC
+NetworkConnection.mm @nonARC
+WKWebViewConfigurationExtras.mm @nonARC
 
 cocoa/CGImagePixelReader.cpp
-cocoa/DaemonTestUtilities.mm
-cocoa/DragAndDropSimulator.mm
-cocoa/HostWindowManager.mm
-cocoa/ImageAnalysisTestingUtilities.mm
-cocoa/NSItemProviderAdditions.mm
-cocoa/PlatformUtilitiesCocoa.mm
-cocoa/TestCocoa.mm
-cocoa/TestDownloadDelegate.mm
-cocoa/TestInspectorURLSchemeHandler.mm
-cocoa/TestLegacyDownloadDelegate.mm
-cocoa/TestNavigationDelegate.mm
-cocoa/TestProtocol.mm
-cocoa/TestResourceLoadDelegate.mm
-cocoa/TestUIDelegate.mm
-cocoa/TestScriptMessageHandler.mm
-cocoa/TestWebExtensionsDelegate.mm
-cocoa/TestWKWebView.mm
-cocoa/TestWKWebViewConfiguration.mm
-cocoa/UISideCompositingScope.mm
-cocoa/UserMediaCaptureUIDelegate.mm
-ios/IOSMouseEventTestHarness.mm
+cocoa/DaemonTestUtilities.mm @nonARC
+cocoa/DecomposedAttributedText.mm @nonARC
+cocoa/DragAndDropSimulator.mm @nonARC
+cocoa/HostWindowManager.mm @nonARC
+cocoa/ImageAnalysisTestingUtilities.mm @nonARC
+cocoa/ModelLoadingMessageHandler.mm @nonARC
+cocoa/NSItemProviderAdditions.mm @nonARC
+cocoa/PlatformUtilitiesCocoa.mm @nonARC
+cocoa/TestCocoa.mm @nonARC
+cocoa/TestDownloadDelegate.mm @nonARC
+cocoa/TestInspectorURLSchemeHandler.mm @nonARC
+cocoa/TestLegacyDownloadDelegate.mm @nonARC
+cocoa/TestNavigationDelegate.mm @nonARC
+cocoa/TestProtocol.mm @nonARC
+cocoa/TestResourceLoadDelegate.mm @nonARC
+cocoa/TestUIDelegate.mm @nonARC
+cocoa/TestScriptMessageHandler.mm @nonARC
+cocoa/TestWebExtensionsDelegate.mm @nonARC
+cocoa/TestWKWebView.mm @nonARC
+cocoa/TestWKWebViewConfiguration.mm @nonARC
+cocoa/UISideCompositingScope.mm @nonARC
+cocoa/UserMediaCaptureUIDelegate.mm @nonARC
+ios/IOSMouseEventTestHarness.mm @nonARC
 
-Tests/mac/CustomSwipeViewTests.mm
+Tests/WTF/cocoa/URLExtras.mm @nonARC
 
-Tests/WTF/cocoa/URLExtras.mm
-
-Tests/WebKitCocoa/AVFoundationPreference.mm
-Tests/WebKitCocoa/AdaptiveImageGlyph.mm
-Tests/WebKitCocoa/AdditionalReadAccessAllowedURLs.mm
-Tests/WebKitCocoa/AdditionalSupportedImageTypes.mm
-Tests/WebKitCocoa/AlwaysRevalidatedURLSchemes.mm
-Tests/WebKitCocoa/AnimatedResize.mm
-Tests/WebKitCocoa/AppPrivacyReport.mm
-Tests/WebKitCocoa/ApplePay.mm
-Tests/WebKitCocoa/AppleVisualEffectTests.mm
-Tests/WebKitCocoa/ApplicationManifest.mm
-Tests/WebKitCocoa/AsyncFunction.mm
-Tests/WebKitCocoa/AsyncPolicyForNavigationResponse.mm
-Tests/WebKitCocoa/AttrStyle.mm
-Tests/WebKitCocoa/AudioBufferSize.mm
-Tests/WebKitCocoa/AudioRoutingArbitration.mm
-Tests/WebKitCocoa/AutoFillAvailable.mm
-Tests/WebKitCocoa/AutoLayoutIntegration.mm
-Tests/WebKitCocoa/Badging.mm
-Tests/WebKitCocoa/BundleCSSStyleDeclarationHandle.mm
-Tests/WebKitCocoa/BundleEditingDelegate.mm
-Tests/WebKitCocoa/BundleFormDelegate.mm
-Tests/WebKitCocoa/BundlePageConsoleMessage.mm
-Tests/WebKitCocoa/BundlePageConsoleMessageWithDetails.mm
-Tests/WebKitCocoa/BundleParameters.mm
-Tests/WebKitCocoa/BundleRangeHandle.mm
-Tests/WebKitCocoa/CSSViewportUnits.mm
-Tests/WebKitCocoa/CancelFontSubresource.mm
-Tests/WebKitCocoa/LockdownModeFonts.mm
-Tests/WebKitCocoa/Challenge.mm
-Tests/WebKitCocoa/ClickAutoFillButton.mm
-Tests/WebKitCocoa/ClipboardTests.mm
-Tests/WebKitCocoa/CloseWebViewAfterEnterFullscreen.mm
-Tests/WebKitCocoa/CloseWebViewDuringEnterFullscreen.mm
-Tests/WebKitCocoa/Coding.mm
-Tests/WebKitCocoa/CommandBackForward.mm
-Tests/WebKitCocoa/Configuration.mm
-Tests/WebKitCocoa/ConsoleMessageWithDetails.mm
-Tests/WebKitCocoa/ContentFiltering.mm
-Tests/WebKitCocoa/ContentRuleListNotification.mm
-Tests/WebKitCocoa/ContentSecurityPolicy.mm
-Tests/WebKitCocoa/ContentSecurityPolicyTestHelpers.mm
-Tests/WebKitCocoa/ContextMenus.mm
-Tests/WebKitCocoa/CookieAcceptPolicy.mm
-Tests/WebKitCocoa/CookiePrivateBrowsing.mm
-Tests/WebKitCocoa/CookieStoreAPI.mm
-Tests/WebKitCocoa/CopyHTML.mm
-Tests/WebKitCocoa/CopyRTF.mm
-Tests/WebKitCocoa/CopyURL.mm
-Tests/WebKitCocoa/Copying.mm
-Tests/WebKitCocoa/CreateWebArchive.mm
-Tests/WebKitCocoa/CustomUserAgent.mm
-Tests/WebKitCocoa/DataDetection.mm
-Tests/WebKitCocoa/WritingTools.mm
-Tests/WebKitCocoa/DecidePolicyForNavigationAction.mm
-Tests/WebKitCocoa/DeviceManagementRestrictions.mm
-Tests/WebKitCocoa/DeviceOrientation.mm
-Tests/WebKitCocoa/DidResignInputElementStrongPasswordAppearance.mm
-Tests/WebKitCocoa/DisableSpellcheck.mm
-Tests/WebKitCocoa/DisplayName.mm
-Tests/WebKitCocoa/DoAfterNextPresentationUpdateAfterCrash.mm
-Tests/WebKitCocoa/DocumentEditingContext.mm
-Tests/WebKitCocoa/Download.mm
-Tests/WebKitCocoa/DownloadProgress.mm
-Tests/WebKitCocoa/DragAndDropTests.mm
-Tests/WebKitCocoa/DrawingToPDF.mm
-Tests/WebKitCocoa/DuplicateCompletionHandlerCalls.mm
-Tests/WebKitCocoa/EditorStateTests.mm
-Tests/WebKitCocoa/ElementTargetingTests.mm
-Tests/WebKitCocoa/ElementTextPreview.mm
-Tests/WebKitCocoa/EventAttribution.mm
-Tests/WebKitCocoa/ExitFullscreenOnEnterPiP.mm
-Tests/WebKitCocoa/ExitPiPOnSuspendVideoElement.mm
-Tests/WebKitCocoa/FTP.mm
-Tests/WebKitCocoa/FileSystemAccess.mm
-Tests/WebKitCocoa/FindInPage.mm
-Tests/WebKitCocoa/FindInPageAPI.mm
-Tests/WebKitCocoa/FirstVisuallyNonEmptyMilestone.mm
-Tests/WebKitCocoa/FixedLayoutSize.mm
-Tests/WebKitCocoa/FontAttributes.mm
-Tests/WebKitCocoa/FormValidation.mm
-Tests/WebKitCocoa/FrameHandleSerialization.mm
-Tests/WebKitCocoa/FullscreenAlert.mm
-Tests/WebKitCocoa/FullscreenDelegate.mm
-Tests/WebKitCocoa/FullscreenLayoutConstraints.mm
-Tests/WebKitCocoa/FullscreenRemoveNodeBeforeEnter.mm
-Tests/WebKitCocoa/FullscreenScrollAndResize.mm
-Tests/WebKitCocoa/FullscreenVideoTextRecognition.mm
-Tests/WebKitCocoa/GPUProcess.mm
-Tests/WebKitCocoa/Geolocation.mm
-Tests/WebKitCocoa/GetDisplayMedia.mm
-Tests/WebKitCocoa/GetDisplayMediaWindowAndScreen.mm
-Tests/WebKitCocoa/GetResourceData.mm
-Tests/WebKitCocoa/HistoryDelegate.mm
-Tests/WebKitCocoa/HSTS.mm
-Tests/WebKitCocoa/IDBCheckpointWAL.mm
-Tests/WebKitCocoa/IDBDeleteRecovery.mm
-Tests/WebKitCocoa/IDBIndexUpgradeToV2.mm
-Tests/WebKitCocoa/IDBObjectStoreInfoUpgradeToV2.mm
-Tests/WebKitCocoa/IPCTestingAPI.mm
-Tests/WebKitCocoa/IconLoadingDelegate.mm
-Tests/WebKitCocoa/ImageAnalysisTests.mm
-Tests/WebKitCocoa/InAppBrowserPrivacy.mm
-Tests/WebKitCocoa/IndexedDBDatabaseProcessKill.mm
-Tests/WebKitCocoa/IndexedDBFileName.mm
-Tests/WebKitCocoa/IndexedDBInPageCache.mm
-Tests/WebKitCocoa/IndexedDBMultiProcess.mm
-Tests/WebKitCocoa/IndexedDBPersistence.mm
-Tests/WebKitCocoa/IndexedDBStructuredCloneBackwardCompatibility.mm
+Tests/WebKitCocoa/AVFoundationPreference.mm @nonARC
+Tests/WebKitCocoa/AdaptiveImageGlyph.mm @nonARC
+Tests/WebKitCocoa/AdditionalReadAccessAllowedURLs.mm @nonARC
+Tests/WebKitCocoa/AdditionalSupportedImageTypes.mm @nonARC
+Tests/WebKitCocoa/AlwaysRevalidatedURLSchemes.mm @nonARC
+Tests/WebKitCocoa/AnimatedResize.mm @nonARC
+Tests/WebKitCocoa/AppPrivacyReport.mm @nonARC
+Tests/WebKitCocoa/ApplePay.mm @nonARC
+Tests/WebKitCocoa/AppleVisualEffectTests.mm @nonARC
+Tests/WebKitCocoa/ApplicationManifest.mm @nonARC
+Tests/WebKitCocoa/AsyncFunction.mm @nonARC
+Tests/WebKitCocoa/AsyncPolicyForNavigationResponse.mm @nonARC
+Tests/WebKitCocoa/AttrStyle.mm @nonARC
+Tests/WebKitCocoa/AudioBufferSize.mm @nonARC
+Tests/WebKitCocoa/AudioRoutingArbitration.mm @nonARC
+Tests/WebKitCocoa/AutoFillAvailable.mm @nonARC
+Tests/WebKitCocoa/AutoLayoutIntegration.mm @nonARC
+Tests/WebKitCocoa/Badging.mm @nonARC
+Tests/WebKitCocoa/BundleCSSStyleDeclarationHandle.mm @nonARC
+Tests/WebKitCocoa/BundleEditingDelegate.mm @nonARC
+Tests/WebKitCocoa/BundleFormDelegate.mm @nonARC
+Tests/WebKitCocoa/BundleParameters.mm @nonARC
+Tests/WebKitCocoa/BundleRangeHandle.mm @nonARC
+Tests/WebKitCocoa/CSSViewportUnits.mm @nonARC
+Tests/WebKitCocoa/CancelFontSubresource.mm @nonARC
+Tests/WebKitCocoa/LockdownModeFonts.mm @nonARC
+Tests/WebKitCocoa/Challenge.mm @nonARC
+Tests/WebKitCocoa/ClickAutoFillButton.mm @nonARC
+Tests/WebKitCocoa/ClipboardTests.mm @nonARC
+Tests/WebKitCocoa/CloseWebViewAfterEnterFullscreen.mm @nonARC
+Tests/WebKitCocoa/CloseWebViewDuringEnterFullscreen.mm @nonARC
+Tests/WebKitCocoa/Coding.mm @nonARC
+Tests/WebKitCocoa/CommandBackForward.mm @nonARC
+Tests/WebKitCocoa/Configuration.mm @nonARC
+Tests/WebKitCocoa/ContentFiltering.mm @nonARC
+Tests/WebKitCocoa/ContentRuleListNotification.mm @nonARC
+Tests/WebKitCocoa/ContentSecurityPolicy.mm @nonARC
+Tests/WebKitCocoa/ContextMenus.mm @nonARC
+Tests/WebKitCocoa/CookieAcceptPolicy.mm @nonARC
+Tests/WebKitCocoa/CookiePrivateBrowsing.mm @nonARC
+Tests/WebKitCocoa/CookieStoreAPI.mm @nonARC
+Tests/WebKitCocoa/CopyHTML.mm @nonARC
+Tests/WebKitCocoa/CopyRTF.mm @nonARC
+Tests/WebKitCocoa/CopyURL.mm @nonARC
+Tests/WebKitCocoa/Copying.mm @nonARC
+Tests/WebKitCocoa/CreateWebArchive.mm @nonARC
+Tests/WebKitCocoa/CustomUserAgent.mm @nonARC
+Tests/WebKitCocoa/DataDetection.mm @nonARC
+Tests/WebKitCocoa/WritingTools.mm @nonARC
+Tests/WebKitCocoa/DecidePolicyForNavigationAction.mm @nonARC
+Tests/WebKitCocoa/DeviceManagementRestrictions.mm @nonARC
+Tests/WebKitCocoa/DeviceOrientation.mm @nonARC
+Tests/WebKitCocoa/DisableSpellcheck.mm @nonARC
+Tests/WebKitCocoa/DisplayName.mm @nonARC
+Tests/WebKitCocoa/DoAfterNextPresentationUpdateAfterCrash.mm @nonARC
+Tests/WebKitCocoa/DocumentEditingContext.mm @nonARC
+Tests/WebKitCocoa/Download.mm @nonARC
+Tests/WebKitCocoa/DownloadProgress.mm @nonARC
+Tests/WebKitCocoa/DragAndDropTests.mm @nonARC
+Tests/WebKitCocoa/DrawingToPDF.mm @nonARC
+Tests/WebKitCocoa/DuplicateCompletionHandlerCalls.mm @nonARC
+Tests/WebKitCocoa/EditorStateTests.mm @nonARC
+Tests/WebKitCocoa/ElementTargetingTests.mm @nonARC
+Tests/WebKitCocoa/ElementTextPreview.mm @nonARC
+Tests/WebKitCocoa/EnhancedSecurity.mm @nonARC
+Tests/WebKitCocoa/EventAttribution.mm @nonARC
+Tests/WebKitCocoa/ExitFullscreenOnEnterPiP.mm @nonARC
+Tests/WebKitCocoa/ExitPiPOnSuspendVideoElement.mm @nonARC
+Tests/WebKitCocoa/FTP.mm @nonARC
+Tests/WebKitCocoa/FileSystemAccess.mm @nonARC
+Tests/WebKitCocoa/FindInPage.mm @nonARC
+Tests/WebKitCocoa/FindInPageAPI.mm @nonARC
+Tests/WebKitCocoa/FirstVisuallyNonEmptyMilestone.mm @nonARC
+Tests/WebKitCocoa/FixedLayoutSize.mm @nonARC
+Tests/WebKitCocoa/FontAttributes.mm @nonARC
+Tests/WebKitCocoa/FormValidation.mm @nonARC
+Tests/WebKitCocoa/FullscreenAlert.mm @nonARC
+Tests/WebKitCocoa/FullscreenDelegate.mm @nonARC
+Tests/WebKitCocoa/FullscreenLayoutConstraints.mm @nonARC
+Tests/WebKitCocoa/FullscreenRemoveNodeBeforeEnter.mm @nonARC
+Tests/WebKitCocoa/FullscreenScrollAndResize.mm @nonARC
+Tests/WebKitCocoa/FullscreenVideoTextRecognition.mm @nonARC
+Tests/WebKitCocoa/GPUProcess.mm @nonARC
+Tests/WebKitCocoa/Geolocation.mm @nonARC
+Tests/WebKitCocoa/GetDisplayMedia.mm @nonARC
+Tests/WebKitCocoa/GetDisplayMediaWindowAndScreen.mm @nonARC
+Tests/WebKitCocoa/GetResourceData.mm @nonARC
+Tests/WebKitCocoa/HistoryDelegate.mm @nonARC
+Tests/WebKitCocoa/HSTS.mm @nonARC
+Tests/WebKitCocoa/IDBCheckpointWAL.mm @nonARC
+Tests/WebKitCocoa/IDBDeleteRecovery.mm @nonARC
+Tests/WebKitCocoa/IDBIndexUpgradeToV2.mm @nonARC
+Tests/WebKitCocoa/IDBObjectStoreInfoUpgradeToV2.mm @nonARC
+Tests/WebKitCocoa/IPCTestingAPI.mm @nonARC
+Tests/WebKitCocoa/IconLoadingDelegate.mm @nonARC
+Tests/WebKitCocoa/ImageAnalysisTests.mm @nonARC
+Tests/WebKitCocoa/InAppBrowserPrivacy.mm @nonARC
+Tests/WebKitCocoa/IndexedDBDatabaseProcessKill.mm @nonARC
+Tests/WebKitCocoa/IndexedDBFileName.mm @nonARC
+Tests/WebKitCocoa/IndexedDBInPageCache.mm @nonARC
+Tests/WebKitCocoa/IndexedDBMultiProcess.mm @nonARC
+Tests/WebKitCocoa/IndexedDBPersistence.mm @nonARC
+Tests/WebKitCocoa/IndexedDBStructuredCloneBackwardCompatibility.mm @nonARC
 Tests/WebKitCocoa/IndexedDBSuspendImminently.html
-Tests/WebKitCocoa/IndexedDBSuspendImminently.mm
-Tests/WebKitCocoa/IndexedDBTempFileSize.mm
-Tests/WebKitCocoa/IndexedDBUserDelete.mm
-Tests/WebKitCocoa/InitializeWebViewWhenChangingUserDefaults.mm
-Tests/WebKitCocoa/InjectedBundleNodeHandleIsSelectElement.mm
-Tests/WebKitCocoa/InjectedBundleNodeHandleIsTextField.mm
-Tests/WebKitCocoa/InsertTextAlternatives.mm
-Tests/WebKitCocoa/InteractionDeadlockAfterCrash.mm
-Tests/WebKitCocoa/JITEnabled.mm
-Tests/WebKitCocoa/JavaScriptDuringNavigation.mm
-Tests/WebKitCocoa/LoadAlternateHTMLString.mm
-Tests/WebKitCocoa/LoadAndDecodeImage.mm
-Tests/WebKitCocoa/LoadDataWithNilMIMEType.mm
-Tests/WebKitCocoa/LoadFileThenReload.mm
-Tests/WebKitCocoa/LoadFileURL.mm
-Tests/WebKitCocoa/LoadInvalidURLRequest.mm
-Tests/WebKitCocoa/LocalStorageClear.mm
-Tests/WebKitCocoa/LocalStorageDatabaseTracker.mm
-Tests/WebKitCocoa/LocalStorageNullEntries.mm
-Tests/WebKitCocoa/LocalStoragePersistence.mm
-Tests/WebKitCocoa/LocalStorageQuirkTest.mm
-Tests/WebKitCocoa/MediaBufferingPolicy.mm
-Tests/WebKitCocoa/MediaDocument.mm
-Tests/WebKitCocoa/MediaLoading.mm @no-unify
-Tests/WebKitCocoa/MediaMutedState.mm
-Tests/WebKitCocoa/MediaSession.mm
-Tests/WebKitCocoa/MediaType.mm
-Tests/WebKitCocoa/MemoryFootprintThreshold.mm
-Tests/WebKitCocoa/MessagePortProviders.mm
-Tests/WebKitCocoa/ModalAlerts.mm
-Tests/WebKitCocoa/MouseSupportUIDelegate.mm
-Tests/WebKitCocoa/NSAttributedStringWebKitAdditions.mm
-Tests/WebKitCocoa/NSFileManagerExtras.mm
-Tests/WebKitCocoa/Navigation.mm
-Tests/WebKitCocoa/NavigationAction.mm
-Tests/WebKitCocoa/NetworkProcess.mm
-Tests/WebKitCocoa/NetworkProcessCrashNonPersistentDataStore.mm
-Tests/WebKitCocoa/NoPauseWhenSwitchingTabs.mm
-Tests/WebKitCocoa/NoResumeSoundPlayedToTheEndAfterThePageBecomesVisible.mm
-Tests/WebKitCocoa/NotificationAPI.mm
-Tests/WebKitCocoa/NowPlaying.mm
-Tests/WebKitCocoa/NowPlayingControlsTests.mm
-Tests/WebKitCocoa/ObscuredContentInsets.mm
-Tests/WebKitCocoa/ObservedRenderingProgressEventsAfterCrash.mm
-Tests/WebKitCocoa/OpenAndCloseWindow.mm
-Tests/WebKitCocoa/OverrideViewportArguments.mm
-Tests/WebKitCocoa/PDFLinkReferrer.mm
-Tests/WebKitCocoa/PDFSnapshot.mm
-Tests/WebKitCocoa/PageZoom.mm
-Tests/WebKitCocoa/ParserYieldTokenTests.mm
-Tests/WebKitCocoa/PasteboardUtilities.mm
-Tests/WebKitCocoa/PasteHTML.mm
-Tests/WebKitCocoa/PasteImage.mm
-Tests/WebKitCocoa/PasteMixedContent.mm
-Tests/WebKitCocoa/PasteRTFD.mm
-Tests/WebKitCocoa/PasteWebArchive.mm
-Tests/WebKitCocoa/PermissionsAPI.mm
-Tests/WebKitCocoa/PictureInPictureDelegate.mm
-Tests/WebKitCocoa/Preconnect.mm
-Tests/WebKitCocoa/Preferences.mm
-Tests/WebKitCocoa/PreferredAudioBufferSize.mm
-Tests/WebKitCocoa/PrepareForMoveToWindow.mm
-Tests/WebKitCocoa/PrivateClickMeasurement.mm
-Tests/WebKitCocoa/ProcessInfo.mm
-Tests/WebKitCocoa/ProcessPreWarming.mm
-Tests/WebKitCocoa/ProcessSuspendMediaBuffering.mm
-Tests/WebKitCocoa/ProcessSuspension.mm
-Tests/WebKitCocoa/ProcessSwapOnNavigation.mm
-Tests/WebKitCocoa/ProvisionalURLNotChange.mm
-Tests/WebKitCocoa/Proxy.mm
-Tests/WebKitCocoa/PushAPI.mm
-Tests/WebKitCocoa/QuickLook.mm
-Tests/WebKitCocoa/ReloadWithDifferingInitialScale.mm
-Tests/WebKitCocoa/RemoteObjectRegistry.mm
-Tests/WebKitCocoa/RenderedImageWithOptions.mm
-Tests/WebKitCocoa/RenderingProgress.mm
-Tests/WebKitCocoa/ReparentWebViewTimeout.mm
-Tests/WebKitCocoa/RequestTextInputContext.mm
-Tests/WebKitCocoa/RequiresUserActionForPlayback.mm
-Tests/WebKitCocoa/ResourceLoadDelegate.mm
-Tests/WebKitCocoa/ResourceLoadStatistics.mm
-Tests/WebKitCocoa/ResponsivenessTimer.mm
-Tests/WebKitCocoa/ResponsivenessTimerDoesntFireEarly.mm
-Tests/WebKitCocoa/RestoreLocalStorage.mm
-Tests/WebKitCocoa/RestoreScrollPosition.mm
-Tests/WebKitCocoa/RestoreSessionStateWithoutNavigation.mm
-Tests/WebKitCocoa/RestoreSessionStorage.mm
-Tests/WebKitCocoa/RunOpenPanel.mm
-Tests/WebKitCocoa/RunScriptAfterDocumentLoad.mm
-Tests/WebKitCocoa/SafeBrowsing.mm
-Tests/WebKitCocoa/SampledPageTopColor.mm
-Tests/WebKitCocoa/SchemeRegistry.mm
-Tests/WebKitCocoa/ScreenTime.mm
-Tests/WebKitCocoa/ScriptTelemetryTests.mm
-Tests/WebKitCocoa/ServiceWorkerBasic.mm
-Tests/WebKitCocoa/SessionStorage.mm
-Tests/WebKitCocoa/ShouldGoToBackForwardListItem.mm
-Tests/WebKitCocoa/ShouldOpenExternalURLsInNewWindowActions.mm
-Tests/WebKitCocoa/ShrinkToFit.mm
-Tests/WebKitCocoa/ShouldOpenAppLinks.mm
-Tests/WebKitCocoa/SimulateClickOverText.mm
-Tests/WebKitCocoa/SiteIsolation.mm
-Tests/WebKitCocoa/SnapshotStore.mm
-Tests/WebKitCocoa/SpeechRecognition.mm
-Tests/WebKitCocoa/StopSuspendResumeAllMedia.mm
-Tests/WebKitCocoa/StorageQuota.mm
-Tests/WebKitCocoa/StoreBlobThenDelete.mm
-Tests/WebKitCocoa/SwitchInputTests.mm
-Tests/WebKitCocoa/SystemColors.mm
-Tests/WebKitCocoa/SystemPreview.mm
-Tests/WebKitCocoa/TextPlaceholderTests.mm
-Tests/WebKitCocoa/TLSDeprecation.mm
-Tests/WebKitCocoa/TabOutOfWebView.mm
-Tests/WebKitCocoa/TestAwakener.mm
-Tests/WebKitCocoa/SOAuthorizationTests.mm
-Tests/WebKitCocoa/TestURLSchemeHandler.mm
-Tests/WebKitCocoa/TextFragments.mm
-Tests/WebKitCocoa/TextManipulation.mm
-Tests/WebKitCocoa/TextSize.mm
-Tests/WebKitCocoa/TextWidth.mm
-Tests/WebKitCocoa/TimeZoneOverride.mm
-Tests/WebKitCocoa/UIDelegate.mm
-Tests/WebKitCocoa/UnifiedPDFTestHelpers.mm
-Tests/WebKitCocoa/UnifiedPDFTests.mm
-Tests/WebKitCocoa/UploadDirectory.mm
-Tests/WebKitCocoa/UseSelectionAsFindString.mm
-Tests/WebKitCocoa/UseSystemAppearance.mm
-Tests/WebKitCocoa/UserContentController.mm
-Tests/WebKitCocoa/UserContentWorld.mm
-Tests/WebKitCocoa/UserInitiatedActionInNavigationAction.mm
-Tests/WebKitCocoa/UserMediaDisabled.mm
-Tests/WebKitCocoa/UserMediaSimulateFailedSandbox.mm
-Tests/WebKitCocoa/VerifyUserGestureFromUIProcess.mm
-Tests/WebKitCocoa/VideoControlsManager.mm
-Tests/WebKitCocoa/VideoQualityDisplayCompositing.mm
-Tests/WebKitCocoa/ViewExposedRect.mm
-Tests/WebKitCocoa/VisibilityState.mm
-Tests/WebKitCocoa/VisibleContentRect.mm
-Tests/WebKitCocoa/VisitedLinkStore.mm
-Tests/WebKitCocoa/WKAppHighlights.mm
-Tests/WebKitCocoa/WKAttachmentTests.mm
-Tests/WebKitCocoa/WKContentExtensionStore.mm
-Tests/WebKitCocoa/WKContentViewEditingActions.mm
-Tests/WebKitCocoa/WKContentViewTargetForAction.mm
-Tests/WebKitCocoa/WKFragmentDirectiveGeneration.mm
-Tests/WebKitCocoa/WKHTTPCookieStore.mm
-Tests/WebKitCocoa/WKInspectorDelegate.mm
-Tests/WebKitCocoa/WKInspectorExtension.mm
-Tests/WebKitCocoa/WKInspectorExtensionDelegate.mm
-Tests/WebKitCocoa/WKInspectorExtensionHost.mm
-Tests/WebKitCocoa/WKNSDictionaryEmptyDictionaryCrash.mm
-Tests/WebKitCocoa/WKNSNumber.mm
-Tests/WebKitCocoa/WKNavigationResponse.mm
-Tests/WebKitCocoa/WKObject.mm
-Tests/WebKitCocoa/WKPageHasMediaStreamingActivity.mm
-Tests/WebKitCocoa/WKPDFView.mm
-Tests/WebKitCocoa/WKPreferences.mm
-Tests/WebKitCocoa/WKPrinting.mm
-Tests/WebKitCocoa/WKProcessPoolConfiguration.mm
-Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm
-Tests/WebKitCocoa/WKURLSchemeHandler-1.mm
-Tests/WebKitCocoa/WKURLSchemeHandler-leaks.mm
-Tests/WebKitCocoa/WKWebExtension.mm
-Tests/WebKitCocoa/WKWebExtensionAPIAction.mm
-Tests/WebKitCocoa/WKWebExtensionAPIAlarms.mm
-Tests/WebKitCocoa/WKWebExtensionAPICommands.mm
-Tests/WebKitCocoa/WKWebExtensionAPICookies.mm
-Tests/WebKitCocoa/WKWebExtensionAPIDeclarativeNetRequest.mm
-Tests/WebKitCocoa/WKWebExtensionAPIDevTools.mm
-Tests/WebKitCocoa/WKWebExtensionAPIEvent.mm
-Tests/WebKitCocoa/WKWebExtensionAPIExtension.mm
-Tests/WebKitCocoa/WKWebExtensionAPIMenus.mm
-Tests/WebKitCocoa/WKWebExtensionAPINamespace.mm
-Tests/WebKitCocoa/WKWebExtensionAPIPermissions.mm
-Tests/WebKitCocoa/WKWebExtensionAPIScripting.mm
-Tests/WebKitCocoa/WKWebExtensionAPIStorage.mm
-Tests/WebKitCocoa/WKWebExtensionAPIRuntime.mm
-Tests/WebKitCocoa/WKWebExtensionAPISidebar.mm
-Tests/WebKitCocoa/WKWebExtensionAPITabs.mm
-Tests/WebKitCocoa/WKWebExtensionAPITest.mm
-Tests/WebKitCocoa/WKWebExtensionAPIWebNavigation.mm
-Tests/WebKitCocoa/WKWebExtensionAPIWebRequest.mm
-Tests/WebKitCocoa/WKWebExtensionAPIWindows.mm
-Tests/WebKitCocoa/WKWebExtensionContext.mm
-Tests/WebKitCocoa/WKWebExtensionController.mm
-Tests/WebKitCocoa/WKWebExtensionControllerConfiguration.mm
-Tests/WebKitCocoa/WKWebExtensionDataRecord.mm
-Tests/WebKitCocoa/WKWebExtensionMatchPattern.mm
-Tests/WebKitCocoa/WKWebExtensionTab.mm
-Tests/WebKitCocoa/WKWebExtensionWindow.mm
-Tests/WebKitCocoa/WKWebViewAlwaysShowsScroller.mm
-Tests/WebKitCocoa/WKWebViewCandidateTests.mm
-Tests/WebKitCocoa/WKWebViewCloseAllMediaPresentations.mm
-Tests/WebKitCocoa/WKWebViewConfiguration.mm
-Tests/WebKitCocoa/WKWebViewDefaultNavigationDelegate.mm
-Tests/WebKitCocoa/WKWebViewDiagnosticLogging.mm
-Tests/WebKitCocoa/WKWebViewDisableSelection.mm
-Tests/WebKitCocoa/WKWebViewDoesNotLogDuringInitialization.mm
-Tests/WebKitCocoa/WKWebViewEditActions.mm
-Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm
-Tests/WebKitCocoa/WKWebViewFindString.mm
-Tests/WebKitCocoa/WKWebViewFindStringFindDelegate.mm
-Tests/WebKitCocoa/WKWebViewFirstResponderTests.mm
-Tests/WebKitCocoa/WKWebViewGetContents.mm
-Tests/WebKitCocoa/WKWebViewInspection.mm
-Tests/WebKitCocoa/WKWebViewLoadAPIs.mm
-Tests/WebKitCocoa/WKWebViewNotificationForwarding.mm
-Tests/WebKitCocoa/WKWebViewPrintFormatter.mm
-Tests/WebKitCocoa/WKWebViewResize.mm
-Tests/WebKitCocoa/WKWebViewServerTrustKVC.mm
-Tests/WebKitCocoa/WKWebViewSnapshot.mm
-Tests/WebKitCocoa/WKWebViewSuspendAllMediaPlayback.mm
-Tests/WebKitCocoa/WKWebViewTextInput.mm
-Tests/WebKitCocoa/WKWebViewThemeColor.mm
-Tests/WebKitCocoa/WKWebViewUnderPageBackgroundColor.mm
-Tests/WebKitCocoa/WKWebsiteDatastore.mm
-Tests/WebKitCocoa/WebContentProcessDidTerminate.mm
-Tests/WebKitCocoa/WebContentRestrictions.mm
-Tests/WebKitCocoa/WebCryptoMasterKey.mm
-Tests/WebKitCocoa/WebLocks.mm
-Tests/WebKitCocoa/WebProcessKillIDBCleanup.mm
-Tests/WebKitCocoa/WebProcessTerminate.mm
-Tests/WebKitCocoa/WebPushDaemon.mm
-Tests/WebKitCocoa/WebSQLBasics.mm
-Tests/WebKitCocoa/WebSocket.mm
-Tests/WebKitCocoa/WebTransport.mm
-Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm
-Tests/WebKitCocoa/WebsitePolicies.mm
-Tests/WebKitCocoa/WritingSuggestions.mm
-Tests/WebKitCocoa/YoutubeReplacementPlugin.mm
-Tests/WebKitCocoa/_WKInputDelegate.mm
-Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm
-Tests/WebKitCocoa/iOSMouseSupport.mm
-Tests/WebKitCocoa/iOSStylusSupport.mm
+Tests/WebKitCocoa/IndexedDBSuspendImminently.mm @nonARC
+Tests/WebKitCocoa/IndexedDBTempFileSize.mm @nonARC
+Tests/WebKitCocoa/IndexedDBUserDelete.mm @nonARC
+Tests/WebKitCocoa/InitializeWebViewWhenChangingUserDefaults.mm @nonARC
+Tests/WebKitCocoa/InjectedBundleNodeHandleIsSelectElement.mm @nonARC
+Tests/WebKitCocoa/InjectedBundleNodeHandleIsTextField.mm @nonARC
+Tests/WebKitCocoa/InsertTextAlternatives.mm @nonARC
+Tests/WebKitCocoa/InteractionDeadlockAfterCrash.mm @nonARC
+Tests/WebKitCocoa/JITEnabled.mm @nonARC
+Tests/WebKitCocoa/JSHandle.mm @nonARC
+Tests/WebKitCocoa/JavaScriptDuringNavigation.mm @nonARC
+Tests/WebKitCocoa/LegacyPDFPluginTests.mm @nonARC
+Tests/WebKitCocoa/LoadAlternateHTMLString.mm @nonARC
+Tests/WebKitCocoa/LoadAndDecodeImage.mm @nonARC
+Tests/WebKitCocoa/LoadDataWithNilMIMEType.mm @nonARC
+Tests/WebKitCocoa/LoadFileThenReload.mm @nonARC
+Tests/WebKitCocoa/LoadFileURL.mm @nonARC
+Tests/WebKitCocoa/LoadInvalidURLRequest.mm @nonARC
+Tests/WebKitCocoa/Loading.mm @nonARC
+Tests/WebKitCocoa/LocalStorageClear.mm @nonARC
+Tests/WebKitCocoa/LocalStorageDatabaseTracker.mm @nonARC
+Tests/WebKitCocoa/LocalStorageNullEntries.mm @nonARC
+Tests/WebKitCocoa/LocalStoragePersistence.mm @nonARC
+Tests/WebKitCocoa/LocalStorageQuirkTest.mm @nonARC
+Tests/WebKitCocoa/MediaBufferingPolicy.mm @nonARC
+Tests/WebKitCocoa/MediaDocument.mm @nonARC
+Tests/WebKitCocoa/MediaLoading.mm @nonARC @no-unify
+Tests/WebKitCocoa/MediaMutedState.mm @nonARC
+Tests/WebKitCocoa/MediaSession.mm @nonARC
+Tests/WebKitCocoa/MediaType.mm @nonARC
+Tests/WebKitCocoa/MemoryFootprintThreshold.mm @nonARC
+Tests/WebKitCocoa/MessagePortProviders.mm @nonARC
+Tests/WebKitCocoa/ModalAlerts.mm @nonARC
+Tests/WebKitCocoa/ModelProcess.mm @nonARC
+Tests/WebKitCocoa/MouseSupportUIDelegate.mm @nonARC
+Tests/WebKitCocoa/NSAttributedStringWebKitAdditions.mm @nonARC
+Tests/WebKitCocoa/NSFileManagerExtras.mm @nonARC
+Tests/WebKitCocoa/Navigation.mm @nonARC
+Tests/WebKitCocoa/NavigationAction.mm @nonARC
+Tests/WebKitCocoa/NavigationSwipeTests.mm @nonARC
+Tests/WebKitCocoa/NetworkProcess.mm @nonARC
+Tests/WebKitCocoa/NetworkProcessCrashNonPersistentDataStore.mm @nonARC
+Tests/WebKitCocoa/NoPauseWhenSwitchingTabs.mm @nonARC
+Tests/WebKitCocoa/NoResumeSoundPlayedToTheEndAfterThePageBecomesVisible.mm @nonARC
+Tests/WebKitCocoa/NotificationAPI.mm @nonARC
+Tests/WebKitCocoa/NowPlaying.mm @nonARC
+Tests/WebKitCocoa/NowPlayingControlsTests.mm @nonARC
+Tests/WebKitCocoa/ObscuredContentInsets.mm @nonARC
+Tests/WebKitCocoa/ObservedRenderingProgressEventsAfterCrash.mm @nonARC
+Tests/WebKitCocoa/OpenAndCloseWindow.mm @nonARC
+Tests/WebKitCocoa/OverrideViewportArguments.mm @nonARC
+Tests/WebKitCocoa/PDFLinkReferrer.mm @nonARC
+Tests/WebKitCocoa/PDFSnapshot.mm @nonARC
+Tests/WebKitCocoa/PageZoom.mm @nonARC
+Tests/WebKitCocoa/ParserYieldTokenTests.mm @nonARC
+Tests/WebKitCocoa/PasteboardUtilities.mm @nonARC
+Tests/WebKitCocoa/PasteHTML.mm @nonARC
+Tests/WebKitCocoa/PasteImage.mm @nonARC
+Tests/WebKitCocoa/PasteMixedContent.mm @nonARC
+Tests/WebKitCocoa/PasteRTFD.mm @nonARC
+Tests/WebKitCocoa/PasteWebArchive.mm @nonARC
+Tests/WebKitCocoa/PermissionsAPI.mm @nonARC
+Tests/WebKitCocoa/PictureInPictureDelegate.mm @nonARC
+Tests/WebKitCocoa/Preconnect.mm @nonARC
+Tests/WebKitCocoa/Preferences.mm @nonARC
+Tests/WebKitCocoa/PreferredAudioBufferSize.mm @nonARC
+Tests/WebKitCocoa/PrepareForMoveToWindow.mm @nonARC
+Tests/WebKitCocoa/PrivateClickMeasurement.mm @nonARC
+Tests/WebKitCocoa/ProcessInfo.mm @nonARC
+Tests/WebKitCocoa/ProcessPreWarming.mm @nonARC
+Tests/WebKitCocoa/ProcessSuspendMediaBuffering.mm @nonARC
+Tests/WebKitCocoa/ProcessSuspension.mm @nonARC
+Tests/WebKitCocoa/ProcessSwapOnNavigation.mm @nonARC
+Tests/WebKitCocoa/ProvisionalURLNotChange.mm @nonARC
+Tests/WebKitCocoa/Proxy.mm @nonARC
+Tests/WebKitCocoa/PushAPI.mm @nonARC
+Tests/WebKitCocoa/QuickLook.mm @nonARC
+Tests/WebKitCocoa/ReloadWithDifferingInitialScale.mm @nonARC
+Tests/WebKitCocoa/RemoteObjectRegistry.mm @nonARC
+Tests/WebKitCocoa/RemoveFullscreenElementFromDOM.mm @nonARC
+Tests/WebKitCocoa/RenderedImageWithOptions.mm @nonARC
+Tests/WebKitCocoa/RenderingProgress.mm @nonARC
+Tests/WebKitCocoa/ReparentWebViewTimeout.mm @nonARC
+Tests/WebKitCocoa/RequestTextInputContext.mm @nonARC
+Tests/WebKitCocoa/RequiresUserActionForPlayback.mm @nonARC
+Tests/WebKitCocoa/ResourceLoadDelegate.mm @nonARC
+Tests/WebKitCocoa/ResourceLoadStatistics.mm @nonARC
+Tests/WebKitCocoa/ResponsivenessTimer.mm @nonARC
+Tests/WebKitCocoa/ResponsivenessTimerDoesntFireEarly.mm @nonARC
+Tests/WebKitCocoa/RestoreLocalStorage.mm @nonARC
+Tests/WebKitCocoa/RestoreScrollPosition.mm @nonARC
+Tests/WebKitCocoa/RestoreSessionStateWithoutNavigation.mm @nonARC
+Tests/WebKitCocoa/RestoreSessionStorage.mm @nonARC
+Tests/WebKitCocoa/RunOpenPanel.mm @nonARC
+Tests/WebKitCocoa/RunScriptAfterDocumentLoad.mm @nonARC
+Tests/WebKitCocoa/SafeBrowsing.mm @nonARC
+Tests/WebKitCocoa/SampledPageTopColor.mm @nonARC
+Tests/WebKitCocoa/SchemeRegistry.mm @nonARC
+Tests/WebKitCocoa/ScreenTime.mm @nonARC
+Tests/WebKitCocoa/SerializedNode.mm @nonARC
+Tests/WebKitCocoa/ScriptTrackingPrivacyTests.mm @nonARC
+Tests/WebKitCocoa/ServiceWorkerBasic.mm @nonARC
+Tests/WebKitCocoa/SessionStorage.mm @nonARC
+Tests/WebKitCocoa/ShouldGoToBackForwardListItem.mm @nonARC
+Tests/WebKitCocoa/ShouldOpenExternalURLsInNewWindowActions.mm @nonARC
+Tests/WebKitCocoa/ShrinkToFit.mm @nonARC
+Tests/WebKitCocoa/ShouldOpenAppLinks.mm @nonARC
+Tests/WebKitCocoa/SimulateClickOverText.mm @nonARC
+Tests/WebKitCocoa/SiteIsolation.mm @nonARC
+Tests/WebKitCocoa/SiteIsolationUtilities.mm @nonARC
+Tests/WebKitCocoa/SnapshotStore.mm @nonARC
+Tests/WebKitCocoa/SpeechRecognition.mm @nonARC
+Tests/WebKitCocoa/StopSuspendResumeAllMedia.mm @nonARC
+Tests/WebKitCocoa/StorageQuota.mm @nonARC
+Tests/WebKitCocoa/StoreBlobThenDelete.mm @nonARC
+Tests/WebKitCocoa/SwitchInputTests.mm @nonARC
+Tests/WebKitCocoa/SystemColors.mm @nonARC
+Tests/WebKitCocoa/SystemPreview.mm @nonARC
+Tests/WebKitCocoa/TextPlaceholderTests.mm @nonARC
+Tests/WebKitCocoa/TLSDeprecation.mm @nonARC
+Tests/WebKitCocoa/TabOutOfWebView.mm @nonARC
+Tests/WebKitCocoa/TestAwakener.mm @nonARC
+Tests/WebKitCocoa/SOAuthorizationTests.mm @nonARC
+Tests/WebKitCocoa/TestURLSchemeHandler.mm @nonARC
+Tests/WebKitCocoa/TextExtractionTests.mm @nonARC
+Tests/WebKitCocoa/TextFragments.mm @nonARC
+Tests/WebKitCocoa/TextManipulation.mm @nonARC
+Tests/WebKitCocoa/TextSize.mm @nonARC
+Tests/WebKitCocoa/TextWidth.mm @nonARC
+Tests/WebKitCocoa/TimeZoneOverride.mm @nonARC
+Tests/WebKitCocoa/UIDelegate.mm @nonARC
+Tests/WebKitCocoa/PDFTestHelpers.mm @nonARC
+Tests/WebKitCocoa/UnifiedPDFTests.mm @nonARC
+Tests/WebKitCocoa/UploadDirectory.mm @nonARC
+Tests/WebKitCocoa/UseSelectionAsFindString.mm @nonARC
+Tests/WebKitCocoa/UseSystemAppearance.mm @nonARC
+Tests/WebKitCocoa/UserContentController.mm @nonARC
+Tests/WebKitCocoa/UserContentWorld.mm @nonARC
+Tests/WebKitCocoa/UserInitiatedActionInNavigationAction.mm @nonARC
+Tests/WebKitCocoa/UserMediaDisabled.mm @nonARC
+Tests/WebKitCocoa/UserMediaSimulateFailedSandbox.mm @nonARC
+Tests/WebKitCocoa/VerifyUserGestureFromUIProcess.mm @nonARC
+Tests/WebKitCocoa/VideoControlsManager.mm @nonARC
+Tests/WebKitCocoa/VideoQualityDisplayCompositing.mm @nonARC
+Tests/WebKitCocoa/ViewExposedRect.mm @nonARC
+Tests/WebKitCocoa/VisibilityState.mm @nonARC
+Tests/WebKitCocoa/VisibleContentRect.mm @nonARC
+Tests/WebKitCocoa/VisitedLinkStore.mm @nonARC
+Tests/WebKitCocoa/WKAppHighlights.mm @nonARC
+Tests/WebKitCocoa/WKAttachmentTests.mm @nonARC
+Tests/WebKitCocoa/WKContentExtensionStore.mm @nonARC
+Tests/WebKitCocoa/WKContentViewEditingActions.mm @nonARC
+Tests/WebKitCocoa/WKContentViewTargetForAction.mm @nonARC
+Tests/WebKitCocoa/WKFragmentDirectiveGeneration.mm @nonARC
+Tests/WebKitCocoa/WKHTTPCookieStore.mm @nonARC
+Tests/WebKitCocoa/WKInspectorDelegate.mm @nonARC
+Tests/WebKitCocoa/WKInspectorExtension.mm @nonARC
+Tests/WebKitCocoa/WKInspectorExtensionDelegate.mm @nonARC
+Tests/WebKitCocoa/WKInspectorExtensionHost.mm @nonARC
+Tests/WebKitCocoa/WKNSDictionaryEmptyDictionaryCrash.mm @nonARC
+Tests/WebKitCocoa/WKNSNumber.mm @nonARC
+Tests/WebKitCocoa/WKNavigationResponse.mm @nonARC
+Tests/WebKitCocoa/WKObject.mm @nonARC
+Tests/WebKitCocoa/WKPageHasMediaStreamingActivity.mm @nonARC
+Tests/WebKitCocoa/WKPreferences.mm @nonARC
+Tests/WebKitCocoa/WKPrinting.mm @nonARC
+Tests/WebKitCocoa/WKProcessPoolConfiguration.mm @nonARC
+Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm @nonARC
+Tests/WebKitCocoa/WKScrollGeometryTests.mm @nonARC
+Tests/WebKitCocoa/WKURLSchemeHandler-1.mm @nonARC
+Tests/WebKitCocoa/WKURLSchemeHandler-leaks.mm @nonARC
+Tests/WebKitCocoa/WKWebExtension.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPIAction.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPIAlarms.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPIBookmarks.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPICommands.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPICookies.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPIDeclarativeNetRequest.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPIDevTools.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPIDOM.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPIEvent.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPIExtension.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPIMenus.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPINamespace.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPIPermissions.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPIScripting.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPIStorage.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPIRuntime.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPISidebar.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPITabs.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPITest.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPIWebNavigation.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPIWebRequest.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionAPIWindows.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionContext.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionController.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionControllerConfiguration.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionDataRecord.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionMatchPattern.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionTab.mm @nonARC
+Tests/WebKitCocoa/WKWebExtensionWindow.mm @nonARC
+Tests/WebKitCocoa/WKWebViewAlwaysShowsScroller.mm @nonARC
+Tests/WebKitCocoa/WKWebViewCandidateTests.mm @nonARC
+Tests/WebKitCocoa/WKWebViewCloseAllMediaPresentations.mm @nonARC
+Tests/WebKitCocoa/WKWebViewConfiguration.mm @nonARC
+Tests/WebKitCocoa/WKWebViewDefaultNavigationDelegate.mm @nonARC
+Tests/WebKitCocoa/WKWebViewDiagnosticLogging.mm @nonARC
+Tests/WebKitCocoa/WKWebViewDisableSelection.mm @nonARC
+Tests/WebKitCocoa/WKWebViewDoesNotLogDuringInitialization.mm @nonARC
+Tests/WebKitCocoa/WKWebViewEditActions.mm @nonARC
+Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm @nonARC
+Tests/WebKitCocoa/WKWebViewFindString.mm @nonARC
+Tests/WebKitCocoa/WKWebViewFindStringFindDelegate.mm @nonARC
+Tests/WebKitCocoa/WKWebViewFirstResponderTests.mm @nonARC
+Tests/WebKitCocoa/WKWebViewGetContents.mm @nonARC
+Tests/WebKitCocoa/WKWebViewInspection.mm @nonARC
+Tests/WebKitCocoa/WKWebViewLoadAPIs.mm @nonARC
+Tests/WebKitCocoa/WKWebViewNotificationForwarding.mm @nonARC
+Tests/WebKitCocoa/WKWebViewPrintFormatter.mm @nonARC
+Tests/WebKitCocoa/WKWebViewResize.mm @nonARC
+Tests/WebKitCocoa/WKWebViewServerTrustKVC.mm @nonARC
+Tests/WebKitCocoa/WKWebViewSnapshot.mm @nonARC
+Tests/WebKitCocoa/WKWebViewSuspendAllMediaPlayback.mm @nonARC
+Tests/WebKitCocoa/WKWebViewTextInput.mm @nonARC
+Tests/WebKitCocoa/WKWebViewThemeColor.mm @nonARC
+Tests/WebKitCocoa/WKWebViewUnderPageBackgroundColor.mm @nonARC
+Tests/WebKitCocoa/WKWebsiteDatastore.mm @nonARC
+Tests/WebKitCocoa/WebContentProcessDidTerminate.mm @nonARC
+Tests/WebKitCocoa/WebContentRestrictions.mm @nonARC
+Tests/WebKitCocoa/WebCryptoMasterKey.mm @nonARC
+Tests/WebKitCocoa/WebLocks.mm @nonARC
+Tests/WebKitCocoa/WebProcessKillIDBCleanup.mm @nonARC
+Tests/WebKitCocoa/WebProcessTerminate.mm @nonARC
+Tests/WebKitCocoa/WebPushDaemon.mm @nonARC
+Tests/WebKitCocoa/WebSQLBasics.mm @nonARC
+Tests/WebKitCocoa/WebSocket.mm @nonARC
+Tests/WebKitCocoa/WebTransport.mm @nonARC
+Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm @nonARC
+Tests/WebKitCocoa/WebsitePolicies.mm @nonARC
+Tests/WebKitCocoa/WritingSuggestions.mm @nonARC
+Tests/WebKitCocoa/YoutubeReplacementPlugin.mm @nonARC
+Tests/WebKitCocoa/_WKInputDelegate.mm @nonARC
+Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm @nonARC
+Tests/WebKitCocoa/iOSMouseSupport.mm @nonARC
+Tests/WebKitCocoa/iOSStylusSupport.mm @nonARC
 
-Tests/WebKitCocoa/UI/VideoPresentationMode.mm
+Tests/WebKitCocoa/UI/ElementFullscreen.mm @nonARC
+Tests/WebKitCocoa/UI/VideoPresentationMode.mm @nonARC

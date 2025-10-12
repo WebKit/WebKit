@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2004-2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,17 +25,18 @@
 
 #include "RenderStyleDifference.h"
 #include "RenderStyleInlines.h"
+#include "StylePrimitiveKeyword+Logging.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
 
 namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleMultiColData);
 
 StyleMultiColData::StyleMultiColData()
-    : count(RenderStyle::initialColumnCount())
-    , autoWidth(true)
-    , autoCount(true)
+    : width(RenderStyle::initialColumnWidth())
+    , count(RenderStyle::initialColumnCount())
     , fill(static_cast<unsigned>(RenderStyle::initialColumnFill()))
-    , columnSpan(false)
+    , columnSpan(static_cast<unsigned>(RenderStyle::initialColumnSpan()))
     , axis(static_cast<unsigned>(RenderStyle::initialColumnAxis()))
     , progression(static_cast<unsigned>(RenderStyle::initialColumnProgression()))
 {
@@ -46,8 +48,6 @@ inline StyleMultiColData::StyleMultiColData(const StyleMultiColData& other)
     , count(other.count)
     , rule(other.rule)
     , visitedLinkColumnRuleColor(other.visitedLinkColumnRuleColor)
-    , autoWidth(other.autoWidth)
-    , autoCount(other.autoCount)
     , fill(other.fill)
     , columnSpan(other.columnSpan)
     , axis(other.axis)
@@ -62,11 +62,14 @@ Ref<StyleMultiColData> StyleMultiColData::copy() const
 
 bool StyleMultiColData::operator==(const StyleMultiColData& other) const
 {
-    return width == other.width && count == other.count
-        && rule == other.rule && visitedLinkColumnRuleColor == other.visitedLinkColumnRuleColor
-        && autoWidth == other.autoWidth && autoCount == other.autoCount
-        && fill == other.fill && columnSpan == other.columnSpan
-        && axis == other.axis && progression == other.progression;
+    return width == other.width
+        && count == other.count
+        && rule == other.rule
+        && visitedLinkColumnRuleColor == other.visitedLinkColumnRuleColor
+        && fill == other.fill
+        && columnSpan == other.columnSpan
+        && axis == other.axis
+        && progression == other.progression;
 }
 
 #if !LOG_DISABLED
@@ -77,14 +80,18 @@ void StyleMultiColData::dumpDifferences(TextStream& ts, const StyleMultiColData&
     LOG_IF_DIFFERENT(rule);
     LOG_IF_DIFFERENT(visitedLinkColumnRuleColor);
 
-    LOG_IF_DIFFERENT(autoWidth);
-    LOG_IF_DIFFERENT(autoCount);
-
     LOG_IF_DIFFERENT_WITH_CAST(ColumnFill, fill);
     LOG_IF_DIFFERENT_WITH_CAST(ColumnSpan, columnSpan);
     LOG_IF_DIFFERENT_WITH_CAST(ColumnAxis, axis);
     LOG_IF_DIFFERENT_WITH_CAST(ColumnProgression, progression);
 }
 #endif // !LOG_DISABLED
+
+Style::LineWidth StyleMultiColData::ruleWidth() const
+{
+    if (rule.style() == BorderStyle::None || rule.style() == BorderStyle::Hidden)
+        return Style::LineWidth { 0_css_px };
+    return rule.width();
+}
 
 } // namespace WebCore

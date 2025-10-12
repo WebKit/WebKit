@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: No valid data-* attributes found in selector list : main table
 Interactions between <COL> visiblity:collapse, and table inline size
 
 What happens to the table size when column collapses? Should the space taken up by the table remain the same, but the table iteslf should shrink?

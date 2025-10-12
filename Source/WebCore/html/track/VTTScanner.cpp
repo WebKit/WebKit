@@ -52,7 +52,7 @@ bool VTTScanner::scan(char c)
     return true;
 }
 
-bool VTTScanner::scan(std::span<const LChar> characters)
+bool VTTScanner::scan(std::span<const Latin1Character> characters)
 {
     auto matchLength = m_is8Bit ? m_data.characters8.size() : m_data.characters16.size();
     if (matchLength < characters.size())
@@ -178,14 +178,14 @@ auto VTTScanner::createRun(Position start, Position end) const -> Run
 {
     if (m_is8Bit) {
         auto span8 = m_source.span8();
-        auto* start8 = static_cast<const LChar*>(start);
-        auto* end8 = static_cast<const LChar*>(end);
+        auto* start8 = static_cast<const Latin1Character*>(start);
+        auto* end8 = static_cast<const Latin1Character*>(end);
         RELEASE_ASSERT(start8 >= span8.data());
         return Run { span8.subspan(start8 - span8.data(), end8 - start8) };
     }
     auto span16 = m_source.span16();
-    auto* start16 = static_cast<const UChar*>(start);
-    auto* end16 = static_cast<const UChar*>(end);
+    auto* start16 = static_cast<const char16_t*>(start);
+    auto* end16 = static_cast<const char16_t*>(end);
     RELEASE_ASSERT(start16 >= span16.data());
     return Run { span16.subspan(start16 - span16.data(), end16 - start16) };
 }

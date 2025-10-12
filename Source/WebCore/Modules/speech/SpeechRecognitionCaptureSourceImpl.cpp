@@ -67,7 +67,7 @@ SpeechRecognitionCaptureSourceImpl::SpeechRecognitionCaptureSourceImpl(SpeechRec
         nullLogger()->setEnabled(this, false);
     }
 
-    m_source->setLogger(*nullLogger(), nextLogIdentifier());
+    m_source->setLogger(Ref { *nullLogger() }.get(), nextLogIdentifier());
 #endif
 
     m_source->addAudioSampleObserver(*this);
@@ -85,17 +85,18 @@ SpeechRecognitionCaptureSourceImpl::~SpeechRecognitionCaptureSourceImpl()
 }
 
 #if PLATFORM(COCOA)
-void SpeechRecognitionCaptureSourceImpl::pullSamplesAndCallDataCallback(AudioSampleDataSource* dataSource, const MediaTime& time, const CAAudioStreamDescription& audioDescription, size_t sampleCount)
+void SpeechRecognitionCaptureSourceImpl::pullSamplesAndCallDataCallback(AudioSampleDataSource* inputDataSource, const MediaTime& time, const CAAudioStreamDescription& audioDescription, size_t sampleCount)
 {
     ASSERT(isMainThread());
 
     auto data = WebAudioBufferList { audioDescription, sampleCount };
     {
         Locker locker { m_dataSourceLock };
-        if (m_dataSource.get() != dataSource)
+        RefPtr dataSource = m_dataSource;
+        if (dataSource.get() != inputDataSource)
             return;
         
-        m_dataSource->pullSamples(*data.list(), sampleCount, time.timeValue(), 0, AudioSampleDataSource::Copy);
+        dataSource->pullSamples(*data.list(), sampleCount, time.timeValue(), 0, AudioSampleDataSource::Copy);
     }
 
     m_dataCallback(time, data, audioDescription, sampleCount);
@@ -117,37 +118,34 @@ void SpeechRecognitionCaptureSourceImpl::audioSamplesAvailable(const WTF::MediaT
         return;
 
     Locker locker { AdoptLock, m_dataSourceLock };
+    RefPtr dataSource = m_dataSource;
     auto audioDescription = toCAAudioStreamDescription(description);
-    if (!m_dataSource || !m_dataSource->inputDescription() || *m_dataSource->inputDescription() != description) {
-        auto dataSource = AudioSampleDataSource::create(audioDescription.sampleRate(), m_source.get());
-        if (dataSource->setInputFormat(audioDescription)) {
-            callOnMainThread([this, weakThis = WeakPtr { *this }] {
-                if (!weakThis)
-                    return;
-    
-                m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Unable to set input format"_s }));
+    if (!dataSource || !dataSource->inputDescription() || *dataSource->inputDescription() != description) {
+        Ref newDataSource = AudioSampleDataSource::create(audioDescription.sampleRate(), m_source.get());
+        if (newDataSource->setInputFormat(audioDescription)) {
+            callOnMainThread([weakThis = WeakPtr { *this }] {
+                if (CheckedPtr checkedThis = weakThis.get())
+                    checkedThis->m_stateUpdateCallback(SpeechRecognitionUpdate::createError(checkedThis->m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Unable to set input format"_s }));
             });
             return;
         }
-        
-        if (dataSource->setOutputFormat(audioDescription)) {
-            callOnMainThread([this, weakThis = WeakPtr { *this }] {
-                if (!weakThis)
-                    return;
 
-                m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Unable to set output format"_s }));
+        if (newDataSource->setOutputFormat(audioDescription)) {
+            callOnMainThread([weakThis = WeakPtr { *this }] {
+                if (CheckedPtr checkedThis = weakThis.get())
+                    checkedThis->m_stateUpdateCallback(SpeechRecognitionUpdate::createError(checkedThis->m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Unable to set output format"_s }));
             });
             return;
         }
-        m_dataSource = WTFMove(dataSource);
+
+        dataSource = WTFMove(newDataSource);
+        m_dataSource = dataSource.copyRef();
     }
 
-    m_dataSource->pushSamples(time, data, sampleCount);
-    callOnMainThread([this, weakThis = WeakPtr { *this }, dataSource = m_dataSource, time, audioDescription, sampleCount] {
-        if (!weakThis)
-            return;
-
-        pullSamplesAndCallDataCallback(dataSource.get(), time, audioDescription, sampleCount);
+    dataSource->pushSamples(time, data, sampleCount);
+    callOnMainThread([weakThis = WeakPtr { *this }, dataSource = WTFMove(dataSource), time, audioDescription, sampleCount] {
+        if (CheckedPtr checkedThis = weakThis.get())
+            checkedThis->pullSamplesAndCallDataCallback(dataSource.get(), time, audioDescription, sampleCount);
     });
 #endif
 }

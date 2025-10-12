@@ -79,18 +79,6 @@ void RemoteMediaSessionHelperProxy::stopMonitoringWirelessRoutes()
     MediaSessionHelper::sharedHelper().stopMonitoringWirelessRoutes();
 }
 
-void RemoteMediaSessionHelperProxy::providePresentingApplicationPID(int pid, MediaSessionHelper::ShouldOverride shouldOverride)
-{
-    m_presentingApplicationPID = pid;
-    MediaSessionHelper::sharedHelper().providePresentingApplicationPID(pid, shouldOverride);
-}
-
-void RemoteMediaSessionHelperProxy::overridePresentingApplicationPIDIfNeeded()
-{
-    if (m_presentingApplicationPID)
-        MediaSessionHelper::sharedHelper().providePresentingApplicationPID(*m_presentingApplicationPID, MediaSessionHelper::ShouldOverride::Yes);
-}
-
 void RemoteMediaSessionHelperProxy::uiApplicationWillEnterForeground(SuspendedUnderLock suspendedUnderLock)
 {
     if (auto connection = m_gpuConnection.get())

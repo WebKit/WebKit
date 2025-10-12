@@ -11,8 +11,6 @@
 #ifndef API_VIDEO_TEST_VIDEO_FRAME_MATCHERS_H_
 #define API_VIDEO_TEST_VIDEO_FRAME_MATCHERS_H_
 
-#include "api/rtp_packet_infos.h"
-#include "api/video/video_frame.h"
 #include "test/gmock.h"
 
 namespace webrtc::test::video_frame_matchers {

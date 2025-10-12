@@ -27,8 +27,8 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "FTLAbbreviatedTypes.h"
-#include "FTLValueRange.h"
+#include <JavaScriptCore/FTLAbbreviatedTypes.h>
+#include <JavaScriptCore/FTLValueRange.h>
 
 namespace JSC {
 
@@ -64,8 +64,6 @@ public:
     const unsigned rangeKind { 0 };
     const unsigned profKind { 0 };
     const LValue branchWeights { nullptr };
-    
-    const ValueRange nonNegativeInt32;
 };
 
 } } // namespace JSC::FTL

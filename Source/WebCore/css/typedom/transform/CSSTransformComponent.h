@@ -57,7 +57,7 @@ public:
     virtual void setIs2D(bool is2D) { m_is2D = is2D ? Is2D::Yes : Is2D::No; }
     virtual ExceptionOr<Ref<DOMMatrix>> toMatrix() = 0;
     virtual ~CSSTransformComponent() = default;
-    virtual CSSTransformType getType() const = 0;
+    virtual CSSTransformType transformType() const = 0;
 
     virtual RefPtr<CSSValue> toCSSValue() const = 0;
 

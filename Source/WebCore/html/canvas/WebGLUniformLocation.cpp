@@ -32,43 +32,44 @@
 
 namespace WebCore {
 
-Ref<WebGLUniformLocation> WebGLUniformLocation::create(WebGLProgram* program, GCGLint location, GCGLenum type)
+Ref<WebGLUniformLocation> WebGLUniformLocation::create(WebGLProgram& program, GCGLint location)
 {
-    return adoptRef(*new WebGLUniformLocation(program, location, type));
+    return adoptRef(*new WebGLUniformLocation(program, location));
 }
 
-WebGLUniformLocation::WebGLUniformLocation(WebGLProgram* program, GCGLint location, GCGLenum type)
+WebGLUniformLocation::WebGLUniformLocation(WebGLProgram& program, GCGLint location)
     : m_program(program)
     , m_location(location)
-    , m_type(type)
+    , m_linkCount(m_program->getLinkCount())
 {
-    ASSERT(m_program);
-    m_linkCount = m_program->getLinkCount();
 }
 
-WebGLProgram* WebGLUniformLocation::program() const
+RefPtr<WebGLProgram> WebGLUniformLocation::program() const
 {
     // If the program has been linked again, then this UniformLocation is no
     // longer valid.
     if (m_program->getLinkCount() != m_linkCount)
-        return 0;
+        return nullptr;
     return m_program.get();
 }
 
 GCGLint WebGLUniformLocation::location() const
 {
-    // If the program has been linked again, then this UniformLocation is no
-    // longer valid.
     ASSERT(m_program->getLinkCount() == m_linkCount);
     return m_location;
 }
     
-GCGLenum WebGLUniformLocation::type() const
+std::optional<GCGLenum> WebGLUniformLocation::type() const
 {
-    // If the program has been linked again, then this UniformLocation is no
-    // longer valid.
     ASSERT(m_program->getLinkCount() == m_linkCount);
     return m_type;
+}
+
+void WebGLUniformLocation::setType(GCGLenum type)
+{
+    ASSERT(m_program->getLinkCount() == m_linkCount);
+    ASSERT(!m_type);
+    m_type = type;
 }
 
 }

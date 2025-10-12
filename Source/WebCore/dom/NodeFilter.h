@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "ActiveDOMCallback.h"
-#include "CallbackResult.h"
-#include "WebCoreOpaqueRoot.h"
+#include <WebCore/ActiveDOMCallback.h>
+#include <WebCore/CallbackResult.h>
+#include <WebCore/WebCoreOpaqueRoot.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

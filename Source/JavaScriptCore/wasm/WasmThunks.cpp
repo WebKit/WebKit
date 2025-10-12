@@ -66,6 +66,34 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromWasmThunkGenerator(const
     return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "throwExceptionFromWasmThunk"_s, "Throw exception from Wasm");
 }
 
+MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromOMGThunkGenerator(const AbstractLocker&)
+{
+    CCallHelpers jit;
+    JIT_COMMENT(jit, "throwExceptionFromOMGThunkGenerator");
+
+    // Do not perform emitFunctionPrologue intentionally. This thunk is called by OMG, but we will throw an error. So there is no
+    // reason to construct the correct stack frames here. preserveReturnAddressAfterCall extracts the caller's returnAddress,
+    // used by StackVisitor to reconstruct CallSiteIndex. And this also pops return-address in x64, which means that callFrameRegister
+    // will become the same to caller's one (OMG's one).
+    jit.preserveReturnAddressAfterCall(GPRInfo::argumentGPR2);
+
+    // The thing that jumps here must move ExceptionType into the argumentGPR1 before jumping here.
+    // We're allowed to use temp registers here. We are not allowed to use callee saves.
+    jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR0);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::argumentGPR3);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR3, VM::topEntryFrameOffset()), GPRInfo::argumentGPR3);
+    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(GPRInfo::argumentGPR3);
+
+    jit.prepareWasmCallOperation(GPRInfo::argumentGPR0);
+    CCallHelpers::Call call = jit.call(OperationPtrTag);
+    jit.farJump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
+    jit.breakpoint(); // We should not reach this.
+
+    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
+    linkBuffer.link<OperationPtrTag>(call, operationThrowExceptionFromOMG);
+    return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "throwExceptionFromOMG"_s, "Throw exception from OMG");
+}
+
 // This is just here to give us a unique backtrace if we ever actually hit this.
 MacroAssemblerCodeRef<JITThunkPtrTag> crashDueToBBQStackOverflowGenerator(const AbstractLocker&)
 {
@@ -106,6 +134,38 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowFromWasmThunkGenerator(c
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
     return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "throwStackOverflowFromWasmThunk"_s, "Throw stack overflow from Wasm");
 }
+
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+MacroAssemblerCodeRef<JITThunkPtrTag> materializeBaselineDataGenerator(const AbstractLocker&)
+{
+    CCallHelpers jit;
+    JIT_COMMENT(jit, "materializeBaselineDataGenerator");
+    jit.emitFunctionPrologue();
+
+    const unsigned extraPaddingBytes = 0;
+    RegisterSetBuilder builder;
+    for (auto regs : wasmCallingConvention().jsrArgs)
+        builder.add(regs, IgnoreVectors);
+    for (auto reg : wasmCallingConvention().fprArgs)
+        builder.add(reg, Options::useWasmSIMD() ? Width128 : Width64);
+
+    auto registersToSpill = RegisterSetBuilder::registersToSaveForCCall(builder.buildWithLowerBits()).buildWithLowerBits();
+    unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
+
+    // We can clobber these argument registers now since we saved them and later we restore them.
+    jit.move(GPRInfo::nonPreservedNonArgumentGPR0, GPRInfo::argumentGPR0);
+    jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR1);
+    jit.move(MacroAssembler::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationWasmMaterializeBaselineData)), GPRInfo::argumentGPR2);
+    jit.call(GPRInfo::argumentGPR2, OperationPtrTag);
+
+    ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, { }, numberOfStackBytesUsedForRegisterPreservation, extraPaddingBytes);
+
+    jit.emitFunctionEpilogue();
+    jit.ret();
+    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
+    return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "materializeBaselineDataThunk"_s, "Materialize BaselineData");
+}
+#endif
 
 #if USE(JSVALUE64)
 MacroAssemblerCodeRef<JITThunkPtrTag> catchInWasmThunkGenerator(const AbstractLocker&)

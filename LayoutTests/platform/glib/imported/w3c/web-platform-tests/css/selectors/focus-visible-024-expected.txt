@@ -1,7 +1,0 @@
-Target A
-Target B
-
-PASS ":focus-visible" should be a valid selector
-FAIL :focus-visible matches after accesskey on DIV assert_equals: outline-style for DIV#targetA should be solid expected "solid" but got "none"
-FAIL :focus-visible matches after accesskey on BUTTON assert_equals: outline-style for BUTTON#targetB should be solid expected "solid" but got "none"
-

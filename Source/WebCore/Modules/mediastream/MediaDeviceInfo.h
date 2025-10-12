@@ -27,9 +27,9 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "CaptureDevice.h"
-#include "ContextDestructionObserver.h"
-#include "ScriptWrappable.h"
+#include <WebCore/CaptureDevice.h>
+#include <WebCore/ContextDestructionObserver.h>
+#include <WebCore/ScriptWrappable.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -46,6 +46,8 @@ public:
     const String& deviceId() const { return m_deviceId; }
     const String& groupId() const { return m_groupId; }
     Kind kind() const { return m_kind; }
+
+    virtual bool isInputDeviceInfo() const { return false; }
 
 protected:
     MediaDeviceInfo(const String&, const String&, const String&, Kind);

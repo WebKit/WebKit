@@ -3,7 +3,7 @@ name = "bssl-sys"
 version = "0.1.0"
 edition = "2018"
 publish = false
-license = "ISC"
+license = "Apache-2.0"
 
 # This exists to workaround a limitation in cargo:
 # https://github.com/rust-lang/cargo/issues/3544

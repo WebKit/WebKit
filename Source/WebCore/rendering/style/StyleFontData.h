@@ -25,7 +25,10 @@
 
 #pragma once
 
-#include "FontCascade.h"
+#include <WebCore/FontCascade.h>
+#include <WebCore/StyleLetterSpacing.h>
+#include <WebCore/StyleWordSpacing.h>
+#include <WebCore/FontCascade.h>
 #include <wtf/DataRef.h>
 
 namespace WTF {
@@ -35,7 +38,7 @@ class TextStream;
 namespace WebCore {
 
 class StyleFontData : public RefCounted<StyleFontData> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StyleFontData);
 public:
     static Ref<StyleFontData> create() { return adoptRef(*new StyleFontData); }
     Ref<StyleFontData> copy() const;
@@ -46,6 +49,8 @@ public:
     void dumpDifferences(TextStream&, const StyleFontData&) const;
 #endif
 
+    Style::LetterSpacing letterSpacing;
+    Style::WordSpacing wordSpacing;
     FontCascade fontCascade;
 
 private:

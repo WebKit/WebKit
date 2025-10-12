@@ -15,12 +15,14 @@
 
     promise_test(async (test) => {
         audio.srcObject = await navigator.mediaDevices.getUserMedia({audio: true});
+        test.add_cleanup(() => audio.srcObject.getTracks().forEach(track => track.stop()));
         var eventWatcher = new EventWatcher(test, audio, 'playing');
         return eventWatcher.wait_for('playing');
     }, 'Local audio playback fires playing event');
 
     promise_test(async (test) => {
         audioNoAutoplay.srcObject = await navigator.mediaDevices.getUserMedia({audio: true});
+        test.add_cleanup(() => audioNoAutoplay.srcObject.getTracks().forEach(track => track.stop()));
         audioNoAutoplay.play();
         var eventWatcher = new EventWatcher(test, audioNoAutoplay, 'playing');
         return eventWatcher.wait_for('playing');

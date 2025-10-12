@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "PixelBufferFormat.h"
+#include <WebCore/PixelBufferFormat.h>
 #include <span>
 
 namespace WebCore {

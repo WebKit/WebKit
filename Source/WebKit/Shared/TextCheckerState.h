@@ -36,6 +36,7 @@ enum class TextCheckerState : uint8_t {
     AutomaticQuoteSubstitutionEnabled = 1 << 4,
     AutomaticDashSubstitutionEnabled = 1 << 5,
     AutomaticLinkDetectionEnabled = 1 << 6,
+    SmartListsEnabled = 1 << 7,
 #endif
 };
 

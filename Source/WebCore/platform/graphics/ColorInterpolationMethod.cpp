@@ -101,6 +101,9 @@ TextStream& operator<<(TextStream& ts, ColorInterpolationColorSpace interpolatio
     case ColorInterpolationColorSpace::DisplayP3:
         ts << "Display P3"_s;
         break;
+    case ColorInterpolationColorSpace::DisplayP3Linear:
+        ts << "Display P3 Linear"_s;
+        break;
     case ColorInterpolationColorSpace::A98RGB:
         ts << "A98 RGB"_s;
         break;

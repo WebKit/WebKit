@@ -65,7 +65,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SendGarbageCollectionEventsTask);
 
 SendGarbageCollectionEventsTask::SendGarbageCollectionEventsTask(WebHeapAgent& agent)
     : m_agent(agent)
-    , m_timer(RunLoop::main(), this, &SendGarbageCollectionEventsTask::timerFired)
+    , m_timer(RunLoop::mainSingleton(), "SendGarbageCollectionEventsTask::Timer"_s, this, &SendGarbageCollectionEventsTask::timerFired)
 {
 }
 
@@ -105,15 +105,15 @@ void SendGarbageCollectionEventsTask::timerFired()
 WebHeapAgent::WebHeapAgent(WebAgentContext& context)
     : InspectorHeapAgent(context)
     , m_instrumentingAgents(context.instrumentingAgents)
-    , m_sendGarbageCollectionEventsTask(makeUnique<SendGarbageCollectionEventsTask>(*this))
+    , m_sendGarbageCollectionEventsTask(makeUniqueRef<SendGarbageCollectionEventsTask>(*this))
 {
 }
 
 WebHeapAgent::~WebHeapAgent() = default;
 
-void WebHeapAgent::didCreateFrontendAndBackend(FrontendRouter* frontendRouter, BackendDispatcher* backendDispatcher)
+void WebHeapAgent::didCreateFrontendAndBackend()
 {
-    InspectorHeapAgent::didCreateFrontendAndBackend(frontendRouter, backendDispatcher);
+    InspectorHeapAgent::didCreateFrontendAndBackend();
 
     ASSERT(m_instrumentingAgents.persistentWebHeapAgent() != this);
     m_instrumentingAgents.setPersistentWebHeapAgent(this);

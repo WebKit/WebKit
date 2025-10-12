@@ -58,7 +58,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
 
 namespace WebCore {
 class WebAVPlayerLayerPresentationModelClient final : public VideoPresentationModelClient, public CanMakeCheckedPtr<WebAVPlayerLayerPresentationModelClient> {
-    WTF_MAKE_FAST_ALLOCATED(WebAVPlayerLayerPresentationModelClient);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebAVPlayerLayerPresentationModelClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebAVPlayerLayerPresentationModelClient);
 public:
     WebAVPlayerLayerPresentationModelClient(WebAVPlayerLayer* playerLayer)
@@ -122,7 +122,7 @@ private:
 
 - (VideoPresentationModel*)presentationModel
 {
-    return _presentationModel.get().get();
+    return _presentationModel.get().unsafeGet();
 }
 
 - (void)setPresentationModel:(VideoPresentationModel*)presentationModel
@@ -152,7 +152,7 @@ private:
 
 - (void)setPlayerController:(AVPlayerController *)playerController
 {
-    ASSERT(!playerController || [playerController isKindOfClass:webAVPlayerControllerClass()]);
+    ASSERT(!playerController || [playerController isKindOfClass:webAVPlayerControllerClassSingleton()]);
     _playerController = (WebAVPlayerController *)playerController;
 }
 
@@ -300,7 +300,7 @@ static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const Flo
     OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, "self.bounds: ", FloatRect(self.bounds), ", targetVideoFrame: ", _targetVideoFrame, ", transform: [", transform.a, ", ", transform.d, "]");
 
     NSTimeInterval animationDuration = [CATransaction animationDuration];
-    RunLoop::protectedMain()->dispatch([self, strongSelf = retainPtr(self), animationDuration] {
+    RunLoop::mainSingleton().dispatch([self, strongSelf = retainPtr(self), animationDuration] {
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
         [self performSelector:@selector(resolveBounds) withObject:nil afterDelay:animationDuration + 0.1];
     });

@@ -19,10 +19,10 @@
 
 #pragma once
 
-#include "Document.h"
-#include "LocalFrameInlines.h"
-#include "NetworkingContext.h"
-#include "ReferrerPolicy.h"
+#include <WebCore/Document.h>
+#include <WebCore/LocalFrameInlines.h>
+#include <WebCore/NetworkingContext.h>
+#include <WebCore/ReferrerPolicy.h>
 
 namespace WebCore {
 

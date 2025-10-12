@@ -11,9 +11,11 @@
 // Most of this was borrowed (with minor modifications) from V8's and Chromium's
 // src/base/logging.cc.
 
+#include <stdlib.h>
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
+#include <string>
 
 #include "absl/strings/string_view.h"
 
@@ -28,10 +30,8 @@
 
 #if defined(WEBRTC_WIN)
 #define LAST_SYSTEM_ERROR (::GetLastError())
-#elif defined(__native_client__) && __native_client__
-#define LAST_SYSTEM_ERROR (0)
 #elif defined(WEBRTC_POSIX)
-#include <errno.h>
+#include <cerrno>
 #define LAST_SYSTEM_ERROR (errno)
 #endif  // WEBRTC_WIN
 
@@ -59,7 +59,7 @@ void AppendFormat(std::string* s, const char* fmt, ...) {
 }
 }  // namespace
 
-namespace rtc {
+namespace webrtc {
 namespace webrtc_checks_impl {
 
 #if !defined(WEBRTC_CHROMIUM_BUILD)
@@ -224,17 +224,17 @@ RTC_NORETURN void UnreachableCodeReached() {
 #endif  // !RTC_DCHECK_IS_ON
 
 }  // namespace webrtc_checks_impl
-}  // namespace rtc
+}  // namespace webrtc
 
 // Function to call from the C version of the RTC_CHECK and RTC_DCHECK macros.
 RTC_NORETURN void rtc_FatalMessage(const char* file,
                                    int line,
                                    const char* msg) {
 #if RTC_CHECK_MSG_ENABLED
-  static constexpr rtc::webrtc_checks_impl::CheckArgType t[] = {
-      rtc::webrtc_checks_impl::CheckArgType::kEnd};
-  rtc::webrtc_checks_impl::FatalLog(file, line, msg, t);
+  static constexpr webrtc::webrtc_checks_impl::CheckArgType t[] = {
+      webrtc::webrtc_checks_impl::CheckArgType::kEnd};
+  webrtc::webrtc_checks_impl::FatalLog(file, line, msg, t);
 #else
-  rtc::webrtc_checks_impl::FatalLog(file, line);
+  webrtc::webrtc_checks_impl::FatalLog(file, line);
 #endif
 }

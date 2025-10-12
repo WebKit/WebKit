@@ -42,9 +42,9 @@ _vpaes_encrypt_core:
 	movdqu	xmm5,XMMWORD[r9]
 	psrld	xmm1,4
 	pand	xmm0,xmm9
-DB	102,15,56,0,208
+	pshufb	xmm2,xmm0
 	movdqa	xmm0,XMMWORD[(($L$k_ipt+16))]
-DB	102,15,56,0,193
+	pshufb	xmm0,xmm1
 	pxor	xmm2,xmm5
 	add	r9,16
 	pxor	xmm0,xmm2
@@ -56,25 +56,25 @@ $L$enc_loop:
 
 	movdqa	xmm4,xmm13
 	movdqa	xmm0,xmm12
-DB	102,15,56,0,226
-DB	102,15,56,0,195
+	pshufb	xmm4,xmm2
+	pshufb	xmm0,xmm3
 	pxor	xmm4,xmm5
 	movdqa	xmm5,xmm15
 	pxor	xmm0,xmm4
 	movdqa	xmm1,XMMWORD[((-64))+r10*1+r11]
-DB	102,15,56,0,234
+	pshufb	xmm5,xmm2
 	movdqa	xmm4,XMMWORD[r10*1+r11]
 	movdqa	xmm2,xmm14
-DB	102,15,56,0,211
+	pshufb	xmm2,xmm3
 	movdqa	xmm3,xmm0
 	pxor	xmm2,xmm5
-DB	102,15,56,0,193
+	pshufb	xmm0,xmm1
 	add	r9,16
 	pxor	xmm0,xmm2
-DB	102,15,56,0,220
+	pshufb	xmm3,xmm4
 	add	r11,16
 	pxor	xmm3,xmm0
-DB	102,15,56,0,193
+	pshufb	xmm0,xmm1
 	and	r11,0x30
 	sub	rax,1
 	pxor	xmm0,xmm3
@@ -86,19 +86,19 @@ $L$enc_entry:
 	pandn	xmm1,xmm0
 	psrld	xmm1,4
 	pand	xmm0,xmm9
-DB	102,15,56,0,232
+	pshufb	xmm5,xmm0
 	movdqa	xmm3,xmm10
 	pxor	xmm0,xmm1
-DB	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	movdqa	xmm4,xmm10
 	pxor	xmm3,xmm5
-DB	102,15,56,0,224
+	pshufb	xmm4,xmm0
 	movdqa	xmm2,xmm10
 	pxor	xmm4,xmm5
-DB	102,15,56,0,211
+	pshufb	xmm2,xmm3
 	movdqa	xmm3,xmm10
 	pxor	xmm2,xmm0
-DB	102,15,56,0,220
+	pshufb	xmm3,xmm4
 	movdqu	xmm5,XMMWORD[r9]
 	pxor	xmm3,xmm1
 	jnz	NEAR $L$enc_loop
@@ -106,12 +106,12 @@ DB	102,15,56,0,220
 
 	movdqa	xmm4,XMMWORD[((-96))+r10]
 	movdqa	xmm0,XMMWORD[((-80))+r10]
-DB	102,15,56,0,226
+	pshufb	xmm4,xmm2
 	pxor	xmm4,xmm5
-DB	102,15,56,0,195
+	pshufb	xmm0,xmm3
 	movdqa	xmm1,XMMWORD[64+r10*1+r11]
 	pxor	xmm0,xmm4
-DB	102,15,56,0,193
+	pshufb	xmm0,xmm1
 	ret
 
 
@@ -164,12 +164,12 @@ _vpaes_encrypt_core_2x:
 	psrld	xmm7,4
 	pand	xmm0,xmm9
 	pand	xmm6,xmm9
-DB	102,15,56,0,208
-DB	102,68,15,56,0,198
+	pshufb	xmm2,xmm0
+	pshufb	xmm8,xmm6
 	movdqa	xmm0,XMMWORD[(($L$k_ipt+16))]
 	movdqa	xmm6,xmm0
-DB	102,15,56,0,193
-DB	102,15,56,0,247
+	pshufb	xmm0,xmm1
+	pshufb	xmm6,xmm7
 	pxor	xmm2,xmm5
 	pxor	xmm8,xmm5
 	add	r9,16
@@ -185,10 +185,10 @@ $L$enc2x_loop:
 	movdqa	xmm0,XMMWORD[(($L$k_sb1+16))]
 	movdqa	xmm12,xmm4
 	movdqa	xmm6,xmm0
-DB	102,15,56,0,226
-DB	102,69,15,56,0,224
-DB	102,15,56,0,195
-DB	102,65,15,56,0,243
+	pshufb	xmm4,xmm2
+	pshufb	xmm12,xmm8
+	pshufb	xmm0,xmm3
+	pshufb	xmm6,xmm11
 	pxor	xmm4,xmm5
 	pxor	xmm12,xmm5
 	movdqa	xmm5,XMMWORD[$L$k_sb2]
@@ -197,30 +197,30 @@ DB	102,65,15,56,0,243
 	pxor	xmm6,xmm12
 	movdqa	xmm1,XMMWORD[((-64))+r10*1+r11]
 
-DB	102,15,56,0,234
-DB	102,69,15,56,0,232
+	pshufb	xmm5,xmm2
+	pshufb	xmm13,xmm8
 	movdqa	xmm4,XMMWORD[r10*1+r11]
 
 	movdqa	xmm2,XMMWORD[(($L$k_sb2+16))]
 	movdqa	xmm8,xmm2
-DB	102,15,56,0,211
-DB	102,69,15,56,0,195
+	pshufb	xmm2,xmm3
+	pshufb	xmm8,xmm11
 	movdqa	xmm3,xmm0
 	movdqa	xmm11,xmm6
 	pxor	xmm2,xmm5
 	pxor	xmm8,xmm13
-DB	102,15,56,0,193
-DB	102,15,56,0,241
+	pshufb	xmm0,xmm1
+	pshufb	xmm6,xmm1
 	add	r9,16
 	pxor	xmm0,xmm2
 	pxor	xmm6,xmm8
-DB	102,15,56,0,220
-DB	102,68,15,56,0,220
+	pshufb	xmm3,xmm4
+	pshufb	xmm11,xmm4
 	add	r11,16
 	pxor	xmm3,xmm0
 	pxor	xmm11,xmm6
-DB	102,15,56,0,193
-DB	102,15,56,0,241
+	pshufb	xmm0,xmm1
+	pshufb	xmm6,xmm1
 	and	r11,0x30
 	sub	rax,1
 	pxor	xmm0,xmm3
@@ -238,32 +238,32 @@ $L$enc2x_entry:
 	psrld	xmm7,4
 	pand	xmm0,xmm9
 	pand	xmm6,xmm9
-DB	102,15,56,0,232
-DB	102,68,15,56,0,238
+	pshufb	xmm5,xmm0
+	pshufb	xmm13,xmm6
 	movdqa	xmm3,xmm10
 	movdqa	xmm11,xmm10
 	pxor	xmm0,xmm1
 	pxor	xmm6,xmm7
-DB	102,15,56,0,217
-DB	102,68,15,56,0,223
+	pshufb	xmm3,xmm1
+	pshufb	xmm11,xmm7
 	movdqa	xmm4,xmm10
 	movdqa	xmm12,xmm10
 	pxor	xmm3,xmm5
 	pxor	xmm11,xmm13
-DB	102,15,56,0,224
-DB	102,68,15,56,0,230
+	pshufb	xmm4,xmm0
+	pshufb	xmm12,xmm6
 	movdqa	xmm2,xmm10
 	movdqa	xmm8,xmm10
 	pxor	xmm4,xmm5
 	pxor	xmm12,xmm13
-DB	102,15,56,0,211
-DB	102,69,15,56,0,195
+	pshufb	xmm2,xmm3
+	pshufb	xmm8,xmm11
 	movdqa	xmm3,xmm10
 	movdqa	xmm11,xmm10
 	pxor	xmm2,xmm0
 	pxor	xmm8,xmm6
-DB	102,15,56,0,220
-DB	102,69,15,56,0,220
+	pshufb	xmm3,xmm4
+	pshufb	xmm11,xmm12
 	movdqu	xmm5,XMMWORD[r9]
 
 	pxor	xmm3,xmm1
@@ -275,18 +275,18 @@ DB	102,69,15,56,0,220
 	movdqa	xmm0,XMMWORD[((-80))+r10]
 	movdqa	xmm12,xmm4
 	movdqa	xmm6,xmm0
-DB	102,15,56,0,226
-DB	102,69,15,56,0,224
+	pshufb	xmm4,xmm2
+	pshufb	xmm12,xmm8
 	pxor	xmm4,xmm5
 	pxor	xmm12,xmm5
-DB	102,15,56,0,195
-DB	102,65,15,56,0,243
+	pshufb	xmm0,xmm3
+	pshufb	xmm6,xmm11
 	movdqa	xmm1,XMMWORD[64+r10*1+r11]
 
 	pxor	xmm0,xmm4
 	pxor	xmm6,xmm12
-DB	102,15,56,0,193
-DB	102,15,56,0,241
+	pshufb	xmm0,xmm1
+	pshufb	xmm6,xmm1
 	ret
 
 
@@ -310,11 +310,11 @@ _vpaes_decrypt_core:
 	movdqu	xmm5,XMMWORD[r9]
 	shl	r11,4
 	pand	xmm0,xmm9
-DB	102,15,56,0,208
+	pshufb	xmm2,xmm0
 	movdqa	xmm0,XMMWORD[(($L$k_dipt+16))]
 	xor	r11,0x30
 	lea	r10,[$L$k_dsbd]
-DB	102,15,56,0,193
+	pshufb	xmm0,xmm1
 	and	r11,0x30
 	pxor	xmm2,xmm5
 	movdqa	xmm5,XMMWORD[(($L$k_mc_forward+48))]
@@ -330,35 +330,35 @@ $L$dec_loop:
 
 	movdqa	xmm4,XMMWORD[((-32))+r10]
 	movdqa	xmm1,XMMWORD[((-16))+r10]
-DB	102,15,56,0,226
-DB	102,15,56,0,203
+	pshufb	xmm4,xmm2
+	pshufb	xmm1,xmm3
 	pxor	xmm0,xmm4
 	movdqa	xmm4,XMMWORD[r10]
 	pxor	xmm0,xmm1
 	movdqa	xmm1,XMMWORD[16+r10]
 
-DB	102,15,56,0,226
-DB	102,15,56,0,197
-DB	102,15,56,0,203
+	pshufb	xmm4,xmm2
+	pshufb	xmm0,xmm5
+	pshufb	xmm1,xmm3
 	pxor	xmm0,xmm4
 	movdqa	xmm4,XMMWORD[32+r10]
 	pxor	xmm0,xmm1
 	movdqa	xmm1,XMMWORD[48+r10]
 
-DB	102,15,56,0,226
-DB	102,15,56,0,197
-DB	102,15,56,0,203
+	pshufb	xmm4,xmm2
+	pshufb	xmm0,xmm5
+	pshufb	xmm1,xmm3
 	pxor	xmm0,xmm4
 	movdqa	xmm4,XMMWORD[64+r10]
 	pxor	xmm0,xmm1
 	movdqa	xmm1,XMMWORD[80+r10]
 
-DB	102,15,56,0,226
-DB	102,15,56,0,197
-DB	102,15,56,0,203
+	pshufb	xmm4,xmm2
+	pshufb	xmm0,xmm5
+	pshufb	xmm1,xmm3
 	pxor	xmm0,xmm4
 	add	r9,16
-DB	102,15,58,15,237,12
+	palignr	xmm5,xmm5,12
 	pxor	xmm0,xmm1
 	sub	rax,1
 
@@ -369,32 +369,32 @@ $L$dec_entry:
 	movdqa	xmm2,xmm11
 	psrld	xmm1,4
 	pand	xmm0,xmm9
-DB	102,15,56,0,208
+	pshufb	xmm2,xmm0
 	movdqa	xmm3,xmm10
 	pxor	xmm0,xmm1
-DB	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	movdqa	xmm4,xmm10
 	pxor	xmm3,xmm2
-DB	102,15,56,0,224
+	pshufb	xmm4,xmm0
 	pxor	xmm4,xmm2
 	movdqa	xmm2,xmm10
-DB	102,15,56,0,211
+	pshufb	xmm2,xmm3
 	movdqa	xmm3,xmm10
 	pxor	xmm2,xmm0
-DB	102,15,56,0,220
+	pshufb	xmm3,xmm4
 	movdqu	xmm0,XMMWORD[r9]
 	pxor	xmm3,xmm1
 	jnz	NEAR $L$dec_loop
 
 
 	movdqa	xmm4,XMMWORD[96+r10]
-DB	102,15,56,0,226
+	pshufb	xmm4,xmm2
 	pxor	xmm4,xmm0
 	movdqa	xmm0,XMMWORD[112+r10]
 	movdqa	xmm2,XMMWORD[((-352))+r11]
-DB	102,15,56,0,195
+	pshufb	xmm0,xmm3
 	pxor	xmm0,xmm4
-DB	102,15,56,0,194
+	pshufb	xmm0,xmm2
 	ret
 
 
@@ -434,7 +434,7 @@ _vpaes_schedule_core:
 $L$schedule_am_decrypting:
 
 	movdqa	xmm1,XMMWORD[r10*1+r8]
-DB	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	movdqu	XMMWORD[rdx],xmm3
 	xor	r8,0x30
 
@@ -488,7 +488,7 @@ $L$schedule_192:
 
 $L$oop_schedule_192:
 	call	_vpaes_schedule_round
-DB	102,15,58,15,198,8
+	palignr	xmm0,xmm6,8
 	call	_vpaes_schedule_mangle
 	call	_vpaes_schedule_192_smear
 	call	_vpaes_schedule_mangle
@@ -554,7 +554,7 @@ $L$schedule_mangle_last:
 
 
 	movdqa	xmm1,XMMWORD[r10*1+r8]
-DB	102,15,56,0,193
+	pshufb	xmm0,xmm1
 	lea	r11,[$L$k_opt]
 	add	rdx,32
 
@@ -630,13 +630,13 @@ _vpaes_schedule_round:
 
 
 	pxor	xmm1,xmm1
-DB	102,65,15,58,15,200,15
-DB	102,69,15,58,15,192,15
+	palignr	xmm1,xmm8,15
+	palignr	xmm8,xmm8,15
 	pxor	xmm7,xmm1
 
 
 	pshufd	xmm0,xmm0,0xFF
-DB	102,15,58,15,192,1
+	palignr	xmm0,xmm0,1
 
 
 
@@ -657,24 +657,24 @@ _vpaes_schedule_low_round:
 	psrld	xmm1,4
 	pand	xmm0,xmm9
 	movdqa	xmm2,xmm11
-DB	102,15,56,0,208
+	pshufb	xmm2,xmm0
 	pxor	xmm0,xmm1
 	movdqa	xmm3,xmm10
-DB	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	pxor	xmm3,xmm2
 	movdqa	xmm4,xmm10
-DB	102,15,56,0,224
+	pshufb	xmm4,xmm0
 	pxor	xmm4,xmm2
 	movdqa	xmm2,xmm10
-DB	102,15,56,0,211
+	pshufb	xmm2,xmm3
 	pxor	xmm2,xmm0
 	movdqa	xmm3,xmm10
-DB	102,15,56,0,220
+	pshufb	xmm3,xmm4
 	pxor	xmm3,xmm1
 	movdqa	xmm4,xmm13
-DB	102,15,56,0,226
+	pshufb	xmm4,xmm2
 	movdqa	xmm0,xmm12
-DB	102,15,56,0,195
+	pshufb	xmm0,xmm3
 	pxor	xmm0,xmm4
 
 
@@ -702,9 +702,9 @@ _vpaes_schedule_transform:
 	psrld	xmm1,4
 	pand	xmm0,xmm9
 	movdqa	xmm2,XMMWORD[r11]
-DB	102,15,56,0,208
+	pshufb	xmm2,xmm0
 	movdqa	xmm0,XMMWORD[16+r11]
-DB	102,15,56,0,193
+	pshufb	xmm0,xmm1
 	pxor	xmm0,xmm2
 	ret
 
@@ -745,11 +745,11 @@ _vpaes_schedule_mangle:
 
 	add	rdx,16
 	pxor	xmm4,XMMWORD[$L$k_s63]
-DB	102,15,56,0,229
+	pshufb	xmm4,xmm5
 	movdqa	xmm3,xmm4
-DB	102,15,56,0,229
+	pshufb	xmm4,xmm5
 	pxor	xmm3,xmm4
-DB	102,15,56,0,229
+	pshufb	xmm4,xmm5
 	pxor	xmm3,xmm4
 
 	jmp	NEAR $L$schedule_mangle_both
@@ -763,40 +763,40 @@ $L$schedule_mangle_dec:
 	pand	xmm4,xmm9
 
 	movdqa	xmm2,XMMWORD[r11]
-DB	102,15,56,0,212
+	pshufb	xmm2,xmm4
 	movdqa	xmm3,XMMWORD[16+r11]
-DB	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	pxor	xmm3,xmm2
-DB	102,15,56,0,221
+	pshufb	xmm3,xmm5
 
 	movdqa	xmm2,XMMWORD[32+r11]
-DB	102,15,56,0,212
+	pshufb	xmm2,xmm4
 	pxor	xmm2,xmm3
 	movdqa	xmm3,XMMWORD[48+r11]
-DB	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	pxor	xmm3,xmm2
-DB	102,15,56,0,221
+	pshufb	xmm3,xmm5
 
 	movdqa	xmm2,XMMWORD[64+r11]
-DB	102,15,56,0,212
+	pshufb	xmm2,xmm4
 	pxor	xmm2,xmm3
 	movdqa	xmm3,XMMWORD[80+r11]
-DB	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	pxor	xmm3,xmm2
-DB	102,15,56,0,221
+	pshufb	xmm3,xmm5
 
 	movdqa	xmm2,XMMWORD[96+r11]
-DB	102,15,56,0,212
+	pshufb	xmm2,xmm4
 	pxor	xmm2,xmm3
 	movdqa	xmm3,XMMWORD[112+r11]
-DB	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	pxor	xmm3,xmm2
 
 	add	rdx,-16
 
 $L$schedule_mangle_both:
 	movdqa	xmm1,XMMWORD[r10*1+r8]
-DB	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	add	r8,-16
 	and	r8,0x30
 	movdqu	XMMWORD[rdx],xmm3
@@ -1172,8 +1172,8 @@ $L$ctr32_loop:
 	movdqa	xmm1,XMMWORD[$L$rev_ctr]
 	movdqa	xmm0,xmm14
 	movdqa	xmm6,xmm15
-DB	102,15,56,0,193
-DB	102,15,56,0,241
+	pshufb	xmm0,xmm1
+	pshufb	xmm6,xmm1
 	call	_vpaes_encrypt_core_2x
 	movdqu	xmm1,XMMWORD[rdi]
 	movdqu	xmm2,XMMWORD[16+rdi]

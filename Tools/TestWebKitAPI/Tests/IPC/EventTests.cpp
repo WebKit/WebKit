@@ -35,7 +35,7 @@ struct MockTestMessageWithSignal {
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
-    static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(123); }
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCTester_EmptyMessage; }
     MockTestMessageWithSignal(IPC::Signal&& signal)
         : m_signal(WTFMove(signal))
     {
@@ -88,7 +88,7 @@ TEST_P(EventTestABBA, SerializeAndSignal)
     runLoop->dispatch([&] {
         ASSERT_TRUE(openB());
 
-        bClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+        bClient().setAsyncMessageHandler([&] (IPC::Connection&, IPC::Decoder& decoder) -> bool {
             auto signal = decoder.decode<IPC::Signal>();
             signal->signal();
 
@@ -112,7 +112,7 @@ TEST_P(EventTestABBA, InterruptOnDestruct)
     runLoop->dispatch([&] {
         ASSERT_TRUE(openB());
 
-        bClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+        bClient().setAsyncMessageHandler([&] (IPC::Connection&, IPC::Decoder& decoder) -> bool {
             {
                 auto signal = decoder.decode<IPC::Signal>();
             }

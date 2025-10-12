@@ -128,7 +128,7 @@ private:
     uint64_t m_keyGeneratorValue { 1 };
 
     KeyValueMap m_transactionModifiedRecords;
-    std::unique_ptr<KeyValueMap> m_keyValueStore;
+    KeyValueMap m_keyValueStore;
     std::unique_ptr<IDBKeyDataSet> m_orderedKeys;
 
     HashMap<IDBIndexIdentifier, RefPtr<MemoryIndex>> m_indexesByIdentifier;

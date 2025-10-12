@@ -26,8 +26,9 @@
 
 #pragma once
 
-#include "CustomGetterSetter.h"
-#include "DOMAnnotation.h"
+#include <JavaScriptCore/CustomGetterSetter.h>
+#include <JavaScriptCore/DOMAnnotation.h>
+#include <JavaScriptCore/VM.h>
 
 namespace JSC {
 namespace DOMJIT {

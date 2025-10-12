@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2024 Apple Inc.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -30,11 +30,11 @@
 
 #include "FetchBodySource.h"
 #include "FormDataConsumer.h"
-#include "JSDOMPromiseDeferredForward.h"
-#include "ReadableStreamSink.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include "SharedBuffer.h"
-#include "UserGestureIndicator.h"
+#include <WebCore/JSDOMPromiseDeferredForward.h>
+#include <WebCore/ReadableStreamSink.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/SharedBuffer.h>
+#include <WebCore/UserGestureIndicator.h>
 
 namespace WebCore {
 
@@ -45,8 +45,8 @@ class FetchBodySource;
 class FormData;
 class ReadableStream;
 
-class FetchBodyConsumer final : public CanMakeCheckedPtr<FetchBodyConsumer> {
-    WTF_MAKE_FAST_ALLOCATED;
+class FetchBodyConsumer final : public CanMakeWeakPtr<FetchBodyConsumer>, public CanMakeCheckedPtr<FetchBodyConsumer> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FetchBodyConsumer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FetchBodyConsumer);
 public:
     enum class Type { None, ArrayBuffer, Blob, Bytes, JSON, Text, FormData };
@@ -61,7 +61,7 @@ public:
     void append(const SharedBuffer&);
 
     bool hasData() const { return !!m_buffer; }
-    const FragmentedSharedBuffer* data() const LIFETIME_BOUND { return m_buffer.get().get(); }
+    const FragmentedSharedBuffer* data() const LIFETIME_BOUND { return m_buffer.get().unsafeGet(); }
     void setData(Ref<FragmentedSharedBuffer>&&);
 
     RefPtr<FragmentedSharedBuffer> takeData();
@@ -93,6 +93,9 @@ public:
 private:
     Ref<Blob> takeAsBlob(ScriptExecutionContext*, const String& contentType);
     void resetConsumePromise();
+
+    RefPtr<ReadableStreamToSharedBufferSink> protectedSink() { return m_sink; }
+    RefPtr<FormDataConsumer> protectedFormDataConsumer() { return m_formDataConsumer; }
 
     Type m_type;
     SharedBufferBuilder m_buffer;

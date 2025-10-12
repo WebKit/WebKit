@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2024 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  * Copyright (C) 2013 Patrick Gansterer <paroga@paroga.com>
  *
@@ -45,7 +45,6 @@
 #include <wtf/GetPtr.h>
 #include <wtf/IterationStatus.h>
 #include <wtf/NotFound.h>
-#include <wtf/StringExtras.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/TypeTraits.h>
 #include <wtf/Variant.h>
@@ -157,6 +156,25 @@ inline bool isPointerAligned(void* p)
 inline bool is8ByteAligned(void* p)
 {
     return !((uintptr_t)(p) & (sizeof(double) - 1));
+}
+
+inline bool isAligned(void* ptr, int alignment = sizeof(void*))
+{
+    return reinterpret_cast<uintptr_t>(ptr) % alignment == 0;
+}
+
+template <typename T>
+inline bool isAligned(T* ptr, int alignment = sizeof(void*))
+{
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(alignment >= alignof(T));
+    return reinterpret_cast<uintptr_t>(ptr) % alignment == 0;
+}
+
+template <typename T, int alignment = sizeof(void*)>
+inline bool isAligned(T* ptr)
+{
+    static_assert(alignment >= alignof(T));
+    return isAligned<T>(ptr, alignment);
 }
 
 inline std::byte* alignedBytes(std::byte* pointer, size_t alignment)
@@ -544,7 +562,7 @@ template<class V, class... F> requires (!HasSwitchOn<V>) ALWAYS_INLINE auto swit
 
 #else
 
-template<class V, class... F> requires (!HasSwitchOn<V>) ALWAYS_INLINE auto switchOn(V&& v, F&&... f) -> decltype(WTF::visit(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v))))
+template<class V, class... F> requires (!HasSwitchOn<V>) ALWAYS_INLINE constexpr auto switchOn(V&& v, F&&... f) -> decltype(WTF::visit(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v))))
 {
     return WTF::visit(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v)));
 }
@@ -611,12 +629,12 @@ template<typename... Ts> struct HoldsAlternative<Variant<Ts...>> {
     }
 };
 
-template<typename T, typename V> bool holdsAlternative(const V& v)
+template<typename T, typename V> constexpr bool holdsAlternative(const V& v)
 {
     return HoldsAlternative<V>::template holdsAlternative<T>(v);
 }
 
-template<size_t I, typename V> bool holdsAlternative(const V& v)
+template<size_t I, typename V> constexpr bool holdsAlternative(const V& v)
 {
     return HoldsAlternative<V>::template holdsAlternative<I>(v);
 }
@@ -818,15 +836,6 @@ IteratorTypeDst mergeDeduplicatedSorted(IteratorTypeLeft leftBegin, IteratorType
     return dstIter;
 }
 
-// libstdc++5 does not have constexpr std::tie. Since we cannot redefine std::tie with constexpr, we define WTF::tie instead.
-// This workaround can be removed after 2019-04 and all users of WTF::tie can be converted to std::tie
-// For more info see: https://bugs.webkit.org/show_bug.cgi?id=180692 and https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65978
-template <class ...Args>
-constexpr std::tuple<Args&...> tie(Args&... values)
-{
-    return std::tuple<Args&...>(values...);
-}
-
 } // namespace WTF
 
 // This version of placement new omits a 0 check.
@@ -857,7 +866,7 @@ namespace WTF {
 template<class T, class... Args>
 ALWAYS_INLINE decltype(auto) makeUnique(Args&&... args)
 {
-    static_assert(std::is_same<typename T::WTFIsFastMallocAllocated, int>::value, "T should use FastMalloc (WTF_MAKE_FAST_ALLOCATED)");
+    static_assert(std::is_same<typename T::WTFIsFastMallocAllocated, int>::value, "T should use FastMalloc (WTF_DEPRECATED_MAKE_FAST_ALLOCATED)");
     static_assert(!HasRefPtrMemberFunctions<T>::value, "T should not be RefCounted");
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
@@ -869,7 +878,7 @@ ALWAYS_INLINE decltype(auto) makeUnique(Args&&... args)
 template<class T, class U = T, class... Args>
 ALWAYS_INLINE const std::unique_ptr<U> makeUniqueWithoutRefCountedCheck(Args&&... args)
 {
-    static_assert(std::is_same<typename T::WTFIsFastMallocAllocated, int>::value, "T should use FastMalloc (WTF_MAKE_FAST_ALLOCATED)");
+    static_assert(std::is_same<typename T::WTFIsFastMallocAllocated, int>::value, "T should use FastMalloc (WTF_DEPRECATED_MAKE_FAST_ALLOCATED)");
     return std::unique_ptr<U>(std::make_unique<T>(std::forward<Args>(args)...));
 }
 
@@ -1008,6 +1017,32 @@ bool equalSpans(std::span<T, TExtent> a, std::span<U, UExtent> b)
     return !memcmp(a.data(), b.data(), a.size_bytes()); // NOLINT
 }
 
+#if !HAVE(MEMMEM)
+
+inline const void* memmem(const void* haystack, size_t haystackLength, const void* needle, size_t needleLength)
+{
+    if (!needleLength)
+        return haystack;
+
+    if (haystackLength < needleLength)
+        return nullptr;
+
+    auto haystackSpan = unsafeMakeSpan(static_cast<const uint8_t*>(haystack), haystackLength);
+    auto needleSpan = unsafeMakeSpan(static_cast<const uint8_t*>(needle), needleLength);
+
+    size_t lastPossiblePosition = haystackLength - needleLength;
+
+    for (size_t i = 0; i <= lastPossiblePosition; ++i) {
+        auto candidateSpan = haystackSpan.subspan(i, needleLength);
+        if (equalSpans(candidateSpan, needleSpan))
+            return candidateSpan.data();
+    }
+
+    return nullptr;
+}
+
+#endif
+
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
 bool spanHasPrefix(std::span<T, TExtent> span, std::span<U, UExtent> prefix)
 {
@@ -1091,7 +1126,7 @@ template<typename T, std::size_t Extent>
 void memsetSpan(std::span<T, Extent> destination, uint8_t byte)
 {
     static_assert(std::is_trivially_copyable_v<T>);
-    memset(destination.data(), byte, destination.size_bytes()); // NOLINT
+    memset(static_cast<void*>(destination.data()), byte, destination.size_bytes()); // NOLINT
 }
 
 template<typename T, std::size_t Extent>
@@ -1214,7 +1249,7 @@ template <class T> inline typename std::enable_if<std::is_pointer<T>::value, T>:
 
 #define SAFE_SPRINTF(destinationSpan, format, ...) \
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN \
-    snprintf(destinationSpan.data(), destinationSpan.size_bytes(), format, SAFE_PRINTF_TYPE(__VA_ARGS__)) \
+    snprintf(destinationSpan.data(), destinationSpan.size_bytes(), format __VA_OPT__(, SAFE_PRINTF_TYPE(__VA_ARGS__))) \
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 template<typename T> concept ByteType = sizeof(T) == 1 && ((std::is_integral_v<T> && !std::same_as<T, bool>) || std::same_as<T, std::byte>) && !std::is_const_v<T>;
@@ -1348,8 +1383,8 @@ template<typename Head, typename... Tail> auto tuple_zip(Head&& head, Tail&& ...
     );
 }
 
-template<typename WordType, typename Func>
-ALWAYS_INLINE constexpr void forEachSetBit(std::span<const WordType> bits, const Func& func)
+template<typename WordType, std::size_t Extent, typename Func>
+ALWAYS_INLINE constexpr void forEachSetBit(std::span<const WordType, Extent> bits, const Func& func)
 {
     constexpr size_t wordSize = sizeof(WordType) * CHAR_BIT;
     for (size_t i = 0; i < bits.size(); ++i) {
@@ -1387,8 +1422,8 @@ ALWAYS_INLINE constexpr void forEachSetBit(std::span<const WordType> bits, const
     }
 }
 
-template<typename WordType, typename Func>
-ALWAYS_INLINE constexpr void forEachSetBit(std::span<const WordType> bits, size_t startIndex, const Func& func)
+template<typename WordType, std::size_t Extent, typename Func>
+ALWAYS_INLINE constexpr void forEachSetBit(std::span<const WordType, Extent> bits, size_t startIndex, const Func& func)
 {
     constexpr size_t wordSize = sizeof(WordType) * CHAR_BIT;
     auto iterate = [&](WordType word, size_t i) ALWAYS_INLINE_LAMBDA {
@@ -1483,6 +1518,7 @@ ALWAYS_INLINE std::optional<double> stringToDouble(std::span<const char> buffer,
 {
     RELEASE_ASSERT(buffer.back() == '\0');
     char* end;
+    errno = 0;
     auto result = std::strtod(buffer.data(), &end);
     if (errno == ERANGE) {
         parsedLength = 0;
@@ -1509,8 +1545,10 @@ namespace detail {
 template<typename T, typename U> using copy_const = std::conditional_t<std::is_const_v<T>, const U, U>;
 template<typename T, typename U> using override_ref = std::conditional_t<std::is_rvalue_reference_v<T>, std::remove_reference_t<U>&&, U&>;
 template<typename T, typename U> using forward_like_impl = override_ref<T&&, copy_const<std::remove_reference_t<T>, std::remove_reference_t<U>>>;
+template<typename T, typename U> using forward_like_preserving_const_impl = override_ref<T&&, std::remove_reference_t<U>>;
 } // namespace detail
 template<typename T, typename U> constexpr auto forward_like(U&& value) -> detail::forward_like_impl<T, U> { return static_cast<detail::forward_like_impl<T, U>>(value); }
+template<typename T, typename U> constexpr auto forward_like_preserving_const(U&& value) -> detail::forward_like_preserving_const_impl<T, U> { return static_cast<detail::forward_like_preserving_const_impl<T, U>>(value); }
 } // namespace WTF
 
 using WTF::GB;
@@ -1547,6 +1585,9 @@ using WTF::makeUnique;
 using WTF::makeUniqueWithoutFastMallocCheck;
 using WTF::makeUniqueWithoutRefCountedCheck;
 using WTF::memcpySpan;
+#if !HAVE(MEMMEM)
+using WTF::memmem;
+#endif
 using WTF::memmoveSpan;
 using WTF::memsetSpan;
 using WTF::mergeDeduplicatedSorted;

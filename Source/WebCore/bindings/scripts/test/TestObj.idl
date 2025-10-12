@@ -46,6 +46,13 @@ enum TestObjKind { "quick", "dead" };
 enum ObjSize { "small", "much-much-larger" };
 enum TestConfidence { "high", "kinda-low" };
 
+[MissingValueDefault="value1"] enum TestEnumWithMissingValueDefault { "value1", "value2", "value3", "" };
+[InvalidValueDefault="value2"] enum TestEnumWithInvalidValueDefault { "value1", "value2", "value3", "" };
+[MissingValueDefault="value1", InvalidValueDefault="value2"] enum TestEnumWithMissingAndInvalidValueDefault { "value1", "value2", "value3", "" };
+[MissingValueDefault=value1] enum TestEnumWithMissingValueDefaultNoQuotes { "value1", "value2", "value3", "" };
+[MissingValueDefault] enum TestEnumWithMissingValueDefaultAsEmptyValue { "value1", "value2", "value3", "" };
+[MissingValueDefault="foo"] enum TestEnumWithMissingValueDefaultNotInEnumValues { "value1", "value2", "value3", "" };
+
 [
     InterfaceName=TestObject,
     Exposed=(Window,Worker)
@@ -92,6 +99,8 @@ enum TestConfidence { "high", "kinda-low" };
     attribute TestDictionary? nullableDictionaryAttr;
     attribute (DOMString or [Clamp] long or undefined) annotatedTypeInUnionAttr;
     attribute sequence<[Clamp] long> annotatedTypeInSequenceAttr;
+    attribute (long or Node) unionAttr;
+    [OptimizedUnionSetterUsingOverloads] attribute (long or Node) optimizedSetterUnionAttr;
 
     attribute TestEnumTypeWithAlternateImplementationName implementationEnumAttr;
 
@@ -101,20 +110,50 @@ enum TestConfidence { "high", "kinda-low" };
     attribute TestObj                  XMLObjAttr;
     attribute boolean                  create;
 
-    // Reflected DOM attributes
+    // Reflected IDL attributes
     [Reflect] attribute DOMString reflectedStringAttr;
+    [Reflect, Enumerated=TestEnumWithMissingValueDefault] attribute DOMString reflectedEnumWithMissingValueDefaultStringAttr;
+    [Reflect, Enumerated=TestEnumWithInvalidValueDefault] attribute DOMString reflectedEnumWithInvalidValueDefaultStringAttr;
+    [Reflect, Enumerated=TestEnumWithMissingAndInvalidValueDefault] attribute DOMString reflectedEnumWithInvalidAndMissingValueDefaultStringAttr;
+    [Reflect, Enumerated=TestEnumWithMissingValueDefaultNoQuotes] attribute DOMString reflectedEnumWithMissingValueDefaultNoQuotesStringAttr; 
+    [Reflect, Enumerated] attribute DOMString reflectedEnumWithNoEnumerationSpecified;
+    [Reflect, Enumerated=foo] attribute DOMString reflectedEnumWithInvalidEnumSpecified; 
+    [Reflect, Enumerated=TestEnumWithMissingValueDefaultAsEmptyValue] attribute DOMString reflectedEnumWithMissingValueDefaultAsEmptyValue; 
+    [Reflect, Enumerated=TestEnumWithMissingValueDefaultNotInEnumValues] attribute DOMString reflectedEnumWithMissingValueDefaultNotInEnumValues;
+    [Enumerated=foo] attribute DOMString fauxEnumReflectedStringMissingReflectAttribute; 
     [Reflect] attribute USVString reflectedUSVStringAttr;
     [Reflect] attribute long reflectedIntegralAttr;
     [Reflect] attribute unsigned long reflectedUnsignedIntegralAttr;
     [Reflect] attribute boolean reflectedBooleanAttr;
     [Reflect] attribute Element reflectedElementAttr;
     [Reflect] attribute FrozenArray<Element> reflectedElementsArrayAttr;
-    [Reflect, URL] attribute DOMString reflectedURLAttr;
-    [Reflect, URL] attribute USVString reflectedUSVURLAttr;
-    [Reflect=customContentStringAttr] attribute DOMString reflectedStringAttr;
-    [Reflect=customContentIntegralAttr] attribute long reflectedCustomIntegralAttr;
-    [Reflect=customContentBooleanAttr] attribute boolean reflectedCustomBooleanAttr;
-    [Reflect=customContentURLAttr, URL] attribute DOMString reflectedCustomURLAttr;
+    [ReflectURL] attribute DOMString reflectedURLAttr;
+    [ReflectURL] attribute USVString reflectedUSVURLAttr;
+    [Reflect="custom-content-string"] attribute DOMString reflectedStringAttr;
+    [Reflect="custom-content-integral"] attribute long reflectedCustomIntegralAttr;
+    [Reflect="custom-content-boolean"] attribute boolean reflectedCustomBooleanAttr;
+    [ReflectURL="custom-content-url"] attribute DOMString reflectedCustomURLAttr;
+
+    // Reflected nullable IDL attributes
+    [Reflect] attribute DOMString? reflectedNullableStringAttr;
+    [Reflect, Enumerated=TestEnumWithMissingValueDefault] attribute DOMString? reflectedNullableEnumWithMissingValueDefaultStringAttr;
+    [Reflect, Enumerated=TestEnumWithInvalidValueDefault] attribute DOMString? reflectedNullableEnumWithInvalidValueDefaultStringAttr;
+    [Reflect, Enumerated=TestEnumWithMissingAndInvalidValueDefault] attribute DOMString? reflectedNullableEnumWithInvalidAndMissingValueDefaultStringAttr;
+    [Reflect, Enumerated=TestEnumWithMissingValueDefaultNoQuotes] attribute DOMString? reflectedNullableEnumWithMissingValueDefaultNoQuotesStringAttr; 
+    [Reflect="contentattribute", Enumerated=TestEnumWithMissingAndInvalidValueDefault] attribute DOMString? reflectedNullableStringAttrIsSpecifiedWithQuotesAttr;
+    [Reflect="content-attribute", Enumerated=TestEnumWithMissingAndInvalidValueDefault] attribute DOMString? reflectedNullableStringHyphenatedAttrIsSpecifiedWithQuotesAttr;
+
+    // Reflected for setter only IDL attributes
+    [ReflectSetter] attribute DOMString reflectedSetterStringAttr;
+    [ReflectSetter] attribute USVString reflectedSetterUSVStringAttr;
+    [ReflectSetter] attribute long reflectedSetterIntegralAttr;
+    [ReflectSetter] attribute unsigned long reflectedSetterUnsignedIntegralAttr;
+    [ReflectSetter] attribute boolean reflectedSetterBooleanAttr;
+    [ReflectSetter] attribute Element reflectedSetterElementAttr;
+    [ReflectSetter] attribute FrozenArray<Element> reflectedSetterElementsArrayAttr;
+    [ReflectSetter="custom-content-string"] attribute DOMString reflectedSetterStringAttr;
+    [ReflectSetter="custom-content-integral"] attribute long reflectedSetterCustomIntegralAttr;
+    [ReflectSetter="custom-content-boolean"] attribute boolean reflectedSetterCustomBooleanAttr;
 
     // [EnabledByDeprecatedGlobalSetting] attributes and operations.
     [Conditional=TEST_FEATURE, EnabledByDeprecatedGlobalSetting=TestFeatureEnabled&TestFeature1Enabled] attribute DOMString enabledAtRuntimeAttribute;

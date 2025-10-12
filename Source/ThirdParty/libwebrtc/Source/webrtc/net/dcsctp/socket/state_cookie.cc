@@ -9,11 +9,13 @@
  */
 #include "net/dcsctp/socket/state_cookie.h"
 
+#include <cstddef>
 #include <cstdint>
 #include <optional>
 #include <vector>
 
 #include "api/array_view.h"
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
 #include "net/dcsctp/socket/capabilities.h"
@@ -49,7 +51,7 @@ std::vector<uint8_t> StateCookie::Serialize() {
 }
 
 std::optional<StateCookie> StateCookie::Deserialize(
-    rtc::ArrayView<const uint8_t> cookie) {
+    webrtc::ArrayView<const uint8_t> cookie) {
   if (cookie.size() != kCookieSize) {
     RTC_DLOG(LS_WARNING) << "Invalid state cookie: " << cookie.size()
                          << " bytes";

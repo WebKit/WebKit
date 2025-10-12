@@ -34,6 +34,7 @@
 namespace WebKit {
 
 struct WebExtensionMessageTargetParameters {
+    std::optional<WebPageProxyIdentifier> pageProxyIdentifier;
     std::optional<WebExtensionFrameIdentifier> frameIdentifier;
     Markable<WTF::UUID> documentIdentifier;
 };

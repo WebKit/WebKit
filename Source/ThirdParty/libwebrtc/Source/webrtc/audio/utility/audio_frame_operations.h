@@ -11,12 +11,11 @@
 #ifndef AUDIO_UTILITY_AUDIO_FRAME_OPERATIONS_H_
 #define AUDIO_UTILITY_AUDIO_FRAME_OPERATIONS_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include <cstddef>
+#include <cstdint>
 
-#include "absl/base/attributes.h"
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
+#include "api/audio/audio_view.h"
 
 namespace webrtc {
 

@@ -8,17 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stdio.h>
-
 #include <charconv>
+#include <cstdio>
+#include <cstring>
+#include <memory>
 #include <string>
+#include <vector>
 
-#include "api/scoped_refptr.h"
-#include "api/video/i420_buffer.h"
+#include "absl/strings/string_view.h"
+#include "api/video/resolution.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
-#include "rtc_base/logging.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/string_encode.h"
-#include "rtc_base/strings/string_builder.h"
 #include "test/testsupport/file_utils.h"
 #include "test/testsupport/frame_reader.h"
 
@@ -32,15 +33,15 @@ void ParseY4mHeader(std::string filepath,
                     Resolution* resolution,
                     int* header_size) {
   FILE* file = fopen(filepath.c_str(), "r");
-  RTC_CHECK(file != NULL) << "Cannot open " << filepath;
+  RTC_CHECK(file != nullptr) << "Cannot open " << filepath;
 
   // Length of Y4M header is technically unlimited due to the comment tag 'X'.
   char h[1024];
-  RTC_CHECK(fgets(h, sizeof(h), file) != NULL)
+  RTC_CHECK(fgets(h, sizeof(h), file) != nullptr)
       << "File " << filepath << " is too small";
   fclose(file);
 
-  std::vector<absl::string_view> header = rtc::split(h, ' ');
+  std::vector<absl::string_view> header = split(h, ' ');
   RTC_CHECK(!header.empty() && header[0] == "YUV4MPEG2")
       << filepath << " is not a valid Y4M file";
 

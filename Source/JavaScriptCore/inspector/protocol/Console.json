@@ -13,7 +13,6 @@
                 "network",
                 "console-api",
                 "storage",
-                "appcache",
                 "rendering",
                 "css",
                 "accessibility",

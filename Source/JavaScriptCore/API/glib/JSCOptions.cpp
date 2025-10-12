@@ -191,7 +191,7 @@ static gboolean jscOptionsSetValue(const char* option, const GValue* value)
         return TRUE;                                                    \
     }
 
-    Options::initialize();
+    Options::initialize([] { });
     FOR_EACH_JSC_OPTION(SET_OPTION_VALUE)
 #undef SET_OPTION_VALUE
 
@@ -209,7 +209,7 @@ static gboolean jscOptionsGetValue(const char* option, GValue* value)
         return TRUE;                                                    \
     }
 
-    Options::initialize();
+    Options::initialize([] { });
     FOR_EACH_JSC_OPTION(GET_OPTION_VALUE)
 #undef GET_OPTION_VALUE
 
@@ -646,7 +646,7 @@ void jsc_options_foreach(JSCOptionsFunc function, gpointer userData)
             return;                                                     \
     }
 
-    Options::initialize();
+    Options::initialize([] { });
     FOR_EACH_JSC_OPTION(VISIT_OPTION)
 #undef VISIT_OPTION
 }
@@ -703,7 +703,7 @@ GOptionGroup* jsc_options_get_option_group(void)
         names->append(WTFMove(name));                                   \
     }
 
-    Options::initialize();
+    Options::initialize([] { });
     FOR_EACH_JSC_OPTION(REGISTER_OPTION)
 #undef REGISTER_OPTION
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

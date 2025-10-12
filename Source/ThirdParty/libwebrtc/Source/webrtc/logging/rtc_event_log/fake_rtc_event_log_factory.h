@@ -15,6 +15,7 @@
 
 #include "absl/base/nullability.h"
 #include "api/environment/environment.h"
+#include "api/rtc_event_log/rtc_event_log.h"
 #include "api/rtc_event_log/rtc_event_log_factory_interface.h"
 #include "logging/rtc_event_log/fake_rtc_event_log.h"
 
@@ -25,7 +26,7 @@ class FakeRtcEventLogFactory : public RtcEventLogFactoryInterface {
   FakeRtcEventLogFactory() = default;
   ~FakeRtcEventLogFactory() override = default;
 
-  absl::Nonnull<std::unique_ptr<RtcEventLog>> Create(
+  absl_nonnull std::unique_ptr<RtcEventLog> Create(
       const Environment& env) const override;
 
   FakeRtcEventLog* last_log_created() { return last_log_created_; }

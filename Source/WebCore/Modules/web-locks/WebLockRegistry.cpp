@@ -42,7 +42,7 @@ static RefPtr<WebLockRegistry>& sharedRegistry()
     return registry;
 }
 
-WebLockRegistry& WebLockRegistry::shared()
+WebLockRegistry& WebLockRegistry::singleton()
 {
     auto& registry = sharedRegistry();
     if (!registry)

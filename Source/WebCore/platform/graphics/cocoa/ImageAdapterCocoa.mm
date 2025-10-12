@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,9 @@
 #import "FloatRect.h"
 #import "GraphicsContext.h"
 #import "SharedBuffer.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/WTFString.h>
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
@@ -80,10 +82,7 @@ RetainPtr<CFDataRef> ImageAdapter::tiffRepresentation(const Vector<Ref<NativeIma
 
     RetainPtr<CFMutableDataRef> data = adoptCF(CFDataCreateMutable(0, 0));
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData(data.get(), kUTTypeTIFF, nativeImages.size(), 0));
-ALLOW_DEPRECATED_DECLARATIONS_END
-
+    RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData(data.get(), bridge_cast(UTTypeTIFF.identifier), nativeImages.size(), 0));
     if (!destination)
         return nullptr;
 

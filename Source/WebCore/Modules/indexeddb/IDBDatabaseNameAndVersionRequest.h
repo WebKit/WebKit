@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "IDBActiveDOMObject.h"
-#include "IDBDatabaseNameAndVersion.h"
-#include "IDBResourceIdentifier.h"
+#include <WebCore/IDBActiveDOMObject.h>
+#include <WebCore/IDBDatabaseNameAndVersion.h>
+#include <WebCore/IDBResourceIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
@@ -66,7 +66,7 @@ private:
     bool virtualHasPendingActivity() const final;
     void stop() final;
 
-    Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
+    const Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
     IDBResourceIdentifier m_resourceIdentifier;
     InfoCallback m_callback;
 };

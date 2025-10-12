@@ -176,7 +176,7 @@ private:
 class ObjectBase : public Value {
 private:
     friend class Value;
-    using DataStorage = UncheckedKeyHashMap<String, Ref<Value>>;
+    using DataStorage = HashMap<String, Ref<Value>>;
     using OrderStorage = Vector<String>;
 
 public:

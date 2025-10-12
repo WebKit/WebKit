@@ -32,7 +32,7 @@ namespace webrtc {
 // needs to be in Annex B format. Data is written directly to |annexb_buffer|.
 bool H264CMSampleBufferToAnnexBBuffer(CMSampleBufferRef avcc_sample_buffer,
                                       bool is_keyframe,
-                                      rtc::Buffer* annexb_buffer);
+                                      webrtc::Buffer* annexb_buffer);
 
 // Converts a buffer received from RTP into a sample buffer suitable for the
 // VideoToolbox decoder. The RTP buffer is in annex b format whereas the sample
@@ -61,7 +61,7 @@ std::optional<H264Information> ComputeH264InfoFromAVC(const uint8_t* avcdata, si
 // needs to be in Annex B format. Data is written directly to |annexb_buffer|.
 bool H265CMSampleBufferToAnnexBBuffer(CMSampleBufferRef avcc_sample_buffer,
                                       bool is_keyframe,
-                                      rtc::Buffer* annexb_buffer);
+                                      webrtc::Buffer* annexb_buffer);
 
 // Converts a buffer received from RTP into a sample buffer suitable for the
 // VideoToolbox decoder. The RTP buffer is in annex b format whereas the sample

@@ -1150,6 +1150,31 @@ cl_mem CL_API_CALL clCreateImageWithProperties(cl_context context,
                                                          image_desc, host_ptr, errcode_ret);
 }
 
+// cl_khr_external_memory
+cl_int CL_API_CALL clEnqueueAcquireExternalMemObjectsKHR(cl_command_queue command_queue,
+                                                         cl_uint num_mem_objects,
+                                                         const cl_mem *mem_objects,
+                                                         cl_uint num_events_in_wait_list,
+                                                         const cl_event *event_wait_list,
+                                                         cl_event *event)
+{
+    return cl::GetDispatch().clEnqueueAcquireExternalMemObjectsKHR(
+        command_queue, num_mem_objects, mem_objects, num_events_in_wait_list, event_wait_list,
+        event);
+}
+
+cl_int CL_API_CALL clEnqueueReleaseExternalMemObjectsKHR(cl_command_queue command_queue,
+                                                         cl_uint num_mem_objects,
+                                                         const cl_mem *mem_objects,
+                                                         cl_uint num_events_in_wait_list,
+                                                         const cl_event *event_wait_list,
+                                                         cl_event *event)
+{
+    return cl::GetDispatch().clEnqueueReleaseExternalMemObjectsKHR(
+        command_queue, num_mem_objects, mem_objects, num_events_in_wait_list, event_wait_list,
+        event);
+}
+
 // cl_khr_icd
 cl_int CL_API_CALL clIcdGetPlatformIDsKHR(cl_uint num_entries,
                                           cl_platform_id *platforms,

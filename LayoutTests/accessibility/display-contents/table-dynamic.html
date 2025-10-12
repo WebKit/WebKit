@@ -109,7 +109,9 @@ if (window.accessibilityController) {
             var tableOne = accessibilityController.accessibleElementById("t1");
             if (!tableZero || !tableOne)
                 return false;
-            return tableZero.rowCount >= 4 && tableOne.rowCount === 2;
+            if (tableZero.rowCount !== 4 || tableOne.rowCount !== 2)
+                return false;
+            return tableZero.cellForColumnAndRow(0, 3).role.toLowerCase().includes("cell");
         });
 
         dumpTable("t0", 4, 2, false /* useExpect */);

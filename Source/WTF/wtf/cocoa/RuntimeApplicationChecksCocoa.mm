@@ -155,9 +155,6 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
         disableBehavior(SDKAlignedBehavior::NoPokerBrosBuiltInTagQuirk);
     }
 
-    if (linkedBefore(dyld_late_fall_2020_os_versions, DYLD_IOS_VERSION_14_2, DYLD_MACOSX_VERSION_10_16))
-        disableBehavior(SDKAlignedBehavior::SupportsiOSAppsOnMacOS);
-
     if (linkedBefore(dyld_spring_2021_os_versions, DYLD_IOS_VERSION_14_5, DYLD_MACOSX_VERSION_11_3)) {
         disableBehavior(SDKAlignedBehavior::DataURLFragmentRemoval);
         disableBehavior(SDKAlignedBehavior::HTMLDocumentSupportedPropertyNames);
@@ -221,7 +218,6 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
         disableBehavior(SDKAlignedBehavior::FullySuspendsBackgroundContentImmediately);
         disableBehavior(SDKAlignedBehavior::ApplicationStateTrackerDoesNotObserveWindow);
         disableBehavior(SDKAlignedBehavior::ThrowOnKVCInstanceVariableAccess);
-        disableBehavior(SDKAlignedBehavior::BlockOptionallyBlockableMixedContent);
         disableBehavior(SDKAlignedBehavior::LaxCookieSameSiteAttribute);
         disableBehavior(SDKAlignedBehavior::UseCFNetworkNetworkLoader);
         disableBehavior(SDKAlignedBehavior::BlocksConnectionsToAddressWithOnlyZeros);
@@ -229,8 +225,21 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
         disableBehavior(SDKAlignedBehavior::SupportGameControllerEventInteractionAPI);
     }
 
+    if (linkedBefore(dyld_2024_SU_C_os_versions, DYLD_IOS_VERSION_18_2, DYLD_MACOSX_VERSION_15_2))
+        disableBehavior(SDKAlignedBehavior::BlobFileAccessEnforcementAndNetworkProcessRoundTrip);
+
+    if (linkedBefore(dyld_2024_SU_E_os_versions, DYLD_IOS_VERSION_18_4, DYLD_MACOSX_VERSION_15_4)) {
+        disableBehavior(SDKAlignedBehavior::DevolvableWidgets);
+        disableBehavior(SDKAlignedBehavior::SetSelectionRangeCachesSelectionIfNotFocusedOrSelected);
+        disableBehavior(SDKAlignedBehavior::DispatchFocusEventBeforeNotifyingClient);
+        disableBehavior(SDKAlignedBehavior::BlobFileAccessEnforcement);
+    }
+
     if (linkedBefore(dyld_2024_SU_F_os_versions, DYLD_IOS_VERSION_18_5, DYLD_MACOSX_VERSION_15_5))
         disableBehavior(SDKAlignedBehavior::NavigationActionSourceFrameNonNull);
+
+    if (linkedBefore(dyld_2025_SU_B_os_versions, DYLD_IOS_VERSION_26_1, DYLD_MACOSX_VERSION_26_1))
+        disableBehavior(SDKAlignedBehavior::AllowBackgroundAudioPlayback);
 
     disableAdditionalSDKAlignedBehaviors(behaviors);
 
@@ -355,10 +364,10 @@ static bool applicationBundleIsEqualTo(const String& bundleIdentifierString)
     return applicationBundleIdentifier() == bundleIdentifierString;
 }
 
-bool CocoaApplication::isIBooks()
+bool CocoaApplication::isAppleBooks()
 {
-    static bool isIBooks = applicationBundleIsEqualTo("com.apple.iBooksX"_s) || applicationBundleIsEqualTo("com.apple.iBooks"_s);
-    return isIBooks;
+    static bool isAppleBooks = applicationBundleIsEqualTo("com.apple.iBooksX"_s) || applicationBundleIsEqualTo("com.apple.iBooks"_s);
+    return isAppleBooks;
 }
 
 bool CocoaApplication::isWebkitTestRunner()
@@ -371,6 +380,43 @@ bool CocoaApplication::isAppleApplication()
 {
     static bool isAppleApplication = applicationBundleIdentifier().startsWith("com.apple."_s);
     return isAppleApplication;
+}
+
+bool CocoaApplication::isDumpRenderTree()
+{
+#if PLATFORM(MAC)
+    static bool isDumpRenderTree = applicationBundleIsEqualTo("com.apple.WebKit.DumpRenderTree"_s);
+    return isDumpRenderTree;
+#else
+    static bool isDumpRenderTree = applicationBundleIsEqualTo("org.webkit.DumpRenderTree"_s);
+    return isDumpRenderTree;
+#endif
+}
+
+bool CocoaApplication::shouldOSFaultLogForAppleApplicationUsingWebKit1()
+{
+    static bool bundleIdentifierShouldLog;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        bundleIdentifierShouldLog = []() -> bool {
+            if (!isAppleApplication())
+                return false;
+
+            String bundleIdentifier = applicationBundleIdentifier();
+            if (bundleIdentifier.startsWith("com.apple.InstallerRemotePluginService."_s))
+                return false;
+            if (applicationBundleIsEqualTo("com.apple.WebKit.TestWebKitAPI"_s))
+                return false;
+            if (applicationBundleIsEqualTo("com.apple.ibtool"_s))
+                return false;
+            if (CocoaApplication::isDumpRenderTree())
+                return false;
+
+            return true;
+        }();
+    });
+
+    return bundleIdentifierShouldLog && !((rand() * 1000) % 1000);
 }
 
 #if PLATFORM(MAC)
@@ -477,14 +523,6 @@ bool IOSApplication::isWebBookmarksD()
     return isWebBookmarksD;
 }
 
-bool IOSApplication::isDumpRenderTree()
-{
-    // We use a prefix match instead of strict equality since multiple instances of DumpRenderTree
-    // may be launched, where the bundle identifier of each instance has a unique suffix.
-    static bool isDumpRenderTree = applicationBundleIsEqualTo("org.webkit.DumpRenderTree"_s); // e.g. org.webkit.DumpRenderTree0
-    return isDumpRenderTree;
-}
-
 bool IOSApplication::isMobileStore()
 {
     static bool isMobileStore = applicationBundleIsEqualTo("com.apple.MobileStore"_s);
@@ -495,12 +533,6 @@ bool IOSApplication::isMobileStore()
 bool IOSApplication::isWebProcess()
 {
     return isInWebProcess();
-}
-
-bool IOSApplication::isIBooksStorytime()
-{
-    static bool isIBooksStorytime = applicationBundleIsEqualTo("com.apple.TVBooks"_s);
-    return isIBooksStorytime;
 }
 
 bool IOSApplication::isHoYoLAB()
@@ -545,64 +577,10 @@ bool IOSApplication::isFeedly()
     return isFeedly;
 }
 
-bool IOSApplication::isPocketCity()
-{
-    static bool isPocketCity = applicationBundleIsEqualTo("com.codebrewgames.pocketcity"_s);
-    return isPocketCity;
-}
-
 bool IOSApplication::isEssentialSkeleton()
 {
     static bool isEssentialSkeleton = applicationBundleIsEqualTo("com.3d4medical.EssentialSkeleton"_s);
     return isEssentialSkeleton;
-}
-
-bool IOSApplication::isESPNFantasySports()
-{
-    static bool isESPNFantasySports = applicationBundleIsEqualTo("com.espn.fantasyFootball"_s);
-    return isESPNFantasySports;
-}
-
-bool IOSApplication::isDoubleDown()
-{
-    static bool isDoubleDown = applicationBundleIsEqualTo("com.doubledowninteractive.DDCasino"_s);
-    return isDoubleDown;
-}
-
-bool IOSApplication::isFIFACompanion()
-{
-    static bool isFIFACompanion = applicationBundleIsEqualTo("com.ea.ios.fifaultimate"_s);
-    return isFIFACompanion;
-}
-
-bool IOSApplication::isNoggin()
-{
-    static bool isNoggin = applicationBundleIsEqualTo("com.mtvn.noggin"_s);
-    return isNoggin;
-}
-
-bool IOSApplication::isOKCupid()
-{
-    static bool isOKCupid = applicationBundleIsEqualTo("com.okcupid.app"_s);
-    return isOKCupid;
-}
-
-bool IOSApplication::isJWLibrary()
-{
-    static bool isJWLibrary = applicationBundleIsEqualTo("org.jw.jwlibrary"_s);
-    return isJWLibrary;
-}
-
-bool IOSApplication::isPaperIO()
-{
-    static bool isPaperIO = applicationBundleIsEqualTo("io.voodoo.paperio"_s);
-    return isPaperIO;
-}
-
-bool IOSApplication::isCrunchyroll()
-{
-    static bool isCrunchyroll = applicationBundleIsEqualTo("com.crunchyroll.iphone"_s);
-    return isCrunchyroll;
 }
 
 bool IOSApplication::isUNIQLOApp()
@@ -621,6 +599,18 @@ bool IOSApplication::isMyRideK12()
 {
     static bool isMyRideK12 = applicationBundleIsEqualTo("com.tylertech.myridek12"_s);
     return isMyRideK12;
+}
+
+bool IOSApplication::isFirefox()
+{
+    static bool isFirefox = applicationBundleIsEqualTo("org.mozilla.ios.Firefox"_s);
+    return isFirefox;
+}
+
+bool IOSApplication::isFirefoxFocus()
+{
+    static bool isFirefoxFocus = applicationBundleIsEqualTo("org.mozilla.ios.Focus"_s);
+    return isFirefoxFocus;
 }
 
 bool IOSApplication::isHimalaya()

@@ -11,6 +11,7 @@
 #include "modules/audio_processing/agc2/clipping_predictor_level_buffer.h"
 
 #include <algorithm>
+#include <optional>
 
 #include "test/gmock.h"
 #include "test/gtest.h"

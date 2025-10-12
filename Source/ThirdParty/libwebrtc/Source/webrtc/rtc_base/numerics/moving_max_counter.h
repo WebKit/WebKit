@@ -20,7 +20,7 @@
 
 #include "rtc_base/checks.h"
 
-namespace rtc {
+namespace webrtc {
 
 // Implements moving max: can add samples to it and calculate maximum over some
 // fixed moving window.
@@ -113,6 +113,7 @@ void MovingMaxCounter<T>::RollWindow(int64_t new_time_ms) {
   samples_.erase(samples_.begin(), it);
 }
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_NUMERICS_MOVING_MAX_COUNTER_H_

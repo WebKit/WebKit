@@ -197,7 +197,8 @@ private:
                 break;
 
             case GetByOffset: {
-                if (node->child1()->op() == GetButterfly
+                if (!node->hasDoubleResult()
+                    && node->child1()->op() == GetButterfly
                     && candidateButterflies.contains(node->child1().node())
                     && node->child2() == candidate
                     && node->storageAccessData().offset == clonedArgumentsLengthPropertyOffset) {

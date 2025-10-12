@@ -59,6 +59,7 @@ private:
     std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) final;
     std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) final;
     std::unique_ptr<PlatformControl> createPlatformToggleButton(ToggleButtonPart&) final;
+    Type type() const final { return Type::Empty; }
 };
 
 } // namespace WebCore

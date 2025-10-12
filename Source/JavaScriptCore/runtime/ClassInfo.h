@@ -22,8 +22,8 @@
 
 #pragma once
 
-#include "ConstructData.h"
-#include "JSCast.h"
+#include <JavaScriptCore/ConstructData.h>
+#include <JavaScriptCore/JSCast.h>
 #include <wtf/CompactPtr.h>
 #include <wtf/PtrTag.h>
 

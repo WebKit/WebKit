@@ -47,6 +47,7 @@
 #include "Logging.h"
 #include "MediaConstraints.h"
 #include "MediaDevices.h"
+#include "MediaSessionManagerInterface.h"
 #include "MediaStream.h"
 #include "MediaStreamPrivate.h"
 #include "NavigatorMediaDevices.h"
@@ -100,11 +101,20 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
     m_isInterrupted = m_private->interrupted();
 
     if (m_private->isAudio())
-        PlatformMediaSessionManager::singleton().addAudioCaptureSource(*this);
+        if (RefPtr manager = mediaSessionManager())
+            manager->addAudioCaptureSource(*this);
 }
 
 MediaStreamTrack::~MediaStreamTrack()
 {
+    if (isCaptureTrack() && !ended()) {
+        if (RefPtr context = scriptExecutionContext()) {
+            context->postTask([](auto& context) {
+                context.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "A capture MediaStreamTrack was destroyed without having been stopped explicitly"_s);
+            });
+        }
+    }
+
     m_private->removeObserver(*this);
     stopTrack();
 
@@ -112,7 +122,8 @@ MediaStreamTrack::~MediaStreamTrack()
         return;
 
     if (m_private->isAudio())
-        PlatformMediaSessionManager::singleton().removeAudioCaptureSource(*this);
+        if (RefPtr manager = mediaSessionManager())
+            manager->removeAudioCaptureSource(*this);
 }
 
 const AtomString& MediaStreamTrack::kind() const
@@ -250,7 +261,8 @@ void MediaStreamTrack::stopTrack(StopMode mode)
     m_ended = true;
 
     if (isAudio() && isCaptureTrack())
-        PlatformMediaSessionManager::singleton().audioCaptureSourceStateChanged();
+        if (RefPtr manager = mediaSessionManager())
+            manager->audioCaptureSourceStateChanged();
 
     configureTrackRendering();
 }
@@ -259,9 +271,9 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
 {
     auto& settings = m_private->settings();
     TrackSettings result;
-    if (settings.supportsWidth())
+    if (settings.supportsWidth() && settings.width())
         result.width = settings.width();
-    if (settings.supportsHeight())
+    if (settings.supportsHeight() && settings.height())
         result.height = settings.height();
     if (settings.supportsAspectRatio() && result.height && result.width)
         result.aspectRatio = *result.width / static_cast<double>(*result.height);
@@ -315,7 +327,7 @@ auto MediaStreamTrack::takePhoto(PhotoSettings&& settings) -> Ref<TakePhotoPromi
 {
     ASSERT(!m_ended);
 
-    return m_private->takePhoto(WTFMove(settings))->whenSettled(RunLoop::protectedMain(), [protectedThis = Ref { *this }] (auto&& result) mutable {
+    return m_private->takePhoto(WTFMove(settings))->whenSettled(RunLoop::mainSingleton(), [protectedThis = Ref { *this }] (auto&& result) mutable {
 
         // https://w3c.github.io/mediacapture-image/#dom-imagecapture-takephoto
         // If the operation cannot be completed for any reason (for example, upon
@@ -337,7 +349,7 @@ auto MediaStreamTrack::getPhotoCapabilities() -> Ref<PhotoCapabilitiesPromise>
 {
     ASSERT(!m_ended);
 
-    return m_private->getPhotoCapabilities()->whenSettled(RunLoop::protectedMain(), [protectedThis = Ref { *this }] (auto&& result) mutable {
+    return m_private->getPhotoCapabilities()->whenSettled(RunLoop::mainSingleton(), [protectedThis = Ref { *this }] (auto&& result) mutable {
 
         // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotocapabilities②
         // If the data cannot be gathered for any reason (for example, the MediaStreamTrack being ended
@@ -358,7 +370,7 @@ auto MediaStreamTrack::getPhotoSettings() -> Ref<PhotoSettingsPromise>
 {
     ASSERT(!m_ended);
 
-    return m_private->getPhotoSettings()->whenSettled(RunLoop::protectedMain(), [protectedThis = Ref { *this }] (auto&& result) mutable {
+    return m_private->getPhotoSettings()->whenSettled(RunLoop::mainSingleton(), [protectedThis = Ref { *this }] (auto&& result) mutable {
 
         // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotosettings②
         // If the data cannot be gathered for any reason (for example, the MediaStreamTrack being ended
@@ -480,7 +492,8 @@ void MediaStreamTrack::trackStarted(MediaStreamTrackPrivate&)
 void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
 {
     if (m_isCaptureTrack && m_private->isAudio())
-        PlatformMediaSessionManager::singleton().removeAudioCaptureSource(*this);
+        if (RefPtr manager = mediaSessionManager())
+            manager->removeAudioCaptureSource(*this);
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -531,7 +544,8 @@ void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
         m_muted = muted;
 
         if (isAudio() && isCaptureTrack())
-            PlatformMediaSessionManager::singleton().audioCaptureSourceStateChanged();
+            if (RefPtr manager = mediaSessionManager())
+                manager->audioCaptureSourceStateChanged();
 
         dispatchEvent(Event::create(muted ? eventNames().muteEvent : eventNames().unmuteEvent, Event::CanBubble::No, Event::IsCancelable::No));
     };
@@ -644,6 +658,19 @@ Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, 
     }
 
     return track;
+}
+
+RefPtr<MediaSessionManagerInterface> MediaStreamTrack::mediaSessionManager() const
+{
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (!document)
+        return nullptr;
+
+    RefPtr page = document->page();
+    if (!page)
+        return nullptr;
+
+    return page->mediaSessionManager();
 }
 
 ScriptExecutionContext* MediaStreamTrack::scriptExecutionContext() const

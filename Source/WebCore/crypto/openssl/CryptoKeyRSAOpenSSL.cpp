@@ -230,7 +230,7 @@ void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgor
 RefPtr<CryptoKeyRSA> CryptoKeyRSA::importSpki(CryptoAlgorithmIdentifier identifier, std::optional<CryptoAlgorithmIdentifier> hash, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
     // We need a local pointer variable to pass to d2i (DER to internal) functions().
-    const uint8_t* ptr = keyData.data();
+    const uint8_t* ptr = keyData.span().data();
 
     // We use d2i_PUBKEY() to import a public key.
     auto pkey = EvpPKeyPtr(d2i_PUBKEY(nullptr, &ptr, keyData.size()));
@@ -243,7 +243,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importSpki(CryptoAlgorithmIdentifier identifi
 RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier identifier, std::optional<CryptoAlgorithmIdentifier> hash, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
     // We need a local pointer variable to pass to d2i (DER to internal) functions().
-    const uint8_t* ptr = keyData.data();
+    const uint8_t* ptr = keyData.span().data();
 
     // We use d2i_PKCS8_PRIV_KEY_INFO() to import a private key.
     auto p8inf = PKCS8PrivKeyInfoPtr(d2i_PKCS8_PRIV_KEY_INFO(nullptr, &ptr, keyData.size()));
@@ -267,7 +267,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
         return Exception { ExceptionCode::OperationError };
 
     Vector<uint8_t> keyData(len);
-    auto ptr = keyData.data();
+    auto ptr = keyData.mutableSpan().data();
     if (i2d_PUBKEY(platformKey(), &ptr) < 0)
         return Exception { ExceptionCode::OperationError };
 
@@ -288,7 +288,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
         return Exception { ExceptionCode::OperationError };
 
     Vector<uint8_t> keyData(len);
-    auto ptr = keyData.data();
+    auto ptr = keyData.mutableSpan().data();
     if (i2d_PKCS8_PRIV_KEY_INFO(p8inf.get(), &ptr) < 0)
         return Exception { ExceptionCode::OperationError };
 
@@ -312,7 +312,7 @@ auto CryptoKeyRSA::algorithm() const -> KeyAlgorithm
         CryptoRsaHashedKeyAlgorithm result;
         result.name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
         result.modulusLength = modulusLength;
-        result.publicExponent = Uint8Array::tryCreate(publicExponent.data(), publicExponent.size());
+        result.publicExponent = Uint8Array::tryCreate(publicExponent.span());
         result.hash.name = CryptoAlgorithmRegistry::singleton().name(m_hash);
         return result;
     }
@@ -320,7 +320,7 @@ auto CryptoKeyRSA::algorithm() const -> KeyAlgorithm
     CryptoRsaKeyAlgorithm result;
     result.name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
     result.modulusLength = modulusLength;
-    result.publicExponent = Uint8Array::tryCreate(publicExponent.data(), publicExponent.size());
+    result.publicExponent = Uint8Array::tryCreate(publicExponent.span());
     return result;
 }
 

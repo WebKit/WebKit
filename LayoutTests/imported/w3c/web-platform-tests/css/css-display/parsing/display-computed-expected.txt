@@ -19,6 +19,94 @@ PASS Property display value 'none'
 PASS Property display value 'flex'
 PASS Property display value 'inline-flex'
 PASS Property display value 'contents'
+FAIL Property display value 'run-in' assert_true: 'run-in' is a supported value for display. expected true got false
+PASS Property display value 'flow'
+PASS Property display value 'flow-root'
+FAIL Property display value 'ruby' assert_true: 'ruby' is a supported value for display. expected true got false
+FAIL Property display value 'ruby-base' assert_true: 'ruby-base' is a supported value for display. expected true got false
+FAIL Property display value 'ruby-text' assert_true: 'ruby-text' is a supported value for display. expected true got false
+FAIL Property display value 'flow list-item' assert_true: 'flow list-item' is a supported value for display. expected true got false
+FAIL Property display value 'list-item flow' assert_true: 'list-item flow' is a supported value for display. expected true got false
+FAIL Property display value 'flow-root list-item' assert_true: 'flow-root list-item' is a supported value for display. expected true got false
+FAIL Property display value 'list-item flow-root' assert_true: 'list-item flow-root' is a supported value for display. expected true got false
+PASS Property display value 'block flow'
+PASS Property display value 'flow block'
+PASS Property display value 'flow-root block'
+PASS Property display value 'block flow-root'
+PASS Property display value 'flex block'
+PASS Property display value 'block flex'
+PASS Property display value 'grid block'
+PASS Property display value 'block grid'
+PASS Property display value 'table block'
+PASS Property display value 'block table'
+FAIL Property display value 'block ruby' assert_true: 'block ruby' is a supported value for display. expected true got false
+FAIL Property display value 'ruby block' assert_true: 'ruby block' is a supported value for display. expected true got false
+FAIL Property display value 'block list-item' assert_true: 'block list-item' is a supported value for display. expected true got false
+FAIL Property display value 'list-item block' assert_true: 'list-item block' is a supported value for display. expected true got false
+FAIL Property display value 'flow block list-item' assert_true: 'flow block list-item' is a supported value for display. expected true got false
+FAIL Property display value 'block flow list-item' assert_true: 'block flow list-item' is a supported value for display. expected true got false
+FAIL Property display value 'flow list-item block' assert_true: 'flow list-item block' is a supported value for display. expected true got false
+FAIL Property display value 'block list-item flow' assert_true: 'block list-item flow' is a supported value for display. expected true got false
+FAIL Property display value 'list-item block flow' assert_true: 'list-item block flow' is a supported value for display. expected true got false
+FAIL Property display value 'list-item flow block' assert_true: 'list-item flow block' is a supported value for display. expected true got false
+FAIL Property display value 'flow-root block list-item' assert_true: 'flow-root block list-item' is a supported value for display. expected true got false
+FAIL Property display value 'block flow-root list-item' assert_true: 'block flow-root list-item' is a supported value for display. expected true got false
+FAIL Property display value 'flow-root list-item block' assert_true: 'flow-root list-item block' is a supported value for display. expected true got false
+FAIL Property display value 'block list-item flow-root' assert_true: 'block list-item flow-root' is a supported value for display. expected true got false
+FAIL Property display value 'list-item block flow-root' assert_true: 'list-item block flow-root' is a supported value for display. expected true got false
+FAIL Property display value 'list-item flow-root block' assert_true: 'list-item flow-root block' is a supported value for display. expected true got false
+PASS Property display value 'inline flow'
+PASS Property display value 'flow inline'
+PASS Property display value 'flow-root inline'
+PASS Property display value 'inline flow-root'
+PASS Property display value 'flex inline'
+PASS Property display value 'inline flex'
+PASS Property display value 'grid inline'
+PASS Property display value 'inline grid'
+PASS Property display value 'table inline'
+PASS Property display value 'inline table'
+FAIL Property display value 'inline ruby' assert_true: 'inline ruby' is a supported value for display. expected true got false
+FAIL Property display value 'ruby inline' assert_true: 'ruby inline' is a supported value for display. expected true got false
+FAIL Property display value 'inline list-item' assert_true: 'inline list-item' is a supported value for display. expected true got false
+FAIL Property display value 'list-item inline' assert_true: 'list-item inline' is a supported value for display. expected true got false
+FAIL Property display value 'flow inline list-item' assert_true: 'flow inline list-item' is a supported value for display. expected true got false
+FAIL Property display value 'inline flow list-item' assert_true: 'inline flow list-item' is a supported value for display. expected true got false
+FAIL Property display value 'flow list-item inline' assert_true: 'flow list-item inline' is a supported value for display. expected true got false
+FAIL Property display value 'inline list-item flow' assert_true: 'inline list-item flow' is a supported value for display. expected true got false
+FAIL Property display value 'list-item inline flow' assert_true: 'list-item inline flow' is a supported value for display. expected true got false
+FAIL Property display value 'list-item flow inline' assert_true: 'list-item flow inline' is a supported value for display. expected true got false
+FAIL Property display value 'flow-root inline list-item' assert_true: 'flow-root inline list-item' is a supported value for display. expected true got false
+FAIL Property display value 'inline flow-root list-item' assert_true: 'inline flow-root list-item' is a supported value for display. expected true got false
+FAIL Property display value 'flow-root list-item inline' assert_true: 'flow-root list-item inline' is a supported value for display. expected true got false
+FAIL Property display value 'inline list-item flow-root' assert_true: 'inline list-item flow-root' is a supported value for display. expected true got false
+FAIL Property display value 'list-item inline flow-root' assert_true: 'list-item inline flow-root' is a supported value for display. expected true got false
+FAIL Property display value 'list-item flow-root inline' assert_true: 'list-item flow-root inline' is a supported value for display. expected true got false
+FAIL Property display value 'run-in flow' assert_true: 'run-in flow' is a supported value for display. expected true got false
+FAIL Property display value 'flow run-in' assert_true: 'flow run-in' is a supported value for display. expected true got false
+FAIL Property display value 'flow-root run-in' assert_true: 'flow-root run-in' is a supported value for display. expected true got false
+FAIL Property display value 'run-in flow-root' assert_true: 'run-in flow-root' is a supported value for display. expected true got false
+FAIL Property display value 'flex run-in' assert_true: 'flex run-in' is a supported value for display. expected true got false
+FAIL Property display value 'run-in flex' assert_true: 'run-in flex' is a supported value for display. expected true got false
+FAIL Property display value 'grid run-in' assert_true: 'grid run-in' is a supported value for display. expected true got false
+FAIL Property display value 'run-in grid' assert_true: 'run-in grid' is a supported value for display. expected true got false
+FAIL Property display value 'table run-in' assert_true: 'table run-in' is a supported value for display. expected true got false
+FAIL Property display value 'run-in table' assert_true: 'run-in table' is a supported value for display. expected true got false
+FAIL Property display value 'run-in ruby' assert_true: 'run-in ruby' is a supported value for display. expected true got false
+FAIL Property display value 'ruby run-in' assert_true: 'ruby run-in' is a supported value for display. expected true got false
+FAIL Property display value 'run-in list-item' assert_true: 'run-in list-item' is a supported value for display. expected true got false
+FAIL Property display value 'list-item run-in' assert_true: 'list-item run-in' is a supported value for display. expected true got false
+FAIL Property display value 'flow run-in list-item' assert_true: 'flow run-in list-item' is a supported value for display. expected true got false
+FAIL Property display value 'run-in flow list-item' assert_true: 'run-in flow list-item' is a supported value for display. expected true got false
+FAIL Property display value 'flow list-item run-in' assert_true: 'flow list-item run-in' is a supported value for display. expected true got false
+FAIL Property display value 'run-in list-item flow' assert_true: 'run-in list-item flow' is a supported value for display. expected true got false
+FAIL Property display value 'list-item run-in flow' assert_true: 'list-item run-in flow' is a supported value for display. expected true got false
+FAIL Property display value 'list-item flow run-in' assert_true: 'list-item flow run-in' is a supported value for display. expected true got false
+FAIL Property display value 'flow-root run-in list-item' assert_true: 'flow-root run-in list-item' is a supported value for display. expected true got false
+FAIL Property display value 'run-in flow-root list-item' assert_true: 'run-in flow-root list-item' is a supported value for display. expected true got false
+FAIL Property display value 'flow-root list-item run-in' assert_true: 'flow-root list-item run-in' is a supported value for display. expected true got false
+FAIL Property display value 'run-in list-item flow-root' assert_true: 'run-in list-item flow-root' is a supported value for display. expected true got false
+FAIL Property display value 'list-item run-in flow-root' assert_true: 'list-item run-in flow-root' is a supported value for display. expected true got false
+FAIL Property display value 'list-item flow-root run-in' assert_true: 'list-item flow-root run-in' is a supported value for display. expected true got false
 PASS position absolute affects computed display
 PASS position fixed affects computed display
 PASS float left affects computed display

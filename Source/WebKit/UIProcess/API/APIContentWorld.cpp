@@ -27,6 +27,8 @@
 #include "APIContentWorld.h"
 
 #include "ContentWorldShared.h"
+#include "WebProcessMessages.h"
+#include "WebProcessProxy.h"
 #include "WebUserContentControllerProxy.h"
 #include <wtf/HashMap.h>
 #include <wtf/WeakRef.h>
@@ -48,6 +50,8 @@ static HashMap<WebKit::ContentWorldIdentifier, WeakRef<ContentWorld>>& sharedWor
 
 ContentWorld* ContentWorld::worldForIdentifier(WebKit::ContentWorldIdentifier identifier)
 {
+    if (identifier == WebKit::pageContentWorldIdentifier())
+        return &pageContentWorldSingleton();
     return sharedWorldIdentifierMap().get(identifier);
 }
 
@@ -58,7 +62,7 @@ static WebKit::ContentWorldIdentifier generateIdentifier()
         // To make sure we don't use our shared pageContentWorld identifier for this
         // content world we're about to make, burn through one identifier.
         auto identifier = WebKit::ContentWorldIdentifier::generate();
-        ASSERT_UNUSED(identifier, identifier.toUInt64() >= WebKit::pageContentWorldIdentifier().toUInt64());
+        ASSERT_UNUSED(identifier, identifier.object().toUInt64() >= WebKit::pageContentWorldIdentifier().object().toUInt64());
     });
     return WebKit::ContentWorldIdentifier::generate();
 }
@@ -112,20 +116,14 @@ ContentWorld::~ContentWorld()
         ASSERT_UNUSED(taken, taken.get() == this);
     }
 
-    for (Ref proxy : m_associatedContentControllerProxies)
-        proxy->contentWorldDestroyed(*this);
+    for (Ref process : m_processes)
+        process->send(Messages::WebProcess::ContentWorldDestroyed(m_identifier), 0);
 }
 
-void ContentWorld::addAssociatedUserContentControllerProxy(WebKit::WebUserContentControllerProxy& proxy)
+WebKit::ContentWorldData ContentWorld::worldDataForProcess(WebKit::WebProcessProxy& process) const
 {
-    auto addResult = m_associatedContentControllerProxies.add(proxy);
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-}
-
-void ContentWorld::userContentControllerProxyDestroyed(WebKit::WebUserContentControllerProxy& proxy)
-{
-    bool removed = m_associatedContentControllerProxies.remove(proxy);
-    ASSERT_UNUSED(removed, removed);
+    m_processes.add(process);
+    return { m_identifier, m_name, m_options };
 }
 
 } // namespace API

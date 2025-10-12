@@ -657,7 +657,7 @@ TEST(WTF_HashMap, Ensure_RefPtr)
 }
 
 class ObjectWithRefLogger {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ObjectWithRefLogger);
 public:
     ObjectWithRefLogger(Ref<RefLogger>&& logger)
         : m_logger(WTFMove(logger))
@@ -749,7 +749,7 @@ TEST(WTF_HashMap, ValueIsDestructedOnRemove)
 }
 
 struct DerefObserver {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DerefObserver);
     NEVER_INLINE void ref()
     {
         ++count;
@@ -1184,7 +1184,7 @@ TEST(WTF_HashMap, Random_IsEvenlyDistributedAfterRemove)
 }
 
 class TestObjectWithCustomDestructor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TestObjectWithCustomDestructor);
 public:
     TestObjectWithCustomDestructor(Function<void()>&& runInDestructor)
         : m_runInDestructor(WTFMove(runInDestructor))
@@ -1213,6 +1213,27 @@ TEST(WTF_HashMap, Clear_Reenter)
     map.clear();
     EXPECT_EQ(0U, map.size());
     EXPECT_TRUE(map.isEmpty());
+}
+
+TEST(WTF_HashMap, Set_Reenter)
+{
+    HashMap<uint64_t, Variant<std::unique_ptr<TestObjectWithCustomDestructor>, int>> map;
+    map.add(1, makeUnique<TestObjectWithCustomDestructor>([&map] {
+        auto it = map.find(1);
+        EXPECT_TRUE(std::holds_alternative<std::unique_ptr<TestObjectWithCustomDestructor>>(it->value));
+    }));
+    map.set(1, 1);
+}
+
+TEST(WTF_HashMap, Take_Set_Reenter)
+{
+    HashMap<uint64_t, Variant<std::unique_ptr<TestObjectWithCustomDestructor>, int>> map;
+    map.add(1, makeUnique<TestObjectWithCustomDestructor>([&map] {
+        auto it = map.find(1);
+        EXPECT_FALSE(std::holds_alternative<std::unique_ptr<TestObjectWithCustomDestructor>>(it->value));
+    }));
+    auto value = map.take(1);
+    map.set(1, 1);
 }
 
 TEST(WTF_HashMap, Ensure_Translator)

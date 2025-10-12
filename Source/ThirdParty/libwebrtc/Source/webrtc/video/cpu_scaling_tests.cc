@@ -20,7 +20,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
 #include "test/call_test.h"
-#include "test/field_trial.h"
 #include "test/frame_generator_capturer.h"
 #include "test/gtest.h"
 #include "test/video_test_constants.h"
@@ -37,14 +36,11 @@ constexpr int kFps = 28;
 class CpuOveruseTest : public test::CallTest {
  protected:
   CpuOveruseTest()
-      : field_trials_("WebRTC-ForceSimulatedOveruseIntervalMs/1-60000-60000/") {
-  }
+      : CallTest("WebRTC-ForceSimulatedOveruseIntervalMs/1-60000-60000/") {}
 
   void RunTestAndCheckForAdaptation(
       const DegradationPreference& degradation_preference,
       bool expect_adaptation);
-
-  test::ScopedFieldTrials field_trials_;
 };
 
 void CpuOveruseTest::RunTestAndCheckForAdaptation(
@@ -71,8 +67,8 @@ void CpuOveruseTest::RunTestAndCheckForAdaptation(
     }
 
     // Called when FrameGeneratorCapturer::AddOrUpdateSink is called.
-    void OnSinkWantsChanged(rtc::VideoSinkInterface<VideoFrame>* sink,
-                            const rtc::VideoSinkWants& wants) override {
+    void OnSinkWantsChanged(VideoSinkInterface<VideoFrame>* sink,
+                            const VideoSinkWants& wants) override {
       if (wants.max_pixel_count == std::numeric_limits<int>::max() &&
           wants.max_framerate_fps == kFps) {
         // Max configured framerate is initially set.

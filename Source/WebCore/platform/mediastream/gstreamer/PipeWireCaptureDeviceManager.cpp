@@ -47,47 +47,55 @@ PipeWireCaptureDeviceManager::PipeWireCaptureDeviceManager(OptionSet<CaptureDevi
     });
 }
 
-void PipeWireCaptureDeviceManager::computeCaptureDevices()
+void PipeWireCaptureDeviceManager::computeCaptureDevices(CompletionHandler<void()>&& callback)
 {
-    if (MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled())
+    if (MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled()) {
+        callback();
         return;
+    }
 
+#if PLATFORM(WPE)
+    callback();
+    return;
+#endif
     if (!m_pipewireDeviceProvider || !gstObjectHasProperty(GST_OBJECT_CAST(m_pipewireDeviceProvider.get()), "fd"_s)) {
         GST_WARNING("PipeWire Device Provider is missing or too old. Please install PipeWire >= 0.3.64.");
+        callback();
         return;
     }
 
-    if (!m_portal)
-        m_portal = DesktopPortalCamera::create();
+    auto portal = DesktopPortalCamera::create();
 
     GST_DEBUG("Checking with Camera portal");
-    if (!m_portal || !m_portal->isCameraPresent()) {
+    if (!portal || !portal->isCameraPresent()) {
         GST_DEBUG("Portal not present or has no camera");
+        callback();
         return;
     }
 
-    if (!m_portal->accessCamera()) {
-        GST_DEBUG("Camera access denied");
-        return;
-    }
+    GST_DEBUG("Attempting to access the camera");
+    portal->accessCamera([this, callback = WTFMove(callback)](auto fd) mutable {
+        if (!fd) {
+            GST_DEBUG("Camera access unavailable");
+            callback();
+            return;
+        }
 
-    auto fd = m_portal->openCameraPipewireRemote();
-    if (!fd)
-        return;
+        GST_DEBUG("FD from portal: %d", *fd);
+        g_object_set(m_pipewireDeviceProvider.get(), "fd", *fd, nullptr);
+        gst_device_provider_start(m_pipewireDeviceProvider.get());
 
-    GST_DEBUG("FD from portal: %d", *fd);
-    g_object_set(m_pipewireDeviceProvider.get(), "fd", *fd, nullptr);
-    gst_device_provider_start(m_pipewireDeviceProvider.get());
+        GList* devices = gst_device_provider_get_devices(m_pipewireDeviceProvider.get());
+        GST_DEBUG("Provisioning VideoCaptureDeviceManager with %u device(s).", g_list_length(devices));
+        auto& manager = GStreamerVideoCaptureDeviceManager::singleton();
+        while (devices) {
+            manager.addDevice(adoptGRef(GST_DEVICE_CAST(devices->data)));
+            devices = g_list_delete_link(devices, devices);
+        }
 
-    GList* devices = gst_device_provider_get_devices(m_pipewireDeviceProvider.get());
-    GST_DEBUG("Provisioning VideoCaptureDeviceManager with %u device(s).", g_list_length(devices));
-    auto& manager = GStreamerVideoCaptureDeviceManager::singleton();
-    while (devices) {
-        manager.addDevice(adoptGRef(GST_DEVICE_CAST(devices->data)));
-        devices = g_list_delete_link(devices, devices);
-    }
-
-    gst_device_provider_stop(m_pipewireDeviceProvider.get());
+        gst_device_provider_stop(m_pipewireDeviceProvider.get());
+        callback();
+    });
 }
 
 CaptureSourceOrError PipeWireCaptureDeviceManager::createCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints)

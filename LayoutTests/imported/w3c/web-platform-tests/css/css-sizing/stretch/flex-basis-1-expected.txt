@@ -1,0 +1,28 @@
+basic:
+With border:
+With border+margin:
+flex-basis:stretch items can still shrink:
+column flexbox has indefinite height so flex-basis:stretch behaves as flex-basis:content
+
+FAIL .item 1 assert_equals:
+<div class="item" style="outline: 5px solid;" data-expected-client-width="100">
+      <div class="grandchild"></div>
+    </div>
+clientWidth expected 100 but got 30
+FAIL .item 2 assert_equals:
+<div class="item" style="border: 5px solid;" data-expected-client-width="90">
+      <div class="grandchild"></div>
+    </div>
+clientWidth expected 90 but got 30
+FAIL .item 3 assert_equals:
+<div class="item" style="border: 5px solid; margin-right: 20px;" data-expected-client-width="70">
+      <div class="grandchild"></div>
+    </div>
+clientWidth expected 70 but got 30
+FAIL .item 4 assert_equals:
+<div class="item" style="outline: 5px solid;" data-expected-client-width="50">
+      <div class="grandchild"></div>
+    </div>
+clientWidth expected 50 but got 30
+PASS .item 5
+

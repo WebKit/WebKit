@@ -19,4 +19,4 @@ shouldThrow(() => {
         {
         }
     };
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: Cannot access 'a' before initialization.`);

@@ -37,7 +37,6 @@ public:
     static Ref<HTMLProgressElement> create(const QualifiedName&, Document&);
 
     double value() const;
-    void setValue(double);
 
     double max() const;
     void setMax(double);

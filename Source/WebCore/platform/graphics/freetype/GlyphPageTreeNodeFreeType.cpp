@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-bool GlyphPage::fill(std::span<const UChar> buffer)
+bool GlyphPage::fill(std::span<const char16_t> buffer)
 {
     const Font& font = this->font();
     cairo_scaled_font_t* scaledFont = font.platformData().scaledFont();

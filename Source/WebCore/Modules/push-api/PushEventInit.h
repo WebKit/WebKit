@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ExtendableEventInit.h"
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <WebCore/ExtendableEventInit.h>
 
 namespace WebCore {
 

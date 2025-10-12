@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+        <style>
+
+        select {
+            margin-top: 100px;
+        }
+
+        </style>
+    </head>
+<body>
+<select id="select1">
+    <option>A</option>
+    <option>B</option>
+    <option>C</option>
+</select>
+<select id="select2">
+    <option>D</option>
+    <option>E</option>
+    <option>F</option>
+</select>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that focusing one select and then focusing another does not dismiss the second select's menu.");
+
+    await UIHelper.activateElement(select1);
+    await UIHelper.waitForContextMenuToShow();
+
+    await UIHelper.tapAt(20, 20);
+    await UIHelper.activateElement(select2);
+
+    await UIHelper.delayFor(1000);
+
+    items = await UIHelper.selectMenuItems();
+    shouldBeTrue("areArraysEqual(items, " + '["D", "E", "F"]' + ")");
+
+    finishJSTest();
+});
+</script>
+</html>

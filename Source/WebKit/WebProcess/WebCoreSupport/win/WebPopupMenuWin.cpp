@@ -28,7 +28,6 @@
 
 #include "PlatformPopupMenuData.h"
 #include "WebPage.h"
-#include <WebCore/LengthFunctions.h>
 #include <WebCore/PopupMenuClient.h>
 #include <WebCore/RenderTheme.h>
 #include <WebCore/ScrollbarTheme.h>
@@ -141,13 +140,9 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
             float textX = 0;
             if (m_popupClient->menuStyle().textDirection() == TextDirection::LTR) {
                 textX = std::max<float>(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
-                if (RenderTheme::singleton().popupOptionSupportsTextIndent())
-                    textX += minimumIntValueForLength(itemStyle.textIndent(), LayoutUnit::fromFloatRound(itemRect.width()));
             } else {
                 textX = itemRect.width() - m_popupClient->menuStyle().font().width(textRun);
                 textX = std::min<float>(textX, textX - m_popupClient->clientPaddingRight() + m_popupClient->clientInsetRight());
-                if (RenderTheme::singleton().popupOptionSupportsTextIndent())
-                    textX -= minimumIntValueForLength(itemStyle.textIndent(), LayoutUnit::fromFloatRound(itemRect.width()));
             }
             float textY = itemRect.y() + itemFontCascade.metricsOfPrimaryFont().intAscent() + (itemRect.height() - itemFontCascade.metricsOfPrimaryFont().intHeight()) / 2;
 

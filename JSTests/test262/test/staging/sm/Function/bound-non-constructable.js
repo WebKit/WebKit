@@ -2,13 +2,12 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, deepEqual.js]
-flags:
-  - noStrict
+includes: [compareArray.js]
 description: |
   pending
 esid: pending
 ---*/
+
 var objects = [
     Math.sin.bind(null),
     new Proxy(Math.sin.bind(null), {}),
@@ -17,11 +16,11 @@ var objects = [
 
 for (var obj of objects) {
     // Target is not constructable, so a new array should be created internally.
-    assert.deepEqual(Array.from.call(obj, [1, 2, 3]), [1, 2, 3]);
-    assert.deepEqual(Array.of.call(obj, 1, 2, 3), [1, 2, 3]);
+    assert.compareArray(Array.from.call(obj, [1, 2, 3]), [1, 2, 3]);
+    assert.compareArray(Array.of.call(obj, 1, 2, 3), [1, 2, 3]);
 
     // Make sure they are callable, but not constructable.
     obj();
-    assertThrowsInstanceOf(() => new obj, TypeError);
+    assert.throws(TypeError, () => new obj);
 }
 

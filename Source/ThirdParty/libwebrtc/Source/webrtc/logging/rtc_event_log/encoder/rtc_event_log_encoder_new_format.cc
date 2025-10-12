@@ -170,19 +170,19 @@ bool ConvertToProtoFormat(const std::vector<RtpExtension>& extensions,
 }
 
 rtclog2::DtlsTransportStateEvent::DtlsTransportState ConvertToProtoFormat(
-    webrtc::DtlsTransportState state) {
+    DtlsTransportState state) {
   switch (state) {
-    case webrtc::DtlsTransportState::kNew:
+    case DtlsTransportState::kNew:
       return rtclog2::DtlsTransportStateEvent::DTLS_TRANSPORT_NEW;
-    case webrtc::DtlsTransportState::kConnecting:
+    case DtlsTransportState::kConnecting:
       return rtclog2::DtlsTransportStateEvent::DTLS_TRANSPORT_CONNECTING;
-    case webrtc::DtlsTransportState::kConnected:
+    case DtlsTransportState::kConnected:
       return rtclog2::DtlsTransportStateEvent::DTLS_TRANSPORT_CONNECTED;
-    case webrtc::DtlsTransportState::kClosed:
+    case DtlsTransportState::kClosed:
       return rtclog2::DtlsTransportStateEvent::DTLS_TRANSPORT_CLOSED;
-    case webrtc::DtlsTransportState::kFailed:
+    case DtlsTransportState::kFailed:
       return rtclog2::DtlsTransportStateEvent::DTLS_TRANSPORT_FAILED;
-    case webrtc::DtlsTransportState::kNumValues:
+    case DtlsTransportState::kNumValues:
       RTC_DCHECK_NOTREACHED();
   }
   RTC_DCHECK_NOTREACHED();
@@ -301,8 +301,7 @@ rtclog2::IceCandidatePairEvent::IceCandidatePairEventType ConvertToProtoFormat(
 
 // Copies all RTCP blocks except APP, SDES and unknown from `packet` to
 // `buffer`. `buffer` must have space for at least `packet.size()` bytes.
-size_t RemoveNonAllowlistedRtcpBlocks(const rtc::Buffer& packet,
-                                      uint8_t* buffer) {
+size_t RemoveNonAllowlistedRtcpBlocks(const Buffer& packet, uint8_t* buffer) {
   RTC_DCHECK(buffer != nullptr);
   rtcp::CommonHeader header;
   const uint8_t* block_begin = packet.data();
@@ -344,7 +343,7 @@ size_t RemoveNonAllowlistedRtcpBlocks(const rtc::Buffer& packet,
 }
 
 template <typename EventType, typename ProtoType>
-void EncodeRtcpPacket(rtc::ArrayView<const EventType*> batch,
+void EncodeRtcpPacket(ArrayView<const EventType*> batch,
                       ProtoType* proto_batch) {
   if (batch.empty()) {
     return;
@@ -472,7 +471,7 @@ void RtcEventLogEncoderNewFormat::EncodeRtpPacket(const Batch& batch,
     // TODO(webrtc:14975) Remove this kill switch after DD in RTC event log has
     //                    been rolled out.
     if (encode_dependency_descriptor_) {
-      std::vector<rtc::ArrayView<const uint8_t>> raw_dds(batch.size());
+      std::vector<ArrayView<const uint8_t>> raw_dds(batch.size());
       bool has_dd = false;
       for (size_t i = 0; i < batch.size(); ++i) {
         raw_dds[i] =
@@ -971,7 +970,7 @@ std::string RtcEventLogEncoderNewFormat::EncodeBatch(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeAlrState(
-    rtc::ArrayView<const RtcEventAlrState*> batch,
+    ArrayView<const RtcEventAlrState*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventAlrState* base_event : batch) {
     rtclog2::AlrState* proto_batch = event_stream->add_alr_states();
@@ -982,7 +981,7 @@ void RtcEventLogEncoderNewFormat::EncodeAlrState(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeAudioNetworkAdaptation(
-    rtc::ArrayView<const RtcEventAudioNetworkAdaptation*> batch,
+    ArrayView<const RtcEventAudioNetworkAdaptation*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty())
     return;
@@ -1134,7 +1133,7 @@ void RtcEventLogEncoderNewFormat::EncodeAudioNetworkAdaptation(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeAudioPlayout(
-    rtc::ArrayView<const RtcEventAudioPlayout*> batch,
+    ArrayView<const RtcEventAudioPlayout*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty())
     return;
@@ -1176,7 +1175,7 @@ void RtcEventLogEncoderNewFormat::EncodeAudioPlayout(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeNetEqSetMinimumDelay(
-    rtc::ArrayView<const RtcEventNetEqSetMinimumDelay*> batch,
+    ArrayView<const RtcEventNetEqSetMinimumDelay*> batch,
     rtclog2::EventStream* event_stream) {
   if (encode_neteq_set_minimum_delay_kill_switch_) {
     return;
@@ -1234,7 +1233,7 @@ void RtcEventLogEncoderNewFormat::EncodeNetEqSetMinimumDelay(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeAudioRecvStreamConfig(
-    rtc::ArrayView<const RtcEventAudioReceiveStreamConfig*> batch,
+    ArrayView<const RtcEventAudioReceiveStreamConfig*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventAudioReceiveStreamConfig* base_event : batch) {
     rtclog2::AudioRecvStreamConfig* proto_batch =
@@ -1253,7 +1252,7 @@ void RtcEventLogEncoderNewFormat::EncodeAudioRecvStreamConfig(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeAudioSendStreamConfig(
-    rtc::ArrayView<const RtcEventAudioSendStreamConfig*> batch,
+    ArrayView<const RtcEventAudioSendStreamConfig*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventAudioSendStreamConfig* base_event : batch) {
     rtclog2::AudioSendStreamConfig* proto_batch =
@@ -1271,7 +1270,7 @@ void RtcEventLogEncoderNewFormat::EncodeAudioSendStreamConfig(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeBweUpdateDelayBased(
-    rtc::ArrayView<const RtcEventBweUpdateDelayBased*> batch,
+    ArrayView<const RtcEventBweUpdateDelayBased*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty())
     return;
@@ -1328,7 +1327,7 @@ void RtcEventLogEncoderNewFormat::EncodeBweUpdateDelayBased(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeBweUpdateLossBased(
-    rtc::ArrayView<const RtcEventBweUpdateLossBased*> batch,
+    ArrayView<const RtcEventBweUpdateLossBased*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty())
     return;
@@ -1392,7 +1391,7 @@ void RtcEventLogEncoderNewFormat::EncodeBweUpdateLossBased(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeDtlsTransportState(
-    rtc::ArrayView<const RtcEventDtlsTransportState*> batch,
+    ArrayView<const RtcEventDtlsTransportState*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventDtlsTransportState* base_event : batch) {
     rtclog2::DtlsTransportStateEvent* proto_batch =
@@ -1404,7 +1403,7 @@ void RtcEventLogEncoderNewFormat::EncodeDtlsTransportState(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeDtlsWritableState(
-    rtc::ArrayView<const RtcEventDtlsWritableState*> batch,
+    ArrayView<const RtcEventDtlsWritableState*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventDtlsWritableState* base_event : batch) {
     rtclog2::DtlsWritableState* proto_batch =
@@ -1415,7 +1414,7 @@ void RtcEventLogEncoderNewFormat::EncodeDtlsWritableState(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeProbeClusterCreated(
-    rtc::ArrayView<const RtcEventProbeClusterCreated*> batch,
+    ArrayView<const RtcEventProbeClusterCreated*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventProbeClusterCreated* base_event : batch) {
     rtclog2::BweProbeCluster* proto_batch = event_stream->add_probe_clusters();
@@ -1428,7 +1427,7 @@ void RtcEventLogEncoderNewFormat::EncodeProbeClusterCreated(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeProbeResultFailure(
-    rtc::ArrayView<const RtcEventProbeResultFailure*> batch,
+    ArrayView<const RtcEventProbeResultFailure*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventProbeResultFailure* base_event : batch) {
     rtclog2::BweProbeResultFailure* proto_batch =
@@ -1442,7 +1441,7 @@ void RtcEventLogEncoderNewFormat::EncodeProbeResultFailure(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeProbeResultSuccess(
-    rtc::ArrayView<const RtcEventProbeResultSuccess*> batch,
+    ArrayView<const RtcEventProbeResultSuccess*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventProbeResultSuccess* base_event : batch) {
     rtclog2::BweProbeResultSuccess* proto_batch =
@@ -1455,7 +1454,7 @@ void RtcEventLogEncoderNewFormat::EncodeProbeResultSuccess(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeRouteChange(
-    rtc::ArrayView<const RtcEventRouteChange*> batch,
+    ArrayView<const RtcEventRouteChange*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventRouteChange* base_event : batch) {
     rtclog2::RouteChange* proto_batch = event_stream->add_route_changes();
@@ -1467,7 +1466,7 @@ void RtcEventLogEncoderNewFormat::EncodeRouteChange(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeRemoteEstimate(
-    rtc::ArrayView<const RtcEventRemoteEstimate*> batch,
+    ArrayView<const RtcEventRemoteEstimate*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty())
     return;
@@ -1539,7 +1538,7 @@ void RtcEventLogEncoderNewFormat::EncodeRemoteEstimate(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeRtcpPacketIncoming(
-    rtc::ArrayView<const RtcEventRtcpPacketIncoming*> batch,
+    ArrayView<const RtcEventRtcpPacketIncoming*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty()) {
     return;
@@ -1548,7 +1547,7 @@ void RtcEventLogEncoderNewFormat::EncodeRtcpPacketIncoming(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeRtcpPacketOutgoing(
-    rtc::ArrayView<const RtcEventRtcpPacketOutgoing*> batch,
+    ArrayView<const RtcEventRtcpPacketOutgoing*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty()) {
     return;
@@ -1567,7 +1566,7 @@ void RtcEventLogEncoderNewFormat::EncodeRtpPacketIncoming(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeFramesDecoded(
-    rtc::ArrayView<const RtcEventFrameDecoded* const> batch,
+    ArrayView<const RtcEventFrameDecoded* const> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty()) {
     return;
@@ -1666,7 +1665,7 @@ void RtcEventLogEncoderNewFormat::EncodeFramesDecoded(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeGenericPacketsSent(
-    rtc::ArrayView<const RtcEventGenericPacketSent*> batch,
+    ArrayView<const RtcEventGenericPacketSent*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty()) {
     return;
@@ -1742,7 +1741,7 @@ void RtcEventLogEncoderNewFormat::EncodeGenericPacketsSent(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeGenericPacketsReceived(
-    rtc::ArrayView<const RtcEventGenericPacketReceived*> batch,
+    ArrayView<const RtcEventGenericPacketReceived*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty()) {
     return;
@@ -1796,7 +1795,7 @@ void RtcEventLogEncoderNewFormat::EncodeGenericPacketsReceived(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeGenericAcksReceived(
-    rtc::ArrayView<const RtcEventGenericAckReceived*> batch,
+    ArrayView<const RtcEventGenericAckReceived*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty()) {
     return;
@@ -1882,7 +1881,7 @@ void RtcEventLogEncoderNewFormat::EncodeRtpPacketOutgoing(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeVideoRecvStreamConfig(
-    rtc::ArrayView<const RtcEventVideoReceiveStreamConfig*> batch,
+    ArrayView<const RtcEventVideoReceiveStreamConfig*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventVideoReceiveStreamConfig* base_event : batch) {
     rtclog2::VideoRecvStreamConfig* proto_batch =
@@ -1902,7 +1901,7 @@ void RtcEventLogEncoderNewFormat::EncodeVideoRecvStreamConfig(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeVideoSendStreamConfig(
-    rtc::ArrayView<const RtcEventVideoSendStreamConfig*> batch,
+    ArrayView<const RtcEventVideoSendStreamConfig*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventVideoSendStreamConfig* base_event : batch) {
     rtclog2::VideoSendStreamConfig* proto_batch =
@@ -1921,7 +1920,7 @@ void RtcEventLogEncoderNewFormat::EncodeVideoSendStreamConfig(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeIceCandidatePairConfig(
-    rtc::ArrayView<const RtcEventIceCandidatePairConfig*> batch,
+    ArrayView<const RtcEventIceCandidatePairConfig*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventIceCandidatePairConfig* base_event : batch) {
     rtclog2::IceCandidatePairConfig* proto_batch =
@@ -1950,7 +1949,7 @@ void RtcEventLogEncoderNewFormat::EncodeIceCandidatePairConfig(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeIceCandidatePairEvent(
-    rtc::ArrayView<const RtcEventIceCandidatePair*> batch,
+    ArrayView<const RtcEventIceCandidatePair*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventIceCandidatePair* base_event : batch) {
     rtclog2::IceCandidatePairEvent* proto_batch =

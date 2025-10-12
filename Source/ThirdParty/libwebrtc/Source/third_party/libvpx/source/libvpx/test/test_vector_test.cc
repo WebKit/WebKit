@@ -35,7 +35,7 @@ const int kThreads = 0;
 const int kMtMode = 1;
 const int kFileName = 2;
 
-typedef std::tuple<int, int, const char *> DecodeParam;
+using DecodeParam = std::tuple<int, int, const char *>;
 
 class TestVectorTest : public ::libvpx_test::DecoderTest,
                        public ::libvpx_test::CodecTestWithParam<DecodeParam> {

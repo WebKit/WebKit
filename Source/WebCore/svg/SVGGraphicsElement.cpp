@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGGraphicsElement.h"
 
+#include "ContainerNodeInlines.h"
 #include "LegacyRenderSVGPath.h"
 #include "LegacyRenderSVGResource.h"
 #include "RenderAncestorIterator.h"
@@ -102,7 +103,7 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
     bool hasSpecifiedTransform = style && style->hasTransform();
 
     // Honor any of the transform-related CSS properties if set.
-    if (hasSpecifiedTransform || (style && (style->translate() || style->scale() || style->rotate()))) {
+    if (hasSpecifiedTransform || (style && (style->hasTranslate() || style->hasScale() || style->hasRotate()))) {
         // Note: objectBoundingBox is an emptyRect for elements like pattern or clipPath.
         // See the "Object bounding box units" section of http://dev.w3.org/csswg/css3-transforms/
         TransformationMatrix transform;

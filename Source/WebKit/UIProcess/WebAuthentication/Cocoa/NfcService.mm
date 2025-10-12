@@ -46,7 +46,7 @@ Ref<NfcService> NfcService::create(AuthenticatorTransportServiceObserver& observ
 
 NfcService::NfcService(AuthenticatorTransportServiceObserver& observer)
     : FidoService(observer)
-    , m_restartTimer(RunLoop::main(), this, &NfcService::platformStartDiscovery)
+    , m_restartTimer(RunLoop::mainSingleton(), "NfcService::RestartTimer"_s, this, &NfcService::platformStartDiscovery)
 {
 }
 
@@ -55,7 +55,7 @@ NfcService::~NfcService() = default;
 bool NfcService::isAvailable()
 {
 #if HAVE(NEAR_FIELD)
-    return [[getNFHardwareManagerClass() sharedHardwareManager] areFeaturesSupported:NFFeatureReaderMode outError:nil];
+    return [[getNFHardwareManagerClassSingleton() sharedHardwareManager] areFeaturesSupported:NFFeatureReaderMode outError:nil];
 #else
     return false;
 #endif
@@ -111,7 +111,7 @@ void NfcService::platformStartDiscovery()
             return;
         }
 
-        RunLoop::protectedMain()->dispatch([weakThis = WTFMove(weakThis), session = retainPtr(session)] () mutable {
+        RunLoop::mainSingleton().dispatch([weakThis = WTFMove(weakThis), session = retainPtr(session)] () mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis) {
                 [session endSession];
@@ -122,7 +122,7 @@ void NfcService::platformStartDiscovery()
             protectedThis->m_connection = NfcConnection::create(WTFMove(session), *protectedThis);
         });
     });
-    [[getNFHardwareManagerClass() sharedHardwareManager] startReaderSession:callback.get()];
+    [[getNFHardwareManagerClassSingleton() sharedHardwareManager] startReaderSession:callback.get()];
 #endif // HAVE(NEAR_FIELD)
 }
 

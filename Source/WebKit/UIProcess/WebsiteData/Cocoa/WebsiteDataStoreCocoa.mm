@@ -34,6 +34,7 @@
 #import "SandboxUtilities.h"
 #import "UnifiedOriginStorageLevel.h"
 #import "WebFramePolicyListenerProxy.h"
+#import "WebPageProxy.h"
 #import "WebPreferencesDefaultValues.h"
 #import "WebPreferencesKeys.h"
 #import "WebProcessProxy.h"
@@ -133,6 +134,9 @@ WebCore::ThirdPartyCookieBlockingMode WebsiteDataStore::thirdPartyCookieBlocking
         else
             m_thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::All;
     }
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES) && (!defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) || !CFN_COOKIE_ACCEPTS_POLICY_PARTITION)
+    RELEASE_ASSERT(m_thirdPartyCookieBlockingMode != WebCore::ThirdPartyCookieBlockingMode::AllExceptPartitioned);
+#endif
     return *m_thirdPartyCookieBlockingMode;
 }
 
@@ -258,6 +262,21 @@ std::optional<bool> WebsiteDataStore::useNetworkLoader()
 #endif // NETWORK_LOADER
 }
 
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
+bool WebsiteDataStore::isOptInCookiePartitioningEnabled() const
+{
+#if defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
+    return std::ranges::any_of(m_processes, [](auto& process) {
+        return std::ranges::any_of(process.pages(), [](auto& page) {
+            return page->preferences().optInPartitionedCookiesEnabled();
+        });
+    });
+#else
+    return false;
+#endif
+}
+#endif
+
 void WebsiteDataStore::platformInitialize()
 {
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -297,7 +316,7 @@ void WebsiteDataStore::fetchAllDataStoreIdentifiers(CompletionHandler<void(Vecto
         auto identifiers = WTF::compactMap(FileSystem::listDirectory(directory), [](auto&& identifierString) {
             return WTF::UUID::parse(identifierString);
         });
-        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), identifiers = crossThreadCopy(WTFMove(identifiers))]() mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), identifiers = crossThreadCopy(WTFMove(identifiers))]() mutable {
             completionHandler(WTFMove(identifiers));
         });
     });
@@ -314,7 +333,7 @@ void WebsiteDataStore::removeDataStoreWithIdentifierImpl(const WTF::UUID& identi
         }
 
         bool deleted = FileSystem::deleteNonEmptyDirectory(directory);
-        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), deleted]() mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), deleted]() mutable {
             if (!deleted)
                 return completionHandler("Failed to delete files on disk"_s);
 
@@ -373,26 +392,6 @@ String WebsiteDataStore::defaultSearchFieldHistoryDirectory(const String& baseDi
         return FileSystem::pathByAppendingComponent(baseDirectory, "SearchHistory"_s);
 
     return websiteDataDirectoryFileSystemRepresentation("SearchHistory"_s);
-}
-
-String WebsiteDataStore::defaultApplicationCacheDirectory(const String& baseDirectory)
-{
-    if (!baseDirectory.isEmpty())
-        return FileSystem::pathByAppendingComponent(baseDirectory, "ApplicationCache"_s);
-
-#if PLATFORM(IOS_FAMILY)
-    // This quirk used to make these apps share application cache storage, but doesn't accomplish that any more.
-    // Preserving it avoids the need to migrate data when upgrading.
-    // FIXME: Ideally we should just have Safari, WebApp, and webbookmarksd create a data store with
-    // this application cache path.
-    if (WTF::IOSApplication::isMobileSafari() || WTF::IOSApplication::isWebBookmarksD()) {
-        NSString *cachePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches/com.apple.WebAppCache"];
-
-        return WebKit::stringByResolvingSymlinksInPath(String { cachePath.stringByStandardizingPath });
-    }
-#endif
-
-    return cacheDirectoryFileSystemRepresentation("OfflineWebApplicationCache"_s, { }, ShouldCreateDirectory::No);
 }
 
 String WebsiteDataStore::defaultCacheStorageDirectory(const String& baseDirectory)
@@ -563,7 +562,7 @@ String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const String& dir
     static NeverDestroyed<RetainPtr<NSURL>> tempURL;
     
     dispatch_once(&onceToken, ^{
-        RetainPtr url = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
+        RetainPtr url = [NSURL fileURLWithPath:RetainPtr { NSTemporaryDirectory() }.get() isDirectory:YES];
         if (!url)
             RELEASE_ASSERT_NOT_REACHED();
         
@@ -664,7 +663,7 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
         NSArray<NSString *> *appBoundData = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"WKAppBoundDomains"];
         keyExists = !!appBoundData;
         
-        RunLoop::protectedMain()->dispatch([forceReinitialization, appBoundData = retainPtr(appBoundData)] {
+        RunLoop::mainSingleton().dispatch([forceReinitialization, appBoundData = retainPtr(appBoundData)] {
             if (hasInitializedAppBoundDomains && forceReinitialization != ForceReinitialization::Yes)
                 return;
 
@@ -719,7 +718,7 @@ void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSe
     // Hopping to the background thread then back to the main thread
     // ensures that initializeAppBoundDomains() has finished.
     appBoundDomainQueue().dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
-        RunLoop::protectedMain()->dispatch([this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
+        RunLoop::mainSingleton().dispatch([this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
             ASSERT(hasInitializedAppBoundDomains);
             if (m_configuration->enableInAppBrowserPrivacyForTesting())
                 addTestDomains();
@@ -803,9 +802,25 @@ static HashSet<WebCore::RegistrableDomain>& managedDomains()
     return managedDomains;
 }
 
-NSString *kManagedSitesIdentifier = @"com.apple.mail-shared";
-NSString *kCrossSiteTrackingPreventionRelaxedDomainsKey = @"CrossSiteTrackingPreventionRelaxedDomains";
-NSString *kCrossSiteTrackingPreventionRelaxedAppsKey = @"CrossSiteTrackingPreventionRelaxedApps";
+#if PLATFORM(MAC)
+static NSString *managedSitesIdentifierSingleton()
+{
+    static NSString *identifier = @"com.apple.mail-shared";
+    return identifier;
+}
+
+static NSString *crossSiteTrackingPreventionRelaxedDomainsKeySingleton()
+{
+    static NSString *key = @"CrossSiteTrackingPreventionRelaxedDomains";
+    return key;
+}
+
+static NSString *crossSiteTrackingPreventionRelaxedAppsKeySingleton()
+{
+    static NSString *key = @"CrossSiteTrackingPreventionRelaxedApps";
+    return key;
+}
+#endif
 
 void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReinitialization)
 {
@@ -824,19 +839,19 @@ void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReini
         bool isSafari = false;
 #if PLATFORM(MAC)
         isSafari = WTF::MacApplication::isSafari();
-        RetainPtr managedSitesPrefs = adoptNS([[NSDictionary alloc] initWithContentsOfFile:[adoptNS([[NSString alloc] initWithFormat:@"/Library/Managed Preferences/%@/%@.plist", NSUserName(), kManagedSitesIdentifier]) stringByStandardizingPath]]);
-        crossSiteTrackingPreventionRelaxedDomains = [managedSitesPrefs objectForKey:kCrossSiteTrackingPreventionRelaxedDomainsKey];
-        crossSiteTrackingPreventionRelaxedApps = [managedSitesPrefs objectForKey:kCrossSiteTrackingPreventionRelaxedAppsKey];
+        RetainPtr managedSitesPrefs = adoptNS([[NSDictionary alloc] initWithContentsOfFile:[adoptNS([[NSString alloc] initWithFormat:@"/Library/Managed Preferences/%@/%@.plist", RetainPtr { NSUserName() }.get(), managedSitesIdentifierSingleton()]) stringByStandardizingPath]]);
+        crossSiteTrackingPreventionRelaxedDomains = [managedSitesPrefs objectForKey:crossSiteTrackingPreventionRelaxedDomainsKeySingleton()];
+        crossSiteTrackingPreventionRelaxedApps = [managedSitesPrefs objectForKey:crossSiteTrackingPreventionRelaxedAppsKeySingleton()];
 #elif !PLATFORM(MACCATALYST)
         isSafari = WTF::IOSApplication::isMobileSafari();
-        if ([PAL::getMCProfileConnectionClass() instancesRespondToSelector:@selector(crossSiteTrackingPreventionRelaxedDomains)])
-            crossSiteTrackingPreventionRelaxedDomains = [(MCProfileConnection *)[PAL::getMCProfileConnectionClass() sharedConnection] crossSiteTrackingPreventionRelaxedDomains];
+        if ([PAL::getMCProfileConnectionClassSingleton() instancesRespondToSelector:@selector(crossSiteTrackingPreventionRelaxedDomains)])
+            crossSiteTrackingPreventionRelaxedDomains = [(MCProfileConnection *)[PAL::getMCProfileConnectionClassSingleton() sharedConnection] crossSiteTrackingPreventionRelaxedDomains];
         else
             crossSiteTrackingPreventionRelaxedDomains = @[];
 
         auto relaxedAppsSelector = NSSelectorFromString(@"crossSiteTrackingPreventionRelaxedApps");
-        if ([PAL::getMCProfileConnectionClass() instancesRespondToSelector:relaxedAppsSelector])
-            crossSiteTrackingPreventionRelaxedApps = [[PAL::getMCProfileConnectionClass() sharedConnection] performSelector:relaxedAppsSelector];
+        if ([PAL::getMCProfileConnectionClassSingleton() instancesRespondToSelector:relaxedAppsSelector])
+            crossSiteTrackingPreventionRelaxedApps = [[PAL::getMCProfileConnectionClassSingleton() sharedConnection] performSelector:relaxedAppsSelector];
         else
             crossSiteTrackingPreventionRelaxedApps = @[];
 #endif
@@ -847,7 +862,7 @@ void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReini
         if (!shouldUseRelaxedDomainsIfAvailable)
             return;
 
-        RunLoop::protectedMain()->dispatch([forceReinitialization, crossSiteTrackingPreventionRelaxedDomains] {
+        RunLoop::mainSingleton().dispatch([forceReinitialization, crossSiteTrackingPreventionRelaxedDomains] {
             if (hasInitializedManagedDomains && forceReinitialization != ForceReinitialization::Yes)
                 return;
 
@@ -884,7 +899,7 @@ void WebsiteDataStore::ensureManagedDomains(CompletionHandler<void(const HashSet
     // Hopping to the background thread then back to the main thread
     // ensures that initializeManagedDomains() has finished.
     managedDomainQueueSingleton().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
-        RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
+        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
             ASSERT(hasInitializedManagedDomains);
             completionHandler(managedDomains());
         });
@@ -927,7 +942,7 @@ void WebsiteDataStore::reinitializeManagedDomains()
 
 bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String& entitlement)
 {
-    return WTF::hasEntitlement(networkProcess().connection().xpcConnection(), entitlement);
+    return WTF::hasEntitlement(networkProcess().protectedConnection()->protectedXPCConnection().get(), entitlement);
 }
 
 std::optional<double> WebsiteDataStore::defaultOriginQuotaRatio()
@@ -1028,7 +1043,7 @@ void WebsiteDataStore::loadRecentSearches(const String& name, CompletionHandler<
 {
     m_queue->dispatch([name = name.isolatedCopy(), completionHandler = WTFMove(completionHandler), directory = resolvedDirectories().searchFieldHistoryDirectory.isolatedCopy()]() mutable {
         auto result = WebCore::loadRecentSearchesFromFile(name, directory);
-        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), result = crossThreadCopy(result)]() mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), result = crossThreadCopy(result)]() mutable {
             completionHandler(WTFMove(result));
         });
     });
@@ -1038,7 +1053,7 @@ void WebsiteDataStore::removeRecentSearches(WallTime oldestTimeToRemove, Complet
 {
     m_queue->dispatch([time = oldestTimeToRemove.isolatedCopy(), directory = resolvedDirectories().searchFieldHistoryDirectory.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         WebCore::removeRecentlyModifiedRecentSearchesFromFile(time, directory);
-        RunLoop::protectedMain()->dispatch(WTFMove(completionHandler));
+        RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
     });
 }
 

@@ -1,0 +1,3 @@
+
+PASS Fetch from host with trailing dot should be allowed by CSP.
+

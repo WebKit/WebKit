@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (192,0) size 400x46 [border: (1px outset #000000)]
+        RenderTableSection {TBODY} at (1,1) size 398x44
+          RenderTableRow {TR} at (0,2) size 398x40
+            RenderTableCell {TD} at (2,2) size 394x40 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {FORM} at (2,2) size 390x20
+                RenderMenuList {SELECT} at (0,0) size 56x20 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
+                  RenderBlock (anonymous) at (1,1) size 54x18
+                    RenderText at (8,2) size 23x13
+                      text run at (8,2) width 23: "Test"
+                RenderText {#text} at (0,0) size 0x0

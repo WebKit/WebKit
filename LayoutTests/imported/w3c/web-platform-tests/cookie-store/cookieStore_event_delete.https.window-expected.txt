@@ -1,4 +1,0 @@
-
-PASS cookieStore fires change event for cookie deleted by cookieStore.delete()
-FAIL cookieStore does not fire change events for non-existing expired cookies assert_equals: expected 2 but got 4
-

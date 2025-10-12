@@ -71,7 +71,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     ASSERT(!destination->r);
     const void* chunkContents = static_cast<const void*>(destination->chunkContents);
     fixPointer(source, destination, chunkContents);
-    destination->chunkContents = static_cast<const UChar*>(chunkContents);
+    destination->chunkContents = static_cast<const char16_t*>(chunkContents);
     return destination;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,7 @@ WKURLRequestRef WKDownloadCopyRequest(WKDownloadRef download)
 
 void WKDownloadCancel(WKDownloadRef download, const void* functionContext, WKDownloadCancelCallback callback)
 {
-    return toImpl(download)->cancel([functionContext, callback](auto* resumeData) {
+    return toProtectedImpl(download)->cancel([functionContext, callback](auto* resumeData) {
         if (callback)
             callback(toAPI(resumeData), functionContext);
     });
@@ -64,7 +64,8 @@ void WKDownloadCancel(WKDownloadRef download, const void* functionContext, WKDow
 
 WKPageRef WKDownloadGetOriginatingPage(WKDownloadRef download)
 {
-    return toAPI(toImpl(download)->originatingPage());
+    RefPtr originatingPage = toProtectedImpl(download)->originatingPage();
+    return toAPI(originatingPage.get());
 }
 
 bool WKDownloadGetWasUserInitiated(WKDownloadRef download)
@@ -147,5 +148,5 @@ void WKDownloadSetClient(WKDownloadRef download, WKDownloadClientBase* client)
         }
     };
 
-    toImpl(download)->setClient(adoptRef(*new DownloadClient(client)));
+    toProtectedImpl(download)->setClient(adoptRef(*new DownloadClient(client)));
 }

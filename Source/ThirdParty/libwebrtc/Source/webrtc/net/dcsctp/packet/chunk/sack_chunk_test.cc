@@ -10,13 +10,13 @@
 #include "net/dcsctp/packet/chunk/sack_chunk.h"
 
 #include <cstdint>
-#include <type_traits>
 #include <vector>
 
 #include "api/array_view.h"
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/testing/testing_macros.h"
-#include "rtc_base/gunit.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace {

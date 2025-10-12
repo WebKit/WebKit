@@ -37,8 +37,8 @@ WK_CLASS_AVAILABLE(macos(10.12))
 @property (nonatomic, readonly, copy) _WKHitTestResult *hitTestResult WK_API_AVAILABLE(macos(13.3));
 @property (nonatomic, readonly, copy, nullable) NSString *qrCodePayloadString WK_API_AVAILABLE(macos(14.0));
 @property (nonatomic, readonly) BOOL hasEntireImage WK_API_AVAILABLE(macos(14.0));
-@property (nonatomic, readonly) BOOL allowsFollowingLink WK_API_AVAILABLE(macos(WK_MAC_TBA));
-@property (nonatomic, readonly) BOOL allowsFollowingImageURL WK_API_AVAILABLE(macos(WK_MAC_TBA));
+@property (nonatomic, readonly) BOOL allowsFollowingLink WK_API_AVAILABLE(macos(26.0));
+@property (nonatomic, readonly) BOOL allowsFollowingImageURL WK_API_AVAILABLE(macos(26.0));
 
 @end
 

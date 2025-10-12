@@ -1,4 +1,4 @@
 
 
-FAIL Event Timing Keydown. assert_implements: Event Counts isn't supported undefined
+PASS Event Timing Keydown.
 

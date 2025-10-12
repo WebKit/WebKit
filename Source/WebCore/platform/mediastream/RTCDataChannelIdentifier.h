@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "ProcessQualified.h"
-#include "RTCDataChannelLocalIdentifier.h"
+#include <WebCore/ProcessQualified.h>
+#include <WebCore/RTCDataChannelLocalIdentifier.h>
 
 namespace WebCore {
 

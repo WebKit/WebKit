@@ -377,6 +377,7 @@ void GStreamerDataChannelHandler::onMessageData(GBytes* bytes)
     });
 }
 
+IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage")
 void GStreamerDataChannelHandler::onMessageString(const char* message)
 {
     Locker locker { m_clientLock };
@@ -399,6 +400,7 @@ void GStreamerDataChannelHandler::onMessageString(const char* message)
         client.value()->didReceiveStringData(string);
     });
 }
+IGNORE_CLANG_WARNINGS_END
 
 void GStreamerDataChannelHandler::onError(GError* error)
 {

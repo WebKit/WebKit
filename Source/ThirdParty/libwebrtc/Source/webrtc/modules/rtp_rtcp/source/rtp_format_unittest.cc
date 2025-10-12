@@ -10,8 +10,7 @@
 
 #include "modules/rtp_rtcp/source/rtp_format.h"
 
-#include <memory>
-#include <numeric>
+#include <vector>
 
 #include "absl/algorithm/container.h"
 #include "test/gmock.h"

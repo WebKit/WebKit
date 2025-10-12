@@ -4,34 +4,12 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Don't assert parsing |for (var x = 3 of 42);|
+info: bugzilla.mozilla.org/show_bug.cgi?id=1164741
 esid: pending
 ---*/
-var gTestfile = "for-of-var-with-initializer.js";
-var BUGNUMBER = 1164741;
-var summary = "Don't assert parsing |for (var x = 3 of 42);|";
 
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
-
-try
-{
+assert.throws(SyntaxError, function() {
   Function("for (var x = 3 of 42);");
-  throw new Error("didn't throw");
-}
-catch (e)
-{
-  assert.sameValue(e instanceof SyntaxError, true,
-           "expected syntax error, got: " + e);
-}
-
-/******************************************************************************/
-
-print("Tests complete");
+});

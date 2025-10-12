@@ -58,29 +58,13 @@ Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(Docum
     if (!value)
         return { };
 
-    if (auto* customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(*value)) {
-        if (std::holds_alternative<CSSCustomPropertyValue::SyntaxValueList>(customPropertyValue->value())) {
-            auto& list = std::get<CSSCustomPropertyValue::SyntaxValueList>(customPropertyValue->value());
-
-            Vector<RefPtr<CSSStyleValue>> result;
-            result.reserveInitialCapacity(list.values.size());
-            for (auto& listValue : list.values) {
-                auto styleValue = CSSStyleValueFactory::constructStyleValueForCustomPropertySyntaxValue(listValue);
-                if (!styleValue)
-                    return { };
-                result.append(WTFMove(styleValue));
-            }
-            return result;
-        }
+    if (RefPtr valueList = dynamicDowncast<CSSValueList>(*value); valueList && (propertyID && CSSProperty::isListValuedProperty(*propertyID))) {
+        return WTF::map(*valueList, [&](auto& item) {
+            return StylePropertyMapReadOnly::reifyValue(document, Ref { const_cast<CSSValue&>(item) }, propertyID);
+        });
     }
 
-    auto* valueList = dynamicDowncast<CSSValueList>(*value);
-    if (!valueList || (propertyID && !CSSProperty::isListValuedProperty(*propertyID)))
-        return { StylePropertyMapReadOnly::reifyValue(document, WTFMove(value), propertyID) };
-
-    return WTF::map(*valueList, [&](auto& item) {
-        return StylePropertyMapReadOnly::reifyValue(document, Ref { const_cast<CSSValue&>(item) }, propertyID);
-    });
+    return { StylePropertyMapReadOnly::reifyValue(document, WTFMove(value), propertyID) };
 }
 
 StylePropertyMapReadOnly::Iterator::Iterator(StylePropertyMapReadOnly& map, ScriptExecutionContext* context)

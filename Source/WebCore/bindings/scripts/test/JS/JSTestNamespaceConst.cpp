@@ -83,13 +83,13 @@ JSValue JSTestNamespaceConst::getConstructor(VM& vm, const JSGlobalObject* globa
 
 void JSTestNamespaceConst::destroy(JSC::JSCell* cell)
 {
-    JSTestNamespaceConst* thisObject = static_cast<JSTestNamespaceConst*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestNamespaceConst* thisObject = static_cast<JSTestNamespaceConst*>(cell);
     thisObject->JSTestNamespaceConst::~JSTestNamespaceConst();
 }
 
 JSC::GCClient::IsoSubspace* JSTestNamespaceConst::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestNamespaceConst, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestNamespaceConst, UseCustomHeapCellType::No>(vm, "JSTestNamespaceConst"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamespaceConst.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamespaceConst = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestNamespaceConst.get(); },

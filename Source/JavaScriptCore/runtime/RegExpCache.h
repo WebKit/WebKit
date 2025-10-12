@@ -28,10 +28,10 @@
 
 #pragma once
 
-#include "RegExp.h"
-#include "RegExpKey.h"
-#include "Strong.h"
-#include "Weak.h"
+#include <JavaScriptCore/RegExp.h>
+#include <JavaScriptCore/RegExpKey.h>
+#include <JavaScriptCore/Strong.h>
+#include <JavaScriptCore/Weak.h>
 #include <array>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/TZoneMalloc.h>

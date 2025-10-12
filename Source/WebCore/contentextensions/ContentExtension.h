@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,8 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "DFABytecodeInterpreter.h"
-#include "StyleSheetContents.h"
+#include <WebCore/DFABytecodeInterpreter.h>
+#include <WebCore/StyleSheetContents.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -54,10 +54,10 @@ public:
 
 private:
     ContentExtension(const String& identifier, Ref<CompiledContentExtension>&&, URL&&, ShouldCompileCSS);
-    uint32_t findFirstIgnorePreviousRules() const;
+    uint32_t findFirstIgnoreRule() const;
     
     String m_identifier;
-    Ref<CompiledContentExtension> m_compiledExtension;
+    const Ref<CompiledContentExtension> m_compiledExtension;
     URL m_extensionBaseURL;
 
     RefPtr<StyleSheetContents> m_globalDisplayNoneStyleSheet;

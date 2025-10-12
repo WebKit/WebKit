@@ -1,8 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Importing binding name 'default' cannot be resolved by star export entries.
-CONSOLE MESSAGE: SyntaxError: Importing binding name 'default' cannot be resolved by star export entries.
-CONSOLE MESSAGE: SyntaxError: Importing binding name 'default' cannot be resolved by star export entries.
-CONSOLE MESSAGE: SyntaxError: Importing binding name 'default' cannot be resolved by star export entries.
-CONSOLE MESSAGE: SyntaxError: Importing binding name 'default' cannot be resolved by star export entries.
 
 PASS Test that missing exports lead to SyntaxError events on window and load events on script
 

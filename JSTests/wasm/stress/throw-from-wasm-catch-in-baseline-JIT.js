@@ -1,4 +1,3 @@
-//@ skip if !$isWasmPlatform
 //@ runNoisyTestDefault("--traceBaselineJITExecution=1", "--jitPolicyScale=0")
 
 let x = readFile('throw-from-wasm-catch-in-baseline-JIT-payload.bin', 'binary');

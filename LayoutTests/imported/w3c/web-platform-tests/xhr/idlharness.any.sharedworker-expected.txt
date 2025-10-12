@@ -4,10 +4,10 @@ PASS idl_test validation
 PASS Partial interface Document: member names are unique
 PASS Partial interface Document[2]: member names are unique
 PASS Document includes NonElementParentNode: member names are unique
+PASS Document includes DocumentOrShadowRoot: member names are unique
 PASS Document includes ParentNode: member names are unique
 PASS Document includes XPathEvaluatorBase: member names are unique
 PASS Document includes GlobalEventHandlers: member names are unique
-PASS Document includes DocumentAndElementEventHandlers: member names are unique
 PASS XMLHttpRequestEventTarget interface: existence and properties of interface object
 PASS XMLHttpRequestEventTarget interface object length
 PASS XMLHttpRequestEventTarget interface object name

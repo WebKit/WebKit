@@ -22,68 +22,6 @@
 
 headers: "ArgumentCodersCocoa.h"
 
-#if USE(CORE_TEXT)
-
-header: <WebCore/FontPlatformData.h>
-
-[CustomHeader] struct WebCore::FontPlatformSerializedTraits {
-    String uiFontDesign;
-    std::optional<RetainPtr<CFNumberRef>> weight;
-    std::optional<RetainPtr<CFNumberRef>> width;
-    std::optional<RetainPtr<CFNumberRef>> symbolic;
-    std::optional<RetainPtr<CFNumberRef>> grade;
-};
-
-[CustomHeader] struct WebCore::FontPlatformOpticalSize {
-    Variant<RetainPtr<CFNumberRef>, String> opticalSize;
-};
-
-[CustomHeader] struct WebCore::FontPlatformSerializedAttributes {
-    String fontName;
-    String descriptorLanguage;
-    String descriptorTextStyle;
-
-    std::optional<RetainPtr<CFDataRef>> matrix;
-
-    std::optional<RetainPtr<CFBooleanRef>> ignoreLegibilityWeight;
-
-    std::optional<RetainPtr<CFNumberRef>> baselineAdjust;
-    std::optional<RetainPtr<CFNumberRef>> fallbackOption;
-    std::optional<RetainPtr<CFNumberRef>> fixedAdvance;
-    std::optional<RetainPtr<CFNumberRef>> orientation;
-    std::optional<RetainPtr<CFNumberRef>> palette;
-    std::optional<RetainPtr<CFNumberRef>> size;
-    std::optional<RetainPtr<CFNumberRef>> sizeCategory;
-    std::optional<RetainPtr<CFNumberRef>> track;
-    std::optional<RetainPtr<CFNumberRef>> unscaledTracking;
-
-    std::optional<Vector<std::pair<RetainPtr<CFNumberRef>, RetainPtr<CGColorRef>>>> paletteColors;
-    std::optional<Vector<std::pair<RetainPtr<CFNumberRef>, RetainPtr<CFNumberRef>>>> variations;
-
-    std::optional<WebCore::FontPlatformOpticalSize> opticalSize;
-    std::optional<WebCore::FontPlatformSerializedTraits> traits;
-
-    std::optional<RetainPtr<CFArrayRef>> featureSettings;
-
-#if HAVE(ADDITIONAL_FONT_PLATFORM_SERIALIZED_ATTRIBUTES)
-    std::optional<RetainPtr<CFNumberRef>> additionalNumber;
-#endif
-};
-
-[CustomHeader] struct WebCore::FontPlatformSerializedCreationData {
-    Vector<uint8_t> fontFaceData;
-    std::optional<WebCore::FontPlatformSerializedAttributes> attributes;
-    String itemInCollection;
-};
-
-[CustomHeader] struct WebCore::FontPlatformSerializedData {
-    CTFontDescriptorOptions options;
-    RetainPtr<CFStringRef> referenceURL;
-    RetainPtr<CFStringRef> postScriptName;
-    std::optional<WebCore::FontPlatformSerializedAttributes> attributes;
-};
-#endif // USE(CORE_TEXT)
-
 #if ENABLE(CONTENT_FILTERING)
 class WebCore::ContentFilterUnblockHandler {
     String unblockURLHost()
@@ -153,31 +91,31 @@ header: <WebCore/AttributedString.h>
 [CustomHeader] struct WebCore::ParagraphStyleTextList {
     WebCore::AttributedStringTextListID thisID
     String markerFormat;
-    [Validator='startingItemNumber >= 0'] long startingItemNumber;
+    int64_t startingItemNumber;
 }
 
 header: <WebCore/AttributedString.h>
 [CustomHeader] struct WebCore::ParagraphStyleCommonTableAttributes {
-    CGFloat width;
-    CGFloat minimumWidth;
-    CGFloat maximumWidth;
-    CGFloat minimumHeight;
-    CGFloat maximumHeight;
+    double width;
+    double minimumWidth;
+    double maximumWidth;
+    double minimumHeight;
+    double maximumHeight;
 
-    CGFloat paddingMinXEdge;
-    CGFloat paddingMinYEdge;
-    CGFloat paddingMaxXEdge;
-    CGFloat paddingMaxYEdge;
+    double paddingMinXEdge;
+    double paddingMinYEdge;
+    double paddingMaxXEdge;
+    double paddingMaxYEdge;
 
-    CGFloat borderMinXEdge;
-    CGFloat borderMinYEdge;
-    CGFloat borderMaxXEdge;
-    CGFloat borderMaxYEdge;
+    double borderMinXEdge;
+    double borderMinYEdge;
+    double borderMaxXEdge;
+    double borderMaxYEdge;
 
-    CGFloat marginMinXEdge;
-    CGFloat marginMinYEdge;
-    CGFloat marginMaxXEdge;
-    CGFloat marginMaxYEdge;
+    double marginMinXEdge;
+    double marginMinYEdge;
+    double marginMaxXEdge;
+    double marginMaxYEdge;
 
     RetainPtr<WebCore::CocoaColor> backgroundColor;
     RetainPtr<WebCore::CocoaColor> borderMinXEdgeColor;
@@ -190,17 +128,17 @@ header: <WebCore/AttributedString.h>
 [CustomHeader] struct WebCore::TextTableBlock : WebCore::ParagraphStyleCommonTableAttributes {
     WebCore::AttributedStringTextTableBlockID thisID;
     WebCore::AttributedStringTextTableID tableID;
-    [Validator='startingRow >= 0'] long startingRow;
-    [Validator='rowSpan >= 0'] long rowSpan;
-    [Validator='startingColumn >= 0'] long startingColumn;
-    [Validator='columnSpan >= 0'] long columnSpan;
+    [Validator='startingRow >= 0'] int64_t startingRow;
+    [Validator='rowSpan >= 0'] int64_t rowSpan;
+    [Validator='startingColumn >= 0'] int64_t startingColumn;
+    [Validator='columnSpan >= 0'] int64_t columnSpan;
     WebCore::TextTableBlockVerticalAlignment verticalAlignment;
 };
 
 header: <WebCore/AttributedString.h>
 [CustomHeader] struct WebCore::TextTable : WebCore::ParagraphStyleCommonTableAttributes {
     WebCore::AttributedStringTextTableID thisID;
-    unsigned long numberOfColumns;
+    uint64_t numberOfColumns;
     WebCore::TextTableLayoutAlgorithm layout;
     bool collapsesBorders;
     bool hidesEmptyCells;
@@ -208,7 +146,7 @@ header: <WebCore/AttributedString.h>
 
 header: <WebCore/AttributedString.h>
 [CustomHeader] struct WebCore::TextTab {
-    CGFloat location;
+    double location;
     WebCore::ParagraphStyleAlignment alignment;
 }
 
@@ -218,11 +156,11 @@ header: <WebCore/AttributedString.h>
     WebCore::ParagraphStyleAlignment alignment;
     WebCore::ParagraphStyleWritingDirection writingDirection;
     float hyphenationFactor;
-    CGFloat firstLineHeadIndent;
-    CGFloat headIndent;
-    [Validator='headerLevel >= 0'] long headerLevel;
-    CGFloat tailIndent;
-    CGFloat paragraphSpacing;
+    double firstLineHeadIndent;
+    double headIndent;
+    [Validator='headerLevel >= 0'] int64_t headerLevel;
+    double tailIndent;
+    double paragraphSpacing;
     Vector<WebCore::AttributedStringTextTableBlockID> textTableBlockIDs;
     Vector<WebCore::AttributedStringTextListID> textListIDs;
     Vector<WebCore::TextTableBlock> textTableBlocks;
@@ -231,14 +169,24 @@ header: <WebCore/AttributedString.h>
     Vector<WebCore::TextTab> textTabs;
 }
 
-[Nested] struct WebCore::AttributedString::AttributeValue {
+[Nested, CreateUsing=createFromIPCData] struct WebCore::AttributedString::FontWrapper {
+    String postScriptName();
+    double pointSize();
+    CTFontDescriptorOptions fontDescriptorOptions();
+    std::optional<WebCore::FontPlatformSerializedAttributes> fontSerializedAttributes();
+}
+
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    Variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, WebCore::ParagraphStyle, RetainPtr<NSPresentationIntent>, RetainPtr<NSShadow>, RetainPtr<NSDate>, WebCore::AttributedString::ColorFromCGColor, WebCore::AttributedString::ColorFromPlatformColor, WebCore::MultiRepresentationHEICAttachmentData, WebCore::TextAttachmentFileWrapper, WebCore::TextAttachmentMissingImage> value;
+[Nested] struct WebCore::AttributedString::AttributeValue {
+    Variant<double, String, URL, WebCore::AttributedString::FontWrapper, Vector<String>, Vector<double>, WebCore::ParagraphStyle, RetainPtr<NSPresentationIntent>, RetainPtr<NSShadow>, RetainPtr<NSDate>, WebCore::AttributedString::ColorFromCGColor, WebCore::AttributedString::ColorFromPlatformColor, WebCore::MultiRepresentationHEICAttachmentData, WebCore::TextAttachmentFileWrapper, WebCore::TextAttachmentMissingImage> value;
+}
 #endif
 #if !ENABLE(MULTI_REPRESENTATION_HEIC)
-    Variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, WebCore::ParagraphStyle, RetainPtr<NSPresentationIntent>, RetainPtr<NSShadow>, RetainPtr<NSDate>, WebCore::AttributedString::ColorFromCGColor, WebCore::AttributedString::ColorFromPlatformColor, WebCore::TextAttachmentFileWrapper, WebCore::TextAttachmentMissingImage> value;
-#endif
+[Nested] struct WebCore::AttributedString::AttributeValue {
+    Variant<double, String, URL, WebCore::AttributedString::FontWrapper, Vector<String>, Vector<double>, WebCore::ParagraphStyle, RetainPtr<NSPresentationIntent>, RetainPtr<NSShadow>, RetainPtr<NSDate>, WebCore::AttributedString::ColorFromCGColor, WebCore::AttributedString::ColorFromPlatformColor, WebCore::TextAttachmentFileWrapper, WebCore::TextAttachmentMissingImage> value;
 }
+#endif
+
 
 [Nested] struct WebCore::AttributedString::ColorFromPlatformColor {
     WebCore::Color color
@@ -249,8 +197,8 @@ header: <WebCore/AttributedString.h>
 }
 
 [Nested] struct WebCore::AttributedString::Range {
-    size_t location
-    size_t length
+    uint64_t location
+    uint64_t length
 };
 
 struct WebCore::AttributedString {
@@ -367,19 +315,19 @@ class WebCore::PaymentSessionError {
 
 headers: <pal/cocoa/PassKitSoftLink.h>
 class WebCore::PaymentMethod {
-    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentMethodClass()], Validator='m_pkPaymentMethod'] RetainPtr<PKPaymentMethod> m_pkPaymentMethod;
+    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentMethodClassSingleton()], Validator='m_pkPaymentMethod'] RetainPtr<PKPaymentMethod> m_pkPaymentMethod;
 };
 
 class WebCore::Payment {
-    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentClass()]] RetainPtr<PKPayment> pkPayment();
+    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentClassSingleton()]] RetainPtr<PKPayment> pkPayment();
 };
 
 class WebCore::PaymentContact {
-    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKContactClass()]] RetainPtr<PKContact> pkContact();
+    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKContactClassSingleton()]] RetainPtr<PKContact> pkContact();
 };
 
 class WebCore::PaymentMerchantSession {
-    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentMerchantSessionClass()]] RetainPtr<PKPaymentMerchantSession> pkPaymentMerchantSession();
+    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentMerchantSessionClassSingleton()]] RetainPtr<PKPaymentMerchantSession> pkPaymentMerchantSession();
 };
 #endif
 
@@ -474,6 +422,11 @@ NSURLRequest wrapped by CoreIPCNSURLRequest
 #if USE(AVFOUNDATION)
 AVOutputContext wrapped by CoreIPCAVOutputContext
 #endif
+
+#if USE(PASSKIT) && !HAVE(WK_SECURE_CODING_PKDATECOMPONENTSRANGE)
+PKDateComponentsRange wrapped by CoreIPCPKDateComponentsRange
+#endif
+
 #if USE(PASSKIT)
 PKPaymentMethod wrapped by CoreIPCPKPaymentMethod
 PKPaymentMerchantSession wrapped by CoreIPCPKPaymentMerchantSession
@@ -483,7 +436,6 @@ PKSecureElementPass wrapped by CoreIPCPKSecureElementPass
 PKPayment wrapped by CoreIPCPKPayment
 PKPaymentToken wrapped by CoreIPCPKPaymentToken
 PKShippingMethod wrapped by CoreIPCPKShippingMethod
-PKDateComponentsRange wrapped by CoreIPCPKDateComponentsRange
 CNContact wrapped by CoreIPCCNContact
 CNPhoneNumber wrapped by CoreIPCCNPhoneNumber
 CNPostalAddress wrapped by CoreIPCCNPostalAddress
@@ -497,7 +449,6 @@ NSDateComponents wrapped by CoreIPCDateComponents
 NSData wrapped by CoreIPCData
 NSURL wrapped by CoreIPCURL
 NSNull wrapped by CoreIPCNull
-WebCore::CocoaFont wrapped by CoreIPCFont
 NSDate wrapped by CoreIPCDate
 NSArray wrapped by CoreIPCArray
 NSError wrapped by CoreIPCError
@@ -506,9 +457,9 @@ NSNumber wrapped by CoreIPCNumber
 NSString wrapped by CoreIPCString
 NSDictionary wrapped by CoreIPCDictionary
 NSPresentationIntent wrapped by CoreIPCPresentationIntent
+NSSet wrapped by CoreIPCStringSet
 
 #if PLATFORM(MAC)
-using CGDirectDisplayID = uint32_t
 using WebCore::CocoaColor = NSColor;
 NSColor wrapped by CoreIPCColor
 #else
@@ -518,7 +469,6 @@ UIColor wrapped by CoreIPCColor
 
 using CFTimeInterval = double
 using CGGlyph = uint16_t
-using NSRect = CGRect
 
 #if ENABLE(WRITING_TOOLS)
 using WebCore::WritingTools::TextSuggestion::ID = WTF::UUID
@@ -527,8 +477,4 @@ using WebCore::WritingTools::Session::ID = WTF::UUID
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 using WebCore::MediaControlsContextMenuItem::ID = uint64_t;
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-[Nested] enum class WebCore::MediaSessionHelper::ShouldOverride : bool
 #endif

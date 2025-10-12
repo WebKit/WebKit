@@ -6,6 +6,10 @@
 
 // EGLX11VisualTest.cpp: tests for EGL_ANGLE_x11_visual extension
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <gtest/gtest.h>
 
 #include <EGL/egl.h>
@@ -78,9 +82,8 @@ TEST_P(EGLX11VisualHintTest, InvalidVisualID)
     static const int gInvalidVisualId = -1;
     auto attributes                   = getDisplayAttributes(gInvalidVisualId);
 
-    EGLDisplay display = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
-                                               reinterpret_cast<_XDisplay *>(EGL_DEFAULT_DISPLAY),
-                                               attributes.data());
+    EGLDisplay display = eglGetPlatformDisplay(
+        GetEglPlatform(), reinterpret_cast<_XDisplay *>(EGL_DEFAULT_DISPLAY), attributes.data());
     ASSERT_TRUE(display != EGL_NO_DISPLAY);
 
     ASSERT_TRUE(EGL_FALSE == eglInitialize(display, nullptr, nullptr));
@@ -104,9 +107,8 @@ TEST_P(EGLX11VisualHintTest, ValidVisualIDAndClear)
     int visualId = windowAttributes.visual->visualid;
 
     auto attributes    = getDisplayAttributes(visualId);
-    EGLDisplay display = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
-                                               reinterpret_cast<_XDisplay *>(EGL_DEFAULT_DISPLAY),
-                                               attributes.data());
+    EGLDisplay display = eglGetPlatformDisplay(
+        GetEglPlatform(), reinterpret_cast<_XDisplay *>(EGL_DEFAULT_DISPLAY), attributes.data());
     ASSERT_NE(EGL_NO_DISPLAY, display);
 
     ASSERT_TRUE(EGL_TRUE == eglInitialize(display, nullptr, nullptr));
@@ -182,9 +184,8 @@ TEST_P(EGLX11VisualHintTest, InvalidWindowVisualID)
     }
 
     auto attributes    = getDisplayAttributes(visualId);
-    EGLDisplay display = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
-                                               reinterpret_cast<_XDisplay *>(EGL_DEFAULT_DISPLAY),
-                                               attributes.data());
+    EGLDisplay display = eglGetPlatformDisplay(
+        GetEglPlatform(), reinterpret_cast<_XDisplay *>(EGL_DEFAULT_DISPLAY), attributes.data());
     ASSERT_NE(EGL_NO_DISPLAY, display);
 
     ASSERT_TRUE(EGL_TRUE == eglInitialize(display, nullptr, nullptr));

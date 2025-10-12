@@ -1,0 +1,6 @@
+
+FAIL Appending a rule assert_equals: expected "10px" but got "42px"
+FAIL Prepending a rule assert_equals: expected "10px" but got "42px"
+FAIL Deleting a rule assert_equals: expected "10px" but got "42px"
+FAIL Prepending a rule, then deleting last assert_equals: expected "10px" but got "42px"
+

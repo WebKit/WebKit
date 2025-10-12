@@ -23,10 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <wtf/Platform.h>
+
 #if PLATFORM(MAC)
 
+#import <AppKit/NSView.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
+
+@class NSResponder;
+@class NSTextField;
+@class NSVisualEffectView;
 
 WEBCORE_EXPORT @interface WebCoreFullScreenPlaceholderView : NSView {
 @private
@@ -35,7 +42,8 @@ WEBCORE_EXPORT @interface WebCoreFullScreenPlaceholderView : NSView {
     WeakObjCPtr<NSResponder> _target;
 }
 @property (nullable, strong) id contents;
-@property (nullable, weak) NSResponder *target;
+/* This is a safer cpp false positive (rdar://161063702). */
+@property (nullable, weak) NSResponder *target SUPPRESS_UNRETAINED_MEMBER;
 - (void)setExitWarningVisible:(BOOL)visible;
 @end
 

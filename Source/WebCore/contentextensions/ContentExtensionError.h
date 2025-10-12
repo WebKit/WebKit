@@ -37,13 +37,14 @@ namespace ContentExtensions {
 enum class ContentExtensionError {
     // JSON parser error
     JSONInvalid = 1,
-    
+
     // JSON semantics error
     JSONTopLevelStructureNotAnArray,
     JSONInvalidObjectInTopLevelArray,
     JSONInvalidRule,
+    JSONInvalidRuleIdentifier,
     JSONContainsNoRules,
-    
+
     JSONInvalidTrigger,
     JSONInvalidURLFilterInTrigger,
     JSONInvalidTriggerFlagsArray,
@@ -53,7 +54,7 @@ enum class ContentExtensionError {
     JSONMultipleConditions,
     JSONTooManyRules,
     JSONInvalidRequestMethod,
-    
+
     JSONInvalidAction,
     JSONInvalidActionType,
     JSONInvalidCSSDisplayNoneActionType,

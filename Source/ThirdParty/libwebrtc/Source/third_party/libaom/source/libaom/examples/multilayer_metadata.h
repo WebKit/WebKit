@@ -1,7 +1,21 @@
+/*
+ * Copyright (c) 2024, Alliance for Open Media. All rights reserved.
+ *
+ * This source code is subject to the terms of the BSD 2 Clause License and
+ * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
+ * was not distributed with this source code in the LICENSE file, you can
+ * obtain it at www.aomedia.org/license/software. If the Alliance for Open
+ * Media Patent License 1.0 was not distributed with this source code in the
+ * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
+ */
+
+// Experimental multilayer metadata defined in CWG-E050.
+
 #ifndef AOM_EXAMPLES_MULTILAYER_METADATA_H_
 #define AOM_EXAMPLES_MULTILAYER_METADATA_H_
 
 #include <cstdint>
+#include <utility>
 #include <vector>
 
 namespace libaom_examples {
@@ -20,30 +34,25 @@ struct ColorProperties {
 enum AlphaUse {
   ALPHA_STRAIGHT = 0,
   ALPHA_PREMULTIPLIED = 1,
-  ALPHA_SEGMENTATION = 2,
-  ALPHA_UNSPECIFIED = 3,
+  ALPHA_UNSPECIFIED = 2,
+  // 3 is reserved.
 };
 
 struct AlphaInformation {
-  AlphaUse alpha_use_idc;   // [0, 7]
+  AlphaUse alpha_use_idc;   // [0, 3]
+  bool alpha_simple_flag;   // If true, all fields below are ignored.
   uint8_t alpha_bit_depth;  // [8, 15]
   uint8_t alpha_clip_idc;   // [0, 3]
   bool alpha_incr_flag;
-  uint16_t alpha_transparent_value;  // [0, 1<<alpha_bit_depth]
-  uint16_t alpha_opaque_value;       // [0, 1<<alpha_bit_depth]
-  // Relevant for ALPHA_STRAIGHT only.
+  uint16_t alpha_transparent_value;  // [0, 1<<(alpha_bit_depth+1))
+  uint16_t alpha_opaque_value;       // [0, 1<<(alpha_bit_depth+1))
   std::pair<ColorProperties, bool> alpha_color_description;
-  // Relevant for ALPHA_SEGMENTATION only.
-  // Must be either empty or have the same size as the number of values between
-  // alpha_transparent_value and alpha_opaque_value, inclusively.
-  std::vector<uint16_t> label_type_id;
 };
 
-// TODO: maryla - parse floats directly and convert to this wire
-// representation at write time.
 struct DepthRepresentationElement {
   bool sign_flag;
-  uint8_t exponent;  // [0, 126]
+  uint8_t exponent;      // [0, 126] (biased exponent)
+  uint8_t mantissa_len;  // [1, 32]
   uint32_t mantissa;
 };
 
@@ -52,36 +61,38 @@ struct DepthInformation {
   std::pair<DepthRepresentationElement, bool> z_far;
   std::pair<DepthRepresentationElement, bool> d_min;
   std::pair<DepthRepresentationElement, bool> d_max;
-  uint8_t depth_representation_type;  // [0, 15]
-  uint8_t disparity_ref_view_id;      // [0, 3]
-  uint8_t depth_nonlinear_precision;  // [8, 23]
-  // [0, 1<<depth_nonlinear_precision]
-  std::vector<uint32_t> depth_nonlinear_representation_model;
+  uint8_t depth_representation_type;  // [0, 2]. Values 3 to 15 are reserved.
+  // Only relevant if d_min or d_max are present.
+  uint8_t disparity_ref_view_id;  // [0, 3]
 };
 
 enum MultilayerUseCase {
   MULTILAYER_USE_CASE_UNSPECIFIED = 0,
-  MULTILAYER_USE_CASE_ALPHA = 1,
-  MULTILAYER_USE_CASE_DEPTH = 2,
-  MULTILAYER_USE_CASE_STEREO = 3,
-  MULTILAYER_USE_CASE_STEREO_ALPHA_GLOBAL = 4,
-  MULTILAYER_USE_CASE_STEREO_DEPTH_GLOBAL = 5,
-  MULTILAYER_USE_CASE_STEREO_ALPHA = 6,
-  MULTILAYER_USE_CASE_STEREO_DEPTH = 7,
-  MULTILAYER_USE_CASE_444 = 8,
-  MULTILAYER_USE_CASE_420_444 = 9,
-  MULTILAYER_USE_CASE_444_ALPHA = 10,
-  MULTILAYER_USE_CASE_444_DEPTH = 11,
+  MULTILAYER_USE_CASE_GLOBAL_ALPHA = 1,
+  MULTILAYER_USE_CASE_GLOBAL_DEPTH = 2,
+  MULTILAYER_USE_CASE_ALPHA = 3,
+  MULTILAYER_USE_CASE_DEPTH = 4,
+  MULTILAYER_USE_CASE_STEREO = 5,
+  MULTILAYER_USE_CASE_STEREO_GLOBAL_ALPHA = 6,
+  MULTILAYER_USE_CASE_STEREO_GLOBAL_DEPTH = 7,
+  MULTILAYER_USE_CASE_STEREO_ALPHA = 8,
+  MULTILAYER_USE_CASE_STEREO_DEPTH = 9,
+  MULTILAYER_USE_CASE_444_GLOBAL_ALPHA = 10,
+  MULTILAYER_USE_CASE_444_GLOBAL_DEPTH = 11,
+  MULTILAYER_USE_CASE_444 = 12,
+  MULTILAYER_USE_CASE_420_444 = 13,
+  // 14 to 63 are reserved.
 };
 
 enum LayerType {
-  MULTIALYER_LAYER_TYPE_UNSPECIFIED = 0,
-  MULTIALYER_LAYER_TYPE_TEXTURE = 1,
-  MULTIALYER_LAYER_TYPE_TEXTURE_1 = 2,
-  MULTIALYER_LAYER_TYPE_TEXTURE_2 = 3,
-  MULTIALYER_LAYER_TYPE_TEXTURE_3 = 4,
-  MULTIALYER_LAYER_TYPE_ALPHA = 5,
-  MULTIALYER_LAYER_TYPE_DEPTH = 6,
+  MULTILAYER_LAYER_TYPE_UNSPECIFIED = 0,
+  MULTILAYER_LAYER_TYPE_TEXTURE = 1,
+  MULTILAYER_LAYER_TYPE_TEXTURE_1 = 2,
+  MULTILAYER_LAYER_TYPE_TEXTURE_2 = 3,
+  MULTILAYER_LAYER_TYPE_TEXTURE_3 = 4,
+  MULTILAYER_LAYER_TYPE_ALPHA = 5,
+  MULTILAYER_LAYER_TYPE_DEPTH = 6,
+  // 7 to 31 are reserved.
 };
 
 enum MultilayerMetadataScope {
@@ -96,6 +107,15 @@ enum MultilayerViewType {
   VIEW_CENTER = 1,
   VIEW_LEFT = 2,
   VIEW_RIGHT = 3,
+  // 4 to 7 are reserved.
+};
+
+struct FrameLocalMetadata {
+  long frame_idx;
+  // Relevant for MULTILAYER_LAYER_TYPE_ALPHA with scope != SCOPE_GLOBAL.
+  AlphaInformation alpha;
+  // Relevant for MULTILAYER_LAYER_TYPE_DEPTH with scope != SCOPE_GLOBAL.
+  DepthInformation depth;
 };
 
 struct LayerMetadata {
@@ -108,27 +128,37 @@ struct LayerMetadata {
 
   std::pair<ColorProperties, bool> layer_color_description;
 
-  // Relevant for MULTIALYER_LAYER_TYPE_ALPHA with SCOPE_GLOBAL or SCOPE_MIXED.
-  AlphaInformation global_alpha_info;
-  // Relevant for MULTIALYER_LAYER_TYPE_DEPTH with SCOPE_GLOBAL or SCOPE_MIXED.
-  DepthInformation global_depth_info;
+  // Relevant for MULTILAYER_LAYER_TYPE_ALPHA with scope >= SCOPE_GLOBAL.
+  AlphaInformation alpha;
+  // Relevant for MULTILAYER_LAYER_TYPE_DEPTH with scope >= SCOPE_GLOBAL.
+  DepthInformation depth;
+
+  // Relevant when scope != SCOPE_GLOBAL.
+  std::vector<FrameLocalMetadata> local_metadata;
 };
 
 struct MultilayerMetadata {
-  MultilayerUseCase use_case;  // [0, 63]
-  std::vector<LayerMetadata> layers;
+  MultilayerUseCase use_case;         // [0, 63]
+  std::vector<LayerMetadata> layers;  // max size 4
 };
 
 // Parses a multilayer metadata file.
-// Terminates the process in case of error.
 // The metadata is expected to be in a subset of the YAML format supporting
 // simple lists and maps with integer values, and comments.
-// Does very little validation on the metadata, e.g. does not check that the
-// values are in the correct range.
-MultilayerMetadata parse_multilayer_file(const char *metadata_path);
+// Checks that the metadata is valid and terminates the process in case of
+// error.
+bool parse_multilayer_file(const char *metadata_path,
+                           MultilayerMetadata *multilayer);
 
 // Prints the multilayer metadata to stdout for debugging.
 void print_multilayer_metadata(const MultilayerMetadata &multilayer);
+
+// Converts a double value to a DepthRepresentationElement struct.
+bool double_to_depth_representation_element(
+    double v, DepthRepresentationElement *element);
+// Converts a DepthRepresentationElement struct to a double value.
+double depth_representation_element_to_double(
+    const DepthRepresentationElement &e);
 
 }  // namespace libaom_examples
 

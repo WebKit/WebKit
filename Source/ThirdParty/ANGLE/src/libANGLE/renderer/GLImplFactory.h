@@ -79,7 +79,9 @@ class GLImplFactory : angle::NonCopyable
     virtual BufferImpl *createBuffer(const gl::BufferState &state) = 0;
 
     // Vertex Array creation
-    virtual VertexArrayImpl *createVertexArray(const gl::VertexArrayState &data) = 0;
+    virtual VertexArrayImpl *createVertexArray(
+        const gl::VertexArrayState &data,
+        const gl::VertexArrayBuffers &vertexArrayBuffers) = 0;
 
     // Query and Fence creation
     virtual QueryImpl *createQuery(gl::QueryType type) = 0;

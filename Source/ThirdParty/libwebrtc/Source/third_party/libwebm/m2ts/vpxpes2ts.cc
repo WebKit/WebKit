@@ -10,7 +10,10 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstdio>
+#include <new>
 #include <vector>
+
+#include "m2ts/webm2pes.h"
 
 namespace libwebm {
 // TODO(tomfinegan): Dedupe this and PesHeaderField.
@@ -133,7 +136,7 @@ bool VpxPes2Ts::ConvertToFile() {
                  output_file_name_.c_str());
     return false;
   }
-  pes_converter_.reset(new Webm2Pes(input_file_name_, this));
+  pes_converter_.reset(new (std::nothrow) Webm2Pes(input_file_name_, this));
   if (pes_converter_ == nullptr) {
     std::fprintf(stderr, "VpxPes2Ts: Out of memory.\n");
     return false;

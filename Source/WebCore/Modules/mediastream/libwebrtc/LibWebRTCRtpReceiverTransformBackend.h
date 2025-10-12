@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,37 +26,25 @@
 
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
+#include "LibWebRTCRtpReceiverBackend.h"
 #include "LibWebRTCRtpTransformBackend.h"
-#include <wtf/Ref.h>
-
-ALLOW_UNUSED_PARAMETERS_BEGIN
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-
-#include <webrtc/api/rtp_receiver_interface.h>
-
-ALLOW_DEPRECATED_DECLARATIONS_END
-ALLOW_UNUSED_PARAMETERS_END
-
-namespace webrtc {
-class RtpReceiverInterface;
-}
 
 namespace WebCore {
 
 class LibWebRTCRtpReceiverTransformBackend final : public LibWebRTCRtpTransformBackend {
 public:
-    static Ref<LibWebRTCRtpReceiverTransformBackend> create(rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver) { return adoptRef(*new LibWebRTCRtpReceiverTransformBackend(WTFMove(receiver))); }
+    static Ref<LibWebRTCRtpReceiverTransformBackend> create(Ref<webrtc::RtpReceiverInterface>&& receiver) { return adoptRef(*new LibWebRTCRtpReceiverTransformBackend(WTFMove(receiver))); }
     ~LibWebRTCRtpReceiverTransformBackend();
 
 private:
-    explicit LibWebRTCRtpReceiverTransformBackend(rtc::scoped_refptr<webrtc::RtpReceiverInterface>);
+    explicit LibWebRTCRtpReceiverTransformBackend(Ref<webrtc::RtpReceiverInterface>&&);
 
     // RTCRtpTransformBackend
     void setTransformableFrameCallback(Callback&&) final;
     bool requestKeyFrame(const String&) final;
 
     bool m_isRegistered { false };
-    rtc::scoped_refptr<webrtc::RtpReceiverInterface> m_rtcReceiver;
+    const Ref<webrtc::RtpReceiverInterface> m_rtcReceiver;
 };
 
 } // namespace WebCore

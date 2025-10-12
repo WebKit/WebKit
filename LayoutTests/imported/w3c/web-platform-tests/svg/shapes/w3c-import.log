@@ -14,7 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/animatedPoints-non-animated.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/shapes/circle-01-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/shapes/circle-01-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/shapes/circle-01.svg

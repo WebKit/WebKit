@@ -1,0 +1,6 @@
+
+FAIL <dashed-function> in longhand assert_equals: expected "10px" but got "784px"
+FAIL <dashed-function> with typed result in longhand assert_equals: expected "10px" but got "0px"
+FAIL <dashed-function> with in inherited longhand assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL <dashed-function> with typed result in shorthand assert_equals: expected "10px" but got "0px"
+

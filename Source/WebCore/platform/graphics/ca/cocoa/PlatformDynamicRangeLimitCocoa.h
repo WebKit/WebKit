@@ -25,9 +25,11 @@
 
 #pragma once
 
+#import <wtf/Platform.h>
+
 #if PLATFORM(COCOA)
 
-#import "PlatformDynamicRangeLimit.h"
+#import <WebCore/PlatformDynamicRangeLimit.h>
 
 namespace WebCore {
 

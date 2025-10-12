@@ -1,0 +1,4 @@
+
+PASS Valid parameter descriptors should have successful registration.
+PASS Invalid parameter descriptors should fail registration.
+

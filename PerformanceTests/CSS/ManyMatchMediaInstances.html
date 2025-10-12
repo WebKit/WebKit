@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+</head>
+<body>
+</body>
+<script>
+
+const queries = Array.from({ length: 1000000 }, ((_, val) =>
+    window.matchMedia(`(max-height: ${val}px)`)
+));
+
+
+let testDone = false;
+let startTime;
+
+function runTest() {
+  if (startTime)
+    PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime);
+  if (testDone)
+    return;
+
+  startTime = PerfTestRunner.now();
+
+  requestAnimationFrame(runTest);
+}
+
+PerfTestRunner.prepareToMeasureValuesAsync({
+  unit: 'ms',
+  done: () => { testDone = true; },
+});
+requestAnimationFrame(runTest);
+
+</script>
+</html>

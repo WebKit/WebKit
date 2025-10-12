@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "LayoutBox.h"
-#include "LayoutUnits.h"
+#include <WebCore/LayoutBox.h>
+#include <WebCore/LayoutUnits.h>
 #include <unicode/ubidi.h>
 
 namespace WebCore {

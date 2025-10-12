@@ -31,9 +31,9 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "AttestationConveyancePreference.h"
-#include "AuthenticatorAssertionResponse.h"
-#include "AuthenticatorAttestationResponse.h"
+#include <WebCore/AttestationConveyancePreference.h>
+#include <WebCore/AuthenticatorAssertionResponse.h>
+#include <WebCore/AuthenticatorAttestationResponse.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

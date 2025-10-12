@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "Color.h"
-#include "FloatPoint.h"
-#include "IntRect.h"
-#include "Timer.h"
+#include <WebCore/Color.h>
+#include <WebCore/FloatPoint.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/Timer.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WallTime.h>
@@ -76,12 +76,12 @@ public:
     };
 
     WEBCORE_EXPORT static Ref<PageOverlay> create(PageOverlayClient&, OverlayType = OverlayType::View, AlwaysTileOverlayLayer = AlwaysTileOverlayLayer::No);
-    WEBCORE_EXPORT virtual ~PageOverlay();
+    WEBCORE_EXPORT ~PageOverlay();
 
     WEBCORE_EXPORT PageOverlayController* controller() const;
 
     typedef uint64_t PageOverlayID;
-    virtual PageOverlayID pageOverlayID() const { return m_pageOverlayID; }
+    PageOverlayID pageOverlayID() const { return m_pageOverlayID; }
 
     void setPage(Page*);
     WEBCORE_EXPORT Page* page() const;

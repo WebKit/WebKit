@@ -1,0 +1,5 @@
+
+FAIL Property -webkit-text-stroke value 'green' assert_equals: expected "0px rgb(0, 128, 0)" but got ""
+FAIL Property -webkit-text-stroke value '3px' assert_equals: expected "3px rgb(0, 255, 0)" but got ""
+FAIL Property -webkit-text-stroke value '1px red' assert_equals: expected "1px rgb(255, 0, 0)" but got ""
+

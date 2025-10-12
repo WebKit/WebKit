@@ -440,6 +440,7 @@ def library_target_to_blueprint(target, build_info):
         if target in ROOT_TARGETS:
             bp['defaults'].append('angle_vendor_cc_defaults')
             bp['defaults'].append('angle_dma_buf_cc_defaults')
+            bp['afdo'] = True
         bps_for_abis[abi] = bp
 
     common_bp = merge_bps(bps_for_abis)
@@ -900,6 +901,7 @@ def main():
             'third_party/abseil-cpp/LICENSE',
             'third_party/glslang/LICENSE',
             'third_party/glslang/src/LICENSE.txt',
+            'third_party/re2/LICENSE',
             'third_party/spirv-headers/LICENSE',
             'third_party/spirv-headers/src/LICENSE',
             'third_party/spirv-tools/LICENSE',

@@ -26,6 +26,9 @@
 #include "config.h"
 #include "VideoPixelFormat.h"
 
+#include <wtf/NeverDestroyed.h>
+#include <wtf/text/WTFString.h>
+
 #if USE(GSTREAMER)
 #include <gst/video/video-format.h>
 #endif
@@ -76,6 +79,32 @@ std::optional<VideoPixelFormat> convertVideoFramePixelFormat(uint32_t format, bo
     UNUSED_PARAM(shouldDiscardAlpha);
 #endif
     return { };
+}
+
+String convertVideoPixelFormatToString(VideoPixelFormat format)
+{
+    static const std::array<NeverDestroyed<String>, 9> values {
+        MAKE_STATIC_STRING_IMPL("I420"),
+        MAKE_STATIC_STRING_IMPL("I420A"),
+        MAKE_STATIC_STRING_IMPL("I422"),
+        MAKE_STATIC_STRING_IMPL("I444"),
+        MAKE_STATIC_STRING_IMPL("NV12"),
+        MAKE_STATIC_STRING_IMPL("RGBA"),
+        MAKE_STATIC_STRING_IMPL("RGBX"),
+        MAKE_STATIC_STRING_IMPL("BGRA"),
+        MAKE_STATIC_STRING_IMPL("BGRX"),
+    };
+    static_assert(!static_cast<size_t>(VideoPixelFormat::I420), "VideoPixelFormat::I420 is not 0 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::I420A) == 1, "VideoPixelFormat::I420A is not 1 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::I422) == 2, "VideoPixelFormat::I422 is not 2 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::I444) == 3, "VideoPixelFormat::I444 is not 3 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::NV12) == 4, "VideoPixelFormat::NV12 is not 4 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::RGBA) == 5, "VideoPixelFormat::RGBA is not 5 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::RGBX) == 6, "VideoPixelFormat::RGBX is not 6 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::BGRA) == 7, "VideoPixelFormat::BGRA is not 7 as expected");
+    static_assert(static_cast<size_t>(VideoPixelFormat::BGRX) == 8, "VideoPixelFormat::BGRX is not 8 as expected");
+    ASSERT(static_cast<size_t>(format) < std::size(values));
+    return values[static_cast<size_t>(format)];
 }
 
 } // namespace WebCore

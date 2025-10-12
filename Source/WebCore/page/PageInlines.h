@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "KeyboardScrollingAnimator.h"
-#include "MediaProducer.h"
-#include "Page.h"
+#include <WebCore/KeyboardScrollingAnimator.h>
+#include <WebCore/MediaProducer.h>
+#include <WebCore/Page.h>
 
 namespace WebCore {
 

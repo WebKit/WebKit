@@ -47,7 +47,7 @@ bool TransformOperations::operator==(const TransformOperations& o) const
 {
     static_assert(std::ranges::sized_range<decltype(m_operations)>);
 
-    return std::ranges::equal(m_operations, o.m_operations, [](auto& a, auto& b) { return a.get() == b.get(); });
+    return std::ranges::equal(m_operations, o.m_operations, [](auto& a, auto& b) { return arePointingToEqualData(a, b); });
 }
 
 TransformOperations TransformOperations::clone() const
@@ -55,69 +55,64 @@ TransformOperations TransformOperations::clone() const
     return TransformOperations { m_operations.map([](const auto& op) { return op->clone(); }) };
 }
 
-TransformOperations TransformOperations::selfOrCopyWithResolvedCalculatedValues(const FloatSize& size) const
-{
-    return TransformOperations { m_operations.map([&size](const auto& op) { return op->selfOrCopyWithResolvedCalculatedValues(size); }) };
-}
-
-void TransformOperations::apply(TransformationMatrix& matrix, const FloatSize& size, unsigned start) const
+void TransformOperations::apply(TransformationMatrix& matrix, unsigned start) const
 {
     for (unsigned i = start; i < m_operations.size(); ++i)
-        m_operations[i]->apply(matrix, size);
+        m_operations[i]->apply(matrix);
 }
 
-bool TransformOperations::has3DOperation() const
-{
-    return std::ranges::any_of(m_operations, [](auto& op) { return op->is3DOperation(); });
-}
-
-bool TransformOperations::isRepresentableIn2D() const
-{
-    return std::ranges::all_of(m_operations, [](auto& op) { return op->isRepresentableIn2D(); });
-}
-
-bool TransformOperations::affectedByTransformOrigin() const
-{
-    return std::ranges::any_of(m_operations, [](auto& op) { return op->isAffectedByTransformOrigin(); });
-}
-
-bool TransformOperations::isInvertible(const LayoutSize& size) const
+bool TransformOperations::isInvertible() const
 {
     TransformationMatrix transform;
-    apply(transform, size);
+    apply(transform);
     return transform.isInvertible();
 }
 
-bool TransformOperations::containsNonInvertibleMatrix(const LayoutSize& boxSize) const
+bool TransformOperations::containsNonInvertibleMatrix() const
 {
-    return (hasTransformOfType<TransformOperation::Type::Matrix>() || hasTransformOfType<TransformOperation::Type::Matrix3D>()) && !isInvertible(boxSize);
+    return (hasTransformOfType<TransformOperation::Type::Matrix>() || hasTransformOfType<TransformOperation::Type::Matrix3D>()) && !isInvertible();
 }
 
-bool TransformOperations::shouldFallBackToDiscreteAnimation(const TransformOperations& from, const LayoutSize& boxSize) const
+TransformOperations blend(const TransformOperations& from, const TransformOperations& to, const BlendingContext& context)
 {
-    return from.containsNonInvertibleMatrix(boxSize) || containsNonInvertibleMatrix(boxSize);
-}
+    bool shouldFallBackToDiscreteInterpolation = from.containsNonInvertibleMatrix() || to.containsNonInvertibleMatrix();
 
-TransformOperations TransformOperations::blend(const TransformOperations& from, const BlendingContext& context, const LayoutSize& boxSize, std::optional<unsigned> prefixLength) const
-{
-    if (shouldFallBackToDiscreteAnimation(from, boxSize))
-        return TransformOperations { createBlendedMatrixOperationFromOperationsSuffix(from, 0, context, boxSize) };
+    auto createBlendedMatrixOperationFromOperationsSuffix = [&](unsigned start) -> Ref<TransformOperation> {
+        TransformationMatrix fromTransform;
+        from.apply(fromTransform, start);
+
+        TransformationMatrix toTransform;
+        to.apply(toTransform, start);
+
+        auto progress = context.progress;
+        auto compositeOperation = context.compositeOperation;
+        if (shouldFallBackToDiscreteInterpolation) {
+            progress = progress < 0.5 ? 0 : 1;
+            compositeOperation = CompositeOperation::Replace;
+        }
+
+        toTransform.blend(fromTransform, progress, compositeOperation);
+        return Matrix3DTransformOperation::create(toTransform);
+    };
+
+    if (shouldFallBackToDiscreteInterpolation)
+        return TransformOperations { createBlendedMatrixOperationFromOperationsSuffix(0) };
 
     unsigned fromOperationCount = from.size();
-    unsigned toOperationCount = size();
+    unsigned toOperationCount = to.size();
     unsigned maxOperationCount = std::max(fromOperationCount, toOperationCount);
 
     Vector<Ref<TransformOperation>> operations;
     operations.reserveInitialCapacity(maxOperationCount);
 
     for (unsigned i = 0; i < maxOperationCount; i++) {
-        RefPtr<TransformOperation> fromOperation = (i < fromOperationCount) ? from.m_operations[i].ptr() : nullptr;
-        RefPtr<TransformOperation> toOperation = (i < toOperationCount) ? m_operations[i].ptr() : nullptr;
+        RefPtr<TransformOperation> fromOperation = (i < fromOperationCount) ? from[i].ptr() : nullptr;
+        RefPtr<TransformOperation> toOperation = (i < toOperationCount) ? to[i].ptr() : nullptr;
 
         // If either of the transform list is empty, then we should not attempt to do a matrix blend.
         if (fromOperationCount && toOperationCount) {
-            if ((prefixLength && i >= *prefixLength) || (fromOperation && toOperation && !fromOperation->sharedPrimitiveType(toOperation.get()))) {
-                operations.append(createBlendedMatrixOperationFromOperationsSuffix(from, i, context, boxSize));
+            if (fromOperation && toOperation && !fromOperation->sharedPrimitiveType(toOperation.get())) {
+                operations.append(createBlendedMatrixOperationFromOperationsSuffix(i));
                 operations.shrinkToFit();
 
                 return TransformOperations { WTFMove(operations) };
@@ -139,25 +134,6 @@ TransformOperations TransformOperations::blend(const TransformOperations& from, 
     }
 
     return TransformOperations { WTFMove(operations) };
-}
-
-Ref<TransformOperation> TransformOperations::createBlendedMatrixOperationFromOperationsSuffix(const TransformOperations& from, unsigned start, const BlendingContext& context, const LayoutSize& referenceBoxSize) const
-{
-    TransformationMatrix fromTransform;
-    from.apply(fromTransform, referenceBoxSize, start);
-
-    TransformationMatrix toTransform;
-    apply(toTransform, referenceBoxSize, start);
-
-    auto progress = context.progress;
-    auto compositeOperation = context.compositeOperation;
-    if (shouldFallBackToDiscreteAnimation(from, referenceBoxSize)) {
-        progress = progress < 0.5 ? 0 : 1;
-        compositeOperation = CompositeOperation::Replace;
-    }
-
-    toTransform.blend(fromTransform, progress, compositeOperation);
-    return Matrix3DTransformOperation::create(toTransform);
 }
 
 TextStream& operator<<(TextStream& ts, const TransformOperations& ops)

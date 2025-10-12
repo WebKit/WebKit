@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Append clear and encrypted content</title>
+    <script src="../video-test.js"></script>
+    <script src="../media-source/media-source-loader-simple.js"></script>
+    <script src="medias-enc.js"></script>
+    <script src="clearKey/encrypted-media-clearKey-handler.js"></script>
+    <script>
+
+     const audioConf = streamMedias["clearToEncryptedMSE"].audio;
+
+     function runTest() {
+
+         findMediaElement();
+
+         const emeHandler = new EncryptedMediaHandler(video, audioConf);
+         if (!emeHandler)
+             endTest();
+
+         function checkEndTest() {
+             consoleWrite("All appends are completed");
+             testExpected('video.duration', 23, '>=');
+             endTest();
+         }
+
+         consoleWrite("Appending chunks...");
+         const ms = new MediaSourceLoaderSimple(video);
+         ms.onready = function() {
+             ms.createSourceBuffer(audioConf, 11).then(checkEndTest, failTest);
+         };
+     }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

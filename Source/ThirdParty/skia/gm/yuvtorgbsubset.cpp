@@ -19,10 +19,13 @@
 #include "include/core/SkString.h"
 #include "include/core/SkYUVAInfo.h"
 #include "include/core/SkYUVAPixmaps.h"
-#include "include/gpu/ganesh/GrDirectContext.h"
 #include "src/core/SkCanvasPriv.h"
-#include "src/gpu/ganesh/SkGr.h"
 #include "tools/gpu/YUVUtils.h"
+
+#if defined(SK_GANESH)
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "src/gpu/ganesh/SkGr.h"
+#endif
 
 #include <memory>
 #include <utility>
@@ -34,7 +37,7 @@ namespace skiagm {
 //////////////////////////////////////////////////////////////////////////////
 
 // This GM tests subsetting YUV multiplanar images where the U and V
-// planes have different resolution from Y. See skbug:8959
+// planes have different resolution from Y. See skbug.com/40040241
 
 class YUVtoRGBSubsetEffect : public GM {
 public:
@@ -79,11 +82,16 @@ protected:
     }
 
     DrawResult onGpuSetup(SkCanvas* canvas, SkString* errorMsg, GraphiteTestContext*) override {
-        auto context = GrAsDirectContext(canvas->recordingContext());
         skgpu::graphite::Recorder* recorder = nullptr;
+        GrDirectContext* context = nullptr;
+
 #if defined(SK_GRAPHITE)
         recorder = canvas->recorder();
 #endif
+#if defined(SK_GANESH)
+        context = GrAsDirectContext(canvas->recordingContext());
+#endif
+
         if (!context && !recorder) {
             return DrawResult::kSkip;
         }
@@ -96,25 +104,22 @@ protected:
 #if defined(SK_GRAPHITE)
         if (recorder) {
             fYUVImage = lazyYUV->refImage(recorder, sk_gpu_test::LazyYUVImage::Type::kFromPixmaps);
-        } else
+        }
 #endif
-        {
+#if defined(SK_GANESH)
+        if (context) {
             fYUVImage = lazyYUV->refImage(context, sk_gpu_test::LazyYUVImage::Type::kFromPixmaps);
         }
+#endif
 
         return DrawResult::kOk;
     }
 
     void onGpuTeardown() override { fYUVImage.reset(); }
 
-    DrawResult onDraw(SkCanvas* canvas,
-                      SkString* errorMsg) override {
-        auto context = GrAsDirectContext(canvas->recordingContext());
-        skgpu::graphite::Recorder* recorder = nullptr;
-#if defined(SK_GRAPHITE)
-        recorder = canvas->recorder();
-#endif
-        if (!context && !recorder) {
+    DrawResult onDraw(SkCanvas* canvas, SkString* errorMsg) override {
+        SkRecorder* recorder = canvas->baseRecorder();
+        if (!recorder) {
             *errorMsg = kErrorMsg_DrawSkippedGpuOnly;
             return DrawResult::kSkip;
         }
@@ -157,15 +162,7 @@ protected:
                 paint.setColor(SK_ColorBLACK);
                 canvas->drawRect(rect, paint);
                 if (subset) {
-                    sk_sp<SkImage> subsetImg;
-#if defined(SK_GRAPHITE)
-                    if (recorder) {
-                        subsetImg = fYUVImage->makeSubset(recorder, *subset, {false});
-                    } else
-#endif
-                    {
-                        subsetImg = fYUVImage->makeSubset(context, *subset);
-                    }
+                    sk_sp<SkImage> subsetImg = fYUVImage->makeSubset(recorder, *subset, {false});
                     SkASSERT(subsetImg);
                     paint.setShader(subsetImg->makeShader(tm, tm,
                                                           sampling, SkMatrix::Translate(2, 2)));

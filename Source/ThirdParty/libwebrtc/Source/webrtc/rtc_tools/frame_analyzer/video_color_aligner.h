@@ -27,23 +27,22 @@ using ColorTransformationMatrix = std::array<std::array<float, 4>, 3>;
 // Calculate the optimal color transformation that should be applied to the test
 // video to match as closely as possible to the reference video.
 ColorTransformationMatrix CalculateColorTransformationMatrix(
-    const rtc::scoped_refptr<Video>& reference_video,
-    const rtc::scoped_refptr<Video>& test_video);
+    const scoped_refptr<Video>& reference_video,
+    const scoped_refptr<Video>& test_video);
 
 // Calculate color transformation for a single I420 frame.
 ColorTransformationMatrix CalculateColorTransformationMatrix(
-    const rtc::scoped_refptr<I420BufferInterface>& reference_frame,
-    const rtc::scoped_refptr<I420BufferInterface>& test_frame);
+    const scoped_refptr<I420BufferInterface>& reference_frame,
+    const scoped_refptr<I420BufferInterface>& test_frame);
 
 // Apply a color transformation to a video.
-rtc::scoped_refptr<Video> AdjustColors(
-    const ColorTransformationMatrix& color_matrix,
-    const rtc::scoped_refptr<Video>& video);
+scoped_refptr<Video> AdjustColors(const ColorTransformationMatrix& color_matrix,
+                                  const scoped_refptr<Video>& video);
 
 // Apply a color transformation to a single I420 frame.
-rtc::scoped_refptr<I420BufferInterface> AdjustColors(
+scoped_refptr<I420BufferInterface> AdjustColors(
     const ColorTransformationMatrix& color_matrix,
-    const rtc::scoped_refptr<I420BufferInterface>& frame);
+    const scoped_refptr<I420BufferInterface>& frame);
 
 }  // namespace test
 }  // namespace webrtc

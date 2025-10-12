@@ -10,9 +10,22 @@
 #ifndef VIDEO_TEST_MOCK_VIDEO_STREAM_ENCODER_H_
 #define VIDEO_TEST_MOCK_VIDEO_STREAM_ENCODER_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <vector>
 
+#include "api/adaptation/resource.h"
+#include "api/fec_controller_override.h"
+#include "api/rtp_parameters.h"
+#include "api/rtp_sender_interface.h"
+#include "api/scoped_refptr.h"
+#include "api/units/data_rate.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_type.h"
+#include "api/video/video_source_interface.h"
+#include "api/video_codecs/video_encoder.h"
 #include "test/gmock.h"
+#include "video/config/video_encoder_config.h"
 #include "video/video_stream_encoder_interface.h"
 
 namespace webrtc {
@@ -21,16 +34,15 @@ class MockVideoStreamEncoder : public VideoStreamEncoderInterface {
  public:
   MOCK_METHOD(void,
               AddAdaptationResource,
-              (rtc::scoped_refptr<Resource>),
+              (scoped_refptr<Resource>),
               (override));
-  MOCK_METHOD(std::vector<rtc::scoped_refptr<Resource>>,
+  MOCK_METHOD(std::vector<scoped_refptr<Resource>>,
               GetAdaptationResources,
               (),
               (override));
   MOCK_METHOD(void,
               SetSource,
-              (rtc::VideoSourceInterface<VideoFrame>*,
-               const DegradationPreference&),
+              (VideoSourceInterface<VideoFrame>*, const DegradationPreference&),
               (override));
   MOCK_METHOD(void, SetSink, (EncoderSink*, bool), (override));
   MOCK_METHOD(void, SetStartBitrate, (int), (override));
@@ -44,7 +56,7 @@ class MockVideoStreamEncoder : public VideoStreamEncoderInterface {
               (override));
   MOCK_METHOD(void,
               OnBitrateUpdated,
-              (DataRate, DataRate, DataRate, uint8_t, int64_t, double),
+              (DataRate, DataRate, uint8_t, int64_t, double),
               (override));
   MOCK_METHOD(void,
               SetFecControllerOverride,

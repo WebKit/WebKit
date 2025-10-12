@@ -68,22 +68,22 @@ static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& ke
         // If the salt vector is empty, a zeroed-out key of macLength size should be used.
         if (salt.isEmpty()) {
             Vector<uint8_t> zeroedKey(macLength, 0);
-            error = gcry_mac_setkey(handle, zeroedKey.data(), zeroedKey.size());
+            error = gcry_mac_setkey(handle, zeroedKey.span().data(), zeroedKey.size());
         } else
-            error = gcry_mac_setkey(handle, salt.data(), salt.size());
+            error = gcry_mac_setkey(handle, salt.span().data(), salt.size());
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
             return std::nullopt;
         }
 
-        error = gcry_mac_write(handle, key.data(), key.size());
+        error = gcry_mac_write(handle, key.span().data(), key.size());
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
             return std::nullopt;
         }
 
         size_t pseudoRandomKeySize = pseudoRandomKey.size();
-        error = gcry_mac_read(handle, pseudoRandomKey.data(), &pseudoRandomKeySize);
+        error = gcry_mac_read(handle, pseudoRandomKey.mutableSpan().data(), &pseudoRandomKeySize);
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
             return std::nullopt;
@@ -110,7 +110,7 @@ static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& ke
                 return std::nullopt;
             }
 
-            error = gcry_mac_setkey(handle, pseudoRandomKey.data(), pseudoRandomKey.size());
+            error = gcry_mac_setkey(handle, pseudoRandomKey.span().data(), pseudoRandomKey.size());
             if (error != GPG_ERR_NO_ERROR) {
                 PAL::GCrypt::logError(error);
                 return std::nullopt;
@@ -124,14 +124,14 @@ static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& ke
             blockData.appendVector(info);
             blockData.append(i + 1);
 
-            error = gcry_mac_write(handle, blockData.data(), blockData.size());
+            error = gcry_mac_write(handle, blockData.span().data(), blockData.size());
             if (error != GPG_ERR_NO_ERROR) {
                 PAL::GCrypt::logError(error);
                 return std::nullopt;
             }
 
             size_t blockSize = lastBlock.size();
-            error = gcry_mac_read(handle, lastBlock.data(), &blockSize);
+            error = gcry_mac_read(handle, lastBlock.mutableSpan().data(), &blockSize);
             if (error != GPG_ERR_NO_ERROR) {
                 PAL::GCrypt::logError(error);
                 return std::nullopt;

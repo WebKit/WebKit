@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "ExitKind.h"
-#include "JSCJSValue.h"
-#include "ProfilerOriginStack.h"
+#include <JavaScriptCore/ExitKind.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/ProfilerOriginStack.h>
 
 namespace JSC { namespace Profiler {
 

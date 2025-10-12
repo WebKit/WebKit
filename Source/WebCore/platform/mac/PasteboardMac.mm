@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@
 #import "SharedBuffer.h"
 #import "UTIUtilities.h"
 #import "WebNSAttributedStringExtras.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/HIServicesSPI.h>
 #import <wtf/MallocSpan.h>
@@ -48,6 +49,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/unicode/CharacterNames.h>
 
@@ -65,25 +67,25 @@ static const Vector<String> writableTypesForURL()
     Vector<String> types;
     
     types.append(WebURLsWithTitlesPboardType);
-    types.append(String(legacyURLPasteboardType()));
+    types.append(String(legacyURLPasteboardTypeSingleton()));
     types.append(WebURLPboardType);
     types.append(WebURLNamePboardType);
-    types.append(String(legacyStringPasteboardType()));
+    types.append(String(legacyStringPasteboardTypeSingleton()));
     return types;
 }
 
 static Vector<String> writableTypesForImage()
 {
     Vector<String> types;
-    types.append(String(legacyTIFFPasteboardType()));
+    types.append(String(legacyTIFFPasteboardTypeSingleton()));
     types.appendVector(writableTypesForURL());
-    types.append(String(legacyRTFDPasteboardType()));
+    types.append(String(legacyRTFDPasteboardTypeSingleton()));
     return types;
 }
 
 NSArray *Pasteboard::supportedFileUploadPasteboardTypes()
 {
-    return @[ legacyFilesPromisePasteboardType(), legacyFilenamesPasteboardType() ];
+    return @[ legacyFilesPromisePasteboardTypeSingleton(), legacyFilenamesPasteboardTypeSingleton() ];
 }
 
 Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context)
@@ -143,19 +145,16 @@ void Pasteboard::write(const PasteboardWebContent& content)
         types.append(WebSmartPastePboardType);
     if (content.dataInWebArchiveFormat) {
         types.append(WebArchivePboardType);
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        types.append(kUTTypeWebArchive);
-ALLOW_DEPRECATED_DECLARATIONS_END
+        types.append(UTTypeWebArchive.identifier);
     }
     if (content.dataInRTFDFormat)
-        types.append(String(legacyRTFDPasteboardType()));
+        types.append(String(legacyRTFDPasteboardTypeSingleton()));
     if (content.dataInRTFFormat)
-        types.append(String(legacyRTFPasteboardType()));
+        types.append(String(legacyRTFPasteboardTypeSingleton()));
     if (!content.dataInHTMLFormat.isNull())
-        types.append(String(legacyHTMLPasteboardType()));
+        types.append(String(legacyHTMLPasteboardTypeSingleton()));
     if (!content.dataInStringFormat.isNull())
-        types.append(String(legacyStringPasteboardType()));
+        types.append(String(legacyStringPasteboardTypeSingleton()));
     types.appendVector(clientTypes);
     types.append(PasteboardCustomData::cocoaType());
 
@@ -169,21 +168,26 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(clientData[i].get(), clientTypes[i], m_pasteboardName, context());
     if (content.canSmartCopyOrDelete)
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(nullptr, WebSmartPastePboardType, m_pasteboardName, context());
-    if (content.dataInWebArchiveFormat) {
+
+    bool didWriteWebArchive = false;
+    if (RefPtr webArchive = content.webArchive) {
+        m_changeCount = platformStrategies()->pasteboardStrategy()->writeWebArchive(*webArchive, m_pasteboardName);
+        didWriteWebArchive = !!m_changeCount;
+    }
+    if (!didWriteWebArchive && content.dataInWebArchiveFormat) {
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInWebArchiveFormat.get(), WebArchivePboardType, m_pasteboardName, context());
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInWebArchiveFormat.get(), kUTTypeWebArchive, m_pasteboardName, context());
-ALLOW_DEPRECATED_DECLARATIONS_END
+        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInWebArchiveFormat.get(), UTTypeWebArchive.identifier, m_pasteboardName, context());
     }
+
     if (content.dataInRTFDFormat)
-        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInRTFDFormat.get(), legacyRTFDPasteboardType(), m_pasteboardName, context());
+        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInRTFDFormat.get(), legacyRTFDPasteboardTypeSingleton(), m_pasteboardName, context());
     if (content.dataInRTFFormat)
-        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInRTFFormat.get(), legacyRTFPasteboardType(), m_pasteboardName, context());
+        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInRTFFormat.get(), legacyRTFPasteboardTypeSingleton(), m_pasteboardName, context());
     if (!content.dataInHTMLFormat.isNull())
-        m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(content.dataInHTMLFormat, legacyHTMLPasteboardType(), m_pasteboardName, context());
+        m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(content.dataInHTMLFormat, legacyHTMLPasteboardTypeSingleton(), m_pasteboardName, context());
     if (!content.dataInStringFormat.isNull())
-        m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(content.dataInStringFormat, legacyStringPasteboardType(), m_pasteboardName, context());
+        m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(content.dataInStringFormat, legacyStringPasteboardTypeSingleton(), m_pasteboardName, context());
 
     PasteboardCustomData data;
     data.setOrigin(content.contentOrigin);
@@ -194,12 +198,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartReplaceOption)
 {
     Vector<String> types;
-    types.append(legacyStringPasteboardType());
+    types.append(legacyStringPasteboardTypeSingleton());
     if (smartReplaceOption == CanSmartReplace)
         types.append(WebSmartPastePboardType);
 
     platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName, context());
-    m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(text, legacyStringPasteboardType(), m_pasteboardName, context());
+    m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(text, legacyStringPasteboardTypeSingleton(), m_pasteboardName, context());
     if (smartReplaceOption == CanSmartReplace)
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(0, WebSmartPastePboardType, m_pasteboardName, context());
 }
@@ -223,14 +227,14 @@ static long writeURLForTypes(const Vector<String>& types, const String& pasteboa
         PasteboardURL url = { pasteboardURL.url, String(title.get()).trim(deprecatedIsSpaceOrNewline), emptyString() };
         newChangeCount = platformStrategies()->pasteboardStrategy()->setURL(url, pasteboardName, context);
     }
-    if (types.contains(String(legacyURLPasteboardType())))
-        newChangeCount = platformStrategies()->pasteboardStrategy()->setStringForType([nsURL absoluteString], legacyURLPasteboardType(), pasteboardName, context);
+    if (types.contains(String(legacyURLPasteboardTypeSingleton())))
+        newChangeCount = platformStrategies()->pasteboardStrategy()->setStringForType([nsURL absoluteString], legacyURLPasteboardTypeSingleton(), pasteboardName, context);
     if (types.contains(WebURLPboardType))
         newChangeCount = platformStrategies()->pasteboardStrategy()->setStringForType(userVisibleString.get(), WebURLPboardType, pasteboardName, context);
     if (types.contains(WebURLNamePboardType))
         newChangeCount = platformStrategies()->pasteboardStrategy()->setStringForType(title.get(), WebURLNamePboardType, pasteboardName, context);
-    if (types.contains(String(legacyStringPasteboardType())))
-        newChangeCount = platformStrategies()->pasteboardStrategy()->setStringForType(userVisibleString.get(), legacyStringPasteboardType(), pasteboardName, context);
+    if (types.contains(String(legacyStringPasteboardTypeSingleton())))
+        newChangeCount = platformStrategies()->pasteboardStrategy()->setStringForType(userVisibleString.get(), legacyStringPasteboardTypeSingleton(), pasteboardName, context);
 
     return newChangeCount;
 }
@@ -248,32 +252,32 @@ void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL& pasteboa
 
 void Pasteboard::write(const Color& color)
 {
-    Vector<String> types = { legacyColorPasteboardType() };
+    Vector<String> types = { legacyColorPasteboardTypeSingleton() };
     platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName, context());
     m_changeCount = platformStrategies()->pasteboardStrategy()->setColor(color, m_pasteboardName, context());
 }
 
 static NSFileWrapper* fileWrapper(const PasteboardImage& pasteboardImage)
 {
-    auto wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:pasteboardImage.resourceData->makeContiguous()->createNSData().get()]);
-    [wrapper setPreferredFilename:suggestedFilenameWithMIMEType(pasteboardImage.url.url.createNSURL().get(), pasteboardImage.resourceMIMEType)];
+    auto wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:Ref { *pasteboardImage.resourceData }->makeContiguous()->createNSData().get()]);
+    [wrapper setPreferredFilename:RetainPtr { suggestedFilenameWithMIMEType(pasteboardImage.url.url.createNSURL().get(), pasteboardImage.resourceMIMEType) }.get()];
     return wrapper.autorelease();
 }
 
 static void writeFileWrapperAsRTFDAttachment(NSFileWrapper *wrapper, const String& pasteboardName, int64_t& newChangeCount, const PasteboardContext* context)
 {
-    NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:adoptNS([[NSTextAttachment alloc] initWithFileWrapper:wrapper]).get()];
+    RetainPtr string = [NSAttributedString attributedStringWithAttachment:adoptNS([[NSTextAttachment alloc] initWithFileWrapper:wrapper]).get()];
 
     NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }];
     if (!RTFDData)
         return;
 
-    newChangeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::create(RTFDData).ptr(), legacyRTFDPasteboardType(), pasteboardName, context);
+    newChangeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::create(RTFDData).ptr(), legacyRTFDPasteboardTypeSingleton(), pasteboardName, context);
 }
 
 void Pasteboard::write(const PasteboardImage& pasteboardImage)
 {
-    CFDataRef imageData = pasteboardImage.image->adapter().tiffRepresentation();
+    RetainPtr imageData = Ref { *pasteboardImage.image }->adapter().tiffRepresentation();
     if (!imageData)
         return;
 
@@ -283,24 +287,18 @@ void Pasteboard::write(const PasteboardImage& pasteboardImage)
     auto types = writableTypesForImage();
     if (pasteboardImage.dataInWebArchiveFormat) {
         types.append(WebArchivePboardType);
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        types.append(kUTTypeWebArchive);
-ALLOW_DEPRECATED_DECLARATIONS_END
+        types.append(UTTypeWebArchive.identifier);
     }
 
     m_changeCount = writeURLForTypes(types, m_pasteboardName, pasteboardImage.url, context());
-    m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::create(imageData).ptr(), legacyTIFFPasteboardType(), m_pasteboardName, context());
+    m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::create(imageData.get()).ptr(), legacyTIFFPasteboardTypeSingleton(), m_pasteboardName, context());
     if (auto archiveData = pasteboardImage.dataInWebArchiveFormat) {
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(archiveData.get(), WebArchivePboardType, m_pasteboardName, context());
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(archiveData.get(), kUTTypeWebArchive, m_pasteboardName, context());
-ALLOW_DEPRECATED_DECLARATIONS_END
+        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(archiveData.get(), UTTypeWebArchive.identifier, m_pasteboardName, context());
     }
     if (!pasteboardImage.dataInHTMLFormat.isEmpty())
-        m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(pasteboardImage.dataInHTMLFormat, legacyHTMLPasteboardType(), m_pasteboardName, context());
-    writeFileWrapperAsRTFDAttachment(fileWrapper(pasteboardImage), m_pasteboardName, m_changeCount, context());
+        m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(pasteboardImage.dataInHTMLFormat, legacyHTMLPasteboardTypeSingleton(), m_pasteboardName, context());
+    writeFileWrapperAsRTFDAttachment(RetainPtr { fileWrapper(pasteboardImage) }.get(), m_pasteboardName, m_changeCount, context());
 }
 
 void Pasteboard::write(const PasteboardBuffer& pasteboardBuffer)
@@ -358,29 +356,29 @@ static RefPtr<SharedBuffer> readBufferAtPreferredItemIndex(const String& type, s
 
 void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy allowURL, std::optional<size_t> itemIndex)
 {
-    auto& strategy = *platformStrategies()->pasteboardStrategy();
+    CheckedRef strategy = *platformStrategies()->pasteboardStrategy();
 
     Vector<String> types;
     if (itemIndex) {
-        if (auto itemInfo = strategy.informationForItemAtIndex(*itemIndex, m_pasteboardName, m_changeCount, context()))
+        if (auto itemInfo = strategy->informationForItemAtIndex(*itemIndex, m_pasteboardName, m_changeCount, context()))
             types = itemInfo->platformTypesByFidelity;
     } else
-        strategy.getTypes(types, m_pasteboardName, context());
+        strategy->getTypes(types, m_pasteboardName, context());
 
     if (types.contains(String(NSPasteboardTypeString))) {
-        text.text = readStringAtPreferredItemIndex(NSPasteboardTypeString, itemIndex, strategy, m_pasteboardName, context());
+        text.text = readStringAtPreferredItemIndex(NSPasteboardTypeString, itemIndex, strategy.get(), m_pasteboardName, context());
         text.isURL = false;
         return;
     }
 
-    if (types.contains(String(legacyStringPasteboardType()))) {
-        text.text = readStringAtPreferredItemIndex(legacyStringPasteboardType(), itemIndex, strategy, m_pasteboardName, context());
+    if (types.contains(String(legacyStringPasteboardTypeSingleton()))) {
+        text.text = readStringAtPreferredItemIndex(legacyStringPasteboardTypeSingleton(), itemIndex, strategy.get(), m_pasteboardName, context());
         text.isURL = false;
         return;
     }
     
-    if (types.contains(String(legacyRTFDPasteboardType()))) {
-        if (auto data = readBufferAtPreferredItemIndex(legacyRTFDPasteboardType(), itemIndex, strategy, m_pasteboardName, context())) {
+    if (types.contains(String(legacyRTFDPasteboardTypeSingleton()))) {
+        if (auto data = readBufferAtPreferredItemIndex(legacyRTFDPasteboardTypeSingleton(), itemIndex, strategy.get(), m_pasteboardName, context())) {
             if (auto attributedString = adoptNS([[NSAttributedString alloc] initWithRTFD:data->makeContiguous()->createNSData().get() documentAttributes:nil])) {
                 text.text = [attributedString string];
                 text.isURL = false;
@@ -399,8 +397,8 @@ void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy allow
         }
     }
 
-    if (types.contains(String(legacyRTFPasteboardType()))) {
-        if (auto data = readBufferAtPreferredItemIndex(legacyRTFPasteboardType(), itemIndex, strategy, m_pasteboardName, context())) {
+    if (types.contains(String(legacyRTFPasteboardTypeSingleton()))) {
+        if (auto data = readBufferAtPreferredItemIndex(legacyRTFPasteboardTypeSingleton(), itemIndex, strategy, m_pasteboardName, context())) {
             if (auto attributedString = adoptNS([[NSAttributedString alloc] initWithRTF:data->createNSData().get() documentAttributes:nil])) {
                 text.text = [attributedString string];
                 text.isURL = false;
@@ -419,15 +417,15 @@ void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy allow
         }
     }
 
-    if (types.contains(String(legacyFilesPromisePasteboardType()))) {
+    if (types.contains(String(legacyFilesPromisePasteboardTypeSingleton()))) {
         text.text = joinPathnames(m_promisedFilePaths);
         text.isURL = false;
         return;
     }
 
-    if (types.contains(String(legacyFilenamesPasteboardType()))) {
+    if (types.contains(String(legacyFilenamesPasteboardTypeSingleton()))) {
         Vector<String> pathnames;
-        strategy.getPathnamesForType(pathnames, legacyFilenamesPasteboardType(), m_pasteboardName, context());
+        strategy->getPathnamesForType(pathnames, legacyFilenamesPasteboardTypeSingleton(), m_pasteboardName, context());
         text.text = joinPathnames(pathnames);
         text.isURL = false;
         return;
@@ -435,16 +433,16 @@ void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy allow
 
     // FIXME: The code above looks at the types vector first, but this just gets the string without checking. Why the difference?
     if (allowURL == PlainTextURLReadingPolicy::AllowURL) {
-        text.text = readStringAtPreferredItemIndex(legacyURLPasteboardType(), itemIndex, strategy, m_pasteboardName, context());
+        text.text = readStringAtPreferredItemIndex(legacyURLPasteboardTypeSingleton(), itemIndex, strategy.get(), m_pasteboardName, context());
         text.isURL = !text.text.isNull();
     }
 }
 
 void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, std::optional<size_t> itemIndex)
 {
-    auto& strategy = *platformStrategies()->pasteboardStrategy();
+    CheckedRef strategy = *platformStrategies()->pasteboardStrategy();
     auto platformTypesFromItems = [](const Vector<PasteboardItemInfo>& items) {
-        UncheckedKeyHashSet<String> types;
+        HashSet<String> types;
         for (auto& item : items) {
             for (auto& type : item.platformTypesByFidelity)
                 types.add(type);
@@ -452,84 +450,82 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
         return types;
     };
 
-    UncheckedKeyHashSet<String> nonTranscodedTypes;
+    HashSet<String> nonTranscodedTypes;
     Vector<String> types;
     if (itemIndex) {
-        if (auto itemInfo = strategy.informationForItemAtIndex(*itemIndex, m_pasteboardName, m_changeCount, context())) {
+        if (auto itemInfo = strategy->informationForItemAtIndex(*itemIndex, m_pasteboardName, m_changeCount, context())) {
             types = itemInfo->platformTypesByFidelity;
             nonTranscodedTypes = platformTypesFromItems({ *itemInfo });
         }
     } else {
-        strategy.getTypes(types, m_pasteboardName, context());
-        if (auto allItems = strategy.allPasteboardItemInfo(m_pasteboardName, m_changeCount, context()))
+        strategy->getTypes(types, m_pasteboardName, context());
+        if (auto allItems = strategy->allPasteboardItemInfo(m_pasteboardName, m_changeCount, context()))
             nonTranscodedTypes = platformTypesFromItems(*allItems);
     }
 
     reader.setContentOrigin(readOrigin());
 
     if (types.contains(WebArchivePboardType)) {
-        if (auto buffer = readBufferAtPreferredItemIndex(WebArchivePboardType, itemIndex, strategy, m_pasteboardName, context())) {
+        if (auto buffer = readBufferAtPreferredItemIndex(WebArchivePboardType, itemIndex, strategy.get(), m_pasteboardName, context())) {
             if (m_changeCount != changeCount() || reader.readWebArchive(*buffer))
                 return;
         }
     }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (types.contains(String(kUTTypeWebArchive))) {
-        if (auto buffer = readBufferAtPreferredItemIndex(kUTTypeWebArchive, itemIndex, strategy, m_pasteboardName, context())) {
+    if (types.contains(String(UTTypeWebArchive.identifier))) {
+        if (auto buffer = readBufferAtPreferredItemIndex(UTTypeWebArchive.identifier, itemIndex, strategy.get(), m_pasteboardName, context())) {
             if (m_changeCount != changeCount() || reader.readWebArchive(*buffer))
                 return;
         }
     }
-ALLOW_DEPRECATED_DECLARATIONS_END
 
-    if (policy == WebContentReadingPolicy::AnyType && types.contains(String(legacyFilesPromisePasteboardType()))) {
+    if (policy == WebContentReadingPolicy::AnyType && types.contains(String(legacyFilesPromisePasteboardTypeSingleton()))) {
         if (m_changeCount != changeCount() || reader.readFilePaths(m_promisedFilePaths))
             return;
     }
 
-    if (policy == WebContentReadingPolicy::AnyType && types.contains(String(legacyFilenamesPasteboardType()))) {
+    if (policy == WebContentReadingPolicy::AnyType && types.contains(String(legacyFilenamesPasteboardTypeSingleton()))) {
         Vector<String> paths;
-        strategy.getPathnamesForType(paths, legacyFilenamesPasteboardType(), m_pasteboardName, context());
+        strategy->getPathnamesForType(paths, legacyFilenamesPasteboardTypeSingleton(), m_pasteboardName, context());
         if (m_changeCount != changeCount() || reader.readFilePaths(paths))
             return;
     }
 
-    if (types.contains(String(legacyHTMLPasteboardType()))) {
-        String string = readStringAtPreferredItemIndex(legacyHTMLPasteboardType(), itemIndex, strategy, m_pasteboardName, context());
+    if (types.contains(String(legacyHTMLPasteboardTypeSingleton()))) {
+        String string = readStringAtPreferredItemIndex(legacyHTMLPasteboardTypeSingleton(), itemIndex, strategy.get(), m_pasteboardName, context());
         if (m_changeCount != changeCount() || (!string.isNull() && reader.readHTML(string)))
             return;
     }
 
     if (types.contains(String(NSPasteboardTypeHTML))) {
-        String string = readStringAtPreferredItemIndex(NSPasteboardTypeHTML, itemIndex, strategy, m_pasteboardName, context());
+        String string = readStringAtPreferredItemIndex(NSPasteboardTypeHTML, itemIndex, strategy.get(), m_pasteboardName, context());
         if (m_changeCount != changeCount() || (!string.isNull() && reader.readHTML(string)))
             return;
     }
 
-    if (types.contains(String(legacyRTFDPasteboardType()))) {
-        if (auto buffer = readBufferAtPreferredItemIndex(legacyRTFDPasteboardType(), itemIndex, strategy, m_pasteboardName, context())) {
+    if (types.contains(String(legacyRTFDPasteboardTypeSingleton()))) {
+        if (auto buffer = readBufferAtPreferredItemIndex(legacyRTFDPasteboardTypeSingleton(), itemIndex, strategy.get(), m_pasteboardName, context())) {
             if (m_changeCount != changeCount() || reader.readRTFD(*buffer))
                 return;
         }
     }
 
     if (types.contains(String(NSPasteboardTypeRTFD))) {
-        if (auto buffer = readBufferAtPreferredItemIndex(NSPasteboardTypeRTFD, itemIndex, strategy, m_pasteboardName, context())) {
+        if (auto buffer = readBufferAtPreferredItemIndex(NSPasteboardTypeRTFD, itemIndex, strategy.get(), m_pasteboardName, context())) {
             if (m_changeCount != changeCount() || reader.readRTFD(*buffer))
                 return;
         }
     }
 
-    if (types.contains(String(legacyRTFPasteboardType()))) {
-        if (auto buffer = readBufferAtPreferredItemIndex(legacyRTFPasteboardType(), itemIndex, strategy, m_pasteboardName, context())) {
+    if (types.contains(String(legacyRTFPasteboardTypeSingleton()))) {
+        if (auto buffer = readBufferAtPreferredItemIndex(legacyRTFPasteboardTypeSingleton(), itemIndex, strategy.get(), m_pasteboardName, context())) {
             if (m_changeCount != changeCount() || reader.readRTF(*buffer))
                 return;
         }
     }
 
     if (types.contains(String(NSPasteboardTypeRTF))) {
-        if (auto buffer = readBufferAtPreferredItemIndex(NSPasteboardTypeRTF, itemIndex, strategy, m_pasteboardName, context())) {
+        if (auto buffer = readBufferAtPreferredItemIndex(NSPasteboardTypeRTF, itemIndex, strategy.get(), m_pasteboardName, context())) {
             if (m_changeCount != changeCount() || reader.readRTF(*buffer))
                 return;
         }
@@ -539,22 +535,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     using ImageReadingInfo = std::tuple<String, ASCIILiteral>;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     const std::array<ImageReadingInfo, 6> imageTypesToRead { {
-        { String(legacyTIFFPasteboardType()), "image/tiff"_s },
+        { String(legacyTIFFPasteboardTypeSingleton()), "image/tiff"_s },
         { String(NSPasteboardTypeTIFF), "image/tiff"_s },
-        { String(legacyPDFPasteboardType()), "application/pdf"_s },
+        { String(legacyPDFPasteboardTypeSingleton()), "application/pdf"_s },
         { String(NSPasteboardTypePDF), "application/pdf"_s },
-        { String(kUTTypePNG), "image/png"_s },
-        { String(kUTTypeJPEG), "image/jpeg"_s }
+        { String(UTTypePNG.identifier), "image/png"_s },
+        { String(UTTypeJPEG.identifier), "image/jpeg"_s }
     } };
-ALLOW_DEPRECATED_DECLARATIONS_END
 
     auto tryToReadImage = [&] (const String& pasteboardType, ASCIILiteral mimeType) {
         if (!types.contains(pasteboardType))
             return false;
 
-        auto buffer = readBufferAtPreferredItemIndex(pasteboardType, itemIndex, strategy, m_pasteboardName, context());
+        auto buffer = readBufferAtPreferredItemIndex(pasteboardType, itemIndex, strategy.get(), m_pasteboardName, context());
         if (m_changeCount != changeCount())
             return true;
 
@@ -579,26 +573,24 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return;
     }
 
-    if (types.contains(String(legacyURLPasteboardType()))) {
-        URL url = strategy.url(m_pasteboardName, context());
-        String title = readStringAtPreferredItemIndex(WebURLNamePboardType, itemIndex, strategy, m_pasteboardName, context());
+    if (types.contains(String(legacyURLPasteboardTypeSingleton()))) {
+        URL url = strategy->url(m_pasteboardName, context());
+        String title = readStringAtPreferredItemIndex(WebURLNamePboardType, itemIndex, strategy.get(), m_pasteboardName, context());
         if (m_changeCount != changeCount() || (!url.isNull() && reader.readURL(url, title)))
             return;
     }
 
-    if (types.contains(String(legacyStringPasteboardType()))) {
-        String string = readStringAtPreferredItemIndex(legacyStringPasteboardType(), itemIndex, strategy, m_pasteboardName, context());
+    if (types.contains(String(legacyStringPasteboardTypeSingleton()))) {
+        String string = readStringAtPreferredItemIndex(legacyStringPasteboardTypeSingleton(), itemIndex, strategy.get(), m_pasteboardName, context());
         if (m_changeCount != changeCount() || (!string.isNull() && reader.readPlainText(string)))
             return;
     }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (types.contains(String(kUTTypeUTF8PlainText))) {
-        String string = strategy.stringForType(kUTTypeUTF8PlainText, m_pasteboardName, context());
+    if (types.contains(String(UTTypeUTF8PlainText.identifier))) {
+        String string = strategy->stringForType(UTTypeUTF8PlainText.identifier, m_pasteboardName, context());
         if (m_changeCount != changeCount() || (!string.isNull() && reader.readPlainText(string)))
             return;
     }
-ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 bool Pasteboard::hasData()
@@ -641,13 +633,13 @@ void Pasteboard::clear(const String& type)
 
 Vector<String> Pasteboard::readPlatformValuesAsStrings(const String& domType, int64_t changeCount, const String& pasteboardName)
 {
-    auto& strategy = *platformStrategies()->pasteboardStrategy();
+    CheckedRef strategy = *platformStrategies()->pasteboardStrategy();
     auto cocoaType = cocoaTypeFromHTMLClipboardType(domType);
     if (cocoaType.isEmpty())
         return { };
 
-    auto values = strategy.allStringsForType(cocoaType, pasteboardName, context());
-    if (cocoaType == String(legacyStringPasteboardType())) {
+    auto values = strategy->allStringsForType(cocoaType, pasteboardName, context());
+    if (cocoaType == String(legacyStringPasteboardTypeSingleton())) {
         values = values.map([&] (auto& value) -> String {
             return [value.createNSString() precomposedStringWithCanonicalMapping];
         });
@@ -678,15 +670,15 @@ void Pasteboard::addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTy
         return; // Skip this ancient type that gets auto-supplied by some system conversion.
 
     // UTI may not do these right, so make sure we get the right, predictable result
-    if (cocoaType == String(legacyStringPasteboardType()) || cocoaType == String(NSPasteboardTypeString)) {
+    if (cocoaType == String(legacyStringPasteboardTypeSingleton()) || cocoaType == String(NSPasteboardTypeString)) {
         resultTypes.add(textPlainContentTypeAtom());
         return;
     }
-    if (cocoaType == String(legacyURLPasteboardType())) {
+    if (cocoaType == String(legacyURLPasteboardTypeSingleton())) {
         resultTypes.add("text/uri-list"_s);
         return;
     }
-    if (cocoaType == String(legacyFilenamesPasteboardType()) || Pasteboard::shouldTreatCocoaTypeAsFile(cocoaType))
+    if (cocoaType == String(legacyFilenamesPasteboardTypeSingleton()) || Pasteboard::shouldTreatCocoaTypeAsFile(cocoaType))
         return;
     String utiType = utiTypeFromCocoaType(cocoaType);
     if (!utiType.isEmpty()) {
@@ -702,8 +694,7 @@ void Pasteboard::writeString(const String& type, const String& data)
     const String& cocoaType = cocoaTypeFromHTMLClipboardType(type);
     String cocoaData = data;
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (cocoaType == String(legacyURLPasteboardType()) || cocoaType == String(kUTTypeFileURL)) {
+    if (cocoaType == String(legacyURLPasteboardTypeSingleton()) || cocoaType == String(UTTypeFileURL.identifier)) {
         RetainPtr url = adoptNS([[NSURL alloc] initWithString:cocoaData.createNSString().get()]);
         if ([url isFileURL])
             return;
@@ -712,7 +703,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
         return;
     }
-ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!cocoaType.isEmpty()) {
         // everything else we know of goes on the pboard as a string
@@ -723,17 +713,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 Vector<String> Pasteboard::readFilePaths()
 {
-    auto& strategy = *platformStrategies()->pasteboardStrategy();
+    CheckedRef strategy = *platformStrategies()->pasteboardStrategy();
 
     Vector<String> types;
-    strategy.getTypes(types, m_pasteboardName, context());
+    strategy->getTypes(types, m_pasteboardName, context());
 
-    if (types.contains(String(legacyFilesPromisePasteboardType())))
+    if (types.contains(String(legacyFilesPromisePasteboardTypeSingleton())))
         return m_promisedFilePaths;
 
-    if (types.contains(String(legacyFilenamesPasteboardType()))) {
+    if (types.contains(String(legacyFilenamesPasteboardTypeSingleton()))) {
         Vector<String> filePaths;
-        strategy.getPathnamesForType(filePaths, legacyFilenamesPasteboardType(), m_pasteboardName, context());
+        strategy->getPathnamesForType(filePaths, legacyFilenamesPasteboardTypeSingleton(), m_pasteboardName, context());
         return filePaths;
     }
 
@@ -780,7 +770,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
     } else {
         flipImage = false;
-        bitmapImage = (NSBitmapImageRep *)imageRep;
+        bitmapImage = checked_objc_cast<NSBitmapImageRep>(imageRep);
     }
     ASSERT(bitmapImage);
 
@@ -833,11 +823,13 @@ void Pasteboard::setDragImage(DragImage image, const IntPoint& location)
     // This is the most innocuous event to use, per Kristin Forster.
     // This is only relevant in WK1. Do not execute in the WebContent process, since it is now using
     // NSRunLoop, and not the NSApplication run loop.
-    if ([NSApp isRunning]) {
+    // This is a safer cpp false positive (rdar://161068288).
+    SUPPRESS_UNRETAINED_ARG if ([NSApp isRunning]) {
         ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
         NSEvent* event = [NSEvent mouseEventWithType:NSEventTypeMouseMoved location:NSZeroPoint
             modifierFlags:0 timestamp:0 windowNumber:0 context:nil eventNumber:0 clickCount:0 pressure:0];
-        [NSApp postEvent:event atStart:YES];
+        // This is a safer cpp false positive (rdar://161068288).
+        SUPPRESS_UNRETAINED_ARG [NSApp postEvent:event atStart:YES];
     }
 }
 #endif
@@ -852,15 +844,13 @@ RefPtr<WebCore::SharedBuffer> Pasteboard::bufferConvertedToPasteboardType(const 
     if (pasteboardBuffer.type == pasteboardType)
         return pasteboardBuffer.data;
 
-    if (pasteboardType != String(legacyTIFFPasteboardType()))
+    if (pasteboardType != String(legacyTIFFPasteboardTypeSingleton()))
         return pasteboardBuffer.data;
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (pasteboardBuffer.type == String(kUTTypeTIFF))
+    if (pasteboardBuffer.type == String(UTTypeTIFF.identifier))
         return pasteboardBuffer.data;
-ALLOW_DEPRECATED_DECLARATIONS_END
 
-    auto sourceData = pasteboardBuffer.data->createCFData();
+    auto sourceData = Ref { *pasteboardBuffer.data }->createCFData();
     auto sourceType = pasteboardBuffer.type.createCFString();
 
     const void* key = kCGImageSourceTypeIdentifierHint;
@@ -872,9 +862,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return nullptr;
 
     auto data = adoptCF(CFDataCreateMutable(0, 0));
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    auto destination = adoptCF(CGImageDestinationCreateWithData(data.get(), kUTTypeTIFF, 1, NULL));
-ALLOW_DEPRECATED_DECLARATIONS_END
+    auto destination = adoptCF(CGImageDestinationCreateWithData(data.get(), bridge_cast(UTTypeTIFF.identifier), 1, NULL));
     if (!destination)
         return nullptr;
 

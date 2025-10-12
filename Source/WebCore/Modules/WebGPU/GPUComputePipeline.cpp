@@ -43,7 +43,7 @@ void GPUComputePipeline::setLabel(String&& label)
 Ref<GPUBindGroupLayout> GPUComputePipeline::getBindGroupLayout(uint32_t index)
 {
     // "A new GPUBindGroupLayout wrapper is returned each time"
-    return GPUBindGroupLayout::create(m_backing->getBindGroupLayout(index));
+    return GPUBindGroupLayout::create(m_backing->getBindGroupLayout(index), m_uniqueId);
 }
 
 } // namespace WebCore

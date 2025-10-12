@@ -13,8 +13,13 @@
 
 #include "api/task_queue/task_queue_base.h"
 #include "api/task_queue/test/mock_task_queue_base.h"
-#include "rtc_base/gunit.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "net/dcsctp/public/timeout.h"
+#include "net/dcsctp/public/types.h"
+#include "rtc_base/thread.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 #include "test/time_controller/simulated_time_controller.h"
 
 namespace dcsctp {
@@ -43,7 +48,7 @@ class TaskQueueTimeoutTest : public testing::Test {
   MockFunction<void(TimeoutID)> on_expired_;
   webrtc::GlobalSimulatedTimeController time_controller_;
 
-  rtc::Thread* task_queue_;
+  webrtc::Thread* task_queue_;
   TaskQueueTimeoutFactory factory_;
 };
 
@@ -129,7 +134,7 @@ TEST(TaskQueueTimeoutWithMockTaskQueueTest, CanSetTimeoutPrecisionToLow) {
           _));
   TaskQueueTimeoutFactory factory(
       mock_task_queue, []() { return TimeMs(1337); },
-      [](TimeoutID timeout_id) {});
+      [](TimeoutID /* timeout_id */) {});
   std::unique_ptr<Timeout> timeout =
       factory.CreateTimeout(webrtc::TaskQueueBase::DelayPrecision::kLow);
   timeout->Start(DurationMs(1), TimeoutID(1));
@@ -147,7 +152,7 @@ TEST(TaskQueueTimeoutWithMockTaskQueueTest, CanSetTimeoutPrecisionToHigh) {
           _));
   TaskQueueTimeoutFactory factory(
       mock_task_queue, []() { return TimeMs(1337); },
-      [](TimeoutID timeout_id) {});
+      [](TimeoutID /* timeout_id */) {});
   std::unique_ptr<Timeout> timeout =
       factory.CreateTimeout(webrtc::TaskQueueBase::DelayPrecision::kHigh);
   timeout->Start(DurationMs(1), TimeoutID(1));
@@ -165,7 +170,7 @@ TEST(TaskQueueTimeoutWithMockTaskQueueTest, TimeoutPrecisionIsLowByDefault) {
           _));
   TaskQueueTimeoutFactory factory(
       mock_task_queue, []() { return TimeMs(1337); },
-      [](TimeoutID timeout_id) {});
+      [](TimeoutID /* timeout_id */) {});
   std::unique_ptr<Timeout> timeout = factory.CreateTimeout();
   timeout->Start(DurationMs(1), TimeoutID(1));
 }

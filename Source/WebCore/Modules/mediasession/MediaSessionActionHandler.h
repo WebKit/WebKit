@@ -27,9 +27,9 @@
 
 #if ENABLE(MEDIA_SESSION)
 
-#include "ActiveDOMCallback.h"
-#include "CallbackResult.h"
-#include "MediaSessionActionDetails.h"
+#include <WebCore/ActiveDOMCallback.h>
+#include <WebCore/CallbackResult.h>
+#include <WebCore/MediaSessionActionDetails.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 

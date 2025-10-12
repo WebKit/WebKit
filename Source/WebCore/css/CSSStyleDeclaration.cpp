@@ -27,6 +27,9 @@
 #include "CSSStyleDeclaration.h"
 
 #include "Document.h"
+#include "NodeDocument.h"
+#include "NodeInlines.h"
+#include "ScriptWrappableInlines.h"
 #include "Settings.h"
 #include "StyledElement.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -39,5 +42,7 @@ const Settings* CSSStyleDeclaration::settings() const
 {
     return parentElement() ? &parentElement()->document().settings() : nullptr;
 }
+
+CSSStyleDeclaration::~CSSStyleDeclaration() = default;
 
 } // namespace WebCore

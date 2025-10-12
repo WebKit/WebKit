@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,7 +45,7 @@ SourceGraphic::SourceGraphic(DestinationColorSpace colorSpace)
 {
 }
 
-OptionSet<FilterRenderingMode> SourceGraphic::supportedFilterRenderingModes() const
+OptionSet<FilterRenderingMode> SourceGraphic::supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const
 {
     OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
 #if USE(CORE_IMAGE) || USE(SKIA)
@@ -54,7 +54,7 @@ OptionSet<FilterRenderingMode> SourceGraphic::supportedFilterRenderingModes() co
 #if USE(GRAPHICS_CONTEXT_FILTERS)
     modes.add(FilterRenderingMode::GraphicsContext);
 #endif
-    return modes;
+    return modes & preferredFilterRenderingModes;
 }
 
 std::unique_ptr<FilterEffectApplier> SourceGraphic::createAcceleratedApplier() const

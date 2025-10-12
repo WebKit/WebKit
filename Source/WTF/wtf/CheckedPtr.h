@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/CheckedRef.h>
+#include <wtf/RawPtrTraits.h>
 
 namespace WTF {
 
@@ -39,7 +40,7 @@ namespace WTF {
 
 template<typename T, typename PtrTraits>
 class CheckedPtr {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CheckedPtr);
 public:
 
     constexpr CheckedPtr()
@@ -198,6 +199,7 @@ struct GetPtrHelper<CheckedPtr<T, PtrTraits>> {
 template <typename T, typename U>
 struct IsSmartPtr<CheckedPtr<T, U>> {
     static constexpr bool value = true;
+    static constexpr bool isNullable = false;
 };
 
 template<typename ExpectedType, typename ArgType, typename ArgPtrTraits>
@@ -210,62 +212,6 @@ template<typename ExpectedType, typename ArgType, typename ArgPtrTraits>
 inline bool is(const CheckedPtr<ArgType, ArgPtrTraits>& source)
 {
     return is<ExpectedType>(source.get());
-}
-
-template<typename Target, typename Source, typename PtrTraits>
-inline CheckedPtr<match_constness_t<Source, Target>> uncheckedDowncast(CheckedPtr<Source, PtrTraits>& source)
-{
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!source || is<Target>(*source));
-    return CheckedPtr<match_constness_t<Source, Target>>(static_cast<Target*>(source.get()));
-}
-
-template<typename Target, typename Source, typename PtrTraits>
-inline CheckedPtr<match_constness_t<Source, Target>> uncheckedDowncast(CheckedPtr<Source, PtrTraits>&& source)
-{
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!source || is<Target>(*source));
-    return CheckedPtr<match_constness_t<Source, Target>>(static_cast<Target*>(WTFMove(source)));
-}
-
-template<typename Target, typename Source, typename PtrTraits>
-inline CheckedPtr<match_constness_t<Source, Target>> downcast(CheckedPtr<Source, PtrTraits>& source)
-{
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
-    RELEASE_ASSERT(!source || is<Target>(*source));
-    return CheckedPtr<match_constness_t<Source, Target>>(static_cast<Target*>(source.get()));
-}
-
-template<typename Target, typename Source, typename PtrTraits>
-inline CheckedPtr<match_constness_t<Source, Target>> downcast(CheckedPtr<Source, PtrTraits>&& source)
-{
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
-    RELEASE_ASSERT(!source || is<Target>(*source));
-    return CheckedPtr<match_constness_t<Source, Target>>(static_cast<Target*>(WTFMove(source)));
-}
-
-template<typename Target, typename Source, typename TargetPtrTraits = RawPtrTraits<Target>, typename SourcePtrTraits>
-inline CheckedPtr<match_constness_t<Source, Target>, TargetPtrTraits> dynamicDowncast(CheckedPtr<Source, SourcePtrTraits>& source)
-{
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
-    if (!is<Target>(source))
-        return nullptr;
-    return CheckedPtr<match_constness_t<Source, Target>, TargetPtrTraits>(static_cast<Target*>(source.get()));
-}
-
-template<typename Target, typename Source, typename TargetPtrTraits = RawPtrTraits<Target>, typename SourcePtrTraits>
-inline CheckedPtr<match_constness_t<Source, Target>, TargetPtrTraits> dynamicDowncast(CheckedPtr<Source, SourcePtrTraits>&& source)
-{
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
-    if (!is<Target>(source))
-        return nullptr;
-    return CheckedPtr<match_constness_t<Source, Target>, TargetPtrTraits>(static_cast<Target*>(WTFMove(source)));
 }
 
 template<typename P> struct HashTraits<CheckedPtr<P>> : SimpleClassHashTraits<CheckedPtr<P>> {
@@ -294,3 +240,4 @@ template<typename T> using PackedCheckedPtr = CheckedPtr<T, PackedPtrTraits<T>>;
 
 using WTF::CheckedPtr;
 using WTF::PackedCheckedPtr;
+

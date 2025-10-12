@@ -30,6 +30,7 @@
 #include "ReceiverMatcher.h"
 #include "SyncRequestID.h"
 #include <memory>
+#include <span>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -42,6 +43,11 @@
 
 #if PLATFORM(MAC)
 #include "ImportanceAssertion.h"
+#endif
+
+#if !USE(SYSTEM_MALLOC)
+#include <bmalloc/TZoneHeap.h>
+#include <bmalloc/bmalloc.h>
 #endif
 
 #ifdef __OBJC__
@@ -101,6 +107,7 @@ public:
     bool shouldUseFullySynchronousModeForTesting() const;
     bool shouldMaintainOrderingWithAsyncMessages() const;
     void setIsAllowedWhenWaitingForSyncReplyOverride(bool value) { m_isAllowedWhenWaitingForSyncReplyOverride = value; }
+    bool isAsyncReplyMessage() const { return isAsyncReply(messageName()); }
 
 #if PLATFORM(MAC)
     void setImportanceAssertion(ImportanceAssertion&&);
@@ -171,12 +178,8 @@ public:
 
     std::optional<Attachment> takeLastAttachment();
 
-    void setIndexOfDecodingFailure(int32_t indexOfObjectFailingDecoding)
-    {
-        if (m_indexOfObjectFailingDecoding == -1)
-            m_indexOfObjectFailingDecoding = indexOfObjectFailingDecoding;
-    }
-    int32_t indexOfObjectFailingDecoding() const { return m_indexOfObjectFailingDecoding; }
+    void addIndexOfDecodingFailure(uint32_t indexOfObjectFailingDecoding) { m_indicesOfObjectsFailingDecoding.append(indexOfObjectFailingDecoding); }
+    const Vector<uint32_t>& indicesOfObjectsFailingDecoding() const { return m_indicesOfObjectsFailingDecoding; }
 
 private:
     Decoder(std::span<const uint8_t> buffer, BufferDeallocator&&, Vector<Attachment>&&);
@@ -201,7 +204,7 @@ private:
     uint64_t m_destinationID;
     Markable<SyncRequestID> m_syncRequestID;
 
-    int32_t m_indexOfObjectFailingDecoding { -1 };
+    Vector<uint32_t> m_indicesOfObjectsFailingDecoding;
 };
 
 template<>

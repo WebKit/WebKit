@@ -382,6 +382,42 @@
                     "qualifier":"Const"
                 },
                 "value":"resources"
+            },
+            "gl_ShadingRateFlag2VerticalPixelsEXT":{
+                "essl_level":"ESSL3_1_BUILTINS",
+                "type":{
+                    "basic":"Int",
+                    "precision":"Medium",
+                    "qualifier":"Const"
+                },
+                "value":"resources"
+            },
+            "gl_ShadingRateFlag4VerticalPixelsEXT":{
+                "essl_level":"ESSL3_1_BUILTINS",
+                "type":{
+                    "basic":"Int",
+                    "precision":"Medium",
+                    "qualifier":"Const"
+                },
+                "value":"resources"
+            },
+            "gl_ShadingRateFlag2HorizontalPixelsEXT":{
+                "essl_level":"ESSL3_1_BUILTINS",
+                "type":{
+                    "basic":"Int",
+                    "precision":"Medium",
+                    "qualifier":"Const"
+                },
+                "value":"resources"
+            },
+            "gl_ShadingRateFlag4HorizontalPixelsEXT":{
+                "essl_level":"ESSL3_1_BUILTINS",
+                "type":{
+                    "basic":"Int",
+                    "precision":"Medium",
+                    "qualifier":"Const"
+                },
+                "value":"resources"
             }
         },
         "subgroups":{
@@ -946,6 +982,19 @@
                     }
                 }
             },
+            "EXTFragmentShadingRate":{
+                "variables":{
+                    "gl_ShadingRateEXT":{
+                        "essl_level":"ESSL3_1_BUILTINS",
+                        "essl_extension":"EXT_fragment_shading_rate",
+                        "type":{
+                            "basic":"Int",
+                            "precision":"Medium",
+                            "qualifier":"ShadingRateEXT"
+                        }
+                    }
+                }
+            },
             "OESSampleVariables":{
                 "variables":{
                     "gl_SampleID":{
@@ -1134,6 +1183,19 @@
                         "suffix": "APPLE"
                     }
                 }
+            },
+            "EXTFragmentShadingRatePrimitive":{
+                "variables":{
+                    "gl_PrimitiveShadingRateEXT":{
+                        "essl_level":"ESSL3_1_BUILTINS",
+                        "essl_extension":"EXT_fragment_shading_rate_primitive",
+                        "type":{
+                            "basic":"Int",
+                            "precision":"Medium",
+                            "qualifier":"PrimitiveShadingRateEXT"
+                        }
+                    }
+                }
             }
         }
     },
@@ -1260,6 +1322,16 @@
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "initDynamicType":"TType *{type_name} = new TType(gl_PerVertex, EvqPerVertexIn, TLayoutQualifier::Create()); {type_name}->makeArray(0u);",
                 "comment":"The array size of gl_in is undefined until we get a valid input primitive declaration."
+            },
+            "gl_PrimitiveShadingRateEXT":{
+                "suffix":"GS",
+                "essl_level":"ESSL3_1_BUILTINS",
+                "essl_extension":"EXT_fragment_shading_rate_primitive",
+                "type":{
+                    "basic":"Int",
+                    "precision":"Medium",
+                    "qualifier":"PrimitiveShadingRateEXT"
+                }
             }
         },
         "subgroups":{

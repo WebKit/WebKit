@@ -36,7 +36,7 @@ namespace WebCore {
 #if PLATFORM(IOS_FAMILY)
 CFStringRef getUIContentSizeCategoryDidChangeNotificationName()
 {
-    return static_cast<CFStringRef>(PAL::get_UIKit_UIContentSizeCategoryDidChangeNotification());
+    return static_cast<CFStringRef>(PAL::get_UIKit_UIContentSizeCategoryDidChangeNotificationSingleton());
 }
 #endif
 
@@ -54,7 +54,7 @@ CFStringRef contentSizeCategory()
         return bridge_cast(contentSizeCategoryStorage().createNSString().autorelease());
     }
 #if PLATFORM(IOS_FAMILY)
-    return static_cast<CFStringRef>([[PAL::getUIApplicationClass() sharedApplication] preferredContentSizeCategory]);
+    return static_cast<CFStringRef>([[PAL::getUIApplicationClassSingleton() sharedApplication] preferredContentSizeCategory]);
 #else
     return kCTFontContentSizeCategoryL;
 #endif

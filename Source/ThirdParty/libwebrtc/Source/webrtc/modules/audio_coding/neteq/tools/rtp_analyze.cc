@@ -8,15 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stdio.h>
-
+#include <algorithm>
+#include <cstdint>
+#include <cstdio>
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
-#include "modules/audio_coding/neteq/tools/packet.h"
+#include "api/rtp_headers.h"
 #include "modules/audio_coding/neteq/tools/rtp_file_source.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "rtc_base/checks.h"
 
 ABSL_FLAG(int, red, 117, "RTP payload type for RED");
 ABSL_FLAG(int,
@@ -29,6 +35,54 @@ ABSL_FLAG(int,
           -1,
           "Extension ID for absolute sender time; "
           "-1 not to print absolute send time");
+
+namespace {
+
+struct RedHeader {
+  uint32_t rtp_timestamp;
+  int payload_type;
+};
+std::vector<RedHeader> ExtractRedHeaders(const webrtc::RtpPacket& packet) {
+  //
+  //  0                   1                    2                   3
+  //  0 1 2 3 4 5 6 7 8 9 0 1 2 3  4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+  // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  // |1|   block PT  |  timestamp offset         |   block length    |
+  // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  // |1|    ...                                                      |
+  // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  // |0|   block PT  |
+  // +-+-+-+-+-+-+-+-+
+  //
+  const uint8_t* payload_ptr = packet.payload().data();
+  const uint8_t* payload_end_ptr =
+      packet.payload().data() + packet.payload().size();
+
+  // Find all RED headers with the extension bit set to 1. That is, all headers
+  // but the last one.
+  std::vector<RedHeader> red_headers;
+  while ((payload_ptr < payload_end_ptr) && (*payload_ptr & 0x80)) {
+    RedHeader header;
+    header.payload_type = payload_ptr[0] & 0x7F;
+    uint32_t offset = (payload_ptr[1] << 6) + ((payload_ptr[2] & 0xFC) >> 2);
+    header.rtp_timestamp = packet.Timestamp() - offset;
+    red_headers.push_back(header);
+    payload_ptr += 4;
+  }
+  // Last header.
+  RTC_DCHECK_LT(payload_ptr, payload_end_ptr);
+  if (payload_ptr >= payload_end_ptr) {
+    return {};  // Payload too short.
+  }
+  RedHeader header;
+  header.payload_type = payload_ptr[0] & 0x7F;
+  header.rtp_timestamp = packet.Timestamp();
+  red_headers.push_back(header);
+  std::reverse(red_headers.begin(), red_headers.end());
+  return red_headers;
+}
+
+}  // namespace
 
 int main(int argc, char* argv[]) {
   std::vector<char*> args = absl::ParseCommandLine(argc, argv);
@@ -95,68 +149,60 @@ int main(int argc, char* argv[]) {
 
   uint32_t max_abs_send_time = 0;
   int cycles = -1;
-  std::unique_ptr<webrtc::test::Packet> packet;
+  std::unique_ptr<webrtc::RtpPacketReceived> packet;
   while (true) {
     packet = file_source->NextPacket();
-    if (!packet.get()) {
+    if (!packet) {
       // End of file reached.
       break;
     }
     // Write packet data to file. Use virtual_packet_length_bytes so that the
     // correct packet sizes are printed also for RTP header-only dumps.
-    fprintf(out_file, "%5u %10u %10u %5i %5i %2i %#08X",
-            packet->header().sequenceNumber, packet->header().timestamp,
-            static_cast<unsigned int>(packet->time_ms()),
-            static_cast<int>(packet->virtual_packet_length_bytes()),
-            packet->header().payloadType, packet->header().markerBit,
-            packet->header().ssrc);
-    if (print_audio_level && packet->header().extension.audio_level()) {
-      fprintf(out_file, " %5d (%1i)",
-              packet->header().extension.audio_level()->level(),
-              packet->header().extension.audio_level()->voice_activity());
+    fprintf(out_file, "%5u %10u %10i %5zu %5i %2i %#08X",
+            packet->SequenceNumber(), packet->Timestamp(),
+            packet->arrival_time().ms<int>(), packet->size(),
+            packet->PayloadType(), packet->Marker(), packet->Ssrc());
+    webrtc::AudioLevel audio_level;
+    if (print_audio_level &&
+        packet->GetExtension<webrtc::AudioLevelExtension>(&audio_level)) {
+      fprintf(out_file, " %5d (%1i)", audio_level.level(),
+              audio_level.voice_activity());
     }
-    if (print_abs_send_time && packet->header().extension.hasAbsoluteSendTime) {
+    uint32_t abs_sent_time;
+    if (print_abs_send_time &&
+        packet->GetExtension<webrtc::AbsoluteSendTime>(&abs_sent_time)) {
       if (cycles == -1) {
         // Initialize.
-        max_abs_send_time = packet->header().extension.absoluteSendTime;
+        max_abs_send_time = abs_sent_time;
         cycles = 0;
       }
       // Abs sender time is 24 bit 6.18 fixed point. Shift by 8 to normalize to
       // 32 bits (unsigned). Calculate the difference between this packet's
       // send time and the maximum observed. Cast to signed 32-bit to get the
       // desired wrap-around behavior.
-      if (static_cast<int32_t>(
-              (packet->header().extension.absoluteSendTime << 8) -
-              (max_abs_send_time << 8)) >= 0) {
+      if (static_cast<int32_t>((abs_sent_time << 8) -
+                               (max_abs_send_time << 8)) >= 0) {
         // The difference is non-negative, meaning that this packet is newer
         // than the previously observed maximum absolute send time.
-        if (packet->header().extension.absoluteSendTime < max_abs_send_time) {
+        if (abs_sent_time < max_abs_send_time) {
           // Wrap detected.
           cycles++;
         }
-        max_abs_send_time = packet->header().extension.absoluteSendTime;
+        max_abs_send_time = abs_sent_time;
       }
       // Abs sender time is 24 bit 6.18 fixed point. Divide by 2^18 to convert
       // to floating point representation.
       double send_time_seconds =
-          static_cast<double>(packet->header().extension.absoluteSendTime) /
-              262144 +
-          64.0 * cycles;
+          static_cast<double>(abs_sent_time) / 262144 + 64.0 * cycles;
       fprintf(out_file, " %11f", send_time_seconds);
     }
     fprintf(out_file, "\n");
 
-    if (packet->header().payloadType == absl::GetFlag(FLAGS_red)) {
-      std::list<webrtc::RTPHeader*> red_headers;
-      packet->ExtractRedHeaders(&red_headers);
-      while (!red_headers.empty()) {
-        webrtc::RTPHeader* red = red_headers.front();
-        RTC_DCHECK(red);
-        fprintf(out_file, "* %5u %10u %10u %5i\n", red->sequenceNumber,
-                red->timestamp, static_cast<unsigned int>(packet->time_ms()),
-                red->payloadType);
-        red_headers.pop_front();
-        delete red;
+    if (packet->PayloadType() == absl::GetFlag(FLAGS_red)) {
+      for (const RedHeader& red : ExtractRedHeaders(*packet)) {
+        fprintf(out_file, "* %5u %10u %10i %5i\n", packet->SequenceNumber(),
+                red.rtp_timestamp, packet->arrival_time().ms<int>(),
+                red.payload_type);
       }
     }
   }

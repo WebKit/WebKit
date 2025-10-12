@@ -10,13 +10,15 @@
 
 #include "rtc_base/memory_usage.h"
 
+#include <cstdint>
+
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 
 TEST(GetMemoryUsage, SimpleTest) {
   int64_t used_bytes = GetProcessResidentSizeBytes();
   EXPECT_GE(used_bytes, 0);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

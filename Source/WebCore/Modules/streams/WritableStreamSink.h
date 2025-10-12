@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "JSDOMPromiseDeferred.h"
-#include "ScriptExecutionContext.h"
+#include <WebCore/JSDOMPromiseDeferred.h>
+#include <WebCore/ScriptExecutionContext.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

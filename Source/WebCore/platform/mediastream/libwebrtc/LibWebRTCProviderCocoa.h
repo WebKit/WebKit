@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "LibWebRTCProvider.h"
+#include <WebCore/LibWebRTCProvider.h>
 
 #if USE(LIBWEBRTC)
 

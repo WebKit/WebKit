@@ -2,17 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Returning non-object from @@iterator should throw
+info: bugzilla.mozilla.org/show_bug.cgi?id=1021835
 esid: pending
 ---*/
-var BUGNUMBER = 1021835;
-var summary = "Returning non-object from @@iterator should throw";
-
-print(BUGNUMBER + ": " + summary);
 
 let ctors = [
     Map,
@@ -37,7 +31,6 @@ for (let ctor of ctors) {
                 return primitive;
             }
         };
-        assertThrowsInstanceOf(() => new ctor(arg), TypeError);
+        assert.throws(TypeError, () => new ctor(arg));
     }
 }
-

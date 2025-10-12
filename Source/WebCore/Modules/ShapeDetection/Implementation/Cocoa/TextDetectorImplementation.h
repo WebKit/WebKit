@@ -27,7 +27,7 @@
 
 #if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION) && HAVE(VISION)
 
-#include "TextDetectorInterface.h"
+#include <WebCore/TextDetectorInterface.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore::ShapeDetection {

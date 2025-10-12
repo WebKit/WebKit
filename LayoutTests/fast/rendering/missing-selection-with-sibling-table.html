@@ -1,0 +1,23 @@
+<style>
+#container {
+  display: flex;
+  flex-direction: column;
+}
+
+table {
+  float: left;
+  margin-top: 1px;
+}
+</style>
+<div id=container>
+  <div>
+    <table><caption>PASS</caption></table>
+    <div>if this is all selected.</div>
+  </div>
+</div>
+<script>
+let range = new Range();
+range.setStart(container.firstChild, 0);
+range.setEnd(container.lastChild, 0);
+window.getSelection().addRange(range);
+</script>

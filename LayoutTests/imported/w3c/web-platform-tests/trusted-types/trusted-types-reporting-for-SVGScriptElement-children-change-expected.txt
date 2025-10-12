@@ -1,0 +1,4 @@
+
+PASS sink mismatch violation report when the script text is changed by manipulating its children.
+PASS inline check violation report when the script text is changed by manipulating its children.
+

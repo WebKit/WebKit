@@ -25,13 +25,20 @@ function dumpAXTable(axElement, options) {
 
 // Dumps the result of a traversal via the UI element search API (which is what some ATs use).
 // `options` is an object with these keys:
+//
 //   * `excludeRoles`: Array of strings representing roles you don't want to include in the output.
 //                     Case insensitive, partial match is fine, e.g. "scrollbar" will exclude "AXScrollBar".
+//
+//   * `visibleOnly`: Specify true if only elements visible in the viewport should be returned.
+//
+//   * `includeAccessibilityText`: Specify true if you want the accessibility text of each element to be included in the output.
 function dumpAXSearchTraversal(axElement, options = { }) {
     let output = "";
     let searchResult = null;
+    const { visibleOnly = false } = options;
+    const { includeAccessibilityText = false } = options;
     while (true) {
-        searchResult = axElement.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        searchResult = axElement.uiElementForSearchPredicate(searchResult, /* directionIsNext */ true, "AXAnyTypeSearchKey", /* searchText */ "", visibleOnly);
         if (!searchResult)
             break;
 
@@ -54,6 +61,9 @@ function dumpAXSearchTraversal(axElement, options = { }) {
         let resultDescription = `${id ? `#${id} ` : ""}${role}`;
         if (role.includes("StaticText"))
             resultDescription += ` ${accessibilityController.platformName === "ios" ? searchResult.description : searchResult.stringValue}`;
+
+        if (includeAccessibilityText)
+            resultDescription += `\n${platformTextAlternatives(searchResult)}\n`;
 
         output += `\n{${resultDescription}}\n`;
     }
@@ -112,6 +122,20 @@ function visibleRange(axElement, {width, height, scrollTop}) {
     return `Range with view ${width}x${height}, scrollTop ${scrollTop}: ${axElement.stringDescriptionOfAttributeValue("AXVisibleCharacterRange")}\n`;
 }
 
+async function verifyVisibleRange(axElement, {width, height, scrollTop}, allowedRangeStrings) {
+    testRunner.setViewSize(width, height);
+    document.body.scrollTop = scrollTop;
+    await waitFor(() => {
+        const visibleRange = axElement.stringDescriptionOfAttributeValue("AXVisibleCharacterRange");
+        for (let i = 0; i < allowedRangeStrings.length; i++) {
+            if (visibleRange.includes(allowedRangeStrings[i]))
+                return true;
+        }
+        return false;
+    });
+    return `Got expected visible-character-range for window width ${width}px, height ${height}px, scrollTop ${scrollTop}px\n`;
+}
+
 function platformValueForW3CName(accessibilityObject, includeSource=false) {
     var result;
     if (accessibilityController.platformName == "atspi")
@@ -165,11 +189,6 @@ function platformRoleForStaticText() {
     return accessibilityController.platformName == "atspi" ? "AXRole: AXStatic" : "AXRole: AXStaticText";
 }
 
-function spinnerForTextInput(accessibilityObject) {
-    var index = accessibilityController.platformName == "atspi" ? 0 : 1;
-    return accessibilityObject.childAtIndex(index);
-}
-
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -178,9 +197,20 @@ function waitFor(condition)
 {
     return new Promise((resolve, reject) => {
         let interval = setInterval(() => {
-            if (condition()) {
+            // Trigger timeout after 3 seconds if promise could not be resolved.
+            let timeoutInterval = setInterval(() => {
+                resolve(false);
+            }, 3000);
+            try {
+                if (condition()) {
+                    clearInterval(timeoutInterval);
+                    clearInterval(interval);
+                    resolve(true);
+                }
+            } catch (error) {
+                clearInterval(timeoutInterval);
                 clearInterval(interval);
-                resolve();
+                reject(error);
             }
         }, 0);
     });
@@ -257,10 +287,17 @@ async function expectAsync(expression, expectedValue) {
         debug("WARN: The expression arg in expectAsync should be a string.");
 
     const evalExpression = `${expression} === ${expectedValue}`;
-    await waitFor(() => {
+    return await waitFor(() => {
         return eval(evalExpression);
+    }).then((success) => {
+        if (success) {
+            return `PASS: ${evalExpression}\n`;
+        } else {
+            return `FAIL: ${evalExpression}\n`;
+        }
+    }).catch((error) => {
+        return `FAIL: ${error}\n`;
     });
-    return `PASS: ${evalExpression}\n`;
 }
 
 async function expectAsyncExpression(expression, expectedValue) {
@@ -270,8 +307,15 @@ async function expectAsyncExpression(expression, expectedValue) {
     const evalExpression = `${expression} === ${expectedValue}`;
     await waitFor(() => {
         return eval(evalExpression);
+    }).then((success) => {
+        if (success) {
+            debug(`PASS ${evalExpression}`);
+        } else {
+            debug(`FAIL ${evalExpression}`);
+        }
+    }).catch((error) => {
+        debug(`FAIL ${error}`);
     });
-    debug(`PASS ${evalExpression}`);
 }
 
 async function waitForFocus(id) {

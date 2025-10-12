@@ -46,12 +46,12 @@ inline void FunctionExecutable::finalizeUnconditionally(VM& vm, CollectionScope 
 
 inline FunctionCodeBlock* FunctionExecutable::replaceCodeBlockWith(VM& vm, CodeSpecializationKind kind, CodeBlock* newCodeBlock)
 {
-    if (kind == CodeForCall) {
+    if (kind == CodeSpecializationKind::CodeForCall) {
         FunctionCodeBlock* oldCodeBlock = codeBlockForCall();
         m_codeBlockForCall.setMayBeNull(vm, this, newCodeBlock);
         return oldCodeBlock;
     }
-    ASSERT(kind == CodeForConstruct);
+    ASSERT(kind == CodeSpecializationKind::CodeForConstruct);
     FunctionCodeBlock* oldCodeBlock = codeBlockForConstruct();
     m_codeBlockForConstruct.setMayBeNull(vm, this, newCodeBlock);
     return oldCodeBlock;

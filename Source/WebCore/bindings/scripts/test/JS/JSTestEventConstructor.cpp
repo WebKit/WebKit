@@ -316,7 +316,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestEventConstructor_attr3, (JSGlobalObject* lexicalG
 
 JSC::GCClient::IsoSubspace* JSTestEventConstructor::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestEventConstructor, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestEventConstructor, UseCustomHeapCellType::No>(vm, "JSTestEventConstructor"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestEventConstructor.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestEventConstructor = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestEventConstructor.get(); },
@@ -341,7 +341,9 @@ extern "C" { extern void (*const __identifier("??_7TestEventConstructor@WebCore@
 #else
 extern "C" { extern void* _ZTVN7WebCore20TestEventConstructorE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestEventConstructor>, void>> static inline void verifyVTable(TestEventConstructor* ptr) {
+template<std::same_as<TestEventConstructor> T>
+static inline void verifyVTable(TestEventConstructor* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -360,8 +362,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestEventCons
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestEventConstructor>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestEventConstructor>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestEventConstructor>(impl.ptr());
 #endif

@@ -122,7 +122,7 @@ static WTF::Win32Handle launchBrowser()
     startupInfo.dwFlags = STARTF_USESHOWWINDOW;
     startupInfo.wShowWindow = SW_HIDE;
     PROCESS_INFORMATION processInformation { };
-    if (::CreateProcess(0, commandLine.wideCharacters().data(), 0, 0, true, 0, 0, 0, &startupInfo, &processInformation))
+    if (::CreateProcess(0, commandLine.wideCharacters().mutableSpan().data(), 0, 0, true, 0, 0, 0, &startupInfo, &processInformation))
         return Win32Handle::adopt(processInformation.hProcess);
 
     return { };
@@ -163,7 +163,7 @@ void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&
         targetPort = *freePort;
 
         auto envVar = makeString(targetIp, ':', targetPort);
-        ::SetEnvironmentVariable(L"WEBKIT_INSPECTOR_SERVER", envVar.wideCharacters().data());
+        ::SetEnvironmentVariable(L"WEBKIT_INSPECTOR_SERVER", envVar.wideCharacters().span().data());
 
         m_browserHandle = launchBrowser();
         if (!m_browserHandle) {

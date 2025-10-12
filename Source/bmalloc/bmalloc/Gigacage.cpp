@@ -40,6 +40,7 @@
 #endif
 
 #if BUSE(LIBPAS)
+#include "pas_mte_config.h"
 #include "iso_heap.h"
 #endif
 
@@ -176,6 +177,20 @@ void ensureGigacage()
             g_gigacageConfig.totalSize = totalSize;
             g_gigacageConfig.isEnabled = true;
             BPROFILE_ALLOCATION(INITIAL_GIGACAGE, totalSize);
+#if BENABLE(MTE)
+            pas_mte_ensure_initialized();
+            if (BMALLOC_USE_MTE) {
+                for (Kind kind : shuffledKinds) {
+                    void* base = g_gigacageConfig.allocBasePtr(kind);
+                    size_t size = g_gigacageConfig.allocSize(kind);
+                    const vm_inherit_t childProcessInheritance = VM_INHERIT_DEFAULT;
+                    const bool copy = false;
+                    const vm_prot_t protections = VM_PROT_WRITE | VM_PROT_READ;
+                    auto kernResult = mach_vm_map(mach_task_self(), (mach_vm_address_t*)&base, size, vmPageSize() - 1, VM_FLAGS_FIXED | VM_FLAGS_OVERWRITE | (int)VMTag::JSGigacage, MEMORY_OBJECT_NULL, 0, copy, protections, protections, childProcessInheritance);
+                    RELEASE_BASSERT(kernResult == KERN_SUCCESS);
+                }
+            }
+#endif // BENABLE(MTE)
         });
 }
 
@@ -259,8 +274,8 @@ bool shouldBeEnabled()
             RELEASE_BASSERT(!g_gigacageConfig.shouldBeEnabledHasBeenCalled);
             g_gigacageConfig.shouldBeEnabledHasBeenCalled = true;
 
-            bool debugHeapEnabled = Environment::get()->isDebugHeapEnabled();
-            if (debugHeapEnabled)
+            bool systemHeapEnabled = Environment::get()->isSystemHeapEnabled();
+            if (systemHeapEnabled)
                 return;
 
             if (!gigacageEnabledForProcess())

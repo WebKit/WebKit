@@ -27,9 +27,9 @@
 
 #if ENABLE(JIT)
 
-#include "CallMode.h"
-#include "CodeSpecializationKind.h"
-#include "JSCPtrTag.h"
+#include <JavaScriptCore/CallMode.h>
+#include <JavaScriptCore/CodeSpecializationKind.h>
+#include <JavaScriptCore/JSCPtrTag.h>
 
 namespace JSC {
 
@@ -80,6 +80,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> globalIsNaNThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> numberIsNaNThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> globalIsFiniteThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> numberIsFiniteThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> numberIsSafeIntegerThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> absThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> ceilThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> expThunkGenerator(VM&);

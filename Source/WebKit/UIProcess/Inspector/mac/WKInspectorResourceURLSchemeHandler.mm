@@ -34,6 +34,7 @@
 #import "WebURLSchemeHandlerCocoa.h"
 #import <WebCore/MIMETypeRegistry.h>
 #import <wtf/Assertions.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 @implementation WKInspectorResourceURLSchemeHandler {
     RetainPtr<NSMapTable<id <WKURLSchemeTask>, NSOperation *>> _fileLoadOperations;
@@ -65,7 +66,7 @@
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
 {
-    dispatch_assert_queue(dispatch_get_main_queue());
+    dispatch_assert_queue(mainDispatchQueueSingleton());
     if (!_cachedBundle) {
         _cachedBundle = [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];
 
@@ -127,7 +128,7 @@
 
 - (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
 {
-    dispatch_assert_queue(dispatch_get_main_queue());
+    dispatch_assert_queue(mainDispatchQueueSingleton());
     if (NSOperation *operation = [_fileLoadOperations objectForKey:urlSchemeTask]) {
         [operation cancel];
         [_fileLoadOperations removeObjectForKey:urlSchemeTask];

@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(COCOA)
 OBJC_CLASS CALayer;
 using PlatformLayer = CALayer;

@@ -12,17 +12,16 @@
 #define RTC_BASE_PLATFORM_THREAD_H_
 
 #include <functional>
-#include <string>
-#if !defined(WEBRTC_WIN)
-#include <pthread.h>
-#endif
-
 #include <optional>
 
 #include "absl/strings/string_view.h"
-#include "rtc_base/platform_thread_types.h"
+#include "rtc_base/platform_thread_types.h"  // IWYU pragma: keep
 
-namespace rtc {
+#if !defined(WEBRTC_WIN)
+#include <pthread.h>  // IWYU pragma: keep
+#endif
+
+namespace webrtc {
 
 enum class ThreadPriority {
   kLow = 1,
@@ -71,7 +70,7 @@ class PlatformThread final {
   // For a PlatformThread that's been spawned joinable, the destructor suspends
   // the calling thread until the created thread exits unless the thread has
   // already exited.
-  virtual ~PlatformThread();
+  ~PlatformThread();
 
   // Finalizes any allocated resources.
   // For a PlatformThread that's been spawned joinable, Finalize() suspends
@@ -116,6 +115,7 @@ class PlatformThread final {
   bool joinable_ = false;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_PLATFORM_THREAD_H_

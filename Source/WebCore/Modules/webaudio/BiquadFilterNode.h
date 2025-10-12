@@ -56,3 +56,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_AUDIONODE(BiquadFilterNode, NodeTypeBiquadFilter);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,9 +41,10 @@ public:
     bool equals(const CSSImageSetOptionValue&) const;
     String customCSSText(const CSS::SerializationContext&) const;
 
-    Ref<CSSValue> image() const { return m_image; }
+    CSSValue& image() const { return m_image; }
 
-    Ref<CSSPrimitiveValue> resolution() const { return m_resolution; }
+    CSSPrimitiveValue& resolution() const { return m_resolution; }
+    Ref<CSSPrimitiveValue> protectedResolution() const { return m_resolution; }
     void setResolution(Ref<CSSPrimitiveValue>&&);
 
     String type() const { return m_mimeType; }
@@ -63,7 +64,7 @@ private:
     CSSImageSetOptionValue(Ref<CSSValue>&&, Ref<CSSPrimitiveValue>&&);
     CSSImageSetOptionValue(Ref<CSSValue>&&, Ref<CSSPrimitiveValue>&&, String&&);
 
-    Ref<CSSValue> m_image;
+    const Ref<CSSValue> m_image;
     Ref<CSSPrimitiveValue> m_resolution;
     String m_mimeType;
 };

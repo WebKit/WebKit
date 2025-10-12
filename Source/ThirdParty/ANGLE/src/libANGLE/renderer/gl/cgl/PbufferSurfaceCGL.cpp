@@ -106,15 +106,11 @@ egl::Error PbufferSurfaceCGL::releaseTexImage(const gl::Context *context, EGLint
 
 void PbufferSurfaceCGL::setSwapInterval(const egl::Display *display, EGLint interval) {}
 
-EGLint PbufferSurfaceCGL::getWidth() const
+gl::Extents PbufferSurfaceCGL::getSize() const
 {
-    return mWidth;
+    return gl::Extents(mWidth, mHeight, 1);
 }
 
-EGLint PbufferSurfaceCGL::getHeight() const
-{
-    return mHeight;
-}
 
 EGLint PbufferSurfaceCGL::isPostSubBufferSupported() const
 {

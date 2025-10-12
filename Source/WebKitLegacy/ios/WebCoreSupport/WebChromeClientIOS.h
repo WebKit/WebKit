@@ -28,6 +28,12 @@
 #import "WebChromeClient.h"
 #import <wtf/TZoneMalloc.h>
 
+namespace WebCore {
+enum class BroadcastFocusedElement : bool;
+class Frame;
+struct FocusOptions;
+}
+
 class WebChromeClientIOS final : public WebChromeClient {
     WTF_MAKE_TZONE_ALLOCATED(WebChromeClientIOS);
 public:
@@ -50,6 +56,7 @@ private:
     void runOpenPanel(WebCore::LocalFrame&, WebCore::FileChooser&) final;
     void showShareSheet(WebCore::ShareDataWithParsedURL&&, CompletionHandler<void(bool)>&&) final;
 
+    bool hasAccessoryMousePointingDevice() const final { return false; }
     bool hoverSupportedByPrimaryPointingDevice() const final { return false; }
     bool hoverSupportedByAnyAvailablePointingDevice() const final { return false; }
     std::optional<WebCore::PointerCharacteristics> pointerCharacteristicsOfPrimaryPointingDevice() const final { return WebCore::PointerCharacteristics::Coarse; }
@@ -99,7 +106,7 @@ private:
     RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient&) const final;
     void relayAccessibilityNotification(String&&, RetainPtr<NSData>&&) const final { }
     void webAppOrientationsUpdated() final;
-    void focusedElementChanged(WebCore::Element*) final;
+    void focusedElementChanged(WebCore::Element*, WebCore::LocalFrame*, WebCore::FocusOptions, WebCore::BroadcastFocusedElement) final;
     void showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy, const String&) final;
     RefPtr<WebCore::Icon> createIconForFiles(const Vector<String>& filenames) final;
 

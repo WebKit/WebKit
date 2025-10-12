@@ -35,7 +35,7 @@ class Page;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessibilityRootAtspi);
 class AccessibilityRootAtspi final : public RefCountedAndCanMakeWeakPtr<AccessibilityRootAtspi> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AccessibilityRootAtspi);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AccessibilityRootAtspi, AccessibilityRootAtspi);
 public:
     static Ref<AccessibilityRootAtspi> create(Page&);
     ~AccessibilityRootAtspi() = default;

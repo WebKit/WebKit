@@ -9,22 +9,22 @@
  */
 #include "net/dcsctp/packet/sctp_packet.h"
 
-#include <stddef.h>
-
+#include <cstddef>
 #include <cstdint>
 #include <optional>
-#include <string>
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "api/array_view.h"
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/common/math.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
 #include "net/dcsctp/packet/chunk/chunk.h"
 #include "net/dcsctp/packet/crc32c.h"
 #include "net/dcsctp/public/dcsctp_options.h"
+#include "net/dcsctp/public/types.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/string_format.h"
 
@@ -105,8 +105,9 @@ std::vector<uint8_t> SctpPacket::Builder::Build(bool write_checksum) {
   return out;
 }
 
-std::optional<SctpPacket> SctpPacket::Parse(rtc::ArrayView<const uint8_t> data,
-                                            const DcSctpOptions& options) {
+std::optional<SctpPacket> SctpPacket::Parse(
+    webrtc::ArrayView<const uint8_t> data,
+    const DcSctpOptions& options) {
   if (data.size() < kHeaderSize + kChunkTlvHeaderSize ||
       data.size() > kMaxUdpPacketSize) {
     RTC_DLOG(LS_WARNING) << "Invalid packet size";
@@ -139,7 +140,7 @@ std::optional<SctpPacket> SctpPacket::Parse(rtc::ArrayView<const uint8_t> data,
     BoundedByteWriter<kHeaderSize>(data_copy).Store32<8>(0);
     uint32_t calculated_checksum = GenerateCrc32C(data_copy);
     if (calculated_checksum != common_header.checksum) {
-      RTC_DLOG(LS_WARNING) << rtc::StringFormat(
+      RTC_DLOG(LS_WARNING) << webrtc::StringFormat(
           "Invalid packet checksum, packet_checksum=0x%08x, "
           "calculated_checksum=0x%08x",
           common_header.checksum, calculated_checksum);
@@ -161,8 +162,8 @@ std::optional<SctpPacket> SctpPacket::Parse(rtc::ArrayView<const uint8_t> data,
 
   std::vector<ChunkDescriptor> descriptors;
   descriptors.reserve(kExpectedDescriptorCount);
-  rtc::ArrayView<const uint8_t> descriptor_data =
-      rtc::ArrayView<const uint8_t>(data_copy).subview(kHeaderSize);
+  webrtc::ArrayView<const uint8_t> descriptor_data =
+      webrtc::ArrayView<const uint8_t>(data_copy).subview(kHeaderSize);
   while (!descriptor_data.empty()) {
     if (descriptor_data.size() < kChunkTlvHeaderSize) {
       RTC_DLOG(LS_WARNING) << "Too small chunk";

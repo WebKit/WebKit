@@ -31,11 +31,11 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "AttestationConveyancePreference.h"
-#include "AuthenticatorAssertionResponse.h"
-#include "AuthenticatorAttestationResponse.h"
-#include "AuthenticatorGetInfoResponse.h"
-#include "FidoConstants.h"
+#include <WebCore/AttestationConveyancePreference.h>
+#include <WebCore/AuthenticatorAssertionResponse.h>
+#include <WebCore/AuthenticatorAttestationResponse.h>
+#include <WebCore/AuthenticatorGetInfoResponse.h>
+#include <WebCore/FidoConstants.h>
 
 // Converts response from authenticators to CTAPResponse objects. If the
 // response of the authenticator does not conform to format specified by the

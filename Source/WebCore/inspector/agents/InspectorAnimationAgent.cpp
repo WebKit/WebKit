@@ -26,7 +26,6 @@
 #include "config.h"
 #include "InspectorAnimationAgent.h"
 
-#include "Animation.h"
 #include "AnimationEffect.h"
 #include "AnimationEffectPhase.h"
 #include "BlendingKeyframes.h"
@@ -36,9 +35,12 @@
 #include "CSSTransition.h"
 #include "CSSValue.h"
 #include "CSSValuePool.h"
+#include "ContextDestructionObserverInlines.h"
+#include "DocumentPage.h"
 #include "Element.h"
 #include "Event.h"
 #include "FillMode.h"
+#include "FrameDestructionObserverInlines.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
@@ -144,13 +146,13 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
                 .setOffset(blendingKeyframe.offset())
                 .release();
 
-            RefPtr<TimingFunction> timingFunction;
+            RefPtr<const TimingFunction> timingFunction;
             if (!parsedKeyframes.isEmpty())
                 timingFunction = parsedKeyframes[i].timingFunction;
             if (!timingFunction)
                 timingFunction = blendingKeyframe.timingFunction();
             if (!timingFunction)
-                timingFunction = styleOriginatedAnimation->backingAnimation().timingFunction();
+                timingFunction = styleOriginatedAnimation->backingAnimationTimingFunction();
             if (timingFunction)
                 keyframePayload->setEasing(timingFunction->cssText());
 
@@ -248,7 +250,7 @@ static Ref<Inspector::Protocol::Animation::Effect> buildObjectForEffect(Animatio
 
 InspectorAnimationAgent::InspectorAnimationAgent(PageAgentContext& context)
     : InspectorAgentBase("Animation"_s, context)
-    , m_frontendDispatcher(makeUnique<Inspector::AnimationFrontendDispatcher>(context.frontendRouter))
+    , m_frontendDispatcher(makeUniqueRef<Inspector::AnimationFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::AnimationBackendDispatcher::create(context.backendDispatcher, this))
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_inspectedPage(context.inspectedPage)
@@ -259,7 +261,7 @@ InspectorAnimationAgent::InspectorAnimationAgent(PageAgentContext& context)
 
 InspectorAnimationAgent::~InspectorAnimationAgent() = default;
 
-void InspectorAnimationAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
+void InspectorAnimationAgent::didCreateFrontendAndBackend()
 {
     ASSERT(m_instrumentingAgents.persistentAnimationAgent() != this);
     m_instrumentingAgents.setPersistentAnimationAgent(this);
@@ -310,7 +312,7 @@ Inspector::Protocol::ErrorStringOr<RefPtr<Inspector::Protocol::Animation::Effect
 {
     Inspector::Protocol::ErrorString errorString;
 
-    auto* animation = assertAnimation(errorString, animationId);
+    RefPtr animation = assertAnimation(errorString, animationId);
     if (!animation)
         return makeUnexpected(errorString);
 
@@ -327,7 +329,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Styleable>> Ins
 {
     Inspector::Protocol::ErrorString errorString;
 
-    auto* animation = assertAnimation(errorString, animationId);
+    RefPtr animation = assertAnimation(errorString, animationId);
     if (!animation)
         return makeUnexpected(errorString);
 
@@ -352,11 +354,11 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObjec
 {
     Inspector::Protocol::ErrorString errorString;
 
-    auto* animation = assertAnimation(errorString, animationId);
+    RefPtr animation = assertAnimation(errorString, animationId);
     if (!animation)
         return makeUnexpected(errorString);
 
-    auto* state = animation->scriptExecutionContext()->globalObject();
+    auto* state = animation->protectedScriptExecutionContext()->globalObject();
     auto injectedScript = m_injectedScriptManager.injectedScriptFor(state);
     ASSERT(!injectedScript.hasNoValue());
 
@@ -365,7 +367,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObjec
         JSC::JSLockHolder lock(state);
 
         auto* globalObject = deprecatedGlobalObjectForPrototype(state);
-        value = toJS(state, globalObject, animation);
+        value = toJS(state, globalObject, animation.get());
     }
 
     if (!value) {

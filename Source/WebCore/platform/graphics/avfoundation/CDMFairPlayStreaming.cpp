@@ -96,9 +96,8 @@ static Vector<Ref<SharedBuffer>> extractSinfData(const SharedBuffer& buffer)
     // JSON of the format: "{ sinf: [ <base64-encoded-string> ] }"
     if (buffer.size() > std::numeric_limits<unsigned>::max())
         return { };
-    String json { buffer.makeContiguous()->span() };
 
-    auto value = JSON::Value::parseJSON(json);
+    auto value = JSON::Value::parseJSON(byteCast<Latin1Character>(buffer.makeContiguous()->span()));
     if (!value)
         return { };
 
@@ -218,9 +217,8 @@ std::optional<Vector<Ref<SharedBuffer>>> CDMPrivateFairPlayStreaming::extractKey
     // JSON of the format: "{ "codc" : [integer],  "mtyp" : [integer],  "cont" : "mpts"} }"
     if (buffer.size() > std::numeric_limits<unsigned>::max())
         return { };
-    String json { buffer.makeContiguous()->span() };
 
-    auto value = JSON::Value::parseJSON(json);
+    auto value = JSON::Value::parseJSON(byteCast<Latin1Character>(buffer.makeContiguous()->span()));
     if (!value)
         return { };
 
@@ -280,10 +278,10 @@ void CDMFactory::platformRegisterFactories(Vector<CDMFactory*>& factories)
 
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        InitDataRegistry::shared().registerInitDataType(CDMPrivateFairPlayStreaming::sinfName(), { CDMPrivateFairPlayStreaming::sanitizeSinf, CDMPrivateFairPlayStreaming::extractKeyIDsSinf });
-        InitDataRegistry::shared().registerInitDataType(CDMPrivateFairPlayStreaming::skdName(), { CDMPrivateFairPlayStreaming::sanitizeSkd, CDMPrivateFairPlayStreaming::extractKeyIDsSkd });
+        InitDataRegistry::singleton().registerInitDataType(CDMPrivateFairPlayStreaming::sinfName(), { CDMPrivateFairPlayStreaming::sanitizeSinf, CDMPrivateFairPlayStreaming::extractKeyIDsSinf });
+        InitDataRegistry::singleton().registerInitDataType(CDMPrivateFairPlayStreaming::skdName(), { CDMPrivateFairPlayStreaming::sanitizeSkd, CDMPrivateFairPlayStreaming::extractKeyIDsSkd });
 #if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
-        InitDataRegistry::shared().registerInitDataType(CDMPrivateFairPlayStreaming::mptsName(), { CDMPrivateFairPlayStreaming::sanitizeMpts, CDMPrivateFairPlayStreaming::extractKeyIDsMpts });
+        InitDataRegistry::singleton().registerInitDataType(CDMPrivateFairPlayStreaming::mptsName(), { CDMPrivateFairPlayStreaming::sanitizeMpts, CDMPrivateFairPlayStreaming::extractKeyIDsMpts });
 #endif
     });
 }

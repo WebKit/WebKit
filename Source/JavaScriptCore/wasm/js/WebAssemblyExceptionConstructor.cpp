@@ -57,7 +57,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyException, (JSGlobalObject* globa
     if (&tag->tag() == &Wasm::Tag::jsExceptionTag()) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "WebAssembly.Exception constructor does not accept WebAssembly.JSTag"_s);
 
-    const auto& tagFunctionType = tag->type();
+    SUPPRESS_UNCOUNTED_LOCAL const auto& tagFunctionType = tag->type();
     MarkedArgumentBuffer values;
     values.ensureCapacity(tagFunctionType.argumentCount());
     forEachInIterable(globalObject, tagParameters, [&] (VM&, JSGlobalObject*, JSValue nextValue) {

@@ -43,7 +43,7 @@
     [RaisesException] void isRegexSupported([NSDictionary] any regexOptions, [Optional, CallbackHandler] function callback);
     [RaisesException] void setExtensionActionOptions([NSDictionary] any options, [Optional, CallbackHandler] function callback);
 
-    // FIXME: <rdar://71867958> Implement onRuleMatchedDebug.
+    [Dynamic, Conditional=DNR_ON_RULE_MATCHED_DEBUG] readonly attribute WebExtensionAPIEvent onRuleMatchedDebug;
 
     [ImplementedAs=maxNumberOfStaticRulesets] readonly attribute double MAX_NUMBER_OF_STATIC_RULESETS;
     [ImplementedAs=maxNumberOfEnabledRulesets] readonly attribute double MAX_NUMBER_OF_ENABLED_STATIC_RULESETS;

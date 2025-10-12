@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@ public:
 
     virtual ~RemoteTextureViewProxy();
 
-    RemoteGPUProxy& root() { return m_root; }
+    RemoteGPUProxy& root() const { return m_root; }
 
 private:
     friend class DowncastConvertToBackingContext;
@@ -69,8 +69,8 @@ private:
     void setLabelInternal(const String&) final;
 
     WebGPUIdentifier m_backing;
-    Ref<ConvertToBackingContext> m_convertToBackingContext;
-    Ref<RemoteGPUProxy> m_root;
+    const Ref<ConvertToBackingContext> m_convertToBackingContext;
+    const Ref<RemoteGPUProxy> m_root;
 };
 
 } // namespace WebKit::WebGPU

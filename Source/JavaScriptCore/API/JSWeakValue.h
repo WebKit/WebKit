@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2018 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
-#include "Weak.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/Weak.h>
 
 namespace JSC {
 

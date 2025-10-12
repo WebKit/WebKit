@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,20 +38,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface AVFragmentedMediaDataReport : NSObject
 @end
 
-#if !HAVE(AVASSETWRITERDELEGATE_API)
-@protocol AVAssetWriterDelegate <NSObject>
-@optional
-- (void)assetWriter:(AVAssetWriter *)assetWriter didProduceFragmentedHeaderData:(NSData *)fragmentedHeaderData;
-- (void)assetWriter:(AVAssetWriter *)assetWriter didProduceFragmentedMediaData:(NSData *)fragmentedMediaData fragmentedMediaDataReport:(AVFragmentedMediaDataReport *)fragmentedMediaDataReport;
-@end
-#endif
-
 @interface AVAssetWriter ()
 - (nullable instancetype)initWithFileType:(NSString * _Nullable)outputFileType error:(NSError * _Nullable * _Nullable)outError;
 - (void)flush;
-#if !HAVE(AVASSETWRITERDELEGATE_API)
-@property (weak, nullable) id <AVAssetWriterDelegate> delegate SPI_AVAILABLE(macos(10.15), ios(13.0), tvos(13.0), watchos(6.0));
-#endif
 @end
 
 NS_ASSUME_NONNULL_END

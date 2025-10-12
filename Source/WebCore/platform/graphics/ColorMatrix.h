@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <concepts>
 #include <math.h>
 #include <wtf/MathExtras.h>
 

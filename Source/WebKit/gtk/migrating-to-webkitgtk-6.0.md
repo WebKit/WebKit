@@ -24,13 +24,13 @@ time to start looking into webkitgtk-6.0.
 All APIs that were previously deprecated in webkit2gtk-4.0 and webkit2gtk-4.1
 have been removed. This includes the original JavaScriptCore API (e.g.
 `JSContextRef` and `JSObjectRef`), which has been replaced by the GObject-style
-JavaScriptCore API (e.g. [type@JSC.Context] and [type@JSC.Object]) that is
-available since 2.22. It also includes the entire GObject DOM API (e.g.
+JavaScriptCore API (e.g. [type@JavaScriptCore.Context] and [type@JavaScriptCore.Value])
+that is available since 2.22. It also includes the entire GObject DOM API (e.g.
 `WebKitDOMDocument`), which has been removed without replacement. Use JavaScript
 to interact with and manipulate the DOM instead, perhaps via
 [method@WebKit.WebView.evaluate_javascript] or
 [method@WebKit.WebView.call_async_javascript_function] in the UI process, or
-[method@JSC.ValueObject.invoke_method] in the web process.
+[method@JavaScriptCore.Value.object_invoke_method] in the web process.
 
 Run your application with the environment variable `G_ENABLE_DIAGNOSTIC=1` to
 notice use of deprecated signals and properties.
@@ -150,7 +150,7 @@ now all use a filesystem path rather than a URI. All uses must be updated accord
 ## JavaScript Results
 
 WebKitJavascriptResult has been removed. [signal@WebKit.UserContentManager::script-message-received]
-now directly returns a [class@JSC.Value] instead.
+now directly returns a [class@JavaScriptCore.Value] instead.
 
 ## Web Process Extension
 

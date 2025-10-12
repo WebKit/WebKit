@@ -1,0 +1,3 @@
+
+PASS Setting keyPoints invalid and then valid should result in the animation running
+

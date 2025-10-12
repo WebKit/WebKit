@@ -47,7 +47,7 @@ private:
     bool m_needsTransformUpdate : 1;
     bool m_didTransformToRootUpdate : 1;
     AffineTransform m_localTransform;
-    FloatSize m_lastTranslation;
+    FloatSize m_additionalTranslation;
     FloatRect m_lastTransformReferenceBoxRect;
 };
 

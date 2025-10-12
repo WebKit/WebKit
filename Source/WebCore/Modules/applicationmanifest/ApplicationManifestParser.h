@@ -27,7 +27,7 @@
 
 #if ENABLE(APPLICATION_MANIFEST)
 
-#include "ApplicationManifest.h"
+#include <WebCore/ApplicationManifest.h>
 #include <optional>
 #include <wtf/JSONValues.h>
 

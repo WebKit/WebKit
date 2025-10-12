@@ -1,14 +1,3 @@
-CONSOLE MESSAGE: <link rel=preload> must have a valid `as` value
-CONSOLE MESSAGE: <link rel=preload> cannot have the empty string as `as` value
-CONSOLE MESSAGE: The resource http://localhost:8800/preload/non-existent/dummy.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
-CONSOLE MESSAGE: The resource http://localhost:8800/preload/non-existent/dummy.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
-CONSOLE MESSAGE: The resource http://localhost:8800/preload/non-existent/square.png was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
-CONSOLE MESSAGE: The resource http://localhost:8800/preload/non-existent/Ahem.ttf was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
-CONSOLE MESSAGE: The resource http://localhost:8800/preload/non-existent/test.mp4 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
-CONSOLE MESSAGE: The resource http://localhost:8800/preload/non-existent/test.oga was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
-CONSOLE MESSAGE: The resource http://localhost:8800/preload/non-existent/security/captions.vtt was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
-CONSOLE MESSAGE: The resource http://localhost:8800/preload/non-existent/dummy.xml?fetch was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
-CONSOLE MESSAGE: Error: assert_true: video triggered error event expected true got false
 
 FAIL Makes sure that preloaded resources trigger the onerror event Error: assert_true: video triggered error event expected true got false
 

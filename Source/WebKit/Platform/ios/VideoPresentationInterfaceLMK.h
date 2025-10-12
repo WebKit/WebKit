@@ -30,9 +30,9 @@
 #include <WebCore/VideoPresentationInterfaceIOS.h>
 #include <wtf/TZoneMalloc.h>
 
-OBJC_CLASS LMPlayableViewController;
 OBJC_CLASS WKCaptionLayerLayoutManager;
 OBJC_CLASS WKSLinearMediaPlayer;
+OBJC_CLASS WKSPlayableViewControllerHost;
 
 namespace WebCore {
 class PlaybackSessionInterfaceIOS;
@@ -68,6 +68,7 @@ private:
     void enterExternalPlayback(CompletionHandler<void(bool, UIViewController *)> &&, CompletionHandler<void(bool)>&&) final;
     void exitExternalPlayback() final;
     bool cleanupExternalPlayback() final;
+    void didSetPlayerIdentifier() final;
     void didSetVideoReceiverEndpoint() final;
     void tryToStartPictureInPicture() final { }
     void stopPictureInPicture() final { }
@@ -81,14 +82,14 @@ private:
     AVPlayerViewController *avPlayerViewController() const final { return nullptr; }
     CALayer *captionsLayer() final;
     void setupCaptionsLayer(CALayer *parent, const WebCore::FloatSize&) final;
-    LMPlayableViewController *playableViewController() final;
+    WKSPlayableViewControllerHost *playableViewController() final;
     void setSpatialImmersive(bool) final;
     void swapFullscreenModesWith(VideoPresentationInterfaceIOS&) final;
 
     WKSLinearMediaPlayer *linearMediaPlayer() const;
     void ensurePlayableViewController();
 
-    RetainPtr<LMPlayableViewController> m_playerViewController;
+    RetainPtr<WKSPlayableViewControllerHost> m_playerViewController;
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_spatialTrackingLabel;

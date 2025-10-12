@@ -9,19 +9,19 @@
  */
 #include "net/dcsctp/packet/chunk/forward_tsn_chunk.h"
 
-#include <stddef.h>
-#include <stdint.h>
-
+#include <cstddef>
+#include <cstdint>
 #include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "api/array_view.h"
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
 #include "net/dcsctp/packet/chunk/forward_tsn_common.h"
-#include "net/dcsctp/packet/tlv_trait.h"
+#include "net/dcsctp/public/types.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace dcsctp {
@@ -45,7 +45,7 @@ namespace dcsctp {
 constexpr int ForwardTsnChunk::kType;
 
 std::optional<ForwardTsnChunk> ForwardTsnChunk::Parse(
-    rtc::ArrayView<const uint8_t> data) {
+    webrtc::ArrayView<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -70,7 +70,7 @@ std::optional<ForwardTsnChunk> ForwardTsnChunk::Parse(
 }
 
 void ForwardTsnChunk::SerializeTo(std::vector<uint8_t>& out) const {
-  rtc::ArrayView<const SkippedStream> skipped = skipped_streams();
+  webrtc::ArrayView<const SkippedStream> skipped = skipped_streams();
   size_t variable_size = skipped.size() * kSkippedStreamBufferSize;
   BoundedByteWriter<kHeaderSize> writer = AllocateTLV(out, variable_size);
 
@@ -85,7 +85,7 @@ void ForwardTsnChunk::SerializeTo(std::vector<uint8_t>& out) const {
 }
 
 std::string ForwardTsnChunk::ToString() const {
-  rtc::StringBuilder sb;
+  webrtc::StringBuilder sb;
   sb << "FORWARD-TSN, new_cumulative_tsn=" << *new_cumulative_tsn();
   for (const auto& skipped : skipped_streams()) {
     sb << ", skip " << skipped.stream_id.value() << ":" << *skipped.ssn;

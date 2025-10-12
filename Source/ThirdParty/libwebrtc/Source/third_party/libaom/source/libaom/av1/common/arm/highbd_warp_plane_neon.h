@@ -53,8 +53,7 @@ static AOM_FORCE_INLINE int32x4x2_t vertical_filter_8x1_f8(const int16x8_t *tmp,
 static AOM_FORCE_INLINE int16x8_t load_filters_1(int ofs) {
   const int ofs0 = ROUND_POWER_OF_TWO(ofs, WARPEDDIFF_PREC_BITS);
 
-  const int16_t *base =
-      (int16_t *)av1_warped_filter + WARPEDPIXEL_PREC_SHIFTS * 8;
+  const int16_t *base = av1_warped_filter[WARPEDPIXEL_PREC_SHIFTS];
   return vld1q_s16(base + ofs0 * 8);
 }
 
@@ -65,8 +64,7 @@ static AOM_FORCE_INLINE void load_filters_4(int16x8_t out[], int ofs,
   const int ofs2 = ROUND_POWER_OF_TWO(ofs + stride * 2, WARPEDDIFF_PREC_BITS);
   const int ofs3 = ROUND_POWER_OF_TWO(ofs + stride * 3, WARPEDDIFF_PREC_BITS);
 
-  const int16_t *base =
-      (int16_t *)av1_warped_filter + WARPEDPIXEL_PREC_SHIFTS * 8;
+  const int16_t *base = av1_warped_filter[WARPEDPIXEL_PREC_SHIFTS];
   out[0] = vld1q_s16(base + ofs0 * 8);
   out[1] = vld1q_s16(base + ofs1 * 8);
   out[2] = vld1q_s16(base + ofs2 * 8);
@@ -84,8 +82,7 @@ static AOM_FORCE_INLINE void load_filters_8(int16x8_t out[], int ofs,
   const int ofs6 = ROUND_POWER_OF_TWO(ofs + stride * 6, WARPEDDIFF_PREC_BITS);
   const int ofs7 = ROUND_POWER_OF_TWO(ofs + stride * 7, WARPEDDIFF_PREC_BITS);
 
-  const int16_t *base =
-      (int16_t *)av1_warped_filter + WARPEDPIXEL_PREC_SHIFTS * 8;
+  const int16_t *base = av1_warped_filter[WARPEDPIXEL_PREC_SHIFTS];
   out[0] = vld1q_s16(base + ofs0 * 8);
   out[1] = vld1q_s16(base + ofs1 * 8);
   out[2] = vld1q_s16(base + ofs2 * 8);

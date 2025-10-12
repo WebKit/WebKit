@@ -37,20 +37,18 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValuePool);
 LazyNeverDestroyed<StaticCSSValuePool> staticCSSValuePool;
 
 StaticCSSValuePool::StaticCSSValuePool()
+    : m_implicitInitialValue(CSSValue::StaticCSSValue, CSSPrimitiveValue::ImplicitInitialValue)
+    , m_transparentColor(CSSValue::StaticCSSValue, WebCore::Color::transparentBlack)
+    , m_whiteColor(CSSValue::StaticCSSValue, WebCore::Color::white)
+    , m_blackColor(CSSValue::StaticCSSValue, WebCore::Color::black)
 {
-    m_implicitInitialValue.construct(CSSValue::StaticCSSValue, CSSPrimitiveValue::ImplicitInitialValue);
-    
-    m_transparentColor.construct(CSSValue::StaticCSSValue, WebCore::Color::transparentBlack);
-    m_whiteColor.construct(CSSValue::StaticCSSValue, WebCore::Color::white);
-    m_blackColor.construct(CSSValue::StaticCSSValue, WebCore::Color::black);
-
     for (auto keyword : allCSSValueKeywords())
-        m_identifierValues[enumToUnderlyingType(keyword)].construct(CSSValue::StaticCSSValue, keyword);
+        new (m_identifierValues[enumToUnderlyingType(keyword)].get()) CSSPrimitiveValue { CSSValue::StaticCSSValue, keyword };
 
     for (unsigned i = 0; i <= maximumCacheableIntegerValue; ++i) {
-        m_pixelValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PX);
-        m_percentageValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PERCENTAGE);
-        m_numberValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_NUMBER);
+        new (m_pixelValues[i].get()) CSSPrimitiveValue(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PX);
+        new (m_percentageValues[i].get()) CSSPrimitiveValue(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PERCENTAGE);
+        new (m_numberValues[i].get()) CSSPrimitiveValue(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_NUMBER);
     }
 }
 
@@ -76,12 +74,12 @@ Ref<CSSColorValue> CSSValuePool::createColorValue(const WebCore::Color& color)
 {
     // These are the empty and deleted values of the hash table.
     if (color == WebCore::Color::transparentBlack)
-        return staticCSSValuePool->m_transparentColor.get();
+        return staticCSSValuePool->m_transparentColor;
     if (color == WebCore::Color::white)
-        return staticCSSValuePool->m_whiteColor.get();
+        return staticCSSValuePool->m_whiteColor;
     // Just because it is common.
     if (color == WebCore::Color::black)
-        return staticCSSValuePool->m_blackColor.get();
+        return staticCSSValuePool->m_blackColor;
 
     // Remove one entry at random if the cache grows too large.
     // FIXME: Use TinyLRUCache instead?

@@ -28,9 +28,11 @@
 
 #include "AuxiliaryProcessCreationParameters.h"
 #include "AuxiliaryProcessMessages.h"
+#include "Connection.h"
 #include "Logging.h"
 #include "MessageNames.h"
 #include "OverrideLanguages.h"
+#include "StreamClientConnection.h"
 #include "UIProcessLogInitialization.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyIdentifier.h"
@@ -164,7 +166,7 @@ void AuxiliaryProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& lau
 #endif
 #if ENABLE(BUBBLEWRAP_SANDBOX)
     case ProcessLauncher::ProcessType::DBusProxy:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         break;
 #endif
     }
@@ -400,7 +402,7 @@ void AuxiliaryProcessProxy::wakeUpTemporarilyForIPC()
     // in increased memory usage. To avoid this, we allow the process to stay alive for 1 second after draining
     // its message queue.
     auto completionHandler = [activity = protectedThrottler()->backgroundActivity("IPC sending due to large outgoing queue"_s)]() mutable {
-        RunLoop::protectedMain()->dispatchAfter(1_s, [activity = WTFMove(activity)]() { });
+        RunLoop::mainSingleton().dispatchAfter(1_s, [activity = WTFMove(activity)]() { });
     };
     sendWithAsyncReply(Messages::AuxiliaryProcess::MainThreadPing(), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
 }
@@ -537,7 +539,7 @@ void AuxiliaryProcessProxy::checkForResponsiveness(CompletionHandler<void()>&& r
     sendWithAsyncReply(Messages::AuxiliaryProcess::MainThreadPing(), [weakThis = WeakPtr { *this }, responsivenessHandler = WTFMove(responsivenessHandler)]() mutable {
         // Schedule an asynchronous task because our completion handler may have been called as a result of the AuxiliaryProcessProxy
         // being in the middle of destruction.
-        RunLoop::protectedMain()->dispatch([weakThis = WTFMove(weakThis), responsivenessHandler = WTFMove(responsivenessHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([weakThis = WTFMove(weakThis), responsivenessHandler = WTFMove(responsivenessHandler)]() mutable {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->stopResponsivenessTimer();
 
@@ -560,6 +562,11 @@ AuxiliaryProcessCreationParameters AuxiliaryProcessProxy::auxiliaryProcessParame
     auto* exemptClassNames = SecureCoding::classNamesExemptFromSecureCodingCrash();
     if (exemptClassNames)
         parameters.classNamesExemptFromSecureCodingCrash = WTF::makeUnique<HashSet<String>>(*exemptClassNames);
+#endif
+
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+    parameters.shouldEnableIPCSignposts = IPC::Connection::signpostsEnabled();
+    parameters.shouldEnableStreamingIPCSignposts = IPC::StreamClientConnection::signpostsEnabled();
 #endif
 
     return parameters;

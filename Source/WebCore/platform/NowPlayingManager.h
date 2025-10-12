@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "NowPlayingInfo.h"
-#include "PlatformMediaSession.h"
-#include "RemoteCommandListener.h"
+#include <WebCore/NowPlayingInfo.h>
+#include <WebCore/PlatformMediaSession.h>
+#include <WebCore/RemoteCommandListener.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 

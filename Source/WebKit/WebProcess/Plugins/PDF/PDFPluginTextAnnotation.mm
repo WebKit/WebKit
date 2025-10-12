@@ -30,7 +30,7 @@
 
 #import "PDFAnnotationTypeHelpers.h"
 #import "PDFKitSPI.h"
-#import <WebCore/AddEventListenerOptions.h>
+#import <WebCore/AddEventListenerOptionsInlines.h>
 #import <WebCore/CSSPrimitiveValue.h>
 #import <WebCore/CSSPropertyNames.h>
 #import <WebCore/ColorCocoa.h>
@@ -76,7 +76,7 @@ Ref<PDFPluginTextAnnotation> PDFPluginTextAnnotation::create(PDFAnnotation *anno
 
 PDFPluginTextAnnotation::~PDFPluginTextAnnotation()
 {
-    element()->removeEventListener(eventNames().keydownEvent, *eventListener(), false);
+    protectedElement()->removeEventListener(eventNames().keydownEvent, *eventListener(), false);
 }
 
 Ref<Element> PDFPluginTextAnnotation::createAnnotationElement()
@@ -117,12 +117,12 @@ void PDFPluginTextAnnotation::commit()
 
 String PDFPluginTextAnnotation::value() const
 {
-    return downcast<HTMLTextFormControlElement>(element())->value();
+    return downcast<HTMLTextFormControlElement>(protectedElement())->value();
 }
 
 void PDFPluginTextAnnotation::setValue(const String& value)
 {
-    downcast<HTMLTextFormControlElement>(element())->setValue(value);
+    downcast<HTMLTextFormControlElement>(protectedElement())->setValue(value);
 }
 
 bool PDFPluginTextAnnotation::handleEvent(Event& event)

@@ -1,0 +1,11 @@
+If indefinite min-height: stretch behaves as automatic size then black border will encompass lorem ipsum due to flex automatic minimum sizing.
+
+If indefinite min-height: stretch behaves as 0px then black border will not encompass lorem ipsum.
+
+lorem ipsum
+
+FAIL [data-expected-client-height] 1 assert_equals:
+<div style="min-height: stretch; flex-basis: 0; border: solid" data-expected-client-height="0">lorem ipsum
+    </div>
+clientHeight expected 0 but got 20
+

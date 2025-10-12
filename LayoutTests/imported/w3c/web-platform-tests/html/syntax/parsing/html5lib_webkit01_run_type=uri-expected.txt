@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: PASS
-CONSOLE MESSAGE: FOO<span>BAR</span>BAZ
 html5lib Parser Test
 
 

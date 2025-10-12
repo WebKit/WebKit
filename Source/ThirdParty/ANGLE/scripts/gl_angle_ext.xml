@@ -1478,6 +1478,8 @@
         <extension name="GL_ANGLE_shader_binary" supported='gles2'>
             <require>
                 <enum name="GL_SHADER_BINARY_ANGLE"/>
+            </require>
+        </extension>
         <extension name="GL_ANGLE_variable_rasterization_rate_metal" supported="gles2">
             <require>
                 <enum name="GL_VARIABLE_RASTERIZATION_RATE_ANGLE"/>

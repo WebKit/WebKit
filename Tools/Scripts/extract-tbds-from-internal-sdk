@@ -84,6 +84,10 @@ sys.addaudithook(echo_system_commands)
 # Select static archives and any Mach-O executables from the build directory.
 executables = []
 for dirpath, dirnames, filenames in os.walk(opts.build_dir):
+    # Do not recurse into Frameworks/ directories inside app bundles, as they
+    # may contain libraries copied from Xcode (e.g. XCTest) which are not part
+    # of the WebKit build.
+    dirnames[:] = [d for d in dirnames if d != 'Frameworks']
     for name in filenames:
         path = f'{dirpath}/{name}'
         if name.endswith('.a'):

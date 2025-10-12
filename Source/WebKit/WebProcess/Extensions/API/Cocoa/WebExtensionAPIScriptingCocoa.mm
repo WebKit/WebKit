@@ -60,13 +60,11 @@ static NSString * const filesKey = @"files";
 static NSString * const frameIDsKey = @"frameIds";
 static NSString * const funcKey = @"func";
 static NSString * const functionKey = @"function";
-static NSString * const originKey = @"origin";
 static NSString * const tabIDKey = @"tabId";
 static NSString * const targetKey = @"target";
 static NSString * const worldKey = @"world";
 
 static NSString * const excludeMatchesKey = @"excludeMatches";
-static NSString * const idKey = @"id";
 static NSString * const idsKey = @"ids";
 static NSString * const jsKey = @"js";
 static NSString * const matchOriginAsFallbackKey = @"matchOriginAsFallback";
@@ -135,7 +133,7 @@ NSDictionary *toWebAPI(const WebExtensionRegisteredScriptParameters& parameters)
     ASSERT(parameters.matchPatterns);
     ASSERT(parameters.persistent);
 
-    result[idKey] = parameters.identifier.createNSString().get();
+    result[@"id"] = parameters.identifier.createNSString().get();
     result[matchesKey] = createNSArray(parameters.matchPatterns.value()).get();
     result[persistAcrossSessionsKey] = parameters.persistent.value() ? @YES : @NO;
 
@@ -512,7 +510,7 @@ bool WebExtensionAPIScripting::parseCSSInjectionOptions(NSDictionary *cssInfo, W
     static NSDictionary<NSString *, id> *keyTypes = @{
         cssKey: NSString.class,
         filesKey: @[ NSString.class ],
-        originKey: NSString.class,
+        @"origin": NSString.class,
         targetKey: NSDictionary.class,
     };
 
@@ -533,7 +531,7 @@ bool WebExtensionAPIScripting::parseCSSInjectionOptions(NSDictionary *cssInfo, W
     }
 
     std::optional<WebCore::UserStyleLevel> styleLevel;
-    if (!parseStyleLevel(cssInfo, originKey, styleLevel, outExceptionString))
+    if (!parseStyleLevel(cssInfo, @"origin", styleLevel, outExceptionString))
         return false;
 
     if (styleLevel)
@@ -551,7 +549,7 @@ bool WebExtensionAPIScripting::parseCSSInjectionOptions(NSDictionary *cssInfo, W
 bool WebExtensionAPIScripting::parseRegisteredContentScripts(NSArray *scripts, FirstTimeRegistration firstTimeRegistration, Vector<WebExtensionRegisteredScriptParameters>& parametersVector, NSString **outExceptionString)
 {
     static NSArray<NSString *> *requiredKeys = @[
-        idKey,
+        @"id",
     ];
 
     static NSDictionary<NSString *, id> *keyTypes = @{
@@ -559,7 +557,7 @@ bool WebExtensionAPIScripting::parseRegisteredContentScripts(NSArray *scripts, F
         cssKey: @[ NSString.class ],
         cssOriginKey: NSString.class,
         excludeMatchesKey: @[ NSString.class ],
-        idKey: NSString.class,
+        @"id": NSString.class,
         jsKey: @[ NSString.class ],
         matchOriginAsFallbackKey: @YES.class,
         matchesKey: @[ NSString.class ],
@@ -574,22 +572,22 @@ bool WebExtensionAPIScripting::parseRegisteredContentScripts(NSArray *scripts, F
 
         WebExtensionRegisteredScriptParameters parameters;
 
-        NSString *scriptID = script[idKey];
+        NSString *scriptID = script[@"id"];
         if (!scriptID.length) {
-            *outExceptionString = toErrorString(nullString(), idKey, @"it must not be empty").createNSString().autorelease();
+            *outExceptionString = toErrorString(nullString(), @"id", @"it must not be empty").createNSString().autorelease();
             return false;
         }
 
         if ([scriptID characterAtIndex:0] == '_') {
-            *outExceptionString = toErrorString(nullString(), idKey, @"it must not start with '_'").createNSString().autorelease();
+            *outExceptionString = toErrorString(nullString(), @"id", @"it must not start with '_'").createNSString().autorelease();
             return false;
         }
 
-        parameters.identifier = script[idKey];
+        parameters.identifier = script[@"id"];
 
         NSArray *matchPatterns = script[matchesKey];
         if (firstTimeRegistration == FirstTimeRegistration::Yes && !matchPatterns.count) {
-            *outExceptionString = toErrorString(nullString(), matchesKey, @"it must specify at least one match pattern for script with ID '%@'", script[idKey]).createNSString().autorelease();
+            *outExceptionString = toErrorString(nullString(), matchesKey, @"it must specify at least one match pattern for script with ID '%@'", script[@"id"]).createNSString().autorelease();
             return false;
         }
 

@@ -27,6 +27,7 @@
 #include "GObjectEventListener.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <WebCore/ContextDestructionObserverInlines.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/JSDOMGlobalObject.h>
 #include <WebCore/JSDOMPromiseDeferred.h>
@@ -1048,33 +1049,35 @@ glong webkit_dom_dom_window_get_orientation(WebKitDOMDOMWindow* self)
 #endif /* ENABLE(ORIENTATION_EVENTS) */
 }
 
-gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOMWindow* window, const gchar* handlerName, const gchar* message)
+gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOMWindow* self, const gchar* handlerName, const gchar* message)
 {
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(window), FALSE);
+    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), FALSE);
     g_return_val_if_fail(handlerName, FALSE);
     g_return_val_if_fail(message, FALSE);
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    WebCore::LocalDOMWindow* domWindow = WebKit::core(window);
-    if (!domWindow->shouldHaveWebKitNamespaceForWorld(WebCore::mainThreadNormalWorldSingleton()))
-        return FALSE;
+    auto* window = WebKit::core(self);
+    auto& world = WebCore::mainThreadNormalWorldSingleton();
 
-    auto webkitNamespace = domWindow->webkitNamespace();
-    if (!webkitNamespace)
-        return FALSE;
-
-    auto handler = webkitNamespace->messageHandlers()->namedItem(WebCore::mainThreadNormalWorldSingleton(), AtomString::fromUTF8(handlerName));
-    if (!handler)
-        return FALSE;
-    
-    auto* scriptExecutionContext = ((WebCore::ContextDestructionObserver*)domWindow)->scriptExecutionContext();
+    auto* scriptExecutionContext = ((WebCore::ContextDestructionObserver*)window)->scriptExecutionContext();
     if (!scriptExecutionContext)
         return FALSE;
-    
-    auto* globalObject = toJSDOMGlobalObject(*scriptExecutionContext, WebCore::mainThreadNormalWorldSingleton());
+
+    auto* globalObject = toJSDOMGlobalObject(*scriptExecutionContext, world);
     if (!globalObject)
         return FALSE;
 
+    if (!window->shouldHaveWebKitNamespaceForWorld(world, globalObject))
+        return FALSE;
+
+    auto webkitNamespace = window->webkitNamespace();
+    if (!webkitNamespace)
+        return FALSE;
+
+    auto handler = webkitNamespace->messageHandlers()->namedItem(world, AtomString::fromUTF8(handlerName));
+    if (!handler)
+        return FALSE;
+    
     auto promise = WebCore::DeferredPromise::create(*globalObject);
     JSRetainPtr<JSStringRef> jsString(Adopt, JSStringCreateWithUTF8CString(message));
     JSValueRef jsStringValue = JSValueMakeString(toRef(globalObject), jsString.get());

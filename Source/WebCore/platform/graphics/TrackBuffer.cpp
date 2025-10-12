@@ -42,6 +42,9 @@ static constexpr size_t MaximumSlidingWindowLength = 16;
 
 static inline MediaTime roundTowardsTimeScaleWithRoundingMargin(const MediaTime& time, uint32_t timeScale, const MediaTime& roundingMargin)
 {
+    ASSERT(timeScale);
+    if (!timeScale)
+        return time;
     while (true) {
         MediaTime roundedTime = time.toTimeScale(timeScale);
         if (abs(roundedTime - time) < roundingMargin || timeScale >= MediaTime::MaximumTimeScale)
@@ -194,6 +197,8 @@ bool TrackBuffer::reenqueueMediaForTime(const MediaTime& time, const MediaTime& 
     clearDecodeQueue();
     m_enqueueDiscontinuityBoundary = time + m_discontinuityTolerance;
 
+    m_needsReenqueueing = false;
+
     if (m_samples.empty())
         return false;
 
@@ -257,8 +262,6 @@ bool TrackBuffer::reenqueueMediaForTime(const MediaTime& time, const MediaTime& 
                 m_hasOutOfOrderFrames = true;
         }
     }
-
-    m_needsReenqueueing = false;
 
     return true;
 }
@@ -530,7 +533,7 @@ void TrackBuffer::setRoundedTimestampOffset(const MediaTime& time, uint32_t time
 #if !RELEASE_LOG_DISABLED
 void TrackBuffer::setLogger(const Logger& newLogger, uint64_t newLogIdentifier)
 {
-    m_logger = &newLogger;
+    m_logger = newLogger;
     m_logIdentifier = childLogIdentifier(newLogIdentifier, cryptographicallyRandomNumber<uint32_t>());
     ALWAYS_LOG(LOGIDENTIFIER);
 }

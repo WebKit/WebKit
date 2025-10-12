@@ -16,7 +16,6 @@
 #include <vector>
 
 #include "api/array_view.h"
-#include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/block.h"
 
 namespace webrtc {
@@ -33,7 +32,7 @@ class FrameBlocker {
   // Inserts one 80 sample multiband subframe from the multiband frame and
   // extracts one 64 sample multiband block.
   void InsertSubFrameAndExtractBlock(
-      const std::vector<std::vector<rtc::ArrayView<float>>>& sub_frame,
+      const std::vector<std::vector<ArrayView<float>>>& sub_frame,
       Block* block);
   // Reports whether a multiband block of 64 samples is available for
   // extraction.

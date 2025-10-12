@@ -251,10 +251,6 @@ void RenderMathMLOperator::layoutBlock(RelayoutChildren relayoutChildren, Layout
         // We then move the children to take spacing into account.
         shiftInFlowChildren(writingMode().isBidiLTR() ? leadingSpaceValue : -leadingSpaceValue, 0_lu);
     }
-
-    updateScrollInfoAfterLayout();
-
-    clearNeedsLayout();
 }
 
 void RenderMathMLOperator::updateMathOperator()

@@ -245,13 +245,14 @@
     if (_cocoaImage)
         return adoptNS([_cocoaImage copy]).autorelease();
 
-    if (!_image)
+    RefPtr image = _image;
+    if (!image)
         return nil;
 
 #if USE(APPKIT)
-    _cocoaImage = adoptNS([[NSImage alloc] initWithCGImage:_image->makeCGImageCopy().get() size:NSSizeFromCGSize(_boundingRect.size)]);
+    _cocoaImage = adoptNS([[NSImage alloc] initWithCGImage:image->createPlatformImage().get() size:NSSizeFromCGSize(_boundingRect.size)]);
 #else
-    _cocoaImage = adoptNS([[UIImage alloc] initWithCGImage:_image->makeCGImageCopy().get()]);
+    _cocoaImage = adoptNS([[UIImage alloc] initWithCGImage:image->createPlatformImage().get()]);
 #endif
     _image = nullptr;
 

@@ -1,0 +1,8 @@
+FIRST
+<script>
+	window.addEventListener("message", event => {
+		if (event.data == "set as self") {
+			window.open("http://localhost:8000/site-isolation/resources/iframe-opener-is-self-third.html", "namedframe");
+		}
+	}, false);
+</script>

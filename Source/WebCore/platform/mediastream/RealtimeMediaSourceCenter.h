@@ -32,10 +32,11 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamRequest.h"
-#include "RealtimeMediaSource.h"
+#include <WebCore/MediaStreamRequest.h>
+#include <WebCore/RealtimeMediaSource.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>

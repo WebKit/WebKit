@@ -4,5 +4,5 @@ The test passes if the "bar" has underline, overline and line through.
 | <p>
 |   "foo<#selection-caret>"
 |   <span>
-|     style="text-decoration: underline overline line-through;"
+|     style="text-decoration-line: underline overline line-through;"
 |     "bar"

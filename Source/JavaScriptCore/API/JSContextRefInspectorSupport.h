@@ -30,7 +30,7 @@
 #error Requires C++ Support.
 #endif
 
-#include "JSContextRefPrivate.h"
+#include <JavaScriptCore/JSContextRefPrivate.h>
 
 namespace Inspector {
 class AugmentableInspectorController;

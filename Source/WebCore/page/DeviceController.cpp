@@ -29,6 +29,7 @@
 
 #include "DeviceClient.h"
 #include "Document.h"
+#include "NodeInlines.h"
 #include "SecurityOrigin.h"
 #include <wtf/TZoneMallocInlines.h>
 

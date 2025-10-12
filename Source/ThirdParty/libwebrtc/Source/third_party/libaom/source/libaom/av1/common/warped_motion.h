@@ -33,7 +33,14 @@
 #define WARP_ERROR_BLOCK_LOG 5
 #define WARP_ERROR_BLOCK (1 << WARP_ERROR_BLOCK_LOG)
 
-extern const int16_t av1_warped_filter[WARPEDPIXEL_PREC_SHIFTS * 3 + 1][8];
+#if AOM_ARCH_ARM || AOM_ARCH_AARCH64 || AOM_ARCH_X86 || AOM_ARCH_X86_64
+typedef int16_t WarpedFilterCoeff;
+#else
+typedef int8_t WarpedFilterCoeff;
+#endif
+
+extern const WarpedFilterCoeff
+    av1_warped_filter[WARPEDPIXEL_PREC_SHIFTS * 3 + 1][8];
 
 DECLARE_ALIGNED(8, extern const int8_t,
                 av1_filter_8bit[WARPEDPIXEL_PREC_SHIFTS * 3 + 1][8]);

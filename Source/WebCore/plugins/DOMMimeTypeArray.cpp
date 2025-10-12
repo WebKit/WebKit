@@ -22,6 +22,7 @@
 
 #include "DOMMimeType.h"
 #include "Navigator.h"
+#include "ScriptWrappableInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 

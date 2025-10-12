@@ -59,21 +59,48 @@ def unpack_ref(ref_file, ref_file_full_path, packed_refs_full_path):
         fout.write(git_hash + '\n')
 
 
+# Get the files that GN action target angle_commit_id depends on.
+# If any of these files changed, the build system should rerun the commit_id.py
+# script to regenerate the angle_commit.h
+# Case 1: git config extensions.refStorage == file (or empty)
+# Case 1.1: .git/HEAD contains the hash.
+#           Return .git/HEAD
+# Case 1.2: .git/HEAD contains non-hash: e.g. refs/heads/<branch_name>
+#           Return .git/HEAD
+#           Return .git/refs/heads/<branch_name>
+# Case 2: git config extensions.refStorage == reftable
+# In this case, HEAD will just store refs/heads/.invalid. If any reference is
+# updated, .git/reftable/table.list will be updated.
+#           Return .git/reftable/table.list
 def get_git_inputs_and_maybe_unpack_ref(cwd):
-    # commit id should depend on angle's HEAD revision
+    # check git extensions.refStorage type
+    gitRefStorageType = grab_output('git config --get extensions.refStorage', cwd)
+    isRefTableStorage = gitRefStorageType and gitRefStorageType == "reftable"
     git_dir = os.path.normpath(os.path.join(cwd, get_git_dir(cwd)))
     head_file = os.path.join(git_dir, 'HEAD')
-    ret = [head_file]
+    ret = []
+    # commit id should depend on angle's HEAD revision only if
+    # extensions.refStorage = file.
+    # If extensions.refStorage = reftable, .git/HEAD will always contains
+    # "refs/heads/.invalid", and we can't rely on it as an indicator of whether
+    # to rerun this script.
+    if not isRefTableStorage:
+        ret.append(head_file)
     git_common_dir = os.path.normpath(os.path.join(cwd, get_git_common_dir(cwd)))
     result = pathlib.Path(head_file).read_text().split()
     if result[0] == "ref:":
-        ref_file = result[1]
-        ref_file_full_path = os.path.join(git_common_dir, ref_file)
+        # if the extensions.refStorage is reftable, add .git/reftable/tables.list as an input to gn action target
+        if isRefTableStorage:
+            ret.append(os.path.join(git_common_dir, 'reftable', 'tables.list'))
+        else:
+            # if the extensions.refStorage is file, add loose ref file pointed by HEAD
+            ref_file = result[1]
+            ref_file_full_path = os.path.join(git_common_dir, ref_file)
 
-        if not os.path.exists(ref_file_full_path):
-            packed_refs_full_path = os.path.join(git_common_dir, 'packed-refs')
-            unpack_ref(ref_file, ref_file_full_path, packed_refs_full_path)
-        ret.append(os.path.join(git_common_dir, ref_file))
+            if not os.path.exists(ref_file_full_path):
+                packed_refs_full_path = os.path.join(git_common_dir, 'packed-refs')
+                unpack_ref(ref_file, ref_file_full_path, packed_refs_full_path)
+            ret.append(os.path.join(git_common_dir, ref_file))
     return ret
 
 

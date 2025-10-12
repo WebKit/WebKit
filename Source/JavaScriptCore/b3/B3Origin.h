@@ -32,7 +32,7 @@
 #include <wtf/ValidatedReinterpretCast.h>
 
 namespace JSC::Wasm {
-class OMGOrigin;
+class WasmOrigin;
 class OpcodeOrigin;
 }
 
@@ -51,12 +51,12 @@ public:
     enum OriginType : uint8_t {
         InvalidTag,
         DFGOriginPtr,
-        OMGOriginPtr,
+        WasmOriginPtr,
         PackedWasmOrigin,
     };
 
-    explicit Origin(const Wasm::OMGOrigin* data)
-        : m_data(data, OMGOriginPtr)
+    explicit Origin(const Wasm::WasmOrigin* data)
+        : m_data(data, WasmOriginPtr)
     {
     }
 
@@ -72,13 +72,13 @@ public:
     explicit operator bool() const { return !!m_data.bits(); }
 
     bool isDFGOrigin() const { return !m_data.bits() || m_data.tag() == DFGOriginPtr; }
-    bool isOMGOrigin() const { return !m_data.bits() || m_data.tag() == OMGOriginPtr; }
+    bool isWasmOrigin() const { return !m_data.bits() || m_data.tag() == WasmOriginPtr; }
     bool isPackedWasmOrigin() const { return !m_data.bits() || m_data.tag() == PackedWasmOrigin; }
 
-    Wasm::OMGOrigin* omgOrigin() const
+    Wasm::WasmOrigin* wasmOrigin() const
     {
-        ASSERT(isOMGOrigin());
-        return VALIDATED_REINTERPRET_CAST("OMGOrigin", Wasm::OMGOrigin, m_data.ptr());
+        ASSERT(isWasmOrigin());
+        return VALIDATED_REINTERPRET_CAST("WasmOrigin", Wasm::WasmOrigin, m_data.ptr());
     }
 
     DFG::Node* dfgOrigin() const
@@ -87,7 +87,7 @@ public:
         return std::bit_cast<DFG::Node*>(m_data.ptr());
     }
 
-    const Wasm::OMGOrigin* maybeOMGOrigin() const { return isOMGOrigin() ? omgOrigin() : nullptr; }
+    const Wasm::WasmOrigin* maybeWasmOrigin() const { return isWasmOrigin() ? wasmOrigin() : nullptr; }
 
     // You should avoid using this. Use OriginDump instead.
     void dump(PrintStream&) const;

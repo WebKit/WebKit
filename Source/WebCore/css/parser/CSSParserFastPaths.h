@@ -29,8 +29,8 @@
 
 #pragma once
 
-#include "CSSValueKeywords.h"
-#include "ColorTypes.h"
+#include <WebCore/CSSValueKeywords.h>
+#include <WebCore/ColorTypes.h>
 #include <optional>
 #include <wtf/Forward.h>
 

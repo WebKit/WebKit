@@ -1,0 +1,1606 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "categories": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "localizableTextProviderWithStringsFileTextKey:", "unavailable": true},
+      {"access": "public", "name": "localizableTextProviderWithStringsFileTextKey:shortTextKey:", "unavailable": true},
+      {"access": "public", "name": "localizableTextProviderWithStringsFileFormatKey:textProviders:", "unavailable": true}
+     ],
+     "interface": "CLKTextProvider",
+     "name": "Localizable",
+     "unavailable": true
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CLKComplicationColumnAlignmentLeading"},
+      {"access": "public", "name": "CLKComplicationColumnAlignmentTrailing"},
+      {"access": "public", "name": "CLKComplicationColumnAlignmentLeft"},
+      {"access": "public", "name": "CLKComplicationColumnAlignmentRight"}
+     ],
+     "name": "CLKComplicationColumnAlignment",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CLKComplicationFamilyModularSmall"},
+      {"access": "public", "name": "CLKComplicationFamilyModularLarge"},
+      {"access": "public", "name": "CLKComplicationFamilyUtilitarianSmall"},
+      {"access": "public", "name": "CLKComplicationFamilyUtilitarianSmallFlat", "unavailable": true},
+      {"access": "public", "name": "CLKComplicationFamilyUtilitarianLarge"},
+      {"access": "public", "name": "CLKComplicationFamilyCircularSmall"},
+      {"access": "public", "name": "CLKComplicationFamilyExtraLarge", "unavailable": true},
+      {"access": "public", "name": "CLKComplicationFamilyGraphicCorner", "unavailable": true},
+      {"access": "public", "name": "CLKComplicationFamilyGraphicBezel", "unavailable": true},
+      {"access": "public", "name": "CLKComplicationFamilyGraphicCircular", "unavailable": true},
+      {"access": "public", "name": "CLKComplicationFamilyGraphicRectangular", "unavailable": true},
+      {"access": "public", "name": "CLKComplicationFamilyGraphicExtraLarge", "unavailable": true}
+     ],
+     "name": "CLKComplicationFamily",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CLKComplicationPrivacyBehaviorShowOnLockScreen"},
+      {"access": "public", "name": "CLKComplicationPrivacyBehaviorHideOnLockScreen"}
+     ],
+     "name": "CLKComplicationPrivacyBehavior",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CLKComplicationRingStyleClosed"},
+      {"access": "public", "name": "CLKComplicationRingStyleOpen"}
+     ],
+     "name": "CLKComplicationRingStyle",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CLKComplicationTimeTravelDirectionNone"},
+      {"access": "public", "name": "CLKComplicationTimeTravelDirectionForward"},
+      {"access": "public", "name": "CLKComplicationTimeTravelDirectionBackward"}
+     ],
+     "name": "CLKComplicationTimeTravelDirections",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CLKComplicationTimelineAnimationBehaviorNever"},
+      {"access": "public", "name": "CLKComplicationTimelineAnimationBehaviorGrouped"},
+      {"access": "public", "name": "CLKComplicationTimelineAnimationBehaviorAlways"}
+     ],
+     "name": "CLKComplicationTimelineAnimationBehavior",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CLKGaugeProviderStyleRing"},
+      {"access": "public", "name": "CLKGaugeProviderStyleFill"}
+     ],
+     "name": "CLKGaugeProviderStyle",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CLKRelativeDateStyleNatural"},
+      {"access": "public", "name": "CLKRelativeDateStyleOffset"},
+      {"access": "public", "name": "CLKRelativeDateStyleTimer"},
+      {"access": "public", "name": "CLKRelativeDateStyleNaturalAbbreviated"},
+      {"access": "public", "name": "CLKRelativeDateStyleOffsetShort"},
+      {"access": "public", "name": "CLKRelativeDateStyleNaturalFull"}
+     ],
+     "name": "CLKRelativeDateStyle",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CLKWatchFaceLibraryErrorCodeNotFileURL"},
+      {"access": "public", "name": "CLKWatchFaceLibraryErrorCodeInvalidFile"},
+      {"access": "public", "name": "CLKWatchFaceLibraryErrorCodePermissionDenied"},
+      {"access": "public", "name": "CLKWatchFaceLibraryErrorCodeFaceNotAvailable"},
+      {"access": "public", "name": "CLKWatchFaceLibraryErrorCodeNoURL"}
+     ],
+     "introduced": "14",
+     "name": "CLKWatchFaceLibraryErrorCode"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_CLKAllComplicationFamilies", "unavailable": true},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CLKComplicationServerActiveComplicationsDidChangeNotification", "unavailable": true},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CLKDefaultComplicationIdentifier", "unavailable": true},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CLKLaunchedComplicationIdentifierKey", "unavailable": true},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CLKLaunchedTimelineEntryDateKey", "unavailable": true},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CLKSimpleGaugeProviderFillFractionEmpty", "unavailable": true},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_CLKWatchFaceLibraryErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "CLKComplication",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "family", "name": "family"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "userInfo", "name": "userInfo", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "userActivity", "name": "userActivity", "unavailable": true}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithIdentifier:displayName:supportedFamilies:"},
+      {"access": "public", "name": "initWithIdentifier:displayName:supportedFamilies:userInfo:"},
+      {"access": "public", "name": "initWithIdentifier:displayName:supportedFamilies:userActivity:"}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "name": "displayName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedFamilies", "name": "supportedFamilies"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "userInfo", "name": "userInfo"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "userActivity", "name": "userActivity"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "intentWidgetMigrationConfigurationWithKind:extensionBundleIdentifier:intent:localizedDisplayName:"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithKind:extensionBundleIdentifier:intent:localizedDisplayName:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationIntentWidgetMigrationConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "kind", "name": "kind"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extensionBundleIdentifier", "name": "extensionBundleIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "intent", "name": "intent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedDisplayName", "name": "localizedDisplayName"}
+     ],
+     "super": "CLKComplicationWidgetMigrationConfiguration",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "sharedInstance"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "reloadTimelineForComplication:"},
+      {"access": "public", "name": "extendTimelineForComplication:"},
+      {"access": "public", "name": "reloadComplicationDescriptors", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationServer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "activeComplications", "name": "activeComplications"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "earliestTimeTravelDate", "name": "earliestTimeTravelDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "latestTimeTravelDate", "name": "latestTimeTravelDate"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "staticWidgetMigrationConfigurationWithKind:extensionBundleIdentifier:"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithKind:extensionBundleIdentifier:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationStaticWidgetMigrationConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "kind", "name": "kind"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extensionBundleIdentifier", "name": "extensionBundleIdentifier"}
+     ],
+     "super": "CLKComplicationWidgetMigrationConfiguration",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "new"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "init"}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplate",
+     "properties": [
+      {"access": "public", "getter": "tintColor", "name": "tintColor", "setter": "setTintColor:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithImageProvider:fillFraction:ringStyle:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithImageProvider:fillFraction:ringStyle:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateCircularSmallRingImage",
+     "properties": [
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"},
+      {"access": "public", "getter": "fillFraction", "name": "fillFraction", "setter": "setFillFraction:"},
+      {"access": "public", "getter": "ringStyle", "name": "ringStyle", "setter": "setRingStyle:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithTextProvider:fillFraction:ringStyle:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTextProvider:fillFraction:ringStyle:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateCircularSmallRingText",
+     "properties": [
+      {"access": "public", "getter": "textProvider", "name": "textProvider", "setter": "setTextProvider:"},
+      {"access": "public", "getter": "fillFraction", "name": "fillFraction", "setter": "setFillFraction:"},
+      {"access": "public", "getter": "ringStyle", "name": "ringStyle", "setter": "setRingStyle:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithImageProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithImageProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateCircularSmallSimpleImage",
+     "properties": [
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithTextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateCircularSmallSimpleText",
+     "properties": [
+      {"access": "public", "getter": "textProvider", "name": "textProvider", "setter": "setTextProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithLine1ImageProvider:line2TextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLine1ImageProvider:line2TextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateCircularSmallStackImage",
+     "properties": [
+      {"access": "public", "getter": "line1ImageProvider", "name": "line1ImageProvider", "setter": "setLine1ImageProvider:"},
+      {"access": "public", "getter": "line2TextProvider", "name": "line2TextProvider", "setter": "setLine2TextProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithLine1TextProvider:line2TextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLine1TextProvider:line2TextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateCircularSmallStackText",
+     "properties": [
+      {"access": "public", "getter": "line1TextProvider", "name": "line1TextProvider", "setter": "setLine1TextProvider:"},
+      {"access": "public", "getter": "line2TextProvider", "name": "line2TextProvider", "setter": "setLine2TextProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithRow1Column1TextProvider:row1Column2TextProvider:row2Column1TextProvider:row2Column2TextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithRow1Column1TextProvider:row1Column2TextProvider:row2Column1TextProvider:row2Column2TextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateExtraLargeColumnsText",
+     "properties": [
+      {"access": "public", "getter": "row1Column1TextProvider", "name": "row1Column1TextProvider", "setter": "setRow1Column1TextProvider:"},
+      {"access": "public", "getter": "row1Column2TextProvider", "name": "row1Column2TextProvider", "setter": "setRow1Column2TextProvider:"},
+      {"access": "public", "getter": "row2Column1TextProvider", "name": "row2Column1TextProvider", "setter": "setRow2Column1TextProvider:"},
+      {"access": "public", "getter": "row2Column2TextProvider", "name": "row2Column2TextProvider", "setter": "setRow2Column2TextProvider:"},
+      {"access": "public", "getter": "column2Alignment", "name": "column2Alignment", "setter": "setColumn2Alignment:"},
+      {"access": "public", "getter": "highlightColumn2", "name": "highlightColumn2", "setter": "setHighlightColumn2:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithImageProvider:fillFraction:ringStyle:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithImageProvider:fillFraction:ringStyle:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateExtraLargeRingImage",
+     "properties": [
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"},
+      {"access": "public", "getter": "fillFraction", "name": "fillFraction", "setter": "setFillFraction:"},
+      {"access": "public", "getter": "ringStyle", "name": "ringStyle", "setter": "setRingStyle:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithTextProvider:fillFraction:ringStyle:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTextProvider:fillFraction:ringStyle:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateExtraLargeRingText",
+     "properties": [
+      {"access": "public", "getter": "textProvider", "name": "textProvider", "setter": "setTextProvider:"},
+      {"access": "public", "getter": "fillFraction", "name": "fillFraction", "setter": "setFillFraction:"},
+      {"access": "public", "getter": "ringStyle", "name": "ringStyle", "setter": "setRingStyle:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithImageProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithImageProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateExtraLargeSimpleImage",
+     "properties": [
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithTextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateExtraLargeSimpleText",
+     "properties": [
+      {"access": "public", "getter": "textProvider", "name": "textProvider", "setter": "setTextProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithLine1ImageProvider:line2TextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLine1ImageProvider:line2TextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateExtraLargeStackImage",
+     "properties": [
+      {"access": "public", "getter": "line1ImageProvider", "name": "line1ImageProvider", "setter": "setLine1ImageProvider:"},
+      {"access": "public", "getter": "line2TextProvider", "name": "line2TextProvider", "setter": "setLine2TextProvider:"},
+      {"access": "public", "getter": "highlightLine2", "name": "highlightLine2", "setter": "setHighlightLine2:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithLine1TextProvider:line2TextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLine1TextProvider:line2TextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateExtraLargeStackText",
+     "properties": [
+      {"access": "public", "getter": "line1TextProvider", "name": "line1TextProvider", "setter": "setLine1TextProvider:"},
+      {"access": "public", "getter": "line2TextProvider", "name": "line2TextProvider", "setter": "setLine2TextProvider:"},
+      {"access": "public", "getter": "highlightLine2", "name": "highlightLine2", "setter": "setHighlightLine2:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithCircularTemplate:", "unavailable": true},
+      {"access": "public", "name": "templateWithCircularTemplate:textProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithCircularTemplate:", "unavailable": true},
+      {"access": "public", "name": "initWithCircularTemplate:textProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicBezelCircularText",
+     "properties": [
+      {"access": "public", "getter": "circularTemplate", "name": "circularTemplate", "setter": "setCircularTemplate:"},
+      {"access": "public", "getter": "textProvider", "name": "textProvider", "setter": "setTextProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicCircular",
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithGaugeProvider:imageProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithGaugeProvider:imageProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicCircularClosedGaugeImage",
+     "properties": [
+      {"access": "public", "getter": "gaugeProvider", "name": "gaugeProvider", "setter": "setGaugeProvider:"},
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"}
+     ],
+     "super": "CLKComplicationTemplateGraphicCircular",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithGaugeProvider:centerTextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithGaugeProvider:centerTextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicCircularClosedGaugeText",
+     "properties": [
+      {"access": "public", "getter": "gaugeProvider", "name": "gaugeProvider", "setter": "setGaugeProvider:"},
+      {"access": "public", "getter": "centerTextProvider", "name": "centerTextProvider", "setter": "setCenterTextProvider:"}
+     ],
+     "super": "CLKComplicationTemplateGraphicCircular",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithImageProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithImageProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicCircularImage",
+     "properties": [
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"}
+     ],
+     "super": "CLKComplicationTemplateGraphicCircular",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithGaugeProvider:bottomImageProvider:centerTextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithGaugeProvider:bottomImageProvider:centerTextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicCircularOpenGaugeImage",
+     "properties": [
+      {"access": "public", "getter": "gaugeProvider", "name": "gaugeProvider", "setter": "setGaugeProvider:"},
+      {"access": "public", "getter": "bottomImageProvider", "name": "bottomImageProvider", "setter": "setBottomImageProvider:"},
+      {"access": "public", "getter": "centerTextProvider", "name": "centerTextProvider", "setter": "setCenterTextProvider:"}
+     ],
+     "super": "CLKComplicationTemplateGraphicCircular",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithGaugeProvider:leadingTextProvider:trailingTextProvider:centerTextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithGaugeProvider:leadingTextProvider:trailingTextProvider:centerTextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicCircularOpenGaugeRangeText",
+     "properties": [
+      {"access": "public", "getter": "gaugeProvider", "name": "gaugeProvider", "setter": "setGaugeProvider:"},
+      {"access": "public", "getter": "leadingTextProvider", "name": "leadingTextProvider", "setter": "setLeadingTextProvider:"},
+      {"access": "public", "getter": "trailingTextProvider", "name": "trailingTextProvider", "setter": "setTrailingTextProvider:"},
+      {"access": "public", "getter": "centerTextProvider", "name": "centerTextProvider", "setter": "setCenterTextProvider:"}
+     ],
+     "super": "CLKComplicationTemplateGraphicCircular",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithGaugeProvider:bottomTextProvider:centerTextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithGaugeProvider:bottomTextProvider:centerTextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicCircularOpenGaugeSimpleText",
+     "properties": [
+      {"access": "public", "getter": "gaugeProvider", "name": "gaugeProvider", "setter": "setGaugeProvider:"},
+      {"access": "public", "getter": "bottomTextProvider", "name": "bottomTextProvider", "setter": "setBottomTextProvider:"},
+      {"access": "public", "getter": "centerTextProvider", "name": "centerTextProvider", "setter": "setCenterTextProvider:"}
+     ],
+     "super": "CLKComplicationTemplateGraphicCircular",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithLine1ImageProvider:line2TextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLine1ImageProvider:line2TextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicCircularStackImage",
+     "properties": [
+      {"access": "public", "getter": "line1ImageProvider", "name": "line1ImageProvider", "setter": "setLine1ImageProvider:"},
+      {"access": "public", "getter": "line2TextProvider", "name": "line2TextProvider", "setter": "setLine2TextProvider:"}
+     ],
+     "super": "CLKComplicationTemplateGraphicCircular",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithLine1TextProvider:line2TextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLine1TextProvider:line2TextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicCircularStackText",
+     "properties": [
+      {"access": "public", "getter": "line1TextProvider", "name": "line1TextProvider", "setter": "setLine1TextProvider:"},
+      {"access": "public", "getter": "line2TextProvider", "name": "line2TextProvider", "setter": "setLine2TextProvider:"}
+     ],
+     "super": "CLKComplicationTemplateGraphicCircular",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithImageProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithImageProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicCornerCircularImage",
+     "properties": [
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithGaugeProvider:imageProvider:", "unavailable": true},
+      {"access": "public", "name": "templateWithGaugeProvider:leadingTextProvider:trailingTextProvider:imageProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithGaugeProvider:imageProvider:", "unavailable": true},
+      {"access": "public", "name": "initWithGaugeProvider:leadingTextProvider:trailingTextProvider:imageProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicCornerGaugeImage",
+     "properties": [
+      {"access": "public", "getter": "gaugeProvider", "name": "gaugeProvider", "setter": "setGaugeProvider:"},
+      {"access": "public", "getter": "leadingTextProvider", "name": "leadingTextProvider", "setter": "setLeadingTextProvider:"},
+      {"access": "public", "getter": "trailingTextProvider", "name": "trailingTextProvider", "setter": "setTrailingTextProvider:"},
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithGaugeProvider:outerTextProvider:", "unavailable": true},
+      {"access": "public", "name": "templateWithGaugeProvider:leadingTextProvider:trailingTextProvider:outerTextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithGaugeProvider:outerTextProvider:", "unavailable": true},
+      {"access": "public", "name": "initWithGaugeProvider:leadingTextProvider:trailingTextProvider:outerTextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicCornerGaugeText",
+     "properties": [
+      {"access": "public", "getter": "gaugeProvider", "name": "gaugeProvider", "setter": "setGaugeProvider:"},
+      {"access": "public", "getter": "leadingTextProvider", "name": "leadingTextProvider", "setter": "setLeadingTextProvider:"},
+      {"access": "public", "getter": "trailingTextProvider", "name": "trailingTextProvider", "setter": "setTrailingTextProvider:"},
+      {"access": "public", "getter": "outerTextProvider", "name": "outerTextProvider", "setter": "setOuterTextProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithInnerTextProvider:outerTextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithInnerTextProvider:outerTextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicCornerStackText",
+     "properties": [
+      {"access": "public", "getter": "innerTextProvider", "name": "innerTextProvider", "setter": "setInnerTextProvider:"},
+      {"access": "public", "getter": "outerTextProvider", "name": "outerTextProvider", "setter": "setOuterTextProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithTextProvider:imageProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTextProvider:imageProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicCornerTextImage",
+     "properties": [
+      {"access": "public", "getter": "textProvider", "name": "textProvider", "setter": "setTextProvider:"},
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicExtraLargeCircular",
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithGaugeProvider:imageProvider:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithGaugeProvider:imageProvider:"}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicExtraLargeCircularClosedGaugeImage",
+     "properties": [
+      {"access": "public", "getter": "gaugeProvider", "name": "gaugeProvider", "setter": "setGaugeProvider:"},
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"}
+     ],
+     "super": "CLKComplicationTemplateGraphicExtraLargeCircular",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithGaugeProvider:centerTextProvider:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithGaugeProvider:centerTextProvider:"}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicExtraLargeCircularClosedGaugeText",
+     "properties": [
+      {"access": "public", "getter": "gaugeProvider", "name": "gaugeProvider", "setter": "setGaugeProvider:"},
+      {"access": "public", "getter": "centerTextProvider", "name": "centerTextProvider", "setter": "setCenterTextProvider:"}
+     ],
+     "super": "CLKComplicationTemplateGraphicExtraLargeCircular",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithImageProvider:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithImageProvider:"}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicExtraLargeCircularImage",
+     "properties": [
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"}
+     ],
+     "super": "CLKComplicationTemplateGraphicExtraLargeCircular",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithGaugeProvider:bottomImageProvider:centerTextProvider:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithGaugeProvider:bottomImageProvider:centerTextProvider:"}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicExtraLargeCircularOpenGaugeImage",
+     "properties": [
+      {"access": "public", "getter": "gaugeProvider", "name": "gaugeProvider", "setter": "setGaugeProvider:"},
+      {"access": "public", "getter": "bottomImageProvider", "name": "bottomImageProvider", "setter": "setBottomImageProvider:"},
+      {"access": "public", "getter": "centerTextProvider", "name": "centerTextProvider", "setter": "setCenterTextProvider:"}
+     ],
+     "super": "CLKComplicationTemplateGraphicExtraLargeCircular",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithGaugeProvider:leadingTextProvider:trailingTextProvider:centerTextProvider:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithGaugeProvider:leadingTextProvider:trailingTextProvider:centerTextProvider:"}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicExtraLargeCircularOpenGaugeRangeText",
+     "properties": [
+      {"access": "public", "getter": "gaugeProvider", "name": "gaugeProvider", "setter": "setGaugeProvider:"},
+      {"access": "public", "getter": "leadingTextProvider", "name": "leadingTextProvider", "setter": "setLeadingTextProvider:"},
+      {"access": "public", "getter": "trailingTextProvider", "name": "trailingTextProvider", "setter": "setTrailingTextProvider:"},
+      {"access": "public", "getter": "centerTextProvider", "name": "centerTextProvider", "setter": "setCenterTextProvider:"}
+     ],
+     "super": "CLKComplicationTemplateGraphicExtraLargeCircular",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithGaugeProvider:bottomTextProvider:centerTextProvider:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithGaugeProvider:bottomTextProvider:centerTextProvider:"}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicExtraLargeCircularOpenGaugeSimpleText",
+     "properties": [
+      {"access": "public", "getter": "gaugeProvider", "name": "gaugeProvider", "setter": "setGaugeProvider:"},
+      {"access": "public", "getter": "bottomTextProvider", "name": "bottomTextProvider", "setter": "setBottomTextProvider:"},
+      {"access": "public", "getter": "centerTextProvider", "name": "centerTextProvider", "setter": "setCenterTextProvider:"}
+     ],
+     "super": "CLKComplicationTemplateGraphicExtraLargeCircular",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithLine1ImageProvider:line2TextProvider:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLine1ImageProvider:line2TextProvider:"}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicExtraLargeCircularStackImage",
+     "properties": [
+      {"access": "public", "getter": "line1ImageProvider", "name": "line1ImageProvider", "setter": "setLine1ImageProvider:"},
+      {"access": "public", "getter": "line2TextProvider", "name": "line2TextProvider", "setter": "setLine2TextProvider:"}
+     ],
+     "super": "CLKComplicationTemplateGraphicExtraLargeCircular",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithLine1TextProvider:line2TextProvider:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLine1TextProvider:line2TextProvider:"}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicExtraLargeCircularStackText",
+     "properties": [
+      {"access": "public", "getter": "line1TextProvider", "name": "line1TextProvider", "setter": "setLine1TextProvider:"},
+      {"access": "public", "getter": "line2TextProvider", "name": "line2TextProvider", "setter": "setLine2TextProvider:"}
+     ],
+     "super": "CLKComplicationTemplateGraphicExtraLargeCircular",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithImageProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithImageProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicRectangularFullImage",
+     "properties": [
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithTextProvider:imageProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTextProvider:imageProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicRectangularLargeImage",
+     "properties": [
+      {"access": "public", "getter": "textProvider", "name": "textProvider", "setter": "setTextProvider:"},
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithHeaderTextProvider:body1TextProvider:", "unavailable": true},
+      {"access": "public", "name": "templateWithHeaderTextProvider:body1TextProvider:body2TextProvider:", "unavailable": true},
+      {"access": "public", "name": "templateWithHeaderImageProvider:headerTextProvider:body1TextProvider:", "unavailable": true},
+      {"access": "public", "name": "templateWithHeaderImageProvider:headerTextProvider:body1TextProvider:body2TextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithHeaderTextProvider:body1TextProvider:", "unavailable": true},
+      {"access": "public", "name": "initWithHeaderTextProvider:body1TextProvider:body2TextProvider:", "unavailable": true},
+      {"access": "public", "name": "initWithHeaderImageProvider:headerTextProvider:body1TextProvider:", "unavailable": true},
+      {"access": "public", "name": "initWithHeaderImageProvider:headerTextProvider:body1TextProvider:body2TextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicRectangularStandardBody",
+     "properties": [
+      {"access": "public", "getter": "headerImageProvider", "name": "headerImageProvider", "setter": "setHeaderImageProvider:"},
+      {"access": "public", "getter": "headerTextProvider", "name": "headerTextProvider", "setter": "setHeaderTextProvider:"},
+      {"access": "public", "getter": "body1TextProvider", "name": "body1TextProvider", "setter": "setBody1TextProvider:"},
+      {"access": "public", "getter": "body2TextProvider", "name": "body2TextProvider", "setter": "setBody2TextProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithHeaderTextProvider:body1TextProvider:gaugeProvider:", "unavailable": true},
+      {"access": "public", "name": "templateWithHeaderImageProvider:headerTextProvider:body1TextProvider:gaugeProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithHeaderTextProvider:body1TextProvider:gaugeProvider:", "unavailable": true},
+      {"access": "public", "name": "initWithHeaderImageProvider:headerTextProvider:body1TextProvider:gaugeProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateGraphicRectangularTextGauge",
+     "properties": [
+      {"access": "public", "getter": "headerImageProvider", "name": "headerImageProvider", "setter": "setHeaderImageProvider:"},
+      {"access": "public", "getter": "headerTextProvider", "name": "headerTextProvider", "setter": "setHeaderTextProvider:"},
+      {"access": "public", "getter": "body1TextProvider", "name": "body1TextProvider", "setter": "setBody1TextProvider:"},
+      {"access": "public", "getter": "gaugeProvider", "name": "gaugeProvider", "setter": "setGaugeProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithRow1Column1TextProvider:row1Column2TextProvider:row2Column1TextProvider:row2Column2TextProvider:row3Column1TextProvider:row3Column2TextProvider:", "unavailable": true},
+      {"access": "public", "name": "templateWithRow1ImageProvider:row1Column1TextProvider:row1Column2TextProvider:row2ImageProvider:row2Column1TextProvider:row2Column2TextProvider:row3ImageProvider:row3Column1TextProvider:row3Column2TextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithRow1Column1TextProvider:row1Column2TextProvider:row2Column1TextProvider:row2Column2TextProvider:row3Column1TextProvider:row3Column2TextProvider:", "unavailable": true},
+      {"access": "public", "name": "initWithRow1ImageProvider:row1Column1TextProvider:row1Column2TextProvider:row2ImageProvider:row2Column1TextProvider:row2Column2TextProvider:row3ImageProvider:row3Column1TextProvider:row3Column2TextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateModularLargeColumns",
+     "properties": [
+      {"access": "public", "getter": "row1ImageProvider", "name": "row1ImageProvider", "setter": "setRow1ImageProvider:"},
+      {"access": "public", "getter": "row1Column1TextProvider", "name": "row1Column1TextProvider", "setter": "setRow1Column1TextProvider:"},
+      {"access": "public", "getter": "row1Column2TextProvider", "name": "row1Column2TextProvider", "setter": "setRow1Column2TextProvider:"},
+      {"access": "public", "getter": "row2ImageProvider", "name": "row2ImageProvider", "setter": "setRow2ImageProvider:"},
+      {"access": "public", "getter": "row2Column1TextProvider", "name": "row2Column1TextProvider", "setter": "setRow2Column1TextProvider:"},
+      {"access": "public", "getter": "row2Column2TextProvider", "name": "row2Column2TextProvider", "setter": "setRow2Column2TextProvider:"},
+      {"access": "public", "getter": "row3ImageProvider", "name": "row3ImageProvider", "setter": "setRow3ImageProvider:"},
+      {"access": "public", "getter": "row3Column1TextProvider", "name": "row3Column1TextProvider", "setter": "setRow3Column1TextProvider:"},
+      {"access": "public", "getter": "row3Column2TextProvider", "name": "row3Column2TextProvider", "setter": "setRow3Column2TextProvider:"},
+      {"access": "public", "getter": "column2Alignment", "name": "column2Alignment", "setter": "setColumn2Alignment:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithHeaderTextProvider:body1TextProvider:", "unavailable": true},
+      {"access": "public", "name": "templateWithHeaderTextProvider:body1TextProvider:body2TextProvider:", "unavailable": true},
+      {"access": "public", "name": "templateWithHeaderImageProvider:headerTextProvider:body1TextProvider:", "unavailable": true},
+      {"access": "public", "name": "templateWithHeaderImageProvider:headerTextProvider:body1TextProvider:body2TextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithHeaderTextProvider:body1TextProvider:", "unavailable": true},
+      {"access": "public", "name": "initWithHeaderTextProvider:body1TextProvider:body2TextProvider:", "unavailable": true},
+      {"access": "public", "name": "initWithHeaderImageProvider:headerTextProvider:body1TextProvider:", "unavailable": true},
+      {"access": "public", "name": "initWithHeaderImageProvider:headerTextProvider:body1TextProvider:body2TextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateModularLargeStandardBody",
+     "properties": [
+      {"access": "public", "getter": "headerImageProvider", "name": "headerImageProvider", "setter": "setHeaderImageProvider:"},
+      {"access": "public", "getter": "headerTextProvider", "name": "headerTextProvider", "setter": "setHeaderTextProvider:"},
+      {"access": "public", "getter": "body1TextProvider", "name": "body1TextProvider", "setter": "setBody1TextProvider:"},
+      {"access": "public", "getter": "body2TextProvider", "name": "body2TextProvider", "setter": "setBody2TextProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithHeaderTextProvider:row1Column1TextProvider:row1Column2TextProvider:row2Column1TextProvider:row2Column2TextProvider:", "unavailable": true},
+      {"access": "public", "name": "templateWithHeaderImageProvider:headerTextProvider:row1Column1TextProvider:row1Column2TextProvider:row2Column1TextProvider:row2Column2TextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithHeaderTextProvider:row1Column1TextProvider:row1Column2TextProvider:row2Column1TextProvider:row2Column2TextProvider:", "unavailable": true},
+      {"access": "public", "name": "initWithHeaderImageProvider:headerTextProvider:row1Column1TextProvider:row1Column2TextProvider:row2Column1TextProvider:row2Column2TextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateModularLargeTable",
+     "properties": [
+      {"access": "public", "getter": "headerImageProvider", "name": "headerImageProvider", "setter": "setHeaderImageProvider:"},
+      {"access": "public", "getter": "headerTextProvider", "name": "headerTextProvider", "setter": "setHeaderTextProvider:"},
+      {"access": "public", "getter": "row1Column1TextProvider", "name": "row1Column1TextProvider", "setter": "setRow1Column1TextProvider:"},
+      {"access": "public", "getter": "row1Column2TextProvider", "name": "row1Column2TextProvider", "setter": "setRow1Column2TextProvider:"},
+      {"access": "public", "getter": "row2Column1TextProvider", "name": "row2Column1TextProvider", "setter": "setRow2Column1TextProvider:"},
+      {"access": "public", "getter": "row2Column2TextProvider", "name": "row2Column2TextProvider", "setter": "setRow2Column2TextProvider:"},
+      {"access": "public", "getter": "column2Alignment", "name": "column2Alignment", "setter": "setColumn2Alignment:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithHeaderTextProvider:bodyTextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithHeaderTextProvider:bodyTextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateModularLargeTallBody",
+     "properties": [
+      {"access": "public", "getter": "headerTextProvider", "name": "headerTextProvider", "setter": "setHeaderTextProvider:"},
+      {"access": "public", "getter": "bodyTextProvider", "name": "bodyTextProvider", "setter": "setBodyTextProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithRow1Column1TextProvider:row1Column2TextProvider:row2Column1TextProvider:row2Column2TextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithRow1Column1TextProvider:row1Column2TextProvider:row2Column1TextProvider:row2Column2TextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateModularSmallColumnsText",
+     "properties": [
+      {"access": "public", "getter": "row1Column1TextProvider", "name": "row1Column1TextProvider", "setter": "setRow1Column1TextProvider:"},
+      {"access": "public", "getter": "row1Column2TextProvider", "name": "row1Column2TextProvider", "setter": "setRow1Column2TextProvider:"},
+      {"access": "public", "getter": "row2Column1TextProvider", "name": "row2Column1TextProvider", "setter": "setRow2Column1TextProvider:"},
+      {"access": "public", "getter": "row2Column2TextProvider", "name": "row2Column2TextProvider", "setter": "setRow2Column2TextProvider:"},
+      {"access": "public", "getter": "column2Alignment", "name": "column2Alignment", "setter": "setColumn2Alignment:"},
+      {"access": "public", "getter": "highlightColumn2", "name": "highlightColumn2", "setter": "setHighlightColumn2:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithImageProvider:fillFraction:ringStyle:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithImageProvider:fillFraction:ringStyle:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateModularSmallRingImage",
+     "properties": [
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"},
+      {"access": "public", "getter": "fillFraction", "name": "fillFraction", "setter": "setFillFraction:"},
+      {"access": "public", "getter": "ringStyle", "name": "ringStyle", "setter": "setRingStyle:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithTextProvider:fillFraction:ringStyle:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTextProvider:fillFraction:ringStyle:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateModularSmallRingText",
+     "properties": [
+      {"access": "public", "getter": "textProvider", "name": "textProvider", "setter": "setTextProvider:"},
+      {"access": "public", "getter": "fillFraction", "name": "fillFraction", "setter": "setFillFraction:"},
+      {"access": "public", "getter": "ringStyle", "name": "ringStyle", "setter": "setRingStyle:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithImageProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithImageProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateModularSmallSimpleImage",
+     "properties": [
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithTextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateModularSmallSimpleText",
+     "properties": [
+      {"access": "public", "getter": "textProvider", "name": "textProvider", "setter": "setTextProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithLine1ImageProvider:line2TextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLine1ImageProvider:line2TextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateModularSmallStackImage",
+     "properties": [
+      {"access": "public", "getter": "line1ImageProvider", "name": "line1ImageProvider", "setter": "setLine1ImageProvider:"},
+      {"access": "public", "getter": "line2TextProvider", "name": "line2TextProvider", "setter": "setLine2TextProvider:"},
+      {"access": "public", "getter": "highlightLine2", "name": "highlightLine2", "setter": "setHighlightLine2:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithLine1TextProvider:line2TextProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLine1TextProvider:line2TextProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateModularSmallStackText",
+     "properties": [
+      {"access": "public", "getter": "line1TextProvider", "name": "line1TextProvider", "setter": "setLine1TextProvider:"},
+      {"access": "public", "getter": "line2TextProvider", "name": "line2TextProvider", "setter": "setLine2TextProvider:"},
+      {"access": "public", "getter": "highlightLine2", "name": "highlightLine2", "setter": "setHighlightLine2:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithTextProvider:", "unavailable": true},
+      {"access": "public", "name": "templateWithTextProvider:imageProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTextProvider:", "unavailable": true},
+      {"access": "public", "name": "initWithTextProvider:imageProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateUtilitarianLargeFlat",
+     "properties": [
+      {"access": "public", "getter": "textProvider", "name": "textProvider", "setter": "setTextProvider:"},
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithTextProvider:", "unavailable": true},
+      {"access": "public", "name": "templateWithTextProvider:imageProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTextProvider:", "unavailable": true},
+      {"access": "public", "name": "initWithTextProvider:imageProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateUtilitarianSmallFlat",
+     "properties": [
+      {"access": "public", "getter": "textProvider", "name": "textProvider", "setter": "setTextProvider:"},
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithImageProvider:fillFraction:ringStyle:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithImageProvider:fillFraction:ringStyle:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateUtilitarianSmallRingImage",
+     "properties": [
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"},
+      {"access": "public", "getter": "fillFraction", "name": "fillFraction", "setter": "setFillFraction:"},
+      {"access": "public", "getter": "ringStyle", "name": "ringStyle", "setter": "setRingStyle:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithTextProvider:fillFraction:ringStyle:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTextProvider:fillFraction:ringStyle:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateUtilitarianSmallRingText",
+     "properties": [
+      {"access": "public", "getter": "textProvider", "name": "textProvider", "setter": "setTextProvider:"},
+      {"access": "public", "getter": "fillFraction", "name": "fillFraction", "setter": "setFillFraction:"},
+      {"access": "public", "getter": "ringStyle", "name": "ringStyle", "setter": "setRingStyle:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "templateWithImageProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithImageProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTemplateUtilitarianSmallSquare",
+     "properties": [
+      {"access": "public", "getter": "imageProvider", "name": "imageProvider", "setter": "setImageProvider:"}
+     ],
+     "super": "CLKComplicationTemplate",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "entryWithDate:complicationTemplate:"},
+      {"access": "public", "name": "entryWithDate:complicationTemplate:timelineAnimationGroup:"}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationTimelineEntry",
+     "properties": [
+      {"access": "public", "getter": "date", "name": "date", "setter": "setDate:"},
+      {"access": "public", "getter": "complicationTemplate", "name": "complicationTemplate", "setter": "setComplicationTemplate:"},
+      {"access": "public", "getter": "timelineAnimationGroup", "name": "timelineAnimationGroup", "setter": "setTimelineAnimationGroup:"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKComplicationWidgetMigrationConfiguration",
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "textProviderWithDate:units:"},
+      {"access": "public", "name": "textProviderWithDate:units:timeZone:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDate:units:", "unavailable": true},
+      {"access": "public", "name": "initWithDate:units:timeZone:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKDateTextProvider",
+     "properties": [
+      {"access": "public", "getter": "date", "name": "date", "setter": "setDate:"},
+      {"access": "public", "getter": "calendarUnits", "name": "calendarUnits", "setter": "setCalendarUnits:"},
+      {"access": "public", "getter": "timeZone", "name": "timeZone", "setter": "setTimeZone:"},
+      {"access": "public", "getter": "uppercase", "name": "uppercase", "setter": "setUppercase:"}
+     ],
+     "super": "CLKTextProvider",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "new"},
+      {"access": "public", "name": "providerWithFullColorImage:"},
+      {"access": "public", "name": "providerWithFullColorImage:tintedImageProvider:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "init"},
+      {"access": "public", "name": "initWithFullColorImage:", "unavailable": true},
+      {"access": "public", "name": "initWithFullColorImage:tintedImageProvider:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKFullColorImageProvider",
+     "properties": [
+      {"access": "public", "getter": "image", "name": "image", "setter": "setImage:"},
+      {"access": "public", "getter": "tintedImageProvider", "name": "tintedImageProvider", "setter": "setTintedImageProvider:", "unavailable": true},
+      {"access": "public", "getter": "accessibilityLabel", "name": "accessibilityLabel", "setter": "setAccessibilityLabel:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKGaugeProvider",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "style", "name": "style"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gaugeColors", "name": "gaugeColors"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gaugeColorLocations", "name": "gaugeColorLocations"},
+      {"access": "public", "getter": "accessibilityLabel", "name": "accessibilityLabel", "setter": "setAccessibilityLabel:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "new"},
+      {"access": "public", "name": "imageProviderWithOnePieceImage:"},
+      {"access": "public", "name": "imageProviderWithOnePieceImage:twoPieceImageBackground:twoPieceImageForeground:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "init"},
+      {"access": "public", "name": "initWithOnePieceImage:", "unavailable": true},
+      {"access": "public", "name": "initWithOnePieceImage:twoPieceImageBackground:twoPieceImageForeground:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKImageProvider",
+     "properties": [
+      {"access": "public", "getter": "onePieceImage", "name": "onePieceImage", "setter": "setOnePieceImage:"},
+      {"access": "public", "getter": "tintColor", "name": "tintColor", "setter": "setTintColor:"},
+      {"access": "public", "getter": "twoPieceImageBackground", "name": "twoPieceImageBackground", "setter": "setTwoPieceImageBackground:"},
+      {"access": "public", "getter": "twoPieceImageForeground", "name": "twoPieceImageForeground", "setter": "setTwoPieceImageForeground:"},
+      {"access": "public", "getter": "accessibilityLabel", "name": "accessibilityLabel", "setter": "setAccessibilityLabel:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "textProviderWithDate:style:units:"},
+      {"access": "public", "name": "textProviderWithDate:relativeToDate:style:units:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDate:style:units:", "unavailable": true},
+      {"access": "public", "name": "initWithDate:relativeToDate:style:units:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKRelativeDateTextProvider",
+     "properties": [
+      {"access": "public", "getter": "date", "name": "date", "setter": "setDate:"},
+      {"access": "public", "getter": "relativeToDate", "name": "relativeToDate", "setter": "setRelativeToDate:", "unavailable": true},
+      {"access": "public", "getter": "relativeDateStyle", "name": "relativeDateStyle", "setter": "setRelativeDateStyle:"},
+      {"access": "public", "getter": "calendarUnits", "name": "calendarUnits", "setter": "setCalendarUnits:"}
+     ],
+     "super": "CLKTextProvider",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "gaugeProviderWithStyle:gaugeColors:gaugeColorLocations:fillFraction:"},
+      {"access": "public", "name": "gaugeProviderWithStyle:gaugeColor:fillFraction:"}
+     ],
+     "linkage": "exported",
+     "name": "CLKSimpleGaugeProvider",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "fillFraction", "name": "fillFraction"}
+     ],
+     "super": "CLKGaugeProvider",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "textProviderWithText:"},
+      {"access": "public", "name": "textProviderWithText:shortText:"},
+      {"access": "public", "name": "textProviderWithText:shortText:accessibilityLabel:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithText:", "unavailable": true},
+      {"access": "public", "name": "initWithText:shortText:", "unavailable": true},
+      {"access": "public", "name": "initWithText:shortText:accessibilityLabel:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKSimpleTextProvider",
+     "properties": [
+      {"access": "public", "getter": "text", "name": "text", "setter": "setText:"},
+      {"access": "public", "getter": "shortText", "name": "shortText", "setter": "setShortText:"}
+     ],
+     "super": "CLKTextProvider",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Localizable"
+     ],
+     "classMethods": [
+      {"access": "public", "introduced": "9", "name": "new"},
+      {"access": "public", "name": "textProviderWithFormat:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "init"}
+     ],
+     "linkage": "exported",
+     "name": "CLKTextProvider",
+     "properties": [
+      {"access": "public", "getter": "tintColor", "name": "tintColor", "setter": "setTintColor:"},
+      {"access": "public", "getter": "accessibilityLabel", "name": "accessibilityLabel", "setter": "setAccessibilityLabel:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "gaugeProviderWithStyle:gaugeColors:gaugeColorLocations:startDate:endDate:"},
+      {"access": "public", "name": "gaugeProviderWithStyle:gaugeColors:gaugeColorLocations:startDate:startFillFraction:endDate:endFillFraction:"}
+     ],
+     "linkage": "exported",
+     "name": "CLKTimeIntervalGaugeProvider",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endDate", "name": "endDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startFillFraction", "name": "startFillFraction"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endFillFraction", "name": "endFillFraction"}
+     ],
+     "super": "CLKGaugeProvider",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "textProviderWithStartDate:endDate:"},
+      {"access": "public", "name": "textProviderWithStartDate:endDate:timeZone:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithStartDate:endDate:", "unavailable": true},
+      {"access": "public", "name": "initWithStartDate:endDate:timeZone:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKTimeIntervalTextProvider",
+     "properties": [
+      {"access": "public", "getter": "startDate", "name": "startDate", "setter": "setStartDate:"},
+      {"access": "public", "getter": "endDate", "name": "endDate", "setter": "setEndDate:"},
+      {"access": "public", "getter": "timeZone", "name": "timeZone", "setter": "setTimeZone:"}
+     ],
+     "super": "CLKTextProvider",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "textProviderWithDate:"},
+      {"access": "public", "name": "textProviderWithDate:timeZone:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDate:", "unavailable": true},
+      {"access": "public", "name": "initWithDate:timeZone:", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CLKTimeTextProvider",
+     "properties": [
+      {"access": "public", "getter": "date", "name": "date", "setter": "setDate:"},
+      {"access": "public", "getter": "timeZone", "name": "timeZone", "setter": "setTimeZone:"}
+     ],
+     "super": "CLKTextProvider",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "addWatchFaceAtURL:completionHandler:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "CLKWatchFaceLibrary",
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "getTimelineEndDateForComplication:withHandler:", "optional": true},
+      {"access": "public", "name": "getPrivacyBehaviorForComplication:withHandler:", "optional": true},
+      {"access": "public", "name": "getTimelineAnimationBehaviorForComplication:withHandler:", "optional": true},
+      {"access": "public", "name": "getAlwaysOnTemplateForComplication:withHandler:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "getCurrentTimelineEntryForComplication:withHandler:"},
+      {"access": "public", "name": "getTimelineEntriesForComplication:afterDate:limit:withHandler:", "optional": true},
+      {"access": "public", "name": "getLocalizableSampleTemplateForComplication:withHandler:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "getComplicationDescriptorsWithHandler:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "handleSharedComplicationDescriptors:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "getPlaceholderTemplateForComplication:withHandler:", "optional": true},
+      {"access": "public", "name": "getSupportedTimeTravelDirectionsForComplication:withHandler:", "optional": true},
+      {"access": "public", "name": "getTimelineStartDateForComplication:withHandler:", "optional": true},
+      {"access": "public", "name": "getTimelineEntriesForComplication:beforeDate:limit:withHandler:", "optional": true},
+      {"access": "public", "name": "getNextRequestedUpdateDateWithHandler:", "optional": true},
+      {"access": "public", "name": "requestedUpdateDidBegin", "optional": true},
+      {"access": "public", "name": "requestedUpdateBudgetExhausted", "optional": true}
+     ],
+     "name": "CLKComplicationDataSource",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "widgetMigrator", "name": "widgetMigrator", "optional": true, "unavailable": true}
+     ],
+     "protocols": [
+      "NSObject"
+     ],
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "getWidgetConfigurationFrom:completionHandler:", "optional": true}
+     ],
+     "name": "CLKComplicationWidgetMigrator",
+     "protocols": [
+      "NSObject"
+     ],
+     "unavailable": true
+    }
+   ],
+   "target": "arm64e-apple-ios26",
+   "typedefs": [
+    {"access": "public", "name": "CLKComplicationColumnAlignment"},
+    {"access": "public", "name": "CLKComplicationFamily"},
+    {"access": "public", "name": "CLKComplicationPrivacyBehavior"},
+    {"access": "public", "name": "CLKComplicationRingStyle"},
+    {"access": "public", "name": "CLKComplicationTimeTravelDirections"},
+    {"access": "public", "name": "CLKComplicationTimelineAnimationBehavior"},
+    {"access": "public", "name": "CLKGaugeProviderStyle"},
+    {"access": "public", "name": "CLKRelativeDateStyle"},
+    {"access": "public", "name": "CLKWatchFaceLibraryErrorCode"}
+   ]
+  },
+  {
+   "globals": [
+    {"access": "public", "linkage": "exported", "name": "_$sSo21CLKComplicationFamilyV8ClockKitE8allCasesSayABGvgZ"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo21CLKComplicationFamilyV8ClockKitE8allCasesSayABGvpZMV"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo21CLKComplicationFamilyVs12CaseIterable8ClockKitMc", "unavailable": true}
+   ],
+   "target": "arm64e-apple-ios26.0"
+  }
+ ],
+ "version": "1.0"
+}

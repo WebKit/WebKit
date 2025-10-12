@@ -9,9 +9,10 @@
  */
 
 #include <immintrin.h>
-#include <stddef.h>
-#include <stdint.h>
 #include <xmmintrin.h>
+
+#include <cstddef>
+#include <cstdint>
 
 #include "common_audio/resampler/sinc_resampler.h"
 

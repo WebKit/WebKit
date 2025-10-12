@@ -82,9 +82,9 @@ static WebPlatformTouchPoint::TouchType convertTouchType(WKTouchPointType touchT
     }
 }
 
-static inline WebCore::IntPoint positionForCGPoint(CGPoint position)
+static inline WebCore::DoublePoint positionForCGPoint(CGPoint position)
 {
-    return WebCore::IntPoint(position);
+    return WebCore::DoublePoint(position);
 }
 
 static CGFloat radiusForTouchPoint(const WKTouchPoint& touchPoint)
@@ -110,6 +110,7 @@ Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoints(const W
         platformTouchPoint.setRadiusY(radius);
         // FIXME (259068): Add support for Touch.rotationAngle.
         platformTouchPoint.setRotationAngle(0);
+        platformTouchPoint.setTwist(touchPoint.twist);
         platformTouchPoint.setForce(touchPoint.force);
         platformTouchPoint.setAltitudeAngle(touchPoint.altitudeAngle);
         platformTouchPoint.setAzimuthAngle(touchPoint.azimuthAngle);
@@ -135,7 +136,7 @@ Vector<WebTouchEvent> NativeWebTouchEvent::extractPredictedWebTouchEvents(const 
 
 NativeWebTouchEvent::NativeWebTouchEvent(const WKTouchEvent& event, UIKeyModifierFlags flags)
     : WebTouchEvent(
-        { webEventTypeForWKTouchEventType(event.type), webEventModifierFlags(flags), WallTime::fromRawSeconds(event.timestamp) },
+        { webEventTypeForWKTouchEventType(event.type), webEventModifierFlags(flags), MonotonicTime::fromRawSeconds(event.timestamp) },
         extractWebTouchPoints(event),
         extractCoalescedWebTouchEvents(event, flags),
         extractPredictedWebTouchEvents(event, flags),

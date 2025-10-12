@@ -27,12 +27,12 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePayAutomaticReloadPaymentRequest.h"
-#include "ApplePayDeferredPaymentRequest.h"
-#include "ApplePayDisbursementRequest.h"
-#include "ApplePayLineItem.h"
-#include "ApplePayPaymentTokenContext.h"
-#include "ApplePayRecurringPaymentRequest.h"
+#include <WebCore/ApplePayAutomaticReloadPaymentRequest.h>
+#include <WebCore/ApplePayDeferredPaymentRequest.h>
+#include <WebCore/ApplePayDisbursementRequest.h>
+#include <WebCore/ApplePayLineItem.h>
+#include <WebCore/ApplePayPaymentTokenContext.h>
+#include <WebCore/ApplePayRecurringPaymentRequest.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

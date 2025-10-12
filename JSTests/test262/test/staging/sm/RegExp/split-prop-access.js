@@ -2,17 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-RegExp-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  String.prototype.split should call ToUint32(limit) before ToString(separator).
+info: bugzilla.mozilla.org/show_bug.cgi?id=1287525
 esid: pending
 ---*/
-var BUGNUMBER = 1287525;
-var summary = 'String.prototype.split should call ToUint32(limit) before ToString(separator).';
-
-print(BUGNUMBER + ": " + summary);
 
 var accessed = false;
 
@@ -25,4 +19,3 @@ Object.defineProperty(rx, Symbol.match, {
 rx[Symbol.split]("abba");
 
 assert.sameValue(accessed, true);
-

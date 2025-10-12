@@ -38,13 +38,13 @@
 // run in a row, this provides an indication of which one is currently running.
 
 // If enabled, runs unittests using the XCTest test runner.
-const char kEnableRunIOSUnittestsWithXCTest[] = "enable-run-ios-unittests-with-xctest";
+const char kEnableRunIOSUnittestsWithXCTest[] =
+    "enable-run-ios-unittests-with-xctest";
 
 static int (*g_test_suite)(void) = NULL;
 static int g_argc;
 static char **g_argv;
 static bool g_write_perf_output;
-static bool g_export_perf_results_new_api;
 static std::string g_webrtc_test_metrics_output_path;
 static std::optional<bool> g_is_xctest;
 static std::optional<std::vector<std::string>> g_metrics_to_plot;
@@ -79,7 +79,7 @@ static std::optional<std::vector<std::string>> g_metrics_to_plot;
   // root view controller. Set an empty one here.
   [_window setRootViewController:[[UIViewController alloc] init]];
 
-  if (!rtc::test::ShouldRunIOSUnittestsWithXCTest()) {
+  if (!webrtc::test::ShouldRunIOSUnittestsWithXCTest()) {
     // When running in XCTest mode, XCTest will invoke `runGoogleTest` directly.
     // Otherwise, schedule a call to `runTests`.
     [self performSelector:@selector(runTests) withObject:nil afterDelay:0.1];
@@ -89,68 +89,54 @@ static std::optional<std::vector<std::string>> g_metrics_to_plot;
 }
 
 - (BOOL)supportsRunningGoogleTests {
-  return rtc::test::ShouldRunIOSUnittestsWithXCTest();
+  return webrtc::test::ShouldRunIOSUnittestsWithXCTest();
 }
 
 - (int)runGoogleTests {
-  rtc::test::ConfigureCoverageReportPath();
+  webrtc::test::ConfigureCoverageReportPath();
 
   int exitStatus = g_test_suite();
 
-  NSArray<NSString *> *outputDirectories =
-      NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+  NSArray<NSString *> *outputDirectories = NSSearchPathForDirectoriesInDomains(
+      NSDocumentDirectory, NSUserDomainMask, YES);
   std::vector<std::unique_ptr<webrtc::test::MetricsExporter>> exporters;
-  if (g_export_perf_results_new_api) {
-    exporters.push_back(std::make_unique<webrtc::test::StdoutMetricsExporter>());
-    if (g_write_perf_output) {
-      // Stores data into a proto file under the app's document directory.
-      NSString *fileName = @"perftest-output.pb";
-      if ([outputDirectories count] != 0) {
-        NSString *outputPath = [outputDirectories[0] stringByAppendingPathComponent:fileName];
+  exporters.push_back(std::make_unique<webrtc::test::StdoutMetricsExporter>());
+  if (g_write_perf_output) {
+    // Stores data into a proto file under the app's document directory.
+    NSString *fileName = @"perftest-output.pb";
+    if ([outputDirectories count] != 0) {
+      NSString *outputPath =
+          [outputDirectories[0] stringByAppendingPathComponent:fileName];
 
-        exporters.push_back(std::make_unique<webrtc::test::ChromePerfDashboardMetricsExporter>(
-            [NSString stdStringForString:outputPath]));
-      }
-    }
-    if (!g_webrtc_test_metrics_output_path.empty()) {
-      RTC_CHECK_EQ(g_webrtc_test_metrics_output_path.find('/'), std::string::npos)
-          << "On iOS, --webrtc_test_metrics_output_path must only be a file name.";
-      if ([outputDirectories count] != 0) {
-        NSString *fileName = [NSString stringWithCString:g_webrtc_test_metrics_output_path.c_str()
-                                                encoding:[NSString defaultCStringEncoding]];
-        NSString *outputPath = [outputDirectories[0] stringByAppendingPathComponent:fileName];
-        exporters.push_back(std::make_unique<webrtc::test::MetricsSetProtoFileExporter>(
-            webrtc::test::MetricsSetProtoFileExporter::Options(
-                [NSString stdStringForString:outputPath])));
-      }
-    }
-  } else {
-    exporters.push_back(std::make_unique<webrtc::test::PrintResultProxyMetricsExporter>());
-  }
-  webrtc::test::ExportPerfMetric(*webrtc::test::GetGlobalMetricsLogger(), std::move(exporters));
-  if (!g_export_perf_results_new_api) {
-    if (g_write_perf_output) {
-      // Stores data into a proto file under the app's document directory.
-      NSString *fileName = @"perftest-output.pb";
-      if ([outputDirectories count] != 0) {
-        NSString *outputPath = [outputDirectories[0] stringByAppendingPathComponent:fileName];
-
-        if (!webrtc::test::WritePerfResults([NSString stdStringForString:outputPath])) {
-          return 1;
-        }
-      }
-    }
-    if (g_metrics_to_plot) {
-      webrtc::test::PrintPlottableResults(*g_metrics_to_plot);
+      exporters.push_back(
+          std::make_unique<webrtc::test::ChromePerfDashboardMetricsExporter>(
+              [NSString stdStringForString:outputPath]));
     }
   }
-
+  if (!g_webrtc_test_metrics_output_path.empty()) {
+    RTC_CHECK_EQ(g_webrtc_test_metrics_output_path.find('/'), std::string::npos)
+        << "On iOS, --webrtc_test_metrics_output_path must only be a file "
+           "name.";
+    if ([outputDirectories count] != 0) {
+      NSString *fileName =
+          [NSString stringWithCString:g_webrtc_test_metrics_output_path.c_str()
+                             encoding:[NSString defaultCStringEncoding]];
+      NSString *outputPath =
+          [outputDirectories[0] stringByAppendingPathComponent:fileName];
+      exporters.push_back(
+          std::make_unique<webrtc::test::MetricsSetProtoFileExporter>(
+              webrtc::test::MetricsSetProtoFileExporter::Options(
+                  [NSString stdStringForString:outputPath])));
+    }
+  }
+  webrtc::test::ExportPerfMetric(*webrtc::test::GetGlobalMetricsLogger(),
+                                 std::move(exporters));
   return exitStatus;
 }
 
 - (void)runTests {
-  RTC_DCHECK(!rtc::test::ShouldRunIOSUnittestsWithXCTest());
-  rtc::test::ConfigureCoverageReportPath();
+  RTC_DCHECK(!webrtc::test::ShouldRunIOSUnittestsWithXCTest());
+  webrtc::test::ConfigureCoverageReportPath();
 
   int exitStatus = [self runGoogleTests];
 
@@ -169,7 +155,7 @@ static std::optional<std::vector<std::string>> g_metrics_to_plot;
 }
 
 @end
-namespace rtc {
+namespace webrtc {
 namespace test {
 
 // Note: This is not thread safe, and must be called from the same thread as
@@ -178,14 +164,12 @@ void InitTestSuite(int (*test_suite)(void),
                    int argc,
                    char *argv[],
                    bool write_perf_output,
-                   bool export_perf_results_new_api,
                    std::string webrtc_test_metrics_output_path,
                    std::optional<std::vector<std::string>> metrics_to_plot) {
   g_test_suite = test_suite;
   g_argc = argc;
   g_argv = argv;
   g_write_perf_output = write_perf_output;
-  g_export_perf_results_new_api = export_perf_results_new_api;
   g_webrtc_test_metrics_output_path = webrtc_test_metrics_output_path;
   g_metrics_to_plot = std::move(metrics_to_plot);
 }
@@ -214,4 +198,4 @@ bool ShouldRunIOSUnittestsWithXCTest() {
 }
 
 }  // namespace test
-}  // namespace rtc
+}  // namespace webrtc

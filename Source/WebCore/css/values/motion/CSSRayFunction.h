@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "CSSPosition.h"
-#include "CSSPrimitiveNumericTypes.h"
+#include <WebCore/CSSPosition.h>
+#include <WebCore/CSSPrimitiveNumericTypes.h>
 
 namespace WebCore {
 namespace CSS {

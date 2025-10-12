@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "PlatformContentFilter.h"
+#include <WebCore/PlatformContentFilter.h>
 #include <wtf/Compiler.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -53,13 +53,16 @@ public:
     ContentFilterUnblockHandler unblockHandler() const override;
 #endif
     
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    void didReceiveAllowDecisionOnQueue(bool isAllowed, NSData *);
+#endif
+
 private:
     explicit ParentalControlsContentFilter(const PlatformContentFilter::FilterParameters&);
     bool enabled() const;
 
     void updateFilterState();
 #if HAVE(WEBCONTENTRESTRICTIONS)
-    void didReceiveAllowDecisionOnQueue(bool isAllowed, NSData *);
     void updateFilterStateOnMain();
 #endif
 

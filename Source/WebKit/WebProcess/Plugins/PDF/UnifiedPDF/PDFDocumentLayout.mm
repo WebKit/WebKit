@@ -82,7 +82,6 @@ RetainPtr<PDFPage> PDFDocumentLayout::pageAtIndex(PageIndex index) const
 
 auto PDFDocumentLayout::indexForPage(RetainPtr<PDFPage> page) const -> std::optional<PageIndex>
 {
-
     auto pageIndex = [m_pdfDocument indexForPage:page.get()];
     if (pageIndex == NSNotFound)
         return { };

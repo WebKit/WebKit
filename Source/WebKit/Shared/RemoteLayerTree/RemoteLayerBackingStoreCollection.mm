@@ -1,5 +1,5 @@
  /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,63 +68,26 @@ void RemoteLayerBackingStoreCollection::deref() const
 
 void RemoteLayerBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLayerTreeTransaction& transaction)
 {
-    Vector<RemoteRenderingBackendProxy::LayerPrepareBuffersData> prepareBuffersData;
-    prepareBuffersData.reserveInitialCapacity(m_backingStoresNeedingDisplay.computeSize());
-
-    Vector<WeakPtr<RemoteLayerWithRemoteRenderingBackingStore>> backingStoreList;
-    backingStoreList.reserveInitialCapacity(m_backingStoresNeedingDisplay.computeSize());
-
     Ref remoteRenderingBackend = protectedLayerTreeContext()->ensureRemoteRenderingBackendProxy();
+    remoteRenderingBackend->startPreparingImageBufferSetsForDisplay();
 
     for (CheckedRef backingStore : m_backingStoresNeedingDisplay) {
         Ref layer = backingStore->layer();
         layer->properties().notePropertiesChanged(LayerChange::BackingStoreChanged);
         transaction.layerPropertiesChanged(layer);
-
-        if (CheckedPtr remoteBackingStore = dynamicDowncast<RemoteLayerWithRemoteRenderingBackingStore>(backingStore.get())) {
-            if (remoteBackingStore->performDelegatedLayerDisplay())
-                continue;
-
-            auto bufferSet = remoteBackingStore->protectedBufferSet();
-            if (!bufferSet)
-                continue;
-
-            if (!remoteBackingStore->hasFrontBuffer() || !remoteBackingStore->supportsPartialRepaint())
-                remoteBackingStore->setNeedsDisplay();
-
-            prepareBuffersData.append({
-                bufferSet,
-                remoteBackingStore->dirtyRegion(),
-                remoteBackingStore->supportsPartialRepaint(),
-                remoteBackingStore->hasEmptyDirtyRegion(),
-                remoteBackingStore->drawingRequiresClearedPixels(),
-            });
-
-            backingStoreList.append(*remoteBackingStore);
-        }
-
         backingStore->prepareToDisplay();
     }
 
-    if (prepareBuffersData.size()) {
-        auto swapResult = remoteRenderingBackend->prepareImageBufferSetsForDisplay(WTFMove(prepareBuffersData));
-        RELEASE_ASSERT(swapResult.size() == backingStoreList.size() || swapResult.isEmpty());
-        for (unsigned i = 0; i < swapResult.size(); ++i) {
-            auto& backingStoreSwapResult = swapResult[i];
-            auto& backingStore = backingStoreList[i];
-            if (backingStoreSwapResult == SwapBuffersDisplayRequirement::NeedsFullDisplay)
-                backingStore->setNeedsDisplay();
-        }
-    }
+    remoteRenderingBackend->endPreparingImageBufferSetsForDisplay();
 }
 
 bool RemoteLayerBackingStoreCollection::paintReachableBackingStoreContents()
 {
     bool anyNonEmptyDirtyRegion = false;
-    for (auto& backingStore : m_backingStoresNeedingDisplay) {
-        if (!backingStore.hasEmptyDirtyRegion())
+    for (CheckedRef backingStore : m_backingStoresNeedingDisplay) {
+        if (!backingStore->hasEmptyDirtyRegion())
             anyNonEmptyDirtyRegion = true;
-        backingStore.paintContents();
+        backingStore->paintContents();
     }
     return anyNonEmptyDirtyRegion;
 }
@@ -146,9 +109,9 @@ void RemoteLayerBackingStoreCollection::willCommitLayerTree(RemoteLayerTreeTrans
 {
     ASSERT(m_inLayerFlush);
     Vector<WebCore::PlatformLayerIdentifier> newlyUnreachableLayerIDs;
-    for (auto& backingStore : m_liveBackingStore) {
-        if (!m_reachableBackingStoreInLatestFlush.contains(backingStore))
-            newlyUnreachableLayerIDs.append(backingStore.layer().layerID());
+    for (CheckedRef backingStore : m_liveBackingStore) {
+        if (!m_reachableBackingStoreInLatestFlush.contains(backingStore.get()))
+            newlyUnreachableLayerIDs.append(backingStore->layer().layerID());
     }
 
     transaction.setLayerIDsWithNewlyUnreachableBackingStore(newlyUnreachableLayerIDs);
@@ -162,8 +125,8 @@ Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> RemoteLayerBackingStore
     for (auto& layer : transaction.changedLayers()) {
         if (layer->properties().changedProperties & LayerChange::BackingStoreChanged) {
             needToScheduleVolatilityTimer = true;
-            if (layer->properties().backingStoreOrProperties.store)
-                flushers.appendVector(layer->properties().backingStoreOrProperties.store->takePendingFlushers());
+            if (CheckedPtr store = layer->properties().backingStoreOrProperties.store.get())
+                flushers.appendVector(store->takePendingFlushers());
         }
 
         layer->didCommit();
@@ -183,9 +146,9 @@ Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> RemoteLayerBackingStore
 bool RemoteLayerBackingStoreCollection::updateUnreachableBackingStores()
 {
     Vector<WeakPtr<RemoteLayerBackingStore>> newlyUnreachableBackingStore;
-    for (auto& backingStore : m_liveBackingStore) {
-        if (!m_reachableBackingStoreInLatestFlush.contains(backingStore))
-            newlyUnreachableBackingStore.append(backingStore);
+    for (CheckedRef backingStore : m_liveBackingStore) {
+        if (!m_reachableBackingStoreInLatestFlush.contains(backingStore.get()))
+            newlyUnreachableBackingStore.append(backingStore.get());
     }
 
     for (auto& backingStore : newlyUnreachableBackingStore)
@@ -239,7 +202,7 @@ bool RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayedWithRendering
 void RemoteLayerBackingStoreCollection::purgeFrontBufferForTesting(RemoteLayerBackingStore& backingStore)
 {
     if (CheckedPtr remoteBackingStore = dynamicDowncast<RemoteLayerWithRemoteRenderingBackingStore>(&backingStore)) {
-        if (RefPtr bufferSet = remoteBackingStore->protectedBufferSet()) {
+        if (RefPtr bufferSet = remoteBackingStore->bufferSet()) {
             Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>> identifiers;
             OptionSet<BufferInSetType> bufferTypes { BufferInSetType::Front };
             identifiers.append(std::make_pair(Ref { *bufferSet }, bufferTypes));
@@ -254,7 +217,7 @@ void RemoteLayerBackingStoreCollection::purgeFrontBufferForTesting(RemoteLayerBa
 void RemoteLayerBackingStoreCollection::purgeBackBufferForTesting(RemoteLayerBackingStore& backingStore)
 {
     if (CheckedPtr remoteBackingStore = dynamicDowncast<RemoteLayerWithRemoteRenderingBackingStore>(&backingStore)) {
-        if (RefPtr bufferSet = remoteBackingStore->protectedBufferSet()) {
+        if (RefPtr bufferSet = remoteBackingStore->bufferSet()) {
             Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>> identifiers;
             OptionSet<BufferInSetType> bufferTypes { BufferInSetType::Back, BufferInSetType::SecondaryBack };
             identifiers.append(std::make_pair(Ref { *bufferSet }, bufferTypes));
@@ -270,7 +233,7 @@ void RemoteLayerBackingStoreCollection::purgeBackBufferForTesting(RemoteLayerBac
 void RemoteLayerBackingStoreCollection::markFrontBufferVolatileForTesting(RemoteLayerBackingStore& backingStore)
 {
     if (CheckedPtr remoteBackingStore = dynamicDowncast<RemoteLayerWithRemoteRenderingBackingStore>(&backingStore)) {
-        if (RefPtr bufferSet = remoteBackingStore->protectedBufferSet()) {
+        if (RefPtr bufferSet = remoteBackingStore->bufferSet()) {
             Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>> identifiers;
             OptionSet<BufferInSetType> bufferTypes { BufferInSetType::Front };
             identifiers.append(std::make_pair(Ref { *bufferSet }, bufferTypes));
@@ -439,7 +402,7 @@ void RemoteLayerBackingStoreCollection::gpuProcessConnectionWasDestroyed()
 bool RemoteLayerBackingStoreCollection::collectRemoteRenderingBackingStoreBufferIdentifiersToMarkVolatile(RemoteLayerWithRemoteRenderingBackingStore& backingStore, OptionSet<VolatilityMarkingBehavior> markingBehavior, MonotonicTime now, Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>& identifiers)
 {
     ASSERT(!m_inLayerFlush);
-    auto bufferSet = backingStore.protectedBufferSet();
+    RefPtr bufferSet = backingStore.bufferSet();
     if (!bufferSet)
         return true;
 

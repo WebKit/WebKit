@@ -42,15 +42,6 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 using namespace JSC;
 
 #ifdef __APPLE__
-kern_return_t PASPGMEnabledOnProcess()
-{
-#if !USE(SYSTEM_MALLOC)
-#if BENABLE(LIBPAS)
-    return pas_probabilistic_guard_malloc_enabled_on_process() ? KERN_SUCCESS : KERN_FAILURE;
-#endif /* BENABLE(LIBPAS) */
-#endif /* !USE(SYSTEM_MALLOC) */
-    return KERN_FAILURE;
-}
 
 kern_return_t PASReportCrashExtractResults(vm_address_t fault_address, mach_vm_address_t pas_dead_root, unsigned version, task_t task, pas_report_crash_pgm_report *report, crash_reporter_memory_reader_t crm_reader)
 {

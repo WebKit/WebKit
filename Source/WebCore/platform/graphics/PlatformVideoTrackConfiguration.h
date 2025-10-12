@@ -27,10 +27,10 @@
 
 #if ENABLE(VIDEO)
 
-#include "PlatformTrackConfiguration.h"
-#include "PlatformVideoColorSpace.h"
-#include "SpatialVideoMetadata.h"
-#include "VideoProjectionMetadata.h"
+#include <WebCore/PlatformTrackConfiguration.h>
+#include <WebCore/PlatformVideoColorSpace.h>
+#include <WebCore/SpatialVideoMetadata.h>
+#include <WebCore/VideoProjectionMetadata.h>
 #include <optional>
 
 namespace WebCore {

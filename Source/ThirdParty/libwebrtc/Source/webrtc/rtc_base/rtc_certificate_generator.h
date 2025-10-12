@@ -22,7 +22,7 @@
 #include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread.h"
 
-namespace rtc {
+namespace webrtc {
 
 // Generates `RTCCertificate`s.
 // See `RTCCertificateGenerator` for the WebRTC repo's implementation.
@@ -78,6 +78,7 @@ class RTC_EXPORT RTCCertificateGenerator
   Thread* const worker_thread_;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_RTC_CERTIFICATE_GENERATOR_H_

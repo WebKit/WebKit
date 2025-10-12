@@ -29,7 +29,7 @@ header: "RemoteImageBufferSetConfiguration.h"
     float resolutionScale;
     WebCore::DestinationColorSpace colorSpace;
     WebCore::ContentsFormat contentsFormat;
-    WebCore::ImageBufferPixelFormat pixelFormat;
+    WebCore::ImageBufferFormat bufferFormat;
     WebCore::RenderingMode renderingMode;
     WebCore::RenderingPurpose renderingPurpose;
 

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Not executing script because it moved between documents during fetching
 
 
 PASS Sanity check around top-level Window

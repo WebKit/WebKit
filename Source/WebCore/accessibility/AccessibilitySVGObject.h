@@ -28,17 +28,26 @@
 #pragma once
 
 #include "AccessibilityRenderObject.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class AccessibilitySVGObject : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilitySVGObject> create(AXID, RenderObject&, AXObjectCache*);
+    static Ref<AccessibilitySVGObject> create(AXID, RenderObject&, AXObjectCache&, bool isSVGRoot = false);
+    static Ref<AccessibilitySVGObject> create(AXID, Element&, AXObjectCache&, bool isSVGRoot = false);
     virtual ~AccessibilitySVGObject();
 
+    AccessibilityObject* parentObject() const override;
+    void setParent(AccessibilityRenderObject*);
+    bool isRootWithAccessibleContent() const;
+
+    bool isAccessibilitySVGObjectInstance() const final { return true; }
+    bool isAccessibilitySVGRoot() const final { return m_isSVGRoot; }
+
 protected:
-    explicit AccessibilitySVGObject(AXID, RenderObject&, AXObjectCache*);
-    AXObjectCache* axObjectCache() const final { return m_axObjectCache.get(); }
+    explicit AccessibilitySVGObject(AXID, RenderObject&, AXObjectCache&, bool isSVGRoot);
+    explicit AccessibilitySVGObject(AXID, Element&, AXObjectCache&, bool isSVGRoot);
     AccessibilityRole determineAriaRoleAttribute() const final;
 
 private:
@@ -56,7 +65,18 @@ private:
     template <typename ChildrenType>
     Element* childElementWithMatchingLanguage(ChildrenType&) const;
 
-    WeakPtr<AXObjectCache> m_axObjectCache;
+    // Set for remote SVG resources, on the root.
+    WeakPtr<AccessibilityRenderObject> m_parent;
 };
 
+inline void AccessibilitySVGObject::setParent(AccessibilityRenderObject* parent)
+{
+    ASSERT(m_isSVGRoot);
+    m_parent = parent;
+}
+
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilitySVGObject) \
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.isAccessibilitySVGObjectInstance(); } \
+SPECIALIZE_TYPE_TRAITS_END()

@@ -1,5 +1,6 @@
 
 PASS :resolve_attachment:
+PASS :resolve_attachment:bindTextureResource=true
 PASS :resolve_attachment:colorAttachmentSamples=1
 PASS :resolve_attachment:resolveTargetSamples=4
 PASS :resolve_attachment:resolveTargetUsage=1

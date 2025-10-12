@@ -26,6 +26,7 @@
 #include "config.h"
 #include "URLPatternParser.h"
 
+#include "ExceptionOr.h"
 #include "URLPatternCanonical.h"
 #include "URLPatternTokenizer.h"
 #include <ranges>
@@ -309,7 +310,7 @@ String generateSegmentWildcardRegexp(const URLPatternStringOptions& options)
 template<typename CharacterType>
 static String escapeRegexStringForCharacters(std::span<const CharacterType> characters)
 {
-    static constexpr std::array regexEscapeCharacters { '.', '+', '*', '?', '^', '$', '{', '}', '(', ')', '[', ']', '|', '/', '\\' }; // NOLINT
+    static constexpr auto regexEscapeCharacters = std::to_array<const CharacterType>({ '.', '+', '*', '?', '^', '$', '{', '}', '(', ')', '[', ']', '|', '/', '\\' }); // NOLINT
 
     StringBuilder result;
     result.reserveCapacity(characters.size());
@@ -507,7 +508,7 @@ String generatePatternString(const Vector<Part>& partList, const URLPatternStrin
 template<typename CharacterType>
 static String escapePatternStringForCharacters(std::span<const CharacterType> characters)
 {
-    static constexpr std::array escapeCharacters { '+', '*', '?', ':', '(', ')', '\\', '{', '}' }; // NOLINT
+    static constexpr auto escapeCharacters = std::to_array<const CharacterType>({ '+', '*', '?', ':', '(', ')', '\\', '{', '}' }); // NOLINT
 
     StringBuilder result;
     result.reserveCapacity(characters.size());
@@ -534,7 +535,7 @@ String escapePatternString(StringView input)
 }
 
 // https://urlpattern.spec.whatwg.org/#is-a-valid-name-code-point
-bool isValidNameCodepoint(UChar codepoint, URLPatternUtilities::IsFirst first)
+bool isValidNameCodepoint(char16_t codepoint, URLPatternUtilities::IsFirst first)
 {
     if (first == URLPatternUtilities::IsFirst::Yes)
         return u_hasBinaryProperty(codepoint, UCHAR_ID_START) || codepoint == '_' || codepoint == '$';

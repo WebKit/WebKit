@@ -36,8 +36,8 @@
 #endif
 
 #if defined(__has_include)
-#if __has_include(<System/pthread_machdep.h>)
-#include <System/pthread_machdep.h>
+#if __has_include(<pthread/tsd_private.h>)
+#include <pthread/tsd_private.h>
 #define HAVE_PTHREAD_MACHDEP_H 1
 #else
 #define HAVE_PTHREAD_MACHDEP_H 0

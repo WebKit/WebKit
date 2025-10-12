@@ -21,14 +21,14 @@
 
 #pragma once
 
-#include "CSSPropertyParserConsumer+Color.h"
-#include "Color.h"
-#include "ColorSerialization.h"
-#include "CommonAtomStrings.h"
-#include "FloatPoint.h"
-#include "FloatRect.h"
-#include "QualifiedName.h"
-#include "SVGParserUtilities.h"
+#include <WebCore/CSSPropertyParserConsumer+Color.h>
+#include <WebCore/Color.h>
+#include <WebCore/ColorSerialization.h>
+#include <WebCore/CommonAtomStrings.h>
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/QualifiedName.h>
+#include <WebCore/SVGParserUtilities.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {

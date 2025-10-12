@@ -26,11 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "AXCoreObject.h"
-#import "CocoaAccessibilityConstants.h"
-#import "FontPlatformData.h"
 #import <CoreGraphics/CoreGraphics.h>
+#import <WebCore/AXCoreObject.h>
+#import <WebCore/CocoaAccessibilityConstants.h>
+#import <WebCore/FontPlatformData.h>
 #import <wtf/Markable.h>
+#import <wtf/Platform.h>
 #import <wtf/RefPtr.h>
 #import <wtf/WeakPtr.h>
 
@@ -69,13 +70,11 @@ RetainPtr<NSAttributedString> attributedStringCreate(Node&, StringView, const Si
     // or invalid IDs)? https://bugs.webkit.org/show_bug.cgi?id=293262
     std::atomic<bool> m_isolatedObjectInitialized;
 #endif
-
-    Markable<WebCore::AXID> _identifier;
 }
 
 - (id)initWithAccessibilityObject:(WebCore::AccessibilityObject&)axObject;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-- (void)attachIsolatedObject:(WebCore::AXIsolatedObject*)isolatedObject;
+- (void)attachIsolatedObject:(WebCore::AXIsolatedObject&)isolatedObject;
 - (BOOL)hasIsolatedObject;
 #endif
 
@@ -83,8 +82,6 @@ RetainPtr<NSAttributedString> attributedStringCreate(Node&, StringView, const Si
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 - (void)detachIsolatedObject:(WebCore::AccessibilityDetachmentType)detachmentType;
 #endif
-
-@property (nonatomic, assign) Markable<WebCore::AXID> identifier;
 
 // FIXME: unified these two methods into one.
 #if PLATFORM(MAC)

@@ -4,28 +4,14 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Array.prototype.pop shouldn't touch elements greater than length on non-arrays
+info: bugzilla.mozilla.org/show_bug.cgi?id=909602
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 909602;
-var summary =
-  "Array.prototype.pop shouldn't touch elements greater than length on " +
-  "non-arrays";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 function doTest(obj, index)
 {
-  // print("testing " + JSON.stringify(obj) + " with index " + index);
   assert.sameValue(Array.prototype.pop.call(obj), undefined);
   assert.sameValue(index in obj, true);
   assert.sameValue(obj[index], 42);
@@ -90,7 +76,3 @@ function testPop6()
 }
 for (var i = 0; i < 50; i++)
   testPop6();
-
-/******************************************************************************/
-
-print("Tests complete");

@@ -11,6 +11,14 @@
 #include "video/rate_utilization_tracker.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <optional>
+
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

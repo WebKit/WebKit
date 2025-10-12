@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+
+var canvas = document.createElement("canvas");
+var gl = canvas.getContext("webgl2");
+var shaderURLs = ['resources/threejs-perf1.frag'];
+
+let shaderTexts = [];
+
+function testIteration()
+{
+    for (let shaderText of shaderTexts) {
+        let shader = gl.createShader(gl.FRAGMENT_SHADER);
+        gl.shaderSource(shader, shaderText);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS))
+            throw "Test error";
+        gl.deleteShader(shader);
+    }
+}
+
+async function test()
+{
+    for (let shaderURL of shaderURLs) {
+        let response = await fetch(shaderURL);
+        shaderTexts.push(await response.text());
+    }
+    testIteration();
+    PerfTestRunner.measureRunsPerSecond({
+        description: 'Measures performance of WebGL shader compilation.',
+        run: testIteration
+    });
+}
+
+test();
+
+</script>
+</body>
+</html>

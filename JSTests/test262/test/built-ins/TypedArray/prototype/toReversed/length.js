@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-%typedarray%.prototype.toReversed
+esid: sec-%typedarray%.prototype.toreversed
 description: >
   The "length" property of %TypedArray%.prototype.toReversed
 info: |

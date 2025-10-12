@@ -156,7 +156,7 @@
     uint8_t *pdst_sd_m = (uint8_t *)(pdst);                     \
     uint32_t val0_sd_m, val1_sd_m;                              \
                                                                 \
-    val0_sd_m = (uint32_t)((val)&0x00000000FFFFFFFF);           \
+    val0_sd_m = (uint32_t)((val) & 0x00000000FFFFFFFF);         \
     val1_sd_m = (uint32_t)(((val) >> 32) & 0x00000000FFFFFFFF); \
                                                                 \
     SW(val0_sd_m, pdst_sd_m);                                   \
@@ -481,17 +481,17 @@
                  with rounding is calculated and written to 'out0'
 */
 #define AVER_UB2(RTYPE, in0, in1, in2, in3, out0, out1)   \
-  {                                                       \
+  do {                                                    \
     out0 = (RTYPE)__msa_aver_u_b((v16u8)in0, (v16u8)in1); \
     out1 = (RTYPE)__msa_aver_u_b((v16u8)in2, (v16u8)in3); \
-  }
+  } while (0)
 #define AVER_UB2_UB(...) AVER_UB2(v16u8, __VA_ARGS__)
 
 #define AVER_UB4(RTYPE, in0, in1, in2, in3, in4, in5, in6, in7, out0, out1, \
                  out2, out3)                                                \
   {                                                                         \
-    AVER_UB2(RTYPE, in0, in1, in2, in3, out0, out1)                         \
-    AVER_UB2(RTYPE, in4, in5, in6, in7, out2, out3)                         \
+    AVER_UB2(RTYPE, in0, in1, in2, in3, out0, out1);                        \
+    AVER_UB2(RTYPE, in4, in5, in6, in7, out2, out3);                        \
   }
 #define AVER_UB4_UB(...) AVER_UB4(v16u8, __VA_ARGS__)
 
@@ -1463,15 +1463,15 @@
                  'shift' is a vector.
 */
 #define SRAR_W2(RTYPE, in0, in1, shift)                  \
-  {                                                      \
+  do {                                                   \
     in0 = (RTYPE)__msa_srar_w((v4i32)in0, (v4i32)shift); \
     in1 = (RTYPE)__msa_srar_w((v4i32)in1, (v4i32)shift); \
-  }
+  } while (0)
 
 #define SRAR_W4(RTYPE, in0, in1, in2, in3, shift) \
   {                                               \
-    SRAR_W2(RTYPE, in0, in1, shift)               \
-    SRAR_W2(RTYPE, in2, in3, shift)               \
+    SRAR_W2(RTYPE, in0, in1, shift);              \
+    SRAR_W2(RTYPE, in2, in3, shift);              \
   }
 #define SRAR_W4_SW(...) SRAR_W4(v4i32, __VA_ARGS__)
 

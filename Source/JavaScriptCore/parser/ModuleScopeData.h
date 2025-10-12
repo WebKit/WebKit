@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "Identifier.h"
+#include <JavaScriptCore/Identifier.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 

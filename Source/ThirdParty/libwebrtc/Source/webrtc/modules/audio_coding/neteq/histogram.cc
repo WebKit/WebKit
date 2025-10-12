@@ -11,12 +11,11 @@
 #include "modules/audio_coding/neteq/histogram.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <cstdlib>
-#include <numeric>
 #include <optional>
 
 #include "rtc_base/checks.h"
-#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 

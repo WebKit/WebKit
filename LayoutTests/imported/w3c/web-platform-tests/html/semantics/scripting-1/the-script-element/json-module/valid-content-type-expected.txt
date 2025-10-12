@@ -5,4 +5,6 @@ PASS text/html+json
 PASS image/svg+json
 PASS text/json;boundary=something
 PASS text/json;foo=bar
+PASS text/json;+json
+PASS text/html+xml+json
 

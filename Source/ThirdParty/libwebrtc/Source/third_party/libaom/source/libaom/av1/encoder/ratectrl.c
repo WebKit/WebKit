@@ -164,6 +164,20 @@ double av1_convert_qindex_to_q(int qindex, aom_bit_depth_t bit_depth) {
   }
 }
 
+int av1_convert_q_to_qindex(double q, aom_bit_depth_t bit_depth) {
+  int qindex = MINQ;
+
+  // Find the first qindex that matches or exceeds q.
+  // Note: this operation can also be done with a binary search, as
+  // av1_convert_qindex_to_q() is monotonically increasing with respect to
+  // increasing qindex.
+  while (qindex < MAXQ && av1_convert_qindex_to_q(qindex, bit_depth) < q) {
+    qindex++;
+  }
+
+  return qindex;
+}
+
 // Gets the appropriate bpmb enumerator based on the frame and content type
 static int get_bpmb_enumerator(FRAME_TYPE frame_type,
                                const int is_screen_content_type) {
@@ -184,16 +198,15 @@ static int get_init_ratio(double sse) { return (int)(300000 / sse); }
 // Allow for increase in enumerator to reduce overshoot.
 static int adjust_rtc_keyframe(const RATE_CONTROL *rc, int enumerator) {
   // Don't adjust if most of the image is flat.
-  if (rc->perc_flat_blocks_keyframe > 70) return enumerator;
+  if (rc->perc_spatial_flat_blocks > 70) return enumerator;
   if (rc->last_encoded_size_keyframe == 0 ||
       rc->frames_since_scene_change < rc->frames_since_key) {
     // Very first frame, or if scene change happened after last keyframe.
     if (rc->frame_spatial_variance > 1000 ||
-        (rc->frame_spatial_variance > 500 &&
-         rc->perc_flat_blocks_keyframe == 0))
+        (rc->frame_spatial_variance > 500 && rc->perc_spatial_flat_blocks == 0))
       return enumerator << 3;
     else if (rc->frame_spatial_variance > 500 &&
-             rc->perc_flat_blocks_keyframe < 10)
+             rc->perc_spatial_flat_blocks < 10)
       return enumerator << 2;
     else if (rc->frame_spatial_variance > 400)
       return enumerator << 1;
@@ -233,7 +246,7 @@ int av1_rc_bits_per_mb(const AV1_COMP *cpi, FRAME_TYPE frame_type, int qindex,
     const int ratio = (cpi->rc.bit_est_ratio == 0) ? get_init_ratio(sse_sqrt)
                                                    : cpi->rc.bit_est_ratio;
     // Clamp the enumerator to lower the q fluctuations.
-    enumerator = AOMMIN(AOMMAX((int)(ratio * sse_sqrt), 20000), 170000);
+    enumerator = clamp((int)(ratio * sse_sqrt), 20000, 170000);
   } else if (cpi->oxcf.rc_cfg.mode == AOM_CBR && frame_type == KEY_FRAME &&
              cpi->sf.rt_sf.rc_adjust_keyframe && bit_depth == 8 &&
              cpi->oxcf.rc_cfg.max_intra_bitrate_pct > 0 &&
@@ -607,9 +620,9 @@ static int adjust_q_cbr(const AV1_COMP *cpi, int q, int active_worst_quality,
     // next refresh cycle.
     if (cpi->is_screen_content_type &&
         (cpi->cyclic_refresh->sb_index > cpi->cyclic_refresh->last_sb_index)) {
-      max_delta_down = AOMMIN(8, AOMMAX(1, rc->q_1_frame / 32));
+      max_delta_down = clamp(rc->q_1_frame / 32, 1, 8);
     } else {
-      max_delta_down = AOMMIN(16, AOMMAX(1, rc->q_1_frame / 8));
+      max_delta_down = clamp(rc->q_1_frame / 8, 1, 16);
     }
     if (!cpi->ppi->use_svc && cpi->is_screen_content_type) {
       // Link max_delta_up to max_delta_down and buffer status.
@@ -620,9 +633,9 @@ static int adjust_q_cbr(const AV1_COMP *cpi, int q, int active_worst_quality,
       }
     }
   } else {
-    max_delta_down = (cpi->is_screen_content_type)
-                         ? AOMMIN(8, AOMMAX(1, rc->q_1_frame / 16))
-                         : AOMMIN(16, AOMMAX(1, rc->q_1_frame / 8));
+    max_delta_down = cpi->is_screen_content_type
+                         ? clamp(rc->q_1_frame / 16, 1, 8)
+                         : clamp(rc->q_1_frame / 8, 1, 16);
   }
   // For screen static content with stable buffer level: relax the
   // limit on max_delta_down and apply bias qp, based on buffer fullness.
@@ -743,7 +756,7 @@ static int adjust_q_cbr(const AV1_COMP *cpi, int q, int active_worst_quality,
     const int min_dist = av1_svc_get_min_ref_dist(cpi);
     q = q - AOMMIN(min_dist, 20);
   }
-  return AOMMAX(AOMMIN(q, cpi->rc.worst_quality), cpi->rc.best_quality);
+  return clamp(q, cpi->rc.best_quality, cpi->rc.worst_quality);
 }
 
 static const RATE_FACTOR_LEVEL rate_factor_levels[FRAME_UPDATE_TYPES] = {
@@ -1435,8 +1448,6 @@ static int get_active_cq_level(const RATE_CONTROL *rc,
   static const double cq_adjust_threshold = 0.1;
   int active_cq_level = rc_cfg->cq_level;
   if (rc_cfg->mode == AOM_CQ || rc_cfg->mode == AOM_Q) {
-    // printf("Superres %d %d %d = %d\n", superres_denom, intra_only,
-    //        rc->frames_to_key, !(intra_only && rc->frames_to_key <= 1));
     if ((superres_mode == AOM_SUPERRES_QTHRESH ||
          superres_mode == AOM_SUPERRES_AUTO) &&
         superres_denom != SCALE_NUMERATOR) {
@@ -2023,19 +2034,12 @@ static int rc_pick_q_and_bounds_q_mode(const AV1_COMP *cpi, int width,
 
   if (cq_level > 0) active_best_quality = AOMMAX(1, active_best_quality);
 
-  *top_index = active_worst_quality;
-  *bottom_index = active_best_quality;
+  *top_index = clamp(active_worst_quality, rc->best_quality, rc->worst_quality);
 
-  *top_index = AOMMAX(*top_index, rc->best_quality);
-  *top_index = AOMMIN(*top_index, rc->worst_quality);
+  *bottom_index =
+      clamp(active_best_quality, rc->best_quality, rc->worst_quality);
 
-  *bottom_index = AOMMAX(*bottom_index, rc->best_quality);
-  *bottom_index = AOMMIN(*bottom_index, rc->worst_quality);
-
-  q = active_best_quality;
-
-  q = AOMMAX(q, rc->best_quality);
-  q = AOMMIN(q, rc->worst_quality);
+  q = *bottom_index;
 
   assert(*top_index <= rc->worst_quality && *top_index >= rc->best_quality);
   assert(*bottom_index <= rc->worst_quality &&
@@ -2481,6 +2485,10 @@ void av1_rc_postencode_update_drop_frame(AV1_COMP *cpi) {
     cpi->svc.last_layer_dropped[cpi->svc.spatial_layer_id] = true;
     cpi->svc.drop_spatial_layer[cpi->svc.spatial_layer_id] = true;
   }
+  if (cpi->svc.spatial_layer_id == cpi->svc.number_spatial_layers - 1) {
+    cpi->svc.prev_number_spatial_layers = cpi->svc.number_spatial_layers;
+  }
+  cpi->svc.prev_number_temporal_layers = cpi->svc.number_temporal_layers;
 }
 
 int av1_find_qindex(double desired_q, aom_bit_depth_t bit_depth,
@@ -3068,18 +3076,15 @@ static int set_block_is_active(unsigned char *const active_map_4x4, int mi_cols,
 static unsigned int estimate_scroll_motion(
     const AV1_COMP *cpi, uint8_t *src_buf, uint8_t *last_src_buf,
     int src_stride, int ref_stride, BLOCK_SIZE bsize, int pos_col, int pos_row,
-    int *best_intmv_col, int *best_intmv_row) {
+    int *best_intmv_col, int *best_intmv_row, int sw_col, int sw_row) {
   const AV1_COMMON *const cm = &cpi->common;
   const int bw = block_size_wide[bsize];
   const int bh = block_size_high[bsize];
   const int full_search = 1;
   // Keep border a multiple of 16.
   const int border = (cpi->oxcf.border_in_pixels >> 4) << 4;
-  // Make search_size_height larger to capture more common vertical scroll.
-  // Increase the search if last two frames were dropped.
-  // Values set based on screen test set.
-  int search_size_width = 96;
-  int search_size_height = cpi->rc.drop_count_consec > 1 ? 224 : 192;
+  int search_size_width = sw_col;
+  int search_size_height = sw_row;
   // Adjust based on boundary.
   if ((pos_col - search_size_width < -border) ||
       (pos_col + search_size_width > cm->width + border))
@@ -3236,8 +3241,9 @@ static void rc_scene_detection_onepass_rt(AV1_COMP *cpi,
   // non-zero sad exists along bottom border even though source is static.
   const int border =
       rc->prev_frame_is_dropped || cpi->svc.number_temporal_layers > 1;
-  // Store blkwise SAD for later use
-  if (width == cm->render_width && height == cm->render_height) {
+  // Store blkwise SAD for later use. Disable for spatial layers for now.
+  if (width == cm->render_width && height == cm->render_height &&
+      cpi->svc.number_spatial_layers == 1) {
     if (cpi->src_sad_blk_64x64 == NULL) {
       CHECK_MEM_ERROR(cm, cpi->src_sad_blk_64x64,
                       (uint64_t *)aom_calloc(sb_cols * sb_rows,
@@ -3253,6 +3259,7 @@ static void rc_scene_detection_onepass_rt(AV1_COMP *cpi,
     for (int sbi_col = 0; sbi_col < sb_cols; ++sbi_col) {
       int block_is_active = 1;
       if (cpi->active_map.enabled && rc->percent_blocks_inactive > 0) {
+        // Fix this to include skip feature via ROI.
         block_is_active = set_block_is_active(active_map_4x4, mi_cols, mi_rows,
                                               sbi_col, sbi_row);
       }
@@ -3326,22 +3333,59 @@ static void rc_scene_detection_onepass_rt(AV1_COMP *cpi,
         unscaled_src->y_height >= 720) {
       cpi->rc.high_motion_content_screen_rtc = 1;
       // Compute fast coarse/global motion for 128x128 superblock centered
-      // at middle of frames, to determine if motion is scroll.
+      // at middle of frame, and one to the upper left and one to lower right.
+      // to determine if motion is scroll. Only test 3 points (pts) for now.
       // TODO(marpan): Only allow for 8 bit-depth for now.
       if (cm->seq_params->bit_depth == 8) {
-        int pos_col = (unscaled_src->y_width >> 1) - 64;
-        int pos_row = (unscaled_src->y_height >> 1) - 64;
-        src_y = unscaled_src->y_buffer + pos_row * src_ystride + pos_col;
-        last_src_y =
-            unscaled_last_src->y_buffer + pos_row * last_src_ystride + pos_col;
-        int best_intmv_col = 0;
-        int best_intmv_row = 0;
-        unsigned int y_sad = estimate_scroll_motion(
-            cpi, src_y, last_src_y, src_ystride, last_src_ystride,
-            BLOCK_128X128, pos_col, pos_row, &best_intmv_col, &best_intmv_row);
-        if (y_sad < 100 &&
-            (abs(best_intmv_col) > 16 || abs(best_intmv_row) > 16))
-          cpi->rc.high_motion_content_screen_rtc = 0;
+        int sw_row = (cpi->rc.frame_source_sad > 20000) ? 512 : 192;
+        int sw_col = (cpi->rc.frame_source_sad > 20000) ? 512 : 160;
+        if (cm->width * cm->height >= 3840 * 2160 &&
+            cpi->svc.number_temporal_layers > 1) {
+          sw_row = sw_row << 1;
+          sw_col = sw_col << 1;
+        }
+        const int num_pts =
+            unscaled_src->y_width * unscaled_src->y_height >= 1920 * 1080 ? 3
+                                                                          : 1;
+        for (int pts = 0; pts < num_pts; pts++) {
+          // fac and shift are used to move the center block for the other
+          // two points (pts).
+          int fac = 1;
+          int shift = 1;
+          if (pts == 1) {
+            fac = 1;
+            shift = 2;
+          } else if (pts == 2) {
+            fac = 3;
+            shift = 2;
+          }
+          int pos_col = (fac * unscaled_src->y_width >> shift) - 64;
+          int pos_row = (fac * unscaled_src->y_height >> shift) - 64;
+          pos_col = AOMMAX(sw_col,
+                           AOMMIN(unscaled_src->y_width - sw_col - 1, pos_col));
+          pos_row = AOMMAX(
+              sw_row, AOMMIN(unscaled_src->y_height - sw_row - 1, pos_row));
+          if (pos_col >= 0 && pos_col < unscaled_src->y_width - 64 &&
+              pos_row >= 0 && pos_row < unscaled_src->y_height - 64) {
+            src_y = unscaled_src->y_buffer + pos_row * src_ystride + pos_col;
+            last_src_y = unscaled_last_src->y_buffer +
+                         pos_row * last_src_ystride + pos_col;
+            int best_intmv_col = 0;
+            int best_intmv_row = 0;
+            unsigned int y_sad = estimate_scroll_motion(
+                cpi, src_y, last_src_y, src_ystride, last_src_ystride,
+                BLOCK_128X128, pos_col, pos_row, &best_intmv_col,
+                &best_intmv_row, sw_col, sw_row);
+            unsigned int sad_thresh =
+                (abs(best_intmv_col) > 150 || abs(best_intmv_row) > 150) ? 300
+                                                                         : 150;
+            if (y_sad < sad_thresh &&
+                (abs(best_intmv_col) > 16 || abs(best_intmv_row) > 16)) {
+              cpi->rc.high_motion_content_screen_rtc = 0;
+              break;
+            }
+          }
+        }
       }
     }
     // Pass the flag value to all layer frames.
@@ -3391,7 +3435,7 @@ static const uint8_t AV1_VAR_OFFS[MAX_SB_SIZE] = {
   128, 128, 128, 128, 128, 128, 128, 128
 };
 
-/*!\brief Compute spatial activity for keyframe,  1 pass real-time mode.
+/*!\brief Compute spatial activity for frame,  1 pass real-time mode.
  *
  * Compute average spatial activity/variance for source frame over a
  * subset of superblocks.
@@ -3404,8 +3448,8 @@ static const uint8_t AV1_VAR_OFFS[MAX_SB_SIZE] = {
  * \remark Nothing is returned. Instead the average spatial variance
  * computed is stored in flag \c cpi->rc.frame_spatial_variance.
  */
-static void rc_spatial_act_keyframe_onepass_rt(AV1_COMP *cpi, uint8_t *src_y,
-                                               int src_ystride) {
+static void rc_spatial_act_onepass_rt(AV1_COMP *cpi, uint8_t *src_y,
+                                      int src_ystride) {
   AV1_COMMON *const cm = &cpi->common;
   int num_mi_cols = cm->mi_params.mi_cols;
   int num_mi_rows = cm->mi_params.mi_rows;
@@ -3414,7 +3458,7 @@ static void rc_spatial_act_keyframe_onepass_rt(AV1_COMP *cpi, uint8_t *src_y,
   uint64_t avg_variance = 0;
   int num_samples = 0;
   int num_zero_var_blocks = 0;
-  cpi->rc.perc_flat_blocks_keyframe = 0;
+  cpi->rc.perc_spatial_flat_blocks = 0;
   const int sb_size_by_mb = (cm->seq_params->sb_size == BLOCK_128X128)
                                 ? (cm->seq_params->mib_size >> 1)
                                 : cm->seq_params->mib_size;
@@ -3433,7 +3477,7 @@ static void rc_spatial_act_keyframe_onepass_rt(AV1_COMP *cpi, uint8_t *src_y,
     src_y += (src_ystride << 6) - (sb_cols << 6);
   }
   if (num_samples > 0) {
-    cpi->rc.perc_flat_blocks_keyframe = 100 * num_zero_var_blocks / num_samples;
+    cpi->rc.perc_spatial_flat_blocks = 100 * num_zero_var_blocks / num_samples;
     avg_variance = avg_variance / num_samples;
   }
   cpi->rc.frame_spatial_variance = avg_variance >> 12;
@@ -3530,17 +3574,19 @@ static void resize_reset_rc(AV1_COMP *cpi, int resize_width, int resize_height,
 
 /*!\brief Check for resize based on Q, for 1 pass real-time mode.
  *
- * Check if we should resize, based on average QP from past x frames.
+ * Check if we should resize, based on average QP and content/motion
+ * complexity from past x frames.
  * Only allow for resize at most 1/2 scale down for now, Scaling factor
  * for each step may be 3/4 or 1/2.
  *
  * \ingroup rate_control
- * \param[in]       cpi          Top level encoder structure
+ * \param[in]       cpi            Top level encoder structure
+ * \param[in]       one_half_only  Only allow 1/2 scaling factor
  *
  * \remark Return resized width/height in \c cpi->resize_pending_params,
  * and update some resize counters in \c rc.
  */
-static void dynamic_resize_one_pass_cbr(AV1_COMP *cpi) {
+static void dynamic_resize_one_pass_cbr(AV1_COMP *cpi, int one_half_only) {
   const AV1_COMMON *const cm = &cpi->common;
   RATE_CONTROL *const rc = &cpi->rc;
   PRIMARY_RATE_CONTROL *const p_rc = &cpi->ppi->p_rc;
@@ -3562,9 +3608,11 @@ static void dynamic_resize_one_pass_cbr(AV1_COMP *cpi) {
   if ((cm->width * cm->height) < min_width * min_height) down_size_on = 0;
 
   // Resize based on average buffer underflow and QP over some window.
-  // Ignore samples close to key frame, since QP is usually high after key.
-  if (cpi->rc.frames_since_key > cpi->framerate) {
-    const int window = AOMMIN(30, (int)(2 * cpi->framerate));
+  // Ignore samples close to key frame and scene change since QP is usually high
+  // after key and scene change.
+  // Need to incorpoate content/motion from scene detection analysis.
+  if (rc->frames_since_key > cpi->framerate && !rc->high_source_sad) {
+    const int window = AOMMAX(60, (int)(3 * cpi->framerate));
     rc->resize_avg_qp += p_rc->last_q[INTER_FRAME];
     if (cpi->ppi->p_rc.buffer_level <
         (int)(30 * p_rc->optimal_buffer_level / 100))
@@ -3584,13 +3632,14 @@ static void dynamic_resize_one_pass_cbr(AV1_COMP *cpi) {
           resize_action = DOWN_ONEHALF;
           rc->resize_state = ONE_HALF;
         } else if (rc->resize_state == ORIG) {
-          resize_action = DOWN_THREEFOUR;
-          rc->resize_state = THREE_QUARTER;
+          resize_action = one_half_only ? DOWN_ONEHALF : DOWN_THREEFOUR;
+          rc->resize_state = one_half_only ? ONE_HALF : THREE_QUARTER;
         }
       } else if (rc->resize_state != ORIG &&
                  avg_qp < avg_qp_thr1 * cpi->rc.worst_quality / 100) {
         if (rc->resize_state == THREE_QUARTER ||
-            avg_qp < avg_qp_thr2 * cpi->rc.worst_quality / 100) {
+            avg_qp < avg_qp_thr2 * cpi->rc.worst_quality / 100 ||
+            one_half_only) {
           resize_action = UP_ORIG;
           rc->resize_state = ORIG;
         } else if (rc->resize_state == ONE_HALF) {
@@ -3651,8 +3700,8 @@ static inline int set_key_frame(AV1_COMP *cpi, unsigned int frame_flags) {
 
 // Set to true if this frame is a recovery frame, for 1 layer RPS,
 // and whether we should apply some boost (QP, adjust speed features, etc).
-// Recovery frame here means frame whose closest reference suddenly
-// switched from previous frame to one much further away.
+// Recovery frame here means frame whose closest reference is x frames away,
+// where x = 4.
 // TODO(marpan): Consider adding on/off flag to SVC_REF_FRAME_CONFIG to
 // allow more control for applications.
 static bool set_flag_rps_bias_recovery_frame(const AV1_COMP *const cpi) {
@@ -3662,8 +3711,8 @@ static bool set_flag_rps_bias_recovery_frame(const AV1_COMP *const cpi) {
       cpi->ppi->rtc_ref.reference_was_previous_frame) {
     int min_dist = av1_svc_get_min_ref_dist(cpi);
     // Only consider boost for this frame if its closest reference is further
-    // than x frames away, using x = 4 for now.
-    if (min_dist != INT_MAX && min_dist > 4) return true;
+    // than or equal to x frames away, using x = 4 for now.
+    if (min_dist != INT_MAX && min_dist >= 4) return true;
   }
   return false;
 }
@@ -3761,13 +3810,13 @@ void av1_get_one_pass_rt_params(AV1_COMP *cpi, FRAME_TYPE *const frame_type,
        (cpi->sf.rt_sf.rc_compute_spatial_var_sc && rc->high_source_sad)) &&
       svc->spatial_layer_id == 0 && cm->seq_params->bit_depth == 8 &&
       cpi->oxcf.rc_cfg.max_intra_bitrate_pct > 0)
-    rc_spatial_act_keyframe_onepass_rt(cpi, frame_input->source->y_buffer,
-                                       frame_input->source->y_stride);
+    rc_spatial_act_onepass_rt(cpi, frame_input->source->y_buffer,
+                              frame_input->source->y_stride);
   // Check for dynamic resize, for single spatial layer for now.
   // For temporal layers only check on base temporal layer.
   if (cpi->oxcf.resize_cfg.resize_mode == RESIZE_DYNAMIC) {
     if (svc->number_spatial_layers == 1 && svc->temporal_layer_id == 0)
-      dynamic_resize_one_pass_cbr(cpi);
+      dynamic_resize_one_pass_cbr(cpi, /*one_half_only=*/1);
     if (rc->resize_state == THREE_QUARTER) {
       resize_pending_params->width = (3 + cpi->oxcf.frm_dim_cfg.width * 3) >> 2;
       resize_pending_params->height =
@@ -3782,6 +3831,10 @@ void av1_get_one_pass_rt_params(AV1_COMP *cpi, FRAME_TYPE *const frame_type,
   } else if (is_frame_resize_pending(cpi)) {
     resize_reset_rc(cpi, resize_pending_params->width,
                     resize_pending_params->height, cm->width, cm->height);
+  }
+  if (svc->temporal_layer_id == 0) {
+    rc->num_col_blscroll_last_tl0 = 0;
+    rc->num_row_blscroll_last_tl0 = 0;
   }
   // Set the GF interval and update flag.
   if (!rc->rtc_external_ratectrl)
@@ -3862,9 +3915,16 @@ int av1_encodedframe_overshoot_cbr(AV1_COMP *cpi, int *q) {
         *q = cpi->rc.worst_quality;
       }
     } else {
-      *q = (3 * cpi->rc.worst_quality + *q) >> 2;
-      // For screen content use the max-q set by the user to allow for less
-      // overshoot on slide changes.
+      // Set a larger QP.
+      const uint64_t sad_thr = 64 * 64 * 32;
+      if (cm->width * cm->height >= 1280 * 720 &&
+          (p_rc->buffer_level > (p_rc->optimal_buffer_level) >> 1) &&
+          cpi->rc.avg_source_sad < sad_thr) {
+        *q = (*q + cpi->rc.worst_quality) >> 1;
+      } else {
+        *q = (3 * cpi->rc.worst_quality + *q) >> 2;
+      }
+      // If we arrive here for screen content: use the max-q set by the user.
       if (is_screen_content) *q = cpi->rc.worst_quality;
     }
   }

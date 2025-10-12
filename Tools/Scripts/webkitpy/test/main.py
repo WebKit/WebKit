@@ -64,6 +64,11 @@ def main():
     AutoInstall.register(Package('reporelaypy', Version(0, 4, 1)), local=True)
     AutoInstall.register(Package('webkitflaskpy', Version(0, 3, 0)), local=True)
 
+    # Register testing-only packages.
+    AutoInstall.register(Package('mypy', Version(1, 16, 1)))
+    AutoInstall.register(Package('mypy_extensions', Version(1, 1, 0)))
+    AutoInstall.register(Package('pathspec', Version(0, 12, 1)))
+
     tester = Tester()
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts'), 'webkitpy')
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitcorepy'), 'webkitcorepy')
@@ -71,6 +76,7 @@ def main():
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitscmpy'), 'webkitscmpy')
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitflaskpy'), 'webkitflaskpy')
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'reporelaypy'), 'reporelaypy')
+    tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitapipy'), 'webkitapipy')
     tester.add_tree(os.path.join(_webkit_root, 'Source', 'WebKit', 'Scripts'), 'webkit')
 
     tester.skip(('webkitpy.common.checkout.scm.scm_unittest',), 'are really, really, slow', 31818)

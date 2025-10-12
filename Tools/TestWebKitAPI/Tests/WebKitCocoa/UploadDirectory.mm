@@ -34,6 +34,7 @@
 #import "Utilities.h"
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/text/WTFString.h>
 
 @interface UploadDelegate : NSObject <WKUIDelegate>
@@ -89,10 +90,10 @@ TEST(WebKit, UploadDirectory)
                 "<form id='form' action='/upload.php' method='post' enctype='multipart/form-data'><input type='file' name='testname'></form>"_s;
                 connection.send(response, [=] {
                     connection.receiveHTTPRequest([=](Vector<char>&& request) {
-                        EXPECT_TRUE(strnstr(request.data(), "Content-Length: 543\r\n", request.size()));
-                        auto* headerEnd = strnstr(request.data(), "\r\n\r\n", request.size());
-                        EXPECT_TRUE(headerEnd);
-                        EXPECT_EQ(request.end() - (headerEnd + + strlen("\r\n\r\n")), 543);
+                        EXPECT_TRUE(contains(request.span(), "Content-Length: 543\r\n"_span));
+                        size_t headerEnd = find(request.span(), "\r\n\r\n"_span);
+                        EXPECT_TRUE(headerEnd != notFound);
+                        EXPECT_EQ(request.size() - (headerEnd + strlen("\r\n\r\n")), 543u);
                         constexpr auto secondResponse =
                         "HTTP/1.1 200 OK\r\n"
                         "Content-Length: 0\r\n\r\n"_s;

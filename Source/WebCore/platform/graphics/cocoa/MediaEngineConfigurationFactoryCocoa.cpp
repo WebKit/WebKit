@@ -33,6 +33,7 @@
 #include "HEVCUtilitiesCocoa.h"
 #include "MediaCapabilitiesDecodingInfo.h"
 #include "MediaDecodingConfiguration.h"
+#include "MediaEngineConfigurationFactory.h"
 #include "MediaPlayer.h"
 #include "MediaSessionHelperIOS.h"
 #include "PlatformMediaSessionManager.h"
@@ -163,7 +164,11 @@ static std::optional<MediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const M
     if (!configuration.audio->spatialRendering.value_or(false))
         return info;
 
-    auto supportsSpatialPlayback = PlatformMediaSessionManager::singleton().supportsSpatialAudioPlaybackForConfiguration(configuration);
+    RefPtr manager = configuration.pageIdentifier ? MediaEngineConfigurationFactory::mediaSessionManagerForPageIdentifier(configuration.pageIdentifier.value()) : nullptr;
+    if (!manager)
+        return std::nullopt;
+
+    auto supportsSpatialPlayback = manager->supportsSpatialAudioPlaybackForConfiguration(configuration);
     if (!supportsSpatialPlayback.has_value())
         return std::nullopt;
 

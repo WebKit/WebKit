@@ -38,7 +38,6 @@
 #include "RenderView.h"
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"
-#include "SVGRenderStyle.h"
 #include "SVGUseElement.h"
 #include "SVGVisitedRendererTracking.h"
 #include <wtf/SetForScope.h>
@@ -111,7 +110,7 @@ void RenderSVGResourceClipper::applyPathClipping(GraphicsContext& context, const
         clipPathTransform.multiply(layer()->transform()->toAffineTransform());
 
     const auto& clipPath = clipRenderer.computeClipPath(clipPathTransform);
-    auto windRule = clipRenderer.style().svgStyle().clipRule();
+    auto windRule = clipRenderer.style().clipRule();
 
     // The SVG specification wants us to clip everything, if clip-path doesn't have a child.
     if (clipPath.isEmpty())

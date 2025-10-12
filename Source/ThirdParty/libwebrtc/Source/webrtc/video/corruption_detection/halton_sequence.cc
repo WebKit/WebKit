@@ -18,7 +18,7 @@
 namespace webrtc {
 namespace {
 
-static constexpr int kMaxDimensions = 5;
+constexpr int kMaxDimensions = 5;
 const int kBases[kMaxDimensions] = {2, 3, 5, 7, 11};
 
 double GetVanDerCorputSequenceElement(int sequence_idx, int base) {

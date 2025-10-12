@@ -9,7 +9,10 @@
  */
 #include "net/dcsctp/common/sequence_numbers.h"
 
-#include "test/gmock.h"
+#include <cstdint>
+
+#include "rtc_base/strong_alias.h"
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace {

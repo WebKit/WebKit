@@ -9,7 +9,11 @@
  */
 #include "test/frame_forwarder.h"
 
+#include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
+#include "api/video/video_source_interface.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 namespace test {
@@ -23,32 +27,31 @@ void FrameForwarder::IncomingCapturedFrame(const VideoFrame& video_frame) {
     sink_->OnFrame(video_frame);
 }
 
-void FrameForwarder::AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
-                                     const rtc::VideoSinkWants& wants) {
+void FrameForwarder::AddOrUpdateSink(VideoSinkInterface<VideoFrame>* sink,
+                                     const VideoSinkWants& wants) {
   MutexLock lock(&mutex_);
   AddOrUpdateSinkLocked(sink, wants);
 }
 
-void FrameForwarder::AddOrUpdateSinkLocked(
-    rtc::VideoSinkInterface<VideoFrame>* sink,
-    const rtc::VideoSinkWants& wants) {
+void FrameForwarder::AddOrUpdateSinkLocked(VideoSinkInterface<VideoFrame>* sink,
+                                           const VideoSinkWants& wants) {
   RTC_DCHECK(!sink_ || sink_ == sink);
   sink_ = sink;
   sink_wants_ = wants;
 }
 
-void FrameForwarder::RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) {
+void FrameForwarder::RemoveSink(VideoSinkInterface<VideoFrame>* sink) {
   MutexLock lock(&mutex_);
   RTC_DCHECK_EQ(sink, sink_);
   sink_ = nullptr;
 }
 
-rtc::VideoSinkWants FrameForwarder::sink_wants() const {
+VideoSinkWants FrameForwarder::sink_wants() const {
   MutexLock lock(&mutex_);
   return sink_wants_;
 }
 
-rtc::VideoSinkWants FrameForwarder::sink_wants_locked() const {
+VideoSinkWants FrameForwarder::sink_wants_locked() const {
   return sink_wants_;
 }
 

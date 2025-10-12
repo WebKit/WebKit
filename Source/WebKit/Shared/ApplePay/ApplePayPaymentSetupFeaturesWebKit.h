@@ -48,6 +48,7 @@ public:
     PaymentSetupFeatures(RetainPtr<NSArray>&& = nullptr);
 
     NSArray *platformFeatures() const { return m_platformFeatures.get(); }
+    RetainPtr<NSArray> protectedPlatformFeatures() const { return m_platformFeatures; }
     operator Vector<Ref<WebCore::ApplePaySetupFeature>>() const;
 
 private:

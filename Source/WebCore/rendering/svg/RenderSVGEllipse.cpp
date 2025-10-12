@@ -76,7 +76,7 @@ void RenderSVGEllipse::updateShapeFromElement()
 
     m_fillBoundingBox = FloatRect(m_center.x() - m_radii.width(), m_center.y() - m_radii.height(), 2 * m_radii.width(), 2 * m_radii.height());
     m_strokeBoundingBox = m_fillBoundingBox;
-    if (style().svgStyle().hasStroke())
+    if (style().hasStroke())
         m_strokeBoundingBox->inflate(strokeWidth() / 2);
 }
 
@@ -85,21 +85,25 @@ void RenderSVGEllipse::calculateRadiiAndCenter()
     Ref graphicsElement = this->graphicsElement();
     SVGLengthContext lengthContext(graphicsElement.ptr());
     m_center = FloatPoint(
-        lengthContext.valueForLength(style().svgStyle().cx(), SVGLengthMode::Width),
-        lengthContext.valueForLength(style().svgStyle().cy(), SVGLengthMode::Height));
+        lengthContext.valueForLength(style().cx(), SVGLengthMode::Width),
+        lengthContext.valueForLength(style().cy(), SVGLengthMode::Height));
     if (is<SVGCircleElement>(graphicsElement)) {
-        float radius = lengthContext.valueForLength(style().svgStyle().r());
+        float radius = lengthContext.valueForLength(style().r());
         m_radii = FloatSize(radius, radius);
         return;
     }
 
     ASSERT(is<SVGEllipseElement>(graphicsElement));
 
-    Length rx = style().svgStyle().rx();
-    Length ry = style().svgStyle().ry();
+    auto& rx = style().rx();
+    auto& ry = style().ry();
     m_radii = FloatSize(
         lengthContext.valueForLength(rx.isAuto() ? ry : rx, SVGLengthMode::Width),
         lengthContext.valueForLength(ry.isAuto() ? rx : ry, SVGLengthMode::Height));
+    if (rx.isAuto())
+        m_radii.setWidth(m_radii.height());
+    else if (ry.isAuto())
+        m_radii.setHeight(m_radii.width());
 }
 
 void RenderSVGEllipse::fillShape(GraphicsContext& context) const
@@ -113,7 +117,7 @@ void RenderSVGEllipse::fillShape(GraphicsContext& context) const
 
 void RenderSVGEllipse::strokeShape(GraphicsContext& context) const
 {
-    if (!style().hasVisibleStroke())
+    if (!style().hasStroke() || !style().strokeWidth().isPossiblyPositive())
         return;
     if (hasPath()) {
         RenderSVGShape::strokeShape(context);
@@ -130,7 +134,7 @@ bool RenderSVGEllipse::canUseStrokeHitTestFastPath() const
 
     // We can compute intersections with continuous strokes on circles
     // without using a Path.
-    return m_shapeType == ShapeType::Circle && style().svgStyle().strokeDashArray().isEmpty();
+    return m_shapeType == ShapeType::Circle && style().strokeDashArray().isNone();
 }
 
 bool RenderSVGEllipse::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)

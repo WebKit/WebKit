@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "CSSParserContext.h"
-#include "CanvasNoiseInjection.h"
-#include "FloatRect.h"
-#include "IntSize.h"
-#include "PixelBuffer.h"
-#include "TaskSource.h"
+#include <WebCore/CSSParserContext.h>
+#include <WebCore/CanvasNoiseInjection.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/IntSize.h>
+#include <WebCore/PixelBuffer.h>
+#include <WebCore/TaskSource.h>
 #include <atomic>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/HashSet.h>
@@ -101,6 +101,7 @@ public:
 
     virtual SecurityOrigin* securityOrigin() const { return nullptr; }
     ScriptExecutionContext* scriptExecutionContext() const { return canvasBaseScriptExecutionContext();  }
+    RefPtr<ScriptExecutionContext> protectedScriptExecutionContext() const;
 
     virtual CanvasRenderingContext* renderingContext() const = 0;
 
@@ -117,7 +118,7 @@ public:
     void notifyObserversCanvasDisplayBufferPrepared();
     bool hasDisplayBufferObservers() const { return !m_displayBufferObservers.isEmptyIgnoringNullReferences(); }
 
-    UncheckedKeyHashSet<Element*> cssCanvasClients() const;
+    HashSet<Element*> cssCanvasClients() const;
 
     // !rect means caller knows the full canvas is invalidated previously.
     void didDraw(const std::optional<FloatRect>& rect) { return didDraw(rect, ShouldApplyPostProcessingToDirtyRect::Yes); }
@@ -155,6 +156,7 @@ protected:
     explicit CanvasBase(IntSize, ScriptExecutionContext&);
 
     virtual ScriptExecutionContext* canvasBaseScriptExecutionContext() const = 0;
+    RefPtr<ScriptExecutionContext> protectedCanvasBaseScriptExecutionContext() const;
     virtual std::unique_ptr<CSSParserContext> createCSSParserContext() const = 0;
 
     virtual void setSize(const IntSize&);

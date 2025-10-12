@@ -38,7 +38,7 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorTimer::create()
 }
 
 DisplayVBlankMonitorTimer::DisplayVBlankMonitorTimer()
-    : DisplayVBlankMonitor(WebCore::FullSpeedFramesPerSecond)
+    : DisplayVBlankMonitorThreaded(WebCore::FullSpeedFramesPerSecond)
 {
 }
 

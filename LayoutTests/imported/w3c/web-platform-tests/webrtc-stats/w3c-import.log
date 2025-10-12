@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc-stats/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/webrtc-stats/README.md
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-stats/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webrtc-stats/getStats-remote-candidate-address.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc-stats/getStats-remote-candidate-ufrag.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc-stats/hardware-capability-stats.https.html

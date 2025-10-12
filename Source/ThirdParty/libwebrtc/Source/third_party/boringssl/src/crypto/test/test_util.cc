@@ -1,21 +1,22 @@
-/* Copyright (c) 2015, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2015 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include "test_util.h"
 
 #include <ostream>
 
+#include <openssl/bn.h>
 #include <openssl/err.h>
 
 #include "../internal.h"
@@ -41,7 +42,7 @@ std::ostream &operator<<(std::ostream &os, const Bytes &in) {
   return os;
 }
 
-bool DecodeHex(std::vector<uint8_t> *out, const std::string &in) {
+bool DecodeHex(std::vector<uint8_t> *out, std::string_view in) {
   out->clear();
   if (in.size() % 2 != 0) {
     return false;
@@ -70,7 +71,7 @@ std::string EncodeHex(bssl::Span<const uint8_t> in) {
 }
 
 testing::AssertionResult ErrorEquals(uint32_t err, int lib, int reason) {
-  if (ERR_GET_LIB(err) == lib && ERR_GET_REASON(err) == reason) {
+  if (ERR_equals(err, lib, reason)) {
     return testing::AssertionSuccess();
   }
 
@@ -81,4 +82,18 @@ testing::AssertionResult ErrorEquals(uint32_t err, int lib, int reason) {
          << ERR_error_string_n(ERR_PACK(lib, reason), expected,
                                sizeof(expected))
          << "\"";
+}
+
+bssl::UniquePtr<BIGNUM> HexToBIGNUM(const char *hex) {
+  BIGNUM *bn = nullptr;
+  BN_hex2bn(&bn, hex);
+  return bssl::UniquePtr<BIGNUM>(bn);
+}
+
+std::string BIGNUMToHex(const BIGNUM *bn) {
+  bssl::UniquePtr<char> hex(BN_bn2hex(bn));
+  if (hex == nullptr) {
+    return "error";
+  }
+  return hex.get();
 }

@@ -133,7 +133,7 @@ void WebDataListSuggestionsDropdownMac::close()
 } // namespace WebKit
 
 @implementation WKDataListSuggestionWindow {
-    RetainPtr<NSVisualEffectView> _backdropView;
+    RetainPtr<NSView> _backdropView;
 }
 
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)backingStoreType defer:(BOOL)defer
@@ -143,13 +143,20 @@ void WebDataListSuggestionsDropdownMac::close()
         return nil;
 
     self.hasShadow = YES;
+#if HAVE(LIQUID_GLASS)
+    if (WebKit::isLiquidGlassEnabled())
+        _backdropView = adoptNS([[NSGlassEffectView alloc] initWithFrame:contentRect]);
+#endif
 
-    _backdropView = adoptNS([[NSVisualEffectView alloc] initWithFrame:contentRect]);
+    if (!_backdropView) {
+        RetainPtr visualEffectView = adoptNS([[NSVisualEffectView alloc] initWithFrame:contentRect]);
+        [visualEffectView setMaterial:NSVisualEffectMaterialMenu];
+        [visualEffectView setState:NSVisualEffectStateActive];
+        [visualEffectView setBlendingMode:NSVisualEffectBlendingModeBehindWindow];
+        _backdropView = visualEffectView;
+    }
+
     [_backdropView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [_backdropView setMaterial:NSVisualEffectMaterialMenu];
-    [_backdropView setState:NSVisualEffectStateActive];
-    [_backdropView setBlendingMode:NSVisualEffectBlendingModeBehindWindow];
-
     [self setContentView:_backdropView.get()];
 
     return self;
@@ -169,14 +176,6 @@ void WebDataListSuggestionsDropdownMac::close()
 {
     return NSWindowShadowSecondaryWindow;
 }
-
-#if ENABLE(WINDOW_ADJUSTMENT_FOR_DATALIST_DROPDOWN)
-#import <WebKitAdditions/WebDataListSuggestionsDropdownMacAdditions.mm>
-#else
-- (void)adjustWindowIfNeeded
-{
-}
-#endif
 
 @end
 
@@ -292,9 +291,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self setHeaderView:nil];
     [self setBackgroundColor:[NSColor clearColor]];
     [self setIntercellSpacing:NSMakeSize(0, self.intercellSpacing.height)];
-#if HAVE(NSTABLEVIEWSTYLE)
     [self setStyle:NSTableViewStyleFullWidth];
-#endif
 
     auto column = adoptNS([[NSTableColumn alloc] init]);
     [column setWidth:rect.width()];
@@ -325,7 +322,7 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
 @implementation WKDataListSuggestionsController {
     WeakPtr<WebKit::WebDataListSuggestionsDropdownMac> _dropdown;
     Vector<WebCore::DataListSuggestion> _suggestions;
-    NSView *_presentingView;
+    RetainPtr<NSView> _presentingView;
 
     RetainPtr<NSScrollView> _scrollView;
     RetainPtr<WKDataListSuggestionWindow> _enclosingWindow;
@@ -351,7 +348,14 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
     [_enclosingWindow setMovable:NO];
     [_enclosingWindow setBackgroundColor:[NSColor clearColor]];
     [_enclosingWindow setOpaque:NO];
-    [_enclosingWindow adjustWindowIfNeeded];
+
+#if HAVE(LIQUID_GLASS)
+    if (WebKit::isLiquidGlassEnabled()) {
+        [_enclosingWindow setStyleMask:(NSWindowStyleMaskBorderless | NSWindowStyleMaskFullSizeContentView)];
+        [[[_enclosingWindow contentView] layer] setCornerRadius:12.0];
+        [[[_enclosingWindow contentView] layer] setMasksToBounds:YES];
+    }
+#endif
 
     _scrollView = adoptNS([[NSScrollView alloc] initWithFrame:[_enclosingWindow contentView].bounds]);
     [_scrollView setHasVerticalScroller:YES];
@@ -360,12 +364,7 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
     [_scrollView setDocumentView:_table.get()];
     [_scrollView setDrawsBackground:NO];
 
-    auto insetView =
-#if HAVE(NSTABLEVIEWSTYLE)
-        _scrollView;
-#else
-        [_scrollView contentView];
-#endif
+    auto insetView = _scrollView;
     [insetView setAutomaticallyAdjustsContentInsets:NO];
     [insetView setContentInsets:NSEdgeInsetsMake(dropdownVerticalPadding, 0, dropdownVerticalPadding, 0)];
 

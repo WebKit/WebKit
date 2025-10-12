@@ -10,12 +10,16 @@
 
 #include "modules/audio_coding/neteq/tools/neteq_stats_plotter.h"
 
-#include <inttypes.h>
-#include <stdio.h>
-
+#include <algorithm>
+#include <cinttypes>
+#include <cstdint>
+#include <cstdio>
+#include <memory>
 #include <utility>
 
 #include "absl/strings/string_view.h"
+#include "modules/audio_coding/neteq/tools/neteq_delay_analyzer.h"
+#include "modules/audio_coding/neteq/tools/neteq_stats_getter.h"
 
 namespace webrtc {
 namespace test {

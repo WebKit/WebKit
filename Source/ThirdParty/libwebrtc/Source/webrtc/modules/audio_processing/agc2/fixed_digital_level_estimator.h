@@ -12,10 +12,10 @@
 #define MODULES_AUDIO_PROCESSING_AGC2_FIXED_DIGITAL_LEVEL_ESTIMATOR_H_
 
 #include <array>
-#include <vector>
+#include <cstddef>
 
+#include "api/audio/audio_view.h"
 #include "modules/audio_processing/agc2/agc2_common.h"
-#include "modules/audio_processing/include/audio_frame_view.h"
 
 namespace webrtc {
 

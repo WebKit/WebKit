@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="container">
+    <div id="c-true" contenteditable="true">True</div>
+    <div id="c-false" contenteditable="false">False</div>
+    <div id="c-plaintext-only" contenteditable="plaintext-only">Plaintext-Only</div>
+    <div id="c-none">None</div>
+    <div id="c-empty" contenteditable="">Empty</div>
+    <div id="c-other" contenteditable="other">Other</div>
+    <div id="c-truecaps" contenteditable="TRUE">TRUE</div>
+    <div id="c-truespace" contenteditable=" true ">&nbsp;true&nbsp;</div>
+</div>
+
+<script>
+var output = "This test ensures we parse contenteditable correctly.\n\n";
+
+if (window.accessibilityController) {
+    [
+        ['c-true', true],
+        ['c-false', false],
+        ['c-plaintext-only', true],
+        ['c-none', false],
+        ['c-empty', true],
+        ['c-other', false],
+        ['c-truecaps', true],
+        ['c-truespace', false],
+    ].forEach(([elementId, expected]) => {
+        element = accessibilityController.accessibleElementById(elementId);
+        expectedRole = expected ? "'AXRole: AXTextArea'" : "'AXRole: AXGroup'";
+        output += expect("element.role", expectedRole);
+    });
+    document.getElementById('container').hidden = true;
+    debug(output);
+}
+</script>
+</body>
+</html>

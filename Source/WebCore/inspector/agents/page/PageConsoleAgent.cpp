@@ -93,7 +93,6 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Consol
     addLogChannel(Inspector::Protocol::Console::ChannelSource::Network);
     addLogChannel(Inspector::Protocol::Console::ChannelSource::ConsoleAPI);
     addLogChannel(Inspector::Protocol::Console::ChannelSource::Storage);
-    addLogChannel(Inspector::Protocol::Console::ChannelSource::Appcache);
     addLogChannel(Inspector::Protocol::Console::ChannelSource::Rendering);
     addLogChannel(Inspector::Protocol::Console::ChannelSource::CSS);
     addLogChannel(Inspector::Protocol::Console::ChannelSource::Accessibility);

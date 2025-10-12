@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -22,12 +22,12 @@
 
 #pragma once
 
-#include "CPU.h"
-#include "CalleeBits.h"
-#include "MacroAssemblerCodeRef.h"
-#include "Register.h"
-#include "StackVisitor.h"
-#include "VM.h"
+#include <JavaScriptCore/CPU.h>
+#include <JavaScriptCore/CalleeBits.h>
+#include <JavaScriptCore/MacroAssemblerCodeRef.h>
+#include <JavaScriptCore/Register.h>
+#include <JavaScriptCore/StackVisitor.h>
+#include <JavaScriptCore/VM.h>
 #include <wtf/EnumClassOperatorOverloads.h>
 
 #if OS(WINDOWS)
@@ -341,8 +341,8 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
             return callerFrameAndPC().callerFrame == noCaller() && callerFrameAndPC().returnPC == nullptr;
         }
 
-        void convertToStackOverflowFrame(VM&, CodeBlock* codeBlockToKeepAliveUntilFrameIsUnwound);
-        bool isPartiallyInitializedFrame() const;
+        void convertToZombieFrame(VM&, CodeBlock* codeBlockToKeepAliveUntilFrameIsUnwound);
+        bool isZombieFrame() const;
         bool isNativeCalleeFrame() const;
 
         void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[static_cast<int>(CallFrameSlot::argumentCountIncludingThis)].payload() = count; }
@@ -429,6 +429,10 @@ JS_EXPORT_PRIVATE bool isFromJSCode(void* returnAddress);
 #else
 #define DECLARE_WASM_CALL_FRAME(instance) ((instance)->temporaryCallFrame())
 #endif
+
+// FIXME (see rdar://72897291): Work around a Clang bug where __builtin_return_address()
+// sometimes gives us a signed pointer, and sometimes does not.
+#define OUR_RETURN_ADDRESS removeCodePtrTag(__builtin_return_address(0))
 
 } // namespace JSC
 

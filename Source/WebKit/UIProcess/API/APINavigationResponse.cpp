@@ -28,7 +28,9 @@
 
 #include "APIFrameInfo.h"
 #include "APINavigation.h"
+#include "FrameInfoData.h"
 #include "WebFrameProxy.h"
+#include "WebPageProxy.h"
 
 namespace API {
 
@@ -50,7 +52,7 @@ FrameInfo* NavigationResponse::navigationInitiatingFrame()
     if (!frameInfo)
         return nullptr;
     RefPtr frame = WebKit::WebFrameProxy::webFrame(frameInfo->frameID);
-    m_sourceFrame = FrameInfo::create(FrameInfoData { *frameInfo }, frame ? frame->page() : nullptr);
+    m_sourceFrame = FrameInfo::create(WebKit::FrameInfoData { *frameInfo });
     return m_sourceFrame.get();
 }
 

@@ -1,0 +1,7 @@
+
+PASS Creating an empty policy name works.
+PASS Creating policy names made of a single ASCII character works.
+PASS Creating policy names made of multiple ASCII characters works.
+PASS Creating policy names containing a non-ASCII BMP character works.
+PASS Creating policy names containing a non-BMP character works.
+

@@ -20,7 +20,6 @@
 
 [
     JSCustomMarkFunction,
-    JSGenerateToJSObject,
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface Attr : Node {

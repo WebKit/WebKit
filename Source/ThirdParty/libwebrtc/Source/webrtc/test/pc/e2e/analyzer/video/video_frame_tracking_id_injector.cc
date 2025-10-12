@@ -10,9 +10,11 @@
 
 #include "test/pc/e2e/analyzer/video/video_frame_tracking_id_injector.h"
 
-#include "absl/memory/memory.h"
+#include <cstdint>
+
 #include "api/video/encoded_image.h"
 #include "rtc_base/checks.h"
+#include "test/pc/e2e/analyzer/video/encoded_image_data_injector.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "SourceID.h"
+#include <JavaScriptCore/SourceID.h>
 #include <stddef.h>
 
 namespace JSC {

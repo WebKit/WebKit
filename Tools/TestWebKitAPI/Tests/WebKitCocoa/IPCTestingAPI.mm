@@ -373,6 +373,70 @@ TEST(IPCTestingAPI, DecodesReplyArgumentsForAsyncMessage)
     EXPECT_STREQ([alertMessage UTF8String], "[{\"type\":\"bool\",\"value\":false}]");
 }
 
+TEST(IPCTestingAPI, EmptyParametersDeleteCookie)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>"
+        "let c = IPC.connectionForProcessTarget('Networking');"
+        "let cb = (result) => alert(JSON.stringify(result.arguments));"
+        "c.sendWithAsyncReply(0, IPC.messages.NetworkConnectionToWebProcess_DeleteCookie.name,"
+        "[{type: 'URL', value: ''},"
+        "{type: 'URL', value: 'https://www.url.com'},"
+        "{type: 'String', value: 'a=b'}], cb);</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_STREQ([alertMessage UTF8String], "[]");
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>"
+        "let c = IPC.connectionForProcessTarget('Networking');"
+        "let cb = (result) => alert(JSON.stringify(result.arguments));"
+        "c.sendWithAsyncReply(0, IPC.messages.NetworkConnectionToWebProcess_DeleteCookie.name,"
+        "[{type: 'URL', value: 'https://www.firstparty.com'},"
+        "{type: 'URL', value: ''},"
+        "{type: 'String', value: 'a=b'}], cb);</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_STREQ([alertMessage UTF8String], "[]");
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>"
+        "let c = IPC.connectionForProcessTarget('Networking');"
+        "let cb = (result) => alert(JSON.stringify(result.arguments));"
+        "c.sendWithAsyncReply(0, IPC.messages.NetworkConnectionToWebProcess_DeleteCookie.name,"
+        "[{type: 'URL', value: 'https://www.firstparty.com'},"
+        "{type: 'URL', value: 'https://www.url.com'},"
+        "{type: 'String', value: ''}], cb);</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_STREQ([alertMessage UTF8String], "[]");
+}
+
+TEST(IPCTestingAPI, InvalidURLsDeleteCookie)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>"
+        "let c = IPC.connectionForProcessTarget('Networking');"
+        "let cb = (result) => alert(JSON.stringify(result.arguments));"
+        "c.sendWithAsyncReply(0, IPC.messages.NetworkConnectionToWebProcess_DeleteCookie.name,"
+        "[{type: 'URL', value: 'firstparty.com'},"
+        "{type: 'URL', value: 'url.com'},"
+        "{type: 'String', value: 'a=b'}], cb);</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_STREQ([alertMessage UTF8String], "[]");
+}
+
 TEST(IPCTestingAPI, EmptyFirstPartyForCookiesCookieRequestHeaderFieldValue)
 {
     RetainPtr webView = createWebViewWithIPCTestingAPI();

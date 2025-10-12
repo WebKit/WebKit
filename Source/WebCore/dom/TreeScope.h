@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011 Google Inc. All Rights Reserved.
- * Copyright (C) 2012, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,14 @@
 
 #pragma once
 
-#include "HitTestSource.h"
+#include <WebCore/HitTestSource.h>
 #include <memory>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/NoVirtualDestructorBase.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/AtomString.h>
 
 namespace JSC {
@@ -78,7 +80,7 @@ public:
     Element* focusedElementInScope();
     Element* pointerLockElement() const;
 
-    void setCustomElementRegistry(Ref<CustomElementRegistry>&&);
+    void setCustomElementRegistry(RefPtr<CustomElementRegistry>&&);
     CustomElementRegistry* customElementRegistry() const { return m_customElementRegistry.get(); }
 
     WEBCORE_EXPORT RefPtr<Element> getElementById(const AtomString&) const;
@@ -133,7 +135,6 @@ public:
     bool isMatchingAnchor(HTMLAnchorElement&, StringView name);
 
     inline ContainerNode& rootNode() const; // Defined in TreeScopeInlines.h
-    inline Ref<ContainerNode> protectedRootNode() const; // Defined in TreeScopeInlines.h
 
     inline IdTargetObserverRegistry& idTargetObserverRegistry();
     IdTargetObserverRegistry* idTargetObserverRegistryIfExists() { return m_idTargetObserverRegistry.get(); }
@@ -157,16 +158,16 @@ public:
     void markPendingSVGResourcesForRemoval(const AtomString&);
     RefPtr<SVGElement> takeElementFromPendingSVGResourcesForRemovalMap(const AtomString&);
 
+    // FIXME: Add a ThreadSafetyAnalysis annotated Lock subclass that allows for asserted reads from the mutator
+    static ALWAYS_INLINE Lock& treeScopeMutationLock();
+
 protected:
     TreeScope(ShadowRoot&, Document&, RefPtr<CustomElementRegistry>&&);
     explicit TreeScope(Document&);
     ~TreeScope();
 
     void destroyTreeScopeData();
-    void setDocumentScope(Document& document)
-    {
-        m_documentScope = document;
-    }
+    inline void setDocumentScope(Document&);
 
     RefPtr<Node> nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint, HitTestSource);
 
@@ -177,7 +178,7 @@ private:
     SVGResourcesMap& svgResourcesMap() const;
     bool isElementWithPendingSVGResources(SVGElement&) const;
 
-    CheckedRef<ContainerNode> m_rootNode;
+    const CheckedRef<ContainerNode> m_rootNode;
     std::reference_wrapper<Document> m_documentScope;
     TreeScope* m_parentTreeScope;
 

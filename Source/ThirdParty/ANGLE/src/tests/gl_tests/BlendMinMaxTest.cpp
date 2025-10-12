@@ -6,6 +6,10 @@
 
 #include "test_utils/ANGLETest.h"
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 using namespace angle;
 
 class BlendMinMaxTest : public ANGLETest<>

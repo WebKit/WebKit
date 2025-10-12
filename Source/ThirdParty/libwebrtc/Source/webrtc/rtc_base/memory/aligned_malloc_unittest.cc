@@ -10,12 +10,13 @@
 
 #include "rtc_base/memory/aligned_malloc.h"
 
+#include <cstddef>
 #include <memory>
 
 #ifdef _WIN32
 #include <windows.h>
 #else
-#include <stdint.h>
+#include <cstdint>
 #endif
 
 #include "test/gtest.h"
@@ -26,7 +27,7 @@ namespace webrtc {
 bool CorrectUsage(size_t size, size_t alignment) {
   std::unique_ptr<char, AlignedFreeDeleter> scoped(
       static_cast<char*>(AlignedMalloc(size, alignment)));
-  if (scoped.get() == NULL) {
+  if (scoped == nullptr) {
     return false;
   }
   const uintptr_t scoped_address = reinterpret_cast<uintptr_t>(scoped.get());
@@ -39,7 +40,7 @@ TEST(AlignedMalloc, GetRightAlign) {
   const size_t left_misalignment = 1;
   std::unique_ptr<char, AlignedFreeDeleter> scoped(
       static_cast<char*>(AlignedMalloc(size, alignment)));
-  EXPECT_TRUE(scoped.get() != NULL);
+  EXPECT_TRUE(scoped.get() != nullptr);
   const uintptr_t aligned_address = reinterpret_cast<uintptr_t>(scoped.get());
   const uintptr_t misaligned_address = aligned_address - left_misalignment;
   const char* misaligned_ptr =

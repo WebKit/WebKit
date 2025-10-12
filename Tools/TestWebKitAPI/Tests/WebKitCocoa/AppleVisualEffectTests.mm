@@ -35,11 +35,135 @@
 
 namespace TestWebKitAPI {
 
-#if USE(APPLE_INTERNAL_SDK)
+#if HAVE(MATERIAL_HOSTING)
 
-#import <WebKitAdditions/AppleVisualEffectTestsAdditions.mm>
+// FIXME: Remove these tests and update LayoutTests/apple-visual-effects/apple-visual-effect-parsing.html.
 
-#endif
+TEST(AppleVisualEffect, GlassMaterialParsing)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setUseSystemAppearance:YES];
+
+    [webView synchronouslyLoadHTMLString:@"<div id='test'></div>"];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('#test').style.setProperty('-apple-visual-effect', '-apple-system-glass-material')"];
+
+    EXPECT_WK_STREQ("-apple-system-glass-material", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('#test')).getPropertyValue('-apple-visual-effect')"]);
+}
+
+TEST(AppleVisualEffect, GlassMaterialParsingWithoutUseSystemAppearance)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setUseSystemAppearance:NO];
+
+    [webView synchronouslyLoadHTMLString:@"<div id='test'></div>"];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('#test').style.setProperty('-apple-visual-effect', '-apple-system-glass-material')"];
+
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('#test')).getPropertyValue('-apple-visual-effect')"]);
+}
+
+TEST(AppleVisualEffect, MediaControlsGlassMaterialParsing)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setUseSystemAppearance:YES];
+
+    [webView synchronouslyLoadHTMLString:@"<div id='test'></div>"];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('#test').style.setProperty('-apple-visual-effect', '-apple-system-glass-material-media-controls')"];
+
+    EXPECT_WK_STREQ("-apple-system-glass-material-media-controls", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('#test')).getPropertyValue('-apple-visual-effect')"]);
+}
+
+TEST(AppleVisualEffect, MediaControlsGlassMaterialParsingWithoutUseSystemAppearance)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setUseSystemAppearance:NO];
+
+    [webView synchronouslyLoadHTMLString:@"<div id='test'></div>"];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('#test').style.setProperty('-apple-visual-effect', '-apple-system-glass-material-media-controls')"];
+
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('#test')).getPropertyValue('-apple-visual-effect')"]);
+}
+
+TEST(AppleVisualEffect, MediaControlsSubduedGlassMaterialParsing)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setUseSystemAppearance:YES];
+
+    [webView synchronouslyLoadHTMLString:@"<div id='test'></div>"];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('#test').style.setProperty('-apple-visual-effect', '-apple-system-glass-material-media-controls-subdued')"];
+
+    EXPECT_WK_STREQ("-apple-system-glass-material-media-controls-subdued", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('#test')).getPropertyValue('-apple-visual-effect')"]);
+}
+
+TEST(AppleVisualEffect, MediaControlsSubduedGlassMaterialParsingWithoutUseSystemAppearance)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setUseSystemAppearance:NO];
+
+    [webView synchronouslyLoadHTMLString:@"<div id='test'></div>"];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('#test').style.setProperty('-apple-visual-effect', '-apple-system-glass-material-media-controls-subdued')"];
+
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('#test')).getPropertyValue('-apple-visual-effect')"]);
+}
+
+TEST(AppleVisualEffect, SubduedGlassMaterialParsing)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setUseSystemAppearance:YES];
+
+    [webView synchronouslyLoadHTMLString:@"<div id='test'></div>"];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('#test').style.setProperty('-apple-visual-effect', '-apple-system-glass-material-subdued')"];
+
+    EXPECT_WK_STREQ("-apple-system-glass-material-subdued", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('#test')).getPropertyValue('-apple-visual-effect')"]);
+}
+
+TEST(AppleVisualEffect, SubduedGlassMaterialParsingWithoutUseSystemAppearance)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setUseSystemAppearance:NO];
+
+    [webView synchronouslyLoadHTMLString:@"<div id='test'></div>"];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('#test').style.setProperty('-apple-visual-effect', '-apple-system-glass-material-subdued')"];
+
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('#test')).getPropertyValue('-apple-visual-effect')"]);
+}
+
+TEST(AppleVisualEffect, ClearGlassMaterialParsing)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setUseSystemAppearance:YES];
+
+    [webView synchronouslyLoadHTMLString:@"<div id='test'></div>"];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('#test').style.setProperty('-apple-visual-effect', '-apple-system-glass-material-clear')"];
+
+    EXPECT_WK_STREQ("-apple-system-glass-material-clear", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('#test')).getPropertyValue('-apple-visual-effect')"]);
+}
+
+TEST(AppleVisualEffect, ClearGlassMaterialParsingWithoutUseSystemAppearance)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setUseSystemAppearance:NO];
+
+    [webView synchronouslyLoadHTMLString:@"<div id='test'></div>"];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('#test').style.setProperty('-apple-visual-effect', '-apple-system-glass-material-clear')"];
+
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('#test')).getPropertyValue('-apple-visual-effect')"]);
+}
+
+TEST(AppleVisualEffect, NoCrashWhenRemovingLayers)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setUseSystemAppearance:YES];
+
+    [webView synchronouslyLoadHTMLString:@"<body style='background: red;'><div style='-apple-visual-effect: -apple-system-glass-material; width: 200px; height:  200px; border-radius: 10px;'><p>Test</p></div></body>"];
+
+    [webView waitForNextPresentationUpdate];
+
+    [webView synchronouslyLoadHTMLString:@"<body style='background: blue;'><div style='-apple-visual-effect: -apple-system-glass-material; width: 200px; height:  200px; border-radius: 10px;'><p>Test</p></div></body>"];
+
+    [webView waitForNextPresentationUpdate];
+}
+
+#endif // HAVE(MATERIAL_HOSTING)
 
 } // namespace TestWebKitAPI
 

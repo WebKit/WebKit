@@ -22,6 +22,7 @@ TEST(DataSizeTest, ConstExpr) {
   constexpr int64_t kValue = 12345;
   constexpr DataSize kDataSizeZero = DataSize::Zero();
   constexpr DataSize kDataSizeInf = DataSize::Infinity();
+  static_assert(DataSize() == kDataSizeZero);
   static_assert(kDataSizeZero.IsZero(), "");
   static_assert(kDataSizeInf.IsInfinite(), "");
   static_assert(kDataSizeInf.bytes_or(-1) == -1, "");

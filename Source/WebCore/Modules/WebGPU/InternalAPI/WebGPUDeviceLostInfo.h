@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUDeviceLostReason.h"
+#include <WebCore/WebGPUDeviceLostReason.h>
 #include <optional>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>

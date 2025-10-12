@@ -2,19 +2,17 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-Set-shell.js, deepEqual.js, compareArray.js]
-flags:
-  - noStrict
+includes: [sm/non262-Set-shell.js, compareArray.js, propertyHelper.js]
 description: |
   pending
 esid: pending
 ---*/
 
 assert.sameValue(typeof Set.prototype.isSubsetOf, "function");
-assert.deepEqual(Object.getOwnPropertyDescriptor(Set.prototype.isSubsetOf, "length"), {
+verifyProperty(Set.prototype.isSubsetOf, "length", {
   value: 1, writable: false, enumerable: false, configurable: true,
 });
-assert.deepEqual(Object.getOwnPropertyDescriptor(Set.prototype.isSubsetOf, "name"), {
+verifyProperty(Set.prototype.isSubsetOf, "name", {
   value: "isSubsetOf", writable: false, enumerable: false, configurable: true,
 });
 
@@ -118,7 +116,7 @@ for (let values of [
   setLikeObj.keys = nonCallable;
 
   log.length = 0;
-  assertThrowsInstanceOf(() => emptySet.isSubsetOf(setLike), TypeError);
+  assert.throws(TypeError, () => emptySet.isSubsetOf(setLike));
 
   assert.compareArray(log, [
     "[[get]]", "size",
@@ -131,7 +129,7 @@ for (let values of [
   setLikeObj.has = nonCallable;
 
   log.length = 0;
-  assertThrowsInstanceOf(() => emptySet.isSubsetOf(setLike), TypeError);
+  assert.throws(TypeError, () => emptySet.isSubsetOf(setLike));
 
   assert.compareArray(log, [
     "[[get]]", "size",
@@ -143,7 +141,7 @@ for (let values of [
   sizeValue = NaN;
 
   log.length = 0;
-  assertThrowsInstanceOf(() => emptySet.isSubsetOf(setLike), TypeError);
+  assert.throws(TypeError, () => emptySet.isSubsetOf(setLike));
 
   assert.compareArray(log, [
     "[[get]]", "size",
@@ -154,7 +152,7 @@ for (let values of [
   sizeValue = undefined;
 
   log.length = 0;
-  assertThrowsInstanceOf(() => emptySet.isSubsetOf(setLike), TypeError);
+  assert.throws(TypeError, () => emptySet.isSubsetOf(setLike));
 
   assert.compareArray(log, [
     "[[get]]", "size",
@@ -163,7 +161,7 @@ for (let values of [
 }
 
 // Doesn't accept Array as an input.
-assertThrowsInstanceOf(() => emptySet.isSubsetOf([]), TypeError);
+assert.throws(TypeError, () => emptySet.isSubsetOf([]));
 
 // Works with Set subclasses.
 {
@@ -194,7 +192,7 @@ assertThrowsInstanceOf(() => emptySet.isSubsetOf([]), TypeError);
 for (let thisValue of [
   null, undefined, true, "", {}, new Map, new Proxy(new Set, {}),
 ]) {
-  assertThrowsInstanceOf(() => Set.prototype.isSubsetOf.call(thisValue, emptySet), TypeError);
+  assert.throws(TypeError, () => Set.prototype.isSubsetOf.call(thisValue, emptySet));
 }
 
 // Doesn't call |has| when this-value has more elements.

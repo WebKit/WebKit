@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,10 +30,10 @@
 
 #pragma once
 
-#include "ScriptExecutionContext.h"
-#include "ThreadableWebSocketChannel.h"
-#include "WebSocketChannelClient.h"
-#include "WorkerThreadableWebSocketChannel.h"
+#include <WebCore/ScriptExecutionContext.h>
+#include <WebCore/ThreadableWebSocketChannel.h>
+#include <WebCore/WebSocketChannelClient.h>
+#include <WebCore/WorkerThreadableWebSocketChannel.h>
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -86,8 +86,8 @@ private:
     RefPtr<WorkerThreadableWebSocketChannel::Peer> m_peer;
     bool m_failedWebSocketChannelCreation;
     // ThreadSafeRefCounted must not have String member variables.
-    Vector<UChar> m_subprotocol;
-    Vector<UChar> m_extensions;
+    Vector<char16_t> m_subprotocol;
+    Vector<char16_t> m_extensions;
     bool m_suspended;
     Vector<std::unique_ptr<ScriptExecutionContext::Task>> m_pendingTasks;
 };

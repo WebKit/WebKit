@@ -1,3 +1,3 @@
 
-FAIL Position fallback correctly applied to after-change style assert_equals: #inner halfway between black and lime expected "rgb(0, 128, 0)" but got "rgb(64, 64, 0)"
+FAIL Position fallback correctly applied to after-change style assert_equals: Transitioning from !important width to fallback width expected 250 but got 200
 

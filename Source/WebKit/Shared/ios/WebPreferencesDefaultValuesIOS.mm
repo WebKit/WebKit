@@ -77,7 +77,7 @@ static bool isAsyncTextInputFeatureFlagEnabled()
 
 bool defaultUseAsyncUIKitInteractions()
 {
-    if (WTF::CocoaApplication::isIBooks()) {
+    if (WTF::CocoaApplication::isAppleBooks()) {
         // FIXME: Remove this exception once rdar://119836700 is addressed.
         return false;
     }

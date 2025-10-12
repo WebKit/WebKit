@@ -29,7 +29,8 @@ void InitReplay(void)
     // maxTransformFeedback = 0
     // maxVertexArray = 0
     // maxegl_Sync = 0
-    InitializeReplay4("CapturedTest_ActiveTextures_ES3_Vulkan.angledata", 72, 276, 0, 3, 0, 3, 0, 2, 0, 0, 0, 0, 0, 0, 0, 5, 1, 0, 3, 0, 0, 0);
+    InitializeReplay5("CapturedTest_ActiveTextures_ES3_Vulkan.angledata", 72, 276, 0, 3, 0, 3, 0, 2, 0, 0, 0, 0, 0, 0, 0, 5, 1, 0, 3, 0, 0, 0);
+    InitializeBinaryDataLoader();
 }
 
 // Public Functions

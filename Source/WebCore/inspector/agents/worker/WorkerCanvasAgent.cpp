@@ -60,7 +60,7 @@ bool WorkerCanvasAgent::matchesCurrentContext(ScriptExecutionContext* scriptExec
     if (!globalScope)
         return false;
 
-    return globalScope == &m_globalScope;
+    return globalScope == m_globalScope.ptr();
 }
 
 } // namespace WebCore

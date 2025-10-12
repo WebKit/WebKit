@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "InstructionStream.h"
-#include "Opcode.h"
+#include <JavaScriptCore/InstructionStream.h>
+#include <JavaScriptCore/Opcode.h>
 #include <limits.h>
 #include <wtf/FastBitVector.h>
 #include <wtf/Vector.h>
@@ -102,6 +102,5 @@ private:
 WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename OpcodeTraits>, BytecodeBasicBlock<OpcodeTraits>);
 
 using JSBytecodeBasicBlock = BytecodeBasicBlock<JSOpcodeTraits>;
-using WasmBytecodeBasicBlock = BytecodeBasicBlock<WasmOpcodeTraits>;
 
 } // namespace JSC

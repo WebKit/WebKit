@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CredentialBase.h"
 #include <Security/SecBase.h>
+#include <WebCore/CredentialBase.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSURLCredential;
@@ -51,9 +51,10 @@ public:
 
     WEBCORE_EXPORT bool isEmpty() const;
 
-    bool encodingRequiresPlatformData() const { return m_nsCredential && encodingRequiresPlatformData(RetainPtr { m_nsCredential }.get()); }
+    bool encodingRequiresPlatformData() const;
 
     WEBCORE_EXPORT NSURLCredential *nsCredential() const;
+    WEBCORE_EXPORT RetainPtr<NSURLCredential> protectedNSCredential() const;
 
     static bool platformCompare(const Credential&, const Credential&);
 

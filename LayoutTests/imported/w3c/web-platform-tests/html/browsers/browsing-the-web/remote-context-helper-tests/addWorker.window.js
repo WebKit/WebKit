@@ -2,8 +2,6 @@
 // META: script=/common/dispatcher/dispatcher.js
 // META: script=/common/get-host-info.sub.js
 // META: script=/common/utils.js
-// META: script=/resources/testharness.js
-// META: script=/resources/testharnessreport.js
 // META: script=/html/browsers/browsing-the-web/remote-context-helper/resources/remote-context-helper.js
 // META: script=./resources/test-helper.js
 
@@ -18,11 +16,14 @@ promise_test(async t => {
   const headerName = 'x-wpt-test-header';
   const headerValue = 'test-escaping()';
   const worker = await main.addWorker(
+      'workerVar',
       {
         scripts: ['/common/get-host-info.sub.js', './resources/test-script.js'],
         headers: [[headerName, headerValue]],
       },
   );
+
+  assert_true(await main.executeScript(() => workerVar instanceof Worker));
 
   await assertSimplestScriptRuns(worker);
   await assertFunctionRuns(worker, () => testFunction(), 'testFunction exists');

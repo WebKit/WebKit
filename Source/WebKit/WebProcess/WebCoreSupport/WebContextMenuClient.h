@@ -70,6 +70,8 @@ private:
     void showContextMenu() override;
 #endif
 
+    RefPtr<WebPage> protectedPage() const;
+
     WeakPtr<WebPage> m_page;
 };
 

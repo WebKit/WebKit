@@ -1,0 +1,71 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true obscuredInset.top=50 ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body, html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: system-ui;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: tomato;
+            z-index: 100;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgb(200, 100, 100);
+            z-index: 1000;
+            visibility: hidden;
+        }
+
+        .tall {
+            padding-top: 60px;
+            height: 2000px;
+            background: white;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        await UIHelper.setObscuredInsets(50, 0, 50, 0);
+        await UIHelper.ensurePresentationUpdate();
+
+        initialColors = await UIHelper.fixedContainerEdgeColors();
+
+        await UIHelper.delayFor(100);
+        document.querySelector(".overlay").style.visibility = "visible";
+        await UIHelper.ensurePresentationUpdate();
+
+        finalColors = await UIHelper.fixedContainerEdgeColors();
+
+        shouldBeEqualToString("initialColors.top", "rgb(255, 99, 71)");
+        shouldBeNull("initialColors.bottom");
+        shouldBeEqualToString("finalColors.top", "rgb(255, 99, 71)");
+        shouldBeEqualToString("finalColors.bottom", "rgb(200, 100, 100)");
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+    <div class="header"></div>
+    <div class="tall"></div>
+    <div class="overlay"></div>
+</body>
+</html>

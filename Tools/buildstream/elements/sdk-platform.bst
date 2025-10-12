@@ -16,6 +16,7 @@ depends:
 - sdk/eigen.bst
 - sdk/enchant-2.bst
 - sdk/flite.bst
+- sdk/fmtlib.bst
 - sdk/gi-docgen.bst
 - sdk/graphviz.bst
 - sdk/gst-plugin-audiofx.bst
@@ -25,6 +26,7 @@ depends:
 - sdk/gst-plugin-livesync.bst
 - sdk/gst-plugin-rtp.bst
 - sdk/gtk.bst
+- sdk/hiredis.bst
 - sdk/icecc.bst
 - sdk/krb5.bst
 - sdk/libavif.bst

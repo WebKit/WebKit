@@ -52,6 +52,7 @@ enum class WebAuthenticationStatus : uint8_t {
     KeyStoreFull,
     PINTooShort,
     PINTooLong,
+    PINSuccessful,
 };
 
 enum class LocalAuthenticatorPolicy : bool {

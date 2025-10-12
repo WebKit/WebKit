@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CharacterRange.h"
-#include "DictationContext.h"
+#include <WebCore/CharacterRange.h>
+#include <WebCore/DictationContext.h>
 
 namespace WebCore {
 

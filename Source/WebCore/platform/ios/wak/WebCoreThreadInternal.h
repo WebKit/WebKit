@@ -26,7 +26,7 @@
 #ifndef WebCoreThreadInternal_h
 #define WebCoreThreadInternal_h
 
-#include "WebCoreThread.h"
+#include <WebCore/WebCoreThread.h>
 
 #if defined(__cplusplus)
 extern "C" {
@@ -43,7 +43,10 @@ void WebRunLoopDisableNested();
 void WebThreadInitRunQueue();
 
 WEBCORE_EXPORT CFRunLoopRef WebThreadRunLoop(void);
+
+#if TARGET_OS_IPHONE
 WebThreadContext *WebThreadCurrentContext(void);
+#endif
 
 #if defined(__cplusplus)
 } // extern "C"

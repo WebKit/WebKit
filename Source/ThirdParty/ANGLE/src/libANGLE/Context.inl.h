@@ -60,7 +60,7 @@ ANGLE_INLINE void MarkShaderStorageUsage(const Context *context)
         Buffer *buffer = context->getState().getIndexedShaderStorageBuffer(index).get();
         if (buffer)
         {
-            buffer->onDataChanged();
+            buffer->onDataChanged(context);
         }
     }
 
@@ -185,16 +185,26 @@ ANGLE_INLINE void Context::drawElements(PrimitiveMode mode,
     ANGLE_CONTEXT_TRY(mImplementation->drawElements(this, mode, count, type, indices));
 }
 
-ANGLE_INLINE void StateCache::onBufferBindingChange(Context *context)
-{
-    updateBasicDrawStatesError();
-    updateBasicDrawElementsError();
-}
-
 ANGLE_INLINE void Context::bindBuffer(BufferBinding target, BufferID buffer)
 {
     Buffer *bufferObject =
         mState.mBufferManager->checkBufferAllocation(mImplementation.get(), buffer);
+
+    // If there is a shared context, buffer may have been modified by other context. bindBuffer
+    // supposedly should pick up the changes other contexts have made and update current vertex
+    // array.
+    if (bufferObject != nullptr && isSharedContext())
+    {
+        VertexArrayBufferBindingMask bindingMask = bufferObject->getVertexArrayBinding(this);
+        if (bindingMask.any())
+        {
+            ASSERT(mState.mVertexArray != nullptr);
+            // Update vertex array only if buffer is attached to current vertex array.
+            mState.mVertexArray->onSharedBufferBind(this, bufferObject, bindingMask);
+            mState.setObjectDirty(GL_VERTEX_ARRAY);
+            mPrivateStateCache.onVertexArrayBufferContentsChange();
+        }
+    }
 
     // Early return if rebinding the same buffer
     if (bufferObject == mState.getTargetBuffer(target))
@@ -203,7 +213,7 @@ ANGLE_INLINE void Context::bindBuffer(BufferBinding target, BufferID buffer)
     }
 
     mState.setBufferBinding(this, target, bufferObject);
-    mStateCache.onBufferBindingChange(this);
+    mPrivateStateCache.onBufferBindingChange();
 
     if (bufferObject && isWebGL())
     {
@@ -446,7 +456,7 @@ ANGLE_INLINE void Context::vertexAttribPointer(GLuint index,
                                   type, normalized != GL_FALSE, stride, ptr, &vertexAttribDirty);
     if (vertexAttribDirty)
     {
-        mStateCache.onVertexArrayStateChange(this);
+        mPrivateStateCache.onVertexArrayStateChange();
     }
 }
 

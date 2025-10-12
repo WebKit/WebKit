@@ -7,6 +7,10 @@
 //   Tests the correctness of eglImage with native Metal texture extensions.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 
 #include "common/mathutil.h"
@@ -15,7 +19,6 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <Metal/Metal.h>
-#include <gmock/gmock.h>
 #include <span>
 
 namespace angle

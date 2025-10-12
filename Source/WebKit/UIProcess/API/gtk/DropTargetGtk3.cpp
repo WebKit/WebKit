@@ -49,7 +49,7 @@ enum DropTargetType { Markup, Text, URIList, NetscapeURL, SmartPaste, Custom };
 
 DropTarget::DropTarget(GtkWidget* webView)
     : m_webView(webView)
-    , m_leaveTimer(RunLoop::main(), this, &DropTarget::leaveTimerFired)
+    , m_leaveTimer(RunLoop::mainSingleton(), "DropTarget::LeaveTimer"_s, this, &DropTarget::leaveTimerFired)
 {
     GRefPtr<GtkTargetList> list = adoptGRef(gtk_target_list_new(nullptr, 0));
     gtk_target_list_add_text_targets(list.get(), DropTargetType::Text);
@@ -185,8 +185,8 @@ void DropTarget::dataReceived(IntPoint&& position, GtkSelectionData* data, unsig
         const auto* markupData = gtk_selection_data_get_data_with_length(data, &length);
         if (length > 0) {
             // If data starts with UTF-16 BOM assume it's UTF-16, otherwise assume UTF-8.
-            if (length >= 2 && reinterpret_cast<const UChar*>(markupData)[0] == 0xFEFF)
-                m_selectionData->setMarkup(String({ reinterpret_cast<const UChar*>(markupData) + 1, static_cast<size_t>((length / 2) - 1) }));
+            if (length >= 2 && reinterpret_cast<const char16_t*>(markupData)[0] == 0xFEFF)
+                m_selectionData->setMarkup(String({ reinterpret_cast<const char16_t*>(markupData) + 1, static_cast<size_t>((length / 2) - 1) }));
             else
                 m_selectionData->setMarkup(String::fromUTF8(std::span(markupData, length)));
         }

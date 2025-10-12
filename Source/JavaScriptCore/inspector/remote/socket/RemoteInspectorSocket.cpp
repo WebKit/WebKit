@@ -262,7 +262,7 @@ String RemoteInspector::backendCommands() const
 
     auto contents = FileSystem::readEntireFile(m_backendCommandsPath);
 
-    return contents ? String::adopt(WTFMove(*contents)) : emptyString();
+    return contents ? String { byteCast<Latin1Character>(contents->span()) } : emptyString();
 }
 
 // RemoteInspectorConnectionClient handlers

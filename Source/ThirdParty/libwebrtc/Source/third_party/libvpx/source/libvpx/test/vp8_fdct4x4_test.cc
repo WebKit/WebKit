@@ -25,7 +25,7 @@
 
 namespace {
 
-typedef void (*FdctFunc)(int16_t *a, int16_t *b, int a_stride);
+using FdctFunc = void (*)(int16_t *a, int16_t *b, int a_stride);
 
 const int cospi8sqrt2minus1 = 20091;
 const int sinpi8sqrt2 = 35468;

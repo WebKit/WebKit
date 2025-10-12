@@ -33,7 +33,7 @@
     border-bottom: 1px solid var(--border-color);
 }
 
-.content-view-container > .content-view.audit-test > header h1 {
+.content-view-container > .content-view.audit-test > header > .information > h1 {
     font-size: 2em;
 }
 

@@ -289,6 +289,8 @@
                 return testGetStats();
             })
             .then(function () {
+                if (selector)
+                    selector.stop();
                 finishJSTest();
             })
             .catch(function () {

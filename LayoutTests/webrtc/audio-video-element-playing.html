@@ -19,6 +19,7 @@ promise_test(async (t) => {
     });
 
     const localStream = await navigator.mediaDevices.getUserMedia({ audio : true });
+    t.add_cleanup(() => localStream.getAudioTracks()[0].stop());
     pc1.addTrack(localStream.getAudioTracks()[0], localStream);
     pc1.addTransceiver("video", { streams : [localStream] });
 

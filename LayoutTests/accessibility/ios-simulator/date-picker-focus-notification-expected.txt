@@ -1,0 +1,7 @@
+This tests that when a date field shows a popover, no focused event is fired.
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

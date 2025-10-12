@@ -104,7 +104,7 @@ void MathMLMencloseElement::addNotationFlags(StringView notation)
 void MathMLMencloseElement::parseNotationAttribute()
 {
     clearNotations();
-    if (!hasAttribute(notationAttr)) {
+    if (!hasAttributeWithoutSynchronization(notationAttr)) {
         addNotation(LongDiv); // The default value is longdiv.
         return;
     }

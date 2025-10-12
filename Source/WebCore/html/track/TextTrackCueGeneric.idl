@@ -25,7 +25,6 @@
 
 [
     Conditional=VIDEO,
-    JSGenerateToJSObject,
     JSGenerateToNativeObject,
     LegacyNoInterfaceObject,
     ExportMacro=WEBCORE_EXPORT,

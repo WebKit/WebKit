@@ -23,7 +23,6 @@
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
 #include <WebCore/GUniquePtrSoup.h>
-#include <WebCore/SoupVersioning.h>
 #include <glib/gstdio.h>
 
 static WebKitTestServer* kServer;
@@ -845,11 +844,7 @@ static void testCookieManagerLongExpires(CookieManagerTest* test, gconstpointer)
     SoupCookie* cookie = static_cast<SoupCookie*>(cookies->data);
     auto* cookiesExpires = soup_cookie_get_expires(cookie);
     g_assert_nonnull(cookiesExpires);
-#if USE(SOUP2)
-    g_assert_cmpint(g_date_time_to_unix(expires.get()), ==, soup_date_to_time_t(cookiesExpires));
-#else
     g_assert_cmpint(g_date_time_to_unix(expires.get()), ==, g_date_time_to_unix(cookiesExpires));
-#endif
 
     test->deleteAllCookies();
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 0);
@@ -905,11 +900,7 @@ static void testCookieSyncWithWebView(CookiePersistentStorageTest* test, gconstp
     g_assert_cmpstr(cookieString.get(), ==, "baz=value");
 }
 
-#if USE(SOUP2)
-static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
-#else
 static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
-#endif
 {
     if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
         soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);

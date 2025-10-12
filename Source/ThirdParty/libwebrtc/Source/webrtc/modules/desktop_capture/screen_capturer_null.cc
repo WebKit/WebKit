@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <memory>
+
 #include "modules/desktop_capture/desktop_capturer.h"
 
 namespace webrtc {

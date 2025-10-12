@@ -10,6 +10,12 @@
 
 #include "modules/audio_coding/neteq/timestamp_scaler.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <optional>
+#include <utility>
+
+#include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
@@ -326,7 +332,7 @@ TEST(TimestampScaler, Failures) {
   uint32_t timestamp = 4711;  // Some number.
   EXPECT_EQ(timestamp, scaler.ToInternal(timestamp, kRtpPayloadType));
 
-  Packet* packet = NULL;
+  Packet* packet = nullptr;
   scaler.ToInternal(packet);  // Should not crash. That's all we can test.
 
   EXPECT_CALL(db, Die());  // Called when database object is deleted.

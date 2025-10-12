@@ -90,15 +90,15 @@ const uint32_t unicodeLetter = U_GC_L_MASK | U_GC_NL_MASK;
 const uint32_t unicodeCombiningMark = U_GC_MN_MASK | U_GC_MC_MASK;
 const uint32_t unicodeDigit = U_GC_ND_MASK;
 const uint32_t unicodeConnectorPunctuation = U_GC_PC_MASK;
-const UChar ZWNJ = 0x200C;
-const UChar ZWJ = 0x200D;
+const char16_t ZWNJ = 0x200C;
+const char16_t ZWJ = 0x200D;
 
-static inline bool isIdentifierStartCharacter(UChar c)
+static inline bool isIdentifierStartCharacter(char16_t c)
 {
     return (U_GET_GC_MASK(c) & unicodeLetter) || (c == '$') || (c == '_');
 }
 
-static inline bool isIdentifierCharacter(UChar c)
+static inline bool isIdentifierCharacter(char16_t c)
 {
     return (U_GET_GC_MASK(c) & (unicodeLetter | unicodeCombiningMark | unicodeDigit | unicodeConnectorPunctuation)) || (c == '$') || (c == '_') || (c == ZWNJ) || (c == ZWJ);
 }

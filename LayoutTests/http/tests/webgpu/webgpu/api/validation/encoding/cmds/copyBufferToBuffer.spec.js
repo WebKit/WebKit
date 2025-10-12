@@ -25,12 +25,12 @@ Test Plan:
 * Source buffer and destination buffer are the same buffer
 `;import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { kBufferUsages } from '../../../../capability_info.js';
-import { kResourceStates } from '../../../../gpu_test.js';
+import { kResourceStates, AllFeaturesMaxLimitsGPUTest } from '../../../../gpu_test.js';
 import { kMaxSafeMultipleOf8 } from '../../../../util/math.js';
-import { AllFeaturesMaxLimitsValidationTest } from '../../validation_test.js';
+import * as vtu from '../../validation_test_utils.js';
 
-class F extends AllFeaturesMaxLimitsValidationTest {
-  TestCopyBufferToBuffer(options)
+class F extends AllFeaturesMaxLimitsGPUTest {
+  testCopyBufferToBuffer(options)
 
 
 
@@ -66,11 +66,11 @@ combine('dstBufferState', kResourceStates)
 ).
 fn((t) => {
   const { srcBufferState, dstBufferState } = t.params;
-  const srcBuffer = t.createBufferWithState(srcBufferState, {
+  const srcBuffer = vtu.createBufferWithState(t, srcBufferState, {
     size: 16,
     usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST
   });
-  const dstBuffer = t.createBufferWithState(dstBufferState, {
+  const dstBuffer = vtu.createBufferWithState(t, dstBufferState, {
     size: 16,
     usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST
   });
@@ -83,7 +83,7 @@ fn((t) => {
   'FinishError' :
   'SubmitError';
 
-  t.TestCopyBufferToBuffer({
+  t.testCopyBufferToBuffer({
     srcBuffer,
     srcOffset: 0,
     dstBuffer,
@@ -122,7 +122,7 @@ fn((t) => {
     })
   );
 
-  t.TestCopyBufferToBuffer({
+  t.testCopyBufferToBuffer({
     srcBuffer,
     srcOffset: 0,
     dstBuffer,
@@ -153,7 +153,7 @@ fn((t) => {
   const isSuccess = srcUsage === GPUBufferUsage.COPY_SRC && dstUsage === GPUBufferUsage.COPY_DST;
   const expectation = isSuccess ? 'Success' : 'FinishError';
 
-  t.TestCopyBufferToBuffer({
+  t.testCopyBufferToBuffer({
     srcBuffer,
     srcOffset: 0,
     dstBuffer,
@@ -183,7 +183,7 @@ fn((t) => {
     usage: GPUBufferUsage.COPY_DST
   });
 
-  t.TestCopyBufferToBuffer({
+  t.testCopyBufferToBuffer({
     srcBuffer,
     srcOffset: 0,
     dstBuffer,
@@ -218,7 +218,7 @@ fn((t) => {
     usage: GPUBufferUsage.COPY_DST
   });
 
-  t.TestCopyBufferToBuffer({
+  t.testCopyBufferToBuffer({
     srcBuffer,
     srcOffset,
     dstBuffer,
@@ -255,7 +255,7 @@ fn((t) => {
     usage: GPUBufferUsage.COPY_DST
   });
 
-  t.TestCopyBufferToBuffer({
+  t.testCopyBufferToBuffer({
     srcBuffer,
     srcOffset,
     dstBuffer,
@@ -290,7 +290,7 @@ fn((t) => {
     usage: GPUBufferUsage.COPY_DST
   });
 
-  t.TestCopyBufferToBuffer({
+  t.testCopyBufferToBuffer({
     srcBuffer,
     srcOffset,
     dstBuffer,
@@ -315,7 +315,7 @@ fn((t) => {
     usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST
   });
 
-  t.TestCopyBufferToBuffer({
+  t.testCopyBufferToBuffer({
     srcBuffer: buffer,
     srcOffset,
     dstBuffer: buffer,

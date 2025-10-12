@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 // angle_loadimage.cpp: Defines image loading functions.
 
 #include "image_util/loadimage.h"
@@ -52,9 +56,10 @@ inline bool supportsSSE2()
 
 namespace angle
 {
-ImageLoadContext::ImageLoadContext()                              = default;
-ImageLoadContext::~ImageLoadContext()                             = default;
-ImageLoadContext::ImageLoadContext(const ImageLoadContext &other) = default;
+ImageLoadContext::ImageLoadContext()                                         = default;
+ImageLoadContext::~ImageLoadContext()                                        = default;
+ImageLoadContext::ImageLoadContext(const ImageLoadContext &other)            = default;
+ImageLoadContext &ImageLoadContext::operator=(const ImageLoadContext &other) = default;
 
 void LoadA8ToRGBA8(const ImageLoadContext &context,
                    size_t width,
@@ -84,7 +89,7 @@ void LoadA8ToRGBA8(const ImageLoadContext &context,
                 size_t x = 0;
 
                 // Make output writes aligned
-                for (; ((reinterpret_cast<intptr_t>(&dest[x]) & 0xF) != 0 && x < width); x++)
+                for (; x < width && (reinterpret_cast<intptr_t>(&dest[x]) & 0xF) != 0; x++)
                 {
                     dest[x] = static_cast<uint32_t>(source[x]) << 24;
                 }
@@ -702,7 +707,7 @@ void LoadRGBA8ToBGRA8(const ImageLoadContext &context,
                 size_t x = 0;
 
                 // Make output writes aligned
-                for (; ((reinterpret_cast<intptr_t>(&dest[x]) & 15) != 0) && x < width; x++)
+                for (; x < width && (reinterpret_cast<intptr_t>(&dest[x]) & 15) != 0; x++)
                 {
                     uint32_t rgba = source[x];
                     dest[x]       = (ANGLE_ROTL(rgba, 16) & 0x00ff00ff) | (rgba & 0xff00ff00);

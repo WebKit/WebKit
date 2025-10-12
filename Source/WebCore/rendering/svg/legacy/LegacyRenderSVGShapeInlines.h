@@ -26,14 +26,14 @@
 #pragma once
 
 #include "LegacyRenderSVGShape.h"
+#include "RenderStyleInlines.h"
 #include "SVGGraphicsElement.h"
-#include "SVGRenderStyle.h"
 
 namespace WebCore {
 
 inline bool LegacyRenderSVGShape::hasNonScalingStroke() const
 {
-    return style().svgStyle().vectorEffect() == VectorEffect::NonScalingStroke;
+    return style().vectorEffect() == VectorEffect::NonScalingStroke;
 }
 
 inline SVGGraphicsElement& LegacyRenderSVGShape::graphicsElement() const

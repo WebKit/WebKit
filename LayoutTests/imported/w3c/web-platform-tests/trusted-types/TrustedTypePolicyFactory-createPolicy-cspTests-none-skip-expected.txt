@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Invalid policy name in 'trusted-types' Content Security Policy directive: 'none'. Note that 'none' has no effect unless it is the only expression.
-
 
 PASS Can create policy with name 'SomeName'
 PASS Can create a second policy with name 'SomeName'

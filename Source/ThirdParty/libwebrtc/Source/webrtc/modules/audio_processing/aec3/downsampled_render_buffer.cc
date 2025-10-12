@@ -11,6 +11,7 @@
 #include "modules/audio_processing/aec3/downsampled_render_buffer.h"
 
 #include <algorithm>
+#include <cstddef>
 
 namespace webrtc {
 

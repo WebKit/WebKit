@@ -34,22 +34,22 @@ namespace WebCore {
 
 class HTMLNameCache {
 public:
-    ALWAYS_INLINE static QualifiedName makeAttributeQualifiedName(std::span<const UChar> string)
+    ALWAYS_INLINE static QualifiedName makeAttributeQualifiedName(std::span<const char16_t> string)
     {
         return makeQualifiedName(string);
     }
 
-    ALWAYS_INLINE static QualifiedName makeAttributeQualifiedName(std::span<const LChar> string)
+    ALWAYS_INLINE static QualifiedName makeAttributeQualifiedName(std::span<const Latin1Character> string)
     {
         return makeQualifiedName(string);
     }
 
-    ALWAYS_INLINE static AtomString makeAttributeValue(std::span<const UChar> string)
+    ALWAYS_INLINE static AtomString makeAttributeValue(std::span<const char16_t> string)
     {
         return makeAtomString(string);
     }
 
-    ALWAYS_INLINE static AtomString makeAttributeValue(std::span<const LChar> string)
+    ALWAYS_INLINE static AtomString makeAttributeValue(std::span<const Latin1Character> string)
     {
         return makeAtomString(string);
     }
@@ -100,7 +100,7 @@ private:
         return *slot;
     }
 
-    ALWAYS_INLINE static size_t slotIndex(UChar firstCharacter, UChar lastCharacter, UChar length)
+    ALWAYS_INLINE static size_t slotIndex(char16_t firstCharacter, char16_t lastCharacter, char16_t length)
     {
         unsigned hash = (firstCharacter << 6) ^ ((lastCharacter << 14) ^ firstCharacter);
         hash += (hash >> 14) + (length << 14);
@@ -108,13 +108,13 @@ private:
         return (hash + (hash >> 6)) % capacity;
     }
 
-    ALWAYS_INLINE static AtomString& atomStringCacheSlot(UChar firstCharacter, UChar lastCharacter, UChar length)
+    ALWAYS_INLINE static AtomString& atomStringCacheSlot(char16_t firstCharacter, char16_t lastCharacter, char16_t length)
     {
         auto index = slotIndex(firstCharacter, lastCharacter, length);
         return atomStringCache()[index];
     }
 
-    ALWAYS_INLINE static RefPtr<QualifiedName::QualifiedNameImpl>& qualifiedNameCacheSlot(UChar firstCharacter, UChar lastCharacter, UChar length)
+    ALWAYS_INLINE static RefPtr<QualifiedName::QualifiedNameImpl>& qualifiedNameCacheSlot(char16_t firstCharacter, char16_t lastCharacter, char16_t length)
     {
         auto index = slotIndex(firstCharacter, lastCharacter, length);
         return qualifiedNameCache()[index];

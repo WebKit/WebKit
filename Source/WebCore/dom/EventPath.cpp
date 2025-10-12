@@ -65,7 +65,7 @@ private:
 
     void checkConsistency(Node& currentTarget);
 
-    Ref<Node> m_relatedNode;
+    const Ref<Node> m_relatedNode;
     RefPtr<Node> m_retargetedRelatedNode;
     Vector<RefPtr<TreeScope>, 8> m_ancestorTreeScopes;
     unsigned m_lowestCommonAncestorIndex { 0 };
@@ -118,7 +118,7 @@ void EventPath::buildPath(Node& originalTarget, Event& event)
                 if (auto* document = dynamicDowncast<Document>(*node); document && event.type() != eventNames().loadEvent) {
                     ASSERT(target);
                     if (target) {
-                        if (RefPtr window = document->domWindow())
+                        if (RefPtr window = document->window())
                             m_path.append(EventContext { EventContext::Type::Window, node.get(), window.get(), target.get(), closedShadowDepth });
                     }
                 }
@@ -281,6 +281,17 @@ Vector<Ref<EventTarget>> EventPath::computePathUnclosedToTarget(const EventTarge
     return path;
 }
 
+Vector<Ref<EventTarget>> EventPath::computePathTreatingAllShadowRootsAsOpen() const
+{
+    Vector<Ref<EventTarget>> path;
+    auto pathSize = m_path.size();
+    RELEASE_ASSERT(pathSize);
+    path.reserveInitialCapacity(pathSize);
+    for (auto& currentContext : m_path)
+        path.append(*currentContext.currentTarget());
+    return path;
+}
+
 EventPath::EventPath(std::span<EventTarget* const> targets)
 {
     m_path = WTF::map(targets, [&](auto* target) {
@@ -308,7 +319,7 @@ RelatedNodeRetargeter::RelatedNodeRetargeter(Ref<Node>&& relatedNode, Node& targ
     , m_retargetedRelatedNode(m_relatedNode.copyRef())
 {
     auto& targetTreeScope = target.treeScope();
-    RefPtr currentTreeScope = &m_relatedNode->treeScope();
+    RefPtr currentTreeScope = m_relatedNode->treeScope();
     if (currentTreeScope == &targetTreeScope && target.isConnected() && m_relatedNode->isConnected()) [[likely]]
         return;
 

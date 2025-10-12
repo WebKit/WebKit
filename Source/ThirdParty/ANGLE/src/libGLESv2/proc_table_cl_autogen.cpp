@@ -141,6 +141,8 @@ const ProcTable &GetProcTable()
          {"clSetContextDestructorCallback", P(::cl::clSetContextDestructorCallback)},
          {"clCreateBufferWithProperties", P(::cl::clCreateBufferWithProperties)},
          {"clCreateImageWithProperties", P(::cl::clCreateImageWithProperties)},
+         {"clEnqueueAcquireExternalMemObjectsKHR", P(::cl::clEnqueueAcquireExternalMemObjectsKHR)},
+         {"clEnqueueReleaseExternalMemObjectsKHR", P(::cl::clEnqueueReleaseExternalMemObjectsKHR)},
          {"clIcdGetPlatformIDsKHR", P(::cl::clIcdGetPlatformIDsKHR)}});
     return *sProcTable;
 }

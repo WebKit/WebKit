@@ -12,6 +12,10 @@
 #ifndef LIBANGLE_RENDERER_FORMAT_H_
 #define LIBANGLE_RENDERER_FORMAT_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/cl_types.h"
 #include "libANGLE/renderer/FormatID_autogen.h"
 #include "libANGLE/renderer/renderer_utils.h"

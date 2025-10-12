@@ -27,11 +27,11 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "AuthenticationExtensionsClientOutputsJSON.h"
-#include "CBORReader.h"
-#include "CBORWriter.h"
-#include "CredentialPropertiesOutput.h"
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <WebCore/AuthenticationExtensionsClientOutputsJSON.h>
+#include <WebCore/CBORReader.h>
+#include <WebCore/CBORWriter.h>
+#include <WebCore/CredentialPropertiesOutput.h>
 #include <optional>
 
 namespace WebCore {

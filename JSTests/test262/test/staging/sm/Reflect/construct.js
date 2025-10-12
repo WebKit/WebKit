@@ -4,9 +4,7 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-Reflect-shell.js, deepEqual.js]
-flags:
-  - noStrict
+includes: [sm/non262-Reflect-shell.js, deepEqual.js]
 description: |
   pending
 esid: pending
@@ -56,7 +54,7 @@ g = Derived.bind(null, "q");
 assert.deepEqual(Reflect.construct(g, [8, 9]), new g(8, 9));
 
 // Cross-compartment wrappers:
-var g = createNewGlobal();
+var g = $262.createRealm().global;
 var local = {here: this};
 g.eval("function F(arg) { this.arg = arg }");
 assert.deepEqual(Reflect.construct(g.F, [local]), new g.F(local));
@@ -75,8 +73,8 @@ var nonConstructors = [
     new Proxy(Reflect.construct, {construct(){}}),
 ];
 for (var obj of nonConstructors) {
-    assertThrowsInstanceOf(() => Reflect.construct(obj, []), TypeError);
-    assertThrowsInstanceOf(() => Reflect.construct(obj, [], Object), TypeError);
+    assert.throws(TypeError, () => Reflect.construct(obj, []));
+    assert.throws(TypeError, () => Reflect.construct(obj, [], Object));
 }
 
 
@@ -100,7 +98,7 @@ for (var ctor of constructors) {
 
 // The newTarget argument must be a constructor.
 for (var v of SOME_PRIMITIVE_VALUES.concat(nonConstructors)) {
-    assertThrowsInstanceOf(() => Reflect.construct(checkNewTarget, [], v), TypeError);
+    assert.throws(TypeError, () => Reflect.construct(checkNewTarget, [], v));
 }
 
 // The builtin Array constructor uses new.target.prototype and always

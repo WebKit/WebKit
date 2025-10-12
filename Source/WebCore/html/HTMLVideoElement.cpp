@@ -32,12 +32,14 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
+#include "DocumentView.h"
 #include "ElementInlines.h"
 #include "EventNames.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MediaPlayerPrivate.h"
@@ -46,6 +48,7 @@
 #include "PictureInPictureSupport.h"
 #include "RenderImage.h"
 #include "RenderLayerCompositor.h"
+#include "RenderObjectDocument.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "ScriptController.h"
@@ -63,7 +66,21 @@
 #include "PictureInPictureObserver.h"
 #endif
 
-#define HTMLVIDEOELEMENT_RELEASE_LOG(fmt, ...) RELEASE_LOG_FORWARDABLE(Media, fmt, identifier().toUInt64(), ##__VA_ARGS__)
+#if RELEASE_LOG_DISABLED
+#define HTMLVIDEOELEMENT_RELEASE_LOG(formatString, ...)
+#else
+#define HTMLVIDEOELEMENT_RELEASE_LOG(formatString, ...) \
+do { \
+    if (willLog(WTFLogLevel::Always)) { \
+        RELEASE_LOG_FORWARDABLE(Media, HTMLVIDEOELEMENT_##formatString, logIdentifier(), ##__VA_ARGS__); \
+        if (logger().hasEnabledInspector()) { \
+            char buffer[1024] = { 0 }; \
+            SAFE_SPRINTF(std::span { buffer }, MESSAGE_HTMLVIDEOELEMENT_##formatString, logIdentifier(), ##__VA_ARGS__); \
+            logger().toObservers(logChannel(), WTFLogLevel::Always, String::fromUTF8(buffer)); \
+        } \
+    } \
+} while (0)
+#endif
 
 namespace WebCore {
 
@@ -132,7 +149,7 @@ bool HTMLVideoElement::supportsAcceleratedRendering() const
 
 void HTMLVideoElement::mediaPlayerRenderingModeChanged()
 {
-    HTMLVIDEOELEMENT_RELEASE_LOG(HTMLVIDEOELEMENT_MEDIAPLAYERRENDERINGMODECHANGED);
+    HTMLVIDEOELEMENT_RELEASE_LOG(MEDIAPLAYERRENDERINGMODECHANGED);
 
     // Kick off a fake recalcStyle that will update the compositing tree.
     computeAcceleratedRenderingStateAndUpdateMediaPlayer();
@@ -279,7 +296,7 @@ unsigned HTMLVideoElement::videoHeight() const
 void HTMLVideoElement::scheduleResizeEvent(const FloatSize& naturalSize)
 {
     m_lastReportedNaturalSize = naturalSize;
-    ALWAYS_LOG(LOGIDENTIFIER, naturalSize);
+    HTMLVIDEOELEMENT_RELEASE_LOG(SCHEDULERESIZEEVENT, naturalSize.width(), naturalSize.height());
     scheduleEvent(eventNames().resizeEvent);
 }
 
@@ -297,7 +314,7 @@ bool HTMLVideoElement::isURLAttribute(const Attribute& attribute) const
 const AtomString& HTMLVideoElement::imageSourceURL() const
 {
     const auto& url = attributeWithoutSynchronization(posterAttr);
-    if (!StringView(url).containsOnly<isASCIIWhitespace<UChar>>())
+    if (!StringView(url).containsOnly<isASCIIWhitespace<char16_t>>())
         return url;
     return m_defaultPosterURL;
 }
@@ -319,7 +336,7 @@ bool HTMLVideoElement::shouldDisplayPosterImage() const
 
 void HTMLVideoElement::mediaPlayerFirstVideoFrameAvailable()
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "m_showPoster = ", showPosterFlag());
+    HTMLVIDEOELEMENT_RELEASE_LOG(MEDIAPLAYERFIRSTVIDEOFRAMEAVAILABLE, showPosterFlag());
 
     if (showPosterFlag())
         return;
@@ -329,8 +346,10 @@ void HTMLVideoElement::mediaPlayerFirstVideoFrameAvailable()
     if (RefPtr player = this->player())
         player->prepareForRendering();
 
-    if (CheckedPtr renderer = this->renderer())
+    if (CheckedPtr renderer = this->renderer()) {
         renderer->updateFromElement();
+        protectedDocument()->didPaintImage(*this, nullptr, renderer->videoBox());
+    }
 }
 
 std::optional<DestinationColorSpace> HTMLVideoElement::colorSpace() const
@@ -342,7 +361,7 @@ std::optional<DestinationColorSpace> HTMLVideoElement::colorSpace() const
     return player->colorSpace();
 }
 
-RefPtr<ImageBuffer> HTMLVideoElement::createBufferForPainting(const FloatSize& size, RenderingMode renderingMode, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat) const
+RefPtr<ImageBuffer> HTMLVideoElement::createBufferForPainting(const FloatSize& size, RenderingMode renderingMode, const DestinationColorSpace& colorSpace, ImageBufferFormat pixelFormat) const
 {
     auto* hostWindow = document().view() && document().view()->root() ? document().view()->root()->hostWindow() : nullptr;
     return ImageBuffer::create(size, renderingMode, RenderingPurpose::MediaPainting, 1, colorSpace, pixelFormat, hostWindow);
@@ -436,15 +455,12 @@ void HTMLVideoElement::ancestorWillEnterFullscreen()
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
+
 bool HTMLVideoElement::webkitWirelessVideoPlaybackDisabled() const
 {
     return mediaSession().wirelessVideoPlaybackDisabled();
 }
 
-void HTMLVideoElement::setWebkitWirelessVideoPlaybackDisabled(bool disabled)
-{
-    setBooleanAttribute(webkitwirelessvideoplaybackdisabledAttr, disabled);
-}
 #endif
 
 void HTMLVideoElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
@@ -757,10 +773,10 @@ void HTMLVideoElement::serviceRequestVideoFrameCallbacks(ReducedResolutionSecond
         return;
 
     auto videoFrameMetadata = player()->videoFrameMetadata();
-    if (!videoFrameMetadata || !document().domWindow())
+    if (!videoFrameMetadata || !document().window())
         return;
 
-    processVideoFrameMetadataTimestamps(*videoFrameMetadata, document().domWindow()->protectedPerformance());
+    processVideoFrameMetadataTimestamps(*videoFrameMetadata, document().window()->protectedPerformance());
 
     Ref protectedThis { *this };
 

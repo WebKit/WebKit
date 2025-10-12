@@ -4,36 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-object-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Object.prototype.isPrototypeOf
+info: bugzilla.mozilla.org/show_bug.cgi?id=619283
 esid: pending
 ---*/
-var gTestfile = 'isPrototypeOf.js';
-var BUGNUMBER = 619283;
-var summary = "Object.prototype.isPrototypeOf";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
-
-function expectThrowTypeError(fun)
-{
-  try
-  {
-    var r = fun();
-    throw new Error("didn't throw TypeError, returned " + r);
-  }
-  catch (e)
-  {
-    assert.sameValue(e instanceof TypeError, true,
-             "didn't throw TypeError, got: " + e);
-  }
-}
 
 var isPrototypeOf = Object.prototype.isPrototypeOf;
 
@@ -58,12 +33,12 @@ assert.sameValue(isPrototypeOf(null), false);
  *    argument.
  */
 var protoGlobal = Object.create(this);
-expectThrowTypeError(function() { isPrototypeOf.call(null, {}); });
-expectThrowTypeError(function() { isPrototypeOf.call(undefined, {}); });
-expectThrowTypeError(function() { isPrototypeOf({}); });
-expectThrowTypeError(function() { isPrototypeOf.call(null, protoGlobal); });
-expectThrowTypeError(function() { isPrototypeOf.call(undefined, protoGlobal); });
-expectThrowTypeError(function() { isPrototypeOf(protoGlobal); });
+assert.throws(TypeError, function() { isPrototypeOf.call(null, {}); });
+assert.throws(TypeError, function() { isPrototypeOf.call(undefined, {}); });
+assert.throws(TypeError, function() { isPrototypeOf({}); });
+assert.throws(TypeError, function() { isPrototypeOf.call(null, protoGlobal); });
+assert.throws(TypeError, function() { isPrototypeOf.call(undefined, protoGlobal); });
+assert.throws(TypeError, function() { isPrototypeOf(protoGlobal); });
 
 
 /*
@@ -84,8 +59,3 @@ assert.sameValue(this.isPrototypeOf(protoGlobal), true);
 assert.sameValue(Object.prototype.isPrototypeOf({}), true);
 assert.sameValue(Object.prototype.isPrototypeOf(new Number(17)), true);
 assert.sameValue(Object.prototype.isPrototypeOf(function(){}), true);
-
-
-/******************************************************************************/
-
-print("All tests passed!");

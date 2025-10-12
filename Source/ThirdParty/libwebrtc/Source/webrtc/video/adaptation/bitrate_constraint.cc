@@ -10,11 +10,17 @@
 
 #include "video/adaptation/bitrate_constraint.h"
 
+#include <cstdint>
+#include <optional>
 #include <utility>
-#include <vector>
 
 #include "api/sequence_checker.h"
+#include "api/video_codecs/video_encoder.h"
+#include "call/adaptation/encoder_settings.h"
+#include "call/adaptation/video_source_restrictions.h"
 #include "call/adaptation/video_stream_adapter.h"
+#include "call/adaptation/video_stream_input_state.h"
+#include "rtc_base/checks.h"
 #include "video/adaptation/video_stream_encoder_resource_manager.h"
 
 namespace webrtc {

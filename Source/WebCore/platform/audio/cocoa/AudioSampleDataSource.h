@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "AudioSampleDataConverter.h"
-#include "CAAudioStreamDescription.h"
-#include "CARingBuffer.h"
 #include <CoreAudio/CoreAudioTypes.h>
+#include <WebCore/AudioSampleDataConverter.h>
+#include <WebCore/CAAudioStreamDescription.h>
+#include <WebCore/CARingBuffer.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/RefPtr.h>

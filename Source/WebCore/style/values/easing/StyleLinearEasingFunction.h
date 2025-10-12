@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class CSSToLengthConversionData;
+class BuilderState;
 class LinearTimingFunction;
 class RenderStyle;
 class TimingFunction;
@@ -37,7 +37,7 @@ namespace Style {
 
 CSS::LinearEasingFunction toCSSLinearEasingFunction(const LinearTimingFunction&, const RenderStyle&);
 
-Ref<TimingFunction> createTimingFunction(const CSS::LinearEasingFunction&, const CSSToLengthConversionData&);
+Ref<TimingFunction> createTimingFunction(const BuilderState&, const CSS::LinearEasingFunction&);
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::LinearEasingFunction&);
 
 } // namespace Style

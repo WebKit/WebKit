@@ -37,7 +37,7 @@
     padding: 0 0 1px 0;
 }
 
-.CodeMirror pre {
+.CodeMirror pre:is(.CodeMirror-line, .CodeMirror-line-like) {
     padding: 0 3px 0 7px;
 }
 

@@ -42,7 +42,7 @@ static std::optional<ShareableResource::Handle> tryConvertToShareableResourceHan
     if (!script.containsSingleFileMappedSegment())
         return std::nullopt;
 
-    auto& segment = script.buffer()->begin()->segment;
+    auto& segment = script.buffer().begin()->segment;
     auto sharedMemory = SharedMemory::wrapMap(segment->span(), SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
         return std::nullopt;
@@ -79,7 +79,7 @@ String ScriptBuffer::toString() const
 
 bool ScriptBuffer::containsSingleFileMappedSegment() const
 {
-    return m_buffer && m_buffer.get()->hasOneSegment() && m_buffer.get()->begin()->segment->containsMappedFileData();
+    return m_buffer.hasOneSegment() && m_buffer.begin()->segment->containsMappedFileData();
 }
 
 void ScriptBuffer::append(const String& string)
@@ -120,15 +120,6 @@ auto ScriptBuffer::ipcData() const -> IPCData
         return { WTFMove(*handle) };
 #endif
     return m_buffer.get();
-}
-
-bool operator==(const ScriptBuffer& a, const ScriptBuffer& b)
-{
-    if (a.buffer() == b.buffer())
-        return true;
-    if (!a.buffer() || !b.buffer())
-        return false;
-    return *a.buffer() == *b.buffer();
 }
 
 } // namespace WebCore

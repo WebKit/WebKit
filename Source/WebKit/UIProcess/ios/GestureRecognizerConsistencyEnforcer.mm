@@ -38,7 +38,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(GestureRecognizerConsistencyEnforcer);
 
 GestureRecognizerConsistencyEnforcer::GestureRecognizerConsistencyEnforcer(WKContentView *view)
     : m_view(view)
-    , m_timer(RunLoop::main(), this, &GestureRecognizerConsistencyEnforcer::timerFired)
+    , m_timer(RunLoop::mainSingleton(), "GestureRecognizerConsistencyEnforcer::Timer"_s, this, &GestureRecognizerConsistencyEnforcer::timerFired)
 {
     ASSERT(m_view);
 }

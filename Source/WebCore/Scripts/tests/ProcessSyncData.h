@@ -24,10 +24,9 @@
 
 #pragma once
 
-#include "DOMAudioSession.h"
+#include <WebCore/DOMAudioSession.h>
 #include <wtf/URL.h>
 #include "StringifyThis"
-#include <variant>
 
 namespace WebCore {
 
@@ -57,7 +56,7 @@ static const ProcessSyncDataType allFrameTreeSyncDataTypes[] = {
 using DOMAudioSessionType = bool;
 #endif
 
-using ProcessSyncDataVariant = std::variant<
+using ProcessSyncDataVariant = Variant<
     WebCore::DOMAudioSessionType,
     URL,
     bool,

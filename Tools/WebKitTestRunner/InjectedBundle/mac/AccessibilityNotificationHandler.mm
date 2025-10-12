@@ -93,7 +93,7 @@
     // Once we start requesting notifications, it's on for the duration of the program.
     // This is to avoid any race conditions between tests turning this flag on and off. Instead
     // AccessibilityNotificationHandler can ignore events it doesn't care about.
-    [WTR::webAccessibilityObjectWrapperClass() accessibilitySetShouldRepostNotifications:YES];
+    [WTR::webAccessibilityObjectWrapperClassSingleton() accessibilitySetShouldRepostNotifications:YES];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_notificationReceived:) name:@"AXDRTNotification" object:nil];
 }
 
@@ -133,4 +133,3 @@
 }
 
 @end
-

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WasmTag.h"
 
+#include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEBASSEMBLY)

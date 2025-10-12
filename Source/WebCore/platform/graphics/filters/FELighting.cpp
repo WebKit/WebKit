@@ -58,7 +58,7 @@ bool FELighting::operator==(const FELighting& other) const
         && m_specularExponent == other.m_specularExponent
         && m_kernelUnitLengthX == other.m_kernelUnitLengthX
         && m_kernelUnitLengthY == other.m_kernelUnitLengthY
-        && m_lightSource.get() == other.m_lightSource.get();
+        && arePointingToEqualData(m_lightSource, other.m_lightSource);
 }
 
 bool FELighting::setSurfaceScale(float surfaceScale)

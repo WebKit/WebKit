@@ -32,7 +32,7 @@
     DispatchedTo=WebContent
 ]
 messages -> RemoteImageDecoderAVFManager {
-    EncodedDataStatusChanged(WebCore::ImageDecoderIdentifier identifier, size_t frameCount, WebCore::IntSize size, bool hasTrack)
+    EncodedDataStatusChanged(WebCore::ImageDecoderIdentifier identifier, uint64_t frameCount, WebCore::IntSize size, bool hasTrack)
 }
 
 #endif

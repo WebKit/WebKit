@@ -11,8 +11,14 @@
 #include "video/encoder_overshoot_detector.h"
 
 #include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 #include <string>
 
+#include "api/units/data_rate.h"
+#include "api/video/video_codec_type.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -20,7 +26,7 @@ namespace {
 // The buffer level for media-rate utilization is allowed to go below zero,
 // down to
 // -(`kMaxMediaUnderrunFrames` / `target_framerate_fps_`) * `target_bitrate_`.
-static constexpr double kMaxMediaUnderrunFrames = 5.0;
+constexpr double kMaxMediaUnderrunFrames = 5.0;
 }  // namespace
 
 EncoderOvershootDetector::EncoderOvershootDetector(int64_t window_size_ms,

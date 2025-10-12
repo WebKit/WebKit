@@ -10,10 +10,11 @@
 
 #include "test/testsupport/test_artifacts.h"
 
-#include <string.h>
+#include <cstdint>
+#include <cstring>
+#include <string>
 
 #include "absl/flags/flag.h"
-#include "absl/flags/parse.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/system/file_wrapper.h"
 #include "test/testsupport/file_utils.h"

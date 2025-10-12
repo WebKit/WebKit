@@ -373,13 +373,13 @@ RefPtr<WebCore::Icon> WebExtensionMenuItem::icon(WebCore::FloatSize idealSize) c
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
     if (m_iconVariants) {
         result = extensionContext->protectedExtension()->bestIconVariant(m_iconVariants, WebCore::FloatSize(idealSize), [&](Ref<API::Error> error) {
-            extensionContext->recordError(wrapper(error.get()));
+            extensionContext->recordError(error);
         });
     } else
 #endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
     if (m_icons) {
         result = extensionContext->protectedExtension()->bestIcon(m_icons, WebCore::FloatSize(idealSize), [&](Ref<API::Error> error) {
-            extensionContext->recordError(wrapper(error.get()));
+            extensionContext->recordError(error);
         });
     }
 

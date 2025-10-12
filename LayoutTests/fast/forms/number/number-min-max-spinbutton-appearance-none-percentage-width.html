@@ -1,0 +1,23 @@
+<style>
+
+input::-webkit-inner-spin-button {
+   appearance: none;
+   width: 50%;
+   background: red;
+}
+
+</style>
+<input id="input" type="number" min="0" max="10">
+<div id="logs"></div>
+<script>
+
+function runTest() {
+    testRunner.dumpAsText();
+
+    logs.innerHTML += "input width is " + input.getBoundingClientRect().width;
+}
+
+if (window.testRunner)
+    runTest();
+
+</script>

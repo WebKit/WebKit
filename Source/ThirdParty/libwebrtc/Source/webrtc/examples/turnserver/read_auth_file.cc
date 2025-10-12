@@ -10,7 +10,10 @@
 
 #include "examples/turnserver/read_auth_file.h"
 
-#include <stddef.h>
+#include <cstddef>
+#include <istream>
+#include <map>
+#include <string>
 
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
@@ -25,8 +28,8 @@ std::map<std::string, std::string> ReadAuthFile(std::istream* s) {
     if (sep == std::string::npos)
       continue;
     char buf[32];
-    size_t len = rtc::hex_decode(rtc::ArrayView<char>(buf),
-                                 absl::string_view(line).substr(sep + 1));
+    size_t len = webrtc::hex_decode(webrtc::ArrayView<char>(buf),
+                                    absl::string_view(line).substr(sep + 1));
     if (len > 0) {
       name_to_key.emplace(line.substr(0, sep), std::string(buf, len));
     }

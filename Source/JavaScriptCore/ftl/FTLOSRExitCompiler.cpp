@@ -332,6 +332,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
                 if (!property.location().neededForMaterialization())
                     continue;
 
+                ASSERT(property.value().kind() != ExitValueDead);
                 recoverValue(property.value());
                 jit.storePtr(GPRInfo::regT0, materializationArguments + propertyIndex);
             }

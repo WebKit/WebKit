@@ -78,6 +78,8 @@ enum class PaintBehavior : uint32_t {
     ExcludeReplacedContentExceptForIFrames      = 1 << 19,
     ExcludeText                                 = 1 << 20,
     FixedAndStickyLayersOnly                    = 1 << 21,
+    DrawsHDRContent                             = 1 << 22,
+    DraggableSnapshot                           = 1 << 23,
 };
 
 } // namespace WebCore

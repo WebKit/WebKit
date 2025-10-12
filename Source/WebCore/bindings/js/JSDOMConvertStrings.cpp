@@ -126,7 +126,7 @@ ConversionResult<IDLDOMString> trustedScriptCompliantString(JSGlobalObject& glob
     VM& vm = global.vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    if (auto* trustedScript = JSTrustedScript::toWrapped(vm, input))
+    if (RefPtr trustedScript = JSTrustedScript::toWrapped(vm, input))
         return trustedScript->toString();
 
     RefPtr scriptExecutionContext = jsDynamicCast<JSDOMGlobalObject*>(&global)->scriptExecutionContext();

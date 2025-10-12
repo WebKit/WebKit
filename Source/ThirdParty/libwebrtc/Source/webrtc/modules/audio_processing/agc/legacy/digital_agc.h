@@ -11,7 +11,8 @@
 #ifndef MODULES_AUDIO_PROCESSING_AGC_LEGACY_DIGITAL_AGC_H_
 #define MODULES_AUDIO_PROCESSING_AGC_LEGACY_DIGITAL_AGC_H_
 
-#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include <cstddef>
+#include <cstdint>
 
 namespace webrtc {
 

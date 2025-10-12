@@ -40,22 +40,22 @@ WKTypeID WKBackForwardListGetTypeID()
 
 WKBackForwardListItemRef WKBackForwardListGetCurrentItem(WKBackForwardListRef listRef)
 {
-    return toAPI(toProtectedImpl(listRef)->currentItem());
+    return toAPI(toProtectedImpl(listRef)->protectedCurrentItem().get());
 }
 
 WKBackForwardListItemRef WKBackForwardListGetBackItem(WKBackForwardListRef listRef)
 {
-    return toAPI(toProtectedImpl(listRef)->backItem());
+    return toAPI(toProtectedImpl(listRef)->protectedBackItem().get());
 }
 
 WKBackForwardListItemRef WKBackForwardListGetForwardItem(WKBackForwardListRef listRef)
 {
-    return toAPI(toProtectedImpl(listRef)->forwardItem());
+    return toAPI(toProtectedImpl(listRef)->protectedForwardItem().get());
 }
 
 WKBackForwardListItemRef WKBackForwardListGetItemAtIndex(WKBackForwardListRef listRef, int index)
 {
-    return toAPI(toProtectedImpl(listRef)->itemAtIndex(index));
+    return toAPI(toProtectedImpl(listRef)->protectedItemAtIndex(index).get());
 }
 
 void WKBackForwardListClear(WKBackForwardListRef listRef)

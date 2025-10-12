@@ -129,7 +129,7 @@ static std::optional<float> resolveColorStopPosition(const GradientLinearColorSt
         [&](const typename LengthPercentage<>::Dimension& length) -> std::optional<float> {
             if (gradientLength <= 0)
                 return 0;
-            return length.value / gradientLength;
+            return length.resolveZoom(Style::ZoomNeeded { }) / gradientLength;
         },
         [&](const typename LengthPercentage<>::Percentage& percentage) -> std::optional<float> {
             return percentage.value / 100.0;
@@ -642,9 +642,9 @@ template<typename GradientAdapter, typename StyleGradient> GradientColorStops co
     };
 }
 
-static inline float positionFromValue(const LengthPercentage<>& coordinate, float widthOrHeight)
+static inline float positionFromValue(LengthWrapperBaseDerived auto const& coordinate, float widthOrHeight)
 {
-    return evaluate(coordinate, widthOrHeight);
+    return evaluate<float>(coordinate, widthOrHeight, Style::ZoomNeeded { });
 }
 
 static inline float positionFromValue(const NumberOrPercentage<>& coordinate, float widthOrHeight)
@@ -722,7 +722,7 @@ static std::pair<FloatPoint, FloatPoint> endPointsFromAngleForPrefixedVariants(f
 
 static float resolveRadius(const LengthPercentage<CSS::Nonnegative>& radius, float widthOrHeight)
 {
-    return evaluate(radius, widthOrHeight);
+    return evaluate<float>(radius, widthOrHeight, Style::ZoomNeeded { });
 }
 
 struct DistanceToCorner {
@@ -943,7 +943,7 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     auto computeCircleRadius = [&](const Variant<RadialGradient::Circle::Length, RadialGradient::Extent>& circleLengthOrExtent, FloatPoint centerPoint) -> std::pair<float, float> {
         return WTF::switchOn(circleLengthOrExtent,
             [&](const RadialGradient::Circle::Length& circleLength) -> std::pair<float, float> {
-                return { circleLength.value, 1 };
+                return { circleLength.resolveZoom(Style::ZoomNeeded { }), 1 };
             },
             [&](const RadialGradient::Extent& extent) -> std::pair<float, float> {
                 return WTF::switchOn(extent,

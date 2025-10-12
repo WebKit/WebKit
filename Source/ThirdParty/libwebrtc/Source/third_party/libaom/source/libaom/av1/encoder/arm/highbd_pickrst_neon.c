@@ -1902,7 +1902,7 @@ int64_t av1_highbd_pixel_proj_error_neon(
 
       for (int k = j; k < width; ++k) {
         int32_t v = 1 << (SGRPROJ_RST_BITS + SGRPROJ_PRJ_BITS - 1);
-        v += xq_active * (int32_t)((uint32_t)flt[j] - (uint16_t)(dat[k] << 4));
+        v += xq_active * (int32_t)((uint32_t)flt[k] - (uint16_t)(dat[k] << 4));
         const int32_t e =
             (v >> (SGRPROJ_RST_BITS + SGRPROJ_PRJ_BITS)) + dat[k] - src[k];
         sse += ((int64_t)e * e);

@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
 
+#include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
 #include "GPUProcessConnectionMessages.h"
 #include "RemoteAudioSessionProxy.h"
@@ -36,6 +37,10 @@
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/TZoneMallocInlines.h>
+
+#if PLATFORM(IOS_FAMILY)
+#include <WebCore/MediaSessionHelperIOS.h>
+#endif
 
 namespace WebKit {
 
@@ -51,16 +56,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioSessionProxyManager);
 RemoteAudioSessionProxyManager::RemoteAudioSessionProxyManager(GPUProcess& gpuProcess)
     : m_gpuProcess(gpuProcess)
 {
-    Ref session = AudioSession::sharedSession();
-    session->addInterruptionObserver(*this);
-    session->addConfigurationChangeObserver(*this);
+    AudioSession::addInterruptionObserver(*this);
+    AudioSession::singleton().addConfigurationChangeObserver(*this);
 }
 
 RemoteAudioSessionProxyManager::~RemoteAudioSessionProxyManager()
 {
-    Ref session = AudioSession::sharedSession();
-    session->removeInterruptionObserver(*this);
-    session->removeConfigurationChangeObserver(*this);
+    AudioSession::removeInterruptionObserver(*this);
+    AudioSession::singleton().removeConfigurationChangeObserver(*this);
 }
 
 void RemoteAudioSessionProxyManager::addProxy(RemoteAudioSessionProxy& proxy, std::optional<audit_token_t> auditToken)
@@ -70,7 +73,7 @@ void RemoteAudioSessionProxyManager::addProxy(RemoteAudioSessionProxy& proxy, st
     updateCategory();
 
     if (auditToken)
-        AudioSession::protectedSharedSession()->setHostProcessAttribution(*auditToken);
+        AudioSession::singleton().setHostProcessAttribution(*auditToken);
 }
 
 void RemoteAudioSessionProxyManager::removeProxy(RemoteAudioSessionProxy& proxy)
@@ -119,7 +122,7 @@ void RemoteAudioSessionProxyManager::updateCategory()
     else if (policyCounts.contains(RouteSharingPolicy::Independent))
         ASSERT_NOT_REACHED();
 
-    AudioSession::protectedSharedSession()->setCategory(category, mode, policy);
+    AudioSession::singleton().setCategory(category, mode, policy);
 }
 
 void RemoteAudioSessionProxyManager::updatePreferredBufferSizeForProcess()
@@ -131,7 +134,7 @@ void RemoteAudioSessionProxyManager::updatePreferredBufferSizeForProcess()
     }
 
     if (preferredBufferSize != std::numeric_limits<size_t>::max())
-        AudioSession::protectedSharedSession()->setPreferredBufferSize(preferredBufferSize);
+        AudioSession::singleton().setPreferredBufferSize(preferredBufferSize);
 }
 
 void RemoteAudioSessionProxyManager::updateSpatialExperience()
@@ -148,9 +151,8 @@ void RemoteAudioSessionProxyManager::updateSpatialExperience()
         }
     }
 
-    Ref session = AudioSession::sharedSession();
-    session->setSceneIdentifier(sceneIdentifier);
-    session->setSoundStageSize(maxSize.value_or(AudioSession::SoundStageSize::Automatic));
+    AudioSession::singleton().setSceneIdentifier(sceneIdentifier);
+    AudioSession::singleton().setSoundStageSize(maxSize.value_or(AudioSession::SoundStageSize::Automatic));
 }
 
 bool RemoteAudioSessionProxyManager::hasOtherActiveProxyThan(RemoteAudioSessionProxy& proxyToExclude)
@@ -171,6 +173,38 @@ bool RemoteAudioSessionProxyManager::hasActiveNotInterruptedProxy()
     return false;
 }
 
+#if PLATFORM(IOS_FAMILY)
+static void providePresentingApplicationPID(RemoteAudioSessionProxy& proxy)
+{
+    RefPtr webProcessConnection = proxy.gpuConnectionToWebProcess();
+    if (!webProcessConnection)
+        return;
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+    if (webProcessConnection->sharedPreferencesForWebProcessValue().mediaCapabilityGrantsEnabled)
+        return;
+#endif
+
+    ProcessID pid = GPUProcess::singleton().parentProcessConnection()->remoteProcessID();
+
+#if !PLATFORM(APPLETV)
+    // Presenting application audit tokens are per-page, but AudioSessions are per-web-process,
+    // and it's not straightforward to know in the GPU process which page is responsible for activating
+    // the shared AVAudioSession. In reality, all pages in a given web process share a presenting
+    // application, so it's sufficient to use the first page's audit token.
+    auto& auditTokens = webProcessConnection->presentingApplicationAuditTokens();
+    if (!auditTokens.isEmpty())
+        pid = webProcessConnection->presentingApplicationPID(*auditTokens.keys().begin());
+#ifndef NDEBUG
+    for (auto& pageIdentifier : auditTokens.keys())
+        ASSERT(pid == webProcessConnection->presentingApplicationPID(pageIdentifier));
+#endif
+#endif
+
+    MediaSessionHelper::sharedHelper().providePresentingApplicationPID(pid);
+}
+#endif
+
 bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSessionProxy& proxy, bool active)
 {
     ASSERT(m_proxies.contains(proxy));
@@ -185,13 +219,17 @@ bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSession
         // This proxy wants to de-activate, and is the last remaining active
         // proxy. Deactivate the session, and return whether that deactivation
         // was sucessful.
-        return AudioSession::protectedSharedSession()->tryToSetActive(false);
+        return AudioSession::singleton().tryToSetActive(false);
     }
+
+#if PLATFORM(IOS_FAMILY)
+    providePresentingApplicationPID(proxy);
+#endif
 
     if (!hasActiveNotInterruptedProxy()) {
         // This proxy and only this proxy wants to become active. Activate
         // the session, and return whether that activation was successful.
-        return AudioSession::protectedSharedSession()->tryToSetActive(active);
+        return AudioSession::singleton().tryToSetActive(active);
     }
 
     // If this proxy is Ambient, and the session is already active, this
@@ -247,25 +285,25 @@ void RemoteAudioSessionProxyManager::updatePresentingProcesses()
         presentingProcesses.append(*token);
 
     if (!presentingProcesses.isEmpty())
-        AudioSession::protectedSharedSession()->setPresentingProcesses(WTFMove(presentingProcesses));
+        AudioSession::singleton().setPresentingProcesses(WTFMove(presentingProcesses));
 }
 
 void RemoteAudioSessionProxyManager::beginInterruptionRemote()
 {
     Ref session = this->session();
     // Temporarily remove as an observer to avoid a spurious IPC back to the web process.
-    session->removeInterruptionObserver(*this);
+    AudioSession::removeInterruptionObserver(*this);
     session->beginInterruption();
-    session->addInterruptionObserver(*this);
+    AudioSession::addInterruptionObserver(*this);
 }
 
 void RemoteAudioSessionProxyManager::endInterruptionRemote(AudioSession::MayResume mayResume)
 {
     Ref session = this->session();
     // Temporarily remove as an observer to avoid a spurious IPC back to the web process.
-    session->removeInterruptionObserver(*this);
+    AudioSession::removeInterruptionObserver(*this);
     session->endInterruption(mayResume);
-    session->addInterruptionObserver(*this);
+    AudioSession::addInterruptionObserver(*this);
 }
 
 void RemoteAudioSessionProxyManager::beginAudioSessionInterruption()

@@ -13,6 +13,7 @@
 #include "config/aom_config.h"
 #include "config/av1_rtcd.h"
 
+#include "aom_dsp/arm/mem_neon.h"
 #include "av1/common/cfl.h"
 
 static inline void vldsubstq_s16(int16_t *dst, const uint16_t *src, int offset,
@@ -428,10 +429,7 @@ static inline int16x8_t predict_w8(const int16_t *pred_buf_q3,
 static inline int16x8x2_t predict_w16(const int16_t *pred_buf_q3,
                                       int16x8_t alpha_sign, int abs_alpha_q12,
                                       int16x8_t dc) {
-  // vld2q_s16 interleaves, which is not useful for prediction. vst1q_s16_x2
-  // does not interleave, but is not currently available in the compilier used
-  // by the AOM build system.
-  const int16x8x2_t ac_q3 = vld2q_s16(pred_buf_q3);
+  const int16x8x2_t ac_q3 = vld1q_s16_x2(pred_buf_q3);
   const int16x8_t ac_sign_0 = veorq_s16(alpha_sign, ac_q3.val[0]);
   const int16x8_t ac_sign_1 = veorq_s16(alpha_sign, ac_q3.val[1]);
   const int16x8_t scaled_luma_0 =
@@ -447,10 +445,7 @@ static inline int16x8x2_t predict_w16(const int16_t *pred_buf_q3,
 static inline int16x8x4_t predict_w32(const int16_t *pred_buf_q3,
                                       int16x8_t alpha_sign, int abs_alpha_q12,
                                       int16x8_t dc) {
-  // vld4q_s16 interleaves, which is not useful for prediction. vst1q_s16_x4
-  // does not interleave, but is not currently available in the compilier used
-  // by the AOM build system.
-  const int16x8x4_t ac_q3 = vld4q_s16(pred_buf_q3);
+  const int16x8x4_t ac_q3 = vld1q_s16_x4(pred_buf_q3);
   const int16x8_t ac_sign_0 = veorq_s16(alpha_sign, ac_q3.val[0]);
   const int16x8_t ac_sign_1 = veorq_s16(alpha_sign, ac_q3.val[1]);
   const int16x8_t ac_sign_2 = veorq_s16(alpha_sign, ac_q3.val[2]);
@@ -497,7 +492,7 @@ static inline void cfl_predict_lbd_neon(const int16_t *pred_buf_q3,
             predict_w16(pred_buf_q3, alpha_sign, abs_alpha_q12, dc);
         const uint8x8x2_t predun = { { vqmovun_s16(pred.val[0]),
                                        vqmovun_s16(pred.val[1]) } };
-        vst2_u8(dst, predun);
+        vst1_u8_x2(dst, predun);
       } else {
         const int16x8x4_t pred =
             predict_w32(pred_buf_q3, alpha_sign, abs_alpha_q12, dc);
@@ -505,7 +500,7 @@ static inline void cfl_predict_lbd_neon(const int16_t *pred_buf_q3,
           { vqmovun_s16(pred.val[0]), vqmovun_s16(pred.val[1]),
             vqmovun_s16(pred.val[2]), vqmovun_s16(pred.val[3]) }
         };
-        vst4_u8(dst, predun);
+        vst1_u8_x4(dst, predun);
       }
       dst += dst_stride;
     } while ((pred_buf_q3 += CFL_BUF_LINE) < end);
@@ -574,11 +569,11 @@ static inline void cfl_predict_hbd_neon(const int16_t *pred_buf_q3,
       } else if (width == 16) {
         const int16x8x2_t pred =
             predict_w16(pred_buf_q3, alpha_sign, abs_alpha_q12, dc);
-        vst2q_u16(dst, clamp2q_s16(pred, max_16x8));
+        vst1q_u16_x2(dst, clamp2q_s16(pred, max_16x8));
       } else {
         const int16x8x4_t pred =
             predict_w32(pred_buf_q3, alpha_sign, abs_alpha_q12, dc);
-        vst4q_u16(dst, clamp4q_s16(pred, max_16x8));
+        vst1q_u16_x4(dst, clamp4q_s16(pred, max_16x8));
       }
       dst += dst_stride;
     } while ((pred_buf_q3 += CFL_BUF_LINE) < end);

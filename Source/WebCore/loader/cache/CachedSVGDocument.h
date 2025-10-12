@@ -22,9 +22,9 @@
 
 #pragma once
 
-#include "CachedResource.h"
-#include "SVGDocument.h"
-#include "TextResourceDecoder.h"
+#include <WebCore/CachedResource.h>
+#include <WebCore/SVGDocument.h>
+#include <WebCore/TextResourceDecoder.h>
 
 namespace WebCore {
 

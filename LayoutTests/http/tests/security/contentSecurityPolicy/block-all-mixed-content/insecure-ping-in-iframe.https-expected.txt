@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: [blocked] The page at https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-ping.html# requested insecure content from http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi. This content was blocked and must be served over HTTPS.
-
-This test loads a secure iframe that triggers an insecure ping load. We should trigger a mixed content block because the child frame has CSP directive block-all-mixed-content.
-
-

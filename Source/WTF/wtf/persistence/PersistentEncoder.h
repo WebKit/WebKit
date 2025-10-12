@@ -37,7 +37,7 @@ namespace WTF::Persistence {
 template<typename> struct Coder;
 
 class Encoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Encoder);
 public:
     WTF_EXPORT_PRIVATE Encoder();
     WTF_EXPORT_PRIVATE ~Encoder();

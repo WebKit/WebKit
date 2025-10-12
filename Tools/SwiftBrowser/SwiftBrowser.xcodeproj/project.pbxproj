@@ -21,6 +21,13 @@
 		07A58C0E2D04DD4700CAB4ED /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A58C0D2D04DD4700CAB4ED /* WebKit.framework */; };
 		07A58C482D05651C00CAB4ED /* AppStorageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A58C472D05651C00CAB4ED /* AppStorageKeys.swift */; };
 		07A58C4A2D0567A100CAB4ED /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A58C492D0567A100CAB4ED /* SettingsView.swift */; };
+		07BAE3C82E811D5600027836 /* SwiftUI+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BAE3C72E811D5100027836 /* SwiftUI+Extras.swift */; };
+		07BAE3CA2E811D9100027836 /* FeatureFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BAE3C92E811D8A00027836 /* FeatureFlags.swift */; };
+		07BAE3CC2E811F0C00027836 /* FeatureFlagsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BAE3CB2E811F0600027836 /* FeatureFlagsModel.swift */; };
+		07BAE3CE2E811F4400027836 /* _WKFeature+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BAE3CD2E811F3D00027836 /* _WKFeature+Extras.swift */; };
+		07E88A872E774C93005A53CB /* WebToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E88A862E774C93005A53CB /* WebToolbarModifier.swift */; };
+		07E88A892E777C61005A53CB /* WebContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E88A882E777C61005A53CB /* WebContextMenu.swift */; };
+		330FBEE22DEAD07600C266CA /* CommandLine+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330FBEE12DEAD05F00C266CA /* CommandLine+Extras.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -58,6 +65,13 @@
 		07A58C0D2D04DD4700CAB4ED /* WebKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		07A58C472D05651C00CAB4ED /* AppStorageKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageKeys.swift; sourceTree = "<group>"; };
 		07A58C492D0567A100CAB4ED /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		07BAE3C72E811D5100027836 /* SwiftUI+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftUI+Extras.swift"; sourceTree = "<group>"; };
+		07BAE3C92E811D8A00027836 /* FeatureFlags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlags.swift; sourceTree = "<group>"; };
+		07BAE3CB2E811F0600027836 /* FeatureFlagsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagsModel.swift; sourceTree = "<group>"; };
+		07BAE3CD2E811F3D00027836 /* _WKFeature+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "_WKFeature+Extras.swift"; sourceTree = "<group>"; };
+		07E88A862E774C93005A53CB /* WebToolbarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebToolbarModifier.swift; sourceTree = "<group>"; };
+		07E88A882E777C61005A53CB /* WebContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebContextMenu.swift; sourceTree = "<group>"; };
+		330FBEE12DEAD05F00C266CA /* CommandLine+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommandLine+Extras.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +93,8 @@
 				07A58C472D05651C00CAB4ED /* AppStorageKeys.swift */,
 				07A58BFF2D040E3400CAB4ED /* BrowserViewModel.swift */,
 				07259B2D2D1F308500B45C4E /* DialogPresenter.swift */,
+				07BAE3C92E811D8A00027836 /* FeatureFlags.swift */,
+				07BAE3CB2E811F0600027836 /* FeatureFlagsModel.swift */,
 				07259B352D1F969A00B45C4E /* NavigationDecider.swift */,
 			);
 			path = ViewModel;
@@ -97,6 +113,9 @@
 		07259B372D1F978200B45C4E /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				07BAE3CD2E811F3D00027836 /* _WKFeature+Extras.swift */,
+				330FBEE12DEAD05F00C266CA /* CommandLine+Extras.swift */,
+				07BAE3C72E811D5100027836 /* SwiftUI+Extras.swift */,
 				078F11842D288FAC00B3582D /* URLRequest+Codable.swift */,
 				07259B382D1F97A500B45C4E /* URLResponse+Extras.swift */,
 			);
@@ -136,6 +155,7 @@
 			isa = PBXGroup;
 			children = (
 				07259B372D1F978200B45C4E /* Extensions */,
+				07E88A852E774C7E005A53CB /* Modifiers */,
 				07259B2C2D1F303300B45C4E /* ViewModel */,
 				07259B302D1F30DB00B45C4E /* Views */,
 				07A4CE9E2D08C06400764F5E /* Empty.swift */,
@@ -180,6 +200,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		07E88A852E774C7E005A53CB /* Modifiers */ = {
+			isa = PBXGroup;
+			children = (
+				07E88A882E777C61005A53CB /* WebContextMenu.swift */,
+				07E88A862E774C93005A53CB /* WebToolbarModifier.swift */,
+			);
+			path = Modifiers;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -219,6 +248,7 @@
 				};
 			};
 			buildConfigurationList = 07A58BCF2D0400B300CAB4ED /* Build configuration list for PBXProject "SwiftBrowser" */;
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -227,7 +257,6 @@
 			);
 			mainGroup = 07A58BCB2D0400B300CAB4ED;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 63;
 			productRefGroup = 07A58BD52D0400B300CAB4ED /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -253,17 +282,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07BAE3CE2E811F4400027836 /* _WKFeature+Extras.swift in Sources */,
 				07A58C482D05651C00CAB4ED /* AppStorageKeys.swift in Sources */,
 				07A58C022D04111900CAB4ED /* BrowserView.swift in Sources */,
 				07A58C002D040E3400CAB4ED /* BrowserViewModel.swift in Sources */,
+				330FBEE22DEAD07600C266CA /* CommandLine+Extras.swift in Sources */,
 				07A58BEE2D04013100CAB4ED /* ContentView.swift in Sources */,
 				07259B2E2D1F308500B45C4E /* DialogPresenter.swift in Sources */,
 				07A4CE9F2D08C06400764F5E /* Empty.swift in Sources */,
+				07BAE3CA2E811D9100027836 /* FeatureFlags.swift in Sources */,
+				07BAE3CC2E811F0C00027836 /* FeatureFlagsModel.swift in Sources */,
 				07259B362D1F969A00B45C4E /* NavigationDecider.swift in Sources */,
 				07A58C4A2D0567A100CAB4ED /* SettingsView.swift in Sources */,
 				07A58BEF2D04013100CAB4ED /* SwiftBrowser.swift in Sources */,
+				07BAE3C82E811D5600027836 /* SwiftUI+Extras.swift in Sources */,
 				078F11852D288FAC00B3582D /* URLRequest+Codable.swift in Sources */,
 				07259B392D1F97A500B45C4E /* URLResponse+Extras.swift in Sources */,
+				07E88A892E777C61005A53CB /* WebContextMenu.swift in Sources */,
+				07E88A872E774C93005A53CB /* WebToolbarModifier.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

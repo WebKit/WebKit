@@ -363,6 +363,8 @@ void AudioBuffer::applyNoiseIfNeeded()
     m_noiseInjectionMultiplier = 0;
 }
 
+AudioBuffer::~AudioBuffer() = default;
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

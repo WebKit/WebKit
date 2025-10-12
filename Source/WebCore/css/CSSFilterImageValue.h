@@ -27,7 +27,7 @@
 
 #pragma once
 
-#include "CSSFilterProperty.h"
+#include "CSSFilter.h"
 #include "CSSValue.h"
 #include <wtf/Function.h>
 
@@ -41,7 +41,7 @@ class StyleImage;
 
 class CSSFilterImageValue final : public CSSValue {
 public:
-    static Ref<CSSFilterImageValue> create(Ref<CSSValue>&& imageValueOrNone, CSS::FilterProperty&& filter)
+    static Ref<CSSFilterImageValue> create(Ref<CSSValue>&& imageValueOrNone, CSS::Filter&& filter)
     {
         return adoptRef(*new CSSFilterImageValue(WTFMove(imageValueOrNone), WTFMove(filter)));
     }
@@ -56,10 +56,10 @@ public:
     RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
 
 private:
-    explicit CSSFilterImageValue(Ref<CSSValue>&& imageValueOrNone, CSS::FilterProperty&&);
+    explicit CSSFilterImageValue(Ref<CSSValue>&& imageValueOrNone, CSS::Filter&&);
 
     const Ref<CSSValue> m_imageValueOrNone;
-    CSS::FilterProperty m_filter;
+    CSS::Filter m_filter;
 };
 
 } // namespace WebCore

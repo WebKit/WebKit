@@ -73,23 +73,27 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  */
 @property (nonatomic, readonly) WKNavigationType navigationType;
 
-/*! @abstract The navigation's request.
+/*! @abstract The navigation's request. 
  */
 @property (nonatomic, readonly, copy) NSURLRequest *request;
 
 /*! @abstract A value indicating whether the web content used a download attribute to indicate that this should be downloaded.
-*/
+ */
 @property (nonatomic, readonly) BOOL shouldPerformDownload WK_API_AVAILABLE(macos(11.3), ios(14.5));
+
+/*! @abstract Whether or not the navigation is a redirect from a content rule list.
+ */
+@property (nonatomic, readonly) BOOL isContentRuleListRedirect WK_API_AVAILABLE(macos(16.0), ios(19.0), visionos(3.0));
 
 #if TARGET_OS_IPHONE
 
 /*! @abstract The modifier keys that were in effect when the navigation was requested.
  */
-@property (nonatomic, readonly) UIKeyModifierFlags modifierFlags WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, readonly) UIKeyModifierFlags modifierFlags WK_API_AVAILABLE(ios(18.4), visionos(2.4));
 
 /*! @abstract The button mask of the index of the mouse button causing the navigation to be requested.
  */
-@property (nonatomic, readonly) UIEventButtonMask buttonNumber WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, readonly) UIEventButtonMask buttonNumber WK_API_AVAILABLE(ios(18.4), visionos(2.4));
 
 #else
 

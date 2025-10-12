@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L. All rights reserved.
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,8 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+struct XRCanvasConfiguration;
 
 class GraphicsContextGL;
 template<typename> class ExceptionOr;
@@ -90,7 +92,7 @@ public:
     void addInputConnection(Ref<WebFakeXRInputController>&& input) { m_inputConnections.append(WTFMove(input)); };
 private:
     WebCore::IntSize recommendedResolution(PlatformXR::SessionMode) final;
-    void initializeTrackingAndRendering(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&) final;
+    void initializeTrackingAndRendering(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&, std::optional<WebCore::XRCanvasConfiguration>&&) final;
     void shutDownTrackingAndRendering() final;
     bool supportsSessionShutdownNotification() const final { return m_supportsShutdownNotification; }
     void initializeReferenceSpace(PlatformXR::ReferenceSpaceType) final { }
@@ -106,12 +108,7 @@ private:
     bool m_supportsShutdownNotification { false };
     Timer m_frameTimer;
     RequestFrameCallback m_FrameCallback;
-#if PLATFORM(COCOA)
     HashMap<PlatformXR::LayerHandle, WebCore::IntSize> m_layers;
-#else
-    HashMap<PlatformXR::LayerHandle, PlatformGLObject> m_layers;
-    RefPtr<WebCore::GraphicsContextGL> m_gl;
-#endif
     uint32_t m_layerIndex { 0 };
     Vector<Ref<WebFakeXRInputController>> m_inputConnections;
 };
@@ -140,7 +137,7 @@ public:
 private:
     WebFakeXRDevice();
 
-    Ref<SimulatedXRDevice> m_device;
+    const Ref<SimulatedXRDevice> m_device;
     PlatformXR::InputSourceHandle mInputSourceHandleIndex { 0 };
 };
 

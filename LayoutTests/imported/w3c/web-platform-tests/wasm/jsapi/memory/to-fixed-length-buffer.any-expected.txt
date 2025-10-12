@@ -1,4 +1,4 @@
 
-FAIL API surface assert_equals: expected "object" but got "undefined"
-FAIL toFixedLengthBuffer caching behavior memory.toFixedLengthBuffer is not a function. (In 'memory.toFixedLengthBuffer()', 'memory.toFixedLengthBuffer' is undefined)
+PASS API surface
+PASS toFixedLengthBuffer caching behavior
 

@@ -117,7 +117,7 @@ void Fuzzilli::readInput(Vector<char>* buffer)
     RELEASE_ASSERT(inputSize < REPRL_MAX_DATA_SIZE);
 
     buffer->resize(inputSize);
-    memcpy(buffer->data(), reprlInputData, inputSize);
+    memcpySpan(buffer->mutableSpan(), unsafeMakeSpan(reprlInputData, inputSize));
 }
 
 void Fuzzilli::flushReprl(int32_t result)

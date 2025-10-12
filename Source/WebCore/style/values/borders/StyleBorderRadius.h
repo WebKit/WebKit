@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,36 +24,50 @@
 
 #pragma once
 
-#include "CSSBorderRadius.h"
-#include "FloatRoundedRect.h"
-#include "StylePrimitiveNumericTypes.h"
+#include <WebCore/CSSBorderRadius.h>
+#include <WebCore/FloatRoundedRect.h>
+#include <WebCore/LayoutRoundedRect.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
 
 namespace WebCore {
+
+class LayoutSize;
+
 namespace Style {
+
+using BorderRadiusValue = MinimallySerializingSpaceSeparatedSize<LengthPercentage<CSS::Nonnegative>>;
 
 // <'border-radius'> = <length-percentage [0,∞]>{1,4} [ / <length-percentage [0,∞]>{1,4} ]?
 // https://drafts.csswg.org/css-backgrounds-3/#propdef-border-radius
-struct BorderRadius {
-    using Corner = SpaceSeparatedSize<LengthPercentage<CSS::Nonnegative>>;
+struct BorderRadius : RectCorners<BorderRadiusValue> {
+    BorderRadius(BorderRadiusValue value)
+        : RectCorners<BorderRadiusValue> { value, value, value, value }
+    {
+    }
 
-    constexpr bool operator==(const BorderRadius&) const = default;
+    BorderRadius(BorderRadiusValue topLeft, BorderRadiusValue topRight, BorderRadiusValue bottomLeft, BorderRadiusValue bottomRight)
+        : RectCorners<BorderRadiusValue> { WTFMove(topLeft), WTFMove(topRight), WTFMove(bottomLeft), WTFMove(bottomRight) }
+    {
+    }
 
-    Corner topLeft;
-    Corner topRight;
-    Corner bottomRight;
-    Corner bottomLeft;
+    BorderRadius(RectCorners<BorderRadiusValue>&& corners)
+        : RectCorners<BorderRadiusValue> { WTFMove(corners) }
+    {
+    }
+
+    bool operator==(const BorderRadius&) const = default;
 };
 
 template<size_t I> const auto& get(const BorderRadius& value)
 {
     if constexpr (!I)
-        return value.topLeft;
+        return value.topLeft();
     else if constexpr (I == 1)
-        return value.topRight;
+        return value.topRight();
     else if constexpr (I == 2)
-        return value.bottomRight;
+        return value.bottomLeft();
     else if constexpr (I == 3)
-        return value.bottomLeft;
+        return value.bottomRight();
 }
 
 // MARK: - Conversion
@@ -61,9 +75,16 @@ template<size_t I> const auto& get(const BorderRadius& value)
 template<> struct ToCSS<BorderRadius> { auto operator()(const BorderRadius&, const RenderStyle&) -> CSS::BorderRadius; };
 template<> struct ToStyle<CSS::BorderRadius> { auto operator()(const CSS::BorderRadius&, const BuilderState&) -> BorderRadius; };
 
+template<> struct CSSValueConversion<BorderRadiusValue> { auto operator()(BuilderState&, const CSSValue&) -> BorderRadiusValue; };
+
 // MARK: - Evaluation
 
-template<> struct Evaluation<BorderRadius> { auto operator()(const BorderRadius&, FloatSize) -> FloatRoundedRect::Radii; };
+template<> struct Evaluation<BorderRadius, FloatRoundedRect::Radii> {
+    auto operator()(const BorderRadius&, FloatSize, ZoomNeeded) -> FloatRoundedRect::Radii;
+};
+template<> struct Evaluation<BorderRadius, LayoutRoundedRect::Radii> {
+    auto operator()(const BorderRadius&, LayoutSize, ZoomNeeded) -> LayoutRoundedRect::Radii;
+};
 
 } // namespace Style
 } // namespace WebCore

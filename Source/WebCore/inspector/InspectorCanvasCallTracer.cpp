@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,46 +27,11 @@
 #include "config.h"
 #include "InspectorCanvasCallTracer.h"
 
-#include "CSSStyleImageValue.h"
 #include "CanvasBase.h"
-#include "CanvasGradient.h"
-#include "CanvasPattern.h"
 #include "CanvasRenderingContext.h"
-#include "CanvasRenderingContext2D.h"
-#include "DOMMatrix2DInit.h"
-#include "DOMPointInit.h"
-#include "Element.h"
-#include "HTMLCanvasElement.h"
-#include "HTMLImageElement.h"
-#include "HTMLVideoElement.h"
-#include "ImageData.h"
-#include "ImageDataSettings.h"
 #include "InspectorCanvasAgent.h"
 #include "InspectorInstrumentation.h"
 #include "InstrumentingAgents.h"
-#include "OffscreenCanvas.h"
-#include "Path2D.h"
-#include "RecordingSwizzleType.h"
-#include "WebGL2RenderingContext.h"
-#include "WebGLBuffer.h"
-#include "WebGLFramebuffer.h"
-#include "WebGLProgram.h"
-#include "WebGLQuery.h"
-#include "WebGLRenderbuffer.h"
-#include "WebGLRenderingContextBase.h"
-#include "WebGLSampler.h"
-#include "WebGLShader.h"
-#include "WebGLSync.h"
-#include "WebGLTexture.h"
-#include "WebGLTransformFeedback.h"
-#include "WebGLUniformLocation.h"
-#include "WebGLVertexArrayObject.h"
-#include <JavaScriptCore/ArrayBuffer.h>
-#include <JavaScriptCore/ArrayBufferView.h>
-#include <JavaScriptCore/TypedArrays.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -73,7 +39,7 @@ static InspectorCanvasAgent* enabledCanvasAgent(CanvasRenderingContext& canvasRe
 {
     ASSERT(InspectorInstrumentationPublic::hasFrontends());
 
-    auto* agents = InspectorInstrumentation::instrumentingAgents(canvasRenderingContext.canvasBase().scriptExecutionContext());
+    auto* agents = InspectorInstrumentation::instrumentingAgents(canvasRenderingContext.canvasBase().protectedScriptExecutionContext().get());
     ASSERT(agents);
     if (!agents)
         return nullptr;
@@ -82,30 +48,21 @@ static InspectorCanvasAgent* enabledCanvasAgent(CanvasRenderingContext& canvasRe
     return agents->enabledCanvasAgent();
 }
 
-#define PROCESS_ARGUMENT_DEFINITION(ArgumentType) \
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvasCallTracer::processArgument(CanvasRenderingContext& canvasRenderingContext, ArgumentType argument) \
-{ \
-    if (auto* canvasAgent = enabledCanvasAgent(canvasRenderingContext)) \
-        return canvasAgent->processArgument(canvasRenderingContext, argument); \
-    return std::nullopt; \
-} \
-// end of PROCESS_ARGUMENT_DEFINITION
-    FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_ARGUMENT(PROCESS_ARGUMENT_DEFINITION)
-#undef PROCESS_ARGUMENT_DEFINITION
+RefPtr<InspectorCanvas> InspectorCanvasCallTracer::enabledInspectorCanvas(CanvasRenderingContext& canvasRenderingContext)
+{
+    auto* canvasAgent = enabledCanvasAgent(canvasRenderingContext);
+    if (!canvasAgent)
+        return nullptr;
+    return canvasAgent->findInspectorCanvas(canvasRenderingContext);
+}
 
-void InspectorCanvasCallTracer::recordAction(CanvasRenderingContext& canvasRenderingContext, String&& name, InspectorCanvasCallTracer::ProcessedArguments&& arguments)
+void InspectorCanvasCallTracer::recordAction(CanvasRenderingContext& canvasRenderingContext, String&& name, InspectorCanvasProcessedArguments&& arguments)
 {
     if (auto* canvasAgent = enabledCanvasAgent(canvasRenderingContext))
         canvasAgent->recordAction(canvasRenderingContext, WTFMove(name), WTFMove(arguments));
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvasCallTracer::processArgument(const CanvasBase& canvasBase, uint32_t argument)
-{
-    ASSERT(canvasBase.renderingContext());
-    return processArgument(*canvasBase.renderingContext(), argument);
-}
-
-void InspectorCanvasCallTracer::recordAction(const CanvasBase& canvasBase, String&& name, InspectorCanvasCallTracer::ProcessedArguments&& arguments)
+void InspectorCanvasCallTracer::recordAction(const CanvasBase& canvasBase, String&& name, InspectorCanvasProcessedArguments&& arguments)
 {
     ASSERT(canvasBase.renderingContext());
     recordAction(*canvasBase.renderingContext(), WTFMove(name), WTFMove(arguments));

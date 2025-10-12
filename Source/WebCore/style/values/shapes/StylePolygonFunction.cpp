@@ -63,7 +63,7 @@ WebCore::Path PathComputation<Polygon>::operator()(const Polygon& value, const F
     auto boundingLocation = boundingBox.location();
     auto boundingSize = boundingBox.size();
     auto points = value.vertices.value.map([&](const auto& vertex) {
-        return evaluate(vertex, boundingSize) + boundingLocation;
+        return evaluate<FloatPoint>(vertex, boundingSize, Style::ZoomNeeded { }) + boundingLocation;
     });
     return cachedPolygonPath(points);
 }

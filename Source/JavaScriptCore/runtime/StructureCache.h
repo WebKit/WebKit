@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "PrototypeKey.h"
-#include "WeakGCMap.h"
+#include <JavaScriptCore/PrototypeKey.h>
+#include <JavaScriptCore/WeakGCMap.h>
 #include <wtf/Lock.h>
 
 namespace JSC {

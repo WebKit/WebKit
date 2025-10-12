@@ -16,6 +16,7 @@
             stream = await navigator.mediaDevices.getUserMedia({ video: { width : 640 } });
             assert_equals(stream.getVideoTracks()[0].getSettings().torch, undefined, 'settings-1');
             assert_equals(stream.getVideoTracks()[0].getCapabilities().torch, undefined, 'capabilities-1');
+            stream.getTracks().forEach(track => track.stop());
 
             stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, torch : true } });
             assert_equals(stream.getVideoTracks()[0].getCapabilities().torch, true, 'capabilities-2');
@@ -26,6 +27,7 @@
             await stream.getVideoTracks()[0].applyConstraints({ torch : false });
             assert_equals(stream.getVideoTracks()[0].getSettings().torch, false, 'settings -3');
 
+            stream.getTracks().forEach(track => track.stop());
         }, 'getUserMedia torch');
     </script>
 </body>

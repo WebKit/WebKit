@@ -13,6 +13,7 @@
 #include <stdio.h>
 
 #include <cstddef>
+#include <cstdio>
 #include <fstream>
 #include <ios>
 #include <iterator>

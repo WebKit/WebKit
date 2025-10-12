@@ -1871,7 +1871,8 @@ public:
 
     void move(RegisterID src, RegisterID dest)
     {
-        m_assembler.addiInsn(dest, src, Imm::I<0>());
+        if (src != dest)
+            m_assembler.addiInsn(dest, src, Imm::I<0>());
     }
 
     void move(TrustedImm32 imm, RegisterID dest)
@@ -1939,7 +1940,8 @@ public:
 
     void moveFloat(FPRegisterID src, FPRegisterID dest)
     {
-        m_assembler.fsgnjInsn<32>(dest, src, src);
+        if (src != dest)
+            m_assembler.fsgnjInsn<32>(dest, src, src);
     }
 
     void moveFloatTo32(FPRegisterID src, RegisterID dest)
@@ -1954,7 +1956,8 @@ public:
 
     void moveDouble(FPRegisterID src, FPRegisterID dest)
     {
-        m_assembler.fsgnjInsn<64>(dest, src, src);
+        if (src != dest)
+            m_assembler.fsgnjInsn<64>(dest, src, src);
     }
 
     void moveDoubleTo64(FPRegisterID src, RegisterID dest)

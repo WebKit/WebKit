@@ -269,6 +269,19 @@ void TDirectiveHandler::handleExtension(const angle::pp::SourceLocation &loc,
                 iter->second = behaviorVal;
             }
         }
+        // GL_EXT_fragment_shading_rate_primitive is implicitly enabled when
+        // GL_EXT_fragment_shading_rate are enabled.
+        else if (name == "GL_EXT_fragment_shading_rate")
+        {
+            constexpr char kFragmentShadingRatePrimitiveEXTName[] =
+                "GL_EXT_fragment_shading_rate_primitive";
+            iter =
+                mExtensionBehavior.find(GetExtensionByName(kFragmentShadingRatePrimitiveEXTName));
+            if (iter != mExtensionBehavior.end())
+            {
+                iter->second = behaviorVal;
+            }
+        }
         return;
     }
 

@@ -45,7 +45,6 @@ using namespace WebKit;
 static NSString *urlsKey = @"urls";
 static NSString *typesKey = @"types";
 
-static NSString *tabIdKey = @"tabId";
 static NSString *windowIdKey = @"windowId";
 
 _WKWebExtensionWebRequestResourceType toWebExtensionWebRequestResourceType(const ResourceLoadInfo& resourceLoadInfo)
@@ -107,7 +106,7 @@ _WKWebExtensionWebRequestResourceType toWebExtensionWebRequestResourceType(const
     static NSDictionary<NSString *, id> *expectedTypes = @{
         urlsKey: @[ NSString.class ],
         typesKey: NSArray.class,
-        tabIdKey: NSNumber.class,
+        @"tabId": NSNumber.class,
         windowIdKey: NSNumber.class,
     };
 
@@ -215,7 +214,7 @@ static std::optional<WebExtensionWindowIdentifier> toWindowID(NSNumber *rawValue
     if (errorMessage)
         return errorMessage;
 
-    _tabID = toTabID(dictionary[tabIdKey]);
+    _tabID = toTabID(dictionary[@"tabId"]);
     _windowID = toWindowID(dictionary[windowIdKey]);
 
     return nil;

@@ -30,7 +30,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "Document.h"
-#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "Navigator.h"
 #include <wtf/TZoneMallocInlines.h>
 

@@ -110,7 +110,8 @@ void ImageBufferSkiaAcceleratedBackend::prepareForDisplay()
     if (!image)
         return;
 
-    m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(), GLFence::create()));
+    auto fence = GLFence::create(PlatformDisplay::sharedDisplay().glDisplay());
+    m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(), WTFMove(fence)));
 #endif
 }
 

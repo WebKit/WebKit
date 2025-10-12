@@ -33,10 +33,13 @@
 #import "PageClientImplMac.h"
 #import "PlatformPopupMenuData.h"
 #import "WebPopupItem.h"
+#import <pal/spi/cf/CoreTextSPI.h>
 #import <pal/spi/mac/NSCellSPI.h>
 #import <pal/system/mac/PopupMenu.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/ProcessPrivilege.h>
+#import <wtf/SetForScope.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -44,7 +47,6 @@ using namespace WebCore;
 WebPopupMenuProxyMac::WebPopupMenuProxyMac(NSView *webView, WebPopupMenuProxy::Client& client)
     : WebPopupMenuProxy(client)
     , m_webView(webView)
-    , m_wasCanceled(false)
 {
 }
 
@@ -68,7 +70,7 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *f
 
     for (int i = 0; i < size; i++) {
         if (items[i].m_type == WebPopupItem::Type::Separator)
-            [[m_popup menu] addItem:[NSMenuItem separatorItem]];
+            [protectedMenu() addItem:[NSMenuItem separatorItem]];
         else {
             [m_popup addItemWithTitle:@""];
             RetainPtr menuItem = [m_popup lastItem];
@@ -87,6 +89,8 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *f
                 RetainPtr<NSArray> writingDirectionArray = adoptNS([[NSArray alloc] initWithObjects:writingDirectionNumber.get(), nil]);
                 [attributes setObject:writingDirectionArray.get() forKey:NSWritingDirectionAttributeName];
             }
+            if (!items[i].m_language.isEmpty())
+                [attributes setObject:items[i].m_language.createNSString().get() forKey:NSLanguageIdentifierAttributeName];
             RetainPtr<NSAttributedString> string = adoptNS([[NSAttributedString alloc] initWithString:items[i].m_text.createNSString().get() attributes:attributes.get()]);
 
             [menuItem setAttributedTitle:string.get()];
@@ -102,24 +106,28 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *f
 void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection textDirection, double pageScaleFactor, const Vector<WebPopupItem>& items, const PlatformPopupMenuData& data, int32_t selectedIndex)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    RetainPtr<NSFont> font;
+    RetainPtr<CTFontRef> font;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    if (RetainPtr fontAttributes = bridge_cast(data.fontInfo.fontAttributeDictionary.get())) {
-        auto scaledFontSize = [fontAttributes.get()[NSFontSizeAttribute] floatValue] * pageScaleFactor;
-
-        font = fontWithAttributes(fontAttributes.get(), ((pageScaleFactor != 1) ? scaledFontSize : 0));
-        // font will be nil when using a custom font. However, we should still
-        // honor the font size, matching other browsers.
-        if (!font)
-            font = [NSFont menuFontOfSize:scaledFontSize];
-    } else
-        font = [NSFont menuFontOfSize:0];
+    auto scaledFontSize = data.pointSize * pageScaleFactor;
     
+    RetainPtr descriptor = adoptCF(CTFontDescriptorCreateWithNameAndSize(data.postScriptName.createCFString().get(), scaledFontSize));
+    RetainPtr matched = adoptCF(CTFontDescriptorCreateMatchingFontDescriptorsWithOptions(descriptor.get(), NULL, kCTFontDescriptorMatchingOptionIncludeHiddenFonts));
+
+    if (matched && CFArrayGetCount(matched.get())) {
+        RetainPtr matchedDescriptor = dynamic_cf_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(matched.get(), 0));
+        font = adoptCF(CTFontCreateWithFontDescriptor(matchedDescriptor.get(), scaledFontSize, NULL));
+    }
+
+    // font will be nil when using a custom font. However, we should still
+    // honor the font size, matching other browsers.
+    if (!font)
+        font = bridge_cast([NSFont menuFontOfSize:scaledFontSize]);
+
     END_BLOCK_OBJC_EXCEPTIONS
 
-    populate(items, font.get(), textDirection);
+    populate(items, bridge_cast(font.get()), textDirection);
 
     [m_popup attachPopUpWithFrame:rect inView:m_webView.get().get()];
     [m_popup selectItemAtIndex:selectedIndex];
@@ -153,7 +161,7 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
     }
     RetainPtr<NSView> dummyView = adoptNS([[NSView alloc] initWithFrame:rect]);
     [dummyView.get() setUserInterfaceLayoutDirection:textDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
-    [m_webView addSubview:dummyView.get()];
+    [m_webView.get() addSubview:dummyView.get()];
     location = [dummyView convertPoint:location fromView:m_webView.get().get()];
 
     NSControlSize controlSize;
@@ -172,8 +180,10 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
         break;
     }
 
+    SetForScope visibleScope { m_isVisible, true };
+
     Ref<WebPopupMenuProxyMac> protect(*this);
-    PAL::popUpMenu(menu.get(), location, roundf(NSWidth(rect)), dummyView.get(), selectedIndex, font.get(), controlSize, data.hideArrows);
+    PAL::popUpMenu(menu.get(), location, roundf(NSWidth(rect)), dummyView.get(), selectedIndex, bridge_cast(font.get()), controlSize, data.hideArrows);
 
     [m_popup dismissPopUp];
     [dummyView removeFromSuperview];
@@ -204,7 +214,7 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
 
     [NSApp postEvent:fakeEvent.get() atStart:YES];
     fakeEvent = [NSEvent mouseEventWithType:NSEventTypeMouseMoved
-                                   location:[[m_webView window] convertPointFromScreen:[NSEvent mouseLocation]]
+                                   location:[[m_webView.get() window] convertPointFromScreen:[NSEvent mouseLocation]]
                               modifierFlags:[initiatingNSEvent modifierFlags]
                                   timestamp:[initiatingNSEvent timestamp]
                                windowNumber:[initiatingNSEvent windowNumber]
@@ -217,13 +227,23 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
 
 void WebPopupMenuProxyMac::hidePopupMenu()
 {
-    [[m_popup menu] cancelTracking];
+    [protectedMenu() cancelTracking];
 }
 
 void WebPopupMenuProxyMac::cancelTracking()
 {
-    [[m_popup menu] cancelTracking];
+    [protectedMenu() cancelTracking];
     m_wasCanceled = true;
+}
+
+RetainPtr<NSPopUpButtonCell> WebPopupMenuProxyMac::protectedPopup() const
+{
+    return m_popup;
+}
+
+RetainPtr<NSMenu> WebPopupMenuProxyMac::protectedMenu() const
+{
+    return [m_popup menu];
 }
 
 } // namespace WebKit

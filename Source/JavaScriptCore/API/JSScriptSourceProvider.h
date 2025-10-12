@@ -48,7 +48,7 @@ private:
         , m_script(script)
     { }
 
-    RetainPtr<JSScript> m_script;
+    const RetainPtr<JSScript> m_script;
 };
 
 #endif // JSC_OBJC_API_ENABLED

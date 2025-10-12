@@ -1,3 +1,4 @@
+//@ skip if $memoryLimited
 import Builder from '../Builder.js'
 import * as assert from '../assert.js'
 

@@ -1,86 +1,22 @@
-CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/html/dom/idlharness.https.html?exclude=(Document|Window|HTML.*) requested insecure content from http://invalid/. This content was blocked and must be served over HTTPS.
-
-CONSOLE MESSAGE: Not allowed to request resource
-CONSOLE MESSAGE: EventSource cannot load http://invalid/ due to access control checks.
 HTML IDL tests
 
 
 PASS idl_test setup
 PASS idl_test validation
-PASS Partial interface Document: original interface defined
-PASS Partial interface Document: member names are unique
 PASS Partial interface mixin DocumentOrShadowRoot: original interface mixin defined
 PASS Partial interface mixin DocumentOrShadowRoot: member names are unique
+PASS Partial interface Navigator: original interface defined
+PASS Partial interface Navigator: member names are unique
+PASS Partial interface Element: original interface defined
+PASS Partial interface Element: member names are unique
+PASS Partial interface ShadowRoot: original interface defined
+PASS Partial interface ShadowRoot: member names are unique
+PASS Partial interface Range: original interface defined
+PASS Partial interface Range: member names are unique
 PASS Partial interface mixin NavigatorID: original interface mixin defined
 PASS Partial interface mixin NavigatorID: member names are unique
-PASS Partial interface HTMLAnchorElement: original interface defined
-PASS Partial interface HTMLAnchorElement: member names are unique
-PASS Partial interface HTMLAreaElement: original interface defined
-PASS Partial interface HTMLAreaElement: member names are unique
-PASS Partial interface HTMLBodyElement: original interface defined
-PASS Partial interface HTMLBodyElement: member names are unique
-PASS Partial interface HTMLBRElement: original interface defined
-PASS Partial interface HTMLBRElement: member names are unique
-PASS Partial interface HTMLTableCaptionElement: original interface defined
-PASS Partial interface HTMLTableCaptionElement: member names are unique
-PASS Partial interface HTMLTableColElement: original interface defined
-PASS Partial interface HTMLTableColElement: member names are unique
-PASS Partial interface HTMLDivElement: original interface defined
-PASS Partial interface HTMLDivElement: member names are unique
-PASS Partial interface HTMLDListElement: original interface defined
-PASS Partial interface HTMLDListElement: member names are unique
-PASS Partial interface HTMLEmbedElement: original interface defined
-PASS Partial interface HTMLEmbedElement: member names are unique
-PASS Partial interface HTMLHeadingElement: original interface defined
-PASS Partial interface HTMLHeadingElement: member names are unique
-PASS Partial interface HTMLHRElement: original interface defined
-PASS Partial interface HTMLHRElement: member names are unique
-PASS Partial interface HTMLHtmlElement: original interface defined
-PASS Partial interface HTMLHtmlElement: member names are unique
-PASS Partial interface HTMLIFrameElement: original interface defined
-PASS Partial interface HTMLIFrameElement: member names are unique
-PASS Partial interface HTMLImageElement: original interface defined
-PASS Partial interface HTMLImageElement: member names are unique
-PASS Partial interface HTMLInputElement: original interface defined
-PASS Partial interface HTMLInputElement: member names are unique
-PASS Partial interface HTMLLegendElement: original interface defined
-PASS Partial interface HTMLLegendElement: member names are unique
-PASS Partial interface HTMLLIElement: original interface defined
-PASS Partial interface HTMLLIElement: member names are unique
-PASS Partial interface HTMLLinkElement: original interface defined
-PASS Partial interface HTMLLinkElement: member names are unique
-PASS Partial interface HTMLMenuElement: original interface defined
-PASS Partial interface HTMLMenuElement: member names are unique
-PASS Partial interface HTMLMetaElement: original interface defined
-PASS Partial interface HTMLMetaElement: member names are unique
-PASS Partial interface HTMLObjectElement: original interface defined
-PASS Partial interface HTMLObjectElement: member names are unique
-PASS Partial interface HTMLOListElement: original interface defined
-PASS Partial interface HTMLOListElement: member names are unique
-PASS Partial interface HTMLParagraphElement: original interface defined
-PASS Partial interface HTMLParagraphElement: member names are unique
-PASS Partial interface HTMLParamElement: original interface defined
-PASS Partial interface HTMLParamElement: member names are unique
-PASS Partial interface HTMLPreElement: original interface defined
-PASS Partial interface HTMLPreElement: member names are unique
-PASS Partial interface HTMLStyleElement: original interface defined
-PASS Partial interface HTMLStyleElement: member names are unique
-PASS Partial interface HTMLScriptElement: original interface defined
-PASS Partial interface HTMLScriptElement: member names are unique
-PASS Partial interface HTMLTableElement: original interface defined
-PASS Partial interface HTMLTableElement: member names are unique
-PASS Partial interface HTMLTableSectionElement: original interface defined
-PASS Partial interface HTMLTableSectionElement: member names are unique
-PASS Partial interface HTMLTableCellElement: original interface defined
-PASS Partial interface HTMLTableCellElement: member names are unique
-PASS Partial interface HTMLTableRowElement: original interface defined
-PASS Partial interface HTMLTableRowElement: member names are unique
-PASS Partial interface HTMLUListElement: original interface defined
-PASS Partial interface HTMLUListElement: member names are unique
 PASS Partial interface Document[2]: original interface defined
 PASS Partial interface Document[2]: member names are unique
-PASS Partial interface Window: original interface defined
-PASS Partial interface Window: member names are unique
 PASS Partial interface Document[3]: member names are unique
 PASS Partial interface mixin DocumentOrShadowRoot[2]: member names are unique
 PASS Partial interface UIEvent: member names are unique
@@ -88,16 +24,7 @@ PASS Partial interface MouseEvent: member names are unique
 PASS Partial interface UIEvent[2]: member names are unique
 PASS Partial dictionary UIEventInit: member names are unique
 PASS Document includes GlobalEventHandlers: member names are unique
-PASS Document includes DocumentAndElementEventHandlers: member names are unique
-PASS HTMLElement includes GlobalEventHandlers: member names are unique
-PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
-PASS HTMLElement includes ElementContentEditable: member names are unique
-PASS HTMLElement includes HTMLOrSVGElement: member names are unique
-PASS HTMLLinkElement includes LinkStyle: member names are unique
-PASS HTMLStyleElement includes LinkStyle: member names are unique
-PASS HTMLBodyElement includes WindowEventHandlers: member names are unique
-PASS HTMLAnchorElement includes HTMLHyperlinkElementUtils: member names are unique
-PASS HTMLAreaElement includes HTMLHyperlinkElementUtils: member names are unique
+PASS CanvasRenderingContext2D includes CanvasSettings: member names are unique
 PASS CanvasRenderingContext2D includes CanvasState: member names are unique
 PASS CanvasRenderingContext2D includes CanvasTransform: member names are unique
 PASS CanvasRenderingContext2D includes CanvasCompositing: member names are unique
@@ -115,6 +42,7 @@ PASS CanvasRenderingContext2D includes CanvasPathDrawingStyles: member names are
 PASS CanvasRenderingContext2D includes CanvasTextDrawingStyles: member names are unique
 PASS CanvasRenderingContext2D includes CanvasPath: member names are unique
 PASS Path2D includes CanvasPath: member names are unique
+PASS OffscreenCanvasRenderingContext2D includes CanvasSettings: member names are unique
 PASS OffscreenCanvasRenderingContext2D includes CanvasState: member names are unique
 PASS OffscreenCanvasRenderingContext2D includes CanvasTransform: member names are unique
 PASS OffscreenCanvasRenderingContext2D includes CanvasCompositing: member names are unique
@@ -144,7 +72,10 @@ PASS Navigator includes NavigatorPlugins: member names are unique
 PASS Navigator includes NavigatorConcurrentHardware: member names are unique
 PASS Window includes AnimationFrameProvider: member names are unique
 PASS DedicatedWorkerGlobalScope includes AnimationFrameProvider: member names are unique
+PASS MessagePort includes MessageEventTarget: member names are unique
+PASS DedicatedWorkerGlobalScope includes MessageEventTarget: member names are unique
 PASS Worker includes AbstractWorker: member names are unique
+PASS Worker includes MessageEventTarget: member names are unique
 PASS SharedWorker includes AbstractWorker: member names are unique
 PASS WorkerNavigator includes NavigatorID: member names are unique
 PASS WorkerNavigator includes NavigatorLanguage: member names are unique
@@ -152,10 +83,8 @@ PASS WorkerNavigator includes NavigatorOnLine: member names are unique
 PASS WorkerNavigator includes NavigatorConcurrentHardware: member names are unique
 PASS Window includes WindowSessionStorage: member names are unique
 PASS Window includes WindowLocalStorage: member names are unique
-PASS HTMLFrameSetElement includes WindowEventHandlers: member names are unique
 PASS Element includes ARIAMixin: member names are unique
 PASS SVGElement includes GlobalEventHandlers: member names are unique
-PASS SVGElement includes DocumentAndElementEventHandlers: member names are unique
 PASS SVGElement includes SVGElementInstance: member names are unique
 PASS SVGElement includes HTMLOrSVGElement: member names are unique
 PASS SVGGraphicsElement includes SVGTests: member names are unique
@@ -163,7 +92,6 @@ PASS SVGSVGElement includes SVGFitToViewBox: member names are unique
 PASS SVGSVGElement includes WindowEventHandlers: member names are unique
 PASS SVGImageElement includes SVGURIReference: member names are unique
 PASS SVGScriptElement includes SVGURIReference: member names are unique
-PASS HTMLElement includes ElementCSSInlineStyle: member names are unique
 PASS SVGElement includes ElementCSSInlineStyle: member names are unique
 PASS Document includes NonElementParentNode: member names are unique
 PASS DocumentFragment includes NonElementParentNode: member names are unique
@@ -199,6 +127,14 @@ PASS DOMStringList interface: location.ancestorOrigins must inherit property "it
 PASS DOMStringList interface: calling item(unsigned long) on location.ancestorOrigins with too few arguments must throw TypeError
 PASS DOMStringList interface: location.ancestorOrigins must inherit property "contains(DOMString)" with the proper type
 PASS DOMStringList interface: calling contains(DOMString) on location.ancestorOrigins with too few arguments must throw TypeError
+PASS Element interface: document.createElement("noscript") must inherit property "setHTMLUnsafe((TrustedHTML or DOMString))" with the proper type
+PASS Element interface: calling setHTMLUnsafe((TrustedHTML or DOMString)) on document.createElement("noscript") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("noscript") must inherit property "getHTML(optional GetHTMLOptions)" with the proper type
+PASS Element interface: calling getHTML(optional GetHTMLOptions) on document.createElement("noscript") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("noscript") must inherit property "innerHTML" with the proper type
+PASS Element interface: document.createElement("noscript") must inherit property "outerHTML" with the proper type
+PASS Element interface: document.createElement("noscript") must inherit property "insertAdjacentHTML(DOMString, (TrustedHTML or DOMString))" with the proper type
+PASS Element interface: calling insertAdjacentHTML(DOMString, (TrustedHTML or DOMString)) on document.createElement("noscript") with too few arguments must throw TypeError
 PASS DOMStringMap interface: existence and properties of interface object
 PASS DOMStringMap interface object length
 PASS DOMStringMap interface object name
@@ -477,8 +413,6 @@ PASS CanvasRenderingContext2D interface: operation isPointInStroke(unrestricted 
 PASS CanvasRenderingContext2D interface: operation isPointInStroke(Path2D, unrestricted double, unrestricted double)
 PASS CanvasRenderingContext2D interface: operation drawFocusIfNeeded(Element)
 PASS CanvasRenderingContext2D interface: operation drawFocusIfNeeded(Path2D, Element)
-FAIL CanvasRenderingContext2D interface: operation scrollPathIntoView() assert_own_property: interface prototype object missing non-static operation expected property "scrollPathIntoView" missing
-FAIL CanvasRenderingContext2D interface: operation scrollPathIntoView(Path2D) assert_own_property: interface prototype object missing non-static operation expected property "scrollPathIntoView" missing
 PASS CanvasRenderingContext2D interface: operation fillText(DOMString, unrestricted double, unrestricted double, optional unrestricted double)
 PASS CanvasRenderingContext2D interface: operation strokeText(DOMString, unrestricted double, unrestricted double, optional unrestricted double)
 PASS CanvasRenderingContext2D interface: operation measureText(DOMString)
@@ -497,6 +431,7 @@ PASS CanvasRenderingContext2D interface: attribute miterLimit
 PASS CanvasRenderingContext2D interface: operation setLineDash(sequence<unrestricted double>)
 PASS CanvasRenderingContext2D interface: operation getLineDash()
 PASS CanvasRenderingContext2D interface: attribute lineDashOffset
+FAIL CanvasRenderingContext2D interface: attribute lang assert_true: The prototype object must have a property "lang" expected true got false
 PASS CanvasRenderingContext2D interface: attribute font
 PASS CanvasRenderingContext2D interface: attribute textAlign
 PASS CanvasRenderingContext2D interface: attribute textBaseline
@@ -514,7 +449,7 @@ PASS CanvasRenderingContext2D interface: operation quadraticCurveTo(unrestricted
 PASS CanvasRenderingContext2D interface: operation bezierCurveTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS CanvasRenderingContext2D interface: operation arcTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS CanvasRenderingContext2D interface: operation rect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
-PASS CanvasRenderingContext2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, sequence<(unrestricted double or DOMPointInit)>)
+FAIL CanvasRenderingContext2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional (unrestricted double or DOMPointInit or sequence<(unrestricted double or DOMPointInit)>)) assert_equals: property has wrong .length expected 4 but got 5
 PASS CanvasRenderingContext2D interface: operation arc(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS CanvasRenderingContext2D interface: operation ellipse(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS CanvasRenderingContext2D must be primary interface of document.createElement("canvas").getContext("2d")
@@ -588,9 +523,6 @@ PASS CanvasRenderingContext2D interface: document.createElement("canvas").getCon
 PASS CanvasRenderingContext2D interface: calling drawFocusIfNeeded(Element) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "drawFocusIfNeeded(Path2D, Element)" with the proper type
 PASS CanvasRenderingContext2D interface: calling drawFocusIfNeeded(Path2D, Element) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "scrollPathIntoView()" with the proper type assert_inherits: property "scrollPathIntoView" not found in prototype chain
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "scrollPathIntoView(Path2D)" with the proper type assert_inherits: property "scrollPathIntoView" not found in prototype chain
-FAIL CanvasRenderingContext2D interface: calling scrollPathIntoView(Path2D) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError assert_inherits: property "scrollPathIntoView" not found in prototype chain
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fillText(DOMString, unrestricted double, unrestricted double, optional unrestricted double)" with the proper type
 PASS CanvasRenderingContext2D interface: calling fillText(DOMString, unrestricted double, unrestricted double, optional unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "strokeText(DOMString, unrestricted double, unrestricted double, optional unrestricted double)" with the proper type
@@ -621,6 +553,7 @@ PASS CanvasRenderingContext2D interface: document.createElement("canvas").getCon
 PASS CanvasRenderingContext2D interface: calling setLineDash(sequence<unrestricted double>) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "getLineDash()" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "lineDashOffset" with the proper type
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "lang" with the proper type assert_inherits: property "lang" not found in prototype chain
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "font" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textAlign" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textBaseline" with the proper type
@@ -644,18 +577,12 @@ PASS CanvasRenderingContext2D interface: document.createElement("canvas").getCon
 PASS CanvasRenderingContext2D interface: calling arcTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "rect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type
 PASS CanvasRenderingContext2D interface: calling rect(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, sequence<(unrestricted double or DOMPointInit)>)" with the proper type
-PASS CanvasRenderingContext2D interface: calling roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, sequence<(unrestricted double or DOMPointInit)>) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional (unrestricted double or DOMPointInit or sequence<(unrestricted double or DOMPointInit)>))" with the proper type
+PASS CanvasRenderingContext2D interface: calling roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional (unrestricted double or DOMPointInit or sequence<(unrestricted double or DOMPointInit)>)) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "arc(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)" with the proper type
 PASS CanvasRenderingContext2D interface: calling arc(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "ellipse(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)" with the proper type
 PASS CanvasRenderingContext2D interface: calling ellipse(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
-FAIL CanvasFilter interface: existence and properties of interface object assert_own_property: self does not have own property "CanvasFilter" expected property "CanvasFilter" missing
-FAIL CanvasFilter interface object length assert_own_property: self does not have own property "CanvasFilter" expected property "CanvasFilter" missing
-FAIL CanvasFilter interface object name assert_own_property: self does not have own property "CanvasFilter" expected property "CanvasFilter" missing
-FAIL CanvasFilter interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CanvasFilter" expected property "CanvasFilter" missing
-FAIL CanvasFilter interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CanvasFilter" expected property "CanvasFilter" missing
-FAIL CanvasFilter interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CanvasFilter" expected property "CanvasFilter" missing
 PASS CanvasGradient interface: existence and properties of interface object
 PASS CanvasGradient interface object length
 PASS CanvasGradient interface object name
@@ -688,22 +615,6 @@ PASS TextMetrics interface: attribute emHeightDescent
 PASS TextMetrics interface: attribute hangingBaseline
 PASS TextMetrics interface: attribute alphabeticBaseline
 PASS TextMetrics interface: attribute ideographicBaseline
-PASS ImageData interface: existence and properties of interface object
-PASS ImageData interface object length
-PASS ImageData interface object name
-PASS ImageData interface: existence and properties of interface prototype object
-PASS ImageData interface: existence and properties of interface prototype object's "constructor" property
-PASS ImageData interface: existence and properties of interface prototype object's @@unscopables property
-PASS ImageData interface: attribute width
-PASS ImageData interface: attribute height
-PASS ImageData interface: attribute data
-PASS ImageData interface: attribute colorSpace
-PASS ImageData must be primary interface of new ImageData(10, 10)
-PASS Stringification of new ImageData(10, 10)
-PASS ImageData interface: new ImageData(10, 10) must inherit property "width" with the proper type
-PASS ImageData interface: new ImageData(10, 10) must inherit property "height" with the proper type
-FAIL ImageData interface: new ImageData(10, 10) must inherit property "data" with the proper type assert_inherits: property "data" found on object expected in prototype chain
-PASS ImageData interface: new ImageData(10, 10) must inherit property "colorSpace" with the proper type
 PASS Path2D interface: existence and properties of interface object
 PASS Path2D interface object length
 PASS Path2D interface object name
@@ -718,7 +629,7 @@ PASS Path2D interface: operation quadraticCurveTo(unrestricted double, unrestric
 PASS Path2D interface: operation bezierCurveTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS Path2D interface: operation arcTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS Path2D interface: operation rect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
-PASS Path2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, sequence<(unrestricted double or DOMPointInit)>)
+FAIL Path2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional (unrestricted double or DOMPointInit or sequence<(unrestricted double or DOMPointInit)>)) assert_equals: property has wrong .length expected 4 but got 5
 PASS Path2D interface: operation arc(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS Path2D interface: operation ellipse(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS ImageBitmapRenderingContext interface: existence and properties of interface object
@@ -749,6 +660,7 @@ PASS OffscreenCanvasRenderingContext2D interface: existence and properties of in
 PASS OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object's "constructor" property
 PASS OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object's @@unscopables property
 PASS OffscreenCanvasRenderingContext2D interface: attribute canvas
+FAIL OffscreenCanvasRenderingContext2D interface: operation getContextAttributes() assert_own_property: interface prototype object missing non-static operation expected property "getContextAttributes" missing
 PASS OffscreenCanvasRenderingContext2D interface: operation save()
 PASS OffscreenCanvasRenderingContext2D interface: operation restore()
 PASS OffscreenCanvasRenderingContext2D interface: operation reset()
@@ -808,6 +720,7 @@ PASS OffscreenCanvasRenderingContext2D interface: attribute miterLimit
 PASS OffscreenCanvasRenderingContext2D interface: operation setLineDash(sequence<unrestricted double>)
 PASS OffscreenCanvasRenderingContext2D interface: operation getLineDash()
 PASS OffscreenCanvasRenderingContext2D interface: attribute lineDashOffset
+FAIL OffscreenCanvasRenderingContext2D interface: attribute lang assert_true: The prototype object must have a property "lang" expected true got false
 PASS OffscreenCanvasRenderingContext2D interface: attribute font
 PASS OffscreenCanvasRenderingContext2D interface: attribute textAlign
 PASS OffscreenCanvasRenderingContext2D interface: attribute textBaseline
@@ -825,12 +738,10 @@ PASS OffscreenCanvasRenderingContext2D interface: operation quadraticCurveTo(unr
 PASS OffscreenCanvasRenderingContext2D interface: operation bezierCurveTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation arcTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation rect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
-PASS OffscreenCanvasRenderingContext2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, sequence<(unrestricted double or DOMPointInit)>)
+FAIL OffscreenCanvasRenderingContext2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional (unrestricted double or DOMPointInit or sequence<(unrestricted double or DOMPointInit)>)) assert_equals: property has wrong .length expected 4 but got 5
 PASS OffscreenCanvasRenderingContext2D interface: operation arc(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS OffscreenCanvasRenderingContext2D interface: operation ellipse(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
-FAIL CustomElementRegistry interface: existence and properties of interface object assert_throws_js: interface object didn't throw TypeError when called as a constructor function "function() {
-                new interface_object();
-            }" did not throw
+PASS CustomElementRegistry interface: existence and properties of interface object
 PASS CustomElementRegistry interface object length
 PASS CustomElementRegistry interface object name
 PASS CustomElementRegistry interface: existence and properties of interface prototype object
@@ -838,8 +749,10 @@ PASS CustomElementRegistry interface: existence and properties of interface prot
 PASS CustomElementRegistry interface: existence and properties of interface prototype object's @@unscopables property
 PASS CustomElementRegistry interface: operation define(DOMString, CustomElementConstructor, optional ElementDefinitionOptions)
 PASS CustomElementRegistry interface: operation get(DOMString)
+PASS CustomElementRegistry interface: operation getName(CustomElementConstructor)
 PASS CustomElementRegistry interface: operation whenDefined(DOMString)
 PASS CustomElementRegistry interface: operation upgrade(Node)
+PASS CustomElementRegistry interface: operation initialize(Node)
 PASS ElementInternals interface: existence and properties of interface object
 PASS ElementInternals interface object length
 PASS ElementInternals interface object name
@@ -856,6 +769,65 @@ PASS ElementInternals interface: attribute validationMessage
 PASS ElementInternals interface: operation checkValidity()
 PASS ElementInternals interface: operation reportValidity()
 PASS ElementInternals interface: attribute labels
+PASS ElementInternals interface: attribute states
+PASS CustomStateSet interface: existence and properties of interface object
+PASS CustomStateSet interface object length
+PASS CustomStateSet interface object name
+PASS CustomStateSet interface: existence and properties of interface prototype object
+PASS CustomStateSet interface: existence and properties of interface prototype object's "constructor" property
+PASS CustomStateSet interface: existence and properties of interface prototype object's @@unscopables property
+PASS CustomStateSet interface: setlike<DOMString>
+FAIL VisibilityStateEntry interface: existence and properties of interface object assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
+FAIL VisibilityStateEntry interface object length assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
+FAIL VisibilityStateEntry interface object name assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
+FAIL VisibilityStateEntry interface: existence and properties of interface prototype object assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
+FAIL VisibilityStateEntry interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
+FAIL VisibilityStateEntry interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
+FAIL VisibilityStateEntry interface: attribute name assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
+FAIL VisibilityStateEntry interface: attribute entryType assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
+FAIL VisibilityStateEntry interface: attribute startTime assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
+FAIL VisibilityStateEntry interface: attribute duration assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
+PASS UserActivation interface: existence and properties of interface object
+PASS UserActivation interface object length
+PASS UserActivation interface object name
+PASS UserActivation interface: existence and properties of interface prototype object
+PASS UserActivation interface: existence and properties of interface prototype object's "constructor" property
+PASS UserActivation interface: existence and properties of interface prototype object's @@unscopables property
+PASS UserActivation interface: attribute hasBeenActive
+PASS UserActivation interface: attribute isActive
+PASS ToggleEvent interface: existence and properties of interface object
+PASS ToggleEvent interface object length
+PASS ToggleEvent interface object name
+PASS ToggleEvent interface: existence and properties of interface prototype object
+PASS ToggleEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS ToggleEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS ToggleEvent interface: attribute oldState
+PASS ToggleEvent interface: attribute newState
+FAIL ToggleEvent interface: attribute source assert_true: The prototype object must have a property "source" expected true got false
+PASS ToggleEvent must be primary interface of new ToggleEvent("beforetoggle")
+PASS Stringification of new ToggleEvent("beforetoggle")
+PASS ToggleEvent interface: new ToggleEvent("beforetoggle") must inherit property "oldState" with the proper type
+PASS ToggleEvent interface: new ToggleEvent("beforetoggle") must inherit property "newState" with the proper type
+FAIL ToggleEvent interface: new ToggleEvent("beforetoggle") must inherit property "source" with the proper type assert_inherits: property "source" not found in prototype chain
+PASS CommandEvent interface: existence and properties of interface object
+PASS CommandEvent interface object length
+PASS CommandEvent interface object name
+PASS CommandEvent interface: existence and properties of interface prototype object
+PASS CommandEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS CommandEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS CommandEvent interface: attribute source
+PASS CommandEvent interface: attribute command
+PASS CloseWatcher interface: existence and properties of interface object
+PASS CloseWatcher interface object length
+PASS CloseWatcher interface object name
+PASS CloseWatcher interface: existence and properties of interface prototype object
+PASS CloseWatcher interface: existence and properties of interface prototype object's "constructor" property
+PASS CloseWatcher interface: existence and properties of interface prototype object's @@unscopables property
+PASS CloseWatcher interface: operation requestClose()
+PASS CloseWatcher interface: operation close()
+PASS CloseWatcher interface: operation destroy()
+PASS CloseWatcher interface: attribute oncancel
+PASS CloseWatcher interface: attribute onclose
 PASS DataTransfer interface: existence and properties of interface object
 PASS DataTransfer interface object length
 PASS DataTransfer interface object name
@@ -906,6 +878,30 @@ PASS BarProp interface: existence and properties of interface prototype object
 PASS BarProp interface: existence and properties of interface prototype object's "constructor" property
 PASS BarProp interface: existence and properties of interface prototype object's @@unscopables property
 PASS BarProp interface: attribute visible
+PASS Location interface: existence and properties of interface object
+PASS Location interface object length
+PASS Location interface object name
+PASS Location interface: existence and properties of interface prototype object
+PASS Location interface: existence and properties of interface prototype object's "constructor" property
+PASS Location interface: existence and properties of interface prototype object's @@unscopables property
+FAIL Location interface: stringifier assert_own_property: interface prototype object missing non-static operation expected property "toString" missing
+PASS Location must be primary interface of window.location
+PASS Stringification of window.location
+PASS Location interface: window.location must have own property "href"
+PASS Location interface: window.location must have own property "origin"
+PASS Location interface: window.location must have own property "protocol"
+PASS Location interface: window.location must have own property "host"
+PASS Location interface: window.location must have own property "hostname"
+PASS Location interface: window.location must have own property "port"
+PASS Location interface: window.location must have own property "pathname"
+PASS Location interface: window.location must have own property "search"
+PASS Location interface: window.location must have own property "hash"
+PASS Location interface: window.location must have own property "assign"
+PASS Location interface: calling assign(USVString) on window.location with too few arguments must throw TypeError
+PASS Location interface: window.location must have own property "replace"
+PASS Location interface: calling replace(USVString) on window.location with too few arguments must throw TypeError
+PASS Location interface: window.location must have own property "reload"
+PASS Location interface: window.location must have own property "ancestorOrigins"
 PASS History interface: existence and properties of interface object
 PASS History interface object length
 PASS History interface object name
@@ -933,30 +929,116 @@ PASS History interface: window.history must inherit property "pushState(any, DOM
 PASS History interface: calling pushState(any, DOMString, optional USVString?) on window.history with too few arguments must throw TypeError
 PASS History interface: window.history must inherit property "replaceState(any, DOMString, optional USVString?)" with the proper type
 PASS History interface: calling replaceState(any, DOMString, optional USVString?) on window.history with too few arguments must throw TypeError
-PASS Location interface: existence and properties of interface object
-PASS Location interface object length
-PASS Location interface object name
-PASS Location interface: existence and properties of interface prototype object
-PASS Location interface: existence and properties of interface prototype object's "constructor" property
-PASS Location interface: existence and properties of interface prototype object's @@unscopables property
-FAIL Location interface: stringifier assert_own_property: interface prototype object missing non-static operation expected property "toString" missing
-PASS Location must be primary interface of window.location
-PASS Stringification of window.location
-PASS Location interface: window.location must have own property "href"
-PASS Location interface: window.location must have own property "origin"
-PASS Location interface: window.location must have own property "protocol"
-PASS Location interface: window.location must have own property "host"
-PASS Location interface: window.location must have own property "hostname"
-PASS Location interface: window.location must have own property "port"
-PASS Location interface: window.location must have own property "pathname"
-PASS Location interface: window.location must have own property "search"
-PASS Location interface: window.location must have own property "hash"
-PASS Location interface: window.location must have own property "assign"
-PASS Location interface: calling assign(USVString) on window.location with too few arguments must throw TypeError
-PASS Location interface: window.location must have own property "replace"
-PASS Location interface: calling replace(USVString) on window.location with too few arguments must throw TypeError
-PASS Location interface: window.location must have own property "reload"
-PASS Location interface: window.location must have own property "ancestorOrigins"
+PASS Navigation interface: existence and properties of interface object
+PASS Navigation interface object length
+PASS Navigation interface object name
+PASS Navigation interface: existence and properties of interface prototype object
+PASS Navigation interface: existence and properties of interface prototype object's "constructor" property
+PASS Navigation interface: existence and properties of interface prototype object's @@unscopables property
+PASS Navigation interface: operation entries()
+PASS Navigation interface: attribute currentEntry
+PASS Navigation interface: operation updateCurrentEntry(NavigationUpdateCurrentEntryOptions)
+PASS Navigation interface: attribute transition
+PASS Navigation interface: attribute activation
+PASS Navigation interface: attribute canGoBack
+PASS Navigation interface: attribute canGoForward
+FAIL Navigation interface: operation navigate(USVString, optional NavigationNavigateOptions) assert_throws_js: calling operation with this = null didn't throw TypeError function "function() {
+            fn.apply(obj, args);
+        }" did not throw
+FAIL Navigation interface: operation reload(optional NavigationReloadOptions) assert_throws_js: calling operation with this = null didn't throw TypeError function "function() {
+            fn.apply(obj, args);
+        }" did not throw
+FAIL Navigation interface: operation traverseTo(DOMString, optional NavigationOptions) assert_throws_js: calling operation with this = null didn't throw TypeError function "function() {
+            fn.apply(obj, args);
+        }" did not throw
+FAIL Navigation interface: operation back(optional NavigationOptions) assert_throws_js: calling operation with this = null didn't throw TypeError function "function() {
+            fn.apply(obj, args);
+        }" did not throw
+FAIL Navigation interface: operation forward(optional NavigationOptions) assert_throws_js: calling operation with this = null didn't throw TypeError function "function() {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Navigation interface: attribute onnavigate
+PASS Navigation interface: attribute onnavigatesuccess
+PASS Navigation interface: attribute onnavigateerror
+PASS Navigation interface: attribute oncurrententrychange
+PASS NavigationHistoryEntry interface: existence and properties of interface object
+PASS NavigationHistoryEntry interface object length
+PASS NavigationHistoryEntry interface object name
+PASS NavigationHistoryEntry interface: existence and properties of interface prototype object
+PASS NavigationHistoryEntry interface: existence and properties of interface prototype object's "constructor" property
+PASS NavigationHistoryEntry interface: existence and properties of interface prototype object's @@unscopables property
+PASS NavigationHistoryEntry interface: attribute url
+PASS NavigationHistoryEntry interface: attribute key
+PASS NavigationHistoryEntry interface: attribute id
+PASS NavigationHistoryEntry interface: attribute index
+PASS NavigationHistoryEntry interface: attribute sameDocument
+PASS NavigationHistoryEntry interface: operation getState()
+PASS NavigationHistoryEntry interface: attribute ondispose
+PASS NavigationTransition interface: existence and properties of interface object
+PASS NavigationTransition interface object length
+PASS NavigationTransition interface object name
+PASS NavigationTransition interface: existence and properties of interface prototype object
+PASS NavigationTransition interface: existence and properties of interface prototype object's "constructor" property
+PASS NavigationTransition interface: existence and properties of interface prototype object's @@unscopables property
+PASS NavigationTransition interface: attribute navigationType
+PASS NavigationTransition interface: attribute from
+FAIL NavigationTransition interface: attribute committed assert_true: The prototype object must have a property "committed" expected true got false
+PASS NavigationTransition interface: attribute finished
+PASS NavigationActivation interface: existence and properties of interface object
+PASS NavigationActivation interface object length
+PASS NavigationActivation interface object name
+PASS NavigationActivation interface: existence and properties of interface prototype object
+PASS NavigationActivation interface: existence and properties of interface prototype object's "constructor" property
+PASS NavigationActivation interface: existence and properties of interface prototype object's @@unscopables property
+PASS NavigationActivation interface: attribute from
+PASS NavigationActivation interface: attribute entry
+PASS NavigationActivation interface: attribute navigationType
+PASS NavigateEvent interface: existence and properties of interface object
+PASS NavigateEvent interface object length
+PASS NavigateEvent interface object name
+PASS NavigateEvent interface: existence and properties of interface prototype object
+PASS NavigateEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS NavigateEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS NavigateEvent interface: attribute navigationType
+PASS NavigateEvent interface: attribute destination
+PASS NavigateEvent interface: attribute canIntercept
+PASS NavigateEvent interface: attribute userInitiated
+PASS NavigateEvent interface: attribute hashChange
+PASS NavigateEvent interface: attribute signal
+PASS NavigateEvent interface: attribute formData
+PASS NavigateEvent interface: attribute downloadRequest
+PASS NavigateEvent interface: attribute info
+PASS NavigateEvent interface: attribute hasUAVisualTransition
+PASS NavigateEvent interface: attribute sourceElement
+PASS NavigateEvent interface: operation intercept(optional NavigationInterceptOptions)
+PASS NavigateEvent interface: operation scroll()
+FAIL NavigationPrecommitController interface: existence and properties of interface object assert_own_property: self does not have own property "NavigationPrecommitController" expected property "NavigationPrecommitController" missing
+FAIL NavigationPrecommitController interface object length assert_own_property: self does not have own property "NavigationPrecommitController" expected property "NavigationPrecommitController" missing
+FAIL NavigationPrecommitController interface object name assert_own_property: self does not have own property "NavigationPrecommitController" expected property "NavigationPrecommitController" missing
+FAIL NavigationPrecommitController interface: existence and properties of interface prototype object assert_own_property: self does not have own property "NavigationPrecommitController" expected property "NavigationPrecommitController" missing
+FAIL NavigationPrecommitController interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "NavigationPrecommitController" expected property "NavigationPrecommitController" missing
+FAIL NavigationPrecommitController interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "NavigationPrecommitController" expected property "NavigationPrecommitController" missing
+FAIL NavigationPrecommitController interface: operation redirect(USVString, optional NavigationNavigateOptions) assert_own_property: self does not have own property "NavigationPrecommitController" expected property "NavigationPrecommitController" missing
+PASS NavigationDestination interface: existence and properties of interface object
+PASS NavigationDestination interface object length
+PASS NavigationDestination interface object name
+PASS NavigationDestination interface: existence and properties of interface prototype object
+PASS NavigationDestination interface: existence and properties of interface prototype object's "constructor" property
+PASS NavigationDestination interface: existence and properties of interface prototype object's @@unscopables property
+PASS NavigationDestination interface: attribute url
+PASS NavigationDestination interface: attribute key
+PASS NavigationDestination interface: attribute id
+PASS NavigationDestination interface: attribute index
+PASS NavigationDestination interface: attribute sameDocument
+PASS NavigationDestination interface: operation getState()
+PASS NavigationCurrentEntryChangeEvent interface: existence and properties of interface object
+PASS NavigationCurrentEntryChangeEvent interface object length
+PASS NavigationCurrentEntryChangeEvent interface object name
+PASS NavigationCurrentEntryChangeEvent interface: existence and properties of interface prototype object
+PASS NavigationCurrentEntryChangeEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS NavigationCurrentEntryChangeEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS NavigationCurrentEntryChangeEvent interface: attribute navigationType
+PASS NavigationCurrentEntryChangeEvent interface: attribute from
 PASS PopStateEvent interface: existence and properties of interface object
 PASS PopStateEvent interface object length
 PASS PopStateEvent interface object name
@@ -964,9 +1046,11 @@ PASS PopStateEvent interface: existence and properties of interface prototype ob
 PASS PopStateEvent interface: existence and properties of interface prototype object's "constructor" property
 PASS PopStateEvent interface: existence and properties of interface prototype object's @@unscopables property
 PASS PopStateEvent interface: attribute state
+PASS PopStateEvent interface: attribute hasUAVisualTransition
 PASS PopStateEvent must be primary interface of new PopStateEvent("popstate", { data: {} })
 PASS Stringification of new PopStateEvent("popstate", { data: {} })
 PASS PopStateEvent interface: new PopStateEvent("popstate", { data: {} }) must inherit property "state" with the proper type
+PASS PopStateEvent interface: new PopStateEvent("popstate", { data: {} }) must inherit property "hasUAVisualTransition" with the proper type
 PASS HashChangeEvent interface: existence and properties of interface object
 PASS HashChangeEvent interface object length
 PASS HashChangeEvent interface object name
@@ -975,6 +1059,21 @@ PASS HashChangeEvent interface: existence and properties of interface prototype 
 PASS HashChangeEvent interface: existence and properties of interface prototype object's @@unscopables property
 PASS HashChangeEvent interface: attribute oldURL
 PASS HashChangeEvent interface: attribute newURL
+PASS PageSwapEvent interface: existence and properties of interface object
+PASS PageSwapEvent interface object length
+PASS PageSwapEvent interface object name
+PASS PageSwapEvent interface: existence and properties of interface prototype object
+PASS PageSwapEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS PageSwapEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS PageSwapEvent interface: attribute activation
+PASS PageSwapEvent interface: attribute viewTransition
+PASS PageRevealEvent interface: existence and properties of interface object
+PASS PageRevealEvent interface object length
+PASS PageRevealEvent interface object name
+PASS PageRevealEvent interface: existence and properties of interface prototype object
+PASS PageRevealEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS PageRevealEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS PageRevealEvent interface: attribute viewTransition
 PASS PageTransitionEvent interface: existence and properties of interface object
 PASS PageTransitionEvent interface object length
 PASS PageTransitionEvent interface object name
@@ -989,6 +1088,27 @@ PASS BeforeUnloadEvent interface: existence and properties of interface prototyp
 PASS BeforeUnloadEvent interface: existence and properties of interface prototype object's "constructor" property
 PASS BeforeUnloadEvent interface: existence and properties of interface prototype object's @@unscopables property
 PASS BeforeUnloadEvent interface: attribute returnValue
+FAIL NotRestoredReasonDetails interface: existence and properties of interface object assert_own_property: self does not have own property "NotRestoredReasonDetails" expected property "NotRestoredReasonDetails" missing
+FAIL NotRestoredReasonDetails interface object length assert_own_property: self does not have own property "NotRestoredReasonDetails" expected property "NotRestoredReasonDetails" missing
+FAIL NotRestoredReasonDetails interface object name assert_own_property: self does not have own property "NotRestoredReasonDetails" expected property "NotRestoredReasonDetails" missing
+FAIL NotRestoredReasonDetails interface: existence and properties of interface prototype object assert_own_property: self does not have own property "NotRestoredReasonDetails" expected property "NotRestoredReasonDetails" missing
+FAIL NotRestoredReasonDetails interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "NotRestoredReasonDetails" expected property "NotRestoredReasonDetails" missing
+FAIL NotRestoredReasonDetails interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "NotRestoredReasonDetails" expected property "NotRestoredReasonDetails" missing
+FAIL NotRestoredReasonDetails interface: attribute reason assert_own_property: self does not have own property "NotRestoredReasonDetails" expected property "NotRestoredReasonDetails" missing
+FAIL NotRestoredReasonDetails interface: operation toJSON() assert_own_property: self does not have own property "NotRestoredReasonDetails" expected property "NotRestoredReasonDetails" missing
+FAIL NotRestoredReasons interface: existence and properties of interface object assert_own_property: self does not have own property "NotRestoredReasons" expected property "NotRestoredReasons" missing
+FAIL NotRestoredReasons interface object length assert_own_property: self does not have own property "NotRestoredReasons" expected property "NotRestoredReasons" missing
+FAIL NotRestoredReasons interface object name assert_own_property: self does not have own property "NotRestoredReasons" expected property "NotRestoredReasons" missing
+FAIL NotRestoredReasons interface: existence and properties of interface prototype object assert_own_property: self does not have own property "NotRestoredReasons" expected property "NotRestoredReasons" missing
+FAIL NotRestoredReasons interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "NotRestoredReasons" expected property "NotRestoredReasons" missing
+FAIL NotRestoredReasons interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "NotRestoredReasons" expected property "NotRestoredReasons" missing
+FAIL NotRestoredReasons interface: attribute src assert_own_property: self does not have own property "NotRestoredReasons" expected property "NotRestoredReasons" missing
+FAIL NotRestoredReasons interface: attribute id assert_own_property: self does not have own property "NotRestoredReasons" expected property "NotRestoredReasons" missing
+FAIL NotRestoredReasons interface: attribute name assert_own_property: self does not have own property "NotRestoredReasons" expected property "NotRestoredReasons" missing
+FAIL NotRestoredReasons interface: attribute url assert_own_property: self does not have own property "NotRestoredReasons" expected property "NotRestoredReasons" missing
+FAIL NotRestoredReasons interface: attribute reasons assert_own_property: self does not have own property "NotRestoredReasons" expected property "NotRestoredReasons" missing
+FAIL NotRestoredReasons interface: attribute children assert_own_property: self does not have own property "NotRestoredReasons" expected property "NotRestoredReasons" missing
+FAIL NotRestoredReasons interface: operation toJSON() assert_own_property: self does not have own property "NotRestoredReasons" expected property "NotRestoredReasons" missing
 PASS ErrorEvent interface: existence and properties of interface object
 PASS ErrorEvent interface object length
 PASS ErrorEvent interface object name
@@ -1006,7 +1126,9 @@ PASS PromiseRejectionEvent interface object name
 PASS PromiseRejectionEvent interface: existence and properties of interface prototype object
 PASS PromiseRejectionEvent interface: existence and properties of interface prototype object's "constructor" property
 PASS PromiseRejectionEvent interface: existence and properties of interface prototype object's @@unscopables property
-PASS PromiseRejectionEvent interface: attribute promise
+FAIL PromiseRejectionEvent interface: attribute promise assert_throws_js: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
 PASS PromiseRejectionEvent interface: attribute reason
 PASS DOMParser interface: existence and properties of interface object
 PASS DOMParser interface object length
@@ -1014,17 +1136,25 @@ PASS DOMParser interface object name
 PASS DOMParser interface: existence and properties of interface prototype object
 PASS DOMParser interface: existence and properties of interface prototype object's "constructor" property
 PASS DOMParser interface: existence and properties of interface prototype object's @@unscopables property
-PASS DOMParser interface: operation parseFromString(DOMString, DOMParserSupportedType)
+PASS DOMParser interface: operation parseFromString((TrustedHTML or DOMString), DOMParserSupportedType)
 PASS DOMParser must be primary interface of new DOMParser()
 PASS Stringification of new DOMParser()
-PASS DOMParser interface: new DOMParser() must inherit property "parseFromString(DOMString, DOMParserSupportedType)" with the proper type
-PASS DOMParser interface: calling parseFromString(DOMString, DOMParserSupportedType) on new DOMParser() with too few arguments must throw TypeError
+PASS DOMParser interface: new DOMParser() must inherit property "parseFromString((TrustedHTML or DOMString), DOMParserSupportedType)" with the proper type
+PASS DOMParser interface: calling parseFromString((TrustedHTML or DOMString), DOMParserSupportedType) on new DOMParser() with too few arguments must throw TypeError
+PASS XMLSerializer interface: existence and properties of interface object
+PASS XMLSerializer interface object length
+PASS XMLSerializer interface object name
+PASS XMLSerializer interface: existence and properties of interface prototype object
+PASS XMLSerializer interface: existence and properties of interface prototype object's "constructor" property
+PASS XMLSerializer interface: existence and properties of interface prototype object's @@unscopables property
+PASS XMLSerializer interface: operation serializeToString(Node)
 PASS Navigator interface: existence and properties of interface object
 PASS Navigator interface object length
 PASS Navigator interface object name
 PASS Navigator interface: existence and properties of interface prototype object
 PASS Navigator interface: existence and properties of interface prototype object's "constructor" property
 PASS Navigator interface: existence and properties of interface prototype object's @@unscopables property
+PASS Navigator interface: attribute userActivation
 PASS Navigator interface: attribute appCodeName
 PASS Navigator interface: attribute appName
 PASS Navigator interface: attribute appVersion
@@ -1049,6 +1179,7 @@ PASS Navigator interface: attribute pdfViewerEnabled
 PASS Navigator interface: attribute hardwareConcurrency
 PASS Navigator must be primary interface of window.navigator
 PASS Stringification of window.navigator
+PASS Navigator interface: window.navigator must inherit property "userActivation" with the proper type
 PASS Navigator interface: window.navigator must inherit property "appCodeName" with the proper type
 PASS Navigator interface: window.navigator must inherit property "appName" with the proper type
 PASS Navigator interface: window.navigator must inherit property "appVersion" with the proper type
@@ -1114,6 +1245,24 @@ PASS MimeType interface: attribute type
 PASS MimeType interface: attribute description
 PASS MimeType interface: attribute suffixes
 PASS MimeType interface: attribute enabledPlugin
+PASS ImageData interface: existence and properties of interface object
+PASS ImageData interface object length
+PASS ImageData interface object name
+PASS ImageData interface: existence and properties of interface prototype object
+PASS ImageData interface: existence and properties of interface prototype object's "constructor" property
+PASS ImageData interface: existence and properties of interface prototype object's @@unscopables property
+PASS ImageData interface: attribute width
+PASS ImageData interface: attribute height
+PASS ImageData interface: attribute data
+PASS ImageData interface: attribute pixelFormat
+PASS ImageData interface: attribute colorSpace
+PASS ImageData must be primary interface of new ImageData(10, 10)
+PASS Stringification of new ImageData(10, 10)
+PASS ImageData interface: new ImageData(10, 10) must inherit property "width" with the proper type
+PASS ImageData interface: new ImageData(10, 10) must inherit property "height" with the proper type
+FAIL ImageData interface: new ImageData(10, 10) must inherit property "data" with the proper type assert_inherits: property "data" found on object expected in prototype chain
+PASS ImageData interface: new ImageData(10, 10) must inherit property "pixelFormat" with the proper type
+PASS ImageData interface: new ImageData(10, 10) must inherit property "colorSpace" with the proper type
 PASS ImageBitmap interface: existence and properties of interface object
 PASS ImageBitmap interface object length
 PASS ImageBitmap interface object name
@@ -1175,44 +1324,6 @@ PASS EventSource interface: new EventSource("http://invalid") must inherit prope
 PASS EventSource interface: new EventSource("http://invalid") must inherit property "onmessage" with the proper type
 PASS EventSource interface: new EventSource("http://invalid") must inherit property "onerror" with the proper type
 PASS EventSource interface: new EventSource("http://invalid") must inherit property "close()" with the proper type
-PASS WebSocket interface: existence and properties of interface object
-PASS WebSocket interface object length
-PASS WebSocket interface object name
-PASS WebSocket interface: existence and properties of interface prototype object
-PASS WebSocket interface: existence and properties of interface prototype object's "constructor" property
-PASS WebSocket interface: existence and properties of interface prototype object's @@unscopables property
-PASS WebSocket interface: attribute url
-PASS WebSocket interface: constant CONNECTING on interface object
-PASS WebSocket interface: constant CONNECTING on interface prototype object
-PASS WebSocket interface: constant OPEN on interface object
-PASS WebSocket interface: constant OPEN on interface prototype object
-PASS WebSocket interface: constant CLOSING on interface object
-PASS WebSocket interface: constant CLOSING on interface prototype object
-PASS WebSocket interface: constant CLOSED on interface object
-PASS WebSocket interface: constant CLOSED on interface prototype object
-PASS WebSocket interface: attribute readyState
-PASS WebSocket interface: attribute bufferedAmount
-PASS WebSocket interface: attribute onopen
-PASS WebSocket interface: attribute onerror
-PASS WebSocket interface: attribute onclose
-PASS WebSocket interface: attribute extensions
-PASS WebSocket interface: attribute protocol
-PASS WebSocket interface: operation close(optional unsigned short, optional USVString)
-PASS WebSocket interface: attribute onmessage
-PASS WebSocket interface: attribute binaryType
-PASS WebSocket interface: operation send(USVString)
-PASS WebSocket interface: operation send(Blob)
-PASS WebSocket interface: operation send(ArrayBuffer)
-PASS WebSocket interface: operation send(ArrayBufferView)
-PASS CloseEvent interface: existence and properties of interface object
-PASS CloseEvent interface object length
-PASS CloseEvent interface object name
-PASS CloseEvent interface: existence and properties of interface prototype object
-PASS CloseEvent interface: existence and properties of interface prototype object's "constructor" property
-PASS CloseEvent interface: existence and properties of interface prototype object's @@unscopables property
-PASS CloseEvent interface: attribute wasClean
-PASS CloseEvent interface: attribute code
-PASS CloseEvent interface: attribute reason
 PASS MessageChannel interface: existence and properties of interface object
 PASS MessageChannel interface object length
 PASS MessageChannel interface object name
@@ -1231,6 +1342,7 @@ PASS MessagePort interface: operation postMessage(any, sequence<object>)
 PASS MessagePort interface: operation postMessage(any, optional StructuredSerializeOptions)
 PASS MessagePort interface: operation start()
 PASS MessagePort interface: operation close()
+FAIL MessagePort interface: attribute onclose assert_true: The prototype object must have a property "onclose" expected true got false
 PASS MessagePort interface: attribute onmessage
 PASS MessagePort interface: attribute onmessageerror
 PASS BroadcastChannel interface: existence and properties of interface object
@@ -1256,9 +1368,9 @@ PASS Worker interface: existence and properties of interface prototype object's 
 PASS Worker interface: operation terminate()
 PASS Worker interface: operation postMessage(any, sequence<object>)
 PASS Worker interface: operation postMessage(any, optional StructuredSerializeOptions)
+PASS Worker interface: attribute onerror
 PASS Worker interface: attribute onmessage
 PASS Worker interface: attribute onmessageerror
-PASS Worker interface: attribute onerror
 PASS SharedWorker interface: existence and properties of interface object
 PASS SharedWorker interface object length
 PASS SharedWorker interface object name
@@ -1349,6 +1461,7 @@ FAIL External interface: window.external must inherit property "IsSearchProvider
 PASS SVGElement interface: attribute onabort
 PASS SVGElement interface: attribute onauxclick
 PASS SVGElement interface: attribute onbeforeinput
+PASS SVGElement interface: attribute onbeforematch
 PASS SVGElement interface: attribute onbeforetoggle
 PASS SVGElement interface: attribute onblur
 PASS SVGElement interface: attribute oncancel
@@ -1361,7 +1474,9 @@ PASS SVGElement interface: attribute oncommand
 FAIL SVGElement interface: attribute oncontextlost assert_true: The prototype object must have a property "oncontextlost" expected true got false
 PASS SVGElement interface: attribute oncontextmenu
 FAIL SVGElement interface: attribute oncontextrestored assert_true: The prototype object must have a property "oncontextrestored" expected true got false
+PASS SVGElement interface: attribute oncopy
 PASS SVGElement interface: attribute oncuechange
+PASS SVGElement interface: attribute oncut
 PASS SVGElement interface: attribute ondblclick
 PASS SVGElement interface: attribute ondrag
 PASS SVGElement interface: attribute ondragend
@@ -1392,6 +1507,7 @@ PASS SVGElement interface: attribute onmousemove
 PASS SVGElement interface: attribute onmouseout
 PASS SVGElement interface: attribute onmouseover
 PASS SVGElement interface: attribute onmouseup
+PASS SVGElement interface: attribute onpaste
 PASS SVGElement interface: attribute onpause
 PASS SVGElement interface: attribute onplay
 PASS SVGElement interface: attribute onplaying
@@ -1400,6 +1516,7 @@ PASS SVGElement interface: attribute onratechange
 PASS SVGElement interface: attribute onreset
 PASS SVGElement interface: attribute onresize
 PASS SVGElement interface: attribute onscroll
+PASS SVGElement interface: attribute onscrollend
 PASS SVGElement interface: attribute onsecuritypolicyviolation
 PASS SVGElement interface: attribute onseeked
 PASS SVGElement interface: attribute onseeking
@@ -1417,9 +1534,6 @@ PASS SVGElement interface: attribute onwebkitanimationiteration
 PASS SVGElement interface: attribute onwebkitanimationstart
 PASS SVGElement interface: attribute onwebkittransitionend
 PASS SVGElement interface: attribute onwheel
-PASS SVGElement interface: attribute oncopy
-PASS SVGElement interface: attribute oncut
-PASS SVGElement interface: attribute onpaste
 PASS SVGElement interface: attribute dataset
 PASS SVGElement interface: attribute nonce
 PASS SVGElement interface: attribute autofocus
@@ -1436,11 +1550,22 @@ FAIL SVGSVGElement interface: attribute onmessageerror assert_true: The prototyp
 FAIL SVGSVGElement interface: attribute onoffline assert_true: The prototype object must have a property "onoffline" expected true got false
 FAIL SVGSVGElement interface: attribute ononline assert_true: The prototype object must have a property "ononline" expected true got false
 FAIL SVGSVGElement interface: attribute onpagehide assert_true: The prototype object must have a property "onpagehide" expected true got false
+FAIL SVGSVGElement interface: attribute onpagereveal assert_true: The prototype object must have a property "onpagereveal" expected true got false
 FAIL SVGSVGElement interface: attribute onpageshow assert_true: The prototype object must have a property "onpageshow" expected true got false
+FAIL SVGSVGElement interface: attribute onpageswap assert_true: The prototype object must have a property "onpageswap" expected true got false
 FAIL SVGSVGElement interface: attribute onpopstate assert_true: The prototype object must have a property "onpopstate" expected true got false
 FAIL SVGSVGElement interface: attribute onrejectionhandled assert_true: The prototype object must have a property "onrejectionhandled" expected true got false
 FAIL SVGSVGElement interface: attribute onstorage assert_true: The prototype object must have a property "onstorage" expected true got false
 FAIL SVGSVGElement interface: attribute onunhandledrejection assert_true: The prototype object must have a property "onunhandledrejection" expected true got false
 FAIL SVGSVGElement interface: attribute onunload assert_true: The prototype object must have a property "onunload" expected true got false
+PASS ShadowRoot interface: operation setHTMLUnsafe((TrustedHTML or DOMString))
+PASS ShadowRoot interface: operation getHTML(optional GetHTMLOptions)
+PASS ShadowRoot interface: attribute innerHTML
 PASS ShadowRoot interface: attribute activeElement
+PASS Element interface: operation setHTMLUnsafe((TrustedHTML or DOMString))
+PASS Element interface: operation getHTML(optional GetHTMLOptions)
+PASS Element interface: attribute innerHTML
+PASS Element interface: attribute outerHTML
+PASS Element interface: operation insertAdjacentHTML(DOMString, (TrustedHTML or DOMString))
+PASS Range interface: operation createContextualFragment((TrustedHTML or DOMString))
 

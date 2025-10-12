@@ -25,7 +25,8 @@
 #include <unicode/utypes.h>
 #include <wtf/BitSet.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/LChar.h>
+#include <wtf/text/ASCIILiteral.h>
+#include <wtf/text/Latin1Character.h>
 
 #if CPU(X86_SSE2)
 #include <emmintrin.h>
@@ -33,21 +34,19 @@
 
 namespace WTF {
 
-template<unsigned charactersCount>
-inline constexpr BitSet<256> makeLatin1CharacterBitSet(const char (&characters)[charactersCount])
+inline constexpr BitSet<256> makeLatin1CharacterBitSet(ASCIILiteral characters)
 {
-    static_assert(charactersCount > 0, "Since string literal is null terminated, characterCount is always larger than 0");
     BitSet<256> bitmap;
-    for (unsigned i = 0; i < charactersCount - 1; ++i)
-        bitmap.set(characters[i]);
+    for (char character : characters.span())
+        bitmap.set(character);
     return bitmap;
 }
 
-inline constexpr BitSet<256> makeLatin1CharacterBitSet(NOESCAPE const Invocable<bool(LChar)> auto& matches)
+inline constexpr BitSet<256> makeLatin1CharacterBitSet(NOESCAPE const Invocable<bool(Latin1Character)> auto& matches)
 {
     BitSet<256> bitmap;
     for (unsigned i = 0; i < bitmap.size(); ++i) {
-        if (matches(static_cast<LChar>(i)))
+        if (matches(static_cast<Latin1Character>(i)))
             bitmap.set(i);
     }
     return bitmap;
@@ -75,19 +74,19 @@ template<typename T> inline T* alignToMachineWord(T* pointer)
 }
 
 template<size_t size, typename CharacterType> struct NonASCIIMask;
-template<> struct NonASCIIMask<4, UChar> {
+template<> struct NonASCIIMask<4, char16_t> {
     static inline uint32_t value() { return 0xFF80FF80U; }
 };
-template<> struct NonASCIIMask<4, LChar> {
+template<> struct NonASCIIMask<4, Latin1Character> {
     static inline uint32_t value() { return 0x80808080U; }
 };
 template<> struct NonASCIIMask<4, char8_t> {
     static inline uint32_t value() { return 0x80808080U; }
 };
-template<> struct NonASCIIMask<8, UChar> {
+template<> struct NonASCIIMask<8, char16_t> {
     static inline uint64_t value() { return 0xFF80FF80FF80FF80ULL; }
 };
-template<> struct NonASCIIMask<8, LChar> {
+template<> struct NonASCIIMask<8, Latin1Character> {
     static inline uint64_t value() { return 0x8080808080808080ULL; }
 };
 template<> struct NonASCIIMask<8, char8_t> {
@@ -95,10 +94,10 @@ template<> struct NonASCIIMask<8, char8_t> {
 };
 
 template<size_t size, typename CharacterType> struct NonLatin1Mask;
-template<> struct NonLatin1Mask<4, UChar> {
+template<> struct NonLatin1Mask<4, char16_t> {
     static inline uint32_t value() { return 0xFF00FF00U; }
 };
-template<> struct NonLatin1Mask<8, UChar> {
+template<> struct NonLatin1Mask<8, char16_t> {
     static inline uint64_t value() { return 0xFF00FF00FF00FF00ULL; }
 };
 

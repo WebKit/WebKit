@@ -22,6 +22,7 @@
 #if HAVE(GL_FENCE)
 
 #include "GLFence.h"
+#include <wtf/ThreadSafeWeakPtr.h>
 
 typedef void* EGLSync;
 
@@ -29,12 +30,12 @@ namespace WebCore {
 
 class GLFenceEGL final : public GLFence {
 public:
-    static std::unique_ptr<GLFence> create();
+    static std::unique_ptr<GLFence> create(const GLDisplay&);
 #if OS(UNIX)
-    static std::unique_ptr<GLFence> createExportable();
-    static std::unique_ptr<GLFence> importFD(WTF::UnixFileDescriptor&&);
+    static std::unique_ptr<GLFence> createExportable(const GLDisplay&);
+    static std::unique_ptr<GLFence> importFD(const GLDisplay&, WTF::UnixFileDescriptor&&);
 #endif
-    GLFenceEGL(EGLSync, bool);
+    GLFenceEGL(const GLDisplay&, EGLSync, bool);
     virtual ~GLFenceEGL();
 
 private:
@@ -44,6 +45,7 @@ private:
     WTF::UnixFileDescriptor exportFD() override;
 #endif
 
+    ThreadSafeWeakPtr<GLDisplay> m_display;
     EGLSync m_sync { nullptr };
 #if OS(UNIX)
     bool m_isExportable { false };

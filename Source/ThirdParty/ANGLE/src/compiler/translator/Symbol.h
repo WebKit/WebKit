@@ -9,6 +9,10 @@
 #ifndef COMPILER_TRANSLATOR_SYMBOL_H_
 #define COMPILER_TRANSLATOR_SYMBOL_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "common/angleutils.h"
 #include "compiler/translator/ExtensionBehavior.h"
 #include "compiler/translator/ImmutableString.h"
@@ -232,6 +236,8 @@ class TInterfaceBlock : public TSymbol, public TFieldListCollection
 
     TLayoutBlockStorage blockStorage() const { return mBlockStorage; }
     int blockBinding() const { return mBinding; }
+    bool isDefaultUniformBlock() const { return mIsDefaultUniformBlock; }
+    void setDefaultUniformBlock() { mIsDefaultUniformBlock = true; }
 
   private:
     friend class TSymbolTable;
@@ -263,6 +269,7 @@ class TInterfaceBlock : public TSymbol, public TFieldListCollection
 
     TLayoutBlockStorage mBlockStorage;
     int mBinding;
+    bool mIsDefaultUniformBlock;
 
     // Note that we only record matrix packing on a per-field granularity.
 };

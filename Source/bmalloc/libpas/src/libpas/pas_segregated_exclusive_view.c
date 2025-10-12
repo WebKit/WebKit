@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "pas_config.h"
@@ -29,13 +29,10 @@
 
 #include "pas_segregated_exclusive_view.h"
 
-#include "pas_epoch.h"
 #include "pas_immortal_heap.h"
 #include "pas_log.h"
-#include "pas_page_malloc.h"
 #include "pas_page_sharing_pool.h"
 #include "pas_segregated_heap.h"
-#include "pas_segregated_page_inlines.h"
 #include "pas_segregated_size_directory.h"
 
 size_t pas_segregated_exclusive_view_count;
@@ -45,7 +42,7 @@ pas_segregated_exclusive_view* pas_segregated_exclusive_view_create(
     size_t index)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
-    
+
     pas_segregated_exclusive_view* result;
 
     if (verbose)
@@ -76,7 +73,7 @@ void pas_segregated_exclusive_view_note_emptiness(
 {
     pas_segregated_directory* directory;
     unsigned view_index;
-    
+
     if (page->is_in_use_for_allocation) {
         /* We currently don't want to notify emptiness until after we're done allocating in the
            page. However, this is a relatively weak requirement. */
@@ -85,7 +82,7 @@ void pas_segregated_exclusive_view_note_emptiness(
 
     directory = &pas_compact_segregated_size_directory_ptr_load_non_null(&view->directory)->base;
     view_index = view->index;
-    
+
     pas_segregated_directory_view_did_become_empty_at_index(directory, view_index);
 }
 
@@ -114,7 +111,7 @@ static pas_heap_summary compute_summary_impl(pas_segregated_exclusive_view* view
     directory = &size_directory->base;
     page_config_ptr = pas_segregated_page_config_kind_get_config(directory->page_config_kind);
     page_config = *page_config_ptr;
-    
+
     result = pas_heap_summary_create_empty();
 
     data = pas_segregated_size_directory_data_ptr_load(&size_directory->data);
@@ -133,7 +130,7 @@ static pas_heap_summary compute_summary_impl(pas_segregated_exclusive_view* view
     pas_page_base_add_free_range(
         &page->base, &result, pas_range_create(end, page_config.base.page_size),
         pas_free_meta_range);
-    
+
     for (offset = begin; offset < end; offset += object_size) {
         if (pas_bitvector_get(
                 page->alloc_bits,
@@ -150,7 +147,7 @@ static pas_heap_summary compute_summary_impl(pas_segregated_exclusive_view* view
 
     if (page->is_in_use_for_allocation)
         result.cached += page_config.base.page_size;
-    
+
     return result;
 }
 
@@ -158,7 +155,7 @@ pas_heap_summary pas_segregated_exclusive_view_compute_summary(
     pas_segregated_exclusive_view* view)
 {
     pas_heap_summary result;
-    
+
     pas_lock_lock(&view->ownership_lock);
     result = compute_summary_impl(view);
     pas_lock_unlock(&view->ownership_lock);
@@ -189,7 +186,7 @@ void pas_segregated_exclusive_view_install_full_use_counts(
 
     full_use_counts = pas_compact_tagged_page_granule_use_count_ptr_load_non_null(
         &pas_segregated_size_directory_get_extended_data(directory)->full_use_counts);
-    
+
     memcpy(use_counts,
            full_use_counts,
            num_granules * sizeof(pas_page_granule_use_count));

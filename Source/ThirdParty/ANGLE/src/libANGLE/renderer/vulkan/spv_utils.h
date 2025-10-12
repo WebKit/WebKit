@@ -79,6 +79,13 @@ struct ShaderInterfaceVariableXfbInfo
     std::vector<ShaderInterfaceVariableXfbInfo> arrayElements;
 };
 
+enum class PrecisionAdjustmentEnum : uint8_t
+{
+    kUnchanged,
+    kLowerPrecision,
+    kUpperPrecision,
+};
+
 // Information for each shader interface variable.  Not all fields are relevant to each shader
 // interface variable.  For example opaque uniforms require a set and binding index, while vertex
 // attributes require a location.
@@ -91,7 +98,6 @@ struct ShaderInterfaceVariableInfo
           location(kInvalid),
           component(kInvalid),
           index(kInvalid),
-          useRelaxedPrecision(false),
           varyingIsInput(false),
           varyingIsOutput(false),
           hasTransformFeedback(false),
@@ -99,7 +105,9 @@ struct ShaderInterfaceVariableInfo
           padding(0),
           attributeComponentCount(0),
           attributeLocationCount(0)
-    {}
+    {
+        SetBitField(useRelaxedPrecision, PrecisionAdjustmentEnum::kUnchanged);
+    }
 
     static constexpr uint32_t kInvalid = std::numeric_limits<uint32_t>::max();
 
@@ -118,17 +126,17 @@ struct ShaderInterfaceVariableInfo
     gl::ShaderBitSet activeStages;
 
     // Indicates that the precision needs to be modified in the generated SPIR-V
-    // to support only transferring medium precision data when there's a precision
+    // to support only transferring same precision data when there's a precision
     // mismatch between the shaders. For example, either the VS casts highp->mediump
     // or the FS casts mediump->highp.
-    uint8_t useRelaxedPrecision : 1;
+    PrecisionAdjustmentEnum useRelaxedPrecision : 2;
     // Indicate if varying is input or output, or both (in case of for example gl_Position in a
     // geometry shader)
     uint8_t varyingIsInput : 1;
     uint8_t varyingIsOutput : 1;
     uint8_t hasTransformFeedback : 1;
     uint8_t isArray : 1;
-    uint8_t padding : 3;
+    uint8_t padding : 2;
 
     // For vertex attributes, this is the number of components / locations.  These are used by the
     // vertex attribute aliasing transformation only.

@@ -27,7 +27,7 @@
 
 #if USE(GRAPHICS_LAYER_WC) && ENABLE(WEBGL)
 
-#include "GraphicsContextGLIdentifier.h"
+#include "RemoteGraphicsContextGLIdentifier.h"
 #include "WCContentBufferIdentifier.h"
 #include <WebCore/WCPlatformLayer.h>
 

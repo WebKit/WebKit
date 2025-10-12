@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include <cmath>
 #include <type_traits>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/FixedVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>

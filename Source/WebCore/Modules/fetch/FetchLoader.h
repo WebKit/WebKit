@@ -28,9 +28,9 @@
 
 #pragma once
 
-#include "ThreadableLoader.h"
-#include "ThreadableLoaderClient.h"
-#include "URLKeepingBlobAlive.h"
+#include <WebCore/ThreadableLoader.h>
+#include <WebCore/ThreadableLoaderClient.h>
+#include <WebCore/URLKeepingBlobAlive.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/URL.h>
 
@@ -43,11 +43,12 @@ class FetchRequest;
 class ScriptExecutionContext;
 class FragmentedSharedBuffer;
 
-class WEBCORE_EXPORT FetchLoader final : public ThreadableLoaderClient {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FetchLoader);
+class WEBCORE_EXPORT FetchLoader final : public RefCounted<FetchLoader>, public ThreadableLoaderClient {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FetchLoader, FetchLoader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FetchLoader);
 public:
-    FetchLoader(FetchLoaderClient&, FetchBodyConsumer*);
+    static Ref<FetchLoader> create(FetchLoaderClient&, FetchBodyConsumer*);
     ~FetchLoader();
 
     RefPtr<FragmentedSharedBuffer> startStreaming();
@@ -60,6 +61,8 @@ public:
     bool isStarted() const { return m_isStarted; }
 
 private:
+    FetchLoader(FetchLoaderClient&, FetchBodyConsumer*);
+
     // ThreadableLoaderClient API.
     void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) final;
     void didReceiveData(const SharedBuffer&) final;
@@ -67,9 +70,9 @@ private:
     void didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&) final;
 
 private:
-    CheckedRef<FetchLoaderClient> m_client;
+    WeakPtr<FetchLoaderClient> m_client;
     RefPtr<ThreadableLoader> m_loader;
-    CheckedPtr<FetchBodyConsumer> m_consumer;
+    WeakPtr<FetchBodyConsumer> m_consumer;
     bool m_isStarted { false };
     URLKeepingBlobAlive m_urlForReading;
 };

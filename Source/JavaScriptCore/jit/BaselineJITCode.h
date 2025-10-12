@@ -94,6 +94,11 @@ public:
 
     CodeLocationLabel<JSInternalPtrTag> getCallLinkDoneLocationForBytecodeIndex(BytecodeIndex) const;
 
+    double livenessRate() const { return m_livenessRate; }
+    void setLivenessRate(double rate) { m_livenessRate = rate; }
+    double fullnessRate() const { return m_fullnessRate; }
+    void setFullnessRate(double rate) { m_fullnessRate = rate; }
+
     FixedVector<BaselineUnlinkedCallLinkInfo> m_unlinkedCalls;
     FixedVector<BaselineUnlinkedStructureStubInfo> m_unlinkedStubInfos;
     FixedVector<SimpleJumpTable> m_switchJumpTables;
@@ -101,6 +106,12 @@ public:
     JITCodeMap m_jitCodeMap;
     JITConstantPool m_constantPool;
     std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
+private:
+    // The percentage of ValueProfiles that had some profiling data in them.
+    double m_livenessRate { 0 };
+    // The percentage of ValueProfile buckets that had a value in them.
+    double m_fullnessRate { 0 };
+public:
     bool m_isShareable { true };
 };
 

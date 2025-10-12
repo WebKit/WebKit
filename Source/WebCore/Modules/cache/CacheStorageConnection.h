@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "DOMCacheEngine.h"
-#include "RetrieveRecordsOptions.h"
+#include <WebCore/DOMCacheEngine.h>
+#include <WebCore/RetrieveRecordsOptions.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/NativePromise.h>

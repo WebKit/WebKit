@@ -11,9 +11,9 @@
 #ifndef MODULES_VIDEO_CODING_RTP_FRAME_ID_ONLY_REF_FINDER_H_
 #define MODULES_VIDEO_CODING_RTP_FRAME_ID_ONLY_REF_FINDER_H_
 
+#include <cstdint>
 #include <memory>
 
-#include "absl/container/inlined_vector.h"
 #include "modules/rtp_rtcp/source/frame_object.h"
 #include "modules/video_coding/rtp_frame_reference_finder.h"
 #include "rtc_base/numerics/sequence_number_unwrapper.h"

@@ -13,56 +13,6 @@ PASS :only_in_compute:entry_point="fragment_without_call";call="bar()"
 PASS :only_in_compute:entry_point="fragment_without_call";call="workgroupUniformLoad(%26wgvar)"
 PASS :no_atomics:type="bool";call="bar()"
 PASS :no_atomics:type="bool";call="workgroupUniformLoad(%26wgvar)"
-PASS :no_atomics:type="atomic%3Ci32%3E";call="bar()"
-FAIL :no_atomics:type="atomic%3Ci32%3E";call="workgroupUniformLoad(%26wgvar)" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    struct AtomicStruct {
-      a : atomic<u32>
-    }
-
-    var<workgroup> wgvar : atomic<i32>;
-
-    fn bar() -> bool {
-      return true;
-    }
-
-    fn foo() {
-      _ = workgroupUniformLoad(&wgvar);
-    }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/workgroupUniformLoad.spec.js:121:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
-PASS :no_atomics:type="atomic%3Cu32%3E";call="bar()"
-FAIL :no_atomics:type="atomic%3Cu32%3E";call="workgroupUniformLoad(%26wgvar)" assert_unreached:
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    struct AtomicStruct {
-      a : atomic<u32>
-    }
-
-    var<workgroup> wgvar : atomic<u32>;
-
-    fn bar() -> bool {
-      return true;
-    }
-
-    fn foo() {
-      _ = workgroupUniformLoad(&wgvar);
-    }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/workgroupUniformLoad.spec.js:121:24
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
- Reached unreachable code
 PASS :no_atomics:type="array%3Catomic%3Ci32%3E,%204%3E";call="bar()"
 FAIL :no_atomics:type="array%3Catomic%3Ci32%3E,%204%3E";call="workgroupUniformLoad(%26wgvar)" assert_unreached:
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
@@ -84,7 +34,7 @@ FAIL :no_atomics:type="array%3Catomic%3Ci32%3E,%204%3E";call="workgroupUniformLo
       _ = workgroupUniformLoad(&wgvar);
     }
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/workgroupUniformLoad.spec.js:121:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/workgroupUniformLoad.spec.js:119:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code
@@ -109,7 +59,25 @@ FAIL :no_atomics:type="AtomicStruct";call="workgroupUniformLoad(%26wgvar)" asser
       _ = workgroupUniformLoad(&wgvar);
     }
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/workgroupUniformLoad.spec.js:121:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/workgroupUniformLoad.spec.js:119:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :param_constructible_only:stage="const"
+FAIL :param_constructible_only:stage="override" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    override array_size = 10u;
+    var<workgroup> wgvar : array<u32, array_size>;
+
+    fn foo() {
+      _ = workgroupUniformLoad(&wgvar)[0];
+    }
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/workgroupUniformLoad.spec.js:137:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
  Reached unreachable code

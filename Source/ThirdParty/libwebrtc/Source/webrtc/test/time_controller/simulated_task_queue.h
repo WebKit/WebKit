@@ -12,12 +12,16 @@
 
 #include <deque>
 #include <map>
-#include <memory>
 #include <vector>
 
 #include "absl/functional/any_invocable.h"
+#include "absl/strings/string_view.h"
+#include "api/location.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 #include "test/time_controller/simulated_time_controller.h"
 
 namespace webrtc {

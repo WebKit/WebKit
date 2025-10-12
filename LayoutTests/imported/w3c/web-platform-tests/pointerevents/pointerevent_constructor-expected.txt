@@ -4,7 +4,7 @@ Test Description: This test checks if PointerEvent constructor works properly.
 
 
 PASS PointerEvent: Constructor test
-FAIL getCoalescedEvents in event assert_equals: expected false but got true
+PASS getCoalescedEvents in event
 PASS getPredictedEvents().length
 PASS event.target
 PASS event.currentTarget

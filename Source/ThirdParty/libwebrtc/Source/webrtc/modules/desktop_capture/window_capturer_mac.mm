@@ -47,8 +47,9 @@ bool IsWindowValid(CGWindowID id) {
 class WindowCapturerMac : public DesktopCapturer {
  public:
   explicit WindowCapturerMac(
-      rtc::scoped_refptr<FullScreenWindowDetector> full_screen_window_detector,
-      rtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor);
+      webrtc::scoped_refptr<FullScreenWindowDetector>
+          full_screen_window_detector,
+      webrtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor);
   ~WindowCapturerMac() override;
 
   WindowCapturerMac(const WindowCapturerMac&) = delete;
@@ -68,9 +69,10 @@ class WindowCapturerMac : public DesktopCapturer {
   // The window being captured.
   CGWindowID window_id_ = 0;
 
-  rtc::scoped_refptr<FullScreenWindowDetector> full_screen_window_detector_;
+  webrtc::scoped_refptr<FullScreenWindowDetector> full_screen_window_detector_;
 
-  const rtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor_;
+  const webrtc::scoped_refptr<DesktopConfigurationMonitor>
+      configuration_monitor_;
 
   WindowFinderMac window_finder_;
 
@@ -79,8 +81,8 @@ class WindowCapturerMac : public DesktopCapturer {
 };
 
 WindowCapturerMac::WindowCapturerMac(
-    rtc::scoped_refptr<FullScreenWindowDetector> full_screen_window_detector,
-    rtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor)
+    webrtc::scoped_refptr<FullScreenWindowDetector> full_screen_window_detector,
+    webrtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor)
     : full_screen_window_detector_(std::move(full_screen_window_detector)),
       configuration_monitor_(std::move(configuration_monitor)),
       window_finder_(configuration_monitor_) {}
@@ -92,15 +94,13 @@ bool WindowCapturerMac::GetSourceList(SourceList* sources) {
 }
 
 bool WindowCapturerMac::SelectSource(SourceId id) {
-  if (!IsWindowValid(id))
-    return false;
+  if (!IsWindowValid(id)) return false;
   window_id_ = id;
   return true;
 }
 
 bool WindowCapturerMac::FocusOnSelectedSource() {
-  if (!window_id_)
-    return false;
+  if (!window_id_) return false;
 
   CGWindowID ids[1];
   ids[0] = window_id_;
@@ -126,8 +126,8 @@ bool WindowCapturerMac::FocusOnSelectedSource() {
 
   // TODO(jiayl): this will bring the process main window to the front. We
   // should find a way to bring only the window to the front.
-  bool result =
-      [[NSRunningApplication runningApplicationWithProcessIdentifier:pid] activateWithOptions:0];
+  bool result = [[NSRunningApplication
+      runningApplicationWithProcessIdentifier:pid] activateWithOptions:0];
 
   CFRelease(window_id_array);
   CFRelease(window_array);
@@ -170,7 +170,8 @@ void WindowCapturerMac::CaptureFrame() {
               [sources](CFDictionaryRef window) {
                 WindowId window_id = GetWindowId(window);
                 if (window_id != kNullWindowId) {
-                  sources->push_back(DesktopCapturer::Source{window_id, GetWindowTitle(window)});
+                  sources->push_back(DesktopCapturer::Source{
+                      window_id, GetWindowTitle(window)});
                 }
                 return true;
               },
@@ -178,10 +179,12 @@ void WindowCapturerMac::CaptureFrame() {
               false);
         });
 
-    CGWindowID full_screen_window = full_screen_window_detector_->FindFullScreenWindow(window_id_);
+    CGWindowID full_screen_window =
+        full_screen_window_detector_->FindFullScreenWindow(window_id_);
 
     if (full_screen_window != kCGNullWindowID) {
-      // If this is the first time this happens, report to UMA that the feature is active.
+      // If this is the first time this happens, report to UMA that the feature
+      // is active.
       if (!fullscreen_usage_logged_) {
         LogDesktopCapturerFullscreenDetectorUsage();
         fullscreen_usage_logged_ = true;
@@ -190,7 +193,8 @@ void WindowCapturerMac::CaptureFrame() {
     }
   }
 
-  std::unique_ptr<DesktopFrame> frame = DesktopFrameCGImage::CreateForWindow(on_screen_window);
+  std::unique_ptr<DesktopFrame> frame =
+      DesktopFrameCGImage::CreateForWindow(on_screen_window);
   if (!frame) {
     RTC_LOG(LS_WARNING) << "Temporarily failed to capture window.";
     callback_->OnCaptureResult(Result::ERROR_TEMPORARY, nullptr);
@@ -202,7 +206,8 @@ void WindowCapturerMac::CaptureFrame() {
   frame->set_top_left(GetWindowBounds(on_screen_window).top_left());
 
   float scale_factor = GetWindowScaleFactor(window_id_, frame->size());
-  frame->set_dpi(DesktopVector(kStandardDPI * scale_factor, kStandardDPI * scale_factor));
+  frame->set_dpi(
+      DesktopVector(kStandardDPI * scale_factor, kStandardDPI * scale_factor));
 
   callback_->OnCaptureResult(Result::SUCCESS, std::move(frame));
 }

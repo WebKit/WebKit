@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D078E922E737C0500A9B266 /* DDMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D078E8F2E737C0500A9B266 /* DDMesh.h */; };
+		0D078E932E737C0500A9B266 /* DDMesh.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0D078E902E737C0500A9B266 /* DDMesh.mm */; };
+		0D078E942E737C0500A9B266 /* UsdModelRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D078E912E737C0500A9B266 /* UsdModelRenderer.swift */; };
+		0D164A3A2E8EE14700864EA1 /* TextureOrTextureView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D164A392E8EE14700864EA1 /* TextureOrTextureView.h */; };
 		0D212A652BC26336001160BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D212A642BC26336001160BF /* CoreGraphics.framework */; };
 		0D30F93729F1F94A0055D9F1 /* ExternalTexture.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0D30F93629F1F94A0055D9F1 /* ExternalTexture.mm */; };
 		0D30F93929F1FAC50055D9F1 /* ExternalTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D30F93829F1FAC50055D9F1 /* ExternalTexture.h */; };
@@ -18,6 +22,7 @@
 		0D943C102C6571BC00D33BA5 /* XRBinding.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0D943C0E2C6571BC00D33BA5 /* XRBinding.mm */; };
 		0D943C232C65E46400D33BA5 /* XRSubImage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0D943C222C65E46400D33BA5 /* XRSubImage.mm */; };
 		0D943C242C65E46400D33BA5 /* XRSubImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D943C212C65E46400D33BA5 /* XRSubImage.h */; };
+		0DACD85B2E79E66F00CDA0DC /* DDModelTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DACD85A2E79E66F00CDA0DC /* DDModelTypes.h */; };
 		0DD5FD352C66947B004AF552 /* XRProjectionLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DD5FD332C66947B004AF552 /* XRProjectionLayer.h */; };
 		0DD5FD362C66947B004AF552 /* XRProjectionLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0DD5FD342C66947B004AF552 /* XRProjectionLayer.mm */; };
 		0DE2BFAD2C150DF700D04AEB /* ShaderStage.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DE2BFAC2C150DF700D04AEB /* ShaderStage.h */; };
@@ -51,7 +56,6 @@
 		1CA5B4FF2A6F2A5800E5F297 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CA5B4FE2A6F2A5800E5F297 /* JavaScriptCore.framework */; };
 		1CA5B5002A6F2A5E00E5F297 /* libwgsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CEBD7F22716B2CC00A5254D /* libwgsl.a */; };
 		1CBAB0922718CCA0006080BB /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */; };
-		1CBD2E972977DAC900BBF52C /* PresentationContextCoreAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CBD2E932977DAC900BBF52C /* PresentationContextCoreAnimation.mm */; };
 		1CBD2E992977DAC900BBF52C /* PresentationContextIOSurface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CBD2E952977DAC900BBF52C /* PresentationContextIOSurface.mm */; };
 		1CEBD7E72716AFBA00A5254D /* WebGPU.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CEBD7E62716AFBA00A5254D /* WebGPU.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1CEBD7F82716B34400A5254D /* WGSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CEBD7F72716B34400A5254D /* WGSL.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -107,9 +111,7 @@
 		3A12AEC328FCE94C00C1B975 /* ASTInterpolateAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AEA928FCE94C00C1B975 /* ASTInterpolateAttribute.h */; };
 		3A12AEC728FCEEC400C1B975 /* ASTStructureMember.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AEC428FCEEC400C1B975 /* ASTStructureMember.h */; };
 		3A12AEC828FCEEC400C1B975 /* ASTWhileStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AEC528FCEEC400C1B975 /* ASTWhileStatement.h */; };
-		3A12AEC928FCEEC400C1B975 /* ASTStaticAssertStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AEC628FCEEC400C1B975 /* ASTStaticAssertStatement.h */; };
 		3A12AECC28FCFA9800C1B975 /* ASTUnsigned32Literal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AECA28FCFA9800C1B975 /* ASTUnsigned32Literal.h */; };
-		3A12AECD28FCFA9800C1B975 /* ASTBitcastExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AECB28FCFA9800C1B975 /* ASTBitcastExpression.h */; };
 		3A12AED428FCFC5600C1B975 /* ASTSigned32Literal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AECE28FCFC5500C1B975 /* ASTSigned32Literal.h */; };
 		3A12AED528FCFC5600C1B975 /* ASTAbstractIntegerLiteral.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AECF28FCFC5500C1B975 /* ASTAbstractIntegerLiteral.h */; };
 		3A12AED628FCFC5600C1B975 /* ASTBoolLiteral.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AED028FCFC5500C1B975 /* ASTBoolLiteral.h */; };
@@ -294,6 +296,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0D078E8F2E737C0500A9B266 /* DDMesh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DDMesh.h; sourceTree = "<group>"; };
+		0D078E902E737C0500A9B266 /* DDMesh.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DDMesh.mm; sourceTree = "<group>"; };
+		0D078E912E737C0500A9B266 /* UsdModelRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsdModelRenderer.swift; sourceTree = "<group>"; };
+		0D164A392E8EE14700864EA1 /* TextureOrTextureView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextureOrTextureView.h; sourceTree = "<group>"; };
 		0D212A642BC26336001160BF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		0D30F93629F1F94A0055D9F1 /* ExternalTexture.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ExternalTexture.mm; sourceTree = "<group>"; };
 		0D30F93829F1FAC50055D9F1 /* ExternalTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalTexture.h; sourceTree = "<group>"; };
@@ -306,6 +312,7 @@
 		0D943C0E2C6571BC00D33BA5 /* XRBinding.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = XRBinding.mm; sourceTree = "<group>"; };
 		0D943C212C65E46400D33BA5 /* XRSubImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRSubImage.h; sourceTree = "<group>"; };
 		0D943C222C65E46400D33BA5 /* XRSubImage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = XRSubImage.mm; sourceTree = "<group>"; };
+		0DACD85A2E79E66F00CDA0DC /* DDModelTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DDModelTypes.h; sourceTree = "<group>"; };
 		0DD5FD332C66947B004AF552 /* XRProjectionLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRProjectionLayer.h; sourceTree = "<group>"; };
 		0DD5FD342C66947B004AF552 /* XRProjectionLayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = XRProjectionLayer.mm; sourceTree = "<group>"; };
 		0DE2BFAC2C150DF700D04AEB /* ShaderStage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderStage.h; sourceTree = "<group>"; };
@@ -366,8 +373,6 @@
 		1CA5B4FE2A6F2A5800E5F297 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/System/iOSSupport/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		1CA7CDB12A2B284A0094071F /* WebGPUInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUInternal.h; sourceTree = "<group>"; };
 		1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		1CBD2E922977DAC900BBF52C /* PresentationContextCoreAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresentationContextCoreAnimation.h; sourceTree = "<group>"; };
-		1CBD2E932977DAC900BBF52C /* PresentationContextCoreAnimation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PresentationContextCoreAnimation.mm; sourceTree = "<group>"; };
 		1CBD2E942977DAC900BBF52C /* PresentationContextIOSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresentationContextIOSurface.h; sourceTree = "<group>"; };
 		1CBD2E952977DAC900BBF52C /* PresentationContextIOSurface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PresentationContextIOSurface.mm; sourceTree = "<group>"; };
 		1CC0C8C9273A7D8900D0B481 /* WebGPU.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = WebGPU.modulemap; sourceTree = "<group>"; };
@@ -389,6 +394,21 @@
 		1CEBD82B2716CAFB00A5254D /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		1CEBD82D2716CB1600A5254D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1CEBD8302716CB3800A5254D /* libicucore.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libicucore.tbd; path = usr/lib/libicucore.tbd; sourceTree = SDKROOT; };
+		2B1B1C5E2E3A874700D7D9ED /* ForwardDeclCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = ForwardDeclCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C5F2E3A874700D7D9ED /* MemoryUnsafeCastCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = MemoryUnsafeCastCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C602E3A874700D7D9ED /* NoUncheckedPtrMemberCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = NoUncheckedPtrMemberCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C612E3A874700D7D9ED /* NoUncountedMemberCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = NoUncountedMemberCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C622E3A874700D7D9ED /* NoUnretainedMemberCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = NoUnretainedMemberCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C632E3A874700D7D9ED /* RefCntblBaseVirtualDtorExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = RefCntblBaseVirtualDtorExpectations; sourceTree = "<group>"; };
+		2B1B1C642E3A874700D7D9ED /* RetainPtrCtorAdoptCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = RetainPtrCtorAdoptCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C652E3A874700D7D9ED /* UncheckedCallArgsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UncheckedCallArgsCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C662E3A874700D7D9ED /* UncheckedLocalVarsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UncheckedLocalVarsCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C672E3A874700D7D9ED /* UncountedCallArgsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UncountedCallArgsCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C682E3A874700D7D9ED /* UncountedLambdaCapturesCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UncountedLambdaCapturesCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C692E3A874700D7D9ED /* UncountedLocalVarsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UncountedLocalVarsCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C6A2E3A874700D7D9ED /* UnretainedCallArgsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnretainedCallArgsCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C6B2E3A874700D7D9ED /* UnretainedLambdaCapturesCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnretainedLambdaCapturesCheckerExpectations; sourceTree = "<group>"; };
+		2B1B1C6C2E3A874700D7D9ED /* UnretainedLocalVarsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnretainedLocalVarsCheckerExpectations; sourceTree = "<group>"; };
 		338BB2CD27B6B60200E066AB /* Token.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Token.h; sourceTree = "<group>"; };
 		338BB2CF27B6B61B00E066AB /* Token.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Token.cpp; sourceTree = "<group>"; };
 		338BB2D127B6B63F00E066AB /* SourceSpan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SourceSpan.h; sourceTree = "<group>"; };
@@ -439,9 +459,7 @@
 		3A12AEA928FCE94C00C1B975 /* ASTInterpolateAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTInterpolateAttribute.h; sourceTree = "<group>"; };
 		3A12AEC428FCEEC400C1B975 /* ASTStructureMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTStructureMember.h; sourceTree = "<group>"; };
 		3A12AEC528FCEEC400C1B975 /* ASTWhileStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTWhileStatement.h; sourceTree = "<group>"; };
-		3A12AEC628FCEEC400C1B975 /* ASTStaticAssertStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTStaticAssertStatement.h; sourceTree = "<group>"; };
 		3A12AECA28FCFA9800C1B975 /* ASTUnsigned32Literal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTUnsigned32Literal.h; sourceTree = "<group>"; };
-		3A12AECB28FCFA9800C1B975 /* ASTBitcastExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBitcastExpression.h; sourceTree = "<group>"; };
 		3A12AECE28FCFC5500C1B975 /* ASTSigned32Literal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTSigned32Literal.h; sourceTree = "<group>"; };
 		3A12AECF28FCFC5500C1B975 /* ASTAbstractIntegerLiteral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTAbstractIntegerLiteral.h; sourceTree = "<group>"; };
 		3A12AED028FCFC5500C1B975 /* ASTBoolLiteral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBoolLiteral.h; sourceTree = "<group>"; };
@@ -540,6 +558,8 @@
 		97FA1A8729C085A60052D650 /* wgslc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wgslc.cpp; path = WGSL/wgslc.cpp; sourceTree = SOURCE_ROOT; };
 		97FA1AA229C0BB700052D650 /* wgslc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = wgslc.xcconfig; sourceTree = "<group>"; };
 		DD5697FC2DC1311D00050321 /* rdar150228472.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = rdar150228472.swift; sourceTree = "<group>"; };
+		DD7181312E21D3C800A096B7 /* AllowedSPI.toml */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllowedSPI.toml; sourceTree = "<group>"; };
+		DD7181322E21D3C800A096B7 /* AllowedSPI-legacy.toml */ = {isa = PBXFileReference; lastKnownFileType = text; path = "AllowedSPI-legacy.toml"; sourceTree = "<group>"; };
 		DD8EE22F2CE6B4B3004DD6F8 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -598,6 +618,7 @@
 				1CEBD7E52716AFBA00A5254D /* WebGPU */,
 				1CEBD7E42716AFBA00A5254D /* Products */,
 				1CEBD8252716CACC00A5254D /* Frameworks */,
+				2B1B1C6D2E3A874700D7D9ED /* SaferCPPExpectations */,
 			);
 			sourceTree = "<group>";
 		};
@@ -639,6 +660,9 @@
 				1C5ACAA7273A426D0095F8D5 /* ComputePipeline.h */,
 				1C5ACAA2273A426D0095F8D5 /* ComputePipeline.mm */,
 				1CEBD80A2716C36C00A5254D /* config.h */,
+				0D078E8F2E737C0500A9B266 /* DDMesh.h */,
+				0D078E902E737C0500A9B266 /* DDMesh.mm */,
+				0DACD85A2E79E66F00CDA0DC /* DDModelTypes.h */,
 				1C5ACA9B273A426D0095F8D5 /* Device.h */,
 				1C5ACAA3273A426D0095F8D5 /* Device.mm */,
 				1CEBD80B2716C37900A5254D /* ExportMacros.h */,
@@ -656,8 +680,6 @@
 				1C5ACAE4273A55DD0095F8D5 /* PipelineLayout.mm */,
 				1C9F7CDE29762F51006B5BE9 /* PresentationContext.h */,
 				1C9F7CDD29762F51006B5BE9 /* PresentationContext.mm */,
-				1CBD2E922977DAC900BBF52C /* PresentationContextCoreAnimation.h */,
-				1CBD2E932977DAC900BBF52C /* PresentationContextCoreAnimation.mm */,
 				1CBD2E942977DAC900BBF52C /* PresentationContextIOSurface.h */,
 				1CBD2E952977DAC900BBF52C /* PresentationContextIOSurface.mm */,
 				1C5ACAAC273A426D0095F8D5 /* QuerySet.h */,
@@ -680,8 +702,10 @@
 				0DE2BFAC2C150DF700D04AEB /* ShaderStage.h */,
 				1C5ACA99273A426D0095F8D5 /* Texture.h */,
 				1C5ACAB1273A426D0095F8D5 /* Texture.mm */,
+				0D164A392E8EE14700864EA1 /* TextureOrTextureView.h */,
 				1C5ACADD273A4F3D0095F8D5 /* TextureView.h */,
 				1C5ACAEA273A560D0095F8D5 /* TextureView.mm */,
+				0D078E912E737C0500A9B266 /* UsdModelRenderer.swift */,
 				1CEBD7E62716AFBA00A5254D /* WebGPU.h */,
 				1CC0C8C9273A7D8900D0B481 /* WebGPU.modulemap */,
 				1C5ACAD2273A4C860095F8D5 /* WebGPUExt.h */,
@@ -768,6 +792,8 @@
 		1CEBD7F92716B38600A5254D /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				DD7181322E21D3C800A096B7 /* AllowedSPI-legacy.toml */,
+				DD7181312E21D3C800A096B7 /* AllowedSPI.toml */,
 				1CEBD7FA2716B3D500A5254D /* Base.xcconfig */,
 				1CEBD7FB2716B5B400A5254D /* DebugRelease.xcconfig */,
 				1CEBD7FC2716B64400A5254D /* WebGPU.xcconfig */,
@@ -795,6 +821,28 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		2B1B1C6D2E3A874700D7D9ED /* SaferCPPExpectations */ = {
+			isa = PBXGroup;
+			children = (
+				2B1B1C5E2E3A874700D7D9ED /* ForwardDeclCheckerExpectations */,
+				2B1B1C5F2E3A874700D7D9ED /* MemoryUnsafeCastCheckerExpectations */,
+				2B1B1C602E3A874700D7D9ED /* NoUncheckedPtrMemberCheckerExpectations */,
+				2B1B1C612E3A874700D7D9ED /* NoUncountedMemberCheckerExpectations */,
+				2B1B1C622E3A874700D7D9ED /* NoUnretainedMemberCheckerExpectations */,
+				2B1B1C632E3A874700D7D9ED /* RefCntblBaseVirtualDtorExpectations */,
+				2B1B1C642E3A874700D7D9ED /* RetainPtrCtorAdoptCheckerExpectations */,
+				2B1B1C652E3A874700D7D9ED /* UncheckedCallArgsCheckerExpectations */,
+				2B1B1C662E3A874700D7D9ED /* UncheckedLocalVarsCheckerExpectations */,
+				2B1B1C672E3A874700D7D9ED /* UncountedCallArgsCheckerExpectations */,
+				2B1B1C682E3A874700D7D9ED /* UncountedLambdaCapturesCheckerExpectations */,
+				2B1B1C692E3A874700D7D9ED /* UncountedLocalVarsCheckerExpectations */,
+				2B1B1C6A2E3A874700D7D9ED /* UnretainedCallArgsCheckerExpectations */,
+				2B1B1C6B2E3A874700D7D9ED /* UnretainedLambdaCapturesCheckerExpectations */,
+				2B1B1C6C2E3A874700D7D9ED /* UnretainedLocalVarsCheckerExpectations */,
+			);
+			path = SaferCPPExpectations;
+			sourceTree = "<group>";
+		};
 		33EA185C27BC193D00A1DD52 /* AST */ = {
 			isa = PBXGroup;
 			children = (
@@ -808,7 +856,6 @@
 				3AD0D23C2988F3AA0080D728 /* ASTBinaryExpression.cpp */,
 				3AD0D23D2988F3AA0080D728 /* ASTBinaryExpression.h */,
 				3A12AEA728FCE94C00C1B975 /* ASTBindingAttribute.h */,
-				3A12AECB28FCFA9800C1B975 /* ASTBitcastExpression.h */,
 				3A12AED028FCFC5500C1B975 /* ASTBoolLiteral.h */,
 				3A12AE9F28FCE94B00C1B975 /* ASTBreakStatement.h */,
 				97835C9429F7D85A00939EBA /* ASTBuilder.cpp */,
@@ -862,7 +909,6 @@
 				3A12AEA128FCE94B00C1B975 /* ASTSizeAttribute.h */,
 				3A12AE9928FCE94B00C1B975 /* ASTStageAttribute.h */,
 				33EA187827BC22AA00A1DD52 /* ASTStatement.h */,
-				3A12AEC628FCEEC400C1B975 /* ASTStaticAssertStatement.h */,
 				3A9D02A1298390CF00888A75 /* ASTStringDumper.cpp */,
 				3A9D02A3298390CF00888A75 /* ASTStringDumper.h */,
 				33EA187327BC204900A1DD52 /* ASTStructure.h */,
@@ -933,6 +979,8 @@
 				94E02AFC2CF03B580052068F /* Buffer.h in Headers */,
 				94200C4F2CADBCAD00484401 /* CommandEncoder.h in Headers */,
 				94200C522CADBE5200484401 /* CommandsMixin.h in Headers */,
+				0D078E922E737C0500A9B266 /* DDMesh.h in Headers */,
+				0DACD85B2E79E66F00CDA0DC /* DDModelTypes.h in Headers */,
 				941C64B72CAB4A0700A63214 /* Device.h in Headers */,
 				0D30F93929F1FAC50055D9F1 /* ExternalTexture.h in Headers */,
 				941C1EE72CA46829004D4220 /* Instance.h in Headers */,
@@ -942,6 +990,7 @@
 				941C2CF32CBDB0E700B5DB48 /* QuerySet.h in Headers */,
 				941C1EE62CA33255004D4220 /* Queue.h in Headers */,
 				0DE2BFAD2C150DF700D04AEB /* ShaderStage.h in Headers */,
+				0D164A3A2E8EE14700864EA1 /* TextureOrTextureView.h in Headers */,
 				1C5ACAD3273A4C860095F8D5 /* WebGPUExt.h in Headers */,
 				94CC0FE62CA203B300CB3264 /* WebGPUSwiftInternal.h in Headers */,
 				0D943C0F2C6571BC00D33BA5 /* XRBinding.h in Headers */,
@@ -965,7 +1014,6 @@
 				33EA186A27BC1BE600A1DD52 /* ASTAttribute.h in Headers */,
 				3AD0D23F2988F3AB0080D728 /* ASTBinaryExpression.h in Headers */,
 				3A12AEC128FCE94C00C1B975 /* ASTBindingAttribute.h in Headers */,
-				3A12AECD28FCFA9800C1B975 /* ASTBitcastExpression.h in Headers */,
 				3A12AED628FCFC5600C1B975 /* ASTBoolLiteral.h in Headers */,
 				3A12AEB928FCE94C00C1B975 /* ASTBreakStatement.h in Headers */,
 				97835C9329F7C9C600939EBA /* ASTBuilder.h in Headers */,
@@ -1017,7 +1065,6 @@
 				3A12AEBB28FCE94C00C1B975 /* ASTSizeAttribute.h in Headers */,
 				3A12AEB328FCE94C00C1B975 /* ASTStageAttribute.h in Headers */,
 				33EA187927BC22AA00A1DD52 /* ASTStatement.h in Headers */,
-				3A12AEC928FCEEC400C1B975 /* ASTStaticAssertStatement.h in Headers */,
 				3A9D02A6298390CF00888A75 /* ASTStringDumper.h in Headers */,
 				33EA187427BC204900A1DD52 /* ASTStructure.h in Headers */,
 				3A12AEC728FCEEC400C1B975 /* ASTStructureMember.h in Headers */,
@@ -1263,7 +1310,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ -f \"${SCRIPT_INPUT_FILE_0}\" ]\nthen \"${SCRIPT_INPUT_FILE_0}\" \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/JavaScriptCore\"\nfi && touch \"${DERIVED_FILES_DIR}/audit-spi.d\"\n";
+			shellScript = "if [ -f \"${SCRIPT_INPUT_FILE_0}\" ]\nthen \"${SCRIPT_INPUT_FILE_0}\" \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" -framework JavaScriptCore\nfi && touch \"${DERIVED_FILES_DIR}/audit-spi.d\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1291,6 +1338,7 @@
 				1C582FF927E04131009B40F0 /* CommandsMixin.mm in Sources */,
 				1C5ACAC6273A426D0095F8D5 /* ComputePassEncoder.mm in Sources */,
 				1C5ACAC0273A426D0095F8D5 /* ComputePipeline.mm in Sources */,
+				0D078E932E737C0500A9B266 /* DDMesh.mm in Sources */,
 				1C5ACAC1273A426D0095F8D5 /* Device.mm in Sources */,
 				0D30F93729F1F94A0055D9F1 /* ExternalTexture.mm in Sources */,
 				1C0F41EE280940650005886D /* HardwareCapabilities.mm in Sources */,
@@ -1299,7 +1347,6 @@
 				973F784829C8A78200166C66 /* Pipeline.mm in Sources */,
 				1C5ACAE5273A55DD0095F8D5 /* PipelineLayout.mm in Sources */,
 				1C9F7CDF29762F51006B5BE9 /* PresentationContext.mm in Sources */,
-				1CBD2E972977DAC900BBF52C /* PresentationContextCoreAnimation.mm in Sources */,
 				1CBD2E992977DAC900BBF52C /* PresentationContextIOSurface.mm in Sources */,
 				1C5ACABD273A426D0095F8D5 /* QuerySet.mm in Sources */,
 				1C5ACACB273A426E0095F8D5 /* Queue.mm in Sources */,
@@ -1313,6 +1360,7 @@
 				1C5ACACE273A426E0095F8D5 /* ShaderModule.mm in Sources */,
 				1C5ACACF273A426E0095F8D5 /* Texture.mm in Sources */,
 				1C5ACAEB273A560D0095F8D5 /* TextureView.mm in Sources */,
+				0D078E942E737C0500A9B266 /* UsdModelRenderer.swift in Sources */,
 				0D943C102C6571BC00D33BA5 /* XRBinding.mm in Sources */,
 				0DD5FD362C66947B004AF552 /* XRProjectionLayer.mm in Sources */,
 				0D943C232C65E46400D33BA5 /* XRSubImage.mm in Sources */,

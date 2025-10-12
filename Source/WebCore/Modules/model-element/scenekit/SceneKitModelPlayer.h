@@ -27,10 +27,10 @@
 
 #if HAVE(SCENEKIT)
 
-#include "Model.h"
-#include "ModelPlayer.h"
-#include "ModelPlayerClient.h"
-#include "SceneKitModelLoaderClient.h"
+#include <WebCore/Model.h>
+#include <WebCore/ModelPlayer.h>
+#include <WebCore/ModelPlayerClient.h>
+#include <WebCore/SceneKitModelLoaderClient.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>

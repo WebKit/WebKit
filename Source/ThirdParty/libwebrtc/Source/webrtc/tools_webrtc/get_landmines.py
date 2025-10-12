@@ -67,6 +67,10 @@ def print_landmines():  # pylint: disable=invalid-name
         print('Clobber to remove .xctest files.')
         print('Clobber to remove .xctest files (take 2).')
         print('Switching rtc_executable to rtc_test')
+        print('Lets clobber iOS due to signing issue b/396118151')
+        print('Lets clobber iOS due to signing issue b/396118151 (2nd try)')
+    if host_os() == 'android':
+        print('Clobber due to Android "compile confirm no-op" errors.')
 
 
 def main():

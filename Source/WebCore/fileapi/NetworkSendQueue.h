@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ContextDestructionObserver.h"
-#include "ExceptionCode.h"
+#include <WebCore/ContextDestructionObserver.h>
+#include <WebCore/ExceptionCode.h>
 #include <span>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
@@ -62,7 +62,7 @@ public:
 private:
     void processMessages();
 
-    using Message = Variant<CString, Ref<FragmentedSharedBuffer>, UniqueRef<BlobLoader>>;
+    using Message = Variant<CString, Ref<FragmentedSharedBuffer>, Ref<BlobLoader>>;
     Deque<Message> m_queue;
 
     WriteString m_writeString;

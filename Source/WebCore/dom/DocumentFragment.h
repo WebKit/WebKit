@@ -23,8 +23,8 @@
 
 #pragma once
 
-#include "ContainerNode.h"
-#include "ParserContentPolicy.h"
+#include <WebCore/ContainerNode.h>
+#include <WebCore/ParserContentPolicy.h>
 
 namespace WebCore {
 
@@ -49,7 +49,8 @@ protected:
     String nodeName() const final;
 
 private:
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) override;
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;
+    SerializedNode serializeNode(CloningOperation) const override;
     bool childTypeAllowed(NodeType) const override;
 };
 

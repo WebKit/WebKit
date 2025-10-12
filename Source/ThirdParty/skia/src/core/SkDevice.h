@@ -22,6 +22,7 @@
 #include "include/core/SkSamplingOptions.h"
 #include "include/core/SkShader.h"
 #include "include/core/SkSize.h"
+#include "include/core/SkSpan.h"
 #include "include/core/SkSurfaceProps.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkNoncopyable.h"
@@ -29,7 +30,6 @@
 #include "src/core/SkMatrixPriv.h"
 #include "src/shaders/SkShaderBase.h"
 
-#include <cstddef>
 #include <cstdint>
 #include <utility>
 
@@ -334,8 +334,7 @@ public:
     virtual void drawSlug(SkCanvas*, const sktext::gpu::Slug* slug, const SkPaint& paint);
 
     virtual void drawPaint(const SkPaint& paint) = 0;
-    virtual void drawPoints(SkCanvas::PointMode mode, size_t count,
-                            const SkPoint[], const SkPaint& paint) = 0;
+    virtual void drawPoints(SkCanvas::PointMode, SkSpan<const SkPoint>, const SkPaint&) = 0;
     virtual void drawRect(const SkRect& r,
                           const SkPaint& paint) = 0;
     virtual void drawRegion(const SkRegion& r,
@@ -358,8 +357,7 @@ public:
      *  path on the stack to hold the representation of the oval.
      */
     virtual void drawPath(const SkPath& path,
-                          const SkPaint& paint,
-                          bool pathIsMutable) = 0;
+                          const SkPaint& paint) = 0;
 
     virtual void drawImageRect(const SkImage*, const SkRect* src, const SkRect& dst,
                                const SkSamplingOptions&, const SkPaint&,
@@ -394,7 +392,7 @@ public:
                            const SkPoint texCoords[4], sk_sp<SkBlender>, const SkPaint& paint);
 
     // default implementation calls drawVertices
-    virtual void drawAtlas(const SkRSXform[], const SkRect[], const SkColor[], int count,
+    virtual void drawAtlas(SkSpan<const SkRSXform>, SkSpan<const SkRect>, SkSpan<const SkColor>,
                            sk_sp<SkBlender>, const SkPaint&);
 
     virtual void drawAnnotation(const SkRect&, const char[], SkData*) {}
@@ -595,14 +593,14 @@ public:
 protected:
 
     void drawPaint(const SkPaint& paint) override {}
-    void drawPoints(SkCanvas::PointMode, size_t, const SkPoint[], const SkPaint&) override {}
+    void drawPoints(SkCanvas::PointMode, SkSpan<const SkPoint>, const SkPaint&) override {}
     void drawImageRect(const SkImage*, const SkRect*, const SkRect&,
                        const SkSamplingOptions&, const SkPaint&,
                        SkCanvas::SrcRectConstraint) override {}
     void drawRect(const SkRect&, const SkPaint&) override {}
     void drawOval(const SkRect&, const SkPaint&) override {}
     void drawRRect(const SkRRect&, const SkPaint&) override {}
-    void drawPath(const SkPath&, const SkPaint&, bool) override {}
+    void drawPath(const SkPath&, const SkPaint&) override {}
     void drawDevice(SkDevice*, const SkSamplingOptions&, const SkPaint&) override {}
     void drawVertices(const SkVertices*, sk_sp<SkBlender>, const SkPaint&, bool) override {}
     void drawMesh(const SkMesh&, sk_sp<SkBlender>, const SkPaint&) override {}

@@ -35,10 +35,10 @@ namespace WTF {
 // This is a collection that is meant to be used for building up lists in a certain order. It's
 // not an efficient data structure for storing lists, but if you need to build a list by doing
 // operations like insertBefore(existingValue, newValue), then this class is a good intermediate
-// helper. Note that the type it operates on must be usable as a UncheckedKeyHashMap key.
+// helper. Note that the type it operates on must be usable as a HashMap key.
 template<typename T>
 class OrderMaker {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(OrderMaker);
     WTF_MAKE_NONCOPYABLE(OrderMaker);
     
     struct Node : BasicRawSentinelNode<Node> {
@@ -122,7 +122,7 @@ private:
         return result;
     }
     
-    UncheckedKeyHashMap<T, Node*> m_map;
+    HashMap<T, Node*> m_map;
     Bag<Node> m_nodes; // FIXME: We could just manually free the contents of the linked list.
     SentinelLinkedList<Node> m_list;
 };

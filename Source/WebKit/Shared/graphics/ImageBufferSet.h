@@ -27,10 +27,12 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "ImageBufferSetIdentifier.h"
 #include "SwapBuffersDisplayRequirement.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/Region.h>
+#include <wtf/Identified.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -47,6 +49,11 @@ class ImageBufferSet {
 public:
     using PaintRectList = Vector<WebCore::FloatRect, 5>;
 
+    ImageBufferSet() = default;
+    ImageBufferSet(ImageBufferSetIdentifier identifier)
+        : m_identifier(identifier)
+    { }
+
     // Tries to swap one of the existing back buffers to the new front buffer, if any are
     // not currently in-use.
     SwapBuffersDisplayRequirement swapBuffersForDisplay(bool hasEmptyDirtyRegion, bool supportsPartialRepaint);
@@ -61,10 +68,13 @@ public:
 
     void clearBuffers();
 
+    ImageBufferSetIdentifier identifier() const { return m_identifier; }
+
     RefPtr<WebCore::ImageBuffer> protectedFrontBuffer() { return m_frontBuffer; }
     RefPtr<WebCore::ImageBuffer> protectedBackBuffer() { return m_backBuffer; }
     RefPtr<WebCore::ImageBuffer> protectedSecondaryBackBuffer() { return m_secondaryBackBuffer; }
 
+    const ImageBufferSetIdentifier m_identifier { ImageBufferSetIdentifier::generate() };
     RefPtr<WebCore::ImageBuffer> m_frontBuffer;
     RefPtr<WebCore::ImageBuffer> m_backBuffer;
     RefPtr<WebCore::ImageBuffer> m_secondaryBackBuffer;

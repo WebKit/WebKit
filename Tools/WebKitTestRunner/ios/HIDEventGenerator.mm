@@ -37,6 +37,7 @@
 #import <wtf/MathExtras.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/Vector.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(BackBoardServices)
 SOFT_LINK(BackBoardServices, BKSHIDEventSetDigitizerInfo, void, (IOHIDEventRef digitizerEvent, uint32_t contextID, uint8_t systemGestureisPossible, uint8_t isSystemGestureStateChangeEvent, CFStringRef displayUUID, CFTimeInterval initialTouchTimestamp, float maxForce), (digitizerEvent, contextID, systemGestureisPossible, isSystemGestureStateChangeEvent, displayUUID, initialTouchTimestamp, maxForce));
@@ -520,13 +521,13 @@ static InterpolationType interpolationFromString(NSString *string)
     if (!eventRef)
         return YES;
 
-    dispatch_async(dispatch_get_main_queue(), [modifierFlags = _activeModifiers.flags(), strongEvent = RetainPtr { eventRef }] {
+    dispatch_async(mainDispatchQueueSingleton(), [modifierFlags = _activeModifiers.flags(), strongEvent = RetainPtr { eventRef }] {
         uint32_t contextID = [UIApplication sharedApplication].keyWindow._contextId;
         ASSERT(contextID);
         BKSHIDEventSetDigitizerInfo(strongEvent.get(), contextID, false, false, NULL, 0, 0);
 
         static auto canSetActiveModifiers = [&] {
-            return [getBKSHIDEventDigitizerAttributesClass() instancesRespondToSelector:@selector(setActiveModifiers:)];
+            return [getBKSHIDEventDigitizerAttributesClassSingleton() instancesRespondToSelector:@selector(setActiveModifiers:)];
         }();
 
         if (canSetActiveModifiers && IOHIDEventGetType(strongEvent.get()) == kIOHIDEventTypeDigitizer) {
@@ -555,7 +556,7 @@ static InterpolationType interpolationFromString(NSString *string)
         kIOHIDEventOptionNone));
     
     if (markerEvent) {
-        dispatch_async(dispatch_get_main_queue(), [markerEvent = WTFMove(markerEvent)] {
+        dispatch_async(mainDispatchQueueSingleton(), [markerEvent = WTFMove(markerEvent)] {
             auto contextID = [UIApplication sharedApplication].keyWindow._contextId;
             ASSERT(contextID);
             BKSHIDEventSetDigitizerInfo(markerEvent.get(), contextID, false, false, NULL, 0, 0);
@@ -618,7 +619,7 @@ static InterpolationType interpolationFromString(NSString *string)
     for (NSUInteger index = 0; index < touchCount; ++index)
         locations[index] = location;
     
-    [self touchDownAtPoints:(locations.isEmpty() ? nullptr : locations.data()) touchCount:touchCount];
+    [self touchDownAtPoints:(locations.isEmpty() ? nullptr : locations.mutableSpan().data()) touchCount:touchCount];
 }
 
 - (void)touchDown:(CGPoint)location
@@ -654,7 +655,7 @@ static InterpolationType interpolationFromString(NSString *string)
     for (NSUInteger index = 0; index < touchCount; ++index)
         locations[index] = location;
     
-    [self liftUpAtPoints:(locations.isEmpty() ? nullptr : locations.data()) touchCount:touchCount];
+    [self liftUpAtPoints:(locations.isEmpty() ? nullptr : locations.mutableSpan().data()) touchCount:touchCount];
 }
 
 - (void)liftUp:(CGPoint)location
@@ -683,7 +684,7 @@ static InterpolationType interpolationFromString(NSString *string)
 
             nextLocations[i] = calculateNextCurveLocation(startLocations[i], newLocations[i], interval);
         }
-        [self _updateTouchPoints:(nextLocations.isEmpty() ? nullptr : nextLocations.data()) count:touchCount];
+        [self _updateTouchPoints:(nextLocations.isEmpty() ? nullptr : nextLocations.mutableSpan().data()) count:touchCount];
 
         delayBetweenMove(eventIndex++, elapsed);
     }
@@ -783,7 +784,7 @@ static InterpolationType interpolationFromString(NSString *string)
         return;
 
     bool doneWaitingForDelay = false;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), [&doneWaitingForDelay] {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), mainDispatchQueueSingleton(), [&doneWaitingForDelay] {
         doneWaitingForDelay = true;
     });
 
@@ -829,7 +830,7 @@ static InterpolationType interpolationFromString(NSString *string)
     [self touchDown:location touchCount:1];
     auto completionBlockCopy = makeBlockPtr(completionBlock);
 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, longPressHoldDelay * nanosecondsPerSecond), dispatch_get_main_queue(), ^ {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, longPressHoldDelay * nanosecondsPerSecond), mainDispatchQueueSingleton(), ^{
         [self liftUp:location];
         [self sendMarkerHIDEventWithCompletionBlock:completionBlockCopy.get()];
     });
@@ -1199,12 +1200,12 @@ RetainPtr<IOHIDEventRef> createHIDKeyEvent(NSString *character, uint64_t timesta
         if (waitTime > 0)
             [NSThread sleepForTimeInterval:waitTime];
         
-        dispatch_async(dispatch_get_main_queue(), ^ {
+        dispatch_async(mainDispatchQueueSingleton(), ^{
             [self dispatchEventWithInfo:eventInfo];
         });
     }
     
-    dispatch_async(dispatch_get_main_queue(), ^ {
+    dispatch_async(mainDispatchQueueSingleton(), ^{
         [self sendMarkerHIDEventWithCompletionBlock:completionBlock];
     });
 }

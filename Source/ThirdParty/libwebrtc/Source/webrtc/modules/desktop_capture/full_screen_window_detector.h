@@ -11,6 +11,8 @@
 #ifndef MODULES_DESKTOP_CAPTURE_FULL_SCREEN_WINDOW_DETECTOR_H_
 #define MODULES_DESKTOP_CAPTURE_FULL_SCREEN_WINDOW_DETECTOR_H_
 
+#include <cstdint>
+#include <functional>
 #include <memory>
 
 #include "api/function_view.h"
@@ -33,7 +35,7 @@ namespace webrtc {
 // FullScreenApplicationHandler.
 
 class FullScreenWindowDetector
-    : public rtc::RefCountedNonVirtual<FullScreenWindowDetector> {
+    : public RefCountedNonVirtual<FullScreenWindowDetector> {
  public:
   using ApplicationHandlerFactory =
       std::function<std::unique_ptr<FullScreenApplicationHandler>(
@@ -55,10 +57,27 @@ class FullScreenWindowDetector
   // update internal state no often than twice per second
   void UpdateWindowListIfNeeded(
       DesktopCapturer::SourceId original_source_id,
-      rtc::FunctionView<bool(DesktopCapturer::SourceList*)> get_sources);
+      FunctionView<bool(DesktopCapturer::SourceList*)> get_sources);
 
-  static rtc::scoped_refptr<FullScreenWindowDetector>
+  static scoped_refptr<FullScreenWindowDetector>
   CreateFullScreenWindowDetector();
+  void SetUseHeuristicFullscreenPowerPointWindows(
+      bool use_heuristic_fullscreen_powerpoint_windows,
+      bool use_heuristic_for_wgc = false) {
+    use_heuristic_fullscreen_powerpoint_windows_ =
+        use_heuristic_fullscreen_powerpoint_windows;
+    use_heuristic_for_wgc_ = use_heuristic_for_wgc;
+    if (app_handler_) {
+      app_handler_->SetUseHeuristicFullscreenPowerPointWindows(
+          use_heuristic_fullscreen_powerpoint_windows);
+    }
+  }
+  bool UseHeuristicForWGC() { return use_heuristic_for_wgc_; }
+
+  // Used for tests.
+  void CreateFullScreenApplicationHandlerForTest(
+      DesktopCapturer::SourceId source_id,
+      bool fullscreen_slide_show_started_after_capture_start);
 
  protected:
   std::unique_ptr<FullScreenApplicationHandler> app_handler_;
@@ -67,6 +86,18 @@ class FullScreenWindowDetector
   void CreateApplicationHandlerIfNeeded(DesktopCapturer::SourceId source_id);
 
   ApplicationHandlerFactory application_handler_factory_;
+  // `use_heuristic_fullscreen_powerpoint_windows_` controls if we create the
+  // FullScreenPowerPointHandler class or not.
+  // TODO(crbug.com/409473386): Remove
+  // `use_heuristic_fullscreen_powerpoint_windows_` once the feature is
+  // available in stable for some milestones.
+  bool use_heuristic_fullscreen_powerpoint_windows_ = true;
+
+  // `use_heuristic_for_wgc_` implements the finch experiment for
+  // the usage of FullScreenPowerPointHandler class for WGC API.
+  // TODO(crbug.com/409473386): Remove `use_heuristic_for_wgc_` once
+  // the feature has been rolled out to Stable for some milestones.
+  bool use_heuristic_for_wgc_ = false;
 
   int64_t last_update_time_ms_;
   DesktopCapturer::SourceId previous_source_id_;

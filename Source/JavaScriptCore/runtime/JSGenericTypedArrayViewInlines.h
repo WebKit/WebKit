@@ -25,15 +25,15 @@
 
 #pragma once
 
-#include "Error.h"
-#include "ExceptionHelpers.h"
-#include "GenericTypedArrayViewInlines.h"
-#include "JSArrayBuffer.h"
-#include "JSArrayBufferViewInlines.h"
-#include "JSCellInlines.h"
-#include "JSGenericTypedArrayView.h"
-#include "TypeError.h"
-#include "TypedArrays.h"
+#include <JavaScriptCore/Error.h>
+#include <JavaScriptCore/ExceptionHelpers.h>
+#include <JavaScriptCore/GenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/JSArrayBuffer.h>
+#include <JavaScriptCore/JSArrayBufferViewInlines.h>
+#include <JavaScriptCore/JSCellInlines.h>
+#include <JavaScriptCore/JSGenericTypedArrayView.h>
+#include <JavaScriptCore/TypeError.h>
+#include <JavaScriptCore/TypedArrays.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/text/MakeString.h>
 
@@ -793,7 +793,7 @@ template<typename Adaptor> inline typename Adaptor::Type* JSGenericTypedArrayVie
     return std::bit_cast<typename Adaptor::Type*>(vector());
 }
 
-template<typename Adaptor> inline bool JSGenericTypedArrayView<Adaptor>::inBounds(size_t i) const
+template<typename Adaptor> inline bool JSGenericTypedArrayView<Adaptor>::inBounds(uint64_t i) const
 {
     if (canUseRawFieldsDirectly()) [[likely]]
         return i < lengthRaw();

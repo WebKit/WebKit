@@ -1,3 +1,0 @@
-
-PASS Basic tests for navigation.currentEntry
-

@@ -23,8 +23,7 @@
 
 #include "ActiveDOMObject.h"
 #include "ContextDestructionObserverInlines.h"
-#include "Document.h"
-#include "DocumentInlines.h"
+#include "DocumentQuirks.h"
 #include "ExtendedDOMClientIsoSubspaces.h"
 #include "ExtendedDOMIsoSubspaces.h"
 #include "JSDOMAbstractOperations.h"
@@ -34,7 +33,6 @@
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMWrapperCache.h"
-#include "Quirks.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/FunctionPrototype.h>
@@ -149,7 +147,7 @@ JSValue JSTestNamedGetterCallWith::getConstructor(VM& vm, const JSGlobalObject* 
 
 void JSTestNamedGetterCallWith::destroy(JSC::JSCell* cell)
 {
-    JSTestNamedGetterCallWith* thisObject = static_cast<JSTestNamedGetterCallWith*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestNamedGetterCallWith* thisObject = static_cast<JSTestNamedGetterCallWith*>(cell);
     thisObject->JSTestNamedGetterCallWith::~JSTestNamedGetterCallWith();
 }
 
@@ -335,7 +333,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedGetterCallWithConstructor, (JSGlobalObject* 
 
 JSC::GCClient::IsoSubspace* JSTestNamedGetterCallWith::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestNamedGetterCallWith, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestNamedGetterCallWith, UseCustomHeapCellType::No>(vm, "JSTestNamedGetterCallWith"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamedGetterCallWith.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedGetterCallWith = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestNamedGetterCallWith.get(); },
@@ -362,7 +360,7 @@ bool JSTestNamedGetterCallWithOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC:
 
 void JSTestNamedGetterCallWithOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestNamedGetterCallWith = static_cast<JSTestNamedGetterCallWith*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestNamedGetterCallWith = static_cast<JSTestNamedGetterCallWith*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestNamedGetterCallWith->protectedWrapped().ptr(), jsTestNamedGetterCallWith);
 }
@@ -375,7 +373,9 @@ extern "C" { extern void (*const __identifier("??_7TestNamedGetterCallWith@WebCo
 #else
 extern "C" { extern void* _ZTVN7WebCore23TestNamedGetterCallWithE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestNamedGetterCallWith>, void>> static inline void verifyVTable(TestNamedGetterCallWith* ptr) {
+template<std::same_as<TestNamedGetterCallWith> T>
+static inline void verifyVTable(TestNamedGetterCallWith* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -394,8 +394,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestNamedGett
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestNamedGetterCallWith>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestNamedGetterCallWith>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestNamedGetterCallWith>(impl.ptr());
 #endif

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "IdentityCredentialProtocol.h"
 #include <JavaScriptCore/Strong.h>
+#include <WebCore/IdentityCredentialProtocol.h>
 
 namespace JSC {
 class JSObject;

@@ -72,7 +72,7 @@ void PublicSuffixStore::enablePublicSuffixCache()
 
     Locker locker { m_publicSuffixCacheLock };
     ASSERT(!m_publicSuffixCache);
-    m_publicSuffixCache = UncheckedKeyHashSet<PublicSuffix> { };
+    m_publicSuffixCache = HashSet<PublicSuffix> { };
 }
 
 void PublicSuffixStore::addPublicSuffix(const PublicSuffix& publicSuffix)

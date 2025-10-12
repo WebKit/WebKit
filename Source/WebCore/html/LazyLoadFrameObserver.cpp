@@ -26,11 +26,11 @@
 #include "config.h"
 #include "LazyLoadFrameObserver.h"
 
-#include "DocumentInlines.h"
 #include "HTMLIFrameElement.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
 #include "LocalFrame.h"
+#include "NodeDocument.h"
 #include "RenderStyle.h"
 
 #include <limits>

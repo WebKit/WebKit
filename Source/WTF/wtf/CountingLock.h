@@ -27,6 +27,7 @@
 
 #include <wtf/DataLog.h>
 #include <wtf/LockAlgorithm.h>
+#include <wtf/ThreadSanitizerSupport.h>
 
 namespace WTF {
 
@@ -56,7 +57,7 @@ namespace WTF {
 
 class CountingLock final {
     WTF_MAKE_NONCOPYABLE(CountingLock);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CountingLock);
 
     typedef unsigned LockType;
     
@@ -84,17 +85,22 @@ public:
     
     bool tryLock()
     {
-        return ExclusiveAlgorithm::tryLock(m_word);
+        bool success = ExclusiveAlgorithm::tryLock(m_word);
+        if (success)
+            TSAN_ANNOTATE_HAPPENS_AFTER(this);
+        return success;
     }
 
     void lock()
     {
         if (!ExclusiveAlgorithm::lockFast(m_word)) [[unlikely]]
             lockSlow();
+        TSAN_ANNOTATE_HAPPENS_AFTER(this);
     }
     
     void unlock()
     {
+        TSAN_ANNOTATE_HAPPENS_BEFORE(this);
         if (!ExclusiveAlgorithm::unlockFast(m_word)) [[unlikely]]
             unlockSlow();
     }

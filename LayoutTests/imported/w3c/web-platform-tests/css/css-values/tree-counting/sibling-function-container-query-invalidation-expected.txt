@@ -1,0 +1,10 @@
+
+PASS sibling-index() in @container width query initially not matching
+PASS sibling-count() in @container width query initially not matching
+PASS sibling-index() in @container style() query initially not matching
+PASS sibling-count() in @container style() query initially not matching
+FAIL sibling-index() in @container width query matching after removal assert_equals: expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
+FAIL sibling-count() in @container width query matching after removal assert_equals: expected "rgb(0, 255, 0)" but got "rgb(0, 0, 0)"
+FAIL sibling-index() in @container style() query matching after removal assert_equals: expected "yes" but got "no"
+FAIL sibling-count() in @container style() query matching after removal assert_equals: expected "yes" but got "no"
+

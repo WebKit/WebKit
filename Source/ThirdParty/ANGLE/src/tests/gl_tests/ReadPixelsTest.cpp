@@ -7,6 +7,10 @@
 //   Tests calls related to glReadPixels.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 
 #include <array>

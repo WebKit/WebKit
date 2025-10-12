@@ -4,25 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-JSON-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Better/more correct handling for replacer arrays with trailing holes through which inherited elements might appear
+info: bugzilla.mozilla.org/show_bug.cgi?id=1217069
 esid: pending
 ---*/
-var gTestfile = "stringify-replacer-array-trailing-holes.js";
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 1217069;
-var summary =
-  "Better/more correct handling for replacer arrays with trailing holes " +
-  "through which inherited elements might appear";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 var obj = { 0: "hi", 1: "n-nao", 2: "run away!", 3: "bye" };
 
@@ -50,7 +36,3 @@ Object.prototype[3] = 3;
 
 assert.sameValue(JSON.stringify(obj, replacer),
          '{"0":"hi","1":"n-nao","2":"run away!","3":"bye"}');
-
-/******************************************************************************/
-
-print("Tests complete");

@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "pas_config.h"
@@ -29,12 +29,8 @@
 
 #include "pas_segregated_partial_view.h"
 
-#include "pas_epoch.h"
 #include "pas_immortal_heap.h"
-#include "pas_segregated_page_inlines.h"
-#include "pas_segregated_partial_view_inlines.h"
 #include "pas_segregated_shared_page_directory.h"
-#include "pas_segregated_shared_view_inlines.h"
 #include "pas_shared_handle_or_page_boundary_inlines.h"
 
 size_t pas_segregated_partial_view_count = 0;
@@ -45,7 +41,7 @@ pas_segregated_partial_view_create(
     size_t index)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
-    
+
     pas_segregated_partial_view* result;
 
     if (verbose)
@@ -110,7 +106,7 @@ void pas_segregated_partial_view_set_is_in_use_for_allocation(
     pas_segregated_shared_handle* shared_handle)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
-    
+
     pas_segregated_shared_page_directory* shared_page_directory;
     size_t index;
 
@@ -123,7 +119,7 @@ void pas_segregated_partial_view_set_is_in_use_for_allocation(
         pas_log("Setting partial %p, shared %p (index %zu) as in use for allocation.\n",
                 view, shared_view, index);
     }
-    
+
     PAS_TESTING_ASSERT(!pas_segregated_partial_view_is_eligible(view));
     PAS_TESTING_ASSERT(!view->is_in_use_for_allocation);
 
@@ -209,17 +205,17 @@ static pas_heap_summary compute_summary(pas_segregated_partial_view* view)
     }
 
     /* This doesn't have to be optimized since this is just for internal introspection.
-     
+
        Note that this logic magically works even for */
     begin_index = PAS_BITVECTOR_BIT_INDEX((unsigned)view->alloc_bits_offset);
     end_index = PAS_BITVECTOR_BIT_INDEX((unsigned)view->alloc_bits_offset +
                                         (unsigned)view->alloc_bits_size);
 
     result = pas_heap_summary_create_empty();
-    
+
     for (index = begin_index; index < end_index; ++index) {
         uintptr_t offset;
-        
+
         if (!pas_bitvector_get(full_alloc_bits, index))
             continue;
 
@@ -229,13 +225,13 @@ static pas_heap_summary compute_summary(pas_segregated_partial_view* view)
             result.free += object_size;
             continue;
         }
- 
+
         offset = pas_page_base_object_offset_from_page_boundary_at_index(
             (unsigned)index, page_config.base);
-        
+
         pas_segregated_page_add_commit_range(
             page, &result, pas_range_create(offset, offset + object_size));
-        
+
         if (pas_bitvector_get(alloc_bits, index))
             result.allocated += object_size;
         else {

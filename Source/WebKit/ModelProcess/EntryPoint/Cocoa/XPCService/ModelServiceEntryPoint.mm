@@ -56,9 +56,9 @@ extern "C" WK_EXPORT void MODEL_SERVICE_INITIALIZER(xpc_connection_t connection,
 
 void MODEL_SERVICE_INITIALIZER(xpc_connection_t connection, xpc_object_t initializerMessage)
 {
-    WTF::initializeMainThread();
-
+    WebKit::disableJSC([&] {
 #if ENABLE(MODEL_PROCESS)
-    WebKit::XPCServiceInitializer<WebKit::ModelProcess, WebKit::ModelServiceInitializerDelegate>(connection, initializerMessage);
+        WebKit::XPCServiceInitializer<WebKit::ModelProcess, WebKit::ModelServiceInitializerDelegate>(connection, initializerMessage);
 #endif // ENABLE(MODEL_PROCESS)
+    });
 }

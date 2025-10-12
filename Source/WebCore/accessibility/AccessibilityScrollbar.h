@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #pragma once
 
 #include "AccessibilityMockObject.h"
@@ -36,10 +36,10 @@ class Scrollbar;
 
 class AccessibilityScrollbar final : public AccessibilityMockObject {
 public:
-    static Ref<AccessibilityScrollbar> create(AXID, Scrollbar&);
+    static Ref<AccessibilityScrollbar> create(AXID, Scrollbar&, AXObjectCache&);
 
 private:
-    explicit AccessibilityScrollbar(AXID, Scrollbar&);
+    explicit AccessibilityScrollbar(AXID, Scrollbar&, AXObjectCache&);
 
     bool canSetValueAttribute() const final { return true; }
 
@@ -55,7 +55,7 @@ private:
     bool setValue(float) final;
     float valueForRange() const final;
 
-    Ref<Scrollbar> m_scrollbar;
+    const Ref<Scrollbar> m_scrollbar;
 };
 
 } // namespace WebCore

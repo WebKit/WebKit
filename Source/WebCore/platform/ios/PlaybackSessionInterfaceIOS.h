@@ -25,13 +25,14 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(COCOA) && HAVE(AVKIT)
 
-#include "EventListener.h"
-#include "HTMLMediaElementEnums.h"
-#include "MediaPlayerIdentifier.h"
-#include "PlaybackSessionModel.h"
-#include "Timer.h"
+#include <WebCore/EventListener.h>
+#include <WebCore/HTMLMediaElementEnums.h>
+#include <WebCore/MediaPlayerIdentifier.h>
+#include <WebCore/PlaybackSessionModel.h>
+#include <WebCore/Timer.h>
 #include <functional>
 #include <objc/objc.h>
 #include <wtf/CheckedRef.h>
@@ -81,7 +82,7 @@ public:
     void modelDestroyed() override;
 
     std::optional<MediaPlayerIdentifier> playerIdentifier() const;
-    void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>);
+    virtual void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>);
     void setVideoPresentationInterface(WeakPtr<VideoPresentationInterfaceIOS>);
 
     virtual void startObservingNowPlayingMetadata();

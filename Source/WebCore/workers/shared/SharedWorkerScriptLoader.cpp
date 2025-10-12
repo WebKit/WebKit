@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SharedWorkerScriptLoader.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "EventNames.h"
 #include "InspectorInstrumentation.h"
 #include "SharedWorker.h"
@@ -38,6 +39,11 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedWorkerScriptLoader);
+
+Ref<SharedWorkerScriptLoader> SharedWorkerScriptLoader::create(URL&& url, SharedWorker& worker, WorkerOptions&& options)
+{
+    return adoptRef(*new SharedWorkerScriptLoader(WTFMove(url), worker, WTFMove(options)));
+}
 
 SharedWorkerScriptLoader::SharedWorkerScriptLoader(URL&& url, SharedWorker& worker, WorkerOptions&& options)
     : m_options(WTFMove(options))
@@ -53,7 +59,7 @@ void SharedWorkerScriptLoader::load(CompletionHandler<void(WorkerFetchResult&&, 
     m_completionHandler = WTFMove(completionHandler);
 
     auto source = m_options.type == WorkerType::Module ? WorkerScriptLoader::Source::ModuleScript : WorkerScriptLoader::Source::ClassicWorkerScript;
-    m_loader->loadAsynchronously(*m_worker->scriptExecutionContext(), ResourceRequest(URL { m_url }), source, m_worker->workerFetchOptions(m_options, FetchOptions::Destination::Sharedworker), ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective, ServiceWorkersMode::All, *this, WorkerRunLoop::defaultMode(), ScriptExecutionContextIdentifier::generate());
+    m_loader->loadAsynchronously(*m_worker->protectedScriptExecutionContext(), ResourceRequest(URL { m_url }), source, m_worker->workerFetchOptions(m_options, FetchOptions::Destination::Sharedworker), ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective, ServiceWorkersMode::All, *this, WorkerRunLoop::defaultMode(), ScriptExecutionContextIdentifier::generate());
 }
 
 void SharedWorkerScriptLoader::didReceiveResponse(ScriptExecutionContextIdentifier mainContextIdentifier, std::optional<ResourceLoaderIdentifier> identifier, const ResourceResponse&)
@@ -67,7 +73,7 @@ void SharedWorkerScriptLoader::didReceiveResponse(ScriptExecutionContextIdentifi
 
 void SharedWorkerScriptLoader::notifyFinished(std::optional<ScriptExecutionContextIdentifier> mainContextIdentifier)
 {
-    auto* scriptExecutionContext = m_worker->scriptExecutionContext();
+    RefPtr scriptExecutionContext = m_worker->scriptExecutionContext();
 
     if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
         if (scriptExecutionContext && !m_loader->failed()) {

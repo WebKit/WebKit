@@ -5,11 +5,15 @@
         width: 200px;
         height: 200px;
         position: absolute;
+        border-radius: inherit;
     }
     div.image-container {
         width: 200px;
         height: 200px;
         position: relative;
+    }
+    .rounded {
+        border-radius: 20px;
     }
 </style>
 <body>
@@ -20,6 +24,12 @@
         <template shadowrootmode="open">
             <img style="width: 200px; height: 200px" controls src="resources/spatial.heic">
         </template>
+    </div>
+    <div class="image-container rounded">
+        <img controls src="resources/spatial.heic">
+    </div>
+    <div class="image-container">
+        <img controls src="resources/green-2000x800.heic">
     </div>
     <img controls src="resources/green.jpg">
             

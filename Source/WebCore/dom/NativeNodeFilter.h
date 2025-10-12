@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "NodeFilter.h"
-#include "NodeFilterCondition.h"
+#include <WebCore/NodeFilter.h>
+#include <WebCore/NodeFilterCondition.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -46,7 +46,7 @@ private:
 
     bool hasCallback() const final;
 
-    Ref<NodeFilterCondition> m_condition;
+    const Ref<NodeFilterCondition> m_condition;
 };
 
 } // namespace WebCore

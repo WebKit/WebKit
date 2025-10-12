@@ -238,11 +238,6 @@ GL_APICALL void GL_APIENTRY glCopySubTexture3DANGLE(GLuint sourceId,
 #endif
 #endif /* GL_ANGLE_copy_texture_3d */
 
-#ifndef GL_CHROMIUM_sync_query
-#define GL_CHROMIUM_sync_query 1
-#define GL_COMMANDS_COMPLETED_CHROMIUM    0x84F7
-#endif  /* GL_CHROMIUM_sync_query */
-
 #ifndef GL_EXT_texture_compression_s3tc_srgb
 #define GL_EXT_texture_compression_s3tc_srgb 1
 #define GL_COMPRESSED_SRGB_S3TC_DXT1_EXT  0x8C4C

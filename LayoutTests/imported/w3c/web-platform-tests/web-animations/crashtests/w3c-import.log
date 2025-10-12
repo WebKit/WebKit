@@ -15,8 +15,12 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/crashtests/color-mix-crashtest.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/crashtests/effectively-infinite-timing-parameters.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/crashtests/get-computed-timing-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/crashtests/get-keyframe-fontsize-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/crashtests/infinite-active-duration.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/crashtests/non-interpolable-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/crashtests/partially-overlapping-animations-one-not-current-001.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/crashtests/reparent-animating-element-001.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/crashtests/reparent-animating-element-002.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/crashtests/sibling-index-offset-crash.html

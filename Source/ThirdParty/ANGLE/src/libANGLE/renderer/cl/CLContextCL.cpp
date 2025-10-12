@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 //
 // CLContextCL.cpp: Implements the class methods for CLContextCL.
+//
+
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
 #include "libANGLE/renderer/cl/CLContextCL.h"
 

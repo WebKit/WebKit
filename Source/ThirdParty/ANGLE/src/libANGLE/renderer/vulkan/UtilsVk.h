@@ -175,6 +175,7 @@ class UtilsVk : angle::NonCopyable
         SurfaceRotation srcRotation;
         GLenum srcColorEncoding;
         GLenum dstColorEncoding;
+        bool copyYuvWithoutColorConversion;
     };
 
     struct CopyImageBitsParameters

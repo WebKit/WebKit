@@ -1,6 +1,0 @@
-
-
-FAIL <input type=date> keyboard behavior for :user-valid/:user-invalid. assert_equals: Date input value should match the testdriver input. expected "1234-01-01" but got ""
-FAIL <input type=time> keyboard behavior for :user-valid/:user-invalid. assert_equals: Time input value should match the testdriver input. expected "01:02" but got ""
-FAIL <input type=datetime-local> keyboard behavior for :user-valid/:user-invalid. assert_equals: Datetime input value should match the testdriver input. expected "1234-01-01T01:02" but got ""
-

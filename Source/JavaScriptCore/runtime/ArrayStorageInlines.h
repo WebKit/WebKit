@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ArrayStorage.h"
-#include "StructureInlines.h"
+#include <JavaScriptCore/ArrayStorage.h>
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace JSC {
 

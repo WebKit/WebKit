@@ -11,21 +11,17 @@
 #define TEST_MAC_CAPTURER_H_
 
 #include <cstddef>
-#include <memory>
-#include <vector>
 
-#include "api/media_stream_interface.h"
-#include "api/scoped_refptr.h"
-#include "modules/video_capture/video_capture.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/thread.h"
 #include "test/test_video_capturer.h"
 
 namespace webrtc {
 namespace test {
 
 class MacCapturer : public TestVideoCapturer,
-                    public rtc::VideoSinkInterface<VideoFrame> {
+                    public VideoSinkInterface<VideoFrame> {
  public:
   static MacCapturer* Create(size_t width,
                              size_t height,

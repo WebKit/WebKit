@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@ class ControlFactoryMac final : public ControlFactoryCocoa, public CanMakeChecke
 public:
     using ControlFactoryCocoa::ControlFactoryCocoa;
 
-    static ControlFactoryMac& shared();
+    static ControlFactoryMac& singleton();
 
     NSView *drawingView(const FloatRect&, const ControlStyle&) const;
 
@@ -74,6 +74,7 @@ private:
     std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) final;
     std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) final;
     std::unique_ptr<PlatformControl> createPlatformToggleButton(ToggleButtonPart&) final;
+    Type type() const final { return Type::Mac; }
 
     NSButtonCell *buttonCell() const;
     NSButtonCell *defaultButtonCell() const;
@@ -104,5 +105,9 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ControlFactoryMac)
+    static bool isType(const WebCore::ControlFactory& factory) { return factory.type() == WebCore::ControlFactory::Type::Mac; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // PLATFORM(MAC)

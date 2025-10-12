@@ -11,8 +11,7 @@
 #ifndef RTC_TOOLS_FRAME_ANALYZER_LINEAR_LEAST_SQUARES_H_
 #define RTC_TOOLS_FRAME_ANALYZER_LINEAR_LEAST_SQUARES_H_
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <optional>
 #include <valarray>
 #include <vector>

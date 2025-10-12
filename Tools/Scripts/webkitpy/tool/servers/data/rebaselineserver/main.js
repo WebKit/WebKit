@@ -340,7 +340,7 @@ function selectTest()
                 baselinePath += 'platform/' + platform + '/';
             }
             baselinePath += testName + '-expected' + extension;
-            link.href = getTracUrl(baselinePath);
+            link.href = getRepoUrl(baselinePath);
             if (extension == '.checksum') {
                 link.textContent = 'chk';
             } else {
@@ -385,7 +385,7 @@ function updateState()
     $('next-test').disabled = testIndex == testCount - 1;
     $('previous-test').disabled = testIndex == 0;
 
-    $('test-link').href = getTracUrl(testName);
+    $('test-link').href = getRepoUrl(testName);
 
     var state = results.tests[testName].state;
     $('state').className = state;

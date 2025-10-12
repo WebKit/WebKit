@@ -62,7 +62,7 @@ public:
 
     void addDevice(GRefPtr<GstDevice>&&);
 
-    void teardown();
+    virtual void teardown();
 
 protected:
     Vector<CaptureDevice> m_devices;
@@ -111,6 +111,12 @@ public:
     void deref() const final { }
 
     static VideoCaptureFactory& videoFactory();
+
+    void teardown() final
+    {
+        GStreamerCaptureDeviceManager::teardown();
+        m_pipewireCaptureDeviceManager = nullptr;
+    }
 
 private:
     GStreamerVideoCaptureDeviceManager();

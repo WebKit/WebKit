@@ -72,8 +72,7 @@ typedef struct vpx_atomic_int {
   volatile int value;
 } vpx_atomic_int;
 
-#define VPX_ATOMIC_INIT(num) \
-  { num }
+#define VPX_ATOMIC_INIT(num) { num }
 
 // Initialization of an atomic int, not thread safe.
 static INLINE void vpx_atomic_init(vpx_atomic_int *atomic, int value) {

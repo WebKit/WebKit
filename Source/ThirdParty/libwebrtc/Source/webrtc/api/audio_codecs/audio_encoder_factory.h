@@ -15,12 +15,12 @@
 #include <optional>
 #include <vector>
 
+#include "absl/base/nullability.h"
 #include "api/audio_codecs/audio_codec_pair_id.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/environment/environment.h"
-#include "rtc_base/checks.h"
-#include "rtc_base/ref_count.h"
+#include "api/ref_count.h"
 
 namespace webrtc {
 
@@ -58,7 +58,7 @@ class AudioEncoderFactory : public RefCountInterface {
 
   // Creates an AudioEncoder for the specified format.
   // Returns null if the format isn't supported.
-  virtual absl::Nullable<std::unique_ptr<AudioEncoder>> Create(
+  virtual absl_nullable std::unique_ptr<AudioEncoder> Create(
       const Environment& env,
       const SdpAudioFormat& format,
       Options options) = 0;

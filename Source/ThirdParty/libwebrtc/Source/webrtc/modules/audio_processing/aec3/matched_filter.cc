@@ -9,8 +9,11 @@
  */
 #include "modules/audio_processing/aec3/matched_filter.h"
 
+#include <string>
+#include <vector>
+
 // Defines WEBRTC_ARCH_X86_FAMILY, used below.
-#include "rtc_base/system/arch.h"
+#include "rtc_base/system/arch.h"  // IWYU pragma: keep
 
 #if defined(WEBRTC_HAS_NEON)
 #include <arm_neon.h>
@@ -21,17 +24,14 @@
 #include <algorithm>
 #include <cstddef>
 #include <initializer_list>
-#include <iterator>
-#include <numeric>
 #include <optional>
 
 #include "api/array_view.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/downsampled_render_buffer.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace {
 
@@ -41,8 +41,8 @@ namespace {
 constexpr int kAccumulatedErrorSubSampleRate = 4;
 
 void UpdateAccumulatedError(
-    const rtc::ArrayView<const float> instantaneous_accumulated_error,
-    const rtc::ArrayView<float> accumulated_error,
+    const webrtc::ArrayView<const float> instantaneous_accumulated_error,
+    const webrtc::ArrayView<float> accumulated_error,
     float one_over_error_sum_anchor) {
   static constexpr float kSmoothConstantIncreases = 0.015f;
   for (size_t k = 0; k < instantaneous_accumulated_error.size(); ++k) {
@@ -57,10 +57,9 @@ void UpdateAccumulatedError(
   }
 }
 
-size_t ComputePreEchoLag(
-    const rtc::ArrayView<const float> accumulated_error,
-    size_t lag,
-    size_t alignment_shift_winner) {
+size_t ComputePreEchoLag(const webrtc::ArrayView<const float> accumulated_error,
+                         size_t lag,
+                         size_t alignment_shift_winner) {
   static constexpr float kPreEchoThreshold = 0.5f;
   RTC_DCHECK_GE(lag, alignment_shift_winner);
   size_t pre_echo_lag_estimate = lag - alignment_shift_winner;
@@ -93,13 +92,13 @@ void MatchedFilterCoreWithAccumulatedError_NEON(
     size_t x_start_index,
     float x2_sum_threshold,
     float smoothing,
-    rtc::ArrayView<const float> x,
-    rtc::ArrayView<const float> y,
-    rtc::ArrayView<float> h,
+    webrtc::ArrayView<const float> x,
+    webrtc::ArrayView<const float> y,
+    webrtc::ArrayView<float> h,
     bool* filters_updated,
     float* error_sum,
-    rtc::ArrayView<float> accumulated_error,
-    rtc::ArrayView<float> scratch_memory) {
+    webrtc::ArrayView<float> accumulated_error,
+    webrtc::ArrayView<float> scratch_memory) {
   const int h_size = static_cast<int>(h.size());
   const int x_size = static_cast<int>(x.size());
   RTC_DCHECK_EQ(0, h_size % 4);
@@ -119,7 +118,7 @@ void MatchedFilterCoreWithAccumulatedError_NEON(
     }
     const float* x_p =
         chunk1 != h_size ? scratch_memory.data() : &x[x_start_index];
-    const float* h_p = &h[0];
+    const float* h_cp = &h[0];
     float* accumulated_error_p = &accumulated_error[0];
     // Initialize values for the accumulation.
     float32x4_t x2_sum_128 = vdupq_n_f32(0);
@@ -128,10 +127,10 @@ void MatchedFilterCoreWithAccumulatedError_NEON(
     // Perform 128 bit vector operations.
     const int limit_by_4 = h_size >> 2;
     for (int k = limit_by_4; k > 0;
-         --k, h_p += 4, x_p += 4, accumulated_error_p++) {
+         --k, h_cp += 4, x_p += 4, accumulated_error_p++) {
       // Load the data into 128 bit vectors.
       const float32x4_t x_k = vld1q_f32(x_p);
-      const float32x4_t h_k = vld1q_f32(h_p);
+      const float32x4_t h_k = vld1q_f32(h_cp);
       // Compute and accumulate x * x.
       x2_sum_128 = vmlaq_f32(x2_sum_128, x_k, x_k);
       // Compute x * h
@@ -155,7 +154,6 @@ void MatchedFilterCoreWithAccumulatedError_NEON(
       float* h_p = &h[0];
       x_p = chunk1 != h_size ? scratch_memory.data() : &x[x_start_index];
       // Perform 128 bit vector operations.
-      const int limit_by_4 = h_size >> 2;
       for (int k = limit_by_4; k > 0; --k, h_p += 4, x_p += 4) {
         // Load the data into 128 bit vectors.
         float32x4_t h_k = vld1q_f32(h_p);
@@ -174,14 +172,14 @@ void MatchedFilterCoreWithAccumulatedError_NEON(
 void MatchedFilterCore_NEON(size_t x_start_index,
                             float x2_sum_threshold,
                             float smoothing,
-                            rtc::ArrayView<const float> x,
-                            rtc::ArrayView<const float> y,
-                            rtc::ArrayView<float> h,
+                            webrtc::ArrayView<const float> x,
+                            webrtc::ArrayView<const float> y,
+                            webrtc::ArrayView<float> h,
                             bool* filters_updated,
                             float* error_sum,
                             bool compute_accumulated_error,
-                            rtc::ArrayView<float> accumulated_error,
-                            rtc::ArrayView<float> scratch_memory) {
+                            webrtc::ArrayView<float> accumulated_error,
+                            webrtc::ArrayView<float> scratch_memory) {
   const int h_size = static_cast<int>(h.size());
   const int x_size = static_cast<int>(x.size());
   RTC_DCHECK_EQ(0, h_size % 4);
@@ -198,7 +196,7 @@ void MatchedFilterCore_NEON(size_t x_start_index,
 
     RTC_DCHECK_GT(x_size, x_start_index);
     const float* x_p = &x[x_start_index];
-    const float* h_p = &h[0];
+    const float* h_cp = &h[0];
 
     // Initialize values for the accumulation.
     float32x4_t s_128 = vdupq_n_f32(0);
@@ -216,20 +214,20 @@ void MatchedFilterCore_NEON(size_t x_start_index,
     for (int limit : {chunk1, chunk2}) {
       // Perform 128 bit vector operations.
       const int limit_by_4 = limit >> 2;
-      for (int k = limit_by_4; k > 0; --k, h_p += 4, x_p += 4) {
+      for (int k = limit_by_4; k > 0; --k, h_cp += 4, x_p += 4) {
         // Load the data into 128 bit vectors.
         const float32x4_t x_k = vld1q_f32(x_p);
-        const float32x4_t h_k = vld1q_f32(h_p);
+        const float32x4_t h_k = vld1q_f32(h_cp);
         // Compute and accumulate x * x and h * x.
         x2_sum_128 = vmlaq_f32(x2_sum_128, x_k, x_k);
         s_128 = vmlaq_f32(s_128, h_k, x_k);
       }
 
       // Perform non-vector operations for any remaining items.
-      for (int k = limit - limit_by_4 * 4; k > 0; --k, ++h_p, ++x_p) {
+      for (int k = limit - limit_by_4 * 4; k > 0; --k, ++h_cp, ++x_p) {
         const float x_k = *x_p;
         x2_sum += x_k * x_k;
-        s += *h_p * x_k;
+        s += *h_cp * x_k;
       }
 
       x_p = &x[0];
@@ -288,17 +286,16 @@ void MatchedFilterCore_NEON(size_t x_start_index,
 
 #if defined(WEBRTC_ARCH_X86_FAMILY)
 
-void MatchedFilterCore_AccumulatedError_SSE2(
-    size_t x_start_index,
-    float x2_sum_threshold,
-    float smoothing,
-    rtc::ArrayView<const float> x,
-    rtc::ArrayView<const float> y,
-    rtc::ArrayView<float> h,
-    bool* filters_updated,
-    float* error_sum,
-    rtc::ArrayView<float> accumulated_error,
-    rtc::ArrayView<float> scratch_memory) {
+void MatchedFilterCore_AccumulatedError_SSE2(size_t x_start_index,
+                                             float x2_sum_threshold,
+                                             float smoothing,
+                                             ArrayView<const float> x,
+                                             ArrayView<const float> y,
+                                             ArrayView<float> h,
+                                             bool* filters_updated,
+                                             float* error_sum,
+                                             ArrayView<float> accumulated_error,
+                                             ArrayView<float> scratch_memory) {
   const int h_size = static_cast<int>(h.size());
   const int x_size = static_cast<int>(x.size());
   RTC_DCHECK_EQ(0, h_size % 8);
@@ -364,20 +361,20 @@ void MatchedFilterCore_AccumulatedError_SSE2(
       const float alpha = smoothing * e / x2_sum;
       const __m128 alpha_128 = _mm_set1_ps(alpha);
       // filter = filter + smoothing * (y - filter * x) * x / x * x.
-      float* h_p = &h[0];
-      const float* x_p =
+      float* h_p2 = &h[0];
+      const float* x_p2 =
           chunk1 != h_size ? scratch_memory.data() : &x[x_start_index];
       // Perform 128 bit vector operations.
       const int limit_by_4 = h_size >> 2;
-      for (int k = limit_by_4; k > 0; --k, h_p += 4, x_p += 4) {
+      for (int k = limit_by_4; k > 0; --k, h_p2 += 4, x_p2 += 4) {
         // Load the data into 128 bit vectors.
-        __m128 h_k = _mm_loadu_ps(h_p);
-        const __m128 x_k = _mm_loadu_ps(x_p);
+        __m128 h_k = _mm_loadu_ps(h_p2);
+        const __m128 x_k = _mm_loadu_ps(x_p2);
         // Compute h = h + alpha * x.
         const __m128 alpha_x = _mm_mul_ps(alpha_128, x_k);
         h_k = _mm_add_ps(h_k, alpha_x);
         // Store the result.
-        _mm_storeu_ps(h_p, h_k);
+        _mm_storeu_ps(h_p2, h_k);
       }
       *filters_updated = true;
     }
@@ -388,14 +385,14 @@ void MatchedFilterCore_AccumulatedError_SSE2(
 void MatchedFilterCore_SSE2(size_t x_start_index,
                             float x2_sum_threshold,
                             float smoothing,
-                            rtc::ArrayView<const float> x,
-                            rtc::ArrayView<const float> y,
-                            rtc::ArrayView<float> h,
+                            ArrayView<const float> x,
+                            ArrayView<const float> y,
+                            ArrayView<float> h,
                             bool* filters_updated,
                             float* error_sum,
                             bool compute_accumulated_error,
-                            rtc::ArrayView<float> accumulated_error,
-                            rtc::ArrayView<float> scratch_memory) {
+                            ArrayView<float> accumulated_error,
+                            ArrayView<float> scratch_memory) {
   if (compute_accumulated_error) {
     return MatchedFilterCore_AccumulatedError_SSE2(
         x_start_index, x2_sum_threshold, smoothing, x, y, h, filters_updated,
@@ -467,26 +464,26 @@ void MatchedFilterCore_SSE2(size_t x_start_index,
       const float alpha = smoothing * e / x2_sum;
       const __m128 alpha_128 = _mm_set1_ps(alpha);
       // filter = filter + smoothing * (y - filter * x) * x / x * x.
-      float* h_p = &h[0];
+      float* h_p2 = &h[0];
       x_p = &x[x_start_index];
       // Perform the loop in two chunks.
       for (int limit : {chunk1, chunk2}) {
         // Perform 128 bit vector operations.
         const int limit_by_4 = limit >> 2;
-        for (int k = limit_by_4; k > 0; --k, h_p += 4, x_p += 4) {
+        for (int k = limit_by_4; k > 0; --k, h_p2 += 4, x_p += 4) {
           // Load the data into 128 bit vectors.
-          __m128 h_k = _mm_loadu_ps(h_p);
+          __m128 h_k = _mm_loadu_ps(h_p2);
           const __m128 x_k = _mm_loadu_ps(x_p);
 
           // Compute h = h + alpha * x.
           const __m128 alpha_x = _mm_mul_ps(alpha_128, x_k);
           h_k = _mm_add_ps(h_k, alpha_x);
           // Store the result.
-          _mm_storeu_ps(h_p, h_k);
+          _mm_storeu_ps(h_p2, h_k);
         }
         // Perform non-vector operations for any remaining items.
-        for (int k = limit - limit_by_4 * 4; k > 0; --k, ++h_p, ++x_p) {
-          *h_p += alpha * *x_p;
+        for (int k = limit - limit_by_4 * 4; k > 0; --k, ++h_p2, ++x_p) {
+          *h_p2 += alpha * *x_p;
         }
         x_p = &x[0];
       }
@@ -500,13 +497,13 @@ void MatchedFilterCore_SSE2(size_t x_start_index,
 void MatchedFilterCore(size_t x_start_index,
                        float x2_sum_threshold,
                        float smoothing,
-                       rtc::ArrayView<const float> x,
-                       rtc::ArrayView<const float> y,
-                       rtc::ArrayView<float> h,
+                       ArrayView<const float> x,
+                       ArrayView<const float> y,
+                       ArrayView<float> h,
                        bool* filters_updated,
                        float* error_sum,
                        bool compute_accumulated_error,
-                       rtc::ArrayView<float> accumulated_error) {
+                       ArrayView<float> accumulated_error) {
   if (compute_accumulated_error) {
     std::fill(accumulated_error.begin(), accumulated_error.end(), 0.0f);
   }
@@ -546,10 +543,10 @@ void MatchedFilterCore(size_t x_start_index,
       const float alpha = smoothing * e / x2_sum;
 
       // filter = filter + smoothing * (y - filter * x) * x / x * x.
-      size_t x_index = x_start_index;
+      size_t x_index2 = x_start_index;
       for (size_t k = 0; k < h.size(); ++k) {
-        h[k] += alpha * x[x_index];
-        x_index = x_index < (x.size() - 1) ? x_index + 1 : 0;
+        h[k] += alpha * x[x_index2];
+        x_index2 = x_index2 < (x.size() - 1) ? x_index2 + 1 : 0;
       }
       *filters_updated = true;
     }
@@ -558,7 +555,7 @@ void MatchedFilterCore(size_t x_start_index,
   }
 }
 
-size_t MaxSquarePeakIndex(rtc::ArrayView<const float> h) {
+size_t MaxSquarePeakIndex(ArrayView<const float> h) {
   if (h.size() < 2) {
     return 0;
   }
@@ -658,7 +655,7 @@ void MatchedFilter::Reset(bool full_reset) {
 }
 
 void MatchedFilter::Update(const DownsampledRenderBuffer& render_buffer,
-                           rtc::ArrayView<const float> capture,
+                           ArrayView<const float> capture,
                            bool use_slow_smoothing) {
   RTC_DCHECK_EQ(sub_block_size_, capture.size());
   auto& y = capture;

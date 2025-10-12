@@ -1,0 +1,4 @@
+
+FAIL Same-origin credentialless iframe can't request storage access assert_equals: expected "failed" but got "success"
+FAIL Cross-origin credentialless iframe can't request storage access assert_equals: expected "failed" but got "success"
+

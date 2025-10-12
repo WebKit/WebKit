@@ -34,4 +34,5 @@ extern NSString *_NXSmartPaste;
 
 @interface NSPasteboard ()
 - (NSData *)_dataWithoutConversionForType:(NSString *)type securityScoped:(BOOL)securityScoped;
+- (BOOL)_setExpirationDate:(NSDate *)date;
 @end

@@ -27,7 +27,7 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
-#include "WebGPU.h"
+#include <WebCore/WebGPU.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>

@@ -101,8 +101,7 @@ horizontal_filter_4x1_f1_beta0(const uint8x16_t in, int16x8_t f_s16) {
 
 static AOM_FORCE_INLINE int16x8_t horizontal_filter_4x1_f1(const uint8x16_t in,
                                                            int sx) {
-  int16x8_t f_s16 =
-      vld1q_s16((int16_t *)(av1_warped_filter + (sx >> WARPEDDIFF_PREC_BITS)));
+  int16x8_t f_s16 = vld1q_s16(av1_warped_filter[sx >> WARPEDDIFF_PREC_BITS]);
   return horizontal_filter_4x1_f1_beta0(in, f_s16);
 }
 
@@ -140,8 +139,7 @@ horizontal_filter_8x1_f1_beta0(const uint8x16_t in, int16x8_t f_s16) {
 
 static AOM_FORCE_INLINE int16x8_t horizontal_filter_8x1_f1(const uint8x16_t in,
                                                            int sx) {
-  int16x8_t f_s16 =
-      vld1q_s16((int16_t *)(av1_warped_filter + (sx >> WARPEDDIFF_PREC_BITS)));
+  int16x8_t f_s16 = vld1q_s16(av1_warped_filter[sx >> WARPEDDIFF_PREC_BITS]);
   return horizontal_filter_8x1_f1_beta0(in, f_s16);
 }
 
@@ -156,8 +154,7 @@ static AOM_FORCE_INLINE void vertical_filter_4x1_f1(const int16x8_t *src,
   int16x4_t s6 = vget_low_s16(src[6]);
   int16x4_t s7 = vget_low_s16(src[7]);
 
-  int16x8_t f =
-      vld1q_s16((int16_t *)(av1_warped_filter + (sy >> WARPEDDIFF_PREC_BITS)));
+  int16x8_t f = vld1q_s16(av1_warped_filter[sy >> WARPEDDIFF_PREC_BITS]);
 
   int32x4_t m0123 = vmull_lane_s16(s0, vget_low_s16(f), 0);
   m0123 = vmlal_lane_s16(m0123, s1, vget_low_s16(f), 1);
@@ -210,8 +207,7 @@ static AOM_FORCE_INLINE void vertical_filter_8x1_f1(const int16x8_t *src,
   int16x8_t s6 = src[6];
   int16x8_t s7 = src[7];
 
-  int16x8_t f =
-      vld1q_s16((int16_t *)(av1_warped_filter + (sy >> WARPEDDIFF_PREC_BITS)));
+  int16x8_t f = vld1q_s16(av1_warped_filter[sy >> WARPEDDIFF_PREC_BITS]);
 
   int32x4_t m0123 = vmull_lane_s16(vget_low_s16(s0), vget_low_s16(f), 0);
   m0123 = vmlal_lane_s16(m0123, vget_low_s16(s1), vget_low_s16(f), 1);

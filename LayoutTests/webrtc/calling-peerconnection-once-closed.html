@@ -46,9 +46,10 @@ promise_test(() => {
     });
 }, "Ensuring closed connection addTransceiver does not crash");
 
-promise_test(() => {
+promise_test((t) => {
     return closedConnection().then((connection) => {
         return navigator.mediaDevices.getUserMedia({video: true}).then((stream) => {
+            t.add_cleanup(() => stream.getVideoTracks()[0].stop());
             assert_throws_dom("InvalidStateError", () => { connection.addTrack(stream.getVideoTracks()[0], stream); });
         });
     });

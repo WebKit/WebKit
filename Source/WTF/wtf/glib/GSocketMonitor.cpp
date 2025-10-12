@@ -55,11 +55,17 @@ gboolean GSocketMonitor::socketSourceCallback(GSocket*, GIOCondition condition, 
     return result;
 }
 
-void GSocketMonitor::start(GSocket* socket, GIOCondition condition, RunLoop& runLoop, Function<gboolean(GIOCondition)>&& callback)
+void GSocketMonitor::start(GSocket* socket, GIOCondition condition, RunLoop& runLoop, GCancellable* cancellable, Function<gboolean(GIOCondition)>&& callback)
 {
     stop();
 
-    m_cancellable = adoptGRef(g_cancellable_new());
+    if (cancellable) {
+        m_cancellable = cancellable;
+        m_shouldCancelOnStop = false;
+    } else {
+        m_cancellable = adoptGRef(g_cancellable_new());
+        m_shouldCancelOnStop = true;
+    }
     m_source = adoptGRef(g_socket_create_source(socket, condition, m_cancellable.get()));
     g_source_set_name(m_source.get(), "[WebKit] Socket monitor");
     m_callback = WTFMove(callback);
@@ -73,7 +79,8 @@ void GSocketMonitor::stop()
     if (!m_source)
         return;
 
-    g_cancellable_cancel(m_cancellable.get());
+    if (m_shouldCancelOnStop)
+        g_cancellable_cancel(m_cancellable.get());
     m_cancellable = nullptr;
     g_source_destroy(m_source.get());
     m_source = nullptr;

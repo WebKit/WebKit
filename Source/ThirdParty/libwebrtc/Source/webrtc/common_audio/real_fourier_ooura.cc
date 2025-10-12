@@ -12,6 +12,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <complex>
+#include <cstddef>
 
 #include "common_audio/third_party/ooura/fft_size_256/fft4g.h"
 #include "rtc_base/checks.h"

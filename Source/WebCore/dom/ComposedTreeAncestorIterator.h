@@ -119,7 +119,7 @@ public:
     }
 
 private:
-    Ref<Node> m_node;
+    const Ref<Node> m_node;
 };
 
 // FIXME: We should have const versions too.

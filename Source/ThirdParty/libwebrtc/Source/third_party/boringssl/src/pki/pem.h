@@ -1,17 +1,29 @@
 // Copyright 2011 The Chromium Authors
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #ifndef BSSL_PKI_PEM_H_
 #define BSSL_PKI_PEM_H_
 
 #include <stddef.h>
 
+#include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
 
 #include <openssl/base.h>
+#include <openssl/span.h>
 
 BSSL_NAMESPACE_BEGIN
 
@@ -26,6 +38,8 @@ class OPENSSL_EXPORT PEMTokenizer {
   // |str| must remain valid for the duration of the PEMTokenizer.
   PEMTokenizer(std::string_view str,
                const std::vector<std::string> &allowed_block_types);
+  PEMTokenizer(std::string_view str,
+               bssl::Span<const std::string_view> allowed_block_types);
 
   PEMTokenizer(const PEMTokenizer &) = delete;
   PEMTokenizer &operator=(const PEMTokenizer &) = delete;
@@ -49,7 +63,7 @@ class OPENSSL_EXPORT PEMTokenizer {
 
  private:
   void Init(std::string_view str,
-            const std::vector<std::string> &allowed_block_types);
+            bssl::Span<const std::string_view> allowed_block_types);
 
   // A simple cache of the allowed PEM header and footer for a given PEM
   // block type, so that it is only computed once.
@@ -76,8 +90,29 @@ class OPENSSL_EXPORT PEMTokenizer {
   std::string data_;
 };
 
-// Encodes |data| in the encapsulated message format described in RFC 1421,
-// with |type| as the PEM block type (eg: CERTIFICATE).
+// PEMToken represents a single PEM token. Headers are not stored or supported.
+struct PEMToken {
+  std::string type;
+  std::string data;
+};
+
+// PEMDecode decodes |data| into a sequence of PEM tokens. Only tokens whose
+// type appears in |allowed_types| are included in the resulting vector. The
+// resulting vector may be empty if either there are no valid PEM tokens in the
+// input, or there are valid tokens but none of them match any of the allowed
+// types.
+OPENSSL_EXPORT std::vector<PEMToken> PEMDecode(
+    std::string_view data, bssl::Span<const std::string_view> allowed_types);
+
+// PEMDecodeSingle decodes |data| into a single PEM token, which must be of the
+// specified |allowed_type|, and returns that token's base64-decoded body.
+// Returns nullopt if there is not exactly one token of the allowed type in the
+// input for any reason.
+OPENSSL_EXPORT std::optional<std::string> PEMDecodeSingle(
+    std::string_view data, std::string_view allowed_type);
+
+// PEMEncode encodes |data| in the encapsulated message format described in RFC
+// 1421, with |type| as the PEM block type (eg: CERTIFICATE).
 OPENSSL_EXPORT std::string PEMEncode(std::string_view data,
                                      const std::string &type);
 

@@ -27,7 +27,7 @@
 #include "PlatformWebViewClientWPE.h"
 
 #if ENABLE(WPE_PLATFORM)
-#include <wpe/headless/wpe-headless.h>
+#include <wpe/wpe-platform.h>
 #include <wtf/glib/GUniquePtr.h>
 
 #if USE(CAIRO)
@@ -42,12 +42,11 @@ IGNORE_CLANG_WARNINGS_END
 namespace WTR {
 
 PlatformWebViewClientWPE::PlatformWebViewClientWPE(WKPageConfigurationRef configuration)
-    : m_display(adoptGRef(wpe_display_headless_new()))
 {
-    // Increase the double click time to 500 to match what tests expect.
-    auto* settings = wpe_display_get_settings(m_display.get());
-    wpe_settings_set_uint32(settings, WPE_SETTING_DOUBLE_CLICK_TIME, 500, WPE_SETTINGS_SOURCE_APPLICATION, nullptr);
-    m_view = WKViewCreate(m_display.get(), configuration);
+    WPEDisplay* display = wpe_display_get_default();
+    if (!display)
+        g_error("Failed to get the default WPE display\n");
+    m_view = WKViewCreate(display, configuration);
     auto* wpeView = WKViewGetView(m_view);
     wpe_view_focus_in(wpeView);
     wpe_toplevel_resize(wpe_view_get_toplevel(wpeView), 800, 600);
@@ -70,6 +69,18 @@ void PlatformWebViewClientWPE::addToWindow()
 void PlatformWebViewClientWPE::removeFromWindow()
 {
     // FIXME: implement.
+}
+
+WKSize PlatformWebViewClientWPE::size()
+{
+    int width, height;
+    wpe_toplevel_get_size(wpe_view_get_toplevel(WKViewGetView(m_view)), &width, &height);
+    return { static_cast<double>(width), static_cast<double>(height) };
+}
+
+void PlatformWebViewClientWPE::resize(WKSize size)
+{
+    wpe_toplevel_resize(wpe_view_get_toplevel(WKViewGetView(m_view)), size.width, size.height);
 }
 
 void PlatformWebViewClientWPE::focus()

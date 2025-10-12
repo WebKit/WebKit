@@ -43,7 +43,7 @@ using WKDatePickerToolbarView = UIView;
 
 const CGFloat toolbarBottomMarginSmall = 2;
 
-@interface WKDatePickerPopoverView : UIView
+@interface WKDatePickerContentView : UIView
 
 @property (readonly, nonatomic) UIDatePicker *datePicker;
 @property (readonly, nonatomic) WKDatePickerToolbarView *accessoryView;
@@ -55,7 +55,7 @@ const CGFloat toolbarBottomMarginSmall = 2;
 
 @end
 
-@implementation WKDatePickerPopoverView {
+@implementation WKDatePickerContentView {
     __weak UIDatePicker *_datePicker;
 #if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
     __weak UICalendarView *_calendarView;
@@ -79,24 +79,26 @@ const CGFloat toolbarBottomMarginSmall = 2;
 
 - (void)setupView:(UIView *)pickerView toolbarBottomMargin:(CGFloat)toolbarBottomMargin
 {
-    _accessoryView = adoptNS([WKDatePickerToolbarView new]);
     [self setTranslatesAutoresizingMaskIntoConstraints:NO];
-    static constexpr auto marginSize = 16;
+
     pickerView.translatesAutoresizingMaskIntoConstraints = NO;
-    pickerView.layoutMargins = UIEdgeInsetsMake(marginSize, marginSize, marginSize, marginSize);
-    [pickerView sizeToFit];
     [self addSubview:pickerView];
 
+    _accessoryView = adoptNS([WKDatePickerToolbarView new]);
     [_accessoryView setTranslatesAutoresizingMaskIntoConstraints:NO];
-#if USE(UITOOLBAR_FOR_DATE_PICKER_ACCESSORY_VIEW)
+    [self addSubview:_accessoryView.get()];
+
+#if USE(POPOVER_PRESENTATION_FOR_DATE_PICKER)
+    static constexpr auto marginSize = 16;
+    pickerView.layoutMargins = UIEdgeInsetsMake(marginSize, marginSize, marginSize, marginSize);
+    [pickerView sizeToFit];
+
     [_accessoryView setStandardAppearance:^{
         auto appearance = adoptNS([UIToolbarAppearance new]);
         [appearance setBackgroundEffect:nil];
         return appearance.autorelease();
     }()];
     [_accessoryView sizeToFit];
-#endif
-    [self addSubview:_accessoryView.get()];
 
     auto pickerViewSize = [pickerView bounds].size;
     auto accessoryViewSize = [_accessoryView bounds].size;
@@ -108,25 +110,30 @@ const CGFloat toolbarBottomMarginSmall = 2;
 
     _toolbarLeadingConstraint = [[_accessoryView leadingAnchor] constraintEqualToAnchor:self.leadingAnchor constant:accessoryViewHorizontalMargin];
     _toolbarTrailingConstraint = [[_accessoryView trailingAnchor] constraintEqualToAnchor:self.trailingAnchor constant:-accessoryViewHorizontalMargin];
-#if USE(UITOOLBAR_FOR_DATE_PICKER_ACCESSORY_VIEW)
     _toolbarHeightConstraint = [[_accessoryView heightAnchor] constraintEqualToConstant:accessoryViewSize.height];
-#endif
     _toolbarBottomConstraint = [[_accessoryView bottomAnchor] constraintEqualToAnchor:self.bottomAnchor constant:-toolbarBottomMargin];
+#endif
 
     [NSLayoutConstraint activateConstraints:@[
+#if USE(POPOVER_PRESENTATION_FOR_DATE_PICKER)
         [self.widthAnchor constraintEqualToConstant:_contentSize.width],
         [self.heightAnchor constraintEqualToConstant:_contentSize.height],
         [[pickerView heightAnchor] constraintEqualToConstant:pickerViewSize.height],
-        [[pickerView leadingAnchor] constraintEqualToAnchor:self.leadingAnchor],
-        [[pickerView trailingAnchor] constraintEqualToAnchor:self.trailingAnchor],
         [[pickerView topAnchor] constraintEqualToAnchor:self.topAnchor],
         [[pickerView bottomAnchor] constraintEqualToSystemSpacingBelowAnchor:[_accessoryView topAnchor] multiplier:1],
         _toolbarLeadingConstraint.get(),
         _toolbarTrailingConstraint.get(),
-#if USE(UITOOLBAR_FOR_DATE_PICKER_ACCESSORY_VIEW)
         _toolbarHeightConstraint.get(),
-#endif
         _toolbarBottomConstraint.get(),
+#else
+        [[pickerView topAnchor] constraintEqualToAnchor:[_accessoryView bottomAnchor]],
+        [[pickerView bottomAnchor] constraintEqualToAnchor:[self bottomAnchor]],
+        [[_accessoryView topAnchor] constraintEqualToAnchor:[self topAnchor]],
+        [[_accessoryView leadingAnchor] constraintEqualToAnchor:self.leadingAnchor],
+        [[_accessoryView trailingAnchor] constraintEqualToAnchor:self.trailingAnchor],
+#endif
+        [[pickerView leadingAnchor] constraintEqualToAnchor:self.leadingAnchor],
+        [[pickerView trailingAnchor] constraintEqualToAnchor:self.trailingAnchor],
     ]];
 
     [self adjustLayoutIfNeeded];
@@ -216,12 +223,13 @@ const CGFloat toolbarBottomMarginSmall = 2;
 
 @end
 
+// FIXME: Rename to reflect that this isn't always presented as a popover.
 @interface WKDatePickerPopoverController () <UIPopoverPresentationControllerDelegate>
 
 @end
 
 @implementation WKDatePickerPopoverController {
-    RetainPtr<WKDatePickerPopoverView> _contentView;
+    RetainPtr<WKDatePickerContentView> _contentView;
     RetainPtr<NSLayoutConstraint> _untransformedContentWidthConstraint;
     RetainPtr<NSLayoutConstraint> _transformedContentWidthConstraint;
     __weak id<WKDatePickerPopoverControllerDelegate> _delegate;
@@ -233,10 +241,12 @@ const CGFloat toolbarBottomMarginSmall = 2;
     if (!(self = [super init]))
         return nil;
 
-    _contentView = adoptNS([[WKDatePickerPopoverView alloc] initWithDatePicker:datePicker]);
+    _contentView = adoptNS([[WKDatePickerContentView alloc] initWithDatePicker:datePicker]);
     _delegate = delegate;
+#if USE(POPOVER_PRESENTATION_FOR_DATE_PICKER)
     self.modalPresentationStyle = UIModalPresentationPopover;
     self.popoverPresentationController.delegate = self;
+#endif
     return self;
 }
 
@@ -247,10 +257,12 @@ const CGFloat toolbarBottomMarginSmall = 2;
     if (!(self = [super init]))
         return nil;
 
-    _contentView = adoptNS([[WKDatePickerPopoverView alloc] initWithCalendarView:calendarView selectionWeekOfYear:weekSelection]);
+    _contentView = adoptNS([[WKDatePickerContentView alloc] initWithCalendarView:calendarView selectionWeekOfYear:weekSelection]);
     _delegate = delegate;
+#if USE(POPOVER_PRESENTATION_FOR_DATE_PICKER)
     self.modalPresentationStyle = UIModalPresentationPopover;
     self.popoverPresentationController.delegate = self;
+#endif
     return self;
 }
 
@@ -345,9 +357,12 @@ const CGFloat toolbarBottomMarginSmall = 2;
         [[_contentView bottomAnchor] constraintGreaterThanOrEqualToAnchor:self.view.layoutMarginsGuide.bottomAnchor]
     ]];
 
+#if USE(POPOVER_PRESENTATION_FOR_DATE_PICKER)
     self.preferredContentSize = [_contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+#endif
 }
 
+#if USE(POPOVER_PRESENTATION_FOR_DATE_PICKER)
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
@@ -360,6 +375,7 @@ const CGFloat toolbarBottomMarginSmall = 2;
 
     [self _scaleDownToFitHeightIfNeeded];
 }
+#endif
 
 #if !PLATFORM(MACCATALYST)
 // FIXME: This platform conditional works around the fact that -isBeingPresented is sometimes NO in Catalyst, when presenting

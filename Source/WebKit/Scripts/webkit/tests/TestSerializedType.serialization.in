@@ -16,11 +16,11 @@ headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
 [Nested] class Namespace::OtherClass {
     int a
     [BitField] bool b
-    [SecureCodingAllowed=[NSArray.class, PAL::getDDScannerResultClass()]] RetainPtr<NSArray> dataDetectorResults;
+    [SecureCodingAllowed=[NSArray.class, PAL::getDDScannerResultClassSingleton()]] RetainPtr<NSArray> dataDetectorResults;
 }
 
 [Nested] class Namespace::ClassWithMemberPrecondition {
-    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentMethodClass()]] RetainPtr<PKPaymentMethod> m_pkPaymentMethod;
+    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentMethodClassSingleton()]] RetainPtr<PKPaymentMethod> m_pkPaymentMethod;
 }
 
 [RefCounted] class Namespace::ReturnRefClass {
@@ -102,8 +102,8 @@ class WTF::Seconds {
 };
 
 struct SoftLinkedMember {
-    [SecureCodingAllowed=[PAL::getDDActionContextClass()]] RetainPtr<DDActionContext> firstMember;
-    [SecureCodingAllowed=[PAL::getDDActionContextClass()]] RetainPtr<DDActionContext> secondMember;
+    [SecureCodingAllowed=[PAL::getDDActionContextClassSingleton()]] RetainPtr<DDActionContext> firstMember;
+    [SecureCodingAllowed=[PAL::getDDActionContextClassSingleton()]] RetainPtr<DDActionContext> secondMember;
 }
 
 [RefCounted] class WebCore::TimingFunction subclasses {
@@ -156,6 +156,7 @@ headers: "CommonHeader.h"
 headers: "CommonHeader.h"
 [CustomHeader] class Namespace::CommonClass {
     int value;
+    WebCore::TimingFunction nonRefMemberWithSubclasses;
 }
 
 headers: "CommonHeader.h"
@@ -232,7 +233,7 @@ struct RequestEncodedWithBody {
 
 #if USE(AVFOUNDATION)
 secure_coding_header: <pal/cocoa/AVFoundationSoftLink.h>
-[WebKitSecureCodingClass=PAL::getAVOutputContextClass(), SupportWKKeyedCoder] webkit_secure_coding AVOutputContext {
+[WebKitSecureCodingClass=PAL::getAVOutputContextClassSingleton(), SupportWKKeyedCoder] webkit_secure_coding AVOutputContext {
     AVOutputContextSerializationKeyContextID: String
     AVOutputContextSerializationKeyContextType: String
 }
@@ -255,7 +256,7 @@ webkit_secure_coding NSSomeFoundationType {
 #if ENABLE(DATA_DETECTION)
 # Test a comment
 secure_coding_headers: <pal/cocoa/DataDetectorsCoreSoftLink.h>
-[WebKitSecureCodingClass=PAL::getDDScannerResultClass()] webkit_secure_coding DDScannerResult {
+[WebKitSecureCodingClass=PAL::getDDScannerResultClassSingleton()] webkit_secure_coding DDScannerResult {
     StringKey: String
     NumberKey: Number
     OptionalNumberKey: Number?

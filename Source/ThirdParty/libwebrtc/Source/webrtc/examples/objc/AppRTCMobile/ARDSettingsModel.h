@@ -34,7 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Returns current video resolution string.
  * If no resolution is in store, default value of 640x480 is returned.
- * When defaulting to value, the default is saved in store for consistency reasons.
+ * When defaulting to value, the default is saved in store for consistency
+ * reasons.
  */
 - (NSString *)currentVideoResolutionSettingFromStore;
 - (int)currentVideoResolutionWidthFromStore;
@@ -56,7 +57,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<RTC_OBJC_TYPE(RTCVideoCodecInfo) *> *)availableVideoCodecs;
 
 /**
- * Returns current video codec setting from store if present or default (H264) otherwise.
+ * Returns current video codec setting from store if present or default (H264)
+ * otherwise.
  */
 - (RTC_OBJC_TYPE(RTCVideoCodecInfo) *)currentVideoCodecSettingFromStore;
 
@@ -83,7 +85,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)storeMaxBitrateSetting:(nullable NSNumber *)bitrate;
 
 /**
- * Returns current audio only setting from store if present or default (NO) otherwise.
+ * Returns current audio only setting from store if present or default (NO)
+ * otherwise.
  */
 - (BOOL)currentAudioOnlySettingFromStore;
 
@@ -95,7 +98,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)storeAudioOnlySetting:(BOOL)audioOnly;
 
 /**
- * Returns current create AecDump setting from store if present or default (NO) otherwise.
+ * Returns current create AecDump setting from store if present or default (NO)
+ * otherwise.
  */
 - (BOOL)currentCreateAecDumpSettingFromStore;
 
@@ -107,8 +111,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)storeCreateAecDumpSetting:(BOOL)createAecDump;
 
 /**
- * Returns current setting whether to use manual audio config from store if present or default (YES)
- * otherwise.
+ * Returns current setting whether to use manual audio config from store if
+ * present or default (YES) otherwise.
  */
 - (BOOL)currentUseManualAudioConfigSettingFromStore;
 

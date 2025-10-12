@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS NavigationHistoryEntry's key and id on same-document back navigation
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "LocalFrame.h"
+#include "NodeDocument.h"
 #include "RenderText.h"
 #include "Settings.h"
 #include "Text.h"
@@ -41,59 +42,70 @@
 
 namespace WebCore {
 
-InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(Ref<Text>&& node, unsigned offset, const String& text, EditAction editingAction)
+InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(Ref<Text>&& node, unsigned offset, const String& text, AllowPasswordEcho allowPasswordEcho, EditAction editingAction)
     : SimpleEditCommand(node->document(), editingAction)
     , m_node(WTFMove(node))
     , m_offset(offset)
     , m_text(text)
+    , m_allowPasswordEcho(allowPasswordEcho)
 {
     ASSERT(m_offset <= m_node->length());
     ASSERT(!m_text.isEmpty());
 }
 
+bool InsertIntoTextNodeCommand::shouldEnablePasswordEcho() const
+{
+    if (m_allowPasswordEcho != AllowPasswordEcho::Yes)
+        return false;
+
+    if (!document().settings().passwordEchoEnabled())
+        return false;
+
+    if (document().editor().client()->shouldSuppressPasswordEcho())
+        return false;
+
+    return true;
+}
+
 void InsertIntoTextNodeCommand::doApply()
 {
-    bool passwordEchoEnabled = document().settings().passwordEchoEnabled() && !document().editor().client()->shouldSuppressPasswordEcho();
+    bool passwordEchoEnabled = shouldEnablePasswordEcho();
 
     if (passwordEchoEnabled)
-        protectedDocument()->updateLayoutIgnorePendingStylesheets();
+        document().updateLayoutIgnorePendingStylesheets();
 
-    auto node = protectedNode();
-    if (!node->hasEditableStyle())
+    if (!m_node->hasEditableStyle())
         return;
 
     if (passwordEchoEnabled) {
-        if (CheckedPtr renderText = node->renderer())
+        if (CheckedPtr renderText = m_node->renderer())
             renderText->momentarilyRevealLastTypedCharacter(m_offset + m_text.length());
     }
     
-    node->insertData(m_offset, m_text);
+    m_node->insertData(m_offset, m_text);
 }
 
 void InsertIntoTextNodeCommand::doReapply()
 {
-    auto node = protectedNode();
-    if (!node->hasEditableStyle())
+    if (!m_node->hasEditableStyle())
         return;
 
-    node->insertData(m_offset, m_text);
+    m_node->insertData(m_offset, m_text);
 }
 
 void InsertIntoTextNodeCommand::doUnapply()
 {
-    auto node = protectedNode();
-    if (!node->hasEditableStyle())
+    if (!m_node->hasEditableStyle())
         return;
 
-    node->deleteData(m_offset, m_text.length());
+    m_node->deleteData(m_offset, m_text.length());
 }
 
 #ifndef NDEBUG
 
 void InsertIntoTextNodeCommand::getNodesInCommand(NodeSet& nodes)
 {
-    auto node = protectedNode();
-    addNodeAndDescendants(node.ptr(), nodes);
+    addNodeAndDescendants(m_node.ptr(), nodes);
 }
 
 #endif

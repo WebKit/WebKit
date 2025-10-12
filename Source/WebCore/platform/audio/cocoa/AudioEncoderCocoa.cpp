@@ -32,6 +32,7 @@
 #include "AudioSampleBufferConverter.h"
 #include "AudioSampleFormat.h"
 #include "CAAudioStreamDescription.h"
+#include "Logging.h"
 #include "MediaSampleAVFObjC.h"
 #include "MediaUtilities.h"
 #include "PlatformRawAudioDataCocoa.h"

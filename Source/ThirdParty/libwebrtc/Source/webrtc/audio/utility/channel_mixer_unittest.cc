@@ -10,12 +10,11 @@
 
 #include "audio/utility/channel_mixer.h"
 
-#include <memory>
+#include <cstddef>
+#include <cstdint>
 
 #include "api/audio/audio_frame.h"
 #include "api/audio/channel_layout.h"
-#include "audio/utility/channel_mixing_matrix.h"
-#include "rtc_base/arraysize.h"
 #include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
@@ -36,7 +35,7 @@ class ChannelMixerTest : public ::testing::Test {
     EXPECT_TRUE(frame_.muted());
   }
 
-  virtual ~ChannelMixerTest() {}
+  ~ChannelMixerTest() override {}
 
   AudioFrame frame_;
 };
@@ -163,7 +162,7 @@ TEST_F(ChannelMixerTest, ConstructAllPossibleLayouts) {
         continue;
       }
 
-      rtc::StringBuilder ss;
+      StringBuilder ss;
       ss << "Input Layout: " << input_layout
          << ", Output Layout: " << output_layout;
       SCOPED_TRACE(ss.str());

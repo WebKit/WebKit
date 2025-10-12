@@ -27,8 +27,8 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "MacroAssemblerCodeRef.h"
-#include "RegisterSet.h"
+#include <JavaScriptCore/MacroAssemblerCodeRef.h>
+#include <JavaScriptCore/RegisterSet.h>
 
 namespace JSC { namespace FTL {
 

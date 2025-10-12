@@ -1,8 +1,8 @@
 disableRichSourceInfo();
 
-expectedError = "ReferenceError: Cannot access uninitialized variable.";
 
-function shouldThrow(func) {
+function shouldThrow(func, variableName) {
+    const expectedError = `ReferenceError: Cannot access '${variableName}' before initialization.`;
     var actualError = false;
     try {
         func();
@@ -82,23 +82,23 @@ function test16() {
     loadString("c.foo[0][0] = 42;");
 }
 
-shouldThrow(test1);
-shouldThrow(test2);
-shouldThrow(test3);
-shouldThrow(test4);
-shouldThrow(test5);
-shouldThrow(test6);
-shouldThrow(test7);
-shouldThrow(test8);
+shouldThrow(test1, 'a');
+shouldThrow(test2, 'a');
+shouldThrow(test3, 'a');
+shouldThrow(test4, 'a');
+shouldThrow(test5, 'a');
+shouldThrow(test6, 'a');
+shouldThrow(test7, 'a');
+shouldThrow(test8, 'a');
 
-shouldThrow(test9);
-shouldThrow(test10);
-shouldThrow(test11);
-shouldThrow(test12);
-shouldThrow(test13);
-shouldThrow(test14);
-shouldThrow(test15);
-shouldThrow(test16);
+shouldThrow(test9, 'c');
+shouldThrow(test10, 'c');
+shouldThrow(test11, 'c');
+shouldThrow(test12, 'c');
+shouldThrow(test13, 'c');
+shouldThrow(test14, 'c');
+shouldThrow(test15, 'c');
+shouldThrow(test16, 'c');
 
 let a;
 let b;

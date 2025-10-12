@@ -1,7 +1,7 @@
 {
     "TraceMetadata": {
         "AreClientArraysEnabled": true,
-        "CaptureRevision": 24515,
+        "CaptureRevision": 25782,
         "ConfigAlphaBits": 8,
         "ConfigBlueBits": 8,
         "ConfigDepthBits": 24,
@@ -22,10 +22,17 @@
         "IsRobustResourceInitEnabled": false,
         "IsWebGLCompatibilityEnabled": false
     },
+    "BinaryMetadata": {
+        "BlockCount": 1,
+        "BlockSize": "268435456",
+        "IndexOffset": "0",
+        "ResidentSize": "2147483648",
+        "Version": 1
+    },
     "TraceFiles": [
         "CapturedTest_MultiFrame_ES3_Vulkan.cpp",
         "CapturedTest_MultiFrame_ES3_Vulkan.h",
-        "CapturedTest_MultiFrame_ES3_Vulkan_001.cpp",
+        "CapturedTest_MultiFrame_ES3_Vulkan_0001.cpp",
         "CapturedTest_MultiFrame_ES3_Vulkan_shared.cpp"
     ],
     "WindowSurfaceContextID": 1

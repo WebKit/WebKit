@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include "CSSPathFunction.h"
-#include "StyleFillRule.h"
-#include "StylePathComputation.h"
-#include "StylePrimitiveNumericTypes.h"
-#include "StyleWindRuleComputation.h"
+#include <WebCore/CSSPathFunction.h>
+#include <WebCore/StyleFillRule.h>
+#include <WebCore/StylePathComputation.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
+#include <WebCore/StyleWindRuleComputation.h>
 
 namespace WebCore {
 namespace Style {
@@ -61,24 +61,40 @@ template<size_t I> const auto& get(const Path& value)
         return value.zoom;
 }
 
-template<> struct ToCSS<Path> { auto operator()(const Path&, const RenderStyle&) -> CSS::Path; };
-template<> struct ToStyle<CSS::Path> { auto operator()(const CSS::Path&, const BuilderState&) -> Path; };
+// MARK: - Conversion
 
-template<> struct ToCSS<Path::Data> { auto operator()(const Path::Data&, const RenderStyle&) -> CSS::Path::Data; };
+// Non-standard parameters, `conversion` and `zoom`, are needed in some instances of Style <-> CSS conversions for Path.
+
+template<> struct ToCSS<Path> { auto operator()(const Path&, const RenderStyle&, PathConversion = PathConversion::None) -> CSS::Path; };
+template<> struct ToStyle<CSS::Path> { auto operator()(const CSS::Path&, const BuilderState&, std::optional<float> zoom = 1.0f) -> Path; };
+
+template<> struct ToCSS<Path::Data> { auto operator()(const Path::Data&, const RenderStyle&, PathConversion = PathConversion::None) -> CSS::Path::Data; };
 template<> struct ToStyle<CSS::Path::Data> { auto operator()(const CSS::Path::Data&, const BuilderState&) -> Path::Data; };
 
-// Non-standard parameters, `conversion` and `zoom`, are needed in some instances of Style <-> CSS conversions
-// for Path, so additional "override" conversion operators are provided here.
-auto overrideToCSS(const PathFunction&, const RenderStyle&, PathConversion) -> CSS::PathFunction;
-auto overrideToStyle(const CSS::PathFunction&, const Style::BuilderState&, std::optional<float> zoom) -> PathFunction;
+template<> struct CSSValueCreation<PathFunction> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const PathFunction&, PathConversion = PathConversion::None); };
+
+// MARK: - Serialization
+
+template<> struct Serialize<Path> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const Path&, PathConversion = PathConversion::None); };
+
+// MARK: - Path
 
 template<> struct PathComputation<Path> { WebCore::Path operator()(const Path&, const FloatRect&); };
+
+// MARK: - Wind Rule
+
 template<> struct WindRuleComputation<Path> { WebCore::WindRule operator()(const Path&); };
+
+// MARK: - Blending
 
 template<> struct Blending<Path> {
     auto canBlend(const Path&, const Path&) -> bool;
     auto blend(const Path&, const Path&, const BlendingContext&) -> Path;
 };
+
+// MARK: - Logging
+
+WTF::TextStream& operator<<(WTF::TextStream&, const Path::Data&);
 
 } // namespace Style
 } // namespace WebCore

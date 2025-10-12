@@ -1,16 +1,16 @@
-/* Copyright (c) 2020, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2020 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <assert.h>
 #include <stdio.h>
@@ -31,10 +31,10 @@
 #include <openssl/evp.h>
 #include <openssl/mem.h>
 #include <openssl/rand.h>
-#include <openssl/sha.h>
+#include <openssl/sha2.h>
 #include <openssl/trust_token.h>
 
-#include "../ec_extra/internal.h"
+#include "../ec/internal.h"
 #include "../fipsmodule/ec/internal.h"
 #include "../internal.h"
 #include "../test/test_util.h"
@@ -649,11 +649,11 @@ class TrustTokenProtocolTestBase : public ::testing::Test {
 
     uint8_t public_key[32], private_key[64];
     ED25519_keypair(public_key, private_key);
-    bssl::UniquePtr<EVP_PKEY> priv(EVP_PKEY_new_raw_private_key(
-        EVP_PKEY_ED25519, nullptr, private_key, 32));
+    bssl::UniquePtr<EVP_PKEY> priv(
+        EVP_PKEY_from_raw_private_key(EVP_pkey_ed25519(), private_key, 32));
     ASSERT_TRUE(priv);
     bssl::UniquePtr<EVP_PKEY> pub(
-        EVP_PKEY_new_raw_public_key(EVP_PKEY_ED25519, nullptr, public_key, 32));
+        EVP_PKEY_from_raw_public_key(EVP_pkey_ed25519(), public_key, 32));
     ASSERT_TRUE(pub);
 
     TRUST_TOKEN_CLIENT_set_srr_key(client.get(), pub.get());
@@ -899,10 +899,10 @@ TEST_P(TrustTokenProtocolTest, IssuedWithBadKeyID) {
   uint8_t public_key[32], private_key[64];
   ED25519_keypair(public_key, private_key);
   bssl::UniquePtr<EVP_PKEY> priv(
-      EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519, nullptr, private_key, 32));
+      EVP_PKEY_from_raw_private_key(EVP_pkey_ed25519(), private_key, 32));
   ASSERT_TRUE(priv);
   bssl::UniquePtr<EVP_PKEY> pub(
-      EVP_PKEY_new_raw_public_key(EVP_PKEY_ED25519, nullptr, public_key, 32));
+      EVP_PKEY_from_raw_public_key(EVP_pkey_ed25519(), public_key, 32));
   ASSERT_TRUE(pub);
 
   TRUST_TOKEN_CLIENT_set_srr_key(client.get(), pub.get());

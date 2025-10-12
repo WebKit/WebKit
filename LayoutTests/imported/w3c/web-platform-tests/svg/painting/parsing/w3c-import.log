@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/color-interpolation-computed.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/color-interpolation-invalid.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/color-interpolation-valid.svg

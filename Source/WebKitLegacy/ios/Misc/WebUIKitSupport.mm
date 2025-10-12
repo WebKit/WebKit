@@ -33,13 +33,15 @@
 #import "WebPreferencesDefinitions.h"
 #import "WebViewPrivate.h"
 #import <JavaScriptCore/InitializeThreading.h>
-#import <WebCore/BreakLines.h>
+#import <WebCore/BreakablePositions.h>
+#import <WebCore/Path.h>
 #import <WebCore/PathUtilities.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/Settings.h>
 #import <WebCore/WebBackgroundTaskController.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
 #import <wtf/ObjCRuntimeExtras.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 
 using namespace WebCore;
@@ -47,7 +49,7 @@ using namespace WebCore;
 // See <rdar://problem/7902473> Optimize WebLocalizedString for why we do this on a background thread on a timer callback
 static void LoadWebLocalizedStringsTimerCallback(CFRunLoopTimerRef timer, void *info)
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^ {
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         // We don't care if we find this string, but searching for it will load the plist and save the results.
         // FIXME: It would be nicer to do this in a more direct way.
         UI_STRING_KEY_INTERNAL("Typing", "Typing (Undo action name)", "Undo action name");
@@ -87,12 +89,12 @@ float WebKitGetMinimumZoomFontSize(void)
     return DEFAULT_VALUE_FOR_MinimumZoomFontSize;
 }
 
-int WebKitGetLastLineBreakInBuffer(UChar *characters, int position, int length)
+int WebKitGetLastLineBreakInBuffer(char16_t *characters, int position, int length)
 {
     unsigned lastBreakPos = position;
     unsigned breakPos = 0;
     CachedLineBreakIteratorFactory lineBreakIteratorFactory(StringView { std::span(characters, length) });
-    while (static_cast<int>(breakPos = BreakLines::nextBreakablePosition(lineBreakIteratorFactory, breakPos)) < position)
+    while (static_cast<int>(breakPos = BreakablePositions::next(lineBreakIteratorFactory, breakPos)) < position)
         lastBreakPos = breakPos++;
     return static_cast<int>(lastBreakPos) < position ? lastBreakPos : INT_MAX;
 }

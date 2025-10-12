@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "CanvasCaptureMediaStreamTrack.h"
+#include "ContextDestructionObserverInlines.h"
 #include "GraphicsContext.h"
 #include "ImageBitmapOptions.h"
 #include "ImageBuffer.h"
@@ -91,7 +92,7 @@ void ImageCapture::takePhoto(PhotoSettings&& settings, DOMPromiseDeferred<IDLInt
         return;
     }
 
-    m_track->takePhoto(WTFMove(settings))->whenSettled(RunLoop::protectedMain(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
+    m_track->takePhoto(WTFMove(settings))->whenSettled(RunLoop::mainSingleton(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::ImageCapture, [promise = WTFMove(promise), result = WTFMove(result), identifier = WTFMove(identifier)](ImageCapture& capture) mutable {
             if (!result) {
                 ERROR_LOG_WITH_THIS(&capture, identifier, "rejecting promise: ", result.error().message());
@@ -146,14 +147,14 @@ static void createImageBitmap(VideoFrame& videoFrame, CompletionHandler<void(Ref
     IntSize size { static_cast<int>(videoFrame.presentationSize().width()), static_cast<int>(videoFrame.presentationSize().height()) };
     if (videoFrame.has90DegreeRotation())
         size = { size.height(), size.width() };
-    auto imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer) {
         completionHandler({ });
         return;
     }
 
     if (hasPlatformStrategies()) {
-        platformStrategies()->mediaStrategy().nativeImageFromVideoFrame(videoFrame, [videoFrame = Ref { videoFrame }, imageBuffer = imageBuffer.releaseNonNull(), completionHandler = WTFMove(completionHandler)](auto&& nativeImage) mutable {
+        platformStrategies()->mediaStrategy()->nativeImageFromVideoFrame(videoFrame, [videoFrame = Ref { videoFrame }, imageBuffer = imageBuffer.releaseNonNull(), completionHandler = WTFMove(completionHandler)](auto&& nativeImage) mutable {
             if (!nativeImage) {
                 completionHandler(createImageBitmapViaDrawing(WTFMove(imageBuffer), videoFrame));
                 return;
@@ -225,7 +226,7 @@ private:
     {
         {
             Locker locker(m_frameLock);
-            m_frame = &frame;
+            m_frame = frame;
         }
         callOnMainThread([weakThis = ThreadSafeWeakPtr { *this }] {
             RefPtr protectedThis = weakThis.get();
@@ -335,7 +336,7 @@ void ImageCapture::getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<PhotoCa
         return;
     }
 
-    m_track->getPhotoCapabilities()->whenSettled(RunLoop::protectedMain(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
+    m_track->getPhotoCapabilities()->whenSettled(RunLoop::mainSingleton(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::ImageCapture, [promise = WTFMove(promise), result = WTFMove(result), identifier = WTFMove(identifier)](auto& capture) mutable {
             if (!result) {
                 ERROR_LOG_WITH_THIS(&capture, identifier, "rejecting promise: ", result.error().message());
@@ -364,7 +365,7 @@ void ImageCapture::getPhotoSettings(DOMPromiseDeferred<IDLDictionary<PhotoSettin
         return;
     }
 
-    m_track->getPhotoSettings()->whenSettled(RunLoop::protectedMain(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
+    m_track->getPhotoSettings()->whenSettled(RunLoop::mainSingleton(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::ImageCapture, [promise = WTFMove(promise), result = WTFMove(result), identifier = WTFMove(identifier)](auto& capture) mutable {
             if (!result) {
                 ERROR_LOG_WITH_THIS(&capture, identifier, "rejecting promise: ", result.error().message());

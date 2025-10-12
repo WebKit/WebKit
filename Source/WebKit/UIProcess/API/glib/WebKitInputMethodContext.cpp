@@ -483,11 +483,13 @@ void webkit_input_method_context_notify_surrounding(WebKitInputMethodContext* co
     g_return_if_fail(WEBKIT_IS_INPUT_METHOD_CONTEXT(context));
     g_return_if_fail(text || !length);
 
+    IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
     if (!text)
         text = "";
     if (length < 0)
         length = strlen(text);
     g_return_if_fail(cursorIndex <= static_cast<unsigned>(length));
+    IGNORE_CLANG_WARNINGS_END
 
     auto* imClass = WEBKIT_INPUT_METHOD_CONTEXT_GET_CLASS(context);
     if (imClass->notify_surrounding)

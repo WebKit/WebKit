@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CryptoKey.h"
-#include "CryptoKeyPair.h"
+#include <WebCore/CryptoKey.h>
+#include <WebCore/CryptoKeyPair.h>
 
 namespace WebCore {
 

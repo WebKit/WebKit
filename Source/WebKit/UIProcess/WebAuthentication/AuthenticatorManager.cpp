@@ -185,7 +185,7 @@ Ref<AuthenticatorManager> AuthenticatorManager::create()
 }
 
 AuthenticatorManager::AuthenticatorManager()
-    : m_requestTimeOutTimer(RunLoop::main(), this, &AuthenticatorManager::timeOutTimerFired)
+    : m_requestTimeOutTimer(RunLoop::mainSingleton(), "AuthenticatorManager::RequestTimeOutTimer"_s, this, &AuthenticatorManager::timeOutTimerFired)
 {
 }
 
@@ -252,7 +252,7 @@ void AuthenticatorManager::enableNativeSupport()
 
 void AuthenticatorManager::clearStateAsync()
 {
-    RunLoop::protectedMain()->dispatch([weakThis = WeakPtr { *this }] {
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         weakThis->clearState();
@@ -303,19 +303,23 @@ void AuthenticatorManager::respondReceived(Respond&& respond)
         auto code = std::get<ExceptionData>(respond).code;
         shouldComplete = code == ExceptionCode::InvalidStateError || code == ExceptionCode::NotSupportedError;
     }
+    respondReceivedInternal(WTFMove(respond), shouldComplete);
+    if (!shouldComplete)
+        restartDiscovery();
+}
+
+void AuthenticatorManager::respondReceivedInternal(Respond&& respond, bool shouldComplete)
+{
     if (shouldComplete) {
         invokePendingCompletionHandler(WTFMove(respond));
         clearStateAsync();
         m_requestTimeOutTimer.stop();
-        return;
     }
-    respondReceivedInternal(WTFMove(respond));
-    restartDiscovery();
 }
 
 void AuthenticatorManager::downgrade(Authenticator& id, Ref<Authenticator>&& downgradedAuthenticator)
 {
-    RunLoop::protectedMain()->dispatch([weakThis = WeakPtr { *this }, id = Ref { id }] {
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, id = Ref { id }] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -327,9 +331,11 @@ void AuthenticatorManager::downgrade(Authenticator& id, Ref<Authenticator>&& dow
 
 void AuthenticatorManager::authenticatorStatusUpdated(WebAuthenticationStatus status)
 {
-    // Immediately invalidate the cache if the PIN is incorrect. A status update often means
-    // an error. We don't really care what kind of error it really is.
-    m_pendingRequestData.cachedPin = String();
+    if (status != WebAuthenticationStatus::PINSuccessful) {
+        // Immediately invalidate the cache if the PIN is incorrect. A status update often means
+        // an error. We don't really care what kind of error it really is.
+        m_pendingRequestData.cachedPin = String();
+    }
 
     // This is for the new UI.
     if (RefPtr presenter = m_presenter) {
@@ -582,7 +588,7 @@ void AuthenticatorManager::dispatchPanelClientCall(Function<void(const API::WebA
 
     // Call delegates in the next run loop to prevent clients' reentrance that would potentially modify the state
     // of the current run loop in unexpected ways.
-    RunLoop::protectedMain()->dispatch([weakPanel = WTFMove(weakPanel), call = WTFMove(call)] () {
+    RunLoop::mainSingleton().dispatch([weakPanel = WTFMove(weakPanel), call = WTFMove(call)] () {
         if (!weakPanel)
             return;
         call(*weakPanel);

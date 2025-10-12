@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error: Error Message
 
 PASS  AbstractWorker ErrorEvent.lineno
 

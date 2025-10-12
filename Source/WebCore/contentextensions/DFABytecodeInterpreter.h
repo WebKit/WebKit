@@ -27,9 +27,9 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "ContentExtensionRule.h"
-#include "ContentExtensionsDebugging.h"
-#include "DFABytecode.h"
+#include <WebCore/ContentExtensionRule.h>
+#include <WebCore/ContentExtensionsDebugging.h>
+#include <WebCore/DFABytecode.h>
 #include <wtf/DataLog.h>
 #include <wtf/HashSet.h>
 
@@ -50,7 +50,7 @@ private:
     void interpretTestFlagsAndAppendAction(unsigned& programCounter, ResourceFlags, Actions&);
 
     template<bool caseSensitive>
-    void interpretJumpTable(std::span<const LChar> url, uint32_t& urlIndex, uint32_t& programCounter);
+    void interpretJumpTable(std::span<const Latin1Character> url, uint32_t& urlIndex, uint32_t& programCounter);
 
     const std::span<const uint8_t> m_bytecode;
 };

@@ -1,0 +1,3 @@
+
+PASS If the redirect needs to be rerequested but goes to the same place and that one doesn't vary, we actually can use the prefetched final response.
+

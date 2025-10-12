@@ -1,10 +1,10 @@
 
-FAIL inline, 200, parser-inserted assert_unreached: Load event should not be fired. Reached unreachable code
+PASS inline, 200, parser-inserted
 PASS inline, 404, parser-inserted
 PASS src, 200, parser-inserted
 PASS src, 404, parser-inserted
 PASS src, 200, not parser-inserted
 PASS src, 404, not parser-inserted
-FAIL inline, 200, not parser-inserted assert_unreached: Load event should not be fired. Reached unreachable code
+PASS inline, 200, not parser-inserted
 PASS inline, 404, not parser-inserted
 

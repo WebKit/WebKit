@@ -30,6 +30,8 @@
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include "SVGParsingError.h"
+#include "SVGPropertyOwnerRegistry.h"
+#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

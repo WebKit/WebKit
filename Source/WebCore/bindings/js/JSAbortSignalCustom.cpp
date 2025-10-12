@@ -55,9 +55,10 @@ bool JSAbortSignalOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> ha
                 return true;
             }
         } else {
-            if (reason) [[unlikely]]
-                *reason = "Has Abort Event Listener"_s;
-            return true;
+            bool isReachable = containsWebCoreOpaqueRoot(visitor, abortSignal);
+            if (isReachable && reason) [[unlikely]]
+                *reason = "Has Abort Event Listener And Is Referenced By Other Objects"_s;
+            return isReachable;
         }
     }
 

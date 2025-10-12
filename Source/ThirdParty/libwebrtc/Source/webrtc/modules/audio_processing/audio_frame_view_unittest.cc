@@ -11,10 +11,12 @@
 #include "modules/audio_processing/include/audio_frame_view.h"
 
 #include <array>
+#include <cstddef>
 
+#include "api/audio/audio_processing.h"
+#include "api/audio/audio_view.h"
 #include "common_audio/channel_buffer.h"
 #include "modules/audio_processing/audio_buffer.h"
-#include "rtc_base/arraysize.h"
 #include "test/gtest.h"
 
 namespace webrtc {

@@ -27,7 +27,7 @@
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
-#include "CaptionUserPreferences.h"
+#include <WebCore/CaptionUserPreferences.h>
 
 namespace WebCore {
 

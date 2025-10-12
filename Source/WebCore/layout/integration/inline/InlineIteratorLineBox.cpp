@@ -30,6 +30,7 @@
 #include "InlineIteratorBoxInlines.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderBlockFlow.h"
+#include "RenderObjectDocument.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
 

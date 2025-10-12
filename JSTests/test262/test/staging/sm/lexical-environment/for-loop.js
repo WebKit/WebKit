@@ -4,38 +4,17 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  for-loop semantics for for(;;) loops whose heads contain lexical declarations
+info: bugzilla.mozilla.org/show_bug.cgi?id=985733
 esid: pending
 ---*/
-var gTestfile = "for-loop.js";
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 985733;
-var summary =
-  "ES6 for-loop semantics for for(;;) loops whose heads contain lexical "
-  "declarations";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 function isError(code, type)
 {
-  try
-  {
+  assert.throws(type, function() {
     Function(code);
-    throw new Error("didn't throw");
-  }
-  catch (e)
-  {
-    assert.sameValue(e instanceof type, true,
-             "unexpected error for `" + code + "`: got " + e);
-  }
+  });
 }
 
 function isOK(code)
@@ -46,8 +25,8 @@ function isOK(code)
 isError("for (const x; ; ) ;", SyntaxError);
 isError("for (const x = 5, y; ; ) ;", SyntaxError);
 isError("for (const [z]; ; ) ;", SyntaxError);
-//isError("for (const [z, z]; ; ) ;", SyntaxError);
-//isError("for (const [z, z] = [0, 1]; ; ) ;", SyntaxError);
+isError("for (const [z, z]; ; ) ;", SyntaxError);
+isError("for (const [z, z] = [0, 1]; ; ) ;", SyntaxError);
 
 isOK("for (let x; ; ) ;");
 isOK("for (let x = 5, y; ; ) ;");
@@ -120,7 +99,3 @@ if (save() !== "OUTER V IGNORE")
   t(8, "body", 8);
   assert.sameValue(funcs.length, 9);
 }
-
-/******************************************************************************/
-
-print("Tests complete");

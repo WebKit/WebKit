@@ -33,7 +33,6 @@
 #include <gbm.h>
 #include <glib-object.h>
 #include <wpe/wpe-platform.h>
-#include <xf86drmMode.h>
 
 G_BEGIN_DECLS
 

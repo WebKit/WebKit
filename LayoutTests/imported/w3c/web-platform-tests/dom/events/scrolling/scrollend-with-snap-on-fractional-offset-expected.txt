@@ -1,0 +1,4 @@
+123
+
+PASS snap to fractional offset fires scrollend exactly once.
+

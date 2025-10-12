@@ -11,15 +11,19 @@
 #define LIBANGLE_RENDERER_WGPU_RENDERBUFFERWGPU_H_
 
 #include "libANGLE/renderer/RenderbufferImpl.h"
+#include "libANGLE/renderer/wgpu/RenderTargetWgpu.h"
+#include "libANGLE/renderer/wgpu/wgpu_helpers.h"
 
 namespace rx
 {
 
-class RenderbufferWgpu : public RenderbufferImpl
+class RenderbufferWgpu : public RenderbufferImpl, public angle::ObserverInterface
 {
   public:
     RenderbufferWgpu(const gl::RenderbufferState &state);
     ~RenderbufferWgpu() override;
+
+    void onDestroy(const gl::Context *context) override;
 
     angle::Result setStorage(const gl::Context *context,
                              GLenum internalformat,
@@ -37,6 +41,28 @@ class RenderbufferWgpu : public RenderbufferImpl
     angle::Result initializeContents(const gl::Context *context,
                                      GLenum binding,
                                      const gl::ImageIndex &imageIndex) override;
+
+    angle::Result getAttachmentRenderTarget(const gl::Context *context,
+                                            GLenum binding,
+                                            const gl::ImageIndex &imageIndex,
+                                            GLsizei samples,
+                                            FramebufferAttachmentRenderTarget **rtOut) override;
+
+    void releaseOwnershipOfImage(const gl::Context *context);
+    webgpu::ImageHelper *getImage() const { return mImage; }
+
+    // We monitor the ImageHelper and set dirty bits if the ImageHelper changes. This can
+    // support changes in the ImageHelper even outside the RenderbufferWgpu class.
+    void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
+
+  private:
+    void setImageHelper(webgpu::ImageHelper *imageHelper, bool ownsImageHelper);
+
+    bool mOwnsImage             = false;
+    webgpu::ImageHelper *mImage = nullptr;
+    RenderTargetWgpu mRenderTarget;
+
+    angle::ObserverBinding mImageObserverBinding;
 };
 
 }  // namespace rx

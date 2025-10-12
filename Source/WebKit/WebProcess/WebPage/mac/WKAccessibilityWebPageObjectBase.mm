@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,7 @@
 #import <WebCore/RemoteFrame.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/Scrollbar.h>
+#import <WebCore/Settings.h>
 
 namespace ax = WebCore::Accessibility;
 
@@ -57,7 +58,7 @@ namespace ax = WebCore::Accessibility;
     if (!m_page)
         return nullptr;
 
-    auto page = m_page->corePage();
+    RefPtr page = m_page->corePage();
     if (!page)
         return nullptr;
 
@@ -89,6 +90,12 @@ namespace ax = WebCore::Accessibility;
     return axPlugin.autorelease();
 }
 
+- (BOOL)shouldFallbackToWebContentAXObjectForMainFramePlugin
+{
+    RefPtr page = m_page.get();
+    return page && page->shouldFallbackToWebContentAXObjectForMainFramePlugin();
+}
+
 // Called directly by Accessibility framework.
 - (id)accessibilityRootObjectWrapper
 {
@@ -111,16 +118,25 @@ namespace ax = WebCore::Accessibility;
         if (!WebCore::AXObjectCache::accessibilityEnabled())
             [protectedSelf enableAccessibilityForAllProcesses];
 
-        if (protectedSelf.get()->m_hasMainFramePlugin) {
+        if (protectedSelf->m_hasMainFramePlugin) {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
             // Even though we want to serve the PDF plugin tree for main-frame plugins, we still need to make sure the isolated tree
             // is built, so that when text annotations are created on-the-fly as users focus on text fields,
             // isolated objects are able to be attached to those text annotation object wrappers.
             // If they aren't, we never have a backing object to serve any requests from.
             if (auto cache = protectedSelf.get().axObjectCache)
-                cache->buildAccessibilityTreeIfNeeded();
+                cache->buildIsolatedTreeIfNeeded();
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-            return protectedSelf.get().accessibilityPluginObject;
+            if (![protectedSelf shouldFallbackToWebContentAXObjectForMainFramePlugin])
+                return [protectedSelf accessibilityPluginObject];
+        }
+
+        RefPtr frame = protectedFrame ? WTFMove(protectedFrame) : [protectedSelf focusedLocalFrame];
+        if (RefPtr document = frame->document()) {
+            if (CheckedPtr cache = document->axObjectCache()) {
+                if (RefPtr root = cache->rootObjectForFrame(*frame))
+                    return root->wrapper();
+            }
         }
 
         if (auto cache = protectedSelf.get().axObjectCache) {
@@ -129,7 +145,7 @@ namespace ax = WebCore::Accessibility;
             // try again if necessary.
             RefPtr frame = protectedFrame ? WTFMove(protectedFrame) : [protectedSelf focusedLocalFrame];
 
-            if (auto* root = frame ? cache->rootObjectForFrame(*frame) : nullptr)
+            if (RefPtr root = frame ? cache->rootObjectForFrame(*frame) : nullptr)
                 return root->wrapper();
         }
 
@@ -149,7 +165,7 @@ namespace ax = WebCore::Accessibility;
         [self setPosition:page->accessibilityPosition()];
         [self setSize:page->size()];
 #endif
-        auto* frame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
+        RefPtr frame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
         m_hasMainFramePlugin = frame && frame->document() ? frame->document()->isPluginDocument() : false;
     } else {
         m_pageID = std::nullopt;
@@ -181,18 +197,42 @@ namespace ax = WebCore::Accessibility;
         // of the plugin accessiblity tree.
         return;
     }
+
+    CheckedPtr cache = tree->axObjectCache();
+    if (!cache)
+        return;
+
+    std::optional isolatedTreeFrameID = cache->frameID();
+    if (!isolatedTreeFrameID)
+        return;
+
+    RefPtr mainFrame = m_page ? m_page->mainFrame() : nullptr;
+    if (!mainFrame)
+        return;
+
+    // Ignore an isolated tree that's not the main frame, otherwise VoiceOver might jump directly to an iframe
+    // when interacting with a page.
+    if (*isolatedTreeFrameID != mainFrame->frameID())
+        return;
+
     m_isolatedTree = tree.get();
 }
 
 - (void)setWindow:(id)window
 {
     ASSERT(isMainRunLoop());
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     Locker lock { m_windowLock };
-#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     m_window = window;
 }
-#endif
+
+- (void)_buildIsolatedTreeIfNeeded
+{
+    ensureOnMainThread([protectedSelf = RetainPtr { self }] {
+        if (auto cache = protectedSelf.get().axObjectCache)
+            cache->buildIsolatedTreeIfNeeded();
+    });
+}
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 - (void)setHasMainFramePlugin:(bool)hasPlugin
 {
@@ -211,7 +251,7 @@ namespace ax = WebCore::Accessibility;
     return m_remoteFrameOffset;
 }
 
-- (void)setRemoteParent:(id)parent
+- (void)setRemoteParent:(id)parent token:(NSData *)token
 {
     ASSERT(isMainRunLoop());
 
@@ -219,6 +259,12 @@ namespace ax = WebCore::Accessibility;
     Locker lock { m_parentLock };
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     m_parent = parent;
+    m_remoteToken = token;
+}
+
+- (NSUInteger)remoteTokenHash
+{
+    return [m_remoteToken.get() hash];
 }
 
 - (void)setFrameIdentifier:(const WebCore::FrameIdentifier&)frameID

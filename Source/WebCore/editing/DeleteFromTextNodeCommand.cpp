@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2008, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "CompositeEditCommand.h"
 #include "Document.h"
 #include "Editing.h"
+#include "NodeDocument.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -45,36 +46,29 @@ DeleteFromTextNodeCommand::DeleteFromTextNodeCommand(Ref<Text>&& node, unsigned 
 
 void DeleteFromTextNodeCommand::doApply()
 {
-    auto node = protectedNode();
-    if (!isEditableNode(node))
+    if (!isEditableNode(m_node))
         return;
 
-    auto result = node->substringData(m_offset, m_count);
+    auto result = m_node->substringData(m_offset, m_count);
     if (result.hasException())
         return;
     m_text = result.releaseReturnValue();
-    node->deleteData(m_offset, m_count);
+    m_node->deleteData(m_offset, m_count);
 }
 
 void DeleteFromTextNodeCommand::doUnapply()
 {
-    auto node = protectedNode();
-    if (!node->hasEditableStyle())
+    if (!m_node->hasEditableStyle())
         return;
 
-    node->insertData(m_offset, m_text);
+    m_node->insertData(m_offset, m_text);
 }
 
 #ifndef NDEBUG
 void DeleteFromTextNodeCommand::getNodesInCommand(NodeSet& nodes)
 {
-    addNodeAndDescendants(protectedNode().ptr(), nodes);
+    addNodeAndDescendants(m_node.ptr(), nodes);
 }
 #endif
-
-inline Ref<Text> DeleteFromTextNodeCommand::protectedNode() const
-{
-    return m_node;
-}
 
 } // namespace WebCore

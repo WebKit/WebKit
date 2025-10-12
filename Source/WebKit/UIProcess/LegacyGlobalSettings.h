@@ -50,8 +50,10 @@ public:
     const HashSet<String>& schemesToRegisterAsLocal() { return m_schemesToRegisterAsLocal; }
     void registerURLSchemeAsLocal(const String& scheme) { m_schemesToRegisterAsLocal.add(scheme); }
 
+#if ENABLE(ALL_LEGACY_REGISTERED_SPECIAL_URL_SCHEMES)
     const HashSet<String>& schemesToRegisterAsNoAccess() { return m_schemesToRegisterAsNoAccess; }
     void registerURLSchemeAsNoAccess(const String& scheme) { m_schemesToRegisterAsNoAccess.add(scheme); }
+#endif
 
     const HashSet<String>& hostnamesToRegisterAsLocal() const { return m_hostnamesToRegisterAsLocal; }
     void registerHostnameAsLocal(const String& hostname) { m_hostnamesToRegisterAsLocal.add(hostname); }
@@ -64,7 +66,9 @@ private:
     HashSet<String> m_schemesToRegisterAsSecure;
     HashSet<String> m_schemesToRegisterAsBypassingContentSecurityPolicy;
     HashSet<String> m_schemesToRegisterAsLocal;
+#if ENABLE(ALL_LEGACY_REGISTERED_SPECIAL_URL_SCHEMES)
     HashSet<String> m_schemesToRegisterAsNoAccess;
+#endif
     HashSet<String> m_hostnamesToRegisterAsLocal;
 };
 

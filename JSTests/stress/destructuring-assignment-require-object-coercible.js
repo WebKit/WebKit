@@ -23,14 +23,16 @@ function testOK(script) {
         throw new Error("Bad error: " + String(error));
 }
 
-testTypeError(`({ } = null)`, "TypeError: Right side of assignment cannot be destructured");
-testTypeError(`({ a } = null)`, "TypeError: Right side of assignment cannot be destructured");
-testTypeError(`({ a: { b } = null } = { })`, "TypeError: Right side of assignment cannot be destructured");
-testTypeError(`({ a: { b } } = { a: null })`, "TypeError: Right side of assignment cannot be destructured");
-testTypeError(`({ } = undefined)`, "TypeError: Right side of assignment cannot be destructured");
-testTypeError(`({ a } = undefined)`, "TypeError: Right side of assignment cannot be destructured");
-testTypeError(`({ a: { b } = undefined } = { })`, "TypeError: Right side of assignment cannot be destructured");
-testTypeError(`({ a: { b } } = { a: undefined })`, "TypeError: Right side of assignment cannot be destructured");
+testTypeError(`({ } = null)`, "TypeError: Cannot destructure null or undefined value");
+testTypeError(`({ a } = null)`, "TypeError: Cannot destructure property 'a' from null or undefined value");
+testTypeError(`({ a: { b } = null } = { })`, "TypeError: Cannot destructure property 'b' from null or undefined value");
+testTypeError(`({ a: { b } } = { a: null })`, "TypeError: Cannot destructure property 'b' from null or undefined value");
+testTypeError(`({ ...a } = null)`, "TypeError: Cannot destructure null or undefined value");
+testTypeError(`({ } = undefined)`, "TypeError: Cannot destructure null or undefined value");
+testTypeError(`({ a } = undefined)`, "TypeError: Cannot destructure property 'a' from null or undefined value");
+testTypeError(`({ a: { b } = undefined } = { })`, "TypeError: Cannot destructure property 'b' from null or undefined value");
+testTypeError(`({ a: { b } } = { a: undefined })`, "TypeError: Cannot destructure property 'b' from null or undefined value");
+testTypeError(`({ ...a } = undefined)`, "TypeError: Cannot destructure null or undefined value");
 
 testOK(`({ } = 123)`);
 testOK(`({ a } = 123)`);

@@ -11,10 +11,12 @@
 #ifndef MODULES_PORTAL_PIPEWIRE_UTILS_H_
 #define MODULES_PORTAL_PIPEWIRE_UTILS_H_
 
-#include <errno.h>
-#include <stdint.h>
+#include <asm-generic/ioctl.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
+
+#include <cerrno>
+#include <cstdint>
 
 // static
 struct dma_buf_sync {

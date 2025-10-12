@@ -30,10 +30,10 @@
 
 #import "CAAudioStreamDescription.h"
 #import "Logging.h"
-#import "MediaSample.h"
 #import "MediaUtilities.h"
 #import "PlatformMediaSessionManager.h"
 #import "SharedBuffer.h"
+#import "TrackInfo.h"
 #import <AudioToolbox/AudioCodec.h>
 #import <AudioToolbox/AudioComponent.h>
 #import <AudioToolbox/AudioFormat.h>
@@ -50,6 +50,22 @@
 #import <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebCore {
+
+namespace WebMAudioUtilities {
+#if ENABLE(OPUS)
+static std::optional<bool> s_hasOpusDecoder;
+#endif
+#if ENABLE(VORBIS)
+static std::optional<bool> s_hasVorbisDecoder;
+#endif
+}
+
+#if ENABLE(OPUS)
+void setHasOpusDecoder(bool hasDecoder) { WebMAudioUtilities::s_hasOpusDecoder = hasDecoder; }
+#endif
+#if ENABLE(VORBIS)
+void setHasVorbisDecoder(bool hasDecoder) { WebMAudioUtilities::s_hasVorbisDecoder = hasDecoder; }
+#endif
 
 #if ENABLE(VORBIS) || ENABLE(OPUS)
 static bool registerDecoderFactory(ASCIILiteral decoderName, OSType decoderType)
@@ -86,7 +102,7 @@ static RefPtr<AudioInfo> createAudioInfoForFormat(OSType formatID, Vector<uint8_
     AudioStreamBasicDescription asbd { };
     asbd.mFormatID = formatID;
     uint32_t size = sizeof(asbd);
-    auto error = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, magicCookie.size(), magicCookie.data(), &size, &asbd);
+    auto error = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, magicCookie.size(), magicCookie.span().data(), &size, &asbd);
     if (error) {
         RELEASE_LOG_ERROR(Media, "createAudioFormatDescriptionForFormat failed with error %d (%.4s)", error, (char *)&error);
         return nullptr;
@@ -368,7 +384,9 @@ static Vector<uint8_t> cookieFromOpusCookieContents(const OpusCookieContents& co
 bool isOpusDecoderAvailable()
 {
 #if ENABLE(OPUS)
-    return registerOpusDecoderIfNeeded();
+    if (registerOpusDecoderIfNeeded())
+        return true;
+    return WebMAudioUtilities::s_hasOpusDecoder.value_or(false);
 #else
     return false;
 #endif
@@ -493,7 +511,9 @@ static Vector<uint8_t> cookieFromVorbisCodecPrivate(std::span<const uint8_t> cod
 bool isVorbisDecoderAvailable()
 {
 #if ENABLE(VORBIS)
-    return registerVorbisDecoderIfNeeded();
+    if (registerVorbisDecoderIfNeeded())
+        return true;
+    return WebMAudioUtilities::s_hasVorbisDecoder.value_or(false);
 #else
     return false;
 #endif

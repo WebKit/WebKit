@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -14,16 +11,16 @@ function f0(a) {
 }
 
 // SyntaxError should be thrown if method definition has duplicated name.
-assertThrowsInstanceOf(() => eval(`
+assert.throws(SyntaxError, () => eval(`
 ({
   m1(a, a) {
   }
 });
-`), SyntaxError);
-assertThrowsInstanceOf(() => eval(`
+`));
+assert.throws(SyntaxError, () => eval(`
 ({
   m2(a, ...a) {
   }
 });
-`), SyntaxError);
+`));
 

@@ -17,12 +17,12 @@
 #include <optional>
 
 #include "api/environment/environment.h"
+#include "api/neteq/delay_manager_interface.h"
 #include "api/neteq/neteq.h"
 #include "api/neteq/neteq_controller.h"
 #include "api/neteq/tick_timer.h"
 #include "modules/audio_coding/neteq/buffer_level_filter.h"
 #include "modules/audio_coding/neteq/delay_constraints.h"
-#include "modules/audio_coding/neteq/delay_manager.h"
 #include "modules/audio_coding/neteq/packet_arrival_history.h"
 
 namespace webrtc {
@@ -30,10 +30,12 @@ namespace webrtc {
 // This is the class for the decision tree implementation.
 class DecisionLogic : public NetEqController {
  public:
-  DecisionLogic(const Environment& env, NetEqController::Config config);
+  DecisionLogic(const Environment& env,
+                NetEqController::Config config,
+                std::unique_ptr<DelayManagerInterface> delay_manager);
   DecisionLogic(
       NetEqController::Config config,
-      std::unique_ptr<DelayManager> delay_manager,
+      std::unique_ptr<DelayManagerInterface> delay_manager,
       std::unique_ptr<BufferLevelFilter> buffer_level_filter,
       std::unique_ptr<PacketArrivalHistory> packet_arrival_history = nullptr);
 
@@ -150,7 +152,7 @@ class DecisionLogic : public NetEqController {
 
   int GetPlayoutDelayMs(NetEqController::NetEqStatus status) const;
 
-  std::unique_ptr<DelayManager> delay_manager_;
+  std::unique_ptr<DelayManagerInterface> delay_manager_;
   DelayConstraints delay_constraints_;
   std::unique_ptr<BufferLevelFilter> buffer_level_filter_;
   std::unique_ptr<PacketArrivalHistory> packet_arrival_history_;

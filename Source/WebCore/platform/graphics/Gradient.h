@@ -27,12 +27,13 @@
 
 #pragma once
 
-#include "Color.h"
-#include "ColorInterpolationMethod.h"
-#include "FloatPoint.h"
-#include "GradientColorStops.h"
-#include "GraphicsTypes.h"
-#include "RenderingResource.h"
+#include <WebCore/Color.h>
+#include <WebCore/ColorInterpolationMethod.h>
+#include <WebCore/FloatPoint.h>
+#include <WebCore/GradientColorStops.h>
+#include <WebCore/GraphicsTypes.h>
+#include <WebCore/RenderingResource.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
 #if USE(SKIA)
@@ -40,7 +41,7 @@
 #endif
 
 #if USE(CG)
-#include "GradientRendererCG.h"
+#include <WebCore/GradientRendererCG.h>
 #endif
 
 #if USE(CG)
@@ -61,7 +62,8 @@ class AffineTransform;
 class FloatRect;
 class GraphicsContext;
 
-class Gradient final : public RenderingResource {
+// Note: currently this class is not usable from multiple threads due to mutating interface.
+class Gradient final : public ThreadSafeRefCounted<Gradient> {
 public:
     struct LinearData {
         FloatPoint point0;
@@ -83,13 +85,17 @@ public:
 
     using Data = Variant<LinearData, RadialData, ConicData>;
 
-    WEBCORE_EXPORT static Ref<Gradient> create(Data&&, ColorInterpolationMethod, GradientSpreadMethod = GradientSpreadMethod::Pad, GradientColorStops&& = { }, std::optional<RenderingResourceIdentifier> = std::nullopt);
-    ~Gradient();
+    // isTransient may affect backend rendering implementation caching decisions.
+    // Transient instances may be assumed to be drawn only few times or seldomly and as such the backend
+    // may not persist caches related to the instance.
+    WEBCORE_EXPORT static Ref<Gradient> create(Data&&, ColorInterpolationMethod, GradientSpreadMethod = GradientSpreadMethod::Pad, GradientColorStops&& = { }, bool isTransient = true);
+    WEBCORE_EXPORT ~Gradient();
 
     const Data& data() const { return m_data; }
     ColorInterpolationMethod colorInterpolationMethod() const { return m_colorInterpolationMethod; }
     GradientSpreadMethod spreadMethod() const { return m_spreadMethod; }
     const GradientColorStops& stops() const { return m_stops; }
+    bool isTransient() const { return m_isTransient; }
 
     WEBCORE_EXPORT void addColorStop(GradientColorStop&&);
 
@@ -115,10 +121,13 @@ public:
     sk_sp<SkShader> shader(float globalAlpha, const AffineTransform&);
 #endif
 
-private:
-    Gradient(Data&&, ColorInterpolationMethod, GradientSpreadMethod, GradientColorStops&&, std::optional<RenderingResourceIdentifier>);
+    void addObserver(WeakRef<RenderingResourceObserver>&& observer) const
+    {
+        m_observers.add(WTFMove(observer));
+    }
 
-    bool isGradient() const final { return true; }
+private:
+    Gradient(Data&&, ColorInterpolationMethod, GradientSpreadMethod, GradientColorStops&&, bool isTransient);
 
     void stopsChanged();
 
@@ -132,16 +141,10 @@ private:
     std::optional<GradientRendererCG> m_platformRenderer;
 #endif
 
-#if USE(SKIA)
-    sk_sp<SkShader> m_shader;
-#endif
-
+    mutable WeakHashSet<RenderingResourceObserver> m_observers;
+    bool m_isTransient { true };
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Gradient&);
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Gradient)
-    static bool isType(const WebCore::RenderingResource& renderingResource) { return renderingResource.isGradient(); }
-SPECIALIZE_TYPE_TRAITS_END()

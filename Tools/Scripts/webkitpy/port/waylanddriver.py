@@ -45,9 +45,10 @@ class WaylandDriver(Driver):
         return True
 
     def _setup_environ_for_test(self):
-        driver_environment = super(WaylandDriver, self)._setup_environ_for_test()
+        driver_environment = super()._setup_environ_for_test()
         self._port._copy_value_from_environ_if_set(driver_environment, 'WAYLAND_DISPLAY')
         self._port._copy_value_from_environ_if_set(driver_environment, 'WAYLAND_SOCKET')
         driver_environment['GDK_BACKEND'] = 'wayland'
         driver_environment['EGL_PLATFORM'] = 'wayland'
+        driver_environment['WPE_DISPLAY'] = 'wpe-display-wayland'
         return driver_environment

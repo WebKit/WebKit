@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CertificateSummary.h"
-#include "NotImplemented.h"
+#include <WebCore/CertificateSummary.h>
+#include <WebCore/NotImplemented.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/persistence/PersistentCoders.h>

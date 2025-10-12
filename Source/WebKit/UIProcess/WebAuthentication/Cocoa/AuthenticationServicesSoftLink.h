@@ -52,4 +52,4 @@ SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASAuthorizationPublicKeyCredentialPRFRegistra
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASAuthorizationPublicKeyCredentialPRFAssertionInputValues);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASAuthorizationPublicKeyCredentialPRFAssertionInput);
 #endif
-#define ASAuthorizationErrorDomain WebKit::get_AuthenticationServices_ASAuthorizationErrorDomain()
+#define ASAuthorizationErrorDomain WebKit::get_AuthenticationServices_ASAuthorizationErrorDomainSingleton()

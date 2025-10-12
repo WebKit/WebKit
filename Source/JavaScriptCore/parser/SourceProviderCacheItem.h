@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ParserModes.h"
-#include "ParserTokens.h"
+#include <JavaScriptCore/ParserModes.h>
+#include <JavaScriptCore/ParserTokens.h>
 #include <wtf/Vector.h>
 #include <wtf/text/UniquedStringImpl.h>
 #include <wtf/text/WTFString.h>
@@ -57,7 +57,7 @@ struct SourceProviderCacheItemCreationParameters {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SourceProviderCacheItem);
 class SourceProviderCacheItem {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SourceProviderCacheItem);
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SourceProviderCacheItem, SourceProviderCacheItem);
 public:
     static std::unique_ptr<SourceProviderCacheItem> create(const SourceProviderCacheItemCreationParameters&);
     ~SourceProviderCacheItem();
@@ -67,10 +67,10 @@ public:
         JSToken token;
         token.m_type = isBodyArrowExpression ? static_cast<JSTokenType>(tokenType) : CLOSEBRACE;
         token.m_data.offset = lastTokenStartOffset;
-        token.m_location.startOffset = lastTokenStartOffset;
-        token.m_location.endOffset = lastTokenEndOffset;
-        token.m_location.line = lastTokenLine;
-        token.m_location.lineStartOffset = lastTokenLineStartOffset;
+        token.m_startPosition.offset = lastTokenStartOffset;
+        token.m_startPosition.line = lastTokenLine;
+        token.m_startPosition.lineStartOffset = lastTokenLineStartOffset;
+        token.m_endPosition.offset = lastTokenEndOffset;
         // token.m_location.sourceOffset is initialized once by the client. So,
         // we do not need to set it here.
         return token;

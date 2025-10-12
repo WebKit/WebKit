@@ -10,21 +10,32 @@
 
 #include "modules/rtp_rtcp/include/flexfec_sender.h"
 
-#include <string.h>
-
+#include <cstdint>
+#include <cstring>
 #include <list>
+#include <memory>
+#include <optional>
 #include <utility>
+#include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
 #include "api/environment/environment.h"
+#include "api/rtp_parameters.h"
+#include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "modules/include/module_fec_types.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
+#include "modules/rtp_rtcp/source/rtp_header_extension_size.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/race_checker.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 
@@ -78,7 +89,7 @@ FlexfecSender::FlexfecSender(
     uint32_t protected_media_ssrc,
     absl::string_view mid,
     const std::vector<RtpExtension>& rtp_header_extensions,
-    rtc::ArrayView<const RtpExtensionSize> extension_sizes,
+    ArrayView<const RtpExtensionSize> extension_sizes,
     const RtpState* rtp_state)
     : env_(env),
       random_(env_.clock().TimeInMicroseconds()),
@@ -158,9 +169,7 @@ std::vector<std::unique_ptr<RtpPacketToSend>> FlexfecSender::GetFecPackets() {
     }
 
     // RTP payload.
-    uint8_t* payload =
-        fec_packet_to_send->AllocatePayload(fec_packet->data.size());
-    memcpy(payload, fec_packet->data.cdata(), fec_packet->data.size());
+    fec_packet_to_send->SetPayload(fec_packet->data);
 
     total_fec_data_bytes += fec_packet_to_send->size();
     fec_packets_to_send.push_back(std::move(fec_packet_to_send));

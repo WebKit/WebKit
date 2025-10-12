@@ -346,15 +346,23 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         let groupings = this._style.groupings;
         for (let i = groupings.length - 1; i >= 0; --i) {
             let grouping = groupings[i];
+
+            if (!grouping.prefix && !grouping.text)
+                continue;
+
             let groupingTypeElement = this._groupingsContainerElement.appendChild(document.createElement("div"));
             groupingTypeElement.classList.add("grouping");
 
-            let prefix = grouping.prefix;
-            if (prefix)
-                groupingTypeElement.textContent = prefix + " ";
+            if (!grouping.text) {
+                groupingTypeElement.textContent = grouping.prefix;
+                continue;
+            }
+
+            if (grouping.prefix)
+                groupingTypeElement.textContent = grouping.prefix + " ";
 
             let groupingTextElement = groupingTypeElement.appendChild(document.createElement("span"));
-            groupingTextElement.textContent = grouping.text ?? "";
+            groupingTextElement.textContent = grouping.text;
             groupingTextElement.representedGrouping = grouping;
 
             if (grouping.editable) {

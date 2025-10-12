@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include "ScrollbarThemeComposite.h"
+#include <WebCore/ScrollbarThemeComposite.h>
+#include <wtf/Platform.h>
 
 #if PLATFORM(MAC)
 
@@ -61,6 +62,7 @@ public:
     void unregisterScrollbar(Scrollbar&) override;
 
     static NSScrollerImp *scrollerImpForScrollbar(Scrollbar&);
+    static RetainPtr<NSScrollerImp> protectedScrollerImpForScrollbar(Scrollbar&);
 
     void setPaintCharacteristicsForScrollbar(Scrollbar&);
 

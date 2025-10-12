@@ -1,0 +1,3 @@
+
+FAIL valid-custom-element-names assert_unreached: Custom element name should have been valid but threw error: code points: [97,45,1], string: "a-" SyntaxError: Custom element name contains a character that is not allowed Reached unreachable code
+

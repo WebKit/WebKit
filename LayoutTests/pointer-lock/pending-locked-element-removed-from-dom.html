@@ -1,7 +1,7 @@
-<!DOCTYPE HTML>
+<!DOCTYPE HTML> <!-- webkit-test-runner [ PointerLockEnabled=true ] -->
 <html>
 <head>
-<script src="../http/tests/resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../http/tests/resources/pointer-lock/pointer-lock-test-harness.js"></script>
 </head>
 <body>
@@ -12,6 +12,7 @@
     description("Test removing an element with a pending pointer lock cancels the lock.")
     window.jsTestIsAsync = true;
     window.internals.settings.setPointerLockOptionsEnabled(true);
+    window.testRunner?.setHasMouseDeviceForTesting(true);
 
     targetDiv = document.getElementById("target");
 
@@ -47,6 +48,5 @@
     ];
     doNextStepWithUserGesture();
 </script>
-<script src="../http/tests/resources/js-test-post.js"></script>
 </body>
 </html>

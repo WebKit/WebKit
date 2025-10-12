@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,6 +31,8 @@
 #include "CommonAtomStrings.h"
 #include "CommonVM.h"
 #include "ContainerNodeAlgorithms.h"
+#include "DocumentInlines.h"
+#include "DocumentQuirks.h"
 #include "Editor.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
@@ -42,6 +44,7 @@
 #include "HTMLOptionsCollection.h"
 #include "HTMLSlotElement.h"
 #include "HTMLTableRowsCollection.h"
+#include "HTMLTemplateElement.h"
 #include "InspectorInstrumentation.h"
 #include "JSNodeCustom.h"
 #include "LabelsNodeList.h"
@@ -61,6 +64,7 @@
 #include "SVGUseElement.h"
 #include "ScriptDisallowedScope.h"
 #include "SelectorQuery.h"
+#include "SerializedNode.h"
 #include "SlotAssignment.h"
 #include "StaticNodeList.h"
 #include "TemplateContentDocumentFragment.h"
@@ -437,7 +441,7 @@ static inline bool isChildTypeAllowed(ContainerNode& newParent, Node& child)
 
 static bool containsIncludingHostElements(const Node& possibleAncestor, const Node& node)
 {
-    RefPtr<const Node> currentNode = &node;
+    RefPtr<const Node> currentNode = node;
     do {
         if (currentNode == &possibleAncestor)
             return true;
@@ -616,7 +620,7 @@ void ContainerNode::appendChildCommon(Node& child)
 
     child.setParentNode(this);
 
-    if (auto lastChild = protectedLastChild()) {
+    if (RefPtr lastChild = this->lastChild()) {
         child.setPreviousSibling(lastChild.get());
         lastChild->setNextSibling(&child);
     } else
@@ -1031,15 +1035,17 @@ void ContainerNode::childrenChanged(const ChildChange& change)
         cache->childrenChanged(*this);
 }
 
-void ContainerNode::cloneChildNodes(Document& document, CustomElementRegistry* registry, ContainerNode& clone, size_t currentDepth)
+static constexpr size_t cloneMaxDepth = 1024;
+
+void ContainerNode::cloneChildNodes(Document& document, CustomElementRegistry* fallbackRegistry, ContainerNode& clone, size_t currentDepth) const
 {
-    if (currentDepth == 1024)
+    if (currentDepth >= cloneMaxDepth)
         return;
 
     NodeVector postInsertionNotificationTargets;
     bool hadElement = false;
     for (RefPtr child = firstChild(); child; child = child->nextSibling()) {
-        Ref clonedChild = child->cloneNodeInternal(document, CloningOperation::SelfWithTemplateContent, registry);
+        Ref clonedChild = child->cloneNodeInternal(document, CloningOperation::SelfWithTemplateContent, fallbackRegistry);
         {
             WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
             ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -1052,12 +1058,32 @@ void ContainerNode::cloneChildNodes(Document& document, CustomElementRegistry* r
             hadElement = hadElement || is<Element>(clonedChild);
         }
         if (RefPtr childAsContainerNode = dynamicDowncast<ContainerNode>(*child))
-            childAsContainerNode->cloneChildNodes(document, registry, downcast<ContainerNode>(clonedChild), currentDepth + 1);
+            childAsContainerNode->cloneChildNodes(document, fallbackRegistry, downcast<ContainerNode>(clonedChild), currentDepth + 1);
     }
     clone.childrenChanged(makeChildChangeForCloneInsertion(hadElement ? ClonedChildIncludesElements::Yes : ClonedChildIncludesElements::No));
 
     for (auto& target : postInsertionNotificationTargets)
         target->didFinishInsertingNode();
+}
+
+Vector<SerializedNode> ContainerNode::serializeChildNodes(size_t currentDepth) const
+{
+    if (currentDepth >= cloneMaxDepth)
+        return { };
+
+    Vector<SerializedNode> result;
+    for (RefPtr child = firstChild(); child; child = child->nextSibling()) {
+        result.append(child->serializeNode(CloningOperation::SelfWithTemplateContent));
+        RefPtr childAsContainerNode = dynamicDowncast<ContainerNode>(*child);
+        if (!childAsContainerNode)
+            continue;
+        WTF::switchOn(result.last().data, [&] (SerializedNode::ContainerNode& node) {
+            node.children = childAsContainerNode->serializeChildNodes(currentDepth + 1);
+        }, []<typename T>(const T&) requires (!std::derived_from<T, SerializedNode::ContainerNode>) {
+            RELEASE_ASSERT_NOT_REACHED();
+        });
+    }
+    return result;
 }
 
 unsigned ContainerNode::countChildNodes() const
@@ -1084,7 +1110,7 @@ static void dispatchChildInsertionEvents(Node& child)
 
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(child));
 
-    RefPtr c = &child;
+    RefPtr c = child;
     if (c->parentNode() && document->hasListenerType(Document::ListenerType::DOMNodeInserted))
         c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeInsertedEvent, Event::CanBubble::Yes, c->protectedParentNode().get()));
 
@@ -1125,7 +1151,7 @@ ExceptionOr<Element*> ContainerNode::querySelector(const String& selectors)
 
 ExceptionOr<Ref<NodeList>> ContainerNode::querySelectorAll(const String& selectors)
 {
-    auto document = protectedDocument();
+    Ref document = this->document();
     if (auto results = document->resultForSelectorAll(*this, selectors))
         return Ref<NodeList> { StaticWrapperNodeList::create(results.releaseNonNull()) };
     auto query = document->selectorQueryForString(selectors);
@@ -1136,6 +1162,12 @@ ExceptionOr<Ref<NodeList>> ContainerNode::querySelectorAll(const String& selecto
     auto nodeList = query.releaseReturnValue().queryAll(*this);
     if (isCacheable)
         document->addResultForSelectorAll(*this, selectors, nodeList, classNameToMatch);
+
+#if ENABLE(MEDIA_STREAM)
+    if (document->quirks().shouldEnableFacebookFlagQuirk() && nodeList->length() && selectors == "script[data-sjs]:not([data-processed])"_s)
+        nodeList = document->quirks().applyFacebookFlagQuirk(document, nodeList);
+#endif
+
     return nodeList;
 }
 
@@ -1216,7 +1248,7 @@ ExceptionOr<void> ContainerNode::prepend(FixedVector<NodeOrString>&& vector)
     if (result.hasException())
         return result.releaseException();
 
-    RefPtr nextChild = protectedFirstChild();
+    RefPtr nextChild = firstChild();
     auto newChildren = result.releaseReturnValue();
     if (auto checkResult = ensurePreInsertionValidityForPhantomDocumentFragment(newChildren, nextChild.get()); checkResult.hasException())
         return checkResult;

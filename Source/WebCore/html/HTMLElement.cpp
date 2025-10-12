@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2021-2024 Google Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2011 Motorola Mobility. All rights reserved.
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HTMLElement.h"
 
+#include "AXObjectCache.h"
 #include "CSSMarkup.h"
 #include "CSSParserFastPaths.h"
 #include "CSSPropertyNames.h"
@@ -38,9 +39,10 @@
 #include "CommonAtomStrings.h"
 #include "CustomElementReactionQueue.h"
 #include "DOMTokenList.h"
-#include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentInlines.h"
+#include "DocumentPage.h"
+#include "DocumentQuirks.h"
 #include "Editor.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
@@ -82,10 +84,10 @@
 #include "NodeTraversal.h"
 #include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
-#include "Quirks.h"
 #include "RenderElement.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
+#include "Settings.h"
 #include "ShadowRoot.h"
 #include "SimulatedClick.h"
 #include "StyleProperties.h"
@@ -237,7 +239,10 @@ void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& na
         break;
     }
     case AttributeNames::hiddenAttr:
-        addPropertyToPresentationalHintStyle(style, CSSPropertyDisplay, CSSValueNone);
+        if (document().settings().hiddenUntilFoundEnabled() && equalIgnoringASCIICase(value, "until-found"_s))
+            addPropertyToPresentationalHintStyle(style, CSSPropertyContentVisibility, CSSValueHidden);
+        else
+            addPropertyToPresentationalHintStyle(style, CSSPropertyDisplay, CSSValueNone);
         break;
     case AttributeNames::draggableAttr:
         if (equalLettersIgnoringASCIICase(value, "true"_s))
@@ -431,7 +436,7 @@ static Ref<DocumentFragment> textToFragment(Document& document, const String& te
 
     for (unsigned start = 0, length = text.length(); start < length; ) {
         // Find next line break.
-        UChar c = 0;
+        char16_t c = 0;
         unsigned i;
         for (i = start; i < length; i++) {
             c = text[i];
@@ -479,16 +484,11 @@ const AtomString& HTMLElement::dir() const
     return toValidDirValue(attributeWithoutSynchronization(dirAttr));
 }
 
-void HTMLElement::setDir(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(dirAttr, value);
-}
-
 ExceptionOr<void> HTMLElement::setInnerText(String&& text)
 {
     // FIXME: This doesn't take whitespace collapsing into account at all.
 
-    if (!text.contains([](UChar c) { return c == '\n' || c == '\r'; })) {
+    if (!text.contains([](char16_t c) { return c == '\n' || c == '\r'; })) {
         stringReplaceAll(WTFMove(text));
         return { };
     }
@@ -522,7 +522,7 @@ ExceptionOr<void> HTMLElement::setOuterText(String&& text)
     RefPtr<Node> newChild;
 
     // Convert text to fragment with <br> tags instead of linebreaks if needed.
-    if (text.contains([](UChar c) { return c == '\n' || c == '\r'; }))
+    if (text.contains([](char16_t c) { return c == '\n' || c == '\r'; }))
         newChild = textToFragment(protectedDocument(), WTFMove(text));
     else
         newChild = Text::create(protectedDocument(), WTFMove(text));
@@ -826,7 +826,7 @@ std::optional<SRGBA<uint8_t>> HTMLElement::parseLegacyColorValue(StringView stri
     if (string.isEmpty())
         return std::nullopt;
 
-    string = string.trim(isASCIIWhitespace<UChar>);
+    string = string.trim(isASCIIWhitespace<char16_t>);
     if (string.isEmpty())
         return Color::black;
 
@@ -948,11 +948,6 @@ AutocapitalizeType HTMLElement::autocapitalizeType() const
     return autocapitalizeTypeForAttributeValue(attributeWithoutSynchronization(HTMLNames::autocapitalizeAttr));
 }
 
-void HTMLElement::setAutocapitalize(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(autocapitalizeAttr, value);
-}
-
 #endif
 
 #if ENABLE(AUTOCORRECT)
@@ -981,11 +976,6 @@ const AtomString& HTMLElement::inputMode() const
     return stringForInputMode(canonicalInputMode());
 }
 
-void HTMLElement::setInputMode(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(inputmodeAttr, value);
-}
-
 EnterKeyHint HTMLElement::canonicalEnterKeyHint() const
 {
     return enterKeyHintForAttributeValue(attributeWithoutSynchronization(enterkeyhintAttr));
@@ -996,9 +986,11 @@ String HTMLElement::enterKeyHint() const
     return attributeValueForEnterKeyHint(canonicalEnterKeyHint());
 }
 
-void HTMLElement::setEnterKeyHint(const AtomString& value)
+bool HTMLElement::isHiddenUntilFound() const
 {
-    setAttributeWithoutSynchronization(enterkeyhintAttr, value);
+    if (!document().settings().hiddenUntilFoundEnabled())
+        return false;
+    return equalIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::hiddenAttr), "until-found"_s);
 }
 
 // https://html.spec.whatwg.org/#dom-hidden
@@ -1101,12 +1093,12 @@ static void runPopoverFocusingSteps(HTMLElement& popover)
         return;
     }
 
-    RefPtr control = popover.hasAttribute(autofocusAttr) ? &popover : popover.findAutofocusDelegate();
+    RefPtr control = popover.hasAttributeWithoutSynchronization(autofocusAttr) ? &popover : popover.findAutofocusDelegate();
     if (!control)
         return;
 
     Ref controlDocument = control->document();
-    RefPtr page = controlDocument->protectedPage();
+    RefPtr page = controlDocument->page();
     if (!page)
         return;
 
@@ -1249,7 +1241,8 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
 
     ASSERT(popoverData());
 
-    removeFromTopLayer();
+    if (isInTopLayer())
+        removeFromTopLayer();
 
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::PopoverOpen, false);
     popoverData()->setVisibilityState(PopoverVisibilityState::Hidden);

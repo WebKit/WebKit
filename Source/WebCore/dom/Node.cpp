@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
@@ -37,6 +37,7 @@
 #include "CustomElementRegistry.h"
 #include "DataTransfer.h"
 #include "DocumentInlines.h"
+#include "DocumentQuirks.h"
 #include "DocumentType.h"
 #include "ElementIterator.h"
 #include "ElementRareData.h"
@@ -46,6 +47,7 @@
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
+#include "FrameInlines.h"
 #include "GCReachableRef.h"
 #include "HTMLAreaElement.h"
 #include "HTMLBodyElement.h"
@@ -95,7 +97,6 @@
 #include "XMLNames.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <wtf/HexNumber.h>
-#include <wtf/RefCountedLeakCounter.h>
 #include <wtf/SHA1.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -110,7 +111,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Node);
+WTF_MAKE_PREFERABLY_COMPACT_TZONE_OR_ISO_ALLOCATED_IMPL(Node);
 
 using namespace HTMLNames;
 
@@ -226,7 +227,7 @@ void Node::dumpStatistics()
     size_t fragmentNodes = 0;
     size_t shadowRootNodes = 0;
 
-    UncheckedKeyHashMap<String, size_t> perTagCount;
+    HashMap<String, size_t> perTagCount;
 
     size_t attributes = 0;
     size_t attributesWithAttr = 0;
@@ -234,7 +235,7 @@ void Node::dumpStatistics()
     size_t elementsWithRareData = 0;
     size_t elementsWithNamedNodeMap = 0;
 
-    UncheckedKeyHashMap<uint32_t, size_t> rareDataSingleUseTypeCounts;
+    HashMap<uint32_t, size_t> rareDataSingleUseTypeCounts;
     size_t mixedRareDataUseCount = 0;
 
     for (auto& node : liveNodeSet()) {
@@ -265,7 +266,7 @@ void Node::dumpStatistics()
 
                 // Tag stats
                 Element& element = uncheckedDowncast<Element>(node);
-                UncheckedKeyHashMap<String, size_t>::AddResult result = perTagCount.add(element.tagName(), 1);
+                HashMap<String, size_t>::AddResult result = perTagCount.add(element.tagName(), 1);
                 if (!result.isNewEntry)
                     result.iterator->value++;
 
@@ -326,7 +327,6 @@ void Node::dumpStatistics()
         SAFE_PRINTF("  %s: %zu\n", stringForRareDataUseType(static_cast<NodeRareData::UseType>(it.key)), it.value);
     printf("\n");
 
-
     printf("NodeType distribution:\n");
     printf("  Number of Element nodes: %zu\n", elementNodes);
     printf("  Number of Attribute nodes: %zu\n", attrNodes);
@@ -353,42 +353,8 @@ void Node::dumpStatistics()
 #endif // DUMP_NODE_STATISTICS
 }
 
-DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, nodeCounter, ("WebCoreNode"));
-
-#ifndef NDEBUG
-static bool shouldIgnoreLeaks = false;
-
-static WeakHashSet<Node, WeakPtrImplWithEventTargetData>& ignoreSet()
-{
-    static NeverDestroyed<WeakHashSet<Node, WeakPtrImplWithEventTargetData>> ignore;
-    return ignore;
-}
-
-#endif
-
-void Node::startIgnoringLeaks()
-{
-#ifndef NDEBUG
-    shouldIgnoreLeaks = true;
-#endif
-}
-
-void Node::stopIgnoringLeaks()
-{
-#ifndef NDEBUG
-    shouldIgnoreLeaks = false;
-#endif
-}
-
 void Node::trackForDebugging()
 {
-#ifndef NDEBUG
-    if (shouldIgnoreLeaks)
-        ignoreSet().add(*this);
-    else
-        nodeCounter.increment();
-#endif
-
 #if DUMP_NODE_STATISTICS
     liveNodeSet().add(*this);
 #endif
@@ -426,6 +392,12 @@ Node::Node(Document& document, NodeType type, OptionSet<TypeFlag> flags)
 #endif
 }
 
+static HashMap<WeakRef<Node, WeakPtrImplWithEventTargetData>, NodeIdentifier>& nodeIdentifiersMap()
+{
+    static MainThreadNeverDestroyed<HashMap<WeakRef<Node, WeakPtrImplWithEventTargetData>, NodeIdentifier>> map;
+    return map;
+}
+
 Node::~Node()
 {
     ASSERT(isMainThread());
@@ -434,10 +406,10 @@ Node::~Node()
 
     InspectorInstrumentation::willDestroyDOMNode(*this);
 
-#ifndef NDEBUG
-    if (!ignoreSet().remove(*this))
-        nodeCounter.decrement();
-#endif
+    if (hasStateFlag(StateFlag::HasNodeIdentifier)) [[unlikely]]
+        nodeIdentifiersMap().remove(*this);
+    else
+        ASSERT(!nodeIdentifiersMap().contains(*this));
 
 #if DUMP_NODE_STATISTICS
     liveNodeSet().remove(*this);
@@ -460,11 +432,11 @@ Node::~Node()
             document.decrementReferencingNodeCount(); // This may destroy the document.
     }
 
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY) && (ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS))
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY) && ASSERT_ENABLED
     for (auto& document : Document::allDocuments()) {
-        ASSERT_WITH_SECURITY_IMPLICATION(!document->touchEventListenersContain(*this));
-        ASSERT_WITH_SECURITY_IMPLICATION(!document->touchEventHandlersContain(*this));
-        ASSERT_WITH_SECURITY_IMPLICATION(!document->touchEventTargetsContain(*this));
+        ASSERT(!document->touchEventListenersContain(*this));
+        ASSERT(!document->touchEventHandlersContain(*this));
+        ASSERT(!document->touchEventTargetsContain(*this));
     }
 #endif
 
@@ -583,9 +555,9 @@ ExceptionOr<void> Node::appendChild(Node& newChild)
     return Exception { ExceptionCode::HierarchyRequestError };
 }
 
-static UncheckedKeyHashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringVector(const FixedVector<NodeOrString>& vector)
+static HashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringVector(const FixedVector<NodeOrString>& vector)
 {
-    UncheckedKeyHashSet<RefPtr<Node>> nodeSet;
+    HashSet<RefPtr<Node>> nodeSet;
     for (const auto& variant : vector) {
         WTF::switchOn(variant,
             [&] (const RefPtr<Node>& node) { nodeSet.add(const_cast<Node*>(node.get())); },
@@ -595,7 +567,7 @@ static UncheckedKeyHashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringVe
     return nodeSet;
 }
 
-static RefPtr<Node> firstPrecedingSiblingNotInNodeSet(Node& context, const UncheckedKeyHashSet<RefPtr<Node>>& nodeSet)
+static RefPtr<Node> firstPrecedingSiblingNotInNodeSet(Node& context, const HashSet<RefPtr<Node>>& nodeSet)
 {
     for (auto* sibling = context.previousSibling(); sibling; sibling = sibling->previousSibling()) {
         if (!nodeSet.contains(sibling))
@@ -604,7 +576,7 @@ static RefPtr<Node> firstPrecedingSiblingNotInNodeSet(Node& context, const Unche
     return nullptr;
 }
 
-static RefPtr<Node> firstFollowingSiblingNotInNodeSet(Node& context, const UncheckedKeyHashSet<RefPtr<Node>>& nodeSet)
+static RefPtr<Node> firstFollowingSiblingNotInNodeSet(Node& context, const HashSet<RefPtr<Node>>& nodeSet)
 {
     for (auto* sibling = context.nextSibling(); sibling; sibling = sibling->nextSibling()) {
         if (!nodeSet.contains(sibling))
@@ -815,14 +787,14 @@ ExceptionOr<void> Node::normalize()
     return { };
 }
 
-Ref<Node> Node::cloneNode(bool deep)
+Ref<Node> Node::cloneNode(bool deep) const
 {
     ASSERT(!isShadowRoot());
     RefPtr registry = CustomElementRegistry::registryForNodeOrTreeScope(*this, treeScope());
     return cloneNodeInternal(document(), deep ? CloningOperation::Everything : CloningOperation::SelfOnly, registry.get());
 }
 
-ExceptionOr<Ref<Node>> Node::cloneNodeForBindings(bool deep)
+ExceptionOr<Ref<Node>> Node::cloneNodeForBindings(bool deep) const
 {
     if (isShadowRoot()) [[unlikely]]
         return Exception { ExceptionCode::NotSupportedError };
@@ -945,9 +917,9 @@ LayoutRect Node::absoluteBoundingRect(bool* isReplaced)
     }
     RenderObject* renderer = hitRenderer;
     while (renderer && !renderer->isBody() && !renderer->isDocumentElementRenderer()) {
-        if (renderer->isRenderBlock() || renderer->isNonReplacedAtomicInline() || renderer->isReplacedOrAtomicInline()) {
+        if (renderer->isRenderBlock() || renderer->isNonReplacedAtomicInlineLevelBox() || renderer->isBlockLevelReplacedOrAtomicInline()) {
             // FIXME: Is this really what callers want for the "isReplaced" flag?
-            *isReplaced = renderer->isReplacedOrAtomicInline();
+            *isReplaced = renderer->isBlockLevelReplacedOrAtomicInline();
             return renderer->absoluteBoundingBoxRect();
         }
         renderer = renderer->parent();
@@ -2460,7 +2432,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomString& event
 
 #if PLATFORM(IOS_FAMILY)
     if (targetNode == document.ptr() && typeInfo.type() == EventType::scroll) {
-        if (RefPtr window = document->domWindow())
+        if (RefPtr window = document->window())
             window->incrementScrollEventListenersCount();
     }
 
@@ -2512,7 +2484,7 @@ static inline bool didRemoveEventListenerOfType(Node& targetNode, const AtomStri
 
 #if PLATFORM(IOS_FAMILY)
     if (&targetNode == document.ptr() && typeInfo.type() == EventType::scroll) {
-        if (RefPtr window = document->domWindow())
+        if (RefPtr window = document->window())
             window->decrementScrollEventListenersCount();
     }
 
@@ -2570,9 +2542,9 @@ WeakHashSet<MutationObserverRegistration>* Node::transientMutationObserverRegist
     return &data->transientRegistry;
 }
 
-UncheckedKeyHashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> Node::registeredMutationObservers(MutationObserverOptionType type, const QualifiedName* attributeName)
+HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> Node::registeredMutationObservers(MutationObserverOptionType type, const QualifiedName* attributeName)
 {
-    UncheckedKeyHashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> observers;
+    HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> observers;
     ASSERT((type == MutationObserverOptionType::Attributes && attributeName) || !attributeName);
 
     auto collectMatchingObserversForMutation = [&](MutationObserverRegistration& registration) {
@@ -2749,7 +2721,7 @@ void Node::defaultEventHandler(Event& event)
                 CheckedPtr renderBox = dynamicDowncast<RenderBox>(*renderer);
                 if (renderBox && renderBox->canBeScrolledAndHasScrollableArea()) {
                     if (RefPtr frame = document().frame())
-                        frame->checkedEventHandler()->startPanScrolling(*renderBox);
+                        frame->eventHandler().startPanScrolling(*renderBox);
                     break;
                 }
             }
@@ -3115,6 +3087,23 @@ TextStream& operator<<(TextStream& ts, const Node& node)
 {
     ts << node.debugDescription();
     return ts;
+}
+
+NodeIdentifier Node::nodeIdentifier() const
+{
+    return nodeIdentifiersMap().ensure(const_cast<Node&>(*this), [&] {
+        setStateFlag(StateFlag::HasNodeIdentifier);
+        return NodeIdentifier::generate();
+    }).iterator->value;
+}
+
+Node* Node::fromIdentifier(NodeIdentifier identifier)
+{
+    for (auto& [node, nodeIdentifier] : nodeIdentifiersMap()) {
+        if (nodeIdentifier == identifier)
+            return node.ptr();
+    }
+    return nullptr;
 }
 
 } // namespace WebCore

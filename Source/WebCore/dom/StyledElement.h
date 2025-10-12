@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "Element.h"
-#include "ElementData.h"
-#include "IsImportant.h"
+#include <WebCore/Element.h>
+#include <WebCore/ElementData.h>
+#include <WebCore/IsImportant.h>
 
 namespace WebCore {
 

@@ -612,7 +612,7 @@ glong webkit_dom_html_object_element_get_hspace(WebKitDOMHTMLObjectElement* self
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_OBJECT_ELEMENT(self), 0);
     WebCore::HTMLObjectElement* item = WebKit::core(self);
-    glong result = item->getIntegralAttribute(WebCore::HTMLNames::hspaceAttr);
+    glong result = item->integralAttribute(WebCore::HTMLNames::hspaceAttr);
     return result;
 }
 
@@ -694,7 +694,7 @@ glong webkit_dom_html_object_element_get_vspace(WebKitDOMHTMLObjectElement* self
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_OBJECT_ELEMENT(self), 0);
     WebCore::HTMLObjectElement* item = WebKit::core(self);
-    glong result = item->getIntegralAttribute(WebCore::HTMLNames::vspaceAttr);
+    glong result = item->integralAttribute(WebCore::HTMLNames::vspaceAttr);
     return result;
 }
 

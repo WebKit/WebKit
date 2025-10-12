@@ -15,6 +15,9 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/allow_prototype_cycle_through_location.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign-replace-from-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign-replace-from-top-to-nested-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign-with-nested-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_after_load-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_after_load-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_after_load.html
@@ -29,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-prevent-extensions.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-sameish.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-with-colon.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-prototype-no-toString-valueOf.html
@@ -45,6 +49,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_assign_about_blank-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_assign_about_blank.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash_set_empty_string.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hashchange_infinite_loop.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_host.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hostname.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_href.html
@@ -65,6 +71,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/reload_document_write.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/reload_document_write_onload-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/reload_document_write_onload.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/replace-with-nested-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same-hash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same_origin_frame.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/scripted_click_assign_during_load-1.html

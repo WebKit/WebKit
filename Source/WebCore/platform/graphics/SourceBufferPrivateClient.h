@@ -27,11 +27,11 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include "AudioTrackPrivate.h"
-#include "InbandTextTrackPrivate.h"
-#include "MediaDescription.h"
-#include "PlatformMediaError.h"
-#include "VideoTrackPrivate.h"
+#include <WebCore/AudioTrackPrivate.h>
+#include <WebCore/InbandTextTrackPrivate.h>
+#include <WebCore/MediaDescription.h>
+#include <WebCore/PlatformMediaError.h>
+#include <WebCore/VideoTrackPrivate.h>
 #include <wtf/MediaTime.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
@@ -48,7 +48,7 @@ struct SourceBufferEvictionData {
     uint64_t contentSize { 0 };
     int64_t evictableSize { 0 };
     uint64_t maximumBufferSize { 0 };
-    size_t numMediaSamples { 0 };
+    uint64_t numMediaSamples { 0 };
 
     bool operator!=(const SourceBufferEvictionData& other)
     {

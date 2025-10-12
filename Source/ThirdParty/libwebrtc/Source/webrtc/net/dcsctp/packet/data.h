@@ -10,12 +10,14 @@
 #ifndef NET_DCSCTP_PACKET_DATA_H_
 #define NET_DCSCTP_PACKET_DATA_H_
 
+#include <cstddef>
 #include <cstdint>
 #include <utility>
 #include <vector>
 
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/public/types.h"
+#include "rtc_base/strong_alias.h"
 
 namespace dcsctp {
 

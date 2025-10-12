@@ -1,5 +1,0 @@
-
-FAIL PointerEvent.deviceProperties via DevicePropertiesInit promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: DeviceProperties"
-FAIL PointerEvent.deviceProperties via empty DevicePropertiesInit promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: DeviceProperties"
-FAIL No deviceProperties in PointerEventInit assert_equals: expected (object) null but got (undefined) undefined
-

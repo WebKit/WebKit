@@ -9,6 +9,7 @@
  */
 #include "modules/rtp_rtcp/source/rtp_header_extension_size.h"
 
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "test/gtest.h"
 

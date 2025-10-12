@@ -41,7 +41,7 @@ class Device;
 class XRProjectionLayer;
 
 class XRView : public RefCountedAndCanMakeWeakPtr<XRView>, public WGPUXRViewImpl {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(XRView);
 public:
     static Ref<XRView> create(Device& device)
     {
@@ -56,14 +56,14 @@ public:
 
     void setLabel(String&&);
 
-    bool isValid() const;
-    Device& device();
+    bool isValid() const { return true; }
+    Device& device() { return m_device; }
 
 private:
     XRView(bool, Device&);
     XRView(Device&);
 
-    Ref<Device> m_device;
+    const Ref<Device> m_device;
 };
 
 } // namespace WebGPU

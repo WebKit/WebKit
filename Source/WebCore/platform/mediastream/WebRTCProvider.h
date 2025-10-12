@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "MDNSRegisterError.h"
-#include "MediaCapabilitiesInfo.h"
-#include "RTCDataChannelRemoteHandlerConnection.h"
-#include "RTCRtpCapabilities.h"
-#include "ScriptExecutionContextIdentifier.h"
+#include <WebCore/MDNSRegisterError.h>
+#include <WebCore/MediaCapabilitiesInfo.h>
+#include <WebCore/RTCDataChannelRemoteHandlerConnection.h>
+#include <WebCore/RTCRtpCapabilities.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 #include <wtf/TZoneMalloc.h>

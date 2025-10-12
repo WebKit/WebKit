@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "HTMLTextFormControlElement.h"
+#include <WebCore/HTMLTextFormControlElement.h>
 #include <memory>
 #include <wtf/ValueOrReference.h>
 
@@ -77,15 +77,11 @@ public:
     FileList* filesForBindings() { return files(); }
     void setFilesForBindings(RefPtr<FileList>&& fileList) { return setFiles(WTFMove(fileList), WasSetByJavaScript::Yes); }
     WEBCORE_EXPORT unsigned height() const;
-    WEBCORE_EXPORT void setHeight(unsigned);
     bool indeterminate() const { return m_isIndeterminate; }
     WEBCORE_EXPORT void setIndeterminate(bool);
     WEBCORE_EXPORT RefPtr<HTMLElement> list() const;
     unsigned size() const { return m_size; }
     WEBCORE_EXPORT ExceptionOr<void> setSize(unsigned);
-    WEBCORE_EXPORT const AtomString& defaultValue() const;
-    WEBCORE_EXPORT void setDefaultValue(const AtomString&);
-    WEBCORE_EXPORT void setType(const AtomString&);
     WEBCORE_EXPORT ValueOrReference<String> value() const final;
     WEBCORE_EXPORT ExceptionOr<void> setValue(const String&, TextFieldEventBehavior = DispatchNoEvent, TextControlSetValueSelection = TextControlSetValueSelection::SetSelectionToEnd) final;
     WEBCORE_EXPORT void setValueForUser(const String&);
@@ -97,7 +93,6 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> stepUp(int = 1);
     WEBCORE_EXPORT ExceptionOr<void> stepDown(int = 1);
     WEBCORE_EXPORT unsigned width() const;
-    WEBCORE_EXPORT void setWidth(unsigned);
     bool hasSwitchAttribute() const { return m_hasSwitchAttribute; }
     WEBCORE_EXPORT String validationMessage() const final;
     std::optional<unsigned> selectionStartForBindings() const;
@@ -201,7 +196,7 @@ public:
     void setDefaultCheckedState(bool);
 
     bool sizeShouldIncludeDecoration(int& preferredSize) const;
-    float decorationWidth() const;
+    float decorationWidth(float inputWidth) const;
 
     // Checks if the specified string would be a valid value.
     // We should not call this for types with no string value such as CHECKBOX and RADIO.
@@ -226,7 +221,7 @@ public:
 
     bool rendererIsNeeded(const RenderStyle&) final;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
-    bool isReplaced(const RenderStyle&) const final;
+    bool isReplaced(const RenderStyle* = nullptr) const final;
     void willAttachRenderers() final;
     void didAttachRenderers() final;
     void didDetachRenderers() final;
@@ -245,9 +240,6 @@ public:
 
     Vector<String> acceptMIMETypes() const;
     Vector<String> acceptFileExtensions() const;
-    WEBCORE_EXPORT String alt() const;
-
-    URL src() const;
 
     unsigned effectiveMaxLength() const;
 
@@ -305,7 +297,7 @@ public:
     // Functions for InputType classes.
     void setValueInternal(const String&, TextFieldEventBehavior);
     bool isTextFormControlFocusable() const;
-    bool isTextFormControlKeyboardFocusable(KeyboardEvent*) const;
+    bool isTextFormControlKeyboardFocusable(const FocusEventData&) const;
     bool isTextFormControlMouseFocusable() const;
     bool valueAttributeWasUpdatedAfterParsing() const { return m_valueAttributeWasUpdatedAfterParsing; }
 
@@ -369,7 +361,7 @@ private:
 
     void defaultEventHandler(Event&) final;
 
-    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) override;
+    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) const override;
 
     enum AutoCompleteSetting : uint8_t { Uninitialized, On, Off };
     static constexpr int defaultSize = 20;
@@ -383,7 +375,7 @@ private:
 
     int defaultTabIndex() const final;
     bool hasCustomFocusLogic() const final;
-    bool isKeyboardFocusable(KeyboardEvent*) const final;
+    bool isKeyboardFocusable(const FocusEventData&) const final;
     bool isMouseFocusable() const final;
     bool isEnumeratable() const final;
     bool isLabelable() const final;

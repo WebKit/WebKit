@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FloatSize.h"
-#include "ScrollTypes.h"
+#include <WebCore/FloatSize.h>
+#include <WebCore/ScrollTypes.h>
 #include <wtf/Deque.h>
 #include <wtf/TZoneMalloc.h>
 

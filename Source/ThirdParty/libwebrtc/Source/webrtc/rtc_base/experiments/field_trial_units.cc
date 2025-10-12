@@ -9,13 +9,16 @@
  */
 #include "rtc_base/experiments/field_trial_units.h"
 
-#include <stdio.h>
-
+#include <cstdio>
 #include <limits>
 #include <optional>
 #include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 
 // Large enough to fit "seconds", the longest supported unit name.
 #define RTC_TRIAL_UNIT_LENGTH_STR "7"

@@ -1,3 +1,4 @@
 
-PASS Test setTargetAtTime after an event in the same processing block
+PASS setTargetAtTime() after setValueAtTime()
+FAIL setTargetAtTime() after setTargetAtTime() assert_approx_equals: scheduled value at startSample2 expected 0.9999999403953552 +/- 5.960464477539063e-8 but got 0
 

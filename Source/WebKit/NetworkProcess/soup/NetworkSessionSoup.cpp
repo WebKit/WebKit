@@ -47,7 +47,7 @@ NetworkSessionSoup::NetworkSessionSoup(NetworkProcess& networkProcess, const Net
     , m_networkSession(makeUnique<SoupNetworkSession>(m_sessionID))
     , m_persistentCredentialStorageEnabled(parameters.persistentCredentialStorageEnabled)
 {
-    auto* storageSession = networkStorageSession();
+    CheckedPtr storageSession = networkStorageSession();
     ASSERT(storageSession);
 
     storageSession->setCookieAcceptPolicy(parameters.cookieAcceptPolicy);
@@ -75,7 +75,7 @@ SoupSession* NetworkSessionSoup::soupSession() const
 
 void NetworkSessionSoup::setCookiePersistentStorage(const String& storagePath, SoupCookiePersistentStorageType storageType)
 {
-    auto* storageSession = networkStorageSession();
+    CheckedPtr storageSession = networkStorageSession();
     if (!storageSession)
         return;
 
@@ -95,55 +95,29 @@ void NetworkSessionSoup::setCookiePersistentStorage(const String& storagePath, S
 
 void NetworkSessionSoup::clearCredentials(WallTime)
 {
-#if SOUP_CHECK_VERSION(2, 57, 1)
     soup_auth_manager_clear_cached_credentials(SOUP_AUTH_MANAGER(soup_session_get_feature(soupSession(), SOUP_TYPE_AUTH_MANAGER)));
-#endif
 }
 
-#if USE(SOUP2)
-static gboolean webSocketAcceptCertificateCallback(GTlsConnection* connection, GTlsCertificate* certificate, GTlsCertificateFlags errors, NetworkSessionSoup* session)
-{
-    if (DeprecatedGlobalSettings::allowsAnySSLCertificate())
-        return TRUE;
-
-    auto* soupMessage = static_cast<SoupMessage*>(g_object_get_data(G_OBJECT(connection), "wk-soup-message"));
-    return !session->soupNetworkSession().checkTLSErrors(soupURIToURL(soup_message_get_uri(soupMessage)), certificate, errors);
-}
-
-static void webSocketMessageNetworkEventCallback(SoupMessage* soupMessage, GSocketClientEvent event, GIOStream* connection, NetworkSessionSoup* session)
-{
-    if (event != G_SOCKET_CLIENT_TLS_HANDSHAKING)
-        return;
-
-    g_object_set_data(G_OBJECT(connection), "wk-soup-message", soupMessage);
-    g_signal_connect(connection, "accept-certificate", G_CALLBACK(webSocketAcceptCertificateCallback), session);
-}
-#endif
-
-std::unique_ptr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, NetworkSocketChannel& channel, const ResourceRequest& request, const String& protocol, const ClientOrigin&, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, StoredCredentialsPolicy)
+RefPtr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, NetworkSocketChannel& channel, const ResourceRequest& request, const String& protocol, const ClientOrigin&, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, StoredCredentialsPolicy)
 {
     GRefPtr<SoupMessage> soupMessage = request.createSoupMessage(blobRegistry());
     if (!soupMessage)
         return nullptr;
 
     if (request.url().protocolIs("wss"_s)) {
-#if USE(SOUP2)
-        g_signal_connect(soupMessage.get(), "network-event", G_CALLBACK(webSocketMessageNetworkEventCallback), this);
-#else
         g_signal_connect(soupMessage.get(), "accept-certificate", G_CALLBACK(+[](SoupMessage* message, GTlsCertificate* certificate, GTlsCertificateFlags errors,  NetworkSessionSoup* session) -> gboolean {
             if (DeprecatedGlobalSettings::allowsAnySSLCertificate())
                 return TRUE;
 
             return !session->soupNetworkSession().checkTLSErrors(soup_message_get_uri(message), certificate, errors);
         }), this);
-#endif
     }
 
-    bool shouldBlockCookies = networkStorageSession()->shouldBlockCookies(request, frameID, pageID, networkProcess().shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID));
+    bool shouldBlockCookies = checkedNetworkStorageSession()->shouldBlockCookies(request, frameID, pageID, networkProcess().shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID), WebCore::IsKnownCrossSiteTracker::No);
     if (shouldBlockCookies)
         soup_message_disable_feature(soupMessage.get(), SOUP_TYPE_COOKIE_JAR);
 
-    return makeUnique<WebSocketTask>(channel, request, soupSession(), soupMessage.get(), protocol);
+    return WebSocketTask::create(channel, request, soupSession(), soupMessage.get(), protocol);
 }
 
 void NetworkSessionSoup::setIgnoreTLSErrors(bool ignoreTLSErrors)

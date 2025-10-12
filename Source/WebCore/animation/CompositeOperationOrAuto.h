@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CompositeOperation.h"
+#include <WebCore/CompositeOperation.h>
 
 namespace WebCore {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +49,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #if ENABLE(CONTENT_FILTERING)
 #import <pal/spi/cocoa/NEFilterSourceSPI.h>
@@ -58,6 +59,8 @@
 #import "ExtensionKitSPI.h"
 #import "WKProcessExtension.h"
 #endif
+
+#import <pal/spi/cocoa/NetworkSPI.h>
 
 namespace WebKit {
 
@@ -116,6 +119,23 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
         [NEFilterSource setDelegation:&auditToken.value()];
 #endif
     m_enableModernDownloadProgress = parameters.enableModernDownloadProgress;
+
+#if ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
+    // See TestController::cocoaPlatformInitialize for supporting a local DNS resolver when !ENABLE(TEST_DNS_SERVER_IN_NETWORKING_PROCESS).
+    auto webPlatformTestDomain = "web-platform.test"_s;
+    if (parameters.localhostAliasesForTesting.contains(webPlatformTestDomain)) {
+        m_resolverConfig = adoptOSObject(nw_resolver_config_create());
+        if (auto resolverConfig = m_resolverConfig) {
+            nw_resolver_config_set_protocol(resolverConfig.get(), nw_resolver_protocol_dns53);
+            nw_resolver_config_set_class(resolverConfig.get(), nw_resolver_class_designated_direct);
+            nw_resolver_config_add_name_server(resolverConfig.get(), "127.0.0.1:8053");
+            nw_resolver_config_add_match_domain(resolverConfig.get(), webPlatformTestDomain.characters());
+            nw_privacy_context_require_encrypted_name_resolution(NW_DEFAULT_PRIVACY_CONTEXT, true, m_resolverConfig.get());
+        }
+    }
+#endif // ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
+
+    increaseFileDescriptorLimit();
 }
 
 RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const
@@ -143,8 +163,8 @@ std::optional<audit_token_t> NetworkProcess::sourceApplicationAuditToken() const
 HashSet<String> NetworkProcess::hostNamesWithHSTSCache(PAL::SessionID sessionID) const
 {
     HashSet<String> hostNames;
-    if (auto* networkSession = downcast<NetworkSessionCocoa>(this->networkSession(sessionID))) {
-        for (NSString *host in networkSession->hstsStorage().nonPreloadedHosts)
+    if (CheckedPtr networkSession = downcast<NetworkSessionCocoa>(this->networkSession(sessionID))) {
+        for (NSString *host in networkSession->protectedHSTSStorage().get().nonPreloadedHosts)
             hostNames.add(host);
     }
     return hostNames;
@@ -152,9 +172,9 @@ HashSet<String> NetworkProcess::hostNamesWithHSTSCache(PAL::SessionID sessionID)
 
 void NetworkProcess::deleteHSTSCacheForHostNames(PAL::SessionID sessionID, const Vector<String>& hostNames)
 {
-    if (auto* networkSession = downcast<NetworkSessionCocoa>(this->networkSession(sessionID))) {
+    if (CheckedPtr networkSession = downcast<NetworkSessionCocoa>(this->networkSession(sessionID))) {
         for (auto& hostName : hostNames)
-            [networkSession->hstsStorage() resetHSTSForHost:hostName.createNSString().get()];
+            [networkSession->protectedHSTSStorage() resetHSTSForHost:hostName.createNSString().get()];
     }
 }
 
@@ -162,8 +182,8 @@ void NetworkProcess::clearHSTSCache(PAL::SessionID sessionID, WallTime modifiedS
 {
     NSTimeInterval timeInterval = modifiedSince.secondsSinceEpoch().seconds();
     RetainPtr date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
-    if (auto* networkSession = downcast<NetworkSessionCocoa>(this->networkSession(sessionID)))
-        [networkSession->hstsStorage() resetHSTSHostsSinceDate:date.get()];
+    if (CheckedPtr networkSession = downcast<NetworkSessionCocoa>(this->networkSession(sessionID)))
+        [networkSession->protectedHSTSStorage() resetHSTSHostsSinceDate:date.get()];
 }
 
 void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)
@@ -172,7 +192,7 @@ void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<vo
         m_clearCacheDispatchGroup = adoptOSObject(dispatch_group_create());
 
     RetainPtr group = m_clearCacheDispatchGroup.get();
-    dispatch_group_async(group.get(), dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
+    dispatch_group_async(group.get(), RetainPtr { mainDispatchQueueSingleton() }.get(), makeBlockPtr([this, protectedThis = Ref { *this }, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
         auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
         forEachNetworkSession([modifiedSince, &aggregator](NetworkSession& session) {
             if (RefPtr cache = session.cache())
@@ -200,14 +220,14 @@ void saveCookies(NSHTTPCookieStorage *cookieStorage, CompletionHandler<void()>&&
     ASSERT(cookieStorage);
     [cookieStorage _saveCookies:makeBlockPtr([completionHandler = WTFMove(completionHandler)]() mutable {
         // CFNetwork may call the completion block on a background queue, so we need to redispatch to the main thread.
-        RunLoop::protectedMain()->dispatch(WTFMove(completionHandler));
+        RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
     }).get()];
 }
 
 void NetworkProcess::platformFlushCookies(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-    auto* networkStorageSession = storageSession(sessionID);
+    CheckedPtr networkStorageSession = storageSession(sessionID);
     if (!networkStorageSession)
         return completionHandler();
 
@@ -227,15 +247,15 @@ const String& NetworkProcess::uiProcessBundleIdentifier() const
 void NetworkProcess::setBackupExclusionPeriodForTesting(PAL::SessionID sessionID, Seconds period, CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    if (auto* session = networkSession(sessionID))
-        session->protectedStorageManager()->setBackupExclusionPeriodForTesting(period, [callbackAggregator] { });
+    if (CheckedPtr session = networkSession(sessionID))
+        session->storageManager().setBackupExclusionPeriodForTesting(period, [callbackAggregator] { });
 }
 #endif // PLATFORM(IOS_FAMILY)
 
 #if HAVE(NW_PROXY_CONFIG)
 void NetworkProcess::clearProxyConfigData(PAL::SessionID sessionID)
 {
-    auto* session = networkSession(sessionID);
+    CheckedPtr session = networkSession(sessionID);
     if (!session)
         return;
 
@@ -244,7 +264,7 @@ void NetworkProcess::clearProxyConfigData(PAL::SessionID sessionID)
 
 void NetworkProcess::setProxyConfigData(PAL::SessionID sessionID, Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>>&& proxyConfigurations)
 {
-    auto* session = networkSession(sessionID);
+    CheckedPtr session = networkSession(sessionID);
     if (!session)
         return;
 

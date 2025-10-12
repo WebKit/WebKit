@@ -46,8 +46,8 @@ struct RevealItemRange {
     {
     }
 
-    NSUInteger location { 0 };
-    NSUInteger length { 0 };
+    uint64_t location { 0 };
+    uint64_t length { 0 };
 };
 
 class RevealItem {

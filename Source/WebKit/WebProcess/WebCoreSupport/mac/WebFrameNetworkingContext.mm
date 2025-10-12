@@ -31,6 +31,7 @@
 #import "WebPage.h"
 #import "WebProcess.h"
 #import "WebsiteDataStoreParameters.h"
+#import <WebCore/DocumentPage.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/LocalFrameLoaderClient.h>

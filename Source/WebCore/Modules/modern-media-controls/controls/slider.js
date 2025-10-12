@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016, 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016, 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,13 +32,13 @@ class Slider extends SliderBase
         this._primaryFill = new LayoutNode(`<div class="primary"></div>`);
         this._trackFill = new LayoutNode(`<div class="track"></div>`);
         this._secondaryFill = new LayoutNode(`<div class="secondary"></div>`);
+        this._trackFill.children = [this._secondaryFill];
 
         let fillContainer = new LayoutNode(`<div class="fill"></div>`);
-        fillContainer.children = [this._primaryFill, this._trackFill, this._secondaryFill];
-
         this._knob = new LayoutNode(`<div class="knob ${knobStyle}"></div>`);
+        fillContainer.children = [this._primaryFill, this._knob, this._trackFill];
 
-        this.appearanceContainer.children = [fillContainer, this._knob];
+        this.appearanceContainer.children = [fillContainer];
 
         this.height = 16;
         this._knobStyle = knobStyle;
@@ -71,38 +71,8 @@ class Slider extends SliderBase
     {
         super.commit();
 
-        const scrubberWidth = (style => {
-            switch (style) {
-            case Slider.KnobStyle.Bar:
-                return 4;
-            case Slider.KnobStyle.Circle:
-                return 9;
-            case Slider.KnobStyle.None:
-                return 0;
-            }
-            console.error("Unknown Slider.KnobStyle");
-            return 0;
-        })(this._knobStyle);
-
-        const scrubberBorder = (style => {
-            switch (style) {
-            case Slider.KnobStyle.Bar:
-                return 1;
-            case Slider.KnobStyle.Circle:
-                return (-1 * scrubberWidth / 2);
-            case Slider.KnobStyle.None:
-                return 0;
-            }
-            console.error("Unknown Slider.KnobStyle");
-            return 0;
-        })(this._knobStyle);
-
-        const scrubberCenterX = (scrubberWidth / 2) + Math.round((this.width - scrubberWidth) * this.value);
-        this._primaryFill.element.style.width = `${scrubberCenterX - (scrubberWidth / 2) - scrubberBorder}px`;
-        this._trackFill.element.style.left = `${scrubberCenterX + (scrubberWidth / 2) + scrubberBorder}px`;
-        this._secondaryFill.element.style.left = `${scrubberCenterX + (scrubberWidth / 2) + scrubberBorder}px`;
-        this._secondaryFill.element.style.right = `${(1 - this.secondaryValue) * 100}%`;
-        this._knob.element.style.left = `${scrubberCenterX}px`;
+        this._primaryFill.element.style.flexGrow = 100 * this.value;
+        this._trackFill.element.style.flexGrow = 100 * (1 - this.value);
     }
 
 }

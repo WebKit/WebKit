@@ -627,14 +627,14 @@ void av1_estimate_block_intra(int plane, int block, int row, int col,
 
   av1_predict_intra_block_facade(cm, xd, plane, col, row, tx_size);
 
-  if (args->prune_mode_based_on_sad) {
+  if (args->prune_mode_based_on_sad || args->prune_palette_sad) {
     unsigned int this_sad = cpi->ppi->fn_ptr[plane_bsize].sdf(
         p->src.buf, p->src.stride, pd->dst.buf, pd->dst.stride);
     const unsigned int sad_threshold =
         args->best_sad != UINT_MAX ? args->best_sad + (args->best_sad >> 4)
                                    : UINT_MAX;
     // Skip the evaluation of current mode if its SAD is more than a threshold.
-    if (this_sad > sad_threshold) {
+    if (args->prune_mode_based_on_sad && this_sad > sad_threshold) {
       // For the current mode, set rate and distortion to maximum possible
       // values and return.
       // Note: args->rdc->rate is checked in av1_nonrd_pick_intra_mode() to skip
@@ -708,7 +708,8 @@ void av1_estimate_intra_mode(AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bsize,
                              PRED_BUFFER *tmp_buffers,
                              PRED_BUFFER **this_mode_pred, RD_STATS *best_rdc,
                              BEST_PICKMODE *best_pickmode,
-                             PICK_MODE_CONTEXT *ctx) {
+                             PICK_MODE_CONTEXT *ctx,
+                             unsigned int *best_sad_norm) {
   AV1_COMMON *const cm = &cpi->common;
   MACROBLOCKD *const xd = &x->e_mbd;
   MB_MODE_INFO *const mi = xd->mi[0];
@@ -806,6 +807,8 @@ void av1_estimate_intra_mode(AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bsize,
 
   struct estimate_block_intra_args args;
   init_estimate_block_intra_args(&args, cpi, x);
+  if (prune_palette_testing_inter(cpi, x->source_variance))
+    args.prune_palette_sad = true;
   TX_SIZE intra_tx_size = AOMMIN(
       AOMMIN(max_txsize_lookup[bsize],
              tx_mode_to_biggest_tx_size[txfm_params->tx_mode_search_type]),
@@ -930,4 +933,7 @@ void av1_estimate_intra_mode(AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bsize,
     memset(ctx->blk_skip, 0,
            sizeof(x->txfm_search_info.blk_skip[0]) * ctx->num_4x4_blk);
   mi->tx_size = best_pickmode->best_tx_size;
+
+  *best_sad_norm = args.best_sad >>
+                   (b_width_log2_lookup[bsize] + b_height_log2_lookup[bsize]);
 }

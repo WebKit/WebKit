@@ -10,19 +10,20 @@
 #ifndef NET_DCSCTP_SOCKET_TRANSMISSION_CONTROL_BLOCK_H_
 #define NET_DCSCTP_SOCKET_TRANSMISSION_CONTROL_BLOCK_H_
 
-#include <cstdint>
+#include <cstddef>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
-#include <vector>
 
-#include "absl/functional/bind_front.h"
 #include "absl/strings/string_view.h"
-#include "api/task_queue/task_queue_base.h"
-#include "net/dcsctp/common/sequence_numbers.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/chunk/cookie_echo_chunk.h"
 #include "net/dcsctp/packet/sctp_packet.h"
+#include "net/dcsctp/public/dcsctp_handover_state.h"
 #include "net/dcsctp/public/dcsctp_options.h"
 #include "net/dcsctp/public/dcsctp_socket.h"
 #include "net/dcsctp/rx/data_tracker.h"

@@ -43,6 +43,9 @@ ADDITIONAL_MIXINS = {
             '--use-permissive-pixel-comparison=${use_permissive_angle_pixel_comparison}',
         ],
     },
+    'no_tombstones': {
+        'args': ['--do-not-store-tombstones',],
+    },
     'samsung_s24': {
         'swarming': {
             'dimensions': {

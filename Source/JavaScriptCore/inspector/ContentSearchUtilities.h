@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "InspectorProtocolObjects.h"
+#include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/Forward.h>
 
 namespace JSC { namespace Yarr {

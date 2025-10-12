@@ -400,6 +400,17 @@
                 "ArchivePath",
                 "Base64"
             ]
+        },
+        {
+            "id": "PermissionState",
+            "type": "string",
+            "spec": "https://www.w3.org/TR/permissions/#dom-permissionstate",
+            "description": "Values represent the concept of a permission state.",
+            "enum": [
+                "granted",
+                "denied",
+                "prompt"
+            ]
         }
     ],
     "commands": [
@@ -439,7 +450,8 @@
             "description": "Try to close the specified browsing context. This can trigger an unload prompt and thereafter succeed or fail.",
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be closed." }
-            ]
+            ],
+            "async": true
         },
         {
             "name": "deleteSession",
@@ -905,6 +917,27 @@
             "condition": "defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC",
             "parameters": [
                 { "name": "identifier", "type": "string", "description": "The identifier of the extension to unload." }
+            ],
+            "async": true
+        },
+        {
+            "name": "setStorageAccessPermissionState",
+            "description": "Simulates user modification of a PermissionDescriptor's permission status for storage-access.",
+            "spec": "https://www.w3.org/TR/permissions/#webdriver-command-set-permission",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the targeted browsing context." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "description": "The handle for the frame to set storage access permission for." },
+                { "name": "state", "$ref": "PermissionState", "description": "The new state to be applied to the permission." }
+            ],
+            "async": true
+        },
+        {
+            "name": "setStorageAccessPolicy",
+            "description": "Modifies the storage access policy for the specified browsing context.",
+            "spec": "https://privacycg.github.io/storage-access/#set-storage-access-command",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "blocked", "type": "boolean", "description": "Whether to block third-party cookie storage access." }
             ],
             "async": true
         },

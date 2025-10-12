@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/ctor-gain.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/gain-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/gain.html

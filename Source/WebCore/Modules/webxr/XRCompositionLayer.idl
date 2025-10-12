@@ -29,8 +29,7 @@
     EnabledBySetting=WebXRLayersAPIEnabled,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=Window,
-    JSGenerateToJSObject,
-    JSGenerateToNativeObject,
+    JSGenerateToNativeObject
 ] interface XRCompositionLayer : WebXRLayer {
     readonly attribute XRLayerLayout layout;
 

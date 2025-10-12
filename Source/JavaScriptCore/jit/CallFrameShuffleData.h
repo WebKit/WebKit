@@ -27,8 +27,8 @@
 
 #if ENABLE(JIT)
 
-#include "RegisterMap.h"
-#include "ValueRecovery.h"
+#include <JavaScriptCore/RegisterMap.h>
+#include <JavaScriptCore/ValueRecovery.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC {

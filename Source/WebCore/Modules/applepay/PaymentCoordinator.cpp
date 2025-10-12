@@ -35,6 +35,7 @@
 #include "ApplePayShippingMethod.h"
 #include "ApplePayShippingMethodUpdate.h"
 #include "Document.h"
+#include "DocumentPage.h"
 #include "ExceptionDetails.h"
 #include "LinkIconCollector.h"
 #include "Logging.h"
@@ -126,7 +127,7 @@ bool PaymentCoordinator::beginPaymentSession(Document& document, PaymentSession&
         document.addConsoleMessage(MessageSource::PaymentRequest, MessageLevel::Warning, "`enabled` is a deprecated value for `shippingContactEditingMode`. Please use `available` instead."_s);
 #endif
 
-    m_activeSession = &paymentSession;
+    m_activeSession = paymentSession;
     return true;
 }
 
@@ -200,83 +201,90 @@ void PaymentCoordinator::cancelPaymentSession()
 
 void PaymentCoordinator::validateMerchant(URL&& validationURL)
 {
-    if (!m_activeSession) {
+    RefPtr activeSession = m_activeSession;
+    if (!activeSession) {
         // It's possible that the payment has been aborted already.
         return;
     }
 
     PAYMENT_COORDINATOR_RELEASE_LOG("validateMerchant()");
-    m_activeSession->validateMerchant(WTFMove(validationURL));
+    activeSession->validateMerchant(WTFMove(validationURL));
 }
 
 void PaymentCoordinator::didAuthorizePayment(const Payment& payment)
 {
-    if (!m_activeSession) {
+    RefPtr activeSession = m_activeSession;
+    if (!activeSession) {
         // It's possible that the payment has been aborted already.
         return;
     }
 
     PAYMENT_COORDINATOR_RELEASE_LOG("didAuthorizePayment()");
-    m_activeSession->didAuthorizePayment(payment);
+    activeSession->didAuthorizePayment(payment);
 }
 
 void PaymentCoordinator::didSelectPaymentMethod(const PaymentMethod& paymentMethod)
 {
-    if (!m_activeSession) {
+    RefPtr activeSession = m_activeSession;
+    if (!activeSession) {
         // It's possible that the payment has been aborted already.
         return;
     }
 
     PAYMENT_COORDINATOR_RELEASE_LOG("didSelectPaymentMethod()");
-    m_activeSession->didSelectPaymentMethod(paymentMethod);
+    activeSession->didSelectPaymentMethod(paymentMethod);
 }
 
 void PaymentCoordinator::didSelectShippingMethod(const ApplePayShippingMethod& shippingMethod)
 {
-    if (!m_activeSession) {
+    RefPtr activeSession = m_activeSession;
+    if (!activeSession) {
         // It's possible that the payment has been aborted already.
         return;
     }
 
     PAYMENT_COORDINATOR_RELEASE_LOG("didSelectShippingMethod()");
-    m_activeSession->didSelectShippingMethod(shippingMethod);
+    activeSession->didSelectShippingMethod(shippingMethod);
 }
 
 void PaymentCoordinator::didSelectShippingContact(const PaymentContact& shippingContact)
 {
-    if (!m_activeSession) {
+    RefPtr activeSession = m_activeSession;
+    if (!activeSession) {
         // It's possible that the payment has been aborted already.
         return;
     }
 
     PAYMENT_COORDINATOR_RELEASE_LOG("didSelectShippingContact()");
-    m_activeSession->didSelectShippingContact(shippingContact);
+    activeSession->didSelectShippingContact(shippingContact);
 }
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
 
 void PaymentCoordinator::didChangeCouponCode(String&& couponCode)
 {
-    if (!m_activeSession) {
+    RefPtr activeSession = m_activeSession;
+    if (!activeSession) {
         // It's possible that the payment has been aborted already.
         return;
     }
 
     PAYMENT_COORDINATOR_RELEASE_LOG("didChangeCouponCode()");
-    m_activeSession->didChangeCouponCode(WTFMove(couponCode));
+    activeSession->didChangeCouponCode(WTFMove(couponCode));
 }
 
 #endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
 void PaymentCoordinator::didCancelPaymentSession(PaymentSessionError&& error)
 {
-    if (!m_activeSession) {
+    RefPtr activeSession = m_activeSession;
+    if (!activeSession) {
         // It's possible that the payment has been aborted already.
         return;
     }
 
     PAYMENT_COORDINATOR_RELEASE_LOG("didCancelPaymentSession()");
-    m_activeSession->didCancelPaymentSession(WTFMove(error));
+    activeSession->didCancelPaymentSession(WTFMove(error));
     m_activeSession = nullptr;
 }
 

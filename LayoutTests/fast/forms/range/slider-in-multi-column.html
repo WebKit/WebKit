@@ -47,7 +47,7 @@ function pageY(runner) {
     return acc;
 }
 
-function testIt(formIndex, colIndex, ofsX, expected)
+function testIt(formIndex, colIndex, expected)
 {
     const form = document.getElementById("f" + formIndex);
     const column = document.getElementById("c" + formIndex + "0");
@@ -55,8 +55,14 @@ function testIt(formIndex, colIndex, ofsX, expected)
 
     const sliderId = "c" + formIndex + colIndex;
     const slider = document.getElementById(sliderId);
+    const sliderThumb = internals.shadowRoot(slider).querySelector('[useragentpart="-webkit-slider-thumb"]');
 
-    const clickX = pageX(column) + colWidth * colIndex + ofsX;
+    const sliderWidth = slider.offsetWidth;
+    const sliderThumbWidth = sliderThumb.offsetWidth;
+
+    const offsetX = ((expected - 2) / 100) * (sliderWidth - sliderThumbWidth) + sliderThumbWidth / 2;
+
+    const clickX = pageX(column) + colWidth * colIndex + offsetX;
     const clickY = pageY(column) + slider.offsetHeight / 2;
 
     eventSender.mouseMoveTo(clickX, clickY);
@@ -78,7 +84,7 @@ function test()
 
     for (var formIndex = 0; formIndex < numForms; formIndex++) {
         for (var colIndex = 0; colIndex < numCols; colIndex++) {
-          testIt(formIndex, colIndex, 23, 20);
+          testIt(formIndex, colIndex, 20);
         }
     }
 }

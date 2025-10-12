@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "IDBKeyPath.h"
-#include "IndexKey.h"
+#include <WebCore/IDBKeyPath.h>
+#include <WebCore/IndexKey.h>
 #include <wtf/Forward.h>
 
 namespace JSC {

@@ -174,7 +174,7 @@ glong webkit_dom_html_pre_element_get_width(WebKitDOMHTMLPreElement* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_PRE_ELEMENT(self), 0);
     WebCore::HTMLPreElement* item = WebKit::core(self);
-    glong result = item->getIntegralAttribute(WebCore::HTMLNames::widthAttr);
+    glong result = item->integralAttribute(WebCore::HTMLNames::widthAttr);
     return result;
 }
 

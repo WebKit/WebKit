@@ -83,7 +83,7 @@ void Cursor::ensurePlatformCursor() const
     switch (m_type) {
     case Type::Pointer:
         // A null GdkCursor is the default cursor for the window.
-        m_platformCursor = 0;
+        m_platformCursor = nullptr;
         break;
     case Type::Cross:
         m_platformCursor = createNamedCursor("crosshair");

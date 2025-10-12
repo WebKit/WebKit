@@ -58,12 +58,5 @@ void RemotePageFullscreenManagerProxy::didReceiveMessage(IPC::Connection& connec
         manager->didReceiveMessage(connection, decoder);
 }
 
-bool RemotePageFullscreenManagerProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
-{
-    if (RefPtr manager = m_manager.get())
-        return manager->didReceiveSyncMessage(connection, decoder, replyEncoder);
-    return false;
-}
-
 }
 #endif

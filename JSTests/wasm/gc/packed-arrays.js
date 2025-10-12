@@ -335,7 +335,7 @@ function testTrapsNull(type) {
         (i32.const 0)))`);
     assert.throws(() => { m.exports.f(); },
                   WebAssembly.RuntimeError,
-                  "array.set to a null reference");
+                  "access to a null reference");
 }
 
 // Tests that setting `index` in a `type` array of length `len` is a runtime error

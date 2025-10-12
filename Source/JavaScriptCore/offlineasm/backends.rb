@@ -135,7 +135,7 @@ end
 class Label
     def lower(name)
         $asm.debugAnnotation codeOrigin.debugDirective if $enableDebugAnnotations
-        $asm.putsLabel(self.name[1..-1], @global, @export, @aligned, @alignTo)
+        $asm.putsLabel(self.name[1..-1], @global, @export, @aligned, @alignTo ? @alignTo.dump : @alignTo)
     end
 end
 

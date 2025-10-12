@@ -260,7 +260,7 @@ glong webkit_dom_html_embed_element_get_height(WebKitDOMHTMLEmbedElement* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_EMBED_ELEMENT(self), 0);
     WebCore::HTMLEmbedElement* item = WebKit::core(self);
-    glong result = item->getIntegralAttribute(WebCore::HTMLNames::heightAttr);
+    glong result = item->integralAttribute(WebCore::HTMLNames::heightAttr);
     return result;
 }
 
@@ -331,7 +331,7 @@ glong webkit_dom_html_embed_element_get_width(WebKitDOMHTMLEmbedElement* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_EMBED_ELEMENT(self), 0);
     WebCore::HTMLEmbedElement* item = WebKit::core(self);
-    glong result = item->getIntegralAttribute(WebCore::HTMLNames::widthAttr);
+    glong result = item->integralAttribute(WebCore::HTMLNames::widthAttr);
     return result;
 }
 

@@ -1,17 +1,16 @@
-/* Copyright (c) 2024, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */
+// Copyright 2024 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 //! Elliptic Curve Digital Signature Algorithm.
 //!
@@ -75,16 +74,43 @@ impl<C: ec::Curve> PublicKey<C> {
         self.point.to_der_subject_public_key_info()
     }
 
-    /// Verify `signature` as a valid signature of a digest of `signed_msg`
-    /// with this public key. SHA-256 will be used to produce the digest if the
-    /// curve of this public key is P-256. SHA-384 will be used to produce the
-    /// digest if the curve of this public key is P-384.
+    /// Verify `signature` as a valid ASN.1-based signature of a digest of
+    /// `signed_msg` with this public key. SHA-256 will be used to produce the
+    /// digest if the curve of this public key is P-256. SHA-384 will be used to
+    /// produce the digest if the curve of this public key is P-384.
     pub fn verify(&self, signed_msg: &[u8], signature: &[u8]) -> Result<(), InvalidSignatureError> {
         let digest = C::hash(signed_msg);
         let result = self.point.with_point_as_ec_key(|ec_key| unsafe {
             // Safety: `ec_key` is valid per `with_point_as_ec_key`.
             bssl_sys::ECDSA_verify(
                 /*type=*/ 0,
+                digest.as_slice().as_ffi_ptr(),
+                digest.len(),
+                signature.as_ffi_ptr(),
+                signature.len(),
+                ec_key,
+            )
+        });
+        if result == 1 {
+            Ok(())
+        } else {
+            Err(InvalidSignatureError)
+        }
+    }
+
+    /// Verify `signature` as a valid P1363-based signature of a digest of
+    /// `signed_msg` with this public key. SHA-256 will be used to produce the
+    /// digest if the curve of this public key is P-256. SHA-384 will be used to
+    /// produce the digest if the curve of this public key is P-384.
+    pub fn verify_p1363(
+        &self,
+        signed_msg: &[u8],
+        signature: &[u8],
+    ) -> Result<(), InvalidSignatureError> {
+        let digest = C::hash(signed_msg);
+        let result = self.point.with_point_as_ec_key(|ec_key| unsafe {
+            // Safety: `ec_key` is valid per `with_point_as_ec_key`.
+            bssl_sys::ECDSA_verify_p1363(
                 digest.as_slice().as_ffi_ptr(),
                 digest.len(),
                 signature.as_ffi_ptr(),
@@ -178,10 +204,10 @@ impl<C: ec::Curve> PrivateKey<C> {
         }
     }
 
-    /// Sign a digest of `to_be_signed` using this key and return the signature.
-    /// SHA-256 will be used to produce the digest if the curve of this public
-    /// key is P-256. SHA-384 will be used to produce the digest if the curve
-    /// of this public key is P-384.
+    /// Sign a digest of `to_be_signed` using this key and return the
+    /// ASN.1-based signature. SHA-256 will be used to produce the digest if the
+    /// curve of this public key is P-256. SHA-384 will be used to produce the
+    /// digest if the curve of this public key is P-384.
     pub fn sign(&self, to_be_signed: &[u8]) -> Vec<u8> {
         // Safety: `self.key` is valid by construction.
         let max_size = unsafe { bssl_sys::ECDSA_size(self.key.as_ffi_ptr()) };
@@ -215,6 +241,43 @@ impl<C: ec::Curve> PrivateKey<C> {
             })
         }
     }
+
+    /// Sign a digest of `to_be_signed` using this key and return the
+    /// P1363-based signature. SHA-256 will be used to produce the digest if
+    /// the curve of this public key is P-256. SHA-384 will be used to produce
+    /// the digest if the curve of this public key is P-384.
+    pub fn sign_p1363(&self, to_be_signed: &[u8]) -> Vec<u8> {
+        // Safety: `self.key` is valid by construction.
+        let max_size = unsafe { bssl_sys::ECDSA_size_p1363(self.key.as_ffi_ptr()) };
+        // No curve can be empty.
+        assert_ne!(max_size, 0);
+
+        let digest = C::hash(to_be_signed);
+
+        unsafe {
+            with_output_vec(max_size, |out_buf| {
+                let mut out_len = 0usize;
+                // Safety: `out_buf` points to at least `size` bytes, as
+                // required.
+                let result = {
+                    bssl_sys::ECDSA_sign_p1363(
+                        digest.as_slice().as_ffi_ptr(),
+                        digest.len(),
+                        out_buf,
+                        &mut out_len,
+                        max_size,
+                        self.key.as_ffi_ptr(),
+                    )
+                };
+                // Signing should never fail unless we're out of memory,
+                // which this crate doesn't handle.
+                assert_eq!(result, 1);
+                assert!(out_len <= max_size);
+                // Safety: `out_len` bytes have been written.
+                out_len
+            })
+        }
+    }
 }
 
 #[cfg(test)]
@@ -226,15 +289,23 @@ mod test {
         let signed_message = b"hello world";
         let key = PrivateKey::<C>::generate();
         let mut sig = key.sign(signed_message);
+        let mut sig_p1363 = key.sign_p1363(signed_message);
 
         let public_key = PublicKey::<C>::from_der_subject_public_key_info(
             key.to_der_subject_public_key_info().as_ref(),
         )
         .unwrap();
         assert!(public_key.verify(signed_message, sig.as_slice()).is_ok());
+        assert!(public_key
+            .verify_p1363(signed_message, sig_p1363.as_slice())
+            .is_ok());
 
         sig[10] ^= 1;
         assert!(public_key.verify(signed_message, sig.as_slice()).is_err());
+        sig_p1363[10] ^= 1;
+        assert!(public_key
+            .verify_p1363(signed_message, sig_p1363.as_slice())
+            .is_err());
     }
 
     #[test]

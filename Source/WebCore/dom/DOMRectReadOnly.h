@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "DOMRectInit.h"
-#include "FloatConversion.h"
-#include "FloatRect.h"
-#include "ScriptWrappable.h"
+#include <WebCore/DOMRectInit.h>
+#include <WebCore/FloatConversion.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/ScriptWrappable.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NoVirtualDestructorBase.h>
 #include <wtf/Ref.h>

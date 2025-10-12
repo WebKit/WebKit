@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(COCOA)
 
 #include <wtf/RefPtr.h>
@@ -68,6 +69,13 @@ std::optional<OpusCookieContents> parseOpusPrivateData(std::span<const uint8_t> 
 bool parseOpusTOCData(std::span<const uint8_t> frameData, OpusCookieContents&);
 RefPtr<AudioInfo> createOpusAudioInfo(const OpusCookieContents&);
 Vector<uint8_t> createOpusPrivateData(const AudioStreamBasicDescription&, uint16_t preSkip = 0);
+
+#if ENABLE(OPUS)
+WEBCORE_EXPORT void setHasOpusDecoder(bool);
+#endif
+#if ENABLE(VORBIS)
+WEBCORE_EXPORT void setHasVorbisDecoder(bool);
+#endif
 
 }
 

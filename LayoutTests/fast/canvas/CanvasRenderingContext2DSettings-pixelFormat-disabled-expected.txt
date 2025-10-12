@@ -1,12 +1,12 @@
-Test that the pixelFormat member of CanvasRenderingContext2DSettings is unsupported when CanvasPixelFormatEnabled=false.
+Test that the colorType member of CanvasRenderingContext2DSettings is unsupported when CanvasColorTypeEnabled=false.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS testSettings.pixelFormat is undefined.
-PASS testSettings.pixelFormat is undefined.
-PASS testSettings.pixelFormat is undefined.
-PASS testSettings.pixelFormat is undefined.
+PASS testSettings.colorType is undefined.
+PASS testSettings.colorType is undefined.
+PASS testSettings.colorType is undefined.
+PASS testSettings.colorType is undefined.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -62,16 +62,4 @@ void JSIDBCursor::visitAdditionalChildren(Visitor& visitor)
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSIDBCursor);
 
-JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<IDBCursor>&& cursor)
-{
-    if (is<IDBCursorWithValue>(cursor))
-        return createWrapper<IDBCursorWithValue>(globalObject, WTFMove(cursor));
-    return createWrapper<IDBCursor>(globalObject, WTFMove(cursor));
-}
-
-JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, IDBCursor& cursor)
-{
-    return wrap(lexicalGlobalObject, globalObject, cursor);
-}
-
 } // namespace WebCore

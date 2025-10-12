@@ -28,6 +28,7 @@
 #include "NodeInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderText.h"
 #include "RenderTextControlSingleLine.h"
@@ -103,12 +104,27 @@ RenderBox::LogicalExtentComputedValues RenderTextControl::computeLogicalHeight(L
     if (!innerText)
         return RenderBox::computeLogicalHeight(LayoutUnit(), LayoutUnit());
 
-    if (style().fieldSizing() == FieldSizing::Content)
-        return RenderBox::computeLogicalHeight(logicalHeight, logicalTop);
+    if (style().fieldSizing() == FieldSizing::Content) {
+        auto logicalHeightExtent = RenderBox::computeLogicalHeight(logicalHeight, logicalTop);
+        if (style().logicalHeight().isSpecified())
+            return logicalHeightExtent;
+
+        auto placeholderLogicalHeight = [&] -> LayoutUnit {
+            CheckedPtr placeholder = textFormControlElement().placeholderElement();
+            if (!placeholder)
+                return { };
+            CheckedPtr placeholderBox = placeholder->renderBox();
+            if (!placeholderBox)
+                return { };
+            return placeholderBox->computeLogicalHeight(placeholderBox->logicalHeight(), placeholderBox->logicalTop()).m_extent;
+        };
+        logicalHeightExtent.m_extent = std::max(logicalHeightExtent.m_extent, placeholderLogicalHeight());
+        return logicalHeightExtent;
+    }
 
     if (RenderBox* innerTextBox = innerText->renderBox()) {
         LayoutUnit nonContentHeight = innerTextBox->borderAndPaddingLogicalHeight() + innerTextBox->marginLogicalHeight();
-        logicalHeight = computeControlLogicalHeight(innerTextBox->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes), nonContentHeight);
+        logicalHeight = computeControlLogicalHeight(innerTextBox->lineHeight(), nonContentHeight);
 
         // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.
         auto shouldIncludeScrollbarHeight = [&] {
@@ -148,7 +164,7 @@ float RenderTextControl::getAverageCharWidth()
     if (style().fontCascade().fastAverageCharWidthIfAvailable(width))
         return width;
 
-    const UChar ch = '0';
+    const char16_t ch = '0';
     const String str = span(ch);
     const FontCascade& font = style().fontCascade();
     TextRun textRun = constructTextRun(str, style(), ExpansionBehavior::allowRightOnly());
@@ -164,8 +180,6 @@ float RenderTextControl::scaleEmToUnits(int x) const
 
 void RenderTextControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    // FIXME: Fix field-sizing: content with size containment
-    // https://bugs.webkit.org/show_bug.cgi?id=269169
     if (style().fieldSizing() == FieldSizing::Content)
         return RenderBlockFlow::computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
 
@@ -178,9 +192,11 @@ void RenderTextControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
     }
     // Use average character width. Matches IE.
     maxLogicalWidth = preferredContentLogicalWidth(const_cast<RenderTextControl*>(this)->getAverageCharWidth());
+    maxLogicalWidth = RenderTheme::singleton().adjustedMaximumLogicalWidthForControl(style(), textFormControlElement(), maxLogicalWidth);
+
     auto& logicalWidth = style().logicalWidth();
     if (logicalWidth.isCalculated())
-        minLogicalWidth = std::max(0_lu, valueForLength(logicalWidth, 0_lu));
+        minLogicalWidth = std::max(0_lu, Style::evaluate<LayoutUnit>(logicalWidth, 0_lu, Style::ZoomNeeded { }));
     else if (!logicalWidth.isPercent())
         minLogicalWidth = maxLogicalWidth;
 }
@@ -196,8 +212,8 @@ void RenderTextControl::computePreferredLogicalWidths()
     m_minPreferredLogicalWidth = 0;
     m_maxPreferredLogicalWidth = 0;
 
-    if (style().logicalWidth().isFixed() && style().logicalWidth().value() >= 0)
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style().logicalWidth());
+    if (auto fixedLogicalWidth = style().logicalWidth().tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositiveOrZero())
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
     else
         computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
 
@@ -216,11 +232,22 @@ void RenderTextControl::layoutExcludedChildren(RelayoutChildren relayoutChildren
 {
     RenderBlockFlow::layoutExcludedChildren(relayoutChildren);
 
-    HTMLElement* placeholder = textFormControlElement().placeholderElement();
-    RenderElement* placeholderRenderer = placeholder ? placeholder->renderer() : 0;
+    auto* placeholder = textFormControlElement().placeholderElement();
+    if (!placeholder)
+        return;
+
+    CheckedPtr placeholderRenderer = placeholder->renderer();
     if (!placeholderRenderer)
         return;
+
     placeholderRenderer->setIsExcludedFromNormalLayout(true);
+
+    if (style().fieldSizing() == FieldSizing::Content) {
+        // In order to take placeholder height into account while computing the size of the input box, we need to
+        // layout the placeholder too (which is how excluded content normally works).
+        placeholderRenderer->setChildNeedsLayout(MarkOnlyThis);
+        placeholderRenderer->layoutIfNeeded();
+    }
 
     if (relayoutChildren == RelayoutChildren::Yes) {
         // The markParents arguments should be false because this function is
@@ -239,9 +266,8 @@ bool RenderTextControl::canScroll() const
 
 int RenderTextControl::innerLineHeight() const
 {
-    auto innerText = innerTextElement();
-    if (innerText && innerText->renderer())
-        return innerText->renderer()->style().computedLineHeight();
+    if (auto innerTextElement = this->innerTextElement(); innerTextElement && innerTextElement->renderer())
+        return innerTextElement->renderer()->style().computedLineHeight();
     return style().computedLineHeight();
 }
 #endif

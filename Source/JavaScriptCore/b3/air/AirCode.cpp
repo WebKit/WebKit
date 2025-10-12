@@ -352,9 +352,9 @@ unsigned Code::jsHash() const
     return result;
 }
 
-void Code::setNumEntrypoints(unsigned numEntryPoints)
+void Code::setNumEntrypoints(unsigned numEntrypoints)
 {
-    m_prologueGenerators = { numEntryPoints, m_defaultPrologueGenerator.copyRef() };
+    m_prologueGenerators = { numEntrypoints, m_defaultPrologueGenerator.copyRef() };
 }
 
 bool Code::usesSIMD() const

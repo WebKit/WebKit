@@ -86,6 +86,10 @@ RTC_EXPORT std::optional<std::string> H264ProfileLevelIdToString(
 // etc).
 RTC_EXPORT bool H264IsSameProfile(const CodecParameterMap& params1,
                                   const CodecParameterMap& params2);
+// Returns true if the parameters have the same H264 profile (Baseline, High,
+// etc) and same level.
+RTC_EXPORT bool H264IsSameProfileAndLevel(const CodecParameterMap& params1,
+                                          const CodecParameterMap& params2);
 
 }  // namespace webrtc
 

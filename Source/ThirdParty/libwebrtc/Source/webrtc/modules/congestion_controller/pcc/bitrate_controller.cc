@@ -12,10 +12,16 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <cstdlib>
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
+
+#include "api/units/data_rate.h"
+#include "modules/congestion_controller/pcc/monitor_interval.h"
+#include "modules/congestion_controller/pcc/utility_function.h"
 
 namespace webrtc {
 namespace pcc {

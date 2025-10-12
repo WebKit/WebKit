@@ -28,10 +28,12 @@
 #include "config.h"
 #include "JSCustomElementInterface.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "CustomElementRegistry.h"
 #include "DOMWrapperWorld.h"
 #include "ElementRareData.h"
 #include "EventLoop.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLFormElement.h"
 #include "HTMLMaybeFormAssociatedCustomElement.h"
 #include "HTMLUnknownElement.h"
@@ -432,6 +434,11 @@ void JSCustomElementInterface::setFormStateRestoreCallback(JSObject* callback)
 void JSCustomElementInterface::didUpgradeLastElementInConstructionStack()
 {
     m_constructionStack.last() = nullptr;
+}
+
+ScriptExecutionContext* JSCustomElementInterface::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
 }
 
 template<typename Visitor>

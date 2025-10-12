@@ -27,13 +27,13 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "BasicCredential.h"
-#include "DigitalCredentialsProtocols.h"
-#include "DigitalCredentialsRequestData.h"
-#include "JSDOMPromiseDeferred.h"
-#include "JSDOMPromiseDeferredForward.h"
-#include "UnvalidatedDigitalCredentialRequest.h"
 #include <JavaScriptCore/Strong.h>
+#include <WebCore/BasicCredential.h>
+#include <WebCore/DigitalCredentialsProtocols.h>
+#include <WebCore/DigitalCredentialsRequestData.h>
+#include <WebCore/JSDOMPromiseDeferred.h>
+#include <WebCore/JSDOMPromiseDeferredForward.h>
+#include <WebCore/UnvalidatedDigitalCredentialRequest.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -65,6 +65,11 @@ public:
     }
 
     static void discoverFromExternalSource(const Document&, CredentialPromise&&, CredentialRequestOptions&&);
+
+    static bool userAgentAllowsProtocol(const String& protocol)
+    {
+        return protocol == "org-iso-mdoc"_s;
+    }
 
 private:
     DigitalCredential(JSC::Strong<JSC::JSObject>&&, IdentityCredentialProtocol);

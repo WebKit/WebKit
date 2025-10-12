@@ -6,6 +6,10 @@
 
 // copyvertex.inc.h: Implementation of vertex buffer copying and conversion functions
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 namespace rx
 {
 

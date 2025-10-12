@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: SecurityError: Attempted to use a non-registrable domain.
 
 FAIL Finite resource timing entries buffer size assert_equals: Document domain had no impact on the timing-allow check expected "PASS" but got "FAIL - iframe document.domain was not set"
 

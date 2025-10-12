@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "IDBKeyPath.h"
-#include "IDBResourceIdentifier.h"
+#include <WebCore/IDBKeyPath.h>
+#include <WebCore/IDBResourceIdentifier.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
@@ -46,7 +46,7 @@ namespace IDBServer {
 class UniqueIDBDatabaseConnection;
 
 class IDBConnectionToClientDelegate : public CanMakeThreadSafeCheckedPtr<IDBConnectionToClientDelegate> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(IDBConnectionToClientDelegate);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IDBConnectionToClientDelegate);
 public:
     virtual ~IDBConnectionToClientDelegate() = default;

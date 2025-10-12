@@ -11,6 +11,11 @@
 #include "modules/congestion_controller/pcc/rtt_tracker.h"
 
 #include <algorithm>
+#include <vector>
+
+#include "api/transport/network_types.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 
 namespace webrtc {
 namespace pcc {

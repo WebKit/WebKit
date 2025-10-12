@@ -38,7 +38,7 @@ NativeWebKeyboardEvent::NativeWebKeyboardEvent(WPEEvent* event, const String& te
 }
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
-    : WebKeyboardEvent(WebEvent(WebEventType::KeyDown, { }, WallTime::now()), text, "Unidentified"_s, "Unidentified"_s, "U+0000"_s, 0, 0, true, WTFMove(preeditUnderlines), WTFMove(preeditSelectionRange), false, false)
+    : WebKeyboardEvent(WebEvent(WebEventType::KeyDown, { }, MonotonicTime::now()), text, "Unidentified"_s, "Unidentified"_s, "U+0000"_s, 0, 0, true, WTFMove(preeditUnderlines), WTFMove(preeditSelectionRange), false, false)
 {
 }
 

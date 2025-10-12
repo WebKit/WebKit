@@ -6,6 +6,10 @@
 
 // system_utils: Defines common utility functions
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "util/test_utils.h"
 
 #include <EGL/egl.h>
@@ -14,6 +18,7 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <iterator>
 
 namespace angle
 {

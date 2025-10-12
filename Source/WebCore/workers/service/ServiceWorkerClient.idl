@@ -24,7 +24,6 @@
  */
 
 [
-    CustomToJSObject,
     EnabledBySetting=ServiceWorkersEnabled,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=ServiceWorker,

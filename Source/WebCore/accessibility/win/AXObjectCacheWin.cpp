@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2013 Apple Inc. All Rights Reserved.
- * Copyright (C) 2012 Serotek Corporation. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Serotek Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +28,12 @@
 #include "config.h"
 #include "AXObjectCache.h"
 
+#include "AXNotifications.h"
 #include "AccessibilityObject.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "Document.h"
+#include "DocumentPage.h"
+#include "NodeDocument.h"
 #include "Page.h"
 #include "RenderObject.h"
 
@@ -130,7 +132,7 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* o
 {
     if (!obj)
         return;
-    
+
     Document* document = obj->document();
     if (!document)
         return;

@@ -4187,6 +4187,13 @@ private:
             return;
         }
 
+        case MemoryCopy:
+        case MemoryFill: {
+            // They should be lowered already.
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+
         case B3::VectorExtractLane: {
             SIMDValue* value = m_value->as<SIMDValue>();
             auto lane = value->simdLane();
@@ -4405,6 +4412,12 @@ private:
             return;
         case B3::VectorMul:
             emitSIMDBinaryOp(Air::VectorMul);
+            return;
+        case B3::VectorMulHigh:
+            emitSIMDBinaryOp(Air::VectorMulHigh);
+            return;
+        case B3::VectorMulLow:
+            emitSIMDBinaryOp(Air::VectorMulLow);
             return;
         case B3::VectorDotProduct:
             emitSIMDMonomorphicBinaryOp(Air::VectorDotProduct);

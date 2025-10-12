@@ -29,7 +29,7 @@
 #if ENABLE(WPE_PLATFORM)
 #include "APIPageConfiguration.h"
 #include "APIViewClient.h"
-#include "AcceleratedBackingStoreDMABuf.h"
+#include "AcceleratedBackingStore.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebTouchEvent.h"
@@ -134,10 +134,10 @@ ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& co
     createWebPage(configuration);
     m_pageProxy->setIntrinsicDeviceScaleFactor(wpe_view_get_scale(m_wpeView.get()));
     m_pageProxy->windowScreenDidChange(m_displayID);
-    m_backingStore = AcceleratedBackingStoreDMABuf::create(*m_pageProxy, m_wpeView.get());
+    m_backingStore = AcceleratedBackingStore::create(*m_pageProxy, m_wpeView.get());
 
     auto& pageConfiguration = m_pageProxy->configuration();
-    m_pageProxy->initializeWebPage(pageConfiguration.openedSite(), pageConfiguration.initialSandboxFlags());
+    m_pageProxy->initializeWebPage(pageConfiguration.openedSite(), pageConfiguration.initialSandboxFlags(), pageConfiguration.initialReferrerPolicy());
 
     WebCore::SystemSettings::singleton().addObserver([this](const auto& state) {
         if (state.darkMode)
@@ -252,9 +252,9 @@ void ViewPlatform::updateAcceleratedSurface(uint64_t surfaceID)
     m_backingStore->updateSurfaceID(surfaceID);
 }
 
-RendererBufferFormat ViewPlatform::renderBufferFormat() const
+RendererBufferDescription ViewPlatform::renderBufferDescription() const
 {
-    return m_backingStore->bufferFormat();
+    return m_backingStore->bufferDescription();
 }
 
 void ViewPlatform::updateDisplayID()
@@ -371,6 +371,7 @@ gboolean ViewPlatform::handleEvent(WPEEvent* event)
         break;
     case WPE_EVENT_POINTER_DOWN:
         m_inputMethodFilter.cancelComposition();
+        wpe_view_focus_in(m_wpeView.get());
         [[fallthrough]];
     case WPE_EVENT_POINTER_UP:
     case WPE_EVENT_POINTER_MOVE:
@@ -463,6 +464,8 @@ void ViewPlatform::handleGesture(WPEEvent* event)
                 ));
                 page().handleMouseEvent(WebKit::NativeWebMouseEvent(simulatedEvent.get()));
             }
+
+            wpe_view_focus_in(m_wpeView.get());
 
             // Mouse up on the same location.
             {

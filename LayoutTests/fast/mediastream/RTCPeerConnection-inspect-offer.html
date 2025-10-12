@@ -49,6 +49,7 @@
 
                 testPassed("End of promise chain");
                 finishJSTest();
+                stream.getTracks().forEach(track => track.stop());
             })
             .catch(function (error) {
                 testFailed("Error caught in promise chain: " + error);

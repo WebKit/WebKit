@@ -26,7 +26,6 @@
 [
     CustomIsReachable,
     EnabledBySetting=CSSPaintingAPIEnabled,
-    JSGenerateToJSObject,
     JSCustomMarkFunction,
     Exposed=PaintWorklet,
     TaggedWrapper,

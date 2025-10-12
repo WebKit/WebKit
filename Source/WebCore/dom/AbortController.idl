@@ -25,6 +25,7 @@
 
 [
     Exposed=*,
+    JSCustomMarkFunction,
     GenerateAddOpaqueRoot
 ] interface AbortController {
     [CallWith=CurrentScriptExecutionContext] constructor();

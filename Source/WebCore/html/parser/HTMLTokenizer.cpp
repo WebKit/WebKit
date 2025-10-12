@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2008-2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile, Inc. http://www.torchmobile.com/
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2010 Google, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static inline LChar convertASCIIAlphaToLower(UChar character)
+static inline Latin1Character convertASCIIAlphaToLower(char16_t character)
 {
     ASSERT(isASCIIAlpha(character));
     return toASCIILowerUnchecked(character);
@@ -68,15 +68,15 @@ HTMLTokenizer::HTMLTokenizer(const HTMLParserOptions& options)
 {
 }
 
-inline void HTMLTokenizer::bufferASCIICharacter(UChar character)
+inline void HTMLTokenizer::bufferASCIICharacter(char16_t character)
 {
     ASSERT(character != kEndOfFileMarker);
     ASSERT(isASCII(character));
-    LChar narrowedCharacter = character;
+    Latin1Character narrowedCharacter = character;
     m_token.appendToCharacter(narrowedCharacter);
 }
 
-inline void HTMLTokenizer::bufferCharacter(UChar character)
+inline void HTMLTokenizer::bufferCharacter(char16_t character)
 {
     ASSERT(character != kEndOfFileMarker);
     m_token.appendToCharacter(character);
@@ -150,7 +150,7 @@ void HTMLTokenizer::flushBufferedEndTag()
     m_temporaryBuffer.clear();
 }
 
-bool HTMLTokenizer::commitToPartialEndTag(SegmentedString& source, UChar character, State state)
+bool HTMLTokenizer::commitToPartialEndTag(SegmentedString& source, char16_t character, State state)
 {
     ASSERT(source.currentCharacter() == character);
     appendToTemporaryBuffer(character);
@@ -200,7 +200,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 
     if (!m_preprocessor.peek(source, isNullCharacterSkippingState(m_state)))
         return haveBufferedCharacterToken();
-    UChar character = m_preprocessor.nextInputCharacter();
+    char16_t character = m_preprocessor.nextInputCharacter();
 
     // https://html.spec.whatwg.org/#tokenization
     switch (m_state) {
@@ -1396,7 +1396,7 @@ void HTMLTokenizer::updateStateFor(const AtomString& tagName)
         m_state = RAWTEXTState;
 }
 
-inline void HTMLTokenizer::appendToTemporaryBuffer(UChar character)
+inline void HTMLTokenizer::appendToTemporaryBuffer(char16_t character)
 {
     ASSERT(isASCII(character));
     m_temporaryBuffer.append(character);
@@ -1406,10 +1406,10 @@ inline bool HTMLTokenizer::temporaryBufferIs(ASCIILiteral expectedString)
 {
     if (m_temporaryBuffer.size() != expectedString.length())
         return false;
-    return equal(m_temporaryBuffer.data(), expectedString.span8());
+    return equal(m_temporaryBuffer.span().data(), expectedString.span8());
 }
 
-inline void HTMLTokenizer::appendToPossibleEndTag(UChar character)
+inline void HTMLTokenizer::appendToPossibleEndTag(char16_t character)
 {
     ASSERT(isASCII(character));
     m_bufferedEndTagName.append(character);
@@ -1419,7 +1419,7 @@ inline bool HTMLTokenizer::isAppropriateEndTag() const
 {
     if (m_bufferedEndTagName.size() != m_appropriateEndTagName.size())
         return false;
-    return equal(m_bufferedEndTagName.data(), m_appropriateEndTagName.span());
+    return equal(m_bufferedEndTagName.span().data(), m_appropriateEndTagName.span());
 }
 
 inline void HTMLTokenizer::parseError()

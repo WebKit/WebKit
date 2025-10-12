@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: AES-CBC and AES-CTR do not provide authentication by default, and implementing it manually can result in minor, but serious mistakes. We recommended using authenticated encryption like AES-GCM to protect against chosen-ciphertext attacks.
 
 PASS setup
 PASS Can wrap and unwrap RSASSA-PKCS1-v1_5 public key keys using spki and RSA-OAEP

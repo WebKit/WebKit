@@ -28,6 +28,7 @@
 
 #include <cstdio>
 #include <mutex>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if OS(DARWIN)
 #include <sys/sysctl.h>
@@ -47,16 +48,13 @@ int numberOfProcessorCores()
     if (s_numberOfCores > 0)
         return s_numberOfCores;
     
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    if (const char* coresEnv = getenv("WTF_numberOfProcessorCores")) {
-        unsigned numberOfCores;
-        if (sscanf(coresEnv, "%u", &numberOfCores) == 1) {
-            s_numberOfCores = numberOfCores;
+    if (CString coresEnv = getenv("WTF_numberOfProcessorCores"); !coresEnv.isNull()) {
+        if (auto numberOfCores = parseInteger<unsigned>(coresEnv.span())) {
+            s_numberOfCores = *numberOfCores;
             return s_numberOfCores;
-        } else
-            fprintf(stderr, "WARNING: failed to parse WTF_numberOfProcessorCores=%s\n", coresEnv);
+        }
+        SAFE_FPRINTF(stderr, "WARNING: failed to parse WTF_numberOfProcessorCores=%s\n", coresEnv);
     }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if OS(DARWIN)
     unsigned result;

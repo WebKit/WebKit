@@ -489,8 +489,10 @@ std::optional<unsigned> WebPopupMenuProxyGtk::typeAheadFindIndex(unsigned keyval
         if (!text)
             continue;
 
+IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
         if (!strncmp(prefix.get(), text.get(), strlen(prefix.get())))
             return index;
+IGNORE_CLANG_WARNINGS_END
     }
 
     return std::nullopt;

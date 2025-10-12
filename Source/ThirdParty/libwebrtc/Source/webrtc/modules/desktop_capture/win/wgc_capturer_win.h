@@ -15,11 +15,15 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 
+#include <cstddef>
 #include <map>
 #include <memory>
 
+#include "api/scoped_refptr.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
+#include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_capturer.h"
+#include "modules/desktop_capture/full_screen_window_detector.h"
 #include "modules/desktop_capture/win/screen_capture_utils.h"
 #include "modules/desktop_capture/win/wgc_capture_session.h"
 #include "modules/desktop_capture/win/wgc_capture_source.h"
@@ -72,7 +76,7 @@ class ScreenEnumerator final : public SourceEnumerator {
   ~ScreenEnumerator() override = default;
 
   bool FindAllSources(DesktopCapturer::SourceList* sources) override {
-    return webrtc::GetScreenList(sources);
+    return GetScreenList(sources);
   }
 };
 
@@ -109,6 +113,10 @@ class WgcCapturerWin : public DesktopCapturer {
 
   // Used in WgcCapturerTests.
   bool IsSourceBeingCaptured(SourceId id);
+  void SetUpFullScreenDetectorForTest(
+      bool use_heuristic,
+      DesktopCapturer::SourceId source_id,
+      bool fullscreen_slide_show_started_after_capture_start = true);
 
  private:
   typedef HRESULT(WINAPI* CreateDispatcherQueueControllerFunc)(
@@ -142,6 +150,11 @@ class WgcCapturerWin : public DesktopCapturer {
   // if the source is capturable and it creates the GraphicsCaptureItem for us.
   std::unique_ptr<WgcCaptureSource> capture_source_;
 
+  // DesktopCapturer::SourceId of the source that was selected by the user. It
+  // might not necessarily correspond to the `capture_source_` when the
+  // `full_screen_window_detector_` is active.
+  DesktopCapturer::SourceId selected_source_id_;
+
   // A map of all the sources we are capturing and the associated
   // WgcCaptureSession. Frames for the current source (indicated via
   // SelectSource) will be retrieved from the appropriate session when
@@ -162,6 +175,13 @@ class WgcCapturerWin : public DesktopCapturer {
   // A Direct3D11 device that is shared amongst the WgcCaptureSessions, who
   // require one to perform the capture.
   Microsoft::WRL::ComPtr<::ID3D11Device> d3d11_device_;
+
+  // This allows us to find full screen windows for applications in some
+  // specific cases.
+  scoped_refptr<FullScreenWindowDetector> full_screen_window_detector_;
+
+  // Used to make sure that we only log the usage of fullscreen detection once.
+  bool fullscreen_usage_logged_ = false;
 };
 
 }  // namespace webrtc

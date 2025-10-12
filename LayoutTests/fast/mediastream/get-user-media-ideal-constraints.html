@@ -11,6 +11,7 @@
 <script>
 promise_test(async (test) => {
     localVideo.srcObject = await navigator.mediaDevices.getUserMedia({video: {width: 2000, height: 1200, frameRate: 30 }});
+    test.add_cleanup(() => localVideo.srcObject.getTracks().forEach(track => track.stop()));
 
     const settings = localVideo.srcObject.getVideoTracks()[0].getSettings();
     assert_equals(settings.width, 2000, "settings width");

@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT event and promise ordering for navigation.reload() where the navigate event is canceled Test timed out
+PASS event and promise ordering for navigation.reload() where the navigate event is canceled
 

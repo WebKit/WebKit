@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ArrayBuffer.h"
-#include "ArrayBufferView.h"
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/ArrayBufferView.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

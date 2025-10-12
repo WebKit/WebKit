@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CellState.h"
-#include "IndexingType.h"
-#include "JSTypeInfo.h"
-#include "StructureID.h"
+#include <JavaScriptCore/CellState.h>
+#include <JavaScriptCore/IndexingType.h>
+#include <JavaScriptCore/JSTypeInfo.h>
+#include <JavaScriptCore/StructureID.h>
 
 namespace JSC {
 
@@ -59,16 +59,16 @@ public:
     TypeInfo typeInfo(TypeInfo::OutOfLineTypeFlags outOfLineTypeFlags) const { return TypeInfo(type(), inlineTypeFlags(), outOfLineTypeFlags); }
     CellState defaultCellState() const { return u.fields.defaultCellState; }
 
-    static constexpr int32_t typeInfoBlob(IndexingType indexingModeIncludingHistory, JSType type, TypeInfo::InlineTypeFlags inlineTypeFlags)
+    static constexpr uint32_t typeInfoBlob(IndexingType indexingModeIncludingHistory, JSType type, TypeInfo::InlineTypeFlags inlineTypeFlags)
     {
 #if CPU(LITTLE_ENDIAN)
-        return static_cast<int32_t>((static_cast<uint32_t>(indexingModeIncludingHistory) << 0) | (static_cast<uint32_t>(type) << 8) | (static_cast<uint32_t>(inlineTypeFlags) << 16) | (static_cast<uint32_t>(CellState::DefinitelyWhite) << 24));
+        return (static_cast<uint32_t>(indexingModeIncludingHistory) << 0) | (static_cast<uint32_t>(type) << 8) | (static_cast<uint32_t>(inlineTypeFlags) << 16) | (static_cast<uint32_t>(CellState::DefinitelyWhite) << 24);
 #else
-        return static_cast<int32_t>((static_cast<uint32_t>(indexingModeIncludingHistory) << 24) | (static_cast<uint32_t>(type) << 16) | (static_cast<uint32_t>(inlineTypeFlags) << 8) | (static_cast<uint32_t>(CellState::DefinitelyWhite) << 0));
+        return (static_cast<uint32_t>(indexingModeIncludingHistory) << 24) | (static_cast<uint32_t>(type) << 16) | (static_cast<uint32_t>(inlineTypeFlags) << 8) | (static_cast<uint32_t>(CellState::DefinitelyWhite) << 0);
 #endif
     }
 
-    int32_t blob() const { return u.word; }
+    uint32_t blob() const { return u.word; }
 
     static constexpr ptrdiff_t indexingModeIncludingHistoryOffset()
     {
@@ -83,7 +83,7 @@ private:
             TypeInfo::InlineTypeFlags inlineTypeFlags;
             CellState defaultCellState;
         } fields;
-        int32_t word;
+        uint32_t word;
 
         Data() { word = 0xbbadbeef; }
     };

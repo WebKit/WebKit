@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Node.h"
+#include <WebCore/Node.h>
 
 namespace WebCore {
 
@@ -37,6 +37,8 @@ struct BoundaryPoint {
 
     inline Document& document() const; // Defined in BoundaryPointInlines.h
     inline Ref<Document> protectedDocument() const; // Defined in BoundaryPointInlines.h
+
+    String debugDescription() const;
 };
 
 bool operator==(const BoundaryPoint&, const BoundaryPoint&);

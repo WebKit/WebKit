@@ -773,7 +773,7 @@ class Instruction
             $asm.putc "#{operands[1].clLValue(:int32)} = #{operands[0].clValue(:int8)};"
         when "sxh2i"
             $asm.putc "#{operands[1].clLValue(:int32)} = #{operands[0].clValue(:int16)};"
-        when "sxb2q"
+        when "sxb2q", "sxb2p"
             $asm.putc "#{operands[1].clLValue(:int64)} = #{operands[0].clValue(:int8)};"
         when "sxh2q"
             $asm.putc "#{operands[1].clLValue(:int64)} = #{operands[0].clValue(:int16)};"

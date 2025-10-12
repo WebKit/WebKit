@@ -1,0 +1,13 @@
+
+FAIL @function works inside shadow assert_equals: expected "10px" but got "--a()"
+FAIL Looking up document-global function assert_equals: expected "42px" but got "--a()"
+FAIL @function works inside nested shadow assert_equals: expected "11px" but got "--a()"
+FAIL @function defined in outer shadow is visible assert_equals: expected "12px" but got "--a()"
+FAIL Combining functions from various scopes assert_equals: expected "42px B C" but got "--a() --b() --c()"
+FAIL ::part() can not see inner functions assert_equals: expected "42px 14px" but got "--a() --b()"
+FAIL ::slotted() can see inner functions assert_equals: expected "42px 16px 15px" but got "--a() --b() --c()"
+FAIL :host can see inner functions assert_equals: expected "42px 17px 18px" but got "--a() --b() --c()"
+FAIL Outer functions can't see inner functions assert_equals: expected "20px C" but got "--b() --c()"
+FAIL Outer functions can't see inner functions (local vars) assert_equals: expected "22px C" but got "--d()"
+FAIL Function with same name in different scopes assert_equals: expected "24px" but got "--a()"
+

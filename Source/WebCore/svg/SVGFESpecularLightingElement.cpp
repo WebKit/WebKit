@@ -27,11 +27,11 @@
 #include "FESpecularLighting.h"
 #include "NodeName.h"
 #include "RenderElement.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "SVGFELightElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include "SVGRenderStyle.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -96,7 +96,7 @@ bool SVGFESpecularLightingElement::setFilterEffectAttribute(FilterEffect& filter
     switch (attrName.nodeName()) {
     case AttributeNames::lighting_colorAttr: {
         auto& style = renderer()->style();
-        auto color = style.colorWithColorFilter(style.svgStyle().lightingColor());
+        auto color = style.colorWithColorFilter(style.lightingColor());
         return effect.setLightingColor(color);
     }
     case AttributeNames::surfaceScaleAttr:
@@ -106,23 +106,23 @@ bool SVGFESpecularLightingElement::setFilterEffectAttribute(FilterEffect& filter
     case AttributeNames::specularExponentAttr:
         return effect.setSpecularExponent(specularExponent());
     case AttributeNames::azimuthAttr:
-        return effect.lightSource()->setAzimuth(lightElement()->azimuth());
+        return effect.lightSource().setAzimuth(lightElement()->azimuth());
     case AttributeNames::elevationAttr:
-        return effect.lightSource()->setElevation(lightElement()->elevation());
+        return effect.lightSource().setElevation(lightElement()->elevation());
     case AttributeNames::xAttr:
-        return effect.lightSource()->setX(lightElement()->x());
+        return effect.lightSource().setX(lightElement()->x());
     case AttributeNames::yAttr:
-        return effect.lightSource()->setY(lightElement()->y());
+        return effect.lightSource().setY(lightElement()->y());
     case AttributeNames::zAttr:
-        return effect.lightSource()->setZ(lightElement()->z());
+        return effect.lightSource().setZ(lightElement()->z());
     case AttributeNames::pointsAtXAttr:
-        return effect.lightSource()->setPointsAtX(lightElement()->pointsAtX());
+        return effect.lightSource().setPointsAtX(lightElement()->pointsAtX());
     case AttributeNames::pointsAtYAttr:
-        return effect.lightSource()->setPointsAtY(lightElement()->pointsAtY());
+        return effect.lightSource().setPointsAtY(lightElement()->pointsAtY());
     case AttributeNames::pointsAtZAttr:
-        return effect.lightSource()->setPointsAtZ(lightElement()->pointsAtZ());
+        return effect.lightSource().setPointsAtZ(lightElement()->pointsAtZ());
     case AttributeNames::limitingConeAngleAttr:
-        return effect.lightSource()->setLimitingConeAngle(lightElement()->limitingConeAngle());
+        return effect.lightSource().setLimitingConeAngle(lightElement()->limitingConeAngle());
     default:
         break;
     }
@@ -168,7 +168,7 @@ RefPtr<FilterEffect> SVGFESpecularLightingElement::createFilterEffect(const Filt
     Ref lightSource = lightElement->lightSource();
     auto& style = renderer->style();
 
-    auto color = style.colorWithColorFilter(style.svgStyle().lightingColor());
+    auto color = style.colorWithColorFilter(style.lightingColor());
 
     return FESpecularLighting::create(color, surfaceScale(), specularConstant(), specularExponent(), kernelUnitLengthX(), kernelUnitLengthY(), WTFMove(lightSource));
 }

@@ -98,7 +98,6 @@ class MultiviewTestBase : public ANGLETestBase
     {
         setWindowWidth(128);
         setWindowHeight(128);
-        setWebGLCompatibilityEnabled(true);
     }
     virtual ~MultiviewTestBase() {}
 
@@ -109,7 +108,7 @@ class MultiviewTestBase : public ANGLETestBase
 
 // Base class for multiview tests that don't need specific helper functions.
 class MultiviewTest : public MultiviewTestBase,
-                      public ::testing::TestWithParam<MultiviewImplementationParams>
+                      public ::testing::WithParamInterface<MultiviewImplementationParams>
 {
   protected:
     MultiviewTest() : MultiviewTestBase(GetParam()) {}

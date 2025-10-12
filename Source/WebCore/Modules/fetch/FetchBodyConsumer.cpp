@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2024 Apple Inc.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -41,7 +41,6 @@
 #include "JSDOMPromiseDeferred.h"
 #include "TextResourceDecoder.h"
 #include <wtf/StdLibExtras.h>
-#include <wtf/StringExtras.h>
 #include <wtf/URLParser.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/ParsingUtilities.h>
@@ -54,7 +53,7 @@ static inline Ref<Blob> blobFromData(ScriptExecutionContext* context, Vector<uin
 }
 
 // https://mimesniff.spec.whatwg.org/#http-quoted-string-token-code-point
-static bool isHTTPQuotedStringTokenCodePoint(UChar c)
+static bool isHTTPQuotedStringTokenCodePoint(char16_t c)
 {
     return c == 0x09
         || (c >= 0x20 && c <= 0x7E)
@@ -99,7 +98,7 @@ static HashMap<String, String> parseParameters(StringView input, size_t position
             size_t valueBegin = position;
             while (position < input.length() && input[position] != ';')
                 position++;
-            parameterValue = input.substring(valueBegin, position - valueBegin).trim(isASCIIWhitespaceWithoutFF<UChar>);
+            parameterValue = input.substring(valueBegin, position - valueBegin).trim(isASCIIWhitespaceWithoutFF<char16_t>);
         }
 
         if (parameterName.length()
@@ -114,7 +113,7 @@ static HashMap<String, String> parseParameters(StringView input, size_t position
 // https://mimesniff.spec.whatwg.org/#parsing-a-mime-type
 static std::optional<MimeType> parseMIMEType(const String& contentType)
 {
-    String input = contentType.trim(isASCIIWhitespaceWithoutFF<UChar>);
+    String input = contentType.trim(isASCIIWhitespaceWithoutFF<char16_t>);
     size_t slashIndex = input.find('/');
     if (slashIndex == notFound)
         return std::nullopt;
@@ -124,7 +123,7 @@ static std::optional<MimeType> parseMIMEType(const String& contentType)
         return std::nullopt;
     
     size_t semicolonIndex = input.find(';', slashIndex);
-    String subtype = input.substring(slashIndex + 1, semicolonIndex - slashIndex - 1).trim(isASCIIWhitespaceWithoutFF<UChar>);
+    String subtype = input.substring(slashIndex + 1, semicolonIndex - slashIndex - 1).trim(isASCIIWhitespaceWithoutFF<char16_t>);
     if (!subtype.length() || !isValidHTTPToken(subtype))
         return std::nullopt;
 
@@ -180,7 +179,7 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
             size_t contentTypeBegin = header.findIgnoringASCIICase(contentTypeCharacters);
             if (contentTypeBegin != notFound) {
                 size_t contentTypeEnd = header.find(oneNewLine, contentTypeBegin);
-                contentType = StringView(header).substring(contentTypeBegin + contentTypePrefixLength, contentTypeEnd - contentTypeBegin - contentTypePrefixLength).trim(isASCIIWhitespaceWithoutFF<UChar>).toString();
+                contentType = StringView(header).substring(contentTypeBegin + contentTypePrefixLength, contentTypeEnd - contentTypeBegin - contentTypePrefixLength).trim(isASCIIWhitespaceWithoutFF<char16_t>).toString();
             }
 
             form.append(name, File::create(context, Blob::create(context, Vector(body), Blob::normalizedContentType(contentType)).get(), filename).get(), filename);
@@ -263,11 +262,11 @@ static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyCons
 void FetchBodyConsumer::clean()
 {
     m_buffer.reset();
-    if (m_formDataConsumer)
-        m_formDataConsumer->cancel();
+    if (RefPtr formDataConsumer = m_formDataConsumer)
+        formDataConsumer->cancel();
     resetConsumePromise();
-    if (m_sink) {
-        m_sink->clearCallback();
+    if (RefPtr sink = m_sink) {
+        sink->clearCallback();
         return;
     }
 }
@@ -305,7 +304,7 @@ void FetchBodyConsumer::resolveWithFormData(Ref<DeferredPromise>&& promise, cons
         builder.append(value);
         return true;
     });
-    m_formDataConsumer->start();
+    protectedFormDataConsumer()->start();
 }
 
 void FetchBodyConsumer::consumeFormDataAsStream(const FormData& formData, FetchBodySource& source, ScriptExecutionContext* context)
@@ -334,14 +333,14 @@ void FetchBodyConsumer::consumeFormDataAsStream(const FormData& formData, FetchB
 
         return source->enqueue(ArrayBuffer::tryCreate(value));
     });
-    m_formDataConsumer->start();
+    protectedFormDataConsumer()->start();
 }
 
 void FetchBodyConsumer::extract(ReadableStream& stream, ReadableStreamToSharedBufferSink::Callback&& callback)
 {
     ASSERT(!m_sink);
     m_sink = ReadableStreamToSharedBufferSink::create(WTFMove(callback));
-    m_sink->pipeFrom(stream);
+    protectedSink()->pipeFrom(stream);
 }
 
 void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& contentType, FetchBodyOwner* owner, ReadableStream* stream)
@@ -365,7 +364,7 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
 
             data.append(*chunk);
         });
-        m_sink->pipeFrom(*stream);
+        protectedSink()->pipeFrom(*stream);
         return;
     }
 
@@ -400,7 +399,7 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
         return;
     case FetchBodyConsumer::Type::FormData: {
         auto buffer = takeData();
-        if (auto formData = packageFormData(promise->scriptExecutionContext(), contentType, buffer ? buffer->makeContiguous()->span() : std::span<const uint8_t> { }))
+        if (auto formData = packageFormData(promise->protectedScriptExecutionContext().get(), contentType, buffer ? buffer->makeContiguous()->span() : std::span<const uint8_t> { }))
             promise->resolve<IDLInterface<DOMFormData>>(*formData);
         else
             promise->reject(ExceptionCode::TypeError);
@@ -414,8 +413,8 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
 
 void FetchBodyConsumer::append(const SharedBuffer& buffer)
 {
-    if (m_source) {
-        m_source->enqueue(buffer.tryCreateArrayBuffer());
+    if (RefPtr source = m_source) {
+        source->enqueue(buffer.tryCreateArrayBuffer());
         return;
     }
     m_buffer.append(buffer);
@@ -445,7 +444,51 @@ Ref<Blob> FetchBodyConsumer::takeAsBlob(ScriptExecutionContext* context, const S
     if (!m_buffer)
         return Blob::create(context, Vector<uint8_t>(), normalizedContentType);
 
-    return blobFromData(context, m_buffer.take()->extractData(), normalizedContentType);
+    // Minimise the number of DataSegments to reduce overall memory allocation.
+    // We pack it in 8MiB minimum segment.
+    static constexpr size_t MinimumBlobSize = 8 * 1024 * 1024;
+
+    RefPtr buffer = m_buffer.take();
+    if (buffer->size() <= MinimumBlobSize)
+        return Blob::create(context, buffer->extractData(), normalizedContentType);
+
+    size_t packedBufferSize = std::min(buffer->size(), MinimumBlobSize);
+    Vector<uint8_t> packedBuffer;
+    packedBuffer.reserveInitialCapacity(packedBufferSize);
+
+    Vector<Ref<SharedBuffer>> segments;
+    segments.reserveInitialCapacity(buffer->segmentsCount());
+    buffer->forEachSegmentAsSharedBuffer([&](Ref<SharedBuffer>&& sharedBuffer) {
+        segments.append(WTFMove(sharedBuffer));
+    });
+    buffer = nullptr; // So that the segments above hold each a single refcount to allow extractData to move the content.
+
+    SharedBufferBuilder bufferBuilder;
+    for (auto&& segment : segments) {
+        if (segment->size() >= MinimumBlobSize) {
+            if (packedBuffer.size()) {
+                bufferBuilder.append(std::exchange(packedBuffer, { }));
+                packedBuffer.reserveInitialCapacity(packedBufferSize);
+            }
+            bufferBuilder.append(WTFMove(segment));
+            continue;
+        }
+        if (packedBuffer.size() + segment->size() <= MinimumBlobSize) {
+            packedBuffer.appendVector(segment->extractData());
+            continue;
+        }
+        ASSERT(packedBuffer.size() <= MinimumBlobSize);
+        size_t leftInPacked = MinimumBlobSize - packedBuffer.size();
+        auto segmentData = segment->extractData();
+        packedBuffer.appendVector(segmentData.subvector(0, leftInPacked));
+        bufferBuilder.append(std::exchange(packedBuffer, { }));
+        packedBuffer.reserveInitialCapacity(packedBufferSize);
+        packedBuffer.appendVector(segmentData.subvector(leftInPacked));
+    };
+    if (!packedBuffer.isEmpty())
+        bufferBuilder.append(WTFMove(packedBuffer));
+
+    return Blob::create(context, bufferBuilder.take(), normalizedContentType);
 }
 
 String FetchBodyConsumer::takeAsText()
@@ -474,20 +517,20 @@ void FetchBodyConsumer::resetConsumePromise()
 
 void FetchBodyConsumer::setSource(Ref<FetchBodySource>&& source)
 {
-    m_source = WTFMove(source);
+    m_source = source.copyRef();
     if (m_buffer)
-        m_source->enqueue(m_buffer.takeAsArrayBuffer());
+        source->enqueue(m_buffer.takeAsArrayBuffer());
 }
 
 void FetchBodyConsumer::loadingFailed(const Exception& exception)
 {
     m_isLoading = false;
-    if (m_consumePromise) {
-        m_consumePromise->reject(exception);
+    if (RefPtr consumePromise = m_consumePromise) {
+        consumePromise->reject(exception);
         resetConsumePromise();
     }
-    if (m_source) {
-        m_source->error(exception);
+    if (RefPtr source = m_source) {
+        source->error(exception);
         m_source = nullptr;
     }
 }
@@ -497,15 +540,16 @@ void FetchBodyConsumer::loadingSucceeded(const String& contentType)
     m_isLoading = false;
 
     if (m_consumePromise) {
-        if (!m_userGestureToken || m_userGestureToken->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwardingForFetch()) || !m_userGestureToken->processingUserGesture())
+        RefPtr userGestureToken = m_userGestureToken;
+        if (!userGestureToken || userGestureToken->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwardingForFetch()) || !userGestureToken->processingUserGesture())
             resolve(m_consumePromise.releaseNonNull(), contentType, nullptr, nullptr);
         else {
-            UserGestureIndicator gestureIndicator(m_userGestureToken, UserGestureToken::GestureScope::MediaOnly, UserGestureToken::ShouldPropagateToMicroTask::Yes);
+            UserGestureIndicator gestureIndicator(userGestureToken, UserGestureToken::GestureScope::MediaOnly, UserGestureToken::ShouldPropagateToMicroTask::Yes);
             resolve(m_consumePromise.releaseNonNull(), contentType, nullptr, nullptr);
         }
     }
-    if (m_source) {
-        m_source->close();
+    if (RefPtr source = m_source) {
+        source->close();
         m_source = nullptr;
     }
 }

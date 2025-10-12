@@ -29,6 +29,7 @@
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+struct FrameInfoData;
 class WebFrameProxy;
 class WebPageProxy;
 }
@@ -41,7 +42,7 @@ class FormClient {
 public:
     virtual ~FormClient() { }
 
-    virtual void willSubmitForm(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebFrameProxy&, const Vector<std::pair<WTF::String, WTF::String>>&, API::Object*, CompletionHandler<void()>&& completionHandler)
+    virtual void willSubmitForm(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebFrameProxy&, WebKit::FrameInfoData&&, WebKit::FrameInfoData&&, const Vector<std::pair<WTF::String, WTF::String>>&, API::Object*, CompletionHandler<void()>&& completionHandler)
     {
         completionHandler();
     }

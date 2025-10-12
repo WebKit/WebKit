@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,15 +43,15 @@ public:
     
     using ResponseReadyPromise = DOMPromiseProxy<IDLInterface<FetchResponse>>;
     ResponseReadyPromise& responseReady() { return m_responseReadyPromise; }
-    Ref<FetchRequest> request();
+    FetchRequest& request() { return m_request; }
 
     void settleResponseReadyPromise(ExceptionOr<Ref<FetchResponse>>&&);
 
 private:
     BackgroundFetchRecord(ScriptExecutionContext&, BackgroundFetchRecordInformation&&);
 
-    UniqueRef<ResponseReadyPromise> m_responseReadyPromise;
-    Ref<FetchRequest> m_request;
+    const UniqueRef<ResponseReadyPromise> m_responseReadyPromise;
+    const Ref<FetchRequest> m_request;
 };
 
 } // namespace WebCore

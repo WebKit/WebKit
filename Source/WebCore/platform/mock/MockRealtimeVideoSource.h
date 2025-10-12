@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,13 +32,12 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "DashArray.h"
-#include "FontCascade.h"
-#include "ImageBuffer.h"
-#include "MockMediaDevice.h"
-#include "OrientationNotifier.h"
-#include "RealtimeMediaSourceFactory.h"
-#include "RealtimeVideoCaptureSource.h"
+#include <WebCore/DashArray.h>
+#include <WebCore/FontCascade.h>
+#include <WebCore/ImageBuffer.h>
+#include <WebCore/MockMediaDevice.h>
+#include <WebCore/RealtimeMediaSourceFactory.h>
+#include <WebCore/RealtimeVideoCaptureSource.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
 
@@ -49,7 +48,7 @@ class GraphicsContext;
 
 enum class VideoFrameRotation : uint16_t;
 
-class MockRealtimeVideoSource : public RealtimeVideoCaptureSource, private OrientationNotifier::Observer {
+class MockRealtimeVideoSource : public RealtimeVideoCaptureSource {
 public:
     static CaptureSourceOrError create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
     virtual ~MockRealtimeVideoSource();
@@ -160,7 +159,7 @@ private:
     MonotonicTime m_delayUntil;
 
     unsigned m_frameNumber { 0 };
-    Ref<RunLoop> m_runLoop;
+    const Ref<RunLoop> m_runLoop;
     RunLoop::Timer m_emitFrameTimer;
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;

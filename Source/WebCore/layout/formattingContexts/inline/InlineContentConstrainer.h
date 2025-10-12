@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "FormattingConstraints.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingUtils.h"
-#include "InlineItem.h"
 #include "InlineLineBuilder.h"
-#include "InlineLineTypes.h"
-#include "InlineTextItem.h"
+#include <WebCore/FormattingConstraints.h>
+#include <WebCore/InlineItem.h>
+#include <WebCore/InlineLineTypes.h>
+#include <WebCore/InlineTextItem.h>
 #include <optional>
 
 namespace WebCore {
@@ -74,7 +74,7 @@ private:
     Vector<size_t> computeBreakOpportunities(InlineItemRange) const;
     Vector<LayoutUnit> computeLineWidthsFromBreaks(InlineItemRange, const Vector<size_t>& breaks, bool isFirstChunk) const;
     InlineLayoutUnit computeMaxTextIndent() const;
-    InlineLayoutUnit computeTextIndent(PreviousLineState) const;
+    InlineLayoutUnit computedTextIndent(IsFirstFormattedLine, std::optional<InlineFormattingUtils::LineEndsWithLineBreak> previousLineEndsWithLineBreak) const;
 
     InlineFormattingContext& m_inlineFormattingContext;
     const InlineItemList& m_inlineItemList;

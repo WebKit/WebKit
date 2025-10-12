@@ -10,7 +10,7 @@
 
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 
-#include <cstdint>
+#include <cstddef>
 
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 

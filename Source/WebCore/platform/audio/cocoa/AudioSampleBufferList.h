@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CAAudioStreamDescription.h"
-#include "CARingBuffer.h"
-#include "WebAudioBufferList.h"
 #include <CoreAudio/CoreAudioTypes.h>
+#include <WebCore/CAAudioStreamDescription.h>
+#include <WebCore/CARingBuffer.h>
+#include <WebCore/WebAudioBufferList.h>
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -86,7 +86,7 @@ protected:
     size_t m_sampleCapacity { 0 };
     size_t m_maxBufferSizePerChannel { 0 };
     size_t m_bufferListBaseSize { 0 };
-    UniqueRef<WebAudioBufferList> m_bufferList;
+    const UniqueRef<WebAudioBufferList> m_bufferList;
 };
 
 inline size_t AudioSampleBufferList::audioBufferListSizeForStream(const CAAudioStreamDescription& description)

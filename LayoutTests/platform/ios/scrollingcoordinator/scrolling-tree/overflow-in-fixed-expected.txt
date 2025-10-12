@@ -16,7 +16,6 @@ Scrolling content
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
       (viewport rect at last layout at (0,0) size 800x600)
-      (layer position at last layout (8,13))
       (children 1
         (Overflow scrolling node
           (scrollable area size 400 300)

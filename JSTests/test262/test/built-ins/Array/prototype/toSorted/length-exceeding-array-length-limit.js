@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-array.prototype.toSorted
+esid: sec-array.prototype.tosorted
 description: >
   Array.prototype.toSorted limits the length to 2 ** 32 - 1
 info: |

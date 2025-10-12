@@ -27,7 +27,7 @@
 
 #if USE(APPKIT)
 
-#include "AppKitControlSystemImage.h"
+#include <WebCore/AppKitControlSystemImage.h>
 #include <optional>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>

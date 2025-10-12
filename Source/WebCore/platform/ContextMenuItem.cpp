@@ -246,6 +246,7 @@ static bool isValidContextMenuAction(WebCore::ContextMenuAction action)
     case ContextMenuAction::ContextMenuItemTagSmartQuotes:
     case ContextMenuAction::ContextMenuItemTagSmartDashes:
     case ContextMenuAction::ContextMenuItemTagSmartLinks:
+    case ContextMenuAction::ContextMenuItemTagSmartLists:
     case ContextMenuAction::ContextMenuItemTagTextReplacement:
     case ContextMenuAction::ContextMenuItemTagTransformationsMenu:
     case ContextMenuAction::ContextMenuItemTagMakeUpperCase:

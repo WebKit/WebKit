@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSCustomElementRegistry.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "CustomElementRegistry.h"
 #include "Document.h"
 #include "HTMLNames.h"

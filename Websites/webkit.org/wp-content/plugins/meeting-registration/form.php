@@ -47,12 +47,18 @@
 #registration label ~ ul {
     list-style: none;
     padding-left: 0;
-    margin-top: 0;
+    margin: 0;
 }
 
 #registration input[type=checkbox],
 #registration input[type=radio] {
     vertical-align: middle;
+}
+
+input ~ p {
+    margin-top: 0.5rem;
+    font-size: 1.5rem;
+    margin-bottom: 0;
 }
 
 @supports selector(label:has(~ input:focus)) {
@@ -78,12 +84,21 @@
     text-transform: revert;
     position: relative;
     top: 0 !important;
+    left: 0;
 }
 
 #registration .alignright {
     flex-grow: 2;
     text-align: right;
     float: none;
+}
+
+@media only screen and (max-width: 415px) {
+    #registration .form-field {
+        position: relative;
+        flex-basis: 100%;
+    }
+
 }
 </style>
 <form action="" method="POST">
@@ -107,21 +122,40 @@
     </div>
 
     <div class="form-field text-area">
-        <label class="form-label" for="interests">Topics of Interest or Presentation Proposal</label>
+        <label class="form-label" for="interests">Topics of Interest, Presentation Proposal</label>
         <textarea name="interests" id="interests" rows="7" placeholder="&nbsp;"></textarea>
     </div>
+    
+    <div class="form-field text-area">
+        <label class="form-label" for="bof-topic">Birds of a Feather Topics</label>
+        <input type="text" name="boftopics" id="bof-topic" placeholder="&nbsp;">
+        <p>We encourage you to suggest a list of topics for Birds of a Feather discussions.</p>
+    </div>
+    
+    <div class="form-field text-area">
+        <label class="form-label" for="accessibility-needs">List any Accessibility Needs</label>
+        <input type="text" name="accessibility" id="accessibility-needs" placeholder="&nbsp;">
+    </div>
+    
+    <div class="form-field text-area">
+        <label class="form-label" for="accessibility-needs">List any special Dietary Needs</label>
+        <input type="text" name="dietneeds" id="dietary-needs" placeholder="&nbsp;">
+    </div>
+    
+    <div class="form-field form-toggle">
+        <label class="form-label">Please let us know your attendance preference so that we can plan appropriately:</label>
+        <ul>
+            <li><label class="form-label"><input type="radio" name="attendance" value="in-person"> I will attend in-person.</label></li>
+            <li><label class="form-label"><input type="radio" name="attendance" value="online"> I will attend online.</label></li>
+        </ul>
+    </div>
 
+    
     <div class="form-field form-toggle">
         <label class="form-label" for="contributor-toggle"><input type="checkbox" id="contributor-toggle" name="claim" <?php echo WebKit_Meeting_Registration::is_contributor() ? ' checked="checked"' : ''; ?>> I am a WebKit contributor</label>
     </div>
     
-    <div class="form-field form-toggle">
-        <label class="form-label" for="contributor-attendance">Please let us know your attendance preference so that we can plan appropriately:</label>
-        <ul>
-            <li><label class="form-label"><input type="radio" id="contributor-attendance" name="attendance" value="in-person"> I will attend in-person.</label></li>
-            <li><label class="form-label"><input type="radio" id="contributor-attendance" name="attendance" value="online"> I will attend online.</label></li>
-        </ul>
-    </div>
+
 
     <div class="alignright">
         <input type="submit" name="Submit" value="Register" class="submit-button">

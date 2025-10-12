@@ -45,7 +45,7 @@
 #endif
 
 #if USE(GBM)
-#include "DMABufRendererBufferFormat.h"
+#include "RendererBufferFormat.h"
 #endif
 
 #if USE(GBM) && ENABLE(WPE_PLATFORM)
@@ -124,7 +124,7 @@ void WebPageProxy::setInputMethodState(std::optional<InputMethodState>&& state)
 }
 
 #if USE(GBM)
-Vector<DMABufRendererBufferFormat> WebPageProxy::preferredBufferFormats() const
+Vector<RendererBufferFormat> WebPageProxy::preferredBufferFormats() const
 {
 #if ENABLE(WPE_PLATFORM)
     auto* view = wpeView();
@@ -135,28 +135,33 @@ Vector<DMABufRendererBufferFormat> WebPageProxy::preferredBufferFormats() const
     if (!formats)
         return { };
 
-    Vector<DMABufRendererBufferFormat> dmabufFormats;
-    const char* mainDevice = wpe_buffer_dma_buf_formats_get_device(formats);
+    Vector<RendererBufferFormat> bufferFormats;
+    WPEDRMDevice* mainDevice = wpe_buffer_dma_buf_formats_get_device(formats);
     auto groupCount = wpe_buffer_dma_buf_formats_get_n_groups(formats);
     for (unsigned i = 0; i < groupCount; ++i) {
-        DMABufRendererBufferFormat dmabufFormat;
+        RendererBufferFormat bufferFormat;
         switch (wpe_buffer_dma_buf_formats_get_group_usage(formats, i)) {
         case WPE_BUFFER_DMA_BUF_FORMAT_USAGE_RENDERING:
-            dmabufFormat.usage = DMABufRendererBufferFormat::Usage::Rendering;
+            bufferFormat.usage = RendererBufferFormat::Usage::Rendering;
             break;
         case WPE_BUFFER_DMA_BUF_FORMAT_USAGE_MAPPING:
-            dmabufFormat.usage = DMABufRendererBufferFormat::Usage::Mapping;
+            bufferFormat.usage = RendererBufferFormat::Usage::Mapping;
             break;
         case WPE_BUFFER_DMA_BUF_FORMAT_USAGE_SCANOUT:
-            dmabufFormat.usage = DMABufRendererBufferFormat::Usage::Scanout;
+            bufferFormat.usage = RendererBufferFormat::Usage::Scanout;
             break;
         }
-        const char* targetDevice = wpe_buffer_dma_buf_formats_get_group_device(formats, i);
-        dmabufFormat.drmDevice = targetDevice ? targetDevice : mainDevice;
+
+        WPEDRMDevice* targetDevice = wpe_buffer_dma_buf_formats_get_group_device(formats, i);
+        if (!targetDevice)
+            targetDevice = mainDevice;
+        if (targetDevice)
+            bufferFormat.drmDevice = { CString(wpe_drm_device_get_primary_node(targetDevice)), CString(wpe_drm_device_get_render_node(targetDevice)) };
+
         auto formatsCount = wpe_buffer_dma_buf_formats_get_group_n_formats(formats, i);
-        dmabufFormat.formats.reserveInitialCapacity(formatsCount);
+        bufferFormat.formats.reserveInitialCapacity(formatsCount);
         for (unsigned j = 0; j < formatsCount; ++j) {
-            DMABufRendererBufferFormat::Format format;
+            RendererBufferFormat::Format format;
             format.fourcc = wpe_buffer_dma_buf_formats_get_format_fourcc(formats, i, j);
             auto* modifiers = wpe_buffer_dma_buf_formats_get_format_modifiers(formats, i, j);
             format.modifiers.reserveInitialCapacity(modifiers->len);
@@ -166,12 +171,12 @@ Vector<DMABufRendererBufferFormat> WebPageProxy::preferredBufferFormats() const
                 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 format.modifiers.append(*modifier);
             }
-            dmabufFormat.formats.append(WTFMove(format));
+            bufferFormat.formats.append(WTFMove(format));
         }
-        dmabufFormats.append(WTFMove(dmabufFormat));
+        bufferFormats.append(WTFMove(bufferFormat));
     }
 
-    return dmabufFormats;
+    return bufferFormats;
 #else
     return { };
 #endif

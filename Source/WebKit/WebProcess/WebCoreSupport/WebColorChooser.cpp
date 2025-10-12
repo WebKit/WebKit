@@ -43,17 +43,16 @@ WebColorChooser::WebColorChooser(WebPage* page, ColorChooserClient* client, cons
     : m_colorChooserClient(client)
     , m_page(page)
 {
-    m_page->setActiveColorChooser(this);
-    auto supportsAlpha = m_colorChooserClient->supportsAlpha() ? ColorControlSupportsAlpha::Yes : ColorControlSupportsAlpha::No;
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowColorPicker(initialColor, m_colorChooserClient->elementRectRelativeToRootView(), supportsAlpha, m_colorChooserClient->suggestedColors()), m_page->identifier());
+    page->setActiveColorChooser(this);
+    auto supportsAlpha = client->supportsAlpha() ? ColorControlSupportsAlpha::Yes : ColorControlSupportsAlpha::No;
+
+    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebPageProxy::ShowColorPicker(initialColor, client->elementRectRelativeToRootView(), supportsAlpha, client->suggestedColors(), client->rootFrameID()), page->identifier());
 }
 
 WebColorChooser::~WebColorChooser()
 {
-    if (!m_page)
-        return;
-
-    m_page->setActiveColorChooser(nullptr);
+    if (RefPtr page = m_page.get())
+        page->setActiveColorChooser(nullptr);
 }
 
 void WebColorChooser::didChooseColor(const Color& color)
@@ -70,29 +69,29 @@ void WebColorChooser::didEndChooser()
 
 void WebColorChooser::disconnectFromPage()
 {
-    m_page = 0;
+    m_page = nullptr;
 }
 
 void WebColorChooser::reattachColorChooser(const Color& color)
 {
-    ASSERT(m_page);
-    m_page->setActiveColorChooser(this);
+    Ref page = *m_page;
+    page->setActiveColorChooser(this);
 
-    RefPtr colorChooserClient = m_colorChooserClient.get();
-    ASSERT(colorChooserClient);
+    Ref colorChooserClient = *m_colorChooserClient;
     auto supportsAlpha = colorChooserClient->supportsAlpha() ? ColorControlSupportsAlpha::Yes : ColorControlSupportsAlpha::No;
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowColorPicker(color, colorChooserClient->elementRectRelativeToRootView(), supportsAlpha, colorChooserClient->suggestedColors()), m_page->identifier());
+    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebPageProxy::ShowColorPicker(color, colorChooserClient->elementRectRelativeToRootView(), supportsAlpha, colorChooserClient->suggestedColors(), colorChooserClient->rootFrameID()), page->identifier());
 }
 
 void WebColorChooser::setSelectedColor(const Color& color)
 {
-    if (!m_page)
+    RefPtr page = m_page.get();
+    if (!page)
         return;
     
-    if (m_page->activeColorChooser() != this)
+    if (page->activeColorChooser() != this)
         return;
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::SetColorPickerColor(color), m_page->identifier());
+    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebPageProxy::SetColorPickerColor(color), page->identifier());
 }
 
 void WebColorChooser::endChooser()
@@ -100,7 +99,7 @@ void WebColorChooser::endChooser()
     if (!m_page)
         return;
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::EndColorPicker(), m_page->identifier());
+    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebPageProxy::EndColorPicker(), m_page->identifier());
 }
 
 } // namespace WebKit

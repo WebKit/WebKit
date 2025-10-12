@@ -11,6 +11,8 @@
 #ifndef TEST_PC_E2E_ANALYZER_VIDEO_DEFAULT_VIDEO_QUALITY_ANALYZER_STREAM_STATE_H_
 #define TEST_PC_E2E_ANALYZER_VIDEO_DEFAULT_VIDEO_QUALITY_ANALYZER_STREAM_STATE_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <optional>
 #include <set>
@@ -35,12 +37,12 @@ namespace webrtc {
 // dead.
 //
 // Supports peer indexes from 0 to max(size_t) - 1.
-class StreamState {
+class AnalyzerStreamState {
  public:
-  StreamState(size_t sender,
-              std::set<size_t> receivers,
-              Timestamp stream_started_time,
-              Clock* clock);
+  AnalyzerStreamState(size_t sender,
+                      std::set<size_t> receivers,
+                      Timestamp stream_started_time,
+                      Clock* clock);
 
   size_t sender() const { return sender_; }
   Timestamp stream_started_time() const { return stream_started_time_; }

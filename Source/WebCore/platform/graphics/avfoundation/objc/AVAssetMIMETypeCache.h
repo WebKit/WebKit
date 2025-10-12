@@ -25,9 +25,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(COCOA)
 
-#include "MIMETypeCache.h"
+#include <WebCore/MIMETypeCache.h>
 
 namespace WebCore {
 

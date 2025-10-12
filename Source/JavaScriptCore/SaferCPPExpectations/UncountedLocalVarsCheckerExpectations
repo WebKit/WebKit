@@ -6,7 +6,6 @@ API/tests/testapi.cpp
 builtins/BuiltinNames.cpp
 bytecode/AccessCase.cpp
 bytecode/AdaptiveInferredPropertyValueWatchpointBase.cpp
-bytecode/BytecodeDumper.cpp
 bytecode/CallLinkStatus.cpp
 bytecode/CheckPrivateBrandStatus.cpp
 bytecode/CodeBlock.cpp
@@ -37,7 +36,6 @@ dfg/DFGDesiredIdentifiers.cpp
 dfg/DFGDesiredWatchpoints.cpp
 dfg/DFGFixupPhase.cpp
 dfg/DFGGraph.cpp
-dfg/DFGGraph.h
 dfg/DFGJITCode.cpp
 dfg/DFGLazyJSValue.cpp
 dfg/DFGOSREntry.cpp
@@ -63,14 +61,10 @@ heap/ConservativeRoots.cpp
 heap/HeapHelperPool.cpp
 heap/JITStubRoutineSet.cpp
 inspector/AsyncStackTrace.cpp
-inspector/InspectorBackendDispatcher.cpp
 inspector/JSJavaScriptCallFrame.cpp
 inspector/ScriptCallStackFactory.cpp
 inspector/agents/InspectorDebuggerAgent.cpp
 inspector/agents/InspectorScriptProfilerAgent.cpp
-inspector/remote/RemoteInspector.cpp
-inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm
-inspector/remote/cocoa/RemoteInspectorCocoa.mm
 interpreter/CallFrame.cpp
 interpreter/Interpreter.cpp
 interpreter/StackVisitor.cpp
@@ -80,7 +74,6 @@ jit/JITSafepoint.cpp
 jit/JITWorklist.cpp
 jsc.cpp
 llint/LLIntEntrypoint.cpp
-llint/LLIntSlowPaths.cpp
 parser/Lexer.h
 parser/Parser.cpp
 parser/Parser.h
@@ -98,7 +91,6 @@ runtime/JSArrayBufferView.cpp
 runtime/JSCJSValue.cpp
 runtime/JSCJSValueInlines.h
 runtime/JSFinalizationRegistry.cpp
-runtime/JSFunction.cpp
 runtime/JSGlobalObject.cpp
 runtime/JSObject.cpp
 runtime/JSRunLoopTimer.cpp
@@ -113,18 +105,15 @@ runtime/ScopedArguments.h
 runtime/StringPrototype.cpp
 runtime/Structure.cpp
 runtime/StructureInlines.h
-runtime/SymbolConstructor.cpp
 runtime/SymbolTable.h
 runtime/TypeSet.cpp
 runtime/VMTraps.cpp
 runtime/WaiterListManager.h
 tools/JSDollarVM.cpp
-tools/VMInspector.cpp
 wasm/WasmBBQJIT.cpp
 wasm/WasmBBQJIT64.cpp
 wasm/WasmBBQPlan.cpp
 wasm/WasmCallee.cpp
-wasm/WasmCalleeGroup.cpp
 wasm/WasmConstExprGenerator.cpp
 wasm/WasmFaultSignalHandler.cpp
 wasm/WasmFormat.h
@@ -133,8 +122,6 @@ wasm/WasmIPIntGenerator.cpp
 wasm/WasmIPIntPlan.cpp
 wasm/WasmIPIntSlowPaths.cpp
 wasm/WasmIRGeneratorHelpers.h
-wasm/WasmLLIntGenerator.cpp
-wasm/WasmLLIntPlan.cpp
 wasm/WasmModule.cpp
 wasm/WasmOMGIRGenerator.cpp
 wasm/WasmOMGPlan.cpp
@@ -143,7 +130,6 @@ wasm/WasmOperations.cpp
 wasm/WasmOperationsInlines.h
 wasm/WasmParser.h
 wasm/WasmSectionParser.cpp
-wasm/WasmSlowPaths.cpp
 wasm/WasmStreamingCompiler.cpp
 wasm/WasmTypeDefinition.cpp
 wasm/WasmTypeDefinitionInlines.h
@@ -151,6 +137,5 @@ wasm/WasmWorklist.cpp
 wasm/js/JSWebAssembly.cpp
 wasm/js/JSWebAssemblyHelpers.h
 wasm/js/JSWebAssemblyInstance.cpp
-wasm/js/JSWebAssemblyModule.cpp
 wasm/js/WasmToJS.cpp
 wasm/js/WebAssemblyModuleRecord.cpp

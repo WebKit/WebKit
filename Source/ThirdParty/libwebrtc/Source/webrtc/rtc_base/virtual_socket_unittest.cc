@@ -8,18 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <math.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-
 #include <algorithm>
+#include <cmath>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
 #include <memory>
 
 #include "absl/memory/memory.h"
 #include "api/units/time_delta.h"
-#include "rtc_base/arraysize.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/async_udp_socket.h"
 #include "rtc_base/fake_clock.h"
@@ -39,17 +37,15 @@
 #include "rtc_base/virtual_socket_server.h"
 #include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 namespace {
 
-using ::webrtc::RepeatingTaskHandle;
-using ::webrtc::TimeDelta;
-using ::webrtc::testing::SSE_CLOSE;
-using ::webrtc::testing::SSE_ERROR;
-using ::webrtc::testing::SSE_OPEN;
-using ::webrtc::testing::SSE_READ;
-using ::webrtc::testing::SSE_WRITE;
-using ::webrtc::testing::StreamSink;
+using testing::SSE_CLOSE;
+using testing::SSE_ERROR;
+using testing::SSE_OPEN;
+using testing::SSE_READ;
+using testing::SSE_WRITE;
+using testing::StreamSink;
 
 // Sends at a constant rate but with random packet sizes.
 struct Sender {
@@ -58,10 +54,10 @@ struct Sender {
         socket(std::make_unique<AsyncUDPSocket>(s)),
         rate(rt),
         count(0) {
-    last_send = rtc::TimeMillis();
+    last_send = TimeMillis();
 
     periodic = RepeatingTaskHandle::DelayedStart(thread, NextDelay(), [this] {
-      int64_t cur_time = rtc::TimeMillis();
+      int64_t cur_time = TimeMillis();
       int64_t delay = cur_time - last_send;
       uint32_t size =
           std::clamp<uint32_t>(rate * delay / 1000, sizeof(uint32_t), 4096);
@@ -81,7 +77,7 @@ struct Sender {
 
   Thread* thread;
   std::unique_ptr<AsyncUDPSocket> socket;
-  rtc::PacketOptions options;
+  AsyncSocketPacketOptions options;
   RepeatingTaskHandle periodic;
   uint32_t rate;  // bytes per second
   uint32_t count;
@@ -100,8 +96,8 @@ struct Receiver : public sigslot::has_slots<> {
         sum_sq(0),
         samples(0) {
     socket->RegisterReceivedPacketCallback(
-        [&](rtc::AsyncPacketSocket* socket, const rtc::ReceivedPacket& packet) {
-          OnReadPacket(socket, packet);
+        [&](AsyncPacketSocket* s, const ReceivedIpPacket& packet) {
+          OnReadPacket(s, packet);
         });
     periodic = RepeatingTaskHandle::DelayedStart(
         thread, TimeDelta::Seconds(1), [this] {
@@ -117,7 +113,7 @@ struct Receiver : public sigslot::has_slots<> {
 
   ~Receiver() override { periodic.Stop(); }
 
-  void OnReadPacket(AsyncPacketSocket* s, const rtc::ReceivedPacket& packet) {
+  void OnReadPacket(AsyncPacketSocket* s, const ReceivedIpPacket& packet) {
     ASSERT_EQ(socket.get(), s);
     ASSERT_GE(packet.payload().size(), 4U);
 
@@ -126,7 +122,7 @@ struct Receiver : public sigslot::has_slots<> {
 
     uint32_t send_time =
         *reinterpret_cast<const uint32_t*>(packet.payload().data());
-    uint32_t recv_time = rtc::TimeMillis();
+    uint32_t recv_time = TimeMillis();
     uint32_t delay = recv_time - send_time;
     sum += delay;
     sum_sq += delay * delay;
@@ -837,7 +833,7 @@ class VirtualSocketServerTest : public ::testing::Test {
   }
 
  protected:
-  rtc::ScopedFakeClock fake_clock_;
+  ScopedFakeClock fake_clock_;
   VirtualSocketServer ss_;
   AutoSocketServerThread thread_;
   const SocketAddress kIPv4AnyAddress;
@@ -1086,17 +1082,16 @@ TEST_F(VirtualSocketServerTest, CreatesStandardDistribution) {
   const double kTestDev[] = {0.25, 0.1, 0.01};
   // TODO(deadbeef): The current code only works for 1000 data points or more.
   const uint32_t kTestSamples[] = {/*10, 100,*/ 1000};
-  for (size_t midx = 0; midx < arraysize(kTestMean); ++midx) {
-    for (size_t didx = 0; didx < arraysize(kTestDev); ++didx) {
-      for (size_t sidx = 0; sidx < arraysize(kTestSamples); ++sidx) {
-        ASSERT_LT(0u, kTestSamples[sidx]);
-        const uint32_t kStdDev =
-            static_cast<uint32_t>(kTestDev[didx] * kTestMean[midx]);
+  for (uint32_t test_mean : kTestMean) {
+    for (double test_dev : kTestDev) {
+      for (uint32_t test_sample : kTestSamples) {
+        ASSERT_LT(0u, test_sample);
+        const uint32_t kStdDev = static_cast<uint32_t>(test_dev * test_mean);
         std::unique_ptr<VirtualSocketServer::Function> f =
-            VirtualSocketServer::CreateDistribution(kTestMean[midx], kStdDev,
-                                                    kTestSamples[sidx]);
+            VirtualSocketServer::CreateDistribution(test_mean, kStdDev,
+                                                    test_sample);
         ASSERT_TRUE(nullptr != f.get());
-        ASSERT_EQ(kTestSamples[sidx], f->size());
+        ASSERT_EQ(test_sample, f->size());
         double sum = 0;
         for (uint32_t i = 0; i < f->size(); ++i) {
           sum += (*f)[i].second;
@@ -1108,16 +1103,14 @@ TEST_F(VirtualSocketServerTest, CreatesStandardDistribution) {
           sum_sq_dev += dev * dev;
         }
         const double stddev = sqrt(sum_sq_dev / f->size());
-        EXPECT_NEAR(kTestMean[midx], mean, 0.1 * kTestMean[midx])
-            << "M=" << kTestMean[midx] << " SD=" << kStdDev
-            << " N=" << kTestSamples[sidx];
+        EXPECT_NEAR(test_mean, mean, 0.1 * test_mean)
+            << "M=" << test_mean << " SD=" << kStdDev << " N=" << test_sample;
         EXPECT_NEAR(kStdDev, stddev, 0.1 * kStdDev)
-            << "M=" << kTestMean[midx] << " SD=" << kStdDev
-            << " N=" << kTestSamples[sidx];
+            << "M=" << test_mean << " SD=" << kStdDev << " N=" << test_sample;
       }
     }
   }
 }
 
 }  // namespace
-}  // namespace rtc
+}  // namespace webrtc

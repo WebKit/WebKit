@@ -17,13 +17,12 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
 #pragma once
 
-#include "CharacterData.h"
-#include "RenderPtr.h"
+#include <WebCore/CharacterData.h>
+#include <WebCore/RenderPtr.h>
 
 namespace WebCore {
 
@@ -55,6 +54,7 @@ public:
     bool canContainRangeEndPoint() const final { return true; }
 
     RenderText* renderer() const;
+    CheckedPtr<RenderText> checkedRenderer() const;
 
     void updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);
 
@@ -70,7 +70,8 @@ protected:
 
 private:
     String nodeName() const override;
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) override;
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;
+    SerializedNode serializeNode(CloningOperation) const override;
     void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges) final;
 
     virtual Ref<Text> virtualCreate(String&&);

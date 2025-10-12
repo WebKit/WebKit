@@ -10,9 +10,12 @@
 
 #include "modules/video_coding/rtp_frame_id_only_ref_finder.h"
 
+#include <memory>
 #include <utility>
 
-#include "rtc_base/logging.h"
+#include "api/video/video_frame_type.h"
+#include "modules/rtp_rtcp/source/frame_object.h"
+#include "modules/video_coding/rtp_frame_reference_finder.h"
 
 namespace webrtc {
 

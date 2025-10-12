@@ -10,15 +10,25 @@
 
 #include "modules/desktop_capture/win/screen_capturer_win_directx.h"
 
+#include <wrl/client.h>
+
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "modules/desktop_capture/desktop_capture_metrics_helper.h"
+#include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/screen_capture_frame_queue.h"
+#include "modules/desktop_capture/shared_memory.h"
+#include "modules/desktop_capture/win/dxgi_duplicator_controller.h"
+#include "modules/desktop_capture/win/dxgi_frame.h"
 #include "modules/desktop_capture/win/screen_capture_utils.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -129,7 +139,7 @@ void ScreenCapturerWinDirectx::CaptureFrame() {
   RTC_DCHECK(callback_);
   TRACE_EVENT0("webrtc", "ScreenCapturerWinDirectx::CaptureFrame");
 
-  int64_t capture_start_time_nanos = rtc::TimeNanos();
+  int64_t capture_start_time_nanos = TimeNanos();
 
   // Note that the [] operator will create the ScreenCaptureFrameQueue if it
   // doesn't exist, so this is safe.
@@ -190,8 +200,8 @@ void ScreenCapturerWinDirectx::CaptureFrame() {
       std::unique_ptr<DesktopFrame> frame =
           frames.current_frame()->frame()->Share();
 
-      int capture_time_ms = (rtc::TimeNanos() - capture_start_time_nanos) /
-                            rtc::kNumNanosecsPerMillisec;
+      int capture_time_ms =
+          (TimeNanos() - capture_start_time_nanos) / kNumNanosecsPerMillisec;
       RTC_HISTOGRAM_COUNTS_1000(
           "WebRTC.DesktopCapture.Win.DirectXCapturerFrameTime",
           capture_time_ms);

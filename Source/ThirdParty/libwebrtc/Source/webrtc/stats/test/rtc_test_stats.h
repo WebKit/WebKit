@@ -18,13 +18,14 @@
 #include <vector>
 
 #include "api/stats/rtc_stats.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
 class RTC_EXPORT RTCTestStats : public RTCStats {
  public:
-  WEBRTC_RTCSTATS_DECL();
+  WEBRTC_RTCSTATS_DECL(RTCTestStats);
   RTCTestStats(const std::string& id, Timestamp timestamp);
   ~RTCTestStats() override;
 

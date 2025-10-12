@@ -29,16 +29,15 @@
 
 #if ENABLE(ASSEMBLER) && CPU(ARM64E)
 
-#include "DisallowMacroScratchRegisterUsage.h"
-#include <wtf/MathExtras.h>
-
 // We need to include this before MacroAssemblerARM64.h because MacroAssemblerARM64
 // will be defined in terms of ARM64EAssembler for ARM64E.
-#include "ARM64EAssembler.h"
-#include "JITOperationValidation.h"
-#include "JSCConfig.h"
-#include "JSCPtrTag.h"
-#include "MacroAssemblerARM64.h"
+#include <JavaScriptCore/ARM64EAssembler.h>
+#include <JavaScriptCore/DisallowMacroScratchRegisterUsage.h>
+#include <JavaScriptCore/JITOperationValidation.h>
+#include <JavaScriptCore/JSCConfig.h>
+#include <JavaScriptCore/JSCPtrTag.h>
+#include <JavaScriptCore/MacroAssemblerARM64.h>
+#include <wtf/MathExtras.h>
 #include <wtf/TZoneMalloc.h>
 
 #if OS(DARWIN)

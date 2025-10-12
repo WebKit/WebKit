@@ -134,7 +134,7 @@ async function window0() {
 c = await navigator.gpu.requestAdapter();
 device0 = await c.requestDevice();
 texture1 = device0.createTexture({
-  size : [],
+  size : [1],
   dimension : '1d',
   format : 'rgba16sint',
   usage : GPUTextureUsage.STORAGE_BINDING | []

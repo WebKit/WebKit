@@ -61,5 +61,5 @@
 
     [ImplementedAs=setSelectionRangeForBindings] undefined setSelectionRange(unsigned long start, unsigned long end, optional DOMString direction);
 
-    [CEReactions=NotNeeded] attribute [AtomString] DOMString autocomplete;
+    [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString autocomplete;
 };

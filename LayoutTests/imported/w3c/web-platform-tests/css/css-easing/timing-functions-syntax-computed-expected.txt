@@ -19,4 +19,5 @@ PASS Property animation-timing-function value 'steps(calc(-10), start)'
 PASS Property animation-timing-function value 'steps(calc(5 / 2), start)'
 PASS Property animation-timing-function value 'steps(calc(1), jump-none)'
 PASS Property animation-timing-function value 'linear, ease, linear'
+PASS Property animation-timing-function value 'steps(calc(2 + sign(100em - 1px)), end)'
 

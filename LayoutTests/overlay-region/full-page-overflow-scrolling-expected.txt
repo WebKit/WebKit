@@ -46,6 +46,7 @@
                                           (scrolling behavior 2)
                                           (overlay region [x: 0 y: 0 width: 800 height: 100])
                                           (overlay region [x: 0 y: 550 width: 800 height: 50])
+                                          (associated layers 2)
                                           (layer bounds [x: 0 y: 4100 width: 800 height: 600])
                                           (layer position [x: 400 y: 400])
                                           (subviews

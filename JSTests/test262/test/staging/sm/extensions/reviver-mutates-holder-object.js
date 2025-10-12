@@ -4,22 +4,11 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-extensions-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  Behavior when the JSON.parse reviver mutates the holder object
+info: bugzilla.mozilla.org/show_bug.cgi?id=901351
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 901351;
-var summary = "Behavior when the JSON.parse reviver mutates the holder object";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 // A little trickiness to account for the undefined-ness of property
 // enumeration order.
@@ -53,7 +42,3 @@ else
   assert.sameValue(obj.a.d, 17);
   assert.sameValue(obj.b, 1);
 }
-
-/******************************************************************************/
-
-print("Tests complete");

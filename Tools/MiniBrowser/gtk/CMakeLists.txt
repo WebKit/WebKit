@@ -26,15 +26,8 @@ set(MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_SOURCE_DIR}/Source
 )
 
-set(MiniBrowser_SYSTEM_INCLUDE_DIRECTORIES
-    ${GLIB_INCLUDE_DIRS}
-    ${LIBSOUP_INCLUDE_DIRS}
-)
-
 set(MiniBrowser_PRIVATE_LIBRARIES
-    ${GLIB_LIBRARIES}
     ${JavaScriptCore_LIBRARY_NAME}
-    ${LIBSOUP_LIBRARIES}
     GTK::GTK
     WebKit::WebKit
 )

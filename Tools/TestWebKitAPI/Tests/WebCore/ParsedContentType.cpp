@@ -35,100 +35,55 @@ namespace TestWebKitAPI {
 
 TEST(ParsedContentType, MimeSniff)
 {
-    EXPECT_TRUE(isValidContentType("text/plain"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType(" text/plain"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType(" text/plain "_s, Mode::MimeSniff));
-    EXPECT_FALSE(isValidContentType("text /plain"_s, Mode::MimeSniff));
-    EXPECT_FALSE(isValidContentType("text/ plain"_s, Mode::MimeSniff));
-    EXPECT_FALSE(isValidContentType("text / plain"_s, Mode::MimeSniff));
-    EXPECT_FALSE(isValidContentType("te xt/plain"_s, Mode::MimeSniff));
-    EXPECT_FALSE(isValidContentType("text/pla in"_s, Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain"_s));
+    EXPECT_TRUE(isValidContentType(" text/plain"_s));
+    EXPECT_TRUE(isValidContentType(" text/plain "_s));
+    EXPECT_FALSE(isValidContentType("text /plain"_s));
+    EXPECT_FALSE(isValidContentType("text/ plain"_s));
+    EXPECT_FALSE(isValidContentType("text / plain"_s));
+    EXPECT_FALSE(isValidContentType("te xt/plain"_s));
+    EXPECT_FALSE(isValidContentType("text/pla in"_s));
 
-    EXPECT_FALSE(isValidContentType("text"_s, Mode::MimeSniff));
-    EXPECT_FALSE(isValidContentType("text/"_s, Mode::MimeSniff));
-    EXPECT_FALSE(isValidContentType("/plain"_s, Mode::MimeSniff));
+    EXPECT_FALSE(isValidContentType("text"_s));
+    EXPECT_FALSE(isValidContentType("text/"_s));
+    EXPECT_FALSE(isValidContentType("/plain"_s));
 
-    EXPECT_TRUE(isValidContentType("text/plain;"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;;"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;;;"_s, Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain;"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;;"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;;;"_s));
 
-    EXPECT_TRUE(isValidContentType("text/plain;test"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain; test"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test="_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test=value"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;;test=value"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;;;test=value"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test=value;"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test=value;;"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test=value;;;"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain; test=value"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test =value"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test= value"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test=value "_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;=;test=value"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test=value;="_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;wrong=;test=value"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;=wrong;test=value"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test=value;wrong="_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test=value;=wrong"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain ;test=value"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain\n;test=value"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain\r;test=value"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain\t;test=value"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test=value ;test=value"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test=value\n;test=value"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test=value\r;test=value"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test=value\t;test=value"_s, Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain;test"_s));
+    EXPECT_TRUE(isValidContentType("text/plain; test"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test="_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;;test=value"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;;;test=value"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value;"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value;;"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value;;;"_s));
+    EXPECT_TRUE(isValidContentType("text/plain; test=value"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test =value"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test= value"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value "_s));
+    EXPECT_TRUE(isValidContentType("text/plain;=;test=value"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value;="_s));
+    EXPECT_TRUE(isValidContentType("text/plain;wrong=;test=value"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;=wrong;test=value"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value;wrong="_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value;=wrong"_s));
+    EXPECT_TRUE(isValidContentType("text/plain ;test=value"_s));
+    EXPECT_TRUE(isValidContentType("text/plain\n;test=value"_s));
+    EXPECT_TRUE(isValidContentType("text/plain\r;test=value"_s));
+    EXPECT_TRUE(isValidContentType("text/plain\t;test=value"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value ;test=value"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value\n;test=value"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value\r;test=value"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value\t;test=value"_s));
 
-    EXPECT_TRUE(isValidContentType("text/plain;test=\"value\""_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test=\"value"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test=\"value\"foo"_s, Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test=\"value\"foo;foo=bar"_s, Mode::MimeSniff));
-}
-
-TEST(ParsedContentType, Rfc2045)
-{
-    EXPECT_TRUE(isValidContentType("text/plain"_s, Mode::Rfc2045));
-    EXPECT_TRUE(isValidContentType(" text/plain"_s, Mode::Rfc2045));
-    EXPECT_TRUE(isValidContentType(" text/plain "_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text /plain"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/ plain"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text / plain"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("te xt/plain"_s, Mode::Rfc2045));
-    EXPECT_TRUE(isValidContentType("text/pla in"_s, Mode::Rfc2045));
-
-    EXPECT_FALSE(isValidContentType("text"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("/plain"_s, Mode::Rfc2045));
-
-    EXPECT_FALSE(isValidContentType("text/plain;"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;;"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;;;"_s, Mode::Rfc2045));
-
-    EXPECT_FALSE(isValidContentType("text/plain;test"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain; test"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;test="_s, Mode::Rfc2045));
-    EXPECT_TRUE(isValidContentType("text/plain;test=value"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;;test=value"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;;;test=value"_s, Mode::Rfc2045));
-    EXPECT_TRUE(isValidContentType("text/plain;test=value;"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;test=value;;"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;test=value;;;"_s, Mode::Rfc2045));
-    EXPECT_TRUE(isValidContentType("text/plain; test=value"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;test =value"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;test= value"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;test=value "_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;=;test=value"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;test=value;="_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;wrong=;test=value"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;=wrong;test=value"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;test=value;wrong="_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;test=value;=wrong"_s, Mode::Rfc2045));
-
-    EXPECT_TRUE(isValidContentType("text/plain;test=\"value\""_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;test=\"value"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;test=\"value\"foo"_s, Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;test=\"value\"foo;foo=bar"_s, Mode::Rfc2045));
+    EXPECT_TRUE(isValidContentType("text/plain;test=\"value\""_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test=\"value"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test=\"value\"foo"_s));
+    EXPECT_TRUE(isValidContentType("text/plain;test=\"value\"foo;foo=bar"_s));
 }
 
 // The word "escape" here just means a format easy to read in test results.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "Color.h"
-#include "ControlFactory.h"
-#include "PlatformControl.h"
-#include "StyleAppearance.h"
+#include <WebCore/Color.h>
+#include <WebCore/ControlFactory.h>
+#include <WebCore/PlatformControl.h>
+#include <WebCore/StyleAppearance.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -44,6 +44,7 @@ public:
     StyleAppearance type() const { return m_type; }
 
     WEBCORE_EXPORT ControlFactory& controlFactory() const;
+    WEBCORE_EXPORT Ref<ControlFactory> protectedControlFactory() const;
     void setOverrideControlFactory(RefPtr<ControlFactory>&& controlFactory) { m_overrideControlFactory = WTFMove(controlFactory); }
 
     FloatSize sizeForBounds(const FloatRect& bounds, const ControlStyle&);

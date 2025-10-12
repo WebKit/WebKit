@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include "ArchiveError.h"
-#include "SubstituteResource.h"
+#include <WebCore/ArchiveError.h>
+#include <WebCore/SubstituteResource.h>
 
 namespace WebCore {
 

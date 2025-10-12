@@ -128,8 +128,10 @@ Ref<Protocol::Console::StackTrace> ScriptCallStack::buildInspectorObject() const
     if (m_truncated)
         stackTrace->setTruncated(true);
 
-    if (m_parentStackTrace)
-        stackTrace->setParentStackTrace(m_parentStackTrace->buildInspectorObject());
+    if (m_parentStackTrace) {
+        if (auto parentStackTrace = m_parentStackTrace->buildInspectorObject())
+            stackTrace->setParentStackTrace(parentStackTrace.releaseNonNull());
+    }
 
     return stackTrace;
 }

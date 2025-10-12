@@ -9,13 +9,11 @@
  */
 #include "net/dcsctp/packet/error_cause/cookie_received_while_shutting_down_cause.h"
 
-#include <stdint.h>
-
-#include <type_traits>
+#include <cstdint>
 #include <vector>
 
 #include "net/dcsctp/testing/testing_macros.h"
-#include "rtc_base/gunit.h"
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace {

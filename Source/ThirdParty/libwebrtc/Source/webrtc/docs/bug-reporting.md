@@ -115,7 +115,7 @@ Anyone with a [Google account][1] can file bugs in the Chrome and WebRTC tracker
 ### Filing a Security Bug
 
 The WebRTC team takes security very seriously. If you find a vulnerability in
-WebRTC, please file a [Chromium security bug][ChromeSecurity], even if the bug
+WebRTC, please file a [Chromium security bug][ChromeSecurityBug], even if the bug
 only affects native WebRTC code and not Chromium.
 
 A history of fixed Chromium security bugs is best found via [security notes in
@@ -161,13 +161,14 @@ page.
 [1]: https://accounts.google.com/
 [2]: http://www.chromium.org/for-testers/bug-reporting-guidelines/reporting-crash-bug
 [3]: https://code.google.com/p/chromium/issues/entry?template=Audio/Video%20Issue
-[4]: https://bugs.chromium.org/p/webrtc/issues/entry
+[4]: https://issues.webrtc.org/issues/new?component=1363538&template=1986396
 [5]: native-code/logging.md
 [ChromeSecurity]: https://www.chromium.org/Home/chromium-security/reporting-security-bugs
 [DiscussWebRTC]: https://groups.google.com/group/discuss-webrtc
 [ChromeSecurityBlog]: https://chromereleases.googleblog.com/search/label/Stable%20updates
-[ChromeBugList]: https://bugs.chromium.org/p/chromium/issues/list?can=1&q=Type%3DBug-Security+component%3ABlink%3EWebRTC+-status%3ADuplicate%2CWontfix&sort=-closed&colspec=ID+Pri+M+Component+Status+Owner+Summary+OS+Closed&x=m&y=releaseblock&cells=ids
-[WebRtcBugList]: https://bugs.chromium.org/p/webrtc/issues/list?q=Type%3DBug-Security&can=1
+[ChromeSecurityBug]: https://issues.chromium.org/issues/new?component=1363614&template=1922342
+[ChromeBugList]: https://issues.chromium.org/issues?q=type:vulnerability
+[WebRtcBugList]: https://issues.chromium.org/issues?q=type:vulnerability%20componentid:1456096
 [ChromeSecurity]: https://www.chromium.org/Home/chromium-security
 [SeverityGuidelines]: https://chromium.googlesource.com/chromium/src/+/main/docs/security/severity-guidelines.md
 [SecurityFaq]: https://chromium.googlesource.com/chromium/src/+/main/docs/security/faq.md

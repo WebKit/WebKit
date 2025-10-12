@@ -3,14 +3,15 @@ function dirname(path) {
 }
 
 /* This subdomain should point to this same location */
-var SUBDOMAIN = "{{hosts[alt][]}}"
+var SUBDOMAIN = 'www1'
 var SUBDOMAIN2 = 'www2'
 var PORT = {{ports[http][1]}}
 //XXX HTTPS
 var PORTS = {{ports[https][0]}}
 
 /* Changes http://example.com/abc/def/cool.htm to http://www1.example.com/abc/def/ */
-var CROSSDOMAIN     = location.protocol + '//' + SUBDOMAIN + ':' + location.port + dirname(location.pathname)
-var REMOTE_HOST     = SUBDOMAIN
+var CROSSDOMAIN     = dirname(location.href)
+                        .replace('://', '://' + SUBDOMAIN + '.')
+var REMOTE_HOST     = SUBDOMAIN + '.' + location.host
 var REMOTE_PROTOCOL = location.protocol
 var REMOTE_ORIGIN   = REMOTE_PROTOCOL + '//' + REMOTE_HOST

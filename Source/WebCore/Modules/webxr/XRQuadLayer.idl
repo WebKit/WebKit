@@ -28,7 +28,7 @@
     Conditional=WEBXR_LAYERS,
     EnabledBySetting=WebXRLayersAPIEnabled,
     ExportMacro=WEBCORE_EXPORT,
-    Exposed=Window,
+    Exposed=Window
 ] interface XRQuadLayer : XRCompositionLayer {
     attribute WebXRSpace space;
     attribute WebXRRigidTransform transform;

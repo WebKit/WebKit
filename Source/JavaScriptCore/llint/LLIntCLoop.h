@@ -27,8 +27,8 @@
 
 #if ENABLE(C_LOOP)
 
-#include "JSCJSValue.h"
-#include "Opcode.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/Opcode.h>
 #include "ProtoCallFrame.h"
 
 namespace JSC {

@@ -7,6 +7,10 @@
 // RenderStateCache.cpp: Defines rx::RenderStateCache, a cache of Direct3D render
 // state objects.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "libANGLE/renderer/d3d/d3d11/RenderStateCache.h"
 
 #include <float.h>

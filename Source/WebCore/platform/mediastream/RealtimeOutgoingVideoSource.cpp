@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -183,7 +183,7 @@ void RealtimeOutgoingVideoSource::initializeFromSource()
     updateFramesSending();
 }
 
-void RealtimeOutgoingVideoSource::AddOrUpdateSink(rtc::VideoSinkInterface<webrtc::VideoFrame>* sink, const rtc::VideoSinkWants& sinkWants)
+void RealtimeOutgoingVideoSource::AddOrUpdateSink(webrtc::VideoSinkInterface<webrtc::VideoFrame>* sink, const webrtc::VideoSinkWants& sinkWants)
 {
     ASSERT(!sinkWants.black_frames);
 
@@ -212,7 +212,7 @@ void RealtimeOutgoingVideoSource::AddOrUpdateSink(rtc::VideoSinkInterface<webrtc
     m_sinks.add(sink);
 }
 
-void RealtimeOutgoingVideoSource::RemoveSink(rtc::VideoSinkInterface<webrtc::VideoFrame>* sink)
+void RealtimeOutgoingVideoSource::RemoveSink(webrtc::VideoSinkInterface<webrtc::VideoFrame>* sink)
 {
     Locker locker { m_sinksLock };
     m_sinks.remove(sink);
@@ -235,7 +235,7 @@ void RealtimeOutgoingVideoSource::sendBlackFramesIfNeeded()
         if (!m_shouldApplyRotation && (m_currentRotation == webrtc::kVideoRotation_270 || m_currentRotation == webrtc::kVideoRotation_90))
             std::swap(width, height);
 
-        m_blackFrame = createBlackFrame(width, height);
+        m_blackFrame = WTF::toRef(createBlackFrame(width, height));
         ASSERT(m_blackFrame);
         if (!m_blackFrame) {
             ALWAYS_LOG(LOGIDENTIFIER, "Unable to send black frames");
@@ -249,10 +249,10 @@ void RealtimeOutgoingVideoSource::sendBlackFramesIfNeeded()
 void RealtimeOutgoingVideoSource::sendOneBlackFrame()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>(m_blackFrame));
+    sendFrame(webrtc::scoped_refptr { m_blackFrame.get() });
 }
 
-void RealtimeOutgoingVideoSource::sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer)
+void RealtimeOutgoingVideoSource::sendFrame(webrtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer)
 {
     MonotonicTime timestamp = MonotonicTime::now();
     webrtc::VideoFrame frame(buffer, m_shouldApplyRotation ? webrtc::kVideoRotation_0 : m_currentRotation, static_cast<int64_t>(timestamp.secondsSinceEpoch().microseconds()));

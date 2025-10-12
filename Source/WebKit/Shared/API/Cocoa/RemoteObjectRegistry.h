@@ -65,7 +65,7 @@ private:
 
     // Message handlers
     void invokeMethod(const RemoteObjectInvocation&);
-    void callReplyBlock(uint64_t replyID, const UserData& blockInvocation);
+    void callReplyBlock(IPC::Connection& connection, uint64_t replyID, const UserData& blockInvocation);
     void releaseUnusedReplyBlock(uint64_t replyID);
 
     WeakObjCPtr<_WKRemoteObjectRegistry> m_remoteObjectRegistry;

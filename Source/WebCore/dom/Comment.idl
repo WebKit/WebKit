@@ -18,7 +18,6 @@
  */
 
 [
-    JSGenerateToJSObject,
     Exposed=Window
 ] interface Comment : CharacterData {
     [CallWith=CurrentDocument] constructor(optional DOMString data = "");

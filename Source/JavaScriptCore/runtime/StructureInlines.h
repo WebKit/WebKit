@@ -25,21 +25,21 @@
 
 #pragma once
 
-#include "BigIntPrototype.h"
-#include "BrandedStructure.h"
-#include "JSArrayBufferView.h"
-#include "JSCJSValueInlines.h"
-#include "JSGlobalObject.h"
-#include "JSObjectInlines.h"
-#include "PropertyTable.h"
-#include "StringPrototype.h"
-#include "Structure.h"
-#include "StructureChain.h"
-#include "StructureRareDataInlines.h"
-#include "SymbolPrototype.h"
-#include "Watchpoint.h"
-#include "WebAssemblyGCStructure.h"
-#include "WriteBarrierInlines.h"
+#include <JavaScriptCore/BigIntPrototype.h>
+#include <JavaScriptCore/BrandedStructure.h>
+#include <JavaScriptCore/JSArrayBufferView.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/JSObjectInlines.h>
+#include <JavaScriptCore/PropertyTable.h>
+#include <JavaScriptCore/StringPrototype.h>
+#include <JavaScriptCore/Structure.h>
+#include <JavaScriptCore/StructureChain.h>
+#include <JavaScriptCore/StructureRareDataInlines.h>
+#include <JavaScriptCore/SymbolPrototype.h>
+#include <JavaScriptCore/Watchpoint.h>
+#include <JavaScriptCore/WebAssemblyGCStructure.h>
+#include <JavaScriptCore/WriteBarrierInlines.h>
 #include <wtf/CompactRefPtr.h>
 #include <wtf/Threading.h>
 
@@ -317,19 +317,19 @@ inline bool Structure::transitivelyTransitionedFrom(Structure* structureToFind)
     return false;
 }
 
-inline void Structure::setCachedPropertyNames(VM& vm, CachedPropertyNamesKind kind, JSImmutableButterfly* cached)
+inline void Structure::setCachedPropertyNames(VM& vm, CachedPropertyNamesKind kind, JSCellButterfly* cached)
 {
     ensureRareData(vm)->setCachedPropertyNames(vm, kind, cached);
 }
 
-inline JSImmutableButterfly* Structure::cachedPropertyNames(CachedPropertyNamesKind kind) const
+inline JSCellButterfly* Structure::cachedPropertyNames(CachedPropertyNamesKind kind) const
 {
     if (!hasRareData())
         return nullptr;
     return rareData()->cachedPropertyNames(kind);
 }
 
-inline JSImmutableButterfly* Structure::cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind kind) const
+inline JSCellButterfly* Structure::cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind kind) const
 {
     if (!hasRareData())
         return nullptr;
@@ -514,6 +514,8 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
     checkConsistency();
     if (attributes & PropertyAttribute::DontEnum || propertyName.isSymbol())
         setIsQuickPropertyAccessAllowedForEnumeration(false);
+    if (attributes & PropertyAttribute::ReadOnly)
+        setContainsReadOnlyProperties();
     if (attributes & PropertyAttribute::DontEnum)
         setHasNonEnumerableProperties(true);
     if (attributes & PropertyAttribute::DontDelete) {
@@ -670,6 +672,8 @@ ALWAYS_INLINE auto Structure::addOrReplacePropertyWithoutTransition(VM& vm, Prop
     checkConsistency();
     if (newAttributes & PropertyAttribute::DontEnum || propertyName.isSymbol())
         setIsQuickPropertyAccessAllowedForEnumeration(false);
+    if (newAttributes & PropertyAttribute::ReadOnly)
+        setContainsReadOnlyProperties();
     if (newAttributes & PropertyAttribute::DontEnum)
         setHasNonEnumerableProperties(true);
     if (newAttributes & PropertyAttribute::DontDelete) {

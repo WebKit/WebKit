@@ -15,6 +15,8 @@
 #include <utility>
 
 #include "api/test/pclf/media_configuration.h"
+#include "api/test/video/video_frame_writer.h"
+#include "api/video/video_frame.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 

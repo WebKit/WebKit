@@ -1,3 +1,7 @@
+CONSOLE MESSAGE: error
+CONSOLE MESSAGE: GPUPipelineError: location(200) >= maxColorAttachments(8)
+CONSOLE MESSAGE: GPUPipelineError
+CONSOLE MESSAGE: _
+CONSOLE MESSAGE: GPUPipelineError: location(200) >= maxColorAttachments(8) - validation
 promises created
-Pass
 

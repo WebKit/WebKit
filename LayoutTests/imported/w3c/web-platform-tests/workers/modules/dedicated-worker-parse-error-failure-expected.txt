@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Unexpected token ';'
-CONSOLE MESSAGE: SyntaxError: Unexpected token ';'
 
 PASS Module worker construction for script with syntax error should dispatch an event named error.
 PASS Static import on module worker for script with syntax error should dispatch an event named error.

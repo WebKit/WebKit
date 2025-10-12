@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -363,9 +363,9 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
     removeChildren(suppressOnDeselect)
     {
-        for (let child of this.children) {
-            child.deselect(suppressOnDeselect);
+        this.selectedTreeElement?.deselect(suppressOnDeselect);
 
+        for (let child of this.children) {
             let treeOutline = child.treeOutline;
 
             child._detach();
@@ -402,12 +402,14 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
     _forgetTreeElementAndDescendants(element)
     {
+        console.assert(!element.selected, element);
         element.treeOutline = null;
         this._knownTreeElements.delete(element.identifier, element);
 
         const skipUnrevealed = false;
         const dontPopulate = true;
         for (let current = element.children[0]; current; current = current.traverseNextTreeElement(skipUnrevealed, element, dontPopulate)) {
+            console.assert(!current.selected, current);
             current.treeOutline = null;
             this._knownTreeElements.delete(current.identifier, current);
         }

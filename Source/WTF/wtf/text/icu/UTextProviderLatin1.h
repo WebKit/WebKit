@@ -26,19 +26,19 @@
 #pragma once
 
 #include <unicode/utext.h>
-#include <wtf/text/LChar.h>
+#include <wtf/text/Latin1Character.h>
 
 namespace WTF {
 
 const int UTextWithBufferInlineCapacity = 16;
 
 struct UTextWithBuffer {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(UTextWithBuffer);
     UText text;
-    UChar buffer[UTextWithBufferInlineCapacity];
+    char16_t buffer[UTextWithBufferInlineCapacity];
 };
 
-UText* openLatin1UTextProvider(UTextWithBuffer* utWithBuffer, std::span<const LChar> string, UErrorCode* status);
-WTF_EXPORT_PRIVATE UText* openLatin1ContextAwareUTextProvider(UTextWithBuffer* utWithBuffer, std::span<const LChar> string, std::span<const UChar> priorContext, UErrorCode* status);
+UText* openLatin1UTextProvider(UTextWithBuffer* utWithBuffer, std::span<const Latin1Character> string, UErrorCode* status);
+WTF_EXPORT_PRIVATE UText* openLatin1ContextAwareUTextProvider(UTextWithBuffer* utWithBuffer, std::span<const Latin1Character> string, std::span<const char16_t> priorContext, UErrorCode* status);
 
 } // namespace WTF

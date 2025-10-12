@@ -31,6 +31,7 @@
 #include "AudioSampleFormat.h"
 #include "CAAudioStreamDescription.h"
 #include "CMUtilities.h"
+#include "Logging.h"
 #include "MediaSampleAVFObjC.h"
 #include "NotImplemented.h"
 #include "SharedBuffer.h"
@@ -250,17 +251,18 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
     WebAudioBufferList sourceList(audioData.m_description, audioData.sampleBuffer());
     bool destinationIsInterleaved = isAudioSampleFormatInterleaved(destinationFormat);
 
-    if (audioSampleElementFormat(sourceFormat) == audioSampleElementFormat(destinationFormat)) {
-        if (numberOfChannels() == 1 || (audioData.isInterleaved() && destinationIsInterleaved)) {
-            // Simplest case.
-            ASSERT(!planeIndex);
-            auto source = sourceList.bufferAsSpan(0);
-            size_t frameOffsetInBytes = frameOffset.value_or(0) * audioData.m_description.bytesPerFrame();
-            RELEASE_ASSERT(frameOffsetInBytes <= source.size());
-            auto subSource = source.subspan(frameOffsetInBytes, source.size() - frameOffsetInBytes);
-            memcpySpan(destination, subSource);
-            return;
-        }
+    // Copy memory when:
+    // - formats fully match
+    // - sample format matches and source is mono (planar and interleaved have the same layout)
+    if (sourceFormat == destinationFormat || (audioSampleElementFormat(sourceFormat) == audioSampleElementFormat(destinationFormat) && numberOfChannels() == 1)) {
+        ASSERT(!destinationIsInterleaved || !planeIndex);
+        auto source = sourceList.bufferAsSpan(planeIndex);
+        size_t frameOffsetInBytes = frameOffset.value_or(0) * audioData.m_description.bytesPerFrame();
+        size_t copyLengthInBytes = copyElementCount * computeBytesPerSample(destinationFormat);
+        RELEASE_ASSERT(frameOffsetInBytes + copyLengthInBytes <= source.size());
+        auto subSource = source.subspan(frameOffsetInBytes, copyLengthInBytes);
+        memcpySpan(destination, subSource);
+        return;
     }
 
     auto source = planesOfSamples(sourceFormat, sourceList, frameOffset.value_or(0) * (audioData.isInterleaved() ? numberOfChannels() : 1));

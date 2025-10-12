@@ -11,9 +11,8 @@
 #ifndef TEST_PC_E2E_ANALYZER_VIDEO_DEFAULT_VIDEO_QUALITY_ANALYZER_H_
 #define TEST_PC_E2E_ANALYZER_VIDEO_DEFAULT_VIDEO_QUALITY_ANALYZER_H_
 
-#include <atomic>
+#include <cstddef>
 #include <cstdint>
-#include <deque>
 #include <map>
 #include <memory>
 #include <set>
@@ -21,13 +20,16 @@
 #include <unordered_map>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/array_view.h"
+#include "api/scoped_refptr.h"
+#include "api/stats/rtc_stats_report.h"
 #include "api/test/metrics/metrics_logger.h"
 #include "api/test/video_quality_analyzer_interface.h"
-#include "api/units/data_size.h"
 #include "api/units/timestamp.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_frame.h"
+#include "api/video_codecs/video_encoder.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
@@ -50,7 +52,7 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   ~DefaultVideoQualityAnalyzer() override;
 
   void Start(std::string test_case_name,
-             rtc::ArrayView<const std::string> peer_names,
+             ArrayView<const std::string> peer_names,
              int max_threads_count) override;
   uint16_t OnFrameCaptured(absl::string_view peer_name,
                            const std::string& stream_label,
@@ -92,7 +94,7 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   std::string GetSenderPeerName(uint16_t frame_id) const override;
   void OnStatsReports(
       absl::string_view pc_label,
-      const rtc::scoped_refptr<const RTCStatsReport>& report) override {}
+      const scoped_refptr<const RTCStatsReport>& report) override {}
 
   // Returns set of stream labels, that were met during test call.
   std::set<StatsKey> GetKnownVideoStreams() const;
@@ -120,10 +122,10 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   // because this value is reserved by `VideoFrame` as "ID not set".
   uint16_t GetNextFrameId() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
-  void AddExistingFramesInFlightForStreamToComparator(size_t stream_index,
-                                                      StreamState& stream_state,
-                                                      size_t peer_index)
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+  void AddExistingFramesInFlightForStreamToComparator(
+      size_t stream_index,
+      AnalyzerStreamState& stream_state,
+      size_t peer_index) RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Processes frames for the peer identified by `peer_index` up to
   // `rendered_frame_id` (excluded). Sends each dropped frame for comparison and
@@ -133,7 +135,7 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   int ProcessNotSeenFramesBeforeRendered(size_t peer_index,
                                          uint16_t rendered_frame_id,
                                          const InternalStatsKey& stats_key,
-                                         StreamState& state)
+                                         AnalyzerStreamState& state)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Report results for all metrics for all streams.
@@ -194,7 +196,8 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   std::map<InternalStatsKey, FrameCounters> stream_frame_counters_
       RTC_GUARDED_BY(mutex_);
   // Map from stream index in `streams_` to its StreamState.
-  std::unordered_map<size_t, StreamState> stream_states_ RTC_GUARDED_BY(mutex_);
+  std::unordered_map<size_t, AnalyzerStreamState> stream_states_
+      RTC_GUARDED_BY(mutex_);
   // Map from stream index in `streams_` to sender peer index in `peers_`.
   std::unordered_map<size_t, size_t> stream_to_sender_ RTC_GUARDED_BY(mutex_);
 

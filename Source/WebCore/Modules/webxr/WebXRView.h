@@ -65,10 +65,10 @@ public:
 private:
     WebXRView(Ref<WebXRFrame>&&, XREye, Ref<WebXRRigidTransform>&&, Ref<Float32Array>&&);
 
-    Ref<WebXRFrame> m_frame;
+    const Ref<WebXRFrame> m_frame;
     XREye m_eye;
-    Ref<WebXRRigidTransform> m_transform;
-    Ref<Float32Array> m_projection;
+    const Ref<WebXRRigidTransform> m_transform;
+    const Ref<Float32Array> m_projection;
     bool m_viewportModifiable { false };
     double m_requestedViewportScale { 1.0 };
     JSValueInWrappedObject m_cachedProjectionMatrix;

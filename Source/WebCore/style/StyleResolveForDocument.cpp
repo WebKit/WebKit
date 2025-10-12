@@ -31,7 +31,6 @@
 
 #include "CSSFontSelector.h"
 #include "Document.h"
-#include "DocumentInlines.h"
 #include "FontCascade.h"
 #include "HTMLIFrameElement.h"
 #include "LocalFrame.h"
@@ -60,7 +59,7 @@ RenderStyle resolveForDocument(const Document& document)
     auto documentStyle = RenderStyle::create();
 
     documentStyle.setDisplay(DisplayType::Block);
-    documentStyle.setRTLOrdering(document.visuallyOrdered() ? Order::Visual : Order::Logical);
+    documentStyle.setRTLOrdering(document.visuallyOrdered() ? WebCore::Order::Visual : WebCore::Order::Logical);
     documentStyle.setZoom(!document.printing() ? renderView.frame().pageZoomFactor() : 1);
     documentStyle.setPageScaleTransform(renderView.frame().frameScaleFactor());
 
@@ -68,15 +67,15 @@ RenderStyle resolveForDocument(const Document& document)
     documentStyle.setUserModify(document.inDesignMode() ? UserModify::ReadWrite : UserModify::ReadOnly);
 #if PLATFORM(IOS_FAMILY)
     if (document.inDesignMode())
-        documentStyle.setTextSizeAdjust(TextSizeAdjustment::none());
+        documentStyle.setTextSizeAdjust(CSS::Keyword::None { });
 #endif
 
     Adjuster::adjustEventListenerRegionTypesForRootStyle(documentStyle, document);
     
-    const Pagination& pagination = renderView.frameView().pagination();
+    auto& pagination = renderView.frameView().pagination();
     if (pagination.mode != Pagination::Mode::Unpaginated) {
         documentStyle.setColumnStylesFromPaginationMode(pagination.mode);
-        documentStyle.setColumnGap(GapLength(WebCore::Length(static_cast<int>(pagination.gap), LengthType::Fixed)));
+        documentStyle.setColumnGap(GapGutter::Fixed { static_cast<float>(pagination.gap) });
         if (renderView.multiColumnFlow())
             renderView.updateColumnProgressionFromStyle(documentStyle);
     }
@@ -107,6 +106,8 @@ RenderStyle resolveForDocument(const Document& document)
     RefPtr fontSelector = document.protectedFontSelector();
     fontCascade.update(WTFMove(fontSelector));
     documentStyle.setFontCascade(WTFMove(fontCascade));
+
+    documentStyle.setEnableEvaluationTimeZoom(document.settings().evaluationTimeZoomEnabled());
 
     return documentStyle;
 }

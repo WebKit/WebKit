@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Config is not valid
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Config is not valid
 
 Harness Error (FAIL), message = Unhandled rejection: Config is not valid
 

@@ -46,7 +46,7 @@ class DataRate final : public rtc_units_impl::RelativeUnit<DataRate> {
   }
   static constexpr DataRate Infinity() { return PlusInfinity(); }
 
-  DataRate() = delete;
+  constexpr DataRate() = default;
 
   template <typename Sink>
   friend void AbslStringify(Sink& sink, DataRate value);

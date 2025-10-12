@@ -30,7 +30,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "CDMKeySystemConfiguration.h"
+#include <WebCore/CDMKeySystemConfiguration.h>
 
 namespace WebCore {
 

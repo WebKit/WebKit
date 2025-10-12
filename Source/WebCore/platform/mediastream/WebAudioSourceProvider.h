@@ -27,7 +27,7 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include "AudioSourceProvider.h"
+#include <WebCore/AudioSourceProvider.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {

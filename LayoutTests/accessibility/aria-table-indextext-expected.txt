@@ -1,0 +1,22 @@
+This tests that aria-{row,col}indextext attributes in aria table/grid are working correctly.
+
+PASS: cell1.stringAttributeValue('AXColumnIndexDescription') === 'B'
+PASS: cell1.stringAttributeValue('AXRowIndexDescription') === 'Seven'
+PASS: cell2.stringAttributeValue('AXColumnIndexDescription') === 'D'
+PASS: cell2.stringAttributeValue('AXRowIndexDescription') === 'Eight'
+PASS: cell3.stringAttributeValue('AXColumnIndexDescription') === 'E'
+PASS: cell3.stringAttributeValue('AXRowIndexDescription') === 'Eight'
+PASS: cell4.stringAttributeValue('AXColumnIndexDescription') === null
+PASS: cell5.stringAttributeValue('AXColumnIndexDescription') === null
+PASS: cell6.stringAttributeValue('AXColumnIndexDescription') === null
+PASS: cell1.stringAttributeValue('AXColumnIndexDescription') === 'D'
+PASS: cell1.stringAttributeValue('AXRowIndexDescription') === 'Ten'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+First Name Last Name Company Address
+Fred Jackson Acme, Inc. 123 Broad St.
+Sara James
+Footer 1 Footer 2 Footer 3
+Name Company Address

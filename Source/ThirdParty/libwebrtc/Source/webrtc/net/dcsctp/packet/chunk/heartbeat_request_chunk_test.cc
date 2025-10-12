@@ -9,8 +9,7 @@
  */
 #include "net/dcsctp/packet/chunk/heartbeat_request_chunk.h"
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <utility>
 #include <vector>
 
@@ -18,8 +17,8 @@
 #include "net/dcsctp/packet/parameter/heartbeat_info_parameter.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
 #include "net/dcsctp/testing/testing_macros.h"
-#include "rtc_base/gunit.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace dcsctp {
 namespace {

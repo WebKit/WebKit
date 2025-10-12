@@ -10,15 +10,14 @@
 
 #include "modules/video_coding/timing/rtt_filter.h"
 
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include <algorithm>
+#include <cmath>
+#include <cstdint>
+#include <cstdlib>
 
 #include "absl/algorithm/container.h"
-#include "absl/container/inlined_vector.h"
 #include "api/units/time_delta.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

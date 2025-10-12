@@ -39,13 +39,12 @@
 namespace WebCore {
 
 class AccessibilityMathMLElement : public AccessibilityRenderObject {
-
 public:
-    static Ref<AccessibilityMathMLElement> create(AXID, RenderObject&, bool isAnonymousOperator);
+    static Ref<AccessibilityMathMLElement> create(AXID, RenderObject&, AXObjectCache&, bool isAnonymousOperator);
     virtual ~AccessibilityMathMLElement();
 
 protected:
-    explicit AccessibilityMathMLElement(AXID, RenderObject&, bool isAnonymousOperator);
+    explicit AccessibilityMathMLElement(AXID, RenderObject&, AXObjectCache&, bool isAnonymousOperator);
 
 private:
     AccessibilityRole determineAccessibilityRole() final;

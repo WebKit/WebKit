@@ -109,7 +109,7 @@ NS_ASSUME_NONNULL_BEGIN
     OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "keys=", keys.size());
 
     // FIXME (117803793): Remove staging code once -[AVContentKey revoke] is available in SDKs used by WebKit builders
-    if (![PAL::getAVContentKeyClass() instancesRespondToSelector:@selector(revoke)])
+    if (![PAL::getAVContentKeyClassSingleton() instancesRespondToSelector:@selector(revoke)])
         return;
 
     for (auto& key : keys)

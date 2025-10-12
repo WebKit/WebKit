@@ -1,9 +1,9 @@
 
-PASS table
-FAIL colgroup assert_equals: expected 100 but got 114
-FAIL col assert_equals: expected 100 but got 114
-FAIL rowgroup assert_equals: expected 100 but got 114
-PASS row
-PASS cell
-PASS content
+FAIL table assert_equals: expected 70 but got 120
+FAIL colgroup assert_equals: expected 70 but got 114
+FAIL col assert_equals: expected 70 but got 114
+FAIL rowgroup assert_equals: expected 70 but got 114
+FAIL row assert_equals: expected 70 but got 100
+FAIL cell assert_equals: expected 70 but got 100
+FAIL content assert_equals: expected 70 but got 100
 

@@ -7,6 +7,10 @@
 //   Unit tests for the matrix utils.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "matrix_utils.h"
 
 #include <gtest/gtest.h>

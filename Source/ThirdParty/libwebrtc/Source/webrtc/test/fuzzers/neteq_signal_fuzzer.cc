@@ -8,17 +8,29 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <algorithm>
 #include <cmath>
+#include <cstddef>
+#include <cstdint>
 #include <limits>
+#include <map>
 #include <memory>
+#include <optional>
+#include <utility>
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "api/neteq/neteq.h"
+#include "api/rtp_headers.h"
 #include "modules/audio_coding/codecs/pcm16b/audio_encoder_pcm16b.h"
 #include "modules/audio_coding/neteq/tools/audio_checksum.h"
 #include "modules/audio_coding/neteq/tools/encode_neteq_input.h"
+#include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/random.h"
 #include "test/fuzzers/fuzz_data_helper.h"
@@ -37,20 +49,21 @@ class SineAndNoiseGenerator : public EncodeNetEqInput::Generator {
         noise_generator_(fuzz_data_.ReadOrDefaultValueNotZero<uint64_t>(1)) {}
 
   // Generates num_samples of the sine-gaussian mixture.
-  rtc::ArrayView<const int16_t> Generate(size_t num_samples) override {
+  webrtc::ArrayView<const int16_t> Generate(size_t num_samples) override {
     if (samples_.size() < num_samples) {
       samples_.resize(num_samples);
     }
 
-    rtc::ArrayView<int16_t> output(samples_.data(), num_samples);
+    webrtc::ArrayView<int16_t> output(samples_.data(), num_samples);
     // Randomize an amplitude between 0 and 32768; use 65000/2 if we are out of
     // fuzzer data.
     const float amplitude = fuzz_data_.ReadOrDefaultValue<uint16_t>(65000) / 2;
     // Randomize a noise standard deviation between 0 and 1999.
     const float noise_std = fuzz_data_.ReadOrDefaultValue<uint16_t>(0) % 2000;
     for (auto& x : output) {
-      x = rtc::saturated_cast<int16_t>(amplitude * std::sin(phase_) +
-                                       noise_generator_.Gaussian(0, noise_std));
+      x = webrtc::saturated_cast<int16_t>(
+          amplitude * std::sin(phase_) +
+          noise_generator_.Gaussian(0, noise_std));
       phase_ += 2 * kPi * kFreqHz / sample_rate_hz_;
     }
     return output;
@@ -160,7 +173,7 @@ void FuzzOneInputTest(const uint8_t* data, size_t size) {
     return;
   }
 
-  FuzzDataHelper fuzz_data(rtc::ArrayView<const uint8_t>(data, size));
+  FuzzDataHelper fuzz_data(webrtc::ArrayView<const uint8_t>(data, size));
 
   // Allowed sample rates and payload types used in the test.
   std::pair<int, uint8_t> rate_types[] = {

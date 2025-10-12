@@ -108,7 +108,7 @@ void BackgroundFetchLoad::didFinish(const ResourceError& error, const ResourceRe
 void BackgroundFetchLoad::loadRequest(NetworkProcess& networkProcess, ResourceRequest&& request)
 {
     BGLOAD_RELEASE_LOG("startNetworkLoad");
-    auto* networkSession = networkProcess.networkSession(m_sessionID);
+    CheckedPtr networkSession = networkProcess.networkSession(m_sessionID);
     ASSERT(networkSession);
     if (!networkSession)
         return;

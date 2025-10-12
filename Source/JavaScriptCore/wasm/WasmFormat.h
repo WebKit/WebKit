@@ -27,20 +27,20 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "CCallHelpers.h"
-#include "CallLinkInfo.h"
-#include "CodeLocation.h"
-#include "Identifier.h"
-#include "JSString.h"
-#include "MacroAssemblerCodeRef.h"
-#include "MathCommon.h"
-#include "PageCount.h"
-#include "RegisterAtOffsetList.h"
-#include "WasmMemoryInformation.h"
-#include "WasmName.h"
-#include "WasmNameSection.h"
-#include "WasmOps.h"
-#include "WasmTypeDefinition.h"
+#include <JavaScriptCore/CCallHelpers.h>
+#include <JavaScriptCore/CallLinkInfo.h>
+#include <JavaScriptCore/CodeLocation.h>
+#include <JavaScriptCore/Identifier.h>
+#include <JavaScriptCore/JSString.h>
+#include <JavaScriptCore/MacroAssemblerCodeRef.h>
+#include <JavaScriptCore/MathCommon.h>
+#include <JavaScriptCore/PageCount.h>
+#include <JavaScriptCore/RegisterAtOffsetList.h>
+#include <JavaScriptCore/WasmMemoryInformation.h>
+#include <JavaScriptCore/WasmName.h>
+#include <JavaScriptCore/WasmNameSection.h>
+#include <JavaScriptCore/WasmOps.h>
+#include <JavaScriptCore/WasmTypeDefinition.h>
 #include <cstdint>
 #include <limits>
 #include <memory>
@@ -81,7 +81,7 @@ inline bool isValueType(Type type)
     case TypeKind::F32:
     case TypeKind::F64:
         return true;
-    case TypeKind::Exn:
+    case TypeKind::Exnref:
     case TypeKind::Externref:
     case TypeKind::Funcref:
         return false;
@@ -95,6 +95,22 @@ inline bool isValueType(Type type)
     }
     return false;
 }
+
+
+// Type hierarchy of Ref types is here
+//
+//     any -> eq -> i31    ----+
+//             |               |
+//             +--> array  ----+-> none
+//             |               |
+//             +--> struct ----+
+//
+//     func -> nofunc
+//
+//     extern -> noextern
+//
+//     exn -> noexn
+//
 
 inline bool isRefType(Type type)
 {
@@ -129,24 +145,24 @@ inline bool isAnyref(Type type)
     return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Anyref);
 }
 
-inline bool isNullexnref(Type type)
+inline bool isNoexnref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nullexn);
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Noexnref);
 }
 
-inline bool isNullref(Type type)
+inline bool isNoneref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nullref);
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Noneref);
 }
 
-inline bool isNullfuncref(Type type)
+inline bool isNofuncref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nullfuncref);
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nofuncref);
 }
 
-inline bool isNullexternref(Type type)
+inline bool isNoexternref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nullexternref);
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Noexternref);
 }
 
 inline bool isInternalref(Type type)
@@ -160,7 +176,7 @@ inline bool isInternalref(Type type)
         case TypeKind::Structref:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
-        case TypeKind::Nullref:
+        case TypeKind::Noneref:
             return true;
         default:
             return false;
@@ -186,7 +202,7 @@ inline bool isStructref(Type type)
 
 inline bool isExnref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Exn);
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Exnref);
 }
 
 inline JSString* typeToJSAPIString(VM& vm, Type type)
@@ -248,7 +264,7 @@ inline Type arrayrefType(bool isNullable = true)
 
 inline Type exnrefType()
 {
-    return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Exn) };
+    return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Exnref) };
 }
 
 inline bool isRefWithTypeIndex(Type type)
@@ -287,11 +303,10 @@ inline bool isSubtypeIndex(TypeIndex sub, TypeIndex parent)
     if (sub == parent)
         return true;
 
-    auto subRTT = TypeInformation::tryGetCanonicalRTT(sub);
-    auto parentRTT = TypeInformation::tryGetCanonicalRTT(parent);
-    ASSERT(subRTT.has_value() && parentRTT.has_value());
+    auto subRTT = TypeInformation::getCanonicalRTT(sub);
+    auto parentRTT = TypeInformation::getCanonicalRTT(parent);
 
-    return subRTT.value()->isStrictSubRTT(*parentRTT.value());
+    return subRTT->isStrictSubRTT(parentRTT.get());
 }
 
 bool isSubtype(Type, Type);
@@ -325,16 +340,16 @@ inline bool isSubtypeSlow(Type sub, Type parent)
     if (isEqref(sub) && isAnyref(parent))
         return true;
 
-    if (isNullref(sub))
+    if (isNoneref(sub))
         return isInternalref(parent);
 
-    if (isNullfuncref(sub))
+    if (isNofuncref(sub))
         return isSubtype(parent, funcrefType());
 
-    if (isNullexternref(sub) && isExternref(parent))
+    if (isNoexternref(sub) && isExternref(parent))
         return true;
 
-    if (isNullexnref(sub) && isExnref(parent))
+    if (isNoexnref(sub) && isExnref(parent))
         return true;
 
     if (sub.isRef() && parent.isRefNull())
@@ -365,16 +380,16 @@ inline bool isValidHeapTypeKind(intptr_t kind)
     switch (kind) {
     case static_cast<intptr_t>(TypeKind::Funcref):
     case static_cast<intptr_t>(TypeKind::Externref):
-    case static_cast<intptr_t>(TypeKind::Exn):
+    case static_cast<intptr_t>(TypeKind::Exnref):
     case static_cast<intptr_t>(TypeKind::I31ref):
     case static_cast<intptr_t>(TypeKind::Arrayref):
     case static_cast<intptr_t>(TypeKind::Structref):
     case static_cast<intptr_t>(TypeKind::Eqref):
     case static_cast<intptr_t>(TypeKind::Anyref):
-    case static_cast<intptr_t>(TypeKind::Nullexn):
-    case static_cast<intptr_t>(TypeKind::Nullref):
-    case static_cast<intptr_t>(TypeKind::Nullfuncref):
-    case static_cast<intptr_t>(TypeKind::Nullexternref):
+    case static_cast<intptr_t>(TypeKind::Noexnref):
+    case static_cast<intptr_t>(TypeKind::Noneref):
+    case static_cast<intptr_t>(TypeKind::Nofuncref):
+    case static_cast<intptr_t>(TypeKind::Noexternref):
         return true;
     default:
         break;
@@ -401,16 +416,16 @@ inline const char* heapTypeKindAsString(TypeKind kind)
         return "eq";
     case TypeKind::Anyref:
         return "any";
-    case TypeKind::Nullref:
+    case TypeKind::Noneref:
         return "none";
-    case TypeKind::Nullfuncref:
+    case TypeKind::Nofuncref:
         return "nofunc";
-    case TypeKind::Nullexternref:
+    case TypeKind::Noexternref:
         return "noextern";
-    case TypeKind::Exn:
-        return "exn";
-    case TypeKind::Nullexn:
-        return "nullexn";
+    case TypeKind::Exnref:
+        return "exnref";
+    case TypeKind::Noexnref:
+        return "noexnref";
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return "";
@@ -502,7 +517,7 @@ inline ASCIILiteral makeString(ExternalKind kind)
 }
 
 struct Import {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Import);
     const Name module;
     const Name field;
     ExternalKind kind;
@@ -510,7 +525,7 @@ struct Import {
 };
 
 struct Export {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Export);
     const Name field;
     ExternalKind kind;
     unsigned kindIndex; // Index in the vector of the corresponding kind.
@@ -519,7 +534,7 @@ struct Export {
 String makeString(const Name& characters);
 
 struct GlobalInformation {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(GlobalInformation);
 
     enum InitializationType : uint8_t {
         IsImport,
@@ -546,7 +561,7 @@ struct GlobalInformation {
 };
 
 struct FunctionData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(FunctionData);
     size_t start;
     size_t end;
     Vector<uint8_t> data;
@@ -600,34 +615,45 @@ private:
     Type m_type;
 };
 
-struct Segment {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-
+class Segment final : public TrailingArray<Segment, uint8_t> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Segment);
+    WTF_MAKE_NONCOPYABLE(Segment);
+    WTF_MAKE_NONMOVABLE(Segment);
+    using Base = TrailingArray<Segment, uint8_t>;
+    friend Base;
+public:
     enum class Kind : uint8_t {
         Active,
         Passive,
     };
 
-    Kind kind;
-    uint32_t sizeInBytes;
-    std::optional<I32InitExpr> offsetIfActive;
-    // Bytes are allocated at the end.
     uint8_t& byte(uint32_t pos)
     {
-        ASSERT(pos < sizeInBytes);
-        return *(reinterpret_cast<uint8_t*>(this) + sizeof(Segment) + pos);
+        return Base::at(pos);
+    }
+    uint32_t sizeInBytes() const { return Base::size(); }
+
+    Segment(size_t sizeInBytes, Kind passedKind, std::optional<I32InitExpr>&& passedOffsetIfActive)
+        : Base(sizeInBytes)
+        , m_kind(passedKind)
+        , m_offsetIfActive(WTFMove(passedOffsetIfActive))
+    {
     }
 
-    static void destroy(Segment*);
-    typedef std::unique_ptr<Segment, decltype(&Segment::destroy)> Ptr;
-    static Segment::Ptr create(std::optional<I32InitExpr>, uint32_t, Kind);
+    static std::unique_ptr<Segment> tryCreate(std::optional<I32InitExpr>, uint32_t, Kind);
 
-    bool isActive() const { return kind == Kind::Active; }
-    bool isPassive() const { return kind == Kind::Passive; }
+    bool isActive() const { return m_kind == Kind::Active; }
+    bool isPassive() const { return m_kind == Kind::Passive; }
+    Kind kind() const { return m_kind; }
+    std::optional<I32InitExpr> offsetIfActive() const { return m_offsetIfActive; }
+
+private:
+    const Kind m_kind;
+    const std::optional<I32InitExpr> m_offsetIfActive;
 };
 
 struct Element {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Element);
 
     enum class Kind : uint8_t {
         Active,
@@ -717,7 +743,7 @@ private:
 };
     
 struct CustomSection {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CustomSection);
     Name name;
     Vector<uint8_t> payload;
 };
@@ -778,16 +804,15 @@ private:
 };
 
 struct UnlinkedWasmToWasmCall {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(UnlinkedWasmToWasmCall);
     CodeLocationNearCall<WasmEntryPtrTag> callLocation;
     FunctionSpaceIndex functionIndexSpace;
-    CodeLocationDataLabelPtr<WasmEntryPtrTag> calleeLocation;
 
 };
 
 #if ENABLE(JIT)
 struct Entrypoint {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Entrypoint);
     std::unique_ptr<Compilation> compilation;
     RegisterAtOffsetList calleeSaveRegisters;
 };
@@ -798,7 +823,7 @@ using StackMap = FixedVector<OSREntryValue>;
 using StackMaps = UncheckedKeyHashMap<CallSiteIndex, StackMap>;
 
 struct InternalFunction {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(InternalFunction);
 #if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
     StackMaps stackmaps;
 #endif
@@ -812,16 +837,19 @@ struct InternalFunction {
     unsigned osrEntryScratchBufferSize { 0 };
 };
 
-extern const CalleeBits NullWasmCallee;
-
 struct alignas(8) WasmCallableFunction {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WasmCallableFunction);
     using LoadLocation = CodePtr<WasmEntryPtrTag>*;
+    static constexpr ptrdiff_t offsetOfBoxedCallee() { return OBJECT_OFFSETOF(WasmCallableFunction, boxedCallee); }
+    static constexpr ptrdiff_t offsetOfTargetInstance() { return OBJECT_OFFSETOF(WasmCallableFunction, targetInstance); }
     static constexpr ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WasmCallableFunction, entrypointLoadLocation); }
-    static constexpr ptrdiff_t offsetOfBoxedWasmCalleeLoadLocation() { return OBJECT_OFFSETOF(WasmCallableFunction, boxedWasmCalleeLoadLocation); }
 
-    // FIXME: This always points to the interpreter callee anyway so there's no point in having the extra indirection.
-    const CalleeBits* boxedWasmCalleeLoadLocation { &NullWasmCallee };
+    // LoadLocation's dereference.
+    static constexpr ptrdiff_t offsetOfValueOfLoadLocation() { return 0; }
+
+    bool isJS() const;
+
+    CalleeBits boxedCallee { };
     // Target instance and entrypoint are only set for wasm->wasm calls, and are otherwise nullptr. The js-specific logic occurs through import function.
     WriteBarrier<JSWebAssemblyInstance> targetInstance { };
     LoadLocation entrypointLoadLocation { };
@@ -831,28 +859,25 @@ struct alignas(8) WasmCallableFunction {
 // with all imports, and then all internal functions. WasmToWasmImportableFunction and FunctionIndexSpace are only
 // meant as fast lookup tables for these opcodes and do not own code.
 struct WasmToWasmImportableFunction : public WasmCallableFunction {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    static constexpr ptrdiff_t offsetOfSignatureIndex() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, typeIndex); }
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WasmToWasmImportableFunction);
     static constexpr ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, rtt); }
 
+    const RTT* rtt { nullptr };
     // FIXME: Pack type index and code pointer into one 64-bit value. See <https://bugs.webkit.org/show_bug.cgi?id=165511>.
     TypeIndex typeIndex { TypeDefinition::invalidIndex };
-    // Used when GC proposal is enabled, otherwise can be null.
-    const RTT* rtt;
 };
 using FunctionIndexSpace = Vector<WasmToWasmImportableFunction>;
 
 struct WasmOrJSImportableFunction : public WasmToWasmImportableFunction {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WasmOrJSImportableFunction);
     using LoadLocation = CodePtr<WasmEntryPtrTag>*;
 
     CodePtr<WasmEntryPtrTag> importFunctionStub;
     WriteBarrier<JSObject> importFunction { };
-    CalleeBits boxedCallee { 0xBEEF };
 };
 
 struct WasmOrJSImportableFunctionCallLinkInfo final : public WasmOrJSImportableFunction {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WasmOrJSImportableFunctionCallLinkInfo);
     std::unique_ptr<DataOnlyCallLinkInfo> callLinkInfo { };
     static constexpr ptrdiff_t offsetOfCallLinkInfo() { return OBJECT_OFFSETOF(WasmOrJSImportableFunctionCallLinkInfo, callLinkInfo); }
 };

@@ -10,6 +10,8 @@
 
 #include "rtc_base/win/scoped_com_initializer.h"
 
+#include <cstddef>
+
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 

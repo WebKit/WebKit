@@ -30,7 +30,11 @@
     #FakeLoadURLC(String url)
     # FakeLoadURLD(String url)
 
-[ExceptionForEnabledBy]
+[
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo,
+    ExceptionForEnabledBy
+]
 messages -> TestWithoutAttributes {
     LoadURL(String url)
 #if ENABLE(TOUCH_EVENTS)

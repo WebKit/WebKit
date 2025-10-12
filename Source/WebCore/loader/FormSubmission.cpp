@@ -36,6 +36,7 @@
 #include "ContentSecurityPolicy.h"
 #include "DOMFormData.h"
 #include "DocumentInlines.h"
+#include "DocumentView.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "FormData.h"
@@ -77,7 +78,7 @@ static void appendMailtoPostFormDataToURL(URL& url, const FormData& data, const 
 
     Vector<uint8_t> bodyData("body="_span);
     FormDataBuilder::encodeStringAsFormData(bodyData, body.utf8());
-    body = makeStringByReplacingAll(bodyData.span(), '+', "%20"_s);
+    body = makeStringByReplacingAll(byteCast<Latin1Character>(bodyData.span()), '+', "%20"_s);
 
     auto query = url.query();
     if (query.isEmpty())
@@ -223,7 +224,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
 
     if (isMultiPartForm) {
         formData = FormData::createMultiPart(domFormData);
-        boundary = String(formData->boundary());
+        boundary = String(byteCast<Latin1Character>(formData->boundary().span()));
     } else {
         formData = FormData::create(domFormData, attributes.method() == Method::Get ? FormData::EncodingType::FormURLEncoded : FormData::parseEncodingType(encodingType));
         if (copiedAttributes.method() == Method::Post && isMailtoForm) {
@@ -235,7 +236,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
 
     formData->setIdentifier(generateFormDataIdentifier());
 
-    auto formState = FormState::create(form, WTFMove(formValues), document, trigger);
+    auto formState = FormState::create(form, WTFMove(formValues), document, trigger, submitter.get());
 
     return adoptRef(*new FormSubmission(copiedAttributes.method(), actionURL, form.effectiveTarget(event, submitter.get()), encodingType, WTFMove(formState), formData.releaseNonNull(), boundary, lockHistory, event));
 }
@@ -249,11 +250,6 @@ URL FormSubmission::requestURL() const
     if (m_method == Method::Get && !requestURL.protocolIsJavaScript())
         requestURL.setQuery(m_formData->flattenToString());
     return requestURL;
-}
-
-RefPtr<Event> FormSubmission::protectedEvent() const
-{
-    return m_event;
 }
 
 void FormSubmission::populateFrameLoadRequest(FrameLoadRequest& frameRequest)

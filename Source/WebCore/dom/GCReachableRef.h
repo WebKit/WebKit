@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Node.h"
+#include <WebCore/Node.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/RawPtrTraits.h>
 #include <wtf/RefPtr.h>
@@ -52,7 +52,8 @@ private:
     WEBCORE_EXPORT static HashCountedSet<EventTarget*>& map();
 };
 
-template <typename T, typename = std::enable_if_t<std::is_same<T, typename std::remove_const<T>::type>::value>>
+template <typename T>
+    requires std::same_as<T, std::remove_const_t<T>>
 class GCReachableRef {
     WTF_MAKE_NONCOPYABLE(GCReachableRef);
 public:
@@ -136,15 +137,15 @@ template<typename P> struct HashTraits<WebCore::GCReachableRef<P>> : SimpleClass
     static TakeType take(Ref<P>&& value) { return isEmptyValue(value) ? std::nullopt : std::optional<Ref<P>>(WTFMove(value)); }
 };
 
-template <typename T, typename U>
-struct GetPtrHelper<WebCore::GCReachableRef<T, U>> {
+template <typename T>
+struct GetPtrHelper<WebCore::GCReachableRef<T>> {
     using PtrType = T*;
     using UnderlyingType = T;
-    static T* getPtr(const WebCore::GCReachableRef<T, U>& reference) { return const_cast<T*>(reference.ptr()); }
+    static T* getPtr(const WebCore::GCReachableRef<T>& reference) { return const_cast<T*>(reference.ptr()); }
 };
 
-template <typename T, typename U>
-struct IsSmartPtr<WebCore::GCReachableRef<T, U>> {
+template <typename T>
+struct IsSmartPtr<WebCore::GCReachableRef<T>> {
     static const bool value = true;
     static constexpr bool isNullable = true;
 };

@@ -172,7 +172,7 @@ JSValue JSTestOperationConditional::getConstructor(VM& vm, const JSGlobalObject*
 
 void JSTestOperationConditional::destroy(JSC::JSCell* cell)
 {
-    JSTestOperationConditional* thisObject = static_cast<JSTestOperationConditional*>(cell);
+    SUPPRESS_MEMORY_UNSAFE_CAST JSTestOperationConditional* thisObject = static_cast<JSTestOperationConditional*>(cell);
     thisObject->JSTestOperationConditional::~JSTestOperationConditional();
 }
 
@@ -224,7 +224,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestOperationConditionalPrototypeFunction_conditional
 
 JSC::GCClient::IsoSubspace* JSTestOperationConditional::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestOperationConditional, UseCustomHeapCellType::No>(vm,
+    return WebCore::subspaceForImpl<JSTestOperationConditional, UseCustomHeapCellType::No>(vm, "JSTestOperationConditional"_s,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestOperationConditional.get(); },
         [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestOperationConditional = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestOperationConditional.get(); },
@@ -251,7 +251,7 @@ bool JSTestOperationConditionalOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC
 
 void JSTestOperationConditionalOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestOperationConditional = static_cast<JSTestOperationConditional*>(handle.slot()->asCell());
+    SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestOperationConditional = static_cast<JSTestOperationConditional*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestOperationConditional->protectedWrapped().ptr(), jsTestOperationConditional);
 }
@@ -264,7 +264,9 @@ extern "C" { extern void (*const __identifier("??_7TestOperationConditional@WebC
 #else
 extern "C" { extern void* _ZTVN7WebCore24TestOperationConditionalE[]; }
 #endif
-template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestOperationConditional>, void>> static inline void verifyVTable(TestOperationConditional* ptr) {
+template<std::same_as<TestOperationConditional> T>
+static inline void verifyVTable(TestOperationConditional* ptr)
+{
     if constexpr (std::is_polymorphic_v<T>) {
         const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
@@ -283,8 +285,9 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestOperation
 #endif
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestOperationConditional>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestOperationConditional>&& impl)
 {
+    UNUSED_PARAM(lexicalGlobalObject);
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestOperationConditional>(impl.ptr());
 #endif

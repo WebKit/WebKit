@@ -8,12 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-// MSVC++ requires this to be set before any other includes to get M_PI.
-#define _USE_MATH_DEFINES
-
 #include "common_audio/resampler/sinusoidal_linear_chirp_source.h"
 
-#include <math.h>
+#include <cmath>
+#include <cstddef>
+#include <numbers>
 
 namespace webrtc {
 
@@ -43,7 +42,8 @@ void SinusoidalLinearChirpSource::Run(size_t frames, float* destination) {
       } else {
         // Sinusoidal linear chirp.
         double t = (current_index_ - delay_samples_) / sample_rate_;
-        destination[i] = sin(2 * M_PI * (kMinFrequency * t + (k_ / 2) * t * t));
+        destination[i] =
+            sin(2 * std::numbers::pi * (kMinFrequency * t + (k_ / 2) * t * t));
       }
     }
   }

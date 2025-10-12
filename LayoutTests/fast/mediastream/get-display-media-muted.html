@@ -38,7 +38,8 @@
 
     promise_test(async (test) => {
         await new Promise(async (resolve, reject) => {
-            let stream = await callGetDisplayMedia({ video: true });
+            const stream = await callGetDisplayMedia({ video: true });
+            test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
             let pageMediaState = internals.pageMediaState();
 
             assert_false(pageMediaState.includes('HasMutedScreenCaptureDevice'), 'page state does not include HasMutedScreenCaptureDevice');

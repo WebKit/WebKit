@@ -27,17 +27,51 @@
  */
 
 #include "config.h"
+#include "MIMETypeRegistry.h"
 #include "ResourceLoader.h"
 
 #include "HTTPParsers.h"
 #include "ResourceError.h"
 #include "SharedBuffer.h"
 #include <gio/gio.h>
+#include <optional>
+#include <wtf/SortedArrayMap.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
+#include <wtf/text/ASCIILiteral.h>
+#include <wtf/text/StringView.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+static std::optional<String> contentTypeLookUpForKnownResource(const char* filename)
+{
+    StringView fileName = StringView::fromLatin1(filename);
+    StringView extension;
+    size_t dotIndex = fileName.reverseFind('.');
+
+    if (dotIndex != notFound && dotIndex < (fileName.length() - 1))
+        extension = fileName.substring(dotIndex);
+
+    static constexpr std::pair<ComparableLettersLiteral, ASCIILiteral> extensionTypeMapping[] = {
+        { ".css"_s, "text/css"_s },
+        { ".gif"_s, "image/gif"_s },
+        { ".html"_s, "text/html"_s },
+        { ".js"_s, "text/javascript"_s },
+        { ".json"_s, "application/json"_s },
+        { ".mjs"_s, "text/javascript"_s },
+        { ".pfb"_s, "application/x-font-type1"_s },
+        { ".svg"_s, "image/svg+xml"_s },
+        { ".ttf"_s, "font/ttf"_s },
+    };
+
+    static constexpr SortedArrayMap mappings { extensionTypeMapping };
+    if (const auto contentType = mappings.tryGet(extension))
+        return *contentType;
+
+    return std::nullopt;
+}
 
 void ResourceLoader::loadGResource()
 {
@@ -63,12 +97,15 @@ void ResourceLoader::loadGResource()
         gsize dataSize;
         const auto* data = static_cast<const guchar*>(g_bytes_get_data(bytes.get(), &dataSize));
         GUniquePtr<char> fileName(g_path_get_basename(url.path().utf8().data()));
-        GUniquePtr<char> contentType(g_content_type_guess(fileName.get(), data, dataSize, nullptr));
-        auto contentTypeString = String::fromLatin1(contentType.get());
-        ResourceResponse response { WTFMove(url), extractMIMETypeFromMediaType(contentTypeString), static_cast<long long>(dataSize), extractCharsetFromMediaType(contentTypeString).toString() };
+        auto contentTypeString = contentTypeLookUpForKnownResource(fileName.get());
+        if (!contentTypeString) {
+            GUniquePtr<char> contentType(g_content_type_guess(fileName.get(), data, dataSize, nullptr));
+            contentTypeString = String::fromLatin1(contentType.get());
+        }
+        ResourceResponse response { WTFMove(url), extractMIMETypeFromMediaType(*contentTypeString), static_cast<long long>(dataSize), extractCharsetFromMediaType(*contentTypeString).toString() };
         response.setHTTPStatusCode(200);
         response.setHTTPStatusText("OK"_s);
-        response.setHTTPHeaderField(HTTPHeaderName::ContentType, contentTypeString);
+        response.setHTTPHeaderField(HTTPHeaderName::ContentType, *contentTypeString);
         response.setSource(ResourceResponse::Source::Network);
         loader->deliverResponseAndData(WTFMove(response), SharedBuffer::create(bytes.get()));
     }, protectedThis.leakRef()));

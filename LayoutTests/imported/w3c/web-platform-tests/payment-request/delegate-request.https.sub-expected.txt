@@ -1,10 +1,8 @@
 Verifies that PaymentRequest.show() call from a cross-origin subframe without user activation works if and only if the top frame has user activation and it delegates the capability to the subframe.
 
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN Payment-request from a subframe fails without delegation when the top frame has no user activation
-NOTRUN Payment-request from a subframe fails without delegation when the top frame has user activation
-NOTRUN Payment-request from a subframe succeeds with delegation when the top frame has user activation
-NOTRUN Payment-request from a subframe fails with delegation when the top frame has no user activation
+PASS Payment-request from a subframe fails without delegation when the top frame has no user activation
+PASS Payment-request from a subframe fails without delegation when the top frame has user activation
+FAIL Payment-request from a subframe succeeds with delegation when the top frame has user activation assert_equals: expected "success" but got "failure"
+PASS Payment-request from a subframe fails with delegation when the top frame has no user activation
 

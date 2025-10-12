@@ -10,69 +10,29 @@
 #include "modules/audio_processing/utility/cascaded_biquad_filter.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <vector>
 
+#include "api/array_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
-
-CascadedBiQuadFilter::BiQuadParam::BiQuadParam(std::complex<float> zero,
-                                               std::complex<float> pole,
-                                               float gain,
-                                               bool mirror_zero_along_i_axis)
-    : zero(zero),
-      pole(pole),
-      gain(gain),
-      mirror_zero_along_i_axis(mirror_zero_along_i_axis) {}
-
-CascadedBiQuadFilter::BiQuadParam::BiQuadParam(const BiQuadParam&) = default;
-
-CascadedBiQuadFilter::BiQuad::BiQuad(
-    const CascadedBiQuadFilter::BiQuadParam& param)
-    : x(), y() {
-  float z_r = std::real(param.zero);
-  float z_i = std::imag(param.zero);
-  float p_r = std::real(param.pole);
-  float p_i = std::imag(param.pole);
-  float gain = param.gain;
-
-  if (param.mirror_zero_along_i_axis) {
-    // Assuming zeroes at z_r and -z_r.
-    RTC_DCHECK(z_i == 0.f);
-    coefficients.b[0] = gain * 1.f;
-    coefficients.b[1] = 0.f;
-    coefficients.b[2] = gain * -(z_r * z_r);
-  } else {
-    // Assuming zeros at (z_r + z_i*i) and (z_r - z_i*i).
-    coefficients.b[0] = gain * 1.f;
-    coefficients.b[1] = gain * -2.f * z_r;
-    coefficients.b[2] = gain * (z_r * z_r + z_i * z_i);
-  }
-
-  // Assuming poles at (p_r + p_i*i) and (p_r - p_i*i).
-  coefficients.a[0] = -2.f * p_r;
-  coefficients.a[1] = p_r * p_r + p_i * p_i;
-}
 
 void CascadedBiQuadFilter::BiQuad::BiQuad::Reset() {
   x[0] = x[1] = y[0] = y[1] = 0.f;
 }
 
 CascadedBiQuadFilter::CascadedBiQuadFilter(
-    const CascadedBiQuadFilter::BiQuadCoefficients& coefficients,
-    size_t num_biquads)
-    : biquads_(num_biquads, BiQuad(coefficients)) {}
-
-CascadedBiQuadFilter::CascadedBiQuadFilter(
-    const std::vector<CascadedBiQuadFilter::BiQuadParam>& biquad_params) {
-  for (const auto& param : biquad_params) {
-    biquads_.push_back(BiQuad(param));
+    ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients> coefficients) {
+  for (const auto& single_biquad_coefficients : coefficients) {
+    biquads_.push_back(BiQuad(single_biquad_coefficients));
   }
 }
 
 CascadedBiQuadFilter::~CascadedBiQuadFilter() = default;
 
-void CascadedBiQuadFilter::Process(rtc::ArrayView<const float> x,
-                                   rtc::ArrayView<float> y) {
+void CascadedBiQuadFilter::Process(ArrayView<const float> x,
+                                   ArrayView<float> y) {
   if (biquads_.size() > 0) {
     ApplyBiQuad(x, y, &biquads_[0]);
     for (size_t k = 1; k < biquads_.size(); ++k) {
@@ -83,7 +43,7 @@ void CascadedBiQuadFilter::Process(rtc::ArrayView<const float> x,
   }
 }
 
-void CascadedBiQuadFilter::Process(rtc::ArrayView<float> y) {
+void CascadedBiQuadFilter::Process(ArrayView<float> y) {
   for (auto& biquad : biquads_) {
     ApplyBiQuad(y, y, &biquad);
   }
@@ -95,8 +55,8 @@ void CascadedBiQuadFilter::Reset() {
   }
 }
 
-void CascadedBiQuadFilter::ApplyBiQuad(rtc::ArrayView<const float> x,
-                                       rtc::ArrayView<float> y,
+void CascadedBiQuadFilter::ApplyBiQuad(ArrayView<const float> x,
+                                       ArrayView<float> y,
                                        CascadedBiQuadFilter::BiQuad* biquad) {
   RTC_DCHECK_EQ(x.size(), y.size());
   const float c_a_0 = biquad->coefficients.a[0];

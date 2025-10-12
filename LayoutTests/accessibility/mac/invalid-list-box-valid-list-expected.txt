@@ -1,0 +1,13 @@
+This test ensures that if role='listbox' is used on what's clearly a static list, we interpret it as a list role instead.
+
+PASS: accessibilityController.accessibleElementById('listbox').role === 'AXRole: AXList'
+PASS: accessibilityController.accessibleElementById('listbox').subrole === 'AXSubrole: AXContentList'
+PASS: accessibilityController.accessibleElementById('listbox').role === 'AXRole: AXList'
+PASS: accessibilityController.accessibleElementById('listbox').subrole === 'AXSubrole: '
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Category A
+Category B
+Category C

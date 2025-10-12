@@ -17,11 +17,16 @@
         )
         (GraphicsLayer
           (position 0.00 1000.00)
-          (preserves3D 1)
+          (bounds 800.00 600.00)
           (children 1
             (GraphicsLayer
-              (bounds 500.00 500.00)
-              (contentsOpaque 1)
+              (preserves3D 1)
+              (children 1
+                (GraphicsLayer
+                  (bounds 500.00 500.00)
+                  (contentsOpaque 1)
+                )
+              )
             )
           )
         )

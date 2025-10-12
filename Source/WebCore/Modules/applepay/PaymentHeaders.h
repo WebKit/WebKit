@@ -25,14 +25,14 @@
 
 #pragma once
 
-#include "ApplePayCouponCodeUpdate.h"
-#include "ApplePayPaymentMethodUpdate.h"
-#include "ApplePaySessionPaymentRequest.h"
-#include "ApplePayShippingContactUpdate.h"
-#include "ApplePayShippingMethodUpdate.h"
-#include "Payment.h"
-#include "PaymentContact.h"
-#include "PaymentMerchantSession.h"
-#include "PaymentMethod.h"
-#include "PaymentSessionError.h"
-#include "PaymentSummaryItems.h"
+#include <WebCore/ApplePayCouponCodeUpdate.h>
+#include <WebCore/ApplePayPaymentMethodUpdate.h>
+#include <WebCore/ApplePaySessionPaymentRequest.h>
+#include <WebCore/ApplePayShippingContactUpdate.h>
+#include <WebCore/ApplePayShippingMethodUpdate.h>
+#include <WebCore/Payment.h>
+#include <WebCore/PaymentContact.h>
+#include <WebCore/PaymentMerchantSession.h>
+#include <WebCore/PaymentMethod.h>
+#include <WebCore/PaymentSessionError.h>
+#include <WebCore/PaymentSummaryItems.h>

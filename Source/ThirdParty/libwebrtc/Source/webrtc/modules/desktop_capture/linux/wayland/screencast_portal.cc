@@ -10,11 +10,21 @@
 
 #include "modules/desktop_capture/linux/wayland/screencast_portal.h"
 
+#include <gio/gio.h>
 #include <gio/gunixfdlist.h>
-#include <glib-object.h>
+#include <glib.h>
+#include <unistd.h>
 
+#include <cstdint>
+#include <string>
+#include <utility>
+
+#include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/portal/pipewire_utils.h"
+#include "modules/portal/portal_request_response.h"
 #include "modules/portal/scoped_glib.h"
 #include "modules/portal/xdg_desktop_portal_utils.h"
+#include "modules/portal/xdg_session_details.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
@@ -88,23 +98,19 @@ void ScreenCastPortal::Stop() {
   }
 }
 
+// static
+void UnsubscribeSignalHandler(GDBusConnection* connection, guint* signal_id) {
+  if (signal_id && *signal_id) {
+    g_dbus_connection_signal_unsubscribe(connection, *signal_id);
+    *signal_id = 0;
+  }
+}
+
 void ScreenCastPortal::UnsubscribeSignalHandlers() {
-  if (start_request_signal_id_) {
-    g_dbus_connection_signal_unsubscribe(connection_, start_request_signal_id_);
-    start_request_signal_id_ = 0;
-  }
-
-  if (sources_request_signal_id_) {
-    g_dbus_connection_signal_unsubscribe(connection_,
-                                         sources_request_signal_id_);
-    sources_request_signal_id_ = 0;
-  }
-
-  if (session_request_signal_id_) {
-    g_dbus_connection_signal_unsubscribe(connection_,
-                                         session_request_signal_id_);
-    session_request_signal_id_ = 0;
-  }
+  UnsubscribeSignalHandler(connection_, &session_request_signal_id_);
+  UnsubscribeSignalHandler(connection_, &sources_request_signal_id_);
+  UnsubscribeSignalHandler(connection_, &start_request_signal_id_);
+  UnsubscribeSignalHandler(connection_, &session_closed_signal_id_);
 }
 
 void ScreenCastPortal::SetSessionDetails(
@@ -200,12 +206,11 @@ void ScreenCastPortal::OnSessionClosedSignal(GDBusConnection* connection,
 
   RTC_LOG(LS_INFO) << "Received closed signal from session.";
 
-  that->notifier_->OnScreenCastSessionClosed();
+  // Clear the session handle to avoid calling Session::Close from the destructor
+  // since it's already closed
+  that->session_handle_ = "";
 
-  // Unsubscribe from the signal and free the session handle to avoid calling
-  // Session::Close from the destructor since it's already closed
-  g_dbus_connection_signal_unsubscribe(that->connection_,
-                                       that->session_closed_signal_id_);
+  that->notifier_->OnScreenCastSessionClosed();
 }
 
 void ScreenCastPortal::SourcesRequest() {
@@ -293,11 +298,8 @@ void ScreenCastPortal::OnSourcesRequested(GDBusProxy* proxy,
   g_variant_get_child(variant.get(), 0, "o", handle.receive());
   if (!handle) {
     RTC_LOG(LS_ERROR) << "Failed to initialize the screen cast session.";
-    if (that->sources_request_signal_id_) {
-      g_dbus_connection_signal_unsubscribe(that->connection_,
-                                           that->sources_request_signal_id_);
-      that->sources_request_signal_id_ = 0;
-    }
+    UnsubscribeSignalHandler(that->connection_,
+                             &that->sources_request_signal_id_);
     that->OnPortalDone(RequestResponse::kError);
     return;
   }

@@ -4,6 +4,7 @@
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,9 +25,11 @@
 
 #pragma once
 
-#include "BorderValue.h"
-#include "GapLength.h"
-#include "RenderStyleConstants.h"
+#include <WebCore/BorderValue.h>
+#include <WebCore/RenderStyleConstants.h>
+#include <WebCore/StyleColumnCount.h>
+#include <WebCore/StyleColumnWidth.h>
+#include <WebCore/StyleLineWidth.h>
 #include <wtf/RefCounted.h>
 
 namespace WTF {
@@ -39,7 +42,7 @@ namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleMultiColData);
 class StyleMultiColData : public RefCounted<StyleMultiColData> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleMultiColData);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleMultiColData, StyleMultiColData);
 public:
     static Ref<StyleMultiColData> create() { return adoptRef(*new StyleMultiColData); }
     Ref<StyleMultiColData> copy() const;
@@ -50,24 +53,17 @@ public:
     void dumpDifferences(TextStream&, const StyleMultiColData&) const;
 #endif
 
-    unsigned short ruleWidth() const
-    {
-        if (rule.style() == BorderStyle::None || rule.style() == BorderStyle::Hidden)
-            return 0; 
-        return rule.width();
-    }
+    Style::LineWidth ruleWidth() const;
 
-    float width { 0 };
-    unsigned short count;
+    Style::ColumnWidth width { CSS::Keyword::Auto { } };
+    Style::ColumnCount count { CSS::Keyword::Auto { } };
     BorderValue rule;
     Style::Color visitedLinkColumnRuleColor;
 
-    bool autoWidth : 1;
-    bool autoCount : 1;
-    unsigned fill : 1; // ColumnFill
-    unsigned columnSpan : 1; // ColumnSpan
-    unsigned axis : 2; // ColumnAxis
-    unsigned progression : 2; // ColumnProgression
+    PREFERRED_TYPE(ColumnFill) unsigned fill : 1;
+    PREFERRED_TYPE(ColumnSpan) unsigned columnSpan : 1;
+    PREFERRED_TYPE(ColumnAxis) unsigned axis : 2;
+    PREFERRED_TYPE(ColumnProgression) unsigned progression : 2;
 
 private:
     StyleMultiColData();

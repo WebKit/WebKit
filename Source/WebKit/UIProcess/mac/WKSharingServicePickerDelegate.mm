@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -135,7 +135,7 @@
         dataReference = span(data.get());
 
         types.append(NSPasteboardTypeRTFD);
-        types.append(WebCore::legacyRTFDPasteboardType());
+        types.append(WebCore::legacyRTFDPasteboardTypeSingleton());
     } else if (RetainPtr data = dynamic_objc_cast<NSData>(item.get())) {
         RetainPtr<CGImageSourceRef> source = adoptCF(CGImageSourceCreateWithData(bridge_cast(data.get()), NULL));
         RetainPtr<CGImageRef> image = adoptCF(CGImageSourceCreateImageAtIndex(source.get(), 0, NULL));
@@ -146,7 +146,6 @@
         dataReference = span(data.get());
         types.append(NSPasteboardTypeTIFF);
     } else if (RetainPtr itemProvider = dynamic_objc_cast<NSItemProvider>(item.get())) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         RefPtr menuProxy = _menuProxy.get();
         WeakPtr weakPage = menuProxy ? menuProxy->page() : nullptr;
         RetainPtr<NSString> itemUTI = itemProvider.get().registeredTypeIdentifiers.firstObject;
@@ -169,7 +168,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 webPage->didInvalidateDataForAttachment(*apiAttachment.get());
             });
         }];
-ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     } else {
         LOG_ERROR("sharingService:didShareItems: - Unknown item type returned\n");

@@ -13,9 +13,12 @@
 
 #include <stddef.h>
 
+#include <cstdint>
+
+#include "api/array_view.h"
 #include "rtc_base/stream.h"
 
-namespace rtc {
+namespace webrtc {
 
 // MemoryStream dynamically resizes to accomodate written data.
 
@@ -25,10 +28,10 @@ class MemoryStream final : public StreamInterface {
   ~MemoryStream() override;
 
   StreamState GetState() const override;
-  StreamResult Read(rtc::ArrayView<uint8_t> buffer,
+  StreamResult Read(ArrayView<uint8_t> buffer,
                     size_t& bytes_read,
                     int& error) override;
-  StreamResult Write(rtc::ArrayView<const uint8_t> buffer,
+  StreamResult Write(ArrayView<const uint8_t> buffer,
                      size_t& bytes_written,
                      int& error) override;
   void Close() override;
@@ -54,6 +57,7 @@ class MemoryStream final : public StreamInterface {
   size_t seek_position_ = 0;
 };
 
-}  // namespace rtc
+}  //  namespace webrtc
+
 
 #endif  // RTC_BASE_MEMORY_STREAM_H_

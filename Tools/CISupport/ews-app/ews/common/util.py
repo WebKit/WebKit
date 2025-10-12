@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2024 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -66,9 +66,9 @@ def load_password(name, default=None):
         passwords = json.load(open('passwords.json'))
         return passwords.get(name, default)
     except FileNotFoundError as e:
-        _log.error('ERROR: passwords.json missing: {}, using default value for {}\n'.format(e, name))
+        _log.error(f'Using default value for {name}, {e}')
     except Exception as e:
-        _log.error('Error in finding {} in passwords.json'.format(name))
+        _log.error(f'Error in finding {name} in passwords.json: {e}')
     return default
 
 
@@ -79,3 +79,10 @@ def get_custom_suffix():
     if 'uat' in hostname:
         return '-uat'
     return ''
+
+
+def get_cibuilds_for_queue(change, queue):
+    builds = [build for build in change.cibuild_set.all() if build.builder_display_name == queue]
+    if builds:
+        builds.sort(key=lambda build: build.created, reverse=True)
+    return builds

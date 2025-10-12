@@ -48,7 +48,7 @@ public:
 
 private:
     friend struct IPC::ArgumentCoder<PaymentMethod, void>;
-    RetainPtr<PKPaymentMethod> m_pkPaymentMethod;
+    const RetainPtr<PKPaymentMethod> m_pkPaymentMethod;
 };
 
 }

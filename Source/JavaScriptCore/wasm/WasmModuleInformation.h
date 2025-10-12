@@ -27,13 +27,18 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmBranchHints.h"
-#include "WasmFormat.h"
+#include <JavaScriptCore/WasmBranchHints.h>
+#include <JavaScriptCore/WasmFormat.h>
+#include <JavaScriptCore/WasmModuleDebugInfo.h>
 
 #include <wtf/FixedBitVector.h>
 #include <wtf/HashMap.h>
 
-namespace JSC { namespace Wasm {
+namespace JSC {
+
+class WebAssemblyCompileOptions;
+
+namespace Wasm {
 
 struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> {
 
@@ -134,8 +139,7 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
             return false;
         if (Options::forceAllFunctionsToUseSIMD())
             return true;
-        // The LLInt discovers this value.
-        ASSERT(Options::useWasmLLInt() || Options::useWasmIPInt());
+        ASSERT(Options::useWasmIPInt());
 
         return functions[index].usesSIMD;
     }
@@ -172,8 +176,13 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     }
     size_t totalFunctionSize() const { return m_totalFunctionSize; }
 
+    void applyCompileOptions(const WebAssemblyCompileOptions&);
+    bool importedStringConstantsEquals(const String& expected) const { return m_importedStringConstants && m_importedStringConstants.value() == expected; }
+    bool builtinSetsInclude(const String& qualifiedName) const { return m_qualifiedBuiltinSetNames.contains(qualifiedName); }
+
     // FIXME: These should probably be FixedVectors.
     Vector<Import> imports;
+    FixedBitVector importShouldBeHidden; // filter imports[i] from the result of Module.imports(moduleObject)
     Vector<TypeIndex> importFunctionTypeIndices;
     Vector<TypeIndex> internalFunctionTypeIndices;
     Vector<TypeIndex> importExceptionTypeIndices;
@@ -190,7 +199,7 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
 
     Vector<Export> exports;
     std::optional<uint32_t> startFunctionIndexSpace;
-    Vector<Segment::Ptr> data;
+    Vector<std::unique_ptr<Segment>> data;
     Vector<Element> elements;
     Vector<TableInformation> tables;
     Vector<GlobalInformation> globals;
@@ -200,15 +209,22 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     Ref<NameSection> nameSection;
     BranchHints branchHints;
     std::optional<uint32_t> numberOfDataSegments;
-    Vector<RefPtr<const RTT>> rtts;
+    Vector<Ref<const RTT>> rtts;
     Vector<Vector<uint8_t>> constantExpressions;
     Name sourceMappingURL;
+    std::unique_ptr<Wasm::ModuleDebugInfo> debugInfo;
 
     BitVector m_declaredFunctions;
     BitVector m_declaredExceptions;
     mutable FixedBitVector m_referencedFunctions;
     mutable FixedBitVector m_clobberingTailCalls;
     size_t m_totalFunctionSize { 0 };
+
+private:
+    void populateImportShouldBeHidden();
+
+    std::optional<String> m_importedStringConstants;
+    Vector<String> m_qualifiedBuiltinSetNames;
 };
 
     

@@ -1,0 +1,127 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<body>
+    <script>
+        window.testRunner?.dumpAsText();
+        window.testRunner?.waitUntilDone();
+
+        window.setTimeout(async () => {
+            if (!window.IPC)
+                return window.testRunner?.notifyDone();
+
+            const { CoreIPC } = await import('./coreipc.js');
+
+            const streamConnection = CoreIPC.newStreamConnection();
+
+            const renderingBackendIdentifier = Math.floor(Math.random() * 0x1000000);
+            CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+                renderingBackendIdentifier: renderingBackendIdentifier,
+                connectionHandle: streamConnection
+            });
+            const remoteRenderingBackend = streamConnection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+
+            const imageBufferIdentifier = Math.floor(Math.random() * 0x1000000);
+            const contextIdentifier = Math.floor(Math.random() * 0x1000000);
+            remoteRenderingBackend.CreateImageBuffer({
+                logicalSize: {
+                    width: 32,
+                    height: 82
+                },
+                renderingMode: 1,
+                renderingPurpose: 0,
+                resolutionScale: 10,
+                colorSpace: {
+                    serializableColorSpace: {
+                        alias: {
+                            m_cgColorSpace: {
+                                alias: {
+                                    variantType: 'WebCore::ColorSpace',
+                                    variant: 1
+                                }
+                            }
+                        }
+                    }
+                },
+                pixelFormat: 1,
+                identifier: imageBufferIdentifier,
+                contextIdentifier: contextIdentifier
+            });
+            const remoteImageBuffer = streamConnection.newInterface("RemoteImageBuffer", imageBufferIdentifier);
+
+            try {
+                remoteImageBuffer.FilteredNativeImage({
+                    filter: {
+                        subclasses: {
+                            variantType: 'WebCore::CSSFilter',
+                            variant: {
+                                functions: [{
+                                    subclasses: {
+                                        variantType: 'WebCore::FEConvolveMatrix',
+                                        variant: {
+                                            kernelSize: {
+                                                width: 29,
+                                                height: 57
+                                            },
+                                            divisor: 103,
+                                            bias: 343597699707,
+                                            targetOffset: {
+                                                x: 1067253780,
+                                                y: 91
+                                            },
+                                            edgeMode: 0,
+                                            kernelUnitLength: {
+                                                x: 112,
+                                                y: 41
+                                            },
+                                            preserveAlpha: true,
+                                            kernel: [],
+                                            operatingColorSpace: {
+                                                serializableColorSpace: {
+                                                    alias: {
+                                                        m_cgColorSpace: {
+                                                            alias: {
+                                                                variantType: 'WebCore::ColorSpace',
+                                                                variant: 1
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }],
+                                filterRenderingModes: 1,
+                                filterScale: {
+                                    width: 68,
+                                    height: 3
+                                },
+                                filterRegion: {
+                                    location: {
+                                        x: 39,
+                                        y: 112
+                                    },
+                                    size: {
+                                        width: 32,
+                                        height: 110
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch(err) {
+                if(!(err instanceof TypeError)) {
+                    console.log("Test failed: expected TypeError, got " + err);
+                }
+            }
+
+            streamConnection.connection.invalidate();
+
+            // Allow some time for the GPUP to receive the FilteredNativeImage message, otherwise we can finish
+            // the test before we detect a possible GPUP crash.
+            setTimeout(()=>{
+                window.testRunner?.notifyDone();
+            }, 500);
+        }, 20);
+    </script>
+    <p>This test passes if WebKit does not crash.</p>
+</body>

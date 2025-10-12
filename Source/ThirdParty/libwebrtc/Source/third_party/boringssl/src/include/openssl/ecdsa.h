@@ -1,59 +1,21 @@
-/* ====================================================================
- * Copyright (c) 1998-2005 The OpenSSL Project.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit. (http://www.OpenSSL.org/)"
- *
- * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission. For written permission, please contact
- *    openssl-core@OpenSSL.org.
- *
- * 5. Products derived from this software may not be called "OpenSSL"
- *    nor may "OpenSSL" appear in their names without prior written
- *    permission of the OpenSSL Project.
- *
- * 6. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit (http://www.OpenSSL.org/)"
- *
- * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
- *
- * This product includes cryptographic software written by Eric Young
- * (eay@cryptsoft.com).  This product includes software written by Tim
- * Hudson (tjh@cryptsoft.com). */
+// Copyright 2002-2016 The OpenSSL Project Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #ifndef OPENSSL_HEADER_ECDSA_H
 #define OPENSSL_HEADER_ECDSA_H
 
-#include <openssl/base.h>
+#include <openssl/base.h>   // IWYU pragma: export
 
 #include <openssl/ec_key.h>
 
@@ -67,12 +29,18 @@ extern "C" {
 
 
 // Signing and verifying.
+//
+// ECDSA does not have a single, common signature format across all
+// applications. These functions implement the more common, ASN.1-based format.
+// In it, signatures are a DER-encoded ECDSA-Sig-Value structure. Note that this
+// format is variable-length. Callers must be prepared to receive signatures
+// that are slightly shorter than the maximum for the ECDSA curve.
 
 // ECDSA_sign signs |digest_len| bytes from |digest| with |key| and writes the
-// resulting signature to |sig|, which must have |ECDSA_size(key)| bytes of
-// space. On successful exit, |*sig_len| is set to the actual number of bytes
-// written. The |type| argument should be zero. It returns one on success and
-// zero otherwise.
+// resulting ASN.1-based signature to |sig|, which must have |ECDSA_size(key)|
+// bytes of space. On successful exit, |*sig_len| is set to the actual number of
+// bytes written. The |type| argument should be zero. It returns one on success
+// and zero otherwise.
 //
 // WARNING: |digest| must be the output of some hash function on the data to be
 // signed. Passing unhashed inputs will not result in a secure signature scheme.
@@ -81,9 +49,9 @@ OPENSSL_EXPORT int ECDSA_sign(int type, const uint8_t *digest,
                               unsigned int *sig_len, const EC_KEY *key);
 
 // ECDSA_verify verifies that |sig_len| bytes from |sig| constitute a valid
-// signature by |key| of |digest|. (The |type| argument should be zero.) It
-// returns one on success or zero if the signature is invalid or an error
-// occurred.
+// ASN.1-based signature by |key| of |digest|. (The |type| argument should be
+// zero.) It returns one on success or zero if the signature is invalid or an
+// error occurred.
 //
 // WARNING: |digest| must be the output of some hash function on the data to be
 // verified. Passing unhashed inputs will not result in a secure signature
@@ -92,8 +60,8 @@ OPENSSL_EXPORT int ECDSA_verify(int type, const uint8_t *digest,
                                 size_t digest_len, const uint8_t *sig,
                                 size_t sig_len, const EC_KEY *key);
 
-// ECDSA_size returns the maximum size of an ECDSA signature using |key|. It
-// returns zero if |key| is NULL or if it doesn't have a group set.
+// ECDSA_size returns the maximum size of an ASN.1-based ECDSA signature using
+// |key|. It returns zero if |key| is NULL or if it doesn't have a group set.
 OPENSSL_EXPORT size_t ECDSA_size(const EC_KEY *key);
 
 
@@ -174,6 +142,43 @@ OPENSSL_EXPORT int ECDSA_SIG_to_bytes(uint8_t **out_bytes, size_t *out_len,
 // structure for a group whose order is represented in |order_len| bytes, or
 // zero on overflow.
 OPENSSL_EXPORT size_t ECDSA_SIG_max_len(size_t order_len);
+
+
+// IEEE P1363 signing and verifying.
+//
+// ECDSA does not have a single, common signature format across all
+// applications. These functions implement the less common, fixed-width format,
+// defined in IEEE P1363. It is also used in PKCS#11 and DNSSEC. In it,
+// signatures are a concatenation of r and s components, each zero-padded up to
+// the width of the group order. This format is fixed-width, so a given ECDSA
+// curve's signatures will always have the same size.
+
+// ECDSA_sign_p1363 signs |digest_len| bytes from |digest| with |key| and writes
+// the resulting P1363-based signature to |sig|, which must have
+// |ECDSA_size_p1363(key)| bytes of space. On successful exit, |*out_sig_len| is
+// set to the actual number of bytes written, which will always match
+// |ECDSA_size_p1363(key)|. It returns one on success and zero otherwise.
+//
+// WARNING: |digest| must be the output of some hash function on the data to be
+// signed. Passing unhashed inputs will not result in a secure signature scheme.
+OPENSSL_EXPORT int ECDSA_sign_p1363(const uint8_t *digest, size_t digest_len,
+                                    uint8_t *sig, size_t *out_sig_len,
+                                    size_t max_sig_len, const EC_KEY *key);
+
+// ECDSA_verify_p1363 verifies that |sig_len| bytes from |sig| constitute a
+// valid P1363-based signature by |key| of |digest|. It returns one on success
+// or zero if the signature is invalid or an error occurred.
+//
+// WARNING: |digest| must be the output of some hash function on the data to be
+// verified. Passing unhashed inputs will not result in a secure signature
+// scheme.
+OPENSSL_EXPORT int ECDSA_verify_p1363(const uint8_t *digest, size_t digest_len,
+                                      const uint8_t *sig, size_t sig_len,
+                                      const EC_KEY *key);
+
+// ECDSA_size_p1363 returns the size of a P1363-based ECDSA signature using
+// |key|. It returns zero if |key| is NULL or if it doesn't have a group set.
+OPENSSL_EXPORT size_t ECDSA_size_p1363(const EC_KEY *key);
 
 
 // Testing-only functions.

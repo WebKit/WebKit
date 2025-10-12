@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "AffineTransform.h"
-#include "FloatSize.h"
+#include <WebCore/AffineTransform.h>
+#include <WebCore/FloatSize.h>
 #include <stdint.h>
 
 // X11 headers define a bunch of macros with common terms, interfering with WebCore and WTF enum values.

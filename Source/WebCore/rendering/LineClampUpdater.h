@@ -26,7 +26,7 @@
 #pragma once
 
 #include "RenderLayoutState.h"
-#include "RenderView.h"
+#include <WebCore/RenderView.h>
 #include <wtf/CheckedPtr.h>
 
 namespace WebCore {
@@ -58,10 +58,9 @@ inline LineClampUpdater::LineClampUpdater(const RenderBlockFlow& blockContainer)
         return;
     }
 
-    auto maximumLinesForBlockContainer = m_blockContainer->style().maxLines();
-    if (maximumLinesForBlockContainer) {
+    if (auto maximumLinesForBlockContainer = m_blockContainer->style().maxLines().tryValue()) {
         // New, top level line clamp.
-        layoutState->setLineClamp(RenderLayoutState::LineClamp { maximumLinesForBlockContainer, m_blockContainer->style().overflowContinue() == OverflowContinue::Discard });
+        layoutState->setLineClamp(RenderLayoutState::LineClamp { static_cast<size_t>(maximumLinesForBlockContainer->value), m_blockContainer->style().overflowContinue() == OverflowContinue::Discard });
         return;
     }
 

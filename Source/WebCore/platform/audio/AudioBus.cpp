@@ -529,7 +529,7 @@ RefPtr<AudioBus> AudioBus::createBySampleRateConverting(const AudioBus& sourceBu
         resamplerSourceBus = mixedMonoBus.get();
     } else {
         // Directly resample without down-mixing.
-        resamplerSourceBus = &sourceBus;
+        resamplerSourceBus = sourceBus;
     }
 
     // Calculate destination length based on the sample-rates.

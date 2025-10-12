@@ -41,10 +41,14 @@ namespace WebKit {
 void TestWithSpanOfConst::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithSpanOfConst::TestSpanOfConstFloat::name())
-        return IPC::handleMessage<Messages::TestWithSpanOfConst::TestSpanOfConstFloat>(connection, decoder, this, &TestWithSpanOfConst::testSpanOfConstFloat);
-    if (decoder.messageName() == Messages::TestWithSpanOfConst::TestSpanOfConstFloatSegments::name())
-        return IPC::handleMessage<Messages::TestWithSpanOfConst::TestSpanOfConstFloatSegments>(connection, decoder, this, &TestWithSpanOfConst::testSpanOfConstFloatSegments);
+    if (decoder.messageName() == Messages::TestWithSpanOfConst::TestSpanOfConstFloat::name()) {
+        IPC::handleMessage<Messages::TestWithSpanOfConst::TestSpanOfConstFloat>(connection, decoder, this, &TestWithSpanOfConst::testSpanOfConstFloat);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithSpanOfConst::TestSpanOfConstFloatSegments::name()) {
+        IPC::handleMessage<Messages::TestWithSpanOfConst::TestSpanOfConstFloatSegments>(connection, decoder, this, &TestWithSpanOfConst::testSpanOfConstFloatSegments);
+        return;
+    }
     UNUSED_PARAM(connection);
     RELEASE_LOG_ERROR(IPC, "Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
     decoder.markInvalid();

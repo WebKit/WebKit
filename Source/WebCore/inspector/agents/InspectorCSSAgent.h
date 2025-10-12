@@ -94,7 +94,7 @@ public:
     static std::optional<Inspector::Protocol::CSS::PseudoId> protocolValueForPseudoId(PseudoId);
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void didCreateFrontendAndBackend();
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // CSSBackendDispatcherHandler
@@ -187,8 +187,8 @@ private:
 
     void resetPseudoStates();
 
-    std::unique_ptr<Inspector::CSSFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::CSSBackendDispatcher> m_backendDispatcher;
+    const UniqueRef<Inspector::CSSFrontendDispatcher> m_frontendDispatcher;
+    const Ref<Inspector::CSSBackendDispatcher> m_backendDispatcher;
 
     WeakRef<Page> m_inspectedPage;
     IdToInspectorStyleSheet m_idToInspectorStyleSheet;

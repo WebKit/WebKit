@@ -1060,19 +1060,19 @@ void vpx_idct16x16_256_add_vsx(const tran_low_t *input, uint8_t *dest,
                in[3][6], in[3][7], out[3][0], out[3][1], out[3][2], out[3][3], \
                out[3][4], out[3][5], out[3][6], out[3][7]);
 
-#define PIXEL_ADD_STORE32(in0, in1, in2, in3, step)        \
-  dst = vec_vsx_ld((step)*stride, dest);                   \
-  d_uh = (int16x8_t)vec_mergeh(dst, zerov);                \
-  d_ul = (int16x8_t)vec_mergel(dst, zerov);                \
-  PIXEL_ADD(in0, d_uh, add, shift6);                       \
-  PIXEL_ADD(in1, d_ul, add, shift6);                       \
-  vec_vsx_st(vec_packsu(d_uh, d_ul), (step)*stride, dest); \
-  dst = vec_vsx_ld((step)*stride + 16, dest);              \
-  d_uh = (int16x8_t)vec_mergeh(dst, zerov);                \
-  d_ul = (int16x8_t)vec_mergel(dst, zerov);                \
-  PIXEL_ADD(in2, d_uh, add, shift6);                       \
-  PIXEL_ADD(in3, d_ul, add, shift6);                       \
-  vec_vsx_st(vec_packsu(d_uh, d_ul), (step)*stride + 16, dest);
+#define PIXEL_ADD_STORE32(in0, in1, in2, in3, step)          \
+  dst = vec_vsx_ld((step) * stride, dest);                   \
+  d_uh = (int16x8_t)vec_mergeh(dst, zerov);                  \
+  d_ul = (int16x8_t)vec_mergel(dst, zerov);                  \
+  PIXEL_ADD(in0, d_uh, add, shift6);                         \
+  PIXEL_ADD(in1, d_ul, add, shift6);                         \
+  vec_vsx_st(vec_packsu(d_uh, d_ul), (step) * stride, dest); \
+  dst = vec_vsx_ld((step) * stride + 16, dest);              \
+  d_uh = (int16x8_t)vec_mergeh(dst, zerov);                  \
+  d_ul = (int16x8_t)vec_mergel(dst, zerov);                  \
+  PIXEL_ADD(in2, d_uh, add, shift6);                         \
+  PIXEL_ADD(in3, d_ul, add, shift6);                         \
+  vec_vsx_st(vec_packsu(d_uh, d_ul), (step) * stride + 16, dest);
 
 #define ADD_STORE_BLOCK(in, offset)                                        \
   PIXEL_ADD_STORE32(in[0][0], in[1][0], in[2][0], in[3][0], (offset) + 0); \

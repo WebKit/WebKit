@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,8 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "Event.h"
-#include "RTCDataChannel.h"
+#include <WebCore/Event.h>
+#include <WebCore/RTCDataChannel.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -43,13 +43,13 @@ public:
     static Ref<RTCDataChannelEvent> create(const AtomString& type, CanBubble, IsCancelable, Ref<RTCDataChannel>&&);
     static Ref<RTCDataChannelEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
 
-    RTCDataChannel& channel();
+    RTCDataChannel& channel() { return m_channel; }
 
 private:
     RTCDataChannelEvent(const AtomString& type, CanBubble, IsCancelable, Ref<RTCDataChannel>&&);
     RTCDataChannelEvent(const AtomString& type, Init&&, IsTrusted);
 
-    Ref<RTCDataChannel> m_channel;
+    const Ref<RTCDataChannel> m_channel;
 };
 
 } // namespace WebCore

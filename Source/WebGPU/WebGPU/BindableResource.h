@@ -26,9 +26,14 @@
 #pragma once
 
 #import <Metal/Metal.h>
+#import <limits>
+#import <type_traits>
+#import <utility>
+#import <wtf/HashFunctions.h>
 #import <wtf/HashMap.h>
 #import <wtf/OptionSet.h>
 #import <wtf/RefPtr.h>
+#import <wtf/Variant.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
 
@@ -36,6 +41,7 @@ namespace WebGPU {
 
 class Buffer;
 class ExternalTexture;
+class Texture;
 class TextureView;
 
 enum class BindGroupEntryUsage {
@@ -60,7 +66,7 @@ static constexpr auto isTextureBindGroupEntryUsage(OptionSet<BindGroupEntryUsage
 struct BindGroupEntryUsageData {
     OptionSet<BindGroupEntryUsage> usage { BindGroupEntryUsage::Undefined };
     uint32_t binding { 0 };
-    using Resource = Variant<RefPtr<Buffer>, RefPtr<const TextureView>, RefPtr<const ExternalTexture>>;
+    using Resource = Variant<RefPtr<Buffer>, RefPtr<const Texture>, RefPtr<const TextureView>, RefPtr<const ExternalTexture>>;
     Resource resource;
     uint64_t entryOffset { 0 };
     uint64_t entrySize { 0 };

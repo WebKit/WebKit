@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,11 +29,13 @@
 
 #include "AXObjectCache.h"
 #include "CachedImage.h"
-#include "DocumentInlines.h"
+#include "ContainerNodeInlines.h"
 #include "EditingInlines.h"
 #include "Editor.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementInlines.h"
+#include "FrameDestructionObserverInlines.h"
+#include "GraphicsLayer.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDListElement.h"
 #include "HTMLDivElement.h"
@@ -201,7 +203,7 @@ Element* unsplittableElementForPosition(const Position& position)
     // Since enclosingNodeOfType won't search beyond the highest root editable node,
     // this code works even if the closest table cell was outside of the root editable node.
     if (auto enclosingCell = downcast<Element>(enclosingNodeOfType(position, &isTableCell)))
-        return enclosingCell.get();
+        return enclosingCell.unsafeGet();
     return editableRootForPosition(position);
 }
 
@@ -366,7 +368,7 @@ int lastOffsetForEditing(const Node& node)
     return editingIgnoresContent(node) ? 1 : 0;
 }
 
-bool isAmbiguousBoundaryCharacter(UChar character)
+bool isAmbiguousBoundaryCharacter(char16_t character)
 {
     // These are characters that can behave as word boundaries, but can appear within words.
     // If they are just typed, i.e. if they are immediately followed by a caret, we want to delay text checking until the next character has been typed.
@@ -386,7 +388,7 @@ String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfP
             previousCharacterWasSpace = false;
             continue;
         }
-        LChar selectedWhitespaceCharacter;
+        Latin1Character selectedWhitespaceCharacter;
         // We need to ensure there is no next sibling text node. See https://bugs.webkit.org/show_bug.cgi?id=123163
         if (previousCharacterWasSpace || (!i && startIsStartOfParagraph) || (i == length - 1 && shouldEmitNBSPbeforeEnd)) {
             selectedWhitespaceCharacter = noBreakSpace;
@@ -425,7 +427,7 @@ const String& nonBreakingSpaceString()
 RefPtr<Element> isFirstPositionAfterTable(const VisiblePosition& position)
 {
     Position upstream(position.deepEquivalent().upstream());
-    auto node = upstream.protectedDeprecatedNode();
+    RefPtr node = upstream.deprecatedNode();
     if (!node)
         return nullptr;
     auto* renderer = node->renderer();
@@ -437,7 +439,7 @@ RefPtr<Element> isFirstPositionAfterTable(const VisiblePosition& position)
 RefPtr<Element> isLastPositionBeforeTable(const VisiblePosition& position)
 {
     Position downstream(position.deepEquivalent().downstream());
-    auto node = downstream.protectedDeprecatedNode();
+    RefPtr node = downstream.deprecatedNode();
     if (!node)
         return nullptr;
     auto* renderer = node->renderer();
@@ -487,7 +489,7 @@ VisiblePosition closestEditablePositionInElementForAbsolutePoint(const Element& 
     auto absoluteBoundingBox = renderer->absoluteBoundingBoxRect();
     auto constrainedAbsolutePoint = point.constrainedBetween(absoluteBoundingBox.minXMinYCorner(), absoluteBoundingBox.maxXMaxYCorner());
     auto localPoint = renderer->absoluteToLocal(constrainedAbsolutePoint, UseTransforms);
-    auto visiblePosition = renderer->positionForPoint(flooredLayoutPoint(localPoint), HitTestSource::User, nullptr);
+    auto visiblePosition = renderer->visiblePositionForPoint(flooredLayoutPoint(localPoint), HitTestSource::User);
     return isEditablePosition(visiblePosition.deepEquivalent()) ? visiblePosition : VisiblePosition { };
 }
 
@@ -504,7 +506,7 @@ bool isListItem(const Node& node)
 Element* enclosingElementWithTag(const Position& position, const QualifiedName& tagName)
 {
     auto root = highestEditableRoot(position);
-    for (RefPtr node = position.protectedDeprecatedNode(); node; node = node->parentNode()) {
+    for (RefPtr node = position.deprecatedNode(); node; node = node->parentNode()) {
         if (root && !node->hasEditableStyle())
             continue;
         auto* element = dynamicDowncast<Element>(*node);
@@ -523,7 +525,7 @@ RefPtr<Node> enclosingNodeOfType(const Position& position, bool (*nodeIsOfType)(
     // FIXME: support CanSkipCrossEditingBoundary
     ASSERT(rule == CanCrossEditingBoundary || rule == CannotCrossEditingBoundary);
     auto root = rule == CannotCrossEditingBoundary ? highestEditableRoot(position) : nullptr;
-    for (auto n = position.protectedDeprecatedNode(); n; n = n->parentNode()) {
+    for (RefPtr n = position.deprecatedNode(); n; n = n->parentNode()) {
         // Don't return a non-editable node if the input position was editable, since
         // the callers from editing will no doubt want to perform editing inside the returned node.
         if (root && !n->hasEditableStyle())
@@ -586,7 +588,7 @@ RefPtr<Element> enclosingTableCell(const Position& position)
 
 RefPtr<Element> enclosingAnchorElement(const Position& p)
 {
-    for (auto node = p.protectedDeprecatedNode(); node; node = node->parentNode()) {
+    for (RefPtr node = p.deprecatedNode(); node; node = node->parentNode()) {
         if (RefPtr element = dynamicDowncast<Element>(*node); element && element->isLink())
             return element;
     }
@@ -831,7 +833,7 @@ Ref<Element> createTabSpanElement(Document& document)
 unsigned numEnclosingMailBlockquotes(const Position& position)
 {
     unsigned count = 0;
-    for (auto node = position.protectedDeprecatedNode(); node; node = node->parentNode()) {
+    for (RefPtr node = position.deprecatedNode(); node; node = node->parentNode()) {
         if (isMailBlockquote(*node))
             ++count;
     }
@@ -1570,11 +1572,11 @@ EnclosingLayerInfomation computeEnclosingLayer(const SimpleRange& range)
         if (!graphicsLayer)
             continue;
 
-        auto identifier = graphicsLayer->primaryLayerID();
+        auto identifier = graphicsLayer->layerIDIgnoringStructuralLayer();
         if (!identifier)
             continue;
 
-        return { startLayer, endLayer, layer, identifier };
+        return { WTFMove(startLayer), WTFMove(endLayer), WTFMove(layer), WTFMove(graphicsLayer), WTFMove(identifier) };
     }
     return { };
 }

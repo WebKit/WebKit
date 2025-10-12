@@ -29,7 +29,7 @@
 
 #include "BufferIdentifierSet.h"
 #include "ImageBufferBackendHandle.h"
-#include "RemoteImageBufferSetIdentifier.h"
+#include "ImageBufferSetIdentifier.h"
 #include "SwapBuffersDisplayRequirement.h"
 #include <WebCore/Region.h>
 #include <WebCore/RenderingResourceIdentifier.h>
@@ -41,7 +41,7 @@ class TextStream;
 namespace WebKit {
 
 struct ImageBufferSetPrepareBufferForDisplayInputData {
-    RemoteImageBufferSetIdentifier remoteBufferSet;
+    ImageBufferSetIdentifier remoteBufferSet;
     WebCore::Region dirtyRegion;
     bool supportsPartialRepaint { true };
     bool hasEmptyDirtyRegion { true };

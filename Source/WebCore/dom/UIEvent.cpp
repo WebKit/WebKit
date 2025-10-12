@@ -86,17 +86,37 @@ int UIEvent::layerY()
     return 0;
 }
 
-int UIEvent::pageX() const
+double UIEvent::screenX() const
 {
     return 0;
 }
 
-int UIEvent::pageY() const
+double UIEvent::screenY() const
+{
+    return 0;
+}
+
+double UIEvent::pageX() const
+{
+    return 0;
+}
+
+double UIEvent::pageY() const
 {
     return 0;
 }
 
 unsigned UIEvent::which() const
+{
+    return 0;
+}
+
+double UIEvent::clientX() const
+{
+    return 0;
+}
+
+double UIEvent::clientY() const
 {
     return 0;
 }

@@ -1,6 +1,7 @@
 <script>
 onload = () => {
-    navigator.mediaDevices.getUserMedia({ video: true }).then(() => {
+    navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+        stream.getTracks().forEach(track => track.stop());
         parent.postMessage("OK", "*");
     }, () => {
         parent.postMessage("KO", "*");

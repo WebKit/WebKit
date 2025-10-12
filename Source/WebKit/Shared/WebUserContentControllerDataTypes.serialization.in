@@ -21,22 +21,22 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 header: "WebUserContentControllerDataTypes.h"
-[CustomHeader] struct WebKit::WebUserScriptData {
+[CustomHeader, DebugDecodingFailure] struct WebKit::WebUserScriptData {
     WebKit::UserScriptIdentifier identifier;
-    WebKit::ContentWorldIdentifier worldIdentifier;
+    WebKit::ContentWorldData worldData;
     WebCore::UserScript userScript;
 }
 
 header: "WebUserContentControllerDataTypes.h"
-[CustomHeader] struct WebKit::WebUserStyleSheetData {
+[CustomHeader, DebugDecodingFailure] struct WebKit::WebUserStyleSheetData {
     WebKit::UserStyleSheetIdentifier identifier;
-    WebKit::ContentWorldIdentifier worldIdentifier;
+    WebKit::ContentWorldData worldData;
     WebCore::UserStyleSheet userStyleSheet;
 }
 
 header: "WebUserContentControllerDataTypes.h"
-[CustomHeader] struct WebKit::WebScriptMessageHandlerData {
+[CustomHeader, DebugDecodingFailure] struct WebKit::WebScriptMessageHandlerData {
     WebKit::ScriptMessageHandlerIdentifier identifier;
-    WebKit::ContentWorldIdentifier worldIdentifier;
+    WebKit::ContentWorldData worldData;
     String name;
 }

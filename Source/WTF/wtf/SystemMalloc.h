@@ -35,7 +35,7 @@ namespace WTF {
 struct SystemMalloc {
     static void* malloc(size_t size)
     {
-        auto* result = ::malloc(size);
+        void* result = ::malloc(size);
         if (!result)
             CRASH();
         return result;
@@ -48,7 +48,7 @@ struct SystemMalloc {
 
     static void* zeroedMalloc(size_t size)
     {
-        auto* result = ::malloc(size);
+        void* result = ::malloc(size);
         if (!result)
             CRASH();
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -59,7 +59,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     static void* tryZeroedMalloc(size_t size)
     {
-        auto* result = ::malloc(size);
+        void* result = ::malloc(size);
         if (!result)
             return nullptr;
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -70,7 +70,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     static void* realloc(void* p, size_t size)
     {
-        auto* result = ::realloc(p, size);
+        void* result = ::realloc(p, size);
         if (!result)
             CRASH();
         return result;

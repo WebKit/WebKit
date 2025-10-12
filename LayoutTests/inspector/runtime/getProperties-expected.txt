@@ -23,8 +23,8 @@ Evaluating expression...
 Getting own properties...
 Properties:
     "length"     =>  0 (number)  [configurable | isOwn]
-    "prototype"  =>  "Test" (object)  [isOwn]
     "name"       =>  "Test" (string)  [configurable | isOwn]
+    "prototype"  =>  "Test" (object)  [isOwn]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 
 -- Running test case: Runtime.getProperties.BoundConstructor
@@ -184,6 +184,7 @@ Properties:
     "#classPrivateProperty"          =>  "classPrivatePropertyValue parent" (string)  [writable | enumerable | configurable | isOwn | isPrivate]
     "#parentClassPrivateProperty"    =>  "parentClassPrivatePropertyValue" (string)  [writable | enumerable | configurable | isOwn | isPrivate]
     "length"                         =>  0 (number)  [configurable | isOwn]
+    "name"                           =>  "PrivateMembersTestClassParent" (string)  [configurable | isOwn]
     "prototype"                      =>  "PrivateMembersTestClassParent" (object)  [isOwn]
     "classPublicMethod"              =>  "classPublicMethod() { parent }" (function)  [writable | configurable | isOwn]
     "classPublicGetter"              =>  get "get classPublicGetter() { parent }" (function)  [configurable | isOwn]
@@ -202,7 +203,6 @@ Properties:
     "toString"                       =>  "toString() { return \"<redacted>\"; }" (function)  [writable | configurable | isOwn]
     "classPublicProperty"            =>  "classPublicPropertyValue parent" (string)  [writable | enumerable | configurable | isOwn]
     "parentClassPublicProperty"      =>  "parentClassPublicPropertyValue" (string)  [writable | enumerable | configurable | isOwn]
-    "name"                           =>  "PrivateMembersTestClassParent" (string)  [configurable | isOwn]
     "__proto__"                      =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 
 -- Running test case: Runtime.getProperties.Private.Constructor.Child
@@ -212,6 +212,7 @@ Properties:
     "#classPrivateProperty"         =>  "classPrivatePropertyValue child" (string)  [writable | enumerable | configurable | isOwn | isPrivate]
     "#childClassPrivateProperty"    =>  "childClassPrivatePropertyValue" (string)  [writable | enumerable | configurable | isOwn | isPrivate]
     "length"                        =>  0 (number)  [configurable | isOwn]
+    "name"                          =>  "PrivateMembersTestClassChild" (string)  [configurable | isOwn]
     "prototype"                     =>  "PrivateMembersTestClassChild" (object)  [isOwn]
     "classPublicMethod"             =>  "classPublicMethod() { child }" (function)  [writable | configurable | isOwn]
     "classPublicGetter"             =>  get "get classPublicGetter() { child }" (function)  [configurable | isOwn]
@@ -230,7 +231,6 @@ Properties:
     "toString"                      =>  "toString() { return \"<redacted>\"; }" (function)  [writable | configurable | isOwn]
     "classPublicProperty"           =>  "classPublicPropertyValue child" (string)  [writable | enumerable | configurable | isOwn]
     "childClassPublicProperty"      =>  "childClassPublicPropertyValue" (string)  [writable | enumerable | configurable | isOwn]
-    "name"                          =>  "PrivateMembersTestClassChild" (string)  [configurable | isOwn]
     "__proto__"                     =>  "<redacted>" (function class)  [writable | configurable | isOwn]
 
 -- Running test case: Runtime.getProperties.Private.Prototype.Parent

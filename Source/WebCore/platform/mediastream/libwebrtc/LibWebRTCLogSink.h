@@ -42,25 +42,25 @@ class LibWebRTCLogSink;
 
 namespace WebCore {
 
-class LibWebRTCLogSink final : rtc::LogSink {
+class LibWebRTCLogSink final : webrtc::LogSink {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCLogSink);
 public:
-    using LogCallback = Function<void(rtc::LoggingSeverity, const std::string&)>;
+    using LogCallback = Function<void(webrtc::LoggingSeverity, const std::string&)>;
     explicit LibWebRTCLogSink(LogCallback&&);
 
     ~LibWebRTCLogSink();
 
-    void start(rtc::LoggingSeverity = rtc::LoggingSeverity::LS_VERBOSE);
+    void start(webrtc::LoggingSeverity = webrtc::LoggingSeverity::LS_VERBOSE);
     void stop();
 
 private:
-    void OnLogMessage(const std::string& message, rtc::LoggingSeverity severity) final { logMessage(message, severity); }
-    void OnLogMessage(const std::string& message) final { logMessage(message, rtc::LoggingSeverity::LS_INFO); }
+    void OnLogMessage(const std::string& message, webrtc::LoggingSeverity severity) final { logMessage(message, severity); }
+    void OnLogMessage(const std::string& message) final { logMessage(message, webrtc::LoggingSeverity::LS_INFO); }
 
-    void logMessage(const std::string&, rtc::LoggingSeverity);
+    void logMessage(const std::string&, webrtc::LoggingSeverity);
 
     LogCallback m_callback;
-    std::optional<rtc::LoggingSeverity> m_loggingLevel;
+    std::optional<webrtc::LoggingSeverity> m_loggingLevel;
 };
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CallFrame.h"
-#include "JSCalleeInlines.h"
-#include "RegisterInlines.h"
+#include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/JSCalleeInlines.h>
+#include <JavaScriptCore/RegisterInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -83,11 +83,11 @@ inline JSCell* CallFrame::codeOwnerCell() const
     return codeBlock();
 }
 
-inline bool CallFrame::isPartiallyInitializedFrame() const
+inline bool CallFrame::isZombieFrame() const
 {
     if (callee().isNativeCallee())
         return false;
-    return jsCallee() == jsCallee()->globalObject()->partiallyInitializedFrameCallee();
+    return jsCallee() == jsCallee()->globalObject()->zombieFrameCallee();
 }
 
 inline bool CallFrame::isNativeCalleeFrame() const

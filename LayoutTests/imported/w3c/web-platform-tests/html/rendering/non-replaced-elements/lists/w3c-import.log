@@ -33,6 +33,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-upper-alpha.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-upper-roman-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-upper-roman.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/list-style-position-quirks-mode-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/list-style-position-quirks-mode-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/list-style-position-quirks-mode.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/lists-presentational-hints-ascii-case-insensitive.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/lists-styles-quirks.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/lists-styles.html

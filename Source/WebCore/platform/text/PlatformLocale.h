@@ -27,6 +27,7 @@
 #define PlatformLocale_h
 
 #include <wtf/Language.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 

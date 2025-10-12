@@ -10,6 +10,10 @@
 #ifndef TESTS_TEST_UTILS_CONSTANTFOLDINGTEST_H_
 #define TESTS_TEST_UTILS_CONSTANTFOLDINGTEST_H_
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include <vector>
 
 #include "common/mathutil.h"

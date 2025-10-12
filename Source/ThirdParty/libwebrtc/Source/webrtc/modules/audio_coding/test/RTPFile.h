@@ -13,6 +13,7 @@
 
 #include <stdio.h>
 
+#include <cstdint>
 #include <queue>
 
 #include "absl/strings/string_view.h"

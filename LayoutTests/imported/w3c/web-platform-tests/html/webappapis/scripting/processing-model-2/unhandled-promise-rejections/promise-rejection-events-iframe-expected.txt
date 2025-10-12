@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error
 
 PASS unhandledrejection: promise is created in iframe and being rejected elsewhere
 PASS no unhandledrejection/rejectionhandled: promise is created in iframe and being rejected elsewhere

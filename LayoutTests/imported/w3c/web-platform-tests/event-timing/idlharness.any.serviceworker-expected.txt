@@ -10,5 +10,7 @@ PASS Partial interface Performance[2]: member names are unique
 PASS PerformanceEventTiming interface: existence and properties of interface object
 PASS EventCounts interface: existence and properties of interface object
 PASS Performance interface: member eventCounts
+PASS Performance interface: member interactionCount
 PASS Performance interface: performance must not have property "eventCounts"
+PASS Performance interface: performance must not have property "interactionCount"
 

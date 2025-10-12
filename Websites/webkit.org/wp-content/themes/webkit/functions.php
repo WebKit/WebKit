@@ -23,6 +23,12 @@ add_action('init', function() {
     add_filter('emoji_svg_url', '__return_false');
 });
 
+// Enforce using classic editor
+add_action('init', function() {
+    add_filter('use_block_editor_for_post', '__return_false');
+    add_filter('use_block_editor_for_post_type', '__return_false');
+});
+
 add_action( 'wp_dashboard_setup', function () {
     $SurveyWidget = new WebKit_Nightly_Survey();
     $SurveyWidget->add_widget();

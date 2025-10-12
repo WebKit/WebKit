@@ -1,8 +1,11 @@
 #!/usr/bin/env lucicfg
 
-# Copyright (c) 2019 The WebRTC project authors. All rights reserved.
-# Use of this source code is governed by a BSD-style license that can be
-# found in the LICENSE file.
+#  Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#  Use of this source code is governed by a BSD-style license
+#  that can be found in the LICENSE file in the root of the source
+#  tree. An additional intellectual property rights grant can be found
+#  in the file PATENTS.  All contributing project authors may
+#  be found in the AUTHORS file in the root of the source tree.
 
 # https://chromium.googlesource.com/infra/luci/luci-go/+/main/lucicfg/doc/
 
@@ -18,22 +21,28 @@ DEFAULT_CPU = "x86-64"
 
 # Helpers:
 
-def make_reclient_properties(instance, jobs = None):
-    """Makes a default reclient property with the specified argument.
+def make_siso_properties(instance, jobs = None):
+    """Makes a default RBE property with the specified argument.
 
     Args:
       instance: RBE insatnce name.
       jobs: Number of jobs to be used by the builder.
     Returns:
-      A dictonary with the reclient properties.
+      A dictonary with the siso properties.
     """
-    reclient_props = {
-        "instance": instance,
-        "metrics_project": "chromium-reclient-metrics",
+    siso_props = {
+        "project": instance,
+        "configs": ["builder"],
+        "enable_cloud_profiler": True,
+        "enable_cloud_trace": True,
+        "enable_monitoring": True,
     }
     if jobs:
-        reclient_props["jobs"] = jobs
-    return {"$build/reclient": reclient_props}
+        siso_props["remote_jobs"] = jobs
+    props = {
+        "$build/siso": siso_props,
+    }
+    return props
 
 def os_from_name(name):
     """Returns the 'os' dimension based on a builder name.
@@ -52,7 +61,8 @@ def os_from_name(name):
 # Add names of builders to remove from LKGR finder to this list. This is
 # useful when a failure can be safely ignored while fixing it without
 # blocking the LKGR finder on it.
-skipped_lkgr_bots = []
+skipped_lkgr_bots = [
+]
 
 # Use LUCI Scheduler BBv2 names and add Scheduler realms configs.
 lucicfg.enable_experiment("crbug.com/1182002")
@@ -289,6 +299,10 @@ luci.bucket(
             "project-webrtc-ci-schedulers",
         ]),
     ],
+    constraints = luci.bucket_constraints(
+        pools = ["luci.webrtc.ci"],
+        service_accounts = ["webrtc-ci-builder@chops-service-accounts.iam.gserviceaccount.com"],
+    ),
 )
 
 luci.bucket(
@@ -302,6 +316,10 @@ luci.bucket(
             "service-account-chromeperf",
         ]),
     ],
+    constraints = luci.bucket_constraints(
+        pools = ["luci.webrtc.perf"],
+        service_accounts = ["webrtc-ci-builder@chops-service-accounts.iam.gserviceaccount.com"],
+    ),
 )
 
 luci.bucket(
@@ -579,7 +597,7 @@ def ci_builder(
     dimensions["builderless"] = "1"
     properties = properties or {}
     properties["builder_group"] = "client.webrtc"
-    properties.update(make_reclient_properties("rbe-webrtc-trusted"))
+    properties.update(make_siso_properties("rbe-webrtc-trusted"))
 
     notifies = ["post_submit_failure_notifier", "infra_failure_notifier"]
     notifies += ["webrtc_tree_closer"] if name not in skipped_lkgr_bots else []
@@ -624,7 +642,7 @@ def try_builder(
         dimensions["builderless"] = "1"
     properties = properties or {}
     properties["builder_group"] = "tryserver.webrtc"
-    properties.update(make_reclient_properties("rbe-webrtc-untrusted"))
+    properties.update(make_siso_properties("rbe-webrtc-untrusted"))
     if cq != None:
         luci.cq_tryjob_verifier(name, cq_group = "cq", **cq)
         if branch_cq:
@@ -653,7 +671,7 @@ def perf_builder(name, perf_cat, **kwargs):
     Notifications are also disabled.
     """
     add_milo(name, {"perf": perf_cat})
-    properties = make_reclient_properties("rbe-webrtc-trusted")
+    properties = make_siso_properties("rbe-webrtc-trusted")
     properties["builder_group"] = "client.webrtc.perf"
     dimensions = {"pool": "luci.webrtc.perf", "os": "Linux"}
     return webrtc_builder(
@@ -750,6 +768,7 @@ ios_try_job("ios_compile_arm64_dbg")
 ios_builder("iOS64 Release", "iOS|arm64|rel")
 ios_try_job("ios_compile_arm64_rel")
 ios_builder("iOS Debug (simulator)", "iOS|x64|sim")
+
 ios_try_job("ios_dbg_simulator")
 ios_builder("iOS API Framework Builder", "iOS|fat|size", recipe = "ios_api_framework", prioritized = True)
 ios_try_job("ios_api_framework", recipe = "ios_api_framework")
@@ -765,7 +784,7 @@ ci_builder("Linux64 Release", "Linux|x64|rel")
 try_builder("linux_rel")
 ci_builder("Linux64 Builder", "Linux|x64|size", perf_cat = "Linux|x64|Builder|", prioritized = True)
 try_builder("linux_compile_rel")
-perf_builder("Perf Linux Bionic", "Linux|x64|Tester|Bionic", triggered_by = ["Linux64 Builder"])
+perf_builder("Perf Linux", "Linux|x64|Tester", triggered_by = ["Linux64 Builder"])
 ci_builder("Linux32 Debug (ARM)", "Linux|arm|dbg")
 try_builder("linux_compile_arm_dbg")
 ci_builder("Linux32 Release (ARM)", "Linux|arm|rel")
@@ -813,7 +832,9 @@ try_builder("mac_asan")
 ci_builder("MacARM64 M1 Release", "Mac|arm64M1|rel", cpu = "arm64-64-Apple_M1")
 try_builder("mac_rel_m1")
 try_builder("mac_dbg_m1")
-chromium_try_builder("mac_chromium_compile")
+
+# TODO b/427073823 - Re-enable once the slow compilation issue is fixed.
+chromium_try_builder("mac_chromium_compile", cq = None)
 
 ci_builder("Win32 Debug (Clang)", "Win Clang|x86|dbg")
 try_builder("win_x86_clang_dbg", cq = None)
@@ -838,7 +859,7 @@ try_builder("win11_debug", cq = None)
 chromium_try_builder("win_chromium_compile")
 chromium_try_builder("win_chromium_compile_dbg")
 
-try_builder("iwyu_verifier", cq = None)
+try_builder("iwyu_verifier")
 
 try_builder(
     "presubmit",
@@ -880,10 +901,8 @@ lkgr_config = {
             # bucket alias: luci.chromium.webrtc.fyi
             "builders": [
                 "WebRTC Chromium FYI Android Builder (dbg)",
-                "WebRTC Chromium FYI Android Builder ARM64 (dbg)",
                 "WebRTC Chromium FYI Android Builder",
-                "WebRTC Chromium FYI Android Tests (dbg)",
-                "WebRTC Chromium FYI Android Tests ARM64 (dbg)",
+                "WebRTC Chromium FYI Android Tester",
                 "WebRTC Chromium FYI Linux Builder (dbg)",
                 "WebRTC Chromium FYI Linux Builder",
                 "WebRTC Chromium FYI Linux Tester",

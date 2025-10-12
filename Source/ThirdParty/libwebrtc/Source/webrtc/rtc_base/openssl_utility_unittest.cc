@@ -8,17 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <string>
-#include <vector>
-
-#if defined(WEBRTC_POSIX)
-#include <unistd.h>
-#endif
-
-#if defined(WEBRTC_WIN)
-// Must be included first before openssl headers.
-#include "rtc_base/win32.h"  // NOLINT
-#endif                       // WEBRTC_WIN
+#include "rtc_base/openssl_utility.h"
 
 #include <openssl/bio.h>
 #include <openssl/crypto.h>
@@ -31,19 +21,20 @@
 #include <openssl/x509v3.h>
 #endif
 
-#include "rtc_base/arraysize.h"
+#include <cstddef>
+#include <cstdint>
+#include <string>
+#include <vector>
+
 #include "rtc_base/checks.h"
-#include "rtc_base/gunit.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/openssl.h"
-#include "rtc_base/openssl_utility.h"
-#include "rtc_base/ssl_roots.h"
-#include "test/gmock.h"
+#include "test/gtest.h"
 
-namespace rtc {
+namespace webrtc {
 namespace {
 // Fake P-256 key for use with the test certificates below.
-const unsigned char kFakeSSLPrivateKey[] = {
+constexpr unsigned char kFakeSSLPrivateKey[] = {
     0x30, 0x81, 0x87, 0x02, 0x01, 0x00, 0x30, 0x13, 0x06, 0x07, 0x2a, 0x86,
     0x48, 0xce, 0x3d, 0x02, 0x01, 0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d,
     0x03, 0x01, 0x07, 0x04, 0x6d, 0x30, 0x6b, 0x02, 0x01, 0x01, 0x04, 0x20,
@@ -59,7 +50,7 @@ const unsigned char kFakeSSLPrivateKey[] = {
 
 // A self-signed certificate with CN *.webrtc.org and SANs foo.test, *.bar.test,
 // and test.webrtc.org.
-const unsigned char kFakeSSLCertificate[] = {
+constexpr unsigned char kFakeSSLCertificate[] = {
     0x30, 0x82, 0x02, 0x9e, 0x30, 0x82, 0x02, 0x42, 0xa0, 0x03, 0x02, 0x01,
     0x02, 0x02, 0x09, 0x00, 0xc8, 0x83, 0x59, 0x4d, 0x90, 0xc3, 0x5f, 0xc8,
     0x30, 0x0c, 0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x04, 0x03, 0x02,
@@ -119,7 +110,7 @@ const unsigned char kFakeSSLCertificate[] = {
     0xc3, 0x71};
 
 // A self-signed SSL certificate with only the legacy CN field *.webrtc.org.
-const unsigned char kFakeSSLCertificateLegacy[] = {
+constexpr unsigned char kFakeSSLCertificateLegacy[] = {
     0x30, 0x82, 0x02, 0x6a, 0x30, 0x82, 0x02, 0x0e, 0xa0, 0x03, 0x02, 0x01,
     0x02, 0x02, 0x09, 0x00, 0xc8, 0x83, 0x59, 0x4d, 0x90, 0xc3, 0x5f, 0xc8,
     0x30, 0x0c, 0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x04, 0x03, 0x02,
@@ -187,7 +178,7 @@ SSL* CreateSSLWithPeerCertificate(const unsigned char* cert, size_t cert_len) {
   const unsigned char* key_ptr = kFakeSSLPrivateKey;
   EVP_PKEY* key = d2i_PrivateKey(
       EVP_PKEY_EC, nullptr, &key_ptr,
-      checked_cast<long>(arraysize(kFakeSSLPrivateKey)));  // NOLINT
+      checked_cast<long>(std::ssize(kFakeSSLPrivateKey)));  // NOLINT
   RTC_CHECK(key);
 
 #ifdef OPENSSL_IS_BORINGSSL
@@ -269,7 +260,7 @@ TEST(OpenSSLUtilityTest, VerifyPeerCertMatchesHostFailsOnNoPeerCertificate) {
 
 TEST(OpenSSLUtilityTest, VerifyPeerCertMatchesHost) {
   SSL* ssl = CreateSSLWithPeerCertificate(kFakeSSLCertificate,
-                                          arraysize(kFakeSSLCertificate));
+                                          std::size(kFakeSSLCertificate));
 
   // Each of the names in the SAN list is valid.
   EXPECT_TRUE(openssl::VerifyPeerCertMatchesHost(ssl, "foo.test"));
@@ -290,7 +281,7 @@ TEST(OpenSSLUtilityTest, VerifyPeerCertMatchesHost) {
 
 TEST(OpenSSLUtilityTest, VerifyPeerCertMatchesHostLegacy) {
   SSL* ssl = CreateSSLWithPeerCertificate(kFakeSSLCertificateLegacy,
-                                          arraysize(kFakeSSLCertificateLegacy));
+                                          std::size(kFakeSSLCertificateLegacy));
 
   // If there is no SAN list, WebRTC still implements the legacy mechanism which
   // checks the CN, no longer supported by modern browsers.
@@ -305,4 +296,4 @@ TEST(OpenSSLUtilityTest, VerifyPeerCertMatchesHostLegacy) {
   SSL_free(ssl);
 }
 
-}  // namespace rtc
+}  // namespace webrtc

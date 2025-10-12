@@ -47,10 +47,11 @@ scheduler.frameDidFire = function()
     shouldBe("mediaControls.leftContainer.children[1]", "mediaControls.playPauseButton");
     shouldBe("mediaControls.leftContainer.children[2]", "mediaControls.skipForwardButton");
 
-    shouldBe("mediaControls.timeControl.children.length", "3");
+    shouldBe("mediaControls.timeControl.children.length", "4");
     shouldBe("mediaControls.timeControl.children[0]", "mediaControls.timeControl.elapsedTimeLabel");
     shouldBe("mediaControls.timeControl.children[1]", "mediaControls.timeControl.scrubber");
-    shouldBe("mediaControls.timeControl.children[2]", "mediaControls.timeControl.durationTimeLabel");
+    shouldBe("mediaControls.timeControl.children[2]", "mediaControls.timeControl.remainingTimeLabel");
+    shouldBe("mediaControls.timeControl.children[3]", "mediaControls.timeControl.durationTimeLabel");
 
     shouldBe("mediaControls.rightContainer.children.length", "4");
     shouldBe("mediaControls.rightContainer.children[0]", "mediaControls.muteButton");

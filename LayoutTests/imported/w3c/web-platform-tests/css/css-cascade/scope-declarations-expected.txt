@@ -1,7 +1,7 @@
 
-FAIL Scoped declarations apply to the scoping root assert_equals: expected "1" but got "auto"
-FAIL Scoped declarations apply to implicit scoping root assert_equals: expected "1" but got "auto"
-FAIL Scoped declarations apply with zero specificity assert_equals: expected "2" but got "1"
-FAIL Declarations are parsed into CSSNestedDeclarations, prelude=(.a) assert_equals: expected 5 but got 0
-FAIL Declarations are parsed into CSSNestedDeclarations, prelude= assert_equals: expected 5 but got 0
+PASS Scoped declarations apply to the scoping root
+PASS Scoped declarations apply to implicit scoping root
+PASS Scoped declarations apply with zero specificity
+PASS Declarations are parsed into CSSNestedDeclarations, prelude=(.a)
+PASS Declarations are parsed into CSSNestedDeclarations, prelude=
 

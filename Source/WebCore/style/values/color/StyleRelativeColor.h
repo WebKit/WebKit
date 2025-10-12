@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +27,14 @@
 #pragma once
 
 #include "CSSColorDescriptors.h"
+#include "CSSPrimitiveNumericTypes+Logging.h"
 #include "CSSRelativeColor.h"
 #include "CSSRelativeColorResolver.h"
-#include "CSSRelativeColorSerialization.h"
-#include "CSSSerializationContext.h"
 #include "Color.h"
 #include "ColorSerialization.h"
 #include "StyleColor.h"
+#include "StylePrimitiveKeyword+Logging.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
 #include "StyleResolvedColor.h"
 #include <wtf/text/TextStream.h>
 
@@ -42,7 +44,7 @@ namespace Style {
 template<typename D, unsigned Index> using RelativeColorComponent = GetCSSColorParseTypeWithCalcAndSymbolsComponentResult<D, Index>;
 
 template<typename D> struct RelativeColor {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RelativeColor);
 
     using Descriptor = D;
 
@@ -101,21 +103,62 @@ template<typename D> bool containsCurrentColor(const RelativeColor<D>& relative)
     return WebCore::Style::containsCurrentColor(relative.origin);
 }
 
-template<typename D> void serializationForCSS(StringBuilder& builder, const CSS::SerializationContext& context, const RelativeColor<D>& relative)
+template<typename D> void serializationForCSSTokenization(StringBuilder& builder, const CSS::SerializationContext& context, const RelativeColor<D>& relative)
 {
-    CSS::serializationForCSSRelativeColor(builder, context, relative);
+    using ColorType = typename D::ColorType;
+
+    if constexpr (D::usesColorFunctionForSerialization) {
+        builder.append("color(from "_s);
+        serializationForCSSTokenization(builder, context, relative.origin);
+        builder.append(' ');
+        builder.append(serialization(ColorSpaceFor<ColorType>));
+    } else {
+        builder.append(D::serializationFunctionName);
+        builder.append("(from "_s);
+        serializationForCSSTokenization(builder, context, relative.origin);
+    }
+
+    auto [c1, c2, c3, alpha] = relative.components;
+
+    builder.append(' ');
+    CSS::serializationForCSS(builder, context, c1);
+    builder.append(' ');
+    CSS::serializationForCSS(builder, context, c2);
+    builder.append(' ');
+    CSS::serializationForCSS(builder, context, c3);
+
+    if (alpha) {
+        builder.append(" / "_s);
+        CSS::serializationForCSS(builder, context, *alpha);
+    }
+
+    builder.append(')');
 }
 
-template<typename D> String serializationForCSS(const CSS::SerializationContext& context, const RelativeColor<D>& relative)
+template<typename D> String serializationForCSSTokenization(const CSS::SerializationContext& context, const RelativeColor<D>& relative)
 {
     StringBuilder builder;
-    serializationForCSS(builder, context, relative);
+    serializationForCSSTokenization(builder, context, relative);
     return builder.toString();
 }
 
 template<typename D> WTF::TextStream& operator<<(WTF::TextStream& ts, const RelativeColor<D>& relative)
 {
-    return ts << "relativeColor("_s << serializationForCSS(CSS::defaultSerializationContext(), relative) << ')';
+    using ColorType = typename D::ColorType;
+
+    if constexpr (D::usesColorFunctionForSerialization)
+        ts << "color(from "_s << relative.origin << ' ' << serialization(ColorSpaceFor<ColorType>);
+    else
+        ts << D::serializationFunctionName << "(from "_s << relative.origin;
+
+    auto [c1, c2, c3, alpha] = relative.components;
+    ts << ' ' << c1 << ' ' << c2 << ' ' << c3;
+    if (alpha)
+        ts << " / "_s << *alpha;
+
+    ts << ')';
+
+    return ts;
 }
 
 } // namespace Style

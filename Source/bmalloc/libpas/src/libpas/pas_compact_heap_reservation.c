@@ -31,6 +31,7 @@
 
 #include "pas_heap_lock.h"
 #include "pas_page_malloc.h"
+#include "pas_zero_memory.h"
 
 #if PAS_PLATFORM(PLAYSTATION)
 #include <memory-extra.h>

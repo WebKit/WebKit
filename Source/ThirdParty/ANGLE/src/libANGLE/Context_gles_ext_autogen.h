@@ -79,6 +79,7 @@
     /* GL_ARM_rgba8 */                                                                             \
     /* GL_ARM_shader_framebuffer_fetch */                                                          \
     /* GL_ARM_shader_framebuffer_fetch_depth_stencil */                                            \
+    /* GL_ARM_texture_unnormalized_coordinates */                                                  \
     /* GL_EXT_EGL_image_array */                                                                   \
     /* GL_EXT_EGL_image_external_wrap_modes */                                                     \
     /* GL_EXT_EGL_image_storage */                                                                 \
@@ -145,6 +146,13 @@
                                GLeglClientBufferEXT clientBuffer, GLbitfield flags);               \
     /* GL_EXT_float_blend */                                                                       \
     /* GL_EXT_frag_depth */                                                                        \
+    /* GL_EXT_fragment_shading_rate */                                                             \
+    void framebufferShadingRate(GLenum target, GLenum attachment, GLuint texture, GLint baseLayer, \
+                                GLsizei numLayers, GLsizei texelWidth, GLsizei texelHeight);       \
+    void getFragmentShadingRates(GLsizei samples, GLsizei maxCount, GLsizei *count,                \
+                                 GLenum *shadingRates);                                            \
+    /* GL_EXT_fragment_shading_rate_attachment */                                                  \
+    /* GL_EXT_fragment_shading_rate_primitive */                                                   \
     /* GL_EXT_geometry_shader */                                                                   \
     /* GL_EXT_gpu_shader5 */                                                                       \
     /* GL_EXT_instanced_arrays */                                                                  \
@@ -645,7 +653,7 @@
     /* GL_ANGLE_texture_multisample */                                                             \
     /* GL_ANGLE_texture_rectangle */                                                               \
     /* GL_ANGLE_variable_rasterization_rate_metal */                                               \
-    void bindMetalRasterizationRateMap(GLuint renderbuffer, GLMTLRasterizationRateMapANGLE map);   \
+    void bindMetalRasterizationRateMap(GLuint framebuffer, GLMTLRasterizationRateMapANGLE map);    \
     /* GL_ANGLE_vulkan_image */                                                                    \
     void acquireTextures(GLuint numTextures, const TextureID *texturesPacked,                      \
                          const GLenum *layouts);                                                   \
@@ -673,7 +681,6 @@
     /* GL_CHROMIUM_framebuffer_mixed_samples */                                                    \
     /* GL_CHROMIUM_lose_context */                                                                 \
     void loseContext(GraphicsResetStatus currentPacked, GraphicsResetStatus otherPacked);          \
-    /* GL_CHROMIUM_sync_query */                                                                   \
     /* GL_WEBKIT_explicit_resolve_target */                                                        \
     void framebufferResolveRenderbufferWEBKIT(GLenum target, GLenum attachment,                    \
                                               GLenum renderbuffertarget,                           \

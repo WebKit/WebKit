@@ -128,7 +128,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
                 continue;
             } else if (characters[i] == ',')
                 ++commas;
-            else if (!Lexer<LChar>::isWhiteSpace(characters[i]))
+            else if (!Lexer<Latin1Character>::isWhiteSpace(characters[i]))
                 sawOneParam = true;
 
             if (i + 2 < view.length() && characters[i] == '.' && characters[i + 1] == '.' && characters[i + 2] == '.') {

@@ -45,7 +45,7 @@ class TestController;
 class EventSenderProxyClient;
 #endif
 class EventSenderProxy {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(EventSenderProxy);
 public:
     explicit EventSenderProxy(TestController*);
     ~EventSenderProxy();
@@ -81,7 +81,7 @@ public:
     
     using EventTimestamp = uint64_t; // mach_absolute_time units.
 
-    void sendWheelEvent(EventTimestamp, double globalX, double globalY, double deltaX, double deltaY, WheelEventPhase, WheelEventPhase momentumPhase);
+    void sendWheelEvent(EventTimestamp, double globalX, double globalY, double deltaX, double deltaY, WheelEventPhase, WheelEventPhase momentumPhase, bool momentumWillBegin = false);
 #endif
 
     void leapForward(int milliseconds);

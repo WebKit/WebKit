@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
-#include "TypedArrayAdaptors.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/TypedArrayAdaptors.h>
 
 namespace JSC {
 

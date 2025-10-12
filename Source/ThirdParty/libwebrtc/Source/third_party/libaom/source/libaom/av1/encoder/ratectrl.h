@@ -199,7 +199,9 @@ typedef struct {
   int last_encoded_size_keyframe;
   int last_target_size_keyframe;
   int frames_since_scene_change;
-  int perc_flat_blocks_keyframe;
+  int perc_spatial_flat_blocks;
+  int num_col_blscroll_last_tl0;
+  int num_row_blscroll_last_tl0;
 
   int avg_frame_bandwidth;  // Average frame size target for clip
   int min_frame_bandwidth;  // Minimum allocation used for any frame
@@ -587,6 +589,9 @@ int av1_estimate_bits_at_q(const struct AV1_COMP *cpi, int q,
                            double correction_factor);
 
 double av1_convert_qindex_to_q(int qindex, aom_bit_depth_t bit_depth);
+
+// Converts a Q value to a qindex.
+int av1_convert_q_to_qindex(double q, aom_bit_depth_t bit_depth);
 
 void av1_rc_init_minq_luts(void);
 

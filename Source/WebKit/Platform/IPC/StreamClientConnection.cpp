@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,12 @@
 
 #include "config.h"
 #include "StreamClientConnection.h"
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
+
+#if PLATFORM(COCOA)
+#include <CoreFoundation/CoreFoundation.h>
+#endif
 
 namespace IPC {
 
@@ -41,21 +46,24 @@ StreamClientConnection::DedicatedConnectionClient::DedicatedConnectionClient(Str
 
 void StreamClientConnection::DedicatedConnectionClient::didReceiveMessage(Connection& connection, Decoder& decoder)
 {
-    m_receiver.didReceiveMessage(connection, decoder);
+    if (RefPtr receiver = m_receiver.get())
+        receiver->didReceiveMessage(connection, decoder);
 }
 
-bool StreamClientConnection::DedicatedConnectionClient::didReceiveSyncMessage(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder)
+void StreamClientConnection::DedicatedConnectionClient::didReceiveSyncMessage(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder)
 {
-    return m_receiver.didReceiveSyncMessage(connection, decoder, replyEncoder);
+    if (RefPtr receiver = m_receiver.get())
+        receiver->didReceiveSyncMessage(connection, decoder, replyEncoder);
 }
 
 void StreamClientConnection::DedicatedConnectionClient::didClose(Connection& connection)
 {
     // Client is expected to listen to Connection::didClose() from the connection it sent to the dedicated connection to.
-    m_receiver.didClose(connection);
+    if (RefPtr receiver = m_receiver.get())
+        receiver->didClose(connection);
 }
 
-void StreamClientConnection::DedicatedConnectionClient::didReceiveInvalidMessage(Connection&, MessageName, int32_t)
+void StreamClientConnection::DedicatedConnectionClient::didReceiveInvalidMessage(Connection&, MessageName, const Vector<uint32_t>&)
 {
     ASSERT_NOT_REACHED(); // The sender is expected to be trusted, so all invalid messages are programming errors.
 }
@@ -114,19 +122,19 @@ void StreamClientConnection::setMaxBatchSize(unsigned size)
 void StreamClientConnection::open(Connection::Client& receiver, SerialFunctionDispatcher& dispatcher)
 {
     m_dedicatedConnectionClient.emplace(*this, receiver);
-    protectedConnection()->open(*m_dedicatedConnectionClient, dispatcher);
+    m_connection->open(Ref { *m_dedicatedConnectionClient }.get(), dispatcher);
 }
 
 Error StreamClientConnection::flushSentMessages()
 {
     auto timeout = defaultTimeout();
     wakeUpServer(WakeUpServer::Yes);
-    return protectedConnection()->flushSentMessages(WTFMove(timeout));
+    return m_connection->flushSentMessages(WTFMove(timeout));
 }
 
 void StreamClientConnection::invalidate()
 {
-    protectedConnection()->invalidate();
+    m_connection->invalidate();
 }
 
 void StreamClientConnection::wakeUpServer(WakeUpServer wakeUpResult)
@@ -158,12 +166,49 @@ Connection& StreamClientConnection::connectionForTesting()
 
 void StreamClientConnection::addWorkQueueMessageReceiver(ReceiverName name, WorkQueue& workQueue, WorkQueueMessageReceiverBase& receiver, uint64_t destinationID)
 {
-    protectedConnection()->addWorkQueueMessageReceiver(name, workQueue, receiver, destinationID);
+    m_connection->addWorkQueueMessageReceiver(name, workQueue, receiver, destinationID);
 }
 
 void StreamClientConnection::removeWorkQueueMessageReceiver(ReceiverName name, uint64_t destinationID)
 {
-    protectedConnection()->removeWorkQueueMessageReceiver(name, destinationID);
+    m_connection->removeWorkQueueMessageReceiver(name, destinationID);
 }
+
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+
+static bool streamingIPCSignpostsEnabled = false;
+
+void StreamClientConnection::forceEnableSignposts()
+{
+    streamingIPCSignpostsEnabled = true;
+}
+
+bool StreamClientConnection::signpostsEnabled()
+{
+    static bool hasReadPreferences = false;
+    if (!hasReadPreferences) [[unlikely]] {
+        if (!isInAuxiliaryProcess() && CFPreferencesGetAppBooleanValue(CFSTR("WebKitDebugStreamingIPCSignposts"), kCFPreferencesCurrentApplication, nullptr))
+            streamingIPCSignpostsEnabled = true;
+        hasReadPreferences = true;
+    }
+
+    return streamingIPCSignpostsEnabled;
+}
+
+uintptr_t StreamClientConnection::generateSignpostIdentifier()
+{
+    static std::atomic<uintptr_t> identifier;
+    return ++identifier;
+}
+
+void StreamClientConnection::emitSendSignpost(MessageName messageName)
+{
+    // Signposts can turn in to log message IPCs when emitted from WebContent. Don't emit a signpost
+    // for log messages to avoid an infinite number of signposts.
+    if (signpostsEnabled() && receiverName(messageName) != IPC::ReceiverName::LogStream) [[unlikely]]
+        WTFEmitSignpost(generateSignpostIdentifier(), StreamClientConnection, "send: %" PUBLIC_LOG_STRING, description(messageName).characters());
+}
+
+#endif
 
 }

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "LayoutUnits.h"
+#include <WebCore/LayoutUnits.h>
 
 namespace WebCore {
 namespace Layout {
@@ -42,10 +42,9 @@ struct TextSpacingContext {
     TrimmableTextSpacings trimmableTextSpacings;
 };
 
-enum class PreviousLineState {
-    NoPreviousLine,
-    EndsWithLineBreak,
-    DoesNotEndWithLineBreak,
+enum class IsFirstFormattedLine : bool {
+    No,
+    Yes
 };
 
 enum class LineEndingTruncationPolicy : uint8_t {
@@ -86,7 +85,6 @@ struct PreviousLine {
     // Content width measured during line breaking (avoid double-measuring).
     std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
     bool endsWithLineBreak { false };
-    bool hasInlineContent { false };
     TextDirection inlineBaseDirection { TextDirection::LTR };
     Vector<const Box*> suspendedFloats;
 };

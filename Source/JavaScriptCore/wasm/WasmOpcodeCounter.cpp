@@ -35,6 +35,7 @@
 #if PLATFORM(COCOA)
 #include <notify.h>
 #include <unistd.h>
+#include <wtf/darwin/DispatchExtras.h>
 #endif
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -109,7 +110,7 @@ void WasmOpcodeCounter::registerDispatch()
         dataLogF("<WASM.OP.STAT><%d> Use `notifyutil -v -p %s` to dump statistics.\n", pid, key);
 
         int token;
-        notify_register_dispatch(key, &token, dispatch_get_main_queue(), ^(int) {
+        notify_register_dispatch(key, &token, mainDispatchQueueSingleton(), ^(int) {
             WasmOpcodeCounter::singleton().dump();
         });
     });

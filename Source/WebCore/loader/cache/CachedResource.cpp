@@ -34,15 +34,16 @@
 #include "DefaultResourceLoadPriority.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
-#include "Document.h"
 #include "DocumentLoader.h"
+#include "DocumentPage.h"
+#include "FrameInlines.h"
 #include "FrameLoader.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPHeaderValues.h"
 #include "InspectorInstrumentation.h"
 #include "LegacySchemeRegistry.h"
 #include "LoaderStrategy.h"
-#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameLoaderClient.h"
 #include "Logging.h"
 #include "MemoryCache.h"
@@ -52,7 +53,6 @@
 #include "SubresourceLoader.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/MathExtras.h>
-#include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -75,13 +75,11 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CachedResourceResponseData);
 
 static Seconds deadDecodedDataDeletionIntervalForResourceType(CachedResource::Type type)
 {
-    if (type == CachedResource::Type::Script)
+    if (type == CachedResource::Type::Script || type == CachedResource::Type::JSON)
         return 5_s;
 
     return MemoryCache::singleton().deadDecodedDataDeletionInterval();
 }
-
-DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, cachedResourceLeakCounter, ("CachedResource"));
 
 CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::SessionID sessionID, const CookieJar* cookieJar)
     : m_options(request.options())
@@ -101,12 +99,9 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::
     ASSERT(m_sessionID.isValid());
 
     setLoadPriority(request.priority(), request.fetchPriority());
-#ifndef NDEBUG
-    cachedResourceLeakCounter.increment();
-#endif
 
     // FIXME: We should have a better way of checking for Navigation loads, maybe FetchMode::Options::Navigate.
-    ASSERT(m_origin || m_type == Type::MainResource);
+    ASSERT(m_origin || m_type == Type::MainResource || m_options.cachingPolicy == CachingPolicy::AllowCachingPrefetch);
 
     if (isRequestCrossOrigin(m_origin.get(), m_resourceRequest.url(), m_options))
         setCrossOrigin();
@@ -126,9 +121,6 @@ CachedResource::CachedResource(const URL& url, Type type, PAL::SessionID session
     , m_ignoreForRequestCount(false)
 {
     ASSERT(m_sessionID.isValid());
-#ifndef NDEBUG
-    cachedResourceLeakCounter.increment();
-#endif
 }
 
 CachedResource::~CachedResource()
@@ -141,9 +133,6 @@ CachedResource::~CachedResource()
 
 #if ASSERT_ENABLED
     m_deleted = true;
-#endif
-#ifndef NDEBUG
-    cachedResourceLeakCounter.decrement();
 #endif
 }
 
@@ -468,7 +457,7 @@ void CachedResource::redirectReceived(ResourceRequest&& request, const ResourceR
 
     m_requestedFromNetworkingLayer = true;
     if (!response.isNull())
-        updateRedirectChainStatus(m_redirectChainCacheStatus, response);
+        updateRedirectChainStatus(m_redirectChainCacheStatus, response, m_options);
 
     completionHandler(WTFMove(request));
 }
@@ -549,7 +538,7 @@ bool CachedResource::addClientToSet(CachedResourceClient& client)
     if (allowsCaching() && !hasClients() && inCache())
         MemoryCache::singleton().addToLiveResourcesSize(*this);
 
-    if ((m_type == Type::RawResource || m_type == Type::MainResource) && !response().isNull() && !m_proxyResource) {
+    if ((m_type == Type::RawResource || m_type == Type::MainResource) && !response().isNull() && !m_proxyResource && m_options.cachingPolicy != CachingPolicy::AllowCachingPrefetch) {
         // Certain resources (especially XHRs and main resources) do crazy things if an asynchronous load returns
         // synchronously (e.g., scripts may not have set all the state they need to handle the load).
         // Therefore, rather than immediately sending callbacks on a cache hit like other CachedResources,
@@ -1047,7 +1036,7 @@ void CachedResource::tryReplaceEncodedData(SharedBuffer& newBuffer)
     if (*m_data != newBuffer)
         return;
 
-    m_data = &newBuffer;
+    m_data = newBuffer;
     didReplaceSharedBufferContents();
 }
 

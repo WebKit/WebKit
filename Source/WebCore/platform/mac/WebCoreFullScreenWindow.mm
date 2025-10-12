@@ -96,7 +96,7 @@
 
     if ([self firstResponder] != savedFirstResponder
         && [savedFirstResponder isKindOfClass:[NSView class]]
-        && [(NSView*)savedFirstResponder isDescendantOf:[self contentView]])
+        && [checked_objc_cast<NSView>(savedFirstResponder) isDescendantOf:[self contentView]])
         [self makeFirstResponder:savedFirstResponder];
 }
 @end

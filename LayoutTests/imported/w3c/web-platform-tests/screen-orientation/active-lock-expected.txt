@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: Screen orientation locking is not supported
 fragment
 
 FAIL Performing a fragment navigation must not abort the screen orientation change promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"

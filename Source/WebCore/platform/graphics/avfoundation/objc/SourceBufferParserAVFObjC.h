@@ -27,9 +27,9 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include "Logging.h"
-#include "MediaSourceConfiguration.h"
-#include "SourceBufferParser.h"
+#include <WebCore/Logging.h>
+#include <WebCore/MediaSourceConfiguration.h>
+#include <WebCore/SourceBufferParser.h>
 #include <wtf/Box.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/TypeCasts.h>
@@ -58,7 +58,7 @@ public:
     AVStreamDataParser* streamDataParser() const { return m_parser.get(); }
 
     Type type() const { return Type::AVFObjC; }
-    Expected<void, PlatformMediaError> appendData(Segment&&, AppendFlags = AppendFlags::None) final;
+    Expected<void, PlatformMediaError> appendData(Ref<const SharedBuffer>&&, AppendFlags = AppendFlags::None) final;
     void flushPendingMediaData() final;
     void resetParserState() final;
     void invalidate() final;

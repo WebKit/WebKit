@@ -67,7 +67,7 @@ GStreamerCapturer::GStreamerCapturer(const PipeWireCaptureDevice& device)
 
 GStreamerCapturer::~GStreamerCapturer()
 {
-    tearDown();
+    tearDown(true);
 }
 
 void GStreamerCapturer::tearDown(bool disconnectSignals)
@@ -90,7 +90,9 @@ void GStreamerCapturer::tearDown(bool disconnectSignals)
     m_valve = nullptr;
     m_src = nullptr;
     m_capsfilter = nullptr;
+    m_sink = nullptr;
     m_pipeline = nullptr;
+    m_caps = nullptr;
 }
 
 GStreamerCapturerObserver::~GStreamerCapturerObserver()
@@ -174,6 +176,7 @@ GstElement* GStreamerCapturer::createSource()
         g_object_set(m_src.get(), "path", path.string().ascii().data(), "fd", m_pipewireDevice->fd(), nullptr);
     } else {
         ASSERT(m_device);
+        ASSERT(gst_device_has_classes(m_device->device(), GST_ELEMENT_FACTORY_KLASS_SRC));
         auto sourceName = makeString(unsafeSpan(name()), hex(reinterpret_cast<uintptr_t>(this)));
         m_src = gst_device_create_element(m_device->device(), sourceName.ascii().data());
         ASSERT(m_src);
@@ -212,7 +215,7 @@ GstElement* GStreamerCapturer::createSource()
             auto [rotation, isMirrored] = webkitGstBufferGetVideoRotation(buffer);
 
             auto modifiedBuffer = webkitGstBufferSetVideoFrameMetadata(GRefPtr(buffer), metadata, rotation, isMirrored);
-            GST_PAD_PROBE_INFO_DATA(info) = modifiedBuffer.leakRef();
+            gst_pad_probe_info_set_buffer(info, modifiedBuffer.leakRef());
             return GST_PAD_PROBE_OK;
         }, nullptr, nullptr);
     }
@@ -245,11 +248,11 @@ void GStreamerCapturer::setupPipeline()
     registerActivePipeline(m_pipeline);
     connectSimpleBusMessageCallback(pipeline());
 
-    GRefPtr<GstElement> source = createSource();
-    GRefPtr<GstElement> converter = createConverter();
+    auto source = createSource();
+    auto converter = createConverter();
 
-    m_valve = makeElement("valve"_s);
-    m_capsfilter = makeElement("capsfilter"_s);
+    m_valve = gst_element_factory_make("valve", nullptr);
+    m_capsfilter = gst_element_factory_make("capsfilter", nullptr);
     auto queue = gst_element_factory_make("queue", nullptr);
     if (!m_sink)
         m_sink = makeElement("appsink"_s);
@@ -260,12 +263,12 @@ void GStreamerCapturer::setupPipeline()
     g_object_set(m_sink.get(), "enable-last-sample", FALSE, nullptr);
     g_object_set(m_capsfilter.get(), "caps", m_caps.get(), nullptr);
 
-    gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), source.get(), m_capsfilter.get(), m_valve.get(), queue, m_sink.get(), nullptr);
-    auto tail = source.get();
+    gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), source, m_capsfilter.get(), m_valve.get(), queue, m_sink.get(), nullptr);
+    auto tail = source;
     if (converter) {
-        gst_bin_add(GST_BIN_CAST(m_pipeline.get()), converter.get());
-        gst_element_link(source.get(), converter.get());
-        tail = converter.get();
+        gst_bin_add(GST_BIN_CAST(m_pipeline.get()), converter);
+        gst_element_link(source, converter);
+        tail = converter;
     }
     gst_element_link_many(tail, m_capsfilter.get(), m_valve.get(), queue, m_sink.get(), nullptr);
 }

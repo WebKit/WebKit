@@ -540,8 +540,6 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
             configuration->setLocalStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->localStorageDirectory.get()));
         if (priv->diskCacheDirectory)
             configuration->setNetworkCacheDirectory(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(priv->diskCacheDirectory.get()), networkCacheSubdirectory));
-        if (priv->applicationCacheDirectory)
-            configuration->setApplicationCacheDirectory(FileSystem::stringFromFileSystemRepresentation(priv->applicationCacheDirectory.get()));
         if (priv->indexedDBDirectory)
             configuration->setIndexedDBDatabaseDirectory(FileSystem::stringFromFileSystemRepresentation(priv->indexedDBDirectory.get()));
         if (priv->webSQLDirectory)
@@ -726,10 +724,6 @@ const gchar* webkit_website_data_manager_get_disk_cache_directory(WebKitWebsiteD
     if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
         return nullptr;
 
-    if (!priv->diskCacheDirectory) {
-        // The default directory already has the subdirectory.
-        priv->diskCacheDirectory.reset(g_strdup(FileSystem::parentPath(WebKit::WebsiteDataStore::defaultNetworkCacheDirectory()).utf8().data()));
-    }
     return priv->diskCacheDirectory.get();
 }
 
@@ -753,8 +747,6 @@ const gchar* webkit_website_data_manager_get_offline_application_cache_directory
     if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
         return nullptr;
 
-    if (!priv->applicationCacheDirectory)
-        priv->applicationCacheDirectory.reset(g_strdup(WebKit::WebsiteDataStore::defaultApplicationCacheDirectory().utf8().data()));
     return priv->applicationCacheDirectory.get();
 }
 
@@ -1167,8 +1159,6 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes type
         returnValue.add(WebsiteDataType::MemoryCache);
     if (types & WEBKIT_WEBSITE_DATA_DISK_CACHE)
         returnValue.add(WebsiteDataType::DiskCache);
-    if (types & WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE)
-        returnValue.add(WebsiteDataType::OfflineWebApplicationCache);
     if (types & WEBKIT_WEBSITE_DATA_SESSION_STORAGE)
         returnValue.add(WebsiteDataType::SessionStorage);
     if (types & WEBKIT_WEBSITE_DATA_LOCAL_STORAGE)

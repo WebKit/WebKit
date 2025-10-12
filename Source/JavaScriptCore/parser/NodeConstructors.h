@@ -514,8 +514,9 @@ namespace JSC {
     {
     }
 
-    inline TypeOfResolveNode::TypeOfResolveNode(const JSTokenLocation& location, const Identifier& ident)
+    inline TypeOfResolveNode::TypeOfResolveNode(const JSTokenLocation& location, const Identifier& ident, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
         : ExpressionNode(location, ResultType::stringType())
+        , ThrowableExpressionData(divot, divotStart, divotEnd)
         , m_ident(ident)
     {
     }

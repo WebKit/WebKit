@@ -27,18 +27,18 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "ActiveDOMObject.h"
-#include "DetachedRTCDataChannel.h"
-#include "Event.h"
-#include "EventTarget.h"
-#include "EventTargetInterfaces.h"
-#include "NetworkSendQueue.h"
-#include "RTCDataChannelHandler.h"
-#include "RTCDataChannelHandlerClient.h"
-#include "RTCDataChannelIdentifier.h"
-#include "ScriptExecutionContext.h"
-#include "ScriptWrappable.h"
-#include "Timer.h"
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/DetachedRTCDataChannel.h>
+#include <WebCore/Event.h>
+#include <WebCore/EventTarget.h>
+#include <WebCore/EventTargetInterfaces.h>
+#include <WebCore/NetworkSendQueue.h>
+#include <WebCore/RTCDataChannelHandler.h>
+#include <WebCore/RTCDataChannelHandlerClient.h>
+#include <WebCore/RTCDataChannelIdentifier.h>
+#include <WebCore/ScriptExecutionContext.h>
+#include <WebCore/ScriptWrappable.h>
+#include <WebCore/Timer.h>
 
 namespace JSC {
     class ArrayBuffer;
@@ -103,7 +103,8 @@ private:
     void removeFromDataChannelLocalMapIfNeeded();
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCDataChannel; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final;
+    using ActiveDOMObject::protectedScriptExecutionContext;
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

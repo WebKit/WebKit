@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,41 +32,41 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-#include "CalleeBits.h"
-#include "CodeSpecializationKind.h"
-#include "ConcurrentJSLock.h"
-#include "DFGDoesGCCheck.h"
-#include "DeleteAllCodeEffort.h"
-#include "ExceptionEventLocation.h"
-#include "FunctionHasExecutedCache.h"
-#include "Heap.h"
-#include "ImplementationVisibility.h"
-#include "IndexingType.h"
-#include "Integrity.h"
-#include "Interpreter.h"
-#include "Intrinsic.h"
-#include "JSCJSValue.h"
-#include "JSDateMath.h"
-#include "JSLock.h"
-#include "JSONAtomStringCache.h"
-#include "KeyAtomStringCache.h"
-#include "MicrotaskQueue.h"
-#include "NativeFunction.h"
-#include "NumericStrings.h"
-#include "SlotVisitorMacros.h"
-#include "SmallStrings.h"
-#include "StringReplaceCache.h"
-#include "StringSplitCache.h"
-#include "Strong.h"
-#include "SubspaceAccess.h"
-#include "ThunkGenerator.h"
-#include "VMTraps.h"
-#include "WasmContext.h"
-#include "WeakGCMap.h"
-#include "WriteBarrier.h"
+#include <JavaScriptCore/CalleeBits.h>
+#include <JavaScriptCore/CodeSpecializationKind.h>
+#include <JavaScriptCore/ConcurrentJSLock.h>
+#include <JavaScriptCore/DFGDoesGCCheck.h>
+#include <JavaScriptCore/DeleteAllCodeEffort.h>
+#include <JavaScriptCore/ExceptionEventLocation.h>
+#include <JavaScriptCore/FunctionHasExecutedCache.h>
+#include <JavaScriptCore/Heap.h>
+#include <JavaScriptCore/ImplementationVisibility.h>
+#include <JavaScriptCore/IndexingType.h>
+#include <JavaScriptCore/Integrity.h>
+#include <JavaScriptCore/Interpreter.h>
+#include <JavaScriptCore/Intrinsic.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSDateMath.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/JSONAtomStringCache.h>
+#include <JavaScriptCore/KeyAtomStringCache.h>
+#include <JavaScriptCore/MicrotaskQueue.h>
+#include <JavaScriptCore/NativeFunction.h>
+#include <JavaScriptCore/NumericStrings.h>
+#include <JavaScriptCore/SlotVisitorMacros.h>
+#include <JavaScriptCore/SmallStrings.h>
+#include <JavaScriptCore/SourceTaintedOrigin.h>
+#include <JavaScriptCore/StringReplaceCache.h>
+#include <JavaScriptCore/StringSplitCache.h>
+#include <JavaScriptCore/Strong.h>
+#include <JavaScriptCore/SubspaceAccess.h>
+#include <JavaScriptCore/ThunkGenerator.h>
+#include <JavaScriptCore/VMThreadContext.h>
+#include <JavaScriptCore/WasmContext.h>
+#include <JavaScriptCore/WeakGCMap.h>
+#include <JavaScriptCore/WriteBarrier.h>
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/DoublyLinkedList.h>
 #include <wtf/Forward.h>
 #include <wtf/Gigacage.h>
 #include <wtf/HashMap.h>
@@ -223,8 +223,8 @@ private:
 enum VMIdentifierType { };
 using VMIdentifier = AtomicObjectIdentifier<VMIdentifierType>;
 
-class VM : public ThreadSafeRefCountedWithSuppressingSaferCPPChecking<VM>, public DoublyLinkedListNode<VM> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(VM);
+class VM : public ThreadSafeRefCountedWithSuppressingSaferCPPChecking<VM> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(VM, VM);
 public:
     // WebCore has a one-to-one mapping of threads to VMs;
     // create() should only be called once
@@ -287,15 +287,18 @@ public:
     Type& ensureSideData(void* key, const Functor&);
 
     bool hasTerminationRequest() const { return m_hasTerminationRequest; }
+    // While setHasTerminationRequest() needs to be CONCURRENT_SAFE (called for stopping worker
+    // threads), clearHasTerminationRequest() should only be called by the owner mutator thread
+    // after servicing the requests. Hence, it should not be concurrent.
     void clearHasTerminationRequest()
     {
         m_hasTerminationRequest = false;
-        clearEntryScopeService(EntryScopeService::ResetTerminationRequest);
+        clearEntryScopeService(ConcurrentEntryScopeService::ResetTerminationRequest);
     }
-    void setHasTerminationRequest()
+    CONCURRENT_SAFE void setHasTerminationRequest()
     {
         m_hasTerminationRequest = true;
-        requestEntryScopeService(EntryScopeService::ResetTerminationRequest);
+        requestEntryScopeService(ConcurrentEntryScopeService::ResetTerminationRequest);
     }
 
     bool executionForbidden() const { return m_executionForbidden; }
@@ -332,20 +335,34 @@ public:
         TracePoints = 1 << 1,
         Watchdog = 1 << 2,
 
-        // Transient services i.e. these will never be cleared after they are serviced once, and can be set again later.
+        // Transient services i.e. these will be cleared after they are serviced once, and can be set again later.
         ClearScratchBuffers = 1 << 3,
         FirePrimitiveGigacageEnabled = 1 << 4,
         PopListeners = 1 << 5,
-        ResetTerminationRequest = 1 << 6,
     };
 
-    bool hasAnyEntryScopeServiceRequest() { return !m_entryScopeServices.isEmpty(); }
+    // FIXME rdar://161576886
+    // It is evident that code can be made simpler and more efficient by combining the bits of
+    // ConcurrentEntryScopeServices and VMTraps. Some of them (e.g. NeedStopTheWorld) overlap.
+    // However, combining them will require some filtering so that only the right bits are
+    // checked at the right place. We'll fix this in a later patch.
+    enum class ConcurrentEntryScopeService : uint8_t {
+        // Transient services i.e. these will be cleared after they are serviced once, and can be set again later.
+        ResetTerminationRequest = 1 << 0,
+        NeedStopTheWorld = 1 << 1, // FIXME rdar://161576886
+    };
+
+    bool hasAnyEntryScopeServiceRequest() { return m_entryScopeServicesRawBits; }
     void executeEntryScopeServicesOnEntry();
     void executeEntryScopeServicesOnExit();
 
     void requestEntryScopeService(EntryScopeService service)
     {
-        m_entryScopeServices.add(service);
+        entryScopeServices().add(service);
+    }
+    CONCURRENT_SAFE void requestEntryScopeService(ConcurrentEntryScopeService service)
+    {
+        concurrentEntryScopeServices().add(service);
     }
 
     enum class SchedulerOptions : uint8_t {
@@ -353,12 +370,11 @@ public:
     };
     JS_EXPORT_PRIVATE void performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSet<SchedulerOptions>);
 
-    Structure* immutableButterflyStructure(IndexingType indexingType) { return rawImmutableButterflyStructure(indexingType).get(); }
+    Structure* cellButterflyStructure(IndexingType indexingType) { return rawImmutableButterflyStructure(indexingType).get(); }
 
     // Keep super frequently accessed fields top in VM.
     unsigned disallowVMEntryCount { 0 };
 private:
-    void* m_softStackLimit { nullptr };
     Exception* m_exception { nullptr };
     Exception* m_terminationException { nullptr };
     Exception* m_lastException { nullptr };
@@ -367,18 +383,39 @@ public:
     // topEntryFrame.
     // FIXME: This should be a void*, because it might not point to a CallFrame.
     // https://bugs.webkit.org/show_bug.cgi?id=160441
+    // The following two fields are sometimes treated as a pair in assembly code, making usages of the second one implicit.
+    // To find them, look for loadpairq/storepairq of "VM::topCallFrame" in *.asm files.
     CallFrame* topCallFrame { nullptr };
     EntryFrame* topEntryFrame { nullptr };
+    void* maybeReturnPC { nullptr };
 private:
-    OptionSet<EntryScopeService> m_entryScopeServices;
+
+    struct EntryScopeServicesBits {
+        OptionSet<EntryScopeService> m_entryScopeServices;
+        OptionSet<ConcurrentEntryScopeService, ConcurrencyTag::Atomic> m_concurrentEntryScopeServices;
+    };
+
+    uint16_t m_entryScopeServicesRawBits { 0 };
+    static_assert(sizeof(EntryScopeServicesBits) == sizeof(m_entryScopeServicesRawBits));
+
+    OptionSet<EntryScopeService>& entryScopeServices()
+    {
+        auto& services = *std::bit_cast<EntryScopeServicesBits*>(&m_entryScopeServicesRawBits);
+        return services.m_entryScopeServices;
+    }
+    OptionSet<ConcurrentEntryScopeService, ConcurrencyTag::Atomic>& concurrentEntryScopeServices()
+    {
+        auto& services = *std::bit_cast<EntryScopeServicesBits*>(&m_entryScopeServicesRawBits);
+        return services.m_concurrentEntryScopeServices;
+    }
+
 public:
     bool didEnterVM { false };
 private:
-    VMTraps m_traps;
-
     VMIdentifier m_identifier;
     const Ref<JSLock> m_apiLock;
-    Ref<WTF::RunLoop> m_runLoop;
+    VMThreadContext m_threadContext;
+    const Ref<WTF::RunLoop> m_runLoop;
 
     WeakRandom m_random;
     WeakRandom m_heapRandom;
@@ -386,15 +423,25 @@ private:
 
     bool hasEntryScopeServiceRequest(EntryScopeService service)
     {
-        return m_entryScopeServices.contains(service);
+        return entryScopeServices().contains(service);
+    }
+
+    bool hasEntryScopeServiceRequest(ConcurrentEntryScopeService service)
+    {
+        return concurrentEntryScopeServices().contains(service);
     }
 
     void clearEntryScopeService(EntryScopeService service)
     {
-        m_entryScopeServices.remove(service);
+        entryScopeServices().remove(service);
     }
 
-    WriteBarrier<Structure>& rawImmutableButterflyStructure(IndexingType indexingType) { return immutableButterflyStructures[arrayIndexFromIndexingType(indexingType) - NumberOfIndexingShapes]; }
+    void clearEntryScopeService(ConcurrentEntryScopeService service)
+    {
+        concurrentEntryScopeServices().remove(service);
+    }
+
+    WriteBarrier<Structure>& rawImmutableButterflyStructure(IndexingType indexingType) { return cellButterflyStructures[arrayIndexFromIndexingType(indexingType) - NumberOfIndexingShapes]; }
 
 public:
     Heap heap;
@@ -414,7 +461,6 @@ public:
     ALWAYS_INLINE CompleteSubspace& immutableButterflyAuxiliarySpace() { return heap.immutableButterflyAuxiliarySpace; }
     ALWAYS_INLINE CompleteSubspace& gigacageAuxiliarySpace(Gigacage::Kind kind) { return heap.gigacageAuxiliarySpace(kind); }
     ALWAYS_INLINE CompleteSubspace& cellSpace() { return heap.cellSpace; }
-    ALWAYS_INLINE CompleteSubspace& variableSizedCellSpace() { return heap.variableSizedCellSpace; }
     ALWAYS_INLINE CompleteSubspace& destructibleObjectSpace() { return heap.destructibleObjectSpace; }
 #if ENABLE(WEBASSEMBLY)
     template<SubspaceAccess mode>
@@ -471,11 +517,12 @@ public:
     WriteBarrier<Structure> webAssemblyCalleeGroupStructure;
 #endif
     WriteBarrier<Structure> moduleProgramExecutableStructure;
+    WriteBarrier<Structure> promiseReactionStructure;
     WriteBarrier<Structure> regExpStructure;
     WriteBarrier<Structure> symbolStructure;
     WriteBarrier<Structure> symbolTableStructure;
-    std::array<WriteBarrier<Structure>, NumberOfCopyOnWriteIndexingModes> immutableButterflyStructures;
-    WriteBarrier<Structure> immutableButterflyOnlyAtomStringsStructure;
+    std::array<WriteBarrier<Structure>, NumberOfCopyOnWriteIndexingModes> cellButterflyStructures;
+    WriteBarrier<Structure> cellButterflyOnlyAtomStringsStructure;
     WriteBarrier<Structure> sourceCodeStructure;
     WriteBarrier<Structure> scriptFetcherStructure;
     WriteBarrier<Structure> scriptFetchParametersStructure;
@@ -499,6 +546,13 @@ public:
     WriteBarrier<Structure> bigIntStructure;
 
     WriteBarrier<JSPropertyNameEnumerator> m_emptyPropertyNameEnumerator;
+    WriteBarrier<NativeExecutable> m_promiseResolvingFunctionResolveExecutable;
+    WriteBarrier<NativeExecutable> m_promiseResolvingFunctionRejectExecutable;
+    WriteBarrier<NativeExecutable> m_promiseFirstResolvingFunctionResolveExecutable;
+    WriteBarrier<NativeExecutable> m_promiseFirstResolvingFunctionRejectExecutable;
+    WriteBarrier<NativeExecutable> m_promiseResolvingFunctionResolveWithoutPromiseExecutable;
+    WriteBarrier<NativeExecutable> m_promiseResolvingFunctionRejectWithoutPromiseExecutable;
+    WriteBarrier<NativeExecutable> m_promiseCapabilityExecutorExecutable;
 
     WriteBarrier<JSCell> m_orderedHashTableDeletedValue;
     WriteBarrier<JSCell> m_orderedHashTableSentinel;
@@ -560,6 +614,55 @@ public:
         if (m_emptyPropertyNameEnumerator) [[likely]]
             return m_emptyPropertyNameEnumerator.get();
         return emptyPropertyNameEnumeratorSlow();
+    }
+
+    NativeExecutable* promiseResolvingFunctionResolveExecutable()
+    {
+        if (m_promiseResolvingFunctionResolveExecutable) [[likely]]
+            return m_promiseResolvingFunctionResolveExecutable.get();
+        return promiseResolvingFunctionResolveExecutableSlow();
+    }
+
+    NativeExecutable* promiseResolvingFunctionRejectExecutable()
+    {
+        if (m_promiseResolvingFunctionRejectExecutable) [[likely]]
+            return m_promiseResolvingFunctionRejectExecutable.get();
+        return promiseResolvingFunctionRejectExecutableSlow();
+    }
+
+    NativeExecutable* promiseFirstResolvingFunctionResolveExecutable()
+    {
+        if (m_promiseFirstResolvingFunctionResolveExecutable) [[likely]]
+            return m_promiseFirstResolvingFunctionResolveExecutable.get();
+        return promiseFirstResolvingFunctionResolveExecutableSlow();
+    }
+
+    NativeExecutable* promiseFirstResolvingFunctionRejectExecutable()
+    {
+        if (m_promiseFirstResolvingFunctionRejectExecutable) [[likely]]
+            return m_promiseFirstResolvingFunctionRejectExecutable.get();
+        return promiseFirstResolvingFunctionRejectExecutableSlow();
+    }
+
+    NativeExecutable* promiseResolvingFunctionResolveWithoutPromiseExecutable()
+    {
+        if (m_promiseResolvingFunctionResolveWithoutPromiseExecutable) [[likely]]
+            return m_promiseResolvingFunctionResolveWithoutPromiseExecutable.get();
+        return promiseResolvingFunctionResolveWithoutPromiseExecutableSlow();
+    }
+
+    NativeExecutable* promiseResolvingFunctionRejectWithoutPromiseExecutable()
+    {
+        if (m_promiseResolvingFunctionRejectWithoutPromiseExecutable) [[likely]]
+            return m_promiseResolvingFunctionRejectWithoutPromiseExecutable.get();
+        return promiseResolvingFunctionRejectWithoutPromiseExecutableSlow();
+    }
+
+    NativeExecutable* promiseCapabilityExecutorExecutable()
+    {
+        if (m_promiseCapabilityExecutorExecutable) [[likely]]
+            return m_promiseCapabilityExecutorExecutable.get();
+        return promiseCapabilityExecutorExecutableSlow();
     }
 
     WeakGCMap<SymbolImpl*, Symbol, PtrHash<SymbolImpl*>> symbolImplToSymbolMap;
@@ -628,7 +731,7 @@ public:
     NativeExecutable* getHostFunction(NativeFunction, ImplementationVisibility, NativeFunction constructor, const String& name);
     NativeExecutable* getHostFunction(NativeFunction, ImplementationVisibility, Intrinsic, NativeFunction constructor, const DOMJIT::Signature*, const String& name);
 
-    NativeExecutable* getBoundFunction(bool isJSFunction);
+    NativeExecutable* getBoundFunction(bool isJSFunction, SourceTaintedOrigin taintedness);
     NativeExecutable* getRemoteFunction(bool isJSFunction);
 
     CodePtr<JSEntryPtrTag> getCTIInternalFunctionTrampolineFor(CodeSpecializationKind);
@@ -638,6 +741,11 @@ public:
     static constexpr ptrdiff_t exceptionOffset()
     {
         return OBJECT_OFFSETOF(VM, m_exception);
+    }
+
+    static constexpr ptrdiff_t offsetOfTopCallFrame()
+    {
+        return OBJECT_OFFSETOF(VM, topCallFrame);
     }
 
     static constexpr ptrdiff_t callFrameForCatchOffset()
@@ -665,15 +773,27 @@ public:
         return OBJECT_OFFSETOF(VM, heap) + OBJECT_OFFSETOF(Heap, m_mutatorShouldBeFenced);
     }
 
+    static constexpr ptrdiff_t offsetOfTraps()
+    {
+        return OBJECT_OFFSETOF(VM, m_threadContext) + VMThreadContext::offsetOfTraps();
+    }
+
     static constexpr ptrdiff_t offsetOfTrapsBits()
     {
-        return OBJECT_OFFSETOF(VM, m_traps) + VMTraps::offsetOfTrapsBits();
+        return offsetOfTraps() + VMTraps::offsetOfTrapsBits();
     }
 
     static constexpr ptrdiff_t offsetOfSoftStackLimit()
     {
-        return OBJECT_OFFSETOF(VM, m_softStackLimit);
+        return offsetOfTraps() + VMTraps::offsetOfSoftStackLimit();
     }
+
+    ALWAYS_INLINE static VM* fromThreadContext(VMThreadContext* context)
+    {
+        return std::bit_cast<VM*>(std::bit_cast<uint8_t*>(context) - OBJECT_OFFSETOF(VM, m_threadContext));
+    }
+
+    ALWAYS_INLINE VMThreadContext* threadContext() { return &m_threadContext; }
 
     void clearLastException() { m_lastException = nullptr; }
 
@@ -703,16 +823,11 @@ public:
     size_t updateSoftReservedZoneSize(size_t softReservedZoneSize);
     
     static size_t committedStackByteCount();
-    inline bool ensureStackCapacityFor(Register* newTopOfStack);
+    inline bool ensureJSStackCapacityFor(Register* newTopOfStack);
 
     void* stackLimit() { return m_stackLimit; }
-    void* softStackLimit() { return m_softStackLimit; }
-    void** addressOfSoftStackLimit() { return &m_softStackLimit; }
-#if ENABLE(C_LOOP)
-    void* cloopStackLimit() { return m_cloopStackLimit; }
-    void setCLoopStackLimit(void* limit) { m_cloopStackLimit = limit; }
-    JS_EXPORT_PRIVATE void* currentCLoopStackPointer() const;
-#endif
+    ALWAYS_INLINE void* softStackLimit() const { return traps().softStackLimit(); }
+    ALWAYS_INLINE void** addressOfSoftStackLimit() { return traps().addressOfSoftStackLimit(); }
 
     inline bool isSafeToRecurseSoft() const;
     bool isSafeToRecurse() const
@@ -723,6 +838,13 @@ public:
     void* lastStackTop() { return m_lastStackTop; }
     void setLastStackTop(const Thread&);
     
+#if ENABLE(C_LOOP)
+    ALWAYS_INLINE CLoopStack& cloopStack() { return traps().cloopStack(); }
+    ALWAYS_INLINE const CLoopStack& cloopStack() const { return traps().cloopStack(); }
+    ALWAYS_INLINE void* cloopStackLimit() { return traps().cloopStackLimit(); }
+    ALWAYS_INLINE void* currentCLoopStackPointer() const { return traps().currentCLoopStackPointer(); }
+#endif
+
     EncodedJSValue encodedHostCallReturnValue { };
     CallFrame* newCallFrameReturnValue;
     CallFrame* callFrameForCatch { nullptr };
@@ -786,7 +908,7 @@ public:
     static constexpr size_t patternContextBufferSize = 0; // Space allocated to save nested parenthesis context
 #endif
 
-    Ref<CompactTDZEnvironmentMap> m_compactVariableMap;
+    const Ref<CompactTDZEnvironmentMap> m_compactVariableMap;
 
     LazyUniqueRef<VM, HasOwnPropertyCache> m_hasOwnPropertyCache;
     ALWAYS_INLINE HasOwnPropertyCache* hasOwnPropertyCache() { return m_hasOwnPropertyCache.getIfExists(); }
@@ -818,7 +940,7 @@ public:
     bool isCollectorBusyOnCurrentThread() { return heap.currentThreadIsDoingGCWork(); }
 
 #if ENABLE(GC_VALIDATION)
-    bool isInitializingObject() const; 
+    bool isInitializingObject() const;
     void setInitializingObjectClass(const ClassInfo*);
 #endif
 
@@ -906,19 +1028,30 @@ public:
 
     std::optional<RefPtr<Thread>> ownerThread() const { return m_apiLock->ownerThread(); }
 
-    VMTraps& traps() { return m_traps; }
+    ALWAYS_INLINE VMTraps& traps() { return m_threadContext.traps(); }
+    ALWAYS_INLINE const VMTraps& traps() const { return m_threadContext.traps(); }
 
     JS_EXPORT_PRIVATE bool hasExceptionsAfterHandlingTraps();
 
-    // These may be called concurrently from another thread.
-    void notifyNeedDebuggerBreak() { m_traps.fireTrap(VMTraps::NeedDebuggerBreak); }
-    void notifyNeedShellTimeoutCheck() { m_traps.fireTrap(VMTraps::NeedShellTimeoutCheck); }
-    void notifyNeedTermination()
+    CONCURRENT_SAFE void notifyNeedDebuggerBreak() { traps().fireTrap(VMTraps::NeedDebuggerBreak); }
+    CONCURRENT_SAFE void notifyNeedShellTimeoutCheck() { traps().fireTrap(VMTraps::NeedShellTimeoutCheck); }
+    CONCURRENT_SAFE void notifyNeedTermination()
     {
         setHasTerminationRequest();
-        m_traps.fireTrap(VMTraps::NeedTermination);
+        traps().fireTrap(VMTraps::NeedTermination);
     }
-    void notifyNeedWatchdogCheck() { m_traps.fireTrap(VMTraps::NeedWatchdogCheck); }
+    CONCURRENT_SAFE void notifyNeedWatchdogCheck() { traps().fireTrap(VMTraps::NeedWatchdogCheck); }
+
+    CONCURRENT_SAFE void requestStop()
+    {
+        requestEntryScopeService(ConcurrentEntryScopeService::NeedStopTheWorld); // FIXME rdar://161576886
+        traps().fireTrap(VMTraps::NeedStopTheWorld);
+    }
+    CONCURRENT_SAFE void cancelStop()
+    {
+        traps().clearTrap(VMTraps::NeedStopTheWorld);
+        clearEntryScopeService(ConcurrentEntryScopeService::NeedStopTheWorld); // FIXME rdar://161576886
+    }
 
     void promiseRejected(JSPromise*);
 
@@ -975,6 +1108,9 @@ public:
     void notifyDebuggerHookInjected() { m_isDebuggerHookInjected = true; }
     bool isDebuggerHookInjected() const { return m_isDebuggerHookInjected; }
 
+    bool isWasmStopWorldActive() { return m_isWasmStopWorldActive; }
+    void setIsWasmStopWorldActive(bool isWasmStopWorldActive) { m_isWasmStopWorldActive = isWasmStopWorldActive; }
+
 private:
     VM(VMType, HeapType, WTF::RunLoop* = nullptr, bool* success = nullptr);
     static VM*& sharedInstanceInternal();
@@ -983,6 +1119,13 @@ private:
     JS_EXPORT_PRIVATE JSCell* orderedHashTableDeletedValueSlow();
     JS_EXPORT_PRIVATE JSCell* orderedHashTableSentinelSlow();
     JSPropertyNameEnumerator* emptyPropertyNameEnumeratorSlow();
+    NativeExecutable* promiseResolvingFunctionResolveExecutableSlow();
+    NativeExecutable* promiseResolvingFunctionRejectExecutableSlow();
+    NativeExecutable* promiseFirstResolvingFunctionResolveExecutableSlow();
+    NativeExecutable* promiseFirstResolvingFunctionRejectExecutableSlow();
+    NativeExecutable* promiseResolvingFunctionResolveWithoutPromiseExecutableSlow();
+    NativeExecutable* promiseResolvingFunctionRejectWithoutPromiseExecutableSlow();
+    NativeExecutable* promiseCapabilityExecutorExecutableSlow();
 
     void updateStackLimits();
 
@@ -1008,15 +1151,10 @@ private:
         m_throwingThread = nullptr;
 #endif
         m_exception = nullptr;
-        traps().clearTrapBit(VMTraps::NeedExceptionHandling);
+        traps().clearTrap(VMTraps::NeedExceptionHandling);
     }
 
     JS_EXPORT_PRIVATE void setException(Exception*);
-
-#if ENABLE(C_LOOP)
-    bool ensureStackCapacityForCLoop(Register* newTopOfStack);
-    bool isSafeToRecurseSoftCLoop() const;
-#endif // ENABLE(C_LOOP)
 
     JS_EXPORT_PRIVATE Exception* throwException(JSGlobalObject*, Exception*);
     JS_EXPORT_PRIVATE Exception* throwException(JSGlobalObject*, JSValue);
@@ -1039,9 +1177,6 @@ private:
     void* m_stackPointerAtVMEntry { nullptr };
     size_t m_currentSoftReservedZoneSize;
     void* m_stackLimit { nullptr };
-#if ENABLE(C_LOOP)
-    void* m_cloopStackLimit { nullptr };
-#endif
     void* m_lastStackTop { nullptr };
 
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
@@ -1101,12 +1236,13 @@ private:
     bool m_executionForbidden { false };
     bool m_executionForbiddenOnTermination { false };
     bool m_isDebuggerHookInjected { false };
+    bool m_isWasmStopWorldActive { false };
 
     Lock m_loopHintExecutionCountLock;
     UncheckedKeyHashMap<const JSInstruction*, std::pair<unsigned, std::unique_ptr<uintptr_t>>> m_loopHintExecutionCounts;
 
     MicrotaskQueue m_defaultMicrotaskQueue;
-    Ref<Waiter> m_syncWaiter;
+    const Ref<Waiter> m_syncWaiter;
 
     std::atomic<int64_t> m_numberOfActiveJITPlans { 0 };
 
@@ -1118,8 +1254,7 @@ private:
 
     DoublyLinkedList<Debugger> m_debuggers;
 
-    VM* m_prev; // Required by DoublyLinkedListNode.
-    VM* m_next; // Required by DoublyLinkedListNode.
+    void checkStaticAsserts(); // Not for calling.
 
     friend class Heap;
     friend class CatchScope; // Friend for exception checking purpose only.
@@ -1129,8 +1264,9 @@ private:
     friend class SuspendExceptionScope;
     friend class ThrowScope; // Friend for exception checking purpose only.
     friend class VMTraps;
-    friend class WTF::DoublyLinkedListNode<VM>;
 };
+
+static_assert(OBJECT_OFFSETOF(VM, topEntryFrame) == OBJECT_OFFSETOF(VM, topCallFrame) + sizeof(void*), "We load/store these using a pair instruction");
 
 #if ENABLE(GC_VALIDATION)
 inline bool VM::isInitializingObject() const

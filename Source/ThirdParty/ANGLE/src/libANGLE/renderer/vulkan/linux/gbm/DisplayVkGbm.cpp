@@ -71,7 +71,20 @@ egl::ConfigSet DisplayVkGbm::generateConfigs()
     return cfgSet;
 }
 
-void DisplayVkGbm::checkConfigSupport(egl::Config *config) {}
+void DisplayVkGbm::checkConfigSupport(egl::Config *config)
+{
+    ASSERT(mGbmDevice);
+    uint32_t format = angle::GLInternalFormatToDrmFourCCFormat(config->renderTargetFormat);
+    uint32_t flags  = GBM_BO_USE_RENDERING | GBM_BO_USE_SCANOUT;
+
+    if (!gbm_device_is_format_supported(mGbmDevice, format, flags))
+    {
+        config->surfaceType &= ~EGL_WINDOW_BIT;
+        return;
+    }
+
+    config->nativeVisualID = format;
+}
 
 const char *DisplayVkGbm::getWSIExtension() const
 {

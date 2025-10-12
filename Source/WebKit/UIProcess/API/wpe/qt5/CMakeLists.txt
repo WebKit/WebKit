@@ -21,6 +21,7 @@ set_target_properties(qtwpe PROPERTIES
 target_compile_definitions(qtwpe PUBLIC
     QT_NO_KEYWORDS=1
 )
+target_compile_options(qtwpe PRIVATE ${DEVELOPER_MODE_CXX_FLAGS})
 target_link_libraries(qtwpe PRIVATE
     PkgConfig::Epoxy
     PkgConfig::WPEWebKit

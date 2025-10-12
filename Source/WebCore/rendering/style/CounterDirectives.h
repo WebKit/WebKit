@@ -34,7 +34,7 @@ struct CounterDirectives {
 };
 
 struct CounterDirectiveMap {
-    UncheckedKeyHashMap<AtomString, CounterDirectives> map;
+    HashMap<AtomString, CounterDirectives> map;
 
     friend bool operator==(const CounterDirectiveMap&, const CounterDirectiveMap&) = default;
 };

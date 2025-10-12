@@ -6719,6 +6719,161 @@ CallCapture CaptureCreateImageWithProperties(bool isCallValid,
     return CallCapture(angle::EntryPoint::CLCreateImageWithProperties, std::move(paramBuffer));
 }
 
+// cl_khr_external_memory
+CallCapture CaptureEnqueueAcquireExternalMemObjectsKHR(bool isCallValid,
+                                                       cl_command_queue command_queue,
+                                                       cl_uint num_mem_objects,
+                                                       const cl_mem *mem_objects,
+                                                       cl_uint num_events_in_wait_list,
+                                                       const cl_event *event_wait_list,
+                                                       cl_event *event,
+                                                       cl_int returnValue)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("command_queue", ParamType::Tcl_command_queue, command_queue);
+    paramBuffer.addValueParam("num_mem_objects", ParamType::Tcl_uint, num_mem_objects);
+
+    if (isCallValid)
+    {
+        ParamCapture mem_objectsParam("mem_objects", ParamType::Tcl_memConstPointer);
+        InitParamValue(ParamType::Tcl_memConstPointer, mem_objects, &mem_objectsParam.value);
+        CaptureEnqueueAcquireExternalMemObjectsKHR_mem_objects(
+            isCallValid, command_queue, num_mem_objects, mem_objects, num_events_in_wait_list,
+            event_wait_list, event, &mem_objectsParam);
+        paramBuffer.addParam(std::move(mem_objectsParam));
+    }
+    else
+    {
+        ParamCapture mem_objectsParam("mem_objects", ParamType::Tcl_memConstPointer);
+        InitParamValue(ParamType::Tcl_memConstPointer, static_cast<const cl_mem *>(nullptr),
+                       &mem_objectsParam.value);
+        paramBuffer.addParam(std::move(mem_objectsParam));
+    }
+
+    paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
+                              num_events_in_wait_list);
+
+    if (isCallValid)
+    {
+        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
+        InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
+                       &event_wait_listParam.value);
+        CaptureEnqueueAcquireExternalMemObjectsKHR_event_wait_list(
+            isCallValid, command_queue, num_mem_objects, mem_objects, num_events_in_wait_list,
+            event_wait_list, event, &event_wait_listParam);
+        paramBuffer.addParam(std::move(event_wait_listParam));
+    }
+    else
+    {
+        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
+        InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
+                       &event_wait_listParam.value);
+        paramBuffer.addParam(std::move(event_wait_listParam));
+    }
+
+    if (isCallValid)
+    {
+        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
+        InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
+        CaptureEnqueueAcquireExternalMemObjectsKHR_event(
+            isCallValid, command_queue, num_mem_objects, mem_objects, num_events_in_wait_list,
+            event_wait_list, event, &eventParam);
+        paramBuffer.addParam(std::move(eventParam));
+    }
+    else
+    {
+        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
+        InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
+                       &eventParam.value);
+        paramBuffer.addParam(std::move(eventParam));
+    }
+
+    ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
+    InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
+    paramBuffer.addReturnValue(std::move(returnValueCapture));
+
+    return CallCapture(angle::EntryPoint::CLEnqueueAcquireExternalMemObjectsKHR,
+                       std::move(paramBuffer));
+}
+
+CallCapture CaptureEnqueueReleaseExternalMemObjectsKHR(bool isCallValid,
+                                                       cl_command_queue command_queue,
+                                                       cl_uint num_mem_objects,
+                                                       const cl_mem *mem_objects,
+                                                       cl_uint num_events_in_wait_list,
+                                                       const cl_event *event_wait_list,
+                                                       cl_event *event,
+                                                       cl_int returnValue)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("command_queue", ParamType::Tcl_command_queue, command_queue);
+    paramBuffer.addValueParam("num_mem_objects", ParamType::Tcl_uint, num_mem_objects);
+
+    if (isCallValid)
+    {
+        ParamCapture mem_objectsParam("mem_objects", ParamType::Tcl_memConstPointer);
+        InitParamValue(ParamType::Tcl_memConstPointer, mem_objects, &mem_objectsParam.value);
+        CaptureEnqueueReleaseExternalMemObjectsKHR_mem_objects(
+            isCallValid, command_queue, num_mem_objects, mem_objects, num_events_in_wait_list,
+            event_wait_list, event, &mem_objectsParam);
+        paramBuffer.addParam(std::move(mem_objectsParam));
+    }
+    else
+    {
+        ParamCapture mem_objectsParam("mem_objects", ParamType::Tcl_memConstPointer);
+        InitParamValue(ParamType::Tcl_memConstPointer, static_cast<const cl_mem *>(nullptr),
+                       &mem_objectsParam.value);
+        paramBuffer.addParam(std::move(mem_objectsParam));
+    }
+
+    paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
+                              num_events_in_wait_list);
+
+    if (isCallValid)
+    {
+        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
+        InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
+                       &event_wait_listParam.value);
+        CaptureEnqueueReleaseExternalMemObjectsKHR_event_wait_list(
+            isCallValid, command_queue, num_mem_objects, mem_objects, num_events_in_wait_list,
+            event_wait_list, event, &event_wait_listParam);
+        paramBuffer.addParam(std::move(event_wait_listParam));
+    }
+    else
+    {
+        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
+        InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
+                       &event_wait_listParam.value);
+        paramBuffer.addParam(std::move(event_wait_listParam));
+    }
+
+    if (isCallValid)
+    {
+        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
+        InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
+        CaptureEnqueueReleaseExternalMemObjectsKHR_event(
+            isCallValid, command_queue, num_mem_objects, mem_objects, num_events_in_wait_list,
+            event_wait_list, event, &eventParam);
+        paramBuffer.addParam(std::move(eventParam));
+    }
+    else
+    {
+        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
+        InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
+                       &eventParam.value);
+        paramBuffer.addParam(std::move(eventParam));
+    }
+
+    ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
+    InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
+    paramBuffer.addReturnValue(std::move(returnValueCapture));
+
+    return CallCapture(angle::EntryPoint::CLEnqueueReleaseExternalMemObjectsKHR,
+                       std::move(paramBuffer));
+}
+
 // cl_khr_icd
 CallCapture CaptureIcdGetPlatformIDsKHR(bool isCallValid,
                                         cl_uint num_entries,

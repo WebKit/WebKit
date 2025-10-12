@@ -8,14 +8,15 @@ TODO(#3363): Make this into a MaxLimitTest and increase kMaxColorAttachments.
 import { range } from '../../../../common/util/util.js';
 import { getDefaultLimits, kTextureSampleCounts } from '../../../capability_info.js';
 import {
-  kRegularTextureFormats,
   kSizedDepthStencilFormats,
   kUnsizedDepthStencilFormats,
-  kTextureFormatInfo,
   filterFormatsByFeature,
-  getFeaturesForFormats } from
+  getFeaturesForFormats,
+  isDepthTextureFormat,
+  isStencilTextureFormat,
+  kPossibleColorRenderableTextureFormats } from
 '../../../format_info.js';
-import { ValidationTest } from '../validation_test.js';
+import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
 
 // MAINTENANCE_TODO: This should be changed to kMaxColorAttachmentsToTest
 // when this is made a MaxLimitTest (see above).
@@ -89,7 +90,7 @@ const kFeaturesForDepthStencilAttachmentFormats = getFeaturesForFormats([
 ...kUnsizedDepthStencilFormats]
 );
 
-class F extends ValidationTest {
+class F extends AllFeaturesMaxLimitsGPUTest {
   createAttachmentTextureView(format, sampleCount) {
     return this.createTextureTracked({
       // Size matching the "arbitrary" size used by ValidationTest helpers.
@@ -121,12 +122,12 @@ class F extends ValidationTest {
     const attachment = {
       view: this.createAttachmentTextureView(format, sampleCount)
     };
-    if (kTextureFormatInfo[format].depth) {
+    if (isDepthTextureFormat(format)) {
       attachment.depthClearValue = 0;
       attachment.depthLoadOp = 'clear';
       attachment.depthStoreOp = 'discard';
     }
-    if (kTextureFormatInfo[format].stencil) {
+    if (isStencilTextureFormat(format)) {
       attachment.stencilClearValue = 1;
       attachment.stencilLoadOp = 'clear';
       attachment.stencilStoreOp = 'discard';
@@ -167,21 +168,17 @@ class F extends ValidationTest {
 
 export const g = makeTestGroup(F);
 
-const kColorAttachmentFormats = kRegularTextureFormats.filter(
-  (format) => !!kTextureFormatInfo[format].colorRender
-);
-
 g.test('render_pass_and_bundle,color_format').
 desc('Test that color attachment formats in render passes and bundles must match.').
 paramsSubcasesOnly((u) =>
 u //
-.combine('passFormat', kColorAttachmentFormats).
-combine('bundleFormat', kColorAttachmentFormats)
+.combine('passFormat', kPossibleColorRenderableTextureFormats).
+combine('bundleFormat', kPossibleColorRenderableTextureFormats)
 ).
 fn((t) => {
   const { passFormat, bundleFormat } = t.params;
-
-  t.skipIfTextureFormatNotSupportedDeprecated(passFormat, bundleFormat);
+  t.skipIfTextureFormatNotSupported(passFormat, bundleFormat);
+  t.skipIfTextureFormatNotUsableAsRenderAttachment(passFormat, bundleFormat);
 
   const bundleEncoder = t.device.createRenderBundleEncoder({
     colorFormats: [bundleFormat]
@@ -301,12 +298,9 @@ expand('bundleFormat', ({ bundleFeature }) =>
 filterFormatsByFeature(bundleFeature, kDepthStencilAttachmentFormats)
 )
 ).
-beforeAllSubcases((t) => {
-  const { passFeature, bundleFeature } = t.params;
-  t.selectDeviceOrSkipTestCase([passFeature, bundleFeature]);
-}).
 fn((t) => {
   const { passFormat, bundleFormat } = t.params;
+  t.skipIfTextureFormatNotSupported(passFormat, bundleFormat);
 
   const bundleEncoder = t.device.createRenderBundleEncoder({
     colorFormats: ['rgba8unorm'],
@@ -351,9 +345,7 @@ fn((t) => {
 g.test('render_pass_and_bundle,device_mismatch').
 desc('Test that render passes cannot be called with bundles created from another device.').
 paramsSubcasesOnly((u) => u.combine('mismatched', [true, false])).
-beforeAllSubcases((t) => {
-  t.selectMismatchedDeviceOrSkipTestCase(undefined);
-}).
+beforeAllSubcases((t) => t.usesMismatchedDevice()).
 fn((t) => {
   const { mismatched } = t.params;
   const sourceDevice = mismatched ? t.mismatchedDevice : t.device;
@@ -383,13 +375,13 @@ params((u) =>
 u.
 combine('encoderType', ['render pass', 'render bundle']).
 beginSubcases().
-combine('encoderFormat', kColorAttachmentFormats).
-combine('pipelineFormat', kColorAttachmentFormats)
+combine('encoderFormat', kPossibleColorRenderableTextureFormats).
+combine('pipelineFormat', kPossibleColorRenderableTextureFormats)
 ).
 fn((t) => {
   const { encoderType, encoderFormat, pipelineFormat } = t.params;
-
-  t.skipIfTextureFormatNotSupportedDeprecated(encoderFormat, pipelineFormat);
+  t.skipIfTextureFormatNotSupported(encoderFormat, pipelineFormat);
+  t.skipIfTextureFormatNotUsableAsRenderAttachment(encoderFormat, pipelineFormat);
 
   const pipeline = t.createRenderPipeline([{ format: pipelineFormat, writeMask: 0 }]);
 
@@ -506,12 +498,9 @@ expand('pipelineFormat', ({ pipelineFormatFeature }) =>
 filterFormatsByFeature(pipelineFormatFeature, kDepthStencilAttachmentFormats)
 )
 ).
-beforeAllSubcases((t) => {
-  const { encoderFormatFeature, pipelineFormatFeature } = t.params;
-  t.selectDeviceOrSkipTestCase([encoderFormatFeature, pipelineFormatFeature]);
-}).
 fn((t) => {
   const { encoderType, encoderFormat, pipelineFormat } = t.params;
+  t.skipIfTextureFormatNotSupported(encoderFormat, pipelineFormat);
 
   const pipeline = t.createRenderPipeline(
     [{ format: 'rgba8unorm', writeMask: 0 }],
@@ -554,16 +543,15 @@ combine('stencilWriteMask', [0, 0xffffffff]).
 combine('cullMode', ['none', 'front', 'back']).
 filter((p) => {
   if (p.format) {
-    const depthStencilInfo = kTextureFormatInfo[p.format];
     // If the format has no depth aspect, the depthReadOnly, depthWriteEnabled of the pipeline must not be true
     // in order to create a valid render pipeline.
-    if (!depthStencilInfo.depth && p.depthWriteEnabled) {
+    if (!isDepthTextureFormat(p.format) && p.depthWriteEnabled) {
       return false;
     }
     // If the format has no stencil aspect, the stencil state operation must be 'keep'
     // in order to create a valid render pipeline.
     if (
-    !depthStencilInfo.stencil && (
+    !isStencilTextureFormat(p.format) && (
     p.stencilFront.failOp !== 'keep' || p.stencilBack.failOp !== 'keep'))
     {
       return false;
@@ -573,9 +561,6 @@ filter((p) => {
   return true;
 })
 ).
-beforeAllSubcases((t) => {
-  t.selectDeviceForTextureFormatOrSkipTestCase(t.params.format);
-}).
 fn((t) => {
   const {
     encoderType,
@@ -588,6 +573,7 @@ fn((t) => {
     stencilFront,
     stencilBack
   } = t.params;
+  t.skipIfTextureFormatNotSupported(format);
 
   const pipeline = t.createRenderPipeline(
     [{ format: 'rgba8unorm', writeMask: 0 }],

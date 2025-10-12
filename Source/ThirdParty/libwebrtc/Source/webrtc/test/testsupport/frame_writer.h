@@ -11,8 +11,9 @@
 #ifndef TEST_TESTSUPPORT_FRAME_WRITER_H_
 #define TEST_TESTSUPPORT_FRAME_WRITER_H_
 
-#include <stdio.h>
-
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
 #include <string>
 
 #include "api/video/video_frame.h"

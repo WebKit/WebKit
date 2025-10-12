@@ -29,7 +29,7 @@
 #import "DOMURL.h"
 #import "DeprecatedGlobalSettings.h"
 #import "DictionaryLookup.h"
-#import "Document.h"
+#import "DocumentView.h"
 #import "EventHandler.h"
 #import "FrameDestructionObserverInlines.h"
 #import "HTMLMediaElement.h"
@@ -44,6 +44,7 @@
 #import "UTIUtilities.h"
 #import <AVFoundation/AVPlayer.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #if PLATFORM(MAC)
 #import "NSScrollerImpDetails.h"
@@ -240,7 +241,7 @@ DDScannerResult *Internals::fakeDataDetectorResultForTesting()
         if (!CFArrayGetCount(results.get()))
             return nil;
 
-        return { [[PAL::getDDScannerResultClass() resultsFromCoreResults:results.get()] firstObject] };
+        return { [[PAL::getDDScannerResultClassSingleton() resultsFromCoreResults:results.get()] firstObject] };
     }();
     return result->get();
 }
@@ -284,9 +285,9 @@ bool Internals::emitWebCoreLogs(unsigned logCount, bool useMainThread) const
             RELEASE_LOG_FORWARDABLE(Testing, WEBCORE_TEST_LOG, i);
     });
     if (useMainThread)
-        dispatch_async(dispatch_get_main_queue(), blockPtr.get());
+        dispatch_async(mainDispatchQueueSingleton(), blockPtr.get());
     else
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), blockPtr.get());
+        dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), blockPtr.get());
     return true;
 }
 
@@ -297,9 +298,9 @@ bool Internals::emitLogs(const String& logString, unsigned logCount, bool useMai
             RELEASE_LOG(Testing, "%s", logString.utf8().data());
     });
     if (useMainThread)
-        dispatch_async(dispatch_get_main_queue(), blockPtr.get());
+        dispatch_async(mainDispatchQueueSingleton(), blockPtr.get());
     else
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), blockPtr.get());
+        dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), blockPtr.get());
     return true;
 }
 #endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)

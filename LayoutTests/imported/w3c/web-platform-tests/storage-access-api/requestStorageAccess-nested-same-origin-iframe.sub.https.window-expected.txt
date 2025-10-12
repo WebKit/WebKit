@@ -1,6 +1,6 @@
 
 PASS [nested-same-origin-frame] document.requestStorageAccess() should exist on the document interface
 PASS [nested-same-origin-frame] document.requestStorageAccess() should resolve in top-level frame or same-site iframe, otherwise reject with a NotAllowedError with no user gesture.
-FAIL [nested-same-origin-frame] document.requestStorageAccess() should be resolved with no user gesture when a permission grant exists, and should allow cookie access promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "storage-access"."
+PASS [nested-same-origin-frame] document.requestStorageAccess() should be resolved with no user gesture when a permission grant exists, and should allow cookie access
 PASS [nested-same-origin-frame] document.requestStorageAccess() should resolve without permission grant or user gesture
 

@@ -25,11 +25,12 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(IOS_FAMILY)
 
-#include "AudioSession.h"
-#include "MediaSessionHelperIOS.h"
-#include "MediaSessionManagerCocoa.h"
+#include <WebCore/AudioSession.h>
+#include <WebCore/MediaSessionHelperIOS.h>
+#include <WebCore/MediaSessionManagerCocoa.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -50,7 +51,7 @@ class MediaSessionManageriOS
     , public AudioSessionInterruptionObserver {
     WTF_MAKE_TZONE_ALLOCATED(MediaSessionManageriOS);
 public:
-    MediaSessionManageriOS();
+    MediaSessionManageriOS(PageIdentifier);
     virtual ~MediaSessionManageriOS();
 
     bool hasWirelessTargetsAvailable() final;
@@ -64,8 +65,6 @@ private:
 #endif
 
     void configureWirelessTargetMonitoring() final;
-    void providePresentingApplicationPIDIfNecessary(const std::optional<ProcessID>&) final;
-    void updatePresentingApplicationPIDIfNecessary(ProcessID) final;
     bool sessionWillBeginPlayback(PlatformMediaSessionInterface&) final;
     void sessionWillEndPlayback(PlatformMediaSessionInterface&, DelayCallingUpdateNowPlaying) final;
 
@@ -93,7 +92,6 @@ private:
 #endif
 
     bool m_isMonitoringWirelessRoutes { false };
-    bool m_havePresentedApplicationPID { false };
 };
 
 } // namespace WebCore

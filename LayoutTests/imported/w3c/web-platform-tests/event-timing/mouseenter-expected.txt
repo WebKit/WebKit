@@ -1,5 +1,5 @@
 Outside target!
 Target
 
-FAIL Event Timing mouseenter. assert_implements: Event Counts isn't supported undefined
+PASS Event Timing mouseenter.
 

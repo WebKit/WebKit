@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "CookieChangeSubscription.h"
-#include "NavigationPreloadState.h"
-#include "SWServer.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include "ServiceWorkerRegistrationData.h"
-#include "ServiceWorkerTypes.h"
-#include "Timer.h"
+#include <WebCore/CookieChangeSubscription.h>
+#include <WebCore/NavigationPreloadState.h>
+#include <WebCore/SWServer.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/ServiceWorkerRegistrationData.h>
+#include <WebCore/ServiceWorkerTypes.h>
+#include <WebCore/Timer.h>
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>

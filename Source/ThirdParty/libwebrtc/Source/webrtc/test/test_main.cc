@@ -8,8 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <algorithm>
+#include <cstddef>
 #include <memory>
-#include <regex>
 #include <string>
 #include <vector>
 

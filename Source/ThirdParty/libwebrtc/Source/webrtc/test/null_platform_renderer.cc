@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cstddef>
+
 #include "test/video_renderer.h"
 
 namespace webrtc {

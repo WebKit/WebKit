@@ -50,7 +50,6 @@
 #include <wtf/URLHash.h>
 #include <wtf/WeakHashSet.h>
 
-OBJC_CLASS NSError;
 OBJC_CLASS NSMenu;
 OBJC_CLASS _WKWebExtensionControllerHelper;
 OBJC_PROTOCOL(WKWebExtensionControllerDelegatePrivate);
@@ -74,6 +73,10 @@ class WebProcessPool;
 class WebsiteDataStore;
 struct WebExtensionControllerParameters;
 struct WebExtensionFrameParameters;
+
+#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
+struct ContentRuleListMatchedRule;
+#endif
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 class WebInspectorUIProxy;
@@ -109,7 +112,7 @@ public:
 
     WebExtensionControllerConfiguration& configuration() const { return m_configuration.get(); }
     Ref<WebExtensionControllerConfiguration> protectedConfiguration() const { return m_configuration; }
-    WebExtensionControllerParameters parameters() const;
+    WebExtensionControllerParameters parameters(const API::PageConfiguration&) const;
 
     bool operator==(const WebExtensionController& other) const { return (this == &other); }
 
@@ -128,10 +131,12 @@ public:
     bool hasLoadedContexts() const { return !m_extensionContexts.isEmpty(); }
     bool isFreshlyCreated() const { return m_freshlyCreated; }
 
-    bool load(WebExtensionContext&, NSError ** = nullptr);
-    bool unload(WebExtensionContext&, NSError ** = nullptr);
+    Expected<bool, RefPtr<API::Error>> load(WebExtensionContext&);
+    Expected<bool, RefPtr<API::Error>> unload(WebExtensionContext&);
 
     void unloadAll();
+
+    void dispatchDidLoad(WebExtensionContext&);
 
     void addPage(WebPageProxy&);
     void removePage(WebPageProxy&);
@@ -169,6 +174,10 @@ public:
 
     void handleContentRuleListNotification(WebPageProxyIdentifier, URL&, WebCore::ContentRuleListResults&);
 
+#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
+    void handleContentRuleListMatchedRule(WebPageProxyIdentifier, WebCore::ContentRuleListMatchedRule&);
+#endif
+
 #if ENABLE(INSPECTOR_EXTENSIONS)
     void inspectorWillOpen(WebInspectorUIProxy&, WebPageProxy&);
     void inspectorWillClose(WebInspectorUIProxy&, WebPageProxy&);
@@ -187,12 +196,16 @@ public:
 
 #ifdef __OBJC__
     WKWebExtensionController *wrapper() const { return (WKWebExtensionController *)API::ObjectImpl<API::Object::Type::WebExtensionController>::wrapper(); }
-    WKWebExtensionControllerDelegatePrivate *delegate() const { return (WKWebExtensionControllerDelegatePrivate *)wrapper().delegate; }
+    RetainPtr<WKWebExtensionController> protectedWrapper() const { return wrapper(); }
+    WKWebExtensionControllerDelegatePrivate *delegate() const { return (WKWebExtensionControllerDelegatePrivate *)protectedWrapper().get().delegate; }
 #endif
 
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+
+    bool hasLoadedContexts(IPC::Decoder&) const { return hasLoadedContexts(); }
+    bool inTestingMode(IPC::Decoder&) const { return inTestingMode(); }
 
     void initializePlatform();
 
@@ -257,7 +270,7 @@ private:
 
     RefPtr<HTTPCookieStoreObserver> protectedCookieStoreObserver() { return m_cookieStoreObserver; }
 
-    Ref<WebExtensionControllerConfiguration> m_configuration;
+    const Ref<WebExtensionControllerConfiguration> m_configuration;
 
 #if PLATFORM(COCOA)
     RetainPtr<_WKWebExtensionControllerHelper> m_webExtensionControllerHelper;

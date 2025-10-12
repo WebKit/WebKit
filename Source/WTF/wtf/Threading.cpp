@@ -173,9 +173,9 @@ public:
 #endif
 };
 
-UncheckedKeyHashSet<Thread*>& Thread::allThreads()
+HashSet<Thread*>& Thread::allThreads()
 {
-    static LazyNeverDestroyed<UncheckedKeyHashSet<Thread*>> allThreads;
+    static LazyNeverDestroyed<HashSet<Thread*>> allThreads;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
         allThreads.construct();

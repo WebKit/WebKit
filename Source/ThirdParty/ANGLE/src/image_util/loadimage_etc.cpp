@@ -6,6 +6,10 @@
 
 // loadimage_etc.cpp: Decodes ETC and EAC encoded textures.
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "image_util/loadimage.h"
 
 #include <type_traits>

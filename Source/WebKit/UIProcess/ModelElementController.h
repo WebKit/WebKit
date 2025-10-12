@@ -29,7 +29,6 @@
 
 #include "ModelIdentifier.h"
 #include <WebCore/ElementContext.h>
-#include <WebCore/GraphicsLayer.h>
 #include <WebCore/HTMLModelElementCamera.h>
 #include <WebCore/ResourceError.h>
 #include <wtf/MachSendRight.h>
@@ -43,6 +42,10 @@ OBJC_CLASS ASVInlinePreview;
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 OBJC_CLASS WKModelView;
 #endif
+
+namespace WebCore {
+class LayoutPoint;
+}
 
 namespace WebKit {
 

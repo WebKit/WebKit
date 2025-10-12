@@ -9,8 +9,20 @@
  */
 #include "rtc_tools/video_encoder/encoded_image_file_writer.h"
 
+#include <cstddef>
+#include <optional>
+#include <utility>
+
+#include "api/video/encoded_image.h"
+#include "api/video/video_frame_type.h"
+#include "api/video_codecs/scalability_mode.h"
+#include "api/video_codecs/video_codec.h"
 #include "modules/video_coding/svc/scalability_mode_util.h"
+#include "modules/video_coding/utility/ivf_file_writer.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/strings/string_builder.h"
+#include "rtc_base/system/file_wrapper.h"
 
 namespace webrtc {
 namespace test {
@@ -36,7 +48,7 @@ EncodedImageFileWriter::EncodedImageFileWriter(
   for (int i = 0; i < spatial_layers_; ++i) {
     for (int j = 0; j < temporal_layers_; ++j) {
       char buffer[256];
-      rtc::SimpleStringBuilder name(buffer);
+      SimpleStringBuilder name(buffer);
       name << "output-" << codec_string << "-"
            << ScalabilityModeToString(*scalability_mode) << "-L" << i << "T"
            << j << ".ivf";

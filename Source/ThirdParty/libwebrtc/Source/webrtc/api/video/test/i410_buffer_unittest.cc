@@ -27,19 +27,19 @@ constexpr uint16_t kYValue = 4;
 constexpr uint16_t kUValue = 8;
 constexpr uint16_t kVValue = 16;
 
-int GetY(rtc::scoped_refptr<I410BufferInterface> buf, int col, int row) {
+int GetY(scoped_refptr<I410BufferInterface> buf, int col, int row) {
   return buf->DataY()[row * buf->StrideY() + col];
 }
 
-int GetU(rtc::scoped_refptr<I410BufferInterface> buf, int col, int row) {
+int GetU(scoped_refptr<I410BufferInterface> buf, int col, int row) {
   return buf->DataU()[row * buf->StrideU() + col];
 }
 
-int GetV(rtc::scoped_refptr<I410BufferInterface> buf, int col, int row) {
+int GetV(scoped_refptr<I410BufferInterface> buf, int col, int row) {
   return buf->DataV()[row * buf->StrideV() + col];
 }
 
-void FillI410Buffer(rtc::scoped_refptr<I410Buffer> buf) {
+void FillI410Buffer(scoped_refptr<I410Buffer> buf) {
   for (int row = 0; row < buf->height(); ++row) {
     for (int col = 0; col < buf->width(); ++col) {
       buf->MutableDataY()[row * buf->StrideY() + col] = kYValue;
@@ -56,7 +56,7 @@ TEST(I410BufferTest, InitialData) {
   constexpr int width = 3;
   constexpr int height = 3;
 
-  rtc::scoped_refptr<I410Buffer> i410_buffer(I410Buffer::Create(width, height));
+  scoped_refptr<I410Buffer> i410_buffer(I410Buffer::Create(width, height));
   EXPECT_EQ(width, i410_buffer->width());
   EXPECT_EQ(height, i410_buffer->height());
   EXPECT_EQ(stride, i410_buffer->StrideY());
@@ -70,7 +70,7 @@ TEST(I410BufferTest, ReadPixels) {
   constexpr int width = 3;
   constexpr int height = 3;
 
-  rtc::scoped_refptr<I410Buffer> i410_buffer(I410Buffer::Create(width, height));
+  scoped_refptr<I410Buffer> i410_buffer(I410Buffer::Create(width, height));
   FillI410Buffer(i410_buffer);
   for (int row = 0; row < height; row++) {
     for (int col = 0; col < width; col++) {
@@ -89,13 +89,13 @@ TEST(I410BufferTest, ToI420) {
   constexpr int size_y = width * height;
   constexpr int size_u = (width + 1) / 2 * (height + 1) / 2;
   constexpr int size_v = (width + 1) / 2 * (height + 1) / 2;
-  rtc::scoped_refptr<I420Buffer> reference(I420Buffer::Create(width, height));
+  scoped_refptr<I420Buffer> reference(I420Buffer::Create(width, height));
   // I410 is 10-bit while I420 is 8 bit, so last 2 bits would be discarded.
   memset(reference->MutableDataY(), kYValue >> 2, size_y);
   memset(reference->MutableDataU(), kUValue >> 2, size_u);
   memset(reference->MutableDataV(), kVValue >> 2, size_v);
 
-  rtc::scoped_refptr<I410Buffer> i410_buffer(I410Buffer::Create(width, height));
+  scoped_refptr<I410Buffer> i410_buffer(I410Buffer::Create(width, height));
   FillI410Buffer(i410_buffer);
 
   // Confirm YUV values are as expected.
@@ -107,7 +107,7 @@ TEST(I410BufferTest, ToI420) {
     }
   }
 
-  rtc::scoped_refptr<I420BufferInterface> i420_buffer(i410_buffer->ToI420());
+  scoped_refptr<I420BufferInterface> i420_buffer(i410_buffer->ToI420());
 
   // Confirm YUV values are as expected.
   for (int row = 0; row < height; row++) {

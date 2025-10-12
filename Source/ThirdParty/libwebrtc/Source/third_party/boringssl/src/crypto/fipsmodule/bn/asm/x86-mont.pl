@@ -1,17 +1,22 @@
 #! /usr/bin/env perl
 # Copyright 2005-2016 The OpenSSL Project Authors. All Rights Reserved.
 #
-# Licensed under the OpenSSL license (the "License").  You may not use
-# this file except in compliance with the License.  You can obtain a copy
-# in the file LICENSE in the source distribution or at
-# https://www.openssl.org/source/license.html
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 
 # ====================================================================
 # Written by Andy Polyakov <appro@openssl.org> for the OpenSSL
-# project. The module is, however, dual licensed under OpenSSL and
-# CRYPTOGAMS licenses depending on where you obtain it. For further
-# details see http://www.openssl.org/~appro/cryptogams/.
+# project.
 # ====================================================================
 
 # October 2005
@@ -44,7 +49,7 @@ open STDOUT,">$output";
 
 $sse2=1;
 
-&function_begin("bn_mul_mont");
+&function_begin("bn_mul_mont_words");
 
 $i="edx";
 $j="ecx";
@@ -63,11 +68,9 @@ $_sp=&DWP(4*6,"esp");
 $_bpend=&DWP(4*7,"esp");
 $frame=32;				# size of above frame rounded up to 16n
 
-	&xor	("eax","eax");
+	# No return value. Instead, the caller must ensure num >= 4
 	&mov	("edi",&wparam(5));	# int num
-	&cmp	("edi",4);
-	&jl	(&label("just_leave"));
-
+	# No return value.
 	&lea	("esi",&wparam(0));	# put aside pointer to argument block
 	&lea	("edx",&wparam(1));	# load ap
 	&add	("edi",2);		# extra two words on top of tp
@@ -321,9 +324,8 @@ $mask="mm7";
 	&jge	(&label("copy"));
 
 	&mov	("esp",$_sp);		# pull saved stack pointer
-	&mov	("eax",1);
-&set_label("just_leave");
-&function_end("bn_mul_mont");
+	# No return value
+&function_end("bn_mul_mont_words");
 
 &asciz("Montgomery Multiplication for x86, CRYPTOGAMS by <appro\@openssl.org>");
 

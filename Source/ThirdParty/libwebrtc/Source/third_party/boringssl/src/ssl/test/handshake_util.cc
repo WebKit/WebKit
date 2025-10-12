@@ -1,16 +1,16 @@
-/* Copyright (c) 2018, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2018 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include "handshake_util.h"
 
@@ -64,17 +64,11 @@ bool RetryAsync(SSL *ssl, int ret) {
 
   if (test_state->packeted_bio != nullptr &&
       PacketedBioAdvanceClock(test_state->packeted_bio)) {
-    // The DTLS retransmit logic silently ignores write failures. So the test
-    // may progress, allow writes through synchronously.
-    AsyncBioEnforceWriteQuota(test_state->async_bio, false);
     int timeout_ret = DTLSv1_handle_timeout(ssl);
-    AsyncBioEnforceWriteQuota(test_state->async_bio, true);
-
-    if (timeout_ret < 0) {
-      fprintf(stderr, "Error retransmitting.\n");
-      return false;
+    if (timeout_ret >= 0) {
+      return true;
     }
-    return true;
+    ssl_err = SSL_get_error(ssl, timeout_ret);
   }
 
   // See if we needed to read or write more. If so, allow one byte through on
@@ -97,9 +91,36 @@ bool RetryAsync(SSL *ssl, int ret) {
       return true;
     case SSL_ERROR_WANT_PRIVATE_KEY_OPERATION:
       test_state->private_key_retries++;
+      if (config->private_key_delay_ms != 0 &&
+          test_state->private_key_retries == 1) {
+        // The first time around, simulate the private key operation taking a
+        // long time to run.
+        if (test_state->packeted_bio == nullptr) {
+          fprintf(stderr, "-private-key-delay-ms requires DTLS.\n");
+          return false;
+        }
+        timeval *clock = PacketedBioGetClock(test_state->packeted_bio);
+        clock->tv_sec += config->private_key_delay_ms / 1000;
+        clock->tv_usec += config->private_key_delay_ms * 1000;
+        if (clock->tv_usec >= 1000000) {
+          clock->tv_usec -= 1000000;
+          clock->tv_sec++;
+        }
+        int timeout_ret = DTLSv1_handle_timeout(ssl);
+        if (timeout_ret < 0) {
+          if (SSL_get_error(ssl, timeout_ret) == SSL_ERROR_WANT_WRITE) {
+            AsyncBioAllowWrite(test_state->async_bio, 1);
+            return true;
+          }
+          return false;
+        }
+      }
       return true;
     case SSL_ERROR_WANT_CERTIFICATE_VERIFY:
       test_state->custom_verify_ready = true;
+      return true;
+    case SSL_ERROR_PENDING_TICKET:
+      test_state->async_ticket_decrypt_ready = true;
       return true;
     default:
       return false;
@@ -699,10 +720,9 @@ bool GetHandshakeHint(SSL *ssl, SettingsWriter *writer, bool is_resume,
 
   bool has_hints;
   std::vector<uint8_t> hints;
-  if (!RequestHandshakeHint(
-          GetTestConfig(ssl), is_resume,
-          MakeConstSpan(CBB_data(input.get()), CBB_len(input.get())),
-          &has_hints, &hints)) {
+  if (!RequestHandshakeHint(GetTestConfig(ssl), is_resume,
+                            Span(CBB_data(input.get()), CBB_len(input.get())),
+                            &has_hints, &hints)) {
     return false;
   }
   if (has_hints &&

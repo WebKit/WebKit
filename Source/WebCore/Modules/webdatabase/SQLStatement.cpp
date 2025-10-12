@@ -117,11 +117,11 @@ bool SQLStatement::execute(Database& db)
 
     auto statement = database.prepareStatementSlow(m_statement);
     if (!statement) {
-        LOG(StorageAPI, "Unable to verify correctness of statement %s - error %i (%s)", m_statement.ascii().data(), statement.error(), database.lastErrorMsg());
-        if (statement.error() == SQLITE_INTERRUPT)
-            m_error = SQLError::create(SQLError::DATABASE_ERR, "could not prepare statement"_s, statement.error(), "interrupted"_s);
+        LOG(StorageAPI, "Unable to verify correctness of statement %s - error %i (%s)", m_statement.ascii().data(), database.lastError(), database.lastErrorMsg());
+        if (database.lastError() == SQLITE_INTERRUPT)
+            m_error = SQLError::create(SQLError::DATABASE_ERR, "could not prepare statement"_s, database.lastError(), "interrupted"_s);
         else
-            m_error = SQLError::create(SQLError::SYNTAX_ERR, "could not prepare statement"_s, statement.error(), database.lastErrorMsg());
+            m_error = SQLError::create(SQLError::SYNTAX_ERR, "could not prepare statement"_s, database.lastError(), database.lastErrorMsg());
         return false;
     }
 

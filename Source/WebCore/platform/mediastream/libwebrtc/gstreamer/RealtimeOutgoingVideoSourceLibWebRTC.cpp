@@ -72,7 +72,7 @@ void RealtimeOutgoingVideoSourceLibWebRTC::videoFrameAvailable(VideoFrame& video
     sendFrame(WTFMove(frameBuffer));
 }
 
-rtc::scoped_refptr<webrtc::VideoFrameBuffer> RealtimeOutgoingVideoSourceLibWebRTC::createBlackFrame(size_t  width, size_t  height)
+webrtc::scoped_refptr<webrtc::VideoFrameBuffer> RealtimeOutgoingVideoSourceLibWebRTC::createBlackFrame(size_t  width, size_t  height)
 {
     GstVideoInfo info;
 
@@ -81,8 +81,10 @@ rtc::scoped_refptr<webrtc::VideoFrameBuffer> RealtimeOutgoingVideoSourceLibWebRT
     GRefPtr<GstBuffer> buffer = adoptGRef(gst_buffer_new_allocate(nullptr, info.size, nullptr));
     GRefPtr<GstCaps> caps = adoptGRef(gst_video_info_to_caps(&info));
 
-    GstMappedBuffer map(buffer.get(), GST_MAP_WRITE);
-    memset(map.data(), 0, info.size);
+    {
+        GstMappedBuffer map(buffer.get(), GST_MAP_WRITE);
+        memsetSpan(map.mutableSpan<uint8_t>(), 0);
+    }
 
     return GStreamerVideoFrameLibWebRTC::create(gst_sample_new(buffer.get(), caps.get(), NULL, NULL));
 }

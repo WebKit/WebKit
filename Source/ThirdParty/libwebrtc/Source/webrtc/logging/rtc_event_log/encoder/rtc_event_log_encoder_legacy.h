@@ -97,10 +97,10 @@ class RtcEventLogEncoderLegacy final : public RtcEventLogEncoder {
 
   // RTCP/RTP are handled similarly for incoming/outgoing.
   std::string EncodeRtcpPacket(int64_t timestamp_us,
-                               const rtc::Buffer& packet,
+                               const Buffer& packet,
                                bool is_incoming);
   std::string EncodeRtpPacket(int64_t timestamp_us,
-                              rtc::ArrayView<const uint8_t> header,
+                              ArrayView<const uint8_t> header,
                               size_t packet_length,
                               int probe_cluster_id,
                               bool is_incoming);

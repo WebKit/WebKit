@@ -49,7 +49,6 @@ specific_include_rules = {
   ],
 
   ".*\.h": [
-    "+rtc_base/arraysize.h",
     "+rtc_base/checks.h",
     "+rtc_base/system/rtc_export.h",
     "+rtc_base/system/rtc_export_template.h",
@@ -79,9 +78,17 @@ specific_include_rules = {
     "+rtc_base/strings/string_builder.h",
   ],
 
+  "audio_format\.h": [
+    "+rtc_base/strings/string_builder.h",
+  ],
+
   "candidate\.h": [
     "+rtc_base/network_constants.h",
     "+rtc_base/socket_address.h",
+  ],
+
+  "create_peerconnection_factory\.h": [
+    "+rtc_base/thread.h",
   ],
 
   "data_channel_interface\.h": [
@@ -100,9 +107,23 @@ specific_include_rules = {
     "+modules/include/module_fec_types.h",
   ],
 
+  "jsep\.h": [
+    "+absl/strings/has_absl_stringify.h",
+    "+absl/strings/str_format.h",
+  ],
+
+  "local_network_access_permission\.h": [
+    "+rtc_base/socket_address.h",
+  ],
+
   "packet_socket_factory\.h": [
     "+rtc_base/async_packet_socket.h",
     "+rtc_base/socket_address.h",
+    "+rtc_base/ssl_certificate.h",
+  ],
+
+  "turn_customizer\.h": [
+    "+p2p/base/port_interface.h",
   ],
 
   "peer_connection_interface\.h": [
@@ -135,6 +156,8 @@ specific_include_rules = {
 
   "rtc_error\.h": [
     "+rtc_base/logging.h",
+    "+absl/strings/has_absl_stringify.h",
+    "+absl/strings/str_format.h",
   ],
   "rtc_event_log_output_file.h": [
     # For private member and constructor.
@@ -184,16 +207,16 @@ specific_include_rules = {
     "+rtc_base/thread_annotations.h",
   ],
 
-  "test_dependency_factory\.h": [
-    "+rtc_base/thread_checker.h",
-  ],
-
   "time_controller\.h": [
     "+rtc_base/thread.h",
   ],
 
   "videocodec_test_fixture\.h": [
     "+modules/video_coding/include/video_codec_interface.h"
+  ],
+
+  "rtp_parameters\.h": [
+    "+absl/strings/str_format.h",
   ],
 
   "sequence_checker\.h": [
@@ -232,6 +255,10 @@ specific_include_rules = {
 
   "field_trials_registry\.h": [
     "+rtc_base/containers/flat_set.h",
+  ],
+
+  "ice_transport_factory\.h": [
+    "+p2p/base/port_allocator.h",
   ],
 
   # .cc files in api/ should not be restricted in what they can #include,

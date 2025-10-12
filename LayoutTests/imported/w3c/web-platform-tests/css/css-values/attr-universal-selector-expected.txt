@@ -1,4 +1,3 @@
-Blocked access to external URL https://does-not-exist.test/404.png
 
 FAIL CSS Values and Units Test: attr() security limitations in universal selector  assert_equals: 'background-image: attr(data-foo)' with data-foo='https://does-not-exist.test/404.png' expected "none" but got "image-set(url(\"https://does-not-exist.test/404.png\") 1dppx)"
 

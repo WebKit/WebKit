@@ -8,9 +8,9 @@
 #ifndef MKVMUXER_MKVMUXERUTIL_H_
 #define MKVMUXER_MKVMUXERUTIL_H_
 
-#include "mkvmuxertypes.h"
+#include <stdint.h>
 
-#include "stdint.h"
+#include "mkvmuxertypes.h"
 
 namespace mkvmuxer {
 class Cluster;

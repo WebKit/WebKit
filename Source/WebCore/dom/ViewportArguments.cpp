@@ -165,6 +165,7 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
     result.orientation = orientation;
     result.shrinkToFit = shrinkToFit;
     result.viewportFit = viewportFit;
+    result.interactiveWidget = interactiveWidget;
 
     return result;
 }
@@ -311,6 +312,20 @@ static ViewportFit parseViewportFitValue(StringView key, StringView value, NOESC
     return ViewportFit::Auto;
 }
 
+static InteractiveWidget parseInteractiveWidgetValue(StringView key, StringView value, NOESCAPE const InternalViewportErrorHandler& errorHandler)
+{
+    if (equalLettersIgnoringASCIICase(value, "resizes-visual"_s))
+        return InteractiveWidget::ResizesVisual;
+    if (equalLettersIgnoringASCIICase(value, "resizes-content"_s))
+        return InteractiveWidget::ResizesContent;
+    if (equalLettersIgnoringASCIICase(value, "overlays-content"_s))
+        return InteractiveWidget::OverlaysContent;
+
+    errorHandler(ViewportErrorCode::UnrecognizedViewportArgumentValue, value, key);
+
+    return InteractiveWidget::ResizesVisual;
+}
+
 static ASCIILiteral viewportErrorMessageTemplate(ViewportErrorCode errorCode)
 {
     switch (errorCode) {
@@ -367,7 +382,7 @@ static void reportViewportWarning(Document& document, ViewportErrorCode errorCod
     document.addConsoleMessage(MessageSource::Rendering, viewportErrorMessageLevel(errorCode), message);
 }
 
-void setViewportFeature(ViewportArguments& arguments, StringView key, StringView value, NOESCAPE const ViewportErrorHandler& errorHandler)
+void setViewportFeature(ViewportArguments& arguments, StringView key, StringView value, bool metaViewportInteractiveWidgetEnabled, NOESCAPE const ViewportErrorHandler& errorHandler)
 {
     InternalViewportErrorHandler internalErrorHandler = [&errorHandler] (ViewportErrorCode errorCode, StringView replacement1, StringView replacement2) {
         errorHandler(errorCode, viewportErrorMessage(errorCode, replacement1, replacement2));
@@ -395,13 +410,15 @@ void setViewportFeature(ViewportArguments& arguments, StringView key, StringView
         arguments.shrinkToFit = findBooleanValue(key, value, internalErrorHandler);
     else if (equalLettersIgnoringASCIICase(key, "viewport-fit"_s))
         arguments.viewportFit = parseViewportFitValue(key, value, internalErrorHandler);
+    else if (metaViewportInteractiveWidgetEnabled && equalLettersIgnoringASCIICase(key, "interactive-widget"_s))
+        arguments.interactiveWidget = parseInteractiveWidgetValue(key, value, internalErrorHandler);
     else
         internalErrorHandler(ViewportErrorCode::UnrecognizedViewportArgumentKey, key, { });
 }
 
 void setViewportFeature(ViewportArguments& arguments, Document& document, StringView key, StringView value)
 {
-    setViewportFeature(arguments, key, value, [&](ViewportErrorCode errorCode, const String& message) {
+    setViewportFeature(arguments, key, value, document.settings().metaViewportInteractiveWidgetEnabled(), [&](ViewportErrorCode errorCode, const String& message) {
         reportViewportWarning(document, errorCode, message);
     });
 }

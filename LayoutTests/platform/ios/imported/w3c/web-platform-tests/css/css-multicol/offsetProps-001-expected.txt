@@ -1,0 +1,8 @@
+p
+ppp pppp pppp pppp pppp pppp pppp pppp pppp pppp pppp pppp pppp
+
+FAIL outer assert_equals: expected 292 but got 72
+FAIL middle assert_equals: expected 150 but got 72
+FAIL inner1 assert_equals: expected 24 but got 25
+FAIL inner2 assert_equals: expected 110 but got 72
+

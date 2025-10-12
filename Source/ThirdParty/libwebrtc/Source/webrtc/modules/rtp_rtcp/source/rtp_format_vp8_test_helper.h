@@ -17,6 +17,9 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_VP8_TEST_HELPER_H_
 #define MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_VP8_TEST_HELPER_H_
 
+#include <cstddef>
+#include <cstdint>
+
 #include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtp_format_vp8.h"
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
@@ -33,22 +36,21 @@ class RtpFormatVp8TestHelper {
   RtpFormatVp8TestHelper& operator=(const RtpFormatVp8TestHelper&) = delete;
 
   void GetAllPacketsAndCheck(RtpPacketizerVp8* packetizer,
-                             rtc::ArrayView<const size_t> expected_sizes);
+                             ArrayView<const size_t> expected_sizes);
 
-  rtc::ArrayView<const uint8_t> payload() const { return payload_; }
+  ArrayView<const uint8_t> payload() const { return payload_; }
   size_t payload_size() const { return payload_.size(); }
 
  private:
   // Returns header size, i.e. payload offset.
-  int CheckHeader(rtc::ArrayView<const uint8_t> rtp_payload, bool first);
-  void CheckPictureID(rtc::ArrayView<const uint8_t> rtp_payload, int* offset);
-  void CheckTl0PicIdx(rtc::ArrayView<const uint8_t> rtp_payload, int* offset);
-  void CheckTIDAndKeyIdx(rtc::ArrayView<const uint8_t> rtp_payload,
-                         int* offset);
+  int CheckHeader(ArrayView<const uint8_t> rtp_payload, bool first);
+  void CheckPictureID(ArrayView<const uint8_t> rtp_payload, int* offset);
+  void CheckTl0PicIdx(ArrayView<const uint8_t> rtp_payload, int* offset);
+  void CheckTIDAndKeyIdx(ArrayView<const uint8_t> rtp_payload, int* offset);
   void CheckPayload(const uint8_t* data_ptr);
 
   const RTPVideoHeaderVP8* const hdr_info_;
-  rtc::Buffer payload_;
+  Buffer payload_;
 };
 
 }  // namespace webrtc

@@ -21,6 +21,7 @@
 #pragma once
 
 #include "SVGComponentTransferFunctionElement.h"
+#include "SVGComponentTransferFunctionElementInlines.h"
 
 namespace WebCore {
 

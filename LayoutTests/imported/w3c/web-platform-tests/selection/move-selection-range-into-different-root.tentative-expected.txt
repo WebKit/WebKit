@@ -2,4 +2,19 @@
 
 
 FAIL Set selection range into a document fragment with selectNode assert_equals: expected 0 but got 1
+FAIL Set selection range into a sub-document with selectNode assert_equals: expected 0 but got 1
+FAIL Set selection range into a document fragment with selectNodeContents assert_equals: expected 0 but got 1
+FAIL Set selection range into a sub-document with selectNodeContents assert_equals: expected 0 but got 1
+FAIL Set selection range into a document fragment with setEnd assert_equals: expected 0 but got 1
+FAIL Set selection range into a sub-document with setEnd assert_equals: expected 0 but got 1
+FAIL Set selection range into a document fragment with setEndAfter assert_equals: expected 0 but got 1
+FAIL Set selection range into a sub-document with setEndAfter assert_equals: expected 0 but got 1
+FAIL Set selection range into a document fragment with setEndBefore assert_equals: expected 0 but got 1
+FAIL Set selection range into a sub-document with setEndBefore assert_equals: expected 0 but got 1
+FAIL Set selection range into a document fragment with setStart assert_equals: expected 0 but got 1
+FAIL Set selection range into a sub-document with setStart assert_equals: expected 0 but got 1
+FAIL Set selection range into a document fragment with setStartAfter assert_equals: expected 0 but got 1
+FAIL Set selection range into a sub-document with setStartAfter assert_equals: expected 0 but got 1
+FAIL Set selection range into a document fragment with setStartBefore assert_equals: expected 0 but got 1
+FAIL Set selection range into a sub-document with setStartBefore assert_equals: expected 0 but got 1
 

@@ -2,9 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js]
-flags:
-  - noStrict
 description: |
   pending
 esid: pending
@@ -80,7 +77,7 @@ child.testStaticLookups();
 assert.sameValue(new Proxy(({ method() { return super.hasOwnProperty("method"); } }), {}).method(), true);
 
 // What about a CCW?
-var g = createNewGlobal();
+var g = $262.createRealm().global;
 var wrappedSuper = g.eval("({ method() { return super.hasOwnProperty('method'); } })");
 assert.sameValue(wrappedSuper.method(), true);
 

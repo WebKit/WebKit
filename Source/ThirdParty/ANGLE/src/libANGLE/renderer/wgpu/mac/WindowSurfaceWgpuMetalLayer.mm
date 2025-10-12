@@ -56,7 +56,9 @@ angle::Result WindowSurfaceWgpuMetalLayer::createWgpuSurface(const egl::Display 
         CGSizeMake(mMetalLayer.bounds.size.width * mMetalLayer.contentsScale,
                    mMetalLayer.bounds.size.height * mMetalLayer.contentsScale);
     mMetalLayer.framebufferOnly  = NO;
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
     mMetalLayer.autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
+#endif
     mMetalLayer.contentsScale    = layer.contentsScale;
 
     [layer addSublayer:mMetalLayer];
@@ -68,10 +70,11 @@ angle::Result WindowSurfaceWgpuMetalLayer::createWgpuSurface(const egl::Display 
     surfaceDesc.nextInChain           = &metalLayerDesc.chain;
 
     DisplayWgpu *displayWgpu = webgpu::GetImpl(display);
+    const DawnProcTable *wgpu       = displayWgpu->getProcs();
     webgpu::InstanceHandle instance = displayWgpu->getInstance();
 
-    webgpu::SurfaceHandle surface =
-        webgpu::SurfaceHandle::Acquire(wgpuInstanceCreateSurface(instance.get(), &surfaceDesc));
+    webgpu::SurfaceHandle surface = webgpu::SurfaceHandle::Acquire(
+        wgpu, wgpu->instanceCreateSurface(instance.get(), &surfaceDesc));
     *outSurface           = surface;
 
     return angle::Result::Continue;

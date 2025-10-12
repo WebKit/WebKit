@@ -6,6 +6,10 @@ export function compile(wat) {
     return new WebAssembly.Module(binary);
 }
 
+export function watToWasm(wat) {
+    return WebAssemblyText.encode(wat);
+}
+
 export function instantiate(wat, imports = {}) {
     const module = compile(wat);
     return new WebAssembly.Instance(module, imports);

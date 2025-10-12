@@ -1,18 +1,24 @@
 <!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
 <script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
 <script>
-window.addEventListener("message", function (event) {
+description("Tests key events on cross-origin iframes in site isolation mode");
+jsTestIsAsync = true;
+
+window.addEventListener("message", async function (event) {
     testPassed("Received key event " + event.data);
-    testRunner.notifyDone();
+    finishJSTest();
 });
 
-function test() {
+async function test() {
     document.getElementById("iframe").focus();
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-        eventSender.keyDown("x");
-    }
+    testRunner?.dumpAsText();
+    await UIHelper.setHardwareKeyboardAttached(true);
+    await UIHelper.keyDown("x");
+}
+
+async function onIframeLoad() {
+    await test();
 }
 </script>
-<iframe onload="test()" id="iframe" src="http://localhost:8000/site-isolation/resources/key-event-handler.html"></iframe>
+<iframe onload="onIframeLoad()" id="iframe" src="http://localhost:8000/site-isolation/resources/key-event-handler.html"></iframe>

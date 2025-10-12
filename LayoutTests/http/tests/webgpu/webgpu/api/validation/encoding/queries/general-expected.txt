@@ -4,8 +4,4 @@ PASS :occlusion_query,query_type:type="occlusion"
 PASS :occlusion_query,query_type:type="timestamp"
 PASS :occlusion_query,invalid_query_set:
 PASS :occlusion_query,query_index:
-PASS :writeTimestamp,query_type_and_index:type="occlusion"
-PASS :writeTimestamp,query_type_and_index:type="timestamp"
-PASS :writeTimestamp,invalid_query_set:
-PASS :writeTimestamp,device_mismatch:
 

@@ -11,10 +11,13 @@
 #ifndef AUDIO_AUDIO_TRANSPORT_IMPL_H_
 #define AUDIO_AUDIO_TRANSPORT_IMPL_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <vector>
 
-#include "api/audio/audio_device.h"
+#include "api/audio/audio_device_defines.h"
 #include "api/audio/audio_mixer.h"
 #include "api/audio/audio_processing.h"
 #include "api/scoped_refptr.h"
@@ -107,7 +110,7 @@ class AudioTransportImpl : public AudioTransport {
 
   // Render side.
 
-  rtc::scoped_refptr<AudioMixer> mixer_;
+  scoped_refptr<AudioMixer> mixer_;
   AudioFrame mixed_frame_;
   // Converts mixed audio to the audio device output rate.
   PushResampler<int16_t> render_resampler_;

@@ -35,6 +35,7 @@
 #include <wtf/StringPrintStream.h>
 #include <wtf/UUID.h>
 #include <wtf/cf/TypeCastsCF.h>
+#include <wtf/darwin/DispatchExtras.h>
 #include <wtf/spi/cf/CFPrivSPI.h>
 #include <wtf/spi/darwin/dyldSPI.h>
 
@@ -54,9 +55,7 @@ namespace WTF {
 static char const * const notificationName = "com.apple.WebKit.LibraryPathDiagnostics";
 static char const * const loggingSubsystem = "com.apple.WebKit.LibraryPathDiagnostics";
 static char const * const loggingCategory = "LibraryPathDiagnostics";
-#if HAVE(DYLD_DLOPEN_IMAGE_HEADER_SPI)
 static char const * const libraryListEnvironmentVariableName = "LIBRARY_PATH_DIAGNOSTICS_LIBRARIES";
-#endif
 static char const * const bundleListEnvironmentVariableName = "LIBRARY_PATH_DIAGNOSTICS_BUNDLES";
 
 static String uuidToString(const uuid_t& uuid)
@@ -74,14 +73,12 @@ private:
     void logJSONPayload(const JSON::Object&);
     void logString(std::span<const String> path, const String&);
     void logObject(std::span<const String> path, Ref<JSON::Object>&&);
-    void logError(const char*, ...);
+    void logError(const char*, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
 
     void logExecutablePath(void);
     void logDYLDSharedCacheInfo(void);
-#if HAVE(DYLD_DLOPEN_IMAGE_HEADER_SPI)
     void logDynamicLibraryInfo(const String&);
     void logDynamicLibraryInfo(void);
-#endif
     void logBundleInfo(const String&);
     void logBundleInfo(void);
 #if HAVE(CHIRP_SPI)
@@ -161,7 +158,6 @@ void LibraryPathDiagnosticsLogger::logDYLDSharedCacheInfo(void)
     logObject(std::initializer_list<String> { "SharedCache"_s }, WTFMove(sharedCacheInfo));
 }
 
-#if HAVE(DYLD_DLOPEN_IMAGE_HEADER_SPI)
 #if HAVE(SHARED_REGION_SPI)
 static bool isAddressInSharedRegion(const void* addr)
 {
@@ -216,7 +212,6 @@ void LibraryPathDiagnosticsLogger::logDynamicLibraryInfo(void)
     for (const auto& installName : libraries)
         logDynamicLibraryInfo(installName);
 }
-#endif // HAVE(DYLD_DLOPEN_IMAGE_HEADER_SPI)
 
 void LibraryPathDiagnosticsLogger::logBundleInfo(const String& bundleIdentifier)
 {
@@ -280,9 +275,7 @@ void LibraryPathDiagnosticsLogger::log(void)
 {
     logExecutablePath();
     logDYLDSharedCacheInfo();
-#if HAVE(DYLD_DLOPEN_IMAGE_HEADER_SPI)
     logDynamicLibraryInfo();
-#endif
     logBundleInfo();
 #if HAVE(CHIRP_SPI)
     logCryptexCanaryInfo();
@@ -294,7 +287,7 @@ void initializeLibraryPathDiagnostics(void)
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         int token = -1;
-        notify_register_dispatch(notificationName, &token, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(int token) {
+        notify_register_dispatch(notificationName, &token, globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(int token) {
             UNUSED_PARAM(token);
             logLibraryPathDiagnostics();
         });

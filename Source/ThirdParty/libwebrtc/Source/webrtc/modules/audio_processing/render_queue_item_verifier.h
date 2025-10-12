@@ -11,6 +11,7 @@
 #ifndef MODULES_AUDIO_PROCESSING_RENDER_QUEUE_ITEM_VERIFIER_H_
 #define MODULES_AUDIO_PROCESSING_RENDER_QUEUE_ITEM_VERIFIER_H_
 
+#include <cstddef>
 #include <vector>
 
 namespace webrtc {

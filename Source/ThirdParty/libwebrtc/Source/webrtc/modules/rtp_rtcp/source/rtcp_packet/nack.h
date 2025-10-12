@@ -11,6 +11,8 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_NACK_H_
 #define MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_NACK_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <vector>
 
 #include "modules/rtp_rtcp/source/rtcp_packet/rtpfb.h"

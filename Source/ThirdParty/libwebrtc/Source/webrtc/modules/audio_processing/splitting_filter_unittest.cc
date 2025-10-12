@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-// MSVC++ requires this to be set before any other includes to get M_PI.
-#define _USE_MATH_DEFINES
-
 #include "modules/audio_processing/splitting_filter.h"
 
 #include <cmath>
+#include <cstddef>
+#include <cstring>
+#include <numbers>
 
 #include "common_audio/channel_buffer.h"
 #include "test/gtest.h"
@@ -21,8 +21,8 @@
 namespace webrtc {
 namespace {
 
-const size_t kSamplesPer16kHzChannel = 160;
-const size_t kSamplesPer48kHzChannel = 480;
+constexpr size_t kSamplesPer16kHzChannel = 160;
+constexpr size_t kSamplesPer48kHzChannel = 480;
 
 }  // namespace
 
@@ -55,7 +55,7 @@ TEST(SplittingFilterTest, SplitsIntoThreeBandsAndReconstructs) {
       float amplitude = is_present[j] ? kAmplitude : 0.f;
       for (size_t k = 0; k < kSamplesPer48kHzChannel; ++k) {
         in_data.channels()[0][k] +=
-            amplitude * sin(2.f * M_PI * kFrequenciesHz[j] *
+            amplitude * sin(2.f * std::numbers::pi * kFrequenciesHz[j] *
                             (i * kSamplesPer48kHzChannel + k) / kSampleRateHz);
       }
     }

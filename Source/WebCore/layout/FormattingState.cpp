@@ -48,7 +48,7 @@ FormattingState::~FormattingState()
 BoxGeometry& FormattingState::boxGeometry(const Box& layoutBox)
 {
     // FIXME: Remove this when all FormattingStates transtioned to a cache setup.
-    return layoutState().ensureGeometryForBox(layoutBox);
+    return m_layoutState->ensureGeometryForBox(layoutBox);
 }
 
 }

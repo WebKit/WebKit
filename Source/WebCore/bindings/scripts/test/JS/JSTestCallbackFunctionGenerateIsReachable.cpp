@@ -124,4 +124,8 @@ JSC::JSValue toJS(TestCallbackFunctionGenerateIsReachable& impl)
     return static_cast<JSTestCallbackFunctionGenerateIsReachable&>(impl).callbackData()->callback();
 }
 
+ScriptExecutionContext* JSTestCallbackFunctionGenerateIsReachable::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
+}
 } // namespace WebCore

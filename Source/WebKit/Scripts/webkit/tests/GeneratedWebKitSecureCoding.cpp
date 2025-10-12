@@ -147,11 +147,11 @@ RetainPtr<id> CoreIPCAVOutputContext::toID() const
         propertyList[@"AVOutputContextSerializationKeyContextID"] = m_AVOutputContextSerializationKeyContextID.get();
     if (m_AVOutputContextSerializationKeyContextType)
         propertyList[@"AVOutputContextSerializationKeyContextType"] = m_AVOutputContextSerializationKeyContextType.get();
-    if ([PAL::getAVOutputContextClass() instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)])
-        return adoptNS([[PAL::getAVOutputContextClass() alloc] _initWithWebKitPropertyListData:propertyList]);
+    if ([PAL::getAVOutputContextClassSingleton() instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)])
+        return adoptNS([[PAL::getAVOutputContextClassSingleton() alloc] _initWithWebKitPropertyListData:propertyList]);
 
     auto unarchiver = adoptNS([[WKKeyedCoder alloc] initWithDictionary:propertyList]);
-    return adoptNS([[PAL::getAVOutputContextClass() alloc] initWithCoder:unarchiver.get()]);
+    return adoptNS([[PAL::getAVOutputContextClassSingleton() alloc] initWithCoder:unarchiver.get()]);
 }
 #endif // USE(AVFOUNDATION)
 
@@ -322,12 +322,12 @@ RetainPtr<id> CoreIPCDDScannerResult::toID() const
         propertyList[@"OptionalDictionaryKey"] = dictionary.get();
     propertyList[@"DataArrayKey"] = arrayFromVector(m_DataArrayKey).get();
     propertyList[@"SecTrustArrayKey"] = arrayFromVector(m_SecTrustArrayKey).get();
-    RELEASE_ASSERT([PAL::getDDScannerResultClass() instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)]);
-    if ([PAL::getDDScannerResultClass() instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)])
-        return adoptNS([[PAL::getDDScannerResultClass() alloc] _initWithWebKitPropertyListData:propertyList]);
+    RELEASE_ASSERT([PAL::getDDScannerResultClassSingleton() instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)]);
+    if ([PAL::getDDScannerResultClassSingleton() instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)])
+        return adoptNS([[PAL::getDDScannerResultClassSingleton() alloc] _initWithWebKitPropertyListData:propertyList]);
 
     auto unarchiver = adoptNS([[WKKeyedCoder alloc] initWithDictionary:propertyList]);
-    return adoptNS([[PAL::getDDScannerResultClass() alloc] initWithCoder:unarchiver.get()]);
+    return adoptNS([[PAL::getDDScannerResultClassSingleton() alloc] initWithCoder:unarchiver.get()]);
 }
 #endif // ENABLE(DATA_DETECTION)
 

@@ -4,36 +4,17 @@
  */
 
 /*---
-includes: [sm/non262.js, sm/non262-shell.js, sm/non262-expressions-shell.js]
-flags:
-  - noStrict
 description: |
-  pending
+  \\u and \\x must be followed by the appropriate number of hex digits or else it is a syntax error
+info: bugzilla.mozilla.org/show_bug.cgi?id=663300
 esid: pending
 ---*/
-//-----------------------------------------------------------------------------
-var BUGNUMBER = 663300;
-var summary =
-  "\\u and \\x must be followed by the appropriate number of hex digits or " +
-  "else it is a syntax error";
-
-print(BUGNUMBER + ": " + summary);
-
-/**************
- * BEGIN TEST *
- **************/
 
 function expectSyntaxError(str)
 {
-  try
-  {
+  assert.throws(SyntaxError, function() {
     eval(str);
-  }
-  catch (e)
-  {
-    assert.sameValue(e instanceof SyntaxError, true,
-             "no syntax error evaluating " + str);
-  }
+  }, "syntax error evaluating " + str);
 }
 
 expectSyntaxError('"\\x"');
@@ -147,7 +128,3 @@ assert.sameValue(eval('"a\\\nb"'), "ab");
 assert.sameValue(eval('"a\\\r\nb"'), "ab");
 assert.sameValue(eval('"a\\\u2028b"'), "ab");
 assert.sameValue(eval('"a\\\u2029b"'), "ab");
-
-/******************************************************************************/
-
-print("All tests passed!");

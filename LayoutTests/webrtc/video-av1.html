@@ -88,7 +88,7 @@ async function getInboundRTPStatsNumberOfDecodedFrames(connection)
     var report = await connection.getStats();
     var framesDecoded;
     report.forEach((statItem) => {
-        if (statItem.type === "inbound-rtp")
+        if (statItem.type === "inbound-rtp" && statItem.kind === "video")
             framesDecoded = statItem.framesDecoded;
     });
     return framesDecoded;

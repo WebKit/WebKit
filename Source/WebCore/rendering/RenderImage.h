@@ -24,8 +24,9 @@
 
 #pragma once
 
-#include "RenderImageResource.h"
-#include "RenderReplaced.h"
+#include <WebCore/RenderImageResource.h>
+#include <WebCore/RenderReplaced.h>
+#include <wtf/Platform.h>
 
 namespace WebCore {
 
@@ -78,6 +79,7 @@ public:
     bool isShowingAltText() const;
 
     virtual bool shouldDisplayBrokenImageIcon() const;
+    bool shouldRespectZeroIntrinsicWidth() const override;
 
     String accessibilityDescription() const { return imageResource().image()->accessibilityDescription(); }
 
@@ -91,7 +93,8 @@ protected:
 
     bool shouldInvalidatePreferredWidths() const final;
     RenderBox* embeddedContentBox() const final;
-    void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, FloatSize& intrinsicRatio) const final;
+    FloatSize computeIntrinsicSize() const final;
+    FloatSize preferredAspectRatio() const final;
     bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const override;
 
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
@@ -137,8 +140,6 @@ private:
 
     LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred = ShouldComputePreferred::ComputeActual) const override;
     LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const override;
-
-    LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
 
     bool shouldCollapseToEmpty() const;
 

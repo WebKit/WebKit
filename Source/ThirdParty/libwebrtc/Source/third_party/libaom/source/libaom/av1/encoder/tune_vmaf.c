@@ -327,7 +327,7 @@ static double find_best_frame_unsharp_amount_loop(
   } while (approx_vmaf > best_vmaf && loop_count < max_loop_count);
   unsharp_amount =
       approx_vmaf > best_vmaf ? unsharp_amount : unsharp_amount - step_size;
-  return AOMMIN(max_amount, AOMMAX(unsharp_amount, min_amount));
+  return fclamp(unsharp_amount, min_amount, max_amount);
 }
 
 static double find_best_frame_unsharp_amount(
@@ -944,10 +944,7 @@ int av1_get_vmaf_base_qindex(const AV1_COMP *const cpi, int current_qindex) {
   const double beta = AOMMAX(approx_sse / (dsse + approx_sse), 0.5);
   const int offset =
       av1_get_deltaq_offset(cm->seq_params->bit_depth, current_qindex, beta);
-  int qindex = current_qindex + offset;
-
-  qindex = AOMMIN(qindex, MAXQ);
-  qindex = AOMMAX(qindex, MINQ);
+  const int qindex = clamp(current_qindex + offset, MINQ, MAXQ);
 
   return qindex;
 }
@@ -996,7 +993,7 @@ static double find_best_frame_unsharp_amount_loop_neg(
   unsharp_amount =
       approx_score > best_score ? unsharp_amount : unsharp_amount - step_size;
 
-  return AOMMIN(max_amount, AOMMAX(unsharp_amount, min_amount));
+  return fclamp(unsharp_amount, min_amount, max_amount);
 }
 
 static double find_best_frame_unsharp_amount_neg(

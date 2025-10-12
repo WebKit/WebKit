@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Unexpected end of script
 
 Harness Error (FAIL), message = SyntaxError: Unexpected end of script
 

@@ -14,8 +14,6 @@
 #include <d3d11.h>
 #include <dxgi1_2.h>
 
-#include "modules/desktop_capture/desktop_geometry.h"
-#include "modules/desktop_capture/desktop_region.h"
 #include "modules/desktop_capture/win/dxgi_texture.h"
 
 namespace webrtc {

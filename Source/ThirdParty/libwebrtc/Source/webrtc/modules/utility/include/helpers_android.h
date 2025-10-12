@@ -13,10 +13,6 @@
 
 #include <jni.h>
 
-#include <string>
-
-#include "rtc_base/system/arch.h"
-
 // Abort the process if `jni` has a Java exception pending.
 // TODO(henrika): merge with CHECK_JNI_EXCEPTION() in jni_helpers.h.
 #define CHECK_EXCEPTION(jni)        \
